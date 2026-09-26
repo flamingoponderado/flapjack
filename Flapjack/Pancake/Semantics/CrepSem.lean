@@ -2008,7 +2008,7 @@ mutual
             | none => none
             | some result => some (restoreCrepRuntimeStep name (state.locals name) result)
     | _fuel + 1, state, .assign name value =>
-        match evalCrepRuntimeExp state value with
+        match (evalCrepRuntimeExpWordLab state value).map panTheWord with
         | none => some (.error, state)
         | some value =>
             match state.locals name with
