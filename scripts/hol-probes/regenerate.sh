@@ -229,6 +229,10 @@ run_probe crep_arith_lookup_code_probeScript.sml crep_arith_lookup_code_probe.ou
   "$cake_dir/pancake/proofs"
 run_probe crep_arith_eval_mul_const_probeScript.sml crep_arith_eval_mul_const_probe.out \
   input_word multiply_general "$cake_dir/pancake/proofs/crep_arithProofScript.sml"
+run_probe crep_exps_of_probeScript.sml crep_exps_of_probe.out \
+  dec_seq if_store while call_tail call_ret call_ret_hdl stores empty \
+  "$cake_dir/pancake/semantics/crepPropsScript.sml" \
+  "$cake_dir/pancake/semantics"
 run_probe crep_runtime_read_bytes_probeScript.sml crep_runtime_read_bytes_probe.out \
   read_bytes_zero read_bytes_out_of_domain "$cake_dir/pancake/semantics/panSemScript.sml" \
   "$cake_dir/pancake/semantics"

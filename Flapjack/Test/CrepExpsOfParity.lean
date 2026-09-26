@@ -3,11 +3,11 @@ import Flapjack.Pancake.Semantics.CrepProps
 /-!
 # Original-domain parity for `crepProps$exps_of`
 
-The expected values are derived from the direct HOL equations of
-`cakeml/pancake/semantics/crepPropsScript.sml:1282-1299`, and the probe source
-`scripts/hol-probes/crep_exps_of_probeScript.sml` records them for regeneration
-with `scripts/hol-probes/regenerate.sh` in a checkout with built CakeML HOL
-theories.
+The expected values are the direct HOL `EVAL` output recorded in the checked-in
+oracle `scripts/hol-probes/crep_exps_of_probe.out` (source
+`scripts/hol-probes/crep_exps_of_probeScript.sml`, regenerated with
+`scripts/hol-probes/regenerate.sh` from the pinned CakeML submodule), for
+`cakeml/pancake/semantics/crepPropsScript.sml:1282-1299`.
 
 The tagged exact `crepExpsOfHOL` is checked both against explicit expected
 lists (mapped through `crepExpOfHOL` to the production expression carrier) and
