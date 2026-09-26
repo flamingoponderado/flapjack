@@ -12614,7 +12614,23 @@
       "code"
     ],
     "reviewer": "flapjack-ds8 (source comparison; bead flapjack-pxn.18.3.5.8.8.7): HOL FLOOKUP_set_globals (crepPropsScript.sml:297-301) `FLOOKUP (set_globals gv w s).locals n = FLOOKUP s.locals n` over the exact finite-support CrepSemHOLState carrier, using the tagged CrepSemHOLState.setGlobals (crepSemScript.sml:61-63), which updates only globals. FLOOKUP is rendered as the canonical HolFiniteMapExact.lookup. Finite-map representation recorded by the qualifier (locals/globals/code); same-module canonical witness forwards CrepSemHOLState.holFmapAsFiniteSupportWitness. Direct HOL row set_globals_direct in crep_store_global_probe.out. Representation-only; no statement/side-condition change."
-  },
+   },
+   {
+     "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
+     "hol_name": "eval_upd_clock_eq",
+     "lean_path": "Flapjack/Pancake/Semantics/CrepProps.lean",
+     "lean_name": "evalCrepSemHOLExp_upd_clock_eq",
+     "statement_status": "reviewed_exact",
+     "reviewer": "flapjack-ds10 (source comparison; bead flapjack-pxn.18.4.8.2.1): HOL eval_upd_clock_eq (crepPropsScript.sml:858) `!t e ck. eval (t with clock := ck) e = eval t e` over the exact tagged evaluator evalCrepSemHOLExp (crepSemScript.sml eval_def). The `with clock` state update is rendered as a Lean structure update; the statement names no finite-map field so no representation qualifier is required. The exact evaluator reads locals/globals/memory/memaddrs/be/baseAddr/topAddr and never the clock, so the result is unchanged; proof by CrepExpHOL.rec with a list motive for the nested op/crepOp argument lists."
+   },
+   {
+     "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
+     "hol_name": "opt_mmap_eval_upd_clock_eq",
+     "lean_path": "Flapjack/Pancake/Semantics/CrepProps.lean",
+     "lean_name": "evalCrepSemHOLExps_upd_clock_eq",
+     "statement_status": "reviewed_exact",
+     "reviewer": "flapjack-ds10 (source comparison; bead flapjack-pxn.18.4.8.2.1): HOL opt_mmap_eval_upd_clock_eq (crepPropsScript.sml:872) `!es s ck. OPT_MMAP (eval (s with clock := ck + s.clock)) es = OPT_MMAP (eval s) es` over the exact tagged evaluator evalCrepSemHOLExp. HOL OPT_MMAP is rendered as List.mapM over Option; the list update uses `clock := ck + state.clock` as in HOL. Follows from the pointwise eval_upd_clock_eq via Flapjack.list_mapM_congr. No representation qualifier (no finite-map field named)."
+   },
   {
     "hol_path": null,
     "hol_name": null,

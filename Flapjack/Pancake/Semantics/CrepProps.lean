@@ -1,4 +1,5 @@
 import Flapjack.HolRef
+import Flapjack.FiniteMap
 import Flapjack.Pancake.CrepLang
 import Flapjack.Pancake.CrepLang.Exp
 import Flapjack.Pancake.CrepLang.Prog
@@ -981,5 +982,52 @@ theorem flookupSetGlobalsCrepSemHOL_locals {width : Nat} [NeZero width] {σ : Ty
     (CrepSemHOLState.setGlobals key value s).locals.lookup name =
       s.locals.lookup name := by
   simp [CrepSemHOLState.setGlobals]
+
+/-- Exact HOL `eval_upd_clock_eq` (`crepPropsScript.sml:858`): the expression
+evaluator never reads the clock, so updating `clock` leaves the result
+unchanged. -/
+@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "eval_upd_clock_eq"]
+theorem evalCrepSemHOLExp_upd_clock_eq {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) [h : DecidablePred state.memaddrs]
+    (e : CrepExpHOL width) (ck : Nat) :
+    @evalCrepSemHOLExp width _ σ { state with clock := ck } h e =
+      @evalCrepSemHOLExp width _ σ state h e := by
+  induction e using (CrepExpHOL.rec (motive_2 := fun args =>
+      ∀ a ∈ args, @evalCrepSemHOLExp width _ σ { state with clock := ck } h a =
+        @evalCrepSemHOLExp width _ σ state h a))
+  case nil a ha => simp at ha
+  case cons head tail ihh iht a ha =>
+    rcases List.mem_cons.mp ha with rfl | ha
+    · exact ihh
+    · exact iht a ha
+  case const value => simp only [evalCrepSemHOLExp]
+  case var name => simp only [evalCrepSemHOLExp]
+  case load address ih => simp only [evalCrepSemHOLExp]; rw [ih]
+  case load32 address ih => simp only [evalCrepSemHOLExp]; rw [ih]
+  case loadByte address ih => simp only [evalCrepSemHOLExp]; rw [ih]
+  case loadGlob address => simp only [evalCrepSemHOLExp]
+  case op operator args ih =>
+    simp only [evalCrepSemHOLExp]
+    rw [Flapjack.list_mapM_congr _ _ args ih]
+  case crepOp operator args ih =>
+    simp only [evalCrepSemHOLExp]
+    rw [Flapjack.list_mapM_congr _ _ args ih]
+  case cmp operator left right ihl ihr => simp only [evalCrepSemHOLExp]; rw [ihl, ihr]
+  case shift operator left right ihl ihr => simp only [evalCrepSemHOLExp]; rw [ihl, ihr]
+  case baseAddr => simp only [evalCrepSemHOLExp]
+  case topAddr => simp only [evalCrepSemHOLExp]
+
+/-- Exact HOL `opt_mmap_eval_upd_clock_eq` (`crepPropsScript.sml:872`): mapping
+the expression evaluator (after a clock update by `ck + state.clock`) over a list
+of expressions equals mapping the original evaluator. -/
+@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "opt_mmap_eval_upd_clock_eq"]
+theorem evalCrepSemHOLExps_upd_clock_eq {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) [h : DecidablePred state.memaddrs]
+    (es : List (CrepExpHOL width)) (ck : Nat) :
+    es.mapM (fun e =>
+        @evalCrepSemHOLExp width _ σ { state with clock := ck + state.clock } h e) =
+      es.mapM (fun e => @evalCrepSemHOLExp width _ σ state h e) :=
+  Flapjack.list_mapM_congr _ _ es
+    (fun e _ => evalCrepSemHOLExp_upd_clock_eq state e (ck + state.clock))
 
 end Flapjack
