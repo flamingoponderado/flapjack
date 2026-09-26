@@ -270,6 +270,28 @@ authorize changed quantifiers, hypotheses, conclusions, `BEq` side conditions,
 or word-model differences, and the manifest must use status
 `reviewed_fmap_as_finite_support_result` after source comparison.
 
+**Qualify multi-carrier finite-map relations.** Use
+`(fmap_as_finite_support_relation := [Carrier.field, ...])` when a HOL relation
+mentions multiple carrier structures and needs explicit ownership for the
+finite-map fields it actually traverses (for example HOL `state_rel_def`,
+whose only translated finite-map field is `PanSemStateFiniteExact.globals`). Each
+entry names one field of one carrier; the carrier must be declared in the module
+or reachable through its imports and that field's type must be the reviewed
+canonical `HolFiniteMapExact` translation (a raw `α → Option β` map is
+ineligible). The tagged declaration must name every entry carrier. The qualifier
+covers only the listed map fields (and their HOL vs Lean representation); it does
+NOT cover bare finite-map parameters that are not fields of a named carrier, and
+it does not authorize changed quantifiers, hypotheses, conclusions, `BEq` side
+conditions, or word-model differences. Each distinct entry carrier needs a
+same-module checked canonical witness
+`holFmapAsFiniteSupportRelationWitness_<Carrier>` naming the carrier and stating a
+genuine `toX`/`ofX` roundtrip with its broad counterpart (a carrier named in the
+statement that contributes no translated finite-map field needs no witness). This
+qualifier is mutually exclusive with `fmap_as_finite_support` and
+`fmap_as_finite_support_result`, cannot use `reviewed_exact`, and requires
+manifest status `reviewed_fmap_as_finite_support_relation` with a
+source-comparison note after the reviewer compares each HOL conjunct.
+
 **Port the executable path, too.** As HOL definitions are ported, make the
 compiler that `flapjack-compile` actually runs call the reviewed `@[hol]`
 definitions. A tagged proof-only duplicate beside a different production

@@ -1,4 +1,5 @@
 import Flapjack.Pancake.PanSimp
+import Flapjack.Pancake.PanLang.ProgHOLInduction
 
 /-!
 Flapjack-specific representation bridges for the exact HOL `pan_simp` pass.
@@ -297,5 +298,164 @@ theorem progOfHOL_seqAssocHOL_annot {width : Nat} [NeZero width]
     progOfHOL (seqAssocHOL pre (.annot tag text)) =
       seqAssoc (progOfHOL pre) (progOfHOL (.annot tag text)) := by
   simp [seqAssocHOL, seqAssoc, progOfHOL]
+/-- Flapjack-specific full codec bridge for HOL `seq_assoc_def`: decoding the
+exact `seqAssocHOL` agrees with production `seqAssoc` on decoded programs.
+HOL has no separate theorem about the `ProgHOL` decoder. The proof uses the
+Lean-only strong `sizeOf` induction `progHOL_sizeOf_induction` because
+`seqAssocHOL` is well-founded, not structurally, recursive. -/
+theorem progOfHOL_seqAssocHOL {width : Nat} [NeZero width]
+    (pre program : ProgHOL width) :
+    progOfHOL (seqAssocHOL pre program) =
+      seqAssoc (progOfHOL pre) (progOfHOL program) := by
+  suffices h : ∀ program : ProgHOL width,
+      ∀ pre, progOfHOL (seqAssocHOL pre program) =
+        seqAssoc (progOfHOL pre) (progOfHOL program) from h program pre
+  refine progHOL_sizeOf_induction
+    (motive := fun program => ∀ pre, progOfHOL (seqAssocHOL pre program) =
+      seqAssoc (progOfHOL pre) (progOfHOL program)) ?_
+  intro program ih pre
+  cases program with
+  | skip => simp [seqAssocHOL, seqAssoc, progOfHOL]
+  | dec name shape value body =>
+      simp only [seqAssocHOL, seqAssoc, progOfHOL, progOfHOL_smartSeqHOL,
+        ih body (by decreasing_trivial) .skip]
+      try rfl
+  | seq first second =>
+      simp only [seqAssocHOL, seqAssoc, progOfHOL,
+        ih second (by decreasing_trivial) (seqAssocHOL pre first),
+        ih first (by decreasing_trivial) pre]
+      try rfl
+  | ite condition thenBranch elseBranch =>
+      simp only [seqAssocHOL, seqAssoc, progOfHOL, progOfHOL_smartSeqHOL,
+        ih thenBranch (by decreasing_trivial) .skip,
+        ih elseBranch (by decreasing_trivial) .skip]
+      try rfl
+  | «while» condition body =>
+      simp only [seqAssocHOL, seqAssoc, progOfHOL, progOfHOL_smartSeqHOL,
+        ih body (by decreasing_trivial) .skip]
+      try rfl
+  | call info name args =>
+      rw [progOfHOL_call]
+      rw [progOfHOL_seqAssocHOL_call (pre := pre) (info := info) (name := name)
+        (args := args) (fun {returns eid vname body} hmem =>
+          by
+            subst hmem
+            exact ih body (by decreasing_trivial) .skip |> fun h => by
+              simpa [progOfHOL] using h)]
+  | decCall name shape function args body =>
+      simp only [seqAssocHOL, seqAssoc, progOfHOL, progOfHOL_smartSeqHOL,
+        ih body (by decreasing_trivial) .skip]
+      try rfl
+  | annot tag text => simp [seqAssocHOL, seqAssoc, progOfHOL]
+  | assign kind name value => simp [seqAssocHOL, seqAssoc, progOfHOL, progOfHOL_smartSeqHOL]
+  | primitive name operator args => simp [seqAssocHOL, seqAssoc, progOfHOL, progOfHOL_smartSeqHOL]
+  | store address value => simp [seqAssocHOL, seqAssoc, progOfHOL, progOfHOL_smartSeqHOL]
+  | store32 address value => simp [seqAssocHOL, seqAssoc, progOfHOL, progOfHOL_smartSeqHOL]
+  | storeByte address value => simp [seqAssocHOL, seqAssoc, progOfHOL, progOfHOL_smartSeqHOL]
+  | «break» => simp [seqAssocHOL, seqAssoc, progOfHOL, progOfHOL_smartSeqHOL]
+  | «continue» => simp [seqAssocHOL, seqAssoc, progOfHOL, progOfHOL_smartSeqHOL]
+  | extCall function configuration configurationLength array arrayLength =>
+      simp [seqAssocHOL, seqAssoc, progOfHOL, progOfHOL_smartSeqHOL]
+  | raise exception value => simp [seqAssocHOL, seqAssoc, progOfHOL, progOfHOL_smartSeqHOL]
+  | «return» value => simp [seqAssocHOL, seqAssoc, progOfHOL, progOfHOL_smartSeqHOL]
+  | shMemLoad size kind name address =>
+      simp [seqAssocHOL, seqAssoc, progOfHOL, progOfHOL_smartSeqHOL]
+  | shMemStore size address value =>
+      simp [seqAssocHOL, seqAssoc, progOfHOL, progOfHOL_smartSeqHOL]
+  | tick => simp [seqAssocHOL, seqAssoc, progOfHOL, progOfHOL_smartSeqHOL]
+
+/-- Flapjack-specific codec bridge for HOL `ret_to_tail_def`: decoding the
+exact `retToTailHOL` agrees with production `retToTail`. No separate HOL
+theorem; proved by strong `sizeOf` induction over `ProgHOL`. -/
+theorem progOfHOL_retToTailHOL {width : Nat} [NeZero width]
+    (program : ProgHOL width) :
+    progOfHOL (retToTailHOL program) = retToTail (progOfHOL program) := by
+  suffices h : ∀ program : ProgHOL width,
+      progOfHOL (retToTailHOL program) = retToTail (progOfHOL program) from h program
+  refine progHOL_sizeOf_induction (motive := fun program =>
+    progOfHOL (retToTailHOL program) = retToTail (progOfHOL program)) ?_
+  intro program ih
+  cases program with
+  | skip => simp [retToTailHOL, retToTail, progOfHOL]
+  | dec name shape value body =>
+      simp only [retToTailHOL, retToTail, progOfHOL, ih body (by decreasing_trivial)]
+      try rfl
+  | seq first second =>
+      simp only [retToTailHOL, retToTail, progOfHOL, progOfHOL_seqCallRetHOL,
+        ih first (by decreasing_trivial), ih second (by decreasing_trivial)]
+      try rfl
+  | ite condition thenBranch elseBranch =>
+      simp only [retToTailHOL, retToTail, progOfHOL,
+        ih thenBranch (by decreasing_trivial), ih elseBranch (by decreasing_trivial)]
+      try rfl
+  | «while» condition body =>
+      simp only [retToTailHOL, retToTail, progOfHOL, ih body (by decreasing_trivial)]
+      try rfl
+  | call info name args =>
+      cases info with
+      | none => simp [retToTailHOL, retToTail, progOfHOL]
+      | some returnsHandler =>
+          obtain ⟨returns, handler⟩ := returnsHandler
+          cases handler with
+          | none => simp [retToTailHOL, retToTail, progOfHOL]
+          | some handlerData =>
+              obtain ⟨eid, vname, body⟩ := handlerData
+              simp only [retToTailHOL, retToTail, progOfHOL,
+                ih body (by decreasing_trivial)]
+              try rfl
+  | decCall name shape function args body =>
+      simp only [retToTailHOL, retToTail, progOfHOL, ih body (by decreasing_trivial)]
+      try rfl
+  | annot tag text => simp [retToTailHOL, retToTail, progOfHOL]
+  | assign kind name value => simp [retToTailHOL, retToTail, progOfHOL]
+  | primitive name operator args => simp [retToTailHOL, retToTail, progOfHOL]
+  | store address value => simp [retToTailHOL, retToTail, progOfHOL]
+  | store32 address value => simp [retToTailHOL, retToTail, progOfHOL]
+  | storeByte address value => simp [retToTailHOL, retToTail, progOfHOL]
+  | «break» => simp [retToTailHOL, retToTail, progOfHOL]
+  | «continue» => simp [retToTailHOL, retToTail, progOfHOL]
+  | extCall function configuration configurationLength array arrayLength =>
+      simp [retToTailHOL, retToTail, progOfHOL]
+  | raise exception value => simp [retToTailHOL, retToTail, progOfHOL]
+  | «return» value => simp [retToTailHOL, retToTail, progOfHOL]
+  | shMemLoad size kind name address => simp [retToTailHOL, retToTail, progOfHOL]
+  | shMemStore size address value => simp [retToTailHOL, retToTail, progOfHOL]
+  | tick => simp [retToTailHOL, retToTail, progOfHOL]
+
+/-- Flapjack-specific codec bridge for HOL `compile_def`: decoding the exact
+`panSimpCompileHOL` agrees with the executed production `panSimpProg`. -/
+theorem progOfHOL_panSimpCompileHOL {width : Nat} [NeZero width]
+    (program : ProgHOL width) :
+    progOfHOL (panSimpCompileHOL program) = panSimpProg (progOfHOL program) := by
+  rw [panSimpCompileHOL, progOfHOL_retToTailHOL, progOfHOL_seqAssocHOL]
+  simp only [panSimpProg, progOfHOL]
+
+/-- Flapjack-specific codec bridge for HOL `compile_prog_def`: mapping the
+exact `panSimpDeclsHOL` through `declOfHOL` agrees with the executed
+production `panSimpDecls`. -/
+theorem progOfHOL_panSimpDeclsHOL {width : Nat} [NeZero width]
+    (declarations : List (DeclHOL width)) :
+    (panSimpDeclsHOL declarations).map (fun d => declOfHOL d) =
+      panSimpDecls (declarations.map (fun d => declOfHOL d)) := by
+  induction declarations with
+  | nil => simp [panSimpDeclsHOL, panSimpDecls]
+  | cons declaration declarations ih =>
+      cases declaration with
+      | function d =>
+          simp only [panSimpDeclsHOL, List.map_cons]
+          rw [ih]
+          simp [panSimpDecls, declOfHOL, funDeclOfHOL, progOfHOL_panSimpCompileHOL]
+      | decl shape name value =>
+          simp only [panSimpDeclsHOL, List.map_cons]
+          rw [ih]
+          simp [panSimpDecls, declOfHOL]
+      | exnDecl exceptionName shape =>
+          simp only [panSimpDeclsHOL, List.map_cons]
+          rw [ih]
+          simp [panSimpDecls, declOfHOL]
+      | name struct fields =>
+          simp only [panSimpDeclsHOL, List.map_cons]
+          rw [ih]
+          simp [panSimpDecls, declOfHOL]
 
 end Flapjack
