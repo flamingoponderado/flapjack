@@ -945,7 +945,8 @@ run_probe compile_def_probeScript.sml compile_def_probe.out \
   struct_skip struct_break struct_continue struct_tick struct_annot struct_seq \
   missing_global empty_one_global extra_names_global missing_names_global \
   missing_local empty_one_local extra_names_local missing_names_local valid_local \
-  empty_struct_return finite_map_shadow_return extcall_high_tail \
+  empty_struct_return finite_map_shadow_return deccall_one_word deccall_multiword \
+  extcall_high_tail \
   extcall_shared_high_tail extcall_constants extcall_shape_fallback \
   pair_load pair_store fixed_stride64 \
   "$cake_dir/pancake/pan_to_crepScript.sml"
@@ -970,6 +971,12 @@ run_probe compile_prog_probeScript.sml compile_prog_probe.out \
   "$cake_dir/pancake/pan_to_crepScript.sml"
 run_probe excp_rel_probeScript.sml excp_rel_probe.out \
   empty_maps noninjective_compiler_codes \
+  "$cake_dir/pancake/proofs/pan_to_crepProofScript.sml" \
+  "$cake_dir/pancake/proofs"
+run_probe pan_to_crep_state_rel_carrier_probeScript.sml pan_to_crep_state_rel_carrier_probe.out \
+  state_rel_matching_fields state_rel_rejects_nonempty_structs \
+  state_rel_globals_equation_unreduced state_rel_nonempty_globals_lookup \
+  state_rel_empty_globals_lookup state_rel_named_struct_carrier \
   "$cake_dir/pancake/proofs/pan_to_crepProofScript.sml" \
   "$cake_dir/pancake/proofs"
 run_probe ctxt_fc_probeScript.sml ctxt_fc_probe.out \

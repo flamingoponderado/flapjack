@@ -268,6 +268,13 @@ val _ = print_eval "missing_names_local"
       (panLang$Call
         (SOME (SOME (panLang$Local, «missing_names»), NONE)) «f» [])``;
 
+val _ = print_eval "call_no_return"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (panLang$Call NONE «f»
+        [panLang$Const (1w : 8 word);
+         panLang$RStruct [panLang$Const 2w; panLang$Const 3w]])``;
+
 val _ = print_eval "valid_local"
   ``pan_to_crep$compile
       <| vars := FEMPTY |+ («pair»,
@@ -287,6 +294,19 @@ val _ = print_eval "finite_map_shadow_return"
                  |+ («p», (panLang$One, [5]));
          funcs := FEMPTY; eids := FEMPTY; vmax := 5 |>
       (panLang$Return (panLang$Var panLang$Local «p»))``;
+
+val _ = print_eval "deccall_one_word"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 4 |>
+      (panLang$DecCall «x» panLang$One «f» [panLang$Const (3w : 8 word)]
+        (panLang$Return (panLang$Var panLang$Local «x»)))``;
+
+val _ = print_eval "deccall_multiword"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 10 |>
+      (panLang$DecCall «pair» (panLang$Comb [panLang$One; panLang$One]) «f»
+        [panLang$Const (3w : 8 word); panLang$Const 4w]
+        (panLang$Return (panLang$Var panLang$Local «pair»)))``;
 
 (* The source freshness bound scans all var_cexp words, even though ExtCall
    requires each operand to have shape One and emits only its first word. *)

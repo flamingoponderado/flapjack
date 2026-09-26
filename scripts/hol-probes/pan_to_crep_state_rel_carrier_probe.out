@@ -1,0 +1,6 @@
+state_rel_matching_fields=T
+state_rel_rejects_nonempty_structs=F
+state_rel_globals_equation_unreduced=FEMPTY⟨«global» ↦ ValWord 3w⟩ = FEMPTY
+state_rel_nonempty_globals_lookup=T
+state_rel_empty_globals_lookup=T
+state_rel_named_struct_carrier=T
