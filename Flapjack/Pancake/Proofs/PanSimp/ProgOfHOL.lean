@@ -170,4 +170,16 @@ theorem progOfHOL_seqCallRetHOL {width : Nat} [NeZero width]
               simp [seqCallRetHOL, seqCallRet, progOfHOL]
   | _ => simp [seqCallRetHOL, seqCallRet, progOfHOL]
 
+/-- Flapjack-specific codec equation for the Seq clause of HOL
+`ret_to_tail_def`. It reuses the `seq_call_ret` bridge, whose exact MlString
+equality guard is reflected by the codec; it has no separate HOL original and
+therefore carries no `@[hol]` tag. -/
+theorem progOfHOL_retToTailHOL_seq {width : Nat} [NeZero width]
+    (first second : ProgHOL width)
+    (hfirst : progOfHOL (retToTailHOL first) = retToTail (progOfHOL first))
+    (hsecond : progOfHOL (retToTailHOL second) = retToTail (progOfHOL second)) :
+    progOfHOL (retToTailHOL (.seq first second)) =
+      seqCallRet (.seq (retToTail (progOfHOL first)) (retToTail (progOfHOL second))) := by
+  simp [retToTailHOL, progOfHOL, progOfHOL_seqCallRetHOL, hfirst, hsecond]
+
 end Flapjack
