@@ -205,6 +205,17 @@ theorem progOfHOL_retToTailHOL_ite {width : Nat} [NeZero width]
       retToTail (progOfHOL (.ite condition thenBranch elseBranch)) := by
   simp only [retToTailHOL, retToTail, progOfHOL.eq_9, hthen, helse]
 
+/-- Flapjack-specific codec equation for the While clause of HOL
+`ret_to_tail_def`. Its only recursive obligation is the loop-body codec
+equation; HOL has no theorem about commuting `progOfHOL` with `retToTailHOL`,
+so this declaration carries no `@[hol]` tag. -/
+theorem progOfHOL_retToTailHOL_while {width : Nat} [NeZero width]
+    (condition : ExpHOL width) (body : ProgHOL width)
+    (hbody : progOfHOL (retToTailHOL body) = retToTail (progOfHOL body)) :
+    progOfHOL (retToTailHOL (.while condition body)) =
+      retToTail (progOfHOL (.while condition body)) := by
+  simp only [retToTailHOL, retToTail, progOfHOL.eq_10, hbody]
+
 /-- Flapjack-specific codec equation for the Call clause of HOL
 `ret_to_tail_def`. A recursive equation is needed only for a present handler;
 the helper has no separate HOL original and carries no `@[hol]` tag. -/
