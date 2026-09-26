@@ -2050,7 +2050,7 @@ mutual
             | none => some (.error, state)
         | _, _ => some (.error, state)
     | _fuel + 1, state, .storeGlob address value =>
-        match evalCrepRuntimeExp state value with
+        match (evalCrepRuntimeExpWordLab state value).map panTheWord with
         | some value =>
             some (.normal, setCrepRuntimeGlobals address (.word value) state)
         | none => some (.error, state)
