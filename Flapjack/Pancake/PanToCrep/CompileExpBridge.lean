@@ -573,4 +573,41 @@ theorem compileExpBridge {width : Nat} [NeZero width]
     (fun _ _ _ => True.intro)
     expression
 
+/-! ### Codec-direction corollaries
+
+`compileExpBridge` is stated in the `crepExpToHOL` direction. Downstream
+executable-path routing often wants the exact result mapped back to the
+production carrier, which is the `crepExpOfHOL` direction below. The expression
+list direction is unconditional (`crepExpOfHOL` is a total left inverse of
+`crepExpToHOL`); the shape direction needs `ShapeByteRanged`, because
+`shapeOfHOL` only inverts `shapeToHOL` on byte-ranged shapes. -/
+
+theorem compileExpBridge_codecImage {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (expression : Exp (BitVec width)) :
+    (compileExpExactHOLW context (expToHOL expression)).1.map crepExpOfHOL
+      = (compileExpHOL (CompileExpContextExact.prodContext context) expression).1 := by
+  have h := (compileExpBridge context expression).1
+  have hcomp : (crepExpOfHOL (width := width) ∘ crepExpToHOL (width := width)) = id :=
+    funext (fun x => crepExpOfHOL_crepExpToHOL (width := width) x)
+  rw [← h, List.map_map, hcomp, List.map_id]
+
+theorem compileExpBridge_shapeOfHOL {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (expression : Exp (BitVec width))
+    (hbyte : ShapeByteRanged
+      (compileExpHOL (CompileExpContextExact.prodContext context) expression).2) :
+    shapeOfHOL (compileExpExactHOLW context (expToHOL expression)).2
+      = (compileExpHOL (CompileExpContextExact.prodContext context) expression).2 := by
+  rw [← (compileExpBridge context expression).2]
+  exact shapeOfHOL_shapeToHOL _ hbyte
+
+theorem compileExpBridge_pair {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (expression : Exp (BitVec width))
+    (hbyte : ShapeByteRanged
+      (compileExpHOL (CompileExpContextExact.prodContext context) expression).2) :
+    ((compileExpExactHOLW context (expToHOL expression)).1.map crepExpOfHOL,
+        shapeOfHOL (compileExpExactHOLW context (expToHOL expression)).2)
+      = compileExpHOL (CompileExpContextExact.prodContext context) expression :=
+  Prod.ext (compileExpBridge_codecImage context expression)
+    (compileExpBridge_shapeOfHOL context expression hbyte)
+
 end Flapjack
