@@ -96,33 +96,4 @@ def asmChecksOfConfig {width : Nat} (config : AsmConfig width) :
     addrOk := asmAddrOk config }
 
 
-/-- Not an exact HOL port (carrier mismatch, bead flapjack-4ac.6.1):
-    HOL's declaration uses HOL `'a addr` (the exact `HolAddr`), whereas this Lean
-    declaration uses the production `WordLangAddr`.  The width-corrected
-    restatement does not by itself make the carrier exact, so the
-    `@[hol]` tag was withdrawn.  The exact-carrier restatement is
-    tracked by bead flapjack-4ac.6.1.2. -/
-def asmAddrOkExact {width : Nat} [NeZero width] (config : AsmConfig width) :
-    WordMemOp → WordLangAddr (BitVec width) → Bool
-  | operator, .addr base offset =>
-      asmRegOk config base &&
-        (if operator == .load || operator == .store || operator == .load32 ||
-            operator == .store32 then
-          asmAddrOffsetOk config offset
-         else if operator == .load16 || operator == .store16 then
-          asmHwOffsetOk config offset && !(config.isa == .ag32)
-         else
-          asmByteOffsetOk config offset)
-
-/-! ## Exact-to-executed width bridge
-
-`asmAddrOkExact` is the exact positive-width HOL port (`addr_ok_def`); the
-executed compiler uses the width-general `asmAddrOk`.  The equality below holds
-definitionally under `[NeZero width]`, so no caller rerouting is required
-(bead flapjack-4ac.6.1.1). -/
-
-theorem asmAddrOkExact_eq {width : Nat} [NeZero width] (config : AsmConfig width)
-    (operator : WordMemOp) (address : WordLangAddr (BitVec width)) :
-    asmAddrOkExact config operator address = asmAddrOk config operator address := rfl
-
 end Flapjack.Compiler.Backend.StackProps
