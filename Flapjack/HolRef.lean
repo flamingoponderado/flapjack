@@ -114,16 +114,20 @@ structure HolRef where
       finite-map operation/result. This is a representation statement only; it
       does not authorize changed hypotheses, results, or word-model differences. -/
   fmapAsFiniteSupportResult : Bool := false
-  /-- Multi-carrier finite-map relation entries, each written `Carrier.field`.
-      Used when a relation spans more than one carrier structure (for example a
-      PanSem state and a CrepSem state), which the single-owner
-      `fmapAsFiniteSupport` qualifier cannot express. Every named carrier must
-      be a structure declared in the same module or reachable through its
-      imports, the field must use `HolFiniteMapExact`, the tagged declaration
-      must name every carrier it relates, and the module must contain a checked
-      carrier-specific witness `holFmapAsFiniteSupportRelationWitness_<carrier>`
-      stating a real `toX`/`ofX` roundtrip with its broad counterpart. This does
-      not relax the single-owner gate. -/
+  /-- Multi-carrier finite-map relation entries, each written `Carrier.field`
+      or, for a standalone map parameter with no owning carrier, a bare
+      parameter name. Used when a relation spans more than one carrier
+      structure (for example a PanSem state and a CrepSem state), which the
+      single-owner `fmapAsFiniteSupport` qualifier cannot express. Every named
+      carrier must be a structure declared in the same module or reachable
+      through its imports, the field must use `HolFiniteMapExact`, the tagged
+      declaration must name every carrier it relates, and the module must
+      contain a checked carrier-specific witness
+      `holFmapAsFiniteSupportRelationWitness_<carrier>` stating a real
+      `toX`/`ofX` roundtrip with its broad counterpart. A bare parameter entry
+      requires the tagged declaration to bind that name at a
+      `HolFiniteMapExact` type and needs no carrier witness. This does not
+      relax the single-owner gate. -/
   fmapAsFiniteSupportRelation : Array (String × String) := #[]
   deriving Inhabited, Repr, BEq
 
@@ -227,7 +231,7 @@ private def HolRef.qualifierSuffix (ref : HolRef) : String :=
   let fmapAsFiniteSupportResult := if ref.fmapAsFiniteSupportResult then
     " (fmap_as_finite_support_result)" else ""
   let fmapAsFiniteSupportRelation := if ref.fmapAsFiniteSupportRelation.isEmpty then "" else
-    s!" (fmap_as_finite_support_relation := [{String.intercalate ", " (ref.fmapAsFiniteSupportRelation.toList.map (fun entry => s!"{entry.1}.{entry.2}"))}])"
+    s!" (fmap_as_finite_support_relation := [{String.intercalate ", " (ref.fmapAsFiniteSupportRelation.toList.map (fun entry => if entry.1.isEmpty then entry.2 else s!"{entry.1}.{entry.2}"))}])"
   listAsArray ++ namesAsString ++ namesAsStringBoundary ++ fmapAsFiniteSupport ++ fmapAsFiniteSupportResult ++ fmapAsFiniteSupportRelation
 
 /-! Parser regressions for the original syntax, each qualifier alone, and both
@@ -323,6 +327,14 @@ run_cmd do
     catch _ => pure true
   unless fmapRelationDuplicateRejected do
     throwError "@[hol] duplicate fmap_as_finite_support_relation entries must be rejected"
+  let fmapRelationParameterSyntax ← `(attr| hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "locals_rel_def"
+    (fmap_as_finite_support_relation := [PanToCrepContextExact.vars, sourceLocals, targetLocals]))
+  let fmapRelationParameterRef ← Lean.Elab.Command.liftCoreM (parseHolRefAttribute fmapRelationParameterSyntax)
+  unless fmapRelationParameterRef.fmapAsFiniteSupportRelation.toList ==
+      [("PanToCrepContextExact", "vars"), ("", "sourceLocals"), ("", "targetLocals")] &&
+      HolRef.qualifierSuffix fmapRelationParameterRef ==
+        " (fmap_as_finite_support_relation := [PanToCrepContextExact.vars, sourceLocals, targetLocals])" do
+    throwError "@[hol] fmap_as_finite_support_relation bare-parameter syntax regression"
 
 /-- The HOL cross-reference attached to `declName`, if any. -/
 def HolRef.get? (env : Environment) (declName : Name) : Option HolRef :=

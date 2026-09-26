@@ -46,12 +46,25 @@ def noOverlapFiniteExact {κ β : Type}
       map.lookup key' = some (shape', slots') →
       (∃ slot, slot ∈ slots ∧ slot ∈ slots') → key = key'
 
-/-- Flapjack-specific state-relation support over the exact finite-support
-    PanSem and CrepSem carriers. `globals.lookup = none` renders HOL `FEMPTY`;
-    the remaining conjunctions follow HOL `state_rel_def` in the same order
-    (`pan_to_crepProofScript.sml:45-59`). The finite-map translation uses the
-    PanSem/CrepSem owners and is covered by the module's per-owner roundtrip
-    witnesses; this relation adapter itself remains Flapjack-specific. -/
+/-- Same-module canonical relation witness for the multi-carrier
+    `fmap_as_finite_support_relation` qualifier. It forwards the canonical
+    finite-support roundtrip of `PanSemStateFiniteExact`, the carrier owning the
+    single finite-map field traversed by HOL `state_rel_def` (`globals`). -/
+theorem holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact
+    {width : Nat} {σ : Type} [NeZero width] :
+    (∀ (state : PanSemStateExact width σ) (h : state.FiniteSupport),
+        (PanSemStateFiniteExact.ofExact state h).toExact = state) ∧
+    (∀ state : PanSemStateFiniteExact width σ,
+        PanSemStateFiniteExact.ofExact state.toExact state.toExact_finiteSupport = state) :=
+  PanSemStateFiniteExact.holFmapAsFiniteSupportWitness
+
+/-- Exact port of HOL `state_rel_def`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:45-58`). `source.globals`
+    is the only finite-map field of an exact state carrier that the relation
+    traverses, and HOL asserts it is `FEMPTY`; the qualifier records exactly
+    that field. The Crep target contributes no traversed finite-map field. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "state_rel_def"
+  (fmap_as_finite_support_relation := [PanSemStateFiniteExact.globals])]
 def panToCrepStateRelFiniteExact {width : Nat} {σ : Type} [NeZero width]
     (source : PanSemStateFiniteExact width σ)
     (target : CrepSemHOLState width σ) : Prop :=
@@ -264,13 +277,6 @@ theorem holFmapAsFiniteSupportRelationWitness_PanToCrepTargetLocalsExact
     PanToCrepTargetLocalsExact.ofBroad locals.toBroad
       locals.targetLocals.finiteSupport = locals :=
   PanToCrepTargetLocalsExact.ofBroad_toBroad locals
-
-/-- Same-module multi-carrier witness for PanSem's finite-map fields. -/
-theorem holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact
-    {width : Nat} {σ : Type} [NeZero width]
-    (state : PanSemStateFiniteExact width σ) :
-    PanSemStateFiniteExact.ofExact state.toExact state.toExact_finiteSupport = state :=
-  PanSemStateFiniteExact.ofExact_toExact state
 
 /-- Same-module multi-carrier witness for CrepSem's finite-map fields. -/
 theorem holFmapAsFiniteSupportRelationWitness_CrepSemHOLState

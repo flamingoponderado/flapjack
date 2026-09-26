@@ -341,6 +341,30 @@ example :
         HolWordLab.toPanWordLab :=
   evalCrepRuntimeExpWordLab_executed load64State _
 
+/-- Full width-64 list-level projection bridge (bare result shape), with a
+byte-reading load in the list and no hypothesis. -/
+example :
+    evalCrepRuntimeExps (executedCrepState load64State)
+        [CrepExp.load32 (CrepExp.const (0 : BitVec 64)),
+          CrepExp.op BinOp.add [CrepExp.const (1 : BitVec 64), CrepExp.const 2]] =
+      ((List.mapM (fun e => evalCrepSemHOLExp load64State (crepExpToHOL e))
+        [CrepExp.load32 (CrepExp.const (0 : BitVec 64)),
+          CrepExp.op BinOp.add [CrepExp.const (1 : BitVec 64), CrepExp.const 2]]).map
+        (List.map holWordLabToWord)) :=
+  evalCrepRuntimeExps_executed load64State _
+
+/-- Full width-64 list-level projection bridge at the production `word_lab`
+result shape. -/
+example :
+    evalCrepRuntimeExpsWordLab (executedCrepState load64State)
+        [CrepExp.loadByte (CrepExp.const (0 : BitVec 64)),
+          CrepExp.op BinOp.add [CrepExp.const (1 : BitVec 64), CrepExp.const 2]] =
+      ((List.mapM (fun e => evalCrepSemHOLExp load64State (crepExpToHOL e))
+        [CrepExp.loadByte (CrepExp.const (0 : BitVec 64)),
+          CrepExp.op BinOp.add [CrepExp.const (1 : BitVec 64), CrepExp.const 2]]).map
+        (List.map HolWordLab.toPanWordLab)) :=
+  evalCrepRuntimeExpsWordLab_executed load64State _
+
 def runChecks : IO Bool := do
   IO.println s!"PASS crep evaluate_replicate_const word_lab shape"
   IO.println s!"PASS exact crepSem evaluate_replicate_const matches HOL oracle rows"
@@ -350,5 +374,6 @@ def runChecks : IO Bool := do
   IO.println s!"PASS executed production word_lab evaluator returns exact evalCrepSemHOLExp result on bridged fragment"
   IO.println s!"PASS executed production list word_lab evaluator returns exact evalCrepSemHOLExp result on bridged fragment"
   IO.println s!"PASS full width-64 executed Crep evaluator agrees with exact evalCrepSemHOLExp"
+  IO.println s!"PASS full width-64 executed Crep list-level evaluator agrees with exact evalCrepSemHOLExp"
   pure (replicateConstGuard && exactReplicateGuard)
 end Flapjack.Test.CrepReplicateConstParity
