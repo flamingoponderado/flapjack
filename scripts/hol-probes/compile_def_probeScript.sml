@@ -23,6 +23,36 @@ val _ = print_eval "return"
       <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
       (Return (Const (7w : 8 word)))``;
 
+val _ = print_eval "struct_skip"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (Skip : 8 word panLang$prog)``;
+
+val _ = print_eval "struct_break"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (Break : 8 word panLang$prog)``;
+
+val _ = print_eval "struct_continue"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (Continue : 8 word panLang$prog)``;
+
+val _ = print_eval "struct_tick"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (Tick : 8 word panLang$prog)``;
+
+val _ = print_eval "struct_annot"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (Annot «slice» «text» : 8 word panLang$prog)``;
+
+val _ = print_eval "struct_seq"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (Seq Skip (Seq Break Continue) : 8 word panLang$prog)``;
+
 val _ = print_eval "missing_global"
   ``pan_to_crep$compile
       <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
