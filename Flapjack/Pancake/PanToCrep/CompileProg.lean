@@ -109,6 +109,21 @@ theorem compileProgExactHOLW_skip_bridge {width : Nat} [NeZero width]
       compileProgRiscV context.toProduction .skip := by
   simp [compileProgExactHOLW, compileProgRiscV, compileProgHOL, crepProgOfHOL]
 
+/-- The `Seq` bridge follows from the same-context bridges of both children:
+    each compiler preserves the outer `Seq` constructor and recursively
+    compiles the two subprograms. -/
+theorem compileProgExactHOLW_seq_bridge {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width)
+    (first second : Flapjack.Pancake.PanLang.ProgHOL width)
+    (hfirst : crepProgOfHOL (compileProgExactHOLW context first) =
+      compileProgRiscV context.toProduction (progOfHOL first))
+    (hsecond : crepProgOfHOL (compileProgExactHOLW context second) =
+      compileProgRiscV context.toProduction (progOfHOL second)) :
+    crepProgOfHOL (compileProgExactHOLW context (.seq first second)) =
+      compileProgRiscV context.toProduction (progOfHOL (.seq first second)) := by
+  simp [compileProgExactHOLW, compileProgRiscV, compileProgHOL,
+    crepProgOfHOL, progOfHOL, hfirst, hsecond]
+
 /-- Metadata adapter whose compiler input crosses the exact `DeclHOL` carrier
     boundary.  Its side condition is the byte-range premise used by the
     production-to-HOL declaration codec; it is preserved by the executed
