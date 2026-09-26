@@ -12453,5 +12453,37 @@
       "code"
     ],
     "reviewer": "flapjack-ds8 (source comparison; bead flapjack-pxn.18.3.5.8.8.7): HOL FLOOKUP_set_globals (crepPropsScript.sml:297-301) `FLOOKUP (set_globals gv w s).locals n = FLOOKUP s.locals n` over the exact finite-support CrepSemHOLState carrier, using the tagged CrepSemHOLState.setGlobals (crepSemScript.sml:61-63), which updates only globals. FLOOKUP is rendered as the canonical HolFiniteMapExact.lookup. Finite-map representation recorded by the qualifier (locals/globals/code); same-module canonical witness forwards CrepSemHOLState.holFmapAsFiniteSupportWitness. Direct HOL row set_globals_direct in crep_store_global_probe.out. Representation-only; no statement/side-condition change."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/ProgOfHOL.lean",
+    "lean_name": "progOfHOL_seqAssocHOL",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific full codec bridge for exact HOL `seq_assoc_def`: decoding `seqAssocHOL` agrees with production `seqAssoc`. HOL has no separate theorem commuting its `ProgHOL` decoder with the transform; proved by Lean-only strong sizeOf induction. No HOL tag."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/ProgOfHOL.lean",
+    "lean_name": "progOfHOL_retToTailHOL",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific codec bridge for exact HOL `ret_to_tail_def`: decoding `retToTailHOL` agrees with production `retToTail`. HOL has no separate decoder theorem; proved by strong sizeOf induction. No HOL tag."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/ProgOfHOL.lean",
+    "lean_name": "progOfHOL_panSimpCompileHOL",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific codec bridge for exact HOL `compile_def`: decoding `panSimpCompileHOL` agrees with executed production `panSimpProg`. Composition of the seq_assoc and ret_to_tail bridges; no separate HOL theorem and no HOL tag."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/ProgOfHOL.lean",
+    "lean_name": "progOfHOL_panSimpDeclsHOL",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific codec bridge for exact HOL `compile_prog_def`: mapping `panSimpDeclsHOL` through `declOfHOL` agrees with executed production `panSimpDecls`, including declaration traversal and per-function body compilation. No separate HOL theorem about the declaration decoder; no HOL tag."
   }
 ]
