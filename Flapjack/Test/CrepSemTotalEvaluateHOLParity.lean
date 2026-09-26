@@ -274,66 +274,91 @@ theorem whileStampIdentity :
 
 Kernel-checked transcription of the six direct HOL EVAL rows in
 `scripts/hol-probes/crep_exit_loop_probe.out`, over the exact
-`Option (CrepResultHOL (BitVec width) HolFinalEvent)` carrier. -/
+`Option (CrepResultHOLExact 64)` carrier (the `@[hol]` port of HOL `result`). -/
+
+def exitResultIsBreak (n : Nat) :
+    Option (CrepResultHOLExact 64) → Bool
+  | some (.break m) => m == n
+  | _ => false
+
+def exitResultIsContinue (n : Nat) :
+    Option (CrepResultHOLExact 64) → Bool
+  | some (.continue m) => m == n
+  | _ => false
+
+def exitResultIsTimeOut :
+    Option (CrepResultHOLExact 64) → Bool
+  | some .timeOut => true
+  | _ => false
+
+def exitResultIsNormal :
+    Option (CrepResultHOLExact 64) → Bool
+  | none => true
+  | _ => false
+
+def exitResultIsError :
+    Option (CrepResultHOLExact 64) → Bool
+  | some .error => true
+  | _ => false
 
 /-- `exit_loop_break=SOME (Break 2)`: `exit_loop (SOME (Break 3)) = SOME (Break 2)`. -/
 theorem exitLoopBreak :
     exitLoopCrepResult
-        (some (CrepResultHOL.break 3) :
-          Option (CrepResultHOL (BitVec 64) HolFinalEvent)) =
+        (some (CrepResultHOLExact.break 3) :
+          Option (CrepResultHOLExact 64)) =
       some (.break 2) := rfl
 
 /-- `exit_loop_break_zero=SOME (Break 0)`: truncated `num` subtraction stops at zero. -/
 theorem exitLoopBreakZero :
     exitLoopCrepResult
-        (some (CrepResultHOL.break 0) :
-          Option (CrepResultHOL (BitVec 64) HolFinalEvent)) =
+        (some (CrepResultHOLExact.break 0) :
+          Option (CrepResultHOLExact 64)) =
       some (.break 0) := rfl
 
 /-- `exit_loop_continue=SOME (Continue 1)`: `exit_loop (SOME (Continue 2)) = SOME (Continue 1)`. -/
 theorem exitLoopContinue :
     exitLoopCrepResult
-        (some (CrepResultHOL.continue 2) :
-          Option (CrepResultHOL (BitVec 64) HolFinalEvent)) =
+        (some (CrepResultHOLExact.continue 2) :
+          Option (CrepResultHOLExact 64)) =
       some (.continue 1) := rfl
 
 /-- `exit_loop_other=SOME TimeOut`: non-control results pass through unchanged. -/
 theorem exitLoopTimeOut :
     exitLoopCrepResult
-        (some (CrepResultHOL.timeOut) :
-          Option (CrepResultHOL (BitVec 64) HolFinalEvent)) =
+        (some (CrepResultHOLExact.timeOut) :
+          Option (CrepResultHOLExact 64)) =
       some (.timeOut) := rfl
 
 /-- `exit_loop_none=NONE`: an absent result stays absent. -/
 theorem exitLoopNone :
     exitLoopCrepResult
-        (none : Option (CrepResultHOL (BitVec 64) HolFinalEvent)) = none := rfl
+        (none : Option (CrepResultHOLExact 64)) = none := rfl
 
 /-- `exit_loop_error=SOME Error`: `Error` passes through unchanged. -/
 theorem exitLoopError :
     exitLoopCrepResult
-        (some (CrepResultHOL.error) :
-          Option (CrepResultHOL (BitVec 64) HolFinalEvent)) =
+        (some (CrepResultHOLExact.error) :
+          Option (CrepResultHOLExact 64)) =
       some (.error) := rfl
 
 def exitLoopOracleRowsMatch : Bool :=
-  resultIsBreak 2 (exitLoopCrepResult
-    (some (CrepResultHOL.break 3) :
-      Option (CrepResultHOL (BitVec 64) HolFinalEvent))) &&
-  resultIsBreak 0 (exitLoopCrepResult
-    (some (CrepResultHOL.break 0) :
-      Option (CrepResultHOL (BitVec 64) HolFinalEvent))) &&
-  resultIsContinue 1 (exitLoopCrepResult
-    (some (CrepResultHOL.continue 2) :
-      Option (CrepResultHOL (BitVec 64) HolFinalEvent))) &&
-  resultIsTimeOut (exitLoopCrepResult
-    (some (CrepResultHOL.timeOut) :
-      Option (CrepResultHOL (BitVec 64) HolFinalEvent))) &&
-  resultIsNormal (exitLoopCrepResult
-    (none : Option (CrepResultHOL (BitVec 64) HolFinalEvent))) &&
-  resultIsError (exitLoopCrepResult
-    (some (CrepResultHOL.error) :
-      Option (CrepResultHOL (BitVec 64) HolFinalEvent)))
+  exitResultIsBreak 2 (exitLoopCrepResult
+    (some (CrepResultHOLExact.break 3) :
+      Option (CrepResultHOLExact 64))) &&
+  exitResultIsBreak 0 (exitLoopCrepResult
+    (some (CrepResultHOLExact.break 0) :
+      Option (CrepResultHOLExact 64))) &&
+  exitResultIsContinue 1 (exitLoopCrepResult
+    (some (CrepResultHOLExact.continue 2) :
+      Option (CrepResultHOLExact 64))) &&
+  exitResultIsTimeOut (exitLoopCrepResult
+    (some (CrepResultHOLExact.timeOut) :
+      Option (CrepResultHOLExact 64))) &&
+  exitResultIsNormal (exitLoopCrepResult
+    (none : Option (CrepResultHOLExact 64))) &&
+  exitResultIsError (exitLoopCrepResult
+    (some (CrepResultHOLExact.error) :
+      Option (CrepResultHOLExact 64)))
 
 #guard exitLoopOracleRowsMatch
 

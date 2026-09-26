@@ -537,11 +537,19 @@
   },
   {
     "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
+    "hol_name": "result",
+    "lean_path": "Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean",
+    "lean_name": "CrepResultHOLExact",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-26; bead flapjack-pxn.18.5.5.7.7.16): HOL Datatype result (crepSemScript.sml:36-44) is Error | TimeOut | Break num | Continue num | Return (('a word_lab) list) | Exception ('a word) | FinalFFI final_event. Lean CrepResultHOLExact has the same seven constructors with one-for-one payloads: break/continue carry Nat, return carries List (HolWordLab width) (the tagged exact port of 'a word_lab), exception carries BitVec width (the canonical positive finite-word model of 'a word used by the tagged state fields and HolWordLab), and finalFfi carries the tagged monomorphic HolFinalEvent port of final_event. final_event is monomorphic in HOL, so no final-event parameter is needed, and result has no other type parameter. [NeZero width] matches HOL's positive dimindex, as for HolWordLab. Constructor arity and payload correspondence were compared directly with the HOL source. The production CrepResultHOL with its List (PanWordLab (BitVec width)) return payload remains untagged infrastructure and is not claimed exact."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
     "hol_name": "exit_loop_def",
     "lean_path": "Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean",
     "lean_name": "exitLoopCrepResult",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds9 (source comparison, 2026-09-26; bead flapjack-pxn.18.5.5.7.7.14): HOL exit_loop_def (crepSemScript.sml:234-238) is the three equations exit_loop (SOME (Break n)) = SOME (Break (n - 1)); exit_loop (SOME (Continue n)) = SOME (Continue (n - 1)); exit_loop res = res. The Lean clauses match one for one over the carrier Option (CrepResultHOL (BitVec width) HolFinalEvent), which is the exact crepSem$result option at the positive word dimension: CrepResultHOL is the accepted constructor-by-constructor encoding of crepSem$result (same reviewed carrier as the tagged contResHOL), HolFinalEvent is the tagged exact port of final_event, and Nat subtraction is HOL num subtraction. No result payload is inspected, so no PanWordLab/HolWordLab projection arises. Direct HOL EVAL rows exit_loop_break=SOME (Break 2), exit_loop_break_zero=SOME (Break 0), exit_loop_continue=SOME (Continue 1), exit_loop_other=SOME TimeOut, exit_loop_none=NONE, exit_loop_error=SOME Error in scripts/hol-probes/crep_exit_loop_probe.out are reproduced by kernel-checked theorems in Flapjack/Test/CrepSemTotalEvaluateHOLParity.lean. Positive-width carrier via [NeZero width] where the word is used; this definition itself is width-generic like HOL.)"
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-26; beads flapjack-pxn.18.5.5.7.7.14/.16): HOL exit_loop_def (crepSemScript.sml:234-238) is the three equations exit_loop (SOME (Break n)) = SOME (Break (n - 1)); exit_loop (SOME (Continue n)) = SOME (Continue (n - 1)); exit_loop res = res. The Lean clauses match one for one over the genuinely exact carrier Option (CrepResultHOLExact width), the @[hol] port of HOL Datatype result whose Return payload is List (HolWordLab width), matching HOL's ('a word_lab) list, and whose Exception payload is BitVec width. Positive-width via [NeZero width] where the word_lab/word payloads are used; the equations themselves are width-generic like HOL. No result payload is inspected, so no PanWordLab projection arises. Direct HOL EVAL rows exit_loop_break=SOME (Break 2), exit_loop_break_zero=SOME (Break 0), exit_loop_continue=SOME (Continue 1), exit_loop_other=SOME TimeOut, exit_loop_none=NONE, exit_loop_error=SOME Error in scripts/hol-probes/crep_exit_loop_probe.out are reproduced by kernel-checked theorems in Flapjack/Test/CrepSemTotalEvaluateHOLParity.lean.)"
   },
   {
     "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",

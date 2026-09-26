@@ -1693,6 +1693,7 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         ("Flapjack/Compiler/Backend/RegAlloc.lean", "isPhyVar"),
         ("Flapjack/Compiler/Backend/RegAlloc.lean", "isAllocVar"),
         ("Flapjack/Compiler/Backend/RegAlloc.lean", "conventionPartitions"),
+        ("Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean", "CrepResultHOLExact"),
         ("Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean", "exitLoopCrepResult"),
         ("Flapjack/Pancake/Proofs/CrepInline.lean", "genlist_less_than"),
         ("Flapjack/Pancake/Proofs/CrepInline.lean", "genlist_not_in"),
