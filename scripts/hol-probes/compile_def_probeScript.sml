@@ -291,6 +291,44 @@ val _ = print_eval "call_result_no_handler_missing"
         [panLang$Const (1w : 8 word);
          panLang$RStruct [panLang$Const 2w; panLang$Const 3w]])``;
 
+val _ = print_eval "call_wrapped_result_no_handler"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY |+ («pair»,
+           (panLang$Comb [panLang$One; panLang$One], [30; 31]));
+         funcs := FEMPTY; eids := FEMPTY; vmax := 50 |>
+      (panLang$Call
+        (SOME (SOME (panLang$Local, «pair»), NONE)) «f»
+        [panLang$Const (1w : 8 word);
+         panLang$RStruct [panLang$Const 2w; panLang$Const 3w]])``;
+
+val _ = print_eval "call_wrapped_result_missing"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 50 |>
+      (panLang$Call
+        (SOME (SOME (panLang$Local, «missing»), NONE)) «f»
+        [panLang$Const (1w : 8 word);
+         panLang$RStruct [panLang$Const 2w; panLang$Const 3w]])``;
+
+val _ = print_eval "call_wrapped_result_empty_one"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY |+ («empty_one», (panLang$One, []));
+         funcs := FEMPTY; eids := FEMPTY; vmax := 50 |>
+      (panLang$Call
+        (SOME (SOME (panLang$Local, «empty_one»), NONE)) «f»
+        [panLang$Const (1w : 8 word);
+         panLang$RStruct [panLang$Const 2w; panLang$Const 3w]])``;
+
+val _ = print_eval "call_wrapped_result_handler_missing_eid"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY |+ («pair»,
+           (panLang$Comb [panLang$One; panLang$One], [30; 31]));
+         funcs := FEMPTY; eids := FEMPTY; vmax := 50 |>
+      (panLang$Call
+        (SOME (SOME (panLang$Local, «pair»),
+          SOME («E», «exn», panLang$Tick))) «f»
+        [panLang$Const (1w : 8 word);
+         panLang$RStruct [panLang$Const 2w; panLang$Const 3w]])``;
+
 val _ = print_eval "call_handler_missing_eid"
   ``pan_to_crep$compile
       <| vars := FEMPTY;
