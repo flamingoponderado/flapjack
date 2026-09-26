@@ -98,6 +98,16 @@ names remain direct metadata and `exp_hdl` is sequenced before the compiled
 handler body. Its matching helper and guard are
 `compileCallWrappedResultHandlerPresentEidExactHOLW` and
 `exactCallWrappedResultHandlerPresentEidParity`.
+`call_wrapped_result_fallback_handler_present_eid` checks the complementary
+case where no wrapped result destination exists: the handler remains but the
+Call return-name list is empty. Its matching helper and guard are
+`compileCallWrappedResultFallbackHandlerPresentEidExactHOLW` and
+`exactCallWrappedFallbackHandlerPresentEidParity`.
+`call_wrapped_result_fallback_handler_missing_eid` checks the same missing
+result destination with no exception-code entry, so HOL drops the handler and
+emits `Call NONE`; the matching helper and guard are
+`compileCallWrappedResultFallbackHandlerMissingEidExactHOLW` and
+`exactCallWrappedFallbackHandlerMissingEidParity`.
 `call_handler_present_eid` checks the found-EID branch, including exact
 `exp_hdl` global loads and recursive handler sequencing; its exact helper is
 `compileCallHandlerPresentEidExactHOLW`.
