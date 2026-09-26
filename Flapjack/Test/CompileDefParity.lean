@@ -411,6 +411,15 @@ def exactReturnContext : CompileExpContextExact 8 where
   eids := HolFiniteMapExact.empty
   vmax := 0
 
+def exactLocalAssignContext (destinationNames sourceNames : List Nat) :
+    CompileExpContextExact 8 where
+  vars := (HolFiniteMapExact.empty.update
+      (ofString "dst", (.one, destinationNames))).update
+      (ofString "src", (.one, sourceNames))
+  funcs := HolFiniteMapExact.empty
+  eids := HolFiniteMapExact.empty
+  vmax := 10
+
 def returnValuesMatch (expected : List (CrepExp (BitVec 8))) : CrepProgHOL 8 → Bool
   | .return actual => actual.map crepExpOfHOL == expected
   | _ => false
@@ -468,13 +477,36 @@ def exactGlobalFallbackParity : Bool :=
 
 #guard exactGlobalFallbackParity
 
+def exactLocalAssignClauseParity : Bool :=
+  (match compileLocalAssignExactHOLW
+      (exactLocalAssignContext [7] [8]) (ofString "dst") (.var .local (ofString "src")) with
+   | .seq (.assign 7 (.var 8)) .skip => true
+   | _ => false) &&
+  (match compileLocalAssignExactHOLW
+      (exactLocalAssignContext [7] [7]) (ofString "dst") (.var .local (ofString "src")) with
+   | .dec 11 (.var 7) (.seq (.assign 7 (.var 11)) .skip) => true
+   | _ => false) &&
+  (match compileLocalAssignExactHOLW exactReturnContext (ofString "dst")
+      (.var .local (ofString "src")) with
+   | .skip => true
+   | _ => false) &&
+  (match compileLocalAssignExactHOLW
+      (exactLocalAssignContext [7, 8] [9]) (ofString "dst")
+      (.var .local (ofString "src")) with
+   | .skip => true
+   | _ => false)
+
+#guard exactLocalAssignClauseParity
+
 def runChecks : IO Bool := do
   if parityGuard && exactStructuralSliceParity && exactReturnClauseParity &&
-      exactStoreClauseParity && exactIfWhileClauseParity && exactGlobalFallbackParity then
+      exactStoreClauseParity && exactIfWhileClauseParity && exactGlobalFallbackParity &&
+      exactLocalAssignClauseParity then
     IO.println "PASS compile_def fixed-width load/store and control-flow parity"
   else
     IO.println "FAIL compile_def parity"
   pure (parityGuard && exactStructuralSliceParity && exactReturnClauseParity &&
-    exactStoreClauseParity && exactIfWhileClauseParity && exactGlobalFallbackParity)
+    exactStoreClauseParity && exactIfWhileClauseParity && exactGlobalFallbackParity &&
+    exactLocalAssignClauseParity)
 
 end Flapjack.Test.CompileDefParity
