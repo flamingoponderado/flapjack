@@ -22,6 +22,8 @@ open Flapjack
 
 def word8 (n : Nat) : BitVec 8 := BitVec.ofNat 8 n
 
+def word5 (n : Nat) : BitVec 5 := BitVec.ofNat 5 n
+
 def probeFfi : HolFfiState Unit where
   oracle := fun _ state _ _ => .ret state []
   ffiState := ()
@@ -123,6 +125,47 @@ theorem shMemOp_store32 :
     crepShMemOpExactHOL .store32 1 (word8 3) probeState =
       crepShMemStoreExactHOL 1 (word8 3) 4 probeState := rfl
 
+/-! ## Clock-invariance helpers
+
+Kernel-checked instantiations of the tagged exact HOL `clock_eq_simp`,
+`sh_mem_load_clock`, `sh_mem_store_clock` and `sh_mem_op_clock`
+(`crepSemScript.sml:392-419`) over the exact sh_mem ports and state updates.
+Rows `clock_eq_simp_*`, `sh_mem_load_clock*`, `sh_mem_store_clock*`,
+`sh_mem_op_clock*` in `scripts/hol-probes/crep_clock_helpers_probe.out`. -/
+
+theorem clockHelpers_clockEqSimp :
+    (CrepSemHOLState.setVar 1 (HolWordLab.word (word8 5)) probeState).clock =
+        probeState.clock ∧
+      (CrepSemHOLState.emptyLocals probeState).clock = probeState.clock ∧
+      (CrepSemHOLState.setGlobals (word5 0) (HolWordLab.word (word8 5))
+          probeState).clock = probeState.clock :=
+  crepSemClockEqSimp 1 (HolWordLab.word (word8 5)) (word5 0) probeState
+
+theorem clockHelpers_shMemLoad :
+    (crepShMemLoadExactHOL 1 (word8 3) 0 probeState).2.clock = probeState.clock :=
+  crepShMemLoadClock 1 (word8 3) 0 probeState _ _ rfl
+
+theorem clockHelpers_shMemLoadNonzero :
+    (crepShMemLoadExactHOL 1 (word8 3) 1 probeState).2.clock = probeState.clock :=
+  crepShMemLoadClock 1 (word8 3) 1 probeState _ _ rfl
+
+theorem clockHelpers_shMemStore :
+    (crepShMemStoreExactHOL 1 (word8 3) 0 probeState).2.clock = probeState.clock :=
+  crepShMemStoreClock 1 (word8 3) 0 probeState _ _ rfl
+
+theorem clockHelpers_shMemStoreNonzero :
+    (crepShMemStoreExactHOL 1 (word8 3) 1 probeState).2.clock = probeState.clock :=
+  crepShMemStoreClock 1 (word8 3) 1 probeState _ _ rfl
+
+theorem clockHelpers_shMemOpLoad :
+    (crepShMemOpExactHOL .load 1 (word8 3) probeState).2.clock = probeState.clock :=
+  crepShMemOpClock .load 1 (word8 3) probeState _ _ rfl
+
+theorem clockHelpers_shMemOpStore8 :
+    (crepShMemOpExactHOL .store8 1 (word8 3) probeState).2.clock =
+      probeState.clock :=
+  crepShMemOpClock .store8 1 (word8 3) probeState _ _ rfl
+
 def runChecks : IO Bool := do
   let loadOk := loadZeroWidthOracle && loadNonzeroWidthOracle
   let storeOk := storeMissingLocalOracle && storeZeroWidthOracle && storeNonzeroWidthOracle
@@ -135,6 +178,7 @@ def runChecks : IO Bool := do
   else
     IO.println "FAIL crepSem sh_mem_store_def exact port matches direct crep_sh_mem_store_probe oracle"
   IO.println "PASS crepSem sh_mem_op_def exact dispatch clauses match direct crep_sh_mem_op_probe oracle"
+  IO.println "PASS crepSem clock_eq_simp/sh_mem_load_clock/sh_mem_store_clock/sh_mem_op_clock exact ports match direct crep_clock_helpers_probe oracle"
   pure (loadOk && storeOk)
 
 end Flapjack.Test.CrepShMemHOLParity
