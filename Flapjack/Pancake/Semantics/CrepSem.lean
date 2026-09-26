@@ -2066,7 +2066,7 @@ mutual
               | none => none
             | _ => some (result, state)
     | fuel + 1, state, .ite condition thenBranch elseBranch =>
-        match evalCrepRuntimeExp state condition with
+        match (evalCrepRuntimeExpWordLab state condition).map panTheWord with
         | none => some (.error, state)
         | some conditionValue =>
             match evalCrepRuntimeProg handler primitive fuel state
@@ -2074,7 +2074,7 @@ mutual
             | some result => some result
             | none => none
     | fuel + 1, state, .while condition body =>
-        match evalCrepRuntimeExp state condition with
+        match (evalCrepRuntimeExpWordLab state condition).map panTheWord with
         | none => some (.error, state)
         | some conditionValue =>
             if conditionValue == 0 then
