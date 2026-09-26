@@ -177,9 +177,10 @@ def highVariableContext : CompileContext Nat :=
   | .dec 1 (.var 7) (.shMem .store8 1 (.const 10)) => true
   | _ => false
 
-/-! `pan_to_crep$compile` bases a shared-memory-store temporary on the address
-    expression, not the value expression.  Keep the address deliberately at a
-    higher slot so a value-based implementation is observably different. -/
+/-! HOL's constructor order is `ShMemStore size value address`; the generic
+    production constructor uses field names `address value`, but its compiler
+    clause preserves the HOL positional order. Keep the first (stored-value)
+    expression at a higher slot than the second (destination address). -/
 def highAddressLowValueContext : CompileContext Nat :=
   { assignmentContext with
       vars := [("address", (.one, [7])), ("value", (.one, [1]))]
