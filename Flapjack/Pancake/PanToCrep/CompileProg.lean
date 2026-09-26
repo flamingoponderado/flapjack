@@ -362,6 +362,60 @@ theorem compileProgExactHOLW_store_byte_bridge {width : Nat} [NeZero width]
                     simp_all [compileProgExactHOLW, compileStoreByteExactHOLW,
                       compileProgRiscV, compileProgHOL, crepProgOfHOL]
 
+/-- Source-reviewed HOL `ShMemStore` clause bridge (`pan_to_crepScript.sml`,
+    `compile_def`): its operands are positional `value` then `address`. The
+    production `Prog.shMemStore` names its two fields `address` and `value`,
+    but the compiler clause consumes those positions in HOL order: the first
+    operand is the stored expression and the second is the destination address.
+    The exact clause allocates from `FOLDR MAX 0 (var_cexp value)`; the
+    production clause's singleton `maxCrepExpVarHOL` is the same maximum. -/
+private theorem foldr_max_zero_eq_max_getD (xs : List Nat) :
+    xs.foldr max 0 = xs.max?.getD 0 := by
+  induction xs with
+  | nil => simp
+  | cons head tail ih =>
+      simp only [List.foldr_cons, List.max?_cons']
+      rw [List.foldl_max]
+      rw [ih]
+      cases hmax : tail.max? <;> simp <;> omega
+
+theorem compileProgExactHOLW_shmem_store_bridge {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width) (operator : OpSize)
+    (value address : Exp (BitVec width))
+    (hvalue :
+      ((compileExpExactHOLW context (expToHOL value)).1.map crepExpOfHOL,
+        shapeOfHOL (compileExpExactHOLW context (expToHOL value)).2) =
+        compileExpHOL context.toProduction value)
+    (haddress :
+      ((compileExpExactHOLW context (expToHOL address)).1.map crepExpOfHOL,
+        shapeOfHOL (compileExpExactHOLW context (expToHOL address)).2) =
+        compileExpHOL context.toProduction address) :
+    crepProgOfHOL (compileProgExactHOLW context
+        (.shMemStore operator (expToHOL value) (expToHOL address))) =
+      compileProgRiscV context.toProduction
+        (.shMemStore operator value address) := by
+  rw [Prod.mk.injEq] at hvalue haddress
+  rcases hvalue with ⟨hvalueList, _⟩
+  rcases haddress with ⟨haddressList, _⟩
+  cases hExactValue : compileExpExactHOLW context (expToHOL value) with
+  | mk exactValues valueShape =>
+      cases hExactAddress : compileExpExactHOLW context (expToHOL address) with
+      | mk exactAddresses addressShape =>
+          cases hProductionValue : compileExpHOL context.toProduction value with
+          | mk productionValues productionValueShape =>
+              cases hProductionAddress : compileExpHOL context.toProduction address with
+              | mk productionAddresses productionAddressShape =>
+                  cases exactValues <;> cases exactAddresses <;>
+                    cases productionValues <;> cases productionAddresses <;>
+                    simp_all [compileProgExactHOLW, compileShMemStoreExactHOLW,
+                      compileProgRiscV, compileProgHOL, crepProgOfHOL,
+                      firstCompiledExpAnyShapeHOL, maxCrepExpVarHOL,
+                      crepExpVarsW, foldr_max_zero_eq_max_getD, nestedDecs,
+                      List.flatMap]
+                  all_goals
+                    rw [List.foldl_max]
+                    omega
+
 /-- Metadata adapter whose compiler input crosses the exact `DeclHOL` carrier
     boundary.  Its side condition is the byte-range premise used by the
     production-to-HOL declaration codec; it is preserved by the executed

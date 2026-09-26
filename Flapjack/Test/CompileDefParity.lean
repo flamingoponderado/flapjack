@@ -667,6 +667,23 @@ def exactShMemStoreClauseParity : Bool :=
 
 #guard exactShMemStoreClauseParity
 
+/-! The exact and production compiler clauses agree on HOL's positional
+    `ShMemStore value address` operands, including the fresh index coming from
+    variables in the first (stored-value) operand. -/
+def exactShMemStoreProductionBridgeParity : Bool :=
+  let context := exactLocalAssignContext [1] [8]
+  let value := Exp.var .local "src"
+  let address := Exp.var .local "dst"
+  match
+      (crepProgOfHOL (compileProgExactHOLW context
+          (.shMemStore .op8 (expToHOL value) (expToHOL address))),
+        compileProgRiscV context.toProduction (.shMemStore .op8 value address)) with
+  | (.dec 9 (.var 1) (.shMem .store8 9 (.var 8)),
+      .dec 9 (.var 1) (.shMem .store8 9 (.var 8))) => true
+  | _ => false
+
+#guard exactShMemStoreProductionBridgeParity
+
 def exactShMemLoadClauseParity : Bool :=
   (match compileShMemLoadExactHOLW (exactLocalAssignContext [7] [8]) .op8
       (ofString "dst") (.const 3) with
