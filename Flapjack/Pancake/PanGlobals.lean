@@ -287,13 +287,16 @@ theorem length_le_maxNameLength {name : String} {names : List String}
     `NameRanged name` (only apostrophes are appended).  The executed path
     supplies byte-ranged seeds: `globalCompile` uses `freshNameHOL "" names` and
     `freshNameHOL "vn'" (resultName :: names)`, and `globalNewMainName` uses the
-    literal `"main"`.  The `names` list is used only for membership equality,
-    never inspected, so it is not a byte-observable identifier.  Direct HOL rows
-    are in `scripts/hol-probes/pan_globals_fresh_name_probe.out`; Lean rows and
-    the byte-rangedness guard are in
+    literal `"main"`.  `names : List String` represents the HOL `mlstring list`
+    names and is classified `equality/map-key-only`: it is used only for
+    membership equality, never inspected, and is never byte-observable.  This is
+    consistent with the `names` classification already reviewed for
+    `freshNameHOL_not_mem_hol`/`freshNameHOL_not_mem_of_subset_hol`.  Direct HOL
+    rows are in `scripts/hol-probes/pan_globals_fresh_name_probe.out`; Lean rows
+    and the byte-rangedness guard are in
     `Flapjack/Test/PanGlobalsNameByteRangedParity.lean`. -/
 @[hol "cakeml/pancake/pan_globalsScript.sml" "fresh_name_def"
-  (names_as_string := [name]) (names_as_string_boundary := [name])]
+  (names_as_string := [name, names]) (names_as_string_boundary := [name])]
 def freshNameHOL (name : String) (names : List String) : String :=
   if name ∈ names then freshNameHOL (name ++ "'") names else name
 termination_by 1 + maxNameLength names - name.length
@@ -478,6 +481,80 @@ theorem globalCompileProg_expIds [BEq String] [Add α] [Mul α]
 def fpermName {α : Type u} [DecidableEq α] (f g h : α) : α :=
   if f = h then g else if g = h then f else h
 
+section FpermExact
+
+open Flapjack.Pancake.PanLang (MlS ProgHOL DeclHOL)
+
+/-! Exact structural-renaming ports over the reviewed MlString/word-indexed
+    `ProgHOL`/`DeclHOL` carriers (bead `flapjack-pxn.18.3.5.8.20`).  HOL's
+    `fperm_def`/`fperm_decs_def` (`cakeml/pancake/pan_globalsScript.sml:191-214`,
+    `:216-221`) recurse only on program/declaration structure, so they transfer
+    constructor-for-constructor to `ProgHOL width` / `List (DeclHOL width)`; the
+    name rename is the already-reviewed exact polymorphic `fpermName` above.
+    The production `globalRenameProg`/`globalRenameDecls` below are the
+    `Prog α`/`Decl α` analogues; routing the executed path through these exact
+    definitions needs the byte-range `progToHOL`/`progOfHOL` detour and is
+    tracked by `flapjack-6nn.3.1`. -/
+
+/-- Exact port of HOL `fperm_def` (`cakeml/pancake/pan_globalsScript.sml:191-214`)
+    over the reviewed word-indexed `ProgHOL width` carrier.
+
+    The seven equations match HOL clause-for-clause: `Dec`, `Seq`, `If`,
+    `While`, `Call` (recursing into the optional exception-handler program and
+    renaming the call name with the exact `fpermName`), `DecCall` (renaming the
+    callee and recursing into the body), and the identity default.  The `Call`
+    metadata nesting
+    `Option (Option (VarKind × MlS) × Option (MlS × MlS × ProgHOL width))`
+    matches HOL
+    `(((varkind # varname) option # ((eid # varname # prog) option)) option)`
+    constructor-for-constructor.  Every expression payload is left untouched,
+    exactly as in HOL. -/
+@[hol "cakeml/pancake/pan_globalsScript.sml" "fperm_def"]
+def fpermHOL {width : Nat} [NeZero width] (f g : MlS) : ProgHOL width → ProgHOL width
+  | .dec name shape value body => .dec name shape value (fpermHOL f g body)
+  | .seq first second => .seq (fpermHOL f g first) (fpermHOL f g second)
+  | .ite condition thenBranch elseBranch =>
+      .ite condition (fpermHOL f g thenBranch) (fpermHOL f g elseBranch)
+  | .while condition body => .while condition (fpermHOL f g body)
+  | .call info name args =>
+      .call (match info with
+             | none => none
+             | some (kindOpt, handlerOpt) =>
+                 some (kindOpt, match handlerOpt with
+                               | none => none
+                               | some (eid, binding, handler) =>
+                                   some (eid, binding, fpermHOL f g handler)))
+        (fpermName f g name) args
+  | .decCall name shape function args body =>
+      .decCall name shape (fpermName f g function) args (fpermHOL f g body)
+  | program => program
+termination_by program => sizeOf program
+decreasing_by
+  all_goals decreasing_trivial
+
+/-- Exact port of HOL `fperm_decs_def`
+    (`cakeml/pancake/pan_globalsScript.sml:216-221`) over the reviewed
+    word-indexed `DeclHOL width` carrier.  The three equations match HOL
+    clause-for-clause: `[]`, `Function fi :: decs` (renaming `fi.name` with the
+    exact `fpermName` and `fi.body` with the exact `fpermHOL`), and
+    `d :: decs` leaving every other declaration in place. -/
+@[hol "cakeml/pancake/pan_globalsScript.sml" "fperm_decs_def"]
+def fpermDecsHOL {width : Nat} [NeZero width] (f g : MlS) :
+    List (DeclHOL width) → List (DeclHOL width)
+  | [] => []
+  | .function declaration :: declarations =>
+      .function { declaration with
+        name := fpermName f g declaration.name
+        body := fpermHOL f g declaration.body } ::
+        fpermDecsHOL f g declarations
+  | declaration :: declarations =>
+      declaration :: fpermDecsHOL f g declarations
+termination_by declarations => sizeOf declarations
+decreasing_by
+  all_goals decreasing_trivial
+
+end FpermExact
+
 /-- Production `String`-specialized form of Cake's polymorphic `fperm_name`
     (`fpermName` above): renaming swaps the `source` and `target` function
     names and leaves every other name unchanged.  Its body is exactly the
@@ -498,6 +575,13 @@ def fpermName {α : Type u} [DecidableEq α] (f g h : α) : α :=
 def globalRenameFunctionName
     (source target name : FunName) : FunName :=
   fpermName source target name
+
+/-- Checked bridge for the name component of the executed rename path: the
+    production `String` helper is definitionally the reviewed exact polymorphic
+    HOL `fperm_name` port applied at `α := String`, so the executed compiler
+    path already runs the exact definition. -/
+@[simp] theorem globalRenameFunctionName_eq_fpermName (source target name : FunName) :
+    globalRenameFunctionName source target name = fpermName source target name := rfl
 
 /-! Counterparts of Cake's `fperm_name_cancel` and `fperm_name_cong`
     (`pan_globalsProofScript.sml:1622,1629`): the source/target renaming is an
@@ -537,15 +621,15 @@ theorem globalRenameFunctionName_cong [BEq String] [LawfulBEq String]
 -- embeds the generic `Exp α` with `Const : α`, `Shape`'s `Named` is backed by
 -- `String`, and StructName/FieldName/VarName/FunName/ExceptionId are `String`
 -- rather than HOL `mlstring` (see the `Exp`/`prog` audit at
--- `Flapjack/Pancake/PanLang.lean:226-269`). Exact width-indexed carriers exist
--- (`ProgHOL`/`ExpHOL`/`ShapeHOL` under `Flapjack/Pancake/PanLang/`) but no
--- `fperm` port is built over them. `names_as_string` could only classify the
+-- `Flapjack/Pancake/PanLang.lean:226-269`). The exact port `fpermHOL` above is
+-- now built over the reviewed width-indexed `ProgHOL` carrier (bead
+-- `flapjack-pxn.18.3.5.8.20`), but routing this generic `Prog α` production
+-- path through it needs the byte-range `progToHOL`/`progOfHOL` detour, which is
+-- unavailable for arbitrary `α`/`String`; that executable-path replacement is
+-- tracked by `flapjack-6nn.3.1`. `names_as_string` could only classify the
 -- `call`/`decCall` `FunName` arguments (equality/map-key-only); it cannot
--- authorize the whole program carrier. The executed path is this production
--- definition, so the tag stays withdrawn until the exact-carrier
--- transformation is connected (bead `flapjack-6nn.3.1`; MlString carrier
--- `flapjack-pxn.18.3.5.8`). Direct HOL rows recursive_control / handler /
--- deccall / unchanged / fperm_done are in
+-- authorize the whole program carrier. Direct HOL rows recursive_control /
+-- handler / deccall / unchanged / fperm_done are in
 -- `scripts/hol-probes/pan_globals_fperm_probe.out` and sampled by
 -- `Flapjack/Test/PanGlobalsFpermParity.lean`.
 def globalRenameProg
@@ -585,13 +669,14 @@ termination_by program => sizeOf program
 -- imported declaration carrier: production `Decl α` contains `Prog α`/`Exp α`
 -- (`Const : α`, String identifiers) and `Shape` (`Named : String`), whereas HOL
 -- `decl` carries word-valued expressions with `mlstring` identifiers and
--- `shape`. Exact carriers (`DeclHOL`/`ProgHOL`/`ExpHOL`/`ShapeHOL` under
--- `Flapjack/Pancake/PanLang/`) exist but no `fperm_decs` port is built over
--- them. The `names_as_string` qualifier cannot repair the expression/Shape
--- carrier difference. The executed path is this production definition; keep
--- it untagged until the exact-carrier transformation is connected (bead
--- `flapjack-6nn.3.1`; MlString carrier `flapjack-pxn.18.3.5.8`). Direct HOL
--- rows mixed / empty / singleton_nonfunction are in
+-- `shape`. The exact port `fpermDecsHOL` above is now built over the reviewed
+-- width-indexed `DeclHOL`/`FunDeclHOL` carriers (bead
+-- `flapjack-pxn.18.3.5.8.20`), but routing this generic `Decl α` production
+-- path through it needs the byte-range `progToHOL`/`progOfHOL` detour, which is
+-- unavailable for arbitrary `α`/`String`; that executable-path replacement is
+-- tracked by `flapjack-6nn.3.1`. The `names_as_string` qualifier cannot repair
+-- the expression/Shape carrier difference. Direct HOL rows mixed / empty /
+-- singleton_nonfunction are in
 -- `scripts/hol-probes/pan_globals_fperm_decs_probe.out` and sampled by
 -- `Flapjack/Test/PanGlobalsFpermDecsParity.lean`.
 def globalRenameDecls
@@ -605,6 +690,125 @@ def globalRenameDecls
   | declaration :: declarations =>
       declaration :: globalRenameDecls source target declarations
 termination_by declarations => sizeOf declarations
+
+section FpermBridge
+
+open Flapjack.Pancake.PanLang (MlS ProgHOL DeclHOL progOfHOL declOfHOL funDeclOfHOL)
+open Flapjack.Basis.Pure.MlString
+
+/-- `toStringOfBytes` is injective on the exact `MlString` carrier: the byte
+    codec reads each 8-bit character back exactly, so `ofString` is a
+    left-inverse. -/
+theorem toStringOfBytes_injective : Function.Injective toStringOfBytes := by
+  intro left right h
+  have := congrArg ofString h
+  simpa [ofString_toStringOfBytes] using this
+
+/-- The byte codec commutes with the exact polymorphic `fperm_name`: decoding a
+    renamed `MlString` is the `String` rename of the decoded names. -/
+theorem toStringOfBytes_fpermName (f g h : MlS) :
+    toStringOfBytes (fpermName f g h) =
+      fpermName (toStringOfBytes f) (toStringOfBytes g) (toStringOfBytes h) := by
+  have hinj := toStringOfBytes_injective
+  by_cases hfh : f = h
+  · simp [fpermName, hfh]
+  · have hne : toStringOfBytes f ≠ toStringOfBytes h := fun hh => hfh (hinj hh)
+    by_cases hgh : g = h
+    · simp [fpermName, hfh, hne, hgh]
+    · have hgne : toStringOfBytes g ≠ toStringOfBytes h := fun hh => hgh (hinj hh)
+      simp [fpermName, hfh, hne, hgh, hgne]
+
+/-- Checked bridge for the structural program rename: decoding the reviewed
+    exact `fpermHOL` over the word-indexed `ProgHOL` carrier is the executed
+    production `globalRenameProg` over the decoded program.  The relation is
+    total (no byte-range premise): it connects the exact definition to the
+    production analogue on the exact-carrier image.  Making the executed
+    compiler itself call `fpermHOL` additionally needs the byte-range
+    `progToHOL`/`progOfHOL` routing tracked by `flapjack-6nn.3.1`. -/
+@[simp] theorem progOfHOL_fpermHOL {width : Nat} [NeZero width] (f g : MlS)
+    (program : ProgHOL width) :
+    progOfHOL (fpermHOL f g program) =
+      globalRenameProg (toStringOfBytes f) (toStringOfBytes g)
+        (progOfHOL program) := by
+  fun_induction fpermHOL f g program with
+  | case1 name shape value body ih =>
+      simp_all only [progOfHOL, globalRenameProg]
+  | case2 first second ih2 ih1 =>
+      simp_all only [progOfHOL, globalRenameProg]
+  | case3 condition thenBranch elseBranch ih2 ih1 =>
+      simp_all only [progOfHOL, globalRenameProg]
+  | case4 condition body ih =>
+      simp_all only [progOfHOL, globalRenameProg]
+  | case5 info name args ih =>
+      cases info with
+      | none =>
+          simp_all only [progOfHOL, globalRenameProg, globalRenameFunctionName,
+            toStringOfBytes_fpermName]
+      | some pair =>
+          obtain ⟨kindOpt, handlerOpt⟩ := pair
+          cases handlerOpt with
+          | none =>
+              simp_all only [progOfHOL, globalRenameProg, globalRenameFunctionName,
+                toStringOfBytes_fpermName]
+          | some triple =>
+              obtain ⟨eid, binding, handler⟩ := triple
+              simp_all only [progOfHOL, globalRenameProg, globalRenameFunctionName,
+                toStringOfBytes_fpermName]
+  | case6 name shape function args body ih =>
+      simp_all only [progOfHOL, globalRenameProg, globalRenameFunctionName,
+        toStringOfBytes_fpermName]
+  | case7 program x5 x4 x3 x2 x1 x0 =>
+      cases program with
+      | dec name shape value body => exact absurd rfl (x5 name shape value body)
+      | seq first second => exact absurd rfl (x4 first second)
+      | ite condition thenBranch elseBranch =>
+          exact absurd rfl (x3 condition thenBranch elseBranch)
+      | «while» condition body => exact absurd rfl (x2 condition body)
+      | call info name args => exact absurd rfl (x1 info name args)
+      | decCall name shape function args body =>
+          exact absurd rfl (x0 name shape function args body)
+      | skip => simp [progOfHOL, globalRenameProg]
+      | assign kind name value => simp [progOfHOL, globalRenameProg]
+      | primitive name operator args => simp [progOfHOL, globalRenameProg]
+      | store address value => simp [progOfHOL, globalRenameProg]
+      | store32 address value => simp [progOfHOL, globalRenameProg]
+      | storeByte address value => simp [progOfHOL, globalRenameProg]
+      | «break» => simp [progOfHOL, globalRenameProg]
+      | «continue» => simp [progOfHOL, globalRenameProg]
+      | extCall function configuration configurationLength array arrayLength =>
+          simp [progOfHOL, globalRenameProg]
+      | raise exception value => simp [progOfHOL, globalRenameProg]
+      | «return» value => simp [progOfHOL, globalRenameProg]
+      | shMemLoad size kind name address => simp [progOfHOL, globalRenameProg]
+      | shMemStore size address value => simp [progOfHOL, globalRenameProg]
+      | tick => simp [progOfHOL, globalRenameProg]
+      | annot tag text => simp [progOfHOL, globalRenameProg]
+
+/-- Checked bridge for the declaration rename, the `fperm_decs` companion of
+    `progOfHOL_fpermHOL`: mapping the exact `fpermDecsHOL` result through
+    `declOfHOL` is the executed `globalRenameDecls` over the decoded list. -/
+@[simp] theorem map_declOfHOL_fpermDecsHOL {width : Nat} [NeZero width] (f g : MlS)
+    (declarations : List (DeclHOL width)) :
+    (fpermDecsHOL f g declarations).map declOfHOL =
+      globalRenameDecls (toStringOfBytes f) (toStringOfBytes g)
+        (declarations.map declOfHOL) := by
+  induction declarations with
+  | nil => simp [fpermDecsHOL, globalRenameDecls]
+  | cons d ds ih =>
+      cases d with
+      | function fi =>
+          simp only [fpermDecsHOL, List.map_cons, globalRenameDecls, declOfHOL,
+            funDeclOfHOL]
+          rw [ih]
+          simp [progOfHOL_fpermHOL, toStringOfBytes_fpermName]
+      | decl shape name value =>
+          simp [fpermDecsHOL, globalRenameDecls, declOfHOL, ih]
+      | exnDecl exceptionName shape =>
+          simp [fpermDecsHOL, globalRenameDecls, declOfHOL, ih]
+      | name struct fields =>
+          simp [fpermDecsHOL, globalRenameDecls, declOfHOL, ih]
+
+end FpermBridge
 
 /-! Counterpart of Cake's `fperm_decs_append`
     (`pan_globalsProofScript.sml:1663`): renaming distributes over
@@ -909,16 +1113,21 @@ theorem sizeOfEids_structCompileTop (declarations : List (Decl α)) :
 
 /-! ### Checked codec bridge to the exact `DeclHOL` predicates (bead `flapjack-ni1.1`)
 
-`isDecl`/`isExnDecl`/`sizeOfEids` are polymorphic over the production `Decl α`,
-while the tagged predicates are over exact `DeclHOL width` (`MlS`/`ShapeHOL`).
-The `declOfHOL` lemmas below check their behavior on the exact codec image. For
-arbitrary production declarations, `sizeOfEids` instead uses the documented
-constructor-only projection above. These are source-helper bridges, not a
-claim that `crepGetEidsFromDecls` routes through `sizeOfEidsHOL`. -/
+`isDecl`/`isExnDecl`/`isName`/`globalDeclIsFunction` and `sizeOfEids` consume
+the production `Decl α`, while their HOL predicates consume exact
+`DeclHOL width` (`MlS`/`ShapeHOL`/word-valued expressions). The
+`declOfHOL` lemmas below establish a total relation on the exact codec image;
+direct call routing is unavailable because the carriers differ and a general
+production `Decl α` cannot be encoded as `DeclHOL width` without value and
+name assumptions. `sizeOfEids` on arbitrary production declarations therefore
+uses its documented constructor-only projection above. These are checked
+source-helper bridges, not a claim that `crepGetEidsFromDecls` routes through
+`sizeOfEidsHOL`. -/
 
 section DeclHOLBridge
 
-open Flapjack.Pancake.PanLang (DeclHOL declOfHOL isDeclHOL isExnDeclHOL isNameHOL)
+open Flapjack.Pancake.PanLang
+  (DeclHOL declOfHOL isDeclHOL isExnDeclHOL isNameHOL isFunctionHOL)
 
 theorem isDecl_declOfHOL {width : Nat} [NeZero width] (declaration : DeclHOL width) :
     isDecl (declOfHOL declaration) = isDeclHOL declaration := by
@@ -942,6 +1151,86 @@ theorem sizeOfEids_map_declOfHOL {width : Nat} [NeZero width]
       cases isExnDeclHOL declaration <;> simp [Nat.add_comm]
 
 end DeclHOLBridge
+
+section ResortShapeExact
+
+open Flapjack.Pancake.PanLang
+  (MlS DeclHOL ShapeHOL functionsHOL isNameHOL isExnDeclHOL isDeclHOL isFunctionHOL)
+open Flapjack.Basis.Pure.MlString (ofString toStringOfBytes)
+
+/-! Exact-carrier ports of the three declaration-list transformations of Cake's
+`pan_globals` pass (bead `flapjack-pxn.18.3.5.8.21`).  They run over the
+reviewed word-indexed `List (DeclHOL width)` carrier and reuse the already
+tagged sibling ports `isNameHOL`/`isExnDeclHOL`/`isDeclHOL`/`isFunctionHOL`
+(`panLangScript.sml:234-249`, `:314-317`), `freshNameHOL` (`fresh_name_def`),
+and `functionsHOL` (`functions_def`).  The production analogues
+`globalResortDecls`/`globalNewMainName`/`globalDeclShapes` below still consume
+generic `Decl α`, whose expressions carry `α` in `Const` and whose identifiers
+and `Shape` are `String`; routing the executed compiler through these exact
+definitions is the exact-carrier production task tracked by
+`flapjack-6nn.3.1`. -/
+
+/-- Exact port of HOL `resort_decls_def`
+    (`cakeml/pancake/pan_globalsScript.sml:179`):
+
+    HOL `resort_decls decs = FILTER is_name decs ++ FILTER is_exn_decl decs ++
+    FILTER is_decl decs ++ FILTER is_function decs`.
+
+    The four filters are applied to the same argument, use the tagged
+    `isNameHOL`/`isExnDeclHOL`/`isDeclHOL`/`isFunctionHOL` predicates, and are
+    concatenated left-to-right in exactly HOL's order.  The carrier is the
+    reviewed word-indexed `List (DeclHOL width)` (MlString identifiers,
+    word-indexed expressions), so no qualifier applies. -/
+@[hol "cakeml/pancake/pan_globalsScript.sml" "resort_decls_def"]
+def resortDeclsHOL {width : Nat} [NeZero width]
+    (declarations : List (DeclHOL width)) : List (DeclHOL width) :=
+  (declarations.filter isNameHOL) ++ (declarations.filter isExnDeclHOL) ++
+    (declarations.filter isDeclHOL) ++ (declarations.filter isFunctionHOL)
+
+/-- Untagged (tag WITHDRAWN) definition matching HOL `new_main_name_def`
+    (`cakeml/pancake/pan_globalsScript.sml:224`):
+
+    HOL `new_main_name decls = fresh_name «main» (MAP FST (functions decls))`.
+
+    The `@[hol ...]` tag is WITHDRAWN per the coordinator HOLD: `newMainNameHOL`
+    returns a byte-observable `MlS` main name computed through the String-backed
+    `freshNameHOL`, and the exact `mlstring`-native `fresh_name` restatement (or
+    an approved `names_as_string` + `NameRanged` witness for this declaration)
+    has not been provided.  Tracked by bead `flapjack-pxn.18.3.5.8.21`.
+    `functionsHOL` is the tagged mlstring-keyed port of HOL `functions`, so its
+    first components are the function names in source order; the byte codec
+    `toStringOfBytes`/`ofString` is the identity on the `MlS` carrier and
+    preserves the membership test.  Do not re-tag until the coordinator
+    approves a faithful restatement. -/
+def newMainNameHOL {width : Nat} [NeZero width]
+    (declarations : List (DeclHOL width)) : MlS :=
+  ofString
+    (freshNameHOL "main"
+      ((functionsHOL declarations).map (fun entry => toStringOfBytes entry.1)))
+
+/-- Exact port of HOL `dec_shapes_def`
+    (`cakeml/pancake/pan_globalsScript.sml:228-234`):
+
+    HOL `dec_shapes (Function _::ds) = dec_shapes ds`,
+    `dec_shapes (Decl sh _ _::ds) = sh::dec_shapes ds`,
+    `dec_shapes (Name _ _::ds) = dec_shapes ds`,
+    `dec_shapes (ExnDecl _ _::ds) = dec_shapes ds`,
+    `dec_shapes [] = []`.
+
+    The clauses match HOL's clause order and shape selection exactly: only
+    `Decl` contributes its shape, and function/name/exception declarations are
+    skipped.  The carrier is `List (DeclHOL width)` and the result is
+    `List ShapeHOL`, so no qualifier applies. -/
+@[hol "cakeml/pancake/pan_globalsScript.sml" "dec_shapes_def"]
+def decShapesHOL {width : Nat} [NeZero width] :
+    List (DeclHOL width) → List ShapeHOL
+  | [] => []
+  | .function _ :: declarations => decShapesHOL declarations
+  | .decl shape _ _ :: declarations => shape :: decShapesHOL declarations
+  | .name _ _ :: declarations => decShapesHOL declarations
+  | .exnDecl _ _ :: declarations => decShapesHOL declarations
+
+end ResortShapeExact
 
 /-! Flapjack-specific source-shaped counterpart (NOT an exact HOL port) of Cake's `resort_decls_def` (`pan_globalsScript.sml:179`):
     declarations are regrouped as names, exceptions, value declarations, and
@@ -3544,5 +3833,130 @@ theorem globalCompileDecsThreaded_result_all_function_or_exception [BEq String]
   · exact globalDecls_all_or_of_all_right globalDeclIsFunction
       globalDeclIsException _
       (globalCompileDecsThreaded_functions_all_isFunction context declarations)
+
+/-! ### Checked exact-carrier bridges for the `pan_globals` declaration-list ports
+
+These `@[simp]` lemmas connect the reviewed exact ports `resortDeclsHOL`,
+`newMainNameHOL`, and `decShapesHOL` over `List (DeclHOL width)` to the
+production `globalResortDecls`/`globalNewMainName`/`globalDeclShapes` over
+`Decl (BitVec width)` on the exact `declOfHOL` image.  They are source-helper
+bridges, not a route for the executed generic-`Decl α` path; replacing that
+path with the exact ports remains the exact-carrier production task
+`flapjack-6nn.3.1`. -/
+
+section ResortShapeExactBridge
+
+open Flapjack.Pancake.PanLang
+  (DeclHOL declOfHOL funDeclOfHOL isDeclHOL isExnDeclHOL isNameHOL isFunctionHOL
+    shapeOfHOL functionsHOL)
+open Flapjack.Basis.Pure.MlString (ofString toStringOfBytes)
+
+/-- `List.filter`/`globalDeclsFilter` agreement.  Named `_listFilter` rather
+    than the proof-side name `globalDeclsFilter_eq_filter`, which
+    `Flapjack.Pancake.Proofs.PanSimp` declares in this same namespace. -/
+theorem globalDeclsFilter_eq_listFilter (predicate : Decl α → Bool)
+    (declarations : List (Decl α)) :
+    globalDeclsFilter predicate declarations = List.filter predicate declarations := by
+  induction declarations with
+  | nil => simp [globalDeclsFilter]
+  | cons declaration declarations ih =>
+      cases h : predicate declaration <;> simp [globalDeclsFilter, h, ih]
+
+@[simp] theorem globalDeclIsName_declOfHOL {width : Nat} [NeZero width]
+    (declaration : DeclHOL width) :
+    globalDeclIsName (declOfHOL declaration) = isNameHOL declaration := by
+  cases declaration <;> rfl
+
+@[simp] theorem globalDeclIsException_declOfHOL {width : Nat} [NeZero width]
+    (declaration : DeclHOL width) :
+    globalDeclIsException (declOfHOL declaration) = isExnDeclHOL declaration := by
+  cases declaration <;> rfl
+
+@[simp] theorem globalDeclIsGlobal_declOfHOL {width : Nat} [NeZero width]
+    (declaration : DeclHOL width) :
+    globalDeclIsGlobal (declOfHOL declaration) = isDeclHOL declaration := by
+  cases declaration <;> rfl
+
+@[simp] theorem globalDeclIsFunction_declOfHOL {width : Nat} [NeZero width]
+    (declaration : DeclHOL width) :
+    globalDeclIsFunction (declOfHOL declaration) = isFunctionHOL declaration := by
+  cases declaration <;> rfl
+
+/-- Bridge: mapping the exact `resortDeclsHOL` through the `declOfHOL` codec is
+    the production `globalResortDecls` on the decoded declaration list. -/
+@[simp] theorem map_declOfHOL_resortDeclsHOL {width : Nat} [NeZero width]
+    (declarations : List (DeclHOL width)) :
+    (resortDeclsHOL declarations).map declOfHOL =
+      globalResortDecls (declarations.map declOfHOL) := by
+  have hfilter : ∀ (p : DeclHOL width → Bool) (q : Decl (BitVec width) → Bool),
+      (∀ d, q (declOfHOL d) = p d) →
+      (declarations.map declOfHOL).filter q =
+        (declarations.filter p).map declOfHOL := by
+    intro p q hpq
+    rw [List.filter_map]
+    congr 1
+    congr 1
+    funext d
+    exact hpq d
+  unfold resortDeclsHOL globalResortDecls
+  rw [globalDeclsFilter_eq_listFilter, globalDeclsFilter_eq_listFilter,
+    globalDeclsFilter_eq_listFilter, globalDeclsFilter_eq_listFilter]
+  rw [List.map_append, List.map_append, List.map_append]
+  rw [hfilter isNameHOL globalDeclIsName (fun d => globalDeclIsName_declOfHOL d),
+    hfilter isExnDeclHOL globalDeclIsException
+      (fun d => globalDeclIsException_declOfHOL d),
+    hfilter isDeclHOL globalDeclIsGlobal (fun d => globalDeclIsGlobal_declOfHOL d),
+    hfilter isFunctionHOL globalDeclIsFunction
+      (fun d => globalDeclIsFunction_declOfHOL d)]
+
+/-- Bridge: mapping the exact `decShapesHOL` result through the `shapeOfHOL`
+    codec is the production `globalDeclShapes` on the decoded declaration
+    list. -/
+@[simp] theorem map_shapeOfHOL_decShapesHOL {width : Nat} [NeZero width]
+    (declarations : List (DeclHOL width)) :
+    (decShapesHOL declarations).map shapeOfHOL =
+      globalDeclShapes (declarations.map declOfHOL) := by
+  induction declarations with
+  | nil => simp [decShapesHOL, globalDeclShapes]
+  | cons declaration declarations ih =>
+      cases declaration <;>
+        simp [decShapesHOL, globalDeclShapes_cons, declOfHOL, ih]
+
+/-- Bridge: the function-name projection of the exact carrier (via `declOfHOL`)
+    is the decoded `functionsHOL` name column. -/
+@[simp] theorem globalFunctionNames_map_declOfHOL {width : Nat} [NeZero width]
+    (declarations : List (DeclHOL width)) :
+    globalFunctionNames (declarations.map declOfHOL) =
+      (functionsHOL declarations).map (fun entry => toStringOfBytes entry.1) := by
+  induction declarations with
+  | nil => simp [globalFunctionNames, functionsHOL]
+  | cons declaration declarations ih =>
+      cases declaration <;>
+        simp [globalFunctionNames, functionsHOL, declOfHOL, funDeclOfHOL, ih]
+
+/-- The fresh-name search seeded with the literal `"main"` stays in the byte
+    range for any name list; used by the `newMainNameHOL` bridge below with a
+    variable list so the range proof does not reduce over a concrete list. -/
+theorem nameRanged_freshNameHOL_main (names : List String) :
+    Flapjack.Pancake.PanLang.NameRanged (freshNameHOL "main" names) :=
+  holMlStringWitness_freshNameHOL "main" names
+    (by unfold Flapjack.Pancake.PanLang.NameRanged; decide)
+
+/-- Bridge: decoding the exact `newMainNameHOL` result is the production
+    `globalNewMainName` on the decoded declaration list.  The byte-range
+    hypothesis is discharged because the seed `"main"` and the appended
+    apostrophes are in the byte range (`holMlStringWitness_freshNameHOL`). -/
+@[simp] theorem toStringOfBytes_newMainNameHOL {width : Nat} [NeZero width]
+    (declarations : List (DeclHOL width)) :
+    toStringOfBytes (newMainNameHOL declarations) =
+      globalNewMainName (declarations.map declOfHOL) := by
+  simp only [newMainNameHOL, globalNewMainName]
+  rw [globalFunctionNames_map_declOfHOL]
+  generalize hnames : (functionsHOL declarations).map
+    (fun entry => toStringOfBytes entry.1) = names
+  exact Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes
+    (freshNameHOL "main" names) (nameRanged_freshNameHOL_main names)
+
+end ResortShapeExactBridge
 
 end Flapjack

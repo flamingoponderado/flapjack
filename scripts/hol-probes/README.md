@@ -59,10 +59,47 @@ stored in the code map; HOL returns `SOME Error`, preserves the decremented
 clock, and exposes the callee post-state. Their Lean checks live in
 `Flapjack.Test.PanEvaluateParity` and exercise the recursive
 `PanSemState.code` evaluator.
-`compile_def_probe.out` also records direct HOL evaluations of assigned Global
-call destinations through `pan_to_crep$compile`: absent lookups, the
+`compile_def_probe.out` also records direct HOL evaluations of `Return`
+(`return`, `multi_return`, and the empty-struct return), paired
+`Store32`/`StoreByte` success and fallback rows, `If`/`While` success and
+fallback rows, Global Assign/ShMemLoad Skip fallbacks, Local Assign direct,
+overlap-temporary, missing-destination, and length-fallback rows, Primitive
+destination present/missing rows, one-word/multiword Store and fallback rows,
+scalar/structured Raise and fallback rows, ShMemStore success and missing-head
+rows, local ShMemLoad success and fallback rows, and assigned Global call
+destinations through `pan_to_crep$compile`, plus scalar/multiword Dec and
+shape-length fallback and scalar/multiword DecCall rows. The exact untagged
+`compileDecCallExactHOLW` slice and its Lean checks are in
+`Flapjack.Test.CompileDefParity`; `call_no_return` checks the HOL `rtyp = NONE`
+arm's flattening of argument expressions, with the exact untagged
+`compileCallNoReturnExactHOLW` slice checked in the same module.
+`call_result_no_handler_present` and `_missing` pin the other arm for
+`rtyp = SOME (NONE, NONE)`: lookup of the return shape, fresh result names,
+zero initialization, and the empty-result fallback. Its exact untagged helper
+is `compileCallResultNoHandlerExactHOLW`. `call_handler_missing_eid` checks
+that an exception handler with a missing `eids` entry takes the same fallback;
+the Lean exact subcase is `compileCallHandlerMissingEidExactHOLW`.
+`extcall_constants` (with `vmax = 400`),
+`extcall_high_tail` (with `vmax = 0`), `extcall_shared_high_tail`, and
+`extcall_shape_fallback` pin the `ExtCall` case: its freshness bound scans all
+operand variables, including a high variable that is not emitted, and ignores
+context `vmax`; the four operands must also have shape `One` and nonempty
+compiled lists. The exact untagged `compileExtCallExactHOLW` clause slice and
+Lean checks live in `Flapjack.Test.CompileDefParity`. Regenerate the direct HOL
+fixture with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=compile_def_probeScript.sml bash scripts/hol-probes/regenerate.sh`:
+absent lookups, the
 `One`/empty-list fallback, and inconsistent shape/name-list lengths. The
-matching Lean cases live in `Flapjack.Test.CompileDefParity`.
+matching Lean cases live in `Flapjack.Test.CompileDefParity`. The
+`struct_skip`, `struct_seq`, `struct_break`, `struct_continue`, `struct_tick`,
+and `struct_annot` rows pin the first exact-carrier `compile_def` structural
+slice; its supported-subset helper is intentionally untagged and does not
+claim the full compiler definition.
+`compile_exp_probe.out` records direct HOL EVAL rows for every `compile_exp`
+constructor family and defensive fallback. `Flapjack.Test.CompileExpParity`
+checks those rows through both the existing production-carrier implementation
+and the exact-carrier `compileExpExactHOLW`; the latter is tagged against
+`compile_exp_def` and uses the exact Pan/Crepe expression and context carriers.
 `excp_rel_probe.out` and `ctxt_fc_probe.out` are direct EVALs from
 `pan_to_crepProofTheory`, paired with `Flapjack.Test.PanToCrepRelationsParity`.
 The `functions_projection` row in `ctxt_fc_probe.out` directly checks the
@@ -74,6 +111,21 @@ The `excp_rel` cases deliberately use a word-valued compiler-code map and a
 shape-valued source map, matching the definition's independent HOL value types.
 The `ctxt_fc` cases record `with_shape` slot slicing, ZIP truncation, and
 `MAX_LIST` on an empty name list.
+`pan_to_crep_state_rel_carrier_probe.out` directly evaluates HOL
+`pan_to_crepProof$state_rel` (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:45-56`)
+on matching fields and a nonempty named struct context, and records its
+`mlstring`-named `struct_info` row. It also records the `FLOOKUP` observations
+for empty and nonempty globals. HOL EVAL leaves equality of the nonempty
+function-backed fmap with `FEMPTY` unreduced, so that row is kept explicitly
+as an unevaluated term; it is not reported as a computed `F` result. The exact
+carrier checks live in `Flapjack.Test.PanToCrepStateRelCarrierParity`. The
+source review is intentionally narrow: it pins the carrier fields consumed by
+the state relation, not a port of `state_rel` or a claim that production
+String/Shape states satisfy the relation. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=pan_to_crep_state_rel_carrier_probeScript.sml
+scripts/hol-probes/regenerate.sh` when using a read-only CakeML checkout whose
+compiled theories match the source commit.
 `code_rel_probe.out` records the HOL-inferred source/target code-map types,
 compiled parameter return, localisation outcomes, function-signature lookup,
 and target entry. The probe also proves matching and deliberately mismatching
@@ -395,6 +447,21 @@ local theorem `MEM_functions` at
 `Flapjack.Pancake.PanLang.functionsHOL` and its membership theorem
 `MEM_functionsHOL` are paired with the Lean regression
 `Flapjack.Test.PanGlobalsMemFunctionsHOLParity`.
+
+`pan_lang_size_probe.out` loads the real compiled CakeML `panLangTheory` and
+prints the `Datatype`-generated size equations `mlstring_size_def`,
+`shape_size_def`, and `exp_size_def`, the `MEM_IMP_shape_size` and
+`MEM_IMP_exp_size` statements, and concrete `EVAL` rows for representative
+`shape_size`/`exp_size` applications. It replaces an earlier version that
+reconstructed the datatypes locally, which pinned `MEM_IMP_shape_size` and
+`MEM_IMP_exp_size` only by analogy. The equations are transcribed in
+`Flapjack/Pancake/PanLang/Shape.lean` and `Flapjack/Pancake/PanLang/Exp.lean`;
+the generated equations are not textual HOL declarations, so the transcriptions
+and their `@[hol]`-tagged `MEM_IMP_*` theorems cannot reference them directly.
+The matching fixtures live in `Flapjack.Test.PanLangGeneratedSizeParity`.
+Regenerate with `HOL_PROBE_ONLY=pan_lang_size_probeScript.sml
+scripts/hol-probes/regenerate.sh` against a CakeML checkout whose compiled
+theories match the submodule source commit.
 
 From the repository root, with HOL4 and the CakeML checkout available,
 regenerate both checked-in outputs with:

@@ -229,6 +229,10 @@ run_probe crep_arith_lookup_code_probeScript.sml crep_arith_lookup_code_probe.ou
   "$cake_dir/pancake/proofs"
 run_probe crep_arith_eval_mul_const_probeScript.sml crep_arith_eval_mul_const_probe.out \
   input_word multiply_general "$cake_dir/pancake/proofs/crep_arithProofScript.sml"
+run_probe crep_exps_of_probeScript.sml crep_exps_of_probe.out \
+  dec_seq if_store while call_tail call_ret call_ret_hdl stores empty \
+  "$cake_dir/pancake/semantics/crepPropsScript.sml" \
+  "$cake_dir/pancake/semantics"
 run_probe crep_runtime_read_bytes_probeScript.sml crep_runtime_read_bytes_probe.out \
   read_bytes_zero read_bytes_out_of_domain "$cake_dir/pancake/semantics/panSemScript.sml" \
   "$cake_dir/pancake/semantics"
@@ -416,6 +420,13 @@ run_probe pan_lang_size_of_sh_with_ctxt_probeScript.sml pan_lang_size_of_sh_with
   "$cake_dir/pancake/panLangScript.sml"
 run_probe pan_lang_size_of_shape_probeScript.sml pan_lang_size_of_shape_probe.out \
   one empty_comb named nested_comb "$cake_dir/pancake/panLangScript.sml"
+# The size probe observes the HOL-generated shape_size/exp_size equations from
+# the real panLangTheory (not a local datatype replica), plus concrete EVAL rows.
+run_probe pan_lang_size_probeScript.sml pan_lang_size_probe.out \
+  mlstring_size_def shape_size_def exp_size_def MEM_IMP_shape_size \
+  MEM_IMP_exp_size exp_size_base \
+  "$cake_dir/pancake/panLangScript.sml" \
+  "$cake_dir/pancake"
 run_probe pan_lang_decl_predicates_probeScript.sml pan_lang_decl_predicates_probe.out \
   is_decl_decl is_decl_exception is_exn_decl_exception is_exn_decl_decl \
   is_name_name is_name_decl size_of_eids_empty size_of_eids_mixed \
@@ -906,7 +917,9 @@ run_probe comp_field_probeScript.sml comp_field_probe.out \
 run_probe compile_panop_probeScript.sml compile_panop_probe.out \
   "$cake_dir/pancake/pan_to_crepScript.sml"
 run_probe compile_exp_probeScript.sml compile_exp_probe.out \
-  leaves bytes_in_word nstruct nfield load_one load_two struct_field loads_ops cmp_shift finite_map_shadow finite_map_load32_local \
+  leaves missing_local bytes_in_word nstruct nfield load_one load_two struct_field \
+  struct_fallbacks loads_ops cmp_shift shape_fallbacks heads_fallbacks \
+  binary_fallbacks finite_map_shadow finite_map_load32_local \
   finite_map_load_byte_local loadbyte_recursive_address \
   "$cake_dir/pancake/pan_to_crepScript.sml"
 run_probe exp_hdl_probeScript.sml exp_hdl_probe.out \
@@ -918,10 +931,23 @@ run_probe ret_hdl_probeScript.sml ret_hdl_probe.out \
 run_probe wrap_rt_probeScript.sml wrap_rt_probe.out \
   none named "$cake_dir/pancake/pan_to_crepScript.sml"
 run_probe compile_def_probeScript.sml compile_def_probe.out \
-  return missing_global empty_one_global extra_names_global missing_names_global \
+  return multi_return store32_clause store32_fallback store_byte_clause store_byte_fallback \
+  if_clause if_fallback while_clause while_fallback \
+  global_assign_fallback global_shmem_load_fallback \
+  local_assign_direct local_assign_overlap_temporaries local_assign_missing_destination \
+  local_assign_length_fallback \
+  primitive_destination_present primitive_destination_missing \
+  store_one_word store_multiword store_address_fallback store_shape_length_fallback \
+  raise_one_word raise_multiword raise_missing_eid raise_shape_length_fallback \
+  shmem_store_clause shmem_store_value_fallback shmem_store_address_fallback \
+  shmem_load_local_clause shmem_load_missing_destination shmem_load_address_fallback \
+  dec_one_word dec_multiword dec_shape_length_fallback \
+  struct_skip struct_break struct_continue struct_tick struct_annot struct_seq \
+  missing_global empty_one_global extra_names_global missing_names_global \
   missing_local empty_one_local extra_names_local missing_names_local valid_local \
-  empty_struct_return finite_map_shadow_return extcall_high_tail \
-  extcall_shared_high_tail \
+  empty_struct_return finite_map_shadow_return deccall_one_word deccall_multiword \
+  extcall_high_tail \
+  extcall_shared_high_tail extcall_constants extcall_shape_fallback \
   pair_load pair_store fixed_stride64 \
   "$cake_dir/pancake/pan_to_crepScript.sml"
 run_probe compile_to_crep_probeScript.sml compile_to_crep_probe.out \
@@ -945,6 +971,12 @@ run_probe compile_prog_probeScript.sml compile_prog_probe.out \
   "$cake_dir/pancake/pan_to_crepScript.sml"
 run_probe excp_rel_probeScript.sml excp_rel_probe.out \
   empty_maps noninjective_compiler_codes \
+  "$cake_dir/pancake/proofs/pan_to_crepProofScript.sml" \
+  "$cake_dir/pancake/proofs"
+run_probe pan_to_crep_state_rel_carrier_probeScript.sml pan_to_crep_state_rel_carrier_probe.out \
+  state_rel_matching_fields state_rel_rejects_nonempty_structs \
+  state_rel_globals_equation_unreduced state_rel_nonempty_globals_lookup \
+  state_rel_empty_globals_lookup state_rel_named_struct_carrier \
   "$cake_dir/pancake/proofs/pan_to_crepProofScript.sml" \
   "$cake_dir/pancake/proofs"
 run_probe ctxt_fc_probeScript.sml ctxt_fc_probe.out \

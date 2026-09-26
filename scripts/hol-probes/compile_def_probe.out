@@ -1,4 +1,52 @@
 return=Return [Const 7w]
+multi_return=Return [Const 1w; Const 2w]
+store32_clause=Store32 (Const 1w) (Const 2w)
+store32_fallback=Skip
+store_byte_clause=StoreByte (Const 3w) (Const 4w)
+store_byte_fallback=Skip
+if_clause=If (Const 1w) Skip (Break 0)
+if_fallback=Skip
+while_clause=While (Const 2w) (Break 0)
+while_fallback=Skip
+global_assign_fallback=Skip
+global_shmem_load_fallback=Skip
+local_assign_direct=Seq (Assign 7 (Var 8)) Skip
+local_assign_overlap_temporaries=Dec 11 (Var 7) (Seq (Assign 7 (Var 11)) Skip)
+local_assign_missing_destination=Skip
+local_assign_length_fallback=Skip
+primitive_destination_present=Dec 11 (Const 1w) (Dec 12 (Var 8) (Primitive [7] AddCarry [11; 12]))
+primitive_destination_missing=Skip
+store_one_word=Dec 1 (Const 3w) (Dec 2 (Const 4w) (Seq (Store (Var 1) (Var 2)) Skip))
+store_multiword=Dec 1 (Const 3w)
+  (Dec 2 (Const 4w)
+     (Dec 3 (Const 5w)
+        (Seq (Store (Var 1) (Var 2))
+           (Seq (Store (Op Add [Var 1; Const 1w]) (Var 3)) Skip))))
+store_address_fallback=Skip
+store_shape_length_fallback=Skip
+raise_one_word=Seq (Dec 1 (Const 9w) (Seq (StoreGlob 0w (Var 1)) Skip)) (Raise 12w)
+raise_multiword=Seq
+  (Dec 1 (Const 1w)
+     (Dec 2 (Const 2w)
+        (Seq (StoreGlob 0w (Var 1)) (Seq (StoreGlob 1w (Var 2)) Skip))))
+  (Raise 12w)
+raise_missing_eid=Skip
+raise_shape_length_fallback=Skip
+shmem_store_clause=Dec 9 (Const 3w) (ShMem Store8 9 (Var 8))
+shmem_store_value_fallback=Skip
+shmem_store_address_fallback=Skip
+shmem_load_local_clause=ShMem Load8 7 (Const 3w)
+shmem_load_missing_destination=Skip
+shmem_load_address_fallback=Skip
+dec_one_word=Dec 1 (Const 4w) (Return [Var 1])
+dec_multiword=Dec 1 (Const 1w) (Dec 2 (Const 2w) Tick)
+dec_shape_length_fallback=Skip
+struct_skip=Skip
+struct_break=Break 0
+struct_continue=Continue 0
+struct_tick=Tick
+struct_annot=Skip
+struct_seq=Seq Skip (Seq (Break 0) (Continue 0))
 missing_global=Call NONE «f» []
 empty_one_global=Call NONE «f» []
 extra_names_global=Call (SOME ([4; 5],NONE)) «f» []
@@ -7,15 +55,33 @@ missing_local=Call NONE «f» []
 empty_one_local=Call NONE «f» []
 extra_names_local=Call (SOME ([4; 5],NONE)) «f» []
 missing_names_local=Call (SOME ([4],NONE)) «f» []
+call_no_return=Call NONE «f» [Const 1w; Const 2w; Const 3w]
+call_result_no_handler_present=Dec 11 (Const 0w)
+  (Dec 12 (Const 0w)
+     (Call (SOME ([11; 12],NONE)) «f» [Const 1w; Const 2w; Const 3w]))
+call_result_no_handler_missing=Call (SOME ([],NONE)) «missing» [Const 1w; Const 2w; Const 3w]
+call_handler_missing_eid=Dec 11 (Const 0w)
+  (Dec 12 (Const 0w)
+     (Call (SOME ([11; 12],NONE)) «f» [Const 1w; Const 2w; Const 3w]))
 valid_local=Call (SOME ([0; 1],NONE)) «f» []
 empty_struct_return=Return []
 finite_map_shadow_return=Return [Var 5]
+deccall_one_word=Dec 5 (Const 0w)
+  (Seq (Call (SOME ([5],NONE)) «f» [Const 3w]) (Return [Var 5]))
+deccall_multiword=Dec 11 (Const 0w)
+  (Dec 12 (Const 0w)
+     (Seq (Call (SOME ([11; 12],NONE)) «f» [Const 3w; Const 4w])
+        (Return [Var 11; Var 12])))
 extcall_high_tail=Dec 101 (Var 4)
   (Dec 102 (Var 5)
      (Dec 103 (Var 6) (Dec 104 (Var 7) (ExtCall «f» 101 102 103 104))))
 extcall_shared_high_tail=Dec 100 (Var 1)
   (Dec 101 (Var 1)
      (Dec 102 (Var 1) (Dec 103 (Var 1) (ExtCall «f» 100 101 102 103))))
+extcall_constants=Dec 1 (Const 1w)
+  (Dec 2 (Const 2w)
+     (Dec 3 (Const 3w) (Dec 4 (Const 4w) (ExtCall «f» 1 2 3 4))))
+extcall_shape_fallback=Skip
 pair_load=Return
   (Load (Var 0)::
      if n2w (dimindex (:word64) DIV 8 MOD dimword (:word64)) = 0w then

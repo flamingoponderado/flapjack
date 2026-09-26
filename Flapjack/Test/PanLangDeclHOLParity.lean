@@ -255,6 +255,10 @@ example (declaration : DeclHOL 64) :
   isExnDecl_declOfHOL declaration
 
 example (declaration : DeclHOL 64) :
+    Flapjack.globalDeclIsFunction (declOfHOL declaration) = isFunctionHOL declaration :=
+  globalDeclIsFunction_declOfHOL declaration
+
+example (declaration : DeclHOL 64) :
     Flapjack.isName (declOfHOL declaration) = isNameHOL declaration :=
   isName_declOfHOL declaration
 

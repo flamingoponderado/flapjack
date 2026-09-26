@@ -312,6 +312,18 @@ WITHDRAWN_HOL_DECLARATIONS = {
         "finite-support carrier; tag remains withdrawn pending "
         "flapjack-pxn.18.3.7.1.3.1.1.3.1."
     ),
+    ("Flapjack/Pancake/PanGlobals.lean", "newMainNameHOL"): (
+        "cakeml/pancake/pan_globalsScript.sml",
+        "new_main_name_def",
+        "flapjack-ds9 / coordinator HOLD (bead flapjack-pxn.18.3.5.8.21): "
+        "newMainNameHOL returns a byte-observable MlS main name computed through "
+        "the String-backed freshNameHOL, and the exact mlstring-native fresh_name "
+        "restatement (or an approved names_as_string + NameRanged witness for this "
+        "declaration) has not been provided. The @[hol] tag, manifest row and "
+        "type-hash entry were withdrawn; the definition and its bridge proof are "
+        "retained as production infrastructure. Keep untagged until the "
+        "coordinator approves a faithful restatement."
+    ),
 }
 # An untagged documented mismatch may be a definition-like declaration or a
 # theorem/lemma whose carrier or statement shape differs from HOL's.
@@ -321,6 +333,58 @@ DEFINITION_RE = re.compile(
     r"(?:def|abbrev|opaque|theorem|lemma)\s+([^\s:({\[]+)"
 )
 DOCUMENTED_MISMATCHES = {
+    ("Flapjack/Pancake/Proofs/PanSimp.lean", "collectPanValueStructs_panSimpDecls"): (
+        "cakeml/pancake/proofs/pan_simpProofScript.sml",
+        "decs_stcnames_compile_prog",
+        "flapjack-ds8 (bead flapjack-4ac.8): production String-keyed Prog/Decl carriers; "
+        "HOL states it over the exact mlstring-keyed panLang syntax. Tag withdrawn; exact port "
+        "tracked by flapjack-4ac.8 (blocked by flapjack-4ac.8.1).",
+    ),
+    ("Flapjack/Pancake/Proofs/PanSimp.lean", "expIdsRetToTailEq"): (
+        "cakeml/pancake/proofs/pan_simpProofScript.sml",
+        "exp_ids_ret_to_tail_eq",
+        "flapjack-ds8 (bead flapjack-4ac.8): production String-keyed Prog carriers; HOL uses exact "
+        "mlstring panLang. Tag withdrawn; exact port tracked by flapjack-4ac.8 (blocked by flapjack-4ac.8.1).",
+    ),
+    ("Flapjack/Pancake/Proofs/PanSimp.lean", "expIdsSeqAssocEq"): (
+        "cakeml/pancake/proofs/pan_simpProofScript.sml",
+        "exp_ids_seq_assoc_eq",
+        "flapjack-ds8 (bead flapjack-4ac.8): production String-keyed Prog carriers; HOL uses exact "
+        "mlstring panLang. Tag withdrawn; exact port tracked by flapjack-4ac.8 (blocked by flapjack-4ac.8.1).",
+    ),
+    ("Flapjack/Pancake/Proofs/PanSimp.lean", "expIdsCompileEq"): (
+        "cakeml/pancake/proofs/pan_simpProofScript.sml",
+        "exp_ids_compile_eq",
+        "flapjack-ds8 (bead flapjack-4ac.8): production String-keyed Prog carriers; HOL uses exact "
+        "mlstring panLang. Tag withdrawn; exact port tracked by flapjack-4ac.8 (blocked by flapjack-4ac.8.1).",
+    ),
+    ("Flapjack/Pancake/Proofs/PanSimp.lean", "sizeOfEidsPanSimpDeclsEq"): (
+        "cakeml/pancake/proofs/pan_simpProofScript.sml",
+        "size_of_eids_compile_eq",
+        "flapjack-ds8 (bead flapjack-4ac.8): production String-keyed Decl carriers; HOL uses exact "
+        "mlstring panLang. Tag withdrawn; exact port tracked by flapjack-4ac.8 (blocked by flapjack-4ac.8.1).",
+    ),
+    ("Flapjack/Pancake/Proofs/PanSimp.lean", "functionsCompileProg"): (
+        "cakeml/pancake/proofs/pan_simpProofScript.sml",
+        "functions_compile_prog",
+        "flapjack-ds8 (bead flapjack-4ac.8): production String-keyed Decl carriers; HOL uses exact "
+        "mlstring panLang. Tag withdrawn; exact port tracked by flapjack-4ac.8 (blocked by flapjack-4ac.8.1).",
+    ),
+    ("Flapjack/Pancake/Proofs/PanSimp.lean", "firstCompileProgAllDistinctPanSimp"): (
+        "cakeml/pancake/proofs/pan_simpProofScript.sml",
+        "first_compile_prog_all_distinct",
+        "flapjack-ds8 (bead flapjack-4ac.8): production String-keyed Decl carriers; HOL uses exact "
+        "mlstring panLang. Tag withdrawn; exact port tracked by flapjack-4ac.8 (blocked by flapjack-4ac.8.1).",
+    ),
+    ("Flapjack/Pancake/Proofs/PanGlobals/ShapeInfrastructure.lean", "evaluateDeclsFunctionsWf"): (
+        "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+        "evaluate_decls_functions_wf",
+        "flapjack-ds8 (bead flapjack-4ac.7): HOL declares evaluate_decls_functions_wf[local] "
+        "over the exact panSem evaluate_decls and exact panLang decl/shape carriers; it is not "
+        "exported, and the Lean analogue reads the production PanSemDeclarationState/Decl/isWfShape "
+        "String/Shape carriers. The @[hol] tag was withdrawn; the public consequence "
+        "evaluate_decls_functions is the exact port (evaluateDeclsHOLFinite_functions)."
+    ),
     ("Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean", "evaluateDeclsHOLFinite_functions"): (
         "cakeml/pancake/semantics/panPropsScript.sml",
         "evaluate_decls_functions",
@@ -1650,8 +1714,14 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         ("Flapjack/Pancake/Proofs/PanGlobals.lean", "ALOOKUP_MAP3"),
         ("Flapjack/Pancake/Proofs/PanGlobals.lean", "ALOOKUP_MAP4"),
         ("Flapjack/Pancake/PanGlobals.lean", "fpermName"),
+        ("Flapjack/Pancake/PanGlobals.lean", "fpermHOL"),
+        ("Flapjack/Pancake/PanGlobals.lean", "fpermDecsHOL"),
+        ("Flapjack/Pancake/PanGlobals.lean", "resortDeclsHOL"),
+        ("Flapjack/Pancake/PanGlobals.lean", "decShapesHOL"),
         ("Flapjack/Pancake/Proofs/PanGlobals.lean", "fpermName_cancel"),
         ("Flapjack/Pancake/Proofs/PanGlobals.lean", "fpermName_cong"),
+        ("Flapjack/Pancake/Proofs/PanGlobals.lean", "EVERY_fperm_decsHOL"),
+        ("Flapjack/Pancake/Proofs/PanGlobals.lean", "FILTER_decs_fperm_decsHOL"),
         ("Flapjack/Pancake/Proofs/PanToCrep.lean", "mod_eq_of_lt_eq"),
         ("Flapjack/Pancake/Proofs/PanToCrep.lean", "option_ne_none_iff_exists"),
         ("Flapjack/Pancake/Proofs/PanToCrep.lean", "prod_mk_pair_eq_id"),
@@ -1746,6 +1816,36 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         ("Flapjack/Compiler/Backend/StackNames.lean", "map_fst_compile"),
         ("Flapjack/Pancake/PanStructs.lean", "afindi"),
         ("Flapjack/Misc/Sptree.lean", "NumSet"),
+        ("Flapjack/Pancake/WordConvs.lean", "distinctTarRegExact"),
+        ("Flapjack/Pancake/WordConvs.lean", "twoRegInstExact"),
+        ("Flapjack/Pancake/WordConvs.lean", "instArgConventionExact"),
+        ("Flapjack/Pancake/WordConvs.lean", "instOkLessExact"),
+        ("Flapjack/Pancake/Semantics/CrepProps.lean", "crepExpsOfHOL"),
+        ("Flapjack/Compiler/Encoders/Asm.lean", "asmOffsetOkExact"),
+        ("Flapjack/Compiler/Encoders/Asm.lean", "asmRegOkExact"),
+        ("Flapjack/Compiler/Encoders/Asm.lean", "asmFpRegOkExact"),
+        ("Flapjack/Compiler/Encoders/Asm.lean", "asmRegImmOkExact"),
+        ("Flapjack/Compiler/Encoders/Asm.lean", "asmFpOkExact"),
+        ("Flapjack/Compiler/Encoders/Asm.lean", "asmCmpOkExact"),
+        ("Flapjack/Compiler/Encoders/Asm.lean", "asmArithOkExact"),
+        ("Flapjack/Compiler/Encoders/Asm.lean", "asmInstOkExact"),
+        ("Flapjack/Compiler/Encoders/Asm.lean", "asmOkExact"),
+        ("Flapjack/Compiler/Backend/StackProps.lean", "asmAddrOkExact"),
+        ("Flapjack/Compiler/Encoders/Asm.lean", "AsmConfigExact"),
+        ("Flapjack/Pancake/Proofs/PanSimp.lean", "mapSndFEq"),
+        ("Flapjack/Pancake/Proofs/PanSimp.lean", "expIdsHOL_retToTailHOL_eq"),
+        ("Flapjack/Pancake/Proofs/PanSimp.lean", "expIdsHOL_seqAssocHOL_eq"),
+        ("Flapjack/Pancake/Proofs/PanSimp.lean", "expIdsHOL_panSimpCompileHOL_eq"),
+        ("Flapjack/Pancake/Proofs/PanSimp.lean", "functionsHOL_panSimpDeclsHOL_eq"),
+        ("Flapjack/Pancake/Proofs/PanSimp.lean", "sizeOfEidsHOL_panSimpDeclsHOL_eq"),
+        ("Flapjack/Pancake/Proofs/PanSimp.lean", "firstCompileProgAllDistinctHOL"),
+        ("Flapjack/Pancake/Proofs/PanSimp.lean", "decsStcnamesHOLExact_panSimpDeclsHOL_eq"),
+        ("Flapjack/Pancake/PanSimp.lean", "smartSeqHOL"),
+        ("Flapjack/Pancake/PanSimp.lean", "seqCallRetHOL"),
+        ("Flapjack/Pancake/PanSimp.lean", "seqAssocHOL"),
+        ("Flapjack/Pancake/PanSimp.lean", "retToTailHOL"),
+        ("Flapjack/Pancake/PanSimp.lean", "panSimpCompileHOL"),
+        ("Flapjack/Pancake/PanSimp.lean", "panSimpDeclsHOL"),
     }
     for key in reviewed_exact:
         # A source comparison cannot claim an exact HOL port after its tag is

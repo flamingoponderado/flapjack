@@ -25,6 +25,8 @@ val _ = print_eval "leaves"
     pan_to_crep$compile_exp ^ctxt (Var Global «g»),
     pan_to_crep$compile_exp ^ctxt BaseAddr,
     pan_to_crep$compile_exp ^ctxt TopAddr)``;
+val _ = print_eval "missing_local"
+  ``pan_to_crep$compile_exp ^ctxt (Var Local «missing»)``;
 val _ = print_eval "bytes_in_word"
   ``(pan_to_crep$compile_exp ^ctxt panLang$BytesInWord :
       64 word crepLang$exp list # panLang$shape)``;
@@ -48,6 +50,10 @@ val _ = print_eval "struct_field"
       (RStruct [Const (1w : 8 word); Const 2w]),
     pan_to_crep$compile_exp ^ctxt
       (RField 1 (RStruct [Const (1w : 8 word); Const 2w])))``;
+val _ = print_eval "struct_fallbacks"
+  ``(pan_to_crep$compile_exp ^ctxt (RField 0 (Const (9w : 8 word))),
+    pan_to_crep$compile_exp ^ctxt
+      (Load One (RStruct ([] : 8 word panLang$exp list))))``;
 val _ = print_eval "loads_ops"
   ``(pan_to_crep$compile_exp ^ctxt (Load32 (Const (3w : 8 word))),
     pan_to_crep$compile_exp ^ctxt (LoadByte (Const (4w : 8 word))),
@@ -63,6 +69,20 @@ val _ = print_eval "cmp_shift"
       (Cmp Equal (Const (1w : 8 word)) (Const 0w)),
     pan_to_crep$compile_exp ^ctxt
       (Shift Lsl (Const (2w : 8 word)) (Const 1w)))``;
+val _ = print_eval "shape_fallbacks"
+  ``(pan_to_crep$compile_exp ^ctxt
+      (Load32 (RStruct [Const (1w : 8 word); Const 2w])),
+    pan_to_crep$compile_exp ^ctxt
+      (LoadByte (RStruct [Const (1w : 8 word); Const 2w])))``;
+val _ = print_eval "heads_fallbacks"
+  ``(pan_to_crep$compile_exp ^ctxt (Op Add [RStruct ([] : 8 word panLang$exp list)]),
+    pan_to_crep$compile_exp ^ctxt
+      (Panop Mul [RStruct ([] : 8 word panLang$exp list)]))``;
+val _ = print_eval "binary_fallbacks"
+  ``(pan_to_crep$compile_exp ^ctxt
+      (Cmp Equal (RStruct ([] : 8 word panLang$exp list)) (Const 1w)),
+    pan_to_crep$compile_exp ^ctxt
+      (Shift Lsl (Const 1w) (RStruct ([] : 8 word panLang$exp list))))``;
 
 val finite_map_shadow_ctxt =
   ``<| vars := FEMPTY |+ («p», (One, [3])) |+ («p», (One, [5]));

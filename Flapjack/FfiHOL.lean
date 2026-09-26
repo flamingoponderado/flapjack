@@ -196,4 +196,48 @@ theorem callFFIHOL_ret {σ : Type u} (state : HolFfiState σ) (name : HolFfiName
   unfold callFFIHOL
   rw [if_neg hne, h]
 
+/-! A single successful exact FFI call cannot discard an earlier observable
+    trace.  This is the local transition lemma used when lifting HOL
+    `evaluate_io_events_mono` (`cakeml/pancake/semantics/panPropsScript.sml:856`)
+    to the exact recursive Pancake evaluator.  It is proved directly from
+    `callFFIHOL_def`; no external FFI-extension assumption is needed. -/
+theorem callFFIHOL_return_ioEvents_prefix {σ : Type u} (state : HolFfiState σ)
+    (name : HolFfiName) (configuration bytes : List (BitVec 8))
+    (nextState : HolFfiState σ) (nextBytes : List (BitVec 8))
+    (hresult : callFFIHOL state name configuration bytes =
+      .ret nextState nextBytes) :
+    state.ioEvents <+: nextState.ioEvents := by
+  by_cases hname : name = .extCall (Flapjack.Basis.Pure.MlString.MlString.implode [])
+  · subst hname
+    simp [callFFIHOL] at hresult
+    simp_all
+  · rw [callFFIHOL] at hresult
+    simp only [hname, ↓reduceIte] at hresult
+    split at hresult
+    · split at hresult
+      · cases hresult
+        exact List.prefix_append _ _
+      · cases hresult
+    · cases hresult
+
+/-! The same monotonicity statement in the result's sum form.  The `final`
+    branch keeps the current FFI state, while a successful return uses the
+    append performed by `callFFIHOL_return_ioEvents_prefix`.  This form is used
+    at the exact evaluator's shared-memory and external-call leaves, where the
+    result constructor is exposed directly. -/
+theorem callFFIHOL_result_ioEvents_prefix {σ : Type u} (state : HolFfiState σ)
+    (name : HolFfiName) (configuration bytes : List (BitVec 8))
+    (result : HolFfiResult σ)
+    (hresult : callFFIHOL state name configuration bytes = result) :
+    state.ioEvents <+:
+      match result with
+      | .ret nextFfi _ => nextFfi.ioEvents
+      | .final _ => state.ioEvents := by
+  cases result with
+  | ret nextFfi nextBytes =>
+      exact callFFIHOL_return_ioEvents_prefix state name configuration bytes
+        nextFfi nextBytes hresult
+  | final event =>
+      exact List.prefix_refl _
+
 end Flapjack

@@ -142,6 +142,7 @@ import Flapjack.CrepeCompileExpVariables
 import Flapjack.CompileParamVarsBounds
 import Flapjack.CrepeContextBounds
 import Flapjack.Pancake.PanToCrep.Compile
+import Flapjack.Pancake.PanToCrep.CompileExact
 import Flapjack.Pancake.PanToCrep.ExpHdlExact
 import Flapjack.Pancake.PanToCrep.MakeVmapHOL
 import Flapjack.Pancake.PanToCrep.ContextExact
@@ -156,6 +157,7 @@ import Flapjack.CrepeGlobalAddress
 import Flapjack.Pancake.Semantics.CrepSem
 import Flapjack.Pancake.Semantics.CrepSem.LookupCode
 import Flapjack.Pancake.Semantics.CrepSem.StateExact
+import Flapjack.Pancake.Semantics.CrepSem.ExecutedWordLabBridge
 import Flapjack.PanToCrepCorrectnessBoundary
 import Flapjack.PanToCrepExceptionRelation
 import Flapjack.PanToCrepMaxList

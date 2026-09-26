@@ -524,7 +524,10 @@ decreasing_by
 reviewed HOL-shaped `shapeValHOL` at a valid one-bit word width, then transport
 its canonical zero/record output to the parser's generic word carrier. Shape
 names are discarded by HOL `shape_val` itself; `shapeToHOL`'s byte encoding
-therefore cannot affect this result. -/
+therefore cannot affect this result. Width one is safe here because
+`shapeValHOL` constructs only zero constants and records of those constants;
+the adapter discards the one-bit word and calls `ofInt 0` for the caller's
+carrier. No arithmetic or width-sensitive observation crosses this boundary. -/
 def shapeValViaHOL {α : Type} (ofInt : Int → α) (shape : Flapjack.Shape) :
     Flapjack.Exp α :=
   decodeShapeValHOL ofInt
@@ -547,11 +550,10 @@ also generates the size functions used by `Theorem MEM_IMP_exp_size`
 (lines 198-208).  As with `shape_size`, they are produced by HOL's `Datatype`
 package (`HOL/src/datatype/DataSize.sml`), not written as source declarations, so
 they have no textual HOL name for `scripts/check-hol-refs.py` to resolve and
-cannot carry an `@[hol]` tag.  The equations, printed from a standard-HOL
-reconstruction of the identical datatype (same constructor arities and field
-types; `w2n` is the registered size of `'a word`, `num`'s size is the identity,
-and each operator type `varkind`/`binop`/`panop`/`cmp`/`shift` is a nullary
-datatype whose size is the constant `0`), are pinned in
+cannot carry an `@[hol]` tag.  The equations, printed from the real CakeML
+`panLangTheory` by `scripts/hol-probes/pan_lang_size_probeScript.sml` (which
+imports the compiled theory from the matching source commit instead of
+reconstructing the datatype) and pinned in
 `scripts/hol-probes/pan_lang_size_probe.out`:
 
 ```
