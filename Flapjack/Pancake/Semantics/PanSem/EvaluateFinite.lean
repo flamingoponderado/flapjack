@@ -24,9 +24,13 @@ as the source evidence for the `evaluate_def` port.  Exposed so far:
 `Call` / `DecCall` argument-list and code-lookup short circuits plus the
 clock-exhaustion (`TimeOut`, empty locals) branches, and the
 `Return` / `Raise` / `ShMemLoad` / `ShMemStore` clauses.  The `Call` / `DecCall`
-returned and exception outcome branches are still being added; the exact
-`@[hol ... "evaluate_def" ...]` tag stays withheld until every clause is exposed
-and reviewed (`flapjack-qj5` is blocked on `flapjack-6yq`).
+returned and exception outcome branches are exposed by the projection theorems
+`evalPanSemRecursiveCallFiniteContext_call_projection` and
+`..._decCall_projection`, which relate the finite context evaluator to the broad
+exact one over `toExact`.  The exact
+`@[hol ... "evaluate_def" ...]` tag stays withheld until the general
+`fun_induction` projection equivalence over every constructor is proved and
+reviewed (`flapjack-qj5` is blocked on `flapjack-6yq`).
 
 The older delegating adapter `evaluateHOLFiniteViaExact` (and its
 `evalPanSemRecursiveCallHOLFinite_of_broad` / `evaluateHOLFiniteViaExact_of_broad`
@@ -1134,6 +1138,130 @@ theorem evalPanSemRecursiveCallFiniteContext_call_projection {width : Nat} {σ :
                               isValidValueHOLExact context.toExact.state VarKind.local handlerVar value) = true) := hcond
                             simp only [if_neg hcond, if_neg hcond']; callProjectionCloser
                       · simp only [if_neg heq]; callProjectionCloser
+                | finalFfi e => callProjectionCloser
+
+set_option maxHeartbeats 1000000 in
+theorem evalPanSemRecursiveCallFiniteContext_decCall_projection {width : Nat} {σ : Type} [NeZero width]
+    (resultName : MlS) (shape : ShapeHOL) (function : MlS) (arguments : List (ExpHOL width))
+    (continuation : ProgHOL width) (context : FiniteEvalContext width σ)
+    (ihBody : ∀ (prog : ProgHOL width) (fc : FiniteEvalContext width σ)
+        (o : Option (Option (PanSemResultExact width) × FiniteEvalContext width σ)),
+        evalPanSemRecursiveCallFiniteContext prog fc = o →
+        evalPanSemRecursiveCallContextHOLExact prog fc.toExact =
+          Option.map (fun p => (p.1, p.2.toExact)) o)
+    (ihContinuation : ∀ (prog : ProgHOL width) (fc : FiniteEvalContext width σ)
+        (o : Option (Option (PanSemResultExact width) × FiniteEvalContext width σ)),
+        evalPanSemRecursiveCallFiniteContext prog fc = o →
+        evalPanSemRecursiveCallContextHOLExact prog fc.toExact =
+          Option.map (fun p => (p.1, p.2.toExact)) o) :
+    Option.map (fun p => (p.1, p.2.toExact))
+        (evalPanSemRecursiveCallFiniteContext
+          (.decCall resultName shape function arguments continuation) context) =
+      evalPanSemRecursiveCallContextHOLExact
+        (.decCall resultName shape function arguments continuation) context.toExact := by
+  rw [evalPanSemRecursiveCallFiniteContext.eq_6, evalPanSemRecursiveCallContextHOLExact.eq_6]
+  rw [evalListHOLFinite_eq_toExact context.state (h := context.memaddrsDecidable) arguments]
+  rw [evalListHOLExact_toExact_eq context arguments]
+  generalize hargs : @Flapjack.evalListHOLExact width σ _ context.state.toExact
+      context.memaddrsDecidable arguments = result
+  cases result with
+  | none => rfl
+  | some values =>
+      simp only []
+      rw [show (FiniteEvalContext.toExact context).state.code = context.state.code.lookup from rfl]
+      split
+      · rename_i hnone
+        rw [(lookupCodeHOLFinite_eq_none_iff (code := context.state.code.lookup)
+          (fname := function) (values := values)).mp hnone]
+        rfl
+      · rename_i body callee returnShape hsome
+        rw [lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee
+          returnShape hsome]
+        simp only []
+        by_cases hclock : context.state.clock = 0
+        · have hclock' : context.toExact.state.clock = 0 := hclock
+          rw [if_pos hclock, if_pos hclock']
+          simp only [Option.map_some, Option.some.injEq]
+          have hb : (context.withState (emptyLocalsHOLFinite context.state) rfl rfl).toExact =
+              context.toExact.withState (emptyLocalsHOLExact context.state.toExact) rfl rfl := by
+            apply PanSemExactEvalContext.ext
+            change emptyLocalsHOLExact context.state.toExact =
+              (emptyLocalsHOLFinite context.state).toExact
+            rw [toExact_emptyLocalsHOLFinite]
+          rw [hb]
+          rfl
+        · have hclock' : ¬(context.toExact.state.clock = 0) := hclock
+          rw [if_neg hclock, if_neg hclock']
+          generalize hent : context.withState
+            (callEntryStateHOLFinite context.state callee) rfl rfl = ent
+          generalize hentb : context.toExact.withState
+            (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
+          have hentb_eq : entb = ent.toExact := by
+            rw [← hentb, ← hent]
+            apply PanSemExactEvalContext.ext
+            change (callEntryStateHOLFinite context.state callee).toExact =
+              Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup
+            rw [toExact_callEntryStateHOLFinite]
+            rfl
+          rw [hentb_eq]
+          cases hbody : evalPanSemRecursiveCallFiniteContext body ent with
+          | none => rw [ihBody body ent none hbody]; simp only [Option.map_none]
+          | some pair =>
+              obtain ⟨bodyResult, bodyContext⟩ := pair
+              rw [ihBody body ent (some (bodyResult, bodyContext)) hbody]
+              simp only [Option.map_some]
+              cases bodyResult with
+              | none => callProjectionCloser
+              | some r =>
+                cases r with
+                | «error» => callProjectionCloser
+                | «timeOut» => callProjectionCloser
+                | «break» => callProjectionCloser
+                | «continue» => callProjectionCloser
+                | returned value =>
+                  simp only []
+                  by_cases hshape : (shapeEqHOL (shapeOfHOLExact value) shape &&
+                      shapeEqHOL (shapeOfHOLExact value) returnShape) = true
+                  · simp only [if_pos hshape]
+                    rw [← toExact_callContinuationContextHOLFinite context
+                      (callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)
+                        (some (PanSemResultExact.returned value)) bodyContext)
+                      (Flapjack.callFixedContextHOLExact
+                        (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup)
+                        (some (PanSemResultExact.returned value)) bodyContext.toExact)
+                      (toExact_callFixedContextHOLFinite
+                        (callEntryStateHOLFinite context.state callee)
+                        (some (PanSemResultExact.returned value)) bodyContext)
+                      resultName value]
+                    cases hcont : evalPanSemRecursiveCallFiniteContext continuation
+                        (callContinuationContextHOLFinite context
+                          (callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)
+                            (some (PanSemResultExact.returned value)) bodyContext)
+                          resultName value) with
+                    | none =>
+                        rw [ihContinuation continuation _ none hcont]
+                        simp only [Option.map_none]
+                    | some cpair =>
+                        obtain ⟨continuationResult, continuationPost⟩ := cpair
+                        rw [ihContinuation continuation _
+                          (some (continuationResult, continuationPost)) hcont]
+                        simp only [Option.map_some, Option.some.injEq, Prod.mk.injEq]
+                        refine ⟨trivial, ?_⟩
+                        apply PanSemExactEvalContext.ext
+                        simp only [FiniteEvalContext.toExact,
+                          PanSemExactEvalContext.withState_state]
+                        change ({ continuationPost.state with
+                            locals := HolFiniteMapExact.resVarEq
+                              continuationPost.state.locals
+                              (resultName, context.state.locals.lookup resultName) } :
+                            PanSemStateFiniteExact width σ).toExact =
+                          { continuationPost.toExact.state with
+                            locals := resVarHOLExact continuationPost.toExact.state.locals
+                              (resultName, context.toExact.state.locals resultName) }
+                        rw [toExact_resVarEq_locals]
+                        congr 1
+                  · simp only [if_neg hshape]; callProjectionCloser
+                | exception eid value => callProjectionCloser
                 | finalFfi e => callProjectionCloser
 
 end PanSemStateFiniteExact

@@ -12356,5 +12356,29 @@
     "lean_name": "asmInstOkExact",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.6.1.2): exact positive-width port of HOL asmScript.sml:286-299 over the exact HolInst/HolArith/HolFp/HolRegImm carriers and exact AsmConfigExact; the mem case reads the exact offset_ok-based addr/hw/byte offset helpers. The production asmInstOk remains the untagged width-general executed form with generic WordLangInst/AsmConfig carriers."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmScript.sml",
+    "hol_name": "asm_ok_def",
+    "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
+    "lean_name": "asmOkExact",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.6.1.2): exact positive-width port of HOL asm_ok_def over the exact HolAsm carrier and the exact AsmConfigExact; jump/cjump/loc offset overloads built on the exact asmOffsetOkExact, instruction payload via exact asmInstOkExact, cmp_ok via exact asmCmpOkExact over HolRegImm; the production asmOk uses the generic AsmData/AsmConfig carriers and is documented_mismatch."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "addr_ok_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackProps.lean",
+    "lean_name": "asmAddrOkExact",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.6.1.2): exact clause-for-clause port of HOL addr_ok_def (stackPropsScript.sml:801-810) over the exact asm carriers HolMemop/HolAddr and the exact AsmConfigExact, using the exact offset helpers asmAddrOffsetOkExact/asmHwOffsetOkExact/asmByteOffsetOkExact. The width-general production asmAddrOk remains documented_mismatch."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+    "hol_name": "inst_ok_less_def",
+    "lean_path": "Flapjack/Pancake/WordConvs.lean",
+    "lean_name": "instOkLessExact",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.6.1.2): exact clause-for-clause port of HOL wordConvs$inst_ok_less_def (wordConvsScript.sml:208-264) over the exact positive-dimension AsmConfigExact/HolInst carriers (HOL 'a asm_config/'a inst) with an explicit [NeZero width] binder, matching HOL's config-first argument order. All arith/mem/fp clauses, the unreachable Load16/Store16 hw_offset case, dimindex(:'a)=32 guards as width==32, ISA membership as disjunctions, and the catch-all are transcribed exactly."
   }
 ]
