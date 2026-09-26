@@ -2594,6 +2594,30 @@
     "hol_path": "cakeml/pancake/pan_globalsScript.sml",
     "hol_name": "resort_decls_def",
     "lean_path": "Flapjack/Pancake/PanGlobals.lean",
+    "lean_name": "resortDeclsHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 (source comparison, bead flapjack-pxn.18.3.5.8.21) HOL resort_decls_def (pan_globalsScript.sml:179): resort_decls decs = FILTER is_name decs ++ FILTER is_exn_decl decs ++ FILTER is_decl decs ++ FILTER is_function decs. The exact Lean port resortDeclsHOL runs over the reviewed word-indexed List (DeclHOL width) carrier, applies the tagged isNameHOL/isExnDeclHOL/isDeclHOL/isFunctionHOL predicates to the same argument, and concatenates the four filters left-to-right in exactly HOL order. No qualifier applies."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_globalsScript.sml",
+    "hol_name": "new_main_name_def",
+    "lean_path": "Flapjack/Pancake/PanGlobals.lean",
+    "lean_name": "newMainNameHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 (source comparison, bead flapjack-pxn.18.3.5.8.21) HOL new_main_name_def (pan_globalsScript.sml:224): new_main_name decls = fresh_name main (MAP FST (functions decls)). The exact Lean port newMainNameHOL runs over List (DeclHOL width), takes the first components of the tagged functionsHOL (functions_def, mlstring-keyed) in source order, and calls the reviewed freshNameHOL (fresh_name_def) on the seed main. HOL fresh_name is over mlstring; the port applies freshNameHOL through the total byte codec toStringOfBytes/ofString (ofString_toStringOfBytes is unconditional), which is the identity on MlS and preserves the membership test (toStringOfBytes is injective). The result is the exact MlS carrier. No qualifier applies."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_globalsScript.sml",
+    "hol_name": "dec_shapes_def",
+    "lean_path": "Flapjack/Pancake/PanGlobals.lean",
+    "lean_name": "decShapesHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 (source comparison, bead flapjack-pxn.18.3.5.8.21) HOL dec_shapes_def (pan_globalsScript.sml:228-234) is the five-clause projection Function _::ds |-> dec_shapes ds, Decl sh _ _::ds |-> sh::dec_shapes ds, Name _ _::ds |-> dec_shapes ds, ExnDecl _ _::ds |-> dec_shapes ds, [] |-> []. The exact Lean port decShapesHOL over the reviewed word-indexed List (DeclHOL width) matches the clause order and shape selection exactly and returns List ShapeHOL. No qualifier applies."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_globalsScript.sml",
+    "hol_name": "resort_decls_def",
+    "lean_path": "Flapjack/Pancake/PanGlobals.lean",
     "lean_name": "globalResortDecls",
     "statement_status": "documented_mismatch",
     "reviewer": "flapjack-ds4 (source comparison, bead flapjack-dlc.16) against pan_globalsScript.sml:179: the filter order FILTER is_name ++ FILTER is_exn_decl ++ FILTER is_decl ++ FILTER is_function matches globalResortDecls, and globalDeclIsName/globalDeclIsException/globalDeclIsGlobal/globalDeclIsFunction are the HOL predicates. The mismatch is the executed Decl α carrier, which is not DeclHOL width: production Exp α stores α in Const, HOL ExpHOL width stores BitVec width ('a word), and names/Shape use String instead of mlstring. names_as_string only accounts for the name difference, so the tag remains withdrawn pending the exact-carrier transformation flapjack-6nn.3.1 / flapjack-pxn.18.3.5.8. Direct HOL rows mixed / stable_groups / empty are in pan_globals_resort_decls_probe.out and sampled by Flapjack/Test/PanGlobalsResortDeclsParity.lean."
