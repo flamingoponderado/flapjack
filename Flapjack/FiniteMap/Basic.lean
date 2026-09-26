@@ -199,6 +199,28 @@ theorem FLOOKUP_FUPDATE_LIST_zip_not_mem [BEq α] [LawfulBEq α]
   rw [List.map_fst_zip (by omega)]
   exact h
 
+/-- Adjudication of the open-statement HOL declaration
+`cakeml/pancake/semantics/pan_commonPropsScript.sml:302`
+`map_flookup_fupdate_zip_not_mem` (bead flapjack-pxn.18.5.5.29).
+
+HOL stores that theorem as
+`Theorem map_flookup_fupdate_zip_not_mem:
+   !xs ys f n. distinct_lists xs ys /\ LENGTH xs = LENGTH zs ==>
+     MAP (FLOOKUP (f |++ ZIP (xs,zs))) ys = MAP (FLOOKUP f) ys`,
+whose binder list quantifies `n` while the body reads `zs`, leaving `zs` free
+and `n` unused (`Term.free_varsl` reports `zs`; the `n` binder is dead).  As
+stored it is therefore an open statement, not a closed theorem, so this Lean
+lemma is deliberately left untagged: a `@[hol]` tag would cite a HOL
+declaration whose quantified-variable list does not match the Lean statement.
+
+The intended declaration is almost certainly the closed form
+`!xs ys f zs. distinct_lists xs ys /\ LENGTH xs = LENGTH zs ==>
+   MAP (FLOOKUP (f |++ ZIP (xs,zs))) ys = MAP (FLOOKUP f) ys`
+(replacing the typo'd dead binder `n` by `zs`), which is exactly this Lean
+statement.  Landing an exact tag requires repairing the HOL source (the CakeML
+submodule is read-only here) or a coordinator-accepted policy for tagging a
+repaired open HOL statement; until then this lemma stays Flapjack-only
+infrastructure. -/
 theorem map_FLOOKUP_FUPDATE_LIST_zip_not_mem [BEq α] [LawfulBEq α]
     (xs : List α) (ys : List α) (zs : List β) (f : FiniteMap α β)
     (hdisj : ListDisjoint xs ys) (hlen : xs.length = zs.length) :

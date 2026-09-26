@@ -752,7 +752,7 @@ theorem evalPanSemRecursiveCallContextHOLExact_call_finiteSupport
                     (bodyResult, bodyContext) hbody
                 have hfixed : (fixClockHOLExact (callEntryStateHOLExact context.state calleeLocals) (bodyResult, bodyContext.state)).2.FiniteSupport :=
                   PanSemStateExact.finiteSupport_fixClock _ _ hbodyfs
-                let fixedCtx : PanSemExactEvalContext width σ := bodyContext.withState (fixClockHOLExact (callEntryStateHOLExact context.state calleeLocals) (bodyResult, bodyContext.state)).snd rfl rfl
+                let fixedCtx : PanSemExactEvalContext width σ := callFixedContextHOLExact (callEntryStateHOLExact context.state calleeLocals) bodyResult bodyContext
                 have hfixedCtx : fixedCtx.state.FiniteSupport := hfixed
                 cases bodyResult with
                 | none =>
@@ -847,10 +847,10 @@ theorem evalPanSemRecursiveCallContextHOLExact_call_finiteSupport
                                       simp only [heshapes] at hres
                                       by_cases hcond : (shapeEqHOL (shapeOfHOLExact value) shape && isValidValueHOLExact context.state .local handlerVar value) = true
                                       · rw [if_pos hcond] at hres
-                                        have hhandler : (fixedCtx.withState (setVarHOLExact handlerVar value ({ fixedCtx.state with locals := context.state.locals } : PanSemStateExact width σ)) rfl rfl).state.FiniteSupport := by
+                                        have hhandler : (fixedCtx.withState (handlerStateHOLExact context fixedCtx handlerVar value) rfl rfl).state.FiniteSupport := by
                                           change (setVarHOLExact handlerVar value ({ fixedCtx.state with locals := context.state.locals } : PanSemStateExact width σ)).FiniteSupport
                                           exact PanSemStateExact.finiteSupport_setVar (PanSemStateExact.finiteSupport_setLocals fixedCtx.state context.state.locals h.1 hfixedCtx) handlerVar value
-                                        exact ihHandler handlerProgram (fixedCtx.withState (setVarHOLExact handlerVar value ({ fixedCtx.state with locals := context.state.locals } : PanSemStateExact width σ)) rfl rfl) hhandler result hres
+                                        exact ihHandler handlerProgram (fixedCtx.withState (handlerStateHOLExact context fixedCtx handlerVar value) rfl rfl) hhandler result hres
                                       · rw [if_neg hcond] at hres
                                         simp only [Option.some.injEq] at hres
                                         rw [← hres]
@@ -926,7 +926,7 @@ theorem evalPanSemRecursiveCallContextHOLExact_decCall_finiteSupport
                     (bodyResult, bodyContext) hbody
                 have hfixed : (fixClockHOLExact (callEntryStateHOLExact context.state calleeLocals) (bodyResult, bodyContext.state)).2.FiniteSupport :=
                   PanSemStateExact.finiteSupport_fixClock _ _ hbodyfs
-                let fixedCtx : PanSemExactEvalContext width σ := bodyContext.withState (fixClockHOLExact (callEntryStateHOLExact context.state calleeLocals) (bodyResult, bodyContext.state)).snd rfl rfl
+                let fixedCtx : PanSemExactEvalContext width σ := callFixedContextHOLExact (callEntryStateHOLExact context.state calleeLocals) bodyResult bodyContext
                 have hfixedCtx : fixedCtx.state.FiniteSupport := hfixed
                 cases bodyResult with
                 | none =>
@@ -960,13 +960,13 @@ theorem evalPanSemRecursiveCallContextHOLExact_decCall_finiteSupport
                         by_cases hcond : (shapeEqHOL (shapeOfHOLExact value) shape && shapeEqHOL (shapeOfHOLExact value) returnShape) = true
                         · rw [if_pos hcond] at hres
                           cases hcont : evalPanSemRecursiveCallContextHOLExact continuation
-                              ((bodyContext.withState (fixClockHOLExact (callEntryStateHOLExact context.state calleeLocals) (some (PanSemResultExact.returned value), bodyContext.state)).snd rfl rfl).withState (setVarHOLExact resultName value ({ (bodyContext.withState (fixClockHOLExact (callEntryStateHOLExact context.state calleeLocals) (some (PanSemResultExact.returned value), bodyContext.state)).snd rfl rfl).state with locals := context.state.locals } : PanSemStateExact width σ)) rfl rfl) with
+                              (callContinuationContextHOLExact context (callFixedContextHOLExact (callEntryStateHOLExact context.state calleeLocals) (some (PanSemResultExact.returned value)) bodyContext) resultName value) with
                           | none => try (simp only [hcont] at hres); cases hres
                           | some cpair =>
                               obtain ⟨continuationResult, continuationPost⟩ := cpair
                               try (simp only [hcont] at hres)
-                              have hcontEntry : ((bodyContext.withState (fixClockHOLExact (callEntryStateHOLExact context.state calleeLocals) (some (PanSemResultExact.returned value), bodyContext.state)).snd rfl rfl).withState (setVarHOLExact resultName value ({ (bodyContext.withState (fixClockHOLExact (callEntryStateHOLExact context.state calleeLocals) (some (PanSemResultExact.returned value), bodyContext.state)).snd rfl rfl).state with locals := context.state.locals } : PanSemStateExact width σ)) rfl rfl).state.FiniteSupport := by
-                                change (setVarHOLExact resultName value ({ (bodyContext.withState (fixClockHOLExact (callEntryStateHOLExact context.state calleeLocals) (some (PanSemResultExact.returned value), bodyContext.state)).snd rfl rfl).state with locals := context.state.locals } : PanSemStateExact width σ)).FiniteSupport
+                              have hcontEntry : (callContinuationContextHOLExact context (callFixedContextHOLExact (callEntryStateHOLExact context.state calleeLocals) (some (PanSemResultExact.returned value)) bodyContext) resultName value).state.FiniteSupport := by
+                                change (handlerStateHOLExact context (callFixedContextHOLExact (callEntryStateHOLExact context.state calleeLocals) (some (PanSemResultExact.returned value)) bodyContext) resultName value).FiniteSupport
                                 exact PanSemStateExact.finiteSupport_setVar (PanSemStateExact.finiteSupport_setLocals fixedCtx.state context.state.locals h.1 hfixedCtx) resultName value
                               have hcontF : continuationPost.state.FiniteSupport :=
                                 ihContinuation _ hcontEntry (continuationResult, continuationPost) hcont
@@ -1122,7 +1122,7 @@ theorem evalPanSemRecursiveCallContextHOLExact_finiteSupport {width : Nat} {σ :
         (ih1 hentry (result, postContext) hbody)
   case case23 =>
       rename_i inst context state info function arguments values hargs body calleeLocals returnShape
-        hlookup hclock entry entryContext postContext hbody fixed fixedContext ih1
+        hlookup hclock entry entryContext postContext hbody fixedContext ih1
       intro result hres
       simp only [Option.some.injEq] at hres
       cases hres
@@ -1133,7 +1133,7 @@ theorem evalPanSemRecursiveCallContextHOLExact_finiteSupport {width : Nat} {σ :
         (ih1 hentry (none, postContext) hbody)
   case case24 =>
       rename_i inst context state info function arguments values hargs body calleeLocals returnShape
-        hlookup hclock entry entryContext postContext hbody fixed fixedContext ih1
+        hlookup hclock entry entryContext postContext hbody fixedContext ih1
       intro result hres
       simp only [Option.some.injEq] at hres
       cases hres
@@ -1144,7 +1144,7 @@ theorem evalPanSemRecursiveCallContextHOLExact_finiteSupport {width : Nat} {σ :
         (ih1 hentry (some PanSemResultExact.break, postContext) hbody)
   case case25 =>
       rename_i inst context state info function arguments values hargs body calleeLocals returnShape
-        hlookup hclock entry entryContext postContext hbody fixed fixedContext ih1
+        hlookup hclock entry entryContext postContext hbody fixedContext ih1
       intro result hres
       simp only [Option.some.injEq] at hres
       cases hres
@@ -1155,7 +1155,7 @@ theorem evalPanSemRecursiveCallContextHOLExact_finiteSupport {width : Nat} {σ :
         (ih1 hentry (some PanSemResultExact.continue, postContext) hbody)
   case case26 =>
       rename_i inst context state function arguments values hargs body calleeLocals returnShape
-        hlookup hclock entry entryContext postContext value hshape hbody fixed fixedContext ih1
+        hlookup hclock entry entryContext postContext value hshape hbody fixedContext ih1
       intro result hres
       simp only [Option.some.injEq] at hres
       cases hres
@@ -1169,7 +1169,7 @@ theorem evalPanSemRecursiveCallContextHOLExact_finiteSupport {width : Nat} {σ :
       exact PanSemStateExact.finiteSupport_emptyLocals hfixed
   case case27 =>
       rename_i inst context state function arguments values hargs body calleeLocals returnShape
-        hlookup hclock entry entryContext postContext value hshape snd hbody fixed fixedContext ih1
+        hlookup hclock entry entryContext postContext value hshape snd hbody fixedContext ih1
       intro result hres
       simp only [Option.some.injEq] at hres
       cases hres
@@ -1183,8 +1183,7 @@ theorem evalPanSemRecursiveCallContextHOLExact_finiteSupport {width : Nat} {σ :
       exact PanSemStateExact.finiteSupport_setLocals fixedContext.state state.locals h.1 hfixed
   case case28 =>
       rename_i inst context state function arguments values hargs body calleeLocals returnShape
-        hlookup hclock entry entryContext postContext value hshape kind name snd hvalid hbody fixed
-        fixedContext ih1
+        hlookup hclock entry entryContext postContext value hshape kind name snd hvalid hbody fixedContext ih1
       intro result hres
       simp only [Option.some.injEq] at hres
       cases hres
@@ -1200,8 +1199,7 @@ theorem evalPanSemRecursiveCallContextHOLExact_finiteSupport {width : Nat} {σ :
         (PanSemStateExact.finiteSupport_setLocals fixedContext.state state.locals h.1 hfixed) kind name value
   case case29 =>
       rename_i inst context state function arguments values hargs body calleeLocals returnShape
-        hlookup hclock entry entryContext postContext value hshape kind name snd hvalid hbody fixed
-        fixedContext ih1
+        hlookup hclock entry entryContext postContext value hshape kind name snd hvalid hbody fixedContext ih1
       intro result hres
       simp only [Option.some.injEq] at hres
       cases hres
@@ -1213,7 +1211,7 @@ theorem evalPanSemRecursiveCallContextHOLExact_finiteSupport {width : Nat} {σ :
         (ih1 hentry (some (PanSemResultExact.returned value), postContext) hbody)
   case case30 =>
       rename_i inst context state info function arguments values hargs body calleeLocals returnShape
-        hlookup hclock entry entryContext postContext value hshape hbody fixed fixedContext ih1
+        hlookup hclock entry entryContext postContext value hshape hbody fixedContext ih1
       intro result hres
       simp only [Option.some.injEq] at hres
       cases hres
@@ -1225,7 +1223,7 @@ theorem evalPanSemRecursiveCallContextHOLExact_finiteSupport {width : Nat} {σ :
         (ih1 hentry (some (PanSemResultExact.returned value), postContext) hbody)
   case case31 =>
       rename_i inst context state function arguments values hargs body calleeLocals returnShape
-        hlookup hclock entry entryContext postContext exceptionId value hbody fixed fixedContext ih1
+        hlookup hclock entry entryContext postContext exceptionId value hbody fixedContext ih1
       intro result hres
       simp only [Option.some.injEq] at hres
       cases hres
@@ -1239,7 +1237,7 @@ theorem evalPanSemRecursiveCallContextHOLExact_finiteSupport {width : Nat} {σ :
       exact PanSemStateExact.finiteSupport_emptyLocals hfixed
   case case32 =>
       rename_i inst context state function arguments values hargs body calleeLocals returnShape
-        hlookup hclock entry entryContext postContext exceptionId value fst hbody fixed fixedContext ih1
+        hlookup hclock entry entryContext postContext exceptionId value fst hbody fixedContext ih1
       intro result hres
       simp only [Option.some.injEq] at hres
       cases hres
@@ -1254,7 +1252,7 @@ theorem evalPanSemRecursiveCallContextHOLExact_finiteSupport {width : Nat} {σ :
   case case33 =>
       rename_i inst context state function arguments values hargs body calleeLocals returnShape
         hlookup hclock entry entryContext postContext value fst handlerId handlerVar handlerProgram shape
-        hcond heshapes hbody fixed fixedContext handlerState handlerContext ih2 ih1
+        hcond heshapes hbody fixedContext handlerState handlerContext ih2 ih1
       intro result hres
       have hentry : entryContext.state.FiniteSupport := by
         change ({ state with clock := state.clock - 1, locals := calleeLocals } : PanSemStateExact width σ).FiniteSupport
@@ -1272,7 +1270,7 @@ theorem evalPanSemRecursiveCallContextHOLExact_finiteSupport {width : Nat} {σ :
   case case34 =>
       rename_i inst context state function arguments values hargs body calleeLocals returnShape
         hlookup hclock entry entryContext postContext value fst handlerId handlerVar handlerProgram shape
-        hcond heshapes hbody fixed fixedContext ih1
+        hcond heshapes hbody fixedContext ih1
       intro result hres
       simp only [Option.some.injEq] at hres
       cases hres
@@ -1285,7 +1283,7 @@ theorem evalPanSemRecursiveCallContextHOLExact_finiteSupport {width : Nat} {σ :
   case case35 =>
       rename_i inst context state function arguments values hargs body calleeLocals returnShape
         hlookup hclock entry entryContext postContext value fst handlerId handlerVar handlerProgram
-        heshapes hbody fixed fixedContext ih1
+        heshapes hbody fixedContext ih1
       intro result hres
       simp only [Option.some.injEq] at hres
       cases hres
@@ -1298,7 +1296,7 @@ theorem evalPanSemRecursiveCallContextHOLExact_finiteSupport {width : Nat} {σ :
   case case36 =>
       rename_i inst context state function arguments values hargs body calleeLocals returnShape
         hlookup hclock entry entryContext postContext exceptionId value fst handlerId handlerVar
-        handlerProgram hne hbody fixed fixedContext ih1
+        handlerProgram hne hbody fixedContext ih1
       intro result hres
       simp only [Option.some.injEq] at hres
       cases hres
@@ -1312,8 +1310,7 @@ theorem evalPanSemRecursiveCallContextHOLExact_finiteSupport {width : Nat} {σ :
       exact PanSemStateExact.finiteSupport_emptyLocals hfixed
   case case37 =>
       rename_i inst context state info function arguments values hargs body calleeLocals returnShape
-        hlookup hclock entry entryContext postContext other hbreak hcont hret hexc hbody fixed
-        fixedContext ih1
+        hlookup hclock entry entryContext postContext other hbreak hcont hret hexc hbody fixedContext ih1
       intro result hres
       simp only [Option.some.injEq] at hres
       cases hres
@@ -1326,7 +1323,7 @@ theorem evalPanSemRecursiveCallContextHOLExact_finiteSupport {width : Nat} {σ :
       exact PanSemStateExact.finiteSupport_emptyLocals hfixed
   case case42 =>
       rename_i inst context state resultName shape function arguments continuation values hargs body
-        calleeLocals returnShape hlookup hclock entry entryContext postContext hbody fixed fixedContext ih1
+        calleeLocals returnShape hlookup hclock entry entryContext postContext hbody fixedContext ih1
       intro result hres
       simp only [Option.some.injEq] at hres
       cases hres
@@ -1337,7 +1334,7 @@ theorem evalPanSemRecursiveCallContextHOLExact_finiteSupport {width : Nat} {σ :
         (ih1 hentry (none, postContext) hbody)
   case case43 =>
       rename_i inst context state resultName shape function arguments continuation values hargs body
-        calleeLocals returnShape hlookup hclock entry entryContext postContext hbody fixed fixedContext ih1
+        calleeLocals returnShape hlookup hclock entry entryContext postContext hbody fixedContext ih1
       intro result hres
       simp only [Option.some.injEq] at hres
       cases hres
@@ -1348,7 +1345,7 @@ theorem evalPanSemRecursiveCallContextHOLExact_finiteSupport {width : Nat} {σ :
         (ih1 hentry (some PanSemResultExact.break, postContext) hbody)
   case case44 =>
       rename_i inst context state resultName shape function arguments continuation values hargs body
-        calleeLocals returnShape hlookup hclock entry entryContext postContext hbody fixed fixedContext ih1
+        calleeLocals returnShape hlookup hclock entry entryContext postContext hbody fixedContext ih1
       intro result hres
       simp only [Option.some.injEq] at hres
       cases hres
@@ -1360,7 +1357,7 @@ theorem evalPanSemRecursiveCallContextHOLExact_finiteSupport {width : Nat} {σ :
   case case46 =>
       rename_i inst context state resultName shape function arguments continuation values hargs body
         calleeLocals returnShape hlookup hclock entry entryContext postContext1 value hcond result postContext
-        restored hbody fixed fixedContext continuationState continuationContext hcont ih2 ih1
+        restored hbody fixedContext continuationContext hcont ih2 ih1
       intro r hres
       simp only [Option.some.injEq] at hres
       cases hres
@@ -1382,8 +1379,7 @@ theorem evalPanSemRecursiveCallContextHOLExact_finiteSupport {width : Nat} {σ :
         (resultName, state.locals resultName) hcontF.1, hcontF.2.1, hcontF.2.2.1, hcontF.2.2.2⟩
   case case47 =>
       rename_i inst context state resultName shape function arguments continuation values hargs body
-        calleeLocals returnShape hlookup hclock entry entryContext postContext value hshape hbody fixed
-        fixedContext ih1
+        calleeLocals returnShape hlookup hclock entry entryContext postContext value hshape hbody fixedContext ih1
       intro result hres
       simp only [Option.some.injEq] at hres
       cases hres
@@ -1396,7 +1392,7 @@ theorem evalPanSemRecursiveCallContextHOLExact_finiteSupport {width : Nat} {σ :
   case case48 =>
       rename_i inst context state resultName shape function arguments continuation values hargs body
         calleeLocals returnShape hlookup hclock entry entryContext postContext other hbreak hcont hret hbody
-        fixed fixedContext ih1
+        fixedContext ih1
       intro result hres
       simp only [Option.some.injEq] at hres
       cases hres
