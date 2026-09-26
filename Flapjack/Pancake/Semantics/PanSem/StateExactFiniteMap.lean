@@ -928,6 +928,45 @@ theorem toExact_withState_eq {width : Nat} {σ : Type} [NeZero width]
   apply PanSemExactEvalContext.ext
   exact hstate
 
+/-- FLAPJACK-SPECIFIC (not a HOL declaration): `Call` exception-handler context
+    bridge.  When the finite and broad fixed contexts agree through `toExact`,
+    wrapping them with the handler `setVar` record update keeps projecting.  All
+    arguments are explicit so the projection proofs can invoke it with `_` holes
+    at the rewrite site (the definition's auto-generated `withState` proofs then
+    unify). -/
+theorem toExact_withState_setVarLocals {width : Nat} {σ : Type} [NeZero width]
+    (context : FiniteEvalContext width σ)
+    (fixedFin : FiniteEvalContext width σ) (fixedBroad : PanSemExactEvalContext width σ)
+    (hfix : fixedFin.toExact = fixedBroad)
+    (name : MlS) (value : ValueHOL width)
+    (p1 : (setVarHOLFinite name value
+            ({ fixedFin.state with locals := context.state.locals } : PanSemStateFiniteExact width σ)).memaddrs
+          = fixedFin.state.memaddrs)
+    (p2 : (setVarHOLFinite name value
+            ({ fixedFin.state with locals := context.state.locals } : PanSemStateFiniteExact width σ)).shMemaddrs
+          = fixedFin.state.shMemaddrs)
+    (q1 : (setVarHOLExact name value
+            ({ fixedBroad.state with locals := context.toExact.state.locals } : PanSemStateExact width σ)).memaddrs
+          = fixedBroad.state.memaddrs)
+    (q2 : (setVarHOLExact name value
+            ({ fixedBroad.state with locals := context.toExact.state.locals } : PanSemStateExact width σ)).shMemaddrs
+          = fixedBroad.state.shMemaddrs) :
+    (fixedFin.withState
+        (setVarHOLFinite name value
+          ({ fixedFin.state with locals := context.state.locals } : PanSemStateFiniteExact width σ)) p1 p2).toExact =
+      fixedBroad.withState
+        (setVarHOLExact name value
+          ({ fixedBroad.state with locals := context.toExact.state.locals } : PanSemStateExact width σ)) q1 q2 := by
+  apply PanSemExactEvalContext.ext
+  change (setVarHOLFinite name value ({ fixedFin.state with locals := context.state.locals } : PanSemStateFiniteExact width σ)).toExact =
+    setVarHOLExact name value ({ fixedBroad.state with locals := context.toExact.state.locals } : PanSemStateExact width σ)
+  rw [toExact_setVarHOLFinite, toExact_setLocals]
+  have hstate : fixedFin.state.toExact = fixedBroad.state := by
+    have := congrArg PanSemExactEvalContext.state hfix
+    simpa only [FiniteEvalContext.toExact] using this
+  rw [hstate]
+  rfl
+
 end FiniteEvalContext
 
 /-- The finite fix-clock never increases the clock. -/
