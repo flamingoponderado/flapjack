@@ -4,6 +4,7 @@ import Flapjack.Pancake.Semantics.PanProps
 import Flapjack.Pancake.PanGlobals
 import Flapjack.PanProgramSemantics
 import Flapjack.Pancake.PanSimp
+import Flapjack.Pancake.Semantics.PanSem.DeclContextExact
 
 /-!
 Counterpart of Cake's `decs_stcnames_compile_prog`
@@ -2595,6 +2596,24 @@ theorem expIdsHOL_panSimpCompileHOL_eq {width : Nat} [NeZero width]
   rw [expIdsHOL_retToTailHOL_eq, expIdsHOL_seqAssocHOL_eq]
   simp [Flapjack.Pancake.PanLang.expIdsHOL]
 
+/-- Exact HOL `pan_simpProof$size_of_eids_compile_eq`
+(`pan_simpProofScript.sml:52`):
+`!pan_code. size_of_eids (compile_prog pan_code) = size_of_eids pan_code`. -/
+@[hol "cakeml/pancake/proofs/pan_simpProofScript.sml" "size_of_eids_compile_eq"]
+theorem sizeOfEidsHOL_panSimpDeclsHOL_eq {width : Nat} [NeZero width]
+    (declarations : List (DeclHOL width)) :
+    Flapjack.Pancake.PanLang.sizeOfEidsHOL (panSimpDeclsHOL declarations) =
+      Flapjack.Pancake.PanLang.sizeOfEidsHOL declarations := by
+  induction declarations with
+  | nil => simp [panSimpDeclsHOL, Flapjack.Pancake.PanLang.sizeOfEidsHOL]
+  | cons declaration declarations ih =>
+      cases declaration <;>
+        simp_all [panSimpDeclsHOL, Flapjack.Pancake.PanLang.sizeOfEidsHOL,
+          Flapjack.Pancake.PanLang.isExnDeclHOL] <;>
+        rw [List.filter_cons_of_pos (by rfl)] <;>
+        rw [List.filter_cons_of_pos (by rfl)] <;>
+        simp_all
+
 /-- Exact HOL `pan_simpProof$functions_compile_prog`
 (`pan_simpProofScript.sml:1017`):
 `functions (compile_prog prog) = MAP (λ(x,y,z,t). (x,y,compile z,t)) (functions prog)`. -/
@@ -2632,5 +2651,26 @@ theorem firstCompileProgAllDistinctHOL {width : Nat} [NeZero width]
   rw [functionsHOL_panSimpDeclsHOL_eq]
   simp only [List.map_map]
   exact hnames
+
+/-- Exact HOL `pan_simpProof$decs_stcnames_compile_prog`
+(`pan_simpProofScript.sml:1334-1341`):
+`!ctxt pan_code. decs_stcnames ctxt (compile_prog pan_code) =
+              decs_stcnames ctxt pan_code`.
+Stated over the exact `decsStcnamesHOLExact`
+(`Flapjack/Pancake/Semantics/PanSem/DeclContextExact.lean`) and the exact
+`panSimpDeclsHOL` (`compile_prog`) transformation on `DeclHOL`: `pan_simp`
+rewrites only function bodies, so the accumulated struct-name context is
+unchanged. -/
+@[hol "cakeml/pancake/proofs/pan_simpProofScript.sml" "decs_stcnames_compile_prog"]
+theorem decsStcnamesHOLExact_panSimpDeclsHOL_eq {width : Nat} [NeZero width]
+    (context : StructContextExact) (declarations : List (DeclHOL width)) :
+    Flapjack.decsStcnamesHOLExact (width := width) context
+        (panSimpDeclsHOL declarations) =
+      Flapjack.decsStcnamesHOLExact (width := width) context declarations := by
+  induction declarations generalizing context with
+  | nil => simp [panSimpDeclsHOL, Flapjack.decsStcnamesHOLExact]
+  | cons declaration declarations ih =>
+      cases declaration <;>
+        simp_all [panSimpDeclsHOL, Flapjack.decsStcnamesHOLExact]
 
 end Flapjack
