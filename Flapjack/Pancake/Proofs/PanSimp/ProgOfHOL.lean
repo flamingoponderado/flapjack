@@ -226,4 +226,18 @@ theorem progOfHOL_seqAssocHOL_seq {width : Nat} [NeZero width]
   rw [hsecond, hfirst]
   simp [seqAssoc]
 
+/-- Flapjack-specific codec equation for the Dec clause of HOL
+`seq_assoc_def`. It uses the recursive body equation at Skip and has no
+separate HOL original, so it carries no `@[hol]` tag. -/
+theorem progOfHOL_seqAssocHOL_dec {width : Nat} [NeZero width]
+    (pre : ProgHOL width) (name : MlS) (shape : ShapeHOL)
+    (value : ExpHOL width) (body : ProgHOL width)
+    (hbody : progOfHOL (seqAssocHOL .skip body) =
+      seqAssoc .skip (progOfHOL body)) :
+    progOfHOL (seqAssocHOL pre (.dec name shape value body)) =
+      seqAssoc (progOfHOL pre) (progOfHOL (.dec name shape value body)) := by
+  simp only [seqAssocHOL]
+  rw [progOfHOL_smartSeqHOL]
+  simp [seqAssoc, progOfHOL, hbody]
+
 end Flapjack

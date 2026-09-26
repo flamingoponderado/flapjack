@@ -5085,6 +5085,14 @@
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanSimp/ProgOfHOL.lean",
+    "lean_name": "progOfHOL_seqAssocHOL_dec",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific codec equation for the Dec clause of exact pan_simp seq_assoc. It uses a recursive body equation at Skip; HOL has no theorem about commuting progOfHOL with seqAssocHOL, so no HOL tag is claimed."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/ProgOfHOL.lean",
     "lean_name": "panSimpToStringOfBytes_eq_iff",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific codec lemma: equality reflection is derived from `panSimpToStringOfBytes_injective`, with equality preservation by substitution. HOL has no separate theorem about the Lean decoder, so this declaration carries no HOL tag."
