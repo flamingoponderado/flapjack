@@ -1185,8 +1185,7 @@ def evalPanSemRecursiveCallFiniteContext {width : Nat} {σ : Type} [NeZero width
                         | some (.returned value) =>
                             if shapeEqHOL (shapeOfHOLExact value) shape &&
                                 shapeEqHOL (shapeOfHOLExact value) returnShape then
-                              let continuationState := setVarHOLFinite resultName value
-                                { fixedContext.state with locals := state.locals }
+                              let continuationState := handlerStateHOLFinite context fixedContext resultName value
                               let continuationContext := fixedContext.withState
                                 continuationState rfl rfl
                               match evalPanSemRecursiveCallFiniteContext continuation
