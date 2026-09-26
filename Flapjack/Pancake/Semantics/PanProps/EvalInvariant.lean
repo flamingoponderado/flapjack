@@ -1020,13 +1020,19 @@ def ofPanSemFinite {width : Nat} {σ : Type} [NeZero width]
   cases state
   rfl
 
-/-- Local finite-map `dec_clock` operation for the projection equations below. -/
+/-- Local finite-map `dec_clock` operation for the projection equations below
+    (declaration-local helper exception reviewed under bead `flapjack-i6f8`;
+    see the `structsSimpsHOLFinite` note for why the canonical
+    `PanSemStateFiniteExact.decClockHOLFinite` cannot replace it here). -/
 def decClockForStructsSimps {width : Nat} {σ : Type} [NeZero width]
     (state : PanPropsEvalStateFiniteExact width σ) :
     PanPropsEvalStateFiniteExact width σ :=
   { state with clock := state.clock - 1 }
 
-/-- Local finite-map `empty_locals` operation for the projection equations. -/
+/-- Local finite-map `empty_locals` operation for the projection equations below
+    (declaration-local helper exception reviewed under bead `flapjack-i6f8`;
+    see the `structsSimpsHOLFinite` note for why the canonical
+    `PanSemStateFiniteExact.emptyLocalsHOLFinite` cannot replace it here). -/
 def emptyLocalsForStructsSimps {width : Nat} {σ : Type} [NeZero width]
     (state : PanPropsEvalStateFiniteExact width σ) :
     PanPropsEvalStateFiniteExact width σ :=
@@ -1048,7 +1054,18 @@ instance emptyLocalsForStructsSimpsDecidablePred {width : Nat} {σ : Type} [NeZe
 
 /-- HOL `panProps$structs_simps` (`panPropsScript.sml:1217`): the six
     projections of `dec_clock` and `empty_locals`. This uses the existing
-    PanProps finite-map state and its canonical same-module roundtrip witness. -/
+    PanProps finite-map state and its canonical same-module roundtrip witness.
+
+    FLAPJACK-SPECIFIC surface note (bead `flapjack-i6f8`): the canonical tagged
+    `dec_clock_def`/`empty_locals_def` ports (`PanSemStateFiniteExact.decClockHOLFinite`,
+    `emptyLocalsHOLFinite`) live with the `PanSemStateFiniteExact` carrier in the
+    PanSem counterpart, whereas `structs_simps` is a `panPropsScript.sml`
+    declaration whose `fmap_as_finite_support` qualifier requires the owning
+    carrier structure and the same-module roundtrip witness to sit beside the
+    tagged theorem. The `decClockForStructsSimps`/`emptyLocalsForStructsSimps`
+    record updates below are therefore the minimal PanProps-carrier mirrors; they
+    are definitionally the same field updates as the canonical ports and are not
+    meant to introduce a second HOL definition. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "structs_simps"
   (fmap_as_finite_support := [locals, globals, code, eshapes])]
 theorem structsSimpsHOLFinite {width : Nat} {σ : Type} [NeZero width]
