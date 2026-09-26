@@ -2715,6 +2715,22 @@
     "reviewer": "flapjack-deepseek-three (source comparison, bead flapjack-6nn.4) HOL fresh_name_def (pan_globalsScript.sml:55): fresh_name name names = if MEM name names then fresh_name (strcat name \u00ab'\u00bb) names else name. Lean freshNameHOL has the same clauses (\u2208 = list/String equality, ++ = strcat one-character append); HOL's strlen/MAX_SET termination measure versus Lean maxNameLength is non-operational and String.length occurs only there, so the sole operational difference is the String/mlstring carrier. Reviewed under names_as_string: name: byte-observable (the generated name crosses the compiler boundary; the same-module holMlStringWitness_freshNameHOL gives NameRanged (freshNameHOL name names) from the NameRanged name premise, and the executed path seeds are the empty string, vn' and main). names: equality/map-key-only (represented by Lean `List String`, the HOL `mlstring list` used only for membership equality, never inspected and never byte-observable), while name: byte-observable remains the only byte-observable identifier, with the same-module witness holMlStringWitness_freshNameHOL. This classification was requested by Luna-C and the coordinator (bead flapjack-pxn.18.3.5.8.21) and matches the names classification already reviewed for freshNameHOL_not_mem_hol/freshNameHOL_not_mem_of_subset_hol. Direct HOL rows in pan_globals_fresh_name_probe.out."
   },
   {
+    "hol_path": "cakeml/pancake/pan_globalsScript.sml",
+    "hol_name": "fresh_name_def",
+    "lean_path": "Flapjack/Pancake/PanGlobals.lean",
+    "lean_name": "freshNameMlS",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 (source comparison, bead flapjack-pxn.18.3.5.8.21): HOL fresh_name_def (pan_globalsScript.sml:55) fresh_name name names = if MEM name names then fresh_name (strcat name \u00ab'\u00bb) names else name is ported clause for clause over the exact mlstring carrier MlS: MEM is list membership, strcat name \u00ab'\u00bb is mlstrAppend name (ofString \"'\"), and the recursion is well founded with the non-operational maxMlsLength measure in place of HOL strlen/MAX_SET. This is the unqualified exact restatement of the same HOL declaration as the String-backed freshNameHOL (reviewed_names_as_string above); the byte codec bridge toStringOfBytes_freshNameMlS relates the two. Direct HOL rows in pan_globals_fresh_name_probe.out."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_globalsScript.sml",
+    "hol_name": "new_main_name_def",
+    "lean_path": "Flapjack/Pancake/PanGlobals.lean",
+    "lean_name": "newMainNameHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 (source comparison, bead flapjack-pxn.18.3.5.8.21): HOL new_main_name_def (pan_globalsScript.sml:224) new_main_name decls = fresh_name \u00abmain\u00bb (MAP FST (functions decls)) is ported exactly over the exact List (DeclHOL width) carrier: functionsHOL is the tagged mlstring-keyed functions port, so (functionsHOL decls).map Prod.fst is MAP FST (functions decls); the seed is ofString \"main\" and the search is the tagged exact freshNameMlS. No qualifier applies. The production String-carrier globalNewMainName remains a separately recorded documented mismatch. Direct HOL rows empty/two_collisions/mixed/absent in pan_globals_new_main_name_probe.out are replayed by Flapjack.Test.PanGlobalsNewMainNameExactParity."
+  },
+  {
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
      "hol_name": "fresh_name_correct",
      "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
@@ -5024,6 +5040,22 @@
     "lean_name": "panSimpToStringOfBytes_injective",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific codec lemma: injectivity follows from `ofString_toStringOfBytes`; there is no separate HOL theorem for this decoder property. It carries no HOL tag."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/ProgOfHOL.lean",
+    "lean_name": "progOfHOL_call",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific equation for the `progOfHOL` codec on HOL Call metadata. It exposes the decoded production call and has no separate HOL original; no HOL tag is claimed."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/ProgOfHOL.lean",
+    "lean_name": "progOfHOL_seqAssocHOL_call",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific codec equation for the Call clause of exact pan_simp seq_assoc. It uses the Call metadata decoder and a recursive handler-body equation; HOL has no separate theorem about commuting progOfHOL with seqAssocHOL, so no HOL tag is claimed."
   },
   {
     "hol_path": null,
