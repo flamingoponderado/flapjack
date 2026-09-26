@@ -2467,46 +2467,28 @@ theorem evaluateDeclsEshapesHOLFinite {width : Nat} {σ : Type} [NeZero width] :
               | true => exact False.elim (hcondition hcond)
             simp [condition, hconditionFalse] at hEval
 
-/-- Exact finite-support port of HOL `panProps$evaluate_decls_only_functions`
-    (`cakeml/pancake/semantics/panPropsScript.sml:1528`): under `EVERY
-    is_function pan_code`, a successful declaration evaluation changes only
-    `code`, appending the function entries. The premise is rendered as `program.all
-    isFunctionHOL = true`, the exact `EVERY is_function` reading over the
-    reviewed `DeclHOL` carrier; the conclusion is HOL's record update with
-    `|++`.
-
-    PanProps-counterpart exact port (bead flapjack-4ac.4.85, audit
-    flapjack-4ac.6). The PanProps finite evaluator
-    `evaluateDeclsPanPropsHOLFinite` is kernel-bridged to the canonical tagged
-    `PanSemStateFiniteExact.evaluateDeclsHOLFinite` by
-    `evaluateDeclsPanPropsHOLFinite_toCanonical` (via the field-for-field state
-    codec `toPanSemFinite`), so this invariant is about the canonical evaluator.
-    The four `|->` fields (`locals`, `globals`, `code`, `eshapes`) are the
-    reviewed canonical `HolFiniteMapExact` translation recorded by the
-    `fmap_as_finite_support` qualifier; the canonical witness
-    `holFmapAsFiniteSupportWitness` is in this module. -/
-@[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_decls_only_functions"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
-theorem evaluateDeclsOnlyFunctionsHOLFinite {width : Nat} {σ : Type} [NeZero width] :
-    ∀ (state : PanPropsEvalStateFiniteExact width σ) [DecidablePred state.memaddrs]
-      (program : List (DeclHOL width)) (result : PanPropsEvalStateFiniteExact width σ),
+private theorem evaluateDeclsHOLFinite_onlyFunctions {width : Nat} {σ : Type}
+    [NeZero width] :
+    ∀ (state : PanSemStateFiniteExact width σ) [DecidablePred state.memaddrs]
+      (program : List (DeclHOL width)) (result : PanSemStateFiniteExact width σ),
       program.all isFunctionHOL = true →
-      evaluateDeclsPanPropsCanonical state program = some result →
+      PanSemStateFiniteExact.evaluateDeclsHOLFinite state program = some result →
         result = { state with code := state.code.updateList (functionsHOL program) } := by
-  simp only [evaluateDeclsPanPropsCanonical_eqHOLFinite]
   intro state hdec program
   induction program generalizing state with
   | nil =>
       intro result _ hEval
       injection hEval with hEq
       subst hEq
-      rw [show functionsHOL ([] : List (DeclHOL width)) = [] from rfl, updateList_nil]
+      rw [show functionsHOL ([] : List (DeclHOL width)) = [] from rfl]
+      cases state
+      simp [updateList_nil]
   | cons declaration rest ih =>
       intro result hall hEval
       cases declaration with
       | function declaration =>
           simp only [List.all_cons, isFunctionHOL, Bool.true_and] at hall
-          simp only [evaluateDeclsPanPropsHOLFinite] at hEval
+          simp only [PanSemStateFiniteExact.evaluateDeclsHOLFinite] at hEval
           let condition := declaration.params.all
               (fun parameter => isWfShapeExactHOL state.structs parameter.2) &&
             isWfShapeExactHOL state.structs declaration.returnShape
@@ -2530,8 +2512,119 @@ theorem evaluateDeclsOnlyFunctionsHOLFinite {width : Nat} {σ : Type} [NeZero wi
       | exnDecl exceptionName shape =>
           exact absurd hall (by simp [List.all_cons, isFunctionHOL])
 
+/-- Exact finite-support port of HOL `panProps$evaluate_decls_only_functions`
+    (`cakeml/pancake/semantics/panPropsScript.sml:1528`): under `EVERY
+    is_function pan_code`, a successful declaration evaluation changes only
+    `code`, appending the function entries. The premise is rendered as `program.all
+    isFunctionHOL = true`, the exact `EVERY is_function` reading over the
+    reviewed `DeclHOL` carrier; the conclusion is HOL's record update with
+    `|++`.
+
+    PanProps-counterpart exact port (bead flapjack-4ac.4.85, audit
+    flapjack-4ac.6). Its proof uses a structural lemma about the canonical
+    `PanSemStateFiniteExact.evaluateDeclsHOLFinite` and transfers the result
+    through the field-for-field `toPanSemFinite` codec; it does not unfold the
+    PanProps-local recursive proof helper.
+    The four `|->` fields (`locals`, `globals`, `code`, `eshapes`) are the
+    reviewed canonical `HolFiniteMapExact` translation recorded by the
+    `fmap_as_finite_support` qualifier; the canonical witness
+    `holFmapAsFiniteSupportWitness` is in this module. -/
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_decls_only_functions"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+theorem evaluateDeclsOnlyFunctionsHOLFinite {width : Nat} {σ : Type} [NeZero width] :
+    ∀ (state : PanPropsEvalStateFiniteExact width σ) [DecidablePred state.memaddrs]
+      (program : List (DeclHOL width)) (result : PanPropsEvalStateFiniteExact width σ),
+      program.all isFunctionHOL = true →
+      evaluateDeclsPanPropsCanonical state program = some result →
+        result = { state with code := state.code.updateList (functionsHOL program) } := by
+  intro state hdec program result hall hEval
+  letI : DecidablePred state.toPanSemFinite.memaddrs := by
+    simpa [PanPropsEvalStateFiniteExact.toPanSemFinite] using hdec
+  unfold evaluateDeclsPanPropsCanonical at hEval
+  cases hcanonical : PanSemStateFiniteExact.evaluateDeclsHOLFinite
+      state.toPanSemFinite program with
+  | none => simp [hcanonical] at hEval
+  | some canonicalResult =>
+      simp only [hcanonical, Option.map_some] at hEval
+      have hconverted : ofPanSemFinite canonicalResult = result :=
+        Option.some.inj hEval
+      have hresult : canonicalResult = result.toPanSemFinite := by
+        simpa using congrArg PanPropsEvalStateFiniteExact.toPanSemFinite hconverted
+      subst canonicalResult
+      have hfunctions := evaluateDeclsHOLFinite_onlyFunctions
+        state.toPanSemFinite program result.toPanSemFinite hall hcanonical
+      cases state <;> cases result <;>
+        simpa [PanPropsEvalStateFiniteExact.toPanSemFinite] using hfunctions
+
 section
 open Classical
+
+private theorem evaluateDeclsHOLFinite_append {width : Nat} {σ : Type}
+    [NeZero width] :
+    ∀ (state : PanSemStateFiniteExact width σ) [_hdec : DecidablePred state.memaddrs]
+      (ds1 ds2 : List (DeclHOL width)),
+      PanSemStateFiniteExact.evaluateDeclsHOLFinite state (ds1 ++ ds2) =
+        Option.bind (PanSemStateFiniteExact.evaluateDeclsHOLFinite state ds1)
+          (fun state' => PanSemStateFiniteExact.evaluateDeclsHOLFinite state' ds2) := by
+  intro state _hdec ds1
+  induction ds1 generalizing state with
+  | nil =>
+      intro ds2
+      simp only [List.nil_append, PanSemStateFiniteExact.evaluateDeclsHOLFinite]
+      have hdecEq : _hdec = (fun address => Classical.propDecidable (state.memaddrs address)) :=
+        Subsingleton.elim _ _
+      rw [hdecEq]
+      rfl
+  | cons declaration rest ih =>
+      intro ds2
+      cases declaration with
+      | name name fields =>
+          simpa [List.cons_append, PanSemStateFiniteExact.evaluateDeclsHOLFinite]
+            using ih state ds2
+      | decl shape name expression =>
+          letI : DecidablePred
+              (PanSemStateFiniteExact.emptyLocalsHOLFinite state).memaddrs := by
+            simpa [PanSemStateFiniteExact.emptyLocalsHOLFinite] using _hdec
+          simp only [List.cons_append, PanSemStateFiniteExact.evaluateDeclsHOLFinite]
+          cases heval : PanSemStateFiniteExact.evalHOLFinite
+              (PanSemStateFiniteExact.emptyLocalsHOLFinite state) expression with
+          | none => simp
+          | some value =>
+              by_cases hshape : shapeEqHOL shape (shapeOfHOLExact value)
+              · simp only [if_pos hshape]
+                exact ih (PanSemStateFiniteExact.setGlobalHOLFinite name value state)
+                  (_hdec := _hdec) ds2
+              · simp [hshape]
+      | function declaration =>
+          simp only [List.cons_append, PanSemStateFiniteExact.evaluateDeclsHOLFinite]
+          let condition := declaration.params.all
+              (fun parameter => isWfShapeExactHOL state.structs parameter.2) &&
+            isWfShapeExactHOL state.structs declaration.returnShape
+          by_cases hcondition : condition = true
+          · simp only [condition, hcondition, if_pos]
+            exact ih
+              { state with code := state.code.update (declaration.name,
+                (declaration.params, declaration.body, declaration.returnShape)) }
+              (_hdec := _hdec) ds2
+          · have hconditionFalse : condition = false := by
+              cases hcond : condition with
+              | false => rfl
+              | true => exact False.elim (hcondition hcond)
+            simp [condition, hconditionFalse]
+      | exnDecl exceptionName shape =>
+          simp only [List.cons_append, PanSemStateFiniteExact.evaluateDeclsHOLFinite]
+          let condition := (state.eshapes.lookup exceptionName).isNone &&
+            isWfShapeExactHOL state.structs shape
+          by_cases hcondition : condition = true
+          · simp only [condition, hcondition, if_pos]
+            exact ih
+              { state with eshapes := state.eshapes.update (exceptionName, shape) }
+              (_hdec := _hdec) ds2
+          · have hconditionFalse : condition = false := by
+              cases hcond : condition with
+              | false => rfl
+              | true => exact False.elim (hcondition hcond)
+            simp [condition, hconditionFalse]
 
 /-- Exact finite-support port of HOL `panProps$evaluate_decls_append`
     (`cakeml/pancake/semantics/panPropsScript.sml:1540`): evaluating `ds1 ++ ds2`
@@ -2544,11 +2637,10 @@ open Classical
     change the evaluator's value relative to HOL's total classical logic.
 
     PanProps-counterpart exact port (bead flapjack-4ac.4.86, audit
-    flapjack-4ac.6). The PanProps finite evaluator
-    `evaluateDeclsPanPropsHOLFinite` is kernel-bridged to the canonical tagged
-    `PanSemStateFiniteExact.evaluateDeclsHOLFinite` by
-    `evaluateDeclsPanPropsHOLFinite_toCanonical` (via the field-for-field state
-    codec `toPanSemFinite`), so this invariant is about the canonical evaluator.
+    flapjack-4ac.6). Its proof applies a structural append lemma over the
+    canonical `PanSemStateFiniteExact.evaluateDeclsHOLFinite` and maps the
+    result through the field-for-field `toPanSemFinite` codec; it does not
+    unfold the PanProps-local recursive proof helper.
     The four `|->` fields (`locals`, `globals`, `code`, `eshapes`) are the
     reviewed canonical `HolFiniteMapExact` translation recorded by the
     `fmap_as_finite_support` qualifier; the canonical witness
@@ -2560,52 +2652,15 @@ theorem evaluateDeclsAppendHOLFinite {width : Nat} {σ : Type} [NeZero width] :
       evaluateDeclsPanPropsCanonical state (ds1 ++ ds2) =
         Option.bind (evaluateDeclsPanPropsCanonical state ds1)
           (fun state' => evaluateDeclsPanPropsCanonical state' ds2) := by
-  simp only [evaluateDeclsPanPropsCanonical_eqHOLFinite]
+  classical
   intro state ds1 ds2
-  induction ds1 generalizing state with
-  | nil => rfl
-  | cons declaration rest ih =>
-      cases declaration with
-      | name name fields =>
-          simp only [List.cons_append, evaluateDeclsPanPropsHOLFinite]
-          exact ih state
-      | decl shape name expression =>
-          simp only [List.cons_append, evaluateDeclsPanPropsHOLFinite]
-          cases heval : evalHOL { state with locals := HolFiniteMapExact.empty } expression with
-          | none => rfl
-          | some value =>
-              by_cases hshape : shapeEqHOL shape (shapeOfHOLExact value)
-              · simp only [if_pos hshape]
-                exact ih { state with globals := state.globals.update (name, value) }
-              · simp [hshape]
-      | function declaration =>
-          simp only [List.cons_append, evaluateDeclsPanPropsHOLFinite]
-          let condition := declaration.params.all
-              (fun parameter => isWfShapeExactHOL state.structs parameter.2) &&
-            isWfShapeExactHOL state.structs declaration.returnShape
-          by_cases hcondition : condition = true
-          · simp only [condition, hcondition, if_pos]
-            exact ih
-              { state with code := state.code.update (declaration.name,
-                (declaration.params, declaration.body, declaration.returnShape)) }
-          · have hconditionFalse : condition = false := by
-              cases hcond : condition with
-              | false => rfl
-              | true => exact False.elim (hcondition hcond)
-            simp [condition, hconditionFalse]
-      | exnDecl exceptionName shape =>
-          simp only [List.cons_append, evaluateDeclsPanPropsHOLFinite]
-          let condition := (state.eshapes.lookup exceptionName).isNone &&
-            isWfShapeExactHOL state.structs shape
-          by_cases hcondition : condition = true
-          · simp only [condition, hcondition, if_pos]
-            exact ih
-              { state with eshapes := state.eshapes.update (exceptionName, shape) }
-          · have hconditionFalse : condition = false := by
-              cases hcond : condition with
-              | false => rfl
-              | true => exact False.elim (hcondition hcond)
-            simp [condition, hconditionFalse]
+  letI : DecidablePred state.toPanSemFinite.memaddrs :=
+    toPanSemFiniteDecidableMemaddrs state
+  unfold evaluateDeclsPanPropsCanonical
+  rw [evaluateDeclsHOLFinite_append state.toPanSemFinite ds1 ds2]
+  cases hfirst : PanSemStateFiniteExact.evaluateDeclsHOLFinite
+      state.toPanSemFinite ds1 <;>
+    simp [PanPropsEvalStateFiniteExact.toPanSemFinite_ofPanSemFinite]
 
 end
 
@@ -2685,47 +2740,31 @@ private theorem notMem_fst_of_all_isNone_update {width : Nat} {σ : Type} [NeZer
   rw [hval] at hsome
   simp at hsome
 
-/-- Exact finite-support port of HOL `panProps$evaluate_decls_only_exn_decls`
-    (`cakeml/pancake/semantics/panPropsScript.sml:1436`): if every declaration is
-    an exception declaration, a successful evaluation leaves the whole state
-    unchanged except for the exception table, which becomes
-    `s.eshapes |++ exceptions ds`. Quantifier order `s ds s'`, the
-    `EVERY is_exn_decl` premise rendered as `program.all isExnDeclHOL = true`,
-    the successful-evaluation premise, and HOL's record update with
-    `exceptionsHOL` follow the source.
-
-    PanProps-counterpart exact port (bead flapjack-4ac.4.77, audit
-    flapjack-4ac.6). The PanProps finite evaluator
-    `evaluateDeclsPanPropsHOLFinite` is kernel-bridged to the canonical tagged
-    `PanSemStateFiniteExact.evaluateDeclsHOLFinite` by
-    `evaluateDeclsPanPropsHOLFinite_toCanonical` (via the field-for-field state
-    codec `toPanSemFinite`), so this invariant is about the canonical evaluator.
-    The four `|->` fields (`locals`, `globals`, `code`, `eshapes`) are the
-    reviewed canonical `HolFiniteMapExact` translation recorded by the
-    `fmap_as_finite_support` qualifier; the canonical witness
-    `holFmapAsFiniteSupportWitness` is in this module. -/
-@[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_decls_only_exn_decls"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
-theorem evaluateDeclsOnlyExnDeclsHOLFinite {width : Nat} {σ : Type} [NeZero width] :
-    ∀ (state : PanPropsEvalStateFiniteExact width σ) [DecidablePred state.memaddrs]
-      (program : List (DeclHOL width)) (result : PanPropsEvalStateFiniteExact width σ),
+/-- Canonical PanSem recursion helper for the exception-only state invariant.
+    It is deliberately stated on `PanSemStateFiniteExact` so the tagged PanProps
+    theorem can avoid unfolding its local recursive proof evaluator. -/
+private theorem evaluateDeclsHOLFinite_onlyExnDecls {width : Nat} {σ : Type}
+    [NeZero width] :
+    ∀ (state : PanSemStateFiniteExact width σ) [DecidablePred state.memaddrs]
+      (program : List (DeclHOL width)) (result : PanSemStateFiniteExact width σ),
       program.all isExnDeclHOL = true →
-      evaluateDeclsPanPropsCanonical state program = some result →
-        result = { state with eshapes := state.eshapes.updateList (exceptionsHOL program) } := by
-  simp only [evaluateDeclsPanPropsCanonical_eqHOLFinite]
+      PanSemStateFiniteExact.evaluateDeclsHOLFinite state program = some result →
+        result = { state with
+          eshapes := state.eshapes.updateList (exceptionsHOL program) } := by
   intro state hdec program
   induction program generalizing state with
   | nil =>
       intro result _ hEval
       injection hEval with hEq
       subst hEq
-      rw [show exceptionsHOL ([] : List (DeclHOL width)) = [] from rfl, updateList_nil]
+      rw [show exceptionsHOL ([] : List (DeclHOL width)) = [] from rfl,
+        updateList_nil]
   | cons declaration rest ih =>
       intro result hall hEval
       cases declaration with
       | exnDecl exceptionName shape =>
           simp only [List.all_cons, isExnDeclHOL, Bool.true_and] at hall
-          simp only [evaluateDeclsPanPropsHOLFinite] at hEval
+          simp only [PanSemStateFiniteExact.evaluateDeclsHOLFinite] at hEval
           let condition := (state.eshapes.lookup exceptionName).isNone &&
             isWfShapeExactHOL state.structs shape
           by_cases hcondition : condition = true
@@ -2741,14 +2780,55 @@ theorem evaluateDeclsOnlyExnDeclsHOLFinite {width : Nat} {σ : Type} [NeZero wid
               | true => exact False.elim (hcondition hcond)
             simp [condition, hconditionFalse] at hEval
       | name name fields =>
-          simp only [evaluateDeclsPanPropsHOLFinite] at hEval
+          simp only [PanSemStateFiniteExact.evaluateDeclsHOLFinite] at hEval
           exact absurd hall (by simp [List.all_cons, isExnDeclHOL])
       | decl shape name expression =>
-          simp only [evaluateDeclsPanPropsHOLFinite] at hEval
+          simp only [PanSemStateFiniteExact.evaluateDeclsHOLFinite] at hEval
           exact absurd hall (by simp [List.all_cons, isExnDeclHOL])
       | function declaration =>
-          simp only [evaluateDeclsPanPropsHOLFinite] at hEval
+          simp only [PanSemStateFiniteExact.evaluateDeclsHOLFinite] at hEval
           exact absurd hall (by simp [List.all_cons, isExnDeclHOL])
+
+/-- Exact finite-support port of HOL `panProps$evaluate_decls_only_exn_decls`
+    (`cakeml/pancake/semantics/panPropsScript.sml:1436`): if every declaration is
+    an exception declaration, a successful evaluation leaves the whole state
+    unchanged except for the exception table, which becomes
+    `s.eshapes |++ exceptions ds`. Quantifier order `s ds s'`, the
+    `EVERY is_exn_decl` premise rendered as `program.all isExnDeclHOL = true`,
+    the successful-evaluation premise, and HOL's record update with
+    `exceptionsHOL` follow the source.
+
+    PanProps-counterpart exact port (bead flapjack-4ac.4.77, audit
+    flapjack-4ac.6). Its proof applies the canonical tagged
+    `PanSemStateFiniteExact.evaluateDeclsHOLFinite` through the field-for-field
+    state codec `toPanSemFinite`; it does not unfold the PanProps-local
+    recursive proof helper.
+    The four `|->` fields (`locals`, `globals`, `code`, `eshapes`) are the
+    reviewed canonical `HolFiniteMapExact` translation recorded by the
+    `fmap_as_finite_support` qualifier; the canonical witness
+    `holFmapAsFiniteSupportWitness` is in this module. -/
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_decls_only_exn_decls"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+theorem evaluateDeclsOnlyExnDeclsHOLFinite {width : Nat} {σ : Type} [NeZero width] :
+    ∀ (state : PanPropsEvalStateFiniteExact width σ) [DecidablePred state.memaddrs]
+      (program : List (DeclHOL width)) (result : PanPropsEvalStateFiniteExact width σ),
+      program.all isExnDeclHOL = true →
+      evaluateDeclsPanPropsCanonical state program = some result →
+      result = { state with eshapes := state.eshapes.updateList (exceptionsHOL program) } := by
+  intro state hdec program result hall hEval
+  unfold evaluateDeclsPanPropsCanonical at hEval
+  cases hcanonical : PanSemStateFiniteExact.evaluateDeclsHOLFinite
+      state.toPanSemFinite program with
+  | none => simp [hcanonical] at hEval
+  | some final =>
+      have hresult : PanPropsEvalStateFiniteExact.ofPanSemFinite final = result := by
+        simpa [hcanonical] using hEval
+      subst result
+      have hfinal := evaluateDeclsHOLFinite_onlyExnDecls
+        state.toPanSemFinite program final hall hcanonical
+      rw [hfinal]
+      simp [PanPropsEvalStateFiniteExact.ofPanSemFinite,
+        PanPropsEvalStateFiniteExact.toPanSemFinite]
 
 /-- Exact finite-support port of HOL `panProps$evaluate_decls_exns_wf`
     (`cakeml/pancake/semantics/panPropsScript.sml:1419`): a successful declaration
