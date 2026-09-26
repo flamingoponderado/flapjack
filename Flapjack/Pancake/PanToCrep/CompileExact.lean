@@ -282,4 +282,25 @@ def compileStoreExactHOLW {width : Nat} [NeZero width]
         nestedDecsHOL (addressName :: valueNames) (compiledAddress :: values) storeSequence
   | ([], _) => .skip
 
+/-! The `Raise` clause from `compile_def`
+    (`pan_to_crepScript.sml:197-207`). It requires an exception-id lookup and
+    a shape size matching the compiled value list, then saves each component
+    into consecutive globals before raising the looked-up word code. -/
+
+def compileRaiseExactHOLW {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (exceptionName : MlS)
+    (expression : Flapjack.Pancake.PanLang.ExpHOL width) : CrepProgHOL width :=
+  match context.eids.lookup exceptionName with
+  | none => .skip
+  | some exceptionCode =>
+      let (values, shape) := compileExpExactHOLW context expression
+      let valueCount := Flapjack.Pancake.PanLang.sizeOfShapeHOL shape
+      let temporaries := (List.range valueCount).map
+        (fun index => context.vmax + index + 1)
+      if valueCount != values.length then .skip
+      else
+        let saveValues := crepNestedSeqHOL
+          (storeGlobalsHOL (0 : BitVec 5) (temporaries.map CrepExpHOL.var))
+        .seq (nestedDecsHOL temporaries values saveValues) (.raise exceptionCode)
+
 end Flapjack

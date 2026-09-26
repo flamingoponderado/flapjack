@@ -116,6 +116,25 @@ val _ = print_eval "store_shape_length_fallback"
       <| vars := FEMPTY |+ («bad», (panLang$Comb [panLang$One; panLang$One], [9]));
          funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
       (Store (Const (3w : 8 word)) (Var Local «bad»))``;
+val _ = print_eval "raise_one_word"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY;
+         eids := FEMPTY |+ («E», (12w : 8 word)); vmax := 0 |>
+      (Raise «E» (Const (9w : 8 word)))``;
+val _ = print_eval "raise_multiword"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY;
+         eids := FEMPTY |+ («E», (12w : 8 word)); vmax := 0 |>
+      (Raise «E» (RStruct [Const (1w : 8 word); Const 2w]))``;
+val _ = print_eval "raise_missing_eid"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (Raise «missing» (Const (9w : 8 word)))``;
+val _ = print_eval "raise_shape_length_fallback"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY |+ («bad», (panLang$Comb [panLang$One; panLang$One], [9]));
+         funcs := FEMPTY; eids := FEMPTY |+ («E», (12w : 8 word)); vmax := 0 |>
+      (Raise «E» (Var Local «bad»))``;
 
 val _ = print_eval "struct_skip"
   ``pan_to_crep$compile

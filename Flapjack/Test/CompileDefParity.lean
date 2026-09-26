@@ -427,6 +427,21 @@ def exactMalformedStoreContext : CompileExpContextExact 8 where
   eids := HolFiniteMapExact.empty
   vmax := 0
 
+def exactRaiseContext : CompileExpContextExact 8 where
+  vars := HolFiniteMapExact.empty
+  funcs := HolFiniteMapExact.empty
+  eids := HolFiniteMapExact.empty.update
+    (ofString "E", BitVec.ofNat 8 12)
+  vmax := 0
+
+def exactMalformedRaiseContext : CompileExpContextExact 8 where
+  vars := HolFiniteMapExact.empty.update
+    (ofString "bad", (.comb [.one, .one], [9]))
+  funcs := HolFiniteMapExact.empty
+  eids := HolFiniteMapExact.empty.update
+    (ofString "E", BitVec.ofNat 8 12)
+  vmax := 0
+
 def returnValuesMatch (expected : List (CrepExp (BitVec 8))) : CrepProgHOL 8 → Bool
   | .return actual => actual.map crepExpOfHOL == expected
   | _ => false
@@ -538,15 +553,37 @@ def exactStoreClauseFullParity : Bool :=
 
 #guard exactStoreClauseFullParity
 
+def exactRaiseClauseParity : Bool :=
+  (match compileRaiseExactHOLW exactRaiseContext (ofString "E") (.const 9) with
+   | .seq (.dec 1 (.const 9) (.seq (.storeGlob 0 (.var 1)) .skip)) (.raise 12) => true
+   | _ => false) &&
+  (match compileRaiseExactHOLW exactRaiseContext (ofString "E")
+      (.rstruct [.const 1, .const 2]) with
+   | .seq (.dec 1 (.const 1) (.dec 2 (.const 2)
+       (.seq (.storeGlob 0 (.var 1)) (.seq (.storeGlob 1 (.var 2)) .skip))))
+       (.raise 12) => true
+   | _ => false) &&
+  (match compileRaiseExactHOLW exactReturnContext (ofString "missing") (.const 9) with
+   | .skip => true
+   | _ => false) &&
+  (match compileRaiseExactHOLW exactMalformedRaiseContext (ofString "E")
+      (.var .local (ofString "bad")) with
+   | .skip => true
+   | _ => false)
+
+#guard exactRaiseClauseParity
+
 def runChecks : IO Bool := do
   if parityGuard && exactStructuralSliceParity && exactReturnClauseParity &&
       exactStoreClauseParity && exactIfWhileClauseParity && exactGlobalFallbackParity &&
-      exactLocalAssignClauseParity && exactPrimitiveClauseParity && exactStoreClauseFullParity then
+      exactLocalAssignClauseParity && exactPrimitiveClauseParity && exactStoreClauseFullParity &&
+      exactRaiseClauseParity then
     IO.println "PASS compile_def fixed-width load/store and control-flow parity"
   else
     IO.println "FAIL compile_def parity"
   pure (parityGuard && exactStructuralSliceParity && exactReturnClauseParity &&
     exactStoreClauseParity && exactIfWhileClauseParity && exactGlobalFallbackParity &&
-    exactLocalAssignClauseParity && exactPrimitiveClauseParity && exactStoreClauseFullParity)
+    exactLocalAssignClauseParity && exactPrimitiveClauseParity && exactStoreClauseFullParity &&
+    exactRaiseClauseParity)
 
 end Flapjack.Test.CompileDefParity

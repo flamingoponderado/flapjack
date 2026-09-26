@@ -24,6 +24,14 @@ store_multiword=Dec 1 (Const 3w)
            (Seq (Store (Op Add [Var 1; Const 1w]) (Var 3)) Skip))))
 store_address_fallback=Skip
 store_shape_length_fallback=Skip
+raise_one_word=Seq (Dec 1 (Const 9w) (Seq (StoreGlob 0w (Var 1)) Skip)) (Raise 12w)
+raise_multiword=Seq
+  (Dec 1 (Const 1w)
+     (Dec 2 (Const 2w)
+        (Seq (StoreGlob 0w (Var 1)) (Seq (StoreGlob 1w (Var 2)) Skip))))
+  (Raise 12w)
+raise_missing_eid=Skip
+raise_shape_length_fallback=Skip
 struct_skip=Skip
 struct_break=Break 0
 struct_continue=Continue 0
