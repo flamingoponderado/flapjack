@@ -50,6 +50,19 @@ exception, and final-FFI outcomes. These source proof branches do not turn the
 production-carrier declarations in `Proofs/PanToCrep/EvaluateCases` into exact
 HOL-shaped cases.
 
+The relation hypotheses also have distinct source definitions in this same
+HOL proof file: `state_rel_def` (line 45) equates total word memory, both
+memory domains, clock, endianness, FFI, and address bounds while requiring
+empty source structs/globals; `code_rel_def` (line 32) relates every source
+code entry to `compile (ctxt_fc ...)` in target code; `excp_rel_def` (line 16)
+requires equal exception-map domains and injective compiler codes; and
+`locals_rel_def` (line 71) combines context well-formedness with slot lookup,
+`OPT_MMAP`, flattening, and well-formed-shape obligations. The existing
+`stateRel`, `codeRelW`, `excpRel`, and `localsRel` definitions have analogous
+logical clauses but use production `String`, `Shape`, `PanValue`, optional
+memory, and `CrepRuntimeState` carriers. Their current similarity does not
+discharge the exact-carrier prerequisites recorded on `.5.16.1`.
+
 There is no assembled Lean theorem with that statement. The existing
 `pc_compile_correct` constructor helpers in `Proofs/PanToCrep/EvaluateCases`
 are individual proof infrastructure, and the `stateRel` below is the
