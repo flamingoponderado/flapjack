@@ -284,6 +284,18 @@ theorem compileProgExactHOLW_global_assign_bridge {width : Nat} [NeZero width]
   simp [compileProgExactHOLW, compileGlobalAssignExactHOLW,
     compileProgRiscV, compileProgHOL, crepProgOfHOL, progOfHOL]
 
+/-- HOL's Global ShMemLoad equation compiles to `Skip` in both carriers. -/
+theorem compileProgExactHOLW_global_shmem_load_bridge {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width) (operator : OpSize) (name : MlS)
+    (address : Flapjack.Pancake.PanLang.ExpHOL width) :
+    crepProgOfHOL
+        (compileProgExactHOLW context
+          (.shMemLoad operator .global name address)) =
+      compileProgRiscV context.toProduction
+        (progOfHOL (.shMemLoad operator .global name address)) := by
+  simp [compileProgExactHOLW, compileGlobalShMemLoadExactHOLW,
+    compileProgRiscV, compileProgHOL, crepProgOfHOL, progOfHOL]
+
 /-- The exact Store32 equation agrees with production once both expression
     compiler results are decoded. -/
 theorem compileProgExactHOLW_store32_bridge {width : Nat} [NeZero width]
