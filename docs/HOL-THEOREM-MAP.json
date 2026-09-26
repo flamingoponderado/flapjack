@@ -11926,6 +11926,20 @@
   },
   {
     "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "opt_mmap_helper_thm",
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
+    "lean_name": "optMmapHelperThm",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "reviewer": "flapjack-ds10 (bead flapjack-4ac.4.38, 2026-09-26; supersedes flapjack-ds8's disposition): HOL panPropsScript.sml:614 defines the [local] helper by Q.SPECL [es,es] OPT_MMAP_CONG |> Q.ISPEC (\\e. eval ((if T then f else I) st) e) |> Q.SPEC (\\e. eval st e) |> REWRITE_RULE [] |> Q.GENL [f,st,es]. A direct probe loading the real compiled panPropsTheory in my own checkout prints the exact type: forall f st es. (forall x. MEM x es ==> (\\e. eval (f st) e) x = (\\e. eval st e) x) ==> OPT_MMAP (\\e. eval (f st) e) es = OPT_MMAP (\\e. eval st e) es, with f : panSem$state -> panSem$state, st : panSem$state, es : panSem$exp list. Lean keeps HOL's quantifier order (f, st, es), the same pointwise-evaluation premise (after beta), and the same OPT_MMAP/List.mapM equality. ds8's note that it is merely the content of beads .4ac.4.54-.57 is inaccurate: it is the generic OPT_MMAP/eval congruence with an arbitrary state transformer f, not a specific locals/clock/code update. The state is the PanProps counterpart carrier PanPropsEvalStateFiniteExact, owning the four HolFiniteMapExact fields and the same-module canonical holFmapAsFiniteSupportWitness, so the fmap qualifier is checker-valid; evalHOL delegates to the exact broad evaluator through toExact and is linked to the canonical tagged PanSemStateFiniteExact evaluator by the evaluateDeclsPanPropsHOLFinite_toCanonical codec. Proof: induction on es (the List.mapM congruence). [NeZero width] models HOL's positive word dimension; the two DecidablePred binders are Lean computation evidence for the HOL word-set membership guard on each of the two states f st and st (HOL's total eval needs none). The qualifier records only the four finite-map fields."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
     "hol_name": "eval_upd_clock_eq",
     "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
     "lean_name": "evalHOL_upd_clock_eq",
