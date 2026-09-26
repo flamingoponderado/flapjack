@@ -5011,6 +5011,30 @@
   {
     "hol_path": null,
     "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/ProgOfHOL.lean",
+    "lean_name": "panSimpToStringOfBytes_injective",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific codec lemma: injectivity follows from `ofString_toStringOfBytes`; there is no separate HOL theorem for this decoder property. It carries no HOL tag."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/ProgOfHOL.lean",
+    "lean_name": "panSimpToStringOfBytes_eq_iff",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific codec lemma: equality reflection is derived from `panSimpToStringOfBytes_injective`, with equality preservation by substitution. HOL has no separate theorem about the Lean decoder, so this declaration carries no HOL tag."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/ProgOfHOL.lean",
+    "lean_name": "progOfHOL_seqCallRetHOL",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific representation bridge for HOL `seq_call_ret_def`: HOL has no separate theorem commuting `seqCallRetHOL` with the Lean `progOfHOL` decoder. The bridge preserves the exact HOL transform while reflecting its MlString equality guard through the decoder. It carries no HOL tag."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
     "lean_name": "structCompileShapesFuel_eq_map",
     "statement_status": "no_hol_reference_pending_classification",
