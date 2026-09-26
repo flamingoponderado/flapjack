@@ -12157,5 +12157,21 @@
     "lean_name": "AsmConfigExact",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.6.1.2.1): exact HOL asmScript.sml:153-172 asm_config record; field-for-field correspondence, with encode : HolAsm width -> List (BitVec 8) matching HOL's 'a asm -> word8 list and every remaining field identical to the production AsmConfig. Reviewed_exact at [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmScript.sml",
+    "hol_name": "reg_ok_def",
+    "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
+    "lean_name": "asmRegOkExact",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.6.1.2): exact HOL asmScript.sml:174-176 reg_ok_def over the exact AsmConfigExact carrier (encode : HolAsm width -> word8 list); HOL argument order reg_ok r c, r < c.reg_count and ~MEM r c.avoid_regs rendered as register < config.regCount && !config.avoidRegs.contains register. Reviewed_exact at [NeZero width]; the width-general executed asmRegOk stays documented_mismatch."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmScript.sml",
+    "hol_name": "fp_reg_ok_def",
+    "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
+    "lean_name": "asmFpRegOkExact",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.6.1.2): exact HOL asmScript.sml:178-179 fp_reg_ok_def over the exact AsmConfigExact carrier with HOL argument order fp_reg_ok d c; d < c.fp_reg_count rendered as register < config.fpRegCount. Reviewed_exact at [NeZero width]; the width-general executed asmFpRegOk stays documented_mismatch."
   }
 ]

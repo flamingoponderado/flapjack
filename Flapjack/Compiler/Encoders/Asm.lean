@@ -325,6 +325,26 @@ structure AsmConfigExact (width : Nat) [NeZero width] where
   cjumpOffset : BitVec width × BitVec width
   locOffset : BitVec width × BitVec width
 
+/-- HOL `asmScript.sml:174-176`:
+`reg_ok r c <=> r < c.reg_count /\ ~MEM r c.avoid_regs`.
+Exact port over the exact `AsmConfigExact` carrier (`encode : HolAsm width → word8 list`)
+with the HOL argument order `reg_ok r c`; the width-general executed `asmRegOk`
+remains the untagged production form.  Bead flapjack-4ac.6.1.2. -/
+@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "reg_ok_def"]
+def asmRegOkExact {width : Nat} [NeZero width] (register : Nat)
+    (config : AsmConfigExact width) : Bool :=
+  register < config.regCount && !config.avoidRegs.contains register
+
+/-- HOL `asmScript.sml:178-179`:
+`fp_reg_ok d c <=> d < c.fp_reg_count`.
+Exact port over the exact `AsmConfigExact` carrier with the HOL argument order
+`fp_reg_ok d c`; the width-general executed `asmFpRegOk` remains the untagged
+production form.  Bead flapjack-4ac.6.1.2. -/
+@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "fp_reg_ok_def"]
+def asmFpRegOkExact {width : Nat} [NeZero width] (register : Nat)
+    (config : AsmConfigExact width) : Bool :=
+  register < config.fpRegCount
+
 /--
     Not an exact HOL port: this Lean declaration quantifies `width : Nat`
     without `[NeZero width]`, so `BitVec 0` is admitted, whereas HOL `word`
