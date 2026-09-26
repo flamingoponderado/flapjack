@@ -79,6 +79,9 @@ zero initialization, and the empty-result fallback. Its exact untagged helper
 is `compileCallResultNoHandlerExactHOLW`. `call_handler_missing_eid` checks
 that an exception handler with a missing `eids` entry takes the same fallback;
 the Lean exact subcase is `compileCallHandlerMissingEidExactHOLW`.
+`call_handler_present_eid` checks the found-EID branch, including exact
+`exp_hdl` global loads and recursive handler sequencing; its exact helper is
+`compileCallHandlerPresentEidExactHOLW`.
 `extcall_constants` (with `vmax = 400`),
 `extcall_high_tail` (with `vmax = 0`), `extcall_shared_high_tail`, and
 `extcall_shape_fallback` pin the `ExtCall` case: its freshness bound scans all

@@ -1,5 +1,6 @@
 import Flapjack.Pancake.PanToCrep.Compile
 import Flapjack.Pancake.PanToCrep.ContextExact
+import Flapjack.Pancake.PanToCrep.ExpHdlExact
 import Flapjack.Pancake.Semantics.CrepSem.HOLState
 import Flapjack.Pancake.PanCommon
 
@@ -456,6 +457,33 @@ def compileCallHandlerMissingEidExactHOLW {width : Nat} [NeZero width]
     (_missingEid : context.eids.lookup _exceptionName = none) :
     CrepProgHOL width :=
   compileCallResultNoHandlerExactHOLW context function arguments
+
+/-! The `hdl = SOME (eid, evar, p)` branch with a successful `eids` lookup in
+    HOL `compile_def` (`pan_to_crepScript.sml:233-239`) keeps the exception
+    handler. It wraps the recursively compiled body with exact `exp_hdl`, then
+    zero-initializes the callee return names before emitting the handled call. -/
+
+def compileCallHandlerPresentEidExactHOLW {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (function : MlS)
+    (arguments : List (Flapjack.Pancake.PanLang.ExpHOL width))
+    (exceptionName exceptionVariable : MlS) (exceptionCode : BitVec width)
+    (_eidLookup : context.eids.lookup exceptionName = some exceptionCode)
+    (compileHandlerBody : CompileExpContextExact width → CrepProgHOL width) :
+    CrepProgHOL width :=
+  let compiledArguments := compileExpExactHOLWList context arguments
+  let flattenedArguments := compiledArguments.flatMap Prod.fst
+  let returnShape := (context.funcs.lookup function).map Prod.snd
+  let returnNames := match returnShape with
+    | none => []
+    | some shape => (List.range (Flapjack.Pancake.PanLang.sizeOfShapeHOL shape)).map
+        (fun index => context.vmax + index + 1)
+  let handler := CrepProgHOL.seq
+    (expHdlExact ⟨context.vars⟩ exceptionVariable)
+    (compileHandlerBody context)
+  let call := CrepProgHOL.call
+    (some (returnNames, some (exceptionCode, handler))) function flattenedArguments
+  nestedDecsHOL returnNames
+    (List.replicate returnNames.length (.const (0 : BitVec width))) call
 
 /-! The `ExtCall` clause from HOL `compile_def`
     (`pan_to_crepScript.sml:274-290`). The freshness bound is the maximum over
