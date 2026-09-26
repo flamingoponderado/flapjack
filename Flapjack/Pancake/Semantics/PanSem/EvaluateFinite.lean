@@ -1264,6 +1264,1211 @@ theorem evalPanSemRecursiveCallFiniteContext_decCall_projection {width : Nat} {�
                 | exception eid value => callProjectionCloser
                 | finalFfi e => callProjectionCloser
 
+
+theorem callFixedContextHOLFinite_toExact {width : Nat} {σ : Type} [NeZero width]
+    (context : FiniteEvalContext width σ) (callee : HolFiniteMapExact MlS (ValueHOL width))
+    (postContext : FiniteEvalContext width σ) (bodyResult : Option (PanSemResultExact width)) :
+    ((context.state.callEntryStateHOLFinite callee).callFixedContextHOLFinite bodyResult
+        postContext).toExact =
+      Flapjack.callFixedContextHOLExact
+        (Flapjack.callEntryStateHOLExact context.state.toExact callee.lookup)
+        bodyResult postContext.toExact := by
+  rw [toExact_callFixedContextHOLFinite]
+  congr 1
+
+set_option maxHeartbeats 2000000 in
+theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type} [NeZero width]
+    (program : ProgHOL width) (context : FiniteEvalContext width σ) :
+    Option.map (fun p => (p.1, p.2.toExact))
+        (evalPanSemRecursiveCallFiniteContext program context) =
+      evalPanSemRecursiveCallContextHOLExact program context.toExact := by
+  fun_induction evalPanSemRecursiveCallFiniteContext program context with
+  | case1 =>
+      rename_i inst context state name shape initializer body x
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_1]
+      have hx : @Flapjack.evalHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable initializer = none := by
+        rw [evalHOLExact_toExact_eq context initializer]
+        exact x
+      simp only [hx]
+      rfl
+  | case2 =>
+      rename_i inst context state name shape initializer body value x1 h bodyState bodyContext x ih1
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_1]
+      have hx1 : @Flapjack.evalHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable initializer = some value := by
+        rw [evalHOLExact_toExact_eq context initializer]
+        exact x1
+      simp only [hx1]
+      simp only [h, if_true]
+      generalize hbcb : context.toExact.withState (setVarHOLExact name value context.toExact.state) rfl rfl = bbc
+      have hbbc : bbc = bodyContext.toExact := by
+        rw [← hbcb]
+        apply PanSemExactEvalContext.ext
+        simp only [PanSemExactEvalContext.withState_state, FiniteEvalContext.toExact]
+        change setVarHOLExact name value context.state.toExact =
+          (setVarHOLFinite name value context.state).toExact
+        rw [toExact_setVarHOLFinite]
+      rw [hbbc]
+      rw [← ih1, x]
+      rfl
+  | case3 =>
+      rename_i inst context state name shape initializer body value x1 h bodyState bodyContext result postContext x restored ih1
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_1]
+      have hx1 : @Flapjack.evalHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable initializer = some value := by
+        rw [evalHOLExact_toExact_eq context initializer]
+        exact x1
+      simp only [hx1]
+      simp only [h, if_true]
+      generalize hbcb : context.toExact.withState (setVarHOLExact name value context.toExact.state) rfl rfl = bbc
+      have hbbc : bbc = bodyContext.toExact := by
+        rw [← hbcb]
+        apply PanSemExactEvalContext.ext
+        simp only [PanSemExactEvalContext.withState_state, FiniteEvalContext.toExact]
+        change setVarHOLExact name value context.state.toExact =
+          (setVarHOLFinite name value context.state).toExact
+        rw [toExact_setVarHOLFinite]
+      rw [hbbc]
+      rw [← ih1, x]
+      simp only [Option.map_some, Option.some.injEq]
+      refine congrArg (fun c => (result, c)) ?_
+      apply PanSemExactEvalContext.ext
+      change ({ postContext.state with locals := HolFiniteMapExact.resVarEq postContext.state.locals (name, state.locals.lookup name) } : PanSemStateFiniteExact width σ).toExact =
+        { postContext.toExact.state with locals := resVarHOLExact postContext.toExact.state.locals (name, context.toExact.state.locals name) }
+      rw [toExact_resVarEq_locals]
+      congr 1
+  | case4 =>
+      rename_i inst context state name shape initializer body value x h
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_1]
+      have hx : @Flapjack.evalHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable initializer = some value := by
+        rw [evalHOLExact_toExact_eq context initializer]
+        exact x
+      simp only [hx]
+      rw [if_neg h]
+      rfl
+  | case5 =>
+      rename_i inst context first second x ih1
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_2]
+      rw [← ih1, x]
+      rfl
+  | case6 =>
+      rename_i inst context state first second postContext x fixed fixedContext ih2 ih1
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_2]
+      rw [← ih2, x]
+      simp only [Option.map_some]
+      exact ih1
+  | case7 =>
+      rename_i inst context state first second postContext val x fixed fixedContext ih1
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_2]
+      rw [← ih1, x]
+      simp only [Option.map_some]
+      rfl
+  | case8 =>
+      rename_i inst context state condition thenBranch elseBranch value x h ih1
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_3]
+      have hc : @Flapjack.evalHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable condition = some (.val (.word value)) := by
+        rw [evalHOLExact_toExact_eq context condition]
+        exact x
+      simp only [hc]
+      simp only [h, if_true]
+      exact ih1
+  | case9 =>
+      rename_i inst context state condition thenBranch elseBranch value x h ih1
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_3]
+      have hc : @Flapjack.evalHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable condition = some (.val (.word value)) := by
+        rw [evalHOLExact_toExact_eq context condition]
+        exact x
+      simp only [hc]
+      rw [if_neg h]
+      exact ih1
+  | case10 =>
+      rename_i inst context state condition thenBranch elseBranch x
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_3]
+      have hx : ∀ value, @Flapjack.evalHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable condition = some (.val (.word value)) → False := by
+        intro value hv
+        rw [evalHOLExact_toExact_eq context condition] at hv
+        exact x value hv
+      cases hc : @Flapjack.evalHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable condition with
+      | none => rfl
+      | some v =>
+        cases v with
+        | val wordLab => cases wordLab with | word value => exact (hx value hc).elim
+        | rStruct fields => rfl
+        | nStruct name fields => rfl
+  | case11 =>
+      rename_i inst context state condition body value x h1 h
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_4]
+      have hc : @Flapjack.evalHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable condition = some (.val (.word value)) := by
+        rw [evalHOLExact_toExact_eq context condition]
+        exact x
+      simp only [hc]
+      rw [if_pos h1]
+      have h' : context.toExact.state.clock = 0 := h
+      rw [if_pos h']
+      simp only [Option.map_some, Option.some.injEq, Prod.mk.injEq]
+      refine ⟨trivial, ?_⟩
+      apply PanSemExactEvalContext.ext
+      change emptyLocalsHOLExact context.state.toExact = (emptyLocalsHOLFinite context.state).toExact
+      rw [toExact_emptyLocalsHOLFinite]
+  | case12 =>
+      rename_i inst context state condition body value x1 h1 hclock entry entryContext x ih1
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_4]
+      have hc : @Flapjack.evalHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable condition = some (.val (.word value)) := by
+        rw [evalHOLExact_toExact_eq context condition]
+        exact x1
+      simp only [hc]
+      rw [if_pos h1]
+      have hclock' : ¬(context.toExact.state.clock = 0) := hclock
+      rw [if_neg hclock']
+      generalize hentb : context.toExact.withState (decClockHOLExact context.toExact.state) rfl rfl = entb
+      have hentb_eq : entb = entryContext.toExact := by
+        rw [← hentb]
+        apply PanSemExactEvalContext.ext
+        change decClockHOLExact context.state.toExact = (decClockHOLFinite context.state).toExact
+        rw [toExact_decClockHOLFinite]
+      rw [hentb_eq]
+      rw [← ih1, x]
+      rfl
+  | case13 =>
+      rename_i inst context state condition body value x1 h1 hclock entry entryContext postContext x fixed fixedContext ih2 ih1
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_4]
+      have hc : @Flapjack.evalHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable condition = some (.val (.word value)) := by
+        rw [evalHOLExact_toExact_eq context condition]
+        exact x1
+      simp only [hc]
+      rw [if_pos h1]
+      have hclock' : ¬(context.toExact.state.clock = 0) := hclock
+      rw [if_neg hclock']
+      generalize hentb : context.toExact.withState (decClockHOLExact context.toExact.state) rfl rfl = entb
+      have hentb_eq : entb = entryContext.toExact := by
+        rw [← hentb]
+        apply PanSemExactEvalContext.ext
+        change decClockHOLExact context.state.toExact = (decClockHOLFinite context.state).toExact
+        rw [toExact_decClockHOLFinite]
+      rw [hentb_eq]
+      rw [← ih2, x]
+      simp only [Option.map_some]
+      exact ih1
+  | case14 =>
+      rename_i inst context state condition body value x1 h1 hclock entry entryContext postContext x fixed fixedContext ih2 ih1
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_4]
+      have hc : @Flapjack.evalHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable condition = some (.val (.word value)) := by
+        rw [evalHOLExact_toExact_eq context condition]
+        exact x1
+      simp only [hc]
+      rw [if_pos h1]
+      have hclock' : ¬(context.toExact.state.clock = 0) := hclock
+      rw [if_neg hclock']
+      generalize hentb : context.toExact.withState (decClockHOLExact context.toExact.state) rfl rfl = entb
+      have hentb_eq : entb = entryContext.toExact := by
+        rw [← hentb]
+        apply PanSemExactEvalContext.ext
+        change decClockHOLExact context.state.toExact = (decClockHOLFinite context.state).toExact
+        rw [toExact_decClockHOLFinite]
+      rw [hentb_eq]
+      rw [← ih2, x]
+      simp only [Option.map_some]
+      exact ih1
+  | case15 =>
+      rename_i inst context state condition body value x1 h1 hclock entry entryContext postContext x fixed fixedContext ih1
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_4]
+      have hc : @Flapjack.evalHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable condition = some (.val (.word value)) := by
+        rw [evalHOLExact_toExact_eq context condition]
+        exact x1
+      simp only [hc]
+      rw [if_pos h1]
+      have hclock' : ¬(context.toExact.state.clock = 0) := hclock
+      rw [if_neg hclock']
+      generalize hentb : context.toExact.withState (decClockHOLExact context.toExact.state) rfl rfl = entb
+      have hentb_eq : entb = entryContext.toExact := by
+        rw [← hentb]
+        apply PanSemExactEvalContext.ext
+        change decClockHOLExact context.state.toExact = (decClockHOLFinite context.state).toExact
+        rw [toExact_decClockHOLFinite]
+      rw [hentb_eq]
+      rw [← ih1, x]
+      simp only [Option.map_some]
+      rfl
+  | case16 =>
+      rename_i inst context state condition body value x4 h1 hclock entry entryContext result postContext x3 fixed fixedContext x2 x1 x0 ih1
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_4]
+      have hc : @Flapjack.evalHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable condition = some (.val (.word value)) := by
+        rw [evalHOLExact_toExact_eq context condition]
+        exact x4
+      simp only [hc]
+      rw [if_pos h1]
+      have hclock' : ¬(context.toExact.state.clock = 0) := hclock
+      rw [if_neg hclock']
+      generalize hentb : context.toExact.withState (decClockHOLExact context.toExact.state) rfl rfl = entb
+      have hentb_eq : entb = entryContext.toExact := by
+        rw [← hentb]
+        apply PanSemExactEvalContext.ext
+        change decClockHOLExact context.state.toExact = (decClockHOLFinite context.state).toExact
+        rw [toExact_decClockHOLFinite]
+      rw [hentb_eq]
+      rw [← ih1, x3]
+      simp only [Option.map_some]
+      rfl
+  | case17 =>
+      rename_i inst context state condition body value x h
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_4]
+      have hc : @Flapjack.evalHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable condition = some (.val (.word value)) := by
+        rw [evalHOLExact_toExact_eq context condition]
+        exact x
+      simp only [hc]
+      rw [if_neg h]
+      simp only [Option.map_some]
+  | case18 =>
+      rename_i inst context state condition body x
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_4]
+      have hx : ∀ value, @Flapjack.evalHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable condition = some (.val (.word value)) → False := by
+        intro value hv
+        rw [evalHOLExact_toExact_eq context condition] at hv
+        exact x value hv
+      cases hc : @Flapjack.evalHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable condition with
+      | none => rfl
+      | some v =>
+        cases v with
+        | val wordLab => cases wordLab with | word value => exact (hx value hc).elim
+        | rStruct fields => rfl
+        | nStruct name fields => rfl
+  | case19 =>
+      rename_i inst context state info function arguments x
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_5]
+      have hx : @Flapjack.evalListHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable arguments = none := by
+        rw [evalListHOLExact_toExact_eq context arguments]; exact x
+      simp only [hx, Option.map_some]
+  | case20 =>
+      rename_i inst context state info function arguments values x1 x
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_5]
+      rw [show (FiniteEvalContext.toExact context).state.code = context.state.code.lookup from rfl]
+      have hargs : @Flapjack.evalListHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable arguments = some values := by
+        rw [evalListHOLExact_toExact_eq context arguments]; exact x1
+      have hl : lookupCodeHOLExact context.state.code.lookup function values = none :=
+        (lookupCodeHOLFinite_eq_none_iff (code := context.state.code.lookup) (fname := function) (values := values)).mp x
+      simp only [hargs, hl, Option.map_some]
+  | case21 =>
+      rename_i inst context state info function arguments values x1 body callee returnShape x h
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_5]
+      rw [show (FiniteEvalContext.toExact context).state.code = context.state.code.lookup from rfl]
+      have hargs : @Flapjack.evalListHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable arguments = some values := by
+        rw [evalListHOLExact_toExact_eq context arguments]; exact x1
+      have hl : lookupCodeHOLExact context.state.code.lookup function values = some (body, callee.lookup, returnShape) :=
+        lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x
+      simp only [hargs, hl]
+      have hclock' : context.toExact.state.clock = 0 := h
+      rw [if_pos hclock']
+      simp only [Option.map_some, Option.some.injEq, Prod.mk.injEq]
+      refine ⟨trivial, ?_⟩
+      apply PanSemExactEvalContext.ext
+      change emptyLocalsHOLExact context.state.toExact = (emptyLocalsHOLFinite context.state).toExact
+      rw [toExact_emptyLocalsHOLFinite]
+  | case22 =>
+      rename_i inst context state info function arguments values x2 body callee returnShape x1 h entry entryContext x ih1
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_5]
+      rw [show (FiniteEvalContext.toExact context).state.code = context.state.code.lookup from rfl]
+      have hargs : @Flapjack.evalListHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable arguments = some values := by
+        rw [evalListHOLExact_toExact_eq context arguments]; exact x2
+      have hl : lookupCodeHOLExact context.state.code.lookup function values = some (body, callee.lookup, returnShape) :=
+        lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x1
+      simp only [hargs, hl]
+      have hclock' : ¬(context.toExact.state.clock = 0) := h
+      rw [if_neg hclock']
+      generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
+      have hentb_eq : entb = entryContext.toExact := by
+        rw [← hentb]
+        apply PanSemExactEvalContext.ext
+        change (callEntryStateHOLFinite context.state callee).toExact =
+          Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup
+        rw [toExact_callEntryStateHOLFinite]
+        rfl
+      rw [hentb_eq]
+      rw [← ih1, x]
+      rfl
+  | case23 =>
+      rename_i inst context state info function arguments values x2 body callee returnShape x1 h entry entryContext postContext x fixedContext ih1
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_5]
+      rw [show (FiniteEvalContext.toExact context).state.code = context.state.code.lookup from rfl]
+      have hargs : @Flapjack.evalListHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable arguments = some values := by
+        rw [evalListHOLExact_toExact_eq context arguments]; exact x2
+      have hl : lookupCodeHOLExact context.state.code.lookup function values = some (body, callee.lookup, returnShape) :=
+        lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x1
+      simp only [hargs, hl]
+      have hclock' : ¬(context.toExact.state.clock = 0) := h
+      rw [if_neg hclock']
+      generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
+      have hentb_eq : entb = entryContext.toExact := by
+        rw [← hentb]
+        apply PanSemExactEvalContext.ext
+        change (callEntryStateHOLFinite context.state callee).toExact = Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup
+        rw [toExact_callEntryStateHOLFinite]
+        rfl
+      rw [hentb_eq, ← ih1, x]
+      simp only [Option.map_some, Option.some.injEq]
+      congr 1
+  | case24 =>
+      rename_i inst context state info function arguments values x2 body callee returnShape x1 h entry entryContext postContext x fixedContext ih1
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_5]
+      rw [show (FiniteEvalContext.toExact context).state.code = context.state.code.lookup from rfl]
+      have hargs : @Flapjack.evalListHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable arguments = some values := by
+        rw [evalListHOLExact_toExact_eq context arguments]; exact x2
+      have hl : lookupCodeHOLExact context.state.code.lookup function values = some (body, callee.lookup, returnShape) :=
+        lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x1
+      simp only [hargs, hl]
+      have hclock' : ¬(context.toExact.state.clock = 0) := h
+      rw [if_neg hclock']
+      generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
+      have hentb_eq : entb = entryContext.toExact := by
+        rw [← hentb]
+        apply PanSemExactEvalContext.ext
+        change (callEntryStateHOLFinite context.state callee).toExact = Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup
+        rw [toExact_callEntryStateHOLFinite]
+        rfl
+      rw [hentb_eq, ← ih1, x]
+      simp only [Option.map_some, Option.some.injEq]
+      congr 1
+  | case25 =>
+      rename_i inst context state info function arguments values x2 body callee returnShape x1 h entry entryContext postContext x fixedContext ih1
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_5]
+      rw [show (FiniteEvalContext.toExact context).state.code = context.state.code.lookup from rfl]
+      have hargs : @Flapjack.evalListHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable arguments = some values := by
+        rw [evalListHOLExact_toExact_eq context arguments]; exact x2
+      have hl : lookupCodeHOLExact context.state.code.lookup function values = some (body, callee.lookup, returnShape) :=
+        lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x1
+      simp only [hargs, hl]
+      have hclock' : ¬(context.toExact.state.clock = 0) := h
+      rw [if_neg hclock']
+      generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
+      have hentb_eq : entb = entryContext.toExact := by
+        rw [← hentb]
+        apply PanSemExactEvalContext.ext
+        change (callEntryStateHOLFinite context.state callee).toExact = Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup
+        rw [toExact_callEntryStateHOLFinite]
+        rfl
+      rw [hentb_eq, ← ih1, x]
+      simp only [Option.map_some, Option.some.injEq]
+      congr 1
+  | case26 =>
+      rename_i inst context state function arguments values x2 body callee returnShape x1 hClock entry entryContext postContext value hshape x fixedContext ih1
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_5]
+      rw [show (FiniteEvalContext.toExact context).state.code = context.state.code.lookup from rfl]
+      have hargs : @Flapjack.evalListHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable arguments = some values := by
+        rw [evalListHOLExact_toExact_eq context arguments]; exact x2
+      have hl : lookupCodeHOLExact context.state.code.lookup function values = some (body, callee.lookup, returnShape) :=
+        lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x1
+      simp only [hargs, hl]
+      have hclock' : ¬(context.toExact.state.clock = 0) := hClock
+      rw [if_neg hclock']
+      generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
+      have hentb_eq : entb = entryContext.toExact := by
+        rw [← hentb]
+        apply PanSemExactEvalContext.ext
+        change (callEntryStateHOLFinite context.state callee).toExact = Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup
+        rw [toExact_callEntryStateHOLFinite]
+        rfl
+      rw [hentb_eq, ← ih1, x]
+      simp only [Option.map_some]
+      rw [if_pos hshape]
+      simp only [Option.some.injEq, Prod.mk.injEq]
+      refine ⟨trivial, ?_⟩
+      apply PanSemExactEvalContext.ext
+      simp only [FiniteEvalContext.toExact, FiniteEvalContext.withState,
+        PanSemExactEvalContext.withState_state, toExact_emptyLocalsHOLFinite]
+      congr 1
+  | case27 =>
+      rename_i inst context state function arguments values x2 body callee returnShape x1 hClock entry entryContext postContext value hshape snd x fixedContext ih1
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_5]
+      rw [show (FiniteEvalContext.toExact context).state.code = context.state.code.lookup from rfl]
+      have hargs : @Flapjack.evalListHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable arguments = some values := by
+        rw [evalListHOLExact_toExact_eq context arguments]; exact x2
+      have hl : lookupCodeHOLExact context.state.code.lookup function values = some (body, callee.lookup, returnShape) :=
+        lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x1
+      simp only [hargs, hl]
+      have hclock' : ¬(context.toExact.state.clock = 0) := hClock
+      rw [if_neg hclock']
+      generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
+      have hentb_eq : entb = entryContext.toExact := by
+        rw [← hentb]
+        apply PanSemExactEvalContext.ext
+        change (callEntryStateHOLFinite context.state callee).toExact = Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup
+        rw [toExact_callEntryStateHOLFinite]
+        rfl
+      rw [hentb_eq, ← ih1, x]
+      simp only [Option.map_some]
+      rw [if_pos hshape]
+      simp only [Option.some.injEq, Prod.mk.injEq]
+      refine ⟨trivial, ?_⟩
+      apply PanSemExactEvalContext.ext
+      simp only [FiniteEvalContext.toExact, FiniteEvalContext.withState,
+        PanSemExactEvalContext.withState_state, toExact_setLocals]
+      congr 1
+  | case28 =>
+      rename_i inst context state function arguments values x2 body callee returnShape x1 hClock entry entryContext postContext value hshape kind name snd hvalid x fixedContext ih1
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_5]
+      rw [show (FiniteEvalContext.toExact context).state.code = context.state.code.lookup from rfl]
+      have hargs : @Flapjack.evalListHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable arguments = some values := by
+        rw [evalListHOLExact_toExact_eq context arguments]; exact x2
+      have hl : lookupCodeHOLExact context.state.code.lookup function values = some (body, callee.lookup, returnShape) :=
+        lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x1
+      simp only [hargs, hl]
+      have hclock' : ¬(context.toExact.state.clock = 0) := hClock
+      rw [if_neg hclock']
+      generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
+      have hentb_eq : entb = entryContext.toExact := by
+        rw [← hentb]
+        apply PanSemExactEvalContext.ext
+        change (callEntryStateHOLFinite context.state callee).toExact = Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup
+        rw [toExact_callEntryStateHOLFinite]
+        rfl
+      rw [hentb_eq, ← ih1, x]
+      simp only [Option.map_some]
+      rw [if_pos hshape]
+      rw [if_pos (show isValidValueHOLExact context.toExact.state kind name value = true from hvalid)]
+      simp only [Option.some.injEq, Prod.mk.injEq]
+      refine ⟨trivial, ?_⟩
+      apply PanSemExactEvalContext.ext
+      simp only [FiniteEvalContext.toExact, PanSemExactEvalContext.withState_state,
+        FiniteEvalContext.withState_state]
+      rw [toExact_setKvarHOLFinite]
+      congr 1
+  | case29 =>
+      rename_i inst context state function arguments values x2 body callee returnShape x1 hClock entry entryContext postContext value hshape kind name snd hvalid x fixedContext ih1
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_5]
+      rw [show (FiniteEvalContext.toExact context).state.code = context.state.code.lookup from rfl]
+      have hargs : @Flapjack.evalListHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable arguments = some values := by
+        rw [evalListHOLExact_toExact_eq context arguments]; exact x2
+      have hl : lookupCodeHOLExact context.state.code.lookup function values = some (body, callee.lookup, returnShape) :=
+        lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x1
+      simp only [hargs, hl]
+      have hclock' : ¬(context.toExact.state.clock = 0) := hClock
+      rw [if_neg hclock']
+      generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
+      have hentb_eq : entb = entryContext.toExact := by
+        rw [← hentb]
+        apply PanSemExactEvalContext.ext
+        change (callEntryStateHOLFinite context.state callee).toExact = Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup
+        rw [toExact_callEntryStateHOLFinite]
+        rfl
+      rw [hentb_eq, ← ih1, x]
+      simp only [Option.map_some]
+      rw [if_pos hshape]
+      rw [if_neg (show ¬(isValidValueHOLExact context.toExact.state kind name value = true) from hvalid)]
+      simp only [Option.some.injEq, Prod.mk.injEq]
+      refine ⟨trivial, ?_⟩
+      have hfix := callFixedContextHOLFinite_toExact context callee postContext
+        (some (PanSemResultExact.returned value))
+      exact hfix
+  | case30 =>
+      rename_i inst context state info function arguments values x2 body callee returnShape x1 hClock entry entryContext postContext value hshape x fixedContext ih1
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_5]
+      rw [show (FiniteEvalContext.toExact context).state.code = context.state.code.lookup from rfl]
+      have hargs : @Flapjack.evalListHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable arguments = some values := by
+        rw [evalListHOLExact_toExact_eq context arguments]; exact x2
+      have hl : lookupCodeHOLExact context.state.code.lookup function values = some (body, callee.lookup, returnShape) :=
+        lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x1
+      simp only [hargs, hl]
+      have hclock' : ¬(context.toExact.state.clock = 0) := hClock
+      rw [if_neg hclock']
+      generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
+      have hentb_eq : entb = entryContext.toExact := by
+        rw [← hentb]
+        apply PanSemExactEvalContext.ext
+        change (callEntryStateHOLFinite context.state callee).toExact = Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup
+        rw [toExact_callEntryStateHOLFinite]
+        rfl
+      rw [hentb_eq, ← ih1, x]
+      simp only [Option.map_some]
+      rw [if_neg hshape]
+      simp only [Option.some.injEq, Prod.mk.injEq]
+      refine ⟨trivial, ?_⟩
+      have hfix := callFixedContextHOLFinite_toExact context callee postContext
+        (some (PanSemResultExact.returned value))
+      exact hfix
+  | case31 =>
+      rename_i inst context state function arguments values x2 body callee returnShape x1 hClock entry entryContext postContext exceptionId value x fixedContext ih1
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_5]
+      rw [show (FiniteEvalContext.toExact context).state.code = context.state.code.lookup from rfl]
+      have hargs : @Flapjack.evalListHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable arguments = some values := by
+        rw [evalListHOLExact_toExact_eq context arguments]; exact x2
+      have hl : lookupCodeHOLExact context.state.code.lookup function values = some (body, callee.lookup, returnShape) :=
+        lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x1
+      simp only [hargs, hl]
+      have hclock' : ¬(context.toExact.state.clock = 0) := hClock
+      rw [if_neg hclock']
+      generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
+      have hentb_eq : entb = entryContext.toExact := by
+        rw [← hentb]
+        apply PanSemExactEvalContext.ext
+        change (callEntryStateHOLFinite context.state callee).toExact = Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup
+        rw [toExact_callEntryStateHOLFinite]
+        rfl
+      rw [hentb_eq, ← ih1, x]
+      simp only [Option.map_some]
+      simp only [Option.some.injEq, Prod.mk.injEq]
+      refine ⟨trivial, ?_⟩
+      apply PanSemExactEvalContext.ext
+      simp only [FiniteEvalContext.toExact, FiniteEvalContext.withState,
+        PanSemExactEvalContext.withState_state, toExact_emptyLocalsHOLFinite]
+      congr 1
+  | case32 =>
+      rename_i inst context state function arguments values x2 body callee returnShape x1 hClock entry entryContext postContext exceptionId value fst x fixedContext ih1
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_5]
+      rw [show (FiniteEvalContext.toExact context).state.code = context.state.code.lookup from rfl]
+      have hargs : @Flapjack.evalListHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable arguments = some values := by
+        rw [evalListHOLExact_toExact_eq context arguments]; exact x2
+      have hl : lookupCodeHOLExact context.state.code.lookup function values = some (body, callee.lookup, returnShape) :=
+        lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x1
+      simp only [hargs, hl]
+      have hclock' : ¬(context.toExact.state.clock = 0) := hClock
+      rw [if_neg hclock']
+      generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
+      have hentb_eq : entb = entryContext.toExact := by
+        rw [← hentb]
+        apply PanSemExactEvalContext.ext
+        change (callEntryStateHOLFinite context.state callee).toExact = Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup
+        rw [toExact_callEntryStateHOLFinite]
+        rfl
+      rw [hentb_eq, ← ih1, x]
+      simp only [Option.map_some]
+      simp only [Option.some.injEq, Prod.mk.injEq]
+      refine ⟨trivial, ?_⟩
+      apply PanSemExactEvalContext.ext
+      simp only [FiniteEvalContext.toExact, FiniteEvalContext.withState,
+        PanSemExactEvalContext.withState_state, toExact_emptyLocalsHOLFinite]
+      congr 1
+  | case33 =>
+      rename_i inst context state function arguments values x3 body callee returnShape x2 hClock entry entryContext postContext value fst handlerId handlerVar handlerProgram shape hcond x1 x fixedContext handlerState handlerContext ih2 ih1
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_5]
+      rw [show (FiniteEvalContext.toExact context).state.code = context.state.code.lookup from rfl]
+      have hargs : @Flapjack.evalListHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable arguments = some values := by
+        rw [evalListHOLExact_toExact_eq context arguments]; exact x3
+      have hl : lookupCodeHOLExact context.state.code.lookup function values = some (body, callee.lookup, returnShape) :=
+        lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x2
+      simp only [hargs, hl]
+      have hclock' : ¬(context.toExact.state.clock = 0) := hClock
+      rw [if_neg hclock']
+      generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
+      have hentb_eq : entb = entryContext.toExact := by
+        rw [← hentb]
+        apply PanSemExactEvalContext.ext
+        change (callEntryStateHOLFinite context.state callee).toExact = Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup
+        rw [toExact_callEntryStateHOLFinite]
+        rfl
+      rw [hentb_eq, ← ih2, x]
+      simp only [Option.map_some]
+      simp only [if_true]
+      rw [show context.toExact.state.eshapes = context.state.eshapes.lookup from rfl]
+      rw [x1]
+      simp only []
+      rw [if_pos (show (shapeEqHOL (shapeOfHOLExact value) shape && isValidValueHOLExact context.toExact.state VarKind.local handlerVar value) = true from hcond)]
+      have hfix := callFixedContextHOLFinite_toExact context callee postContext
+        (some (PanSemResultExact.exception handlerId value))
+      have hctx : (Flapjack.callFixedContextHOLExact (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup)
+            (some (PanSemResultExact.exception handlerId value)) postContext.toExact).withState
+          (Flapjack.handlerStateHOLExact context.toExact
+            (Flapjack.callFixedContextHOLExact (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup)
+              (some (PanSemResultExact.exception handlerId value)) postContext.toExact)
+            handlerVar value) rfl rfl = handlerContext.toExact := by
+        apply PanSemExactEvalContext.ext
+        simp only [FiniteEvalContext.toExact, PanSemExactEvalContext.withState_state]
+        exact (toExact_handlerStateHOLFinite context fixedContext _ hfix handlerVar value).symm
+      rw [hctx]
+      exact ih1
+  | case34 =>
+      rename_i inst context state function arguments values x3 body callee returnShape x2 hClock entry entryContext postContext value fst handlerId handlerVar handlerProgram shape hcond x1 x fixedContext ih1
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_5]
+      rw [show (FiniteEvalContext.toExact context).state.code = context.state.code.lookup from rfl]
+      have hargs : @Flapjack.evalListHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable arguments = some values := by
+        rw [evalListHOLExact_toExact_eq context arguments]; exact x3
+      have hl : lookupCodeHOLExact context.state.code.lookup function values = some (body, callee.lookup, returnShape) :=
+        lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x2
+      simp only [hargs, hl]
+      have hclock' : ¬(context.toExact.state.clock = 0) := hClock
+      rw [if_neg hclock']
+      generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
+      have hentb_eq : entb = entryContext.toExact := by
+        rw [← hentb]
+        apply PanSemExactEvalContext.ext
+        change (callEntryStateHOLFinite context.state callee).toExact = Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup
+        rw [toExact_callEntryStateHOLFinite]
+        rfl
+      rw [hentb_eq, ← ih1, x]
+      simp only [Option.map_some]
+      simp only [if_true]
+      rw [show context.toExact.state.eshapes = context.state.eshapes.lookup from rfl]
+      rw [x1]
+      simp only []
+      rw [if_neg (show ¬(shapeEqHOL (shapeOfHOLExact value) shape && isValidValueHOLExact context.toExact.state VarKind.local handlerVar value) = true from hcond)]
+      simp only [Option.some.injEq, Prod.mk.injEq]
+      refine ⟨trivial, ?_⟩
+      have hfix := callFixedContextHOLFinite_toExact context callee postContext
+        (some (PanSemResultExact.exception handlerId value))
+      exact hfix
+  | case35 =>
+      rename_i inst context state function arguments values x3 body callee returnShape x2 hClock entry entryContext postContext value fst handlerId handlerVar handlerProgram x1 x fixedContext ih1
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_5]
+      rw [show (FiniteEvalContext.toExact context).state.code = context.state.code.lookup from rfl]
+      have hargs : @Flapjack.evalListHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable arguments = some values := by
+        rw [evalListHOLExact_toExact_eq context arguments]; exact x3
+      have hl : lookupCodeHOLExact context.state.code.lookup function values = some (body, callee.lookup, returnShape) :=
+        lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x2
+      simp only [hargs, hl]
+      have hclock' : ¬(context.toExact.state.clock = 0) := hClock
+      rw [if_neg hclock']
+      generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
+      have hentb_eq : entb = entryContext.toExact := by
+        rw [← hentb]
+        apply PanSemExactEvalContext.ext
+        change (callEntryStateHOLFinite context.state callee).toExact = Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup
+        rw [toExact_callEntryStateHOLFinite]
+        rfl
+      rw [hentb_eq, ← ih1, x]
+      simp only [Option.map_some]
+      simp only [if_true]
+      rw [show context.toExact.state.eshapes = context.state.eshapes.lookup from rfl]
+      rw [x1]
+      simp only [Option.some.injEq, Prod.mk.injEq]
+      refine ⟨trivial, ?_⟩
+      have hfix := callFixedContextHOLFinite_toExact context callee postContext
+        (some (PanSemResultExact.exception handlerId value))
+      exact hfix
+  | case36 =>
+      rename_i inst context state function arguments values x2 body callee returnShape x1 hClock entry entryContext postContext exceptionId value fst handlerId handlerVar handlerProgram hne x fixedContext ih1
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_5]
+      rw [show (FiniteEvalContext.toExact context).state.code = context.state.code.lookup from rfl]
+      have hargs : @Flapjack.evalListHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable arguments = some values := by
+        rw [evalListHOLExact_toExact_eq context arguments]; exact x2
+      have hl : lookupCodeHOLExact context.state.code.lookup function values = some (body, callee.lookup, returnShape) :=
+        lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x1
+      simp only [hargs, hl]
+      have hclock' : ¬(context.toExact.state.clock = 0) := hClock
+      rw [if_neg hclock']
+      generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
+      have hentb_eq : entb = entryContext.toExact := by
+        rw [← hentb]
+        apply PanSemExactEvalContext.ext
+        change (callEntryStateHOLFinite context.state callee).toExact = Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup
+        rw [toExact_callEntryStateHOLFinite]
+        rfl
+      rw [hentb_eq, ← ih1, x]
+      simp only [Option.map_some]
+      rw [if_neg hne]
+      simp only [Option.some.injEq, Prod.mk.injEq]
+      refine ⟨trivial, ?_⟩
+      apply PanSemExactEvalContext.ext
+      simp only [FiniteEvalContext.toExact, FiniteEvalContext.withState,
+        PanSemExactEvalContext.withState_state, toExact_emptyLocalsHOLFinite]
+      congr 1
+  | case37 =>
+      rename_i inst context state info function arguments values x6 body callee returnShape x5 hClock entry entryContext postContext other x4 x3 x2 x1 x fixedContext ih1
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_5]
+      rw [show (FiniteEvalContext.toExact context).state.code = context.state.code.lookup from rfl]
+      have hargs : @Flapjack.evalListHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable arguments = some values := by
+        rw [evalListHOLExact_toExact_eq context arguments]; exact x6
+      have hl : lookupCodeHOLExact context.state.code.lookup function values = some (body, callee.lookup, returnShape) :=
+        lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x5
+      simp only [hargs, hl]
+      have hclock' : ¬(context.toExact.state.clock = 0) := hClock
+      rw [if_neg hclock']
+      generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
+      have hentb_eq : entb = entryContext.toExact := by
+        rw [← hentb]
+        apply PanSemExactEvalContext.ext
+        change (callEntryStateHOLFinite context.state callee).toExact = Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup
+        rw [toExact_callEntryStateHOLFinite]
+        rfl
+      rw [hentb_eq, ← ih1, x]
+      simp only [Option.map_some]
+      simp only [Option.some.injEq, Prod.mk.injEq]
+      refine ⟨trivial, ?_⟩
+      apply PanSemExactEvalContext.ext
+      simp only [FiniteEvalContext.toExact, FiniteEvalContext.withState,
+        PanSemExactEvalContext.withState_state, toExact_emptyLocalsHOLFinite]
+      congr 1
+  | case38 =>
+      rename_i inst context state resultName shape function arguments continuation x
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_6]
+      have hargs : @Flapjack.evalListHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable arguments = none := by
+        rw [evalListHOLExact_toExact_eq context arguments]; exact x
+      simp only [hargs, Option.map_some]
+  | case39 =>
+      rename_i inst context state resultName shape function arguments continuation values x1 x
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_6]
+      rw [show (FiniteEvalContext.toExact context).state.code = context.state.code.lookup from rfl]
+      have hargs : @Flapjack.evalListHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable arguments = some values := by
+        rw [evalListHOLExact_toExact_eq context arguments]; exact x1
+      have hl : lookupCodeHOLExact context.state.code.lookup function values = none :=
+        (lookupCodeHOLFinite_eq_none_iff (code := context.state.code.lookup) (fname := function) (values := values)).mp x
+      simp only [hargs, hl, Option.map_some]
+  | case40 =>
+      rename_i inst context state resultName shape function arguments continuation values x1 body callee returnShape x h
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_6]
+      rw [show (FiniteEvalContext.toExact context).state.code = context.state.code.lookup from rfl]
+      have hargs : @Flapjack.evalListHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable arguments = some values := by
+        rw [evalListHOLExact_toExact_eq context arguments]; exact x1
+      have hl : lookupCodeHOLExact context.state.code.lookup function values = some (body, callee.lookup, returnShape) :=
+        lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x
+      simp only [hargs, hl]
+      have hclock' : context.toExact.state.clock = 0 := h
+      rw [if_pos hclock']
+      simp only [Option.map_some, Option.some.injEq, Prod.mk.injEq]
+      refine ⟨trivial, ?_⟩
+      apply PanSemExactEvalContext.ext
+      change emptyLocalsHOLExact context.state.toExact = (emptyLocalsHOLFinite context.state).toExact
+      rw [toExact_emptyLocalsHOLFinite]
+  | case41 =>
+      rename_i inst context state resultName shape function arguments continuation values x2 body callee returnShape x1 hClock entry entryContext x ih1
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_6]
+      rw [show (FiniteEvalContext.toExact context).state.code = context.state.code.lookup from rfl]
+      have hargs : @Flapjack.evalListHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable arguments = some values := by
+        rw [evalListHOLExact_toExact_eq context arguments]; exact x2
+      have hl : lookupCodeHOLExact context.state.code.lookup function values = some (body, callee.lookup, returnShape) :=
+        lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x1
+      simp only [hargs, hl]
+      have hclock' : ¬(context.toExact.state.clock = 0) := hClock
+      rw [if_neg hclock']
+      generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
+      have hentb_eq : entb = entryContext.toExact := by
+        rw [← hentb]
+        apply PanSemExactEvalContext.ext
+        change (callEntryStateHOLFinite context.state callee).toExact = Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup
+        rw [toExact_callEntryStateHOLFinite]
+        rfl
+      rw [hentb_eq, ← ih1, x]
+      simp only [Option.map_none]
+  | case42 =>
+      rename_i inst context state resultName shape function arguments continuation values x2 body callee returnShape x1 hClock entry entryContext postContext x fixedContext ih1
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_6]
+      rw [show (FiniteEvalContext.toExact context).state.code = context.state.code.lookup from rfl]
+      have hargs : @Flapjack.evalListHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable arguments = some values := by
+        rw [evalListHOLExact_toExact_eq context arguments]; exact x2
+      have hl : lookupCodeHOLExact context.state.code.lookup function values = some (body, callee.lookup, returnShape) :=
+        lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x1
+      simp only [hargs, hl]
+      have hclock' : ¬(context.toExact.state.clock = 0) := hClock
+      rw [if_neg hclock']
+      generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
+      have hentb_eq : entb = entryContext.toExact := by
+        rw [← hentb]
+        apply PanSemExactEvalContext.ext
+        change (callEntryStateHOLFinite context.state callee).toExact = Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup
+        rw [toExact_callEntryStateHOLFinite]
+        rfl
+      rw [hentb_eq, ← ih1, x]
+      simp only [Option.map_some]
+      simp only [Option.some.injEq, Prod.mk.injEq]
+      refine ⟨trivial, ?_⟩
+      have hfix := callFixedContextHOLFinite_toExact context callee postContext none
+      exact hfix
+  | case43 =>
+      rename_i inst context state resultName shape function arguments continuation values x2 body callee returnShape x1 hClock entry entryContext postContext x fixedContext ih1
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_6]
+      rw [show (FiniteEvalContext.toExact context).state.code = context.state.code.lookup from rfl]
+      have hargs : @Flapjack.evalListHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable arguments = some values := by
+        rw [evalListHOLExact_toExact_eq context arguments]; exact x2
+      have hl : lookupCodeHOLExact context.state.code.lookup function values = some (body, callee.lookup, returnShape) :=
+        lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x1
+      simp only [hargs, hl]
+      have hclock' : ¬(context.toExact.state.clock = 0) := hClock
+      rw [if_neg hclock']
+      generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
+      have hentb_eq : entb = entryContext.toExact := by
+        rw [← hentb]
+        apply PanSemExactEvalContext.ext
+        change (callEntryStateHOLFinite context.state callee).toExact = Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup
+        rw [toExact_callEntryStateHOLFinite]
+        rfl
+      rw [hentb_eq, ← ih1, x]
+      simp only [Option.map_some]
+      simp only [Option.some.injEq, Prod.mk.injEq]
+      refine ⟨trivial, ?_⟩
+      have hfix := callFixedContextHOLFinite_toExact context callee postContext (some PanSemResultExact.break)
+      exact hfix
+  | case44 =>
+      rename_i inst context state resultName shape function arguments continuation values x2 body callee returnShape x1 hClock entry entryContext postContext x fixedContext ih1
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_6]
+      rw [show (FiniteEvalContext.toExact context).state.code = context.state.code.lookup from rfl]
+      have hargs : @Flapjack.evalListHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable arguments = some values := by
+        rw [evalListHOLExact_toExact_eq context arguments]; exact x2
+      have hl : lookupCodeHOLExact context.state.code.lookup function values = some (body, callee.lookup, returnShape) :=
+        lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x1
+      simp only [hargs, hl]
+      have hclock' : ¬(context.toExact.state.clock = 0) := hClock
+      rw [if_neg hclock']
+      generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
+      have hentb_eq : entb = entryContext.toExact := by
+        rw [← hentb]
+        apply PanSemExactEvalContext.ext
+        change (callEntryStateHOLFinite context.state callee).toExact = Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup
+        rw [toExact_callEntryStateHOLFinite]
+        rfl
+      rw [hentb_eq, ← ih1, x]
+      simp only [Option.map_some]
+      simp only [Option.some.injEq, Prod.mk.injEq]
+      refine ⟨trivial, ?_⟩
+      have hfix := callFixedContextHOLFinite_toExact context callee postContext (some PanSemResultExact.continue)
+      exact hfix
+  | case45 =>
+      rename_i inst context state resultName shape function arguments continuation values x3 body callee returnShape x2 hClock entry entryContext postContext value hshape x1 fixedContext continuationContext x ih2 ih1
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_6]
+      rw [show (FiniteEvalContext.toExact context).state.code = context.state.code.lookup from rfl]
+      have hargs : @Flapjack.evalListHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable arguments = some values := by
+        rw [evalListHOLExact_toExact_eq context arguments]; exact x3
+      have hl : lookupCodeHOLExact context.state.code.lookup function values = some (body, callee.lookup, returnShape) :=
+        lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x2
+      simp only [hargs, hl]
+      have hclock' : ¬(context.toExact.state.clock = 0) := hClock
+      rw [if_neg hclock']
+      generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
+      have hentb_eq : entb = entryContext.toExact := by
+        rw [← hentb]
+        apply PanSemExactEvalContext.ext
+        change (callEntryStateHOLFinite context.state callee).toExact = Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup
+        rw [toExact_callEntryStateHOLFinite]
+        rfl
+      rw [hentb_eq, ← ih2, x1]
+      simp only [Option.map_some]
+      rw [if_pos hshape]
+      rw [← toExact_callContinuationContextHOLFinite context fixedContext
+        (Flapjack.callFixedContextHOLExact (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup)
+          (some (PanSemResultExact.returned value)) postContext.toExact)
+        (callFixedContextHOLFinite_toExact context callee postContext (some (PanSemResultExact.returned value)))
+        resultName value]
+      rw [← ih1, x]
+      simp only [Option.map_none]
+  | case46 =>
+      rename_i inst context state resultName shape function arguments continuation values x3 body callee returnShape x2 hClock entry entryContext postContext1 value hshape result postContext restored x1 fixedContext continuationContext x ih2 ih1
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_6]
+      rw [show (FiniteEvalContext.toExact context).state.code = context.state.code.lookup from rfl]
+      have hargs : @Flapjack.evalListHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable arguments = some values := by
+        rw [evalListHOLExact_toExact_eq context arguments]; exact x3
+      have hl : lookupCodeHOLExact context.state.code.lookup function values = some (body, callee.lookup, returnShape) :=
+        lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x2
+      simp only [hargs, hl]
+      have hclock' : ¬(context.toExact.state.clock = 0) := hClock
+      rw [if_neg hclock']
+      generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
+      have hentb_eq : entb = entryContext.toExact := by
+        rw [← hentb]
+        apply PanSemExactEvalContext.ext
+        change (callEntryStateHOLFinite context.state callee).toExact = Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup
+        rw [toExact_callEntryStateHOLFinite]
+        rfl
+      rw [hentb_eq, ← ih2, x1]
+      simp only [Option.map_some]
+      rw [if_pos hshape]
+      rw [← toExact_callContinuationContextHOLFinite context fixedContext
+        (Flapjack.callFixedContextHOLExact (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup)
+          (some (PanSemResultExact.returned value)) postContext1.toExact)
+        (callFixedContextHOLFinite_toExact context callee postContext1 (some (PanSemResultExact.returned value)))
+        resultName value]
+      rw [← ih1, x]
+      simp only [Option.map_some, Option.some.injEq, Prod.mk.injEq]
+      refine ⟨trivial, ?_⟩
+      apply PanSemExactEvalContext.ext
+      simp only [FiniteEvalContext.toExact, PanSemExactEvalContext.withState_state]
+      change ({ postContext.state with
+          locals := HolFiniteMapExact.resVarEq postContext.state.locals
+            (resultName, context.state.locals.lookup resultName) } :
+          PanSemStateFiniteExact width σ).toExact =
+        { postContext.toExact.state with
+          locals := resVarHOLExact postContext.toExact.state.locals
+            (resultName, context.toExact.state.locals resultName) }
+      rw [toExact_resVarEq_locals]
+      congr 1
+  | case47 =>
+      rename_i inst context state resultName shape function arguments continuation values x2 body callee returnShape x1 hClock entry entryContext postContext value hshape x fixedContext ih1
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_6]
+      rw [show (FiniteEvalContext.toExact context).state.code = context.state.code.lookup from rfl]
+      have hargs : @Flapjack.evalListHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable arguments = some values := by
+        rw [evalListHOLExact_toExact_eq context arguments]; exact x2
+      have hl : lookupCodeHOLExact context.state.code.lookup function values = some (body, callee.lookup, returnShape) :=
+        lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x1
+      simp only [hargs, hl]
+      have hclock' : ¬(context.toExact.state.clock = 0) := hClock
+      rw [if_neg hclock']
+      generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
+      have hentb_eq : entb = entryContext.toExact := by
+        rw [← hentb]
+        apply PanSemExactEvalContext.ext
+        change (callEntryStateHOLFinite context.state callee).toExact = Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup
+        rw [toExact_callEntryStateHOLFinite]
+        rfl
+      rw [hentb_eq, ← ih1, x]
+      simp only [Option.map_some]
+      rw [if_neg hshape]
+      simp only [Option.some.injEq, Prod.mk.injEq]
+      refine ⟨trivial, ?_⟩
+      have hfix := callFixedContextHOLFinite_toExact context callee postContext (some (PanSemResultExact.returned value))
+      exact hfix
+  | case48 =>
+      rename_i inst context state resultName shape function arguments continuation values x5 body callee returnShape x4 hClock entry entryContext postContext other x3 x2 x1 x fixedContext ih1
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_6]
+      rw [show (FiniteEvalContext.toExact context).state.code = context.state.code.lookup from rfl]
+      have hargs : @Flapjack.evalListHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable arguments = some values := by
+        rw [evalListHOLExact_toExact_eq context arguments]; exact x5
+      have hl : lookupCodeHOLExact context.state.code.lookup function values = some (body, callee.lookup, returnShape) :=
+        lookupCodeHOLFinite_eq_some context.state.code.lookup function values body callee returnShape x4
+      simp only [hargs, hl]
+      have hclock' : ¬(context.toExact.state.clock = 0) := hClock
+      rw [if_neg hclock']
+      generalize hentb : context.toExact.withState (Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup) rfl rfl = entb
+      have hentb_eq : entb = entryContext.toExact := by
+        rw [← hentb]
+        apply PanSemExactEvalContext.ext
+        change (callEntryStateHOLFinite context.state callee).toExact = Flapjack.callEntryStateHOLExact context.toExact.state callee.lookup
+        rw [toExact_callEntryStateHOLFinite]
+        rfl
+      rw [hentb_eq, ← ih1, x]
+      simp only [Option.map_some]
+      simp only [Option.some.injEq, Prod.mk.injEq]
+      refine ⟨trivial, ?_⟩
+      apply PanSemExactEvalContext.ext
+      simp only [FiniteEvalContext.toExact, FiniteEvalContext.withState,
+        PanSemExactEvalContext.withState_state, toExact_emptyLocalsHOLFinite]
+      congr 1
+  | case49 =>
+      rename_i inst context
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_def]
+      simp only []
+      simp only [Option.map_some]
+  | case50 =>
+      rename_i inst context
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_def]
+      simp only []
+      simp only [Option.map_some]
+  | case51 =>
+      rename_i inst context
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_def]
+      simp only []
+      simp only [Option.map_some]
+  | case52 =>
+      rename_i inst context tag text
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_def]
+      simp only []
+      simp only [Option.map_some]
+  | case53 =>
+      rename_i inst context state h
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_def]
+      simp only []
+      have h' : context.toExact.state.clock = 0 := h
+      rw [if_pos h']
+      simp only [Option.map_some, Option.some.injEq, Prod.mk.injEq]
+      refine ⟨trivial, ?_⟩
+      apply PanSemExactEvalContext.ext
+      change emptyLocalsHOLExact context.state.toExact = (emptyLocalsHOLFinite context.state).toExact
+      rw [toExact_emptyLocalsHOLFinite]
+  | case54 =>
+      rename_i inst context state h
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_def]
+      simp only []
+      have h' : ¬(context.toExact.state.clock = 0) := h
+      rw [if_neg h']
+      simp only [Option.map_some, Option.some.injEq, Prod.mk.injEq]
+      refine ⟨trivial, ?_⟩
+      apply PanSemExactEvalContext.ext
+      change decClockHOLExact context.state.toExact = (decClockHOLFinite context.state).toExact
+      rw [toExact_decClockHOLFinite]
+  | case55 =>
+      rename_i inst context state value x
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_def]
+      simp only []
+      have hx : @Flapjack.evalHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable value = none := by
+        rw [evalHOLExact_toExact_eq context value]
+        exact x
+      simp only [hx]
+      simp only [Option.map_some]
+  | case56 =>
+      rename_i inst context state value1 value x h
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_def]
+      simp only []
+      have hx : @Flapjack.evalHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable value1 = some value := by
+        rw [evalHOLExact_toExact_eq context value1]
+        exact x
+      simp only [hx]
+      have h' : Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL context.toExact.state.structs
+          (shapeOfHOLExact value) ≤ 32 := h
+      rw [if_pos h']
+      simp only [Option.map_some, Option.some.injEq, Prod.mk.injEq]
+      refine ⟨trivial, ?_⟩
+      apply PanSemExactEvalContext.ext
+      change emptyLocalsHOLExact context.state.toExact = (emptyLocalsHOLFinite context.state).toExact
+      rw [toExact_emptyLocalsHOLFinite]
+  | case57 =>
+      rename_i inst context state value1 value x h
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_def]
+      simp only []
+      have hx : @Flapjack.evalHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable value1 = some value := by
+        rw [evalHOLExact_toExact_eq context value1]
+        exact x
+      simp only [hx]
+      have h' : ¬(Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL context.toExact.state.structs
+          (shapeOfHOLExact value) ≤ 32) := h
+      rw [if_neg h']
+      simp only [Option.map_some]
+  | case58 =>
+      rename_i inst context state exception value x
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_def]
+      simp only []
+      have hx : @Flapjack.evalHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable value = none := by
+        rw [evalHOLExact_toExact_eq context value]
+        exact x
+      simp only [hx]
+      simp only [Option.map_some]
+  | case59 =>
+      rename_i inst context state exception value1 value x1 x
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_def]
+      simp only []
+      have hx : @Flapjack.evalHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable value1 = some value := by
+        rw [evalHOLExact_toExact_eq context value1]
+        exact x1
+      simp only [hx]
+      rw [show context.toExact.state.eshapes = context.state.eshapes.lookup from rfl, x]
+      simp only [Option.map_some]
+  | case60 =>
+      rename_i inst context state exception value1 value x1 shape x h1 h
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_def]
+      simp only []
+      have hx : @Flapjack.evalHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable value1 = some value := by
+        rw [evalHOLExact_toExact_eq context value1]
+        exact x1
+      simp only [hx]
+      rw [show context.toExact.state.eshapes = context.state.eshapes.lookup from rfl, x]
+      simp only []
+      have h' : Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL context.toExact.state.structs
+          (shapeOfHOLExact value) ≤ 32 := h
+      rw [if_pos h1, if_pos h']
+      simp only [Option.map_some, Option.some.injEq, Prod.mk.injEq]
+      refine ⟨trivial, ?_⟩
+      apply PanSemExactEvalContext.ext
+      change emptyLocalsHOLExact context.state.toExact = (emptyLocalsHOLFinite context.state).toExact
+      rw [toExact_emptyLocalsHOLFinite]
+  | case61 =>
+      rename_i inst context state exception value1 value x1 shape x h1 h
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_def]
+      simp only []
+      have hx : @Flapjack.evalHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable value1 = some value := by
+        rw [evalHOLExact_toExact_eq context value1]
+        exact x1
+      simp only [hx]
+      rw [show context.toExact.state.eshapes = context.state.eshapes.lookup from rfl, x]
+      simp only []
+      have h' : ¬(Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL context.toExact.state.structs
+          (shapeOfHOLExact value) ≤ 32) := h
+      rw [if_pos h1, if_neg h']
+      simp only [Option.map_some]
+  | case62 =>
+      rename_i inst context state exception value1 value x1 shape x h
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_def]
+      simp only []
+      have hx : @Flapjack.evalHOLExact width σ _ context.toExact.state context.toExact.memaddrsDecidable value1 = some value := by
+        rw [evalHOLExact_toExact_eq context value1]
+        exact x1
+      simp only [hx]
+      rw [show context.toExact.state.eshapes = context.state.eshapes.lookup from rfl, x]
+      simp only []
+      rw [if_neg h]
+      simp only [Option.map_some]
+  | case63 =>
+      rename_i inst context state size kind name address evalExpression output
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_def]
+      simp only []
+      simp only [Option.map_some, Option.some.injEq]
+      refine congrArg (fun c => (output.1, c)) ?_
+      apply PanSemExactEvalContext.ext
+      rfl
+  | case64 =>
+      rename_i inst context state size address value evalExpression output
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_def]
+      simp only []
+      simp only [Option.map_some, Option.some.injEq]
+      refine congrArg (fun c => (output.1, c)) ?_
+      apply PanSemExactEvalContext.ext
+      rfl
+  | case65 =>
+      rename_i inst context state other x14 x13 x12 x11 x10 x9 x8 x7 x6 x5 x4 x3 x2 x1 x0 hres
+      cases other <;> simp_all [evalPanSemNonrecursiveHOLFinite, evalPanSemNonrecursiveHOLExact]
+      · exfalso; exact (x14 _ _ _ _ rfl rfl rfl) rfl
+      · exfalso; exact (x9 _ _ _ _ _ rfl rfl rfl rfl) rfl
+  | case66 =>
+      rename_i inst context state other x14 x13 x12 x11 x10 x9 x8 x7 x6 x5 x4 x3 x2 x1 x0 pair hres
+      rw [evalPanSemRecursiveCallContextHOLExact.eq_def]
+      cases other with
+      | dec name shape initializer body => exact (x14 name shape initializer body rfl).elim
+      | seq first second => exact (x13 first second rfl).elim
+      | ite condition thenBranch elseBranch => exact (x12 condition thenBranch elseBranch rfl).elim
+      | «while» condition body => exact (x11 condition body rfl).elim
+      | call info function arguments => exact (x10 info function arguments rfl).elim
+      | decCall resultName shape function arguments continuation =>
+          exact (x9 resultName shape function arguments continuation rfl).elim
+      | skip => exact (x8 rfl).elim
+      | «break» => exact (x7 rfl).elim
+      | «continue» => exact (x6 rfl).elim
+      | annot tag text => exact (x5 tag text rfl).elim
+      | tick => exact (x4 rfl).elim
+      | «return» value => exact (x3 value rfl).elim
+      | raise exception value => exact (x2 exception value rfl).elim
+      | shMemLoad size kind name address => exact (x1 size kind name address rfl).elim
+      | shMemStore size address value => exact (x0 size address value rfl).elim
+      | assign kind name value =>
+          simp only [evalPanSemNonrecursiveHOLFinite, evalPanSemNonrecursiveHOLExact] at hres
+          simp only [Option.some.injEq] at hres
+          cases hres
+          simp only [Option.map_some, Option.some.injEq, Prod.mk.injEq]
+          refine ⟨rfl, ?_⟩
+          apply PanSemExactEvalContext.ext
+          simp only [FiniteEvalContext.toExact_withState,
+            PanSemExactEvalContext.withState_state, toExact_ofExact]
+          rfl
+      | primitive name operator args =>
+          simp only [evalPanSemNonrecursiveHOLFinite, evalPanSemNonrecursiveHOLExact] at hres
+          simp only [Option.some.injEq] at hres
+          cases hres
+          simp only [Option.map_some, Option.some.injEq, Prod.mk.injEq]
+          refine ⟨rfl, ?_⟩
+          apply PanSemExactEvalContext.ext
+          simp only [FiniteEvalContext.toExact_withState,
+            PanSemExactEvalContext.withState_state, toExact_ofExact]
+          rfl
+      | store address value =>
+          simp only [evalPanSemNonrecursiveHOLFinite, evalPanSemNonrecursiveHOLExact] at hres
+          simp only [Option.some.injEq] at hres
+          cases hres
+          simp only [Option.map_some, Option.some.injEq, Prod.mk.injEq]
+          refine ⟨rfl, ?_⟩
+          apply PanSemExactEvalContext.ext
+          simp only [FiniteEvalContext.toExact_withState,
+            PanSemExactEvalContext.withState_state, toExact_ofExact]
+          rfl
+      | store32 address value =>
+          simp only [evalPanSemNonrecursiveHOLFinite, evalPanSemNonrecursiveHOLExact] at hres
+          simp only [Option.some.injEq] at hres
+          cases hres
+          simp only [Option.map_some, Option.some.injEq, Prod.mk.injEq]
+          refine ⟨rfl, ?_⟩
+          apply PanSemExactEvalContext.ext
+          simp only [FiniteEvalContext.toExact_withState,
+            PanSemExactEvalContext.withState_state, toExact_ofExact]
+          rfl
+      | storeByte address value =>
+          simp only [evalPanSemNonrecursiveHOLFinite, evalPanSemNonrecursiveHOLExact] at hres
+          simp only [Option.some.injEq] at hres
+          cases hres
+          simp only [Option.map_some, Option.some.injEq, Prod.mk.injEq]
+          refine ⟨rfl, ?_⟩
+          apply PanSemExactEvalContext.ext
+          simp only [FiniteEvalContext.toExact_withState,
+            PanSemExactEvalContext.withState_state, toExact_ofExact]
+          rfl
+      | extCall function configuration configurationLength array arrayLength =>
+          simp only [evalPanSemNonrecursiveHOLFinite, evalPanSemNonrecursiveHOLExact] at hres
+          simp only [Option.some.injEq] at hres
+          cases hres
+          simp only [Option.map_some, Option.some.injEq, Prod.mk.injEq]
+          refine ⟨rfl, ?_⟩
+          apply PanSemExactEvalContext.ext
+          simp only [FiniteEvalContext.toExact_withState,
+            PanSemExactEvalContext.withState_state, toExact_ofExact]
+          rfl
+
 end PanSemStateFiniteExact
 
 end Flapjack
