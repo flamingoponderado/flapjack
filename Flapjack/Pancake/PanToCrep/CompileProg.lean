@@ -124,6 +124,35 @@ theorem compileProgExactHOLW_seq_bridge {width : Nat} [NeZero width]
   simp [compileProgExactHOLW, compileProgRiscV, compileProgHOL,
     crepProgOfHOL, progOfHOL, hfirst, hsecond]
 
+/-! Basic leaf/control clauses of the exact-to-production compiler bridge. -/
+theorem compileProgExactHOLW_break_bridge {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width) :
+    crepProgOfHOL (compileProgExactHOLW context (.break : ProgHOL width)) =
+      compileProgRiscV context.toProduction (progOfHOL (.break : ProgHOL width)) := by
+  simp [compileProgExactHOLW, compileProgRiscV, compileProgHOL, crepProgOfHOL,
+    progOfHOL]
+
+theorem compileProgExactHOLW_continue_bridge {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width) :
+    crepProgOfHOL (compileProgExactHOLW context (.continue : ProgHOL width)) =
+      compileProgRiscV context.toProduction (progOfHOL (.continue : ProgHOL width)) := by
+  simp [compileProgExactHOLW, compileProgRiscV, compileProgHOL, crepProgOfHOL,
+    progOfHOL]
+
+theorem compileProgExactHOLW_tick_bridge {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width) :
+    crepProgOfHOL (compileProgExactHOLW context (.tick : ProgHOL width)) =
+      compileProgRiscV context.toProduction (progOfHOL (.tick : ProgHOL width)) := by
+  simp [compileProgExactHOLW, compileProgRiscV, compileProgHOL, crepProgOfHOL,
+    progOfHOL]
+
+theorem compileProgExactHOLW_annot_bridge {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width) (tag text : MlS) :
+    crepProgOfHOL (compileProgExactHOLW context (.annot tag text)) =
+      compileProgRiscV context.toProduction (progOfHOL (.annot tag text)) := by
+  simp [compileProgExactHOLW, compileProgRiscV, compileProgHOL, crepProgOfHOL,
+    progOfHOL]
+
 /-- Metadata adapter whose compiler input crosses the exact `DeclHOL` carrier
     boundary.  Its side condition is the byte-range premise used by the
     production-to-HOL declaration codec; it is preserved by the executed
