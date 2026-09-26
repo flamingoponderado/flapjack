@@ -885,7 +885,15 @@ theorem feveryResVarFlookupHOL {α β : Type} [DecidableEq α]
 
 /-- PanProps-local finite-map rendering of HOL's PanSem state. The four
     `HolFiniteMapExact` fields correspond to HOL `|->` fields; all other fields
-    retain the exact PanSem carrier types. -/
+    retain the exact PanSem carrier types.
+
+    This is intentionally a distinct structure from `PanSemStateFiniteExact`:
+    the `fmap_as_finite_support` checker requires the qualified fields' owning
+    structure and its checked roundtrip witness to live in the same module as
+    each tagged PanProps declaration. The canonical PanSem carrier is owned by
+    another counterpart module, so reusing it here would make the PanProps
+    qualifier unverifiable. `toPanSemFinite`/`ofPanSemFinite` are field-for-field
+    codecs; this local carrier changes no state field or evaluator behavior. -/
 structure PanPropsEvalStateFiniteExact (width : Nat) (σ : Type) [NeZero width] where
   locals : HolFiniteMapExact MlS (ValueHOL width)
   globals : HolFiniteMapExact MlS (ValueHOL width)
@@ -1061,6 +1069,38 @@ theorem structsSimpsHOLFinite {width : Nat} {σ : Type} [NeZero width]
     (emptyLocalsForStructsSimps state).locals = HolFiniteMapExact.empty := by
   simp [decClockForStructsSimps, emptyLocalsForStructsSimps]
 
+/-!
+### Source-review disposition: `evaluate_structs_invariant`
+
+HOL `panPropsScript.sml:1210` states
+`evaluate (p, s) = (res, s') ==> s'.structs = s.structs`; the theorem is
+proved directly from `evaluate_invariants`.  There is deliberately no
+`@[hol]` theorem for it here yet.  The direct finite evaluator in
+`PanSemStateFiniteExact.evaluateHOLFinite` currently returns an assembly
+`Option` around its `result option × state` output, while
+`evaluateHOLFiniteViaExact` removes that marker by delegating through the
+unrestricted-map `PanSemStateExact` evaluator.  The source counterpart's
+finite-to-broad projection proof and the clause-for-clause tagged finite
+`evaluate_def` are still in progress (`flapjack-6yq` and its dependent
+`flapjack-qj5`).  A preservation fact about either adapter alone would
+therefore not yet be a source-reviewed port of this theorem.  The faithful
+finite-state theorem is tracked by `flapjack-4ac.4.63.1`.
+
+### Source-review disposition: `evaluate_min_clock`
+
+HOL `panPropsScript.sml:822` states that if
+`evaluate (prog, s) = (q, r)` and `q ≠ SOME TimeOut`, then there is an input
+clock `k` for which evaluation returns the same result and all the same
+post-state components except that the clock is zero.  Its proof depends on
+`evaluate_clock_sub`; it does not assume an evaluator-success marker as a
+premise.  There is deliberately no `@[hol]` theorem for this result yet:
+`evaluateHOLFiniteViaExact` is the total pair-shaped adapter, but it delegates
+through the unrestricted-map `PanSemStateExact` evaluator, while the direct
+finite evaluator's source projection and tagged `evaluate_def` remain in
+progress (`flapjack-6yq` / `flapjack-qj5`).  The faithful finite-state theorem
+is tracked by `flapjack-4ac.4.47.1`.
+-/
+
 /-- Flapjack-specific adapter from the PanProps finite-support state to the
     existing PanSem expression evaluator. HOL `eval_def` is tagged on its
     PanSem counterpart; this adapter has no separate HOL declaration. -/
@@ -1157,11 +1197,20 @@ theorem evalEmptyLocalsHOLFinite {width : Nat} {σ : Type} [NeZero width] :
   rw [evalHOL_emptyLocalsForStructsSimps state expression] at h
   exact evalHOLExact_emptyLocalsHOLExact state.toExact expression value h
 
-/-- Flapjack-specific PanProps adapter for recursive declaration evaluation.
-    It has no independent HOL tag: the faithful `evaluate_decls_def` belongs
-    in the PanSem counterpart and is tracked by `flapjack-4ac.3.53`. Its
-    successful and failing results are kernel-checked equivalent through
-    `toExact` to the existing function-backed `evaluateDeclsHOLExact`. -/
+/-- Flapjack-specific PanProps proof adapter for recursive declaration
+    evaluation. It has no independent HOL tag: the faithful
+    `evaluate_decls_def` belongs in the PanSem counterpart. Its clauses were
+    compared with `panSemScript.sml:814-837`: `[]` preserves the state, `Name`
+    recurses unchanged, `Decl` evaluates with empty locals then checks the
+    shape and updates globals, `Function` checks parameter/return shapes then
+    updates code, and `ExnDecl` checks freshness/shape then updates eshapes.
+    The `HolFiniteMapExact.update`/`lookup` operations implement the source
+    `FUPDATE`/`FLOOKUP`, and the expression evaluator is the reviewed exact
+    PanSem evaluator. The complete Option-result codec below proves this helper
+    equal to the canonical tagged PanSem finite-map evaluator for every program,
+    including failure. It is proof infrastructure for theorem statements over
+    the local carrier, not a second production compiler route. The removal or
+    migration of this helper remains tracked by `flapjack-p5wm`. -/
 def evaluateDeclsPanPropsHOLFinite {width : Nat} {σ : Type} [NeZero width]
     (state : PanPropsEvalStateFiniteExact width σ) [DecidablePred state.memaddrs] :
     List (DeclHOL width) → Option (PanPropsEvalStateFiniteExact width σ)
@@ -1398,6 +1447,39 @@ theorem evaluateDeclsPanPropsHOLFinite_toCanonical {width : Nat} {σ : Type}
               | false => rfl
               | true => exact False.elim (hcondition hcond)
             simp [condition, hconditionFalse, hconditionCanonical]
+
+/-- Flapjack-specific representation adapter for PanProps theorems that need
+    the local same-module finite-map witness. Evaluation itself is performed
+    by the canonical tagged PanSem finite-support evaluator; only successful
+    result states are converted back to this module's carrier. This avoids a
+    second evaluator definition in a PanProps theorem statement. The complete
+    `Option` result is equivalent to the local recursive proof helper by
+    `evaluateDeclsPanPropsHOLFinite_toCanonical`. -/
+def evaluateDeclsPanPropsCanonical {width : Nat} {σ : Type}
+    [NeZero width] (state : PanPropsEvalStateFiniteExact width σ)
+    [DecidablePred state.memaddrs] (program : List (DeclHOL width)) :
+    Option (PanPropsEvalStateFiniteExact width σ) :=
+  (PanSemStateFiniteExact.evaluateDeclsHOLFinite state.toPanSemFinite program).map
+    PanPropsEvalStateFiniteExact.ofPanSemFinite
+
+/-- The counterpart-module adapter above uses the canonical evaluator rather
+    than duplicating its clauses; its result codec agrees with the local proof
+    helper on both failure and success. -/
+theorem evaluateDeclsPanPropsCanonical_eqHOLFinite {width : Nat} {σ : Type}
+    [NeZero width] (state : PanPropsEvalStateFiniteExact width σ)
+    [DecidablePred state.memaddrs] (program : List (DeclHOL width)) :
+    evaluateDeclsPanPropsCanonical state program =
+      evaluateDeclsPanPropsHOLFinite state program := by
+  unfold evaluateDeclsPanPropsCanonical
+  have h := evaluateDeclsPanPropsHOLFinite_toCanonical state program
+  calc
+    _ = (PanSemStateFiniteExact.evaluateDeclsHOLFinite
+        state.toPanSemFinite program).map PanPropsEvalStateFiniteExact.ofPanSemFinite := rfl
+    _ = ((evaluateDeclsPanPropsHOLFinite state program).map
+        PanPropsEvalStateFiniteExact.toPanSemFinite).map
+        PanPropsEvalStateFiniteExact.ofPanSemFinite := by rw [← h]
+    _ = evaluateDeclsPanPropsHOLFinite state program := by
+      cases evaluateDeclsPanPropsHOLFinite state program <;> simp
 
 private theorem panMemLoad32HOL_monoDomain {width : Nat} [NeZero width]
     (memory : RiscV.Word width → HolWordLab width)
@@ -2960,30 +3042,6 @@ theorem evaluateDeclsNamesHOLFinite {width : Nat} {σ : Type} [NeZero width]
             (DeclHOL.exnDecl exceptionName shape) = false from rfl] at hd
           exact (Bool.false_eq_true.mp hd).elim
 
-/-- The PanProps finite-support `toPanSemFinite` codec is injective: its
-    left inverse is `ofPanSemFinite`. Infrastructure for transporting canonical
-    PanSem declarations back to the PanProps counterpart carrier. -/
-theorem toPanSemFinite_injective {width : Nat} {σ : Type} [NeZero width] :
-    Function.Injective (@toPanSemFinite width σ _) := by
-  intro a b h
-  have := congrArg ofPanSemFinite h
-  simpa using this
-
-/-- Injectivity of `Option.map toPanSemFinite`, used to transport a canonical
-    `Option`-valued equation back to the PanProps carrier. -/
-theorem optionMapToPanSemFinite_injective {width : Nat} {σ : Type} [NeZero width]
-    {a b : Option (PanPropsEvalStateFiniteExact width σ)} :
-    a.map toPanSemFinite = b.map toPanSemFinite → a = b := by
-  intro h
-  cases a with
-  | none => cases b <;> simp_all
-  | some x =>
-      cases b with
-      | none => simp_all
-      | some y =>
-          simp only [Option.map_some, Option.some.injEq] at h
-          exact congrArg some (toPanSemFinite_injective h)
-
 /-- Exact finite-support port of HOL `panProps$evaluate_decl_commute`
     (`cakeml/pancake/semantics/panPropsScript.sml:1472-1480`):
     `!s fi sh v' e ds. evaluate_decls s (Function fi::Decl sh v' e::ds) =
@@ -2993,12 +3051,10 @@ theorem optionMapToPanSemFinite_injective {width : Nat} {σ : Type} [NeZero widt
     `code` and the evaluator does not read `code`. The state is the PanProps
     counterpart carrier over the reviewed canonical `HolFiniteMapExact`
     translation (canonical witness `holFmapAsFiniteSupportWitness` in this
-    module). This is stated over `evaluateDeclsPanPropsHOLFinite`, but the
-    kernel codec `evaluateDeclsPanPropsHOLFinite_toCanonical` transports the
-    canonical tagged PanSem `evaluateDeclsHOLFinite` equation back through the
-    injective `toPanSemFinite`/`ofPanSemFinite` roundtrip, so it is about the
-    canonical evaluator rather than a similar duplicate (coordinator HOLD
-    2026-09-26T16:46Z resolved by `flapjack-lqws`). `[NeZero width]` models
+    module). Its statement uses `evaluateDeclsPanPropsCanonical`, which calls
+    the canonical tagged PanSem `evaluateDeclsHOLFinite` and maps only the
+    result state back through the field-for-field carrier codec. Thus the
+    theorem statement itself is about the canonical evaluator. `[NeZero width]` models
     HOL's positive word dimension and `DecidablePred state.memaddrs` is
     computation evidence for the HOL word-set guard. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_decl_commute"
@@ -3007,14 +3063,13 @@ theorem evaluateDeclsDeclCommuteHOLFinite {width : Nat} {σ : Type} [NeZero widt
     (state : PanPropsEvalStateFiniteExact width σ) [h : DecidablePred state.memaddrs]
     (fi : FunDeclHOL width) (sh : ShapeHOL) (v' : MlS) (e : ExpHOL width)
     (ds : List (DeclHOL width)) :
-    evaluateDeclsPanPropsHOLFinite state (.function fi :: .decl sh v' e :: ds)
-      = evaluateDeclsPanPropsHOLFinite state (.decl sh v' e :: .function fi :: ds) := by
+    evaluateDeclsPanPropsCanonical state (.function fi :: .decl sh v' e :: ds)
+      = evaluateDeclsPanPropsCanonical state (.decl sh v' e :: .function fi :: ds) := by
   letI : DecidablePred state.toPanSemFinite.memaddrs := toPanSemFiniteDecidableMemaddrs state
   have hcanon := PanSemStateFiniteExact.evaluateDeclsHOLFinite_declCommute
     state.toPanSemFinite fi sh v' e ds
-  rw [← evaluateDeclsPanPropsHOLFinite_toCanonical state,
-    ← evaluateDeclsPanPropsHOLFinite_toCanonical state] at hcanon
-  exact optionMapToPanSemFinite_injective hcanon
+  unfold evaluateDeclsPanPropsCanonical
+  exact congrArg (fun result => result.map PanPropsEvalStateFiniteExact.ofPanSemFinite) hcanon
 
 end PanPropsEvalStateFiniteExact
 
