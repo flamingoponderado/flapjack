@@ -288,4 +288,14 @@ theorem progOfHOL_seqAssocHOL_decCall {width : Nat} [NeZero width]
   rw [progOfHOL_smartSeqHOL]
   simp [seqAssoc, progOfHOL, hbody]
 
+/-- Flapjack-specific codec equation for the annotation clause of HOL
+`seq_assoc_def`. HOL erases annotations to the pending prefix, and no
+recursive obligation is needed. HOL has no theorem about commuting `progOfHOL`
+with `seqAssocHOL`, so this declaration carries no `@[hol]` tag. -/
+theorem progOfHOL_seqAssocHOL_annot {width : Nat} [NeZero width]
+    (pre : ProgHOL width) (tag text : MlS) :
+    progOfHOL (seqAssocHOL pre (.annot tag text)) =
+      seqAssoc (progOfHOL pre) (progOfHOL (.annot tag text)) := by
+  simp [seqAssocHOL, seqAssoc, progOfHOL]
+
 end Flapjack
