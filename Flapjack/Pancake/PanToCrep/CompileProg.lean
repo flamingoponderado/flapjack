@@ -1,6 +1,7 @@
 import Flapjack.HolRef
 import Flapjack.Pancake.CrepInline.Pass
 import Flapjack.Pancake.PanToCrep.Compile
+import Flapjack.Pancake.PanToCrep.CompileExact
 import Flapjack.Pancake.PanLang.Decl
 
 /-!
@@ -97,6 +98,16 @@ def compileProgTopHOLOfExact {width : Nat} [NeZero width]
     (declarations : List (DeclHOL width)) :
     List (FunName × List Nat × CrepProg (BitVec width)) :=
   compileProgTopHOL (declarations.map declOfHOL)
+
+/-- Exact-versus-production bridge for the `Skip` constructor. The complete
+    per-function compiler bridge is tracked by
+    `flapjack-pxn.18.3.5.8.13.30.1`; this base case is definitional because
+    both compiler equations return `Skip` without consulting the context. -/
+theorem compileProgExactHOLW_skip_bridge {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width) :
+    crepProgOfHOL (compileProgExactHOLW context .skip) =
+      compileProgRiscV context.toProduction .skip := by
+  simp [compileProgExactHOLW, compileProgRiscV, compileProgHOL, crepProgOfHOL]
 
 /-- Metadata adapter whose compiler input crosses the exact `DeclHOL` carrier
     boundary.  Its side condition is the byte-range premise used by the
