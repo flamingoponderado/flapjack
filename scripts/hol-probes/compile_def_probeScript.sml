@@ -28,6 +28,25 @@ val _ = print_eval "multi_return"
       <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
       (Return (RStruct [Const (1w : 8 word); Const 2w]))``;
 
+val _ = print_eval "store32_clause"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (panLang$Store32 (panLang$Const (1w : 8 word)) (panLang$Const 2w))``;
+val _ = print_eval "store32_fallback"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (panLang$Store32 (panLang$RStruct ([] : 8 panLang$exp list))
+        (panLang$Const 2w))``;
+val _ = print_eval "store_byte_clause"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (panLang$StoreByte (panLang$Const (3w : 8 word)) (panLang$Const 4w))``;
+val _ = print_eval "store_byte_fallback"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (panLang$StoreByte (panLang$Const (3w : 8 word))
+        (panLang$RStruct ([] : 8 panLang$exp list)))``;
+
 val _ = print_eval "struct_skip"
   ``pan_to_crep$compile
       <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
