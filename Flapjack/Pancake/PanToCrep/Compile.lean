@@ -510,11 +510,11 @@ def compileProgHOL [BEq α] [OfNat α 0] [OfNat α 1] [Add α]
   | .annot _ _ => .skip
 termination_by structural program
 
-/-! ### Exact structural slice of `compile_def`
+/-! ### Structural support fragment for `compile_def`
 
-The complete exact compiler is being split into source-reviewed slices under
-`flapjack-pxn.18.3.5.8.13`. This first slice covers only the independent HOL
-equations for `Skip`, `Seq`, `Break`, `Continue`, `Tick`, and `Annot`
+The source-reviewed exact recursive compiler is in `CompileExact.lean` under
+`flapjack-pxn.18.3.5.8.13`. This separate inductive fragment retains the
+independent HOL equations for `Skip`, `Seq`, `Break`, `Continue`, `Tick`, and `Annot`
 (`pan_to_crepScript.sml:139, 207-220, 306-307`). Its support predicate makes
 the covered sublanguage explicit; unsupported constructors have no output in
 this helper, rather than inheriting an invented `Skip` fallback. This is
