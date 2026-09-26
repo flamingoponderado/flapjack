@@ -523,6 +523,73 @@ def compileCallHandlerPresentEidExactHOLW {width : Nat} [NeZero width]
   nestedDecsHOL returnNames
     (List.replicate returnNames.length (.const (0 : BitVec width))) call
 
+/-! ### Assembled exact `Call` info equation
+
+This dispatcher combines the source-reviewed `Call` arm slices above in the
+same nesting as HOL `compile_def` (`pan_to_crepScript.sml:221-261`). In
+particular, the assigned-result kind is ignored by `wrap_rt`; handler lookup
+occurs only after the result-shape branch; and a handler body remains a
+recursive compiler callback until the full `compile_def` assembly is ported.
+This is an equation slice, not yet a recursive `compile` definition. -/
+
+def compileCallInfoExactHOLW {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (function : MlS)
+    (info : Option (Option (VarKind × MlS) ×
+      Option (MlS × MlS × Flapjack.Pancake.PanLang.ProgHOL width)))
+    (arguments : List (Flapjack.Pancake.PanLang.ExpHOL width))
+    (compileBody : CompileExpContextExact width →
+      Flapjack.Pancake.PanLang.ProgHOL width → CrepProgHOL width) :
+    CrepProgHOL width :=
+  match info with
+  | none => compileCallNoReturnExactHOLW context function arguments
+  | some (none, none) =>
+      compileCallResultNoHandlerExactHOLW context function arguments
+  | some (none, some (exceptionName, exceptionVariable, body)) =>
+      match hEid : context.eids.lookup exceptionName with
+      | none =>
+          compileCallHandlerMissingEidExactHOLW context function arguments
+            exceptionName exceptionVariable body
+            hEid
+      | some exceptionCode =>
+          compileCallHandlerPresentEidExactHOLW context function arguments
+            exceptionName exceptionVariable exceptionCode
+            hEid
+            (fun bodyContext => compileBody bodyContext body)
+  | some (some (_resultKind, resultName), handler) =>
+      match hWrap : wrapRtHOL (context.vars.lookup resultName) with
+      | none =>
+          match handler with
+          | none =>
+              compileCallWrappedResultFallbackNoHandlerExactHOLW context
+                function resultName arguments hWrap
+          | some (exceptionName, exceptionVariable, body) =>
+              match hEid : context.eids.lookup exceptionName with
+              | none =>
+                  compileCallWrappedResultFallbackHandlerMissingEidExactHOLW
+                    context function resultName arguments exceptionName
+                    exceptionVariable body hWrap hEid
+              | some exceptionCode =>
+                  compileCallWrappedResultFallbackHandlerPresentEidExactHOLW
+                    context function resultName arguments exceptionName
+                    exceptionVariable exceptionCode hWrap hEid
+                    (fun bodyContext => compileBody bodyContext body)
+      | some (resultShape, resultNames) =>
+          match handler with
+          | none =>
+              compileCallWrappedResultNoHandlerExactHOLW context function
+                resultName arguments resultShape resultNames hWrap
+          | some (exceptionName, exceptionVariable, body) =>
+              match hEid : context.eids.lookup exceptionName with
+              | none =>
+                  compileCallWrappedResultHandlerMissingEidExactHOLW context
+                    function resultName arguments resultShape resultNames
+                    exceptionName exceptionVariable body hWrap hEid
+              | some exceptionCode =>
+                  compileCallWrappedResultHandlerPresentEidExactHOLW context
+                    function resultName arguments resultShape resultNames
+                    exceptionName exceptionVariable exceptionCode hWrap hEid
+                    (fun bodyContext => compileBody bodyContext body)
+
 /-! The `ExtCall` clause from HOL `compile_def`
     (`pan_to_crepScript.sml:274-290`). The freshness bound is the maximum over
     every variable in all four compiled operand lists, even though the output
