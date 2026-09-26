@@ -489,4 +489,125 @@ def postAllocConventions {width : Nat} (k : Nat) (program : WordLangProg (BitVec
     everyStackVar (fun name => decide (name ≥ 2 * k)) program ∧
     callArgConvention program
 
+/-- Exact HOL port of the positive-dimensional word-type declaration
+HOL `distinct_tar_reg_def` (`cakeml/compiler/backend/semantics/wordConvsScript.sml`), restated with an explicit `[NeZero width]` binder so the
+statement matches HOL's positive-dimension `word` types.  The width-general
+`distinctTarReg` above remains the untagged executed form; this declaration is the
+faithful positive-width counterpart tracked by bead flapjack-4ac.6.1. -/
+@[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml" "distinct_tar_reg_def"]
+def distinctTarRegExact {width : Nat} [NeZero width] : WordLangInst (BitVec width) → Bool
+  | .arith (.binop _ r1 _ ri) => match ri with
+      | .reg r => decide (r ≠ r1)
+      | .imm _ => true
+  | .arith (.shift _ r1 _ ri) => match ri with
+      | .reg r => decide (r ≠ r1)
+      | .imm _ => true
+  | .arith (.addCarry r1 _ r3 r4) => decide (r1 ≠ r3 ∧ r1 ≠ r4)
+  | .arith (.addOverflow r1 _ r3 _) => decide (r1 ≠ r3)
+  | .arith (.subOverflow r1 _ r3 _) => decide (r1 ≠ r3)
+  | _ => true
+
+/-- Exact HOL port of the positive-dimensional word-type declaration
+HOL `two_reg_inst_def` (`cakeml/compiler/backend/semantics/wordConvsScript.sml`), restated with an explicit `[NeZero width]` binder so the
+statement matches HOL's positive-dimension `word` types.  The width-general
+`twoRegInst` above remains the untagged executed form; this declaration is the
+faithful positive-width counterpart tracked by bead flapjack-4ac.6.1. -/
+@[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml" "two_reg_inst_def"]
+def twoRegInstExact {width : Nat} [NeZero width] : WordLangInst (BitVec width) → Bool
+  | .arith (.binop _ r1 r2 _) => r1 == r2
+  | .arith (.shift _ r1 r2 _) => r1 == r2
+  | .arith (.addCarry r1 r2 _ _) => r1 == r2
+  | .arith (.addOverflow r1 r2 _ _) => r1 == r2
+  | .arith (.subOverflow r1 r2 _ _) => r1 == r2
+  | _ => true
+
+/-- Exact HOL port of the positive-dimensional word-type declaration
+HOL `inst_ok_less_def` (`cakeml/compiler/backend/semantics/wordConvsScript.sml`), restated with an explicit `[NeZero width]` binder so the
+statement matches HOL's positive-dimension `word` types.  The width-general
+`instOkLess` above remains the untagged executed form; this declaration is the
+faithful positive-width counterpart tracked by bead flapjack-4ac.6.1. -/
+@[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml" "inst_ok_less_def"]
+def instOkLessExact {width : Nat} [NeZero width] (config : AsmConfig width) :
+    WordLangInst (BitVec width) → Bool
+  | .arith (.binop operator _ _ (.imm value)) => config.validImm (.inl operator) value
+  | .arith (.shift operator _ _ (.imm value)) =>
+      (!(value == 0) || operator == .lsl) && value.toNat < width
+  | .arith (.div ..) =>
+      config.isa == .armv8 || config.isa == .mips || config.isa == .riscv
+  | .arith (.longMul destinationLeft destinationRight sourceLeft sourceRight) =>
+      (!(config.isa == .armv7) || !(destinationLeft == destinationRight)) &&
+        (!(config.isa == .armv8 || config.isa == .riscv || config.isa == .ag32) ||
+          (!(destinationLeft == sourceLeft) && !(destinationLeft == sourceRight)))
+  | .arith (.longDiv ..) => config.isa == .x86_64
+  | .arith (.addCarry destination _ sourceLeft sourceRight) =>
+      (!(config.isa == .mips || config.isa == .riscv) ||
+        (!(destination == sourceLeft) && !(destination == sourceRight)))
+  | .arith (.addOverflow destination _ sourceLeft _) =>
+      (!(config.isa == .mips || config.isa == .riscv) || !(destination == sourceLeft))
+  | .arith (.subOverflow destination _ sourceLeft _) =>
+      (!(config.isa == .mips || config.isa == .riscv) || !(destination == sourceLeft))
+  | .mem operator _ (.addr _ offset) =>
+      (if operator == .load || operator == .store || operator == .load16 ||
+          operator == .store16 || operator == .load32 || operator == .store32 then
+        asmAddrOffsetOk config offset
+       else if operator == .load16 || operator == .store16 then
+        asmHwOffsetOk config offset
+       else
+        asmByteOffsetOk config offset)
+  | .fp (.fpLess _ left right) => asmFpRegOk config left && asmFpRegOk config right
+  | .fp (.fpLessEqual _ left right) => asmFpRegOk config left && asmFpRegOk config right
+  | .fp (.fpEqual _ left right) => asmFpRegOk config left && asmFpRegOk config right
+  | .fp (.fpAbs destination source) =>
+      (!config.twoRegArith || !(destination == source)) &&
+        asmFpRegOk config destination && asmFpRegOk config source
+  | .fp (.fpNeg destination source) =>
+      (!config.twoRegArith || !(destination == source)) &&
+        asmFpRegOk config destination && asmFpRegOk config source
+  | .fp (.fpSqrt destination source) =>
+      asmFpRegOk config destination && asmFpRegOk config source
+  | .fp (.fpAdd destination left right) =>
+      (!config.twoRegArith || destination == left) && asmFpRegOk config destination &&
+        asmFpRegOk config left && asmFpRegOk config right
+  | .fp (.fpSub destination left right) =>
+      (!config.twoRegArith || destination == left) && asmFpRegOk config destination &&
+        asmFpRegOk config left && asmFpRegOk config right
+  | .fp (.fpMul destination left right) =>
+      (!config.twoRegArith || destination == left) && asmFpRegOk config destination &&
+        asmFpRegOk config left && asmFpRegOk config right
+  | .fp (.fpDiv destination left right) =>
+      (!config.twoRegArith || destination == left) && asmFpRegOk config destination &&
+        asmFpRegOk config left && asmFpRegOk config right
+  | .fp (.fpFma destination left right) =>
+      (config.isa == .armv7) && 2 < config.fpRegCount && asmFpRegOk config destination &&
+        asmFpRegOk config left && asmFpRegOk config right
+  | .fp (.fpMov destination source) =>
+      asmFpRegOk config destination && asmFpRegOk config source
+  | .fp (.fpMovToReg destinationInteger second fpRegister) =>
+      (!(width == 32) || !(destinationInteger == second)) && asmFpRegOk config fpRegister
+  | .fp (.fpMovFromReg fpRegister destinationInteger second) =>
+      (!(width == 32) || !(destinationInteger == second)) && asmFpRegOk config fpRegister
+  | .fp (.fpToInt destination source) =>
+      asmFpRegOk config destination && asmFpRegOk config source
+  | .fp (.fpFromInt destination source) =>
+      asmFpRegOk config destination && asmFpRegOk config source
+  | _ => true
+
+/-- Exact HOL port of the positive-dimensional word-type declaration
+HOL `inst_arg_convention_def` (`cakeml/compiler/backend/semantics/wordConvsScript.sml`), restated with an explicit `[NeZero width]` binder so the
+statement matches HOL's positive-dimension `word` types.  The width-general
+`instArgConvention` above remains the untagged executed form; this declaration is the
+faithful positive-width counterpart tracked by bead flapjack-4ac.6.1. -/
+@[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml" "inst_arg_convention_def"]
+def instArgConventionExact {width : Nat} [NeZero width] : WordLangInst (BitVec width) -> Bool
+  | .arith (.addCarry _ _ _ r4) => r4 == 0
+  | .arith (.shift _ _ _ (.reg r)) => r == 8
+  | .arith (.addOverflow _ _ _ r4) => r4 == 0
+  | .arith (.subOverflow _ _ _ r4) => r4 == 0
+  | .arith (.longMul r1 r2 r3 r4) =>
+      r1 == 6 && r2 == 0 && r3 == 0 && r4 == 4
+  | .arith (.longDiv r1 r2 r3 r4 _) =>
+      r1 == 0 && r2 == 6 && r3 == 6 && r4 == 0
+  | _ => true
+
+
 end Flapjack

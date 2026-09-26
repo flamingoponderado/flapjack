@@ -96,4 +96,22 @@ def asmChecksOfConfig {width : Nat} (config : AsmConfig width) :
     addrOk := asmAddrOk config }
 
 
+/-- Exact HOL port of the positive-dimensional word-type declaration
+HOL `addr_ok_def` (`cakeml/compiler/backend/semantics/stackPropsScript.sml`), restated with an explicit `[NeZero width]` binder so the
+statement matches HOL's positive-dimension `word` types.  The width-general
+`asmAddrOk` above remains the untagged executed form; this declaration is the
+faithful positive-width counterpart tracked by bead flapjack-4ac.6.1. -/
+@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "addr_ok_def"]
+def asmAddrOkExact {width : Nat} [NeZero width] (config : AsmConfig width) :
+    WordMemOp → WordLangAddr (BitVec width) → Bool
+  | operator, .addr base offset =>
+      asmRegOk config base &&
+        (if operator == .load || operator == .store || operator == .load32 ||
+            operator == .store32 then
+          asmAddrOffsetOk config offset
+         else if operator == .load16 || operator == .store16 then
+          asmHwOffsetOk config offset && !(config.isa == .ag32)
+         else
+          asmByteOffsetOk config offset)
+
 end Flapjack.Compiler.Backend.StackProps

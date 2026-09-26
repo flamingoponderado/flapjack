@@ -585,4 +585,199 @@ def riscvConfigForChecks : AsmConfig 64 where
   cjumpOffset := (riscvMin21 + 8, riscvMax21 + 4)
   locOffset := (riscvMin32, riscvJumpMax)
 
+/-- Exact HOL port of the positive-dimensional word-type declaration
+HOL `reg_ok_def` (`cakeml/compiler/encoders/asm/asmScript.sml`), restated with an explicit `[NeZero width]` binder so the
+statement matches HOL's positive-dimension `word` types.  The width-general
+`asmRegOk` above remains the untagged executed form; this declaration is the
+faithful positive-width counterpart tracked by bead flapjack-4ac.6.1. -/
+@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "reg_ok_def"]
+def asmRegOkExact {width : Nat} [NeZero width] (config : AsmConfig width) (register : Nat) : Bool :=
+  register < config.regCount && !config.avoidRegs.contains register
+
+/-- Exact HOL port of the positive-dimensional word-type declaration
+HOL `fp_reg_ok_def` (`cakeml/compiler/encoders/asm/asmScript.sml`), restated with an explicit `[NeZero width]` binder so the
+statement matches HOL's positive-dimension `word` types.  The width-general
+`asmFpRegOk` above remains the untagged executed form; this declaration is the
+faithful positive-width counterpart tracked by bead flapjack-4ac.6.1. -/
+@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "fp_reg_ok_def"]
+def asmFpRegOkExact {width : Nat} [NeZero width] (config : AsmConfig width) (register : Nat) : Bool :=
+  register < config.fpRegCount
+
+/-- Exact HOL port of the positive-dimensional word-type declaration
+HOL `reg_imm_ok_def` (`cakeml/compiler/encoders/asm/asmScript.sml`), restated with an explicit `[NeZero width]` binder so the
+statement matches HOL's positive-dimension `word` types.  The width-general
+`asmRegImmOk` above remains the untagged executed form; this declaration is the
+faithful positive-width counterpart tracked by bead flapjack-4ac.6.1. -/
+@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "reg_imm_ok_def"]
+def asmRegImmOkExact {width : Nat} [NeZero width] (config : AsmConfig width) (operator : Sum BinOp Cmp) :
+    WordRegImm (BitVec width) → Bool
+  | .reg register => asmRegOk config register
+  | .imm value =>
+      (operator == .inl .xor && value == -1) || config.validImm operator value
+
+/-- Exact HOL port of the positive-dimensional word-type declaration
+HOL `offset_ok_def` (`cakeml/compiler/encoders/asm/asmScript.sml`), restated with an explicit `[NeZero width]` binder so the
+statement matches HOL's positive-dimension `word` types.  The width-general
+`asmOffsetOk` above remains the untagged executed form; this declaration is the
+faithful positive-width counterpart tracked by bead flapjack-4ac.6.1. -/
+@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "offset_ok_def"]
+def asmOffsetOkExact {width : Nat} [NeZero width] (alignment : Nat)
+    (bounds : BitVec width × BitVec width) (offset : BitVec width) : Bool :=
+  bounds.1.toInt ≤ offset.toInt && offset.toInt ≤ bounds.2.toInt &&
+    asmAligned alignment offset
+
+/-- Exact HOL port of the positive-dimensional word-type declaration
+HOL `arith_ok_def` (`cakeml/compiler/encoders/asm/asmScript.sml`), restated with an explicit `[NeZero width]` binder so the
+statement matches HOL's positive-dimension `word` types.  The width-general
+`asmArithOk` above remains the untagged executed form; this declaration is the
+faithful positive-width counterpart tracked by bead flapjack-4ac.6.1. -/
+@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "arith_ok_def"]
+def asmArithOkExact {width : Nat} [NeZero width] (config : AsmConfig width) :
+    WordLangArith (BitVec width) → Bool
+  | .binop operator destination source right =>
+      (!config.twoRegArith || destination == source ||
+          (operator == .or && right == .reg source)) &&
+        asmRegOk config destination && asmRegOk config source &&
+        asmRegImmOk config (.inl operator) right
+  | .shift operator destination source right =>
+      (!config.twoRegArith || destination == source) &&
+        asmRegOk config destination && asmRegOk config source &&
+        (match right with
+         | .imm value => (!(value == 0) || operator == .lsl) && value.toNat < width
+         | .reg register =>
+             asmRegOk config register && (!(config.isa == .x86_64) || register == 1))
+  | .div destination dividend divisor =>
+      asmRegOk config destination && asmRegOk config dividend &&
+        asmRegOk config divisor &&
+        (config.isa == .armv8 || config.isa == .mips || config.isa == .riscv)
+  | .longMul destinationLeft destinationRight sourceLeft sourceRight =>
+      asmRegOk config destinationLeft && asmRegOk config destinationRight &&
+        asmRegOk config sourceLeft && asmRegOk config sourceRight &&
+        (!(config.isa == .x86_64) ||
+          (destinationLeft == 2 && destinationRight == 0 && sourceLeft == 0)) &&
+        (!(config.isa == .armv7) || !(destinationLeft == destinationRight)) &&
+        (!(config.isa == .armv8 || config.isa == .riscv || config.isa == .ag32) ||
+          (!(destinationLeft == sourceLeft) && !(destinationLeft == sourceRight)))
+  | .longDiv destinationLeft destinationRight sourceLeft sourceRight quotient =>
+      (config.isa == .x86_64) && destinationLeft == 0 && destinationRight == 2 &&
+        sourceLeft == 2 && sourceRight == 0 && asmRegOk config quotient
+  | .addCarry destination result sourceLeft sourceRight =>
+      (!config.twoRegArith || destination == result) &&
+        asmRegOk config destination && asmRegOk config result &&
+        asmRegOk config sourceLeft && asmRegOk config sourceRight &&
+        (!(config.isa == .mips || config.isa == .riscv) ||
+          (!(destination == sourceLeft) && !(destination == sourceRight)))
+  | .addOverflow destination result sourceLeft sourceRight =>
+      (!config.twoRegArith || destination == result) &&
+        asmRegOk config destination && asmRegOk config result &&
+        asmRegOk config sourceLeft && asmRegOk config sourceRight &&
+        (!(config.isa == .mips || config.isa == .riscv) || !(destination == sourceLeft))
+  | .subOverflow destination result sourceLeft sourceRight =>
+      (!config.twoRegArith || destination == result) &&
+        asmRegOk config destination && asmRegOk config result &&
+        asmRegOk config sourceLeft && asmRegOk config sourceRight &&
+        (!(config.isa == .mips || config.isa == .riscv) || !(destination == sourceLeft))
+
+/-- Exact HOL port of the positive-dimensional word-type declaration
+HOL `fp_ok_def` (`cakeml/compiler/encoders/asm/asmScript.sml`), restated with an explicit `[NeZero width]` binder so the
+statement matches HOL's positive-dimension `word` types.  The width-general
+`asmFpOk` above remains the untagged executed form; this declaration is the
+faithful positive-width counterpart tracked by bead flapjack-4ac.6.1. -/
+@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "fp_ok_def"]
+def asmFpOkExact {width : Nat} [NeZero width] (config : AsmConfig width) : WordLangFp → Bool
+  | .fpLess destination left right =>
+      asmRegOk config destination && asmFpRegOk config left && asmFpRegOk config right
+  | .fpLessEqual destination left right =>
+      asmRegOk config destination && asmFpRegOk config left && asmFpRegOk config right
+  | .fpEqual destination left right =>
+      asmRegOk config destination && asmFpRegOk config left && asmFpRegOk config right
+  | .fpAbs destination source =>
+      (!config.twoRegArith || !(destination == source)) &&
+        asmFpRegOk config destination && asmFpRegOk config source
+  | .fpNeg destination source =>
+      (!config.twoRegArith || !(destination == source)) &&
+        asmFpRegOk config destination && asmFpRegOk config source
+  | .fpSqrt destination source =>
+      asmFpRegOk config destination && asmFpRegOk config source
+  | .fpAdd destination left right =>
+      (!config.twoRegArith || destination == left) && asmFpRegOk config destination &&
+        asmFpRegOk config left && asmFpRegOk config right
+  | .fpSub destination left right =>
+      (!config.twoRegArith || destination == left) && asmFpRegOk config destination &&
+        asmFpRegOk config left && asmFpRegOk config right
+  | .fpMul destination left right =>
+      (!config.twoRegArith || destination == left) && asmFpRegOk config destination &&
+        asmFpRegOk config left && asmFpRegOk config right
+  | .fpDiv destination left right =>
+      (!config.twoRegArith || destination == left) && asmFpRegOk config destination &&
+        asmFpRegOk config left && asmFpRegOk config right
+  | .fpFma destination left right =>
+      (config.isa == .armv7) && 2 < config.fpRegCount && asmFpRegOk config destination &&
+        asmFpRegOk config left && asmFpRegOk config right
+  | .fpMov destination source =>
+      asmFpRegOk config destination && asmFpRegOk config source
+  | .fpMovToReg destinationInteger second sourceFloat =>
+      asmRegOk config destinationInteger &&
+        (!(width == 32) || (!(destinationInteger == second) && asmRegOk config second)) &&
+        asmFpRegOk config sourceFloat
+  | .fpMovFromReg destinationFloat destinationInteger second =>
+      asmRegOk config destinationInteger &&
+        (!(width == 32) || (!(destinationInteger == second) && asmRegOk config second)) &&
+        asmFpRegOk config destinationFloat
+  | .fpToInt destination source =>
+      asmFpRegOk config destination && asmFpRegOk config source
+  | .fpFromInt destination source =>
+      asmFpRegOk config destination && asmFpRegOk config source
+
+/-- Exact HOL port of the positive-dimensional word-type declaration
+HOL `cmp_ok_def` (`cakeml/compiler/encoders/asm/asmScript.sml`), restated with an explicit `[NeZero width]` binder so the
+statement matches HOL's positive-dimension `word` types.  The width-general
+`asmCmpOk` above remains the untagged executed form; this declaration is the
+faithful positive-width counterpart tracked by bead flapjack-4ac.6.1. -/
+@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "cmp_ok_def"]
+def asmCmpOkExact {width : Nat} [NeZero width] (config : AsmConfig width) (operator : Cmp)
+    (register : Nat) (right : WordRegImm (BitVec width)) : Bool :=
+  asmRegOk config register && asmRegImmOk config (.inr operator) right
+
+/-- Exact HOL port of the positive-dimensional word-type declaration
+HOL `inst_ok_def` (`cakeml/compiler/encoders/asm/asmScript.sml`), restated with an explicit `[NeZero width]` binder so the
+statement matches HOL's positive-dimension `word` types.  The width-general
+`asmInstOk` above remains the untagged executed form; this declaration is the
+faithful positive-width counterpart tracked by bead flapjack-4ac.6.1. -/
+@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "inst_ok_def"]
+def asmInstOkExact {width : Nat} [NeZero width] (config : AsmConfig width) : WordLangInst (BitVec width) → Bool
+  | .skip => true
+  | .const destination _ => asmRegOk config destination
+  | .arith operation => asmArithOk config operation
+  | .fp operation => asmFpOk config operation
+  | .mem operator destination (.addr base offset) =>
+      asmRegOk config destination && asmRegOk config base &&
+        (if operator == .load || operator == .store || operator == .load32 ||
+            operator == .store32 then
+          asmAddrOffsetOk config offset
+         else if operator == .load16 || operator == .store16 then
+          asmHwOffsetOk config offset && !(config.isa == .ag32)
+         else
+          asmByteOffsetOk config offset)
+
+/-- Exact HOL port of the positive-dimensional word-type declaration
+HOL `asm_ok_def` (`cakeml/compiler/encoders/asm/asmScript.sml`), restated with an explicit `[NeZero width]` binder so the
+statement matches HOL's positive-dimension `word` types.  The width-general
+`asmOk` above remains the untagged executed form; this declaration is the
+faithful positive-width counterpart tracked by bead flapjack-4ac.6.1. -/
+@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "asm_ok_def"]
+def asmOkExact {width : Nat} [NeZero width] (config : AsmConfig width) : AsmData width → Bool
+  | .inst inner => asmInstOk config inner
+  | .jump target => asmJumpOffsetOk config target
+  | .jumpCmp operator source right target =>
+      asmCjumpOffsetOk config target && asmCmpOk config operator source right
+  | .call target =>
+      (match config.linkReg with
+        | some register => asmRegOk config register
+        | none => false) &&
+        asmJumpOffsetOk config target
+  | .jumpReg target => asmRegOk config target
+  | .loc register offset => asmRegOk config register && asmLocOffsetOk config offset
+
+
 end Flapjack.Compiler.Encoders.Asm

@@ -1806,6 +1806,20 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         ("Flapjack/Pancake/PanSimp.lean", "retToTailHOL"),
         ("Flapjack/Pancake/PanSimp.lean", "panSimpCompileHOL"),
         ("Flapjack/Pancake/PanSimp.lean", "panSimpDeclsHOL"),
+        ("Flapjack/Compiler/Encoders/Asm.lean", "asmRegOkExact"),
+        ("Flapjack/Compiler/Encoders/Asm.lean", "asmFpRegOkExact"),
+        ("Flapjack/Compiler/Encoders/Asm.lean", "asmRegImmOkExact"),
+        ("Flapjack/Compiler/Encoders/Asm.lean", "asmOffsetOkExact"),
+        ("Flapjack/Compiler/Encoders/Asm.lean", "asmArithOkExact"),
+        ("Flapjack/Compiler/Encoders/Asm.lean", "asmFpOkExact"),
+        ("Flapjack/Compiler/Encoders/Asm.lean", "asmCmpOkExact"),
+        ("Flapjack/Compiler/Encoders/Asm.lean", "asmInstOkExact"),
+        ("Flapjack/Compiler/Encoders/Asm.lean", "asmOkExact"),
+        ("Flapjack/Compiler/Backend/StackProps.lean", "asmAddrOkExact"),
+        ("Flapjack/Pancake/WordConvs.lean", "distinctTarRegExact"),
+        ("Flapjack/Pancake/WordConvs.lean", "twoRegInstExact"),
+        ("Flapjack/Pancake/WordConvs.lean", "instOkLessExact"),
+        ("Flapjack/Pancake/WordConvs.lean", "instArgConventionExact"),
     }
     for key in reviewed_exact:
         # A source comparison cannot claim an exact HOL port after its tag is
