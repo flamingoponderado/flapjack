@@ -535,4 +535,42 @@ theorem compileExpBridge_load {width : Nat} [NeZero width]
           exact loadShapeBytes_map_crepExpToHOL (0 : BitVec width) (Shape.shapeSize shape) a
         · trivial
 
+
+/-! ### Assembly: the full `compile_exp` codec bridge
+
+The top-level theorem is the `Flapjack.Exp.rec` assembly over all 17
+constructors, using the per-constructor handlers above and the two list
+handlers. -/
+
+theorem compileExpBridge {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (expression : Exp (BitVec width)) :
+    compileExpBridgeProp context expression :=
+  Flapjack.Exp.rec
+    (motive_1 := compileExpBridgeProp context)
+    (motive_2 := compileExpListBridgeProp context)
+    (motive_3 := fun _ => True)
+    (motive_4 := fun _ => True)
+    (compileExpBridge_const context)
+    (compileExpBridge_var context)
+    (compileExpBridge_rStruct context)
+    (compileExpBridge_rField context)
+    (fun name fields _ => compileExpBridge_nStruct context name fields)
+    (fun name value _ => compileExpBridge_nField context name value)
+    (compileExpBridge_load context)
+    (compileExpBridge_load32 context)
+    (compileExpBridge_loadByte context)
+    (compileExpBridge_op context)
+    (compileExpBridge_panOp context)
+    (compileExpBridge_cmp context)
+    (compileExpBridge_shift context)
+    (compileExpBridge_baseAddr context)
+    (compileExpBridge_topAddr context)
+    (compileExpBridge_bytesInWord context)
+    (compileExpListBridgeProp_nil context)
+    (compileExpListBridgeProp_cons context)
+    True.intro
+    (fun _ _ _ _ => True.intro)
+    (fun _ _ _ => True.intro)
+    expression
+
 end Flapjack
