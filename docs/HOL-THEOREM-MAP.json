@@ -8503,9 +8503,17 @@
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
     "hol_name": "evaluate_replicate_const",
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "evaluateReplicateConstHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Exact HOL shape: ∀n s. OPT_MMAP (eval s) (REPLICATE n (Const 0w)) = SOME (REPLICATE n (Word 0w)). Statement uses the reviewed tagged exact crepSem$eval_def port evalCrepSemHOLExp (CrepSem/HOLState.lean:239, whose Const clause returns HolWordLab directly), so no bare-runtime post-map and the conclusion is HOL's exact HolWordLab list. OPT_MMAP = List.mapM; HOL word width = BitVec width. No finite-map field is named in this statement (the carrier's representation is recorded by evalCrepSemHOLExp's own fmap_as_finite_support tag). The untagged Flapjack word_lab-core analogue evaluateReplicateConst remains untagged; production routing tracked by flapjack-pxn.18.4.3.48.1."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
     "lean_name": "evaluateReplicateConst",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Untagged: only a Flapjack word_lab core analogue. evalCrepRuntimeExpsWordLab recurses through the bare evalCrepRuntimeExp (returns bare alpha) and its op/crepOp cases delegate to the arbitrary runtime memoryModel hooks, whereas HOL crepSem$eval is the fixed evaluator returning word_lab. Not kernel-checked equal to crepSem$eval, so no @[hol] tag; faithful production evaluator/projection tracked by bead flapjack-pxn.18.4.3.48.1."
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only word_lab-core analogue over evalCrepRuntimeExpsWordLab (bare-runtime evaluator delegating to arbitrary memoryModel hooks), not kernel-checked equal to crepSem$eval; specifically not a HOL port, hence no @[hol] tag. The faithful exact port is evaluateReplicateConstHOL. Production evaluator/projection tracked by flapjack-pxn.18.4.3.48.1."
   },
   {
     "hol_path": null,
