@@ -1030,6 +1030,12 @@ run_probe crep_sh_mem_op_probeScript.sml crep_sh_mem_op_probe.out \
 run_probe crep_sh_mem_store_probeScript.sml crep_sh_mem_store_probe.out \
   sh_mem_store_missing_local sh_mem_store_nonzero_domain_error \
   "$cake_dir/pancake/semantics/crepSemScript.sml"
+run_probe crep_clock_helpers_probeScript.sml crep_clock_helpers_probe.out \
+  clock_eq_simp_set_var clock_eq_simp_empty_locals clock_eq_simp_set_globals \
+  sh_mem_load_clock sh_mem_load_clock_nonzero \
+  sh_mem_store_clock sh_mem_store_clock_nonzero \
+  sh_mem_op_clock_load sh_mem_op_clock_store8 \
+  "$cake_dir/pancake/semantics/crepSemScript.sml"
 run_probe crep_mem_load_probeScript.sml crep_mem_load_probe.out \
   mem_load_hit mem_load_miss \
   "$cake_dir/pancake/semantics/crepSemScript.sml"

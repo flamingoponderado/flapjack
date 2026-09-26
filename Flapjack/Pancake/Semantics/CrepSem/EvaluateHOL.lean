@@ -380,6 +380,83 @@ def crepShMemStoreHOL {width : Nat} [NeZero width] {σ : Type}
   letI : DecidablePred state.shMemaddrs := shMemDec
   crepShMemStoreExactHOL name address (crepShMemByteWidth operator) state
 
+/-! ## Clock-invariance helpers
+
+HOL `clock_eq_simp` (`crepSemScript.sml:392-398`) and the shared-memory clock
+lemmas `sh_mem_load_clock`/`sh_mem_store_clock`/`sh_mem_op_clock`
+(`crepSemScript.sml:400-419`). These are the exact source helper lemmas under
+`evaluate_clock`/`fix_clock_evaluate`; they are stated over the exact
+`crepShMemLoadExactHOL`/`crepShMemStoreExactHOL`/`crepShMemOpExactHOL` ports
+and the tagged `CrepSemHOLState.setVar`/`emptyLocals`/`setGlobals` updates, all
+of which leave the `clock` field unchanged. -/
+
+/-- Exact port of HOL `clock_eq_simp` (`crepSemScript.sml:392-398`): the
+    `set_var`, `empty_locals` and `set_globals` state updates do not change the
+    clock component. The three conjuncts match HOL's `set_var`/`empty_locals`/
+    `set_globals` clause order. -/
+@[hol "cakeml/pancake/semantics/crepSemScript.sml" "clock_eq_simp" (fmap_as_finite_support := [locals, globals, code])]
+theorem crepSemClockEqSimp {width : Nat} [NeZero width] {ffiState : Type}
+    (name : Nat) (value : HolWordLab width) (key : BitVec 5)
+    (state : CrepSemHOLState width ffiState) :
+    (CrepSemHOLState.setVar name value state).clock = state.clock ∧
+      (CrepSemHOLState.emptyLocals state).clock = state.clock ∧
+      (CrepSemHOLState.setGlobals key value state).clock = state.clock := by
+  refine ⟨?_, ?_, ?_⟩ <;> rfl
+
+/-- Exact port of HOL `sh_mem_load_clock` (`crepSemScript.sml:400-403`):
+    `sh_mem_load v addr nb s = (r, s') ⇒ s'.clock = s.clock`. -/
+@[hol "cakeml/pancake/semantics/crepSemScript.sml" "sh_mem_load_clock" (fmap_as_finite_support := [locals, globals, code])]
+theorem crepShMemLoadClock {width : Nat} [NeZero width] {σ : Type}
+    (name : Nat) (address : BitVec width) (nb : Nat)
+    (state : CrepSemHOLState width σ) [DecidablePred state.shMemaddrs]
+    (r : Option (CrepResultHOLExact width)) (s' : CrepSemHOLState width σ)
+    (h : crepShMemLoadExactHOL name address nb state = (r, s')) :
+    s'.clock = state.clock := by
+  have hs : s' = (crepShMemLoadExactHOL name address nb state).snd := by rw [h]
+  subst hs
+  simp only [crepShMemLoadExactHOL]
+  split <;> (try split) <;> (try split)
+  all_goals
+    first
+    | rfl
+    | simp only [CrepSemHOLState.emptyLocals]
+    | simp only [CrepSemHOLState.setVar]
+
+/-- Exact port of HOL `sh_mem_store_clock` (`crepSemScript.sml:406-409`):
+    `sh_mem_store v addr nb s = (r, s') ⇒ s'.clock = s.clock`. -/
+@[hol "cakeml/pancake/semantics/crepSemScript.sml" "sh_mem_store_clock" (fmap_as_finite_support := [locals, globals, code])]
+theorem crepShMemStoreClock {width : Nat} [NeZero width] {σ : Type}
+    (name : Nat) (address : BitVec width) (nb : Nat)
+    (state : CrepSemHOLState width σ) [DecidablePred state.shMemaddrs]
+    (r : Option (CrepResultHOLExact width)) (s' : CrepSemHOLState width σ)
+    (h : crepShMemStoreExactHOL name address nb state = (r, s')) :
+    s'.clock = state.clock := by
+  have hs : s' = (crepShMemStoreExactHOL name address nb state).snd := by rw [h]
+  subst hs
+  simp only [crepShMemStoreExactHOL]
+  split <;> (try split) <;> (try split) <;> (try split)
+  all_goals
+    first
+    | rfl
+    | simp only [CrepSemHOLState.emptyLocals]
+    | simp only [CrepSemHOLState.setVar]
+
+/-- Exact port of HOL `sh_mem_op_clock` (`crepSemScript.sml:412-419`):
+    `sh_mem_op op v addr s = (r, s') ⇒ s'.clock = s.clock`, by dispatching on
+    the shared-memory operator to the tagged clock lemmas. -/
+@[hol "cakeml/pancake/semantics/crepSemScript.sml" "sh_mem_op_clock" (fmap_as_finite_support := [locals, globals, code])]
+theorem crepShMemOpClock {width : Nat} [NeZero width] {σ : Type}
+    (operator : CrepMemOp) (name : Nat) (address : BitVec width)
+    (state : CrepSemHOLState width σ) [DecidablePred state.shMemaddrs]
+    (r : Option (CrepResultHOLExact width)) (s' : CrepSemHOLState width σ)
+    (h : crepShMemOpExactHOL operator name address state = (r, s')) :
+    s'.clock = state.clock := by
+  cases operator <;>
+    simp only [crepShMemOpExactHOL] at h <;>
+    first
+    | exact crepShMemLoadClock name address _ state _ _ h
+    | exact crepShMemStoreClock name address _ state _ _ h
+
 /-- Total HOL-shaped `crepSem$evaluate` (`crepSemScript.sml:240-390`) by
     constructor recursion on the exact `CrepProgHOL` syntax over the exact
     finite-support `CrepSemHOLState`. The returned pair is
