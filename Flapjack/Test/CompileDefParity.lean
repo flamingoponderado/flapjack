@@ -573,17 +573,31 @@ def exactRaiseClauseParity : Bool :=
 
 #guard exactRaiseClauseParity
 
+def exactShMemStoreClauseParity : Bool :=
+  (match compileShMemStoreExactHOLW
+      (exactLocalAssignContext [7] [8]) .op8 (.var .local (ofString "src")) (.const 3) with
+   | .dec 9 (.const 3) (.shMem .store8 9 (.var 8)) => true
+   | _ => false) &&
+  (match compileShMemStoreExactHOLW exactReturnContext .op8 (.rstruct []) (.const 3) with
+   | .skip => true
+   | _ => false) &&
+  (match compileShMemStoreExactHOLW exactReturnContext .op8 (.const 4) (.rstruct []) with
+   | .skip => true
+   | _ => false)
+
+#guard exactShMemStoreClauseParity
+
 def runChecks : IO Bool := do
   if parityGuard && exactStructuralSliceParity && exactReturnClauseParity &&
       exactStoreClauseParity && exactIfWhileClauseParity && exactGlobalFallbackParity &&
       exactLocalAssignClauseParity && exactPrimitiveClauseParity && exactStoreClauseFullParity &&
-      exactRaiseClauseParity then
+      exactRaiseClauseParity && exactShMemStoreClauseParity then
     IO.println "PASS compile_def fixed-width load/store and control-flow parity"
   else
     IO.println "FAIL compile_def parity"
   pure (parityGuard && exactStructuralSliceParity && exactReturnClauseParity &&
     exactStoreClauseParity && exactIfWhileClauseParity && exactGlobalFallbackParity &&
     exactLocalAssignClauseParity && exactPrimitiveClauseParity && exactStoreClauseFullParity &&
-    exactRaiseClauseParity)
+    exactRaiseClauseParity && exactShMemStoreClauseParity)
 
 end Flapjack.Test.CompileDefParity

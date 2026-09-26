@@ -135,6 +135,19 @@ val _ = print_eval "raise_shape_length_fallback"
       <| vars := FEMPTY |+ («bad», (panLang$Comb [panLang$One; panLang$One], [9]));
          funcs := FEMPTY; eids := FEMPTY |+ («E», (12w : 8 word)); vmax := 0 |>
       (Raise «E» (Var Local «bad»))``;
+val _ = print_eval "shmem_store_clause"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY |+ («src», (panLang$One, [8]));
+         funcs := FEMPTY; eids := FEMPTY; vmax := 10 |>
+      (ShMemStore Op8 (Var Local «src») (Const (3w : 8 word)))``;
+val _ = print_eval "shmem_store_value_fallback"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 10 |>
+      (ShMemStore Op8 (RStruct ([] : 8 panLang$exp list)) (Const (3w : 8 word)))``;
+val _ = print_eval "shmem_store_address_fallback"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 10 |>
+      (ShMemStore Op8 (Const (4w : 8 word)) (RStruct ([] : 8 panLang$exp list)))``;
 
 val _ = print_eval "struct_skip"
   ``pan_to_crep$compile

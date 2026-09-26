@@ -303,4 +303,19 @@ def compileRaiseExactHOLW {width : Nat} [NeZero width]
           (storeGlobalsHOL (0 : BitVec 5) (temporaries.map CrepExpHOL.var))
         .seq (nestedDecsHOL temporaries values saveValues) (.raise exceptionCode)
 
+/-! The `ShMemStore` clause from `compile_def`
+    (`pan_to_crepScript.sml:285-293`). Both operands must compile to heads.
+    HOL picks the first compiled value and address, then places the store at
+    one greater than the largest variable used by the value expression. -/
+
+def compileShMemStoreExactHOLW {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (operator : OpSize)
+    (value address : Flapjack.Pancake.PanLang.ExpHOL width) : CrepProgHOL width :=
+  match compileExpExactHOLW context value, compileExpExactHOLW context address with
+  | (compiledValue :: _, _), (compiledAddress :: _, _) =>
+      let index := (crepExpVarsW (crepExpOfHOL compiledValue)).foldr max 0
+      .dec (index + 1) compiledAddress
+        (.shMem (storeMemOpHOL operator) (index + 1) compiledValue)
+  | _, _ => .skip
+
 end Flapjack

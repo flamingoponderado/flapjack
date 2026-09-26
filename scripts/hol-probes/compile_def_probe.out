@@ -32,6 +32,9 @@ raise_multiword=Seq
   (Raise 12w)
 raise_missing_eid=Skip
 raise_shape_length_fallback=Skip
+shmem_store_clause=Dec 9 (Const 3w) (ShMem Store8 9 (Var 8))
+shmem_store_value_fallback=Skip
+shmem_store_address_fallback=Skip
 struct_skip=Skip
 struct_break=Break 0
 struct_continue=Continue 0

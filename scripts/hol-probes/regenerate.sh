@@ -935,6 +935,7 @@ run_probe compile_def_probeScript.sml compile_def_probe.out \
   primitive_destination_present primitive_destination_missing \
   store_one_word store_multiword store_address_fallback store_shape_length_fallback \
   raise_one_word raise_multiword raise_missing_eid raise_shape_length_fallback \
+  shmem_store_clause shmem_store_value_fallback shmem_store_address_fallback \
   struct_skip struct_break struct_continue struct_tick struct_annot struct_seq \
   missing_global empty_one_global extra_names_global missing_names_global \
   missing_local empty_one_local extra_names_local missing_names_local valid_local \
