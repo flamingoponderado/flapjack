@@ -1,6 +1,7 @@
 import Flapjack.Pancake.Semantics.LoopSemState
 import Flapjack.Pancake.LoopLang
 import Flapjack.Pancake.Semantics.CrepSem.HOLState
+import Flapjack.FfiBridge
 
 /-!
 # Exact finite-support HOL `loopSem$state` carrier
@@ -147,6 +148,79 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {F : Type} :
   ⟨fun state h => LoopSemStateBroad.toBroad_ofBroad state h,
     fun state => LoopSemStateBroad.ofBroad_toBroad state⟩
 
+/-- Exact `get_var_imm_def` (`loopSemScript.sml:165-167`) on the finite-support
+    carrier, operand first as in HOL. -/
+def getVarImm {width : Nat} [NeZero width] {F : Type}
+    (operand : RegImm (BitVec width)) (state : LoopSemStateFiniteExact width F) :
+    Option (WordLocW width) :=
+  match operand with
+  | .reg name => state.locals.lookup name
+  | .imm value => some (.word value)
+
+@[simp] theorem getVarImm_reg {width : Nat} [NeZero width] {F : Type}
+    (state : LoopSemStateFiniteExact width F) (name : Nat) :
+    getVarImm (.reg name) state = state.locals.lookup name := rfl
+
+@[simp] theorem getVarImm_imm {width : Nat} [NeZero width] {F : Type}
+    (state : LoopSemStateFiniteExact width F) (value : BitVec width) :
+    getVarImm (.imm value) state = some (.word value) := rfl
+
+/-- Exact `get_vars_def` (`loopSemScript.sml:98-107`), state second as in HOL. -/
+def getVars {width : Nat} [NeZero width] {F : Type} :
+    List Nat → LoopSemStateFiniteExact width F → Option (List (WordLocW width))
+  | [], _ => some []
+  | name :: names, state =>
+      (state.locals.lookup name).bind
+        (fun value => (getVars names state).map (fun values => value :: values))
+
+@[simp] theorem getVars_nil {width : Nat} [NeZero width] {F : Type}
+    (state : LoopSemStateFiniteExact width F) :
+    getVars [] state = some [] := rfl
+
+theorem getVars_cons {width : Nat} [NeZero width] {F : Type}
+    (name : Nat) (names : List Nat) (state : LoopSemStateFiniteExact width F) :
+    getVars (name :: names) state =
+      (state.locals.lookup name).bind
+        (fun value => (getVars names state).map (fun values => value :: values)) :=
+  rfl
+
 end LoopSemStateFiniteExact
+
+/-- Observational bridge from the exact `LoopSemStateFiniteExact` to the
+    production `LoopMachineState`.  Word-location payloads compare through
+    `loopValueOfWordLocW`; the total `memory` is option-valued on the production
+    side (always present); the address sets are `Bool` predicates on both
+    sides; the code table is related by the production association list
+    enumerating entries of the exact finite map (`num_map` has no enumeration
+    order), with the executable program the `loopProgExecRel` image of the
+    faithful one; and the FFI state by `FfiStateRel`. -/
+def LoopSemStateFiniteExact.prodRel {width : Nat} [NeZero width] {F : Type}
+    (state : LoopSemStateFiniteExact width F)
+    (machine : LoopMachineState (BitVec width) F) : Prop :=
+  (∀ name, machine.locals name = (state.locals.lookup name).map loopValueOfWordLocW) ∧
+  (∀ global, machine.globals global = (state.globals.lookup global).map loopValueOfWordLocW) ∧
+  (∀ address, machine.memory address = some (loopValueOfWordLocW (state.memory address))) ∧
+  machine.mdomain = state.mdomain ∧
+  machine.shMdomain = state.shMdomain ∧
+  machine.clock = state.clock ∧
+  machine.be = state.be ∧
+  FfiStateRel machine.ffi state.ffi ∧
+  machine.baseAddr = state.baseAddr ∧
+  machine.topAddr = state.topAddr ∧
+  (∀ entry, entry ∈ machine.code →
+    ∃ program, state.code.lookup entry.1 = some (entry.2.1, program) ∧
+      loopProgExecRel entry.2.2 program)
+
+/-- Register reads through `get_var_imm` on the production state agree with the
+    exact carrier's local lookup under `prodRel`. -/
+theorem LoopSemStateFiniteExact.getVarImm_map_eq_of_prodRel {width : Nat} [NeZero width]
+    {F : Type} {state : LoopSemStateFiniteExact width F}
+    {machine : LoopMachineState (BitVec width) F}
+    (h : state.prodRel machine) (operand : RegImm (BitVec width)) :
+    (LoopSemStateFiniteExact.getVarImm operand state).map loopValueOfWordLocW =
+      Flapjack.getVarImm machine operand := by
+  cases operand with
+  | reg name => exact (h.1 name).symm
+  | imm value => rfl
 
 end Flapjack
