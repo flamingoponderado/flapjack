@@ -1,4 +1,5 @@
 import Flapjack.Pancake.PanToCrep.Compile
+import Flapjack.Pancake.PanToCrep.CompileExact
 
 /-!
 # Original-domain parity for `pan_to_crep$compile` (`compile_def`)
@@ -11,6 +12,7 @@ The expected cases come from the direct HOL-EVAL fixture
 namespace Flapjack.Test.CompileDefParity
 
 open Flapjack
+open Flapjack.Basis.Pure.MlString
 
 def context : CompileContext Nat :=
   { vars := [], functions := [], exceptions := [], maxVar := 0, bytesInWord := 1 }
@@ -358,11 +360,153 @@ example :
 #guard nativeProgramParityGuard
 #guard finiteMapLoadStoreParityGuard
 
+/-! The direct HOL rows `struct_skip`, `struct_break`, `struct_continue`,
+`struct_tick`, `struct_annot`, and `struct_seq` in `compile_def_probe.out`
+exercise the first exact-carrier `compile_def` slice. The support premise
+admits only those constructors, so unsupported constructors are not silently
+treated as successful compiler cases. -/
+
+open Flapjack.Pancake.PanLang
+
+def exactSkipSupported : CompileProgStructuralFragmentHOL
+    (ProgHOL.skip : ProgHOL 8) := .skip
+
+def exactControlSeqSupported : CompileProgStructuralFragmentHOL
+    (ProgHOL.seq ProgHOL.skip (ProgHOL.seq ProgHOL.break ProgHOL.continue) : ProgHOL 8) :=
+  .seq .skip (.seq .break .continue)
+
+def exactTickSupported : CompileProgStructuralFragmentHOL
+    (ProgHOL.tick : ProgHOL 8) := .tick
+
+def exactBreakSupported : CompileProgStructuralFragmentHOL
+    (ProgHOL.break : ProgHOL 8) := .break
+
+def exactContinueSupported : CompileProgStructuralFragmentHOL
+    (ProgHOL.continue : ProgHOL 8) := .continue
+
+def exactAnnotSupported : CompileProgStructuralFragmentHOL
+    (ProgHOL.annot (.implode []) (.implode []) : ProgHOL 8) := .annot _ _
+
+def exactStructuralSliceParity : Bool :=
+  let compiledSkip := compileProgStructuralFragmentHOL exactSkipSupported
+  let controls := compileProgStructuralFragmentHOL exactControlSeqSupported
+  let compiledTick := compileProgStructuralFragmentHOL exactTickSupported
+  let compiledBreak := compileProgStructuralFragmentHOL exactBreakSupported
+  let compiledContinue := compileProgStructuralFragmentHOL exactContinueSupported
+  let annot := compileProgStructuralFragmentHOL exactAnnotSupported
+  (match compiledSkip with | .skip => true | _ => false) &&
+    (match controls with
+    | .seq .skip (.seq (.break 0) (.continue 0)) => true
+    | _ => false) &&
+    (match compiledTick with | .tick => true | _ => false) &&
+    (match compiledBreak with | .break 0 => true | _ => false) &&
+    (match compiledContinue with | .continue 0 => true | _ => false) &&
+    (match annot with | .skip => true | _ => false)
+
+#guard exactStructuralSliceParity
+
+def exactReturnContext : CompileExpContextExact 8 where
+  vars := HolFiniteMapExact.empty
+  funcs := HolFiniteMapExact.empty
+  eids := HolFiniteMapExact.empty
+  vmax := 0
+
+def exactLocalAssignContext (destinationNames sourceNames : List Nat) :
+    CompileExpContextExact 8 where
+  vars := (HolFiniteMapExact.empty.update
+      (ofString "dst", (.one, destinationNames))).update
+      (ofString "src", (.one, sourceNames))
+  funcs := HolFiniteMapExact.empty
+  eids := HolFiniteMapExact.empty
+  vmax := 10
+
+def returnValuesMatch (expected : List (CrepExp (BitVec 8))) : CrepProgHOL 8 → Bool
+  | .return actual => actual.map crepExpOfHOL == expected
+  | _ => false
+
+def exactReturnClauseParity : Bool :=
+  returnValuesMatch [.const 7]
+    (compileReturnExactHOLW exactReturnContext (.const 7)) &&
+  returnValuesMatch []
+    (compileReturnExactHOLW exactReturnContext (.rstruct [])) &&
+  returnValuesMatch [.const 1, .const 2]
+    (compileReturnExactHOLW exactReturnContext (.rstruct [.const 1, .const 2]))
+
+#guard exactReturnClauseParity
+
+def exactStoreClauseParity : Bool :=
+  (match compileStore32ExactHOLW exactReturnContext (.const 1) (.const 2) with
+   | .store32 (.const 1) (.const 2) => true
+   | _ => false) &&
+  (match compileStore32ExactHOLW exactReturnContext (.rstruct []) (.const 2) with
+   | .skip => true
+   | _ => false) &&
+  (match compileStoreByteExactHOLW exactReturnContext (.const 3) (.const 4) with
+   | .storeByte (.const 3) (.const 4) => true
+   | _ => false) &&
+  (match compileStoreByteExactHOLW exactReturnContext (.const 3) (.rstruct []) with
+   | .skip => true
+   | _ => false)
+
+#guard exactStoreClauseParity
+
+def exactIfWhileClauseParity : Bool :=
+  (match compileIfExactHOLW exactReturnContext (.const 1) .skip (.break 0) with
+   | .ite (.const 1) .skip (.break 0) => true
+   | _ => false) &&
+  (match compileIfExactHOLW exactReturnContext (.rstruct []) .skip .skip with
+   | .skip => true
+   | _ => false) &&
+  (match compileWhileExactHOLW exactReturnContext (.const 2) (.break 0) with
+   | .while (.const 2) (.break 0) => true
+   | _ => false) &&
+  (match compileWhileExactHOLW exactReturnContext (.rstruct []) .skip with
+   | .skip => true
+   | _ => false)
+
+#guard exactIfWhileClauseParity
+
+def exactGlobalFallbackParity : Bool :=
+  (match compileGlobalAssignExactHOLW exactReturnContext (ofString "g") (.const 5) with
+   | .skip => true
+   | _ => false) &&
+  (match compileGlobalShMemLoadExactHOLW exactReturnContext .op8 (ofString "g")
+      (.const 3) with
+   | .skip => true
+   | _ => false)
+
+#guard exactGlobalFallbackParity
+
+def exactLocalAssignClauseParity : Bool :=
+  (match compileLocalAssignExactHOLW
+      (exactLocalAssignContext [7] [8]) (ofString "dst") (.var .local (ofString "src")) with
+   | .seq (.assign 7 (.var 8)) .skip => true
+   | _ => false) &&
+  (match compileLocalAssignExactHOLW
+      (exactLocalAssignContext [7] [7]) (ofString "dst") (.var .local (ofString "src")) with
+   | .dec 11 (.var 7) (.seq (.assign 7 (.var 11)) .skip) => true
+   | _ => false) &&
+  (match compileLocalAssignExactHOLW exactReturnContext (ofString "dst")
+      (.var .local (ofString "src")) with
+   | .skip => true
+   | _ => false) &&
+  (match compileLocalAssignExactHOLW
+      (exactLocalAssignContext [7, 8] [9]) (ofString "dst")
+      (.var .local (ofString "src")) with
+   | .skip => true
+   | _ => false)
+
+#guard exactLocalAssignClauseParity
+
 def runChecks : IO Bool := do
-  if parityGuard then
+  if parityGuard && exactStructuralSliceParity && exactReturnClauseParity &&
+      exactStoreClauseParity && exactIfWhileClauseParity && exactGlobalFallbackParity &&
+      exactLocalAssignClauseParity then
     IO.println "PASS compile_def fixed-width load/store and control-flow parity"
   else
     IO.println "FAIL compile_def parity"
-  pure parityGuard
+  pure (parityGuard && exactStructuralSliceParity && exactReturnClauseParity &&
+    exactStoreClauseParity && exactIfWhileClauseParity && exactGlobalFallbackParity &&
+    exactLocalAssignClauseParity)
 
 end Flapjack.Test.CompileDefParity

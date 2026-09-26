@@ -550,11 +550,10 @@ also generates the size functions used by `Theorem MEM_IMP_exp_size`
 (lines 198-208).  As with `shape_size`, they are produced by HOL's `Datatype`
 package (`HOL/src/datatype/DataSize.sml`), not written as source declarations, so
 they have no textual HOL name for `scripts/check-hol-refs.py` to resolve and
-cannot carry an `@[hol]` tag.  The equations, printed from a standard-HOL
-reconstruction of the identical datatype (same constructor arities and field
-types; `w2n` is the registered size of `'a word`, `num`'s size is the identity,
-and each operator type `varkind`/`binop`/`panop`/`cmp`/`shift` is a nullary
-datatype whose size is the constant `0`), are pinned in
+cannot carry an `@[hol]` tag.  The equations, printed from the real CakeML
+`panLangTheory` by `scripts/hol-probes/pan_lang_size_probeScript.sml` (which
+imports the compiled theory from the matching source commit instead of
+reconstructing the datatype) and pinned in
 `scripts/hol-probes/pan_lang_size_probe.out`:
 
 ```

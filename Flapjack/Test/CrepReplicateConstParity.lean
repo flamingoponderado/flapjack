@@ -80,8 +80,52 @@ example :
       evalCrepRuntimeExpsWordLab baseState [.const (1 : Nat), .const (2 : Nat)] :=
   evalCrepRuntimeExps_wordLab_projection baseState [.const (1 : Nat), .const (2 : Nat)]
 
+/-- Faithful `CrepSemHOLState` for the exact-theorem rows. -/
+def replicateFfi : HolFfiState Unit :=
+  { oracle := fun _ state _ _ => .ret state []
+    ffiState := ()
+    ioEvents := [] }
+
+def exactReplicateState : CrepSemHOLState 8 Unit where
+  locals := HolFiniteMapExact.empty
+  globals := HolFiniteMapExact.empty
+  code := HolFiniteMapExact.empty
+  memory := fun _ => .word (0 : BitVec 8)
+  memaddrs := fun _ => False
+  shMemaddrs := fun _ => False
+  clock := 0
+  be := false
+  ffi := replicateFfi
+  baseAddr := 0
+  topAddr := 0
+
+local instance : DecidablePred exactReplicateState.memaddrs := by
+  intro address
+  change Decidable False
+  infer_instance
+
+/-- Exact labelled theorem instance over the faithful crepSem evaluator
+(`evaluateReplicateConstHOL`): matches HOL row `replicate_const_three`. -/
+example : (List.replicate 3 (CrepExpHOL.const (0 : BitVec 8))).mapM
+    (evalCrepSemHOLExp exactReplicateState) =
+      some (List.replicate 3 (HolWordLab.word (0 : BitVec 8))) :=
+  evaluateReplicateConstHOL 3 exactReplicateState
+
+/-- Guards for the exact theorem against `crep_replicate_const_probe.out` rows
+`replicate_const_one`, `replicate_const_three`, `replicate_const_empty`. -/
+def exactReplicateGuard : Bool :=
+  ((List.replicate 1 (CrepExpHOL.const (0 : BitVec 8))).mapM
+      (evalCrepSemHOLExp exactReplicateState) == some [.word (0 : BitVec 8)]) &&
+  ((List.replicate 3 (CrepExpHOL.const (0 : BitVec 8))).mapM
+      (evalCrepSemHOLExp exactReplicateState) ==
+        some [.word (0 : BitVec 8), .word (0 : BitVec 8), .word (0 : BitVec 8)]) &&
+  ((List.replicate 0 (CrepExpHOL.const (0 : BitVec 8))).mapM
+      (evalCrepSemHOLExp exactReplicateState) == some [])
+
+#guard exactReplicateGuard
+
 def runChecks : IO Bool := do
   IO.println s!"PASS crep evaluate_replicate_const word_lab shape"
-  pure replicateConstGuard
-
+  IO.println s!"PASS exact crepSem evaluate_replicate_const matches HOL oracle rows"
+  pure (replicateConstGuard && exactReplicateGuard)
 end Flapjack.Test.CrepReplicateConstParity

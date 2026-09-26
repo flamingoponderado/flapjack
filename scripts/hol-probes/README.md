@@ -59,10 +59,23 @@ stored in the code map; HOL returns `SOME Error`, preserves the decremented
 clock, and exposes the callee post-state. Their Lean checks live in
 `Flapjack.Test.PanEvaluateParity` and exercise the recursive
 `PanSemState.code` evaluator.
-`compile_def_probe.out` also records direct HOL evaluations of assigned Global
-call destinations through `pan_to_crep$compile`: absent lookups, the
+`compile_def_probe.out` also records direct HOL evaluations of `Return`
+(`return`, `multi_return`, and the empty-struct return), paired
+`Store32`/`StoreByte` success and fallback rows, `If`/`While` success and
+fallback rows, Global Assign/ShMemLoad Skip fallbacks, Local Assign direct,
+overlap-temporary, missing-destination, and length-fallback rows, and assigned Global call
+destinations through `pan_to_crep$compile`: absent lookups, the
 `One`/empty-list fallback, and inconsistent shape/name-list lengths. The
-matching Lean cases live in `Flapjack.Test.CompileDefParity`.
+matching Lean cases live in `Flapjack.Test.CompileDefParity`. The
+`struct_skip`, `struct_seq`, `struct_break`, `struct_continue`, `struct_tick`,
+and `struct_annot` rows pin the first exact-carrier `compile_def` structural
+slice; its supported-subset helper is intentionally untagged and does not
+claim the full compiler definition.
+`compile_exp_probe.out` records direct HOL EVAL rows for every `compile_exp`
+constructor family and defensive fallback. `Flapjack.Test.CompileExpParity`
+checks those rows through both the existing production-carrier implementation
+and the exact-carrier `compileExpExactHOLW`; the latter is tagged against
+`compile_exp_def` and uses the exact Pan/Crepe expression and context carriers.
 `excp_rel_probe.out` and `ctxt_fc_probe.out` are direct EVALs from
 `pan_to_crepProofTheory`, paired with `Flapjack.Test.PanToCrepRelationsParity`.
 The `functions_projection` row in `ctxt_fc_probe.out` directly checks the
@@ -395,6 +408,21 @@ local theorem `MEM_functions` at
 `Flapjack.Pancake.PanLang.functionsHOL` and its membership theorem
 `MEM_functionsHOL` are paired with the Lean regression
 `Flapjack.Test.PanGlobalsMemFunctionsHOLParity`.
+
+`pan_lang_size_probe.out` loads the real compiled CakeML `panLangTheory` and
+prints the `Datatype`-generated size equations `mlstring_size_def`,
+`shape_size_def`, and `exp_size_def`, the `MEM_IMP_shape_size` and
+`MEM_IMP_exp_size` statements, and concrete `EVAL` rows for representative
+`shape_size`/`exp_size` applications. It replaces an earlier version that
+reconstructed the datatypes locally, which pinned `MEM_IMP_shape_size` and
+`MEM_IMP_exp_size` only by analogy. The equations are transcribed in
+`Flapjack/Pancake/PanLang/Shape.lean` and `Flapjack/Pancake/PanLang/Exp.lean`;
+the generated equations are not textual HOL declarations, so the transcriptions
+and their `@[hol]`-tagged `MEM_IMP_*` theorems cannot reference them directly.
+The matching fixtures live in `Flapjack.Test.PanLangGeneratedSizeParity`.
+Regenerate with `HOL_PROBE_ONLY=pan_lang_size_probeScript.sml
+scripts/hol-probes/regenerate.sh` against a CakeML checkout whose compiled
+theories match the submodule source commit.
 
 From the repository root, with HOL4 and the CakeML checkout available,
 regenerate both checked-in outputs with:
