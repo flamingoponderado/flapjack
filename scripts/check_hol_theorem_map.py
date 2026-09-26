@@ -1795,6 +1795,7 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         ("Flapjack/Pancake/Proofs/PanSimp.lean", "functionsHOL_panSimpDeclsHOL_eq"),
         ("Flapjack/Pancake/Proofs/PanSimp.lean", "sizeOfEidsHOL_panSimpDeclsHOL_eq"),
         ("Flapjack/Pancake/Proofs/PanSimp.lean", "firstCompileProgAllDistinctHOL"),
+        ("Flapjack/Pancake/Proofs/PanSimp.lean", "decsStcnamesHOLExact_panSimpDeclsHOL_eq"),
         ("Flapjack/Pancake/PanSimp.lean", "smartSeqHOL"),
         ("Flapjack/Pancake/PanSimp.lean", "seqCallRetHOL"),
         ("Flapjack/Pancake/PanSimp.lean", "seqAssocHOL"),
