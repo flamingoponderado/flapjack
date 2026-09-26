@@ -489,4 +489,56 @@ def postAllocConventions {width : Nat} (k : Nat) (program : WordLangProg (BitVec
     everyStackVar (fun name => decide (name ≥ 2 * k)) program ∧
     callArgConvention program
 
+/-- Exact HOL port of the positive-dimensional word-type declaration
+HOL `distinct_tar_reg_def` (`cakeml/compiler/backend/semantics/wordConvsScript.sml`),
+stated over the exact positive-dimension `HolInst` carrier (HOL's `'a inst`)
+with an explicit `[NeZero width]` binder.  The width-general executed form
+above remains untagged; this declaration is the faithful positive-width
+counterpart tracked by bead flapjack-4ac.6.1. -/
+@[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml" "distinct_tar_reg_def"]
+def distinctTarRegExact {width : Nat} [NeZero width] : HolInst width → Bool
+  | .arith (.binop _ r1 _ ri) => match ri with
+      | .reg r => decide (r ≠ r1)
+      | .imm _ => true
+  | .arith (.shift _ r1 _ ri) => match ri with
+      | .reg r => decide (r ≠ r1)
+      | .imm _ => true
+  | .arith (.addCarry r1 _ r3 r4) => decide (r1 ≠ r3 ∧ r1 ≠ r4)
+  | .arith (.addOverflow r1 _ r3 _) => decide (r1 ≠ r3)
+  | .arith (.subOverflow r1 _ r3 _) => decide (r1 ≠ r3)
+  | _ => true
+
+/-- Exact HOL port of the positive-dimensional word-type declaration
+HOL `two_reg_inst_def` (`cakeml/compiler/backend/semantics/wordConvsScript.sml`),
+stated over the exact positive-dimension `HolInst` carrier (HOL's `'a inst`)
+with an explicit `[NeZero width]` binder.  The width-general executed form
+above remains untagged; this declaration is the faithful positive-width
+counterpart tracked by bead flapjack-4ac.6.1. -/
+@[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml" "two_reg_inst_def"]
+def twoRegInstExact {width : Nat} [NeZero width] : HolInst width → Bool
+  | .arith (.binop _ r1 r2 _) => r1 == r2
+  | .arith (.shift _ r1 r2 _) => r1 == r2
+  | .arith (.addCarry r1 r2 _ _) => r1 == r2
+  | .arith (.addOverflow r1 r2 _ _) => r1 == r2
+  | .arith (.subOverflow r1 r2 _ _) => r1 == r2
+  | _ => true
+
+/-- Exact HOL port of the positive-dimensional word-type declaration
+HOL `inst_arg_convention_def` (`cakeml/compiler/backend/semantics/wordConvsScript.sml`),
+stated over the exact positive-dimension `HolInst` carrier (HOL's `'a inst`)
+with an explicit `[NeZero width]` binder.  The width-general executed form
+above remains untagged; this declaration is the faithful positive-width
+counterpart tracked by bead flapjack-4ac.6.1. -/
+@[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml" "inst_arg_convention_def"]
+def instArgConventionExact {width : Nat} [NeZero width] : HolInst width -> Bool
+  | .arith (.addCarry _ _ _ r4) => r4 == 0
+  | .arith (.shift _ _ _ (.reg r)) => r == 8
+  | .arith (.addOverflow _ _ _ r4) => r4 == 0
+  | .arith (.subOverflow _ _ _ r4) => r4 == 0
+  | .arith (.longMul r1 r2 r3 r4) =>
+      r1 == 6 && r2 == 0 && r3 == 0 && r4 == 4
+  | .arith (.longDiv r1 r2 r3 r4 _) =>
+      r1 == 0 && r2 == 6 && r3 == 6 && r4 == 0
+  | _ => true
+
 end Flapjack
