@@ -410,6 +410,18 @@ def compileDecCallExactHOLW {width : Nat} [NeZero width]
   let call := CrepProgHOL.call (some (names, none)) function arguments
   returnDeclarations (.seq call (compileBody bodyContext))
 
+/-! The `rtyp = NONE` arm of the HOL `Call` clause
+    (`pan_to_crepScript.sml:221-225`) compiles each argument, flattens its
+    expression list, and emits a tail call with no return metadata. -/
+
+def compileCallNoReturnExactHOLW {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (function : MlS)
+    (arguments : List (Flapjack.Pancake.PanLang.ExpHOL width)) :
+    CrepProgHOL width :=
+  let compiledArguments := compileExpExactHOLWList context arguments
+  let flattenedArguments := compiledArguments.flatMap Prod.fst
+  .call none function flattenedArguments
+
 /-! The `ExtCall` clause from HOL `compile_def`
     (`pan_to_crepScript.sml:219-233`). The freshness bound is the maximum over
     every variable in all four compiled operand lists, even though the output

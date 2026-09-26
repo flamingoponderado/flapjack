@@ -268,6 +268,13 @@ val _ = print_eval "missing_names_local"
       (panLang$Call
         (SOME (SOME (panLang$Local, «missing_names»), NONE)) «f» [])``;
 
+val _ = print_eval "call_no_return"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (panLang$Call NONE «f»
+        [panLang$Const (1w : 8 word);
+         panLang$RStruct [panLang$Const 2w; panLang$Const 3w]])``;
+
 val _ = print_eval "valid_local"
   ``pan_to_crep$compile
       <| vars := FEMPTY |+ («pair»,

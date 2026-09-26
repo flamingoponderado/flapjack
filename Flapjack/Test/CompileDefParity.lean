@@ -668,6 +668,15 @@ def exactDecCallClauseParity : Bool :=
 
 #guard exactDecCallClauseParity
 
+def exactCallNoReturnParity : Bool :=
+  match compileCallNoReturnExactHOLW exactReturnContext (ofString "f")
+      [.const 1, .rstruct [.const 2, .const 3]] with
+  | .call none function [.const 1, .const 2, .const 3] =>
+      function == ofString "f"
+  | _ => false
+
+#guard exactCallNoReturnParity
+
 def exactExtCallClauseParity : Bool :=
   (match compileExtCallExactHOLW exactExtCallContext (ofString "f")
       (.var .local (ofString "configuration"))
@@ -700,14 +709,16 @@ def runChecks : IO Bool := do
       exactStoreClauseParity && exactIfWhileClauseParity && exactGlobalFallbackParity &&
       exactLocalAssignClauseParity && exactPrimitiveClauseParity && exactStoreClauseFullParity &&
       exactRaiseClauseParity && exactShMemStoreClauseParity && exactShMemLoadClauseParity &&
-      exactDecClauseParity && exactDecCallClauseParity && exactExtCallClauseParity then
-    IO.println "PASS compile_def fixed-width load/store and control-flow parity"
+      exactDecClauseParity && exactDecCallClauseParity && exactCallNoReturnParity &&
+      exactExtCallClauseParity then
+    IO.println "PASS exact compile_def clause parity"
   else
     IO.println "FAIL compile_def parity"
   pure (parityGuard && exactStructuralSliceParity && exactReturnClauseParity &&
     exactStoreClauseParity && exactIfWhileClauseParity && exactGlobalFallbackParity &&
     exactLocalAssignClauseParity && exactPrimitiveClauseParity && exactStoreClauseFullParity &&
     exactRaiseClauseParity && exactShMemStoreClauseParity && exactShMemLoadClauseParity &&
-    exactDecClauseParity && exactDecCallClauseParity && exactExtCallClauseParity)
+    exactDecClauseParity && exactDecCallClauseParity && exactCallNoReturnParity &&
+    exactExtCallClauseParity)
 
 end Flapjack.Test.CompileDefParity
