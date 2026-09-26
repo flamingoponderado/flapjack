@@ -585,21 +585,29 @@ def riscvConfigForChecks : AsmConfig 64 where
   cjumpOffset := (riscvMin21 + 8, riscvMax21 + 4)
   locOffset := (riscvMin32, riscvJumpMax)
 
-/-- Exact HOL port of the positive-dimensional word-type declaration
-HOL `reg_ok_def` (`cakeml/compiler/encoders/asm/asmScript.sml`), restated with an explicit `[NeZero width]` binder so the
-statement matches HOL's positive-dimension `word` types.  The width-general
-`asmRegOk` above remains the untagged executed form; this declaration is the
-faithful positive-width counterpart tracked by bead flapjack-4ac.6.1. -/
-@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "reg_ok_def"]
+/-- Not an exact HOL port (carrier mismatch, bead flapjack-4ac.6.1):
+    HOL's declaration is stated over the exact asm carriers, but this Lean
+    form is phrased over the production `AsmConfig`, whose `encode` takes
+    production `AsmData`, whereas HOL `asm_config.encode` takes the exact
+    `HolAsm`; the production asm datatypes also differ from the exact
+    `HolInst`/`HolRegImm`.  The width-corrected restatement does not repair the
+    carrier mismatch, so the `@[hol]` tag was withdrawn per the coordinator
+    HOLD; the exact-config restatement is tracked by bead flapjack-4ac.6.1.2.
+    This declaration takes no `AsmConfig` argument; it is listed under the
+    HOLD for re-review. -/
 def asmRegOkExact {width : Nat} [NeZero width] (config : AsmConfig width) (register : Nat) : Bool :=
   register < config.regCount && !config.avoidRegs.contains register
 
-/-- Exact HOL port of the positive-dimensional word-type declaration
-HOL `fp_reg_ok_def` (`cakeml/compiler/encoders/asm/asmScript.sml`), restated with an explicit `[NeZero width]` binder so the
-statement matches HOL's positive-dimension `word` types.  The width-general
-`asmFpRegOk` above remains the untagged executed form; this declaration is the
-faithful positive-width counterpart tracked by bead flapjack-4ac.6.1. -/
-@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "fp_reg_ok_def"]
+/-- Not an exact HOL port (carrier mismatch, bead flapjack-4ac.6.1):
+    HOL's declaration is stated over the exact asm carriers, but this Lean
+    form is phrased over the production `AsmConfig`, whose `encode` takes
+    production `AsmData`, whereas HOL `asm_config.encode` takes the exact
+    `HolAsm`; the production asm datatypes also differ from the exact
+    `HolInst`/`HolRegImm`.  The width-corrected restatement does not repair the
+    carrier mismatch, so the `@[hol]` tag was withdrawn per the coordinator
+    HOLD; the exact-config restatement is tracked by bead flapjack-4ac.6.1.2.
+    This declaration takes no `AsmConfig` argument; it is listed under the
+    HOLD for re-review. -/
 def asmFpRegOkExact {width : Nat} [NeZero width] (config : AsmConfig width) (register : Nat) : Bool :=
   register < config.fpRegCount
 
@@ -615,23 +623,31 @@ def asmRegImmOkExact {width : Nat} [NeZero width] (config : AsmConfig width) (op
   | .imm value =>
       (operator == .inl .xor && value == -1) || config.validImm operator value
 
-/-- Exact HOL port of the positive-dimensional word-type declaration
-HOL `offset_ok_def` (`cakeml/compiler/encoders/asm/asmScript.sml`), restated with an explicit `[NeZero width]` binder so the
-statement matches HOL's positive-dimension `word` types.  The width-general
-`asmOffsetOk` above remains the untagged executed form; this declaration is the
-faithful positive-width counterpart tracked by bead flapjack-4ac.6.1. -/
-@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "offset_ok_def"]
+/-- Not an exact HOL port (carrier mismatch, bead flapjack-4ac.6.1):
+    HOL's declaration is stated over the exact asm carriers, but this Lean
+    form is phrased over the production `AsmConfig`, whose `encode` takes
+    production `AsmData`, whereas HOL `asm_config.encode` takes the exact
+    `HolAsm`; the production asm datatypes also differ from the exact
+    `HolInst`/`HolRegImm`.  The width-corrected restatement does not repair the
+    carrier mismatch, so the `@[hol]` tag was withdrawn per the coordinator
+    HOLD; the exact-config restatement is tracked by bead flapjack-4ac.6.1.2.
+    This declaration takes no `AsmConfig` argument; it is listed under the
+    HOLD for re-review. -/
 def asmOffsetOkExact {width : Nat} [NeZero width] (alignment : Nat)
     (bounds : BitVec width × BitVec width) (offset : BitVec width) : Bool :=
   bounds.1.toInt ≤ offset.toInt && offset.toInt ≤ bounds.2.toInt &&
     asmAligned alignment offset
 
-/-- Exact HOL port of the positive-dimensional word-type declaration
-HOL `arith_ok_def` (`cakeml/compiler/encoders/asm/asmScript.sml`), restated with an explicit `[NeZero width]` binder so the
-statement matches HOL's positive-dimension `word` types.  The width-general
-`asmArithOk` above remains the untagged executed form; this declaration is the
-faithful positive-width counterpart tracked by bead flapjack-4ac.6.1. -/
-@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "arith_ok_def"]
+/-- Not an exact HOL port (carrier mismatch, bead flapjack-4ac.6.1):
+    HOL's declaration is stated over the exact asm carriers, but this Lean
+    form is phrased over the production `AsmConfig`, whose `encode` takes
+    production `AsmData`, whereas HOL `asm_config.encode` takes the exact
+    `HolAsm`; the production asm datatypes also differ from the exact
+    `HolInst`/`HolRegImm`.  The width-corrected restatement does not repair the
+    carrier mismatch, so the `@[hol]` tag was withdrawn per the coordinator
+    HOLD; the exact-config restatement is tracked by bead flapjack-4ac.6.1.2.
+    This declaration takes no `AsmConfig` argument; it is listed under the
+    HOLD for re-review. -/
 def asmArithOkExact {width : Nat} [NeZero width] (config : AsmConfig width) :
     WordLangArith (BitVec width) → Bool
   | .binop operator destination source right =>
@@ -678,12 +694,16 @@ def asmArithOkExact {width : Nat} [NeZero width] (config : AsmConfig width) :
         asmRegOk config sourceLeft && asmRegOk config sourceRight &&
         (!(config.isa == .mips || config.isa == .riscv) || !(destination == sourceLeft))
 
-/-- Exact HOL port of the positive-dimensional word-type declaration
-HOL `fp_ok_def` (`cakeml/compiler/encoders/asm/asmScript.sml`), restated with an explicit `[NeZero width]` binder so the
-statement matches HOL's positive-dimension `word` types.  The width-general
-`asmFpOk` above remains the untagged executed form; this declaration is the
-faithful positive-width counterpart tracked by bead flapjack-4ac.6.1. -/
-@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "fp_ok_def"]
+/-- Not an exact HOL port (carrier mismatch, bead flapjack-4ac.6.1):
+    HOL's declaration is stated over the exact asm carriers, but this Lean
+    form is phrased over the production `AsmConfig`, whose `encode` takes
+    production `AsmData`, whereas HOL `asm_config.encode` takes the exact
+    `HolAsm`; the production asm datatypes also differ from the exact
+    `HolInst`/`HolRegImm`.  The width-corrected restatement does not repair the
+    carrier mismatch, so the `@[hol]` tag was withdrawn per the coordinator
+    HOLD; the exact-config restatement is tracked by bead flapjack-4ac.6.1.2.
+    This declaration takes no `AsmConfig` argument; it is listed under the
+    HOLD for re-review. -/
 def asmFpOkExact {width : Nat} [NeZero width] (config : AsmConfig width) : WordLangFp → Bool
   | .fpLess destination left right =>
       asmRegOk config destination && asmFpRegOk config left && asmFpRegOk config right
