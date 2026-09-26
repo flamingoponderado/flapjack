@@ -1865,15 +1865,20 @@ def crepRuntimeSharedMemExp
   | some address => crepRuntimeSharedMem handler state operator name address
   | none => (.error, state)
 
-/-- Executed Crep external-call step whose four FFI argument expressions are
-evaluated by the HOL-shaped `word_lab` core `evalCrepRuntimeExpWordLab` instead
-of the unwrapped `evalCrepRuntimeExp`.  Reading each wrapped cell back through
+/-- Crep external-call step whose four FFI argument expressions are evaluated by
+the HOL-shaped `word_lab` core `evalCrepRuntimeExpWordLab` instead of the
+unwrapped `evalCrepRuntimeExp`.  Reading each wrapped cell back through
 `panTheWord` recovers exactly the previous behavior
 (`evalCrepRuntimeExpWordLab_panTheWord`), while at width 64 the core equals the
 tagged `evalCrepSemHOLExp` at the canonical executed state
-(`ExecutedWordLabBridge.evalCrepRuntimeExpWordLab_executed`).  This is another
-executed production call site routed through the HOL-shaped evaluator; the
-remaining widths/contexts stay explicit and unchanged. -/
+(`ExecutedWordLabBridge.evalCrepRuntimeExpWordLab_executed`).
+
+This helper is currently unused: the executed compiler routes `.extCall` through
+the four-local `crepRuntimeExtCall`, which reads `state.locals` directly and
+evaluates no expressions.  It is kept (and routed through the HOL-shaped core
+rather than the bare evaluator) as future-proofing so a future expression-based
+ext-call path cannot silently bypass the reviewed evaluator.  The remaining
+widths/contexts stay explicit and unchanged. -/
 def crepRuntimeExtCallExp
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α]
