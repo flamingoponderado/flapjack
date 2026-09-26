@@ -153,6 +153,40 @@ theorem compileProgExactHOLW_annot_bridge {width : Nat} [NeZero width]
   simp [compileProgExactHOLW, compileProgRiscV, compileProgHOL, crepProgOfHOL,
     progOfHOL]
 
+/-- The exact `Return` equation agrees with production once its expression
+    result is decoded. The premise is the paired expression-compiler bridge;
+    the shape-size check is preserved because names do not affect shape size. -/
+theorem compileProgExactHOLW_return_bridge {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width) (expression : Exp (BitVec width))
+    (hcodec :
+      ((compileExpExactHOLW context (expToHOL expression)).1.map crepExpOfHOL,
+        shapeOfHOL (compileExpExactHOLW context (expToHOL expression)).2) =
+        compileExpHOL context.toProduction expression) :
+    crepProgOfHOL
+        (compileProgExactHOLW context (.return (expToHOL expression))) =
+      compileProgRiscV context.toProduction (.return expression) := by
+  have hsize (shape : ShapeHOL) :
+      Shape.shapeSize (shapeOfHOL shape) = sizeOfShapeHOL shape := by
+    have h := sizeOfShapeHOL_shapeToHOL (shapeOfHOL shape)
+    simpa only [shapeToHOL_shapeOfHOL] using h.symm
+  rw [Prod.mk.injEq] at hcodec
+  rcases hcodec with ⟨hexps, hshape⟩
+  have hprodsize :
+      Shape.shapeSize (compileExpHOL context.toProduction expression).2 =
+        sizeOfShapeHOL (compileExpExactHOLW context (expToHOL expression)).2 := by
+    calc
+      Shape.shapeSize (compileExpHOL context.toProduction expression).2 =
+          Shape.shapeSize (shapeOfHOL
+            (compileExpExactHOLW context (expToHOL expression)).2) := by rw [← hshape]
+      _ = sizeOfShapeHOL (compileExpExactHOLW context (expToHOL expression)).2 := hsize _
+  simp only [compileProgExactHOLW, compileProgRiscV, compileProgHOL,
+    compileReturnExactHOLW]
+  rw [hprodsize]
+  by_cases hz : sizeOfShapeHOL (compileExpExactHOLW context (expToHOL expression)).2 = 0
+  · simp [hz, crepProgOfHOL]
+  · simp [hz, crepProgOfHOL]
+    exact hexps
+
 /-- Metadata adapter whose compiler input crosses the exact `DeclHOL` carrier
     boundary.  Its side condition is the byte-range premise used by the
     production-to-HOL declaration codec; it is preserved by the executed
