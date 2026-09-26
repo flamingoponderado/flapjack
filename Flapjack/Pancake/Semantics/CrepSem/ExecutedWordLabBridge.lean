@@ -400,4 +400,58 @@ theorem evalCrepRuntimeExp_executed_loadByte {σ : Type}
           rw [hload]
           simp only [Option.map_map, Function.comp_def, holWordLabToWord_eq]
 
+/-! ## Production `word_lab` result shape
+
+The bare theorems above return bit vectors; the executed production evaluator
+`evalCrepRuntimeExpWordLab` returns `word_lab` cells. Reading the bare result
+through `PanWordLab.word` and then composing with `holWordLabToWord` recovers
+the exact `HolWordLab.toPanWordLab` projection, so the executed production
+`word_lab` evaluator's result equals the tagged exact `evalCrepSemHOLExp`
+result. This is the production result shape of bead `flapjack-pxn.18.4.3.48.1`.
+No `@[hol]` tag: Flapjack-specific representation bridge. -/
+
+/-- Composing the bare-word projection with the `word_lab` wrapper recovers the
+exact `word_lab` projection. -/
+@[simp] theorem option_map_holWordLabToWord_map_word {width : Nat} [NeZero width]
+    (cell : Option (HolWordLab width)) :
+    (cell.map holWordLabToWord).map PanWordLab.word = cell.map HolWordLab.toPanWordLab := by
+  cases cell <;> rfl
+
+/-- The executed production `word_lab` evaluator at the canonical BitVec
+evaluator state returns exactly the tagged exact `evalCrepSemHOLExp` result for
+the fragment that does not read the byte/endian memory model. -/
+theorem evalCrepRuntimeExpWordLab_executed_of_noByteMemoryLoad
+    {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) [DecidablePred state.memaddrs]
+    (e : CrepExp (BitVec width)) (hm : crepExpNoByteMemoryLoad e) :
+    evalCrepRuntimeExpWordLab (executedCrepState state) e =
+      (evalCrepSemHOLExp state (crepExpToHOL e)).map HolWordLab.toPanWordLab := by
+  rw [← evalCrepRuntimeExp_wordLab_projection (executedCrepState state) e]
+  rw [evalCrepRuntimeExp_executed_of_noByteMemoryLoad state e hm]
+  exact option_map_holWordLabToWord_map_word _
+
+/-- RV64 production `word_lab` result shape for the byte-reading 32-bit load. -/
+theorem evalCrepRuntimeExpWordLab_executed_load32 {σ : Type}
+    (state : CrepSemHOLState 64 σ) [DecidablePred state.memaddrs]
+    (address : CrepExp (BitVec 64))
+    (haddr : evalCrepRuntimeExp (executedCrepState state) address =
+      (evalCrepSemHOLExp state (crepExpToHOL address)).map holWordLabToWord) :
+    evalCrepRuntimeExpWordLab (executedCrepState state) (.load32 address) =
+      (evalCrepSemHOLExp state (crepExpToHOL (.load32 address))).map HolWordLab.toPanWordLab := by
+  rw [← evalCrepRuntimeExp_wordLab_projection (executedCrepState state) (.load32 address)]
+  rw [evalCrepRuntimeExp_executed_load32 state address haddr]
+  exact option_map_holWordLabToWord_map_word _
+
+/-- RV64 production `word_lab` result shape for the byte-reading load. -/
+theorem evalCrepRuntimeExpWordLab_executed_loadByte {σ : Type}
+    (state : CrepSemHOLState 64 σ) [DecidablePred state.memaddrs]
+    (address : CrepExp (BitVec 64))
+    (haddr : evalCrepRuntimeExp (executedCrepState state) address =
+      (evalCrepSemHOLExp state (crepExpToHOL address)).map holWordLabToWord) :
+    evalCrepRuntimeExpWordLab (executedCrepState state) (.loadByte address) =
+      (evalCrepSemHOLExp state (crepExpToHOL (.loadByte address))).map HolWordLab.toPanWordLab := by
+  rw [← evalCrepRuntimeExp_wordLab_projection (executedCrepState state) (.loadByte address)]
+  rw [evalCrepRuntimeExp_executed_loadByte state address haddr]
+  exact option_map_holWordLabToWord_map_word _
+
 end Flapjack
