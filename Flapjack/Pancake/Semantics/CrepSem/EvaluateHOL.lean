@@ -30,9 +30,9 @@ translation of the corresponding `evaluate_def` disjunct, including the
 `fix_clock`/`dec_clock` split, the `While` loop-control labels, the `Call`
 handler path, and the FFI clauses.
 
-## Declaration-local representation notes (no `@[hol]` tag)
+## Declaration-local representation notes
 
-The declarations here are intentionally **untagged**: the whole-program
+Most declarations here are intentionally **untagged**: the whole-program
 statement shape is not yet the reviewed exact HOL statement (the projection of
 `CrepResultHOL`'s `return` payload through `PanWordLab`, the `RiscV.Word width`
 fixed-width model of HOL's arbitrary finite word dimension, the executable
@@ -40,10 +40,20 @@ fixed-width model of HOL's arbitrary finite word dimension, the executable
 general agreement proof with the executed interpreter). They are
 declaration-local infrastructure only.
 
-* `CrepResultHOL.return` carries `List (PanWordLab (BitVec width))` while HOL
-  `crepSem$result` carries `('a word_lab) list`; the exact `HolWordLab` values
-  produced by `evalCrepSemHOLExp` are transported by `HolWordLab.toPanWordLab`
-  in the `Return`/`Call` clauses.
+The one exception is `exitLoopCrepResult`, an exact `@[hol]` port of
+`crepSem$exit_loop_def`, stated over the genuinely exact width-indexed result
+carrier `CrepResultHOLExact` (the `@[hol]` port of HOL `Datatype result`) whose
+`Return` payload is `List (HolWordLab width)`, matching HOL's
+`('a word_lab) list`, and whose `Exception` payload is `BitVec width`.
+
+* The production `CrepResultHOL.return` carries `List (PanWordLab (BitVec width))`
+  while HOL `crepSem$result` carries `('a word_lab) list`; the exact `HolWordLab`
+  values produced by `evalCrepSemHOLExp` are transported by
+  `HolWordLab.toPanWordLab` in the evaluator's `Return`/`Call` clauses. The
+  evaluator's own result type still uses the production `CrepResultHOL`, so its
+  whole-program statement remains untagged pending the result-carrier migration
+  tracked separately; `CrepResultHOLExact` is the exact carrier for tagged
+  result-level definitions such as `exit_loop_def`.
 * `CrepSemHOLState` is the finite-support `HolFiniteMapExact` translation of
   HOL's `|->` fields; the state helpers `setVar`/`setGlobals`/`updLocals`/
   `emptyLocals`/`resVarEq` implement the HOL updates with HOL `=` equality.
@@ -131,10 +141,50 @@ def crepExactWriteBytearray {width : Nat} [NeZero width] {σ : Type}
   exact panWriteBytearrayHOL address bytes state.memory state.memaddrs state.be
 
 
-/-- HOL `exit_loop` (`crepSemScript.sml:220-224`) on an optional control result:
-    propagate other outcomes, decrementing the nesting label of `Break` and
-    `Continue`. -/
-def exitLoopCrepResult {width : Nat} :
+/-- Exact port of HOL `Datatype result`
+    (`cakeml/pancake/semantics/crepSemScript.sml:36-44`):
+    `result = Error | TimeOut | Break num | Continue num
+            | Return (('a word_lab) list) | Exception ('a word) | FinalFFI final_event`.
+    Unlike the production `CrepResultHOL`, the `Return` payload is the exact
+    `HolWordLab width` port of `'a word_lab` (not the production `PanWordLab`),
+    and the `Exception` payload is `BitVec width` for `'a word`. The `finalFfi`
+    payload is the monomorphic `HolFinalEvent` port of `final_event`. The width
+    index is the canonical positive finite-word model, matching the tagged
+    `HolWordLab` datatype port (`[NeZero width]` for HOL's positive `dimindex`). -/
+@[hol "cakeml/pancake/semantics/crepSemScript.sml" "result"]
+inductive CrepResultHOLExact (width : Nat) [NeZero width] where
+  | error
+  | timeOut
+  | break (label : Nat)
+  | continue (label : Nat)
+  | return (values : List (HolWordLab width))
+  | exception (value : BitVec width)
+  | finalFfi (event : HolFinalEvent)
+  deriving Repr
+
+/-- Exact port of HOL `exit_loop_def` (`crepSemScript.sml:234-238`):
+    `exit_loop (SOME (Break n)) = SOME (Break (n - 1))`,
+    `exit_loop (SOME (Continue n)) = SOME (Continue (n - 1))`, and
+    `exit_loop res = res`. The carrier
+    `Option (CrepResultHOLExact width)` is the exact `crepSem$result option`
+    over the genuinely exact width-indexed result datatype port above, whose
+    `Return` payload is the exact `HolWordLab` list (matching HOL's
+    `('a word_lab) list`). `Nat` subtraction is HOL `num` subtraction. The
+    `Return`/`Exception`/`FinalFFI` payloads are never inspected, so no payload
+    projection is involved. -/
+@[hol "cakeml/pancake/semantics/crepSemScript.sml" "exit_loop_def"]
+def exitLoopCrepResult {width : Nat} [NeZero width] :
+    Option (CrepResultHOLExact width) →
+      Option (CrepResultHOLExact width)
+  | some (.break label) => some (.break (label - 1))
+  | some (.continue label) => some (.continue (label - 1))
+  | result => result
+
+/-- Production `exit_loop` over the evaluator's `CrepResultHOL` result carrier.
+    Flapjack-specific infrastructure: the evaluator still uses `CrepResultHOL`
+    (whose `Return` payload is `PanWordLab`), so this is not a tagged exact HOL
+    port; `exitLoopCrepResult` above is the exact `@[hol]` declaration. -/
+def exitLoopCrepResultProd {width : Nat} :
     Option (CrepResultHOL (BitVec width) HolFinalEvent) →
       Option (CrepResultHOL (BitVec width) HolFinalEvent)
   | some (.break label) => some (.break (label - 1))
@@ -320,7 +370,7 @@ def evalCrepSemHOLProg {width : Nat} [NeZero width] {σ : Type}
                   evalCrepSemHOLProg (crepStampExactDomains state loopState) memDec shMemDec
                     (.while condition body)
               | (some (.break 0), loopState) => (none, loopState)
-              | (result, loopState) => (exitLoopCrepResult result, loopState)
+              | (result, loopState) => (exitLoopCrepResultProd result, loopState)
           else (none, state)
       | _ => (some .error, state)
   | .break label => (some (.break label), state)
@@ -678,7 +728,7 @@ theorem evalCrepSemHOLProg_ite_false {width : Nat} [NeZero width] {σ : Type}
                    evalCrepSemHOLProg (crepStampExactDomains state loopState) memDec shMemDec
                      (.while condition body)
                | (some (.break 0), loopState) => (none, loopState)
-               | (result, loopState) => (exitLoopCrepResult result, loopState)
+               | (result, loopState) => (exitLoopCrepResultProd result, loopState)
            else (none, state)
        | _ => (some .error, state)) := by
   rw [evalCrepSemHOLProg.eq_def] <;> rfl
@@ -1176,7 +1226,7 @@ theorem crepWhileStep_domains {width : Nat} [NeZero width] {σ : Type}
          evalCrepSemHOLProg (crepStampExactDomains state loopState) memDec shMemDec
            (.while condition body)
      | (some (.break 0), loopState) => (none, loopState)
-     | (result, loopState) => (exitLoopCrepResult result, loopState)).2.memaddrs =
+     | (result, loopState) => (exitLoopCrepResultProd result, loopState)).2.memaddrs =
         state.memaddrs ∧
     (match hfixed : loopStep with
      | (none, loopState) =>
@@ -1186,7 +1236,7 @@ theorem crepWhileStep_domains {width : Nat} [NeZero width] {σ : Type}
          evalCrepSemHOLProg (crepStampExactDomains state loopState) memDec shMemDec
            (.while condition body)
      | (some (.break 0), loopState) => (none, loopState)
-     | (result, loopState) => (exitLoopCrepResult result, loopState)).2.shMemaddrs =
+     | (result, loopState) => (exitLoopCrepResultProd result, loopState)).2.shMemaddrs =
         state.shMemaddrs := by
   split <;> (first | exact hrec | exact hstep)
 
