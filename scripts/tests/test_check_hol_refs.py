@@ -186,6 +186,38 @@ class HolAttributeSitesTest(unittest.TestCase):
         )
         self.assertTrue(any("distinct" in e for e in errors))
 
+    def test_fmap_as_finite_support_relation_accepts_bare_parameters(self):
+        lines = [
+            "structure Ctxt where",
+            "  vars : HolFiniteMapExact MlS (ShapeHOL \u00d7 List Nat)",
+            "",
+            "theorem holFmapAsFiniteSupportRelationWitness_Ctxt :",
+            "    Ctxt.toBroad (Ctxt.ofBroad c) = c := rfl",
+        ]
+        errors = CHECKER["fmap_as_finite_support_relation_errors"](
+            lines,
+            (("Ctxt", "vars"), ("sourceLocals", ""), ("targetLocals", "")),
+            "Example.lean",
+            "def localsRel (context : Ctxt) (sourceLocals : HolFiniteMapExact MlS (ValueHOL width)) (targetLocals : HolFiniteMapExact Nat (HolWordLab width)) : Prop",
+        )
+        self.assertEqual(errors, [])
+
+    def test_fmap_as_finite_support_relation_rejects_raw_parameter(self):
+        lines = ["def localsRel (sourceLocals : MlS \u2192 Option (ValueHOL width)) : Prop := True"]
+        errors = CHECKER["fmap_as_finite_support_relation_errors"](
+            lines, (("sourceLocals", ""),), "Example.lean",
+            "def localsRel (sourceLocals : MlS \u2192 Option (ValueHOL width)) : Prop := True",
+        )
+        self.assertTrue(any("sourceLocals" in e and "HolFiniteMapExact" in e for e in errors))
+
+    def test_fmap_as_finite_support_relation_rejects_unbound_parameter(self):
+        lines = ["def localsRel (other : HolFiniteMapExact MlS (ValueHOL width)) : Prop := True"]
+        errors = CHECKER["fmap_as_finite_support_relation_errors"](
+            lines, (("sourceLocals", ""),), "Example.lean",
+            "def localsRel (other : HolFiniteMapExact MlS (ValueHOL width)) : Prop := True",
+        )
+        self.assertTrue(any("sourceLocals" in e for e in errors))
+
     def test_fmap_as_finite_support_result_accepts_lookup_witness(self):
         lines = [
             "def getEidsFromDeclsHOL : HolFiniteMapExact MlS (BitVec width) :=",

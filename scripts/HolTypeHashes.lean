@@ -44,6 +44,7 @@ import Flapjack.Pancake.Proofs.PanToCrep.CompileExpVmax
 import Flapjack.Pancake.Proofs.PanToCrep.CompileProgParams
 import Flapjack.Pancake.Proofs.PanToWord
 import Flapjack.Pancake.Proofs.PanToCrep.Primop
+import Flapjack.Pancake.Proofs.PanToCrep.StateRelFiniteSupport
 import Flapjack.Pancake.Semantics.CrepProps
 import Flapjack.Pancake.Semantics.CrepSem
 import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
@@ -136,7 +137,7 @@ elab "#emit_hol_type_hashes" : command => do
             ("fmap_as_finite_support", toJson ref.fmapAsFiniteSupport),
             ("fmap_as_finite_support_result", toJson ref.fmapAsFiniteSupportResult),
             ("fmap_as_finite_support_relation",
-              toJson (ref.fmapAsFiniteSupportRelation.map (fun entry => s!"{entry.1}.{entry.2}")))])]
+              toJson (ref.fmapAsFiniteSupportRelation.map (fun entry => if entry.1.isEmpty then entry.2 else s!"{entry.1}.{entry.2}")))])]
         match definitionBody? info with
         | some body =>
             fields := fields ++ [("value_expr", toJson (reprStr (canonicalExpr body)))]
