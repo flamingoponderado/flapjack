@@ -1795,10 +1795,11 @@ theorem evaluateDeclsMemaddrsMonoHOLFinite {width : Nat} {σ : Type}
       [DecidablePred state.memaddrs] (program : List (DeclHOL width))
       (result : PanPropsEvalStateFiniteExact width σ)
       (memaddrs : RiscV.Word width → Prop) [DecidablePred memaddrs],
-      (evaluateDeclsPanPropsHOLFinite state program = some result ∧
+      (evaluateDeclsPanPropsCanonical state program = some result ∧
         (∀ address, state.memaddrs address → memaddrs address)) →
-        evaluateDeclsPanPropsHOLFinite { state with memaddrs := memaddrs } program =
+        evaluateDeclsPanPropsCanonical { state with memaddrs := memaddrs } program =
           some { result with memaddrs := memaddrs } := by
+  simp only [evaluateDeclsPanPropsCanonical_eqHOLFinite]
   intro state hstate program result memaddrs hmemaddrs h
   exact evaluateDeclsPanPropsMemaddrsMono state memaddrs program result h.1 h.2
 
@@ -1822,10 +1823,11 @@ theorem evaluateDeclsSwapMemaddrsHOLFinite {width : Nat} {σ : Type}
       [DecidablePred state.memaddrs] (program : List (DeclHOL width))
       (result : PanPropsEvalStateFiniteExact width σ)
       (memaddrs : RiscV.Word width → Prop) [DecidablePred memaddrs],
-      (evaluateDeclsPanPropsHOLFinite state program = some result ∧
+      (evaluateDeclsPanPropsCanonical state program = some result ∧
         (∀ address, state.memaddrs address → memaddrs address)) →
-        evaluateDeclsPanPropsHOLFinite { state with memaddrs := memaddrs } program =
+        evaluateDeclsPanPropsCanonical { state with memaddrs := memaddrs } program =
           some { result with memaddrs := memaddrs } := by
+  simp only [evaluateDeclsPanPropsCanonical_eqHOLFinite]
   intro state hstate program result memaddrs hmemaddrs h
   exact evaluateDeclsPanPropsMemaddrsMono state memaddrs program result h.1
     (fun address hsource => h.2 address hsource)
@@ -1905,9 +1907,10 @@ theorem evaluateDeclsSwapLocalsHOLFinite {width : Nat} {σ : Type}
       [DecidablePred state.memaddrs] (program : List (DeclHOL width))
       (result : PanPropsEvalStateFiniteExact width σ)
       (locals : HolFiniteMapExact MlS (ValueHOL width)),
-      evaluateDeclsPanPropsHOLFinite state program = some result →
-        evaluateDeclsPanPropsHOLFinite { state with locals := locals } program =
+      evaluateDeclsPanPropsCanonical state program = some result →
+        evaluateDeclsPanPropsCanonical { state with locals := locals } program =
           some { result with locals := locals } := by
+  simp only [evaluateDeclsPanPropsCanonical_eqHOLFinite]
   intro state hstate program result locals hEval
   induction program generalizing state result with
   | nil =>
@@ -1969,10 +1972,11 @@ theorem evaluateDeclsSwapMemoryHOLFinite {width : Nat} {σ : Type}
       [DecidablePred state.memaddrs] (program : List (DeclHOL width))
       (result : PanPropsEvalStateFiniteExact width σ)
       (memory : RiscV.Word width → HolWordLab width),
-      (evaluateDeclsPanPropsHOLFinite state program = some result ∧
+      (evaluateDeclsPanPropsCanonical state program = some result ∧
         (∀ address, state.memaddrs address → state.memory address = memory address)) →
-        evaluateDeclsPanPropsHOLFinite { state with memory := memory } program =
+        evaluateDeclsPanPropsCanonical { state with memory := memory } program =
           some { result with memory := memory } := by
+  simp only [evaluateDeclsPanPropsCanonical_eqHOLFinite]
   intro state hstate program result memory h
   exact evaluateDeclsPanPropsMemorySwap state memory program result h.1 h.2
 
@@ -2346,8 +2350,9 @@ private theorem updateList_nil {α β : Type} [BEq α] [LawfulBEq α]
 theorem evaluateDeclsFunctionsHOLFinite {width : Nat} {σ : Type} [NeZero width] :
     ∀ (state : PanPropsEvalStateFiniteExact width σ) [DecidablePred state.memaddrs]
       (program : List (DeclHOL width)) (result : PanPropsEvalStateFiniteExact width σ),
-      evaluateDeclsPanPropsHOLFinite state program = some result →
+      evaluateDeclsPanPropsCanonical state program = some result →
         result.code = state.code.updateList (functionsHOL program) := by
+  simp only [evaluateDeclsPanPropsCanonical_eqHOLFinite]
   intro state hdec program
   induction program generalizing state with
   | nil =>
@@ -2426,8 +2431,9 @@ theorem evaluateDeclsFunctionsHOLFinite {width : Nat} {σ : Type} [NeZero width]
 theorem evaluateDeclsEshapesHOLFinite {width : Nat} {σ : Type} [NeZero width] :
     ∀ (state : PanPropsEvalStateFiniteExact width σ) [DecidablePred state.memaddrs]
       (program : List (DeclHOL width)) (result : PanPropsEvalStateFiniteExact width σ),
-      evaluateDeclsPanPropsHOLFinite state program = some result →
+      evaluateDeclsPanPropsCanonical state program = some result →
         result.eshapes = state.eshapes.updateList (exceptionsHOL program) := by
+  simp only [evaluateDeclsPanPropsCanonical_eqHOLFinite]
   intro state hdec program
   induction program generalizing state with
   | nil =>
@@ -2508,8 +2514,9 @@ theorem evaluateDeclsOnlyFunctionsHOLFinite {width : Nat} {σ : Type} [NeZero wi
     ∀ (state : PanPropsEvalStateFiniteExact width σ) [DecidablePred state.memaddrs]
       (program : List (DeclHOL width)) (result : PanPropsEvalStateFiniteExact width σ),
       program.all isFunctionHOL = true →
-      evaluateDeclsPanPropsHOLFinite state program = some result →
+      evaluateDeclsPanPropsCanonical state program = some result →
         result = { state with code := state.code.updateList (functionsHOL program) } := by
+  simp only [evaluateDeclsPanPropsCanonical_eqHOLFinite]
   intro state hdec program
   induction program generalizing state with
   | nil =>
@@ -2573,9 +2580,10 @@ open Classical
   (fmap_as_finite_support := [locals, globals, code, eshapes])]
 theorem evaluateDeclsAppendHOLFinite {width : Nat} {σ : Type} [NeZero width] :
     ∀ (state : PanPropsEvalStateFiniteExact width σ) (ds1 ds2 : List (DeclHOL width)),
-      evaluateDeclsPanPropsHOLFinite state (ds1 ++ ds2) =
-        Option.bind (evaluateDeclsPanPropsHOLFinite state ds1)
-          (fun state' => evaluateDeclsPanPropsHOLFinite state' ds2) := by
+      evaluateDeclsPanPropsCanonical state (ds1 ++ ds2) =
+        Option.bind (evaluateDeclsPanPropsCanonical state ds1)
+          (fun state' => evaluateDeclsPanPropsCanonical state' ds2) := by
+  simp only [evaluateDeclsPanPropsCanonical_eqHOLFinite]
   intro state ds1 ds2
   induction ds1 generalizing state with
   | nil => rfl
@@ -2725,8 +2733,9 @@ theorem evaluateDeclsOnlyExnDeclsHOLFinite {width : Nat} {σ : Type} [NeZero wid
     ∀ (state : PanPropsEvalStateFiniteExact width σ) [DecidablePred state.memaddrs]
       (program : List (DeclHOL width)) (result : PanPropsEvalStateFiniteExact width σ),
       program.all isExnDeclHOL = true →
-      evaluateDeclsPanPropsHOLFinite state program = some result →
+      evaluateDeclsPanPropsCanonical state program = some result →
         result = { state with eshapes := state.eshapes.updateList (exceptionsHOL program) } := by
+  simp only [evaluateDeclsPanPropsCanonical_eqHOLFinite]
   intro state hdec program
   induction program generalizing state with
   | nil =>
@@ -2790,12 +2799,13 @@ theorem evaluateDeclsOnlyExnDeclsHOLFinite {width : Nat} {σ : Type} [NeZero wid
 theorem evaluateDeclsExnsWfHOLFinite {width : Nat} {σ : Type} [NeZero width] :
     ∀ (state : PanPropsEvalStateFiniteExact width σ) [DecidablePred state.memaddrs]
       (program : List (DeclHOL width)) (result : PanPropsEvalStateFiniteExact width σ),
-      evaluateDeclsPanPropsHOLFinite state program = some result →
+      evaluateDeclsPanPropsCanonical state program = some result →
         ((exceptionsHOL program).map Prod.fst).Nodup ∧
         (exceptionsHOL program).all
           (fun entry => (state.eshapes.lookup entry.1).isNone) = true ∧
         (exceptionsHOL program).all
           (fun entry => isWfShapeExactHOL state.structs entry.2) = true := by
+  simp only [evaluateDeclsPanPropsCanonical_eqHOLFinite]
   intro state hdec program
   induction program generalizing state with
   | nil =>
@@ -2901,8 +2911,9 @@ theorem exnsWfEvaluateDeclsHOLFinite {width : Nat} {σ : Type} [NeZero width] :
         (fun entry => (state.eshapes.lookup entry.1).isNone) = true →
       (exceptionsHOL program).all
         (fun entry => isWfShapeExactHOL state.structs entry.2) = true →
-      evaluateDeclsPanPropsHOLFinite state program =
+      evaluateDeclsPanPropsCanonical state program =
         some { state with eshapes := state.eshapes.updateList (exceptionsHOL program) } := by
+  simp only [evaluateDeclsPanPropsCanonical_eqHOLFinite]
   intro state hdec program
   induction program generalizing state with
   | nil =>
@@ -2967,10 +2978,11 @@ theorem evaluateDeclsOnlyFunsAndExnDeclsHOLFinite {width : Nat} {σ : Type} [NeZ
       (program : List (DeclHOL width)) (result : PanPropsEvalStateFiniteExact width σ),
       program.all
         (fun declaration => isFunctionHOL declaration || isExnDeclHOL declaration) = true →
-      evaluateDeclsPanPropsHOLFinite state program = some result →
+      evaluateDeclsPanPropsCanonical state program = some result →
         result = { state with
           code := state.code.updateList (functionsHOL program)
           eshapes := state.eshapes.updateList (exceptionsHOL program) } := by
+  simp only [evaluateDeclsPanPropsCanonical_eqHOLFinite]
   intro state hdec program
   induction program generalizing state with
   | nil =>
@@ -3052,7 +3064,8 @@ theorem evaluateDeclsNamesHOLFinite {width : Nat} {σ : Type} [NeZero width]
     (state : PanPropsEvalStateFiniteExact width σ) [DecidablePred state.memaddrs]
     (decs : List (DeclHOL width)) :
     decs.all (fun declaration => Flapjack.Pancake.PanLang.isNameHOL declaration) = true →
-      evaluateDeclsPanPropsHOLFinite state decs = some state := by
+      evaluateDeclsPanPropsCanonical state decs = some state := by
+  simp only [evaluateDeclsPanPropsCanonical_eqHOLFinite]
   induction decs generalizing state with
   | nil => intro _; rfl
   | cons declaration rest ih =>
