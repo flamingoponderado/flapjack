@@ -242,4 +242,81 @@ theorem compileExpListBridgeProp_cons {width : Nat} [NeZero width]
   congr 1
   exact Prod.ext hhead.1 hhead.2
 
+
+/-! ### `Op` and `PanOp` handlers
+
+Both cases extract the argument heads with `cexpHeads`; the codec push-through
+lemma `cexpHeads_map_crepExpToHOL` and the list-motive first-component bridge
+`compileExpListBridgeProp_fstMap` align the production and exact scrutinees. -/
+
+theorem compileExpBridge_op {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (operator : BinOp)
+    (arguments : List (Exp (BitVec width)))
+    (h : compileExpListBridgeProp context arguments) :
+    compileExpBridgeProp context (.op operator arguments) := by
+  simp only [compileExpBridgeProp, compileExpHOL.eq_11, compileExpExactHOLW.eq_11,
+    expToHOL.eq_10]
+  have hf := compileExpListBridgeProp_fstMap context arguments h
+  have heq :
+      cexpHeads
+          ((compileExpExactHOLWList context (arguments.map expToHOL)).map Prod.fst)
+        = (cexpHeads
+            ((compileExpHOL.compileExpListHOL
+              (CompileExpContextExact.prodContext context) arguments).map
+                Prod.fst)).map (List.map crepExpToHOL) := by
+    rw [← hf]
+    exact cexpHeads_map_crepExpToHOL _
+  constructor
+  · rw [heq]
+    cases cexpHeads
+        ((compileExpHOL.compileExpListHOL
+          (CompileExpContextExact.prodContext context) arguments).map Prod.fst) with
+    | none =>
+        simp only [Option.map_none, List.map_cons, List.map_nil,
+          crepExpToHOL.eq_1]
+    | some es =>
+        simp only [Option.map_some, List.map_cons, List.map_nil,
+          crepExpToHOL.eq_7]
+  · rw [heq]
+    cases cexpHeads
+        ((compileExpHOL.compileExpListHOL
+          (CompileExpContextExact.prodContext context) arguments).map Prod.fst) with
+    | none => simp only [Option.map_none, shapeToHOL]
+    | some es => simp only [Option.map_some, shapeToHOL]
+
+theorem compileExpBridge_panOp {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (operator : PanOp)
+    (arguments : List (Exp (BitVec width)))
+    (h : compileExpListBridgeProp context arguments) :
+    compileExpBridgeProp context (.panOp operator arguments) := by
+  simp only [compileExpBridgeProp, compileExpHOL.eq_12, compileExpExactHOLW.eq_12,
+    expToHOL.eq_11]
+  have hf := compileExpListBridgeProp_fstMap context arguments h
+  have heq :
+      cexpHeads
+          ((compileExpExactHOLWList context (arguments.map expToHOL)).map Prod.fst)
+        = (cexpHeads
+            ((compileExpHOL.compileExpListHOL
+              (CompileExpContextExact.prodContext context) arguments).map
+                Prod.fst)).map (List.map crepExpToHOL) := by
+    rw [← hf]
+    exact cexpHeads_map_crepExpToHOL _
+  constructor
+  · rw [heq]
+    cases cexpHeads
+        ((compileExpHOL.compileExpListHOL
+          (CompileExpContextExact.prodContext context) arguments).map Prod.fst) with
+    | none =>
+        simp only [Option.map_none, List.map_cons, List.map_nil,
+          crepExpToHOL.eq_1]
+    | some es =>
+        simp only [Option.map_some, List.map_cons, List.map_nil,
+          crepExpToHOL.eq_8]
+  · rw [heq]
+    cases cexpHeads
+        ((compileExpHOL.compileExpListHOL
+          (CompileExpContextExact.prodContext context) arguments).map Prod.fst) with
+    | none => simp only [Option.map_none, shapeToHOL]
+    | some es => simp only [Option.map_some, shapeToHOL]
+
 end Flapjack
