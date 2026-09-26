@@ -12276,5 +12276,13 @@
     "lean_name": "instOkLessExact",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.6.1.2): exact clause-for-clause port of HOL wordConvs$inst_ok_less_def (wordConvsScript.sml:208-264) over the exact positive-dimension AsmConfigExact/HolInst carriers (HOL 'a asm_config/'a inst) with an explicit [NeZero width] binder, matching HOL's config-first argument order. All arith/mem/fp clauses, the unreachable Load16/Store16 hw_offset case, dimindex(:'a)=32 guards as width==32, ISA membership as disjunctions, and the catch-all are transcribed exactly."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
+    "hol_name": "exps_of_def",
+    "lean_path": "Flapjack/Pancake/Semantics/CrepProps.lean",
+    "lean_name": "crepExpsOfHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-pxn.18.3.5.8.8.6): clause-for-clause port of HOL exps_of_def (crepPropsScript.sml:1282-1299) over the exact CrepProgHOL/CrepExpHOL carriers. Dec -> value::recur; Seq -> ++; If -> condition::(then++else); While -> condition::recur; Call none / some(_,none) -> args; Call some(_,some(_,handler)) -> args++recur handler; Store/Store32/StoreByte -> [address,value]; StoreGlob -> [value]; Return -> values; Assign -> [value]; ShMem -> [address]; catch-all -> []. The Call funname is MlString in both carriers and is ignored by HOL, so no name-carrier mismatch."
   }
 ]
