@@ -129,7 +129,7 @@ def crepExactWriteBytearray {width : Nat} [NeZero width] {σ : Type}
     BitVec width → HolWordLab width := by
   haveI : DecidablePred state.memaddrs := memDec
   exact panWriteBytearrayHOL address bytes state.memory state.memaddrs state.be
-  
+
 
 /-- HOL `exit_loop` (`crepSemScript.sml:220-224`) on an optional control result:
     propagate other outcomes, decrementing the nesting label of `Break` and
