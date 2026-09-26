@@ -29,6 +29,25 @@ context.
 
 namespace Flapjack
 
+/-! HOL `pc_compile_correct` (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:442-490`)
+has quantified inputs `v`, `v1`, `res`, `s1`, `t`, and `ctxt`. Its seven
+premises are `evaluate (v,v1) = (res,s1)`, `res ≠ SOME Error`, `state_rel v1 t`,
+`code_rel ctxt v1.code t.code`, `excp_rel ctxt.eids v1.eshapes`,
+`locals_rel ctxt v1.locals t.locals`, and `localised_prog v`. It concludes that
+there exist `res1` and `t1` with the target evaluation of `(compile ctxt v,t)`;
+the post-state, code, and exception relations; and the complete HOL result
+case split (`NONE`, `Error` excluded, timeout, break, continue, flattened
+return, bounded exception lookup, and final FFI).
+
+There is no assembled Lean theorem with that statement. The existing
+`pc_compile_correct` constructor helpers in `Proofs/PanToCrep/EvaluateCases`
+are individual proof infrastructure, and the `stateRel` below is the
+production `PanSemState`/`CrepRuntimeState` relation, not evidence that the
+exact HOL carriers and both evaluator clause surfaces have been connected.
+Accordingly no `@[hol]` tag is claimed here. The faithful assembled theorem is
+tracked by `flapjack-4ac.5.16.1`, with exact Pan evaluator, Crep evaluator,
+compiler, and relation prerequisites. -/
+
 /-! Flapjack analogue of HOL `globals_lookup_def`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:435-438`). The lookup
     algorithm uses the same 5-bit indices, shape-size count, and optional-map
