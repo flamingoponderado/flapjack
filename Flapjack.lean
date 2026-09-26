@@ -144,6 +144,7 @@ import Flapjack.CompileParamVarsBounds
 import Flapjack.CrepeContextBounds
 import Flapjack.Pancake.PanToCrep.Compile
 import Flapjack.Pancake.PanToCrep.CompileExact
+import Flapjack.Pancake.PanToCrep.CompileExpBridge
 import Flapjack.Pancake.PanToCrep.ExpHdlExact
 import Flapjack.Pancake.PanToCrep.MakeVmapHOL
 import Flapjack.Pancake.PanToCrep.ContextExact
