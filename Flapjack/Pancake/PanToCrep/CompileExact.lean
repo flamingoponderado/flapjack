@@ -1,5 +1,6 @@
 import Flapjack.Pancake.PanToCrep.Compile
 import Flapjack.Pancake.Semantics.CrepSem.HOLState
+import Flapjack.Pancake.PanCommon
 
 /-!
 Exact-carrier expression lowering from HOL `PanLang.ExpHOL` to `CrepExpHOL`.
@@ -216,5 +217,31 @@ def compileGlobalAssignExactHOLW {width : Nat} [NeZero width]
 def compileGlobalShMemLoadExactHOLW {width : Nat} [NeZero width]
     (_context : CompileExpContextExact width) (_operator : OpSize) (_name : MlS)
     (_address : Flapjack.Pancake.PanLang.ExpHOL width) : CrepProgHOL width := .skip
+
+/-! The `Assign Local` clause from `compile_def`
+    (`pan_to_crepScript.sml:153-162`). It preserves the destination-name
+    lookup and compiled-list length checks. When destination variables do not
+    occur in the right-hand expressions, assignments are emitted directly;
+    otherwise HOL first copies through fresh `vmax + SUC i` temporaries. -/
+
+def compileLocalAssignExactHOLW {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (name : MlS)
+    (expression : Flapjack.Pancake.PanLang.ExpHOL width) : CrepProgHOL width :=
+  let (expressions, _shape) := compileExpExactHOLW context expression
+  match context.vars.lookup name with
+  | none => .skip
+  | some (_shape, names) =>
+      if names.length != expressions.length then .skip
+      else
+        let expressionVars := expressions.flatMap fun compiled =>
+          crepExpVarsW (crepExpOfHOL compiled)
+        if distinctListsHol names expressionVars then
+          crepNestedSeqHOL (List.zipWith CrepProgHOL.assign names expressions)
+        else
+          let temporaries := (List.range names.length).map
+            (fun index => context.vmax + index + 1)
+          let assignments := List.zipWith CrepProgHOL.assign names
+            (temporaries.map CrepExpHOL.var)
+          nestedDecsHOL temporaries expressions (crepNestedSeqHOL assignments)
 
 end Flapjack

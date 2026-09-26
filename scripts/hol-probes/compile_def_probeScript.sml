@@ -70,6 +70,26 @@ val _ = print_eval "global_shmem_load_fallback"
   ``pan_to_crep$compile
       <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
       (ShMemLoad Op8 Global «g» (Const (3w : 8 word)))``;
+val _ = print_eval "local_assign_direct"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY |+ («dst», (panLang$One, [7])) |+ («src», (panLang$One, [8]));
+         funcs := FEMPTY; eids := FEMPTY; vmax := 10 |>
+      (Assign Local «dst» (Var Local «src»))``;
+val _ = print_eval "local_assign_overlap_temporaries"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY |+ («dst», (panLang$One, [7])) |+ («src», (panLang$One, [7]));
+         funcs := FEMPTY; eids := FEMPTY; vmax := 10 |>
+      (Assign Local «dst» (Var Local «src»))``;
+val _ = print_eval "local_assign_missing_destination"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 10 |>
+      (Assign Local «dst» (Var Local «src»))``;
+val _ = print_eval "local_assign_length_fallback"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY |+ («dst», (panLang$Comb [panLang$One; panLang$One], [7; 8]))
+           |+ («src», (panLang$One, [9]));
+         funcs := FEMPTY; eids := FEMPTY; vmax := 10 |>
+      (Assign Local «dst» (Var Local «src»))``;
 
 val _ = print_eval "struct_skip"
   ``pan_to_crep$compile
