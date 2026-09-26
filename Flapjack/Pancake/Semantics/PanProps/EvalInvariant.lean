@@ -1827,10 +1827,7 @@ theorem evaluateDeclsSwapMemaddrsHOLFinite {width : Nat} {σ : Type}
         (∀ address, state.memaddrs address → memaddrs address)) →
         evaluateDeclsPanPropsCanonical { state with memaddrs := memaddrs } program =
           some { result with memaddrs := memaddrs } := by
-  simp only [evaluateDeclsPanPropsCanonical_eqHOLFinite]
-  intro state hstate program result memaddrs hmemaddrs h
-  exact evaluateDeclsPanPropsMemaddrsMono state memaddrs program result h.1
-    (fun address hsource => h.2 address hsource)
+  exact evaluateDeclsMemaddrsMonoHOLFinite
 
 private theorem evaluateDeclsPanPropsMemorySwap {width : Nat} {σ : Type}
     [NeZero width] (state : PanPropsEvalStateFiniteExact width σ)
