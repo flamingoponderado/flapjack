@@ -132,6 +132,7 @@ import Flapjack.Test.PanCrepPrimopParity
 import Flapjack.Test.CompileProgParamsParity
 import Flapjack.Test.PanToCrepCodeRelParity
 import Flapjack.Test.PanToCrepStateRelParity
+import Flapjack.Test.PanToCrepStateRelCarrierParity
 import Flapjack.Test.PanHProgExtCallParity
 import Flapjack.Test.PanHProgStoreByteParity
 import Flapjack.Test.PanHProgStore32Parity
@@ -889,6 +890,7 @@ def main : IO Unit := do
     Flapjack.Test.PanToCrepRelationsParity.runChecks,
     Flapjack.Test.PanToCrepCodeRelParity.runChecks,
     Flapjack.Test.PanToCrepStateRelParity.runChecks,
+    Flapjack.Test.PanToCrepStateRelCarrierParity.runChecks,
     Flapjack.Test.PanSimpParity.runChecks,
     Flapjack.Test.CrepExitLoopParity.runChecks,
     Flapjack.Test.PanNbOpParity.runChecks,

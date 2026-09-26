@@ -41,6 +41,7 @@ import Flapjack.Test.PanCost
 import Flapjack.Test.SourceSemanticsOps
 import Flapjack.Test.PanToCrepExceptionRelation
 import Flapjack.Test.PanToCrepRelationsParity
+import Flapjack.Test.PanToCrepStateRelCarrierParity
 import Flapjack.Test.PanToCrepCodeRelParity
 import Flapjack.Test.PanToCrepContextExactParity
 import Flapjack.Test.PanCommonParity
