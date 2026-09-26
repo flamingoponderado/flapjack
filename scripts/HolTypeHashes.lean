@@ -38,6 +38,7 @@ import Flapjack.Pancake.Proofs.PanGlobals
 import Flapjack.Pancake.Proofs.PanStructs
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrect
 import Flapjack.Pancake.Proofs.PanToCrep
+import Flapjack.Pancake.Proofs.PanToCrep.StateRelFiniteSupport
 import Flapjack.Pancake.Proofs.PanToCrep.CompileExpVmax
 import Flapjack.Pancake.Proofs.PanToCrep.CompileProgParams
 import Flapjack.Pancake.Proofs.PanToWord
@@ -131,6 +132,7 @@ elab "#emit_hol_type_hashes" : command => do
             ("names_as_string", toJson ref.namesAsString),
             ("names_as_string_boundary", toJson ref.namesAsStringBoundary),
             ("fmap_as_finite_support", toJson ref.fmapAsFiniteSupport),
+            ("fmap_as_finite_support_carriers", toJson ref.fmapAsFiniteSupportCarriers),
             ("fmap_as_finite_support_result", toJson ref.fmapAsFiniteSupportResult)])]
         match definitionBody? info with
         | some body =>

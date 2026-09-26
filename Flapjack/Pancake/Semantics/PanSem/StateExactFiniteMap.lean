@@ -1410,11 +1410,11 @@ theorem evalPanSemRecursiveCallFiniteContext_total {width : Nat} {σ : Type} [Ne
     As with the broad exact evaluator `evalPanSemRecursiveCallContextHOLExact`,
     the outer `Option` is the *assembly marker* for the recursive cases (it is
     `none` only on the not-yet-assembled internal branches), not part of HOL
-    `evaluate_def`'s `result option × state` result.  The marker is provably
-    inert (`evaluateHOLFinite_ne_none`), but the equivalence with the broad exact
-    evaluator is still pending (bead `flapjack-6yq`), so this wrapper deliberately
-    keeps the marker rather than totalizing an unreachable `none` branch to
-    `(none, state)` (which would be observationally wrong).
+    `evaluate_def`'s `result option × state` result. The marker is provably
+    inert (`evaluateHOLFinite_ne_none`); `evaluateHOLFiniteResult` below removes
+    it with a fallback that is unreachable. Equivalence with the broad exact
+    evaluator is still pending (bead `flapjack-6yq`), so this state-level view
+    remains untagged.
 
     Exposed clause-by-clause in
     `Flapjack.Pancake.Semantics.PanSem.EvaluateFinite`. -/
@@ -1438,6 +1438,39 @@ theorem evaluateHOLFinite_ne_none {width : Nat} {σ : Type} [NeZero width]
   unfold evaluateHOLFinite
   rw [houtput]
   simp
+
+/-- FLAPJACK-SPECIFIC result-shaped view of the finite evaluator. The direct
+    evaluator's assembly marker is dropped using the totality theorem above;
+    the fallback is unreachable. This gives downstream invariant statements
+    HOL's `result option × state` equation without claiming a HOL declaration
+    for this view. -/
+def evaluateHOLFiniteResult {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ)
+    [h : DecidablePred state.memaddrs] [hshared : DecidablePred state.shMemaddrs]
+    (program : ProgHOL width) :
+    Option (PanSemResultExact width) × PanSemStateFiniteExact width σ :=
+  (evaluateHOLFinite state program).getD (none, state)
+
+/-- The result-shaped view is exactly the successful output of the finite
+    evaluator, since its assembly marker cannot fail. -/
+theorem evaluateHOLFiniteResult_eq_iff {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ)
+    [h : DecidablePred state.memaddrs] [hshared : DecidablePred state.shMemaddrs]
+    (program : ProgHOL width)
+    (pair : Option (PanSemResultExact width) × PanSemStateFiniteExact width σ) :
+    evaluateHOLFinite state program = some pair ↔
+      evaluateHOLFiniteResult state program = pair := by
+  constructor
+  · intro heval
+    simp [evaluateHOLFiniteResult, heval]
+  · intro heval
+    have htotal := evaluateHOLFinite_ne_none state program
+    cases h : evaluateHOLFinite state program with
+    | none => exact False.elim (htotal h)
+    | some actual =>
+        have hpair : actual = pair := by
+          simpa [evaluateHOLFiniteResult, h] using heval
+        exact congrArg some hpair
 
 end PanSemStateFiniteExact
 

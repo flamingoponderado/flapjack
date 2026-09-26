@@ -11768,12 +11768,20 @@
     "reviewer": "Flapjack-specific Raise-clause composition over the finite-context evaluator, exact PanSem state, and exact Pan-to-Crep relations. It proves the HOL-shaped empty-context payload conclusion for this clause but has a clause-level evaluator premise, so it is not evaluate_shape_invariant_ret_inst and remains untagged pending the complete evaluator invariant and multi-carrier qualifier."
   },
   {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "panToCrepFiniteEvaluateShapeInvariantRetInst",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific composition proves the HOL Return/Exception shape conclusion over finite-support PanSem/CrepSem carriers with an independent t_locs parameter. It is not yet the exact HOL theorem because its evaluator premise uses evalPanSemRecursiveCallFiniteContext; the full projection to evalPanSemRecursiveCallContextHOLExact is unproved. Per-clause projection work remains tracked by flapjack-6yq; keep evaluate_shape_invariant_ret_inst unported until then."
+  },
+  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
-    "lean_name": "panToCrepFiniteEvaluateShapeInvariantRetInst",
+    "lean_name": "holFmapParameterAsFiniteSupportWitness_panToCrepFiniteEvaluateShapeInvariantRetInst",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific full-program composition reviewed against HOL pan_to_crepProofScript.sml:3016 and panPropsScript.sml:1250. Over finite-support PanSem/CrepSem carriers it combines the recursive evaluator's state/result invariant with the exact state/local relation adapters and proves the same Return/Exception payload shape conclusion. It remains untagged because the evaluator premise carries an outer assembly marker, and the relations span separate PanSem and CrepSem carrier structures that the current fmap_as_finite_support qualifier cannot certify. Faithful replacement flapjack-4ac.5.83 remains open."
+    "reviewer": "Flapjack-specific finite-map parameter roundtrip witness with no HOL counterpart; supports the qualified t_locs carrier representation."
   },
   {
     "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",

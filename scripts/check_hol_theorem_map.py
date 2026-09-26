@@ -1425,6 +1425,7 @@ VALID_STATUSES = {
     "reviewed_list_as_array_names_as_string",
     "reviewed_fmap_as_finite_support",
     "reviewed_fmap_as_finite_support_result",
+    "reviewed_fmap_as_finite_support_carriers",
     "pending_statement_review",
     "documented_mismatch",
     "no_hol_reference_pending_classification",
@@ -1545,24 +1546,31 @@ def data_declarations(root: Path = ROOT) -> set[tuple[str, str]]:
 
 def tagged_declarations(
     root: Path = ROOT,
-) -> dict[tuple[str, str], tuple[str, str, tuple[str, ...], tuple[str, ...], tuple[str, ...], tuple[str, ...], bool]]:
+) -> dict[tuple[str, str], tuple[str, str, tuple[str, ...], tuple[str, ...], tuple[str, ...], tuple[str, ...], tuple[str, ...], bool]]:
     """Return Lean file/name to HOL file/name for every active ``@[hol]``."""
     tagged: dict[
         tuple[str, str],
-        tuple[str, str, tuple[str, ...], tuple[str, ...], tuple[str, ...], tuple[str, ...], bool],
+        tuple[str, str, tuple[str, ...], tuple[str, ...], tuple[str, ...], tuple[str, ...], tuple[str, ...], bool],
     ] = {}
     for path in REFS["lean_files"]():
         rel = path.relative_to(root).as_posix()
         lines = path.read_text(encoding="utf-8").splitlines()
-        for (line, hol_path, hol_name, _hol_line, list_fields,
-             names_fields, boundary_fields, fmap_fields, fmap_result) in HOL_ATTRIBUTE_SITES(lines):
+        for site in HOL_ATTRIBUTE_SITES(lines):
+            if len(site) == 9:  # compatibility for tests/custom reference readers
+                (line, hol_path, hol_name, _hol_line, list_fields,
+                 names_fields, boundary_fields, fmap_fields, fmap_result) = site
+                fmap_carriers = ()
+            else:
+                (line, hol_path, hol_name, _hol_line, list_fields,
+                 names_fields, boundary_fields, fmap_fields, fmap_carriers,
+                 fmap_result) = site
             lean_name = FIND_LEAN_DECL(lines, line - 1)
             key = (rel, lean_name)
             # Source-line disambiguation is checked against the HOL script by
             # check-hol-refs.py. The inventory keys the declaration by its
             # stable HOL file/name pair, not by an editable source line.
             value = (hol_path, hol_name, list_fields, names_fields,
-                     boundary_fields, fmap_fields, fmap_result)
+                     boundary_fields, fmap_fields, fmap_result, fmap_carriers)
             if key in tagged and tagged[key] != value:
                 raise ValueError(f"conflicting @[hol] references for {rel}:{lean_name}")
             tagged[key] = value
@@ -1575,7 +1583,7 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
     inventory: dict[tuple[str, str], dict[str, Any]] = {}
     for (lean_path, lean_name), (
         hol_path, hol_name, list_fields, names_fields, boundary_fields, fmap_fields,
-        fmap_result,
+        fmap_result, fmap_carriers,
     ) in tagged.items():
         entry = {
             "hol_path": hol_path,
@@ -1593,6 +1601,8 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
             entry["names_as_string_boundary"] = list(boundary_fields)
         if fmap_fields:
             entry["fmap_as_finite_support"] = list(fmap_fields)
+        if fmap_carriers:
+            entry["fmap_as_finite_support_carriers"] = list(fmap_carriers)
         if fmap_result:
             entry["fmap_as_finite_support_result"] = True
         inventory[(lean_path, lean_name)] = entry
@@ -1762,7 +1772,7 @@ def validate_inventory(
     proof_declarations: set[tuple[str, str]],
     tagged: dict[
         tuple[str, str],
-        tuple[str, str, tuple[str, ...], tuple[str, ...], tuple[str, ...]],
+        tuple[str, str, tuple[str, ...], tuple[str, ...], tuple[str, ...], tuple[str, ...], tuple[str, ...], bool],
     ],
     data_declarations_: set[tuple[str, str]] | None = None,
 ) -> list[str]:
@@ -1788,16 +1798,20 @@ def validate_inventory(
         hol_path, hol_name = record["hol_path"], record["hol_name"]
         tag = tagged.get(key)
         if tag is not None and len(tag) < 7:
-            tag = tag + ((),) * (7 - len(tag))
+            tag = tag + ((),) * (6 - len(tag)) + (False,)
+        if tag is not None and len(tag) == 7:
+            tag = tag + ((),)
         list_fields = tag[2] if tag is not None else ()
         names_fields = tag[3] if tag is not None else ()
         boundary_fields = tag[4] if tag is not None else ()
         fmap_fields = tag[5] if tag is not None else ()
         fmap_result = bool(tag[6]) if tag is not None else False
+        fmap_carriers = tag[7] if tag is not None else ()
         manifest_list_fields = tuple(record.get("list_as_array", ()))
         manifest_names_fields = tuple(record.get("names_as_string", ()))
         manifest_boundary_fields = tuple(record.get("names_as_string_boundary", ()))
         manifest_fmap_fields = tuple(record.get("fmap_as_finite_support", ()))
+        manifest_fmap_carriers = tuple(record.get("fmap_as_finite_support_carriers", ()))
         manifest_fmap_result = bool(record.get("fmap_as_finite_support_result", False))
         if manifest_list_fields != list_fields:
             errors.append(
@@ -1819,6 +1833,28 @@ def validate_inventory(
             errors.append(
                 f"{key[0]}:{key[1]}: manifest fmap_as_finite_support_result does not match its @[hol] tag"
             )
+        if manifest_fmap_carriers != fmap_carriers:
+            errors.append(
+                f"{key[0]}:{key[1]}: manifest fmap_as_finite_support_carriers fields do not match its @[hol] tag"
+            )
+        if fmap_carriers and (fmap_fields or fmap_result):
+            errors.append(
+                f"{key[0]}:{key[1]}: fmap_as_finite_support_carriers is mutually exclusive with other finite-map qualifiers"
+            )
+        if fmap_carriers and status != "reviewed_fmap_as_finite_support_carriers":
+            errors.append(
+                f"{key[0]}:{key[1]}: fmap_as_finite_support_carriers @[hol] tag needs reviewed_fmap_as_finite_support_carriers status"
+            )
+        if not fmap_carriers and status == "reviewed_fmap_as_finite_support_carriers":
+            errors.append(
+                f"{key[0]}:{key[1]}: reviewed_fmap_as_finite_support_carriers needs its @[hol] qualifier"
+            )
+        if fmap_carriers:
+            reviewer_text = reviewer.lower() if isinstance(reviewer, str) else ""
+            if "source" not in reviewer_text:
+                errors.append(
+                    f"{key[0]}:{key[1]}: reviewed_fmap_as_finite_support_carriers requires a source-comparison note"
+                )
         if fmap_result and fmap_fields:
             errors.append(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support_result (standalone carrier) and "

@@ -154,6 +154,29 @@ class HolTypeHashesTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "manifest qualifiers differ"):
             MODULE.lock_records(manifest, changed)
 
+    def test_multi_owner_carrier_qualifier_is_locked(self):
+        manifest = [{
+            **self.manifest[0],
+            "statement_status": "reviewed_fmap_as_finite_support_carriers",
+            "fmap_as_finite_support_carriers": ["PanState.locals", "CrepState.locals"],
+        }]
+        export = [{
+            **self.export[0],
+            "qualifiers": {
+                "list_as_array": [],
+                "names_as_string": [],
+                "names_as_string_boundary": [],
+                "fmap_as_finite_support": [],
+                "fmap_as_finite_support_carriers": [
+                    "PanState.locals", "CrepState.locals"],
+            },
+        }]
+        lock = MODULE.expected_lock(manifest, export, "leanprover/lean4:v4")
+        self.assertEqual(
+            lock["records"][0]["qualifiers"]["fmap_as_finite_support_carriers"],
+            ["PanState.locals", "CrepState.locals"],
+        )
+
     def test_fmap_qualifier_validates_and_rejects_unknown(self):
         MODULE.validate_export_record(
             {

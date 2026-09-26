@@ -120,9 +120,10 @@ theorem panToCrepStateRelFiniteExact_structs {width : Nat} {σ : Type}
 theorem panToCrepExactInitialShapeInvariant {width : Nat} {σ : Type}
     [NeZero width] (source : PanSemStateFiniteExact width σ)
     (target : CrepSemHOLState width σ)
+    (targetLocals : HolFiniteMapExact Nat (HolWordLab width))
     (context : PanToCrepContextExact width)
     (hstate : panToCrepStateRelFiniteExact source target)
-    (hlocals : panToCrepLocalsRelFiniteExact context source.locals target.locals) :
+    (hlocals : panToCrepLocalsRelFiniteExact context source.locals targetLocals) :
     (∀ name value, source.locals.lookup name = some value →
       isWfShapeValueHOLExact source.structs value = true) ∧
     (∀ name value, source.globals.lookup name = some value →
@@ -130,7 +131,7 @@ theorem panToCrepExactInitialShapeInvariant {width : Nat} {σ : Type}
   constructor
   · intro name value hlookup
     have hshape := panToCrepLocalsRelFiniteExact_valueShapeProjection
-      context source.locals target.locals name value hlocals hlookup
+      context source.locals targetLocals name value hlocals hlookup
     have hstruct := panToCrepStateRelFiniteExact_structs source target hstate
     simpa [hstruct] using hshape
   · intro name value hlookup
@@ -146,18 +147,19 @@ theorem panToCrepExactInitialShapeInvariant {width : Nat} {σ : Type}
 theorem panToCrepFiniteReturnPayloadShape {width : Nat} {σ : Type}
     [NeZero width] (source : PanSemStateFiniteExact width σ)
     (target : CrepSemHOLState width σ)
+    (targetLocals : HolFiniteMapExact Nat (HolWordLab width))
     (relationContext : PanToCrepContextExact width)
     (evaluationContext : PanSemStateFiniteExact.FiniteEvalContext width σ)
     (expression : ExpHOL width) (value : ValueHOL width)
     (output : PanSemStateFiniteExact.FiniteEvalContext width σ)
     (hcontext : evaluationContext.state = source)
     (hstate : panToCrepStateRelFiniteExact source target)
-    (hlocals : panToCrepLocalsRelFiniteExact relationContext source.locals target.locals)
+    (hlocals : panToCrepLocalsRelFiniteExact relationContext source.locals targetLocals)
     (heval : PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext
       (.return expression) evaluationContext = some (some (.returned value), output)) :
     isWfShapeExactHOL ([] : StructContextExact) (shapeOfHOLExact value) = true := by
   have hinitial := panToCrepExactInitialShapeInvariant
-    source target relationContext hstate hlocals
+    source target targetLocals relationContext hstate hlocals
   have hpayload := PanSemStateFiniteExact.evalPanSemFiniteReturnPayloadWf
     evaluationContext (by simpa [hcontext] using hinitial.1)
     (by simpa [hcontext] using hinitial.2) expression value output heval
@@ -173,18 +175,19 @@ theorem panToCrepFiniteReturnPayloadShape {width : Nat} {σ : Type}
 theorem panToCrepFiniteRaisePayloadShape {width : Nat} {σ : Type}
     [NeZero width] (source : PanSemStateFiniteExact width σ)
     (target : CrepSemHOLState width σ)
+    (targetLocals : HolFiniteMapExact Nat (HolWordLab width))
     (relationContext : PanToCrepContextExact width)
     (evaluationContext : PanSemStateFiniteExact.FiniteEvalContext width σ)
     (exception : MlS) (expression : ExpHOL width) (value : ValueHOL width)
     (output : PanSemStateFiniteExact.FiniteEvalContext width σ)
     (hcontext : evaluationContext.state = source)
     (hstate : panToCrepStateRelFiniteExact source target)
-    (hlocals : panToCrepLocalsRelFiniteExact relationContext source.locals target.locals)
+    (hlocals : panToCrepLocalsRelFiniteExact relationContext source.locals targetLocals)
     (heval : PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext
       (.raise exception expression) evaluationContext = some (some (.exception exception value), output)) :
     isWfShapeExactHOL ([] : StructContextExact) (shapeOfHOLExact value) = true := by
   have hinitial := panToCrepExactInitialShapeInvariant
-    source target relationContext hstate hlocals
+    source target targetLocals relationContext hstate hlocals
   have hpayload := PanSemStateFiniteExact.evalPanSemFiniteRaisePayloadWf
     evaluationContext (by simpa [hcontext] using hinitial.1)
     (by simpa [hcontext] using hinitial.2) exception expression value output heval
@@ -194,55 +197,110 @@ theorem panToCrepFiniteRaisePayloadShape {width : Nat} {σ : Type}
     simpa [hstructs] using hpayload
   exact isWfShapeValueHOLExact_shapeOfHOLExact [] value hvalue
 
-/-- Flapjack-specific full-program shape-invariant composition over the
-    finite-support PanSem/CrepSem carriers. It uses the recursive finite
-    context evaluator and the exact finite-support state/local relation
-    helpers above to establish the Return/Exception payload conclusion from
-    HOL `evaluate_shape_invariant_ret_inst`.
+ /-- Finite-support view of the independent HOL `t_locs` map parameter. -/
+abbrev PanToCrepTargetLocalsBroad (width : Nat) [NeZero width] :=
+  Nat → Option (HolWordLab width)
 
-    This is deliberately untagged: the evaluator result still has the
-    finite-context assembly marker `some (some result, output)`, whereas HOL
-    `evaluate` returns `(SOME result, output)` directly. Also, the exact
-    state/local relations span separate PanSem and CrepSem carrier structures,
-    which the current `fmap_as_finite_support` qualifier cannot certify. The
-    source theorem and both carrier statements were reviewed; these remaining
-    representation gates prevent claiming the exact HOL port here. -/
+/-- Forget the finite-support proof on HOL `t_locs` while retaining lookups. -/
+def panToCrepTargetLocalsToBroad {width : Nat} [NeZero width]
+    (locals : HolFiniteMapExact Nat (HolWordLab width)) :
+    PanToCrepTargetLocalsBroad width := locals.lookup
+
+/-- Rebuild HOL `t_locs` from its lookup function and finite-domain witness. -/
+def panToCrepTargetLocalsOfBroad {width : Nat} [NeZero width]
+    (locals : PanToCrepTargetLocalsBroad width)
+    (finiteSupport : ∃ keys : List Nat, ∀ key, locals key ≠ none → key ∈ keys) :
+    HolFiniteMapExact Nat (HolWordLab width) :=
+  ⟨locals, finiteSupport⟩
+
+/-- FLAPJACK-SPECIFIC carrier witness (not a HOL declaration): the theorem's
+    independent finite-map parameter roundtrips through its lookup function
+    and finite-domain witness. It is checked separately from the three state
+    owners. -/
+theorem holFmapParameterAsFiniteSupportWitness_panToCrepFiniteEvaluateShapeInvariantRetInst
+    {width : Nat} [NeZero width]
+    (locals : HolFiniteMapExact Nat (HolWordLab width)) :
+    panToCrepTargetLocalsOfBroad (panToCrepTargetLocalsToBroad locals)
+      locals.finiteSupport = locals := by
+  cases locals
+  rfl
+
+/-- Flapjack-specific full-program shape-invariant composition over the
+    finite-support PanSem/CrepSem carriers. It proves the HOL conclusion from a
+    result-shaped view of the finite-context evaluator. It remains untagged:
+    the complete projection from that evaluator to
+    `evalPanSemRecursiveCallContextHOLExact` has not been proved, so its premise
+    is not yet the faithful HOL `evaluate` result equation. Clause projections
+    are tracked by evaluator port dependency `flapjack-6yq`; do not tag this
+    theorem until that dependency is closed. -/
 theorem panToCrepFiniteEvaluateShapeInvariantRetInst {width : Nat} {σ : Type}
     [NeZero width] (program : ProgHOL width)
-    (evaluationContext : PanSemStateFiniteExact.FiniteEvalContext width σ)
+    (source : PanSemStateFiniteExact width σ)
+    [hmem : DecidablePred source.memaddrs]
+    [hshared : DecidablePred source.shMemaddrs]
     (target : CrepSemHOLState width σ)
+    (targetLocals : HolFiniteMapExact Nat (HolWordLab width))
     (relationContext : PanToCrepContextExact width)
     (result : PanSemResultExact width)
-    (output : PanSemStateFiniteExact.FiniteEvalContext width σ)
-    (hstate : panToCrepStateRelFiniteExact evaluationContext.state target)
+    (postState : PanSemStateFiniteExact width σ)
+    (hstate : panToCrepStateRelFiniteExact source target)
     (hlocals : panToCrepLocalsRelFiniteExact relationContext
-      evaluationContext.state.locals target.locals)
-    (heval : PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext
-      program evaluationContext = some (some result, output)) :
+      source.locals targetLocals)
+    (heval : PanSemStateFiniteExact.evaluateHOLFiniteResult source program =
+      (some result, postState)) :
     match result with
     | .returned value =>
         isWfShapeExactHOL ([] : StructContextExact) (shapeOfHOLExact value) = true
     | .exception _ value =>
         isWfShapeExactHOL ([] : StructContextExact) (shapeOfHOLExact value) = true
     | _ => True := by
+  have hevalMarked := (PanSemStateFiniteExact.evaluateHOLFiniteResult_eq_iff
+    source program (some result, postState)).2 heval
+  let evaluationContext : PanSemStateFiniteExact.FiniteEvalContext width σ :=
+    ⟨source, hmem, hshared⟩
+  have hevalProjection :
+      (PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext
+        program evaluationContext).map
+        (fun pair => (pair.1, pair.2.state)) = some (some result, postState) := by
+    simpa [PanSemStateFiniteExact.evaluateHOLFinite, evaluationContext] using hevalMarked
   have hinitial := panToCrepExactInitialShapeInvariant
-    evaluationContext.state target relationContext hstate hlocals
-  have hinvariant := PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext_shapeInvariant
-    program evaluationContext ⟨hinitial.1, hinitial.2⟩ result output heval
+    source target targetLocals relationContext hstate hlocals
+  have hresultWf : Flapjack.panSemResultHOLWf source.structs (some result) := by
+    cases hcontextEval : PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext
+        program evaluationContext with
+    | none => simp [hcontextEval] at hevalProjection
+    | some pair =>
+        have hprojectPair : (pair.1, pair.2.state) = (some result, postState) := by
+          simpa [hcontextEval] using hevalProjection
+        have hresult : pair.1 = some result := congrArg Prod.fst hprojectPair
+        have hpair : pair = (some result, pair.2) := by
+          apply Prod.ext
+          · exact hresult
+          · rfl
+        have hcontextSuccess :
+            PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext
+              program evaluationContext = some (some result, pair.2) := by
+          rw [hpair] at hcontextEval
+          exact hcontextEval
+        have hinvariant :=
+          PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext_shapeInvariant
+            program evaluationContext ⟨hinitial.1, hinitial.2⟩ (some result) pair.2
+            hcontextSuccess
+        exact hinvariant.2.2
   have hstructs := panToCrepStateRelFiniteExact_structs
-    evaluationContext.state target hstate
+    source target hstate
   cases result with
   | returned value =>
       have hvalue :
-          isWfShapeValueHOLExact evaluationContext.state.structs value = true := by
-        simpa [Flapjack.panSemResultHOLWf] using hinvariant.2.2
+          isWfShapeValueHOLExact source.structs value = true := by
+        simpa [Flapjack.panSemResultHOLWf] using hresultWf
       have hvalueNil : isWfShapeValueHOLExact [] value = true := by
         simpa [hstructs] using hvalue
       exact isWfShapeValueHOLExact_shapeOfHOLExact [] value hvalueNil
   | exception exceptionId value =>
       have hvalue :
-          isWfShapeValueHOLExact evaluationContext.state.structs value = true := by
-        simpa [Flapjack.panSemResultHOLWf] using hinvariant.2.2
+          isWfShapeValueHOLExact source.structs value = true := by
+        simpa [Flapjack.panSemResultHOLWf] using hresultWf
       have hvalueNil : isWfShapeValueHOLExact [] value = true := by
         simpa [hstructs] using hvalue
       exact isWfShapeValueHOLExact_shapeOfHOLExact [] value hvalueNil
