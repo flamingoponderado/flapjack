@@ -18,10 +18,10 @@ This module ports that recursion directly over the exact Flapjack carriers:
 
 * program syntax: `CrepProgHOL width` (`crepLang$prog`);
 * state: `CrepSemHOLState width σ` (the finite-support 11-field `crepSem$state`);
-* result: `Option (CrepResultHOL (BitVec width) HolFinalEvent)`, where `none` is
-  HOL `NONE` (ordinary completion), exactly as `evaluate` returns
-  `result option`. HOL `FinalFFI` always carries a `final_event`, so the event
-  type is fixed at `HolFinalEvent` and is not `'ffi`-dependent.
+* result: `Option (CrepResultHOLExact width)`, where `none` is HOL `NONE`
+  (ordinary completion), exactly as `evaluate` returns `result option`. HOL
+  `FinalFFI` always carries a `final_event`, so the event type is fixed at
+  `HolFinalEvent` and is not `'ffi`-dependent.
 
 The evaluator `evalCrepSemHOLProg` is a single total function with **no fuel**,
 **no `Option`-valued fuel adapter**, and **no dependence on
@@ -33,12 +33,15 @@ handler path, and the FFI clauses.
 ## Declaration-local representation notes
 
 Most declarations here are intentionally **untagged**: the whole-program
-statement shape is not yet the reviewed exact HOL statement (the projection of
-`CrepResultHOL`'s `return` payload through `PanWordLab`, the `RiscV.Word width`
-fixed-width model of HOL's arbitrary finite word dimension, the executable
-`HolFfiState`/`UInt8` byte codec used by the FFI clauses, and the omission of a
-general agreement proof with the executed interpreter). They are
-declaration-local infrastructure only.
+statement shape is not yet the reviewed exact HOL statement (the `RiscV.Word
+width` fixed-width model of HOL's arbitrary finite word dimension, the
+executable `HolFfiState`/`UInt8` byte codec used by the FFI clauses, and the
+omission of a general agreement proof with the executed interpreter). They are
+declaration-local infrastructure only. The result carrier is the exact
+`CrepResultHOLExact width`, so the `Return`/`Call` clauses no longer project
+through the production `PanWordLab`; the production-carrier bridge
+`CrepResultHOLExact.toProd`/`CrepResultHOL.toExact` is available for callers that
+need it.
 
 The one exception is `exitLoopCrepResult`, an exact `@[hol]` port of
 `crepSem$exit_loop_def`, stated over the genuinely exact width-indexed result
@@ -46,14 +49,14 @@ carrier `CrepResultHOLExact` (the `@[hol]` port of HOL `Datatype result`) whose
 `Return` payload is `List (HolWordLab width)`, matching HOL's
 `('a word_lab) list`, and whose `Exception` payload is `BitVec width`.
 
-* The production `CrepResultHOL.return` carries `List (PanWordLab (BitVec width))`
-  while HOL `crepSem$result` carries `('a word_lab) list`; the exact `HolWordLab`
-  values produced by `evalCrepSemHOLExp` are transported by
-  `HolWordLab.toPanWordLab` in the evaluator's `Return`/`Call` clauses. The
-  evaluator's own result type still uses the production `CrepResultHOL`, so its
-  whole-program statement remains untagged pending the result-carrier migration
-  tracked separately; `CrepResultHOLExact` is the exact carrier for tagged
-  result-level definitions such as `exit_loop_def`.
+* The evaluator now returns `Option (CrepResultHOLExact width)`, whose `Return`
+  payload is exactly HOL's `('a word_lab) list` via `HolWordLab`; the production
+  `CrepResultHOL` (whose `return` carries `List (PanWordLab (BitVec width))`)
+  is reachable only through the checked bridge `CrepResultHOLExact.toProd`.
+  The evaluator's whole-program statement remains untagged pending the
+  fixed-width/FFI/agreement audit tracked separately; `CrepResultHOLExact` is
+  the exact carrier for tagged result-level definitions such as
+  `exit_loop_def`.
 * `CrepSemHOLState` is the finite-support `HolFiniteMapExact` translation of
   HOL's `|->` fields; the state helpers `setVar`/`setGlobals`/`updLocals`/
   `emptyLocals`/`resVarEq` implement the HOL updates with HOL `=` equality.
@@ -180,16 +183,57 @@ def exitLoopCrepResult {width : Nat} [NeZero width] :
   | some (.continue label) => some (.continue (label - 1))
   | result => result
 
-/-- Production `exit_loop` over the evaluator's `CrepResultHOL` result carrier.
-    Flapjack-specific infrastructure: the evaluator still uses `CrepResultHOL`
-    (whose `Return` payload is `PanWordLab`), so this is not a tagged exact HOL
-    port; `exitLoopCrepResult` above is the exact `@[hol]` declaration. -/
-def exitLoopCrepResultProd {width : Nat} :
-    Option (CrepResultHOL (BitVec width) HolFinalEvent) →
-      Option (CrepResultHOL (BitVec width) HolFinalEvent)
-  | some (.break label) => some (.break (label - 1))
-  | some (.continue label) => some (.continue (label - 1))
-  | result => result
+/-- Total coercion from the exact width-indexed result carrier
+    `CrepResultHOLExact` to the production `CrepResultHOL`, transporting the
+    `Return` payload through `HolWordLab.toPanWordLab`. Flapjack-specific
+    infrastructure: the evaluator returns `CrepResultHOLExact` directly, and this
+    bridge is only for callers that still need the production `PanWordLab`
+    carrier. -/
+def CrepResultHOLExact.toProd {width : Nat} [NeZero width] :
+    CrepResultHOLExact width → CrepResultHOL (BitVec width) HolFinalEvent
+  | .error => .error
+  | .timeOut => .timeOut
+  | .break label => .break label
+  | .continue label => .continue label
+  | .return values => .return (values.map HolWordLab.toPanWordLab)
+  | .exception value => .exception value
+  | .finalFfi event => .finalFfi event
+
+/-- Total coercion from the production `CrepResultHOL` to the exact width-indexed
+    result carrier `CrepResultHOLExact`, transporting the `Return` payload
+    through `PanWordLab.toHolWordLab`. Flapjack-specific infrastructure; inverse
+    of `CrepResultHOLExact.toProd`. -/
+def CrepResultHOL.toExact {width : Nat} [NeZero width] :
+    CrepResultHOL (BitVec width) HolFinalEvent → CrepResultHOLExact width
+  | .error => .error
+  | .timeOut => .timeOut
+  | .break label => .break label
+  | .continue label => .continue label
+  | .return values => .return (values.map PanWordLab.toHolWordLab)
+  | .exception value => .exception value
+  | .finalFfi event => .finalFfi event
+
+@[simp] theorem List.map_toHolWordLab_toPanWordLab {width : Nat} [NeZero width]
+    (values : List (HolWordLab width)) :
+    values.map (PanWordLab.toHolWordLab ∘ HolWordLab.toPanWordLab) = values :=
+  (List.map_congr_left (fun value _ => HolWordLab.toPanWordLab_toHolWordLab value)).trans
+    (List.map_id values)
+
+@[simp] theorem List.map_toPanWordLab_toHolWordLab {width : Nat} [NeZero width]
+    (values : List (PanWordLab (BitVec width))) :
+    values.map (HolWordLab.toPanWordLab ∘ PanWordLab.toHolWordLab) = values :=
+  (List.map_congr_left (fun value _ => PanWordLab.toHolWordLab_toPanWordLab value)).trans
+    (List.map_id values)
+
+@[simp] theorem CrepResultHOLExact.toProd_toExact {width : Nat} [NeZero width]
+    (result : CrepResultHOLExact width) :
+    result.toProd.toExact = result := by
+  cases result <;> simp [CrepResultHOLExact.toProd, CrepResultHOL.toExact]
+
+@[simp] theorem CrepResultHOL.toExact_toProd {width : Nat} [NeZero width]
+    (result : CrepResultHOL (BitVec width) HolFinalEvent) :
+    result.toExact.toProd = result := by
+  cases result <;> simp [CrepResultHOLExact.toProd, CrepResultHOL.toExact]
 
 /-- Exact HOL `sh_mem_load` clause (`crepSemScript.sml:168-184`) over the exact
     finite-support `CrepSemHOLState`: on the appropriate shared-memory domain,
@@ -199,7 +243,7 @@ def crepShMemLoadHOL {width : Nat} [NeZero width] {σ : Type}
     (operator : CrepMemOp) (name : Nat) (address : BitVec width)
     (state : CrepSemHOLState width σ)
     (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a)) :
-    Option (CrepResultHOL (BitVec width) HolFinalEvent) × CrepSemHOLState width σ :=
+    Option (CrepResultHOLExact width) × CrepSemHOLState width σ :=
   let byteWidth := crepShMemByteWidth operator
   let target := if byteWidth = 0 then address else panByteAlignHOL address
   match shMemDec target with
@@ -223,7 +267,7 @@ def crepShMemStoreHOL {width : Nat} [NeZero width] {σ : Type}
     (operator : CrepMemOp) (name : Nat) (address : BitVec width)
     (state : CrepSemHOLState width σ)
     (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a)) :
-    Option (CrepResultHOL (BitVec width) HolFinalEvent) × CrepSemHOLState width σ :=
+    Option (CrepResultHOLExact width) × CrepSemHOLState width σ :=
   let byteWidth := crepShMemByteWidth operator
   let target := if byteWidth = 0 then address else panByteAlignHOL address
   match state.locals.lookup name with
@@ -257,7 +301,7 @@ def evalCrepSemHOLProg {width : Nat} [NeZero width] {σ : Type}
     (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
     (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a)) :
     CrepProgHOL width →
-      Option (CrepResultHOL (BitVec width) HolFinalEvent) × CrepSemHOLState width σ
+      Option (CrepResultHOLExact width) × CrepSemHOLState width σ
   | .skip => (none, state)
   | .dec name value body =>
       match crepExactEvalExp state memDec value with
@@ -370,7 +414,7 @@ def evalCrepSemHOLProg {width : Nat} [NeZero width] {σ : Type}
                   evalCrepSemHOLProg (crepStampExactDomains state loopState) memDec shMemDec
                     (.while condition body)
               | (some (.break 0), loopState) => (none, loopState)
-              | (result, loopState) => (exitLoopCrepResultProd result, loopState)
+              | (result, loopState) => (exitLoopCrepResult result, loopState)
           else (none, state)
       | _ => (some .error, state)
   | .break label => (some (.break label), state)
@@ -383,7 +427,7 @@ def evalCrepSemHOLProg {width : Nat} [NeZero width] {σ : Type}
           | none => (some .error, state)
           | some (parameters, body) =>
               if parameters.length = values.length && parameters.Nodup then
-                let proceed : Option (CrepResultHOL (BitVec width) HolFinalEvent) ×
+                let proceed : Option (CrepResultHOLExact width) ×
                     CrepSemHOLState width σ :=
                   if hclock : state.clock = 0 then
                     (some .timeOut, CrepSemHOLState.emptyLocals state)
@@ -410,7 +454,7 @@ def evalCrepSemHOLProg {width : Nat} [NeZero width] {σ : Type}
                               match rts.mapM state.locals.lookup with
                               | some _ => (none, { bodyState with
                                   locals := state.locals.updateListEq
-                                    (rts.zip (retvs.map PanWordLab.toHolWordLab)) })
+                                    (rts.zip retvs) })
                               | none => (some .error, bodyState)
                     | (some (.exception eid), bodyState) =>
                         match returnInfo with
@@ -465,7 +509,7 @@ def evalCrepSemHOLProg {width : Nat} [NeZero width] {σ : Type}
       (some (.exception exception), CrepSemHOLState.emptyLocals state)
   | .return values =>
       match values.mapM (@evalCrepSemHOLExp width ‹NeZero width› σ state memDec) with
-      | some ws => (some (.return (ws.map HolWordLab.toPanWordLab)),
+      | some ws => (some (.return ws),
           CrepSemHOLState.emptyLocals state)
       | none => (some .error, state)
   | .shMem operator name address =>
@@ -728,7 +772,7 @@ theorem evalCrepSemHOLProg_ite_false {width : Nat} [NeZero width] {σ : Type}
                    evalCrepSemHOLProg (crepStampExactDomains state loopState) memDec shMemDec
                      (.while condition body)
                | (some (.break 0), loopState) => (none, loopState)
-               | (result, loopState) => (exitLoopCrepResultProd result, loopState)
+               | (result, loopState) => (exitLoopCrepResult result, loopState)
            else (none, state)
        | _ => (some .error, state)) := by
   rw [evalCrepSemHOLProg.eq_def] <;> rfl
@@ -799,7 +843,7 @@ theorem evalCrepSemHOLProg_while_timeout {width : Nat} [NeZero width] {σ : Type
     (values : List (CrepExpHOL width)) :
     evalCrepSemHOLProg state memDec shMemDec (.return values) =
       (match values.mapM (@evalCrepSemHOLExp width ‹NeZero width› σ state memDec) with
-       | some ws => (some (.return (ws.map HolWordLab.toPanWordLab)),
+       | some ws => (some (.return ws),
            CrepSemHOLState.emptyLocals state)
        | none => (some .error, state)) := by
   rw [evalCrepSemHOLProg.eq_def] <;> rfl
@@ -889,7 +933,7 @@ theorem evalCrepSemHOLProg_while_timeout {width : Nat} [NeZero width] {σ : Type
            | none => (some .error, state)
            | some (parameters, body) =>
                if parameters.length = values.length && parameters.Nodup then
-                 let proceed : Option (CrepResultHOL (BitVec width) HolFinalEvent) ×
+                 let proceed : Option (CrepResultHOLExact width) ×
                      CrepSemHOLState width σ :=
                    if _hclock : state.clock = 0 then
                      (some .timeOut, CrepSemHOLState.emptyLocals state)
@@ -913,11 +957,11 @@ theorem evalCrepSemHOLProg_while_timeout {width : Nat} [NeZero width] {σ : Type
                              if retvs.length ≠ rts.length then
                                (some .error, bodyState)
                              else
-                               match rts.mapM state.locals.lookup with
-                               | some _ => (none, { bodyState with
-                                   locals := state.locals.updateListEq
-                                     (rts.zip (retvs.map PanWordLab.toHolWordLab)) })
-                               | none => (some .error, bodyState)
+                              match rts.mapM state.locals.lookup with
+                              | some _ => (none, { bodyState with
+                                  locals := state.locals.updateListEq
+                                    (rts.zip retvs) })
+                              | none => (some .error, bodyState)
                      | (some (.exception eid), bodyState) =>
                          match returnInfo with
                          | none => (some (.exception eid),
@@ -1102,7 +1146,7 @@ theorem crepCallFixed_domains {width : Nat} [NeZero width] {σ : Type}
     (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
     (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
     (returnInfo : Option (List Nat × Option (BitVec width × CrepProgHOL width)))
-    (fixed : Option (CrepResultHOL (BitVec width) HolFinalEvent) ×
+    (fixed : Option (CrepResultHOLExact width) ×
       CrepSemHOLState width σ)
     (hfix : fixed.2.memaddrs = state.memaddrs ∧
       fixed.2.shMemaddrs = state.shMemaddrs)
@@ -1114,60 +1158,60 @@ theorem crepCallFixed_domains {width : Nat} [NeZero width] {σ : Type}
           (crepStampExactDomains state { fixed.2 with locals := state.locals })
           memDec shMemDec handlerBody).2.shMemaddrs = state.shMemaddrs) :
     (match hfixed : fixed with
-     | (none, bodyState) => (some CrepResultHOL.error, bodyState)
-     | (some (CrepResultHOL.break _), bodyState) => (some CrepResultHOL.error, bodyState)
-     | (some (CrepResultHOL.continue _), bodyState) => (some CrepResultHOL.error, bodyState)
-     | (some (CrepResultHOL.return retvs), bodyState) =>
+     | (none, bodyState) => (some CrepResultHOLExact.error, bodyState)
+     | (some (CrepResultHOLExact.break _), bodyState) => (some CrepResultHOLExact.error, bodyState)
+     | (some (CrepResultHOLExact.continue _), bodyState) => (some CrepResultHOLExact.error, bodyState)
+     | (some (CrepResultHOLExact.return retvs), bodyState) =>
          match returnInfo with
-         | none => (some (CrepResultHOL.return retvs), CrepSemHOLState.emptyLocals bodyState)
+         | none => (some (CrepResultHOLExact.return retvs), CrepSemHOLState.emptyLocals bodyState)
          | some (rts, _) =>
-             if retvs.length ≠ rts.length then (some CrepResultHOL.error, bodyState)
+             if retvs.length ≠ rts.length then (some CrepResultHOLExact.error, bodyState)
              else match rts.mapM state.locals.lookup with
                | some _ => (none, { bodyState with
                    locals := state.locals.updateListEq
-                     (rts.zip (retvs.map PanWordLab.toHolWordLab)) })
-               | none => (some CrepResultHOL.error, bodyState)
-     | (some (CrepResultHOL.exception eid), bodyState) =>
+                     (rts.zip retvs) })
+               | none => (some CrepResultHOLExact.error, bodyState)
+     | (some (CrepResultHOLExact.exception eid), bodyState) =>
          match returnInfo with
          | none =>
-             (some (CrepResultHOL.exception eid), CrepSemHOLState.emptyLocals bodyState)
+             (some (CrepResultHOLExact.exception eid), CrepSemHOLState.emptyLocals bodyState)
          | some (_, none) =>
-             (some (CrepResultHOL.exception eid), CrepSemHOLState.emptyLocals bodyState)
+             (some (CrepResultHOLExact.exception eid), CrepSemHOLState.emptyLocals bodyState)
          | some (_, some (eid', handlerBody)) =>
              if eid = eid' then
                evalCrepSemHOLProg
                  (crepStampExactDomains state { bodyState with locals := state.locals })
                  memDec shMemDec handlerBody
-             else (some (CrepResultHOL.exception eid), CrepSemHOLState.emptyLocals bodyState)
+             else (some (CrepResultHOLExact.exception eid), CrepSemHOLState.emptyLocals bodyState)
      | (some result, bodyState) =>
          (some result, CrepSemHOLState.emptyLocals bodyState)).2.memaddrs =
         state.memaddrs ∧
     (match hfixed : fixed with
-     | (none, bodyState) => (some CrepResultHOL.error, bodyState)
-     | (some (CrepResultHOL.break _), bodyState) => (some CrepResultHOL.error, bodyState)
-     | (some (CrepResultHOL.continue _), bodyState) => (some CrepResultHOL.error, bodyState)
-     | (some (CrepResultHOL.return retvs), bodyState) =>
+     | (none, bodyState) => (some CrepResultHOLExact.error, bodyState)
+     | (some (CrepResultHOLExact.break _), bodyState) => (some CrepResultHOLExact.error, bodyState)
+     | (some (CrepResultHOLExact.continue _), bodyState) => (some CrepResultHOLExact.error, bodyState)
+     | (some (CrepResultHOLExact.return retvs), bodyState) =>
          match returnInfo with
-         | none => (some (CrepResultHOL.return retvs), CrepSemHOLState.emptyLocals bodyState)
+         | none => (some (CrepResultHOLExact.return retvs), CrepSemHOLState.emptyLocals bodyState)
          | some (rts, _) =>
-             if retvs.length ≠ rts.length then (some CrepResultHOL.error, bodyState)
+             if retvs.length ≠ rts.length then (some CrepResultHOLExact.error, bodyState)
              else match rts.mapM state.locals.lookup with
                | some _ => (none, { bodyState with
                    locals := state.locals.updateListEq
-                     (rts.zip (retvs.map PanWordLab.toHolWordLab)) })
-               | none => (some CrepResultHOL.error, bodyState)
-     | (some (CrepResultHOL.exception eid), bodyState) =>
+                     (rts.zip retvs) })
+               | none => (some CrepResultHOLExact.error, bodyState)
+     | (some (CrepResultHOLExact.exception eid), bodyState) =>
          match returnInfo with
          | none =>
-             (some (CrepResultHOL.exception eid), CrepSemHOLState.emptyLocals bodyState)
+             (some (CrepResultHOLExact.exception eid), CrepSemHOLState.emptyLocals bodyState)
          | some (_, none) =>
-             (some (CrepResultHOL.exception eid), CrepSemHOLState.emptyLocals bodyState)
+             (some (CrepResultHOLExact.exception eid), CrepSemHOLState.emptyLocals bodyState)
          | some (_, some (eid', handlerBody)) =>
              if eid = eid' then
                evalCrepSemHOLProg
                  (crepStampExactDomains state { bodyState with locals := state.locals })
                  memDec shMemDec handlerBody
-             else (some (CrepResultHOL.exception eid), CrepSemHOLState.emptyLocals bodyState)
+             else (some (CrepResultHOLExact.exception eid), CrepSemHOLState.emptyLocals bodyState)
      | (some result, bodyState) =>
          (some result, CrepSemHOLState.emptyLocals bodyState)).2.shMemaddrs =
         state.shMemaddrs := by
@@ -1210,7 +1254,7 @@ theorem crepWhileStep_domains {width : Nat} [NeZero width] {σ : Type}
     (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
     (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
     (condition : CrepExpHOL width) (body : CrepProgHOL width)
-    (loopStep : Option (CrepResultHOL (BitVec width) HolFinalEvent) ×
+    (loopStep : Option (CrepResultHOLExact width) ×
       CrepSemHOLState width σ)
     (hstep : loopStep.2.memaddrs = state.memaddrs ∧
       loopStep.2.shMemaddrs = state.shMemaddrs)
@@ -1226,7 +1270,7 @@ theorem crepWhileStep_domains {width : Nat} [NeZero width] {σ : Type}
          evalCrepSemHOLProg (crepStampExactDomains state loopState) memDec shMemDec
            (.while condition body)
      | (some (.break 0), loopState) => (none, loopState)
-     | (result, loopState) => (exitLoopCrepResultProd result, loopState)).2.memaddrs =
+     | (result, loopState) => (exitLoopCrepResult result, loopState)).2.memaddrs =
         state.memaddrs ∧
     (match hfixed : loopStep with
      | (none, loopState) =>
@@ -1236,7 +1280,7 @@ theorem crepWhileStep_domains {width : Nat} [NeZero width] {σ : Type}
          evalCrepSemHOLProg (crepStampExactDomains state loopState) memDec shMemDec
            (.while condition body)
      | (some (.break 0), loopState) => (none, loopState)
-     | (result, loopState) => (exitLoopCrepResultProd result, loopState)).2.shMemaddrs =
+     | (result, loopState) => (exitLoopCrepResult result, loopState)).2.shMemaddrs =
         state.shMemaddrs := by
   split <;> (first | exact hrec | exact hstep)
 
