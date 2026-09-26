@@ -333,4 +333,24 @@ def compileShMemLoadExactHOLW {width : Nat} [NeZero width]
       | _ => .skip
   | ([], _) => .skip
 
+/-! The recursive `Dec` clause from `compile_def`
+    (`pan_to_crepScript.sml:145-152`). It allocates names from the old `vmax`,
+    extends the variable map and `vmax` for the recursive body, and emits the
+    declaration only when the compiled expression count matches the shape. -/
+
+def compileDecExactHOLW {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (name : MlS)
+    (shape : Flapjack.Pancake.PanLang.ShapeHOL)
+    (expression : Flapjack.Pancake.PanLang.ExpHOL width)
+    (compileBody : CompileExpContextExact width → CrepProgHOL width) : CrepProgHOL width :=
+  let (values, compiledShape) := compileExpExactHOLW context expression
+  let valueCount := Flapjack.Pancake.PanLang.sizeOfShapeHOL compiledShape
+  let names := (List.range valueCount).map (fun index => context.vmax + index + 1)
+  let bodyContext : CompileExpContextExact width :=
+    { context with
+      vars := context.vars.update (name, (shape, names))
+      vmax := context.vmax + valueCount }
+  if valueCount != values.length then .skip
+  else nestedDecsHOL names values (compileBody bodyContext)
+
 end Flapjack

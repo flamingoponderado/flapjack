@@ -162,6 +162,21 @@ val _ = print_eval "shmem_load_address_fallback"
       <| vars := FEMPTY |+ («dst», (panLang$One, [7]));
          funcs := FEMPTY; eids := FEMPTY; vmax := 10 |>
       (ShMemLoad Op8 Local «dst» (RStruct ([] : 8 panLang$exp list)))``;
+val _ = print_eval "dec_one_word"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (Dec «x» panLang$One (Const (4w : 8 word))
+        (Return (Var Local «x»)))``;
+val _ = print_eval "dec_multiword"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (Dec «pair» (panLang$Comb [panLang$One; panLang$One])
+        (RStruct [Const (1w : 8 word); Const 2w]) Tick)``;
+val _ = print_eval "dec_shape_length_fallback"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY |+ («bad», (panLang$Comb [panLang$One; panLang$One], [9]));
+         funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (Dec «x» panLang$One (Var Local «bad») Tick)``;
 
 val _ = print_eval "struct_skip"
   ``pan_to_crep$compile
