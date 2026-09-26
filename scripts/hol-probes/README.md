@@ -81,7 +81,11 @@ checks the successful `wrap_rt (FLOOKUP ctxt.vars rt)` arm for a local Call
 result: it reuses the looked-up names directly, without temporary allocation
 or zero initialization. The exact untagged helper and parity guard are
 `compileCallWrappedResultNoHandlerExactHOLW` and
-`exactCallWrappedResultNoHandlerParity`. `call_handler_missing_eid` checks
+`exactCallWrappedResultNoHandlerParity`. `call_wrapped_result_missing` and
+`call_wrapped_result_empty_one` check the two `wrap_rt = NONE` cases, which
+emit a flattened tail call without result metadata; their exact helper and
+guard are `compileCallWrappedResultFallbackNoHandlerExactHOLW` and
+`exactCallWrappedResultFallbackNoHandlerParity`. `call_handler_missing_eid` checks
 that an exception handler with a missing `eids` entry takes the same fallback;
 the Lean exact subcase is `compileCallHandlerMissingEidExactHOLW`.
 `call_handler_present_eid` checks the found-EID branch, including exact
