@@ -1587,22 +1587,22 @@ class StandaloneFmapResultStatusTest(unittest.TestCase):
         self.assertTrue(any("source-comparison note" in error for error in errors))
 
 
-class MultiOwnerFmapStatusTest(unittest.TestCase):
+class MultiOwnerFmapRelationStatusTest(unittest.TestCase):
     def _record(self, **overrides):
         record = {
             "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
             "hol_name": "evaluate_shape_invariant_ret_inst",
             "lean_path": "Flapjack/Example.lean",
             "lean_name": "evaluateShapeInvariant",
-            "statement_status": "reviewed_fmap_as_finite_support_carriers",
+            "statement_status": "reviewed_fmap_as_finite_support_relation",
             "reviewer": "source comparison of HOL/Lean carrier structures",
-            "fmap_as_finite_support_carriers": [
+            "fmap_as_finite_support_relation": [
                 "PanState.locals", "CrepState.locals"],
         }
         record.update(overrides)
         return record
 
-    def _tag(self, carriers=("PanState.locals", "CrepState.locals")):
+    def _tag(self, carriers=(("PanState", "locals"), ("CrepState", "locals"))):
         return {
             ("Flapjack/Example.lean", "evaluateShapeInvariant"): (
                 "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
@@ -1611,7 +1611,7 @@ class MultiOwnerFmapStatusTest(unittest.TestCase):
             )
         }
 
-    def test_accepts_multi_owner_carrier_status(self):
+    def test_accepts_multi_owner_relation_status(self):
         errors = MAP["validate_inventory"](
             [self._record()], set(), self._tag(), set())
         self.assertEqual(errors, [])
@@ -1619,11 +1619,14 @@ class MultiOwnerFmapStatusTest(unittest.TestCase):
     def test_rejects_status_without_qualifier(self):
         errors = MAP["validate_inventory"](
             [self._record()], set(), self._tag(()), set())
-        self.assertTrue(any("needs its @[hol] qualifier" in error for error in errors))
+        self.assertTrue(any(
+            "needs a fmap_as_finite_support_relation @[hol] tag" in error
+            for error in errors
+        ))
 
     def test_rejects_manifest_tag_disagreement(self):
         errors = MAP["validate_inventory"](
-            [self._record(fmap_as_finite_support_carriers=["Other.locals"])],
+            [self._record(fmap_as_finite_support_relation=["Other.locals"])],
             set(), self._tag(), set())
         self.assertTrue(any("do not match its @[hol] tag" in error for error in errors))
 

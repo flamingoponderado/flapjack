@@ -3568,6 +3568,46 @@
   {
     "hol_path": null,
     "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "PanToCrepTargetLocalsExact.ofBroad_toBroad",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only finite-support carrier roundtrip for PanToCrepTargetLocalsExact. It proves that converting the wrapper to its broad counterpart and back preserves its HolFiniteMapExact targetLocals field. This is representation infrastructure for the evaluate_shape_invariant_ret_inst port, not a HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanToCrepTargetLocalsExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only qualifier witness: names PanToCrepTargetLocalsExact as owner and proves its toBroad/ofBroad roundtrip. The witness supports the finite-support representation qualifier and is not a port of a HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only qualifier witness: names PanSemStateFiniteExact as owner and proves its finite-support/broad-carrier roundtrip. It supports the finite-support representation qualifier and is not a port of a HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only qualifier witness: names CrepSemHOLState as owner and proves its finite-support/broad-carrier roundtrip. It supports the finite-support representation qualifier and is not a port of a HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only qualifier witness: names PanToCrepContextExact as owner and proves its finite-support/broad-carrier roundtrip. It supports the finite-support representation qualifier and is not a port of a HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
     "lean_name": "mapFlattenMemSomeSupport",
     "statement_status": "no_hol_reference_pending_classification",
@@ -12199,7 +12239,7 @@
     "hol_path": null,
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific composition over finite-support PanSem/CrepSem carriers and independent t_locs; its Return/Exception conclusion now directly states the value-level Lean encoding of HOL is_wf_shape_v_nil. The public finite evaluator wrapper projects to evalPanSemRecursiveCallContextHOLExact through evaluateHOLFinite_toExact and the proved 66-case projection (flapjack-6yq). Keep untagged: the finite evaluator and multi-carrier state_rel/locals_rel support have not completed the source review required for the faithful HOL theorem; tracked by flapjack-4ac.5.83."
+    "reviewer": "Flapjack-specific composition whose Return/Exception conclusion directly states the value-level Lean encoding of HOL is_wf_shape_v_nil. Source comparison matched evaluate(p,s)=(SOME v,s'), state_rel, locals_rel, and the result cases to pan_to_crepProofScript.sml:45-82,3016; ctxt_max/no_overlap to pan_commonPropsScript.sml:11-24. PanSem/CrepSem/context and independent t_locs map owners use same-module roundtrip witnesses for the relation carrier qualifier. The finite evaluator projects to evalPanSemRecursiveCallContextHOLExact through evaluateHOLFinite_toExact and the proved 66-case projection (flapjack-6yq). Keep untagged pending the direct finite-map evaluate_def source review/tag (flapjack-qj5); do not treat this helper as the HOL theorem."
   },
   {
     "hol_path": null,

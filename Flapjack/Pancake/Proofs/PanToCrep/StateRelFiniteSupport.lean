@@ -9,12 +9,13 @@ Finite-support Pan-to-Crep relation infrastructure for the shape-invariant
 proof path. The field types follow HOL `state_rel_def` and `locals_rel_def`:
 `MlS`, `ValueHOL`, `ShapeHOL`, finite-support maps, and `CrepSemHOLState`.
 
-These declarations are intentionally untagged support. The current
-`fmap_as_finite_support` qualifier can certify fields owned by one carrier
-structure, while these relations span the separate PanSem and CrepSem state
-carriers. They are not claims that a HOL relation declaration has been
-ported; the exact theorem tag must wait for reviewed multi-carrier qualifier
-support and the faithful evaluator proof.
+These declarations are untagged relation support. Their conjunctions were
+compared with HOL `state_rel_def` and `locals_rel_def` at
+`pan_to_crepProofScript.sml:45-82`; the finite-map fields are now named through
+their separate owning carriers, with same-module roundtrip witnesses for the
+multi-carrier qualifier. The final theorem remains untagged until the direct
+finite-map `evaluate_def` source review and tag are completed (bead
+`flapjack-qj5`).
 -/
 
 namespace Flapjack
@@ -23,17 +24,20 @@ open Flapjack.Pancake.PanLang
   (MlS ShapeHOL ExpHOL ProgHOL StructContextExact isWfShapeExactHOL)
 
 /-- Flapjack-specific exact-map bound predicate for relation support. It
-    mirrors the shape of HOL `ctxt_max_def`, but is not a tagged port: it takes
-    a bare finite-map parameter without the owning carrier witness required by
-    the current finite-map qualifier. -/
+    has the same quantifiers and bounds as HOL `ctxt_max_def`
+    (`pan_commonPropsScript.sml:11-15`): `0 ≤ n` and every slot from each
+    lookup is at most `n`. `Nat` renders HOL `num`, and its map is the exact
+    `PanToCrepContextExact.vars` field. -/
 def ctxtMaxFiniteExact {κ β : Type}
     (n : Nat) (map : HolFiniteMapExact κ (β × List Nat)) : Prop :=
   0 ≤ n ∧ ∀ key shape slots, map.lookup key = some (shape, slots) →
     ∀ slot ∈ slots, slot ≤ n
 
 /-- Flapjack-specific exact-map overlap predicate for relation support. It
-    mirrors the shape of HOL `no_overlap_def`, but is not a tagged port because
-    its bare map parameter cannot carry the reviewed finite-map qualifier. -/
+    renders HOL `no_overlap_def` (`pan_commonPropsScript.sml:18-24`): each slot
+    list is Nodup and no slot occurs in two distinct key lists. The existential
+    shared-slot formulation is equivalent to HOL's negated `DISJOINT` on the
+    two list sets. The map is `PanToCrepContextExact.vars`. -/
 def noOverlapFiniteExact {κ β : Type}
     (map : HolFiniteMapExact κ (β × List Nat)) : Prop :=
   (∀ key shape slots, map.lookup key = some (shape, slots) → slots.Nodup) ∧
@@ -44,8 +48,10 @@ def noOverlapFiniteExact {κ β : Type}
 
 /-- Flapjack-specific state-relation support over the exact finite-support
     PanSem and CrepSem carriers. `globals.lookup = none` renders HOL `FEMPTY`;
-    this is not a tagged `state_rel_def` port because its finite-map fields span
-    two owning state carriers. -/
+    the remaining conjunctions follow HOL `state_rel_def` in the same order
+    (`pan_to_crepProofScript.sml:45-59`). The finite-map translation uses the
+    PanSem/CrepSem owners and is covered by the module's per-owner roundtrip
+    witnesses; this relation adapter itself remains Flapjack-specific. -/
 def panToCrepStateRelFiniteExact {width : Nat} {σ : Type} [NeZero width]
     (source : PanSemStateFiniteExact width σ)
     (target : CrepSemHOLState width σ) : Prop :=
@@ -62,8 +68,11 @@ def panToCrepStateRelFiniteExact {width : Nat} {σ : Type} [NeZero width]
 
 /-- Flapjack-specific local-relation support over the exact finite-support
     PanSem value and CrepSem word carriers. The final conjunct preserves the
-    source shape invariant; this is not a tagged `locals_rel_def` port because
-    the relation spans separate map carriers. -/
+    literal `is_wf_shape_nil (shape_of v)` conjunct. `mapM` is the
+    `OPT_MMAP` result equation, `flattenHOL` is `flatten`, and the shape
+    equality uses exact `ShapeHOL` names. The premises and quantified names
+    follow HOL `locals_rel_def` (`pan_to_crepProofScript.sml:71-82`); relation
+    carrier translations are recorded by the final theorem qualifier. -/
 def panToCrepLocalsRelFiniteExact {width : Nat} [NeZero width]
     (context : PanToCrepContextExact width)
     (sourceLocals : HolFiniteMapExact MlS (ValueHOL width))
@@ -225,25 +234,81 @@ theorem holFmapParameterAsFiniteSupportWitness_panToCrepFiniteEvaluateShapeInvar
   cases locals
   rfl
 
+/-- Owner structure for the independent finite-map parameter `t_locs`. -/
+structure PanToCrepTargetLocalsExact (width : Nat) [NeZero width] where
+  targetLocals : HolFiniteMapExact Nat (HolWordLab width)
+
+/-- Project the independent `t_locs` carrier to its broad map representation. -/
+def PanToCrepTargetLocalsExact.toBroad {width : Nat} [NeZero width]
+    (locals : PanToCrepTargetLocalsExact width) : PanToCrepTargetLocalsBroad width :=
+  panToCrepTargetLocalsToBroad locals.targetLocals
+
+/-- Rebuild the canonical owner carrier from the broad map and support witness. -/
+def PanToCrepTargetLocalsExact.ofBroad {width : Nat} [NeZero width]
+    (locals : PanToCrepTargetLocalsBroad width)
+    (finiteSupport : ∃ keys : List Nat, ∀ key, locals key ≠ none → key ∈ keys) :
+    PanToCrepTargetLocalsExact width :=
+  ⟨panToCrepTargetLocalsOfBroad locals finiteSupport⟩
+
+/-- The independent map owner roundtrips through its broad counterpart. -/
+theorem PanToCrepTargetLocalsExact.ofBroad_toBroad {width : Nat} [NeZero width]
+    (locals : PanToCrepTargetLocalsExact width) :
+    PanToCrepTargetLocalsExact.ofBroad locals.toBroad
+      locals.targetLocals.finiteSupport = locals := by
+  cases locals
+  rfl
+
+/-- Same-module multi-carrier witness for the exact `t_locs` finite-map field. -/
+theorem holFmapAsFiniteSupportRelationWitness_PanToCrepTargetLocalsExact
+    {width : Nat} [NeZero width] (locals : PanToCrepTargetLocalsExact width) :
+    PanToCrepTargetLocalsExact.ofBroad locals.toBroad
+      locals.targetLocals.finiteSupport = locals :=
+  PanToCrepTargetLocalsExact.ofBroad_toBroad locals
+
+/-- Same-module multi-carrier witness for PanSem's finite-map fields. -/
+theorem holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact
+    {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) :
+    PanSemStateFiniteExact.ofExact state.toExact state.toExact_finiteSupport = state :=
+  PanSemStateFiniteExact.ofExact_toExact state
+
+/-- Same-module multi-carrier witness for CrepSem's finite-map fields. -/
+theorem holFmapAsFiniteSupportRelationWitness_CrepSemHOLState
+    {width : Nat} [NeZero width] {σ : Type} (state : CrepSemHOLState width σ) :
+    CrepSemBroadState.ofBroad state.toBroad state.toBroad_finiteSupport = state :=
+  CrepSemBroadState.ofBroad_toBroad state
+
+/-- Same-module multi-carrier witness for the Pan-to-Crep context maps. -/
+theorem holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact
+    {width : Nat} [NeZero width] (context : PanToCrepContextExact width) :
+    PanToCrepContextExact.ofBroad context.toBroad = context := by
+  cases context
+  rfl
+
 /-- Flapjack-specific full-program shape-invariant composition over the
     finite-support PanSem/CrepSem carriers. Its Return/Exception conclusion is
     now the value-level `is_wf_shape_v_nil` statement, and its finite evaluator
     projects to the broad exact evaluator by `evaluateHOLFinite_toExact` and the
-    proved 66-case projection (`flapjack-6yq`). It remains untagged: its
-    evaluator and multi-carrier relation support have not completed the source
-    review required for the faithful HOL theorem, tracked by
-    `flapjack-4ac.5.83`. -/
+    proved 66-case projection (`flapjack-6yq`). Direct source review matched
+    the three HOL premises and the Return/Exception conclusion with no extra
+    side condition. `state_rel_def` and `locals_rel_def` were compared at
+    `pan_to_crepProofScript.sml:45-82`; the map representations are the
+    witnessed finite-support PanSem, CrepSem, context, and independent `t_locs`
+    carriers. The program/state/result/value/shape/name carriers match the HOL
+    syntax, with positive-width words and exact `MlString` identifiers. Keep
+    untagged until the direct finite-map `evaluate_def` port and its source
+    review are complete under `flapjack-qj5`. -/
 theorem panToCrepFiniteEvaluateShapeInvariantRetInst {width : Nat} {σ : Type}
     [NeZero width] (program : ProgHOL width)
     (source : PanSemStateFiniteExact width σ)
     (target : CrepSemHOLState width σ)
-    (targetLocals : HolFiniteMapExact Nat (HolWordLab width))
+    (targetLocals : PanToCrepTargetLocalsExact width)
     (relationContext : PanToCrepContextExact width)
     (result : PanSemResultExact width)
     (postState : PanSemStateFiniteExact width σ)
     (hstate : panToCrepStateRelFiniteExact source target)
     (hlocals : panToCrepLocalsRelFiniteExact relationContext
-      source.locals targetLocals)
+      source.locals targetLocals.targetLocals)
     (heval : PanSemStateFiniteExact.evaluateHOLFiniteState source program =
       (some result, postState)) :
     match result with
@@ -268,7 +333,7 @@ theorem panToCrepFiniteEvaluateShapeInvariantRetInst {width : Nat} {σ : Type}
         (fun pair => (pair.1, pair.2.state)) = some (some result, postState) := by
     simpa [PanSemStateFiniteExact.evaluateHOLFinite, evaluationContext] using hevalMarked
   have hinitial := panToCrepExactInitialShapeInvariant
-    source target targetLocals relationContext hstate hlocals
+    source target targetLocals.targetLocals relationContext hstate hlocals
   have hresultWf : Flapjack.panSemResultHOLWf source.structs (some result) := by
     cases hcontextEval : PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext
         program evaluationContext with
