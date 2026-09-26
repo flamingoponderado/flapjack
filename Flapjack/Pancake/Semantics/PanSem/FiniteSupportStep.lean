@@ -847,10 +847,10 @@ theorem evalPanSemRecursiveCallContextHOLExact_call_finiteSupport
                                       simp only [heshapes] at hres
                                       by_cases hcond : (shapeEqHOL (shapeOfHOLExact value) shape && isValidValueHOLExact context.state .local handlerVar value) = true
                                       · rw [if_pos hcond] at hres
-                                        have hhandler : (fixedCtx.withState (setVarHOLExact handlerVar value ({ fixedCtx.state with locals := context.state.locals } : PanSemStateExact width σ)) rfl rfl).state.FiniteSupport := by
+                                        have hhandler : (fixedCtx.withState (handlerStateHOLExact context fixedCtx handlerVar value) rfl rfl).state.FiniteSupport := by
                                           change (setVarHOLExact handlerVar value ({ fixedCtx.state with locals := context.state.locals } : PanSemStateExact width σ)).FiniteSupport
                                           exact PanSemStateExact.finiteSupport_setVar (PanSemStateExact.finiteSupport_setLocals fixedCtx.state context.state.locals h.1 hfixedCtx) handlerVar value
-                                        exact ihHandler handlerProgram (fixedCtx.withState (setVarHOLExact handlerVar value ({ fixedCtx.state with locals := context.state.locals } : PanSemStateExact width σ)) rfl rfl) hhandler result hres
+                                        exact ihHandler handlerProgram (fixedCtx.withState (handlerStateHOLExact context fixedCtx handlerVar value) rfl rfl) hhandler result hres
                                       · rw [if_neg hcond] at hres
                                         simp only [Option.some.injEq] at hres
                                         rw [← hres]
@@ -960,13 +960,13 @@ theorem evalPanSemRecursiveCallContextHOLExact_decCall_finiteSupport
                         by_cases hcond : (shapeEqHOL (shapeOfHOLExact value) shape && shapeEqHOL (shapeOfHOLExact value) returnShape) = true
                         · rw [if_pos hcond] at hres
                           cases hcont : evalPanSemRecursiveCallContextHOLExact continuation
-                              ((bodyContext.withState (fixClockHOLExact (callEntryStateHOLExact context.state calleeLocals) (some (PanSemResultExact.returned value), bodyContext.state)).snd rfl rfl).withState (setVarHOLExact resultName value ({ (bodyContext.withState (fixClockHOLExact (callEntryStateHOLExact context.state calleeLocals) (some (PanSemResultExact.returned value), bodyContext.state)).snd rfl rfl).state with locals := context.state.locals } : PanSemStateExact width σ)) rfl rfl) with
+                              ((bodyContext.withState (fixClockHOLExact (callEntryStateHOLExact context.state calleeLocals) (some (PanSemResultExact.returned value), bodyContext.state)).snd rfl rfl).withState (handlerStateHOLExact context (bodyContext.withState (fixClockHOLExact (callEntryStateHOLExact context.state calleeLocals) (some (PanSemResultExact.returned value), bodyContext.state)).snd rfl rfl) resultName value) rfl rfl) with
                           | none => try (simp only [hcont] at hres); cases hres
                           | some cpair =>
                               obtain ⟨continuationResult, continuationPost⟩ := cpair
                               try (simp only [hcont] at hres)
-                              have hcontEntry : ((bodyContext.withState (fixClockHOLExact (callEntryStateHOLExact context.state calleeLocals) (some (PanSemResultExact.returned value), bodyContext.state)).snd rfl rfl).withState (setVarHOLExact resultName value ({ (bodyContext.withState (fixClockHOLExact (callEntryStateHOLExact context.state calleeLocals) (some (PanSemResultExact.returned value), bodyContext.state)).snd rfl rfl).state with locals := context.state.locals } : PanSemStateExact width σ)) rfl rfl).state.FiniteSupport := by
-                                change (setVarHOLExact resultName value ({ (bodyContext.withState (fixClockHOLExact (callEntryStateHOLExact context.state calleeLocals) (some (PanSemResultExact.returned value), bodyContext.state)).snd rfl rfl).state with locals := context.state.locals } : PanSemStateExact width σ)).FiniteSupport
+                              have hcontEntry : ((bodyContext.withState (fixClockHOLExact (callEntryStateHOLExact context.state calleeLocals) (some (PanSemResultExact.returned value), bodyContext.state)).snd rfl rfl).withState (handlerStateHOLExact context (bodyContext.withState (fixClockHOLExact (callEntryStateHOLExact context.state calleeLocals) (some (PanSemResultExact.returned value), bodyContext.state)).snd rfl rfl) resultName value) rfl rfl).state.FiniteSupport := by
+                                change (handlerStateHOLExact context (bodyContext.withState (fixClockHOLExact (callEntryStateHOLExact context.state calleeLocals) (some (PanSemResultExact.returned value), bodyContext.state)).snd rfl rfl) resultName value).FiniteSupport
                                 exact PanSemStateExact.finiteSupport_setVar (PanSemStateExact.finiteSupport_setLocals fixedCtx.state context.state.locals h.1 hfixedCtx) resultName value
                               have hcontF : continuationPost.state.FiniteSupport :=
                                 ihContinuation _ hcontEntry (continuationResult, continuationPost) hcont
