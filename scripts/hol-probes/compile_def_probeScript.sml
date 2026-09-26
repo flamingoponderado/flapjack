@@ -62,6 +62,14 @@ val _ = print_eval "while_fallback"
   ``pan_to_crep$compile
       <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
       (While (RStruct ([] : 8 panLang$exp list)) Skip)``;
+val _ = print_eval "global_assign_fallback"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (Assign Global «g» (Const (5w : 8 word)))``;
+val _ = print_eval "global_shmem_load_fallback"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (ShMemLoad Op8 Global «g» (Const (3w : 8 word)))``;
 
 val _ = print_eval "struct_skip"
   ``pan_to_crep$compile

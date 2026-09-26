@@ -204,4 +204,17 @@ def compileWhileExactHOLW {width : Nat} [NeZero width]
   | (condition :: _, _) => .while condition body
   | ([], _) => .skip
 
+/-! Two constant `Skip` equations from `compile_def`: Global Assign
+    (`pan_to_crepScript.sml:163`) and Global ShMemLoad (line 305). They are
+    explicit untagged slices; their source/context inputs are retained while
+    the compiled result is independent of them, exactly as in HOL. -/
+
+def compileGlobalAssignExactHOLW {width : Nat} [NeZero width]
+    (_context : CompileExpContextExact width) (_name : MlS)
+    (_expression : Flapjack.Pancake.PanLang.ExpHOL width) : CrepProgHOL width := .skip
+
+def compileGlobalShMemLoadExactHOLW {width : Nat} [NeZero width]
+    (_context : CompileExpContextExact width) (_operator : OpSize) (_name : MlS)
+    (_address : Flapjack.Pancake.PanLang.ExpHOL width) : CrepProgHOL width := .skip
+
 end Flapjack

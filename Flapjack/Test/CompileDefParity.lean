@@ -12,6 +12,7 @@ The expected cases come from the direct HOL-EVAL fixture
 namespace Flapjack.Test.CompileDefParity
 
 open Flapjack
+open Flapjack.Basis.Pure.MlString
 
 def context : CompileContext Nat :=
   { vars := [], functions := [], exceptions := [], maxVar := 0, bytesInWord := 1 }
@@ -456,13 +457,24 @@ def exactIfWhileClauseParity : Bool :=
 
 #guard exactIfWhileClauseParity
 
+def exactGlobalFallbackParity : Bool :=
+  (match compileGlobalAssignExactHOLW exactReturnContext (ofString "g") (.const 5) with
+   | .skip => true
+   | _ => false) &&
+  (match compileGlobalShMemLoadExactHOLW exactReturnContext .op8 (ofString "g")
+      (.const 3) with
+   | .skip => true
+   | _ => false)
+
+#guard exactGlobalFallbackParity
+
 def runChecks : IO Bool := do
   if parityGuard && exactStructuralSliceParity && exactReturnClauseParity &&
-      exactStoreClauseParity && exactIfWhileClauseParity then
+      exactStoreClauseParity && exactIfWhileClauseParity && exactGlobalFallbackParity then
     IO.println "PASS compile_def fixed-width load/store and control-flow parity"
   else
     IO.println "FAIL compile_def parity"
   pure (parityGuard && exactStructuralSliceParity && exactReturnClauseParity &&
-    exactStoreClauseParity && exactIfWhileClauseParity)
+    exactStoreClauseParity && exactIfWhileClauseParity && exactGlobalFallbackParity)
 
 end Flapjack.Test.CompileDefParity
