@@ -499,6 +499,20 @@ def exactCallWrappedHandlerPresentContext : CompileExpContextExact 8 where
   eids := HolFiniteMapExact.empty.update (ofString "E", BitVec.ofNat 8 12)
   vmax := 50
 
+def exactCallWrappedFallbackHandlerPresentContext : CompileExpContextExact 8 where
+  vars := HolFiniteMapExact.empty.update
+    (ofString "exn", (.comb [.one, .one], [20, 21]))
+  funcs := HolFiniteMapExact.empty
+  eids := HolFiniteMapExact.empty.update (ofString "E", BitVec.ofNat 8 12)
+  vmax := 50
+
+def exactCallWrappedFallbackHandlerMissingContext : CompileExpContextExact 8 where
+  vars := HolFiniteMapExact.empty.update
+    (ofString "exn", (.comb [.one, .one], [20, 21]))
+  funcs := HolFiniteMapExact.empty
+  eids := HolFiniteMapExact.empty
+  vmax := 50
+
 def exactCallHandlerPresentContext : CompileExpContextExact 8 where
   vars := HolFiniteMapExact.empty.update
     (ofString "exn", (.comb [.one, .one], [20, 21]))
@@ -779,6 +793,42 @@ def exactCallWrappedResultHandlerPresentEidParity : Bool :=
   | _ => false
 
 #guard exactCallWrappedResultHandlerPresentEidParity
+
+def exactCallWrappedFallbackHandlerPresentEidParity : Bool :=
+  match compileCallWrappedResultFallbackHandlerPresentEidExactHOLW
+      exactCallWrappedFallbackHandlerPresentContext (ofString "f")
+      (ofString "missing") [.const 1, .rstruct [.const 2, .const 3]]
+      (ofString "E") (ofString "exn") (BitVec.ofNat 8 12)
+      (by
+        have hne : ofString "exn" ≠ ofString "missing" := by decide
+        simp [exactCallWrappedFallbackHandlerPresentContext, wrapRtHOL,
+          HolFiniteMapExact.lookup_update, FUPDATE, hne])
+      (by simp [exactCallWrappedFallbackHandlerPresentContext,
+        HolFiniteMapExact.lookup_update, FUPDATE])
+      (fun _ => .tick) with
+  | .call (some ([], some (BitVec.ofNat 8 12,
+        .seq (.seq (.assign 20 (.loadGlob 0))
+          (.seq (.assign 21 (.loadGlob 1)) .skip)) .tick))) function
+      [.const 1, .const 2, .const 3] => function == ofString "f"
+  | _ => false
+
+#guard exactCallWrappedFallbackHandlerPresentEidParity
+
+def exactCallWrappedFallbackHandlerMissingEidParity : Bool :=
+  match compileCallWrappedResultFallbackHandlerMissingEidExactHOLW
+      exactCallWrappedFallbackHandlerMissingContext (ofString "f")
+      (ofString "missing") [.const 1, .rstruct [.const 2, .const 3]]
+      (ofString "E") (ofString "exn") .tick
+      (by
+        have hne : ofString "exn" ≠ ofString "missing" := by decide
+        simp [exactCallWrappedFallbackHandlerMissingContext, wrapRtHOL,
+          HolFiniteMapExact.lookup_update, FUPDATE, hne])
+      (by simp [exactCallWrappedFallbackHandlerMissingContext]) with
+  | .call none function [.const 1, .const 2, .const 3] =>
+      function == ofString "f"
+  | _ => false
+
+#guard exactCallWrappedFallbackHandlerMissingEidParity
 
 def exactCallResultNoHandlerParity : Bool :=
   (match compileCallResultNoHandlerExactHOLW exactCallResultContext (ofString "f")
