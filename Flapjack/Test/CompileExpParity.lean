@@ -1,4 +1,5 @@
 import Flapjack.Pancake.PanToCrep.Compile
+import Flapjack.Pancake.PanToCrep.CompileExact
 
 /-!
 # Original-domain parity for `pan_to_crep$compile_exp`
@@ -11,6 +12,8 @@ The expected values come from the direct HOL-EVAL fixture
 namespace Flapjack.Test.CompileExpParity
 
 open Flapjack
+open Flapjack.Basis.Pure.MlString
+open Flapjack.Pancake.PanLang
 
 def context : CompileContext Nat :=
   { vars := [], functions := [], exceptions := [], maxVar := 0, bytesInWord := 8 }
@@ -187,15 +190,115 @@ example : compileExpHOL finiteMapContext (.panOp .mul [.const 5, .const 6]) =
   simp [compileExpHOL, compileExpHOL.compileExpListHOL, cexpHeads,
     compilePanOp, finiteMapContext]
 
+/-! These checks run the same directly captured HOL rows through the exact
+    `ExpHOL`/`PanToCrepContextExact`/`CrepExpHOL` definition. In addition to
+    successful constructors, they pin the defensive cases where HOL returns
+    `Const 0w`. -/
+
+def exactEmptyContext : CompileExpContextExact 64 where
+  vars := HolFiniteMapExact.empty
+  funcs := HolFiniteMapExact.empty
+  eids := HolFiniteMapExact.empty
+  vmax := 0
+
+def exactFiniteMapContext : CompileExpContextExact 64 where
+  vars :=
+    (HolFiniteMapExact.empty : HolFiniteMapExact MlS (ShapeHOL × List Nat))
+      |>.update (ofString "p", (.one, [3]))
+      |>.update (ofString "p", (.one, [5]))
+  funcs := HolFiniteMapExact.empty
+  eids := HolFiniteMapExact.empty
+  vmax := 5
+
+def exactOne (expected : List (CrepExpHOL 64)) :
+    List (CrepExpHOL 64) × ShapeHOL → Bool
+  | (actual, .one) =>
+      actual.map crepExpOfHOL == expected.map crepExpOfHOL
+  | _ => false
+
+def exactCombTwo (expected : List (CrepExpHOL 64)) :
+    List (CrepExpHOL 64) × ShapeHOL → Bool
+  | (actual, .comb [.one, .one]) =>
+      actual.map crepExpOfHOL == expected.map crepExpOfHOL
+  | _ => false
+
+def exactCompileExpParity : Bool :=
+  let constant := (Flapjack.Pancake.PanLang.ExpHOL.const (BitVec.ofNat 64 7))
+  exactOne [.const (BitVec.ofNat 64 7)]
+      (compileExpExactHOLW exactEmptyContext constant) &&
+    exactOne [.const 0] (compileExpExactHOLW exactEmptyContext (.var .global (ofString "g"))) &&
+    exactOne [.const 0]
+      (compileExpExactHOLW exactEmptyContext (.var .local (ofString "missing"))) &&
+    exactOne [.baseAddr] (compileExpExactHOLW exactEmptyContext .baseAddr) &&
+    exactOne [.topAddr] (compileExpExactHOLW exactEmptyContext .topAddr) &&
+    exactOne [.const (BitVec.ofNat 64 8)]
+      (compileExpExactHOLW exactEmptyContext .bytesInWord) &&
+    exactOne [.const 0]
+      (compileExpExactHOLW exactEmptyContext (.nstruct (ofString "S") [])) &&
+    exactOne [.const 0]
+      (compileExpExactHOLW exactEmptyContext (.nfield (ofString "x") constant)) &&
+    exactOne [.load (.const 3)]
+      (compileExpExactHOLW exactEmptyContext (.load .one (.const 3))) &&
+    exactCombTwo [.load (.const 3), .load (.op .add [.const 3, .const 8])]
+      (compileExpExactHOLW exactEmptyContext
+        (.load (.comb [.one, .one]) (.const 3))) &&
+    exactCombTwo [.const 1, .const 2]
+      (compileExpExactHOLW exactEmptyContext
+        (.rstruct [.const 1, .const 2])) &&
+    exactOne [.const 2]
+      (compileExpExactHOLW exactEmptyContext
+        (.rfield 1 (.rstruct [.const 1, .const 2]))) &&
+    exactOne [.const 0]
+      (compileExpExactHOLW exactEmptyContext (.rfield 0 constant)) &&
+    exactOne [.const 0]
+      (compileExpExactHOLW exactEmptyContext (.load .one (.rstruct []))) &&
+    exactOne [.load32 (.const 3)]
+      (compileExpExactHOLW exactEmptyContext (.load32 (.const 3))) &&
+    exactOne [.loadByte (.const 4)]
+      (compileExpExactHOLW exactEmptyContext (.loadByte (.const 4))) &&
+    exactOne [.const 0]
+      (compileExpExactHOLW exactEmptyContext
+        (.load32 (.rstruct [.const 1, .const 2]))) &&
+    exactOne [.const 0]
+      (compileExpExactHOLW exactEmptyContext
+        (.loadByte (.rstruct [.const 1, .const 2]))) &&
+    exactOne [.op .add [.const 1, .const 2, .const 3]]
+      (compileExpExactHOLW exactEmptyContext
+        (.op .add [.const 1, .const 2, .const 3])) &&
+    exactOne [.crepOp .mul [.const 5, .const 6]]
+      (compileExpExactHOLW exactEmptyContext (.panop .mul [.const 5, .const 6])) &&
+    exactOne [.const 0]
+      (compileExpExactHOLW exactEmptyContext (.op .add [.rstruct []])) &&
+    exactOne [.const 0]
+      (compileExpExactHOLW exactEmptyContext (.panop .mul [.rstruct []])) &&
+    exactOne [.cmp .equal (.const 1) (.const 0)]
+      (compileExpExactHOLW exactEmptyContext (.cmp .equal (.const 1) (.const 0))) &&
+    exactOne [.shift .lsl (.const 2) (.const 1)]
+      (compileExpExactHOLW exactEmptyContext (.shift .lsl (.const 2) (.const 1))) &&
+    exactOne [.const 0]
+      (compileExpExactHOLW exactEmptyContext (.cmp .equal (.rstruct []) constant)) &&
+    exactOne [.const 0]
+      (compileExpExactHOLW exactEmptyContext (.shift .lsl constant (.rstruct []))) &&
+    exactOne [.var 5]
+      (compileExpExactHOLW exactFiniteMapContext (.var .local (ofString "p"))) &&
+    exactOne [.load32 (.var 5)]
+      (compileExpExactHOLW exactFiniteMapContext
+        (.load32 (.var .local (ofString "p")))) &&
+    exactOne [.loadByte (.op .add [.const 1, .const 2])]
+      (compileExpExactHOLW exactFiniteMapContext
+        (.loadByte (.op .add [.const 1, .const 2])))
+
+#guard exactCompileExpParity
+
 #eval parityGuard
 #guard parityGuard
 
 def runChecks : IO Bool := do
-  if parityGuard then
-    IO.println "PASS compile_exp leaves/struct-field/loads/ops/cmp-shift/finite-map (tagged compileExpHOL)"
+  if parityGuard && exactCompileExpParity then
+    IO.println "PASS compile_exp production and exact-carrier parity"
   else
     IO.println "FAIL compile_exp parity"
-  pure parityGuard
+  pure (parityGuard && exactCompileExpParity)
 
 /-- The width-indexed delegation `compileExpHOLW` (whose `compile_exp_def` tag
     is withdrawn as a documented carrier mismatch) is definitionally the generic
