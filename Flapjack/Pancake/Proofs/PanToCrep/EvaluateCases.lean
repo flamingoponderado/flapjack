@@ -2931,7 +2931,7 @@ theorem crepRuntimeExpHdlOneWord
       (.seq (.assign slot (.loadGlob (0 : BitVec 5))) .skip : CrepProg (RiscV.Word 64)) := by
     simp [expHdlFiniteMap, hvariable, loadGlobals, panMap2, crepNestedSeq]
   rw [hsetup]
-  simp only [evalCrepRuntimeProg, evalCrepRuntimeExp]
+  simp only [evalCrepRuntimeProg, evalCrepRuntimeExpWordLab_panTheWord, evalCrepRuntimeExp]
   rw [hglobal]
   simp [hslot, panTheWord, fixCrepRuntimeClock]
 
@@ -2980,7 +2980,7 @@ theorem crepRuntimeExpHdlTwoWords
       evalCrepRuntimeProg handler primitive 3 state
         (.assign slot0 (.loadGlob (0 : BitVec 5))) =
       some (.normal, stateAfterFirst) := by
-    rw [evalCrepRuntimeProg]
+    rw [evalCrepRuntimeProg, evalCrepRuntimeExpWordLab_panTheWord]
     rw [hload0]
     rw [hslot0]
     simp only [setCrepRuntimeLocal_eq_update]
@@ -2996,7 +2996,7 @@ theorem crepRuntimeExpHdlTwoWords
       evalCrepRuntimeProg handler primitive 2 stateAfterFirst
         (.assign slot1 (.loadGlob (1 : BitVec 5))) =
       some (.normal, stateAfterBoth) := by
-    rw [evalCrepRuntimeProg]
+    rw [evalCrepRuntimeProg, evalCrepRuntimeExpWordLab_panTheWord]
     rw [hload1]
     rw [hslot1Value]
     simp only [setCrepRuntimeLocal_eq_update]
@@ -3097,7 +3097,7 @@ private theorem crepRuntimeExpHdlNestedWords
               evalCrepRuntimeProg handler primitive (slots.length + 2) state
                 (.assign slot (.loadGlob address)) =
               some (.normal, stateAfterFirst) := by
-            rw [evalCrepRuntimeProg, hhead, hslot]
+            rw [evalCrepRuntimeProg, evalCrepRuntimeExpWordLab_panTheWord, hhead, hslot]
             simp [stateAfterFirst, setCrepRuntimeLocal_eq_update]
           have htailAfterFirst :
               crepRuntimeGlobalWordsRel stateAfterFirst (address + 1) slots values := by

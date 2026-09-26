@@ -1676,18 +1676,6 @@ theorem evalCrepRuntimeExp_topAddr_wordLab
       some (.word state.topAddress) := by
   simp [evalCrepRuntimeExp]
 
-def crepRuntimeSharedMemExp
-    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
-    [Sub α] [AndOp α] [OrOp α] [HXor α α α]
-    [ShiftLeft α] [ShiftRight α] [LT α]
-    [DecidableRel (fun left right : α => left < right)] [PanCmp α]
-    (handler : CrepRuntimeFfiHandler α σ ε)
-    (state : CrepRuntimeState α σ) (operator : CrepMemOp)
-    (name : Nat) (address : CrepExp α) : CrepRuntimeStep α σ ε :=
-  match evalCrepRuntimeExp state address with
-  | some address => crepRuntimeSharedMem handler state operator name address
-  | none => (.error, state)
-
 def crepRuntimeExtCallExp
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α]
@@ -1776,6 +1764,26 @@ def evalCrepRuntimeExpsWordLab
       pure (value :: values)
 termination_by expressions => sizeOf expressions
 
+/-- Executed Crep shared-memory step whose address expression is evaluated by the
+HOL-shaped `word_lab` core `evalCrepRuntimeExpWordLab` instead of the unwrapped
+`evalCrepRuntimeExp`.  Reading the wrapped cell back through `panTheWord` recovers
+exactly the previous behavior (`evalCrepRuntimeExpWordLab_panTheWord`), while at
+width 64 the core equals the tagged `evalCrepSemHOLExp` at the canonical executed
+state (`ExecutedWordLabBridge.evalCrepRuntimeExpWordLab_executed`).  This is the
+first executed production call site routed through the HOL-shaped evaluator; the
+remaining widths/contexts stay explicit and unchanged. -/
+def crepRuntimeSharedMemExp
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α]
+    [ShiftLeft α] [ShiftRight α] [LT α]
+    [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (handler : CrepRuntimeFfiHandler α σ ε)
+    (state : CrepRuntimeState α σ) (operator : CrepMemOp)
+    (name : Nat) (address : CrepExp α) : CrepRuntimeStep α σ ε :=
+  match (evalCrepRuntimeExpWordLab state address).map panTheWord with
+  | some address => crepRuntimeSharedMem handler state operator name address
+  | none => (.error, state)
+
 /-- Reading the production wrapped cell back through `PanWordLab.word` recovers
 it, since `PanWordLab` has the single `word` constructor.  Flapjack-only adapter
 infrastructure. -/
@@ -1816,6 +1824,20 @@ theorem evalCrepRuntimeExp_wordLab_projection
                 simp [evalCrepRuntimeExp, crepOpCrep, Function.comp_def, Option.map_bind]
             | cons extra more =>
                 simp [evalCrepRuntimeExp]
+
+/-- Reading the HOL-shaped `word_lab` core back through `panTheWord` recovers the
+unwrapped production evaluator, so routing an executed call site through the core
+preserves exact runtime behavior. -/
+@[simp] theorem evalCrepRuntimeExpWordLab_panTheWord
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α]
+    [ShiftLeft α] [ShiftRight α] [LT α]
+    [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (state : CrepRuntimeState α σ) (expression : CrepExp α) :
+    (evalCrepRuntimeExpWordLab state expression).map panTheWord =
+      evalCrepRuntimeExp state expression := by
+  rw [← evalCrepRuntimeExp_wordLab_projection state expression]
+  cases evalCrepRuntimeExp state expression <;> rfl
 
 theorem optionBindMapListMapWord (values : Option (List α)) (value : α) :
     values.bind (Option.map (List.map PanWordLab.word) ∘ fun rest => some (value :: rest)) =
@@ -1986,7 +2008,7 @@ mutual
             | none => none
             | some result => some (restoreCrepRuntimeStep name (state.locals name) result)
     | _fuel + 1, state, .assign name value =>
-        match evalCrepRuntimeExp state value with
+        match (evalCrepRuntimeExpWordLab state value).map panTheWord with
         | none => some (.error, state)
         | some value =>
             match state.locals name with
