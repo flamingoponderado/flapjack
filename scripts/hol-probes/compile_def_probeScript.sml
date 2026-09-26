@@ -288,6 +288,19 @@ val _ = print_eval "finite_map_shadow_return"
          funcs := FEMPTY; eids := FEMPTY; vmax := 5 |>
       (panLang$Return (panLang$Var panLang$Local «p»))``;
 
+val _ = print_eval "deccall_one_word"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 4 |>
+      (panLang$DecCall «x» panLang$One «f» [panLang$Const (3w : 8 word)]
+        (panLang$Return (panLang$Var panLang$Local «x»)))``;
+
+val _ = print_eval "deccall_multiword"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 10 |>
+      (panLang$DecCall «pair» (panLang$Comb [panLang$One; panLang$One]) «f»
+        [panLang$Const (3w : 8 word); panLang$Const 4w]
+        (panLang$Return (panLang$Var panLang$Local «pair»)))``;
+
 (* The source freshness bound scans all var_cexp words, even though ExtCall
    requires each operand to have shape One and emits only its first word. *)
 val _ = print_eval "extcall_high_tail"
