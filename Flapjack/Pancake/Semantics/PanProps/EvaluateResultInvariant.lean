@@ -1632,7 +1632,7 @@ theorem evalPanSemRecursiveCallFiniteContext_structs_eq {width : Nat} {σ : Type
       _ = handlerState.structs := rfl
       _ = fixedContext.state.structs := by
         simp [handlerState, handlerStateHOLFinite, setVarHOLFinite,
-          fixedContext, callFixedContextHOLFinite, callEntryStateHOLFinite]
+          fixedContext, callFixedContextHOLFinite]
       _ = entry.structs := by
         simpa [FiniteEvalContext.withState, fixedContext, callFixedContextHOLFinite,
           fixClockHOLFinite, entryContext, callEntryStateHOLFinite] using hbody
