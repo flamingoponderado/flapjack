@@ -233,6 +233,32 @@ theorem seqSkipSkipFullState {width : Nat} [NeZero width] {σ : Type}
   rw [evalCrepSemHOLProg_skip]
   simp [Nat.lt_irrefl]
 
+/-- Kernel-checked domain-preservation instance on the concrete sample state:
+    the evaluator result carries the input `memaddrs`. -/
+theorem whilePreservesMemaddrs :
+    (evalCrepSemHOLProg sampleHOLState memDecSample shMemDecSample
+        (.while (.const (BitVec.ofNat 64 1)) .skip : CrepProgHOL 64)).2.memaddrs =
+      sampleHOLState.memaddrs :=
+  evalCrepSemHOLProg_preserves_memaddrs sampleHOLState memDecSample shMemDecSample _
+
+/-- Kernel-checked domain-preservation instance for `shMemaddrs`. -/
+theorem whilePreservesShMemaddrs :
+    (evalCrepSemHOLProg sampleHOLState memDecSample shMemDecSample
+        (.while (.const (BitVec.ofNat 64 1)) .skip : CrepProgHOL 64)).2.shMemaddrs =
+      sampleHOLState.shMemaddrs :=
+  evalCrepSemHOLProg_preserves_shMemaddrs sampleHOLState memDecSample shMemDecSample _
+
+/-- Kernel-checked recursive-state equality: the `crepStampExactDomains` call the
+    `While` clause performs on the produced state is the identity, so threading
+    the base state's decision procedures is sound. -/
+theorem whileStampIdentity :
+    crepStampExactDomains sampleHOLState
+      (evalCrepSemHOLProg sampleHOLState memDecSample shMemDecSample
+        (.while (.const (BitVec.ofNat 64 1)) .skip : CrepProgHOL 64)).2 =
+      (evalCrepSemHOLProg sampleHOLState memDecSample shMemDecSample
+        (.while (.const (BitVec.ofNat 64 1)) .skip : CrepProgHOL 64)).2 :=
+  crepStampExactDomains_evalCrepSemHOLProg sampleHOLState memDecSample shMemDecSample _
+
 def runChecks : IO Bool := do
   if holOracleRowsMatch then
     IO.println "PASS crepSem total HOL-shaped evaluate Skip/Break/Continue/Seq/Dec/If/While/Raise/Return/Tick match direct crep_inline_eval_probe oracle"
