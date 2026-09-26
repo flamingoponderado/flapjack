@@ -416,6 +416,72 @@ theorem compileProgExactHOLW_shmem_store_bridge {width : Nat} [NeZero width]
                     rw [List.foldl_max]
                     omega
 
+/-- The local `ShMemLoad` equation agrees across the exact and production
+    carriers once the address compiler results are decoded. Both sides use the
+    same exact finite-map destination lookup; missing address heads and missing
+    or empty local destinations remain `Skip` as in HOL. -/
+theorem compileProgExactHOLW_local_shmem_load_bridge {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width) (operator : OpSize) (name : MlS)
+    (address : Exp (BitVec width))
+    (haddressRanged : ExpByteRanged address)
+    (hcodec :
+      ((compileExpExactHOLW context (expToHOL address)).1.map crepExpOfHOL,
+        shapeOfHOL (compileExpExactHOLW context (expToHOL address)).2) =
+        compileExpHOL context.toProduction address) :
+    crepProgOfHOL (compileProgExactHOLW context
+        (.shMemLoad operator .local name (expToHOL address))) =
+      compileProgRiscV context.toProduction
+        (progOfHOL (.shMemLoad operator .local name (expToHOL address))) := by
+  rw [Prod.mk.injEq] at hcodec
+  rcases hcodec with ⟨haddressList, _⟩
+  cases hExactAddress : compileExpExactHOLW context (expToHOL address) with
+  | mk exactAddresses addressShape =>
+      cases hProductionAddress : compileExpHOL context.toProduction address with
+      | mk productionAddresses productionShape =>
+          have hdecoded : exactAddresses.map crepExpOfHOL = productionAddresses := by
+            simpa [hExactAddress, hProductionAddress] using haddressList
+          cases exactAddresses with
+          | nil =>
+              cases productionAddresses with
+              | nil => simp [compileProgExactHOLW, compileShMemLoadExactHOLW,
+                  compileProgRiscV, compileProgHOL, crepProgOfHOL,
+                  firstCompiledExpAnyShapeHOL, progOfHOL,
+                  expOfHOL_expToHOL address haddressRanged, FLOOKUP,
+                  hExactAddress, hProductionAddress]
+              | cons productionHead productionTail => simp at hdecoded
+          | cons exactHead exactTail =>
+              cases productionAddresses with
+              | nil => simp at hdecoded
+              | cons productionHead productionTail =>
+                  have hhead : crepExpOfHOL exactHead = productionHead :=
+                    (List.cons.inj hdecoded).1
+                  cases hlookup : context.vars.lookup name with
+                  | none =>
+                      simp [compileProgExactHOLW, compileShMemLoadExactHOLW,
+                        compileProgRiscV, compileProgHOL, crepProgOfHOL,
+                        firstCompiledExpAnyShapeHOL, progOfHOL, FLOOKUP,
+                        expOfHOL_expToHOL address haddressRanged,
+                        hExactAddress, hProductionAddress, hlookup,
+                        PanToCrepContextExact.toProduction_vars_lookup]
+                  | some entry =>
+                      cases entry with
+                      | mk shape names =>
+                          cases names with
+                          | nil =>
+                              simp [compileProgExactHOLW, compileShMemLoadExactHOLW,
+                                compileProgRiscV, compileProgHOL, crepProgOfHOL,
+                                firstCompiledExpAnyShapeHOL, progOfHOL, FLOOKUP,
+                                expOfHOL_expToHOL address haddressRanged,
+                                hExactAddress, hProductionAddress, hlookup,
+                                PanToCrepContextExact.toProduction_vars_lookup]
+                          | cons destination rest =>
+                              simp [compileProgExactHOLW, compileShMemLoadExactHOLW,
+                                compileProgRiscV, compileProgHOL, crepProgOfHOL,
+                                firstCompiledExpAnyShapeHOL, progOfHOL, FLOOKUP,
+                                expOfHOL_expToHOL address haddressRanged,
+                                hExactAddress, hProductionAddress, hlookup, hhead,
+                                PanToCrepContextExact.toProduction_vars_lookup]
+
 /-- Metadata adapter whose compiler input crosses the exact `DeclHOL` carrier
     boundary.  Its side condition is the byte-range premise used by the
     production-to-HOL declaration codec; it is preserved by the executed

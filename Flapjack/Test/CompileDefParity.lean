@@ -1,5 +1,6 @@
 import Flapjack.Pancake.PanToCrep.Compile
 import Flapjack.Pancake.PanToCrep.CompileExact
+import Flapjack.Pancake.PanToCrep.CompileProg
 
 /-!
 # Original-domain parity for `pan_to_crep$compile` (`compile_def`)
@@ -699,6 +700,17 @@ def exactShMemLoadClauseParity : Bool :=
    | _ => false)
 
 #guard exactShMemLoadClauseParity
+
+example :
+    crepProgOfHOL (compileProgExactHOLW
+      (exactLocalAssignContext [7] [8])
+      (.shMemLoad .op8 .local (ofString "dst") (expToHOL (.const (3 : BitVec 8))))) =
+    compileProgRiscV (exactLocalAssignContext [7] [8]).toProduction
+      (progOfHOL
+        (.shMemLoad .op8 .local (ofString "dst") (expToHOL (.const (3 : BitVec 8))))) := by
+  apply compileProgExactHOLW_local_shmem_load_bridge
+  · simp [ExpByteRanged]
+  · simp [compileExpExactHOLW, compileExpHOL, expToHOL, crepExpOfHOL, shapeOfHOL]
 
 def exactDecClauseParity : Bool :=
   (match compileDecExactHOLW exactReturnContext (ofString "x") .one (.const 4)
