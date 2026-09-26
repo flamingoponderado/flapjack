@@ -187,6 +187,50 @@ theorem compileProgExactHOLW_return_bridge {width : Nat} [NeZero width]
   · simp [hz, crepProgOfHOL]
     exact hexps
 
+/-- The exact `If` equation agrees with production once the condition
+    expression and both recursive branch results are decoded. -/
+theorem compileProgExactHOLW_if_bridge {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width) (condition : Exp (BitVec width))
+    (thenBranch elseBranch : ProgHOL width)
+    (hcodec :
+      ((compileExpExactHOLW context (expToHOL condition)).1.map crepExpOfHOL,
+        shapeOfHOL (compileExpExactHOLW context (expToHOL condition)).2) =
+        compileExpHOL context.toProduction condition)
+    (hthen : crepProgOfHOL (compileProgExactHOLW context thenBranch) =
+      compileProgRiscV context.toProduction (progOfHOL thenBranch))
+    (helse : crepProgOfHOL (compileProgExactHOLW context elseBranch) =
+      compileProgRiscV context.toProduction (progOfHOL elseBranch)) :
+    crepProgOfHOL (compileProgExactHOLW context
+        (.ite (expToHOL condition) thenBranch elseBranch)) =
+      compileProgRiscV context.toProduction
+        (.ite condition (progOfHOL thenBranch) (progOfHOL elseBranch)) := by
+  rw [Prod.mk.injEq] at hcodec
+  rcases hcodec with ⟨hexps, _hshape⟩
+  simp only [compileProgExactHOLW, compileIfExactHOLW]
+  cases hExact : compileExpExactHOLW context (expToHOL condition) with
+  | mk exactExpressions exactShape =>
+      cases exactExpressions with
+      | nil =>
+          cases hProduction : compileExpHOL context.toProduction condition with
+          | mk productionExpressions productionShape =>
+              have hExpressions : productionExpressions = [] := by
+                simpa [hExact, hProduction] using hexps.symm
+              simp [compileProgRiscV, compileProgHOL, hProduction, hExpressions,
+                crepProgOfHOL]
+      | cons head tail =>
+          cases hProduction : compileExpHOL context.toProduction condition with
+          | mk productionExpressions productionShape =>
+              have hExpressions : productionExpressions =
+                  (crepExpOfHOL head) :: (tail.map crepExpOfHOL) := by
+                simpa [hExact, hProduction] using hexps.symm
+              cases productionExpressions with
+              | nil => simp at hExpressions
+              | cons productionHead productionTail =>
+                  have hHead : productionHead = crepExpOfHOL head :=
+                    (List.cons.inj hExpressions).1
+                  simp [compileProgRiscV, compileProgHOL, hProduction, hHead,
+                    hthen, helse, crepProgOfHOL]
+
 /-- Metadata adapter whose compiler input crosses the exact `DeclHOL` carrier
     boundary.  Its side condition is the byte-range premise used by the
     production-to-HOL declaration codec; it is preserved by the executed
