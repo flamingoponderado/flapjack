@@ -872,6 +872,90 @@ def exactCallHandlerPresentEidParity : Bool :=
 
 #guard exactCallHandlerPresentEidParity
 
+/-! The exact `Call` info dispatcher is checked across all three top-level
+    return-type forms, plus handler lookups on both assigned-result branches.
+    The HOL output rows are the direct `compile_def` evaluations in
+    `scripts/hol-probes/compile_def_probe.out` (`call_no_return`,
+    `call_result_no_handler_*`, and `call_wrapped_result_*`). -/
+
+def exactCallInfoDispatchParity : Bool :=
+  (match compileCallInfoExactHOLW exactReturnContext (ofString "f") none
+      [.const 1, .rstruct [.const 2, .const 3]] (fun _ _ => .skip) with
+   | .call none function [.const 1, .const 2, .const 3] => function == ofString "f"
+   | _ => false) &&
+  (match compileCallInfoExactHOLW exactCallResultContext (ofString "f")
+      (some (none, none)) [.const 1, .rstruct [.const 2, .const 3]]
+      (fun _ _ => .skip) with
+   | .dec 11 (.const 0) (.dec 12 (.const 0)
+       (.call (some ([11, 12], none)) function [.const 1, .const 2, .const 3])) =>
+       function == ofString "f"
+   | _ => false) &&
+  (match compileCallInfoExactHOLW exactCallResultContext (ofString "f")
+      (some (none, some (ofString "E", ofString "exn", .tick)))
+      [.const 1, .rstruct [.const 2, .const 3]] (fun _ _ => .skip) with
+   | .dec 11 (.const 0) (.dec 12 (.const 0)
+       (.call (some ([11, 12], none)) function [.const 1, .const 2, .const 3])) =>
+       function == ofString "f"
+   | _ => false) &&
+  (match compileCallInfoExactHOLW exactCallWrappedResultContext (ofString "f")
+      (some (some (.local, ofString "pair"), none))
+      [.const 1, .rstruct [.const 2, .const 3]] (fun _ _ => .skip) with
+   | .call (some ([30, 31], none)) function [.const 1, .const 2, .const 3] =>
+       function == ofString "f"
+   | _ => false) &&
+  (match compileCallInfoExactHOLW exactReturnContext (ofString "f")
+      (some (some (.local, ofString "missing"), none))
+      [.const 1, .rstruct [.const 2, .const 3]] (fun _ _ => .skip) with
+   | .call none function [.const 1, .const 2, .const 3] => function == ofString "f"
+   | _ => false) &&
+  (match compileCallInfoExactHOLW exactCallWrappedResultContext (ofString "f")
+      (some (some (.local, ofString "pair"),
+        some (ofString "E", ofString "exn", .tick)))
+      [.const 1, .rstruct [.const 2, .const 3]] (fun _ _ => .skip) with
+   | .call (some ([30, 31], none)) function [.const 1, .const 2, .const 3] =>
+       function == ofString "f"
+   | _ => false) &&
+  (match compileCallInfoExactHOLW exactCallWrappedFallbackHandlerMissingContext
+      (ofString "f")
+      (some (some (.local, ofString "missing"),
+        some (ofString "E", ofString "exn", .tick)))
+      [.const 1, .rstruct [.const 2, .const 3]] (fun _ _ => .skip) with
+   | .call none function [.const 1, .const 2, .const 3] => function == ofString "f"
+   | _ => false) &&
+  (match compileCallInfoExactHOLW exactCallWrappedHandlerPresentContext
+      (ofString "f")
+      (some (some (.local, ofString "pair"),
+        some (ofString "E", ofString "exn", .tick)))
+      [.const 1, .rstruct [.const 2, .const 3]] (fun _ body =>
+        match body with | .tick => .tick | _ => .skip) with
+   | .call (some ([30, 31], some (BitVec.ofNat 8 12,
+       .seq (.seq (.assign 20 (.loadGlob 0))
+         (.seq (.assign 21 (.loadGlob 1)) .skip)) .tick))) function
+       [.const 1, .const 2, .const 3] => function == ofString "f"
+   | _ => false) &&
+  (match compileCallInfoExactHOLW exactCallHandlerPresentContext (ofString "f")
+      (some (none, some (ofString "E", ofString "exn", .tick)))
+      [.const 1, .rstruct [.const 2, .const 3]] (fun _ body =>
+        match body with | .tick => .tick | _ => .skip) with
+   | .dec 11 (.const 0) (.call (some ([11], some
+       (BitVec.ofNat 8 12, .seq (.seq (.assign 20 (.loadGlob 0))
+         (.seq (.assign 21 (.loadGlob 1)) .skip)) .tick))) function
+       [.const 1, .const 2, .const 3]) => function == ofString "f"
+   | _ => false) &&
+  (match compileCallInfoExactHOLW exactCallWrappedFallbackHandlerPresentContext
+      (ofString "f")
+      (some (some (.local, ofString "missing"),
+        some (ofString "E", ofString "exn", .tick)))
+      [.const 1, .rstruct [.const 2, .const 3]] (fun _ body =>
+        match body with | .tick => .tick | _ => .skip) with
+   | .call (some ([], some (BitVec.ofNat 8 12,
+       .seq (.seq (.assign 20 (.loadGlob 0))
+         (.seq (.assign 21 (.loadGlob 1)) .skip)) .tick))) function
+       [.const 1, .const 2, .const 3] => function == ofString "f"
+   | _ => false)
+
+#guard exactCallInfoDispatchParity
+
 def exactExtCallClauseParity : Bool :=
   (match compileExtCallExactHOLW exactExtCallContext (ofString "f")
       (.var .local (ofString "configuration"))
