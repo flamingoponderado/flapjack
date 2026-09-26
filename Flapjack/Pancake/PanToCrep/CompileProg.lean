@@ -273,6 +273,17 @@ theorem compileProgExactHOLW_while_bridge {width : Nat} [NeZero width]
                   simp [compileProgRiscV, compileProgHOL, hProduction, hHead,
                     hbody, crepProgOfHOL]
 
+/-- HOL's Global Assign equation compiles to `Skip` in both carriers. -/
+theorem compileProgExactHOLW_global_assign_bridge {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width) (name : MlS)
+    (expression : Flapjack.Pancake.PanLang.ExpHOL width) :
+    crepProgOfHOL
+        (compileProgExactHOLW context (.assign .global name expression)) =
+      compileProgRiscV context.toProduction
+        (progOfHOL (.assign .global name expression)) := by
+  simp [compileProgExactHOLW, compileGlobalAssignExactHOLW,
+    compileProgRiscV, compileProgHOL, crepProgOfHOL, progOfHOL]
+
 /-- Metadata adapter whose compiler input crosses the exact `DeclHOL` carrier
     boundary.  Its side condition is the byte-range premise used by the
     production-to-HOL declaration codec; it is preserved by the executed
