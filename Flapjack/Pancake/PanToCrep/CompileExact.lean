@@ -384,6 +384,44 @@ def compileDecExactHOLW {width : Nat} [NeZero width]
   if valueCount != values.length then .skip
   else nestedDecsHOL names values (compileBody bodyContext)
 
+/-! The `DecCall` clause from HOL `compile_def`
+    (`pan_to_crepScript.sml:262-272`). It allocates return names from the old
+    `vmax`, compiles the body under the extended variable map and `vmax`,
+    initializes every return slot to zero, then emits the target Call followed
+    by the compiled body. -/
+
+def compileDecCallExactHOLW {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (name : MlS)
+    (shape : Flapjack.Pancake.PanLang.ShapeHOL) (function : MlS)
+    (arguments : List (Flapjack.Pancake.PanLang.ExpHOL width))
+    (compileBody : CompileExpContextExact width → CrepProgHOL width) :
+    CrepProgHOL width :=
+  let compiledArguments := compileExpExactHOLWList context arguments
+  let arguments := compiledArguments.flatMap Prod.fst
+  let returnCount := Flapjack.Pancake.PanLang.sizeOfShapeHOL shape
+  let names := (List.range returnCount).map
+    (fun index => context.vmax + index + 1)
+  let bodyContext : CompileExpContextExact width :=
+    { context with
+      vars := context.vars.update (name, (shape, names))
+      vmax := context.vmax + returnCount }
+  let returnDeclarations := nestedDecsHOL names
+    (List.replicate names.length (.const (0 : BitVec width)))
+  let call := CrepProgHOL.call (some (names, none)) function arguments
+  returnDeclarations (.seq call (compileBody bodyContext))
+
+/-! The `rtyp = NONE` arm of the HOL `Call` clause
+    (`pan_to_crepScript.sml:221-225`) compiles each argument, flattens its
+    expression list, and emits a tail call with no return metadata. -/
+
+def compileCallNoReturnExactHOLW {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (function : MlS)
+    (arguments : List (Flapjack.Pancake.PanLang.ExpHOL width)) :
+    CrepProgHOL width :=
+  let compiledArguments := compileExpExactHOLWList context arguments
+  let flattenedArguments := compiledArguments.flatMap Prod.fst
+  .call none function flattenedArguments
+
 /-! The `ExtCall` clause from HOL `compile_def`
     (`pan_to_crepScript.sml:219-233`). The freshness bound is the maximum over
     every variable in all four compiled operand lists, even though the output
