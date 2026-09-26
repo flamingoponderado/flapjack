@@ -1676,24 +1676,6 @@ theorem evalCrepRuntimeExp_topAddr_wordLab
       some (.word state.topAddress) := by
   simp [evalCrepRuntimeExp]
 
-def crepRuntimeExtCallExp
-    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
-    [Sub α] [AndOp α] [OrOp α] [HXor α α α]
-    [ShiftLeft α] [ShiftRight α] [LT α]
-    [DecidableRel (fun left right : α => left < right)] [PanCmp α]
-    (handler : CrepRuntimeFfiHandler α σ ε)
-    (state : CrepRuntimeState α σ) (function : FunName)
-    (configuration configurationLength array arrayLength : CrepExp α) :
-    CrepRuntimeStep α σ ε :=
-  match evalCrepRuntimeExp state configuration,
-      evalCrepRuntimeExp state configurationLength,
-      evalCrepRuntimeExp state array,
-      evalCrepRuntimeExp state arrayLength with
-  | some configuration, some configurationLength, some array, some arrayLength =>
-      crepRuntimeExtCallValues handler state function configuration configurationLength
-        array arrayLength
-  | _, _, _, _ => (.error, state)
-
 def evalCrepRuntimeExps
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α]
@@ -1783,6 +1765,33 @@ def crepRuntimeSharedMemExp
   match (evalCrepRuntimeExpWordLab state address).map panTheWord with
   | some address => crepRuntimeSharedMem handler state operator name address
   | none => (.error, state)
+
+/-- Executed Crep external-call step whose four FFI argument expressions are
+evaluated by the HOL-shaped `word_lab` core `evalCrepRuntimeExpWordLab` instead
+of the unwrapped `evalCrepRuntimeExp`.  Reading each wrapped cell back through
+`panTheWord` recovers exactly the previous behavior
+(`evalCrepRuntimeExpWordLab_panTheWord`), while at width 64 the core equals the
+tagged `evalCrepSemHOLExp` at the canonical executed state
+(`ExecutedWordLabBridge.evalCrepRuntimeExpWordLab_executed`).  This is another
+executed production call site routed through the HOL-shaped evaluator; the
+remaining widths/contexts stay explicit and unchanged. -/
+def crepRuntimeExtCallExp
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α]
+    [ShiftLeft α] [ShiftRight α] [LT α]
+    [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (handler : CrepRuntimeFfiHandler α σ ε)
+    (state : CrepRuntimeState α σ) (function : FunName)
+    (configuration configurationLength array arrayLength : CrepExp α) :
+    CrepRuntimeStep α σ ε :=
+  match (evalCrepRuntimeExpWordLab state configuration).map panTheWord,
+      (evalCrepRuntimeExpWordLab state configurationLength).map panTheWord,
+      (evalCrepRuntimeExpWordLab state array).map panTheWord,
+      (evalCrepRuntimeExpWordLab state arrayLength).map panTheWord with
+  | some configuration, some configurationLength, some array, some arrayLength =>
+      crepRuntimeExtCallValues handler state function configuration configurationLength
+        array arrayLength
+  | _, _, _, _ => (.error, state)
 
 /-- Reading the production wrapped cell back through `PanWordLab.word` recovers
 it, since `PanWordLab` has the single `word` constructor.  Flapjack-only adapter
