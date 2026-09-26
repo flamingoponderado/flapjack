@@ -67,6 +67,11 @@ matching Lean cases live in `Flapjack.Test.CompileDefParity`. The
 and `struct_annot` rows pin the first exact-carrier `compile_def` structural
 slice; its supported-subset helper is intentionally untagged and does not
 claim the full compiler definition.
+`compile_exp_probe.out` records direct HOL EVAL rows for every `compile_exp`
+constructor family and defensive fallback. `Flapjack.Test.CompileExpParity`
+checks those rows through both the existing production-carrier implementation
+and the exact-carrier `compileExpExactHOLW`; the latter is tagged against
+`compile_exp_def` and uses the exact Pan/Crepe expression and context carriers.
 `excp_rel_probe.out` and `ctxt_fc_probe.out` are direct EVALs from
 `pan_to_crepProofTheory`, paired with `Flapjack.Test.PanToCrepRelationsParity`.
 The `functions_projection` row in `ctxt_fc_probe.out` directly checks the

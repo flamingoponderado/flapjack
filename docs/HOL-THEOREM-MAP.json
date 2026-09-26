@@ -2073,10 +2073,15 @@
   {
     "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
     "hol_name": "compile_exp_def",
-    "lean_path": "Flapjack/Pancake/PanToCrep.lean",
-    "lean_name": "compileExp",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-luna-b (source comparison, bead flapjack-4ac.2.5; pan_to_crepScript.sml:39-108): clauses are structurally aligned, but compileExp ranges over production Exp \u03b1 with generic Const \u03b1, String-backed names, production Shape/CrepExp \u03b1, and InfoMap-backed CompileContext. HOL uses word-indexed ExpHOL/CrepExpHOL, ShapeHOL/MlString names, and finite-map context; the generic [BEq \u03b1]/[OfNat \u03b1 0]/[Add \u03b1] carrier is not a positive-width HOL word. Lean also reads arbitrary context.bytesInWord for Load/BytesInWord while HOL uses fixed word-width-derived bytes_in_word. Nearby PanToCrepHOLContext still has String keys and production Shape/generic \u03b1 too. No @[hol] tag is claimed. Exact carrier/compiler replacement is flapjack-4ac.2.5.1, dependent on flapjack-pxn.18.3.5.8; because compileExp feeds the executed compiler, replacement must connect the production path or record a measured exception."
+    "lean_path": "Flapjack/Pancake/PanToCrep/CompileExact.lean",
+    "lean_name": "compileExpExactHOLW",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs",
+      "eids"
+    ],
+    "reviewer": "flapjack-luna-b (source comparison, bead flapjack-pxn.18.3.5.8.13.4; pan_to_crepScript.sml:39-101): checked every compile_exp equation against the direct EVAL rows in scripts/hol-probes/compile_exp_probe.out. Const and address leaves, Local FLOOKUP, Global/missing-local zero fallback, RStruct flattening, RField Comb selection and non-Comb fallback, NStruct/NField fallbacks, Load/load_shape, Load32/LoadByte One-shape side conditions and their fallback, Op/Panop cexp_heads behavior, Cmp/Shift nonempty-head behavior, and BytesInWord n2w (width DIV 8) match. The source and target carriers are ExpHOL width/ShapeHOL and CrepExpHOL width with [NeZero width]; MLString names remain exact MlS, and [NeZero width] represents HOL's positive word dimension. Context maps are the sole representation difference: this declaration uses the named CompileExpContextExact carrier, whose vars/funcs/eids fields are HolFiniteMapExact and whose same-module holFmapAsFiniteSupportWitness proves the toBroad/ofBroad roundtrip. The qualifier records only that finite-support map representation. The separate String-backed production compileExp remains untagged; routing production through this exact definition and compiling complete compile_def remain open under flapjack-pxn.18.3.5.8.13."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
