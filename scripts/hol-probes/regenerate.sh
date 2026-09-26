@@ -927,7 +927,7 @@ run_probe ret_hdl_probeScript.sml ret_hdl_probe.out \
 run_probe wrap_rt_probeScript.sml wrap_rt_probe.out \
   none named "$cake_dir/pancake/pan_to_crepScript.sml"
 run_probe compile_def_probeScript.sml compile_def_probe.out \
-  return struct_skip struct_break struct_continue struct_tick struct_annot struct_seq \
+  return multi_return struct_skip struct_break struct_continue struct_tick struct_annot struct_seq \
   missing_global empty_one_global extra_names_global missing_names_global \
   missing_local empty_one_local extra_names_local missing_names_local valid_local \
   empty_struct_return finite_map_shadow_return extcall_high_tail \

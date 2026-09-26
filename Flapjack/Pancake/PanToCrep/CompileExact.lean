@@ -152,4 +152,15 @@ mutual
     all_goals first | sizeOf_list_dec | decreasing_trivial
 end
 
+/-! The direct `Return` case of `compile_def` (`pan_to_crepScript.sml:193-196`).
+    This helper is untagged because it exposes one exact equation slice rather
+    than HOL's complete recursive `compile` definition. -/
+
+def compileReturnExactHOLW {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width)
+    (expression : Flapjack.Pancake.PanLang.ExpHOL width) : CrepProgHOL width :=
+  let (expressions, shape) := compileExpExactHOLW context expression
+  if Flapjack.Pancake.PanLang.sizeOfShapeHOL shape = 0 then .return []
+  else .return expressions
+
 end Flapjack

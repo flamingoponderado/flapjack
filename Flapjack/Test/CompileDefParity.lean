@@ -1,4 +1,5 @@
 import Flapjack.Pancake.PanToCrep.Compile
+import Flapjack.Pancake.PanToCrep.CompileExact
 
 /-!
 # Original-domain parity for `pan_to_crep$compile` (`compile_def`)
@@ -403,11 +404,31 @@ def exactStructuralSliceParity : Bool :=
 
 #guard exactStructuralSliceParity
 
+def exactReturnContext : CompileExpContextExact 8 where
+  vars := HolFiniteMapExact.empty
+  funcs := HolFiniteMapExact.empty
+  eids := HolFiniteMapExact.empty
+  vmax := 0
+
+def returnValuesMatch (expected : List (CrepExp (BitVec 8))) : CrepProgHOL 8 → Bool
+  | .return actual => actual.map crepExpOfHOL == expected
+  | _ => false
+
+def exactReturnClauseParity : Bool :=
+  returnValuesMatch [.const 7]
+    (compileReturnExactHOLW exactReturnContext (.const 7)) &&
+  returnValuesMatch []
+    (compileReturnExactHOLW exactReturnContext (.rstruct [])) &&
+  returnValuesMatch [.const 1, .const 2]
+    (compileReturnExactHOLW exactReturnContext (.rstruct [.const 1, .const 2]))
+
+#guard exactReturnClauseParity
+
 def runChecks : IO Bool := do
-  if parityGuard && exactStructuralSliceParity then
+  if parityGuard && exactStructuralSliceParity && exactReturnClauseParity then
     IO.println "PASS compile_def fixed-width load/store and control-flow parity"
   else
     IO.println "FAIL compile_def parity"
-  pure (parityGuard && exactStructuralSliceParity)
+  pure (parityGuard && exactStructuralSliceParity && exactReturnClauseParity)
 
 end Flapjack.Test.CompileDefParity

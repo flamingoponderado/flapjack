@@ -23,6 +23,11 @@ val _ = print_eval "return"
       <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
       (Return (Const (7w : 8 word)))``;
 
+val _ = print_eval "multi_return"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (Return (RStruct [Const (1w : 8 word); Const 2w]))``;
+
 val _ = print_eval "struct_skip"
   ``pan_to_crep$compile
       <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>

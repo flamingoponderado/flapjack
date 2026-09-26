@@ -1,4 +1,5 @@
 return=Return [Const 7w]
+multi_return=Return [Const 1w; Const 2w]
 struct_skip=Skip
 struct_break=Break 0
 struct_continue=Continue 0
