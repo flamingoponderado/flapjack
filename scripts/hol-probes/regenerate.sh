@@ -932,6 +932,7 @@ run_probe compile_def_probeScript.sml compile_def_probe.out \
   global_assign_fallback global_shmem_load_fallback \
   local_assign_direct local_assign_overlap_temporaries local_assign_missing_destination \
   local_assign_length_fallback \
+  primitive_destination_present primitive_destination_missing \
   struct_skip struct_break struct_continue struct_tick struct_annot struct_seq \
   missing_global empty_one_global extra_names_global missing_names_global \
   missing_local empty_one_local extra_names_local missing_names_local valid_local \

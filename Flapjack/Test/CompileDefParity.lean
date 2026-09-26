@@ -498,15 +498,28 @@ def exactLocalAssignClauseParity : Bool :=
 
 #guard exactLocalAssignClauseParity
 
+def exactPrimitiveClauseParity : Bool :=
+  (match compilePrimitiveExactHOLW
+      (exactLocalAssignContext [7] [8]) (ofString "dst") .addCarry
+      [.const 1, .var .local (ofString "src")] with
+   | .dec 11 (.const 1) (.dec 12 (.var 8) (.primitive [7] .addCarry [11, 12])) => true
+   | _ => false) &&
+  (match compilePrimitiveExactHOLW exactReturnContext (ofString "dst") .addCarry
+      [.const 1, .var .local (ofString "src")] with
+   | .skip => true
+   | _ => false)
+
+#guard exactPrimitiveClauseParity
+
 def runChecks : IO Bool := do
   if parityGuard && exactStructuralSliceParity && exactReturnClauseParity &&
       exactStoreClauseParity && exactIfWhileClauseParity && exactGlobalFallbackParity &&
-      exactLocalAssignClauseParity then
+      exactLocalAssignClauseParity && exactPrimitiveClauseParity then
     IO.println "PASS compile_def fixed-width load/store and control-flow parity"
   else
     IO.println "FAIL compile_def parity"
   pure (parityGuard && exactStructuralSliceParity && exactReturnClauseParity &&
     exactStoreClauseParity && exactIfWhileClauseParity && exactGlobalFallbackParity &&
-    exactLocalAssignClauseParity)
+    exactLocalAssignClauseParity && exactPrimitiveClauseParity)
 
 end Flapjack.Test.CompileDefParity

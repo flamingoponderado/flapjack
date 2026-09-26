@@ -244,4 +244,20 @@ def compileLocalAssignExactHOLW {width : Nat} [NeZero width]
             (temporaries.map CrepExpHOL.var)
           nestedDecsHOL temporaries expressions (crepNestedSeqHOL assignments)
 
+/-! The local `Primitive` destination equation from `compile_def`
+    (`pan_to_crepScript.sml:165-175`). HOL flattens every argument's compiled
+    expression list, allocates one fresh temporary per flattened value, then
+    wraps the target primitive in `nested_decs`. -/
+
+def compilePrimitiveExactHOLW {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (name : MlS) (operator : PrimOp)
+    (arguments : List (Flapjack.Pancake.PanLang.ExpHOL width)) : CrepProgHOL width :=
+  let values := (compileExpExactHOLWList context arguments).flatMap Prod.fst
+  match context.vars.lookup name with
+  | none => .skip
+  | some (_shape, names) =>
+      let temporaries := (List.range values.length).map
+        (fun index => context.vmax + index + 1)
+      nestedDecsHOL temporaries values (.primitive names operator temporaries)
+
 end Flapjack

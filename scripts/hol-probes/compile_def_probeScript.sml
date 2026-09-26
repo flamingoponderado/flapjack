@@ -90,6 +90,15 @@ val _ = print_eval "local_assign_length_fallback"
            |+ («src», (panLang$One, [9]));
          funcs := FEMPTY; eids := FEMPTY; vmax := 10 |>
       (Assign Local «dst» (Var Local «src»))``;
+val _ = print_eval "primitive_destination_present"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY |+ («dst», (panLang$One, [7])) |+ («src», (panLang$One, [8]));
+         funcs := FEMPTY; eids := FEMPTY; vmax := 10 |>
+      (Primitive «dst» AddCarry [Const (1w : 8 word); Var Local «src»])``;
+val _ = print_eval "primitive_destination_missing"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 10 |>
+      (Primitive «dst» AddCarry [Const (1w : 8 word); Var Local «src»])``;
 
 val _ = print_eval "struct_skip"
   ``pan_to_crep$compile
