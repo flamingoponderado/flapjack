@@ -158,6 +158,7 @@ import Flapjack.Pancake.Semantics.CrepSem
 import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
 import Flapjack.Pancake.Semantics.CrepSem.LookupCode
 import Flapjack.Pancake.Semantics.CrepSem.StateExact
+import Flapjack.Pancake.Semantics.CrepSem.ExecutedWordLabBridge
 import Flapjack.PanToCrepCorrectnessBoundary
 import Flapjack.PanToCrepExceptionRelation
 import Flapjack.PanToCrepMaxList

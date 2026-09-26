@@ -11,8 +11,7 @@ HOL `panSem$state` instead keeps those fields as finite maps (`varname |-> 'a v`
 `StateExactFiniteMap.lean`) is the provisional state-level projection of the
 direct, clause-for-clause finite context evaluator
 `evalPanSemRecursiveCallFiniteContext`.  It currently keeps the outer `Option`
-assembly marker (the marker is always `some` once totality is proved; bead
-`flapjack-6yq`), so a clause returns `some (result, state)` rather than HOL
+assembly marker (proved always `some` by `evaluateHOLFinite_ne_none`), so a clause returns `some (result, state)` rather than HOL
 `evaluate_def`'s bare `result option × state` pair.  The finite
 context threads `memaddrsDecidable`/`shMemaddrsDecidable` (bead `flapjack-6yq`)
 so the recursive clauses typecheck over literal record updates.

@@ -134,7 +134,7 @@ def crepExactWriteBytearray {width : Nat} [NeZero width] {σ : Type}
     BitVec width → HolWordLab width := by
   haveI : DecidablePred state.memaddrs := memDec
   exact panWriteBytearrayHOL address bytes state.memory state.memaddrs state.be
-  
+
 
 /-- Exact port of HOL `exit_loop_def` (`crepSemScript.sml:234-238`):
     `exit_loop (SOME (Break n)) = SOME (Break (n - 1))`,

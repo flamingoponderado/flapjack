@@ -1,4 +1,5 @@
 import Flapjack.Pancake.Proofs.PanToCrep
+import Flapjack.Pancake.Semantics.CrepSem.ExecutedWordLabBridge
 
 /-!
 Direct runtime checks against `scripts/hol-probes/crep_replicate_const_probe.out`.
@@ -124,8 +125,32 @@ def exactReplicateGuard : Bool :=
 
 #guard exactReplicateGuard
 
+/-- Executed-path bridge (`flapjack-pxn.18.4.3.48.1.21`): the production
+`word_lab` list evaluator at the canonical BitVec evaluator state of the
+faithful carrier returns the same replicated `word_lab` list as the tagged
+exact `evalCrepSemHOLExp`, matching HOL row `replicate_const_three`. -/
+example :
+    evalCrepRuntimeExpsWordLab (executedCrepState exactReplicateState)
+        (List.replicate 3 (CrepExp.const (0 : BitVec 8))) =
+      some (List.replicate 3 (PanWordLab.word (0 : BitVec 8))) :=
+  evalCrepRuntimeExpsWordLab_replicate_const_executed exactReplicateState 3 (0 : BitVec 8)
+
+/-- Restatement of `evaluate_replicate_const` over the executed evaluator: the
+production `word_lab` list context at the canonical BitVec evaluator state
+equals the exact tagged `evaluateReplicateConstHOL` output transported through
+`HolWordLab.toPanWordLab`. -/
+example :
+    evalCrepRuntimeExpsWordLab (executedCrepState exactReplicateState)
+        (List.replicate 3 (CrepExp.const (0 : BitVec 8))) =
+      ((List.replicate 3 (CrepExpHOL.const (0 : BitVec 8))).mapM
+        (evalCrepSemHOLExp exactReplicateState)).map
+        (List.map HolWordLab.toPanWordLab) := by
+  rw [evaluateReplicateConstHOL]
+  exact evalCrepRuntimeExpsWordLab_replicate_const_executed exactReplicateState 3 (0 : BitVec 8)
+
 def runChecks : IO Bool := do
   IO.println s!"PASS crep evaluate_replicate_const word_lab shape"
   IO.println s!"PASS exact crepSem evaluate_replicate_const matches HOL oracle rows"
+  IO.println s!"PASS executed crep word_lab evaluator agrees with exact evalCrepSemHOLExp on Const path"
   pure (replicateConstGuard && exactReplicateGuard)
 end Flapjack.Test.CrepReplicateConstParity

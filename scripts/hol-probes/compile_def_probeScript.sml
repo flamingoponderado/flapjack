@@ -90,6 +90,93 @@ val _ = print_eval "local_assign_length_fallback"
            |+ («src», (panLang$One, [9]));
          funcs := FEMPTY; eids := FEMPTY; vmax := 10 |>
       (Assign Local «dst» (Var Local «src»))``;
+val _ = print_eval "primitive_destination_present"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY |+ («dst», (panLang$One, [7])) |+ («src», (panLang$One, [8]));
+         funcs := FEMPTY; eids := FEMPTY; vmax := 10 |>
+      (Primitive «dst» AddCarry [Const (1w : 8 word); Var Local «src»])``;
+val _ = print_eval "primitive_destination_missing"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 10 |>
+      (Primitive «dst» AddCarry [Const (1w : 8 word); Var Local «src»])``;
+val _ = print_eval "store_one_word"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (Store (Const (3w : 8 word)) (Const 4w))``;
+val _ = print_eval "store_multiword"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (Store (Const (3w : 8 word)) (RStruct [Const 4w; Const 5w]))``;
+val _ = print_eval "store_address_fallback"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (Store (RStruct ([] : 8 panLang$exp list)) (Const 4w))``;
+val _ = print_eval "store_shape_length_fallback"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY |+ («bad», (panLang$Comb [panLang$One; panLang$One], [9]));
+         funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (Store (Const (3w : 8 word)) (Var Local «bad»))``;
+val _ = print_eval "raise_one_word"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY;
+         eids := FEMPTY |+ («E», (12w : 8 word)); vmax := 0 |>
+      (Raise «E» (Const (9w : 8 word)))``;
+val _ = print_eval "raise_multiword"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY;
+         eids := FEMPTY |+ («E», (12w : 8 word)); vmax := 0 |>
+      (Raise «E» (RStruct [Const (1w : 8 word); Const 2w]))``;
+val _ = print_eval "raise_missing_eid"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (Raise «missing» (Const (9w : 8 word)))``;
+val _ = print_eval "raise_shape_length_fallback"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY |+ («bad», (panLang$Comb [panLang$One; panLang$One], [9]));
+         funcs := FEMPTY; eids := FEMPTY |+ («E», (12w : 8 word)); vmax := 0 |>
+      (Raise «E» (Var Local «bad»))``;
+val _ = print_eval "shmem_store_clause"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY |+ («src», (panLang$One, [8]));
+         funcs := FEMPTY; eids := FEMPTY; vmax := 10 |>
+      (ShMemStore Op8 (Var Local «src») (Const (3w : 8 word)))``;
+val _ = print_eval "shmem_store_value_fallback"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 10 |>
+      (ShMemStore Op8 (RStruct ([] : 8 panLang$exp list)) (Const (3w : 8 word)))``;
+val _ = print_eval "shmem_store_address_fallback"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 10 |>
+      (ShMemStore Op8 (Const (4w : 8 word)) (RStruct ([] : 8 panLang$exp list)))``;
+val _ = print_eval "shmem_load_local_clause"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY |+ («dst», (panLang$One, [7]));
+         funcs := FEMPTY; eids := FEMPTY; vmax := 10 |>
+      (ShMemLoad Op8 Local «dst» (Const (3w : 8 word)))``;
+val _ = print_eval "shmem_load_missing_destination"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 10 |>
+      (ShMemLoad Op8 Local «dst» (Const (3w : 8 word)))``;
+val _ = print_eval "shmem_load_address_fallback"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY |+ («dst», (panLang$One, [7]));
+         funcs := FEMPTY; eids := FEMPTY; vmax := 10 |>
+      (ShMemLoad Op8 Local «dst» (RStruct ([] : 8 panLang$exp list)))``;
+val _ = print_eval "dec_one_word"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (Dec «x» panLang$One (Const (4w : 8 word))
+        (Return (Var Local «x»)))``;
+val _ = print_eval "dec_multiword"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (Dec «pair» (panLang$Comb [panLang$One; panLang$One])
+        (RStruct [Const (1w : 8 word); Const 2w]) Tick)``;
+val _ = print_eval "dec_shape_length_fallback"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY |+ («bad», (panLang$Comb [panLang$One; panLang$One], [9]));
+         funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (Dec «x» panLang$One (Var Local «bad») Tick)``;
 
 val _ = print_eval "struct_skip"
   ``pan_to_crep$compile
@@ -181,6 +268,38 @@ val _ = print_eval "missing_names_local"
       (panLang$Call
         (SOME (SOME (panLang$Local, «missing_names»), NONE)) «f» [])``;
 
+val _ = print_eval "call_no_return"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (panLang$Call NONE «f»
+        [panLang$Const (1w : 8 word);
+         panLang$RStruct [panLang$Const 2w; panLang$Const 3w]])``;
+
+val _ = print_eval "call_result_no_handler_present"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY;
+         funcs := FEMPTY |+ («f», ([], panLang$Comb [panLang$One; panLang$One]));
+         eids := FEMPTY; vmax := 10 |>
+      (panLang$Call (SOME (NONE, NONE)) «f»
+        [panLang$Const (1w : 8 word);
+         panLang$RStruct [panLang$Const 2w; panLang$Const 3w]])``;
+
+val _ = print_eval "call_result_no_handler_missing"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 10 |>
+      (panLang$Call (SOME (NONE, NONE)) «missing»
+        [panLang$Const (1w : 8 word);
+         panLang$RStruct [panLang$Const 2w; panLang$Const 3w]])``;
+
+val _ = print_eval "call_handler_missing_eid"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY;
+         funcs := FEMPTY |+ («f», ([], panLang$Comb [panLang$One; panLang$One]));
+         eids := FEMPTY; vmax := 10 |>
+      (panLang$Call (SOME (NONE, SOME («E», «exn», panLang$Tick))) «f»
+        [panLang$Const (1w : 8 word);
+         panLang$RStruct [panLang$Const 2w; panLang$Const 3w]])``;
+
 val _ = print_eval "valid_local"
   ``pan_to_crep$compile
       <| vars := FEMPTY |+ («pair»,
@@ -201,6 +320,19 @@ val _ = print_eval "finite_map_shadow_return"
          funcs := FEMPTY; eids := FEMPTY; vmax := 5 |>
       (panLang$Return (panLang$Var panLang$Local «p»))``;
 
+val _ = print_eval "deccall_one_word"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 4 |>
+      (panLang$DecCall «x» panLang$One «f» [panLang$Const (3w : 8 word)]
+        (panLang$Return (panLang$Var panLang$Local «x»)))``;
+
+val _ = print_eval "deccall_multiword"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 10 |>
+      (panLang$DecCall «pair» (panLang$Comb [panLang$One; panLang$One]) «f»
+        [panLang$Const (3w : 8 word); panLang$Const 4w]
+        (panLang$Return (panLang$Var panLang$Local «pair»)))``;
+
 (* The source freshness bound scans all var_cexp words, even though ExtCall
    requires each operand to have shape One and emits only its first word. *)
 val _ = print_eval "extcall_high_tail"
@@ -209,7 +341,7 @@ val _ = print_eval "extcall_high_tail"
                  |+ («len1», (panLang$One, [5]))
                  |+ («ptr2», (panLang$One, [6]))
                  |+ («len2», (panLang$One, [7]));
-         funcs := FEMPTY; eids := FEMPTY; vmax := 100 |>
+         funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
       (panLang$ExtCall «f»
         (panLang$Var panLang$Local «ptr1»)
         (panLang$Var panLang$Local «len1»)
@@ -219,12 +351,24 @@ val _ = print_eval "extcall_high_tail"
 val _ = print_eval "extcall_shared_high_tail"
   ``pan_to_crep$compile
       <| vars := FEMPTY |+ («x», (panLang$One, [1; 99]));
-         funcs := FEMPTY; eids := FEMPTY; vmax := 99 |>
+         funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
       (panLang$ExtCall «f»
         (panLang$Var panLang$Local «x»)
         (panLang$Var panLang$Local «x»)
         (panLang$Var panLang$Local «x»)
         (panLang$Var panLang$Local «x»))``;
+
+val _ = print_eval "extcall_constants"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 400 |>
+      (panLang$ExtCall «f» (panLang$Const (1w : 8 word))
+        (panLang$Const 2w) (panLang$Const 3w) (panLang$Const 4w))``;
+
+val _ = print_eval "extcall_shape_fallback"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (panLang$ExtCall «f» (panLang$RStruct ([] : 8 panLang$exp list))
+        (panLang$Const (1w : 8 word)) (panLang$Const 2w) (panLang$Const 3w))``;
 
 val _ = print_eval "pair_load"
   ``pan_to_crep$compile
