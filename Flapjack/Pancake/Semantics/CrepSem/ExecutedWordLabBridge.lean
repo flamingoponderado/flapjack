@@ -686,4 +686,56 @@ theorem evalCrepRuntimeExpWordLab_executed {σ : Type} (state : CrepSemHOLState 
   rw [evalCrepRuntimeExp_executed state e]
   exact option_map_holWordLabToWord_map_word _
 
+@[simp] theorem list_holWordLabToWord_map_word {width : Nat} [NeZero width]
+    (l : List (HolWordLab width)) :
+    (l.map holWordLabToWord).map PanWordLab.word = l.map HolWordLab.toPanWordLab := by
+  induction l with
+  | nil => rfl
+  | cons h t ih => cases h with | word v => simp [ih]
+
+@[simp] theorem option_map_list_holWordLabToWord_map_word {width : Nat} [NeZero width]
+    (o : Option (List (HolWordLab width))) :
+    (o.map (List.map holWordLabToWord)).map (List.map PanWordLab.word) =
+      o.map (List.map HolWordLab.toPanWordLab) := by
+  cases o with
+  | none => rfl
+  | some l => simpa only [Option.map_some] using congrArg some (list_holWordLabToWord_map_word l)
+
+section
+
+set_option maxHeartbeats 1000000
+
+/-- Unconditional width-64 list-level executed bridge: the shipped bare list
+evaluator `evalCrepRuntimeExps` at the canonical BitVec evaluator state returns
+the exact `evalCrepSemHOLExp` result (mapped through `holWordLabToWord`) for
+every list of expressions.  This lifts `evalCrepRuntimeExp_executed` from a
+single expression to the list evaluator. -/
+theorem evalCrepRuntimeExps_executed {σ : Type} (state : CrepSemHOLState 64 σ)
+    [DecidablePred state.memaddrs] (es : List (CrepExp (BitVec 64))) :
+    evalCrepRuntimeExps (executedCrepState state) es =
+      (es.mapM (fun e => evalCrepSemHOLExp state (crepExpToHOL e))).map
+        (List.map holWordLabToWord) := by
+  induction es with
+  | nil => simp [evalCrepRuntimeExps]
+  | cons e rest ih =>
+      rw [List.mapM_cons]
+      simp only [evalCrepRuntimeExps]
+      rw [evalCrepRuntimeExp_executed state e]
+      rw [ih]
+      exact (option_map_list_map_cons _ _ _).symm
+
+end
+
+/-- Unconditional width-64 list-level executed production `word_lab` bridge: the
+shipped `word_lab` list evaluator returns the exact `evalCrepSemHOLExp` result
+(mapped through `HolWordLab.toPanWordLab`). -/
+theorem evalCrepRuntimeExpsWordLab_executed {σ : Type} (state : CrepSemHOLState 64 σ)
+    [DecidablePred state.memaddrs] (es : List (CrepExp (BitVec 64))) :
+    evalCrepRuntimeExpsWordLab (executedCrepState state) es =
+      (es.mapM (fun e => evalCrepSemHOLExp state (crepExpToHOL e))).map
+        (List.map HolWordLab.toPanWordLab) := by
+  rw [← evalCrepRuntimeExps_wordLab_projection (executedCrepState state) es]
+  rw [evalCrepRuntimeExps_executed state es]
+  exact option_map_list_holWordLabToWord_map_word (width := 64) _
+
 end Flapjack
