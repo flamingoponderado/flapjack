@@ -30,15 +30,20 @@ translation of the corresponding `evaluate_def` disjunct, including the
 `fix_clock`/`dec_clock` split, the `While` loop-control labels, the `Call`
 handler path, and the FFI clauses.
 
-## Declaration-local representation notes (no `@[hol]` tag)
+## Declaration-local representation notes
 
-The declarations here are intentionally **untagged**: the whole-program
+Most declarations here are intentionally **untagged**: the whole-program
 statement shape is not yet the reviewed exact HOL statement (the projection of
 `CrepResultHOL`'s `return` payload through `PanWordLab`, the `RiscV.Word width`
 fixed-width model of HOL's arbitrary finite word dimension, the executable
 `HolFfiState`/`UInt8` byte codec used by the FFI clauses, and the omission of a
 general agreement proof with the executed interpreter). They are
 declaration-local infrastructure only.
+
+The one exception is `exitLoopCrepResult`, an exact `@[hol]` port of
+`crepSem$exit_loop_def`: it inspects no result payload, so the accepted exact
+`CrepResultHOL`/`HolFinalEvent` carriers (the same reviewed carrier as the
+tagged `contResHOL`) make its statement the HOL statement.
 
 * `CrepResultHOL.return` carries `List (PanWordLab (BitVec width))` while HOL
   `crepSem$result` carries `('a word_lab) list`; the exact `HolWordLab` values
@@ -131,9 +136,18 @@ def crepExactWriteBytearray {width : Nat} [NeZero width] {σ : Type}
   exact panWriteBytearrayHOL address bytes state.memory state.memaddrs state.be
   
 
-/-- HOL `exit_loop` (`crepSemScript.sml:220-224`) on an optional control result:
-    propagate other outcomes, decrementing the nesting label of `Break` and
-    `Continue`. -/
+/-- Exact port of HOL `exit_loop_def` (`crepSemScript.sml:234-238`):
+    `exit_loop (SOME (Break n)) = SOME (Break (n - 1))`,
+    `exit_loop (SOME (Continue n)) = SOME (Continue (n - 1))`, and
+    `exit_loop res = res`. The carrier
+    `Option (CrepResultHOL (BitVec width) HolFinalEvent)` is the exact
+    `crepSem$result option` at the positive word dimension: `CrepResultHOL` is
+    the accepted constructor-by-constructor encoding of `crepSem$result` (the
+    same reviewed carrier as the tagged `contResHOL`), `HolFinalEvent` is the
+    tagged exact port of `final_event`, and `Nat` subtraction is HOL `num`
+    subtraction. The `Return`/`Exception` payloads are never inspected, so no
+    payload projection is involved. -/
+@[hol "cakeml/pancake/semantics/crepSemScript.sml" "exit_loop_def"]
 def exitLoopCrepResult {width : Nat} :
     Option (CrepResultHOL (BitVec width) HolFinalEvent) →
       Option (CrepResultHOL (BitVec width) HolFinalEvent)

@@ -537,6 +537,14 @@
   },
   {
     "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
+    "hol_name": "exit_loop_def",
+    "lean_path": "Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean",
+    "lean_name": "exitLoopCrepResult",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-26; bead flapjack-pxn.18.5.5.7.7.14): HOL exit_loop_def (crepSemScript.sml:234-238) is the three equations exit_loop (SOME (Break n)) = SOME (Break (n - 1)); exit_loop (SOME (Continue n)) = SOME (Continue (n - 1)); exit_loop res = res. The Lean clauses match one for one over the carrier Option (CrepResultHOL (BitVec width) HolFinalEvent), which is the exact crepSem$result option at the positive word dimension: CrepResultHOL is the accepted constructor-by-constructor encoding of crepSem$result (same reviewed carrier as the tagged contResHOL), HolFinalEvent is the tagged exact port of final_event, and Nat subtraction is HOL num subtraction. No result payload is inspected, so no PanWordLab/HolWordLab projection arises. Direct HOL EVAL rows exit_loop_break=SOME (Break 2), exit_loop_break_zero=SOME (Break 0), exit_loop_continue=SOME (Continue 1), exit_loop_other=SOME TimeOut, exit_loop_none=NONE, exit_loop_error=SOME Error in scripts/hol-probes/crep_exit_loop_probe.out are reproduced by kernel-checked theorems in Flapjack/Test/CrepSemTotalEvaluateHOLParity.lean. Positive-width carrier via [NeZero width] where the word is used; this definition itself is width-generic like HOL.)"
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
     "hol_name": "eval_def",
     "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
     "lean_name": "evalCrepHolFiniteStateSource_load",
