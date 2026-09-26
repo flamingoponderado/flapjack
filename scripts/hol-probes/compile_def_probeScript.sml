@@ -46,6 +46,22 @@ val _ = print_eval "store_byte_fallback"
       <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
       (panLang$StoreByte (panLang$Const (3w : 8 word))
         (panLang$RStruct ([] : 8 panLang$exp list)))``;
+val _ = print_eval "if_clause"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (If (Const (1w : 8 word)) Skip Break)``;
+val _ = print_eval "if_fallback"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (If (RStruct ([] : 8 panLang$exp list)) Skip Skip)``;
+val _ = print_eval "while_clause"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (While (Const (2w : 8 word)) Break)``;
+val _ = print_eval "while_fallback"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (While (RStruct ([] : 8 panLang$exp list)) Skip)``;
 
 val _ = print_eval "struct_skip"
   ``pan_to_crep$compile
