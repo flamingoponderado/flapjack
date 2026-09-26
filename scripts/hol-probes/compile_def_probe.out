@@ -82,6 +82,7 @@ call_wrapped_result_fallback_handler_present_eid=Call
            (Seq (Assign 20 (LoadGlob 0w))
               (Seq (Assign 21 (LoadGlob 1w)) Skip)) Tick))) «f»
   [Const 1w; Const 2w; Const 3w]
+call_wrapped_result_fallback_handler_missing_eid=Call NONE «f» [Const 1w; Const 2w; Const 3w]
 call_handler_missing_eid=Dec 11 (Const 0w)
   (Dec 12 (Const 0w)
      (Call (SOME ([11; 12],NONE)) «f» [Const 1w; Const 2w; Const 3w]))

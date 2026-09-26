@@ -351,6 +351,16 @@ val _ = print_eval "call_wrapped_result_fallback_handler_present_eid"
         [panLang$Const (1w : 8 word);
          panLang$RStruct [panLang$Const 2w; panLang$Const 3w]])``;
 
+val _ = print_eval "call_wrapped_result_fallback_handler_missing_eid"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY |+ («exn», (panLang$Comb [panLang$One; panLang$One], [20; 21]));
+         funcs := FEMPTY; eids := FEMPTY; vmax := 50 |>
+      (panLang$Call
+        (SOME (SOME (panLang$Local, «missing»),
+          SOME («E», «exn», panLang$Tick))) «f»
+        [panLang$Const (1w : 8 word);
+         panLang$RStruct [panLang$Const 2w; panLang$Const 3w]])``;
+
 val _ = print_eval "call_handler_missing_eid"
   ``pan_to_crep$compile
       <| vars := FEMPTY;
