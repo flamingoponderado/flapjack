@@ -42,10 +42,25 @@ def noOverlapFiniteExact {κ β : Type}
       map.lookup key' = some (shape', slots') →
       (∃ slot, slot ∈ slots ∧ slot ∈ slots') → key = key'
 
-/-- Flapjack-specific state-relation support over the exact finite-support
-    PanSem and CrepSem carriers. `globals.lookup = none` renders HOL `FEMPTY`;
-    this is not a tagged `state_rel_def` port because its finite-map fields span
-    two owning state carriers. -/
+/-- Same-module canonical relation witness for the multi-carrier
+    `fmap_as_finite_support_relation` qualifier. It forwards the canonical
+    finite-support roundtrip of `PanSemStateFiniteExact`, the carrier owning the
+    single finite-map field traversed by HOL `state_rel_def` (`globals`). -/
+theorem holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact
+    {width : Nat} {σ : Type} [NeZero width] :
+    (∀ (state : PanSemStateExact width σ) (h : state.FiniteSupport),
+        (PanSemStateFiniteExact.ofExact state h).toExact = state) ∧
+    (∀ state : PanSemStateFiniteExact width σ,
+        PanSemStateFiniteExact.ofExact state.toExact state.toExact_finiteSupport = state) :=
+  PanSemStateFiniteExact.holFmapAsFiniteSupportWitness
+
+/-- Exact port of HOL `state_rel_def`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:45-58`). `source.globals`
+    is the only finite-map field of an exact state carrier that the relation
+    traverses, and HOL asserts it is `FEMPTY`; the qualifier records exactly
+    that field. The Crep target contributes no traversed finite-map field. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "state_rel_def"
+  (fmap_as_finite_support_relation := [PanSemStateFiniteExact.globals])]
 def panToCrepStateRelFiniteExact {width : Nat} {σ : Type} [NeZero width]
     (source : PanSemStateFiniteExact width σ)
     (target : CrepSemHOLState width σ) : Prop :=

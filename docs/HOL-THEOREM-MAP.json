@@ -12485,5 +12485,24 @@
     "lean_name": "progOfHOL_panSimpDeclsHOL",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific codec bridge for exact HOL `compile_prog_def`: mapping `panSimpDeclsHOL` through `declOfHOL` agrees with executed production `panSimpDecls`, including declaration traversal and per-function body compilation. No separate HOL theorem about the declaration decoder; no HOL tag."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "state_rel_def",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "panToCrepStateRelFiniteExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "reviewer": "flapjack-ds8 source comparison (bead flapjack-pxn.18.3.7.1.3.1.4): HOL state_rel_def (cakeml/pancake/proofs/pan_to_crepProofScript.sml:45-58) matches the Lean body clause for clause (memory/memaddrs/shMemaddrs functions, structs=[], globals=FEMPTY as lookup=fun _=>none, clock/be/ffi/baseAddr/topAddr). The only traversed finite-map field is PanSemStateFiniteExact.globals; CrepSemHOLState contributes no translated finite-map field. The relation qualifier records exactly that field; the same-module witness forwards the canonical PanSemStateFiniteExact roundtrip.",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.globals"
+    ]
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds8: Flapjack-specific same-module canonical relation witness for the fmap_as_finite_support_relation qualifier on panToCrepStateRelFiniteExact. It forwards the canonical roundtrip of PanSemStateFiniteExact and has no HOL theorem original."
   }
 ]
