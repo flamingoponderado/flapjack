@@ -76,9 +76,41 @@ arm's flattening of argument expressions, with the exact untagged
 `call_result_no_handler_present` and `_missing` pin the other arm for
 `rtyp = SOME (NONE, NONE)`: lookup of the return shape, fresh result names,
 zero initialization, and the empty-result fallback. Its exact untagged helper
-is `compileCallResultNoHandlerExactHOLW`. `call_handler_missing_eid` checks
+is `compileCallResultNoHandlerExactHOLW`. `call_wrapped_result_no_handler`
+checks the successful `wrap_rt (FLOOKUP ctxt.vars rt)` arm for a local Call
+result: it reuses the looked-up names directly, without temporary allocation
+or zero initialization. The exact untagged helper and parity guard are
+`compileCallWrappedResultNoHandlerExactHOLW` and
+`exactCallWrappedResultNoHandlerParity`. `call_wrapped_result_missing` and
+`call_wrapped_result_empty_one` check the two `wrap_rt = NONE` cases, which
+emit a flattened tail call without result metadata; their exact helper and
+guard are `compileCallWrappedResultFallbackNoHandlerExactHOLW` and
+`exactCallWrappedResultFallbackNoHandlerParity`. `call_handler_missing_eid` checks
 that an exception handler with a missing `eids` entry takes the same fallback;
 the Lean exact subcase is `compileCallHandlerMissingEidExactHOLW`.
+`call_wrapped_result_handler_missing_eid` checks the distinct wrapped-result
+case: the missing handler EID is discarded, but destination names remain in
+the call result metadata. The matching helper and guard are
+`compileCallWrappedResultHandlerMissingEidExactHOLW` and
+`exactCallWrappedResultHandlerMissingEidParity`.
+`call_wrapped_result_handler_present_eid` checks the found-EID branch: result
+names remain direct metadata and `exp_hdl` is sequenced before the compiled
+handler body. Its matching helper and guard are
+`compileCallWrappedResultHandlerPresentEidExactHOLW` and
+`exactCallWrappedResultHandlerPresentEidParity`.
+`call_wrapped_result_fallback_handler_present_eid` checks the complementary
+case where no wrapped result destination exists: the handler remains but the
+Call return-name list is empty. Its matching helper and guard are
+`compileCallWrappedResultFallbackHandlerPresentEidExactHOLW` and
+`exactCallWrappedFallbackHandlerPresentEidParity`.
+`call_wrapped_result_fallback_handler_missing_eid` checks the same missing
+result destination with no exception-code entry, so HOL drops the handler and
+emits `Call NONE`; the matching helper and guard are
+`compileCallWrappedResultFallbackHandlerMissingEidExactHOLW` and
+`exactCallWrappedFallbackHandlerMissingEidParity`.
+`call_handler_present_eid` checks the found-EID branch, including exact
+`exp_hdl` global loads and recursive handler sequencing; its exact helper is
+`compileCallHandlerPresentEidExactHOLW`.
 `extcall_constants` (with `vmax = 400`),
 `extcall_high_tail` (with `vmax = 0`), `extcall_shared_high_tail`, and
 `extcall_shape_fallback` pin the `ExtCall` case: its freshness bound scans all

@@ -9,6 +9,11 @@ The oracle row is transcribed from
 `evaluate (Skip, s) = (NONE, s)`. The same probe also records
 `break_eval=T` and `continue_eval=T`. The evaluator is untagged, so these are
 declaration-local infrastructure regressions, not a whole-program HOL claim.
+
+This file also reproduces the six direct HOL rows of
+`scripts/hol-probes/crep_exit_loop_probe.out` for the exact `@[hol]` port
+`exitLoopCrepResult` (`crepSemScript.sml:exit_loop_def`) over the accepted exact
+`CrepResultHOLExact` carrier, which is also the evaluator's own result carrier.
 -/
 
 namespace Flapjack.Test.CrepSemTotalEvaluateHOLParity
@@ -38,42 +43,48 @@ def shMemDecSample (a : BitVec 64) : Decidable (sampleHOLState.shMemaddrs a) :=
   isFalse (by simp [sampleHOLState])
 
 def run (program : CrepProgHOL 64) :
-    Option (CrepResultHOL (BitVec 64) HolFinalEvent) × CrepSemHOLState 64 Unit :=
+    Option (CrepResultHOLExact 64) × CrepSemHOLState 64 Unit :=
   evalCrepSemHOLProg sampleHOLState memDecSample shMemDecSample program
 
 /-- `true` when the result is HOL `NONE` (ordinary completion). -/
 def resultIsNormal :
-    Option (CrepResultHOL (BitVec 64) HolFinalEvent) → Bool
+    Option (CrepResultHOLExact 64) → Bool
   | none => true
   | _ => false
 
 /-- `true` when the result is `SOME (Break n)`. -/
 def resultIsBreak (n : Nat) :
-    Option (CrepResultHOL (BitVec 64) HolFinalEvent) → Bool
+    Option (CrepResultHOLExact 64) → Bool
   | some (.break m) => m == n
   | _ => false
 
 /-- `true` when the result is `SOME (Continue n)`. -/
 def resultIsContinue (n : Nat) :
-    Option (CrepResultHOL (BitVec 64) HolFinalEvent) → Bool
+    Option (CrepResultHOLExact 64) → Bool
   | some (.continue m) => m == n
   | _ => false
 
 /-- `true` when the result is `SOME (Exception v)`. -/
 def resultIsException (v : BitVec 64) :
-    Option (CrepResultHOL (BitVec 64) HolFinalEvent) → Bool
+    Option (CrepResultHOLExact 64) → Bool
   | some (.exception e) => e == v
   | _ => false
 
 /-- `true` when the result is `SOME TimeOut`. -/
 def resultIsTimeOut :
-    Option (CrepResultHOL (BitVec 64) HolFinalEvent) → Bool
+    Option (CrepResultHOLExact 64) → Bool
   | some .timeOut => true
+  | _ => false
+
+/-- `true` when the result is `SOME Error`. -/
+def resultIsError :
+    Option (CrepResultHOLExact 64) → Bool
+  | some .error => true
   | _ => false
 
 /-- `true` when the result is `SOME (Return [Word v])`. -/
 def resultIsReturnWord (v : BitVec 64) :
-    Option (CrepResultHOL (BitVec 64) HolFinalEvent) → Bool
+    Option (CrepResultHOLExact 64) → Bool
   | some (.return [.word w]) => w == v
   | _ => false
 
@@ -166,21 +177,21 @@ theorem skipFullState :
 theorem breakFullState :
     evalCrepSemHOLProg sampleHOLState memDecSample shMemDecSample
         (.break 3 : CrepProgHOL 64) =
-      (some (CrepResultHOL.break 3), sampleHOLState) :=
+      (some (CrepResultHOLExact.break 3), sampleHOLState) :=
   evalCrepSemHOLProg_break sampleHOLState memDecSample shMemDecSample 3
 
 /-- Kernel-checked full pair equality for Continue via the named equation. -/
 theorem continueFullState :
     evalCrepSemHOLProg sampleHOLState memDecSample shMemDecSample
         (.continue 3 : CrepProgHOL 64) =
-      (some (CrepResultHOL.continue 3), sampleHOLState) :=
+      (some (CrepResultHOLExact.continue 3), sampleHOLState) :=
   evalCrepSemHOLProg_continue sampleHOLState memDecSample shMemDecSample 3
 
 /-- Kernel-checked full pair equality for Raise via the named equation. -/
 theorem raiseFullState :
     evalCrepSemHOLProg sampleHOLState memDecSample shMemDecSample
         (.raise (BitVec.ofNat 64 42) : CrepProgHOL 64) =
-      (some (CrepResultHOL.exception (BitVec.ofNat 64 42)),
+      (some (CrepResultHOLExact.exception (BitVec.ofNat 64 42)),
         CrepSemHOLState.emptyLocals sampleHOLState) :=
   evalCrepSemHOLProg_raise sampleHOLState memDecSample shMemDecSample _
 
@@ -259,11 +270,107 @@ theorem whileStampIdentity :
         (.while (.const (BitVec.ofNat 64 1)) .skip : CrepProgHOL 64)).2 :=
   crepStampExactDomains_evalCrepSemHOLProg sampleHOLState memDecSample shMemDecSample _
 
+/-! ## Exact `exit_loop_def` oracle rows
+
+Kernel-checked transcription of the six direct HOL EVAL rows in
+`scripts/hol-probes/crep_exit_loop_probe.out`, over the exact
+`Option (CrepResultHOLExact 64)` carrier (the `@[hol]` port of HOL `result`). -/
+
+def exitResultIsBreak (n : Nat) :
+    Option (CrepResultHOLExact 64) → Bool
+  | some (.break m) => m == n
+  | _ => false
+
+def exitResultIsContinue (n : Nat) :
+    Option (CrepResultHOLExact 64) → Bool
+  | some (.continue m) => m == n
+  | _ => false
+
+def exitResultIsTimeOut :
+    Option (CrepResultHOLExact 64) → Bool
+  | some .timeOut => true
+  | _ => false
+
+def exitResultIsNormal :
+    Option (CrepResultHOLExact 64) → Bool
+  | none => true
+  | _ => false
+
+def exitResultIsError :
+    Option (CrepResultHOLExact 64) → Bool
+  | some .error => true
+  | _ => false
+
+/-- `exit_loop_break=SOME (Break 2)`: `exit_loop (SOME (Break 3)) = SOME (Break 2)`. -/
+theorem exitLoopBreak :
+    exitLoopCrepResult
+        (some (CrepResultHOLExact.break 3) :
+          Option (CrepResultHOLExact 64)) =
+      some (.break 2) := rfl
+
+/-- `exit_loop_break_zero=SOME (Break 0)`: truncated `num` subtraction stops at zero. -/
+theorem exitLoopBreakZero :
+    exitLoopCrepResult
+        (some (CrepResultHOLExact.break 0) :
+          Option (CrepResultHOLExact 64)) =
+      some (.break 0) := rfl
+
+/-- `exit_loop_continue=SOME (Continue 1)`: `exit_loop (SOME (Continue 2)) = SOME (Continue 1)`. -/
+theorem exitLoopContinue :
+    exitLoopCrepResult
+        (some (CrepResultHOLExact.continue 2) :
+          Option (CrepResultHOLExact 64)) =
+      some (.continue 1) := rfl
+
+/-- `exit_loop_other=SOME TimeOut`: non-control results pass through unchanged. -/
+theorem exitLoopTimeOut :
+    exitLoopCrepResult
+        (some (CrepResultHOLExact.timeOut) :
+          Option (CrepResultHOLExact 64)) =
+      some (.timeOut) := rfl
+
+/-- `exit_loop_none=NONE`: an absent result stays absent. -/
+theorem exitLoopNone :
+    exitLoopCrepResult
+        (none : Option (CrepResultHOLExact 64)) = none := rfl
+
+/-- `exit_loop_error=SOME Error`: `Error` passes through unchanged. -/
+theorem exitLoopError :
+    exitLoopCrepResult
+        (some (CrepResultHOLExact.error) :
+          Option (CrepResultHOLExact 64)) =
+      some (.error) := rfl
+
+def exitLoopOracleRowsMatch : Bool :=
+  exitResultIsBreak 2 (exitLoopCrepResult
+    (some (CrepResultHOLExact.break 3) :
+      Option (CrepResultHOLExact 64))) &&
+  exitResultIsBreak 0 (exitLoopCrepResult
+    (some (CrepResultHOLExact.break 0) :
+      Option (CrepResultHOLExact 64))) &&
+  exitResultIsContinue 1 (exitLoopCrepResult
+    (some (CrepResultHOLExact.continue 2) :
+      Option (CrepResultHOLExact 64))) &&
+  exitResultIsTimeOut (exitLoopCrepResult
+    (some (CrepResultHOLExact.timeOut) :
+      Option (CrepResultHOLExact 64))) &&
+  exitResultIsNormal (exitLoopCrepResult
+    (none : Option (CrepResultHOLExact 64))) &&
+  exitResultIsError (exitLoopCrepResult
+    (some (CrepResultHOLExact.error) :
+      Option (CrepResultHOLExact 64)))
+
+#guard exitLoopOracleRowsMatch
+
 def runChecks : IO Bool := do
   if holOracleRowsMatch then
     IO.println "PASS crepSem total HOL-shaped evaluate Skip/Break/Continue/Seq/Dec/If/While/Raise/Return/Tick match direct crep_inline_eval_probe oracle"
   else
     IO.println "FAIL crepSem total HOL-shaped evaluate Skip/Break/Continue/Seq/Dec/If/While/Raise/Return/Tick match direct crep_inline_eval_probe oracle"
-  pure holOracleRowsMatch
+  if exitLoopOracleRowsMatch then
+    IO.println "PASS crepSem exit_loop_def exact port matches direct crep_exit_loop_probe oracle"
+  else
+    IO.println "FAIL crepSem exit_loop_def exact port matches direct crep_exit_loop_probe oracle"
+  pure (holOracleRowsMatch && exitLoopOracleRowsMatch)
 
 end Flapjack.Test.CrepSemTotalEvaluateHOLParity

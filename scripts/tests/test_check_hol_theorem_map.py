@@ -291,13 +291,21 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
                 self.assertEqual(
                     record["fmap_as_finite_support"], ["locals", "globals", "code"])
                 self.assertIn(key, tagged)
-        # The Nat-fixed state-level resVar stays an untagged documented mismatch.
+        # The polymorphic finite-map result is now reviewed and tagged. The
+        # executable BEq-based resVarW remains a separate documented mismatch.
         res_var_key = (
             "Flapjack/Pancake/Semantics/CrepSem/HOLState.lean", "resVarEq")
         res_var_record = manifest_by_key[res_var_key]
-        self.assertEqual(res_var_record["statement_status"], "documented_mismatch")
-        self.assertIn("flapjack-pxn.18.3.7.1.3.1.1.2.4", res_var_record["reviewer"])
-        self.assertNotIn(res_var_key, tagged)
+        self.assertEqual(
+            (res_var_record["hol_path"], res_var_record["hol_name"]),
+            ("cakeml/pancake/semantics/crepSemScript.sml", "res_var_def"),
+        )
+        self.assertEqual(
+            res_var_record["statement_status"],
+            "reviewed_fmap_as_finite_support_result",
+        )
+        self.assertTrue(res_var_record["fmap_as_finite_support_result"])
+        self.assertIn(res_var_key, tagged)
 
     def test_crep_assigned_vars_nested_seq_carrier_mismatch_is_documented(self):
         key = (

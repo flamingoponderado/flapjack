@@ -30,6 +30,7 @@ from __future__ import annotations
 import os
 import re
 import sys
+from functools import lru_cache
 from collections.abc import Iterable
 from pathlib import Path
 
@@ -313,6 +314,44 @@ def structure_field_map(lines: list[str]) -> dict[str, set[str]]:
     return members
 
 
+@lru_cache(maxsize=None)
+def imported_structure_field_types(
+    module: str, root: str
+) -> dict[str, list[tuple[str, set[str], dict[str, str]]]]:
+    """Collect carrier structures reachable through this module's imports.
+
+    Finite-map qualifiers may use a structure declared by an imported
+    counterpart module. The tagged module still needs a local kernel-checked
+    roundtrip witness, but the field names and carrier types are read from the
+    actual imported declaration rather than inferred from a same-named local
+    duplicate.
+    """
+    root_path = Path(root)
+    current = root_path / module
+    if not current.is_file():
+        return {}
+    pending = list(IMPORT_RE.findall(current.read_text(encoding="utf-8")))
+    visited: set[str] = set()
+    result: dict[str, list[tuple[str, set[str], dict[str, str]]]] = {}
+    while pending:
+        imported = pending.pop()
+        if imported in visited:
+            continue
+        visited.add(imported)
+        path = root_path / (imported.replace(".", "/") + ".lean")
+        if not path.is_file():
+            continue
+        lines = path.read_text(encoding="utf-8").splitlines()
+        members = structure_field_map(lines)
+        types = structure_field_types(lines)
+        for name, fields in members.items():
+            result.setdefault(name, []).append(
+                (imported, fields, types.get(name, {}))
+            )
+        pending.extend(IMPORT_RE.findall("\n".join(lines)))
+    return result
+
+
 def identifier_token_occurs(text: str, name: str) -> bool:
     """Whether `name` occurs in `text` as a complete Lean identifier token.
 
@@ -377,7 +416,7 @@ def tagged_declaration_text(lines: list[str], attribute_start: int) -> str:
             if seen_declaration:
                 break
             region.append(line)
-            if re.search(r"(?:^|\s)(?:def|theorem|lemma|abbrev|instance) ", stripped):
+            if re.search(r"(?:^|\s)(?:def|theorem|lemma|abbrev|instance|structure) ", stripped):
                 seen_declaration = True
                 if ":=" in stripped:
                     break
@@ -387,7 +426,7 @@ def tagged_declaration_text(lines: list[str], attribute_start: int) -> str:
             continue
         if seen_declaration and TOP_DECL_RE.match(line):
             break
-        if re.match(r"(?:def|theorem|lemma|abbrev|instance) ", stripped):
+        if re.match(r"(?:def|theorem|lemma|abbrev|instance|structure) ", stripped):
             seen_declaration = True
         region.append(line)
         if seen_declaration and ":=" in line:
@@ -458,18 +497,49 @@ def fmap_as_finite_support_errors(
     errors: list[str] = []
     if len(set(fields)) != len(fields):
         errors.append("fmap_as_finite_support fields must be distinct")
-    declared_fields = structure_fields(lines)
+    local_types = structure_field_types(lines)
     members = structure_field_map(lines)
-    owning = owning_structure_for_fields(members, fields, declaration_text) if fields else None
-    owner_types = structure_field_types(lines).get(owning, {}) if owning else {}
+    imported = imported_structure_field_types(module, str(ROOT))
+    owning: str | None = None
+    owner_types: dict[str, str] = {}
+    wanted = set(fields)
+    if fields:
+        # Resolve by the tagged declaration's carrier when possible. An
+        # imported carrier must be named by that declaration; a same-named
+        # local structure must not silently shadow it. If the tagged
+        # declaration does not disambiguate, accept only one local candidate,
+        # preserving the old same-module rule.
+        local_candidates = [
+            name for name, names in members.items() if wanted <= names
+        ]
+        imported_candidates = [
+            (name, source, names, types)
+            for name, declarations in imported.items()
+            for source, names, types in declarations
+            if wanted <= names
+        ]
+        if declaration_text:
+            named_local = [
+                name for name in local_candidates
+                if identifier_token_occurs(declaration_text, name)
+            ]
+            named_imported = [
+                item for item in imported_candidates
+                if identifier_token_occurs(declaration_text, item[0])
+            ]
+            named = [(name, local_types.get(name, {})) for name in named_local]
+            named.extend((name, types) for name, _source, _names, types in named_imported)
+            if len(named) == 1:
+                owning, owner_types = named[0]
+        elif len(local_candidates) == 1:
+            owning = local_candidates[0]
+            owner_types = local_types.get(owning, {})
     for field in fields:
-        if field not in declared_fields:
-            errors.append(
-                f"fmap_as_finite_support field `{field}` is not a field of a Lean "
-                f"structure declared in {module}"
-            )
-            continue
         if owning is None:
+            errors.append(
+                f"fmap_as_finite_support field `{field}` is not resolved to one "
+                f"carrier structure in {module} or its imports"
+            )
             continue
         field_type = owner_types.get(field, "")
         if "HolFiniteMapExact" not in field_type:

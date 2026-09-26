@@ -3,6 +3,7 @@ import Flapjack.Pancake.CrepLang
 import Flapjack.Pancake.CrepLang.Exp
 import Flapjack.Pancake.CrepLang.Prog
 import Flapjack.Pancake.Semantics.CrepSem
+import Flapjack.Pancake.Semantics.CrepSem.HOLState
 
 /-!
 Crepe language properties from `cakeml/pancake/semantics/crepPropsScript.sml`.
@@ -905,5 +906,80 @@ def crepExpsOfHOL {width : Nat} [NeZero width] : CrepProgHOL width → List (Cre
 termination_by program => sizeOf program
 decreasing_by
   all_goals decreasing_trivial
+
+/-! ### Exact finite-support `crepProps` state facts
+
+These restate the Cake `crepPropsScript.sml` whole-state facts over the reviewed
+exact `CrepSemHOLState` carrier, whose `locals`/`globals`/`code` fields are the
+finite-support `HolFiniteMapExact` translation of HOL's `|->` maps (the carrier
+is imported from the `crepSem` counterpart, like the other crepSem helpers).
+The `fmap_as_finite_support` qualifier requires a same-module canonical witness,
+provided immediately below. -/
+
+namespace CrepPropsFiniteSupport
+
+/-- Canonical same-module witness for the `fmap_as_finite_support` qualifier used
+by the tagged `crepProps` state facts in this module. The finite-map fields of
+`CrepSemHOLState` are invertibly related to the broad function-backed
+`CrepSemBroadState`; the proof is the imported canonical witness. -/
+theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {σ : Type} :
+    (∀ (state : CrepSemBroadState width σ) (h : state.FiniteSupport),
+        (CrepSemBroadState.ofBroad state h).toBroad = state) ∧
+    (∀ state : CrepSemHOLState width σ,
+        CrepSemBroadState.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  CrepSemHOLState.holFmapAsFiniteSupportWitness
+
+end CrepPropsFiniteSupport
+
+/-- Exact HOL `dec_clock_simp` (`crepPropsScript.sml:267-278`) over the exact
+finite-support `CrepSemHOLState` carrier: the ten field equations, with HOL
+`sh_memaddrs`/`be`/`base_addr`/`top_addr` rendered as `shMemaddrs`/`be`/
+`baseAddr`/`topAddr`. -/
+@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "dec_clock_simp"
+  (fmap_as_finite_support := [locals, globals, code])]
+theorem decClockCrepSemHOL_simp {width : Nat} [NeZero width] {σ : Type}
+    (s : CrepSemHOLState width σ) :
+    (decClockCrepSemHOL s).locals = s.locals ∧
+      (decClockCrepSemHOL s).globals = s.globals ∧
+      (decClockCrepSemHOL s).code = s.code ∧
+      (decClockCrepSemHOL s).memory = s.memory ∧
+      (decClockCrepSemHOL s).memaddrs = s.memaddrs ∧
+      (decClockCrepSemHOL s).shMemaddrs = s.shMemaddrs ∧
+      (decClockCrepSemHOL s).be = s.be ∧
+      (decClockCrepSemHOL s).ffi = s.ffi ∧
+      (decClockCrepSemHOL s).baseAddr = s.baseAddr ∧
+      (decClockCrepSemHOL s).topAddr = s.topAddr := by
+  simp [decClockCrepSemHOL]
+
+/-- Exact HOL `empty_locals_simp` (`crepPropsScript.sml:282-294`) over the exact
+finite-support `CrepSemHOLState` carrier: clearing `locals` to `FEMPTY` preserves
+the other nine fields. -/
+@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "empty_locals_simp"
+  (fmap_as_finite_support := [locals, globals, code])]
+theorem emptyLocalsCrepSemHOL_simp {width : Nat} [NeZero width] {σ : Type}
+    (s : CrepSemHOLState width σ) :
+    (CrepSemHOLState.emptyLocals s).globals = s.globals ∧
+      (CrepSemHOLState.emptyLocals s).code = s.code ∧
+      (CrepSemHOLState.emptyLocals s).memory = s.memory ∧
+      (CrepSemHOLState.emptyLocals s).memaddrs = s.memaddrs ∧
+      (CrepSemHOLState.emptyLocals s).shMemaddrs = s.shMemaddrs ∧
+      (CrepSemHOLState.emptyLocals s).clock = s.clock ∧
+      (CrepSemHOLState.emptyLocals s).be = s.be ∧
+      (CrepSemHOLState.emptyLocals s).ffi = s.ffi ∧
+      (CrepSemHOLState.emptyLocals s).baseAddr = s.baseAddr ∧
+      (CrepSemHOLState.emptyLocals s).topAddr = s.topAddr := by
+  simp [CrepSemHOLState.emptyLocals]
+
+/-- Exact HOL `FLOOKUP_set_globals` (`crepPropsScript.sml:297-301`) over the exact
+finite-support `CrepSemHOLState` carrier: setting a global leaves the `locals`
+finite map unchanged. -/
+@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "FLOOKUP_set_globals"
+  (fmap_as_finite_support := [locals, globals, code])]
+theorem flookupSetGlobalsCrepSemHOL_locals {width : Nat} [NeZero width] {σ : Type}
+    (key : BitVec 5) (value : HolWordLab width) (s : CrepSemHOLState width σ)
+    (name : Nat) :
+    (CrepSemHOLState.setGlobals key value s).locals.lookup name =
+      s.locals.lookup name := by
+  simp [CrepSemHOLState.setGlobals]
 
 end Flapjack

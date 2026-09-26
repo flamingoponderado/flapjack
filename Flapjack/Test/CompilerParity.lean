@@ -51,6 +51,7 @@ import Flapjack.Test.PanGlobalsFpermNameParity
 import Flapjack.Test.PanGlobalsFpermParity
 import Flapjack.Test.PanGlobalsFpermDecsParity
 import Flapjack.Test.PanGlobalsNewMainNameParity
+import Flapjack.Test.PanGlobalsNewMainNameExactParity
 import Flapjack.Test.PanGlobalsNameByteRangedParity
 import Flapjack.Test.PanGlobalsDecShapesParity
 import Flapjack.Test.PanGlobalsExpIdsParity
@@ -167,6 +168,7 @@ import Flapjack.Test.CrepProgHOLParity
 import Flapjack.Test.CrepEvalConstructorParity
 import Flapjack.Test.CrepSemEvalExactParity
 import Flapjack.Test.CrepLocalsWordLabParity
+import Flapjack.Test.CrepShMemHOLParity
 import Flapjack.Test.CrepMemoryRelParity
 import Flapjack.Test.CrepSemStateExactParity
 import Flapjack.Test.CrepFuelCutoffParity
@@ -801,6 +803,7 @@ def main : IO Unit := do
     Flapjack.Test.CrepInlineFmapParity.runChecks,
     Flapjack.Test.CrepInlineRelParity.runChecks,
     Flapjack.Test.CrepSemTotalEvaluateHOLParity.runChecks,
+    Flapjack.Test.CrepShMemHOLParity.runChecks,
     Flapjack.Test.PanGlobalsExceptionsAppendParity.runChecks,
     Flapjack.Test.PanGlobalsExceptionsFilterIsFunctionParity.runChecks,
     Flapjack.Test.PanGlobalsDeclPredicateParity.runChecks,
@@ -810,6 +813,7 @@ def main : IO Unit := do
     Flapjack.Test.PanGlobalsFpermParity.runChecks,
     Flapjack.Test.PanGlobalsFpermDecsParity.runChecks,
     Flapjack.Test.PanGlobalsResortDeclsParity.runChecks,
+    Flapjack.Test.PanGlobalsNewMainNameExactParity.runChecks,
     Flapjack.Test.PanGlobalsDecShapesParity.runChecks,
     Flapjack.Test.PanGlobalsFpermClusterParity.runChecks,
     Flapjack.Test.PanGlobalsDecShapesClusterParity.runChecks,

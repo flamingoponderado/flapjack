@@ -1656,4 +1656,410 @@ theorem evalPanSemNonrecursiveHOLExact_shMemaddrs {width : Nat} {σ : Type}
       simp only [evalPanSemNonrecursiveHOLExact] at h
       obtain rfl := Option.some.inj h; rfl
 
+/-!
+## FFI event-prefix preserved by the exact panSem clause steps
+
+For the `divergenceChain` obligation of the exact `semantics_def`, the exact
+recursive evaluator must only ever extend the FFI event log.  This is the
+Flapjack analogue of HOL `panPropsScript.sml:856 evaluate_io_events_mono`.  Only
+the `ExtCall` clause can extend `ffi.ioEvents` (through `callFFIHOL`, whose
+returned state appends at most one event); every other clause preserves `ffi`
+exactly.  These are Flapjack-specific infrastructure lemmas (no `@[hol]` tag).
+-/
+
+theorem assignStepHOLExact_ffi {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateExact width σ) (kind : VarKind) (name : MlS)
+    (source : ExpHOL width)
+    (evalExpression : PanSemStateExact width σ → ExpHOL width → Option (ValueHOL width)) :
+    (assignStepHOLExact state kind name source evalExpression).2.ffi = state.ffi := by
+  unfold assignStepHOLExact
+  split
+  · split
+    · cases kind <;> rfl
+    · rfl
+  · rfl
+
+theorem primitiveStepHOLExact_ffi {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateExact width σ) (name : MlS) (operator : PrimOp)
+    (arguments : List (ExpHOL width))
+    (evalExpressions : PanSemStateExact width σ → List (ExpHOL width) →
+      Option (List (ValueHOL width))) :
+    (primitiveStepHOLExact state name operator arguments evalExpressions).2.ffi = state.ffi := by
+  unfold primitiveStepHOLExact
+  split
+  · split
+    · split <;> rfl
+    · rfl
+  · rfl
+
+theorem storeStepHOLExact_ffi {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateExact width σ) [DecidablePred state.memaddrs]
+    (destination source : ExpHOL width)
+    (evalExpression : PanSemStateExact width σ → ExpHOL width → Option (ValueHOL width)) :
+    (storeStepHOLExact state destination source evalExpression).2.ffi = state.ffi := by
+  unfold storeStepHOLExact
+  split
+  · split
+    · split <;> rfl
+    · rfl
+  · rfl
+
+theorem store32StepHOLExact_ffi {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateExact width σ) [DecidablePred state.memaddrs]
+    (address value : ExpHOL width)
+    (evalExpression : PanSemStateExact width σ → ExpHOL width → Option (ValueHOL width)) :
+    (store32StepHOLExact state address value evalExpression).2.ffi = state.ffi := by
+  unfold store32StepHOLExact
+  split
+  · split
+    · split <;> rfl
+    · rfl
+  · rfl
+
+theorem storeByteStepHOLExact_ffi {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateExact width σ) [DecidablePred state.memaddrs]
+    (address value : ExpHOL width)
+    (evalExpression : PanSemStateExact width σ → ExpHOL width → Option (ValueHOL width)) :
+    (storeByteStepHOLExact state address value evalExpression).2.ffi = state.ffi := by
+  unfold storeByteStepHOLExact
+  split
+  · split
+    · split <;> rfl
+    · rfl
+  · rfl
+
+theorem setKvarHOLExact_ffi {width : Nat} {σ : Type} [NeZero width]
+    (kind : VarKind) (name : MlS) (value : ValueHOL width)
+    (state : PanSemStateExact width σ) :
+    (setKvarHOLExact kind name value state).ffi = state.ffi := by
+  cases kind <;> rfl
+
+theorem shMemLoadHOLExact_ioEvents_prefix {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateExact width σ) [DecidablePred state.shMemaddrs]
+    (kind : VarKind) (name : MlS) (address : RiscV.Word width) (nb : Nat) :
+    state.ffi.ioEvents <+:
+      (shMemLoadHOLExact state kind name address nb).2.ffi.ioEvents := by
+  unfold shMemLoadHOLExact
+  split <;> (try split) <;> (try split) <;> (try split) <;> (try split) <;>
+    first
+    | exact List.prefix_refl _
+    | exact callFFIHOL_return_ioEvents_prefix _ _ _ _ _ _ (by assumption)
+
+theorem shMemStoreHOLExact_ioEvents_prefix {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateExact width σ) [DecidablePred state.shMemaddrs]
+    (word : RiscV.Word width) (address : RiscV.Word width) (nb : Nat) :
+    state.ffi.ioEvents <+:
+      (shMemStoreHOLExact state word address nb).2.ffi.ioEvents := by
+  unfold shMemStoreHOLExact
+  split <;> (try split) <;> (try split) <;> (try split) <;> (try split) <;>
+    first
+    | exact List.prefix_refl _
+    | exact callFFIHOL_return_ioEvents_prefix _ _ _ _ _ _ (by assumption)
+
+theorem shMemLoadClauseHOLExact_ioEvents_prefix {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateExact width σ) [DecidablePred state.shMemaddrs]
+    (operator : OpSize) (kind : VarKind) (name : MlS) (address : ExpHOL width)
+    (evalExpression : PanSemStateExact width σ → ExpHOL width → Option (ValueHOL width)) :
+    state.ffi.ioEvents <+:
+      (shMemLoadClauseHOLExact state operator kind name address evalExpression).2.ffi.ioEvents := by
+  unfold shMemLoadClauseHOLExact
+  split <;> (try split) <;> (try split) <;> (try split) <;>
+    first
+    | exact List.prefix_refl _
+    | exact shMemLoadHOLExact_ioEvents_prefix _ _ _ _ _
+
+theorem shMemStoreClauseHOLExact_ioEvents_prefix {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateExact width σ) [DecidablePred state.shMemaddrs]
+    (operator : OpSize) (address value : ExpHOL width)
+    (evalExpression : PanSemStateExact width σ → ExpHOL width → Option (ValueHOL width)) :
+    state.ffi.ioEvents <+:
+      (shMemStoreClauseHOLExact state operator address value evalExpression).2.ffi.ioEvents := by
+  unfold shMemStoreClauseHOLExact
+  split <;> (try split) <;> (try split) <;> (try split) <;>
+    first
+    | exact List.prefix_refl _
+    | exact shMemStoreHOLExact_ioEvents_prefix _ _ _ _
+
+set_option maxHeartbeats 2000000 in
+theorem evalPanSemRecursiveCallContextHOLExact_ioEvents_prefix {width : Nat} {σ : Type}
+    [NeZero width] (program : ProgHOL width) (context : PanSemExactEvalContext width σ) :
+    ∀ (result : Option (PanSemResultExact width) × PanSemExactEvalContext width σ),
+      evalPanSemRecursiveCallContextHOLExact program context = some result →
+      context.state.ffi.ioEvents <+: result.2.state.ffi.ioEvents := by
+  fun_induction evalPanSemRecursiveCallContextHOLExact program context
+  case case3 =>
+    intro result hres
+    (try simp only [Option.some.injEq] at hres)
+    (try cases hres)
+    rename_i ih
+    have hstep := ih _ (by assumption)
+    exact hstep
+  case case6 =>
+    intro result hres
+    (try simp only [Option.some.injEq] at hres)
+    (try cases hres)
+    rename_i ih2 ih1
+    have h2 := ih2 _ (by assumption)
+    have h1 := ih1 _ (by assumption)
+    exact h2.trans h1
+  case case7 =>
+    intro result hres
+    (try simp only [Option.some.injEq] at hres)
+    (try cases hres)
+    rename_i ih
+    have hstep := ih _ (by assumption)
+    exact hstep
+  case case8 =>
+    intro result hres
+    (try simp only [Option.some.injEq] at hres)
+    (try cases hres)
+    rename_i ih
+    have hstep := ih _ (by assumption)
+    exact hstep
+  case case9 =>
+    intro result hres
+    (try simp only [Option.some.injEq] at hres)
+    (try cases hres)
+    rename_i ih
+    have hstep := ih _ (by assumption)
+    exact hstep
+  case case13 =>
+    intro result hres
+    (try simp only [Option.some.injEq] at hres)
+    (try cases hres)
+    rename_i ih2 ih1
+    have h2 := ih2 _ (by assumption)
+    have h1 := ih1 _ (by assumption)
+    exact h2.trans h1
+  case case14 =>
+    intro result hres
+    (try simp only [Option.some.injEq] at hres)
+    (try cases hres)
+    rename_i ih2 ih1
+    have h2 := ih2 _ (by assumption)
+    have h1 := ih1 _ (by assumption)
+    exact h2.trans h1
+  case case15 =>
+    intro result hres
+    (try simp only [Option.some.injEq] at hres)
+    (try cases hres)
+    rename_i ih
+    have hstep := ih _ (by assumption)
+    exact hstep
+  case case16 =>
+    intro result hres
+    (try simp only [Option.some.injEq] at hres)
+    (try cases hres)
+    rename_i ih
+    have hstep := ih _ (by assumption)
+    exact hstep
+  case case23 =>
+    intro result hres
+    (try simp only [Option.some.injEq] at hres)
+    (try cases hres)
+    rename_i ih
+    have hstep := ih _ (by assumption)
+    exact hstep
+  case case24 =>
+    intro result hres
+    (try simp only [Option.some.injEq] at hres)
+    (try cases hres)
+    rename_i ih
+    have hstep := ih _ (by assumption)
+    exact hstep
+  case case25 =>
+    intro result hres
+    (try simp only [Option.some.injEq] at hres)
+    (try cases hres)
+    rename_i ih
+    have hstep := ih _ (by assumption)
+    exact hstep
+  case case26 =>
+    intro result hres
+    (try simp only [Option.some.injEq] at hres)
+    (try cases hres)
+    rename_i ih
+    have hstep := ih _ (by assumption)
+    exact hstep
+  case case27 =>
+    intro result hres
+    (try simp only [Option.some.injEq] at hres)
+    (try cases hres)
+    rename_i ih
+    have hstep := ih _ (by assumption)
+    exact hstep
+  case case28 =>
+    intro result hres
+    (try simp only [Option.some.injEq] at hres)
+    (try cases hres)
+    rename_i ih
+    have hstep := ih _ (by assumption)
+    simp only [PanSemExactEvalContext.withState_state, setKvarHOLExact_ffi]
+    exact hstep
+  case case29 =>
+    intro result hres
+    (try simp only [Option.some.injEq] at hres)
+    (try cases hres)
+    rename_i ih
+    have hstep := ih _ (by assumption)
+    exact hstep
+  case case30 =>
+    intro result hres
+    (try simp only [Option.some.injEq] at hres)
+    (try cases hres)
+    rename_i ih
+    have hstep := ih _ (by assumption)
+    exact hstep
+  case case31 =>
+    intro result hres
+    (try simp only [Option.some.injEq] at hres)
+    (try cases hres)
+    rename_i ih
+    have hstep := ih _ (by assumption)
+    exact hstep
+  case case32 =>
+    intro result hres
+    (try simp only [Option.some.injEq] at hres)
+    (try cases hres)
+    rename_i ih
+    have hstep := ih _ (by assumption)
+    exact hstep
+  case case33 =>
+    intro result hres
+    (try simp only [Option.some.injEq] at hres)
+    (try cases hres)
+    rename_i ih2 ih1
+    have h2 := ih2 _ (by assumption)
+    have h1 := ih1 _ (by assumption)
+    exact h2.trans h1
+  case case34 =>
+    intro result hres
+    (try simp only [Option.some.injEq] at hres)
+    (try cases hres)
+    rename_i ih
+    have hstep := ih _ (by assumption)
+    exact hstep
+  case case35 =>
+    intro result hres
+    (try simp only [Option.some.injEq] at hres)
+    (try cases hres)
+    rename_i ih
+    have hstep := ih _ (by assumption)
+    exact hstep
+  case case36 =>
+    intro result hres
+    (try simp only [Option.some.injEq] at hres)
+    (try cases hres)
+    rename_i ih
+    have hstep := ih _ (by assumption)
+    exact hstep
+  case case37 =>
+    intro result hres
+    (try simp only [Option.some.injEq] at hres)
+    (try cases hres)
+    rename_i ih
+    have hstep := ih _ (by assumption)
+    exact hstep
+  case case42 =>
+    intro result hres
+    (try simp only [Option.some.injEq] at hres)
+    (try cases hres)
+    rename_i ih
+    have hstep := ih _ (by assumption)
+    exact hstep
+  case case43 =>
+    intro result hres
+    (try simp only [Option.some.injEq] at hres)
+    (try cases hres)
+    rename_i ih
+    have hstep := ih _ (by assumption)
+    exact hstep
+  case case44 =>
+    intro result hres
+    (try simp only [Option.some.injEq] at hres)
+    (try cases hres)
+    rename_i ih
+    have hstep := ih _ (by assumption)
+    exact hstep
+  case case46 =>
+    intro result hres
+    (try simp only [Option.some.injEq] at hres)
+    (try cases hres)
+    rename_i ih2 ih1
+    have h2 := ih2 _ (by assumption)
+    have h1 := ih1 _ (by assumption)
+    exact h2.trans h1
+  case case47 =>
+    intro result hres
+    (try simp only [Option.some.injEq] at hres)
+    (try cases hres)
+    rename_i ih
+    have hstep := ih _ (by assumption)
+    exact hstep
+  case case48 =>
+    intro result hres
+    (try simp only [Option.some.injEq] at hres)
+    (try cases hres)
+    rename_i ih
+    have hstep := ih _ (by assumption)
+    exact hstep
+  case case49 =>
+    intro result hres
+    simp only [Option.some.injEq] at hres
+    cases hres
+    rename_i out hm hs
+    simp only [out, PanSemExactEvalContext.withState_state, assignStepHOLExact_ffi]
+    exact List.prefix_refl _
+  case case50 =>
+    intro result hres
+    simp only [Option.some.injEq] at hres
+    cases hres
+    rename_i out hm hs
+    simp only [out, PanSemExactEvalContext.withState_state, primitiveStepHOLExact_ffi]
+    exact List.prefix_refl _
+  case case51 =>
+    intro result hres
+    simp only [Option.some.injEq] at hres
+    cases hres
+    rename_i out hm hs
+    simp only [out, PanSemExactEvalContext.withState_state, storeStepHOLExact_ffi]
+    exact List.prefix_refl _
+  case case52 =>
+    intro result hres
+    simp only [Option.some.injEq] at hres
+    cases hres
+    rename_i out hm hs
+    simp only [out, PanSemExactEvalContext.withState_state, store32StepHOLExact_ffi]
+    exact List.prefix_refl _
+  case case53 =>
+    intro result hres
+    simp only [Option.some.injEq] at hres
+    cases hres
+    rename_i out hm hs
+    simp only [out, PanSemExactEvalContext.withState_state, storeByteStepHOLExact_ffi]
+    exact List.prefix_refl _
+  case case67 =>
+    intro result hres
+    simp only [Option.some.injEq] at hres
+    cases hres
+    dsimp only
+    exact extCallStepHOLExact_ioEvents_prefix _ _ _ _ _ _ _
+  case case68 =>
+    intro result hres
+    simp only [Option.some.injEq] at hres
+    cases hres
+    dsimp only
+    exact shMemLoadClauseHOLExact_ioEvents_prefix _ _ _ _ _ _
+  case case69 =>
+    intro result hres
+    simp only [Option.some.injEq] at hres
+    cases hres
+    dsimp only
+    exact shMemStoreClauseHOLExact_ioEvents_prefix _ _ _ _ _
+  all_goals
+    intro result hres
+    (try simp only [Option.some.injEq] at hres) <;>
+    (try cases hres) <;>
+    exact List.prefix_refl _
+
 end Flapjack

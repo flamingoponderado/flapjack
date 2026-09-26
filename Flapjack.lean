@@ -98,6 +98,8 @@ import Flapjack.PanHProgStoreMem
 import Flapjack.PanHProgAssign
 import Flapjack.PanHProgWhile
 import Flapjack.Pancake.PanSimp
+import Flapjack.Pancake.PanLang.ProgHOLInduction
+import Flapjack.Pancake.Proofs.PanSimp.ProgOfHOL
 import Flapjack.PanLocalised
 import Flapjack.Pancake.Proofs.PanSimp.Evaluate
 import Flapjack.PanSimpLocalised
@@ -143,6 +145,7 @@ import Flapjack.CompileParamVarsBounds
 import Flapjack.CrepeContextBounds
 import Flapjack.Pancake.PanToCrep.Compile
 import Flapjack.Pancake.PanToCrep.CompileExact
+import Flapjack.Pancake.PanToCrep.CompileExpBridge
 import Flapjack.Pancake.PanToCrep.ExpHdlExact
 import Flapjack.Pancake.PanToCrep.MakeVmapHOL
 import Flapjack.Pancake.PanToCrep.ContextExact
@@ -155,6 +158,7 @@ import Flapjack.Semantics
 import Flapjack.CrepeSemantics
 import Flapjack.CrepeGlobalAddress
 import Flapjack.Pancake.Semantics.CrepSem
+import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
 import Flapjack.Pancake.Semantics.CrepSem.LookupCode
 import Flapjack.Pancake.Semantics.CrepSem.StateExact
 import Flapjack.Pancake.Semantics.CrepSem.ExecutedWordLabBridge
