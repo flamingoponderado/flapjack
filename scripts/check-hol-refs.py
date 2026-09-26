@@ -49,6 +49,12 @@ FMAP_AS_FINITE_SUPPORT_RE = re.compile(
 FMAP_AS_FINITE_SUPPORT_RESULT_RE = re.compile(
     r'\(\s*fmap_as_finite_support_result\s*\)'
 )
+FMAP_AS_FINITE_SUPPORT_RELATION_RE = re.compile(
+    r'\(\s*fmap_as_finite_support_relation\s*:=\s*\[([^]]*)\]\s*\)'
+)
+RELATION_FIELD_RE = re.compile(
+    r'^\s*([A-Za-z_][A-Za-z0-9_\']*)\s*\.\s*([A-Za-z_][A-Za-z0-9_\']*)\s*$'
+)
 DECL_RE = re.compile(
     r"^\s*(?:@\[[^\]]*\]\s*)?(?:private\s+|protected\s+|noncomputable\s+|partial\s+|unsafe\s+)*"
     r"(?:theorem|lemma|def|abbrev|instance|inductive|structure|class|opaque|axiom)\s+"
@@ -149,6 +155,19 @@ def hol_attribute_sites(lines: list[str]):
                         field.strip() for field in qualifier.group(1).split(",")
                     ) if qualifier else ()
 
+                def relation_fields_for() -> tuple[tuple[str, str], ...]:
+                    qualifier = FMAP_AS_FINITE_SUPPORT_RELATION_RE.search(attribute)
+                    if not qualifier:
+                        return ()
+                    entries: list[tuple[str, str]] = []
+                    for raw in qualifier.group(1).split(","):
+                        match = RELATION_FIELD_RE.match(raw)
+                        if match:
+                            entries.append((match.group(1), match.group(2)))
+                        elif raw.strip():
+                            entries.append((raw.strip(), ""))
+                    return tuple(entries)
+
                 yield (
                     start,
                     hol_path,
@@ -159,6 +178,7 @@ def hol_attribute_sites(lines: list[str]):
                     fields_for(NAMES_AS_STRING_BOUNDARY_RE),
                     fields_for(FMAP_AS_FINITE_SUPPORT_RE),
                     bool(FMAP_AS_FINITE_SUPPORT_RESULT_RE.search(attribute)),
+                    relation_fields_for(),
                 )
         start = None
         chunks = []
@@ -559,6 +579,116 @@ def fmap_as_finite_support_errors(
     return errors
 
 
+def has_fmap_relation_witness(lines: list[str], carrier: str) -> bool:
+    """Require a per-carrier canonical finite-map relation witness in this module.
+
+    A multi-carrier relation names several carriers; each distinct carrier must
+    provide a same-module kernel-checked witness
+    `holFmapAsFiniteSupportRelationWitness_<carrier>` that names the carrier and
+    states a genuine `toX`/`ofX` roundtrip with its broad counterpart.  A bare
+    arrow or an unrelated counterpart mention is rejected.  The witness is
+    carrier-specific so one declaration cannot reuse another carrier's evidence.
+    """
+    if not carrier:
+        return False
+    source = strip_lean_comments("\n".join(lines))
+    pattern = re.compile(
+        rf"^\s*(?:@\[[\s\S]*?\]\s*)?(?:private\s+|protected\s+)?"
+        rf"(?:theorem|lemma)\s+"
+        rf"holFmapAsFiniteSupportRelationWitness_{re.escape(carrier)}\b"
+        rf"(?P<statement>[\s\S]*?):=",
+        re.M,
+    )
+    for match in pattern.finditer(source):
+        statement = match.group("statement")
+        if not identifier_token_occurs(statement, carrier):
+            continue
+        if "=" not in statement and "\u2194" not in statement:
+            continue
+        projects = {m.group(1) for m in TO_FUNCTION_RE.finditer(statement)}
+        reconstructions = {m.group(1) for m in OF_FUNCTION_RE.finditer(statement)}
+        if projects & reconstructions:
+            return True
+    return False
+
+
+def fmap_as_finite_support_relation_errors(
+    lines: list[str], entries: tuple[tuple[str, str], ...], module: str,
+    declaration_text: str = "",
+) -> list[str]:
+    """Validate a multi-carrier finite-map relation qualifier.
+
+    Each entry is `Carrier.field`; the carrier must be a structure declared in
+    this module or reachable through its imports, the field must be one of that
+    carrier's fields and must use the approved `HolFiniteMapExact` carrier, and
+    the tagged declaration must visibly name every carrier it relates.  Every
+    distinct carrier additionally needs its own same-module canonical witness
+    `holFmapAsFiniteSupportRelationWitness_<carrier>` (see
+    `has_fmap_relation_witness`).  This gate is deliberately separate from the
+    single-owner `fmap_as_finite_support` gate and does not relax it: a relation
+    spanning two carriers cannot be certified by one carrier's witness.
+    """
+    errors: list[str] = []
+    if len(set(entries)) != len(entries):
+        errors.append("fmap_as_finite_support_relation entries must be distinct")
+    local_types = structure_field_types(lines)
+    imported = imported_structure_field_types(module, str(ROOT))
+    own_types: dict[str, dict[str, str]] = {}
+    for carrier, field in entries:
+        if not carrier or not field:
+            errors.append(
+                f"fmap_as_finite_support_relation entry `{carrier}.{field}` must "
+                "name a carrier structure and one of its fields as `Carrier.field`"
+            )
+            continue
+        if carrier not in own_types:
+            if carrier in local_types:
+                own_types[carrier] = local_types[carrier]
+            else:
+                for name, declarations in imported.items():
+                    if name != carrier:
+                        continue
+                    for _source, _names, types in declarations:
+                        if field in types:
+                            own_types[carrier] = types
+                            break
+                    break
+        types = own_types.get(carrier)
+        if types is None:
+            errors.append(
+                f"fmap_as_finite_support_relation carrier `{carrier}` is not a "
+                f"structure declared in {module} or its imports"
+            )
+            continue
+        if declaration_text and not identifier_token_occurs(declaration_text, carrier):
+            errors.append(
+                f"fmap_as_finite_support_relation carrier `{carrier}` is not "
+                "named in the tagged declaration; the relation must be stated "
+                "over the carrier it qualifies"
+            )
+        field_type = types.get(field, "")
+        if not field_type:
+            errors.append(
+                f"fmap_as_finite_support_relation field `{field}` is not a field "
+                f"of carrier `{carrier}`"
+            )
+        elif "HolFiniteMapExact" not in field_type:
+            errors.append(
+                f"fmap_as_finite_support_relation field `{carrier}.{field}` does "
+                "not use the approved HolFiniteMapExact carrier; a raw "
+                "function-backed map is ineligible"
+            )
+    for carrier in sorted({carrier for carrier, _ in entries if carrier}):
+        if not has_fmap_relation_witness(lines, carrier):
+            errors.append(
+                "fmap_as_finite_support_relation has no same-module checked "
+                f"canonical witness `holFmapAsFiniteSupportRelationWitness_{carrier}` "
+                "naming the carrier and stating a real `toX`/`ofX` roundtrip with "
+                "its broad counterpart"
+            )
+    return errors
+
+
 def fmap_as_finite_support_result_witness_name(decl_name: str) -> str:
     """Canonical witness name for a standalone HolFiniteMapExact declaration."""
     return f"holFmapAsFiniteSupportResultWitness_{decl_name}"
@@ -921,7 +1051,8 @@ def main(argv: list[str]) -> int:
         module = module_name(lean_path)
         module_reported = False
         for (number, hol_path, hol_name, hol_line, list_fields,
-             names_fields, boundary_fields, fmap_fields, fmap_result) in hol_attribute_sites(lines):
+             names_fields, boundary_fields, fmap_fields, fmap_result,
+             fmap_relation) in hol_attribute_sites(lines):
             where = f"{rel}:{number}"
             lean_decl = find_lean_decl(lines, number - 1)
             if module not in reachable and not module_reported:
@@ -948,6 +1079,13 @@ def main(argv: list[str]) -> int:
                     f"{where}: {error}"
                     for error in fmap_as_finite_support_result_errors(
                         lines, rel, tagged_declaration_text(lines, number), lean_decl
+                    )
+                )
+            if fmap_relation:
+                errors.extend(
+                    f"{where}: {error}"
+                    for error in fmap_as_finite_support_relation_errors(
+                        lines, fmap_relation, rel, tagged_declaration_text(lines, number)
                     )
                 )
             if names_fields or boundary_fields:
