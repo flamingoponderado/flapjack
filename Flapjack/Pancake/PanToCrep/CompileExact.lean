@@ -404,6 +404,28 @@ def compileCallWrappedResultHandlerMissingEidExactHOLW {width : Nat} [NeZero wid
   compileCallWrappedResultNoHandlerExactHOLW context function resultName arguments
     resultShape resultNames _wrappedResult
 
+/-! The handler-present Call arm with successful wrapped-result and exception
+    code lookups in HOL `compile_def` (`pan_to_crepScript.sml:252-261`). It keeps
+    the destination names directly and sequences exact `exp_hdl` with the
+    recursively compiled handler body, without return-slot declarations. -/
+
+def compileCallWrappedResultHandlerPresentEidExactHOLW {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (function resultName : MlS)
+    (arguments : List (Flapjack.Pancake.PanLang.ExpHOL width))
+    (resultShape : Flapjack.Pancake.PanLang.ShapeHOL) (resultNames : List Nat)
+    (exceptionName exceptionVariable : MlS) (exceptionCode : BitVec width)
+    (_wrappedResult : wrapRtHOL (context.vars.lookup resultName) =
+      some (resultShape, resultNames))
+    (_eidLookup : context.eids.lookup exceptionName = some exceptionCode)
+    (compileHandlerBody : CompileExpContextExact width → CrepProgHOL width) :
+    CrepProgHOL width :=
+  let compiledArguments := compileExpExactHOLWList context arguments
+  let flattenedArguments := compiledArguments.flatMap Prod.fst
+  let handler := CrepProgHOL.seq
+    (expHdlExact ⟨context.vars⟩ exceptionVariable)
+    (compileHandlerBody context)
+  .call (some (resultNames, some (exceptionCode, handler))) function flattenedArguments
+
 /-! The `rtyp = SOME (NONE, NONE)` arm of the HOL `Call` clause
     (`pan_to_crepScript.sml:226-232`) looks up the callee's return shape,
     allocates result names above `vmax`, initializes those names to zero, and

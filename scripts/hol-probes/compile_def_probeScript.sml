@@ -329,6 +329,18 @@ val _ = print_eval "call_wrapped_result_handler_missing_eid"
         [panLang$Const (1w : 8 word);
          panLang$RStruct [panLang$Const 2w; panLang$Const 3w]])``;
 
+val _ = print_eval "call_wrapped_result_handler_present_eid"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY |+ («pair»,
+           (panLang$Comb [panLang$One; panLang$One], [30; 31]))
+           |+ («exn», (panLang$Comb [panLang$One; panLang$One], [20; 21]));
+         funcs := FEMPTY; eids := FEMPTY |+ («E», (12w : 8 word)); vmax := 50 |>
+      (panLang$Call
+        (SOME (SOME (panLang$Local, «pair»),
+          SOME («E», «exn», panLang$Tick))) «f»
+        [panLang$Const (1w : 8 word);
+         panLang$RStruct [panLang$Const 2w; panLang$Const 3w]])``;
+
 val _ = print_eval "call_handler_missing_eid"
   ``pan_to_crep$compile
       <| vars := FEMPTY;

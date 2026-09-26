@@ -491,6 +491,14 @@ def exactCallWrappedEmptyOneContext : CompileExpContextExact 8 where
   eids := HolFiniteMapExact.empty
   vmax := 50
 
+def exactCallWrappedHandlerPresentContext : CompileExpContextExact 8 where
+  vars := (HolFiniteMapExact.empty.update
+      (ofString "pair", (.comb [.one, .one], [30, 31]))).update
+      (ofString "exn", (.comb [.one, .one], [20, 21]))
+  funcs := HolFiniteMapExact.empty
+  eids := HolFiniteMapExact.empty.update (ofString "E", BitVec.ofNat 8 12)
+  vmax := 50
+
 def exactCallHandlerPresentContext : CompileExpContextExact 8 where
   vars := HolFiniteMapExact.empty.update
     (ofString "exn", (.comb [.one, .one], [20, 21]))
@@ -751,6 +759,26 @@ def exactCallWrappedResultHandlerMissingEidParity : Bool :=
   | _ => false
 
 #guard exactCallWrappedResultHandlerMissingEidParity
+
+def exactCallWrappedResultHandlerPresentEidParity : Bool :=
+  match compileCallWrappedResultHandlerPresentEidExactHOLW
+      exactCallWrappedHandlerPresentContext (ofString "f") (ofString "pair")
+      [.const 1, .rstruct [.const 2, .const 3]] (.comb [.one, .one]) [30, 31]
+      (ofString "E") (ofString "exn") (BitVec.ofNat 8 12)
+      (by
+        have hne : ofString "exn" ≠ ofString "pair" := by decide
+        simp [exactCallWrappedHandlerPresentContext, wrapRtHOL,
+          HolFiniteMapExact.lookup_update, FUPDATE, hne])
+      (by simp [exactCallWrappedHandlerPresentContext,
+        HolFiniteMapExact.lookup_update, FUPDATE])
+      (fun _ => .tick) with
+  | .call (some ([30, 31], some (BitVec.ofNat 8 12,
+        .seq (.seq (.assign 20 (.loadGlob 0))
+          (.seq (.assign 21 (.loadGlob 1)) .skip)) .tick))) function
+      [.const 1, .const 2, .const 3] => function == ofString "f"
+  | _ => false
+
+#guard exactCallWrappedResultHandlerPresentEidParity
 
 def exactCallResultNoHandlerParity : Bool :=
   (match compileCallResultNoHandlerExactHOLW exactCallResultContext (ofString "f")
