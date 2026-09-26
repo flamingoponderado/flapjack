@@ -76,7 +76,12 @@ arm's flattening of argument expressions, with the exact untagged
 `call_result_no_handler_present` and `_missing` pin the other arm for
 `rtyp = SOME (NONE, NONE)`: lookup of the return shape, fresh result names,
 zero initialization, and the empty-result fallback. Its exact untagged helper
-is `compileCallResultNoHandlerExactHOLW`. `call_handler_missing_eid` checks
+is `compileCallResultNoHandlerExactHOLW`. `call_wrapped_result_no_handler`
+checks the successful `wrap_rt (FLOOKUP ctxt.vars rt)` arm for a local Call
+result: it reuses the looked-up names directly, without temporary allocation
+or zero initialization. The exact untagged helper and parity guard are
+`compileCallWrappedResultNoHandlerExactHOLW` and
+`exactCallWrappedResultNoHandlerParity`. `call_handler_missing_eid` checks
 that an exception handler with a missing `eids` entry takes the same fallback;
 the Lean exact subcase is `compileCallHandlerMissingEidExactHOLW`.
 `call_handler_present_eid` checks the found-EID branch, including exact

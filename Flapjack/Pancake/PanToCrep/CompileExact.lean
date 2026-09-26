@@ -423,6 +423,30 @@ def compileCallNoReturnExactHOLW {width : Nat} [NeZero width]
   let flattenedArguments := compiledArguments.flatMap Prod.fst
   .call none function flattenedArguments
 
+/-! Exact source-level form of HOL `wrap_rt_def` (`pan_to_crepScript.sml:131-136`).
+    It removes only a missing lookup and the special `(One, [])` result. -/
+
+def wrapRtExactHOL (result : Option (Flapjack.Pancake.PanLang.ShapeHOL × List Nat)) :=
+  match result with
+  | none => none
+  | some (.one, []) => none
+  | other => other
+
+/-! The successful `wrap_rt (FLOOKUP ctxt.vars rt)` arm with no handler in HOL
+    `compile_def` (`pan_to_crepScript.sml:252-261`). It reuses the destination
+    names directly in Call metadata and does not allocate or initialize return
+    slots. The premise captures precisely the successful wrapped lookup. -/
+
+def compileCallWrappedResultNoHandlerExactHOLW {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (function resultName : MlS)
+    (arguments : List (Flapjack.Pancake.PanLang.ExpHOL width))
+    (resultShape : Flapjack.Pancake.PanLang.ShapeHOL) (resultNames : List Nat)
+    (_wrappedResult : wrapRtExactHOL (context.vars.lookup resultName) =
+      some (resultShape, resultNames)) : CrepProgHOL width :=
+  let compiledArguments := compileExpExactHOLWList context arguments
+  let flattenedArguments := compiledArguments.flatMap Prod.fst
+  .call (some (resultNames, none)) function flattenedArguments
+
 /-! The `rtyp = SOME (NONE, NONE)` arm of the HOL `Call` clause
     (`pan_to_crepScript.sml:226-232`) looks up the callee's return shape,
     allocates result names above `vmax`, initializes those names to zero, and

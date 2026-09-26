@@ -478,6 +478,13 @@ def exactCallResultContext : CompileExpContextExact 8 where
   eids := HolFiniteMapExact.empty
   vmax := 10
 
+def exactCallWrappedResultContext : CompileExpContextExact 8 where
+  vars := HolFiniteMapExact.empty.update
+    (ofString "pair", (.comb [.one, .one], [30, 31]))
+  funcs := HolFiniteMapExact.empty
+  eids := HolFiniteMapExact.empty
+  vmax := 50
+
 def exactCallHandlerPresentContext : CompileExpContextExact 8 where
   vars := HolFiniteMapExact.empty.update
     (ofString "exn", (.comb [.one, .one], [20, 21]))
@@ -692,6 +699,18 @@ def exactCallNoReturnParity : Bool :=
   | _ => false
 
 #guard exactCallNoReturnParity
+
+def exactCallWrappedResultNoHandlerParity : Bool :=
+  match compileCallWrappedResultNoHandlerExactHOLW exactCallWrappedResultContext
+      (ofString "f") (ofString "pair")
+      [.const 1, .rstruct [.const 2, .const 3]] (.comb [.one, .one]) [30, 31]
+      (by simp [exactCallWrappedResultContext, wrapRtExactHOL,
+        HolFiniteMapExact.lookup_update, FUPDATE]) with
+  | .call (some ([30, 31], none)) function [.const 1, .const 2, .const 3] =>
+      function == ofString "f"
+  | _ => false
+
+#guard exactCallWrappedResultNoHandlerParity
 
 def exactCallResultNoHandlerParity : Bool :=
   (match compileCallResultNoHandlerExactHOLW exactCallResultContext (ofString "f")
