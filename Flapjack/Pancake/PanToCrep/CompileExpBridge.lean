@@ -146,4 +146,431 @@ theorem compileExpBridge_bytesInWord {width : Nat} [NeZero width]
       (simp only [List.map_cons, List.map_nil, crepExpToHOL.eq_1]; rfl)
   · first | rfl | simp only [shapeToHOL]
 
+
+/-! ### List-motive consequences and the `RStruct` handler
+
+Generic list lemmas push `crepExpToHOL`/`shapeToHOL` through the pair map used by
+`compileExpListBridgeProp`; the `RStruct` handler is the first recursive case of
+the bridge. -/
+
+theorem map_flatMap_fst {α β γ δ : Type} (f : α → β) (g : γ → δ)
+    (entries : List (List α × γ)) :
+    (entries.flatMap Prod.fst).map f =
+      (entries.map (fun entry => (entry.1.map f, g entry.2))).flatMap Prod.fst := by
+  induction entries with
+  | nil => rfl
+  | cons entry rest ih =>
+      simp only [List.flatMap_cons, List.map_cons, List.map_append, ih]
+
+theorem map_map_snd {α β γ δ : Type} (f : α → β) (g : γ → δ)
+    (entries : List (List α × γ)) :
+    (entries.map Prod.snd).map g =
+      (entries.map (fun entry => (entry.1.map f, g entry.2))).map Prod.snd := by
+  rw [List.map_map, List.map_map]
+  rfl
+
+theorem compileExpListBridgeProp_fstMap {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width)
+    (expressions : List (Exp (BitVec width)))
+    (h : compileExpListBridgeProp context expressions) :
+    ((compileExpHOL.compileExpListHOL
+        (CompileExpContextExact.prodContext context) expressions).map
+          Prod.fst).map (List.map crepExpToHOL)
+      = (compileExpExactHOLWList context (expressions.map expToHOL)).map
+          Prod.fst := by
+  unfold compileExpListBridgeProp at h
+  rw [← h]
+  rw [List.map_map, List.map_map]
+  rfl
+
+theorem compileExpListBridgeProp_sndMap {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width)
+    (expressions : List (Exp (BitVec width)))
+    (h : compileExpListBridgeProp context expressions) :
+    ((compileExpHOL.compileExpListHOL
+        (CompileExpContextExact.prodContext context) expressions).map
+          Prod.snd).map shapeToHOL
+      = (compileExpExactHOLWList context (expressions.map expToHOL)).map
+          Prod.snd := by
+  unfold compileExpListBridgeProp at h
+  rw [← h]
+  rw [List.map_map, List.map_map]
+  rfl
+
+theorem compileExpListBridgeProp_fstFlatMap {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width)
+    (expressions : List (Exp (BitVec width)))
+    (h : compileExpListBridgeProp context expressions) :
+    ((compileExpHOL.compileExpListHOL
+        (CompileExpContextExact.prodContext context) expressions).flatMap
+          Prod.fst).map crepExpToHOL
+      = (compileExpExactHOLWList context (expressions.map expToHOL)).flatMap
+          Prod.fst := by
+  unfold compileExpListBridgeProp at h
+  rw [map_flatMap_fst crepExpToHOL shapeToHOL]
+  rw [h]
+
+theorem compileExpBridge_rStruct {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width)
+    (fields : List (Exp (BitVec width)))
+    (h : compileExpListBridgeProp context fields) :
+    compileExpBridgeProp context (.rStruct fields) := by
+  simp only [compileExpBridgeProp, compileExpHOL.eq_4, compileExpExactHOLW.eq_4,
+    expToHOL.eq_3]
+  constructor
+  · exact compileExpListBridgeProp_fstFlatMap context fields h
+  · simp only [shapeToHOL]
+    exact congrArg ShapeHOL.comb (compileExpListBridgeProp_sndMap context fields h)
+
+theorem compileExpListBridgeProp_nil {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) :
+    compileExpListBridgeProp context ([] : List (Exp (BitVec width))) := by
+  simp only [compileExpListBridgeProp, List.map_nil,
+    compileExpHOL.compileExpListHOL.eq_1, compileExpExactHOLWList.eq_1]
+
+theorem compileExpListBridgeProp_cons {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (head : Exp (BitVec width))
+    (tail : List (Exp (BitVec width)))
+    (hhead : compileExpBridgeProp context head)
+    (htail : compileExpListBridgeProp context tail) :
+    compileExpListBridgeProp context (head :: tail) := by
+  unfold compileExpBridgeProp at hhead
+  unfold compileExpListBridgeProp at htail ⊢
+  simp only [List.map_cons, compileExpHOL.compileExpListHOL.eq_2,
+    compileExpExactHOLWList.eq_2]
+  rw [htail]
+  congr 1
+  exact Prod.ext hhead.1 hhead.2
+
+
+/-! ### `Op` and `PanOp` handlers
+
+Both cases extract the argument heads with `cexpHeads`; the codec push-through
+lemma `cexpHeads_map_crepExpToHOL` and the list-motive first-component bridge
+`compileExpListBridgeProp_fstMap` align the production and exact scrutinees. -/
+
+theorem compileExpBridge_op {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (operator : BinOp)
+    (arguments : List (Exp (BitVec width)))
+    (h : compileExpListBridgeProp context arguments) :
+    compileExpBridgeProp context (.op operator arguments) := by
+  simp only [compileExpBridgeProp, compileExpHOL.eq_11, compileExpExactHOLW.eq_11,
+    expToHOL.eq_10]
+  have hf := compileExpListBridgeProp_fstMap context arguments h
+  have heq :
+      cexpHeads
+          ((compileExpExactHOLWList context (arguments.map expToHOL)).map Prod.fst)
+        = (cexpHeads
+            ((compileExpHOL.compileExpListHOL
+              (CompileExpContextExact.prodContext context) arguments).map
+                Prod.fst)).map (List.map crepExpToHOL) := by
+    rw [← hf]
+    exact cexpHeads_map_crepExpToHOL _
+  constructor
+  · rw [heq]
+    cases cexpHeads
+        ((compileExpHOL.compileExpListHOL
+          (CompileExpContextExact.prodContext context) arguments).map Prod.fst) with
+    | none =>
+        simp only [Option.map_none, List.map_cons, List.map_nil,
+          crepExpToHOL.eq_1]
+    | some es =>
+        simp only [Option.map_some, List.map_cons, List.map_nil,
+          crepExpToHOL.eq_7]
+  · rw [heq]
+    cases cexpHeads
+        ((compileExpHOL.compileExpListHOL
+          (CompileExpContextExact.prodContext context) arguments).map Prod.fst) with
+    | none => simp only [Option.map_none, shapeToHOL]
+    | some es => simp only [Option.map_some, shapeToHOL]
+
+theorem compileExpBridge_panOp {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (operator : PanOp)
+    (arguments : List (Exp (BitVec width)))
+    (h : compileExpListBridgeProp context arguments) :
+    compileExpBridgeProp context (.panOp operator arguments) := by
+  simp only [compileExpBridgeProp, compileExpHOL.eq_12, compileExpExactHOLW.eq_12,
+    expToHOL.eq_11]
+  have hf := compileExpListBridgeProp_fstMap context arguments h
+  have heq :
+      cexpHeads
+          ((compileExpExactHOLWList context (arguments.map expToHOL)).map Prod.fst)
+        = (cexpHeads
+            ((compileExpHOL.compileExpListHOL
+              (CompileExpContextExact.prodContext context) arguments).map
+                Prod.fst)).map (List.map crepExpToHOL) := by
+    rw [← hf]
+    exact cexpHeads_map_crepExpToHOL _
+  constructor
+  · rw [heq]
+    cases cexpHeads
+        ((compileExpHOL.compileExpListHOL
+          (CompileExpContextExact.prodContext context) arguments).map Prod.fst) with
+    | none =>
+        simp only [Option.map_none, List.map_cons, List.map_nil,
+          crepExpToHOL.eq_1]
+    | some es =>
+        simp only [Option.map_some, List.map_cons, List.map_nil,
+          crepExpToHOL.eq_8]
+  · rw [heq]
+    cases cexpHeads
+        ((compileExpHOL.compileExpListHOL
+          (CompileExpContextExact.prodContext context) arguments).map Prod.fst) with
+    | none => simp only [Option.map_none, shapeToHOL]
+    | some es => simp only [Option.map_some, shapeToHOL]
+
+
+/-! ### Multi-subexpression and guarded-shape handlers
+
+`cmp`/`shift` compile both subexpressions and inspect the head of each compiled
+list; `load32`/`loadByte` compile one subexpression and additionally require the
+exact `ShapeHOL.one` shape. In every case the production and exact matches are
+aligned by rewriting the exact compiled pair with the codec pair equality
+`Prod.ext` of the two conjuncts of `compileExpBridgeProp`. -/
+
+theorem compileExpBridge_cmp {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (operator : Cmp)
+    (left right : Exp (BitVec width))
+    (hleft : compileExpBridgeProp context left)
+    (hright : compileExpBridgeProp context right) :
+    compileExpBridgeProp context (.cmp operator left right) := by
+  obtain ⟨hl1, hl2⟩ := hleft
+  obtain ⟨hr1, hr2⟩ := hright
+  have hexLeft :
+      compileExpExactHOLW context (expToHOL left) =
+        ((compileExpHOL (CompileExpContextExact.prodContext context) left).1.map
+            crepExpToHOL,
+          shapeToHOL
+            (compileExpHOL (CompileExpContextExact.prodContext context) left).2) :=
+    Prod.ext hl1.symm hl2.symm
+  have hexRight :
+      compileExpExactHOLW context (expToHOL right) =
+        ((compileExpHOL (CompileExpContextExact.prodContext context) right).1.map
+            crepExpToHOL,
+          shapeToHOL
+            (compileExpHOL (CompileExpContextExact.prodContext context) right).2) :=
+    Prod.ext hr1.symm hr2.symm
+  simp only [compileExpBridgeProp, compileExpHOL.eq_13, compileExpExactHOLW.eq_13,
+    expToHOL.eq_12, hexLeft, hexRight]
+  constructor
+  · cases compileExpHOL (CompileExpContextExact.prodContext context) left with
+    | mk l1 l2 =>
+      cases compileExpHOL (CompileExpContextExact.prodContext context) right with
+      | mk r1 r2 =>
+        cases l1 with
+        | nil => simp only [List.map_cons, List.map_nil, crepExpToHOL.eq_1]
+        | cons a as =>
+          cases r1 with
+          | nil => simp only [List.map_cons, List.map_nil, crepExpToHOL.eq_1]
+          | cons b bs => simp only [List.map_cons, List.map_nil, crepExpToHOL.eq_9]
+  · cases compileExpHOL (CompileExpContextExact.prodContext context) left with
+    | mk l1 l2 =>
+      cases compileExpHOL (CompileExpContextExact.prodContext context) right with
+      | mk r1 r2 =>
+        cases l1 <;> cases r1 <;> simp only [List.map_cons, List.map_nil, shapeToHOL]
+
+theorem compileExpBridge_shift {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (operator : Shift)
+    (left right : Exp (BitVec width))
+    (hleft : compileExpBridgeProp context left)
+    (hright : compileExpBridgeProp context right) :
+    compileExpBridgeProp context (.shift operator left right) := by
+  obtain ⟨hl1, hl2⟩ := hleft
+  obtain ⟨hr1, hr2⟩ := hright
+  have hexLeft :
+      compileExpExactHOLW context (expToHOL left) =
+        ((compileExpHOL (CompileExpContextExact.prodContext context) left).1.map
+            crepExpToHOL,
+          shapeToHOL
+            (compileExpHOL (CompileExpContextExact.prodContext context) left).2) :=
+    Prod.ext hl1.symm hl2.symm
+  have hexRight :
+      compileExpExactHOLW context (expToHOL right) =
+        ((compileExpHOL (CompileExpContextExact.prodContext context) right).1.map
+            crepExpToHOL,
+          shapeToHOL
+            (compileExpHOL (CompileExpContextExact.prodContext context) right).2) :=
+    Prod.ext hr1.symm hr2.symm
+  simp only [compileExpBridgeProp, compileExpHOL.eq_14, compileExpExactHOLW.eq_14,
+    expToHOL.eq_13, hexLeft, hexRight]
+  constructor
+  · cases compileExpHOL (CompileExpContextExact.prodContext context) left with
+    | mk l1 l2 =>
+      cases compileExpHOL (CompileExpContextExact.prodContext context) right with
+      | mk r1 r2 =>
+        cases l1 with
+        | nil => simp only [List.map_cons, List.map_nil, crepExpToHOL.eq_1]
+        | cons a as =>
+          cases r1 with
+          | nil => simp only [List.map_cons, List.map_nil, crepExpToHOL.eq_1]
+          | cons b bs => simp only [List.map_cons, List.map_nil, crepExpToHOL.eq_10]
+  · cases compileExpHOL (CompileExpContextExact.prodContext context) left with
+    | mk l1 l2 =>
+      cases compileExpHOL (CompileExpContextExact.prodContext context) right with
+      | mk r1 r2 =>
+        cases l1 <;> cases r1 <;> simp only [List.map_cons, List.map_nil, shapeToHOL]
+
+theorem compileExpBridge_load32 {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (expression : Exp (BitVec width))
+    (h : compileExpBridgeProp context expression) :
+    compileExpBridgeProp context (.load32 expression) := by
+  obtain ⟨hl1, hl2⟩ := h
+  have hex :
+      compileExpExactHOLW context (expToHOL expression) =
+        ((compileExpHOL (CompileExpContextExact.prodContext context) expression).1.map
+            crepExpToHOL,
+          shapeToHOL
+            (compileExpHOL (CompileExpContextExact.prodContext context) expression).2) :=
+    Prod.ext hl1.symm hl2.symm
+  simp only [compileExpBridgeProp, compileExpHOL.eq_9, compileExpExactHOLW.eq_9,
+    expToHOL.eq_8, hex]
+  constructor
+  · cases compileExpHOL (CompileExpContextExact.prodContext context) expression with
+    | mk l1 l2 =>
+      cases l1 with
+      | nil => simp only [List.map_cons, List.map_nil, crepExpToHOL.eq_1]
+      | cons a as =>
+        cases l2 with
+        | one => simp only [List.map_cons, List.map_nil, crepExpToHOL.eq_4, shapeToHOL]
+        | comb fields =>
+            simp only [List.map_cons, List.map_nil, crepExpToHOL.eq_1, shapeToHOL]
+        | named nm =>
+            simp only [List.map_cons, List.map_nil, crepExpToHOL.eq_1, shapeToHOL]
+  · cases compileExpHOL (CompileExpContextExact.prodContext context) expression with
+    | mk l1 l2 =>
+      cases l1 <;> (cases l2 <;> simp only [List.map_cons, List.map_nil, shapeToHOL])
+
+theorem compileExpBridge_loadByte {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (expression : Exp (BitVec width))
+    (h : compileExpBridgeProp context expression) :
+    compileExpBridgeProp context (.loadByte expression) := by
+  obtain ⟨hl1, hl2⟩ := h
+  have hex :
+      compileExpExactHOLW context (expToHOL expression) =
+        ((compileExpHOL (CompileExpContextExact.prodContext context) expression).1.map
+            crepExpToHOL,
+          shapeToHOL
+            (compileExpHOL (CompileExpContextExact.prodContext context) expression).2) :=
+    Prod.ext hl1.symm hl2.symm
+  simp only [compileExpBridgeProp, compileExpHOL.eq_10, compileExpExactHOLW.eq_10,
+    expToHOL.eq_9, hex]
+  constructor
+  · cases compileExpHOL (CompileExpContextExact.prodContext context) expression with
+    | mk l1 l2 =>
+      cases l1 with
+      | nil => simp only [List.map_cons, List.map_nil, crepExpToHOL.eq_1]
+      | cons a as =>
+        cases l2 with
+        | one => simp only [List.map_cons, List.map_nil, crepExpToHOL.eq_5, shapeToHOL]
+        | comb fields =>
+            simp only [List.map_cons, List.map_nil, crepExpToHOL.eq_1, shapeToHOL]
+        | named nm =>
+            simp only [List.map_cons, List.map_nil, crepExpToHOL.eq_1, shapeToHOL]
+  · cases compileExpHOL (CompileExpContextExact.prodContext context) expression with
+    | mk l1 l2 =>
+      cases l1 <;> (cases l2 <;> simp only [List.map_cons, List.map_nil, shapeToHOL])
+
+
+/-! ### Single-subexpression guarded handlers: `rField` and `load`
+
+`rField` inspects the shape of the compiled subexpression, `load` additionally
+guards on a nonempty compiled list. The production and exact matches are aligned
+by the codec pair equality, `compileField_map_codecs`, and the checked
+`loadShape`/`loadShapeBytes`/`loadShapeBytesHOLW` bridges. -/
+
+theorem compileExpBridge_rField {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (index : Nat)
+    (expression : Exp (BitVec width))
+    (h : compileExpBridgeProp context expression) :
+    compileExpBridgeProp context (.rField index expression) := by
+  obtain ⟨hl1, hl2⟩ := h
+  have hex :
+      compileExpExactHOLW context (expToHOL expression) =
+        ((compileExpHOL (CompileExpContextExact.prodContext context) expression).1.map
+            crepExpToHOL,
+          shapeToHOL
+            (compileExpHOL (CompileExpContextExact.prodContext context) expression).2) :=
+    Prod.ext hl1.symm hl2.symm
+  simp only [compileExpBridgeProp, compileExpHOL.eq_5, compileExpExactHOLW.eq_5,
+    expToHOL.eq_4, hex]
+  cases hshape : (compileExpHOL (CompileExpContextExact.prodContext context) expression).2 with
+  | one =>
+      constructor <;>
+        simp only [List.map_cons, List.map_nil, crepExpToHOL.eq_1, shapeToHOL]
+  | comb fields =>
+      have hcf := compileField_map_codecs index fields
+        (compileExpHOL (CompileExpContextExact.prodContext context) expression).1
+      simp only [shapeToHOL]
+      exact hcf
+  | named nm =>
+      constructor <;>
+        simp only [List.map_cons, List.map_nil, crepExpToHOL.eq_1, shapeToHOL]
+
+theorem compileExpBridge_load {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (shape : Shape)
+    (expression : Exp (BitVec width))
+    (h : compileExpBridgeProp context expression) :
+    compileExpBridgeProp context (.load shape expression) := by
+  obtain ⟨hl1, hl2⟩ := h
+  have hex :
+      compileExpExactHOLW context (expToHOL expression) =
+        ((compileExpHOL (CompileExpContextExact.prodContext context) expression).1.map
+            crepExpToHOL,
+          shapeToHOL
+            (compileExpHOL (CompileExpContextExact.prodContext context) expression).2) :=
+    Prod.ext hl1.symm hl2.symm
+  simp only [compileExpBridgeProp, compileExpHOL.eq_8, compileExpExactHOLW.eq_8,
+    expToHOL.eq_7, hex, sizeOfShapeHOL_shapeToHOL]
+  cases hcomp : compileExpHOL (CompileExpContextExact.prodContext context) expression with
+  | mk l s =>
+    cases l with
+    | nil =>
+        constructor <;>
+          simp only [List.map_cons, List.map_nil, crepExpToHOL.eq_1, shapeToHOL]
+    | cons a as =>
+        simp only [List.map_cons]
+        constructor
+        · rw [loadShape_eq_loadShapeBytes_of_stride_eq (0 : BitVec width)
+              (CrepBytesInWord.bytesInWord) (Shape.shapeSize shape) a rfl]
+          exact loadShapeBytes_map_crepExpToHOL (0 : BitVec width) (Shape.shapeSize shape) a
+        · trivial
+
+
+/-! ### Assembly: the full `compile_exp` codec bridge
+
+The top-level theorem is the `Flapjack.Exp.rec` assembly over all 17
+constructors, using the per-constructor handlers above and the two list
+handlers. -/
+
+theorem compileExpBridge {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (expression : Exp (BitVec width)) :
+    compileExpBridgeProp context expression :=
+  Flapjack.Exp.rec
+    (motive_1 := compileExpBridgeProp context)
+    (motive_2 := compileExpListBridgeProp context)
+    (motive_3 := fun _ => True)
+    (motive_4 := fun _ => True)
+    (compileExpBridge_const context)
+    (compileExpBridge_var context)
+    (compileExpBridge_rStruct context)
+    (compileExpBridge_rField context)
+    (fun name fields _ => compileExpBridge_nStruct context name fields)
+    (fun name value _ => compileExpBridge_nField context name value)
+    (compileExpBridge_load context)
+    (compileExpBridge_load32 context)
+    (compileExpBridge_loadByte context)
+    (compileExpBridge_op context)
+    (compileExpBridge_panOp context)
+    (compileExpBridge_cmp context)
+    (compileExpBridge_shift context)
+    (compileExpBridge_baseAddr context)
+    (compileExpBridge_topAddr context)
+    (compileExpBridge_bytesInWord context)
+    (compileExpListBridgeProp_nil context)
+    (compileExpListBridgeProp_cons context)
+    True.intro
+    (fun _ _ _ _ => True.intro)
+    (fun _ _ _ => True.intro)
+    expression
+
 end Flapjack
