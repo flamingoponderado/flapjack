@@ -396,6 +396,21 @@ local theorem `MEM_functions` at
 `MEM_functionsHOL` are paired with the Lean regression
 `Flapjack.Test.PanGlobalsMemFunctionsHOLParity`.
 
+`pan_lang_size_probe.out` loads the real compiled CakeML `panLangTheory` and
+prints the `Datatype`-generated size equations `mlstring_size_def`,
+`shape_size_def`, and `exp_size_def`, the `MEM_IMP_shape_size` and
+`MEM_IMP_exp_size` statements, and concrete `EVAL` rows for representative
+`shape_size`/`exp_size` applications. It replaces an earlier version that
+reconstructed the datatypes locally, which pinned `MEM_IMP_shape_size` and
+`MEM_IMP_exp_size` only by analogy. The equations are transcribed in
+`Flapjack/Pancake/PanLang/Shape.lean` and `Flapjack/Pancake/PanLang/Exp.lean`;
+the generated equations are not textual HOL declarations, so the transcriptions
+and their `@[hol]`-tagged `MEM_IMP_*` theorems cannot reference them directly.
+The matching fixtures live in `Flapjack.Test.PanLangGeneratedSizeParity`.
+Regenerate with `HOL_PROBE_ONLY=pan_lang_size_probeScript.sml
+scripts/hol-probes/regenerate.sh` against a CakeML checkout whose compiled
+theories match the submodule source commit.
+
 From the repository root, with HOL4 and the CakeML checkout available,
 regenerate both checked-in outputs with:
 

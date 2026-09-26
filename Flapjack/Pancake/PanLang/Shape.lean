@@ -384,9 +384,11 @@ size functions `shape_size`/`shape1_size` used by `Theorem MEM_IMP_shape_size`
 (lines 131-137).  Those functions are produced by HOL's `Datatype` package
 (`HOL/src/datatype/DataSize.sml`), not written as source declarations, so they
 have no textual HOL name for `scripts/check-hol-refs.py` to resolve and cannot
-carry an `@[hol]` tag.  The equations, printed from a standard-HOL reconstruction
-of the same datatype (identical constructor arities and field types, `char_size`
-from `HOL/src/string/stringScript.sml:179`), are
+carry an `@[hol]` tag.  The equations, printed from the real CakeML
+`panLangTheory` by `scripts/hol-probes/pan_lang_size_probeScript.sml` (which
+imports the compiled theory from the matching source commit instead of
+reconstructing the datatype) and pinned in
+`scripts/hol-probes/pan_lang_size_probe.out`, are
 
 ```
 mlstring_size (implode a) = 1 + list_size char_size a
