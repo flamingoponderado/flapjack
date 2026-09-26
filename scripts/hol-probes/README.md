@@ -105,6 +105,21 @@ The `excp_rel` cases deliberately use a word-valued compiler-code map and a
 shape-valued source map, matching the definition's independent HOL value types.
 The `ctxt_fc` cases record `with_shape` slot slicing, ZIP truncation, and
 `MAX_LIST` on an empty name list.
+`pan_to_crep_state_rel_carrier_probe.out` directly evaluates HOL
+`pan_to_crepProof$state_rel` (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:45-56`)
+on matching fields and a nonempty named struct context, and records its
+`mlstring`-named `struct_info` row. It also records the `FLOOKUP` observations
+for empty and nonempty globals. HOL EVAL leaves equality of the nonempty
+function-backed fmap with `FEMPTY` unreduced, so that row is kept explicitly
+as an unevaluated term; it is not reported as a computed `F` result. The exact
+carrier checks live in `Flapjack.Test.PanToCrepStateRelCarrierParity`. The
+source review is intentionally narrow: it pins the carrier fields consumed by
+the state relation, not a port of `state_rel` or a claim that production
+String/Shape states satisfy the relation. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=pan_to_crep_state_rel_carrier_probeScript.sml
+scripts/hol-probes/regenerate.sh` when using a read-only CakeML checkout whose
+compiled theories match the source commit.
 `code_rel_probe.out` records the HOL-inferred source/target code-map types,
 compiled parameter return, localisation outcomes, function-signature lookup,
 and target entry. The probe also proves matching and deliberately mismatching
