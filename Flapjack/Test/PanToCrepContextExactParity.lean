@@ -102,6 +102,21 @@ example : sample.eids.lookup e = some (2 : BitVec 8) := by
 
 example : sample.vmax = 3 := rfl
 
+/-! Exact HOL `mk_ctxt_def` construction: the reviewed `mkCtxtExactHOL` packs
+its four arguments into the exact record with HOL's argument order and field
+assignment, so it returns the same record as the direct field fixture above. -/
+example :
+    (mkCtxtExactHOL sample.vars sample.funcs sample.vmax sample.eids) = sample := rfl
+
+example : (mkCtxtExactHOL sample.vars sample.funcs sample.vmax sample.eids).vmax = 3 := rfl
+
+example :
+    (mkCtxtExactHOL sample.vars sample.funcs sample.vmax sample.eids).eids.lookup e =
+      some (2 : BitVec 8) := by
+  change sample.eids.lookup e = some (2 : BitVec 8)
+  simp [sample, e, HolFiniteMapExact.update, HolFiniteMapExact.empty, FUPDATE]
+
+
 /-! The production bridge exposes exact context lookups to the String/Shape
 compiler boundary using decoded byte names and shapes. -/
 example : sample.toProduction.vars (toStringOfBytes p) = some (.one, [0]) := by
