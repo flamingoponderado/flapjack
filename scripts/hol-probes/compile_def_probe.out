@@ -64,6 +64,10 @@ extcall_high_tail=Dec 101 (Var 4)
 extcall_shared_high_tail=Dec 100 (Var 1)
   (Dec 101 (Var 1)
      (Dec 102 (Var 1) (Dec 103 (Var 1) (ExtCall «f» 100 101 102 103))))
+extcall_constants=Dec 1 (Const 1w)
+  (Dec 2 (Const 2w)
+     (Dec 3 (Const 3w) (Dec 4 (Const 4w) (ExtCall «f» 1 2 3 4))))
+extcall_shape_fallback=Skip
 pair_load=Return
   (Load (Var 0)::
      if n2w (dimindex (:word64) DIV 8 MOD dimword (:word64)) = 0w then

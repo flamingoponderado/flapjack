@@ -296,7 +296,7 @@ val _ = print_eval "extcall_high_tail"
                  |+ («len1», (panLang$One, [5]))
                  |+ («ptr2», (panLang$One, [6]))
                  |+ («len2», (panLang$One, [7]));
-         funcs := FEMPTY; eids := FEMPTY; vmax := 100 |>
+         funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
       (panLang$ExtCall «f»
         (panLang$Var panLang$Local «ptr1»)
         (panLang$Var panLang$Local «len1»)
@@ -306,12 +306,24 @@ val _ = print_eval "extcall_high_tail"
 val _ = print_eval "extcall_shared_high_tail"
   ``pan_to_crep$compile
       <| vars := FEMPTY |+ («x», (panLang$One, [1; 99]));
-         funcs := FEMPTY; eids := FEMPTY; vmax := 99 |>
+         funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
       (panLang$ExtCall «f»
         (panLang$Var panLang$Local «x»)
         (panLang$Var panLang$Local «x»)
         (panLang$Var panLang$Local «x»)
         (panLang$Var panLang$Local «x»))``;
+
+val _ = print_eval "extcall_constants"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 400 |>
+      (panLang$ExtCall «f» (panLang$Const (1w : 8 word))
+        (panLang$Const 2w) (panLang$Const 3w) (panLang$Const 4w))``;
+
+val _ = print_eval "extcall_shape_fallback"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (panLang$ExtCall «f» (panLang$RStruct ([] : 8 panLang$exp list))
+        (panLang$Const (1w : 8 word)) (panLang$Const 2w) (panLang$Const 3w))``;
 
 val _ = print_eval "pair_load"
   ``pan_to_crep$compile

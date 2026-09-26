@@ -353,4 +353,40 @@ def compileDecExactHOLW {width : Nat} [NeZero width]
   if valueCount != values.length then .skip
   else nestedDecsHOL names values (compileBody bodyContext)
 
+/-! The `ExtCall` clause from HOL `compile_def`
+    (`pan_to_crepScript.sml:219-233`). The freshness bound is the maximum over
+    every variable in all four compiled operand lists, even though the output
+    uses only each list's head. All four source shapes must be `One` and all
+    four compiled lists must be nonempty; otherwise HOL returns `Skip`. -/
+
+def compileExtCallExactHOLW {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (function : MlS)
+    (configuration configurationLength array arrayLength :
+      Flapjack.Pancake.PanLang.ExpHOL width) : CrepProgHOL width :=
+  let (configurationValues, configurationShape) :=
+    compileExpExactHOLW context configuration
+  let (configurationLengthValues, configurationLengthShape) :=
+    compileExpExactHOLW context configurationLength
+  let (arrayValues, arrayShape) := compileExpExactHOLW context array
+  let (arrayLengthValues, arrayLengthShape) :=
+    compileExpExactHOLW context arrayLength
+  let allValues := configurationValues ++ configurationLengthValues ++
+    arrayValues ++ arrayLengthValues
+  let allVariables := allValues.flatMap fun value =>
+    crepExpVarsW (crepExpOfHOL value)
+  let maximumVariable := allVariables.foldl (fun maximum variableIndex =>
+    Nat.max maximum variableIndex) 0
+  match configurationShape, configurationValues,
+      configurationLengthShape, configurationLengthValues,
+      arrayShape, arrayValues, arrayLengthShape, arrayLengthValues with
+  | .one, configurationValue :: _, .one, configurationLengthValue :: _,
+      .one, arrayValue :: _, .one, arrayLengthValue :: _ =>
+        .dec (maximumVariable + 1) configurationValue
+          (.dec (maximumVariable + 2) configurationLengthValue
+            (.dec (maximumVariable + 3) arrayValue
+              (.dec (maximumVariable + 4) arrayLengthValue
+                (.extCall function (maximumVariable + 1) (maximumVariable + 2)
+                  (maximumVariable + 3) (maximumVariable + 4)))))
+  | _, _, _, _, _, _, _, _ => .skip
+
 end Flapjack

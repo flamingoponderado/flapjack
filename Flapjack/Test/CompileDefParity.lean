@@ -442,6 +442,29 @@ def exactMalformedRaiseContext : CompileExpContextExact 8 where
     (ofString "E", BitVec.ofNat 8 12)
   vmax := 0
 
+def exactExtCallContext : CompileExpContextExact 8 where
+  vars := (((HolFiniteMapExact.empty.update
+      (ofString "configuration", (.one, [4, 100]))).update
+      (ofString "configurationLength", (.one, [5]))).update
+      (ofString "array", (.one, [6]))).update
+      (ofString "arrayLength", (.one, [7]))
+  funcs := HolFiniteMapExact.empty
+  eids := HolFiniteMapExact.empty
+  vmax := 0
+
+def exactMalformedExtCallContext : CompileExpContextExact 8 where
+  vars := HolFiniteMapExact.empty.update
+    (ofString "configuration", (.comb [.one], [4]))
+  funcs := HolFiniteMapExact.empty
+  eids := HolFiniteMapExact.empty
+  vmax := 0
+
+def exactExtCallConstantContext : CompileExpContextExact 8 where
+  vars := HolFiniteMapExact.empty
+  funcs := HolFiniteMapExact.empty
+  eids := HolFiniteMapExact.empty
+  vmax := 400
+
 def returnValuesMatch (expected : List (CrepExp (BitVec 8))) : CrepProgHOL 8 → Bool
   | .return actual => actual.map crepExpOfHOL == expected
   | _ => false
@@ -620,12 +643,39 @@ def exactDecClauseParity : Bool :=
 
 #guard exactDecClauseParity
 
+def exactExtCallClauseParity : Bool :=
+  (match compileExtCallExactHOLW exactExtCallContext (ofString "f")
+      (.var .local (ofString "configuration"))
+      (.var .local (ofString "configurationLength"))
+      (.var .local (ofString "array"))
+      (.var .local (ofString "arrayLength")) with
+   | .dec 101 (.var 4) (.dec 102 (.var 5) (.dec 103 (.var 6)
+       (.dec 104 (.var 7) (.extCall function 101 102 103 104)))) =>
+       function == ofString "f"
+   | _ => false) &&
+  (match compileExtCallExactHOLW exactExtCallConstantContext (ofString "f")
+      (.const 1) (.const 2) (.const 3) (.const 4) with
+   | .dec 1 (.const 1) (.dec 2 (.const 2) (.dec 3 (.const 3)
+       (.dec 4 (.const 4) (.extCall function 1 2 3 4)))) =>
+       function == ofString "f"
+   | _ => false) &&
+  (match compileExtCallExactHOLW exactMalformedExtCallContext (ofString "f")
+      (.var .local (ofString "configuration")) (.const 1) (.const 2) (.const 3) with
+   | .skip => true
+   | _ => false) &&
+  (match compileExtCallExactHOLW exactReturnContext (ofString "f")
+      (.rstruct []) (.const 1) (.const 2) (.const 3) with
+   | .skip => true
+   | _ => false)
+
+#guard exactExtCallClauseParity
+
 def runChecks : IO Bool := do
   if parityGuard && exactStructuralSliceParity && exactReturnClauseParity &&
       exactStoreClauseParity && exactIfWhileClauseParity && exactGlobalFallbackParity &&
       exactLocalAssignClauseParity && exactPrimitiveClauseParity && exactStoreClauseFullParity &&
       exactRaiseClauseParity && exactShMemStoreClauseParity && exactShMemLoadClauseParity &&
-      exactDecClauseParity then
+      exactDecClauseParity && exactExtCallClauseParity then
     IO.println "PASS compile_def fixed-width load/store and control-flow parity"
   else
     IO.println "FAIL compile_def parity"
@@ -633,6 +683,6 @@ def runChecks : IO Bool := do
     exactStoreClauseParity && exactIfWhileClauseParity && exactGlobalFallbackParity &&
     exactLocalAssignClauseParity && exactPrimitiveClauseParity && exactStoreClauseFullParity &&
     exactRaiseClauseParity && exactShMemStoreClauseParity && exactShMemLoadClauseParity &&
-    exactDecClauseParity)
+    exactDecClauseParity && exactExtCallClauseParity)
 
 end Flapjack.Test.CompileDefParity
