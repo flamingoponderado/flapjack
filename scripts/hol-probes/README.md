@@ -93,6 +93,11 @@ case: the missing handler EID is discarded, but destination names remain in
 the call result metadata. The matching helper and guard are
 `compileCallWrappedResultHandlerMissingEidExactHOLW` and
 `exactCallWrappedResultHandlerMissingEidParity`.
+`call_wrapped_result_handler_present_eid` checks the found-EID branch: result
+names remain direct metadata and `exp_hdl` is sequenced before the compiled
+handler body. Its matching helper and guard are
+`compileCallWrappedResultHandlerPresentEidExactHOLW` and
+`exactCallWrappedResultHandlerPresentEidParity`.
 `call_handler_present_eid` checks the found-EID branch, including exact
 `exp_hdl` global loads and recursive handler sequencing; its exact helper is
 `compileCallHandlerPresentEidExactHOLW`.
