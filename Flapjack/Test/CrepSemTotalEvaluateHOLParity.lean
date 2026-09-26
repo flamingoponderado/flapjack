@@ -13,7 +13,7 @@ declaration-local infrastructure regressions, not a whole-program HOL claim.
 This file also reproduces the six direct HOL rows of
 `scripts/hol-probes/crep_exit_loop_probe.out` for the exact `@[hol]` port
 `exitLoopCrepResult` (`crepSemScript.sml:exit_loop_def`) over the accepted exact
-`CrepResultHOL` carrier.
+`CrepResultHOLExact` carrier, which is also the evaluator's own result carrier.
 -/
 
 namespace Flapjack.Test.CrepSemTotalEvaluateHOLParity
@@ -43,48 +43,48 @@ def shMemDecSample (a : BitVec 64) : Decidable (sampleHOLState.shMemaddrs a) :=
   isFalse (by simp [sampleHOLState])
 
 def run (program : CrepProgHOL 64) :
-    Option (CrepResultHOL (BitVec 64) HolFinalEvent) × CrepSemHOLState 64 Unit :=
+    Option (CrepResultHOLExact 64) × CrepSemHOLState 64 Unit :=
   evalCrepSemHOLProg sampleHOLState memDecSample shMemDecSample program
 
 /-- `true` when the result is HOL `NONE` (ordinary completion). -/
 def resultIsNormal :
-    Option (CrepResultHOL (BitVec 64) HolFinalEvent) → Bool
+    Option (CrepResultHOLExact 64) → Bool
   | none => true
   | _ => false
 
 /-- `true` when the result is `SOME (Break n)`. -/
 def resultIsBreak (n : Nat) :
-    Option (CrepResultHOL (BitVec 64) HolFinalEvent) → Bool
+    Option (CrepResultHOLExact 64) → Bool
   | some (.break m) => m == n
   | _ => false
 
 /-- `true` when the result is `SOME (Continue n)`. -/
 def resultIsContinue (n : Nat) :
-    Option (CrepResultHOL (BitVec 64) HolFinalEvent) → Bool
+    Option (CrepResultHOLExact 64) → Bool
   | some (.continue m) => m == n
   | _ => false
 
 /-- `true` when the result is `SOME (Exception v)`. -/
 def resultIsException (v : BitVec 64) :
-    Option (CrepResultHOL (BitVec 64) HolFinalEvent) → Bool
+    Option (CrepResultHOLExact 64) → Bool
   | some (.exception e) => e == v
   | _ => false
 
 /-- `true` when the result is `SOME TimeOut`. -/
 def resultIsTimeOut :
-    Option (CrepResultHOL (BitVec 64) HolFinalEvent) → Bool
+    Option (CrepResultHOLExact 64) → Bool
   | some .timeOut => true
   | _ => false
 
 /-- `true` when the result is `SOME Error`. -/
 def resultIsError :
-    Option (CrepResultHOL (BitVec 64) HolFinalEvent) → Bool
+    Option (CrepResultHOLExact 64) → Bool
   | some .error => true
   | _ => false
 
 /-- `true` when the result is `SOME (Return [Word v])`. -/
 def resultIsReturnWord (v : BitVec 64) :
-    Option (CrepResultHOL (BitVec 64) HolFinalEvent) → Bool
+    Option (CrepResultHOLExact 64) → Bool
   | some (.return [.word w]) => w == v
   | _ => false
 
@@ -177,21 +177,21 @@ theorem skipFullState :
 theorem breakFullState :
     evalCrepSemHOLProg sampleHOLState memDecSample shMemDecSample
         (.break 3 : CrepProgHOL 64) =
-      (some (CrepResultHOL.break 3), sampleHOLState) :=
+      (some (CrepResultHOLExact.break 3), sampleHOLState) :=
   evalCrepSemHOLProg_break sampleHOLState memDecSample shMemDecSample 3
 
 /-- Kernel-checked full pair equality for Continue via the named equation. -/
 theorem continueFullState :
     evalCrepSemHOLProg sampleHOLState memDecSample shMemDecSample
         (.continue 3 : CrepProgHOL 64) =
-      (some (CrepResultHOL.continue 3), sampleHOLState) :=
+      (some (CrepResultHOLExact.continue 3), sampleHOLState) :=
   evalCrepSemHOLProg_continue sampleHOLState memDecSample shMemDecSample 3
 
 /-- Kernel-checked full pair equality for Raise via the named equation. -/
 theorem raiseFullState :
     evalCrepSemHOLProg sampleHOLState memDecSample shMemDecSample
         (.raise (BitVec.ofNat 64 42) : CrepProgHOL 64) =
-      (some (CrepResultHOL.exception (BitVec.ofNat 64 42)),
+      (some (CrepResultHOLExact.exception (BitVec.ofNat 64 42)),
         CrepSemHOLState.emptyLocals sampleHOLState) :=
   evalCrepSemHOLProg_raise sampleHOLState memDecSample shMemDecSample _
 
