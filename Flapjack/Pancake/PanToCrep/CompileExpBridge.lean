@@ -146,4 +146,100 @@ theorem compileExpBridge_bytesInWord {width : Nat} [NeZero width]
       (simp only [List.map_cons, List.map_nil, crepExpToHOL.eq_1]; rfl)
   · first | rfl | simp only [shapeToHOL]
 
+
+/-! ### List-motive consequences and the `RStruct` handler
+
+Generic list lemmas push `crepExpToHOL`/`shapeToHOL` through the pair map used by
+`compileExpListBridgeProp`; the `RStruct` handler is the first recursive case of
+the bridge. -/
+
+theorem map_flatMap_fst {α β γ δ : Type} (f : α → β) (g : γ → δ)
+    (entries : List (List α × γ)) :
+    (entries.flatMap Prod.fst).map f =
+      (entries.map (fun entry => (entry.1.map f, g entry.2))).flatMap Prod.fst := by
+  induction entries with
+  | nil => rfl
+  | cons entry rest ih =>
+      simp only [List.flatMap_cons, List.map_cons, List.map_append, ih]
+
+theorem map_map_snd {α β γ δ : Type} (f : α → β) (g : γ → δ)
+    (entries : List (List α × γ)) :
+    (entries.map Prod.snd).map g =
+      (entries.map (fun entry => (entry.1.map f, g entry.2))).map Prod.snd := by
+  rw [List.map_map, List.map_map]
+  rfl
+
+theorem compileExpListBridgeProp_fstMap {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width)
+    (expressions : List (Exp (BitVec width)))
+    (h : compileExpListBridgeProp context expressions) :
+    ((compileExpHOL.compileExpListHOL
+        (CompileExpContextExact.prodContext context) expressions).map
+          Prod.fst).map (List.map crepExpToHOL)
+      = (compileExpExactHOLWList context (expressions.map expToHOL)).map
+          Prod.fst := by
+  unfold compileExpListBridgeProp at h
+  rw [← h]
+  rw [List.map_map, List.map_map]
+  rfl
+
+theorem compileExpListBridgeProp_sndMap {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width)
+    (expressions : List (Exp (BitVec width)))
+    (h : compileExpListBridgeProp context expressions) :
+    ((compileExpHOL.compileExpListHOL
+        (CompileExpContextExact.prodContext context) expressions).map
+          Prod.snd).map shapeToHOL
+      = (compileExpExactHOLWList context (expressions.map expToHOL)).map
+          Prod.snd := by
+  unfold compileExpListBridgeProp at h
+  rw [← h]
+  rw [List.map_map, List.map_map]
+  rfl
+
+theorem compileExpListBridgeProp_fstFlatMap {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width)
+    (expressions : List (Exp (BitVec width)))
+    (h : compileExpListBridgeProp context expressions) :
+    ((compileExpHOL.compileExpListHOL
+        (CompileExpContextExact.prodContext context) expressions).flatMap
+          Prod.fst).map crepExpToHOL
+      = (compileExpExactHOLWList context (expressions.map expToHOL)).flatMap
+          Prod.fst := by
+  unfold compileExpListBridgeProp at h
+  rw [map_flatMap_fst crepExpToHOL shapeToHOL]
+  rw [h]
+
+theorem compileExpBridge_rStruct {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width)
+    (fields : List (Exp (BitVec width)))
+    (h : compileExpListBridgeProp context fields) :
+    compileExpBridgeProp context (.rStruct fields) := by
+  simp only [compileExpBridgeProp, compileExpHOL.eq_4, compileExpExactHOLW.eq_4,
+    expToHOL.eq_3]
+  constructor
+  · exact compileExpListBridgeProp_fstFlatMap context fields h
+  · simp only [shapeToHOL]
+    exact congrArg ShapeHOL.comb (compileExpListBridgeProp_sndMap context fields h)
+
+theorem compileExpListBridgeProp_nil {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) :
+    compileExpListBridgeProp context ([] : List (Exp (BitVec width))) := by
+  simp only [compileExpListBridgeProp, List.map_nil,
+    compileExpHOL.compileExpListHOL.eq_1, compileExpExactHOLWList.eq_1]
+
+theorem compileExpListBridgeProp_cons {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (head : Exp (BitVec width))
+    (tail : List (Exp (BitVec width)))
+    (hhead : compileExpBridgeProp context head)
+    (htail : compileExpListBridgeProp context tail) :
+    compileExpListBridgeProp context (head :: tail) := by
+  unfold compileExpBridgeProp at hhead
+  unfold compileExpListBridgeProp at htail ⊢
+  simp only [List.map_cons, compileExpHOL.compileExpListHOL.eq_2,
+    compileExpExactHOLWList.eq_2]
+  rw [htail]
+  congr 1
+  exact Prod.ext hhead.1 hhead.2
+
 end Flapjack
