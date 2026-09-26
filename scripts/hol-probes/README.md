@@ -73,6 +73,12 @@ shape-length fallback and scalar/multiword DecCall rows. The exact untagged
 `Flapjack.Test.CompileDefParity`; `call_no_return` checks the HOL `rtyp = NONE`
 arm's flattening of argument expressions, with the exact untagged
 `compileCallNoReturnExactHOLW` slice checked in the same module.
+`call_result_no_handler_present` and `_missing` pin the other arm for
+`rtyp = SOME (NONE, NONE)`: lookup of the return shape, fresh result names,
+zero initialization, and the empty-result fallback. Its exact untagged helper
+is `compileCallResultNoHandlerExactHOLW`. `call_handler_missing_eid` checks
+that an exception handler with a missing `eids` entry takes the same fallback;
+the Lean exact subcase is `compileCallHandlerMissingEidExactHOLW`.
 `extcall_constants` (with `vmax = 400`),
 `extcall_high_tail` (with `vmax = 0`), `extcall_shared_high_tail`, and
 `extcall_shape_fallback` pin the `ExtCall` case: its freshness bound scans all

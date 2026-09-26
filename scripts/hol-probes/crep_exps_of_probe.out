@@ -1,0 +1,9 @@
+dec_seq=[Const 1w; Var 1; Const 2w]
+if_store=[Var 3; Var 1; Var 2]
+while=[Const 1w; Var 1]
+call_tail=[Var 4; Const 6w]
+call_ret=[Var 4]
+call_ret_hdl=[Var 4; Var 1]
+stores=([Var 1; Var 2],[Var 1; Var 2],[Var 1; Var 2],[Var 7],[Var 1; Const 2w],
+ [Var 1],[Var 9])
+empty=([],[],[])

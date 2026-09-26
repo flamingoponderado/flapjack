@@ -357,8 +357,43 @@ def compileCallNoReturnExactHOLW {width : Nat} [NeZero width]
   let flattenedArguments := compiledArguments.flatMap Prod.fst
   .call none function flattenedArguments
 
+/-! The `rtyp = SOME (NONE, NONE)` arm of the HOL `Call` clause
+    (`pan_to_crepScript.sml:226-232`) looks up the callee's return shape,
+    allocates result names above `vmax`, initializes those names to zero, and
+    emits a call with result metadata. -/
+
+def compileCallResultNoHandlerExactHOLW {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (function : MlS)
+    (arguments : List (Flapjack.Pancake.PanLang.ExpHOL width)) :
+    CrepProgHOL width :=
+  let compiledArguments := compileExpExactHOLWList context arguments
+  let flattenedArguments := compiledArguments.flatMap Prod.fst
+  let returnShape := (context.funcs.lookup function).map Prod.snd
+  let returnNames := match returnShape with
+    | none => []
+    | some shape => (List.range (Flapjack.Pancake.PanLang.sizeOfShapeHOL shape)).map
+        (fun index => context.vmax + index + 1)
+  let returnDeclarations := nestedDecsHOL returnNames
+    (List.replicate returnNames.length (.const (0 : BitVec width)))
+  returnDeclarations
+    (.call (some (returnNames, none)) function flattenedArguments)
+
+/-! The `hdl = SOME (eid, evar, p)` branch with no `eids` lookup result from
+    HOL `compile_def` (`pan_to_crepScript.sml:233-235`) discards the handler and
+    falls back to the same zero-initialized result call as the `hdl = NONE`
+    case. The premise exposes exactly that HOL lookup side condition. -/
+
+def compileCallHandlerMissingEidExactHOLW {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (function : MlS)
+    (arguments : List (Flapjack.Pancake.PanLang.ExpHOL width))
+    (_exceptionName _exceptionVariable : MlS)
+    (_handlerBody : Flapjack.Pancake.PanLang.ProgHOL width)
+    (_missingEid : context.eids.lookup _exceptionName = none) :
+    CrepProgHOL width :=
+  compileCallResultNoHandlerExactHOLW context function arguments
+
 /-! The `ExtCall` clause from HOL `compile_def`
-    (`pan_to_crepScript.sml:219-233`). The freshness bound is the maximum over
+    (`pan_to_crepScript.sml:274-290`). The freshness bound is the maximum over
     every variable in all four compiled operand lists, even though the output
     uses only each list's head. All four source shapes must be `One` and all
     four compiled lists must be nonempty; otherwise HOL returns `Skip`. -/

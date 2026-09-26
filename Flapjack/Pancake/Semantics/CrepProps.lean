@@ -874,4 +874,36 @@ theorem crepExpVars_of_mem_loadShapeW {width : Nat} [NeZero width]
     rfl] at h
   exact crepExpVars_of_mem_loadShape address CrepBytesInWord.bytesInWord count value n h
 
+/-- Exact port of Cake `crepProps$exps_of_def`
+    (`cakeml/pancake/semantics/crepPropsScript.sml:1282-1299`) over the exact
+    `CrepProgHOL`/`CrepExpHOL` carriers. Collects the expressions that occur
+    directly in a Crepe program: the `Dec` value, both `Seq` sides, the `If`
+    condition and branches, the `While` condition and body, the `Call`
+    arguments plus the handler body when present, both store operands, the
+    `StoreGlob` value, the `Return` values, the `Assign` value and the
+    `ShMem` address; every other constructor contributes nothing. The `Call`
+    function name is an `MlString` in both carriers and is ignored by HOL, so
+    there is no name-carrier mismatch. -/
+@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "exps_of_def"]
+def crepExpsOfHOL {width : Nat} [NeZero width] : CrepProgHOL width → List (CrepExpHOL width)
+  | .dec _ value body => value :: crepExpsOfHOL body
+  | .seq first second => crepExpsOfHOL first ++ crepExpsOfHOL second
+  | .ite condition thenBranch elseBranch =>
+      condition :: (crepExpsOfHOL thenBranch ++ crepExpsOfHOL elseBranch)
+  | .while condition body => condition :: crepExpsOfHOL body
+  | .call none _ args => args
+  | .call (some (_, none)) _ args => args
+  | .call (some (_, some (_, handler))) _ args => args ++ crepExpsOfHOL handler
+  | .store address value => [address, value]
+  | .store32 address value => [address, value]
+  | .storeByte address value => [address, value]
+  | .storeGlob _ value => [value]
+  | .return values => values
+  | .assign _ value => [value]
+  | .shMem _ _ address => [address]
+  | _ => []
+termination_by program => sizeOf program
+decreasing_by
+  all_goals decreasing_trivial
+
 end Flapjack
