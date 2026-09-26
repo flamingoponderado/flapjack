@@ -12078,7 +12078,7 @@
     "hol_path": null,
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific composition proves the HOL Return/Exception shape conclusion over finite-support PanSem/CrepSem carriers with an independent t_locs parameter. Its result-shaped premise is the public finite evaluator wrapper, which projects to evalPanSemRecursiveCallContextHOLExact through evaluateHOLFinite_toExact and the proved 66-case projection (flapjack-6yq). It remains untagged because its state_rel/locals_rel support spans multiple finite-map carriers; the faithful theorem and source-reviewed representation support remain open under flapjack-4ac.5.83."
+    "reviewer": "Flapjack-specific composition over finite-support PanSem/CrepSem carriers and independent t_locs; its Return/Exception conclusion now directly states the value-level Lean encoding of HOL is_wf_shape_v_nil. The public finite evaluator wrapper projects to evalPanSemRecursiveCallContextHOLExact through evaluateHOLFinite_toExact and the proved 66-case projection (flapjack-6yq). Keep untagged: the finite evaluator and multi-carrier state_rel/locals_rel support have not completed the source review required for the faithful HOL theorem; tracked by flapjack-4ac.5.83."
   },
   {
     "hol_path": null,

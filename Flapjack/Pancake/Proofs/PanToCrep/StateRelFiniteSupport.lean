@@ -226,14 +226,13 @@ theorem holFmapParameterAsFiniteSupportWitness_panToCrepFiniteEvaluateShapeInvar
   rfl
 
 /-- Flapjack-specific full-program shape-invariant composition over the
-    finite-support PanSem/CrepSem carriers. It proves the HOL conclusion from a
-    result-shaped view of the finite-context evaluator. The complete projection
-    to `evalPanSemRecursiveCallContextHOLExact` is proved by
-    `evaluateHOLFinite_toExact` (the 66-case evaluator projection tracked by
-    `flapjack-6yq`). It remains untagged because its relation hypotheses are
-    support definitions spanning multiple carriers; the faithful theorem and
-    source-reviewed representation support remain open under `flapjack-4ac.5.83`.
-    -/
+    finite-support PanSem/CrepSem carriers. Its Return/Exception conclusion is
+    now the value-level `is_wf_shape_v_nil` statement, and its finite evaluator
+    projects to the broad exact evaluator by `evaluateHOLFinite_toExact` and the
+    proved 66-case projection (`flapjack-6yq`). It remains untagged: its
+    evaluator and multi-carrier relation support have not completed the source
+    review required for the faithful HOL theorem, tracked by
+    `flapjack-4ac.5.83`. -/
 theorem panToCrepFiniteEvaluateShapeInvariantRetInst {width : Nat} {σ : Type}
     [NeZero width] (program : ProgHOL width)
     (source : PanSemStateFiniteExact width σ)
@@ -249,9 +248,9 @@ theorem panToCrepFiniteEvaluateShapeInvariantRetInst {width : Nat} {σ : Type}
       (some result, postState)) :
     match result with
     | .returned value =>
-        isWfShapeExactHOL ([] : StructContextExact) (shapeOfHOLExact value) = true
+        isWfShapeValueHOLExact [] value = true
     | .exception _ value =>
-        isWfShapeExactHOL ([] : StructContextExact) (shapeOfHOLExact value) = true
+        isWfShapeValueHOLExact [] value = true
     | _ => True := by
   classical
   have hevalHelper : PanSemStateFiniteExact.evaluateHOLFiniteResult source program =
@@ -299,16 +298,12 @@ theorem panToCrepFiniteEvaluateShapeInvariantRetInst {width : Nat} {σ : Type}
       have hvalue :
           isWfShapeValueHOLExact source.structs value = true := by
         simpa [Flapjack.panSemResultHOLWf] using hresultWf
-      have hvalueNil : isWfShapeValueHOLExact [] value = true := by
-        simpa [hstructs] using hvalue
-      exact isWfShapeValueHOLExact_shapeOfHOLExact [] value hvalueNil
+      simpa [hstructs] using hvalue
   | exception exceptionId value =>
       have hvalue :
           isWfShapeValueHOLExact source.structs value = true := by
         simpa [Flapjack.panSemResultHOLWf] using hresultWf
-      have hvalueNil : isWfShapeValueHOLExact [] value = true := by
-        simpa [hstructs] using hvalue
-      exact isWfShapeValueHOLExact_shapeOfHOLExact [] value hvalueNil
+      simpa [hstructs] using hvalue
   | _ => trivial
 
 end Flapjack
