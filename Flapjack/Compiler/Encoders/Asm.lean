@@ -840,4 +840,48 @@ def asmOffsetOkExact {width : Nat} [NeZero width] (alignment : Nat)
   bounds.1.toInt ≤ offset.toInt && offset.toInt ≤ bounds.2.toInt &&
     asmAligned alignment offset
 
+/-! ## Exact `inst_ok_def` port over `AsmConfigExact`/`HolInst`
+
+The offset helpers are the HOL overloads `addr_offset_ok`/`hw_offset_ok`/
+`byte_offset_ok` (`asmScript.sml:279-281`) built on the exact `offset_ok`
+(`asmOffsetOkExact`).  They are placed here because they reference
+`asmOffsetOkExact`, which is declared above; the rest of the exact predicate
+in `inst_ok_def` reads the exact `HolInst`/`HolArith`/`HolFp`/`HolRegImm`
+carriers (bead flapjack-4ac.6.1.2). -/
+
+def asmAddrOffsetOkExact {width : Nat} [NeZero width] (config : AsmConfigExact width)
+    (offset : BitVec width) : Bool :=
+  asmOffsetOkExact 0 config.addrOffset offset
+
+def asmHwOffsetOkExact {width : Nat} [NeZero width] (config : AsmConfigExact width)
+    (offset : BitVec width) : Bool :=
+  asmOffsetOkExact 0 config.hwOffset offset
+
+def asmByteOffsetOkExact {width : Nat} [NeZero width] (config : AsmConfigExact width)
+    (offset : BitVec width) : Bool :=
+  asmOffsetOkExact 0 config.byteOffset offset
+
+/-- HOL `asmScript$inst_ok_def` (`asmScript.sml:286-299`): exact positive-width
+    port over the exact `HolInst` carrier and the exact `AsmConfigExact`; the
+    `arith_ok`/`fp_ok`/`reg_ok` calls read the exact reference resolutions.  The
+    production `asmInstOk` differs in its generic `WordLangInst`/`AsmConfig`
+    carriers. -/
+@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "inst_ok_def"]
+def asmInstOkExact {width : Nat} [NeZero width] (instruction : HolInst width)
+    (config : AsmConfigExact width) : Bool :=
+  match instruction with
+  | .skip => true
+  | .const destination _ => asmRegOkExact destination config
+  | .arith operation => asmArithOkExact operation config
+  | .fp operation => asmFpOkExact operation config
+  | .mem operator destination (.addr base offset) =>
+      asmRegOkExact destination config && asmRegOkExact base config &&
+        (if operator == .load || operator == .store || operator == .load32 ||
+            operator == .store32 then
+          asmAddrOffsetOkExact config offset
+         else if operator == .load16 || operator == .store16 then
+          asmHwOffsetOkExact config offset && !(config.isa == .ag32)
+         else
+          asmByteOffsetOkExact config offset)
+
 end Flapjack.Compiler.Encoders.Asm
