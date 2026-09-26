@@ -2000,7 +2000,7 @@ mutual
     | 0, _, _ => none
     | _fuel + 1, state, .skip => some (.normal, state)
     | fuel + 1, state, .dec name value body =>
-        match evalCrepRuntimeExp state value with
+        match (evalCrepRuntimeExpWordLab state value).map panTheWord with
         | none => some (.error, state)
         | some value =>
             let nextState := setCrepRuntimeLocal name (.word value) state
