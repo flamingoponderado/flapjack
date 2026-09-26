@@ -298,4 +298,33 @@ theorem progOfHOL_seqAssocHOL_annot {width : Nat} [NeZero width]
       seqAssoc (progOfHOL pre) (progOfHOL (.annot tag text)) := by
   simp [seqAssocHOL, seqAssoc, progOfHOL]
 
+/-- Flapjack-specific codec equation for the Tick fallback clause of HOL
+`seq_assoc_def`. This case needs no recursive obligation. HOL has no theorem
+about commuting `progOfHOL` with `seqAssocHOL`, so it carries no `@[hol]` tag.
+-/
+theorem progOfHOL_seqAssocHOL_tick {width : Nat} [NeZero width]
+    (pre : ProgHOL width) :
+    progOfHOL (seqAssocHOL pre .tick) =
+      seqAssoc (progOfHOL pre) (progOfHOL (.tick : ProgHOL width)) := by
+  have hhol : seqAssocHOL pre (.tick : ProgHOL width) = smartSeqHOL pre .tick :=
+    seqAssocHOL.eq_11 pre .tick
+      (by intro h; cases h)
+      (by intro name shape value body h; cases h)
+      (by intro first second h; cases h)
+      (by intro condition thenBranch elseBranch h; cases h)
+      (by intro condition body h; cases h)
+      (by intro info function arguments h; cases h)
+      (by intro name shape function arguments body h; cases h)
+      (by intro tag text h; cases h)
+  rw [hhol, progOfHOL_smartSeqHOL, progOfHOL.eq_22]
+  exact (seqAssoc.eq_11 (progOfHOL pre) Prog.tick
+      (by intro h; cases h)
+      (by intro name shape value body h; cases h)
+      (by intro first second h; cases h)
+      (by intro condition thenBranch elseBranch h; cases h)
+      (by intro condition body h; cases h)
+      (by intro info function arguments h; cases h)
+      (by intro name shape function arguments body h; cases h)
+      (by intro tag text h; cases h)).symm
+
 end Flapjack
