@@ -1616,12 +1616,12 @@ theorem evalPanSemRecursiveCallFiniteContext_total {width : Nat} {σ : Type} [Ne
 
     As with the broad exact evaluator `evalPanSemRecursiveCallContextHOLExact`,
     the outer `Option` is the *assembly marker* for the recursive cases (it is
-    `none` only on the not-yet-assembled internal branches), not part of HOL
-    `evaluate_def`'s `result option × state` result.  The marker is provably
-    inert (`evaluateHOLFinite_ne_none`), but the equivalence with the broad exact
-    evaluator is still pending (bead `flapjack-6yq`), so this wrapper deliberately
-    keeps the marker rather than totalizing an unreachable `none` branch to
-    `(none, state)` (which would be observationally wrong).
+    `none` only on internal assembly branches), not part of HOL
+    `evaluate_def`'s `result option × state` result. The marker is provably
+    inert (`evaluateHOLFinite_ne_none`), and the 66-case projection to the broad
+    exact evaluator is proved. This wrapper retains the marker for existing
+    callers; a pair-shaped wrapper is available separately. A HOL tag still
+    requires source review of the evaluator clauses and carriers.
 
     Exposed clause-by-clause in
     `Flapjack.Pancake.Semantics.PanSem.EvaluateFinite`. -/

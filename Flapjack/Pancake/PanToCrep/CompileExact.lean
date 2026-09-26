@@ -1,4 +1,5 @@
 import Flapjack.Pancake.PanToCrep.Compile
+import Flapjack.Pancake.PanToCrep.ContextExact
 import Flapjack.Pancake.Semantics.CrepSem.HOLState
 import Flapjack.Pancake.PanCommon
 
@@ -40,6 +41,36 @@ structure CompileExpContextExact (width : Nat) [NeZero width] where
   vmax : Nat
 
 namespace CompileExpContextExact
+
+/-- Convert the compiler-local qualifier carrier to the tagged HOL `context`.
+    This is a field-preserving conversion, not a production String codec. -/
+def toPanToCrep {width : Nat} [NeZero width] (context : CompileExpContextExact width) :
+    PanToCrepContextExact width where
+  vars := context.vars
+  funcs := context.funcs
+  eids := context.eids
+  vmax := context.vmax
+
+/-- Convert the tagged HOL `context` to the local carrier required by the
+    current same-module finite-support witness checker. -/
+def ofPanToCrep {width : Nat} [NeZero width] (context : PanToCrepContextExact width) :
+    CompileExpContextExact width where
+  vars := context.vars
+  funcs := context.funcs
+  eids := context.eids
+  vmax := context.vmax
+
+theorem ofPanToCrep_toPanToCrep {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) :
+    ofPanToCrep (toPanToCrep context) = context := by
+  cases context
+  rfl
+
+theorem toPanToCrep_ofPanToCrep {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width) :
+    toPanToCrep (ofPanToCrep context) = context := by
+  cases context
+  rfl
 
 def toBroad {width : Nat} [NeZero width] (context : CompileExpContextExact width) :
     CompileExpContextBroad width where

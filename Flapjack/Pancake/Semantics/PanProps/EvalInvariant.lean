@@ -1129,9 +1129,9 @@ proved directly from `evaluate_invariants`.  There is deliberately no
 `Option` around its `result option × state` output, while
 `evaluateHOLFiniteViaExact` removes that marker by delegating through the
 unrestricted-map `PanSemStateExact` evaluator.  The source counterpart's
-finite-to-broad projection proof and the clause-for-clause tagged finite
-`evaluate_def` are still in progress (`flapjack-6yq` and its dependent
-`flapjack-qj5`).  A preservation fact about either adapter alone would
+finite-to-broad projection is proved, but source review and the clause-for-clause
+tagged finite `evaluate_def` are still in progress (`flapjack-qj5`).
+A preservation fact about either adapter alone would
 therefore not yet be a source-reviewed port of this theorem.  The faithful
 finite-state theorem is tracked by `flapjack-4ac.4.63.1`.
 
@@ -1145,8 +1145,8 @@ post-state components except that the clock is zero.  Its proof depends on
 premise.  There is deliberately no `@[hol]` theorem for this result yet:
 `evaluateHOLFiniteViaExact` is the total pair-shaped adapter, but it delegates
 through the unrestricted-map `PanSemStateExact` evaluator, while the direct
-finite evaluator's source projection and tagged `evaluate_def` remain in
-progress (`flapjack-6yq` / `flapjack-qj5`).  The faithful finite-state theorem
+finite evaluator's projection is proved and its tagged `evaluate_def` remains
+in progress (`flapjack-qj5`). The faithful finite-state theorem
 is tracked by `flapjack-4ac.4.47.1`.
 -/
 
