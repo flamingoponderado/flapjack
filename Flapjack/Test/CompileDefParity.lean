@@ -699,6 +699,17 @@ def exactCallResultNoHandlerParity : Bool :=
 
 #guard exactCallResultNoHandlerParity
 
+def exactCallHandlerMissingEidParity : Bool :=
+  match compileCallHandlerMissingEidExactHOLW exactCallResultContext (ofString "f")
+      [.const 1, .rstruct [.const 2, .const 3]] (ofString "E") (ofString "exn")
+      .tick (by simp [exactCallResultContext]) with
+  | .dec 11 (.const 0) (.dec 12 (.const 0)
+      (.call (some ([11, 12], none)) function [.const 1, .const 2, .const 3])) =>
+      function == ofString "f"
+  | _ => false
+
+#guard exactCallHandlerMissingEidParity
+
 def exactExtCallClauseParity : Bool :=
   (match compileExtCallExactHOLW exactExtCallContext (ofString "f")
       (.var .local (ofString "configuration"))
@@ -732,7 +743,8 @@ def runChecks : IO Bool := do
       exactLocalAssignClauseParity && exactPrimitiveClauseParity && exactStoreClauseFullParity &&
       exactRaiseClauseParity && exactShMemStoreClauseParity && exactShMemLoadClauseParity &&
       exactDecClauseParity && exactDecCallClauseParity && exactCallNoReturnParity &&
-      exactCallResultNoHandlerParity && exactExtCallClauseParity then
+      exactCallResultNoHandlerParity && exactCallHandlerMissingEidParity &&
+      exactExtCallClauseParity then
     IO.println "PASS exact compile_def clause parity"
   else
     IO.println "FAIL compile_def parity"
@@ -741,6 +753,7 @@ def runChecks : IO Bool := do
     exactLocalAssignClauseParity && exactPrimitiveClauseParity && exactStoreClauseFullParity &&
     exactRaiseClauseParity && exactShMemStoreClauseParity && exactShMemLoadClauseParity &&
     exactDecClauseParity && exactDecCallClauseParity && exactCallNoReturnParity &&
-    exactCallResultNoHandlerParity && exactExtCallClauseParity)
+    exactCallResultNoHandlerParity && exactCallHandlerMissingEidParity &&
+    exactExtCallClauseParity)
 
 end Flapjack.Test.CompileDefParity

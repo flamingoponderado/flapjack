@@ -443,6 +443,20 @@ def compileCallResultNoHandlerExactHOLW {width : Nat} [NeZero width]
   returnDeclarations
     (.call (some (returnNames, none)) function flattenedArguments)
 
+/-! The `hdl = SOME (eid, evar, p)` branch with no `eids` lookup result from
+    HOL `compile_def` (`pan_to_crepScript.sml:233-235`) discards the handler and
+    falls back to the same zero-initialized result call as the `hdl = NONE`
+    case. The premise exposes exactly that HOL lookup side condition. -/
+
+def compileCallHandlerMissingEidExactHOLW {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (function : MlS)
+    (arguments : List (Flapjack.Pancake.PanLang.ExpHOL width))
+    (_exceptionName _exceptionVariable : MlS)
+    (_handlerBody : Flapjack.Pancake.PanLang.ProgHOL width)
+    (_missingEid : context.eids.lookup _exceptionName = none) :
+    CrepProgHOL width :=
+  compileCallResultNoHandlerExactHOLW context function arguments
+
 /-! The `ExtCall` clause from HOL `compile_def`
     (`pan_to_crepScript.sml:274-290`). The freshness bound is the maximum over
     every variable in all four compiled operand lists, even though the output
