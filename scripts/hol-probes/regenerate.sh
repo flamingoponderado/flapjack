@@ -969,6 +969,12 @@ run_probe excp_rel_probeScript.sml excp_rel_probe.out \
   empty_maps noninjective_compiler_codes \
   "$cake_dir/pancake/proofs/pan_to_crepProofScript.sml" \
   "$cake_dir/pancake/proofs"
+run_probe pan_to_crep_state_rel_carrier_probeScript.sml pan_to_crep_state_rel_carrier_probe.out \
+  state_rel_matching_fields state_rel_rejects_nonempty_structs \
+  state_rel_globals_equation_unreduced state_rel_nonempty_globals_lookup \
+  state_rel_empty_globals_lookup state_rel_named_struct_carrier \
+  "$cake_dir/pancake/proofs/pan_to_crepProofScript.sml" \
+  "$cake_dir/pancake/proofs"
 run_probe ctxt_fc_probeScript.sml ctxt_fc_probe.out \
   shaped_slots empty_maximum functions_projection vmax_nonempty_list vmax_empty_list \
   "$cake_dir/pancake/proofs/pan_to_crepProofScript.sml" \
