@@ -1171,6 +1171,40 @@ theorem evalHOL_upd_eshapes_eq {width : Nat} {σ : Type} [NeZero width]
   simp only [evalHOL]
   exact evalHOLExact_upd_eshapes_eq state.toExact expression eshapes.lookup
 
+/-- Exact finite-support port of the `[local]` HOL helper
+    `panProps$opt_mmap_helper_thm`
+    (`cakeml/pancake/semantics/panPropsScript.sml:614`). HOL derives it from
+    `OPT_MMAP_CONG` (`miscScript.sml:2481`) by fixing `l1 = l2 = es`,
+    `f := \e. eval ((if T then f else I) st) e` and `f' := eval st`, then
+    generalizing `f`, `st`, `es`; `REWRITE_RULE []` reduces the update to
+    `f st`, leaving
+    `!f st es. (!x. MEM x es ==> eval (f st) x = eval st x) ==>
+       OPT_MMAP (eval (f st)) es = OPT_MMAP (eval st) es`.
+
+    The Lean statement keeps HOL's quantifier order (`f`, `st`, `es`), the same
+    pointwise-evaluation premise and the same `OPT_MMAP`/`List.mapM` equality.
+    `eval` is the PanProps finite carrier's `evalHOL`, whose four `|->` fields
+    are the reviewed canonical `HolFiniteMapExact` translation (canonical
+    witness `holFmapAsFiniteSupportWitness` in this module) and which delegates
+    to the exact broad evaluator through `toExact`. The two `DecidablePred`
+    binders are Lean computation evidence for HOL's word-set membership guard
+    on each of the two states `f st` and `st`; HOL's total `eval` needs no such
+    evidence. -/
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "opt_mmap_helper_thm"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+theorem optMmapHelperThm {width : Nat} {σ : Type} [NeZero width]
+    (f : PanPropsEvalStateFiniteExact width σ → PanPropsEvalStateFiniteExact width σ)
+    (st : PanPropsEvalStateFiniteExact width σ) [hst : DecidablePred st.memaddrs]
+    [hfst : DecidablePred (f st).memaddrs] (es : List (ExpHOL width)) :
+    (∀ x, x ∈ es → (f st).evalHOL x = st.evalHOL x) →
+      es.mapM (f st).evalHOL = es.mapM st.evalHOL := by
+  intro h
+  induction es with
+  | nil => rfl
+  | cons x xs ih =>
+      rw [List.mapM_cons, List.mapM_cons, h x (by simp),
+        ih (fun y hy => h y (by simp [hy]))]
+
 /-- Exact finite-support port of HOL `panProps$eval_empty_locals_IMP`
     (`cakeml/pancake/semantics/panPropsScript.sml:1584`):
     `!s e v. eval (s with locals := FEMPTY) e = SOME v ==> eval s e = SOME v`.
