@@ -9,7 +9,7 @@ Exact-carrier expression lowering from HOL `PanLang.ExpHOL` to `CrepExpHOL`.
 
 This belongs beside the production compiler as an exact source-semantics
 counterpart. The production compiler remains separate until a kernel-checked
-bridge and the full exact `compile_def` slice route are completed.
+bridge routes its executed path through the exact `compile_def` port.
 -/
 
 namespace Flapjack
@@ -523,6 +523,73 @@ def compileCallHandlerPresentEidExactHOLW {width : Nat} [NeZero width]
   nestedDecsHOL returnNames
     (List.replicate returnNames.length (.const (0 : BitVec width))) call
 
+/-! ### Assembled exact `Call` info equation
+
+This dispatcher combines the source-reviewed `Call` arm slices above in the
+same nesting as HOL `compile_def` (`pan_to_crepScript.sml:221-261`). In
+particular, the assigned-result kind is ignored by `wrap_rt`; handler lookup
+occurs only after the result-shape branch; and a handler body remains a
+recursive compiler callback until the full `compile_def` assembly is ported.
+This is an equation slice, not yet a recursive `compile` definition. -/
+
+def compileCallInfoExactHOLW {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (function : MlS)
+    (info : Option (Option (VarKind × MlS) ×
+      Option (MlS × MlS × Flapjack.Pancake.PanLang.ProgHOL width)))
+    (arguments : List (Flapjack.Pancake.PanLang.ExpHOL width))
+    (compileBody : CompileExpContextExact width →
+      Flapjack.Pancake.PanLang.ProgHOL width → CrepProgHOL width) :
+    CrepProgHOL width :=
+  match info with
+  | none => compileCallNoReturnExactHOLW context function arguments
+  | some (none, none) =>
+      compileCallResultNoHandlerExactHOLW context function arguments
+  | some (none, some (exceptionName, exceptionVariable, body)) =>
+      match hEid : context.eids.lookup exceptionName with
+      | none =>
+          compileCallHandlerMissingEidExactHOLW context function arguments
+            exceptionName exceptionVariable body
+            hEid
+      | some exceptionCode =>
+          compileCallHandlerPresentEidExactHOLW context function arguments
+            exceptionName exceptionVariable exceptionCode
+            hEid
+            (fun bodyContext => compileBody bodyContext body)
+  | some (some (_resultKind, resultName), handler) =>
+      match hWrap : wrapRtHOL (context.vars.lookup resultName) with
+      | none =>
+          match handler with
+          | none =>
+              compileCallWrappedResultFallbackNoHandlerExactHOLW context
+                function resultName arguments hWrap
+          | some (exceptionName, exceptionVariable, body) =>
+              match hEid : context.eids.lookup exceptionName with
+              | none =>
+                  compileCallWrappedResultFallbackHandlerMissingEidExactHOLW
+                    context function resultName arguments exceptionName
+                    exceptionVariable body hWrap hEid
+              | some exceptionCode =>
+                  compileCallWrappedResultFallbackHandlerPresentEidExactHOLW
+                    context function resultName arguments exceptionName
+                    exceptionVariable exceptionCode hWrap hEid
+                    (fun bodyContext => compileBody bodyContext body)
+      | some (resultShape, resultNames) =>
+          match handler with
+          | none =>
+              compileCallWrappedResultNoHandlerExactHOLW context function
+                resultName arguments resultShape resultNames hWrap
+          | some (exceptionName, exceptionVariable, body) =>
+              match hEid : context.eids.lookup exceptionName with
+              | none =>
+                  compileCallWrappedResultHandlerMissingEidExactHOLW context
+                    function resultName arguments resultShape resultNames
+                    exceptionName exceptionVariable body hWrap hEid
+              | some exceptionCode =>
+                  compileCallWrappedResultHandlerPresentEidExactHOLW context
+                    function resultName arguments resultShape resultNames
+                    exceptionName exceptionVariable exceptionCode hWrap hEid
+                    (fun bodyContext => compileBody bodyContext body)
+
 /-! The `ExtCall` clause from HOL `compile_def`
     (`pan_to_crepScript.sml:274-290`). The freshness bound is the maximum over
     every variable in all four compiled operand lists, even though the output
@@ -558,6 +625,115 @@ def compileExtCallExactHOLW {width : Nat} [NeZero width]
                 (.extCall function (maximumVariable + 1) (maximumVariable + 2)
                   (maximumVariable + 3) (maximumVariable + 4)))))
   | _, _, _, _, _, _, _, _ => .skip
+
+/-! ### Exact recursive `compile_def`
+
+Every constructor equation below was source-reviewed against
+`cakeml/pancake/pan_to_crepScript.sml:139-307` and its exact helper slice above.
+The only representation qualifier is the exact finite-support carrier for
+HOL's three finite maps; the syntax, positive word width, names, and output
+carrier are otherwise constructor-for-constructor HOL translations. This is
+the proof-side exact compiler. `flapjack-compile` still uses the production
+String-backed path until the separate production bridge is reviewed. -/
+
+@[hol "cakeml/pancake/pan_to_crepScript.sml" "compile_def"
+  (fmap_as_finite_support := [vars, funcs, eids])]
+def compileProgExactHOLW {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width) :
+    Flapjack.Pancake.PanLang.ProgHOL width → CrepProgHOL width
+  | .skip => .skip
+  | .dec name shape expression body =>
+      compileDecExactHOLW context name shape expression
+        (fun bodyContext => compileProgExactHOLW bodyContext body)
+  | .assign .local name expression =>
+      compileLocalAssignExactHOLW context name expression
+  | .assign .global name expression =>
+      compileGlobalAssignExactHOLW context name expression
+  | .primitive name operator arguments =>
+      compilePrimitiveExactHOLW context name operator arguments
+  | .store address value => compileStoreExactHOLW context address value
+  | .store32 address value => compileStore32ExactHOLW context address value
+  | .storeByte address value => compileStoreByteExactHOLW context address value
+  | .seq first second =>
+      .seq (compileProgExactHOLW context first) (compileProgExactHOLW context second)
+  | .ite condition thenBranch elseBranch =>
+      compileIfExactHOLW context condition
+        (compileProgExactHOLW context thenBranch)
+        (compileProgExactHOLW context elseBranch)
+  | .while condition body =>
+      compileWhileExactHOLW context condition (compileProgExactHOLW context body)
+  | .break => .break 0
+  | .continue => .continue 0
+  | .call info function arguments =>
+      match info with
+      | none => compileCallNoReturnExactHOLW context function arguments
+      | some (none, none) =>
+          compileCallResultNoHandlerExactHOLW context function arguments
+      | some (none, some (exceptionName, exceptionVariable, body)) =>
+          match hEid : context.eids.lookup exceptionName with
+          | none =>
+              compileCallHandlerMissingEidExactHOLW context function arguments
+                exceptionName exceptionVariable body hEid
+          | some exceptionCode =>
+              compileCallHandlerPresentEidExactHOLW context function arguments
+                exceptionName exceptionVariable exceptionCode hEid
+                (fun bodyContext => compileProgExactHOLW bodyContext body)
+      | some (some (_resultKind, resultName), handler) =>
+          match hWrap : wrapRtHOL (context.vars.lookup resultName) with
+          | none =>
+              match handler with
+              | none =>
+                  compileCallWrappedResultFallbackNoHandlerExactHOLW context
+                    function resultName arguments hWrap
+              | some (exceptionName, exceptionVariable, body) =>
+                  match hEid : context.eids.lookup exceptionName with
+                  | none =>
+                      compileCallWrappedResultFallbackHandlerMissingEidExactHOLW
+                        context function resultName arguments exceptionName
+                        exceptionVariable body hWrap hEid
+                  | some exceptionCode =>
+                      compileCallWrappedResultFallbackHandlerPresentEidExactHOLW
+                        context function resultName arguments exceptionName
+                        exceptionVariable exceptionCode hWrap hEid
+                        (fun bodyContext => compileProgExactHOLW bodyContext body)
+          | some (resultShape, resultNames) =>
+              match handler with
+              | none =>
+                  compileCallWrappedResultNoHandlerExactHOLW context function
+                    resultName arguments resultShape resultNames hWrap
+              | some (exceptionName, exceptionVariable, body) =>
+                  match hEid : context.eids.lookup exceptionName with
+                  | none =>
+                      compileCallWrappedResultHandlerMissingEidExactHOLW context
+                        function resultName arguments resultShape resultNames
+                        exceptionName exceptionVariable body hWrap hEid
+                  | some exceptionCode =>
+                      compileCallWrappedResultHandlerPresentEidExactHOLW context
+                        function resultName arguments resultShape resultNames
+                        exceptionName exceptionVariable exceptionCode hWrap hEid
+                        (fun bodyContext => compileProgExactHOLW bodyContext body)
+  | .decCall name shape function arguments body =>
+      compileDecCallExactHOLW context name shape function arguments
+        (fun bodyContext => compileProgExactHOLW bodyContext body)
+  | .extCall function configuration configurationLength array arrayLength =>
+      compileExtCallExactHOLW context function configuration configurationLength
+        array arrayLength
+  | .raise exceptionName expression =>
+      compileRaiseExactHOLW context exceptionName expression
+  | .return expression => compileReturnExactHOLW context expression
+  | .shMemLoad operator .local name address =>
+      compileShMemLoadExactHOLW context operator name address
+  | .shMemLoad operator .global name address =>
+      compileGlobalShMemLoadExactHOLW context operator name address
+  | .shMemStore operator address value =>
+      compileShMemStoreExactHOLW context operator address value
+  | .tick => .tick
+  | .annot _ _ => .skip
+termination_by program => sizeOf program
+decreasing_by
+  all_goals
+    simp_wf
+    omega
 
 
 /-! ### Codec helper lemmas for the `compile_exp` production bridge

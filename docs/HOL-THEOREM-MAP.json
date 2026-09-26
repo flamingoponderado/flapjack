@@ -2120,7 +2120,16 @@
     "lean_name": "compileExpExactHOLW",
     "statement_status": "reviewed_fmap_as_finite_support",
     "fmap_as_finite_support": ["vars", "funcs", "eids"],
-    "reviewer": "flapjack-luna-b (source comparison, bead flapjack-pxn.18.3.5.8.13.4; pan_to_crepScript.sml:39-101): checked every compile_exp equation against direct EVAL rows in scripts/hol-probes/compile_exp_probe.out. Const and address leaves, Local FLOOKUP, Global/missing-local zero fallback, RStruct flattening, RField Comb selection and non-Comb fallback, NStruct/NField fallbacks, Load/load_shape, Load32/LoadByte One-shape side conditions and fallback, Op/Panop cexp_heads behavior, Cmp/Shift nonempty-head behavior, and BytesInWord n2w (width DIV 8) match. ExpHOL width/ShapeHOL/MlS and CrepExpHOL width are exact with [NeZero width] for positive word dimensions. Context maps are the sole representation difference: CompileExpContextExact owns vars/funcs/eids as HolFiniteMapExact and same-module holFmapAsFiniteSupportWitness proves the toBroad/ofBroad roundtrip. The qualifier records only finite-support map representation. The String-backed production compileExp remains untagged; full compile_def and production routing remain open under flapjack-pxn.18.3.5.8.13."
+    "reviewer": "flapjack-luna-b (source comparison, bead flapjack-pxn.18.3.5.8.13.4; pan_to_crepScript.sml:39-101): checked every compile_exp equation against direct EVAL rows in scripts/hol-probes/compile_exp_probe.out. Const and address leaves, Local FLOOKUP, Global/missing-local zero fallback, RStruct flattening, RField Comb selection and non-Comb fallback, NStruct/NField fallbacks, Load/load_shape, Load32/LoadByte One-shape side conditions and fallback, Op/Panop cexp_heads behavior, Cmp/Shift nonempty-head behavior, and BytesInWord n2w (width DIV 8) match. ExpHOL width/ShapeHOL/MlS and CrepExpHOL width are exact with [NeZero width] for positive word dimensions. Context maps are the sole representation difference: CompileExpContextExact owns vars/funcs/eids as HolFiniteMapExact and same-module holFmapAsFiniteSupportWitness proves the toBroad/ofBroad roundtrip. The qualifier records only finite-support map representation. The String-backed production compileExp remains untagged; the exact recursive compile_def port is separately tagged as compileProgExactHOLW, while production routing remains open under flapjack-pxn.18.3.5.8.13."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
+    "hol_name": "compile_def",
+    "lean_path": "Flapjack/Pancake/PanToCrep/CompileExact.lean",
+    "lean_name": "compileProgExactHOLW",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["vars", "funcs", "eids"],
+    "reviewer": "flapjack-luna-b (source comparison, bead flapjack-pxn.18.3.5.8.13.29; pan_to_crepScript.sml:139-307): compared every Prog constructor equation and recursive context update against compile_def and its direct EVAL rows in scripts/hol-probes/compile_def_probe.out. Skip, Dec (extended vars/vmax and shape-length fallback), local/global Assign, Primitive, Store, Store32/StoreByte, Return, Raise, Seq, If/While, Break/Continue, all Call rtyp/wrap_rt/handler/eid branches, DecCall, ExtCall, ShMemStore, local/global ShMemLoad, Tick, and Annot match. The exact syntax and word carriers are ProgHOL width/ExpHOL width/ShapeHOL/MlS and CrepProgHOL width with [NeZero width]. PanToCrepContextExact's vars/funcs/eids are the only representation difference, using HolFiniteMapExact; the same-module holFmapAsFiniteSupportWitness proves its toBroad/ofBroad roundtrip. Production String-backed compiler remains separate and is not claimed to execute this definition; routing is tracked by parent flapjack-pxn.18.3.5.8.13."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
@@ -5023,6 +5032,30 @@
     "lean_name": "progOfHOL_smartSeqHOL",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific representation bridge for `smartSeqHOL`: HOL declares the transformation but has no separate theorem about commuting the `ProgHOL` to production `Prog` decoder with it. This proof connects the exact HOL carrier to the executable helper and carries no HOL tag."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/ProgOfHOL.lean",
+    "lean_name": "panSimpToStringOfBytes_injective",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific codec lemma: injectivity follows from `ofString_toStringOfBytes`; there is no separate HOL theorem for this decoder property. It carries no HOL tag."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/ProgOfHOL.lean",
+    "lean_name": "panSimpToStringOfBytes_eq_iff",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific codec lemma: equality reflection is derived from `panSimpToStringOfBytes_injective`, with equality preservation by substitution. HOL has no separate theorem about the Lean decoder, so this declaration carries no HOL tag."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/ProgOfHOL.lean",
+    "lean_name": "progOfHOL_seqCallRetHOL",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific representation bridge for HOL `seq_call_ret_def`: HOL has no separate theorem commuting `seqCallRetHOL` with the Lean `progOfHOL` decoder. The bridge preserves the exact HOL transform while reflecting its MlString equality guard through the decoder. It carries no HOL tag."
   },
   {
     "hol_path": null,
