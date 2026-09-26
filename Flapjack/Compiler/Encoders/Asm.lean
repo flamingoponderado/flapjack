@@ -780,4 +780,47 @@ def asmOkExact {width : Nat} [NeZero width] (config : AsmConfig width) : AsmData
   | .loc register offset => asmRegOk config register && asmLocOffsetOk config offset
 
 
+/-! ## Exact-to-executed width bridges
+
+The `...Exact` predicates above are the exact positive-width HOL ports; the
+executed compiler uses the width-general untagged forms.  The following
+kernel-checked equalities show the two agree definitionally whenever the word
+dimension is positive, which is the only case the compiler instantiates
+(bead flapjack-4ac.6.1.1).  Because the equality holds definitionally under
+`[NeZero width]`, no caller needs to be rerouted: the width-general executed
+forms remain the canonical runtime definitions and are a justified exception
+at width zero, which no source program can inhabit. -/
+
+theorem asmRegOkExact_eq {width : Nat} [NeZero width] (config : AsmConfig width)
+    (register : Nat) : asmRegOkExact config register = asmRegOk config register := rfl
+
+theorem asmFpRegOkExact_eq {width : Nat} [NeZero width] (config : AsmConfig width)
+    (register : Nat) : asmFpRegOkExact config register = asmFpRegOk config register := rfl
+
+theorem asmRegImmOkExact_eq {width : Nat} [NeZero width] (config : AsmConfig width)
+    (operator : Sum BinOp Cmp) (right : WordRegImm (BitVec width)) :
+    asmRegImmOkExact config operator right = asmRegImmOk config operator right := rfl
+
+theorem asmOffsetOkExact_eq {width : Nat} [NeZero width] (alignment : Nat)
+    (bounds : BitVec width × BitVec width) (offset : BitVec width) :
+    asmOffsetOkExact alignment bounds offset = asmOffsetOk alignment bounds offset := rfl
+
+theorem asmArithOkExact_eq {width : Nat} [NeZero width] (config : AsmConfig width)
+    (operation : WordLangArith (BitVec width)) :
+    asmArithOkExact config operation = asmArithOk config operation := rfl
+
+theorem asmFpOkExact_eq {width : Nat} [NeZero width] (config : AsmConfig width)
+    (operation : WordLangFp) : asmFpOkExact config operation = asmFpOk config operation := rfl
+
+theorem asmCmpOkExact_eq {width : Nat} [NeZero width] (config : AsmConfig width)
+    (operator : Cmp) (register : Nat) (right : WordRegImm (BitVec width)) :
+    asmCmpOkExact config operator register right = asmCmpOk config operator register right := rfl
+
+theorem asmInstOkExact_eq {width : Nat} [NeZero width] (config : AsmConfig width)
+    (instruction : WordLangInst (BitVec width)) :
+    asmInstOkExact config instruction = asmInstOk config instruction := rfl
+
+theorem asmOkExact_eq {width : Nat} [NeZero width] (config : AsmConfig width)
+    (data : AsmData width) : asmOkExact config data = asmOk config data := rfl
+
 end Flapjack.Compiler.Encoders.Asm

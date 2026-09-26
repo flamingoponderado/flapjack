@@ -610,4 +610,27 @@ def instArgConventionExact {width : Nat} [NeZero width] : WordLangInst (BitVec w
   | _ => true
 
 
+/-! ## Exact-to-executed width bridges
+
+The four `...Exact` predicates are the exact positive-width HOL ports; the
+executed compiler uses the width-general untagged forms.  The equalities below
+hold definitionally under `[NeZero width]`, so no caller rerouting is required
+(bead flapjack-4ac.6.1.1). -/
+
+theorem distinctTarRegExact_eq {width : Nat} [NeZero width]
+    (instruction : WordLangInst (BitVec width)) :
+    distinctTarRegExact instruction = distinctTarReg instruction := rfl
+
+theorem twoRegInstExact_eq {width : Nat} [NeZero width]
+    (instruction : WordLangInst (BitVec width)) :
+    twoRegInstExact instruction = twoRegInst instruction := rfl
+
+theorem instOkLessExact_eq {width : Nat} [NeZero width] (config : AsmConfig width)
+    (instruction : WordLangInst (BitVec width)) :
+    instOkLessExact config instruction = instOkLess config instruction := rfl
+
+theorem instArgConventionExact_eq {width : Nat} [NeZero width]
+    (instruction : WordLangInst (BitVec width)) :
+    instArgConventionExact instruction = instArgConvention instruction := rfl
+
 end Flapjack

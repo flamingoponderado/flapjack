@@ -114,4 +114,15 @@ def asmAddrOkExact {width : Nat} [NeZero width] (config : AsmConfig width) :
          else
           asmByteOffsetOk config offset)
 
+/-! ## Exact-to-executed width bridge
+
+`asmAddrOkExact` is the exact positive-width HOL port (`addr_ok_def`); the
+executed compiler uses the width-general `asmAddrOk`.  The equality below holds
+definitionally under `[NeZero width]`, so no caller rerouting is required
+(bead flapjack-4ac.6.1.1). -/
+
+theorem asmAddrOkExact_eq {width : Nat} [NeZero width] (config : AsmConfig width)
+    (operator : WordMemOp) (address : WordLangAddr (BitVec width)) :
+    asmAddrOkExact config operator address = asmAddrOk config operator address := rfl
+
 end Flapjack.Compiler.Backend.StackProps
