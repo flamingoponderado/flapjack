@@ -1874,6 +1874,37 @@ theorem evalCrepRuntimeExps_wordLab_projection
           rw [optionBindMapListMapWord]
           rw [ih]
 
+/-- Unwrapping a list of word-labelled values recovers the originals. -/
+@[simp] theorem list_map_panTheWord_word {α : Type u} (values : List α) :
+    List.map (panTheWord ∘ PanWordLab.word) values = values := by
+  induction values with
+  | nil => rfl
+  | cons value values ih => simp [Function.comp, ih, panTheWord]
+
+/-- Pointwise form of the tagged-word-lab list evaluator: mapping the
+    word-labelled list result of `evalCrepRuntimeExpsWordLab` back through
+    `panTheWord` recovers the bare `evalCrepRuntimeExps` result, so a production
+    call site can be routed through the HOL-shaped word-lab core without
+    changing runtime behavior. -/
+@[simp] theorem evalCrepRuntimeExpsWordLab_map_panTheWord
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α]
+    [ShiftLeft α] [ShiftRight α] [LT α]
+    [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (state : CrepRuntimeState α σ) (expressions : List (CrepExp α)) :
+    (evalCrepRuntimeExpsWordLab state expressions).map (List.map panTheWord) =
+      evalCrepRuntimeExps state expressions := by
+  cases h : evalCrepRuntimeExps state expressions with
+  | none =>
+      have hl : evalCrepRuntimeExpsWordLab state expressions = none := by
+        rw [← evalCrepRuntimeExps_wordLab_projection state expressions, h]; rfl
+      rw [hl]; rfl
+  | some values =>
+      have hl : evalCrepRuntimeExpsWordLab state expressions =
+          some (values.map PanWordLab.word) := by
+        rw [← evalCrepRuntimeExps_wordLab_projection state expressions, h]; rfl
+      rw [hl]; simp
+
 def restoreCrepRuntimeStep (name : Nat) (oldValue : Option (PanWordLab α)) :
     CrepRuntimeStep α σ ε → CrepRuntimeStep α σ ε
   | (result, state) =>
@@ -1941,7 +1972,7 @@ mutual
         List (CrepExp α) → Option (CrepRuntimeStep α σ ε)
     | 0, _, _, _, _ => none
     | fuel + 1, caller, info, function, arguments =>
-        match evalCrepRuntimeExps caller arguments with
+        match (evalCrepRuntimeExpsWordLab caller arguments).map (List.map panTheWord) with
         | none => some (.error, caller)
         | some values =>
             match lookupCrepRuntimeCode function values caller.code with
@@ -2112,7 +2143,7 @@ mutual
     | _fuel + 1, state, .raise exception =>
         some (.raised exception, clearCrepRuntimeLocals state)
     | _fuel + 1, state, .return values =>
-        match evalCrepRuntimeExps state values with
+        match (evalCrepRuntimeExpsWordLab state values).map (List.map panTheWord) with
         | some values => some (.returned values, clearCrepRuntimeLocals state)
         | none => some (.error, state)
     | _fuel + 1, state, .shMem operator name address =>
