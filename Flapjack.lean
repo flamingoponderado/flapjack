@@ -98,6 +98,7 @@ import Flapjack.PanHProgStoreMem
 import Flapjack.PanHProgAssign
 import Flapjack.PanHProgWhile
 import Flapjack.Pancake.PanSimp
+import Flapjack.Pancake.PanLang.ProgHOLInduction
 import Flapjack.PanLocalised
 import Flapjack.Pancake.Proofs.PanSimp.Evaluate
 import Flapjack.PanSimpLocalised

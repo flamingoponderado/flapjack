@@ -1,5 +1,6 @@
 import Flapjack.Pancake.PanToCrep.Compile
 import Flapjack.Pancake.PanToCrep.ContextExact
+import Flapjack.Pancake.PanToCrep.ExpHdlExact
 import Flapjack.Pancake.Semantics.CrepSem.HOLState
 import Flapjack.Pancake.PanCommon
 
@@ -16,86 +17,21 @@ namespace Flapjack
 open Flapjack.Basis.Pure.MlString
 open Flapjack.Pancake.PanLang
 
-/-! This module owns the exact-context carrier used by its tagged compiler so
-    the finite-support qualifier is local to the declaration's module. Its
-    fields and word/name carriers are the same ones as
-    `PanToCrepContextExact`; the broad form below exists only for the required
-    canonical finite-support roundtrip witness. -/
+/-! The exact compiler reuses the canonical tagged HOL context carrier from
+    `ContextExact.lean`; it no longer defines a duplicate structure solely to
+    host a local finite-support witness. Keep this source-level alias for test
+    fixtures that used the earlier descriptive name. -/
 
-structure CompileExpContextBroad (width : Nat) where
-  varsLookup : MlS → Option (ShapeHOL × List Nat)
-  varsFiniteSupport : ∃ keys : List MlS, ∀ key, varsLookup key ≠ none → key ∈ keys
-  funcsLookup : MlS → Option (List (MlS × ShapeHOL) × ShapeHOL)
-  funcsFiniteSupport : ∃ keys : List MlS, ∀ key, funcsLookup key ≠ none → key ∈ keys
-  eidsLookup : MlS → Option (BitVec width)
-  eidsFiniteSupport : ∃ keys : List MlS, ∀ key, eidsLookup key ≠ none → key ∈ keys
-  vmax : Nat
+abbrev CompileExpContextExact (width : Nat) [NeZero width] :=
+  PanToCrepContextExact width
 
-/-- Flapjack-specific carrier mirror of the tagged `PanToCrepContextExact`.
-    It owns the finite-map fields in this module so the compiler's finite-map
-    qualifier can be validated alongside its canonical witness. -/
-structure CompileExpContextExact (width : Nat) [NeZero width] where
-  vars : HolFiniteMapExact MlS (ShapeHOL × List Nat)
-  funcs : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ShapeHOL)
-  eids : HolFiniteMapExact MlS (BitVec width)
-  vmax : Nat
-
-namespace CompileExpContextExact
-
-/-- Convert the compiler-local qualifier carrier to the tagged HOL `context`.
-    This is a field-preserving conversion, not a production String codec. -/
-def toPanToCrep {width : Nat} [NeZero width] (context : CompileExpContextExact width) :
-    PanToCrepContextExact width where
-  vars := context.vars
-  funcs := context.funcs
-  eids := context.eids
-  vmax := context.vmax
-
-/-- Convert the tagged HOL `context` to the local carrier required by the
-    current same-module finite-support witness checker. -/
-def ofPanToCrep {width : Nat} [NeZero width] (context : PanToCrepContextExact width) :
-    CompileExpContextExact width where
-  vars := context.vars
-  funcs := context.funcs
-  eids := context.eids
-  vmax := context.vmax
-
-theorem ofPanToCrep_toPanToCrep {width : Nat} [NeZero width]
-    (context : CompileExpContextExact width) :
-    ofPanToCrep (toPanToCrep context) = context := by
-  cases context
-  rfl
-
-theorem toPanToCrep_ofPanToCrep {width : Nat} [NeZero width]
-    (context : PanToCrepContextExact width) :
-    toPanToCrep (ofPanToCrep context) = context := by
-  cases context
-  rfl
-
-def toBroad {width : Nat} [NeZero width] (context : CompileExpContextExact width) :
-    CompileExpContextBroad width where
-  varsLookup := context.vars.lookup
-  varsFiniteSupport := context.vars.finiteSupport
-  funcsLookup := context.funcs.lookup
-  funcsFiniteSupport := context.funcs.finiteSupport
-  eidsLookup := context.eids.lookup
-  eidsFiniteSupport := context.eids.finiteSupport
-  vmax := context.vmax
-
-def ofBroad {width : Nat} [NeZero width] (context : CompileExpContextBroad width) :
-    CompileExpContextExact width where
-  vars := ⟨context.varsLookup, context.varsFiniteSupport⟩
-  funcs := ⟨context.funcsLookup, context.funcsFiniteSupport⟩
-  eids := ⟨context.eidsLookup, context.eidsFiniteSupport⟩
-  vmax := context.vmax
-
-/-- Canonical `HolFiniteMapExact` roundtrip required by the context qualifier. -/
+/-- Same-module witness for the imported canonical carrier. This delegates to
+    the checked `PanToCrepContextExact` roundtrip and lets the qualifier checker
+    validate the actual imported owner and fields at each tagged declaration. -/
 theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width]
-    (context : CompileExpContextExact width) : ofBroad (toBroad context) = context := by
-  cases context
-  rfl
-
-end CompileExpContextExact
+    (context : PanToCrepContextExact width) :
+    PanToCrepContextExact.ofBroad (PanToCrepContextExact.toBroad context) = context :=
+  PanToCrepContextExact.holFmapAsFiniteSupportWitness context
 
 /-! ### Exact-carrier `compile_exp_def`
 
@@ -114,7 +50,7 @@ mutual
   @[hol "cakeml/pancake/pan_to_crepScript.sml" "compile_exp_def"
     (fmap_as_finite_support := [vars, funcs, eids])]
   def compileExpExactHOLW {width : Nat} [NeZero width]
-      (context : CompileExpContextExact width) :
+      (context : PanToCrepContextExact width) :
       Flapjack.Pancake.PanLang.ExpHOL width →
         List (CrepExpHOL width) × Flapjack.Pancake.PanLang.ShapeHOL
     | .const value => ([.const value], .one)
@@ -172,7 +108,7 @@ mutual
 
   /-- `MAP (compile_exp ctxt)` in HOL's RStruct/Op/Panop equations. -/
   def compileExpExactHOLWList {width : Nat} [NeZero width]
-      (context : CompileExpContextExact width) :
+      (context : PanToCrepContextExact width) :
       List (Flapjack.Pancake.PanLang.ExpHOL width) →
         List (List (CrepExpHOL width) × Flapjack.Pancake.PanLang.ShapeHOL)
     | [] => []
@@ -189,7 +125,7 @@ end
     than HOL's complete recursive `compile` definition. -/
 
 def compileReturnExactHOLW {width : Nat} [NeZero width]
-    (context : CompileExpContextExact width)
+    (context : PanToCrepContextExact width)
     (expression : Flapjack.Pancake.PanLang.ExpHOL width) : CrepProgHOL width :=
   let (expressions, shape) := compileExpExactHOLW context expression
   if Flapjack.Pancake.PanLang.sizeOfShapeHOL shape = 0 then .return []
@@ -201,14 +137,14 @@ def compileReturnExactHOLW {width : Nat} [NeZero width]
     head, otherwise returning `Skip` as HOL does. They remain untagged slices. -/
 
 def compileStore32ExactHOLW {width : Nat} [NeZero width]
-    (context : CompileExpContextExact width)
+    (context : PanToCrepContextExact width)
     (destination source : Flapjack.Pancake.PanLang.ExpHOL width) : CrepProgHOL width :=
   match compileExpExactHOLW context destination, compileExpExactHOLW context source with
   | (address :: _, _), (value :: _, _) => .store32 address value
   | _, _ => .skip
 
 def compileStoreByteExactHOLW {width : Nat} [NeZero width]
-    (context : CompileExpContextExact width)
+    (context : PanToCrepContextExact width)
     (destination source : Flapjack.Pancake.PanLang.ExpHOL width) : CrepProgHOL width :=
   match compileExpExactHOLW context destination, compileExpExactHOLW context source with
   | (address :: _, _), (value :: _, _) => .storeByte address value
@@ -221,7 +157,7 @@ def compileStoreByteExactHOLW {width : Nat} [NeZero width]
     equation slices, not the assembled recursive compiler. -/
 
 def compileIfExactHOLW {width : Nat} [NeZero width]
-    (context : CompileExpContextExact width)
+    (context : PanToCrepContextExact width)
     (condition : Flapjack.Pancake.PanLang.ExpHOL width)
     (thenBranch elseBranch : CrepProgHOL width) : CrepProgHOL width :=
   match compileExpExactHOLW context condition with
@@ -229,7 +165,7 @@ def compileIfExactHOLW {width : Nat} [NeZero width]
   | ([], _) => .skip
 
 def compileWhileExactHOLW {width : Nat} [NeZero width]
-    (context : CompileExpContextExact width)
+    (context : PanToCrepContextExact width)
     (condition : Flapjack.Pancake.PanLang.ExpHOL width)
     (body : CrepProgHOL width) : CrepProgHOL width :=
   match compileExpExactHOLW context condition with
@@ -242,11 +178,11 @@ def compileWhileExactHOLW {width : Nat} [NeZero width]
     the compiled result is independent of them, exactly as in HOL. -/
 
 def compileGlobalAssignExactHOLW {width : Nat} [NeZero width]
-    (_context : CompileExpContextExact width) (_name : MlS)
+    (_context : PanToCrepContextExact width) (_name : MlS)
     (_expression : Flapjack.Pancake.PanLang.ExpHOL width) : CrepProgHOL width := .skip
 
 def compileGlobalShMemLoadExactHOLW {width : Nat} [NeZero width]
-    (_context : CompileExpContextExact width) (_operator : OpSize) (_name : MlS)
+    (_context : PanToCrepContextExact width) (_operator : OpSize) (_name : MlS)
     (_address : Flapjack.Pancake.PanLang.ExpHOL width) : CrepProgHOL width := .skip
 
 /-! The `Assign Local` clause from `compile_def`
@@ -256,7 +192,7 @@ def compileGlobalShMemLoadExactHOLW {width : Nat} [NeZero width]
     otherwise HOL first copies through fresh `vmax + SUC i` temporaries. -/
 
 def compileLocalAssignExactHOLW {width : Nat} [NeZero width]
-    (context : CompileExpContextExact width) (name : MlS)
+    (context : PanToCrepContextExact width) (name : MlS)
     (expression : Flapjack.Pancake.PanLang.ExpHOL width) : CrepProgHOL width :=
   let (expressions, _shape) := compileExpExactHOLW context expression
   match context.vars.lookup name with
@@ -281,7 +217,7 @@ def compileLocalAssignExactHOLW {width : Nat} [NeZero width]
     wraps the target primitive in `nested_decs`. -/
 
 def compilePrimitiveExactHOLW {width : Nat} [NeZero width]
-    (context : CompileExpContextExact width) (name : MlS) (operator : PrimOp)
+    (context : PanToCrepContextExact width) (name : MlS) (operator : PrimOp)
     (arguments : List (Flapjack.Pancake.PanLang.ExpHOL width)) : CrepProgHOL width :=
   let values := (compileExpExactHOLWList context arguments).flatMap Prod.fst
   match context.vars.lookup name with
@@ -297,7 +233,7 @@ def compilePrimitiveExactHOLW {width : Nat} [NeZero width]
     for the address and generates the remaining temporaries from that base. -/
 
 def compileStoreExactHOLW {width : Nat} [NeZero width]
-    (context : CompileExpContextExact width)
+    (context : PanToCrepContextExact width)
     (address value : Flapjack.Pancake.PanLang.ExpHOL width) : CrepProgHOL width :=
   match compileExpExactHOLW context address with
   | (compiledAddress :: _, _) =>
@@ -319,7 +255,7 @@ def compileStoreExactHOLW {width : Nat} [NeZero width]
     into consecutive globals before raising the looked-up word code. -/
 
 def compileRaiseExactHOLW {width : Nat} [NeZero width]
-    (context : CompileExpContextExact width) (exceptionName : MlS)
+    (context : PanToCrepContextExact width) (exceptionName : MlS)
     (expression : Flapjack.Pancake.PanLang.ExpHOL width) : CrepProgHOL width :=
   match context.eids.lookup exceptionName with
   | none => .skip
@@ -340,7 +276,7 @@ def compileRaiseExactHOLW {width : Nat} [NeZero width]
     one greater than the largest variable used by the value expression. -/
 
 def compileShMemStoreExactHOLW {width : Nat} [NeZero width]
-    (context : CompileExpContextExact width) (operator : OpSize)
+    (context : PanToCrepContextExact width) (operator : OpSize)
     (value address : Flapjack.Pancake.PanLang.ExpHOL width) : CrepProgHOL width :=
   match compileExpExactHOLW context value, compileExpExactHOLW context address with
   | (compiledValue :: _, _), (compiledAddress :: _, _) =>
@@ -354,7 +290,7 @@ def compileShMemStoreExactHOLW {width : Nat} [NeZero width]
     first destination variable, preserving both lookup/head fallbacks. -/
 
 def compileShMemLoadExactHOLW {width : Nat} [NeZero width]
-    (context : CompileExpContextExact width) (operator : OpSize) (name : MlS)
+    (context : PanToCrepContextExact width) (operator : OpSize) (name : MlS)
     (address : Flapjack.Pancake.PanLang.ExpHOL width) : CrepProgHOL width :=
   match compileExpExactHOLW context address with
   | (compiledAddress :: _, _) =>
@@ -370,14 +306,14 @@ def compileShMemLoadExactHOLW {width : Nat} [NeZero width]
     declaration only when the compiled expression count matches the shape. -/
 
 def compileDecExactHOLW {width : Nat} [NeZero width]
-    (context : CompileExpContextExact width) (name : MlS)
+    (context : PanToCrepContextExact width) (name : MlS)
     (shape : Flapjack.Pancake.PanLang.ShapeHOL)
     (expression : Flapjack.Pancake.PanLang.ExpHOL width)
-    (compileBody : CompileExpContextExact width → CrepProgHOL width) : CrepProgHOL width :=
+    (compileBody : PanToCrepContextExact width → CrepProgHOL width) : CrepProgHOL width :=
   let (values, compiledShape) := compileExpExactHOLW context expression
   let valueCount := Flapjack.Pancake.PanLang.sizeOfShapeHOL compiledShape
   let names := (List.range valueCount).map (fun index => context.vmax + index + 1)
-  let bodyContext : CompileExpContextExact width :=
+  let bodyContext : PanToCrepContextExact width :=
     { context with
       vars := context.vars.update (name, (shape, names))
       vmax := context.vmax + valueCount }
@@ -457,6 +393,33 @@ def compileCallHandlerMissingEidExactHOLW {width : Nat} [NeZero width]
     CrepProgHOL width :=
   compileCallResultNoHandlerExactHOLW context function arguments
 
+/-! The `hdl = SOME (eid, evar, p)` branch with a successful `eids` lookup in
+    HOL `compile_def` (`pan_to_crepScript.sml:233-239`) keeps the exception
+    handler. It wraps the recursively compiled body with exact `exp_hdl`, then
+    zero-initializes the callee return names before emitting the handled call. -/
+
+def compileCallHandlerPresentEidExactHOLW {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (function : MlS)
+    (arguments : List (Flapjack.Pancake.PanLang.ExpHOL width))
+    (exceptionName exceptionVariable : MlS) (exceptionCode : BitVec width)
+    (_eidLookup : context.eids.lookup exceptionName = some exceptionCode)
+    (compileHandlerBody : CompileExpContextExact width → CrepProgHOL width) :
+    CrepProgHOL width :=
+  let compiledArguments := compileExpExactHOLWList context arguments
+  let flattenedArguments := compiledArguments.flatMap Prod.fst
+  let returnShape := (context.funcs.lookup function).map Prod.snd
+  let returnNames := match returnShape with
+    | none => []
+    | some shape => (List.range (Flapjack.Pancake.PanLang.sizeOfShapeHOL shape)).map
+        (fun index => context.vmax + index + 1)
+  let handler := CrepProgHOL.seq
+    (expHdlExact ⟨context.vars⟩ exceptionVariable)
+    (compileHandlerBody context)
+  let call := CrepProgHOL.call
+    (some (returnNames, some (exceptionCode, handler))) function flattenedArguments
+  nestedDecsHOL returnNames
+    (List.replicate returnNames.length (.const (0 : BitVec width))) call
+
 /-! The `ExtCall` clause from HOL `compile_def`
     (`pan_to_crepScript.sml:274-290`). The freshness bound is the maximum over
     every variable in all four compiled operand lists, even though the output
@@ -464,7 +427,7 @@ def compileCallHandlerMissingEidExactHOLW {width : Nat} [NeZero width]
     four compiled lists must be nonempty; otherwise HOL returns `Skip`. -/
 
 def compileExtCallExactHOLW {width : Nat} [NeZero width]
-    (context : CompileExpContextExact width) (function : MlS)
+    (context : PanToCrepContextExact width) (function : MlS)
     (configuration configurationLength array arrayLength :
       Flapjack.Pancake.PanLang.ExpHOL width) : CrepProgHOL width :=
   let (configurationValues, configurationShape) :=
