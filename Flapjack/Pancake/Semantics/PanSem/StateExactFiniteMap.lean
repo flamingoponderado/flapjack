@@ -1646,6 +1646,33 @@ theorem evaluateHOLFinite_ne_none {width : Nat} {σ : Type} [NeZero width]
   rw [houtput]
   simp
 
+/-- FLAPJACK-SPECIFIC exact state-level rendering of HOL `evaluate_def`'s
+    `result option × state` result shape, built directly from the total
+    clause-for-clause finite context evaluator.  Unlike `evaluateHOLFinite` this
+    drops the recursive-case assembly marker, which is provably inert
+    (`evalPanSemRecursiveCallFiniteContext_total`).  Carries no `@[hol]` tag: the
+    `evaluate_def` tag awaits the coordinator's source review of the general
+    projection (`flapjack-6yq.1`). -/
+def evaluateHOLFiniteState {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ)
+    [h : DecidablePred state.memaddrs] [hshared : DecidablePred state.shMemaddrs]
+    (program : ProgHOL width) :
+    Option (PanSemResultExact width) × PanSemStateFiniteExact width σ :=
+  match evalPanSemRecursiveCallFiniteContext program ⟨state, h, hshared⟩ with
+  | some pair => (pair.1, pair.2.state)
+  | none => (none, state)
+
+/-- Checked bridge: `evaluateHOLFiniteState` is the pair-shaped rendering of the
+    assembly-marker wrapper `evaluateHOLFinite`. -/
+theorem evaluateHOLFiniteState_eq_getD {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ)
+    [h : DecidablePred state.memaddrs] [hshared : DecidablePred state.shMemaddrs]
+    (program : ProgHOL width) :
+    evaluateHOLFiniteState state program =
+      (evaluateHOLFinite state program).getD (none, state) := by
+  unfold evaluateHOLFiniteState evaluateHOLFinite
+  cases evalPanSemRecursiveCallFiniteContext program ⟨state, h, hshared⟩ <;> rfl
+
 end PanSemStateFiniteExact
 
 end Flapjack
