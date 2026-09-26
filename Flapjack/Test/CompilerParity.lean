@@ -167,6 +167,7 @@ import Flapjack.Test.CrepProgHOLParity
 import Flapjack.Test.CrepEvalConstructorParity
 import Flapjack.Test.CrepSemEvalExactParity
 import Flapjack.Test.CrepLocalsWordLabParity
+import Flapjack.Test.CrepShMemHOLParity
 import Flapjack.Test.CrepMemoryRelParity
 import Flapjack.Test.CrepSemStateExactParity
 import Flapjack.Test.CrepFuelCutoffParity
@@ -801,6 +802,7 @@ def main : IO Unit := do
     Flapjack.Test.CrepInlineFmapParity.runChecks,
     Flapjack.Test.CrepInlineRelParity.runChecks,
     Flapjack.Test.CrepSemTotalEvaluateHOLParity.runChecks,
+    Flapjack.Test.CrepShMemHOLParity.runChecks,
     Flapjack.Test.PanGlobalsExceptionsAppendParity.runChecks,
     Flapjack.Test.PanGlobalsExceptionsFilterIsFunctionParity.runChecks,
     Flapjack.Test.PanGlobalsDeclPredicateParity.runChecks,
