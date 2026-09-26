@@ -999,6 +999,23 @@ instance toPanSemFiniteDecidableMemaddrs {width : Nat} {σ : Type} [NeZero width
     DecidablePred state.toPanSemFinite.memaddrs := by
   simpa [toPanSemFinite] using h
 
+/-- Memory replacement and the canonical evaluator's empty-locals update
+    preserve the address-set predicate definitionally.  This explicit
+    transport is needed because the evaluator's declaration clause requests a
+    `DecidablePred` for the updated state's `emptyLocalsHOLFinite` projection,
+    while the available instance is indexed by the original PanProps state. -/
+@[instance_reducible]
+def decidablePred_memoryUpdate_emptyLocals_toPanSemFinite
+    {width : Nat} {σ : Type} [NeZero width]
+    (state : PanPropsEvalStateFiniteExact width σ)
+    [h : DecidablePred state.memaddrs]
+    (memory : RiscV.Word width → HolWordLab width) :
+    DecidablePred
+      (PanSemStateFiniteExact.emptyLocalsHOLFinite
+        ({ state with memory := memory }.toPanSemFinite)).memaddrs := by
+  change DecidablePred state.memaddrs
+  exact h
+
 /-- Inverse state codec from the canonical PanSem finite-support carrier. -/
 def ofPanSemFinite {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) : PanPropsEvalStateFiniteExact width σ where
