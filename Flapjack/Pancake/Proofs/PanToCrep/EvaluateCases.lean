@@ -11606,8 +11606,8 @@ theorem panToCrepPcCompileCorrectCallCatchRaiseOneWordCodeStateRiscV64
       targetState (compileCodeRelProg context program) =
         some (.returned [value], targetPost) := by
     rw [hcompiledCall]
-    simp only [evalCrepRuntimeResult, evalCrepRuntimeProg, evalCrepRuntimeExp,
-      setCrepRuntimeLocal_eq_update]
+    simp only [evalCrepRuntimeResult, evalCrepRuntimeProg, evalCrepRuntimeExpWordLab_panTheWord,
+      evalCrepRuntimeExp, setCrepRuntimeLocal_eq_update]
     rw [htargetCall']
     simp [targetPost, targetCaller, calleeState, decCrepClock,
       crepRuntimeCallerState, restoreCrepRuntimeStep, clearCrepRuntimeLocals,

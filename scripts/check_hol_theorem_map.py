@@ -1653,7 +1653,10 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         if fmap_result:
             entry["fmap_as_finite_support_result"] = True
         if fmap_relation:
-            entry["fmap_as_finite_support_relation"] = list(fmap_relation)
+            entry["fmap_as_finite_support_relation"] = [
+                f"{carrier}.{field}" if field else carrier
+                for carrier, field in fmap_relation
+            ]
         inventory[(lean_path, lean_name)] = entry
 
     for lean_path, lean_name in proof_theorem_declarations(root):
@@ -1900,6 +1903,10 @@ def validate_inventory(
         manifest_fmap_fields = tuple(record.get("fmap_as_finite_support", ()))
         manifest_fmap_result = bool(record.get("fmap_as_finite_support_result", False))
         manifest_fmap_relation = tuple(record.get("fmap_as_finite_support_relation", ()))
+        tag_fmap_relation = tuple(
+            f"{carrier}.{field}" if field else carrier
+            for carrier, field in fmap_relation
+        )
         if manifest_list_fields != list_fields:
             errors.append(
                 f"{key[0]}:{key[1]}: manifest list_as_array fields do not match its @[hol] tag"
@@ -1920,7 +1927,7 @@ def validate_inventory(
             errors.append(
                 f"{key[0]}:{key[1]}: manifest fmap_as_finite_support_result does not match its @[hol] tag"
             )
-        if manifest_fmap_relation != fmap_relation:
+        if manifest_fmap_relation != tag_fmap_relation:
             errors.append(
                 f"{key[0]}:{key[1]}: manifest fmap_as_finite_support_relation entries do not match its @[hol] tag"
             )

@@ -612,21 +612,42 @@ def has_fmap_relation_witness(lines: list[str], carrier: str) -> bool:
     return False
 
 
+def parameter_has_hol_finite_map_binder(declaration_text: str, name: str) -> bool:
+    """Whether `name` is a binder of `declaration_text` with a HolFiniteMapExact type.
+
+    A bare finite-map-parameter entry records that a HOL finite-map argument of
+    the tagged declaration is represented by the canonical `HolFiniteMapExact`
+    translation.  The parameter must be an explicit or implicit binder of the
+    declaration whose declared type mentions `HolFiniteMapExact`; a raw
+    function-backed `α → Option β` parameter is ineligible.
+    """
+    if not declaration_text or not name:
+        return False
+    pattern = re.compile(rf"[\(\{{]\s*{re.escape(name)}\s*:\s*([^)\}}]*)[\)\}}]")
+    for match in pattern.finditer(declaration_text):
+        if "HolFiniteMapExact" in match.group(1):
+            return True
+    return False
+
+
 def fmap_as_finite_support_relation_errors(
     lines: list[str], entries: tuple[tuple[str, str], ...], module: str,
     declaration_text: str = "",
 ) -> list[str]:
     """Validate a multi-carrier finite-map relation qualifier.
 
-    Each entry is `Carrier.field`; the carrier must be a structure declared in
-    this module or reachable through its imports, the field must be one of that
-    carrier's fields and must use the approved `HolFiniteMapExact` carrier, and
-    the tagged declaration must visibly name every carrier it relates.  Every
-    distinct carrier additionally needs its own same-module canonical witness
+    Each entry is either `Carrier.field` or a bare finite-map parameter name.
+    A `Carrier.field` entry requires the carrier to be a structure declared in
+    this module or reachable through its imports, the field to be one of that
+    carrier's fields using the approved `HolFiniteMapExact` carrier, and the
+    tagged declaration to visibly name every such carrier; every distinct
+    carrier additionally needs its own same-module canonical witness
     `holFmapAsFiniteSupportRelationWitness_<carrier>` (see
-    `has_fmap_relation_witness`).  This gate is deliberately separate from the
-    single-owner `fmap_as_finite_support` gate and does not relax it: a relation
-    spanning two carriers cannot be certified by one carrier's witness.
+    `has_fmap_relation_witness`).  A bare entry requires the tagged
+    declaration to bind that name at a `HolFiniteMapExact` type: it records a
+    standalone map parameter (no owning carrier), so no carrier witness is
+    required.  This gate is deliberately separate from the single-owner
+    `fmap_as_finite_support` gate and does not relax it.
     """
     errors: list[str] = []
     if len(set(entries)) != len(entries):
@@ -634,13 +655,22 @@ def fmap_as_finite_support_relation_errors(
     local_types = structure_field_types(lines)
     imported = imported_structure_field_types(module, str(ROOT))
     own_types: dict[str, dict[str, str]] = {}
-    for carrier, field in entries:
-        if not carrier or not field:
+    field_entries = [(carrier, field) for carrier, field in entries if field]
+    parameter_entries = [(carrier, field) for carrier, field in entries if not field]
+    for name, _field in parameter_entries:
+        if not name or "." in name:
             errors.append(
-                f"fmap_as_finite_support_relation entry `{carrier}.{field}` must "
-                "name a carrier structure and one of its fields as `Carrier.field`"
+                f"fmap_as_finite_support_relation bare entry `{name}` must be a "
+                "plain finite-map parameter name"
             )
-            continue
+        elif not parameter_has_hol_finite_map_binder(declaration_text, name):
+            errors.append(
+                f"fmap_as_finite_support_relation bare entry `{name}` must be a "
+                "parameter of the tagged declaration whose declared type uses the "
+                "approved HolFiniteMapExact carrier; a raw function-backed map is "
+                "ineligible"
+            )
+    for carrier, field in field_entries:
         if carrier not in own_types:
             if carrier in local_types:
                 own_types[carrier] = local_types[carrier]
@@ -678,7 +708,7 @@ def fmap_as_finite_support_relation_errors(
                 "not use the approved HolFiniteMapExact carrier; a raw "
                 "function-backed map is ineligible"
             )
-    for carrier in sorted({carrier for carrier, _ in entries if carrier}):
+    for carrier in sorted({carrier for carrier, _ in field_entries if carrier}):
         if not has_fmap_relation_witness(lines, carrier):
             errors.append(
                 "fmap_as_finite_support_relation has no same-module checked "
