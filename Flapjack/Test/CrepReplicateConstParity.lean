@@ -148,9 +148,23 @@ example :
   rw [evaluateReplicateConstHOL]
   exact evalCrepRuntimeExpsWordLab_replicate_const_executed exactReplicateState 3 (0 : BitVec 8)
 
+/-- Memory-free arithmetic fragment (`flapjack-pxn.18.4.3.48.1.21`): an `op`
+expression is evaluated identically by the executed production evaluator and
+the tagged exact `evalCrepSemHOLExp`, read through `holWordLabToWord`. -/
+example :
+    evalCrepRuntimeExp (executedCrepState exactReplicateState)
+        (CrepExp.op BinOp.add [CrepExp.const (1 : BitVec 8), CrepExp.const (2 : BitVec 8)]) =
+      (evalCrepSemHOLExp exactReplicateState
+        (crepExpToHOL (CrepExp.op BinOp.add
+          [CrepExp.const (1 : BitVec 8), CrepExp.const (2 : BitVec 8)]))).map
+        holWordLabToWord :=
+  evalCrepRuntimeExp_executed_of_noMemLoad exactReplicateState _
+    (by simp [crepExpNoMemLoad])
+
 def runChecks : IO Bool := do
   IO.println s!"PASS crep evaluate_replicate_const word_lab shape"
   IO.println s!"PASS exact crepSem evaluate_replicate_const matches HOL oracle rows"
   IO.println s!"PASS executed crep word_lab evaluator agrees with exact evalCrepSemHOLExp on Const path"
+  IO.println s!"PASS executed crep word_lab evaluator agrees with exact evalCrepSemHOLExp on memory-free arithmetic fragment"
   pure (replicateConstGuard && exactReplicateGuard)
 end Flapjack.Test.CrepReplicateConstParity
