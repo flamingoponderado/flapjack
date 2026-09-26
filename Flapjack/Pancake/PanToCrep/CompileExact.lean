@@ -163,4 +163,23 @@ def compileReturnExactHOLW {width : Nat} [NeZero width]
   if Flapjack.Pancake.PanLang.sizeOfShapeHOL shape = 0 then .return []
   else .return expressions
 
+/-! These helpers expose the paired `Store32`/`StoreByte` equations from
+    `compile_def` (`pan_to_crepScript.sml:185-192`). Each emits its target
+    instruction only when both recursively compiled expression lists have a
+    head, otherwise returning `Skip` as HOL does. They remain untagged slices. -/
+
+def compileStore32ExactHOLW {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width)
+    (destination source : Flapjack.Pancake.PanLang.ExpHOL width) : CrepProgHOL width :=
+  match compileExpExactHOLW context destination, compileExpExactHOLW context source with
+  | (address :: _, _), (value :: _, _) => .store32 address value
+  | _, _ => .skip
+
+def compileStoreByteExactHOLW {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width)
+    (destination source : Flapjack.Pancake.PanLang.ExpHOL width) : CrepProgHOL width :=
+  match compileExpExactHOLW context destination, compileExpExactHOLW context source with
+  | (address :: _, _), (value :: _, _) => .storeByte address value
+  | _, _ => .skip
+
 end Flapjack

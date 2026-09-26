@@ -1,5 +1,9 @@
 return=Return [Const 7w]
 multi_return=Return [Const 1w; Const 2w]
+store32_clause=Store32 (Const 1w) (Const 2w)
+store32_fallback=Skip
+store_byte_clause=StoreByte (Const 3w) (Const 4w)
+store_byte_fallback=Skip
 struct_skip=Skip
 struct_break=Break 0
 struct_continue=Continue 0
