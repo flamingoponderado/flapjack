@@ -43,11 +43,18 @@ through the production `PanWordLab`; the production-carrier bridge
 `CrepResultHOLExact.toProd`/`CrepResultHOL.toExact` is available for callers that
 need it.
 
-The one exception is `exitLoopCrepResult`, an exact `@[hol]` port of
-`crepSem$exit_loop_def`, stated over the genuinely exact width-indexed result
-carrier `CrepResultHOLExact` (the `@[hol]` port of HOL `Datatype result`) whose
-`Return` payload is `List (HolWordLab width)`, matching HOL's
-`('a word_lab) list`, and whose `Exception` payload is `BitVec width`.
+The tagged exceptions are the exact ports: `exitLoopCrepResult`, an exact
+`@[hol]` port of `crepSem$exit_loop_def`, and the shared-memory helper family
+`crepShMemLoadExactHOL`/`crepShMemStoreExactHOL`/`crepShMemOpExactHOL`, exact
+`@[hol]` ports of `sh_mem_load_def`/`sh_mem_store_def`/`sh_mem_op_def` with
+HOL's free byte count `nb` (the `(fmap_as_finite_support := [locals, globals,
+code])` qualifier records the finite-support state carrier). `exitLoopCrepResult`
+is stated over the genuinely exact width-indexed result carrier
+`CrepResultHOLExact` (the `@[hol]` port of HOL `Datatype result`) whose `Return`
+payload is `List (HolWordLab width)`, matching HOL's `('a word_lab) list`, and
+whose `Exception` payload is `BitVec width`. The operator-indexed
+`crepShMemLoadHOL`/`crepShMemStoreHOL` helpers are Flapjack specializations that
+call the exact ports with `crepShMemByteWidth operator`.
 
 * The evaluator now returns `Option (CrepResultHOLExact width)`, whose `Return`
   payload is exactly HOL's `('a word_lab) list` via `HolWordLab`; the production
@@ -235,21 +242,43 @@ def CrepResultHOL.toExact {width : Nat} [NeZero width] :
     result.toExact.toProd = result := by
   cases result <;> simp [CrepResultHOLExact.toProd, CrepResultHOL.toExact]
 
-/-- Exact HOL `sh_mem_load` clause (`crepSemScript.sml:168-184`) over the exact
-    finite-support `CrepSemHOLState`: on the appropriate shared-memory domain,
-    call the FFI; a terminal result clears the locals, a returned result installs
-    the byte-decoded word and the new FFI state. -/
-def crepShMemLoadHOL {width : Nat} [NeZero width] {σ : Type}
-    (operator : CrepMemOp) (name : Nat) (address : BitVec width)
-    (state : CrepSemHOLState width σ)
-    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a)) :
+namespace CrepSemShMemExact
+
+/-- Canonical kernel witness for the `fmap_as_finite_support` `@[hol]`
+    qualifier used by the tagged `crepSem` shared-memory helpers in this module.
+    The finite-map fields of `CrepSemHOLState` are invertibly related to the
+    broad function-backed `CrepSemBroadState`; the proof is the imported
+    `CrepSemHOLState.holFmapAsFiniteSupportWitness`. The checker requires a
+    same-module witness for every `fmap_as_finite_support`-qualified tag. -/
+theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {ffiState : Type} :
+    (∀ (state : CrepSemBroadState width ffiState) (h : state.FiniteSupport),
+        (CrepSemBroadState.ofBroad state h).toBroad = state) ∧
+    (∀ state : CrepSemHOLState width ffiState,
+        CrepSemBroadState.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  CrepSemHOLState.holFmapAsFiniteSupportWitness
+
+end CrepSemShMemExact
+
+/-- Exact HOL `sh_mem_load_def` (`crepSemScript.sml:168-184`) over the exact
+    finite-support `CrepSemHOLState`, with HOL's *free* byte count `nb` as an
+    explicit argument (not fused into an operator): for `nb = 0` the original
+    address is checked against `sh_memaddrs`, otherwise the byte-aligned address
+    is; in both cases the FFI is called with the original address bytes
+    (`word_to_bytes addr F`). A terminal result clears the locals; a returned
+    result installs the decoded word (`word_of_bytes F 0w`) into `v` and the new
+    FFI state. The `(fmap_as_finite_support := [locals, globals, code])`
+    qualifier records that HOL's `|->` fields are represented by
+    `HolFiniteMapExact`; the positive-width `BitVec width` model represents HOL's
+    nonempty finite word dimension. -/
+@[hol "cakeml/pancake/semantics/crepSemScript.sml" "sh_mem_load_def" (fmap_as_finite_support := [locals, globals, code])]
+def crepShMemLoadExactHOL {width : Nat} [NeZero width] {σ : Type}
+    (name : Nat) (address : BitVec width) (nb : Nat)
+    (state : CrepSemHOLState width σ) [DecidablePred state.shMemaddrs] :
     Option (CrepResultHOLExact width) × CrepSemHOLState width σ :=
-  let byteWidth := crepShMemByteWidth operator
-  let target := if byteWidth = 0 then address else panByteAlignHOL address
-  match shMemDec target with
-  | .isTrue _ =>
+  if nb = 0 then
+    if state.shMemaddrs address then
       match callFFIHOL state.ffi (.sharedMem .mappedRead)
-          [BitVec.ofNat 8 byteWidth]
+          [BitVec.ofNat 8 nb]
           ((crepClockWordToBytes address).map UInt8.toBitVec) with
       | .final event => (some (.finalFfi event), CrepSemHOLState.emptyLocals state)
       | .ret newFfi newBytes =>
@@ -257,34 +286,99 @@ def crepShMemLoadHOL {width : Nat} [NeZero width] {σ : Type}
                       (.word (crepClockWordOfBytes (newBytes.map UInt8.ofBitVec)))
                       state with
                     ffi := newFfi })
-  | .isFalse _ => (some .error, state)
+    else (some .error, state)
+  else
+    if state.shMemaddrs (panByteAlignHOL address) then
+      match callFFIHOL state.ffi (.sharedMem .mappedRead)
+          [BitVec.ofNat 8 nb]
+          ((crepClockWordToBytes address).map UInt8.toBitVec) with
+      | .final event => (some (.finalFfi event), CrepSemHOLState.emptyLocals state)
+      | .ret newFfi newBytes =>
+          (none, { CrepSemHOLState.setVar name
+                      (.word (crepClockWordOfBytes (newBytes.map UInt8.ofBitVec)))
+                      state with
+                    ffi := newFfi })
+    else (some .error, state)
 
-/-- Exact HOL `sh_mem_store` clause (`crepSemScript.sml:186-208`) over the exact
-    finite-support `CrepSemHOLState`: the named local must hold a word; on the
-    domain, call the FFI with the value/address bytes; a terminal result keeps
-    the state, a returned result installs the new FFI state. -/
+/-- Flapjack-specific operator-indexed specialization of the exact HOL
+    `sh_mem_load_def` port: it supplies the byte count from the operator
+    (`crepShMemByteWidth`) and threads an explicit domain decision procedure.
+    This is the form the `ShMem` evaluator clause calls; it is not itself the
+    exact HOL statement because HOL's `nb` is a free argument. -/
+def crepShMemLoadHOL {width : Nat} [NeZero width] {σ : Type}
+    (operator : CrepMemOp) (name : Nat) (address : BitVec width)
+    (state : CrepSemHOLState width σ)
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a)) :
+    Option (CrepResultHOLExact width) × CrepSemHOLState width σ :=
+  letI : DecidablePred state.shMemaddrs := shMemDec
+  crepShMemLoadExactHOL name address (crepShMemByteWidth operator) state
+
+/-- Exact HOL `sh_mem_store_def` (`crepSemScript.sml:186-208`) over the exact
+    finite-support `CrepSemHOLState`, with HOL's free byte count `nb`: the named
+    local `v` must hold a word; for `nb = 0` the original address is checked,
+    otherwise the byte-aligned address is; the FFI receives
+    `word_to_bytes w F ++ word_to_bytes addr F` (or its `TAKE nb` prefix for
+    `nb ≠ 0`). A terminal result keeps the state, a returned result installs the
+    new FFI state. The `(fmap_as_finite_support := [locals, globals, code])`
+    qualifier records the finite-map representation. -/
+@[hol "cakeml/pancake/semantics/crepSemScript.sml" "sh_mem_store_def" (fmap_as_finite_support := [locals, globals, code])]
+def crepShMemStoreExactHOL {width : Nat} [NeZero width] {σ : Type}
+    (name : Nat) (address : BitVec width) (nb : Nat)
+    (state : CrepSemHOLState width σ) [DecidablePred state.shMemaddrs] :
+    Option (CrepResultHOLExact width) × CrepSemHOLState width σ :=
+  match state.locals.lookup name with
+  | some (.word value) =>
+      if nb = 0 then
+        if state.shMemaddrs address then
+          match callFFIHOL state.ffi (.sharedMem .mappedWrite)
+              [BitVec.ofNat 8 nb]
+              ((crepClockWordToBytes value ++ crepClockWordToBytes address).map
+                UInt8.toBitVec) with
+          | .final event => (some (.finalFfi event), state)
+          | .ret newFfi _ => (none, { state with ffi := newFfi })
+        else (some .error, state)
+      else
+        if state.shMemaddrs (panByteAlignHOL address) then
+          match callFFIHOL state.ffi (.sharedMem .mappedWrite)
+              [BitVec.ofNat 8 nb]
+              (((crepClockWordToBytes value).take nb ++
+                crepClockWordToBytes address).map UInt8.toBitVec) with
+          | .final event => (some (.finalFfi event), state)
+          | .ret newFfi _ => (none, { state with ffi := newFfi })
+        else (some .error, state)
+  | _ => (some .error, state)
+
+/-- Exact HOL `sh_mem_op_def` (`crepSemScript.sml:210-218`): dispatch the eight
+    shared-memory operators to `sh_mem_load`/`sh_mem_store` at the fixed byte
+    counts `0` (`Load`/`Store`), `1` (`Load8`/`Store8`), `2`
+    (`Load16`/`Store16`) and `4` (`Load32`/`Store32`), clause for clause. -/
+@[hol "cakeml/pancake/semantics/crepSemScript.sml" "sh_mem_op_def" (fmap_as_finite_support := [locals, globals, code])]
+def crepShMemOpExactHOL {width : Nat} [NeZero width] {σ : Type}
+    (operator : CrepMemOp) (name : Nat) (address : BitVec width)
+    (state : CrepSemHOLState width σ) [DecidablePred state.shMemaddrs] :
+    Option (CrepResultHOLExact width) × CrepSemHOLState width σ :=
+  match operator with
+  | .load => crepShMemLoadExactHOL name address 0 state
+  | .store => crepShMemStoreExactHOL name address 0 state
+  | .load8 => crepShMemLoadExactHOL name address 1 state
+  | .store8 => crepShMemStoreExactHOL name address 1 state
+  | .load16 => crepShMemLoadExactHOL name address 2 state
+  | .store16 => crepShMemStoreExactHOL name address 2 state
+  | .load32 => crepShMemLoadExactHOL name address 4 state
+  | .store32 => crepShMemStoreExactHOL name address 4 state
+
+/-- Flapjack-specific operator-indexed specialization of the exact HOL
+    `sh_mem_store_def` port: it supplies the byte count from the operator and
+    threads an explicit domain decision procedure. This is the form the `ShMem`
+    evaluator clause calls; it is not itself the exact HOL statement because
+    HOL's `nb` is a free argument. -/
 def crepShMemStoreHOL {width : Nat} [NeZero width] {σ : Type}
     (operator : CrepMemOp) (name : Nat) (address : BitVec width)
     (state : CrepSemHOLState width σ)
     (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a)) :
     Option (CrepResultHOLExact width) × CrepSemHOLState width σ :=
-  let byteWidth := crepShMemByteWidth operator
-  let target := if byteWidth = 0 then address else panByteAlignHOL address
-  match state.locals.lookup name with
-  | some (.word value) =>
-      match shMemDec target with
-      | .isTrue _ =>
-          let valueBytes := crepClockWordToBytes value
-          let addressBytes := crepClockWordToBytes address
-          let payload :=
-            if byteWidth = 0 then valueBytes ++ addressBytes
-            else valueBytes.take byteWidth ++ addressBytes
-          match callFFIHOL state.ffi (.sharedMem .mappedWrite)
-              [BitVec.ofNat 8 byteWidth] (payload.map UInt8.toBitVec) with
-          | .final event => (some (.finalFfi event), state)
-          | .ret newFfi _ => (none, { state with ffi := newFfi })
-      | .isFalse _ => (some .error, state)
-  | _ => (some .error, state)
+  letI : DecidablePred state.shMemaddrs := shMemDec
+  crepShMemStoreExactHOL name address (crepShMemByteWidth operator) state
 
 /-- Total HOL-shaped `crepSem$evaluate` (`crepSemScript.sml:240-390`) by
     constructor recursion on the exact `CrepProgHOL` syntax over the exact
@@ -1105,6 +1199,28 @@ theorem fixClock_result_domains {width : Nat} [NeZero width] {σ : Type} {β : T
   simp only [fixClockCrepSemHOL_memaddrs, fixClockCrepSemHOL_shMemaddrs] at h1 h2
   exact ⟨h1.symm, h2.symm⟩
 
+/-- The exact HOL `sh_mem_load` port preserves both domain fields. -/
+theorem crepShMemLoadExactHOL_preserves_domains {width : Nat} [NeZero width] {σ : Type}
+    (name : Nat) (address : BitVec width) (nb : Nat)
+    (state : CrepSemHOLState width σ) [DecidablePred state.shMemaddrs] :
+    (crepShMemLoadExactHOL name address nb state).2.memaddrs = state.memaddrs ∧
+    (crepShMemLoadExactHOL name address nb state).2.shMemaddrs =
+      state.shMemaddrs := by
+  simp only [crepShMemLoadExactHOL]
+  repeat' split
+  all_goals simp [CrepSemHOLState.emptyLocals, CrepSemHOLState.setVar]
+
+/-- The exact HOL `sh_mem_store` port preserves both domain fields. -/
+theorem crepShMemStoreExactHOL_preserves_domains {width : Nat} [NeZero width] {σ : Type}
+    (name : Nat) (address : BitVec width) (nb : Nat)
+    (state : CrepSemHOLState width σ) [DecidablePred state.shMemaddrs] :
+    (crepShMemStoreExactHOL name address nb state).2.memaddrs = state.memaddrs ∧
+    (crepShMemStoreExactHOL name address nb state).2.shMemaddrs =
+      state.shMemaddrs := by
+  simp only [crepShMemStoreExactHOL]
+  repeat' split
+  all_goals simp
+
 /-- The ShMem-load helper preserves both domain fields. -/
 theorem crepShMemLoadHOL_preserves_domains {width : Nat} [NeZero width] {σ : Type}
     (operator : CrepMemOp) (name : Nat) (address : BitVec width)
@@ -1114,11 +1230,8 @@ theorem crepShMemLoadHOL_preserves_domains {width : Nat} [NeZero width] {σ : Ty
     (crepShMemLoadHOL operator name address state shMemDec).2.shMemaddrs =
       state.shMemaddrs := by
   simp only [crepShMemLoadHOL]
-  split
-  · split
-    · simp [CrepSemHOLState.emptyLocals]
-    · simp [CrepSemHOLState.setVar]
-  · simp
+  exact crepShMemLoadExactHOL_preserves_domains name address (crepShMemByteWidth operator)
+    state
 
 /-- The ShMem-store helper preserves both domain fields. -/
 theorem crepShMemStoreHOL_preserves_domains {width : Nat} [NeZero width] {σ : Type}
@@ -1129,13 +1242,8 @@ theorem crepShMemStoreHOL_preserves_domains {width : Nat} [NeZero width] {σ : T
     (crepShMemStoreHOL operator name address state shMemDec).2.shMemaddrs =
       state.shMemaddrs := by
   simp only [crepShMemStoreHOL]
-  split
-  · split
-    · split
-      · simp
-      · simp
-    · simp
-  · simp
+  exact crepShMemStoreExactHOL_preserves_domains name address (crepShMemByteWidth operator)
+    state
 
 set_option linter.unusedVariables false in
 /-- Domain preservation of the `Call` callee-result case split. `hfix` records
