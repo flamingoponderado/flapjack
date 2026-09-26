@@ -62,7 +62,16 @@ clock, and exposes the callee post-state. Their Lean checks live in
 `compile_def_probe.out` also records direct HOL evaluations of assigned Global
 call destinations through `pan_to_crep$compile`: absent lookups, the
 `One`/empty-list fallback, and inconsistent shape/name-list lengths. The
-matching Lean cases live in `Flapjack.Test.CompileDefParity`.
+matching Lean cases live in `Flapjack.Test.CompileDefParity`. The
+`struct_skip`, `struct_seq`, `struct_break`, `struct_continue`, `struct_tick`,
+and `struct_annot` rows pin the first exact-carrier `compile_def` structural
+slice; its supported-subset helper is intentionally untagged and does not
+claim the full compiler definition.
+`compile_exp_probe.out` records direct HOL EVAL rows for every `compile_exp`
+constructor family and defensive fallback. `Flapjack.Test.CompileExpParity`
+checks those rows through both the existing production-carrier implementation
+and the exact-carrier `compileExpExactHOLW`; the latter is tagged against
+`compile_exp_def` and uses the exact Pan/Crepe expression and context carriers.
 `excp_rel_probe.out` and `ctxt_fc_probe.out` are direct EVALs from
 `pan_to_crepProofTheory`, paired with `Flapjack.Test.PanToCrepRelationsParity`.
 The `functions_projection` row in `ctxt_fc_probe.out` directly checks the

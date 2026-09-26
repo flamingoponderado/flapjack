@@ -2620,7 +2620,7 @@ def panSemCompileTopAdmissible : Decl α → Bool
   | .function _ | .decl _ _ _ | .exnDecl _ _ => true
   | .name _ _ => false
 
-/-! Faithful declaration-by-declaration port of Cake
+/-! Production declaration evaluator corresponding to Cake
     `panSem$evaluate_decls` (`panSemScript.sml:814-835`). The dedicated
     `code` map retains parameter and return shapes, and `eshapes` retains the
     source exception map. The legacy runtime `functions` list is not used as a
@@ -2630,8 +2630,15 @@ def panSemCompileTopAdmissible : Decl α → Bool
 -- a `panSem$state` whose `code`/`eshapes` are `mlstring`-keyed finite maps,
 -- whereas `PanSemDeclarationState` uses `InfoMap` lists keyed by
 -- `FunName`/`ExceptionId = String`. The clauses match but the key carrier
--- differs, so the tag is withheld until an exact MlString-keyed state lands
--- (tracked by `flapjack-pxn.18.3.5.8`, parent `flapjack-0lj`).
+-- differs, so this production definition has no HOL tag. The separate
+-- `PanSemStateFiniteExact.evaluateDeclsHOLFinite` proof-side definition carries
+-- the exact finite-support `evaluate_decls_def` tag. The PanProps-side
+-- `evaluateDeclsPanPropsCanonical` adapter routes tagged invariant statements
+-- through that evaluator, but it is proof infrastructure and does not call
+-- this production definition. Production routing or a checked bridge from
+-- this String/InfoMap state to the exact evaluator is not established; tracked
+-- by `flapjack-pxn.18.3.6.10` (depending on the exact production bridge in
+-- `flapjack-pxn.18.3.5.8`).
 def evaluateDecls
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]

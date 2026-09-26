@@ -117,6 +117,72 @@ equality and receives no tag. The faithful theorem port is tracked by
 in `flapjack-4ac.4.105.1` and the exact PanSem semantics port
 `flapjack-4ac.3.52.2`. -/
 
+/-! Source review for HOL `io_events_eq_imp_ffi_eq`
+(`panPropsScript.sml:974-1019`): its quantified variables are `p`, `s`, `res`,
+and `t`; the premises are `evaluate (p,s) = (res,t)` and equality of the
+initial and final `ffi.io_events` lists, and the conclusion is equality of the
+entire final and initial `ffi_state` records. The Lean `HolFfiState` carrier
+preserves HOL's oracle, host-state, and event-list fields, and
+`PanSemStateFiniteExact` contains that exact carrier. The available executable
+`evaluateHOLFinite` interface adds an outer `Option` and returns the exact
+result/state pair through the recursive finite evaluator; there is not yet a
+kernel-checked induction theorem over that evaluator proving that equal event
+lists force equality of both the oracle and host-state fields in every Call,
+DecCall, ExtCall, and shared-memory branch. No similar event-prefix lemma is
+tagged as this theorem. The faithful theorem port is tracked by
+`flapjack-4ac.4.51.1`; it must state the same successful-evaluation and
+event-equality premises and prove equality of the complete `HolFfiState`. -/
+
+/-! Source review for HOL `evaluate_io_events_mono`
+(`panPropsScript.sml:856-876`): HOL quantifies `exps`, `s1`, `res`, `s2`, assumes
+`evaluate (exps,s1) = (res,s2)`, and concludes that the initial `io_events` list
+is a prefix of the final list. The current public finite evaluator
+`evaluateHOLFinite` returns an outer `Option` assembly marker and therefore does
+not have HOL's result type. The older `evaluateHOLFiniteViaExact` has the
+result-option/state pair type, but its body delegates through the unrestricted
+function-backed `PanSemStateExact` evaluator and adds implicit address-domain
+deciders; no reviewed theorem currently identifies that adapter with the
+clause-shaped finite-map `evaluate_def`. Do not tag a prefix result over either
+adapter as this HOL theorem. A faithful finite-map theorem and its evaluator
+prerequisite are tracked by `flapjack-4ac.4.49.1` (blocked on
+`flapjack-qj5`); `io_events_eq_imp_ffi_eq` depends on that child as
+`flapjack-4ac.4.51.1`. -/
+
+/-! Source review for HOL `evaluate_add_clock_or_timeout`
+(`panPropsScript.sml:834-857`): universally quantified `p`, `s`, `q`, `t`,
+`k`, `q'`, and `t'`, it assumes `evaluate (p,s) = (q,t with clock := 0)` and
+`q ≠ SOME TimeOut`, then assumes
+`evaluate (p,s with clock := k) = (q',t')`. It concludes the exact disjunction
+`q' = SOME TimeOut ∧ k < s.clock` or
+`q' = q ∧ s.clock ≤ k ∧ t' = t with clock := k - s.clock`.
+`PanSemStateFiniteExact.evaluateHOLFiniteViaExact` happens to expose the same
+result-option/state shape, but its implementation delegates through the
+unrestricted function-backed evaluator; the direct finite evaluator still has
+an outer assembly marker, and its clause/evaluator correspondence is not
+complete (`flapjack-qj5`). The existing `PanValueFfiClockShift` proves only
+clock arithmetic and selected structural-fuel evaluator cases over different
+program, state, and value carriers; it does not supply the whole-program
+clock-shift argument or the timeout split in HOL's theorem. Do not tag either
+surface as this theorem. The exact finite evaluator prerequisite is tracked by
+`flapjack-qj5`; the statement-exact theorem and clock-shift proof are tracked
+by `flapjack-4ac.4.48.1`, which depends on that evaluator review. -/
+
+/-! Source review for HOL `evaluate_add_clock_io_events_mono`
+(`panPropsScript.sml:881-972`): HOL quantifies `exps`, `s`, and `extra`, with no
+premises, and proves that the `io_events` list in `SND (evaluate (exps,s))` is
+a prefix of the list in `SND (evaluate (exps, s with clock := s.clock + extra))`.
+`PanSemStateFiniteExact.evaluateHOLFiniteViaExact` has the same result-option /
+state result shape, but it delegates through `toExact` to the broad recursive
+evaluator and is explicitly Flapjack-specific; its result type alone does not
+establish correspondence to HOL `evaluate_def`. `evaluateHOLFinite` exposes an
+outer assembly `Option`, and its premature `evaluate_def` tag was withdrawn
+pending the clause-shaped evaluator review (`flapjack-qj5`, blocked by
+`flapjack-6yq`). Therefore no current Lean event-prefix helper is an exact
+port of this theorem, and none is tagged as such. The faithful port and
+clock-increase event-prefix proof are tracked by `flapjack-4ac.4.50.1`, which
+depends on `flapjack-qj5`; keep inventory bead `flapjack-4ac.4.50` open until
+that theorem is kernel-checked over the accepted exact evaluator. -/
+
 /-! Source review for HOL `semantics_decls_has_main'`
 (`panPropsScript.sml:1628-1638`): HOL assumes
 `semantics_decls s start code <> Fail` and proves that

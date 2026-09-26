@@ -884,4 +884,43 @@ def asmInstOkExact {width : Nat} [NeZero width] (instruction : HolInst width)
          else
           asmByteOffsetOkExact config offset)
 
+/-! ## Exact `asm_ok_def` port over `AsmConfigExact`/`HolAsm`
+
+The `jump_offset_ok`/`cjump_offset_ok`/`loc_offset_ok` overloads
+(`asmScript.sml:282-284`) use the configuration's `code_alignment`; they are
+built on the exact `asmOffsetOkExact` (`offset_ok_def`).  The instruction
+payload is checked by the exact `asmInstOkExact`, and `cmp_ok` by the exact
+`asmCmpOkExact` over `HolRegImm` (bead flapjack-4ac.6.1.2). -/
+
+def asmJumpOffsetOkExact {width : Nat} [NeZero width] (config : AsmConfigExact width)
+    (offset : BitVec width) : Bool :=
+  asmOffsetOkExact config.codeAlignment config.jumpOffset offset
+
+def asmCjumpOffsetOkExact {width : Nat} [NeZero width] (config : AsmConfigExact width)
+    (offset : BitVec width) : Bool :=
+  asmOffsetOkExact config.codeAlignment config.cjumpOffset offset
+
+def asmLocOffsetOkExact {width : Nat} [NeZero width] (config : AsmConfigExact width)
+    (offset : BitVec width) : Bool :=
+  asmOffsetOkExact config.codeAlignment config.locOffset offset
+
+/-- HOL `asmScript$asm_ok_def` (`asmScript.sml:301-313`): exact positive-width
+    port over the exact `HolAsm` carrier and the exact `AsmConfigExact`.  The
+    production `asmOk` differs in its generic `AsmData`/`AsmConfig` carriers. -/
+@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "asm_ok_def"]
+def asmOkExact {width : Nat} [NeZero width] (instruction : HolAsm width)
+    (config : AsmConfigExact width) : Bool :=
+  match instruction with
+  | .inst inner => asmInstOkExact inner config
+  | .jump target => asmJumpOffsetOkExact config target
+  | .jumpCmp operator source right target =>
+      asmCjumpOffsetOkExact config target && asmCmpOkExact operator source right config
+  | .call target =>
+      (match config.linkReg with
+        | some register => asmRegOkExact register config
+        | none => false) &&
+        asmJumpOffsetOkExact config target
+  | .jumpReg register => asmRegOkExact register config
+  | .loc register offset => asmRegOkExact register config && asmLocOffsetOkExact config offset
+
 end Flapjack.Compiler.Encoders.Asm

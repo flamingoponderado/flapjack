@@ -85,6 +85,25 @@ def asmAddrOk {width : Nat} (config : AsmConfig width) :
          else
           asmByteOffsetOk config offset)
 
+/-- Exact HOL `stackProps$addr_ok_def` (`stackPropsScript.sml:801-810`) over the
+exact asm carriers `HolMemop`/`HolAddr` and the exact `AsmConfigExact`:
+`Load`/`Store`/`Load32`/`Store32` use the word address offset; `Load16`/`Store16`
+use the halfword offset and are unavailable on `Ag32`; every other memory
+operation uses the byte offset.  HOL argument order is `addr_ok op addr c`. -/
+@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "addr_ok_def"]
+def asmAddrOkExact {width : Nat} [NeZero width] (operator : HolMemop)
+    (address : HolAddr width) (config : AsmConfigExact width) : Bool :=
+  match address with
+  | .addr base offset =>
+      asmRegOkExact base config &&
+        (if operator == .load || operator == .store || operator == .load32 ||
+            operator == .store32 then
+          asmAddrOffsetOkExact config offset
+         else if operator == .load16 || operator == .store16 then
+          asmHwOffsetOkExact config offset && !(config.isa == .ag32)
+         else
+          asmByteOffsetOkExact config offset)
+
 /-- The HOL `stack_asm_ok` callback record instantiated with the real
 `asm_config` validity predicates instead of opaque callbacks. -/
 def asmChecksOfConfig {width : Nat} (config : AsmConfig width) :

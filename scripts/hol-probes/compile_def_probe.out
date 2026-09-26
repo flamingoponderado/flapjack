@@ -1,4 +1,10 @@
 return=Return [Const 7w]
+struct_skip=Skip
+struct_break=Break 0
+struct_continue=Continue 0
+struct_tick=Tick
+struct_annot=Skip
+struct_seq=Seq Skip (Seq (Break 0) (Continue 0))
 missing_global=Call NONE «f» []
 empty_one_global=Call NONE «f» []
 extra_names_global=Call (SOME ([4; 5],NONE)) «f» []
