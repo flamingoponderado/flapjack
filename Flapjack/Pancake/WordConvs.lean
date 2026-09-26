@@ -489,12 +489,12 @@ def postAllocConventions {width : Nat} (k : Nat) (program : WordLangProg (BitVec
     everyStackVar (fun name => decide (name ≥ 2 * k)) program ∧
     callArgConvention program
 
-/-- Exact HOL port of the positive-dimensional word-type declaration
-HOL `distinct_tar_reg_def` (`cakeml/compiler/backend/semantics/wordConvsScript.sml`), restated with an explicit `[NeZero width]` binder so the
-statement matches HOL's positive-dimension `word` types.  The width-general
-`distinctTarReg` above remains the untagged executed form; this declaration is the
-faithful positive-width counterpart tracked by bead flapjack-4ac.6.1. -/
-@[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml" "distinct_tar_reg_def"]
+/-- Not an exact HOL port (carrier mismatch, bead flapjack-4ac.6.1):
+    HOL's declaration uses HOL `'a inst` (the exact `HolInst`), whereas this Lean
+    declaration uses the production `WordLangInst`.  The width-corrected
+    restatement does not by itself make the carrier exact, so the
+    `@[hol]` tag was withdrawn.  The exact-carrier restatement is
+    tracked by bead flapjack-4ac.6.1.2. -/
 def distinctTarRegExact {width : Nat} [NeZero width] : WordLangInst (BitVec width) → Bool
   | .arith (.binop _ r1 _ ri) => match ri with
       | .reg r => decide (r ≠ r1)
@@ -507,12 +507,12 @@ def distinctTarRegExact {width : Nat} [NeZero width] : WordLangInst (BitVec widt
   | .arith (.subOverflow r1 _ r3 _) => decide (r1 ≠ r3)
   | _ => true
 
-/-- Exact HOL port of the positive-dimensional word-type declaration
-HOL `two_reg_inst_def` (`cakeml/compiler/backend/semantics/wordConvsScript.sml`), restated with an explicit `[NeZero width]` binder so the
-statement matches HOL's positive-dimension `word` types.  The width-general
-`twoRegInst` above remains the untagged executed form; this declaration is the
-faithful positive-width counterpart tracked by bead flapjack-4ac.6.1. -/
-@[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml" "two_reg_inst_def"]
+/-- Not an exact HOL port (carrier mismatch, bead flapjack-4ac.6.1):
+    HOL's declaration uses HOL `'a inst` (the exact `HolInst`), whereas this Lean
+    declaration uses the production `WordLangInst`.  The width-corrected
+    restatement does not by itself make the carrier exact, so the
+    `@[hol]` tag was withdrawn.  The exact-carrier restatement is
+    tracked by bead flapjack-4ac.6.1.2. -/
 def twoRegInstExact {width : Nat} [NeZero width] : WordLangInst (BitVec width) → Bool
   | .arith (.binop _ r1 r2 _) => r1 == r2
   | .arith (.shift _ r1 r2 _) => r1 == r2
@@ -521,12 +521,12 @@ def twoRegInstExact {width : Nat} [NeZero width] : WordLangInst (BitVec width) �
   | .arith (.subOverflow r1 r2 _ _) => r1 == r2
   | _ => true
 
-/-- Exact HOL port of the positive-dimensional word-type declaration
-HOL `inst_ok_less_def` (`cakeml/compiler/backend/semantics/wordConvsScript.sml`), restated with an explicit `[NeZero width]` binder so the
-statement matches HOL's positive-dimension `word` types.  The width-general
-`instOkLess` above remains the untagged executed form; this declaration is the
-faithful positive-width counterpart tracked by bead flapjack-4ac.6.1. -/
-@[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml" "inst_ok_less_def"]
+/-- Not an exact HOL port (carrier mismatch, bead flapjack-4ac.6.1):
+    HOL's declaration uses HOL `'a inst` (the exact `HolInst`), whereas this Lean
+    declaration uses the production `WordLangInst`.  The width-corrected
+    restatement does not by itself make the carrier exact, so the
+    `@[hol]` tag was withdrawn.  The exact-carrier restatement is
+    tracked by bead flapjack-4ac.6.1.2. -/
 def instOkLessExact {width : Nat} [NeZero width] (config : AsmConfig width) :
     WordLangInst (BitVec width) → Bool
   | .arith (.binop operator _ _ (.imm value)) => config.validImm (.inl operator) value
@@ -592,12 +592,12 @@ def instOkLessExact {width : Nat} [NeZero width] (config : AsmConfig width) :
       asmFpRegOk config destination && asmFpRegOk config source
   | _ => true
 
-/-- Exact HOL port of the positive-dimensional word-type declaration
-HOL `inst_arg_convention_def` (`cakeml/compiler/backend/semantics/wordConvsScript.sml`), restated with an explicit `[NeZero width]` binder so the
-statement matches HOL's positive-dimension `word` types.  The width-general
-`instArgConvention` above remains the untagged executed form; this declaration is the
-faithful positive-width counterpart tracked by bead flapjack-4ac.6.1. -/
-@[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml" "inst_arg_convention_def"]
+/-- Not an exact HOL port (carrier mismatch, bead flapjack-4ac.6.1):
+    HOL's declaration uses HOL `'a inst` (the exact `HolInst`), whereas this Lean
+    declaration uses the production `WordLangInst`.  The width-corrected
+    restatement does not by itself make the carrier exact, so the
+    `@[hol]` tag was withdrawn.  The exact-carrier restatement is
+    tracked by bead flapjack-4ac.6.1.2. -/
 def instArgConventionExact {width : Nat} [NeZero width] : WordLangInst (BitVec width) -> Bool
   | .arith (.addCarry _ _ _ r4) => r4 == 0
   | .arith (.shift _ _ _ (.reg r)) => r == 8

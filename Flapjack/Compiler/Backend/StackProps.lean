@@ -96,12 +96,12 @@ def asmChecksOfConfig {width : Nat} (config : AsmConfig width) :
     addrOk := asmAddrOk config }
 
 
-/-- Exact HOL port of the positive-dimensional word-type declaration
-HOL `addr_ok_def` (`cakeml/compiler/backend/semantics/stackPropsScript.sml`), restated with an explicit `[NeZero width]` binder so the
-statement matches HOL's positive-dimension `word` types.  The width-general
-`asmAddrOk` above remains the untagged executed form; this declaration is the
-faithful positive-width counterpart tracked by bead flapjack-4ac.6.1. -/
-@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "addr_ok_def"]
+/-- Not an exact HOL port (carrier mismatch, bead flapjack-4ac.6.1):
+    HOL's declaration uses HOL `'a addr` (the exact `HolAddr`), whereas this Lean
+    declaration uses the production `WordLangAddr`.  The width-corrected
+    restatement does not by itself make the carrier exact, so the
+    `@[hol]` tag was withdrawn.  The exact-carrier restatement is
+    tracked by bead flapjack-4ac.6.1.2. -/
 def asmAddrOkExact {width : Nat} [NeZero width] (config : AsmConfig width) :
     WordMemOp → WordLangAddr (BitVec width) → Bool
   | operator, .addr base offset =>

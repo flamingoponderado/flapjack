@@ -38,6 +38,70 @@ DATA_DECLARATION_RE = re.compile(
 # inventory small and source-reviewed; a mismatch row is not generated merely
 # because an arbitrary Lean def happens to mention a HOL name.
 WITHDRAWN_HOL_DECLARATIONS = {
+    ("Flapjack/Compiler/Encoders/Asm.lean", "asmRegImmOkExact"): (
+        "cakeml/compiler/encoders/asm/asmScript.sml",
+        "reg_imm_ok_def",
+        "flapjack-ds8 (bead flapjack-4ac.6.1): the width-corrected restatement does not make the "
+        "carrier exact.  HOL uses the exact `HolRegImm`, this declaration the production "
+        "`WordRegImm`.  The HOL tag was withdrawn; the exact-carrier restatement is tracked by "
+        "bead flapjack-4ac.6.1.2."
+    ),
+    ("Flapjack/Compiler/Encoders/Asm.lean", "asmCmpOkExact"): (
+        "cakeml/compiler/encoders/asm/asmScript.sml",
+        "cmp_ok_def",
+        "flapjack-ds8 (bead flapjack-4ac.6.1): HOL uses the exact `HolRegImm`, this declaration "
+        "the production `WordRegImm`.  The HOL tag was withdrawn; the exact-carrier restatement "
+        "is tracked by bead flapjack-4ac.6.1.2."
+    ),
+    ("Flapjack/Compiler/Encoders/Asm.lean", "asmInstOkExact"): (
+        "cakeml/compiler/encoders/asm/asmScript.sml",
+        "inst_ok_def",
+        "flapjack-ds8 (bead flapjack-4ac.6.1): HOL uses the exact `HolInst`, this declaration the "
+        "production `WordLangInst`.  The HOL tag was withdrawn; the exact-carrier restatement is "
+        "tracked by bead flapjack-4ac.6.1.2."
+    ),
+    ("Flapjack/Compiler/Encoders/Asm.lean", "asmOkExact"): (
+        "cakeml/compiler/encoders/asm/asmScript.sml",
+        "asm_ok_def",
+        "flapjack-ds8 (bead flapjack-4ac.6.1): HOL uses the exact `HolAsm`, this declaration the "
+        "production `AsmData`.  The HOL tag was withdrawn; the exact-carrier restatement is "
+        "tracked by bead flapjack-4ac.6.1.2."
+    ),
+    ("Flapjack/Compiler/Backend/StackProps.lean", "asmAddrOkExact"): (
+        "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+        "addr_ok_def",
+        "flapjack-ds8 (bead flapjack-4ac.6.1): HOL uses the exact `HolAddr`, this declaration the "
+        "production `WordLangAddr`.  The HOL tag was withdrawn; the exact-carrier restatement is "
+        "tracked by bead flapjack-4ac.6.1.2."
+    ),
+    ("Flapjack/Pancake/WordConvs.lean", "distinctTarRegExact"): (
+        "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+        "distinct_tar_reg_def",
+        "flapjack-ds8 (bead flapjack-4ac.6.1): HOL uses the exact `HolInst`, this declaration the "
+        "production `WordLangInst`.  The HOL tag was withdrawn; the exact-carrier restatement is "
+        "tracked by bead flapjack-4ac.6.1.2."
+    ),
+    ("Flapjack/Pancake/WordConvs.lean", "twoRegInstExact"): (
+        "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+        "two_reg_inst_def",
+        "flapjack-ds8 (bead flapjack-4ac.6.1): HOL uses the exact `HolInst`, this declaration the "
+        "production `WordLangInst`.  The HOL tag was withdrawn; the exact-carrier restatement is "
+        "tracked by bead flapjack-4ac.6.1.2."
+    ),
+    ("Flapjack/Pancake/WordConvs.lean", "instOkLessExact"): (
+        "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+        "inst_ok_less_def",
+        "flapjack-ds8 (bead flapjack-4ac.6.1): HOL uses the exact `HolInst`, this declaration the "
+        "production `WordLangInst`.  The HOL tag was withdrawn; the exact-carrier restatement is "
+        "tracked by bead flapjack-4ac.6.1.2."
+    ),
+    ("Flapjack/Pancake/WordConvs.lean", "instArgConventionExact"): (
+        "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+        "inst_arg_convention_def",
+        "flapjack-ds8 (bead flapjack-4ac.6.1): HOL uses the exact `HolInst`, this declaration the "
+        "production `WordLangInst`.  The HOL tag was withdrawn; the exact-carrier restatement is "
+        "tracked by bead flapjack-4ac.6.1.2."
+    ),
     ("Flapjack/Compiler/Encoders/Asm.lean", "asmRegOk"): (
         "cakeml/compiler/encoders/asm/asmScript.sml",
         "reg_ok_def",
@@ -1808,18 +1872,9 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         ("Flapjack/Pancake/PanSimp.lean", "panSimpDeclsHOL"),
         ("Flapjack/Compiler/Encoders/Asm.lean", "asmRegOkExact"),
         ("Flapjack/Compiler/Encoders/Asm.lean", "asmFpRegOkExact"),
-        ("Flapjack/Compiler/Encoders/Asm.lean", "asmRegImmOkExact"),
         ("Flapjack/Compiler/Encoders/Asm.lean", "asmOffsetOkExact"),
         ("Flapjack/Compiler/Encoders/Asm.lean", "asmArithOkExact"),
         ("Flapjack/Compiler/Encoders/Asm.lean", "asmFpOkExact"),
-        ("Flapjack/Compiler/Encoders/Asm.lean", "asmCmpOkExact"),
-        ("Flapjack/Compiler/Encoders/Asm.lean", "asmInstOkExact"),
-        ("Flapjack/Compiler/Encoders/Asm.lean", "asmOkExact"),
-        ("Flapjack/Compiler/Backend/StackProps.lean", "asmAddrOkExact"),
-        ("Flapjack/Pancake/WordConvs.lean", "distinctTarRegExact"),
-        ("Flapjack/Pancake/WordConvs.lean", "twoRegInstExact"),
-        ("Flapjack/Pancake/WordConvs.lean", "instOkLessExact"),
-        ("Flapjack/Pancake/WordConvs.lean", "instArgConventionExact"),
     }
     for key in reviewed_exact:
         # A source comparison cannot claim an exact HOL port after its tag is
