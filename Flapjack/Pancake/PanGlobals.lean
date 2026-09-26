@@ -1155,8 +1155,9 @@ end DeclHOLBridge
 section ResortShapeExact
 
 open Flapjack.Pancake.PanLang
-  (MlS DeclHOL ShapeHOL functionsHOL isNameHOL isExnDeclHOL isDeclHOL isFunctionHOL)
-open Flapjack.Basis.Pure.MlString (ofString toStringOfBytes)
+  (MlS DeclHOL ShapeHOL functionsHOL isNameHOL isExnDeclHOL isDeclHOL isFunctionHOL
+   mlstrAppend)
+open Flapjack.Basis.Pure.MlString (MlString ofString toStringOfBytes)
 
 /-! Exact-carrier ports of the three declaration-list transformations of Cake's
 `pan_globals` pass (bead `flapjack-pxn.18.3.5.8.21`).  They run over the
@@ -1187,26 +1188,76 @@ def resortDeclsHOL {width : Nat} [NeZero width]
   (declarations.filter isNameHOL) ++ (declarations.filter isExnDeclHOL) ++
     (declarations.filter isDeclHOL) ++ (declarations.filter isFunctionHOL)
 
-/-- Untagged (tag WITHDRAWN) definition matching HOL `new_main_name_def`
+/-! ### Exact `mlstring`-native `fresh_name` and `new_main_name`
+
+`freshNameHOL` above is the String-backed production rendering of HOL
+`fresh_name`, kept under the `names_as_string` qualifier.  Below is the
+`mlstring`-native restatement over the exact `MlS` carrier, so that
+`newMainNameHOL` is an unqualified exact port of `new_main_name_def` rather than
+a computation routed through the String codec. -/
+
+/-- Maximum `MlS` character-list length over a list of names; used only to
+    justify termination of the exact `fresh_name` port. -/
+def maxMlsLength : List MlS → Nat
+  | [] => 0
+  | name :: names => max (MlString.explode name).length (maxMlsLength names)
+
+theorem length_le_maxMlsLength {name : MlS} {names : List MlS}
+    (hmem : name ∈ names) :
+    (MlString.explode name).length ≤ maxMlsLength names := by
+  induction names with
+  | nil => cases hmem
+  | cons head tail ih =>
+      rw [maxMlsLength]
+      rcases List.mem_cons.mp hmem with hhead | htail
+      · subst hhead
+        exact Nat.le_max_left _ _
+      · exact Nat.le_trans (ih htail) (Nat.le_max_right _ _)
+
+/-- Exact `mlstring`-native port of HOL `pan_globals$fresh_name`
+    (`cakeml/pancake/pan_globalsScript.sml:55`):
+
+    HOL `fresh_name name names =
+      if MEM name names then fresh_name (strcat name «'») names else name`.
+
+    The clauses match clause for clause over the exact `MlS` carrier: `∈` is
+    `mlstring` list equality, `MEM` is list membership, and
+    `mlstrAppend name (ofString "'")` is HOL `strcat name «'»`.  HOL's
+    non-operational `strlen`/`MAX_SET` measure is replaced by `maxMlsLength`,
+    which occurs only in the termination argument, never in the result.  No
+    qualifier applies because the carrier is already HOL's `mlstring`. -/
+@[hol "cakeml/pancake/pan_globalsScript.sml" "fresh_name_def"]
+def freshNameMlS (name : MlS) (names : List MlS) : MlS :=
+  if name ∈ names then
+    freshNameMlS (mlstrAppend name (ofString "'")) names
+  else name
+termination_by 1 + maxMlsLength names - (MlString.explode name).length
+decreasing_by
+  simp_wf
+  have hmem : name ∈ names := ‹name ∈ names›
+  have hle := length_le_maxMlsLength hmem
+  have happ :
+      (MlString.explode (mlstrAppend name (ofString "'"))).length =
+        (MlString.explode name).length + 1 := by
+    simp [mlstrAppend, ofString, MlString.explode_implode, List.length_append]
+  rw [happ]
+  omega
+
+/-- Exact port of HOL `pan_globals$new_main_name`
     (`cakeml/pancake/pan_globalsScript.sml:224`):
 
     HOL `new_main_name decls = fresh_name «main» (MAP FST (functions decls))`.
 
-    The `@[hol ...]` tag is WITHDRAWN per the coordinator HOLD: `newMainNameHOL`
-    returns a byte-observable `MlS` main name computed through the String-backed
-    `freshNameHOL`, and the exact `mlstring`-native `fresh_name` restatement (or
-    an approved `names_as_string` + `NameRanged` witness for this declaration)
-    has not been provided.  Tracked by bead `flapjack-pxn.18.3.5.8.21`.
-    `functionsHOL` is the tagged mlstring-keyed port of HOL `functions`, so its
-    first components are the function names in source order; the byte codec
-    `toStringOfBytes`/`ofString` is the identity on the `MlS` carrier and
-    preserves the membership test.  Do not re-tag until the coordinator
-    approves a faithful restatement. -/
+    The input is the exact `List (DeclHOL width)`; `functionsHOL` is the tagged
+    `mlstring`-keyed port of HOL `functions`, so `(functionsHOL decls).map
+    Prod.fst` is exactly `MAP FST (functions decls)`.  The source name is the
+    `MlS` literal `«main»` (`ofString "main"`) and the search is the tagged
+    exact `freshNameMlS`.  No qualifier applies because every carrier is already
+    exact. -/
+@[hol "cakeml/pancake/pan_globalsScript.sml" "new_main_name_def"]
 def newMainNameHOL {width : Nat} [NeZero width]
     (declarations : List (DeclHOL width)) : MlS :=
-  ofString
-    (freshNameHOL "main"
-      ((functionsHOL declarations).map (fun entry => toStringOfBytes entry.1)))
+  freshNameMlS (ofString "main") ((functionsHOL declarations).map Prod.fst)
 
 /-- Exact port of HOL `dec_shapes_def`
     (`cakeml/pancake/pan_globalsScript.sml:228-234`):
@@ -1276,7 +1327,9 @@ def globalResortDecls (declarations : List (Decl α)) : List (Decl α) :=
 -- and `Shape` are `String`; HOL `new_main_name` consumes word-valued
 -- declarations with `Const : 'a word` and `mlstring` identifiers. Exact
 -- carriers (`DeclHOL`/`ProgHOL`/`ExpHOL`/`ShapeHOL`) exist under
--- `Flapjack/Pancake/PanLang/`, but no `new_main_name` port runs over them.
+-- `Flapjack/Pancake/PanLang/`; the exact port `newMainNameHOL` runs over them
+-- (tagged `new_main_name_def` above), and `toStringOfBytes_newMainNameHOL`
+-- is the checked bridge to this production form.
 -- `names_as_string` and the generated-name boundary witness only address the
 -- String/mlstring name difference, not this input-carrier mismatch, so the tag
 -- stays withdrawn pending the exact-carrier replacement (bead `flapjack-6nn.3.1`;
@@ -3847,8 +3900,8 @@ path with the exact ports remains the exact-carrier production task
 section ResortShapeExactBridge
 
 open Flapjack.Pancake.PanLang
-  (DeclHOL declOfHOL funDeclOfHOL isDeclHOL isExnDeclHOL isNameHOL isFunctionHOL
-    shapeOfHOL functionsHOL)
+  (MlS mlstrAppend DeclHOL declOfHOL funDeclOfHOL isDeclHOL isExnDeclHOL isNameHOL
+    isFunctionHOL shapeOfHOL functionsHOL)
 open Flapjack.Basis.Pure.MlString (ofString toStringOfBytes)
 
 /-- `List.filter`/`globalDeclsFilter` agreement.  Named `_listFilter` rather
@@ -3934,13 +3987,53 @@ theorem globalDeclsFilter_eq_listFilter (predicate : Decl α → Bool)
       cases declaration <;>
         simp [globalFunctionNames, functionsHOL, declOfHOL, funDeclOfHOL, ih]
 
-/-- The fresh-name search seeded with the literal `"main"` stays in the byte
-    range for any name list; used by the `newMainNameHOL` bridge below with a
-    variable list so the range proof does not reduce over a concrete list. -/
-theorem nameRanged_freshNameHOL_main (names : List String) :
-    Flapjack.Pancake.PanLang.NameRanged (freshNameHOL "main" names) :=
-  holMlStringWitness_freshNameHOL "main" names
-    (by unfold Flapjack.Pancake.PanLang.NameRanged; decide)
+/-- Decoding commutes with `mlstring` concatenation: `toStringOfBytes` reads
+    each byte as one character, so it distributes over `mlstrAppend` (`^`). -/
+theorem toStringOfBytes_mlstrAppend (left right : MlS) :
+    toStringOfBytes (mlstrAppend left right) =
+      toStringOfBytes left ++ toStringOfBytes right := by
+  cases left with
+  | implode leftData =>
+    cases right with
+    | implode rightData =>
+      simp only [mlstrAppend, toStringOfBytes,
+        Flapjack.Basis.Pure.MlString.MlString.explode_implode,
+        List.map_append, String.ofList_append]
+
+/-- `toStringOfBytes` reflects list membership because it is injective. -/
+theorem toStringOfBytes_mem_map_iff (name : MlS) (names : List MlS) :
+    toStringOfBytes name ∈ names.map toStringOfBytes ↔ name ∈ names := by
+  constructor
+  · intro hmem
+    obtain ⟨other, hother, heq⟩ := List.mem_map.mp hmem
+    rw [← toStringOfBytes_injective heq]
+    exact hother
+  · intro hmem
+    exact List.mem_map.mpr ⟨name, hmem, rfl⟩
+
+/-- The apostrophe literal decodes exactly. -/
+@[simp] theorem toStringOfBytes_ofString_quote :
+    toStringOfBytes (ofString "'") = "'" :=
+  Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes "'" (by decide)
+
+/-- The `main` seed literal decodes exactly. -/
+@[simp] theorem toStringOfBytes_ofString_main :
+    toStringOfBytes (ofString "main") = "main" :=
+  Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes "main" (by decide)
+
+/-- The `mlstring`-native `freshNameMlS` commutes with the byte codec: decoding
+    its result is the String-backed `freshNameHOL` on the decoded names. -/
+theorem toStringOfBytes_freshNameMlS (name : MlS) (names : List MlS) :
+    toStringOfBytes (freshNameMlS name names) =
+      freshNameHOL (toStringOfBytes name) (names.map toStringOfBytes) := by
+  fun_induction freshNameMlS name names with
+  | case1 name hmem ih =>
+      rw [freshNameHOL.eq_1,
+        if_pos ((toStringOfBytes_mem_map_iff name names).mpr hmem)]
+      rw [ih, toStringOfBytes_mlstrAppend, toStringOfBytes_ofString_quote]
+  | case2 name hnot =>
+      rw [freshNameHOL.eq_1,
+        if_neg (fun hmem' => hnot ((toStringOfBytes_mem_map_iff name names).mp hmem'))]
 
 /-- Bridge: decoding the exact `newMainNameHOL` result is the production
     `globalNewMainName` on the decoded declaration list.  The byte-range
@@ -3952,10 +4045,9 @@ theorem nameRanged_freshNameHOL_main (names : List String) :
       globalNewMainName (declarations.map declOfHOL) := by
   simp only [newMainNameHOL, globalNewMainName]
   rw [globalFunctionNames_map_declOfHOL]
-  generalize hnames : (functionsHOL declarations).map
-    (fun entry => toStringOfBytes entry.1) = names
-  exact Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes
-    (freshNameHOL "main" names) (nameRanged_freshNameHOL_main names)
+  rw [toStringOfBytes_freshNameMlS]
+  simp only [List.map_map, toStringOfBytes_ofString_main]
+  rfl
 
 end ResortShapeExactBridge
 
