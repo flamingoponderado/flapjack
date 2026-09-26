@@ -125,6 +125,23 @@ def handlerStateHOLExact {width : Nat} {σ : Type} [NeZero width]
     (name : MlS) (value : ValueHOL width) : PanSemStateExact width σ :=
   setVarHOLExact name value { fixedContext.state with locals := context.state.locals }
 
+/-- FLAPJACK-SPECIFIC (not a HOL declaration): named broad fixed context for
+    `Call`/`DecCall`, mirroring `callFixedContextHOLFinite`. -/
+def callFixedContextHOLExact {width : Nat} {σ : Type} [NeZero width]
+    (entry : PanSemStateExact width σ)
+    (bodyResult : Option (PanSemResultExact width))
+    (bodyContext : PanSemExactEvalContext width σ) : PanSemExactEvalContext width σ :=
+  bodyContext.withState
+    (fixClockHOLExact entry (bodyResult, bodyContext.state)).2 rfl rfl
+
+/-- FLAPJACK-SPECIFIC (not a HOL declaration): named broad `DecCall`
+    continuation context, mirroring `callContinuationContextHOLFinite`. -/
+def callContinuationContextHOLExact {width : Nat} {σ : Type} [NeZero width]
+    (context : PanSemExactEvalContext width σ) (fixedContext : PanSemExactEvalContext width σ)
+    (resultName : MlS) (value : ValueHOL width) : PanSemExactEvalContext width σ :=
+  fixedContext.withState
+    (handlerStateHOLExact context fixedContext resultName value) rfl rfl
+
 /-- Exact recursive Dec/Seq/If/While/Call/DecCall and Assign evaluator over the
     state-owned HOL code map.
     Its outer `Option` marks constructors not yet assembled in this fragment;
@@ -220,7 +237,7 @@ def evalPanSemRecursiveCallContextHOLExact {width : Nat} {σ : Type} [NeZero wid
                     | none => none
                     | some (bodyResult, bodyContext) =>
                         let fixed := fixClockHOLExact entry (bodyResult, bodyContext.state)
-                        let fixedContext := bodyContext.withState fixed.2 rfl rfl
+                        let fixedContext := callFixedContextHOLExact entry bodyResult bodyContext
                         match bodyResult with
                         | none => some (some .error, fixedContext)
                         | some .break => some (some .error, fixedContext)
@@ -291,7 +308,7 @@ def evalPanSemRecursiveCallContextHOLExact {width : Nat} {σ : Type} [NeZero wid
                     | none => none
                     | some (bodyResult, bodyContext) =>
                         let fixed := fixClockHOLExact entry (bodyResult, bodyContext.state)
-                        let fixedContext := bodyContext.withState fixed.2 rfl rfl
+                        let fixedContext := callFixedContextHOLExact entry bodyResult bodyContext
                         match bodyResult with
                         | none => some (some .error, fixedContext)
                         | some .break => some (some .error, fixedContext)
@@ -299,9 +316,8 @@ def evalPanSemRecursiveCallContextHOLExact {width : Nat} {σ : Type} [NeZero wid
                         | some (.returned value) =>
                             if shapeEqHOL (shapeOfHOLExact value) shape &&
                                 shapeEqHOL (shapeOfHOLExact value) returnShape then
-                              let continuationState := handlerStateHOLExact context fixedContext resultName value
-                              let continuationContext := fixedContext.withState
-                                continuationState rfl rfl
+                              let continuationContext :=
+                                callContinuationContextHOLExact context fixedContext resultName value
                               match evalPanSemRecursiveCallContextHOLExact continuation
                                   continuationContext with
                               | none => none
@@ -531,7 +547,7 @@ decreasing_by
   · simp only [PanSemExactEvalContext.withState]
     apply Prod.Lex.left
     exact Nat.sub_lt (Nat.pos_of_ne_zero (by omega)) (by decide)
-  · simp only [PanSemExactEvalContext.withState]
+  · simp only [callContinuationContextHOLExact, PanSemExactEvalContext.withState]
     apply Prod.Lex.left
     exact Nat.lt_of_le_of_lt
       (fixClockHOLExact_clock_le entry (bodyResult, bodyContext.state))

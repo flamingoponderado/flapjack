@@ -994,6 +994,51 @@ theorem toExact_handlerStateHOLFinite {width : Nat} {σ : Type} [NeZero width]
   rw [h]
   rfl
 
+/-- FLAPJACK-SPECIFIC (not a HOL declaration): the named finite `DecCall`
+    continuation context, so the projection bridges stay syntactic. -/
+def callContinuationContextHOLFinite {width : Nat} {σ : Type} [NeZero width]
+    (context : FiniteEvalContext width σ) (fixedContext : FiniteEvalContext width σ)
+    (resultName : MlS) (value : ValueHOL width) : FiniteEvalContext width σ :=
+  fixedContext.withState
+    (handlerStateHOLFinite context fixedContext resultName value) rfl rfl
+
+/-- FLAPJACK-SPECIFIC (not a HOL declaration): the named finite continuation
+    context projects to the broad named continuation context. -/
+theorem toExact_callContinuationContextHOLFinite {width : Nat} {σ : Type} [NeZero width]
+    (context : FiniteEvalContext width σ) (fixedFin : FiniteEvalContext width σ)
+    (fixedBroad : PanSemExactEvalContext width σ) (hfix : fixedFin.toExact = fixedBroad)
+    (resultName : MlS) (value : ValueHOL width) :
+    (callContinuationContextHOLFinite context fixedFin resultName value).toExact =
+      Flapjack.callContinuationContextHOLExact context.toExact fixedBroad resultName value := by
+  unfold callContinuationContextHOLFinite Flapjack.callContinuationContextHOLExact
+  apply PanSemExactEvalContext.ext
+  change (handlerStateHOLFinite context fixedFin resultName value).toExact =
+    Flapjack.handlerStateHOLExact context.toExact fixedBroad resultName value
+  exact toExact_handlerStateHOLFinite context fixedFin fixedBroad hfix resultName value
+
+/-- FLAPJACK-SPECIFIC (not a HOL declaration): named finite fixed context for
+    `Call`/`DecCall`, so the projection bridges stay syntactic. -/
+def callFixedContextHOLFinite {width : Nat} {σ : Type} [NeZero width]
+    (entry : PanSemStateFiniteExact width σ)
+    (bodyResult : Option (PanSemResultExact width))
+    (bodyContext : FiniteEvalContext width σ) : FiniteEvalContext width σ :=
+  bodyContext.withState
+    (fixClockHOLFinite entry (bodyResult, bodyContext.state)).2 rfl rfl
+
+/-- FLAPJACK-SPECIFIC (not a HOL declaration): the named finite fixed context
+    projects to the broad named fixed context. -/
+theorem toExact_callFixedContextHOLFinite {width : Nat} {σ : Type} [NeZero width]
+    (entry : PanSemStateFiniteExact width σ)
+    (bodyResult : Option (PanSemResultExact width))
+    (bodyContext : FiniteEvalContext width σ) :
+    (callFixedContextHOLFinite entry bodyResult bodyContext).toExact =
+      Flapjack.callFixedContextHOLExact entry.toExact bodyResult bodyContext.toExact := by
+  unfold callFixedContextHOLFinite Flapjack.callFixedContextHOLExact
+  apply PanSemExactEvalContext.ext
+  change (fixClockHOLFinite entry (bodyResult, bodyContext.state)).2.toExact =
+    (fixClockHOLExact entry.toExact (bodyResult, bodyContext.state.toExact)).2
+  rw [toExact_fixClockHOLFinite]
+
 /-- FLAPJACK-SPECIFIC (not a HOL declaration): named finite `Call`/`DecCall`
     entry state.  Naming it (instead of an inline record-update literal) makes
     the projection bridges syntactic. -/
@@ -1107,7 +1152,7 @@ def evalPanSemRecursiveCallFiniteContext {width : Nat} {σ : Type} [NeZero width
                     | none => none
                     | some (bodyResult, bodyContext) =>
                         let fixed := fixClockHOLFinite entry (bodyResult, bodyContext.state)
-                        let fixedContext := bodyContext.withState fixed.2 rfl rfl
+                        let fixedContext := callFixedContextHOLFinite entry bodyResult bodyContext
                         match bodyResult with
                         | none => some (some .error, fixedContext)
                         | some .break => some (some .error, fixedContext)
@@ -1177,7 +1222,7 @@ def evalPanSemRecursiveCallFiniteContext {width : Nat} {σ : Type} [NeZero width
                     | none => none
                     | some (bodyResult, bodyContext) =>
                         let fixed := fixClockHOLFinite entry (bodyResult, bodyContext.state)
-                        let fixedContext := bodyContext.withState fixed.2 rfl rfl
+                        let fixedContext := callFixedContextHOLFinite entry bodyResult bodyContext
                         match bodyResult with
                         | none => some (some .error, fixedContext)
                         | some .break => some (some .error, fixedContext)
@@ -1185,9 +1230,8 @@ def evalPanSemRecursiveCallFiniteContext {width : Nat} {σ : Type} [NeZero width
                         | some (.returned value) =>
                             if shapeEqHOL (shapeOfHOLExact value) shape &&
                                 shapeEqHOL (shapeOfHOLExact value) returnShape then
-                              let continuationState := handlerStateHOLFinite context fixedContext resultName value
-                              let continuationContext := fixedContext.withState
-                                continuationState rfl rfl
+                              let continuationContext :=
+                                callContinuationContextHOLFinite context fixedContext resultName value
                               match evalPanSemRecursiveCallFiniteContext continuation
                                   continuationContext with
                               | none => none
@@ -1321,7 +1365,7 @@ decreasing_by
   · simp only [FiniteEvalContext.withState]
     apply Prod.Lex.left
     exact Nat.sub_lt (Nat.pos_of_ne_zero (by omega)) (by decide)
-  · simp only [FiniteEvalContext.withState]
+  · simp only [callContinuationContextHOLFinite, FiniteEvalContext.withState]
     apply Prod.Lex.left
     exact Nat.lt_of_le_of_lt
       (fixClockHOLFinite_clock_le entry (bodyResult, bodyContext.state))
