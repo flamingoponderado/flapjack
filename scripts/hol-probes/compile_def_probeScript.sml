@@ -275,6 +275,22 @@ val _ = print_eval "call_no_return"
         [panLang$Const (1w : 8 word);
          panLang$RStruct [panLang$Const 2w; panLang$Const 3w]])``;
 
+val _ = print_eval "call_result_no_handler_present"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY;
+         funcs := FEMPTY |+ («f», ([], panLang$Comb [panLang$One; panLang$One]));
+         eids := FEMPTY; vmax := 10 |>
+      (panLang$Call (SOME (NONE, NONE)) «f»
+        [panLang$Const (1w : 8 word);
+         panLang$RStruct [panLang$Const 2w; panLang$Const 3w]])``;
+
+val _ = print_eval "call_result_no_handler_missing"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 10 |>
+      (panLang$Call (SOME (NONE, NONE)) «missing»
+        [panLang$Const (1w : 8 word);
+         panLang$RStruct [panLang$Const 2w; panLang$Const 3w]])``;
+
 val _ = print_eval "valid_local"
   ``pan_to_crep$compile
       <| vars := FEMPTY |+ («pair»,
