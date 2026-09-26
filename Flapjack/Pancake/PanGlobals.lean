@@ -1110,16 +1110,21 @@ theorem sizeOfEids_structCompileTop (declarations : List (Decl α)) :
 
 /-! ### Checked codec bridge to the exact `DeclHOL` predicates (bead `flapjack-ni1.1`)
 
-`isDecl`/`isExnDecl`/`sizeOfEids` are polymorphic over the production `Decl α`,
-while the tagged predicates are over exact `DeclHOL width` (`MlS`/`ShapeHOL`).
-The `declOfHOL` lemmas below check their behavior on the exact codec image. For
-arbitrary production declarations, `sizeOfEids` instead uses the documented
-constructor-only projection above. These are source-helper bridges, not a
-claim that `crepGetEidsFromDecls` routes through `sizeOfEidsHOL`. -/
+`isDecl`/`isExnDecl`/`isName`/`globalDeclIsFunction` and `sizeOfEids` consume
+the production `Decl α`, while their HOL predicates consume exact
+`DeclHOL width` (`MlS`/`ShapeHOL`/word-valued expressions). The
+`declOfHOL` lemmas below establish a total relation on the exact codec image;
+direct call routing is unavailable because the carriers differ and a general
+production `Decl α` cannot be encoded as `DeclHOL width` without value and
+name assumptions. `sizeOfEids` on arbitrary production declarations therefore
+uses its documented constructor-only projection above. These are checked
+source-helper bridges, not a claim that `crepGetEidsFromDecls` routes through
+`sizeOfEidsHOL`. -/
 
 section DeclHOLBridge
 
-open Flapjack.Pancake.PanLang (DeclHOL declOfHOL isDeclHOL isExnDeclHOL isNameHOL)
+open Flapjack.Pancake.PanLang
+  (DeclHOL declOfHOL isDeclHOL isExnDeclHOL isNameHOL isFunctionHOL)
 
 theorem isDecl_declOfHOL {width : Nat} [NeZero width] (declaration : DeclHOL width) :
     isDecl (declOfHOL declaration) = isDeclHOL declaration := by
@@ -1127,6 +1132,11 @@ theorem isDecl_declOfHOL {width : Nat} [NeZero width] (declaration : DeclHOL wid
 
 theorem isExnDecl_declOfHOL {width : Nat} [NeZero width] (declaration : DeclHOL width) :
     isExnDecl (declOfHOL declaration) = isExnDeclHOL declaration := by
+  cases declaration <;> rfl
+
+theorem globalDeclIsFunction_declOfHOL {width : Nat} [NeZero width]
+    (declaration : DeclHOL width) :
+    globalDeclIsFunction (declOfHOL declaration) = isFunctionHOL declaration := by
   cases declaration <;> rfl
 
 @[simp] theorem isName_declOfHOL {width : Nat} [NeZero width] (declaration : DeclHOL width) :
