@@ -118,6 +118,13 @@ def callEntryStateHOLExact {width : Nat} {σ : Type} [NeZero width]
     callEntryStateHOLExact state calleeLocals =
       { state with clock := state.clock - 1, locals := calleeLocals } := rfl
 
+/-- FLAPJACK-SPECIFIC (not a HOL declaration): named `Call`/`DecCall` handler
+    state, mirroring `handlerStateHOLFinite` on the broad exact state. -/
+def handlerStateHOLExact {width : Nat} {σ : Type} [NeZero width]
+    (context : PanSemExactEvalContext width σ) (fixedContext : PanSemExactEvalContext width σ)
+    (name : MlS) (value : ValueHOL width) : PanSemStateExact width σ :=
+  setVarHOLExact name value { fixedContext.state with locals := context.state.locals }
+
 /-- Exact recursive Dec/Seq/If/While/Call/DecCall and Assign evaluator over the
     state-owned HOL code map.
     Its outer `Option` marks constructors not yet assembled in this fragment;
@@ -252,8 +259,7 @@ def evalPanSemRecursiveCallContextHOLExact {width : Nat} {σ : Type} [NeZero wid
                                   | some shape =>
                                       if shapeEqHOL (shapeOfHOLExact value) shape &&
                                           isValidValueHOLExact state .local handlerVar value then
-                                        let handlerState := setVarHOLExact handlerVar value
-                                          { fixedContext.state with locals := state.locals }
+                                        let handlerState := handlerStateHOLExact context fixedContext handlerVar value
                                         let handlerContext := fixedContext.withState
                                           handlerState rfl rfl
                                         evalPanSemRecursiveCallContextHOLExact handlerProgram
@@ -518,7 +524,7 @@ decreasing_by
   · simp only [PanSemExactEvalContext.withState]
     apply Prod.Lex.left
     exact Nat.sub_lt (Nat.pos_of_ne_zero (by omega)) (by decide)
-  · simp only [PanSemExactEvalContext.withState, setVarHOLExact]
+  · simp only [PanSemExactEvalContext.withState]
     apply Prod.Lex.left
     exact Nat.lt_of_le_of_lt
       (fixClockHOLExact_clock_le entry (bodyResult, bodyContext.state))
@@ -526,7 +532,7 @@ decreasing_by
   · simp only [PanSemExactEvalContext.withState]
     apply Prod.Lex.left
     exact Nat.sub_lt (Nat.pos_of_ne_zero (by omega)) (by decide)
-  · simp only [PanSemExactEvalContext.withState, setVarHOLExact]
+  · simp only [PanSemExactEvalContext.withState]
     apply Prod.Lex.left
     exact Nat.lt_of_le_of_lt
       (fixClockHOLExact_clock_le entry (bodyResult, bodyContext.state))

@@ -969,6 +969,31 @@ theorem toExact_withState_setVarLocals {width : Nat} {σ : Type} [NeZero width]
 
 end FiniteEvalContext
 
+/-- FLAPJACK-SPECIFIC (not a HOL declaration): named `Call`/`DecCall` handler
+    state.  Naming it (instead of an inline record-update literal) makes the
+    projection bridges syntactic, because the definition no longer exposes an
+    expanded record in which the `fixedContext` projections are unfolded. -/
+def handlerStateHOLFinite {width : Nat} {σ : Type} [NeZero width]
+    (context : FiniteEvalContext width σ) (fixedContext : FiniteEvalContext width σ)
+    (name : MlS) (value : ValueHOL width) : PanSemStateFiniteExact width σ :=
+  setVarHOLFinite name value { fixedContext.state with locals := context.state.locals }
+
+/-- FLAPJACK-SPECIFIC (not a HOL declaration): the named finite handler state
+    projects to the broad named handler state. -/
+theorem toExact_handlerStateHOLFinite {width : Nat} {σ : Type} [NeZero width]
+    (context : FiniteEvalContext width σ) (fixedFin : FiniteEvalContext width σ)
+    (fixedBroad : PanSemExactEvalContext width σ) (hfix : fixedFin.toExact = fixedBroad)
+    (name : MlS) (value : ValueHOL width) :
+    (handlerStateHOLFinite context fixedFin name value).toExact =
+      Flapjack.handlerStateHOLExact context.toExact fixedBroad name value := by
+  unfold handlerStateHOLFinite Flapjack.handlerStateHOLExact
+  rw [toExact_setVarHOLFinite, toExact_setLocals]
+  have h : fixedFin.state.toExact = fixedBroad.state := by
+    have := congrArg PanSemExactEvalContext.state hfix
+    simpa only [FiniteEvalContext.toExact] using this
+  rw [h]
+  rfl
+
 /-- The finite fix-clock never increases the clock. -/
 theorem fixClockHOLFinite_clock_le {width : Nat} {σ : Type} [NeZero width] {β : Type}
     (oldState : PanSemStateFiniteExact width σ)
@@ -1103,8 +1128,7 @@ def evalPanSemRecursiveCallFiniteContext {width : Nat} {σ : Type} [NeZero width
                                   | some shape =>
                                       if shapeEqHOL (shapeOfHOLExact value) shape &&
                                           isValidValueHOLExact state.toExact .local handlerVar value then
-                                        let handlerState := setVarHOLFinite handlerVar value
-                                          { fixedContext.state with locals := state.locals }
+                                        let handlerState := handlerStateHOLFinite context fixedContext handlerVar value
                                         let handlerContext := fixedContext.withState
                                           handlerState rfl rfl
                                         evalPanSemRecursiveCallFiniteContext handlerProgram
@@ -1272,7 +1296,7 @@ decreasing_by
   · simp only [FiniteEvalContext.withState]
     apply Prod.Lex.left
     exact Nat.sub_lt (Nat.pos_of_ne_zero (by omega)) (by decide)
-  · simp only [FiniteEvalContext.withState, setVarHOLFinite]
+  · simp only [FiniteEvalContext.withState]
     apply Prod.Lex.left
     exact Nat.lt_of_le_of_lt
       (fixClockHOLFinite_clock_le entry (bodyResult, bodyContext.state))
@@ -1280,7 +1304,7 @@ decreasing_by
   · simp only [FiniteEvalContext.withState]
     apply Prod.Lex.left
     exact Nat.sub_lt (Nat.pos_of_ne_zero (by omega)) (by decide)
-  · simp only [FiniteEvalContext.withState, setVarHOLFinite]
+  · simp only [FiniteEvalContext.withState]
     apply Prod.Lex.left
     exact Nat.lt_of_le_of_lt
       (fixClockHOLFinite_clock_le entry (bodyResult, bodyContext.state))
