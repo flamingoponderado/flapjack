@@ -58,6 +58,8 @@ declaration-local infrastructure only.
 
 namespace Flapjack
 
+open Flapjack.Basis.Pure.MlString
+
 /-- HOL `is_load` (`cakeml/pancake/loop_callScript.sml:10-15`): true for the
     four shared-memory load operations. Flapjack-specific helper for the `ShMem`
     clause; no separate HOL declaration is claimed. -/
@@ -453,5 +455,469 @@ decreasing_by
     evalCrepSemHOLProg state memDec shMemDec (.skip : CrepProgHOL width) =
       (none, state) := by
   simp [evalCrepSemHOLProg]
+
+/-! ## Named constructor equations
+
+These are UNTAGGED infrastructure: each theorem is a named, kernel-checked
+equation for one `CrepProgHOL` constructor of `evalCrepSemHOLProg`, matching
+the corresponding HOL `crepSemScript.sml:evaluate_def` clause (lines 240-390) as
+closely as the Lean definition allows. The carrier is the finite-support
+`CrepSemHOLState`; the raw `CrepHolState` is not used. No `@[hol]` tag is
+attached. -/
+
+/-- HOL `evaluate (Dec v e prog, s)` (`crepSemScript.sml:242-249`): evaluate the
+    initialiser; on failure `Error`, otherwise bind `v` and apply `res_var`.
+    Finite-support `CrepSemHOLState` counterpart; untagged. -/
+@[simp] theorem evalCrepSemHOLProg_dec {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (name : Nat) (value : CrepExpHOL width) (body : CrepProgHOL width) :
+    evalCrepSemHOLProg state memDec shMemDec (.dec name value body) =
+      (match crepExactEvalExp state memDec value with
+       | none => (some .error, state)
+       | some v =>
+           let boundState := CrepSemHOLState.setVar name v state
+           let old := state.locals.lookup name
+           let step := evalCrepSemHOLProg boundState memDec shMemDec body
+           (step.1, { step.2 with locals := step.2.locals.resVarEq (name, old) })) := by
+  rw [evalCrepSemHOLProg.eq_def] <;> rfl
+
+/-- HOL `evaluate (Assign v src, s)` (`crepSemScript.sml:257-262`): the variable
+    must already be bound. Finite-support `CrepSemHOLState` counterpart;
+    untagged. -/
+@[simp] theorem evalCrepSemHOLProg_assign {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (name : Nat) (src : CrepExpHOL width) :
+    evalCrepSemHOLProg state memDec shMemDec (.assign name src) =
+      (match crepExactEvalExp state memDec src with
+       | none => (some .error, state)
+       | some w =>
+           match state.locals.lookup name with
+           | some _ => (none, CrepSemHOLState.setVar name w state)
+           | none => (some .error, state)) := by
+  rw [evalCrepSemHOLProg.eq_def] <;> rfl
+
+/-- HOL `evaluate (Primitive lhss pop rhss, s)` (`crepSemScript.sml:250-256`).
+    Finite-support `CrepSemHOLState` counterpart; untagged. -/
+@[simp] theorem evalCrepSemHOLProg_primitive {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (names : List Nat) (operator : PrimOp) (args : List Nat) :
+    evalCrepSemHOLProg state memDec shMemDec (.primitive names operator args) =
+      (match args.mapM state.locals.lookup with
+       | some ws =>
+           match crepPrimopHOL operator (ws.map HolWordLab.toPanWordLab) with
+           | some results =>
+               if names.length = results.length &&
+                  names.all (fun v => (state.locals.lookup v).isSome) &&
+                  names.Nodup then
+                 (none, { state with
+                   locals := state.locals.updateListEq
+                     (names.zip (results.map PanWordLab.toHolWordLab)) })
+               else (some .error, state)
+           | none => (some .error, state)
+       | none => (some .error, state)) := by
+  rw [evalCrepSemHOLProg.eq_def] <;> rfl
+
+/-- HOL `evaluate (Store dst src, s)` (`crepSemScript.sml:263-269`). Finite-support
+    `CrepSemHOLState` counterpart; untagged. -/
+@[simp] theorem evalCrepSemHOLProg_store {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (dst src : CrepExpHOL width) :
+    evalCrepSemHOLProg state memDec shMemDec (.store dst src) =
+      (match crepExactEvalExp state memDec dst,
+             crepExactEvalExp state memDec src with
+       | some (.word account), some w =>
+           match memDec account with
+           | .isTrue _ =>
+               (none, { state with memory := fun current =>
+                 if current = account then w else state.memory current })
+           | .isFalse _ => (some .error, state)
+       | _, _ => (some .error, state)) := by
+  rw [evalCrepSemHOLProg.eq_def] <;> rfl
+
+/-- HOL `evaluate (Store32 dst src, s)` (`crepSemScript.sml:270-276`).
+    Finite-support `CrepSemHOLState` counterpart; untagged. -/
+@[simp] theorem evalCrepSemHOLProg_store32 {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (dst src : CrepExpHOL width) :
+    evalCrepSemHOLProg state memDec shMemDec (.store32 dst src) =
+      (match crepExactEvalExp state memDec dst,
+             crepExactEvalExp state memDec src with
+       | some (.word address), some (.word w) =>
+           match crepExactMemStore32 state memDec address (BitVec.ofNat 32 w.toNat) with
+           | some memory => (none, { state with memory := memory })
+           | none => (some .error, state)
+       | _, _ => (some .error, state)) := by
+  rw [evalCrepSemHOLProg.eq_def] <;> rfl
+
+/-- HOL `evaluate (StoreByte dst src, s)` (`crepSemScript.sml:277-283`).
+    Finite-support `CrepSemHOLState` counterpart; untagged. -/
+@[simp] theorem evalCrepSemHOLProg_storeByte {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (dst src : CrepExpHOL width) :
+    evalCrepSemHOLProg state memDec shMemDec (.storeByte dst src) =
+      (match crepExactEvalExp state memDec dst,
+             crepExactEvalExp state memDec src with
+       | some (.word address), some (.word w) =>
+           match crepExactMemStoreByte state memDec address (UInt8.ofNat w.toNat) with
+           | some memory => (none, { state with memory := memory })
+           | none => (some .error, state)
+       | _, _ => (some .error, state)) := by
+  rw [evalCrepSemHOLProg.eq_def] <;> rfl
+
+/-- HOL `evaluate (StoreGlob dst src, s)` (`crepSemScript.sml:284-287`).
+    Finite-support `CrepSemHOLState` counterpart; untagged. -/
+@[simp] theorem evalCrepSemHOLProg_storeGlob {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (dst : BitVec 5) (src : CrepExpHOL width) :
+    evalCrepSemHOLProg state memDec shMemDec (.storeGlob dst src) =
+      (match crepExactEvalExp state memDec src with
+       | some w => (none, CrepSemHOLState.setGlobals dst w state)
+       | none => (some .error, state)) := by
+  rw [evalCrepSemHOLProg.eq_def] <;> rfl
+
+/-- HOL `evaluate (Seq c1 c2, s)` (`crepSemScript.sml:300-303`): run `c1` under
+    `fix_clock`; ordinary completion (`NONE`) runs `c2` on the clamped state,
+    any terminal result is propagated. Finite-support `CrepSemHOLState`
+    counterpart; untagged. -/
+@[simp] theorem evalCrepSemHOLProg_seq {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (first second : CrepProgHOL width) :
+    evalCrepSemHOLProg state memDec shMemDec (.seq first second) =
+      (let step := fixClockCrepSemHOL state
+         (evalCrepSemHOLProg state memDec shMemDec first)
+       match _hstep : step with
+       | (none, stepState) =>
+           evalCrepSemHOLProg (crepStampExactDomains state stepState) memDec shMemDec second
+       | (some _, _) => step) := by
+  rw [evalCrepSemHOLProg.eq_def] <;> rfl
+
+/-- HOL `evaluate (If e c1 c2, s)` (`crepSemScript.sml:304-308`): `Word 0` is
+    false, every other `Word` is true. Finite-support `CrepSemHOLState`
+    counterpart; untagged. -/
+@[simp] theorem evalCrepSemHOLProg_ite {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (condition : CrepExpHOL width) (thenBranch elseBranch : CrepProgHOL width) :
+    evalCrepSemHOLProg state memDec shMemDec (.ite condition thenBranch elseBranch) =
+      (match crepExactEvalExp state memDec condition with
+       | some (.word w) =>
+           if w ≠ 0 then evalCrepSemHOLProg state memDec shMemDec thenBranch
+           else evalCrepSemHOLProg state memDec shMemDec elseBranch
+       | _ => (some .error, state)) := by
+  rw [evalCrepSemHOLProg.eq_def] <;> rfl
+
+/-- HOL `If` true branch: a nonzero `Word` condition evaluates the then-branch. -/
+theorem evalCrepSemHOLProg_ite_true {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (condition : CrepExpHOL width) (thenBranch elseBranch : CrepProgHOL width)
+    (w : BitVec width)
+    (hcondition : crepExactEvalExp state memDec condition = some (.word w))
+    (hw : w ≠ 0) :
+    evalCrepSemHOLProg state memDec shMemDec (.ite condition thenBranch elseBranch) =
+      evalCrepSemHOLProg state memDec shMemDec thenBranch := by
+  rw [evalCrepSemHOLProg_ite, hcondition]
+  exact if_pos hw
+
+/-- HOL `If` false branch: a zero `Word` condition evaluates the else-branch. -/
+theorem evalCrepSemHOLProg_ite_false {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (condition : CrepExpHOL width) (thenBranch elseBranch : CrepProgHOL width)
+    (w : BitVec width)
+    (hcondition : crepExactEvalExp state memDec condition = some (.word w))
+    (hw : w = 0) :
+    evalCrepSemHOLProg state memDec shMemDec (.ite condition thenBranch elseBranch) =
+      evalCrepSemHOLProg state memDec shMemDec elseBranch := by
+  rw [evalCrepSemHOLProg_ite, hcondition]
+  exact if_neg (by simp [hw])
+
+/-- HOL `evaluate (While e c, s)` (`crepSemScript.sml:311-323`): the loop-control
+    `Continue 0`/`NONE` recurse on the clamped `dec_clock` state, `Break 0`
+    completes, and other results pass through `exit_loop`. Finite-support
+    `CrepSemHOLState` counterpart; untagged. -/
+@[simp] theorem evalCrepSemHOLProg_while {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (condition : CrepExpHOL width) (body : CrepProgHOL width) :
+    evalCrepSemHOLProg state memDec shMemDec (.while condition body) =
+      (match crepExactEvalExp state memDec condition with
+       | some (.word w) =>
+           if w ≠ 0 then
+             if _hclock : state.clock = 0 then
+               (some .timeOut, CrepSemHOLState.emptyLocals state)
+             else
+               let decState := decClockCrepSemHOL state
+               let fixed := fixClockCrepSemHOL decState
+                 (evalCrepSemHOLProg decState memDec shMemDec body)
+               match _hfixed : fixed with
+               | (none, loopState) =>
+                   evalCrepSemHOLProg (crepStampExactDomains state loopState) memDec shMemDec
+                     (.while condition body)
+               | (some (.continue 0), loopState) =>
+                   evalCrepSemHOLProg (crepStampExactDomains state loopState) memDec shMemDec
+                     (.while condition body)
+               | (some (.break 0), loopState) => (none, loopState)
+               | (result, loopState) => (exitLoopCrepResult result, loopState)
+           else (none, state)
+       | _ => (some .error, state)) := by
+  rw [evalCrepSemHOLProg.eq_def] <;> rfl
+
+/-- HOL `While` with a zero condition: the loop completes with `(NONE, s)`. -/
+theorem evalCrepSemHOLProg_while_false {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (condition : CrepExpHOL width) (body : CrepProgHOL width) (w : BitVec width)
+    (hcondition : crepExactEvalExp state memDec condition = some (.word w))
+    (hw : w = 0) :
+    evalCrepSemHOLProg state memDec shMemDec (.while condition body) = (none, state) := by
+  rw [evalCrepSemHOLProg_while, hcondition]
+  exact if_neg (by simp [hw])
+
+/-- HOL `While` clock exhaustion (`s.clock = 0` with a nonzero condition):
+    `(SOME TimeOut, empty_locals s)`. -/
+theorem evalCrepSemHOLProg_while_timeout {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (condition : CrepExpHOL width) (body : CrepProgHOL width) (w : BitVec width)
+    (hcondition : crepExactEvalExp state memDec condition = some (.word w))
+    (hw : w ≠ 0) (hclock : state.clock = 0) :
+    evalCrepSemHOLProg state memDec shMemDec (.while condition body) =
+      (some .timeOut, CrepSemHOLState.emptyLocals state) := by
+  rw [evalCrepSemHOLProg_while, hcondition]
+  exact (if_pos hw).trans (dif_pos hclock)
+
+/-- HOL `evaluate (Break n, s)` (`crepSemScript.sml:309`). -/
+@[simp] theorem evalCrepSemHOLProg_break {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (label : Nat) :
+    evalCrepSemHOLProg state memDec shMemDec (.break label : CrepProgHOL width) =
+      (some (.break label), state) := by
+  rw [evalCrepSemHOLProg.eq_def] <;> rfl
+
+/-- HOL `evaluate (Continue n, s)` (`crepSemScript.sml:310`). -/
+@[simp] theorem evalCrepSemHOLProg_continue {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (label : Nat) :
+    evalCrepSemHOLProg state memDec shMemDec (.continue label : CrepProgHOL width) =
+      (some (.continue label), state) := by
+  rw [evalCrepSemHOLProg.eq_def] <;> rfl
+
+/-- HOL `evaluate (Raise eid, s)` (`crepSemScript.sml:326`): raise propagates the
+    exception and clears the locals. -/
+@[simp] theorem evalCrepSemHOLProg_raise {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (exception : BitVec width) :
+    evalCrepSemHOLProg state memDec shMemDec (.raise exception) =
+      (some (.exception exception), CrepSemHOLState.emptyLocals state) := by
+  rw [evalCrepSemHOLProg.eq_def] <;> rfl
+
+/-- HOL `evaluate (Return es, s)` (`crepSemScript.sml:324-325`): evaluate every
+    expression into `word_lab` values and clear the locals. -/
+@[simp] theorem evalCrepSemHOLProg_return {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (values : List (CrepExpHOL width)) :
+    evalCrepSemHOLProg state memDec shMemDec (.return values) =
+      (match values.mapM (@evalCrepSemHOLExp width ‹NeZero width› σ state memDec) with
+       | some ws => (some (.return (ws.map HolWordLab.toPanWordLab)),
+           CrepSemHOLState.emptyLocals state)
+       | none => (some .error, state)) := by
+  rw [evalCrepSemHOLProg.eq_def] <;> rfl
+
+/-- HOL `evaluate (ShMem op v ad, s)` (`crepSemScript.sml:288-299`): loads accept
+    any bound variable and delegate to `sh_mem_load`; stores require a `Word`
+    local and delegate to `sh_mem_store`. -/
+@[simp] theorem evalCrepSemHOLProg_shMem {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (operator : CrepMemOp) (name : Nat) (address : CrepExpHOL width) :
+    evalCrepSemHOLProg state memDec shMemDec (.shMem operator name address) =
+      (match crepExactEvalExp state memDec address with
+       | some (.word addressValue) =>
+           if crepIsLoadMemOp operator then
+             match state.locals.lookup name with
+             | some _ => crepShMemLoadHOL operator name addressValue state shMemDec
+             | none => (some .error, state)
+           else
+             match state.locals.lookup name with
+             | some (.word _) =>
+                 crepShMemStoreHOL operator name addressValue state shMemDec
+             | _ => (some .error, state)
+       | _ => (some .error, state)) := by
+  rw [evalCrepSemHOLProg.eq_def] <;> rfl
+
+/-- HOL `evaluate (ExtCall ffi_index ptr1 len1 ptr2 len2, s)`
+    (`crepSemScript.sml:364-381`): read both byte arrays, dispatch the FFI, then
+    on return write the new bytes back and install the new FFI state. -/
+@[simp] theorem evalCrepSemHOLProg_extCall {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (function : MlString) (configuration configurationLength array arrayLength : Nat) :
+    evalCrepSemHOLProg state memDec shMemDec
+        (.extCall function configuration configurationLength array arrayLength) =
+      (match state.locals.lookup configurationLength, state.locals.lookup configuration,
+             state.locals.lookup arrayLength, state.locals.lookup array with
+       | some (.word configLength), some (.word configAddress),
+         some (.word arrayLengthValue), some (.word arrayAddress) =>
+           match readBytearrayHOL configAddress configLength.toNat
+                   (crepExactMemLoadByte state memDec),
+                 readBytearrayHOL arrayAddress arrayLengthValue.toNat
+                   (crepExactMemLoadByte state memDec) with
+           | some configBytes, some arrayBytes =>
+               match callFFIHOL state.ffi (.extCall function)
+                   (configBytes.map UInt8.toBitVec)
+                   (arrayBytes.map UInt8.toBitVec) with
+               | .final event => (some (.finalFfi event), state)
+               | .ret newFfi newBytes =>
+                   (none, { state with
+                     memory := crepExactWriteBytearray state memDec arrayAddress
+                       (newBytes.map UInt8.ofBitVec),
+                     ffi := newFfi })
+           | _, _ => (some .error, state)
+       | _, _, _, _ => (some .error, state)) := by
+  rw [evalCrepSemHOLProg.eq_def] <;> rfl
+
+/-- HOL `evaluate (Tick, s)` (`crepSemScript.sml:327-329`): decrement the clock,
+    or time out at zero with cleared locals. -/
+@[simp] theorem evalCrepSemHOLProg_tick {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a)) :
+    evalCrepSemHOLProg state memDec shMemDec (.tick : CrepProgHOL width) =
+      (if state.clock = 0 then (some .timeOut, CrepSemHOLState.emptyLocals state)
+       else (none, decClockCrepSemHOL state)) := by
+  rw [evalCrepSemHOLProg.eq_def] <;> rfl
+
+/-- HOL `evaluate (Call caltyp fname argexps, s)` (`crepSemScript.sml:330-363`):
+    evaluate the arguments, look up the code, require distinct formals, install
+    the callee locals under `dec_clock`, run the body under `fix_clock`, then
+    handle ordinary completion/`Break`/`Continue` as `Error`, and `Return`/
+    `Exception` including the handler path and `empty_locals` cleanup. -/
+@[simp] theorem evalCrepSemHOLProg_call {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (returnInfo : Option (List Nat × Option (BitVec width × CrepProgHOL width)))
+    (function : MlString) (arguments : List (CrepExpHOL width)) :
+    evalCrepSemHOLProg state memDec shMemDec (.call returnInfo function arguments) =
+      (match arguments.mapM (@evalCrepSemHOLExp width ‹NeZero width› σ state memDec) with
+       | none => (some .error, state)
+       | some values =>
+           match state.code.lookup function with
+           | none => (some .error, state)
+           | some (parameters, body) =>
+               if parameters.length = values.length && parameters.Nodup then
+                 let proceed : Option (CrepResultHOL (BitVec width) HolFinalEvent) ×
+                     CrepSemHOLState width σ :=
+                   if _hclock : state.clock = 0 then
+                     (some .timeOut, CrepSemHOLState.emptyLocals state)
+                   else
+                     let calleeLocals :=
+                       HolFiniteMapExact.empty.updateList (parameters.zip values)
+                     let callee : CrepSemHOLState width σ :=
+                       { state with locals := calleeLocals }
+                     let decCallee := decClockCrepSemHOL callee
+                     let fixed := fixClockCrepSemHOL decCallee
+                       (evalCrepSemHOLProg decCallee memDec shMemDec body)
+                     match _hfixed : fixed with
+                     | (none, bodyState) => (some .error, bodyState)
+                     | (some (.break _), bodyState) => (some .error, bodyState)
+                     | (some (.continue _), bodyState) => (some .error, bodyState)
+                     | (some (.return retvs), bodyState) =>
+                         match returnInfo with
+                         | none => (some (.return retvs),
+                             CrepSemHOLState.emptyLocals bodyState)
+                         | some (rts, _) =>
+                             if retvs.length ≠ rts.length then
+                               (some .error, bodyState)
+                             else
+                               match rts.mapM state.locals.lookup with
+                               | some _ => (none, { bodyState with
+                                   locals := state.locals.updateListEq
+                                     (rts.zip (retvs.map PanWordLab.toHolWordLab)) })
+                               | none => (some .error, bodyState)
+                     | (some (.exception eid), bodyState) =>
+                         match returnInfo with
+                         | none => (some (.exception eid),
+                             CrepSemHOLState.emptyLocals bodyState)
+                         | some (_, none) => (some (.exception eid),
+                             CrepSemHOLState.emptyLocals bodyState)
+                         | some (_, some (eid', handlerBody)) =>
+                             let handlerState : CrepSemHOLState width σ :=
+                               crepStampExactDomains state
+                                 { bodyState with locals := state.locals }
+                             if eid = eid' then
+                               evalCrepSemHOLProg handlerState memDec shMemDec handlerBody
+                             else (some (.exception eid),
+                               CrepSemHOLState.emptyLocals bodyState)
+                     | (some result, bodyState) =>
+                         (some result, CrepSemHOLState.emptyLocals bodyState)
+                 match returnInfo with
+                 | some (rts, _) => if rts.Nodup then proceed else (some .error, state)
+                 | none => proceed
+               else (some .error, state)) := by
+  rw [evalCrepSemHOLProg.eq_def] <;> rfl
+
+/-- HOL `Call` argument evaluation failure: `(SOME Error, s)`. -/
+theorem evalCrepSemHOLProg_call_args_error {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (returnInfo : Option (List Nat × Option (BitVec width × CrepProgHOL width)))
+    (function : MlString) (arguments : List (CrepExpHOL width))
+    (hargs : arguments.mapM (@evalCrepSemHOLExp width ‹NeZero width› σ state memDec) = none) :
+    evalCrepSemHOLProg state memDec shMemDec (.call returnInfo function arguments) =
+      (some .error, state) := by
+  rw [evalCrepSemHOLProg_call, hargs] <;> rfl
+
+/-- HOL `Call` clock exhaustion with `caltyp = NONE` and a successful argument
+    evaluation: `(SOME TimeOut, empty_locals s)`. -/
+theorem evalCrepSemHOLProg_call_none_timeout {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (function : MlString) (arguments : List (CrepExpHOL width))
+    (values : List (HolWordLab width)) (parameters : List Nat) (body : CrepProgHOL width)
+    (hargs : arguments.mapM (@evalCrepSemHOLExp width ‹NeZero width› σ state memDec) =
+      some values)
+    (hcode : state.code.lookup function = some (parameters, body))
+    (hlen : parameters.length = values.length) (hnodup : parameters.Nodup)
+    (hclock : state.clock = 0) :
+    evalCrepSemHOLProg state memDec shMemDec (.call none function arguments) =
+      (some .timeOut, CrepSemHOLState.emptyLocals state) := by
+  rw [evalCrepSemHOLProg_call, hargs, hcode]
+  simp only [hlen, hnodup, decide_true, Bool.true_and, if_true, dif_pos hclock]
 
 end Flapjack
