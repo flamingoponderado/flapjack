@@ -2949,33 +2949,13 @@ theorem evaluateDeclsExnsWfHOLFinite {width : Nat} {σ : Type} [NeZero width] :
       simpa [PanPropsEvalStateFiniteExact.ofPanSemFinite,
         PanPropsEvalStateFiniteExact.toPanSemFinite] using hfinal
 
-/-- Exact finite-support port of HOL `panProps$exns_wf_evaluate_decls`
-    (`cakeml/pancake/semantics/panPropsScript.sml:1448`): the converse
-    characterization. Under `EVERY is_exn_decl ds` together with the three
-    well-formedness conditions (distinct ids, ids absent from the table,
-    well-formed shapes), the evaluation succeeds and yields exactly the state
-    with the exception table updated by `exceptions ds`. Premises are rendered
-    with the same Bool `all`/`isNone`/`isWfShapeExactHOL` vocabulary as
-    `evaluateDeclsExnsWfHOLFinite`. The quantifier order is HOL's `s ds s'`;
-    HOL's `s'` does not occur in any hypothesis or in the conclusion, so HOL
-    type inference gives it a fresh independent type variable, and the Lean
-    statement binds it fully polymorphically as `{γ : Type} (_result : γ)`
-    rather than at the narrowed state type.
-
-    PanProps-counterpart exact port (bead flapjack-4ac.4.78, audit
-    flapjack-4ac.6). The PanProps finite evaluator
-    `evaluateDeclsPanPropsHOLFinite` is kernel-bridged to the canonical tagged
-    `PanSemStateFiniteExact.evaluateDeclsHOLFinite` by
-    `evaluateDeclsPanPropsHOLFinite_toCanonical` (via the field-for-field state
-    codec `toPanSemFinite`), so this invariant is about the canonical evaluator.
-    The four `|->` fields (`locals`, `globals`, `code`, `eshapes`) are the
-    reviewed canonical `HolFiniteMapExact` translation recorded by the
-    `fmap_as_finite_support` qualifier; the canonical witness
-    `holFmapAsFiniteSupportWitness` is in this module. -/
-@[hol "cakeml/pancake/semantics/panPropsScript.sml" "exns_wf_evaluate_decls"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
-theorem exnsWfEvaluateDeclsHOLFinite {width : Nat} {σ : Type} [NeZero width] :
-    ∀ (state : PanPropsEvalStateFiniteExact width σ) [DecidablePred state.memaddrs]
+/-- Untagged canonical recursion support for HOL
+    `panProps$exns_wf_evaluate_decls`. The proof is stated over PanSem's
+    canonical finite-map carrier and uses PanProps' codec view only for the
+    exception-map update facts. -/
+private theorem evaluateDeclsHOLFinite_exnsWfEvaluateDecls {width : Nat} {σ : Type}
+    [NeZero width] :
+    ∀ (state : PanSemStateFiniteExact width σ) [DecidablePred state.memaddrs]
       (program : List (DeclHOL width)) {γ : Type} (_result : γ),
       program.all isExnDeclHOL = true →
       ((exceptionsHOL program).map Prod.fst).Nodup →
@@ -2983,9 +2963,8 @@ theorem exnsWfEvaluateDeclsHOLFinite {width : Nat} {σ : Type} [NeZero width] :
         (fun entry => (state.eshapes.lookup entry.1).isNone) = true →
       (exceptionsHOL program).all
         (fun entry => isWfShapeExactHOL state.structs entry.2) = true →
-      evaluateDeclsPanPropsCanonical state program =
+      PanSemStateFiniteExact.evaluateDeclsHOLFinite state program =
         some { state with eshapes := state.eshapes.updateList (exceptionsHOL program) } := by
-  simp only [evaluateDeclsPanPropsCanonical_eqHOLFinite]
   intro state hdec program
   induction program generalizing state with
   | nil =>
@@ -3007,12 +2986,13 @@ theorem exnsWfEvaluateDeclsHOLFinite {width : Nat} {σ : Type} [NeZero width] :
               isWfShapeExactHOL state.structs shape) = true := by
             rw [Bool.and_eq_true]
             exact ⟨hfreshHead, hwfHead⟩
-          simp only [evaluateDeclsPanPropsHOLFinite, if_pos hcondition]
+          simp only [PanSemStateFiniteExact.evaluateDeclsHOLFinite, if_pos hcondition]
           have htail := ih
             { state with eshapes := state.eshapes.update (exceptionName, shape) }
             _result hall hnodupTail
-            (all_isNone_update_forward state exceptionName shape (exceptionsHOL rest)
-              hnotmem hfreshTail)
+            (all_isNone_update_forward
+              (PanPropsEvalStateFiniteExact.ofPanSemFinite state) exceptionName shape
+              (exceptionsHOL rest) hnotmem hfreshTail)
             (by simpa using hwfTail)
           rw [htail]
           simp [exceptionsHOL, updateList_cons]
@@ -3022,6 +3002,51 @@ theorem exnsWfEvaluateDeclsHOLFinite {width : Nat} {σ : Type} [NeZero width] :
           exact absurd hall (by simp [List.all_cons, isExnDeclHOL])
       | function declaration =>
           exact absurd hall (by simp [List.all_cons, isExnDeclHOL])
+
+/-- Exact finite-support port of HOL `panProps$exns_wf_evaluate_decls`
+    (`cakeml/pancake/semantics/panPropsScript.sml:1448`): the converse
+    characterization. Under `EVERY is_exn_decl ds` together with the three
+    well-formedness conditions (distinct ids, ids absent from the table,
+    well-formed shapes), the evaluation succeeds and yields exactly the state
+    with the exception table updated by `exceptions ds`. Premises are rendered
+    with the same Bool `all`/`isNone`/`isWfShapeExactHOL` vocabulary as
+    `evaluateDeclsExnsWfHOLFinite`. The quantifier order is HOL's `s ds s'`;
+    HOL's `s'` does not occur in any hypothesis or in the conclusion, so HOL
+    type inference gives it a fresh independent type variable, and the Lean
+    statement binds it fully polymorphically as `{γ : Type} (_result : γ)`
+    rather than at the narrowed state type.
+
+    PanProps-counterpart exact port (bead flapjack-4ac.4.78, audit
+    flapjack-4ac.6). Its proof applies the canonical tagged
+    `PanSemStateFiniteExact.evaluateDeclsHOLFinite` through the field-for-field
+    state codec `toPanSemFinite`; it does not unfold the PanProps-local
+    recursive proof helper.
+    The four `|->` fields (`locals`, `globals`, `code`, `eshapes`) are the
+    reviewed canonical `HolFiniteMapExact` translation recorded by the
+    `fmap_as_finite_support` qualifier; the canonical witness
+    `holFmapAsFiniteSupportWitness` is in this module. -/
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "exns_wf_evaluate_decls"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+theorem exnsWfEvaluateDeclsHOLFinite {width : Nat} {σ : Type} [NeZero width] :
+    ∀ (state : PanPropsEvalStateFiniteExact width σ) [DecidablePred state.memaddrs]
+      (program : List (DeclHOL width)) {γ : Type} (_result : γ),
+      program.all isExnDeclHOL = true →
+      ((exceptionsHOL program).map Prod.fst).Nodup →
+      (exceptionsHOL program).all
+        (fun entry => (state.eshapes.lookup entry.1).isNone) = true →
+      (exceptionsHOL program).all
+          (fun entry => isWfShapeExactHOL state.structs entry.2) = true →
+      evaluateDeclsPanPropsCanonical state program =
+        some { state with eshapes := state.eshapes.updateList (exceptionsHOL program) } := by
+  intro state hdec program γ _result hall hnodup hfresh hwf
+  have hcanonical := evaluateDeclsHOLFinite_exnsWfEvaluateDecls
+    state.toPanSemFinite program _result hall (by simpa using hnodup)
+    (by simpa [PanPropsEvalStateFiniteExact.toPanSemFinite] using hfresh)
+    (by simpa [PanPropsEvalStateFiniteExact.toPanSemFinite] using hwf)
+  unfold evaluateDeclsPanPropsCanonical
+  rw [hcanonical]
+  simp [PanPropsEvalStateFiniteExact.ofPanSemFinite,
+    PanPropsEvalStateFiniteExact.toPanSemFinite]
 
 /-- Exact finite-support port of HOL
     `panProps$evaluate_decls_only_funs_and_exn_decls`
