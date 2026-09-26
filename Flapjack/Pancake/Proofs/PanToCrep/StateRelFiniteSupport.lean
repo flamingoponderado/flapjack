@@ -54,6 +54,15 @@ theorem holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact
         PanSemStateFiniteExact.ofExact state.toExact state.toExact_finiteSupport = state) :=
   PanSemStateFiniteExact.holFmapAsFiniteSupportWitness
 
+/-- Same-module canonical relation witness for the multi-carrier
+    `fmap_as_finite_support_relation` qualifier. It forwards the canonical
+    finite-support roundtrip of `PanToCrepContextExact`, the carrier owning the
+    finite-map field traversed by HOL `locals_rel_def` (`vars`). -/
+theorem holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact
+    {width : Nat} [NeZero width] (context : PanToCrepContextExact width) :
+    PanToCrepContextExact.ofBroad (PanToCrepContextExact.toBroad context) = context :=
+  PanToCrepContextExact.holFmapAsFiniteSupportWitness context
+
 /-- Exact port of HOL `state_rel_def`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:45-58`). `source.globals`
     is the only finite-map field of an exact state carrier that the relation
@@ -75,10 +84,16 @@ def panToCrepStateRelFiniteExact {width : Nat} {σ : Type} [NeZero width]
     source.baseAddr = target.baseAddr ∧
     source.topAddr = target.topAddr
 
-/-- Flapjack-specific local-relation support over the exact finite-support
-    PanSem value and CrepSem word carriers. The final conjunct preserves the
-    source shape invariant; this is not a tagged `locals_rel_def` port because
-    the relation spans separate map carriers. -/
+/-- Exact port of HOL `locals_rel_def`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:71-78`). The relation
+    traverses exactly three finite-map values: `context.vars` (the owning
+    `PanToCrepContextExact` field) and the two standalone exact-map parameters
+    `sourceLocals`/`targetLocals`, which the qualifier records as bare entries.
+    The remaining HOL side conditions (`no_overlap`, `ctxt_max`, `shape_of`,
+    `OPT_MMAP`, `flatten`, `is_wf_shape_nil`) are rendered clause-for-clause. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "locals_rel_def"
+  (fmap_as_finite_support_relation :=
+    [PanToCrepContextExact.vars, sourceLocals, targetLocals])]
 def panToCrepLocalsRelFiniteExact {width : Nat} [NeZero width]
     (context : PanToCrepContextExact width)
     (sourceLocals : HolFiniteMapExact MlS (ValueHOL width))
