@@ -4767,6 +4767,8 @@ def ctxtFcExactHOL {width : Nat} [NeZero width]
   eids := em
   vmax := maxList ns
 
+namespace CtxtFcExact
+
 /-- Canonical finite-map representation witness for the imported exact context
     carrier `PanToCrepContextExact`, required by the `fmap_as_finite_support`
     qualifier on `ctxtFcExactHOL`. Flapjack-only representation infrastructure;
@@ -4776,5 +4778,7 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width]
     PanToCrepContextExact.ofBroad (PanToCrepContextExact.toBroad context) = context := by
   cases context
   rfl
+
+end CtxtFcExact
 
 end Flapjack
