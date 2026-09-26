@@ -99,6 +99,23 @@ val _ = print_eval "primitive_destination_missing"
   ``pan_to_crep$compile
       <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 10 |>
       (Primitive «dst» AddCarry [Const (1w : 8 word); Var Local «src»])``;
+val _ = print_eval "store_one_word"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (Store (Const (3w : 8 word)) (Const 4w))``;
+val _ = print_eval "store_multiword"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (Store (Const (3w : 8 word)) (RStruct [Const 4w; Const 5w]))``;
+val _ = print_eval "store_address_fallback"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (Store (RStruct ([] : 8 panLang$exp list)) (Const 4w))``;
+val _ = print_eval "store_shape_length_fallback"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY |+ («bad», (panLang$Comb [panLang$One; panLang$One], [9]));
+         funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (Store (Const (3w : 8 word)) (Var Local «bad»))``;
 
 val _ = print_eval "struct_skip"
   ``pan_to_crep$compile

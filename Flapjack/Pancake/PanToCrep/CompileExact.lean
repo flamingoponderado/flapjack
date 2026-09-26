@@ -260,4 +260,26 @@ def compilePrimitiveExactHOLW {width : Nat} [NeZero width]
         (fun index => context.vmax + index + 1)
       nestedDecsHOL temporaries values (.primitive names operator temporaries)
 
+/-! The recursive `Store` clause from `compile_def`
+    (`pan_to_crepScript.sml:177-185`). The address must compile to a head;
+    the value list must have exactly its shape size. HOL reserves `vmax+1`
+    for the address and generates the remaining temporaries from that base. -/
+
+def compileStoreExactHOLW {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width)
+    (address value : Flapjack.Pancake.PanLang.ExpHOL width) : CrepProgHOL width :=
+  match compileExpExactHOLW context address with
+  | (compiledAddress :: _, _) =>
+      let (values, shape) := compileExpExactHOLW context value
+      let valueCount := Flapjack.Pancake.PanLang.sizeOfShapeHOL shape
+      let addressName := context.vmax + 1
+      let valueNames := (List.range valueCount).map
+        (fun index => addressName + index + 1)
+      if valueCount != values.length then .skip
+      else
+        let storeSequence := crepNestedSeqHOL
+          (storesHOL (.var addressName) (valueNames.map CrepExpHOL.var) (0 : BitVec width))
+        nestedDecsHOL (addressName :: valueNames) (compiledAddress :: values) storeSequence
+  | ([], _) => .skip
+
 end Flapjack

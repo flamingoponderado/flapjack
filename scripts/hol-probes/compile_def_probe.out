@@ -16,6 +16,14 @@ local_assign_missing_destination=Skip
 local_assign_length_fallback=Skip
 primitive_destination_present=Dec 11 (Const 1w) (Dec 12 (Var 8) (Primitive [7] AddCarry [11; 12]))
 primitive_destination_missing=Skip
+store_one_word=Dec 1 (Const 3w) (Dec 2 (Const 4w) (Seq (Store (Var 1) (Var 2)) Skip))
+store_multiword=Dec 1 (Const 3w)
+  (Dec 2 (Const 4w)
+     (Dec 3 (Const 5w)
+        (Seq (Store (Var 1) (Var 2))
+           (Seq (Store (Op Add [Var 1; Const 1w]) (Var 3)) Skip))))
+store_address_fallback=Skip
+store_shape_length_fallback=Skip
 struct_skip=Skip
 struct_break=Break 0
 struct_continue=Continue 0
