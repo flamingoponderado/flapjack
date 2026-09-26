@@ -913,7 +913,9 @@ run_probe comp_field_probeScript.sml comp_field_probe.out \
 run_probe compile_panop_probeScript.sml compile_panop_probe.out \
   "$cake_dir/pancake/pan_to_crepScript.sml"
 run_probe compile_exp_probeScript.sml compile_exp_probe.out \
-  leaves bytes_in_word nstruct nfield load_one load_two struct_field loads_ops cmp_shift finite_map_shadow finite_map_load32_local \
+  leaves missing_local bytes_in_word nstruct nfield load_one load_two struct_field \
+  struct_fallbacks loads_ops cmp_shift shape_fallbacks heads_fallbacks \
+  binary_fallbacks finite_map_shadow finite_map_load32_local \
   finite_map_load_byte_local loadbyte_recursive_address \
   "$cake_dir/pancake/pan_to_crepScript.sml"
 run_probe exp_hdl_probeScript.sml exp_hdl_probe.out \
@@ -925,7 +927,13 @@ run_probe ret_hdl_probeScript.sml ret_hdl_probe.out \
 run_probe wrap_rt_probeScript.sml wrap_rt_probe.out \
   none named "$cake_dir/pancake/pan_to_crepScript.sml"
 run_probe compile_def_probeScript.sml compile_def_probe.out \
-  return missing_global empty_one_global extra_names_global missing_names_global \
+  return multi_return store32_clause store32_fallback store_byte_clause store_byte_fallback \
+  if_clause if_fallback while_clause while_fallback \
+  global_assign_fallback global_shmem_load_fallback \
+  local_assign_direct local_assign_overlap_temporaries local_assign_missing_destination \
+  local_assign_length_fallback \
+  struct_skip struct_break struct_continue struct_tick struct_annot struct_seq \
+  missing_global empty_one_global extra_names_global missing_names_global \
   missing_local empty_one_local extra_names_local missing_names_local valid_local \
   empty_struct_return finite_map_shadow_return extcall_high_tail \
   extcall_shared_high_tail \

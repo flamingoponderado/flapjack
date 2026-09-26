@@ -30,6 +30,48 @@ context.
 
 namespace Flapjack
 
+/-! HOL `pc_compile_correct` (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:442-490`)
+has quantified inputs `v`, `v1`, `res`, `s1`, `t`, and `ctxt`. Its seven
+premises are `evaluate (v,v1) = (res,s1)`, `res ≠ SOME Error`, `state_rel v1 t`,
+`code_rel ctxt v1.code t.code`, `excp_rel ctxt.eids v1.eshapes`,
+`locals_rel ctxt v1.locals t.locals`, and `localised_prog v`. It concludes that
+there exist `res1` and `t1` with the target evaluation of `(compile ctxt v,t)`;
+the post-state, code, and exception relations; and the complete HOL result
+case split (`NONE`, `Error` excluded, timeout, break, continue, flattened
+return, bounded exception lookup, and final FFI).
+
+The HOL proof applies `recInduct panSemTheory.evaluate_ind` and resumes all 21
+source constructors: `Skip`, `Break`, `Continue`, `Annot`, `Tick`, `Assign`,
+`Primitive`, `Dec`, `Store`, `Store32`, `StoreByte`, `ShMemLoad`, `ShMemStore`,
+`Return`, `Raise`, `ExtCall`, `Seq`, `If`, `While`, `Call`, and `DecCall`.
+The recursive induction obligations are for `Dec`, `Seq`, `If`, `While`,
+`Call`, and `DecCall`; `Call` additionally splits tail-call, timeout, return,
+exception, and final-FFI outcomes. These source proof branches do not turn the
+production-carrier declarations in `Proofs/PanToCrep/EvaluateCases` into exact
+HOL-shaped cases.
+
+The relation hypotheses also have distinct source definitions in this same
+HOL proof file: `state_rel_def` (line 45) equates total word memory, both
+memory domains, clock, endianness, FFI, and address bounds while requiring
+empty source structs/globals; `code_rel_def` (line 32) relates every source
+code entry to `compile (ctxt_fc ...)` in target code; `excp_rel_def` (line 16)
+requires equal exception-map domains and injective compiler codes; and
+`locals_rel_def` (line 71) combines context well-formedness with slot lookup,
+`OPT_MMAP`, flattening, and well-formed-shape obligations. The existing
+`stateRel`, `codeRelW`, `excpRel`, and `localsRel` definitions have analogous
+logical clauses but use production `String`, `Shape`, `PanValue`, optional
+memory, and `CrepRuntimeState` carriers. Their current similarity does not
+discharge the exact-carrier prerequisites recorded on `.5.16.1`.
+
+There is no assembled Lean theorem with that statement. The existing
+`pc_compile_correct` constructor helpers in `Proofs/PanToCrep/EvaluateCases`
+are individual proof infrastructure, and the `stateRel` below is the
+production `PanSemState`/`CrepRuntimeState` relation, not evidence that the
+exact HOL carriers and both evaluator clause surfaces have been connected.
+Accordingly no `@[hol]` tag is claimed here. The faithful assembled theorem is
+tracked by `flapjack-4ac.5.16.1`, with exact Pan evaluator, Crep evaluator,
+compiler, and relation prerequisites. -/
+
 /-! Flapjack analogue of HOL `globals_lookup_def`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:435-438`). The lookup
     algorithm uses the same 5-bit indices, shape-size count, and optional-map

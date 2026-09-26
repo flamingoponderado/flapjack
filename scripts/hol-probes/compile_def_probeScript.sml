@@ -23,6 +23,104 @@ val _ = print_eval "return"
       <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
       (Return (Const (7w : 8 word)))``;
 
+val _ = print_eval "multi_return"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (Return (RStruct [Const (1w : 8 word); Const 2w]))``;
+
+val _ = print_eval "store32_clause"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (panLang$Store32 (panLang$Const (1w : 8 word)) (panLang$Const 2w))``;
+val _ = print_eval "store32_fallback"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (panLang$Store32 (panLang$RStruct ([] : 8 panLang$exp list))
+        (panLang$Const 2w))``;
+val _ = print_eval "store_byte_clause"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (panLang$StoreByte (panLang$Const (3w : 8 word)) (panLang$Const 4w))``;
+val _ = print_eval "store_byte_fallback"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (panLang$StoreByte (panLang$Const (3w : 8 word))
+        (panLang$RStruct ([] : 8 panLang$exp list)))``;
+val _ = print_eval "if_clause"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (If (Const (1w : 8 word)) Skip Break)``;
+val _ = print_eval "if_fallback"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (If (RStruct ([] : 8 panLang$exp list)) Skip Skip)``;
+val _ = print_eval "while_clause"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (While (Const (2w : 8 word)) Break)``;
+val _ = print_eval "while_fallback"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (While (RStruct ([] : 8 panLang$exp list)) Skip)``;
+val _ = print_eval "global_assign_fallback"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (Assign Global «g» (Const (5w : 8 word)))``;
+val _ = print_eval "global_shmem_load_fallback"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (ShMemLoad Op8 Global «g» (Const (3w : 8 word)))``;
+val _ = print_eval "local_assign_direct"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY |+ («dst», (panLang$One, [7])) |+ («src», (panLang$One, [8]));
+         funcs := FEMPTY; eids := FEMPTY; vmax := 10 |>
+      (Assign Local «dst» (Var Local «src»))``;
+val _ = print_eval "local_assign_overlap_temporaries"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY |+ («dst», (panLang$One, [7])) |+ («src», (panLang$One, [7]));
+         funcs := FEMPTY; eids := FEMPTY; vmax := 10 |>
+      (Assign Local «dst» (Var Local «src»))``;
+val _ = print_eval "local_assign_missing_destination"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 10 |>
+      (Assign Local «dst» (Var Local «src»))``;
+val _ = print_eval "local_assign_length_fallback"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY |+ («dst», (panLang$Comb [panLang$One; panLang$One], [7; 8]))
+           |+ («src», (panLang$One, [9]));
+         funcs := FEMPTY; eids := FEMPTY; vmax := 10 |>
+      (Assign Local «dst» (Var Local «src»))``;
+
+val _ = print_eval "struct_skip"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (Skip : 8 word panLang$prog)``;
+
+val _ = print_eval "struct_break"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (Break : 8 word panLang$prog)``;
+
+val _ = print_eval "struct_continue"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (Continue : 8 word panLang$prog)``;
+
+val _ = print_eval "struct_tick"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (Tick : 8 word panLang$prog)``;
+
+val _ = print_eval "struct_annot"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (Annot «slice» «text» : 8 word panLang$prog)``;
+
+val _ = print_eval "struct_seq"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (Seq Skip (Seq Break Continue) : 8 word panLang$prog)``;
+
 val _ = print_eval "missing_global"
   ``pan_to_crep$compile
       <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
