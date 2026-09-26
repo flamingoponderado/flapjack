@@ -272,4 +272,20 @@ theorem progOfHOL_seqAssocHOL_while {width : Nat} [NeZero width]
   rw [progOfHOL_smartSeqHOL]
   simp [seqAssoc, progOfHOL, hbody]
 
+/-- Flapjack-specific codec equation for the DecCall clause of HOL
+`seq_assoc_def`. Its only recursive obligation is the body equation at Skip.
+HOL has no theorem about commuting `progOfHOL` with `seqAssocHOL`, so this
+declaration carries no `@[hol]` tag. -/
+theorem progOfHOL_seqAssocHOL_decCall {width : Nat} [NeZero width]
+    (pre : ProgHOL width) (name : MlS) (shape : ShapeHOL) (function : MlS)
+    (arguments : List (ExpHOL width)) (body : ProgHOL width)
+    (hbody : progOfHOL (seqAssocHOL .skip body) =
+      seqAssoc .skip (progOfHOL body)) :
+    progOfHOL (seqAssocHOL pre (.decCall name shape function arguments body)) =
+      seqAssoc (progOfHOL pre)
+        (progOfHOL (.decCall name shape function arguments body)) := by
+  simp only [seqAssocHOL]
+  rw [progOfHOL_smartSeqHOL]
+  simp [seqAssoc, progOfHOL, hbody]
+
 end Flapjack
