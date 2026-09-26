@@ -63,8 +63,21 @@ clock, and exposes the callee post-state. Their Lean checks live in
 (`return`, `multi_return`, and the empty-struct return), paired
 `Store32`/`StoreByte` success and fallback rows, `If`/`While` success and
 fallback rows, Global Assign/ShMemLoad Skip fallbacks, Local Assign direct,
-overlap-temporary, missing-destination, and length-fallback rows, and assigned Global call
-destinations through `pan_to_crep$compile`: absent lookups, the
+overlap-temporary, missing-destination, and length-fallback rows, Primitive
+destination present/missing rows, one-word/multiword Store and fallback rows,
+scalar/structured Raise and fallback rows, ShMemStore success and missing-head
+rows, local ShMemLoad success and fallback rows, and assigned Global call
+destinations through `pan_to_crep$compile`, plus scalar/multiword Dec and
+shape-length fallback rows. `extcall_constants` (with `vmax = 400`),
+`extcall_high_tail` (with `vmax = 0`), `extcall_shared_high_tail`, and
+`extcall_shape_fallback` pin the `ExtCall` case: its freshness bound scans all
+operand variables, including a high variable that is not emitted, and ignores
+context `vmax`; the four operands must also have shape `One` and nonempty
+compiled lists. The exact untagged `compileExtCallExactHOLW` clause slice and
+Lean checks live in `Flapjack.Test.CompileDefParity`. Regenerate the direct HOL
+fixture with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=compile_def_probeScript.sml bash scripts/hol-probes/regenerate.sh`:
+absent lookups, the
 `One`/empty-list fallback, and inconsistent shape/name-list lengths. The
 matching Lean cases live in `Flapjack.Test.CompileDefParity`. The
 `struct_skip`, `struct_seq`, `struct_break`, `struct_continue`, `struct_tick`,

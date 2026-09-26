@@ -182,4 +182,22 @@ theorem extCallStepHOLExact_returned {width : Nat} {σ : Type} [NeZero width]
                    ffi := newFfi }) := by
   simp [extCallStepHOLExact, h1, h2, h3, h4, hread1, hread2, hcall]
 
+/-- The exact `ExtCall` clause only ever prefix-extends the FFI `ioEvents`
+    trace: the final branch clears locals (FFI unchanged) and the returned
+    branch installs `callFFIHOL`'s new FFI state, whose `ioEvents` is a list
+    prefix by `callFFIHOL_return_ioEvents_prefix`.  All error branches leave the
+    state untouched.  This is the `ExtCall` leaf of the evaluator's clock
+    monotonicity argument. -/
+theorem extCallStepHOLExact_ioEvents_prefix {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateExact width σ) [DecidablePred state.memaddrs]
+    (evalExpression : PanSemStateExact width σ → ExpHOL width → Option (ValueHOL width))
+    (function : MlS) (ptr1 len1 ptr2 len2 : ExpHOL width) :
+    state.ffi.ioEvents <+:
+      (extCallStepHOLExact state evalExpression function ptr1 len1 ptr2 len2).2.ffi.ioEvents := by
+  unfold extCallStepHOLExact
+  split <;> (try split) <;> (try split) <;>
+    first
+    | exact List.prefix_refl _
+    | exact callFFIHOL_return_ioEvents_prefix _ _ _ _ _ _ (by assumption)
+
 end Flapjack
