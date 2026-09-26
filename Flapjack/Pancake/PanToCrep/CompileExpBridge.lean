@@ -470,4 +470,69 @@ theorem compileExpBridge_loadByte {width : Nat} [NeZero width]
     | mk l1 l2 =>
       cases l1 <;> (cases l2 <;> simp only [List.map_cons, List.map_nil, shapeToHOL])
 
+
+/-! ### Single-subexpression guarded handlers: `rField` and `load`
+
+`rField` inspects the shape of the compiled subexpression, `load` additionally
+guards on a nonempty compiled list. The production and exact matches are aligned
+by the codec pair equality, `compileField_map_codecs`, and the checked
+`loadShape`/`loadShapeBytes`/`loadShapeBytesHOLW` bridges. -/
+
+theorem compileExpBridge_rField {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (index : Nat)
+    (expression : Exp (BitVec width))
+    (h : compileExpBridgeProp context expression) :
+    compileExpBridgeProp context (.rField index expression) := by
+  obtain ⟨hl1, hl2⟩ := h
+  have hex :
+      compileExpExactHOLW context (expToHOL expression) =
+        ((compileExpHOL (CompileExpContextExact.prodContext context) expression).1.map
+            crepExpToHOL,
+          shapeToHOL
+            (compileExpHOL (CompileExpContextExact.prodContext context) expression).2) :=
+    Prod.ext hl1.symm hl2.symm
+  simp only [compileExpBridgeProp, compileExpHOL.eq_5, compileExpExactHOLW.eq_5,
+    expToHOL.eq_4, hex]
+  cases hshape : (compileExpHOL (CompileExpContextExact.prodContext context) expression).2 with
+  | one =>
+      constructor <;>
+        simp only [List.map_cons, List.map_nil, crepExpToHOL.eq_1, shapeToHOL]
+  | comb fields =>
+      have hcf := compileField_map_codecs index fields
+        (compileExpHOL (CompileExpContextExact.prodContext context) expression).1
+      simp only [shapeToHOL]
+      exact hcf
+  | named nm =>
+      constructor <;>
+        simp only [List.map_cons, List.map_nil, crepExpToHOL.eq_1, shapeToHOL]
+
+theorem compileExpBridge_load {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (shape : Shape)
+    (expression : Exp (BitVec width))
+    (h : compileExpBridgeProp context expression) :
+    compileExpBridgeProp context (.load shape expression) := by
+  obtain ⟨hl1, hl2⟩ := h
+  have hex :
+      compileExpExactHOLW context (expToHOL expression) =
+        ((compileExpHOL (CompileExpContextExact.prodContext context) expression).1.map
+            crepExpToHOL,
+          shapeToHOL
+            (compileExpHOL (CompileExpContextExact.prodContext context) expression).2) :=
+    Prod.ext hl1.symm hl2.symm
+  simp only [compileExpBridgeProp, compileExpHOL.eq_8, compileExpExactHOLW.eq_8,
+    expToHOL.eq_7, hex, sizeOfShapeHOL_shapeToHOL]
+  cases hcomp : compileExpHOL (CompileExpContextExact.prodContext context) expression with
+  | mk l s =>
+    cases l with
+    | nil =>
+        constructor <;>
+          simp only [List.map_cons, List.map_nil, crepExpToHOL.eq_1, shapeToHOL]
+    | cons a as =>
+        simp only [List.map_cons]
+        constructor
+        · rw [loadShape_eq_loadShapeBytes_of_stride_eq (0 : BitVec width)
+              (CrepBytesInWord.bytesInWord) (Shape.shapeSize shape) a rfl]
+          exact loadShapeBytes_map_crepExpToHOL (0 : BitVec width) (Shape.shapeSize shape) a
+        · trivial
+
 end Flapjack
