@@ -12234,5 +12234,13 @@
     "lean_name": "asmInstOkExact",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.6.1.2): exact positive-width port of HOL asmScript.sml:286-299 over the exact HolInst/HolArith/HolFp/HolRegImm carriers and exact AsmConfigExact; the mem case reads the exact offset_ok-based addr/hw/byte offset helpers. The production asmInstOk remains the untagged width-general executed form with generic WordLangInst/AsmConfig carriers."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmScript.sml",
+    "hol_name": "asm_ok_def",
+    "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
+    "lean_name": "asmOkExact",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.6.1.2): exact positive-width port of HOL asm_ok_def over the exact HolAsm carrier and the exact AsmConfigExact; jump/cjump/loc offset overloads built on the exact asmOffsetOkExact, instruction payload via exact asmInstOkExact, cmp_ok via exact asmCmpOkExact over HolRegImm; the production asmOk uses the generic AsmData/AsmConfig carriers and is documented_mismatch."
   }
 ]
