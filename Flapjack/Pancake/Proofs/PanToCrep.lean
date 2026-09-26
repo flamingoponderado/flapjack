@@ -17,6 +17,7 @@ import Flapjack.Pancake.Semantics.PanProps
 import Flapjack.Pancake.Semantics.PanSem.ValueHOL
 import Flapjack.Pancake.PanToCrep.Compile
 import Flapjack.Pancake.PanToCrep.CompileProg
+import Flapjack.Pancake.PanToCrep.ContextExact
 import Flapjack.Pancake.Proofs.PanToCrep.CompileExpVmax
 import Flapjack.CrepeCompileExpVariables
 import Flapjack.PanToCrepMaxList
@@ -4731,5 +4732,53 @@ has a Lean counterpart; Flapjack's `stateRel` relates production String-keyed
 `PanSemState`/`CrepRuntimeState`. Neither may be `@[hol]`-tagged. Both are
 tracked by the same faithful-port dependency `flapjack-pxn.18.4.4` (with
 `flapjack-pxn.18.3.5.8` and `flapjack-0lj`). -/
+
+/-! ## Exact HOL `pan_to_crepProof$ctxt_fc`
+
+HOL (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:25-29`) builds the
+compiled-function context from the function map `cvs`, the exception map `em`,
+variable names `vs`, shapes `shs`, and the `GENLIST`-indexed name blocks `ns`:
+
+    ctxt_fc cvs em vs shs ns =
+      <|vars := FEMPTY |++ ZIP (vs, ZIP (shs, with_shape shs ns));
+        funcs := cvs; eids := em; vmax := MAX_LIST ns|>
+
+The Lean port matches the argument order `(cvs, em, vs, shs, ns)` and the field
+assignment clause for clause. HOL `FEMPTY |++ l` is `FUPDATE_LIST FEMPTY l`
+(`HolFiniteMapExact.updateList HolFiniteMapExact.empty l`), HOL `ZIP` is
+`List.zip` (which truncates to the shorter list exactly as HOL does),
+`with_shape` is the tagged `withShapeHOL`, and `MAX_LIST` is `maxList`. The
+record carrier is the reviewed exact `PanToCrepContextExact`; the
+`fmap_as_finite_support` qualifier records only the canonical finite-support
+representation of its three HOL finite-map fields. Direct HOL-EVAL rows are in
+`scripts/hol-probes/ctxt_fc_probe.out` and replayed by
+`Flapjack.Test.PanToCrepContextExactParity`. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "ctxt_fc_def"
+  (fmap_as_finite_support := [vars, funcs, eids])]
+def ctxtFcExactHOL {width : Nat} [NeZero width]
+    (cvs : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ShapeHOL))
+    (em : HolFiniteMapExact MlS (BitVec width))
+    (vs : List MlS) (shs : List ShapeHOL) (ns : List Nat) :
+    PanToCrepContextExact width where
+  vars := HolFiniteMapExact.updateList
+    (HolFiniteMapExact.empty : HolFiniteMapExact MlS (ShapeHOL × List Nat))
+    (vs.zip (shs.zip (withShapeHOL shs ns)))
+  funcs := cvs
+  eids := em
+  vmax := maxList ns
+
+namespace CtxtFcExact
+
+/-- Canonical finite-map representation witness for the imported exact context
+    carrier `PanToCrepContextExact`, required by the `fmap_as_finite_support`
+    qualifier on `ctxtFcExactHOL`. Flapjack-only representation infrastructure;
+    it is not a port of a HOL declaration. -/
+theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width) :
+    PanToCrepContextExact.ofBroad (PanToCrepContextExact.toBroad context) = context := by
+  cases context
+  rfl
+
+end CtxtFcExact
 
 end Flapjack
