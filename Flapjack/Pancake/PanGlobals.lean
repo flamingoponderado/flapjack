@@ -287,13 +287,16 @@ theorem length_le_maxNameLength {name : String} {names : List String}
     `NameRanged name` (only apostrophes are appended).  The executed path
     supplies byte-ranged seeds: `globalCompile` uses `freshNameHOL "" names` and
     `freshNameHOL "vn'" (resultName :: names)`, and `globalNewMainName` uses the
-    literal `"main"`.  The `names` list is used only for membership equality,
-    never inspected, so it is not a byte-observable identifier.  Direct HOL rows
-    are in `scripts/hol-probes/pan_globals_fresh_name_probe.out`; Lean rows and
-    the byte-rangedness guard are in
+    literal `"main"`.  `names : List String` represents the HOL `mlstring list`
+    names and is classified `equality/map-key-only`: it is used only for
+    membership equality, never inspected, and is never byte-observable.  This is
+    consistent with the `names` classification already reviewed for
+    `freshNameHOL_not_mem_hol`/`freshNameHOL_not_mem_of_subset_hol`.  Direct HOL
+    rows are in `scripts/hol-probes/pan_globals_fresh_name_probe.out`; Lean rows
+    and the byte-rangedness guard are in
     `Flapjack/Test/PanGlobalsNameByteRangedParity.lean`. -/
 @[hol "cakeml/pancake/pan_globalsScript.sml" "fresh_name_def"
-  (names_as_string := [name]) (names_as_string_boundary := [name])]
+  (names_as_string := [name, names]) (names_as_string_boundary := [name])]
 def freshNameHOL (name : String) (names : List String) : String :=
   if name ∈ names then freshNameHOL (name ++ "'") names else name
 termination_by 1 + maxNameLength names - name.length
@@ -1134,11 +1137,6 @@ theorem isExnDecl_declOfHOL {width : Nat} [NeZero width] (declaration : DeclHOL 
     isExnDecl (declOfHOL declaration) = isExnDeclHOL declaration := by
   cases declaration <;> rfl
 
-theorem globalDeclIsFunction_declOfHOL {width : Nat} [NeZero width]
-    (declaration : DeclHOL width) :
-    globalDeclIsFunction (declOfHOL declaration) = isFunctionHOL declaration := by
-  cases declaration <;> rfl
-
 @[simp] theorem isName_declOfHOL {width : Nat} [NeZero width] (declaration : DeclHOL width) :
     isName (declOfHOL declaration) = isNameHOL declaration := by
   cases declaration <;> rfl
@@ -1189,21 +1187,21 @@ def resortDeclsHOL {width : Nat} [NeZero width]
   (declarations.filter isNameHOL) ++ (declarations.filter isExnDeclHOL) ++
     (declarations.filter isDeclHOL) ++ (declarations.filter isFunctionHOL)
 
-/-- Exact port of HOL `new_main_name_def`
+/-- Untagged (tag WITHDRAWN) definition matching HOL `new_main_name_def`
     (`cakeml/pancake/pan_globalsScript.sml:224`):
 
     HOL `new_main_name decls = fresh_name «main» (MAP FST (functions decls))`.
 
+    The `@[hol ...]` tag is WITHDRAWN per the coordinator HOLD: `newMainNameHOL`
+    returns a byte-observable `MlS` main name computed through the String-backed
+    `freshNameHOL`, and the exact `mlstring`-native `fresh_name` restatement (or
+    an approved `names_as_string` + `NameRanged` witness for this declaration)
+    has not been provided.  Tracked by bead `flapjack-pxn.18.3.5.8.21`.
     `functionsHOL` is the tagged mlstring-keyed port of HOL `functions`, so its
-    first components are the function names in source order.  HOL's `fresh_name`
-    operates on `mlstring`; this port applies the reviewed `freshNameHOL`
-    (`fresh_name_def`) through the total byte codec
-    `toStringOfBytes`/`ofString` (`ofString_toStringOfBytes` is unconditional),
-    which is the identity on the `MlS` carrier and preserves the membership
-    test that `freshNameHOL` performs (both encode as `String` equality and
-    `toStringOfBytes` is injective).  The seed is the literal `"main"` and the
-    result is the exact `MlS` carrier. -/
-@[hol "cakeml/pancake/pan_globalsScript.sml" "new_main_name_def"]
+    first components are the function names in source order; the byte codec
+    `toStringOfBytes`/`ofString` is the identity on the `MlS` carrier and
+    preserves the membership test.  Do not re-tag until the coordinator
+    approves a faithful restatement. -/
 def newMainNameHOL {width : Nat} [NeZero width]
     (declarations : List (DeclHOL width)) : MlS :=
   ofString

@@ -312,6 +312,18 @@ WITHDRAWN_HOL_DECLARATIONS = {
         "finite-support carrier; tag remains withdrawn pending "
         "flapjack-pxn.18.3.7.1.3.1.1.3.1."
     ),
+    ("Flapjack/Pancake/PanGlobals.lean", "newMainNameHOL"): (
+        "cakeml/pancake/pan_globalsScript.sml",
+        "new_main_name_def",
+        "flapjack-ds9 / coordinator HOLD (bead flapjack-pxn.18.3.5.8.21): "
+        "newMainNameHOL returns a byte-observable MlS main name computed through "
+        "the String-backed freshNameHOL, and the exact mlstring-native fresh_name "
+        "restatement (or an approved names_as_string + NameRanged witness for this "
+        "declaration) has not been provided. The @[hol] tag, manifest row and "
+        "type-hash entry were withdrawn; the definition and its bridge proof are "
+        "retained as production infrastructure. Keep untagged until the "
+        "coordinator approves a faithful restatement."
+    ),
 }
 # An untagged documented mismatch may be a definition-like declaration or a
 # theorem/lemma whose carrier or statement shape differs from HOL's.
@@ -1695,7 +1707,6 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         ("Flapjack/Pancake/PanGlobals.lean", "fpermHOL"),
         ("Flapjack/Pancake/PanGlobals.lean", "fpermDecsHOL"),
         ("Flapjack/Pancake/PanGlobals.lean", "resortDeclsHOL"),
-        ("Flapjack/Pancake/PanGlobals.lean", "newMainNameHOL"),
         ("Flapjack/Pancake/PanGlobals.lean", "decShapesHOL"),
         ("Flapjack/Pancake/Proofs/PanGlobals.lean", "fpermName_cancel"),
         ("Flapjack/Pancake/Proofs/PanGlobals.lean", "fpermName_cong"),
