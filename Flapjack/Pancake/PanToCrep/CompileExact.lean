@@ -318,4 +318,19 @@ def compileShMemStoreExactHOLW {width : Nat} [NeZero width]
         (.shMem (storeMemOpHOL operator) (index + 1) compiledValue)
   | _, _ => .skip
 
+/-! The local `ShMemLoad` clause from `compile_def`
+    (`pan_to_crepScript.sml:296-304`). It takes the first compiled address and
+    first destination variable, preserving both lookup/head fallbacks. -/
+
+def compileShMemLoadExactHOLW {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (operator : OpSize) (name : MlS)
+    (address : Flapjack.Pancake.PanLang.ExpHOL width) : CrepProgHOL width :=
+  match compileExpExactHOLW context address with
+  | (compiledAddress :: _, _) =>
+      match context.vars.lookup name with
+      | some (_, destination :: _) =>
+          .shMem (loadMemOpHOL operator) destination compiledAddress
+      | _ => .skip
+  | ([], _) => .skip
+
 end Flapjack

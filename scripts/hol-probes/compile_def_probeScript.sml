@@ -148,6 +148,20 @@ val _ = print_eval "shmem_store_address_fallback"
   ``pan_to_crep$compile
       <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 10 |>
       (ShMemStore Op8 (Const (4w : 8 word)) (RStruct ([] : 8 panLang$exp list)))``;
+val _ = print_eval "shmem_load_local_clause"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY |+ («dst», (panLang$One, [7]));
+         funcs := FEMPTY; eids := FEMPTY; vmax := 10 |>
+      (ShMemLoad Op8 Local «dst» (Const (3w : 8 word)))``;
+val _ = print_eval "shmem_load_missing_destination"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 10 |>
+      (ShMemLoad Op8 Local «dst» (Const (3w : 8 word)))``;
+val _ = print_eval "shmem_load_address_fallback"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY |+ («dst», (panLang$One, [7]));
+         funcs := FEMPTY; eids := FEMPTY; vmax := 10 |>
+      (ShMemLoad Op8 Local «dst» (RStruct ([] : 8 panLang$exp list)))``;
 
 val _ = print_eval "struct_skip"
   ``pan_to_crep$compile
