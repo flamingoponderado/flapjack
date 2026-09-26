@@ -170,4 +170,60 @@ theorem progOfHOL_seqCallRetHOL {width : Nat} [NeZero width]
               simp [seqCallRetHOL, seqCallRet, progOfHOL]
   | _ => simp [seqCallRetHOL, seqCallRet, progOfHOL]
 
+/-- Flapjack-specific codec equation for the Seq clause of HOL
+`ret_to_tail_def`. It reuses the `seq_call_ret` bridge, whose exact MlString
+equality guard is reflected by the codec; it has no separate HOL original and
+therefore carries no `@[hol]` tag. -/
+theorem progOfHOL_retToTailHOL_seq {width : Nat} [NeZero width]
+    (first second : ProgHOL width)
+    (hfirst : progOfHOL (retToTailHOL first) = retToTail (progOfHOL first))
+    (hsecond : progOfHOL (retToTailHOL second) = retToTail (progOfHOL second)) :
+    progOfHOL (retToTailHOL (.seq first second)) =
+    seqCallRet (.seq (retToTail (progOfHOL first)) (retToTail (progOfHOL second))) := by
+  simp [retToTailHOL, progOfHOL, progOfHOL_seqCallRetHOL, hfirst, hsecond]
+
+/-- Flapjack-specific codec equation for the Call clause of HOL
+`ret_to_tail_def`. A recursive equation is needed only for a present handler;
+the helper has no separate HOL original and carries no `@[hol]` tag. -/
+theorem progOfHOL_retToTailHOL_call {width : Nat} [NeZero width]
+    (info : Option (Option (VarKind × MlS) × Option (MlS × MlS × ProgHOL width)))
+    (name : MlS) (args : List (ExpHOL width))
+    (handlerBridge : ∀ {returns eid vname body},
+      info = some (returns, some (eid, vname, body)) →
+        progOfHOL (retToTailHOL body) = retToTail (progOfHOL body)) :
+    progOfHOL (retToTailHOL (.call info name args)) =
+      retToTail (.call (progCallInfoOfHOL info) (toStringOfBytes name)
+        (args.map expOfHOL)) := by
+  cases info with
+  | none =>
+      simp [retToTailHOL, retToTail, progOfHOL_call, progCallInfoOfHOL]
+  | some info =>
+      obtain ⟨returns, handler⟩ := info
+      cases handler with
+      | none =>
+          simp [retToTailHOL, retToTail, progOfHOL_call, progCallInfoOfHOL]
+      | some handler =>
+          obtain ⟨eid, vname, body⟩ := handler
+          have hbody := handlerBridge (returns := returns) (eid := eid)
+            (vname := vname) (body := body) rfl
+          simp [retToTailHOL, retToTail, progOfHOL_call, progCallInfoOfHOL, hbody]
+
+/-- Flapjack-specific codec equation for the Seq clause of HOL
+`seq_assoc_def`. The only premises are the two recursive codec equations;
+HOL has no theorem about commuting `progOfHOL` with `seqAssocHOL`, so this
+declaration carries no `@[hol]` tag. -/
+theorem progOfHOL_seqAssocHOL_seq {width : Nat} [NeZero width]
+    (pre first second : ProgHOL width)
+    (hfirst : ∀ pending,
+      progOfHOL (seqAssocHOL pending first) =
+        seqAssoc (progOfHOL pending) (progOfHOL first))
+    (hsecond : ∀ pending,
+      progOfHOL (seqAssocHOL pending second) =
+        seqAssoc (progOfHOL pending) (progOfHOL second)) :
+    progOfHOL (seqAssocHOL pre (.seq first second)) =
+      seqAssoc (progOfHOL pre) (.seq (progOfHOL first) (progOfHOL second)) := by
+  simp only [seqAssocHOL]
+  rw [hsecond, hfirst]
+  simp [seqAssoc]
+
 end Flapjack
