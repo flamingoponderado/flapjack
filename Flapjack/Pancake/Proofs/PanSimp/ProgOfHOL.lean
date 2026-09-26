@@ -183,6 +183,52 @@ theorem progOfHOL_retToTailHOL_seq {width : Nat} [NeZero width]
     seqCallRet (.seq (retToTail (progOfHOL first)) (retToTail (progOfHOL second))) := by
   simp [retToTailHOL, progOfHOL, progOfHOL_seqCallRetHOL, hfirst, hsecond]
 
+/-- Flapjack-specific codec equation for the Dec clause of HOL
+`ret_to_tail_def`. Its only recursive obligation is the body's codec equation;
+HOL has no theorem about commuting `progOfHOL` with `retToTailHOL`, so this
+declaration carries no `@[hol]` tag. -/
+theorem progOfHOL_retToTailHOL_dec {width : Nat} [NeZero width]
+    (name : MlS) (shape : ShapeHOL) (value : ExpHOL width) (body : ProgHOL width)
+    (hbody : progOfHOL (retToTailHOL body) = retToTail (progOfHOL body)) :
+    progOfHOL (retToTailHOL (.dec name shape value body)) =
+      retToTail (progOfHOL (.dec name shape value body)) := by
+  simp only [retToTailHOL, retToTail, progOfHOL.eq_2, hbody]
+
+/-- Flapjack-specific codec equation for the If clause of HOL
+`ret_to_tail_def`. It uses exactly the recursive then and else branch codec
+equations; HOL has no theorem about commuting `progOfHOL` with `retToTailHOL`,
+so this declaration carries no `@[hol]` tag. -/
+theorem progOfHOL_retToTailHOL_ite {width : Nat} [NeZero width]
+    (condition : ExpHOL width) (thenBranch elseBranch : ProgHOL width)
+    (hthen : progOfHOL (retToTailHOL thenBranch) = retToTail (progOfHOL thenBranch))
+    (helse : progOfHOL (retToTailHOL elseBranch) = retToTail (progOfHOL elseBranch)) :
+    progOfHOL (retToTailHOL (.ite condition thenBranch elseBranch)) =
+      retToTail (progOfHOL (.ite condition thenBranch elseBranch)) := by
+  simp only [retToTailHOL, retToTail, progOfHOL.eq_9, hthen, helse]
+
+/-- Flapjack-specific codec equation for the While clause of HOL
+`ret_to_tail_def`. Its only recursive obligation is the loop-body codec
+equation; HOL has no theorem about commuting `progOfHOL` with `retToTailHOL`,
+so this declaration carries no `@[hol]` tag. -/
+theorem progOfHOL_retToTailHOL_while {width : Nat} [NeZero width]
+    (condition : ExpHOL width) (body : ProgHOL width)
+    (hbody : progOfHOL (retToTailHOL body) = retToTail (progOfHOL body)) :
+    progOfHOL (retToTailHOL (.while condition body)) =
+      retToTail (progOfHOL (.while condition body)) := by
+  simp only [retToTailHOL, retToTail, progOfHOL.eq_10, hbody]
+
+/-- Flapjack-specific codec equation for the DecCall clause of HOL
+`ret_to_tail_def`. Its only recursive obligation is the body's codec equation;
+HOL has no theorem about commuting `progOfHOL` with `retToTailHOL`, so this
+declaration carries no `@[hol]` tag. -/
+theorem progOfHOL_retToTailHOL_decCall {width : Nat} [NeZero width]
+    (name : MlS) (shape : ShapeHOL) (function : MlS)
+    (arguments : List (ExpHOL width)) (body : ProgHOL width)
+    (hbody : progOfHOL (retToTailHOL body) = retToTail (progOfHOL body)) :
+    progOfHOL (retToTailHOL (.decCall name shape function arguments body)) =
+      retToTail (progOfHOL (.decCall name shape function arguments body)) := by
+  simp only [retToTailHOL, retToTail, progOfHOL.eq_16, hbody]
+
 /-- Flapjack-specific codec equation for the Call clause of HOL
 `ret_to_tail_def`. A recursive equation is needed only for a present handler;
 the helper has no separate HOL original and carries no `@[hol]` tag. -/
@@ -457,5 +503,34 @@ theorem progOfHOL_panSimpDeclsHOL {width : Nat} [NeZero width]
           simp only [panSimpDeclsHOL, List.map_cons]
           rw [ih]
           simp [panSimpDecls, declOfHOL]
+
+/-- Flapjack-specific codec equation for the Tick fallback clause of HOL
+`seq_assoc_def`. This case needs no recursive obligation. HOL has no theorem
+about commuting `progOfHOL` with `seqAssocHOL`, so it carries no `@[hol]` tag.
+-/
+theorem progOfHOL_seqAssocHOL_tick {width : Nat} [NeZero width]
+    (pre : ProgHOL width) :
+    progOfHOL (seqAssocHOL pre .tick) =
+      seqAssoc (progOfHOL pre) (progOfHOL (.tick : ProgHOL width)) := by
+  have hhol : seqAssocHOL pre (.tick : ProgHOL width) = smartSeqHOL pre .tick :=
+    seqAssocHOL.eq_11 pre .tick
+      (by intro h; cases h)
+      (by intro name shape value body h; cases h)
+      (by intro first second h; cases h)
+      (by intro condition thenBranch elseBranch h; cases h)
+      (by intro condition body h; cases h)
+      (by intro info function arguments h; cases h)
+      (by intro name shape function arguments body h; cases h)
+      (by intro tag text h; cases h)
+  rw [hhol, progOfHOL_smartSeqHOL, progOfHOL.eq_22]
+  exact (seqAssoc.eq_11 (progOfHOL pre) Prog.tick
+      (by intro h; cases h)
+      (by intro name shape value body h; cases h)
+      (by intro first second h; cases h)
+      (by intro condition thenBranch elseBranch h; cases h)
+      (by intro condition body h; cases h)
+      (by intro info function arguments h; cases h)
+      (by intro name shape function arguments body h; cases h)
+      (by intro tag text h; cases h)).symm
 
 end Flapjack

@@ -5105,6 +5105,38 @@
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanSimp/ProgOfHOL.lean",
+    "lean_name": "progOfHOL_retToTailHOL_dec",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific codec equation for the Dec clause of exact pan_simp ret_to_tail. It uses the recursive body codec equation; HOL has no theorem about commuting progOfHOL with retToTailHOL, so no HOL tag is claimed."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/ProgOfHOL.lean",
+    "lean_name": "progOfHOL_retToTailHOL_ite",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific codec equation for the If clause of exact pan_simp ret_to_tail. It uses the two recursive branch codec equations; HOL has no theorem about commuting progOfHOL with retToTailHOL, so no HOL tag is claimed."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/ProgOfHOL.lean",
+    "lean_name": "progOfHOL_retToTailHOL_while",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific codec equation for the While clause of exact pan_simp ret_to_tail. It uses the recursive body codec equation; HOL has no theorem about commuting progOfHOL with retToTailHOL, so no HOL tag is claimed."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/ProgOfHOL.lean",
+    "lean_name": "progOfHOL_retToTailHOL_decCall",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific codec equation for the DecCall clause of exact pan_simp ret_to_tail. It uses the recursive body codec equation; HOL has no theorem about commuting progOfHOL with retToTailHOL, so no HOL tag is claimed."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/ProgOfHOL.lean",
     "lean_name": "progOfHOL_retToTailHOL_call",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific codec equation for the Call clause of exact pan_simp ret_to_tail. It uses the ProgHOL Call decoder and a recursive handler-body equation; HOL has no theorem about commuting progOfHOL with retToTailHOL, so no HOL tag is claimed."
@@ -5156,6 +5188,14 @@
     "lean_name": "progOfHOL_seqAssocHOL_annot",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific codec equation for the annotation clause of exact pan_simp seq_assoc. It requires no recursive hypothesis because HOL erases annotations to the prefix; HOL has no theorem about commuting progOfHOL with seqAssocHOL, so no HOL tag is claimed."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/ProgOfHOL.lean",
+    "lean_name": "progOfHOL_seqAssocHOL_tick",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific codec equation for the Tick fallback clause of exact pan_simp seq_assoc. It requires no recursive hypothesis; HOL has no theorem about commuting progOfHOL with seqAssocHOL, so no HOL tag is claimed."
   },
   {
     "hol_path": null,
