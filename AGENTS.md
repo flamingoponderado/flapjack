@@ -279,10 +279,14 @@ entry names one field of one carrier; the carrier must be declared in the module
 or reachable through its imports and that field's type must be the reviewed
 canonical `HolFiniteMapExact` translation (a raw `α → Option β` map is
 ineligible). The tagged declaration must name every entry carrier. The qualifier
-covers only the listed map fields (and their HOL vs Lean representation); it does
-NOT cover bare finite-map parameters that are not fields of a named carrier, and
-it does not authorize changed quantifiers, hypotheses, conclusions, `BEq` side
-conditions, or word-model differences. Each distinct entry carrier needs a
+covers only the listed maps (and their HOL vs Lean representation); a bare
+entry (a name without a dot) records a standalone finite-map parameter of the
+tagged declaration, which must bind that name at the reviewed canonical
+`HolFiniteMapExact` translation and needs no carrier witness, while a
+`Carrier.field` entry must name one field of one carrier that is declared in the
+module or reachable through its imports with a `HolFiniteMapExact` field. The
+qualifier does not authorize changed quantifiers, hypotheses, conclusions, `BEq`
+side conditions, or word-model differences. Each distinct entry carrier needs a
 same-module checked canonical witness
 `holFmapAsFiniteSupportRelationWitness_<Carrier>` naming the carrier and stating a
 genuine `toX`/`ofX` roundtrip with its broad counterpart (a carrier named in the
