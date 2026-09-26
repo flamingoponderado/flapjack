@@ -12242,5 +12242,13 @@
     "lean_name": "asmOkExact",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.6.1.2): exact positive-width port of HOL asm_ok_def over the exact HolAsm carrier and the exact AsmConfigExact; jump/cjump/loc offset overloads built on the exact asmOffsetOkExact, instruction payload via exact asmInstOkExact, cmp_ok via exact asmCmpOkExact over HolRegImm; the production asmOk uses the generic AsmData/AsmConfig carriers and is documented_mismatch."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "addr_ok_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackProps.lean",
+    "lean_name": "asmAddrOkExact",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.6.1.2): exact clause-for-clause port of HOL addr_ok_def (stackPropsScript.sml:801-810) over the exact asm carriers HolMemop/HolAddr and the exact AsmConfigExact, using the exact offset helpers asmAddrOffsetOkExact/asmHwOffsetOkExact/asmByteOffsetOkExact. The width-general production asmAddrOk remains documented_mismatch."
   }
 ]
