@@ -994,6 +994,24 @@ theorem toExact_handlerStateHOLFinite {width : Nat} {σ : Type} [NeZero width]
   rw [h]
   rfl
 
+/-- FLAPJACK-SPECIFIC (not a HOL declaration): named finite `Call`/`DecCall`
+    entry state.  Naming it (instead of an inline record-update literal) makes
+    the projection bridges syntactic. -/
+def callEntryStateHOLFinite {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ)
+    (callee : HolFiniteMapExact MlS (ValueHOL width)) : PanSemStateFiniteExact width σ :=
+  { state with clock := state.clock - 1, locals := callee }
+
+/-- FLAPJACK-SPECIFIC (not a HOL declaration): the named finite entry state
+    projects to the broad named entry state. -/
+theorem toExact_callEntryStateHOLFinite {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ)
+    (callee : HolFiniteMapExact MlS (ValueHOL width)) :
+    (callEntryStateHOLFinite state callee).toExact =
+      Flapjack.callEntryStateHOLExact state.toExact callee.lookup := by
+  unfold callEntryStateHOLFinite Flapjack.callEntryStateHOLExact
+  rw [toExact_setLocals_clock]
+
 /-- The finite fix-clock never increases the clock. -/
 theorem fixClockHOLFinite_clock_le {width : Nat} {σ : Type} [NeZero width] {β : Type}
     (oldState : PanSemStateFiniteExact width σ)
@@ -1083,7 +1101,7 @@ def evalPanSemRecursiveCallFiniteContext {width : Nat} {σ : Type} [NeZero width
                     some (some .timeOut,
                       context.withState (emptyLocalsHOLFinite state) rfl rfl)
                   else
-                    let entry : PanSemStateFiniteExact width σ := { state with clock := state.clock - 1, locals := callee }
+                    let entry : PanSemStateFiniteExact width σ := callEntryStateHOLFinite state callee
                     let entryContext := context.withState entry rfl rfl
                     match evalPanSemRecursiveCallFiniteContext body entryContext with
                     | none => none
@@ -1153,7 +1171,7 @@ def evalPanSemRecursiveCallFiniteContext {width : Nat} {σ : Type} [NeZero width
                     some (some .timeOut,
                       context.withState (emptyLocalsHOLFinite state) rfl rfl)
                   else
-                    let entry : PanSemStateFiniteExact width σ := { state with clock := state.clock - 1, locals := callee }
+                    let entry : PanSemStateFiniteExact width σ := callEntryStateHOLFinite state callee
                     let entryContext := context.withState entry rfl rfl
                     match evalPanSemRecursiveCallFiniteContext body entryContext with
                     | none => none
