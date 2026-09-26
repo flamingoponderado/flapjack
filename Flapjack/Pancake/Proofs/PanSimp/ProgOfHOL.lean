@@ -47,6 +47,67 @@ theorem panSimpToStringOfBytes_injective : Function.Injective toStringOfBytes :=
     cases h
     rfl
 
+/-- Flapjack-specific decoding of HOL `Prog.call` metadata to production
+metadata. There is no separate HOL declaration for this codec helper. -/
+def progCallInfoOfHOL {width : Nat} [NeZero width] :
+    Option (Option (VarKind × MlS) × Option (MlS × MlS × ProgHOL width)) →
+      Option (Option (VarKind × String) × Option (String × String × Prog (BitVec width)))
+  | none => none
+  | some (kindOpt, none) =>
+      some (kindOpt.map (fun entry => (entry.1, toStringOfBytes entry.2)), none)
+  | some (kindOpt, some (eid, vname, body)) =>
+      some (kindOpt.map (fun entry => (entry.1, toStringOfBytes entry.2)),
+        some (toStringOfBytes eid, toStringOfBytes vname, progOfHOL body))
+
+/-- Every exact HOL call decodes to the production call with decoded names,
+arguments, and optional handler body. This is Flapjack-specific codec
+infrastructure with no separate HOL original. -/
+theorem progOfHOL_call {width : Nat} [NeZero width]
+    (info : Option (Option (VarKind × MlS) × Option (MlS × MlS × ProgHOL width)))
+    (name : MlS) (args : List (ExpHOL width)) :
+    progOfHOL (.call info name args) =
+      Prog.call (progCallInfoOfHOL info) (toStringOfBytes name) (args.map expOfHOL) := by
+  cases info with
+  | none => simp [progCallInfoOfHOL, progOfHOL.eq_13]
+  | some info =>
+      obtain ⟨kindOpt, handlerOpt⟩ := info
+      cases handlerOpt with
+      | none => simp [progCallInfoOfHOL, progOfHOL.eq_14]
+      | some handler =>
+          obtain ⟨eid, vname, body⟩ := handler
+          simp [progCallInfoOfHOL, progOfHOL.eq_15]
+
+/-- Flapjack-specific codec equation for the Call clause of HOL
+`seq_assoc_def`. When a handler is present, the only recursive obligation is
+that its body commutes with `seqAssocHOL`; the theorem has no separate HOL
+original and therefore carries no `@[hol]` tag. -/
+theorem progOfHOL_seqAssocHOL_call {width : Nat} [NeZero width]
+    (pre : ProgHOL width)
+    (info : Option (Option (VarKind × MlS) × Option (MlS × MlS × ProgHOL width)))
+    (name : MlS) (args : List (ExpHOL width))
+    (handlerBridge : ∀ {returns eid vname body},
+      info = some (returns, some (eid, vname, body)) →
+        progOfHOL (seqAssocHOL .skip body) = seqAssoc .skip (progOfHOL body)) :
+    progOfHOL (seqAssocHOL pre (.call info name args)) =
+      seqAssoc (progOfHOL pre)
+        (.call (progCallInfoOfHOL info) (toStringOfBytes name) (args.map expOfHOL)) := by
+  cases info with
+  | none =>
+      simp [seqAssocHOL, seqAssoc, progOfHOL_smartSeqHOL, progOfHOL_call,
+        progCallInfoOfHOL]
+  | some info =>
+      obtain ⟨returns, handler⟩ := info
+      cases handler with
+      | none =>
+          simp [seqAssocHOL, seqAssoc, progOfHOL_smartSeqHOL, progOfHOL_call,
+            progCallInfoOfHOL]
+      | some handler =>
+          obtain ⟨eid, vname, body⟩ := handler
+          have hbody := handlerBridge (returns := returns) (eid := eid)
+            (vname := vname) (body := body) rfl
+          simp [seqAssocHOL, seqAssoc, progOfHOL_smartSeqHOL, progOfHOL_call,
+            progCallInfoOfHOL, hbody]
+
 /-- Flapjack-specific representation bridge for HOL `seq_call_ret_def`.
 HOL has no separate theorem about the `ProgHOL` decoder. This proof compares
 the exact MlString guard with production String equality through the codec
@@ -93,15 +154,8 @@ theorem progOfHOL_seqCallRetHOL {width : Nat} [NeZero width]
                                           panSimpToStringOfBytes_eq_iff]
                               | _ => simp [seqCallRetHOL, seqCallRet, progOfHOL, expOfHOL]
                           | call info name args =>
-                              cases info with
-                              | none => simp [seqCallRetHOL, seqCallRet, progOfHOL]
-                              | some info =>
-                                  obtain ⟨kindOpt, handlerOpt⟩ := info
-                                  cases handlerOpt with
-                                  | none => simp [seqCallRetHOL, seqCallRet, progOfHOL]
-                                  | some handler =>
-                                      obtain ⟨eid, vname, body⟩ := handler
-                                      simp [seqCallRetHOL, seqCallRet, progOfHOL]
+                              simp [seqCallRetHOL, seqCallRet, progOfHOL, progOfHOL_call,
+                                progCallInfoOfHOL]
                           | _ => simp [seqCallRetHOL, seqCallRet, progOfHOL]
       | _ => cases second <;> simp [seqCallRetHOL, seqCallRet, progOfHOL]
   | call info name args =>
