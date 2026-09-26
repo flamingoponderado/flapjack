@@ -27,10 +27,12 @@ clock-exhaustion (`TimeOut`, empty locals) branches, and the
 returned and exception outcome branches are exposed by the projection theorems
 `evalPanSemRecursiveCallFiniteContext_call_projection` and
 `..._decCall_projection`, which relate the finite context evaluator to the broad
-exact one over `toExact`.  The exact
-`@[hol ... "evaluate_def" ...]` tag stays withheld until the general
-`fun_induction` projection equivalence over every constructor is proved and
-reviewed (`flapjack-qj5` is blocked on `flapjack-6yq`).
+exact one over `toExact`.  The general `fun_induction` projection equivalence
+over every constructor is now proved (`evalPanSemRecursiveCallFiniteContext_projection`,
+commit de0d2ff1e, `flapjack-6yq`); the exact
+`@[hol ... "evaluate_def" ...]` tag stays withheld pending the coordinator's
+source review of that theorem and its side conditions/carriers (`flapjack-qj5`,
+`flapjack-6yq.1`).
 
 The older delegating adapter `evaluateHOLFiniteViaExact` (and its
 `evalPanSemRecursiveCallHOLFinite_of_broad` / `evaluateHOLFiniteViaExact_of_broad`
@@ -43,8 +45,11 @@ exact evaluator (`flapjack-6yq`): `..._skip_projection` / `_break_projection` /
 `shMemLoad` / `shMemStore` projections show that mapping the finite evaluator's
 result through `state.toExact` agrees with `...ContextHOLExact`. Recursive
 `Dec`, `Seq`, `If`, and `While` have conditional projection lemmas using their
-recursive hypotheses. `Call` and `DecCall` projection lemmas and an assembling
-induction are still needed.
+recursive hypotheses. `Call` and `DecCall` projection lemmas and the assembling
+66-case induction `evalPanSemRecursiveCallFiniteContext_projection` (commit
+de0d2ff1e) are all proved, so the finite-to-broad evaluator equality over every
+constructor is complete; only the coordinator's source review/`evaluate_def` tag
+remain.
 -/
 import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
 
