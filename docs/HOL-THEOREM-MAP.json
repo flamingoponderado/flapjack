@@ -12229,5 +12229,13 @@
     "lean_name": "instArgConventionExact",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds8 (bead flapjack-4ac.6.1, coordinator review): HOL's declaration uses the exact `'a inst` carrier and introduces no configuration; the positive-width Lean restatement matches clause-for-clause, so this is an exact HOL port over the matching carrier and datatype widths (no mlstring/word-width translation). The Lean declaration is stated over the exact `HolInst` carrier with a checked `HolInst.toWordLangInst` bridge to the width-general executed form."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmScript.sml",
+    "hol_name": "asm_config",
+    "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
+    "lean_name": "AsmConfigExact",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.6.1.2.1): exact HOL asmScript.sml:153-172 asm_config record; field-for-field correspondence, with encode : HolAsm width -> List (BitVec 8) matching HOL's 'a asm -> word8 list and every remaining field identical to the production AsmConfig. Reviewed_exact at [NeZero width]."
   }
 ]

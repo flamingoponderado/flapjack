@@ -1888,6 +1888,7 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         ("Flapjack/Pancake/WordConvs.lean", "distinctTarRegExact"),
         ("Flapjack/Pancake/WordConvs.lean", "twoRegInstExact"),
         ("Flapjack/Pancake/WordConvs.lean", "instArgConventionExact"),
+        ("Flapjack/Compiler/Encoders/Asm.lean", "AsmConfigExact"),
         ("Flapjack/Pancake/Proofs/PanSimp.lean", "mapSndFEq"),
         ("Flapjack/Pancake/Proofs/PanSimp.lean", "expIdsHOL_retToTailHOL_eq"),
         ("Flapjack/Pancake/Proofs/PanSimp.lean", "expIdsHOL_seqAssocHOL_eq"),

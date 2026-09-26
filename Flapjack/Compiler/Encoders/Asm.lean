@@ -298,6 +298,33 @@ structure AsmConfig (width : Nat) where
 def asmAligned {width : Nat} (alignment : Nat) (value : BitVec width) : Bool :=
   value.toNat % 2 ^ alignment = 0
 
+/-- Exact HOL `asm$asm_config` (`cakeml/compiler/encoders/asm/asmScript.sml:153-172`):
+the assembler configuration record, polymorphic in the word dimension in HOL.
+Unlike the production `AsmConfig` below, whose `encode` field consumes the
+generic `AsmData`, this carrier's `encode` takes the exact `HolAsm` and produces
+HOL `word8` lists, matching the HOL field type `'a asm -> word8 list`.  Every
+other field coincides with `AsmConfig`.  This is the prerequisite carrier for
+restating the `AsmConfig`-taking validity predicates over exact carriers (bead
+flapjack-4ac.6.1.2.1). -/
+@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "asm_config"]
+structure AsmConfigExact (width : Nat) [NeZero width] where
+  isa : AsmArchitecture
+  encode : HolAsm width → List (BitVec 8)
+  bigEndian : Bool
+  codeAlignment : Nat
+  linkReg : Option Nat
+  avoidRegs : List Nat
+  regCount : Nat
+  fpRegCount : Nat
+  twoRegArith : Bool
+  validImm : Sum BinOp Cmp → BitVec width → Bool
+  addrOffset : BitVec width × BitVec width
+  hwOffset : BitVec width × BitVec width
+  byteOffset : BitVec width × BitVec width
+  jumpOffset : BitVec width × BitVec width
+  cjumpOffset : BitVec width × BitVec width
+  locOffset : BitVec width × BitVec width
+
 /--
     Not an exact HOL port: this Lean declaration quantifies `width : Nat`
     without `[NeZero width]`, so `BitVec 0` is admitted, whereas HOL `word`
