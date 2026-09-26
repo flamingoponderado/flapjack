@@ -115,19 +115,39 @@ def memLoadGuard : Bool :=
     (memLoadCrepSemHOL (1 : Word8) memState).isNone &&
     (memLoadCrepSemHOL (0 : Word8) memStateWide == some (.word 7))
 
+/-- Replays the direct HOL rows `res_var_delete_hit=NONE` and
+    `res_var_update_hit=SOME (Word 7w)` from
+    `scripts/hol-probes/crep_res_var_probe.out`. -/
+def resVarEqGuard : Bool :=
+  (HolFiniteMapExact.resVarEq localsWithOne (1, none)).lookup 1 == none &&
+    (HolFiniteMapExact.resVarEq localsWithOne (1, some (.word 7))).lookup 1 ==
+      some (.word 7)
+
+theorem resVarEqDeleteHit :
+    (HolFiniteMapExact.resVarEq localsWithOne (1, none)).lookup 1 = none := by
+  decide
+
+theorem resVarEqUpdateHit :
+    (HolFiniteMapExact.resVarEq localsWithOne (1, some (.word 7))).lookup 1 =
+      some (.word 7) := by
+  decide
+
 def stateExactGuard : Bool :=
-  decClockGuard && fixClockClampsGuard && fixClockKeepsLowerGuard && memLoadGuard
+  decClockGuard && fixClockClampsGuard && fixClockKeepsLowerGuard && memLoadGuard &&
+    resVarEqGuard
 
 #eval decClockGuard
 #eval fixClockClampsGuard
 #eval fixClockKeepsLowerGuard
 #eval memLoadGuard
+#eval resVarEqGuard
 #eval stateExactGuard
 
 #guard decClockGuard
 #guard fixClockClampsGuard
 #guard fixClockKeepsLowerGuard
 #guard memLoadGuard
+#guard resVarEqGuard
 #guard stateExactGuard
 
 example :
@@ -140,7 +160,7 @@ example (res : Option Nat) (s1 : CrepSemHOLState 8 Unit)
 
 def runChecks : IO Bool := do
   if stateExactGuard then
-    IO.println "PASS exact crepSem dec_clock/fix_clock/mem_load over the finite-support carrier"
+    IO.println "PASS exact crepSem dec_clock/fix_clock/mem_load/res_var_def over the finite-support carrier"
     pure true
   else
     IO.println "FAIL exact crepSem dec_clock/fix_clock/mem_load over the finite-support carrier"

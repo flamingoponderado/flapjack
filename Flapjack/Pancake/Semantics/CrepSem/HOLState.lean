@@ -151,18 +151,34 @@ def eraseEq [DecidableEq α] (map : HolFiniteMapExact α β) (key : α) :
     · simp [FDOMSUB_HOL, h] at hk
     · simpa [FDOMSUB_HOL, h] using hk
 
-/-- HOL-equality port of `crepSem$res_var` (`crepSemScript.sml:163`) on the
+/-- HOL-equality port of `crepSem$res_var` (`crepSemScript.sml:163-166`) on the
     finite-support carrier: `NONE` subtracts the key from the domain, `SOME v`
     updates it. Uses `DecidableEq` (HOL `=`) so HOL's polymorphic key type is
-    preserved with no `BEq`/`LawfulBEq` side conditions. Untagged: the carrier
-    is `HolFiniteMapExact` itself (no owning structure field), so the
-    `fmap_as_finite_support` qualifier does not directly apply; the exact
-    tagging route is tracked by `flapjack-pxn.18.3.7.1.3.1.1.2.4`. -/
+    preserved with no `BEq`/`LawfulBEq` side conditions. The standalone
+    `fmap_as_finite_support_result` qualifier records that this declaration's
+    own result carrier is the canonical `HolFiniteMapExact` translation of HOL
+    `α |-> β`; it is justified by the same-module lookup witness
+    `holFmapAsFiniteSupportResultWitness_resVarEq`. Tagged
+    `reviewed_fmap_as_finite_support_result` under bead
+    flapjack-pxn.18.5.5.7.7.15. -/
+@[hol "cakeml/pancake/semantics/crepSemScript.sml" "res_var_def" (fmap_as_finite_support_result)]
 def resVarEq [DecidableEq α] (map : HolFiniteMapExact α β)
     (entry : α × Option β) : HolFiniteMapExact α β :=
   match entry.2 with
   | none => eraseEq map entry.1
   | some value => updateEq map (entry.1, value)
+
+/-- Kernel-checked lookup witness for the standalone finite-map-result
+    qualifier on `resVarEq`: the finite-support result's lookup is the HOL
+    `\\`/`|+` raw-map operation applied to the underlying lookup function.
+    Flapjack-only infrastructure; it has no separate HOL original. -/
+theorem holFmapAsFiniteSupportResultWitness_resVarEq [DecidableEq α]
+    (map : HolFiniteMapExact α β) (key : α) (value : Option β) (k : α) :
+    (resVarEq map (key, value)).lookup k =
+      (match value with
+        | none => FDOMSUB_HOL map.lookup key k
+        | some v => FUPDATE_HOL map.lookup (key, v) k) := by
+  cases value <;> rfl
 
 @[simp] theorem lookup_empty (key : α) :
     (empty : HolFiniteMapExact α β).lookup key = none := rfl
