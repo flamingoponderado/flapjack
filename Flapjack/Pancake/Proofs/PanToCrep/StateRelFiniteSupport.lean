@@ -227,17 +227,16 @@ theorem holFmapParameterAsFiniteSupportWitness_panToCrepFiniteEvaluateShapeInvar
 
 /-- Flapjack-specific full-program shape-invariant composition over the
     finite-support PanSem/CrepSem carriers. It proves the HOL conclusion from a
-    result-shaped view of the finite-context evaluator. It remains untagged:
-    the complete projection from that evaluator to
-    `evalPanSemRecursiveCallContextHOLExact` has not been proved, so its premise
-    is not yet the faithful HOL `evaluate` result equation. Clause projections
-    are tracked by evaluator port dependency `flapjack-6yq`; do not tag this
-    theorem until that dependency is closed. -/
+    result-shaped view of the finite-context evaluator. The complete projection
+    to `evalPanSemRecursiveCallContextHOLExact` is proved by
+    `evaluateHOLFinite_toExact` (the 66-case evaluator projection tracked by
+    `flapjack-6yq`). It remains untagged because its relation hypotheses are
+    support definitions spanning multiple carriers; the faithful theorem and
+    source-reviewed representation support remain open under `flapjack-4ac.5.83`.
+    -/
 theorem panToCrepFiniteEvaluateShapeInvariantRetInst {width : Nat} {σ : Type}
     [NeZero width] (program : ProgHOL width)
     (source : PanSemStateFiniteExact width σ)
-    [hmem : DecidablePred source.memaddrs]
-    [hshared : DecidablePred source.shMemaddrs]
     (target : CrepSemHOLState width σ)
     (targetLocals : HolFiniteMapExact Nat (HolWordLab width))
     (relationContext : PanToCrepContextExact width)
@@ -246,7 +245,7 @@ theorem panToCrepFiniteEvaluateShapeInvariantRetInst {width : Nat} {σ : Type}
     (hstate : panToCrepStateRelFiniteExact source target)
     (hlocals : panToCrepLocalsRelFiniteExact relationContext
       source.locals targetLocals)
-    (heval : PanSemStateFiniteExact.evaluateHOLFiniteResult source program =
+    (heval : PanSemStateFiniteExact.evaluateHOLFiniteState source program =
       (some result, postState)) :
     match result with
     | .returned value =>
@@ -254,10 +253,16 @@ theorem panToCrepFiniteEvaluateShapeInvariantRetInst {width : Nat} {σ : Type}
     | .exception _ value =>
         isWfShapeExactHOL ([] : StructContextExact) (shapeOfHOLExact value) = true
     | _ => True := by
+  classical
+  have hevalHelper : PanSemStateFiniteExact.evaluateHOLFiniteResult source program =
+      (some result, postState) := by
+    simpa [PanSemStateFiniteExact.evaluateHOLFiniteState,
+      PanSemStateFiniteExact.evaluateHOLFiniteResult,
+      PanSemStateFiniteExact.evaluateHOLFiniteStateWithDeciders] using heval
   have hevalMarked := (PanSemStateFiniteExact.evaluateHOLFiniteResult_eq_iff
-    source program (some result, postState)).2 heval
+    source program (some result, postState)).2 hevalHelper
   let evaluationContext : PanSemStateFiniteExact.FiniteEvalContext width σ :=
-    ⟨source, hmem, hshared⟩
+    ⟨source, inferInstance, inferInstance⟩
   have hevalProjection :
       (PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext
         program evaluationContext).map

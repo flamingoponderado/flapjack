@@ -1646,14 +1646,9 @@ theorem evaluateHOLFinite_ne_none {width : Nat} {σ : Type} [NeZero width]
   rw [houtput]
   simp
 
-/-- FLAPJACK-SPECIFIC exact state-level rendering of HOL `evaluate_def`'s
-    `result option × state` result shape, built directly from the total
-    clause-for-clause finite context evaluator.  Unlike `evaluateHOLFinite` this
-    drops the recursive-case assembly marker, which is provably inert
-    (`evalPanSemRecursiveCallFiniteContext_total`).  Carries no `@[hol]` tag: the
-    `evaluate_def` tag awaits the coordinator's source review of the general
-    projection (`flapjack-6yq.1`). -/
-def evaluateHOLFiniteState {width : Nat} {σ : Type} [NeZero width]
+/-- Flapjack-specific evaluator view that makes the two decidability witnesses
+    explicit for callers that need to choose them. -/
+def evaluateHOLFiniteStateWithDeciders {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ)
     [h : DecidablePred state.memaddrs] [hshared : DecidablePred state.shMemaddrs]
     (program : ProgHOL width) :
@@ -1662,19 +1657,31 @@ def evaluateHOLFiniteState {width : Nat} {σ : Type} [NeZero width]
   | some pair => (pair.1, pair.2.state)
   | none => (none, state)
 
-/-- Checked bridge: `evaluateHOLFiniteState` is the pair-shaped rendering of the
-    assembly-marker wrapper `evaluateHOLFinite`. -/
-theorem evaluateHOLFiniteState_eq_getD {width : Nat} {σ : Type} [NeZero width]
+/-- FLAPJACK-SPECIFIC exact state-level rendering of HOL `evaluate_def`'s
+    `result option × state` result shape. The decision procedures needed to
+    execute set-membership branches are selected classically in this wrapper,
+    rather than appearing as extra HOL theorem binders. The body directly uses
+    the finite context evaluator; it remains untagged pending source review of
+    every clause and carrier. -/
+noncomputable def evaluateHOLFiniteState {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (program : ProgHOL width) :
+    Option (PanSemResultExact width) × PanSemStateFiniteExact width σ := by
+  classical
+  exact evaluateHOLFiniteStateWithDeciders state program
+
+/-- The decider-taking helper is the pair-shaped rendering of the assembly-marker
+    evaluator. This bridge is Flapjack-specific infrastructure. -/
+theorem evaluateHOLFiniteStateWithDeciders_eq_getD {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ)
     [h : DecidablePred state.memaddrs] [hshared : DecidablePred state.shMemaddrs]
     (program : ProgHOL width) :
-    evaluateHOLFiniteState state program =
+    evaluateHOLFiniteStateWithDeciders state program =
       (evaluateHOLFinite state program).getD (none, state) := by
-  unfold evaluateHOLFiniteState evaluateHOLFinite
+  unfold evaluateHOLFiniteStateWithDeciders evaluateHOLFinite
   cases evalPanSemRecursiveCallFiniteContext program ⟨state, h, hshared⟩ <;> rfl
 
 /-- FLAPJACK-SPECIFIC compatibility name for the pair-shaped finite evaluator. -/
-abbrev evaluateHOLFiniteResult := @evaluateHOLFiniteState
+abbrev evaluateHOLFiniteResult := @evaluateHOLFiniteStateWithDeciders
 
 /-- The result-shaped view is exactly the successful output of the finite
     evaluator, since its assembly marker cannot fail. -/
@@ -1687,7 +1694,7 @@ theorem evaluateHOLFiniteResult_eq_iff {width : Nat} {σ : Type} [NeZero width]
       evaluateHOLFiniteResult state program = pair := by
   have hresult : evaluateHOLFiniteResult state program =
       (evaluateHOLFinite state program).getD (none, state) := by
-    exact evaluateHOLFiniteState_eq_getD state program
+    exact evaluateHOLFiniteStateWithDeciders_eq_getD state program
   rw [hresult]
   constructor
   · intro heval
