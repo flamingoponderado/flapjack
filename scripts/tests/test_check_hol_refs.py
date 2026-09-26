@@ -18,7 +18,7 @@ class HolAttributeSitesTest(unittest.TestCase):
     def test_single_line(self):
         self.assertEqual(
             list(SITES(['@[hol "cakeml/pancake/pan_globalsScript.sml" "compile_top_def"]'])),
-            [(1, "cakeml/pancake/pan_globalsScript.sml", "compile_top_def", None, (), (), (), (), (), False)],
+            [(1, "cakeml/pancake/pan_globalsScript.sml", "compile_top_def", None, (), (), (), (), False, ())],
         )
 
     def test_multiline(self):
@@ -29,7 +29,7 @@ class HolAttributeSitesTest(unittest.TestCase):
                 'theorem compileTopShapeWf : True := trivial',
             ])),
             [(1, "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-              "compile_top_shape_wf", None, (), (), (), (), (), False)],
+              "compile_top_shape_wf", None, (), (), (), (), False, ())],
         )
 
     def test_comments_do_not_count(self):
@@ -39,7 +39,7 @@ class HolAttributeSitesTest(unittest.TestCase):
                 '-- @[hol "cakeml/pancake/pan_globalsScript.sml" "bad"]',
                 '@[hol "cakeml/pancake/pan_globalsScript.sml" "compile_top_def"]',
             ])),
-            [(3, "cakeml/pancake/pan_globalsScript.sml", "compile_top_def", None, (), (), (), (), (), False)],
+            [(3, "cakeml/pancake/pan_globalsScript.sml", "compile_top_def", None, (), (), (), (), False, ())],
         )
 
     def test_source_line(self):
@@ -47,7 +47,7 @@ class HolAttributeSitesTest(unittest.TestCase):
             list(SITES(['@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml"',
                         '  "locals_rel_wf_shape" 2345]'])),
             [(1, "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
-              "locals_rel_wf_shape", 2345, (), (), (), (), (), False)],
+              "locals_rel_wf_shape", 2345, (), (), (), (), False, ())],
         )
 
     def test_list_as_array_fields(self):
@@ -57,7 +57,7 @@ class HolAttributeSitesTest(unittest.TestCase):
                 '  "dec_deg_def" (list_as_array := [degrees, moves])]'
             ])),
             [(1, "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
-              "dec_deg_def", None, ("degrees", "moves"), (), (), (), (), False)],
+              "dec_deg_def", None, ("degrees", "moves"), (), (), (), False, ())],
         )
 
     def test_names_as_string_and_boundary_qualifiers(self):
@@ -68,7 +68,7 @@ class HolAttributeSitesTest(unittest.TestCase):
                 '  (names_as_string_boundary := [generated])]',
             ])),
             [(1, "cakeml/pancake/panLangScript.sml", "varname", None,
-              (), ("name", "generated"), ("generated",), (), (), False)],
+              (), ("name", "generated"), ("generated",), (), False, ())],
         )
 
     def test_fmap_as_finite_support_fields(self):
@@ -78,7 +78,7 @@ class HolAttributeSitesTest(unittest.TestCase):
                 '  (fmap_as_finite_support := [locals, globals])]'
             ])),
             [(1, "cakeml/pancake/semantics/panSemScript.sml",
-              "set_var_def", None, (), (), (), ("locals", "globals"), (), False)],
+              "set_var_def", None, (), (), (), ("locals", "globals"), False, ())],
         )
 
     def test_fmap_as_finite_support_result_qualifier(self):
@@ -88,65 +88,103 @@ class HolAttributeSitesTest(unittest.TestCase):
                 '  (fmap_as_finite_support_result)]'
             ])),
             [(1, "cakeml/pancake/pan_to_crepScript.sml",
-              "get_eids_from_decls_def", None, (), (), (), (), (), True)],
+              "get_eids_from_decls_def", None, (), (), (), (), True, ())],
         )
 
-    def test_multi_owner_fmap_carriers_check_the_real_state_structures(self):
-        errors = CHECKER["fmap_as_finite_support_carriers_errors"](
-            (
-                "PanSemStateFiniteExact.locals",
-                "CrepSemHOLState.locals",
-                "PanToCrepContextExact.vars",
-                "targetLocals",
-            ),
-            "(source : PanSemStateFiniteExact width σ) "
-            "(target : CrepSemHOLState width σ) "
-            "(relationContext : PanToCrepContextExact width) "
-            "(targetLocals : HolFiniteMapExact Nat (HolWordLab width))",
-            "panToCrepFiniteEvaluateShapeInvariantRetInst",
-            Path(__file__).resolve().parents[2] /
-            "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    def test_fmap_as_finite_support_relation_qualifier(self):
+        self.assertEqual(
+            list(SITES([
+                '@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "state_rel_def"',
+                '  (fmap_as_finite_support_relation := [PanSemStateFiniteExact.globals, CrepSemHOLState.locals])]'
+            ])),
+            [(1, "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+              "state_rel_def", None, (), (), (), (), False,
+              (("PanSemStateFiniteExact", "globals"), ("CrepSemHOLState", "locals")))],
+        )
+
+    def test_fmap_as_finite_support_relation_accepts_two_carriers(self):
+        lines = [
+            "structure Source where",
+            "  globals : HolFiniteMapExact MlS (ValueHOL width)",
+            "",
+            "structure Target where",
+            "  locals : HolFiniteMapExact Nat (HolWordLab width)",
+            "",
+            "theorem holFmapAsFiniteSupportRelationWitness_Source :",
+            "    Source.toBroad (Source.ofBroad s) = s := rfl",
+            "",
+            "theorem holFmapAsFiniteSupportRelationWitness_Target :",
+            "    Target.toBroad (Target.ofBroad t) = t := rfl",
+        ]
+        errors = CHECKER["fmap_as_finite_support_relation_errors"](
+            lines,
+            (("Source", "globals"), ("Target", "locals")),
+            "Example.lean",
+            "def stateRel (source : Source) (target : Target) : Prop",
         )
         self.assertEqual(errors, [])
 
-    def test_multi_owner_fmap_carriers_require_owner_in_signature(self):
-        errors = CHECKER["fmap_as_finite_support_carriers_errors"](
-            ("PanSemStateFiniteExact.locals",),
-            "(source : DifferentState width σ)",
+    def test_fmap_as_finite_support_relation_rejects_raw_option_map(self):
+        lines = [
+            "structure Source where",
+            "  globals : MlS \u2192 Option (ValueHOL width)",
+            "",
+            "theorem holFmapAsFiniteSupportRelationWitness_Source :",
+            "    Source.toBroad (Source.ofBroad s) = s := rfl",
+        ]
+        errors = CHECKER["fmap_as_finite_support_relation_errors"](
+            lines, (("Source", "globals"),), "Example.lean",
+            "def stateRel (source : Source) : Prop",
         )
-        self.assertTrue(any("owner `PanSemStateFiniteExact` is not named" in error
-                            for error in errors))
+        self.assertTrue(any("HolFiniteMapExact" in e for e in errors))
 
-    def test_multi_owner_fmap_parameter_requires_exact_carrier_and_witness(self):
-        path = (Path(__file__).resolve().parents[2] /
-                "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean")
-        good = CHECKER["fmap_as_finite_support_carriers_errors"](
-            ("targetLocals",),
-            "(targetLocals : HolFiniteMapExact Nat (HolWordLab width))",
-            "panToCrepFiniteEvaluateShapeInvariantRetInst", path,
+    def test_fmap_as_finite_support_relation_requires_per_carrier_witness(self):
+        lines = [
+            "structure Source where",
+            "  globals : HolFiniteMapExact MlS (ValueHOL width)",
+        ]
+        errors = CHECKER["fmap_as_finite_support_relation_errors"](
+            lines, (("Source", "globals"),), "Example.lean",
+            "def stateRel (source : Source) : Prop",
         )
-        self.assertEqual(good, [])
-        bad = CHECKER["fmap_as_finite_support_carriers_errors"](
-            ("targetLocals",),
-            "(targetLocals : Nat → Option (HolWordLab width))",
-            "missingWitness", path,
+        self.assertTrue(
+            any("holFmapAsFiniteSupportRelationWitness_Source" in e for e in errors)
         )
-        self.assertTrue(any("must have a HolFiniteMapExact binder type" in error
-                            for error in bad))
-        self.assertTrue(any("requires same-module checked roundtrip witness" in error
-                            for error in bad))
 
-    def test_multi_owner_fmap_qualifier(self):
-        self.assertEqual(
-            list(SITES([
-                '@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml"',
-                '  "evaluate_shape_invariant_ret_inst"',
-                '  (fmap_as_finite_support_carriers := [PanState.locals, CrepState.locals])]',
-            ])),
-            [(1, "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
-              "evaluate_shape_invariant_ret_inst", None, (), (), (), (),
-              ("PanState.locals", "CrepState.locals"), False)],
+    def test_fmap_as_finite_support_relation_requires_carrier_in_declaration(self):
+        lines = [
+            "structure Source where",
+            "  globals : HolFiniteMapExact MlS (ValueHOL width)",
+            "",
+            "theorem holFmapAsFiniteSupportRelationWitness_Source :",
+            "    Source.toBroad (Source.ofBroad s) = s := rfl",
+        ]
+        errors = CHECKER["fmap_as_finite_support_relation_errors"](
+            lines, (("Source", "globals"),), "Example.lean",
+            "def stateRel (a : Type) : Prop",
         )
+        self.assertTrue(any("not named in the tagged declaration" in e for e in errors))
+
+    def test_fmap_as_finite_support_relation_rejects_unknown_carrier(self):
+        lines = ["def stateRel : Prop := True"]
+        errors = CHECKER["fmap_as_finite_support_relation_errors"](
+            lines, (("Nope", "globals"),), "Example.lean", "def stateRel : Prop",
+        )
+        self.assertTrue(any("not a structure" in e for e in errors))
+
+    def test_fmap_as_finite_support_relation_rejects_duplicate_entries(self):
+        lines = [
+            "structure Source where",
+            "  globals : HolFiniteMapExact MlS (ValueHOL width)",
+            "",
+            "theorem holFmapAsFiniteSupportRelationWitness_Source :",
+            "    Source.toBroad (Source.ofBroad s) = s := rfl",
+        ]
+        errors = CHECKER["fmap_as_finite_support_relation_errors"](
+            lines, (("Source", "globals"), ("Source", "globals")), "Example.lean",
+            "def stateRel (source : Source) : Prop",
+        )
+        self.assertTrue(any("distinct" in e for e in errors))
 
     def test_fmap_as_finite_support_result_accepts_lookup_witness(self):
         lines = [

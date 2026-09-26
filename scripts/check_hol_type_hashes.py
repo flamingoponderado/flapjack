@@ -47,8 +47,8 @@ def validate_export_record(record: Any, line_number: int) -> dict[str, Any]:
     qualifiers = record.get("qualifiers", {})
     allowed_qualifiers = {
         "list_as_array", "names_as_string", "names_as_string_boundary",
-        "fmap_as_finite_support", "fmap_as_finite_support_carriers",
-        "fmap_as_finite_support_result",
+        "fmap_as_finite_support", "fmap_as_finite_support_result",
+        "fmap_as_finite_support_relation",
     }
     if not isinstance(qualifiers, dict) or not set(qualifiers) <= allowed_qualifiers:
         raise ValueError(f"Lean export line {line_number} has invalid qualifiers")
@@ -128,8 +128,8 @@ def lock_records(
             "reviewed_names_as_string",
             "reviewed_list_as_array_names_as_string",
             "reviewed_fmap_as_finite_support",
-            "reviewed_fmap_as_finite_support_carriers",
             "reviewed_fmap_as_finite_support_result",
+            "reviewed_fmap_as_finite_support_relation",
         }:
             continue
         key = (record["hol_path"], record["hol_name"], record["lean_name"])
@@ -150,7 +150,10 @@ def lock_records(
             "names_as_string_boundary": list(record.get("names_as_string_boundary", ())),
             "fmap_as_finite_support": list(record.get("fmap_as_finite_support", ())),
         }
-        manifest_carriers = list(record.get("fmap_as_finite_support_carriers", ()))
+        if record.get("fmap_as_finite_support_relation", ()):
+            qualifiers["fmap_as_finite_support_relation"] = list(
+                record.get("fmap_as_finite_support_relation", ())
+            )
         if record.get("fmap_as_finite_support_result", False):
             qualifiers["fmap_as_finite_support_result"] = True
         exported_qualifiers = item.get("qualifiers", {})
@@ -160,13 +163,6 @@ def lock_records(
                 f"{record['lean_path']}:{record['lean_name']}: manifest qualifiers "
                 "differ from elaborated @[hol] exporter"
             )
-        if exported_qualifiers.get("fmap_as_finite_support_carriers", []) != manifest_carriers:
-            raise ValueError(
-                f"{record['lean_path']}:{record['lean_name']}: manifest multi-carrier "
-                "qualifier differs from elaborated @[hol] exporter"
-            )
-        if manifest_carriers:
-            qualifiers["fmap_as_finite_support_carriers"] = manifest_carriers
         lock_record: dict[str, Any] = {
                 "lean_path": record["lean_path"],
                 "lean_name": record["lean_name"],
