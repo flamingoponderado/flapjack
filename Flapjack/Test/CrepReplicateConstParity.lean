@@ -158,8 +158,8 @@ example :
         (crepExpToHOL (CrepExp.op BinOp.add
           [CrepExp.const (1 : BitVec 8), CrepExp.const (2 : BitVec 8)]))).map
         holWordLabToWord :=
-  evalCrepRuntimeExp_executed_of_noMemLoad exactReplicateState _
-    (by simp [crepExpNoMemLoad])
+  evalCrepRuntimeExp_executed_of_noByteMemoryLoad exactReplicateState _
+    (by simp [crepExpNoByteMemoryLoad])
 
 /-- Memory-free fragment (`flapjack-pxn.18.4.3.48.1.21.1`): `cmp`, `shift`
 and `crepOp` expressions are evaluated identically by the executed production
@@ -172,8 +172,8 @@ example :
         (crepExpToHOL (CrepExp.cmp Cmp.equal
           (CrepExp.const (1 : BitVec 8)) (CrepExp.const (2 : BitVec 8))))).map
         holWordLabToWord :=
-  evalCrepRuntimeExp_executed_of_noMemLoad exactReplicateState _
-    (by simp [crepExpNoMemLoad])
+  evalCrepRuntimeExp_executed_of_noByteMemoryLoad exactReplicateState _
+    (by simp [crepExpNoByteMemoryLoad])
 
 example :
     evalCrepRuntimeExp (executedCrepState exactReplicateState)
@@ -182,8 +182,8 @@ example :
         (crepExpToHOL (CrepExp.shift Shift.lsl
           (CrepExp.const (1 : BitVec 8)) (CrepExp.const (1 : BitVec 8))))).map
         holWordLabToWord :=
-  evalCrepRuntimeExp_executed_of_noMemLoad exactReplicateState _
-    (by simp [crepExpNoMemLoad])
+  evalCrepRuntimeExp_executed_of_noByteMemoryLoad exactReplicateState _
+    (by simp [crepExpNoByteMemoryLoad])
 
 example :
     evalCrepRuntimeExp (executedCrepState exactReplicateState)
@@ -192,13 +192,35 @@ example :
         (crepExpToHOL (CrepExp.crepOp CrepOp.mul
           [CrepExp.const (3 : BitVec 8), CrepExp.const (4 : BitVec 8)]))).map
         holWordLabToWord :=
-  evalCrepRuntimeExp_executed_of_noMemLoad exactReplicateState _
-    (by simp [crepExpNoMemLoad])
+  evalCrepRuntimeExp_executed_of_noByteMemoryLoad exactReplicateState _
+    (by simp [crepExpNoByteMemoryLoad])
+
+/-- State with a single populated cell at address `0`, for the plain `Load`
+arm (`flapjack-pxn.18.4.3.48.1.21.2`). -/
+def loadState : CrepSemHOLState 8 Unit :=
+  { exactReplicateState with
+    memory := fun _ => .word (9 : BitVec 8)
+    memaddrs := fun address => address = (0 : BitVec 8) }
+
+local instance : DecidablePred loadState.memaddrs := fun x => by
+  change Decidable (x = (0 : BitVec 8))
+  infer_instance
+
+/-- Plain `Load` arm: a single-cell memory load is evaluated identically by the
+executed production evaluator and the tagged exact `evalCrepSemHOLExp`. -/
+example :
+    evalCrepRuntimeExp (executedCrepState loadState)
+        (CrepExp.load (CrepExp.const (0 : BitVec 8))) =
+      (evalCrepSemHOLExp loadState
+        (crepExpToHOL (CrepExp.load (CrepExp.const (0 : BitVec 8))))).map
+        holWordLabToWord :=
+  evalCrepRuntimeExp_executed_of_noByteMemoryLoad loadState _
+    (by simp [crepExpNoByteMemoryLoad])
 
 def runChecks : IO Bool := do
   IO.println s!"PASS crep evaluate_replicate_const word_lab shape"
   IO.println s!"PASS exact crepSem evaluate_replicate_const matches HOL oracle rows"
   IO.println s!"PASS executed crep word_lab evaluator agrees with exact evalCrepSemHOLExp on Const path"
-  IO.println s!"PASS executed crep word_lab evaluator agrees with exact evalCrepSemHOLExp on memory-free fragment (op/cmp/shift/crepOp)"
+  IO.println s!"PASS executed crep word_lab evaluator agrees with exact evalCrepSemHOLExp on the fragment without byte/endian memory model (load/op/cmp/shift/crepOp)"
   pure (replicateConstGuard && exactReplicateGuard)
 end Flapjack.Test.CrepReplicateConstParity
