@@ -144,8 +144,9 @@ def callContinuationContextHOLExact {width : Nat} {σ : Type} [NeZero width]
 
 /-- Exact recursive Dec/Seq/If/While/Call/DecCall and Assign evaluator over the
     state-owned HOL code map.
-    Its outer `Option` marks constructors not yet assembled in this fragment;
-    it is not a HOL result. Seq applies HOL `fix_clock` to its first result,
+    Its outer `Option` is a legacy assembly marker, proved inert on finite-support
+    states by the finite evaluator totality and projection results; it is not a
+    HOL result. Seq applies HOL `fix_clock` to its first result,
     recurs on the second program only for HOL `NONE`, and propagates terminal
     results. `If` selects and recursively evaluates one branch. `While` decrements
     the clock before its body and recurses only on normal or Continue outcomes.
