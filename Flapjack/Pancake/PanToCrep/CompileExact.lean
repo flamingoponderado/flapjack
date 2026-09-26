@@ -452,6 +452,23 @@ def compileCallWrappedResultFallbackNoHandlerExactHOLW {width : Nat} [NeZero wid
   let flattenedArguments := compiledArguments.flatMap Prod.fst
   .call none function flattenedArguments
 
+/-! The handler-present Call arm with a successful wrapped result lookup but a
+    missing exception-code lookup in HOL `compile_def` (`pan_to_crepScript.sml:252-261`).
+    HOL discards the handler while retaining the destination names as result
+    metadata. -/
+
+def compileCallWrappedResultHandlerMissingEidExactHOLW {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (function resultName : MlS)
+    (arguments : List (Flapjack.Pancake.PanLang.ExpHOL width))
+    (resultShape : Flapjack.Pancake.PanLang.ShapeHOL) (resultNames : List Nat)
+    (exceptionName _exceptionVariable : MlS)
+    (_handlerBody : Flapjack.Pancake.PanLang.ProgHOL width)
+    (_wrappedResult : wrapRtHOL (context.vars.lookup resultName) =
+      some (resultShape, resultNames))
+    (_missingEid : context.eids.lookup exceptionName = none) : CrepProgHOL width :=
+  compileCallWrappedResultNoHandlerExactHOLW context function resultName arguments
+    resultShape resultNames _wrappedResult
+
 /-! The `rtyp = SOME (NONE, NONE)` arm of the HOL `Call` clause
     (`pan_to_crepScript.sml:226-232`) looks up the callee's return shape,
     allocates result names above `vmax`, initializes those names to zero, and

@@ -737,6 +737,21 @@ def exactCallWrappedResultFallbackNoHandlerParity : Bool :=
 
 #guard exactCallWrappedResultFallbackNoHandlerParity
 
+def exactCallWrappedResultHandlerMissingEidParity : Bool :=
+  match compileCallWrappedResultHandlerMissingEidExactHOLW
+      exactCallWrappedResultContext (ofString "f") (ofString "pair")
+      [.const 1, .rstruct [.const 2, .const 3]] (.comb [.one, .one]) [30, 31]
+      (ofString "E") (ofString "exn") .tick
+      (by simp [exactCallWrappedResultContext, wrapRtHOL,
+        HolFiniteMapExact.lookup_update, FUPDATE])
+      (by simp [exactCallWrappedResultContext,
+        HolFiniteMapExact.lookup_empty]) with
+  | .call (some ([30, 31], none)) function [.const 1, .const 2, .const 3] =>
+      function == ofString "f"
+  | _ => false
+
+#guard exactCallWrappedResultHandlerMissingEidParity
+
 def exactCallResultNoHandlerParity : Bool :=
   (match compileCallResultNoHandlerExactHOLW exactCallResultContext (ofString "f")
       [.const 1, .rstruct [.const 2, .const 3]] with

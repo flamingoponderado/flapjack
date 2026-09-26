@@ -88,6 +88,11 @@ guard are `compileCallWrappedResultFallbackNoHandlerExactHOLW` and
 `exactCallWrappedResultFallbackNoHandlerParity`. `call_handler_missing_eid` checks
 that an exception handler with a missing `eids` entry takes the same fallback;
 the Lean exact subcase is `compileCallHandlerMissingEidExactHOLW`.
+`call_wrapped_result_handler_missing_eid` checks the distinct wrapped-result
+case: the missing handler EID is discarded, but destination names remain in
+the call result metadata. The matching helper and guard are
+`compileCallWrappedResultHandlerMissingEidExactHOLW` and
+`exactCallWrappedResultHandlerMissingEidParity`.
 `call_handler_present_eid` checks the found-EID branch, including exact
 `exp_hdl` global loads and recursive handler sequencing; its exact helper is
 `compileCallHandlerPresentEidExactHOLW`.

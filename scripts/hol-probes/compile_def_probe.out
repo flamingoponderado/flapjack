@@ -63,6 +63,7 @@ call_result_no_handler_missing=Call (SOME ([],NONE)) «missing» [Const 1w; Cons
 call_wrapped_result_no_handler=Call (SOME ([30; 31],NONE)) «f» [Const 1w; Const 2w; Const 3w]
 call_wrapped_result_missing=Call NONE «f» [Const 1w; Const 2w; Const 3w]
 call_wrapped_result_empty_one=Call NONE «f» [Const 1w; Const 2w; Const 3w]
+call_wrapped_result_handler_missing_eid=Call (SOME ([30; 31],NONE)) «f» [Const 1w; Const 2w; Const 3w]
 call_handler_missing_eid=Dec 11 (Const 0w)
   (Dec 12 (Const 0w)
      (Call (SOME ([11; 12],NONE)) «f» [Const 1w; Const 2w; Const 3w]))
