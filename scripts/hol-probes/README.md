@@ -62,7 +62,8 @@ clock, and exposes the callee post-state. Their Lean checks live in
 `compile_def_probe.out` also records direct HOL evaluations of `Return`
 (`return`, `multi_return`, and the empty-struct return), paired
 `Store32`/`StoreByte` success and fallback rows, `If`/`While` success and
-fallback rows, Global Assign/ShMemLoad Skip fallbacks, and assigned Global call
+fallback rows, Global Assign/ShMemLoad Skip fallbacks, Local Assign direct,
+overlap-temporary, missing-destination, and length-fallback rows, and assigned Global call
 destinations through `pan_to_crep$compile`: absent lookups, the
 `One`/empty-list fallback, and inconsistent shape/name-list lengths. The
 matching Lean cases live in `Flapjack.Test.CompileDefParity`. The
