@@ -5003,6 +5003,14 @@
   {
     "hol_path": null,
     "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/ProgOfHOL.lean",
+    "lean_name": "progOfHOL_smartSeqHOL",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific representation bridge for `smartSeqHOL`: HOL declares the transformation but has no separate theorem about commuting the `ProgHOL` to production `Prog` decoder with it. This proof connects the exact HOL carrier to the executable helper and carries no HOL tag."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
     "lean_name": "structCompileShapesFuel_eq_map",
     "statement_status": "no_hol_reference_pending_classification",
