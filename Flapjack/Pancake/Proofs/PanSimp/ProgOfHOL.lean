@@ -226,4 +226,76 @@ theorem progOfHOL_seqAssocHOL_seq {width : Nat} [NeZero width]
   rw [hsecond, hfirst]
   simp [seqAssoc]
 
+/-- Flapjack-specific codec equation for the Dec clause of HOL
+`seq_assoc_def`. It uses the recursive body equation at Skip and has no
+separate HOL original, so it carries no `@[hol]` tag. -/
+theorem progOfHOL_seqAssocHOL_dec {width : Nat} [NeZero width]
+    (pre : ProgHOL width) (name : MlS) (shape : ShapeHOL)
+    (value : ExpHOL width) (body : ProgHOL width)
+    (hbody : progOfHOL (seqAssocHOL .skip body) =
+      seqAssoc .skip (progOfHOL body)) :
+    progOfHOL (seqAssocHOL pre (.dec name shape value body)) =
+      seqAssoc (progOfHOL pre) (progOfHOL (.dec name shape value body)) := by
+  simp only [seqAssocHOL]
+  rw [progOfHOL_smartSeqHOL]
+  simp [seqAssoc, progOfHOL, hbody]
+
+/-- Flapjack-specific codec equation for the If clause of HOL
+`seq_assoc_def`. The only recursive obligations are the then and else branch
+equations at Skip. HOL has no theorem about commuting `progOfHOL` with
+`seqAssocHOL`, so this declaration carries no `@[hol]` tag. -/
+theorem progOfHOL_seqAssocHOL_ite {width : Nat} [NeZero width]
+    (pre : ProgHOL width) (condition : ExpHOL width)
+    (thenBranch elseBranch : ProgHOL width)
+    (hthen : progOfHOL (seqAssocHOL .skip thenBranch) =
+      seqAssoc .skip (progOfHOL thenBranch))
+    (helse : progOfHOL (seqAssocHOL .skip elseBranch) =
+      seqAssoc .skip (progOfHOL elseBranch)) :
+    progOfHOL (seqAssocHOL pre (.ite condition thenBranch elseBranch)) =
+      seqAssoc (progOfHOL pre)
+        (.ite (expOfHOL condition) (progOfHOL thenBranch) (progOfHOL elseBranch)) := by
+  simp only [seqAssocHOL]
+  rw [progOfHOL_smartSeqHOL]
+  simp [seqAssoc, progOfHOL, hthen, helse]
+
+/-- Flapjack-specific codec equation for the While clause of HOL
+`seq_assoc_def`. Its only recursive obligation is the loop-body equation at
+Skip. HOL has no theorem about commuting `progOfHOL` with `seqAssocHOL`, so
+this declaration carries no `@[hol]` tag. -/
+theorem progOfHOL_seqAssocHOL_while {width : Nat} [NeZero width]
+    (pre : ProgHOL width) (condition : ExpHOL width) (body : ProgHOL width)
+    (hbody : progOfHOL (seqAssocHOL .skip body) =
+      seqAssoc .skip (progOfHOL body)) :
+    progOfHOL (seqAssocHOL pre (.while condition body)) =
+      seqAssoc (progOfHOL pre) (.while (expOfHOL condition) (progOfHOL body)) := by
+  simp only [seqAssocHOL]
+  rw [progOfHOL_smartSeqHOL]
+  simp [seqAssoc, progOfHOL, hbody]
+
+/-- Flapjack-specific codec equation for the DecCall clause of HOL
+`seq_assoc_def`. Its only recursive obligation is the body equation at Skip.
+HOL has no theorem about commuting `progOfHOL` with `seqAssocHOL`, so this
+declaration carries no `@[hol]` tag. -/
+theorem progOfHOL_seqAssocHOL_decCall {width : Nat} [NeZero width]
+    (pre : ProgHOL width) (name : MlS) (shape : ShapeHOL) (function : MlS)
+    (arguments : List (ExpHOL width)) (body : ProgHOL width)
+    (hbody : progOfHOL (seqAssocHOL .skip body) =
+      seqAssoc .skip (progOfHOL body)) :
+    progOfHOL (seqAssocHOL pre (.decCall name shape function arguments body)) =
+      seqAssoc (progOfHOL pre)
+        (progOfHOL (.decCall name shape function arguments body)) := by
+  simp only [seqAssocHOL]
+  rw [progOfHOL_smartSeqHOL]
+  simp [seqAssoc, progOfHOL, hbody]
+
+/-- Flapjack-specific codec equation for the annotation clause of HOL
+`seq_assoc_def`. HOL erases annotations to the pending prefix, and no
+recursive obligation is needed. HOL has no theorem about commuting `progOfHOL`
+with `seqAssocHOL`, so this declaration carries no `@[hol]` tag. -/
+theorem progOfHOL_seqAssocHOL_annot {width : Nat} [NeZero width]
+    (pre : ProgHOL width) (tag text : MlS) :
+    progOfHOL (seqAssocHOL pre (.annot tag text)) =
+      seqAssoc (progOfHOL pre) (progOfHOL (.annot tag text)) := by
+  simp [seqAssocHOL, seqAssoc, progOfHOL]
+
 end Flapjack
