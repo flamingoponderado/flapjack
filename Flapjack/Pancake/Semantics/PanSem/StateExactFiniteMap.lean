@@ -909,6 +909,25 @@ theorem ext {width : Nat} {σ : Type} [NeZero width]
   · exact Subsingleton.elim _ _
   · exact Subsingleton.elim _ _
 
+/-- FLAPJACK-SPECIFIC (not a HOL declaration): a general `withState` projection
+    bridge.  Whenever two states agree through `toExact`, their `withState`
+    contexts project onto each other.  The seven explicit arguments let the
+    projection proofs invoke it with `_ _ _ _` holes at the rewrite site, so the
+    definition's auto-generated `withState` proof arguments unify even though the
+    occurrence cannot be named syntactically. -/
+theorem toExact_withState_eq {width : Nat} {σ : Type} [NeZero width]
+    (context : FiniteEvalContext width σ)
+    (state : PanSemStateFiniteExact width σ) (broadState : PanSemStateExact width σ)
+    (hstate : state.toExact = broadState)
+    (hmem : state.memaddrs = context.state.memaddrs)
+    (hshared : state.shMemaddrs = context.state.shMemaddrs)
+    (hmem' : broadState.memaddrs = context.toExact.state.memaddrs)
+    (hshared' : broadState.shMemaddrs = context.toExact.state.shMemaddrs) :
+    (context.withState state hmem hshared).toExact =
+      context.toExact.withState broadState hmem' hshared' := by
+  apply PanSemExactEvalContext.ext
+  exact hstate
+
 end FiniteEvalContext
 
 /-- The finite fix-clock never increases the clock. -/
