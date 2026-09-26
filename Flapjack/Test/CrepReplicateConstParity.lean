@@ -217,10 +217,55 @@ example :
   evalCrepRuntimeExp_executed_of_noByteMemoryLoad loadState _
     (by simp [crepExpNoByteMemoryLoad])
 
+/-- Width-64 state for the byte-reading `Load32`/`LoadByte` arms
+(`flapjack-pxn.18.4.3.48.1.21.3`). -/
+def load64State : CrepSemHOLState 64 Unit where
+  locals := HolFiniteMapExact.empty
+  globals := HolFiniteMapExact.empty
+  code := HolFiniteMapExact.empty
+  memory := fun _ => .word (9 : BitVec 64)
+  memaddrs := fun _ => False
+  shMemaddrs := fun _ => False
+  clock := 0
+  be := false
+  ffi := replicateFfi
+  baseAddr := 0
+  topAddr := 0
+
+local instance : DecidablePred load64State.memaddrs := by
+  intro address
+  change Decidable False
+  infer_instance
+
+/-- RV64 `Load32` arm: the executed production evaluator agrees with the tagged
+exact `evalCrepSemHOLExp` on the byte-reading 32-bit load. -/
+example :
+    evalCrepRuntimeExp (executedCrepState load64State)
+        (CrepExp.load32 (CrepExp.const (0 : BitVec 64))) =
+      (evalCrepSemHOLExp load64State
+        (crepExpToHOL (CrepExp.load32 (CrepExp.const (0 : BitVec 64))))).map
+        holWordLabToWord :=
+  evalCrepRuntimeExp_executed_load32 load64State (CrepExp.const (0 : BitVec 64))
+    (evalCrepRuntimeExp_executed_of_noByteMemoryLoad load64State _
+      (by simp [crepExpNoByteMemoryLoad]))
+
+/-- RV64 `LoadByte` arm: the executed production evaluator agrees with the tagged
+exact `evalCrepSemHOLExp` on the byte-reading load. -/
+example :
+    evalCrepRuntimeExp (executedCrepState load64State)
+        (CrepExp.loadByte (CrepExp.const (0 : BitVec 64))) =
+      (evalCrepSemHOLExp load64State
+        (crepExpToHOL (CrepExp.loadByte (CrepExp.const (0 : BitVec 64))))).map
+        holWordLabToWord :=
+  evalCrepRuntimeExp_executed_loadByte load64State (CrepExp.const (0 : BitVec 64))
+    (evalCrepRuntimeExp_executed_of_noByteMemoryLoad load64State _
+      (by simp [crepExpNoByteMemoryLoad]))
+
 def runChecks : IO Bool := do
   IO.println s!"PASS crep evaluate_replicate_const word_lab shape"
   IO.println s!"PASS exact crepSem evaluate_replicate_const matches HOL oracle rows"
   IO.println s!"PASS executed crep word_lab evaluator agrees with exact evalCrepSemHOLExp on Const path"
   IO.println s!"PASS executed crep word_lab evaluator agrees with exact evalCrepSemHOLExp on the fragment without byte/endian memory model (load/op/cmp/shift/crepOp)"
+  IO.println s!"PASS exact RV64 load32/loadByte arms agree with evalCrepSemHOLExp on the executed BitVec evaluator state"
   pure (replicateConstGuard && exactReplicateGuard)
 end Flapjack.Test.CrepReplicateConstParity
