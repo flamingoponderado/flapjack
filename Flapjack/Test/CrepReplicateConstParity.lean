@@ -296,6 +296,30 @@ example :
     (evalCrepRuntimeExp_executed_of_noByteMemoryLoad load64State _
       (by simp [crepExpNoByteMemoryLoad]))
 
+/-- Production list-level `word_lab` evaluator on a two-element expression list
+returns exactly the tagged exact `evalCrepSemHOLExp` result
+(`flapjack-pxn.18.4.3.48.1.21.5`). -/
+example :
+    evalCrepRuntimeExpsWordLab (executedCrepState exactReplicateState)
+        [CrepExp.const (1 : BitVec 8),
+          CrepExp.op BinOp.add [CrepExp.const (1 : BitVec 8), CrepExp.const (2 : BitVec 8)]] =
+      ((List.mapM (fun e => evalCrepSemHOLExp exactReplicateState (crepExpToHOL e))
+        [CrepExp.const (1 : BitVec 8),
+          CrepExp.op BinOp.add [CrepExp.const (1 : BitVec 8), CrepExp.const (2 : BitVec 8)]]).map
+        (List.map HolWordLab.toPanWordLab)) :=
+  evalCrepRuntimeExpsWordLab_executed_of_noByteMemoryLoad exactReplicateState _
+    (by simp [crepExpNoByteMemoryLoad])
+
+/-- Executed production route for `replicate (Const 0)` matches the exact
+`evalCrepSemHOLExp` route. -/
+example :
+    evalCrepRuntimeExpsWordLab (executedCrepState exactReplicateState)
+        (List.replicate 3 (CrepExp.const (0 : BitVec 8))) =
+      (((List.replicate 3 (CrepExp.const (0 : BitVec 8))).mapM
+        (fun e => evalCrepSemHOLExp exactReplicateState (crepExpToHOL e))).map
+        (List.map HolWordLab.toPanWordLab)) :=
+  evalCrepRuntimeExpsWordLab_replicate_const_matches_exact exactReplicateState 3 (0 : BitVec 8)
+
 def runChecks : IO Bool := do
   IO.println s!"PASS crep evaluate_replicate_const word_lab shape"
   IO.println s!"PASS exact crepSem evaluate_replicate_const matches HOL oracle rows"
@@ -303,5 +327,6 @@ def runChecks : IO Bool := do
   IO.println s!"PASS executed crep word_lab evaluator agrees with exact evalCrepSemHOLExp on the fragment without byte/endian memory model (load/op/cmp/shift/crepOp)"
   IO.println s!"PASS exact RV64 load32/loadByte arms agree with evalCrepSemHOLExp on the executed BitVec evaluator state"
   IO.println s!"PASS executed production word_lab evaluator returns exact evalCrepSemHOLExp result on bridged fragment"
+  IO.println s!"PASS executed production list word_lab evaluator returns exact evalCrepSemHOLExp result on bridged fragment"
   pure (replicateConstGuard && exactReplicateGuard)
 end Flapjack.Test.CrepReplicateConstParity

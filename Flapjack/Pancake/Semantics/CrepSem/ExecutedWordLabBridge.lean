@@ -454,4 +454,55 @@ theorem evalCrepRuntimeExpWordLab_executed_loadByte {σ : Type}
   rw [evalCrepRuntimeExp_executed_loadByte state address haddr]
   exact option_map_holWordLabToWord_map_word _
 
+/-! ## List-level production `word_lab` result shape
+
+The production list evaluator `evalCrepRuntimeExpsWordLab` is a `mapM` of the
+single-expression `word_lab` evaluator. Lifting the pointwise bridge to lists
+lets the whole executed production route return the exact `evalCrepSemHOLExp`
+result (mapped through `HolWordLab.toPanWordLab`). This is a Flapjack-specific
+representation bridge: it carries no `@[hol]` tag (and, not being under
+`Proofs/`, needs no theorem-map entry). -/
+
+private theorem option_map_list_map_cons {α γ : Type} (g : α → γ)
+    (A : Option α) (B : Option (List α)) :
+    (do let a ← A; let b ← B; pure (a :: b)).map (List.map g) =
+      (do let a ← A.map g; let b ← B.map (List.map g); pure (a :: b)) := by
+  cases A <;> cases B <;> rfl
+
+/-- Executed production list `word_lab` evaluator equals the exact
+`evalCrepSemHOLExp` result (mapped to `PanWordLab`) on any list of expressions
+that does not read the byte/endian memory model. -/
+theorem evalCrepRuntimeExpsWordLab_executed_of_noByteMemoryLoad
+    {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) [DecidablePred state.memaddrs]
+    (es : List (CrepExp (BitVec width)))
+    (hm : ∀ e ∈ es, crepExpNoByteMemoryLoad e) :
+    evalCrepRuntimeExpsWordLab (executedCrepState state) es =
+      (es.mapM (fun e => evalCrepSemHOLExp state (crepExpToHOL e))).map
+        (List.map HolWordLab.toPanWordLab) := by
+  induction es with
+  | nil => simp [evalCrepRuntimeExpsWordLab]
+  | cons e rest ih =>
+      rw [List.mapM_cons]
+      rw [evalCrepRuntimeExpsWordLab]
+      rw [evalCrepRuntimeExpWordLab_executed_of_noByteMemoryLoad state e (hm e (by simp))]
+      rw [ih (fun x hx => hm x (by simp [hx]))]
+      exact (option_map_list_map_cons _ _ _).symm
+
+/-- Executed-route `replicate (Const v)` corollary of the list-level bridge. -/
+theorem evalCrepRuntimeExpsWordLab_replicate_const_matches_exact
+    {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) [DecidablePred state.memaddrs]
+    (n : Nat) (v : BitVec width) :
+    evalCrepRuntimeExpsWordLab (executedCrepState state) (List.replicate n (.const v)) =
+      ((List.replicate n (.const v)).mapM
+        (fun e => evalCrepSemHOLExp state (crepExpToHOL e))).map
+        (List.map HolWordLab.toPanWordLab) :=
+  evalCrepRuntimeExpsWordLab_executed_of_noByteMemoryLoad state _
+    (by
+      intro e he
+      rw [List.mem_replicate] at he
+      obtain ⟨_, rfl⟩ := he
+      simp [crepExpNoByteMemoryLoad])
+
 end Flapjack
