@@ -284,6 +284,72 @@ theorem compileProgExactHOLW_global_assign_bridge {width : Nat} [NeZero width]
   simp [compileProgExactHOLW, compileGlobalAssignExactHOLW,
     compileProgRiscV, compileProgHOL, crepProgOfHOL, progOfHOL]
 
+/-- The exact Store32 equation agrees with production once both expression
+    compiler results are decoded. -/
+theorem compileProgExactHOLW_store32_bridge {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width)
+    (address value : Exp (BitVec width))
+    (haddress :
+      ((compileExpExactHOLW context (expToHOL address)).1.map crepExpOfHOL,
+        shapeOfHOL (compileExpExactHOLW context (expToHOL address)).2) =
+        compileExpHOL context.toProduction address)
+    (hvalue :
+      ((compileExpExactHOLW context (expToHOL value)).1.map crepExpOfHOL,
+        shapeOfHOL (compileExpExactHOLW context (expToHOL value)).2) =
+        compileExpHOL context.toProduction value) :
+    crepProgOfHOL (compileProgExactHOLW context
+        (.store32 (expToHOL address) (expToHOL value))) =
+      compileProgRiscV context.toProduction
+        (.store32 address value) := by
+  rw [Prod.mk.injEq] at haddress hvalue
+  rcases haddress with ⟨haddressList, _⟩
+  rcases hvalue with ⟨hvalueList, _⟩
+  cases hExactAddress : compileExpExactHOLW context (expToHOL address) with
+  | mk exactAddresses addressShape =>
+      cases hExactValue : compileExpExactHOLW context (expToHOL value) with
+      | mk exactValues valueShape =>
+          cases hProductionAddress : compileExpHOL context.toProduction address with
+          | mk productionAddresses productionAddressShape =>
+              cases hProductionValue : compileExpHOL context.toProduction value with
+              | mk productionValues productionValueShape =>
+                  cases exactAddresses <;> cases exactValues <;>
+                    cases productionAddresses <;> cases productionValues <;>
+                    simp_all [compileProgExactHOLW, compileStore32ExactHOLW,
+                      compileProgRiscV, compileProgHOL, crepProgOfHOL]
+
+/-- The exact StoreByte equation agrees with production once both expression
+    compiler results are decoded. -/
+theorem compileProgExactHOLW_store_byte_bridge {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width)
+    (address value : Exp (BitVec width))
+    (haddress :
+      ((compileExpExactHOLW context (expToHOL address)).1.map crepExpOfHOL,
+        shapeOfHOL (compileExpExactHOLW context (expToHOL address)).2) =
+        compileExpHOL context.toProduction address)
+    (hvalue :
+      ((compileExpExactHOLW context (expToHOL value)).1.map crepExpOfHOL,
+        shapeOfHOL (compileExpExactHOLW context (expToHOL value)).2) =
+        compileExpHOL context.toProduction value) :
+    crepProgOfHOL (compileProgExactHOLW context
+        (.storeByte (expToHOL address) (expToHOL value))) =
+      compileProgRiscV context.toProduction
+        (.storeByte address value) := by
+  rw [Prod.mk.injEq] at haddress hvalue
+  rcases haddress with ⟨haddressList, _⟩
+  rcases hvalue with ⟨hvalueList, _⟩
+  cases hExactAddress : compileExpExactHOLW context (expToHOL address) with
+  | mk exactAddresses addressShape =>
+      cases hExactValue : compileExpExactHOLW context (expToHOL value) with
+      | mk exactValues valueShape =>
+          cases hProductionAddress : compileExpHOL context.toProduction address with
+          | mk productionAddresses productionAddressShape =>
+              cases hProductionValue : compileExpHOL context.toProduction value with
+              | mk productionValues productionValueShape =>
+                  cases exactAddresses <;> cases exactValues <;>
+                    cases productionAddresses <;> cases productionValues <;>
+                    simp_all [compileProgExactHOLW, compileStoreByteExactHOLW,
+                      compileProgRiscV, compileProgHOL, crepProgOfHOL]
+
 /-- Metadata adapter whose compiler input crosses the exact `DeclHOL` carrier
     boundary.  Its side condition is the byte-range premise used by the
     production-to-HOL declaration codec; it is preserved by the executed
