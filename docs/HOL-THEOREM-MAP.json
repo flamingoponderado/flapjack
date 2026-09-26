@@ -12173,5 +12173,13 @@
     "lean_name": "asmFpRegOkExact",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.6.1.2): exact HOL asmScript.sml:178-179 fp_reg_ok_def over the exact AsmConfigExact carrier with HOL argument order fp_reg_ok d c; d < c.fp_reg_count rendered as register < config.fpRegCount. Reviewed_exact at [NeZero width]; the width-general executed asmFpRegOk stays documented_mismatch."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmScript.sml",
+    "hol_name": "reg_imm_ok_def",
+    "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
+    "lean_name": "asmRegImmOkExact",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.6.1.2): exact HOL asmScript.sml:182-187 reg_imm_ok_def over the exact AsmConfigExact carrier and exact HolRegImm ('a reg_imm); Reg r case delegates to asmRegOkExact, Imm w case uses ((b = INL Xor) /\\ (w = -1w) \\/ c.valid_imm b w) rendered as (operator == .inl .xor && value == -1) || config.validImm operator value. Reviewed_exact at [NeZero width]."
   }
 ]

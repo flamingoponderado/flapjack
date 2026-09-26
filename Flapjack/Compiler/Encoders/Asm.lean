@@ -345,6 +345,20 @@ def asmFpRegOkExact {width : Nat} [NeZero width] (register : Nat)
     (config : AsmConfigExact width) : Bool :=
   register < config.fpRegCount
 
+/-- HOL `asmScript.sml:182-187`:
+`reg_imm_ok b (Reg r) c = reg_ok r c` /
+`reg_imm_ok b (Imm w) c = ((b = INL Xor) /\ (w = -1w) \/ c.valid_imm b w)`.
+Exact port over the exact `AsmConfigExact` carrier and the exact `HolRegImm`
+(`'a reg_imm`); the `Sum BinOp Cmp` (`binop + cmp`) immediate policy is the
+`validImm` field, and `w = -1w` is `value == -1`.  Bead flapjack-4ac.6.1.2. -/
+@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "reg_imm_ok_def"]
+def asmRegImmOkExact {width : Nat} [NeZero width] (operator : Sum BinOp Cmp)
+    (right : HolRegImm width) (config : AsmConfigExact width) : Bool :=
+  match right with
+  | .reg register => asmRegOkExact register config
+  | .imm value =>
+      (operator == .inl .xor && value == -1) || config.validImm operator value
+
 /--
     Not an exact HOL port: this Lean declaration quantifies `width : Nat`
     without `[NeZero width]`, so `BitVec 0` is admitted, whereas HOL `word`
