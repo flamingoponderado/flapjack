@@ -537,6 +537,22 @@
   },
   {
     "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
+    "hol_name": "result",
+    "lean_path": "Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean",
+    "lean_name": "CrepResultHOLExact",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-26; bead flapjack-pxn.18.5.5.7.7.16): HOL Datatype result (crepSemScript.sml:36-44) is Error | TimeOut | Break num | Continue num | Return (('a word_lab) list) | Exception ('a word) | FinalFFI final_event. Lean CrepResultHOLExact has the same seven constructors with one-for-one payloads: break/continue carry Nat, return carries List (HolWordLab width) (the tagged exact port of 'a word_lab), exception carries BitVec width (the canonical positive finite-word model of 'a word used by the tagged state fields and HolWordLab), and finalFfi carries the tagged monomorphic HolFinalEvent port of final_event. final_event is monomorphic in HOL, so no final-event parameter is needed, and result has no other type parameter. [NeZero width] matches HOL's positive dimindex, as for HolWordLab. Constructor arity and payload correspondence were compared directly with the HOL source. The production CrepResultHOL with its List (PanWordLab (BitVec width)) return payload remains untagged infrastructure and is not claimed exact."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
+    "hol_name": "exit_loop_def",
+    "lean_path": "Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean",
+    "lean_name": "exitLoopCrepResult",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-26; beads flapjack-pxn.18.5.5.7.7.14/.16): HOL exit_loop_def (crepSemScript.sml:234-238) is the three equations exit_loop (SOME (Break n)) = SOME (Break (n - 1)); exit_loop (SOME (Continue n)) = SOME (Continue (n - 1)); exit_loop res = res. The Lean clauses match one for one over the genuinely exact carrier Option (CrepResultHOLExact width), the @[hol] port of HOL Datatype result whose Return payload is List (HolWordLab width), matching HOL's ('a word_lab) list, and whose Exception payload is BitVec width. Positive-width via [NeZero width] where the word_lab/word payloads are used; the equations themselves are width-generic like HOL. No result payload is inspected, so no PanWordLab projection arises. Direct HOL EVAL rows exit_loop_break=SOME (Break 2), exit_loop_break_zero=SOME (Break 0), exit_loop_continue=SOME (Continue 1), exit_loop_other=SOME TimeOut, exit_loop_none=NONE, exit_loop_error=SOME Error in scripts/hol-probes/crep_exit_loop_probe.out are reproduced by kernel-checked theorems in Flapjack/Test/CrepSemTotalEvaluateHOLParity.lean.)"
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
     "hol_name": "eval_def",
     "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
     "lean_name": "evalCrepHolFiniteStateSource_load",
@@ -8963,8 +8979,9 @@
     "hol_name": "res_var_def",
     "lean_path": "Flapjack/Pancake/Semantics/CrepSem/HOLState.lean",
     "lean_name": "resVarEq",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds4 (source comparison, bead flapjack-pxn.18.3.7.1.3.1.1.3.1): faithful HOL-equality port of crepSem$res_var_def (crepSemScript.sml:163-166) on the finite-support HolFiniteMapExact carrier: NONE subtracts the key from the domain (FDOMSUB_HOL) and SOME v updates it (FUPDATE_HOL), both using DecidableEq (Lean's encoding of HOL =). HOL's res_var is polymorphic in the key type and this port adds no BEq/LawfulBEq side conditions, so it never narrows the key type; the finite-support type removes the raw-function infinite-support mismatch that forced the withdrawal of the earlier resVarW/BEq-based tags. Direct HOL rows res_var_delete_hit/res_var_update_hit in crep_res_var_probe.out. This declaration is TEMPORARILY WITHDRAWN from an exact claim pending the fmap_as_finite_support qualifier (bead flapjack-pxn.18.3.7.1.3.1.1.2.4); the helper and its executable bridge remain valid Flapjack infrastructure."
+    "statement_status": "reviewed_fmap_as_finite_support_result",
+    "fmap_as_finite_support_result": true,
+    "reviewer": "flapjack-ds9 (source comparison, bead flapjack-pxn.18.5.5.7.7.15): HOL res_var_def (crepSemScript.sml:163-166) is the two-equation definition on an abstract key n and value option: res_var lc (n, NONE) = lc \\\\ n and res_var lc (n, SOME v) = lc |+ (n, v), fully polymorphic in the key type. resVarEq reproduces both equations over the canonical HolFiniteMapExact alpha beta carrier: none selects eraseEq (FDOMSUB_HOL map.lookup key) and some value selects updateEq (FUPDATE_HOL map.lookup (key,value)), with [DecidableEq alpha] as Lean's encoding of HOL polymorphic equality; no BEq/LawfulBEq side condition narrows the key type. The result carrier is the canonical finite-support translation, so the standalone fmap_as_finite_support_result qualifier applies; the same-module lookup witness holFmapAsFiniteSupportResultWitness_resVarEq states (resVarEq map (key,value)).lookup k = the raw FDOMSUB_HOL/FUPDATE_HOL operation. Direct HOL rows res_var_delete_hit=NONE and res_var_update_hit=SOME (Word 7w) in scripts/hol-probes/crep_res_var_probe.out are replayed by kernel-checked guards/theorems in Flapjack/Test/CrepSemStateExactParity.lean. The qualifier is representation-only and changes no quantifier, side condition, or conclusion. The executable BEq-based resVarW stays untagged."
   },
   {
     "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",

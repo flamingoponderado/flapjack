@@ -544,4 +544,63 @@ def compileExtCallExactHOLW {width : Nat} [NeZero width]
                   (maximumVariable + 3) (maximumVariable + 4)))))
   | _, _, _, _, _, _, _, _ => .skip
 
+
+/-! ### Codec helper lemmas for the `compile_exp` production bridge
+
+These untagged Flapjack lemmas are the list-level helpers needed to relate the
+tagged exact `compileExpExactHOLW` (over `ExpHOL`/`CrepExpHOL`) to the executed
+production `compileExpHOL` under the checked codecs `crepExpToHOL` and
+`shapeToHOL`. They are part of the exact `code_rel` boundary work tracked by
+`flapjack-pxn.18.4.3.73.1`. -/
+
+/-- `cexpHeads` commutes with the element codec `crepExpToHOL`: taking heads of
+    a list of expression lists and then decoding is the same as decoding each
+    list first. -/
+theorem cexpHeads_map_crepExpToHOL {width : Nat} [NeZero width]
+    (lists : List (List (CrepExp (BitVec width)))) :
+    cexpHeads (lists.map (List.map crepExpToHOL)) =
+      (cexpHeads lists).map (List.map crepExpToHOL) := by
+  induction lists with
+  | nil => rfl
+  | cons expressions rest ih =>
+      cases expressions with
+      | nil =>
+          simp only [List.map_cons, List.map_nil, cexpHeads]
+          rfl
+      | cons expression expressions =>
+          cases h : cexpHeads rest with
+          | none =>
+              simp only [List.map_cons, cexpHeads, ih, h]
+              rfl
+          | some heads =>
+              simp only [List.map_cons, cexpHeads, ih, h]
+              rfl
+
+/-- Production-to-exact direction of HOL `crepLang$load_shape_def`: the
+    width-indexed production loader `loadShapeBytes` decodes into the tagged
+    exact `loadShapeBytesHOLW`. Dual to `loadShapeBytesHOLW_toProduction`. -/
+theorem loadShapeBytes_map_crepExpToHOL {width : Nat} [NeZero width]
+    (address : BitVec width) (count : Nat) (value : CrepExp (BitVec width)) :
+    (loadShapeBytes address count value).map crepExpToHOL =
+      loadShapeBytesHOLW address count (crepExpToHOL value) := by
+  induction count generalizing address with
+  | zero => simp [loadShapeBytesHOLW, loadShapeBytes]
+  | succ count ih =>
+      simp only [loadShapeBytesHOLW, loadShapeBytes, List.map_cons]
+      rw [ih]
+      congr 1
+      simp only [beq_iff_eq]
+      by_cases hzero : address = 0
+      · rw [if_pos hzero, if_pos hzero]
+        simp [crepExpToHOL]
+      · rw [if_neg hzero, if_neg hzero]
+        simp [crepExpToHOL]
+
+/-- The `loadShapeBytesW` corollary used by the width-indexed compiler path. -/
+theorem loadShapeBytesW_map_crepExpToHOL {width : Nat} [NeZero width]
+    (address : BitVec width) (count : Nat) (value : CrepExp (BitVec width)) :
+    (loadShapeBytesW address count value).map crepExpToHOL =
+      loadShapeBytesHOLW address count (crepExpToHOL value) :=
+  loadShapeBytes_map_crepExpToHOL address count value
+
 end Flapjack
