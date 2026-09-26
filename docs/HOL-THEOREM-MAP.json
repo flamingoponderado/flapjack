@@ -5020,6 +5020,14 @@
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanSimp/ProgOfHOL.lean",
+    "lean_name": "progOfHOL_call",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific equation for the `progOfHOL` codec on HOL Call metadata. It exposes the decoded production call and has no separate HOL original; no HOL tag is claimed."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/ProgOfHOL.lean",
     "lean_name": "panSimpToStringOfBytes_eq_iff",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific codec lemma: equality reflection is derived from `panSimpToStringOfBytes_injective`, with equality preservation by substitution. HOL has no separate theorem about the Lean decoder, so this declaration carries no HOL tag."
