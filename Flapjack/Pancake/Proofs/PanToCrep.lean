@@ -7,6 +7,7 @@ import Flapjack.PanValueFlatten
 import Flapjack.Pancake.PanToCrep
 import Flapjack.Pancake.Semantics.CrepProps
 import Flapjack.Pancake.Semantics.CrepSem
+import Flapjack.Pancake.Semantics.CrepSem.HOLState
 import Flapjack.Pancake.Semantics.CrepRuntimeTarget
 import Flapjack.Pancake.Semantics.PanSem
 import Flapjack.Pancake.Semantics.PanSem.DeclContextExact
@@ -4572,6 +4573,30 @@ theorem evaluateReplicateConst
   | zero => simp [evalCrepRuntimeExpsWordLab]
   | succ count ih =>
       simp [List.replicate_succ, evalCrepRuntimeExpsWordLab, evalCrepRuntimeExpWordLab, ih]
+
+/-- Exact port of HOL `pan_to_crepProofScript.sml:3051` `evaluate_replicate_const`:
+`∀n s. OPT_MMAP (eval s) (REPLICATE n (Const 0w)) = SOME (REPLICATE n (Word 0w))`.
+
+This is the faithful statement, unlike the untagged word_lab-core analogue
+`evaluateReplicateConst` above: it uses the reviewed exact `crepSem$eval_def`
+port `evalCrepSemHOLExp` (`Flapjack/Pancake/Semantics/CrepSem/HOLState.lean`,
+tagged `@[hol crepSemScript.sml eval_def]`), whose `Const` clause already
+returns the `word_lab` cell `.word value`, so the conclusion has HOL's exact
+`SOME (REPLICATE n (Word 0w))` shape with no bare-runtime post-map. `OPT_MMAP`
+on an option monad is Lean `List.mapM`. Production routing (the executed
+compiler calling the reviewed evaluator) remains tracked by
+`flapjack-pxn.18.4.3.48.1`. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "evaluate_replicate_const"]
+theorem evaluateReplicateConstHOL {width : Nat} [NeZero width] {ffiState : Type}
+    (n : Nat) (state : CrepSemHOLState width ffiState) [h : DecidablePred state.memaddrs] :
+    (List.replicate n (CrepExpHOL.const (0 : BitVec width))).mapM
+        (evalCrepSemHOLExp state) =
+      some (List.replicate n (HolWordLab.word (0 : BitVec width))) := by
+  induction n with
+  | zero => rfl
+  | succ n ih =>
+      simp only [List.replicate_succ, List.mapM_cons, evalCrepSemHOLExp, ih]
+      rfl
 
 /-! ## Exact HOL `pan_to_crep` `is_wf_shape_nil_length_flatten`
 
