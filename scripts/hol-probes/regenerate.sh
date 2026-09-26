@@ -941,7 +941,8 @@ run_probe compile_def_probeScript.sml compile_def_probe.out \
   struct_skip struct_break struct_continue struct_tick struct_annot struct_seq \
   missing_global empty_one_global extra_names_global missing_names_global \
   missing_local empty_one_local extra_names_local missing_names_local valid_local \
-  empty_struct_return finite_map_shadow_return extcall_high_tail \
+  empty_struct_return finite_map_shadow_return deccall_one_word deccall_multiword \
+  extcall_high_tail \
   extcall_shared_high_tail extcall_constants extcall_shape_fallback \
   pair_load pair_store fixed_stride64 \
   "$cake_dir/pancake/pan_to_crepScript.sml"
