@@ -983,6 +983,79 @@ def exactExtCallClauseParity : Bool :=
 
 #guard exactExtCallClauseParity
 
+/-! Whole-definition checks run each top-level syntax constructor through the
+    exact recursive compiler. Their expected equations correspond to the
+    committed direct HOL rows in `compile_def_probe.out`; individual row names
+    and corner-case details are exercised by the clause guards above. -/
+
+def exactCompileDefRecursiveParity : Bool :=
+  (match compileProgExactHOLW exactReturnContext (.skip : ProgHOL 8) with
+   | .skip => true | _ => false) &&
+  (match compileProgExactHOLW exactReturnContext
+      (.dec (ofString "x") .one (.const 4) (.return (.var .local (ofString "x")))) with
+   | .dec 1 (.const 4) (.return [.var 1]) => true | _ => false) &&
+  (match compileProgExactHOLW (exactLocalAssignContext [7] [8])
+      (.assign .local (ofString "dst") (.var .local (ofString "src"))) with
+   | .seq (.assign 7 (.var 8)) .skip => true | _ => false) &&
+  (match compileProgExactHOLW exactReturnContext
+      (.assign .global (ofString "g") (.const 5)) with
+   | .skip => true | _ => false) &&
+  (match compileProgExactHOLW (exactLocalAssignContext [7] [8])
+      (.primitive (ofString "dst") .addCarry
+        [.const 1, .var .local (ofString "src")]) with
+   | .dec 11 (.const 1) (.dec 12 (.var 8) (.primitive [7] .addCarry [11, 12])) => true
+   | _ => false) &&
+  (match compileProgExactHOLW exactReturnContext (.store (.const 3) (.const 4)) with
+   | .dec 1 (.const 3) (.dec 2 (.const 4)
+       (.seq (.store (.var 1) (.var 2)) .skip)) => true | _ => false) &&
+  (match compileProgExactHOLW exactReturnContext (.store32 (.const 1) (.const 2)) with
+   | .store32 (.const 1) (.const 2) => true | _ => false) &&
+  (match compileProgExactHOLW exactReturnContext (.storeByte (.const 3) (.const 4)) with
+   | .storeByte (.const 3) (.const 4) => true | _ => false) &&
+  (match compileProgExactHOLW exactReturnContext
+      (.seq .skip (.seq .break .continue)) with
+   | .seq .skip (.seq (.break 0) (.continue 0)) => true | _ => false) &&
+  (match compileProgExactHOLW exactReturnContext
+      (.ite (.const 1) .skip .break) with
+   | .ite (.const 1) .skip (.break 0) => true | _ => false) &&
+  (match compileProgExactHOLW exactReturnContext (.while (.const 2) .break) with
+   | .while (.const 2) (.break 0) => true | _ => false) &&
+  (match compileProgExactHOLW exactReturnContext (.call none (ofString "f")
+      [.const 1, .rstruct [.const 2, .const 3]]) with
+   | .call none function [.const 1, .const 2, .const 3] => function == ofString "f"
+   | _ => false) &&
+  (match compileProgExactHOLW (exactDecCallContext 4)
+      (.decCall (ofString "x") .one (ofString "f") [.const 3]
+        (.return (.var .local (ofString "x")))) with
+   | .dec 5 (.const 0) (.seq (.call (some ([5], none)) function [.const 3])
+       (.return [.var 5])) => function == ofString "f" | _ => false) &&
+  (match compileProgExactHOLW exactExtCallConstantContext
+      (.extCall (ofString "f") (.const 1) (.const 2) (.const 3) (.const 4)) with
+   | .dec 1 (.const 1) (.dec 2 (.const 2) (.dec 3 (.const 3)
+       (.dec 4 (.const 4) (.extCall function 1 2 3 4)))) => function == ofString "f"
+   | _ => false) &&
+  (match compileProgExactHOLW exactRaiseContext (.raise (ofString "E") (.const 9)) with
+   | .seq (.dec 1 (.const 9) (.seq (.storeGlob 0 (.var 1)) .skip)) (.raise 12) => true
+   | _ => false) &&
+  (match compileProgExactHOLW exactReturnContext (.return (.const 7)) with
+   | .return [.const 7] => true | _ => false) &&
+  (match compileProgExactHOLW (exactLocalAssignContext [7] [8])
+      (.shMemLoad .op8 .local (ofString "dst") (.const 3)) with
+   | .shMem .load8 7 (.const 3) => true | _ => false) &&
+  (match compileProgExactHOLW exactReturnContext
+      (.shMemLoad .op8 .global (ofString "g") (.const 3)) with
+   | .skip => true | _ => false) &&
+  (match compileProgExactHOLW (exactLocalAssignContext [7] [8])
+      (.shMemStore .op8 (.var .local (ofString "src")) (.const 3)) with
+   | .dec 9 (.const 3) (.shMem .store8 9 (.var 8)) => true | _ => false) &&
+  (match compileProgExactHOLW exactReturnContext (.tick : ProgHOL 8) with
+   | .tick => true | _ => false) &&
+  (match compileProgExactHOLW exactReturnContext
+      (.annot (ofString "tag") (ofString "text")) with
+   | .skip => true | _ => false)
+
+#guard exactCompileDefRecursiveParity
+
 def runChecks : IO Bool := do
   if parityGuard && exactStructuralSliceParity && exactReturnClauseParity &&
       exactStoreClauseParity && exactIfWhileClauseParity && exactGlobalFallbackParity &&
@@ -990,7 +1063,8 @@ def runChecks : IO Bool := do
       exactRaiseClauseParity && exactShMemStoreClauseParity && exactShMemLoadClauseParity &&
       exactDecClauseParity && exactDecCallClauseParity && exactCallNoReturnParity &&
       exactCallResultNoHandlerParity && exactCallHandlerMissingEidParity &&
-      exactCallHandlerPresentEidParity && exactExtCallClauseParity then
+      exactCallHandlerPresentEidParity && exactExtCallClauseParity &&
+      exactCompileDefRecursiveParity then
     IO.println "PASS exact compile_def clause parity"
   else
     IO.println "FAIL compile_def parity"
@@ -1000,6 +1074,7 @@ def runChecks : IO Bool := do
     exactRaiseClauseParity && exactShMemStoreClauseParity && exactShMemLoadClauseParity &&
     exactDecClauseParity && exactDecCallClauseParity && exactCallNoReturnParity &&
     exactCallResultNoHandlerParity && exactCallHandlerMissingEidParity &&
-    exactCallHandlerPresentEidParity && exactExtCallClauseParity)
+    exactCallHandlerPresentEidParity && exactExtCallClauseParity &&
+    exactCompileDefRecursiveParity)
 
 end Flapjack.Test.CompileDefParity
