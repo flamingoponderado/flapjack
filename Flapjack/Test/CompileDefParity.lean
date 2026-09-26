@@ -440,13 +440,29 @@ def exactStoreClauseParity : Bool :=
 
 #guard exactStoreClauseParity
 
+def exactIfWhileClauseParity : Bool :=
+  (match compileIfExactHOLW exactReturnContext (.const 1) .skip (.break 0) with
+   | .ite (.const 1) .skip (.break 0) => true
+   | _ => false) &&
+  (match compileIfExactHOLW exactReturnContext (.rstruct []) .skip .skip with
+   | .skip => true
+   | _ => false) &&
+  (match compileWhileExactHOLW exactReturnContext (.const 2) (.break 0) with
+   | .while (.const 2) (.break 0) => true
+   | _ => false) &&
+  (match compileWhileExactHOLW exactReturnContext (.rstruct []) .skip with
+   | .skip => true
+   | _ => false)
+
+#guard exactIfWhileClauseParity
+
 def runChecks : IO Bool := do
   if parityGuard && exactStructuralSliceParity && exactReturnClauseParity &&
-      exactStoreClauseParity then
+      exactStoreClauseParity && exactIfWhileClauseParity then
     IO.println "PASS compile_def fixed-width load/store and control-flow parity"
   else
     IO.println "FAIL compile_def parity"
   pure (parityGuard && exactStructuralSliceParity && exactReturnClauseParity &&
-    exactStoreClauseParity)
+    exactStoreClauseParity && exactIfWhileClauseParity)
 
 end Flapjack.Test.CompileDefParity

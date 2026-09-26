@@ -182,4 +182,26 @@ def compileStoreByteExactHOLW {width : Nat} [NeZero width]
   | (address :: _, _), (value :: _, _) => .storeByte address value
   | _, _ => .skip
 
+/-! The `If` and `While` equations from `compile_def`
+    (`pan_to_crepScript.sml:209-218`). The target branches/body are explicit
+    recursive results; each helper keeps only the head of the exact compiled
+    condition and returns `Skip` when no condition head exists. These are
+    equation slices, not the assembled recursive compiler. -/
+
+def compileIfExactHOLW {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width)
+    (condition : Flapjack.Pancake.PanLang.ExpHOL width)
+    (thenBranch elseBranch : CrepProgHOL width) : CrepProgHOL width :=
+  match compileExpExactHOLW context condition with
+  | (condition :: _, _) => .ite condition thenBranch elseBranch
+  | ([], _) => .skip
+
+def compileWhileExactHOLW {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width)
+    (condition : Flapjack.Pancake.PanLang.ExpHOL width)
+    (body : CrepProgHOL width) : CrepProgHOL width :=
+  match compileExpExactHOLW context condition with
+  | (condition :: _, _) => .while condition body
+  | ([], _) => .skip
+
 end Flapjack
