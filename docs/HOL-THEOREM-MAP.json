@@ -8503,9 +8503,17 @@
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
     "hol_name": "evaluate_replicate_const",
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "evaluateReplicateConstHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Exact HOL shape: ∀n s. OPT_MMAP (eval s) (REPLICATE n (Const 0w)) = SOME (REPLICATE n (Word 0w)). Statement uses the reviewed tagged exact crepSem$eval_def port evalCrepSemHOLExp (CrepSem/HOLState.lean:239, whose Const clause returns HolWordLab directly), so no bare-runtime post-map and the conclusion is HOL's exact HolWordLab list. OPT_MMAP = List.mapM; HOL word width = BitVec width. No finite-map field is named in this statement (the carrier's representation is recorded by evalCrepSemHOLExp's own fmap_as_finite_support tag). The untagged Flapjack word_lab-core analogue evaluateReplicateConst remains untagged; production routing tracked by flapjack-pxn.18.4.3.48.1."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
     "lean_name": "evaluateReplicateConst",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Untagged: only a Flapjack word_lab core analogue. evalCrepRuntimeExpsWordLab recurses through the bare evalCrepRuntimeExp (returns bare alpha) and its op/crepOp cases delegate to the arbitrary runtime memoryModel hooks, whereas HOL crepSem$eval is the fixed evaluator returning word_lab. Not kernel-checked equal to crepSem$eval, so no @[hol] tag; faithful production evaluator/projection tracked by bead flapjack-pxn.18.4.3.48.1."
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only word_lab-core analogue over evalCrepRuntimeExpsWordLab (bare-runtime evaluator delegating to arbitrary memoryModel hooks), not kernel-checked equal to crepSem$eval; specifically not a HOL port, hence no @[hol] tag. The faithful exact port is evaluateReplicateConstHOL. Production evaluator/projection tracked by flapjack-pxn.18.4.3.48.1."
   },
   {
     "hol_path": null,
@@ -12040,6 +12048,20 @@
     "lean_name": "evaluateDeclsHOLFinite_functions",
     "statement_status": "documented_mismatch",
     "reviewer": "flapjack-ds10 (beads flapjack-4ac.4.86/4ac.4.84, coordinator HOLD 2026-09-26T16:46Z): HOL panPropsScript.sml:1518-1526 is a panProps declaration, so the HOL port must live in the PanProps counterpart module/submodule, not this PanSem module. The @[hol] tag was withdrawn; the kernel-checked proof is preserved untagged. Relocation is blocked on a same-module PanProps carrier/witness arrangement plus a kernel codec to the canonical tagged PanSemStateFiniteExact.evaluateDeclsHOLFinite (including the returned state); tracked by bead flapjack-lqws. The canonical panSem evaluate_decls_def tag remains correctly in StateExactFiniteMap.lean."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "opt_mmap_helper_thm",
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
+    "lean_name": "optMmapHelperThm",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "reviewer": "flapjack-ds10 (bead flapjack-4ac.4.38, 2026-09-26; supersedes flapjack-ds8's disposition): HOL panPropsScript.sml:614 defines the [local] helper by Q.SPECL [es,es] OPT_MMAP_CONG |> Q.ISPEC (\\e. eval ((if T then f else I) st) e) |> Q.SPEC (\\e. eval st e) |> REWRITE_RULE [] |> Q.GENL [f,st,es]. A direct probe loading the real compiled panPropsTheory in my own checkout prints the exact type: forall f st es. (forall x. MEM x es ==> (\\e. eval (f st) e) x = (\\e. eval st e) x) ==> OPT_MMAP (\\e. eval (f st) e) es = OPT_MMAP (\\e. eval st e) es, with f : panSem$state -> panSem$state, st : panSem$state, es : panSem$exp list. Lean keeps HOL's quantifier order (f, st, es), the same pointwise-evaluation premise (after beta), and the same OPT_MMAP/List.mapM equality. ds8's note that it is merely the content of beads .4ac.4.54-.57 is inaccurate: it is the generic OPT_MMAP/eval congruence with an arbitrary state transformer f, not a specific locals/clock/code update. The state is the PanProps counterpart carrier PanPropsEvalStateFiniteExact, owning the four HolFiniteMapExact fields and the same-module canonical holFmapAsFiniteSupportWitness, so the fmap qualifier is checker-valid; evalHOL delegates to the exact broad evaluator through toExact and is linked to the canonical tagged PanSemStateFiniteExact evaluator by the evaluateDeclsPanPropsHOLFinite_toCanonical codec. Proof: induction on es (the List.mapM congruence). [NeZero width] models HOL's positive word dimension; the two DecidablePred binders are Lean computation evidence for the HOL word-set membership guard on each of the two states f st and st (HOL's total eval needs none). The qualifier records only the four finite-map fields."
   },
   {
     "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
