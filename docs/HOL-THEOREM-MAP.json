@@ -10369,8 +10369,8 @@
     "hol_name": "inst",
     "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
     "lean_name": "HolInst",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds8 (bead flapjack-4ac.6.1.2.2): HOL `inst` at asmScript.sml:130-136 matches constructor-for-constructor, but its Arith field uses the non-exact `HolArith` alias (production WordLangArith with a WordRegImm payload instead of reg_imm), so this datatype is not an exact port. The @[hol] tag was withdrawn per coordinator adjudication (2026-09-26T19:04Z). Restore the tag once the exact arith carrier lands on prerequisite bead flapjack-4ac.6.1.2.2."
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.6.1.2.2): exact Datatype port of HOL `inst` at asmScript.sml:130-136 - Skip | Const reg ('a word) | Arith ('a arith) | Mem memop reg ('a addr) | FP fp. Constructor-for-constructor match with the now-exact HolArith (reg_imm payload), HolMemop, HolAddr and HolFp carriers; checked codecs HolInst.toWordLangInst/ofWordLangInst with of_to/to_of connect to the production generic WordLangInst. Direct HOL-EVAL rows ai_skip=1/ai_const_reg=2/ai_const_val=7/ai_mem_reg=2/ai_mem_base=3 at word type 64 in scripts/hol-probes/asm_inst_fragment_probe.out are reproduced in Flapjack/Test/AsmConfigChecksParity.lean. Source comparison by flapjack-ds8."
   },
   {
     "hol_path": "cakeml/compiler/encoders/asm/asmScript.sml",
@@ -10401,8 +10401,8 @@
     "hol_name": "arith",
     "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
     "lean_name": "HolArith",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds8 (bead flapjack-4ac.6.1.2.2): the HOL `arith` datatype at asmScript.sml:86-95 carries the exact `'a reg_imm` payload on Binop/Shift, but this Lean alias is definitionally production `WordLangArith (BitVec width)`, whose binop/shift fields use the distinct `WordRegImm (BitVec width)` mirror. Checked codecs HolRegImm.toWordRegImm/ofWordRegImm connect the two, but codec similarity is not carrier identity, so the @[hol] tag was withdrawn per coordinator adjudication (2026-09-26T19:04Z). The faithful port is a genuine `arith` inductive over HolRegImm on prerequisite bead flapjack-4ac.6.1.2.2; downstream tags are re-reviewed after that repair."
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.6.1.2.2): repaired to a genuinely exact port. HolArith is now a real inductive over the exact HolRegImm carrier (Binop/Shift carry 'a reg_imm as HolRegImm), matching HOL `arith` at asmScript.sml:86-95 constructor-for-constructor; checked codecs HolArith.toWordLangArith/ofWordLangArith with of_to/to_of connect it to the production WordLangArith mirror. Direct HOL-EVAL rows aa_div_arity=6/aa_longDiv_arity=15 in scripts/hol-probes/asm_inst_fragment_probe.out are reproduced by arithDivSum/arithLongDivSum in Flapjack/Test/AsmConfigChecksParity.lean. Source comparison by flapjack-ds8."
   },
   {
     "hol_path": "cakeml/compiler/encoders/asm/asmScript.sml",

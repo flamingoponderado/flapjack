@@ -113,17 +113,6 @@ Monomorphic and width-independent; the Lean mirror is the existing faithful
 @[hol "cakeml/compiler/encoders/asm/asmScript.sml" "memop"]
 abbrev HolMemop := Flapjack.WordMemOp
 
-/-- Not an exact HOL port (bead flapjack-4ac.6.1.2.2): HOL `asm$arith`
-(`cakeml/compiler/encoders/asm/asmScript.sml:86-95`) carries the exact
-`'a reg_imm` payload on its `Binop`/`Shift` constructors, whereas this Lean
-alias is definitionally the production generic `WordLangArith (BitVec width)`,
-whose `binop`/`shift` fields use the distinct `WordRegImm (BitVec width)`
-mirror.  A checked codec (`HolRegImm.toWordRegImm`/`ofWordRegImm`) exists, but
-codec similarity is not carrier identity, so the `@[hol "..." "arith"]` tag was
-withdrawn.  The faithful port is a genuine `arith` inductive carrying
-`HolRegImm`, tracked by prerequisite bead flapjack-4ac.6.1.2.2. -/
-abbrev HolArith (width : Nat) [NeZero width] := WordLangArith (BitVec width)
-
 /-- Exact HOL `asm$fp` (`cakeml/compiler/encoders/asm/asmScript.sml:97-119`),
 16 constructors over `reg`/`fp_reg` (`num`).  Monomorphic and width-independent;
 the Lean mirror is the existing faithful `Flapjack.WordLangFp`. -/
@@ -139,6 +128,27 @@ inductive HolRegImm (width : Nat) [NeZero width] where
   | imm (value : BitVec width)
   deriving Repr
 
+/-- Exact HOL `asm$arith` (`cakeml/compiler/encoders/asm/asmScript.sml:86-95`):
+`Binop binop reg reg ('a reg_imm) | Shift shift reg reg ('a reg_imm) | Div reg
+reg reg | LongMul reg reg reg reg | LongDiv reg reg reg reg reg | AddCarry reg
+reg reg reg | AddOverflow reg reg reg reg | SubOverflow reg reg reg reg`, with
+`shift = ast$shift` (`cakeml/semantics/astScript.sml:21`).  This is a genuine
+`arith` inductive whose `binop`/`shift` payloads are the exact `HolRegImm`
+carrier (bead flapjack-4ac.6.1.2.2); the production generic mirror
+`WordLangArith (BitVec width)` uses `WordRegImm` and is connected by the checked
+`HolArith.toWordLangArith`/`ofWordLangArith` codecs. -/
+@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "arith"]
+inductive HolArith (width : Nat) [NeZero width] where
+  | binop (operator : BinOp) (destination source : Nat) (right : HolRegImm width)
+  | shift (operator : Shift) (destination source : Nat) (right : HolRegImm width)
+  | div (destination dividend divisor : Nat)
+  | longMul (destinationLeft destinationRight sourceLeft sourceRight : Nat)
+  | longDiv (destinationLeft destinationRight sourceLeft sourceRight quotient : Nat)
+  | addCarry (destination resultCarry sourceLeft sourceRight : Nat)
+  | addOverflow (destination resultCarry sourceLeft sourceRight : Nat)
+  | subOverflow (destination resultCarry sourceLeft sourceRight : Nat)
+  deriving Repr
+
 /-- Exact HOL `asm$addr` (`cakeml/compiler/encoders/asm/asmScript.sml:121-123`):
 `addr = Addr reg ('a word)`.  This is the payload type of stackLang's
 `ShMemOp`. -/
@@ -147,14 +157,12 @@ inductive HolAddr (width : Nat) [NeZero width] where
   | addr (base : Nat) (offset : BitVec width)
   deriving Repr
 
-/-- Not an exact HOL port (bead flapjack-4ac.6.1.2.2): HOL `asm$inst`
-(`cakeml/compiler/encoders/asm/asmScript.sml:130-136`) is
-`Skip | Const reg ('a word) | Arith ('a arith) | Mem memop reg ('a addr) | FP fp`.
-The constructors here match clause-for-clause, but the `arith` field uses the
-non-exact `HolArith` alias above (production `WordLangArith` with a
-`WordRegImm` payload instead of `reg_imm`), so this datatype is not an exact
-port either; the `@[hol "..." "inst"]` tag was withdrawn.  Restore the tag once
-the exact `arith` carrier lands on prerequisite bead flapjack-4ac.6.1.2.2. -/
+/-- Exact HOL `asm$inst` (`cakeml/compiler/encoders/asm/asmScript.sml:130-136`):
+`inst = Skip | Const reg ('a word) | Arith ('a arith) | Mem memop reg ('a addr)
+| FP fp`.  This is the payload type of stackLang's `Inst`.  `HolArith`, `HolFp`,
+`HolRegImm` and `HolAddr` are the exact `arith`/`fp`/`reg_imm`/`addr` mirrors
+(bead flapjack-4ac.6.1.2.2). -/
+@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "inst"]
 inductive HolInst (width : Nat) [NeZero width] where
   | skip
   | const (destination : Nat) (value : BitVec width)
@@ -185,6 +193,54 @@ def ofWordRegImm {width : Nat} [NeZero width] : WordRegImm (BitVec width) → Ho
 
 end HolRegImm
 
+namespace HolArith
+
+/-- Forget the width index to the production `arith` mirror. -/
+def toWordLangArith {width : Nat} [NeZero width] : HolArith width → WordLangArith (BitVec width)
+  | .binop operator destination source right =>
+      .binop operator destination source (HolRegImm.toWordRegImm right)
+  | .shift operator destination source right =>
+      .shift operator destination source (HolRegImm.toWordRegImm right)
+  | .div destination dividend divisor => .div destination dividend divisor
+  | .longMul destinationLeft destinationRight sourceLeft sourceRight =>
+      .longMul destinationLeft destinationRight sourceLeft sourceRight
+  | .longDiv destinationLeft destinationRight sourceLeft sourceRight quotient =>
+      .longDiv destinationLeft destinationRight sourceLeft sourceRight quotient
+  | .addCarry destination resultCarry sourceLeft sourceRight =>
+      .addCarry destination resultCarry sourceLeft sourceRight
+  | .addOverflow destination resultCarry sourceLeft sourceRight =>
+      .addOverflow destination resultCarry sourceLeft sourceRight
+  | .subOverflow destination resultCarry sourceLeft sourceRight =>
+      .subOverflow destination resultCarry sourceLeft sourceRight
+
+/-- Recover the exact carrier from the production `arith` mirror. -/
+def ofWordLangArith {width : Nat} [NeZero width] : WordLangArith (BitVec width) → HolArith width
+  | .binop operator destination source right =>
+      .binop operator destination source (HolRegImm.ofWordRegImm right)
+  | .shift operator destination source right =>
+      .shift operator destination source (HolRegImm.ofWordRegImm right)
+  | .div destination dividend divisor => .div destination dividend divisor
+  | .longMul destinationLeft destinationRight sourceLeft sourceRight =>
+      .longMul destinationLeft destinationRight sourceLeft sourceRight
+  | .longDiv destinationLeft destinationRight sourceLeft sourceRight quotient =>
+      .longDiv destinationLeft destinationRight sourceLeft sourceRight quotient
+  | .addCarry destination resultCarry sourceLeft sourceRight =>
+      .addCarry destination resultCarry sourceLeft sourceRight
+  | .addOverflow destination resultCarry sourceLeft sourceRight =>
+      .addOverflow destination resultCarry sourceLeft sourceRight
+  | .subOverflow destination resultCarry sourceLeft sourceRight =>
+      .subOverflow destination resultCarry sourceLeft sourceRight
+
+@[simp] theorem of_to {width : Nat} [NeZero width] (carrier : HolArith width) :
+    ofWordLangArith (toWordLangArith carrier) = carrier := by
+  cases carrier <;> simp [toWordLangArith, ofWordLangArith]
+
+@[simp] theorem to_of {width : Nat} [NeZero width] (carrier : WordLangArith (BitVec width)) :
+    toWordLangArith (ofWordLangArith carrier) = carrier := by
+  cases carrier <;> simp [toWordLangArith, ofWordLangArith]
+
+end HolArith
+
 namespace HolAddr
 
 /-- Forget the width index to the production `addr` mirror. -/
@@ -211,7 +267,7 @@ namespace HolInst
 def toWordLangInst {width : Nat} [NeZero width] : HolInst width → WordLangInst (BitVec width)
   | .skip => .skip
   | .const destination value => .const destination value
-  | .arith operation => .arith operation
+  | .arith operation => .arith (HolArith.toWordLangArith operation)
   | .mem operator destination address => .mem operator destination address.toWordLangAddr
   | .fp operation => .fp operation
 
@@ -219,25 +275,27 @@ def toWordLangInst {width : Nat} [NeZero width] : HolInst width → WordLangInst
 def ofWordLangInst {width : Nat} [NeZero width] : WordLangInst (BitVec width) → HolInst width
   | .skip => .skip
   | .const destination value => .const destination value
-  | .arith operation => .arith operation
+  | .arith operation => .arith (HolArith.ofWordLangArith operation)
   | .mem operator destination address => .mem operator destination (HolAddr.ofWordLangAddr address)
   | .fp operation => .fp operation
 
+set_option linter.unusedSimpArgs false in
 @[simp] theorem of_to {width : Nat} [NeZero width] (carrier : HolInst width) :
     ofWordLangInst (toWordLangInst carrier) = carrier := by
   cases carrier with
   | skip => rfl
   | const destination value => rfl
-  | arith operation => rfl
+  | arith operation => cases operation <;> simp [toWordLangInst, ofWordLangInst]
   | mem operator destination address => simp [toWordLangInst, ofWordLangInst]
   | fp operation => rfl
 
+set_option linter.unusedSimpArgs false in
 @[simp] theorem to_of {width : Nat} [NeZero width] (carrier : WordLangInst (BitVec width)) :
     toWordLangInst (ofWordLangInst carrier) = carrier := by
   cases carrier with
   | skip => rfl
   | const destination value => rfl
-  | arith operation => rfl
+  | arith operation => cases operation <;> simp [toWordLangInst, ofWordLangInst]
   | mem operator destination address => simp [toWordLangInst, ofWordLangInst]
   | fp operation => rfl
 
