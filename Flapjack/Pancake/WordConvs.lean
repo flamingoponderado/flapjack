@@ -490,13 +490,13 @@ def postAllocConventions {width : Nat} (k : Nat) (program : WordLangProg (BitVec
     callArgConvention program
 
 /-- Exact HOL port of the positive-dimensional word-type declaration
-HOL `distinct_tar_reg_def` (`cakeml/compiler/backend/semantics/wordConvsScript.sml`), restated with an
-explicit `[NeZero width]` binder so the statement matches HOL's
-positive-dimension `word` types.  The width-general executed form above
-remains untagged; this declaration is the faithful positive-width
+HOL `distinct_tar_reg_def` (`cakeml/compiler/backend/semantics/wordConvsScript.sml`),
+stated over the exact positive-dimension `HolInst` carrier (HOL's `'a inst`)
+with an explicit `[NeZero width]` binder.  The width-general executed form
+above remains untagged; this declaration is the faithful positive-width
 counterpart tracked by bead flapjack-4ac.6.1. -/
 @[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml" "distinct_tar_reg_def"]
-def distinctTarRegExact {width : Nat} [NeZero width] : WordLangInst (BitVec width) → Bool
+def distinctTarRegExact {width : Nat} [NeZero width] : HolInst width → Bool
   | .arith (.binop _ r1 _ ri) => match ri with
       | .reg r => decide (r ≠ r1)
       | .imm _ => true
@@ -509,13 +509,13 @@ def distinctTarRegExact {width : Nat} [NeZero width] : WordLangInst (BitVec widt
   | _ => true
 
 /-- Exact HOL port of the positive-dimensional word-type declaration
-HOL `two_reg_inst_def` (`cakeml/compiler/backend/semantics/wordConvsScript.sml`), restated with an
-explicit `[NeZero width]` binder so the statement matches HOL's
-positive-dimension `word` types.  The width-general executed form above
-remains untagged; this declaration is the faithful positive-width
+HOL `two_reg_inst_def` (`cakeml/compiler/backend/semantics/wordConvsScript.sml`),
+stated over the exact positive-dimension `HolInst` carrier (HOL's `'a inst`)
+with an explicit `[NeZero width]` binder.  The width-general executed form
+above remains untagged; this declaration is the faithful positive-width
 counterpart tracked by bead flapjack-4ac.6.1. -/
 @[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml" "two_reg_inst_def"]
-def twoRegInstExact {width : Nat} [NeZero width] : WordLangInst (BitVec width) → Bool
+def twoRegInstExact {width : Nat} [NeZero width] : HolInst width → Bool
   | .arith (.binop _ r1 r2 _) => r1 == r2
   | .arith (.shift _ r1 r2 _) => r1 == r2
   | .arith (.addCarry r1 r2 _ _) => r1 == r2
@@ -595,13 +595,13 @@ def instOkLessExact {width : Nat} [NeZero width] (config : AsmConfig width) :
   | _ => true
 
 /-- Exact HOL port of the positive-dimensional word-type declaration
-HOL `inst_arg_convention_def` (`cakeml/compiler/backend/semantics/wordConvsScript.sml`), restated with an
-explicit `[NeZero width]` binder so the statement matches HOL's
-positive-dimension `word` types.  The width-general executed form above
-remains untagged; this declaration is the faithful positive-width
+HOL `inst_arg_convention_def` (`cakeml/compiler/backend/semantics/wordConvsScript.sml`),
+stated over the exact positive-dimension `HolInst` carrier (HOL's `'a inst`)
+with an explicit `[NeZero width]` binder.  The width-general executed form
+above remains untagged; this declaration is the faithful positive-width
 counterpart tracked by bead flapjack-4ac.6.1. -/
 @[hol "cakeml/compiler/backend/semantics/wordConvsScript.sml" "inst_arg_convention_def"]
-def instArgConventionExact {width : Nat} [NeZero width] : WordLangInst (BitVec width) -> Bool
+def instArgConventionExact {width : Nat} [NeZero width] : HolInst width -> Bool
   | .arith (.addCarry _ _ _ r4) => r4 == 0
   | .arith (.shift _ _ _ (.reg r)) => r == 8
   | .arith (.addOverflow _ _ _ r4) => r4 == 0
@@ -615,25 +615,52 @@ def instArgConventionExact {width : Nat} [NeZero width] : WordLangInst (BitVec w
 
 /-! ## Exact-to-executed width bridges
 
-The four `...Exact` predicates are the exact positive-width HOL ports; the
-executed compiler uses the width-general untagged forms.  The equalities below
-hold definitionally under `[NeZero width]`, so no caller rerouting is required
-(bead flapjack-4ac.6.1.1). -/
+The exact positive-width HOL ports `distinctTarRegExact`, `twoRegInstExact`
+and `instArgConventionExact` are stated over the exact `HolInst` carrier; the
+executed compiler uses the width-general untagged forms over the production
+`WordLangInst`.  The equalities below relate each exact predicate to its
+executed form through the checked `HolInst.toWordLangInst` bridge, so no caller
+rerouting is required (bead flapjack-4ac.6.1.1). -/
 
 theorem distinctTarRegExact_eq {width : Nat} [NeZero width]
-    (instruction : WordLangInst (BitVec width)) :
-    distinctTarRegExact instruction = distinctTarReg instruction := rfl
+    (instruction : HolInst width) :
+    distinctTarRegExact instruction =
+      distinctTarReg (HolInst.toWordLangInst instruction) := by
+  cases instruction with
+  | arith operation => simp only [HolInst.toWordLangInst]; cases operation <;> rfl
+  | skip => rfl
+  | const destination value => rfl
+  | mem operator destination address => rfl
+  | fp operation => rfl
 
 theorem twoRegInstExact_eq {width : Nat} [NeZero width]
-    (instruction : WordLangInst (BitVec width)) :
-    twoRegInstExact instruction = twoRegInst instruction := rfl
+    (instruction : HolInst width) :
+    twoRegInstExact instruction =
+      twoRegInst (HolInst.toWordLangInst instruction) := by
+  cases instruction with
+  | arith operation => simp only [HolInst.toWordLangInst]; cases operation <;> rfl
+  | skip => rfl
+  | const destination value => rfl
+  | mem operator destination address => rfl
+  | fp operation => rfl
 
 theorem instOkLessExact_eq {width : Nat} [NeZero width] (config : AsmConfig width)
     (instruction : WordLangInst (BitVec width)) :
     instOkLessExact config instruction = instOkLess config instruction := rfl
 
 theorem instArgConventionExact_eq {width : Nat} [NeZero width]
-    (instruction : WordLangInst (BitVec width)) :
-    instArgConventionExact instruction = instArgConvention instruction := rfl
+    (instruction : HolInst width) :
+    instArgConventionExact instruction =
+      instArgConvention (HolInst.toWordLangInst instruction) := by
+  cases instruction with
+  | arith operation =>
+      simp only [HolInst.toWordLangInst]
+      cases operation with
+      | shift operator destination source right => cases right <;> rfl
+      | _ => rfl
+  | skip => rfl
+  | const destination value => rfl
+  | mem operator destination address => rfl
+  | fp operation => rfl
 
 end Flapjack

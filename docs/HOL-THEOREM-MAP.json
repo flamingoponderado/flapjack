@@ -12204,7 +12204,7 @@
     "lean_path": "Flapjack/Pancake/WordConvs.lean",
     "lean_name": "distinctTarRegExact",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds8 (bead flapjack-4ac.6.1, coordinator review): HOL's declaration uses the exact `'a inst` carrier and introduces no configuration; the positive-width Lean restatement matches clause-for-clause, so this is an exact HOL port over the matching carrier and datatype widths (no mlstring/word-width translation)."
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.6.1, coordinator review): HOL's declaration uses the exact `'a inst` carrier and introduces no configuration; the positive-width Lean restatement matches clause-for-clause, so this is an exact HOL port over the matching carrier and datatype widths (no mlstring/word-width translation). The Lean declaration is stated over the exact `HolInst` carrier with a checked `HolInst.toWordLangInst` bridge to the width-general executed form."
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
@@ -12212,7 +12212,7 @@
     "lean_path": "Flapjack/Pancake/WordConvs.lean",
     "lean_name": "twoRegInstExact",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds8 (bead flapjack-4ac.6.1, coordinator review): HOL's declaration uses the exact `'a inst` carrier and introduces no configuration; the positive-width Lean restatement matches clause-for-clause, so this is an exact HOL port over the matching carrier and datatype widths (no mlstring/word-width translation)."
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.6.1, coordinator review): HOL's declaration uses the exact `'a inst` carrier and introduces no configuration; the positive-width Lean restatement matches clause-for-clause, so this is an exact HOL port over the matching carrier and datatype widths (no mlstring/word-width translation). The Lean declaration is stated over the exact `HolInst` carrier with a checked `HolInst.toWordLangInst` bridge to the width-general executed form."
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
@@ -12228,6 +12228,6 @@
     "lean_path": "Flapjack/Pancake/WordConvs.lean",
     "lean_name": "instArgConventionExact",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds8 (bead flapjack-4ac.6.1, coordinator review): HOL's declaration uses the exact `'a inst` carrier and introduces no configuration; the positive-width Lean restatement matches clause-for-clause, so this is an exact HOL port over the matching carrier and datatype widths (no mlstring/word-width translation)."
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.6.1, coordinator review): HOL's declaration uses the exact `'a inst` carrier and introduces no configuration; the positive-width Lean restatement matches clause-for-clause, so this is an exact HOL port over the matching carrier and datatype widths (no mlstring/word-width translation). The Lean declaration is stated over the exact `HolInst` carrier with a checked `HolInst.toWordLangInst` bridge to the width-general executed form."
   }
 ]
