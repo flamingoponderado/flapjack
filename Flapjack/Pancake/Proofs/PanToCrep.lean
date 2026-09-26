@@ -39,6 +39,16 @@ the post-state, code, and exception relations; and the complete HOL result
 case split (`NONE`, `Error` excluded, timeout, break, continue, flattened
 return, bounded exception lookup, and final FFI).
 
+The HOL proof applies `recInduct panSemTheory.evaluate_ind` and resumes all 21
+source constructors: `Skip`, `Break`, `Continue`, `Annot`, `Tick`, `Assign`,
+`Primitive`, `Dec`, `Store`, `Store32`, `StoreByte`, `ShMemLoad`, `ShMemStore`,
+`Return`, `Raise`, `ExtCall`, `Seq`, `If`, `While`, `Call`, and `DecCall`.
+The recursive induction obligations are for `Dec`, `Seq`, `If`, `While`,
+`Call`, and `DecCall`; `Call` additionally splits tail-call, timeout, return,
+exception, and final-FFI outcomes. These source proof branches do not turn the
+production-carrier declarations in `Proofs/PanToCrep/EvaluateCases` into exact
+HOL-shaped cases.
+
 There is no assembled Lean theorem with that statement. The existing
 `pc_compile_correct` constructor helpers in `Proofs/PanToCrep/EvaluateCases`
 are individual proof infrastructure, and the `stateRel` below is the
