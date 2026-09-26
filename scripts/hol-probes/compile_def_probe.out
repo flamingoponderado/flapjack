@@ -63,6 +63,16 @@ call_result_no_handler_missing=Call (SOME ([],NONE)) «missing» [Const 1w; Cons
 call_handler_missing_eid=Dec 11 (Const 0w)
   (Dec 12 (Const 0w)
      (Call (SOME ([11; 12],NONE)) «f» [Const 1w; Const 2w; Const 3w]))
+call_handler_present_eid=Dec 11 (Const 0w)
+  (Call
+     (SOME
+        ([11],
+         SOME
+           (12w,
+            Seq
+              (Seq (Assign 20 (LoadGlob 0w))
+                 (Seq (Assign 21 (LoadGlob 1w)) Skip)) Tick))) «f»
+     [Const 1w; Const 2w; Const 3w])
 valid_local=Call (SOME ([0; 1],NONE)) «f» []
 empty_struct_return=Return []
 finite_map_shadow_return=Return [Var 5]

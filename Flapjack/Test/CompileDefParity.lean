@@ -478,6 +478,15 @@ def exactCallResultContext : CompileExpContextExact 8 where
   eids := HolFiniteMapExact.empty
   vmax := 10
 
+def exactCallHandlerPresentContext : CompileExpContextExact 8 where
+  vars := HolFiniteMapExact.empty.update
+    (ofString "exn", (.comb [.one, .one], [20, 21]))
+  funcs := HolFiniteMapExact.empty.update
+    (ofString "f", ([], .one))
+  eids := HolFiniteMapExact.empty.update
+    (ofString "E", BitVec.ofNat 8 12)
+  vmax := 10
+
 def returnValuesMatch (expected : List (CrepExp (BitVec 8))) : CrepProgHOL 8 → Bool
   | .return actual => actual.map crepExpOfHOL == expected
   | _ => false
@@ -710,6 +719,22 @@ def exactCallHandlerMissingEidParity : Bool :=
 
 #guard exactCallHandlerMissingEidParity
 
+def exactCallHandlerPresentEidParity : Bool :=
+  match compileCallHandlerPresentEidExactHOLW exactCallHandlerPresentContext
+      (ofString "f") [.const 1, .rstruct [.const 2, .const 3]] (ofString "E")
+      (ofString "exn") (BitVec.ofNat 8 12)
+      (by simp [exactCallHandlerPresentContext, HolFiniteMapExact.lookup_update, FUPDATE])
+      (fun _ => .tick) with
+  | .dec 11 (.const 0)
+      (.call (some ([11], some (BitVec.ofNat 8 12,
+        .seq (.seq (.assign 20 (.loadGlob 0))
+          (.seq (.assign 21 (.loadGlob 1)) .skip)) .tick))) function
+        [.const 1, .const 2, .const 3]) =>
+      function == ofString "f"
+  | _ => false
+
+#guard exactCallHandlerPresentEidParity
+
 def exactExtCallClauseParity : Bool :=
   (match compileExtCallExactHOLW exactExtCallContext (ofString "f")
       (.var .local (ofString "configuration"))
@@ -744,7 +769,7 @@ def runChecks : IO Bool := do
       exactRaiseClauseParity && exactShMemStoreClauseParity && exactShMemLoadClauseParity &&
       exactDecClauseParity && exactDecCallClauseParity && exactCallNoReturnParity &&
       exactCallResultNoHandlerParity && exactCallHandlerMissingEidParity &&
-      exactExtCallClauseParity then
+      exactCallHandlerPresentEidParity && exactExtCallClauseParity then
     IO.println "PASS exact compile_def clause parity"
   else
     IO.println "FAIL compile_def parity"
@@ -754,6 +779,6 @@ def runChecks : IO Bool := do
     exactRaiseClauseParity && exactShMemStoreClauseParity && exactShMemLoadClauseParity &&
     exactDecClauseParity && exactDecCallClauseParity && exactCallNoReturnParity &&
     exactCallResultNoHandlerParity && exactCallHandlerMissingEidParity &&
-    exactExtCallClauseParity)
+    exactCallHandlerPresentEidParity && exactExtCallClauseParity)
 
 end Flapjack.Test.CompileDefParity

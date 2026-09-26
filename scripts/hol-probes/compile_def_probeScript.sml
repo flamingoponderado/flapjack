@@ -297,6 +297,15 @@ val _ = print_eval "call_handler_missing_eid"
          funcs := FEMPTY |+ («f», ([], panLang$Comb [panLang$One; panLang$One]));
          eids := FEMPTY; vmax := 10 |>
       (panLang$Call (SOME (NONE, SOME («E», «exn», panLang$Tick))) «f»
+         [panLang$Const (1w : 8 word);
+          panLang$RStruct [panLang$Const 2w; panLang$Const 3w]])``;
+
+val _ = print_eval "call_handler_present_eid"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY |+ («exn», (panLang$Comb [panLang$One; panLang$One], [20; 21]));
+         funcs := FEMPTY |+ («f», ([], panLang$One));
+         eids := FEMPTY |+ («E», (12w : 8 word)); vmax := 10 |>
+      (panLang$Call (SOME (NONE, SOME («E», «exn», panLang$Tick))) «f»
         [panLang$Const (1w : 8 word);
          panLang$RStruct [panLang$Const 2w; panLang$Const 3w]])``;
 
