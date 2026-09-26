@@ -161,10 +161,44 @@ example :
   evalCrepRuntimeExp_executed_of_noMemLoad exactReplicateState _
     (by simp [crepExpNoMemLoad])
 
+/-- Memory-free fragment (`flapjack-pxn.18.4.3.48.1.21.1`): `cmp`, `shift`
+and `crepOp` expressions are evaluated identically by the executed production
+evaluator and the tagged exact `evalCrepSemHOLExp`, read through
+`holWordLabToWord`. -/
+example :
+    evalCrepRuntimeExp (executedCrepState exactReplicateState)
+        (CrepExp.cmp Cmp.equal (CrepExp.const (1 : BitVec 8)) (CrepExp.const (2 : BitVec 8))) =
+      (evalCrepSemHOLExp exactReplicateState
+        (crepExpToHOL (CrepExp.cmp Cmp.equal
+          (CrepExp.const (1 : BitVec 8)) (CrepExp.const (2 : BitVec 8))))).map
+        holWordLabToWord :=
+  evalCrepRuntimeExp_executed_of_noMemLoad exactReplicateState _
+    (by simp [crepExpNoMemLoad])
+
+example :
+    evalCrepRuntimeExp (executedCrepState exactReplicateState)
+        (CrepExp.shift Shift.lsl (CrepExp.const (1 : BitVec 8)) (CrepExp.const (1 : BitVec 8))) =
+      (evalCrepSemHOLExp exactReplicateState
+        (crepExpToHOL (CrepExp.shift Shift.lsl
+          (CrepExp.const (1 : BitVec 8)) (CrepExp.const (1 : BitVec 8))))).map
+        holWordLabToWord :=
+  evalCrepRuntimeExp_executed_of_noMemLoad exactReplicateState _
+    (by simp [crepExpNoMemLoad])
+
+example :
+    evalCrepRuntimeExp (executedCrepState exactReplicateState)
+        (CrepExp.crepOp CrepOp.mul [CrepExp.const (3 : BitVec 8), CrepExp.const (4 : BitVec 8)]) =
+      (evalCrepSemHOLExp exactReplicateState
+        (crepExpToHOL (CrepExp.crepOp CrepOp.mul
+          [CrepExp.const (3 : BitVec 8), CrepExp.const (4 : BitVec 8)]))).map
+        holWordLabToWord :=
+  evalCrepRuntimeExp_executed_of_noMemLoad exactReplicateState _
+    (by simp [crepExpNoMemLoad])
+
 def runChecks : IO Bool := do
   IO.println s!"PASS crep evaluate_replicate_const word_lab shape"
   IO.println s!"PASS exact crepSem evaluate_replicate_const matches HOL oracle rows"
   IO.println s!"PASS executed crep word_lab evaluator agrees with exact evalCrepSemHOLExp on Const path"
-  IO.println s!"PASS executed crep word_lab evaluator agrees with exact evalCrepSemHOLExp on memory-free arithmetic fragment"
+  IO.println s!"PASS executed crep word_lab evaluator agrees with exact evalCrepSemHOLExp on memory-free fragment (op/cmp/shift/crepOp)"
   pure (replicateConstGuard && exactReplicateGuard)
 end Flapjack.Test.CrepReplicateConstParity
