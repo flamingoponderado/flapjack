@@ -320,6 +320,27 @@ example :
         (List.map HolWordLab.toPanWordLab)) :=
   evalCrepRuntimeExpsWordLab_replicate_const_matches_exact exactReplicateState 3 (0 : BitVec 8)
 
+/-- Full width-64 projection bridge: an expression mixing a byte-reading load
+with arithmetic is bridged without any hypothesis. -/
+example :
+    evalCrepRuntimeExp (executedCrepState load64State)
+        (CrepExp.op BinOp.add
+          [CrepExp.load32 (CrepExp.const (0 : BitVec 64)), CrepExp.const 5]) =
+      (evalCrepSemHOLExp load64State
+        (crepExpToHOL (CrepExp.op BinOp.add
+          [CrepExp.load32 (CrepExp.const (0 : BitVec 64)), CrepExp.const 5]))).map
+        holWordLabToWord :=
+  evalCrepRuntimeExp_executed load64State _
+
+/-- Full width-64 projection bridge at the production `word_lab` result shape. -/
+example :
+    evalCrepRuntimeExpWordLab (executedCrepState load64State)
+        (CrepExp.loadByte (CrepExp.const (0 : BitVec 64))) =
+      (evalCrepSemHOLExp load64State
+        (crepExpToHOL (CrepExp.loadByte (CrepExp.const (0 : BitVec 64))))).map
+        HolWordLab.toPanWordLab :=
+  evalCrepRuntimeExpWordLab_executed load64State _
+
 def runChecks : IO Bool := do
   IO.println s!"PASS crep evaluate_replicate_const word_lab shape"
   IO.println s!"PASS exact crepSem evaluate_replicate_const matches HOL oracle rows"
@@ -328,5 +349,6 @@ def runChecks : IO Bool := do
   IO.println s!"PASS exact RV64 load32/loadByte arms agree with evalCrepSemHOLExp on the executed BitVec evaluator state"
   IO.println s!"PASS executed production word_lab evaluator returns exact evalCrepSemHOLExp result on bridged fragment"
   IO.println s!"PASS executed production list word_lab evaluator returns exact evalCrepSemHOLExp result on bridged fragment"
+  IO.println s!"PASS full width-64 executed Crep evaluator agrees with exact evalCrepSemHOLExp"
   pure (replicateConstGuard && exactReplicateGuard)
 end Flapjack.Test.CrepReplicateConstParity
