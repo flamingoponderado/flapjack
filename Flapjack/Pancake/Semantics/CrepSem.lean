@@ -2034,14 +2034,16 @@ mutual
             | none => some (.error, state)
         | _, _ => some (.error, state)
     | _fuel + 1, state, .store32 address value =>
-        match evalCrepRuntimeExp state address, evalCrepRuntimeExp state value with
+        match (evalCrepRuntimeExpWordLab state address).map panTheWord,
+            (evalCrepRuntimeExpWordLab state value).map panTheWord with
         | some address, some value =>
             match crepRuntimeStore32 state address value with
             | some state => some (.normal, state)
             | none => some (.error, state)
         | _, _ => some (.error, state)
     | _fuel + 1, state, .storeByte address value =>
-        match evalCrepRuntimeExp state address, evalCrepRuntimeExp state value with
+        match (evalCrepRuntimeExpWordLab state address).map panTheWord,
+            (evalCrepRuntimeExpWordLab state value).map panTheWord with
         | some address, some value =>
             match crepRuntimeStoreByte state address value with
             | some state => some (.normal, state)

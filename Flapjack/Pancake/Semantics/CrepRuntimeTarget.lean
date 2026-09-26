@@ -3232,14 +3232,14 @@ theorem evalCrepRuntimeProg_store32
               | some state => some (.normal, state)
               | none => some (.error, base) := by
   cases h : evalCrepRuntimeExp base address with
-  | none => simp only [evalCrepRuntimeProg, h]
+  | none => simp only [evalCrepRuntimeProg, evalCrepRuntimeExpWordLab_panTheWord, h]
   | some addressWord =>
     cases h2 : evalCrepRuntimeExp base value with
-    | none => simp only [evalCrepRuntimeProg, h, h2]
+    | none => simp only [evalCrepRuntimeProg, evalCrepRuntimeExpWordLab_panTheWord, h, h2]
     | some valueWord =>
       cases hs : crepRuntimeStore32 base addressWord valueWord with
-      | none => simp only [evalCrepRuntimeProg, h, h2, hs]
-      | some state => simp only [evalCrepRuntimeProg, h, h2, hs]
+      | none => simp only [evalCrepRuntimeProg, evalCrepRuntimeExpWordLab_panTheWord, h, h2, hs]
+      | some state => simp only [evalCrepRuntimeProg, evalCrepRuntimeExpWordLab_panTheWord, h, h2, hs]
 
 theorem evalCrepRuntimeProg_storeByte
     [BEq (RiscV.Word 64)] [OfNat (RiscV.Word 64) 0] [OfNat (RiscV.Word 64) 1]
@@ -3264,13 +3264,13 @@ theorem evalCrepRuntimeProg_storeByte
               | some state => some (.normal, state)
               | none => some (.error, base) := by
   cases h : evalCrepRuntimeExp base address with
-  | none => simp only [evalCrepRuntimeProg, h]
+  | none => simp only [evalCrepRuntimeProg, evalCrepRuntimeExpWordLab_panTheWord, h]
   | some addressWord =>
     cases h2 : evalCrepRuntimeExp base value with
-    | none => simp only [evalCrepRuntimeProg, h, h2]
+    | none => simp only [evalCrepRuntimeProg, evalCrepRuntimeExpWordLab_panTheWord, h, h2]
     | some valueWord =>
       cases hs : crepRuntimeStoreByte base addressWord valueWord with
-      | none => simp only [evalCrepRuntimeProg, h, h2, hs]
-      | some state => simp only [evalCrepRuntimeProg, h, h2, hs]
+      | none => simp only [evalCrepRuntimeProg, evalCrepRuntimeExpWordLab_panTheWord, h, h2, hs]
+      | some state => simp only [evalCrepRuntimeProg, evalCrepRuntimeExpWordLab_panTheWord, h, h2, hs]
 
 end Flapjack
