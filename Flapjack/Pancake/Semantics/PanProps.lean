@@ -117,6 +117,25 @@ prerequisite are tracked by `flapjack-4ac.4.49.1` (blocked on
 `flapjack-qj5`); `io_events_eq_imp_ffi_eq` depends on that child as
 `flapjack-4ac.4.51.1`. -/
 
+/-! Source review for HOL `evaluate_add_clock_or_timeout`
+(`panPropsScript.sml:834-857`): universally quantified `p`, `s`, `q`, `t`,
+`k`, `q'`, and `t'`, it assumes `evaluate (p,s) = (q,t with clock := 0)` and
+`q ≠ SOME TimeOut`, then assumes
+`evaluate (p,s with clock := k) = (q',t')`. It concludes the exact disjunction
+`q' = SOME TimeOut ∧ k < s.clock` or
+`q' = q ∧ s.clock ≤ k ∧ t' = t with clock := k - s.clock`.
+`PanSemStateFiniteExact.evaluateHOLFiniteViaExact` happens to expose the same
+result-option/state shape, but its implementation delegates through the
+unrestricted function-backed evaluator; the direct finite evaluator still has
+an outer assembly marker, and its clause/evaluator correspondence is not
+complete (`flapjack-qj5`). The existing `PanValueFfiClockShift` proves only
+clock arithmetic and selected structural-fuel evaluator cases over different
+program, state, and value carriers; it does not supply the whole-program
+clock-shift argument or the timeout split in HOL's theorem. Do not tag either
+surface as this theorem. The exact finite evaluator prerequisite is tracked by
+`flapjack-qj5`; the statement-exact theorem and clock-shift proof are tracked
+by `flapjack-4ac.4.48.1`, which depends on that evaluator review. -/
+
 /-! Source review for HOL `semantics_decls_has_main'`
 (`panPropsScript.sml:1628-1638`): HOL assumes
 `semantics_decls s start code <> Fail` and proves that
