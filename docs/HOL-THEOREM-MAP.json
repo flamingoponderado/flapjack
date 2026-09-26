@@ -12665,7 +12665,8 @@
     "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "flapjack-ds8: Flapjack-specific same-module canonical relation witness for the fmap_as_finite_support_relation qualifier on panToCrepStateRelFiniteExact. It forwards the canonical roundtrip of PanSemStateFiniteExact and has no HOL theorem original."
-  },  {
+  },
+  {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
     "hol_name": "locals_rel_def",
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
@@ -12677,8 +12678,7 @@
       "sourceLocals",
       "targetLocals"
     ]
-  }
-,
+  },
   {
     "hol_path": null,
     "hol_name": null,
