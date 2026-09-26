@@ -12390,5 +12390,44 @@
     "lean_name": "crepExpsOfHOL",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds8 (source comparison; bead flapjack-pxn.18.3.5.8.8.6): clause-for-clause port of HOL exps_of_def (crepPropsScript.sml:1282-1299) over the exact CrepProgHOL/CrepExpHOL carriers. Dec -> value::recur; Seq -> ++; If -> condition::(then++else); While -> condition::recur; Call none / some(_,none) -> args; Call some(_,some(_,handler)) -> args++recur handler; Store/Store32/StoreByte -> [address,value]; StoreGlob -> [value]; Return -> values; Assign -> [value]; ShMem -> [address]; catch-all -> []. The Call funname is MlString in both carriers and is ignored by HOL, so no name-carrier mismatch."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
+    "hol_name": "dec_clock_simp",
+    "lean_path": "Flapjack/Pancake/Semantics/CrepProps.lean",
+    "lean_name": "decClockCrepSemHOL_simp",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-pxn.18.3.5.8.8.7): clause-for-clause HOL dec_clock_simp (crepPropsScript.sml:267-278) over the exact finite-support CrepSemHOLState carrier (imported crepSem counterpart), using the tagged decClockCrepSemHOL (crepSemScript.sml:145-148). All ten field equations match, with HOL sh_memaddrs/be/base_addr/top_addr rendered as shMemaddrs/be/baseAddr/topAddr; [NeZero width] is the canonical positive word model. The finite-map representation is recorded by the qualifier (locals/globals/code); the same-module canonical holFmapAsFiniteSupportWitness forwards CrepSemHOLState.holFmapAsFiniteSupportWitness, following the EvaluateHOL.lean convention. Direct HOL rows crep_dec_clock_simp_probe.out. Representation-only qualifier; no statement/side-condition change."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
+    "hol_name": "empty_locals_simp",
+    "lean_path": "Flapjack/Pancake/Semantics/CrepProps.lean",
+    "lean_name": "emptyLocalsCrepSemHOL_simp",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-pxn.18.3.5.8.8.7): clause-for-clause HOL empty_locals_simp (crepPropsScript.sml:282-294) over the exact finite-support CrepSemHOLState carrier, using the tagged CrepSemHOLState.emptyLocals (crepSemScript.sml:71-74, FEMPTY for locals). All ten field equations match, with HOL sh_memaddrs/be/base_addr/top_addr rendered as shMemaddrs/be/baseAddr/topAddr. Finite-map representation recorded by the qualifier (locals/globals/code); same-module canonical witness forwards CrepSemHOLState.holFmapAsFiniteSupportWitness. Direct HOL rows empty_locals_locals/clock/memory in crep_dec_clock_simp_probe.out and empty_locals_none in crep_local_updates_probe.out. Representation-only; no statement/side-condition change."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
+    "hol_name": "FLOOKUP_set_globals",
+    "lean_path": "Flapjack/Pancake/Semantics/CrepProps.lean",
+    "lean_name": "flookupSetGlobalsCrepSemHOL_locals",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-pxn.18.3.5.8.8.7): HOL FLOOKUP_set_globals (crepPropsScript.sml:297-301) `FLOOKUP (set_globals gv w s).locals n = FLOOKUP s.locals n` over the exact finite-support CrepSemHOLState carrier, using the tagged CrepSemHOLState.setGlobals (crepSemScript.sml:61-63), which updates only globals. FLOOKUP is rendered as the canonical HolFiniteMapExact.lookup. Finite-map representation recorded by the qualifier (locals/globals/code); same-module canonical witness forwards CrepSemHOLState.holFmapAsFiniteSupportWitness. Direct HOL row set_globals_direct in crep_store_global_probe.out. Representation-only; no statement/side-condition change."
   }
 ]
