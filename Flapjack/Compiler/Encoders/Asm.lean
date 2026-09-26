@@ -113,14 +113,15 @@ Monomorphic and width-independent; the Lean mirror is the existing faithful
 @[hol "cakeml/compiler/encoders/asm/asmScript.sml" "memop"]
 abbrev HolMemop := Flapjack.WordMemOp
 
-/-- Exact HOL `asm$arith` (`cakeml/compiler/encoders/asm/asmScript.sml:86-95`):
-`Binop binop reg reg ('a reg_imm) | Shift shift reg reg ('a reg_imm) | Div reg
-reg reg | LongMul reg reg reg reg | LongDiv reg reg reg reg reg | AddCarry reg
-reg reg reg | AddOverflow reg reg reg reg | SubOverflow reg reg reg reg`, with
-`shift = ast$shift` (`cakeml/semantics/astScript.sml:21`).  The width-indexed
-Lean mirror is definitionally the production generic `WordLangArith` at
-`BitVec width`; the alias records the exact instantiation. -/
-@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "arith"]
+/-- Not an exact HOL port (bead flapjack-4ac.6.1.2.2): HOL `asm$arith`
+(`cakeml/compiler/encoders/asm/asmScript.sml:86-95`) carries the exact
+`'a reg_imm` payload on its `Binop`/`Shift` constructors, whereas this Lean
+alias is definitionally the production generic `WordLangArith (BitVec width)`,
+whose `binop`/`shift` fields use the distinct `WordRegImm (BitVec width)`
+mirror.  A checked codec (`HolRegImm.toWordRegImm`/`ofWordRegImm`) exists, but
+codec similarity is not carrier identity, so the `@[hol "..." "arith"]` tag was
+withdrawn.  The faithful port is a genuine `arith` inductive carrying
+`HolRegImm`, tracked by prerequisite bead flapjack-4ac.6.1.2.2. -/
 abbrev HolArith (width : Nat) [NeZero width] := WordLangArith (BitVec width)
 
 /-- Exact HOL `asm$fp` (`cakeml/compiler/encoders/asm/asmScript.sml:97-119`),
@@ -146,11 +147,14 @@ inductive HolAddr (width : Nat) [NeZero width] where
   | addr (base : Nat) (offset : BitVec width)
   deriving Repr
 
-/-- Exact HOL `asm$inst` (`cakeml/compiler/encoders/asm/asmScript.sml:130-136`):
-`inst = Skip | Const reg ('a word) | Arith ('a arith) | Mem memop reg ('a addr)
-| FP fp`.  This is the payload type of stackLang's `Inst`.  `HolArith` and
-`HolFp` are the exact `arith`/`fp` mirrors. -/
-@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "inst"]
+/-- Not an exact HOL port (bead flapjack-4ac.6.1.2.2): HOL `asm$inst`
+(`cakeml/compiler/encoders/asm/asmScript.sml:130-136`) is
+`Skip | Const reg ('a word) | Arith ('a arith) | Mem memop reg ('a addr) | FP fp`.
+The constructors here match clause-for-clause, but the `arith` field uses the
+non-exact `HolArith` alias above (production `WordLangArith` with a
+`WordRegImm` payload instead of `reg_imm`), so this datatype is not an exact
+port either; the `@[hol "..." "inst"]` tag was withdrawn.  Restore the tag once
+the exact `arith` carrier lands on prerequisite bead flapjack-4ac.6.1.2.2. -/
 inductive HolInst (width : Nat) [NeZero width] where
   | skip
   | const (destination : Nat) (value : BitVec width)

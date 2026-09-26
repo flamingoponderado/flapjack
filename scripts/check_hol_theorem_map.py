@@ -38,6 +38,21 @@ DATA_DECLARATION_RE = re.compile(
 # inventory small and source-reviewed; a mismatch row is not generated merely
 # because an arbitrary Lean def happens to mention a HOL name.
 WITHDRAWN_HOL_DECLARATIONS = {
+    ("Flapjack/Compiler/Encoders/Asm.lean", "HolArith"): (
+        "cakeml/compiler/encoders/asm/asmScript.sml",
+        "arith",
+        "flapjack-ds8 (bead flapjack-4ac.6.1.2.2): HOL arith carries the exact 'a reg_imm payload; "
+        "the Lean alias is production WordLangArith (BitVec width) with a WordRegImm payload. "
+        "Codec similarity is not carrier identity, so the HOL tag was withdrawn pending a genuine "
+        "arith inductive over HolRegImm."
+    ),
+    ("Flapjack/Compiler/Encoders/Asm.lean", "HolInst"): (
+        "cakeml/compiler/encoders/asm/asmScript.sml",
+        "inst",
+        "flapjack-ds8 (bead flapjack-4ac.6.1.2.2): HOL inst's Arith field uses the non-exact HolArith "
+        "alias (WordRegImm payload), so the Lean datatype is not an exact port. The HOL tag was "
+        "withdrawn pending the exact arith carrier."
+    ),
     ("Flapjack/Compiler/Encoders/Asm.lean", "asmRegOk"): (
         "cakeml/compiler/encoders/asm/asmScript.sml",
         "reg_ok_def",
