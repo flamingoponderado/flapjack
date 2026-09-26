@@ -1,4 +1,5 @@
 import Flapjack.Pancake.PanToCrep.Compile
+import Flapjack.Pancake.PanToCrep.ContextExact
 import Flapjack.Pancake.Semantics.CrepSem.HOLState
 import Flapjack.Pancake.PanCommon
 
@@ -40,6 +41,36 @@ structure CompileExpContextExact (width : Nat) [NeZero width] where
   vmax : Nat
 
 namespace CompileExpContextExact
+
+/-- Convert the compiler-local qualifier carrier to the tagged HOL `context`.
+    This is a field-preserving conversion, not a production String codec. -/
+def toPanToCrep {width : Nat} [NeZero width] (context : CompileExpContextExact width) :
+    PanToCrepContextExact width where
+  vars := context.vars
+  funcs := context.funcs
+  eids := context.eids
+  vmax := context.vmax
+
+/-- Convert the tagged HOL `context` to the local carrier required by the
+    current same-module finite-support witness checker. -/
+def ofPanToCrep {width : Nat} [NeZero width] (context : PanToCrepContextExact width) :
+    CompileExpContextExact width where
+  vars := context.vars
+  funcs := context.funcs
+  eids := context.eids
+  vmax := context.vmax
+
+theorem ofPanToCrep_toPanToCrep {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) :
+    ofPanToCrep (toPanToCrep context) = context := by
+  cases context
+  rfl
+
+theorem toPanToCrep_ofPanToCrep {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width) :
+    toPanToCrep (ofPanToCrep context) = context := by
+  cases context
+  rfl
 
 def toBroad {width : Nat} [NeZero width] (context : CompileExpContextExact width) :
     CompileExpContextBroad width where
@@ -243,5 +274,150 @@ def compileLocalAssignExactHOLW {width : Nat} [NeZero width]
           let assignments := List.zipWith CrepProgHOL.assign names
             (temporaries.map CrepExpHOL.var)
           nestedDecsHOL temporaries expressions (crepNestedSeqHOL assignments)
+
+/-! The local `Primitive` destination equation from `compile_def`
+    (`pan_to_crepScript.sml:165-175`). HOL flattens every argument's compiled
+    expression list, allocates one fresh temporary per flattened value, then
+    wraps the target primitive in `nested_decs`. -/
+
+def compilePrimitiveExactHOLW {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (name : MlS) (operator : PrimOp)
+    (arguments : List (Flapjack.Pancake.PanLang.ExpHOL width)) : CrepProgHOL width :=
+  let values := (compileExpExactHOLWList context arguments).flatMap Prod.fst
+  match context.vars.lookup name with
+  | none => .skip
+  | some (_shape, names) =>
+      let temporaries := (List.range values.length).map
+        (fun index => context.vmax + index + 1)
+      nestedDecsHOL temporaries values (.primitive names operator temporaries)
+
+/-! The recursive `Store` clause from `compile_def`
+    (`pan_to_crepScript.sml:177-185`). The address must compile to a head;
+    the value list must have exactly its shape size. HOL reserves `vmax+1`
+    for the address and generates the remaining temporaries from that base. -/
+
+def compileStoreExactHOLW {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width)
+    (address value : Flapjack.Pancake.PanLang.ExpHOL width) : CrepProgHOL width :=
+  match compileExpExactHOLW context address with
+  | (compiledAddress :: _, _) =>
+      let (values, shape) := compileExpExactHOLW context value
+      let valueCount := Flapjack.Pancake.PanLang.sizeOfShapeHOL shape
+      let addressName := context.vmax + 1
+      let valueNames := (List.range valueCount).map
+        (fun index => addressName + index + 1)
+      if valueCount != values.length then .skip
+      else
+        let storeSequence := crepNestedSeqHOL
+          (storesHOL (.var addressName) (valueNames.map CrepExpHOL.var) (0 : BitVec width))
+        nestedDecsHOL (addressName :: valueNames) (compiledAddress :: values) storeSequence
+  | ([], _) => .skip
+
+/-! The `Raise` clause from `compile_def`
+    (`pan_to_crepScript.sml:197-207`). It requires an exception-id lookup and
+    a shape size matching the compiled value list, then saves each component
+    into consecutive globals before raising the looked-up word code. -/
+
+def compileRaiseExactHOLW {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (exceptionName : MlS)
+    (expression : Flapjack.Pancake.PanLang.ExpHOL width) : CrepProgHOL width :=
+  match context.eids.lookup exceptionName with
+  | none => .skip
+  | some exceptionCode =>
+      let (values, shape) := compileExpExactHOLW context expression
+      let valueCount := Flapjack.Pancake.PanLang.sizeOfShapeHOL shape
+      let temporaries := (List.range valueCount).map
+        (fun index => context.vmax + index + 1)
+      if valueCount != values.length then .skip
+      else
+        let saveValues := crepNestedSeqHOL
+          (storeGlobalsHOL (0 : BitVec 5) (temporaries.map CrepExpHOL.var))
+        .seq (nestedDecsHOL temporaries values saveValues) (.raise exceptionCode)
+
+/-! The `ShMemStore` clause from `compile_def`
+    (`pan_to_crepScript.sml:285-293`). Both operands must compile to heads.
+    HOL picks the first compiled value and address, then places the store at
+    one greater than the largest variable used by the value expression. -/
+
+def compileShMemStoreExactHOLW {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (operator : OpSize)
+    (value address : Flapjack.Pancake.PanLang.ExpHOL width) : CrepProgHOL width :=
+  match compileExpExactHOLW context value, compileExpExactHOLW context address with
+  | (compiledValue :: _, _), (compiledAddress :: _, _) =>
+      let index := (crepExpVarsW (crepExpOfHOL compiledValue)).foldr max 0
+      .dec (index + 1) compiledAddress
+        (.shMem (storeMemOpHOL operator) (index + 1) compiledValue)
+  | _, _ => .skip
+
+/-! The local `ShMemLoad` clause from `compile_def`
+    (`pan_to_crepScript.sml:296-304`). It takes the first compiled address and
+    first destination variable, preserving both lookup/head fallbacks. -/
+
+def compileShMemLoadExactHOLW {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (operator : OpSize) (name : MlS)
+    (address : Flapjack.Pancake.PanLang.ExpHOL width) : CrepProgHOL width :=
+  match compileExpExactHOLW context address with
+  | (compiledAddress :: _, _) =>
+      match context.vars.lookup name with
+      | some (_, destination :: _) =>
+          .shMem (loadMemOpHOL operator) destination compiledAddress
+      | _ => .skip
+  | ([], _) => .skip
+
+/-! The recursive `Dec` clause from `compile_def`
+    (`pan_to_crepScript.sml:145-152`). It allocates names from the old `vmax`,
+    extends the variable map and `vmax` for the recursive body, and emits the
+    declaration only when the compiled expression count matches the shape. -/
+
+def compileDecExactHOLW {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (name : MlS)
+    (shape : Flapjack.Pancake.PanLang.ShapeHOL)
+    (expression : Flapjack.Pancake.PanLang.ExpHOL width)
+    (compileBody : CompileExpContextExact width → CrepProgHOL width) : CrepProgHOL width :=
+  let (values, compiledShape) := compileExpExactHOLW context expression
+  let valueCount := Flapjack.Pancake.PanLang.sizeOfShapeHOL compiledShape
+  let names := (List.range valueCount).map (fun index => context.vmax + index + 1)
+  let bodyContext : CompileExpContextExact width :=
+    { context with
+      vars := context.vars.update (name, (shape, names))
+      vmax := context.vmax + valueCount }
+  if valueCount != values.length then .skip
+  else nestedDecsHOL names values (compileBody bodyContext)
+
+/-! The `ExtCall` clause from HOL `compile_def`
+    (`pan_to_crepScript.sml:219-233`). The freshness bound is the maximum over
+    every variable in all four compiled operand lists, even though the output
+    uses only each list's head. All four source shapes must be `One` and all
+    four compiled lists must be nonempty; otherwise HOL returns `Skip`. -/
+
+def compileExtCallExactHOLW {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (function : MlS)
+    (configuration configurationLength array arrayLength :
+      Flapjack.Pancake.PanLang.ExpHOL width) : CrepProgHOL width :=
+  let (configurationValues, configurationShape) :=
+    compileExpExactHOLW context configuration
+  let (configurationLengthValues, configurationLengthShape) :=
+    compileExpExactHOLW context configurationLength
+  let (arrayValues, arrayShape) := compileExpExactHOLW context array
+  let (arrayLengthValues, arrayLengthShape) :=
+    compileExpExactHOLW context arrayLength
+  let allValues := configurationValues ++ configurationLengthValues ++
+    arrayValues ++ arrayLengthValues
+  let allVariables := allValues.flatMap fun value =>
+    crepExpVarsW (crepExpOfHOL value)
+  let maximumVariable := allVariables.foldl (fun maximum variableIndex =>
+    Nat.max maximum variableIndex) 0
+  match configurationShape, configurationValues,
+      configurationLengthShape, configurationLengthValues,
+      arrayShape, arrayValues, arrayLengthShape, arrayLengthValues with
+  | .one, configurationValue :: _, .one, configurationLengthValue :: _,
+      .one, arrayValue :: _, .one, arrayLengthValue :: _ =>
+        .dec (maximumVariable + 1) configurationValue
+          (.dec (maximumVariable + 2) configurationLengthValue
+            (.dec (maximumVariable + 3) arrayValue
+              (.dec (maximumVariable + 4) arrayLengthValue
+                (.extCall function (maximumVariable + 1) (maximumVariable + 2)
+                  (maximumVariable + 3) (maximumVariable + 4)))))
+  | _, _, _, _, _, _, _, _ => .skip
 
 end Flapjack
