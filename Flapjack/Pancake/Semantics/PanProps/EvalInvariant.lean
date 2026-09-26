@@ -999,6 +999,38 @@ instance toPanSemFiniteDecidableMemaddrs {width : Nat} {σ : Type} [NeZero width
     DecidablePred state.toPanSemFinite.memaddrs := by
   simpa [toPanSemFinite] using h
 
+/-- Memory replacement and the canonical evaluator's empty-locals update
+    preserve the address-set predicate definitionally.  This explicit
+    transport is needed because the evaluator's declaration clause requests a
+    `DecidablePred` for the updated state's `emptyLocalsHOLFinite` projection,
+    while the available instance is indexed by the original PanProps state. -/
+@[instance_reducible]
+def decidablePred_memoryUpdate_emptyLocals_toPanSemFinite
+    {width : Nat} {σ : Type} [NeZero width]
+    (state : PanPropsEvalStateFiniteExact width σ)
+    [h : DecidablePred state.memaddrs]
+    (memory : RiscV.Word width → HolWordLab width) :
+    DecidablePred
+      (PanSemStateFiniteExact.emptyLocalsHOLFinite
+        ({ state with memory := memory }.toPanSemFinite)).memaddrs := by
+  change DecidablePred state.memaddrs
+  exact h
+
+/-- The corresponding transport on the canonical PanSem carrier.  This is
+    Flapjack-specific typeclass infrastructure: the address predicate is an
+    unchanged state field under both record updates. -/
+@[instance_reducible]
+def decidablePred_memoryUpdate_emptyLocals_PanSem
+    {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ)
+    [h : DecidablePred state.memaddrs]
+    (memory : RiscV.Word width → HolWordLab width) :
+    DecidablePred
+      (PanSemStateFiniteExact.emptyLocalsHOLFinite
+        ({ state with memory := memory })).memaddrs := by
+  change DecidablePred state.memaddrs
+  exact h
+
 /-- Inverse state codec from the canonical PanSem finite-support carrier. -/
 def ofPanSemFinite {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) : PanPropsEvalStateFiniteExact width σ where
@@ -1097,9 +1129,9 @@ proved directly from `evaluate_invariants`.  There is deliberately no
 `Option` around its `result option × state` output, while
 `evaluateHOLFiniteViaExact` removes that marker by delegating through the
 unrestricted-map `PanSemStateExact` evaluator.  The source counterpart's
-finite-to-broad projection proof and the clause-for-clause tagged finite
-`evaluate_def` are still in progress (`flapjack-6yq` and its dependent
-`flapjack-qj5`).  A preservation fact about either adapter alone would
+finite-to-broad projection is proved, but source review and the clause-for-clause
+tagged finite `evaluate_def` are still in progress (`flapjack-qj5`).
+A preservation fact about either adapter alone would
 therefore not yet be a source-reviewed port of this theorem.  The faithful
 finite-state theorem is tracked by `flapjack-4ac.4.63.1`.
 
@@ -1113,8 +1145,8 @@ post-state components except that the clock is zero.  Its proof depends on
 premise.  There is deliberately no `@[hol]` theorem for this result yet:
 `evaluateHOLFiniteViaExact` is the total pair-shaped adapter, but it delegates
 through the unrestricted-map `PanSemStateExact` evaluator, while the direct
-finite evaluator's source projection and tagged `evaluate_def` remain in
-progress (`flapjack-6yq` / `flapjack-qj5`).  The faithful finite-state theorem
+finite evaluator's projection is proved and its tagged `evaluate_def` remains
+in progress (`flapjack-qj5`). The faithful finite-state theorem
 is tracked by `flapjack-4ac.4.47.1`.
 -/
 
@@ -1738,61 +1770,99 @@ theorem evalSwapMemoryHOLFinite {width : Nat} {σ : Type} [NeZero width] :
   have hSame := evalHOLExactSwapMemory state.toExact memory h.2 expression value hEval
   simpa [evalHOL, PanPropsEvalStateFiniteExact.toExact] using hSame
 
-private theorem evaluateDeclsPanPropsMemaddrsMono {width : Nat} {σ : Type}
-    [NeZero width] (state : PanPropsEvalStateFiniteExact width σ)
+private theorem evaluateDeclsHOLFiniteMemaddrsMono {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateFiniteExact width σ)
     [DecidablePred state.memaddrs] (memaddrs : RiscV.Word width → Prop)
     [DecidablePred memaddrs] (program : List (DeclHOL width))
-    (result : PanPropsEvalStateFiniteExact width σ)
-    (hEval : evaluateDeclsPanPropsHOLFinite state program = some result)
+    (result : PanSemStateFiniteExact width σ)
+    (hEval : PanSemStateFiniteExact.evaluateDeclsHOLFinite state program = some result)
     (hsubset : ∀ address, state.memaddrs address → memaddrs address) :
-    evaluateDeclsPanPropsHOLFinite { state with memaddrs := memaddrs } program =
+    PanSemStateFiniteExact.evaluateDeclsHOLFinite
+        { state with memaddrs := memaddrs } program =
       some { result with memaddrs := memaddrs } := by
   induction program generalizing state result with
   | nil =>
-      simp [evaluateDeclsPanPropsHOLFinite] at hEval
+      simp [PanSemStateFiniteExact.evaluateDeclsHOLFinite] at hEval
       cases hEval
       rfl
   | cons declaration rest ih =>
       cases declaration with
       | name name fields =>
-          simp only [evaluateDeclsPanPropsHOLFinite] at hEval ⊢
+          simp only [PanSemStateFiniteExact.evaluateDeclsHOLFinite] at hEval ⊢
           exact ih state result hEval hsubset
       | decl shape name expression =>
-          simp only [evaluateDeclsPanPropsHOLFinite] at hEval
-          cases heval : evalHOL { state with locals := HolFiniteMapExact.empty } expression with
+          simp only [PanSemStateFiniteExact.evaluateDeclsHOLFinite] at hEval
+          letI : DecidablePred
+              (PanSemStateFiniteExact.emptyLocalsHOLFinite state).memaddrs := by
+            simpa [PanSemStateFiniteExact.emptyLocalsHOLFinite] using
+              (inferInstance : DecidablePred state.memaddrs)
+          cases heval : PanSemStateFiniteExact.evalHOLFinite
+              (PanSemStateFiniteExact.emptyLocalsHOLFinite state) expression with
           | none => simp [heval] at hEval
           | some value =>
               by_cases hshape : shapeEqHOL shape (shapeOfHOLExact value)
               · simp only [heval, if_pos hshape] at hEval
-                have hevalWidened := evalSwapMemaddrsHOLFinite
-                  ({ state with locals := HolFiniteMapExact.empty }) expression value memaddrs
-                  ⟨heval, hsubset⟩
-                let nextState :=
-                  { state with globals := state.globals.update (name, value) }
+                let emptyState := PanSemStateFiniteExact.emptyLocalsHOLFinite state
+                have hsubsetEmpty : ∀ address, emptyState.memaddrs address → memaddrs address := by
+                  simpa [emptyState, PanSemStateFiniteExact.emptyLocalsHOLFinite] using hsubset
+                have hevalExact : evalHOLExact emptyState.toExact expression = some value := by
+                  simpa [PanSemStateFiniteExact.evalHOLFinite, emptyState,
+                    PanSemStateFiniteExact.emptyLocalsHOLFinite,
+                    PanSemStateFiniteExact.toExact, emptyLocalsHOLExact] using heval
+                have hevalWidened := evalHOLExactMemaddrsMono emptyState.toExact memaddrs
+                  hsubsetEmpty expression value hevalExact
+                let widenedInitial := { state with memaddrs := memaddrs }
+                letI : DecidablePred widenedInitial.memaddrs := by
+                  simpa [widenedInitial] using (inferInstance : DecidablePred memaddrs)
+                letI : DecidablePred
+                    (PanSemStateFiniteExact.emptyLocalsHOLFinite widenedInitial).memaddrs := by
+                  simpa [PanSemStateFiniteExact.emptyLocalsHOLFinite] using
+                    (inferInstance : DecidablePred widenedInitial.memaddrs)
+                have hevalWidenedCanonical :
+                    PanSemStateFiniteExact.evalHOLFinite
+                      (PanSemStateFiniteExact.emptyLocalsHOLFinite widenedInitial)
+                      expression = some value := by
+                  have hstates : (PanSemStateFiniteExact.emptyLocalsHOLFinite
+                      widenedInitial).toExact =
+                      { emptyState.toExact with memaddrs := memaddrs } := by
+                    cases state <;> rfl
+                  simpa only [PanSemStateFiniteExact.evalHOLFinite_eq_toExact, hstates]
+                    using hevalWidened
+                let nextState := PanSemStateFiniteExact.setGlobalHOLFinite name value state
+                letI : DecidablePred nextState.memaddrs := by
+                  simpa [nextState, PanSemStateFiniteExact.setGlobalHOLFinite] using
+                    (inferInstance : DecidablePred state.memaddrs)
                 have htail := ih nextState result hEval hsubset
-                simp only [evaluateDeclsPanPropsHOLFinite, hevalWidened, if_pos hshape]
-                exact htail
+                let widenedNext := PanSemStateFiniteExact.setGlobalHOLFinite name value
+                  widenedInitial
+                letI : DecidablePred widenedNext.memaddrs := by
+                  simpa [widenedNext, PanSemStateFiniteExact.setGlobalHOLFinite] using
+                    (inferInstance : DecidablePred memaddrs)
+                simp only [PanSemStateFiniteExact.evaluateDeclsHOLFinite]
+                rw [hevalWidenedCanonical]
+                simp only [if_pos hshape]
+                simpa [nextState, widenedNext, PanSemStateFiniteExact.setGlobalHOLFinite] using htail
               · simp [heval, hshape] at hEval
       | function declaration =>
           let condition := declaration.params.all
             (fun parameter => isWfShapeExactHOL state.structs parameter.2) &&
             isWfShapeExactHOL state.structs declaration.returnShape
           by_cases hcondition : condition = true
-          · simp [evaluateDeclsPanPropsHOLFinite, condition, hcondition] at hEval ⊢
+          · simp [PanSemStateFiniteExact.evaluateDeclsHOLFinite, condition, hcondition] at hEval ⊢
             exact ih
               { state with code := state.code.update (declaration.name,
                 (declaration.params, declaration.body, declaration.returnShape)) }
               result hEval hsubset
-          · simp [evaluateDeclsPanPropsHOLFinite, condition, hcondition] at hEval
+          · simp [PanSemStateFiniteExact.evaluateDeclsHOLFinite, condition, hcondition] at hEval
       | exnDecl exceptionName shape =>
           let condition := (state.eshapes.lookup exceptionName).isNone &&
             isWfShapeExactHOL state.structs shape
           by_cases hcondition : condition = true
-          · simp [evaluateDeclsPanPropsHOLFinite, condition, hcondition] at hEval ⊢
+          · simp [PanSemStateFiniteExact.evaluateDeclsHOLFinite, condition, hcondition] at hEval ⊢
             exact ih
               { state with eshapes := state.eshapes.update (exceptionName, shape) }
               result hEval hsubset
-          · simp [evaluateDeclsPanPropsHOLFinite, condition, hcondition] at hEval
+          · simp [PanSemStateFiniteExact.evaluateDeclsHOLFinite, condition, hcondition] at hEval
 
  /-- Exact finite-support port of HOL `evaluate_decls_memaddrs_mono`
     (`panPropsScript.sml:1766-1778`). The quantified state, declaration list,
@@ -1801,9 +1871,11 @@ private theorem evaluateDeclsPanPropsMemaddrsMono {width : Nat} {σ : Type}
     evaluator follows `evaluate_decls_def` (`panSemScript.sml:814-837`) clause
     for clause. `PanPropsEvalStateFiniteExact` supplies the reviewed canonical
     finite-map representation for the four `|->` fields; the qualifier records
-    only that representation. `[NeZero width]` models HOL's positive word
-    dimension, and `DecidablePred` supplies executable decisions for HOL word
-    set membership. -/
+    only that representation. Its proof uses the canonical tagged PanSem
+    `evaluate_decls_def` through the field-for-field `toPanSemFinite` codec;
+    it does not unfold the PanProps-local recursive evaluator. `[NeZero width]`
+    models HOL's positive word dimension, and `DecidablePred` supplies Lean
+    decisions for HOL word-set membership. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_decls_memaddrs_mono"
   (fmap_as_finite_support := [locals, globals, code, eshapes])]
 theorem evaluateDeclsMemaddrsMonoHOLFinite {width : Nat} {σ : Type}
@@ -1816,9 +1888,50 @@ theorem evaluateDeclsMemaddrsMonoHOLFinite {width : Nat} {σ : Type}
         (∀ address, state.memaddrs address → memaddrs address)) →
         evaluateDeclsPanPropsCanonical { state with memaddrs := memaddrs } program =
           some { result with memaddrs := memaddrs } := by
-  simp only [evaluateDeclsPanPropsCanonical_eqHOLFinite]
   intro state hstate program result memaddrs hmemaddrs h
-  exact evaluateDeclsPanPropsMemaddrsMono state memaddrs program result h.1 h.2
+  letI : DecidablePred state.toPanSemFinite.memaddrs := by
+    simpa [PanPropsEvalStateFiniteExact.toPanSemFinite] using hstate
+  have hcanonical :
+      PanSemStateFiniteExact.evaluateDeclsHOLFinite state.toPanSemFinite program =
+        some result.toPanSemFinite := by
+    have hinj : Function.Injective
+        (PanPropsEvalStateFiniteExact.ofPanSemFinite (width := width) (σ := σ)) := by
+      intro left right hEq
+      have hEq' := congrArg PanPropsEvalStateFiniteExact.toPanSemFinite hEq
+      simpa using hEq'
+    have hmap : Option.map
+        (PanPropsEvalStateFiniteExact.ofPanSemFinite (width := width) (σ := σ))
+        (PanSemStateFiniteExact.evaluateDeclsHOLFinite state.toPanSemFinite program) =
+        some result := by
+      simpa [evaluateDeclsPanPropsCanonical] using h.1
+    have hmap' : Option.map
+        (PanPropsEvalStateFiniteExact.ofPanSemFinite (width := width) (σ := σ))
+        (PanSemStateFiniteExact.evaluateDeclsHOLFinite state.toPanSemFinite program) =
+        Option.map (PanPropsEvalStateFiniteExact.ofPanSemFinite (width := width) (σ := σ))
+          (some result.toPanSemFinite) := by
+      rw [hmap]
+      simp
+    have hcanonical' := Option.map_injective hinj hmap'
+    simpa using hcanonical'
+  have hcanonicalWidened := evaluateDeclsHOLFiniteMemaddrsMono state.toPanSemFinite
+    memaddrs program result.toPanSemFinite hcanonical h.2
+  have hcanonicalOut :
+      PanSemStateFiniteExact.evaluateDeclsHOLFinite
+          { state.toPanSemFinite with memaddrs := memaddrs } program =
+        some ({ result.toPanSemFinite with memaddrs := memaddrs }) := by
+    exact hcanonicalWidened
+  have hmap := congrArg
+    (Option.map (PanPropsEvalStateFiniteExact.ofPanSemFinite (width := width) (σ := σ)))
+    hcanonicalOut
+  change Option.map
+      (PanPropsEvalStateFiniteExact.ofPanSemFinite (width := width) (σ := σ))
+      (PanSemStateFiniteExact.evaluateDeclsHOLFinite
+        (PanPropsEvalStateFiniteExact.toPanSemFinite
+          { state with memaddrs := memaddrs }) program) =
+    some { result with memaddrs := memaddrs }
+  simpa only [PanPropsEvalStateFiniteExact.toPanSemFinite, Option.map_some,
+    PanPropsEvalStateFiniteExact.ofPanSemFinite_toPanSemFinite,
+    PanPropsEvalStateFiniteExact.ofPanSemFinite] using hmap
 
 /-- Exact finite-support port of HOL `evaluate_decls_swap_memaddrs`
     (`panPropsScript.sml:1718`). It preserves the source quantifier order and
@@ -1844,66 +1957,172 @@ theorem evaluateDeclsSwapMemaddrsHOLFinite {width : Nat} {σ : Type}
         (∀ address, state.memaddrs address → memaddrs address)) →
         evaluateDeclsPanPropsCanonical { state with memaddrs := memaddrs } program =
           some { result with memaddrs := memaddrs } := by
-  simp only [evaluateDeclsPanPropsCanonical_eqHOLFinite]
-  intro state hstate program result memaddrs hmemaddrs h
-  exact evaluateDeclsPanPropsMemaddrsMono state memaddrs program result h.1
-    (fun address hsource => h.2 address hsource)
+  exact evaluateDeclsMemaddrsMonoHOLFinite
 
-private theorem evaluateDeclsPanPropsMemorySwap {width : Nat} {σ : Type}
-    [NeZero width] (state : PanPropsEvalStateFiniteExact width σ)
+private theorem evaluateDeclsPanSemMemorySwap {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateFiniteExact width σ)
     [DecidablePred state.memaddrs] (memory : RiscV.Word width → HolWordLab width)
     (program : List (DeclHOL width))
-    (result : PanPropsEvalStateFiniteExact width σ)
-    (hEval : evaluateDeclsPanPropsHOLFinite state program = some result)
+    (result : PanSemStateFiniteExact width σ)
+    (hEval : PanSemStateFiniteExact.evaluateDeclsHOLFinite state program = some result)
     (hagree : ∀ address, state.memaddrs address → state.memory address = memory address) :
-    evaluateDeclsPanPropsHOLFinite { state with memory := memory } program =
+    PanSemStateFiniteExact.evaluateDeclsHOLFinite { state with memory := memory } program =
       some { result with memory := memory } := by
   induction program generalizing state result with
   | nil =>
-      simp [evaluateDeclsPanPropsHOLFinite] at hEval
+      simp [PanSemStateFiniteExact.evaluateDeclsHOLFinite] at hEval
       cases hEval
       rfl
   | cons declaration rest ih =>
       cases declaration with
       | name name fields =>
-          simp only [evaluateDeclsPanPropsHOLFinite] at hEval ⊢
+          simp only [PanSemStateFiniteExact.evaluateDeclsHOLFinite] at hEval ⊢
           exact ih state result hEval hagree
       | decl shape name expression =>
-          simp only [evaluateDeclsPanPropsHOLFinite] at hEval
-          cases heval : evalHOL { state with locals := HolFiniteMapExact.empty } expression with
+          simp only [PanSemStateFiniteExact.evaluateDeclsHOLFinite] at hEval ⊢
+          letI : DecidablePred
+              (PanSemStateFiniteExact.emptyLocalsHOLFinite
+                { state with memory := memory }).memaddrs :=
+            PanPropsEvalStateFiniteExact.decidablePred_memoryUpdate_emptyLocals_PanSem
+              state memory
+          letI : DecidablePred
+              (PanSemStateFiniteExact.emptyLocalsHOLFinite state).memaddrs := by
+            simpa [PanSemStateFiniteExact.emptyLocalsHOLFinite] using
+              (inferInstance : DecidablePred state.memaddrs)
+          cases heval : PanSemStateFiniteExact.evalHOLFinite
+              (PanSemStateFiniteExact.emptyLocalsHOLFinite state) expression with
           | none => simp [heval] at hEval
           | some value =>
               by_cases hshape : shapeEqHOL shape (shapeOfHOLExact value)
               · simp only [heval, if_pos hshape] at hEval
-                have hevalMemory := evalSwapMemoryHOLFinite
-                  ({ state with locals := HolFiniteMapExact.empty }) expression value memory
-                  ⟨heval, hagree⟩
-                let nextState :=
-                  { state with globals := state.globals.update (name, value) }
+                have hExactEval :
+                    evalHOLExact
+                      (PanSemStateFiniteExact.emptyLocalsHOLFinite state).toExact
+                      expression = some value := by
+                  simpa [PanSemStateFiniteExact.evalHOLFinite] using heval
+                have hExactMemory := evalHOLExactSwapMemory
+                  (PanSemStateFiniteExact.emptyLocalsHOLFinite state).toExact memory
+                  (fun address haddress => hagree address
+                    (by simpa [PanSemStateFiniteExact.emptyLocalsHOLFinite] using haddress))
+                  expression value hExactEval
+                have hevalMemory :
+                    PanSemStateFiniteExact.evalHOLFinite
+                      (PanSemStateFiniteExact.emptyLocalsHOLFinite
+                        { state with memory := memory }) expression = some value := by
+                  simpa [PanSemStateFiniteExact.evalHOLFinite,
+                    PanSemStateFiniteExact.emptyLocalsHOLFinite,
+                    PanSemStateFiniteExact.toExact] using hExactMemory
+                let nextState := PanSemStateFiniteExact.setGlobalHOLFinite name value state
+                letI : DecidablePred nextState.memaddrs := by
+                  change DecidablePred state.memaddrs
+                  exact inferInstance
                 have htail := ih nextState result hEval hagree
-                simpa [evaluateDeclsPanPropsHOLFinite, hshape, hevalMemory,
-                  nextState] using htail
+                simpa [PanSemStateFiniteExact.evaluateDeclsHOLFinite, hshape,
+                  hevalMemory, nextState, PanSemStateFiniteExact.setGlobalHOLFinite] using htail
               · simp [heval, hshape] at hEval
       | function declaration =>
           let condition := declaration.params.all
             (fun parameter => isWfShapeExactHOL state.structs parameter.2) &&
             isWfShapeExactHOL state.structs declaration.returnShape
           by_cases hcondition : condition = true
-          · simp [evaluateDeclsPanPropsHOLFinite, condition, hcondition] at hEval ⊢
-            exact ih
-              { state with code := state.code.update (declaration.name,
-                (declaration.params, declaration.body, declaration.returnShape)) }
-              result hEval hagree
-          · simp [evaluateDeclsPanPropsHOLFinite, condition, hcondition] at hEval
+          · simp [PanSemStateFiniteExact.evaluateDeclsHOLFinite,
+              condition, hcondition] at hEval ⊢
+            let nextState := { state with code := state.code.update (declaration.name,
+              (declaration.params, declaration.body, declaration.returnShape)) }
+            letI : DecidablePred nextState.memaddrs := by
+              change DecidablePred state.memaddrs
+              exact inferInstance
+            exact ih nextState result hEval hagree
+          · simp [PanSemStateFiniteExact.evaluateDeclsHOLFinite,
+              condition, hcondition] at hEval ⊢
       | exnDecl exceptionName shape =>
           let condition := (state.eshapes.lookup exceptionName).isNone &&
             isWfShapeExactHOL state.structs shape
           by_cases hcondition : condition = true
-          · simp [evaluateDeclsPanPropsHOLFinite, condition, hcondition] at hEval ⊢
+          · simp [PanSemStateFiniteExact.evaluateDeclsHOLFinite,
+              condition, hcondition] at hEval ⊢
+            let nextState := { state with eshapes := state.eshapes.update (exceptionName, shape) }
+            letI : DecidablePred nextState.memaddrs := by
+              change DecidablePred state.memaddrs
+              exact inferInstance
+            exact ih nextState result hEval hagree
+          · simp [PanSemStateFiniteExact.evaluateDeclsHOLFinite,
+              condition, hcondition] at hEval ⊢
+
+private theorem evaluateDeclsHOLFiniteSwapLocals {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateFiniteExact width σ)
+    [DecidablePred state.memaddrs]
+    (locals : HolFiniteMapExact MlS (ValueHOL width))
+    (program : List (DeclHOL width)) (result : PanSemStateFiniteExact width σ)
+    (hEval : PanSemStateFiniteExact.evaluateDeclsHOLFinite state program = some result) :
+    PanSemStateFiniteExact.evaluateDeclsHOLFinite { state with locals := locals } program =
+      some { result with locals := locals } := by
+  induction program generalizing state result with
+  | nil =>
+      simp [PanSemStateFiniteExact.evaluateDeclsHOLFinite] at hEval
+      cases hEval
+      rfl
+  | cons declaration rest ih =>
+      cases declaration with
+      | name name fields =>
+          simp only [PanSemStateFiniteExact.evaluateDeclsHOLFinite] at hEval ⊢
+          exact ih state result hEval
+      | decl shape name expression =>
+          simp only [PanSemStateFiniteExact.evaluateDeclsHOLFinite] at hEval ⊢
+          let stateWithLocals := { state with locals := locals }
+          letI : DecidablePred
+              (PanSemStateFiniteExact.emptyLocalsHOLFinite state).memaddrs := by
+            simpa [PanSemStateFiniteExact.emptyLocalsHOLFinite] using
+              (inferInstance : DecidablePred state.memaddrs)
+          letI : DecidablePred
+              (PanSemStateFiniteExact.emptyLocalsHOLFinite stateWithLocals).memaddrs := by
+            simpa [stateWithLocals, PanSemStateFiniteExact.emptyLocalsHOLFinite] using
+              (inferInstance : DecidablePred state.memaddrs)
+          cases heval : PanSemStateFiniteExact.evalHOLFinite
+              (PanSemStateFiniteExact.emptyLocalsHOLFinite state) expression with
+          | none => simp [heval] at hEval
+          | some value =>
+              have hevalChanged : PanSemStateFiniteExact.evalHOLFinite
+                  (PanSemStateFiniteExact.emptyLocalsHOLFinite stateWithLocals)
+                  expression = some value := by
+                simpa [stateWithLocals,
+                  PanSemStateFiniteExact.emptyLocalsHOLFinite] using heval
+              by_cases hshape : shapeEqHOL shape (shapeOfHOLExact value)
+              · simp only [heval, if_pos hshape] at hEval
+                let nextState := PanSemStateFiniteExact.setGlobalHOLFinite name value state
+                letI : DecidablePred nextState.memaddrs := by
+                  simpa [nextState, PanSemStateFiniteExact.setGlobalHOLFinite] using
+                    (inferInstance : DecidablePred state.memaddrs)
+                have htail := ih nextState result hEval
+                rw [hevalChanged]
+                simp only [if_pos hshape]
+                simpa [nextState, stateWithLocals,
+                  PanSemStateFiniteExact.setGlobalHOLFinite] using htail
+              · simp [heval, hshape] at hEval
+      | function declaration =>
+          let condition := declaration.params.all
+              (fun parameter => isWfShapeExactHOL state.structs parameter.2) &&
+            isWfShapeExactHOL state.structs declaration.returnShape
+          by_cases hcondition : condition = true
+          · simp [PanSemStateFiniteExact.evaluateDeclsHOLFinite, condition,
+              hcondition] at hEval ⊢
+            exact ih
+              { state with code := state.code.update (declaration.name,
+                (declaration.params, declaration.body, declaration.returnShape)) }
+              result hEval
+          · simp [PanSemStateFiniteExact.evaluateDeclsHOLFinite, condition,
+              hcondition] at hEval
+      | exnDecl exceptionName shape =>
+          let condition := (state.eshapes.lookup exceptionName).isNone &&
+            isWfShapeExactHOL state.structs shape
+          by_cases hcondition : condition = true
+          · simp [PanSemStateFiniteExact.evaluateDeclsHOLFinite, condition,
+              hcondition] at hEval ⊢
             exact ih
               { state with eshapes := state.eshapes.update (exceptionName, shape) }
-              result hEval hagree
-          · simp [evaluateDeclsPanPropsHOLFinite, condition, hcondition] at hEval
+              result hEval
+          · simp [PanSemStateFiniteExact.evaluateDeclsHOLFinite, condition,
+              hcondition] at hEval
 
 /-- HOL `evaluate_decls_swap_locals`
     (`panPropsScript.sml:1645`) over the reviewed finite-support state.
@@ -1927,53 +2146,45 @@ theorem evaluateDeclsSwapLocalsHOLFinite {width : Nat} {σ : Type}
       evaluateDeclsPanPropsCanonical state program = some result →
         evaluateDeclsPanPropsCanonical { state with locals := locals } program =
           some { result with locals := locals } := by
-  simp only [evaluateDeclsPanPropsCanonical_eqHOLFinite]
   intro state hstate program result locals hEval
-  induction program generalizing state result with
-  | nil =>
-      simp [evaluateDeclsPanPropsHOLFinite] at hEval
-      cases hEval
-      rfl
-  | cons declaration rest ih =>
-      cases declaration with
-      | name name fields =>
-          simp only [evaluateDeclsPanPropsHOLFinite] at hEval ⊢
-          exact ih state result hEval
-      | decl shape name expression =>
-          simp only [evaluateDeclsPanPropsHOLFinite] at hEval
-          cases heval : evalHOL { state with locals := HolFiniteMapExact.empty } expression with
-          | none => simp [heval] at hEval
-          | some value =>
-              by_cases hshape : shapeEqHOL shape (shapeOfHOLExact value)
-              · simp only [heval, if_pos hshape] at hEval
-                let nextState :=
-                  { state with globals := state.globals.update (name, value) }
-                have htail := ih nextState result hEval
-                simpa [evaluateDeclsPanPropsHOLFinite, hshape, heval, nextState]
-                  using htail
-              · simp [heval, hshape] at hEval
-      | function declaration =>
-          let condition := declaration.params.all
-              (fun parameter => isWfShapeExactHOL state.structs parameter.2) &&
-            isWfShapeExactHOL state.structs declaration.returnShape
-          by_cases hcondition : condition = true
-          · simp only [evaluateDeclsPanPropsHOLFinite, condition, hcondition,
-              if_pos] at hEval ⊢
-            exact ih
-              { state with code := state.code.update (declaration.name,
-                (declaration.params, declaration.body, declaration.returnShape)) }
-              result hEval
-          · simp [evaluateDeclsPanPropsHOLFinite, condition, hcondition] at hEval
-      | exnDecl exceptionName shape =>
-          let condition := (state.eshapes.lookup exceptionName).isNone &&
-            isWfShapeExactHOL state.structs shape
-          by_cases hcondition : condition = true
-          · simp only [evaluateDeclsPanPropsHOLFinite, condition, hcondition,
-              if_pos] at hEval ⊢
-            exact ih
-              { state with eshapes := state.eshapes.update (exceptionName, shape) }
-              result hEval
-          · simp [evaluateDeclsPanPropsHOLFinite, condition, hcondition] at hEval
+  letI : DecidablePred state.toPanSemFinite.memaddrs := by
+    simpa [PanPropsEvalStateFiniteExact.toPanSemFinite] using hstate
+  have hcanonical :
+      PanSemStateFiniteExact.evaluateDeclsHOLFinite state.toPanSemFinite program =
+        some result.toPanSemFinite := by
+    have hinj : Function.Injective
+        (PanPropsEvalStateFiniteExact.ofPanSemFinite (width := width) (σ := σ)) := by
+      intro left right hEq
+      have hEq' := congrArg PanPropsEvalStateFiniteExact.toPanSemFinite hEq
+      simpa using hEq'
+    have hmap : Option.map
+        (PanPropsEvalStateFiniteExact.ofPanSemFinite (width := width) (σ := σ))
+        (PanSemStateFiniteExact.evaluateDeclsHOLFinite state.toPanSemFinite program) =
+        some result := by
+      simpa [evaluateDeclsPanPropsCanonical] using hEval
+    have hmap' : Option.map
+        (PanPropsEvalStateFiniteExact.ofPanSemFinite (width := width) (σ := σ))
+        (PanSemStateFiniteExact.evaluateDeclsHOLFinite state.toPanSemFinite program) =
+        Option.map (PanPropsEvalStateFiniteExact.ofPanSemFinite (width := width) (σ := σ))
+          (some result.toPanSemFinite) := by
+      rw [hmap]
+      simp
+    have hcanonical' := Option.map_injective hinj hmap'
+    simpa using hcanonical'
+  have hcanonicalChanged := evaluateDeclsHOLFiniteSwapLocals state.toPanSemFinite
+    locals program result.toPanSemFinite hcanonical
+  have hmap := congrArg
+    (Option.map (PanPropsEvalStateFiniteExact.ofPanSemFinite (width := width) (σ := σ)))
+    hcanonicalChanged
+  change Option.map
+      (PanPropsEvalStateFiniteExact.ofPanSemFinite (width := width) (σ := σ))
+      (PanSemStateFiniteExact.evaluateDeclsHOLFinite
+        (PanPropsEvalStateFiniteExact.toPanSemFinite
+          { state with locals := locals }) program) =
+    some { result with locals := locals }
+  simpa only [PanPropsEvalStateFiniteExact.toPanSemFinite, Option.map_some,
+    PanPropsEvalStateFiniteExact.ofPanSemFinite_toPanSemFinite,
+    PanPropsEvalStateFiniteExact.ofPanSemFinite] using hmap
 
 /-- Exact finite-support port of HOL `evaluate_decls_swap_memory`
     (`panPropsScript.sml:1750-1763`). It preserves HOL's quantified state,
@@ -1993,9 +2204,31 @@ theorem evaluateDeclsSwapMemoryHOLFinite {width : Nat} {σ : Type}
         (∀ address, state.memaddrs address → state.memory address = memory address)) →
         evaluateDeclsPanPropsCanonical { state with memory := memory } program =
           some { result with memory := memory } := by
-  simp only [evaluateDeclsPanPropsCanonical_eqHOLFinite]
   intro state hstate program result memory h
-  exact evaluateDeclsPanPropsMemorySwap state memory program result h.1 h.2
+  have hcanonical :
+      PanSemStateFiniteExact.evaluateDeclsHOLFinite state.toPanSemFinite program =
+        some result.toPanSemFinite := by
+    have hmap := h.1
+    change Option.map PanPropsEvalStateFiniteExact.ofPanSemFinite
+        (PanSemStateFiniteExact.evaluateDeclsHOLFinite state.toPanSemFinite program) =
+      some result at hmap
+    cases heval : PanSemStateFiniteExact.evaluateDeclsHOLFinite
+        state.toPanSemFinite program with
+    | none => simp [heval] at hmap
+    | some canonicalResult =>
+        simp only [heval, Option.map_some, Option.some.injEq] at hmap
+        have hEq := congrArg PanPropsEvalStateFiniteExact.toPanSemFinite hmap
+        simpa using hEq
+  letI : DecidablePred state.toPanSemFinite.memaddrs := by
+    simpa [PanPropsEvalStateFiniteExact.toPanSemFinite] using hstate
+  have hcanonicalChanged := evaluateDeclsPanSemMemorySwap
+    state.toPanSemFinite memory program result.toPanSemFinite hcanonical h.2
+  have hmap := congrArg
+    (Option.map (PanPropsEvalStateFiniteExact.ofPanSemFinite
+      (width := width) (σ := σ))) hcanonicalChanged
+  simpa [evaluateDeclsPanPropsCanonical,
+    PanPropsEvalStateFiniteExact.toPanSemFinite,
+    PanPropsEvalStateFiniteExact.ofPanSemFinite] using hmap
 
 /-- `OPT_MMAP eval` over the same finite-support carrier. -/
 def evalListHOL {width : Nat} {σ : Type} [NeZero width]
