@@ -358,6 +358,74 @@ def compileCallNoReturnExactHOLW {width : Nat} [NeZero width]
   let flattenedArguments := compiledArguments.flatMap Prod.fst
   .call none function flattenedArguments
 
+/-! The successful `wrap_rt (FLOOKUP ctxt.vars rt)` arm with no handler in HOL
+    `compile_def` (`pan_to_crepScript.sml:252-261`). It reuses the destination
+    names directly in Call metadata and does not allocate or initialize return
+    slots. The premise uses the canonical tagged `wrapRtHOL` port. -/
+
+def compileCallWrappedResultNoHandlerExactHOLW {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (function resultName : MlS)
+    (arguments : List (Flapjack.Pancake.PanLang.ExpHOL width))
+    (resultShape : Flapjack.Pancake.PanLang.ShapeHOL) (resultNames : List Nat)
+    (_wrappedResult : wrapRtHOL (context.vars.lookup resultName) =
+      some (resultShape, resultNames)) : CrepProgHOL width :=
+  let compiledArguments := compileExpExactHOLWList context arguments
+  let flattenedArguments := compiledArguments.flatMap Prod.fst
+  .call (some (resultNames, none)) function flattenedArguments
+
+/-! The `NONE` arm of `wrap_rt (FLOOKUP ctxt.vars rt)` in HOL `compile_def`
+    (`pan_to_crepScript.sml:252-261`). Missing names and `(One, [])` both emit a
+    tail Call with flattened arguments and no return metadata, using the
+    canonical tagged `wrapRtHOL` port for the side condition. -/
+
+def compileCallWrappedResultFallbackNoHandlerExactHOLW {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (function resultName : MlS)
+    (arguments : List (Flapjack.Pancake.PanLang.ExpHOL width))
+    (_wrappedResult : wrapRtHOL (context.vars.lookup resultName) = none) :
+    CrepProgHOL width :=
+  let compiledArguments := compileExpExactHOLWList context arguments
+  let flattenedArguments := compiledArguments.flatMap Prod.fst
+  .call none function flattenedArguments
+
+/-! The handler-present Call arm with a successful wrapped result lookup but a
+    missing exception-code lookup in HOL `compile_def` (`pan_to_crepScript.sml:252-261`).
+    HOL discards the handler while retaining the destination names as result
+    metadata. -/
+
+def compileCallWrappedResultHandlerMissingEidExactHOLW {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (function resultName : MlS)
+    (arguments : List (Flapjack.Pancake.PanLang.ExpHOL width))
+    (resultShape : Flapjack.Pancake.PanLang.ShapeHOL) (resultNames : List Nat)
+    (exceptionName _exceptionVariable : MlS)
+    (_handlerBody : Flapjack.Pancake.PanLang.ProgHOL width)
+    (_wrappedResult : wrapRtHOL (context.vars.lookup resultName) =
+      some (resultShape, resultNames))
+    (_missingEid : context.eids.lookup exceptionName = none) : CrepProgHOL width :=
+  compileCallWrappedResultNoHandlerExactHOLW context function resultName arguments
+    resultShape resultNames _wrappedResult
+
+/-! The handler-present Call arm with successful wrapped-result and exception
+    code lookups in HOL `compile_def` (`pan_to_crepScript.sml:252-261`). It keeps
+    the destination names directly and sequences exact `exp_hdl` with the
+    recursively compiled handler body, without return-slot declarations. -/
+
+def compileCallWrappedResultHandlerPresentEidExactHOLW {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (function resultName : MlS)
+    (arguments : List (Flapjack.Pancake.PanLang.ExpHOL width))
+    (resultShape : Flapjack.Pancake.PanLang.ShapeHOL) (resultNames : List Nat)
+    (exceptionName exceptionVariable : MlS) (exceptionCode : BitVec width)
+    (_wrappedResult : wrapRtHOL (context.vars.lookup resultName) =
+      some (resultShape, resultNames))
+    (_eidLookup : context.eids.lookup exceptionName = some exceptionCode)
+    (compileHandlerBody : CompileExpContextExact width → CrepProgHOL width) :
+    CrepProgHOL width :=
+  let compiledArguments := compileExpExactHOLWList context arguments
+  let flattenedArguments := compiledArguments.flatMap Prod.fst
+  let handler := CrepProgHOL.seq
+    (expHdlExact ⟨context.vars⟩ exceptionVariable)
+    (compileHandlerBody context)
+  .call (some (resultNames, some (exceptionCode, handler))) function flattenedArguments
+
 /-! The `rtyp = SOME (NONE, NONE)` arm of the HOL `Call` clause
     (`pan_to_crepScript.sml:226-232`) looks up the callee's return shape,
     allocates result names above `vmax`, initializes those names to zero, and
@@ -455,5 +523,64 @@ def compileExtCallExactHOLW {width : Nat} [NeZero width]
                 (.extCall function (maximumVariable + 1) (maximumVariable + 2)
                   (maximumVariable + 3) (maximumVariable + 4)))))
   | _, _, _, _, _, _, _, _ => .skip
+
+
+/-! ### Codec helper lemmas for the `compile_exp` production bridge
+
+These untagged Flapjack lemmas are the list-level helpers needed to relate the
+tagged exact `compileExpExactHOLW` (over `ExpHOL`/`CrepExpHOL`) to the executed
+production `compileExpHOL` under the checked codecs `crepExpToHOL` and
+`shapeToHOL`. They are part of the exact `code_rel` boundary work tracked by
+`flapjack-pxn.18.4.3.73.1`. -/
+
+/-- `cexpHeads` commutes with the element codec `crepExpToHOL`: taking heads of
+    a list of expression lists and then decoding is the same as decoding each
+    list first. -/
+theorem cexpHeads_map_crepExpToHOL {width : Nat} [NeZero width]
+    (lists : List (List (CrepExp (BitVec width)))) :
+    cexpHeads (lists.map (List.map crepExpToHOL)) =
+      (cexpHeads lists).map (List.map crepExpToHOL) := by
+  induction lists with
+  | nil => rfl
+  | cons expressions rest ih =>
+      cases expressions with
+      | nil =>
+          simp only [List.map_cons, List.map_nil, cexpHeads]
+          rfl
+      | cons expression expressions =>
+          cases h : cexpHeads rest with
+          | none =>
+              simp only [List.map_cons, cexpHeads, ih, h]
+              rfl
+          | some heads =>
+              simp only [List.map_cons, cexpHeads, ih, h]
+              rfl
+
+/-- Production-to-exact direction of HOL `crepLang$load_shape_def`: the
+    width-indexed production loader `loadShapeBytes` decodes into the tagged
+    exact `loadShapeBytesHOLW`. Dual to `loadShapeBytesHOLW_toProduction`. -/
+theorem loadShapeBytes_map_crepExpToHOL {width : Nat} [NeZero width]
+    (address : BitVec width) (count : Nat) (value : CrepExp (BitVec width)) :
+    (loadShapeBytes address count value).map crepExpToHOL =
+      loadShapeBytesHOLW address count (crepExpToHOL value) := by
+  induction count generalizing address with
+  | zero => simp [loadShapeBytesHOLW, loadShapeBytes]
+  | succ count ih =>
+      simp only [loadShapeBytesHOLW, loadShapeBytes, List.map_cons]
+      rw [ih]
+      congr 1
+      simp only [beq_iff_eq]
+      by_cases hzero : address = 0
+      · rw [if_pos hzero, if_pos hzero]
+        simp [crepExpToHOL]
+      · rw [if_neg hzero, if_neg hzero]
+        simp [crepExpToHOL]
+
+/-- The `loadShapeBytesW` corollary used by the width-indexed compiler path. -/
+theorem loadShapeBytesW_map_crepExpToHOL {width : Nat} [NeZero width]
+    (address : BitVec width) (count : Nat) (value : CrepExp (BitVec width)) :
+    (loadShapeBytesW address count value).map crepExpToHOL =
+      loadShapeBytesHOLW address count (crepExpToHOL value) :=
+  loadShapeBytes_map_crepExpToHOL address count value
 
 end Flapjack
