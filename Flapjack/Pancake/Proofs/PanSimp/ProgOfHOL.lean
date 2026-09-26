@@ -208,4 +208,22 @@ theorem progOfHOL_retToTailHOL_call {width : Nat} [NeZero width]
             (vname := vname) (body := body) rfl
           simp [retToTailHOL, retToTail, progOfHOL_call, progCallInfoOfHOL, hbody]
 
+/-- Flapjack-specific codec equation for the Seq clause of HOL
+`seq_assoc_def`. The only premises are the two recursive codec equations;
+HOL has no theorem about commuting `progOfHOL` with `seqAssocHOL`, so this
+declaration carries no `@[hol]` tag. -/
+theorem progOfHOL_seqAssocHOL_seq {width : Nat} [NeZero width]
+    (pre first second : ProgHOL width)
+    (hfirst : ∀ pending,
+      progOfHOL (seqAssocHOL pending first) =
+        seqAssoc (progOfHOL pending) (progOfHOL first))
+    (hsecond : ∀ pending,
+      progOfHOL (seqAssocHOL pending second) =
+        seqAssoc (progOfHOL pending) (progOfHOL second)) :
+    progOfHOL (seqAssocHOL pre (.seq first second)) =
+      seqAssoc (progOfHOL pre) (.seq (progOfHOL first) (progOfHOL second)) := by
+  simp only [seqAssocHOL]
+  rw [hsecond, hfirst]
+  simp [seqAssoc]
+
 end Flapjack
