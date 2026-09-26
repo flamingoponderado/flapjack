@@ -240,7 +240,7 @@ private theorem evalListHOLFinite_mem_isWf {width : Nat} {σ : Type} [NeZero wid
                 · simpa [PanSemStateFiniteExact.evalListHOLFinite] using htail
                 · exact htailMem
 
-private def panSemResultHOLWf {width : Nat} [NeZero width]
+def panSemResultHOLWf {width : Nat} [NeZero width]
     (structs : Flapjack.Pancake.PanLang.StructContextExact) :
     Option (PanSemResultExact width) → Prop
   | some (.returned value) => isWfShapeValueHOLExact structs value = true
@@ -251,6 +251,683 @@ private def panSemStateVarsHOLWf {width : Nat} {σ : Type} [NeZero width]
     (structs : Flapjack.Pancake.PanLang.StructContextExact)
     (state : PanSemStateFiniteExact width σ) : Prop :=
   valuesHOLWf structs state.locals.lookup ∧ valuesHOLWf structs state.globals.lookup
+
+private def panSemExactStateVarsHOLWf {width : Nat} {σ : Type} [NeZero width]
+    (structs : Flapjack.Pancake.PanLang.StructContextExact)
+    (state : PanSemStateExact width σ) : Prop :=
+  valuesHOLWf structs state.locals ∧ valuesHOLWf structs state.globals
+
+private theorem valuesHOLWf_setVarHOLExact {width : Nat} [NeZero width]
+    (structs : Flapjack.Pancake.PanLang.StructContextExact)
+    (lookup : MlS → Option (ValueHOL width)) (name : MlS) (newValue : ValueHOL width)
+    (hold : valuesHOLWf structs lookup)
+    (hnew : isWfShapeValueHOLExact structs newValue = true) :
+    valuesHOLWf structs (fun current => if current = name then some newValue else lookup current) := by
+  intro current value hlookup
+  by_cases hname : current = name
+  · subst current
+    have hvalue : newValue = value := by simpa using hlookup
+    subst value
+    exact hnew
+  · exact hold current value (by simpa [hname] using hlookup)
+
+private theorem valuesHOLWf_emptyHOLExact {width : Nat} [NeZero width]
+    (structs : Flapjack.Pancake.PanLang.StructContextExact) :
+    valuesHOLWf structs (fun _ : MlS => (none : Option (ValueHOL width))) := by
+  intro name value hlookup
+  simp at hlookup
+
+private theorem panSemExactStateVarsHOLWf_setKvar {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateExact width σ) (kind : VarKind) (name : MlS)
+    (value : ValueHOL width) (h : panSemExactStateVarsHOLWf state.structs state)
+    (hvalue : isWfShapeValueHOLExact state.structs value = true) :
+    panSemExactStateVarsHOLWf state.structs (setKvarHOLExact kind name value state) := by
+  cases kind
+  · simpa [panSemExactStateVarsHOLWf, setKvarHOLExact, setVarHOLExact] using
+      (show valuesHOLWf state.structs (setVarHOLExact name value state).locals ∧
+          valuesHOLWf state.structs (setVarHOLExact name value state).globals from
+        ⟨by simpa [setVarHOLExact] using
+            valuesHOLWf_setVarHOLExact state.structs state.locals name value h.1 hvalue,
+          h.2⟩)
+  · simpa [panSemExactStateVarsHOLWf, setKvarHOLExact, setGlobalHOLExact] using
+      (show valuesHOLWf state.structs (setGlobalHOLExact name value state).locals ∧
+          valuesHOLWf state.structs (setGlobalHOLExact name value state).globals from
+      ⟨h.1, by simpa [setGlobalHOLExact] using
+            valuesHOLWf_setVarHOLExact state.structs state.globals name value h.2 hvalue⟩)
+
+private theorem panSemExactStateVarsHOLWf_emptyLocals {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateExact width σ)
+    (h : panSemExactStateVarsHOLWf state.structs state) :
+    panSemExactStateVarsHOLWf state.structs (emptyLocalsHOLExact state) := by
+  exact ⟨valuesHOLWf_emptyHOLExact state.structs, h.2⟩
+
+private theorem returnStepHOLExact_shapeInvariant {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateExact width σ) (expression : ExpHOL width)
+    (evalExpression : PanSemStateExact width σ → ExpHOL width → Option (ValueHOL width))
+    (hvars : panSemExactStateVarsHOLWf state.structs state)
+    (hevalWf : ∀ value, evalExpression state expression = some value →
+      isWfShapeValueHOLExact state.structs value = true)
+    (result : Option (PanSemResultExact width)) (output : PanSemStateExact width σ)
+    (heval : returnStepHOLExact state expression evalExpression = (result, output)) :
+    output.structs = state.structs ∧ panSemExactStateVarsHOLWf state.structs output ∧
+      panSemResultHOLWf state.structs result := by
+  cases hvalue : evalExpression state expression with
+  | none =>
+      simp [returnStepHOLExact, hvalue] at heval
+      rcases heval with ⟨rfl, rfl⟩
+      exact ⟨rfl, hvars, trivial⟩
+  | some value =>
+      have hvalueWf := hevalWf value hvalue
+      by_cases hsize : Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL state.structs
+          (shapeOfHOLExact value) ≤ 32
+      · simp [returnStepHOLExact, hvalue, hsize] at heval
+        rcases heval with ⟨rfl, rfl⟩
+        exact ⟨rfl, panSemExactStateVarsHOLWf_emptyLocals state hvars,
+          by simp [panSemResultHOLWf, hvalueWf]⟩
+      · simp [returnStepHOLExact, hvalue, hsize] at heval
+        rcases heval with ⟨rfl, rfl⟩
+        exact ⟨rfl, hvars, trivial⟩
+
+private theorem raiseStepHOLExact_shapeInvariant {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateExact width σ) (exception : MlS)
+    (expression : ExpHOL width)
+    (evalExpression : PanSemStateExact width σ → ExpHOL width → Option (ValueHOL width))
+    (hvars : panSemExactStateVarsHOLWf state.structs state)
+    (hevalWf : ∀ value, evalExpression state expression = some value →
+      isWfShapeValueHOLExact state.structs value = true)
+    (result : Option (PanSemResultExact width)) (output : PanSemStateExact width σ)
+    (heval : raiseStepHOLExact state exception expression evalExpression = (result, output)) :
+    output.structs = state.structs ∧ panSemExactStateVarsHOLWf state.structs output ∧
+      panSemResultHOLWf state.structs result := by
+  cases hvalue : evalExpression state expression with
+  | none =>
+      simp [raiseStepHOLExact, hvalue] at heval
+      rcases heval with ⟨rfl, rfl⟩
+      exact ⟨rfl, hvars, trivial⟩
+  | some value =>
+      have hvalueWf := hevalWf value hvalue
+      cases hshape : state.eshapes exception with
+      | none =>
+          simp [raiseStepHOLExact, hvalue, hshape] at heval
+          rcases heval with ⟨rfl, rfl⟩
+          exact ⟨rfl, hvars, trivial⟩
+      | some shape =>
+          by_cases heq : shapeEqHOL (shapeOfHOLExact value) shape
+          · by_cases hsize : Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL
+                state.structs (shapeOfHOLExact value) ≤ 32
+            · simp [raiseStepHOLExact, hvalue, hshape, heq, hsize] at heval
+              rcases heval with ⟨rfl, rfl⟩
+              exact ⟨rfl, panSemExactStateVarsHOLWf_emptyLocals state hvars,
+                by simp [panSemResultHOLWf, hvalueWf]⟩
+            · simp [raiseStepHOLExact, hvalue, hshape, heq, hsize] at heval
+              rcases heval with ⟨rfl, rfl⟩
+              exact ⟨rfl, hvars, trivial⟩
+          · simp [raiseStepHOLExact, hvalue, hshape, heq] at heval
+            rcases heval with ⟨rfl, rfl⟩
+            exact ⟨rfl, hvars, trivial⟩
+
+private theorem tickStepHOLExact_shapeInvariant {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateExact width σ)
+    (hvars : panSemExactStateVarsHOLWf state.structs state)
+    (result : Option (PanSemResultExact width)) (output : PanSemStateExact width σ)
+    (heval : tickStepHOLExact state = (result, output)) :
+    output.structs = state.structs ∧ panSemExactStateVarsHOLWf state.structs output ∧
+      panSemResultHOLWf state.structs result := by
+  by_cases hclock : state.clock = 0
+  · simp [tickStepHOLExact, hclock] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    exact ⟨rfl, panSemExactStateVarsHOLWf_emptyLocals state hvars, trivial⟩
+  · simp [tickStepHOLExact, hclock] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    exact ⟨rfl, hvars, trivial⟩
+
+private theorem shMemLoadHOLExact_shapeInvariant {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateExact width σ) [DecidablePred state.shMemaddrs]
+    (kind : VarKind) (name : MlS) (address : RiscV.Word width) (nb : Nat)
+    (hvars : panSemExactStateVarsHOLWf state.structs state)
+    (result : Option (PanSemResultExact width)) (output : PanSemStateExact width σ)
+    (heval : shMemLoadHOLExact state kind name address nb = (result, output)) :
+      output.structs = state.structs ∧ panSemExactStateVarsHOLWf state.structs output ∧
+      panSemResultHOLWf state.structs result := by
+  unfold shMemLoadHOLExact at heval
+  by_cases hzero : nb = 0
+  · by_cases hdomain : state.shMemaddrs address
+    · generalize hffi : callFFIHOL state.ffi (.sharedMem .mappedRead)
+          [BitVec.ofNat 8 nb] (panWordToBytesHOL address false) = ffiResult at heval
+      cases ffiResult with
+      | final event =>
+          simp [hzero, hdomain] at heval
+          rcases heval with ⟨rfl, rfl⟩
+          exact ⟨rfl, panSemExactStateVarsHOLWf_emptyLocals state hvars, trivial⟩
+      | ret newFfi bytes =>
+          have hnew : isWfShapeValueHOLExact state.structs
+              (.val (.word (panWordOfBytesHOL (width := width) false 0 bytes))) = true := by
+            simp [isWfShapeValueHOLExact]
+          simp [hzero, hdomain] at heval
+          rcases heval with ⟨rfl, rfl⟩
+          exact ⟨by cases kind <;> rfl, by
+            have hset := panSemExactStateVarsHOLWf_setKvar state kind name
+              (.val (.word (panWordOfBytesHOL (width := width) false 0 bytes))) hvars hnew
+            simpa [panSemExactStateVarsHOLWf, setKvarHOLExact,
+              setVarHOLExact, setGlobalHOLExact] using hset,
+            trivial⟩
+    · simp [hzero, hdomain] at heval
+      rcases heval with ⟨rfl, rfl⟩
+      exact ⟨rfl, hvars, trivial⟩
+  · by_cases hdomain : state.shMemaddrs (panByteAlignHOL address)
+    · generalize hffi : callFFIHOL state.ffi (.sharedMem .mappedRead)
+          [BitVec.ofNat 8 nb] (panWordToBytesHOL address false) = ffiResult at heval
+      cases ffiResult with
+      | final event =>
+          simp [hzero, hdomain] at heval
+          rcases heval with ⟨rfl, rfl⟩
+          exact ⟨rfl, panSemExactStateVarsHOLWf_emptyLocals state hvars, trivial⟩
+      | ret newFfi bytes =>
+          have hnew : isWfShapeValueHOLExact state.structs
+              (.val (.word (panWordOfBytesHOL (width := width) false 0 bytes))) = true := by
+            simp [isWfShapeValueHOLExact]
+          simp [hzero, hdomain] at heval
+          rcases heval with ⟨rfl, rfl⟩
+          exact ⟨by cases kind <;> rfl, by
+            have hset := panSemExactStateVarsHOLWf_setKvar state kind name
+              (.val (.word (panWordOfBytesHOL (width := width) false 0 bytes))) hvars hnew
+            simpa [panSemExactStateVarsHOLWf, setKvarHOLExact,
+              setVarHOLExact, setGlobalHOLExact] using hset,
+            trivial⟩
+    · simp [hzero, hdomain] at heval
+      rcases heval with ⟨rfl, rfl⟩
+      exact ⟨rfl, hvars, trivial⟩
+
+private theorem shMemStoreHOLExact_shapeInvariant {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateExact width σ) [DecidablePred state.shMemaddrs]
+    (word address : RiscV.Word width) (nb : Nat)
+    (hvars : panSemExactStateVarsHOLWf state.structs state)
+    (result : Option (PanSemResultExact width)) (output : PanSemStateExact width σ)
+    (heval : shMemStoreHOLExact state word address nb = (result, output)) :
+    output.structs = state.structs ∧ panSemExactStateVarsHOLWf state.structs output ∧
+      panSemResultHOLWf state.structs result := by
+  unfold shMemStoreHOLExact at heval
+  by_cases hzero : nb = 0
+  · by_cases hdomain : state.shMemaddrs address
+    · generalize hffi : callFFIHOL state.ffi (.sharedMem .mappedWrite)
+          [BitVec.ofNat 8 nb]
+          (panWordToBytesHOL word false ++ panWordToBytesHOL address false) = ffiResult at heval
+      cases ffiResult with
+      | final event =>
+          simp [hzero, hdomain] at heval
+          rcases heval with ⟨rfl, rfl⟩
+          exact ⟨rfl, hvars, trivial⟩
+      | ret newFfi bytes =>
+          simp [hzero, hdomain] at heval
+          rcases heval with ⟨rfl, rfl⟩
+          exact ⟨rfl, by simpa [panSemExactStateVarsHOLWf] using hvars, trivial⟩
+    · simp [hzero, hdomain] at heval
+      rcases heval with ⟨rfl, rfl⟩
+      exact ⟨rfl, hvars, trivial⟩
+  · by_cases hdomain : state.shMemaddrs (panByteAlignHOL address)
+    · generalize hffi : callFFIHOL state.ffi (.sharedMem .mappedWrite)
+          [BitVec.ofNat 8 nb]
+          ((panWordToBytesHOL word false).take nb ++ panWordToBytesHOL address false) = ffiResult at heval
+      cases ffiResult with
+      | final event =>
+          simp [hzero, hdomain] at heval
+          rcases heval with ⟨rfl, rfl⟩
+          exact ⟨rfl, hvars, trivial⟩
+      | ret newFfi bytes =>
+          simp [hzero, hdomain] at heval
+          rcases heval with ⟨rfl, rfl⟩
+          exact ⟨rfl, by simpa [panSemExactStateVarsHOLWf] using hvars, trivial⟩
+    · simp [hzero, hdomain] at heval
+      rcases heval with ⟨rfl, rfl⟩
+      exact ⟨rfl, hvars, trivial⟩
+
+private theorem assignStepHOLExact_shapeInvariant {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateExact width σ) (kind : VarKind) (name : MlS)
+    (source : ExpHOL width)
+    (evalExpression : PanSemStateExact width σ → ExpHOL width → Option (ValueHOL width))
+    (hvars : panSemExactStateVarsHOLWf state.structs state)
+    (hevalWf : ∀ value, evalExpression state source = some value →
+      isWfShapeValueHOLExact state.structs value = true)
+    (result : Option (PanSemResultExact width)) (output : PanSemStateExact width σ)
+    (heval : assignStepHOLExact state kind name source evalExpression = (result, output)) :
+    output.structs = state.structs ∧ panSemExactStateVarsHOLWf state.structs output ∧
+      panSemResultHOLWf state.structs result := by
+  cases hvalue : evalExpression state source with
+  | none =>
+      simp [assignStepHOLExact, hvalue] at heval
+      rcases heval with ⟨rfl, rfl⟩
+      exact ⟨rfl, hvars, trivial⟩
+  | some value =>
+      cases hvalid : isValidValueHOLExact state kind name value with
+      | false =>
+          simp [assignStepHOLExact, hvalue, hvalid] at heval
+          rcases heval with ⟨rfl, rfl⟩
+          exact ⟨rfl, hvars, trivial⟩
+      | true =>
+          have hvalueWf := hevalWf value hvalue
+          simp [assignStepHOLExact, hvalue, hvalid] at heval
+          rcases heval with ⟨rfl, rfl⟩
+          exact ⟨by cases kind <;> rfl,
+            panSemExactStateVarsHOLWf_setKvar state kind name value hvars hvalueWf, trivial⟩
+
+private theorem primitiveStepHOLExact_shapeInvariant {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateExact width σ) (name : MlS) (operator : PrimOp)
+    (arguments : List (ExpHOL width))
+    (evalExpressions : PanSemStateExact width σ → List (ExpHOL width) →
+      Option (List (ValueHOL width)))
+    (hvars : panSemExactStateVarsHOLWf state.structs state)
+    (result : Option (PanSemResultExact width)) (output : PanSemStateExact width σ)
+    (heval : primitiveStepHOLExact state name operator arguments evalExpressions =
+      (result, output)) :
+    output.structs = state.structs ∧ panSemExactStateVarsHOLWf state.structs output ∧
+      panSemResultHOLWf state.structs result := by
+  cases hvalues : evalExpressions state arguments with
+  | none =>
+      simp [primitiveStepHOLExact, hvalues] at heval
+      rcases heval with ⟨rfl, rfl⟩
+      exact ⟨rfl, hvars, trivial⟩
+  | some values =>
+      cases hprim : panPrimopHOLExact operator values with
+      | none =>
+          simp [primitiveStepHOLExact, hvalues, hprim] at heval
+          rcases heval with ⟨rfl, rfl⟩
+          exact ⟨rfl, hvars, trivial⟩
+      | some value =>
+          cases hvalid : isValidValueHOLExact state .local name value with
+          | false =>
+              simp [primitiveStepHOLExact, hvalues, hprim, hvalid] at heval
+              rcases heval with ⟨rfl, rfl⟩
+              exact ⟨rfl, hvars, trivial⟩
+          | true =>
+              have hvalueWf := panPrimopHOLExact_isWfShapeValueHOLExact
+                state.structs operator values value hprim
+              simp [primitiveStepHOLExact, hvalues, hprim, hvalid] at heval
+              rcases heval with ⟨rfl, rfl⟩
+              exact ⟨rfl,
+                panSemExactStateVarsHOLWf_setKvar state .local name value hvars hvalueWf,
+                trivial⟩
+
+private theorem panSemExactStateVarsHOLWf_of_memoryStep {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateExact width σ)
+    (step : Option (PanSemResultExact width) × PanSemStateExact width σ)
+    (hstruct : step.2.structs = state.structs)
+    (hlocals : step.2.locals = state.locals) (hglobals : step.2.globals = state.globals)
+    (hresult : step.1 = none ∨ step.1 = some .error)
+    (hvars : panSemExactStateVarsHOLWf state.structs state)
+    (result : Option (PanSemResultExact width)) (output : PanSemStateExact width σ)
+    (heval : step = (result, output)) :
+    output.structs = state.structs ∧ panSemExactStateVarsHOLWf state.structs output ∧
+      panSemResultHOLWf state.structs result := by
+  have houtput : output = step.2 := (congrArg Prod.snd heval).symm
+  have hresultEq : result = step.1 := (congrArg Prod.fst heval).symm
+  refine ⟨?_, ?_, ?_⟩
+  · rw [houtput]
+    exact hstruct
+  · constructor
+    · intro name value hvalue
+      rw [houtput, hlocals] at hvalue
+      exact hvars.1 name value hvalue
+    · intro name value hvalue
+      rw [houtput, hglobals] at hvalue
+      exact hvars.2 name value hvalue
+  · rw [hresultEq]
+    rcases hresult with h | h <;> simp [panSemResultHOLWf, h]
+
+private theorem storeStepHOLExact_shapeInvariant {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateExact width σ) [DecidablePred state.memaddrs]
+    (destination source : ExpHOL width)
+    (evalExpression : PanSemStateExact width σ → ExpHOL width → Option (ValueHOL width))
+    (hvars : panSemExactStateVarsHOLWf state.structs state)
+    (result : Option (PanSemResultExact width)) (output : PanSemStateExact width σ)
+    (heval : storeStepHOLExact state destination source evalExpression = (result, output)) :
+    output.structs = state.structs ∧ panSemExactStateVarsHOLWf state.structs output ∧
+      panSemResultHOLWf state.structs result := by
+  have hstep : (storeStepHOLExact state destination source evalExpression).2.structs =
+      state.structs := by
+    unfold storeStepHOLExact
+    repeat' (first | split | simp)
+  have hlocals : (storeStepHOLExact state destination source evalExpression).2.locals = state.locals := by
+    unfold storeStepHOLExact
+    repeat' (first | split)
+    all_goals rfl
+  have hglobals : (storeStepHOLExact state destination source evalExpression).2.globals = state.globals := by
+    unfold storeStepHOLExact
+    repeat' (first | split)
+    all_goals rfl
+  have hresult : (storeStepHOLExact state destination source evalExpression).1 =
+      none ∨ (storeStepHOLExact state destination source evalExpression).1 = some .error := by
+    unfold storeStepHOLExact
+    repeat' (first | split)
+    all_goals simp
+  have houtput : output = (storeStepHOLExact state destination source evalExpression).2 :=
+    (congrArg Prod.snd heval).symm
+  have hresultEq : result =
+      (storeStepHOLExact state destination source evalExpression).1 :=
+    (congrArg Prod.fst heval).symm
+  refine ⟨?_, ?_, ?_⟩
+  · rw [houtput]
+    exact hstep
+  · constructor
+    · intro name value hvalue
+      rw [houtput, hlocals] at hvalue
+      exact hvars.1 name value hvalue
+    · intro name value hvalue
+      rw [houtput, hglobals] at hvalue
+      exact hvars.2 name value hvalue
+  · rw [hresultEq]
+    rcases hresult with h | h <;> simp [panSemResultHOLWf, h]
+
+private theorem evalPanSemNonrecursiveHOLExact_shapeInvariant {width : Nat} {σ : Type}
+    [NeZero width] (program : ProgHOL width) (state : PanSemStateExact width σ)
+    [DecidablePred state.memaddrs] [DecidablePred state.shMemaddrs]
+    (hvars : panSemExactStateVarsHOLWf state.structs state) :
+    ∀ result output,
+      evalPanSemNonrecursiveHOLExact program state = some (result, output) →
+        output.structs = state.structs ∧ panSemExactStateVarsHOLWf state.structs output ∧
+          panSemResultHOLWf state.structs result := by
+  cases program with
+  | skip =>
+      intro result output heval
+      simp only [evalPanSemNonrecursiveHOLExact, Option.some.injEq, Prod.mk.injEq] at heval
+      rcases heval with ⟨rfl, rfl⟩
+      exact ⟨rfl, hvars, trivial⟩
+  | assign kind name source =>
+      intro result output heval
+      change some (assignStepHOLExact state kind name source
+        (fun _ expression => evalHOLExact state expression)) = some (result, output) at heval
+      have hstep := Option.some.inj heval
+      apply assignStepHOLExact_shapeInvariant state kind name source
+        (fun _ expression => evalHOLExact state expression) hvars ?_ result output hstep
+      intro value hvalue
+      exact evalHOLExact_isWfShapeValueHOLExact state hvars.1 hvars.2 source value hvalue
+  | primitive name operator arguments =>
+      intro result output heval
+      change some (primitiveStepHOLExact state name operator arguments
+        (fun _ expressions => evalListHOLExact state expressions)) = some (result, output) at heval
+      have hstep := Option.some.inj heval
+      exact primitiveStepHOLExact_shapeInvariant state name operator arguments
+        (fun _ expressions => evalListHOLExact state expressions) hvars result output hstep
+  | dec _ _ _ _ => simp [evalPanSemNonrecursiveHOLExact]
+  | seq _ _ => simp [evalPanSemNonrecursiveHOLExact]
+  | ite _ _ _ => simp [evalPanSemNonrecursiveHOLExact]
+  | «while» _ _ => simp [evalPanSemNonrecursiveHOLExact]
+  | call _ _ _ => simp [evalPanSemNonrecursiveHOLExact]
+  | decCall _ _ _ _ _ => simp [evalPanSemNonrecursiveHOLExact]
+  | «break» =>
+      intro result output heval
+      simp [evalPanSemNonrecursiveHOLExact] at heval
+      rcases heval with ⟨rfl, rfl⟩
+      exact ⟨rfl, hvars, trivial⟩
+  | «continue» =>
+      intro result output heval
+      simp [evalPanSemNonrecursiveHOLExact] at heval
+      rcases heval with ⟨rfl, rfl⟩
+      exact ⟨rfl, hvars, trivial⟩
+  | annot _ _ =>
+      intro result output heval
+      simp [evalPanSemNonrecursiveHOLExact] at heval
+      rcases heval with ⟨rfl, rfl⟩
+      exact ⟨rfl, hvars, trivial⟩
+  | store address value =>
+      intro result output heval
+      change some (storeStepHOLExact state address value
+        (fun _ expression => evalHOLExact state expression)) = some (result, output) at heval
+      exact storeStepHOLExact_shapeInvariant state address value
+        (fun _ expression => evalHOLExact state expression) hvars result output
+        (Option.some.inj heval)
+  | store32 address value =>
+      intro result output heval
+      change some (store32StepHOLExact state address value
+        (fun _ expression => evalHOLExact state expression)) = some (result, output) at heval
+      have hstep := Option.some.inj heval
+      have hstruct : (store32StepHOLExact state address value
+          (fun _ expression => evalHOLExact state expression)).2.structs = state.structs := by
+        unfold store32StepHOLExact
+        repeat' (first | split | simp)
+      have hlocals : (store32StepHOLExact state address value
+          (fun _ expression => evalHOLExact state expression)).2.locals = state.locals := by
+        unfold store32StepHOLExact
+        repeat' (first | split)
+        all_goals rfl
+      have hglobals : (store32StepHOLExact state address value
+          (fun _ expression => evalHOLExact state expression)).2.globals = state.globals := by
+        unfold store32StepHOLExact
+        repeat' (first | split)
+        all_goals rfl
+      have hresult : (store32StepHOLExact state address value
+          (fun _ expression => evalHOLExact state expression)).1 = none ∨
+          (store32StepHOLExact state address value
+            (fun _ expression => evalHOLExact state expression)).1 = some .error := by
+        unfold store32StepHOLExact
+        repeat' (first | split)
+        all_goals simp
+      exact panSemExactStateVarsHOLWf_of_memoryStep state _ hstruct hlocals hglobals hresult
+        hvars result output hstep
+  | storeByte address value =>
+      intro result output heval
+      change some (storeByteStepHOLExact state address value
+        (fun _ expression => evalHOLExact state expression)) = some (result, output) at heval
+      have hstep := Option.some.inj heval
+      have hstruct : (storeByteStepHOLExact state address value
+          (fun _ expression => evalHOLExact state expression)).2.structs = state.structs := by
+        unfold storeByteStepHOLExact
+        repeat' (first | split | simp)
+      have hlocals : (storeByteStepHOLExact state address value
+          (fun _ expression => evalHOLExact state expression)).2.locals = state.locals := by
+        unfold storeByteStepHOLExact
+        repeat' (first | split)
+        all_goals rfl
+      have hglobals : (storeByteStepHOLExact state address value
+          (fun _ expression => evalHOLExact state expression)).2.globals = state.globals := by
+        unfold storeByteStepHOLExact
+        repeat' (first | split)
+        all_goals rfl
+      have hresult : (storeByteStepHOLExact state address value
+          (fun _ expression => evalHOLExact state expression)).1 = none ∨
+          (storeByteStepHOLExact state address value
+            (fun _ expression => evalHOLExact state expression)).1 = some .error := by
+        unfold storeByteStepHOLExact
+        repeat' (first | split)
+        all_goals simp
+      exact panSemExactStateVarsHOLWf_of_memoryStep state _ hstruct hlocals hglobals hresult
+        hvars result output hstep
+  | «return» expression =>
+      intro result output heval
+      change some (returnStepHOLExact state expression
+        (fun _ expression => evalHOLExact state expression)) = some (result, output) at heval
+      exact returnStepHOLExact_shapeInvariant state expression
+        (fun _ expression => evalHOLExact state expression) hvars
+        (by
+          intro value hvalue
+          exact evalHOLExact_isWfShapeValueHOLExact state hvars.1 hvars.2
+            expression value hvalue)
+        result output (Option.some.inj heval)
+  | «raise» exception expression =>
+      intro result output heval
+      change some (raiseStepHOLExact state exception expression
+        (fun _ expression => evalHOLExact state expression)) = some (result, output) at heval
+      exact raiseStepHOLExact_shapeInvariant state exception expression
+        (fun _ expression => evalHOLExact state expression) hvars
+        (by
+          intro value hvalue
+          exact evalHOLExact_isWfShapeValueHOLExact state hvars.1 hvars.2
+            expression value hvalue)
+        result output (Option.some.inj heval)
+  | tick =>
+      intro result output heval
+      change some (tickStepHOLExact state) = some (result, output) at heval
+      exact tickStepHOLExact_shapeInvariant state hvars result output
+        (Option.some.inj heval)
+  | shMemLoad operator kind name address =>
+      intro result output heval
+      change some (shMemLoadClauseHOLExact state operator kind name address
+        (fun _ expression => evalHOLExact state expression)) = some (result, output) at heval
+      cases haddr : evalHOLExact state address with
+      | none =>
+          simp [shMemLoadClauseHOLExact, haddr] at heval
+          rcases heval with ⟨rfl, rfl⟩
+          exact ⟨rfl, hvars, trivial⟩
+      | some addressValue =>
+          cases addressValue with
+          | val addressValue =>
+              cases addressValue with
+              | word address =>
+                  cases hlocal : lookupKvarHOLExact kind name state with
+                  | none =>
+                      simp [shMemLoadClauseHOLExact, haddr, hlocal] at heval
+                      rcases heval with ⟨rfl, rfl⟩
+                      exact ⟨rfl, hvars, trivial⟩
+                  | some localValue =>
+                      cases localValue with
+                      | val localValue =>
+                          cases localValue with
+                          | word _ =>
+                              have hstep : shMemLoadHOLExact state kind name address
+                                  (nbOpHOL operator) = (result, output) := by
+                                simpa [shMemLoadClauseHOLExact, haddr, hlocal] using heval
+                              exact shMemLoadHOLExact_shapeInvariant state kind name address
+                                (nbOpHOL operator) hvars result output hstep
+                      | rStruct _ =>
+                          simp [shMemLoadClauseHOLExact, haddr, hlocal] at heval
+                          rcases heval with ⟨rfl, rfl⟩
+                          exact ⟨rfl, hvars, trivial⟩
+                      | nStruct _ _ =>
+                          simp [shMemLoadClauseHOLExact, haddr, hlocal] at heval
+                          rcases heval with ⟨rfl, rfl⟩
+                          exact ⟨rfl, hvars, trivial⟩
+          | rStruct _ =>
+              simp [shMemLoadClauseHOLExact, haddr] at heval
+              rcases heval with ⟨rfl, rfl⟩
+              exact ⟨rfl, hvars, trivial⟩
+          | nStruct _ _ =>
+              simp [shMemLoadClauseHOLExact, haddr] at heval
+              rcases heval with ⟨rfl, rfl⟩
+              exact ⟨rfl, hvars, trivial⟩
+  | shMemStore operator address value =>
+      intro result output heval
+      change some (shMemStoreClauseHOLExact state operator address value
+        (fun _ expression => evalHOLExact state expression)) = some (result, output) at heval
+      cases haddr : evalHOLExact state address with
+      | none =>
+          simp [shMemStoreClauseHOLExact, haddr] at heval
+          rcases heval with ⟨rfl, rfl⟩
+          exact ⟨rfl, hvars, trivial⟩
+      | some addressValue =>
+          cases addressValue with
+          | val addressValue =>
+              cases addressValue with
+              | word address =>
+                  cases hvalue : evalHOLExact state value with
+                  | none =>
+                      simp [shMemStoreClauseHOLExact, haddr, hvalue] at heval
+                      rcases heval with ⟨rfl, rfl⟩
+                      exact ⟨rfl, hvars, trivial⟩
+                  | some storedValue =>
+                      cases storedValue with
+                      | val storedValue =>
+                          cases storedValue with
+                          | word word =>
+                              have hstep : shMemStoreHOLExact state word address
+                                  (nbOpHOL operator) = (result, output) := by
+                                simpa [shMemStoreClauseHOLExact, haddr, hvalue] using heval
+                              exact shMemStoreHOLExact_shapeInvariant state word address
+                                (nbOpHOL operator) hvars result output hstep
+                      | rStruct _ =>
+                          simp [shMemStoreClauseHOLExact, haddr, hvalue] at heval
+                          rcases heval with ⟨rfl, rfl⟩
+                          exact ⟨rfl, hvars, trivial⟩
+                      | nStruct _ _ =>
+                          simp [shMemStoreClauseHOLExact, haddr, hvalue] at heval
+                          rcases heval with ⟨rfl, rfl⟩
+                          exact ⟨rfl, hvars, trivial⟩
+          | rStruct _ =>
+              simp [shMemStoreClauseHOLExact, haddr] at heval
+              rcases heval with ⟨rfl, rfl⟩
+              exact ⟨rfl, hvars, trivial⟩
+          | nStruct _ _ =>
+              simp [shMemStoreClauseHOLExact, haddr] at heval
+              rcases heval with ⟨rfl, rfl⟩
+              exact ⟨rfl, hvars, trivial⟩
+  | extCall function configuration configurationLength array arrayLength =>
+      intro result output heval
+      change some (extCallStepHOLExact state
+        (fun _ expression => evalHOLExact state expression)
+        function configuration configurationLength array arrayLength) =
+          some (result, output) at heval
+      rcases hvars with ⟨hlocalsWf, hglobalsWf⟩
+      have hstep := Option.some.inj heval
+      let step := extCallStepHOLExact state
+        (fun _ expression => evalHOLExact state expression)
+        function configuration configurationLength array arrayLength
+      have hstruct : step.2.structs = state.structs := by
+        dsimp [step]
+        unfold extCallStepHOLExact
+        repeat' (first | split)
+        all_goals simp [emptyLocalsHOLExact]
+      have hvarsStep : panSemExactStateVarsHOLWf state.structs step.2 := by
+        dsimp [step]
+        unfold extCallStepHOLExact
+        repeat' (first | split)
+        all_goals
+          first
+          | (refine ⟨?_, hglobalsWf⟩
+             simp [valuesHOLWf, emptyLocalsHOLExact]
+             done)
+          | exact ⟨hlocalsWf, hglobalsWf⟩
+      have houtput : output = step.2 := by
+        calc
+          output = (result, output).2 := rfl
+          _ = step.2 := by rw [← hstep]
+      have hresult : result = step.1 := by
+        calc
+          result = (result, output).1 := rfl
+          _ = step.1 := by rw [← hstep]
+      have hresultStep : panSemResultHOLWf state.structs step.1 := by
+        dsimp [step]
+        unfold extCallStepHOLExact
+        repeat' (first | split)
+        all_goals simp [panSemResultHOLWf]
+      refine ⟨?_, ?_, ?_⟩
+      · rw [houtput]
+        exact hstruct
+      · rw [houtput]
+        exact hvarsStep
+      · rw [hresult]
+        exact hresultStep
+
+private theorem evalPanSemNonrecursiveHOLFinite_shapeInvariant {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateFiniteExact width σ)
+    [DecidablePred state.memaddrs] [DecidablePred state.shMemaddrs]
+    (hvars : panSemStateVarsHOLWf state.structs state) (program : ProgHOL width) :
+    ∀ result output,
+      PanSemStateFiniteExact.evalPanSemNonrecursiveHOLFinite state program =
+        some (result, output) →
+        output.structs = state.structs ∧ panSemStateVarsHOLWf state.structs output ∧
+          panSemResultHOLWf state.structs result := by
+  intro result output heval
+  let exactState := state.toExact
+  letI : DecidablePred exactState.memaddrs := by
+    simpa [exactState, PanSemStateFiniteExact.toExact] using
+      (inferInstance : DecidablePred state.memaddrs)
+  letI : DecidablePred exactState.shMemaddrs := by
+    simpa [exactState, PanSemStateFiniteExact.toExact] using
+      (inferInstance : DecidablePred state.shMemaddrs)
+  have hvarsExact : panSemExactStateVarsHOLWf exactState.structs exactState := by
+    simpa [panSemStateVarsHOLWf, panSemExactStateVarsHOLWf, PanSemStateFiniteExact.toExact,
+      valuesHOLWf] using hvars
+  have hprojection := congrArg
+    (Option.map fun pair : Option (PanSemResultExact width) × PanSemStateFiniteExact width σ =>
+      (pair.1, pair.2.toExact)) heval
+  rw [PanSemStateFiniteExact.evalPanSemNonrecursiveHOLFinite_toExact] at hprojection
+  have hExactEval : evalPanSemNonrecursiveHOLExact program exactState =
+      some (result, output.toExact) := by
+    simpa [exactState] using hprojection
+  have hInvariant := evalPanSemNonrecursiveHOLExact_shapeInvariant program exactState
+    hvarsExact result output.toExact hExactEval
+  refine ⟨?_, ?_, hInvariant.2.2⟩
+  · simpa [PanSemStateFiniteExact.toExact] using hInvariant.1
+  · simpa [panSemStateVarsHOLWf, panSemExactStateVarsHOLWf,
+      PanSemStateFiniteExact.toExact, valuesHOLWf] using hInvariant.2.1
 
 private theorem panSemStateVarsHOLWf_emptyLocals {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ)
@@ -489,6 +1166,847 @@ theorem evalPanSemRecursiveCallFiniteContext_structs_eq {width : Nat} {σ : Type
       evalPanSemRecursiveCallFiniteContext program context = some (result, output) →
         output.state.structs = context.state.structs := by
   fun_induction evalPanSemRecursiveCallFiniteContext program context
+  case case1 =>
+    simp
+  case case3 =>
+    rename_i ihBody
+    rename_i bodyEval
+    rename_i restored
+    rename_i postContext
+    rename_i result
+    rename_i bodyContext
+    rename_i bodyState
+    rename_i shapeEq
+    rename_i initEval
+    rename_i value
+    rename_i initializer
+    rename_i body
+    rename_i shape
+    rename_i name
+    rename_i state
+    rename_i context
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    have hbody := ihBody result postContext restored
+    simpa [FiniteEvalContext.withState, bodyEval, bodyContext, bodyState,
+      setVarHOLFinite,
+      PanSemStateFiniteExact.setVarHOLFinite] using hbody
+  case case4 =>
+    simp
+  case case6 =>
+    rename_i ihSecond
+    rename_i ihFirst
+    rename_i fixedContext
+    rename_i fixed
+    rename_i firstEval
+    rename_i postContext
+    rename_i second
+    rename_i first
+    rename_i state
+    rename_i context
+    intro result output heval
+    have hfirst := ihFirst none postContext firstEval
+    have hsecond := ihSecond result output heval
+    calc
+      output.state.structs = fixedContext.state.structs := hsecond
+      _ = fixed.2.structs := rfl
+      _ = state.structs := by simpa [fixed, fixClockHOLFinite, state] using hfirst
+  case case7 =>
+    rename_i ihFirst
+    rename_i fixedContext
+    rename_i fixed
+    rename_i firstEval
+    rename_i val
+    rename_i postContext
+    rename_i second
+    rename_i first
+    rename_i state
+    rename_i context
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    have hfirst := ihFirst (some val) postContext firstEval
+    simpa [FiniteEvalContext.withState, fixedContext, fixed, fixClockHOLFinite, state]
+      using hfirst
+  case case10 =>
+    simp
+  case case11 =>
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    rfl
+  case case12 =>
+    simp
+  case case13 =>
+    rename_i ihLoop
+    rename_i ihBody
+    rename_i fixedContext
+    rename_i fixed
+    rename_i bodyEval
+    rename_i postContext
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hnonzero
+    rename_i conditionEval
+    rename_i value
+    rename_i body
+    rename_i condition
+    rename_i state
+    rename_i context
+    intro result output heval
+    have hbody := ihBody (some .continue) postContext bodyEval
+    have hloop := ihLoop result output heval
+    calc
+      output.state.structs = fixedContext.state.structs := hloop
+      _ = entry.structs := by
+        simp [FiniteEvalContext.withState, fixedContext, fixed,
+          fixClockHOLFinite, entryContext, hbody]
+      _ = state.structs := by simp [entry, decClockHOLFinite]
+      _ = context.state.structs := rfl
+  case case14 =>
+    rename_i ihLoop
+    rename_i ihBody
+    rename_i fixedContext
+    rename_i fixed
+    rename_i bodyEval
+    rename_i postContext
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hnonzero
+    rename_i conditionEval
+    rename_i value
+    rename_i body
+    rename_i condition
+    rename_i state
+    rename_i context
+    intro result output heval
+    have hbody := ihBody none postContext bodyEval
+    have hloop := ihLoop result output heval
+    calc
+      output.state.structs = fixedContext.state.structs := hloop
+      _ = entry.structs := by
+        simp [FiniteEvalContext.withState, fixedContext, fixed,
+          fixClockHOLFinite, entryContext, hbody]
+      _ = state.structs := rfl
+      _ = context.state.structs := rfl
+  case case15 =>
+    rename_i ihBody
+    rename_i fixedContext
+    rename_i fixed
+    rename_i bodyEval
+    rename_i postContext
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hnonzero
+    rename_i conditionEval
+    rename_i value
+    rename_i body
+    rename_i condition
+    rename_i state
+    rename_i context
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    have hbody := ihBody (some .break) postContext bodyEval
+    simpa [FiniteEvalContext.withState, fixedContext, fixed,
+      fixClockHOLFinite, entryContext, entry, decClockHOLFinite, state] using hbody
+  case case16 =>
+    rename_i ihBody
+    rename_i hbreak
+    rename_i hnone
+    rename_i hcontinue
+    rename_i fixedContext
+    rename_i fixed
+    rename_i bodyEval
+    rename_i postContext
+    rename_i bodyResult
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hnonzero
+    rename_i conditionEval
+    rename_i value
+    rename_i body
+    rename_i condition
+    rename_i state
+    rename_i context
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    have hbody := ihBody bodyResult postContext bodyEval
+    simpa [FiniteEvalContext.withState, fixedContext, fixed,
+      fixClockHOLFinite, entryContext, entry, decClockHOLFinite, state] using hbody
+  case case17 =>
+    simp
+  case case18 =>
+    simp
+  case case19 =>
+    simp
+  case case20 =>
+    simp
+  case case21 =>
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    rfl
+  case case22 =>
+    simp
+  case case23 =>
+    rename_i ihBody
+    rename_i fixedContext
+    rename_i fixed
+    rename_i bodyEval
+    rename_i postContext
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hlookup
+    rename_i returnShape
+    rename_i callee
+    rename_i body
+    rename_i values
+    rename_i hargs
+    rename_i function
+    rename_i info
+    rename_i state
+    rename_i context
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    have hbody := ihBody none postContext bodyEval
+    simpa [FiniteEvalContext.withState, fixedContext, fixed,
+      fixClockHOLFinite, entryContext, entry] using hbody
+  case case24 =>
+    rename_i ihBody
+    rename_i fixedContext
+    rename_i fixed
+    rename_i bodyEval
+    rename_i postContext
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hlookup
+    rename_i returnShape
+    rename_i callee
+    rename_i body
+    rename_i values
+    rename_i hargs
+    rename_i function
+    rename_i info
+    rename_i state
+    rename_i context
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    have hbody := ihBody (some .break) postContext bodyEval
+    simpa [FiniteEvalContext.withState, fixedContext, fixed,
+      fixClockHOLFinite, entryContext, entry] using hbody
+  case case25 =>
+    rename_i ihBody
+    rename_i fixedContext
+    rename_i fixed
+    rename_i bodyEval
+    rename_i postContext
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hlookup
+    rename_i returnShape
+    rename_i callee
+    rename_i body
+    rename_i values
+    rename_i hargs
+    rename_i function
+    rename_i info
+    rename_i state
+    rename_i context
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    have hbody := ihBody (some .continue) postContext bodyEval
+    simpa [FiniteEvalContext.withState, fixedContext, fixed,
+      fixClockHOLFinite, entryContext, entry] using hbody
+  case case26 =>
+    rename_i ihBody
+    rename_i fixedContext
+    rename_i fixed
+    rename_i bodyEval
+    rename_i hshape
+    rename_i value
+    rename_i postContext
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hlookup
+    rename_i returnShape
+    rename_i callee
+    rename_i body
+    rename_i values
+    rename_i hargs
+    rename_i arguments
+    rename_i function
+    rename_i state
+    rename_i context
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    have hbody := ihBody (some (.returned value)) postContext bodyEval
+    simpa [FiniteEvalContext.withState, fixedContext, fixed,
+      fixClockHOLFinite, entryContext, entry, state, emptyLocalsHOLFinite] using hbody
+  case case27 =>
+    rename_i ihBody
+    rename_i fixedContext
+    rename_i fixed
+    rename_i bodyEval
+    rename_i infoTail
+    rename_i hshape
+    rename_i value
+    rename_i postContext
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hlookup
+    rename_i returnShape
+    rename_i callee
+    rename_i body
+    rename_i values
+    rename_i hargs
+    rename_i arguments
+    rename_i function
+    rename_i state
+    rename_i context
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    have hbody := ihBody (some (.returned value)) postContext bodyEval
+    simpa [FiniteEvalContext.withState, fixedContext, fixed,
+      fixClockHOLFinite, entryContext, entry] using hbody
+  case case29 =>
+    rename_i ihBody
+    rename_i fixedContext
+    rename_i fixed
+    rename_i bodyEval
+    rename_i hvalid
+    rename_i infoTail
+    rename_i name
+    rename_i kind
+    rename_i hshape
+    rename_i value
+    rename_i postContext
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hlookup
+    rename_i returnShape
+    rename_i callee
+    rename_i body
+    rename_i values
+    rename_i hargs
+    rename_i arguments
+    rename_i function
+    rename_i info
+    rename_i state
+    rename_i context
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    have hbody := ihBody (some (.returned value)) postContext bodyEval
+    simpa [FiniteEvalContext.withState, fixedContext, fixed,
+      fixClockHOLFinite, entryContext, entry] using hbody
+  case case30 =>
+    rename_i ihBody
+    rename_i fixedContext
+    rename_i fixed
+    rename_i bodyEval
+    rename_i hshape
+    rename_i value
+    rename_i postContext
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hlookup
+    rename_i returnShape
+    rename_i callee
+    rename_i body
+    rename_i values
+    rename_i hargs
+    rename_i arguments
+    rename_i function
+    rename_i info
+    rename_i state
+    rename_i context
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    have hbody := ihBody (some (.returned value)) postContext bodyEval
+    simpa [FiniteEvalContext.withState, fixedContext, fixed,
+      fixClockHOLFinite, entryContext, entry] using hbody
+  case case31 =>
+    rename_i ihBody
+    rename_i fixedContext
+    rename_i fixed
+    rename_i bodyEval
+    rename_i value
+    rename_i exceptionId
+    rename_i postContext
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hlookup
+    rename_i returnShape
+    rename_i callee
+    rename_i body
+    rename_i values
+    rename_i hargs
+    rename_i arguments
+    rename_i function
+    rename_i info
+    rename_i state
+    rename_i context
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    have hbody := ihBody (some (.exception exceptionId value)) postContext bodyEval
+    simpa [FiniteEvalContext.withState, fixedContext, fixed,
+      fixClockHOLFinite, entryContext, entry, emptyLocalsHOLFinite] using hbody
+  case case32 =>
+    rename_i ihBody
+    rename_i fixedContext
+    rename_i fixed
+    rename_i bodyEval
+    rename_i infoTail
+    rename_i value
+    rename_i exceptionId
+    rename_i postContext
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hlookup
+    rename_i returnShape
+    rename_i callee
+    rename_i body
+    rename_i values
+    rename_i hargs
+    rename_i arguments
+    rename_i function
+    rename_i info
+    rename_i state
+    rename_i context
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    have hbody := ihBody (some (.exception exceptionId value)) postContext bodyEval
+    simpa [FiniteEvalContext.withState, fixedContext, fixed,
+      fixClockHOLFinite, entryContext, entry, emptyLocalsHOLFinite] using hbody
+  case case33 =>
+    rename_i ihHandler
+    rename_i ihBody
+    rename_i handlerContext
+    rename_i handlerState
+    rename_i fixedContext
+    rename_i fixed
+    rename_i bodyEval
+    rename_i shapeLookup
+    rename_i hvalid
+    rename_i shape
+    rename_i handlerProgram
+    rename_i handlerVar
+    rename_i handlerId
+    rename_i infoTail
+    rename_i value
+    rename_i postContext
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hlookup
+    rename_i returnShape
+    rename_i callee
+    rename_i body
+    rename_i values
+    rename_i hargs
+    rename_i arguments
+    rename_i function
+    rename_i state
+    rename_i context
+    intro result output heval
+    have hbody := ihBody (some (.exception handlerId value)) postContext bodyEval
+    have hhandler := ihHandler result output heval
+    calc
+      output.state.structs = handlerContext.state.structs := hhandler
+      _ = handlerState.structs := rfl
+      _ = fixedContext.state.structs := by
+        simp [handlerState, setVarHOLFinite, fixedContext]
+      _ = entry.structs := by
+        simpa [FiniteEvalContext.withState, fixedContext, fixed,
+          fixClockHOLFinite, entryContext] using hbody
+      _ = state.structs := by simp [entry]
+      _ = context.state.structs := rfl
+  case case34 =>
+    rename_i ihBody
+    rename_i fixedContext
+    rename_i fixed
+    rename_i bodyEval
+    rename_i shapeLookup
+    rename_i hvalid
+    rename_i shape
+    rename_i handlerProgram
+    rename_i handlerVar
+    rename_i handlerId
+    rename_i infoTail
+    rename_i value
+    rename_i postContext
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hlookup
+    rename_i returnShape
+    rename_i callee
+    rename_i body
+    rename_i values
+    rename_i hargs
+    rename_i arguments
+    rename_i function
+    rename_i state
+    rename_i context
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    have hbody := ihBody (some (.exception handlerId value)) postContext bodyEval
+    simpa [FiniteEvalContext.withState, fixedContext, fixed,
+      fixClockHOLFinite, entryContext, entry] using hbody
+  case case35 =>
+    rename_i ihBody
+    rename_i fixedContext
+    rename_i fixed
+    rename_i bodyEval
+    rename_i hshapeLookup
+    rename_i handlerProgram
+    rename_i handlerVar
+    rename_i handlerId
+    rename_i infoTail
+    rename_i value
+    rename_i postContext
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hlookup
+    rename_i returnShape
+    rename_i callee
+    rename_i body
+    rename_i values
+    rename_i hargs
+    rename_i arguments
+    rename_i function
+    rename_i state
+    rename_i context
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    have hbody := ihBody (some (.exception handlerId value)) postContext bodyEval
+    simpa [FiniteEvalContext.withState, fixedContext, fixed,
+      fixClockHOLFinite, entryContext, entry] using hbody
+  case case36 =>
+    rename_i ihBody
+    rename_i fixedContext
+    rename_i fixed
+    rename_i bodyEval
+    rename_i hneq
+    rename_i handlerProgram
+    rename_i handlerVar
+    rename_i handlerId
+    rename_i infoTail
+    rename_i value
+    rename_i exceptionId
+    rename_i postContext
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hlookup
+    rename_i returnShape
+    rename_i callee
+    rename_i body
+    rename_i values
+    rename_i hargs
+    rename_i arguments
+    rename_i function
+    rename_i state
+    rename_i context
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    have hbody := ihBody (some (.exception exceptionId value)) postContext bodyEval
+    simpa [FiniteEvalContext.withState, fixedContext, fixed,
+      fixClockHOLFinite, entryContext, entry, emptyLocalsHOLFinite] using hbody
+  case case37 =>
+    rename_i ihBody
+    rename_i fixedContext
+    rename_i fixed
+    rename_i bodyEval
+    rename_i hexception
+    rename_i hreturned
+    rename_i hcontinue
+    rename_i hbreak
+    rename_i other
+    rename_i postContext
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hlookup
+    rename_i returnShape
+    rename_i callee
+    rename_i body
+    rename_i values
+    rename_i hargs
+    rename_i arguments
+    rename_i function
+    rename_i info
+    rename_i state
+    rename_i context
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    have hbody := ihBody (some other) postContext bodyEval
+    simpa [FiniteEvalContext.withState, fixedContext, fixed,
+      fixClockHOLFinite, entryContext, entry, emptyLocalsHOLFinite] using hbody
+  case case38 =>
+    simp
+  case case39 =>
+    simp
+  case case40 =>
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    rfl
+  case case41 =>
+    simp
+  case case42 =>
+    rename_i ihBody
+    rename_i fixedContext
+    rename_i fixed
+    rename_i bodyEval
+    rename_i postContext
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hlookup
+    rename_i returnShape
+    rename_i callee
+    rename_i body
+    rename_i values
+    rename_i hargs
+    rename_i arguments
+    rename_i function
+    rename_i shape
+    rename_i resultName
+    rename_i state
+    rename_i context
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    have hbody := ihBody none postContext bodyEval
+    simpa [FiniteEvalContext.withState, fixedContext, fixed,
+      fixClockHOLFinite, entryContext, entry] using hbody
+  case case43 =>
+    rename_i ihBody
+    rename_i fixedContext
+    rename_i fixed
+    rename_i bodyEval
+    rename_i postContext
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hlookup
+    rename_i returnShape
+    rename_i callee
+    rename_i body
+    rename_i values
+    rename_i hargs
+    rename_i arguments
+    rename_i function
+    rename_i shape
+    rename_i resultName
+    rename_i state
+    rename_i context
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    have hbody := ihBody (some .break) postContext bodyEval
+    simpa [FiniteEvalContext.withState, fixedContext, fixed,
+      fixClockHOLFinite, entryContext, entry] using hbody
+  case case44 =>
+    rename_i ihBody
+    rename_i fixedContext
+    rename_i fixed
+    rename_i bodyEval
+    rename_i postContext
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hlookup
+    rename_i returnShape
+    rename_i callee
+    rename_i body
+    rename_i values
+    rename_i hargs
+    rename_i arguments
+    rename_i function
+    rename_i shape
+    rename_i resultName
+    rename_i state
+    rename_i context
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    have hbody := ihBody (some .continue) postContext bodyEval
+    simpa [FiniteEvalContext.withState, fixedContext, fixed,
+      fixClockHOLFinite, entryContext, entry] using hbody
+  case case45 =>
+    simp
+  case case46 =>
+    rename_i ihContinuation
+    rename_i ihBody
+    rename_i continuationEval
+    rename_i continuationContext
+    rename_i continuationState
+    rename_i fixedContext
+    rename_i fixed
+    rename_i bodyEval
+    rename_i restored
+    rename_i postContext
+    rename_i continuationResult
+    rename_i hshape
+    rename_i value
+    rename_i bodyPostContext
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hlookup
+    rename_i returnShape
+    rename_i callee
+    rename_i body
+    rename_i values
+    rename_i hargs
+    rename_i arguments
+    rename_i function
+    rename_i continuation
+    rename_i shape
+    rename_i resultName
+    rename_i state
+    rename_i context
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    have hbody := ihBody (some (.returned value)) bodyPostContext bodyEval
+    have hcontinuation := ihContinuation continuationResult postContext continuationEval
+    simpa [FiniteEvalContext.withState, restored, continuationContext,
+      continuationState, setVarHOLFinite, fixedContext, fixed, fixClockHOLFinite,
+      entryContext, entry, state, hbody] using hcontinuation
+  case case47 =>
+    rename_i ihBody
+    rename_i fixedContext
+    rename_i fixed
+    rename_i bodyEval
+    rename_i hshape
+    rename_i value
+    rename_i postContext
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hlookup
+    rename_i returnShape
+    rename_i callee
+    rename_i body
+    rename_i values
+    rename_i hargs
+    rename_i arguments
+    rename_i function
+    rename_i continuation
+    rename_i resultName
+    rename_i shape
+    rename_i state
+    rename_i context
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    have hbody := ihBody (some (.returned value)) postContext bodyEval
+    simpa [FiniteEvalContext.withState, fixedContext, fixed,
+      fixClockHOLFinite, entryContext, entry] using hbody
+  case case48 =>
+    rename_i ihBody
+    rename_i fixedContext
+    rename_i fixed
+    rename_i bodyEval
+    rename_i hreturned
+    rename_i hcontinue
+    rename_i hbreak
+    rename_i other
+    rename_i postContext
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hlookup
+    rename_i returnShape
+    rename_i callee
+    rename_i body
+    rename_i values
+    rename_i hargs
+    rename_i arguments
+    rename_i function
+    rename_i continuation
+    rename_i resultName
+    rename_i shape
+    rename_i state
+    rename_i context
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    have hbody := ihBody (some other) postContext bodyEval
+    simpa [FiniteEvalContext.withState, fixedContext, fixed,
+      fixClockHOLFinite, entryContext, entry, emptyLocalsHOLFinite] using hbody
+  case case49 =>
+    simp
+  case case50 =>
+    simp
+  case case51 =>
+    simp
+  case case52 =>
+    simp
+  case case53 =>
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    rfl
+  case case54 =>
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    rfl
+  case case55 =>
+    simp
+  case case56 =>
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    rfl
+  case case57 =>
+    simp
+  case case58 =>
+    simp
+  case case59 =>
+    simp
+  case case60 =>
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    rfl
+  case case61 =>
+    simp
+  case case62 =>
+    simp
   case case28 =>
     intro result output heval
     try rcases heval with ⟨rfl, rfl⟩
@@ -509,10 +2027,10 @@ theorem evalPanSemRecursiveCallFiniteContext_structs_eq {width : Nat} {σ : Type
   all_goals
     intro result output heval <;>
       (try rcases heval with ⟨rfl, rfl⟩) <;>
-      simp_all (config := { zetaDelta := true })
+      (set_option linter.unusedSimpArgs false in simp_all (config := { zetaDelta := true })
         [FiniteEvalContext.withState, fixClockHOLFinite, decClockHOLFinite,
           emptyLocalsHOLFinite, setVarHOLFinite,
-          PanSemStateFiniteExact.toExact, PanSemStateFiniteExact.ofExact]
+          PanSemStateFiniteExact.toExact, PanSemStateFiniteExact.ofExact])
 
 /-- A successful finite-support `Return` result has a well-formed payload when
     all values initially readable from locals and globals are well-formed. -/
@@ -585,6 +2103,1884 @@ theorem evalPanSemFiniteRaisePayloadWf {width : Nat} {σ : Type} [NeZero width]
             · simp [hvalue, hshape, heq, hsize] at heval
           · simp [hvalue, hshape, heq] at heval
 
+theorem evalPanSemRecursiveCallFiniteContext_shapeInvariant
+    {width : Nat} {σ : Type} [NeZero width]
+    (program : ProgHOL width) (sourceContext : FiniteEvalContext width σ)
+    (hvars : panSemStateVarsHOLWf sourceContext.state.structs sourceContext.state) :
+    ∀ result output,
+      evalPanSemRecursiveCallFiniteContext program sourceContext = some (result, output) →
+        output.state.structs = sourceContext.state.structs ∧
+        panSemStateVarsHOLWf sourceContext.state.structs output.state ∧
+        panSemResultHOLWf sourceContext.state.structs result := by
+  fun_induction evalPanSemRecursiveCallFiniteContext program sourceContext
+  case case3 =>
+    rename_i ihBody
+    rename_i bodyEval
+    rename_i restored
+    rename_i postContext
+    rename_i bodyResult
+    rename_i bodyContext
+    rename_i bodyState
+    rename_i shapeEq
+    rename_i initEval
+    rename_i value
+    rename_i initializer
+    rename_i body
+    rename_i shape
+    rename_i name
+    rename_i state
+    rename_i context
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    letI : DecidablePred state.memaddrs := by
+      simpa [state] using context.memaddrsDecidable
+    have hvalue : isWfShapeValueHOLExact state.structs value = true :=
+      evalHOLFinite_isWf state hvars.1 hvars.2 body value initEval
+    have hbodyVars := panSemStateVarsHOLWf_setVar state name value hvars hvalue
+    have hbody := ihBody hbodyVars bodyResult postContext restored
+    rcases hbody with ⟨hstructs, hpostVars, hresult⟩
+    have hstructs' : postContext.state.structs = state.structs := by
+      simpa [bodyContext, bodyState, setVarHOLFinite,
+        PanSemStateFiniteExact.setVarHOLFinite] using hstructs
+    have hpostVars' : panSemStateVarsHOLWf state.structs postContext.state := by
+      simpa [bodyContext, bodyState, setVarHOLFinite,
+        PanSemStateFiniteExact.setVarHOLFinite] using hpostVars
+    have hpostVarsAtPost : panSemStateVarsHOLWf postContext.state.structs postContext.state := by
+      simpa [hstructs'] using hpostVars'
+    have hcallerLocals : valuesHOLWf postContext.state.structs state.locals.lookup := by
+      rw [hstructs']
+      exact hvars.1
+    have hrestoredVars : panSemStateVarsHOLWf state.structs bodyEval := by
+      simpa [bodyEval, panSemStateVarsHOLWf, hstructs'] using
+        panSemStateVarsHOLWf_restoreLocal postContext.state state name
+          hpostVarsAtPost hcallerLocals
+    refine ⟨?_, ?_, ?_⟩
+    · simp [state, FiniteEvalContext.withState, bodyEval, hstructs']
+    · simpa [FiniteEvalContext.withState, bodyEval] using hrestoredVars
+    · simpa [bodyContext, bodyState, setVarHOLFinite,
+        PanSemStateFiniteExact.setVarHOLFinite] using hresult
+  case case4 =>
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    exact ⟨rfl, hvars, by simp [panSemResultHOLWf]⟩
+  case case1 =>
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    exact ⟨rfl, hvars, by simp [panSemResultHOLWf]⟩
+  case case2 =>
+    intro result output heval
+    simp at heval
+  case case5 =>
+    intro result output heval
+    simp at heval
+  case case8 =>
+    rename_i ihBranch
+    exact ihBranch hvars
+  case case9 =>
+    rename_i ihBranch
+    exact ihBranch hvars
+  case case6 =>
+    rename_i ihSecond
+    rename_i ihFirst
+    rename_i fixedContext
+    rename_i fixed
+    rename_i firstEval
+    rename_i postContext
+    rename_i second
+    rename_i first
+    rename_i state
+    rename_i context
+    intro result output heval
+    have hfirst := ihFirst hvars none postContext firstEval
+    have hfirstVarsAtPost : panSemStateVarsHOLWf postContext.state.structs postContext.state := by
+      rw [hfirst.1]
+      exact hfirst.2.1
+    have hfixedVars : panSemStateVarsHOLWf fixedContext.state.structs fixedContext.state := by
+      simpa [panSemStateVarsHOLWf, FiniteEvalContext.withState, fixedContext, fixed,
+        fixClockHOLFinite] using hfirstVarsAtPost
+    have hsecond := ihSecond hfixedVars result output heval
+    refine ⟨?_, ?_, ?_⟩
+    · calc
+        output.state.structs = fixedContext.state.structs := hsecond.1
+        _ = state.structs := by
+          simpa [fixedContext, fixed, fixClockHOLFinite] using hfirst.1
+        _ = context.state.structs := rfl
+    · simpa [fixedContext, fixed, fixClockHOLFinite, hfirst.1] using hsecond.2.1
+    · simpa [fixedContext, fixed, fixClockHOLFinite, hfirst.1] using hsecond.2.2
+  case case7 =>
+    rename_i ihFirst
+    rename_i fixedContext
+    rename_i fixed
+    rename_i firstEval
+    rename_i val
+    rename_i postContext
+    rename_i second
+    rename_i first
+    rename_i state
+    rename_i context
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    have hfirst := ihFirst hvars (some val) postContext firstEval
+    have hfirstVarsAtPost : panSemStateVarsHOLWf postContext.state.structs postContext.state := by
+      rw [hfirst.1]
+      exact hfirst.2.1
+    have hfixedVars : panSemStateVarsHOLWf fixedContext.state.structs fixedContext.state := by
+      simpa [panSemStateVarsHOLWf, FiniteEvalContext.withState, fixedContext, fixed,
+        fixClockHOLFinite] using hfirstVarsAtPost
+    have hfixedVarsAtOrig : panSemStateVarsHOLWf context.state.structs fixedContext.state := by
+      simpa [fixedContext, fixed, fixClockHOLFinite, hfirst.1] using hfixedVars
+    refine ⟨?_, hfixedVarsAtOrig, ?_⟩
+    · simpa [fixedContext, fixed, fixClockHOLFinite] using hfirst.1
+    · exact hfirst.2.2
+  case case10 =>
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    exact ⟨rfl, hvars, by simp [panSemResultHOLWf]⟩
+  case case11 =>
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    exact ⟨rfl, panSemStateVarsHOLWf_emptyLocals _ hvars,
+      by simp [panSemResultHOLWf]⟩
+  case case12 =>
+    simp
+  case case13 =>
+    rename_i ihLoop
+    rename_i ihBody
+    rename_i fixedContext
+    rename_i fixed
+    rename_i bodyEval
+    rename_i postContext
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hnonzero
+    rename_i conditionEval
+    rename_i value
+    rename_i body
+    rename_i condition
+    rename_i state
+    rename_i context
+    intro result output heval
+    have hentryVars : panSemStateVarsHOLWf entryContext.state.structs entryContext.state := by
+      simpa [panSemStateVarsHOLWf, FiniteEvalContext.withState, entryContext, entry,
+        decClockHOLFinite] using hvars
+    have hbody := ihBody hentryVars (some .continue) postContext bodyEval
+    have hbodyVarsAtPost :
+        panSemStateVarsHOLWf postContext.state.structs postContext.state := by
+      rw [hbody.1]
+      exact hbody.2.1
+    have hfixedVars :
+        panSemStateVarsHOLWf fixedContext.state.structs fixedContext.state := by
+      simpa [panSemStateVarsHOLWf, FiniteEvalContext.withState, fixedContext, fixed,
+        fixClockHOLFinite] using hbodyVarsAtPost
+    have hloop := ihLoop hfixedVars result output heval
+    have hfixedStructs : fixedContext.state.structs = context.state.structs := by
+      calc
+        fixedContext.state.structs = postContext.state.structs := by
+          simp [fixedContext, fixed, fixClockHOLFinite]
+        _ = entryContext.state.structs := hbody.1
+        _ = context.state.structs := by
+          simp [entryContext, entry, decClockHOLFinite, state]
+    refine ⟨?_, ?_, ?_⟩
+    · calc
+        output.state.structs = fixedContext.state.structs := hloop.1
+        _ = context.state.structs := hfixedStructs
+    · simpa [hfixedStructs] using hloop.2.1
+    · simpa [hfixedStructs] using hloop.2.2
+  case case14 =>
+    rename_i ihLoop
+    rename_i ihBody
+    rename_i fixedContext
+    rename_i fixed
+    rename_i bodyEval
+    rename_i postContext
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hnonzero
+    rename_i conditionEval
+    rename_i value
+    rename_i body
+    rename_i condition
+    rename_i state
+    rename_i context
+    intro result output heval
+    have hentryVars : panSemStateVarsHOLWf entryContext.state.structs entryContext.state := by
+      simpa [panSemStateVarsHOLWf, FiniteEvalContext.withState, entryContext, entry,
+        decClockHOLFinite] using hvars
+    have hbody := ihBody hentryVars none postContext bodyEval
+    have hbodyVarsAtPost :
+        panSemStateVarsHOLWf postContext.state.structs postContext.state := by
+      rw [hbody.1]
+      exact hbody.2.1
+    have hfixedVars :
+        panSemStateVarsHOLWf fixedContext.state.structs fixedContext.state := by
+      simpa [panSemStateVarsHOLWf, FiniteEvalContext.withState, fixedContext, fixed,
+        fixClockHOLFinite] using hbodyVarsAtPost
+    have hloop := ihLoop hfixedVars result output heval
+    have hfixedStructs : fixedContext.state.structs = context.state.structs := by
+      calc
+        fixedContext.state.structs = postContext.state.structs := by
+          simp [fixedContext, fixed, fixClockHOLFinite]
+        _ = entryContext.state.structs := hbody.1
+        _ = context.state.structs := by
+          simp [entryContext, entry, decClockHOLFinite, state]
+    refine ⟨?_, ?_, ?_⟩
+    · calc
+        output.state.structs = fixedContext.state.structs := hloop.1
+        _ = context.state.structs := hfixedStructs
+    · simpa [hfixedStructs] using hloop.2.1
+    · simpa [hfixedStructs] using hloop.2.2
+  case case15 =>
+    rename_i ihBody
+    rename_i fixedContext
+    rename_i fixed
+    rename_i bodyEval
+    rename_i postContext
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hnonzero
+    rename_i conditionEval
+    rename_i value
+    rename_i body
+    rename_i condition
+    rename_i state
+    rename_i context
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    have hentryVars : panSemStateVarsHOLWf entryContext.state.structs entryContext.state := by
+      simpa [panSemStateVarsHOLWf, FiniteEvalContext.withState, entryContext, entry,
+        decClockHOLFinite] using hvars
+    have hbody := ihBody hentryVars (some .break) postContext bodyEval
+    have hbodyVarsAtPost :
+        panSemStateVarsHOLWf postContext.state.structs postContext.state := by
+      rw [hbody.1]
+      exact hbody.2.1
+    have hfixedVars :
+        panSemStateVarsHOLWf fixedContext.state.structs fixedContext.state := by
+      simpa [panSemStateVarsHOLWf, FiniteEvalContext.withState, fixedContext, fixed,
+        fixClockHOLFinite] using hbodyVarsAtPost
+    have hfixedStructs : fixedContext.state.structs = context.state.structs := by
+      calc
+        fixedContext.state.structs = postContext.state.structs := by
+          simp [fixedContext, fixed, fixClockHOLFinite]
+        _ = entryContext.state.structs := hbody.1
+        _ = context.state.structs := by
+          simp [entryContext, entry, decClockHOLFinite, state]
+    have hfixedVarsAtOrig :
+        panSemStateVarsHOLWf context.state.structs fixedContext.state := by
+      simpa [hfixedStructs] using hfixedVars
+    exact ⟨hfixedStructs, hfixedVarsAtOrig, by simp [panSemResultHOLWf]⟩
+  case case31 =>
+    rename_i ihBody
+    rename_i fixedContext
+    rename_i fixed
+    rename_i bodyEval
+    rename_i value
+    rename_i exceptionId
+    rename_i postContext
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hlookup
+    rename_i returnShape
+    rename_i callee
+    rename_i body
+    rename_i values
+    rename_i hargs
+    rename_i arguments
+    rename_i function
+    rename_i state
+    rename_i context
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    letI : DecidablePred state.memaddrs := context.memaddrsDecidable
+    have hlookupExact := lookupCodeHOLFinite_eq_some state.code.lookup function hargs
+      body callee returnShape hlookup
+    have hcallee := lookupCodeHOLExact_calleeLocalsWf state arguments hargs function
+      body callee.lookup returnShape values hlookupExact hvars.1 hvars.2
+    have hentryVars : panSemStateVarsHOLWf state.structs entry := by
+      refine ⟨?_, ?_⟩
+      · change valuesHOLWf state.structs callee.lookup
+        exact hcallee
+      · simpa [entry] using hvars.2
+    have hbody := ihBody hentryVars (some (.exception exceptionId value)) postContext bodyEval
+    have hbodyVarsAtPost :
+        panSemStateVarsHOLWf postContext.state.structs postContext.state := by
+      rw [hbody.1]
+      exact hbody.2.1
+    have hfixedVars :
+        panSemStateVarsHOLWf fixedContext.state.structs fixedContext.state := by
+      simpa [panSemStateVarsHOLWf, FiniteEvalContext.withState, fixedContext, fixed,
+        fixClockHOLFinite] using hbodyVarsAtPost
+    have hfixedStructs : fixedContext.state.structs = context.state.structs := by
+      calc
+        fixedContext.state.structs = postContext.state.structs := by
+          simp [fixedContext, fixed, fixClockHOLFinite]
+        _ = entryContext.state.structs := hbody.1
+        _ = context.state.structs := by rfl
+    have hfixedVarsAtOrig :
+        panSemStateVarsHOLWf context.state.structs
+          (PanSemStateFiniteExact.emptyLocalsHOLFinite fixedContext.state) := by
+      simpa [hfixedStructs] using
+        panSemStateVarsHOLWf_emptyLocals fixedContext.state hfixedVars
+    have hvalueWf : isWfShapeValueHOLExact context.state.structs value = true := by
+      simpa [panSemResultHOLWf, entryContext, entry] using hbody.2.2
+    exact ⟨hfixedStructs, hfixedVarsAtOrig, by
+      simpa [panSemResultHOLWf] using hvalueWf⟩
+  case case32 =>
+    rename_i ihBody
+    rename_i fixedContext
+    rename_i fixed
+    rename_i bodyEval
+    rename_i infoTail
+    rename_i value
+    rename_i exceptionId
+    rename_i postContext
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hlookup
+    rename_i returnShape
+    rename_i callee
+    rename_i body
+    rename_i values
+    rename_i hargs
+    rename_i arguments
+    rename_i function
+    rename_i state
+    rename_i context
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    letI : DecidablePred state.memaddrs := context.memaddrsDecidable
+    have hlookupExact := lookupCodeHOLFinite_eq_some state.code.lookup function hargs
+      body callee returnShape hlookup
+    have hcallee := lookupCodeHOLExact_calleeLocalsWf state arguments hargs function
+      body callee.lookup returnShape values hlookupExact hvars.1 hvars.2
+    have hentryVars : panSemStateVarsHOLWf state.structs entry := by
+      refine ⟨?_, ?_⟩
+      · change valuesHOLWf state.structs callee.lookup
+        exact hcallee
+      · simpa [entry] using hvars.2
+    have hbody := ihBody hentryVars (some (.exception exceptionId value)) postContext bodyEval
+    have hbodyVarsAtPost :
+        panSemStateVarsHOLWf postContext.state.structs postContext.state := by
+      rw [hbody.1]
+      exact hbody.2.1
+    have hfixedVars :
+        panSemStateVarsHOLWf fixedContext.state.structs fixedContext.state := by
+      simpa [panSemStateVarsHOLWf, FiniteEvalContext.withState, fixedContext, fixed,
+        fixClockHOLFinite] using hbodyVarsAtPost
+    have hfixedStructs : fixedContext.state.structs = context.state.structs := by
+      calc
+        fixedContext.state.structs = postContext.state.structs := by
+          simp [fixedContext, fixed, fixClockHOLFinite]
+        _ = entryContext.state.structs := hbody.1
+        _ = context.state.structs := by rfl
+    have hfixedVarsAtOrig :
+        panSemStateVarsHOLWf context.state.structs
+          (PanSemStateFiniteExact.emptyLocalsHOLFinite fixedContext.state) := by
+      simpa [hfixedStructs] using
+        panSemStateVarsHOLWf_emptyLocals fixedContext.state hfixedVars
+    have hvalueWf : isWfShapeValueHOLExact context.state.structs value = true := by
+      simpa [panSemResultHOLWf, entryContext, entry] using hbody.2.2
+    exact ⟨hfixedStructs, hfixedVarsAtOrig, by
+      simpa [panSemResultHOLWf] using hvalueWf⟩
+  case case41 =>
+    intro result output heval
+    simp_all
+  case case33 =>
+    rename_i ihHandler
+    rename_i ihBody
+    rename_i handlerContext
+    rename_i handlerState
+    rename_i fixedContext
+    rename_i fixed
+    rename_i bodyEval
+    rename_i shapeLookup
+    rename_i hvalid
+    rename_i shape
+    rename_i handlerProgram
+    rename_i handlerVar
+    rename_i handlerId
+    rename_i infoTail
+    rename_i value
+    rename_i postContext
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hlookup
+    rename_i returnShape
+    rename_i callee
+    rename_i body
+    rename_i values
+    rename_i hargs
+    rename_i arguments
+    rename_i function
+    rename_i state
+    rename_i context
+    intro result output heval
+    letI : DecidablePred state.memaddrs := context.memaddrsDecidable
+    have hlookupExact := lookupCodeHOLFinite_eq_some state.code.lookup function hargs
+      body callee returnShape hlookup
+    have hcallee := lookupCodeHOLExact_calleeLocalsWf state arguments hargs function
+      body callee.lookup returnShape values hlookupExact hvars.1 hvars.2
+    have hentryVars : panSemStateVarsHOLWf state.structs entry := by
+      refine ⟨?_, ?_⟩
+      · change valuesHOLWf state.structs callee.lookup
+        exact hcallee
+      · simpa [entry] using hvars.2
+    have hbody := ihBody hentryVars (some (.exception handlerId value)) postContext bodyEval
+    have hbodyVarsAtPost :
+        panSemStateVarsHOLWf postContext.state.structs postContext.state := by
+      rw [hbody.1]
+      exact hbody.2.1
+    have hfixedVars :
+        panSemStateVarsHOLWf fixedContext.state.structs fixedContext.state := by
+      simpa [panSemStateVarsHOLWf, FiniteEvalContext.withState, fixedContext, fixed,
+        fixClockHOLFinite] using hbodyVarsAtPost
+    have hfixedStructs : fixedContext.state.structs = context.state.structs := by
+      calc
+        fixedContext.state.structs = postContext.state.structs := by
+          simp [fixedContext, fixed, fixClockHOLFinite]
+        _ = entryContext.state.structs := hbody.1
+        _ = context.state.structs := by rfl
+    have hvalueWf : isWfShapeValueHOLExact context.state.structs value = true := by
+      simpa [panSemResultHOLWf, entryContext, entry] using hbody.2.2
+    let handlerBase : PanSemStateFiniteExact width σ :=
+      { fixedContext.state with locals := state.locals }
+    have hhandlerBaseStructs : handlerBase.structs = context.state.structs := by
+      simpa [handlerBase] using hfixedStructs
+    have hhandlerBaseVars : panSemStateVarsHOLWf handlerBase.structs handlerBase := by
+      refine ⟨?_, ?_⟩
+      · simpa [handlerBase, hfixedStructs] using hvars.1
+      · simpa [handlerBase] using hfixedVars.2
+    have hsetHandler :
+        panSemStateVarsHOLWf handlerBase.structs
+          (PanSemStateFiniteExact.setVarHOLFinite handlerVar value handlerBase) :=
+      panSemStateVarsHOLWf_setVar handlerBase handlerVar value hhandlerBaseVars
+        (by simpa [hhandlerBaseStructs] using hvalueWf)
+    have hhandlerVars : panSemStateVarsHOLWf context.state.structs handlerState := by
+      rw [← hhandlerBaseStructs]
+      simpa [handlerState, handlerBase, setVarHOLFinite] using hsetHandler
+    have hhandlerStateStructs : handlerState.structs = context.state.structs := by
+      simpa [handlerState, setVarHOLFinite] using hhandlerBaseStructs
+    have hhandlerStructs : handlerContext.state.structs = context.state.structs := by
+      simpa [handlerContext, FiniteEvalContext.withState] using hhandlerStateStructs
+    have hhandlerVarsAtContext :
+        panSemStateVarsHOLWf handlerContext.state.structs handlerContext.state := by
+      simpa [handlerContext, FiniteEvalContext.withState, hhandlerStateStructs] using hhandlerVars
+    have hhandler := ihHandler hhandlerVarsAtContext result output heval
+    refine ⟨?_, ?_, ?_⟩
+    · calc
+        output.state.structs = handlerContext.state.structs := hhandler.1
+        _ = context.state.structs := hhandlerStructs
+    · simpa [hhandlerStructs] using hhandler.2.1
+    · simpa [hhandlerStructs] using hhandler.2.2
+  case case38 =>
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    exact ⟨rfl, hvars, by simp [panSemResultHOLWf]⟩
+  case case39 =>
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    exact ⟨rfl, hvars, by simp [panSemResultHOLWf]⟩
+  case case40 =>
+    let ctx : FiniteEvalContext width σ := by assumption
+    have hvarsCtx : panSemStateVarsHOLWf ctx.state.structs ctx.state := by assumption
+    have hempty := panSemStateVarsHOLWf_emptyLocals ctx.state hvarsCtx
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    exact ⟨by rfl,
+      by simpa [FiniteEvalContext.withState] using hempty,
+      by simp [panSemResultHOLWf]⟩
+  case case42 =>
+    rename_i ihBody
+    rename_i fixedContext
+    rename_i fixed
+    rename_i bodyEval
+    rename_i postContext
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hlookup
+    rename_i returnShape
+    rename_i callee
+    rename_i body
+    rename_i values
+    rename_i hargs
+    rename_i continuation
+    rename_i arguments
+    rename_i function
+    rename_i shape
+    rename_i resultName
+    rename_i state
+    rename_i context
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    letI : DecidablePred state.memaddrs := context.memaddrsDecidable
+    have hlookupExact := lookupCodeHOLFinite_eq_some state.code.lookup function hargs
+      body callee returnShape hlookup
+    have hcallee := lookupCodeHOLExact_calleeLocalsWf state arguments hargs function
+      body callee.lookup returnShape values hlookupExact hvars.1 hvars.2
+    have hentryVars : panSemStateVarsHOLWf state.structs entry := by
+      refine ⟨?_, ?_⟩
+      · change valuesHOLWf state.structs callee.lookup
+        exact hcallee
+      · simpa [entry] using hvars.2
+    have hbody := ihBody hentryVars none postContext bodyEval
+    have hbodyVarsAtPost :
+        panSemStateVarsHOLWf postContext.state.structs postContext.state := by
+      rw [hbody.1]
+      exact hbody.2.1
+    have hfixedVars :
+        panSemStateVarsHOLWf fixedContext.state.structs fixedContext.state := by
+      simpa [panSemStateVarsHOLWf, FiniteEvalContext.withState, fixedContext, fixed,
+        fixClockHOLFinite] using hbodyVarsAtPost
+    have hfixedStructs : fixedContext.state.structs = context.state.structs := by
+      calc
+        fixedContext.state.structs = postContext.state.structs := by
+          simp [fixedContext, fixed, fixClockHOLFinite]
+        _ = entryContext.state.structs := hbody.1
+        _ = context.state.structs := by rfl
+    have hfixedVarsAtOrig :
+        panSemStateVarsHOLWf context.state.structs fixedContext.state := by
+      simpa [hfixedStructs] using hfixedVars
+    exact ⟨hfixedStructs, hfixedVarsAtOrig, by simp [panSemResultHOLWf]⟩
+  case case43 =>
+    rename_i ihBody
+    rename_i fixedContext
+    rename_i fixed
+    rename_i bodyEval
+    rename_i postContext
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hlookup
+    rename_i returnShape
+    rename_i callee
+    rename_i body
+    rename_i values
+    rename_i hargs
+    rename_i continuation
+    rename_i arguments
+    rename_i function
+    rename_i shape
+    rename_i resultName
+    rename_i state
+    rename_i context
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    letI : DecidablePred state.memaddrs := context.memaddrsDecidable
+    have hlookupExact := lookupCodeHOLFinite_eq_some state.code.lookup function hargs
+      body callee returnShape hlookup
+    have hcallee := lookupCodeHOLExact_calleeLocalsWf state arguments hargs function
+      body callee.lookup returnShape values hlookupExact hvars.1 hvars.2
+    have hentryVars : panSemStateVarsHOLWf state.structs entry := by
+      refine ⟨?_, ?_⟩
+      · change valuesHOLWf state.structs callee.lookup
+        exact hcallee
+      · simpa [entry] using hvars.2
+    have hbody := ihBody hentryVars (some .break) postContext bodyEval
+    have hbodyVarsAtPost :
+        panSemStateVarsHOLWf postContext.state.structs postContext.state := by
+      rw [hbody.1]
+      exact hbody.2.1
+    have hfixedVars :
+        panSemStateVarsHOLWf fixedContext.state.structs fixedContext.state := by
+      simpa [panSemStateVarsHOLWf, FiniteEvalContext.withState, fixedContext, fixed,
+        fixClockHOLFinite] using hbodyVarsAtPost
+    have hfixedStructs : fixedContext.state.structs = context.state.structs := by
+      calc
+        fixedContext.state.structs = postContext.state.structs := by
+          simp [fixedContext, fixed, fixClockHOLFinite]
+        _ = entryContext.state.structs := hbody.1
+        _ = context.state.structs := by rfl
+    have hfixedVarsAtOrig :
+        panSemStateVarsHOLWf context.state.structs fixedContext.state := by
+      simpa [hfixedStructs] using hfixedVars
+    exact ⟨hfixedStructs, hfixedVarsAtOrig, by simp [panSemResultHOLWf]⟩
+  case case44 =>
+    rename_i ihBody
+    rename_i fixedContext
+    rename_i fixed
+    rename_i bodyEval
+    rename_i postContext
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hlookup
+    rename_i returnShape
+    rename_i callee
+    rename_i body
+    rename_i values
+    rename_i hargs
+    rename_i continuation
+    rename_i arguments
+    rename_i function
+    rename_i shape
+    rename_i resultName
+    rename_i state
+    rename_i context
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    letI : DecidablePred state.memaddrs := context.memaddrsDecidable
+    have hlookupExact := lookupCodeHOLFinite_eq_some state.code.lookup function hargs
+      body callee returnShape hlookup
+    have hcallee := lookupCodeHOLExact_calleeLocalsWf state arguments hargs function
+      body callee.lookup returnShape values hlookupExact hvars.1 hvars.2
+    have hentryVars : panSemStateVarsHOLWf state.structs entry := by
+      refine ⟨?_, ?_⟩
+      · change valuesHOLWf state.structs callee.lookup
+        exact hcallee
+      · simpa [entry] using hvars.2
+    have hbody := ihBody hentryVars (some .continue) postContext bodyEval
+    have hbodyVarsAtPost :
+        panSemStateVarsHOLWf postContext.state.structs postContext.state := by
+      rw [hbody.1]
+      exact hbody.2.1
+    have hfixedVars :
+        panSemStateVarsHOLWf fixedContext.state.structs fixedContext.state := by
+      simpa [panSemStateVarsHOLWf, FiniteEvalContext.withState, fixedContext, fixed,
+        fixClockHOLFinite] using hbodyVarsAtPost
+    have hfixedStructs : fixedContext.state.structs = context.state.structs := by
+      calc
+        fixedContext.state.structs = postContext.state.structs := by
+          simp [fixedContext, fixed, fixClockHOLFinite]
+        _ = entryContext.state.structs := hbody.1
+        _ = context.state.structs := by rfl
+    have hfixedVarsAtOrig :
+        panSemStateVarsHOLWf context.state.structs fixedContext.state := by
+      simpa [hfixedStructs] using hfixedVars
+    exact ⟨hfixedStructs, hfixedVarsAtOrig, by simp [panSemResultHOLWf]⟩
+  case case45 =>
+    intro result output heval
+    simp_all
+  case case46 =>
+    rename_i ihContinuation
+    rename_i ihBody
+    rename_i continuationEval
+    rename_i continuationContext
+    rename_i continuationState
+    rename_i fixedContext
+    rename_i fixed
+    rename_i bodyEval
+    rename_i restored
+    rename_i postContext
+    rename_i continuationResult
+    rename_i hshape
+    rename_i value
+    rename_i bodyPostContext
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hlookup
+    rename_i returnShape
+    rename_i callee
+    rename_i body
+    rename_i values
+    rename_i hargs
+    rename_i continuation
+    rename_i arguments
+    rename_i function
+    rename_i shape
+    rename_i resultName
+    rename_i state
+    rename_i context
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    letI : DecidablePred state.memaddrs := context.memaddrsDecidable
+    have hlookupExact := lookupCodeHOLFinite_eq_some state.code.lookup function hargs
+      body callee returnShape hlookup
+    have hcallee := lookupCodeHOLExact_calleeLocalsWf state arguments hargs function
+      body callee.lookup returnShape values hlookupExact hvars.1 hvars.2
+    have hentryVars : panSemStateVarsHOLWf state.structs entry := by
+      refine ⟨?_, ?_⟩
+      · change valuesHOLWf state.structs callee.lookup
+        exact hcallee
+      · simpa [entry] using hvars.2
+    have hbody := ihBody hentryVars (some (.returned value)) bodyPostContext bodyEval
+    have hbodyVarsAtPost :
+        panSemStateVarsHOLWf bodyPostContext.state.structs bodyPostContext.state := by
+      rw [hbody.1]
+      exact hbody.2.1
+    have hfixedVars :
+        panSemStateVarsHOLWf fixedContext.state.structs fixedContext.state := by
+      simpa [panSemStateVarsHOLWf, FiniteEvalContext.withState, fixedContext, fixed,
+        fixClockHOLFinite] using hbodyVarsAtPost
+    have hfixedStructs : fixedContext.state.structs = context.state.structs := by
+      calc
+        fixedContext.state.structs = bodyPostContext.state.structs := by
+          simp [fixedContext, fixed, fixClockHOLFinite]
+        _ = entryContext.state.structs := hbody.1
+        _ = context.state.structs := by rfl
+    have hvalueWf : isWfShapeValueHOLExact context.state.structs value = true := by
+      simpa [panSemResultHOLWf, entryContext, entry] using hbody.2.2
+    let continuationBase : PanSemStateFiniteExact width σ :=
+      { fixedContext.state with locals := state.locals }
+    have hcontinuationBaseStructs : continuationBase.structs = context.state.structs := by
+      simpa [continuationBase] using hfixedStructs
+    have hcontinuationBaseVars :
+        panSemStateVarsHOLWf continuationBase.structs continuationBase := by
+      refine ⟨?_, ?_⟩
+      · simpa [continuationBase, hfixedStructs] using hvars.1
+      · simpa [continuationBase] using hfixedVars.2
+    have hcontinuationStateVars :
+        panSemStateVarsHOLWf continuationState.structs continuationState := by
+      have hset := panSemStateVarsHOLWf_setVar continuationBase resultName value
+        hcontinuationBaseVars (by simpa [hcontinuationBaseStructs] using hvalueWf)
+      simpa [continuationState, continuationBase, setVarHOLFinite] using hset
+    have hcontinuationVarsAtContext :
+        panSemStateVarsHOLWf continuationContext.state.structs continuationContext.state := by
+      simpa [continuationContext, FiniteEvalContext.withState] using hcontinuationStateVars
+    have hcontinuation :=
+      ihContinuation hcontinuationVarsAtContext continuationResult postContext continuationEval
+    have hcontinuationStateStructs :
+        continuationState.structs = continuationBase.structs := by
+      simp [continuationState, continuationBase, setVarHOLFinite]
+    have hcontinuationContextStructs :
+        continuationContext.state.structs = context.state.structs := by
+      calc
+        continuationContext.state.structs = continuationState.structs := rfl
+        _ = continuationBase.structs := hcontinuationStateStructs
+        _ = context.state.structs := hcontinuationBaseStructs
+    have hpostStructs : postContext.state.structs = context.state.structs := by
+      calc
+        postContext.state.structs = continuationContext.state.structs := hcontinuation.1
+        _ = context.state.structs := hcontinuationContextStructs
+    have hpostVars :
+        panSemStateVarsHOLWf postContext.state.structs postContext.state := by
+      rw [hcontinuation.1]
+      exact hcontinuation.2.1
+    have hcallerLocals : valuesHOLWf postContext.state.structs state.locals.lookup := by
+      simpa [hpostStructs] using hvars.1
+    have hrestoredVarsPair :=
+      panSemStateVarsHOLWf_restoreLocal postContext.state state resultName
+        hpostVars hcallerLocals
+    have hrestoredVars : panSemStateVarsHOLWf context.state.structs restored := by
+      refine ⟨?_, ?_⟩
+      · simpa [restored, hpostStructs] using hrestoredVarsPair.1
+      · simpa [restored, hpostStructs] using hrestoredVarsPair.2
+    have hresultWf : panSemResultHOLWf context.state.structs continuationResult := by
+      simpa [hcontinuationContextStructs] using hcontinuation.2.2
+    exact ⟨by simpa [restored, FiniteEvalContext.withState] using hpostStructs,
+      by simpa [restored, FiniteEvalContext.withState] using hrestoredVars,
+      hresultWf⟩
+  case case47 =>
+    rename_i ihBody
+    rename_i fixedContext
+    rename_i fixed
+    rename_i bodyEval
+    rename_i hshape
+    rename_i value
+    rename_i postContext
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hlookup
+    rename_i returnShape
+    rename_i callee
+    rename_i body
+    rename_i values
+    rename_i hargs
+    rename_i continuation
+    rename_i arguments
+    rename_i function
+    rename_i shape
+    rename_i resultName
+    rename_i state
+    rename_i context
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    letI : DecidablePred state.memaddrs := context.memaddrsDecidable
+    have hlookupExact := lookupCodeHOLFinite_eq_some state.code.lookup function hargs
+      body callee returnShape hlookup
+    have hcallee := lookupCodeHOLExact_calleeLocalsWf state arguments hargs function
+      body callee.lookup returnShape values hlookupExact hvars.1 hvars.2
+    have hentryVars : panSemStateVarsHOLWf state.structs entry := by
+      refine ⟨?_, ?_⟩
+      · change valuesHOLWf state.structs callee.lookup
+        exact hcallee
+      · simpa [entry] using hvars.2
+    have hbody := ihBody hentryVars (some (.returned value)) postContext bodyEval
+    have hbodyVarsAtPost :
+        panSemStateVarsHOLWf postContext.state.structs postContext.state := by
+      rw [hbody.1]
+      exact hbody.2.1
+    have hfixedVars :
+        panSemStateVarsHOLWf fixedContext.state.structs fixedContext.state := by
+      simpa [panSemStateVarsHOLWf, FiniteEvalContext.withState, fixedContext, fixed,
+        fixClockHOLFinite] using hbodyVarsAtPost
+    have hfixedStructs : fixedContext.state.structs = context.state.structs := by
+      calc
+        fixedContext.state.structs = postContext.state.structs := by
+          simp [fixedContext, fixed, fixClockHOLFinite]
+        _ = entryContext.state.structs := hbody.1
+        _ = context.state.structs := by rfl
+    have hfixedVarsAtOrig :
+        panSemStateVarsHOLWf context.state.structs fixedContext.state := by
+      simpa [hfixedStructs] using hfixedVars
+    exact ⟨hfixedStructs, hfixedVarsAtOrig, by simp [panSemResultHOLWf]⟩
+  case case48 =>
+    rename_i ihBody
+    rename_i fixedContext
+    rename_i fixed
+    rename_i bodyEval
+    rename_i hreturned
+    rename_i hcontinue
+    rename_i hbreak
+    rename_i other
+    rename_i postContext
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hlookup
+    rename_i returnShape
+    rename_i callee
+    rename_i body
+    rename_i values
+    rename_i hargs
+    rename_i continuation
+    rename_i arguments
+    rename_i function
+    rename_i shape
+    rename_i resultName
+    rename_i state
+    rename_i context
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    letI : DecidablePred state.memaddrs := context.memaddrsDecidable
+    have hlookupExact := lookupCodeHOLFinite_eq_some state.code.lookup function hargs
+      body callee returnShape hlookup
+    have hcallee := lookupCodeHOLExact_calleeLocalsWf state arguments hargs function
+      body callee.lookup returnShape values hlookupExact hvars.1 hvars.2
+    have hentryVars : panSemStateVarsHOLWf state.structs entry := by
+      refine ⟨?_, ?_⟩
+      · change valuesHOLWf state.structs callee.lookup
+        exact hcallee
+      · simpa [entry] using hvars.2
+    have hbody := ihBody hentryVars (some other) postContext bodyEval
+    have hbodyVarsAtPost :
+        panSemStateVarsHOLWf postContext.state.structs postContext.state := by
+      rw [hbody.1]
+      exact hbody.2.1
+    have hfixedVars :
+        panSemStateVarsHOLWf fixedContext.state.structs fixedContext.state := by
+      simpa [panSemStateVarsHOLWf, FiniteEvalContext.withState, fixedContext, fixed,
+        fixClockHOLFinite] using hbodyVarsAtPost
+    have hfixedStructs : fixedContext.state.structs = context.state.structs := by
+      calc
+        fixedContext.state.structs = postContext.state.structs := by
+          simp [fixedContext, fixed, fixClockHOLFinite]
+        _ = entryContext.state.structs := hbody.1
+        _ = context.state.structs := by rfl
+    have hfixedVarsAtOrig :
+        panSemStateVarsHOLWf context.state.structs
+          (PanSemStateFiniteExact.emptyLocalsHOLFinite fixedContext.state) := by
+      simpa [hfixedStructs] using
+        panSemStateVarsHOLWf_emptyLocals fixedContext.state hfixedVars
+    have hresultWf : panSemResultHOLWf context.state.structs (some other) := by
+      simpa [entryContext, FiniteEvalContext.withState, entry] using hbody.2.2
+    exact ⟨hfixedStructs, hfixedVarsAtOrig, hresultWf⟩
+  case case49 =>
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    exact ⟨rfl, hvars, by simp [panSemResultHOLWf]⟩
+  case case50 =>
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    exact ⟨rfl, hvars, by simp [panSemResultHOLWf]⟩
+  case case51 =>
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    exact ⟨rfl, hvars, by simp [panSemResultHOLWf]⟩
+  case case52 =>
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    exact ⟨rfl, hvars, by simp [panSemResultHOLWf]⟩
+  case case53 =>
+    let ctx : FiniteEvalContext width σ := by assumption
+    have hvarsCtx : panSemStateVarsHOLWf ctx.state.structs ctx.state := by assumption
+    have hempty := panSemStateVarsHOLWf_emptyLocals ctx.state hvarsCtx
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    exact ⟨rfl, by simpa [FiniteEvalContext.withState] using hempty,
+      by simp [panSemResultHOLWf]⟩
+  case case54 =>
+    let ctx : FiniteEvalContext width σ := by assumption
+    have hvarsCtx : panSemStateVarsHOLWf ctx.state.structs ctx.state := by assumption
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    exact ⟨rfl,
+      by simpa [panSemStateVarsHOLWf, PanSemStateFiniteExact.decClockHOLFinite] using hvarsCtx,
+      by simp [panSemResultHOLWf]⟩
+  case case55 =>
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    exact ⟨rfl, hvars, by simp [panSemResultHOLWf]⟩
+  case case56 =>
+    let ctx : FiniteEvalContext width σ := by assumption
+    let expression : ExpHOL width := by assumption
+    let value : ValueHOL width := by assumption
+    letI : DecidablePred ctx.state.memaddrs := ctx.memaddrsDecidable
+    have hevalValue : ctx.state.evalHOLFinite expression = some value := by assumption
+    have hvalueWf := evalHOLFinite_isWf ctx.state hvars.1 hvars.2
+      expression value hevalValue
+    have hempty := panSemStateVarsHOLWf_emptyLocals ctx.state hvars
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    exact ⟨rfl, by simpa [FiniteEvalContext.withState] using hempty,
+      by simpa [panSemResultHOLWf, ctx, value] using hvalueWf⟩
+  case case57 =>
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    exact ⟨rfl, hvars, by simp [panSemResultHOLWf]⟩
+  case case58 =>
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    exact ⟨rfl, hvars, by simp [panSemResultHOLWf]⟩
+  case case59 =>
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    exact ⟨rfl, hvars, by simp [panSemResultHOLWf]⟩
+  case case60 =>
+    let ctx : FiniteEvalContext width σ := by assumption
+    let expression : ExpHOL width := by assumption
+    let value : ValueHOL width := by assumption
+    letI : DecidablePred ctx.state.memaddrs := ctx.memaddrsDecidable
+    have hevalValue : ctx.state.evalHOLFinite expression = some value := by assumption
+    have hvalueWf := evalHOLFinite_isWf ctx.state hvars.1 hvars.2
+      expression value hevalValue
+    have hempty := panSemStateVarsHOLWf_emptyLocals ctx.state hvars
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    exact ⟨rfl, by simpa [FiniteEvalContext.withState] using hempty,
+      by simpa [panSemResultHOLWf, ctx, value] using hvalueWf⟩
+  case case61 =>
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    exact ⟨rfl, hvars, by simp [panSemResultHOLWf]⟩
+  case case62 =>
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    exact ⟨rfl, hvars, by simp [panSemResultHOLWf]⟩
+  case case63 =>
+    let ctx : FiniteEvalContext width σ := by assumption
+    let state : PanSemStateFiniteExact width σ := ctx.state
+    let size : OpSize := by assumption
+    let kind : VarKind := by assumption
+    let name : MlS := by assumption
+    let address : ExpHOL width := by assumption
+    let exactState := state.toExact
+    letI : DecidablePred exactState.memaddrs := by
+      simpa [exactState, PanSemStateFiniteExact.toExact] using ctx.memaddrsDecidable
+    letI : DecidablePred exactState.shMemaddrs := by
+      simpa [exactState, PanSemStateFiniteExact.toExact] using ctx.shMemaddrsDecidable
+    have hvarsExact : panSemExactStateVarsHOLWf exactState.structs exactState := by
+      simpa [panSemStateVarsHOLWf, panSemExactStateVarsHOLWf,
+        PanSemStateFiniteExact.toExact, valuesHOLWf] using hvars
+    let pairExact : Option (PanSemResultExact width) × PanSemStateExact width σ := by assumption
+    have hnonrecursive :
+        evalPanSemNonrecursiveHOLExact (.shMemLoad size kind name address) exactState =
+          some pairExact := by
+      rfl
+    have hInvariant := evalPanSemNonrecursiveHOLExact_shapeInvariant
+      (.shMemLoad size kind name address) exactState hvarsExact
+      pairExact.1 pairExact.2 hnonrecursive
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    simpa [FiniteEvalContext.withState, pairExact, exactState,
+      panSemStateVarsHOLWf, panSemExactStateVarsHOLWf,
+      PanSemStateFiniteExact.toExact, PanSemStateFiniteExact.ofExact,
+      PanSemStateFiniteExact.evalPanSemNonrecursiveHOLFinite,
+      evalPanSemNonrecursiveHOLExact, valuesHOLWf] using hInvariant
+  case case64 =>
+    rename_i pairExactInput
+    rename_i evalExpression
+    rename_i valueExpression
+    rename_i addressExpression
+    rename_i sizeInput
+    rename_i stateInput
+    rename_i contextInput
+    let ctx : FiniteEvalContext width σ := contextInput
+    let state : PanSemStateFiniteExact width σ := stateInput
+    let size : OpSize := sizeInput
+    let value : ExpHOL width := valueExpression
+    let address : ExpHOL width := addressExpression
+    let exactState := state.toExact
+    letI : DecidablePred exactState.memaddrs := by
+      simpa [exactState, PanSemStateFiniteExact.toExact] using ctx.memaddrsDecidable
+    letI : DecidablePred exactState.shMemaddrs := by
+      simpa [exactState, PanSemStateFiniteExact.toExact] using ctx.shMemaddrsDecidable
+    have hvarsExact : panSemExactStateVarsHOLWf exactState.structs exactState := by
+      simpa [panSemStateVarsHOLWf, panSemExactStateVarsHOLWf,
+        PanSemStateFiniteExact.toExact, valuesHOLWf] using hvars
+    let pairExact : Option (PanSemResultExact width) × PanSemStateExact width σ := pairExactInput
+    have hnonrecursive :
+        evalPanSemNonrecursiveHOLExact (.shMemStore size address value) exactState =
+          some pairExact := by
+      rfl
+    have hInvariant := evalPanSemNonrecursiveHOLExact_shapeInvariant
+      (.shMemStore size address value) exactState hvarsExact
+      pairExact.1 pairExact.2 hnonrecursive
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    simpa [FiniteEvalContext.withState, pairExact, exactState,
+      panSemStateVarsHOLWf, panSemExactStateVarsHOLWf,
+      PanSemStateFiniteExact.toExact, PanSemStateFiniteExact.ofExact,
+      PanSemStateFiniteExact.evalPanSemNonrecursiveHOLFinite,
+      evalPanSemNonrecursiveHOLExact, valuesHOLWf] using hInvariant
+  case case34 =>
+    rename_i ihBody
+    rename_i fixedContext
+    rename_i fixed
+    rename_i bodyEval
+    rename_i shapeLookup
+    rename_i hvalid
+    rename_i shape
+    rename_i handlerProgram
+    rename_i handlerVar
+    rename_i handlerId
+    rename_i infoTail
+    rename_i value
+    rename_i postContext
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hlookup
+    rename_i returnShape
+    rename_i callee
+    rename_i body
+    rename_i values
+    rename_i hargs
+    rename_i arguments
+    rename_i function
+    rename_i state
+    rename_i context
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    letI : DecidablePred state.memaddrs := context.memaddrsDecidable
+    have hlookupExact := lookupCodeHOLFinite_eq_some state.code.lookup function hargs
+      body callee returnShape hlookup
+    have hcallee := lookupCodeHOLExact_calleeLocalsWf state arguments hargs function
+      body callee.lookup returnShape values hlookupExact hvars.1 hvars.2
+    have hentryVars : panSemStateVarsHOLWf state.structs entry := by
+      refine ⟨?_, ?_⟩
+      · change valuesHOLWf state.structs callee.lookup
+        exact hcallee
+      · simpa [entry] using hvars.2
+    have hbody := ihBody hentryVars (some (.exception handlerId value)) postContext bodyEval
+    have hbodyVarsAtPost :
+        panSemStateVarsHOLWf postContext.state.structs postContext.state := by
+      rw [hbody.1]
+      exact hbody.2.1
+    have hfixedVars :
+        panSemStateVarsHOLWf fixedContext.state.structs fixedContext.state := by
+      simpa [panSemStateVarsHOLWf, FiniteEvalContext.withState, fixedContext, fixed,
+        fixClockHOLFinite] using hbodyVarsAtPost
+    have hfixedStructs : fixedContext.state.structs = context.state.structs := by
+      calc
+        fixedContext.state.structs = postContext.state.structs := by
+          simp [fixedContext, fixed, fixClockHOLFinite]
+        _ = entryContext.state.structs := hbody.1
+        _ = context.state.structs := by rfl
+    have hfixedVarsAtOrig :
+        panSemStateVarsHOLWf context.state.structs fixedContext.state := by
+      simpa [hfixedStructs] using hfixedVars
+    exact ⟨hfixedStructs, hfixedVarsAtOrig, by simp [panSemResultHOLWf]⟩
+  case case35 =>
+    rename_i ihBody
+    rename_i fixedContext
+    rename_i fixed
+    rename_i bodyEval
+    rename_i hshapeLookup
+    rename_i handlerProgram
+    rename_i handlerVar
+    rename_i handlerId
+    rename_i infoTail
+    rename_i value
+    rename_i postContext
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hlookup
+    rename_i returnShape
+    rename_i callee
+    rename_i body
+    rename_i values
+    rename_i hargs
+    rename_i arguments
+    rename_i function
+    rename_i state
+    rename_i context
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    letI : DecidablePred state.memaddrs := context.memaddrsDecidable
+    have hlookupExact := lookupCodeHOLFinite_eq_some state.code.lookup function hargs
+      body callee returnShape hlookup
+    have hcallee := lookupCodeHOLExact_calleeLocalsWf state arguments hargs function
+      body callee.lookup returnShape values hlookupExact hvars.1 hvars.2
+    have hentryVars : panSemStateVarsHOLWf state.structs entry := by
+      refine ⟨?_, ?_⟩
+      · change valuesHOLWf state.structs callee.lookup
+        exact hcallee
+      · simpa [entry] using hvars.2
+    have hbody := ihBody hentryVars (some (.exception handlerId value)) postContext bodyEval
+    have hbodyVarsAtPost :
+        panSemStateVarsHOLWf postContext.state.structs postContext.state := by
+      rw [hbody.1]
+      exact hbody.2.1
+    have hfixedVars :
+        panSemStateVarsHOLWf fixedContext.state.structs fixedContext.state := by
+      simpa [panSemStateVarsHOLWf, FiniteEvalContext.withState, fixedContext, fixed,
+        fixClockHOLFinite] using hbodyVarsAtPost
+    have hfixedStructs : fixedContext.state.structs = context.state.structs := by
+      calc
+        fixedContext.state.structs = postContext.state.structs := by
+          simp [fixedContext, fixed, fixClockHOLFinite]
+        _ = entryContext.state.structs := hbody.1
+        _ = context.state.structs := by rfl
+    have hfixedVarsAtOrig :
+        panSemStateVarsHOLWf context.state.structs fixedContext.state := by
+      simpa [hfixedStructs] using hfixedVars
+    exact ⟨hfixedStructs, hfixedVarsAtOrig, by simp [panSemResultHOLWf]⟩
+  case case36 =>
+    rename_i ihBody
+    rename_i fixedContext
+    rename_i fixed
+    rename_i bodyEval
+    rename_i hneq
+    rename_i handlerProgram
+    rename_i handlerVar
+    rename_i handlerId
+    rename_i infoTail
+    rename_i value
+    rename_i exceptionId
+    rename_i postContext
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hlookup
+    rename_i returnShape
+    rename_i callee
+    rename_i body
+    rename_i values
+    rename_i hargs
+    rename_i arguments
+    rename_i function
+    rename_i state
+    rename_i context
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    letI : DecidablePred state.memaddrs := context.memaddrsDecidable
+    have hlookupExact := lookupCodeHOLFinite_eq_some state.code.lookup function hargs
+      body callee returnShape hlookup
+    have hcallee := lookupCodeHOLExact_calleeLocalsWf state arguments hargs function
+      body callee.lookup returnShape values hlookupExact hvars.1 hvars.2
+    have hentryVars : panSemStateVarsHOLWf state.structs entry := by
+      refine ⟨?_, ?_⟩
+      · change valuesHOLWf state.structs callee.lookup
+        exact hcallee
+      · simpa [entry] using hvars.2
+    have hbody := ihBody hentryVars (some (.exception exceptionId value)) postContext bodyEval
+    have hbodyVarsAtPost :
+        panSemStateVarsHOLWf postContext.state.structs postContext.state := by
+      rw [hbody.1]
+      exact hbody.2.1
+    have hfixedVars :
+        panSemStateVarsHOLWf fixedContext.state.structs fixedContext.state := by
+      simpa [panSemStateVarsHOLWf, FiniteEvalContext.withState, fixedContext, fixed,
+        fixClockHOLFinite] using hbodyVarsAtPost
+    have hfixedStructs : fixedContext.state.structs = context.state.structs := by
+      calc
+        fixedContext.state.structs = postContext.state.structs := by
+          simp [fixedContext, fixed, fixClockHOLFinite]
+        _ = entryContext.state.structs := hbody.1
+        _ = context.state.structs := by rfl
+    have hfixedVarsAtOrig :
+        panSemStateVarsHOLWf context.state.structs
+          (PanSemStateFiniteExact.emptyLocalsHOLFinite fixedContext.state) := by
+      simpa [hfixedStructs] using
+        panSemStateVarsHOLWf_emptyLocals fixedContext.state hfixedVars
+    have hvalueWf : isWfShapeValueHOLExact context.state.structs value = true := by
+      simpa [panSemResultHOLWf, entryContext, entry] using hbody.2.2
+    exact ⟨hfixedStructs, hfixedVarsAtOrig, by
+      simpa [panSemResultHOLWf] using hvalueWf⟩
+  case case37 =>
+    rename_i ihBody
+    rename_i fixedContext
+    rename_i fixed
+    rename_i bodyEval
+    rename_i hexception
+    rename_i hreturned
+    rename_i hcontinue
+    rename_i hbreak
+    rename_i other
+    rename_i postContext
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hlookup
+    rename_i returnShape
+    rename_i callee
+    rename_i body
+    rename_i values
+    rename_i hargs
+    rename_i arguments
+    rename_i function
+    rename_i info
+    rename_i state
+    rename_i context
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    letI : DecidablePred state.memaddrs := context.memaddrsDecidable
+    have hlookupExact := lookupCodeHOLFinite_eq_some state.code.lookup function hargs
+      body callee returnShape hlookup
+    have hcallee := lookupCodeHOLExact_calleeLocalsWf state arguments hargs function
+      body callee.lookup returnShape values hlookupExact hvars.1 hvars.2
+    have hentryVars : panSemStateVarsHOLWf state.structs entry := by
+      refine ⟨?_, ?_⟩
+      · change valuesHOLWf state.structs callee.lookup
+        exact hcallee
+      · simpa [entry] using hvars.2
+    have hbody := ihBody hentryVars (some other) postContext bodyEval
+    have hbodyVarsAtPost :
+        panSemStateVarsHOLWf postContext.state.structs postContext.state := by
+      rw [hbody.1]
+      exact hbody.2.1
+    have hfixedVars :
+        panSemStateVarsHOLWf fixedContext.state.structs fixedContext.state := by
+      simpa [panSemStateVarsHOLWf, FiniteEvalContext.withState, fixedContext, fixed,
+        fixClockHOLFinite] using hbodyVarsAtPost
+    have hfixedStructs : fixedContext.state.structs = context.state.structs := by
+      calc
+        fixedContext.state.structs = postContext.state.structs := by
+          simp [fixedContext, fixed, fixClockHOLFinite]
+        _ = entryContext.state.structs := hbody.1
+        _ = context.state.structs := by rfl
+    have hfixedVarsAtOrig :
+        panSemStateVarsHOLWf context.state.structs
+          (PanSemStateFiniteExact.emptyLocalsHOLFinite fixedContext.state) := by
+      simpa [hfixedStructs] using
+        panSemStateVarsHOLWf_emptyLocals fixedContext.state hfixedVars
+    have hresultWf : panSemResultHOLWf context.state.structs (some other) := by
+      simpa [entryContext, FiniteEvalContext.withState, entry] using hbody.2.2
+    exact ⟨hfixedStructs, hfixedVarsAtOrig, hresultWf⟩
+  case case30 =>
+    rename_i ihBody
+    rename_i fixedContext
+    rename_i fixed
+    rename_i bodyEval
+    rename_i hshape
+    rename_i value
+    rename_i postContext
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hlookup
+    rename_i returnShape
+    rename_i callee
+    rename_i body
+    rename_i values
+    rename_i hargs
+    rename_i arguments
+    rename_i function
+    rename_i info
+    rename_i state
+    rename_i context
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    letI : DecidablePred state.memaddrs := context.memaddrsDecidable
+    have hlookupExact := lookupCodeHOLFinite_eq_some state.code.lookup function hargs
+      body callee returnShape hlookup
+    have hcallee := lookupCodeHOLExact_calleeLocalsWf state arguments hargs function
+      body callee.lookup returnShape values hlookupExact hvars.1 hvars.2
+    have hentryVars : panSemStateVarsHOLWf state.structs entry := by
+      refine ⟨?_, ?_⟩
+      · change valuesHOLWf state.structs callee.lookup
+        exact hcallee
+      · simpa [entry] using hvars.2
+    have hbody := ihBody hentryVars (some (.returned value)) postContext bodyEval
+    have hbodyVarsAtPost :
+        panSemStateVarsHOLWf postContext.state.structs postContext.state := by
+      rw [hbody.1]
+      exact hbody.2.1
+    have hfixedVars :
+        panSemStateVarsHOLWf fixedContext.state.structs fixedContext.state := by
+      simpa [panSemStateVarsHOLWf, FiniteEvalContext.withState, fixedContext, fixed,
+        fixClockHOLFinite] using hbodyVarsAtPost
+    have hfixedStructs : fixedContext.state.structs = context.state.structs := by
+      calc
+        fixedContext.state.structs = postContext.state.structs := by
+          simp [fixedContext, fixed, fixClockHOLFinite]
+        _ = entryContext.state.structs := hbody.1
+        _ = context.state.structs := by rfl
+    have hfixedVarsAtOrig :
+        panSemStateVarsHOLWf context.state.structs fixedContext.state := by
+      simpa [hfixedStructs] using hfixedVars
+    exact ⟨hfixedStructs, hfixedVarsAtOrig, by simp [panSemResultHOLWf]⟩
+  case case16 =>
+    rename_i ihBody
+    rename_i hbreak
+    rename_i hnone
+    rename_i hcontinue
+    rename_i fixedContext
+    rename_i fixed
+    rename_i bodyEval
+    rename_i postContext
+    rename_i bodyResult
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hnonzero
+    rename_i conditionEval
+    rename_i value
+    rename_i body
+    rename_i condition
+    rename_i state
+    rename_i context
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    have hentryVars : panSemStateVarsHOLWf entryContext.state.structs entryContext.state := by
+      simpa [panSemStateVarsHOLWf, FiniteEvalContext.withState, entryContext, entry,
+        decClockHOLFinite] using hvars
+    have hbody := ihBody hentryVars bodyResult postContext bodyEval
+    have hbodyVarsAtPost :
+        panSemStateVarsHOLWf postContext.state.structs postContext.state := by
+      rw [hbody.1]
+      exact hbody.2.1
+    have hfixedVars :
+        panSemStateVarsHOLWf fixedContext.state.structs fixedContext.state := by
+      simpa [panSemStateVarsHOLWf, FiniteEvalContext.withState, fixedContext, fixed,
+        fixClockHOLFinite] using hbodyVarsAtPost
+    have hbodyResultWf : panSemResultHOLWf context.state.structs bodyResult := by
+      simpa [entryContext, entry, decClockHOLFinite] using hbody.2.2
+    have hfixedResultWf : panSemResultHOLWf context.state.structs fixed.1 := by
+      simpa [fixed, fixClockHOLFinite] using hbodyResultWf
+    have hfixedStructs : fixedContext.state.structs = context.state.structs := by
+      calc
+        fixedContext.state.structs = postContext.state.structs := by
+          simp [fixedContext, fixed, fixClockHOLFinite]
+        _ = entryContext.state.structs := hbody.1
+        _ = context.state.structs := by
+          simp [entryContext, entry, decClockHOLFinite, state]
+    have hfixedVarsAtOrig :
+        panSemStateVarsHOLWf context.state.structs fixedContext.state := by
+      simpa [hfixedStructs] using hfixedVars
+    refine ⟨hfixedStructs, hfixedVarsAtOrig, ?_⟩
+    simpa [fixed, fixClockHOLFinite] using hfixedResultWf
+  case case17 =>
+    intro result output heval
+    rcases heval with ⟨rfl, rfl⟩
+    exact ⟨rfl, hvars, by simp [panSemResultHOLWf]⟩
+  case case18 =>
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    exact ⟨rfl, hvars, by simp [panSemResultHOLWf]⟩
+  case case19 =>
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    exact ⟨rfl, hvars, by simp [panSemResultHOLWf]⟩
+  case case20 =>
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    exact ⟨rfl, hvars, by simp [panSemResultHOLWf]⟩
+  case case21 =>
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    exact ⟨rfl, panSemStateVarsHOLWf_emptyLocals _ hvars,
+      by simp [panSemResultHOLWf]⟩
+  case case22 =>
+    simp
+  case case23 =>
+    rename_i ihBody
+    rename_i fixedContext
+    rename_i fixed
+    rename_i bodyEval
+    rename_i postContext
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hlookup
+    rename_i returnShape
+    rename_i callee
+    rename_i body
+    rename_i values
+    rename_i hargs
+    rename_i function
+    rename_i info
+    rename_i state
+    rename_i stateContext
+    rename_i sourceContext
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    letI : DecidablePred stateContext.memaddrs := sourceContext.memaddrsDecidable
+    have hlookupExact := lookupCodeHOLFinite_eq_some stateContext.code.lookup info hargs
+      body callee returnShape hlookup
+    have hcallee := lookupCodeHOLExact_calleeLocalsWf stateContext function hargs info
+      body callee.lookup returnShape values hlookupExact hvars.1 hvars.2
+    have hentryVars : panSemStateVarsHOLWf stateContext.structs entry := by
+      refine ⟨?_, ?_⟩
+      · change valuesHOLWf stateContext.structs callee.lookup
+        exact hcallee
+      · simpa [entry] using hvars.2
+    have hbody := ihBody hentryVars none postContext bodyEval
+    have hbodyVarsAtPost :
+        panSemStateVarsHOLWf postContext.state.structs postContext.state := by
+      rw [hbody.1]
+      exact hbody.2.1
+    have hfixedVars :
+        panSemStateVarsHOLWf fixedContext.state.structs fixedContext.state := by
+      simpa [panSemStateVarsHOLWf, FiniteEvalContext.withState, fixedContext, fixed,
+        fixClockHOLFinite] using hbodyVarsAtPost
+    have hfixedStructs : fixedContext.state.structs = sourceContext.state.structs := by
+      calc
+        fixedContext.state.structs = postContext.state.structs := by
+          simp [fixedContext, fixed, fixClockHOLFinite]
+        _ = entryContext.state.structs := hbody.1
+        _ = sourceContext.state.structs := rfl
+    have hfixedVarsAtOrig :
+        panSemStateVarsHOLWf sourceContext.state.structs fixedContext.state := by
+      simpa [hfixedStructs] using hfixedVars
+    exact ⟨hfixedStructs, hfixedVarsAtOrig, by simp [panSemResultHOLWf]⟩
+  case case24 =>
+    rename_i ihBody
+    rename_i fixedContext
+    rename_i fixed
+    rename_i bodyEval
+    rename_i postContext
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hlookup
+    rename_i returnShape
+    rename_i callee
+    rename_i body
+    rename_i values
+    rename_i hargs
+    rename_i function
+    rename_i info
+    rename_i state
+    rename_i stateContext
+    rename_i sourceContext
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    letI : DecidablePred stateContext.memaddrs := sourceContext.memaddrsDecidable
+    have hlookupExact := lookupCodeHOLFinite_eq_some stateContext.code.lookup info hargs
+      body callee returnShape hlookup
+    have hcallee := lookupCodeHOLExact_calleeLocalsWf stateContext function hargs info
+      body callee.lookup returnShape values hlookupExact hvars.1 hvars.2
+    have hentryVars : panSemStateVarsHOLWf stateContext.structs entry := by
+      refine ⟨?_, ?_⟩
+      · change valuesHOLWf stateContext.structs callee.lookup
+        exact hcallee
+      · simpa [entry] using hvars.2
+    have hbody := ihBody hentryVars (some .break) postContext bodyEval
+    have hbodyVarsAtPost :
+        panSemStateVarsHOLWf postContext.state.structs postContext.state := by
+      rw [hbody.1]
+      exact hbody.2.1
+    have hfixedVars :
+        panSemStateVarsHOLWf fixedContext.state.structs fixedContext.state := by
+      simpa [panSemStateVarsHOLWf, FiniteEvalContext.withState, fixedContext, fixed,
+        fixClockHOLFinite] using hbodyVarsAtPost
+    have hfixedStructs : fixedContext.state.structs = sourceContext.state.structs := by
+      calc
+        fixedContext.state.structs = postContext.state.structs := by
+          simp [fixedContext, fixed, fixClockHOLFinite]
+        _ = entryContext.state.structs := hbody.1
+        _ = sourceContext.state.structs := rfl
+    have hfixedVarsAtOrig :
+        panSemStateVarsHOLWf sourceContext.state.structs fixedContext.state := by
+      simpa [hfixedStructs] using hfixedVars
+    exact ⟨hfixedStructs, hfixedVarsAtOrig, by simp [panSemResultHOLWf]⟩
+  case case25 =>
+    rename_i ihBody
+    rename_i fixedContext
+    rename_i fixed
+    rename_i bodyEval
+    rename_i postContext
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hlookup
+    rename_i returnShape
+    rename_i callee
+    rename_i body
+    rename_i values
+    rename_i hargs
+    rename_i function
+    rename_i info
+    rename_i state
+    rename_i stateContext
+    rename_i sourceContext
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    letI : DecidablePred stateContext.memaddrs := sourceContext.memaddrsDecidable
+    have hlookupExact := lookupCodeHOLFinite_eq_some stateContext.code.lookup info hargs
+      body callee returnShape hlookup
+    have hcallee := lookupCodeHOLExact_calleeLocalsWf stateContext function hargs info
+      body callee.lookup returnShape values hlookupExact hvars.1 hvars.2
+    have hentryVars : panSemStateVarsHOLWf stateContext.structs entry := by
+      refine ⟨?_, ?_⟩
+      · change valuesHOLWf stateContext.structs callee.lookup
+        exact hcallee
+      · simpa [entry] using hvars.2
+    have hbody := ihBody hentryVars (some .continue) postContext bodyEval
+    have hbodyVarsAtPost :
+        panSemStateVarsHOLWf postContext.state.structs postContext.state := by
+      rw [hbody.1]
+      exact hbody.2.1
+    have hfixedVars :
+        panSemStateVarsHOLWf fixedContext.state.structs fixedContext.state := by
+      simpa [panSemStateVarsHOLWf, FiniteEvalContext.withState, fixedContext, fixed,
+        fixClockHOLFinite] using hbodyVarsAtPost
+    have hfixedStructs : fixedContext.state.structs = sourceContext.state.structs := by
+      calc
+        fixedContext.state.structs = postContext.state.structs := by
+          simp [fixedContext, fixed, fixClockHOLFinite]
+        _ = entryContext.state.structs := hbody.1
+        _ = sourceContext.state.structs := rfl
+    have hfixedVarsAtOrig :
+        panSemStateVarsHOLWf sourceContext.state.structs fixedContext.state := by
+      simpa [hfixedStructs] using hfixedVars
+    exact ⟨hfixedStructs, hfixedVarsAtOrig, by simp [panSemResultHOLWf]⟩
+  case case26 =>
+    rename_i ihBody
+    rename_i fixedContext
+    rename_i fixed
+    rename_i bodyEval
+    rename_i hshape
+    rename_i value
+    rename_i postContext
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hlookup
+    rename_i returnShape
+    rename_i callee
+    rename_i body
+    rename_i values
+    rename_i hargs
+    rename_i arguments
+    rename_i function
+    rename_i state
+    rename_i stateContext
+    rename_i sourceContext
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    letI : DecidablePred state.memaddrs := stateContext.memaddrsDecidable
+    have hlookupExact := lookupCodeHOLFinite_eq_some state.code.lookup function hargs
+      body callee returnShape hlookup
+    have hcallee := lookupCodeHOLExact_calleeLocalsWf state arguments hargs function
+      body callee.lookup returnShape values hlookupExact hvars.1 hvars.2
+    have hentryVars : panSemStateVarsHOLWf state.structs entry := by
+      refine ⟨?_, ?_⟩
+      · change valuesHOLWf state.structs callee.lookup
+        exact hcallee
+      · simpa [entry] using hvars.2
+    have hbody := ihBody hentryVars (some (.returned value)) postContext bodyEval
+    have hbodyVarsAtPost :
+        panSemStateVarsHOLWf postContext.state.structs postContext.state := by
+      rw [hbody.1]
+      exact hbody.2.1
+    have hfixedVars :
+        panSemStateVarsHOLWf fixedContext.state.structs fixedContext.state := by
+      simpa [panSemStateVarsHOLWf, FiniteEvalContext.withState, fixedContext, fixed,
+        fixClockHOLFinite] using hbodyVarsAtPost
+    have hfixedStructs : fixedContext.state.structs = stateContext.state.structs := by
+      calc
+        fixedContext.state.structs = postContext.state.structs := by
+          simp [fixedContext, fixed, fixClockHOLFinite]
+        _ = entryContext.state.structs := hbody.1
+        _ = stateContext.state.structs := by rfl
+    have hfixedVarsAtOrig :
+        panSemStateVarsHOLWf stateContext.state.structs fixedContext.state := by
+      simpa [hfixedStructs] using hfixedVars
+    have houtputVars :
+        panSemStateVarsHOLWf stateContext.state.structs
+          (PanSemStateFiniteExact.emptyLocalsHOLFinite fixedContext.state) := by
+      simpa [hfixedStructs] using
+        panSemStateVarsHOLWf_emptyLocals fixedContext.state hfixedVars
+    have hvalueWf : isWfShapeValueHOLExact stateContext.state.structs value = true := by
+      simpa [panSemResultHOLWf, entryContext, entry, state] using hbody.2.2
+    refine ⟨?_, ?_, ?_⟩
+    · simp [FiniteEvalContext.withState, PanSemStateFiniteExact.emptyLocalsHOLFinite,
+        hfixedStructs]
+    · simpa [FiniteEvalContext.withState] using houtputVars
+    · simpa [panSemResultHOLWf] using hvalueWf
+  case case27 =>
+    rename_i ihBody
+    rename_i fixedContext
+    rename_i fixed
+    rename_i bodyEval
+    rename_i infoTail
+    rename_i hshape
+    rename_i value
+    rename_i postContext
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hlookup
+    rename_i returnShape
+    rename_i callee
+    rename_i body
+    rename_i values
+    rename_i hargs
+    rename_i arguments
+    rename_i function
+    rename_i state
+    rename_i stateContext
+    rename_i sourceContext
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    letI : DecidablePred state.memaddrs := stateContext.memaddrsDecidable
+    have hlookupExact := lookupCodeHOLFinite_eq_some state.code.lookup function hargs
+      body callee returnShape hlookup
+    have hcallee := lookupCodeHOLExact_calleeLocalsWf state arguments hargs function
+      body callee.lookup returnShape values hlookupExact hvars.1 hvars.2
+    have hentryVars : panSemStateVarsHOLWf state.structs entry := by
+      refine ⟨?_, ?_⟩
+      · change valuesHOLWf state.structs callee.lookup
+        exact hcallee
+      · simpa [entry] using hvars.2
+    have hbody := ihBody hentryVars (some (.returned value)) postContext bodyEval
+    have hbodyVarsAtPost :
+        panSemStateVarsHOLWf postContext.state.structs postContext.state := by
+      rw [hbody.1]
+      exact hbody.2.1
+    have hfixedVars :
+        panSemStateVarsHOLWf fixedContext.state.structs fixedContext.state := by
+      simpa [panSemStateVarsHOLWf, FiniteEvalContext.withState, fixedContext, fixed,
+        fixClockHOLFinite] using hbodyVarsAtPost
+    have hfixedStructs : fixedContext.state.structs = stateContext.state.structs := by
+      calc
+        fixedContext.state.structs = postContext.state.structs := by
+          simp [fixedContext, fixed, fixClockHOLFinite]
+        _ = entryContext.state.structs := hbody.1
+        _ = stateContext.state.structs := by rfl
+    have hrestoredVars :
+        panSemStateVarsHOLWf stateContext.state.structs
+          { fixedContext.state with locals := state.locals } := by
+      refine ⟨?_, ?_⟩
+      · simpa [hfixedStructs] using hvars.1
+      · simpa [hfixedStructs] using hfixedVars.2
+    refine ⟨?_, ?_, by simp [panSemResultHOLWf]⟩
+    · simp [FiniteEvalContext.withState, hfixedStructs]
+    · simpa [FiniteEvalContext.withState, hfixedStructs] using hrestoredVars
+  case case28 =>
+    rename_i ihBody
+    rename_i fixedContext
+    rename_i fixed
+    rename_i hbody
+    rename_i hvalid
+    rename_i infoTail
+    rename_i name
+    rename_i kind
+    rename_i hreturn
+    rename_i value
+    rename_i postContext
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hlookup
+    rename_i returnShape
+    rename_i calleeLocals
+    rename_i body
+    rename_i hargs
+    rename_i values
+    rename_i arguments
+    rename_i function
+    rename_i state
+    rename_i context
+    intro result output heval
+    letI : DecidablePred state.memaddrs := context.memaddrsDecidable
+    have hentryStruct : entryContext.state.structs = state.structs := rfl
+    have hlookupExact := lookupCodeHOLFinite_eq_some state.code.lookup function values
+      body calleeLocals returnShape hlookup
+    have hcallee := lookupCodeHOLExact_calleeLocalsWf state arguments values function
+      body calleeLocals.lookup returnShape hargs hlookupExact hvars.1 hvars.2
+    have hentryVars : panSemStateVarsHOLWf state.structs entry := by
+      refine ⟨?_, ?_⟩
+      · change valuesHOLWf state.structs calleeLocals.lookup
+        exact hcallee
+      · simpa [entry] using hvars.2
+    have hbodyInvariant := ihBody hentryVars (some (.returned value)) postContext hbody
+    have hbodyPayload : isWfShapeValueHOLExact state.structs value = true := by
+      simpa [panSemResultHOLWf, hentryStruct] using hbodyInvariant.2.2
+    have hfixedStruct : fixed.2.structs = state.structs := by
+      simpa [fixed, fixClockHOLFinite, hentryStruct] using hbodyInvariant.1
+    have hfixedLocalWf : valuesHOLWf state.structs fixed.2.locals.lookup := by
+      simpa [fixed, fixClockHOLFinite, hentryStruct] using
+        hbodyInvariant.2.1.1
+    have hfixedGlobalWf : valuesHOLWf state.structs fixed.2.globals.lookup := by
+      simpa [fixed, fixClockHOLFinite, hentryStruct] using
+        hbodyInvariant.2.1.2
+    let callerState : PanSemStateFiniteExact width σ :=
+      { fixedContext.state with locals := state.locals }
+    have hcallerStruct : callerState.structs = state.structs := by
+      simpa [callerState, fixedContext, FiniteEvalContext.withState] using hfixedStruct
+    have hcallerVars : panSemStateVarsHOLWf callerState.structs callerState := by
+      refine ⟨?_, ?_⟩
+      · simpa [callerState, fixedContext, FiniteEvalContext.withState, hfixedStruct] using hvars.1
+      · simpa [callerState, fixedContext, FiniteEvalContext.withState, hfixedStruct] using
+          hfixedGlobalWf
+    have hbodyPayloadCaller :
+        isWfShapeValueHOLExact callerState.structs value = true := by
+      simpa [callerState, fixedContext, FiniteEvalContext.withState, hfixedStruct] using
+        hbodyPayload
+    have hsetVars := panSemStateVarsHOLWf_setKvar callerState kind name value
+      hcallerVars hbodyPayloadCaller
+    have hpair : (none, fixedContext.withState
+          (PanSemStateFiniteExact.setKvarHOLFinite kind name value callerState)
+          (by cases kind <;> rfl) (by cases kind <;> rfl)) = (result, output) := by
+      exact Option.some.inj heval
+    have hresult : none = result := congrArg Prod.fst hpair
+    subst result
+    have houtput : fixedContext.withState
+        (PanSemStateFiniteExact.setKvarHOLFinite kind name value callerState)
+        (by cases kind <;> rfl) (by cases kind <;> rfl) = output := congrArg Prod.snd hpair
+    rw [← houtput]
+    simp only [FiniteEvalContext.withState_state]
+    constructor
+    · calc
+        (PanSemStateFiniteExact.setKvarHOLFinite kind name value callerState).structs =
+            callerState.structs := by cases kind <;> rfl
+        _ = context.state.structs := by simpa using hcallerStruct
+    · constructor
+      · have hsetVarsContext :
+            panSemStateVarsHOLWf context.state.structs
+              (PanSemStateFiniteExact.setKvarHOLFinite kind name value callerState) := by
+          rw [← hcallerStruct]
+          exact hsetVars
+        exact hsetVarsContext
+      · simp [panSemResultHOLWf]
+  case case29 =>
+    rename_i ihBody
+    rename_i fixedContext
+    rename_i fixed
+    rename_i bodyEval
+    rename_i hvalid
+    rename_i infoTail
+    rename_i name
+    rename_i kind
+    rename_i hshape
+    rename_i value
+    rename_i postContext
+    rename_i entryContext
+    rename_i entry
+    rename_i hclock
+    rename_i hlookup
+    rename_i returnShape
+    rename_i callee
+    rename_i body
+    rename_i values
+    rename_i hargs
+    rename_i arguments
+    rename_i function
+    rename_i state
+    rename_i context
+    intro result output heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    letI : DecidablePred state.memaddrs := context.memaddrsDecidable
+    have hlookupExact := lookupCodeHOLFinite_eq_some state.code.lookup function hargs
+      body callee returnShape hlookup
+    have hcallee := lookupCodeHOLExact_calleeLocalsWf state arguments hargs function
+      body callee.lookup returnShape values hlookupExact hvars.1 hvars.2
+    have hentryVars : panSemStateVarsHOLWf state.structs entry := by
+      refine ⟨?_, ?_⟩
+      · change valuesHOLWf state.structs callee.lookup
+        exact hcallee
+      · simpa [entry] using hvars.2
+    have hbody := ihBody hentryVars (some (.returned value)) postContext bodyEval
+    have hbodyVarsAtPost :
+        panSemStateVarsHOLWf postContext.state.structs postContext.state := by
+      rw [hbody.1]
+      exact hbody.2.1
+    have hfixedVars :
+        panSemStateVarsHOLWf fixedContext.state.structs fixedContext.state := by
+      simpa [panSemStateVarsHOLWf, FiniteEvalContext.withState, fixedContext, fixed,
+        fixClockHOLFinite] using hbodyVarsAtPost
+    have hfixedStructs : fixedContext.state.structs = context.state.structs := by
+      calc
+        fixedContext.state.structs = postContext.state.structs := by
+          simp [fixedContext, fixed, fixClockHOLFinite]
+        _ = entryContext.state.structs := hbody.1
+        _ = context.state.structs := by rfl
+    have hfixedVarsAtOrig :
+        panSemStateVarsHOLWf context.state.structs fixedContext.state := by
+      simpa [hfixedStructs] using hfixedVars
+    exact ⟨hfixedStructs, hfixedVarsAtOrig, by simp [panSemResultHOLWf]⟩
+  case case65 =>
+    intro result output heval
+    simp_all
+  case case66 =>
+    let ctx : FiniteEvalContext width σ := by assumption
+    letI : DecidablePred ctx.state.memaddrs := ctx.memaddrsDecidable
+    letI : DecidablePred ctx.state.shMemaddrs := ctx.shMemaddrsDecidable
+    let other : ProgHOL width := by assumption
+    let pair : Option (PanSemResultExact width) × PanSemStateFiniteExact width σ := by
+      assumption
+    have hnonrec : PanSemStateFiniteExact.evalPanSemNonrecursiveHOLFinite
+        ctx.state other = some pair := by assumption
+    intro result output heval
+    have hInvariant := evalPanSemNonrecursiveHOLFinite_shapeInvariant
+      ctx.state hvars other pair.1 pair.2 hnonrec
+    simp only [FiniteEvalContext.withState] at heval
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    exact hInvariant
 end PanSemStateFiniteExact
 
 end Flapjack

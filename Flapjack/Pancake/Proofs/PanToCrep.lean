@@ -2016,25 +2016,19 @@ theorem bindPanValueParametersLocalsRelOfPanSem
     whole-program evaluation, then `locals_rel_wf_shape` and the HOL
     `state_rel` fields to establish its premises.
 
-    There is no exact Lean counterpart here. `localsRelWfShape` below only
-    proves well-formedness for a value already present in related locals; the
-    state-based evaluator helper below proves well-formedness of expression
-    results over the production evaluator, not the Return/Exception result of
-    HOL `evaluate`. Those helpers use production `PanSemState`/
-    `CrepRuntimeState`, `PanValue`/`Shape`, and String-keyed
-    `PanToCrepProofContext`/`localsRel`. In particular, production source
-    memory is optional `PanValue` while HOL source memory is total
-    `word_lab`, production state/relations use String identifiers, and the
-    exact HOL value/shape carriers are `ValueHOL`/`ShapeHOL`. The complete
-    finite-support HOL evaluator and exact Pan-to-Crep state/local relations
-    are still missing. Keep these helpers untagged as support, not as ports of
-    `evaluate_shape_invariant_ret_inst`. Its faithful replacement remains open
-    on bead `flapjack-4ac.5.83`. The expression-level prerequisite
-    `eval_is_wf_shape_v` is now tagged over the reviewed finite-map carrier in
-    `PanProps/EvalInvariant.lean`; the complete recursive program invariant is
-    still missing. Current theorem-path blockers include the exact lookup-code
-    invariant `.4.66.1`, finite-support program evaluation, and exact
-    PanLang/Pan-to-Crep carriers.
+    An untagged finite-support composition now exists in
+    `PanToCrep/StateRelFiniteSupport.lean`:
+    `panToCrepFiniteEvaluateShapeInvariantRetInst` combines the finite-context
+    recursive evaluator invariant with the reviewed Pan-to-Crep state/local
+    adapters and proves the same Return/Exception payload conclusion. It still
+    is not an exact HOL port: its successful-evaluation premise carries the
+    assembly marker `some (some result, output)`, and the exact state/local
+    adapters span separate PanSem and CrepSem carriers. The current finite-map
+    qualifier cannot certify that multi-carrier statement. Keep the theorem
+    untagged until the evaluator result shape and carrier qualification match
+    HOL; its faithful replacement remains open on bead `flapjack-4ac.5.83`.
+    The expression-level prerequisite `eval_is_wf_shape_v` is tagged over the
+    reviewed finite-map carrier in `PanProps/EvalInvariant.lean`.
 
     Separate source-reviewed disposition for HOL
     `evaluate_shape_invariant_ret_inst2` (`pan_to_crepProofScript.sml:3031-3044`):
