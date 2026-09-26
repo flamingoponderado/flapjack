@@ -1800,6 +1800,7 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         ("Flapjack/Compiler/Encoders/Asm.lean", "asmFpRegOkExact"),
         ("Flapjack/Compiler/Encoders/Asm.lean", "asmRegImmOkExact"),
         ("Flapjack/Compiler/Encoders/Asm.lean", "asmFpOkExact"),
+        ("Flapjack/Compiler/Encoders/Asm.lean", "asmCmpOkExact"),
         ("Flapjack/Compiler/Encoders/Asm.lean", "AsmConfigExact"),
         ("Flapjack/Pancake/Proofs/PanSimp.lean", "mapSndFEq"),
         ("Flapjack/Pancake/Proofs/PanSimp.lean", "expIdsHOL_retToTailHOL_eq"),

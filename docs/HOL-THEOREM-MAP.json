@@ -12189,5 +12189,12 @@
     "lean_name": "asmFpOkExact",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.6.1.2): exact clause-for-clause port of HOL fp_ok_def (asmScript.sml:231-268) over the exact AsmConfigExact carrier (HolAsm encode, BitVec8 output) and the exact HolFp carrier; reg_ok/fp_reg_ok render as asmRegOkExact/asmFpRegOkExact, dimindex(:'a)=32 as width==32, ISA equality as AsmArchitecture equality; no extra hypotheses or side conditions beyond [NeZero width]."
+  },  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmScript.sml",
+    "hol_name": "cmp_ok_def",
+    "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
+    "lean_name": "asmCmpOkExact",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.6.1.2): HOL asmScript.sml:270-272 cmp_ok cmp r ri c <=> reg_ok r c /\\ reg_imm_ok (INR cmp) ri c, ported clause-for-clause over the exact AsmConfigExact carrier and the exact HolRegImm ('a reg_imm) with asmRegOkExact/asmRegImmOkExact; Sum.inr operator renders INR cmp."
   }
 ]

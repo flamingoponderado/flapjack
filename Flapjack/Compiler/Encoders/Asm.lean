@@ -411,6 +411,17 @@ def asmFpOkExact {width : Nat} [NeZero width] (operation : WordLangFp)
     | .fpFromInt destination source =>
         asmFpRegOkExact destination config && asmFpRegOkExact source config
 
+/-- HOL `asmScript$cmp_ok_def` (`asmScript.sml:270-272`):
+`cmp_ok cmp r ri c <=> reg_ok r c /\ reg_imm_ok (INR cmp) ri c`.
+Exact port over the exact `AsmConfigExact` carrier and the exact `HolRegImm`
+(`'a reg_imm`); `reg_ok`/`reg_imm_ok` become `asmRegOkExact`/`asmRegImmOkExact`
+and `INR cmp` is `Sum.inr operator`.  The width-general executed `asmCmpOk`
+remains the untagged production form.  Bead flapjack-4ac.6.1.2. -/
+@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "cmp_ok_def"]
+def asmCmpOkExact {width : Nat} [NeZero width] (operator : Cmp) (register : Nat)
+    (right : HolRegImm width) (config : AsmConfigExact width) : Bool :=
+  asmRegOkExact register config && asmRegImmOkExact (.inr operator) right config
+
 /--
     Not an exact HOL port: this Lean declaration quantifies `width : Nat`
     without `[NeZero width]`, so `BitVec 0` is admitted, whereas HOL `word`
