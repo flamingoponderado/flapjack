@@ -359,6 +359,58 @@ def asmRegImmOkExact {width : Nat} [NeZero width] (operator : Sum BinOp Cmp)
   | .imm value =>
       (operator == .inl .xor && value == -1) || config.validImm operator value
 
+/-- HOL `asmScript$fp_ok_def` (`asmScript.sml:231-268`), exact port over the
+exact `AsmConfigExact` carrier and the exact `HolFp` carrier; `reg_ok`/
+`fp_reg_ok` become `asmRegOkExact`/`asmFpRegOkExact`.  Bead
+flapjack-4ac.6.1.2. -/
+@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "fp_ok_def"]
+def asmFpOkExact {width : Nat} [NeZero width] (operation : WordLangFp)
+    (config : AsmConfigExact width) : Bool :=
+  match operation with
+    | .fpLess destination left right =>
+        asmRegOkExact destination config && asmFpRegOkExact left config && asmFpRegOkExact right config
+    | .fpLessEqual destination left right =>
+        asmRegOkExact destination config && asmFpRegOkExact left config && asmFpRegOkExact right config
+    | .fpEqual destination left right =>
+        asmRegOkExact destination config && asmFpRegOkExact left config && asmFpRegOkExact right config
+    | .fpAbs destination source =>
+        (!config.twoRegArith || !(destination == source)) &&
+          asmFpRegOkExact destination config && asmFpRegOkExact source config
+    | .fpNeg destination source =>
+        (!config.twoRegArith || !(destination == source)) &&
+          asmFpRegOkExact destination config && asmFpRegOkExact source config
+    | .fpSqrt destination source =>
+        asmFpRegOkExact destination config && asmFpRegOkExact source config
+    | .fpAdd destination left right =>
+        (!config.twoRegArith || destination == left) && asmFpRegOkExact destination config &&
+          asmFpRegOkExact left config && asmFpRegOkExact right config
+    | .fpSub destination left right =>
+        (!config.twoRegArith || destination == left) && asmFpRegOkExact destination config &&
+          asmFpRegOkExact left config && asmFpRegOkExact right config
+    | .fpMul destination left right =>
+        (!config.twoRegArith || destination == left) && asmFpRegOkExact destination config &&
+          asmFpRegOkExact left config && asmFpRegOkExact right config
+    | .fpDiv destination left right =>
+        (!config.twoRegArith || destination == left) && asmFpRegOkExact destination config &&
+          asmFpRegOkExact left config && asmFpRegOkExact right config
+    | .fpFma destination left right =>
+        (config.isa == .armv7) && 2 < config.fpRegCount && asmFpRegOkExact destination config &&
+          asmFpRegOkExact left config && asmFpRegOkExact right config
+    | .fpMov destination source =>
+        asmFpRegOkExact destination config && asmFpRegOkExact source config
+    | .fpMovToReg destinationInteger second sourceFloat =>
+        asmRegOkExact destinationInteger config &&
+          (!(width == 32) || (!(destinationInteger == second) && asmRegOkExact second config)) &&
+          asmFpRegOkExact sourceFloat config
+    | .fpMovFromReg destinationFloat destinationInteger second =>
+        asmRegOkExact destinationInteger config &&
+          (!(width == 32) || (!(destinationInteger == second) && asmRegOkExact second config)) &&
+          asmFpRegOkExact destinationFloat config
+    | .fpToInt destination source =>
+        asmFpRegOkExact destination config && asmFpRegOkExact source config
+    | .fpFromInt destination source =>
+        asmFpRegOkExact destination config && asmFpRegOkExact source config
+
 /--
     Not an exact HOL port: this Lean declaration quantifies `width : Nat`
     without `[NeZero width]`, so `BitVec 0` is admitted, whereas HOL `word`
