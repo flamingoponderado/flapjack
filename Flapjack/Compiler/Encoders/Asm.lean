@@ -484,6 +484,62 @@ def asmCmpOkExact {width : Nat} [NeZero width] (operator : Cmp) (register : Nat)
     (right : HolRegImm width) (config : AsmConfigExact width) : Bool :=
   asmRegOkExact register config && asmRegImmOkExact (.inr operator) right config
 
+/-- HOL `asmScript$arith_ok_def` (`asmScript.sml:191-229`), exact port over the
+exact `AsmConfigExact` carrier and the exact `HolArith`/`HolRegImm` (`'a arith`/
+`'a reg_imm`).  `reg_ok`/`reg_imm_ok` become `asmRegOkExact`/`asmRegImmOkExact`,
+`INL b` is `Sum.inl operator`, `dimindex(:'a)` is `width`, and `c.ISA = x86_64`
+is `config.isa == .x86_64`.  The width-general executed `asmArithOk` remains the
+untagged production form.  Bead flapjack-4ac.6.1.2. -/
+@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "arith_ok_def"]
+def asmArithOkExact {width : Nat} [NeZero width] (operation : HolArith width)
+    (config : AsmConfigExact width) : Bool :=
+  match operation with
+  | .binop operator destination source right =>
+      (!config.twoRegArith || destination == source ||
+          (operator == .or && (match right with
+            | .reg register => register == source
+            | .imm _ => false))) &&
+        asmRegOkExact destination config && asmRegOkExact source config &&
+        asmRegImmOkExact (.inl operator) right config
+  | .shift operator destination source right =>
+      (!config.twoRegArith || destination == source) &&
+        asmRegOkExact destination config && asmRegOkExact source config &&
+        (match right with
+         | .imm value => (!(value == 0) || operator == .lsl) && value.toNat < width
+         | .reg register =>
+             asmRegOkExact register config && (!(config.isa == .x86_64) || register == 1))
+  | .div destination dividend divisor =>
+      asmRegOkExact destination config && asmRegOkExact dividend config &&
+        asmRegOkExact divisor config &&
+        (config.isa == .armv8 || config.isa == .mips || config.isa == .riscv)
+  | .longMul destinationLeft destinationRight sourceLeft sourceRight =>
+      asmRegOkExact destinationLeft config && asmRegOkExact destinationRight config &&
+        asmRegOkExact sourceLeft config && asmRegOkExact sourceRight config &&
+        (!(config.isa == .x86_64) ||
+          (destinationLeft == 2 && destinationRight == 0 && sourceLeft == 0)) &&
+        (!(config.isa == .armv7) || !(destinationLeft == destinationRight)) &&
+        (!(config.isa == .armv8 || config.isa == .riscv || config.isa == .ag32) ||
+          (!(destinationLeft == sourceLeft) && !(destinationLeft == sourceRight)))
+  | .longDiv destinationLeft destinationRight sourceLeft sourceRight quotient =>
+      (config.isa == .x86_64) && destinationLeft == 0 && destinationRight == 2 &&
+        sourceLeft == 2 && sourceRight == 0 && asmRegOkExact quotient config
+  | .addCarry destination result sourceLeft sourceRight =>
+      (!config.twoRegArith || destination == result) &&
+        asmRegOkExact destination config && asmRegOkExact result config &&
+        asmRegOkExact sourceLeft config && asmRegOkExact sourceRight config &&
+        (!(config.isa == .mips || config.isa == .riscv) ||
+          (!(destination == sourceLeft) && !(destination == sourceRight)))
+  | .addOverflow destination result sourceLeft sourceRight =>
+      (!config.twoRegArith || destination == result) &&
+        asmRegOkExact destination config && asmRegOkExact result config &&
+        asmRegOkExact sourceLeft config && asmRegOkExact sourceRight config &&
+        (!(config.isa == .mips || config.isa == .riscv) || !(destination == sourceLeft))
+  | .subOverflow destination result sourceLeft sourceRight =>
+      (!config.twoRegArith || destination == result) &&
+        asmRegOkExact destination config && asmRegOkExact result config &&
+        asmRegOkExact sourceLeft config && asmRegOkExact sourceRight config &&
+        (!(config.isa == .mips || config.isa == .riscv) || !(destination == sourceLeft))
+
 /--
     Not an exact HOL port: this Lean declaration quantifies `width : Nat`
     without `[NeZero width]`, so `BitVec 0` is admitted, whereas HOL `word`
