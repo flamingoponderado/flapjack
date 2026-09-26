@@ -105,6 +105,17 @@ structure HolRef where
       finite-map operation/result. This is a representation statement only; it
       does not authorize changed hypotheses, results, or word-model differences. -/
   fmapAsFiniteSupportResult : Bool := false
+  /-- Multi-carrier finite-map relation entries, each written `Carrier.field`.
+      Used when a relation spans more than one carrier structure (for example a
+      PanSem state and a CrepSem state), which the single-owner
+      `fmapAsFiniteSupport` qualifier cannot express. Every named carrier must
+      be a structure declared in the same module or reachable through its
+      imports, the field must use `HolFiniteMapExact`, the tagged declaration
+      must name every carrier it relates, and the module must contain a checked
+      carrier-specific witness `holFmapAsFiniteSupportRelationWitness_<carrier>`
+      stating a real `toX`/`ofX` roundtrip with its broad counterpart. This does
+      not relax the single-owner gate. -/
+  fmapAsFiniteSupportRelation : Array (String × String) := #[]
   deriving Inhabited, Repr, BEq
 
 open Lean
@@ -115,11 +126,13 @@ syntax "(" "names_as_string" ":=" "[" ident,+ "]" ")" : holQualifier
 syntax "(" "names_as_string_boundary" ":=" "[" ident,+ "]" ")" : holQualifier
 syntax "(" "fmap_as_finite_support" ":=" "[" ident,+ "]" ")" : holQualifier
 syntax "(" "fmap_as_finite_support_result" ")" : holQualifier
+syntax "(" "fmap_as_finite_support_relation" ":=" "[" ident,* "]" ")" : holQualifier
 syntax (name := hol) "hol " str str (num)? holQualifier* : attr
 
 private def checkedHolRef (path name : String) (line? : Option Nat := none)
     (listAsArray namesAsString namesAsStringBoundary fmapAsFiniteSupport : Array String := #[])
-    (fmapAsFiniteSupportResult : Bool := false) : CoreM HolRef := do
+    (fmapAsFiniteSupportResult : Bool := false)
+    (fmapAsFiniteSupportRelation : Array (String × String) := #[]) : CoreM HolRef := do
   unless path.startsWith "cakeml/" && path.endsWith ".sml" do
     throwError "@[hol]: path must be a repository-relative `cakeml/...Script.sml` file, got {path}"
   if name.isEmpty || name.any Char.isWhitespace then
@@ -134,20 +147,32 @@ private def checkedHolRef (path name : String) (line? : Option Nat := none)
     throwError "@[hol]: names_as_string_boundary identifiers must also appear in names_as_string"
   if fmapAsFiniteSupport.toList.eraseDups.length != fmapAsFiniteSupport.size then
     throwError "@[hol]: fmap_as_finite_support fields must be distinct"
-  pure { path, name, line?, listAsArray, namesAsString, namesAsStringBoundary, fmapAsFiniteSupport, fmapAsFiniteSupportResult }
+  if fmapAsFiniteSupportRelation.toList.eraseDups.length != fmapAsFiniteSupportRelation.size then
+    throwError "@[hol]: fmap_as_finite_support_relation entries must be distinct"
+  pure { path, name, line?, listAsArray, namesAsString, namesAsStringBoundary, fmapAsFiniteSupport, fmapAsFiniteSupportResult, fmapAsFiniteSupportRelation }
 
-private def parseHolQualifier (stx : Syntax) : CoreM (String × Array String × Bool) := do
+private def parseHolQualifier (stx : Syntax) : CoreM (String × Array String × Bool × Array (String × String)) := do
   match stx with
   | `(holQualifier| (list_as_array := [$fields:ident,*])) =>
-      pure ("list_as_array", fields.getElems.map (fun field => field.getId.eraseMacroScopes.toString), false)
+      pure ("list_as_array", fields.getElems.map (fun field => field.getId.eraseMacroScopes.toString), false, #[])
   | `(holQualifier| (names_as_string := [$names:ident,*])) =>
-      pure ("names_as_string", names.getElems.map (fun name => name.getId.eraseMacroScopes.toString), false)
+      pure ("names_as_string", names.getElems.map (fun name => name.getId.eraseMacroScopes.toString), false, #[])
   | `(holQualifier| (names_as_string_boundary := [$names:ident,*])) =>
-      pure ("names_as_string_boundary", names.getElems.map (fun name => name.getId.eraseMacroScopes.toString), false)
+      pure ("names_as_string_boundary", names.getElems.map (fun name => name.getId.eraseMacroScopes.toString), false, #[])
   | `(holQualifier| (fmap_as_finite_support := [$fields:ident,*])) =>
-      pure ("fmap_as_finite_support", fields.getElems.map (fun field => field.getId.eraseMacroScopes.toString), false)
+      pure ("fmap_as_finite_support", fields.getElems.map (fun field => field.getId.eraseMacroScopes.toString), false, #[])
   | `(holQualifier| (fmap_as_finite_support_result)) =>
-      pure ("fmap_as_finite_support_result", #[], true)
+      pure ("fmap_as_finite_support_result", #[], true, #[])
+  | `(holQualifier| (fmap_as_finite_support_relation := [$entries:ident,*])) =>
+      let pairs : Array (String × String) := entries.getElems.map fun entry =>
+        let text := entry.getId.eraseMacroScopes.toString
+        match text.splitOn "." with
+        | [] => (text, "")
+        | parts =>
+            let field := parts.getLast!
+            let carrier := ".".intercalate parts.dropLast
+            (carrier, field)
+      pure ("fmap_as_finite_support_relation", #[], false, pairs)
   | _ => throwError "@[hol]: malformed qualifier"
 
 private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
@@ -157,14 +182,16 @@ private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
     let mut namesAsStringBoundary : Array String := #[]
     let mut fmapAsFiniteSupport : Array String := #[]
     let mut fmapAsFiniteSupportResult : Bool := false
+    let mut fmapAsFiniteSupportRelation : Array (String × String) := #[]
     for qualifier in qualifiers do
-      let (kind, fields, isResult) ← parseHolQualifier qualifier
+      let (kind, fields, isResult, pairs) ← parseHolQualifier qualifier
       if kind == "list_as_array" then listAsArray := listAsArray ++ fields
       else if kind == "names_as_string" then namesAsString := namesAsString ++ fields
       else if kind == "names_as_string_boundary" then namesAsStringBoundary := namesAsStringBoundary ++ fields
       else if kind == "fmap_as_finite_support_result" then fmapAsFiniteSupportResult := isResult
+      else if kind == "fmap_as_finite_support_relation" then fmapAsFiniteSupportRelation := fmapAsFiniteSupportRelation ++ pairs
       else fmapAsFiniteSupport := fmapAsFiniteSupport ++ fields
-    checkedHolRef path name line? listAsArray namesAsString namesAsStringBoundary fmapAsFiniteSupport fmapAsFiniteSupportResult
+    checkedHolRef path name line? listAsArray namesAsString namesAsStringBoundary fmapAsFiniteSupport fmapAsFiniteSupportResult fmapAsFiniteSupportRelation
   match stx with
   | `(attr| hol $path:str $name:str $line:num $qualifiers:holQualifier*) =>
       parse path.getString name.getString (some line.getNat) qualifiers
@@ -190,7 +217,9 @@ private def HolRef.qualifierSuffix (ref : HolRef) : String :=
     s!" (fmap_as_finite_support := [{String.intercalate ", " ref.fmapAsFiniteSupport.toList}])"
   let fmapAsFiniteSupportResult := if ref.fmapAsFiniteSupportResult then
     " (fmap_as_finite_support_result)" else ""
-  listAsArray ++ namesAsString ++ namesAsStringBoundary ++ fmapAsFiniteSupport ++ fmapAsFiniteSupportResult
+  let fmapAsFiniteSupportRelation := if ref.fmapAsFiniteSupportRelation.isEmpty then "" else
+    s!" (fmap_as_finite_support_relation := [{String.intercalate ", " (ref.fmapAsFiniteSupportRelation.toList.map (fun entry => s!"{entry.1}.{entry.2}"))}])"
+  listAsArray ++ namesAsString ++ namesAsStringBoundary ++ fmapAsFiniteSupport ++ fmapAsFiniteSupportResult ++ fmapAsFiniteSupportRelation
 
 /-! Parser regressions for the original syntax, each qualifier alone, and both
 qualifiers together. These elaborate temporary syntax values only; they do not
@@ -268,6 +297,23 @@ run_cmd do
   unless fmapResultRef.fmapAsFiniteSupportResult && fmapResultRef.fmapAsFiniteSupport.isEmpty &&
       HolRef.qualifierSuffix fmapResultRef == " (fmap_as_finite_support_result)" do
     throwError "@[hol] fmap_as_finite_support_result syntax regression"
+  let fmapRelationSyntax ← `(attr| hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "state_rel_def"
+    (fmap_as_finite_support_relation := [PanSemStateFiniteExact.globals, CrepSemHOLState.locals]))
+  let fmapRelationRef ← Lean.Elab.Command.liftCoreM (parseHolRefAttribute fmapRelationSyntax)
+  unless fmapRelationRef.fmapAsFiniteSupportRelation.toList ==
+      [("PanSemStateFiniteExact", "globals"), ("CrepSemHOLState", "locals")] &&
+      HolRef.qualifierSuffix fmapRelationRef ==
+        " (fmap_as_finite_support_relation := [PanSemStateFiniteExact.globals, CrepSemHOLState.locals])" do
+    throwError "@[hol] fmap_as_finite_support_relation syntax regression"
+  let fmapRelationDuplicateSyntax ← `(attr| hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "state_rel_def"
+    (fmap_as_finite_support_relation := [PanSemStateFiniteExact.globals, PanSemStateFiniteExact.globals]))
+  let fmapRelationDuplicateRejected ← Lean.Elab.Command.liftCoreM do
+    try
+      let _ ← parseHolRefAttribute fmapRelationDuplicateSyntax
+      pure false
+    catch _ => pure true
+  unless fmapRelationDuplicateRejected do
+    throwError "@[hol] duplicate fmap_as_finite_support_relation entries must be rejected"
 
 /-- The HOL cross-reference attached to `declName`, if any. -/
 def HolRef.get? (env : Environment) (declName : Name) : Option HolRef :=

@@ -580,6 +580,42 @@
   },
   {
     "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
+    "hol_name": "clock_eq_simp",
+    "lean_path": "Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean",
+    "lean_name": "crepSemClockEqSimp",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["locals", "globals", "code"],
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-27; bead flapjack-pxn.18.5.5.7.7.19): HOL clock_eq_simp (crepSemScript.sml:392-398, declared [local,simp]) is the conjunction (set_var v w s).clock = s.clock and (empty_locals s).clock = s.clock and (set_globals gv w s).clock = s.clock. The Lean statement is the same three conjuncts in the same order over the tagged exact CrepSemHOLState.setVar/emptyLocals/setGlobals ports (set_var_def:55-57, empty_locals_def:71-74, set_globals_def:61-63). The fmap_as_finite_support qualifier records HOL's |-> locals/globals/code as HolFiniteMapExact, exactly as for the neighbouring state-helper tags; the clock field itself is HOL num vs Nat. Direct HOL EVAL rows clock_eq_simp_set_var/clock_eq_simp_empty_locals/clock_eq_simp_set_globals=T in scripts/hol-probes/crep_clock_helpers_probe.out are replayed by kernel-checked instantiations in Flapjack/Test/CrepShMemHOLParity.lean."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
+    "hol_name": "sh_mem_load_clock",
+    "lean_path": "Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean",
+    "lean_name": "crepShMemLoadClock",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["locals", "globals", "code"],
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-27; bead flapjack-pxn.18.5.5.7.7.19): HOL sh_mem_load_clock (crepSemScript.sml:400-403, declared [local]) is sh_mem_load v addr nb s = (r, s') ==> s'.clock = s.clock, quantified over v, addr, nb, s, r, s'. The Lean statement has the identical quantifiers and conclusion over the exact crepShMemLoadExactHOL port and the exact width-indexed state/result carriers; no extra premise, no target-evaluation hypothesis. The fmap_as_finite_support qualifier records the finite-support CrepSemHOLState carrier (HOL |-> locals/globals/code). Direct HOL EVAL rows sh_mem_load_clock and sh_mem_load_clock_nonzero=T in scripts/hol-probes/crep_clock_helpers_probe.out are replayed by kernel-checked instantiations in Flapjack/Test/CrepShMemHOLParity.lean."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
+    "hol_name": "sh_mem_store_clock",
+    "lean_path": "Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean",
+    "lean_name": "crepShMemStoreClock",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["locals", "globals", "code"],
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-27; bead flapjack-pxn.18.5.5.7.7.19): HOL sh_mem_store_clock (crepSemScript.sml:406-409, declared [local]) is sh_mem_store v addr nb s = (r, s') ==> s'.clock = s.clock, quantified over v, addr, nb, s, r, s'. The Lean statement matches quantifier for quantifier over the exact crepShMemStoreExactHOL port; the store's FLOOKUP/domain/FFI cases all leave the clock field untouched. No extra hypothesis or target premise. The fmap_as_finite_support qualifier records the finite-support CrepSemHOLState carrier. Direct HOL EVAL rows sh_mem_store_clock and sh_mem_store_clock_nonzero=T in scripts/hol-probes/crep_clock_helpers_probe.out are replayed by kernel-checked instantiations in Flapjack/Test/CrepShMemHOLParity.lean."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
+    "hol_name": "sh_mem_op_clock",
+    "lean_path": "Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean",
+    "lean_name": "crepShMemOpClock",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["locals", "globals", "code"],
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-27; bead flapjack-pxn.18.5.5.7.7.19): HOL sh_mem_op_clock (crepSemScript.sml:412-419, declared [local]) is sh_mem_op op v addr s = (r, s') ==> s'.clock = s.clock, dispatching the eight operators to sh_mem_load_clock/sh_mem_store_clock. The Lean statement is identical over the exact crepShMemOpExactHOL port, proving the conclusion by the tagged crepShMemLoadClock/crepShMemStoreClock at the fixed byte counts 0/1/2/4. The fmap_as_finite_support qualifier records the finite-support CrepSemHOLState carrier. Direct HOL EVAL rows sh_mem_op_clock_load and sh_mem_op_clock_store8=T in scripts/hol-probes/crep_clock_helpers_probe.out are replayed by kernel-checked instantiations in Flapjack/Test/CrepShMemHOLParity.lean."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
     "hol_name": "eval_def",
     "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
     "lean_name": "evalCrepHolFiniteStateSource_load",
@@ -11716,6 +11752,27 @@
       "eids"
     ],
     "reviewer": "flapjack-ds9 (source comparison, bead flapjack-4ac.2.11): HOL mk_ctxt_def (pan_to_crepScript.sml:310-316) is `mk_ctxt vmap fs m (es:eid |-> 'a word) = <|vars := vmap; funcs := fs; eids := es; vmax := m|>`. mkCtxtExactHOL matches clause for clause: argument order (vmap, fs, m, es) and field assignment (vars/funcs/eids/vmax) are identical, and the record carrier is the reviewed exact PanToCrepContextExact, whose vars/funcs/eids fields use the canonical HolFiniteMapExact translation of HOL `|->` (MlString keys, ShapeHOL values, BitVec width exception codes) with same-module roundtrip witness holFmapAsFiniteSupportWitness. The fmap_as_finite_support qualifier records only that finite-support representation; it authorizes no change to the quantifier, argument order, or resulting record. Direct HOL mk_ctxt_fields rows are in scripts/hol-probes/compile_to_crep_probe.out and are replayed by Flapjack.Test.PanToCrepContextExactParity."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "ctxt_fc_def",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "ctxtFcExactHOL",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs",
+      "eids"
+    ],
+    "reviewer": "flapjack-ds9 (source comparison, bead flapjack-4ac.5.85): HOL ctxt_fc_def (pan_to_crepProofScript.sml:25-29) is `ctxt_fc cvs em vs shs ns = <|vars := FEMPTY |++ ZIP (vs, ZIP (shs, with_shape shs ns)); funcs := cvs; eids := em; vmax := MAX_LIST ns|>`. ctxtFcExactHOL matches clause for clause: argument order (cvs, em, vs, shs, ns) and field assignment (vars/funcs/eids/vmax) are identical; HOL `FEMPTY |++ l` is `HolFiniteMapExact.updateList HolFiniteMapExact.empty l` (both render FUPDATE_LIST), HOL `ZIP` is `List.zip` (truncating to the shorter list), `with_shape` is the tagged withShapeHOL, and `MAX_LIST` is maxList. All payload carriers are exact: MlS keys, ShapeHOL shapes, List Nat name blocks, and BitVec width exception codes from the exact em argument. The record carrier is the reviewed exact PanToCrepContextExact, whose vars/funcs/eids fields use the canonical HolFiniteMapExact translation of HOL `|->`; the same-module roundtrip witness holFmapAsFiniteSupportWitness in Proofs/PanToCrep.lean justifies the qualifier. The fmap_as_finite_support qualifier records only that finite-support representation; it authorizes no change to the quantifier, argument order, or resulting record. Direct HOL-EVAL rows (shaped_slots, zip_truncates_and_empty_slots, empty_maximum, functions_projection, vmax_nonempty_list, vmax_empty_list) are in scripts/hol-probes/ctxt_fc_probe.out and are replayed by Flapjack.Test.PanToCrepContextExactParity."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only canonical finite-map representation witness (bead flapjack-4ac.5.85), required by the fmap_as_finite_support qualifier on ctxtFcExactHOL. It states PanToCrepContextExact.ofBroad (PanToCrepContextExact.toBroad context) = context for the imported exact carrier, whose toBroad/ofBroad are defined in Flapjack/Pancake/PanToCrep/ContextExact.lean. This is representation infrastructure, not a port of a HOL declaration in pan_to_crepProofScript.sml."
   },
   {
     "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
