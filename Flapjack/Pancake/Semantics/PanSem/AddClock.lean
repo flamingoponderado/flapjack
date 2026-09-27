@@ -233,24 +233,19 @@ theorem ctxAddClock_withState_generic {width : Nat} {σ : Type} [NeZero width]
   apply PanSemExactEvalContext.ext
   rfl
 
-/-! ## Blocker (bead flapjack-dpvn)
+/-! ## Note (bead flapjack-dpvn)
 
-The clock-shift helper infrastructure above compiles, but the full
-result-agreement lemma `evalPanSemRecursiveCallContextHOLExact`
-add-clock equality is blocked on rewriting the `withState`-built
-evaluation contexts.  The equation compiler generates opaque proof
-terms for the `DecidablePred` fields of `PanSemExactEvalContext`,
-e.g. `evalPanSemRecursiveCallContextHOLExact._proof_5 (ctxAddClock
-context extra) ...`; these are propositionally equal to the simple
-`rfl` proofs used by the helper lemmas, but `rw`/`simp` cannot match
-them under the implicit transparency level, so the longer run's
-recursive call cannot be rewritten to `eval sub (ctxAddClock subCtx
-extra)` to apply the induction hypothesis.
-
-A robust fix is a prior lemma that `evalPanSemRecursiveCallContextHOLExact
-program c1 = ... c2` whenever `c1.state = c2.state` (evaluator is
-insensitive to the decidability fields), proved by `fun_induction`,
-then rewriting the eval-to-eval equality (which is type correct).
+The `withState`-built evaluation contexts make direct rewriting of the
+longer run's recursive-call context impossible: the equation compiler
+generates opaque proof terms for the `DecidablePred` fields, e.g.
+`evalPanSemRecursiveCallContextHOLExact._proof_5 (ctxAddClock context
+extra) ...`, which are propositionally equal to the simple `rfl` proofs
+used by the helper lemmas but cannot be matched by `rw`/`simp` at the
+implicit transparency level.  The workaround is the bridge
+`eval_context_state`: the evaluator is insensitive to the decidability
+fields, so an eval-to-eval equality follows from a state equality.  With
+that bridge, the result-agreement lemma `eval_add_clock_mono_aux` below
+is proved by `fun_induction` over the recursive evaluator.
 -/
 
 theorem eval_context_state {width : Nat} {σ : Type} [NeZero width] (program : ProgHOL width)
@@ -697,5 +692,1674 @@ theorem callContinuationContextHOLExact_stateAddClock {width : Nat} {σ : Type} 
   apply PanSemExactEvalContext.ext
   simp only [callContinuationContextHOLExact]
   exact handlerStateHOLExact_stateAddClock context fixedContext resultName value extra
+
+
+attribute [local simp] PanSemExactEvalContext.withState_state
+
+macro "closeLeaf" : tactic => `(tactic|
+  (intro extra resultLow resultHigh hLow hHigh) <;>
+  (try (cases hLow)) <;>
+  (rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh) <;>
+  dsimp only at hHigh <;>
+  simp only [evalHOLExact_stateAddClock, evalListHOLExact_stateAddClock,
+    isValidValueHOLExact_stateAddClock] at hHigh <;>
+  (try (split at hHigh)) <;>
+  (try (split at hHigh)) <;>
+  (try (split at hHigh)) <;>
+  (try (split at hHigh)) <;>
+  (try (split at hHigh)) <;>
+  (try (split at hHigh)) <;>
+  (try (simp_all (config := { zetaDelta := true }))) <;>
+  (try (rw [← hHigh])) <;>
+  (try (simp_all (config := { zetaDelta := true }))) <;>
+  (try (rw [PanSemExactEvalContext.withState_state])) <;>
+  (try (exact List.prefix_refl _)) <;>
+  (try (simp only [PanSemExactEvalContext.withState_state, List.prefix_refl])))
+
+theorem callFixedContextHOLExact_state_ffi {width : Nat} {σ : Type} [NeZero width]
+    (entry : PanSemStateExact width σ) (bodyResult : Option (PanSemResultExact width))
+    (bodyContext : PanSemExactEvalContext width σ) :
+    (callFixedContextHOLExact entry bodyResult bodyContext).state.ffi = bodyContext.state.ffi := by
+  simp only [callFixedContextHOLExact, PanSemExactEvalContext.withState_state, fixClockHOLExact]
+
+
+set_option maxHeartbeats 4000000 in
+theorem eval_add_clock_mono_aux
+    {width : Nat} {σ : Type} [NeZero width]
+    (program : ProgHOL width) (context : PanSemExactEvalContext width σ) :
+    ∀ (extra : Nat)
+      (resultLow resultHigh : Option (PanSemResultExact width) × PanSemExactEvalContext width σ),
+      evalPanSemRecursiveCallContextHOLExact program context = some resultLow →
+      evalPanSemRecursiveCallContextHOLExact program (ctxAddClock context extra) = some resultHigh →
+      resultLow.2.state.ffi.ioEvents <+: resultHigh.2.state.ffi.ioEvents ∧
+      (resultLow.1 ≠ some .timeOut →
+        resultHigh = (resultLow.1, ctxAddClock resultLow.2 extra)) := by
+  fun_induction evalPanSemRecursiveCallContextHOLExact program context
+  case case3 =>
+    rename_i inst context state name shape initializer body value hval hshape bodyState bodyContext
+      result postContext hrec restored ih1
+    intro extra resultLow resultHigh hLow hHigh
+    cases hLow
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
+    dsimp only at hHigh
+    simp only [evalHOLExact_stateAddClock] at hHigh
+    rw [show evalHOLExact context.state initializer = some value from hval] at hHigh
+    simp only [hshape, if_true] at hHigh
+    split at hHigh
+    · simp at hHigh
+    · rename_i rH cH hbodyH
+      simp only [Option.some.injEq] at hHigh
+      have hbodyH' : evalPanSemRecursiveCallContextHOLExact body (ctxAddClock bodyContext extra) =
+          some (rH, cH) := by
+        rw [← eval_context_state body _ (ctxAddClock bodyContext extra)]
+        · exact hbodyH
+        · rfl
+      have hih := ih1 extra (result, postContext) (rH, cH) hrec hbodyH'
+      rw [← hHigh]
+      constructor
+      · simpa only [PanSemExactEvalContext.withState_state] using hih.1
+      · intro hne
+        obtain ⟨hrH, hcH⟩ := Prod.mk.inj (hih.2 hne)
+        subst hrH
+        subst hcH
+        congr 1
+  case case6 =>
+    rename_i inst context state first second postContext hfirst fixed fixedContext ih2 ih1
+    intro extra resultLow resultHigh hLow hHigh
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
+    dsimp only at hHigh
+    split at hHigh
+    · simp at hHigh
+    · rename_i rF cF hfirstHigh
+      have hih2 := ih2 extra (none, postContext) (rF, cF) hfirst hfirstHigh
+      obtain ⟨hrF, hcF⟩ := Prod.mk.inj (hih2.2 (by simp))
+      subst rF
+      subst cF
+      try simp only [] at hHigh
+      have hbodyH' : evalPanSemRecursiveCallContextHOLExact second (ctxAddClock fixedContext extra) =
+          some resultHigh := by
+        rw [← eval_context_state second _ (ctxAddClock fixedContext extra)]
+        · exact hHigh
+        · exact congrArg PanSemExactEvalContext.state
+            (ctxAddClock_withState_fixClock postContext context.state none extra)
+      exact ih1 extra resultLow resultHigh hLow hbodyH'
+  case case7 =>
+    rename_i inst context state first second postContext val hfirst fixed fixedContext ih1
+    intro extra resultLow resultHigh hLow hHigh
+    cases hLow
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
+    dsimp only at hHigh
+    split at hHigh
+    · simp at hHigh
+    · rename_i rF cF hfirstHigh
+      have hih1 := ih1 extra (some val, postContext) (rF, cF) hfirst hfirstHigh
+      have hpref := hih1.1
+      try simp only [] at hpref
+      cases rF with
+      | none =>
+          dsimp only at hHigh
+          have hsp := evalPanSemRecursiveCallContextHOLExact_ioEvents_prefix second _ resultHigh hHigh
+          constructor
+          · exact hpref.trans hsp
+          · intro hne
+            obtain ⟨hrF, _⟩ := Prod.mk.inj (hih1.2 hne)
+            exact absurd hrF (by simp)
+      | some rF' =>
+          simp only [Option.some.injEq] at hHigh
+          rw [← hHigh]
+          constructor
+          · exact hpref
+          · intro hne
+            obtain ⟨hrF, hcF⟩ := Prod.mk.inj (hih1.2 hne)
+            cases hrF
+            cases hcF
+            congr 1
+            apply PanSemExactEvalContext.ext
+            try simp only []
+            exact congrArg Prod.snd
+              (fixClockHOLExact_stateAddClock_pair state (some val) postContext.state extra)
+  case case8 =>
+    rename_i inst context state condition thenBranch elseBranch value hcond hw ih1
+    intro extra resultLow resultHigh hLow hHigh
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
+    dsimp only at hHigh
+    simp only [evalHOLExact_stateAddClock] at hHigh
+    rw [show evalHOLExact context.state condition = some (ValueHOL.val (HolWordLab.word value)) from hcond]
+      at hHigh
+    simp only [hw, if_true] at hHigh
+    exact ih1 extra resultLow resultHigh hLow hHigh
+  case case9 =>
+    rename_i inst context state condition thenBranch elseBranch value hcond hw ih1
+    intro extra resultLow resultHigh hLow hHigh
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
+    dsimp only at hHigh
+    simp only [evalHOLExact_stateAddClock] at hHigh
+    rw [show evalHOLExact context.state condition = some (ValueHOL.val (HolWordLab.word value)) from hcond]
+      at hHigh
+    simp only [hw] at hHigh
+    exact ih1 extra resultLow resultHigh hLow hHigh
+  case case11 =>
+    intro extra resultLow resultHigh hLow hHigh
+    cases hLow
+    constructor
+    · have hprefix := evalPanSemRecursiveCallContextHOLExact_ioEvents_prefix
+          _ _ resultHigh hHigh
+      exact hprefix
+    · intro hne; exact absurd rfl hne
+  case case13 =>
+    rename_i inst context state condition body value hcond hw hclock entry entryContext postContext
+      hrec fixed fixedContext ih2 ih1
+    intro extra resultLow resultHigh hLow hHigh
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
+    dsimp only at hHigh
+    simp only [evalHOLExact_stateAddClock] at hHigh
+    rw [show evalHOLExact context.state condition = some (ValueHOL.val (HolWordLab.word value)) from hcond]
+      at hHigh
+    dsimp only at hHigh
+    rw [if_pos hw] at hHigh
+    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    split at hHigh
+    · simp at hHigh
+    · rename_i rB cB hbodyH
+      have hbodyH' : evalPanSemRecursiveCallContextHOLExact body (ctxAddClock entryContext extra) =
+          some (rB, cB) := by
+        rw [← eval_context_state body _ (ctxAddClock entryContext extra)]
+        · exact hbodyH
+        · change decClockHOLExact (stateAddClock context.state extra) = stateAddClock entry extra
+          rw [decClockHOLExact_stateAddClock context.state extra hclock]
+      have hih2 := ih2 extra (some .continue, postContext) (rB, cB) hrec hbodyH'
+      obtain ⟨hrB, hcB⟩ := Prod.mk.inj (hih2.2 (by simp))
+      cases hrB
+      cases hcB
+      have hHigh' : evalPanSemRecursiveCallContextHOLExact (.while condition body)
+          (ctxAddClock fixedContext extra) = some resultHigh := by
+        rw [← eval_context_state _ _ (ctxAddClock fixedContext extra)]
+        · exact hHigh
+        · change (fixClockHOLExact (decClockHOLExact (stateAddClock context.state extra))
+              (some PanSemResultExact.continue, (ctxAddClock postContext extra).state)).snd =
+            stateAddClock (fixClockHOLExact entry (some (PanSemResultExact.continue), postContext.state)).snd extra
+          rw [decClockHOLExact_stateAddClock context.state extra hclock]
+          exact congrArg Prod.snd
+            (fixClockHOLExact_stateAddClock_pair entry (some (PanSemResultExact.continue))
+              postContext.state extra)
+      exact ih1 extra resultLow resultHigh hLow hHigh'
+  case case14 =>
+    rename_i inst context state condition body value hcond hw hclock entry entryContext postContext
+      hrec fixed fixedContext ih2 ih1
+    intro extra resultLow resultHigh hLow hHigh
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
+    dsimp only at hHigh
+    simp only [evalHOLExact_stateAddClock] at hHigh
+    rw [show evalHOLExact context.state condition = some (ValueHOL.val (HolWordLab.word value)) from hcond]
+      at hHigh
+    dsimp only at hHigh
+    rw [if_pos hw] at hHigh
+    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    split at hHigh
+    · simp at hHigh
+    · rename_i rB cB hbodyH
+      have hbodyH' : evalPanSemRecursiveCallContextHOLExact body (ctxAddClock entryContext extra) =
+          some (rB, cB) := by
+        rw [← eval_context_state body _ (ctxAddClock entryContext extra)]
+        · exact hbodyH
+        · change decClockHOLExact (stateAddClock context.state extra) = stateAddClock entry extra
+          rw [decClockHOLExact_stateAddClock context.state extra hclock]
+      have hih2 := ih2 extra (none, postContext) (rB, cB) hrec hbodyH'
+      obtain ⟨hrB, hcB⟩ := Prod.mk.inj (hih2.2 (by simp))
+      cases hrB
+      cases hcB
+      have hHigh' : evalPanSemRecursiveCallContextHOLExact (.while condition body)
+          (ctxAddClock fixedContext extra) = some resultHigh := by
+        rw [← eval_context_state _ _ (ctxAddClock fixedContext extra)]
+        · exact hHigh
+        · change (fixClockHOLExact (decClockHOLExact (stateAddClock context.state extra))
+              ((none : Option (PanSemResultExact width)), (ctxAddClock postContext extra).state)).snd =
+            stateAddClock (fixClockHOLExact entry
+              ((none : Option (PanSemResultExact width)), postContext.state)).snd extra
+          rw [decClockHOLExact_stateAddClock context.state extra hclock]
+          exact congrArg Prod.snd
+            (fixClockHOLExact_stateAddClock_pair entry
+              ((none : Option (PanSemResultExact width))) postContext.state extra)
+      exact ih1 extra resultLow resultHigh hLow hHigh'
+  case case15 =>
+    rename_i inst context state condition body value hcond hw hclock entry entryContext postContext
+      hrec fixed fixedContext ih1
+    intro extra resultLow resultHigh hLow hHigh
+    cases hLow
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
+    dsimp only at hHigh
+    simp only [evalHOLExact_stateAddClock] at hHigh
+    rw [show evalHOLExact context.state condition = some (ValueHOL.val (HolWordLab.word value)) from hcond]
+      at hHigh
+    dsimp only at hHigh
+    rw [if_pos hw] at hHigh
+    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    split at hHigh
+    · simp at hHigh
+    · rename_i rB cB hbodyH
+      have hbodyH' : evalPanSemRecursiveCallContextHOLExact body (ctxAddClock entryContext extra) =
+          some (rB, cB) := by
+        rw [← eval_context_state body _ (ctxAddClock entryContext extra)]
+        · exact hbodyH
+        · change decClockHOLExact (stateAddClock context.state extra) = stateAddClock entry extra
+          rw [decClockHOLExact_stateAddClock context.state extra hclock]
+      have hih1 := ih1 extra (some .break, postContext) (rB, cB) hrec hbodyH'
+      obtain ⟨hrB, hcB⟩ := Prod.mk.inj (hih1.2 (by simp))
+      cases hrB
+      cases hcB
+      simp only [Option.some.injEq] at hHigh
+      rw [← hHigh]
+      constructor
+      · exact hih1.1
+      · intro _
+        congr 1
+        apply PanSemExactEvalContext.ext
+        change (fixClockHOLExact (decClockHOLExact (stateAddClock context.state extra))
+              (some (PanSemResultExact.break), (ctxAddClock postContext extra).state)).snd =
+            stateAddClock (fixClockHOLExact entry (some (PanSemResultExact.break), postContext.state)).snd extra
+        rw [decClockHOLExact_stateAddClock context.state extra hclock]
+        exact congrArg Prod.snd
+          (fixClockHOLExact_stateAddClock_pair entry (some (PanSemResultExact.break))
+            postContext.state extra)
+  case case16 =>
+    rename_i inst context state condition body value hcond hw hclock entry entryContext result postContext
+      hbody fixed fixedContext hcont hnone hbreak ih1
+    intro extra resultLow resultHigh hLow hHigh
+    cases hLow
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
+    dsimp only at hHigh
+    simp only [evalHOLExact_stateAddClock] at hHigh
+    rw [show evalHOLExact context.state condition = some (ValueHOL.val (HolWordLab.word value)) from hcond]
+      at hHigh
+    dsimp only at hHigh
+    rw [if_pos hw] at hHigh
+    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    split at hHigh
+    · simp at hHigh
+    · rename_i rB cB hbodyH
+      have hbodyH' : evalPanSemRecursiveCallContextHOLExact body (ctxAddClock entryContext extra) =
+          some (rB, cB) := by
+        rw [← eval_context_state body _ (ctxAddClock entryContext extra)]
+        · exact hbodyH
+        · change decClockHOLExact (stateAddClock context.state extra) = stateAddClock entry extra
+          rw [decClockHOLExact_stateAddClock context.state extra hclock]
+      have hih1 := ih1 extra (result, postContext) (rB, cB) hbody hbodyH'
+      have hpref : postContext.state.ffi.ioEvents <+: cB.state.ffi.ioEvents := hih1.1
+      by_cases hto : result = some .timeOut
+      · constructor
+        · split at hHigh
+          · have hsp := evalPanSemRecursiveCallContextHOLExact_ioEvents_prefix _ _ resultHigh hHigh
+            simp only [PanSemExactEvalContext.withState_state, fixClockHOLExact] at hsp ⊢
+            exact hpref.trans hsp
+          · have hsp := evalPanSemRecursiveCallContextHOLExact_ioEvents_prefix _ _ resultHigh hHigh
+            simp only [PanSemExactEvalContext.withState_state, fixClockHOLExact] at hsp ⊢
+            exact hpref.trans hsp
+          · simp only [Option.some.injEq] at hHigh
+            subst resultHigh
+            simp only [PanSemExactEvalContext.withState_state, fixClockHOLExact]
+            exact hpref
+          · simp only [Option.some.injEq] at hHigh
+            subst resultHigh
+            simp only [PanSemExactEvalContext.withState_state, fixClockHOLExact]
+            exact hpref
+        · intro hne; exact absurd hto hne
+      · have hpin := hih1.2 hto
+        obtain ⟨hrB, hcB⟩ := Prod.mk.inj hpin
+        cases hrB
+        cases hcB
+        split at hHigh
+        · simp_all
+        · simp_all
+        · simp_all
+        · simp only [Option.some.injEq] at hHigh
+          rw [← hHigh]
+          constructor
+          · simp only [PanSemExactEvalContext.withState_state, fixClockHOLExact]
+            exact hpref
+          · intro _
+            congr 1
+            apply PanSemExactEvalContext.ext
+            change (fixClockHOLExact (decClockHOLExact (stateAddClock context.state extra))
+                  (result, (ctxAddClock postContext extra).state)).snd =
+                stateAddClock (fixClockHOLExact entry (result, postContext.state)).snd extra
+            rw [decClockHOLExact_stateAddClock context.state extra hclock]
+            exact congrArg Prod.snd
+              (fixClockHOLExact_stateAddClock_pair entry result postContext.state extra)
+  case case17 =>
+    intro extra resultLow resultHigh hLow hHigh
+    cases hLow
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
+    dsimp only at hHigh
+    simp only [evalHOLExact_stateAddClock] at hHigh
+    simp_all (config := { zetaDelta := true })
+    subst resultHigh
+    try simp only []
+    exact List.prefix_refl _
+  case case21 =>
+    intro extra resultLow resultHigh hLow hHigh
+    cases hLow
+    constructor
+    · have hprefix := evalPanSemRecursiveCallContextHOLExact_ioEvents_prefix
+          _ _ resultHigh hHigh
+      exact hprefix
+    · intro hne; exact absurd rfl hne
+  case case23 =>
+    rename_i inst context state info function arguments values hargs body calleeLocals returnShape
+      hlookup hclock entry entryContext postContext hbody fixedContext ih1
+    intro extra resultLow resultHigh hLow hHigh
+    cases hLow
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
+    dsimp only at hHigh
+    simp only [evalListHOLExact_stateAddClock] at hHigh
+    rw [show evalListHOLExact context.state arguments = some values from hargs] at hHigh
+    try simp only [] at hHigh
+    rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
+    try simp only [] at hHigh
+    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    try simp only [] at hHigh
+    split at hHigh
+    · simp at hHigh
+    · rename_i rB cB hbodyH
+      have hbodyH' : evalPanSemRecursiveCallContextHOLExact body (ctxAddClock entryContext extra) =
+          some (rB, cB) := by
+        rw [← eval_context_state body _ (ctxAddClock entryContext extra)]
+        · exact hbodyH
+        · change callEntryStateHOLExact (stateAddClock context.state extra) calleeLocals = stateAddClock entry extra
+          rw [callEntryStateHOLExact_stateAddClock context.state calleeLocals extra hclock]
+      have hih1 := ih1 extra (none, postContext) (rB, cB) hbody hbodyH'
+      obtain ⟨hrB, hcB⟩ := Prod.mk.inj (hih1.2 (by simp))
+      cases hrB
+      cases hcB
+      try simp only [] at hHigh
+      rw [callFixedContextHOLExact_callEntry_stateAddClock context.state calleeLocals (none) postContext extra hclock] at hHigh
+      simp only [Option.some.injEq] at hHigh
+      rw [← hHigh]
+      exact ⟨List.prefix_refl _, by intro _; rfl⟩
+  case case24 =>
+    rename_i inst context state info function arguments values hargs body calleeLocals returnShape
+      hlookup hclock entry entryContext postContext hbody fixedContext ih1
+    intro extra resultLow resultHigh hLow hHigh
+    cases hLow
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
+    dsimp only at hHigh
+    simp only [evalListHOLExact_stateAddClock] at hHigh
+    rw [show evalListHOLExact context.state arguments = some values from hargs] at hHigh
+    try simp only [] at hHigh
+    rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
+    try simp only [] at hHigh
+    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    try simp only [] at hHigh
+    split at hHigh
+    · simp at hHigh
+    · rename_i rB cB hbodyH
+      have hbodyH' : evalPanSemRecursiveCallContextHOLExact body (ctxAddClock entryContext extra) =
+          some (rB, cB) := by
+        rw [← eval_context_state body _ (ctxAddClock entryContext extra)]
+        · exact hbodyH
+        · change callEntryStateHOLExact (stateAddClock context.state extra) calleeLocals = stateAddClock entry extra
+          rw [callEntryStateHOLExact_stateAddClock context.state calleeLocals extra hclock]
+      have hih1 := ih1 extra (some .break, postContext) (rB, cB) hbody hbodyH'
+      obtain ⟨hrB, hcB⟩ := Prod.mk.inj (hih1.2 (by simp))
+      cases hrB
+      cases hcB
+      try simp only [] at hHigh
+      rw [callFixedContextHOLExact_callEntry_stateAddClock context.state calleeLocals (some .break) postContext extra hclock] at hHigh
+      simp only [Option.some.injEq] at hHigh
+      rw [← hHigh]
+      exact ⟨List.prefix_refl _, by intro _; rfl⟩
+  case case25 =>
+    rename_i inst context state info function arguments values hargs body calleeLocals returnShape
+      hlookup hclock entry entryContext postContext hbody fixedContext ih1
+    intro extra resultLow resultHigh hLow hHigh
+    cases hLow
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
+    dsimp only at hHigh
+    simp only [evalListHOLExact_stateAddClock] at hHigh
+    rw [show evalListHOLExact context.state arguments = some values from hargs] at hHigh
+    try simp only [] at hHigh
+    rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
+    try simp only [] at hHigh
+    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    try simp only [] at hHigh
+    split at hHigh
+    · simp at hHigh
+    · rename_i rB cB hbodyH
+      have hbodyH' : evalPanSemRecursiveCallContextHOLExact body (ctxAddClock entryContext extra) =
+          some (rB, cB) := by
+        rw [← eval_context_state body _ (ctxAddClock entryContext extra)]
+        · exact hbodyH
+        · change callEntryStateHOLExact (stateAddClock context.state extra) calleeLocals = stateAddClock entry extra
+          rw [callEntryStateHOLExact_stateAddClock context.state calleeLocals extra hclock]
+      have hih1 := ih1 extra (some .continue, postContext) (rB, cB) hbody hbodyH'
+      obtain ⟨hrB, hcB⟩ := Prod.mk.inj (hih1.2 (by simp))
+      cases hrB
+      cases hcB
+      try simp only [] at hHigh
+      rw [callFixedContextHOLExact_callEntry_stateAddClock context.state calleeLocals (some .continue) postContext extra hclock] at hHigh
+      simp only [Option.some.injEq] at hHigh
+      rw [← hHigh]
+      exact ⟨List.prefix_refl _, by intro _; rfl⟩
+  case case26 =>
+    rename_i inst context state function arguments values hargs body calleeLocals returnShape
+      hlookup hclock entry entryContext postContext value hshape hbody fixedContext ih1
+    intro extra resultLow resultHigh hLow hHigh
+    cases hLow
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
+    dsimp only at hHigh
+    simp only [evalListHOLExact_stateAddClock] at hHigh
+    rw [show evalListHOLExact context.state arguments = some values from hargs] at hHigh
+    try simp only [] at hHigh
+    rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
+    try simp only [] at hHigh
+    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    try simp only [] at hHigh
+    split at hHigh
+    · simp at hHigh
+    · rename_i rB cB hbodyH
+      have hbodyH' : evalPanSemRecursiveCallContextHOLExact body (ctxAddClock entryContext extra) =
+          some (rB, cB) := by
+        rw [← eval_context_state body _ (ctxAddClock entryContext extra)]
+        · exact hbodyH
+        · change callEntryStateHOLExact (stateAddClock context.state extra) calleeLocals = stateAddClock entry extra
+          rw [callEntryStateHOLExact_stateAddClock context.state calleeLocals extra hclock]
+      have hih1 := ih1 extra ((some (.returned value)), postContext) (rB, cB) hbody hbodyH'
+      obtain ⟨hrB, hcB⟩ := Prod.mk.inj (hih1.2 (by simp))
+      cases hrB
+      cases hcB
+      try simp only [] at hHigh
+      rw [if_pos hshape] at hHigh
+      try simp only [] at hHigh
+      simp only [Option.some.injEq] at hHigh
+      rw [← hHigh]
+      constructor
+      · change (emptyLocalsHOLExact (callFixedContextHOLExact _ (some (.returned value)) _).state).ffi.ioEvents <+: (emptyLocalsHOLExact (callFixedContextHOLExact _ (some (.returned value)) _).state).ffi.ioEvents
+        rw [callFixedContextHOLExact_callEntry_stateAddClock_state context.state calleeLocals
+          ((some (.returned value))) postContext extra hclock]
+        simp only [emptyLocalsHOLExact_stateAddClock, stateAddClock_ffi]
+        exact List.prefix_refl _
+      · intro _
+        congr 1
+        apply PanSemExactEvalContext.ext
+        change emptyLocalsHOLExact (callFixedContextHOLExact _ (some (.returned value)) _).state = stateAddClock ((emptyLocalsHOLExact (callFixedContextHOLExact _ (some (.returned value)) _).state)) extra
+        rw [callFixedContextHOLExact_callEntry_stateAddClock_state context.state calleeLocals
+          ((some (.returned value))) postContext extra hclock]
+        simp only [emptyLocalsHOLExact_stateAddClock]
+        rfl
+  case case27 =>
+    rename_i inst context state function arguments values hargs body calleeLocals returnShape
+      hlookup hclock entry entryContext postContext value hshape snd hbody fixedContext ih1
+    intro extra resultLow resultHigh hLow hHigh
+    cases hLow
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
+    dsimp only at hHigh
+    simp only [evalListHOLExact_stateAddClock] at hHigh
+    rw [show evalListHOLExact context.state arguments = some values from hargs] at hHigh
+    try simp only [] at hHigh
+    rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
+    try simp only [] at hHigh
+    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    try simp only [] at hHigh
+    split at hHigh
+    · simp at hHigh
+    · rename_i rB cB hbodyH
+      have hbodyH' : evalPanSemRecursiveCallContextHOLExact body (ctxAddClock entryContext extra) =
+          some (rB, cB) := by
+        rw [← eval_context_state body _ (ctxAddClock entryContext extra)]
+        · exact hbodyH
+        · change callEntryStateHOLExact (stateAddClock context.state extra) calleeLocals = stateAddClock entry extra
+          rw [callEntryStateHOLExact_stateAddClock context.state calleeLocals extra hclock]
+      have hih1 := ih1 extra (some (.returned value), postContext) (rB, cB) hbody hbodyH'
+      obtain ⟨hrB, hcB⟩ := Prod.mk.inj (hih1.2 (by simp))
+      cases hrB
+      cases hcB
+      dsimp only at hHigh
+      rw [if_pos hshape] at hHigh
+      simp only [Option.some.injEq] at hHigh
+      rw [← hHigh]
+      constructor
+      · simp only [PanSemExactEvalContext.withState_state,
+          callFixedContextHOLExact_callEntry_stateAddClock_state context.state calleeLocals
+            (some (.returned value)) postContext extra hclock, stateAddClock_ffi]
+        exact List.prefix_refl _
+      · intro _
+        congr 1
+        apply PanSemExactEvalContext.ext
+        simp only [PanSemExactEvalContext.withState_state,
+          callFixedContextHOLExact_callEntry_stateAddClock_state context.state calleeLocals
+            (some (.returned value)) postContext extra hclock]
+        rfl
+  case case28 =>
+    rename_i inst context state function arguments values hargs body calleeLocals returnShape
+      hlookup hclock entry entryContext postContext value hshape kind name snd hvalid hbody fixedContext ih1
+    intro extra resultLow resultHigh hLow hHigh
+    cases hLow
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
+    dsimp only at hHigh
+    simp only [evalListHOLExact_stateAddClock] at hHigh
+    rw [show evalListHOLExact context.state arguments = some values from hargs] at hHigh
+    try simp only [] at hHigh
+    rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
+    try simp only [] at hHigh
+    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    try simp only [] at hHigh
+    split at hHigh
+    · simp at hHigh
+    · rename_i rB cB hbodyH
+      have hbodyH' : evalPanSemRecursiveCallContextHOLExact body (ctxAddClock entryContext extra) =
+          some (rB, cB) := by
+        rw [← eval_context_state body _ (ctxAddClock entryContext extra)]
+        · exact hbodyH
+        · change callEntryStateHOLExact (stateAddClock context.state extra) calleeLocals = stateAddClock entry extra
+          rw [callEntryStateHOLExact_stateAddClock context.state calleeLocals extra hclock]
+      have hih1 := ih1 extra (some (.returned value), postContext) (rB, cB) hbody hbodyH'
+      obtain ⟨hrB, hcB⟩ := Prod.mk.inj (hih1.2 (by simp))
+      cases hrB
+      cases hcB
+      dsimp only at hHigh
+      rw [if_pos hshape] at hHigh
+      rw [if_pos (by simpa only [isValidValueHOLExact_stateAddClock] using hvalid)] at hHigh
+      simp only [Option.some.injEq] at hHigh
+      rw [← hHigh]
+      constructor
+      · simp only [PanSemExactEvalContext.withState_state,
+          callFixedContextHOLExact_callEntry_stateAddClock_state context.state calleeLocals
+            (some (.returned value)) postContext extra hclock, setKvarHOLExact_ffi, stateAddClock_ffi]
+        exact List.prefix_refl _
+      · intro _
+        congr 1
+        apply PanSemExactEvalContext.ext
+        simp only [PanSemExactEvalContext.withState_state,
+          callFixedContextHOLExact_callEntry_stateAddClock_state context.state calleeLocals
+            (some (.returned value)) postContext extra hclock]
+        cases kind <;> rfl
+  case case29 =>
+    rename_i inst context state function arguments values hargs body calleeLocals returnShape
+      hlookup hclock entry entryContext postContext value hshape kind name snd hvalid hbody fixedContext ih1
+    intro extra resultLow resultHigh hLow hHigh
+    cases hLow
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
+    dsimp only at hHigh
+    simp only [evalListHOLExact_stateAddClock] at hHigh
+    rw [show evalListHOLExact context.state arguments = some values from hargs] at hHigh
+    try simp only [] at hHigh
+    rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
+    try simp only [] at hHigh
+    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    try simp only [] at hHigh
+    split at hHigh
+    · simp at hHigh
+    · rename_i rB cB hbodyH
+      have hbodyH' : evalPanSemRecursiveCallContextHOLExact body (ctxAddClock entryContext extra) =
+          some (rB, cB) := by
+        rw [← eval_context_state body _ (ctxAddClock entryContext extra)]
+        · exact hbodyH
+        · change callEntryStateHOLExact (stateAddClock context.state extra) calleeLocals = stateAddClock entry extra
+          rw [callEntryStateHOLExact_stateAddClock context.state calleeLocals extra hclock]
+      have hih1 := ih1 extra (some (.returned value), postContext) (rB, cB) hbody hbodyH'
+      obtain ⟨hrB, hcB⟩ := Prod.mk.inj (hih1.2 (by simp))
+      cases hrB
+      cases hcB
+      try simp only [] at hHigh
+      rw [if_pos hshape] at hHigh
+      try simp only [] at hHigh
+      rw [if_neg (by simpa only [isValidValueHOLExact_stateAddClock] using hvalid)] at hHigh
+      try simp only [] at hHigh
+      rw [callFixedContextHOLExact_callEntry_stateAddClock context.state calleeLocals
+        (some (.returned value)) postContext extra hclock] at hHigh
+      simp only [Option.some.injEq] at hHigh
+      rw [← hHigh]
+      exact ⟨List.prefix_refl _, by intro _; rfl⟩
+  case case30 =>
+    rename_i inst context state info function arguments values hargs body calleeLocals returnShape
+      hlookup hclock entry entryContext postContext value hshape hbody fixedContext ih1
+    intro extra resultLow resultHigh hLow hHigh
+    cases hLow
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
+    dsimp only at hHigh
+    simp only [evalListHOLExact_stateAddClock] at hHigh
+    rw [show evalListHOLExact context.state arguments = some values from hargs] at hHigh
+    try simp only [] at hHigh
+    rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
+    try simp only [] at hHigh
+    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    try simp only [] at hHigh
+    split at hHigh
+    · simp at hHigh
+    · rename_i rB cB hbodyH
+      have hbodyH' : evalPanSemRecursiveCallContextHOLExact body (ctxAddClock entryContext extra) =
+          some (rB, cB) := by
+        rw [← eval_context_state body _ (ctxAddClock entryContext extra)]
+        · exact hbodyH
+        · change callEntryStateHOLExact (stateAddClock context.state extra) calleeLocals = stateAddClock entry extra
+          rw [callEntryStateHOLExact_stateAddClock context.state calleeLocals extra hclock]
+      have hih1 := ih1 extra (some (.returned value), postContext) (rB, cB) hbody hbodyH'
+      obtain ⟨hrB, hcB⟩ := Prod.mk.inj (hih1.2 (by simp))
+      cases hrB
+      cases hcB
+      try simp only [] at hHigh
+      rw [if_neg hshape] at hHigh
+      try simp only [] at hHigh
+      rw [callFixedContextHOLExact_callEntry_stateAddClock context.state calleeLocals
+        (some (.returned value)) postContext extra hclock] at hHigh
+      simp only [Option.some.injEq] at hHigh
+      rw [← hHigh]
+      exact ⟨List.prefix_refl _, by intro _; rfl⟩
+  case case31 =>
+    rename_i inst context state function arguments values hargs body calleeLocals returnShape
+      hlookup hclock entry entryContext postContext exceptionId value hbody fixedContext ih1
+    intro extra resultLow resultHigh hLow hHigh
+    cases hLow
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
+    dsimp only at hHigh
+    simp only [evalListHOLExact_stateAddClock] at hHigh
+    rw [show evalListHOLExact context.state arguments = some values from hargs] at hHigh
+    try simp only [] at hHigh
+    rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
+    try simp only [] at hHigh
+    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    try simp only [] at hHigh
+    split at hHigh
+    · simp at hHigh
+    · rename_i rB cB hbodyH
+      have hbodyH' : evalPanSemRecursiveCallContextHOLExact body (ctxAddClock entryContext extra) =
+          some (rB, cB) := by
+        rw [← eval_context_state body _ (ctxAddClock entryContext extra)]
+        · exact hbodyH
+        · change callEntryStateHOLExact (stateAddClock context.state extra) calleeLocals = stateAddClock entry extra
+          rw [callEntryStateHOLExact_stateAddClock context.state calleeLocals extra hclock]
+      have hih1 := ih1 extra ((some (.exception exceptionId value)), postContext) (rB, cB) hbody hbodyH'
+      obtain ⟨hrB, hcB⟩ := Prod.mk.inj (hih1.2 (by simp))
+      cases hrB
+      cases hcB
+      try simp only [] at hHigh
+      simp only [Option.some.injEq] at hHigh
+      rw [← hHigh]
+      constructor
+      · change (emptyLocalsHOLExact (callFixedContextHOLExact _ (some (.exception exceptionId value)) _).state).ffi.ioEvents <+: (emptyLocalsHOLExact (callFixedContextHOLExact _ (some (.exception exceptionId value)) _).state).ffi.ioEvents
+        rw [callFixedContextHOLExact_callEntry_stateAddClock_state context.state calleeLocals
+          ((some (.exception exceptionId value))) postContext extra hclock]
+        simp only [emptyLocalsHOLExact_stateAddClock, stateAddClock_ffi]
+        exact List.prefix_refl _
+      · intro _
+        congr 1
+        apply PanSemExactEvalContext.ext
+        change emptyLocalsHOLExact (callFixedContextHOLExact _ (some (.exception exceptionId value)) _).state = stateAddClock ((emptyLocalsHOLExact (callFixedContextHOLExact _ (some (.exception exceptionId value)) _).state)) extra
+        rw [callFixedContextHOLExact_callEntry_stateAddClock_state context.state calleeLocals
+          ((some (.exception exceptionId value))) postContext extra hclock]
+        simp only [emptyLocalsHOLExact_stateAddClock]
+        rfl
+  case case32 =>
+    rename_i inst context state function arguments values hargs body calleeLocals returnShape
+      hlookup hclock entry entryContext postContext exceptionId value fst hbody fixedContext ih1
+    intro extra resultLow resultHigh hLow hHigh
+    cases hLow
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
+    dsimp only at hHigh
+    simp only [evalListHOLExact_stateAddClock] at hHigh
+    rw [show evalListHOLExact context.state arguments = some values from hargs] at hHigh
+    try simp only [] at hHigh
+    rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
+    try simp only [] at hHigh
+    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    try simp only [] at hHigh
+    split at hHigh
+    · simp at hHigh
+    · rename_i rB cB hbodyH
+      have hbodyH' : evalPanSemRecursiveCallContextHOLExact body (ctxAddClock entryContext extra) =
+          some (rB, cB) := by
+        rw [← eval_context_state body _ (ctxAddClock entryContext extra)]
+        · exact hbodyH
+        · change callEntryStateHOLExact (stateAddClock context.state extra) calleeLocals = stateAddClock entry extra
+          rw [callEntryStateHOLExact_stateAddClock context.state calleeLocals extra hclock]
+      have hih1 := ih1 extra ((some (.exception exceptionId value)), postContext) (rB, cB) hbody hbodyH'
+      obtain ⟨hrB, hcB⟩ := Prod.mk.inj (hih1.2 (by simp))
+      cases hrB
+      cases hcB
+      try simp only [] at hHigh
+      simp only [Option.some.injEq] at hHigh
+      rw [← hHigh]
+      constructor
+      · change (emptyLocalsHOLExact (callFixedContextHOLExact _ (some (.exception exceptionId value)) _).state).ffi.ioEvents <+: (emptyLocalsHOLExact (callFixedContextHOLExact _ (some (.exception exceptionId value)) _).state).ffi.ioEvents
+        rw [callFixedContextHOLExact_callEntry_stateAddClock_state context.state calleeLocals
+          ((some (.exception exceptionId value))) postContext extra hclock]
+        simp only [emptyLocalsHOLExact_stateAddClock, stateAddClock_ffi]
+        exact List.prefix_refl _
+      · intro _
+        congr 1
+        apply PanSemExactEvalContext.ext
+        change emptyLocalsHOLExact (callFixedContextHOLExact _ (some (.exception exceptionId value)) _).state = stateAddClock ((emptyLocalsHOLExact (callFixedContextHOLExact _ (some (.exception exceptionId value)) _).state)) extra
+        rw [callFixedContextHOLExact_callEntry_stateAddClock_state context.state calleeLocals
+          ((some (.exception exceptionId value))) postContext extra hclock]
+        simp only [emptyLocalsHOLExact_stateAddClock]
+        rfl
+  case case33 =>
+    rename_i inst context state function arguments values hargs body calleeLocals returnShape
+      hlookup hclock entry entryContext postContext value fst handlerId handlerVar handlerProgram shape
+      hshape hend hbody fixedContext handlerState handlerContext ih2 ih1
+    intro extra resultLow resultHigh hLow hHigh
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
+    dsimp only at hHigh
+    simp only [evalListHOLExact_stateAddClock] at hHigh
+    rw [show evalListHOLExact context.state arguments = some values from hargs] at hHigh
+    try simp only [] at hHigh
+    rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
+    try simp only [] at hHigh
+    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    try simp only [] at hHigh
+    split at hHigh
+    · simp at hHigh
+    · rename_i rB cB hbodyH
+      have hbodyH' : evalPanSemRecursiveCallContextHOLExact body (ctxAddClock entryContext extra) =
+          some (rB, cB) := by
+        rw [← eval_context_state body _ (ctxAddClock entryContext extra)]
+        · exact hbodyH
+        · change callEntryStateHOLExact (stateAddClock context.state extra) calleeLocals = stateAddClock entry extra
+          rw [callEntryStateHOLExact_stateAddClock context.state calleeLocals extra hclock]
+      have hih2 := ih2 extra (some (.exception handlerId value), postContext) (rB, cB) hbody hbodyH'
+      obtain ⟨hrB, hcB⟩ := Prod.mk.inj (hih2.2 (by simp))
+      cases hrB
+      cases hcB
+      dsimp only at hHigh
+      rw [if_pos rfl] at hHigh
+      rw [show (stateAddClock context.state extra).eshapes handlerId = some shape from by rw [stateAddClock_eshapes]; exact hend] at hHigh
+      try simp only [] at hHigh
+      rw [if_pos (by simpa only [isValidValueHOLExact_stateAddClock] using hshape)] at hHigh
+      have hhandlerH : evalPanSemRecursiveCallContextHOLExact handlerProgram
+          (ctxAddClock handlerContext extra) = some resultHigh := by
+        rw [← eval_context_state handlerProgram _ (ctxAddClock handlerContext extra)]
+        · exact hHigh
+        · simp only [callFixedContextHOLExact_callEntry_stateAddClock context.state calleeLocals
+            (some (.exception handlerId value)) postContext extra hclock]
+          exact handlerStateHOLExact_stateAddClock context fixedContext handlerVar value extra
+      exact ih1 extra resultLow resultHigh hLow hhandlerH
+  case case34 =>
+    rename_i inst context state function arguments values hargs body calleeLocals returnShape
+      hlookup hclock entry entryContext postContext value fst handlerId handlerVar handlerProgram shape
+      hinv hend hbody fixedContext ih1
+    intro extra resultLow resultHigh hLow hHigh
+    cases hLow
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
+    dsimp only at hHigh
+    simp only [evalListHOLExact_stateAddClock] at hHigh
+    rw [show evalListHOLExact context.state arguments = some values from hargs] at hHigh
+    try simp only [] at hHigh
+    rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
+    try simp only [] at hHigh
+    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    try simp only [] at hHigh
+    split at hHigh
+    · simp at hHigh
+    · rename_i rB cB hbodyH
+      have hbodyH' : evalPanSemRecursiveCallContextHOLExact body (ctxAddClock entryContext extra) =
+          some (rB, cB) := by
+        rw [← eval_context_state body _ (ctxAddClock entryContext extra)]
+        · exact hbodyH
+        · change callEntryStateHOLExact (stateAddClock context.state extra) calleeLocals = stateAddClock entry extra
+          rw [callEntryStateHOLExact_stateAddClock context.state calleeLocals extra hclock]
+      have hih1 := ih1 extra (some (.exception handlerId value), postContext) (rB, cB) hbody hbodyH'
+      obtain ⟨hrB, hcB⟩ := Prod.mk.inj (hih1.2 (by simp))
+      cases hrB
+      cases hcB
+      dsimp only at hHigh
+      rw [if_pos rfl] at hHigh
+      rw [show (stateAddClock context.state extra).eshapes handlerId = some shape from by rw [stateAddClock_eshapes]; exact hend] at hHigh
+      try simp only [] at hHigh
+      rw [if_neg (by simpa only [isValidValueHOLExact_stateAddClock] using hinv)] at hHigh
+      rw [callFixedContextHOLExact_callEntry_stateAddClock context.state calleeLocals
+        (some (.exception handlerId value)) postContext extra hclock] at hHigh
+      simp only [Option.some.injEq] at hHigh
+      rw [← hHigh]
+      exact ⟨List.prefix_refl _, by intro _; rfl⟩
+  case case35 =>
+    rename_i inst context state function arguments values hargs body calleeLocals returnShape
+      hlookup hclock entry entryContext postContext value fst handlerId handlerVar handlerProgram
+      hnone hbody fixedContext ih1
+    intro extra resultLow resultHigh hLow hHigh
+    cases hLow
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
+    dsimp only at hHigh
+    simp only [evalListHOLExact_stateAddClock] at hHigh
+    rw [show evalListHOLExact context.state arguments = some values from hargs] at hHigh
+    try simp only [] at hHigh
+    rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
+    try simp only [] at hHigh
+    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    try simp only [] at hHigh
+    split at hHigh
+    · simp at hHigh
+    · rename_i rB cB hbodyH
+      have hbodyH' : evalPanSemRecursiveCallContextHOLExact body (ctxAddClock entryContext extra) =
+          some (rB, cB) := by
+        rw [← eval_context_state body _ (ctxAddClock entryContext extra)]
+        · exact hbodyH
+        · change callEntryStateHOLExact (stateAddClock context.state extra) calleeLocals = stateAddClock entry extra
+          rw [callEntryStateHOLExact_stateAddClock context.state calleeLocals extra hclock]
+      have hih1 := ih1 extra (some (.exception handlerId value), postContext) (rB, cB) hbody hbodyH'
+      obtain ⟨hrB, hcB⟩ := Prod.mk.inj (hih1.2 (by simp))
+      cases hrB
+      cases hcB
+      dsimp only at hHigh
+      rw [if_pos rfl] at hHigh
+      rw [show (stateAddClock context.state extra).eshapes handlerId = none from by rw [stateAddClock_eshapes]; exact hnone] at hHigh
+      try dsimp only at hHigh
+      rw [callFixedContextHOLExact_callEntry_stateAddClock context.state calleeLocals
+        (some (.exception handlerId value)) postContext extra hclock] at hHigh
+      simp only [Option.some.injEq] at hHigh
+      rw [← hHigh]
+      exact ⟨List.prefix_refl _, by intro _; rfl⟩
+  case case36 =>
+    rename_i inst context state function arguments values hargs body calleeLocals returnShape
+      hlookup hclock entry entryContext postContext exceptionId value fst handlerId handlerVar handlerProgram hne hbody fixedContext ih1
+    intro extra resultLow resultHigh hLow hHigh
+    cases hLow
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
+    dsimp only at hHigh
+    simp only [evalListHOLExact_stateAddClock] at hHigh
+    rw [show evalListHOLExact context.state arguments = some values from hargs] at hHigh
+    try simp only [] at hHigh
+    rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
+    try simp only [] at hHigh
+    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    try simp only [] at hHigh
+    split at hHigh
+    · simp at hHigh
+    · rename_i rB cB hbodyH
+      have hbodyH' : evalPanSemRecursiveCallContextHOLExact body (ctxAddClock entryContext extra) =
+          some (rB, cB) := by
+        rw [← eval_context_state body _ (ctxAddClock entryContext extra)]
+        · exact hbodyH
+        · change callEntryStateHOLExact (stateAddClock context.state extra) calleeLocals = stateAddClock entry extra
+          rw [callEntryStateHOLExact_stateAddClock context.state calleeLocals extra hclock]
+      have hih1 := ih1 extra ((some (.exception exceptionId value)), postContext) (rB, cB) hbody hbodyH'
+      obtain ⟨hrB, hcB⟩ := Prod.mk.inj (hih1.2 (by simp))
+      cases hrB
+      cases hcB
+      try simp only [] at hHigh
+      rw [if_neg hne] at hHigh
+      try simp only [] at hHigh
+      simp only [Option.some.injEq] at hHigh
+      rw [← hHigh]
+      constructor
+      · change (emptyLocalsHOLExact (callFixedContextHOLExact _ (some (.exception exceptionId value)) _).state).ffi.ioEvents <+: (emptyLocalsHOLExact (callFixedContextHOLExact _ (some (.exception exceptionId value)) _).state).ffi.ioEvents
+        rw [callFixedContextHOLExact_callEntry_stateAddClock_state context.state calleeLocals
+          ((some (.exception exceptionId value))) postContext extra hclock]
+        simp only [emptyLocalsHOLExact_stateAddClock, stateAddClock_ffi]
+        exact List.prefix_refl _
+      · intro _
+        congr 1
+        apply PanSemExactEvalContext.ext
+        change emptyLocalsHOLExact (callFixedContextHOLExact _ (some (.exception exceptionId value)) _).state = stateAddClock ((emptyLocalsHOLExact (callFixedContextHOLExact _ (some (.exception exceptionId value)) _).state)) extra
+        rw [callFixedContextHOLExact_callEntry_stateAddClock_state context.state calleeLocals
+          ((some (.exception exceptionId value))) postContext extra hclock]
+        simp only [emptyLocalsHOLExact_stateAddClock]
+        rfl
+  case case37 =>
+    rename_i inst context state info function arguments values hargs body calleeLocals returnShape
+      hlookup hclock entry entryContext postContext other hbrk hcont hret hexc hbody fixedContext ih1
+    intro extra resultLow resultHigh hLow hHigh
+    cases hLow
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
+    dsimp only at hHigh
+    simp only [evalListHOLExact_stateAddClock] at hHigh
+    rw [show evalListHOLExact context.state arguments = some values from hargs] at hHigh
+    try simp only [] at hHigh
+    rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
+    try simp only [] at hHigh
+    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    try simp only [] at hHigh
+    split at hHigh
+    · simp at hHigh
+    · rename_i rB cB hbodyH
+      have hbodyH' : evalPanSemRecursiveCallContextHOLExact body (ctxAddClock entryContext extra) =
+          some (rB, cB) := by
+        rw [← eval_context_state body _ (ctxAddClock entryContext extra)]
+        · exact hbodyH
+        · change callEntryStateHOLExact (stateAddClock context.state extra) calleeLocals = stateAddClock entry extra
+          rw [callEntryStateHOLExact_stateAddClock context.state calleeLocals extra hclock]
+      have hih1 := ih1 extra (some other, postContext) (rB, cB) hbody hbodyH'
+      have hpref : postContext.state.ffi.ioEvents <+: cB.state.ffi.ioEvents := hih1.1
+      by_cases hto : (some other : Option (PanSemResultExact width)) = some .timeOut
+      · constructor
+        · change postContext.state.ffi.ioEvents <+: resultHigh.2.state.ffi.ioEvents
+          cases rB with
+          | none =>
+              rw [← Option.some.inj hHigh]
+              simp only [callFixedContextHOLExact_state_ffi]
+              exact hpref
+          | some br =>
+              cases br with
+              | error =>
+                  rw [← Option.some.inj hHigh]
+                  simp only [PanSemExactEvalContext.withState_state, callFixedContextHOLExact_state_ffi,
+                    emptyLocalsHOLExact]
+                  exact hpref
+              | timeOut =>
+                  rw [← Option.some.inj hHigh]
+                  simp only [PanSemExactEvalContext.withState_state, callFixedContextHOLExact_state_ffi,
+                    emptyLocalsHOLExact]
+                  exact hpref
+              | finalFfi e =>
+                  rw [← Option.some.inj hHigh]
+                  simp only [PanSemExactEvalContext.withState_state, callFixedContextHOLExact_state_ffi,
+                    emptyLocalsHOLExact]
+                  exact hpref
+              | «break» =>
+                  rw [← Option.some.inj hHigh]
+                  simp only [callFixedContextHOLExact_state_ffi]
+                  exact hpref
+              | «continue» =>
+                  rw [← Option.some.inj hHigh]
+                  simp only [callFixedContextHOLExact_state_ffi]
+                  exact hpref
+              | returned v =>
+                  try (split at hHigh) <;> try (split at hHigh) <;> try (split at hHigh) <;>
+                  try (split at hHigh) <;> try (split at hHigh)
+                  all_goals
+                    (first
+                     | (rw [← Option.some.inj hHigh]
+                        simp only [PanSemExactEvalContext.withState_state, callFixedContextHOLExact_state_ffi,
+                          emptyLocalsHOLExact, setKvarHOLExact_ffi]
+                        exact hpref)
+                     | (simp_all))
+              | exception e v =>
+                  try (split at hHigh) <;> try (split at hHigh) <;> try (split at hHigh) <;>
+                  try (split at hHigh) <;> try (split at hHigh)
+                  all_goals
+                    (first
+                     | (rw [← Option.some.inj hHigh]
+                        simp only [PanSemExactEvalContext.withState_state, callFixedContextHOLExact_state_ffi,
+                          emptyLocalsHOLExact]
+                        exact hpref)
+                     | (have hh : cB.state.ffi.ioEvents <+: resultHigh.2.state.ffi.ioEvents := by
+                          simpa only [PanSemExactEvalContext.withState_state, handlerStateHOLExact,
+                            setVarHOLExact, callFixedContextHOLExact_state_ffi]
+                            using (evalPanSemRecursiveCallContextHOLExact_ioEvents_prefix _ _ resultHigh hHigh)
+                        exact hpref.trans hh)
+                     | (simp_all))
+        · intro hne; exact absurd hto hne
+      · obtain ⟨hrB, hcB⟩ := Prod.mk.inj (hih1.2 hto)
+        cases hrB
+        cases hcB
+        cases other with
+        | «break» => exfalso; exact hbrk rfl
+        | «continue» => exfalso; exact hcont rfl
+        | returned v => exfalso; exact hret v rfl
+        | exception e v => exfalso; exact hexc e v rfl
+        | timeOut => exfalso; exact absurd rfl hto
+        | error =>
+            dsimp only at hHigh
+            simp only [Option.some.injEq] at hHigh
+            rw [← hHigh]
+            constructor
+            · change (emptyLocalsHOLExact (callFixedContextHOLExact _ (some .error) _).state).ffi.ioEvents <+: (emptyLocalsHOLExact (callFixedContextHOLExact _ (some .error) _).state).ffi.ioEvents
+              rw [callFixedContextHOLExact_callEntry_stateAddClock_state context.state calleeLocals
+                (some .error) postContext extra hclock]
+              simp only [emptyLocalsHOLExact_stateAddClock, stateAddClock_ffi]
+              exact List.prefix_refl _
+            · intro _
+              congr 1
+              apply PanSemExactEvalContext.ext
+              change emptyLocalsHOLExact (callFixedContextHOLExact _ (some .error) _).state = stateAddClock ((emptyLocalsHOLExact (callFixedContextHOLExact _ (some .error) _).state)) extra
+              rw [callFixedContextHOLExact_callEntry_stateAddClock_state context.state calleeLocals
+                (some .error) postContext extra hclock]
+              simp only [emptyLocalsHOLExact_stateAddClock]
+              rfl
+        | finalFfi e =>
+            dsimp only at hHigh
+            simp only [Option.some.injEq] at hHigh
+            rw [← hHigh]
+            constructor
+            · change (emptyLocalsHOLExact (callFixedContextHOLExact _ (some (.finalFfi e)) _).state).ffi.ioEvents <+: (emptyLocalsHOLExact (callFixedContextHOLExact _ (some (.finalFfi e)) _).state).ffi.ioEvents
+              rw [callFixedContextHOLExact_callEntry_stateAddClock_state context.state calleeLocals
+                (some (.finalFfi e)) postContext extra hclock]
+              simp only [emptyLocalsHOLExact_stateAddClock, stateAddClock_ffi]
+              exact List.prefix_refl _
+            · intro _
+              congr 1
+              apply PanSemExactEvalContext.ext
+              change emptyLocalsHOLExact (callFixedContextHOLExact _ (some (.finalFfi e)) _).state = stateAddClock ((emptyLocalsHOLExact (callFixedContextHOLExact _ (some (.finalFfi e)) _).state)) extra
+              rw [callFixedContextHOLExact_callEntry_stateAddClock_state context.state calleeLocals
+                (some (.finalFfi e)) postContext extra hclock]
+              simp only [emptyLocalsHOLExact_stateAddClock]
+              rfl
+  case case40 =>
+    intro extra resultLow resultHigh hLow hHigh
+    cases hLow
+    constructor
+    · have hprefix := evalPanSemRecursiveCallContextHOLExact_ioEvents_prefix
+          _ _ resultHigh hHigh
+      exact hprefix
+    · intro hne; exact absurd rfl hne
+  case case42 =>
+    rename_i inst context state resultName shape function arguments continuation values hargs
+      body calleeLocals returnShape hlookup hclock entry entryContext postContext hbody fixedContext ih1
+    intro extra resultLow resultHigh hLow hHigh
+    cases hLow
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
+    dsimp only at hHigh
+    simp only [evalListHOLExact_stateAddClock] at hHigh
+    rw [show evalListHOLExact context.state arguments = some values from hargs] at hHigh
+    try simp only [] at hHigh
+    rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
+    try simp only [] at hHigh
+    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    try simp only [] at hHigh
+    split at hHigh
+    · simp at hHigh
+    · rename_i rB cB hbodyH
+      have hbodyH' : evalPanSemRecursiveCallContextHOLExact body (ctxAddClock entryContext extra) =
+          some (rB, cB) := by
+        rw [← eval_context_state body _ (ctxAddClock entryContext extra)]
+        · exact hbodyH
+        · change callEntryStateHOLExact (stateAddClock context.state extra) calleeLocals = stateAddClock entry extra
+          rw [callEntryStateHOLExact_stateAddClock context.state calleeLocals extra hclock]
+      have hih1 := ih1 extra (none, postContext) (rB, cB) hbody hbodyH'
+      obtain ⟨hrB, hcB⟩ := Prod.mk.inj (hih1.2 (by simp))
+      cases hrB
+      cases hcB
+      dsimp only at hHigh
+      rw [callFixedContextHOLExact_callEntry_stateAddClock context.state calleeLocals
+        (none) postContext extra hclock] at hHigh
+      simp only [Option.some.injEq] at hHigh
+      rw [← hHigh]
+      exact ⟨List.prefix_refl _, by intro _; rfl⟩
+  case case43 =>
+    rename_i inst context state resultName shape function arguments continuation values hargs
+      body calleeLocals returnShape hlookup hclock entry entryContext postContext hbody fixedContext ih1
+    intro extra resultLow resultHigh hLow hHigh
+    cases hLow
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
+    dsimp only at hHigh
+    simp only [evalListHOLExact_stateAddClock] at hHigh
+    rw [show evalListHOLExact context.state arguments = some values from hargs] at hHigh
+    try simp only [] at hHigh
+    rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
+    try simp only [] at hHigh
+    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    try simp only [] at hHigh
+    split at hHigh
+    · simp at hHigh
+    · rename_i rB cB hbodyH
+      have hbodyH' : evalPanSemRecursiveCallContextHOLExact body (ctxAddClock entryContext extra) =
+          some (rB, cB) := by
+        rw [← eval_context_state body _ (ctxAddClock entryContext extra)]
+        · exact hbodyH
+        · change callEntryStateHOLExact (stateAddClock context.state extra) calleeLocals = stateAddClock entry extra
+          rw [callEntryStateHOLExact_stateAddClock context.state calleeLocals extra hclock]
+      have hih1 := ih1 extra (some .break, postContext) (rB, cB) hbody hbodyH'
+      obtain ⟨hrB, hcB⟩ := Prod.mk.inj (hih1.2 (by simp))
+      cases hrB
+      cases hcB
+      dsimp only at hHigh
+      rw [callFixedContextHOLExact_callEntry_stateAddClock context.state calleeLocals
+        (some .break) postContext extra hclock] at hHigh
+      simp only [Option.some.injEq] at hHigh
+      rw [← hHigh]
+      exact ⟨List.prefix_refl _, by intro _; rfl⟩
+  case case44 =>
+    rename_i inst context state resultName shape function arguments continuation values hargs
+      body calleeLocals returnShape hlookup hclock entry entryContext postContext hbody fixedContext ih1
+    intro extra resultLow resultHigh hLow hHigh
+    cases hLow
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
+    dsimp only at hHigh
+    simp only [evalListHOLExact_stateAddClock] at hHigh
+    rw [show evalListHOLExact context.state arguments = some values from hargs] at hHigh
+    try simp only [] at hHigh
+    rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
+    try simp only [] at hHigh
+    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    try simp only [] at hHigh
+    split at hHigh
+    · simp at hHigh
+    · rename_i rB cB hbodyH
+      have hbodyH' : evalPanSemRecursiveCallContextHOLExact body (ctxAddClock entryContext extra) =
+          some (rB, cB) := by
+        rw [← eval_context_state body _ (ctxAddClock entryContext extra)]
+        · exact hbodyH
+        · change callEntryStateHOLExact (stateAddClock context.state extra) calleeLocals = stateAddClock entry extra
+          rw [callEntryStateHOLExact_stateAddClock context.state calleeLocals extra hclock]
+      have hih1 := ih1 extra (some .continue, postContext) (rB, cB) hbody hbodyH'
+      obtain ⟨hrB, hcB⟩ := Prod.mk.inj (hih1.2 (by simp))
+      cases hrB
+      cases hcB
+      dsimp only at hHigh
+      rw [callFixedContextHOLExact_callEntry_stateAddClock context.state calleeLocals
+        (some .continue) postContext extra hclock] at hHigh
+      simp only [Option.some.injEq] at hHigh
+      rw [← hHigh]
+      exact ⟨List.prefix_refl _, by intro _; rfl⟩
+  case case46 =>
+    rename_i inst context state resultName shape function arguments continuation values hargs
+      body calleeLocals returnShape hlookup hclock entry entryContext postContextBody value hshape
+      result postContext restored hbody fixedContext continuationContext hcont ih2 ih1
+    intro extra resultLow resultHigh hLow hHigh
+    cases hLow
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
+    dsimp only at hHigh
+    simp only [evalListHOLExact_stateAddClock] at hHigh
+    rw [show evalListHOLExact context.state arguments = some values from hargs] at hHigh
+    try simp only [] at hHigh
+    rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
+    try simp only [] at hHigh
+    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    try simp only [] at hHigh
+    split at hHigh
+    · simp at hHigh
+    · rename_i rB cB hbodyH
+      have hbodyH' : evalPanSemRecursiveCallContextHOLExact body (ctxAddClock entryContext extra) =
+          some (rB, cB) := by
+        rw [← eval_context_state body _ (ctxAddClock entryContext extra)]
+        · exact hbodyH
+        · change callEntryStateHOLExact (stateAddClock context.state extra) calleeLocals = stateAddClock entry extra
+          rw [callEntryStateHOLExact_stateAddClock context.state calleeLocals extra hclock]
+      have hih2 := ih2 extra (some (.returned value), postContextBody) (rB, cB) hbody hbodyH'
+      obtain ⟨hrB, hcB⟩ := Prod.mk.inj (hih2.2 (by simp))
+      cases hrB
+      cases hcB
+      dsimp only at hHigh
+      rw [if_pos hshape] at hHigh
+      split at hHigh
+      · simp at hHigh
+      · rename_i rC cC hcontH
+        simp only [callFixedContextHOLExact_callEntry_stateAddClock context.state calleeLocals
+          (some (.returned value)) postContextBody extra hclock] at hcontH
+        have hcontH' : evalPanSemRecursiveCallContextHOLExact continuation
+            (ctxAddClock continuationContext extra) = some (rC, cC) := by
+          rw [← eval_context_state continuation _ (ctxAddClock continuationContext extra)]
+          · exact hcontH
+          · exact congrArg PanSemExactEvalContext.state
+              (callContinuationContextHOLExact_stateAddClock context fixedContext resultName value extra)
+        have hih1 := ih1 extra (result, postContext) (rC, cC) hcont hcontH'
+        have hpref : postContext.state.ffi.ioEvents <+: cC.state.ffi.ioEvents := hih1.1
+        by_cases hto : result = some PanSemResultExact.timeOut
+        · constructor
+          · change postContext.state.ffi.ioEvents <+: resultHigh.2.state.ffi.ioEvents
+            simp only [Option.some.injEq] at hHigh
+            rw [← hHigh]
+            first
+             | exact hpref
+             | simpa only [PanSemExactEvalContext.withState_state] using hpref
+          · intro hne; exact absurd hto hne
+        · obtain ⟨hrC, hcC⟩ := Prod.mk.inj (hih1.2 hto)
+          cases hrC
+          cases hcC
+          dsimp only at hHigh
+          simp only [Option.some.injEq] at hHigh
+          rw [← hHigh]
+          exact ⟨List.prefix_refl _, by intro _; rfl⟩
+  case case47 =>
+    rename_i inst context state resultName shape function arguments continuation values hargs
+      body calleeLocals returnShape hlookup hclock entry entryContext postContext value hshape hbody
+      fixedContext ih1
+    intro extra resultLow resultHigh hLow hHigh
+    cases hLow
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
+    dsimp only at hHigh
+    simp only [evalListHOLExact_stateAddClock] at hHigh
+    rw [show evalListHOLExact context.state arguments = some values from hargs] at hHigh
+    try simp only [] at hHigh
+    rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
+    try simp only [] at hHigh
+    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    try simp only [] at hHigh
+    split at hHigh
+    · simp at hHigh
+    · rename_i rB cB hbodyH
+      have hbodyH' : evalPanSemRecursiveCallContextHOLExact body (ctxAddClock entryContext extra) =
+          some (rB, cB) := by
+        rw [← eval_context_state body _ (ctxAddClock entryContext extra)]
+        · exact hbodyH
+        · change callEntryStateHOLExact (stateAddClock context.state extra) calleeLocals = stateAddClock entry extra
+          rw [callEntryStateHOLExact_stateAddClock context.state calleeLocals extra hclock]
+      have hih1 := ih1 extra (some (.returned value), postContext) (rB, cB) hbody hbodyH'
+      obtain ⟨hrB, hcB⟩ := Prod.mk.inj (hih1.2 (by simp))
+      cases hrB
+      cases hcB
+      dsimp only at hHigh
+      rw [if_neg hshape] at hHigh
+      rw [callFixedContextHOLExact_callEntry_stateAddClock context.state calleeLocals
+        (some (.returned value)) postContext extra hclock] at hHigh
+      simp only [Option.some.injEq] at hHigh
+      rw [← hHigh]
+      exact ⟨List.prefix_refl _, by intro _; rfl⟩
+  case case48 =>
+    rename_i inst context state resultName shape function arguments continuation values hargs
+      body calleeLocals returnShape hlookup hclock entry entryContext postContext other
+      hbrk hcont hret hbody fixedContext ih1
+    intro extra resultLow resultHigh hLow hHigh
+    cases hLow
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
+    dsimp only at hHigh
+    simp only [evalListHOLExact_stateAddClock] at hHigh
+    rw [show evalListHOLExact context.state arguments = some values from hargs] at hHigh
+    try simp only [] at hHigh
+    rw [show lookupCodeHOLExact context.state.code function values = some (body, calleeLocals, returnShape) from hlookup] at hHigh
+    try simp only [] at hHigh
+    rw [if_neg (by have hc : context.state.clock ≠ 0 := hclock; omega)] at hHigh
+    try simp only [] at hHigh
+    split at hHigh
+    · simp at hHigh
+    · rename_i rB cB hbodyH
+      have hbodyH' : evalPanSemRecursiveCallContextHOLExact body (ctxAddClock entryContext extra) =
+          some (rB, cB) := by
+        rw [← eval_context_state body _ (ctxAddClock entryContext extra)]
+        · exact hbodyH
+        · change callEntryStateHOLExact (stateAddClock context.state extra) calleeLocals = stateAddClock entry extra
+          rw [callEntryStateHOLExact_stateAddClock context.state calleeLocals extra hclock]
+      have hih1 := ih1 extra (some other, postContext) (rB, cB) hbody hbodyH'
+      have hpref : postContext.state.ffi.ioEvents <+: cB.state.ffi.ioEvents := hih1.1
+      by_cases hto : (some other : Option (PanSemResultExact width)) = some .timeOut
+      · constructor
+        · change postContext.state.ffi.ioEvents <+: resultHigh.2.state.ffi.ioEvents
+          cases rB with
+          | none =>
+              rw [← Option.some.inj hHigh]
+              simp only [callFixedContextHOLExact_state_ffi]
+              exact hpref
+          | some br =>
+              cases br with
+              | error =>
+                  rw [← Option.some.inj hHigh]
+                  simp only [PanSemExactEvalContext.withState_state, callFixedContextHOLExact_state_ffi,
+                    emptyLocalsHOLExact]
+                  exact hpref
+              | timeOut =>
+                  rw [← Option.some.inj hHigh]
+                  simp only [PanSemExactEvalContext.withState_state, callFixedContextHOLExact_state_ffi,
+                    emptyLocalsHOLExact]
+                  exact hpref
+              | finalFfi e =>
+                  rw [← Option.some.inj hHigh]
+                  simp only [PanSemExactEvalContext.withState_state, callFixedContextHOLExact_state_ffi,
+                    emptyLocalsHOLExact]
+                  exact hpref
+              | «break» =>
+                  rw [← Option.some.inj hHigh]
+                  simp only [callFixedContextHOLExact_state_ffi]
+                  exact hpref
+              | «continue» =>
+                  rw [← Option.some.inj hHigh]
+                  simp only [callFixedContextHOLExact_state_ffi]
+                  exact hpref
+              | exception e v =>
+                  rw [← Option.some.inj hHigh]
+                  simp only [PanSemExactEvalContext.withState_state, callFixedContextHOLExact_state_ffi,
+                    emptyLocalsHOLExact]
+                  exact hpref
+              | returned v =>
+                  try (split at hHigh) <;> try (split at hHigh) <;> try (split at hHigh) <;>
+                  try (split at hHigh) <;> try (split at hHigh)
+                  all_goals
+                    (first
+                     | (rw [← Option.some.inj hHigh]
+                        simp only [PanSemExactEvalContext.withState_state, callFixedContextHOLExact_state_ffi,
+                          emptyLocalsHOLExact]
+                        exact hpref)
+                     | (rw [← Option.some.inj hHigh]
+                        simp only [PanSemExactEvalContext.withState_state]
+                        exact hpref.trans
+                          (evalPanSemRecursiveCallContextHOLExact_ioEvents_prefix _ _ _ (by assumption)))
+                     | (simp_all))
+        · intro hne; exact absurd hto hne
+      · obtain ⟨hrB, hcB⟩ := Prod.mk.inj (hih1.2 hto)
+        cases hrB
+        cases hcB
+        cases other with
+        | «break» => exfalso; exact hbrk rfl
+        | «continue» => exfalso; exact hcont rfl
+        | returned v => exfalso; exact hret v rfl
+        | timeOut => exfalso; exact absurd rfl hto
+        | error =>
+            dsimp only at hHigh
+            simp only [Option.some.injEq] at hHigh
+            rw [← hHigh]
+            constructor
+            · change (emptyLocalsHOLExact (callFixedContextHOLExact _ (some .error) _).state).ffi.ioEvents <+: (emptyLocalsHOLExact (callFixedContextHOLExact _ (some .error) _).state).ffi.ioEvents
+              rw [callFixedContextHOLExact_callEntry_stateAddClock_state context.state calleeLocals
+                (some .error) postContext extra hclock]
+              simp only [emptyLocalsHOLExact_stateAddClock, stateAddClock_ffi]
+              exact List.prefix_refl _
+            · intro _
+              congr 1
+              apply PanSemExactEvalContext.ext
+              change emptyLocalsHOLExact (callFixedContextHOLExact _ (some .error) _).state = stateAddClock ((emptyLocalsHOLExact (callFixedContextHOLExact _ (some .error) _).state)) extra
+              rw [callFixedContextHOLExact_callEntry_stateAddClock_state context.state calleeLocals
+                (some .error) postContext extra hclock]
+              simp only [emptyLocalsHOLExact_stateAddClock]
+              rfl
+        | exception e v =>
+            dsimp only at hHigh
+            simp only [Option.some.injEq] at hHigh
+            rw [← hHigh]
+            constructor
+            · change (emptyLocalsHOLExact (callFixedContextHOLExact _ (some (.exception e v)) _).state).ffi.ioEvents <+: (emptyLocalsHOLExact (callFixedContextHOLExact _ (some (.exception e v)) _).state).ffi.ioEvents
+              rw [callFixedContextHOLExact_callEntry_stateAddClock_state context.state calleeLocals
+                (some (.exception e v)) postContext extra hclock]
+              simp only [emptyLocalsHOLExact_stateAddClock, stateAddClock_ffi]
+              exact List.prefix_refl _
+            · intro _
+              congr 1
+              apply PanSemExactEvalContext.ext
+              change emptyLocalsHOLExact (callFixedContextHOLExact _ (some (.exception e v)) _).state = stateAddClock ((emptyLocalsHOLExact (callFixedContextHOLExact _ (some (.exception e v)) _).state)) extra
+              rw [callFixedContextHOLExact_callEntry_stateAddClock_state context.state calleeLocals
+                (some (.exception e v)) postContext extra hclock]
+              simp only [emptyLocalsHOLExact_stateAddClock]
+              rfl
+        | finalFfi e =>
+            dsimp only at hHigh
+            simp only [Option.some.injEq] at hHigh
+            rw [← hHigh]
+            constructor
+            · change (emptyLocalsHOLExact (callFixedContextHOLExact _ (some (.finalFfi e)) _).state).ffi.ioEvents <+: (emptyLocalsHOLExact (callFixedContextHOLExact _ (some (.finalFfi e)) _).state).ffi.ioEvents
+              rw [callFixedContextHOLExact_callEntry_stateAddClock_state context.state calleeLocals
+                (some (.finalFfi e)) postContext extra hclock]
+              simp only [emptyLocalsHOLExact_stateAddClock, stateAddClock_ffi]
+              exact List.prefix_refl _
+            · intro _
+              congr 1
+              apply PanSemExactEvalContext.ext
+              change emptyLocalsHOLExact (callFixedContextHOLExact _ (some (.finalFfi e)) _).state = stateAddClock ((emptyLocalsHOLExact (callFixedContextHOLExact _ (some (.finalFfi e)) _).state)) extra
+              rw [callFixedContextHOLExact_callEntry_stateAddClock_state context.state calleeLocals
+                (some (.finalFfi e)) postContext extra hclock]
+              simp only [emptyLocalsHOLExact_stateAddClock]
+              rfl
+  case case49 =>
+    rename_i inst context state kind name source output hmem hshared
+    intro extra resultLow resultHigh hLow hHigh
+    cases hLow
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
+    dsimp only at hHigh
+    simp only [assignStepHOLExact_stateAddClock] at hHigh
+    simp only [Option.some.injEq] at hHigh
+    subst resultHigh
+    constructor
+    · simp only [PanSemExactEvalContext.withState_state, stateAddClock_ffi]
+      exact List.prefix_refl _
+    · intro _
+      first
+       | rfl
+       | (apply PanSemExactEvalContext.ext
+          simp only [PanSemExactEvalContext.withState_state, ctxAddClock_state])
+  case case50 =>
+    rename_i inst context state name operator arguments output hmem hshared
+    intro extra resultLow resultHigh hLow hHigh
+    cases hLow
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
+    dsimp only at hHigh
+    simp only [primitiveStepHOLExact_stateAddClock] at hHigh
+    simp only [Option.some.injEq] at hHigh
+    subst resultHigh
+    constructor
+    · simp only [PanSemExactEvalContext.withState_state, stateAddClock_ffi]
+      exact List.prefix_refl _
+    · intro _
+      first
+       | rfl
+       | (apply PanSemExactEvalContext.ext
+          simp only [PanSemExactEvalContext.withState_state, ctxAddClock_state])
+  case case51 =>
+    rename_i inst context state address value output hmem hshared
+    intro extra resultLow resultHigh hLow hHigh
+    cases hLow
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
+    dsimp only at hHigh
+    simp only [storeStepHOLExact_stateAddClock] at hHigh
+    simp only [Option.some.injEq] at hHigh
+    subst resultHigh
+    constructor
+    · simp only [PanSemExactEvalContext.withState_state, stateAddClock_ffi]
+      exact List.prefix_refl _
+    · intro _
+      first
+       | rfl
+       | (apply PanSemExactEvalContext.ext
+          simp only [PanSemExactEvalContext.withState_state, ctxAddClock_state])
+  case case52 =>
+    rename_i inst context state address value output hmem hshared
+    intro extra resultLow resultHigh hLow hHigh
+    cases hLow
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
+    dsimp only at hHigh
+    simp only [store32StepHOLExact_stateAddClock] at hHigh
+    simp only [Option.some.injEq] at hHigh
+    subst resultHigh
+    constructor
+    · simp only [PanSemExactEvalContext.withState_state, stateAddClock_ffi]
+      exact List.prefix_refl _
+    · intro _
+      first
+       | rfl
+       | (apply PanSemExactEvalContext.ext
+          simp only [PanSemExactEvalContext.withState_state, ctxAddClock_state])
+  case case53 =>
+    rename_i inst context state address value output hmem hshared
+    intro extra resultLow resultHigh hLow hHigh
+    cases hLow
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
+    dsimp only at hHigh
+    simp only [storeByteStepHOLExact_stateAddClock] at hHigh
+    simp only [Option.some.injEq] at hHigh
+    subst resultHigh
+    constructor
+    · simp only [PanSemExactEvalContext.withState_state, stateAddClock_ffi]
+      exact List.prefix_refl _
+    · intro _
+      first
+       | rfl
+       | (apply PanSemExactEvalContext.ext
+          simp only [PanSemExactEvalContext.withState_state, ctxAddClock_state])
+  case case54 =>
+    intro extra resultLow resultHigh hLow hHigh
+    cases hLow
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
+    dsimp only at hHigh
+    simp only [Option.some.injEq] at hHigh
+    rw [← hHigh]
+    exact ⟨List.prefix_refl _, by intro _; rfl⟩
+  case case55 =>
+    intro extra resultLow resultHigh hLow hHigh
+    cases hLow
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
+    dsimp only at hHigh
+    simp only [Option.some.injEq] at hHigh
+    rw [← hHigh]
+    exact ⟨List.prefix_refl _, by intro _; rfl⟩
+  case case56 =>
+    intro extra resultLow resultHigh hLow hHigh
+    cases hLow
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
+    dsimp only at hHigh
+    simp only [Option.some.injEq] at hHigh
+    rw [← hHigh]
+    exact ⟨List.prefix_refl _, by intro _; rfl⟩
+  case case58 =>
+    intro extra resultLow resultHigh hLow hHigh
+    cases hLow
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
+    dsimp only at hHigh
+    simp only [evalHOLExact_stateAddClock] at hHigh
+    simp_all (config := { zetaDelta := true })
+    subst resultHigh
+    constructor
+    · simp only [PanSemExactEvalContext.withState_state, stateAddClock_ffi]
+      exact List.prefix_refl _
+    · first
+       | rfl
+       | (congr 1
+          apply PanSemExactEvalContext.ext
+          simp only [PanSemExactEvalContext.withState_state, ctxAddClock_state])
+  case case59 =>
+    intro extra resultLow resultHigh hLow hHigh
+    cases hLow
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
+    dsimp only at hHigh
+    simp_all (config := { zetaDelta := true })
+    rw [if_neg (by omega)] at hHigh
+    simp only [Option.some.injEq] at hHigh
+    subst resultHigh
+    constructor
+    · try simp only []
+      exact List.prefix_refl _
+    · first
+       | rfl
+       | (congr 1
+          apply PanSemExactEvalContext.ext
+          simp only [PanSemExactEvalContext.withState_state, ctxAddClock_state])
+  case case62 =>
+    intro extra resultLow resultHigh hLow hHigh
+    cases hLow
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
+    dsimp only at hHigh
+    simp only [evalHOLExact_stateAddClock] at hHigh
+    simp_all (config := { zetaDelta := true })
+    subst resultHigh
+    constructor
+    · simp only [PanSemExactEvalContext.withState_state, stateAddClock_ffi]
+      exact List.prefix_refl _
+    · first
+       | rfl
+       | (congr 1
+          apply PanSemExactEvalContext.ext
+          simp only [PanSemExactEvalContext.withState_state, ctxAddClock_state])
+  case case63 =>
+    intro extra resultLow resultHigh hLow hHigh
+    cases hLow
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
+    dsimp only at hHigh
+    simp_all (config := { zetaDelta := true })
+    rw [if_neg (by omega)] at hHigh
+    simp only [Option.some.injEq] at hHigh
+    subst resultHigh
+    constructor
+    · try simp only []
+      exact List.prefix_refl _
+    · first
+       | rfl
+       | (congr 1
+          apply PanSemExactEvalContext.ext
+          simp only [PanSemExactEvalContext.withState_state, ctxAddClock_state])
+  case case65 =>
+    intro extra resultLow resultHigh hLow hHigh
+    cases hLow
+    constructor
+    · have hprefix := evalPanSemRecursiveCallContextHOLExact_ioEvents_prefix
+          _ _ resultHigh hHigh
+      exact hprefix
+    · intro hne; exact absurd rfl hne
+  case case66 =>
+    intro extra resultLow resultHigh hLow hHigh
+    cases hLow
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
+    dsimp only at hHigh
+    simp_all (config := { zetaDelta := true })
+    subst resultHigh
+    constructor
+    · try simp only []
+      exact List.prefix_refl _
+    · first
+       | rfl
+       | (congr 1
+          apply PanSemExactEvalContext.ext
+          change decClockHOLExact (stateAddClock _ extra) = stateAddClock (decClockHOLExact _) extra
+          exact decClockHOLExact_stateAddClock _ extra (by omega))
+  case case67 =>
+    rename_i inst context state function configuration configurationLength array arrayLength
+      evalExpression output hmem hshared
+    intro extra resultLow resultHigh hLow hHigh
+    cases hLow
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
+    dsimp only at hHigh
+    simp only [extCallStepHOLExact_stateAddClock] at hHigh
+    simp only [Option.some.injEq] at hHigh
+    subst resultHigh
+    constructor
+    · simp only [PanSemExactEvalContext.withState_state, stateAddClock_ffi]
+      exact List.prefix_refl _
+    · intro _
+      first
+       | rfl
+       | (apply PanSemExactEvalContext.ext
+          simp only [PanSemExactEvalContext.withState_state, ctxAddClock_state])
+  case case68 =>
+    rename_i inst context state size kind name address evalExpression output hdomains
+    intro extra resultLow resultHigh hLow hHigh
+    cases hLow
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
+    dsimp only at hHigh
+    simp only [shMemLoadClauseHOLExact_stateAddClock] at hHigh
+    simp only [Option.some.injEq] at hHigh
+    subst resultHigh
+    constructor
+    · simp only [PanSemExactEvalContext.withState_state, stateAddClock_ffi]
+      exact List.prefix_refl _
+    · intro _
+      first
+       | rfl
+       | (apply PanSemExactEvalContext.ext
+          simp only [PanSemExactEvalContext.withState_state, ctxAddClock_state])
+  case case69 =>
+    rename_i inst context state size address value evalExpression output hdomains
+    intro extra resultLow resultHigh hLow hHigh
+    cases hLow
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
+    dsimp only at hHigh
+    simp only [shMemStoreClauseHOLExact_stateAddClock] at hHigh
+    simp only [Option.some.injEq] at hHigh
+    subst resultHigh
+    constructor
+    · simp only [PanSemExactEvalContext.withState_state, stateAddClock_ffi]
+      exact List.prefix_refl _
+    · intro _
+      first
+       | rfl
+       | (apply PanSemExactEvalContext.ext
+          simp only [PanSemExactEvalContext.withState_state, ctxAddClock_state])
+  case case70 =>
+    intro extra resultLow resultHigh hLow hHigh
+    cases hLow
+    rw [evalPanSemRecursiveCallContextHOLExact.eq_def] at hHigh
+    dsimp only at hHigh
+    simp only [Option.some.injEq] at hHigh
+    rw [← hHigh]
+    exact ⟨List.prefix_refl _, by intro _; rfl⟩
+  all_goals closeLeaf
+
+/-! ## Clock-increase event-trace prefix (bead flapjack-tu4j)
+
+The Lean analogue of HOL `panPropsScript.sml:881
+evaluate_add_clock_io_events_mono`: running the exact recursive panSem
+evaluator at a larger clock can only add FFI I/O events, so the
+lower-clock run's `ffi.ioEvents` is a list prefix of the higher-clock
+run's.  Flapjack-specific infrastructure; no `@[hol]` tag. -/
+
+/-- Given that both the low-clock and the shifted-clock runs terminate at
+the given outputs, the low run's `ffi.ioEvents` is a list prefix of the
+high run's. -/
+theorem evalPanSemRecursiveCallContextHOLExact_add_clock_ioEvents_prefix
+    {width : Nat} {σ : Type} [NeZero width]
+    (program : ProgHOL width) (context : PanSemExactEvalContext width σ) (extra : Nat)
+    (resultLow resultHigh : Option (PanSemResultExact width) × PanSemExactEvalContext width σ)
+    (hLow : evalPanSemRecursiveCallContextHOLExact program context = some resultLow)
+    (hHigh : evalPanSemRecursiveCallContextHOLExact program (ctxAddClock context extra) =
+      some resultHigh) :
+    resultLow.2.state.ffi.ioEvents <+: resultHigh.2.state.ffi.ioEvents :=
+  (eval_add_clock_mono_aux program context extra resultLow resultHigh hLow hHigh).1
+
+/-- Clock-increase event-trace prefix in terms of the (total) evaluator
+outputs, eliminating the always-present assembly marker. -/
+theorem evalPanSemRecursiveCallContextHOLExact_add_clock_ioEvents_prefix_getD
+    {width : Nat} {σ : Type} [NeZero width]
+    (program : ProgHOL width) (context : PanSemExactEvalContext width σ) (extra : Nat) :
+    ((evalPanSemRecursiveCallContextHOLExact program context).map
+        (fun result => result.2.state.ffi.ioEvents)).getD [] <+:
+      ((evalPanSemRecursiveCallContextHOLExact program (ctxAddClock context extra)).map
+        (fun result => result.2.state.ffi.ioEvents)).getD [] := by
+  obtain ⟨resultLow, hLow⟩ :=
+    evalPanSemRecursiveCallContextHOLExact_total program context
+  obtain ⟨resultHigh, hHigh⟩ :=
+    evalPanSemRecursiveCallContextHOLExact_total program (ctxAddClock context extra)
+  simp only [hLow, hHigh, Option.map_some, Option.getD_some]
+  exact (eval_add_clock_mono_aux program context extra resultLow resultHigh hLow hHigh).1
 
 end Flapjack
