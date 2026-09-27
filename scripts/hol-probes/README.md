@@ -61,7 +61,12 @@ cases where the callee's actual returned value disagrees with the return shape
 stored in the code map; HOL returns `SOME Error`, preserves the decremented
 clock, and exposes the callee post-state. Their Lean checks live in
 `Flapjack.Test.PanEvaluateParity` and exercise the recursive
-`PanSemState.code` evaluator.
+`PanSemState.code` evaluator. The same probe contains direct `evaluate_def`
+ExtCall rows for returned FFI bytes (including the updated memory), failed
+byte-array reads, expression failure, nonword arguments, and `FFI_final`;
+these are checked by `Flapjack.Test.PanSemExtCallExactParity`. The finite-
+carrier source equation is tagged in
+`Flapjack.Pancake.Semantics.PanSem.ExtCallCase`.
 `compile_def_probe.out` also records direct HOL evaluations of `Return`
 (`return`, `multi_return`, and the empty-struct return), paired
 `Store32`/`StoreByte` success and fallback rows, `If`/`While` success and
