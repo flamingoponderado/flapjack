@@ -26,12 +26,15 @@ clock-exhaustion (`TimeOut`, empty locals) branches, and the
 returned and exception outcome branches are exposed by the projection theorems
 `evalPanSemRecursiveCallFiniteContext_call_projection` and
 `..._decCall_projection`, which relate the finite context evaluator to the broad
-exact one over `toExact`.  The general `fun_induction` projection equivalence
-over every constructor is now proved (`evalPanSemRecursiveCallFiniteContext_projection`,
-commit de0d2ff1e, `flapjack-6yq`); the exact
-`@[hol ... "evaluate_def" ...]` tag stays withheld pending the coordinator's
-source review of that theorem and its side conditions/carriers (`flapjack-qj5`,
-`flapjack-6yq.1`).
+exact one over `toExact`. The general `fun_induction` projection equivalence
+over every constructor is now proved
+(`evalPanSemRecursiveCallFiniteContext_projection`, commit de0d2ff1e,
+`flapjack-6yq`). The 21-clause/carrier source-audit slice `flapjack-6yq.1` is
+coordinator-reviewed and closed. Coordinator review identified that HOL's
+`evaluate_def` at line 780 is a theorem containing the 21 clause equations,
+not a function definition. The function-shaped `evaluateHOLFiniteState` tag
+was withdrawn; `flapjack-qj5` tracks the faithful equation theorem. No HOL
+claim is made by the evaluator infrastructure here.
 
 The older delegating adapter `evaluateHOLFiniteViaExact` (and its
 `evalPanSemRecursiveCallHOLFinite_of_broad` / `evaluateHOLFiniteViaExact_of_broad`
@@ -72,8 +75,11 @@ representation recorded by the state's qualifier and roundtrip witness.
 evaluator. The finite-to-broad theorem below is a kernel-checked projection
 for every constructor; the state-level wrapper's `evaluateHOLFiniteState_eq_getD`
 bridge removes the assembly marker without changing the result/state pair.
-No mismatch was found. This is source-review evidence, not a restoration of
-the `evaluate_def` tag; that tag remains withheld pending coordinator review.
+No clause or carrier mismatch was found. Coordinator review found a declaration
+shape mismatch: HOL `evaluate_def` is the line-780 equation theorem, whereas
+`evaluateHOLFiniteState` is a Lean function definition. Its HOL tag is
+withdrawn; `flapjack-qj5` tracks the equation theorem. The source-audit
+prerequisite `flapjack-6yq.1` is coordinator-reviewed and closed.
 
 The module also carries the per-constructor projection equivalence to the broad
 exact evaluator (`flapjack-6yq`): `..._skip_projection` / `_break_projection` /
@@ -85,8 +91,8 @@ result through `state.toExact` agrees with `...ContextHOLExact`. Recursive
 recursive hypotheses. `Call` and `DecCall` projection lemmas and the assembling
 66-case induction `evalPanSemRecursiveCallFiniteContext_projection` (commit
 de0d2ff1e) are all proved, so the finite-to-broad evaluator equality over every
-constructor is complete; only the coordinator's source review/`evaluate_def` tag
-remain.
+constructor is complete; `flapjack-qj5` tracks the matching conjunction of
+state-level equations and its source-reviewed HOL tag.
 -/
 import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
 
