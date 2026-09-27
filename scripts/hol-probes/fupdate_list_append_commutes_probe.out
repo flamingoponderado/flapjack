@@ -1,0 +1,17 @@
+source_theorem=∀l1 l2 fm.
+  DISJOINT (set (MAP FST l1)) (set (MAP FST l2)) ⇒
+  fm |++ l1 |++ l2 = fm |++ l2 |++ l1
+disjoint_keys=DISJOINT (set [1; 2]) (set [3])
+disjoint_commutes=FEMPTY⟨3 ↦ 30; 2 ↦ 20; 1 ↦ 10; 4 ↦ 40⟩ =
+FEMPTY⟨2 ↦ 20; 1 ↦ 10; 3 ↦ 30; 4 ↦ 40⟩
+disjoint_lookup_preserved=SOME 40
+disjoint_lookup_equal=T
+overlap_keys_disjoint=DISJOINT (set [1; 2]) (set [1])
+overlap_order_changes_map=FEMPTY⟨1 ↦ 99; 2 ↦ 20; 1 ↦ 10; 4 ↦ 40⟩ =
+FEMPTY⟨2 ↦ 20; 1 ↦ 10; 1 ↦ 99; 4 ↦ 40⟩
+overlap_guarded_implication=DISJOINT (set [1; 2]) (set [1]) ⇒
+FEMPTY⟨1 ↦ 99; 2 ↦ 20; 1 ↦ 10; 4 ↦ 40⟩ =
+FEMPTY⟨2 ↦ 20; 1 ↦ 10; 1 ↦ 99; 4 ↦ 40⟩
+overlap_left_lookup=SOME 99
+overlap_right_lookup=SOME 10
+overlap_lookup_equal=F

@@ -412,6 +412,67 @@ theorem FUPDATE_HOL_comm [DecidableEq α] (f : FiniteMap α β)
   by_cases h2 : key = k2 <;> by_cases h1 : key = k1 <;>
     simp_all [FUPDATE_HOL]
 
+/-- Flapjack proof helper for the external HOL theorem
+    `HOL/src/finite_maps/finite_mapScript.sml:2960`.
+    Updating one key commutes past a list of updates that omits that key. -/
+theorem FUPDATE_LIST_HOL_single_commutes [DecidableEq α] (f : FiniteMap α β)
+    (entry : α × β) (entries : List (α × β))
+    (h : entry.1 ∉ entries.map Prod.fst) :
+    FUPDATE_LIST_HOL (FUPDATE_HOL f entry) entries =
+      FUPDATE_HOL (FUPDATE_LIST_HOL f entries) entry := by
+  induction entries generalizing f with
+  | nil => rfl
+  | cons head tail ih =>
+      have hHead : entry.1 ≠ head.1 := by
+        intro he
+        exact h (by simp [he])
+      have hTail : entry.1 ∉ tail.map Prod.fst := by
+        intro hm
+        exact h (by simp [hm])
+      rw [FUPDATE_LIST_HOL_cons, FUPDATE_LIST_HOL_cons]
+      calc
+        FUPDATE_LIST_HOL (FUPDATE_HOL (FUPDATE_HOL f entry) head) tail =
+            FUPDATE_LIST_HOL (FUPDATE_HOL (FUPDATE_HOL f head) entry) tail := by
+              rw [FUPDATE_HOL_comm (f := f) head.1 head.2 entry.1 entry.2 hHead.symm]
+        _ = FUPDATE_HOL (FUPDATE_LIST_HOL (FUPDATE_HOL f head) tail) entry :=
+              ih (FUPDATE_HOL f head) hTail
+
+/-- HOL `FUPDATE_LIST_APPEND_COMMUTES` from
+    `/home/zksecurity/HOL/src/finite_maps/finite_mapScript.sml:2960`.
+
+    The external HOL source quantifies `l1`, `l2`, and `fm`, assumes
+    `DISJOINT (set (MAP FST l1)) (set (MAP FST l2))`, and concludes that the
+    two successive `FUPDATE_LIST` operations may be swapped. This declaration
+    uses HOL equality through `FUPDATE_LIST_HOL`; the set-disjointness premise
+    is expressed as non-membership between the two mapped key lists. The HOL
+    reference checker currently accepts only `cakeml/...sml` paths, while this
+    theorem lives in the separate HOL checkout, so this exact port is
+    intentionally untagged until external-source references are supported. -/
+theorem FUPDATE_LIST_APPEND_COMMUTES_HOL [DecidableEq α]
+    (l1 l2 : List (α × β)) (fm : FiniteMap α β)
+    (h : ∀ key, key ∈ l1.map Prod.fst → key ∉ l2.map Prod.fst) :
+    FUPDATE_LIST_HOL (FUPDATE_LIST_HOL fm l1) l2 =
+      FUPDATE_LIST_HOL (FUPDATE_LIST_HOL fm l2) l1 := by
+  induction l1 generalizing fm with
+  | nil => simp [FUPDATE_LIST_HOL]
+  | cons entry tail ih =>
+      have hEntry : entry.1 ∉ l2.map Prod.fst := by
+        apply h entry.1
+        simp
+      have hTail : ∀ key, key ∈ tail.map Prod.fst → key ∉ l2.map Prod.fst := by
+        intro key hkey
+        apply h key
+        simp [hkey]
+      rw [FUPDATE_LIST_HOL_cons]
+      calc
+        FUPDATE_LIST_HOL (FUPDATE_LIST_HOL (FUPDATE_HOL fm entry) tail) l2 =
+            FUPDATE_LIST_HOL (FUPDATE_LIST_HOL (FUPDATE_HOL fm entry) l2) tail :=
+              ih (FUPDATE_HOL fm entry) hTail
+        _ = FUPDATE_LIST_HOL (FUPDATE_HOL (FUPDATE_LIST_HOL fm l2) entry) tail := by
+              rw [FUPDATE_LIST_HOL_single_commutes fm entry l2 hEntry]
+        _ = FUPDATE_LIST_HOL (FUPDATE_LIST_HOL fm l2) (entry :: tail) := by
+              rw [FUPDATE_LIST_HOL_cons]
+
 /-- HOL-equality form of domain subtraction commutes at distinct keys. -/
 theorem FDOMSUB_HOL_commutes [DecidableEq α] (f : FiniteMap α β) (n m : α)
     (h : n ≠ m) : FDOMSUB_HOL (FDOMSUB_HOL f n) m = FDOMSUB_HOL (FDOMSUB_HOL f m) n := by
