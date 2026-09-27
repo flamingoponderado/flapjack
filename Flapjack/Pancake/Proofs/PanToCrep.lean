@@ -2060,20 +2060,32 @@ theorem bindPanValueParametersLocalsRelOfPanSem
     whole-program evaluation, then `locals_rel_wf_shape` and the HOL
     `state_rel` fields to establish its premises.
 
-    An untagged finite-support composition now exists in
-    `PanToCrep/StateRelFiniteSupport.lean`:
-    `panToCrepFiniteEvaluateShapeInvariantRetInst` combines the finite-context
-    recursive evaluator invariant with the reviewed Pan-to-Crep state/local
-    adapters and proves the same Return/Exception payload conclusion. Its
-    evaluation premise has HOL's `(SOME result, postState)` shape through the
-    totality-backed `evaluateHOLFiniteResult` view. The exact state/local
-    adapters preserve HOL's separate `t` and `t_locs` parameters; the target
-    locals map is independent of the target state. The finite-map carrier
-    qualifier and its field/parameter witnesses are implemented, but the
-    theorem remains untagged because no full projection yet connects its
-    finite-context evaluator to `evalPanSemRecursiveCallContextHOLExact`. That
-    evaluator dependency is tracked by `flapjack-6yq`; the faithful replacement
-    remains open on bead `flapjack-4ac.5.83`.
+    The source-reviewed exact port is now tagged in
+    `PanToCrep/StateRelFiniteSupport.lean` as
+    `panToCrepFiniteEvaluateShapeInvariantRetInst`. It preserves HOL's three
+    premises and Return/Exception conclusion over the exact PanSem and Crep
+    carriers. Its input facts come from the tagged
+    `panToCrepLocalsRelWfShapeFiniteExact` theorem and exact `state_rel` fields;
+    the target `t_locs` map stays independent of target state `t`.
+
+    The evaluator premise has HOL's successful-result semantics, not just its
+    pair shape. `evaluateHOLFiniteState` uses classical choice only to supply
+    Lean membership deciders for `memaddrs` and `shMemaddrs`. The outer
+    recursive assembly marker is proved total by
+    `evalPanSemRecursiveCallFiniteContext_total`, and
+    `evaluateHOLFinite_ne_none` proves the wrapper's `(none, state)` fallback
+    unreachable. `evaluateHOLFiniteResult_eq_iff` connects pair equality to a
+    successful evaluator output; the kernel-checked 66-case
+    `evalPanSemRecursiveCallFiniteContext_projection` then identifies its
+    result and post-state with `evalPanSemRecursiveCallContextHOLExact` on the
+    canonical finite-map projection. All 21 evaluator clauses were compared
+    with `panSemScript.sml:556-761`; nonrecursive clauses use the reviewed
+    exact helpers and reconstruct finite-support post-states. The separate
+    tagged `evaluateIsWfShapeInvariantFiniteExact` in
+    `PanProps/EvaluateResultInvariant.lean` supplies the whole-program result
+    invariant. Bead `flapjack-4ac.5.83` tracks this final theorem path and its
+    invariant/local-relation dependencies; it remains open pending coordinator
+    acceptance.
     The expression-level prerequisite `eval_is_wf_shape_v` is tagged over the
     reviewed finite-map carrier in `PanProps/EvalInvariant.lean`.
 
@@ -2087,14 +2099,15 @@ theorem bindPanValueParametersLocalsRelOfPanSem
     results. The proof uses `lookup_code_wf_shape_invariant_step` to establish
     the newly bound locals invariant before `evaluate_is_wf_shape_invariant`;
     these are proved facts, not additional theorem premises. Existing
-    `localsRelWfShape` and `evalPanSemStateExpsWfShapeOfStateRel` cover only
-    production String-backed relations and a 64-bit expression evaluator.
-    The full source evaluator and exact MlString-keyed Pan-to-Crep state/local
-    relations are not available as one exact carrier, so this theorem stays
-    untagged. Its faithful replacement is `flapjack-4ac.5.47.1`, dependent on
-    `flapjack-4ac.3.52.1`, `flapjack-4ac.5.83`, and exact PanSem state/name
-    carriers. The exact lookup invariant is tracked separately by
-    `flapjack-4ac.4.66.1`. -/
+    `localsRelWfShape` and `evalPanSemStateExpsWfShapeOfStateRel` are production
+    String-backed helpers and do not establish this theorem over HOL carriers.
+    This second theorem remains untagged while its distinct port is tracked by
+    `flapjack-4ac.5.47.1`: it also needs the exact successful
+    `OPT_MMAP (eval s)` and `lookup_code` premises, the `dec_clock`/locals update,
+    and code/local facts that establish well-formedness of `newlocals`. That
+    bead depends on `flapjack-4ac.3.52.1`, this theorem-path bead
+    `flapjack-4ac.5.83`, and exact PanSem state/name carriers. The exact lookup
+    invariant is tracked separately by `flapjack-4ac.4.66.1`. -/
 
 /-- HOL `locals_rel_wf_shape`: every source local covered by the local-state
     relation is a well-formed value in the empty struct context. -/
