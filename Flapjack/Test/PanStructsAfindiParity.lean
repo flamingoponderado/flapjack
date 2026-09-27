@@ -29,6 +29,19 @@ theorem structInfosOkHOLExact_cons_fixture :
   · simp [exactStructInfo, sizeOfShapeWithContextHOL,
       sizeOfShapesWithContextHOL]
 
+/-! The next two instances replay `struct_infos_ok_drop` and
+`struct_infos_ok_append` from `scripts/hol-probes/afindi_probe.out:11-12` on
+the same singleton fields/size-only context used by the original HOL probe. -/
+theorem structInfosOkHOLExact_drop_fixture :
+    structInfosOkHOLExact [] := by
+  apply structInfosOkHOLExact_drop 1 [(exactStructName, exactStructInfo)]
+  exact structInfosOkHOLExact_cons_fixture
+
+theorem structInfosOkHOLExact_append_fixture :
+    structInfosOkHOLExact [(exactStructName, exactStructInfo)] := by
+  apply structInfosOkHOLExact_append [] [(exactStructName, exactStructInfo)]
+  exact structInfosOkHOLExact_cons_fixture
+
 /-! Direct parity for `pan_structs$afindi_def`
     (`pan_structsScript.sml:25`). -/
 def entries : List (String × Nat) := [("a", 10), ("b", 20), ("c", 30)]
