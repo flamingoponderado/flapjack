@@ -29,6 +29,36 @@ reviewed before any `@[hol ... "evaluate_ind" 440]` tag:
   why the `parameters.length`/`Nodup`/`newlocals` guards appear inline.
 
 The `fix_clock` wrapper is rewritten away as in the HOL line-440 `rewrite`.
+
+Clause-by-clause comparison with `scripts/hol-probes/crep_sem_evaluate_ind_probe.out`
+(19 clauses, checked 2026-09-27 against the probe; order and hypotheses match):
+
+* `Skip` - exact.
+* `Dec` - hypothesis `crepExactEvalExpClassical s e = some value`; HOL
+  `s.locals⟨v ↦ value⟩` is `CrepSemHOLState.setVar v value s` (delta 1 for the
+  guard only).
+* `Primitive` (varname list, primop, varname list), `Assign`, `Store`,
+  `Store32`, `StoreByte` - exact; `StoreGlob`'s destination is HOL's fixed
+  `5 word`, rendered `BitVec 5` (not width-indexed); `ShMem memop varname exp` -
+  exact.
+* `Seq` - both IHs, `(res, s1) = evalCrepSemHOLProgExact s c1` with `res = none`
+  (HOL `evaluate (c1,s)`); exact.
+* `If` - `crepExactEvalExpClassical s e = some v1`, `v1 = .word w`, then
+  `P (if w ≠ 0 then c1 else c2, s)` (delta 1 for the guard).
+* `Break n`, `Continue n` (`num` -> `Nat`) - exact.
+* `While` - the three HOL IHs (continue with `v8 = 0`; `res = none`; body at
+  `decClockCrepSemHOL s`), all guarded by `crepExactEvalExpClassical s e =
+  some v2`, `v2 = .word w`, `w ≠ 0`, `s.clock ≠ 0` (delta 1 for the guard).
+* `Return`, `Raise` (HOL `'a word` -> `BitVec width`), `Tick` - exact.
+* `Call` - the two HOL IHs; the caltyp selector
+  `¬(match caltyp with | none => False | some (rts, _) => ¬ rts.Nodup)` and the
+  argument/clock guards are exact; the `lookup_code` hypothesis is spelled out
+  as `s.code.lookup fname = some (parameters, body)`, `parameters.length =
+  args.length`, `parameters.Nodup`,
+  `newlocals = HolFiniteMapExact.empty.updateList (parameters.zip args)`
+  (delta 2).
+* `ExtCall` - exact.
+* Conclusion `∀ v v1, P (v, v1)` - the probe's uncurried motive, exact.
 -/
 
 namespace Flapjack
