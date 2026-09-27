@@ -47,7 +47,7 @@ private def program : P := crepNestedSeqHOL (names.zipWith
   (fun name expression => CrepProgHOL.assign name expression) expressions)
 
 theorem exactTwoAssignEquation :
-    evalCrepSemHOLProgDefault state program =
+    evalCrepSemHOLProgExact state program =
       (none, { state with locals := state.locals.updateListEq (names.zip values) }) := by
   apply evalNestedAssignDistinctEqCrepHOL state expressions names values oldValues
   · simp [evalCrepSemHOLExpDefault, evalCrepSemHOLExpWithMemDec,

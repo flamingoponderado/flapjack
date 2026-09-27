@@ -37,6 +37,44 @@ The older delegating adapter `evaluateHOLFiniteViaExact` (and its
 `evalPanSemRecursiveCallHOLFinite_of_broad` / `evaluateHOLFiniteViaExact_of_broad`
 translation lemmas) remains as untagged Flapjack-specific infrastructure.
 
+Source audit (Luna A, 2026-09-27), compared against the complete HOL
+`evaluate_def` block at `panSemScript.sml:556-761`:
+
+* `Skip`, `Break`, `Continue`, and `Annot` preserve the state and return the
+  corresponding HOL result; `Tick` distinguishes zero clock (`TimeOut` and
+  empty locals) from decrement-and-`NONE`.
+* `Dec` evaluates the initializer, checks `shape_of` equality, installs the
+  value for the body, and restores the previous local with `res_var`.
+  `Assign`, `Primitive`, `Store`, `Store32`, and `StoreByte` retain the source
+  error branches and update only the HOL-selected variable or memory field.
+* `ShMemLoad` and `ShMemStore` use the source helpers, including value-kind,
+  lookup, and memory-domain failures. `Return` and `Raise` retain the shape
+  size bound, exception-shape lookup, and empty-locals behavior.
+* `Seq` fixes the first result's clock and evaluates the second command only
+  for `NONE`; `If` uses the source zero/nonzero word split. `While` checks the
+  zero clock before the body, decrements before body evaluation, fixes its
+  result clock, and recurs only for `NONE`/`Continue`; `Break` becomes `NONE`.
+* `Call` and `DecCall` preserve argument evaluation and exact code lookup,
+  zero-clock timeout, callee-local entry, fixed-clock body outcome split,
+  return-shape and validity checks, exception-handler lookup/validation, and
+  local restoration. `DecCall` additionally checks both declared return
+  shapes, runs its continuation with the result binding, then restores the
+  prior result local. The focused Call/DecCall equations and projection proofs
+  cover the outcome-specific branches.
+* `ExtCall` retains all four expression checks, both byte-array reads, FFI
+  final/return branches, and the source memory/FFI updates.
+
+The exact data carriers are `ProgHOL`/`ExpHOL`/`ShapeHOL` and
+`PanSemStateFiniteExact`: words retain the source width, identifiers use
+`MlS`, and the four finite maps use the reviewed `HolFiniteMapExact`
+representation recorded by the state's qualifier and roundtrip witness.
+`shapeEqHOL_eq_true` establishes the Boolean shape comparison used by the
+evaluator. The finite-to-broad theorem below is a kernel-checked projection
+for every constructor; the state-level wrapper's `evaluateHOLFiniteState_eq_getD`
+bridge removes the assembly marker without changing the result/state pair.
+No mismatch was found. This is source-review evidence, not a restoration of
+the `evaluate_def` tag; that tag remains withheld pending coordinator review.
+
 The module also carries the per-constructor projection equivalence to the broad
 exact evaluator (`flapjack-6yq`): `..._skip_projection` / `_break_projection` /
 `_continue_projection` / `_annot_projection` and the `assign` / `primitive` /
@@ -559,6 +597,48 @@ theorem evalPanSemRecursiveCallFiniteContext_call_return_shape_mismatch
     rw [hshape]
     simp
   rw [if_neg hshapeNe]
+
+/-- HOL `evaluate_def` Call matched-exception branch
+    (`panSemScript.sml:682-688`): after the body yields an exception whose id
+    matches the handler, the caller's finite `eshapes` lookup supplies its
+    declared shape, and both the exception shape and local target are valid,
+    the handler runs from the fixed callee state with the caller's locals and
+    the exception value bound. These are exactly the branch selectors in HOL;
+    this untagged clause equation does not claim the whole evaluator. -/
+theorem evalPanSemRecursiveCallFiniteContext_call_matched_exception_handler
+    {width : Nat} {σ : Type} [NeZero width]
+    (returnInfo : Option (VarKind × MlS))
+    (handlerId handlerVar function : MlS) (handlerProgram body : ProgHOL width)
+    (arguments : List (ExpHOL width)) (context : FiniteEvalContext width σ)
+    (values : List (ValueHOL width)) (callee : HolFiniteMapExact MlS (ValueHOL width))
+    (returnShape : ShapeHOL) (value : ValueHOL width)
+    (bodyContext : FiniteEvalContext width σ) (declaredShape : ShapeHOL)
+    (hargs : evalListHOLFinite context.state
+      (h := context.memaddrsDecidable) arguments = some values)
+    (hlookup : lookupCodeHOLFinite context.state.code.lookup function values =
+      some (body, callee, returnShape))
+    (hclock : context.state.clock ≠ 0)
+    (hbody : evalPanSemRecursiveCallFiniteContext body
+      (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl) =
+        some (some (.exception handlerId value), bodyContext))
+    (hshape : context.state.eshapes.lookup handlerId = some declaredShape)
+    (hshapeEq : shapeEqHOL (shapeOfHOLExact value) declaredShape = true)
+    (hvalid : isValidValueHOLExact context.state.toExact VarKind.local handlerVar value = true) :
+    evalPanSemRecursiveCallFiniteContext
+        (.call (some (returnInfo, some (handlerId, handlerVar, handlerProgram)))
+          function arguments) context =
+      let fixedContext := callFixedContextHOLFinite
+        (callEntryStateHOLFinite context.state callee)
+        (some (.exception handlerId value)) bodyContext
+    evalPanSemRecursiveCallFiniteContext handlerProgram
+        (fixedContext.withState
+          (handlerStateHOLFinite context fixedContext handlerVar value) rfl rfl) := by
+  rw [evalPanSemRecursiveCallFiniteContext.eq_5]
+  simp only [hargs]
+  rw [hlookup]
+  simp only [if_neg hclock]
+  rw [hbody]
+  simp [hshape, hshapeEq, hvalid]
 
 /-- Source-reviewed HOL `DecCall` return-shape side conditions
     (`panSemScript.sml:694-729`). Either mismatch (against the declaration's
@@ -1433,6 +1513,16 @@ theorem callFixedContextHOLFinite_toExact {width : Nat} {σ : Type} [NeZero widt
   rw [toExact_callFixedContextHOLFinite]
   congr 1
 
+/- Source-review note for HOL `evaluate_def` (`panSemScript.sml:556-761`):
+    the 66-case induction below projects every finite-context branch to the
+    broad evaluator. The finite clauses preserve HOL's evaluation/error
+    splits for all 21 constructors; the detailed clause groups and carrier
+    review are recorded at this module's header. In particular, the finite
+    projection uses `evalHOLFinite`/`lookupCodeHOLFinite`, finite-map
+    `resVarEq` restoration, and the named Call/DecCall entry/fixed/continuation
+    bridges. This proves finite-to-broad agreement; it does not by itself
+    establish the broad evaluator's HOL correspondence, so the
+    `evaluate_def` tag remains withheld pending coordinator review. -/
 set_option maxHeartbeats 2000000 in
 theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type} [NeZero width]
     (program : ProgHOL width) (context : FiniteEvalContext width σ) :
