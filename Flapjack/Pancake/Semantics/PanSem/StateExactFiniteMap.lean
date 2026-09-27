@@ -3150,12 +3150,13 @@ theorem evaluateHOLFiniteState_dec_total {width : Nat} {σ : Type} [NeZero width
     case, corresponding to the `OPT_MMAP (eval s) argexps = NONE` branch at
     lines 699-714: it returns `Error` with the caller state unchanged. This is
     a genuine source case with a branch selector and no target-evaluation
-    premise. The exact case is useful Flapjack infrastructure, but is currently
-    untagged: the current reference checker does not resolve
-    `PanSemStateFiniteExact`'s `RiscV.Word width` field alias to the reviewed
-    `BitVec width` carrier needed by the combined word and finite-map
-    qualifiers. Reapply the exact HOL tag after the reviewed carrier/checker
-    update is available. -/
+    premise. `PanSemStateFiniteExact` records the four HOL finite maps through
+    its canonical same-module witness. The combined qualifiers record those
+    maps and HOL's positive word dimension as `BitVec width`; `σ : Type` models
+    the HOL FFI state carrier. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 556
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem evaluateHOLFiniteState_decCall_args_none {width : Nat} {σ : Type}
     [NeZero width] (state : PanSemStateFiniteExact width σ)
     (resultName : MlS) (shape : ShapeHOL) (function : MlS)
@@ -3178,12 +3179,12 @@ theorem evaluateHOLFiniteState_decCall_args_none {width : Nat} {σ : Type}
     case, corresponding to the failed `lookup_code` branch at lines 699-714:
     successful argument evaluation followed by a missing code entry returns
     `Error` with the caller state unchanged. The premise selects only that
-    source branch; the statement remains the total result/state pair. The case
-    is currently untagged: the current reference checker does not resolve
-    `PanSemStateFiniteExact`'s `RiscV.Word width` field alias to the reviewed
-    `BitVec width` carrier needed by the combined word and finite-map
-    qualifiers. Reapply the exact HOL tag after the reviewed carrier/checker
-    update is available. -/
+    source branch; the statement remains the total result/state pair. The
+    combined qualifiers record the four finite-support maps and HOL's positive
+    word dimension as `BitVec width`; `σ : Type` models the HOL FFI state. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 556
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem evaluateHOLFiniteState_decCall_lookup_none {width : Nat} {σ : Type}
     [NeZero width] (state : PanSemStateFiniteExact width σ)
     (resultName : MlS) (shape : ShapeHOL) (function : MlS)
