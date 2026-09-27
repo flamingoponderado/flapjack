@@ -658,4 +658,26 @@ theorem updateEqZipFlookupHOL [BEq α] [LawfulBEq α]
       some (ys[n]'(by rw [← hlen]; exact hn)) :=
   FLOOKUP_FUPDATE_LIST_zip_getElem xs ys f n hdistinct hlen hn
 
+/-- Exact port of HOL `opt_mmap_flookup_update`
+    (`cakeml/pancake/semantics/pan_commonPropsScript.sml:156`): updating a map
+    at a key absent from the queried key list leaves the `OPT_MMAP (FLOOKUP ·)`
+    result unchanged.  HOL's `OPT_MMAP` is the repository's `List.mapM` for
+    `Option`, `~MEM x xs` is rendered as `x ∉ xs`, and `fm |+ (x,y)` as
+    `FUPDATE fm (x, y)`. -/
+@[hol "cakeml/pancake/semantics/pan_commonPropsScript.sml" "opt_mmap_flookup_update"]
+theorem optMmapFlookupUpdateHOL [BEq α] [LawfulBEq α]
+    (fm : FiniteMap α β) (x : α) (y : β) (xs : List α) (ys : List β)
+    (hmap : xs.mapM (fun key => FLOOKUP fm key) = some ys) (hnotmem : x ∉ xs) :
+    xs.mapM (fun key => FLOOKUP (FUPDATE fm (x, y)) key) = some ys := by
+  rw [listMapMCongr (fun key => FLOOKUP (FUPDATE fm (x, y)) key)
+    (fun key => FLOOKUP fm key) xs ?_]
+  · exact hmap
+  · intro key hkey
+    rw [FLOOKUP_update]
+    have hkx : (x == key) = false := by
+      apply beq_eq_false_iff_ne.mpr
+      intro he
+      exact hnotmem (he ▸ hkey)
+    simp [hkx]
+
 end Flapjack
