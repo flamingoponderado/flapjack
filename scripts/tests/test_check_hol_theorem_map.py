@@ -1755,7 +1755,7 @@ class CombinedRelationWordsStatusTest(unittest.TestCase):
     def test_rejects_combined_status_without_source_note(self):
         errors = self._errors(
             self._record(reviewer="inventory only"), self._tag())
-        self.assertTrue(any("source-comparison note" in error for error in errors))
+        self.assertTrue(any("source-comparison note" in error for error in errors), errors)
 
 
 class FmapResultFieldExclusionTest(unittest.TestCase):

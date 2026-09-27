@@ -218,6 +218,52 @@ def unreachElimHOLExact {width : Nat} [NeZero width] :
       (.call (some (names, some (handler, body'))) name arguments, none)
   | program => (program, none)
 
+/-- Exact width-indexed port of Cake `var_prog_def`
+    (`cakeml/pancake/crep_inlineScript.sml:8-33`). The source clauses are
+    preserved in order: declaration/assignment destinations precede expression
+    occurrences; call argument occurrences precede return destinations and
+    handler occurrences; `StoreGlob` contributes only expression variables;
+    ExtCall lists all four variable operands; ShMem lists its name then address;
+    Primitive lists destinations then operands. Exception labels and function
+    names are not variable occurrences. -/
+@[hol "cakeml/pancake/crep_inlineScript.sml" "var_prog_def"
+  (words_as_type_indexed_bitvec)]
+def crepVarProgHOLExact {width : Nat} [NeZero width] :
+    CrepProgHOL width → List Nat
+  | .dec name value body =>
+      [name] ++ crepExpVarsHOL value ++ crepVarProgHOLExact body
+  | .assign name value => [name] ++ crepExpVarsHOL value
+  | .primitive names _ arguments => names ++ arguments
+  | .store address value | .store32 address value | .storeByte address value =>
+      crepExpVarsHOL address ++ crepExpVarsHOL value
+  | .storeGlob _ value => crepExpVarsHOL value
+  | .seq first second => crepVarProgHOLExact first ++ crepVarProgHOLExact second
+  | .ite condition thenBranch elseBranch =>
+      crepExpVarsHOL condition ++ crepVarProgHOLExact thenBranch ++
+        crepVarProgHOLExact elseBranch
+  | .while condition body => crepExpVarsHOL condition ++ crepVarProgHOLExact body
+  | .call none _ arguments => arguments.flatMap crepExpVarsHOL
+  | .call (some (names, none)) _ arguments =>
+      arguments.flatMap crepExpVarsHOL ++ names
+  | .call (some (names, some (_, handler))) _ arguments =>
+      arguments.flatMap crepExpVarsHOL ++ names ++ crepVarProgHOLExact handler
+  | .extCall _ configuration configurationLength array arrayLength =>
+      [configuration, configurationLength, array, arrayLength]
+  | .return values => values.flatMap crepExpVarsHOL
+  | .shMem _ name address => name :: crepExpVarsHOL address
+  | .skip | .break _ | .continue _ | .raise _ | .tick => []
+termination_by program => sizeOf program
+decreasing_by
+  all_goals first | decreasing_trivial | simp_wf
+
+/-- Exact port of Cake `vmax_prog_def` (`crep_inlineScript.sml:36-38`),
+    using the source `MAX_LIST` empty-list convention of zero. -/
+@[hol "cakeml/pancake/crep_inlineScript.sml" "vmax_prog_def"
+  (words_as_type_indexed_bitvec)]
+def crepVmaxProgHOLExact {width : Nat} [NeZero width]
+    (program : CrepProgHOL width) : Nat :=
+  (crepVarProgHOLExact program).foldl max 0
+
 /-- Argument loading for inlining.  Calls the generic `nestedDecs`; the tagged
     width-indexed `nestedDecsW` is a definitional delegation of it, so this
     executed use is the identical computation (`flapjack-pxn.18.4.3.82`). -/

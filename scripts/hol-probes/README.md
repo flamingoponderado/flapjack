@@ -607,6 +607,15 @@ visible. The exact Lean input carrier and regressions are in
 `Flapjack.Test.CrepInlineFmapParity`. Refresh it with
 `HOL_PROBE_ONLY=crep_inline_alist_map_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
+`crep_inline_helper_probe.out` records direct HOL EVAL checks for the exact
+`var_prog_def`/`vmax_prog_def` inputs used by the indexed-carrier ports
+`crepVarProgHOLExact` and `crepVmaxProgHOLExact`: call argument/return/handler
+ordering, ExtCall's four variable operands, the empty Skip case, and
+StoreGlob's ignored address. It also retains the existing `unreach_elim` and
+inlining helper rows. Exact-carrier Lean guards are in
+`Flapjack.Test.CrepeInline`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=crep_inline_helper_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `fupdate_list_append_commutes_probe.out` records the imported original HOL
 theorem `finite_mapTheory.FUPDATE_LIST_APPEND_COMMUTES` from
 `/home/zksecurity/HOL/src/finite_maps/finite_mapScript.sml:2960`, plus direct
