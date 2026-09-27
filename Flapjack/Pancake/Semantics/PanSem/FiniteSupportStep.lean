@@ -2126,6 +2126,48 @@ theorem evalPanSemRecursiveCallContextHOLExact_ioEvents_prefix {width : Nat} {σ
     (try cases hres) <;>
     exact List.prefix_refl _
 
+/-- General composition step for two successful recursive evaluations. The
+    second evaluation may start in a context changed by the first pass, but the
+    FFI state at that boundary must be the same. Prefix monotonicity and equal
+    endpoint events then force both recursive IHs to see unchanged event logs. -/
+theorem evalPanSemRecursiveCallContextHOLExact_compose_ffi_eq_of_ioEvents_eq
+    {width : Nat} {σ : Type} [NeZero width]
+    (first second : ProgHOL width)
+    (context secondContext : PanSemExactEvalContext width σ)
+    (firstOutput result : Option (PanSemResultExact width) × PanSemExactEvalContext width σ)
+    (hfirst : evalPanSemRecursiveCallContextHOLExact first context = some firstOutput)
+    (hboundary : firstOutput.2.state.ffi = secondContext.state.ffi)
+    (hsecond : evalPanSemRecursiveCallContextHOLExact second secondContext = some result)
+    (hfirstIH : ∀ result,
+      evalPanSemRecursiveCallContextHOLExact first context = some result →
+      context.state.ffi.ioEvents = result.2.state.ffi.ioEvents →
+      context.state.ffi = result.2.state.ffi)
+    (hsecondIH : ∀ result,
+      evalPanSemRecursiveCallContextHOLExact second secondContext = some result →
+      secondContext.state.ffi.ioEvents = result.2.state.ffi.ioEvents →
+      secondContext.state.ffi = result.2.state.ffi)
+    (hevents : context.state.ffi.ioEvents = result.2.state.ffi.ioEvents) :
+    context.state.ffi = result.2.state.ffi := by
+  have hfirstPrefix := evalPanSemRecursiveCallContextHOLExact_ioEvents_prefix
+    first context firstOutput hfirst
+  have hsecondPrefix := evalPanSemRecursiveCallContextHOLExact_ioEvents_prefix
+    second secondContext result hsecond
+  have hboundaryEvents : firstOutput.2.state.ffi.ioEvents = secondContext.state.ffi.ioEvents :=
+    congrArg (fun ffi => ffi.ioEvents) hboundary
+  have hmiddleEq := ioEvents_middle_eq_of_prefix_chain hfirstPrefix
+    (hboundaryEvents.symm ▸ hsecondPrefix) hevents
+  have hfirstFfi := hfirstIH firstOutput hfirst hmiddleEq.symm
+  have hsecondEvents : secondContext.state.ffi.ioEvents = result.2.state.ffi.ioEvents := by
+    calc
+      secondContext.state.ffi.ioEvents = firstOutput.2.state.ffi.ioEvents := hboundaryEvents.symm
+      _ = context.state.ffi.ioEvents := hmiddleEq
+      _ = result.2.state.ffi.ioEvents := hevents
+  have hsecondFfi := hsecondIH result hsecond hsecondEvents
+  calc
+    context.state.ffi = firstOutput.2.state.ffi := hfirstFfi
+    _ = secondContext.state.ffi := hboundary
+    _ = result.2.state.ffi := hsecondFfi
+
 /-- Composition fact for the successful `Seq` branch that evaluates its second
     program. The recursive induction hypotheses apply after the prefix lemma
     forces the middle trace to equal both endpoints. -/
@@ -2160,25 +2202,11 @@ theorem evalPanSemRecursiveCallContextHOLExact_seq_ffi_eq_of_ioEvents_eq
   let fixedContext := middleContext.withState
     (fixClockHOLExact context.state
       ((none : Option (PanSemResultExact width)), middleContext.state)).2 rfl rfl
-  have hfirstPrefix := evalPanSemRecursiveCallContextHOLExact_ioEvents_prefix
-    first context (none, middleContext) hfirst
-  have hsecondPrefix := evalPanSemRecursiveCallContextHOLExact_ioEvents_prefix
-    second fixedContext result (by simpa only [fixedContext] using hsecond)
-  have hfixedEvents : fixedContext.state.ffi.ioEvents = middleContext.state.ffi.ioEvents := rfl
-  have hmiddleEq := ioEvents_middle_eq_of_prefix_chain hfirstPrefix
-    (by simpa only [hfixedEvents] using hsecondPrefix) hevents
-  have hfirstFfi := hfirstIH (none, middleContext) hfirst hmiddleEq.symm
-  have hsecondEvents : fixedContext.state.ffi.ioEvents = result.2.state.ffi.ioEvents := by
-    calc
-      fixedContext.state.ffi.ioEvents = middleContext.state.ffi.ioEvents := hfixedEvents
-      _ = context.state.ffi.ioEvents := hmiddleEq
-      _ = result.2.state.ffi.ioEvents := hevents
-  have hsecondFfi := hsecondIH result (by simpa only [fixedContext] using hsecond) hsecondEvents
-  have hfixedFfi : fixedContext.state.ffi = middleContext.state.ffi := rfl
-  calc
-    context.state.ffi = middleContext.state.ffi := hfirstFfi
-    _ = fixedContext.state.ffi := hfixedFfi.symm
-    _ = result.2.state.ffi := hsecondFfi
+  have hcompose := evalPanSemRecursiveCallContextHOLExact_compose_ffi_eq_of_ioEvents_eq
+    first second context fixedContext (none, middleContext) result hfirst (by rfl)
+    (by simpa only [fixedContext] using hsecond) hfirstIH
+    (by simpa only [fixedContext] using hsecondIH) hevents
+  simpa only [fixedContext] using hcompose
 
 /-- Composition fact for an iterating `While` branch after its body has
     returned a continuing result. Event-prefix monotonicity forces the body
@@ -2216,29 +2244,14 @@ theorem evalPanSemRecursiveCallContextHOLExact_while_ffi_eq_of_ioEvents_eq
     context.state.ffi = result.2.state.ffi := by
   let fixedContext := bodyContext.withState
     (fixClockHOLExact entryContext.state (bodyResult, bodyContext.state)).2 rfl rfl
-  have hbodyPrefix := evalPanSemRecursiveCallContextHOLExact_ioEvents_prefix
-    body entryContext (bodyResult, bodyContext) hbody
-  have hloopPrefix := evalPanSemRecursiveCallContextHOLExact_ioEvents_prefix
-    (.while condition body) fixedContext result (by simpa only [fixedContext] using hloop)
   have hentryEvents : entryContext.state.ffi.ioEvents = context.state.ffi.ioEvents := by
     simpa only using congrArg (fun ffi => ffi.ioEvents) hentryFfi.symm
   have hend : entryContext.state.ffi.ioEvents = result.2.state.ffi.ioEvents :=
     hentryEvents.trans hevents
-  have hfixedEvents : fixedContext.state.ffi.ioEvents = bodyContext.state.ffi.ioEvents := rfl
-  have hbodyBoundary := ioEvents_middle_eq_of_prefix_chain hbodyPrefix
-    (hfixedEvents ▸ hloopPrefix) hend
-  have hbodyFfi := hbodyIH (bodyResult, bodyContext) hbody hbodyBoundary.symm
-  have hloopEvents : fixedContext.state.ffi.ioEvents = result.2.state.ffi.ioEvents := by
-    calc
-      fixedContext.state.ffi.ioEvents = bodyContext.state.ffi.ioEvents := hfixedEvents
-      _ = entryContext.state.ffi.ioEvents := hbodyBoundary
-      _ = result.2.state.ffi.ioEvents := hend
-  have hloopFfi := hloopIH result (by simpa only [fixedContext] using hloop) hloopEvents
-  have hfixedFfi : fixedContext.state.ffi = bodyContext.state.ffi := rfl
-  calc
-    context.state.ffi = entryContext.state.ffi := hentryFfi
-    _ = bodyContext.state.ffi := hbodyFfi
-    _ = fixedContext.state.ffi := hfixedFfi.symm
-    _ = result.2.state.ffi := hloopFfi
+  have hcompose := evalPanSemRecursiveCallContextHOLExact_compose_ffi_eq_of_ioEvents_eq
+    body (.while condition body) entryContext fixedContext (bodyResult, bodyContext) result
+    hbody (by rfl) (by simpa only [fixedContext] using hloop) hbodyIH
+    (by simpa only [fixedContext] using hloopIH) hend
+  exact hentryFfi.trans hcompose
 
 end Flapjack
