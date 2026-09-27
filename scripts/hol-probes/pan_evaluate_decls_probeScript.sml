@@ -19,6 +19,10 @@ val s = ``(s:('a,'ffi) panSem$state)``;
 val state0 = ``(^s with <| locals := FEMPTY; globals := FEMPTY;
                             structs := []; code := FEMPTY;
                             eshapes := FEMPTY |>)``;
+val state8 = ``(s:(8,'ffi) panSem$state with <|
+        locals := FEMPTY; globals := FEMPTY; structs := []; code := FEMPTY;
+        eshapes := FEMPTY; memaddrs := {0w}; clock := 20; be := F;
+        memory := (\x : 8 word. if x = 0w then Word 1w else Word 0w) |>)``;
 val fun_decl = ``<| name := strlit "f"; inline := F; export := F;
                     params := [(strlit "x", One)]; body := Skip;
                     return := One |>``;
@@ -37,6 +41,11 @@ val _ = print_eval "decl_word_load_update"
         memaddrs := {0w}; memory := (\x. if x = 0w then Word 9w else ARB) |>)
       [Decl One (strlit "g") (Load One (Const 0w))] of
       SOME s' => FLOOKUP s'.globals (strlit "g")
+    | NONE => ARB``
+val _ = print_eval "decl_byte_load_update"
+  ``case evaluate_decls ^state8
+      [Decl One (strlit "g") (LoadByte (Const 0w))] of
+      SOME s' => (FLOOKUP s'.globals (strlit "g"), s'.memory 0w)
     | NONE => ARB``
 val _ = print_eval "decl_bad_load_shape"
   ``evaluate_decls ^state0
