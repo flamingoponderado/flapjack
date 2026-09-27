@@ -15263,5 +15263,60 @@
     "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-b source comparison (2026-09-28; bead flapjack-4ac.4.51.1; HOL panPropsScript.sml:974-1019): the declaration quantifies p, s, res, and t and states evaluate (p,s) = (res,t) and s.ffi.io_events = t.ffi.io_events ==> t.ffi = s.ffi. The Lean theorem retains this order and both premises and concludes equality of complete HolFfiState, including oracle, host-state, and event fields. PanPropsEvalStateFiniteExact owns the four listed HolFiniteMapExact fields and same-module holFmapAsFiniteSupportWitness. Its toPanSemFinite/ofPanSemFinite codec is field-for-field. evaluatePanPropsHOLFiniteState delegates to the canonical finite context evaluator and only converts the output carrier. The checked finite-context projection relates successful outputs to evalPanSemRecursiveCallContextHOLExact; its recursive event/FFI induction covers ShMemLoad, ShMemStore, Call, DecCall, Seq, ExtCall, and While, matching HOL evaluate_ind cases. The finite-map and indexed-word qualifiers record only the reviewed state/word translations."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "evaluate_invariants",
+    "hol_line": 1150,
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
+    "lean_name": "evaluateInvariantsContinueCaseHOLFinite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-28; bead flapjack-4ac.4.61) against panPropsScript.sml:1150-1158. This is the genuine p = Continue leaf from recInduct evaluate_ind. It retains the source evaluate premise and all eight conclusions, with no IH or extra premise. evaluate_def at panSemScript.sml:624 returns (SOME Continue,s), so the post-state is exactly the input state. The same-module PanPropsEvalStateFiniteExact carrier uses HolFiniteMapExact for the listed fields and its checked roundtrip witness; [NeZero width] is the indexed-word translation. Skip and Break leaves are also ported; recursive cases and assembly remain open."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "evaluate_invariants",
+    "hol_line": 1150,
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
+    "lean_name": "evaluateInvariantsAnnotCaseHOLFinite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-28; bead flapjack-4ac.4.61) against panPropsScript.sml:1150-1158. This is the genuine p = Annot tag text leaf from recInduct evaluate_ind. It retains the source evaluate premise and all eight conclusions, with no IH or extra premise. evaluate_def at panSemScript.sml:656 returns (NONE,s), so the post-state is exactly the input state. The same-module PanPropsEvalStateFiniteExact carrier uses HolFiniteMapExact for the listed fields and its checked roundtrip witness; [NeZero width] is the indexed-word translation. Skip, Break, and Continue leaves are also ported; recursive cases and assembly remain open."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "evaluate_invariants",
+    "hol_line": 1150,
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
+    "lean_name": "evaluateInvariantsTickCaseHOLFinite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-28; bead flapjack-4ac.4.61) against panPropsScript.sml:1150-1158. This is the genuine p = Tick leaf from recInduct evaluate_ind. It retains the source evaluate premise and all eight conclusions, without an IH or extra premise. evaluate_def at panSemScript.sml:653-655 returns (SOME TimeOut, empty_locals s) at zero clock and (NONE, dec_clock s) otherwise; both branches preserve precisely the eight fields concluded here. The Lean leaf uses evaluateHOLFiniteState_tick, with the same finite-support state owner/witness and indexed-word translation. Skip, Break, Continue, and Annot leaves are also ported; recursive cases and assembly remain open."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "evaluate_invariants",
+    "hol_line": 1150,
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
+    "lean_name": "evaluateInvariantsReturnCaseHOLFinite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-28; bead flapjack-4ac.4.61) against panPropsScript.sml:1150-1158. This is the genuine p = Return expression case from recInduct evaluate_ind. It retains the source evaluator result/post pair premise and all eight state conclusions with no IH or extra premise. evaluate_def at panSemScript.sml:638-644 returns Error with the input state when expression evaluation fails or the size bound exceeds 32; a fitting value returns Return value with empty_locals s. All outcomes preserve exactly the eight listed fields. The Lean case uses evalHOLExact, the same 32-word size bound, and evaluateHOLFiniteState_return on PanPropsEvalStateFiniteExact's checked finite-support carrier. Skip, Break, Continue, Annot, and Tick leaves are also ported; recursive cases and assembly remain open."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "evaluate_invariants",
+    "hol_line": 1150,
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
+    "lean_name": "evaluateInvariantsAssignCaseHOLFinite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-28; bead flapjack-4ac.4.61) against panPropsScript.sml:1150-1158 and panSemScript.sml:566-572. This is the genuine Assign kind/name/source leaf from recInduct evaluate_ind. It retains the source evaluator pair premise and all eight conclusions with no induction hypothesis or added precondition. evaluate_def yields Error with the same state for expression failure or invalid assignment; success uses set_kvar, which updates only locals or globals. The Lean statement uses the canonical pair evaluator and PanPropsEvalStateFiniteExact's same-module checked finite-support carrier plus indexed words. Skip, Break, Continue, Annot, Tick, and Return leaves are also ported; recursive cases and assembly remain open."
   }
 ]
