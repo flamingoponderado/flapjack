@@ -86,6 +86,27 @@ def field_mentions_word_carrier(type_text: str, width_name: str) -> bool:
         ):
             return True
     return False
+
+
+_WORD_CARRIER_ALTERNATION = "|".join(
+    re.escape(name) for name in WORD_CARRIER_ABBREV_NAMES
+)
+# A word carrier token (`BitVec` or a reviewed abbreviation such as
+# `RiscV.Word`).
+WORD_CARRIER_TOKEN_RE = re.compile(
+    r"\b(?:BitVec|" + _WORD_CARRIER_ALTERNATION + r")\b"
+)
+# A word carrier applied to an identifier dimension, e.g. `BitVec width`.
+WORD_DIMENSION_ID_RE = re.compile(
+    r"\b(?:BitVec|" + _WORD_CARRIER_ALTERNATION + r")\s+([A-Za-z_][A-Za-z0-9_']*)"
+)
+# A word carrier applied to a literal dimension, e.g. `BitVec 0`.
+WORD_DIMENSION_LITERAL_RE = re.compile(
+    r"\b(?:BitVec|" + _WORD_CARRIER_ALTERNATION + r")\s+([0-9]+)"
+)
+NAT_WIDTH_BINDER_RE = re.compile(
+    r"[\{\(]\s*([A-Za-z_][A-Za-z0-9_']*)\s*:\s*Nat\s*[\}\)]"
+)
 RELATION_FIELD_RE = re.compile(
     r'^\s*([A-Za-z_][A-Za-z0-9_\']*)\s*\.\s*([A-Za-z_][A-Za-z0-9_\']*)\s*$'
 )
@@ -1481,6 +1502,45 @@ def names_as_string_errors(
     return errors
 
 
+def word_dimension_errors(text: str) -> list[str]:
+    """Reject every nonpositive or unconstrained word dimension in `text`.
+
+    Inspects EVERY `BitVec` (or reviewed word-abbreviation) dimension in the
+    given scope, not just the first: each identifier dimension must be a bound
+    ``Nat`` parameter with its own ``[NeZero <width>]`` discharge, a literal
+    ``0`` dimension is rejected, and a ``[NeZero 0]`` instance is rejected.
+    """
+    errors: list[str] = []
+    for match in WORD_DIMENSION_ID_RE.finditer(text):
+        width = match.group(1)
+        if NAT_WIDTH_BINDER_RE.search(text) is None or re.search(
+            r"[\{\(]\s*" + re.escape(width) + r"\s*:\s*Nat\s*[\}\)]", text
+        ) is None:
+            errors.append(
+                f"`BitVec {width}` is not at a `Nat` width binder; every word "
+                "dimension in scope must be an explicit positive-width parameter"
+            )
+        elif re.search(
+            r"\[\s*NeZero\s+" + re.escape(width) + r"\s*\]", text
+        ) is None:
+            errors.append(
+                f"`BitVec {width}` lacks its own `[NeZero {width}]` discharge; "
+                "every word dimension in scope must be constrained"
+            )
+    for match in WORD_DIMENSION_LITERAL_RE.finditer(text):
+        if match.group(1) == "0":
+            errors.append(
+                "`BitVec 0` is not a positive width; the qualifier records HOL's "
+                "positive `dimindex (:α)` dimension"
+            )
+    if re.search(r"\[\s*NeZero\s+0\s*\]", text) is not None:
+        errors.append(
+            "`[NeZero 0]` is not a valid positivity discharge; the dimension must "
+            "be a positive width identifier"
+        )
+    return errors
+
+
 def words_as_type_indexed_bitvec_errors(
     declaration_text: str,
     declaration: str,
@@ -1495,27 +1555,30 @@ def words_as_type_indexed_bitvec_errors(
     positive-width ``BitVec width`` and of HOL's ``'ffi ffi_state`` to a
     universe-0 Lean host type. It is a translation statement only: it changes
     no quantifier, hypothesis, side condition, or conclusion, and it requires
-    no cross-assistant agreement theorem. The checker enforces the two
-    proof obligations named in the qualifier: the ``[NeZero width]`` discharge
-    of ``dimindex (:α) ≥ 1`` must be retained and must not be restated as an
-    extra hypothesis, and an FFI host type must be bound at a ``Type`` universe
-    (no universe-level variable). A direct signature must bind a ``Nat`` width
-    parameter and mention ``BitVec <that width>`` together with
-    ``[NeZero <that width>]``: ``BitVec 5`` next to an unrelated
-    ``[NeZero width]``, or ``BitVec width`` with ``[NeZero other]``, does not
-    qualify.
+    no cross-assistant agreement theorem.
+
+    The checker inspects EVERY word dimension named in the declaration scope,
+    not only the first: each ``BitVec <id>`` (or reviewed abbreviation such as
+    ``RiscV.Word <id>``) must sit at a bound ``Nat`` width parameter with its own
+    ``[NeZero <id>]``. A literal zero dimension (``BitVec 0``) and a
+    ``[NeZero 0]`` instance are rejected, so an unrelated ``[NeZero width]``
+    cannot license a second, unconstrained word width. The ``[NeZero width]``
+    discharge of ``dimindex (:α) ≥ 1`` must be retained and must not be
+    restated as an extra hypothesis, and an FFI host type must be bound by a
+    ``{σ : Type}``/``(σ : Type 0)`` binder at the universe-0 ``Type`` (a
+    ``Type`` with a positive level, a universe-level variable, or ``Sort`` is
+    rejected).
 
     A signature need not spell out ``BitVec`` when it is stated over a
     width-indexed carrier: the qualifier is also accepted when the signature
     names a structure (declared locally or reached through imports) whose own
-    header carries ``[NeZero <width>]`` for its width parameter and some field of
+    header carries ``[NeZero <width>]`` for a width parameter and some field of
     the SAME owner mentions ``BitVec <width>`` with that same width identifier.
     The carrier is resolved from its declaration, never from its name alone: the
-    `[NeZero <width>]` and the ``BitVec <width>`` field must belong to the SAME
-    owning declaration and the same width identifier (a header with
-    ``[NeZero other]`` or a field like ``BitVec 5 × HolWordLab width`` does not
-    qualify), and a name with several owners (a local duplicate shadowing an
-    imported owner) is rejected as ambiguous.
+    ``[NeZero <width>]`` and the ``BitVec <width>`` field must belong to the SAME
+    owning declaration and the same width identifier, every word dimension of
+    the owner must be constrained, and a name with several owners (a local
+    duplicate shadowing an imported owner) is rejected as ambiguous.
     """
     errors: list[str] = []
     if not declaration_text.strip():
@@ -1532,21 +1595,30 @@ def words_as_type_indexed_bitvec_errors(
     signature = stripped.split(":=", 1)[0]
     if not signature.strip():
         signature = stripped
-    direct_width_match = re.search(
-        r"[\{\(]\s*([A-Za-z_][A-Za-z0-9_']*)\s*:\s*Nat\s*[\}\)]", signature
+
+    errors.extend(word_dimension_errors(signature))
+    direct_ids = set(
+        match.group(1) for match in WORD_DIMENSION_ID_RE.finditer(signature)
     )
-    has_direct_bitvec = False
-    if direct_width_match is not None:
-        direct_width = direct_width_match.group(1)
-        has_direct_bitvec = (
-            field_mentions_word_carrier(signature, direct_width)
-            and re.search(
-                r"\[\s*NeZero\s+" + re.escape(direct_width) + r"\s*\]", signature
-            )
-            is not None
+    # A literal dimension such as `BitVec 5` (the `5 word` globals key type, say)
+    # is not itself the `dimindex (:α)` translation; only an identifier dimension
+    # takes the direct route. A literal-only signature still has to resolve a
+    # reviewed carrier, and a literal `0` is rejected by `word_dimension_errors`.
+    has_direct_word = bool(direct_ids)
+    if has_direct_word:
+        direct_widths = set(
+            match.group(1) for match in NAT_WIDTH_BINDER_RE.finditer(signature)
         )
+        if not any(identifier in direct_widths for identifier in direct_ids):
+            errors.append(
+                "words_as_type_indexed_bitvec must name the Lean positive-width word "
+                "carrier `BitVec <width>` at a `Nat` width binder that translates HOL "
+                "`'a word`; a fixed literal dimension is not the `dimindex (:α)` "
+                "translation"
+            )
+
     carrier_ok = False
-    if not has_direct_bitvec and lines is not None and module and root:
+    if not has_direct_word and lines is not None and module and root:
         local_types = structure_field_types(lines)
         local_headers = structure_headers(lines)
         imported_owners = imported_structure_owners(module, root)
@@ -1574,37 +1646,42 @@ def words_as_type_indexed_bitvec_errors(
                 "removed or disambiguated by signature)"
             )
         else:
+            candidate_errors: list[str] = []
             for owners in owners_by_name.values():
-                owner_module, header, fields = owners[0]
-                width_match = re.search(
-                    r"\(\s*([A-Za-z_][A-Za-z0-9_']*)\s*:\s*Nat\s*\)", header
+                _owner_module, header, fields = owners[0]
+                owner_text = header + "\n" + "\n".join(fields.values())
+                owner_errors = word_dimension_errors(owner_text)
+                owner_ids = set(
+                    match.group(1)
+                    for match in WORD_DIMENSION_ID_RE.finditer(owner_text)
                 )
-                if width_match is None:
-                    continue
-                width_name = width_match.group(1)
-                has_bitvec_field = any(
-                    field_mentions_word_carrier(type_text, width_name)
-                    for type_text in fields.values()
+                owner_widths = set(
+                    match.group(1) for match in NAT_WIDTH_BINDER_RE.finditer(owner_text)
                 )
-                nezero_width_re = re.compile(
-                    r"\[\s*NeZero\s+" + re.escape(width_name) + r"\s*\]"
-                )
-                has_positivity = nezero_width_re.search(header) is not None
-                if has_bitvec_field and has_positivity:
+                if (
+                    not owner_errors
+                    and any(identifier in owner_widths for identifier in owner_ids)
+                ):
                     carrier_ok = True
                     break
-    if not has_direct_bitvec and not carrier_ok:
-        errors.append(
-            "words_as_type_indexed_bitvec must name the Lean positive-width word "
-            "carrier `BitVec` that translates HOL `'a word`, or name a reviewed "
-            "width-indexed carrier structure whose fields include `BitVec`-typed "
-            "fields and whose declaration retains `[NeZero width]`"
-        )
-    if "NeZero" not in signature and not carrier_ok:
-        errors.append(
-            "words_as_type_indexed_bitvec must retain the `[NeZero width]` discharge "
-            "of HOL `dimindex (:α) ≥ 1`"
-        )
+                if owner_ids and not candidate_errors:
+                    candidate_errors = owner_errors
+            if not carrier_ok and candidate_errors:
+                errors.extend(candidate_errors)
+
+    if not has_direct_word:
+        if not carrier_ok:
+            errors.append(
+                "words_as_type_indexed_bitvec must name the Lean positive-width word "
+                "carrier `BitVec` that translates HOL `'a word`, or name a reviewed "
+                "width-indexed carrier structure whose fields include `BitVec`-typed "
+                "fields and whose declaration retains `[NeZero width]`"
+            )
+        if "NeZero" not in signature and not carrier_ok:
+            errors.append(
+                "words_as_type_indexed_bitvec must retain the `[NeZero width]` discharge "
+                "of HOL `dimindex (:α) ≥ 1`"
+            )
     extra = WORD_POSITIVITY_EXTRA_RE.search(signature)
     if extra is not None:
         errors.append(
@@ -1613,18 +1690,24 @@ def words_as_type_indexed_bitvec_errors(
             "the only allowed side condition"
         )
     if HOL_FFI_CARRIER_RE.search(signature):
-        if ": Type" not in signature and ": Type 0" not in signature:
+        host_binder = re.search(
+            r"[\{\(]\s*[^\s:(){}]+\s*:\s*Type\s*0?\s*[\}\)]", signature
+        )
+        if host_binder is None:
             errors.append(
                 "words_as_type_indexed_bitvec must bind the FFI host type at a `Type` "
                 "universe for HOL `'ffi ffi_state`"
             )
-        if FFI_UNIVERSE_LEVEL_RE.search(signature) or FFI_SORT_RE.search(signature):
+        if (
+            FFI_UNIVERSE_LEVEL_RE.search(signature) is not None
+            or FFI_SORT_RE.search(signature) is not None
+            or re.search(r":\s*Type\s+(?!0\b)\d", signature) is not None
+        ):
             errors.append(
                 "words_as_type_indexed_bitvec must not introduce an FFI universe-level "
                 "variable or a `Sort`; use the universe-0 `Type` instance"
             )
     return errors
-
 
 def hol_declaration_lines(
     path: Path, cache: dict[Path, dict[str, list[int]]]
