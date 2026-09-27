@@ -598,6 +598,48 @@ theorem evalPanSemRecursiveCallFiniteContext_call_return_shape_mismatch
     simp
   rw [if_neg hshapeNe]
 
+/-- HOL `evaluate_def` Call matched-exception branch
+    (`panSemScript.sml:682-688`): after the body yields an exception whose id
+    matches the handler, the caller's finite `eshapes` lookup supplies its
+    declared shape, and both the exception shape and local target are valid,
+    the handler runs from the fixed callee state with the caller's locals and
+    the exception value bound. These are exactly the branch selectors in HOL;
+    this untagged clause equation does not claim the whole evaluator. -/
+theorem evalPanSemRecursiveCallFiniteContext_call_matched_exception_handler
+    {width : Nat} {σ : Type} [NeZero width]
+    (returnInfo : Option (VarKind × MlS))
+    (handlerId handlerVar function : MlS) (handlerProgram body : ProgHOL width)
+    (arguments : List (ExpHOL width)) (context : FiniteEvalContext width σ)
+    (values : List (ValueHOL width)) (callee : HolFiniteMapExact MlS (ValueHOL width))
+    (returnShape : ShapeHOL) (value : ValueHOL width)
+    (bodyContext : FiniteEvalContext width σ) (declaredShape : ShapeHOL)
+    (hargs : evalListHOLFinite context.state
+      (h := context.memaddrsDecidable) arguments = some values)
+    (hlookup : lookupCodeHOLFinite context.state.code.lookup function values =
+      some (body, callee, returnShape))
+    (hclock : context.state.clock ≠ 0)
+    (hbody : evalPanSemRecursiveCallFiniteContext body
+      (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl) =
+        some (some (.exception handlerId value), bodyContext))
+    (hshape : context.state.eshapes.lookup handlerId = some declaredShape)
+    (hshapeEq : shapeEqHOL (shapeOfHOLExact value) declaredShape = true)
+    (hvalid : isValidValueHOLExact context.state.toExact VarKind.local handlerVar value = true) :
+    evalPanSemRecursiveCallFiniteContext
+        (.call (some (returnInfo, some (handlerId, handlerVar, handlerProgram)))
+          function arguments) context =
+      let fixedContext := callFixedContextHOLFinite
+        (callEntryStateHOLFinite context.state callee)
+        (some (.exception handlerId value)) bodyContext
+    evalPanSemRecursiveCallFiniteContext handlerProgram
+        (fixedContext.withState
+          (handlerStateHOLFinite context fixedContext handlerVar value) rfl rfl) := by
+  rw [evalPanSemRecursiveCallFiniteContext.eq_5]
+  simp only [hargs]
+  rw [hlookup]
+  simp only [if_neg hclock]
+  rw [hbody]
+  simp [hshape, hshapeEq, hvalid]
+
 /-- Source-reviewed HOL `DecCall` return-shape side conditions
     (`panSemScript.sml:694-729`). Either mismatch (against the declaration's
     `shape` or the looked-up `return_sh`) returns `Error` at the clock-fixed
