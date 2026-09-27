@@ -12650,6 +12650,22 @@
   {
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
     "hol_name": "evaluate_def",
+    "hol_line": 780,
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/EvaluateClock.lean",
+    "lean_name": "evaluateHOLFiniteState_seq_line780",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "reviewer": "flapjack-ds5 source comparison (2026-09-27; bead flapjack-qj5.9.1): HOL panSemScript.sml:780 is Theorem evaluate_def[allow_rebind,compute] = REWRITE_RULE [fix_clock_evaluate] evaluate_def, i.e. the source Definition evaluate_def (line 556) with the explicit fix_clock on the Seq first-evaluation pair rewritten away. evaluateHOLFiniteState_seq_line780 states that fix-clock-free Seq conjunct over the pair-shaped finite evaluator: evaluate the first program to a raw result-option x state pair and recurse on the second only when the first result is NONE, otherwise return that raw pair. The proof rewrites the line-556 equation with the finite fix_clock lemma fixClockHOLFinite_evaluateState and adds no semantic premise, no DecidablePred binder, and no clock premise. The finite state uses the four named HolFiniteMapExact fields and their same-module canonical roundtrip witness (in StateExactFiniteMap.lean, reached through this module's imports); the qualifier records only that carrier translation. HOL word-dimension audit: the tagged declaration and its owning width-indexed carrier mention a word type at the width identifier with [NeZero width], so (words_as_type_indexed_bitvec) applies in addition. This is the line-780 Seq case only; the full 21-clause assembly remains open under flapjack-qj5.9.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "evaluate_def",
     "hol_line": 556,
     "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
     "lean_name": "evaluateHOLFiniteState_while_total",
