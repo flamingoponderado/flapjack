@@ -926,8 +926,21 @@ attached. -/
        | _, _ => (some .error, state)) := by
   rw [evalCrepSemHOLProg.eq_def] <;> rfl
 
-/-- HOL `evaluate (StoreByte dst src, s)` (`crepSemScript.sml:277-283`).
-    Finite-support `CrepSemHOLState` counterpart; untagged. -/
+/-- HOL `evaluate (StoreByte dst src, s)` (`crepSemScript.sml:281-287`),
+    source-reviewed as one clause only. Both operands use the tagged exact
+    `eval_def` port `evalCrepSemHOLExp` (`crepSemScript.sml:90-137`), and both
+    must return `Word`. `UInt8.ofNat w.toNat` is the projection of HOL's
+    `w2w w` to word8: after `UInt8.toBitVec`, it is the same `BitVec 8` value.
+    The untagged UInt8 helper `panMemStoreByteHOL` used by
+    `crepExactMemStoreByte` is kernel-proved equal over the complete memory map
+    to the exact tagged `panMemStoreByteWord8HOL` by
+    `panMemStoreByteHOL_eq_word8` (`PanSem/ExtCallExact.lean`). The exact helper
+    implements `mem_store_byte_def` (`panSemScript.sml:300-307`): read the
+    aligned cell, require that aligned address in the domain, then replace that
+    cell with the endian-aware `set_byte` result. Success changes only memory
+    and returns `NONE`; expression/store failure yields `Error` with the
+    original state. This is a local StoreByte disposition only; the enclosing
+    evaluator remains untagged pending other cases and whole-statement review. -/
 @[simp] theorem evalCrepSemHOLProg_storeByte {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ)
     (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
