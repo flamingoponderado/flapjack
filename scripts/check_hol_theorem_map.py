@@ -330,6 +330,14 @@ DEFINITION_RE = re.compile(
     r"(?:def|abbrev|opaque|theorem|lemma)\s+([^\s:({\[]+)"
 )
 DOCUMENTED_MISMATCHES = {
+    ("Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean", "evalCrepSemHOLProgExact_skip"): (
+        "cakeml/pancake/semantics/crepSemScript.sml",
+        "evaluate_def",
+        "Coordinator review HOLD (flapjack-l60u, PR #1167): the local Skip equation is valid, "
+        "but full agreement between evalCrepSemHOLProgExact and HOL evaluate across every "
+        "constructor, including FFI, has not been source-reviewed. Tag withdrawn pending "
+        "that evaluator review.",
+    ),
     ("Flapjack/Pancake/Semantics/LoopSemStateExact.lean", "LoopSemStateFiniteExact"): (
         "cakeml/pancake/semantics/loopSemScript.sml",
         "state",
