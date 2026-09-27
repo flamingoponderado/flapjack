@@ -1,4 +1,5 @@
 import Flapjack.Pancake.PanGlobals
+import Flapjack.Pancake.PanGlobals.CompileExpExactRoute
 import Flapjack.Pancake.PanLang.Decl
 import Flapjack.Pancake.PanLang.Prog
 
@@ -632,7 +633,7 @@ def globalCompileTopForStartSomeCakeOfExact [LawfulBEq String] {width : Nat} [Ne
           maxGlobalsSize := maxGlobalsSize
           bytesInWord := cakeBytesInWord width
           fromNat := BitVec.ofNat width }
-      let compiled := compileDecsCake (cakeContextOfPass initial) renamed
+      let compiled := compileDecsCakeOfExact initial renamed
       let parameters := entry.params.map (fun (name, _) => Exp.var .local name)
       let newMain : Decl (BitVec width) :=
         .function
@@ -684,6 +685,12 @@ theorem globalCompileTopForStartSomeCakeOfExact_eq [LawfulBEq String]
         intro name shape address hlookup
         simp [initial, lookupInfo] at hlookup
       have hcanonical : initial.IsCakeCanonical := ⟨rfl, fun value => rfl⟩
+      have hinitialShapes : GlobalContextListShapesByteRanged initial := by
+        intro entry hmem
+        simp [initial] at hmem
+      have hrouted : compileDecsCakeOfExact initial renamed
+          = compileDecsCake (cakeContextOfPass initial) renamed :=
+        compileDecsCakeOfExact_eq renamed initial hcanonical hinitialShapes hrenamed
       have hthreaded := globalCompileDecsThreaded_byteRanged initial hinitialContext renamed hrenamed
       have hcompiled :
           ∀ program ∈ (compileDecsCake (cakeContextOfPass initial) renamed).initializers,
@@ -691,7 +698,7 @@ theorem globalCompileTopForStartSomeCakeOfExact_eq [LawfulBEq String]
         intro program hprogram
         rw [compileDecsCake_cakeContextOfPass initial hcanonical renamed] at hprogram
         exact hthreaded.1 program hprogram
-      rw [nestedSeqCake_eq _ hcompiled]
+      rw [hrouted, nestedSeqCake_eq _ hcompiled]
 
 /-- `.getD []` wrapper of the `nestedSeqCake`-routed compiler, mirroring
     `globalCompileTopCake`. -/
