@@ -763,6 +763,31 @@ theorem evalCrepSemHOLProgExact_eq_core {width : Nat} [NeZero width] {σ : Type}
   unfold evalCrepSemHOLProgExact
   congr 1
 
+/-- HOL's rewritten `evaluate_def` at `crepSemScript.sml:443`, Skip case
+    (originating at line 241), over the no-decider state/program interface:
+    evaluating Skip returns `(NONE, s)`. Rewriting the original definition by
+    `fix_clock_evaluate` leaves this equation unchanged because `fix_clock`
+    preserves the state clock here. The state is the 11-field
+    `CrepSemHOLState`; the qualifier records exactly its HOL `|->` fields
+    `locals`, `globals`, and `code` as `HolFiniteMapExact`. It remains
+    untagged because the supplied `AGENTS.md` requires the owning carrier
+    structure itself to be declared in the tagged declaration's module;
+    `CrepSemHOLState` is imported from `HOLState.lean`. The local canonical
+    witness does not satisfy that separate ownership requirement. The exact
+    HOL clause is present and kernel-checked, but the qualified HOL port awaits
+    a faithful same-module carrier arrangement; see
+    `flapjack-4ac.5.16.5.13.1`. -/
+theorem evalCrepSemHOLProgExact_skip {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) :
+    evalCrepSemHOLProgExact state (.skip : CrepProgHOL width) = (none, state) := by
+  calc
+    evalCrepSemHOLProgExact state (.skip : CrepProgHOL width) =
+        evalCrepSemHOLProg state
+          (fun a => Classical.propDecidable (state.memaddrs a))
+          (fun a => Classical.propDecidable (state.shMemaddrs a)) .skip :=
+      evalCrepSemHOLProgExact_eq_core state .skip _ _
+    _ = (none, state) := by simp [evalCrepSemHOLProg]
+
 /-- Kernel-checked `Skip` constructor equation of the total HOL-shaped
     evaluator, matching HOL `crepSemScript.sml:241`
     `evaluate (Skip, s) = (NONE, s)`. -/

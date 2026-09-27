@@ -187,6 +187,12 @@ theorem skipFullState :
         (.skip : CrepProgHOL 64) = (none, sampleHOLState) :=
   evalCrepSemHOLProg_skip sampleHOLState memDecSample shMemDecSample
 
+/-- The public no-decider API has the same exact Skip equation as HOL. -/
+theorem skipNoDeciderFullState :
+    evalCrepSemHOLProgExact sampleHOLState (.skip : CrepProgHOL 64) =
+      (none, sampleHOLState) :=
+  evalCrepSemHOLProgExact_skip sampleHOLState
+
 /-- Kernel-checked full pair equality for Break via the named equation. -/
 theorem breakFullState :
     evalCrepSemHOLProg sampleHOLState memDecSample shMemDecSample
