@@ -5,10 +5,10 @@ import Flapjack.Pancake.Semantics.PanSem.EvaluateFinite
 /-!
 # HOL `evaluate_add_clock_or_timeout` over the exact finite-map PanSem evaluator
 
-FLAPJACK-SPECIFIC (untagged): Lean rendering of HOL
-`cakeml/pancake/semantics/panPropsScript.sml:834-857`
-`evaluate_add_clock_or_timeout` over the finite-map evaluator
-`evaluateHOLFiniteState`.
+`evaluateHOLFiniteState_add_clock_or_timeout` ports HOL
+`cakeml/pancake/semantics/panPropsScript.sml:834-857` over the finite-map
+evaluator `evaluateHOLFiniteState`. The exact line-780 `evaluate_def` equation
+theorem establishes that this evaluator has HOL's 21 constructor clauses.
 
 The statement is HOL's: if the run at the input state `s` fixes its result
 clock to `0` and is not a timeout, then running the same program at any other
@@ -18,8 +18,7 @@ the same result with the clock shifted by `k - s.clock`.
 The proof lifts both finite runs to the broad exact evaluator
 `evalPanSemRecursiveCallContextHOLExact` through the kernel-checked projection
 `evalPanSemRecursiveCallFiniteContext_projection`, then applies the
-Flapjack-specific clock-shift lemma `eval_add_clock_mono_aux`. No declaration
-here carries an `@[hol]` tag.
+Flapjack-specific clock-shift lemma `eval_add_clock_mono_aux`.
 -/
 
 open Flapjack.Pancake.PanLang (ProgHOL)
@@ -44,10 +43,35 @@ theorem PanSemStateFiniteExact.toExact_injective {width : Nat} {σ : Type} [NeZe
       have e5 : ae = be := HolFiniteMapExact.ext h5
       rw [e1, e2, h3, e4, e5, h6, h7, h8, h9, h10, h11, h12, h13]
 
-/-- HOL `evaluate_add_clock_or_timeout`
-    (`cakeml/pancake/semantics/panPropsScript.sml:834-857`) over the finite-map
-    evaluator `evaluateHOLFiniteState`. Untagged Flapjack-specific
-    infrastructure. -/
+/- Same-module canonical witness required by the finite-support qualifier on
+   `evaluateHOLFiniteState_add_clock_or_timeout`. It re-exports the checked
+   `toExact`/`ofExact` roundtrip for the owning `PanSemStateFiniteExact`
+   carrier and its broad counterpart. -/
+namespace PanSem.ClockTimeoutWitness
+
+theorem holFmapAsFiniteSupportWitness {width : Nat} {σ : Type} [NeZero width] :
+    (∀ (state : PanSemStateExact width σ) (h : state.FiniteSupport),
+        (PanSemStateFiniteExact.ofExact state h).toExact = state) ∧
+    (∀ state : PanSemStateFiniteExact width σ,
+        PanSemStateFiniteExact.ofExact state.toExact state.toExact_finiteSupport = state) :=
+  PanSemStateFiniteExact.holFmapAsFiniteSupportWitness
+
+end PanSem.ClockTimeoutWitness
+
+/-- Source-reviewed against HOL `panPropsScript.sml:834-857`. The theorem keeps
+    the HOL premise order and exact alternatives: the base run returns `q` at
+    `t` with clock zero and is non-timeout; an arbitrary-clock run either times
+    out below the input clock or returns `q` at `t` with the clock shifted by
+    `k - s.clock`. The evaluator is `evaluateHOLFiniteState`, whose exact
+    21-clause equation port is `evaluateHOLFiniteState_eq_evaluate_def` at
+    `panSemScript.sml:780`. The four `HolFiniteMapExact` state fields are
+    recorded by `fmap_as_finite_support`; the positive width-indexed word
+    carrier is recorded by `words_as_type_indexed_bitvec`. The clock-shift
+    helper and finite-to-broad projection are Flapjack-specific proof
+    infrastructure and add no premise to this statement. -/
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_add_clock_or_timeout" 834
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem evaluateHOLFiniteState_add_clock_or_timeout {width : Nat} {σ : Type} [NeZero width]
     (p : ProgHOL width) (s : PanSemStateFiniteExact width σ)
     (q : Option (PanSemResultExact width)) (t : PanSemStateFiniteExact width σ)

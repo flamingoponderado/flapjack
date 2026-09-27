@@ -645,6 +645,29 @@ truncation, and the default clause. The exact width-indexed Lean port is
 `Flapjack.Test.CrepInlineTransformEocParity`. Regenerate with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=crep_inline_transform_eoc_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
+`crep_inline_transform_branch_probe.out` records direct HOL EVAL of every arm
+of `transform_branch_def` (`crep_inlineScript.sml:155-164`), including nested
+While loop-depth increments and current-depth Call handlers. The exact
+width-indexed Lean port is `transformBranchHOLExact` in
+`Flapjack.Pancake.CrepInline.Pass`; its guards are in
+`Flapjack.Test.CrepInlineTransformBranchParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=crep_inline_transform_branch_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`crep_inline_nontail_probe.out` records direct HOL EVAL of
+`inline_nontail_def` (`crep_inlineScript.sml:193-201`), including zeroed
+temporary returns, nested argument loading, caller-result `MAP2` truncation,
+and a nested-declaration shape mismatch. The exact width-indexed Lean port is
+`inlineNontailHOLExact` in `Flapjack.Pancake.CrepInline.Pass`; guards are in
+`Flapjack.Test.CrepInlineNontailParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=crep_inline_nontail_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`crep_inline_has_return_probe.out` records direct HOL EVAL of every clause of
+`has_return_def` (`crep_inlineScript.sml:41-50`), including the three Call
+return-info cases and recursive handlers. The exact width-indexed Lean port is
+`hasReturnHOLExact` in `Flapjack.Pancake.CrepInline.Pass`; its guards are in
+`Flapjack.Test.CrepInlineHasReturnParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=crep_inline_has_return_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `fupdate_list_append_commutes_probe.out` records the imported original HOL
 theorem `finite_mapTheory.FUPDATE_LIST_APPEND_COMMUTES` from
 `/home/zksecurity/HOL/src/finite_maps/finite_mapScript.sml:2960`, plus direct

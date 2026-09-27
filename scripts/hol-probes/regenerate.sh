@@ -423,6 +423,20 @@ run_probe crep_inline_transform_eoc_probeScript.sml crep_inline_transform_eoc_pr
   transform_eoc_dec transform_eoc_while transform_eoc_seq transform_eoc_if \
   transform_eoc_default \
   "$cake_dir/pancake/crep_inlineScript.sml" "$cake_dir/pancake"
+run_probe crep_inline_transform_branch_probeScript.sml crep_inline_transform_branch_probe.out \
+  transform_branch_return transform_branch_call_none transform_branch_call_returns \
+  transform_branch_call_handler transform_branch_dec transform_branch_while \
+  transform_branch_seq transform_branch_if transform_branch_default \
+  "$cake_dir/pancake/crep_inlineScript.sml" "$cake_dir/pancake"
+run_probe crep_inline_nontail_probeScript.sml crep_inline_nontail_probe.out \
+  inline_nontail_scalar inline_nontail_map2_truncates \
+  inline_nontail_arg_shape_mismatch \
+  "$cake_dir/pancake/crep_inlineScript.sml" "$cake_dir/pancake"
+run_probe crep_inline_has_return_probeScript.sml crep_inline_has_return_probe.out \
+  has_return_return has_return_call_none has_return_call_dest \
+  has_return_call_handler has_return_dec has_return_seq has_return_if \
+  has_return_while has_return_default \
+  "$cake_dir/pancake/crep_inlineScript.sml" "$cake_dir/pancake"
 run_probe crep_inline_cont_res_probeScript.sml crep_inline_cont_res_probe.out \
   cont_res_none cont_res_done "$cake_dir/pancake/proofs/crep_inlineProofScript.sml" \
   "$cake_dir/pancake/proofs"

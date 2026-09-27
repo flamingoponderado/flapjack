@@ -501,10 +501,13 @@ These are the coordinator-requested public statements: HOL `evaluate_clock` and
 success premise. The decidability witnesses are chosen classically inside
 `evaluateHOLFiniteState`, so they add no logical premise, and the pair-shaped
 evaluator is total, so the earlier `= some result` hypotheses are unnecessary.
-They remain untagged: the carrier `PanSemStateFiniteExact` uses canonical
-`HolFiniteMapExact` maps (not HOL's mlstring-keyed finite maps) and the evaluator
-threads operational deciders, so HOL's `@[hol]` tags stay withheld pending
-coordinator evaluator/carrier-fidelity review. -/
+The stronger premise-free bound `evaluateHOLFiniteState_clock_le` below stays
+untagged (it omits HOL's result/post-state variables and equality premise),
+while the exact-shape corollary `evaluateHOLFiniteState_clock_le_result` and
+`fixClockHOLFinite_evaluateState` carry the reviewed
+`(fmap_as_finite_support := [locals, globals, code, eshapes])`
+`(words_as_type_indexed_bitvec)` tags after coordinator source/carrier review
+(bead `flapjack-pxn.18.3.6.9.23.1`). -/
 
 /-- Stronger untagged clock bound over the pair-shaped finite source evaluator:
     for every program and source state the evaluated result clock is bounded by
@@ -1532,7 +1535,8 @@ pair-shaped finite source evaluator. This is the single unconditional source
 `Definition evaluate_def` (line 556) `Call` clause with the inner `fix_clock` on
 the recursive callee-body evaluation rewritten away by line 780's
 `REWRITE_RULE [fix_clock_evaluate]` (via the finite `fixClockHOLFinite_evaluateState`).
-No extra premise. The full 21-clause assembly remains open under `flapjack-qj5.9`.
+No extra premise. The full 21-clause assembly is
+`evaluateHOLFiniteState_eq_evaluate_def` (bead `flapjack-qj5.9.6`).
 
 Declaration review against `panSemScript.sml:657-693`: the equation preserves
 `OPT_MMAP` argument evaluation and `lookup_code`, the clock-zero timeout state,
@@ -1864,7 +1868,8 @@ from the line-556 tagged `evaluateHOLFiniteState_seq`. -/
     `fix_clock` rewritten away by line 780's `REWRITE_RULE [fix_clock_evaluate]`,
     via the finite `fixClockHOLFinite_evaluateState`. No extra premise. The
     carrier/qualifier situation equals the line-556 tagged sibling; the full
-    21-clause assembly remains open under `flapjack-qj5.9`. -/
+    21-clause assembly is `evaluateHOLFiniteState_eq_evaluate_def`
+    (bead `flapjack-qj5.9.6`). -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
   (fmap_as_finite_support := [locals, globals, code, eshapes])
   (words_as_type_indexed_bitvec)]
@@ -2162,5 +2167,44 @@ theorem evaluateHOLFiniteState_eq_evaluate_def {width : Nat} {σ : Type} [NeZero
        else (none, decClockHOLFinite state))
     | .annot _tag _text => (none, state) := by
   cases program <;> (first | rw [evaluateHOLFiniteState_skip] | rw [evaluateHOLFiniteState_dec_total] | rw [evaluateHOLFiniteState_assign] | rw [evaluateHOLFiniteState_primitive] | rw [evaluateHOLFiniteState_store] | rw [evaluateHOLFiniteState_store32] | rw [evaluateHOLFiniteState_storeByte] | rw [evaluateHOLFiniteState_seq_line780] | rw [evaluateHOLFiniteState_ite] | rw [evaluateHOLFiniteState_while_fixClockRewrite] | rw [evaluateHOLFiniteState_break] | rw [evaluateHOLFiniteState_continue] | rw [evaluateHOLFiniteState_call] | rw [evaluateHOLFiniteState_decCall_fixClockRewrite] | rw [evaluateHOLFiniteState_extCall_source] | rw [evaluateHOLFiniteState_raise] | rw [evaluateHOLFiniteState_return] | rw [evaluateHOLFiniteState_shMemLoad_source] | rw [evaluateHOLFiniteState_shMemStore_total] | rw [evaluateHOLFiniteState_tick] | rw [evaluateHOLFiniteState_annot]) <;> try (dsimp only; rfl)
+
+/-! ## FFI event-prefix monotonicity (HOL `panPropsScript.sml:856`)
+
+Exact port of HOL `Theorem evaluate_io_events_mono`
+(`!exps s1 res s2. evaluate (exps,s1) = (res,s2) ==> s1.ffi.io_events ≼ s2.ffi.io_events`)
+over the pair-shaped finite evaluator `evaluateHOLFiniteState`, i.e. the tagged
+21-clause `evaluate_def` port, with HOL's quantifiers and successful-evaluate
+hypothesis. HOL's `IS_PREFIX` (`≼`) is Lean `List.IsPrefix` (`<+:`). The proof
+projects the finite run to the exact recursive evaluator through
+`evalPanSemRecursiveCallFiniteContext_projection` and applies the Flapjack
+event-prefix lemma `evalPanSemRecursiveCallContextHOLExact_ioEvents_prefix`
+(which itself mirrors HOL's `recInduct evaluate_ind` + `IS_PREFIX_TRANS`). -/
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_io_events_mono"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateHOLFiniteState_ioEvents_mono {width : Nat} {σ : Type} [NeZero width]
+    (program : ProgHOL width) (state : PanSemStateFiniteExact width σ)
+    (result : Option (PanSemResultExact width)) (finalState : PanSemStateFiniteExact width σ)
+    (heval : evaluateHOLFiniteState state program = (result, finalState)) :
+    state.ffi.ioEvents <+: finalState.ffi.ioEvents := by
+  classical
+  let context : FiniteEvalContext width σ :=
+    ⟨state, fun address => Classical.propDecidable (state.memaddrs address),
+      fun address => Classical.propDecidable (state.shMemaddrs address)⟩
+  obtain ⟨pair, hpair⟩ := evalPanSemRecursiveCallFiniteContext_total program context
+  rw [evaluateHOLFiniteState_eq_recursiveContext] at heval
+  rw [show (⟨state, fun address => Classical.propDecidable (state.memaddrs address),
+      fun address => Classical.propDecidable (state.shMemaddrs address)⟩ :
+        FiniteEvalContext width σ) = context from rfl] at heval
+  simp only [hpair, Prod.mk.injEq] at heval
+  obtain ⟨hres, hst⟩ := heval
+  have hproj := evalPanSemRecursiveCallFiniteContext_projection program context
+  rw [hpair] at hproj
+  simp only [Option.map_some] at hproj
+  have hpref := evalPanSemRecursiveCallContextHOLExact_ioEvents_prefix program context.toExact
+    (pair.1, pair.2.toExact) hproj.symm
+  subst hres
+  subst hst
+  simpa only [context, FiniteEvalContext.toExact, PanSemStateFiniteExact.toExact] using hpref
 
 end Flapjack
