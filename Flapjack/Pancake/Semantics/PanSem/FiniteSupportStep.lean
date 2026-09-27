@@ -2203,6 +2203,39 @@ theorem evalPanSemRecursiveCallContextHOLExact_compose_ffi_eq_of_ioEvents_eq
     _ = secondContext.state.ffi := hboundary
     _ = result.2.state.ffi := hsecondFfi
 
+/-- Flapjack-specific infrastructure, with no HOL original: a recursive
+    `Call` body and its exception handler compose when their FFI boundary is
+    preserved. The callee entry may change other state fields, so the input to
+    the first IH is recorded separately and related by exact FFI equality. -/
+theorem evalPanSemRecursiveCallContextHOLExact_call_handler_ffi_eq_of_ioEvents_eq
+    {width : Nat} {σ : Type} [NeZero width]
+    (body handler : ProgHOL width)
+    (context entryContext handlerContext : PanSemExactEvalContext width σ)
+    (bodyOutput result : Option (PanSemResultExact width) × PanSemExactEvalContext width σ)
+    (hentry : context.state.ffi = entryContext.state.ffi)
+    (hbody : evalPanSemRecursiveCallContextHOLExact body entryContext = some bodyOutput)
+    (hboundary : bodyOutput.2.state.ffi = handlerContext.state.ffi)
+    (hhandler : evalPanSemRecursiveCallContextHOLExact handler handlerContext = some result)
+    (hbodyIH : ∀ result,
+      evalPanSemRecursiveCallContextHOLExact body entryContext = some result →
+      entryContext.state.ffi.ioEvents = result.2.state.ffi.ioEvents →
+      entryContext.state.ffi = result.2.state.ffi)
+    (hhandlerIH : ∀ result,
+      evalPanSemRecursiveCallContextHOLExact handler handlerContext = some result →
+      handlerContext.state.ffi.ioEvents = result.2.state.ffi.ioEvents →
+      handlerContext.state.ffi = result.2.state.ffi)
+    (hevents : context.state.ffi.ioEvents = result.2.state.ffi.ioEvents) :
+    context.state.ffi = result.2.state.ffi := by
+  have hentryEvents : entryContext.state.ffi.ioEvents = result.2.state.ffi.ioEvents := by
+    calc
+      entryContext.state.ffi.ioEvents = context.state.ffi.ioEvents :=
+        congrArg (fun ffi => ffi.ioEvents) hentry.symm
+      _ = result.2.state.ffi.ioEvents := hevents
+  have hcompose := evalPanSemRecursiveCallContextHOLExact_compose_ffi_eq_of_ioEvents_eq
+    body handler entryContext handlerContext bodyOutput result hbody hboundary hhandler
+    hbodyIH hhandlerIH hentryEvents
+  exact hentry.trans hcompose
+
 /-- Composition fact for the successful `Seq` branch that evaluates its second
     program. The recursive induction hypotheses apply after the prefix lemma
     forces the middle trace to equal both endpoints. -/
