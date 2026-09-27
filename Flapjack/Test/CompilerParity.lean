@@ -35,6 +35,7 @@ import Flapjack.Test.CrepInlineRelParity
 import Flapjack.Test.CrepSemTotalClockLeavesParity
 import Flapjack.Test.CrepSemTotalEvaluateHOLParity
 import Flapjack.Test.CrepNestedAssignDistinctHOLParity
+import Flapjack.Test.CrepNestedDecsSeqResVarEqParity
 import Flapjack.Test.CrepSemTotalCallParity
 import Flapjack.Pancake.Proofs.PanToCrep.TotalEvaluateCases
 import Flapjack.Test.CrepSemTotalAssignParity
@@ -805,6 +806,7 @@ def main : IO Unit := do
     Flapjack.Test.CrepInlineRelParity.runChecks,
     Flapjack.Test.CrepSemTotalEvaluateHOLParity.runChecks,
     Flapjack.Test.CrepNestedAssignDistinctHOLParity.runChecks,
+    Flapjack.Test.CrepNestedDecsSeqResVarEqParity.runChecks,
     Flapjack.Test.CrepShMemHOLParity.runChecks,
     Flapjack.Test.PanGlobalsExceptionsAppendParity.runChecks,
     Flapjack.Test.PanGlobalsExceptionsFilterIsFunctionParity.runChecks,
