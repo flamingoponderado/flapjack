@@ -107,6 +107,27 @@ def panToCrepLocalsRelFiniteExact {width : Nat} [NeZero width]
         flattenHOL value = words ∧
         isWfShapeExactHOL ([] : StructContextExact) (shapeOfHOLExact value) = true
 
+/-- Exact port of HOL `excp_rel_def`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:16-23`). Both maps are
+    standalone exact finite-map parameters, so the qualifier records them as
+    bare entries: `compilerCodes` is HOL's `ceids : eid |-> 'a word` and
+    `sourceShapes` is HOL's `seids`, the source `eshapes : eid |-> shape`. HOL
+    `FDOM seids = FDOM ceids` is rendered pointwise on the canonical
+    `HolFiniteMapExact` lookup (equality of definedness), and `FLOOKUP` becomes
+    `.lookup`. The source map's values are not related to the compiler's; only
+    the domains and the injectivity of the compiler codes are asserted. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "excp_rel_def"
+  (fmap_as_finite_support_relation := [compilerCodes, sourceShapes])]
+def panToCrepExcpRelFiniteExact {width : Nat} [NeZero width]
+    (compilerCodes : HolFiniteMapExact MlS (BitVec width))
+    (sourceShapes : HolFiniteMapExact MlS ShapeHOL) : Prop :=
+  (∀ key, (sourceShapes.lookup key).isSome =
+    (compilerCodes.lookup key).isSome) ∧
+    ∀ exception exception' code code',
+      compilerCodes.lookup exception = some code →
+      compilerCodes.lookup exception' = some code' →
+      code = code' → exception = exception'
+
 /-- The exact finite-support locals relation immediately supplies the literal
     `is_wf_shape_nil (shape_of v)` fact for every present source local. -/
 theorem panToCrepLocalsRelFiniteExact_shapeProjection {width : Nat} [NeZero width]
