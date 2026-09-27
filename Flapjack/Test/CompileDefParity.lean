@@ -744,6 +744,41 @@ def exactRaiseClauseParity : Bool :=
 
 #guard exactRaiseClauseParity
 
+/-- The success case of the full exact-to-production Raise bridge exercises
+    its codec premise on the source Raise clause, including its local Dec,
+    global save, and final Raise output. -/
+example :
+    crepProgOfHOL (compileProgExactHOLW exactRaiseContext
+      (.raise (ofString "E") (expToHOL (.const (BitVec.ofNat 8 9))))) =
+    compileProgRiscV exactRaiseContext.toProduction
+      (.raise "E" (.const (BitVec.ofNat 8 9))) := by
+  apply compileProgExactHOLW_raise_bridge
+  simp only [compileExpExactHOLW.eq_1, expToHOL.eq_1, compileExpHOL.eq_1,
+    List.map_cons, List.map_nil, crepExpOfHOL.eq_1, shapeOfHOL]
+
+/-- The same bridge retains the missing exception-id fallback. -/
+example :
+    crepProgOfHOL (compileProgExactHOLW exactReturnContext
+      (.raise (ofString "missing") (expToHOL (.const (BitVec.ofNat 8 9))))) =
+    compileProgRiscV exactReturnContext.toProduction
+      (.raise "missing" (.const (BitVec.ofNat 8 9))) := by
+  apply compileProgExactHOLW_raise_bridge
+  simp only [compileExpExactHOLW.eq_1, expToHOL.eq_1, compileExpHOL.eq_1,
+    List.map_cons, List.map_nil, crepExpOfHOL.eq_1, shapeOfHOL]
+
+/-- The bridge also retains the malformed expression shape/length fallback. -/
+example :
+    crepProgOfHOL (compileProgExactHOLW exactMalformedRaiseContext
+      (.raise (ofString "E")
+        (expToHOL (.var .local "bad")))) =
+    compileProgRiscV exactMalformedRaiseContext.toProduction
+      (.raise "E" (.var .local "bad")) := by
+  apply compileProgExactHOLW_raise_bridge
+  simp [compileExpExactHOLW.eq_2, expToHOL.eq_2, compileExpHOL.eq_2,
+    PanToCrepContextExact.toProduction, exactMalformedRaiseContext,
+    HolFiniteMapExact.lookup_update, FUPDATE, FLOOKUP, crepExpOfHOL,
+    shapeOfHOL]
+
 def exactShMemStoreClauseParity : Bool :=
   (match compileShMemStoreExactHOLW
       (exactLocalAssignContext [7] [8]) .op8 (.var .local (ofString "src")) (.const 3) with
