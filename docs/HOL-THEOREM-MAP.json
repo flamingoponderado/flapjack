@@ -682,6 +682,20 @@
   },
   {
     "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
+    "hol_name": "evaluate_def",
+    "lean_path": "Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean",
+    "lean_name": "evalCrepSemHOLProgExact_seq_fixClockFree",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "reviewer": "Source comparison (bead flapjack-4ac.5.16.5.26): the Seq clause of HOL evaluate_def as rebound at crepSemScript.sml:443 (evaluate_def = REWRITE_RULE [fix_clock_evaluate] evaluate_def). The primal Seq clause (:303-306) fixes the clock around the first command; line 443 eliminates that fix_clock via fix_clock_evaluate (:432-437), leaving let (res,s1) = evaluate (c1,s) in if res = NONE then evaluate (c2,s1) else (res,s1). The Lean statement is that clause over the no-decider exact evaluator: evalCrepSemHOLProgExact state (.seq first second) = (let step := evalCrepSemHOLProgExact state first; match step with | (none, stepState) => evalCrepSemHOLProgExact stepState second | (some _, _) => step). Derived from the reviewed line-240 no-decider Seq equation evalCrepSemHOLProgExact_seq and the reviewed exact fix_clock identity fixClockCrepSemHOL_evalCrepSemHOLProgExact (bead flapjack-4ac.5.16.5.25). fmap_as_finite_support records the CrepSemHOLState finite-support carrier; words_as_type_indexed_bitvec records the dimension-indexed BitVec translation.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
     "hol_name": "eval_def",
     "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
     "lean_name": "evalCrepHolFiniteStateSource_load",

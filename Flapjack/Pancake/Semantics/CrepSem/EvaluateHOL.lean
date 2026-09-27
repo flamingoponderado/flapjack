@@ -4435,4 +4435,26 @@ theorem fixClockCrepSemHOL_evalCrepSemHOLProgExact {width : Nat} [NeZero width] 
     simp only [fixClockCrepSemHOL]
     rw [if_neg (by omega)]
 
+/-- Fix-clock-free `Seq` clause of HOL `evaluate_def` as rebound at
+`cakeml/pancake/semantics/crepSemScript.sml:443` (`evaluate_def =
+REWRITE_RULE [fix_clock_evaluate] evaluate_def`). The primal equation
+(`:303-306`) fixes the clock around the first command; the line-443 rebind
+eliminates it using `fix_clock_evaluate` (`:432-437`), giving a plain
+`let (res,s1) = evaluate (c1,s) in if res = NONE then evaluate (c2,s1) else
+(res,s1)`. This theorem derives that clause over the no-decider exact
+evaluator by rewriting the reviewed line-240 `Seq` equation with the exact
+`fixClockCrepSemHOL_evalCrepSemHOLProgExact` identity (bead
+`flapjack-4ac.5.16.5.25`). -/
+@[hol "cakeml/pancake/semantics/crepSemScript.sml" "evaluate_def" 443
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
+theorem evalCrepSemHOLProgExact_seq_fixClockFree {width : Nat} [NeZero width]
+    {σ : Type} (state : CrepSemHOLState width σ) (first second : CrepProgHOL width) :
+    evalCrepSemHOLProgExact state (.seq first second) =
+      (let step := evalCrepSemHOLProgExact state first
+       match step with
+       | (none, stepState) => evalCrepSemHOLProgExact stepState second
+       | (some _, _) => step) := by
+  rw [evalCrepSemHOLProgExact_seq, fixClockCrepSemHOL_evalCrepSemHOLProgExact]
+
 end Flapjack
