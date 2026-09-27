@@ -67,10 +67,13 @@ call the exact ports with `crepShMemByteWidth operator`.
 * `CrepSemHOLState` is the finite-support `HolFiniteMapExact` translation of
   HOL's `|->` fields; the state helpers `setVar`/`setGlobals`/`updLocals`/
   `emptyLocals`/`resVarEq` implement the HOL updates with HOL `=` equality.
-* The memory/FFI clause helpers (`panMemStore32HOL`, `panMemStoreByteHOL`,
-  `panByteAlignHOL`, `readBytearrayHOL`, `panWriteBytearrayHOL`, `callFFIHOL`)
-  are the already-reviewed exact ports; `crepClockWordToBytes` /
-  `crepClockWordOfBytes` are the `word_to_bytes`/`word_of_bytes` byte codecs.
+* `panMemStore32HOL` and `callFFIHOL` use their reviewed exact carriers.
+  The ExtCall byte chain (`panMemLoadByteHOL`, `panMemStoreByteHOL`,
+  `readBytearrayHOL`, `panWriteBytearrayHOL`) currently uses `UInt8`, whereas
+  HOL uses `word8` (`BitVec 8`); those declarations are intentionally untagged
+  pending the faithful byte-carrier work in `flapjack-4ac.5.16.5.4`.
+  `crepClockWordToBytes`/`crepClockWordOfBytes` are likewise not cited here as
+  exact HOL ports.
 * `Skip` is fully faithful: `evalCrepSemHOLProg state .skip = (none, state)`,
   matching HOL `evaluate (Skip, s) = (NONE, s)`. The direct oracle row is
   `skip_eval=T` in `scripts/hol-probes/crep_inline_eval_probe.out`.
@@ -710,6 +713,40 @@ decreasing_by
        try simp only [true_and] at *
        omega)
 
+/-- A public no-extra-decision-argument entry point for the finite-support
+    evaluator. Classical decidability supplies the two domain tests required by
+    the Lean recursive core; the proof-side behavior is independent of which
+    decision procedures are chosen, as `evalCrepSemHOLProgExact_eq_core`
+    records. This removes the explicit `memDec`/`shMemDec` arguments from the
+    evaluator interface, but is not tagged as HOL `evaluate_def`: the full
+    clause/carrier audit remains incomplete. -/
+noncomputable def evalCrepSemHOLProgExact {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) (program : CrepProgHOL width) :
+    Option (CrepResultHOLExact width) × CrepSemHOLState width σ := by
+  classical
+  exact evalCrepSemHOLProg state
+    (fun a => (inferInstance : Decidable (state.memaddrs a)))
+    (fun a => (inferInstance : Decidable (state.shMemaddrs a))) program
+
+/-- The no-extra-argument entry point agrees with the recursive core for any
+    domain deciders. This kernel-checked equation makes its classical choice
+    invisible in the evaluator result. -/
+theorem evalCrepSemHOLProgExact_eq_core {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) (program : CrepProgHOL width)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a)) :
+    evalCrepSemHOLProgExact state program =
+      evalCrepSemHOLProg state memDec shMemDec program := by
+  classical
+  have hmem : (fun a => Classical.propDecidable (state.memaddrs a)) = memDec := by
+    funext address
+    exact Subsingleton.elim _ _
+  have hshMem : (fun a => Classical.propDecidable (state.shMemaddrs a)) = shMemDec := by
+    funext address
+    exact Subsingleton.elim _ _
+  unfold evalCrepSemHOLProgExact
+  congr 1
+
 /-- Kernel-checked `Skip` constructor equation of the total HOL-shaped
     evaluator, matching HOL `crepSemScript.sml:241`
     `evaluate (Skip, s) = (NONE, s)`. -/
@@ -1043,8 +1080,17 @@ theorem evalCrepSemHOLProg_while_timeout {width : Nat} [NeZero width] {σ : Type
   rw [evalCrepSemHOLProg.eq_def] <;> rfl
 
 /-- HOL `evaluate (ExtCall ffi_index ptr1 len1 ptr2 len2, s)`
-    (`crepSemScript.sml:364-381`): read both byte arrays, dispatch the FFI, then
-    on return write the new bytes back and install the new FFI state. -/
+    (`crepSemScript.sml:367-379`): read both byte arrays in
+    `(len1,ptr1,len2,ptr2)` lookup order, dispatch `call_FFI (ExtCall ffi_index)`,
+    preserve the input state on final/error, and on return write the returned
+    bytes at `ptr2` and install the new FFI state. Source comparison found those
+    branch orders and updates aligned. This equation remains untagged because
+    its byte helpers carry `UInt8` while HOL's `word8` is represented exactly by
+    `BitVec 8`; the necessary codec has no approved HOL qualifier. The precise
+    byte-carrier replacement is `flapjack-4ac.5.16.5.4`. This core equation also
+    exposes explicit domain-decision arguments; the public no-extra-argument
+    wrapper and its core equality are `evalCrepSemHOLProgExact` and
+    `evalCrepSemHOLProgExact_eq_core` (`flapjack-4ac.5.16.5.2`). -/
 @[simp] theorem evalCrepSemHOLProg_extCall {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ)
     (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
@@ -1089,7 +1135,24 @@ theorem evalCrepSemHOLProg_while_timeout {width : Nat} [NeZero width] {σ : Type
     evaluate the arguments, look up the code, require distinct formals, install
     the callee locals under `dec_clock`, run the body under `fix_clock`, then
     handle ordinary completion/`Break`/`Continue` as `Error`, and `Return`/
-    `Exception` including the handler path and `empty_locals` cleanup. -/
+    `Exception` including the handler path and `empty_locals` cleanup.
+
+    Source review against `evaluate_def` lines 335-364 and `lookup_code_def`
+    lines 76-83 found the Call branches and side conditions aligned: `mapM`
+    evaluates the arguments, the direct code-map case is the expanded
+    `lookup_code` formal-count/distinctness check and zipped local installation,
+    the return-info distinctness check precedes timeout, and the recursive
+    body/handler and cleanup cases follow the HOL cases. The handler's
+    `crepStampExactDomains` restores the original
+    domain fields, which the evaluator clauses do not update, so the explicit
+    domain decisions remain valid across that state update.
+
+    This equation intentionally has no `@[hol]` tag. Its evaluator application
+    takes explicit `memDec` and `shMemDec` arguments; HOL's `evaluate` has only
+    the program and state arguments. That evaluator-interface mismatch remains
+    even though the Call case body was source-reviewed. The faithful public
+    evaluator interface is tracked by `flapjack-4ac.5.16.5.2`; this case audit
+    is `flapjack-4ac.5.16.5.1`. -/
 @[simp] theorem evalCrepSemHOLProg_call {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ)
     (memDec : (a : BitVec width) → Decidable (state.memaddrs a))

@@ -21,8 +21,8 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {σ : Type} :
 end EvalNestedAssignFiniteSupport
 
 /-! HOL's evaluator uses classical decisions for memory-domain membership.
-These wrappers choose those decisions explicitly, keeping them out of the
-ported theorem's quantified variables and five logical premises. -/
+The proof-side expression wrapper chooses that decision explicitly, keeping it
+out of the ported theorem's quantified variables and five logical premises. -/
 
 /-- Flapjack-only classical choice of the memory-domain decision procedure for
 the exact expression evaluator. It is wrapper infrastructure because HOL's
@@ -31,16 +31,6 @@ noncomputable def evalCrepSemHOLExpDefault {width : Nat} [NeZero width] {σ : Ty
     (state : CrepSemHOLState width σ) (expression : CrepExpHOL width) :=
   evalCrepSemHOLExpWithMemDec state
     (fun address => Classical.propDecidable (state.memaddrs address)) expression
-
-/-- Flapjack-only classical choice of the two state-domain decision procedures
-for the exact program evaluator. HOL `evaluate` has no explicit Lean
-`DecidablePred` parameters; this wrapper supplies them without adding theorem
-premises. -/
-noncomputable def evalCrepSemHOLProgDefault {width : Nat} [NeZero width] {σ : Type}
-    (state : CrepSemHOLState width σ) (program : CrepProgHOL width) :=
-  evalCrepSemHOLProg state
-    (fun address => Classical.propDecidable (state.memaddrs address))
-    (fun address => Classical.propDecidable (state.shMemaddrs address)) program
 
 /-- Flapjack-only proof infrastructure for the HOL list induction; there is no
 separate HOL declaration for this internal lemma. The
@@ -182,9 +172,9 @@ theorem evalNestedAssignDistinctEqCrepHOLWithDeciders {width : Nat} [NeZero widt
 `CrepProgHOL`/`CrepExpHOL` and finite-support `CrepSemHOLState` carriers. The
 five propositions are respectively expression success, successful old-local
 lookup, assignment/expression variable disjointness, distinct assignment
-names, and equal list lengths. `evalCrepSemHOL*Default` selects the classical
-decisions required to execute Lean's evaluator for HOL's total set predicates;
-it adds no logical premise to HOL's theorem. -/
+names, and equal list lengths. `evalCrepSemHOLExpDefault` and the canonical
+`evalCrepSemHOLProgExact` select the classical decisions needed for HOL's total
+set predicates; they add no logical premise to HOL's theorem. -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "eval_nested_assign_distinct_eq"
   (fmap_as_finite_support := [locals, globals, code])]
 theorem evalNestedAssignDistinctEqCrepHOL {width : Nat} [NeZero width]
@@ -196,7 +186,7 @@ theorem evalNestedAssignDistinctEqCrepHOL {width : Nat} [NeZero width]
     (hDistinct : distinctListsHol names (expressions.flatMap crepExpVarsHOL) = true)
     (hNodup : names.Nodup)
     (hLength : names.length = expressions.length) :
-    evalCrepSemHOLProgDefault state
+    evalCrepSemHOLProgExact state
         (crepNestedSeqHOL
           (names.zipWith (fun name expression => CrepProgHOL.assign name expression)
             expressions)) =
@@ -212,7 +202,7 @@ theorem evalNestedAssignDistinctEqCrepHOL {width : Nat} [NeZero width]
   have hEval' : expressions.map (crepExactEvalExp state memDec) = values.map some := by
     rw [← hEvalDef]
     exact hEval
-  simpa [evalCrepSemHOLProgDefault, memDec, shMemDec] using
+  simpa [evalCrepSemHOLProgExact, memDec, shMemDec] using
     evalNestedAssignDistinctEqCrepHOLWithDeciders state memDec shMemDec
       expressions names values oldValues hEval' hLocals hDistinct hNodup hLength
 

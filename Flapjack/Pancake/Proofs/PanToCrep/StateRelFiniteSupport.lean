@@ -689,14 +689,15 @@ theorem holFmapAsFiniteSupportResultWitness_slcHOL {width : Nat} [NeZero width]
       FUPDATE_LIST_HOL (fun _ => none)
         ((variables.map Prod.fst).zip arguments) key := rfl
 
-/-- Flapjack-only analogue of HOL `slc_tlc_rw`
+/-- Qualified exact port of HOL `slc_tlc_rw`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:2321-2326`):
     `FEMPTY |++ ZIP (MAP FST vsh,args) = slc vsh args ∧
      FEMPTY |++ ZIP (ns,FLAT (MAP flatten args)) = tlc ns args`.
     Both conjuncts state that the raw finite-map update on `FEMPTY` is
     definitionally the named `slc`/`tlc` constructor, over the exact
     `MlS`/`ShapeHOL`/`ValueHOL`/`HolWordLab` carriers, matching `slcHOL`/`tlcHOL`
-    clause-for-clause.
+    clause-for-clause; the HOL finite maps are represented by the reviewed
+    `HolFiniteMapExact` carrier.
 
     This is a theorem-level finite-map equality: its conclusion is a conjunction
     of two `HolFiniteMapExact` map equalities, so it carries the dedicated
