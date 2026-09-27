@@ -1684,6 +1684,8 @@ class WordsCarrierResolutionTest(unittest.TestCase):
         ])
         errors = self._run(owner, self.CONSUMER)
         self.assertTrue(any("BitVec" in e for e in errors), errors)
+
+    def test_rejects_ambiguous_owners_borrowing_cross_owner_evidence(self):
         # The imported owner has `[NeZero width]` but no `BitVec width` field;
         # the local same-named shadow has a `BitVec width` field but no
         # positivity. Pooling the two owners' evidence would wrongly accept the
