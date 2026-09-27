@@ -12860,5 +12860,22 @@
     "lean_name": "holFmapAsFiniteSupportResultWitness_tlcHOL",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.37): Flapjack-only kernel-checked lookup witness for the standalone finite-map-result qualifier on tlcHOL; no separate HOL original."
+  },
+  {
+    "hol_path": "cakeml/pancake/crepLangScript.sml",
+    "hol_name": "var_cexp_def",
+    "lean_path": "Flapjack/Pancake/Semantics/CrepProps.lean",
+    "lean_name": "crepExpVarsHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-c (source comparison, 2026-09-27; crepLangScript.sml:128-130): exact `CrepExpHOL` port of var_cexp. Const/LoadGlob/BaseAddr/TopAddr produce []; Var produces its singleton; Load/Load32/LoadByte recurse; Op/Crepop flatten mapped variable lists; Cmp/Shift concatenate left then right. The constructor arities and Nat variable names match the exact CrepExpHOL carrier. The pre-existing crepExpVarsW tag is on the width-indexed production expression isomorph; this declaration ports the source over the exact CrepExpHOL carrier needed by the faithful evaluator theorem."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
+    "hol_name": "update_locals_not_vars_eval_eq",
+    "lean_path": "Flapjack/Pancake/Semantics/CrepProps.lean",
+    "lean_name": "updateLocalsNotVarsEvalEqCrepHOL",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["locals", "globals", "code"],
+    "reviewer": "flapjack-luna-c (direct source comparison, 2026-09-27; crepPropsScript.sml:115-130): HOL quantifies state s, expression e, successful word_lab result v, assigned name n, and word_lab w. The premise conjunction is `~MEM n (var_cexp e) /\\ eval s e = SOME v`; the conclusion evaluates the exact same expression in the state whose locals are updated with FUPDATE (n,w), yielding SOME v. Lean preserves binder/premise/conclusion order using CrepSemHOLState, CrepExpHOL, HolWordLab, and the exact evalCrepSemHOLExp port. The record update uses HolFiniteMapExact.updateEq, which is FUPDATE_HOL with HOL equality. The exact var_cexp is crepExpVarsHOL on the same CrepExpHOL carrier. The carrier owns finite maps locals/globals/code and the qualifier records only those fields; [NeZero width] represents HOL's positive word dimension and DecidablePred state.memaddrs is the membership decision instance used by the exact evaluator."
   }
 ]
