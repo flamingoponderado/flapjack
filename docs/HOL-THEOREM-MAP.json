@@ -14025,7 +14025,12 @@
     "hol_name": "eval_load_shape_el_rel",
     "lean_path": "Flapjack/Pancake/Semantics/CrepProps.lean",
     "lean_name": "eval_loadShapeBytesHOLW_getElem",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Source-reviewed against crepPropsScript.sml:40. HOL eval_load_shape_el_rel: n < m ==> eval t (EL n (load_shape a m e)) = eval t (Load (Op Add [e; Const (a + bytes_in_word * n2w n)])). Lean states the same over the exact carriers: evalCrepSemHOLExp targetState, loadShapeBytesHOLW for load_shape, bounded getElem for EL, BitVec.ofNat width (width/8) for byte$bytes_in_word (= n2w (dimindex DIV 8), byteScript.sml:193), and BitVec.ofNat width n for n2w. Premise n < count preserved; no extra premises beyond [NeZero width] and the exact evaluator's DecidablePred memaddrs (the same side condition carried by the tagged eval_def port)."
-  }
-]
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "Source-reviewed against crepPropsScript.sml:40. HOL eval_load_shape_el_rel: n < m ==> eval t (EL n (load_shape a m e)) = eval t (Load (Op Add [e; Const (a + bytes_in_word * n2w n)])). Lean states the same over the exact carriers: evalCrepSemHOLExp targetState, loadShapeBytesHOLW for load_shape, bounded getElem for EL, BitVec.ofNat width (width/8) for byte$bytes_in_word (= n2w (dimindex DIV 8), byteScript.sml:193), and BitVec.ofNat width n for n2w. Premise n < count preserved; no extra premises beyond [NeZero width] and the exact evaluator's DecidablePred memaddrs (the same side condition carried by the tagged eval_def port). Qualifiers: fmap_as_finite_support [locals, globals, code] because the statement quantifies CrepSemHOLState width sigma whose locals/globals/code are HolFiniteMapExact fields (same-module witness holFmapAsFiniteSupportWitness beside the declaration), and words_as_type_indexed_bitvec for the standard translation of HOL 'a word to positive-width BitVec width retaining [NeZero width].",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true
+  }]

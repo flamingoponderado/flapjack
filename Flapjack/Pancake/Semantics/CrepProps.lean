@@ -604,7 +604,9 @@ private theorem eval_load_op_add_zero {width : Nat} [NeZero width] {σ : Type}
     strided `Load (Op Add [e; Const (a + bytes_in_word * n2w n)])`, where the
     byte stride `bytes_in_word` is `n2w (width DIV 8)` and `n2w` is
     `BitVec.ofNat`. -/
-@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "eval_load_shape_el_rel"]
+@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "eval_load_shape_el_rel"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
 theorem eval_loadShapeBytesHOLW_getElem {width : Nat} [NeZero width] {σ : Type}
     (targetState : CrepSemHOLState width σ) [DecidablePred targetState.memaddrs]
     (address : BitVec width) (count : Nat) (value : CrepExpHOL width) (n : Nat)
