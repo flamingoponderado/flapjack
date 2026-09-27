@@ -50,6 +50,8 @@ namespace CrepInlineCanonical
 
 variable {α : Type} {β : Type} {width : Nat} [NeZero width]
 
+open Flapjack.Basis.Pure.MlString
+
 /-! ## Finite-support cardinality certificate -/
 
 /-- HDL `erase_support` support lemma: filtering the erased key out of a support
@@ -312,6 +314,103 @@ theorem inlineProgHOLCoreExact_structural_example [BEq CrepInlineMapHOLName]
       .dec 1 (.const 2) (.seq .skip .skip) := by
   rw [inlineProgHOLCoreExact_dec, inlineProgHOLCoreExact_seq,
     inlineProgHOLCoreExact_skip]
+
+/-! ### Exact `compile_inl_prog` / `compile_inl_top` wrappers
+
+Untagged Flapjack-specific ports of HOL `compile_inl_prog_def` and
+`compile_inl_top_def` (`cakeml/pancake/crep_inlineScript.sml:259,264`) over the
+exact carriers: `mlstring` function names (`CrepInlineMapHOLName`), the
+canonical finite-support inline map (`HolFiniteMapExact`), and `CrepProgHOL`
+triple lists. No `@[hol]` tag is attached pending coordinator carrier review
+(bead `flapjack-e7w.2.2`). -/
+
+/-- Exact analogue of HOL `alist_to_fmap` (`alistScript.sml:21`), which is
+    `FOLDR (fun (k,v) f => f |+ (k,v)) FEMPTY s`; equivalently `FUPDATE_LIST`
+    applied right-to-left, so the FIRST occurrence of a key wins. -/
+def alistToFmapHOLExact [BEq CrepInlineMapHOLName] [LawfulBEq CrepInlineMapHOLName]
+    (entries : List (CrepInlineMapHOLName × (List Nat × CrepProgHOL width))) :
+    HolFiniteMapExact CrepInlineMapHOLName (List Nat × CrepProgHOL width) :=
+  HolFiniteMapExact.empty.updateList entries.reverse
+
+@[simp] theorem lookup_alistToFmapHOLExact [BEq CrepInlineMapHOLName]
+    [LawfulBEq CrepInlineMapHOLName]
+    (entries : List (CrepInlineMapHOLName × (List Nat × CrepProgHOL width)))
+    (key : CrepInlineMapHOLName) :
+    (alistToFmapHOLExact entries).lookup key =
+      FUPDATE_LIST (FEMPTY : FiniteMap CrepInlineMapHOLName
+        (List Nat × CrepProgHOL width)) entries.reverse key := rfl
+
+/-- Exact port of HOL `compile_inl_prog_def`: for every triple, inline the body
+    under the map with that function's own name erased. -/
+noncomputable def compileInlProgHOLExact [BEq CrepInlineMapHOLName] [LawfulBEq CrepInlineMapHOLName]
+    (inl_fs : HolFiniteMapExact CrepInlineMapHOLName (List Nat × CrepProgHOL width))
+    (prog : List (CrepInlineMapHOLName × List Nat × CrepProgHOL width)) :
+    List (CrepInlineMapHOLName × List Nat × CrepProgHOL width) :=
+  prog.map fun triple =>
+    (triple.1, triple.2.1, inlineProgHOLExact (inl_fs.erase triple.1) triple.2.2)
+
+/-- Exact port of HOL `compile_inl_top_def`: build the inline alist by filtering
+    the program to the named functions (HOL `FILTER (fun (x, y) => MEM x
+    inl_fname) prog`), then run `compile_inl_prog`. -/
+noncomputable def compileInlTopHOLExact [BEq CrepInlineMapHOLName] [LawfulBEq CrepInlineMapHOLName]
+    (inl_fname : List CrepInlineMapHOLName)
+    (prog : List (CrepInlineMapHOLName × List Nat × CrepProgHOL width)) :
+    List (CrepInlineMapHOLName × List Nat × CrepProgHOL width) :=
+  let inl_fs :=
+    alistToFmapHOLExact
+      (prog.filter fun triple => inl_fname.contains triple.1)
+  compileInlProgHOLExact inl_fs prog
+
+/-! ### Regression against the direct HOL `alist_to_fmap` / DOMSUB probe
+
+These replay the rows of `scripts/hol-probes/crep_inline_alist_map_probe.out`
+(`alist_duplicate_first=SOME ([7],Skip)`, `alist_other_row=SOME ([],Skip)`,
+`domsub_selected_f=NONE`, `domsub_preserves_g=SOME ([],Skip)`), pinning the
+first-occurrence-wins behavior of HOL `alist_to_fmap` and the `\\` (DOMSUB)
+selected/preserved lookups used by `compile_inl_top`. Untagged, bead
+`flapjack-e7w.2.2`. -/
+
+private def alistProbeRows : List (CrepInlineMapHOLName × (List Nat × CrepProgHOL 8)) :=
+  [(ofString "f", ([7], (.skip : CrepProgHOL 8))),
+   (ofString "f", ([9], (.tick : CrepProgHOL 8))),
+   (ofString "g", ([], (.skip : CrepProgHOL 8)))]
+
+/-- HOL `alist_duplicate_first`: the first `(«f», …)` row wins. -/
+theorem alist_duplicate_first :
+    (alistToFmapHOLExact alistProbeRows).lookup (ofString "f") =
+      some ([7], (.skip : CrepProgHOL 8)) := by
+  have hff : (ofString "f" == ofString "f") = true := by decide
+  have hgf : (ofString "g" == ofString "f") = false := by decide
+  simp only [alistProbeRows, alistToFmapHOLExact, HolFiniteMapExact.lookup_updateList,
+    List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append,
+    FUPDATE_LIST_cons, FUPDATE_LIST_nil, FUPDATE, hff, hgf, Bool.false_eq_true,
+    if_true, if_false]
+
+/-- HOL `alist_other_row`. -/
+theorem alist_other_row :
+    (alistToFmapHOLExact alistProbeRows).lookup (ofString "g") =
+      some ([], (.skip : CrepProgHOL 8)) := by
+  have hfg : (ofString "f" == ofString "g") = false := by decide
+  have hgg : (ofString "g" == ofString "g") = true := by decide
+  simp only [alistProbeRows, alistToFmapHOLExact, HolFiniteMapExact.lookup_updateList,
+    List.reverse_cons, List.reverse_nil, List.nil_append, List.cons_append,
+    FUPDATE_LIST_cons, FUPDATE_LIST_nil, FUPDATE, hfg, hgg, Bool.false_eq_true,
+    if_true, if_false]
+
+/-- HOL `domsub_selected_f`: erasing `«f»` removes its row. -/
+theorem domsub_selected_f :
+    ((alistToFmapHOLExact alistProbeRows).erase (ofString "f")).lookup (ofString "f") =
+      none := by
+  have hff : (ofString "f" == ofString "f") = true := by decide
+  simp only [HolFiniteMapExact.erase, FDOMSUB, hff, if_true]
+
+/-- HOL `domsub_preserves_g`: erasing `«f»` preserves `«g»`. -/
+theorem domsub_preserves_g :
+    ((alistToFmapHOLExact alistProbeRows).erase (ofString "f")).lookup (ofString "g") =
+      some ([], (.skip : CrepProgHOL 8)) := by
+  have hfg : (ofString "f" == ofString "g") = false := by decide
+  simp only [HolFiniteMapExact.erase, FDOMSUB, hfg, Bool.false_eq_true, if_false,
+    alist_other_row]
 
 end CrepInlineCanonical
 
