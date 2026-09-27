@@ -863,6 +863,23 @@ example :
   simp only [compileExpExactHOLW.eq_1, expToHOL.eq_1, compileExpHOL.eq_1,
     List.map_cons, List.map_nil, crepExpOfHOL.eq_1, shapeOfHOL]
 
+/-- The recursive `Dec` bridge (`pan_to_crepScript.sml:141-152`) closes the
+    missing-variable `Skip` fallback, the compiled-shape store, and the
+    recursive body under the extended context for a concrete `.skip` body. The
+    recursive hypothesis is supplied at the two extended contexts. -/
+example :
+    crepProgOfHOL (compileProgExactHOLW (exactLocalAssignContext [7] [8])
+      (.dec (ofString "dst") (shapeToHOL .one)
+        (expToHOL (.const (BitVec.ofNat 8 5))) .skip)) =
+    compileProgRiscV (exactLocalAssignContext [7] [8]).toProduction
+      (.dec "dst" .one (.const (BitVec.ofNat 8 5)) (progOfHOL .skip)) := by
+  apply compileProgExactHOLW_dec_bridge
+  · rfl
+  · rfl
+  · simp only [compileExpExactHOLW.eq_1, expToHOL.eq_1, compileExpHOL.eq_1,
+      List.map_cons, List.map_nil, crepExpOfHOL.eq_1, shapeOfHOL]
+  · simp [compileProgExactHOLW, compileProgHOL, progOfHOL, crepProgOfHOL]
+
 def exactShMemStoreClauseParity : Bool :=
   (match compileShMemStoreExactHOLW
       (exactLocalAssignContext [7] [8]) .op8 (.var .local (ofString "src")) (.const 3) with
