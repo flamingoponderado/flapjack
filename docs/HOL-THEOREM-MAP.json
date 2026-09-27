@@ -13389,5 +13389,13 @@
     "lean_name": "panWriteBytearrayWord8HOL",
     "statement_status": "reviewed_exact",
     "reviewer": "Flapjack source comparison (2026-09-27; flapjack-4ac.5.16.5.4): HOL panSemScript.sml:309-316 has [] -> m and a head/tail equation that recursively writes the tail first, stores the head byte into that memory, and returns the original outer m on store failure. Lean has the same recursion over List (BitVec 8), matching HOL word8 list, and invokes the exact mem_store_byte_def port. Direct HOL write_bytearray_changed/write_bytearray_other_unchanged/write_bytearray_out_of_domain observations are replayed by exact-carrier guards in PanSemStateEvalParity.lean."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExactVarSupport.lean",
+    "lean_name": "compileExpExactHOLW_localVar_vars",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific compiler support theorem: pins that exact compile_exp emits precisely the stored slot names for a successful local context lookup and no variable names on a missing lookup. HOL has no separate theorem for this local clause; it supports, but does not state or prove, eval_var_cexp_present_ctxt. No @[hol] tag is claimed."
   }
 ]
