@@ -12131,6 +12131,16 @@
   },
   {
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 780,
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
+    "lean_name": "evaluateHOLFiniteState_assign",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "reviewer": "flapjack-luna-a source comparison (2026-09-27; bead flapjack-qj5): the Assign conjunct at panSemScript.sml:566-572 first evaluates the source expression; evaluation failure returns (SOME Error,s), and a value returns either (NONE,set_kvar vk v value s) when is_valid_value succeeds or (SOME Error,s) otherwise. panSemScript.sml:469-475 defines validity by looking up the selected Local/Global variable and comparing its existing value's shape with the assigned value's shape; an absent variable is invalid. evaluateHOLFiniteState_assign has those same success and failure branches, with isValidValueHOLExact implementing that lookup/shape test and setKvarHOLFinite implementing the selected local/global update. Its only quantifiers are the state, variable kind/name, and source expression; it assumes neither an evaluation result nor validity. PanSemStateFiniteExact has the same fixed word width and FFI type as the HOL state; the four named map fields use the same-module HolFiniteMapExact witness. Qualifier records only that carrier translation. This is one exact constructor case; the full conjunction remains open."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
     "hol_name": "evaluate_decls_def",
     "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
     "lean_name": "evaluateDeclsHOLFinite",
