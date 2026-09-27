@@ -3346,6 +3346,79 @@ theorem evaluateInvariantsBreakCaseHOLFinite {width : Nat} {σ : Type} [NeZero w
 end Flapjack
 
 
+/-! # The `Continue` case of HOL `evaluate_invariants`
+
+HOL's `Continue` equation preserves the state and this genuine induction leaf
+retains the source premise and all eight field conclusions. -/
+
+namespace Flapjack
+
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_invariants" 1150
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateInvariantsContinueCaseHOLFinite {width : Nat} {σ : Type} [NeZero width] :
+    ∀ (state : PanPropsEvalStateFiniteExact width σ)
+      (result : Option (PanSemResultExact width))
+      (post : PanPropsEvalStateFiniteExact width σ),
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state
+          (.continue : ProgHOL width) = (result, post) →
+      post.memaddrs = state.memaddrs ∧
+      post.shMemaddrs = state.shMemaddrs ∧
+      post.be = state.be ∧
+      post.eshapes = state.eshapes ∧
+      post.baseAddr = state.baseAddr ∧
+      post.structs = state.structs ∧
+      post.code = state.code ∧
+      post.ffi.oracle = state.ffi.oracle := by
+  classical
+  intro state result post hRun
+  simp only [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair,
+    PanSemStateFiniteExact.evaluateHOLFiniteState_continue,
+    PanPropsEvalStateFiniteExact.ofPanSemFinite_toPanSemFinite] at hRun
+  rcases Prod.mk.inj hRun with ⟨rfl, rfl⟩
+  simp
+
+end Flapjack
+
+
+/-! # The `Annot` case of HOL `evaluate_invariants`
+
+HOL's annotation equation returns `(NONE, state)`, so this genuine induction
+leaf retains the source premise and all eight field conclusions. -/
+
+open Flapjack.Pancake.PanLang (MlS)
+
+namespace Flapjack
+
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_invariants" 1150
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateInvariantsAnnotCaseHOLFinite {width : Nat} {σ : Type} [NeZero width] :
+    ∀ (tag text : MlS)
+      (state : PanPropsEvalStateFiniteExact width σ)
+      (result : Option (PanSemResultExact width))
+      (post : PanPropsEvalStateFiniteExact width σ),
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state
+          (.annot tag text : ProgHOL width) = (result, post) →
+      post.memaddrs = state.memaddrs ∧
+      post.shMemaddrs = state.shMemaddrs ∧
+      post.be = state.be ∧
+      post.eshapes = state.eshapes ∧
+      post.baseAddr = state.baseAddr ∧
+      post.structs = state.structs ∧
+      post.code = state.code ∧
+      post.ffi.oracle = state.ffi.oracle := by
+  classical
+  intro tag text state result post hRun
+  simp only [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair,
+    PanSemStateFiniteExact.evaluateHOLFiniteState_annot,
+    PanPropsEvalStateFiniteExact.ofPanSemFinite_toPanSemFinite] at hRun
+  rcases Prod.mk.inj hRun with ⟨rfl, rfl⟩
+  simp
+
+end Flapjack
+
+
 /-!
 # The `Dec` induction case of HOL `evaluate_clock_sub`
 
