@@ -3,6 +3,8 @@ import Flapjack.Pancake.PanToCrep.Compile
 import Flapjack.Pancake.CrepInline
 import Flapjack.Pancake.CrepLang.Prog
 import Flapjack.Basis.Pure.MlString
+import Flapjack.Pancake.Semantics.CrepSem.HOLState
+import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
 import Std.Data.HashSet.Lemmas
 
 /-!
@@ -568,6 +570,117 @@ theorem lookup_remove [BEq CrepInlineMapHOLName]
       if key == name then none else fs.lookup key := by
   unfold remove lookup
   exact CrepInlineFmap.lookup_filter_bne key name fs.entries fs.nodupKeys
+
+/-- The distinct key list representing the finite domain of this carrier. -/
+def domainKeys (fs : CrepInlineFmapHOL width) : List CrepInlineMapHOLName :=
+  fs.entries.map Prod.fst
+
+theorem domainKeys_nodup (fs : CrepInlineFmapHOL width) : fs.domainKeys.Nodup :=
+  fs.nodupKeys
+
+/-- The exact finite-support HOL-map view of the inline carrier. HOL
+    `inline_prog_def` (`crep_inlineScript.sml:203-257`) observes its fmap via
+    `FLOOKUP` and `DOMSUB`; this support witness is the list of entry keys, and
+    `nodupKeys` ensures one value per HOL key. This is a representation bridge,
+    not an `@[hol]` port of the recursive `inline_prog` definition. -/
+def toHolFiniteMapExact [BEq CrepInlineMapHOLName]
+    [LawfulBEq CrepInlineMapHOLName] (fs : CrepInlineFmapHOL width) :
+    HolFiniteMapExact CrepInlineMapHOLName (List Nat × CrepProgHOL width) where
+  lookup := fs.lookup
+  finiteSupport := by
+    refine ⟨fs.domainKeys, ?_⟩
+    intro key hlookup
+    cases h : fs.lookup key with
+    | none => exact (hlookup h).elim
+    | some value =>
+      obtain ⟨before, after, heq, _⟩ := List.lookup_eq_some_iff.mp h
+      rw [domainKeys, heq]
+      simp
+
+@[simp] theorem lookup_toHolFiniteMapExact [BEq CrepInlineMapHOLName]
+    [LawfulBEq CrepInlineMapHOLName] (fs : CrepInlineFmapHOL width)
+    (key : CrepInlineMapHOLName) :
+    (fs.toHolFiniteMapExact).lookup key = fs.lookup key := rfl
+
+/-- A key belongs to the represented finite domain exactly when HOL lookup is
+    defined at that key. -/
+private theorem mem_fst_iff_lookup [BEq α] [LawfulBEq α] (key : α)
+    (entries : List (α × β)) :
+    key ∈ entries.map Prod.fst ↔ List.lookup key entries ≠ none := by
+  induction entries with
+  | nil => simp [List.lookup]
+  | cons entry rest ih =>
+    obtain ⟨name, value⟩ := entry
+    simp only [List.map_cons, List.mem_cons]
+    rw [List.lookup_cons]
+    by_cases h : key == name
+    · have hk : key = name := beq_iff_eq.mp h
+      subst key
+      simp
+    · have hne : key ≠ name := fun heq => h (beq_iff_eq.mpr heq)
+      simp only [h]
+      constructor
+      · intro hm
+        rcases hm with heq | hm
+        · exact False.elim (hne heq)
+        · exact ih.mp hm
+      · intro hlookup
+        exact Or.inr (ih.mpr hlookup)
+
+theorem mem_domainKeys_iff_lookup [BEq CrepInlineMapHOLName]
+    [LawfulBEq CrepInlineMapHOLName] (fs : CrepInlineFmapHOL width)
+    (key : CrepInlineMapHOLName) :
+    key ∈ fs.domainKeys ↔ fs.lookup key ≠ none := by
+  exact mem_fst_iff_lookup key fs.entries
+
+/- The canonical finite-support carrier stores `mlstring` keys as byte lists.
+   Hashing those bytes supplies the `Std.HashSet` implementation used below;
+   `BEq`/`LawfulBEq` for this exact key type are provided by
+   `StateExactFiniteMap`. -/
+instance : Hashable CrepInlineMapHOLName where
+  hash key := hash key.explode
+
+/-- The represented finite domain as an extensional set of HOL keys. -/
+def domainSupport (fs : CrepInlineFmapHOL width) :
+    Std.HashSet CrepInlineMapHOLName := Std.HashSet.ofList fs.domainKeys
+
+theorem mem_domainSupport_iff_lookup
+    (fs : CrepInlineFmapHOL width) (key : CrepInlineMapHOLName) :
+    key ∈ fs.domainSupport ↔ fs.lookup key ≠ none := by
+  rw [domainSupport, Std.HashSet.mem_ofList, List.contains_iff_mem,
+    mem_domainKeys_iff_lookup]
+
+/-- The cardinality of the finite domain, represented by a deduplicating set
+    whose membership is exactly HOL lookup being defined. -/
+def domainCard (fs : CrepInlineFmapHOL width) : Nat := fs.domainSupport.size
+
+/-- Because the carrier keys are duplicate-free, its number of entries equals
+    the size of the extensional finite domain represented by `domainSupport`.
+    The domain membership theorem ties that set to HOL's `FDOM` via lookup. -/
+theorem card_eq_domain_cardinality (fs : CrepInlineFmapHOL width) :
+    fs.card = fs.domainCard := by
+  have hpair : fs.domainKeys.Pairwise (fun a b => (a == b) = false) :=
+    (List.nodup_iff_pairwise_ne.mp fs.domainKeys_nodup).imp (by
+      intro a b hne
+      cases hbeq : a == b with
+      | false => rfl
+      | true => exact False.elim (hne (beq_iff_eq.mp hbeq)))
+  change fs.card = (Std.HashSet.ofList fs.domainKeys).size
+  rw [Std.HashSet.size_ofList hpair]
+  simp [card, domainKeys]
+
+/-- Removing a key from the entry carrier agrees extensionally with HOL
+    `DOMSUB` (`HolFiniteMapExact.eraseEq`) on its finite-support map view. -/
+theorem toHolFiniteMapExact_remove [BEq CrepInlineMapHOLName]
+    [LawfulBEq CrepInlineMapHOLName] [DecidableEq CrepInlineMapHOLName]
+    (fs : CrepInlineFmapHOL width) (name : CrepInlineMapHOLName) :
+    (fs.remove name).toHolFiniteMapExact =
+      (fs.toHolFiniteMapExact).eraseEq name := by
+  apply HolFiniteMapExact.ext
+  funext key
+  change (remove name fs).lookup key = FDOMSUB_HOL fs.lookup name key
+  rw [lookup_remove]
+  by_cases h : key = name <;> simp [FDOMSUB_HOL, h]
 
 private theorem length_filter_lt_of_lookup [BEq CrepInlineMapHOLName]
     [LawfulBEq CrepInlineMapHOLName] (name : CrepInlineMapHOLName)
