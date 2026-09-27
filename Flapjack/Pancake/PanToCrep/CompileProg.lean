@@ -537,6 +537,68 @@ theorem compileProgExactHOLW_store_length_mismatch_bridge {width : Nat}
     hproductionValue]
   simp [crepProgOfHOL, hmismatch, Ne.symm hproductionMismatch]
 
+/-- The complete `Store` compiler clause follows from the paired expression
+    outputs and codecs alone. Split on the address-head and value-length
+    guards; in the successful branch, the value codec plus shape codec forces
+    the production length test to have the same result as HOL's. This is
+    Flapjack bridge infrastructure, not a separately tagged HOL declaration. -/
+theorem compileProgExactHOLW_store_output_bridge {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width)
+    (address value : Exp (BitVec width))
+    (exactAddresses : List (CrepExpHOL width)) (exactAddressShape : ShapeHOL)
+    (exactValues : List (CrepExpHOL width)) (exactValueShape : ShapeHOL)
+    (productionAddresses : List (CrepExp (BitVec width)))
+    (productionAddressShape : Shape)
+    (productionValues : List (CrepExp (BitVec width)))
+    (productionValueShape : Shape)
+    (hexactAddress : compileExpExactHOLW context (expToHOL address) =
+      (exactAddresses, exactAddressShape))
+    (hexactValue : compileExpExactHOLW context (expToHOL value) =
+      (exactValues, exactValueShape))
+    (hproductionAddress : compileExpHOL context.toProduction address =
+      (productionAddresses, productionAddressShape))
+    (hproductionValue : compileExpHOL context.toProduction value =
+      (productionValues, productionValueShape))
+    (haddressCodec : exactAddresses.map crepExpOfHOL = productionAddresses)
+    (hvaluesCodec : exactValues.map crepExpOfHOL = productionValues)
+    (hshapeCodec : shapeOfHOL exactValueShape = productionValueShape) :
+    crepProgOfHOL (compileProgExactHOLW context
+        (.store (expToHOL address) (expToHOL value))) =
+      compileProgRiscV context.toProduction (.store address value) := by
+  cases exactAddresses with
+  | nil =>
+      simp only [List.map_nil] at haddressCodec
+      cases productionAddresses with
+      | nil =>
+          simp only [compileProgExactHOLW, compileStoreExactHOLW,
+            hexactAddress, compileProgRiscV, compileProgHOL,
+            hproductionAddress]
+          simp [crepProgOfHOL]
+      | cons productionAddress productionAddressRest =>
+          simp at haddressCodec
+  | cons exactAddress exactAddressRest =>
+      cases productionAddresses with
+      | nil =>
+          simp only [List.map_cons] at haddressCodec
+          cases haddressCodec
+      | cons productionAddress productionAddressRest =>
+          have haddressHead : crepExpOfHOL exactAddress = productionAddress := by
+            have h := congrArg List.head? haddressCodec
+            simpa using h
+          by_cases hsuccess : sizeOfShapeHOL exactValueShape = exactValues.length
+          · exact compileProgExactHOLW_store_success_bridge context address value
+              exactAddress exactAddressRest exactAddressShape exactValues
+              exactValueShape productionAddress productionAddressRest
+              productionAddressShape productionValues productionValueShape
+              hexactAddress hexactValue hproductionAddress hproductionValue
+              haddressHead hvaluesCodec hshapeCodec hsuccess
+          · exact compileProgExactHOLW_store_length_mismatch_bridge context
+              address value exactAddress exactAddressRest exactAddressShape
+              exactValues exactValueShape productionAddress
+              productionAddressRest productionAddressShape productionValues
+              productionValueShape hexactAddress hexactValue hproductionAddress
+              hproductionValue hvaluesCodec hshapeCodec hsuccess
+
 /-- Source-reviewed HOL `ShMemStore` clause bridge (`pan_to_crepScript.sml`,
     `compile_def`): its operands are positional `value` then `address`. The
     production `Prog.shMemStore` names its two fields `address` and `value`,
