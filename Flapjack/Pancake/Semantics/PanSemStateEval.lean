@@ -156,6 +156,17 @@ def panGetByteHOL {width : Nat} (address value : RiscV.Word width)
     else address.toNat % bytesPerWord
   UInt8.ofNat ((value.toNat / 256 ^ byteIndex) % 256)
 
+/-- Source-shaped `word8` result for HOL's standard-library `get_byte` used by
+    `mem_load_byte_def`. This keeps the output directly in `BitVec 8`; the
+    UInt8 helper above remains a separate executable adapter. -/
+def panGetByteWord8HOL {width : Nat} (address value : RiscV.Word width)
+    (bigEndian : Bool) : BitVec 8 :=
+  let bytesPerWord := width / 8
+  let byteIndex := if bigEndian then
+      bytesPerWord - 1 - (address.toNat % bytesPerWord)
+    else address.toNat % bytesPerWord
+  BitVec.ofNat 8 ((value.toNat / 256 ^ byteIndex) % 256)
+
 /-- Flapjack byte-load helper following HOL `mem_load_byte_def` and
     `byte$get_byte_def`. In particular, little-endian `w2n address MOD 0`
     keeps the address as the shift index below one byte. The RISC-V memory
@@ -174,6 +185,25 @@ def panMemLoadByteHOL {width : Nat} [NeZero width]
   | .word value =>
       if domain aligned then
         some (panGetByteHOL address value bigEndian)
+      else none
+
+/-- Exact `word8` carrier port of HOL `mem_load_byte_def`
+    (`panSemScript.sml:94-99`). It uses the same aligned total `word_lab`
+    lookup and address-domain test as the source clause, and returns HOL's
+    `word8` as `BitVec 8`. The underlying `byte_align`/`get_byte` equations are
+    source-reviewed standard-library renderings (`panByteAlignHOL` and
+    `panGetByteHOL`); the legacy UInt8 helper remains only as a production
+    adapter. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "mem_load_byte_def"]
+def panMemLoadByteWord8HOL {width : Nat} [NeZero width]
+    (memory : RiscV.Word width → HolWordLab width)
+    (domain : RiscV.Word width → Prop) [DecidablePred domain]
+    (bigEndian : Bool) (address : RiscV.Word width) : Option (BitVec 8) :=
+  let aligned := panByteAlignHOL (width := width) address
+  match memory aligned with
+  | .word value =>
+      if domain aligned then
+        some (panGetByteWord8HOL address value bigEndian)
       else none
 
 /-- Exact port of HOL `mem_load_32_def`
@@ -249,6 +279,27 @@ def panMemStoreByteHOL {width : Nat} [NeZero width]
           else memory current)
       else none
 
+/-- Exact `word8` carrier port of HOL `mem_store_byte_def`
+    (`panSemScript.sml:300-307`). It checks the aligned memory cell and domain,
+    then replaces only that aligned cell with `set_byte`'s result; the byte
+    argument is HOL `word8`, represented by `BitVec 8`. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "mem_store_byte_def"]
+def panMemStoreByteWord8HOL {width : Nat} [NeZero width]
+    (memory : RiscV.Word width → HolWordLab width)
+    (domain : RiscV.Word width → Prop) [DecidablePred domain]
+    (bigEndian : Bool) (address : RiscV.Word width) (byte : BitVec 8) :
+    Option (RiscV.Word width → HolWordLab width) :=
+  let aligned := panByteAlignHOL (width := width) address
+  match memory aligned with
+  | .word cell =>
+      if domain aligned then
+        some (fun current =>
+          if current = aligned then
+            .word (panSetByteHOL address (BitVec.ofNat width byte.toNat) cell
+              bigEndian)
+          else memory current)
+      else none
+
 /-- Flapjack helper following HOL `panSem$write_bytearray`
     (`cakeml/pancake/semantics/panSemScript.sml:309-316`):
     `write_bytearray a [] m dm be = m` and
@@ -267,6 +318,25 @@ def panWriteBytearrayHOL {width : Nat} [NeZero width]
   | byte :: rest =>
       match panMemStoreByteHOL
           (panWriteBytearrayHOL (address + 1) rest memory domain bigEndian)
+          domain bigEndian address byte with
+      | some updated => updated
+          | none => memory
+
+/-- Exact `word8 list` carrier port of HOL `write_bytearray_def`
+    (`panSemScript.sml:309-316`). The recursive call writes the tail first;
+    the head byte is stored into that result, and a failed store returns the
+    original outer memory exactly as in the HOL equation. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "write_bytearray_def" 309]
+def panWriteBytearrayWord8HOL {width : Nat} [NeZero width]
+    (address : RiscV.Word width) (bytes : List (BitVec 8))
+    (memory : RiscV.Word width → HolWordLab width)
+    (domain : RiscV.Word width → Prop) [DecidablePred domain]
+    (bigEndian : Bool) : RiscV.Word width → HolWordLab width :=
+  match bytes with
+  | [] => memory
+  | byte :: rest =>
+      match panMemStoreByteWord8HOL
+          (panWriteBytearrayWord8HOL (address + 1) rest memory domain bigEndian)
           domain bigEndian address byte with
       | some updated => updated
       | none => memory
