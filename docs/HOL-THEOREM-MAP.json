@@ -3312,6 +3312,9 @@
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Codex (proof inventory)"
   },
+    {"hol_path": null, "hol_name": null, "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean", "lean_name": "ctxtFcEidsEqHOL", "statement_status": "no_hol_reference_pending_classification", "reviewer": "flapjack-ds9 HOLD (coordinator, 2026-09-27): exact-port proof retained as untagged infrastructure; the @[hol] tag was WITHDRAWN pending the DS10 imported-owner finite-map / words_as_type_indexed_bitvec qualifier policy. No HOL tag currently claims this declaration."},
+    {"hol_path": null, "hol_name": null, "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean", "lean_name": "ctxtFcFuncsEqHOL", "statement_status": "no_hol_reference_pending_classification", "reviewer": "flapjack-ds9 HOLD (coordinator, 2026-09-27): exact-port proof retained as untagged infrastructure; the @[hol] tag was WITHDRAWN pending the DS10 imported-owner finite-map / words_as_type_indexed_bitvec qualifier policy. No HOL tag currently claims this declaration."},
+    {"hol_path": null, "hol_name": null, "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean", "lean_name": "ctxtFcVmaxHOL", "statement_status": "no_hol_reference_pending_classification", "reviewer": "flapjack-ds9 HOLD (coordinator, 2026-09-27): exact-port proof retained as untagged infrastructure; the @[hol] tag was WITHDRAWN pending the DS10 imported-owner finite-map / words_as_type_indexed_bitvec qualifier policy. No HOL tag currently claims this declaration."},
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
     "hol_name": "filter_not_mem_self",
@@ -3544,6 +3547,7 @@
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only finite-support carrier roundtrip for PanToCrepTargetLocalsExact. It proves that converting the wrapper to its broad counterpart and back preserves its HolFiniteMapExact targetLocals field. This is representation infrastructure for the evaluate_shape_invariant_ret_inst port, not a HOL declaration."
   },
+    {"hol_path": null, "hol_name": null, "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean", "lean_name": "ctxtMaxElLeqFiniteExact", "statement_status": "no_hol_reference_pending_classification", "reviewer": "flapjack-ds9 HOLD (coordinator, 2026-09-27): exact-port proof retained as untagged infrastructure; the @[hol] tag was WITHDRAWN pending the DS10 imported-owner finite-map / words_as_type_indexed_bitvec qualifier policy. No HOL tag currently claims this declaration."},
   {
     "hol_path": null,
     "hol_name": null,
@@ -12708,6 +12712,17 @@
     "reviewer": "flapjack-ds9 source comparison (2026-09-27, flapjack-4ac.5.88; pan_to_crepProofScript.sml:527-534): HOL locals_rel_lookup_ctxt has the conjunction locals_rel ctxt lcl lcl' /\\ FLOOKUP lcl vr = SOME v as its only premise and concludes ?ns. FLOOKUP ctxt.vars vr = SOME (shape_of v,ns) /\\ LENGTH ns = LENGTH (flatten v) /\\ OPT_MMAP (FLOOKUP lcl') ns = SOME (flatten v) /\\ is_wf_shape_nil (shape_of v). Lean keeps exactly those two premises (curried) and the four existential conjuncts in the same order: FLOOKUP becomes .lookup, shape_of/flatten/is_wf_shape_nil become shapeOfHOLExact/flattenHOL/isWfShapeExactHOL ([] : StructContextExact), and OPT_MMAP becomes List.mapM. The relation traverses the named PanToCrepContextExact.vars field and the standalone sourceLocals/targetLocals parameters; the PanToCrepContextExact same-module canonical witness and the bare parameter binders establish the reviewed finite-support translations. The LENGTH clause is derived from the tagged HOL opt_mmap_length_eq. [NeZero width] models HOL's positive word dimension. This exact-carrier port replaces the withdrawn String-keyed localsRelLookupCtxt analogue (still recorded below as documented_mismatch)."
   },
   {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "no_overlap_wrap_rt_some_all_distinct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "noOverlapWrapRtSomeAllDistinctFiniteExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "fm"
+    ],
+    "reviewer": "flapjack-ds9 source comparison (2026-09-27, flapjack-4ac.5.95; pan_to_crepProofScript.sml:2461-2467): HOL no_overlap_wrap_rt_some_all_distinct has the conjunction no_overlap fm and wrap_rt (FLOOKUP fm r) = SOME (vsh,ns) as its premise and concludes ALL_DISTINCT ns. Lean keeps the same polymorphic key type (HOL 'a becomes the implicit kappa), the same vsh/ns binders over the exact ShapeHOL payload and Nat list, and the same conclusion ns.Nodup. The finite-map argument fm is the only representation difference: it is the bare parameter recorded by the qualifier and bound at the reviewed canonical HolFiniteMapExact carrier; HOL no_overlap becomes the exact-map renderer noOverlapFiniteExact, FLOOKUP fm r becomes fm.lookup r, and wrap_rt becomes the tagged wrapRtHOL (reviewed_exact, pan_to_crepScript.sml wrap_rt_def). ALL_DISTINCT ns is List.Nodup ns. There are no other hypotheses, side conditions, or quantifier differences. No direct HOL-EVAL oracle row exists for this symbolic normalization lemma; the wrap_rt definition rows in scripts/hol-probes/wrap_rt_probe.out cover only wrap_rt itself."
+  },
+  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
@@ -12852,7 +12867,7 @@
       "eshapes"
     ],
     "reviewer": "flapjack-ds10 (bead flapjack-wci6, 2026-09-26; relocated per coordinator HOLD): HOL panPropsScript.sml:664-672 quantifies t, e, esh and concludes eval (t with eshapes := esh) e = eval t e. Lean preserves that quantifier order (state, expression, eshapes map) and the same evaluator result; the expression evaluator never reads eshapes. The state is the PanProps counterpart carrier PanPropsEvalStateFiniteExact, which owns the four HolFiniteMapExact fields and the same-module canonical holFmapAsFiniteSupportWitness, so the fmap_as_finite_support qualifier is checker-valid. evalHOL delegates to the exact broad expression evaluator through toExact. Proof: evalHOLExact_upd_eshapes_eq over the broad carrier by the mutual evalHOLExact.induct. [NeZero width] models HOL's positive word dimension and DecidablePred state.memaddrs renders HOL word-set membership. The qualifier records only the four finite-map fields."
-  },
+   },
   {
     "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
     "hol_name": "get_eids_from_decls_def",
@@ -13169,11 +13184,11 @@
       "globals",
       "code"
     ],
-    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-pxn.18.3.5.8.8.7): HOL FLOOKUP_set_globals (crepPropsScript.sml:297-301) `FLOOKUP (set_globals gv w s).locals n = FLOOKUP s.locals n` over the exact finite-support CrepSemHOLState carrier, using the tagged CrepSemHOLState.setGlobals (crepSemScript.sml:61-63), which updates only globals. FLOOKUP is rendered as the canonical HolFiniteMapExact.lookup. Finite-map representation recorded by the qualifier (locals/globals/code); same-module canonical witness forwards CrepSemHOLState.holFmapAsFiniteSupportWitness. Direct HOL row set_globals_direct in crep_store_global_probe.out. Representation-only; no statement/side-condition change."
-   },
-   {
-     "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
-     "hol_name": "opt_mmap_eval_upd_clock_eq",
+"reviewer": "flapjack-ds8 (source comparison; bead flapjack-pxn.18.3.5.8.8.7): HOL FLOOKUP_set_globals (crepPropsScript.sml:297-301) `FLOOKUP (set_globals gv w s).locals n = FLOOKUP s.locals n` over the exact finite-support CrepSemHOLState carrier, using the tagged CrepSemHOLState.setGlobals (crepSemScript.sml:61-63), which updates only globals. FLOOKUP is rendered as the canonical HolFiniteMapExact.lookup. Finite-map representation recorded by the qualifier (locals/globals/code); same-module canonical witness forwards CrepSemHOLState.holFmapAsFiniteSupportWitness. Direct HOL row set_globals_direct in crep_store_global_probe.out. Representation-only; no statement/side-condition change."
+    },
+    {
+      "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
+      "hol_name": "opt_mmap_eval_upd_clock_eq",
      "lean_path": "Flapjack/Pancake/Semantics/CrepProps.lean",
      "lean_name": "evalCrepSemHOLExps_upd_clock_eq",
      "statement_status": "reviewed_exact",
@@ -13811,6 +13826,17 @@
       "l"
     ],
     "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.16.25): source comparison of cakeml/pancake/semantics/crepPropsScript.sml:257-263 against the exact Lean statement. HOL quantifies the finite map l, key m, lookup key n and option v freely (no side conditions); the Lean statement renders res_var as the reviewed HolFiniteMapExact.resVarEq (res_var_def) and FLOOKUP as the finite-support .lookup, with DecidableEq alpha encoding HOL equality. The bare parameter l is recorded as a finite-support relation entry; source review confirms the if n = m then v else l.lookup n branch structure matches HOL exactly."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
+    "hol_name": "flookup_res_var_diff_eq",
+    "lean_path": "Flapjack/Pancake/Semantics/CrepProps.lean",
+    "lean_name": "flookupResVarDiffEqHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "l"
+    ],
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-27; bead flapjack-2de.11): HOL crepPropsScript.sml:249-255 `Theorem flookup_res_var_diff_eq: n <> m ==> FLOOKUP (res_var l (m,v)) n = FLOOKUP l n` against the exact Lean statement flookupResVarDiffEqHOL. HOL quantifies the finite map l, the assigned name m, the lookup key n, the option value v and the side condition n <> m; the Lean statement keeps the same argument order, side condition hne : n != m and conclusion, rendering res_var as the reviewed HolFiniteMapExact.resVarEq (res_var_def) and FLOOKUP as the finite-support .lookup. DecidableEq alpha is Lean's encoding of HOL equality, so no extra side condition is introduced. The bare parameter l is recorded as a finite-support relation entry; source review confirms the FLOOKUP_UPDATE/DOMSUB_FLOOKUP_NEQ branch split (v = none and v = some) matches HOL exactly."
   },
   {
     "hol_path": "cakeml/misc/miscScript.sml",
