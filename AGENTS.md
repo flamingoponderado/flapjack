@@ -326,6 +326,24 @@ the Lean witnesses and conjuncts correspond to the HOL map equalities, so source
 review must still compare each numbered witness against the
 HOL equality and record that comparison in the reviewer note.
 
+**Qualify the HOL word-dimension and FFI-universe translation.** Use
+`(words_as_type_indexed_bitvec)` when the only carrier difference from the HOL
+declaration is the standard translation of HOL's type-indexed `'a word`
+(dimension `dimindex (:α)`) to Lean's positive-width `BitVec width` and of HOL's
+`'ffi ffi_state` to a universe-0 Lean host type `σ : Type`. The tagged
+declaration must still name `BitVec`, must retain `[NeZero width]` as the
+discharge of HOL's `dimindex (:α) ≥ 1`, and must not restate word-dimension
+positivity as an extra hypothesis (`width ≠ 0`, `0 < width`, `Nat.pos`,
+`NeZero.out`); when it mentions the FFI carrier `HolFfiState`, the host type must
+be bound at a `Type` universe without a universe-level variable. This is a
+conventional data-structure translation only: it authorizes no change to
+quantifiers, hypotheses, side conditions, or conclusions, and no cross-assistant
+agreement theorem is required. It cannot use `reviewed_exact`; use manifest
+status `reviewed_words_as_type_indexed_bitvec` after comparing the HOL and Lean
+declarations. The reference checker enforces the syntactic obligations above; it
+does not prove HOL-to-Lean correspondence, so source review must compare the
+declaration itself.
+
 **Port the executable path, too.** As HOL definitions are ported, make the
 compiler that `flapjack-compile` actually runs call the reviewed `@[hol]`
 definitions. A tagged proof-only duplicate beside a different production

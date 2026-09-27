@@ -55,6 +55,14 @@ FMAP_AS_FINITE_SUPPORT_RELATION_RE = re.compile(
 FMAP_AS_FINITE_SUPPORT_EQUALITIES_RE = re.compile(
     r'\(\s*fmap_as_finite_support_equalities\s*\)'
 )
+WORDS_AS_TYPE_INDEXED_BITVEC_RE = re.compile(
+    r'\(\s*words_as_type_indexed_bitvec\s*\)'
+)
+WORD_POSITIVITY_EXTRA_RE = re.compile(
+    r"(?:width\s*(?:≠|!=|>|≥)\s*0\b|0\s*<\s*width\b|Nat\.pos\b|NeZero\.out\b)"
+)
+FFI_UNIVERSE_LEVEL_RE = re.compile(r":\s*Type\s+[A-Za-z_][A-Za-z0-9_']*\b")
+HOL_FFI_CARRIER_RE = re.compile(r"\bHolFfiState\b")
 RELATION_FIELD_RE = re.compile(
     r'^\s*([A-Za-z_][A-Za-z0-9_\']*)\s*\.\s*([A-Za-z_][A-Za-z0-9_\']*)\s*$'
 )
@@ -183,6 +191,7 @@ def hol_attribute_sites(lines: list[str]):
                     bool(FMAP_AS_FINITE_SUPPORT_RESULT_RE.search(attribute)),
                     relation_fields_for(),
                     bool(FMAP_AS_FINITE_SUPPORT_EQUALITIES_RE.search(attribute)),
+                    bool(WORDS_AS_TYPE_INDEXED_BITVEC_RE.search(attribute)),
                 )
         start = None
         chunks = []
@@ -1354,6 +1363,59 @@ def names_as_string_errors(
     return errors
 
 
+def words_as_type_indexed_bitvec_errors(
+    declaration_text: str, declaration: str
+) -> list[str]:
+    """Validate the HOL word-dimension / FFI-universe translation qualifier.
+
+    The qualifier records the candidate standard translation of HOL's
+    type-indexed ``'a word`` (dimension ``dimindex (:α)``) to Lean's
+    positive-width ``BitVec width`` and of HOL's ``'ffi ffi_state`` to a
+    universe-0 Lean host type. It is a translation statement only: it changes
+    no quantifier, hypothesis, side condition, or conclusion, and it requires
+    no cross-assistant agreement theorem. The checker enforces the two
+    proof obligations named in the qualifier: the ``[NeZero width]`` discharge
+    of ``dimindex (:α) ≥ 1`` must be retained and must not be restated as an
+    extra hypothesis, and an FFI host type must be bound at a ``Type`` universe
+    (no universe-level variable).
+    """
+    errors: list[str] = []
+    if not declaration_text.strip():
+        return [
+            "words_as_type_indexed_bitvec requires a resolvable tagged declaration "
+            f"signature (checked for `{declaration}`)"
+        ]
+    if "BitVec" not in declaration_text:
+        errors.append(
+            "words_as_type_indexed_bitvec must name the Lean positive-width word "
+            "carrier `BitVec` that translates HOL `'a word`"
+        )
+    if "NeZero" not in declaration_text:
+        errors.append(
+            "words_as_type_indexed_bitvec must retain the `[NeZero width]` discharge "
+            "of HOL `dimindex (:α) ≥ 1`"
+        )
+    extra = WORD_POSITIVITY_EXTRA_RE.search(declaration_text)
+    if extra is not None:
+        errors.append(
+            "words_as_type_indexed_bitvec must not restate word-dimension positivity "
+            f"as an extra hypothesis (`{extra.group(0).strip()}`); `[NeZero width]` is "
+            "the only allowed side condition"
+        )
+    if HOL_FFI_CARRIER_RE.search(declaration_text):
+        if ": Type" not in declaration_text and ": Type 0" not in declaration_text:
+            errors.append(
+                "words_as_type_indexed_bitvec must bind the FFI host type at a `Type` "
+                "universe for HOL `'ffi ffi_state`"
+            )
+        if FFI_UNIVERSE_LEVEL_RE.search(declaration_text):
+            errors.append(
+                "words_as_type_indexed_bitvec must not introduce an FFI universe-level "
+                "variable; use the universe-0 instance"
+            )
+    return errors
+
+
 def hol_declaration_lines(
     path: Path, cache: dict[Path, dict[str, list[int]]]
 ) -> dict[str, list[int]]:
@@ -1429,7 +1491,7 @@ def main(argv: list[str]) -> int:
         module_reported = False
         for (number, hol_path, hol_name, hol_line, list_fields,
              names_fields, boundary_fields, fmap_fields, fmap_result,
-             fmap_relation, fmap_equalities) in hol_attribute_sites(lines):
+             fmap_relation, fmap_equalities, words_bitvec) in hol_attribute_sites(lines):
             where = f"{rel}:{number}"
             lean_decl = find_lean_decl(lines, number - 1)
             if module not in reachable and not module_reported:
@@ -1477,6 +1539,13 @@ def main(argv: list[str]) -> int:
                     f"{where}: {error}"
                     for error in names_as_string_errors(
                         lines, names_fields, boundary_fields, rel, lean_decl
+                    )
+                )
+            if words_bitvec:
+                errors.extend(
+                    f"{where}: {error}"
+                    for error in words_as_type_indexed_bitvec_errors(
+                        tagged_declaration_text(lines, number), lean_decl
                     )
                 )
             target = ROOT / hol_path
