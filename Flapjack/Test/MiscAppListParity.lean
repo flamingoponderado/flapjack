@@ -79,3 +79,16 @@ example :
       ([5, 6] : List Nat).mapM (fun n => some (n + 0)) :=
   Flapjack.optMmapCongHOL _ _ (fun n => some n) (fun n => some (n + 0))
     rfl (fun _ _ => by simp)
+
+-- Closed form of HOL `IMP_OPT_MMAP_EQ` (`cakeml/misc/miscScript.sml:2491`).
+example :
+    ([1, 2, 3] : List Nat).mapM (fun n => some (n * 2)) =
+      ([2, 4, 6] : List Nat).mapM (fun n => some n) :=
+  Flapjack.impOptMmapEq (fun n : Nat => some (n * 2)) (fun n : Nat => some n)
+    [1, 2, 3] [2, 4, 6] (by decide)
+
+example :
+    ([1, 2, 3] : List Nat).mapM (fun n => if n = 2 then none else some n) =
+      ([1, 2, 3] : List Nat).mapM (fun n => if n = 2 then none else some n) :=
+  Flapjack.impOptMmapEq (fun n : Nat => if n = 2 then none else some n)
+    (fun n : Nat => if n = 2 then none else some n) [1, 2, 3] [1, 2, 3] rfl
