@@ -2004,6 +2004,35 @@ theorem evalPanSemRecursiveCallFiniteContext_callFixedContext_normalize
   apply evalPanSemRecursiveCallFiniteContext_state_eq
   rfl
 
+/-- FLAPJACK-SPECIFIC (not a HOL declaration): the generated successful
+    `DecCall` continuation context and the named finite `callContinuationContextHOLFinite`
+    have the same state. This keeps the clock-fixed body context and the
+    caller-local restoration visible when proving the unconditional DecCall
+    equation, without relying on generated `withState` proof arguments. -/
+theorem evalPanSemRecursiveCallFiniteContext_callContinuationContext_normalize
+    {width : Nat} {σ : Type} [NeZero width]
+    (program : ProgHOL width) (context : FiniteEvalContext width σ)
+    (entry : PanSemStateFiniteExact width σ)
+    (bodyResult : Option (PanSemResultExact width))
+    (bodyContext : FiniteEvalContext width σ)
+    (resultName : MlS) (value : ValueHOL width)
+    (hmem : (fixClockHOLFinite entry (bodyResult, bodyContext.state)).2.memaddrs =
+      bodyContext.state.memaddrs)
+    (hshared : (fixClockHOLFinite entry (bodyResult, bodyContext.state)).2.shMemaddrs =
+      bodyContext.state.shMemaddrs) :
+    evalPanSemRecursiveCallFiniteContext program
+        ((bodyContext.withState
+          (fixClockHOLFinite entry (bodyResult, bodyContext.state)).2 hmem hshared).withState
+          (handlerStateHOLFinite context
+            (bodyContext.withState
+              (fixClockHOLFinite entry (bodyResult, bodyContext.state)).2 hmem hshared)
+            resultName value) rfl rfl) =
+      evalPanSemRecursiveCallFiniteContext program
+        (callContinuationContextHOLFinite context
+          (callFixedContextHOLFinite entry bodyResult bodyContext) resultName value) := by
+  apply evalPanSemRecursiveCallFiniteContext_state_eq
+  rfl
+
 /-- FLAPJACK-SPECIFIC provisional projection (not a HOL declaration; carries no
     `@[hol]` tag): the state-level view of the clause-for-clause finite context
     evaluator `evalPanSemRecursiveCallFiniteContext`.
