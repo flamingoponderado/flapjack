@@ -806,8 +806,9 @@ private theorem lookupFieldHOL_isWfShapeValuesHOLExact {width : Nat} [NeZero wid
     support. The recursive finite-support evaluator and its state/local shape
     invariant now exist, but the evaluator still exposes an assembly marker;
     the final state-level theorem path remains tracked by the open
-    `flapjack-4ac.5.83`. Inventory bead `flapjack-4ac.4.67` is closed by source review.
-    The faithful theorem path bead `flapjack-4ac.5.83` remains open. -/
+    `flapjack-4ac.5.83`. Source review closed inventory bead
+    `flapjack-4ac.4.67`; the faithful theorem path bead
+    `flapjack-4ac.5.83` remains open. -/
 
 /-- Untagged support: the exact value-level well-formedness predicate implies
     that the exact `shape_of` image is well-formed (`is_wf_shape_of_v`
