@@ -13215,11 +13215,24 @@
       "globals",
       "code"
     ],
-    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-pxn.18.3.5.8.8.7): HOL FLOOKUP_set_globals (crepPropsScript.sml:297-301) `FLOOKUP (set_globals gv w s).locals n = FLOOKUP s.locals n` over the exact finite-support CrepSemHOLState carrier, using the tagged CrepSemHOLState.setGlobals (crepSemScript.sml:61-63), which updates only globals. FLOOKUP is rendered as the canonical HolFiniteMapExact.lookup. Finite-map representation recorded by the qualifier (locals/globals/code); same-module canonical witness forwards CrepSemHOLState.holFmapAsFiniteSupportWitness. Direct HOL row set_globals_direct in crep_store_global_probe.out. Representation-only; no statement/side-condition change."
-   },
-   {
-     "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
-     "hol_name": "opt_mmap_eval_upd_clock_eq",
+"reviewer": "flapjack-ds8 (source comparison; bead flapjack-pxn.18.3.5.8.8.7): HOL FLOOKUP_set_globals (crepPropsScript.sml:297-301) `FLOOKUP (set_globals gv w s).locals n = FLOOKUP s.locals n` over the exact finite-support CrepSemHOLState carrier, using the tagged CrepSemHOLState.setGlobals (crepSemScript.sml:61-63), which updates only globals. FLOOKUP is rendered as the canonical HolFiniteMapExact.lookup. Finite-map representation recorded by the qualifier (locals/globals/code); same-module canonical witness forwards CrepSemHOLState.holFmapAsFiniteSupportWitness. Direct HOL row set_globals_direct in crep_store_global_probe.out. Representation-only; no statement/side-condition change."
+    },
+    {
+      "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
+      "hol_name": "sh_mem_load_FLOOKUP_locals",
+      "lean_path": "Flapjack/Pancake/Semantics/CrepProps.lean",
+      "lean_name": "crepShMemLoadHOL_flookup_locals",
+      "statement_status": "reviewed_fmap_as_finite_support",
+      "fmap_as_finite_support": [
+        "locals",
+        "globals",
+        "code"
+      ],
+      "reviewer": "flapjack-ds9 (direct source comparison, 2026-09-27; bead flapjack-2de.9): HOL sh_mem_load_FLOOKUP_locals (crepPropsScript.sml:303-310) is sh_mem_load v addr nb s = (res, t) and n <> v and (res = NONE or res = SOME (Continue k) or res = SOME (Break k)) implies FLOOKUP t.locals n = FLOOKUP s.locals n, with free variables v, addr, nb, s, res, t, n, k. The Lean statement has the identical binder order (name, address, nb, state, res, target, key, label) over the exact tagged crepShMemLoadExactHOL port and the exact finite-support CrepSemHOLState carrier; FLOOKUP is rendered as the canonical HolFiniteMapExact.lookup, n <> v as key <> name, and the free HOL k as the universally quantified label. [NeZero width] is the canonical positive word model and DecidablePred state.shMemaddrs is Lean's decision instance for HOL set membership. The fmap_as_finite_support qualifier records HOL's finite maps as HolFiniteMapExact (locals/globals/code), matching the same-module canonical holFmapAsFiniteSupportWitness. No extra hypothesis, no target-evaluation premise, no changed conclusion. No direct HOL EVAL probe row yet."
+    },
+    {
+      "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
+      "hol_name": "opt_mmap_eval_upd_clock_eq",
      "lean_path": "Flapjack/Pancake/Semantics/CrepProps.lean",
      "lean_name": "evalCrepSemHOLExps_upd_clock_eq",
      "statement_status": "reviewed_exact",

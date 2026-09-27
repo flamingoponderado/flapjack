@@ -986,6 +986,36 @@ theorem flookupSetGlobalsCrepSemHOL_locals {width : Nat} [NeZero width] {σ : Ty
       s.locals.lookup name := by
   simp [CrepSemHOLState.setGlobals]
 
+/-- Exact HOL `sh_mem_load_FLOOKUP_locals` (`crepPropsScript.sml:303-310`) over
+    the exact finite-support `CrepSemHOLState` carrier and the exact
+    `crepShMemLoadExactHOL` port of `sh_mem_load`: whenever a shared-memory load
+    returns a non-terminal result (`NONE`, `SOME (Continue k)`, or
+    `SOME (Break k)`), it leaves the lookup of any local distinct from the
+    loaded name unchanged. HOL's `v`/`n` are the `Nat` local names `name`/`key`,
+    and the free HOL `k` is the universally quantified `label`. The
+    `(fmap_as_finite_support := [locals, globals, code])` qualifier records that
+    HOL's `|->` fields are represented by the reviewed `HolFiniteMapExact`
+    translation. -/
+@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "sh_mem_load_FLOOKUP_locals"
+  (fmap_as_finite_support := [locals, globals, code])]
+theorem crepShMemLoadHOL_flookup_locals {width : Nat} [NeZero width] {σ : Type}
+    (name : Nat) (address : BitVec width) (nb : Nat)
+    (state : CrepSemHOLState width σ) [DecidablePred state.shMemaddrs]
+    (res : Option (CrepResultHOLExact width)) (target : CrepSemHOLState width σ)
+    (key : Nat) (label : Nat)
+    (hstep : crepShMemLoadExactHOL name address nb state = (res, target))
+    (hne : key ≠ name)
+    (hres : res = none ∨ res = some (.continue label) ∨ res = some (.break label)) :
+    target.locals.lookup key = state.locals.lookup key := by
+  unfold crepShMemLoadExactHOL at hstep
+  repeat' split at hstep
+  all_goals
+    rcases hstep with ⟨rfl, rfl⟩
+  all_goals
+    try simp_all
+  all_goals
+    simp_all [CrepSemHOLState.setVar, FUPDATE_HOL]
+
 
 /-- Exact port of HOL `eval_upd_clock_eq` (`crepPropsScript.sml:858-872`):
 the exact `crepSem$eval` expression evaluator never reads the state `clock`
