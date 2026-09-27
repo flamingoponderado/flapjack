@@ -13852,7 +13852,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
     "lean_name": "compileExpValRelHOL_const",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81): Flapjack proof infrastructure. HOL proves the `Const` case inside `pc_compile_correct` (pan_to_crepProofScript.sml:143-150) and exports no standalone `compile_exp_val_rel` case, so this lemma has no HOL declaration to cite. It is the exact-carrier `Const` constructor case over ExpHOL/ValueHOL/ShapeHOL/CrepExpHOL with the finite-support source evaluator `evalHOLFinite` and target evaluator `evalCrepSemHOLExp`."
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81): Flapjack proof infrastructure. HOL proves the `Const` case inside `compile_exp_val_rel` (pan_to_crepProofScript.sml:143-150) and exports no standalone case declaration, so this lemma has no HOL declaration to cite. It is the exact-carrier `Const` constructor case over ExpHOL/ValueHOL/ShapeHOL/CrepExpHOL with the finite-support source evaluator `evalHOLFinite` and target evaluator `evalCrepSemHOLExp`."
   },
   {
     "hol_path": null,
@@ -13868,7 +13868,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
     "lean_name": "compileExpValRelHOL_var_local",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.2): faithful Var Local constructor case of HOL compile_exp_val_rel (pan_to_crepProofScript.sml:151-165) over the exact MlString/word_lab carriers; HOL proves the cases inside pc_compile_correct and exports no standalone case, so no @[hol] tag."
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.2): faithful Var Local constructor case of HOL compile_exp_val_rel (pan_to_crepProofScript.sml:151-165) over the exact MlString/word_lab carriers; HOL proves this inside compile_exp_val_rel and exports no standalone case, so no @[hol] tag."
   },
   {
     "hol_path": null,
@@ -13892,7 +13892,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
     "lean_name": "compileExpValRelHOL_rstruct",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.4): exact RStruct case of HOL pan_to_crepProofScript.sml:171-198; Flapjack-specific case lemma, no standalone HOL declaration (HOL proves it inside pc_compile_correct)."
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.4): exact RStruct case of HOL pan_to_crepProofScript.sml:171-198; Flapjack-specific case lemma, no standalone HOL declaration (HOL proves it inside compile_exp_val_rel)."
   },
   {
     "hol_path": null,
@@ -14028,7 +14028,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
     "lean_name": "compileExpValRelHOL_op",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.10): exact-carrier staged constructor lemma for the Op case of HOL compile_exp_val_rel (proved inside pc_compile_correct, so no standalone exported HOL declaration to tag). Flapjack-specific infrastructure."
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.10): exact-carrier staged constructor lemma for the Op case of HOL compile_exp_val_rel (proved inside compile_exp_val_rel, so no standalone exported HOL case declaration to tag). Flapjack-specific infrastructure."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
@@ -14044,6 +14044,6 @@
     "hol_path": null,
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.12): staged case lemma for the Panop arm of HOL compile_exp_val_rel; HOL proves it inside pc_compile_correct, no standalone declaration."
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.12): staged case lemma for the Panop arm of HOL compile_exp_val_rel; HOL proves it inside compile_exp_val_rel, no standalone case declaration."
   }
 ]
