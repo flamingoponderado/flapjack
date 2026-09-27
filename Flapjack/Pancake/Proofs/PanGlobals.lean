@@ -21,8 +21,12 @@ open Flapjack.Pancake.PanLang
     against `panSemScript.sml:68-75`): `TimeOut`/`Return`/`Exception`/`FinalFFI`
     map to `false`, and every other result (`NONE`, `SOME Error`, `Break`,
     `Continue`) maps to `true`.  The payloads are ignored, exactly as in HOL, so
-    the only difference from HOL is the already-reviewed `result` carrier.  No
-    qualifier applies. -/
+    the only difference from HOL is the already-reviewed `result` carrier
+    (`PanSemResultExact width` under `[NeZero width]`, whose word payloads use
+    the reviewed `HolWordLab` translation of HOL `word_lab`).  The predicate
+    ignores every payload, so the classification is representation-independent
+    and no word-dimension qualifier is needed; the finite-map qualifiers are
+    inapplicable because no HOL `|->` state field is named. -/
 @[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "good_res_def"]
 def goodResHOL {width : Nat} [NeZero width] :
     Option (PanSemResultExact width) → Bool
