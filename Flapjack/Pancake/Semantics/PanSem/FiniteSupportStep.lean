@@ -2203,11 +2203,41 @@ theorem evalPanSemRecursiveCallContextHOLExact_compose_ffi_eq_of_ioEvents_eq
     _ = secondContext.state.ffi := hboundary
     _ = result.2.state.ffi := hsecondFfi
 
-/-- Flapjack-specific infrastructure, with no HOL original: a recursive
-    `Call` body and its exception handler compose when their FFI boundary is
-    preserved. The callee entry may change other state fields, so the input to
-    the first IH is recorded separately and related by exact FFI equality. -/
-theorem evalPanSemRecursiveCallContextHOLExact_call_handler_ffi_eq_of_ioEvents_eq
+/-- Flapjack-specific infrastructure, with no HOL original: transport the FFI
+    invariant across one recursive evaluation embedded in a clause that may
+    change non-FFI state before or after that recursive call. -/
+private theorem evalPanSemRecursiveCallContextHOLExact_one_ffi_eq_of_ioEvents_eq
+    {width : Nat} {σ : Type} [NeZero width]
+    (program : ProgHOL width)
+    (context entryContext : PanSemExactEvalContext width σ)
+    (innerOutput output : Option (PanSemResultExact width) × PanSemExactEvalContext width σ)
+    (hentry : context.state.ffi = entryContext.state.ffi)
+    (hinner : evalPanSemRecursiveCallContextHOLExact program entryContext = some innerOutput)
+    (houtput : output.2.state.ffi = innerOutput.2.state.ffi)
+    (hih : ∀ result,
+      evalPanSemRecursiveCallContextHOLExact program entryContext = some result →
+      entryContext.state.ffi.ioEvents = result.2.state.ffi.ioEvents →
+      entryContext.state.ffi = result.2.state.ffi)
+    (hevents : context.state.ffi.ioEvents = output.2.state.ffi.ioEvents) :
+    context.state.ffi = output.2.state.ffi := by
+  have hinnerEvents : entryContext.state.ffi.ioEvents = innerOutput.2.state.ffi.ioEvents := by
+    calc
+      entryContext.state.ffi.ioEvents = context.state.ffi.ioEvents :=
+        congrArg (fun ffi => ffi.ioEvents) hentry.symm
+      _ = output.2.state.ffi.ioEvents := hevents
+      _ = innerOutput.2.state.ffi.ioEvents :=
+        congrArg (fun ffi => ffi.ioEvents) houtput
+  have hinnerFfi := hih innerOutput hinner hinnerEvents
+  calc
+    context.state.ffi = entryContext.state.ffi := hentry
+    _ = innerOutput.2.state.ffi := hinnerFfi
+    _ = output.2.state.ffi := houtput.symm
+
+/-- Flapjack-specific infrastructure, with no HOL original: two nested
+    recursive evaluations compose when the second starts with the first's FFI
+    state. The entry context may differ from the outer context in other state
+    fields, so their FFI equality is an explicit boundary premise. -/
+theorem evalPanSemRecursiveCallContextHOLExact_compose_from_entry_ffi_eq_of_ioEvents_eq
     {width : Nat} {σ : Type} [NeZero width]
     (body handler : ProgHOL width)
     (context entryContext handlerContext : PanSemExactEvalContext width σ)
@@ -2392,5 +2422,455 @@ private theorem decCallContinuationContextHOLExact_recursive_ffi
         (callFixedContextHOLExact context.state bodyResult bodyContext) name value
     _ = bodyContext.state.ffi :=
       callFixedContextHOLExact_recursive_ffi context.state bodyResult bodyContext
+
+/-- Flapjack-specific recursive invariant over the broad exact PanSem context.
+    Unlike the HOL finite-map theorem that motivates it, this evaluator helper
+    has no HOL original because its state carrier admits unrestricted function
+    maps. -/
+theorem evalPanSemRecursiveCallContextHOLExact_ffi_eq_of_ioEvents_eq
+    {width : Nat} {σ : Type} [NeZero width]
+    (program : ProgHOL width) (context : PanSemExactEvalContext width σ) :
+    ∀ result,
+      evalPanSemRecursiveCallContextHOLExact program context = some result →
+      context.state.ffi.ioEvents = result.2.state.ffi.ioEvents →
+      context.state.ffi = result.2.state.ffi := by
+  fun_induction evalPanSemRecursiveCallContextHOLExact program context
+  case case3 =>
+    rename_i inst context state name shape initializer body value hval hshape bodyState bodyContext
+      innerResult postContext hrec restored ih
+    intro result hres hevents
+    simp only [Option.some.injEq] at hres
+    cases hres
+    have hentry : context.state.ffi = bodyContext.state.ffi := rfl
+    have hend : context.state.ffi.ioEvents = postContext.state.ffi.ioEvents := by
+      simpa only [PanSemExactEvalContext.withState_state, restored] using hevents
+    have hinnerEvents : bodyContext.state.ffi.ioEvents = postContext.state.ffi.ioEvents :=
+      (congrArg (fun ffi => ffi.ioEvents) hentry).symm.trans hend
+    have hinner := ih (innerResult, postContext) hrec hinnerEvents
+    simpa only [PanSemExactEvalContext.withState_state, restored] using hentry.trans hinner
+  case case6 =>
+    rename_i inst context state first second middleContext hfirst fixed fixedContext ih2 ih1
+    intro result hres hevents
+    exact evalPanSemRecursiveCallContextHOLExact_seq_ffi_eq_of_ioEvents_eq
+      first second context middleContext result hfirst hres ih2 ih1 hevents
+  case case7 =>
+    rename_i inst context state first second postContext value hfirst fixed fixedContext ih
+    intro result hres hevents
+    simp only [Option.some.injEq] at hres
+    cases hres
+    have hfixed : fixedContext.state.ffi = postContext.state.ffi := by
+      simp [fixedContext, PanSemExactEvalContext.withState, fixed, fixClockHOLExact]
+    have hend : context.state.ffi.ioEvents = postContext.state.ffi.ioEvents := by
+      calc
+        context.state.ffi.ioEvents = fixedContext.state.ffi.ioEvents := hevents
+        _ = postContext.state.ffi.ioEvents := congrArg (fun ffi => ffi.ioEvents) hfixed
+    have hinner := ih (some value, postContext) hfirst hend
+    exact hinner.trans hfixed.symm
+  case case8 =>
+    intro result hres hevents
+    rename_i ih
+    exact ih result hres hevents
+  case case9 =>
+    intro result hres hevents
+    rename_i ih
+    exact ih result hres hevents
+  case case13 =>
+    rename_i inst context state condition body value hcond hw hclock entry entryContext
+      bodyContext hbody fixed fixedContext ihBody ihLoop
+    intro result hres hevents
+    exact evalPanSemRecursiveCallContextHOLExact_while_ffi_eq_of_ioEvents_eq
+      condition body context entryContext bodyContext (some PanSemResultExact.continue)
+      result rfl hbody hres ihBody ihLoop hevents
+  case case14 =>
+    rename_i inst context state condition body value hcond hw hclock entry entryContext
+      bodyContext hbody fixed fixedContext ihBody ihLoop
+    intro result hres hevents
+    exact evalPanSemRecursiveCallContextHOLExact_while_ffi_eq_of_ioEvents_eq
+      condition body context entryContext bodyContext none result rfl hbody hres
+      ihBody ihLoop hevents
+  case case15 =>
+    rename_i inst context state condition body value hcond hw hclock entry entryContext
+      bodyContext hbody fixed fixedContext ih
+    intro result hres hevents
+    simp only [Option.some.injEq] at hres
+    cases hres
+    have houtput : fixedContext.state.ffi = bodyContext.state.ffi := by
+      simp [fixedContext, fixed, PanSemExactEvalContext.withState, fixClockHOLExact]
+    exact evalPanSemRecursiveCallContextHOLExact_one_ffi_eq_of_ioEvents_eq
+      body context entryContext (some PanSemResultExact.break, bodyContext) (none, fixedContext)
+      rfl hbody houtput ih hevents
+  case case16 =>
+    rename_i inst context state condition body value hcond hw hclock entry entryContext
+      bodyResult bodyContext hbody fixed fixedContext hcont hnone hbreak ih
+    intro result hres hevents
+    simp only [Option.some.injEq] at hres
+    cases hres
+    have houtput : fixedContext.state.ffi = bodyContext.state.ffi := by
+      simp [fixedContext, fixed, PanSemExactEvalContext.withState, fixClockHOLExact]
+    exact evalPanSemRecursiveCallContextHOLExact_one_ffi_eq_of_ioEvents_eq
+      body context entryContext (bodyResult, bodyContext) (bodyResult, fixedContext)
+      rfl hbody houtput ih hevents
+  case case23 =>
+    rename_i inst context state info function arguments values hargs body calleeLocals
+      returnShape hlookup hclock entry entryContext postContext hbody fixedContext ih
+    intro result hres hevents
+    simp only [Option.some.injEq] at hres
+    cases hres
+    have houtput : fixedContext.state.ffi = postContext.state.ffi := by
+      simp [fixedContext, callFixedContextHOLExact, PanSemExactEvalContext.withState,
+        fixClockHOLExact]
+    exact evalPanSemRecursiveCallContextHOLExact_one_ffi_eq_of_ioEvents_eq
+      body context entryContext (none, postContext) (some .error, fixedContext)
+      rfl hbody houtput ih hevents
+  case case24 =>
+    rename_i inst context state info function arguments values hargs body calleeLocals
+      returnShape hlookup hclock entry entryContext postContext hbody fixedContext ih
+    intro result hres hevents
+    simp only [Option.some.injEq] at hres
+    cases hres
+    have houtput : fixedContext.state.ffi = postContext.state.ffi := by
+      simp [fixedContext, callFixedContextHOLExact, PanSemExactEvalContext.withState,
+        fixClockHOLExact]
+    exact evalPanSemRecursiveCallContextHOLExact_one_ffi_eq_of_ioEvents_eq
+      body context entryContext (some .break, postContext) (some .error, fixedContext)
+      rfl hbody houtput ih hevents
+  case case25 =>
+    rename_i inst context state info function arguments values hargs body calleeLocals
+      returnShape hlookup hclock entry entryContext postContext hbody fixedContext ih
+    intro result hres hevents
+    simp only [Option.some.injEq] at hres
+    cases hres
+    have houtput : fixedContext.state.ffi = postContext.state.ffi := by
+      simp [fixedContext, callFixedContextHOLExact, PanSemExactEvalContext.withState,
+        fixClockHOLExact]
+    exact evalPanSemRecursiveCallContextHOLExact_one_ffi_eq_of_ioEvents_eq
+      body context entryContext (some .continue, postContext) (some .error, fixedContext)
+      rfl hbody houtput ih hevents
+  case case26 =>
+    rename_i inst context state function arguments values hargs body calleeLocals
+      returnShape hlookup hclock entry entryContext postContext value hshape hbody fixedContext ih
+    intro result hres hevents
+    simp only [Option.some.injEq] at hres
+    cases hres
+    have houtput :
+        (fixedContext.withState (emptyLocalsHOLExact fixedContext.state) rfl rfl).state.ffi =
+          postContext.state.ffi := by
+      simp [PanSemExactEvalContext.withState, emptyLocalsHOLExact, fixedContext,
+        callFixedContextHOLExact, fixClockHOLExact]
+    exact evalPanSemRecursiveCallContextHOLExact_one_ffi_eq_of_ioEvents_eq
+      body context entryContext (some (.returned value), postContext)
+      (some (.returned value), fixedContext.withState
+        (emptyLocalsHOLExact fixedContext.state) rfl rfl) rfl hbody houtput ih hevents
+  case case27 =>
+    rename_i inst context state function arguments values hargs body calleeLocals
+      returnShape hlookup hclock entry entryContext postContext value hshape snd hbody fixedContext ih
+    intro result hres hevents
+    simp only [Option.some.injEq] at hres
+    cases hres
+    have houtput :
+        (fixedContext.withState { fixedContext.state with locals := state.locals } rfl rfl).state.ffi =
+          postContext.state.ffi := by
+      simp [PanSemExactEvalContext.withState, fixedContext, callFixedContextHOLExact,
+        fixClockHOLExact]
+    exact evalPanSemRecursiveCallContextHOLExact_one_ffi_eq_of_ioEvents_eq
+      body context entryContext (some (.returned value), postContext)
+      (none, fixedContext.withState { fixedContext.state with locals := state.locals } rfl rfl)
+      rfl hbody houtput ih hevents
+  case case28 =>
+    rename_i inst context state function arguments values hargs body calleeLocals
+      returnShape hlookup hclock entry entryContext postContext value hshape kind name snd hvalid
+      hbody fixedContext ih
+    intro result hres hevents
+    simp only [Option.some.injEq] at hres
+    cases hres
+    let restoredLocals := { fixedContext.state with locals := state.locals }
+    have houtput :
+        (fixedContext.withState (setKvarHOLExact kind name value restoredLocals)
+          (by cases kind <;> rfl) (by cases kind <;> rfl)).state.ffi = postContext.state.ffi := by
+      cases kind <;> simp [PanSemExactEvalContext.withState, restoredLocals, setKvarHOLExact,
+        fixedContext, callFixedContextHOLExact, fixClockHOLExact]
+    exact evalPanSemRecursiveCallContextHOLExact_one_ffi_eq_of_ioEvents_eq
+      body context entryContext (some (.returned value), postContext)
+      (none, fixedContext.withState (setKvarHOLExact kind name value restoredLocals)
+        (by cases kind <;> rfl) (by cases kind <;> rfl)) rfl hbody houtput ih hevents
+  case case29 =>
+    rename_i inst context state function arguments values hargs body calleeLocals
+      returnShape hlookup hclock entry entryContext postContext value hshape kind name snd hvalid
+      hbody fixedContext ih
+    intro result hres hevents
+    simp only [Option.some.injEq] at hres
+    cases hres
+    have houtput : fixedContext.state.ffi = postContext.state.ffi := by
+      simp [fixedContext, callFixedContextHOLExact, PanSemExactEvalContext.withState,
+        fixClockHOLExact]
+    exact evalPanSemRecursiveCallContextHOLExact_one_ffi_eq_of_ioEvents_eq
+      body context entryContext (some (.returned value), postContext)
+      (some .error, fixedContext) rfl hbody houtput ih hevents
+  case case30 =>
+    rename_i inst context state info function arguments values hargs body calleeLocals
+      returnShape hlookup hclock entry entryContext postContext value hshape hbody fixedContext ih
+    intro result hres hevents
+    simp only [Option.some.injEq] at hres
+    cases hres
+    have houtput : fixedContext.state.ffi = postContext.state.ffi := by
+      simp [fixedContext, callFixedContextHOLExact, PanSemExactEvalContext.withState,
+        fixClockHOLExact]
+    exact evalPanSemRecursiveCallContextHOLExact_one_ffi_eq_of_ioEvents_eq
+      body context entryContext (some (.returned value), postContext)
+      (some .error, fixedContext) rfl hbody houtput ih hevents
+  case case31 =>
+    rename_i inst context state function arguments values hargs body calleeLocals
+      returnShape hlookup hclock entry entryContext postContext exceptionId value hbody fixedContext ih
+    intro result hres hevents
+    simp only [Option.some.injEq] at hres
+    cases hres
+    have houtput :
+        (fixedContext.withState (emptyLocalsHOLExact fixedContext.state) rfl rfl).state.ffi =
+          postContext.state.ffi := by
+      simp [PanSemExactEvalContext.withState, emptyLocalsHOLExact, fixedContext,
+        callFixedContextHOLExact, fixClockHOLExact]
+    exact evalPanSemRecursiveCallContextHOLExact_one_ffi_eq_of_ioEvents_eq
+      body context entryContext (some (.exception exceptionId value), postContext)
+      (some (.exception exceptionId value), fixedContext.withState
+        (emptyLocalsHOLExact fixedContext.state) rfl rfl) rfl hbody houtput ih hevents
+  case case32 =>
+    rename_i inst context state function arguments values hargs body calleeLocals
+      returnShape hlookup hclock entry entryContext postContext exceptionId value info hbody
+      fixedContext ih
+    intro result hres hevents
+    simp only [Option.some.injEq] at hres
+    cases hres
+    have houtput :
+        (fixedContext.withState (emptyLocalsHOLExact fixedContext.state) rfl rfl).state.ffi =
+          postContext.state.ffi := by
+      simp [PanSemExactEvalContext.withState, emptyLocalsHOLExact, fixedContext,
+        callFixedContextHOLExact, fixClockHOLExact]
+    exact evalPanSemRecursiveCallContextHOLExact_one_ffi_eq_of_ioEvents_eq
+      body context entryContext (some (.exception exceptionId value), postContext)
+      (some (.exception exceptionId value), fixedContext.withState
+        (emptyLocalsHOLExact fixedContext.state) rfl rfl) rfl hbody houtput ih hevents
+  case case33 =>
+    rename_i inst context state function arguments values hargs body calleeLocals returnShape
+      hlookup hclock entry entryContext postContext value fst handlerId handlerVar handlerProgram
+      shape hcond heshapes hbody fixedContext handlerState handlerContext ih2 ih1
+    intro result hres hevents
+    have hboundary : postContext.state.ffi = handlerContext.state.ffi := by
+      change postContext.state.ffi =
+        (handlerStateHOLExact context
+          (callFixedContextHOLExact context.state
+            (some (PanSemResultExact.exception handlerId value)) postContext)
+          handlerVar value).ffi
+      exact (callHandlerContextHOLExact_recursive_ffi context
+        (some (PanSemResultExact.exception handlerId value)) postContext
+        handlerVar value).symm
+    exact evalPanSemRecursiveCallContextHOLExact_compose_from_entry_ffi_eq_of_ioEvents_eq
+      body handlerProgram context entryContext handlerContext
+      (some (PanSemResultExact.exception handlerId value), postContext) result
+      (by rfl) hbody hboundary hres ih2 ih1 hevents
+  case case34 =>
+    rename_i inst context state function arguments values hargs body calleeLocals
+      returnShape hlookup hclock entry entryContext postContext value info handlerId handlerVar
+      handlerProgram shape hcond heshapes hbody fixedContext ih
+    intro result hres hevents
+    simp only [Option.some.injEq] at hres
+    cases hres
+    have houtput : fixedContext.state.ffi = postContext.state.ffi := by
+      simp [fixedContext, callFixedContextHOLExact, PanSemExactEvalContext.withState,
+        fixClockHOLExact]
+    exact evalPanSemRecursiveCallContextHOLExact_one_ffi_eq_of_ioEvents_eq
+      body context entryContext (some (.exception handlerId value), postContext)
+      (some .error, fixedContext) rfl hbody houtput ih hevents
+  case case35 =>
+    rename_i inst context state function arguments values hargs body calleeLocals
+      returnShape hlookup hclock entry entryContext postContext value info handlerId handlerVar
+      handlerProgram heshapes hbody fixedContext ih
+    intro result hres hevents
+    simp only [Option.some.injEq] at hres
+    cases hres
+    have houtput : fixedContext.state.ffi = postContext.state.ffi := by
+      simp [fixedContext, callFixedContextHOLExact, PanSemExactEvalContext.withState,
+        fixClockHOLExact]
+    exact evalPanSemRecursiveCallContextHOLExact_one_ffi_eq_of_ioEvents_eq
+      body context entryContext (some (.exception handlerId value), postContext)
+      (some .error, fixedContext) rfl hbody houtput ih hevents
+  case case36 =>
+    rename_i inst context state function arguments values hargs body calleeLocals
+      returnShape hlookup hclock entry entryContext postContext exceptionId value info handlerId
+      handlerVar handlerProgram hne hbody fixedContext ih
+    intro result hres hevents
+    simp only [Option.some.injEq] at hres
+    cases hres
+    have houtput :
+        (fixedContext.withState (emptyLocalsHOLExact fixedContext.state) rfl rfl).state.ffi =
+          postContext.state.ffi := by
+      simp [PanSemExactEvalContext.withState, emptyLocalsHOLExact, fixedContext,
+        callFixedContextHOLExact, fixClockHOLExact]
+    exact evalPanSemRecursiveCallContextHOLExact_one_ffi_eq_of_ioEvents_eq
+      body context entryContext (some (.exception exceptionId value), postContext)
+      (some (.exception exceptionId value), fixedContext.withState
+        (emptyLocalsHOLExact fixedContext.state) rfl rfl) rfl hbody houtput ih hevents
+  case case37 =>
+    rename_i inst context state info function arguments values hargs body calleeLocals
+      returnShape hlookup hclock entry entryContext postContext other hbreak hcontinue hreturn
+      hexception hbody fixedContext ih
+    intro result hres hevents
+    simp only [Option.some.injEq] at hres
+    cases hres
+    have houtput :
+        (fixedContext.withState (emptyLocalsHOLExact fixedContext.state) rfl rfl).state.ffi =
+          postContext.state.ffi := by
+      simp [PanSemExactEvalContext.withState, emptyLocalsHOLExact, fixedContext,
+        callFixedContextHOLExact, fixClockHOLExact]
+    exact evalPanSemRecursiveCallContextHOLExact_one_ffi_eq_of_ioEvents_eq
+      body context entryContext (some other, postContext)
+      (some other, fixedContext.withState (emptyLocalsHOLExact fixedContext.state) rfl rfl)
+      rfl hbody houtput ih hevents
+  case case42 =>
+    rename_i inst context state resultName shape function arguments continuation values hargs
+      body calleeLocals returnShape hlookup hclock entry entryContext postContext hbody fixedContext ih
+    intro result hres hevents
+    simp only [Option.some.injEq] at hres
+    cases hres
+    have houtput : fixedContext.state.ffi = postContext.state.ffi := by
+      simp [fixedContext, callFixedContextHOLExact, PanSemExactEvalContext.withState,
+        fixClockHOLExact]
+    exact evalPanSemRecursiveCallContextHOLExact_one_ffi_eq_of_ioEvents_eq
+      body context entryContext (none, postContext) (some .error, fixedContext)
+      rfl hbody houtput ih hevents
+  case case43 =>
+    rename_i inst context state resultName shape function arguments continuation values hargs
+      body calleeLocals returnShape hlookup hclock entry entryContext postContext hbody fixedContext ih
+    intro result hres hevents
+    simp only [Option.some.injEq] at hres
+    cases hres
+    have houtput : fixedContext.state.ffi = postContext.state.ffi := by
+      simp [fixedContext, callFixedContextHOLExact, PanSemExactEvalContext.withState,
+        fixClockHOLExact]
+    exact evalPanSemRecursiveCallContextHOLExact_one_ffi_eq_of_ioEvents_eq
+      body context entryContext (some .break, postContext) (some .error, fixedContext)
+      rfl hbody houtput ih hevents
+  case case44 =>
+    rename_i inst context state resultName shape function arguments continuation values hargs
+      body calleeLocals returnShape hlookup hclock entry entryContext postContext hbody fixedContext ih
+    intro result hres hevents
+    simp only [Option.some.injEq] at hres
+    cases hres
+    have houtput : fixedContext.state.ffi = postContext.state.ffi := by
+      simp [fixedContext, callFixedContextHOLExact, PanSemExactEvalContext.withState,
+        fixClockHOLExact]
+    exact evalPanSemRecursiveCallContextHOLExact_one_ffi_eq_of_ioEvents_eq
+      body context entryContext (some .continue, postContext) (some .error, fixedContext)
+      rfl hbody houtput ih hevents
+  case case46 =>
+    rename_i inst context state resultName shape function arguments continuation values hargs body
+      calleeLocals returnShape hlookup hclock entry entryContext bodyContext value hcond
+      continuationResult continuationPost restored hbody fixedContext continuationContext hcont
+      ih2 ih1
+    intro result hres hevents
+    simp only [Option.some.injEq] at hres
+    cases hres
+    have hrawEvents : context.state.ffi.ioEvents = continuationPost.state.ffi.ioEvents := by
+      simpa only [PanSemExactEvalContext.withState_state, restored] using hevents
+    have hboundary : bodyContext.state.ffi = continuationContext.state.ffi := by
+      change bodyContext.state.ffi =
+        (callContinuationContextHOLExact context fixedContext resultName value).state.ffi
+      exact (decCallContinuationContextHOLExact_recursive_ffi context
+        (some (PanSemResultExact.returned value)) bodyContext resultName value).symm
+    exact evalPanSemRecursiveCallContextHOLExact_compose_from_entry_ffi_eq_of_ioEvents_eq
+      body continuation context entryContext continuationContext
+      (some (PanSemResultExact.returned value), bodyContext)
+      (continuationResult, continuationPost) (by rfl) hbody hboundary hcont ih2 ih1 hrawEvents
+  case case47 =>
+    rename_i inst context state resultName shape function arguments continuation values hargs
+      body calleeLocals returnShape hlookup hclock entry entryContext postContext value hshape
+      hbody fixedContext ih
+    intro result hres hevents
+    simp only [Option.some.injEq] at hres
+    cases hres
+    have houtput : fixedContext.state.ffi = postContext.state.ffi := by
+      simp [fixedContext, callFixedContextHOLExact, PanSemExactEvalContext.withState,
+        fixClockHOLExact]
+    exact evalPanSemRecursiveCallContextHOLExact_one_ffi_eq_of_ioEvents_eq
+      body context entryContext (some (.returned value), postContext)
+      (some .error, fixedContext) rfl hbody houtput ih hevents
+  case case48 =>
+    rename_i inst context state resultName shape function arguments continuation values hargs
+      body calleeLocals returnShape hlookup hclock entry entryContext postContext other hbreak
+      hcontinue hreturn hbody fixedContext ih
+    intro result hres hevents
+    simp only [Option.some.injEq] at hres
+    cases hres
+    have houtput :
+        (fixedContext.withState (emptyLocalsHOLExact fixedContext.state) rfl rfl).state.ffi =
+          postContext.state.ffi := by
+      simp [PanSemExactEvalContext.withState, emptyLocalsHOLExact, fixedContext,
+        callFixedContextHOLExact, fixClockHOLExact]
+    exact evalPanSemRecursiveCallContextHOLExact_one_ffi_eq_of_ioEvents_eq
+      body context entryContext (some other, postContext)
+      (some other, fixedContext.withState (emptyLocalsHOLExact fixedContext.state) rfl rfl)
+      rfl hbody houtput ih hevents
+  case case49 =>
+    intro result hres hevents
+    simp only [Option.some.injEq] at hres
+    cases hres
+    rename_i out hmem hshared
+    simp only [out, PanSemExactEvalContext.withState_state, assignStepHOLExact_ffi]
+    rfl
+  case case50 =>
+    intro result hres hevents
+    simp only [Option.some.injEq] at hres
+    cases hres
+    rename_i out hmem hshared
+    simp only [out, PanSemExactEvalContext.withState_state, primitiveStepHOLExact_ffi]
+    rfl
+  case case51 =>
+    intro result hres hevents
+    simp only [Option.some.injEq] at hres
+    cases hres
+    rename_i out hmem hshared
+    simp only [out, PanSemExactEvalContext.withState_state, storeStepHOLExact_ffi]
+    rfl
+  case case52 =>
+    intro result hres hevents
+    simp only [Option.some.injEq] at hres
+    cases hres
+    rename_i out hmem hshared
+    simp only [out, PanSemExactEvalContext.withState_state, store32StepHOLExact_ffi]
+    rfl
+  case case53 =>
+    intro result hres hevents
+    simp only [Option.some.injEq] at hres
+    cases hres
+    rename_i out hmem hshared
+    simp only [out, PanSemExactEvalContext.withState_state, storeByteStepHOLExact_ffi]
+    rfl
+  case case67 =>
+    intro result hres hevents
+    simp only [Option.some.injEq] at hres
+    cases hres
+    dsimp only
+    have hstep := extCallStepHOLExact_ffi_eq_of_ioEvents_eq _ _ _ _ _ _ _
+      (by simpa only [PanSemExactEvalContext.withState_state] using hevents.symm)
+    simpa only [PanSemExactEvalContext.withState_state] using hstep.symm
+  case case68 =>
+    intro result hres hevents
+    simp only [Option.some.injEq] at hres
+    cases hres
+    dsimp only
+    have hstep := shMemLoadClauseHOLExact_ffi_eq_of_ioEvents_eq _ _ _ _ _ _
+      (by simpa only [PanSemExactEvalContext.withState_state] using hevents.symm)
+    simpa only [PanSemExactEvalContext.withState_state] using hstep.symm
+  case case69 =>
+    intro result hres hevents
+    simp only [Option.some.injEq] at hres
+    cases hres
+    dsimp only
+    have hstep := shMemStoreClauseHOLExact_ffi_eq_of_ioEvents_eq _ _ _ _ _
+      (by simpa only [PanSemExactEvalContext.withState_state] using hevents.symm)
+    simpa only [PanSemExactEvalContext.withState_state] using hstep.symm
+  all_goals
+    intro result hres hevents
+    cases hres
+    all_goals simp [PanSemExactEvalContext.withState, emptyLocalsHOLExact] <;> rfl
 
 end Flapjack
