@@ -158,6 +158,12 @@ example : crepAssignedFreeVarsW
       (storeGlobalsW (width := 64) (0 : BitVec 5) ([] : List (CrepExp (BitVec 64))))) = [] :=
   crepAssignedFreeVars_nestedSeq_storeGlobalsW (width := 64) 0 []
 
+/-- The production/exact `var_cexp` bridge on a concrete expression:
+`crepExpVarsW (.load (.var 2)) = crepExpVarsHOL (crepExpToHOL (.load (.var 2)))`. -/
+example : crepExpVarsW (CrepExp.load (CrepExp.var (α := BitVec 64) 2)) =
+    crepExpVarsHOL (crepExpToHOL (CrepExp.load (CrepExp.var (α := BitVec 64) 2))) :=
+  crepExpVarsW_eq_crepExpVarsHOL_crepExpToHOL _
+
 def parityGuard : Bool :=
   (crepAssignedFreeVars parityProg == [2, 3]) &&
   (crepAssignedVars parityProg == [1, 2, 3]) &&

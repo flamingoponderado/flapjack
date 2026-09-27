@@ -1838,6 +1838,46 @@ theorem evalPanSemRecursiveCallFiniteContext_state_eq {width : Nat} {σ : Type}
   congrArg (evalPanSemRecursiveCallFiniteContext program)
     (FiniteEvalContext.ext hstate)
 
+/-- FLAPJACK-SPECIFIC specialization of `evalPanSemRecursiveCallFiniteContext_state_eq`
+    for the dependent `withState` context generated at the DecCall entry. The
+    explicit domain-equality proofs may differ from the canonical proofs in
+    `callEntryContextHOLFinite`; the recursive evaluator depends only on the
+    transported state. -/
+theorem evalPanSemRecursiveCallFiniteContext_callEntryContext_normalize
+    {width : Nat} {σ : Type} [NeZero width]
+    (program : ProgHOL width) (context : FiniteEvalContext width σ)
+    (callee : HolFiniteMapExact MlS (ValueHOL width))
+    (hmem : (callEntryStateHOLFinite context.state callee).memaddrs =
+      context.state.memaddrs)
+    (hshared : (callEntryStateHOLFinite context.state callee).shMemaddrs =
+      context.state.shMemaddrs) :
+    evalPanSemRecursiveCallFiniteContext program
+        (context.withState (callEntryStateHOLFinite context.state callee) hmem hshared) =
+      evalPanSemRecursiveCallFiniteContext program
+        (callEntryContextHOLFinite context callee) := by
+  apply evalPanSemRecursiveCallFiniteContext_state_eq
+  rfl
+
+/-- FLAPJACK-SPECIFIC specialization for the fixed callee context in the
+    DecCall equation. This hides the generated finite-domain proof arguments
+    behind the canonical `callFixedContextHOLFinite` context. -/
+theorem evalPanSemRecursiveCallFiniteContext_callFixedContext_normalize
+    {width : Nat} {σ : Type} [NeZero width]
+    (program : ProgHOL width) (entry : PanSemStateFiniteExact width σ)
+    (bodyResult : Option (PanSemResultExact width))
+    (bodyContext : FiniteEvalContext width σ)
+    (hmem : (fixClockHOLFinite entry (bodyResult, bodyContext.state)).2.memaddrs =
+      bodyContext.state.memaddrs)
+    (hshared : (fixClockHOLFinite entry (bodyResult, bodyContext.state)).2.shMemaddrs =
+      bodyContext.state.shMemaddrs) :
+    evalPanSemRecursiveCallFiniteContext program
+        (bodyContext.withState
+          (fixClockHOLFinite entry (bodyResult, bodyContext.state)).2 hmem hshared) =
+      evalPanSemRecursiveCallFiniteContext program
+        (callFixedContextHOLFinite entry bodyResult bodyContext) := by
+  apply evalPanSemRecursiveCallFiniteContext_state_eq
+  rfl
+
 /-- FLAPJACK-SPECIFIC provisional projection (not a HOL declaration; carries no
     `@[hol]` tag): the state-level view of the clause-for-clause finite context
     evaluator `evalPanSemRecursiveCallFiniteContext`.

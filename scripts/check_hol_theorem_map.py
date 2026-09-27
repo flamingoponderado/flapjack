@@ -321,18 +321,6 @@ DEFINITION_RE = re.compile(
     r"(?:def|abbrev|opaque|theorem|lemma)\s+([^\s:({\[]+)"
 )
 DOCUMENTED_MISMATCHES = {
-    ("Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean", "memLoadFlatRelHOLExact"): (
-        "cakeml/pancake/semantics/crepPropsScript.sml",
-        "mem_load_flat_rel",
-        "flapjack-luna-c (source comparison, 2026-09-27; bead flapjack-4ac.5.81.11.1.1): "
-        "the Lean conclusion and premises follow `mem_load_flat_rel` over exact "
-        "Pan evaluator carriers, but its target is CrepSemHOLState, whose owning "
-        "finite-map structure lives in the separate CrepSem module. The current "
-        "fmap_as_finite_support tag checker requires that owner and its roundtrip "
-        "witness in the declaration's own module; words_as_type_indexed_bitvec "
-        "alone cannot authorize this carrier. Keep this analogue untagged until "
-        "the exact target state carrier/qualifier is available in the counterpart module."
-    ),
     ("Flapjack/Pancake/Semantics/LoopSemStateExact.lean", "LoopSemStateFiniteExact"): (
         "cakeml/pancake/semantics/loopSemScript.sml",
         "state",

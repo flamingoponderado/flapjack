@@ -22,7 +22,7 @@ private def memLoadFlatTargetHOL {width : Nat} [NeZero width]
 /- Mutual strided-read analogue of HOL `mem_loads_flat_rel`
    (`crepPropsScript.sml:66-99`), using the shape clause of
    `mem_load_flat_rel` (`:102-109`). It follows the HOL list induction: the
-   append split uses the length theorem below to establish the tail stride.
+   append split uses the imported length theorem to establish the tail stride.
    This helper is intentionally untagged: it is over Lean's exact indexed
    carriers and exact evaluator, but is not itself the source theorem's shared
    Pan/Crep state statement. -/
@@ -166,7 +166,7 @@ private theorem memLoadHOLExact_flatRead_mutual {width : Nat} [NeZero width]
         simp [hhead, htail'] at hload
       | some tailValues => exact (hfail headValue tailValues hhead htail).elim
 
-namespace CompileExpValRelFiniteSupport
+namespace CrepPropsMemLoadFlatRelFiniteSupport
 
 /-- Local same-module witness for the canonical finite-support `CrepSemHOLState`
 carrier used by the qualified `mem_load_flat_rel` port below. -/
@@ -177,7 +177,7 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {σ : Type} :
         CrepSemBroadState.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
   CrepSemHOLState.holFmapAsFiniteSupportWitness
 
-end CompileExpValRelFiniteSupport
+end CrepPropsMemLoadFlatRelFiniteSupport
 
 /- Exact-carrier port of HOL `mem_load_flat_rel`
    (`cakeml/pancake/semantics/crepPropsScript.sml:102-109`). The same target
