@@ -982,25 +982,18 @@ theorem evalCrepSemHOLProgExact_eq_core {width : Nat} [NeZero width] {σ : Type}
   unfold evalCrepSemHOLProgExact
   congr 1
 
-/-- Exact port of the `Skip` conjunct of HOL's rewritten `evaluate_def`
-    (`cakeml/pancake/semantics/crepSemScript.sml:443`, first conjunct
-    originating at line 241): `evaluate (Skip, s) = (NONE, s)`. Over the exact
-    total evaluator `evalCrepSemHOLProgExact` and the 11-field
-    `CrepSemHOLState`, evaluating `Skip` returns the state unchanged. The
-    `fmap_as_finite_support` qualifier records exactly the HOL `|->` fields
-    `locals`, `globals`, and `code` as `HolFiniteMapExact` (with the
-    evaluator-local witness in this module), and `words_as_type_indexed_bitvec`
-    records the `'a word` carrier as `BitVec width` here. Direct source review
-    for `flapjack-4ac.5.16.5.13` (originally tagged under `.13.1`) re-read the
-    rewritten conjunct at `crepSemScript.sml:443` against the originating line
-    241 clause and the 11-field carrier: the `Skip` clause does not mention
-    `fix_clock`, so `REWRITE_RULE [fix_clock_evaluate]` leaves it unchanged, and
-    the state/program-only interface with the exact `(NONE, s)` pair-shape is
-    preserved. The remaining `evaluate_def` clauses stay untagged in this
-    slice. -/
-@[hol "cakeml/pancake/semantics/crepSemScript.sml" "evaluate_def" 443
-  (fmap_as_finite_support := [locals, globals, code])
-  (words_as_type_indexed_bitvec)]
+/-- Flapjack-only `Skip` equation matching the first conjunct of HOL's
+    rewritten `evaluate_def` (`cakeml/pancake/semantics/crepSemScript.sml:443`,
+    originating at line 241): `evaluate (Skip, s) = (NONE, s)`. Over the total
+    evaluator `evalCrepSemHOLProgExact`, evaluating `Skip` returns the state
+    unchanged. This declaration is deliberately untagged: its state carrier
+    `CrepSemHOLState` fixes `ffiState : Type` at Lean's universe 0, while HOL's
+    `state` is polymorphic in the arbitrary type variable `'ffi`. The
+    `fmap_as_finite_support` and `words_as_type_indexed_bitvec` qualifiers do
+    not authorize that separate FFI-universe restriction. A faithful tagged
+    Skip port needs a universe-polymorphic Crep state carrier. The local
+    equation remains useful Flapjack infrastructure; other `evaluate_def`
+    clauses remain untagged. -/
 theorem evalCrepSemHOLProgExact_skip {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ) :
     evalCrepSemHOLProgExact state (.skip : CrepProgHOL width) = (none, state) := by

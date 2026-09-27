@@ -14544,14 +14544,8 @@
     "hol_line": 443,
     "lean_path": "Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean",
     "lean_name": "evalCrepSemHOLProgExact_skip",
-    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support": [
-      "locals",
-      "globals",
-      "code"
-    ],
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 direct source comparison (2026-09-27; bead flapjack-4ac.5.16.5.13, originally tagged under .13.1): the first conjunct of HOL's rewritten evaluate_def (crepSemScript.sml:443, originating at line 241) is evaluate (Skip,s)=(NONE,s); the Skip clause does not mention fix_clock, so REWRITE_RULE [fix_clock_evaluate] leaves it unchanged. evalCrepSemHOLProgExact_skip has exactly the state quantifier and pair-shaped conclusion over CrepProgHOL and the 11-field CrepSemHOLState, over the total exact evaluator; no result premise or extra logical assumption. The fmap_as_finite_support qualifier records HOL's |-> fields locals/globals/code as HolFiniteMapExact, with the same-module canonical witness holFmapAsFiniteSupportWitness in this module re-exporting CrepSemHOLState.holFmapAsFiniteSupportWitness. The words_as_type_indexed_bitvec qualifier records HOL's type-indexed 'a word as BitVec width with [NeZero width] retained. This tag covers only the Skip case; the remaining evaluate_def clauses stay untagged in this slice."
+    "statement_status": "documented_mismatch",
+    "reviewer": "Independent source audit (2026-09-27; bead flapjack-l60u): HOL crepSemScript.sml:443 rewrites the first evaluate_def conjunct to evaluate (Skip,s)=(NONE,s); the Skip equation itself is unconditional and leaves state unchanged. However, evalCrepSemHOLProgExact_skip quantifies CrepSemHOLState width σ, whose declaration fixes ffiState : Type (Lean Type 0), while HOL state (`crepSemScript.sml:19-32`) is polymorphic in arbitrary 'ffi. The fmap_as_finite_support and words_as_type_indexed_bitvec qualifiers account for named map and word translations, but this Lean statement still narrows the FFI host-type universe and neither qualifier authorizes that additional restriction. The theorem tag is withdrawn; the local Skip equation remains useful Flapjack infrastructure. Faithful exact port requires a universe-polymorphic CrepSemHOLState and matching evaluator signatures."
   },
   {
     "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
