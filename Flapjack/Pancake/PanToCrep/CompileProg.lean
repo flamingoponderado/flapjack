@@ -4677,6 +4677,47 @@ theorem compileProgExactHOLW_relation_bridge {width : Nat} [NeZero width]
             productionContext hcontext tag text)
   simpa [motive] using hall program
 
+/-- Flapjack-specific per-function compiler correspondence (no standalone HOL
+    declaration): for every function extracted from a byte-ranged declaration
+    list, the exact `compile_def` body compiler, decoded to production Crep,
+    equals the executed `compFuncHOL` body compiler. The finite-support and
+    name-range facts come from the same production context builder used by
+    `compileToCrepHOL`; the body codec is discharged by the extracted-entry
+    byte-range theorem. -/
+theorem compileFunctionExactProductionBridge {width : Nat} [NeZero width]
+    (declarations : List (Decl (BitVec width)))
+    (entry : FunName × List (VarName × Shape) × Prog (BitVec width) × Shape)
+    (hdecls : ∀ declaration ∈ declarations, DeclByteRanged declaration)
+    (hentry : entry ∈ functionEntries declarations) :
+    crepProgOfHOL
+        (compileProgExactHOLW
+          (panToCrepContextExactOfProduction
+            (panToCrepMkCtxtHOL (panToCrepMakeVmapHOL entry.2.1)
+              (functionInfosHOL declarations)
+              (Shape.shapeSize (.comb (entry.2.1.map Prod.snd)) - 1)
+              (panToCrepGetEidsFromDeclsHOL declarations))
+            (panToCrepFunctionContextProductionEvidence declarations entry
+              hdecls hentry))
+          (progToHOL entry.2.2.1)) =
+      compFuncHOL (functionInfosHOL declarations)
+        (panToCrepGetEidsFromDeclsHOL declarations) entry.2.1 entry.2.2.1 := by
+  let productionContext :=
+    panToCrepMkCtxtHOL (panToCrepMakeVmapHOL entry.2.1)
+      (functionInfosHOL declarations)
+      (Shape.shapeSize (.comb (entry.2.1.map Prod.snd)) - 1)
+      (panToCrepGetEidsFromDeclsHOL declarations)
+  let evidence := panToCrepFunctionContextProductionEvidence declarations entry
+    hdecls hentry
+  let exactContext := panToCrepContextExactOfProduction productionContext evidence
+  have hrelation := panToCrepContextExactOfProduction_relation productionContext evidence
+  have hwhole := compileProgExactHOLW_relation_bridge (progToHOL entry.2.2.1)
+    exactContext productionContext hrelation
+  obtain ⟨_hname, _hparams, _hreturnShape, hbody⟩ :=
+    functionEntries_byteRanged declarations hdecls entry hentry
+  rw [progOfHOL_progToHOL entry.2.2.1 hbody] at hwhole
+  simpa [productionContext, exactContext, evidence, compFuncHOL, compileProgRiscV]
+    using hwhole
+
 /-- Metadata adapter whose compiler input crosses the exact `DeclHOL` carrier
     boundary.  Its side condition is the byte-range premise used by the
     production-to-HOL declaration codec; it is preserved by the executed
