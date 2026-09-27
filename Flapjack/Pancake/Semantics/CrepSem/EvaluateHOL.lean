@@ -2690,6 +2690,111 @@ theorem crepStampExactDomains_evalCrepSemHOLProg {width : Nat} [NeZero width] {�
     (evalCrepSemHOLProg_preserves_memaddrs state memDec shMemDec program)
     (evalCrepSemHOLProg_preserves_shMemaddrs state memDec shMemDec program)
 
+/-! ## Observational inertness of `crepStampExactDomains` at every stamping site
+
+Source check (bead `flapjack-4ac.5.16.5.32`) of HOL `cakeml/pancake/semantics/crepSemScript.sml`
+`evaluate_def` (:240-390): no clause assigns `memaddrs` or `sh_memaddrs`. The
+state updates in the definition are `with locals := ...` (Dec, Primitive,
+Assign, and the `Call` locals install), `with memory := ...` (Store, Store32,
+StoreByte, and the ExtCall result memory), `with ffi := ...` and
+`empty_locals` (Raise, Return, Tick, the While timeout, and the Call
+timeout/return/exception leaves), `set_globals` (StoreGlob), and the clock
+updates `dec_clock`/`fix_clock` (Seq, While, Call). The shared-memory leaves
+`sh_mem_load_def` (:168) and `sh_mem_store_def` (:186) likewise touch only
+`locals` and `ffi`. Hence both domain fields of the state argument are
+invariant along the whole HOL evaluation, and the `crepStampExactDomains` calls
+that the exact Lean evaluator threads into its `Seq`/`While`/`Call` recursive
+steps — present only to restate the recursion base for the explicit
+`memDec`/`shMemDec` deciders — are the identity. The generic clock/`fix_clock`
+lemma below covers every stamping site; the three concrete clause
+presentations follow. All declarations are untagged Flapjack infrastructure
+(they have no HOL declaration of their own; the underlying invariance is HOL's
+by the source check above). -/
+
+/-- Domain-agreement fact for a `fix_clock`-wrapped recursive run of a callee
+    whose domains already agree with the base: the produced state keeps the
+    base state's domains. -/
+theorem fixClockCrepSemHOL_step_domains {width : Nat} [NeZero width] {σ : Type}
+    {base callee : CrepSemHOLState width σ}
+    (hmem : callee.memaddrs = base.memaddrs)
+    (hsh : callee.shMemaddrs = base.shMemaddrs)
+    (memDec : (a : BitVec width) → Decidable (callee.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (callee.shMemaddrs a))
+    (program : CrepProgHOL width) (res : Option (CrepResultHOLExact width))
+    (s' : CrepSemHOLState width σ)
+    (h : fixClockCrepSemHOL callee
+        (evalCrepSemHOLProg callee memDec shMemDec program) = (res, s')) :
+    s'.memaddrs = base.memaddrs ∧ s'.shMemaddrs = base.shMemaddrs := by
+  have hd := fixClock_result_domains callee
+    (evalCrepSemHOLProg callee memDec shMemDec program) res s' h
+  exact ⟨hd.1.trans ((evalCrepSemHOLProg_preserves_memaddrs callee memDec shMemDec program).trans hmem),
+    hd.2.trans ((evalCrepSemHOLProg_preserves_shMemaddrs callee memDec shMemDec program).trans hsh)⟩
+
+/-- Every stamping site stamps a state whose domains already agree with the
+    base, so `crepStampExactDomains` is the identity there. Covers `Seq`,
+    `While`, and the `Call` callee body, each of which stamps the
+    `fix_clock`-wrapped result of a recursive run whose base has the stamping
+    state's domains. -/
+theorem crepStampExactDomains_fixClock_step {width : Nat} [NeZero width] {σ : Type}
+    {base callee : CrepSemHOLState width σ}
+    (hmem : callee.memaddrs = base.memaddrs)
+    (hsh : callee.shMemaddrs = base.shMemaddrs)
+    (memDec : (a : BitVec width) → Decidable (callee.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (callee.shMemaddrs a))
+    (program : CrepProgHOL width) (res : Option (CrepResultHOLExact width))
+    (s' : CrepSemHOLState width σ)
+    (h : fixClockCrepSemHOL callee
+        (evalCrepSemHOLProg callee memDec shMemDec program) = (res, s')) :
+    crepStampExactDomains base s' = s' :=
+  let hd := fixClockCrepSemHOL_step_domains hmem hsh memDec shMemDec program res s' h
+  crepStampExactDomains_eq_self base s' hd.1 hd.2
+
+/-- `Seq` stamping site: the evaluator stamps `stepState`, the state component
+    of `fix_clock` applied to the first statement's run. -/
+theorem crepStampExactDomains_seq_step {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (first : CrepProgHOL width) (stepState : CrepSemHOLState width σ)
+    (h : fixClockCrepSemHOL state
+        (evalCrepSemHOLProg state memDec shMemDec first) = (none, stepState)) :
+    crepStampExactDomains state stepState = stepState :=
+  crepStampExactDomains_fixClock_step rfl rfl memDec shMemDec first none stepState h
+
+/-- `While` stamping site: the evaluator stamps `loopState`, the state
+    component of `fix_clock` applied to the loop body's run on the
+    dec-clocked state. -/
+theorem crepStampExactDomains_while_loop {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (body : CrepProgHOL width) (res : Option (CrepResultHOLExact width))
+    (loopState : CrepSemHOLState width σ)
+    (h : fixClockCrepSemHOL (decClockCrepSemHOL state)
+        (evalCrepSemHOLProg (decClockCrepSemHOL state) memDec shMemDec body) =
+          (res, loopState)) :
+    crepStampExactDomains state loopState = loopState :=
+  crepStampExactDomains_fixClock_step (base := state) (callee := decClockCrepSemHOL state)
+    (by simp) (by simp) memDec shMemDec body res loopState h
+
+/-- `Call` handler stamping site: the evaluator stamps
+    `{ bodyState with locals := state.locals }`, where `bodyState` is the state
+    component of the callee body's `fix_clock`-wrapped run. -/
+theorem crepStampExactDomains_call_handler {width : Nat} [NeZero width] {σ : Type}
+    {base callee : CrepSemHOLState width σ}
+    (hmem : callee.memaddrs = base.memaddrs)
+    (hsh : callee.shMemaddrs = base.shMemaddrs)
+    (memDec : (a : BitVec width) → Decidable (callee.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (callee.shMemaddrs a))
+    (body : CrepProgHOL width) (res : Option (CrepResultHOLExact width))
+    (bodyState : CrepSemHOLState width σ)
+    (h : fixClockCrepSemHOL callee
+        (evalCrepSemHOLProg callee memDec shMemDec body) = (res, bodyState)) :
+    crepStampExactDomains base { bodyState with locals := base.locals } =
+      { bodyState with locals := base.locals } :=
+  let hd := fixClockCrepSemHOL_step_domains hmem hsh memDec shMemDec body res bodyState h
+  crepStampExactDomains_eq_self base _ (by simpa using hd.1) (by simpa using hd.2)
+
 /-- Flapjack-only transport of an explicit memory-domain decision procedure
     across a proved equality of exact state projections. This keeps the
     evaluator's membership decider explicit instead of introducing classical
