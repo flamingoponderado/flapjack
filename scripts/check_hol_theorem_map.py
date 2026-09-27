@@ -330,6 +330,20 @@ DEFINITION_RE = re.compile(
     r"(?:def|abbrev|opaque|theorem|lemma)\s+([^\s:({\[]+)"
 )
 DOCUMENTED_MISMATCHES = {
+    ("Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean", "evalCrepSemHOLProgExact_seq_fixClockFree"): (
+        "cakeml/pancake/semantics/crepSemScript.sml",
+        "evaluate_def",
+        "Coordinator review PR #1168: the local fix-clock-free Seq equation is valid, but "
+        "whole-evaluator agreement between evalCrepSemHOLProgExact and HOL evaluate has not "
+        "been reviewed across Call, domain stamping, and FFI. Tag withdrawn pending that review.",
+    ),
+    ("Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean", "evalCrepSemHOLProgExact_while_fixClockFree"): (
+        "cakeml/pancake/semantics/crepSemScript.sml",
+        "evaluate_def",
+        "Coordinator review PR #1168: the local fix-clock-free While equation is valid, but "
+        "whole-evaluator agreement between evalCrepSemHOLProgExact and HOL evaluate has not "
+        "been reviewed across Call, domain stamping, and FFI. Tag withdrawn pending that review.",
+    ),
     ("Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean", "evalCrepSemHOLProgExact_skip"): (
         "cakeml/pancake/semantics/crepSemScript.sml",
         "evaluate_def",
