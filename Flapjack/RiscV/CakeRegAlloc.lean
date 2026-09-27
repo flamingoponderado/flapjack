@@ -619,6 +619,189 @@ theorem mapValues_representsHOLNodeList {α β : Type u} (f : α → β)
     rw [get_mapValues, hget i hi']
     simp
 
+/-! ### The production `ofNatInfoMap` fold
+
+`ofNatInfoMap` is the fold that builds a `CakeNodeMap` from a HOL association
+list, with the newest binding for a key winning.  Production uses it where the
+original passes a source-keyed `num_map` directly to the allocator (for example
+the spill-cost table through `cakeSpillCostMap`).  The lemmas below pin the
+production fold to the HOL first-binding association-list lookup
+(`lookupNatInfo`/`cakeMapLookup`) and to `RepresentsHOLNodeList` for the dense
+indexed list shape.  These support statements remain untagged: they do not by
+themselves authorize a `list_as_array` qualifier on a HOL theorem. -/
+
+/-- A first-binding lookup commutes with an out-of-range `cakeMapUpdate` at the
+    looked-up key: the update supplies the value.  Flapjack-only checked
+    helper for the general `set`/`get` laws below. -/
+theorem lookupNatInfo_cakeMapUpdate_self {α : Type u} (m : NatInfoMap α)
+    (i : Nat) (v : α) :
+    Flapjack.lookupNatInfo i (cakeMapUpdate m i v) = some v := by
+  induction m with
+  | nil => simp [cakeMapUpdate, Flapjack.lookupNatInfo]
+  | cons entry rest ih =>
+      obtain ⟨j, w⟩ := entry
+      by_cases h : (i == j)
+      · simp [cakeMapUpdate, h, Flapjack.lookupNatInfo]
+      · have hji : (j == i) = false := by
+          rw [Bool.eq_false_iff]
+          intro hji
+          exact h ((beq_iff_eq.mp hji).symm ▸ by simp)
+        simp [cakeMapUpdate, h, hji, Flapjack.lookupNatInfo, ih]
+
+/-- A first-binding lookup is unchanged by an out-of-range `cakeMapUpdate` at a
+    different key. -/
+theorem lookupNatInfo_cakeMapUpdate_of_ne {α : Type u} (m : NatInfoMap α)
+    (i k : Nat) (v : α) (hki : k ≠ i) :
+    Flapjack.lookupNatInfo i (cakeMapUpdate m k v) = Flapjack.lookupNatInfo i m := by
+  have hki' : (k == i) = false := by
+    rw [Bool.eq_false_iff]; exact fun h => hki (beq_iff_eq.mp h)
+  induction m with
+  | nil => simp [cakeMapUpdate, Flapjack.lookupNatInfo, hki']
+  | cons entry rest ih =>
+      obtain ⟨j, w⟩ := entry
+      by_cases hk : (k == j)
+      · have hkj : k = j := beq_iff_eq.mp hk
+        have hji : (j == i) = false := by
+          rw [Bool.eq_false_iff]
+          intro h
+          exact hki (hkj.trans (beq_iff_eq.mp h))
+        simp [cakeMapUpdate, hk, hji, hki', Flapjack.lookupNatInfo]
+      · by_cases hji : (j == i)
+        · simp [cakeMapUpdate, hk, hji, Flapjack.lookupNatInfo]
+        · simp [cakeMapUpdate, hk, hji, Flapjack.lookupNatInfo, ih]
+
+/-- A `set` at any index reads back the assigned value, whether the binding
+    lands in the dense array or in the extension map. -/
+theorem get_set_self {α : Type u} (m : CakeNodeMap α) (i : Nat) (v : α) :
+    get (set m i v) i = some v := by
+  by_cases hi : i < m.slots.size
+  · simp [get, set, hi]
+  · unfold set
+    rw [if_neg hi]
+    unfold get
+    rw [dif_neg (by simpa using hi)]
+    unfold cakeMapLookup
+    exact lookupNatInfo_cakeMapUpdate_self m.outside i v
+
+/-- A `set` at a different index leaves the read at `i` unchanged, whether the
+    binding lands in the dense array or in the extension map. -/
+theorem get_set_of_ne {α : Type u} (m : CakeNodeMap α) (i k : Nat) (v : α)
+    (hki : k ≠ i) : get (set m k v) i = get m i := by
+  by_cases hi : i < m.slots.size
+  · by_cases hk : k < m.slots.size
+    · simp [get, set, hi, hk, hki]
+    · simp [get, set, hi, hk]
+  · by_cases hk : k < m.slots.size
+    · simp [get, set, hi, hk]
+    · simp [get, set, hi, hk, cakeMapLookup,
+        lookupNatInfo_cakeMapUpdate_of_ne m.outside i k v hki]
+
+/-- The `ofNatInfoMap` fold agrees with the HOL first-binding association-list
+    lookup `cakeMapLookup` at every index, whether the binding lands in the
+    dense array or in the extension map.  This is the get law for the
+    production fold that feeds the allocator's spill-cost node map. -/
+theorem get_ofNatInfoMap {α : Type u} (n : Nat) (m : NatInfoMap α) (i : Nat) :
+    get (ofNatInfoMap n m) i = cakeMapLookup m i := by
+  induction m generalizing i with
+  | nil =>
+      by_cases hi : i < n
+      · simp [ofNatInfoMap, ofSize, get, hi, cakeMapLookup, Flapjack.lookupNatInfo]
+      · simp [ofNatInfoMap, ofSize, get, hi, cakeMapLookup, Flapjack.lookupNatInfo]
+  | cons entry rest ih =>
+      obtain ⟨k, v⟩ := entry
+      change get (set (ofNatInfoMap n rest) k v) i = cakeMapLookup ((k, v) :: rest) i
+      by_cases h : (k == i)
+      · have hki : k = i := beq_iff_eq.mp h
+        subst hki
+        rw [get_set_self]
+        simp [cakeMapLookup, Flapjack.lookupNatInfo]
+      · rw [get_set_of_ne _ _ _ _ (fun hki => h (beq_iff_eq.mpr hki))]
+        rw [ih]
+        simp [cakeMapLookup, Flapjack.lookupNatInfo, h]
+
+/-- The `ofNatInfoMap` fold preserves the array dimension, so a later in-range
+    `set` never grows the extension map. -/
+theorem ofNatInfoMap_slots_size {α : Type u} (n : Nat) (m : NatInfoMap α) :
+    (ofNatInfoMap n m).slots.size = n := by
+  induction m with
+  | nil => simp [ofNatInfoMap, ofSize]
+  | cons e rest ih =>
+      obtain ⟨k, v⟩ := e
+      change (set (ofNatInfoMap n rest) k v).slots.size = n
+      rw [slots_size_set]
+      exact ih
+
+/-- If every key of the association list is in range, the `ofNatInfoMap` fold
+    leaves the extension map empty, matching a bounded HOL node field. -/
+theorem ofNatInfoMap_outside_eq_nil {α : Type u} (n : Nat) (m : NatInfoMap α)
+    (h : ∀ e ∈ m, e.1 < n) : (ofNatInfoMap n m).outside = [] := by
+  induction m with
+  | nil => simp [ofNatInfoMap, ofSize]
+  | cons e rest ih =>
+      obtain ⟨k, v⟩ := e
+      have hk : k < (ofNatInfoMap n rest).slots.size := by
+        rw [ofNatInfoMap_slots_size]
+        exact h (k, v) (by simp)
+      have hrest : ∀ e' ∈ rest, e'.1 < n := fun e' he' => h e' (by simp [he'])
+      change (set (ofNatInfoMap n rest) k v).outside = []
+      simp [set, hk, ih hrest]
+
+/-- Every key of an indexed `mapIdx` field is below its length plus the index
+    offset. -/
+theorem mapIdx_fst_lt {α : Type u} (values : List α) (s : Nat) (e : Nat × α)
+    (he : e ∈ values.mapIdx (fun j v => (j + s, v))) :
+    e.1 < values.length + s := by
+  rw [List.mem_mapIdx] at he
+  obtain ⟨i, hi, hf⟩ := he
+  rw [← hf]
+  omega
+
+/-- First-binding lookup of an indexed `mapIdx` field returns the field element:
+    the keys are the distinct ascending indices, so no earlier entry shadows the
+    one at the looked-up index. -/
+theorem lookupNatInfo_mapIdx_add {α : Type u} (values : List α) :
+    ∀ (s : Nat) (i : Nat) (hi : i < values.length),
+      Flapjack.lookupNatInfo (i + s)
+        (values.mapIdx (fun j v => (j + s, v))) = some (values.get ⟨i, hi⟩) := by
+  induction values with
+  | nil => intro s i hi; simp at hi
+  | cons v vs ih =>
+      intro s i hi
+      rw [List.mapIdx_cons]
+      have hfun : (fun (i : Nat) (v : α) => (i + 1 + s, v)) =
+          (fun (j : Nat) (v : α) => (j + (s + 1), v)) := by
+        funext j v; congr 1; omega
+      cases i with
+      | zero => simp [Flapjack.lookupNatInfo]
+      | succ j =>
+          rw [hfun]
+          have hj : j < vs.length := by simpa using hi
+          have hne : ¬ (s = j + 1 + s) := by omega
+          simp only [Flapjack.lookupNatInfo, Nat.zero_add, beq_iff_eq, hne, if_false]
+          have hkey : j + 1 + s = j + (s + 1) := by omega
+          rw [hkey]
+          rw [ih (s + 1) j hj]
+          simp [List.getElem_cons_succ]
+
+/-- The checked node-list representation is preserved by the production
+    `ofNatInfoMap` fold fed the dense indexed association list of a HOL node
+    field.  This is the fromList direction of the `ofList`/readback roundtrip
+    over `RepresentsHOLNodeList`: the array dimension is the list length, the
+    extension map is empty, and every in-range read returns the list element. -/
+theorem ofNatInfoMap_mapIdx_representsHOLNodeList {α : Type u} (values : List α) :
+    RepresentsHOLNodeList
+      (ofNatInfoMap values.length (values.mapIdx (fun i v => (i, v)))) values := by
+  refine ⟨?_, ?_, ?_⟩
+  · exact ofNatInfoMap_outside_eq_nil values.length _ (fun e he => by
+      have := mapIdx_fst_lt values 0 e (by simpa using he)
+      simpa using this)
+  · exact ofNatInfoMap_slots_size values.length _
+  · intro i hi
+    rw [get_ofNatInfoMap]
+    change Flapjack.lookupNatInfo i (values.mapIdx (fun j v => (j + 0, v))) =
+      some (values.get ⟨i, hi⟩)
+    exact lookupNatInfo_mapIdx_add values 0 i hi
+
 /-- The field read back as an association list, ascending by node, for
     diagnostics.  Every key keeps the value `get` returns for it. -/
 def toNatInfoMap {α : Type u} (m : CakeNodeMap α) : NatInfoMap α :=
