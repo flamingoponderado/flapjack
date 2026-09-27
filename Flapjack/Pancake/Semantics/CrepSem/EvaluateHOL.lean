@@ -1618,6 +1618,89 @@ clock-indexed event-prefix chain (HOL `crepPropsScript.sml:1020`
   rw [evalCrepSemHOLProg_tick]
   split <;> rfl
 
+/-! ## FFI reduction for the recursive non-FFI clauses
+
+The base FFI-preservation lemmas above cover the non-recursive clauses. These
+helpers and equations factor the remaining non-FFI control flow so that the
+event-preservation argument can be lifted clause by clause: the two derived
+states (`crepStampExactDomains`, `fixClockCrepSemHOL`) preserve `ffi`, and each
+recursive clause's result `ffi` is exactly the `ffi` of its sub-evaluation (on a
+state with the same `ffi`). Flapjack infrastructure for the clock-indexed
+`ioEvents` chain tracked by `flapjack-pxn.18.4.8.2`; untagged. `while`, `call`,
+and the FFI-calling `shMem`/`extCall` clauses remain for later children. -/
+
+/-- Domain stamping only rewrites the membership predicates, so it preserves the
+    FFI component of the state. -/
+@[simp] theorem crepStampExactDomains_ffi {width : Nat} [NeZero width] {σ : Type}
+    (base state : CrepSemHOLState width σ) :
+    (crepStampExactDomains base state).ffi = state.ffi := rfl
+
+/-- `fix_clock` only lowers the clock, so it preserves the FFI component of the
+    result state. -/
+@[simp] theorem fixClockCrepSemHOL_ffi {width : Nat} [NeZero width] {σ : Type}
+    {β : Type} (oldState : CrepSemHOLState width σ) (step : β × CrepSemHOLState width σ) :
+    (fixClockCrepSemHOL oldState step).2.ffi = step.2.ffi := rfl
+
+/-- FFI reduction for the `dec` clause: the result `ffi` is the sub-evaluation's
+    `ffi` on the bound state, or the input `ffi` on the failure branch. -/
+theorem evalCrepSemHOLProg_dec_ffi {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (name : Nat) (value : CrepExpHOL width) (body : CrepProgHOL width) :
+    (evalCrepSemHOLProg state memDec shMemDec (.dec name value body)).2.ffi =
+      (match crepExactEvalExp state memDec value with
+       | none => state.ffi
+       | some v =>
+           (evalCrepSemHOLProg (CrepSemHOLState.setVar name v state) memDec shMemDec body).2.ffi) := by
+  rw [evalCrepSemHOLProg_dec]
+  cases h : crepExactEvalExp state memDec value with
+  | none => rfl
+  | some v => rfl
+
+/-- FFI reduction for the `seq` clause: the result `ffi` is the first program's
+    `ffi` when it returns a result, otherwise the second program's `ffi`. -/
+theorem evalCrepSemHOLProg_seq_ffi {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (first second : CrepProgHOL width) :
+    (evalCrepSemHOLProg state memDec shMemDec (.seq first second)).2.ffi =
+      (match fixClockCrepSemHOL state (evalCrepSemHOLProg state memDec shMemDec first) with
+       | (none, stepState) =>
+           (evalCrepSemHOLProg (crepStampExactDomains state stepState) memDec shMemDec second).2.ffi
+       | (some _, stepState) => stepState.ffi) := by
+  rw [evalCrepSemHOLProg_seq]
+  cases h : fixClockCrepSemHOL state (evalCrepSemHOLProg state memDec shMemDec first) with
+  | mk result stepState =>
+      cases result with
+      | none => rfl
+      | some res => rfl
+
+/-- FFI reduction for the `ite` clause: the result `ffi` is the taken branch's
+    `ffi`, or the input `ffi` when the condition is not a `word`. -/
+theorem evalCrepSemHOLProg_ite_ffi {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (condition : CrepExpHOL width) (thenBranch elseBranch : CrepProgHOL width) :
+    (evalCrepSemHOLProg state memDec shMemDec (.ite condition thenBranch elseBranch)).2.ffi =
+      (match crepExactEvalExp state memDec condition with
+       | some (.word w) =>
+           if w ≠ 0 then (evalCrepSemHOLProg state memDec shMemDec thenBranch).2.ffi
+           else (evalCrepSemHOLProg state memDec shMemDec elseBranch).2.ffi
+       | _ => state.ffi) := by
+  rw [evalCrepSemHOLProg_ite]
+  cases h : crepExactEvalExp state memDec condition with
+  | none => rfl
+  | some value =>
+      cases value with
+      | word w =>
+          simp only []
+          by_cases hw : w = 0
+          · simp [hw]
+          · rw [if_pos hw, if_pos hw]
+
 /-- HOL `evaluate (Call caltyp fname argexps, s)` (`crepSemScript.sml:330-363`):
     evaluate the arguments, look up the code, require distinct formals, install
     the callee locals under `dec_clock`, run the body under `fix_clock`, then
