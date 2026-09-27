@@ -3568,6 +3568,117 @@ open Flapjack.Pancake.PanLang (MlS ShapeHOL ExpHOL ProgHOL)
 
 namespace Flapjack
 
+/-- Flapjack-specific pair wrapper for the source `Seq` clause. This is not a
+    separate HOL declaration: it follows from the canonical finite-state
+    `evaluate_def` line-780 clause and the field-for-field PanProps/PanSem
+    carrier codec. It exposes the same control flow to the clock-induction
+    cases below. -/
+theorem evaluateHOLFinitePair_seq {width : Nat} {σ : Type} [NeZero width]
+    (state : PanPropsEvalStateFiniteExact width σ) (first second : ProgHOL width) :
+    PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state (.seq first second) =
+      (let firstOutput := PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state first
+       match firstOutput.1 with
+       | none => PanPropsEvalStateFiniteExact.evaluateHOLFinitePair firstOutput.2 second
+       | some _ => firstOutput) := by
+  classical
+  unfold PanPropsEvalStateFiniteExact.evaluateHOLFinitePair
+  rw [evaluateHOLFiniteState_seq_line780]
+  cases state.toPanSemFinite.evaluateHOLFiniteState first with
+  | mk result post =>
+      cases result <;> simp [PanPropsEvalStateFiniteExact.toPanSemFinite,
+        PanPropsEvalStateFiniteExact.ofPanSemFinite]
+
+/-- Flapjack-specific clock bound for the pair wrapper, derived from the
+    canonical exact finite evaluator's clock theorem. -/
+theorem evaluateHOLFinitePair_clock_le {width : Nat} {σ : Type} [NeZero width]
+    (state : PanPropsEvalStateFiniteExact width σ) (program : ProgHOL width) :
+    (PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state program).2.clock ≤
+      state.clock := by
+  have h := evaluateHOLFiniteState_clock_le state.toPanSemFinite program
+  change (PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite program).2.clock ≤
+    state.clock
+  exact h
+
+/-- Genuine recursive-induction `Seq` case of HOL `evaluate_clock_sub`. The
+    high-clock source run is split at the first statement; both recursive
+    induction hypotheses use the same clock decrement, and the second is
+    reached only in the normal-result branch. -/
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_clock_sub"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateClockSubSeqCaseHOLFinite {width : Nat} {σ : Type} [NeZero width]
+    (first second : ProgHOL width) :
+    ∀ (state : PanPropsEvalStateFiniteExact width σ)
+      (result : Option (PanSemResultExact width))
+      (st : PanPropsEvalStateFiniteExact width σ) (ck : Nat),
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state (.seq first second) =
+        (result, { st with clock := st.clock + ck }) →
+      result ≠ some .timeOut →
+      (∀ (state' : PanPropsEvalStateFiniteExact width σ)
+          (result' : Option (PanSemResultExact width))
+          (st' : PanPropsEvalStateFiniteExact width σ) (ck' : Nat),
+        PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state' first =
+          (result', { st' with clock := st'.clock + ck' }) →
+        result' ≠ some .timeOut →
+        PanPropsEvalStateFiniteExact.evaluateHOLFinitePair
+          { state' with clock := state'.clock - ck' } first = (result', st')) →
+      (∀ (state' : PanPropsEvalStateFiniteExact width σ)
+          (result' : Option (PanSemResultExact width))
+          (st' : PanPropsEvalStateFiniteExact width σ) (ck' : Nat),
+        PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state' second =
+          (result', { st' with clock := st'.clock + ck' }) →
+        result' ≠ some .timeOut →
+        PanPropsEvalStateFiniteExact.evaluateHOLFinitePair
+          { state' with clock := state'.clock - ck' } second = (result', st')) →
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair
+        { state with clock := state.clock - ck} (.seq first second) = (result, st) := by
+  classical
+  intro state result st ck hRun hNotTimeout ihFirst ihSecond
+  rw [evaluateHOLFinitePair_seq] at hRun ⊢
+  let firstOutput := PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state first
+  cases hFirstResult : firstOutput.1 with
+  | some firstResult =>
+      have hresult : result = some firstResult := by
+        have h := congrArg Prod.fst hRun
+        simpa [firstOutput, hFirstResult] using h.symm
+      subst result
+      have hFirstPair : firstOutput = (some firstResult,
+          { st with clock := st.clock + ck }) := by
+        simpa [firstOutput, hFirstResult] using hRun
+      have hFirstLow := ihFirst state (some firstResult) st ck hFirstPair hNotTimeout
+      simp [hFirstLow]
+  | none =>
+      have hSecondRun :
+          PanPropsEvalStateFiniteExact.evaluateHOLFinitePair firstOutput.2 second =
+            (result, { st with clock := st.clock + ck }) := by
+        simpa [firstOutput, hFirstResult] using hRun
+      have hSecondClock := evaluateHOLFinitePair_clock_le firstOutput.2 second
+      have hOutputClock := congrArg
+        (fun pair : Option (PanSemResultExact width) × PanPropsEvalStateFiniteExact width σ =>
+          pair.2.clock) hSecondRun
+      have hClockBound : ck ≤ firstOutput.2.clock := by
+        have hExact :
+            (PanPropsEvalStateFiniteExact.evaluateHOLFinitePair firstOutput.2 second).2.clock =
+              st.clock + ck := by
+          simpa using hOutputClock
+        omega
+      let middle : PanPropsEvalStateFiniteExact width σ :=
+        { firstOutput.2 with clock := firstOutput.2.clock - ck }
+      have hFirstPair : firstOutput = (none, { middle with clock := middle.clock + ck }) := by
+        apply Prod.ext
+        · exact hFirstResult
+        · simp [middle, Nat.sub_add_cancel hClockBound]
+      have hFirstLow := ihFirst state none middle ck hFirstPair (by simp)
+      have hFirstLow' :
+          PanPropsEvalStateFiniteExact.evaluateHOLFinitePair
+            { state with clock := state.clock - ck } first = (none, middle) := by
+        simpa [firstOutput, hFirstResult, middle] using hFirstLow
+      have hSecondLow := ihSecond firstOutput.2 result st ck hSecondRun hNotTimeout
+      have hSecondLow' :
+          PanPropsEvalStateFiniteExact.evaluateHOLFinitePair middle second = (result, st) := by
+        simpa [middle] using hSecondLow
+      simp [hFirstLow', hSecondLow']
+
 set_option maxHeartbeats 4000000 in
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_clock_sub"
   (fmap_as_finite_support := [locals, globals, code, eshapes])
