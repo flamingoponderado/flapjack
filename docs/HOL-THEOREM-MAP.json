@@ -13641,5 +13641,13 @@
     "lean_name": "opt_mmap_el",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.16.19): HOL `Theorem opt_mmap_el` (cakeml/pancake/semantics/pan_commonPropsScript.sml:71) states `OPT_MMAP f l = SOME x /\\ n < LENGTH l ==> f (EL n l) = SOME (EL n x)`.  The Lean theorem `opt_mmap_el` has the same binders/hypotheses/conclusion with `OPT_MMAP` rendered as `List.mapM`, `LENGTH`/`EL` as the bounded `getElem`, and `SOME` as `some`; no extra hypotheses."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/pan_commonPropsScript.sml",
+    "hol_name": "domsub_commutes_fupdate",
+    "lean_path": "Flapjack/Pancake/Semantics/PanCommonProps.lean",
+    "lean_name": "domsub_commutes_fupdate",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.16.20): HOL domsub_commutes_fupdate (pan_commonPropsScript.sml:319) states `~MEM x xs /\\ LENGTH xs = LENGTH ys ==> (fm |++ ZIP (xs,ys)) \\\\ x = (fm \\\\ x) |++ ZIP (xs,ys)`. Lean renders `\\\\` as the reviewed Boolean-BEq FDOMSUB, `|++` as FUPDATE_LIST, `~MEM` as list non-membership and LENGTH as length; the proof reuses the untagged analogue FDOMSUB_FUPDATE_LIST_commutes (Flapjack/FiniteMap/Basic.lean:244). No extra hypotheses or side conditions."
   }
 ]
