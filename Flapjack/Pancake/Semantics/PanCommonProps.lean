@@ -680,4 +680,57 @@ theorem optMmapFlookupUpdateHOL [BEq α] [LawfulBEq α]
       exact hnotmem (he ▸ hkey)
     simp [hkx]
 
+/-- Exact port of HOL `distinct_lists_eq_disjoint`
+    (`cakeml/pancake/semantics/pan_commonPropsScript.sml:102`):
+    `distinct_lists xs ys <=> DISJOINT (set xs) (set ys)`.  HOL
+    `distinct_lists` is rendered as the Boolean `distinctListsHol xs ys = true`
+    (the established convention for this predicate), and the set-level
+    `DISJOINT (set xs) (set ys)` as the propositional `ListDisjoint xs ys`
+    (no common list member). -/
+@[hol "cakeml/pancake/semantics/pan_commonPropsScript.sml" "distinct_lists_eq_disjoint"]
+theorem distinct_lists_eq_disjoint {α : Type} [DecidableEq α] (xs ys : List α) :
+    (distinctListsHol xs ys = true) ↔ ListDisjoint xs ys :=
+  distinctListsHol_eq_true_iff_listDisjoint xs ys
+
+/-- Exact port of HOL `opt_mmap_el`
+    (`cakeml/pancake/semantics/pan_commonPropsScript.sml:71`): a successful
+    `OPT_MMAP` maps the `n`-th element of the input to the `n`-th element of
+    the output.  HOL's `EL` is rendered as the bounded `getElem` (the same
+    rendering used by `FLOOKUP_FUPDATE_LIST_zip_getElem`). -/
+@[hol "cakeml/pancake/semantics/pan_commonPropsScript.sml" "opt_mmap_el"]
+theorem opt_mmap_el {α β : Type} (l : List α) (f : α → Option β) (x : List β)
+    (n : Nat) (h : l.mapM f = some x) (hn : n < l.length) :
+    f (l[n]'hn) =
+      some (x[n]'(by rw [← opt_mmap_length_eq l f x h]; exact hn)) := by
+  have hlen := opt_mmap_length_eq l f x h
+  have hn' : n < x.length := by rw [← hlen]; exact hn
+  have hmap := (optMmapEqSome l f x).mp h
+  have hpoint := congrArg (fun ys => ys[n]?) hmap
+  rw [List.getElem?_map, List.getElem?_eq_getElem hn, Option.map_some,
+    List.getElem?_map, List.getElem?_eq_getElem hn', Option.map_some] at hpoint
+  exact Option.some.inj hpoint
+
+/-- Exact port of HOL `domsub_commutes_fupdate`
+    (`cakeml/pancake/semantics/pan_commonPropsScript.sml:319`): domain
+    subtraction at a key absent from the update list commutes with the list
+    update.  HOL `\\` is rendered as the Boolean-`BEq` `FDOMSUB`, `|++` as
+    `FUPDATE_LIST`, `~MEM` as list non-membership and `LENGTH` as `length`. -/
+@[hol "cakeml/pancake/semantics/pan_commonPropsScript.sml" "domsub_commutes_fupdate"]
+theorem domsub_commutes_fupdate [BEq α] [LawfulBEq α]
+    (xs : List α) (ys : List β) (fm : FiniteMap α β) (x : α)
+    (h : x ∉ xs) (hlen : xs.length = ys.length) :
+    FDOMSUB (FUPDATE_LIST fm (xs.zip ys)) x =
+      FUPDATE_LIST (FDOMSUB fm x) (xs.zip ys) :=
+  FDOMSUB_FUPDATE_LIST_commutes xs ys fm x h hlen
+
+/-- Exact port of HOL `map_the_some_cancel`
+    (`cakeml/pancake/semantics/pan_commonPropsScript.sml:332`): mapping
+    `THE ∘ SOME` over a list is the identity.  HOL's partial `THE` applied to
+    `SOME x` returns `x`, rendered as the total `Option.get` with its
+    `isSome` proof. -/
+@[hol "cakeml/pancake/semantics/pan_commonPropsScript.sml" "map_the_some_cancel"]
+theorem mapTheSomeCancelHOL {α : Type} (xs : List α) :
+    xs.map (fun x => (some x : Option α).get (by simp)) = xs := by
+  simp
+
 end Flapjack

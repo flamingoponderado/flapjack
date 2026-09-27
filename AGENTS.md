@@ -228,23 +228,36 @@ qualifier to production declarations until checker tests and source review pass.
 `(fmap_as_finite_support := [field, ...])` when a HOL `|->` finite-map field is
 represented by the reviewed canonical Lean translation `HolFiniteMapExact`
 (a `lookup` function plus a `finiteSupport` proposition). Every named field must
-be declared by ONE owning carrier structure in the same module, whose field
-types use `HolFiniteMapExact`; a raw function-backed `α → Option β` map is
-ineligible, and fields split across several structures are rejected. When a
-module declares several structures with the same field names (for example a
-broad state and its finite-support counterpart), the tagged declaration's own
-carrier disambiguates: the owner must be named in that declaration's signature.
-The module must contain the checked canonical witness
-`holFmapAsFiniteSupportWitness`,
-whose statement names that owning structure and states a real `toX`/`ofX`
-roundtrip between it and its broad counterpart (a bare `State -> Broad -> State`
-arrow, or an unrelated counterpart mention, is rejected; the broad counterpart
-need not be declared in the same module). The
-reference checker verifies field/owner/carrier/witness shape and Lake checks the
-proof; neither establishes HOL correspondence. The qualifier is a representation
-statement only: it does not authorize changed quantifiers, hypotheses,
-conclusions, `BEq` side conditions, or word-model differences, and every tagged
-declaration still needs its own statement/side-condition review.
+be declared by ONE owning carrier structure whose field types use
+`HolFiniteMapExact`; a raw function-backed `α → Option β` map is ineligible, and
+fields split across several structures are rejected. Only HOL `|->` fields are
+eligible: an `sptree$num_map` (for example `loopSem$state`'s `locals`/`code`) is
+a tree map, not a `|->` finite map, so it must not be named here even when the
+Lean field uses `HolFiniteMapExact`. Represent such fields with their own
+reviewed carrier (for example `Flapjack/Misc/Sptree.lean`'s `Spt`) or wait for a
+dedicated qualifier, and leave the affected declaration untagged until then.
+The owning carrier may be
+declared in the tagged module or reached through its transitive imports (for
+example a tagged evaluator whose state carrier lives in a dedicated `HOLState`
+module). Do not declare a local duplicate of an imported state carrier just to
+satisfy placement; a same-named local copy that shadows the imported owner is
+rejected as ambiguous. When several in-scope structures declare the same field
+names, the tagged declaration's own signature disambiguates: the owner must be
+named there as a whole identifier. The tagged module must contain the checked
+canonical witness `holFmapAsFiniteSupportWitness`, whose statement names that
+owning structure and states a real `toX`/`ofX` roundtrip between it and its broad
+counterpart (a bare `State -> Broad -> State` arrow, or an unrelated counterpart
+mention, is rejected; the broad counterpart need not be declared in the same
+module). A witness declared under a fresh local namespace (to avoid clashing with
+an imported witness of the same name) is acceptable, and an imported witness may
+be re-exported as a local one. The reference checker verifies
+field/owner/carrier/witness shape and Lake checks the proof; neither establishes
+HOL correspondence. Source review must additionally confirm the imported owner is
+the reviewed carrier the evaluator actually uses, that no local duplicate carrier
+shadows it, and that the witness is non-vacuous. The qualifier is a
+representation statement only: it does not authorize changed quantifiers,
+hypotheses, conclusions, `BEq` side conditions, or word-model differences, and
+every tagged declaration still needs its own statement/side-condition review.
 
 **Qualify standalone finite-map carriers.** Use
 `(fmap_as_finite_support_result)` when a tagged declaration is not a structure
@@ -325,6 +338,45 @@ universally bound key, and per-conjunct association, but it does not prove that
 the Lean witnesses and conjuncts correspond to the HOL map equalities, so source
 review must still compare each numbered witness against the
 HOL equality and record that comparison in the reviewer note.
+
+**Qualify the HOL word-dimension and FFI-universe translation.** Use
+`(words_as_type_indexed_bitvec)` when the only carrier difference from the HOL
+declaration is the standard translation of HOL's type-indexed `'a word`
+(dimension `dimindex (:α)`) to Lean's positive-width `BitVec width` and of HOL's
+`'ffi ffi_state` to a universe-0 Lean host type `σ : Type`. The tagged
+declaration must name `BitVec`, or name a reviewed width-indexed carrier
+structure (declared locally or reached through imports) whose own header carries
+`[NeZero <width>]` for its width parameter and some field of that SAME owner
+mentions `BitVec <width>` (directly, or through the single reviewed word abbrev
+`RiscV.Word <width>` at `Flapjack/RiscV/Model.lean:17` (`abbrev Word (width :
+Nat) := BitVec width`), which counts as the same `BitVec` carrier at that same
+width identifier) with that same width identifier; the carrier is
+resolved from its declaration, never accepted by name alone, and the
+`[NeZero <width>]` discharge and the word-carrier field must come from the
+SAME owning declaration and the same width identifier (a header with
+`[NeZero other]` or a field such as `BitVec 5 × HolWordLab width` does not
+qualify); the check is syntactic and resolves only the known reviewed abbrev
+`RiscV.Word`, not arbitrary abbrev unfolding, so any other word alias does not
+qualify until it is added to the reviewed abbrev list; a name with several owners (a
+local duplicate shadowing an imported owner) is rejected as ambiguous unless the
+signature uniquely resolves it. The
+declaration must retain `[NeZero width]` as the
+discharge of HOL's `dimindex (:α) ≥ 1`, and must not restate word-dimension
+positivity as an extra hypothesis (`width ≠ 0`, `0 < width`, `Nat.pos`,
+`NeZero.out`); when it mentions the FFI carrier `HolFfiState`, the host type must
+be bound at a `Type` universe without a universe-level variable. This is a
+conventional data-structure translation only: it authorizes no change to
+quantifiers, hypotheses, side conditions, or conclusions, and no cross-assistant
+agreement theorem is required. It cannot use `reviewed_exact`; use manifest
+status `reviewed_words_as_type_indexed_bitvec` after comparing the HOL and Lean
+declarations. When the same declaration also carries
+`fmap_as_finite_support`, use the combined status
+`reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec` (both qualifiers
+required together; the checker rejects either one missing). The reference
+checker reads the tagged declaration's signature, not its proof or body, when
+verifying the `BitVec`/`NeZero`/`Type` obligations; it remains syntactic and
+does not prove HOL-to-Lean correspondence, so source review must compare the
+declaration itself.
 
 **Port the executable path, too.** As HOL definitions are ported, make the
 compiler that `flapjack-compile` actually runs call the reviewed `@[hol]`

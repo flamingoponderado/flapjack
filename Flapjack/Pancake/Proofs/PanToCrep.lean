@@ -495,9 +495,9 @@ theorem noOverlapWrapRtNodup
     authorize the `Shape`/expression carriers, and no `NameRanged` witness
     exists because the output is a membership disjunction, not a name. The
     exact-carrier `comp_field` port is the tagged `compFieldHOL`
-    (`PanToCrep.lean`); a faithful exact port of this MEM lemma is tracked by
-    `flapjack-pxn.18.3.5.8.8` (the production analogue is used by the
-    `pan_to_crep` proof development). -/
+    (`PanToCrep.lean`); the faithful exact port of this MEM lemma is the
+    tagged `memCompFieldHOLExact_or_zero` below (this production analogue is
+    used by the `pan_to_crep` proof development). -/
 theorem compileField_mem_or_zero
     [OfNat α 0]
     (index : Nat) (shapes : List Shape) (expressions : List (CrepExp α))
@@ -625,6 +625,43 @@ theorem memCompFieldHOLExact {width : Nat} [NeZero width]
   have hmem' : candidate ∈ (compFieldHOL index shapes expressions).1 := by
     simpa [hcompiled] using hmem
   exact compFieldHOL_mem_of_index_lt index shapes expressions candidate hindex' hmem'
+
+/-- Exact port of HOL `mem_comp_field_lem`
+    (`pan_to_crepProofScript.sml:397-406`), which states
+    `!i l es x. MEM x (FST (comp_field i l es)) ==> MEM x es \/ x = Const 0w`.
+    The binder order `index`, `shapes`, `expressions`, `expression` follows
+    HOL's `i`, `l`, `es`, `x`; the shape and expression carriers are the exact
+    `ShapeHOL` and width-indexed `CrepExpHOL width`, and HOL's `Const 0w`
+    word literal is `CrepExpHOL.const (0 : BitVec width)`. This is the exact
+    counterpart of the production analogue `compileField_mem_or_zero`, which
+    stays untagged. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "mem_comp_field_lem"]
+theorem memCompFieldHOLExact_or_zero {width : Nat} [NeZero width]
+    (index : Nat) (shapes : List Flapjack.Pancake.PanLang.ShapeHOL)
+    (expressions : List (CrepExpHOL width)) (expression : CrepExpHOL width)
+    (hmem : expression ∈ (compFieldHOL index shapes expressions).1) :
+    expression ∈ expressions ∨ expression = CrepExpHOL.const (0 : BitVec width) := by
+  induction shapes generalizing index expressions with
+  | nil =>
+      simp [compFieldHOL] at hmem
+      exact Or.inr hmem
+  | cons shape shapes ih =>
+      cases index with
+      | zero =>
+          left
+          exact List.mem_of_mem_take hmem
+      | succ index =>
+          have hdrop : expression ∈
+              (compFieldHOL index shapes
+                (expressions.drop
+                  (Flapjack.Pancake.PanLang.sizeOfShapeHOL shape))).1 := by
+            simpa [compFieldHOL] using hmem
+          rcases ih index
+              (expressions.drop
+                (Flapjack.Pancake.PanLang.sizeOfShapeHOL shape)) hdrop with
+            hinput | hzero
+          · exact Or.inl (List.mem_of_mem_drop hinput)
+          · exact Or.inr hzero
 
 /-- HOL `filter_not_mem_self`: filtering a list by non-membership in that
     same list removes every element. -/
@@ -4791,5 +4828,87 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width]
   rfl
 
 end CtxtFcExact
+
+/-- Exact port of HOL `ctxt_fc_funcs_eq`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:2295`):
+    `(ctxt_fc cvs em vs shs ns).funcs = cvs`. The constructed context's
+    `funcs` field is definitionally the supplied function map. The statement
+    keeps HOL's argument order `(cvs, em, vs, shs, ns)` and its unrestricted
+    quantifiers; the only representation difference is the reviewed canonical
+    `HolFiniteMapExact` translation of HOL's `funname |-> ((varname # shape) #
+    shape)` finite map (names are `MlS` = `mlstring`, shapes are
+    `ShapeHOL` = `shape`), recorded by the `fmap_as_finite_support` qualifier on
+    the `funcs` field of the imported exact `PanToCrepContextExact` carrier
+    (same-module witness `CtxtFcExact.holFmapAsFiniteSupportWitness`). The
+    signature is width-indexed with `BitVec width` exception codes and
+    `[NeZero width]`, so HOL's type-indexed `'a word` translation is recorded by
+    the `(words_as_type_indexed_bitvec)` qualifier. Direct HOL-EVAL row
+    `functions_projection=T` in `scripts/hol-probes/ctxt_fc_probe.out` is
+    replayed by the kernel-checked regression in
+    `Flapjack.Test.PanToCrepContextExactParity`. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "ctxt_fc_funcs_eq"
+  (fmap_as_finite_support := [funcs])
+  (words_as_type_indexed_bitvec)]
+theorem ctxtFcFuncsEqHOL {width : Nat} [NeZero width]
+    (cvs : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ShapeHOL))
+    (em : HolFiniteMapExact MlS (BitVec width))
+    (vs : List MlS) (shs : List ShapeHOL) (ns : List Nat) :
+    (ctxtFcExactHOL cvs em vs shs ns : PanToCrepContextExact width).funcs = cvs := rfl
+
+/-- Exact port of HOL `ctxt_fc_eids_eq`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:2301`):
+    `(ctxt_fc cvs em vs shs ns).eids = em`. The constructed context's
+    `eids` field is definitionally the supplied exception-code map. The
+    statement keeps HOL's argument order `(cvs, em, vs, shs, ns)` and its
+    unrestricted quantifiers; the only representation difference is the
+    reviewed canonical `HolFiniteMapExact` translation of HOL's
+    `eid |-> 'a word` finite map (names are `MlS` = `mlstring`), recorded by
+    the `fmap_as_finite_support` qualifier on the `eids` field of the imported
+    exact `PanToCrepContextExact` carrier (same-module witness
+    `CtxtFcExact.holFmapAsFiniteSupportWitness`). The signature is width-indexed
+    with `BitVec width` exception codes and `[NeZero width]`, so HOL's
+    type-indexed `'a word` translation is recorded by the
+    `(words_as_type_indexed_bitvec)` qualifier. The direct HOL-EVAL projection
+    row is replayed by the kernel-checked regression in
+    `Flapjack.Test.PanToCrepContextExactParity`. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "ctxt_fc_eids_eq"
+  (fmap_as_finite_support := [eids])
+  (words_as_type_indexed_bitvec)]
+theorem ctxtFcEidsEqHOL {width : Nat} [NeZero width]
+    (cvs : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ShapeHOL))
+    (em : HolFiniteMapExact MlS (BitVec width))
+    (vs : List MlS) (shs : List ShapeHOL) (ns : List Nat) :
+    (ctxtFcExactHOL cvs em vs shs ns : PanToCrepContextExact width).eids = em := rfl
+
+/-- Exact port of HOL `ctxt_fc_vmax`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:2307`):
+    `(ctxt_fc ctxt.funcs em vs shs ns).vmax = MAX_LIST ns`. HOL's first
+    argument `ctxt.funcs` is a projection of an implicitly universally
+    quantified `context` record and `ctxt_fc` ignores it in the `vmax` clause,
+    so the Lean statement's bare `cvs` argument is equivalent. The statement
+    keeps HOL's argument order `(cvs, em, vs, shs, ns)` and its unrestricted
+    quantifiers; the constructed context's `vmax` field is definitionally
+    `maxList ns`, so the statement is a no-premise projection. `.vmax` is a
+    `Nat` that depends only on `ns`, so the conclusion does not traverse any
+    finite-map field, but the term is stated over the imported exact
+    `PanToCrepContextExact` carrier and binds the `cvs`/`em` maps to its
+    `funcs`/`eids` fields; the `fmap_as_finite_support := [funcs, eids]`
+    qualifier records that canonical `HolFiniteMapExact` translation
+    (same-module witness `CtxtFcExact.holFmapAsFiniteSupportWitness`). The
+    signature is width-indexed with `BitVec width` exception codes and
+    `[NeZero width]`, so HOL's type-indexed `'a word` translation is recorded by
+    the `(words_as_type_indexed_bitvec)` qualifier. Direct HOL-EVAL rows
+    `vmax_nonempty_list=T`/`vmax_empty_list=T` in
+    `scripts/hol-probes/ctxt_fc_probe.out` are replayed by the kernel-checked
+    regression in `Flapjack.Test.PanToCrepContextExactParity`. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "ctxt_fc_vmax"
+  (fmap_as_finite_support := [funcs, eids])
+  (words_as_type_indexed_bitvec)]
+theorem ctxtFcVmaxHOL {width : Nat} [NeZero width]
+    (cvs : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ShapeHOL))
+    (em : HolFiniteMapExact MlS (BitVec width))
+    (vs : List MlS) (shs : List ShapeHOL) (ns : List Nat) :
+    (ctxtFcExactHOL cvs em vs shs ns : PanToCrepContextExact width).vmax =
+      maxList ns := rfl
 
 end Flapjack

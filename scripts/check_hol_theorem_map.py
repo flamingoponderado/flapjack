@@ -321,6 +321,21 @@ DEFINITION_RE = re.compile(
     r"(?:def|abbrev|opaque|theorem|lemma)\s+([^\s:({\[]+)"
 )
 DOCUMENTED_MISMATCHES = {
+    ("Flapjack/Pancake/Semantics/LoopSemStateExact.lean", "LoopSemStateFiniteExact"): (
+        "cakeml/pancake/semantics/loopSemScript.sml",
+        "state",
+        "flapjack-ds10 (bead flapjack-jlj3.1, PR #1166 review item 3): HOL loopSem$state "
+        "locals/code are sptree$num_map, not |-> finite maps, so the fmap_as_finite_support "
+        "qualifier overclaimed the reviewed translation. Tag withdrawn; faithful sptree "
+        "carrier tracked by flapjack-jlj3.1.1.",
+    ),
+    ("Flapjack/Pancake/Semantics/LoopSemStateExact.lean", "getVarImm"): (
+        "cakeml/pancake/semantics/loopSemScript.sml",
+        "get_var_imm_def",
+        "flapjack-ds10 (bead flapjack-jlj3.1, PR #1166 review item 3): HOL locals is "
+        "sptree$num_map, not |->, so the fmap_as_finite_support qualifier overclaimed the "
+        "reviewed translation. Tag withdrawn; faithful sptree carrier tracked by flapjack-jlj3.1.1.",
+    ),
     ("Flapjack/Pancake/Proofs/PanSimp.lean", "collectPanValueStructs_panSimpDecls"): (
         "cakeml/pancake/proofs/pan_simpProofScript.sml",
         "decs_stcnames_compile_prog",
@@ -468,6 +483,21 @@ DOCUMENTED_MISMATCHES = {
         "carrier are differences beyond names_as_string. The concrete faithful "
         "port depends on the exact panSem evaluate and is tracked by "
         "flapjack-pxn.18.4.4 / flapjack-pxn.18.4.3 and flapjack-pxn.18.3.6.9. "
+    ),
+    ("Flapjack/Pancake/Semantics/PanSem/EvaluateClock.lean", "evalPanSemRecursiveCallFiniteContext_clock_le"): (
+        "cakeml/pancake/semantics/panSemScript.sml",
+        "evaluate_clock",
+        "flapjack-ds5 (source comparison, 2026-09-27; bead flapjack-4ac.3.48; "
+        "FLAPJACK-SPECIFIC, documented_mismatch). HOL evaluate_clock "
+        "(panSemScript.sml:755-766) bounds s'.clock <= s.clock over the faithful "
+        "panSem$state. The untagged Lean analogue "
+        "evalPanSemRecursiveCallFiniteContext_clock_le proves the same bound over "
+        "the exact finite-support clause-for-clause evaluator, which takes a "
+        "FiniteEvalContext (state plus threaded DecidablePred memaddrs/shMemaddrs) "
+        "rather than a bare state, and uses canonical HolFiniteMapExact maps "
+        "rather than HOL's mlstring-keyed finite maps. The extra decider context "
+        "argument and finite-map carrier are differences beyond names_as_string. "
+        "The faithful port is tracked by flapjack-qj5. "
     ),
     ("Flapjack/Pancake/Semantics/PanSem/ClockExact.lean", "fixClockHOLExact_IMP_LESS_EQ"): (
         "cakeml/pancake/semantics/panSemScript.sml",
@@ -1470,6 +1500,23 @@ DOCUMENTED_MISMATCHES = {
         "DeclHOL and exact compile_prog."
     ),
 }
+
+# Flapjack-specific theorems that support exact HOL ports but are deliberately
+# not ports of standalone HOL declarations. Most proof helpers live under
+# Proofs/ and are inventoried automatically; counterpart-side witnesses and
+# induction helpers belong beside their semantic definitions instead.
+INFRASTRUCTURE_THEOREMS = {
+    ("Flapjack/Pancake/Semantics/CrepProps/MemLoadFlatRel.lean", "holFmapAsFiniteSupportWitness"): (
+        "Same-module canonical finite-support witness required by the qualified "
+        "mem_load_flat_rel port. This witness restates the CrepSemHOLState / "
+        "CrepSemBroadState roundtrip and is not a standalone HOL theorem."
+    ),
+    ("Flapjack/Pancake/Semantics/CrepProps/MemLoadFlatRel.lean", "memLoadHOLExact_flatRead_mutual"): (
+        "Flapjack-specific mutual evaluator-induction helper for the strided "
+        "mem_load_flat_rel analogue. HOL has no standalone declaration with "
+        "this helper statement; its list cases are part of mem_loads_flat_rel."
+    ),
+}
 VALID_STATUSES = {
     "reviewed_exact",
     "reviewed_list_as_array",
@@ -1479,6 +1526,8 @@ VALID_STATUSES = {
     "reviewed_fmap_as_finite_support_result",
     "reviewed_fmap_as_finite_support_relation",
     "reviewed_fmap_as_finite_support_equalities",
+    "reviewed_words_as_type_indexed_bitvec",
+    "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
     "pending_statement_review",
     "documented_mismatch",
     "no_hol_reference_pending_classification",
@@ -1565,6 +1614,15 @@ def lean_definition_exists(root: Path, lean_path: str, lean_name: str) -> bool:
     )
 
 
+def lean_theorem_exists(root: Path, lean_path: str, lean_name: str) -> bool:
+    """Check a theorem helper in any counterpart module, including Semantics/."""
+    source = strip_comments((root / lean_path).read_text(encoding="utf-8"))
+    return any(
+        (match := THEOREM_RE.match(line)) and match.group(1) == lean_name
+        for line in source.splitlines()
+    )
+
+
 def proof_theorem_declarations(root: Path = ROOT) -> set[tuple[str, str]]:
     """Return file/name pairs for theorem and lemma declarations under Proofs.
 
@@ -1605,7 +1663,7 @@ def tagged_declarations(
         tuple[str, str],
         tuple[
             str, str, tuple[str, ...], tuple[str, ...], tuple[str, ...],
-            tuple[str, ...], bool, tuple[str, ...], bool,
+            tuple[str, ...], bool, tuple[str, ...], bool, bool,
         ],
     ] = {}
     for path in REFS["lean_files"]():
@@ -1613,7 +1671,7 @@ def tagged_declarations(
         lines = path.read_text(encoding="utf-8").splitlines()
         for (line, hol_path, hol_name, _hol_line, list_fields,
              names_fields, boundary_fields, fmap_fields, fmap_result,
-             fmap_relation, fmap_equalities) in HOL_ATTRIBUTE_SITES(lines):
+             fmap_relation, fmap_equalities, words_bitvec) in HOL_ATTRIBUTE_SITES(lines):
             lean_name = FIND_LEAN_DECL(lines, line - 1)
             key = (rel, lean_name)
             # Source-line disambiguation is checked against the HOL script by
@@ -1621,7 +1679,7 @@ def tagged_declarations(
             # stable HOL file/name pair, not by an editable source line.
             value = (hol_path, hol_name, list_fields, names_fields,
                      boundary_fields, fmap_fields, fmap_result, fmap_relation,
-                     fmap_equalities)
+                     fmap_equalities, words_bitvec)
             if key in tagged and tagged[key] != value:
                 raise ValueError(f"conflicting @[hol] references for {rel}:{lean_name}")
             tagged[key] = value
@@ -1634,7 +1692,7 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
     inventory: dict[tuple[str, str], dict[str, Any]] = {}
     for (lean_path, lean_name), (
         hol_path, hol_name, list_fields, names_fields, boundary_fields, fmap_fields,
-        fmap_result, fmap_relation, fmap_equalities,
+        fmap_result, fmap_relation, fmap_equalities, words_bitvec,
     ) in tagged.items():
         entry = {
             "hol_path": hol_path,
@@ -1661,6 +1719,8 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
             ]
         if fmap_equalities:
             entry["fmap_as_finite_support_equalities"] = True
+        if words_bitvec:
+            entry["words_as_type_indexed_bitvec"] = True
         inventory[(lean_path, lean_name)] = entry
 
     for lean_path, lean_name in proof_theorem_declarations(root):
@@ -1688,6 +1748,18 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
             "reviewer": reviewer,
         }
 
+    for (lean_path, lean_name), reviewer in INFRASTRUCTURE_THEOREMS.items():
+        if not lean_theorem_exists(root, lean_path, lean_name):
+            raise ValueError(f"infrastructure theorem is not a current theorem: {lean_path}:{lean_name}")
+        inventory[(lean_path, lean_name)] = {
+            "hol_path": None,
+            "hol_name": None,
+            "lean_path": lean_path,
+            "lean_name": lean_name,
+            "statement_status": "no_hol_reference_pending_classification",
+            "reviewer": reviewer,
+        }
+
     # These source/theorem pairs were checked against their HOL declaration
     # statements in the active review task, not merely copied from attributes.
     reviewed_exact = {
@@ -1705,6 +1777,15 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         ("Flapjack/Pancake/Proofs/PanToCrep.lean", "firstCompileProgAllDistinct"),
         ("Flapjack/Pancake/Proofs/PanGlobals.lean", "map_pick_up_first"),
         ("Flapjack/Pancake/Proofs/PanGlobals.lean", "tuple_4_o"),
+        ("Flapjack/Pancake/Proofs/PanGlobals.lean", "goodResHOL"),
+        ("Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean", "convertResHOL"),
+        ("Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean", "convertResHOL_eqCase1"),
+        ("Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean", "isContResHOL"),
+        ("Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean", "isContResHOL_eqDisj"),
+        ("Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean", "resVsHOL"),
+        ("Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean", "everyConvertVEq"),
+        ("Flapjack/Pancake/Proofs/PanStructs/StructInfosOkExact.lean",
+         "structInfosOkHOLExact_lookup_fields_nodup"),
         ("Flapjack/Pancake/Proofs/PanGlobals.lean", "ALOOKUP_MAP3"),
         ("Flapjack/Pancake/Proofs/PanGlobals.lean", "ALOOKUP_MAP4"),
         ("Flapjack/Pancake/PanGlobals.lean", "fpermName"),
@@ -1718,6 +1799,7 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         ("Flapjack/Pancake/Proofs/PanGlobals.lean", "fpermName_cong"),
         ("Flapjack/Pancake/Proofs/PanGlobals.lean", "EVERY_fperm_decsHOL"),
         ("Flapjack/Pancake/Proofs/PanGlobals.lean", "FILTER_decs_fperm_decsHOL"),
+        ("Flapjack/Pancake/Proofs/PanGlobals.lean", "functionsFpermDecsHOL"),
         ("Flapjack/Pancake/Proofs/PanToCrep.lean", "mod_eq_of_lt_eq"),
         ("Flapjack/Pancake/Proofs/PanToCrep.lean", "option_ne_none_iff_exists"),
         ("Flapjack/Pancake/Proofs/PanToCrep.lean", "prod_mk_pair_eq_id"),
@@ -1902,6 +1984,7 @@ def validate_inventory(
         fmap_result = bool(tag[6]) if tag is not None else False
         fmap_relation = tag[7] if tag is not None else ()
         fmap_equalities = bool(tag[8]) if tag is not None and len(tag) > 8 else False
+        words_bitvec = bool(tag[9]) if tag is not None and len(tag) > 9 else False
         manifest_list_fields = tuple(record.get("list_as_array", ()))
         manifest_names_fields = tuple(record.get("names_as_string", ()))
         manifest_boundary_fields = tuple(record.get("names_as_string_boundary", ()))
@@ -1940,6 +2023,45 @@ def validate_inventory(
         if manifest_fmap_equalities != fmap_equalities:
             errors.append(
                 f"{key[0]}:{key[1]}: manifest fmap_as_finite_support_equalities does not match its @[hol] tag"
+            )
+        manifest_words_bitvec = bool(record.get("words_as_type_indexed_bitvec", False))
+        if manifest_words_bitvec != words_bitvec:
+            errors.append(
+                f"{key[0]}:{key[1]}: manifest words_as_type_indexed_bitvec does not match its @[hol] tag"
+            )
+        combined_words_status = (
+            "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec"
+        )
+        if words_bitvec and fmap_fields and status != combined_words_status:
+            errors.append(
+                f"{key[0]}:{key[1]}: fmap_as_finite_support combined with "
+                "words_as_type_indexed_bitvec requires the combined review status "
+                "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec"
+            )
+        if status == combined_words_status and not (words_bitvec and fmap_fields):
+            errors.append(
+                f"{key[0]}:{key[1]}: "
+                "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec needs "
+                "both the fmap_as_finite_support and words_as_type_indexed_bitvec @[hol] qualifiers"
+            )
+        if words_bitvec and status == "reviewed_exact":
+            errors.append(
+                f"{key[0]}:{key[1]}: words_as_type_indexed_bitvec @[hol] tag cannot have "
+                "reviewed_exact status; use reviewed_words_as_type_indexed_bitvec after source comparison"
+            )
+        if words_bitvec and status not in {
+            "reviewed_words_as_type_indexed_bitvec",
+            combined_words_status,
+        }:
+            errors.append(
+                f"{key[0]}:{key[1]}: words_as_type_indexed_bitvec @[hol] tag needs a reviewed "
+                "source classification (reviewed_words_as_type_indexed_bitvec, or the combined "
+                "status alongside fmap_as_finite_support)"
+            )
+        if not words_bitvec and status == "reviewed_words_as_type_indexed_bitvec":
+            errors.append(
+                f"{key[0]}:{key[1]}: reviewed_words_as_type_indexed_bitvec needs a "
+                "words_as_type_indexed_bitvec @[hol] tag"
             )
         if fmap_relation and (fmap_fields or fmap_result):
             errors.append(
@@ -2057,10 +2179,11 @@ def validate_inventory(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support @[hol] tag cannot have reviewed_exact "
                 "status; use reviewed_fmap_as_finite_support after source comparison"
             )
-        if fmap_fields and status != "reviewed_fmap_as_finite_support":
+        if fmap_fields and status != "reviewed_fmap_as_finite_support" and status != combined_words_status:
             errors.append(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support @[hol] tag needs a reviewed "
-                "source classification (reviewed_fmap_as_finite_support)"
+                "source classification (reviewed_fmap_as_finite_support, or the combined "
+                "status with words_as_type_indexed_bitvec)"
             )
         if not fmap_fields and status == "reviewed_fmap_as_finite_support":
             errors.append(
@@ -2145,11 +2268,12 @@ def validate_inventory(
             errors.append(f"Proofs theorem missing from manifest: {key[0]}:{key[1]}")
 
     documented_mismatch_keys = set(DOCUMENTED_MISMATCHES)
+    infrastructure_theorem_keys = set(INFRASTRUCTURE_THEOREMS)
     for key in by_key:
         if key not in tagged and key not in proof_declarations and not (
             key in WITHDRAWN_HOL_DECLARATIONS
             and (data_declarations_ is None or key in data_declarations_)
-        ) and key not in documented_mismatch_keys:
+        ) and key not in documented_mismatch_keys and key not in infrastructure_theorem_keys:
             errors.append(f"manifest entry is not a current declaration: {key[0]}:{key[1]}")
     return errors
 

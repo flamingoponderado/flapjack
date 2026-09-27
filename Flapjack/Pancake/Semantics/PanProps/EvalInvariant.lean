@@ -1220,6 +1220,39 @@ theorem evalHOL_upd_eshapes_eq {width : Nat} {σ : Type} [NeZero width]
   simp only [evalHOL]
   exact evalHOLExact_upd_eshapes_eq state.toExact expression eshapes.lookup
 
+/-- Exact port of HOL `panProps$opt_mmap_eval_upd_clock_eq`
+    (`cakeml/pancake/semantics/panPropsScript.sml:674-680`):
+    `!es s ck. OPT_MMAP (eval (s with clock := ck + s.clock)) es =
+       OPT_MMAP (eval s) es`. HOL binds `es`, `s`, `ck` and advances the clock by
+    `ck + s.clock`, matching the `{ state with clock := clock + state.clock }`
+    update below; HOL's `OPT_MMAP` is Lean's `List.mapM`. The state is the
+    PanProps counterpart carrier `PanPropsEvalStateFiniteExact`, which owns the
+    four `HolFiniteMapExact` fields (locals/globals/code/eshapes) and the
+    same-module canonical `holFmapAsFiniteSupportWitness`, so the
+    `fmap_as_finite_support` qualifier is checker-valid; `evalHOL` delegates to
+    the exact broad expression evaluator through `toExact`. The carrier is
+    width-indexed (`[NeZero width]` with `RiscV.Word width` fields), so HOL's
+    type-indexed `'a word` translation is recorded by the
+    `(words_as_type_indexed_bitvec)` qualifier alongside the finite-support field
+    qualifier. The statement follows from the tagged `evalHOL_upd_clock_eq` by
+    induction on `es`. `[NeZero width]` models HOL's positive word dimension and
+    `DecidablePred state.memaddrs` is computation evidence for the HOL word-set
+    guard. -/
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "opt_mmap_eval_upd_clock_eq"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem optMmapEvalHOL_upd_clock_eq {width : Nat} {σ : Type} [NeZero width]
+    (state : PanPropsEvalStateFiniteExact width σ) [h : DecidablePred state.memaddrs]
+    (expressions : List (ExpHOL width)) (clock : Nat) :
+    expressions.mapM
+        (fun e =>
+          @evalHOL width σ _ { state with clock := clock + state.clock } h e) =
+      expressions.mapM (fun e => @evalHOL width σ _ state h e) := by
+  induction expressions with
+  | nil => rfl
+  | cons e es ih =>
+      simp only [List.mapM_cons, evalHOL_upd_clock_eq state e (clock + state.clock), ih]
+
 /-- Exact finite-support port of the `[local]` HOL helper
     `panProps$opt_mmap_helper_thm`
     (`cakeml/pancake/semantics/panPropsScript.sml:614`). HOL derives it from
@@ -3226,6 +3259,17 @@ theorem evaluateDeclsDeclCommuteHOLFinite {width : Nat} {σ : Type} [NeZero widt
     state.toPanSemFinite fi sh v' e ds
   unfold evaluateDeclsPanPropsCanonical
   exact congrArg (fun result => result.map PanPropsEvalStateFiniteExact.ofPanSemFinite) hcanon
+
+/-- Pair-shaped (`result`, state) view of the exact total evaluator over the
+    PanProps carrier. This is the HOL `evaluate ... = (result, t)` shape used by
+    the exact `evaluate_is_wf_shape_invariant` port; it is definitionally the
+    canonical `PanSemStateFiniteExact.evaluateHOLFiniteState` result. -/
+noncomputable def evaluateHOLFinitePair {width : Nat} {σ : Type} [NeZero width]
+    (state : PanPropsEvalStateFiniteExact width σ) (program : ProgHOL width) :
+    Option (PanSemResultExact width) × PanPropsEvalStateFiniteExact width σ := by
+  classical
+  let output := PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite program
+  exact (output.1, ofPanSemFinite output.2)
 
 end PanPropsEvalStateFiniteExact
 

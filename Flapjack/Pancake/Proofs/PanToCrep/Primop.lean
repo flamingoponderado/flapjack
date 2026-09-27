@@ -104,7 +104,7 @@ theorem panPrimopCrepPrimopHOLExact {width : Nat} [NeZero width]
     Both sides use the exact `word_lab` carrier `HolWordLab` and the exact
     `panPrimopHOLExact`/`flattenHOL`/`crepPrimopHOLExact`; there is NO explicit
     `HolWordLab.toPanWordLab` map in the statement, so the shape matches HOL.
-    The mapped `PanWordLab` variant is `panPrimopCrepPrimopHOLExact` below
+    The mapped `PanWordLab` variant is `panPrimopCrepPrimopHOLExact` above
     (untagged support). -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "pan_primop_crep_primop"]
 theorem panPrimopCrepPrimopExactHOL {width : Nat} [NeZero width]
