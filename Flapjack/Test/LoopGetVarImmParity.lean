@@ -97,12 +97,11 @@ example (state : LoopMachineState (BitVec 64) Nat) (ck : Nat) :
     getVarImmHOL (.imm 5) { state with clock := ck } = getVarImmHOL (.imm 5) state :=
   getVarImmHOL_add_clock_eq (.imm 5) state ck
 
-/-! ## `LoopSemStateFiniteExact` carrier parity (untagged)
+/-! ## `LoopSemStateFiniteExact` carrier parity
 
-The `get_var_imm_def` rendering (`LoopSemStateFiniteExact.getVarImm`) is
-untagged (bead `flapjack-jlj3.1`: HOL `locals` is `sptree$num_map`, not `|->`)
-but reproduces the same HOL-EVAL oracle rows on the finite-support state
-carrier. -/
+The tagged `get_var_imm_def` rendering (`LoopSemStateFiniteExact.getVarImm`)
+uses the exact `Spt` carrier for HOL `locals : num_map` and reproduces the
+HOL-EVAL oracle rows below. -/
 
 private def exactVarImmFfi : HolFfiState Unit :=
   { oracle := fun _ _ _ _ => .final .failed
