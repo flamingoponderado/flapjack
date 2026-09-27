@@ -512,6 +512,38 @@ example {width : Nat} [NeZero width]
   (compileExpValRelHOL_bytesInWord state context targetState value expressions shape
     heval hcompile).2.2.1
 
+/-- Kernel regression for the vacuous `NStruct` case
+    `compileExpValRelHOL_nstruct` (HOL `pan_to_crepProofScript.sml:130-396`). -/
+example {width : Nat} [NeZero width]
+    (state : PanSemStateFiniteExact width Unit) [_hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width Unit) [_ht : DecidablePred targetState.memaddrs]
+    (name : MlS) (fields : List (MlS × ExpHOL width))
+    (value : ValueHOL width)
+    (expressions : List (CrepExpHOL width)) (shape : ShapeHOL)
+    (heval : state.evalHOLFinite (.nstruct name fields) = some value)
+    (hstate : panToCrepStateRelFiniteExact state targetState)
+    (hcompile : compileExpExactHOLW context (.nstruct name fields) = (expressions, shape)) :
+    shapeOfHOLExact value = shape :=
+  (compileExpValRelHOL_nstruct state context targetState name fields value expressions shape
+    heval hstate hcompile).2.2.1
+
+/-- Kernel regression for the vacuous `NField` case
+    `compileExpValRelHOL_nfield` (HOL `pan_to_crepProofScript.sml:130-396`). -/
+example {width : Nat} [NeZero width]
+    (state : PanSemStateFiniteExact width Unit) [_hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width Unit) [_ht : DecidablePred targetState.memaddrs]
+    (name : MlS) (value' : ExpHOL width)
+    (value : ValueHOL width)
+    (expressions : List (CrepExpHOL width)) (shape : ShapeHOL)
+    (heval : state.evalHOLFinite (.nfield name value') = some value)
+    (hstate : panToCrepStateRelFiniteExact state targetState)
+    (hcompile : compileExpExactHOLW context (.nfield name value') = (expressions, shape)) :
+    shapeOfHOLExact value = shape :=
+  (compileExpValRelHOL_nfield state context targetState name value' value expressions shape
+    heval hstate hcompile).2.2.1
+
 def runChecks : IO Bool := do
   let checks := [
     ("HOL state_rel matching empty carrier fields", matchingFieldsOracleCase),

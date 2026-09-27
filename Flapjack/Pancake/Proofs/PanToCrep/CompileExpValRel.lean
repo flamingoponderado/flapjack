@@ -439,4 +439,61 @@ theorem compileExpValRelHOL_bytesInWord {width : Nat} {σ : Type} [NeZero width]
   · simp [shapeOfHOLExact]
   · simp [isWfShapeExactHOL]
 
+/-- Flapjack-specific staged constructor lemma for the `NStruct` leaf of the
+    exact `compile_exp_val_rel` induction
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:130-396`, the catch-all
+    case). It is not a standalone HOL declaration: the leaf is vacuous because
+    the exact `state_rel` forces the source structure context to be empty, so
+    `structContextLookupHOL` (and hence `eval`) always fails. -/
+theorem compileExpValRelHOL_nstruct {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) [_hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width σ) [_ht : DecidablePred targetState.memaddrs]
+    (name : MlS) (fields : List (MlS × ExpHOL width))
+    (value : ValueHOL width)
+    (expressions : List (CrepExpHOL width)) (shape : ShapeHOL)
+    (heval : state.evalHOLFinite (.nstruct name fields) = some value)
+    (hstate : panToCrepStateRelFiniteExact state targetState)
+    (_hcompile : compileExpExactHOLW context (.nstruct name fields) = (expressions, shape)) :
+    expressions.map (evalCrepSemHOLExp targetState) = (flattenHOL value).map some ∧
+    expressions.length = sizeOfShapeHOL shape ∧
+    shapeOfHOLExact value = shape ∧
+    isWfShapeExactHOL ([] : StructContextExact) shape = true := by
+  have hstructs := panToCrepStateRelFiniteExact_structs state targetState hstate
+  rw [PanSemStateFiniteExact.evalHOLFinite_nstruct, hstructs] at heval
+  simp only [structContextLookupHOL] at heval
+  exact absurd heval.symm (Option.some_ne_none value)
+
+/-- Flapjack-specific staged constructor lemma for the `NField` leaf of the
+    exact `compile_exp_val_rel` induction
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:130-396`, the catch-all
+    case). It is not a standalone HOL declaration: the leaf is vacuous because
+    the exact `state_rel` forces the source structure context to be empty, so
+    the structure lookup guard in `eval` always fails. -/
+theorem compileExpValRelHOL_nfield {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) [_hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width σ) [_ht : DecidablePred targetState.memaddrs]
+    (name : MlS) (value' : ExpHOL width)
+    (value : ValueHOL width)
+    (expressions : List (CrepExpHOL width)) (shape : ShapeHOL)
+    (heval : state.evalHOLFinite (.nfield name value') = some value)
+    (hstate : panToCrepStateRelFiniteExact state targetState)
+    (_hcompile : compileExpExactHOLW context (.nfield name value') = (expressions, shape)) :
+    expressions.map (evalCrepSemHOLExp targetState) = (flattenHOL value).map some ∧
+    expressions.length = sizeOfShapeHOL shape ∧
+    shapeOfHOLExact value = shape ∧
+    isWfShapeExactHOL ([] : StructContextExact) shape = true := by
+  have hstructs := panToCrepStateRelFiniteExact_structs state targetState hstate
+  rw [PanSemStateFiniteExact.evalHOLFinite_nfield, hstructs] at heval
+  cases hval : state.evalHOLFinite value' with
+  | none =>
+      simp only [hval] at heval
+      exact absurd heval.symm (Option.some_ne_none value)
+  | some inner =>
+      cases inner <;>
+        simp only [hval, structContextLookupHOL, Option.isSome_none,
+          Bool.false_eq_true, if_false] at heval <;>
+        exact absurd heval.symm (Option.some_ne_none value)
+
 end Flapjack
