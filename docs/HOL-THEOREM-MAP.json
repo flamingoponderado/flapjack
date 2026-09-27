@@ -12967,7 +12967,7 @@
   {
     "hol_path": "cakeml/pancake/crepLangScript.sml",
     "hol_name": "var_cexp_def",
-    "lean_path": "Flapjack/Pancake/Semantics/CrepProps.lean",
+    "lean_path": "Flapjack/Pancake/CrepLang/Exp.lean",
     "lean_name": "crepExpVarsHOL",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-luna-c (source comparison, 2026-09-27; crepLangScript.sml:128-130): exact `CrepExpHOL` port of var_cexp. Const/LoadGlob/BaseAddr/TopAddr produce []; Var produces its singleton; Load/Load32/LoadByte recurse; Op/Crepop flatten mapped variable lists; Cmp/Shift concatenate left then right. The constructor arities and Nat variable names match the exact CrepExpHOL carrier. The pre-existing crepExpVarsW tag is on the width-indexed production expression isomorph; this declaration ports the source over the exact CrepExpHOL carrier needed by the faithful evaluator theorem."
