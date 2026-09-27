@@ -25,6 +25,7 @@ import Flapjack.Pancake.CrepToLoop
 import Flapjack.Pancake.CrepToLoop.StateRel
 import Flapjack.Pancake.PanCommon
 import Flapjack.Pancake.PanGlobals
+import Flapjack.Pancake.PanGlobals.CompileExpExact
 import Flapjack.Pancake.PanLang
 import Flapjack.Pancake.PanLang.Shape
 import Flapjack.Pancake.PanLang.Exp
