@@ -105,6 +105,14 @@ def PanSemExactEvalContext.withState {width : Nat} {σ : Type} [NeZero width]
       rw [hshared]
       exact context.shMemaddrsDecidable address }
 
+/-- FLAPJACK-SPECIFIC exact-context constructor for the HOL DecCall timeout
+    branch. Explicit domain equalities keep the generated clause equation from
+    depending on an unstable proof placeholder. -/
+def PanSemExactEvalContext.emptyLocalsContextHOLExact {width : Nat} {σ : Type}
+    [NeZero width] (context : PanSemExactEvalContext width σ) :
+    PanSemExactEvalContext width σ :=
+  context.withState (emptyLocalsHOLExact context.state) (by rfl) (by rfl)
+
 -- FLAPJACK-SPECIFIC (not a HOL declaration): named entry state of the broad
 -- `Call`/`DecCall` clause. Naming it lets the finite projection lemmas rewrite
 -- the otherwise head-only record literal.
@@ -300,7 +308,7 @@ def evalPanSemRecursiveCallContextHOLExact {width : Nat} {σ : Type} [NeZero wid
               | some (body, calleeLocals, returnShape) =>
                   if state.clock = 0 then
                     some (some .timeOut,
-                      context.withState (emptyLocalsHOLExact state) rfl rfl)
+                      PanSemExactEvalContext.emptyLocalsContextHOLExact context)
                   else
                     let entry : PanSemStateExact width σ :=
                       callEntryStateHOLExact state calleeLocals
