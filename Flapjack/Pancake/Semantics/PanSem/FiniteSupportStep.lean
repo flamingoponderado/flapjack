@@ -2180,4 +2180,65 @@ theorem evalPanSemRecursiveCallContextHOLExact_seq_ffi_eq_of_ioEvents_eq
     _ = fixedContext.state.ffi := hfixedFfi.symm
     _ = result.2.state.ffi := hsecondFfi
 
+/-- Composition fact for an iterating `While` branch after its body has
+    returned a continuing result. Event-prefix monotonicity forces the body
+    boundary to have the same event log as the loop input when the endpoints
+    agree, so the recursive FFI invariants apply to both evaluations. -/
+theorem evalPanSemRecursiveCallContextHOLExact_while_ffi_eq_of_ioEvents_eq
+    {width : Nat} {σ : Type} [NeZero width]
+    (condition : ExpHOL width) (body : ProgHOL width)
+    (context entryContext bodyContext : PanSemExactEvalContext width σ)
+    (bodyResult : Option (PanSemResultExact width))
+    (result : Option (PanSemResultExact width) × PanSemExactEvalContext width σ)
+    (hentryFfi : context.state.ffi = entryContext.state.ffi)
+    (hbody : evalPanSemRecursiveCallContextHOLExact body entryContext =
+      some (bodyResult, bodyContext))
+    (hloop : evalPanSemRecursiveCallContextHOLExact (.while condition body)
+      (bodyContext.withState
+        (fixClockHOLExact entryContext.state (bodyResult, bodyContext.state)).2 rfl rfl) =
+      some result)
+    (hbodyIH : ∀ result,
+      evalPanSemRecursiveCallContextHOLExact body entryContext = some result →
+      entryContext.state.ffi.ioEvents = result.2.state.ffi.ioEvents →
+      entryContext.state.ffi = result.2.state.ffi)
+    (hloopIH : ∀ result,
+      evalPanSemRecursiveCallContextHOLExact (.while condition body)
+        (bodyContext.withState
+          (fixClockHOLExact entryContext.state (bodyResult, bodyContext.state)).2 rfl rfl) =
+        some result →
+      (bodyContext.withState
+        (fixClockHOLExact entryContext.state (bodyResult, bodyContext.state)).2 rfl rfl).state.ffi.ioEvents =
+        result.2.state.ffi.ioEvents →
+      (bodyContext.withState
+        (fixClockHOLExact entryContext.state (bodyResult, bodyContext.state)).2 rfl rfl).state.ffi =
+        result.2.state.ffi)
+    (hevents : context.state.ffi.ioEvents = result.2.state.ffi.ioEvents) :
+    context.state.ffi = result.2.state.ffi := by
+  let fixedContext := bodyContext.withState
+    (fixClockHOLExact entryContext.state (bodyResult, bodyContext.state)).2 rfl rfl
+  have hbodyPrefix := evalPanSemRecursiveCallContextHOLExact_ioEvents_prefix
+    body entryContext (bodyResult, bodyContext) hbody
+  have hloopPrefix := evalPanSemRecursiveCallContextHOLExact_ioEvents_prefix
+    (.while condition body) fixedContext result (by simpa only [fixedContext] using hloop)
+  have hentryEvents : entryContext.state.ffi.ioEvents = context.state.ffi.ioEvents := by
+    simpa only using congrArg (fun ffi => ffi.ioEvents) hentryFfi.symm
+  have hend : entryContext.state.ffi.ioEvents = result.2.state.ffi.ioEvents :=
+    hentryEvents.trans hevents
+  have hfixedEvents : fixedContext.state.ffi.ioEvents = bodyContext.state.ffi.ioEvents := rfl
+  have hbodyBoundary := ioEvents_middle_eq_of_prefix_chain hbodyPrefix
+    (hfixedEvents ▸ hloopPrefix) hend
+  have hbodyFfi := hbodyIH (bodyResult, bodyContext) hbody hbodyBoundary.symm
+  have hloopEvents : fixedContext.state.ffi.ioEvents = result.2.state.ffi.ioEvents := by
+    calc
+      fixedContext.state.ffi.ioEvents = bodyContext.state.ffi.ioEvents := hfixedEvents
+      _ = entryContext.state.ffi.ioEvents := hbodyBoundary
+      _ = result.2.state.ffi.ioEvents := hend
+  have hloopFfi := hloopIH result (by simpa only [fixedContext] using hloop) hloopEvents
+  have hfixedFfi : fixedContext.state.ffi = bodyContext.state.ffi := rfl
+  calc
+    context.state.ffi = entryContext.state.ffi := hentryFfi
+    _ = bodyContext.state.ffi := hbodyFfi
+    _ = fixedContext.state.ffi := hfixedFfi.symm
+    _ = result.2.state.ffi := hloopFfi
+
 end Flapjack
