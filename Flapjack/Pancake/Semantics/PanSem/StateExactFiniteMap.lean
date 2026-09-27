@@ -3223,17 +3223,10 @@ theorem evaluateHOLFiniteState_dec_total {width : Nat} {σ : Type} [NeZero width
           evalPanSemRecursiveCallFiniteContext, hinit, hshape,
           hmem]
 
-/-- Exact HOL `evaluate_def` (`panSemScript.sml:556`) DecCall argument-failure
-    case, corresponding to the `OPT_MMAP (eval s) argexps = NONE` branch at
-    lines 699-714: it returns `Error` with the caller state unchanged. This is
-    a genuine source case with a branch selector and no target-evaluation
-    premise. `PanSemStateFiniteExact` records the four HOL finite maps through
-    its canonical same-module witness. The combined qualifiers record those
-    maps and HOL's positive word dimension as `BitVec width`; `σ : Type` models
-    the HOL FFI state carrier. -/
-@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 556
-  (fmap_as_finite_support := [locals, globals, code, eshapes])
-  (words_as_type_indexed_bitvec)]
+/-- Flapjack-specific DecCall argument-failure helper for the HOL clause at
+    `panSemScript.sml:694-714`. The `hargs` branch selector is an additional
+    hypothesis absent from HOL's unconditional `evaluate_def` conjunct, so this
+    helper is not tagged as a port of that declaration. -/
 theorem evaluateHOLFiniteState_decCall_args_none {width : Nat} {σ : Type}
     [NeZero width] (state : PanSemStateFiniteExact width σ)
     (resultName : MlS) (shape : ShapeHOL) (function : MlS)
@@ -3252,16 +3245,10 @@ theorem evaluateHOLFiniteState_decCall_args_none {width : Nat} {σ : Type}
   simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
     evalPanSemRecursiveCallFiniteContext.eq_6, hargsExact]
 
-/-- Exact HOL `evaluate_def` (`panSemScript.sml:556`) DecCall lookup-failure
-    case, corresponding to the failed `lookup_code` branch at lines 699-714:
-    successful argument evaluation followed by a missing code entry returns
-    `Error` with the caller state unchanged. The premise selects only that
-    source branch; the statement remains the total result/state pair. The
-    combined qualifiers record the four finite-support maps and HOL's positive
-    word dimension as `BitVec width`; `σ : Type` models the HOL FFI state. -/
-@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 556
-  (fmap_as_finite_support := [locals, globals, code, eshapes])
-  (words_as_type_indexed_bitvec)]
+/-- Flapjack-specific DecCall lookup-failure helper for the HOL clause at
+    `panSemScript.sml:694-714`. The `hargs` and `hlookup` branch selectors are
+    additional hypotheses absent from HOL's unconditional `evaluate_def`
+    conjunct, so this helper is not tagged as a port of that declaration. -/
 theorem evaluateHOLFiniteState_decCall_lookup_none {width : Nat} {σ : Type}
     [NeZero width] (state : PanSemStateFiniteExact width σ)
     (resultName : MlS) (shape : ShapeHOL) (function : MlS)
@@ -3312,19 +3299,12 @@ theorem evaluateHOLFiniteState_decCall_clock_zero {width : Nat} {σ : Type}
     returnShape hargs hlookup hclock
   simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders, context, htimeout]
 
-/-- Exact HOL `evaluate_def` (`panSemScript.sml:556`) DecCall body-`NONE`
-    case, from the successful argument/lookup and nonzero-clock clause at
-    lines 694-714. The body induction hypothesis says evaluation from the
-    decremented-clock callee entry yields `NONE` and `bodyPost`; HOL then
-    applies `fix_clock` to that pair and returns `Error` with its fixed state.
-    The named entry context carries only the auxiliary finite-domain deciders;
-    they add no source premise. `PanSemStateFiniteExact` owns the four named
-    finite-support maps and uses the reviewed width-indexed `BitVec width`
-    carrier. The original Pancake probe `pan_sem_deccall_error_probe.out`
-    includes a successful lookup whose body fails and observes `SOME Error`. -/
-@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 556
-  (fmap_as_finite_support := [locals, globals, code, eshapes])
-  (words_as_type_indexed_bitvec)]
+/-- Flapjack-specific DecCall body-`NONE` helper for the HOL clause at
+    `panSemScript.sml:694-714`. Its argument, lookup, and clock branch
+    selectors are extra hypotheses absent from HOL's unconditional conjunct,
+    so it is not tagged as a port. The body premise is a recursive-call
+    induction hypothesis. The original Pancake probe
+    `pan_sem_deccall_error_probe.out` observes `SOME Error` in this branch. -/
 theorem evaluateHOLFiniteState_decCall_body_none {width : Nat} {σ : Type}
     [NeZero width] (state : PanSemStateFiniteExact width σ)
     (resultName : MlS) (shape : ShapeHOL) (function : MlS)
