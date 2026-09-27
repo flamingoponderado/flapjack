@@ -978,18 +978,19 @@ theorem evalCrepSemHOLProgExact_eq_core {width : Nat} [NeZero width] {σ : Type}
   unfold evalCrepSemHOLProgExact
   congr 1
 
-/-- HOL's rewritten `evaluate_def` at `crepSemScript.sml:443`, Skip case
-    (originating at line 241), over the no-decider state/program interface:
-    evaluating Skip returns `(NONE, s)`. Rewriting the original definition by
-    `fix_clock_evaluate` leaves this equation unchanged because `fix_clock`
-    preserves the state clock here. The state is the 11-field
-    `CrepSemHOLState`; the qualifier records exactly its HOL `|->` fields
-    `locals`, `globals`, and `code` as `HolFiniteMapExact`. It remains
-    untagged pending source review of the whole clause set and carriers (tags
-    are HOLD); the imported `CrepSemHOLState` owner with the evaluator-local
-    witness in this module is an accepted arrangement, and the words qualifier's
-    carrier route resolves the clause signature. See the current-status note at
-    the end of this file (`flapjack-4ac.5.16.5`, `.13.1`). -/
+/-- Exact port of the `Skip` conjunct of HOL's rewritten `evaluate_def`
+    (`cakeml/pancake/semantics/crepSemScript.sml:443`, first conjunct
+    originating at line 241): `evaluate (Skip, s) = (NONE, s)`. Over the exact
+    total evaluator `evalCrepSemHOLProgExact` and the 11-field
+    `CrepSemHOLState`, evaluating `Skip` returns the state unchanged. The
+    `fmap_as_finite_support` qualifier records exactly the HOL `|->` fields
+    `locals`, `globals`, and `code` as `HolFiniteMapExact` (with the
+    evaluator-local witness in this module), and `words_as_type_indexed_bitvec`
+    records the `'a word` carrier as `BitVec width` here (`flapjack-4ac.5.16.5`,
+    `.13.1`). The remaining `evaluate_def` clauses stay untagged in this slice. -/
+@[hol "cakeml/pancake/semantics/crepSemScript.sml" "evaluate_def" 443
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
 theorem evalCrepSemHOLProgExact_skip {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ) :
     evalCrepSemHOLProgExact state (.skip : CrepProgHOL width) = (none, state) := by
