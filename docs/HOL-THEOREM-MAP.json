@@ -5280,10 +5280,10 @@
   {
     "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
     "hol_name": "is_wf_shape_drop",
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
-    "lean_name": "isWfShape_drop",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Codex (source comparison with pan_structsProofScript.sml:114-127: the DROP-n implication and boolean is_wf_shape equations correspond, but the Lean declaration quantifies over production StructContext/Shape with unrestricted String identifiers and a production-only shapedFields cache; HOL uses StructContextExact/ShapeHOL and mlstring. There is no NameRanged premise, so names_as_string cannot bridge the carriers. The direct pan_lang_is_wf_shape_probe.out examples cover the HOL predicate only, not a carrier equivalence. Keep @[hol] withheld pending exact-carrier work flapjack-pxn.18.3.5.8.)"
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/StructInfosOkExact.lean",
+    "lean_name": "isWfShapeExactHOL_drop",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source-reviewed against pan_structsProofScript.sml:114-127. The implication that is_wf_shape holds on DROP n ctxt entails it on ctxt is unchanged, using exact StructContextExact/MlS/ShapeHOL carriers and the HOL Boolean predicate. Named-shape lookup isSome is preserved by suffix inclusion. The production String/cache-backed isWfShape_drop remains an untagged analogue."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
@@ -5464,18 +5464,18 @@
   {
     "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
     "hol_name": "struct_infos_ok_drop",
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
-    "lean_name": "structInfosOk_drop",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds5 (source comparison, 2026-09-25; bead flapjack-dlc.77; confirming the earlier Codex audit): HOL struct_infos_ok_drop (pan_structsProofScript.sml:169-196) is struct_infos_ok sh_ctxt ==> struct_infos_ok (DROP n sh_ctxt) over the fields-only (stcname # struct_info) list with stcname/fldname = mlstring and struct_info = <| fields; size |>. The Lean statement is keyed by the production StructContext = List (StructName × StructInfo) with StructName/FieldName = String and StructInfo carrying the extra shapedFields cache; that constructor-arity/field-type difference from HOL's struct_info is beyond name representation, so names_as_string does not apply, and the executable structInfosOk predicate is the production analogue rather than a tagged HOL port. Tag remains withdrawn. Faithful MlString/ShapeHOL port tracked by flapjack-pxn.18.3.5.8 (parent flapjack-pxn.18.3.5.7.2). Evidence: HOL oracle row in scripts/hol-probes/afindi_probe.out; Lean fixture Flapjack.Test.PanStructsAfindiParity.structInfosOk_drop_fixture."
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/StructInfosOkExact.lean",
+    "lean_name": "structInfosOkHOLExact_drop",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source-reviewed against pan_structsProofScript.sml:169-196. The one-premise implication and conclusion struct_infos_ok (DROP n sh_ctxt) are exact. Lean uses StructContextExact/MlS/ShapeHOL/StructInfoHOLExact with fields and size only; its four invariant clauses match struct_infos_ok_def. The proof uses the exact is_wf_shape_drop result and size_of_sh_with_ctxt_drop argument. Direct original HOL instance row: scripts/hol-probes/afindi_probe.out:11; Lean replay: Flapjack.Test.PanStructsAfindiParity.structInfosOkHOLExact_drop_fixture."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
     "hol_name": "struct_infos_ok_append",
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
-    "lean_name": "structInfosOk_append",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Codex (P0 source review: struct_infos_ok_append is exactly the implication from struct_infos_ok (xs ++ ys) to struct_infos_ok ys, with one premise and the same conclusion. It remains untagged because HOL uses MlS/ShapeHOL/StructContextExact and fields/size-only struct_info, while Lean uses String-backed production StructContext/Shape and cache-augmented StructInfo.shapedFields; isWfShape/lookups use production String equality. names_as_string cannot cover the context/record carrier difference. A faithful theorem can use StructContextExact; exact name-carrier/bridge work is tracked by flapjack-pxn.18.3.5.8.16. This proposition has no byte-observable name output."
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/StructInfosOkExact.lean",
+    "lean_name": "structInfosOkHOLExact_append",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source-reviewed against pan_structsProofScript.sml:198-203. The one-premise implication struct_infos_ok (xs ++ ys) ==> struct_infos_ok ys is exact over StructContextExact and the exact invariant. The proof applies exact struct_infos_ok_drop at LENGTH xs and reduces DROP_APPEND2. Direct original HOL instance row: scripts/hol-probes/afindi_probe.out:12; Lean replay: Flapjack.Test.PanStructsAfindiParity.structInfosOkHOLExact_append_fixture."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
@@ -5489,9 +5489,49 @@
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
+    "lean_name": "isWfShape_drop",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Production String/cache-backed analogue; the exact MlString/ShapeHOL source port is isWfShapeExactHOL_drop in StructInfosOkExact.lean."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
+    "lean_name": "structInfosOk_drop",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Production String/cache-backed analogue; the exact fields/size-only source port is structInfosOkHOLExact_drop in StructInfosOkExact.lean."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
+    "lean_name": "structInfosOk_append",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Production String/cache-backed analogue; the exact fields/size-only source port is structInfosOkHOLExact_append in StructInfosOkExact.lean."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
     "lean_name": "structInfosOk_cons",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Production String/cache-backed analogue only; its precise carrier mismatch and the exact MlS/ShapeHOL port are documented beside the declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/StructInfosOkExact.lean",
+    "lean_name": "structInfosOkExact_lookup_isSome_drop",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private support lemma for the exact is_wf_shape_drop proof; no independent HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/StructInfosOkExact.lean",
+    "lean_name": "isWfShapesExactHOL_drop",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private list support lemma for isWfShapeExactHOL_drop; no independent HOL declaration."
   },
   {
     "hol_path": null,
@@ -11068,6 +11108,35 @@
     "lean_name": "evalCrepSemHOLProg_assign_success",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific exact Assign evaluator leaf supporting HOL eval_nested_assign_distinct_eq (pan_to_crepProofScript.sml:540): under exact expression success and existing-local premises, proves normal completion and the set_var local update over CrepProgHOL/CrepSemHOLState. It does not establish nested Seq composition or the full five-premise list theorem and has no @[hol] tag."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "eval_nested_assign_distinct_eq",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateNestedAssign.lean",
+    "lean_name": "evalNestedAssignDistinctEqCrepHOL",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "reviewer": "flapjack-luna-c (source comparison against pan_to_crepProofScript.sml:540-575 and crepSemScript.sml:240-303, 2026-09-27): quantifies the exact Crep expression list, assignment names, expression results and previous lookup results. The five premises match HOL in order: MAP eval success, OPT_MMAP old-local lookup success, distinct_lists between assigned names and all expression variables, ALL_DISTINCT names, and equal lengths. The conclusion is evaluate (nested_seq (MAP2 Assign names expressions), state) = (NONE, state with locals := locals |++ ZIP (names, values)); List.zipWith/crepNestedSeqHOL and updateListEq/FUPDATE_LIST_HOL implement those equations. CrepSemHOLState carries exact CrepProgHOL/CrepExpHOL and HolWordLab carriers; all and only the locals/globals/code finite maps receive the reviewed canonical HolFiniteMapExact translation. The checker-verified same-module witness ties this carrier to CrepSemBroadState. Lean's operational memory-domain Decidable procedures are hidden behind Flapjack-only classical wrappers, so they add no theorem premise. Direct HOL success and premise-rejection rows are in eval_nested_assign_distinct_eq_probe.out; exact Lean theorem instantiation and regression are in CrepNestedAssignDistinctHOLParity.lean."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateNestedAssign.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module carrier evidence required by scripts/check-hol-refs.py for the tagged theorem's fmap_as_finite_support qualifier. It restates the CrepSemHOLState/CrepSemBroadState roundtrip in the Pan-to-Crep theorem counterpart file; it has no HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateNestedAssign.lean",
+    "lean_name": "evalNestedAssignDistinctEqCrepHOLWithDeciders",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only inductive proof infrastructure for eval_nested_assign_distinct_eq. The explicit memory-domain Decidable arguments are Lean evaluator implementation details; the public tagged theorem hides them behind classical wrappers. This internal lemma has no HOL declaration."
   },
   {
     "hol_path": "cakeml/misc/miscScript.sml",

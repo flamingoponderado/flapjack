@@ -61,10 +61,11 @@ run_probe() {
   local source="$1"
   shift
   local workdir="${1:-$cake_dir/pancake}"
+  # Run from the theory source directory. HOL resolves sibling `.hol/objs`
+  # entries from there; using the object directory itself makes it search a
+  # nested `.hol/objs/.hol/objs` and fails to load shared theories such as
+  # CakeML's `preamble`.
   local hol_workdir="$workdir"
-  if [[ -d "$workdir/.hol/objs" ]]; then
-    hol_workdir="$workdir/.hol/objs"
-  fi
   local probe="$probe_dir/$probe_name"
   local output="$probe_dir/$output_name"
   if probe_needs_refresh "$output" "$probe" "$source"; then
@@ -950,6 +951,10 @@ run_probe compile_def_probeScript.sml compile_def_probe.out \
   extcall_shared_high_tail extcall_constants extcall_shape_fallback \
   pair_load pair_store fixed_stride64 \
   "$cake_dir/pancake/pan_to_crepScript.sml"
+run_probe eval_nested_assign_distinct_eq_probeScript.sml eval_nested_assign_distinct_eq_probe.out \
+  assign_list_success duplicate_names_all_distinct expression_interference_distinct_lists \
+  "$cake_dir/pancake/proofs/pan_to_crepProofScript.sml" \
+  "$cake_dir/pancake/proofs"
 run_probe compile_to_crep_probeScript.sml compile_to_crep_probe.out \
   empty raise_const raise_pair raise_pair_later raise_pair_later_64 handled_pair done \
   "$cake_dir/pancake/pan_to_crepScript.sml"
