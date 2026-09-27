@@ -990,8 +990,14 @@ theorem evalCrepSemHOLProgExact_eq_core {width : Nat} [NeZero width] {σ : Type}
     `fmap_as_finite_support` qualifier records exactly the HOL `|->` fields
     `locals`, `globals`, and `code` as `HolFiniteMapExact` (with the
     evaluator-local witness in this module), and `words_as_type_indexed_bitvec`
-    records the `'a word` carrier as `BitVec width` here (`flapjack-4ac.5.16.5`,
-    `.13.1`). The remaining `evaluate_def` clauses stay untagged in this slice. -/
+    records the `'a word` carrier as `BitVec width` here. Direct source review
+    for `flapjack-4ac.5.16.5.13` (originally tagged under `.13.1`) re-read the
+    rewritten conjunct at `crepSemScript.sml:443` against the originating line
+    241 clause and the 11-field carrier: the `Skip` clause does not mention
+    `fix_clock`, so `REWRITE_RULE [fix_clock_evaluate]` leaves it unchanged, and
+    the state/program-only interface with the exact `(NONE, s)` pair-shape is
+    preserved. The remaining `evaluate_def` clauses stay untagged in this
+    slice. -/
 @[hol "cakeml/pancake/semantics/crepSemScript.sml" "evaluate_def" 443
   (fmap_as_finite_support := [locals, globals, code])
   (words_as_type_indexed_bitvec)]

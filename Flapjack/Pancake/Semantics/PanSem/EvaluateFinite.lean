@@ -715,50 +715,6 @@ theorem evalPanSemRecursiveCallFiniteContext_callEntryContext_state_normalize
   apply evalPanSemRecursiveCallFiniteContext_state_eq
   simpa [callEntryContextHOLFinite, FiniteEvalContext.withState] using hstate
 
-/-- FLAPJACK-SPECIFIC context case for HOL `evaluate_def`'s DecCall body
-    outcome (`panSemScript.sml:694-714`): after successful argument evaluation,
-    code lookup, and a nonzero caller clock, a callee outcome of `NONE` returns
-    `Error` with the clock-fixed callee post-state. The body premise is the
-    recursive-call induction hypothesis at the named entry context. This
-    helper uses `FiniteEvalContext`, whose auxiliary decider evidence is not a
-    HOL carrier, so it is not itself a tagged HOL theorem; the finite-state
-    equation remains part of `flapjack-qj5.12`. HOL line 780 is the rewritten
-    equation form; the explicitly clock-fixed result here follows the line-556
-    Definition. -/
-theorem evalPanSemRecursiveCallFiniteContext_decCall_body_none
-    {width : Nat} {σ : Type} [NeZero width]
-    (resultName : MlS) (shape : ShapeHOL) (function : MlS)
-    (arguments : List (ExpHOL width)) (continuation : ProgHOL width)
-    (context : FiniteEvalContext width σ) (values : List (ValueHOL width))
-    (body : ProgHOL width) (callee : HolFiniteMapExact MlS (ValueHOL width))
-    (returnShape : ShapeHOL) (bodyContext : FiniteEvalContext width σ)
-    (hargs : evalListHOLFinite context.state
-      (h := context.memaddrsDecidable) arguments = some values)
-    (hlookup : lookupCodeHOLFinite context.state.code.lookup function values =
-      some (body, callee, returnShape))
-    (hclock : context.state.clock ≠ 0)
-    (hbody : evalPanSemRecursiveCallFiniteContext body
-      (callEntryContextHOLFinite context callee) =
-      some (none, bodyContext)) :
-    evalPanSemRecursiveCallFiniteContext
-        (.decCall resultName shape function arguments continuation) context =
-      some (some .error,
-        callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)
-          none bodyContext) := by
-  have hbodyGenerated : evalPanSemRecursiveCallFiniteContext body
-      (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl) =
-      some (none, bodyContext) := by
-    calc
-      _ = evalPanSemRecursiveCallFiniteContext body
-          (callEntryContextHOLFinite context callee) := by
-        apply evalPanSemRecursiveCallFiniteContext_callEntryContext_state_normalize
-        rfl
-      _ = _ := hbody
-  rw [evalPanSemRecursiveCallFiniteContext.eq_6]
-  simp only [hargs]
-  rw [hlookup]
-  simp only [if_neg hclock, hbodyGenerated]
-
 /-- FLAPJACK-SPECIFIC proof wrapper (no standalone HOL declaration): the
     DecCall body premise may be supplied at the canonical named entry context.
     The recursive equation creates an extensionally identical `withState`
