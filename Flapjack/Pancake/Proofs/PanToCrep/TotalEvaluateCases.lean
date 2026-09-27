@@ -19,7 +19,241 @@ induction or receive a standalone `@[hol]` reference.
 
 namespace Flapjack
 
-open Flapjack.Pancake.PanLang (MlS ShapeHOL)
+open Flapjack.Pancake.PanLang
+  (MlS ShapeHOL shapeOfHOL sizeOfShapeHOL sizeOfShapesHOL withShapeHOL)
+
+private theorem shapeSizeShapeOfHOLExact (shape : ShapeHOL) :
+    Shape.shapeSize (shapeOfHOL shape) = sizeOfShapeHOL shape := by
+  have h := sizeOfShapeHOL_shapeToHOL (shapeOfHOL shape)
+  simpa [Flapjack.Pancake.PanLang.shapeToHOL_shapeOfHOL] using h.symm
+
+private theorem shapeSizeCombShapeOfHOLExact (shapes : List ShapeHOL) :
+    Shape.shapeSize (.comb (shapes.map shapeOfHOL)) =
+      sizeOfShapeHOL (.comb shapes) := by
+  have h := sizeOfShapesHOL_shapeToHOL (shapes.map shapeOfHOL)
+  rw [List.map_map, Function.comp_def,
+    List.map_congr_left (fun shape _ =>
+      Flapjack.Pancake.PanLang.shapeToHOL_shapeOfHOL shape)] at h
+  simpa [Shape.shapeSize] using h.symm
+
+private theorem withShapeHOL_eq_withShapeShapeOfHOL
+    {α : Type} (shapes : List ShapeHOL) (values : List α) :
+    withShapeHOL shapes values = withShape (shapes.map shapeOfHOL) values := by
+  induction shapes generalizing values with
+  | nil => simp [withShapeHOL, withShape]
+  | cons shape shapes ih =>
+      have hsize : sizeOfShapeHOL shape = Shape.shapeSize (shapeOfHOL shape) :=
+        (shapeSizeShapeOfHOLExact shape).symm
+      simp [withShapeHOL, withShape, hsize, ih]
+
+/-! Exact call-context invariant slice for HOL `locals_rel_def`. The first two
+conjuncts are independent of the values being bound: distinct formal names,
+distinct flat target slots, and the matching total shape size make the
+`ctxt_fc`-generated slot groups non-overlapping and bounded by its `MAX_LIST`
+value. -/
+theorem panToCrepCallContextNoOverlapMaxExact
+    {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width)
+    (names : List MlS) (shapes : List ShapeHOL) (slots : List Nat)
+    (_hnames : names.Nodup) (hnamesLength : names.length = shapes.length)
+    (hslots : slots.Nodup)
+    (hsize : slots.length = sizeOfShapeHOL (.comb shapes)) :
+    noOverlapFiniteExact
+        (ctxtFcExactHOL context.funcs context.eids names shapes slots).vars ∧
+      ctxtMaxFiniteExact
+        (ctxtFcExactHOL context.funcs context.eids names shapes slots).vmax
+        (ctxtFcExactHOL context.funcs context.eids names shapes slots).vars := by
+  let groups := withShapeHOL shapes slots
+  let entries := names.zip (shapes.zip groups)
+  have hvars :
+      (ctxtFcExactHOL context.funcs context.eids names shapes slots).vars.lookup =
+        FUPDATE_LIST FEMPTY entries := by
+    rfl
+  have hshapeSize :
+      slots.length = Shape.shapeSize (.comb (shapes.map shapeOfHOL)) := by
+    rw [shapeSizeCombShapeOfHOLExact]
+    exact hsize
+  have hgroups : groups = withShape (shapes.map shapeOfHOL) slots :=
+    withShapeHOL_eq_withShapeShapeOfHOL shapes slots
+  have hgroupsLength : groups.length = shapes.length := by
+    rw [hgroups]
+    simp [withShape_length]
+  have hnamesGroups : names.length = groups.length := hnamesLength.trans hgroupsLength.symm
+  have hshapeGroups : shapes.length = groups.length := hgroupsLength.symm
+  have hentries := entries
+  constructor
+  · unfold noOverlapFiniteExact
+    constructor
+    · intro name shape namesForValue hlookup
+      rw [hvars] at hlookup
+      rcases flookupFupdateList_mem_or_base FEMPTY entries name
+          (shape, namesForValue) hlookup with hmem | hbase
+      · rcases hmem with ⟨entry, hentry, hname, hvalue⟩
+        rcases entry with ⟨entryName, entryValue⟩
+        rcases entryValue with ⟨entryShape, entrySlots⟩
+        have hentryEq :
+            (entryName, (entryShape, entrySlots)) = (name, (shape, namesForValue)) := by
+          cases hname
+          cases hvalue
+          rfl
+        rw [hentryEq] at hentry
+        have hzipMem : (name, (shape, namesForValue)) ∈ entries := by
+          simpa [entries] using hentry
+        obtain ⟨index, hindexName, hindexPair, hnameAt, hpairAt⟩ :=
+          mem_zip_getElem names (shapes.zip groups)
+            (name, (shape, namesForValue)) hzipMem
+        have hpairBound : index < min shapes.length groups.length := by
+          simpa [List.length_zip] using hindexPair
+        have hindexShape : index < shapes.length :=
+          Nat.lt_of_lt_of_le hpairBound (Nat.min_le_left ..)
+        have hindexProdShape : index < (shapes.map shapeOfHOL).length := by
+          simpa using hindexShape
+        have hindexGroup : index < groups.length :=
+          Nat.lt_of_lt_of_le hpairBound (Nat.min_le_right ..)
+        have hpairAt' :
+            (shapes[index]'hindexShape, groups[index]'hindexGroup) =
+              (shape, namesForValue) := by
+          simpa using hpairAt
+        have hslotsAt : groups[index]'hindexGroup = namesForValue :=
+          congrArg Prod.snd hpairAt'
+        have hprodGroupAt :
+            (withShape (shapes.map shapeOfHOL) slots)[index]'(by
+              rw [withShape_length]
+              exact hindexProdShape) = namesForValue := by
+          simpa [hgroups] using hslotsAt
+        rw [← hprodGroupAt]
+        exact withShapeGetElemNodupOfSlotsNodup
+          (shapes.map shapeOfHOL) slots index hslots hshapeSize hindexProdShape
+      · simp at hbase
+    · intro name other shape otherShape namesForValue otherNames
+        hnameLookup hotherLookup ⟨slot, hslot, hotherSlot⟩
+      by_cases hnamesEq : name = other
+      · exact hnamesEq
+      rw [hvars] at hnameLookup hotherLookup
+      have hiLookup := flookupFupdateList_mem_or_base FEMPTY entries name
+        (shape, namesForValue) hnameLookup
+      have hjLookup := flookupFupdateList_mem_or_base FEMPTY entries other
+        (otherShape, otherNames) hotherLookup
+      rcases hiLookup with ⟨iEntry, hiEntry, hiName, hiValue⟩ | hiBase
+      · rcases hjLookup with ⟨jEntry, hjEntry, hjName, hjValue⟩ | hjBase
+        · rcases iEntry with ⟨iName, iPair⟩
+          rcases iPair with ⟨iShape, iSlots⟩
+          rcases jEntry with ⟨jName, jPair⟩
+          rcases jPair with ⟨jShape, jSlots⟩
+          have hiEntryEq :
+              (iName, (iShape, iSlots)) = (name, (shape, namesForValue)) := by
+            cases hiName
+            cases hiValue
+            rfl
+          have hjEntryEq :
+              (jName, (jShape, jSlots)) = (other, (otherShape, otherNames)) := by
+            cases hjName
+            cases hjValue
+            rfl
+          rw [hiEntryEq] at hiEntry
+          rw [hjEntryEq] at hjEntry
+          have hiZipMem : (name, (shape, namesForValue)) ∈ entries := by
+            simpa [entries] using hiEntry
+          have hjZipMem : (other, (otherShape, otherNames)) ∈ entries := by
+            simpa [entries] using hjEntry
+          obtain ⟨i, hiNameBound, hiPairBound, hiNameAt, hiPairAt⟩ :=
+            mem_zip_getElem names (shapes.zip groups)
+              (name, (shape, namesForValue)) hiZipMem
+          obtain ⟨j, hjNameBound, hjPairBound, hjNameAt, hjPairAt⟩ :=
+            mem_zip_getElem names (shapes.zip groups)
+              (other, (otherShape, otherNames)) hjZipMem
+          have hiPairBound' : i < min shapes.length groups.length := by
+            simpa [List.length_zip] using hiPairBound
+          have hjPairBound' : j < min shapes.length groups.length := by
+            simpa [List.length_zip] using hjPairBound
+          have hiShape : i < shapes.length :=
+            Nat.lt_of_lt_of_le hiPairBound' (Nat.min_le_left ..)
+          have hjShape : j < shapes.length :=
+            Nat.lt_of_lt_of_le hjPairBound' (Nat.min_le_left ..)
+          have hiProdShape : i < (shapes.map shapeOfHOL).length := by simpa using hiShape
+          have hjProdShape : j < (shapes.map shapeOfHOL).length := by simpa using hjShape
+          have hiGroup : i < groups.length :=
+            Nat.lt_of_lt_of_le hiPairBound' (Nat.min_le_right ..)
+          have hjGroup : j < groups.length :=
+            Nat.lt_of_lt_of_le hjPairBound' (Nat.min_le_right ..)
+          have hiPairAt' :
+              (shapes[i]'hiShape, groups[i]'hiGroup) = (shape, namesForValue) := by
+            simpa using hiPairAt
+          have hjPairAt' :
+              (shapes[j]'hjShape, groups[j]'hjGroup) = (otherShape, otherNames) := by
+            simpa using hjPairAt
+          have hiSlots : groups[i]'hiGroup = namesForValue := congrArg Prod.snd hiPairAt'
+          have hjSlots : groups[j]'hjGroup = otherNames := congrArg Prod.snd hjPairAt'
+          have hindexNe : i ≠ j := by
+            intro heq
+            subst j
+            exact hnamesEq (calc
+              name = names[i]'hiNameBound := hiNameAt.symm
+              _ = other := hjNameAt)
+          have hdisjoint := listDisjoint_withShape_getElem
+            (shapes.map shapeOfHOL) slots i j hslots hiProdShape hjProdShape
+            hindexNe hshapeSize
+          have hslotLeft :
+              slot ∈ (withShape (shapes.map shapeOfHOL) slots)[i]'(by
+                rw [withShape_length]
+                exact hiProdShape) := by
+            have hgroupMem : slot ∈ groups[i]'hiGroup := hiSlots.symm ▸ hslot
+            simpa [hgroups] using hgroupMem
+          have hslotRight :
+              slot ∈ (withShape (shapes.map shapeOfHOL) slots)[j]'(by
+                rw [withShape_length]
+                exact hjProdShape) := by
+            have hgroupMem : slot ∈ groups[j]'hjGroup := hjSlots.symm ▸ hotherSlot
+            simpa [hgroups] using hgroupMem
+          exact False.elim (hdisjoint slot hslotLeft hslotRight)
+        · simp at hjBase
+      · simp at hiBase
+  · unfold ctxtMaxFiniteExact
+    refine ⟨Nat.zero_le _, ?_⟩
+    intro name shape namesForValue hlookup slot hslot
+    rw [hvars] at hlookup
+    rcases flookupFupdateList_mem_or_base FEMPTY entries name
+        (shape, namesForValue) hlookup with hmem | hbase
+    · rcases hmem with ⟨entry, hentry, hname, hvalue⟩
+      rcases entry with ⟨entryName, entryValue⟩
+      rcases entryValue with ⟨entryShape, entrySlots⟩
+      have hentryEq :
+          (entryName, (entryShape, entrySlots)) = (name, (shape, namesForValue)) := by
+        cases hname
+        cases hvalue
+        rfl
+      rw [hentryEq] at hentry
+      have hzipMem : (name, (shape, namesForValue)) ∈ entries := by
+        simpa [entries] using hentry
+      obtain ⟨index, hindexName, hindexPair, hnameAt, hpairAt⟩ :=
+        mem_zip_getElem names (shapes.zip groups)
+          (name, (shape, namesForValue)) hzipMem
+      have hpairBound : index < min shapes.length groups.length := by
+        simpa [List.length_zip] using hindexPair
+      have hindexShape : index < shapes.length :=
+        Nat.lt_of_lt_of_le hpairBound (Nat.min_le_left ..)
+      have hindexProdShape : index < (shapes.map shapeOfHOL).length := by
+        simpa using hindexShape
+      have hindexGroup : index < groups.length :=
+        Nat.lt_of_lt_of_le hpairBound (Nat.min_le_right ..)
+      have hpairAt' :
+          (shapes[index]'hindexShape, groups[index]'hindexGroup) =
+            (shape, namesForValue) := by
+        simpa using hpairAt
+      have hslotsAt : groups[index]'hindexGroup = namesForValue :=
+        congrArg Prod.snd hpairAt'
+      have hslotGroup : slot ∈ groups[index]'hindexGroup := hslotsAt.symm ▸ hslot
+      have hslotFlat : slot ∈ slots := by
+        have hslotGroupProd :
+            slot ∈ (withShape (shapes.map shapeOfHOL) slots)[index]'(by
+              rw [withShape_length]
+              exact hindexProdShape) := by
+          simpa [hgroups] using hslotGroup
+        exact withShapeGetElemMemOfSlotsMem
+          (shapes.map shapeOfHOL) slots index slot hshapeSize hindexProdShape hslotGroupProd
+      have hmax := maxList_ge_of_mem slots slot hslotFlat
+      simpa [ctxtFcExactHOL, maxList] using hmax
+    · simp at hbase
 
 /-! The exception-relation conjunct of HOL
 `call_preserve_state_code_locals_rel` (`pan_to_crepProofScript.sml:2355`) is
