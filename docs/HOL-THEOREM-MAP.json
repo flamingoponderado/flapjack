@@ -14830,22 +14830,6 @@
     "reviewer": "Flapjack-specific mutual evaluator-induction helper for the strided mem_load_flat_rel analogue. HOL has no standalone declaration with this helper statement; its internal list cases are part of mem_loads_flat_rel."
   },
   {
-    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
-    "hol_name": "evaluate_def",
-    "hol_line": 780,
-    "lean_path": "Flapjack/Pancake/Semantics/PanSem/EvaluateClock.lean",
-    "lean_name": "evaluateHOLFiniteState_call",
-    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support": [
-      "locals",
-      "globals",
-      "code",
-      "eshapes"
-    ],
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-qj5.9.5.2): the single unconditional HOL panSemScript.sml:780 line-780 Call conjunct (Definition evaluate_def line 556, rewrite removing only the inner fix_clock on the recursive callee-body evaluation via fix_clock_evaluate). Exact clause-for-clause over PanSemStateFiniteExact: OPT_MMAP/eval -> evalListHOLFinite, lookup_code -> lookupCodeHOLFinite, clock=0 -> (some .timeOut, empty_locals s), body result NONE/Break/Continue -> (some Error, st), Return with shape_of <> return_sh -> Error, identity/result/kvar call types, Exception handler shapes, and the catch-all (some other, st) -> (some other, empty_locals st). The internal fixClock/callFixedContext wrappers are eliminated by fixClockHOLFinite_evaluateState and callFixedContextHOLFinite_eq_of_body, matching line 780. Carriers: state maps are reviewed HolFiniteMapExact via the same-module canonical witness; wide word payloads are BitVec width. No extra premise; the full 21-clause assembly remains open under flapjack-qj5.9."
-  },
-  {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
     "hol_name": "eval_map_var_cexp_present_ctxt",
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
@@ -14862,6 +14846,40 @@
       "PanToCrepContextExact.eids"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-b source comparison (2026-09-27; bead flapjack-4ac.5.84) against pan_to_crepProofScript.sml:1077. The Lean binders are exactly es, vs, s, t, ctxt. Its five premises in HOL order are MAP (eval s) es = MAP SOME vs, state_rel s t, code_rel ctxt s.code t.code, locals_rel ctxt s.locals t.locals, and EVERY localised_exp es. Its conclusion ranges over every name in FLAT (MAP var_cexp (FLAT (MAP FST (MAP (compile_exp ctxt) es)))) and returns the exact ctxt.vars FLOOKUP binding and MEM slot-list conclusion. ExpHOL/ValueHOL, PanSemStateFiniteExact/CrepSemHOLState, PanToCrepContextExact, compileExpExactHOLWList, CrepExpHOL/crepExpVarsHOL, and the three exact relation ports supply the corresponding HOL carriers and definitions; no result/evaluator target premise or extra semantic assumption is introduced. The implicit memory-set decider is discharged locally with Classical.propDecidable and is not a theorem premise. The relation finite-map qualifier lists exactly the state/context fields traversed by state_rel, code_rel, locals_rel, and the conclusion, with the same-module canonical witnesses required by the checker. The words_as_type_indexed_bitvec qualifier records HOL's positive type-indexed 'a word as BitVec width under [NeZero width]. Proof derives the conclusion from compileExpExactHOLW_vars_from_context while preserving unused HOL hypotheses. Direct compile_exp oracle rows and exact-carrier regression are in scripts/hol-probes/compile_exp_probe.out and Flapjack.Test.CompileExpParity (finite_map_shadow and its exact 64-bit carrier duplicate). No executable routing claim is made."
+    "reviewer": "flapjack-luna-b source comparison (2026-09-27; bead flapjack-4ac.5.84) against pan_to_crepProofScript.sml:1077. The Lean binders are exactly es, vs, s, t, ctxt. Its five premises in HOL order are MAP (eval s) es = MAP SOME vs, state_rel s t, code_rel ctxt s.code t.code, locals_rel ctxt s.locals t.locals, and EVERY localised_exp es. Its conclusion ranges over every name in FLAT (MAP var_cexp (FLAT (MAP FST (MAP (compile_exp ctxt) es)))) and returns the exact ctxt.vars FLOOKUP binding and MEM slot-list conclusion. ExpHOL/ValueHOL, PanSemStateFiniteExact/CrepSemHOLState, PanToCrepContextExact, compileExpExactHOLWList, CrepExpHOL/crepExpVarsHOL, and the three exact relation ports supply the corresponding HOL carriers and definitions; no result/evaluator target premise or extra semantic assumption is introduced. The implicit memory-set decider is discharged locally with Classical.propDecidable and is not a theorem premise. The relation finite-map qualifier lists exactly the state/context fields traversed by state_rel, code_rel, locals_rel, and the conclusion, with the same-module canonical witnesses required by the checker. This field list is scoped to those relation premises and the conclusion, not recursively to maps read by the source evaluation premise: `_heval` calls the separately tagged PanSemStateFiniteExact.evalHOLFinite, whose eval_def entry records its locals/globals/code/eshapes fields. There is no target expression-evaluation premise. The words_as_type_indexed_bitvec qualifier records HOL's positive type-indexed 'a word as BitVec width under [NeZero width]. Proof derives the conclusion from compileExpExactHOLW_vars_from_context while preserving unused HOL hypotheses. Direct compile_exp oracle rows and exact-carrier regression are in scripts/hol-probes/compile_exp_probe.out and Flapjack.Test.CompileExpParity (finite_map_shadow and its exact 64-bit carrier duplicate). No executable routing claim is made."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 780,
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/EvaluateClock.lean",
+    "lean_name": "evaluateHOLFiniteState_call",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-qj5.9.5.2): the single unconditional HOL panSemScript.sml:780 line-780 Call conjunct (Definition evaluate_def line 556, rewrite removing only the inner fix_clock on the recursive callee-body evaluation via fix_clock_evaluate). Exact clause-for-clause over PanSemStateFiniteExact: OPT_MMAP/eval -> evalListHOLFinite, lookup_code -> lookupCodeHOLFinite, clock=0 -> (some .timeOut, empty_locals s), body result NONE/Break/Continue -> (some Error, st), Return with shape_of <> return_sh -> Error, identity/result/kvar call types, Exception handler shapes, and the catch-all (some other, st) -> (some other, empty_locals st). The internal fixClock/callFixedContext wrappers are eliminated by fixClockHOLFinite_evaluateState and callFixedContextHOLFinite_eq_of_body, matching line 780. Carriers: state maps are reviewed HolFiniteMapExact via the same-module canonical witness; wide word payloads are BitVec width. No extra premise; the full 21-clause assembly remains open under flapjack-qj5.9."
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_inlineScript.sml",
+    "hol_name": "var_prog_def",
+    "lean_path": "Flapjack/Pancake/CrepInline.lean",
+    "lean_name": "crepVarProgHOLExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-27; bead flapjack-e7w.2.1.2) against crep_inlineScript.sml:11-33. All 19 CrepProgHOL constructors match var_prog_def: Dec and Assign destinations precede expression vars; Primitive emits lhs then rhs; Store/Store32/StoreByte concatenate both expressions; StoreGlob ignores its address; Seq and If preserve HOL concatenation order; While prepends condition vars; Call emits flattened arguments then return vars then handler vars when present, and ignores exception labels/function names; ExtCall emits all four numeric vars; Return flattens value vars; ShMem emits its var then address; Skip/Break/Continue/Raise/Tick return empty. Exp variables use the exact crepExpVarsHOL port. The carrier is width-indexed CrepProgHOL with [NeZero width] and BitVec width words, recorded by the words_as_type_indexed_bitvec qualifier; no names, maps, or theorem premises differ. Direct HOL rows var_prog_call_handler_extcall, var_prog_skip_empty, and var_prog_storeglob_ignores_address are in scripts/hol-probes/crep_inline_helper_probe.out and matched by CrepeInline.lean exact-carrier guards."
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_inlineScript.sml",
+    "hol_name": "vmax_prog_def",
+    "lean_path": "Flapjack/Pancake/CrepInline.lean",
+    "lean_name": "crepVmaxProgHOLExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-27; bead flapjack-e7w.2.1.2) against crep_inlineScript.sml:36-38. The equation is MAX_LIST (var_prog p); Lean folds max from 0 over crepVarProgHOLExact p, which matches HOL MAX_LIST including the empty-list result. The exact width-indexed carrier translation is the same positive-width BitVec mapping as CrepProgHOL. Direct HOL rows vmax_prog_call_handler_extcall and vmax_prog_skip_zero are in scripts/hol-probes/crep_inline_helper_probe.out and matched by CrepeInline.lean exact-carrier guards."
   }
 ]

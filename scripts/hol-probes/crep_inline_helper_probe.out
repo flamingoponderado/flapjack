@@ -1,3 +1,8 @@
+var_prog_call_handler_extcall=T
+vmax_prog_call_handler_extcall=T
+var_prog_skip_empty=T
+vmax_prog_skip_zero=T
+var_prog_storeglob_ignores_address=T
 eoc_p=T
 branch_p=T
 tail_p=T
