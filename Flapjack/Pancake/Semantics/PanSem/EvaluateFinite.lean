@@ -3163,6 +3163,33 @@ theorem evaluateHOLFinite_toExact {width : Nat} {σ : Type} [NeZero width]
   simp only [Option.map_map]
   rfl
 
+/-- Flapjack-specific finite result-pair bridge: a successful broad recursive
+    evaluator result is represented by the canonical finite context evaluator
+    with the same result option and an exactly projecting post-state. The
+    finite-to-broad recursive projection supplies the result equality; the
+    state-level wrapper then returns that finite post-state. This helper has no
+    standalone HOL declaration and adds no semantic premise. -/
+theorem evaluateHOLFiniteState_of_broadContext {width : Nat} {σ : Type}
+    [NeZero width] (context : FiniteEvalContext width σ)
+    (program : ProgHOL width)
+    (output : Option (PanSemResultExact width) × PanSemExactEvalContext width σ)
+    (hb : evalPanSemRecursiveCallContextHOLExact program context.toExact = some output) :
+    ∃ pair : Option (PanSemResultExact width) × FiniteEvalContext width σ,
+      evalPanSemRecursiveCallFiniteContext program context = some pair ∧
+      pair.1 = output.1 ∧ pair.2.state.toExact = output.2.state ∧
+      evaluateHOLFiniteState context.state program = (pair.1, pair.2.state) := by
+  have hprojection := evalPanSemRecursiveCallFiniteContext_projection program context
+  rw [hb] at hprojection
+  cases hfinite : evalPanSemRecursiveCallFiniteContext program context with
+  | none => simp [hfinite] at hprojection
+  | some pair =>
+      have hpair : (pair.1, pair.2.toExact) = output := by
+        simpa [hfinite] using hprojection
+      refine ⟨pair, rfl, congrArg Prod.fst hpair,
+        congrArg (fun result => result.2.state) hpair, ?_⟩
+      exact evaluateHOLFiniteState_eq_of_recursiveContext context.state program
+        context rfl pair hfinite
+
 end PanSemStateFiniteExact
 
 end Flapjack
