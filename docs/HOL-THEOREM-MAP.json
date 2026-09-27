@@ -15250,6 +15250,17 @@
   },
   {
     "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "evaluate_invariants",
+    "hol_line": 1150,
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
+    "lean_name": "evaluateInvariantsSkipCaseHOLFinite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-28; bead flapjack-4ac.4.61) against panPropsScript.sml:1150-1158. This is the genuine p = Skip base case of recInduct evaluate_ind: it keeps the source evaluator-result premise and all eight conclusions in source order (memaddrs, sh_memaddrs, be, eshapes, base_addr, structs, code, ffi.oracle), with no induction hypothesis or extra premise. evaluate_def's Skip equation at panSemScript.sml:556-557 returns (NONE,s), so the post-state is exactly the input state. The same-module PanPropsEvalStateFiniteExact carrier uses HolFiniteMapExact for locals/globals/code/eshapes with its checked roundtrip witness; [NeZero width] is the indexed-word translation. Recursive cases and the assembling theorem remain open."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
     "hol_name": "evaluate_clock_sub",
     "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
     "lean_name": "evaluateClockSubRaiseCaseHOLFinite",
@@ -15257,6 +15268,17 @@
     "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-c source comparison (2026-09-27; bead flapjack-4ac.4.60.1.1.7): HOL panPropsScript.sml:724-727 quantifies p,t,res,st,ck with exactly the high-run equation evaluate (p,t) = (res, st with clock := st.clock + ck), the non-timeout premise, and the conclusion evaluating p from t.clock - ck to (res,st). This is the genuine nonrecursive Raise case produced by recInduct evaluate_ind; it adds no IH or other premise, and the non-timeout premise is retained (unused for this non-timing constructor). HOL evaluate_def at panSemScript.sml:645-652 checks FLOOKUP s.eshapes eid and eval s e; it returns Exception eid value and empty_locals s only when shape_of value = sh and size_of_shape_with_ctxt s.structs (shape_of value) <= 32, otherwise Error and the unchanged state. The Lean case uses exact evalHOLExact, lookup and ordinary shape equality, the same 32-bit size bound, and the exact finite Raise equation; it preserves both state-update branches. Carrier qualifiers record the same-module PanPropsEvalStateFiniteExact owner for locals/globals/code/eshapes via HolFiniteMapExact and the indexed-word translation. The full evaluate_clock_sub theorem remains open."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "evaluate_invariants",
+    "hol_line": 1150,
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
+    "lean_name": "evaluateInvariantsBreakCaseHOLFinite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-28; bead flapjack-4ac.4.61) against panPropsScript.sml:1150-1158. This is the genuine p = Break leaf from recInduct evaluate_ind: it keeps the source evaluate premise and the eight conclusions in source order, without an IH or extra premise. evaluate_def at panSemScript.sml:623 returns (SOME Break,s), so the post-state is exactly the input state. The same-module PanPropsEvalStateFiniteExact carrier uses HolFiniteMapExact for locals/globals/code/eshapes via its checked roundtrip witness; [NeZero width] is the indexed-word translation. The Skip leaf is also ported; recursive cases and the assembling theorem remain open."
   },
   {
     "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
