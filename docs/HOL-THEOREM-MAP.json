@@ -12268,10 +12268,18 @@
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
     "lean_name": "panToCrepFiniteEvaluateShapeInvariantRetInst",
-    "hol_path": null,
-    "hol_name": null,
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific composition whose Return/Exception conclusion directly states the value-level Lean encoding of HOL is_wf_shape_v_nil. Source comparison matched evaluate(p,s)=(SOME v,s'), state_rel, locals_rel, and the result cases to pan_to_crepProofScript.sml:45-82,3016; ctxt_max/no_overlap to pan_commonPropsScript.sml:11-24. PanSem/CrepSem/context and independent t_locs map owners use same-module roundtrip witnesses for the relation carrier qualifier. The finite evaluator projects to evalPanSemRecursiveCallContextHOLExact through evaluateHOLFinite_toExact and the proved 66-case projection (flapjack-6yq). Keep untagged pending the direct finite-map evaluate_def source review/tag (flapjack-qj5); do not treat this helper as the HOL theorem."
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "evaluate_shape_invariant_ret_inst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanToCrepContextExact.vars",
+      "PanToCrepTargetLocalsExact.targetLocals"
+    ],
+    "reviewer": "Flapjack-luna-a source comparison (2026-09-27, flapjack-4ac.5.83/.5.46): HOL evaluate_shape_invariant_ret_inst at pan_to_crepProofScript.sml:3016-3028 quantifies p, s, v, s', t, ctxt, and t_locs and has exactly evaluate (p,s)=(SOME v,s'), state_rel s t, locals_rel ctxt s.locals t_locs; its only conclusion cases are Return and Exception payloads satisfying is_wf_shape_v_nil, else T. Lean panToCrepFiniteEvaluateShapeInvariantRetInst has those same variables/premises/conclusion, with HOL state/result/value/program/shape/name carriers represented by PanSemStateFiniteExact, PanSemResultExact, ValueHOL, ProgHOL, ShapeHOL, and MlS; [NeZero width] is the positive HOL word dimension. state_rel_def and locals_rel_def were compared at pan_to_crepProofScript.sml:45-82; ctxt_max/no_overlap at pan_commonPropsScript.sml:11-24. The only nonidentity representations are the six listed HolFiniteMapExact fields, each with a same-module owning-carrier roundtrip witness. The finite evaluator's 21 constructor clauses were compared with panSemScript.sml:556-761: recursive finite-context clauses mirror Dec/Seq/If/While/Call/DecCall; nonrecursive clauses use exact clause helpers and finite-support post-state reconstruction; the outer assembly marker is total, and the 66-case projection to the broad exact evaluator is kernel-checked. evaluateHOLFiniteState therefore has HOL's result-option × state shape and no additional premise; its unreachable assembly fallback changes no result. The evaluator definition itself remains untagged; this tag claims the reviewed target theorem statement and the listed map translations only."
   },
   {
     "hol_path": null,

@@ -291,19 +291,33 @@ theorem holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact
   cases context
   rfl
 
-/-- Flapjack-specific full-program shape-invariant composition over the
-    finite-support PanSem/CrepSem carriers. Its Return/Exception conclusion is
-    now the value-level `is_wf_shape_v_nil` statement, and its finite evaluator
-    projects to the broad exact evaluator by `evaluateHOLFinite_toExact` and the
-    proved 66-case projection (`flapjack-6yq`). Direct source review matched
-    the three HOL premises and the Return/Exception conclusion with no extra
-    side condition. `state_rel_def` and `locals_rel_def` were compared at
-    `pan_to_crepProofScript.sml:45-82`; the map representations are the
-    witnessed finite-support PanSem, CrepSem, context, and independent `t_locs`
-    carriers. The program/state/result/value/shape/name carriers match the HOL
-    syntax, with positive-width words and exact `MlString` identifiers. Keep
-    untagged until the direct finite-map `evaluate_def` port and its source
-    review are complete under `flapjack-qj5`. -/
+/-- Source-reviewed port of HOL `evaluate_shape_invariant_ret_inst`
+    (`pan_to_crepProofScript.sml:3016-3028`). The binders `program`, source,
+    result, and postState render HOL `p`, `s`, `v`, and `s'`; the only premises
+    are the successful `evaluate` result, `state_rel`, and `locals_rel`, and the
+    Return/Exception cases conclude the value-level rendering of
+    `is_wf_shape_v_nil`. `state_rel_def` and `locals_rel_def` were compared at
+    `pan_to_crepProofScript.sml:45-82`; `ctxt_max_def` and `no_overlap_def` at
+    `pan_commonPropsScript.sml:11-24`. PanSem maps, context `vars`, and the
+    independent HOL `t_locs` map use the named finite-support owners and their
+    same-module roundtrip witnesses. `ValueHOL`, `PanSemResultExact`,
+    `ProgHOL`, `ShapeHOL`, and `MlS` have exact constructor/field carriers, and
+    `[NeZero width]` matches HOL's positive word dimension.
+
+    The premise uses the pair-shaped `evaluateHOLFiniteState` view of the
+    finite context evaluator. Its recursive clauses were compared with all 21
+    HOL `evaluate_def` constructors (panSemScript.sml:556-761); nonrecursive
+    clauses call the reviewed exact clause helpers and rewrap finite-support
+    post-states. The outer recursive assembly marker is proved total, so the
+    wrapper's fallback is unreachable. The 66-case projection proves agreement
+    with the broad exact evaluator. The evaluator definition remains untagged;
+    this theorem's tag claims only the source-reviewed theorem statement and
+    its explicit finite-map carrier translations. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "evaluate_shape_invariant_ret_inst"
+  (fmap_as_finite_support_relation := [PanSemStateFiniteExact.locals,
+    PanSemStateFiniteExact.globals, PanSemStateFiniteExact.code,
+    PanSemStateFiniteExact.eshapes, PanToCrepContextExact.vars,
+    PanToCrepTargetLocalsExact.targetLocals])]
 theorem panToCrepFiniteEvaluateShapeInvariantRetInst {width : Nat} {σ : Type}
     [NeZero width] (program : ProgHOL width)
     (source : PanSemStateFiniteExact width σ)
