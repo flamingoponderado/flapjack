@@ -2279,6 +2279,15 @@
   },
   {
     "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
+    "hol_name": "compile_prog_def",
+    "lean_path": "Flapjack/Pancake/PanToCrep/CompileExact.lean",
+    "lean_name": "compileProgDeclsHOLW",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-27; bead flapjack-4ac.2.20.2; pan_to_crepScript.sml:393-397): HOL compile_prog_def is compile_prog prog = let inl_fs_names = MAP FST (functions (FILTER inlinable prog)); to_crep = compile_to_crep prog in compile_inl_top inl_fs_names to_crep, with input 'a prog and result (mlstring # num list # 'a crepLang$prog) list and no hypotheses. The Lean definition reproduces that let structure and operand order clause-for-clause: inlinableHOL/functionsHOL map the FILTER/functions half (MlS names), the declaration-only half is the tagged compileToCrepExactHOLW, and the inline half is the exact compileInlTopHOLExact over MlS names and CrepProgHOL triples (unsorted-inline-map carrier reviewed under flapjack-e7w.1; exact compile_inl_prog/compile_inl_top wrappers landed untagged pending carrier review, flapjack-e7w.2.2). Carriers are DeclHOL width/ShapeHOL/ExpHOL/MlS and CrepProgHOL width with [NeZero width]; the only outer translation is HOL's positive type-indexed word to BitVec width (words_as_type_indexed_bitvec). The finite maps used inside are local intermediates and do not occur in the declaration's input or output type, so no finite-map carrier qualifier applies here; their own declaration tags record their result translations. No hypothesis, side condition, success branch, or conclusion is added or weakened."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
     "hol_name": "comp_func_def",
     "lean_path": "Flapjack/Pancake/PanToCrep/CompileExact.lean",
     "lean_name": "compFuncExactHOLW",
