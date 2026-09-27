@@ -3320,6 +3320,241 @@ theorem evaluateInvariantsBreakCaseHOLFinite {width : Nat} {σ : Type} [NeZero w
 end Flapjack
 
 
+/-! # The `Continue` case of HOL `evaluate_invariants`
+
+HOL's `Continue` equation preserves the state and this genuine induction leaf
+retains the source premise and all eight field conclusions. -/
+
+namespace Flapjack
+
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_invariants" 1150
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateInvariantsContinueCaseHOLFinite {width : Nat} {σ : Type} [NeZero width] :
+    ∀ (state : PanPropsEvalStateFiniteExact width σ)
+      (result : Option (PanSemResultExact width))
+      (post : PanPropsEvalStateFiniteExact width σ),
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state
+          (.continue : ProgHOL width) = (result, post) →
+      post.memaddrs = state.memaddrs ∧
+      post.shMemaddrs = state.shMemaddrs ∧
+      post.be = state.be ∧
+      post.eshapes = state.eshapes ∧
+      post.baseAddr = state.baseAddr ∧
+      post.structs = state.structs ∧
+      post.code = state.code ∧
+      post.ffi.oracle = state.ffi.oracle := by
+  classical
+  intro state result post hRun
+  simp only [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair,
+    PanSemStateFiniteExact.evaluateHOLFiniteState_continue,
+    PanPropsEvalStateFiniteExact.ofPanSemFinite_toPanSemFinite] at hRun
+  rcases Prod.mk.inj hRun with ⟨rfl, rfl⟩
+  simp
+
+end Flapjack
+
+
+/-! # The `Annot` case of HOL `evaluate_invariants`
+
+HOL's annotation equation returns `(NONE, state)`, so this genuine induction
+leaf retains the source premise and all eight field conclusions. -/
+
+open Flapjack.Pancake.PanLang (MlS)
+
+namespace Flapjack
+
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_invariants" 1150
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateInvariantsAnnotCaseHOLFinite {width : Nat} {σ : Type} [NeZero width] :
+    ∀ (tag text : MlS)
+      (state : PanPropsEvalStateFiniteExact width σ)
+      (result : Option (PanSemResultExact width))
+      (post : PanPropsEvalStateFiniteExact width σ),
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state
+          (.annot tag text : ProgHOL width) = (result, post) →
+      post.memaddrs = state.memaddrs ∧
+      post.shMemaddrs = state.shMemaddrs ∧
+      post.be = state.be ∧
+      post.eshapes = state.eshapes ∧
+      post.baseAddr = state.baseAddr ∧
+      post.structs = state.structs ∧
+      post.code = state.code ∧
+      post.ffi.oracle = state.ffi.oracle := by
+  classical
+  intro tag text state result post hRun
+  simp only [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair,
+    PanSemStateFiniteExact.evaluateHOLFiniteState_annot,
+    PanPropsEvalStateFiniteExact.ofPanSemFinite_toPanSemFinite] at hRun
+  rcases Prod.mk.inj hRun with ⟨rfl, rfl⟩
+  simp
+
+end Flapjack
+
+
+/-! # The `Tick` case of HOL `evaluate_invariants`
+
+HOL `Tick` changes only the clock on its positive-clock branch and clears only
+locals on timeout. This induction leaf keeps the source evaluator premise and
+all eight state-field conclusions. -/
+
+namespace Flapjack
+
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_invariants" 1150
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateInvariantsTickCaseHOLFinite {width : Nat} {σ : Type} [NeZero width] :
+    ∀ (state : PanPropsEvalStateFiniteExact width σ)
+      (result : Option (PanSemResultExact width))
+      (post : PanPropsEvalStateFiniteExact width σ),
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state
+          (.tick : ProgHOL width) = (result, post) →
+      post.memaddrs = state.memaddrs ∧
+      post.shMemaddrs = state.shMemaddrs ∧
+      post.be = state.be ∧
+      post.eshapes = state.eshapes ∧
+      post.baseAddr = state.baseAddr ∧
+      post.structs = state.structs ∧
+      post.code = state.code ∧
+      post.ffi.oracle = state.ffi.oracle := by
+  classical
+  intro state result post hRun
+  simp only [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair,
+    PanSemStateFiniteExact.evaluateHOLFiniteState_tick] at hRun
+  by_cases hclock : state.toPanSemFinite.clock = 0
+  · simp [hclock, PanPropsEvalStateFiniteExact.ofPanSemFinite,
+      PanSemStateFiniteExact.emptyLocalsHOLFinite] at hRun
+    rcases hRun with ⟨_, hpost⟩
+    cases hpost
+    simp [PanPropsEvalStateFiniteExact.toPanSemFinite]
+  · simp [hclock, PanPropsEvalStateFiniteExact.ofPanSemFinite,
+      PanSemStateFiniteExact.decClockHOLFinite] at hRun
+    rcases hRun with ⟨_, hpost⟩
+    cases hpost
+    simp [PanPropsEvalStateFiniteExact.toPanSemFinite]
+
+end Flapjack
+
+
+/-! # The `Return` case of HOL `evaluate_invariants`
+
+The successful Return clause clears locals but leaves all eight fields in the
+source invariant unchanged; expression and size failures preserve the state. -/
+
+open Flapjack.Pancake.PanLang (ExpHOL)
+
+namespace Flapjack
+
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_invariants" 1150
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateInvariantsReturnCaseHOLFinite {width : Nat} {σ : Type} [NeZero width] :
+    ∀ (expression : ExpHOL width)
+      (state : PanPropsEvalStateFiniteExact width σ)
+      (result : Option (PanSemResultExact width))
+      (post : PanPropsEvalStateFiniteExact width σ),
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state (.return expression) =
+        (result, post) →
+      post.memaddrs = state.memaddrs ∧
+      post.shMemaddrs = state.shMemaddrs ∧
+      post.be = state.be ∧
+      post.eshapes = state.eshapes ∧
+      post.baseAddr = state.baseAddr ∧
+      post.structs = state.structs ∧
+      post.code = state.code ∧
+      post.ffi.oracle = state.ffi.oracle := by
+  classical
+  intro expression state result post hRun
+  cases heval : @evalHOLExact width σ _ state.toPanSemFinite.toExact
+      (fun address => Classical.propDecidable (state.toPanSemFinite.memaddrs address))
+      expression with
+  | none =>
+      simp [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair,
+        PanSemStateFiniteExact.evaluateHOLFiniteState_return, heval] at hRun
+      rcases hRun with ⟨_, hpost⟩
+      cases hpost
+      simp
+  | some value =>
+      by_cases hsize : Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL
+          state.toPanSemFinite.structs (shapeOfHOLExact value) ≤ 32
+      · simp [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair,
+          PanSemStateFiniteExact.evaluateHOLFiniteState_return, heval, hsize] at hRun
+        rcases hRun with ⟨_, hpost⟩
+        cases hpost
+        simp [PanPropsEvalStateFiniteExact.ofPanSemFinite,
+          PanPropsEvalStateFiniteExact.toPanSemFinite,
+          PanSemStateFiniteExact.emptyLocalsHOLFinite]
+      · simp [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair,
+          PanSemStateFiniteExact.evaluateHOLFiniteState_return, heval, hsize] at hRun
+        rcases hRun with ⟨_, hpost⟩
+        cases hpost
+        simp
+
+end Flapjack
+
+
+/-! # The `Assign` induction case of HOL `evaluate_invariants`
+
+HOL `Assign` either reports Error with the input state or applies `set_kvar`.
+Both keyed-variable updates affect only locals/globals, so all eight fields in
+the invariant are preserved. -/
+
+open Flapjack.Pancake.PanLang (ExpHOL MlS)
+
+namespace Flapjack
+
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_invariants" 1150
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateInvariantsAssignCaseHOLFinite {width : Nat} {σ : Type} [NeZero width] :
+    ∀ (kind : VarKind) (name : MlS) (source : ExpHOL width)
+      (state : PanPropsEvalStateFiniteExact width σ)
+      (result : Option (PanSemResultExact width))
+      (post : PanPropsEvalStateFiniteExact width σ),
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state
+          (.assign kind name source : ProgHOL width) = (result, post) →
+      post.memaddrs = state.memaddrs ∧
+      post.shMemaddrs = state.shMemaddrs ∧
+      post.be = state.be ∧
+      post.eshapes = state.eshapes ∧
+      post.baseAddr = state.baseAddr ∧
+      post.structs = state.structs ∧
+      post.code = state.code ∧
+      post.ffi.oracle = state.ffi.oracle := by
+  classical
+  intro kind name source state result post hRun
+  cases heval : @evalHOLExact width σ _ state.toPanSemFinite.toExact
+      (fun address => Classical.propDecidable (state.toPanSemFinite.memaddrs address))
+      source with
+  | none =>
+      simp [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair,
+        PanSemStateFiniteExact.evaluateHOLFiniteState_assign, heval] at hRun
+      rcases hRun with ⟨_, rfl⟩
+      simp
+  | some value =>
+      by_cases hvalid : Flapjack.isValidValueHOLExact
+          state.toPanSemFinite.toExact kind name value = true
+      · simp [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair,
+          PanSemStateFiniteExact.evaluateHOLFiniteState_assign, heval, hvalid] at hRun
+        rcases hRun with ⟨_, hpost⟩
+        cases hpost
+        cases kind <;> simp [PanPropsEvalStateFiniteExact.ofPanSemFinite,
+          PanPropsEvalStateFiniteExact.toPanSemFinite,
+          PanSemStateFiniteExact.setKvarHOLFinite,
+          PanSemStateFiniteExact.setVarHOLFinite,
+          PanSemStateFiniteExact.setGlobalHOLFinite]
+      · have hinvalid : Flapjack.isValidValueHOLExact
+            state.toPanSemFinite.toExact kind name value = false :=
+          Bool.eq_false_iff.mpr hvalid
+        simp [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair,
+          PanSemStateFiniteExact.evaluateHOLFiniteState_assign, heval, hinvalid] at hRun
+        rcases hRun with ⟨_, rfl⟩
+        simp
+
+end Flapjack
+
+
 /-!
 # The `Dec` induction case of HOL `evaluate_clock_sub`
 
