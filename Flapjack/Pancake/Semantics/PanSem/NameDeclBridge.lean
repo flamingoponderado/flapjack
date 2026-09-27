@@ -1035,4 +1035,154 @@ theorem evalDeclExpression_bytesInWord_correspondence {width : Nat} [NeZero widt
   rw [hprod, hexact]
   exact panValueCodecRel_word (bytesInWordHOL width)
 
+/-! ## List-level correspondence for the memory-free fragment (flapjack-rdc.3)
+
+Shared prerequisite for the `.op`/`.panOp` arms: if every argument of a
+production expression list is related to its exact `expToHOL` image by
+`PanSemDeclarationValueOptionRel PanValueCodecRel`, then the whole list
+evaluation is related.  Untagged Flapjack-specific infrastructure. -/
+
+/-- List-level value correspondence between the production and exact evaluators. -/
+def PanSemDeclarationValueListRel {width : Nat} [NeZero width]
+    (valueRel : PanValue (BitVec width) → ValueHOL width → Prop) :
+    List (PanValue (BitVec width)) → List (ValueHOL width) → Prop
+  | [], [] => True
+  | production :: productions, exact :: exacts =>
+      valueRel production exact ∧
+        PanSemDeclarationValueListRel valueRel productions exacts
+  | _, _ => False
+
+theorem evalPanValueExps_list_correspondence {width : Nat} [NeZero width]
+    [BEq (BitVec width)] [OfNat (BitVec width) 0] [OfNat (BitVec width) 1]
+    [Add (BitVec width)] [Mul (BitVec width)] [Sub (BitVec width)]
+    [AndOp (BitVec width)] [OrOp (BitVec width)] [HXor (BitVec width) (BitVec width) (BitVec width)]
+    [ShiftLeft (BitVec width)] [ShiftRight (BitVec width)] [LT (BitVec width)]
+    [DecidableRel (fun left right : BitVec width => left < right)] [PanCmp (BitVec width)]
+    (state : PanSemStateFiniteExact width Unit) [_hmem : DecidablePred state.memaddrs]
+    (structs : StructContext)
+    (locals globals : VarName → Option (PanValue (BitVec width)))
+    (memory : BitVec width → Option (PanValue (BitVec width)))
+    (baseAddress topAddress bytesInWord : BitVec width)
+    (access : Option (PanValueMemoryAccess (BitVec width)))
+    (expressions : List (Exp (BitVec width)))
+    (values : List (PanValue (BitVec width)))
+    (hprod : evalPanValueExp.evalPanValueExps structs locals globals memory baseAddress
+        topAddress bytesInWord expressions (memoryAccess := access) = some values)
+    (hexp : ∀ e ∈ expressions,
+      PanSemDeclarationValueOptionRel PanValueCodecRel
+        (evalPanValueExp structs locals globals memory baseAddress topAddress bytesInWord e
+          (memoryAccess := access))
+        (state.evalHOLFinite (expToHOL e))) :
+    ∃ exacts : List (ValueHOL width),
+      state.evalListHOLFinite (expressions.map expToHOL) = some exacts ∧
+        PanSemDeclarationValueListRel PanValueCodecRel values exacts := by
+  induction expressions generalizing values with
+  | nil =>
+      simp only [evalPanValueExp.evalPanValueExps, Option.some.injEq] at hprod
+      subst hprod
+      refine ⟨[], ?_, ?_⟩
+      · simp only [List.map_nil, PanSemStateFiniteExact.evalListHOLFinite, evalListHOLExact]
+      · exact trivial
+  | cons expression expressions ih =>
+      have hhead := hexp expression List.mem_cons_self
+      have htail : ∀ e ∈ expressions,
+          PanSemDeclarationValueOptionRel PanValueCodecRel
+            (evalPanValueExp structs locals globals memory baseAddress topAddress bytesInWord e
+              (memoryAccess := access))
+            (state.evalHOLFinite (expToHOL e)) :=
+        fun e he => hexp e (List.mem_cons_of_mem expression he)
+      simp only [evalPanValueExp.evalPanValueExps] at hprod
+      cases h1 : evalPanValueExp structs locals globals memory baseAddress topAddress bytesInWord
+          expression (memoryAccess := access) with
+      | none => rw [h1] at hprod; exact absurd hprod (by simp)
+      | some pv =>
+          cases h2 : evalPanValueExp.evalPanValueExps structs locals globals memory baseAddress
+              topAddress bytesInWord expressions (memoryAccess := access) with
+          | none => rw [h1, h2] at hprod; exact absurd hprod (by simp)
+          | some rest =>
+              rw [h1, h2] at hprod
+              simp at hprod
+              subst hprod
+              cases h3 : state.evalHOLFinite (expToHOL expression) with
+              | none =>
+                  rw [h1, h3] at hhead
+                  simp only [PanSemDeclarationValueOptionRel] at hhead
+              | some ev =>
+                  rw [h1, h3] at hhead
+                  simp only [PanSemDeclarationValueOptionRel] at hhead
+                  obtain ⟨exacts, hexactList, hrelList⟩ := ih rest h2 htail
+                  refine ⟨ev :: exacts, ?_, ⟨hhead, hrelList⟩⟩
+                  rw [List.map_cons]
+                  rw [PanSemStateFiniteExact.evalHOLFinite_eq_toExact] at h3
+                  rw [PanSemStateFiniteExact.evalListHOLFinite_eq_toExact] at hexactList
+                  simp only [PanSemStateFiniteExact.evalListHOLFinite, evalListHOLExact, h3,
+                    hexactList]
+
+/-! ### Word-projection helpers for the Op arm (flapjack-rdc.3.2) -/
+
+/-- The executable/exact value codec holds only for word payloads (forward
+    direction). -/
+theorem panValueCodecRel_exists_word {width : Nat} [NeZero width]
+    (production : PanValue (BitVec width)) (exact : ValueHOL width)
+    (h : PanValueCodecRel production exact) :
+    ∃ word : BitVec width, production = .word word ∧ exact = .val (.word word) := by
+  cases exact with
+  | val wrapper =>
+      cases wrapper with
+      | word word => exact ⟨word, h, rfl⟩
+  | rStruct fields => change False at h; exact h.elim
+  | nStruct name fields => change False at h; exact h.elim
+
+/-- Every exact value related to an executable value is a word. -/
+theorem panSemDeclarationValueListRel_all_valueIsWord {width : Nat} [NeZero width] :
+    ∀ (productions : List (PanValue (BitVec width))) (exacts : List (ValueHOL width)),
+      PanSemDeclarationValueListRel PanValueCodecRel productions exacts →
+      exacts.all valueIsWord = true := by
+  intro productions
+  induction productions with
+  | nil =>
+      intro exacts h
+      cases exacts with
+      | nil => rfl
+      | cons exact restE => change False at h; exact h.elim
+  | cons production rest ih =>
+      intro exacts h
+      cases exacts with
+      | nil => change False at h; exact h.elim
+      | cons exact restE =>
+          simp only [PanSemDeclarationValueListRel] at h
+          obtain ⟨hhead, htail⟩ := h
+          obtain ⟨word, hpw, hexw⟩ := panValueCodecRel_exists_word production exact hhead
+          subst hpw
+          subst hexw
+          simp only [List.all_cons, valueIsWord, Bool.true_and]
+          exact ih restE htail
+
+/-- Projecting the executable values to words agrees with the exact `valueWord`
+    list. -/
+theorem panSemDeclarationValueListRel_mapM_projection {width : Nat} [NeZero width] :
+    ∀ (productions : List (PanValue (BitVec width))) (exacts : List (ValueHOL width)),
+      PanSemDeclarationValueListRel PanValueCodecRel productions exacts →
+      productions.mapM panValueWordProjection = some (exacts.map valueWord) := by
+  intro productions
+  induction productions with
+  | nil =>
+      intro exacts h
+      cases exacts with
+      | nil => rfl
+      | cons exact restE => change False at h; exact h.elim
+  | cons production rest ih =>
+      intro exacts h
+      cases exacts with
+      | nil => change False at h; exact h.elim
+      | cons exact restE =>
+          simp only [PanSemDeclarationValueListRel] at h
+          obtain ⟨hhead, htail⟩ := h
+          obtain ⟨word, hpw, hexw⟩ := panValueCodecRel_exists_word production exact hhead
+          subst hpw
+          subst hexw
+          simp only [List.mapM_cons, panValueWordProjection, valueWord, List.map_cons]
+          rw [ih restE htail]
+          rfl
+
 end Flapjack
