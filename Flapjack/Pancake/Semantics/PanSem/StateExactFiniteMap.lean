@@ -2529,6 +2529,82 @@ theorem evaluateHOLFiniteState_dec {width : Nat} {σ : Type} [NeZero width]
 
 attribute [simp] evaluateHOLFiniteState_dec
 
+/-- Source-reviewed HOL `evaluate_def` Dec conjunct (`panSemScript.sml:558-565`,
+    theorem restatement at line 780). It exposes initializer failure, the
+    shape-equality check, the total recursive body pair, and restoration of the
+    original binding with `res_var`; no recursive assembly-marker branch or
+    semantic premise is present. HOL `FLOOKUP` and `FUPDATE` are represented by
+    the finite map's `lookup` and `resVarEq`. The four named state maps use the
+    same-module canonical finite-support witness. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
+  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+theorem evaluateHOLFiniteState_dec_total {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (name : MlS) (shape : ShapeHOL)
+    (initializer : ExpHOL width) (body : ProgHOL width) :
+    evaluateHOLFiniteState state (.dec name shape initializer body : ProgHOL width) =
+      (let context : FiniteEvalContext width σ :=
+        ⟨state, fun address => Classical.propDecidable (state.memaddrs address),
+          fun address => Classical.propDecidable (state.shMemaddrs address)⟩
+       match @evalHOLExact width σ _ state.toExact context.memaddrsDecidable initializer with
+       | none => (some .error, state)
+       | some value =>
+           if shapeEqHOL shape (shapeOfHOLExact value) then
+             let bodyState := setVarHOLFinite name value state
+             let bodyOutput := evaluateHOLFiniteState bodyState body
+             (bodyOutput.1,
+               { bodyOutput.2 with
+                 locals := HolFiniteMapExact.resVarEq bodyOutput.2.locals
+                   (name, state.locals.lookup name) })
+           else (some .error, state)) := by
+  classical
+  let hmem : DecidablePred state.memaddrs :=
+    fun address => Classical.propDecidable (state.memaddrs address)
+  let hshared : DecidablePred state.shMemaddrs :=
+    fun address => Classical.propDecidable (state.shMemaddrs address)
+  let context : FiniteEvalContext width σ := ⟨state, hmem, hshared⟩
+  cases hinit : @evalHOLExact width σ _ state.toExact hmem initializer with
+  | none =>
+      simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+        evalPanSemRecursiveCallFiniteContext, hinit, hmem]
+  | some value =>
+      by_cases hshape : shapeEqHOL shape (shapeOfHOLExact value) = true
+      · let bodyState := setVarHOLFinite name value state
+        let bodyContext := context.withState bodyState rfl rfl
+        obtain ⟨bodyPair, hbody⟩ :=
+          evalPanSemRecursiveCallFiniteContext_total body bodyContext
+        have hbodyContextClassical : bodyContext =
+            (⟨bodyState,
+              fun address => Classical.propDecidable (bodyState.memaddrs address),
+              fun address => Classical.propDecidable (bodyState.shMemaddrs address)⟩ :
+              FiniteEvalContext width σ) := by
+          apply FiniteEvalContext.ext
+          rfl
+        have hbodyGlobal : evalPanSemRecursiveCallFiniteContext body
+            (⟨bodyState,
+              fun address => Classical.propDecidable (bodyState.memaddrs address),
+              fun address => Classical.propDecidable (bodyState.shMemaddrs address)⟩ :
+              FiniteEvalContext width σ) = some bodyPair := by
+          rw [← hbodyContextClassical]
+          exact hbody
+        have hbodyExpr : evalPanSemRecursiveCallFiniteContext body
+            (context.withState bodyState rfl rfl) = some bodyPair := by
+          simpa [bodyContext, bodyState] using hbody
+        have hbodyOutput : evaluateHOLFiniteState bodyState body =
+            (bodyPair.1, bodyPair.2.state) := by
+          simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+            hbodyGlobal]
+        change (match evalPanSemRecursiveCallFiniteContext
+          (.dec name shape initializer body) context with
+          | some pair => (pair.1, pair.2.state)
+          | none => (none, state)) = _
+        rw [evalPanSemRecursiveCallFiniteContext.eq_def]
+        simp only [evalHOLFinite, hinit, hshape, if_true, context, bodyState, hbodyExpr]
+        rw [hbodyOutput]
+        rfl
+      · simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+          evalPanSemRecursiveCallFiniteContext, hinit, hshape,
+          hmem]
+
 /-- Source-reviewed HOL `evaluate_def` Seq conjunct (`panSemScript.sml:615`,
     restated in the theorem at line 780). It fixes the first pair's clock,
     evaluates the second program only when the first result is `NONE`, and

@@ -12191,6 +12191,16 @@
   },
   {
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 780,
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
+    "lean_name": "evaluateHOLFiniteState_dec_total",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "reviewer": "flapjack-luna-a source comparison (2026-09-27; bead flapjack-qj5.6): HOL evaluate_def panSemScript.sml:558-565 (theorem restatement at line 780) handles Dec by evaluating the initializer, returning Error on failure or shape mismatch, and otherwise recursively evaluating the body after set_var then restoring the original local binding with res_var. evaluateHOLFiniteState_dec_total states the same branches using evalHOLExact, shapeEqHOL, setVarHOLFinite, the total pair-shaped body evaluator, and HolFiniteMapExact.resVarEq. Source definitions res_var_def at lines 505-507 and set_var_def at lines 398-401 use HOL FLOOKUP/FUPDATE; finite-map lookup/update preserve those operations. The body result is not assumed, and the marker-level recursive Option does not occur in the theorem statement; its totality justifies the proof. PanSemStateFiniteExact has the same fixed positive width and result/state shape, and the four listed finite-map fields have the canonical same-module roundtrip witness. The qualifier records only that carrier translation."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
     "hol_name": "evaluate_decls_def",
     "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
     "lean_name": "evaluateDeclsHOLFinite",
