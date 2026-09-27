@@ -13856,5 +13856,13 @@
     "lean_name": "compileExpValRelHOL_var_global",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.3): faithful Var Global case of HOL compile_exp_val_rel (pan_to_crepProofScript.sml:166-168), proved vacuously because localised_exp rejects global variables. Flapjack-specific staged case lemma; full theorem ports the HOL statement over the exact carriers."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "compileExpListValRelHOL",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.4.1): list-level companion of HOL pan_to_crepProofScript.sml:171-198 (the RStruct eval_ind induction step); Flapjack-specific helper, no standalone HOL theorem."
   }
 ]
