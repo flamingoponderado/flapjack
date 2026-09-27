@@ -13555,5 +13555,21 @@
     "lean_name": "panPrimopCrepPrimopExactHOL",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.16.9.1): exact port of HOL pan_primop_crep_primop (pan_to_crepProofScript.sml:1096-1099) with the exact HOL shape pan_primop pop vs = SOME value ==> crep_primop pop (FLAT (MAP flatten vs)) = SOME (flatten value), NO cross-carrier map: panPrimopHOLExact (pan_primop_def, panSemScript.sml:196), flattenHOL (flatten_def) and crepPrimopHOLExact (crep_primop_def, crepSemScript.sml:221) are all exact HolWordLab ports. Direct HOL rows pan_valid/overflow/invalid in pan_crep_primop_probe.out reproduced by Flapjack/Test/PanCrepPrimopParity.lean. The mapped PanWordLab variant panPrimopCrepPrimopHOLExact remains untagged support."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/pan_commonPropsScript.sml",
+    "hol_name": "genlist_distinct_max",
+    "lean_path": "Flapjack/Pancake/Semantics/PanCommonProps.lean",
+    "lean_name": "genlistDistinctMaxHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.16.12): HOL genlist_distinct_max is stated over HOL lists with `distinct_lists` and `GENLIST (fun x. SUC x + m) n`. The Lean statement uses the reviewed `ListDisjoint` rendering of `distinct_lists` and `(List.range n).map (fun i => i + 1 + m)` for `GENLIST`, with the same hypotheses, the same `m`/`m + p` bounds and no extra side conditions."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/pan_commonPropsScript.sml",
+    "hol_name": "genlist_distinct_max'",
+    "lean_path": "Flapjack/Pancake/Semantics/PanCommonProps.lean",
+    "lean_name": "genlistDistinctMaxShiftedHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.16.12): HOL genlist_distinct_max' is stated over HOL lists with `distinct_lists` and `GENLIST (fun x. SUC x + m) n`. The Lean statement uses the reviewed `ListDisjoint` rendering of `distinct_lists` and `(List.range n).map (fun i => i + 1 + m)` for `GENLIST`, with the same hypotheses, the same `m`/`m + p` bounds and no extra side conditions."
   }
 ]

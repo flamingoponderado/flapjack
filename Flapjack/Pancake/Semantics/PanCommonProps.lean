@@ -605,4 +605,30 @@ theorem optMmapDisjZipFlookup [BEq α] [LawfulBEq α]
         exact hxnot (he ▸ hkey)
       simp [hkx]
 
+/-- Exact port of HOL `genlist_distinct_max`
+    (`cakeml/pancake/semantics/pan_commonPropsScript.sml:208`): the
+    `GENLIST (fun x. SUC x + m) n` slot enumeration is disjoint from any list
+    whose elements are bounded by `m`.  HOL's `distinct_lists` is rendered as
+    `ListDisjoint` and `GENLIST` by `List.range`/`List.map`. -/
+@[hol "cakeml/pancake/semantics/pan_commonPropsScript.sml" "genlist_distinct_max"]
+theorem genlistDistinctMaxHOL (n m : Nat) (ys : List Nat)
+    (hys : ∀ y, y ∈ ys → y ≤ m) :
+    ListDisjoint ((List.range n).map (fun i => i + 1 + m)) ys := by
+  intro value hx hy
+  obtain ⟨i, _hi, rfl⟩ := List.mem_map.mp hx
+  have := hys _ hy
+  omega
+
+/-- Exact port of HOL `genlist_distinct_max'`
+    (`cakeml/pancake/semantics/pan_commonPropsScript.sml:221`): the
+    `m + p`-shifted `GENLIST (fun x. SUC x + (m + p)) n` variant. -/
+@[hol "cakeml/pancake/semantics/pan_commonPropsScript.sml" "genlist_distinct_max'"]
+theorem genlistDistinctMaxShiftedHOL (n m p : Nat) (ys : List Nat)
+    (hys : ∀ y, y ∈ ys → y ≤ m) :
+    ListDisjoint ((List.range n).map (fun i => i + 1 + (m + p))) ys := by
+  intro value hx hy
+  obtain ⟨i, _hi, rfl⟩ := List.mem_map.mp hx
+  have := hys _ hy
+  omega
+
 end Flapjack
