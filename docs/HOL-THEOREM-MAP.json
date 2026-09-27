@@ -12329,6 +12329,14 @@
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "panToCrepCallEntryShapeInvariantFiniteExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific call-entry composition for HOL evaluate_shape_invariant_ret_inst2 (pan_to_crepProofScript.sml:3031-3044). It uses exact PanSem evalList and lookup_code results, then combines the exact locals_rel/state_rel invariants with lookupCodeHOLExact_calleeLocalsWf to establish the body-entry locals/globals shape facts. It has no body-evaluation premise and is not itself the HOL theorem. The implicit decidability dictionary for source.memaddrs is evaluator implementation plumbing, not a propositional HOL hypothesis."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
     "lean_name": "panToCrepFiniteReturnPayloadShape",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific Return-clause composition over the finite-context evaluator, exact PanSem state, and exact Pan-to-Crep relations. It proves the HOL-shaped empty-context payload conclusion for this clause but has a clause-level evaluator premise, so it is not evaluate_shape_invariant_ret_inst and remains untagged."
