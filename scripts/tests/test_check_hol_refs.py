@@ -1561,6 +1561,29 @@ class WordsCarrierResolutionTest(unittest.TestCase):
         errors = self._run(owner, self.CONSUMER)
         self.assertTrue(any("BitVec" in e for e in errors), errors)
 
+    def test_rejects_owner_header_nezero_different_width(self):
+        # The owner's header discharges a DIFFERENT width identifier, so the
+        # caller's own `[NeZero width]` must not substitute for carrier
+        # positivity.
+        owner = "\n".join([
+            "structure CrepStateExact (width : Nat) [NeZero other] (ffiState : Type) where",
+            "  locals : HolFiniteMapExact Nat (HolWordLab width)",
+            "  memory : BitVec width → HolWordLab width",
+        ])
+        errors = self._run(owner, self.CONSUMER)
+        self.assertTrue(any("BitVec" in e for e in errors), errors)
+
+    def test_rejects_field_bitvec_of_other_width(self):
+        # A field mentioning `BitVec` and the width token separately (here
+        # `BitVec 5 × HolWordLab width`) is not an actual `BitVec width` field.
+        owner = "\n".join([
+            "structure CrepStateExact (width : Nat) [NeZero width] (ffiState : Type) where",
+            "  locals : HolFiniteMapExact Nat (HolWordLab width)",
+            "  memory : BitVec 5 × HolWordLab width",
+        ])
+        errors = self._run(owner, self.CONSUMER)
+        self.assertTrue(any("BitVec" in e for e in errors), errors)
+
     def test_rejects_ambiguous_owners_borrowing_cross_owner_evidence(self):
         # The imported owner has `[NeZero width]` but no `BitVec width` field;
         # the local same-named shadow has a `BitVec width` field but no

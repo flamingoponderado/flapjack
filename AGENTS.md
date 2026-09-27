@@ -339,11 +339,14 @@ declaration is the standard translation of HOL's type-indexed `'a word`
 (dimension `dimindex (:α)`) to Lean's positive-width `BitVec width` and of HOL's
 `'ffi ffi_state` to a universe-0 Lean host type `σ : Type`. The tagged
 declaration must name `BitVec`, or name a reviewed width-indexed carrier
-structure (declared locally or reached through imports) whose fields include
-`BitVec width` fields and whose own declaration retains `[NeZero width]`; the
-carrier is resolved from its declaration, never accepted by name alone, and the
-`[NeZero width]` discharge and the `BitVec width` field must come from the SAME
-owning declaration and the same width identifier; a name with several owners (a
+structure (declared locally or reached through imports) whose own header carries
+`[NeZero <width>]` for its width parameter and some field of that SAME owner
+mentions `BitVec <width>` with that same width identifier; the carrier is
+resolved from its declaration, never accepted by name alone, and the
+`[NeZero <width>]` discharge and the `BitVec <width>` field must come from the
+SAME owning declaration and the same width identifier (a header with
+`[NeZero other]` or a field such as `BitVec 5 × HolWordLab width` does not
+qualify); a name with several owners (a
 local duplicate shadowing an imported owner) is rejected as ambiguous unless the
 signature uniquely resolves it. The
 declaration must retain `[NeZero width]` as the

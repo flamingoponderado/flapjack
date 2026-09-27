@@ -1472,12 +1472,14 @@ def words_as_type_indexed_bitvec_errors(
 
     A signature need not spell out ``BitVec`` when it is stated over a
     width-indexed carrier: the qualifier is also accepted when the signature
-    names a structure (declared locally or reached through imports) whose
-    fields include ``BitVec``-typed fields and whose own header carries the
-    ``[NeZero width]`` discharge. The carrier is resolved from its declaration,
-    never from its name alone: the `[NeZero width]` and the ``BitVec width``
-    field must belong to the SAME owning declaration and the same width
-    identifier, and a name with several owners (a local duplicate shadowing an
+    names a structure (declared locally or reached through imports) whose own
+    header carries ``[NeZero <width>]`` for its width parameter and some field of
+    the SAME owner mentions ``BitVec <width>`` with that same width identifier.
+    The carrier is resolved from its declaration, never from its name alone: the
+    `[NeZero <width>]` and the ``BitVec <width>`` field must belong to the SAME
+    owning declaration and the same width identifier (a header with
+    ``[NeZero other]`` or a field like ``BitVec 5 × HolWordLab width`` does not
+    qualify), and a name with several owners (a local duplicate shadowing an
     imported owner) is rejected as ambiguous.
     """
     errors: list[str] = []
@@ -1533,12 +1535,17 @@ def words_as_type_indexed_bitvec_errors(
                 if width_match is None:
                     continue
                 width_name = width_match.group(1)
+                bitvec_width_re = re.compile(
+                    r"\bBitVec\s+" + re.escape(width_name) + r"\b"
+                )
                 has_bitvec_field = any(
-                    "BitVec" in type_text
-                    and identifier_token_occurs(type_text, width_name)
+                    bitvec_width_re.search(type_text) is not None
                     for type_text in fields.values()
                 )
-                has_positivity = "NeZero" in header or "NeZero" in signature
+                nezero_width_re = re.compile(
+                    r"\[\s*NeZero\s+" + re.escape(width_name) + r"\s*\]"
+                )
+                has_positivity = nezero_width_re.search(header) is not None
                 if has_bitvec_field and has_positivity:
                     carrier_ok = True
                     break

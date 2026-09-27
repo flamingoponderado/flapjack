@@ -61,10 +61,13 @@ declaration must retain `[NeZero width]` (the discharge of HOL's
 must bind the FFI host type at a `Type` universe when it mentions
 `HolFfiState`. The signature need not pronounce `BitVec` directly when it is
 stated over a reviewed width-indexed carrier (declared locally or reached
-through imports) whose fields include `BitVec width` fields and whose
-declaration retains `[NeZero width]`; the carrier is resolved from its
-declaration, never accepted by name alone, and its `[NeZero width]` discharge
-and `BitVec width` field must belong to the SAME owning declaration (a name with
+through imports) whose own header carries `[NeZero <width>]` for its width
+parameter and some field of that SAME owner mentions `BitVec <width>` with that
+same width identifier; the carrier is resolved from its
+declaration, never accepted by name alone, and its `[NeZero <width>]` discharge
+and `BitVec <width>` field must belong to the SAME owning declaration and the
+same width identifier (a header with `[NeZero other]` or a field such as
+`BitVec 5 × HolWordLab width` does not qualify; a name with
 several owners is rejected as ambiguous unless the signature uniquely resolves
 it). It changes no quantifier,
 hypothesis, side condition, or
