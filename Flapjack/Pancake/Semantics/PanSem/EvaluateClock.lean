@@ -552,14 +552,9 @@ theorem callFixedContextHOLFinite_eq_of_body {width : Nat} {σ : Type} [NeZero w
   apply FiniteEvalContext.ext
   exact congrArg Prod.snd hfix
 
-/-- Exact HOL `evaluate_def` (`panSemScript.sml:780`, the `Call` conjunct of the
-    source definition at line 556): argument evaluation failure returns `Error`
-    at the unchanged state. The source definition's inner `fix_clock` does not
-    apply on this branch. The combined qualifiers record the four
-    finite-support maps and HOL's positive word dimension as `BitVec width`. -/
-@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
-  (fmap_as_finite_support := [locals, globals, code, eshapes])
-  (words_as_type_indexed_bitvec)]
+/-- Flapjack-specific `Call` argument-failure helper for the HOL conjunct at
+    `panSemScript.sml:780`. Its branch-selector hypothesis is absent from that
+    unconditional equation, so this helper is not tagged as a port. -/
 theorem evaluateHOLFiniteState_call_args_none {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ)
     (info : Option (Option (VarKind × MlS) × Option (MlS × MlS × ProgHOL width)))
@@ -576,12 +571,9 @@ theorem evaluateHOLFiniteState_call_args_none {width : Nat} {σ : Type} [NeZero 
   simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
     evalPanSemRecursiveCallFiniteContext.eq_5, hargsExact]
 
-/-- Exact HOL `evaluate_def` (`panSemScript.sml:780`, the `Call` conjunct of the
-    source definition at line 556): successful arguments followed by a missing
-    code entry returns `Error` with the caller state unchanged. -/
-@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
-  (fmap_as_finite_support := [locals, globals, code, eshapes])
-  (words_as_type_indexed_bitvec)]
+/-- Flapjack-specific `Call` lookup-failure helper for the HOL conjunct at
+    `panSemScript.sml:780`. Its branch-selector hypotheses are absent from
+    that unconditional equation, so this helper is not tagged as a port. -/
 theorem evaluateHOLFiniteState_call_lookup_none {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ)
     (info : Option (Option (VarKind × MlS) × Option (MlS × MlS × ProgHOL width)))
@@ -600,13 +592,9 @@ theorem evaluateHOLFiniteState_call_lookup_none {width : Nat} {σ : Type} [NeZer
   simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
     evalPanSemRecursiveCallFiniteContext.eq_5, hargsExact, hlookup]
 
-/-- Exact HOL `evaluate_def` (`panSemScript.sml:780`, the `Call` conjunct of the
-    source definition at line 556): exhausted caller clock returns `TimeOut` with
-    empty locals, before the body evaluation (so the inner `fix_clock` does not
-    apply). -/
-@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
-  (fmap_as_finite_support := [locals, globals, code, eshapes])
-  (words_as_type_indexed_bitvec)]
+/-- Flapjack-specific `Call` clock-exhaustion helper for the HOL conjunct at
+    `panSemScript.sml:780`. Its argument, lookup, and clock branch selectors
+    are absent from that unconditional equation, so it is not tagged. -/
 theorem evaluateHOLFiniteState_call_clock_zero {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ)
     (info : Option (Option (VarKind × MlS) × Option (MlS × MlS × ProgHOL width)))
