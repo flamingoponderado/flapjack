@@ -827,6 +827,42 @@ example :
     HolFiniteMapExact.lookup_update, FUPDATE, FLOOKUP, crepExpOfHOL,
     shapeOfHOL]
 
+/-- The Primitive bridge retains the missing-variable `Skip` fallback. -/
+example :
+    crepProgOfHOL (compileProgExactHOLW exactReturnContext
+      (.primitive (ofString "dst") .addCarry [])) =
+    compileProgRiscV exactReturnContext.toProduction
+      (.primitive "dst" .addCarry []) := by
+  apply compileProgExactHOLW_primitive_bridge (arguments := [])
+  intro expression hmem
+  simp at hmem
+
+/-- The Primitive bridge covers the present-variable temporaries branch with an
+    empty argument list. -/
+example :
+    crepProgOfHOL (compileProgExactHOLW (exactLocalAssignContext [7] [8])
+      (.primitive (ofString "dst") .addCarry [])) =
+    compileProgRiscV (exactLocalAssignContext [7] [8]).toProduction
+      (.primitive "dst" .addCarry []) := by
+  apply compileProgExactHOLW_primitive_bridge (arguments := [])
+  intro expression hmem
+  simp at hmem
+
+/-- The Primitive bridge covers a non-empty argument list through the paired
+    expression codec. -/
+example :
+    crepProgOfHOL (compileProgExactHOLW (exactLocalAssignContext [7] [8])
+      (.primitive (ofString "dst") .addCarry
+        [expToHOL (.const (BitVec.ofNat 8 5))])) =
+    compileProgRiscV (exactLocalAssignContext [7] [8]).toProduction
+      (.primitive "dst" .addCarry [.const (BitVec.ofNat 8 5)]) := by
+  apply compileProgExactHOLW_primitive_bridge (arguments := [.const (BitVec.ofNat 8 5)])
+  intro expression hmem
+  simp only [List.mem_singleton] at hmem
+  subst hmem
+  simp only [compileExpExactHOLW.eq_1, expToHOL.eq_1, compileExpHOL.eq_1,
+    List.map_cons, List.map_nil, crepExpOfHOL.eq_1, shapeOfHOL]
+
 def exactShMemStoreClauseParity : Bool :=
   (match compileShMemStoreExactHOLW
       (exactLocalAssignContext [7] [8]) .op8 (.var .local (ofString "src")) (.const 3) with
