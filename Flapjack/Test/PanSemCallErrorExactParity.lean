@@ -164,25 +164,30 @@ private def callFallThroughGuard : Bool :=
 
 /-- Result matcher for a callee that finishes with `Break` or `Continue`: an
     `Error` at the decremented callee clock whose `p` local holds the bound
-    argument. -/
+    argument and whose caller-local view (`x`) is empty, pairing the
+    `call_break_caller_locals=NONE` / `call_continue_caller_locals=NONE` rows of
+    `pan_sem_call_callee_terminal_probe.out`. -/
 private def isTerminalError (clock value : Nat)
     (result : Option (PanValueFfiClockResult Word64 Unit)) : Bool :=
   match result with
   | some (.control control, n) =>
       match control with
       | .error locals _ _ _ =>
-          n == clock && (match locals "p" with
+          n == clock && (locals "x").isNone && (match locals "p" with
             | some (.word w) => w == BitVec.ofNat 64 value
             | _ => false)
       | _ => false
   | _ => false
 
+private def callerLocalX : VarName -> Option (PanValue Word64) :=
+  fun name => if name == "x" then some (.word 3) else none
+
 private def breakState : PanSemExactState Word64 Unit :=
-  exactStateOf <| { (exactLegacy 5 (fun _ => some (.word 3)) (fun _ => none)
+  exactStateOf <| { (exactLegacy 5 callerLocalX (fun _ => none)
       parameterContracts) with functions := [("f", ["p"], .break)] }
 
 private def continueState : PanSemExactState Word64 Unit :=
-  exactStateOf <| { (exactLegacy 5 (fun _ => some (.word 3)) (fun _ => none)
+  exactStateOf <| { (exactLegacy 5 callerLocalX (fun _ => none)
       parameterContracts) with functions := [("f", ["p"], .continue)] }
 
 private def callBreakGuard : Bool :=
