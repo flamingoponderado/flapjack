@@ -1790,9 +1790,13 @@ termination_by expressions => sizeOf expressions
 
 /-- HOL-shaped Crep expression evaluator.  HOL's `crepSem$eval` returns a
 `word_lab` cell, so this core returns `PanWordLab` results directly instead of
-the unwrapped word carrier.  The production unwrapped evaluator
-`evalCrepRuntimeExp` has the shape of the `panTheWord` projection of this core;
-the formal projection bridge is tracked in bead flapjack-pxn.18.4.3.48.1. -/
+the unwrapped word carrier. Recursive children and expression lists are
+evaluated through this core as well; raw words are projected only at runtime
+hook boundaries. The production unwrapped evaluator `evalCrepRuntimeExp` is
+equal to the `panTheWord` projection of this core by
+`evalCrepRuntimeExpWordLab_panTheWord`. This remains Flapjack runtime
+infrastructure, not an exact HOL evaluator, because the state exposes arbitrary
+word/byte hooks. -/
 def evalCrepRuntimeExpWordLab
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α]
@@ -1802,33 +1806,41 @@ def evalCrepRuntimeExpWordLab
   | .const value => some (.word value)
   | .var name => state.locals name
   | .load address => do
-      let address ← evalCrepRuntimeExp state address
+      let address ← (evalCrepRuntimeExpWordLab state address).map panTheWord
       crepRuntimeLoadWordLab state address
   | .load32 address => do
-      let address ← evalCrepRuntimeExp state address
+      let address ← (evalCrepRuntimeExpWordLab state address).map panTheWord
       crepRuntimeLoad32WordLab state address
   | .loadByte address => do
-      let address ← evalCrepRuntimeExp state address
+      let address ← (evalCrepRuntimeExpWordLab state address).map panTheWord
       crepRuntimeLoadByteWordLab state address
   | .loadGlob address => state.globals address
   | .op operator expressions => do
-      let values ← expressions.mapM (evalCrepRuntimeExp state)
+      let values ← expressions.mapM (fun expression =>
+        (evalCrepRuntimeExpWordLab state expression).map panTheWord)
       (state.memoryModel.wordOp operator values).map PanWordLab.word
   | .crepOp .mul [left, right] => do
-      let left ← evalCrepRuntimeExp state left
-      let right ← evalCrepRuntimeExp state right
+      let left ← (evalCrepRuntimeExpWordLab state left).map panTheWord
+      let right ← (evalCrepRuntimeExpWordLab state right).map panTheWord
       pure (.word (left * right))
   | .cmp operator left right => do
-      let left ← evalCrepRuntimeExp state left
-      let right ← evalCrepRuntimeExp state right
+      let left ← (evalCrepRuntimeExpWordLab state left).map panTheWord
+      let right ← (evalCrepRuntimeExpWordLab state right).map panTheWord
       pure (.word (state.memoryModel.compare operator left right))
   | .shift operator left right => do
-      let left ← evalCrepRuntimeExp state left
-      let right ← evalCrepRuntimeExp state right
+      let left ← (evalCrepRuntimeExpWordLab state left).map panTheWord
+      let right ← (evalCrepRuntimeExpWordLab state right).map panTheWord
       (state.memoryModel.shift operator left right).map PanWordLab.word
   | .baseAddr => some (.word state.baseAddress)
   | .topAddr => some (.word state.topAddress)
   | _ => none
+termination_by expression => sizeOf expression
+decreasing_by
+  simp_wf
+  all_goals first
+    | decreasing_trivial
+    | (rename_i h; simp_all only [CrepExp.op.sizeOf_spec, CrepExp.crepOp.sizeOf_spec];
+       have := List.sizeOf_lt_of_mem h; omega)
 
 /-- List-argument HOL-shaped evaluator: the `word_lab` analogue of
 `OPT_MMAP (eval s)` over a list of Crep expressions. -/
@@ -1921,22 +1933,171 @@ theorem evalCrepRuntimeExp_wordLab_projection
     (state : CrepRuntimeState α σ) (expression : CrepExp α) :
     (evalCrepRuntimeExp state expression).map PanWordLab.word =
       evalCrepRuntimeExpWordLab state expression := by
-  cases expression <;>
-    simp [evalCrepRuntimeExp, evalCrepRuntimeExpWordLab, Function.comp_def,
-      Option.map_bind, optionMapWordPanTheWord]
-  case crepOp operator args =>
-    cases operator
-    cases args with
-    | nil => simp [evalCrepRuntimeExp]
-    | cons left rest =>
-        cases rest with
-        | nil => simp [evalCrepRuntimeExp]
-        | cons right tail =>
-            cases tail with
-            | nil =>
-                simp [evalCrepRuntimeExp, crepOpCrep, Function.comp_def, Option.map_bind]
-            | cons extra more =>
-                simp [evalCrepRuntimeExp]
+  induction expression using (CrepExp.rec (motive_2 := fun expressions =>
+      ∀ e ∈ expressions,
+        (evalCrepRuntimeExp state e).map PanWordLab.word =
+          evalCrepRuntimeExpWordLab state e))
+  case nil e he => exact absurd he (by simp)
+  case cons head tail head_ih tail_ih e he =>
+    rcases List.mem_cons.mp he with rfl | he
+    · exact head_ih
+    · exact tail_ih e he
+  case const value =>
+    simp [evalCrepRuntimeExp, evalCrepRuntimeExpWordLab]
+  case var name =>
+    simp only [evalCrepRuntimeExp, evalCrepRuntimeExpWordLab, Option.map_map]
+    exact optionMapWordPanTheWord (state.locals name)
+  case loadGlob address =>
+    simp only [evalCrepRuntimeExp, evalCrepRuntimeExpWordLab, Option.map_map]
+    exact optionMapWordPanTheWord (state.globals address)
+  case baseAddr =>
+    simp [evalCrepRuntimeExp, evalCrepRuntimeExpWordLab]
+  case topAddr =>
+    simp [evalCrepRuntimeExp, evalCrepRuntimeExpWordLab]
+  case load address ih =>
+    simp only [evalCrepRuntimeExp, evalCrepRuntimeExpWordLab]
+    have hchild : (evalCrepRuntimeExpWordLab state address).map panTheWord =
+        evalCrepRuntimeExp state address := by
+      have hmap := congrArg (Option.map panTheWord) ih
+      have hmap' : evalCrepRuntimeExp state address =
+          (evalCrepRuntimeExpWordLab state address).map panTheWord := by
+        simpa [Option.map_map, Function.comp_def, panTheWord] using hmap
+      exact hmap'.symm
+    rw [hchild]
+    change Option.map PanWordLab.word
+        (Option.bind (evalCrepRuntimeExp state address) (fun a => crepRuntimeLoad state a)) =
+      Option.bind (evalCrepRuntimeExp state address) (fun a => crepRuntimeLoadWordLab state a)
+    rw [Option.map_bind]
+    apply congrArg (Option.bind (evalCrepRuntimeExp state address))
+    funext a
+    simp only [Function.comp_def]
+    exact crepRuntimeLoad_map_word_eq (state := state) (address := a)
+  case load32 address ih =>
+    simp only [evalCrepRuntimeExp, evalCrepRuntimeExpWordLab]
+    have hchild : (evalCrepRuntimeExpWordLab state address).map panTheWord =
+        evalCrepRuntimeExp state address := by
+      have hmap := congrArg (Option.map panTheWord) ih
+      have hmap' : evalCrepRuntimeExp state address =
+          (evalCrepRuntimeExpWordLab state address).map panTheWord := by
+        simpa [Option.map_map, Function.comp_def, panTheWord] using hmap
+      exact hmap'.symm
+    rw [hchild]
+    change Option.map PanWordLab.word
+        (Option.bind (evalCrepRuntimeExp state address) (fun a => crepRuntimeLoad32 state a)) =
+      Option.bind (evalCrepRuntimeExp state address) (fun a => crepRuntimeLoad32WordLab state a)
+    rw [Option.map_bind]
+    apply congrArg (Option.bind (evalCrepRuntimeExp state address))
+    funext a
+    simp only [Function.comp_def]
+    exact crepRuntimeLoad32_map_word_eq (state := state) (address := a)
+  case loadByte address ih =>
+    simp only [evalCrepRuntimeExp, evalCrepRuntimeExpWordLab]
+    have hchild : (evalCrepRuntimeExpWordLab state address).map panTheWord =
+        evalCrepRuntimeExp state address := by
+      have hmap := congrArg (Option.map panTheWord) ih
+      have hmap' : evalCrepRuntimeExp state address =
+          (evalCrepRuntimeExpWordLab state address).map panTheWord := by
+        simpa [Option.map_map, Function.comp_def, panTheWord] using hmap
+      exact hmap'.symm
+    rw [hchild]
+    change Option.map PanWordLab.word
+        (Option.bind (evalCrepRuntimeExp state address) (fun a => crepRuntimeLoadByte state a)) =
+      Option.bind (evalCrepRuntimeExp state address) (fun a => crepRuntimeLoadByteWordLab state a)
+    rw [Option.map_bind]
+    apply congrArg (Option.bind (evalCrepRuntimeExp state address))
+    funext a
+    simp only [Function.comp_def]
+    exact crepRuntimeLoadByte_map_word_eq (state := state) (address := a)
+  case op operator expressions ih =>
+    have hpoint : ∀ e ∈ expressions,
+        (evalCrepRuntimeExpWordLab state e).map panTheWord =
+          evalCrepRuntimeExp state e := by
+      intro e he
+      have h := ih e he
+      have hmap := congrArg (Option.map panTheWord) h
+      have hmap' : evalCrepRuntimeExp state e =
+          (evalCrepRuntimeExpWordLab state e).map panTheWord := by
+        simpa [Option.map_map, Function.comp_def, panTheWord] using hmap
+      exact hmap'.symm
+    have mapM_congr (xs : List (CrepExp α))
+        (g h : CrepExp α → Option α)
+        (hpoint : ∀ x ∈ xs, g x = h x) : xs.mapM g = xs.mapM h := by
+      induction xs with
+      | nil => rfl
+      | cons x xs ihs =>
+          rw [List.mapM_cons, List.mapM_cons, hpoint x (by simp),
+            ihs (fun y hy => hpoint y (by simp [hy]))]
+    have hargs : expressions.mapM (evalCrepRuntimeExp state) =
+        expressions.mapM (fun e =>
+          (evalCrepRuntimeExpWordLab state e).map panTheWord) :=
+      (mapM_congr expressions
+        (fun e => (evalCrepRuntimeExpWordLab state e).map panTheWord)
+        (evalCrepRuntimeExp state) (fun e he => hpoint e he)).symm
+    simp [evalCrepRuntimeExp, evalCrepRuntimeExpWordLab, hargs,
+      Option.map_bind, Function.comp_def]
+  case crepOp operator args ih =>
+    have hpoint : ∀ e ∈ args,
+        (evalCrepRuntimeExpWordLab state e).map panTheWord =
+          evalCrepRuntimeExp state e := by
+      intro e he
+      have h := ih e he
+      have hmap := congrArg (Option.map panTheWord) h
+      have hmap' : evalCrepRuntimeExp state e =
+          (evalCrepRuntimeExpWordLab state e).map panTheWord := by
+        simpa [Option.map_map, Function.comp_def, panTheWord] using hmap
+      exact hmap'.symm
+    cases operator with
+    | mul =>
+        cases args with
+        | nil => simp [evalCrepRuntimeExp, evalCrepRuntimeExpWordLab]
+        | cons left rest =>
+            cases rest with
+            | nil => simp [evalCrepRuntimeExp, evalCrepRuntimeExpWordLab]
+            | cons right tail =>
+                cases tail with
+                | nil =>
+                    have hleft := hpoint left (by simp)
+                    have hright := hpoint right (by simp)
+                    simp [evalCrepRuntimeExp, evalCrepRuntimeExpWordLab,
+                      crepOpCrep, hleft, hright, Option.map_bind, Function.comp_def]
+                | cons extra more =>
+                    simp [evalCrepRuntimeExp, evalCrepRuntimeExpWordLab]
+  case cmp operator left right ihleft ihright =>
+    simp only [evalCrepRuntimeExp, evalCrepRuntimeExpWordLab]
+    have hleft : (evalCrepRuntimeExpWordLab state left).map panTheWord =
+        evalCrepRuntimeExp state left := by
+      have hmap := congrArg (Option.map panTheWord) ihleft
+      have hmap' : evalCrepRuntimeExp state left =
+          (evalCrepRuntimeExpWordLab state left).map panTheWord := by
+        simpa [Option.map_map, Function.comp_def, panTheWord] using hmap
+      exact hmap'.symm
+    have hright : (evalCrepRuntimeExpWordLab state right).map panTheWord =
+        evalCrepRuntimeExp state right := by
+      have hmap := congrArg (Option.map panTheWord) ihright
+      have hmap' : evalCrepRuntimeExp state right =
+          (evalCrepRuntimeExpWordLab state right).map panTheWord := by
+        simpa [Option.map_map, Function.comp_def, panTheWord] using hmap
+      exact hmap'.symm
+    rw [hleft, hright]
+    simp [Option.map_bind, Function.comp_def]
+  case shift operator left right ihleft ihright =>
+    simp only [evalCrepRuntimeExp, evalCrepRuntimeExpWordLab]
+    have hleft : (evalCrepRuntimeExpWordLab state left).map panTheWord =
+        evalCrepRuntimeExp state left := by
+      have hmap := congrArg (Option.map panTheWord) ihleft
+      have hmap' : evalCrepRuntimeExp state left =
+          (evalCrepRuntimeExpWordLab state left).map panTheWord := by
+        simpa [Option.map_map, Function.comp_def, panTheWord] using hmap
+      exact hmap'.symm
+    have hright : (evalCrepRuntimeExpWordLab state right).map panTheWord =
+        evalCrepRuntimeExp state right := by
+      have hmap := congrArg (Option.map panTheWord) ihright
+      have hmap' : evalCrepRuntimeExp state right =
+          (evalCrepRuntimeExpWordLab state right).map panTheWord := by
+        simpa [Option.map_map, Function.comp_def, panTheWord] using hmap
+      exact hmap'.symm
+    rw [hleft, hright]
+    simp [Option.map_bind, Function.comp_def]
 
 /-- Reading the HOL-shaped `word_lab` core back through `panTheWord` recovers the
 unwrapped production evaluator, so routing an executed call site through the core

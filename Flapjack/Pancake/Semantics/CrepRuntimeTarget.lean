@@ -718,7 +718,7 @@ theorem evalCrepRuntimeExpWordLab_cmp_rv64_const
     evalCrepRuntimeExpWordLab (riscv64CrepRuntimeTarget base)
         (.cmp operator (.const left) (.const right)) =
       some (.word (RiscV.panRiscVCmp operator left right)) := by
-  simp [evalCrepRuntimeExpWordLab, evalCrepRuntimeExp,
+  simp [evalCrepRuntimeExpWordLab, panTheWord,
     riscv64CrepRuntimeTarget, RiscV.panRiscVMemoryModel]
 
 /-! ## External-call byte-array reads
@@ -1836,7 +1836,7 @@ theorem evalCrepRuntimeExpWordLab_loadByte_rv64_const
     evalCrepRuntimeExpWordLab (riscv64CrepRuntimeTarget base) (.loadByte (.const address)) =
       (holMemLoadByte64 base.memaddrs (crepRuntimeMemoryView base.memory) false address).map
         PanWordLab.word := by
-  simp [evalCrepRuntimeExpWordLab, evalCrepRuntimeExp,
+  simp [evalCrepRuntimeExpWordLab, panTheWord,
     crepRuntimeLoadByteWordLab_rv64_eq_holMemLoadByte64]
 
 /-- HOL-shaped 4-byte alignment predicate at RV64: HOL `aligned 2 w`, i.e.
@@ -1954,7 +1954,7 @@ theorem evalCrepRuntimeExpWordLab_load32_rv64_const
     evalCrepRuntimeExpWordLab (riscv64CrepRuntimeTarget base) (.load32 (.const address)) =
       (holMemLoad32_64 base.memaddrs (crepRuntimeMemoryView base.memory) false
         address).map PanWordLab.word := by
-  simp [evalCrepRuntimeExpWordLab, evalCrepRuntimeExp,
+  simp [evalCrepRuntimeExpWordLab, panTheWord,
     crepRuntimeLoad32WordLab_rv64_eq_holMemLoad32_64]
 
 /-- HOL-shaped word-cell load primitive for the RV64 target, mirroring
@@ -2004,7 +2004,7 @@ theorem evalCrepRuntimeExpWordLab_load_rv64_const
     evalCrepRuntimeExpWordLab (riscv64CrepRuntimeTarget base) (.load (.const address)) =
       (holMemLoad64 base.memaddrs (crepRuntimeMemoryView base.memory) address).map
         PanWordLab.word := by
-  simp [evalCrepRuntimeExpWordLab, evalCrepRuntimeExp,
+  simp [evalCrepRuntimeExpWordLab, panTheWord,
     crepRuntimeLoadWordLab_rv64_eq_holMemLoad64]
 
 /-! ## The RV64 `Shift` evaluator case
@@ -2071,7 +2071,7 @@ theorem evalCrepRuntimeExpWordLab_shift_rv64_const
     evalCrepRuntimeExpWordLab (riscv64CrepRuntimeTarget base)
         (.shift operator (.const left) (.const right)) =
       (holWordShift64 operator left right.toNat).map PanWordLab.word := by
-  simp [evalCrepRuntimeExpWordLab, evalCrepRuntimeExp,
+  simp [evalCrepRuntimeExpWordLab, panTheWord,
     crepRuntimeShift_rv64_eq_holWordShift64]
 
 /-- Exact condition under which the production `Shift` hook coincides with
@@ -2125,6 +2125,8 @@ theorem evalCrepRuntimeExpWordLab_shift_of_matches
           (holWordShift64 operator leftWord rightWord.toNat).map PanWordLab.word)) := by
   simp only [CrepMemoryModelShiftMatchesHOL64] at hmodel
   simp only [evalCrepRuntimeExpWordLab, hmodel]
+  rw [← evalCrepRuntimeExpWordLab_panTheWord base left,
+    ← evalCrepRuntimeExpWordLab_panTheWord base right]
   rfl
 
 /-- Constant-operand specialization of `evalCrepRuntimeExp_shift_of_matches`. -/
@@ -2196,6 +2198,15 @@ theorem evalCrepRuntimeExpWordLab_op_of_matches
         (fun values => (wordOpHOL operator values).map PanWordLab.word) := by
   simp only [CrepMemoryModelOpMatchesHOL64] at hmodel
   simp only [evalCrepRuntimeExpWordLab, hmodel]
+  have hmapM : expressions.mapM
+      (fun expression => (evalCrepRuntimeExpWordLab base expression).map panTheWord) =
+      expressions.mapM (evalCrepRuntimeExp base) := by
+    induction expressions with
+    | nil => rfl
+    | cons expression expressions ih =>
+        rw [List.mapM_cons, List.mapM_cons,
+          evalCrepRuntimeExpWordLab_panTheWord base expression, ih]
+  rw [hmapM]
   rfl
 
 /-- Constant-operand specialization of `evalCrepRuntimeExp_op_of_matches`. -/
@@ -2277,6 +2288,8 @@ theorem evalCrepRuntimeExpWordLab_cmp_of_matches
           some (.word (evalPanCmp operator leftWord rightWord)))) := by
   simp only [CrepMemoryModelCmpMatchesHOL64] at hmodel
   simp only [evalCrepRuntimeExpWordLab, hmodel]
+  rw [← evalCrepRuntimeExpWordLab_panTheWord base left,
+    ← evalCrepRuntimeExpWordLab_panTheWord base right]
   rfl
 
 /-- Constant-operand specialization of `evalCrepRuntimeExp_cmp_of_matches`. -/
@@ -2391,6 +2404,7 @@ theorem evalCrepRuntimeExpWordLab_loadByte_of_matches
           addressWord).map PanWordLab.word) := by
   simp only [evalCrepRuntimeExpWordLab,
     crepRuntimeLoadByteWordLab_eq_holMemLoadByte64_of_matches base hmodel hbytes hbig]
+  rw [← evalCrepRuntimeExpWordLab_panTheWord base address]
   rfl
 
 theorem evalCrepRuntimeExp_loadByte_const_of_matches
@@ -2438,6 +2452,7 @@ theorem evalCrepRuntimeExpWordLab_load_rv64
         (fun addressWord => (holMemLoad64 base.memaddrs
           (crepRuntimeMemoryView base.memory) addressWord).map PanWordLab.word) := by
   simp only [evalCrepRuntimeExpWordLab, crepRuntimeLoadWordLab_rv64_eq_holMemLoad64]
+  rw [← evalCrepRuntimeExpWordLab_panTheWord (riscv64CrepRuntimeTarget base) address]
   rfl
 
 /-- The exact hook-matching condition under which an arbitrary `PanMemoryModel`
@@ -2569,6 +2584,7 @@ theorem evalCrepRuntimeExpWordLab_load32_of_matches
           addressWord).map PanWordLab.word) := by
   simp only [evalCrepRuntimeExpWordLab,
     crepRuntimeLoad32WordLab_eq_holMemLoad32_64_of_matches base hmodel hbytes hbig]
+  rw [← evalCrepRuntimeExpWordLab_panTheWord base address]
   rfl
 
 /-- Constant-address corollary of the arbitrary-address `Load32` equation. -/
@@ -2907,7 +2923,7 @@ theorem evalCrepRuntimeExpWordLab_crepOpMul_rv64_const
       | nil => simp [evalCrepRuntimeExpWordLab, holCrepOpMul64]
       | cons right tail =>
           cases tail with
-          | nil => simp [evalCrepRuntimeExpWordLab, evalCrepRuntimeExp, holCrepOpMul64]
+          | nil => simp [evalCrepRuntimeExpWordLab, panTheWord, holCrepOpMul64]
           | cons extra more => simp [evalCrepRuntimeExpWordLab, holCrepOpMul64]
 
 /- HOL-shaped total 64-bit reference evaluator over the production RV64 Crep

@@ -89,6 +89,13 @@ val _ = print_eval "shmemload_unbound_result"
 val _ = print_eval "shmemload_domain_result"
   ``FST (panSem$evaluate
       (panLang$ShMemLoad Op8 Local (strlit "x") (panLang$Const (0w:8 word)), ^errorState))``;
+val _ = print_eval "shmemload_address_eval_failure"
+  ``FST (panSem$evaluate
+      (panLang$ShMemLoad Op8 Local (strlit "x") (panLang$Var Local (strlit "z")), ^errorState))``;
+val _ = print_eval "shmemload_address_nonword"
+  ``FST (panSem$evaluate
+      (panLang$ShMemLoad Op8 Local (strlit "x")
+        (panLang$RStruct ([] : 8 panLang$exp list)), ^errorState))``;
 val _ = print_eval "shmemstore_domain_result"
   ``FST (panSem$evaluate
       (panLang$ShMemStore Op8 (panLang$Const (0w:8 word)) (panLang$Const (7w:8 word)), ^errorState))``;

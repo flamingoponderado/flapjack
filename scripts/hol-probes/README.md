@@ -41,6 +41,9 @@ the same source.
 constructor, ordered global updates, local clearing during initializer
 evaluation, an in-domain word load, function-code replacement, and
 shape/duplicate failure cases.
+`Flapjack.Test.PanSemEvaluateDeclsFiniteParity` separately guards the exact
+finite-map evaluator against every named row in `pan_evaluate_decls_probe.out`,
+including an in-domain byte load in a declaration initializer.
 `pan_sem_state_eval_probe.out` records direct HOL EVAL of `eval_def` at
 `cakeml/pancake/semantics/panSemScript.sml:209-297` for in-domain and
 out-of-domain word loads, little- and big-endian byte loads, 32-bit loads, and
@@ -119,8 +122,11 @@ context `vmax`; the four operands must also have shape `One` and nonempty
 compiled lists. The exact untagged `compileExtCallExactHOLW` clause slice and
 Lean checks live in `Flapjack.Test.CompileDefParity`. Regenerate the direct HOL
 fixture with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=compile_def_probeScript.sml bash scripts/hol-probes/regenerate.sh`:
-absent lookups, the
+`CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=compile_def_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
+`dec_declared_shape_ignored` confirms that `Dec` stores the shape returned by
+`compile_exp`, not its declared shape; the exact compiler guard in
+`Flapjack.Test.CompileDefParity` checks the same two-word result.
+The fixture also covers absent lookups, the
 `One`/empty-list fallback, and inconsistent shape/name-list lengths. The
 matching Lean cases live in `Flapjack.Test.CompileDefParity`. The
 `struct_skip`, `struct_seq`, `struct_break`, `struct_continue`, `struct_tick`,
@@ -158,6 +164,17 @@ String/Shape states satisfy the relation. Regenerate with
 HOL_PROBE_ONLY=pan_to_crep_state_rel_carrier_probeScript.sml
 scripts/hol-probes/regenerate.sh` when using a read-only CakeML checkout whose
 compiled theories match the source commit.
+
+`pan_to_crep_ret_inst2_probe.out` evaluates the five premises of
+`evaluate_shape_invariant_ret_inst2` at
+`pan_to_crepProofScript.sml:3031-3044` on a concrete empty-argument call setup:
+the source `OPT_MMAP`, successful code lookup, body `Return (Const 7w)` run,
+matching `state_rel`, and empty `locals_rel`. It also records the combined
+five-premise row and result constructor. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=pan_to_crep_ret_inst2_probeScript.sml
+scripts/hol-probes/regenerate.sh` against the matching built CakeML theories.
+
 `code_rel_probe.out` records the HOL-inferred source/target code-map types,
 compiled parameter return, localisation outcomes, function-signature lookup,
 and target entry. The probe also proves matching and deliberately mismatching
@@ -176,6 +193,11 @@ failure. The matching restricted total state evaluator and Lean guards are in
 `Flapjack.Pancake.Semantics.CrepSem.TotalEval` and
 `Flapjack.Test.CrepSemTotalStoreParity`; the restricted evaluator has no
 whole-definition `@[hol]` tag.
+`pan_sem_store_error_probe.out` includes direct HOL `evaluate` rows for
+ShMemLoad address-evaluation failure, a non-word address, missing destination,
+and shared-memory-domain rejection. `Flapjack.Pancake.Semantics.PanSem.ShMemLoadCase`
+ports the literal nested matches from `evaluate_def`; its finite-carrier Lean
+guards live in `Flapjack.Test.PanSemShMemLoadCaseParity`.
 `crep_arith_dest_const_probe.out` records direct HOL EVAL of
 `crep_arith$dest_const_def` at
 `cakeml/pancake/crep_arithScript.sml:10-12` for a constant, variable, load,
@@ -547,3 +569,33 @@ visible. The exact Lean input carrier and regressions are in
 `Flapjack.Pancake.CrepInline.Pass` and
 `Flapjack.Test.CrepInlineFmapParity`. Refresh it with
 `HOL_PROBE_ONLY=crep_inline_alist_map_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`fupdate_list_append_commutes_probe.out` records the imported original HOL
+theorem `finite_mapTheory.FUPDATE_LIST_APPEND_COMMUTES` from
+`/home/zksecurity/HOL/src/finite_maps/finite_mapScript.sml:2960`, plus direct
+HOL evaluation of disjoint and overlapping key examples. The theorem is used
+in `cakeml/pancake/proofs/pan_to_crepProofScript.sml:1001,1197`; its exact
+HOL-equality Lean port and guards are in `Flapjack.FiniteMap.Basic` and
+`Flapjack.Test.FupdateListAppendCommutesParity`. It remains untagged because
+`scripts/check-hol-refs.py` currently accepts only `cakeml/...sml` references.
+Refresh it with
+`HOL_PROBE_ONLY=fupdate_list_append_commutes_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
+
+`eval_nested_decs_seq_res_var_eq_probe.out` records direct HOL EVAL cases for
+`pan_to_crepProofScript.sml:596-620`: nested declaration evaluation restores
+both previously bound and absent locals, unequal name/expression lengths
+produce the HOL `Skip` case, and the four theorem premises are checked with
+valid and rejected inputs. The exact evaluator theorem and Lean cases are in
+`Flapjack.Pancake.Proofs.PanToCrep.EvaluateNestedDecs` and
+`Flapjack.Test.CrepNestedDecsSeqResVarEqParity`. Refresh it with
+`HOL_PROBE_ONLY=eval_nested_decs_seq_res_var_eq_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`eval_nested_decs_load_globals_probe.out` records direct HOL EVAL instances of
+`evaluate_nested_decs_load_globals` at `pan_to_crepProofScript.sml:4139-4176`:
+loading one global word while restoring an old local, and loading a two-word
+struct while restoring one old local and preserving an absent local. Each row
+checks the complete theorem premise conjunction, including `globals_lookup`,
+the 32-word limit, distinct target locals, and the exact generated
+`load_globals` expression count, then evaluates the theorem's full result and
+post-state equation. Refresh with
+`HOL_PROBE_ONLY=eval_nested_decs_load_globals_probeScript.sml scripts/hol-probes/regenerate.sh`.

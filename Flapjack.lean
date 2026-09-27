@@ -56,6 +56,7 @@ import Flapjack.Pancake.Semantics.PanSem.ValueHOL
 import Flapjack.Pancake.Semantics.PanSem.StateExact
 import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
 import Flapjack.Pancake.Semantics.PanSem.EvaluateFinite
+import Flapjack.Pancake.Semantics.PanSem.ShMemLoadCase
 import Flapjack.Pancake.Semantics.PanSem.LocalUpdatesExact
 import Flapjack.Pancake.Semantics.PanSem.IsValidValueExact
 import Flapjack.Pancake.Semantics.PanSem.DecExact
@@ -88,6 +89,7 @@ import Flapjack.Pancake.Semantics.PanProps.LocalisedExpSimps
 import Flapjack.Pancake.Semantics.PanProps.NamelessExpSimps
 import Flapjack.Pancake.Semantics.ByteAlignBridge
 import Flapjack.Pancake.Semantics.LoopProps
+import Flapjack.Pancake.Semantics.LoopSemStateExact
 import Flapjack.PanObservationalSemantics
 import Flapjack.PanHHandleCallRet
 import Flapjack.PanMrec
@@ -110,6 +112,8 @@ import Flapjack.Pancake.PanGlobalsByteRanged
 import Flapjack.Pancake.Proofs.PanGlobals
 import Flapjack.Pancake.Proofs.PanToCrep.EvaluateCases
 import Flapjack.Pancake.Proofs.PanToCrep.TotalEvaluateCases
+import Flapjack.Pancake.Proofs.PanToCrep.EvaluateNestedAssign
+import Flapjack.Pancake.Proofs.PanToCrep.EvaluateNestedDecs
 import Flapjack.Pancake.Proofs.PanToCrep
 import Flapjack.Pancake.Proofs.PanToCrep.StateRelFiniteSupport
 import Flapjack.Pancake.Proofs.PanToCrep.Primop

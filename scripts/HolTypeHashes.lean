@@ -40,11 +40,15 @@ import Flapjack.Pancake.Proofs.PanGlobals
 import Flapjack.Pancake.Proofs.PanStructs
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrect
 import Flapjack.Pancake.Proofs.PanToCrep
+import Flapjack.Pancake.Proofs.PanToCrep.CodeRelExact
 import Flapjack.Pancake.Proofs.PanToCrep.CompileExpVmax
 import Flapjack.Pancake.Proofs.PanToCrep.CompileProgParams
 import Flapjack.Pancake.Proofs.PanToWord
 import Flapjack.Pancake.Proofs.PanToCrep.Primop
 import Flapjack.Pancake.Proofs.PanToCrep.StateRelFiniteSupport
+import Flapjack.Pancake.Proofs.PanToCrep.TotalEvaluateCases
+import Flapjack.Pancake.Proofs.PanToCrep.EvaluateNestedAssign
+import Flapjack.Pancake.Proofs.PanToCrep.EvaluateNestedDecs
 import Flapjack.Pancake.Semantics.CrepProps
 import Flapjack.Pancake.Semantics.CrepSem
 import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
@@ -54,6 +58,7 @@ import Flapjack.Pancake.Semantics.CrepSem.Primop
 import Flapjack.Pancake.LoopLang
 import Flapjack.Pancake.Semantics.LoopProps
 import Flapjack.Pancake.Semantics.LoopSem
+import Flapjack.Pancake.Semantics.LoopSemStateExact
 import Flapjack.Pancake.Semantics.PanCommonProps
 import Flapjack.Pancake.Semantics.PanProps
 import Flapjack.Pancake.Semantics.PanProps.EvalInvariant
@@ -72,6 +77,7 @@ import Flapjack.Pancake.Semantics.PanSem.TotalSteps
 import Flapjack.Pancake.Semantics.PanSem.ValueHOL
 import Flapjack.Pancake.Semantics.PanSem.StateExact
 import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+import Flapjack.Pancake.Semantics.PanSem.ShMemLoadCase
 import Flapjack.Pancake.Semantics.PanSem.LocalUpdatesExact
 import Flapjack.Pancake.Semantics.PanSem.IsValidValueExact
 import Flapjack.Pancake.Semantics.PanSem.DecExact
@@ -137,7 +143,8 @@ elab "#emit_hol_type_hashes" : command => do
             ("fmap_as_finite_support", toJson ref.fmapAsFiniteSupport),
             ("fmap_as_finite_support_result", toJson ref.fmapAsFiniteSupportResult),
             ("fmap_as_finite_support_relation",
-              toJson (ref.fmapAsFiniteSupportRelation.map (fun entry => if entry.1.isEmpty then entry.2 else s!"{entry.1}.{entry.2}")))])]
+              toJson (ref.fmapAsFiniteSupportRelation.map (fun entry => if entry.1.isEmpty then entry.2 else s!"{entry.1}.{entry.2}"))),
+            ("fmap_as_finite_support_equalities", toJson ref.fmapAsFiniteSupportEqualities)])]
         match definitionBody? info with
         | some body =>
             fields := fields ++ [("value_expr", toJson (reprStr (canonicalExpr body)))]

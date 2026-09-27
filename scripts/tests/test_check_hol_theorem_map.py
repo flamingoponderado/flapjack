@@ -837,22 +837,31 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
         self.assertEqual(record["hol_name"], "compile_exp_not_mem_load_glob")
         self.assertEqual(record["statement_status"], "documented_mismatch")
 
-    def test_is_wf_shape_drop_carrier_mismatch_stays_untagged(self):
+    def test_is_wf_shape_drop_exact_port_and_production_analogue(self):
         inventory = {
             (record["lean_path"], record["lean_name"]): record
             for record in MAP["build_inventory"]()
         }
-        key = ("Flapjack/Pancake/Proofs/PanStructs.lean", "isWfShape_drop")
-        self.assertEqual(inventory[key]["hol_name"], "is_wf_shape_drop")
-        self.assertEqual(inventory[key]["statement_status"], "documented_mismatch")
+        exact_key = ("Flapjack/Pancake/Proofs/PanStructs/StructInfosOkExact.lean",
+                     "isWfShapeExactHOL_drop")
+        production_key = ("Flapjack/Pancake/Proofs/PanStructs.lean", "isWfShape_drop")
+        self.assertEqual(inventory[exact_key]["hol_name"], "is_wf_shape_drop")
+        self.assertEqual(inventory[exact_key]["statement_status"],
+                         "pending_statement_review")
+        self.assertEqual(inventory[production_key]["hol_name"], "is_wf_shape_drop")
+        self.assertEqual(inventory[production_key]["statement_status"],
+                         "documented_mismatch")
 
         manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
-        record = next(record for record in manifest if
-                      (record["lean_path"], record["lean_name"]) == key)
-        self.assertEqual(record["hol_name"], "is_wf_shape_drop")
-        self.assertEqual(record["statement_status"], "documented_mismatch")
-        self.assertIn("unrestricted String", record["reviewer"])
-        self.assertIn("shapedFields", record["reviewer"])
+        exact_record = next(record for record in manifest if
+                            (record["lean_path"], record["lean_name"]) == exact_key)
+        self.assertEqual(exact_record["hol_name"], "is_wf_shape_drop")
+        self.assertEqual(exact_record["statement_status"], "reviewed_exact")
+        production_record = next(record for record in manifest if
+                                 (record["lean_path"], record["lean_name"]) == production_key)
+        self.assertIsNone(production_record["hol_name"])
+        self.assertEqual(production_record["statement_status"],
+                         "no_hol_reference_pending_classification")
 
     def test_old_exp_shapes_map_analogue_stays_untagged(self):
         inventory = {
@@ -1585,6 +1594,50 @@ class StandaloneFmapResultStatusTest(unittest.TestCase):
         errors = self._errors(
             self._record(reviewer="inventory only"), self._tag())
         self.assertTrue(any("source-comparison note" in error for error in errors))
+
+
+class MultiOwnerFmapRelationStatusTest(unittest.TestCase):
+    def _record(self, **overrides):
+        record = {
+            "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+            "hol_name": "evaluate_shape_invariant_ret_inst",
+            "lean_path": "Flapjack/Example.lean",
+            "lean_name": "evaluateShapeInvariant",
+            "statement_status": "reviewed_fmap_as_finite_support_relation",
+            "reviewer": "source comparison of HOL/Lean carrier structures",
+            "fmap_as_finite_support_relation": [
+                "PanState.locals", "CrepState.locals"],
+        }
+        record.update(overrides)
+        return record
+
+    def _tag(self, carriers=(("PanState", "locals"), ("CrepState", "locals"))):
+        return {
+            ("Flapjack/Example.lean", "evaluateShapeInvariant"): (
+                "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+                "evaluate_shape_invariant_ret_inst",
+                (), (), (), (), False, carriers,
+            )
+        }
+
+    def test_accepts_multi_owner_relation_status(self):
+        errors = MAP["validate_inventory"](
+            [self._record()], set(), self._tag(), set())
+        self.assertEqual(errors, [])
+
+    def test_rejects_status_without_qualifier(self):
+        errors = MAP["validate_inventory"](
+            [self._record()], set(), self._tag(()), set())
+        self.assertTrue(any(
+            "needs a fmap_as_finite_support_relation @[hol] tag" in error
+            for error in errors
+        ))
+
+    def test_rejects_manifest_tag_disagreement(self):
+        errors = MAP["validate_inventory"](
+            [self._record(fmap_as_finite_support_relation=["Other.locals"])],
+            set(), self._tag(), set())
+        self.assertTrue(any("do not match its @[hol] tag" in error for error in errors))
 
 
 if __name__ == "__main__":

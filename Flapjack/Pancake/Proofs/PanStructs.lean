@@ -1,5 +1,6 @@
 import Flapjack.HolRef
 import Flapjack.Pancake.PanStructs
+import Flapjack.Pancake.Proofs.PanStructs.StructInfosOkExact
 
 /-!
 Proof lemmas for CakeML Pancake's `pan_structs` theory.

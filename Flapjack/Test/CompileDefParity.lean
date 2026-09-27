@@ -1,5 +1,6 @@
 import Flapjack.Pancake.PanToCrep.Compile
 import Flapjack.Pancake.PanToCrep.CompileExact
+import Flapjack.Pancake.PanToCrep.CompileProg
 
 /-!
 # Original-domain parity for `pan_to_crep$compile` (`compile_def`)
@@ -411,6 +412,96 @@ def exactReturnContext : CompileExpContextExact 8 where
   eids := HolFiniteMapExact.empty
   vmax := 0
 
+private def exactStoreBridgeContext : PanToCrepContextExact 8 where
+  vars := HolFiniteMapExact.empty
+  funcs := HolFiniteMapExact.empty
+  eids := HolFiniteMapExact.empty
+  vmax := 0
+
+private def exactStoreLengthMismatchContext : PanToCrepContextExact 8 where
+  vars := (HolFiniteMapExact.empty.update
+      (ofString "ad", (.one, [3]))).update
+    (ofString "value", (.one, []))
+  funcs := HolFiniteMapExact.empty
+  eids := HolFiniteMapExact.empty
+  vmax := 3
+
+private def exactStoreAddressName : MlS := ofString "ad"
+
+private def exactStoreValueName : MlS := ofString "value"
+
+example :
+    crepProgOfHOL (compileProgExactHOLW exactStoreBridgeContext
+        (.store (expToHOL (.const (3 : BitVec 8)))
+          (expToHOL (.const (4 : BitVec 8))))) =
+      compileProgRiscV exactStoreBridgeContext.toProduction
+        (.store (.const 3) (.const 4)) := by
+  apply compileProgExactHOLW_store_success_bridge
+    (exactAddress := .const 3)
+    (exactAddressRest := [])
+    (exactAddressShape := .one)
+    (exactValues := [.const 4])
+    (exactValueShape := .one)
+    (productionAddress := .const 3)
+    (productionAddressRest := [])
+    (productionAddressShape := .one)
+    (productionValues := [.const 4])
+    (productionValueShape := .one)
+  all_goals simp [exactStoreBridgeContext, compileExpExactHOLW,
+    compileExpHOL, expToHOL, shapeOfHOL, crepExpOfHOL,
+    PanToCrepContextExact.toProduction]
+
+example :
+    crepProgOfHOL (compileProgExactHOLW exactStoreBridgeContext
+        (.store (expToHOL (.rStruct [] : Exp (BitVec 8)))
+          (expToHOL (.const (4 : BitVec 8))))) =
+      compileProgRiscV exactStoreBridgeContext.toProduction
+        (.store (.rStruct []) (.const 4)) := by
+  apply compileProgExactHOLW_store_output_bridge
+    (exactAddresses := []) (exactAddressShape := .comb [])
+    (exactValues := [.const 4]) (exactValueShape := .one)
+    (productionAddresses := []) (productionAddressShape := .comb [])
+    (productionValues := [.const 4]) (productionValueShape := .one)
+  all_goals simp [compileExpExactHOLW, compileExpExactHOLWList, expToHOL,
+    compileExpHOL, compileExpHOL.compileExpListHOL, shapeOfHOL, crepExpOfHOL]
+
+example :
+  crepProgOfHOL (compileProgExactHOLW exactStoreLengthMismatchContext
+        (.store (expToHOL (.var .local
+          (toStringOfBytes exactStoreAddressName) : Exp (BitVec 8)))
+          (expToHOL (.var .local
+            (toStringOfBytes exactStoreValueName) : Exp (BitVec 8))))) =
+      compileProgRiscV exactStoreLengthMismatchContext.toProduction
+        (.store (.var .local (toStringOfBytes exactStoreAddressName))
+          (.var .local (toStringOfBytes exactStoreValueName))) := by
+  have hnameNe : ofString "value" ≠ ofString "ad" := by decide
+  apply compileProgExactHOLW_store_output_bridge
+    (exactAddresses := [.var 3]) (exactAddressShape := .one)
+    (exactValues := []) (exactValueShape := .one)
+    (productionAddresses := [.var 3]) (productionAddressShape := .one)
+    (productionValues := []) (productionValueShape := .one)
+  · simp [compileExpExactHOLW, expToHOL, exactStoreLengthMismatchContext,
+      exactStoreAddressName, HolFiniteMapExact.lookup_update, FUPDATE,
+      ofString_toStringOfBytes, hnameNe]
+  · simp [compileExpExactHOLW, expToHOL, exactStoreLengthMismatchContext,
+      exactStoreValueName, HolFiniteMapExact.lookup_update, FUPDATE,
+      ofString_toStringOfBytes]
+  · have hlookup : exactStoreLengthMismatchContext.toProduction.vars
+        (toStringOfBytes exactStoreAddressName) = some (.one, [3]) := by
+      rw [PanToCrepContextExact.toProduction_vars_lookup]
+      simp [exactStoreLengthMismatchContext, exactStoreAddressName,
+        HolFiniteMapExact.lookup_update, FUPDATE, hnameNe, shapeOfHOL]
+    simp [compileExpHOL, FLOOKUP, hlookup]
+  · have hlookup : exactStoreLengthMismatchContext.toProduction.vars
+        (toStringOfBytes exactStoreValueName) = some (.one, []) := by
+      rw [PanToCrepContextExact.toProduction_vars_lookup]
+      simp [exactStoreLengthMismatchContext, exactStoreValueName,
+        HolFiniteMapExact.lookup_update, FUPDATE, shapeOfHOL]
+    simp [compileExpHOL, FLOOKUP, hlookup]
+  · simp [crepExpOfHOL]
+  · rfl
+  · simp [shapeOfHOL]
+
 def exactLocalAssignContext (destinationNames sourceNames : List Nat) :
     CompileExpContextExact 8 where
   vars := (HolFiniteMapExact.empty.update
@@ -432,6 +523,14 @@ def exactRaiseContext : CompileExpContextExact 8 where
   funcs := HolFiniteMapExact.empty
   eids := HolFiniteMapExact.empty.update
     (ofString "E", BitVec.ofNat 8 12)
+  vmax := 0
+
+/-- Context combining a successful wrapped-result destination `dst` with a
+    found handler EID `E`, for the wrapped-result handler-present-eid bridge. -/
+def exactWrappedHandlerContext : CompileExpContextExact 8 where
+  vars := HolFiniteMapExact.empty.update (ofString "dst", (.one, [7]))
+  funcs := HolFiniteMapExact.empty
+  eids := HolFiniteMapExact.empty.update (ofString "E", BitVec.ofNat 8 12)
   vmax := 0
 
 def exactMalformedRaiseContext : CompileExpContextExact 8 where
@@ -653,6 +752,477 @@ def exactRaiseClauseParity : Bool :=
 
 #guard exactRaiseClauseParity
 
+/-- The success case of the full exact-to-production Raise bridge exercises
+    its codec premise on the source Raise clause, including its local Dec,
+    global save, and final Raise output. -/
+example :
+    crepProgOfHOL (compileProgExactHOLW exactRaiseContext
+      (.raise (ofString "E") (expToHOL (.const (BitVec.ofNat 8 9))))) =
+    compileProgRiscV exactRaiseContext.toProduction
+      (.raise "E" (.const (BitVec.ofNat 8 9))) := by
+  apply compileProgExactHOLW_raise_bridge
+  simp only [compileExpExactHOLW.eq_1, expToHOL.eq_1, compileExpHOL.eq_1,
+    List.map_cons, List.map_nil, crepExpOfHOL.eq_1, shapeOfHOL]
+
+/-- The same bridge retains the missing exception-id fallback. -/
+example :
+    crepProgOfHOL (compileProgExactHOLW exactReturnContext
+      (.raise (ofString "missing") (expToHOL (.const (BitVec.ofNat 8 9))))) =
+    compileProgRiscV exactReturnContext.toProduction
+      (.raise "missing" (.const (BitVec.ofNat 8 9))) := by
+  apply compileProgExactHOLW_raise_bridge
+  simp only [compileExpExactHOLW.eq_1, expToHOL.eq_1, compileExpHOL.eq_1,
+    List.map_cons, List.map_nil, crepExpOfHOL.eq_1, shapeOfHOL]
+
+/-- The bridge also retains the malformed expression shape/length fallback. -/
+example :
+    crepProgOfHOL (compileProgExactHOLW exactMalformedRaiseContext
+      (.raise (ofString "E")
+        (expToHOL (.var .local "bad")))) =
+    compileProgRiscV exactMalformedRaiseContext.toProduction
+      (.raise "E" (.var .local "bad")) := by
+  apply compileProgExactHOLW_raise_bridge
+  simp [compileExpExactHOLW.eq_2, expToHOL.eq_2, compileExpHOL.eq_2,
+    PanToCrepContextExact.toProduction, exactMalformedRaiseContext,
+    HolFiniteMapExact.lookup_update, FUPDATE, FLOOKUP, crepExpOfHOL,
+    shapeOfHOL]
+
+/-- The local-Assign bridge retains the missing-variable `Skip` fallback. -/
+example :
+    crepProgOfHOL (compileProgExactHOLW exactReturnContext
+      (.assign .local (ofString "dst") (expToHOL (.const (BitVec.ofNat 8 5))))) =
+    compileProgRiscV exactReturnContext.toProduction
+      (.assign .local "dst" (.const (BitVec.ofNat 8 5))) := by
+  apply compileProgExactHOLW_local_assign_bridge
+  simp only [compileExpExactHOLW.eq_1, expToHOL.eq_1, compileExpHOL.eq_1,
+    List.map_cons, List.map_nil, crepExpOfHOL.eq_1, shapeOfHOL]
+
+/-- The local-Assign bridge retains the destination/source length-mismatch
+    `Skip` fallback. -/
+example :
+    crepProgOfHOL (compileProgExactHOLW (exactLocalAssignContext [7, 8] [9])
+      (.assign .local (ofString "dst") (expToHOL (.const (BitVec.ofNat 8 5))))) =
+    compileProgRiscV (exactLocalAssignContext [7, 8] [9]).toProduction
+      (.assign .local "dst" (.const (BitVec.ofNat 8 5))) := by
+  apply compileProgExactHOLW_local_assign_bridge
+  simp only [compileExpExactHOLW.eq_1, expToHOL.eq_1, compileExpHOL.eq_1,
+    List.map_cons, List.map_nil, crepExpOfHOL.eq_1, shapeOfHOL]
+
+/-- The local-Assign bridge covers the disjoint direct `nested_seq` branch. -/
+example :
+    crepProgOfHOL (compileProgExactHOLW (exactLocalAssignContext [7] [8])
+      (.assign .local (ofString "dst")
+        (expToHOL (.var .local "src")))) =
+    compileProgRiscV (exactLocalAssignContext [7] [8]).toProduction
+      (.assign .local "dst" (.var .local "src")) := by
+  apply compileProgExactHOLW_local_assign_bridge
+  simp [compileExpExactHOLW.eq_2, expToHOL.eq_2, compileExpHOL.eq_2,
+    PanToCrepContextExact.toProduction, exactLocalAssignContext,
+    HolFiniteMapExact.lookup_update, FUPDATE, FLOOKUP, crepExpOfHOL,
+    shapeOfHOL]
+
+/-- The local-Assign bridge covers the interfering-variable fresh-temporary
+    branch. -/
+example :
+    crepProgOfHOL (compileProgExactHOLW (exactLocalAssignContext [7] [7])
+      (.assign .local (ofString "dst")
+        (expToHOL (.var .local "src")))) =
+    compileProgRiscV (exactLocalAssignContext [7] [7]).toProduction
+      (.assign .local "dst" (.var .local "src")) := by
+  apply compileProgExactHOLW_local_assign_bridge
+  simp [compileExpExactHOLW.eq_2, expToHOL.eq_2, compileExpHOL.eq_2,
+    PanToCrepContextExact.toProduction, exactLocalAssignContext,
+    HolFiniteMapExact.lookup_update, FUPDATE, FLOOKUP, crepExpOfHOL,
+    shapeOfHOL]
+
+/-- The Primitive bridge retains the missing-variable `Skip` fallback. -/
+example :
+    crepProgOfHOL (compileProgExactHOLW exactReturnContext
+      (.primitive (ofString "dst") .addCarry [])) =
+    compileProgRiscV exactReturnContext.toProduction
+      (.primitive "dst" .addCarry []) := by
+  apply compileProgExactHOLW_primitive_bridge (arguments := [])
+  intro expression hmem
+  simp at hmem
+
+/-- The Primitive bridge covers the present-variable temporaries branch with an
+    empty argument list. -/
+example :
+    crepProgOfHOL (compileProgExactHOLW (exactLocalAssignContext [7] [8])
+      (.primitive (ofString "dst") .addCarry [])) =
+    compileProgRiscV (exactLocalAssignContext [7] [8]).toProduction
+      (.primitive "dst" .addCarry []) := by
+  apply compileProgExactHOLW_primitive_bridge (arguments := [])
+  intro expression hmem
+  simp at hmem
+
+/-- The Primitive bridge covers a non-empty argument list through the paired
+    expression codec. -/
+example :
+    crepProgOfHOL (compileProgExactHOLW (exactLocalAssignContext [7] [8])
+      (.primitive (ofString "dst") .addCarry
+        [expToHOL (.const (BitVec.ofNat 8 5))])) =
+    compileProgRiscV (exactLocalAssignContext [7] [8]).toProduction
+      (.primitive "dst" .addCarry [.const (BitVec.ofNat 8 5)]) := by
+  apply compileProgExactHOLW_primitive_bridge (arguments := [.const (BitVec.ofNat 8 5)])
+  intro expression hmem
+  simp only [List.mem_singleton] at hmem
+  subst hmem
+  simp only [compileExpExactHOLW.eq_1, expToHOL.eq_1, compileExpHOL.eq_1,
+    List.map_cons, List.map_nil, crepExpOfHOL.eq_1, shapeOfHOL]
+
+/-- The recursive `Dec` bridge (`pan_to_crepScript.sml:141-152`) closes the
+    missing-variable `Skip` fallback, the compiled-shape store, and the
+    recursive body under the extended context for a concrete `.skip` body. The
+    recursive hypothesis is supplied at the two extended contexts. -/
+example :
+    crepProgOfHOL (compileProgExactHOLW (exactLocalAssignContext [7] [8])
+      (.dec (ofString "dst") (shapeToHOL .one)
+        (expToHOL (.const (BitVec.ofNat 8 5))) .skip)) =
+    compileProgRiscV (exactLocalAssignContext [7] [8]).toProduction
+      (.dec "dst" .one (.const (BitVec.ofNat 8 5)) (progOfHOL .skip)) := by
+  apply compileProgExactHOLW_dec_bridge
+  · rfl
+  · rfl
+  · simp only [compileExpExactHOLW.eq_1, expToHOL.eq_1, compileExpHOL.eq_1,
+      List.map_cons, List.map_nil, crepExpOfHOL.eq_1, shapeOfHOL]
+  · simp [compileProgExactHOLW, compileProgHOL, progOfHOL, crepProgOfHOL]
+
+/-- The recursive `DecCall` bridge (`pan_to_crepScript.sml:262-272`) closes the
+    declared-shape return-slot allocation, the byte-range decoding of the
+    `MlString` callee, and the recursive body under the extended context for a
+    concrete empty argument list and `.skip` body. -/
+example :
+    crepProgOfHOL (compileProgExactHOLW (exactLocalAssignContext [7] [8])
+      (.decCall (ofString "dst") (shapeToHOL .one) (ofString "f")
+        (([] : List (Exp (BitVec 8))).map expToHOL) .skip)) =
+    compileProgRiscV (exactLocalAssignContext [7] [8]).toProduction
+      (.decCall "dst" .one "f" [] (progOfHOL .skip)) := by
+  apply compileProgExactHOLW_decCall_bridge
+  · rfl
+  · rfl
+  · intro expression hmem
+    simp at hmem
+  · decide
+  · simp [compileProgExactHOLW, compileProgHOL, progOfHOL, crepProgOfHOL]
+
+/-- The tail-call bridge (`pan_to_crepScript.sml:221-225`) for a name-ranged
+    callee and a concrete single-argument list. -/
+example :
+    crepProgOfHOL (compileProgExactHOLW (exactLocalAssignContext [7] [8])
+      (.call none (ofString "f")
+        (([.const 5] : List (Exp (BitVec 8))).map expToHOL))) =
+    compileProgRiscV (exactLocalAssignContext [7] [8]).toProduction
+      (.call none "f" [.const 5]) := by
+  apply compileProgExactHOLW_call_none_bridge
+  · decide
+  · intro expression hmem
+    simp only [List.mem_singleton] at hmem
+    subst hmem
+    simp only [compileExpExactHOLW.eq_1, expToHOL.eq_1, compileExpHOL.eq_1,
+      List.map_cons, List.map_nil, crepExpOfHOL.eq_1, shapeOfHOL]
+
+/-- The result-carrying `Call` bridge (`pan_to_crepScript.sml:226-232`) for a
+    name-ranged callee whose `funcs` entry is absent (empty result-name list)
+    and a concrete single-argument list. -/
+example :
+    crepProgOfHOL (compileProgExactHOLW (exactLocalAssignContext [7] [8])
+      (.call (some (none, none)) (ofString "f")
+        (([.const 5] : List (Exp (BitVec 8))).map expToHOL))) =
+    compileProgRiscV (exactLocalAssignContext [7] [8]).toProduction
+      (.call (some (none, none)) "f" [.const 5]) := by
+  apply compileProgExactHOLW_call_result_no_handler_bridge
+  · decide
+  · intro expression hmem
+    simp only [List.mem_singleton] at hmem
+    subst hmem
+    simp only [compileExpExactHOLW.eq_1, expToHOL.eq_1, compileExpHOL.eq_1,
+      List.map_cons, List.map_nil, crepExpOfHOL.eq_1, shapeOfHOL]
+
+/-- The wrapped-result `Call` bridge (`pan_to_crepScript.sml:252-261`) for a
+    name-ranged callee whose destination `wrap_rt` lookup succeeds with a
+    non-empty name list and a concrete single-argument list. -/
+example :
+    crepProgOfHOL (compileProgExactHOLW (exactLocalAssignContext [7] [8])
+      (.call (some (some (.local, ofString "dst"), none)) (ofString "f")
+        (([.const 5] : List (Exp (BitVec 8))).map expToHOL))) =
+    compileProgRiscV (exactLocalAssignContext [7] [8]).toProduction
+      (.call (some (some (.local, "dst"), none)) "f" [.const 5]) := by
+  refine compileProgExactHOLW_call_wrapped_result_no_handler_bridge
+    (context := exactLocalAssignContext [7] [8]) (kind := .local)
+    (resultName := "dst") (function := "f") (arguments := [.const 5])
+    (resultShape := .one) (resultNames := [7]) ?_ (by decide) ?_
+  · rfl
+  · intro expression hmem
+    simp only [List.mem_singleton] at hmem
+    subst hmem
+    simp only [compileExpExactHOLW.eq_1, expToHOL.eq_1, compileExpHOL.eq_1,
+      List.map_cons, List.map_nil, crepExpOfHOL.eq_1, shapeOfHOL]
+
+/-- The wrapped-result fallback `Call` bridge (`pan_to_crepScript.sml:252-261`)
+    for a name-ranged callee whose destination `wrap_rt` lookup fails (absent
+    variable) and a concrete single-argument list. -/
+example :
+    crepProgOfHOL (compileProgExactHOLW (exactLocalAssignContext [7] [8])
+      (.call (some (some (.local, ofString "missing"), none)) (ofString "f")
+        (([.const 5] : List (Exp (BitVec 8))).map expToHOL))) =
+    compileProgRiscV (exactLocalAssignContext [7] [8]).toProduction
+      (.call (some (some (.local, "missing"), none)) "f" [.const 5]) := by
+  refine compileProgExactHOLW_call_wrapped_result_fallback_no_handler_bridge
+    (context := exactLocalAssignContext [7] [8]) (kind := .local)
+    (resultName := "missing") (function := "f") (arguments := [.const 5])
+    ?_ (by decide) ?_
+  · rfl
+  · intro expression hmem
+    simp only [List.mem_singleton] at hmem
+    subst hmem
+    simp only [compileExpExactHOLW.eq_1, expToHOL.eq_1, compileExpHOL.eq_1,
+      List.map_cons, List.map_nil, crepExpOfHOL.eq_1, shapeOfHOL]
+
+/-- The result-arm Call handler-missing-eid bridge
+    (`pan_to_crepScript.sml:233-235`) for a name-ranged callee and exception
+    whose `eids` table lacks the exception, with a concrete single-argument
+    list. -/
+example :
+    crepProgOfHOL (compileProgExactHOLW (exactLocalAssignContext [7] [8])
+      (.call (some (none, some (ofString "F", ofString "e", .skip))) (ofString "f")
+        (([.const 5] : List (Exp (BitVec 8))).map expToHOL))) =
+    compileProgRiscV (exactLocalAssignContext [7] [8]).toProduction
+      (.call (some (none, some ("F", "e", .skip))) "f" [.const 5]) := by
+  refine compileProgExactHOLW_call_handler_missing_eid_bridge
+    (context := exactLocalAssignContext [7] [8]) (function := "f")
+    (exceptionName := "F") (exceptionVariable := "e") (arguments := [.const 5])
+    (body := .skip) ?_ (by decide) (by decide) ?_
+  · rfl
+  · intro expression hmem
+    simp only [List.mem_singleton] at hmem
+    subst hmem
+    simp only [compileExpExactHOLW.eq_1, expToHOL.eq_1, compileExpHOL.eq_1,
+      List.map_cons, List.map_nil, crepExpOfHOL.eq_1, shapeOfHOL]
+
+/-- The result-arm Call handler-present-eid bridge
+    (`pan_to_crepScript.sml:233-239`): the `eids` table binds `"E"` to code `12`,
+    so the handler is kept and the callee return names are zero-initialized. -/
+example :
+    crepProgOfHOL (compileProgExactHOLW exactRaiseContext
+      (.call (some (none, some (ofString "E", ofString "e", .skip))) (ofString "f")
+        (([.const 5] : List (Exp (BitVec 8))).map expToHOL))) =
+    compileProgRiscV exactRaiseContext.toProduction
+      (.call (some (none, some ("E", "e", progOfHOL ProgHOL.skip))) "f" [.const 5]) := by
+  refine compileProgExactHOLW_call_handler_present_eid_bridge
+    (context := exactRaiseContext) (function := "f") (exceptionName := "E")
+    (exceptionVariable := "e") (arguments := [.const 5]) (body := .skip)
+    (exceptionCode := BitVec.ofNat 8 12) ?_ (by decide) (by decide) ?_ ?_
+  · simp [exactRaiseContext, FUPDATE]
+  · intro expression hmem
+    simp only [List.mem_singleton] at hmem
+    subst hmem
+    simp only [compileExpExactHOLW.eq_1, expToHOL.eq_1, compileExpHOL.eq_1,
+      List.map_cons, List.map_nil, crepExpOfHOL.eq_1, shapeOfHOL]
+  · simp [compileProgExactHOLW, compileProgHOL, progOfHOL, crepProgOfHOL]
+
+/-- The wrapped-result Call handler-missing-eid bridge
+    (`pan_to_crepScript.sml:252-261`): the destination `wrap_rt` lookup succeeds
+    but the `eids` table lacks the exception, so the handler is dropped while the
+    destination names are retained as result metadata. -/
+example :
+    crepProgOfHOL (compileProgExactHOLW (exactLocalAssignContext [7] [8])
+      (.call
+        (some (some (.local, ofString "dst"), some (ofString "F", ofString "e", .skip)))
+        (ofString "f") (([.const 5] : List (Exp (BitVec 8))).map expToHOL))) =
+    compileProgRiscV (exactLocalAssignContext [7] [8]).toProduction
+      (.call
+        (some (some (.local, "dst"), some ("F", "e", progOfHOL ProgHOL.skip)))
+        "f" [.const 5]) := by
+  refine compileProgExactHOLW_call_wrapped_result_handler_missing_eid_bridge
+    (context := exactLocalAssignContext [7] [8]) (kind := .local)
+    (resultName := "dst") (function := "f") (exceptionName := "F")
+    (exceptionVariable := "e") (arguments := [.const 5]) (body := .skip)
+    (resultShape := .one) (resultNames := [7]) ?_ ?_ (by decide) (by decide) ?_
+  · rfl
+  · rfl
+  · intro expression hmem
+    simp only [List.mem_singleton] at hmem
+    subst hmem
+    simp only [compileExpExactHOLW.eq_1, expToHOL.eq_1, compileExpHOL.eq_1,
+      List.map_cons, List.map_nil, crepExpOfHOL.eq_1, shapeOfHOL]
+
+/-- The wrapped-result handler-present-eid bridge
+    (`pan_to_crepScript.sml:252-261`) keeps the destination names and sequences
+    `exp_hdl` with the recursively compiled handler body. -/
+example :
+    crepProgOfHOL (compileProgExactHOLW exactWrappedHandlerContext
+      (.call
+        (some (some (.local, ofString "dst"), some (ofString "E", ofString "e", .skip)))
+        (ofString "f") (([.const 5] : List (Exp (BitVec 8))).map expToHOL))) =
+    compileProgRiscV exactWrappedHandlerContext.toProduction
+      (.call
+        (some (some (.local, "dst"), some ("E", "e", progOfHOL ProgHOL.skip)))
+        "f" [.const 5]) := by
+  refine compileProgExactHOLW_call_wrapped_result_handler_present_eid_bridge
+    (context := exactWrappedHandlerContext) (kind := .local)
+    (resultName := "dst") (function := "f") (exceptionName := "E")
+    (exceptionVariable := "e") (arguments := [.const 5]) (body := .skip)
+    (resultShape := .one) (resultNames := [7]) (exceptionCode := BitVec.ofNat 8 12)
+    ?_ ?_ (by decide) (by decide) ?_ ?_
+  · simp [exactWrappedHandlerContext, FUPDATE, wrapRtHOL]
+  · simp [exactWrappedHandlerContext, FUPDATE]
+  · intro expression hmem
+    simp only [List.mem_singleton] at hmem
+    subst hmem
+    simp only [compileExpExactHOLW.eq_1, expToHOL.eq_1, compileExpHOL.eq_1,
+      List.map_cons, List.map_nil, crepExpOfHOL.eq_1, shapeOfHOL]
+  · simp [compileProgExactHOLW, compileProgHOL, progOfHOL, crepProgOfHOL]
+
+/-- The wrapped-result fallback handler-missing-eid bridge
+    (`pan_to_crepScript.sml:252-261`) drops both handler and metadata and emits a
+    flattened tail call. -/
+example :
+    crepProgOfHOL (compileProgExactHOLW exactRaiseContext
+      (.call
+        (some (some (.local, ofString "dst"), some (ofString "F", ofString "e", .skip)))
+        (ofString "f") (([.const 5] : List (Exp (BitVec 8))).map expToHOL))) =
+    compileProgRiscV exactRaiseContext.toProduction
+      (.call
+        (some (some (.local, "dst"), some ("F", "e", progOfHOL ProgHOL.skip)))
+        "f" [.const 5]) := by
+  refine compileProgExactHOLW_call_wrapped_result_fallback_handler_missing_eid_bridge
+    (context := exactRaiseContext) (kind := .local) (resultName := "dst")
+    (function := "f") (exceptionName := "F") (exceptionVariable := "e")
+    (arguments := [.const 5]) (body := .skip) ?_ ?_ (by decide) (by decide) ?_
+  · rfl
+  · simp [exactRaiseContext, FUPDATE]
+    decide
+  · intro expression hmem
+    simp only [List.mem_singleton] at hmem
+    subst hmem
+    simp only [compileExpExactHOLW.eq_1, expToHOL.eq_1, compileExpHOL.eq_1,
+      List.map_cons, List.map_nil, crepExpOfHOL.eq_1, shapeOfHOL]
+
+/-- The wrapped-result fallback handler-present-eid bridge
+    (`pan_to_crepScript.sml:252-261`) keeps the handler but supplies an empty
+    return-name list. -/
+example :
+    crepProgOfHOL (compileProgExactHOLW exactRaiseContext
+      (.call
+        (some (some (.local, ofString "dst"), some (ofString "E", ofString "e", .skip)))
+        (ofString "f") (([.const 5] : List (Exp (BitVec 8))).map expToHOL))) =
+    compileProgRiscV exactRaiseContext.toProduction
+      (.call
+        (some (some (.local, "dst"), some ("E", "e", progOfHOL ProgHOL.skip)))
+        "f" [.const 5]) := by
+  refine compileProgExactHOLW_call_wrapped_result_fallback_handler_present_eid_bridge
+    (context := exactRaiseContext) (kind := .local) (resultName := "dst")
+    (function := "f") (exceptionName := "E") (exceptionVariable := "e")
+    (arguments := [.const 5]) (body := .skip) (exceptionCode := BitVec.ofNat 8 12)
+    ?_ ?_ (by decide) (by decide) ?_ ?_
+  · rfl
+  · rfl
+  · intro expression hmem
+    simp only [List.mem_singleton] at hmem
+    subst hmem
+    simp only [compileExpExactHOLW.eq_1, expToHOL.eq_1, compileExpHOL.eq_1,
+      List.map_cons, List.map_nil, crepExpOfHOL.eq_1, shapeOfHOL]
+  · simp [compileProgExactHOLW, compileProgHOL, progOfHOL, crepProgOfHOL]
+
+/-- The `ExtCall` success bridge (`pan_to_crepScript.sml:274-290`) closes the
+    four `One`-shaped operand bindings and the maximum-variable temporary base
+    for concrete constant operands. -/
+example :
+    crepProgOfHOL (compileProgExactHOLW (exactLocalAssignContext [7] [8])
+      (.extCall (ofString "f") (expToHOL (.const 5)) (expToHOL (.const 6))
+        (expToHOL (.const 7)) (expToHOL (.const 8)))) =
+    compileProgRiscV (exactLocalAssignContext [7] [8]).toProduction
+      (.extCall "f" (.const 5) (.const 6) (.const 7) (.const 8)) := by
+  refine compileProgExactHOLW_extCall_success_bridge
+    (context := exactLocalAssignContext [7] [8]) (function := "f")
+    (configuration := .const 5) (configurationLength := .const 6)
+    (array := .const 7) (arrayLength := .const 8) (hfunction := by decide)
+    (exactConfiguration := .const 5) (exactConfigurationRest := [])
+    (exactConfigurationLength := .const 6) (exactConfigurationLengthRest := [])
+    (exactArray := .const 7) (exactArrayRest := [])
+    (exactArrayLength := .const 8) (exactArrayLengthRest := [])
+    (productionConfiguration := .const 5) (productionConfigurationRest := [])
+    (productionConfigurationLength := .const 6) (productionConfigurationLengthRest := [])
+    (productionArray := .const 7) (productionArrayRest := [])
+    (productionArrayLength := .const 8) (productionArrayLengthRest := [])
+    ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_
+  all_goals
+    simp only [compileExpExactHOLW.eq_1, expToHOL.eq_1, compileExpHOL.eq_1,
+      List.map_cons, List.map_nil, crepExpOfHOL]
+
+/-- The assembly `Call` bridge covers the `rtyp = NONE` arm (`Call NONE`). -/
+example :
+    crepProgOfHOL (compileProgExactHOLW (exactLocalAssignContext [7] [8])
+        (.call none (ofString "f")
+          (([.const 5] : List (Exp (BitVec 8))).map expToHOL))) =
+      compileProgRiscV (exactLocalAssignContext [7] [8]).toProduction
+        (.call none "f" [.const 5]) := by
+  exact compileProgExactHOLW_call_bridge
+    (context := exactLocalAssignContext [7] [8]) (info := none) (function := "f")
+    (arguments := [.const 5]) (by decide)
+    (fun expression hmem => by
+      simp only [List.mem_singleton] at hmem
+      subst hmem
+      simp only [compileExpExactHOLW.eq_1, expToHOL.eq_1, compileExpHOL.eq_1,
+        List.map_cons, List.map_nil, crepExpOfHOL.eq_1, shapeOfHOL])
+    (fun body h => by
+      simp only [callHandlerBody] at h
+      cases h)
+
+/-- The assembly `Call` bridge covers the wrapped-result handler-present-eid
+arm (`SOME (SOME (rtk, rt), SOME handler)` with `wrap_rt` and `eids` both
+succeeding) for `exactWrappedHandlerContext`. -/
+example :
+    crepProgOfHOL (compileProgExactHOLW exactWrappedHandlerContext
+        (.call (some (some (.local, ofString "dst"),
+            some (ofString "E", ofString "e", ProgHOL.skip)))
+          (ofString "f") (([.const 5] : List (Exp (BitVec 8))).map expToHOL))) =
+      compileProgRiscV exactWrappedHandlerContext.toProduction
+        (.call (some (some (.local, "dst"),
+            some ("E", "e", progOfHOL ProgHOL.skip))) "f" [.const 5]) := by
+  exact compileProgExactHOLW_call_bridge
+    (context := exactWrappedHandlerContext)
+    (info := some (some (.local, ofString "dst"),
+      some (ofString "E", ofString "e", ProgHOL.skip)))
+    (function := "f") (arguments := [.const 5]) (by decide)
+    (fun expression hmem => by
+      simp only [List.mem_singleton] at hmem
+      subst hmem
+      simp only [compileExpExactHOLW.eq_1, expToHOL.eq_1, compileExpHOL.eq_1,
+        List.map_cons, List.map_nil, crepExpOfHOL.eq_1, shapeOfHOL])
+    (fun body h => by
+      simp only [callHandlerBody] at h
+      injection h with hb
+      subst hb
+      simp [compileProgExactHOLW, compileProgHOL, progOfHOL, crepProgOfHOL])
+
+/-- The assembly `Call` bridge covers the wrapped-result fallback
+handler-missing-eid arm (`wrap_rt` fails and `eids` is absent). -/
+example :
+    crepProgOfHOL (compileProgExactHOLW (exactLocalAssignContext [7] [8])
+        (.call (some (some (.local, ofString "missing"),
+            some (ofString "E", ofString "e", ProgHOL.skip)))
+          (ofString "f") (([.const 5] : List (Exp (BitVec 8))).map expToHOL))) =
+      compileProgRiscV (exactLocalAssignContext [7] [8]).toProduction
+        (.call (some (some (.local, "missing"),
+            some ("E", "e", progOfHOL ProgHOL.skip))) "f" [.const 5]) := by
+  exact compileProgExactHOLW_call_bridge
+    (context := exactLocalAssignContext [7] [8])
+    (info := some (some (.local, ofString "missing"),
+      some (ofString "E", ofString "e", ProgHOL.skip)))
+    (function := "f") (arguments := [.const 5]) (by decide)
+    (fun expression hmem => by
+      simp only [List.mem_singleton] at hmem
+      subst hmem
+      simp only [compileExpExactHOLW.eq_1, expToHOL.eq_1, compileExpHOL.eq_1,
+        List.map_cons, List.map_nil, crepExpOfHOL.eq_1, shapeOfHOL])
+    (fun body h => by
+      simp only [callHandlerBody] at h
+      injection h with hb
+      subst hb
+      simp [compileProgExactHOLW, compileProgHOL, progOfHOL, crepProgOfHOL])
+
 def exactShMemStoreClauseParity : Bool :=
   (match compileShMemStoreExactHOLW
       (exactLocalAssignContext [7] [8]) .op8 (.var .local (ofString "src")) (.const 3) with
@@ -666,6 +1236,34 @@ def exactShMemStoreClauseParity : Bool :=
    | _ => false)
 
 #guard exactShMemStoreClauseParity
+
+/-! The whole tagged `compile_def` ShMemStore case retains HOL's explicit
+    positional shape: `ShMemStore op value address`. This asymmetric row is
+    the direct HOL oracle `shmem_store_clause` from `compile_def_probe.out`. -/
+def exactShMemStoreCompileDefParity : Bool :=
+  match compileProgExactHOLW (exactLocalAssignContext [7] [8])
+      (.shMemStore .op8 (.var .local (ofString "src")) (.const 3)) with
+  | .dec 9 (.const 3) (.shMem .store8 9 (.var 8)) => true
+  | _ => false
+
+#guard exactShMemStoreCompileDefParity
+
+/-! The exact and production compiler clauses agree on HOL's positional
+    `ShMemStore value address` operands, including the fresh index coming from
+    variables in the first (stored-value) operand. -/
+def exactShMemStoreProductionBridgeParity : Bool :=
+  let context := exactLocalAssignContext [1] [8]
+  let value := Exp.var .local "src"
+  let address := Exp.var .local "dst"
+  match
+      (crepProgOfHOL (compileProgExactHOLW context
+          (.shMemStore .op8 (expToHOL value) (expToHOL address))),
+        compileProgRiscV context.toProduction (.shMemStore .op8 value address)) with
+  | (.dec 9 (.var 1) (.shMem .store8 9 (.var 8)),
+      .dec 9 (.var 1) (.shMem .store8 9 (.var 8))) => true
+  | _ => false
+
+#guard exactShMemStoreProductionBridgeParity
 
 def exactShMemLoadClauseParity : Bool :=
   (match compileShMemLoadExactHOLW (exactLocalAssignContext [7] [8]) .op8
@@ -683,6 +1281,17 @@ def exactShMemLoadClauseParity : Bool :=
 
 #guard exactShMemLoadClauseParity
 
+example :
+    crepProgOfHOL (compileProgExactHOLW
+      (exactLocalAssignContext [7] [8])
+      (.shMemLoad .op8 .local (ofString "dst") (expToHOL (.const (3 : BitVec 8))))) =
+    compileProgRiscV (exactLocalAssignContext [7] [8]).toProduction
+      (progOfHOL
+        (.shMemLoad .op8 .local (ofString "dst") (expToHOL (.const (3 : BitVec 8))))) := by
+  apply compileProgExactHOLW_local_shmem_load_bridge
+  · simp [ExpByteRanged]
+  · simp [compileExpExactHOLW, compileExpHOL, expToHOL, crepExpOfHOL, shapeOfHOL]
+
 def exactDecClauseParity : Bool :=
   (match compileDecExactHOLW exactReturnContext (ofString "x") .one (.const 4)
       (fun bodyContext => compileReturnExactHOLW bodyContext
@@ -693,12 +1302,38 @@ def exactDecClauseParity : Bool :=
       (.rstruct [.const 1, .const 2]) (fun _ => .tick) with
    | .dec 1 (.const 1) (.dec 2 (.const 2) .tick) => true
    | _ => false) &&
+  (match compileDecExactHOLW exactReturnContext (ofString "x")
+      (.named (ofString "wrong")) (.const 4)
+      (fun bodyContext =>
+        match bodyContext.vars.lookup (ofString "x") with
+        | some (.one, _) => .tick
+        | _ => .break 0) with
+   | .dec 1 (.const 4) .tick => true
+   | _ => false) &&
+  (match compileDecExactHOLW exactReturnContext (ofString "x")
+      (.comb [.one, .one]) (.const 4)
+      (fun bodyContext =>
+        match bodyContext.vars.lookup (ofString "x") with
+        | some (.one, _) => .tick
+        | _ => .break 0) with
+   | .dec 1 (.const 4) .tick => true
+   | _ => false) &&
   (match compileDecExactHOLW exactMalformedStoreContext (ofString "x") .one
       (.var .local (ofString "bad")) (fun _ => .tick) with
    | .skip => true
    | _ => false)
 
 #guard exactDecClauseParity
+
+/- Direct HOL `compile_def_probe.out` row `dec_declared_shape_ignored`:
+   `compile_exp` returns a two-word shape even though the source Dec declares
+   One, so the body must see the compiled shape and select its second field. -/
+#guard match compileProgExactHOLW exactReturnContext
+    (.dec (ofString "pair") .one
+      (.rstruct [.const (4 : BitVec 8), .const 5])
+      (.return (.rfield 1 (.var .local (ofString "pair"))))) with
+  | .dec 1 (.const 4) (.dec 2 (.const 5) (.return [.var 2])) => true
+  | _ => false
 
 def exactDecCallClauseParity : Bool :=
   (match compileDecCallExactHOLW (exactDecCallContext 4) (ofString "x") .one

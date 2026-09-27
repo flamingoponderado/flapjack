@@ -2177,7 +2177,9 @@ theorem CrepHolState.toHolState_toHolFiniteWordSourceRuntime {ι : Type u}
 
 /-! The production byte/word load branches over the source-shaped runtime
     reduce to the model-parametric state helpers that spell out HOL's
-    `mem_load_byte_def` and `mem_load_32_def`. These equations connect the
+    `mem_load_byte_def` and `mem_load_32_def` equations. The byte helper remains
+    untagged because the related byte codec uses UInt8 instead of HOL `word8`
+    (`BitVec 8`); see `flapjack-4ac.5.16.5.4`. These equations connect the
     production evaluator path to those source formulas; they do not assert
     that the finite-dimension BitVec encoding is HOL's implicit `finite_index`
     representation. -/
@@ -2302,10 +2304,11 @@ theorem crepHolEvalMemLoadByte_source_toBitVec {ι : Type} {σ : Type}
         transportPanMemoryModel, CrepHolState.toHolFiniteBitVecState,
         mapCrepHolWordLab, hcell, bitVecToHolWord_holWordToBitVec]
 
-/-- The production finite-word source byte-load equation is the tagged HOL
-    `mem_load_byte_def` port after the explicit finite-index/BitVec state
-    transport. This is an all-width operation bridge; it does not by itself
-    establish the whole `crepSem$eval_def` state correspondence. -/
+/-- The production finite-word source byte-load equation spells out HOL's
+    `mem_load_byte_def` after the explicit finite-index/BitVec state transport.
+    Its byte-carrier correspondence remains open under
+    `flapjack-4ac.5.16.5.4`. This is an all-width operation bridge; it does not
+    by itself establish the whole `crepSem$eval_def` state correspondence. -/
 theorem crepHolEvalMemLoadByte_source_eq_panMemLoadByteHOL {ι : Type} {σ : Type}
     (dimension : HolFiniteDimension ι) (bigEndian : Bool)
     (bytesInWord : ι → Bool) (state : CrepHolState (ι → Bool) σ)
@@ -3551,11 +3554,11 @@ theorem evalCrepRuntimeExp_sourceWordLab_eq {ι : Type} {σ : Type}
   rw [evalCrepRuntimeExp_sourceWord_eq]
 
 /-- The source evaluator's recursive `LoadByte` case, after a successful
-    address evaluation, is exactly the tagged HOL `mem_load_byte_def` port
-    followed by HOL's `w2w` widening back to the expression word type. The
-    explicit finite-index/BitVec representation remains a parameter, so this
-    constructor equation does not claim the whole polymorphic `eval_def`
-    correspondence. -/
+    address evaluation, follows HOL `mem_load_byte_def` and its `w2w` widening
+    back to the expression word type. Byte-carrier correspondence remains open
+    under `flapjack-4ac.5.16.5.4`. The explicit finite-index/BitVec
+    representation remains a parameter, so this constructor equation does not
+    claim the whole polymorphic `eval_def` correspondence. -/
 theorem evalCrepHolFiniteWordSourceExp_loadByte_eq_panMemLoadByteHOL
     {ι : Type} {σ : Type} (dimension : HolFiniteDimension ι)
     (state : CrepHolState (ι → Bool) σ)
@@ -3582,8 +3585,9 @@ theorem evalCrepHolFiniteWordSourceExp_loadByte_eq_panMemLoadByteHOL
 
 /-- Complete `word_lab` result form of the source `LoadByte` equation above.
     It transports the evaluator result through the word wrapper and matches
-    the tagged HOL `mem_load_byte_def` result, including the `w2w` conversion.
-    This is adapter support: it does not identify the surrounding recursive
+    the HOL `mem_load_byte_def` equation, including the `w2w` conversion; the
+    byte-carrier difference is tracked by `flapjack-4ac.5.16.5.4`. This is
+    adapter support: it does not identify the surrounding recursive
     source evaluator with HOL's implicit finite-index evaluator. -/
 theorem evalCrepHolFiniteWordSourceExpWordLab_loadByte_eq_panMemLoadByteHOL
     {ι : Type} {σ : Type} (dimension : HolFiniteDimension ι)

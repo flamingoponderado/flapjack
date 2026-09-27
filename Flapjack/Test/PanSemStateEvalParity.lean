@@ -217,8 +217,9 @@ theorem evalPanSemStateExp_op_delegates (operator : BinOp)
   (evalPanSemStateExp littleEndianState (.op .sub [.const 3, .const 5]))
   (BitVec.ofNat 64 0xFFFFFFFFFFFFFFFE)
 
-/- Exact `mem_load_byte_def` port over the faithful total word-cell memory.
-   The expected values are the checked-in direct HOL rows
+/- Source-equation observations for `mem_load_byte_def` over the faithful total
+   word-cell memory, specialized to Flapjack's UInt8 result carrier. The
+   expected values are the checked-in direct HOL rows
    `mem_load_byte_def_little_first/little_last/big_first/missing` in
    `scripts/hol-probes/pan_sem_state_eval_probe.out`. -/
 def holMemory64 : Word64 → HolWordLab 64 :=
@@ -232,6 +233,20 @@ def holMemory64 : Word64 → HolWordLab 64 :=
   some (UInt8.ofNat 17)
 #guard panMemLoadByteHOL (width := 64) holMemory64 (fun _ => False) false 0 ==
   none
+
+/- The same direct HOL rows now replay over the exact `word8` carrier;
+   `pan_sem_state_eval_probe.out` records these as SOME 136w/17w/NONE. -/
+#guard panMemLoadByteWord8HOL (width := 64) holMemory64 (fun a => a = 0) false 0 ==
+  some (BitVec.ofNat 8 136)
+#guard panMemLoadByteWord8HOL (width := 64) holMemory64 (fun a => a = 0) false 7 ==
+  some (BitVec.ofNat 8 17)
+#guard panMemLoadByteWord8HOL (width := 64) holMemory64 (fun a => a = 0) true 0 ==
+  some (BitVec.ofNat 8 17)
+#guard panMemLoadByteWord8HOL (width := 64) holMemory64 (fun _ => False) false 0 ==
+  none
+#guard readBytearrayWordHOL (byteWidth := 8) (0 : Word64) 2
+    (panMemLoadByteWord8HOL (width := 64) holMemory64 (fun a => a = 0) false) ==
+  some [BitVec.ofNat 8 136, BitVec.ofNat 8 119]
 
 example : panMemLoadByteHOL (width := 64) holMemory64 (fun a => a = 0) false 0 =
     some (UInt8.ofNat 136) := by decide
@@ -340,8 +355,9 @@ private abbrev dom4All : RiscV.Word 4 → Prop := fun _ => True
 
 /-! ### Executed-path widening adapter (flapjack-pxn.18.3.6.9.2) -/
 
-/-- The executed `readByte` on the source state agrees with the tagged exact
-    `panMemLoadByteHOL` over the word view of its `PanValue` memory. -/
+/-- The executed `readByte` on the source state agrees with the UInt8-backed
+    `panMemLoadByteHOL` source-equation helper over the word view of its
+    `PanValue` memory. -/
 example :
     (panSemBitVec64MemoryAccess littleEndianState).readByte
         (panSemBitVec64MemoryAccess littleEndianState).domain littleEndianState.memory
@@ -892,6 +908,22 @@ instance : DecidablePred storeDomain := fun x => by
       storeDomain false) 1) != storeMem 1
 #guard ((panWriteBytearrayHOL (width := 8) (5 : RiscV.Word 8) [0x11] storeMem
       storeDomain false) 1) == storeMem 1
+
+/- Direct HOL store/write truth rows from `pan_sem_mem_store_byte_probe.out`,
+   replayed on `word8 = BitVec 8`. -/
+#guard (panMemStoreByteWord8HOL (width := 8) storeMem storeDomain false
+    (1 : RiscV.Word 8) (BitVec.ofNat 8 0xAB)).isSome
+#guard (panMemStoreByteWord8HOL (width := 8) storeMem (fun _ => False) false
+    (1 : RiscV.Word 8) (BitVec.ofNat 8 0xAB)).isNone
+#guard ((panMemStoreByteWord8HOL (width := 8) storeMem storeDomain false
+      (1 : RiscV.Word 8) (BitVec.ofNat 8 0xAB)).map (fun memory => memory 3)) ==
+  some (storeMem 3)
+#guard ((panWriteBytearrayWord8HOL (width := 8) (1 : RiscV.Word 8)
+      [BitVec.ofNat 8 0x11, BitVec.ofNat 8 0x22] storeMem storeDomain false) 3) == storeMem 3
+#guard ((panWriteBytearrayWord8HOL (width := 8) (1 : RiscV.Word 8)
+      [BitVec.ofNat 8 0x11, BitVec.ofNat 8 0x22] storeMem storeDomain false) 1) != storeMem 1
+#guard ((panWriteBytearrayWord8HOL (width := 8) (5 : RiscV.Word 8)
+      [BitVec.ofNat 8 0x11] storeMem storeDomain false) 1) == storeMem 1
 
 
 def holCodecAccess (state : PanSemState (RiscV.Word 64) Unit) :

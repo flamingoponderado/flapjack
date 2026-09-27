@@ -61,10 +61,11 @@ run_probe() {
   local source="$1"
   shift
   local workdir="${1:-$cake_dir/pancake}"
+  # Run from the theory source directory. HOL resolves sibling `.hol/objs`
+  # entries from there; using the object directory itself makes it search a
+  # nested `.hol/objs/.hol/objs` and fails to load shared theories such as
+  # CakeML's `preamble`.
   local hol_workdir="$workdir"
-  if [[ -d "$workdir/.hol/objs" ]]; then
-    hol_workdir="$workdir/.hol/objs"
-  fi
   local probe="$probe_dir/$probe_name"
   local output="$probe_dir/$output_name"
   if probe_needs_refresh "$output" "$probe" "$source"; then
@@ -941,7 +942,7 @@ run_probe compile_def_probeScript.sml compile_def_probe.out \
   raise_one_word raise_multiword raise_missing_eid raise_shape_length_fallback \
   shmem_store_clause shmem_store_value_fallback shmem_store_address_fallback \
   shmem_load_local_clause shmem_load_missing_destination shmem_load_address_fallback \
-  dec_one_word dec_multiword dec_shape_length_fallback \
+  dec_one_word dec_multiword dec_declared_shape_ignored dec_shape_length_fallback \
   struct_skip struct_break struct_continue struct_tick struct_annot struct_seq \
   missing_global empty_one_global extra_names_global missing_names_global \
   missing_local empty_one_local extra_names_local missing_names_local valid_local \
@@ -950,6 +951,22 @@ run_probe compile_def_probeScript.sml compile_def_probe.out \
   extcall_shared_high_tail extcall_constants extcall_shape_fallback \
   pair_load pair_store fixed_stride64 \
   "$cake_dir/pancake/pan_to_crepScript.sml"
+run_probe eval_nested_assign_distinct_eq_probeScript.sml eval_nested_assign_distinct_eq_probe.out \
+  assign_list_success duplicate_names_all_distinct expression_interference_distinct_lists \
+  "$cake_dir/pancake/proofs/pan_to_crepProofScript.sml" \
+  "$cake_dir/pancake/proofs"
+run_probe eval_nested_decs_seq_res_var_eq_probeScript.sml \
+  eval_nested_decs_seq_res_var_eq_probe.out \
+  nested_decs_restore_absent_local nested_decs_restore_existing_local \
+  nested_decs_length_mismatch_skip valid_declaration_premises \
+  duplicate_names_rejected expression_interference_rejected length_premise_rejected \
+  "$cake_dir/pancake/proofs/pan_to_crepProofScript.sml" \
+  "$cake_dir/pancake/proofs"
+run_probe eval_nested_decs_load_globals_probeScript.sml \
+  eval_nested_decs_load_globals_probe.out \
+  word_lookup_and_nested_decs_theorem struct_lookup_and_nested_decs_theorem \
+  "$cake_dir/pancake/proofs/pan_to_crepProofScript.sml" \
+  "$cake_dir/pancake/proofs"
 run_probe compile_to_crep_probeScript.sml compile_to_crep_probe.out \
   empty raise_const raise_pair raise_pair_later raise_pair_later_64 handled_pair done \
   "$cake_dir/pancake/pan_to_crepScript.sml"
@@ -977,6 +994,17 @@ run_probe pan_to_crep_state_rel_carrier_probeScript.sml pan_to_crep_state_rel_ca
   state_rel_matching_fields state_rel_rejects_nonempty_structs \
   state_rel_globals_equation_unreduced state_rel_nonempty_globals_lookup \
   state_rel_empty_globals_lookup state_rel_named_struct_carrier \
+  "$cake_dir/pancake/proofs/pan_to_crepProofScript.sml" \
+  "$cake_dir/pancake/proofs"
+run_probe pan_to_crep_slc_tlc_probeScript.sml pan_to_crep_slc_tlc_probe.out \
+  slc_tlc_slc_x slc_tlc_slc_y slc_tlc_slc_absent slc_tlc_tlc_0 slc_tlc_tlc_1 \
+  slc_tlc_tlc_absent slc_tlc_rw_slc_holds slc_tlc_rw_tlc_holds \
+  slc_tlc_slc_rhs_lookup slc_tlc_tlc_rhs_lookup \
+  "$cake_dir/pancake/proofs/pan_to_crepProofScript.sml" \
+  "$cake_dir/pancake/proofs"
+run_probe pan_to_crep_ret_inst2_probeScript.sml pan_to_crep_ret_inst2_probe.out \
+  ret_inst2_args ret_inst2_lookup ret_inst2_body_run ret_inst2_state_rel \
+  ret_inst2_locals_rel ret_inst2_five_premise_return ret_inst2_return_result \
   "$cake_dir/pancake/proofs/pan_to_crepProofScript.sml" \
   "$cake_dir/pancake/proofs"
 run_probe ctxt_fc_probeScript.sml ctxt_fc_probe.out \
@@ -1857,3 +1885,19 @@ run_probe word_to_stack_stub_probeScript.sml word_to_stack_stub_probe.out \
 run_probe word_to_stack_wshareinst_probeScript.sml word_to_stack_wshareinst_probe.out \
   ws_load ws_store32 "$cake_dir/compiler/backend/word_to_stackScript.sml" \
   "$cake_dir/compiler/backend"
+
+# The pan_commonProps genlist probe observes `mem_genlist_add_suc_val`
+# (pan_commonPropsScript.sml:234): membership in `GENLIST (fun x. SUC x + k) n`
+# implies the value lies in `(k, n + k]`.
+run_probe pan_common_props_genlist_probeScript.sml pan_common_props_genlist_probe.out \
+  genlist_mem_3 genlist_mem_0 genlist_mem_6 genlist_done \
+  "$cake_dir/pancake/semantics/pan_commonPropsScript.sml" \
+  "$cake_dir/pancake/semantics"
+
+# The external HOL finite_map theory theorem used in pc_compile_correct.
+# Unlike CakeML sources, this is deliberately rooted at the separate HOL
+# checkout; check-hol-refs.py currently cannot encode such a path.
+run_probe fupdate_list_append_commutes_probeScript.sml fupdate_list_append_commutes_probe.out \
+  source_theorem overlap_lookup_equal \
+  "$hol_dir/src/finite_maps/finite_mapScript.sml" \
+  "$hol_dir/src/finite_maps"
