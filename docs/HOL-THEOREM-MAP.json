@@ -11110,6 +11110,35 @@
     "reviewer": "Flapjack-specific exact Assign evaluator leaf supporting HOL eval_nested_assign_distinct_eq (pan_to_crepProofScript.sml:540): under exact expression success and existing-local premises, proves normal completion and the set_var local update over CrepProgHOL/CrepSemHOLState. It does not establish nested Seq composition or the full five-premise list theorem and has no @[hol] tag."
   },
   {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "eval_nested_assign_distinct_eq",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateNestedAssign.lean",
+    "lean_name": "evalNestedAssignDistinctEqCrepHOL",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "reviewer": "flapjack-luna-c (source comparison against pan_to_crepProofScript.sml:540-575 and crepSemScript.sml:240-303, 2026-09-27): quantifies the exact Crep expression list, assignment names, expression results and previous lookup results. The five premises match HOL in order: MAP eval success, OPT_MMAP old-local lookup success, distinct_lists between assigned names and all expression variables, ALL_DISTINCT names, and equal lengths. The conclusion is evaluate (nested_seq (MAP2 Assign names expressions), state) = (NONE, state with locals := locals |++ ZIP (names, values)); List.zipWith/crepNestedSeqHOL and updateListEq/FUPDATE_LIST_HOL implement those equations. CrepSemHOLState carries exact CrepProgHOL/CrepExpHOL and HolWordLab carriers; all and only the locals/globals/code finite maps receive the reviewed canonical HolFiniteMapExact translation. The checker-verified same-module witness ties this carrier to CrepSemBroadState. Lean's operational memory-domain Decidable procedures are hidden behind Flapjack-only classical wrappers, so they add no theorem premise. Direct HOL success and premise-rejection rows are in eval_nested_assign_distinct_eq_probe.out; exact Lean theorem instantiation and regression are in CrepNestedAssignDistinctHOLParity.lean."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateNestedAssign.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module carrier evidence required by scripts/check-hol-refs.py for the tagged theorem's fmap_as_finite_support qualifier. It restates the CrepSemHOLState/CrepSemBroadState roundtrip in the Pan-to-Crep theorem counterpart file; it has no HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateNestedAssign.lean",
+    "lean_name": "evalNestedAssignDistinctEqCrepHOLWithDeciders",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only inductive proof infrastructure for eval_nested_assign_distinct_eq. The explicit memory-domain Decidable arguments are Lean evaluator implementation details; the public tagged theorem hides them behind classical wrappers. This internal lemma has no HOL declaration."
+  },
+  {
     "hol_path": "cakeml/misc/miscScript.sml",
     "hol_name": "num_set",
     "lean_path": "Flapjack/Misc/Sptree.lean",

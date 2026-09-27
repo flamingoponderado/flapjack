@@ -4,6 +4,9 @@ import Flapjack.Pancake.CrepLang.Exp
 import Flapjack.Pancake.CrepLang.Prog
 import Flapjack.Pancake.Semantics.CrepSem
 import Flapjack.Pancake.Semantics.CrepSem.HOLState
+import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
+import Flapjack.Pancake.PanCommon
+import Flapjack.Pancake.Semantics.PanCommonProps
 
 /-!
 Crepe language properties from `cakeml/pancake/semantics/crepPropsScript.sml`.
