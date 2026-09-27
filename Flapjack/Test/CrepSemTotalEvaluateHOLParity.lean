@@ -290,6 +290,43 @@ theorem whileStampIdentity :
         (.while (.const (BitVec.ofNat 64 1)) .skip : CrepProgHOL 64)).2 :=
   crepStampExactDomains_evalCrepSemHOLProg sampleHOLState memDecSample shMemDecSample _
 
+/-- `Seq` stamping site: the `crepStampExactDomains` call on the `fix_clock`ed
+    first-statement state is the identity. -/
+theorem seqStampIdentity :
+    crepStampExactDomains sampleHOLState
+      (fixClockCrepSemHOL sampleHOLState
+        (evalCrepSemHOLProg sampleHOLState memDecSample shMemDecSample
+          (.skip : CrepProgHOL 64))).2 =
+      (fixClockCrepSemHOL sampleHOLState
+        (evalCrepSemHOLProg sampleHOLState memDecSample shMemDecSample
+          (.skip : CrepProgHOL 64))).2 :=
+  crepStampExactDomains_seq_step sampleHOLState memDecSample shMemDecSample .skip _
+    (by rw [evalCrepSemHOLProg_skip]; rfl)
+
+/-- `Call` handler stamping site: the `crepStampExactDomains` call on
+    `{ bodyState with locals := state.locals }` is the identity.
+
+    The evaluation-level domain hit/miss behavior the stamping guards is pinned
+    directly against `scripts/hol-probes/crep_eval_probe.out`
+    (`eval_memory_hit`, `eval_memory_miss`) and
+    `scripts/hol-probes/crep_eval_load_rv64_probe.out` (`eval_load_valid`,
+    `eval_load_outside_domain`) in `CrepEvalConstructorParity.lean` /
+    `CrepSemEvalExactParity.lean`. -/
+theorem callHandlerStampIdentity :
+    crepStampExactDomains sampleHOLState
+      ({ (fixClockCrepSemHOL sampleHOLState
+            (evalCrepSemHOLProg sampleHOLState memDecSample shMemDecSample
+              (.skip : CrepProgHOL 64))).2 with
+          locals := sampleHOLState.locals }) =
+      ({ (fixClockCrepSemHOL sampleHOLState
+            (evalCrepSemHOLProg sampleHOLState memDecSample shMemDecSample
+              (.skip : CrepProgHOL 64))).2 with
+          locals := sampleHOLState.locals }) := by
+  apply crepStampExactDomains_call_handler (base := sampleHOLState) (callee := sampleHOLState)
+    (hmem := rfl) (hsh := rfl) (memDec := memDecSample) (shMemDec := shMemDecSample)
+    (body := (.skip : CrepProgHOL 64))
+  rw [evalCrepSemHOLProg_skip]
+
 /-! ## Exact `exit_loop_def` oracle rows
 
 Kernel-checked transcription of the six direct HOL EVAL rows in
