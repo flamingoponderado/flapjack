@@ -259,4 +259,443 @@ theorem eval_context_state {width : Nat} {σ : Type} [NeZero width] (program : P
       evalPanSemRecursiveCallContextHOLExact program c2 :=
   congrArg (evalPanSemRecursiveCallContextHOLExact program) (PanSemExactEvalContext.ext h)
 
+/-! ## Step commutation with the clock shift
+
+Flapjack-specific: each exact nonrecursive clause step commutes with
+`stateAddClock`, because it only inspects non-clock fields (`ffi`, memory,
+locals) and updates non-clock fields.  This is infrastructure towards the HOL
+`evaluate_add_clock_eq` analogue; no declaration carries a `@[hol]` tag. -/
+
+theorem lookupKvarHOLExact_stateAddClock {width : Nat} {σ : Type} [NeZero width]
+    (kind : VarKind) (name : MlS) (state : PanSemStateExact width σ) (extra : Nat) :
+    lookupKvarHOLExact kind name (stateAddClock state extra) =
+      lookupKvarHOLExact kind name state := by
+  cases kind <;> rfl
+
+theorem assignStepHOLExact_stateAddClock {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateExact width σ) [DecidablePred state.memaddrs] (kind : VarKind)
+    (name : MlS) (source : ExpHOL width) (extra : Nat) :
+    assignStepHOLExact (stateAddClock state extra) kind name source
+        (fun _ expression => evalHOLExact (stateAddClock state extra) expression) =
+      ((assignStepHOLExact state kind name source
+          (fun _ expression => evalHOLExact state expression)).1,
+       stateAddClock (assignStepHOLExact state kind name source
+          (fun _ expression => evalHOLExact state expression)).2 extra) := by
+  cases h : evalHOLExact state source with
+  | none => simp only [assignStepHOLExact, evalHOLExact_stateAddClock, h]
+  | some value =>
+      by_cases hv : isValidValueHOLExact state kind name value = true
+      · simp [assignStepHOLExact, h, hv]
+      · simp [assignStepHOLExact, h, hv]
+
+theorem primitiveStepHOLExact_stateAddClock {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateExact width σ) [DecidablePred state.memaddrs] (name : MlS)
+    (operator : PrimOp) (arguments : List (ExpHOL width)) (extra : Nat) :
+    primitiveStepHOLExact (stateAddClock state extra) name operator arguments
+        (fun _ expressions => evalListHOLExact (stateAddClock state extra) expressions) =
+      ((primitiveStepHOLExact state name operator arguments
+          (fun _ expressions => evalListHOLExact state expressions)).1,
+       stateAddClock (primitiveStepHOLExact state name operator arguments
+          (fun _ expressions => evalListHOLExact state expressions)).2 extra) := by
+  cases h : evalListHOLExact state arguments with
+  | none => simp only [primitiveStepHOLExact, evalListHOLExact_stateAddClock, h]
+  | some values =>
+      cases h2 : panPrimopHOLExact (width := width) operator values with
+      | none => simp only [primitiveStepHOLExact, evalListHOLExact_stateAddClock, h, h2]
+      | some value =>
+          by_cases hv : isValidValueHOLExact state .local name value = true
+          · simp [primitiveStepHOLExact, h, h2, hv]
+          · simp [primitiveStepHOLExact, h, h2, hv]
+
+theorem storeStepHOLExact_stateAddClock {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateExact width σ) [DecidablePred state.memaddrs]
+    (address value : ExpHOL width) (extra : Nat) :
+    storeStepHOLExact (stateAddClock state extra) address value
+        (fun _ expression => evalHOLExact (stateAddClock state extra) expression) =
+      ((storeStepHOLExact state address value
+          (fun _ expression => evalHOLExact state expression)).1,
+       stateAddClock (storeStepHOLExact state address value
+          (fun _ expression => evalHOLExact state expression)).2 extra) := by
+  cases h : evalHOLExact state address with
+  | none => simp only [storeStepHOLExact, evalHOLExact_stateAddClock, h]
+  | some v =>
+      cases v with
+      | val w =>
+          cases w with
+          | word addr =>
+              cases h2 : evalHOLExact state value with
+              | none => simp only [storeStepHOLExact, evalHOLExact_stateAddClock, h, h2]
+              | some v2 =>
+                  cases h3 : panMemStoresHOL addr (flattenHOL v2) state.memaddrs
+                      state.memory with
+                  | none => simp only [storeStepHOLExact, evalHOLExact_stateAddClock, h, h2, h3]
+                  | some memory =>
+                      simp only [storeStepHOLExact, evalHOLExact_stateAddClock, h, h2, h3]
+      | rStruct fields => simp only [storeStepHOLExact, evalHOLExact_stateAddClock, h]
+      | nStruct nm fields => simp only [storeStepHOLExact, evalHOLExact_stateAddClock, h]
+
+theorem store32StepHOLExact_stateAddClock {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateExact width σ) [DecidablePred state.memaddrs]
+    (address value : ExpHOL width) (extra : Nat) :
+    store32StepHOLExact (stateAddClock state extra) address value
+        (fun _ expression => evalHOLExact (stateAddClock state extra) expression) =
+      ((store32StepHOLExact state address value
+          (fun _ expression => evalHOLExact state expression)).1,
+       stateAddClock (store32StepHOLExact state address value
+          (fun _ expression => evalHOLExact state expression)).2 extra) := by
+  cases h : evalHOLExact state address with
+  | none => simp only [store32StepHOLExact, evalHOLExact_stateAddClock, h]
+  | some v =>
+      cases v with
+      | val w =>
+          cases w with
+          | word addr =>
+              cases h2 : evalHOLExact state value with
+              | none => simp only [store32StepHOLExact, evalHOLExact_stateAddClock, h, h2]
+              | some v2 =>
+                  cases v2 with
+                  | val w2 =>
+                      cases w2 with
+                      | word word =>
+                          cases h3 : panMemStore32HOL state.memory state.memaddrs
+                              state.be addr (BitVec.ofNat 32 word.toNat) with
+                          | none => simp only [store32StepHOLExact, evalHOLExact_stateAddClock,
+                              h, h2, h3]
+                          | some memory =>
+                              simp only [store32StepHOLExact, evalHOLExact_stateAddClock,
+                                h, h2, h3]
+                  | rStruct fields =>
+                      simp only [store32StepHOLExact, evalHOLExact_stateAddClock, h, h2]
+                  | nStruct nm fields =>
+                      simp only [store32StepHOLExact, evalHOLExact_stateAddClock, h, h2]
+      | rStruct fields => simp only [store32StepHOLExact, evalHOLExact_stateAddClock, h]
+      | nStruct nm fields => simp only [store32StepHOLExact, evalHOLExact_stateAddClock, h]
+
+theorem storeByteStepHOLExact_stateAddClock {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateExact width σ) [DecidablePred state.memaddrs]
+    (address value : ExpHOL width) (extra : Nat) :
+    storeByteStepHOLExact (stateAddClock state extra) address value
+        (fun _ expression => evalHOLExact (stateAddClock state extra) expression) =
+      ((storeByteStepHOLExact state address value
+          (fun _ expression => evalHOLExact state expression)).1,
+       stateAddClock (storeByteStepHOLExact state address value
+          (fun _ expression => evalHOLExact state expression)).2 extra) := by
+  cases h : evalHOLExact state address with
+  | none => simp only [storeByteStepHOLExact, evalHOLExact_stateAddClock, h]
+  | some v =>
+      cases v with
+      | val w =>
+          cases w with
+          | word addr =>
+              cases h2 : evalHOLExact state value with
+              | none => simp only [storeByteStepHOLExact, evalHOLExact_stateAddClock, h, h2]
+              | some v2 =>
+                  cases v2 with
+                  | val w2 =>
+                      cases w2 with
+                      | word word =>
+                          cases h3 : panMemStoreByteHOL state.memory state.memaddrs
+                              state.be addr (UInt8.ofNat word.toNat) with
+                          | none => simp only [storeByteStepHOLExact, evalHOLExact_stateAddClock,
+                              h, h2, h3]
+                          | some memory =>
+                              simp only [storeByteStepHOLExact, evalHOLExact_stateAddClock,
+                                h, h2, h3]
+                  | rStruct fields =>
+                      simp only [storeByteStepHOLExact, evalHOLExact_stateAddClock, h, h2]
+                  | nStruct nm fields =>
+                      simp only [storeByteStepHOLExact, evalHOLExact_stateAddClock, h, h2]
+      | rStruct fields => simp only [storeByteStepHOLExact, evalHOLExact_stateAddClock, h]
+      | nStruct nm fields => simp only [storeByteStepHOLExact, evalHOLExact_stateAddClock, h]
+
+theorem returnStepHOLExact_stateAddClock {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateExact width σ) [DecidablePred state.memaddrs]
+    (expression : ExpHOL width) (extra : Nat) :
+    returnStepHOLExact (stateAddClock state extra) expression
+        (fun _ e => evalHOLExact (stateAddClock state extra) e) =
+      ((returnStepHOLExact state expression (fun _ e => evalHOLExact state e)).1,
+       stateAddClock (returnStepHOLExact state expression
+          (fun _ e => evalHOLExact state e)).2 extra) := by
+  cases h : evalHOLExact state expression with
+  | none => simp only [returnStepHOLExact, evalHOLExact_stateAddClock, h]
+  | some value =>
+      by_cases hs : Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL state.structs
+          (shapeOfHOLExact value) ≤ 32
+      · simp [returnStepHOLExact, h, hs]
+      · simp [returnStepHOLExact, h, hs]
+
+theorem raiseStepHOLExact_stateAddClock {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateExact width σ) [DecidablePred state.memaddrs]
+    (exceptionId : MlS) (expression : ExpHOL width) (extra : Nat) :
+    raiseStepHOLExact (stateAddClock state extra) exceptionId expression
+        (fun _ e => evalHOLExact (stateAddClock state extra) e) =
+      ((raiseStepHOLExact state exceptionId expression
+          (fun _ e => evalHOLExact state e)).1,
+       stateAddClock (raiseStepHOLExact state exceptionId expression
+          (fun _ e => evalHOLExact state e)).2 extra) := by
+  cases h : evalHOLExact state expression with
+  | none => simp only [raiseStepHOLExact, evalHOLExact_stateAddClock, h]
+  | some value =>
+      cases h2 : state.eshapes exceptionId with
+      | none => simp only [raiseStepHOLExact, evalHOLExact_stateAddClock, h, h2]
+      | some shape =>
+          by_cases h3 : shapeEqHOL (shapeOfHOLExact value) shape = true
+          · by_cases h4 : Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL state.structs
+                (shapeOfHOLExact value) ≤ 32
+            · simp [raiseStepHOLExact, h, h2, h3, h4]
+            · simp [raiseStepHOLExact, h, h2, h3, h4]
+          · simp [raiseStepHOLExact, h, h2, h3]
+
+theorem tickStepHOLExact_stateAddClock {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateExact width σ) (extra : Nat) (h : state.clock ≠ 0) :
+    tickStepHOLExact (stateAddClock state extra) =
+      ((tickStepHOLExact state).1, stateAddClock (tickStepHOLExact state).2 extra) := by
+  rw [tickStepHOLExact_clock_pos state h]
+  have h' : (stateAddClock state extra).clock ≠ 0 := by
+    simp only []; omega
+  rw [tickStepHOLExact_clock_pos _ h']
+  exact congrArg (fun s => (none, s)) (decClockHOLExact_stateAddClock state extra h)
+
+theorem shMemLoadHOLExact_stateAddClock {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateExact width σ) [DecidablePred state.shMemaddrs]
+    (kind : VarKind) (name : MlS) (address : RiscV.Word width) (nb : Nat) (extra : Nat) :
+    shMemLoadHOLExact (stateAddClock state extra) kind name address nb =
+      ((shMemLoadHOLExact state kind name address nb).1,
+       stateAddClock (shMemLoadHOLExact state kind name address nb).2 extra) := by
+  unfold shMemLoadHOLExact
+  simp only [stateAddClock]
+  by_cases hnb : nb = 0
+  · subst hnb
+    simp only [if_true]
+    by_cases hdom : state.shMemaddrs address
+    · simp only [hdom, if_true]
+      cases hf : callFFIHOL state.ffi (.sharedMem .mappedRead) [BitVec.ofNat 8 0]
+          (panWordToBytesHOL address false) with
+      | final ev => simp only [emptyLocalsHOLExact_stateAddClock]
+      | ret nf nb' => simp only [setKvarHOLExact_stateAddClock]
+    · simp only [hdom, if_false]
+  · simp only [hnb, if_false]
+    by_cases hdom : state.shMemaddrs (panByteAlignHOL address)
+    · simp only [hdom, if_true]
+      cases hf : callFFIHOL state.ffi (.sharedMem .mappedRead) [BitVec.ofNat 8 nb]
+          (panWordToBytesHOL address false) with
+      | final ev => simp only [emptyLocalsHOLExact_stateAddClock]
+      | ret nf nb' => simp only [setKvarHOLExact_stateAddClock]
+    · simp only [hdom, if_false]
+
+theorem shMemStoreHOLExact_stateAddClock {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateExact width σ) [DecidablePred state.shMemaddrs]
+    (word : RiscV.Word width) (address : RiscV.Word width) (nb : Nat) (extra : Nat) :
+    shMemStoreHOLExact (stateAddClock state extra) word address nb =
+      ((shMemStoreHOLExact state word address nb).1,
+       stateAddClock (shMemStoreHOLExact state word address nb).2 extra) := by
+  unfold shMemStoreHOLExact
+  simp only [stateAddClock]
+  by_cases hnb : nb = 0
+  · subst hnb
+    simp only [if_true]
+    by_cases hdom : state.shMemaddrs address
+    · simp only [hdom, if_true]
+      cases hf : callFFIHOL state.ffi (.sharedMem .mappedWrite) [BitVec.ofNat 8 0]
+          (panWordToBytesHOL word false ++ panWordToBytesHOL address false) with
+      | final ev => simp only []
+      | ret nf nb' => simp only []
+    · simp only [hdom, if_false]
+  · simp only [hnb, if_false]
+    by_cases hdom : state.shMemaddrs (panByteAlignHOL address)
+    · simp only [hdom, if_true]
+      cases hf : callFFIHOL state.ffi (.sharedMem .mappedWrite) [BitVec.ofNat 8 nb]
+          ((panWordToBytesHOL word false).take nb ++ panWordToBytesHOL address false) with
+      | final ev => simp only []
+      | ret nf nb' => simp only []
+    · simp only [hdom, if_false]
+
+theorem extCallStepHOLExact_stateAddClock {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateExact width σ) [DecidablePred state.memaddrs]
+    (function : MlS) (ptr1 len1 ptr2 len2 : ExpHOL width) (extra : Nat) :
+    extCallStepHOLExact (stateAddClock state extra)
+        (fun _ e => evalHOLExact (stateAddClock state extra) e) function ptr1 len1 ptr2 len2 =
+      ((extCallStepHOLExact state (fun _ e => evalHOLExact state e) function ptr1 len1 ptr2 len2).1,
+       stateAddClock (extCallStepHOLExact state (fun _ e => evalHOLExact state e) function
+          ptr1 len1 ptr2 len2).2 extra) := by
+  unfold extCallStepHOLExact
+  simp only [evalHOLExact_stateAddClock]
+  cases h1 : evalHOLExact state ptr1 with
+  | none => simp only []
+  | some v1 =>
+    cases v1 with
+    | val w1 =>
+      cases w1 with
+      | word a1 =>
+        cases h2 : evalHOLExact state len1 with
+        | none => simp only []
+        | some v2 =>
+          cases v2 with
+          | val w2 =>
+            cases w2 with
+            | word l1 =>
+              cases h3 : evalHOLExact state ptr2 with
+              | none => simp only []
+              | some v3 =>
+                cases v3 with
+                | val w3 =>
+                  cases w3 with
+                  | word a2 =>
+                    cases h4 : evalHOLExact state len2 with
+                    | none => simp only []
+                    | some v4 =>
+                      cases v4 with
+                      | val w4 =>
+                        cases w4 with
+                        | word l2 =>
+                          cases hr1 : readBytearrayWordHOL (byteWidth := 8) a1 l1.toNat
+                              (panMemLoadByteWord8HOL state.memory state.memaddrs state.be) with
+                          | none => simp only [hr1]
+                          | some b1 =>
+                            cases hr2 : readBytearrayWordHOL (byteWidth := 8) a2 l2.toNat
+                                (panMemLoadByteWord8HOL state.memory state.memaddrs state.be) with
+                            | none => simp only [hr1, hr2]
+                            | some b2 =>
+                              cases hf : callFFIHOL state.ffi (.extCall function)
+                                  b1 b2 with
+                              | final ev => simp only [hr1, hr2, hf,
+                                  emptyLocalsHOLExact_stateAddClock]
+                              | ret nf nb' => simp only [hr1, hr2, hf]
+                      | rStruct fields => simp only []
+                      | nStruct nm fields => simp only []
+                | rStruct fields => simp only []
+                | nStruct nm fields => simp only []
+          | rStruct fields => simp only []
+          | nStruct nm fields => simp only []
+    | rStruct fields => simp only []
+    | nStruct nm fields => simp only []
+
+theorem shMemLoadClauseHOLExact_stateAddClock {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateExact width σ) [DecidablePred state.shMemaddrs]
+    [DecidablePred state.memaddrs]
+    (operator : OpSize) (kind : VarKind) (name : MlS) (address : ExpHOL width) (extra : Nat) :
+    shMemLoadClauseHOLExact (stateAddClock state extra) operator kind name address
+        (fun _ e => evalHOLExact (stateAddClock state extra) e) =
+      ((shMemLoadClauseHOLExact state operator kind name address
+          (fun _ e => evalHOLExact state e)).1,
+       stateAddClock (shMemLoadClauseHOLExact state operator kind name address
+          (fun _ e => evalHOLExact state e)).2 extra) := by
+  unfold shMemLoadClauseHOLExact
+  simp only [evalHOLExact_stateAddClock]
+  cases h : evalHOLExact state address with
+  | none => simp only []
+  | some v =>
+      cases v with
+      | val w =>
+          cases w with
+          | word addr =>
+              cases hl : lookupKvarHOLExact kind name state with
+              | none => simp only [hl, lookupKvarHOLExact_stateAddClock]
+              | some lv =>
+                  cases lv with
+                  | val w2 =>
+                      cases w2 with
+                      | word word =>
+                          simp only [hl, lookupKvarHOLExact_stateAddClock]
+                          rw [shMemLoadHOLExact_stateAddClock]
+                  | rStruct fields => simp only [hl, lookupKvarHOLExact_stateAddClock]
+                  | nStruct nm fields => simp only [hl, lookupKvarHOLExact_stateAddClock]
+      | rStruct fields => simp only []
+      | nStruct nm fields => simp only []
+
+theorem shMemStoreClauseHOLExact_stateAddClock {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateExact width σ) [DecidablePred state.shMemaddrs]
+    [DecidablePred state.memaddrs]
+    (operator : OpSize) (address value : ExpHOL width) (extra : Nat) :
+    shMemStoreClauseHOLExact (stateAddClock state extra) operator address value
+        (fun _ e => evalHOLExact (stateAddClock state extra) e) =
+      ((shMemStoreClauseHOLExact state operator address value
+          (fun _ e => evalHOLExact state e)).1,
+       stateAddClock (shMemStoreClauseHOLExact state operator address value
+          (fun _ e => evalHOLExact state e)).2 extra) := by
+  unfold shMemStoreClauseHOLExact
+  simp only [evalHOLExact_stateAddClock]
+  cases h : evalHOLExact state address with
+  | none => simp only []
+  | some v =>
+      cases v with
+      | val w =>
+          cases w with
+          | word addr =>
+              cases h2 : evalHOLExact state value with
+              | none => simp only []
+              | some v2 =>
+                  cases v2 with
+                  | val w2 =>
+                      cases w2 with
+                      | word word =>
+                          simp only []
+                          rw [shMemStoreHOLExact_stateAddClock]
+                  | rStruct fields => simp only []
+                  | nStruct nm fields => simp only []
+      | rStruct fields => simp only []
+      | nStruct nm fields => simp only []
+
+theorem callFixedContextHOLExact_callEntry_stateAddClock_state
+    {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateExact width σ) (calleeLocals : MlS → Option (ValueHOL width))
+    (bodyResult : Option (PanSemResultExact width))
+    (bodyContext : PanSemExactEvalContext width σ) (extra : Nat) (h : state.clock ≠ 0) :
+    (callFixedContextHOLExact (callEntryStateHOLExact (stateAddClock state extra) calleeLocals)
+        bodyResult (ctxAddClock bodyContext extra)).state =
+      stateAddClock (callFixedContextHOLExact (callEntryStateHOLExact state calleeLocals)
+        bodyResult bodyContext).state extra := by
+  show (fixClockHOLExact (callEntryStateHOLExact (stateAddClock state extra) calleeLocals)
+      (bodyResult, stateAddClock bodyContext.state extra)).2 =
+    stateAddClock (fixClockHOLExact (callEntryStateHOLExact state calleeLocals)
+      (bodyResult, bodyContext.state)).2 extra
+  rw [callEntryStateHOLExact_stateAddClock state calleeLocals extra h]
+  exact congrArg Prod.snd (fixClockHOLExact_stateAddClock_pair (callEntryStateHOLExact state calleeLocals)
+    bodyResult bodyContext.state extra)
+
+theorem callFixedContextHOLExact_callEntry_stateAddClock {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateExact width σ) (calleeLocals : MlS → Option (ValueHOL width))
+    (bodyResult : Option (PanSemResultExact width))
+    (bodyContext : PanSemExactEvalContext width σ) (extra : Nat) (h : state.clock ≠ 0) :
+    callFixedContextHOLExact (callEntryStateHOLExact (stateAddClock state extra) calleeLocals)
+        bodyResult (ctxAddClock bodyContext extra) =
+      ctxAddClock (callFixedContextHOLExact (callEntryStateHOLExact state calleeLocals)
+        bodyResult bodyContext) extra := by
+  apply PanSemExactEvalContext.ext
+  exact callFixedContextHOLExact_callEntry_stateAddClock_state state calleeLocals
+    bodyResult bodyContext extra h
+
+theorem handlerStateHOLExact_stateAddClock {width : Nat} {σ : Type} [NeZero width]
+    (context : PanSemExactEvalContext width σ) (fixedContext : PanSemExactEvalContext width σ)
+    (name : MlS) (value : ValueHOL width) (extra : Nat) :
+    handlerStateHOLExact (ctxAddClock context extra) (ctxAddClock fixedContext extra) name value =
+      stateAddClock (handlerStateHOLExact context fixedContext name value) extra := by
+  have h1 := setVarHOLExact_stateAddClock name value
+      { fixedContext.state with locals := context.state.locals } extra
+  have h2 : { (ctxAddClock fixedContext extra).state with
+        locals := (ctxAddClock context extra).state.locals } =
+      stateAddClock { fixedContext.state with locals := context.state.locals } extra := rfl
+  unfold handlerStateHOLExact
+  rw [h2, h1]
+
+theorem callFixedContextHOLExact_stateAddClock {width : Nat} {σ : Type} [NeZero width]
+    (entry : PanSemStateExact width σ) (bodyResult : Option (PanSemResultExact width))
+    (bodyContext : PanSemExactEvalContext width σ) (extra : Nat) :
+    callFixedContextHOLExact (stateAddClock entry extra) bodyResult
+        (ctxAddClock bodyContext extra) =
+      ctxAddClock (callFixedContextHOLExact entry bodyResult bodyContext) extra := by
+  apply PanSemExactEvalContext.ext
+  simp only [callFixedContextHOLExact]
+  exact congrArg Prod.snd (fixClockHOLExact_stateAddClock_pair entry bodyResult bodyContext.state extra)
+
+theorem callContinuationContextHOLExact_stateAddClock {width : Nat} {σ : Type} [NeZero width]
+    (context : PanSemExactEvalContext width σ) (fixedContext : PanSemExactEvalContext width σ)
+    (resultName : MlS) (value : ValueHOL width) (extra : Nat) :
+    callContinuationContextHOLExact (ctxAddClock context extra) (ctxAddClock fixedContext extra)
+        resultName value =
+      ctxAddClock (callContinuationContextHOLExact context fixedContext resultName value) extra := by
+  apply PanSemExactEvalContext.ext
+  simp only [callContinuationContextHOLExact]
+  exact handlerStateHOLExact_stateAddClock context fixedContext resultName value extra
+
 end Flapjack
