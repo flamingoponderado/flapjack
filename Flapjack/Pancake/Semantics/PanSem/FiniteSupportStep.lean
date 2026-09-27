@@ -1826,6 +1826,39 @@ theorem shMemStoreClauseHOLExact_ioEvents_prefix {width : Nat} {σ : Type} [NeZe
     | exact List.prefix_refl _
     | exact shMemStoreHOLExact_ioEvents_prefix _ _ _ _
 
+/-- The clause-level `ShMemLoad` helper preserves the complete FFI state when
+    its event log is unchanged. This exposes the helper's existing exact
+    operation-level result at the recursive evaluator boundary. -/
+theorem shMemLoadClauseHOLExact_ffi_eq_of_ioEvents_eq {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateExact width σ) [DecidablePred state.shMemaddrs]
+    (operator : OpSize) (kind : VarKind) (name : MlS) (address : ExpHOL width)
+    (evalExpression : PanSemStateExact width σ → ExpHOL width → Option (ValueHOL width))
+    (hevents : (shMemLoadClauseHOLExact state operator kind name address evalExpression).2.ffi.ioEvents =
+      state.ffi.ioEvents) :
+    (shMemLoadClauseHOLExact state operator kind name address evalExpression).2.ffi = state.ffi := by
+  unfold shMemLoadClauseHOLExact at hevents ⊢
+  repeat' split
+  all_goals
+    try simp_all [shMemLoadHOLExact_ffi_eq_of_ioEvents_eq]
+  all_goals
+    exact shMemLoadHOLExact_ffi_eq_of_ioEvents_eq _ _ _ _ _ _ (by assumption)
+
+/-- The clause-level `ShMemStore` helper preserves the complete FFI state when
+    its event log is unchanged, mirroring the exact `ShMemStore` operation. -/
+theorem shMemStoreClauseHOLExact_ffi_eq_of_ioEvents_eq {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateExact width σ) [DecidablePred state.shMemaddrs]
+    (operator : OpSize) (address value : ExpHOL width)
+    (evalExpression : PanSemStateExact width σ → ExpHOL width → Option (ValueHOL width))
+    (hevents : (shMemStoreClauseHOLExact state operator address value evalExpression).2.ffi.ioEvents =
+      state.ffi.ioEvents) :
+    (shMemStoreClauseHOLExact state operator address value evalExpression).2.ffi = state.ffi := by
+  unfold shMemStoreClauseHOLExact at hevents ⊢
+  repeat' split
+  all_goals
+    try simp_all [shMemStoreHOLExact_ffi_eq_of_ioEvents_eq]
+  all_goals
+    exact shMemStoreHOLExact_ffi_eq_of_ioEvents_eq _ _ _ _ _ (by assumption)
+
 /-- If a pair of sequential event traces extends the first trace and the full
     trace returns to the first trace, the intermediate trace is unchanged.
     This is the cancellation fact needed to apply recursive FFI-state
