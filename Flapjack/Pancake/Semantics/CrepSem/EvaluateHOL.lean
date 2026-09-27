@@ -3008,4 +3008,122 @@ theorem evalCrepSemHOLProgExact_seq {width : Nat} [NeZero width]
       | some result =>
           simp only [fixClockCrepSemHOL]
 
+/-- Flapjack-specific unstamped no-decider restatement of HOL `While` at
+`crepSemScript.sml:314-325`. No separate HOL declaration exists for this
+public evaluator equation. It preserves the zero-clock timeout, false
+condition, `Continue 0`/normal loop re-entry, `Break 0`, and `exit_loop`
+branches. The evaluator core stamps recursive loop states so it can reuse
+explicit domain decisions; body domain preservation and `fix_clock` projection
+show that stamp is identity here, so the public equation has no stamp and no
+domain-preservation premise. It remains untagged while the finite-map carrier
+qualifier policy is reviewed. -/
+theorem evalCrepSemHOLProgExact_while_unstamped {width : Nat} [NeZero width]
+    {σ : Type} (state : CrepSemHOLState width σ) (condition : CrepExpHOL width)
+    (body : CrepProgHOL width) :
+    evalCrepSemHOLProgExact state (.while condition body) =
+      (match crepExactEvalExp state
+          (fun a => Classical.propDecidable (state.memaddrs a)) condition with
+       | some (.word w) =>
+           if w ≠ 0 then
+             if _hclock : state.clock = 0 then
+               (some .timeOut, CrepSemHOLState.emptyLocals state)
+             else
+               let decState := decClockCrepSemHOL state
+               let fixed := fixClockCrepSemHOL decState
+                 (evalCrepSemHOLProgExact decState body)
+               match _hfixed : fixed with
+               | (none, loopState) =>
+                   evalCrepSemHOLProgExact loopState (.while condition body)
+               | (some (.continue 0), loopState) =>
+                   evalCrepSemHOLProgExact loopState (.while condition body)
+               | (some (.break 0), loopState) => (none, loopState)
+               | (result, loopState) => (exitLoopCrepResult result, loopState)
+           else (none, state)
+       | _ => (some .error, state)) := by
+  classical
+  let memDec : (a : BitVec width) → Decidable (state.memaddrs a) :=
+    fun a => Classical.propDecidable (state.memaddrs a)
+  let shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a) :=
+    fun a => Classical.propDecidable (state.shMemaddrs a)
+  let bodyResult := evalCrepSemHOLProg (decClockCrepSemHOL state) memDec shMemDec body
+  let fixed := fixClockCrepSemHOL (decClockCrepSemHOL state) bodyResult
+  have hTop :
+      evalCrepSemHOLProgExact state (.while condition body) =
+        evalCrepSemHOLProg state memDec shMemDec (.while condition body) :=
+    evalCrepSemHOLProgExact_eq_core state (.while condition body) memDec shMemDec
+  have hBody :
+      evalCrepSemHOLProgExact (decClockCrepSemHOL state) body = bodyResult := by
+    dsimp [bodyResult]
+    exact evalCrepSemHOLProgExact_eq_core (decClockCrepSemHOL state) body memDec shMemDec
+  have hBodyDomains :=
+    evalCrepSemHOLProg_preserves_domains (decClockCrepSemHOL state) memDec shMemDec body
+  simp only [CrepDomainsPreserved] at hBodyDomains
+  have hStampFixed (result : Option (CrepResultHOLExact width))
+      (loopState : CrepSemHOLState width σ) (hfixed : fixed = (result, loopState)) :
+      crepStampExactDomains state loopState = loopState := by
+    apply crepStampExactDomains_eq_self
+    · have hfix : fixClockCrepSemHOL (decClockCrepSemHOL state) bodyResult = (result, loopState) := by
+        simpa [fixed] using hfixed
+      have hdomains := fixClock_result_domains (decClockCrepSemHOL state) bodyResult result loopState hfix
+      calc
+        loopState.memaddrs = bodyResult.2.memaddrs := hdomains.1
+        _ = (decClockCrepSemHOL state).memaddrs := hBodyDomains.1
+        _ = state.memaddrs := rfl
+    · have hfix : fixClockCrepSemHOL (decClockCrepSemHOL state) bodyResult = (result, loopState) := by
+        simpa [fixed] using hfixed
+      have hdomains := fixClock_result_domains (decClockCrepSemHOL state) bodyResult result loopState hfix
+      calc
+        loopState.shMemaddrs = bodyResult.2.shMemaddrs := hdomains.2
+        _ = (decClockCrepSemHOL state).shMemaddrs := hBodyDomains.2
+        _ = state.shMemaddrs := rfl
+  rw [hTop, evalCrepSemHOLProg_while]
+  cases hcondition : crepExactEvalExp state memDec condition with
+  | none => rfl
+  | some value =>
+      cases value with
+      | word w =>
+          dsimp only
+          by_cases hw : w ≠ 0
+          · simp only [if_pos hw]
+            by_cases hclock : state.clock = 0
+            · simp [hclock]
+            ·
+              rw [hBody]
+              cases hfixed : fixClockCrepSemHOL (decClockCrepSemHOL state) bodyResult with
+              | mk result loopState =>
+                  have hStamp := hStampFixed result loopState hfixed
+                  have hLoopEval (loopState' : CrepSemHOLState width σ)
+                      (hStamp' : crepStampExactDomains state loopState' = loopState') :
+                      evalCrepSemHOLProg (crepStampExactDomains state loopState')
+                          memDec shMemDec (.while condition body) =
+                        evalCrepSemHOLProgExact loopState' (.while condition body) := by
+                    calc
+                      evalCrepSemHOLProg (crepStampExactDomains state loopState')
+                          memDec shMemDec (.while condition body) =
+                        evalCrepSemHOLProgExact (crepStampExactDomains state loopState')
+                            (.while condition body) :=
+                          evalCrepSemHOLProgExact_eq_core
+                            (crepStampExactDomains state loopState') (.while condition body)
+                            memDec shMemDec
+                      _ = evalCrepSemHOLProgExact loopState' (.while condition body) :=
+                        congrArg (fun st => evalCrepSemHOLProgExact st (.while condition body)) hStamp'
+                  cases result with
+                  | none => simp only [hStamp, hLoopEval]
+                  | some value =>
+                      cases value with
+                      | «continue» label =>
+                          cases label with
+                          | zero => simp only [hStamp, hLoopEval]
+                          | succ _ => rfl
+                      | «break» label =>
+                          cases label with
+                          | zero => rfl
+                          | succ _ => rfl
+                      | error => rfl
+                      | timeOut => rfl
+                      | «return» _ => rfl
+                      | exception _ => rfl
+                      | finalFfi _ => rfl
+          · rw [if_neg hw, if_neg hw]
+
 end Flapjack
