@@ -6551,7 +6551,26 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpVmax.lean",
     "lean_name": "compileExpHOL_outputs_vars_bounded",
     "statement_status": "documented_mismatch",
-    "reviewer": "Source-reviewed against pan_to_crepProofScript.sml:1077. HOL quantifies es/vs/s/t/ctxt, requires successful MAP (eval s) es, state_rel, code_rel, locals_rel, and EVERY localised_exp es, then says every var_cexp name emitted by compiling es is in some ctxt.vars slot list. This Lean helper concludes only emitted name <= vmax and has none of those source/target relation premises or the context lookup result. PanToCrepHOLContext, stateRel, codeRel and localsRel use production String/Shape/PanValue/optional-memory carriers, not HOL mlstring/shape/word_lab and HOL's separate state/context relations. No @[hol] tag is claimed. Exact context/compiler/state-relation replacements are tracked by flapjack-pxn.18.3.5.8.8, flapjack-pxn.18.3.5.8.13, flapjack-pxn.18.3.7.1.3.1; faithful theorem port is flapjack-4ac.5.84."
+    "reviewer": "Flapjack-only production helper, not the HOL theorem: it proves only an emitted-name <= vmax bound over the String-backed production compiler and does not state the source evaluator/relation premises or context-slot conclusion of eval_map_var_cexp_present_ctxt. The exact HOL theorem is separately ported as evalMapVarCexpPresentContextExactHOL in TotalEvaluateCases.lean (flapjack-4ac.5.84); no @[hol] tag is claimed for this helper."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "eval_map_var_cexp_present_ctxt",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "evalMapVarCexpPresentContextExactHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.code",
+      "PanToCrepContextExact.vars",
+      "PanToCrepContextExact.funcs",
+      "PanToCrepContextExact.eids"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-27; bead flapjack-4ac.5.84) against pan_to_crepProofScript.sml:1077. The Lean binders are exactly es, vs, s, t, ctxt. Its five premises in HOL order are MAP (eval s) es = MAP SOME vs, state_rel s t, code_rel ctxt s.code t.code, locals_rel ctxt s.locals t.locals, and EVERY localised_exp es. Its conclusion ranges over every name in FLAT (MAP var_cexp (FLAT (MAP FST (MAP (compile_exp ctxt) es)))) and returns the exact ctxt.vars FLOOKUP binding and MEM slot-list conclusion. ExpHOL/ValueHOL, PanSemStateFiniteExact/CrepSemHOLState, PanToCrepContextExact, compileExpExactHOLWList, CrepExpHOL/crepExpVarsHOL, and the three exact relation ports supply the corresponding HOL carriers and definitions; no result/evaluator target premise or extra semantic assumption is introduced. The implicit memory-set decider is discharged locally with Classical.propDecidable and is not a theorem premise. The relation finite-map qualifier lists exactly the state/context fields traversed by state_rel, code_rel, locals_rel, and the conclusion, with the same-module canonical witnesses required by the checker. The words_as_type_indexed_bitvec qualifier records HOL's positive type-indexed 'a word as BitVec width under [NeZero width]. Proof derives the conclusion from compileExpExactHOLW_vars_from_context while preserving unused HOL hypotheses. Direct compile_exp oracle rows and exact-carrier regression are in scripts/hol-probes/compile_exp_probe.out and Flapjack.Test.CompileExpParity (finite_map_shadow and its exact 64-bit carrier duplicate). No executable routing claim is made."
   },
   {
     "hol_path": null,
@@ -14123,7 +14142,7 @@
     "hol_name": "eval_var_cexp_present_ctxt",
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
     "lean_name": "evalVarCexpPresentContextExactHOL",
-    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
     "fmap_as_finite_support_relation": [
       "PanSemStateFiniteExact.locals",
       "PanSemStateFiniteExact.globals",
@@ -14134,7 +14153,8 @@
       "PanToCrepContextExact.funcs",
       "PanToCrepContextExact.eids"
     ],
-    "reviewer": "Source comparison against pan_to_crepProofScript.sml:693-748. The Lean statement keeps the seven quantified values (source state, expression, value, target state, context, compiled expressions, shape), all six premises in HOL order (state_rel, eval = SOME, code_rel, locals_rel, localised_exp, compile_exp result), and the universal var_cexp membership conclusion. ExpHOL/MlS/ValueHOL/ShapeHOL/CrepExpHOL and exact finite-support states/context are the reviewed carriers; the finite-map qualifier lists each owner field used by eval or the three relation premises, with same-module roundtrip witnesses. The eval premise locally supplies Classical.propDecidable for the HOL address-set predicate, so the Lean implementation has no extra quantified decidability premise. The conclusion follows from the stronger compileExpExactHOLW_vars_from_context theorem; unused HOL premises remain in the statement. No executable routing claim is made."
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison against pan_to_crepProofScript.sml:693-748. The Lean statement keeps the seven quantified values (source state, expression, value, target state, context, compiled expressions, shape), all six premises in HOL order (state_rel, eval = SOME, code_rel, locals_rel, localised_exp, compile_exp result), and the universal var_cexp membership conclusion. ExpHOL/MlS/ValueHOL/ShapeHOL/CrepExpHOL and exact finite-support states/context are the reviewed carriers; the finite-map qualifier lists each owner field used by eval or the three relation premises, with same-module roundtrip witnesses. The words_as_type_indexed_bitvec qualifier records HOL's positive type-indexed word as BitVec width under [NeZero width]. The eval premise locally supplies Classical.propDecidable for the HOL address-set predicate, so the Lean implementation has no extra quantified decidability premise. The conclusion follows from the stronger compileExpExactHOLW_vars_from_context theorem; unused HOL premises remain in the statement. No executable routing claim is made."
   },
   {
     "hol_path": null,

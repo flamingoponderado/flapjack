@@ -73,7 +73,9 @@ it). It changes no quantifier,
 hypothesis, side condition, or
 conclusion, and it requires no cross-assistant agreement theorem. When the
 declaration also carries `fmap_as_finite_support`, use the combined manifest
-status `reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec`; the
+status `reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec`. When it
+instead carries the multi-owner `fmap_as_finite_support_relation`, use
+`reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec`. The
 reference checker reads only the tagged declaration's signature (not its proof
 or body) and records both qualifiers.
 The attribute is inert for the kernel; it exists so that

@@ -1692,6 +1692,63 @@ class MultiOwnerFmapRelationStatusTest(unittest.TestCase):
         self.assertTrue(any("source-comparison note" in e for e in errors), errors)
 
 
+class CombinedFmapRelationWordsStatusTest(unittest.TestCase):
+    COMBINED = (
+        "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec"
+    )
+
+    def _record(self, **overrides):
+        record = {
+            "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+            "hol_name": "evaluate_shape_invariant_ret_inst",
+            "lean_path": "Flapjack/Example.lean",
+            "lean_name": "evaluateShapeInvariant",
+            "statement_status": self.COMBINED,
+            "reviewer": "source comparison of HOL/Lean finite-map and word carriers",
+            "fmap_as_finite_support_relation": [
+                "PanState.locals", "CrepState.locals"],
+            "words_as_type_indexed_bitvec": True,
+        }
+        record.update(overrides)
+        return record
+
+    def _tag(self, carriers=(("PanState", "locals"), ("CrepState", "locals")), words=True):
+        return {
+            ("Flapjack/Example.lean", "evaluateShapeInvariant"): (
+                "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+                "evaluate_shape_invariant_ret_inst",
+                (), (), (), (), False, carriers, False, words,
+            )
+        }
+
+    def _errors(self, record, tagged):
+        return MAP["validate_inventory"]([record], set(), tagged, set())
+
+    def test_accepts_combined_relation_and_word_status(self):
+        self.assertEqual(self._errors(self._record(), self._tag()), [])
+
+    def test_rejects_combined_status_without_words_qualifier(self):
+        errors = self._errors(self._record(), self._tag(words=False))
+        self.assertTrue(any("needs both" in error for error in errors))
+
+    def test_rejects_combined_status_without_relation_qualifier(self):
+        errors = self._errors(
+            self._record(), self._tag(carriers=()))
+        self.assertTrue(any("needs both" in error for error in errors))
+
+    def test_rejects_relation_status_when_word_qualifier_is_present(self):
+        errors = self._errors(
+            self._record(statement_status="reviewed_fmap_as_finite_support_relation"),
+            self._tag(),
+        )
+        self.assertTrue(any("combined review status" in error for error in errors))
+
+    def test_rejects_combined_status_without_source_note(self):
+        errors = self._errors(
+            self._record(reviewer="inventory only"), self._tag())
+        self.assertTrue(any("source-comparison note" in error for error in errors))
+
+
 class FmapResultFieldExclusionTest(unittest.TestCase):
     def _record(self, **overrides):
         record = {
