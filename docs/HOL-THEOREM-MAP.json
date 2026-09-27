@@ -13691,5 +13691,13 @@
     "lean_name": "foldrMaxZeroMaxListHOL",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.16.24): HOL miscScript.sml:630 'Theorem FOLDR_MAX_0_MAX_LIST: !ls. FOLDR MAX 0 ls = MAX_LIST ls'. Clause-for-clause over num: FOLDR MAX 0 -> List.foldr max 0; MAX_LIST (HOL rich_list, MAX_LIST [] = 0 / MAX_LIST (h::t) = MAX h (MAX_LIST t)) -> the reviewed executable maxList at Flapjack/PanToCrepMaxList.lean:29. No extra hypotheses or side conditions; direct proof dependency of pc_compile_correct (pan_to_crepProofScript.sml:1998 and :4501-4532)."
+  },
+  {
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "UNCURRY_eq_pair",
+    "lean_path": "Flapjack/Misc/Uncurry.lean",
+    "lean_name": "uncurryEqPairHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.9): exact port of miscScript.sml:2271 `UNCURRY f v = z <=> ?a b. v = (a,b) /\\ f a b = z`. HOL UNCURRY is Function.uncurry, the product type 'a # 'b is Lean \u03b1 \u00d7 \u03b2; clause-for-clause match, no side conditions."
   }
 ]

@@ -1,5 +1,6 @@
 import Flapjack.Misc.AppList
 import Flapjack.Misc.FlatReplicate
+import Flapjack.Misc.Uncurry
 
 /-! Lean regression for the HOL `misc$app_list`/`append` oracle
 (`scripts/hol-probes/misc_app_list_probe.out`). -/
@@ -46,3 +47,17 @@ def runChecks : IO Bool := do
   pure true
 
 end Flapjack.Test.MiscAppListParity
+
+
+example : Function.uncurry (fun a b : Nat => a + b) (2, 3) = 5 :=
+  (Flapjack.uncurryEqPairHOL (fun a b : Nat => a + b) (2, 3) 5).mpr ⟨2, 3, rfl, rfl⟩
+
+example : ¬ Function.uncurry (fun a b : Nat => a + b) (2, 3) = 6 := by
+  intro h
+  obtain ⟨a, b, hv, hf⟩ := (Flapjack.uncurryEqPairHOL (fun a b : Nat => a + b) (2, 3) 6).mp h
+  injection hv with ha hb
+  subst ha; subst hb
+  omega
+
+example : (∃ a b : Nat, ((4, 7) : Nat × Nat) = (a, b) ∧ a * b = 28) :=
+  (Flapjack.uncurryEqPairHOL (fun a b : Nat => a * b) (4, 7) 28).mp rfl
