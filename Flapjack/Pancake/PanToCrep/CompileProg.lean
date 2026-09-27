@@ -741,6 +741,151 @@ theorem compileProgExactHOLW_raise_bridge {width : Nat} [NeZero width]
                   compileProgRiscV, compileProgHOL, FLOOKUP, hProductionEid, hEid,
                   hExact, hProduction, hcount, hproductionMismatch, crepProgOfHOL]
 
+/-- Source-reviewed bridge for HOL `compile_def`'s local `Assign` clause
+    (`cakeml/pancake/pan_to_crepScript.sml:142-158`).  The four source branches
+    are preserved: a variable missing from `ctxt.vars` and a compiled
+    shape/list length mismatch both compile to `Skip`; disjoint assigned
+    variable names compile to `nested_seq (MAP2 Assign ns es)`; interfering
+    names first declare fresh temporaries (`ctxt.vmax + 1 ...`) and assign the
+    destination variables from those temporaries.  The exact clause
+    `compileLocalAssignExactHOLW` allocates the same temporaries as the
+    production `freshNamesHOL` names. -/
+theorem compileProgExactHOLW_local_assign_bridge {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width) (name : String)
+    (expression : Exp (BitVec width))
+    (hcodec :
+      ((compileExpExactHOLW context (expToHOL expression)).1.map crepExpOfHOL,
+        shapeOfHOL (compileExpExactHOLW context (expToHOL expression)).2) =
+        compileExpHOL context.toProduction expression) :
+    crepProgOfHOL
+        (compileProgExactHOLW context
+          (.assign .local (Flapjack.Basis.Pure.MlString.ofString name)
+            (expToHOL expression))) =
+      compileProgRiscV context.toProduction (.assign .local name expression) := by
+  cases hExact : compileExpExactHOLW context (expToHOL expression) with
+  | mk exactValues exactShape =>
+      cases hProduction : compileExpHOL context.toProduction expression with
+      | mk productionValues productionShape =>
+          have hcodec' := hcodec
+          rw [hExact, hProduction] at hcodec'
+          simp only [Prod.mk.injEq] at hcodec'
+          rcases hcodec' with ⟨hvalues, _hshape⟩
+          have hlength : exactValues.length = productionValues.length := by
+            have h := congrArg List.length hvalues
+            simpa using h
+          have hvariables :
+              context.toProduction.vars name =
+                (context.vars.lookup
+                  (Flapjack.Basis.Pure.MlString.ofString name)).map
+                  (fun entry => (shapeOfHOL entry.1, entry.2)) := rfl
+          cases hlookup : context.vars.lookup
+              (Flapjack.Basis.Pure.MlString.ofString name) with
+          | none =>
+              simp [compileProgExactHOLW, compileLocalAssignExactHOLW,
+                compileProgRiscV, compileProgHOL, FLOOKUP, hvariables, hlookup,
+                crepProgOfHOL]
+          | some entry =>
+              obtain ⟨entryShape, names⟩ := entry
+              have hProductionVar :
+                  FLOOKUP context.toProduction.vars name =
+                    some (shapeOfHOL entryShape, names) := by
+                unfold FLOOKUP
+                rw [hvariables, hlookup]
+                rfl
+              have hdisjEq :
+                  distinctListsHol names
+                      (exactValues.flatMap fun compiled =>
+                        crepExpVarsW (crepExpOfHOL compiled)) =
+                    distinctLists names
+                      (productionValues.flatMap crepExpVars) := by
+                rw [crepExpVarsW_flatMap_crepExpOfHOL, ← hvalues]
+                rw [distinctLists, distinctListsBEq_eq_distinctListsHol]
+              have hassign :
+                  (names.zipWith
+                      (fun name expression => CrepProg.assign name expression)
+                      productionValues) =
+                    List.zipWith
+                      (fun name expression =>
+                        CrepProg.assign name (crepExpOfHOL expression))
+                      names exactValues := by
+                rw [← hvalues]
+                rw [List.zipWith_map_right]
+              have htemporaries :
+                  (List.range names.length).map
+                    (fun index => context.vmax + index + 1) =
+                    freshNamesHOL context.toProduction names.length 1 := by
+                unfold freshNamesHOL
+                change (List.range names.length).map
+                    (fun index => context.vmax + index + 1) =
+                  (List.range names.length).map
+                    (fun offset => context.vmax + 1 + offset)
+                apply List.map_congr_left
+                intro index _hin
+                omega
+              by_cases hlen : names.length = exactValues.length
+              · have hproductionLen :
+                    names.length = productionValues.length := by
+                  rw [hlen, hlength]
+                by_cases hdisj : distinctLists names
+                    (productionValues.flatMap crepExpVars) = true
+                · have hdisjHol : distinctListsHol names
+                      (exactValues.flatMap fun compiled =>
+                        crepExpVarsW (crepExpOfHOL compiled)) = true := by
+                    rw [hdisjEq]
+                    exact hdisj
+                  simp only [compileProgExactHOLW, compileLocalAssignExactHOLW,
+                    compileProgRiscV, compileProgHOL, hProductionVar,
+                    hExact, hProduction]
+                  rw [hlookup]
+                  dsimp only
+                  rw [if_pos hproductionLen, if_pos hdisj,
+                    if_neg (by simp [hlen]), if_pos hdisjHol]
+                  simp only [crepProgOfHOL_crepNestedSeqHOL,
+                    crepProgOfHOL_zipWith_assign]
+                  exact congrArg crepNestedSeq hassign.symm
+                · have hdisjHol : distinctListsHol names
+                      (exactValues.flatMap fun compiled =>
+                        crepExpVarsW (crepExpOfHOL compiled)) ≠ true := by
+                    rw [hdisjEq]
+                    exact hdisj
+                  have hassignments :
+                      List.zipWith
+                          (fun name expression =>
+                            CrepProg.assign name (crepExpOfHOL expression))
+                          names
+                          (List.map (CrepExpHOL.var (width := width))
+                            (freshNamesHOL context.toProduction names.length 1)) =
+                        List.zipWith
+                          (fun name temporary =>
+                            CrepProg.assign name (CrepExp.var temporary))
+                          names
+                          (freshNamesHOL context.toProduction names.length 1) := by
+                    rw [List.zipWith_map_right]
+                    simp only [crepExpOfHOL]
+                  simp only [compileProgExactHOLW, compileLocalAssignExactHOLW,
+                    compileProgRiscV, compileProgHOL, hProductionVar,
+                    hExact, hProduction]
+                  rw [hlookup]
+                  dsimp only
+                  rw [if_pos hproductionLen, if_neg hdisj,
+                    if_neg (by simp [hlen]), if_neg hdisjHol]
+                  rw [crepProgOfHOL_nestedDecsHOL,
+                    crepProgOfHOL_crepNestedSeqHOL,
+                    crepProgOfHOL_zipWith_assign, hvalues]
+                  rw [htemporaries, hassignments]
+              · have hproductionLen :
+                    names.length ≠ productionValues.length := by
+                  intro hcontra
+                  apply hlen
+                  rw [hcontra, hlength]
+                simp only [compileProgExactHOLW, compileLocalAssignExactHOLW,
+                  compileProgRiscV, compileProgHOL, hProductionVar,
+                  hExact, hProduction]
+                rw [hlookup]
+                dsimp only
+                rw [if_neg hproductionLen, if_pos (by simp [hlen])]
+                simp only [crepProgOfHOL]
+
 /-- Source-reviewed HOL `ShMemStore` clause bridge (`pan_to_crepScript.sml`,
     `compile_def`): its operands are positional `value` then `address`. The
     production `Prog.shMemStore` names its two fields `address` and `value`,
