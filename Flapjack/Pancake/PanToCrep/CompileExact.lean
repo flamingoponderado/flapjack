@@ -303,11 +303,17 @@ def compileShMemLoadExactHOLW {width : Nat} [NeZero width]
 /-! The recursive `Dec` clause from `compile_def`
     (`pan_to_crepScript.sml:145-152`). It allocates names from the old `vmax`,
     extends the variable map and `vmax` for the recursive body, and emits the
-    declaration only when the compiled expression count matches the shape. -/
+    declaration only when the compiled expression count matches the shape.
+
+    HOL ignores the declared shape `s` of `Dec v s e p` and stores the shape
+    `sh` produced by `compile_exp` in the extended variable map
+    (`nctxt = ctxt with <|vars := ctxt.vars |+ (v, (sh, nvars)); ...|>`), and
+    production `compileProgHOL` does the same with `compiled.2`. To stay exact,
+    the `_shape` parameter is unused here and the compiled shape is stored. -/
 
 def compileDecExactHOLW {width : Nat} [NeZero width]
     (context : PanToCrepContextExact width) (name : MlS)
-    (shape : Flapjack.Pancake.PanLang.ShapeHOL)
+    (_shape : Flapjack.Pancake.PanLang.ShapeHOL)
     (expression : Flapjack.Pancake.PanLang.ExpHOL width)
     (compileBody : PanToCrepContextExact width → CrepProgHOL width) : CrepProgHOL width :=
   let (values, compiledShape) := compileExpExactHOLW context expression
@@ -315,7 +321,7 @@ def compileDecExactHOLW {width : Nat} [NeZero width]
   let names := (List.range valueCount).map (fun index => context.vmax + index + 1)
   let bodyContext : PanToCrepContextExact width :=
     { context with
-      vars := context.vars.update (name, (shape, names))
+      vars := context.vars.update (name, (compiledShape, names))
       vmax := context.vmax + valueCount }
   if valueCount != values.length then .skip
   else nestedDecsHOL names values (compileBody bodyContext)

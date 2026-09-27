@@ -931,6 +931,14 @@ def exactDecClauseParity : Bool :=
       (.rstruct [.const 1, .const 2]) (fun _ => .tick) with
    | .dec 1 (.const 1) (.dec 2 (.const 2) .tick) => true
    | _ => false) &&
+  (match compileDecExactHOLW exactReturnContext (ofString "x")
+      (.named (ofString "wrong")) (.const 4)
+      (fun bodyContext =>
+        match bodyContext.vars.lookup (ofString "x") with
+        | some (.one, _) => .tick
+        | _ => .break 0) with
+   | .dec 1 (.const 4) .tick => true
+   | _ => false) &&
   (match compileDecExactHOLW exactMalformedStoreContext (ofString "x") .one
       (.var .local (ofString "bad")) (fun _ => .tick) with
    | .skip => true
