@@ -12171,6 +12171,16 @@
   },
   {
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 780,
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
+    "lean_name": "evaluateHOLFiniteState_primitive",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "reviewer": "flapjack-luna-a source comparison (2026-09-27; bead flapjack-qj5): the Primitive conjunct at panSemScript.sml:573-582 first applies OPT_MMAP (eval s) to the argument expressions; on SOME values it runs pan_primop, then checks is_valid_value s Local v value and either returns (NONE,set_var v value s) or (SOME Error,s). Every list-evaluation failure, unsupported/invalid primop result, or invalid local shape returns (SOME Error,s). evaluateHOLFiniteState_primitive has these exact branches using evalListHOLExact, tagged panPrimopHOLExact, isValidValueHOLExact for the Local key, and setVarHOLFinite. panSemScript.sml:196 defines the currently supported AddCarry primop with its exact three-word arity/result; all other primop cases return NONE, matching panPrimopHOLExact. evalListHOLExact is the direct OPT_MMAP evaluator recursion and takes no successful-result assumption. The state uses the same positive word dimension and FFI type as HOL; the four named map fields use the same-module HolFiniteMapExact roundtrip witness, recorded only as this carrier translation. No evaluation, primop-success, or validity fact is assumed. This is one exact constructor case; the full conjunction remains open."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
     "hol_name": "evaluate_decls_def",
     "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
     "lean_name": "evaluateDeclsHOLFinite",
