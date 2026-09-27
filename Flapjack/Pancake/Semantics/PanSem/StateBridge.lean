@@ -28,9 +28,15 @@ over:
   values, while HOL `memory : 'a word → 'a word_lab` is total and holds only
   word payloads.  The bridge does not invent a default: the forward codec takes
   the exact memory function as an argument together with the representation
-  premise `PanSemMemoryRel` that the production map agrees with it on
-  (`some (.word _)`) values.  This is a representation premise, not a semantic
-  one.
+  premise `PanSemMemoryRel` that the production map is word-valued on the
+  production `memaddrs` domain and agrees with the exact total memory there.
+  The premise is *one-directional*: nothing is required of the production
+  memory at addresses outside `memaddrs`, because the production evaluator
+  gates every word/byte/32-bit access through `memaddrs` *before* consulting
+  the memory cell (`mem_load_def`, `mem_load_byte_def`, `mem_load_32_def` and
+  their production counterparts `panValueMemoryAccessOfModel`), so real
+  partial production states with holes or absent cells off the domain are
+  admitted.  This is a representation premise, not a semantic one.
 * production `StructInfo` carries a source-only `shapedFields` cache that HOL
   `struct_info` does not have.  The exact-to-production direction erases it
   (`panStructContextOfHOL`); the production-to-exact direction drops it.  The
@@ -320,14 +326,77 @@ def holWordLabBits {width : Nat} [NeZero width] : HolWordLab width → BitVec wi
 @[simp] theorem holWordLabBits_word {width : Nat} [NeZero width] (bits : BitVec width) :
     holWordLabBits (.word bits) = bits := rfl
 
-/-- Memory agreement: the production partial memory is `some` exactly on its
-    word-valued entries and matches the exact total word-lab memory there.  This
-    is the representation premise for the otherwise incompatible memory
-    carriers (partial generic value versus total `word_lab`). -/
+/-- Totalize a partial production memory into the HOL `word_lab` memory by
+    keeping word cells and reading every other address (absent or non-word) as
+    `.word 0`.  Off-`memaddrs` cells are never consulted by the evaluator, so
+    the chosen default is irrelevant to hit/miss behavior. -/
+def panSemMemoryExactOf {width : Nat} [NeZero width]
+    (memory : RiscV.Word width → Option (PanValue (BitVec width))) :
+    RiscV.Word width → HolWordLab width :=
+  fun address => match memory address with
+    | some (.word bits) => .word bits
+    | _ => .word 0
+
+/-- Memory agreement: the production partial memory is word-valued on its
+    addressable domain and matches the exact total word-lab memory there.
+
+    This is the representation premise for the otherwise incompatible memory
+    carriers (partial generic value versus total `word_lab`).  It is
+    deliberately one-directional: the production evaluator checks
+    `memaddrs address` before reading the cell (`mem_load_def` and the
+    `panModelReadWord`/`panModelReadByte`/`panModelRead32` helpers), so
+    addresses outside the domain miss regardless of what the production map
+    stores there.  Requiring the production cell to be absent (or even
+    word-valued) off the domain would reject real partial production states
+    without changing any load/store result.  On the domain, word-valuedness is
+    exactly what the production word/byte/32-bit eager `let .word :=` guards
+    need, and it makes the production effective domain `memaddrs` agree with
+    the HOL `addr IN dm` hit condition and the exact total read. -/
 def PanSemMemoryRel {width : Nat} [NeZero width]
+    (memaddrs : RiscV.Word width → Bool)
     (memory : RiscV.Word width → Option (PanValue (BitVec width)))
     (exactMemory : RiscV.Word width → HolWordLab width) : Prop :=
-  ∀ address, memory address = some (.word (holWordLabBits (exactMemory address)))
+  ∀ address, memaddrs address = true →
+    memory address = some (.word (holWordLabBits (exactMemory address)))
+
+/-- Forward witness: any partial production memory that is word-valued on its
+    own `memaddrs` domain satisfies the revised memory relation after
+    totalization with `panSemMemoryExactOf`.  This is the constructor that
+    makes `panSemStateToExact` usable on parser-backed initial states, whose
+    memory is only populated on the loaded address domain. -/
+theorem panSemMemoryRel_of_partial {width : Nat} [NeZero width]
+    (memaddrs : RiscV.Word width → Bool)
+    (memory : RiscV.Word width → Option (PanValue (BitVec width)))
+    (hdefined : ∀ address, memaddrs address = true →
+      ∃ bits, memory address = some (.word bits)) :
+    PanSemMemoryRel memaddrs memory (panSemMemoryExactOf memory) := by
+  intro address hmemaddr
+  obtain ⟨bits, hbits⟩ := hdefined address hmemaddr
+  simp only [panSemMemoryExactOf, hbits, holWordLabBits_word]
+
+/-- The production word-store update preserves the memory relation, with the
+    exact memory updated at the same address.  The production store updates the
+    cell only when `memaddrs address` holds (mirroring HOL `mem_store`), so the
+    one-directional premise is preserved on the domain and untouched off it. -/
+theorem panSemMemoryRel_update {width : Nat} [NeZero width]
+    (memaddrs : RiscV.Word width → Bool)
+    (memory : RiscV.Word width → Option (PanValue (BitVec width)))
+    (exactMemory : RiscV.Word width → HolWordLab width)
+    (hrel : PanSemMemoryRel memaddrs memory exactMemory)
+    (address : RiscV.Word width) (value : BitVec width) :
+    PanSemMemoryRel memaddrs
+      (fun current => if current == address then some (.word value) else memory current)
+      (fun current => if current = address then .word value else exactMemory current) := by
+  intro a ha
+  by_cases h : a = address
+  · subst h
+    simp only [beq_self_eq_true, if_true, holWordLabBits_word]
+  · have hbeq : (a == address) = false := by
+      simp [beq_eq_false_iff_ne, h]
+    have hif : (if a = address then (.word value : HolWordLab width) else exactMemory a)
+        = exactMemory a := if_neg h
+    simp only [hbeq, hif]
+    exact hrel a ha
 
 /-- Field-wise representation relation between a production `PanSemState` over
     `BitVec width`/`HolFfiState σ` and the exact `PanSemStateExact` carrier.
@@ -336,7 +405,9 @@ def PanSemMemoryRel {width : Nat} [NeZero width]
     whose `MlString` image round-trips); the code payloads use the exact
     `panLangEntryToHOL` codec; `structs` uses the cache-dropping context codec;
     `memaddrs`/`sharedMemaddrs` relate production Booleans to HOL propositions;
-    `memory` uses `PanSemMemoryRel`; and the scalar/FFI fields agree by
+    `memory` uses `PanSemMemoryRel` keyed by the production `memaddrs` domain
+    (word-valued on the domain and matching the exact total memory there, with
+    no constraint off the domain); and the scalar/FFI fields agree by
     equality. -/
 def PanSemStateRel {width : Nat} [NeZero width] {σ : Type}
     (production : PanSemState (RiscV.Word width) (HolFfiState σ))
@@ -351,7 +422,7 @@ def PanSemStateRel {width : Nat} [NeZero width] {σ : Type}
         exact.code (ofString name)) ∧
   (∀ name, NameRanged name →
       Option.map shapeToHOL (production.exceptionShapes name) = exact.eshapes (ofString name)) ∧
-  PanSemMemoryRel production.memory exact.memory ∧
+  PanSemMemoryRel production.memaddrs production.memory exact.memory ∧
   (∀ address, production.memaddrs address = true ↔ exact.memaddrs address) ∧
   (∀ address, production.sharedMemaddrs address = true ↔ exact.shMemaddrs address) ∧
   exact.clock = production.clock ∧
@@ -366,7 +437,7 @@ def PanSemStateRel {width : Nat} [NeZero width] {σ : Type}
 def panSemStateToExact {width : Nat} [NeZero width] {σ : Type}
     (production : PanSemState (RiscV.Word width) (HolFfiState σ))
     (exactMemory : RiscV.Word width → HolWordLab width)
-    (_hmem : PanSemMemoryRel production.memory exactMemory) :
+    (_hmem : PanSemMemoryRel production.memaddrs production.memory exactMemory) :
     PanSemStateExact width σ where
   locals := fun name => Option.map panValueToHOL (production.locals (toStringOfBytes name))
   globals := fun name => Option.map panValueToHOL (production.globals (toStringOfBytes name))
@@ -388,7 +459,7 @@ def panSemStateToExact {width : Nat} [NeZero width] {σ : Type}
 theorem panSemStateRel_toExact {width : Nat} [NeZero width] {σ : Type}
     (production : PanSemState (RiscV.Word width) (HolFfiState σ))
     (exactMemory : RiscV.Word width → HolWordLab width)
-    (hmem : PanSemMemoryRel production.memory exactMemory) :
+    (hmem : PanSemMemoryRel production.memaddrs production.memory exactMemory) :
     PanSemStateRel production (panSemStateToExact production exactMemory hmem) := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · intro name hname
@@ -439,8 +510,9 @@ theorem panSemStateMemoryRel_ofExact {width : Nat} [NeZero width] {σ : Type}
     (exact : PanSemStateExact width σ)
     [DecidablePred exact.memaddrs] [DecidablePred exact.shMemaddrs]
     (codeSupport : ∃ keys : List MlS, ∀ key, exact.code key ≠ none → key ∈ keys) :
-    PanSemMemoryRel (panSemStateOfExact exact codeSupport).memory exact.memory := by
-  intro address
+    PanSemMemoryRel (panSemStateOfExact exact codeSupport).memaddrs
+      (panSemStateOfExact exact codeSupport).memory exact.memory := by
+  intro address _
   simp only [panSemStateOfExact]
 
 /-- The reverse codec lands in the state relation. -/
