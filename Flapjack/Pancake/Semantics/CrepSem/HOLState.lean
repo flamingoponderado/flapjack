@@ -251,7 +251,8 @@ it.  The positive-width `BitVec` model represents HOL's
 nonempty finite word dimension.  `HolWordLab` has only `Word`, so HOL's
 `EVERY isWord` guard is always true for values produced here. -/
 @[hol "cakeml/pancake/semantics/crepSemScript.sml" "eval_def"
-  (fmap_as_finite_support := [locals, globals, code])]
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
 def evalCrepSemHOLExp {width : Nat} [NeZero width] {ffiState : Type}
     (state : CrepSemHOLState width ffiState) [DecidablePred state.memaddrs] :
     CrepExpHOL width → Option (HolWordLab width)
