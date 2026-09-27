@@ -13920,5 +13920,13 @@
     "lean_name": "compFieldHOL_slice",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.7.1): private Flapjack-specific helper for the exact `compile_exp_val_rel` RField case. It relates `compFieldHOL index (values.map shapeOfHOLExact) cexp` to the flattened slice `flattenHOL (values[index])` using the flattened sub-expression list, with no standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "compileExpValRelHOL_rfield",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.7): Flapjack-specific staged constructor lemma for the `RField` leaf of HOL `pan_to_crepProofScript.sml:187-214` `compile_exp_val_rel`; not a standalone HOL declaration (no `@[hol]` tag). It consumes the induction hypothesis `hsub` for the sub-expression (the relation at the sub-expression only) and the private `compFieldHOL_slice` helper; the full `compile_exp_val_rel` theorem remains open."
   }
 ]
