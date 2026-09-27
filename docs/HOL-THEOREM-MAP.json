@@ -13114,6 +13114,20 @@
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "local_rel_gt_vmax_preserved",
+    "hol_line": 2245,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "panToCrepLocalRelGtVmaxPreservedFiniteExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "PanToCrepContextExact.vars",
+      "sourceLocals",
+      "targetLocals"
+    ],
+    "reviewer": "flapjack-ds9 source comparison (2026-09-27, flapjack-4ac.5.96; pan_to_crepProofScript.sml:2245-2261): HOL local_rel_gt_vmax_preserved has exactly locals_rel ct l l' and ct.vmax < n as premises and concludes locals_rel ct l (l' |+ (n,v)). Lean keeps those two premises (panToCrepLocalsRelFiniteExact and habove : context.vmax < slot) and the same conclusion over targetLocals.updateEq (slot, newValue), the equality-based rendering of HOL FUPDATE. The relation traverses the named PanToCrepContextExact.vars field and the standalone sourceLocals/targetLocals parameters; the PanToCrepContextExact same-module canonical relation witness and the bare parameter binders establish the reviewed finite-support translations. The only representation difference is the finite-support carrier. No hypotheses, quantifiers, side conditions, or conclusions differ. [NeZero width] models HOL's positive word dimension. This exact-carrier port replaces the withdrawn String-keyed localRelGtVmaxPreserved analogue (still recorded below as documented_mismatch)."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
     "hol_name": "no_overlap_wrap_rt_some_all_distinct",
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
     "lean_name": "noOverlapWrapRtSomeAllDistinctFiniteExact",

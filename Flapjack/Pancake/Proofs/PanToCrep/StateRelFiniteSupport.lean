@@ -1,3 +1,4 @@
+import Flapjack.FiniteMap
 import Flapjack.Pancake.Semantics.CrepSem.HOLState
 import Flapjack.Pancake.PanToCrep.ContextExact
 import Flapjack.Pancake.Semantics.PanProps
@@ -279,6 +280,46 @@ theorem panToCrepLocalsRelLookupCtxtFiniteExact {width : Nat} [NeZero width]
         opt_mmap_length_eq slots targetLocals.lookup words hmap
       _ = (flattenHOL value).length := by rw [← hflatten]
   · rw [hmap, ← hflatten]
+
+/-- Exact port of HOL `local_rel_gt_vmax_preserved`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:2245-2261`):
+    `locals_rel ct l l' /\ ct.vmax < n ==> locals_rel ct l (l' |+ (n,v))`.
+    The relation traverses exactly the same three finite-map values as the
+    tagged `locals_rel_def` port: the owning `PanToCrepContextExact.vars` field
+    and the standalone `sourceLocals`/`targetLocals` parameters. HOL `l' |+ (n,v)`
+    is the equality-based `HolFiniteMapExact.updateEq`, and HOL's side-condition
+    free conclusion is preserved: `ctxtMaxFiniteExact` bounds every source slot
+    by `context.vmax`, so the strictly larger new slot `n` cannot occur in any
+    source slot list and the target `List.mapM`/`OPT_MMAP` clause is unchanged
+    pointwise. No hypotheses, quantifiers, side conditions, or conclusions are
+    changed. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "local_rel_gt_vmax_preserved"
+  (fmap_as_finite_support_relation :=
+    [PanToCrepContextExact.vars, sourceLocals, targetLocals])]
+theorem panToCrepLocalRelGtVmaxPreservedFiniteExact {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width)
+    (sourceLocals : HolFiniteMapExact MlS (ValueHOL width))
+    (targetLocals : HolFiniteMapExact Nat (HolWordLab width))
+    (slot : Nat) (newValue : HolWordLab width)
+    (hrel : panToCrepLocalsRelFiniteExact context sourceLocals targetLocals)
+    (habove : context.vmax < slot) :
+    panToCrepLocalsRelFiniteExact context sourceLocals
+      (targetLocals.updateEq (slot, newValue)) := by
+  refine ⟨hrel.1, hrel.2.1, ?_⟩
+  intro name value hlookup
+  obtain ⟨slots, words, hcontext, hmap, hflatten, hwf⟩ :=
+    hrel.2.2 name value hlookup
+  refine ⟨slots, words, hcontext, ?_, hflatten, hwf⟩
+  rw [← hmap]
+  apply list_mapM_congr
+  intro key hkey
+  have hle : key ≤ context.vmax :=
+    hrel.2.1.2 name (shapeOfHOLExact value) slots hcontext key hkey
+  have hne : key ≠ slot := by
+    intro he
+    subst he
+    exact Nat.not_lt_of_ge hle habove
+  simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, hne]
 
 namespace CtxtMaxElLeqExact
 
