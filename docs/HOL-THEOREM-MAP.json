@@ -10998,6 +10998,14 @@
     "reviewer": "Flapjack-specific prerequisite for HOL pc_compile_correct[Annot]: over exact ProgHOL/MlS carriers, records the Pan Annot result/state, compile_def erasure to Crep Skip, target Skip result/state, and preservation of exact state_rel/code_rel/locals_rel/excp_rel using codeRelExactHOLW. It does not assemble the full existential conclusion and is not a standalone HOL declaration; no @[hol] tag is claimed."
   },
   {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "evalCrepSemHOLProg_assign_success",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific exact Assign evaluator leaf supporting HOL eval_nested_assign_distinct_eq (pan_to_crepProofScript.sml:540): under exact expression success and existing-local premises, proves normal completion and the set_var local update over CrepProgHOL/CrepSemHOLState. It does not establish nested Seq composition or the full five-premise list theorem and has no @[hol] tag."
+  },
+  {
     "hol_path": "cakeml/misc/miscScript.sml",
     "hol_name": "num_set",
     "lean_path": "Flapjack/Misc/Sptree.lean",
@@ -12867,5 +12875,22 @@
     "lean_name": "withShapeHOL_eq_withShapeShapeOfHOL",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Private Flapjack-only representation bridge between exact withShapeHOL and the production withShape helper after shapeOfHOL conversion. It has no separate HOL declaration; the exact with_shape_def port remains withShapeHOL."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "tlc_def",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "tlcHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_result",
+    "fmap_as_finite_support_result": true,
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.37): exact port of HOL tlc_def (pan_to_crepProofScript.sml:2317-2319) `tlc ns args = FEMPTY |++ ZIP (ns, FLAT (MAP flatten args))`. Keys num->Nat and values 'a word_lab->HolWordLab width match; `|++` is rendered by the reviewed HolFiniteMapExact.updateListEq (HOL FUPDATE_LIST with HOL =), and flatten is the tagged flattenHOL. The standalone result qualifier records only the finite-support representation; the same-module holFmapAsFiniteSupportResultWitness_tlcHOL states the unconditional lookup-level correspondence to raw FUPDATE_LIST_HOL. Production tlc stays an untagged documented carrier mismatch."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "holFmapAsFiniteSupportResultWitness_tlcHOL",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.37): Flapjack-only kernel-checked lookup witness for the standalone finite-map-result qualifier on tlcHOL; no separate HOL original."
   }
 ]
