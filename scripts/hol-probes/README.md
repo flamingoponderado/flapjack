@@ -41,6 +41,9 @@ the same source.
 constructor, ordered global updates, local clearing during initializer
 evaluation, an in-domain word load, function-code replacement, and
 shape/duplicate failure cases.
+`Flapjack.Test.PanSemEvaluateDeclsFiniteParity` separately guards the exact
+finite-map evaluator against every named row in `pan_evaluate_decls_probe.out`,
+including an in-domain byte load in a declaration initializer.
 `pan_sem_state_eval_probe.out` records direct HOL EVAL of `eval_def` at
 `cakeml/pancake/semantics/panSemScript.sml:209-297` for in-domain and
 out-of-domain word loads, little- and big-endian byte loads, 32-bit loads, and
