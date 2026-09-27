@@ -7,9 +7,12 @@ import Flapjack.Pancake.PanCommon
 /-!
 Exact-carrier expression lowering from HOL `PanLang.ExpHOL` to `CrepExpHOL`.
 
-This belongs beside the production compiler as an exact source-semantics
-counterpart. The production compiler remains separate until a kernel-checked
-bridge routes its executed path through the exact `compile_def` port.
+The parser-proved compiler entry executes this lowering transitively through
+`compileProgExactHOLW` before decoding its result to production Crep. The
+per-function and top-level output-preservation bridges live in `CompileProg`.
+Direct callers without byte-range evidence retain the untagged String-backed
+compatibility route; the broader `compile_prog` carrier gap is tracked
+separately for exact `compile_inl_top`.
 -/
 
 namespace Flapjack
@@ -39,9 +42,9 @@ The function below uses the HOL `ExpHOL`/`ShapeHOL` syntax, the finite-support
 `PanToCrepContextExact`, and `CrepExpHOL` at the same positive word width. Its
 equations follow `pan_to_crepScript.sml:39-101`: local lookup reads the exact
 finite map; `compFieldHOL` and `loadShapeBytesHOLW` implement the cited HOL
-helpers; and the bytes-in-word constant is `n2w (width DIV 8)`. This exact
-definition does not by itself route the production compiler through the exact
-carriers; that bridge remains tracked under the parent compile_def bead. -/
+helpers; and the bytes-in-word constant is `n2w (width DIV 8)`. The parser-proved
+production body route calls this definition through `compileProgExactHOLW`; the
+output-preservation bridge is recorded in `CompileProg.lean`. -/
 
 mutual
   /-- Exact width-indexed port of HOL `pan_to_crep$compile_exp_def`.
