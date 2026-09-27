@@ -408,4 +408,12 @@ private def progCarrierGuard : Bool :=
 
 #guard progCarrierGuard
 
+/-- The exact `is_load` port: the four loads are `true`, the four stores
+    `false`, matching HOL `asmScript$is_load_def`. -/
+private def asmIsLoadGuard : Bool :=
+  asmIsLoad .load && asmIsLoad .load8 && asmIsLoad .load16 && asmIsLoad .load32 &&
+  !asmIsLoad .store && !asmIsLoad .store8 && !asmIsLoad .store16 && !asmIsLoad .store32
+
+#guard asmIsLoadGuard
+
 end Flapjack.Test.AsmConfigChecksParity

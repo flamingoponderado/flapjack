@@ -477,6 +477,94 @@ theorem crepShMemOpClock {width : Nat} [NeZero width] {σ : Type}
     | exact crepShMemLoadClock name address _ state _ _ h
     | exact crepShMemStoreClock name address _ state _ _ h
 
+/-! ## FFI event-prefix preserved by the exact shared-memory helpers
+
+For the `divergenceChain` obligation of the exact `semantics_def`, the exact
+recursive evaluator must only ever extend the FFI event log.  Only the shared
+memory (`sh_mem_load`/`sh_mem_store`) and external-call leaves can extend
+`ffi.ioEvents` (through `callFFIHOL`); every other clause preserves `ffi`
+exactly.  The lemmas below establish the event-prefix property for the exact
+shared-memory leaves, mirroring the panSem per-step lemmas in
+`Flapjack/Pancake/Semantics/PanSem/FiniteSupportStep.lean` (the analogue of HOL
+`evaluate_io_events_mono`).  They are Flapjack-specific infrastructure lemmas
+(no `@[hol]` tag); the full evaluator-level chain is tracked by bead
+`flapjack-pxn.18.4.8.2`.
+-/
+
+/-- The exact HOL `sh_mem_load_def` port only extends the FFI event log. -/
+theorem crepShMemLoadExactHOL_ioEvents_prefix {width : Nat} [NeZero width] {σ : Type}
+    (name : Nat) (address : BitVec width) (nb : Nat)
+    (state : CrepSemHOLState width σ) [DecidablePred state.shMemaddrs] :
+    state.ffi.ioEvents <+:
+      (crepShMemLoadExactHOL name address nb state).2.ffi.ioEvents := by
+  unfold crepShMemLoadExactHOL
+  split
+  · split
+    · split
+      · exact List.prefix_refl _
+      · exact callFFIHOL_return_ioEvents_prefix _ _ _ _ _ _ (by assumption)
+    · exact List.prefix_refl _
+  · split
+    · split
+      · exact List.prefix_refl _
+      · exact callFFIHOL_return_ioEvents_prefix _ _ _ _ _ _ (by assumption)
+    · exact List.prefix_refl _
+
+/-- The exact HOL `sh_mem_store_def` port only extends the FFI event log. -/
+theorem crepShMemStoreExactHOL_ioEvents_prefix {width : Nat} [NeZero width] {σ : Type}
+    (name : Nat) (address : BitVec width) (nb : Nat)
+    (state : CrepSemHOLState width σ) [DecidablePred state.shMemaddrs] :
+    state.ffi.ioEvents <+:
+      (crepShMemStoreExactHOL name address nb state).2.ffi.ioEvents := by
+  unfold crepShMemStoreExactHOL
+  split
+  · split
+    · split
+      · split
+        · exact List.prefix_refl _
+        · exact callFFIHOL_return_ioEvents_prefix _ _ _ _ _ _ (by assumption)
+      · exact List.prefix_refl _
+    · split
+      · split
+        · exact List.prefix_refl _
+        · exact callFFIHOL_return_ioEvents_prefix _ _ _ _ _ _ (by assumption)
+      · exact List.prefix_refl _
+  · exact List.prefix_refl _
+
+/-- The exact HOL `sh_mem_op_def` dispatch only extends the FFI event log. -/
+theorem crepShMemOpExactHOL_ioEvents_prefix {width : Nat} [NeZero width] {σ : Type}
+    (operator : CrepMemOp) (name : Nat) (address : BitVec width)
+    (state : CrepSemHOLState width σ) [DecidablePred state.shMemaddrs] :
+    state.ffi.ioEvents <+:
+      (crepShMemOpExactHOL operator name address state).2.ffi.ioEvents := by
+  cases operator <;>
+    simp only [crepShMemOpExactHOL] <;>
+    first
+      | exact crepShMemLoadExactHOL_ioEvents_prefix _ _ _ _
+      | exact crepShMemStoreExactHOL_ioEvents_prefix _ _ _ _
+
+/-- Operator-indexed exact load specialization only extends the FFI event log. -/
+theorem crepShMemLoadHOL_ioEvents_prefix {width : Nat} [NeZero width] {σ : Type}
+    (operator : CrepMemOp) (name : Nat) (address : BitVec width)
+    (state : CrepSemHOLState width σ)
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a)) :
+    state.ffi.ioEvents <+:
+      (crepShMemLoadHOL operator name address state shMemDec).2.ffi.ioEvents := by
+  simp only [crepShMemLoadHOL]
+  exact crepShMemLoadExactHOL_ioEvents_prefix name address
+    (crepShMemByteWidth operator) state
+
+/-- Operator-indexed exact store specialization only extends the FFI event log. -/
+theorem crepShMemStoreHOL_ioEvents_prefix {width : Nat} [NeZero width] {σ : Type}
+    (operator : CrepMemOp) (name : Nat) (address : BitVec width)
+    (state : CrepSemHOLState width σ)
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a)) :
+    state.ffi.ioEvents <+:
+      (crepShMemStoreHOL operator name address state shMemDec).2.ffi.ioEvents := by
+  simp only [crepShMemStoreHOL]
+  exact crepShMemStoreExactHOL_ioEvents_prefix name address
+    (crepShMemByteWidth operator) state
+
 /-- Total HOL-shaped `crepSem$evaluate` (`crepSemScript.sml:240-390`) by
     constructor recursion on the exact `CrepProgHOL` syntax over the exact
     finite-support `CrepSemHOLState`. The returned pair is
