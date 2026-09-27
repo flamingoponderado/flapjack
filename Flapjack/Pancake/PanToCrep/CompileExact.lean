@@ -1,5 +1,6 @@
 import Flapjack.Pancake.PanToCrep.Compile
 import Flapjack.Pancake.PanToCrep.ContextExact
+import Flapjack.Pancake.PanToCrep.MakeVmapHOL
 import Flapjack.Pancake.PanToCrep.ExpHdlExact
 import Flapjack.Pancake.Semantics.CrepSem.HOLState
 import Flapjack.Pancake.PanCommon
@@ -745,6 +746,28 @@ decreasing_by
   all_goals
     simp_wf
     omega
+
+/-! Exact HOL `comp_func_def` (`pan_to_crepScript.sml:337-343`). The four
+curried arguments, the `make_vmap` result, the parameter-shape maximum, the
+`mk_ctxt` field order, and recursive `compile` call follow the source
+definition directly. The two input maps are the canonical finite-support
+rendering of HOL `fs` and `eids`; `BitVec width` with `[NeZero width]` is the
+usual positive type-indexed HOL word translation. Names and syntax stay on the
+exact `MlS`/`ShapeHOL`/`ProgHOL`/`CrepProgHOL` carriers. This theorem-side port
+does not yet reroute the production String-backed `compFuncHOL`; that route is
+tracked separately under `flapjack-pxn.18.3.5.8`. -/
+@[hol "cakeml/pancake/pan_to_crepScript.sml" "comp_func_def"
+  (fmap_as_finite_support_relation := [fs, eids])
+  (words_as_type_indexed_bitvec)]
+def compFuncExactHOLW {width : Nat} [NeZero width]
+    (fs : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ShapeHOL))
+    (eids : HolFiniteMapExact MlS (BitVec width))
+    (params : List (MlS × ShapeHOL))
+    (body : Flapjack.Pancake.PanLang.ProgHOL width) : CrepProgHOL width :=
+  let vmap := panToCrepMakeVmapHOLExact params
+  let shapes := params.map Prod.snd
+  let vmax := sizeOfShapeHOL (.comb shapes) - 1
+  compileProgExactHOLW (mkCtxtExactHOL vmap fs vmax eids) body
 
 
 /-! ### Codec helper lemmas for the `compile_exp` production bridge
