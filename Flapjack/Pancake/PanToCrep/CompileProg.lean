@@ -1292,7 +1292,6 @@ theorem compileProgExactHOLW_extCall_success_bridge {width : Nat} [NeZero width]
   simp only [crepProgOfHOL, nestedDecs, hheadConfiguration,
     hheadConfigurationLength, hheadArray, hheadArrayLength, hfunctionDecode]
 
-set_option linter.unusedSimpArgs false in
 /-- Source-reviewed HOL `ExtCall` fallback clause (`pan_to_crepScript.sml:274-290`).
     HOL `compile_ext_call` returns `Skip` unless every one of the four operand
     shapes is `One` and every compiled operand list is nonempty. The caller
