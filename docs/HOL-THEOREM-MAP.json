@@ -12211,6 +12211,16 @@
   },
   {
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 780,
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
+    "lean_name": "evaluateHOLFiniteState_shMemStore_total",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "reviewer": "flapjack-luna-a source comparison (2026-09-27; bead flapjack-qj5.5): HOL evaluate_def panSemScript.sml:611-614 (theorem restatement at line 780) evaluates both address and value expressions in the original state. Only the pair SOME (ValWord addr), SOME (ValWord bytes) calls sh_mem_store bytes addr (nb_op op); all other cases return (SOME Error,s). evaluateHOLFiniteState_shMemStore_total states the direct pair match and invokes exact shMemStoreHOLExact state.toExact bytes addr (nbOpHOL operator); its finite-support witness only reconstructs that exact output on the PanSemStateFiniteExact carrier. The evaluator's clause-level shMemStoreClauseHOLExact and exact result projection prove the equation, including final FFI and successful FFI state results. The theorem assumes neither expression succeeds nor a shared-memory domain condition. The state has HOL's positive word dimension and result/state pair, and its four listed finite-map fields have the same-module canonical roundtrip witness. The qualifier records only this representation translation."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
     "hol_name": "evaluate_decls_def",
     "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
     "lean_name": "evaluateDeclsHOLFinite",
