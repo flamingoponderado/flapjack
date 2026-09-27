@@ -139,4 +139,25 @@ theorem compileExpValRelHOL_var_local {width : Nat} {σ : Type} [NeZero width]
   · rfl
   · exact hwf
 
+/-- Faithful `Var Global` case of HOL `compile_exp_val_rel`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:166-168`). The HOL proof
+    is `fs[localised_exp_simps]`: a global variable is not localised, so the
+    `localised_exp e` premise is contradictory and the case is vacuous. -/
+theorem compileExpValRelHOL_var_global {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) [_hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width σ) [_ht : DecidablePred targetState.memaddrs]
+    (name : MlS) (value : ValueHOL width)
+    (expressions : List (CrepExpHOL width)) (shape : ShapeHOL)
+    (_heval : state.evalHOLFinite (ExpHOL.var .global name) = some value)
+    (hlocalised : localisedExpHOL (width := width) (ExpHOL.var .global name) = true)
+    (_hcompile : compileExpExactHOLW context (ExpHOL.var .global name) =
+      (expressions, shape)) :
+    expressions.map (evalCrepSemHOLExp targetState) = (flattenHOL value).map some ∧
+    expressions.length = sizeOfShapeHOL shape ∧
+    shapeOfHOLExact value = shape ∧
+    isWfShapeExactHOL ([] : StructContextExact) shape = true := by
+  simp only [localisedExpHOL, everyExpHOL] at hlocalised
+  exact (Bool.false_ne_true hlocalised).elim
+
 end Flapjack
