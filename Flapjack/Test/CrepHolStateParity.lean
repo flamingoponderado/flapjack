@@ -1,4 +1,5 @@
 import Flapjack.Pancake.Proofs.CrepArith.HOLStateMapc
+import Flapjack.Pancake.Semantics.CrepProps
 
 namespace Flapjack.Test.CrepHolStateParity
 
@@ -132,5 +133,35 @@ example {width : Nat} [NeZero width]
       resVarW (fun k => (map.lookup k).map HolWordLab.toPanWordLab)
         (key, value.map HolWordLab.toPanWordLab) :=
   CrepSemHOLState.lookup_resVarW map key value
+
+/-- Exact-port fixture for HOL `flookup_res_var_thm`
+(`crepPropsScript.sml:257-263`): a `res_var` update exposes the new `SOME`
+value at the updated key and leaves other keys to the original map. -/
+private def resVarSample : HolFiniteMapExact Nat Nat where
+  lookup k := if k = 0 then some 5 else none
+  finiteSupport := by
+    refine ⟨[0], ?_⟩
+    intro k hk
+    by_cases h : k = 0
+    · simp [h]
+    · simp [h] at hk
+
+example :
+    (HolFiniteMapExact.resVarEq resVarSample (0, (some 9 : Option Nat))).lookup 0 =
+      some 9 := by
+  rw [Flapjack.flookupResVarThmHOL]
+  simp
+
+example :
+    (HolFiniteMapExact.resVarEq resVarSample (0, (some 9 : Option Nat))).lookup 1 =
+      none := by
+  rw [Flapjack.flookupResVarThmHOL]
+  simp [resVarSample]
+
+example :
+    (HolFiniteMapExact.resVarEq resVarSample (0, (none : Option Nat))).lookup 0 =
+      none := by
+  rw [Flapjack.flookupResVarThmHOL]
+  simp
 
 end Flapjack.Test.CrepHolStateParity

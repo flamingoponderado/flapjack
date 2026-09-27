@@ -1,4 +1,5 @@
 import Flapjack.PanToCrepMaxList
+import Flapjack.Misc.FoldrMaxList
 
 /-!
 # Original-domain parity for HOL `rich_list$MAX_LIST`
@@ -38,6 +39,17 @@ theorem maxList_range_fixture : maxList (List.range 5) = 4 :=
 theorem maxList_genlist_add_suc_val_fixture :
     maxList ((List.range 5).map (fun x => (x + 1) + 3)) = 8 :=
   maxList_genlist_add_suc_val 3 5 (by decide)
+
+theorem foldrMaxZeroMaxList_fixture :
+    first.foldr max 0 = maxList first :=
+  foldrMaxZeroMaxListHOL first
+
+theorem foldrMaxZeroMaxList_nil_fixture :
+    ([] : List Nat).foldr max 0 = maxList [] :=
+  foldrMaxZeroMaxListHOL []
+
+#guard ([3, 7, 1] : List Nat).foldr max 0 == maxList [3, 7, 1]
+#guard ([3, 7, 1] : List Nat).foldr max 0 == 7
 
 #check @maxList_ge_of_mem
 #check @maxList_add_one_not_mem
