@@ -631,4 +631,15 @@ theorem genlistDistinctMaxShiftedHOL (n m p : Nat) (ys : List Nat)
   have := hys _ hy
   omega
 
+/-- Exact port of HOL `mem_genlist_add_suc_val`
+    (`cakeml/pancake/semantics/pan_commonPropsScript.sml:234`): every value in
+    the `GENLIST (fun x. SUC x + k) n` interval lies in `(k, n + k]`. -/
+@[hol "cakeml/pancake/semantics/pan_commonPropsScript.sml" "mem_genlist_add_suc_val"]
+theorem memGenlistAddSucValHOL (n x k : Nat) :
+    x ∈ (List.range n).map (fun i => i + 1 + k) → k < x ∧ x ≤ n + k := by
+  intro hx
+  obtain ⟨i, hi, rfl⟩ := List.mem_map.mp hx
+  rw [List.mem_range] at hi
+  omega
+
 end Flapjack

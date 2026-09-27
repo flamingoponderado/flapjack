@@ -124,8 +124,23 @@ theorem genlist_distinct_max_shifted_fixture :
   genlistDistinctMaxShiftedHOL 3 4 5 [0, 1, 2, 4]
     (by intro y hy; simp [List.mem_cons] at hy; omega)
 
+-- HOL `mem_genlist_add_suc_val` (`pan_commonPropsScript.sml:234`), pinned by the
+-- checked-in oracle `scripts/hol-probes/pan_common_props_genlist_probe.out`
+-- (`genlist_mem_3=T`, `genlist_mem_0=F`, `genlist_mem_6=F`).
+def memGenlistGuard : Bool :=
+  (((List.range 4).map (fun x => x + 1 + 1)) : List Nat).all (fun x => decide (1 < x ∧ x ≤ 4 + 1)) &&
+    (((List.range 4).map (fun x => x + 1 + 1)) : List Nat).contains 3 &&
+    !((((List.range 4).map (fun x => x + 1 + 1)) : List Nat).contains 0) &&
+    !((((List.range 4).map (fun x => x + 1 + 1)) : List Nat).contains 6)
+
+#guard memGenlistGuard
+
+/-- HOL `mem_genlist_add_suc_val` (`pan_commonPropsScript.sml:234`). -/
+theorem mem_genlist_add_suc_val_fixture : (1 : Nat) < 3 ∧ 3 ≤ 4 + 1 :=
+  memGenlistAddSucValHOL 4 3 1 (by decide)
+
 def runChecks : IO Bool := do
-  if zipGuard && fmdvGuard && takeDropElZipGuard && genlistGuard then
+  if zipGuard && fmdvGuard && takeDropElZipGuard && genlistGuard && memGenlistGuard then
     IO.println
       "PASS exact pan_commonProps zip fupdate not-mem, disjoint take/drop, fm_update_diff_vars, take/drop suffix disjoint, EL disjoint, and empty zip lookup (14 HOL rows)"
     return true

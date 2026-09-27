@@ -13571,5 +13571,13 @@
     "lean_name": "genlistDistinctMaxShiftedHOL",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.16.12): HOL genlist_distinct_max' is stated over HOL lists with `distinct_lists` and `GENLIST (fun x. SUC x + m) n`. The Lean statement uses the reviewed `ListDisjoint` rendering of `distinct_lists` and `(List.range n).map (fun i => i + 1 + m)` for `GENLIST`, with the same hypotheses, the same `m`/`m + p` bounds and no extra side conditions."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/pan_commonPropsScript.sml",
+    "hol_name": "mem_genlist_add_suc_val",
+    "lean_path": "Flapjack/Pancake/Semantics/PanCommonProps.lean",
+    "lean_name": "memGenlistAddSucValHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.16.13): HOL `!n x k. MEM x (GENLIST (\\x. SUC x + k) n) ==> k < x /\\ x <= n + k` (pan_commonPropsScript.sml:234) matches clause-for-clause; `GENLIST (fun x. SUC x + k) n` renders as `(List.range n).map (fun i => i + 1 + k)`, `MEM` as `\u2208`, over Nat; no side conditions. Used by pan_to_crepProofScript.sml (pc_compile_correct dependency)."
   }
 ]

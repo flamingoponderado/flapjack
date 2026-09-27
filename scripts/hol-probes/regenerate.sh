@@ -1885,3 +1885,11 @@ run_probe word_to_stack_stub_probeScript.sml word_to_stack_stub_probe.out \
 run_probe word_to_stack_wshareinst_probeScript.sml word_to_stack_wshareinst_probe.out \
   ws_load ws_store32 "$cake_dir/compiler/backend/word_to_stackScript.sml" \
   "$cake_dir/compiler/backend"
+
+# The pan_commonProps genlist probe observes `mem_genlist_add_suc_val`
+# (pan_commonPropsScript.sml:234): membership in `GENLIST (fun x. SUC x + k) n`
+# implies the value lies in `(k, n + k]`.
+run_probe pan_common_props_genlist_probeScript.sml pan_common_props_genlist_probe.out \
+  genlist_mem_3 genlist_mem_0 genlist_mem_6 genlist_done \
+  "$cake_dir/pancake/semantics/pan_commonPropsScript.sml" \
+  "$cake_dir/pancake/semantics"
