@@ -12063,6 +12063,16 @@
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
     "hol_name": "evaluate_def",
     "hol_line": 780,
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/ShMemLoadCase.lean",
+    "lean_name": "evaluateHOLFiniteState_shMemLoad_source",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "reviewer": "flapjack-luna-c source comparison (2026-09-27; bead flapjack-qj5.4): compared with the ShMemLoad conjunct at panSemScript.sml:605-610. The conclusion exposes the same `eval s ad` word/non-word-or-failure match, then `lookup_kvar vk v s` word/non-word-or-missing match; both failing branches return SOME Error with the original state, while only the word/word branch calls sh_mem_load with nb_op op. It quantifies over the reviewed `PanSemStateFiniteExact`, `ProgHOL`, expression, size, kind, and name carriers and adds no logical premise. The successful helper result is translated back with the canonical finite-support proof. The imported carrier is named in the statement, and this case module includes its own checked `toExact`/`ofExact` roundtrip witness for the finite-map qualifier. Direct HOL EVAL guard rows and matching Lean result checks are in pan_sem_store_error_probe.out and PanSemShMemLoadCaseParity."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 780,
     "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
     "lean_name": "evaluateHOLFiniteState_break",
     "statement_status": "reviewed_fmap_as_finite_support",
