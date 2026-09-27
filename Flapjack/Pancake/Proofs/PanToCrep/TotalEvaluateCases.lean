@@ -20,7 +20,9 @@ induction or receive a standalone `@[hol]` reference.
 namespace Flapjack
 
 open Flapjack.Pancake.PanLang
-  (MlS ShapeHOL shapeOfHOL sizeOfShapeHOL sizeOfShapesHOL withShapeHOL)
+  (MlS ShapeHOL shapeOfHOL sizeOfShapeHOL sizeOfShapeHOL_comb
+    sizeOfShapesHOL sizeOfShapesHOL_cons withShapeHOL isWfShapeExactHOL
+    StructContextExact)
 
 private theorem shapeSizeShapeOfHOLExact (shape : ShapeHOL) :
     Shape.shapeSize (shapeOfHOL shape) = sizeOfShapeHOL shape := by
@@ -45,6 +47,296 @@ private theorem withShapeHOL_eq_withShapeShapeOfHOL
       have hsize : sizeOfShapeHOL shape = Shape.shapeSize (shapeOfHOL shape) :=
         (shapeSizeShapeOfHOLExact shape).symm
       simp [withShapeHOL, withShape, hsize, ih]
+
+private theorem shapeSizeCombHOL_eq_flattenHOL_length
+    {width : Nat} [NeZero width]
+    (shapes : List ShapeHOL) (arguments : List (ValueHOL width))
+    (hlen : shapes.length = arguments.length)
+    (hshape : ∀ i (hsi : i < shapes.length) (hai : i < arguments.length),
+      (shapes[i]'hsi) = shapeOfHOLExact (arguments[i]'hai))
+    (hwf : ∀ value, value ∈ arguments →
+      isWfShapeExactHOL ([] : StructContextExact) (shapeOfHOLExact value) = true) :
+    sizeOfShapeHOL (.comb shapes) = (arguments.map flattenHOL).flatten.length := by
+  induction arguments generalizing shapes with
+  | nil =>
+      cases shapes with
+      | nil => simp [sizeOfShapeHOL]
+      | cons shape shapes => simp at hlen
+  | cons value arguments ih =>
+      cases shapes with
+      | nil => simp at hlen
+      | cons shape shapes =>
+          have hhead : shape = shapeOfHOLExact value := by
+            have h := hshape 0 (by simp) (by simp)
+            simpa using h
+          have htailLength : shapes.length = arguments.length := by simpa using hlen
+          have htailShape : ∀ i (hsi : i < shapes.length) (hai : i < arguments.length),
+              (shapes[i]'hsi) = shapeOfHOLExact (arguments[i]'hai) := by
+            intro i hsi hai
+            have h := hshape (i + 1) (by simp [hsi]) (by simp [hai])
+            simpa [List.getElem_cons_succ] using h
+          have htailWf : ∀ other, other ∈ arguments →
+              isWfShapeExactHOL ([] : StructContextExact)
+                (shapeOfHOLExact other) = true := by
+            intro other hmem
+            exact hwf other (by simp [hmem])
+          simp only [List.map_cons, List.flatten_cons, List.length_append,
+            sizeOfShapeHOL_comb, sizeOfShapesHOL_cons]
+          rw [hhead, flattenHOL_length_eq_sizeOfShapeHOL value (hwf value (by simp)),
+            ← sizeOfShapeHOL_comb shapes]
+          exact congrArg (fun n => sizeOfShapeHOL (shapeOfHOLExact value) + n)
+            (ih shapes htailLength htailShape htailWf)
+
+private theorem withShapeHOL_getElem_length_exact
+    {width : Nat} [NeZero width]
+    (shapes : List ShapeHOL) (slots : List Nat)
+    (arguments : List (ValueHOL width)) (i : Nat)
+    (hslots : slots.length = (arguments.map flattenHOL).flatten.length)
+    (hsize : sizeOfShapeHOL (.comb shapes) =
+      (arguments.map flattenHOL).flatten.length)
+    (hiShape : i < shapes.length) (hiArg : i < arguments.length)
+    (hshape : ∀ i (hsi : i < shapes.length) (hai : i < arguments.length),
+      (shapes[i]'hsi) = shapeOfHOLExact (arguments[i]'hai))
+    (hwf : ∀ value, value ∈ arguments →
+      isWfShapeExactHOL ([] : StructContextExact) (shapeOfHOLExact value) = true) :
+    ((withShapeHOL shapes slots)[i]'(by
+      rw [withShapeHOL_eq_withShapeShapeOfHOL, withShape_length]
+      simpa only [List.length_map] using hiShape)).length =
+        (flattenHOL (arguments[i]'hiArg)).length := by
+  have hgroups := withShapeHOL_eq_withShapeShapeOfHOL shapes slots
+  have hprodSize : slots.length = Shape.shapeSize (.comb (shapes.map shapeOfHOL)) := by
+    rw [shapeSizeCombShapeOfHOLExact]
+    exact hslots.trans hsize.symm
+  have hgroupLen := withShape_getElem_length (shapes.map shapeOfHOL) slots i
+    hprodSize (by simpa only [List.length_map] using hiShape)
+  have hgroupsAt := congrArg
+    (fun groups : List (List Nat) => groups[i]?) hgroups
+  have hholBound : i < (withShapeHOL shapes slots).length := by
+    rw [hgroups, withShape_length]
+    simpa only [List.length_map] using hiShape
+  have hprodBound : i < (withShape (shapes.map shapeOfHOL) slots).length := by
+    rw [withShape_length]
+    simpa only [List.length_map] using hiShape
+  have hlengthEq :
+      ((withShapeHOL shapes slots)[i]'hholBound).length =
+      ((withShape (shapes.map shapeOfHOL) slots)[i]'hprodBound).length := by
+    have h := congrArg (Option.map List.length) hgroupsAt
+    have hsome :
+        some ((withShapeHOL shapes slots)[i]'hholBound).length =
+          some ((withShape (shapes.map shapeOfHOL) slots)[i]'hprodBound).length := by
+      simpa [List.getElem?_eq_getElem, hholBound, hprodBound] using h
+    exact Option.some.inj hsome
+  have hgroupLen' :
+      ((withShape (shapes.map shapeOfHOL) slots)[i]'hprodBound).length =
+        Shape.shapeSize (shapeOfHOL (shapes[i]'hiShape)) := by
+    simpa only [List.getElem_map] using hgroupLen
+  calc
+    ((withShapeHOL shapes slots)[i]'hholBound).length =
+        ((withShape (shapes.map shapeOfHOL) slots)[i]'hprodBound).length := hlengthEq
+    _ = Shape.shapeSize (shapeOfHOL (shapes[i]'hiShape)) := hgroupLen'
+    _ = sizeOfShapeHOL (shapes[i]'hiShape) :=
+      shapeSizeShapeOfHOLExact (shapes[i]'hiShape)
+    _ = sizeOfShapeHOL (shapeOfHOLExact (arguments[i]'hiArg)) := by
+      rw [hshape i hiShape hiArg]
+    _ = (flattenHOL (arguments[i]'hiArg)).length :=
+      (flattenHOL_length_eq_sizeOfShapeHOL (arguments[i]'hiArg)
+        (hwf (arguments[i]'hiArg) (List.getElem_mem hiArg))).symm
+
+private theorem withShapeHOL_getElem_eq_take_drop
+    {α : Type} (shapes : List ShapeHOL) (values : List α) (i : Nat)
+    (hvalues : values.length = sizeOfShapeHOL (.comb shapes))
+    (hi : i < shapes.length) :
+    (withShapeHOL shapes values)[i]'(by
+      rw [withShapeHOL_eq_withShapeShapeOfHOL, withShape_length]
+      simpa only [List.length_map] using hi) =
+      (values.drop (sizeOfShapeHOL (.comb (shapes.take i)))).take
+        (sizeOfShapeHOL (shapes[i]'hi)) := by
+  have hgroups := withShapeHOL_eq_withShapeShapeOfHOL shapes values
+  have hprodValues : values.length = Shape.shapeSize (.comb (shapes.map shapeOfHOL)) := by
+    rw [shapeSizeCombShapeOfHOLExact]
+    exact hvalues
+  have hprodBound : i < (withShape (shapes.map shapeOfHOL) values).length := by
+    rw [withShape_length]
+    simpa only [List.length_map] using hi
+  have hholBound : i < (withShapeHOL shapes values).length := by
+    rw [hgroups, withShape_length]
+    simpa only [List.length_map] using hi
+  have hgroupsAt := congrArg
+    (fun groups : List (List α) => groups[i]?) hgroups
+  have hgroupEq :
+      (withShapeHOL shapes values)[i]'hholBound =
+        (withShape (shapes.map shapeOfHOL) values)[i]'hprodBound := by
+    have hsome :
+        some ((withShapeHOL shapes values)[i]'hholBound) =
+          some ((withShape (shapes.map shapeOfHOL) values)[i]'hprodBound) := by
+      simpa [List.getElem?_eq_getElem, hholBound, hprodBound] using hgroupsAt
+    exact Option.some.inj hsome
+  calc
+    (withShapeHOL shapes values)[i]'hholBound =
+        (withShape (shapes.map shapeOfHOL) values)[i]'hprodBound := hgroupEq
+    _ = (values.drop (Shape.shapeSize
+          (.comb ((shapes.map shapeOfHOL).take i)))).take
+          (Shape.shapeSize ((shapes.map shapeOfHOL)[i]'(by
+            simpa only [List.length_map] using hi))) :=
+      withShape_getElem_eq_take_drop (shapes.map shapeOfHOL) values i
+        hprodValues (by simpa only [List.length_map] using hi)
+    _ = (values.drop (sizeOfShapeHOL (.comb (shapes.take i)))).take
+          (sizeOfShapeHOL (shapes[i]'hi)) := by
+      have hprefix : Shape.shapeSize
+          (.comb ((shapes.map shapeOfHOL).take i)) =
+            sizeOfShapeHOL (.comb (shapes.take i)) := by
+        rw [← List.map_take]
+        exact shapeSizeCombShapeOfHOLExact (shapes.take i)
+      have hcurrent : Shape.shapeSize
+          ((shapes.map shapeOfHOL)[i]'(by
+            simpa only [List.length_map] using hi)) =
+            sizeOfShapeHOL (shapes[i]'hi) := by
+        rw [List.getElem_map]
+        exact shapeSizeShapeOfHOLExact (shapes[i]'hi)
+      rw [hprefix, hcurrent]
+
+private theorem withShapeHOL_mapFlatten
+    {width : Nat} [NeZero width]
+    (shapes : List ShapeHOL) (arguments : List (ValueHOL width))
+    (hlen : shapes.length = arguments.length)
+    (hshape : ∀ i (hsi : i < shapes.length) (hai : i < arguments.length),
+      shapes[i]'hsi = shapeOfHOLExact (arguments[i]'hai))
+    (hwf : ∀ value, value ∈ arguments →
+      isWfShapeExactHOL ([] : StructContextExact) (shapeOfHOLExact value) = true) :
+    withShapeHOL shapes ((arguments.map flattenHOL).flatten) =
+      arguments.map flattenHOL := by
+  induction arguments generalizing shapes with
+  | nil =>
+      cases shapes with
+      | nil => simp [withShapeHOL]
+      | cons shape shapes => simp at hlen
+  | cons value arguments ih =>
+      cases shapes with
+      | nil => simp at hlen
+      | cons shape shapes =>
+          have hhead : shape = shapeOfHOLExact value := by
+            have h := hshape 0 (by simp) (by simp)
+            simpa using h
+          have htailLength : shapes.length = arguments.length := by simpa using hlen
+          have htailShape : ∀ i (hsi : i < shapes.length) (hai : i < arguments.length),
+              shapes[i]'hsi = shapeOfHOLExact (arguments[i]'hai) := by
+            intro i hsi hai
+            have h := hshape (i + 1) (by simp [hsi]) (by simp [hai])
+            simpa [List.getElem_cons_succ] using h
+          have htailWf : ∀ other, other ∈ arguments →
+              isWfShapeExactHOL ([] : StructContextExact)
+                (shapeOfHOLExact other) = true := by
+            intro other hmem
+            exact hwf other (by simp [hmem])
+          have hvalueWf := hwf value (by simp)
+          have hvalueLength : (flattenHOL value).length =
+              sizeOfShapeHOL (shapeOfHOLExact value) :=
+            flattenHOL_length_eq_sizeOfShapeHOL value hvalueWf
+          simp only [List.map_cons, List.flatten_cons]
+          rw [withShapeHOL, hhead, ← hvalueLength]
+          have htake :
+              ((flattenHOL value) ++ (arguments.map flattenHOL).flatten).take
+                  (flattenHOL value).length = flattenHOL value := by
+            rw [List.take_append_of_le_length (Nat.le_refl _), List.take_length]
+          have hdrop :
+              ((flattenHOL value) ++ (arguments.map flattenHOL).flatten).drop
+                  (flattenHOL value).length = (arguments.map flattenHOL).flatten := by
+            simp
+          rw [htake, hdrop, ih shapes htailLength htailShape htailWf]
+
+private theorem tlcHOL_lookup_getElem
+    {width : Nat} [NeZero width]
+    (slots : List Nat) (arguments : List (ValueHOL width)) (i : Nat)
+    (hdistinct : slots.Nodup)
+    (hlen : slots.length = (arguments.map flattenHOL).flatten.length)
+    (hi : i < slots.length) :
+    (tlcHOL slots arguments).lookup (slots[i]'hi) =
+      some ((arguments.map flattenHOL).flatten[i]'(by omega)) := by
+  rw [holFmapAsFiniteSupportResultWitness_tlcHOL]
+  have hlookup := FLOOKUP_FUPDATE_LIST_zip_getElem slots
+    ((arguments.map flattenHOL).flatten) FEMPTY i hdistinct hlen hi
+  change FLOOKUP
+    (FUPDATE_LIST_HOL (FEMPTY : FiniteMap Nat (HolWordLab width))
+      (slots.zip ((arguments.map flattenHOL).flatten)))
+    (slots[i]'hi) = _
+  rw [FUPDATE_LIST_HOL_eq_FUPDATE_LIST]
+  exact hlookup
+
+private theorem tlcHOLWithShapeMapM
+    {width : Nat} [NeZero width]
+    (shapes : List ShapeHOL) (arguments : List (ValueHOL width))
+    (slots : List Nat) (i : Nat)
+    (hslotsNodup : slots.Nodup)
+    (hslotsLength : slots.length = (arguments.map flattenHOL).flatten.length)
+    (hshapeSize : sizeOfShapeHOL (.comb shapes) =
+      (arguments.map flattenHOL).flatten.length)
+    (hlen : shapes.length = arguments.length)
+    (hshape : ∀ i (hsi : i < shapes.length) (hai : i < arguments.length),
+      shapes[i]'hsi = shapeOfHOLExact (arguments[i]'hai))
+    (hwf : ∀ value, value ∈ arguments →
+      isWfShapeExactHOL ([] : StructContextExact) (shapeOfHOLExact value) = true)
+    (hiShape : i < shapes.length) (hiArgument : i < arguments.length) :
+    ((withShapeHOL shapes slots)[i]'(by
+      rw [withShapeHOL_eq_withShapeShapeOfHOL, withShape_length]
+      simpa only [List.length_map] using hiShape)).mapM
+        (tlcHOL slots arguments).lookup = some (flattenHOL (arguments[i]'hiArgument)) := by
+  let words := (arguments.map flattenHOL).flatten
+  let shape := shapes[i]'hiShape
+  let value := arguments[i]'hiArgument
+  have hslotsShape : slots.length = sizeOfShapeHOL (.comb shapes) :=
+    hslotsLength.trans hshapeSize.symm
+  have hgroupLength :
+      ((withShapeHOL shapes slots)[i]'(by
+        rw [withShapeHOL_eq_withShapeShapeOfHOL, withShape_length]
+        simpa only [List.length_map] using hiShape)).length =
+        (flattenHOL value).length := by
+    exact withShapeHOL_getElem_length_exact shapes slots arguments i
+      hslotsLength hshapeSize hiShape hiArgument hshape hwf
+  have hwhole : slots.mapM (tlcHOL slots arguments).lookup = some words := by
+    apply (list_mapM_eq_some_iff (tlcHOL slots arguments).lookup slots words).2
+    refine ⟨?_, ?_⟩
+    · simpa [words] using hslotsLength
+    · intro j hj
+      have hjSlots : j < slots.length := by simpa [words] using hslotsLength ▸ hj
+      have hjWords : j < words.length := by simpa [words] using hj
+      calc
+        (slots[j]?).bind (tlcHOL slots arguments).lookup =
+            some (words[j]'hjWords) := by
+          rw [List.getElem?_eq_getElem hjSlots]
+          simpa [words] using tlcHOL_lookup_getElem slots arguments j
+            hslotsNodup hslotsLength hjSlots
+        _ = words[j]? := by rw [List.getElem?_eq_getElem hjWords]
+  have hgroupInput := withShapeHOL_getElem_eq_take_drop shapes slots i
+    hslotsShape hiShape
+  have hgroupWords := withShapeHOL_getElem_eq_take_drop shapes words i
+    hshapeSize.symm hiShape
+  have hpartition := withShapeHOL_mapFlatten shapes arguments hlen hshape hwf
+  have hgroupWordsEq :
+      (withShapeHOL shapes words)[i]'(by
+        rw [withShapeHOL_eq_withShapeShapeOfHOL, withShape_length]
+        simpa only [List.length_map] using hiShape) =
+        flattenHOL value := by
+    have hpartitionAt := congrArg
+      (fun groups : List (List (HolWordLab width)) => groups[i]?) hpartition
+    have hgroupBound : i < (withShapeHOL shapes words).length := by
+      rw [withShapeHOL_eq_withShapeShapeOfHOL, withShape_length]
+      simpa only [List.length_map] using hiShape
+    have hvalueBound : i < (arguments.map flattenHOL).length := by
+      simpa using hiArgument
+    have hleft : (withShapeHOL shapes words)[i]? =
+        some ((withShapeHOL shapes words)[i]'hgroupBound) :=
+      List.getElem?_eq_getElem hgroupBound
+    have hright : (arguments.map flattenHOL)[i]? =
+        some ((arguments.map flattenHOL)[i]'hvalueBound) :=
+      List.getElem?_eq_getElem hvalueBound
+    rw [hleft, hright] at hpartitionAt
+    simpa [words, value, List.getElem_map] using Option.some.inj hpartitionAt
+  have hwindow := list_mapM_takeDrop_of_success
+    (tlcHOL slots arguments).lookup slots words
+    (sizeOfShapeHOL (.comb (shapes.take i))) (sizeOfShapeHOL shape) hwhole
+  rw [← hgroupInput, ← hgroupWords] at hwindow
+  rw [hgroupWordsEq] at hwindow
+  exact hwindow
 
 /-! Exact call-context invariant slice for HOL `locals_rel_def`. The first two
 conjuncts are independent of the values being bound: distinct formal names,
@@ -254,6 +546,112 @@ theorem panToCrepCallContextNoOverlapMaxExact
       have hmax := maxList_ge_of_mem slots slot hslotFlat
       simpa [ctxtFcExactHOL, maxList] using hmax
     · simp at hbase
+
+/-! The third conjunct of HOL `locals_rel` for Call binds a Pan source
+argument to its `ctxt_fc` slot group, then obtains that argument's exact
+`flatten` from the HOL `tlc` map. This helper uses the exact `slcHOL`,
+`tlcHOL`, `ShapeHOL`, and `ValueHOL` carriers; it is a projection, not the
+full HOL Call theorem. -/
+theorem panToCrepCallLocalsRelArgumentBindingsExact
+    {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width)
+    (variableShapes : List (MlS × ShapeHOL))
+    (arguments : List (ValueHOL width)) (slots : List Nat)
+    (hnames : (variableShapes.map Prod.fst).Nodup)
+    (hlen : variableShapes.length = arguments.length)
+    (hshape : ∀ i (hvar : i < variableShapes.length)
+      (harg : i < arguments.length),
+      (variableShapes[i]'hvar).2 = shapeOfHOLExact (arguments[i]'harg))
+    (hslots : slots.Nodup)
+    (hslotsLength : slots.length = (arguments.map flattenHOL).flatten.length)
+    (hwf : ∀ value, value ∈ arguments →
+      isWfShapeExactHOL ([] : StructContextExact) (shapeOfHOLExact value) = true) :
+    panToCrepLocalsRelFiniteExact
+      (ctxtFcExactHOL context.funcs context.eids
+        (variableShapes.map Prod.fst) (variableShapes.map Prod.snd) slots)
+      (slcHOL variableShapes arguments) (tlcHOL slots arguments) := by
+  classical
+  let names := variableShapes.map Prod.fst
+  let shapes := variableShapes.map Prod.snd
+  let groups := withShapeHOL shapes slots
+  let words := (arguments.map flattenHOL).flatten
+  have hnamesLength : names.length = shapes.length := by simp [names, shapes]
+  have hgroupsLength : groups.length = shapes.length := by
+    unfold groups
+    rw [withShapeHOL_eq_withShapeShapeOfHOL, withShape_length]
+    simp only [List.length_map]
+  have hshapeList : shapes.length = arguments.length := by
+    simpa [shapes] using hlen
+  have hshapeAt : ∀ i (hsh : i < shapes.length) (harg : i < arguments.length),
+      shapes[i]'hsh = shapeOfHOLExact (arguments[i]'harg) := by
+    intro i hsh harg
+    simpa [shapes, List.getElem_map] using hshape i
+      (by simpa [names, shapes] using hsh) harg
+  have hshapeSize : sizeOfShapeHOL (.comb shapes) = words.length := by
+    simpa [words] using shapeSizeCombHOL_eq_flattenHOL_length shapes arguments
+      hshapeList hshapeAt hwf
+  have hslotsShape : slots.length = sizeOfShapeHOL (.comb shapes) := by
+    simpa [words] using hslotsLength.trans hshapeSize.symm
+  have hcontextInvariants := panToCrepCallContextNoOverlapMaxExact
+    context names shapes slots hnames hnamesLength hslots hslotsShape
+  unfold panToCrepLocalsRelFiniteExact
+  refine ⟨hcontextInvariants.1, hcontextInvariants.2, ?_⟩
+  intro name value hsourceLookup
+  have hsourceLookupFinite :
+      FLOOKUP (FUPDATE_LIST FEMPTY (names.zip arguments)) name = some value := by
+    have hmapEq := FUPDATE_LIST_HOL_eq_FUPDATE_LIST
+      (FEMPTY : FiniteMap MlS (ValueHOL width)) (names.zip arguments)
+    rw [← hmapEq]
+    simpa [FLOOKUP] using
+      (holFmapAsFiniteSupportResultWitness_slcHOL variableShapes arguments name ▸
+        hsourceLookup)
+  rcases flookupFupdateList_mem_or_base (FEMPTY : FiniteMap MlS (ValueHOL width))
+      (names.zip arguments) name value hsourceLookupFinite with hentry | hbase
+  · obtain ⟨entry, hmem, hentryName, hentryValue⟩ := hentry
+    obtain ⟨i, hiName, hiArgument, hnameAt, hargumentAt⟩ :=
+      mem_zip_getElem names arguments entry hmem
+    have hiVariable : i < variableShapes.length := by
+      simpa [names] using hiName
+    have hnameIs : names[i]'hiName = name := by simpa [hentryName] using hnameAt
+    have hvalueIs : arguments[i]'hiArgument = value := by
+      simpa [hentryValue] using hargumentAt
+    have hshapeIndex : i < shapes.length := by simpa [shapes] using hiVariable
+    have hgroupIndex : i < groups.length := by
+      rw [hgroupsLength]
+      exact hshapeIndex
+    have hgroupShape : shapes[i]'hshapeIndex = shapeOfHOLExact value := by
+      rw [hshapeAt i hshapeIndex hiArgument, hvalueIs]
+    have hcontextLength : names.length = (shapes.zip groups).length := by
+      simp [List.length_zip, hnamesLength, hgroupsLength]
+    have hcontextLookup := FLOOKUP_FUPDATE_LIST_zip_getElem
+      names (shapes.zip groups) FEMPTY i hnames hcontextLength hiName
+    have hzipIndex : i < (shapes.zip groups).length := by
+      rw [← hcontextLength]
+      exact hiName
+    have hgroupBound : i < (withShapeHOL shapes slots).length := by
+      rw [withShapeHOL_eq_withShapeShapeOfHOL, withShape_length]
+      simpa only [List.length_map] using hshapeIndex
+    have hcontextValue :
+        ((shapes.zip groups)[i]'hzipIndex) =
+          (shapeOfHOLExact value, groups[i]'hgroupBound) := by
+      simp only [List.getElem_zip]
+      exact congrArg (fun shape => (shape, groups[i]'hgroupBound)) hgroupShape
+    have hcontextLookup' :
+        (ctxtFcExactHOL context.funcs context.eids names shapes slots).vars.lookup name =
+          some (shapeOfHOLExact value, groups[i]'hgroupBound) := by
+      simpa [ctxtFcExactHOL, names, shapes, groups, FLOOKUP] using
+        (hnameIs ▸ hcontextLookup.trans (congrArg some hcontextValue))
+    have hargumentWf :
+        isWfShapeExactHOL ([] : StructContextExact) (shapeOfHOLExact value) = true := by
+      rw [← hvalueIs]
+      exact hwf (arguments[i]'hiArgument) (List.getElem_mem hiArgument)
+    have hmapGroups := tlcHOLWithShapeMapM shapes arguments slots i hslots
+      hslotsLength hshapeSize hshapeList hshapeAt hwf hshapeIndex hiArgument
+    rw [hvalueIs] at hmapGroups
+    refine ⟨groups[i]'hgroupBound, flattenHOL value, hcontextLookup', ?_, rfl,
+      hargumentWf⟩
+    simpa [groups] using hmapGroups
+  · simp at hbase
 
 /-! The exception-relation conjunct of HOL
 `call_preserve_state_code_locals_rel` (`pan_to_crepProofScript.sml:2355`) is
