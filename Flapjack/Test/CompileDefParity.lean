@@ -827,6 +827,59 @@ example :
     HolFiniteMapExact.lookup_update, FUPDATE, FLOOKUP, crepExpOfHOL,
     shapeOfHOL]
 
+/-- The Primitive bridge retains the missing-variable `Skip` fallback. -/
+example :
+    crepProgOfHOL (compileProgExactHOLW exactReturnContext
+      (.primitive (ofString "dst") .addCarry [])) =
+    compileProgRiscV exactReturnContext.toProduction
+      (.primitive "dst" .addCarry []) := by
+  apply compileProgExactHOLW_primitive_bridge (arguments := [])
+  intro expression hmem
+  simp at hmem
+
+/-- The Primitive bridge covers the present-variable temporaries branch with an
+    empty argument list. -/
+example :
+    crepProgOfHOL (compileProgExactHOLW (exactLocalAssignContext [7] [8])
+      (.primitive (ofString "dst") .addCarry [])) =
+    compileProgRiscV (exactLocalAssignContext [7] [8]).toProduction
+      (.primitive "dst" .addCarry []) := by
+  apply compileProgExactHOLW_primitive_bridge (arguments := [])
+  intro expression hmem
+  simp at hmem
+
+/-- The Primitive bridge covers a non-empty argument list through the paired
+    expression codec. -/
+example :
+    crepProgOfHOL (compileProgExactHOLW (exactLocalAssignContext [7] [8])
+      (.primitive (ofString "dst") .addCarry
+        [expToHOL (.const (BitVec.ofNat 8 5))])) =
+    compileProgRiscV (exactLocalAssignContext [7] [8]).toProduction
+      (.primitive "dst" .addCarry [.const (BitVec.ofNat 8 5)]) := by
+  apply compileProgExactHOLW_primitive_bridge (arguments := [.const (BitVec.ofNat 8 5)])
+  intro expression hmem
+  simp only [List.mem_singleton] at hmem
+  subst hmem
+  simp only [compileExpExactHOLW.eq_1, expToHOL.eq_1, compileExpHOL.eq_1,
+    List.map_cons, List.map_nil, crepExpOfHOL.eq_1, shapeOfHOL]
+
+/-- The recursive `Dec` bridge (`pan_to_crepScript.sml:141-152`) closes the
+    missing-variable `Skip` fallback, the compiled-shape store, and the
+    recursive body under the extended context for a concrete `.skip` body. The
+    recursive hypothesis is supplied at the two extended contexts. -/
+example :
+    crepProgOfHOL (compileProgExactHOLW (exactLocalAssignContext [7] [8])
+      (.dec (ofString "dst") (shapeToHOL .one)
+        (expToHOL (.const (BitVec.ofNat 8 5))) .skip)) =
+    compileProgRiscV (exactLocalAssignContext [7] [8]).toProduction
+      (.dec "dst" .one (.const (BitVec.ofNat 8 5)) (progOfHOL .skip)) := by
+  apply compileProgExactHOLW_dec_bridge
+  · rfl
+  · rfl
+  · simp only [compileExpExactHOLW.eq_1, expToHOL.eq_1, compileExpHOL.eq_1,
+      List.map_cons, List.map_nil, crepExpOfHOL.eq_1, shapeOfHOL]
+  · simp [compileProgExactHOLW, compileProgHOL, progOfHOL, crepProgOfHOL]
+
 def exactShMemStoreClauseParity : Bool :=
   (match compileShMemStoreExactHOLW
       (exactLocalAssignContext [7] [8]) .op8 (.var .local (ofString "src")) (.const 3) with
@@ -895,12 +948,38 @@ def exactDecClauseParity : Bool :=
       (.rstruct [.const 1, .const 2]) (fun _ => .tick) with
    | .dec 1 (.const 1) (.dec 2 (.const 2) .tick) => true
    | _ => false) &&
+  (match compileDecExactHOLW exactReturnContext (ofString "x")
+      (.named (ofString "wrong")) (.const 4)
+      (fun bodyContext =>
+        match bodyContext.vars.lookup (ofString "x") with
+        | some (.one, _) => .tick
+        | _ => .break 0) with
+   | .dec 1 (.const 4) .tick => true
+   | _ => false) &&
+  (match compileDecExactHOLW exactReturnContext (ofString "x")
+      (.comb [.one, .one]) (.const 4)
+      (fun bodyContext =>
+        match bodyContext.vars.lookup (ofString "x") with
+        | some (.one, _) => .tick
+        | _ => .break 0) with
+   | .dec 1 (.const 4) .tick => true
+   | _ => false) &&
   (match compileDecExactHOLW exactMalformedStoreContext (ofString "x") .one
       (.var .local (ofString "bad")) (fun _ => .tick) with
    | .skip => true
    | _ => false)
 
 #guard exactDecClauseParity
+
+/- Direct HOL `compile_def_probe.out` row `dec_declared_shape_ignored`:
+   `compile_exp` returns a two-word shape even though the source Dec declares
+   One, so the body must see the compiled shape and select its second field. -/
+#guard match compileProgExactHOLW exactReturnContext
+    (.dec (ofString "pair") .one
+      (.rstruct [.const (4 : BitVec 8), .const 5])
+      (.return (.rfield 1 (.var .local (ofString "pair"))))) with
+  | .dec 1 (.const 4) (.dec 2 (.const 5) (.return [.var 2])) => true
+  | _ => false
 
 def exactDecCallClauseParity : Bool :=
   (match compileDecCallExactHOLW (exactDecCallContext 4) (ofString "x") .one

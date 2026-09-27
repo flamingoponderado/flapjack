@@ -801,9 +801,20 @@ attached. -/
            (step.1, { step.2 with locals := step.2.locals.resVarEq (name, old) })) := by
   rw [evalCrepSemHOLProg.eq_def] <;> rfl
 
-/-- HOL `evaluate (Assign v src, s)` (`crepSemScript.sml:257-262`): the variable
-    must already be bound. Finite-support `CrepSemHOLState` counterpart;
-    untagged. -/
+/-- HOL `evaluate (Assign v src, s)` (`crepSemScript.sml:257-262`),
+    source-reviewed as one clause only. `crepExactEvalExp state memDec src`
+    delegates to the tagged exact `evalCrepSemHOLExp` port of `eval_def`
+    (`crepSemScript.sml:90-137`); `memDec` supplies Lean's decidability
+    evidence and does not change the evaluator's result. On `NONE`, this clause
+    returns `Error` and the original state. On `SOME w`, it requires
+    `state.locals.lookup name` to be defined, then `setVar` performs HOL's
+    `set_var_def` update (`crepSemScript.sml:55-57`) with `FUPDATE` / `|+`;
+    an absent local returns `Error` and leaves state unchanged. `name : Nat`
+    matches HOL `varname = num`, values use the one-constructor `HolWordLab`
+    `word_lab` carrier, and the state maps use the reviewed finite-support
+    translation. This supports an exact Assign-clause disposition only; the
+    enclosing evaluator remains untagged pending all other cases and whole-
+    statement review. -/
 @[simp] theorem evalCrepSemHOLProg_assign {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ)
     (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
@@ -818,8 +829,23 @@ attached. -/
            | none => (some .error, state)) := by
   rw [evalCrepSemHOLProg.eq_def] <;> rfl
 
-/-- HOL `evaluate (Primitive lhss pop rhss, s)` (`crepSemScript.sml:250-256`).
-    Finite-support `CrepSemHOLState` counterpart; untagged. -/
+/-- HOL `evaluate (Primitive lhss pop rhss, s)` (`crepSemScript.sml:250-262`),
+    source-reviewed as a single clause, not as a whole-evaluator port. The
+    `args.mapM state.locals.lookup` branch is HOL's `OPT_MMAP (FLOOKUP
+    s.locals) rhss`; `crepPrimopHOL` is the cited `crep_primop_def`; and the
+    success guard translates `LENGTH` equality, `EVERY IS_SOME`, and
+    `ALL_DISTINCT` before applying the locals `|++ ZIP` update via
+    `updateListEq`. Each failure returns `Error` with the original state.
+
+    The state carrier's keys are `Nat` like HOL `varname`; its locals map uses
+    `HolFiniteMapExact` with HOL equality/update helpers. HOL `word_lab` has
+    only `Word word`, represented by `HolWordLab`; this clause converts through
+    `HolWordLab.toPanWordLab` before `crepPrimopHOL` and back with
+    `PanWordLab.toHolWordLab`. Those conversions are inverse, and the
+    `BitVec width`/`[NeZero width]` carrier supplies the positive-width word
+    parameter. This review covers only the Primitive equation. The enclosing
+    evaluator remains untagged pending the other clauses and whole-statement
+    review. -/
 @[simp] theorem evalCrepSemHOLProg_primitive {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ)
     (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
@@ -841,8 +867,20 @@ attached. -/
        | none => (some .error, state)) := by
   rw [evalCrepSemHOLProg.eq_def] <;> rfl
 
-/-- HOL `evaluate (Store dst src, s)` (`crepSemScript.sml:263-269`). Finite-support
-    `CrepSemHOLState` counterpart; untagged. -/
+/-- HOL `evaluate (Store dst src, s)` (`crepSemScript.sml:263-269`),
+    source-reviewed as one clause only. Both expressions use the tagged exact
+    `eval_def` port `evalCrepSemHOLExp` (`crepSemScript.sml:90-137`), through
+    `crepExactEvalExp`; its explicit `memDec` is Lean decidability evidence.
+    HOL accepts only a `Word` address but any `word_lab` source value, exactly
+    the patterns below. `memDec account` is HOL's `account IN s.memaddrs` test.
+    Success updates only memory at that address and returns `NONE`; failure of
+    either expression or the domain check returns `Error` with the original
+    state. The pointwise memory function in this equation is HOL's `addr =+ w`
+    update from `mem_store_def` (`panSemScript.sml:373-378`), also implemented
+    by the tagged `panMemStoreHOL` helper in `PanSemStateEval.lean`. The state
+    uses the reviewed positive-width `BitVec` / `HolWordLab` carriers. This
+    establishes a local Store-clause disposition only; the enclosing evaluator
+    remains untagged pending the other cases and whole-statement review. -/
 @[simp] theorem evalCrepSemHOLProg_store {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ)
     (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
@@ -860,8 +898,19 @@ attached. -/
        | _, _ => (some .error, state)) := by
   rw [evalCrepSemHOLProg.eq_def] <;> rfl
 
-/-- HOL `evaluate (Store32 dst src, s)` (`crepSemScript.sml:270-276`).
-    Finite-support `CrepSemHOLState` counterpart; untagged. -/
+/-- HOL `evaluate (Store32 dst src, s)` (`crepSemScript.sml:274-280`),
+    source-reviewed as one clause only. Both operands use the tagged exact
+    `eval_def` port `evalCrepSemHOLExp` (`crepSemScript.sml:90-137`) through
+    `crepExactEvalExp`; HOL and Lean both require each result to be a `Word`.
+    Converting the source payload with `BitVec.ofNat 32 w.toNat` is HOL's
+    `w2w w` to `word32`. `crepExactMemStore32` delegates to the tagged exact
+    `mem_store_32_def` port `panMemStore32HOL` (`panSemScript.sml:327-342`):
+    alignment, aligned-cell lookup, domain membership at `byte_align`, and the
+    four endian-aware byte replacements match. On success only memory changes
+    and the result is `NONE`; failed operands or store conditions return
+    `Error` with the original state. This is only a local Store32-clause
+    disposition; the enclosing evaluator remains untagged pending other cases
+    and whole-statement/carrier review. -/
 @[simp] theorem evalCrepSemHOLProg_store32 {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ)
     (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
@@ -877,8 +926,21 @@ attached. -/
        | _, _ => (some .error, state)) := by
   rw [evalCrepSemHOLProg.eq_def] <;> rfl
 
-/-- HOL `evaluate (StoreByte dst src, s)` (`crepSemScript.sml:277-283`).
-    Finite-support `CrepSemHOLState` counterpart; untagged. -/
+/-- HOL `evaluate (StoreByte dst src, s)` (`crepSemScript.sml:281-287`),
+    source-reviewed as one clause only. Both operands use the tagged exact
+    `eval_def` port `evalCrepSemHOLExp` (`crepSemScript.sml:90-137`), and both
+    must return `Word`. `UInt8.ofNat w.toNat` is the projection of HOL's
+    `w2w w` to word8: after `UInt8.toBitVec`, it is the same `BitVec 8` value.
+    The untagged UInt8 helper `panMemStoreByteHOL` used by
+    `crepExactMemStoreByte` is kernel-proved equal over the complete memory map
+    to the exact tagged `panMemStoreByteWord8HOL` by
+    `panMemStoreByteHOL_eq_word8` (`PanSem/ExtCallExact.lean`). The exact helper
+    implements `mem_store_byte_def` (`panSemScript.sml:300-307`): read the
+    aligned cell, require that aligned address in the domain, then replace that
+    cell with the endian-aware `set_byte` result. Success changes only memory
+    and returns `NONE`; expression/store failure yields `Error` with the
+    original state. This is a local StoreByte disposition only; the enclosing
+    evaluator remains untagged pending other cases and whole-statement review. -/
 @[simp] theorem evalCrepSemHOLProg_storeByte {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ)
     (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
@@ -894,8 +956,19 @@ attached. -/
        | _, _ => (some .error, state)) := by
   rw [evalCrepSemHOLProg.eq_def] <;> rfl
 
-/-- HOL `evaluate (StoreGlob dst src, s)` (`crepSemScript.sml:284-287`).
-    Finite-support `CrepSemHOLState` counterpart; untagged. -/
+/-- HOL `evaluate (StoreGlob dst src, s)` (`crepSemScript.sml:288-291`),
+    source-reviewed as one clause only. The source expression is evaluated by
+    the tagged exact `eval_def` port `evalCrepSemHOLExp`
+    (`crepSemScript.sml:90-137`) through `crepExactEvalExp`. HOL accepts any
+    `word_lab` result and unconditionally updates `globals`; the Lean branch
+    likewise has no prior-key-membership guard. `setGlobals` is the tagged
+    `set_globals_def` port (`crepSemScript.sml:61-63`) using HOL-equality
+    `FUPDATE` on the finite-support map, so an absent key is inserted. The
+    destination is `BitVec 5`, matching HOL's fixed `5 word` global key, and
+    values use `HolWordLab`. A failed expression returns `Error` and the
+    original state; success changes only globals and returns `NONE`. This is
+    a local StoreGlob disposition only; the enclosing evaluator remains
+    untagged pending other cases and whole-statement review. -/
 @[simp] theorem evalCrepSemHOLProg_storeGlob {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ)
     (memDec : (a : BitVec width) → Decidable (state.memaddrs a))

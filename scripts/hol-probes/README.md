@@ -119,8 +119,11 @@ context `vmax`; the four operands must also have shape `One` and nonempty
 compiled lists. The exact untagged `compileExtCallExactHOLW` clause slice and
 Lean checks live in `Flapjack.Test.CompileDefParity`. Regenerate the direct HOL
 fixture with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=compile_def_probeScript.sml bash scripts/hol-probes/regenerate.sh`:
-absent lookups, the
+`CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=compile_def_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
+`dec_declared_shape_ignored` confirms that `Dec` stores the shape returned by
+`compile_exp`, not its declared shape; the exact compiler guard in
+`Flapjack.Test.CompileDefParity` checks the same two-word result.
+The fixture also covers absent lookups, the
 `One`/empty-list fallback, and inconsistent shape/name-list lengths. The
 matching Lean cases live in `Flapjack.Test.CompileDefParity`. The
 `struct_skip`, `struct_seq`, `struct_break`, `struct_continue`, `struct_tick`,
@@ -567,3 +570,13 @@ valid and rejected inputs. The exact evaluator theorem and Lean cases are in
 `Flapjack.Pancake.Proofs.PanToCrep.EvaluateNestedDecs` and
 `Flapjack.Test.CrepNestedDecsSeqResVarEqParity`. Refresh it with
 `HOL_PROBE_ONLY=eval_nested_decs_seq_res_var_eq_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`eval_nested_decs_load_globals_probe.out` records direct HOL EVAL instances of
+`evaluate_nested_decs_load_globals` at `pan_to_crepProofScript.sml:4139-4176`:
+loading one global word while restoring an old local, and loading a two-word
+struct while restoring one old local and preserving an absent local. Each row
+checks the complete theorem premise conjunction, including `globals_lookup`,
+the 32-word limit, distinct target locals, and the exact generated
+`load_globals` expression count, then evaluates the theorem's full result and
+post-state equation. Refresh with
+`HOL_PROBE_ONLY=eval_nested_decs_load_globals_probeScript.sml scripts/hol-probes/regenerate.sh`.

@@ -942,7 +942,7 @@ run_probe compile_def_probeScript.sml compile_def_probe.out \
   raise_one_word raise_multiword raise_missing_eid raise_shape_length_fallback \
   shmem_store_clause shmem_store_value_fallback shmem_store_address_fallback \
   shmem_load_local_clause shmem_load_missing_destination shmem_load_address_fallback \
-  dec_one_word dec_multiword dec_shape_length_fallback \
+  dec_one_word dec_multiword dec_declared_shape_ignored dec_shape_length_fallback \
   struct_skip struct_break struct_continue struct_tick struct_annot struct_seq \
   missing_global empty_one_global extra_names_global missing_names_global \
   missing_local empty_one_local extra_names_local missing_names_local valid_local \
@@ -960,6 +960,11 @@ run_probe eval_nested_decs_seq_res_var_eq_probeScript.sml \
   nested_decs_restore_absent_local nested_decs_restore_existing_local \
   nested_decs_length_mismatch_skip valid_declaration_premises \
   duplicate_names_rejected expression_interference_rejected length_premise_rejected \
+  "$cake_dir/pancake/proofs/pan_to_crepProofScript.sml" \
+  "$cake_dir/pancake/proofs"
+run_probe eval_nested_decs_load_globals_probeScript.sml \
+  eval_nested_decs_load_globals_probe.out \
+  word_lookup_and_nested_decs_theorem struct_lookup_and_nested_decs_theorem \
   "$cake_dir/pancake/proofs/pan_to_crepProofScript.sml" \
   "$cake_dir/pancake/proofs"
 run_probe compile_to_crep_probeScript.sml compile_to_crep_probe.out \

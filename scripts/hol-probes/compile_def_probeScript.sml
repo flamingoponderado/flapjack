@@ -172,6 +172,12 @@ val _ = print_eval "dec_multiword"
       <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
       (Dec «pair» (panLang$Comb [panLang$One; panLang$One])
         (RStruct [Const (1w : 8 word); Const 2w]) Tick)``;
+val _ = print_eval "dec_declared_shape_ignored"
+  ``pan_to_crep$compile
+      <| vars := FEMPTY; funcs := FEMPTY; eids := FEMPTY; vmax := 0 |>
+      (Dec «pair» panLang$One
+        (RStruct [Const (4w : 8 word); Const 5w])
+        (Return (RField 1 (Var Local «pair»))))``;
 val _ = print_eval "dec_shape_length_fallback"
   ``pan_to_crep$compile
       <| vars := FEMPTY |+ («bad», (panLang$Comb [panLang$One; panLang$One], [9]));
