@@ -412,7 +412,31 @@ run_probe crep_inline_alist_map_probeScript.sml crep_inline_alist_map_probe.out 
   alist_duplicate_first input_rows_order "$cake_dir/pancake/crep_inlineScript.sml" \
   "$cake_dir/pancake"
 run_probe crep_inline_helper_probeScript.sml crep_inline_helper_probe.out \
-  eoc_p unreach_p "$cake_dir/pancake/crep_inlineScript.sml" "$cake_dir/pancake"
+  var_prog_call_handler_extcall unreach_p \
+  "$cake_dir/pancake/crep_inlineScript.sml" "$cake_dir/pancake"
+run_probe crep_inline_structural_probeScript.sml crep_inline_structural_probe.out \
+  inline_prog_empty_dec inline_prog_empty_while \
+  "$cake_dir/pancake/crep_inlineScript.sml" "$cake_dir/pancake"
+run_probe crep_inline_transform_eoc_probeScript.sml crep_inline_transform_eoc_probe.out \
+  transform_eoc_return_zip transform_eoc_call_none transform_eoc_call_returns \
+  transform_eoc_call_handler transform_eoc_call_handler_value \
+  transform_eoc_dec transform_eoc_while transform_eoc_seq transform_eoc_if \
+  transform_eoc_default \
+  "$cake_dir/pancake/crep_inlineScript.sml" "$cake_dir/pancake"
+run_probe crep_inline_transform_branch_probeScript.sml crep_inline_transform_branch_probe.out \
+  transform_branch_return transform_branch_call_none transform_branch_call_returns \
+  transform_branch_call_handler transform_branch_dec transform_branch_while \
+  transform_branch_seq transform_branch_if transform_branch_default \
+  "$cake_dir/pancake/crep_inlineScript.sml" "$cake_dir/pancake"
+run_probe crep_inline_nontail_probeScript.sml crep_inline_nontail_probe.out \
+  inline_nontail_scalar inline_nontail_map2_truncates \
+  inline_nontail_arg_shape_mismatch \
+  "$cake_dir/pancake/crep_inlineScript.sml" "$cake_dir/pancake"
+run_probe crep_inline_has_return_probeScript.sml crep_inline_has_return_probe.out \
+  has_return_return has_return_call_none has_return_call_dest \
+  has_return_call_handler has_return_dec has_return_seq has_return_if \
+  has_return_while has_return_default \
+  "$cake_dir/pancake/crep_inlineScript.sml" "$cake_dir/pancake"
 run_probe crep_inline_cont_res_probeScript.sml crep_inline_cont_res_probe.out \
   cont_res_none cont_res_done "$cake_dir/pancake/proofs/crep_inlineProofScript.sml" \
   "$cake_dir/pancake/proofs"
@@ -453,7 +477,9 @@ run_probe compile_shape_probeScript.sml compile_shape_probe.out \
   one compile_shapes_map compiled_shape_wf compiled_shapes_wf \
   "$cake_dir/pancake/pan_structsScript.sml"
 run_probe pan_lang_var_exp_probeScript.sml pan_lang_var_exp_probe.out \
-  local_var global_var nested nested_global "$cake_dir/pancake/panLangScript.sml"
+  local_var global_var nested nested_global \
+  global_var_exp_def global_var_exp_def_primitive \
+  "$cake_dir/pancake/panLangScript.sml"
 run_probe pan_lang_load_store_op_probeScript.sml pan_lang_load_store_op_probe.out \
   load_op8 load_op16 load_opw load_op32 store_op8 store_op16 store_opw store_op32 \
   "$cake_dir/pancake/panLangScript.sml"
@@ -987,6 +1013,9 @@ run_probe eval_nested_decs_load_globals_probeScript.sml \
 run_probe compile_to_crep_probeScript.sml compile_to_crep_probe.out \
   empty raise_const raise_pair raise_pair_later raise_pair_later_64 handled_pair done \
   "$cake_dir/pancake/pan_to_crepScript.sml"
+run_probe pan_to_crep_comp_func_probeScript.sml pan_to_crep_comp_func_probe.out \
+  comp_func_skip comp_func_one_parameter_return comp_func_pair_parameter_return \
+  "$cake_dir/pancake/pan_to_crepScript.sml"
 run_probe crep_alookup_compile_probeScript.sml crep_alookup_compile_probe.out \
   source_names_distinct alookup_param_entry "$cake_dir/pancake/pan_to_crepScript.sml"
 run_probe crep_el_compile_probeScript.sml crep_el_compile_probe.out \
@@ -1124,6 +1153,9 @@ run_probe pan_structs_compile_exp_probeScript.sml pan_structs_compile_exp_probe.
   rstruct old_shapes_map "$cake_dir/pancake/pan_structsScript.sml"
 run_probe crep_semantics_probeScript.sml crep_semantics_probe.out \
   semantics_timeout_is_nonterminal semantics_break_is_nonterminal \
+  "$cake_dir/pancake/semantics/crepSemScript.sml"
+run_probe crep_sem_evaluate_ind_probeScript.sml crep_sem_evaluate_ind_probe.out \
+  evaluate_ind \
   "$cake_dir/pancake/semantics/crepSemScript.sml"
 run_probe crep_res_var_probeScript.sml crep_res_var_probe.out \
   res_var_delete_hit res_var_update_hit \

@@ -1,5 +1,6 @@
 import Flapjack.Pancake.PanToCrep.Compile
 import Flapjack.Pancake.PanToCrep.ContextExact
+import Flapjack.Pancake.PanToCrep.MakeVmapHOL
 import Flapjack.Pancake.PanToCrep.ExpHdlExact
 import Flapjack.Pancake.Semantics.CrepSem.HOLState
 import Flapjack.Pancake.PanCommon
@@ -7,9 +8,12 @@ import Flapjack.Pancake.PanCommon
 /-!
 Exact-carrier expression lowering from HOL `PanLang.ExpHOL` to `CrepExpHOL`.
 
-This belongs beside the production compiler as an exact source-semantics
-counterpart. The production compiler remains separate until a kernel-checked
-bridge routes its executed path through the exact `compile_def` port.
+The parser-proved compiler entry executes this lowering transitively through
+`compileProgExactHOLW` before decoding its result to production Crep. The
+per-function and top-level output-preservation bridges live in `CompileProg`.
+Direct callers without byte-range evidence retain the untagged String-backed
+compatibility route; the broader `compile_prog` carrier gap is tracked
+separately for exact `compile_inl_top`.
 -/
 
 namespace Flapjack
@@ -39,16 +43,17 @@ The function below uses the HOL `ExpHOL`/`ShapeHOL` syntax, the finite-support
 `PanToCrepContextExact`, and `CrepExpHOL` at the same positive word width. Its
 equations follow `pan_to_crepScript.sml:39-101`: local lookup reads the exact
 finite map; `compFieldHOL` and `loadShapeBytesHOLW` implement the cited HOL
-helpers; and the bytes-in-word constant is `n2w (width DIV 8)`. This exact
-definition does not by itself route the production compiler through the exact
-carriers; that bridge remains tracked under the parent compile_def bead. -/
+helpers; and the bytes-in-word constant is `n2w (width DIV 8)`. The parser-proved
+production body route calls this definition through `compileProgExactHOLW`; the
+output-preservation bridge is recorded in `CompileProg.lean`. -/
 
 mutual
   /-- Exact width-indexed port of HOL `pan_to_crep$compile_exp_def`.
       `ShapeHOL`, `MlS`, and `CrepExpHOL width` preserve HOL's carriers and
       every fallback equation. -/
   @[hol "cakeml/pancake/pan_to_crepScript.sml" "compile_exp_def"
-    (fmap_as_finite_support := [vars, funcs, eids])]
+    (fmap_as_finite_support := [vars, funcs, eids])
+    (words_as_type_indexed_bitvec)]
   def compileExpExactHOLW {width : Nat} [NeZero width]
       (context : PanToCrepContextExact width) :
       Flapjack.Pancake.PanLang.ExpHOL width →
@@ -638,12 +643,15 @@ Every constructor equation below was source-reviewed against
 `cakeml/pancake/pan_to_crepScript.sml:139-307` and its exact helper slice above.
 The only representation qualifier is the exact finite-support carrier for
 HOL's three finite maps; the syntax, positive word width, names, and output
-carrier are otherwise constructor-for-constructor HOL translations. This is
-the proof-side exact compiler. `flapjack-compile` still uses the production
-String-backed path until the separate production bridge is reviewed. -/
+carrier are otherwise constructor-for-constructor HOL translations. The
+parser-backed `flapjack-compile` route executes this definition through
+`compileProgTopHOLProductionExact` after the byte-range and output-codec
+bridges; arbitrary String-backed callers retain the untagged compatibility
+path. -/
 
 @[hol "cakeml/pancake/pan_to_crepScript.sml" "compile_def"
-  (fmap_as_finite_support := [vars, funcs, eids])]
+  (fmap_as_finite_support := [vars, funcs, eids])
+  (words_as_type_indexed_bitvec)]
 def compileProgExactHOLW {width : Nat} [NeZero width]
     (context : PanToCrepContextExact width) :
     Flapjack.Pancake.PanLang.ProgHOL width → CrepProgHOL width
@@ -740,6 +748,58 @@ decreasing_by
   all_goals
     simp_wf
     omega
+
+/-! Exact HOL `comp_func_def` (`pan_to_crepScript.sml:337-343`). The four
+curried arguments, the `make_vmap` result, the parameter-shape maximum, the
+`mk_ctxt` field order, and recursive `compile` call follow the source
+definition directly. The two input maps are the canonical finite-support
+rendering of HOL `fs` and `eids`; `BitVec width` with `[NeZero width]` is the
+usual positive type-indexed HOL word translation. Names and syntax stay on the
+exact `MlS`/`ShapeHOL`/`ProgHOL`/`CrepProgHOL` carriers. The parser-backed
+`compileProgTopHOLProductionExact` route calls this tagged wrapper; its
+byte-ranged production context/parameter bridge and output-preservation proof
+are recorded beside that route in `CompileProg.lean` under
+`flapjack-pxn.18.3.5.8.25`. -/
+@[hol "cakeml/pancake/pan_to_crepScript.sml" "comp_func_def"
+  (fmap_as_finite_support_relation := [fs, eids])
+  (words_as_type_indexed_bitvec)]
+def compFuncExactHOLW {width : Nat} [NeZero width]
+    (fs : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ShapeHOL))
+    (eids : HolFiniteMapExact MlS (BitVec width))
+    (params : List (MlS × ShapeHOL))
+    (body : Flapjack.Pancake.PanLang.ProgHOL width) : CrepProgHOL width :=
+  let vmap := panToCrepMakeVmapHOLExact params
+  let shapes := params.map Prod.snd
+  let vmax := sizeOfShapeHOL (.comb shapes) - 1
+  compileProgExactHOLW (mkCtxtExactHOL vmap fs vmax eids) body
+
+/-! ### Exact declaration-only `compile_to_crep_def`
+
+This is the HOL pan_to_crepScript.sml:383-391 definition over
+`List (DeclHOL width)`: project functions in source order, build the function
+and exception-code maps from the original declarations, then emit one
+`(name, crep_vars params, comp params body)` triple per projected function.
+`makeFuncsExactHOL`, `getEidsFromDeclsHOL`, `functionsHOL`, `crepVarsHOL`, and
+`compFuncExactHOLW` are the already reviewed tagged dependencies. The
+finite-map values are local intermediates and do not occur in this
+declaration's input or output type, so no finite-map carrier qualifier applies
+here; their individual definition tags record their own result translations.
+The only outer type translation is HOL's positive type-indexed word to
+`BitVec width`. The production String-backed `compileToCrepHOL` route is still
+separate; routing the executable compiler through this exact declaration-only
+definition remains tracked by `flapjack-pxn.18.3.1.3`, and the exact
+`compile_prog` boundary by `flapjack-4ac.2.20.2`. -/
+@[hol "cakeml/pancake/pan_to_crepScript.sml" "compile_to_crep_def"
+  (words_as_type_indexed_bitvec)]
+def compileToCrepExactHOLW {width : Nat} [NeZero width]
+    (declarations : List (DeclHOL width)) :
+    List (MlS × List Nat × CrepProgHOL width) :=
+  let prog := functionsHOL declarations
+  let fs := makeFuncsExactHOL prog
+  let eids := getEidsFromDeclsHOL declarations
+  prog.map (fun entry =>
+    (entry.1, crepVarsHOL entry.2.1,
+      compFuncExactHOLW fs eids entry.2.1 entry.2.2.1))
 
 
 /-! ### Codec helper lemmas for the `compile_exp` production bridge

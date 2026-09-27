@@ -17,6 +17,7 @@ import Flapjack.Pancake.Semantics.PanProps
 import Flapjack.Pancake.Semantics.PanSem.ValueHOL
 import Flapjack.Pancake.PanToCrep.Compile
 import Flapjack.Pancake.PanToCrep.CompileProg
+import Flapjack.Pancake.PanToCrep.CompileExact
 import Flapjack.Pancake.PanToCrep.ContextExact
 import Flapjack.Pancake.Proofs.PanToCrep.CompileExactVarSupport
 import Flapjack.Pancake.Proofs.PanToCrep.CompileExpVmax
@@ -635,7 +636,8 @@ theorem memCompFieldHOLExact {width : Nat} [NeZero width]
     word literal is `CrepExpHOL.const (0 : BitVec width)`. This is the exact
     counterpart of the production analogue `compileField_mem_or_zero`, which
     stays untagged. -/
-@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "mem_comp_field_lem"]
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "mem_comp_field_lem"
+  (words_as_type_indexed_bitvec)]
 theorem memCompFieldHOLExact_or_zero {width : Nat} [NeZero width]
     (index : Nat) (shapes : List Flapjack.Pancake.PanLang.ShapeHOL)
     (expressions : List (CrepExpHOL width)) (expression : CrepExpHOL width)
@@ -2867,6 +2869,22 @@ theorem firstCompileToCrepAllDistinct [NeZero width]
       fun (name, _, _) => name).Nodup := by
   simpa [compileToCrepHOL, List.map_map, Function.comp_def] using hdistinct
 
+/-- Exact-carrier port of HOL `first_compile_to_crep_all_distinct`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:4566-4573`). The input
+    and output have the exact `DeclHOL`/`CrepProgHOL` carriers; the premise and
+    conclusion are the HOL `ALL_DISTINCT (MAP FST ...)` clauses rendered as
+    `List.Nodup`. The only representation qualifier is the standard positive
+    type-indexed word to `BitVec width` translation. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml"
+  "first_compile_to_crep_all_distinct" (words_as_type_indexed_bitvec)]
+theorem firstCompileToCrepAllDistinctExact {width : Nat} [NeZero width]
+    (declarations : List (Flapjack.Pancake.PanLang.DeclHOL width))
+    (hdistinct :
+      (Flapjack.Pancake.PanLang.functionsHOL declarations).map Prod.fst |>.Nodup) :
+    ((show List (Flapjack.Pancake.PanLang.MlS × List Nat × CrepProgHOL width) from
+        compileToCrepExactHOLW declarations).map Prod.fst).Nodup := by
+  simpa [compileToCrepExactHOLW, List.map_map, Function.comp_def] using hdistinct
+
 /-- `compileToCrepHOL` is the source function list mapped through `comp_func`
     and `crep_vars`, with the context built from the same declaration list. -/
 theorem compileToCrepHOL_eq_map
@@ -4800,7 +4818,12 @@ record carrier is the reviewed exact `PanToCrepContextExact`; the
 `fmap_as_finite_support` qualifier records only the canonical finite-support
 representation of its three HOL finite-map fields. Direct HOL-EVAL rows are in
 `scripts/hol-probes/ctxt_fc_probe.out` and replayed by
-`Flapjack.Test.PanToCrepContextExactParity`. -/
+`Flapjack.Test.PanToCrepContextExactParity`.
+
+`updateList` is explicitly instantiated with Lean's generic
+`BEqOfDecidableEq`/`LawfulBEq` pair for `MlS`. This keeps the definition's
+equality dictionary tied to HOL `=` independently of the named but equivalent
+`MlS` instances imported through the production inline-pass dependency. -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "ctxt_fc_def"
   (fmap_as_finite_support := [vars, funcs, eids])]
 def ctxtFcExactHOL {width : Nat} [NeZero width]
@@ -4808,7 +4831,11 @@ def ctxtFcExactHOL {width : Nat} [NeZero width]
     (em : HolFiniteMapExact MlS (BitVec width))
     (vs : List MlS) (shs : List ShapeHOL) (ns : List Nat) :
     PanToCrepContextExact width where
-  vars := HolFiniteMapExact.updateList
+  vars := @HolFiniteMapExact.updateList MlS (ShapeHOL × List Nat)
+    (@instBEqOfDecidableEq MlS
+      Flapjack.Basis.Pure.MlString.instDecidableEqMlString)
+    (@instLawfulBEq MlS
+      Flapjack.Basis.Pure.MlString.instDecidableEqMlString)
     (HolFiniteMapExact.empty : HolFiniteMapExact MlS (ShapeHOL × List Nat))
     (vs.zip (shs.zip (withShapeHOL shs ns)))
   funcs := cvs

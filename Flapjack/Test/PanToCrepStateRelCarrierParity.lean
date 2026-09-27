@@ -158,6 +158,28 @@ private theorem loadCaseLocalsRel :
   simp [panToCrepLocalsRelFiniteExact, noOverlapFiniteExact,
     ctxtMaxFiniteExact, loadCaseSource, loadCaseContext, HolFiniteMapExact.empty]
 
+/-- Kernel regression for the full-list HOL `eval_map_comp_exp_flat_eq` port.
+    Two constants exercise the source-list induction and concatenation of their
+    compiled target expressions under exact source/target states and relations. -/
+private def flatCaseExpressions : List (ExpHOL 64) :=
+  [.const (3 : BitVec 64), .const (5 : BitVec 64)]
+
+private def flatCaseValues : List (ValueHOL 64) :=
+  [.val (.word (3 : BitVec 64)), .val (.word (5 : BitVec 64))]
+
+example :
+    (flatCaseExpressions.flatMap (fun expression =>
+      (compileExpExactHOLW loadCaseContext expression).1)).map
+        (evalCrepSemHOLExp loadCaseTarget) =
+      (flatCaseValues.flatMap flattenHOL).map some := by
+  apply evalMapCompExpFlatEqHOL loadCaseSource loadCaseContext loadCaseTarget
+    flatCaseExpressions flatCaseValues
+  · rfl
+  · exact loadCaseStateRel
+  · exact loadCaseCodeRel
+  · exact loadCaseLocalsRel
+  · simp [flatCaseExpressions, localisedExpHOL, everyExpHOL]
+
 private theorem loadCaseAddressIH :
     ∀ (subValue : ValueHOL 64) (subExpressions : List (CrepExpHOL 64))
         (subShape : ShapeHOL),
@@ -581,6 +603,46 @@ private def lookupCtxtGuard : Bool :=
 private def ctxtMaxElLeqGuard : Bool :=
   match lookupCtxtContext.vars.lookup lookupCtxtName with
   | some (.one, [slot]) => decide (slot ≤ lookupCtxtContext.vmax)
+  | _ => false
+
+/-- Kernel-checked row: the exact `local_rel_gt_vmax_preserved` port applies to
+    any related exact carrier triple; updating the target at a slot strictly
+    above `vmax` preserves `locals_rel`. -/
+example {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width)
+    (sourceLocals : HolFiniteMapExact MlS (ValueHOL width))
+    (targetLocals : HolFiniteMapExact Nat (HolWordLab width))
+    (slot : Nat) (newValue : HolWordLab width)
+    (hrel : panToCrepLocalsRelFiniteExact context sourceLocals targetLocals)
+    (habove : context.vmax < slot) :
+    panToCrepLocalsRelFiniteExact context sourceLocals
+      (targetLocals.updateEq (slot, newValue)) :=
+  panToCrepLocalRelGtVmaxPreservedFiniteExact context sourceLocals targetLocals
+    slot newValue hrel habove
+
+/-- Concrete exact-carrier instance: the one-slot `lookupCtxtContext` fixture
+    (`vars` maps `x` to `(One, [0])`, `vmax = 0`) stays related after the target
+    is updated at the fresh slot `1`, and the new binding is observable. -/
+private theorem localRelGtVmaxFixture :
+    panToCrepLocalsRelFiniteExact lookupCtxtContext lookupCtxtSourceLocals
+      (lookupCtxtTargetLocals.updateEq
+        (1, HolWordLab.word (7 : BitVec 8))) ∧
+    (lookupCtxtTargetLocals.updateEq
+        (1, HolWordLab.word (7 : BitVec 8))).lookup 1 =
+      some (HolWordLab.word (7 : BitVec 8)) := by
+  refine ⟨panToCrepLocalRelGtVmaxPreservedFiniteExact lookupCtxtContext
+    lookupCtxtSourceLocals lookupCtxtTargetLocals 1
+    (HolWordLab.word (7 : BitVec 8)) lookupCtxtLocalsRel (by decide), ?_⟩
+  simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL]
+
+private def localRelGtVmaxGuard : Bool :=
+  match lookupCtxtContext.vars.lookup lookupCtxtName with
+  | some (.one, [_slot]) =>
+      decide (lookupCtxtContext.vmax < 1) &&
+        (match (lookupCtxtTargetLocals.updateEq
+            (1, HolWordLab.word (7 : BitVec 8))).lookup 1 with
+         | some (.word value) => value == (7 : BitVec 8)
+         | _ => false)
   | _ => false
 
 /-! Exact `compile_exp_val_rel` `Var Local` case

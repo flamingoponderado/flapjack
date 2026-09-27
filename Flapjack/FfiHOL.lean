@@ -196,6 +196,35 @@ theorem callFFIHOL_ret {σ : Type u} (state : HolFfiState σ) (name : HolFfiName
   unfold callFFIHOL
   rw [if_neg hne, h]
 
+/-- Flapjack-specific call lemma (no standalone HOL declaration): when a
+    successful non-identity FFI call leaves the observable event log
+    unchanged, it also leaves the complete FFI state unchanged. A successful
+    non-identity call appends exactly one event, so the unchanged-log case can
+    only be the empty-name identity call. -/
+theorem callFFIHOL_ret_ffi_eq_of_ioEvents_eq {σ : Type u}
+    (state next : HolFfiState σ) (name : HolFfiName)
+    (configuration bytes nextBytes : List (BitVec 8))
+    (hcall : callFFIHOL state name configuration bytes = .ret next nextBytes)
+    (hevents : next.ioEvents = state.ioEvents) :
+    next = state := by
+  by_cases hname : name = .extCall (Flapjack.Basis.Pure.MlString.MlString.implode [])
+  · subst name
+    simp [callFFIHOL] at hcall
+    rcases hcall with ⟨hnext, _⟩
+    exact hnext.symm
+  · unfold callFFIHOL at hcall
+    rw [if_neg hname] at hcall
+    cases horacle : state.oracle name state.ffiState configuration bytes with
+    | final outcome => simp [horacle] at hcall
+    | ret hostState returnedBytes =>
+        by_cases hlength : returnedBytes.length = bytes.length
+        · simp [horacle, hlength] at hcall
+          rcases hcall with ⟨hnext, _⟩
+          rw [← hnext] at hevents
+          have hlengthEvents := congrArg List.length hevents
+          simp at hlengthEvents
+        · simp [horacle, hlength] at hcall
+
 /-! A single successful exact FFI call cannot discard an earlier observable
     trace.  This is the local transition lemma used when lifting HOL
     `evaluate_io_events_mono` (`cakeml/pancake/semantics/panPropsScript.sml:856`)

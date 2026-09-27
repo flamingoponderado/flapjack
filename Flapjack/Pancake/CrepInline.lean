@@ -1,4 +1,5 @@
 import Flapjack.Pancake.CrepLang
+import Flapjack.Pancake.CrepLang.Prog
 
 /-!
 Executable support for the Crepe inlining pass.
@@ -141,6 +142,16 @@ inductive CrepEarlyExit where
   | loopExit
   deriving DecidableEq, Repr
 
+/-- Exact port of `early_exit` from
+    `cakeml/pancake/crep_inlineScript.sml`: its three constructors are
+    `Exn`, `Ret`, and `Loop_exit`, in HOL order. -/
+@[hol "cakeml/pancake/crep_inlineScript.sml" "early_exit"]
+inductive CrepEarlyExitHOL where
+  | exception
+  | return
+  | loopExit
+  deriving DecidableEq, Repr
+
 def crepMergeExit : Option CrepEarlyExit → Option CrepEarlyExit → Option CrepEarlyExit
   | some .return, second => second
   | first, some .return => first
@@ -149,6 +160,109 @@ def crepMergeExit : Option CrepEarlyExit → Option CrepEarlyExit → Option Cre
   | some .loopExit, second => second
   | first, some .loopExit => first
   | none, none => none
+
+/-- Helper for the HOL-carrier unreachability pass. The clause priority is the
+    same as HOL's nested case expression in `unreach_elim_def`: Ret cases are
+    tested first, then Exn, then Loop_exit. -/
+def crepMergeExitHOL : Option CrepEarlyExitHOL → Option CrepEarlyExitHOL →
+    Option CrepEarlyExitHOL
+  | some .return, second => second
+  | first, some .return => first
+  | some .exception, second => second
+  | first, some .exception => first
+  | some .loopExit, second => second
+  | first, some .loopExit => first
+  | none, none => none
+
+/-- Exact port of Cake `unreach_elim_def`
+    (`cakeml/pancake/crep_inlineScript.sml:90-135`) over the exact
+    width-indexed `CrepProgHOL` carrier. Source review compared every clause:
+    Return/Raise/Break/Continue report their exit; Seq skips its second
+    component when the first reports an exit; Dec propagates the body's exit;
+    If transforms both branches and merges exits with HOL's return, exception,
+    then loop-exit priority; While always reports `NONE`; Call with no return
+    info reports Ret, a handler-free returning Call reports no exit, and a
+    Call with a handler transforms the handler but discards its exit; all
+    other constructors are unchanged with no exit. -/
+@[hol "cakeml/pancake/crep_inlineScript.sml" "unreach_elim_def"
+  (words_as_type_indexed_bitvec)]
+def unreachElimHOLExact {width : Nat} [NeZero width] :
+    CrepProgHOL width → CrepProgHOL width × Option CrepEarlyExitHOL
+  | .return values => (.return values, some .return)
+  | .raise exception => (.raise exception, some .exception)
+  | .break label => (.break label, some .loopExit)
+  | .continue label => (.continue label, some .loopExit)
+  | .seq first second =>
+      let (first', firstExit) := unreachElimHOLExact first
+      if firstExit.isSome then
+        (first', firstExit)
+      else
+        let (second', secondExit) := unreachElimHOLExact second
+        (.seq first' second', secondExit)
+  | .dec name value body =>
+      let (body', bodyExit) := unreachElimHOLExact body
+      (.dec name value body', bodyExit)
+  | .ite condition thenBranch elseBranch =>
+      let (then', thenExit) := unreachElimHOLExact thenBranch
+      let (else', elseExit) := unreachElimHOLExact elseBranch
+      (.ite condition then' else', crepMergeExitHOL thenExit elseExit)
+  | .while condition body =>
+      let (body', _) := unreachElimHOLExact body
+      (.while condition body', none)
+  | .call none name arguments =>
+      (.call none name arguments, some .return)
+  | .call (some (names, none)) name arguments =>
+      (.call (some (names, none)) name arguments, none)
+  | .call (some (names, some (handler, body))) name arguments =>
+      let (body', _) := unreachElimHOLExact body
+      (.call (some (names, some (handler, body'))) name arguments, none)
+  | program => (program, none)
+
+/-- Exact width-indexed port of Cake `var_prog_def`
+    (`cakeml/pancake/crep_inlineScript.sml:8-33`). The source clauses are
+    preserved in order: declaration/assignment destinations precede expression
+    occurrences; call argument occurrences precede return destinations and
+    handler occurrences; `StoreGlob` contributes only expression variables;
+    ExtCall lists all four variable operands; ShMem lists its name then address;
+    Primitive lists destinations then operands. Exception labels and function
+    names are not variable occurrences. -/
+@[hol "cakeml/pancake/crep_inlineScript.sml" "var_prog_def"
+  (words_as_type_indexed_bitvec)]
+def crepVarProgHOLExact {width : Nat} [NeZero width] :
+    CrepProgHOL width → List Nat
+  | .dec name value body =>
+      [name] ++ crepExpVarsHOL value ++ crepVarProgHOLExact body
+  | .assign name value => [name] ++ crepExpVarsHOL value
+  | .primitive names _ arguments => names ++ arguments
+  | .store address value | .store32 address value | .storeByte address value =>
+      crepExpVarsHOL address ++ crepExpVarsHOL value
+  | .storeGlob _ value => crepExpVarsHOL value
+  | .seq first second => crepVarProgHOLExact first ++ crepVarProgHOLExact second
+  | .ite condition thenBranch elseBranch =>
+      crepExpVarsHOL condition ++ crepVarProgHOLExact thenBranch ++
+        crepVarProgHOLExact elseBranch
+  | .while condition body => crepExpVarsHOL condition ++ crepVarProgHOLExact body
+  | .call none _ arguments => arguments.flatMap crepExpVarsHOL
+  | .call (some (names, none)) _ arguments =>
+      arguments.flatMap crepExpVarsHOL ++ names
+  | .call (some (names, some (_, handler))) _ arguments =>
+      arguments.flatMap crepExpVarsHOL ++ names ++ crepVarProgHOLExact handler
+  | .extCall _ configuration configurationLength array arrayLength =>
+      [configuration, configurationLength, array, arrayLength]
+  | .return values => values.flatMap crepExpVarsHOL
+  | .shMem _ name address => name :: crepExpVarsHOL address
+  | .skip | .break _ | .continue _ | .raise _ | .tick => []
+termination_by program => sizeOf program
+decreasing_by
+  all_goals first | decreasing_trivial | simp_wf
+
+/-- Exact port of Cake `vmax_prog_def` (`crep_inlineScript.sml:36-38`),
+    using the source `MAX_LIST` empty-list convention of zero. -/
+@[hol "cakeml/pancake/crep_inlineScript.sml" "vmax_prog_def"
+  (words_as_type_indexed_bitvec)]
+def crepVmaxProgHOLExact {width : Nat} [NeZero width]
+    (program : CrepProgHOL width) : Nat :=
+  (crepVarProgHOLExact program).foldl max 0
 
 /-- Argument loading for inlining.  Calls the generic `nestedDecs`; the tagged
     width-indexed `nestedDecsW` is a definitional delegation of it, so this

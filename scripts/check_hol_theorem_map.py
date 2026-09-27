@@ -38,6 +38,15 @@ DATA_DECLARATION_RE = re.compile(
 # inventory small and source-reviewed; a mismatch row is not generated merely
 # because an arbitrary Lean def happens to mention a HOL name.
 WITHDRAWN_HOL_DECLARATIONS = {
+    ("Flapjack/Pancake/Proofs/PanGlobals.lean", "goodResHOL"): (
+        "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+        "good_res_def",
+        "flapjack-ds8 (bead flapjack-ikjm.2): HOL good_res_def classifies the word-parametrized "
+        "panSem$result; the Lean declaration fixes the carrier to the width-indexed inductive "
+        "PanSemResultExact width.  The required (words_as_type_indexed_bitvec) qualifier cannot be "
+        "validated for an inductive carrier, so the @[hol] tag was withdrawn pending a checker "
+        "extension for reviewed width-indexed inductive carriers."
+    ),
     ("Flapjack/Compiler/Encoders/Asm.lean", "asmRegOk"): (
         "cakeml/compiler/encoders/asm/asmScript.sml",
         "reg_ok_def",
@@ -321,20 +330,27 @@ DEFINITION_RE = re.compile(
     r"(?:def|abbrev|opaque|theorem|lemma)\s+([^\s:({\[]+)"
 )
 DOCUMENTED_MISMATCHES = {
-    ("Flapjack/Pancake/Semantics/LoopSemStateExact.lean", "LoopSemStateFiniteExact"): (
-        "cakeml/pancake/semantics/loopSemScript.sml",
-        "state",
-        "flapjack-ds10 (bead flapjack-jlj3.1, PR #1166 review item 3): HOL loopSem$state "
-        "locals/code are sptree$num_map, not |-> finite maps, so the fmap_as_finite_support "
-        "qualifier overclaimed the reviewed translation. Tag withdrawn; faithful sptree "
-        "carrier tracked by flapjack-jlj3.1.1.",
+    ("Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean", "evalCrepSemHOLProgExact_seq_fixClockFree"): (
+        "cakeml/pancake/semantics/crepSemScript.sml",
+        "evaluate_def",
+        "Coordinator review PR #1168: the local fix-clock-free Seq equation is valid, but "
+        "whole-evaluator agreement between evalCrepSemHOLProgExact and HOL evaluate has not "
+        "been reviewed across Call, domain stamping, and FFI. Tag withdrawn pending that review.",
     ),
-    ("Flapjack/Pancake/Semantics/LoopSemStateExact.lean", "getVarImm"): (
-        "cakeml/pancake/semantics/loopSemScript.sml",
-        "get_var_imm_def",
-        "flapjack-ds10 (bead flapjack-jlj3.1, PR #1166 review item 3): HOL locals is "
-        "sptree$num_map, not |->, so the fmap_as_finite_support qualifier overclaimed the "
-        "reviewed translation. Tag withdrawn; faithful sptree carrier tracked by flapjack-jlj3.1.1.",
+    ("Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean", "evalCrepSemHOLProgExact_while_fixClockFree"): (
+        "cakeml/pancake/semantics/crepSemScript.sml",
+        "evaluate_def",
+        "Coordinator review PR #1168: the local fix-clock-free While equation is valid, but "
+        "whole-evaluator agreement between evalCrepSemHOLProgExact and HOL evaluate has not "
+        "been reviewed across Call, domain stamping, and FFI. Tag withdrawn pending that review.",
+    ),
+    ("Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean", "evalCrepSemHOLProgExact_skip"): (
+        "cakeml/pancake/semantics/crepSemScript.sml",
+        "evaluate_def",
+        "Coordinator review HOLD (flapjack-l60u, PR #1167): the local Skip equation is valid, "
+        "but full agreement between evalCrepSemHOLProgExact and HOL evaluate across every "
+        "constructor, including FFI, has not been source-reviewed. Tag withdrawn pending "
+        "that evaluator review.",
     ),
     ("Flapjack/Pancake/Proofs/PanSimp.lean", "collectPanValueStructs_panSimpDecls"): (
         "cakeml/pancake/proofs/pan_simpProofScript.sml",
@@ -1525,9 +1541,11 @@ VALID_STATUSES = {
     "reviewed_fmap_as_finite_support",
     "reviewed_fmap_as_finite_support_result",
     "reviewed_fmap_as_finite_support_relation",
+    "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_equalities",
     "reviewed_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
     "pending_statement_review",
     "documented_mismatch",
     "no_hol_reference_pending_classification",
@@ -1777,7 +1795,6 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         ("Flapjack/Pancake/Proofs/PanToCrep.lean", "firstCompileProgAllDistinct"),
         ("Flapjack/Pancake/Proofs/PanGlobals.lean", "map_pick_up_first"),
         ("Flapjack/Pancake/Proofs/PanGlobals.lean", "tuple_4_o"),
-        ("Flapjack/Pancake/Proofs/PanGlobals.lean", "goodResHOL"),
         ("Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean", "convertResHOL"),
         ("Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean", "convertResHOL_eqCase1"),
         ("Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean", "isContResHOL"),
@@ -1829,6 +1846,7 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         ("Flapjack/Pancake/Semantics/PanProps.lean", "optMmapEqSomeHelper"),
         ("Flapjack/Pancake/PanLang/Decl.lean", "exceptionsHOL"),
         ("Flapjack/Pancake/PanLang/Exp.lean", "varExpHOL"),
+        ("Flapjack/Pancake/PanLang/Exp.lean", "globalVarExpHOL_spec"),
         ("Flapjack/Pancake/PanLang/Exp.lean", "memImpExpSizeHOL"),
         ("Flapjack/Pancake/PanToCrep/Compile.lean", "crepVarsHOL"),
         ("Flapjack/Pancake/PanToCrep/Compile.lean", "loadMemOpHOL"),
@@ -2032,17 +2050,40 @@ def validate_inventory(
         combined_words_status = (
             "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec"
         )
+        combined_relation_words_status = (
+            "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec"
+        )
         if words_bitvec and fmap_fields and status != combined_words_status:
             errors.append(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support combined with "
                 "words_as_type_indexed_bitvec requires the combined review status "
                 "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec"
             )
+        if words_bitvec and fmap_relation and status != combined_relation_words_status:
+            errors.append(
+                f"{key[0]}:{key[1]}: fmap_as_finite_support_relation combined with "
+                "words_as_type_indexed_bitvec requires the combined review status "
+                "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec"
+            )
         if status == combined_words_status and not (words_bitvec and fmap_fields):
             errors.append(
                 f"{key[0]}:{key[1]}: "
                 "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec needs "
                 "both the fmap_as_finite_support and words_as_type_indexed_bitvec @[hol] qualifiers"
+            )
+        if words_bitvec and fmap_relation and status != combined_relation_words_status:
+            errors.append(
+                f"{key[0]}:{key[1]}: fmap_as_finite_support_relation combined with "
+                "words_as_type_indexed_bitvec requires the combined review status "
+                "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec"
+            )
+        if status == combined_relation_words_status and not (
+            words_bitvec and fmap_relation
+        ):
+            errors.append(
+                f"{key[0]}:{key[1]}: "
+                "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec needs "
+                "both the fmap_as_finite_support_relation and words_as_type_indexed_bitvec @[hol] qualifiers"
             )
         if words_bitvec and status == "reviewed_exact":
             errors.append(
@@ -2052,11 +2093,12 @@ def validate_inventory(
         if words_bitvec and status not in {
             "reviewed_words_as_type_indexed_bitvec",
             combined_words_status,
+            combined_relation_words_status,
         }:
             errors.append(
                 f"{key[0]}:{key[1]}: words_as_type_indexed_bitvec @[hol] tag needs a reviewed "
                 "source classification (reviewed_words_as_type_indexed_bitvec, or the combined "
-                "status alongside fmap_as_finite_support)"
+                "status alongside fmap_as_finite_support / fmap_as_finite_support_relation)"
             )
         if not words_bitvec and status == "reviewed_words_as_type_indexed_bitvec":
             errors.append(
@@ -2073,10 +2115,14 @@ def validate_inventory(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support_relation @[hol] tag cannot have "
                 "reviewed_exact status; use reviewed_fmap_as_finite_support_relation after source comparison"
             )
-        if fmap_relation and status != "reviewed_fmap_as_finite_support_relation":
+        if fmap_relation and status not in {
+            "reviewed_fmap_as_finite_support_relation",
+            combined_relation_words_status,
+        }:
             errors.append(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support_relation @[hol] tag needs a reviewed "
-                "source classification (reviewed_fmap_as_finite_support_relation)"
+                "source classification (reviewed_fmap_as_finite_support_relation, or the combined "
+                "status with words_as_type_indexed_bitvec)"
             )
         if not fmap_relation and status == "reviewed_fmap_as_finite_support_relation":
             errors.append(
@@ -2179,7 +2225,7 @@ def validate_inventory(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support @[hol] tag cannot have reviewed_exact "
                 "status; use reviewed_fmap_as_finite_support after source comparison"
             )
-        if fmap_fields and status != "reviewed_fmap_as_finite_support" and status != combined_words_status:
+        if fmap_fields and status != "reviewed_fmap_as_finite_support" and status != combined_words_status and status != combined_relation_words_status:
             errors.append(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support @[hol] tag needs a reviewed "
                 "source classification (reviewed_fmap_as_finite_support, or the combined "

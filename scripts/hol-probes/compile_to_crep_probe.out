@@ -39,6 +39,10 @@ handled_pair=[(«f»,[],
                 (Seq (Assign 1 (LoadGlob 1w)) Skip)) Skip))) «f» [])]
 duplicate_exceptions=[(«f»,[],Seq (Dec 1 (Const 7w) (Seq (StoreGlob 0w (Var 1)) Skip)) (Raise 0w));
  («g»,[],Seq (Dec 1 (Const 9w) (Seq (StoreGlob 0w (Var 1)) Skip)) (Raise 1w))]
+duplicate_function_names=[(«f»,[],Skip); («f»,[],Skip);
+ («g»,[],
+  Dec 1 (Const 0w) (Dec 2 (Const 0w) (Call (SOME ([1; 2],NONE)) «f» [])))]
+distinct_function_names=[(«f»,[],Skip); («g»,[],Skip)]
 crep_vars_empty=[]
 crep_vars_nested=[0; 1; 2; 3]
 mk_ctxt_fields=<|vars := FEMPTY⟨«x» ↦ (One,[0])⟩; funcs := FEMPTY⟨«f» ↦ ([(«x»,One)],One)⟩;

@@ -1,0 +1,9 @@
+has_return_return=T
+has_return_call_none=T
+has_return_call_dest=F
+has_return_call_handler=T
+has_return_dec=T
+has_return_seq=T
+has_return_if=T
+has_return_while=T
+has_return_default=F

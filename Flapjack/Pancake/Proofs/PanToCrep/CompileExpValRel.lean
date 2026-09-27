@@ -22,10 +22,20 @@ This module preserves that shape over the exact carriers `ExpHOL width`,
 `CrepSemHOLState`, and `PanToCrepContextExact`, with the exact finite-support
 source evaluator `evalHOLFinite` and target evaluator `evalCrepSemHOLExp`.
 
-The full theorem is tracked by `flapjack-4ac.5.81`; this slice records the exact
-statement and proves its `Const` case. It is Flapjack proof infrastructure: HOL
-proves the cases inside `compile_exp_val_rel` and does not export a standalone
-`compile_exp_val_rel` case, so nothing here carries an `@[hol]` tag.
+The full theorem is assembled at the end of this module as `compileExpValRelHOL`
+(bead `flapjack-4ac.5.81`), the exact target of HOL `compile_exp_val_rel`
+(`cakeml/pancake/proofs/pan_to_crepProofScript.sml:130`). It carries the
+combined `(fmap_as_finite_support_relation := [...])` +
+`(words_as_type_indexed_bitvec)` qualifier (bead `flapjack-4ac.5.81.14`): the
+HOL theorem is polymorphic in the word dimension (`'a word`) and the FFI-state
+type (the `('a,'b) state` parameter), while this rendering fixes the positive
+width `BitVec width` (`[NeZero width]`) and the universe-0 host `σ : Type`, and
+represents the HOL state/context maps by the finite-support carriers
+`PanSemStateFiniteExact` / `CrepSemHOLState` / `PanToCrepContextExact`. The
+relation list records exactly the carrier fields the three relation hypotheses
+traverse; the same-module per-carrier witnesses below validate those carriers.
+The individual `compileExpValRelHOL_<constructor>` case lemmas are Flapjack
+proof infrastructure and are untagged.
 -/
 
 namespace Flapjack
@@ -40,9 +50,9 @@ open Flapjack.Pancake.PanLang
     `codeRelExactHOLW`/`panToCrepLocalsRelFiniteExact`, and `localised_exp` is
     `localisedExpHOL`.
 
-    This is the target of the full port (`flapjack-4ac.5.81`); the constructor
-    case below does not complete it. -/
-def compileExpValRelHOL {width : Nat} {σ : Type} [NeZero width]
+    This is the exact-carrier statement assembled by `compileExpValRelHOL` below
+    (bead `flapjack-4ac.5.81`). -/
+def compileExpValRelHOLProp {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ)
     (context : PanToCrepContextExact width)
     (targetState : CrepSemHOLState width σ)
@@ -1689,6 +1699,265 @@ theorem compileExpValRelHOL_panop {width : Nat} {σ : Type} [NeZero width]
           | true => exact absurd hb hall
         simp only [hvals, hfalse, Bool.false_eq_true, if_false] at heval
         exact absurd heval.symm (Option.some_ne_none value)
+
+/- Same-module canonical relation witnesses for the combined qualifier on
+   `compileExpValRelHOL`. Declared in a fresh namespace so they do not clash
+   with the identically named witnesses in the imported state-relation modules;
+   the reference checker matches the unqualified name within this module. -/
+namespace CompileExpValRelRelationWitnesses
+
+/-- Same-module canonical relation witness for the imported `PanSemStateFiniteExact`
+    carrier, whose `globals`, `code`, and `locals` fields are traversed by the
+    `compile_exp_val_rel` hypotheses (`state_rel`, `code_rel`, `locals_rel`). It
+    forwards the canonical `toExact`/`ofExact` roundtrip of the finite-support
+    carrier with its broad `PanSemStateExact` counterpart. Flapjack
+    representation infrastructure only. -/
+theorem holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact
+    {width : Nat} {σ : Type} [NeZero width] :
+    (∀ (state : PanSemStateExact width σ) (h : state.FiniteSupport),
+        (PanSemStateFiniteExact.ofExact state h).toExact = state) ∧
+    (∀ state : PanSemStateFiniteExact width σ,
+        PanSemStateFiniteExact.ofExact state.toExact state.toExact_finiteSupport = state) :=
+  PanSemStateFiniteExact.holFmapAsFiniteSupportWitness
+
+/-- Same-module canonical relation witness for the imported `CrepSemHOLState`
+    carrier, whose `code` and `locals` fields are traversed by
+    `compile_exp_val_rel`'s `code_rel`/`locals_rel` hypotheses. It forwards the
+    canonical `toBroad`/`ofBroad` roundtrip with the broad `CrepSemBroadState`
+    counterpart. Flapjack representation infrastructure only. -/
+theorem holFmapAsFiniteSupportRelationWitness_CrepSemHOLState
+    {width : Nat} [NeZero width] {σ : Type} (state : CrepSemHOLState width σ) :
+    CrepSemBroadState.ofBroad state.toBroad state.toBroad_finiteSupport = state :=
+  CrepSemBroadState.ofBroad_toBroad state
+
+/-- Same-module canonical relation witness for the imported
+    `PanToCrepContextExact` carrier, whose `vars`, `funcs`, and `eids` fields are
+    traversed by `compile_exp_val_rel`'s `code_rel`/`locals_rel` hypotheses. It
+    forwards the canonical `toBroad`/`ofBroad` roundtrip with the broad
+    `PanToCrepContextBroad` counterpart. Flapjack representation infrastructure
+    only. -/
+theorem holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact
+    {width : Nat} [NeZero width] (context : PanToCrepContextExact width) :
+    PanToCrepContextExact.ofBroad (PanToCrepContextExact.toBroad context) = context :=
+  PanToCrepContextExact.holFmapAsFiniteSupportWitness context
+
+end CompileExpValRelRelationWitnesses
+
+/-- Assembled exact-carrier counterpart of HOL `compile_exp_val_rel`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:130`): the full
+    expression-evaluation / compilation correspondence over the exact
+    `PanSemStateFiniteExact` / `CrepSemHOLState` carriers.  Built by structural
+    recursion on the expression, dispatching every constructor to its
+    source-reviewed case lemma.
+
+    Clause-for-clause comparison with the HOL statement: the six premises
+    (`panSem$eval s e = SOME v`, `state_rel s t`, `code_rel ct s.code t.code`,
+    `locals_rel ct s.locals t.locals`, `localised_exp e`, `compile_exp ct e =
+    (es, sh)`) render as `state.evalHOLFinite expression = some value`,
+    `panToCrepStateRelFiniteExact state targetState`,
+    `codeRelExactHOLW context state.code targetState.code`,
+    `panToCrepLocalsRelFiniteExact context state.locals targetState.locals`,
+    `localisedExpHOL expression = true`, and `compileExpExactHOLW context
+    expression = (expressions, shape)`; the four conclusions render as
+    `expressions.map (evalCrepSemHOLExp targetState) = (flattenHOL value).map
+    some`, `expressions.length = sizeOfShapeHOL shape`, `shapeOfHOLExact value =
+    shape`, and `isWfShapeExactHOL ([] : StructContextExact) shape = true`. No
+    hypothesis, side condition, quantifier, or conclusion differs.
+
+    The combined `(fmap_as_finite_support_relation := [...])` +
+    `(words_as_type_indexed_bitvec)` qualifier records the only representation
+    differences: HOL is polymorphic in the word dimension (`'a word`) and the
+    FFI-state type, whereas this statement fixes the positive width
+    `BitVec width` (`[NeZero width]`) and the universe-0 host `σ : Type`; and the
+    HOL state/context maps are represented by the finite-support carriers. The
+    relation entries are exactly the fields the premises traverse: `state_rel`
+    reads `PanSemStateFiniteExact.globals`; `code_rel` reads
+    `PanSemStateFiniteExact.code` / `CrepSemHOLState.code` and
+    `PanToCrepContextExact.funcs`/`eids`; `locals_rel` reads
+    `PanToCrepContextExact.vars` and the `locals` fields of both states. Fields
+    read only inside the separately tagged and source-reviewed evaluators
+    (`state.eshapes` through `evalHOLFinite`, `targetState.globals` through
+    `evalCrepSemHOLExp`) occur in no relation hypothesis or conclusion and so are
+    not listed; the qualifier covers only the maps the relation premises
+    traverse. The same-module witnesses above validate the three carriers. No
+    cross-assistant agreement theorem is required for this tag. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "compile_exp_val_rel"
+  (fmap_as_finite_support_relation := [PanSemStateFiniteExact.globals,
+    PanSemStateFiniteExact.code, PanSemStateFiniteExact.locals,
+    CrepSemHOLState.code, CrepSemHOLState.locals,
+    PanToCrepContextExact.vars, PanToCrepContextExact.funcs,
+    PanToCrepContextExact.eids])
+  (words_as_type_indexed_bitvec)]
+theorem compileExpValRelHOL {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) [hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width σ) [ht : DecidablePred targetState.memaddrs] :
+    compileExpValRelHOLProp state context targetState := by
+  let Conclusion : ValueHOL width → List (CrepExpHOL width) → ShapeHOL → Prop :=
+    fun value expressions shape =>
+      expressions.map (evalCrepSemHOLExp targetState) = (flattenHOL value).map some ∧
+      expressions.length = sizeOfShapeHOL shape ∧
+      shapeOfHOLExact value = shape ∧
+      isWfShapeExactHOL ([] : StructContextExact) shape = true
+  let Case : ExpHOL width → Prop := fun e =>
+    ∀ (value : ValueHOL width) (expressions : List (CrepExpHOL width)) (shape : ShapeHOL),
+      state.evalHOLFinite e = some value →
+      panToCrepStateRelFiniteExact state targetState →
+      codeRelExactHOLW context state.code targetState.code →
+      panToCrepLocalsRelFiniteExact context state.locals targetState.locals →
+      localisedExpHOL e = true →
+      compileExpExactHOLW context e = (expressions, shape) →
+      Conclusion value expressions shape
+  exact ExpHOL.rec
+    (motive_1 := Case)
+    (motive_2 := fun l => ∀ e ∈ l, Case e)
+    (motive_3 := fun l => ∀ p ∈ l, Case p.2)
+    (motive_4 := fun p => Case p.2)
+    (fun word => by
+      intro value expressions shape heval _hstate _hcode _hlocals _hlocalised hcompile
+      exact compileExpValRelHOL_const state context targetState word value expressions shape
+        heval hcompile)
+    (fun kind name => by
+      intro value expressions shape heval _hstate _hcode hlocals hlocalised hcompile
+      cases kind
+      · exact compileExpValRelHOL_var_local state context targetState name value
+          expressions shape heval hlocals hcompile
+      · exact compileExpValRelHOL_var_global state context targetState name value
+          expressions shape heval hlocalised hcompile)
+    (fun fields ih => by
+      intro value expressions shape heval hstate hcode hlocals hlocalised hcompile
+      exact compileExpValRelHOL_rstruct state context targetState fields value expressions shape
+        (fun e he v es sh hev hl hc => ih e he v es sh hev hstate hcode hlocals hl hc)
+        heval hlocalised hcompile)
+    (fun index subExpression ih => by
+      intro value expressions shape heval hstate hcode hlocals hlocalised hcompile
+      exact compileExpValRelHOL_rfield state context targetState index subExpression value
+        expressions shape
+        (fun sv ses ssh hev hs hc hl hcomp => ih sv ses ssh hev hs hc hl hcomp)
+        heval hlocalised hstate hcode hlocals hcompile)
+    (fun name fields _ih => by
+      intro value expressions shape heval hstate _hcode _hlocals _hlocalised hcompile
+      exact compileExpValRelHOL_nstruct state context targetState name fields value
+        expressions shape heval hstate hcompile)
+    (fun name value' _ih => by
+      intro value expressions shape heval hstate _hcode _hlocals _hlocalised hcompile
+      exact compileExpValRelHOL_nfield state context targetState name value' value
+        expressions shape heval hstate hcompile)
+    (fun shape address ih => by
+      intro value expressions outputShape heval hstate hcode hlocals hlocalised hcompile
+      exact compileExpValRelHOL_load state context targetState shape address value expressions
+        outputShape
+        (fun sv ses ssh hev hs hc hl hcomp => ih sv ses ssh hev hs hc hl hcomp)
+        heval hlocalised hstate hcode hlocals hcompile)
+    (fun subExpression ih => by
+      intro value expressions shape heval hstate hcode hlocals hlocalised hcompile
+      exact compileExpValRelHOL_load32 state context targetState subExpression value
+        expressions shape
+        (fun sv ses ssh hev hs hc hl hcomp => ih sv ses ssh hev hs hc hl hcomp)
+        heval hlocalised hstate hcode hlocals hcompile)
+    (fun subExpression ih => by
+      intro value expressions shape heval hstate hcode hlocals hlocalised hcompile
+      exact compileExpValRelHOL_loadByte state context targetState subExpression value
+        expressions shape
+        (fun sv ses ssh hev hs hc hl hcomp => ih sv ses ssh hev hs hc hl hcomp)
+        heval hlocalised hstate hcode hlocals hcompile)
+    (fun operator arguments ih => by
+      intro value expressions shape heval hstate hcode hlocals hlocalised hcompile
+      exact compileExpValRelHOL_op state context targetState operator arguments value
+        expressions shape
+        (fun e he v es sh hev hl hc => ih e he v es sh hev hstate hcode hlocals hl hc)
+        heval hlocalised hcompile)
+    (fun operator arguments ih => by
+      intro value expressions shape heval hstate hcode hlocals hlocalised hcompile
+      exact compileExpValRelHOL_panop state context targetState operator arguments value
+        expressions shape
+        (fun e he v es sh hev hl hc => ih e he v es sh hev hstate hcode hlocals hl hc)
+        heval hlocalised hcompile)
+    (fun operator left right ihleft ihright => by
+      intro value expressions shape heval hstate hcode hlocals hlocalised hcompile
+      exact compileExpValRelHOL_cmp state context targetState operator left right value
+        expressions shape
+        (fun sv ses ssh hev hs hc hl hcomp => ihleft sv ses ssh hev hs hc hl hcomp)
+        (fun sv ses ssh hev hs hc hl hcomp => ihright sv ses ssh hev hs hc hl hcomp)
+        heval hlocalised hstate hcode hlocals hcompile)
+    (fun operator left right ihleft ihright => by
+      intro value expressions shape heval hstate hcode hlocals hlocalised hcompile
+      exact compileExpValRelHOL_shift state context targetState operator left right value
+        expressions shape
+        (fun sv ses ssh hev hs hc hl hcomp => ihleft sv ses ssh hev hs hc hl hcomp)
+        (fun sv ses ssh hev hs hc hl hcomp => ihright sv ses ssh hev hs hc hl hcomp)
+        heval hlocalised hstate hcode hlocals hcompile)
+    (fun value expressions shape heval hstate _hcode _hlocals _hlocalised hcompile =>
+        compileExpValRelHOL_baseAddr state context targetState value expressions shape
+          heval hstate hcompile)
+    (fun value expressions shape heval hstate _hcode _hlocals _hlocalised hcompile =>
+        compileExpValRelHOL_topAddr state context targetState value expressions shape
+          heval hstate hcompile)
+    (fun value expressions shape heval _hstate _hcode _hlocals _hlocalised hcompile =>
+        compileExpValRelHOL_bytesInWord state context targetState value expressions shape
+          heval hcompile)
+    (fun _e he => by simp at he)
+    (fun head tail ihhead ihtail e he => by
+      rcases List.mem_cons.mp he with rfl | he
+      · exact ihhead
+      · exact ihtail e he)
+    (fun _p hp => by simp at hp)
+    (fun head tail ihhead ihtail p hp => by
+      rcases List.mem_cons.mp hp with rfl | hp
+      · exact ihhead
+      · exact ihtail p hp)
+    (fun _fst _snd ih => ih)
+
+/-- Exact port of HOL `eval_map_comp_exp_flat_eq`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:1055-1072`). The
+    successful source evaluations, source/target `state_rel`, `code_rel`,
+    `locals_rel`, and `EVERY localised_exp` premises and the flattened target
+    evaluation conclusion follow HOL's statement exactly. The finite-support
+    relation qualifier records the map fields traversed by those three
+    relation premises; the width-indexed carriers translate HOL words through
+    `BitVec width` with `[NeZero width]`. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "eval_map_comp_exp_flat_eq"
+  (fmap_as_finite_support_relation := [PanSemStateFiniteExact.globals,
+    PanSemStateFiniteExact.code, PanSemStateFiniteExact.locals,
+    CrepSemHOLState.code, CrepSemHOLState.locals,
+    PanToCrepContextExact.vars, PanToCrepContextExact.funcs,
+    PanToCrepContextExact.eids])
+  (words_as_type_indexed_bitvec)]
+theorem evalMapCompExpFlatEqHOL {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ)
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width σ)
+    [hs : DecidablePred state.memaddrs] [ht : DecidablePred targetState.memaddrs]
+    (expressions : List (ExpHOL width))
+    (values : List (ValueHOL width))
+    (hsource : expressions.map state.evalHOLFinite = values.map some)
+    (hstate : panToCrepStateRelFiniteExact state targetState)
+    (hcode : codeRelExactHOLW context state.code targetState.code)
+    (hlocals : panToCrepLocalsRelFiniteExact context state.locals targetState.locals)
+    (hlocalized : expressions.all localisedExpHOL = true) :
+    (expressions.flatMap (fun expression =>
+      (compileExpExactHOLW context expression).1)).map
+        (evalCrepSemHOLExp targetState) =
+      (values.flatMap flattenHOL).map some := by
+  induction expressions generalizing values with
+  | nil =>
+      cases values <;> simp at hsource ⊢
+  | cons expression expressions ih =>
+      cases values with
+      | nil => simp at hsource
+      | cons value values =>
+          simp only [List.map_cons] at hsource
+          rcases List.cons.inj hsource with ⟨heval, htailSource⟩
+          simp only [List.all_cons, Bool.and_eq_true] at hlocalized
+          obtain ⟨hlocalizedHead, hlocalizedTail⟩ := hlocalized
+          cases hcompile : compileExpExactHOLW context expression with
+          | mk compiled shape =>
+              have hhead := compileExpValRelHOL state context targetState
+                expression value compiled shape heval hstate hcode hlocals
+                hlocalizedHead hcompile
+              have htail := ih values htailSource hlocalizedTail
+              simp only [List.flatMap_cons, hcompile, List.map_append]
+              rw [hhead.1, htail]
 
 
 end Flapjack

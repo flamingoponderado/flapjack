@@ -3,7 +3,7 @@ import Flapjack.Pancake.PanToCrep.Compile
 
 namespace Flapjack.Test.CompileProgParity
 
-open Flapjack
+open Flapjack Flapjack.Pancake.PanLang
 
 def compileProgProbeContext : CompileContext Nat :=
   { vars := [], functions := [], exceptions := [], maxVar := 0,
@@ -140,6 +140,166 @@ def compileProgTopNestedParity : Bool :=
 #guard compileProgTopEmptyParity
 #guard compileProgTopDuplicateParity
 #guard compileProgTopNestedParity
+
+/-! The same committed HOL `compile_prog_probe.out` rows are exercised through
+    the exact body route, with explicit constructor-level byte-range evidence
+    for the hand-built syntax used by the HOL probe. -/
+private theorem compileProbeNameIdRanged : NameRanged "id" := by
+  intro c hc
+  have hc' : c = 'i' ∨ c = 'd' := by simpa using hc
+  rcases hc' with h | h <;> subst c <;> decide
+
+private theorem compileProbeNameMainRanged : NameRanged "main" := by
+  intro c hc
+  have hc' : c = 'm' ∨ c = 'a' ∨ c = 'i' ∨ c = 'n' := by simpa using hc
+  rcases hc' with h | h | h | h <;> subst c <;> decide
+
+private theorem compileProbeNameLeafRanged : NameRanged "leaf" := by
+  intro c hc
+  have hc' : c = 'l' ∨ c = 'e' ∨ c = 'a' ∨ c = 'f' := by simpa using hc
+  rcases hc' with h | h | h | h <;> subst c <;> decide
+
+private theorem compileProbeNameMidRanged : NameRanged "mid" := by
+  intro c hc
+  have hc' : c = 'm' ∨ c = 'i' ∨ c = 'd' := by simpa using hc
+  rcases hc' with h | h | h <;> subst c <;> decide
+
+private theorem compileProbeInlineReturnRanged {width : Nat} (name : String)
+    (hname : NameRanged name) (value : BitVec width) :
+    DeclByteRanged (width := width) (.function
+      { name := name, inline := true, exported := false, params := [],
+        body := .return (.const value), returnShape := .one }) := by
+  simp only [DeclByteRanged, FunDeclByteRanged]
+  refine ⟨hname, ?_, ?_, ?_⟩
+  · simp [ListParamByteRanged]
+  · simp [ProgByteRanged, ExpByteRanged]
+  · simp [ShapeByteRanged]
+
+private theorem compileProbeInlineCallRanged {width : Nat} (name function : String)
+    (hname : NameRanged name) (hfunction : NameRanged function) :
+    DeclByteRanged (width := width) (.function
+      { name := name, inline := false, exported := true, params := [],
+        body := .call none function ([] : List (Exp (BitVec width))), returnShape := .one }) := by
+  simp only [DeclByteRanged, FunDeclByteRanged]
+  refine ⟨hname, ?_, ?_, ?_⟩
+  · simp [ListParamByteRanged]
+  · simp only [ProgByteRanged]
+    exact ⟨hfunction, by simp⟩
+  · simp [ShapeByteRanged]
+
+def compileProgExactDuplicateDecls : List (Decl (BitVec 8)) :=
+  let declarations : List (Decl (BitVec 8)) :=
+    [.function
+       { name := "id", inline := true, exported := false, params := [],
+         body := .return (.const (BitVec.ofNat 8 7)), returnShape := .one },
+     .function
+       { name := "id", inline := true, exported := false, params := [],
+         body := .return (.const (BitVec.ofNat 8 9)), returnShape := .one },
+     .function
+       { name := "main", inline := false, exported := true, params := [],
+         body := .call none "id" [], returnShape := .one }]
+  declarations
+
+theorem compileProgExactDuplicateDeclsByteRanged :
+    ∀ declaration ∈ compileProgExactDuplicateDecls, DeclByteRanged declaration := by
+  intro declaration hmem
+  simp [compileProgExactDuplicateDecls] at hmem
+  rcases hmem with h | h | h
+  · subst declaration
+    exact compileProbeInlineReturnRanged (width := 8) "id" compileProbeNameIdRanged _
+  · subst declaration
+    exact compileProbeInlineReturnRanged (width := 8) "id" compileProbeNameIdRanged _
+  · rcases h with h | h
+    · exact compileProbeInlineCallRanged (width := 8) "main" "id"
+        compileProbeNameMainRanged compileProbeNameIdRanged
+
+def compileProgExactNestedDecls : List (Decl (BitVec 8)) :=
+  let declarations : List (Decl (BitVec 8)) :=
+    [.function
+       { name := "leaf", inline := true, exported := false, params := [],
+         body := .return (.const (BitVec.ofNat 8 7)), returnShape := .one },
+     .function
+       { name := "mid", inline := true, exported := false, params := [],
+         body := .call none "leaf" [], returnShape := .one },
+     .function
+       { name := "main", inline := false, exported := true, params := [],
+         body := .call none "mid" [], returnShape := .one }]
+  declarations
+
+theorem compileProgExactNestedDeclsByteRanged :
+    ∀ declaration ∈ compileProgExactNestedDecls, DeclByteRanged declaration := by
+  intro declaration hmem
+  simp [compileProgExactNestedDecls] at hmem
+  rcases hmem with h | h | h
+  · subst declaration
+    exact compileProbeInlineReturnRanged (width := 8) "leaf" compileProbeNameLeafRanged _
+  · subst declaration
+    exact compileProbeInlineCallRanged (width := 8) "mid" "leaf"
+      compileProbeNameMidRanged compileProbeNameLeafRanged
+  · rcases h with h | h
+    · exact compileProbeInlineCallRanged (width := 8) "main" "mid"
+        compileProbeNameMainRanged compileProbeNameMidRanged
+
+def compileProgExactProductionEmptyParity : Bool :=
+  match compileProgTopHOLProductionExact ([] : List (Decl (BitVec 8))) (by
+      intro declaration hmem
+      simp at hmem) with
+  | [] => true
+  | _ => false
+
+def compileProgExactProductionDuplicateParity : Bool :=
+  match compileProgTopHOLProductionExact compileProgExactDuplicateDecls
+      compileProgExactDuplicateDeclsByteRanged with
+  | [("id", [], .return [.const first]),
+     ("id", [], .return [.const second]),
+     ("main", [], .seq .tick (.return [.const returned]))] =>
+      first == BitVec.ofNat 8 7 && second == BitVec.ofNat 8 9 &&
+        returned == BitVec.ofNat 8 7
+  | _ => false
+
+def compileProgExactProductionNestedParity : Bool :=
+  match compileProgTopHOLProductionExact compileProgExactNestedDecls
+      compileProgExactNestedDeclsByteRanged with
+  | [("leaf", [], .return [.const leafValue]),
+     ("mid", [], .seq .tick (.return [.const midValue])),
+     ("main", [], .seq .tick (.seq .tick (.return [.const mainValue])))] =>
+      leafValue == BitVec.ofNat 8 7 && midValue == BitVec.ofNat 8 7 &&
+        mainValue == BitVec.ofNat 8 7
+  | _ => false
+
+#guard compileProgExactProductionEmptyParity
+#guard compileProgExactProductionDuplicateParity
+#guard compileProgExactProductionNestedParity
+
+def compileProgExactDuplicateMatchesProduction : Bool :=
+  match compileProgTopHOL compileProgExactDuplicateDecls,
+      compileProgTopHOLProductionExact compileProgExactDuplicateDecls
+        compileProgExactDuplicateDeclsByteRanged with
+  | [(_, [], .return [.const directFirst]),
+     (_, [], .return [.const directSecond]),
+     (_, [], .seq .tick (.return [.const directReturned]))],
+    [(_, [], .return [.const exactFirst]),
+     (_, [], .return [.const exactSecond]),
+     (_, [], .seq .tick (.return [.const exactReturned]))] =>
+      directFirst == exactFirst && directSecond == exactSecond &&
+        directReturned == exactReturned
+  | _, _ => false
+
+def compileProgExactNestedMatchesProduction : Bool :=
+  match compileProgTopHOL compileProgExactNestedDecls,
+      compileProgTopHOLProductionExact compileProgExactNestedDecls
+        compileProgExactNestedDeclsByteRanged with
+  | [(_, [], .return [.const directLeaf]),
+     (_, [], .seq .tick (.return [.const directMid])),
+     (_, [], .seq .tick (.seq .tick (.return [.const directMain])))],
+    [(_, [], .return [.const exactLeaf]),
+     (_, [], .seq .tick (.return [.const exactMid])),
+     (_, [], .seq .tick (.seq .tick (.return [.const exactMain])))] =>
+      directLeaf == exactLeaf && directMid == exactMid && directMain == exactMain
+  | _, _ => false
+
+#guard compileProgExactDuplicateMatchesProduction
+#guard compileProgExactNestedMatchesProduction
 
 /-! The fixture is the direct HOL evaluation of
     `pan_to_crep$compile_prog` on the same inline callee/caller pair. -/

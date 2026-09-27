@@ -1734,6 +1734,52 @@ theorem setKvarHOLExact_ffi {width : Nat} {σ : Type} [NeZero width]
     (setKvarHOLExact kind name value state).ffi = state.ffi := by
   cases kind <;> rfl
 
+/-- A successful exact `ExtCall` step with unchanged observable events keeps
+    the whole FFI state. Errors and terminal FFI results leave the source state
+    installed; a returning FFI call is handled by the single-call event/state
+    lemma from `FfiHOL`. -/
+theorem extCallStepHOLExact_ffi_eq_of_ioEvents_eq {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateExact width σ) [DecidablePred state.memaddrs]
+    (evalExpression : PanSemStateExact width σ → ExpHOL width → Option (ValueHOL width))
+    (function : MlS) (ptr1 len1 ptr2 len2 : ExpHOL width)
+    (hevents : (extCallStepHOLExact state evalExpression function ptr1 len1 ptr2 len2).2.ffi.ioEvents =
+      state.ffi.ioEvents) :
+    (extCallStepHOLExact state evalExpression function ptr1 len1 ptr2 len2).2.ffi = state.ffi := by
+  unfold extCallStepHOLExact at hevents ⊢
+  repeat' split
+  all_goals
+    try simp_all [emptyLocalsHOLExact]
+  all_goals
+    exact callFFIHOL_ret_ffi_eq_of_ioEvents_eq _ _ _ _ _ _ (by assumption) (by assumption)
+
+/-- The same unchanged-event consequence for the exact `ShMemLoad` helper. -/
+theorem shMemLoadHOLExact_ffi_eq_of_ioEvents_eq {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateExact width σ) [DecidablePred state.shMemaddrs]
+    (kind : VarKind) (name : MlS) (address : RiscV.Word width) (nb : Nat)
+    (hevents : (shMemLoadHOLExact state kind name address nb).2.ffi.ioEvents =
+      state.ffi.ioEvents) :
+    (shMemLoadHOLExact state kind name address nb).2.ffi = state.ffi := by
+  unfold shMemLoadHOLExact at hevents ⊢
+  repeat' split
+  all_goals
+    try simp_all [emptyLocalsHOLExact, setKvarHOLExact]
+  all_goals
+    exact callFFIHOL_ret_ffi_eq_of_ioEvents_eq _ _ _ _ _ _ (by assumption) (by assumption)
+
+/-- The same unchanged-event consequence for the exact `ShMemStore` helper. -/
+theorem shMemStoreHOLExact_ffi_eq_of_ioEvents_eq {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateExact width σ) [DecidablePred state.shMemaddrs]
+    (word address : RiscV.Word width) (nb : Nat)
+    (hevents : (shMemStoreHOLExact state word address nb).2.ffi.ioEvents =
+      state.ffi.ioEvents) :
+    (shMemStoreHOLExact state word address nb).2.ffi = state.ffi := by
+  unfold shMemStoreHOLExact at hevents ⊢
+  repeat' split
+  all_goals
+    try simp_all
+  all_goals
+    exact callFFIHOL_ret_ffi_eq_of_ioEvents_eq _ _ _ _ _ _ (by assumption) (by assumption)
+
 theorem shMemLoadHOLExact_ioEvents_prefix {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateExact width σ) [DecidablePred state.shMemaddrs]
     (kind : VarKind) (name : MlS) (address : RiscV.Word width) (nb : Nat) :
@@ -1779,6 +1825,57 @@ theorem shMemStoreClauseHOLExact_ioEvents_prefix {width : Nat} {σ : Type} [NeZe
     first
     | exact List.prefix_refl _
     | exact shMemStoreHOLExact_ioEvents_prefix _ _ _ _
+
+/-- The clause-level `ShMemLoad` helper preserves the complete FFI state when
+    its event log is unchanged. This exposes the helper's existing exact
+    operation-level result at the recursive evaluator boundary. -/
+theorem shMemLoadClauseHOLExact_ffi_eq_of_ioEvents_eq {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateExact width σ) [DecidablePred state.shMemaddrs]
+    (operator : OpSize) (kind : VarKind) (name : MlS) (address : ExpHOL width)
+    (evalExpression : PanSemStateExact width σ → ExpHOL width → Option (ValueHOL width))
+    (hevents : (shMemLoadClauseHOLExact state operator kind name address evalExpression).2.ffi.ioEvents =
+      state.ffi.ioEvents) :
+    (shMemLoadClauseHOLExact state operator kind name address evalExpression).2.ffi = state.ffi := by
+  unfold shMemLoadClauseHOLExact at hevents ⊢
+  repeat' split
+  all_goals
+    try simp_all [shMemLoadHOLExact_ffi_eq_of_ioEvents_eq]
+  all_goals
+    exact shMemLoadHOLExact_ffi_eq_of_ioEvents_eq _ _ _ _ _ _ (by assumption)
+
+/-- The clause-level `ShMemStore` helper preserves the complete FFI state when
+    its event log is unchanged, mirroring the exact `ShMemStore` operation. -/
+theorem shMemStoreClauseHOLExact_ffi_eq_of_ioEvents_eq {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateExact width σ) [DecidablePred state.shMemaddrs]
+    (operator : OpSize) (address value : ExpHOL width)
+    (evalExpression : PanSemStateExact width σ → ExpHOL width → Option (ValueHOL width))
+    (hevents : (shMemStoreClauseHOLExact state operator address value evalExpression).2.ffi.ioEvents =
+      state.ffi.ioEvents) :
+    (shMemStoreClauseHOLExact state operator address value evalExpression).2.ffi = state.ffi := by
+  unfold shMemStoreClauseHOLExact at hevents ⊢
+  repeat' split
+  all_goals
+    try simp_all [shMemStoreHOLExact_ffi_eq_of_ioEvents_eq]
+  all_goals
+    exact shMemStoreHOLExact_ffi_eq_of_ioEvents_eq _ _ _ _ _ (by assumption)
+
+/-- If a pair of sequential event traces extends the first trace and the full
+    trace returns to the first trace, the intermediate trace is unchanged.
+    This is the cancellation fact needed to apply recursive FFI-state
+    invariants to each side of a `Seq`. -/
+private theorem ioEvents_middle_eq_of_prefix_chain {α : Type} {first middle last : List α}
+    (hfirst : first <+: middle) (hsecond : middle <+: last) (hend : first = last) :
+    middle = first := by
+  obtain ⟨xs, hxs⟩ := hfirst
+  obtain ⟨ys, hys⟩ := hsecond
+  rw [← hend] at hys
+  have hxslen := congrArg List.length hxs
+  have hyslen := congrArg List.length hys
+  simp only [List.length_append] at hxslen hyslen
+  have hxszero : xs.length = 0 := by omega
+  cases xs with
+  | nil => simpa using hxs.symm
+  | cons x xs => simp at hxszero
 
 set_option maxHeartbeats 2000000 in
 theorem evalPanSemRecursiveCallContextHOLExact_ioEvents_prefix {width : Nat} {σ : Type}
@@ -2061,5 +2158,133 @@ theorem evalPanSemRecursiveCallContextHOLExact_ioEvents_prefix {width : Nat} {σ
     (try simp only [Option.some.injEq] at hres) <;>
     (try cases hres) <;>
     exact List.prefix_refl _
+
+/-- General composition step for two successful recursive evaluations. The
+    second evaluation may start in a context changed by the first pass, but the
+    FFI state at that boundary must be the same. Prefix monotonicity and equal
+    endpoint events then force both recursive IHs to see unchanged event logs. -/
+theorem evalPanSemRecursiveCallContextHOLExact_compose_ffi_eq_of_ioEvents_eq
+    {width : Nat} {σ : Type} [NeZero width]
+    (first second : ProgHOL width)
+    (context secondContext : PanSemExactEvalContext width σ)
+    (firstOutput result : Option (PanSemResultExact width) × PanSemExactEvalContext width σ)
+    (hfirst : evalPanSemRecursiveCallContextHOLExact first context = some firstOutput)
+    (hboundary : firstOutput.2.state.ffi = secondContext.state.ffi)
+    (hsecond : evalPanSemRecursiveCallContextHOLExact second secondContext = some result)
+    (hfirstIH : ∀ result,
+      evalPanSemRecursiveCallContextHOLExact first context = some result →
+      context.state.ffi.ioEvents = result.2.state.ffi.ioEvents →
+      context.state.ffi = result.2.state.ffi)
+    (hsecondIH : ∀ result,
+      evalPanSemRecursiveCallContextHOLExact second secondContext = some result →
+      secondContext.state.ffi.ioEvents = result.2.state.ffi.ioEvents →
+      secondContext.state.ffi = result.2.state.ffi)
+    (hevents : context.state.ffi.ioEvents = result.2.state.ffi.ioEvents) :
+    context.state.ffi = result.2.state.ffi := by
+  have hfirstPrefix := evalPanSemRecursiveCallContextHOLExact_ioEvents_prefix
+    first context firstOutput hfirst
+  have hsecondPrefix := evalPanSemRecursiveCallContextHOLExact_ioEvents_prefix
+    second secondContext result hsecond
+  have hboundaryEvents : firstOutput.2.state.ffi.ioEvents = secondContext.state.ffi.ioEvents :=
+    congrArg (fun ffi => ffi.ioEvents) hboundary
+  have hmiddleEq := ioEvents_middle_eq_of_prefix_chain hfirstPrefix
+    (hboundaryEvents.symm ▸ hsecondPrefix) hevents
+  have hfirstFfi := hfirstIH firstOutput hfirst hmiddleEq.symm
+  have hsecondEvents : secondContext.state.ffi.ioEvents = result.2.state.ffi.ioEvents := by
+    calc
+      secondContext.state.ffi.ioEvents = firstOutput.2.state.ffi.ioEvents := hboundaryEvents.symm
+      _ = context.state.ffi.ioEvents := hmiddleEq
+      _ = result.2.state.ffi.ioEvents := hevents
+  have hsecondFfi := hsecondIH result hsecond hsecondEvents
+  calc
+    context.state.ffi = firstOutput.2.state.ffi := hfirstFfi
+    _ = secondContext.state.ffi := hboundary
+    _ = result.2.state.ffi := hsecondFfi
+
+/-- Composition fact for the successful `Seq` branch that evaluates its second
+    program. The recursive induction hypotheses apply after the prefix lemma
+    forces the middle trace to equal both endpoints. -/
+theorem evalPanSemRecursiveCallContextHOLExact_seq_ffi_eq_of_ioEvents_eq
+    {width : Nat} {σ : Type} [NeZero width]
+    (first second : ProgHOL width) (context middleContext : PanSemExactEvalContext width σ)
+    (result : Option (PanSemResultExact width) × PanSemExactEvalContext width σ)
+    (hfirst : evalPanSemRecursiveCallContextHOLExact first context = some (none, middleContext))
+    (hsecond : evalPanSemRecursiveCallContextHOLExact second
+      (middleContext.withState
+        (fixClockHOLExact context.state
+          ((none : Option (PanSemResultExact width)), middleContext.state)).2 rfl rfl) = some result)
+    (hfirstIH : ∀ result,
+      evalPanSemRecursiveCallContextHOLExact first context = some result →
+      context.state.ffi.ioEvents = result.2.state.ffi.ioEvents →
+      context.state.ffi = result.2.state.ffi)
+    (hsecondIH : ∀ result,
+      evalPanSemRecursiveCallContextHOLExact second
+        (middleContext.withState
+          (fixClockHOLExact context.state
+            ((none : Option (PanSemResultExact width)), middleContext.state)).2 rfl rfl) = some result →
+      (middleContext.withState
+        (fixClockHOLExact context.state
+          ((none : Option (PanSemResultExact width)), middleContext.state)).2 rfl rfl).state.ffi.ioEvents =
+          result.2.state.ffi.ioEvents →
+      (middleContext.withState
+        (fixClockHOLExact context.state
+          ((none : Option (PanSemResultExact width)), middleContext.state)).2 rfl rfl).state.ffi =
+          result.2.state.ffi)
+    (hevents : context.state.ffi.ioEvents = result.2.state.ffi.ioEvents) :
+    context.state.ffi = result.2.state.ffi := by
+  let fixedContext := middleContext.withState
+    (fixClockHOLExact context.state
+      ((none : Option (PanSemResultExact width)), middleContext.state)).2 rfl rfl
+  have hcompose := evalPanSemRecursiveCallContextHOLExact_compose_ffi_eq_of_ioEvents_eq
+    first second context fixedContext (none, middleContext) result hfirst (by rfl)
+    (by simpa only [fixedContext] using hsecond) hfirstIH
+    (by simpa only [fixedContext] using hsecondIH) hevents
+  simpa only [fixedContext] using hcompose
+
+/-- Composition fact for an iterating `While` branch after its body has
+    returned a continuing result. Event-prefix monotonicity forces the body
+    boundary to have the same event log as the loop input when the endpoints
+    agree, so the recursive FFI invariants apply to both evaluations. -/
+theorem evalPanSemRecursiveCallContextHOLExact_while_ffi_eq_of_ioEvents_eq
+    {width : Nat} {σ : Type} [NeZero width]
+    (condition : ExpHOL width) (body : ProgHOL width)
+    (context entryContext bodyContext : PanSemExactEvalContext width σ)
+    (bodyResult : Option (PanSemResultExact width))
+    (result : Option (PanSemResultExact width) × PanSemExactEvalContext width σ)
+    (hentryFfi : context.state.ffi = entryContext.state.ffi)
+    (hbody : evalPanSemRecursiveCallContextHOLExact body entryContext =
+      some (bodyResult, bodyContext))
+    (hloop : evalPanSemRecursiveCallContextHOLExact (.while condition body)
+      (bodyContext.withState
+        (fixClockHOLExact entryContext.state (bodyResult, bodyContext.state)).2 rfl rfl) =
+      some result)
+    (hbodyIH : ∀ result,
+      evalPanSemRecursiveCallContextHOLExact body entryContext = some result →
+      entryContext.state.ffi.ioEvents = result.2.state.ffi.ioEvents →
+      entryContext.state.ffi = result.2.state.ffi)
+    (hloopIH : ∀ result,
+      evalPanSemRecursiveCallContextHOLExact (.while condition body)
+        (bodyContext.withState
+          (fixClockHOLExact entryContext.state (bodyResult, bodyContext.state)).2 rfl rfl) =
+        some result →
+      (bodyContext.withState
+        (fixClockHOLExact entryContext.state (bodyResult, bodyContext.state)).2 rfl rfl).state.ffi.ioEvents =
+        result.2.state.ffi.ioEvents →
+      (bodyContext.withState
+        (fixClockHOLExact entryContext.state (bodyResult, bodyContext.state)).2 rfl rfl).state.ffi =
+        result.2.state.ffi)
+    (hevents : context.state.ffi.ioEvents = result.2.state.ffi.ioEvents) :
+    context.state.ffi = result.2.state.ffi := by
+  let fixedContext := bodyContext.withState
+    (fixClockHOLExact entryContext.state (bodyResult, bodyContext.state)).2 rfl rfl
+  have hentryEvents : entryContext.state.ffi.ioEvents = context.state.ffi.ioEvents := by
+    simpa only using congrArg (fun ffi => ffi.ioEvents) hentryFfi.symm
+  have hend : entryContext.state.ffi.ioEvents = result.2.state.ffi.ioEvents :=
+    hentryEvents.trans hevents
+  have hcompose := evalPanSemRecursiveCallContextHOLExact_compose_ffi_eq_of_ioEvents_eq
+    body (.while condition body) entryContext fixedContext (bodyResult, bodyContext) result
+    hbody (by rfl) (by simpa only [fixedContext] using hloop) hbodyIH
+    (by simpa only [fixedContext] using hloopIH) hend
+  exact hentryFfi.trans hcompose
 
 end Flapjack

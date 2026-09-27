@@ -25,6 +25,7 @@ import Flapjack.Pancake.CrepToLoop
 import Flapjack.Pancake.CrepToLoop.StateRel
 import Flapjack.Pancake.PanCommon
 import Flapjack.Pancake.PanGlobals
+import Flapjack.Pancake.PanGlobals.CompileExpExact
 import Flapjack.Pancake.PanLang
 import Flapjack.Pancake.PanLang.Shape
 import Flapjack.Pancake.PanLang.Exp
@@ -68,6 +69,7 @@ import Flapjack.Pancake.Semantics.LoopSemStateExact
 import Flapjack.Pancake.Semantics.PanCommonProps
 import Flapjack.Pancake.Semantics.PanProps
 import Flapjack.Pancake.Semantics.PanProps.EvalInvariant
+import Flapjack.Pancake.Semantics.PanProps.EvaluateResultInvariant
 import Flapjack.Pancake.Semantics.PanProps.MemByteArray
 import Flapjack.Pancake.Semantics.PanProps.LocalisedExpSimps
 import Flapjack.Pancake.Semantics.PanProps.NamelessExpSimps
@@ -84,6 +86,7 @@ import Flapjack.Pancake.Semantics.PanSem.ValueHOL
 import Flapjack.Pancake.Semantics.PanSem.StateExact
 import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
 import Flapjack.Pancake.Semantics.PanSem.EvaluateClock
+import Flapjack.Pancake.Semantics.PanSem.ClockTimeout
 import Flapjack.Pancake.Semantics.PanSem.ShMemLoadCase
 import Flapjack.Pancake.Semantics.PanSem.ExtCallCase
 import Flapjack.Pancake.Semantics.PanSem.LocalUpdatesExact
@@ -97,6 +100,7 @@ import Flapjack.Pancake.Semantics.PanSem.EvaluateDeclsExact
 import Flapjack.Pancake.Semantics.PanSem.ClockExact
 import Flapjack.Pancake.Semantics.PanSem.StateSimpExact
 import Flapjack.Pancake.Semantics.PanSem.StateDefsExact
+import Flapjack.Pancake.Semantics.PanSem.EvaluateClock
 import Flapjack.Pancake.WordLang
 import Flapjack.Pancake.WordConvs
 import Flapjack.RiscV.CorrectnessEncoding
