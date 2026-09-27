@@ -13625,5 +13625,13 @@
     "lean_name": "optMmapFlookupUpdateHOL",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.16.16): HOL pan_commonPropsScript.sml:156 states OPT_MMAP (FLOOKUP fm) xs = SOME ys /\\ ~MEM x xs ==> OPT_MMAP (FLOOKUP (fm |+ (x,y))) xs = SOME ys. Clause-for-clause over the reviewed extensional finite-map carrier: OPT_MMAP -> List.mapM, ~MEM -> not-in, fm |+ (x,y) -> FUPDATE fm (x,y). No extra hypotheses; proof uses the shared listMapMCongr and FLOOKUP_update."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/pan_commonPropsScript.sml",
+    "hol_name": "distinct_lists_eq_disjoint",
+    "lean_path": "Flapjack/Pancake/Semantics/PanCommonProps.lean",
+    "lean_name": "distinct_lists_eq_disjoint",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.16.18): HOL `distinct_lists_eq_disjoint` (pan_commonPropsScript.sml:102) states `distinct_lists xs ys <=> DISJOINT (set xs) (set ys)`. HOL `distinct_lists` is rendered as the exact Boolean `distinctListsHol xs ys = true` (the established convention for this predicate) and the set-level `DISJOINT (set xs) (set ys)` as the propositional `ListDisjoint xs ys`; the proof is the already-reviewed exact bridge distinctListsHol_eq_true_iff_listDisjoint. No extra hypotheses beyond [DecidableEq \u03b1]; source review only."
   }
 ]

@@ -680,4 +680,16 @@ theorem optMmapFlookupUpdateHOL [BEq α] [LawfulBEq α]
       exact hnotmem (he ▸ hkey)
     simp [hkx]
 
+/-- Exact port of HOL `distinct_lists_eq_disjoint`
+    (`cakeml/pancake/semantics/pan_commonPropsScript.sml:102`):
+    `distinct_lists xs ys <=> DISJOINT (set xs) (set ys)`.  HOL
+    `distinct_lists` is rendered as the Boolean `distinctListsHol xs ys = true`
+    (the established convention for this predicate), and the set-level
+    `DISJOINT (set xs) (set ys)` as the propositional `ListDisjoint xs ys`
+    (no common list member). -/
+@[hol "cakeml/pancake/semantics/pan_commonPropsScript.sml" "distinct_lists_eq_disjoint"]
+theorem distinct_lists_eq_disjoint {α : Type} [DecidableEq α] (xs ys : List α) :
+    (distinctListsHol xs ys = true) ↔ ListDisjoint xs ys :=
+  distinctListsHol_eq_true_iff_listDisjoint xs ys
+
 end Flapjack
