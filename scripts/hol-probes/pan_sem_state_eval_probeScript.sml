@@ -61,6 +61,10 @@ val _ = print_eval "op_add_one"
   ``eval ^little (panLang$Op Add [panLang$Const 1w])``;
 val _ = print_eval "op_add_pair"
   ``eval ^little (panLang$Op Add [panLang$Const 1w; panLang$Const 2w])``;
+val _ = print_eval "op_add_var_missing"
+  ``eval ^little (panLang$Op Add [panLang$Var Local «x»; panLang$Const 2w])``;
+val _ = print_eval "op_add_const_var_missing"
+  ``eval ^little (panLang$Op Add [panLang$Const 1w; panLang$Var Local «y»])``;
 val _ = print_eval "op_and_three"
   ``eval ^little (panLang$Op And [panLang$Const 15w; panLang$Const 6w;
       panLang$Const 3w])``;
