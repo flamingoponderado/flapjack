@@ -1880,15 +1880,23 @@ theorem evaluateHOLFiniteState_seq_line780 {width : Nat} {σ : Type} [NeZero wid
   simp only [fixClockHOLFinite_evaluateState state first]
   rfl
 
-/- FLAPJACK-SPECIFIC provisional assembly (no `@[hol]` tag): the HOL-shaped
-`match program with` statement over all 21 `ProgHOL` constructors, with each
-arm copied from the corresponding tagged clause equation. The tag is withheld
-because the `DecCall` arm currently retains the `fixClockHOLFinite` wrapper of
-the original line-556 `Definition evaluate_def`, whereas the line-780 theorem
-rewrites that wrapper away with `fix_clock_evaluate`; the other twenty arms
-match line 780. Restoring the tag requires a fix-clock-free line-780 `DecCall`
-variant, tracked on `flapjack-qj5.9.6`. -/
+/- Exact port of HOL `evaluate_def`
+`cakeml/pancake/semantics/panSemScript.sml:780`
+(`Theorem evaluate_def[allow_rebind,compute] =
+ REWRITE_RULE [fix_clock_evaluate] evaluate_def`):
+the single HOL-shaped `match program with` equation over all 21 `ProgHOL`
+constructors, with each arm copied from the corresponding line-780 clause
+equation. The `DecCall` arm is the fix-clock-free line-780 form
+`evaluateHOLFiniteState_decCall_fixClockRewrite`; the integer-return arm uses
+`evaluateHOLFiniteState_dec_total`, and `Seq`/`While` use their line-780
+restatements, so no arm retains the line-556 `fix_clock` wrapper that line 780
+rewrites away. No extra premise and no result hypothesis is added. The four
+finite-map fields and the positive word width use the same reviewed carriers as
+the tagged clause siblings. -/
 set_option maxHeartbeats 4000000 in
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem evaluateHOLFiniteState_eq_evaluate_def {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) (program : ProgHOL width) :
     evaluateHOLFiniteState state program =
@@ -2048,28 +2056,27 @@ theorem evaluateHOLFiniteState_eq_evaluate_def {width : Nat} {σ : Type} [NeZero
                if state.clock = 0 then
                  (some .timeOut, emptyLocalsHOLFinite state)
                else
-                 let entry := callEntryStateHOLFinite state callee
-                 let bodyOutput := evaluateHOLFiniteState entry body
-                 let fixed := fixClockHOLFinite entry bodyOutput
-                 match bodyOutput.1 with
-                 | none => (some .error, fixed.2)
-                 | some .break => (some .error, fixed.2)
-                 | some .continue => (some .error, fixed.2)
-                 | some (.returned value) =>
-                     if shapeEqHOL (shapeOfHOLExact value) shape &&
-                         shapeEqHOL (shapeOfHOLExact value) returnShape then
-                       let continuationState :=
-                         setVarHOLFinite resultName value
-                           { fixed.2 with locals := state.locals }
-                       let continuationOutput :=
-                         evaluateHOLFiniteState continuationState continuation
-                       (continuationOutput.1,
-                         { continuationOutput.2 with
-                           locals := HolFiniteMapExact.resVarEq
-                             continuationOutput.2.locals
-                             (resultName, state.locals.lookup resultName) })
-                     else (some .error, fixed.2)
-                 | some other => (some other, emptyLocalsHOLFinite fixed.2))
+                  let entry := callEntryStateHOLFinite state callee
+                  let bodyOutput := evaluateHOLFiniteState entry body
+                  match bodyOutput.1 with
+                  | none => (some .error, bodyOutput.2)
+                  | some .break => (some .error, bodyOutput.2)
+                  | some .continue => (some .error, bodyOutput.2)
+                  | some (.returned value) =>
+                      if shapeEqHOL (shapeOfHOLExact value) shape &&
+                          shapeEqHOL (shapeOfHOLExact value) returnShape then
+                        let continuationState :=
+                          setVarHOLFinite resultName value
+                            { bodyOutput.2 with locals := state.locals }
+                        let continuationOutput :=
+                          evaluateHOLFiniteState continuationState continuation
+                        (continuationOutput.1,
+                          { continuationOutput.2 with
+                            locals := HolFiniteMapExact.resVarEq
+                              continuationOutput.2.locals
+                              (resultName, state.locals.lookup resultName) })
+                      else (some .error, bodyOutput.2)
+                  | some other => (some other, emptyLocalsHOLFinite bodyOutput.2))
     | .extCall function configuration configurationLength array arrayLength => match
         @evalHOLFinite width σ _ state
           (fun address => Classical.propDecidable (state.memaddrs address)) configuration,
@@ -2154,6 +2161,6 @@ theorem evaluateHOLFiniteState_eq_evaluate_def {width : Nat} {σ : Type} [NeZero
     | .tick => (if state.clock = 0 then (some .timeOut, emptyLocalsHOLFinite state)
        else (none, decClockHOLFinite state))
     | .annot _tag _text => (none, state) := by
-  cases program <;> (first | rw [evaluateHOLFiniteState_skip] | rw [evaluateHOLFiniteState_dec_total] | rw [evaluateHOLFiniteState_assign] | rw [evaluateHOLFiniteState_primitive] | rw [evaluateHOLFiniteState_store] | rw [evaluateHOLFiniteState_store32] | rw [evaluateHOLFiniteState_storeByte] | rw [evaluateHOLFiniteState_seq_line780] | rw [evaluateHOLFiniteState_ite] | rw [evaluateHOLFiniteState_while_fixClockRewrite] | rw [evaluateHOLFiniteState_break] | rw [evaluateHOLFiniteState_continue] | rw [evaluateHOLFiniteState_call] | rw [evaluateHOLFiniteState_decCall_total] | rw [evaluateHOLFiniteState_extCall_source] | rw [evaluateHOLFiniteState_raise] | rw [evaluateHOLFiniteState_return] | rw [evaluateHOLFiniteState_shMemLoad_source] | rw [evaluateHOLFiniteState_shMemStore_total] | rw [evaluateHOLFiniteState_tick] | rw [evaluateHOLFiniteState_annot]) <;> try (dsimp only; rfl)
+  cases program <;> (first | rw [evaluateHOLFiniteState_skip] | rw [evaluateHOLFiniteState_dec_total] | rw [evaluateHOLFiniteState_assign] | rw [evaluateHOLFiniteState_primitive] | rw [evaluateHOLFiniteState_store] | rw [evaluateHOLFiniteState_store32] | rw [evaluateHOLFiniteState_storeByte] | rw [evaluateHOLFiniteState_seq_line780] | rw [evaluateHOLFiniteState_ite] | rw [evaluateHOLFiniteState_while_fixClockRewrite] | rw [evaluateHOLFiniteState_break] | rw [evaluateHOLFiniteState_continue] | rw [evaluateHOLFiniteState_call] | rw [evaluateHOLFiniteState_decCall_fixClockRewrite] | rw [evaluateHOLFiniteState_extCall_source] | rw [evaluateHOLFiniteState_raise] | rw [evaluateHOLFiniteState_return] | rw [evaluateHOLFiniteState_shMemLoad_source] | rw [evaluateHOLFiniteState_shMemStore_total] | rw [evaluateHOLFiniteState_tick] | rw [evaluateHOLFiniteState_annot]) <;> try (dsimp only; rfl)
 
 end Flapjack
