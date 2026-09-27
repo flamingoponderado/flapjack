@@ -362,6 +362,102 @@ theorem compileProgExactHOLW_store_byte_bridge {width : Nat} [NeZero width]
                     simp_all [compileProgExactHOLW, compileStoreByteExactHOLW,
                       compileProgRiscV, compileProgHOL, crepProgOfHOL]
 
+private theorem crepProgOfHOL_nestedDecsHOL {width : Nat} [NeZero width]
+    (names : List Nat) (values : List (CrepExpHOL width))
+    (body : CrepProgHOL width) :
+    crepProgOfHOL (nestedDecsHOL names values body) =
+      nestedDecs names (values.map crepExpOfHOL) (crepProgOfHOL body) := by
+  induction names generalizing values body with
+  | nil => cases values <;> simp [nestedDecsHOL, nestedDecs, crepProgOfHOL]
+  | cons name names ih =>
+      cases values <;> simp [nestedDecsHOL, nestedDecs, crepProgOfHOL, ih]
+
+private theorem crepProgOfHOL_storesHOL {width : Nat} [NeZero width]
+    (address : CrepExpHOL width) (values : List (CrepExpHOL width))
+    (offset : BitVec width) :
+    (storesHOL address values offset).map crepProgOfHOL =
+      stores (crepExpOfHOL address) (values.map crepExpOfHOL) offset
+        (BitVec.ofNat width (width / 8)) := by
+  induction values generalizing offset with
+  | nil => simp [storesHOL, stores]
+  | cons value values ih =>
+      simp only [storesHOL, List.map_cons, crepProgOfHOL, stores]
+      split <;> simp [crepExpOfHOL, ih]
+
+/-- Exact successful-clause bridge for HOL's `Store` equation. It is stated
+    over the expression-compiler outputs so the caller supplies the paired
+    expression codecs and the successful shape/length condition. This isolates
+    the Store-specific proof: exact and production reserve the same address
+    slot, allocate `vmax + 2 + i` for each value, and use the same fixed
+    `bytes_in_word` stride after decoding. The unguarded mismatch/fallback
+    cases remain part of bead `flapjack-pxn.18.3.5.8.13.30.1.12`. -/
+theorem compileProgExactHOLW_store_success_bridge {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width)
+    (address value : Exp (BitVec width))
+    (exactAddress : CrepExpHOL width) (exactAddressRest : List (CrepExpHOL width))
+    (exactAddressShape : ShapeHOL) (exactValues : List (CrepExpHOL width))
+    (exactValueShape : ShapeHOL)
+    (productionAddress : CrepExp (BitVec width))
+    (productionAddressRest : List (CrepExp (BitVec width)))
+    (productionAddressShape : Shape)
+    (productionValues : List (CrepExp (BitVec width))) (productionValueShape : Shape)
+    (hexactAddress : compileExpExactHOLW context (expToHOL address) =
+      (exactAddress :: exactAddressRest, exactAddressShape))
+    (hexactValue : compileExpExactHOLW context (expToHOL value) =
+      (exactValues, exactValueShape))
+    (hproductionAddress : compileExpHOL context.toProduction address =
+      (productionAddress :: productionAddressRest, productionAddressShape))
+    (hproductionValue : compileExpHOL context.toProduction value =
+      (productionValues, productionValueShape))
+    (haddressCodec : crepExpOfHOL exactAddress = productionAddress)
+    (hvaluesCodec : exactValues.map crepExpOfHOL = productionValues)
+    (hshapeCodec : shapeOfHOL exactValueShape = productionValueShape)
+    (hsuccess : sizeOfShapeHOL exactValueShape = exactValues.length) :
+    crepProgOfHOL (compileProgExactHOLW context
+        (.store (expToHOL address) (expToHOL value))) =
+      compileProgRiscV context.toProduction (.store address value) := by
+  have hsize (shape : ShapeHOL) :
+      Shape.shapeSize (shapeOfHOL shape) = sizeOfShapeHOL shape := by
+    have h := sizeOfShapeHOL_shapeToHOL (shapeOfHOL shape)
+    simpa only [shapeToHOL_shapeOfHOL] using h.symm
+  have hsuccessProduction : productionValues.length = Shape.shapeSize productionValueShape := by
+    calc
+      productionValues.length = exactValues.length := by
+        simpa using congrArg List.length hvaluesCodec.symm
+      _ = sizeOfShapeHOL exactValueShape := hsuccess.symm
+      _ = Shape.shapeSize (shapeOfHOL exactValueShape) := (hsize _).symm
+      _ = Shape.shapeSize productionValueShape := congrArg Shape.shapeSize hshapeCodec
+  have hcount : exactValues.length = Shape.shapeSize productionValueShape := by
+    calc
+      exactValues.length = productionValues.length := by
+        simpa using congrArg List.length hvaluesCodec
+      _ = Shape.shapeSize productionValueShape := hsuccessProduction
+  have hnamesProduction :
+      (List.range exactValues.length).map (fun index => context.vmax + 1 + index + 1) =
+        freshNamesHOL context.toProduction productionValueShape.shapeSize 2 := by
+    simp only [freshNamesHOL, PanToCrepContextExact.toProduction]
+    rw [← hcount]
+    congr 1
+    funext index
+    omega
+  simp only [compileProgExactHOLW, compileStoreExactHOLW, hexactAddress,
+    hexactValue, compileProgRiscV, compileProgHOL, hproductionAddress,
+    hproductionValue, hsuccess, hsuccessProduction]
+  have hExactGuard : ¬ ((exactValues.length != exactValues.length) = true) := by
+    simp
+  simp only [if_neg hExactGuard, if_true]
+  rw [crepProgOfHOL_nestedDecsHOL, crepProgOfHOL_crepNestedSeqHOL,
+    crepProgOfHOL_storesHOL]
+  simp [haddressCodec, hvaluesCodec, hnamesProduction,
+    PanToCrepContextExact.toProduction, CrepBytesInWord.bytesInWord]
+  have hvar :
+      crepExpOfHOL ∘ (CrepExpHOL.var : Nat → CrepExpHOL width) =
+        (CrepExp.var : Nat → CrepExp (BitVec width)) := by
+    funext name
+    simp [crepExpOfHOL]
+  rw [hvar]
+  simp [crepExpOfHOL]
+
 /-- Source-reviewed HOL `ShMemStore` clause bridge (`pan_to_crepScript.sml`,
     `compile_def`): its operands are positional `value` then `address`. The
     production `Prog.shMemStore` names its two fields `address` and `value`,
