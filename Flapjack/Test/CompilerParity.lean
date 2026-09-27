@@ -48,6 +48,7 @@ import Flapjack.Test.CrepInlineFmapParity
 import Flapjack.Test.CrepInlineStructuralHOLParity
 import Flapjack.Test.CrepInlineTransformEocParity
 import Flapjack.Test.CrepInlineTransformBranchParity
+import Flapjack.Test.CrepInlineNontailParity
 import Flapjack.Test.PanShapeValParity
 import Flapjack.Test.PanGlobalsCompileExpParity
 import Flapjack.Test.PanGlobalsFreshNameParity
@@ -816,6 +817,7 @@ def main : IO Unit := do
     Flapjack.Test.CrepInlineStructuralHOLParity.runChecks,
     Flapjack.Test.CrepInlineTransformEocParity.runChecks,
     Flapjack.Test.CrepInlineTransformBranchParity.runChecks,
+    Flapjack.Test.CrepInlineNontailParity.runChecks,
     Flapjack.Test.CrepInlineRelParity.runChecks,
     Flapjack.Test.CrepSemTotalEvaluateHOLParity.runChecks,
     Flapjack.Test.CrepNestedAssignDistinctHOLParity.runChecks,
