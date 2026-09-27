@@ -833,6 +833,67 @@ class HolAttributeSitesTest(unittest.TestCase):
             finally:
                 checker_globals["ROOT"] = original_root
 
+    def test_combined_fmap_words_qualifiers_with_imported_owner(self):
+        """A real imported-owner + evaluator-local witness + both qualifiers.
+
+        Mirrors the crepSem `evaluate_def` arrangement: `CrepSemHOLState` lives
+        in an imported module, the tagged declaration is in the consumer module
+        with a local `holFmapAsFiniteSupportWitness`, and the tag carries both
+        `(fmap_as_finite_support := [...])` and `(words_as_type_indexed_bitvec)`.
+        """
+        checker_globals = CHECKER["fmap_as_finite_support_errors"].__globals__
+        original_root = checker_globals["ROOT"]
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            owner = root / "Flapjack" / "PanToCrep" / "ContextExact.lean"
+            consumer = root / "Flapjack" / "PanToCrep" / "CompileExact.lean"
+            owner.parent.mkdir(parents=True)
+            owner.write_text(
+                "\n".join([
+                    "structure CrepStateExact (width : Nat) where",
+                    "  locals : HolFiniteMapExact Nat (HolWordLab width)",
+                    "  globals : HolFiniteMapExact (BitVec 5) (HolWordLab width)",
+                    "  code : HolFiniteMapExact Name Prog",
+                ]),
+                encoding="utf-8",
+            )
+            consumer.write_text(
+                "\n".join([
+                    "import Flapjack.PanToCrep.ContextExact",
+                    "theorem holFmapAsFiniteSupportWitness",
+                    "    (state : CrepStateExact width) :",
+                    "    CrepStateExact.ofBroad",
+                    "      (CrepStateExact.toBroad state) = state := by",
+                    "  exact CrepStateExact.holFmapAsFiniteSupportWitness state",
+                    '@[hol "cakeml/pancake/semantics/crepSemScript.sml" "evaluate_def" 240',
+                    "  (fmap_as_finite_support := [locals, globals, code])",
+                    "  (words_as_type_indexed_bitvec)]",
+                    "def evalProg (state : CrepStateExact width) [NeZero width]",
+                    "    (address : BitVec width) := address",
+                ]),
+                encoding="utf-8",
+            )
+            checker_globals["ROOT"] = root
+            try:
+                lines = consumer.read_text(encoding="utf-8").splitlines()
+                declaration_text = CHECKER["tagged_declaration_text"](lines, 6)
+                self.assertEqual(
+                    CHECKER["fmap_as_finite_support_errors"](
+                        lines, ("locals", "globals", "code"),
+                        "Flapjack/PanToCrep/CompileExact.lean",
+                        declaration_text,
+                    ),
+                    [],
+                )
+                self.assertEqual(
+                    CHECKER["words_as_type_indexed_bitvec_errors"](
+                        declaration_text, "evalProg",
+                    ),
+                    [],
+                )
+            finally:
+                checker_globals["ROOT"] = original_root
+
     def test_fmap_as_finite_support_rejects_local_duplicate_of_imported_owner(self):
         checker_globals = CHECKER["fmap_as_finite_support_errors"].__globals__
         original_root = checker_globals["ROOT"]

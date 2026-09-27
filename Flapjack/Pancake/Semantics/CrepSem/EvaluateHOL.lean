@@ -3056,6 +3056,32 @@ A future checker rule could additionally require a same-module adapter showing
 `BitVec width` has the HOL word cardinality (`2^width`) together with the
 `NeZero` discharge; that is out of scope for this proposal.
 
+### Signature-visibility limit for `crepSem evaluate_def` clauses
+
+A live check (`scripts/check-hol-refs.py`) of the exact carrier shows that the
+words qualifier is *not* attachable to the `crepSem` `evaluate_def` clause
+equations as written. Temporarily tagging `evalCrepSemHOLProgExact_skip` with
+`(fmap_as_finite_support := [locals, globals, code])
+(words_as_type_indexed_bitvec)` is rejected with
+
+```
+words_as_type_indexed_bitvec must name the Lean positive-width word carrier
+`BitVec` that translates HOL `'a word`
+```
+
+because the clause statement names only `CrepSemHOLState width σ` and
+`CrepProgHOL width`; no literal `BitVec` occurs in its signature (the word type
+is hidden inside the state/program carriers). The same holds for the whole
+`evalCrepSemHOLProg`/`evalCrepSemHOLProgExact` statements. So the composition
+"`words_as_type_indexed_bitvec` must accompany `fmap_as_finite_support` for
+`evaluate_def`" requested during review is unsatisfiable under the current
+checker rule. Two options for the ruling: (a) tag `evaluate_def` clauses
+fmap-only and record the `dimindex`/`'ffi` translation in the reviewer note (no
+words qualifier, since no word type is syntactically visible); or (b) extend the
+words rule to accept a reviewed width-indexed carrier
+(`HolWordLab`/`CrepProgHOL`/`CrepSemHOLState`) as evidence of the translation.
+No checker rule is changed here.
+
 ### Scope
 
 This proposal authorises no tag by itself: `evaluate_def` still needs the `.13.1`
