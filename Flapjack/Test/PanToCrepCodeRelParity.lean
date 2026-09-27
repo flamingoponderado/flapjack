@@ -1,5 +1,6 @@
 import Flapjack.Pancake.Proofs.PanToCrep
 import Flapjack.Pancake.Proofs.PanToCrep.CodeRelExact
+import Flapjack.Pancake.Proofs.PanToCrep.StateRelFiniteSupport
 
 /-! Nonvacuous checks for HOL `code_rel_def`, paired with the direct
 CakeML/HOL oracle in `scripts/hol-probes/code_rel_probe.out`. The source map
@@ -311,6 +312,101 @@ def getEidsGuard : Bool :=
 
 #guard getEidsGuard
 
+/-! ### Exact HOL `excp_rel_def` over `HolFiniteMapExact MlS`
+
+These fixtures exercise the exact MlString-keyed relation
+`Flapjack.panToCrepExcpRelFiniteExact` against rows of the direct CakeML/HOL
+oracle `scripts/hol-probes/excp_rel_probe.out` (`empty_maps`,
+`same_domain_injective`, `domain_mismatch`, `noninjective_compiler_codes`). -/
+
+abbrev ExcpRelName := Flapjack.Basis.Pure.MlString.MlString
+
+def excpRelName (s : String) : ExcpRelName :=
+  Flapjack.Basis.Pure.MlString.ofString s
+
+theorem excpRelName_E_ne_F : excpRelName "E" ≠ excpRelName "F" := by decide
+
+def excpRelCodes : HolFiniteMapExact ExcpRelName (BitVec 8) :=
+  (HolFiniteMapExact.empty.updateEq (excpRelName "E", (0 : BitVec 8))).updateEq
+    (excpRelName "F", 1)
+
+def excpRelCodesNonInjective : HolFiniteMapExact ExcpRelName (BitVec 8) :=
+  (HolFiniteMapExact.empty.updateEq (excpRelName "E", (0 : BitVec 8))).updateEq
+    (excpRelName "F", 0)
+
+def excpRelShapes : HolFiniteMapExact ExcpRelName Flapjack.Pancake.PanLang.ShapeHOL :=
+  (HolFiniteMapExact.empty.updateEq (excpRelName "E",
+      Flapjack.Pancake.PanLang.ShapeHOL.one)).updateEq
+    (excpRelName "F", Flapjack.Pancake.PanLang.ShapeHOL.comb [])
+
+def excpRelShapesMismatch :
+    HolFiniteMapExact ExcpRelName Flapjack.Pancake.PanLang.ShapeHOL :=
+  HolFiniteMapExact.empty.updateEq (excpRelName "F",
+    Flapjack.Pancake.PanLang.ShapeHOL.one)
+
+/-- Matching Lean test for the HOL oracle row `same_domain_injective`. -/
+example : panToCrepExcpRelFiniteExact excpRelCodes excpRelShapes := by
+  constructor
+  · intro key
+    by_cases hE : key = excpRelName "E"
+    · subst hE
+      simp [excpRelCodes, excpRelShapes, FUPDATE_HOL, excpRelName_E_ne_F]
+    · by_cases hF : key = excpRelName "F"
+      · subst hF
+        simp [excpRelCodes, excpRelShapes, FUPDATE_HOL]
+      · simp [excpRelCodes, excpRelShapes, FUPDATE_HOL, hE, hF]
+  · intro e e' n n' he he' heq
+    have key_of : ∀ key n, excpRelCodes.lookup key = some n →
+        (key = excpRelName "E" ∧ n = (0 : BitVec 8)) ∨
+          (key = excpRelName "F" ∧ n = 1) := by
+      intro key n h
+      by_cases hE : key = excpRelName "E"
+      · subst hE
+        exact Or.inl ⟨rfl, by simpa [excpRelCodes, FUPDATE_HOL, excpRelName_E_ne_F] using h.symm⟩
+      · by_cases hF : key = excpRelName "F"
+        · subst hF
+          exact Or.inr ⟨rfl, by simpa [excpRelCodes, FUPDATE_HOL] using h.symm⟩
+        · exact absurd h (by simp [excpRelCodes, FUPDATE_HOL, hE, hF])
+    rcases key_of e n he with ⟨rfl, hn⟩ | ⟨rfl, hn⟩ <;>
+      rcases key_of e' n' he' with ⟨rfl, hn'⟩ | ⟨rfl, hn'⟩ <;>
+      simp_all
+
+/-- Matching Lean test for the HOL oracle row `domain_mismatch`. -/
+example : ¬ panToCrepExcpRelFiniteExact excpRelCodes excpRelShapesMismatch := by
+  intro h
+  have hE := h.1 (excpRelName "E")
+  rw [show excpRelCodes.lookup (excpRelName "E") = some (0 : BitVec 8) by
+        simp [excpRelCodes, FUPDATE_HOL, excpRelName_E_ne_F],
+      show excpRelShapesMismatch.lookup (excpRelName "E") = none by
+        simp [excpRelShapesMismatch, FUPDATE_HOL, excpRelName_E_ne_F]] at hE
+  simp at hE
+
+/-- Matching Lean test for the HOL oracle row `noninjective_compiler_codes`. -/
+example : ¬ panToCrepExcpRelFiniteExact excpRelCodesNonInjective excpRelShapes := by
+  intro h
+  exact excpRelName_E_ne_F
+    (h.2 (excpRelName "E") (excpRelName "F") 0 0
+      (by simp [excpRelCodesNonInjective, FUPDATE_HOL, excpRelName_E_ne_F])
+      (by simp [excpRelCodesNonInjective, FUPDATE_HOL]) rfl)
+
+/-- Computable fixture guard mirroring the oracle rows: domain agreement on the
+    two fixture keys plus distinct compiler codes. -/
+def excpRelExactGuard : Bool :=
+  ((excpRelCodes.lookup (excpRelName "E")).isSome ==
+    (excpRelShapes.lookup (excpRelName "E")).isSome) &&
+  ((excpRelCodes.lookup (excpRelName "F")).isSome ==
+    (excpRelShapes.lookup (excpRelName "F")).isSome) &&
+  (excpRelCodes.lookup (excpRelName "E") != excpRelCodes.lookup (excpRelName "F"))
+
+#guard excpRelExactGuard
+
+/-- The same fixture must fail on a domain mismatch. -/
+def excpRelExactMismatchGuard : Bool :=
+  ((excpRelCodes.lookup (excpRelName "E")).isSome ==
+    (excpRelShapesMismatch.lookup (excpRelName "E")).isSome)
+
+#guard !excpRelExactMismatchGuard
+
 /-- Parameter list for the `make_vmap` / `ctxt_fc` bridge used by HOL
     `mk_ctxt_code_imp_code_rel`'s context construction. -/
 def bridgeParams : List (VarName × Shape) := [("x", .one), ("y", .one)]
@@ -489,6 +585,7 @@ def runChecks : IO Bool := do
     ("HOL el_compile_prog_el_prog_eq indexed provenance", elCompileGuard),
     ("HOL make_funcs_def parameter table", makeFuncsGuard),
     ("HOL get_eids_imp_excp_rel exception codes", getEidsGuard),
+    ("HOL excp_rel_def exact MlString finite maps", excpRelExactGuard),
     ("HOL mk_ctxt_code_imp_code_rel makeFuncsHOL/alookup link", generalAlookupGuard),
     ("HOL mk_ctxt_code_imp_code_rel make_vmap/ctxt_fc bridge", vmapCtxtFCGuard),
     ("HOL mk_ctxt_code_imp_code_rel compiled code_rel", mkCtxtCodeRelGuard),

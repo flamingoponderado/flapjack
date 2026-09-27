@@ -154,4 +154,128 @@ termination_by program => sizeOf program
 decreasing_by
   all_goals decreasing_trivial
 
+/-! ## Executable/faithful loopLang bridge
+
+Flapjack-specific bridge between the exact HOL `loopLang$prog` carrier
+(`HolLoopProg`, tagged over `MlString`/`NumSet`) and the executable `LoopProg`.
+It is untagged Flapjack infrastructure: it relates the two representations so
+the exact `loopSem$state` carrier can be bridged to production.  The `num_set`
+live sets are related by `numSetListRel`, the FFI name by the `MlString` codec,
+and every expression subterm by `holLoopExpToExecutable`. -/
+
+/-- Executable/faithful relation for HOL `num_set`: exactly the listed keys are
+    present in the `spt`-backed set. -/
+def numSetListRel (keys : List Nat) (tree : NumSet) : Prop :=
+  keys.Nodup ∧ ∀ key, sptLookup key tree = some () ↔ key ∈ keys
+
+/-- Executable/faithful relation for `loopLang$exp`: the executable expression
+    is the projection of the faithful one. -/
+def loopExpExecRel {width : Nat} [NeZero width] :
+    LoopExp (BitVec width) → HolLoopExp width → Prop :=
+  fun expression faithful => expression = holLoopExpToExecutable faithful
+
+/-- Executable/faithful relation for `loopLang$prog`.  Every HOL constructor has
+    an executable counterpart; the `num_set` live sets are related by
+    `numSetListRel`, the FFI name by the `MlString` codec, and sub-programs
+    recursively.  The executable language's extra expression constructors
+    (`crepOp`/`cmp`) have no HOL counterpart and are rejected. -/
+def loopProgExecRel {width : Nat} [NeZero width] :
+    LoopProg (BitVec width) → HolLoopProg width → Prop
+  | .skip, .skip => True
+  | .assign executableName executableValue, .assign faithfulName faithfulValue =>
+      executableName = faithfulName ∧ loopExpExecRel executableValue faithfulValue
+  | .primitive executableDestinations executableOperator executableArguments,
+    .primitive faithfulDestinations faithfulOperator faithfulArguments =>
+      executableDestinations = faithfulDestinations ∧
+        executableOperator = faithfulOperator ∧
+        executableArguments = faithfulArguments
+  | .arith executableOperation, .arith faithfulOperation =>
+      executableOperation = faithfulOperation
+  | .store executableAddress executableValue, .store faithfulAddress faithfulValue =>
+      executableValue = faithfulValue ∧ loopExpExecRel executableAddress faithfulAddress
+  | .setGlobal executableAddress executableValue,
+    .setGlobal faithfulAddress faithfulValue =>
+      executableAddress = faithfulAddress ∧ loopExpExecRel executableValue faithfulValue
+  | .load32 executableAddress executableDestination,
+    .load32 faithfulAddress faithfulDestination =>
+      executableAddress = faithfulAddress ∧ executableDestination = faithfulDestination
+  | .loadByte executableAddress executableDestination,
+    .loadByte faithfulAddress faithfulDestination =>
+      executableAddress = faithfulAddress ∧ executableDestination = faithfulDestination
+  | .store32 executableAddress executableValue,
+    .store32 faithfulAddress faithfulValue =>
+      executableAddress = faithfulAddress ∧ executableValue = faithfulValue
+  | .storeByte executableAddress executableValue,
+    .storeByte faithfulAddress faithfulValue =>
+      executableAddress = faithfulAddress ∧ executableValue = faithfulValue
+  | .seq executableFirst executableSecond, .seq faithfulFirst faithfulSecond =>
+      loopProgExecRel executableFirst faithfulFirst ∧
+        loopProgExecRel executableSecond faithfulSecond
+  | .ite executableOperator executableCondition executableRight executableThen
+      executableElse executableLive,
+    .ite faithfulOperator faithfulCondition faithfulRight faithfulThen
+      faithfulElse faithfulLive =>
+      executableOperator = faithfulOperator ∧
+        executableCondition = faithfulCondition ∧
+        executableRight = faithfulRight ∧
+        loopProgExecRel executableThen faithfulThen ∧
+        loopProgExecRel executableElse faithfulElse ∧
+        numSetListRel executableLive faithfulLive
+  | .loop executableLiveIn executableBody executableLiveOut,
+    .loop faithfulLiveIn faithfulBody faithfulLiveOut =>
+      numSetListRel executableLiveIn faithfulLiveIn ∧
+        loopProgExecRel executableBody faithfulBody ∧
+        numSetListRel executableLiveOut faithfulLiveOut
+  | .break executableLabel, .break faithfulLabel => executableLabel = faithfulLabel
+  | .continue executableLabel, .continue faithfulLabel => executableLabel = faithfulLabel
+  | .raise executableException, .raise faithfulException =>
+      executableException = faithfulException
+  | .return executableValues, .return faithfulValues => executableValues = faithfulValues
+  | .shMem executableOperator executableName executableAddress,
+    .shMem faithfulOperator faithfulName faithfulAddress =>
+      executableOperator = faithfulOperator ∧
+        executableName = faithfulName ∧
+        loopExpExecRel executableAddress faithfulAddress
+  | .tick, .tick => True
+  | .mark executableBody, .mark faithfulBody =>
+      loopProgExecRel executableBody faithfulBody
+  | .fail, .fail => True
+  | .locValue executableDestination executableSource,
+    .locValue faithfulDestination faithfulSource =>
+      executableDestination = faithfulDestination ∧
+        executableSource = faithfulSource
+  | .call executableReturns executableTarget executableArguments executableHandler,
+    .call faithfulReturns faithfulTarget faithfulArguments faithfulHandler =>
+      (match executableReturns, faithfulReturns with
+        | none, none => True
+        | some (executableRegister, executableLive),
+          some (faithfulRegister, faithfulLive) =>
+            executableRegister = faithfulRegister ∧ numSetListRel executableLive faithfulLive
+        | _, _ => False) ∧
+        executableTarget = faithfulTarget ∧
+        executableArguments = faithfulArguments ∧
+        (match executableHandler, faithfulHandler with
+          | none, none => True
+          | some (executableNumber, executableFirst, executableSecond, executableLive),
+            some (faithfulNumber, faithfulFirst, faithfulSecond, faithfulLive) =>
+              executableNumber = faithfulNumber ∧
+                loopProgExecRel executableFirst faithfulFirst ∧
+                loopProgExecRel executableSecond faithfulSecond ∧
+                numSetListRel executableLive faithfulLive
+          | _, _ => False)
+  | .ffi executableFunction executableConfiguration executableConfigurationLength
+      executableArray executableArrayLength executableLive,
+    .ffi faithfulFunction faithfulConfiguration faithfulConfigurationLength
+      faithfulArray faithfulArrayLength faithfulLive =>
+      Flapjack.Basis.Pure.MlString.ofString executableFunction = faithfulFunction ∧
+        executableConfiguration = faithfulConfiguration ∧
+        executableConfigurationLength = faithfulConfigurationLength ∧
+        executableArray = faithfulArray ∧
+        executableArrayLength = faithfulArrayLength ∧
+        numSetListRel executableLive faithfulLive
+  | _, _ => False
+termination_by _ faithful => sizeOf faithful
+decreasing_by
+  all_goals decreasing_trivial
+
 end Flapjack
