@@ -19,6 +19,27 @@ induction or receive a standalone `@[hol]` reference.
 
 namespace Flapjack
 
+open Flapjack.Pancake.PanLang (MlS ShapeHOL)
+
+/-! The exception-relation conjunct of HOL
+`call_preserve_state_code_locals_rel` (`pan_to_crepProofScript.sml:2355`) is
+stable across the exact call-context and source clock updates. HOL
+`ctxt_fc_def` keeps `ctxt.eids`, and Pan `dec_clock_def` keeps `s.eshapes`;
+the exact carriers expose those equations directly. This is only a projected
+conjunct helper, not a tagged port of the full Call theorem. -/
+theorem panToCrepCallExcpRelFiniteExactContextUpdate
+    {width : Nat} {σ : Type} [NeZero width]
+    (context : PanToCrepContextExact width)
+    (source : PanSemStateFiniteExact width σ)
+    (variableShapes : List (MlS × ShapeHOL))
+    (names : List Nat)
+    (hrel : panToCrepExcpRelFiniteExact context.eids source.eshapes) :
+    panToCrepExcpRelFiniteExact
+      (ctxtFcExactHOL context.funcs context.eids
+        (variableShapes.map Prod.fst) (variableShapes.map Prod.snd) names).eids
+      source.decClockHOLFinite.eshapes := by
+  simpa [ctxtFcExactHOL, PanSemStateFiniteExact.decClockHOLFinite] using hrel
+
 /-! The `Skip` constructor case uses the total result×state clauses on both
   sides. The source evaluator uses the production `PanSemState`, and the target
   evaluator uses the code-bearing runtime state converted by `toHolState`. The
