@@ -10944,6 +10944,14 @@
     "reviewer": "Flapjack-specific prerequisite for HOL pc_compile_correct[Break]: records the finite-context Pan Break result/state, exact compiler Break 0 output, and Crep Break 0 result/state, preserving exact state and locals relations. It does not assemble code_rel/excp_rel or the full existential conclusion and is not a standalone HOL declaration."
   },
   {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "panToCrepExactContinueTransition",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific prerequisite for HOL pc_compile_correct[Continue]: records the finite-context Pan Continue result/state, exact compiler Continue 0 output, and Crep Continue 0 result/state, preserving exact state and locals relations. It does not assemble code_rel/excp_rel or the full existential conclusion and is not a standalone HOL declaration."
+  },
+  {
     "hol_path": "cakeml/misc/miscScript.sml",
     "hol_name": "num_set",
     "lean_path": "Flapjack/Misc/Sptree.lean",
