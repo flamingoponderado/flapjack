@@ -1657,14 +1657,29 @@ def evaluateHOLFiniteStateWithDeciders {width : Nat} {σ : Type} [NeZero width]
   | some pair => (pair.1, pair.2.state)
   | none => (none, state)
 
-/-- FLAPJACK-SPECIFIC function-shaped evaluator over the exact finite-support
-    carrier. HOL `panSemScript.sml:780` names a theorem: the conjunction of the
-    21 equations from `evaluate_def`, rewritten using `fix_clock_evaluate`;
-    it is not a function definition and must not tag this Lean `def`. The
-    result-option × state shape, finite context, total assembly marker, and
-    checked projection remain useful infrastructure for the faithful equation
-    theorem tracked by `flapjack-qj5`. Source comparison of its 21 clauses and
-    finite-map carrier is recorded in `EvaluateFinite.lean`. -/
+/-- Flapjack-specific finite-support evaluator aligned with HOL
+    `panSem$evaluate_def` (`panSemScript.sml:556-761`, rewritten as a theorem at
+    line 780). It preserves the result-option × state pair, but this Lean
+    declaration is a function definition, whereas HOL's cited declaration is
+    a conjunction of constructor equations. Those equations still need an
+    exact theorem port (tracked by `flapjack-qj5`); this wrapper must not carry
+    the HOL theorem's tag. `FiniteEvalContext` threads
+    Lean's operational `DecidablePred` evidence through local/state updates;
+    this wrapper chooses that evidence classically, so it adds no logical
+    premise. The internal evaluator's outer assembly marker is proved always
+    populated, and `evaluateHOLFiniteStateWithDeciders_eq_getD` shows that its
+    fallback does not change any result.
+
+    The `(fmap_as_finite_support := [locals, globals, code, eshapes])`
+    qualifier records exactly HOL's four finite-map state fields as
+    `HolFiniteMapExact`. `PanSemStateFiniteExact` owns those fields in this
+    module, whose `holFmapAsFiniteSupportWitness` proves the roundtrip to its
+    broad counterpart. Source review compared every recursive and
+    nonrecursive clause, including clock/fix-clock behavior, Dec restoration,
+    Call/DecCall result and exception branches, shape/validity checks, FFI and
+    shared-memory errors, and finite-map updates. The finite-to-broad
+    projection is independently kernel-checked; the evaluator is not routed
+    through the production compiler. -/
 noncomputable def evaluateHOLFiniteState {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) (program : ProgHOL width) :
     Option (PanSemResultExact width) × PanSemStateFiniteExact width σ := by
