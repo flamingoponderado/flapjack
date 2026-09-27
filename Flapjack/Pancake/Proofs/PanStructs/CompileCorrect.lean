@@ -110,6 +110,26 @@ def convertResHOL {width : Nat} [NeZero width] :
   | some (.exception exceptionId value) => some (.exception exceptionId (convertV value))
   | res => res
 
+/-- Exact port of HOL `is_cont_res_def`
+    (`cakeml/pancake/proofs/pan_structsProofScript.sml:992-997`):
+    `is_cont_res NONE = T`, `is_cont_res (SOME Break) = T`,
+    `is_cont_res (SOME Continue) = T`, and `is_cont_res _ = F`.
+
+    The parameter is HOL's `panSem$result option`, rendered as
+    `Option (PanSemResultExact width)` over the reviewed exact `result` carrier
+    (`DecExact.lean:58`, tagged against `panSemScript.sml:68-75`).  The three
+    matched clauses and the `NONE` clause return `true`, the catch-all returns
+    `false`, exactly as HOL's clauses; no payload is inspected.  The only
+    difference from HOL is the already-reviewed `result` carrier, so no
+    qualifier applies. -/
+@[hol "cakeml/pancake/proofs/pan_structsProofScript.sml" "is_cont_res_def"]
+def isContResHOL {width : Nat} [NeZero width] :
+    Option (PanSemResultExact width) → Bool
+  | none => true
+  | some .break => true
+  | some .continue => true
+  | _ => false
+
 /-! Structural Bool equality for the translated Shape datatype. It performs
     the HOL constructor equality cases recursively and avoids a BEq instance
     for Shape or String. -/
