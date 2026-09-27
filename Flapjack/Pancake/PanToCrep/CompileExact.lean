@@ -755,9 +755,11 @@ curried arguments, the `make_vmap` result, the parameter-shape maximum, the
 definition directly. The two input maps are the canonical finite-support
 rendering of HOL `fs` and `eids`; `BitVec width` with `[NeZero width]` is the
 usual positive type-indexed HOL word translation. Names and syntax stay on the
-exact `MlS`/`ShapeHOL`/`ProgHOL`/`CrepProgHOL` carriers. This theorem-side port
-does not yet reroute the production String-backed `compFuncHOL`; that route is
-tracked separately under `flapjack-pxn.18.3.5.8`. -/
+exact `MlS`/`ShapeHOL`/`ProgHOL`/`CrepProgHOL` carriers. The parser-backed
+`compileProgTopHOLProductionExact` route calls this tagged wrapper; its
+byte-ranged production context/parameter bridge and output-preservation proof
+are recorded beside that route in `CompileProg.lean` under
+`flapjack-pxn.18.3.5.8.25`. -/
 @[hol "cakeml/pancake/pan_to_crepScript.sml" "comp_func_def"
   (fmap_as_finite_support_relation := [fs, eids])
   (words_as_type_indexed_bitvec)]
