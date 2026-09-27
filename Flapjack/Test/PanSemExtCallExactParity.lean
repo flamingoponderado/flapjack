@@ -56,6 +56,13 @@ def evalExpressionFixture (state : PanSemStateExact 8 Unit) (expression : ExpHOL
   | .var .local name => state.locals name
   | _ => none
 
+def evalNonwordFixture (_state : PanSemStateExact 8 Unit) (expression : ExpHOL 8) :
+    Option (ValueHOL 8) :=
+  match expression with
+  | .const value => some (.val (.word value))
+  | .rstruct [] => some (.rStruct [])
+  | _ => none
+
 def isNoneResult : Option (PanSemResultExact 8) → Bool
   | none => true
   | _ => false
@@ -91,7 +98,8 @@ private abbrev finalState : PanSemStateExact 8 Unit :=
 def extCallReturnedGuard : Bool :=
   let result := extCallStepHOLExact returnedState
     evalExpressionFixture (ml "x") (.const 0) (.const 2) (.const 0) (.const 2)
-  isNoneResult result.1 && memoryWord result.2 0 == some 0x42
+  isNoneResult result.1 && memoryWord result.2 0 == some 0x42 &&
+    result.2.ffi.ffiState == () && result.2.ffi.ioEvents.length == 1
 
 /-- A failed byte-array read returns `Error` and keeps the state. -/
 def extCallBadReadGuard : Bool :=
@@ -103,25 +111,44 @@ def extCallBadReadGuard : Bool :=
 def extCallFinalGuard : Bool :=
   let result := extCallStepHOLExact finalState
     evalExpressionFixture (ml "x") (.const 0) (.const 2) (.const 0) (.const 2)
-  isFinalFfiResult result.1 && (localsWord result.2 (ml "v")).isNone
+  isFinalFfiResult result.1 && (localsWord result.2 (ml "v")).isNone &&
+    result.2.ffi.ffiState == () && result.2.ffi.ioEvents.isEmpty
+
+/-- A missing source expression returns `Error` and keeps the source state. -/
+def extCallEvalErrorGuard : Bool :=
+  let result := extCallStepHOLExact returnedState
+    evalExpressionFixture (ml "x") (.var .local (ml "missing"))
+      (.const 2) (.const 0) (.const 2)
+  isErrorResult result.1 && memoryWord result.2 0 == some 0xAB
+
+/-- A successfully evaluated nonword argument returns `Error`. -/
+def extCallNonwordGuard : Bool :=
+  let result := extCallStepHOLExact returnedState
+    evalNonwordFixture (ml "x") (.rstruct []) (.const 2) (.const 0) (.const 2)
+  isErrorResult result.1 && memoryWord result.2 0 == some 0xAB
 
 def extCallExactGuard : Bool :=
-  extCallReturnedGuard && extCallBadReadGuard && extCallFinalGuard
+  extCallReturnedGuard && extCallBadReadGuard && extCallFinalGuard &&
+    extCallEvalErrorGuard && extCallNonwordGuard
 
 #eval extCallReturnedGuard
 #eval extCallBadReadGuard
 #eval extCallFinalGuard
+#eval extCallEvalErrorGuard
+#eval extCallNonwordGuard
 #guard extCallReturnedGuard
 #guard extCallBadReadGuard
 #guard extCallFinalGuard
+#guard extCallEvalErrorGuard
+#guard extCallNonwordGuard
 #guard extCallExactGuard
 
 def runChecks : IO Bool := do
   if extCallExactGuard then
-    IO.println "PASS exact panSem ExtCall clause step (3 HOL rows)"
+    IO.println "PASS exact panSem ExtCall clause step (5 HOL rows)"
     pure true
   else
-    IO.println "FAIL exact panSem ExtCall clause step (3 HOL rows)"
+    IO.println "FAIL exact panSem ExtCall clause step (5 HOL rows)"
     pure false
 
 end Flapjack.Test.PanSemExtCallExactParity

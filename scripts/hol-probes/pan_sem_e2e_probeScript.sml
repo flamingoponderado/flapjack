@@ -937,6 +937,30 @@ val _ = print_eval "extcall_clause_bad_read"
           ffi := ^returning_ffi |>)) of
       (res, s') => (res, s'.memory 0w)``
 
+val _ = print_eval "extcall_clause_eval_error"
+  ``case panSem$evaluate
+      (panLang$ExtCall «x» (panLang$Var panLang$Local «missing»)
+         (panLang$Const (2w:8 word)) (panLang$Const (0w:8 word))
+         (panLang$Const (2w:8 word)),
+       ((ARB:((8),unit) panSem$state) with <|
+          locals := FEMPTY;
+          memory := (\a:8 word. if a = 0w then Word (0xABw:8 word) else Word (0w:8 word));
+          memaddrs := {0w; 1w}; sh_memaddrs := EMPTY; be := F;
+          ffi := ^returning_ffi |>)) of
+      (res, s') => (res, s'.memory 0w)``
+
+val _ = print_eval "extcall_clause_nonword"
+  ``case panSem$evaluate
+      (panLang$ExtCall «x» (panLang$RStruct [])
+         (panLang$Const (2w:8 word)) (panLang$Const (0w:8 word))
+         (panLang$Const (2w:8 word)),
+       ((ARB:((8),unit) panSem$state) with <|
+          locals := FEMPTY;
+          memory := (\a:8 word. if a = 0w then Word (0xABw:8 word) else Word (0w:8 word));
+          memaddrs := {0w; 1w}; sh_memaddrs := EMPTY; be := F;
+          ffi := ^returning_ffi |>)) of
+      (res, s') => (res, s'.memory 0w)``
+
 val _ = print_eval "extcall_clause_final"
   ``case panSem$evaluate
       (panLang$ExtCall «x» (panLang$Const (0w:8 word)) (panLang$Const (2w:8 word))
