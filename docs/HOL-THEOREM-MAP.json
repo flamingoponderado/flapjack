@@ -14927,5 +14927,21 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-ds8 (source comparison; bead flapjack-pxn.18.3.6.9.23.1): exact statement-shape port of HOL panSemScript.sml:768-775 fix_clock_evaluate (fix_clock s (evaluate (prog,s)) = evaluate (prog,s)) over the pair-shaped finite evaluator on PanSemStateFiniteExact. Same reviewed HolFiniteMapExact carrier fields and BitVec width words as evaluateHOLFiniteState_clock_le_result; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 780,
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/EvaluateClock.lean",
+    "lean_name": "evaluateHOLFiniteState_eq_evaluate_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "reviewer": "flapjack-ds8 source comparison (2026-09-27; bead flapjack-qj5.9.6): HOL panSemScript.sml:780 is Theorem evaluate_def[allow_rebind,compute] = REWRITE_RULE [fix_clock_evaluate] evaluate_def. evaluateHOLFiniteState_eq_evaluate_def states the single HOL-shaped constructor match of the whole evaluator over all 21 ProgHOL constructors, with each arm copied from the corresponding line-780 clause equation (evaluateHOLFiniteState_decCall_fixClockRewrite for DecCall, _dec_total for the integer-return constructor, _seq_line780 and _while_fixClockRewrite for Seq/While), so no arm keeps the line-556 fix_clock wrapper that line 780 rewrites away. No extra premise, result hypothesis, or DecidablePred binder is added beyond the finite clause siblings. The finite state uses the four named HolFiniteMapExact fields with the same-module canonical roundtrip witness in PanSem.EvaluateClockWitness, and the width-indexed word carrier retains [NeZero width], so both (fmap_as_finite_support := [locals, globals, code, eshapes]) and (words_as_type_indexed_bitvec) apply; the qualifiers record only those carrier translations.",
+    "words_as_type_indexed_bitvec": true
   }
 ]
