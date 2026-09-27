@@ -697,6 +697,85 @@ Tracking: tag bead `flapjack-4ac.5.16.5`, finite-map owner/witness placement
 `flapjack-4ac.5.16.5.13.1`, this audit `flapjack-4ac.5.16.5.16`.
 -/
 
+/-!
+## Clause-by-clause source review of `evaluate_def` (bead `flapjack-4ac.5.16.5.33`)
+
+Target: the rebound `evaluate_def` (`crepSemScript.sml:443-444`,
+`REWRITE_RULE [fix_clock_evaluate]` of the `:240-390` definition), whose
+Seq/While/Call conjuncts have no `fix_clock`. Compared with
+`evalCrepSemHOLProgExact`, its clause equations in this module, and the helpers
+they call. Verdict: **no semantic divergence was found in any of the 19
+clauses**, but the declaration is **not tagged**. Several clause equations do not
+yet have HOL's statement shape, and no assembled theorem states all conjuncts.
+Neither `evalCrepSemHOLProg` nor `evalCrepSemHOLProgExact` can itself carry the
+tag. The core takes the `memDec`/`shMemDec` arguments and stamps domains with
+`crepStampExactDomains`. The wrapper's body is a classical instantiation of the
+core. The tag belongs on clause equations over `evalCrepSemHOLProgExact`, as for
+PanSem's line-780 `evaluate_def`.
+
+Clauses whose existing equations already have HOL's shape (up to the qualified
+finite-map/word carriers): `Skip` (`evalCrepSemHOLProgExact_skip`), `Break`,
+`Continue`, `Raise`, `Tick`, and `ExtCall`
+(`evalCrepSemHOLProgExact_extCall`: the argument order
+`ptr1 = configuration`, `len1 = configurationLength`, `read_bytearray`/
+`write_bytearray` on the exact `word8` helpers, and the `FFI_final`/`FFI_return`
+split all match `:367-379`).
+
+Clauses that are semantically faithful but still need a HOL-shaped statement:
+
+* `Dec` (`:242-247`): no `evalCrepSemHOLProgExact` equation exists yet; only the
+  core `evalCrepSemHOLProg_dec`. The `setVar`/`resVarEq` updates are HOL's
+  `|+`/`res_var` (bead `flapjack-4ac.5.16.5.36`).
+* `Assign`, `StoreGlob`, `Return`, `Primitive`: faithful, but stated through the
+  `crepExactEvalExp` wrapper rather than the tagged `evalCrepSemHOLExp`
+  (`.36`). `Primitive`'s Boolean `&&`/`all`/`Nodup` guard is HOL's
+  `LENGTH ... ∧ EVERY ... ∧ ALL_DISTINCT`.
+* `Store` (`:267-273`): matches the domain decider directly instead of calling
+  HOL `mem_store` (tagged `panMemStoreHOL`). `Store32`: goes through the wrapper
+  `crepExactMemStore32`, which equals the tagged `panMemStore32HOL`, and
+  `BitVec.ofNat 32 w.toNat` is HOL `w2w`. `StoreByte`: goes through the
+  legacy `UInt8` helper `crepExactMemStoreByte` instead of the tagged `word8`
+  `panMemStoreByteWord8HOL`; the two are equal by
+  `crepExactMemStoreByte_eq_word8` (bead `flapjack-4ac.5.16.5.35`).
+* `If` (`:307-311`): stated as `if w ≠ 0 then eval c1 else eval c2` instead of
+  HOL's `evaluate (if w <> 0w then c1 else c2, s)` (`.36`).
+* `ShMem` (`:292-303`): the load/store branches call the Flapjack wrappers
+  `crepShMemLoadHOL`/`crepShMemStoreHOL`, not the tagged `sh_mem_op` port
+  `crepShMemOpExactHOL`. They agree on each branch because `is_load` fixes the
+  operator family (`.36`).
+* `Seq` (`evalCrepSemHOLProgExact_seq_fixClockFree`): unstamped and without
+  `fix_clock`, but written as `match step with (none, s1) => ... | (some _, _) =>
+  step`, not HOL's `if res = NONE then evaluate (c2,s1) else (res,s1)` (`.36`).
+* `While` (`evalCrepSemHOLProgExact_while_fixClockFree`): unstamped and without
+  `fix_clock`, but it keeps an unused named match `_hbody :` on the body run
+  (`.36`).
+* `Call` (`:335-366`): the handler runs on `crepStampExactDomains state
+  {bodyState with locals := state.locals}`. That is the identity by
+  `crepStampExactDomains_call_handler`, but it is not HOL's `st with locals :=
+  s.locals`. The fix-clock-free form from bead `.30` keeps an unused named
+  match. `lookup_code` is inlined as `code.lookup`, the length/`Nodup` guard, and
+  `HolFiniteMapExact.empty.updateList`. The tagged `lookupCodeHOL` works over
+  the raw `FiniteMap` carrier, so a finite-support form is needed. The `rts`
+  distinctness guard is also nested under `match returnInfo` rather than HOL's
+  `if (case caltyp of ...) then (SOME Error, s) else ...`. The clock, callee
+  locals, and every result branch (`Return` with `OPT_MMAP (FLOOKUP s.locals)
+  rts` and `|++ ZIP`, the `Exception` handler with `eid = eid'`, and the
+  `empty_locals` fall-through) match (bead `flapjack-4ac.5.16.5.34`).
+
+Carriers: `CrepProgHOL` (`prog`), `CrepResultHOLExact` (`result`), `HolWordLab`
+(`word_lab`, a single `Word` constructor as in `panSemScript.sml:17`),
+`evalCrepSemHOLExp` (`eval_def`), `crepPrimopHOLExact`, `decClockCrepSemHOL`,
+`exitLoopCrepResult`, and the `sh_mem_*`, `mem_store*`, `read_bytearray`,
+`write_bytearray`, and `call_FFI` helpers are all tagged ports. `memaddrs`/
+`sh_memaddrs` are HOL sets as `BitVec width → Prop`. HOL never updates them in
+`evaluate`, and the classical deciders used by `evalCrepSemHOLProgExact` are
+invisible (`evalCrepSemHOLProgExact_eq_core`). The `'a word`/`'ffi` translation is
+the `(words_as_type_indexed_bitvec)` one.
+
+Tagging the assembled 19-conjunct theorem (bead `flapjack-4ac.5.16.5.37`)
+depends on `.34`, `.35`, and `.36`.
+-/
+
 /-- Total HOL-shaped `crepSem$evaluate` (`crepSemScript.sml:240-390`) by
     constructor recursion on the exact `CrepProgHOL` syntax over the exact
     finite-support `CrepSemHOLState`. The returned pair is
