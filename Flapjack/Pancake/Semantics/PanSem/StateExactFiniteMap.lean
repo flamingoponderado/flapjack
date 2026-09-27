@@ -1870,6 +1870,46 @@ theorem evalPanSemRecursiveCallFiniteContext_callEntryContext_normalize
   apply evalPanSemRecursiveCallFiniteContext_state_eq
   rfl
 
+/-- FLAPJACK-SPECIFIC DecCall body-`NONE` case for the finite context
+    evaluator. After successful arguments and lookup and a nonzero clock, the
+    recursive body result `NONE` produces `Error` with the fixed callee
+    post-context. This keeps the generated `withState` decider proofs out of
+    the body induction hypothesis; the exact finite-state HOL case is stated
+    separately below. -/
+theorem evalPanSemRecursiveCallFiniteContext_decCall_body_none
+    {width : Nat} {σ : Type} [NeZero width]
+    (resultName : MlS) (shape : ShapeHOL) (function : MlS)
+    (arguments : List (ExpHOL width)) (continuation : ProgHOL width)
+    (context : FiniteEvalContext width σ) (values : List (ValueHOL width))
+    (body : ProgHOL width) (callee : HolFiniteMapExact MlS (ValueHOL width))
+    (returnShape : ShapeHOL) (bodyContext : FiniteEvalContext width σ)
+    (hargs : evalListHOLFinite context.state
+      (h := context.memaddrsDecidable) arguments = some values)
+    (hlookup : lookupCodeHOLFinite context.state.code.lookup function values =
+      some (body, callee, returnShape))
+    (hclock : context.state.clock ≠ 0)
+    (hbody : evalPanSemRecursiveCallFiniteContext body
+      (callEntryContextHOLFinite context callee) =
+      some (none, bodyContext)) :
+    evalPanSemRecursiveCallFiniteContext
+        (.decCall resultName shape function arguments continuation) context =
+      some (some .error,
+        callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)
+          none bodyContext) := by
+  have hbodyGenerated : evalPanSemRecursiveCallFiniteContext body
+      (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl) =
+      some (none, bodyContext) := by
+    calc
+      _ = evalPanSemRecursiveCallFiniteContext body
+          (callEntryContextHOLFinite context callee) := by
+        apply evalPanSemRecursiveCallFiniteContext_state_eq
+        rfl
+      _ = _ := hbody
+  rw [evalPanSemRecursiveCallFiniteContext.eq_6]
+  simp only [hargs]
+  rw [hlookup]
+  simp only [if_neg hclock, hbodyGenerated]
+
 /-- FLAPJACK-SPECIFIC specialization for the fixed callee context in the
     DecCall equation. This hides the generated finite-domain proof arguments
     behind the canonical `callFixedContextHOLFinite` context. -/
@@ -3146,17 +3186,10 @@ theorem evaluateHOLFiniteState_dec_total {width : Nat} {σ : Type} [NeZero width
           evalPanSemRecursiveCallFiniteContext, hinit, hshape,
           hmem]
 
-/-- Exact HOL `evaluate_def` (`panSemScript.sml:556`) DecCall argument-failure
-    case, corresponding to the `OPT_MMAP (eval s) argexps = NONE` branch at
-    lines 699-714: it returns `Error` with the caller state unchanged. This is
-    a genuine source case with a branch selector and no target-evaluation
-    premise. `PanSemStateFiniteExact` records the four HOL finite maps through
-    its canonical same-module witness. The combined qualifiers record those
-    maps and HOL's positive word dimension as `BitVec width`; `σ : Type` models
-    the HOL FFI state carrier. -/
-@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 556
-  (fmap_as_finite_support := [locals, globals, code, eshapes])
-  (words_as_type_indexed_bitvec)]
+/-- Flapjack-specific DecCall argument-failure helper for the HOL clause at
+    `panSemScript.sml:694-714`. The `hargs` branch selector is an additional
+    hypothesis absent from HOL's unconditional `evaluate_def` conjunct, so this
+    helper is not tagged as a port of that declaration. -/
 theorem evaluateHOLFiniteState_decCall_args_none {width : Nat} {σ : Type}
     [NeZero width] (state : PanSemStateFiniteExact width σ)
     (resultName : MlS) (shape : ShapeHOL) (function : MlS)
@@ -3175,16 +3208,10 @@ theorem evaluateHOLFiniteState_decCall_args_none {width : Nat} {σ : Type}
   simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
     evalPanSemRecursiveCallFiniteContext.eq_6, hargsExact]
 
-/-- Exact HOL `evaluate_def` (`panSemScript.sml:556`) DecCall lookup-failure
-    case, corresponding to the failed `lookup_code` branch at lines 699-714:
-    successful argument evaluation followed by a missing code entry returns
-    `Error` with the caller state unchanged. The premise selects only that
-    source branch; the statement remains the total result/state pair. The
-    combined qualifiers record the four finite-support maps and HOL's positive
-    word dimension as `BitVec width`; `σ : Type` models the HOL FFI state. -/
-@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 556
-  (fmap_as_finite_support := [locals, globals, code, eshapes])
-  (words_as_type_indexed_bitvec)]
+/-- Flapjack-specific DecCall lookup-failure helper for the HOL clause at
+    `panSemScript.sml:694-714`. The `hargs` and `hlookup` branch selectors are
+    additional hypotheses absent from HOL's unconditional `evaluate_def`
+    conjunct, so this helper is not tagged as a port of that declaration. -/
 theorem evaluateHOLFiniteState_decCall_lookup_none {width : Nat} {σ : Type}
     [NeZero width] (state : PanSemStateFiniteExact width σ)
     (resultName : MlS) (shape : ShapeHOL) (function : MlS)
@@ -3234,6 +3261,50 @@ theorem evaluateHOLFiniteState_decCall_clock_zero {width : Nat} {σ : Type}
     resultName shape function arguments continuation context values body callee
     returnShape hargs hlookup hclock
   simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders, context, htimeout]
+
+/-- Flapjack-specific DecCall body-`NONE` helper for the HOL clause at
+    `panSemScript.sml:694-714`. Its argument, lookup, and clock branch
+    selectors are extra hypotheses absent from HOL's unconditional conjunct,
+    so it is not tagged as a port. The body premise is a recursive-call
+    induction hypothesis. The original Pancake probe
+    `pan_sem_deccall_error_probe.out` observes `SOME Error` in this branch. -/
+theorem evaluateHOLFiniteState_decCall_body_none {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateFiniteExact width σ)
+    (resultName : MlS) (shape : ShapeHOL) (function : MlS)
+    (arguments : List (ExpHOL width)) (continuation : ProgHOL width)
+    (values : List (ValueHOL width)) (body : ProgHOL width)
+    (callee : HolFiniteMapExact MlS (ValueHOL width)) (returnShape : ShapeHOL)
+    (bodyPost : PanSemStateFiniteExact width σ)
+    (hargs : evalListHOLFinite state
+      (h := fun address => Classical.propDecidable (state.memaddrs address))
+      arguments = some values)
+    (hlookup : lookupCodeHOLFinite state.code.lookup function values =
+      some (body, callee, returnShape))
+    (hclock : state.clock ≠ 0)
+    (hbody : evaluateHOLFiniteState
+      (callEntryStateHOLFinite state callee) body =
+        ((none : Option (PanSemResultExact width)), bodyPost)) :
+    evaluateHOLFiniteState state
+        (.decCall resultName shape function arguments continuation : ProgHOL width) =
+      (some .error,
+        (fixClockHOLFinite (callEntryStateHOLFinite state callee)
+          ((none : Option (PanSemResultExact width)), bodyPost)).2) := by
+  classical
+  let context : FiniteEvalContext width σ :=
+    ⟨state, fun address => Classical.propDecidable (state.memaddrs address),
+      fun address => Classical.propDecidable (state.shMemaddrs address)⟩
+  have hargsContext : evalListHOLFinite context.state
+      (h := context.memaddrsDecidable) arguments = some values := by
+    simpa [context] using hargs
+  obtain ⟨bodyContext, hbodyContext, hbodyState⟩ :=
+    evalPanSemRecursiveCallFiniteContext_of_evaluateHOLFiniteState
+      (callEntryStateHOLFinite state callee) body
+      (callEntryContextHOLFinite context callee) rfl (none, bodyPost) hbody
+  have hcase := evalPanSemRecursiveCallFiniteContext_decCall_body_none
+    resultName shape function arguments continuation context values body callee
+    returnShape bodyContext hargsContext hlookup hclock hbodyContext
+  simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders, context,
+    hcase, callFixedContextHOLFinite, hbodyState]
 
 /-- Source-reviewed HOL `evaluate_def` Seq conjunct (`panSemScript.sml:615`)
     from the source `Definition evaluate_def` at line 556. That definition

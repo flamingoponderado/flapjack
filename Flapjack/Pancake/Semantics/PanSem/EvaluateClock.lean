@@ -532,6 +532,111 @@ theorem fixClockHOLFinite_evaluateState {width : Nat} {σ : Type} [NeZero width]
   classical
   exact fixClockHOLFinite_evaluate state program
 
+
+/-- FLAPJACK-SPECIFIC (not a HOL declaration): the finite `Call`/`DecCall` body
+    result already satisfies the evaluated-clock bound, so the finite
+    `fix_clock` on the body pair is the identity. This is the rewrite used to
+    restate HOL `evaluate_def`'s `Call` clause at line 780 without the source
+    definition's inner `fix_clock` (HOL `fix_clock_evaluate`). -/
+theorem callFixedContextHOLFinite_eq_of_body {width : Nat} {σ : Type} [NeZero width]
+    (entry : PanSemStateFiniteExact width σ) (body : ProgHOL width)
+    (bodyResult : Option (PanSemResultExact width)) (bodyContext : FiniteEvalContext width σ)
+    (hbodyOutput : evaluateHOLFiniteState entry body = (bodyResult, bodyContext.state)) :
+    callFixedContextHOLFinite entry bodyResult bodyContext = bodyContext := by
+  have hfix : fixClockHOLFinite entry (bodyResult, bodyContext.state) =
+      (bodyResult, bodyContext.state) := by
+    rw [← hbodyOutput]
+    exact fixClockHOLFinite_evaluateState entry body
+  unfold callFixedContextHOLFinite
+  apply FiniteEvalContext.ext
+  exact congrArg Prod.snd hfix
+
+/-- Flapjack-specific `Call` argument-failure helper for the HOL conjunct at
+    `panSemScript.sml:780`. Its branch-selector hypothesis is absent from that
+    unconditional equation, so this helper is not tagged as a port. -/
+theorem evaluateHOLFiniteState_call_args_none {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ)
+    (info : Option (Option (VarKind × MlS) × Option (MlS × MlS × ProgHOL width)))
+    (function : MlS) (arguments : List (ExpHOL width))
+    (hargs : evalListHOLFinite state
+      (h := fun address => Classical.propDecidable (state.memaddrs address))
+      arguments = none) :
+    evaluateHOLFiniteState state (.call info function arguments : ProgHOL width) =
+      (some .error, state) := by
+  classical
+  have hargsExact : @evalListHOLExact width σ _ state.toExact
+      (fun address => Classical.propDecidable (state.memaddrs address)) arguments = none := by
+    simpa only [evalListHOLFinite_eq_toExact] using hargs
+  simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+    evalPanSemRecursiveCallFiniteContext.eq_5, hargsExact]
+
+/-- Flapjack-specific `Call` lookup-failure helper for the HOL conjunct at
+    `panSemScript.sml:780`. Its branch-selector hypotheses are absent from
+    that unconditional equation, so this helper is not tagged as a port. -/
+theorem evaluateHOLFiniteState_call_lookup_none {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ)
+    (info : Option (Option (VarKind × MlS) × Option (MlS × MlS × ProgHOL width)))
+    (function : MlS) (arguments : List (ExpHOL width)) (values : List (ValueHOL width))
+    (hargs : evalListHOLFinite state
+      (h := fun address => Classical.propDecidable (state.memaddrs address))
+      arguments = some values)
+    (hlookup : lookupCodeHOLFinite state.code.lookup function values = none) :
+    evaluateHOLFiniteState state (.call info function arguments : ProgHOL width) =
+      (some .error, state) := by
+  classical
+  have hargsExact : @evalListHOLExact width σ _ state.toExact
+      (fun address => Classical.propDecidable (state.memaddrs address)) arguments =
+      some values := by
+    simpa only [evalListHOLFinite_eq_toExact] using hargs
+  simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+    evalPanSemRecursiveCallFiniteContext.eq_5, hargsExact, hlookup]
+
+/-- Flapjack-specific `Call` clock-exhaustion helper for the HOL conjunct at
+    `panSemScript.sml:780`. Its argument, lookup, and clock branch selectors
+    are absent from that unconditional equation, so it is not tagged. -/
+theorem evaluateHOLFiniteState_call_clock_zero {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ)
+    (info : Option (Option (VarKind × MlS) × Option (MlS × MlS × ProgHOL width)))
+    (function : MlS) (arguments : List (ExpHOL width)) (values : List (ValueHOL width))
+    (body : ProgHOL width) (callee : HolFiniteMapExact MlS (ValueHOL width))
+    (returnShape : ShapeHOL)
+    (hargs : evalListHOLFinite state
+      (h := fun address => Classical.propDecidable (state.memaddrs address))
+      arguments = some values)
+    (hlookup : lookupCodeHOLFinite state.code.lookup function values =
+      some (body, callee, returnShape))
+    (hclock : state.clock = 0) :
+    evaluateHOLFiniteState state (.call info function arguments : ProgHOL width) =
+      (some .timeOut, emptyLocalsHOLFinite state) := by
+  classical
+  let context : FiniteEvalContext width σ :=
+    ⟨state, fun address => Classical.propDecidable (state.memaddrs address),
+      fun address => Classical.propDecidable (state.shMemaddrs address)⟩
+  have hargsContext : evalListHOLFinite context.state
+      (h := context.memaddrsDecidable) arguments = some values := by
+    simpa only [context] using hargs
+  have hlookupContext :
+      lookupCodeHOLFinite context.state.code.lookup function values =
+        some (body, callee, returnShape) := by
+    simpa only [context] using hlookup
+  have hclockContext : context.state.clock = 0 := by
+    simpa only [context] using hclock
+  have htimeout : evalPanSemRecursiveCallFiniteContext (.call info function arguments) context =
+      some (some .timeOut, context.withState (emptyLocalsHOLFinite context.state) rfl rfl) := by
+    rw [evalPanSemRecursiveCallFiniteContext.eq_def]
+    dsimp only
+    rw [hargsContext]
+    dsimp only
+    rw [hlookupContext]
+    dsimp only
+    rw [if_pos hclockContext]
+  rw [evaluateHOLFiniteState_eq_withDeciders state (.call info function arguments)]
+  simp only [evaluateHOLFiniteStateWithDeciders]
+  rw [show (⟨state, fun address => Classical.propDecidable (state.memaddrs address),
+        fun address => Classical.propDecidable (state.shMemaddrs address)⟩ :
+        FiniteEvalContext width σ) = context from rfl]
+  rw [htimeout]
+  rfl
 /-
 Re-export of the canonical finite-map translation witness for the owning
     carrier `PanSemStateFiniteExact` (declared in `StateExactFiniteMap.lean`), so
