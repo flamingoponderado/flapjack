@@ -1035,4 +1035,432 @@ theorem evalDeclExpression_bytesInWord_correspondence {width : Nat} [NeZero widt
   rw [hprod, hexact]
   exact panValueCodecRel_word (bytesInWordHOL width)
 
+/-! ## List-level correspondence for the memory-free fragment (flapjack-rdc.3)
+
+Shared prerequisite for the `.op`/`.panOp` arms: if every argument of a
+production expression list is related to its exact `expToHOL` image by
+`PanSemDeclarationValueOptionRel PanValueCodecRel`, then the whole list
+evaluation is related.  Untagged Flapjack-specific infrastructure. -/
+
+/-- List-level value correspondence between the production and exact evaluators. -/
+def PanSemDeclarationValueListRel {width : Nat} [NeZero width]
+    (valueRel : PanValue (BitVec width) → ValueHOL width → Prop) :
+    List (PanValue (BitVec width)) → List (ValueHOL width) → Prop
+  | [], [] => True
+  | production :: productions, exact :: exacts =>
+      valueRel production exact ∧
+        PanSemDeclarationValueListRel valueRel productions exacts
+  | _, _ => False
+
+theorem evalPanValueExps_list_correspondence {width : Nat} [NeZero width]
+    [BEq (BitVec width)] [OfNat (BitVec width) 0] [OfNat (BitVec width) 1]
+    [Add (BitVec width)] [Mul (BitVec width)] [Sub (BitVec width)]
+    [AndOp (BitVec width)] [OrOp (BitVec width)] [HXor (BitVec width) (BitVec width) (BitVec width)]
+    [ShiftLeft (BitVec width)] [ShiftRight (BitVec width)] [LT (BitVec width)]
+    [DecidableRel (fun left right : BitVec width => left < right)] [PanCmp (BitVec width)]
+    (state : PanSemStateFiniteExact width Unit) [_hmem : DecidablePred state.memaddrs]
+    (structs : StructContext)
+    (locals globals : VarName → Option (PanValue (BitVec width)))
+    (memory : BitVec width → Option (PanValue (BitVec width)))
+    (baseAddress topAddress bytesInWord : BitVec width)
+    (access : Option (PanValueMemoryAccess (BitVec width)))
+    (expressions : List (Exp (BitVec width)))
+    (values : List (PanValue (BitVec width)))
+    (hprod : evalPanValueExp.evalPanValueExps structs locals globals memory baseAddress
+        topAddress bytesInWord expressions (memoryAccess := access) = some values)
+    (hexp : ∀ e ∈ expressions,
+      PanSemDeclarationValueOptionRel PanValueCodecRel
+        (evalPanValueExp structs locals globals memory baseAddress topAddress bytesInWord e
+          (memoryAccess := access))
+        (state.evalHOLFinite (expToHOL e))) :
+    ∃ exacts : List (ValueHOL width),
+      state.evalListHOLFinite (expressions.map expToHOL) = some exacts ∧
+        PanSemDeclarationValueListRel PanValueCodecRel values exacts := by
+  induction expressions generalizing values with
+  | nil =>
+      simp only [evalPanValueExp.evalPanValueExps, Option.some.injEq] at hprod
+      subst hprod
+      refine ⟨[], ?_, ?_⟩
+      · simp only [List.map_nil, PanSemStateFiniteExact.evalListHOLFinite, evalListHOLExact]
+      · exact trivial
+  | cons expression expressions ih =>
+      have hhead := hexp expression List.mem_cons_self
+      have htail : ∀ e ∈ expressions,
+          PanSemDeclarationValueOptionRel PanValueCodecRel
+            (evalPanValueExp structs locals globals memory baseAddress topAddress bytesInWord e
+              (memoryAccess := access))
+            (state.evalHOLFinite (expToHOL e)) :=
+        fun e he => hexp e (List.mem_cons_of_mem expression he)
+      simp only [evalPanValueExp.evalPanValueExps] at hprod
+      cases h1 : evalPanValueExp structs locals globals memory baseAddress topAddress bytesInWord
+          expression (memoryAccess := access) with
+      | none => rw [h1] at hprod; exact absurd hprod (by simp)
+      | some pv =>
+          cases h2 : evalPanValueExp.evalPanValueExps structs locals globals memory baseAddress
+              topAddress bytesInWord expressions (memoryAccess := access) with
+          | none => rw [h1, h2] at hprod; exact absurd hprod (by simp)
+          | some rest =>
+              rw [h1, h2] at hprod
+              simp at hprod
+              subst hprod
+              cases h3 : state.evalHOLFinite (expToHOL expression) with
+              | none =>
+                  rw [h1, h3] at hhead
+                  simp only [PanSemDeclarationValueOptionRel] at hhead
+              | some ev =>
+                  rw [h1, h3] at hhead
+                  simp only [PanSemDeclarationValueOptionRel] at hhead
+                  obtain ⟨exacts, hexactList, hrelList⟩ := ih rest h2 htail
+                  refine ⟨ev :: exacts, ?_, ⟨hhead, hrelList⟩⟩
+                  rw [List.map_cons]
+                  rw [PanSemStateFiniteExact.evalHOLFinite_eq_toExact] at h3
+                  rw [PanSemStateFiniteExact.evalListHOLFinite_eq_toExact] at hexactList
+                  simp only [PanSemStateFiniteExact.evalListHOLFinite, evalListHOLExact, h3,
+                    hexactList]
+
+/-! ### Word-projection helpers for the Op arm (flapjack-rdc.3.2) -/
+
+/-- The executable/exact value codec holds only for word payloads (forward
+    direction). -/
+theorem panValueCodecRel_exists_word {width : Nat} [NeZero width]
+    (production : PanValue (BitVec width)) (exact : ValueHOL width)
+    (h : PanValueCodecRel production exact) :
+    ∃ word : BitVec width, production = .word word ∧ exact = .val (.word word) := by
+  cases exact with
+  | val wrapper =>
+      cases wrapper with
+      | word word => exact ⟨word, h, rfl⟩
+  | rStruct fields => change False at h; exact h.elim
+  | nStruct name fields => change False at h; exact h.elim
+
+/-- Every exact value related to an executable value is a word. -/
+theorem panSemDeclarationValueListRel_all_valueIsWord {width : Nat} [NeZero width] :
+    ∀ (productions : List (PanValue (BitVec width))) (exacts : List (ValueHOL width)),
+      PanSemDeclarationValueListRel PanValueCodecRel productions exacts →
+      exacts.all valueIsWord = true := by
+  intro productions
+  induction productions with
+  | nil =>
+      intro exacts h
+      cases exacts with
+      | nil => rfl
+      | cons exact restE => change False at h; exact h.elim
+  | cons production rest ih =>
+      intro exacts h
+      cases exacts with
+      | nil => change False at h; exact h.elim
+      | cons exact restE =>
+          simp only [PanSemDeclarationValueListRel] at h
+          obtain ⟨hhead, htail⟩ := h
+          obtain ⟨word, hpw, hexw⟩ := panValueCodecRel_exists_word production exact hhead
+          subst hpw
+          subst hexw
+          simp only [List.all_cons, valueIsWord, Bool.true_and]
+          exact ih restE htail
+
+/-- Projecting the executable values to words agrees with the exact `valueWord`
+    list. -/
+theorem panSemDeclarationValueListRel_mapM_projection {width : Nat} [NeZero width] :
+    ∀ (productions : List (PanValue (BitVec width))) (exacts : List (ValueHOL width)),
+      PanSemDeclarationValueListRel PanValueCodecRel productions exacts →
+      productions.mapM panValueWordProjection = some (exacts.map valueWord) := by
+  intro productions
+  induction productions with
+  | nil =>
+      intro exacts h
+      cases exacts with
+      | nil => rfl
+      | cons exact restE => change False at h; exact h.elim
+  | cons production rest ih =>
+      intro exacts h
+      cases exacts with
+      | nil => change False at h; exact h.elim
+      | cons exact restE =>
+          simp only [PanSemDeclarationValueListRel] at h
+          obtain ⟨hhead, htail⟩ := h
+          obtain ⟨word, hpw, hexw⟩ := panValueCodecRel_exists_word production exact hhead
+          subst hpw
+          subst hexw
+          simp only [List.mapM_cons, panValueWordProjection, valueWord, List.map_cons]
+          rw [ih restE htail]
+          rfl
+
+/-- Binop `Op` arm.  The executable clause evaluates the arguments, projects the
+    results to words and applies the executed `access.wordOp`; the finite
+    evaluator applies the tagged `wordOpHOL` to the exact value list.  Given the
+    per-argument relation, a successful argument evaluation, and that the
+    executed memory access agrees with `wordOpHOL`, the two `.op` results are
+    related. -/
+theorem evalPanValueExp_op_correspondence {width : Nat} [NeZero width]
+    [BEq (BitVec width)] [OfNat (BitVec width) 0] [OfNat (BitVec width) 1]
+    [Add (BitVec width)] [Mul (BitVec width)] [Sub (BitVec width)]
+    [AndOp (BitVec width)] [OrOp (BitVec width)] [HXor (BitVec width) (BitVec width) (BitVec width)]
+    [ShiftLeft (BitVec width)] [ShiftRight (BitVec width)] [LT (BitVec width)]
+    [DecidableRel (fun left right : BitVec width => left < right)] [PanCmp (BitVec width)]
+    (state : PanSemStateFiniteExact width Unit) [_hmem : DecidablePred state.memaddrs]
+    (structs : StructContext)
+    (locals globals : VarName → Option (PanValue (BitVec width)))
+    (memory : BitVec width → Option (PanValue (BitVec width)))
+    (baseAddress topAddress bytesInWord : BitVec width)
+    (access : PanValueMemoryAccess (BitVec width))
+    (operator : BinOp) (arguments : List (Exp (BitVec width)))
+    (values : List (PanValue (BitVec width)))
+    (hvalues : evalPanValueExp.evalPanValueExps structs locals globals memory baseAddress
+        topAddress bytesInWord arguments (memoryAccess := some access) = some values)
+    (hargs : ∀ e ∈ arguments,
+      PanSemDeclarationValueOptionRel PanValueCodecRel
+        (evalPanValueExp structs locals globals memory baseAddress topAddress bytesInWord e
+          (memoryAccess := some access))
+        (state.evalHOLFinite (expToHOL e)))
+    (hwordOp : ∀ words : List (BitVec width),
+      access.wordOp operator words = wordOpHOL operator words) :
+    PanSemDeclarationValueOptionRel PanValueCodecRel
+      (evalPanValueExp structs locals globals memory baseAddress topAddress bytesInWord
+        (.op operator arguments) (memoryAccess := some access))
+      (state.evalHOLFinite (.op operator (arguments.map expToHOL))
+        : Option (ValueHOL width)) := by
+  obtain ⟨exacts, hexactList, hrelList⟩ :=
+    evalPanValueExps_list_correspondence state structs locals globals memory baseAddress
+      topAddress bytesInWord (some access) arguments values hvalues hargs
+  have hAllWord := panSemDeclarationValueListRel_all_valueIsWord values exacts hrelList
+  have hProj := panSemDeclarationValueListRel_mapM_projection values exacts hrelList
+  have hprod : evalPanValueExp structs locals globals memory baseAddress topAddress bytesInWord
+      (.op operator arguments) (memoryAccess := some access) =
+      (access.wordOp operator (exacts.map valueWord)).map PanValue.word := by
+    simp only [evalPanValueExp]
+    rw [hvalues]
+    simp [hProj]
+  have hexact : state.evalHOLFinite (.op operator (arguments.map expToHOL)) =
+      (wordOpHOL operator (exacts.map valueWord)).map (fun word => .val (.word word)) := by
+    rw [PanSemStateFiniteExact.evalHOLFinite_op, hexactList]
+    dsimp only
+    rw [hAllWord]
+    rfl
+  rw [hprod, hexact, hwordOp (exacts.map valueWord)]
+  cases hwo : wordOpHOL operator (exacts.map valueWord) with
+  | none => simp only [Option.map_none, PanSemDeclarationValueOptionRel]
+  | some word =>
+      simp only [Option.map_some, PanSemDeclarationValueOptionRel, panValueCodecRel_word]
+
+/-- Executed-path instance of `evalPanValueExp_op_correspondence`: with the
+access supplied by the executed 64-bit RISC-V memory model
+`panSemBitVec64MemoryAccess`, the `hwordOp` premise is discharged by
+`panSemBitVec64MemoryAccess_wordOp` (rfl), so the `.op` correspondence carries
+no undischarged semantic premise.  Direct original-HOL oracles:
+`scripts/hol-probes/word_op_finite_probe.out` (HOL `wordLang$word_op_def`
+Add/Sub/And/Or/Xor rows) together with the `pan_sem_state_eval_probe.out` rows
+`op_add_fold_three` / `op_sub_wrong_arity`, the latter pinned in
+`Flapjack/Test/PanSemStateEvalParity.lean`. -/
+theorem evalPanValueExp_op_correspondence_executed
+    {σ : Type}
+    (productionState : PanSemState (RiscV.Word 64) σ)
+    (state : PanSemStateFiniteExact 64 Unit) [_hmem : DecidablePred state.memaddrs]
+    (structs : StructContext)
+    (locals globals : VarName → Option (PanValue (RiscV.Word 64)))
+    (memory : RiscV.Word 64 → Option (PanValue (RiscV.Word 64)))
+    (baseAddress topAddress bytesInWord : RiscV.Word 64)
+    (operator : BinOp) (arguments : List (Exp (RiscV.Word 64)))
+    (values : List (PanValue (RiscV.Word 64)))
+    (hvalues : evalPanValueExp.evalPanValueExps structs locals globals memory baseAddress
+        topAddress bytesInWord arguments
+        (memoryAccess := some (panSemBitVec64MemoryAccess productionState)) = some values)
+    (hargs : ∀ e ∈ arguments,
+      PanSemDeclarationValueOptionRel PanValueCodecRel
+        (evalPanValueExp structs locals globals memory baseAddress topAddress bytesInWord e
+          (memoryAccess := some (panSemBitVec64MemoryAccess productionState)))
+        (state.evalHOLFinite (expToHOL e))) :
+    PanSemDeclarationValueOptionRel PanValueCodecRel
+      (evalPanValueExp structs locals globals memory baseAddress topAddress bytesInWord
+        (.op operator arguments)
+        (memoryAccess := some (panSemBitVec64MemoryAccess productionState)))
+      (state.evalHOLFinite (.op operator (arguments.map expToHOL))) :=
+  evalPanValueExp_op_correspondence state structs locals globals memory
+    baseAddress topAddress bytesInWord (panSemBitVec64MemoryAccess productionState)
+    operator arguments values hvalues hargs
+    (fun words => panSemBitVec64MemoryAccess_wordOp productionState operator words)
+
+/-! ### Option-level list correspondence for the Op arm (flapjack-rdc.3.3) -/
+
+/-- Option-level counterpart of `PanSemDeclarationValueListRel`: `none`/`none` is
+    the rejection case, and `some`/`some` is the related-list case. -/
+def PanSemDeclarationValueOptionListRel {width : Nat} [NeZero width]
+    (valueRel : PanValue (BitVec width) → ValueHOL width → Prop) :
+    Option (List (PanValue (BitVec width))) → Option (List (ValueHOL width)) → Prop
+  | none, none => True
+  | some productions, some exacts =>
+      PanSemDeclarationValueListRel valueRel productions exacts
+  | _, _ => False
+
+theorem evalPanValueExps_option_correspondence {width : Nat} [NeZero width]
+    [BEq (BitVec width)] [OfNat (BitVec width) 0] [OfNat (BitVec width) 1]
+    [Add (BitVec width)] [Mul (BitVec width)] [Sub (BitVec width)]
+    [AndOp (BitVec width)] [OrOp (BitVec width)] [HXor (BitVec width) (BitVec width) (BitVec width)]
+    [ShiftLeft (BitVec width)] [ShiftRight (BitVec width)] [LT (BitVec width)]
+    [DecidableRel (fun left right : BitVec width => left < right)] [PanCmp (BitVec width)]
+    (state : PanSemStateFiniteExact width Unit) [_hmem : DecidablePred state.memaddrs]
+    (structs : StructContext)
+    (locals globals : VarName → Option (PanValue (BitVec width)))
+    (memory : BitVec width → Option (PanValue (BitVec width)))
+    (baseAddress topAddress bytesInWord : BitVec width)
+    (access : Option (PanValueMemoryAccess (BitVec width)))
+    (expressions : List (Exp (BitVec width)))
+    (hexp : ∀ e ∈ expressions,
+      PanSemDeclarationValueOptionRel PanValueCodecRel
+        (evalPanValueExp structs locals globals memory baseAddress topAddress bytesInWord e
+          (memoryAccess := access))
+        (state.evalHOLFinite (expToHOL e))) :
+    PanSemDeclarationValueOptionListRel PanValueCodecRel
+      (evalPanValueExp.evalPanValueExps structs locals globals memory baseAddress topAddress
+        bytesInWord expressions (memoryAccess := access))
+      (state.evalListHOLFinite (expressions.map expToHOL)) := by
+  induction expressions with
+  | nil =>
+      simp only [List.map_nil, evalPanValueExp.evalPanValueExps,
+        PanSemStateFiniteExact.evalListHOLFinite, evalListHOLExact,
+        PanSemDeclarationValueOptionListRel, PanSemDeclarationValueListRel]
+  | cons expression expressions ih =>
+      have hhead := hexp expression List.mem_cons_self
+      have htail : ∀ e ∈ expressions,
+          PanSemDeclarationValueOptionRel PanValueCodecRel
+            (evalPanValueExp structs locals globals memory baseAddress topAddress bytesInWord e
+              (memoryAccess := access))
+            (state.evalHOLFinite (expToHOL e)) :=
+        fun e he => hexp e (List.mem_cons_of_mem expression he)
+      cases h1 : evalPanValueExp structs locals globals memory baseAddress topAddress bytesInWord
+          expression (memoryAccess := access) with
+      | none =>
+          rw [h1] at hhead
+          cases h3 : state.evalHOLFinite (expToHOL expression) with
+          | none =>
+              rw [PanSemStateFiniteExact.evalHOLFinite_eq_toExact] at h3
+              simp only [List.map_cons, PanSemStateFiniteExact.evalListHOLFinite_eq_toExact,
+                evalListHOLExact, h3]
+              simp [evalPanValueExp.evalPanValueExps, h1]
+              simp only [PanSemDeclarationValueOptionListRel]
+          | some ev => rw [h3] at hhead; simp only [PanSemDeclarationValueOptionRel] at hhead
+      | some pv =>
+          rw [h1] at hhead
+          cases h3 : state.evalHOLFinite (expToHOL expression) with
+          | none => rw [h3] at hhead; simp only [PanSemDeclarationValueOptionRel] at hhead
+          | some ev =>
+              rw [h3] at hhead
+              simp only [PanSemDeclarationValueOptionRel] at hhead
+              have ih' := ih htail
+              cases h2 : state.evalListHOLFinite (expressions.map expToHOL) with
+              | none =>
+                  rw [h2] at ih'
+                  cases h4 : evalPanValueExp.evalPanValueExps structs locals globals memory
+                      baseAddress topAddress bytesInWord expressions (memoryAccess := access) with
+                  | none =>
+                      rw [PanSemStateFiniteExact.evalHOLFinite_eq_toExact] at h3
+                      rw [PanSemStateFiniteExact.evalListHOLFinite_eq_toExact] at h2
+                      simp only [List.map_cons, PanSemStateFiniteExact.evalListHOLFinite_eq_toExact,
+                        evalListHOLExact, h3, h2]
+                      simp [evalPanValueExp.evalPanValueExps, h1, h4]
+                      simp only [PanSemDeclarationValueOptionListRel]
+                  | some pvs =>
+                      rw [h4] at ih'
+                      simp only [PanSemDeclarationValueOptionListRel] at ih'
+              | some ees =>
+                  rw [h2] at ih'
+                  cases h4 : evalPanValueExp.evalPanValueExps structs locals globals memory
+                      baseAddress topAddress bytesInWord expressions (memoryAccess := access) with
+                  | none =>
+                      rw [h4] at ih'
+                      simp only [PanSemDeclarationValueOptionListRel] at ih'
+                  | some pvs =>
+                      rw [h4] at ih'
+                      simp only [PanSemDeclarationValueOptionListRel] at ih'
+                      rw [PanSemStateFiniteExact.evalHOLFinite_eq_toExact] at h3
+                      rw [PanSemStateFiniteExact.evalListHOLFinite_eq_toExact] at h2
+                      simp only [List.map_cons, PanSemStateFiniteExact.evalListHOLFinite_eq_toExact,
+                        evalListHOLExact, h3, h2]
+                      simp only [evalPanValueExp.evalPanValueExps, h1, h4,
+                        PanSemDeclarationValueOptionListRel]
+                      exact ⟨hhead, ih'⟩
+
+/-- Full executed-path `.op` correspondence (success and rejection) over the
+    finite-support evaluator: no successful-argument-list premise.  The executed
+    RV64 access discharges the `wordOp` bridge by `rfl`.  The op semantics it
+    compares are pinned by the direct original-Pancake oracles
+    `scripts/hol-probes/word_op_finite_probe.out` (HOL `wordLang$word_op_def`
+    Add/Sub/And/Or/Xor, including the arity-mismatch rejection rows) and
+    `scripts/hol-probes/pan_sem_state_eval_probe.out` (rows `op_add_fold_three`
+    success and `op_sub_wrong_arity` rejection, checked in
+    `Flapjack/Test/PanSemStateEvalParity.lean`). -/
+theorem evalPanValueExp_op_option_correspondence_executed {σ : Type}
+    (productionState : PanSemState (RiscV.Word 64) σ)
+    (state : PanSemStateFiniteExact 64 Unit) [_hmem : DecidablePred state.memaddrs]
+    (structs : StructContext)
+    (locals globals : VarName → Option (PanValue (RiscV.Word 64)))
+    (memory : RiscV.Word 64 → Option (PanValue (RiscV.Word 64)))
+    (baseAddress topAddress bytesInWord : RiscV.Word 64)
+    (operator : BinOp) (arguments : List (Exp (RiscV.Word 64)))
+    (hargs : ∀ e ∈ arguments,
+      PanSemDeclarationValueOptionRel PanValueCodecRel
+        (evalPanValueExp structs locals globals memory baseAddress topAddress bytesInWord e
+          (memoryAccess := some (panSemBitVec64MemoryAccess productionState)))
+        (state.evalHOLFinite (expToHOL e))) :
+    PanSemDeclarationValueOptionRel PanValueCodecRel
+      (evalPanValueExp structs locals globals memory baseAddress topAddress bytesInWord
+        (.op operator arguments)
+        (memoryAccess := some (panSemBitVec64MemoryAccess productionState)))
+      (state.evalHOLFinite (.op operator (arguments.map expToHOL))) := by
+  have hlist := evalPanValueExps_option_correspondence state structs locals globals memory
+    baseAddress topAddress bytesInWord (some (panSemBitVec64MemoryAccess productionState))
+    arguments hargs
+  have hwordOp : ∀ words : List (RiscV.Word 64),
+      (panSemBitVec64MemoryAccess productionState).wordOp operator words =
+        wordOpHOL operator words :=
+    fun words => panSemBitVec64MemoryAccess_wordOp productionState operator words
+  cases hvals : evalPanValueExp.evalPanValueExps structs locals globals memory baseAddress
+      topAddress bytesInWord arguments
+      (memoryAccess := some (panSemBitVec64MemoryAccess productionState)) with
+  | none =>
+      rw [hvals] at hlist
+      cases hel : state.evalListHOLFinite (arguments.map expToHOL) with
+      | none =>
+          have hprod : evalPanValueExp structs locals globals memory baseAddress topAddress
+              bytesInWord (.op operator arguments)
+              (memoryAccess := some (panSemBitVec64MemoryAccess productionState)) = none := by
+            simp only [evalPanValueExp]
+            rw [hvals]
+            simp
+          have hexact : state.evalHOLFinite (.op operator (arguments.map expToHOL)) = none := by
+            rw [PanSemStateFiniteExact.evalHOLFinite_op, hel]
+          rw [hprod, hexact]
+          simp only [PanSemDeclarationValueOptionRel]
+      | some ees =>
+          rw [hel] at hlist
+          simp only [PanSemDeclarationValueOptionListRel] at hlist
+  | some values =>
+      rw [hvals] at hlist
+      cases hel : state.evalListHOLFinite (arguments.map expToHOL) with
+      | none =>
+          rw [hel] at hlist
+          simp only [PanSemDeclarationValueOptionListRel] at hlist
+      | some exacts =>
+          rw [hel] at hlist
+          have hAllWord := panSemDeclarationValueListRel_all_valueIsWord values exacts hlist
+          have hProj := panSemDeclarationValueListRel_mapM_projection values exacts hlist
+          have hprod : evalPanValueExp structs locals globals memory baseAddress topAddress
+              bytesInWord (.op operator arguments)
+              (memoryAccess := some (panSemBitVec64MemoryAccess productionState)) =
+              ((panSemBitVec64MemoryAccess productionState).wordOp operator
+                (exacts.map valueWord)).map PanValue.word := by
+            simp only [evalPanValueExp]
+            rw [hvals]
+            simp [hProj]
+          have hexact : state.evalHOLFinite (.op operator (arguments.map expToHOL)) =
+              (wordOpHOL operator (exacts.map valueWord)).map (fun w => .val (.word w)) := by
+            rw [PanSemStateFiniteExact.evalHOLFinite_op, hel]
+            dsimp only
+            rw [hAllWord]
+            rfl
+          rw [hprod, hexact, hwordOp (exacts.map valueWord)]
+          cases hwo : wordOpHOL operator (exacts.map valueWord) with
+          | none => simp only [Option.map_none, PanSemDeclarationValueOptionRel]
+          | some word =>
+              simp only [Option.map_some, PanSemDeclarationValueOptionRel, panValueCodecRel_word]
+
 end Flapjack

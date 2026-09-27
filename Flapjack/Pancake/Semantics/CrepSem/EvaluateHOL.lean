@@ -1819,6 +1819,104 @@ theorem evalCrepSemHOLProg_call_none_timeout {width : Nat} [NeZero width] {σ : 
   simp only [hlen, hnodup, decide_true, Bool.true_and, if_true, dif_pos hclock]
 
 
+/-! ## FFI reduction for the FFI-producing clauses
+
+Only `ShMem` and `ExtCall` extend `state.ffi` among the exact evaluator clauses.
+These equations present each clause's resulting `ffi` as the shared-memory
+helper's `ffi` (`ShMem`) or as `state.ffi`/the FFI-returned state (`ExtCall`).
+Untagged Flapjack infrastructure; base cases of the clock-indexed event-prefix
+chain (HOL `crepPropsScript.sml:1020`) tracked by `flapjack-pxn.18.4.8.2`. -/
+
+theorem evalCrepSemHOLProg_shMem_ffi {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (operator : CrepMemOp) (name : Nat) (address : CrepExpHOL width) :
+    (evalCrepSemHOLProg state memDec shMemDec (.shMem operator name address)).2.ffi =
+      (match crepExactEvalExp state memDec address with
+       | some (.word addressValue) =>
+           if crepIsLoadMemOp operator then
+             match state.locals.lookup name with
+             | some _ => (crepShMemLoadHOL operator name addressValue state shMemDec).2.ffi
+             | none => state.ffi
+           else
+             match state.locals.lookup name with
+             | some (.word _) => (crepShMemStoreHOL operator name addressValue state shMemDec).2.ffi
+             | _ => state.ffi
+       | _ => state.ffi) := by
+  rw [evalCrepSemHOLProg_shMem]
+  cases hcond : crepExactEvalExp state memDec address with
+  | none => rfl
+  | some value =>
+      cases value with
+      | word addressValue =>
+          simp only []
+          cases hb : crepIsLoadMemOp operator with
+          | true =>
+              cases hlook : state.locals.lookup name with
+              | none => rfl
+              | some v => rfl
+          | false =>
+              cases hlook : state.locals.lookup name with
+              | none => rfl
+              | some v => cases v with | word w => rfl
+
+theorem evalCrepSemHOLProg_extCall_ffi {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (function : MlString) (configuration configurationLength array arrayLength : Nat) :
+    (evalCrepSemHOLProg state memDec shMemDec
+        (.extCall function configuration configurationLength array arrayLength)).2.ffi =
+      (match state.locals.lookup configurationLength, state.locals.lookup configuration,
+             state.locals.lookup arrayLength, state.locals.lookup array with
+       | some (.word configLength), some (.word configAddress),
+         some (.word arrayLengthValue), some (.word arrayAddress) =>
+           match readBytearrayWordHOL (byteWidth := 8) configAddress configLength.toNat
+                   (crepExactMemLoadByteWord8 state memDec),
+                 readBytearrayWordHOL (byteWidth := 8) arrayAddress arrayLengthValue.toNat
+                   (crepExactMemLoadByteWord8 state memDec) with
+           | some configBytes, some arrayBytes =>
+               match callFFIHOL state.ffi (.extCall function)
+                   configBytes arrayBytes with
+               | .final _event => state.ffi
+               | .ret newFfi _newBytes => newFfi
+           | _, _ => state.ffi
+       | _, _, _, _ => state.ffi) := by
+  rw [evalCrepSemHOLProg_extCall]
+  cases h1 : state.locals.lookup configurationLength with
+  | none => simp
+  | some v1 =>
+      cases v1 with
+      | word configLength =>
+          cases h2 : state.locals.lookup configuration with
+          | none => simp
+          | some v2 =>
+              cases v2 with
+              | word configAddress =>
+                  cases h3 : state.locals.lookup arrayLength with
+                  | none => simp
+                  | some v3 =>
+                      cases v3 with
+                      | word arrayLengthValue =>
+                          cases h4 : state.locals.lookup array with
+                          | none => simp
+                          | some v4 =>
+                              cases v4 with
+                              | word arrayAddress =>
+                                  cases hr1 : readBytearrayWordHOL (byteWidth := 8) configAddress
+                                      configLength.toNat (crepExactMemLoadByteWord8 state memDec) with
+                                  | none => simp [hr1]
+                                  | some configBytes =>
+                                      cases hr2 : readBytearrayWordHOL (byteWidth := 8) arrayAddress
+                                          arrayLengthValue.toNat (crepExactMemLoadByteWord8 state memDec) with
+                                      | none => simp [hr1, hr2]
+                                      | some arrayBytes =>
+                                          cases hc : callFFIHOL state.ffi (.extCall function)
+                                              configBytes arrayBytes with
+                                          | final _event => simp [hr1, hr2, hc]
+                                          | ret newFfi _newBytes => simp [hr1, hr2, hc]
+
 /-! ## Domain-field projection and preservation infrastructure
 
 The total evaluator threads the caller's `memDec`/`shMemDec` decision procedures
@@ -3449,7 +3547,20 @@ structure CrepEvalArg (width : Nat) (σ : Type) [NeZero width] where
   program : CrepProgHOL width
 
 /-- General well-founded induction principle for `evalCrepSemHOLProg`,
-    matching its `(state.clock, sizeOf program)` lexicographic measure. -/
+    matching its `(state.clock, sizeOf program)` lexicographic measure.
+
+    FLAPJACK-SPECIFIC (untagged). The intended HOL original is
+    `crepSemScript.sml:440 evaluate_ind[allow_rebind] =
+    REWRITE_RULE [fix_clock_evaluate] evaluate_ind`, the auto-generated
+    induction principle of the total clocked evaluator. This principle is
+    deliberately **not** tagged: (i) its motive carries the two explicit
+    domain decision procedures `memDec`/`shMemDec`, whereas HOL `evaluate`
+    takes only `(prog, s)`; (ii) the well-founded relation here is
+    `Prod.Lex Nat.lt Nat.lt (state.clock, sizeOf program)`, whereas HOL's
+    generated relation is the internal `tdefn` measure on `(prog, s)`; and
+    (iii) the carrier is `CrepSemHOLState width σ` with `BitVec width` in
+    place of HOL `('a,'ffi) crepSem$state` with `'a word`. A faithful tagged
+    port is tracked by `flapjack-2de.1.1`. -/
 theorem evalCrepSemHOLProg.inductHOL_general {width : Nat} [NeZero width] {σ : Type}
     {motive : (state : CrepSemHOLState width σ) →
       ((a : BitVec width) → Decidable (state.memaddrs a)) →
@@ -3477,7 +3588,14 @@ theorem evalCrepSemHOLProg.inductHOL_general {width : Nat} [NeZero width] {σ : 
 
 /-- Per-constructor well-founded induction principle for the exact
     `evalCrepSemHOLProg`, with one case handler per `CrepProgHOL` constructor and
-    induction hypotheses for the sub-programs actually passed by the evaluator. -/
+    induction hypotheses for the sub-programs actually passed by the evaluator.
+
+    FLAPJACK-SPECIFIC (untagged). This is a constructor-structured helper, not
+    HOL's `evaluate_ind`: several handlers carry extra branch-selector
+    hypotheses (e.g. the `Call` body-result/handler equation with `eid = eid'`,
+    the `Seq` `fixClockCrepSemHOL` step equation) and every handler threads the
+    explicit `memDec`/`shMemDec` deciders. Per the fleet tag policy such
+    branch helpers stay untagged; the faithful tagged port is `flapjack-2de.1.1`. -/
 theorem evalCrepSemHOLProg.inductHOL {width : Nat} [NeZero width] {σ : Type}
     {motive : (state : CrepSemHOLState width σ) →
       ((a : BitVec width) → Decidable (state.memaddrs a)) →

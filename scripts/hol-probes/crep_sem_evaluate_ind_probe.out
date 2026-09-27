@@ -1,0 +1,58 @@
+evaluate_ind=∀P. (∀s. P (Skip,s)) ∧
+    (∀v e prog s.
+       (∀value.
+          eval s e = SOME value ⇒
+          P (prog,s with locals := s.locals⟨v ↦ value⟩)) ⇒
+       P (Dec v e prog,s)) ∧
+    (∀lhss pop rhss s. P (Primitive lhss pop rhss,s)) ∧
+    (∀v src s. P (Assign v src,s)) ∧ (∀dst src s. P (Store dst src,s)) ∧
+    (∀dst src s. P (Store32 dst src,s)) ∧
+    (∀dst src s. P (StoreByte dst src,s)) ∧
+    (∀dst src s. P (StoreGlob dst src,s)) ∧
+    (∀op v ad s. P (ShMem op v ad,s)) ∧
+    (∀c1 c2 s.
+       (∀res s1. (res,s1) = evaluate (c1,s) ∧ res = NONE ⇒ P (c2,s1)) ∧
+       P (c1,s) ⇒
+       P (Seq c1 c2,s)) ∧
+    (∀e c1 c2 s.
+       (∀v1 w.
+          eval s e = SOME v1 ∧ v1 = Word w ⇒ P (if w ≠ 0w then c1 else c2,s)) ⇒
+       P (If e c1 c2,s)) ∧ (∀n s. P (Break n,s)) ∧ (∀n s. P (Continue n,s)) ∧
+    (∀e c s.
+       (∀v2 w res s1 v1 v8.
+          eval s e = SOME v2 ∧ v2 = Word w ∧ w ≠ 0w ∧ s.clock ≠ 0 ∧
+          (res,s1) = evaluate (c,dec_clock s) ∧ res = SOME v1 ∧
+          v1 = Continue v8 ∧ v8 = 0 ⇒
+          P (While e c,s1)) ∧
+       (∀v2 w res s1.
+          eval s e = SOME v2 ∧ v2 = Word w ∧ w ≠ 0w ∧ s.clock ≠ 0 ∧
+          (res,s1) = evaluate (c,dec_clock s) ∧ res = NONE ⇒
+          P (While e c,s1)) ∧
+       (∀v2 w.
+          eval s e = SOME v2 ∧ v2 = Word w ∧ w ≠ 0w ∧ s.clock ≠ 0 ⇒
+          P (c,dec_clock s)) ⇒
+       P (While e c,s)) ∧ (∀es s. P (Return es,s)) ∧
+    (∀eid s. P (Raise eid,s)) ∧ (∀s. P (Tick,s)) ∧
+    (∀caltyp fname argexps s.
+       (∀args v6 prog newlocals eval_prog v4 st v7 eid v v1 v2 v3 eid' p.
+          OPT_MMAP (eval s) argexps = SOME args ∧
+          lookup_code s.code fname args (LENGTH args) = SOME v6 ∧
+          v6 = (prog,newlocals) ∧
+          ¬(case caltyp of NONE => F | SOME (rts,v2) => ¬ALL_DISTINCT rts) ∧
+          s.clock ≠ 0 ∧
+          eval_prog = evaluate (prog,dec_clock s with locals := newlocals) ∧
+          eval_prog = (v4,st) ∧ v4 = SOME v7 ∧ v7 = Exception eid ∧
+          caltyp = SOME v ∧ v = (v1,v2) ∧ v2 = SOME v3 ∧ v3 = (eid',p) ∧
+          eid = eid' ⇒
+          P (p,st with locals := s.locals)) ∧
+       (∀args v6 prog newlocals.
+          OPT_MMAP (eval s) argexps = SOME args ∧
+          lookup_code s.code fname args (LENGTH args) = SOME v6 ∧
+          v6 = (prog,newlocals) ∧
+          ¬(case caltyp of NONE => F | SOME (rts,v2) => ¬ALL_DISTINCT rts) ∧
+          s.clock ≠ 0 ⇒
+          P (prog,dec_clock s with locals := newlocals)) ⇒
+       P (Call caltyp fname argexps,s)) ∧
+    (∀ffi_index ptr1 len1 ptr2 len2 s.
+       P (ExtCall ffi_index ptr1 len1 ptr2 len2,s)) ⇒
+    ∀v v1. P (v,v1)
