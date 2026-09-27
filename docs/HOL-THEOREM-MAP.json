@@ -11050,13 +11050,8 @@
     "hol_name": "eval_nested_assign_distinct_eq",
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateNestedAssign.lean",
     "lean_name": "evalNestedAssignDistinctEqCrepHOL",
-    "statement_status": "reviewed_fmap_as_finite_support",
-    "fmap_as_finite_support": [
-      "locals",
-      "globals",
-      "code"
-    ],
-    "reviewer": "flapjack-luna-c (source comparison against pan_to_crepProofScript.sml:540-575 and crepSemScript.sml:240-303, 2026-09-27): quantifies the exact Crep expression list, assignment names, expression results and previous lookup results. The five premises match HOL in order: MAP eval success, OPT_MMAP old-local lookup success, distinct_lists between assigned names and all expression variables, ALL_DISTINCT names, and equal lengths. The conclusion is evaluate (nested_seq (MAP2 Assign names expressions), state) = (NONE, state with locals := locals |++ ZIP (names, values)); List.zipWith/crepNestedSeqHOL and updateListEq/FUPDATE_LIST_HOL implement those equations. CrepSemHOLState carries exact CrepProgHOL/CrepExpHOL and HolWordLab carriers; all and only the locals/globals/code finite maps receive the reviewed canonical HolFiniteMapExact translation. The checker-verified same-module witness ties this carrier to CrepSemBroadState. The tagged conclusion now invokes the canonical evalCrepSemHOLProgExact entry, whose decision choice is theorem-proved independent by evalCrepSemHOLProgExact_eq_core; the prior proof-local duplicate was definitionally the same recursive call. Lean's operational memory-domain Decidable procedures are hidden behind Flapjack-only classical wrappers, so they add no theorem premise. Direct HOL success and premise-rejection rows are in eval_nested_assign_distinct_eq_probe.out; exact Lean theorem instantiation and regression are in CrepNestedAssignDistinctHOLParity.lean."
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-ds10 (2026-09-27; bead flapjack-64k0, PR #1166 review item 2): @[hol] tag WITHDRAWN on concrete source-shape/carrier gaps. The statement is over evalCrepSemHOLProgExact, the no-decider classical wrapper around the re-implemented evaluator evalCrepSemHOLProg whose full clause set is not yet source-reviewed against evaluate_def. Gaps: the recursive clauses thread base-state decisions through crepStampExactDomains, whose reachability for the derived states is unreviewed; the byte-store clause still routes through the legacy UInt8 helpers; and the finite-map qualifier's owner/witness placement is unresolved (flapjack-4ac.5.16.5.13.1). HOL candidate eval_nested_assign_distinct_eq (pan_to_crepProofScript.sml:540-575); faithful port tracked by flapjack-4ac.5.16.5."
   },
   {
     "hol_path": null,
@@ -11996,6 +11991,15 @@
   },
   {
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "is_valid_value_def",
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
+    "lean_name": "isValidValueHOLFinite",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "reviewer": "flapjack-luna-c source comparison (2026-09-27; bead flapjack-qj5.10): HOL panSemScript.sml:469-475 defines is_valid_value by looking up the selected Local/Global binding with FLOOKUP, returning false when absent, and comparing shape_of on the candidate and existing values when present. isValidValueHOLFinite has the same two branches over PanSemStateFiniteExact; lookupKvarHOLFinite uses the canonical HolFiniteMapExact.lookup translation of FLOOKUP, and shapeOfHOLExact and shapeEqHOL implement the exact value/shape carriers and HOL equality (shapeEqHOL_eq_true records the Bool equality bridge). The four named maps use the same-module HolFiniteMapExact carrier and roundtrip witness. The qualifier records only the finite-map representation."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
     "hol_name": "empty_locals_def",
     "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
     "lean_name": "emptyLocalsHOLFinite",
@@ -12058,16 +12062,6 @@
     "statement_status": "reviewed_fmap_as_finite_support",
     "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
     "reviewer": "flapjack-luna-a source comparison (2026-09-27; bead flapjack-qj5): the first conjunct of HOL's line-780 evaluate_def theorem is evaluate (Skip,s)=(NONE,s), from the Skip clause at panSemScript.sml:557. evaluateHOLFiniteState_skip has exactly the state quantifier and pair-shaped conclusion over ProgHOL and PanSemStateFiniteExact; no result premise or extra logical assumption. The four named finite-map fields use the same-module HolFiniteMapExact carrier and canonical roundtrip witness. This tag covers only the Skip case; the full 21-equation theorem remains open."
-  },
-  {
-    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
-    "hol_name": "evaluate_def",
-    "hol_line": 780,
-    "lean_path": "Flapjack/Pancake/Semantics/PanSem/ShMemLoadCase.lean",
-    "lean_name": "evaluateHOLFiniteState_shMemLoad_source",
-    "statement_status": "reviewed_fmap_as_finite_support",
-    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
-    "reviewer": "flapjack-luna-c source comparison (2026-09-27; bead flapjack-qj5.4): compared with the ShMemLoad conjunct at panSemScript.sml:605-610. The conclusion exposes the same `eval s ad` word/non-word-or-failure match, then `lookup_kvar vk v s` word/non-word-or-missing match; both failing branches return SOME Error with the original state, while only the word/word branch calls sh_mem_load with nb_op op. It quantifies over the reviewed `PanSemStateFiniteExact`, `ProgHOL`, expression, size, kind, and name carriers and adds no logical premise. The successful helper result is translated back with the canonical finite-support proof. The imported carrier is named in the statement, and this case module includes its own checked `toExact`/`ofExact` roundtrip witness for the finite-map qualifier. Direct HOL EVAL guard rows and matching Lean result checks are in pan_sem_store_error_probe.out and PanSemShMemLoadCaseParity."
   },
   {
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
@@ -12192,12 +12186,12 @@
   {
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
     "hol_name": "evaluate_def",
-    "hol_line": 780,
+    "hol_line": 556,
     "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
     "lean_name": "evaluateHOLFiniteState_seq",
     "statement_status": "reviewed_fmap_as_finite_support",
     "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
-    "reviewer": "flapjack-luna-a source comparison (2026-09-27; bead flapjack-qj5.3): HOL evaluate_def panSemScript.sml:615 (theorem restatement at line 780) says evaluate (Seq c1 c2,s) = let (res,s1)=fix_clock s (evaluate (c1,s)) in if res=NONE then evaluate (c2,s1) else (res,s1). evaluateHOLFiniteState_seq exposes both recursive calls as total result-option × state pairs, fixes the first pair with fixClockHOLFinite, and branches on the same NONE result; the recursive evaluator's internal optional assembly marker is not in the theorem statement. The proof obtains total outputs for both recursive calls and transports only the decidability evidence in FiniteEvalContext, without adding a semantic premise. The state is PanSemStateFiniteExact with the four named HolFiniteMapExact fields and same-module canonical roundtrip witness. Its fixed positive word width, ProgHOL constructor, and result/state pair agree with HOL; the qualifier records only the finite-map carrier translation."
+    "reviewer": "flapjack-luna-a source comparison (2026-09-27; beads flapjack-qj5.3 and flapjack-yh3l): the Seq conjunct at panSemScript.sml:615 belongs to the source Definition evaluate_def at line 556, whose RHS explicitly applies fix_clock to the first evaluation pair. The separate line-780 theorem is REWRITE_RULE [fix_clock_evaluate] evaluate_def and removes that explicit fix_clock, so this Lean statement is tagged to line 556. evaluateHOLFiniteState_seq exposes both recursive calls as total result-option × state pairs, fixes the first pair with fixClockHOLFinite, and branches on the same NONE result; its internal optional assembly marker is absent from the statement. The proof obtains total outputs for both recursive calls and adds no semantic premise. The finite state uses the four named HolFiniteMapExact fields and their same-module canonical roundtrip witness; the qualifier records only this carrier translation. This is a staged case, not the full conjunction: exact 21-clause assembly remains open under flapjack-qj5.9."
   },
   {
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
@@ -12277,18 +12271,16 @@
     "hol_name": "evaluate_nested_decs_load_globals",
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateNestedDecs.lean",
     "lean_name": "evaluateNestedDecsLoadGlobalsCrepHOL",
-    "statement_status": "reviewed_fmap_as_finite_support",
-    "fmap_as_finite_support": ["locals", "globals", "code"],
-    "reviewer": "flapjack-luna-c (source comparison, 2026-09-27; bead flapjack-4ac.5.60.1; pan_to_crepProofScript.sml:4139-4176). HOL universally quantifies s, rv, rvs, vs, p. Lean uses the same four premises in source order: globals_lookup s rv = SOME rvs; size_of_shape (shape_of rv) <= 32; ALL_DISTINCT vs; LENGTH vs = size_of_shape (shape_of rv). Its conclusion is the complete evaluate equation for nested_decs vs (load_globals 0w (size_of_shape (shape_of rv))) p, including the body evaluation from FUPDATE_LIST of ZIP (vs,rvs) and FOLDL res_var restoration using the original locals. The exact CrepSemHOLState, ValueHOL, CrepProgHOL, CrepExpHOL, shapeOfHOLExact, sizeOfShapeHOL, nestedDecsHOL, loadGlobalsHOL, and evalCrepSemHOLProgExact carriers and definitions preserve the HOL statement; only locals/globals/code use the named canonical HolFiniteMapExact representation. Direct HOL oracle rows cover a word and a two-word struct, including present/absent prior locals and resulting values/state; Lean kernel regressions exercise the corresponding exact evaluator equations. This is a proof-side port and does not establish production compiler routing or original Pancake executable parity; that route remains open on linked production bead flapjack-4ac.3.45."
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-ds10 (2026-09-27; bead flapjack-64k0, PR #1166 review item 2): @[hol] tag WITHDRAWN on concrete source-shape/carrier gaps. The conclusion is over evalCrepSemHOLProgExact, the no-decider classical wrapper around the re-implemented evaluator evalCrepSemHOLProg, and (like the general nested-declaration equation) it quantifies over an arbitrary continuation body, so its exactness depends on the still-open full clause review against evaluate_def. Gaps: the recursive clauses thread base-state decisions through crepStampExactDomains, whose reachability for the derived states is unreviewed; the byte-store clause still routes through the legacy UInt8 helpers; and the finite-map qualifier's owner/witness placement is unresolved (flapjack-4ac.5.16.5.13.1). HOL candidate evaluate_nested_decs_load_globals (pan_to_crepProofScript.sml:4139-4176); faithful port tracked by flapjack-4ac.5.16.5."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
     "hol_name": "eval_nested_decs_seq_res_var_eq",
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateNestedDecs.lean",
     "lean_name": "evalNestedDecsSeqResVarEqCrepHOL",
-    "statement_status": "reviewed_fmap_as_finite_support",
-    "fmap_as_finite_support": ["locals", "globals", "code"],
-    "reviewer": "flapjack-luna-c (source comparison, 2026-09-27; bead flapjack-4ac.5.19.1; pan_to_crepProofScript.sml:596-620). HOL universally quantifies es, ns, t, ev, p. The four premises are exactly MAP (eval t) es = MAP SOME ev; LENGTH ns = LENGTH es; distinct_lists ns (FLAT (MAP var_cexp es)); ALL_DISTINCT ns. The conclusion is the complete evaluate equation for nested_decs ns es p: evaluate the body from t with locals updated by FUPDATE_LIST (ZIP (ns,ev)), then restore result locals by FOLDL res_var over ZIP (ns, MAP (FLOOKUP t.locals) ns), preserving result and every other state field. Lean keeps the same four propositions and conclusion shape over CrepExpHOL/CrepProgHOL and the full clocked CrepSemHOLState evaluator; its classical default wrappers only select Decidable procedures for HOL total set predicates and add no theorem premises. nestedDecsUpdatedInput_eq_updateListEq identifies the induction helper's recursive setVar sequence with HolFiniteMapExact.updateListEq on the same ZIP. Source review checked nested_decs_def's unequal-length Skip cases; eval's initial-state expression premise; the declaration-name/expression-variable disjointness used to preserve initializer values after earlier bindings; ALL_DISTINCT used to commute restoration updates; and res_var's absent/present old-local behavior. The fmap_as_finite_support qualifier records only the locals/globals/code HOL |-> fields as HolFiniteMapExact; the same-module holFmapAsFiniteSupportWitness establishes the owning CrepSemHOLState roundtrip with CrepSemBroadState. Direct HOL EVAL cases for old-local present/absent restoration, unequal lengths, and premise rejections are in scripts/hol-probes/eval_nested_decs_seq_res_var_eq_probe.out and are replayed by Flapjack.Test.CrepNestedDecsSeqResVarEqParity. This proof-side port does not change the executed compiler path."
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-ds10 (2026-09-27; bead flapjack-64k0, PR #1166 review item 2): @[hol] tag WITHDRAWN on concrete source-shape/carrier gaps. The conclusion is over evalCrepSemHOLProgExact, the no-decider classical wrapper around the re-implemented evaluator evalCrepSemHOLProg, and the theorem quantifies over an arbitrary continuation body, so its exactness depends on the still-open full clause review of that evaluator against evaluate_def. Gaps: the recursive clauses thread base-state decisions through crepStampExactDomains, whose reachability for the derived states is unreviewed; the byte-store clause still routes through the legacy UInt8 helpers; and the finite-map qualifier's owner/witness placement is unresolved (flapjack-4ac.5.16.5.13.1). HOL candidate eval_nested_decs_seq_res_var_eq (pan_to_crepProofScript.sml:596-620); faithful port tracked by flapjack-4ac.5.16.5."
   },
   {
     "hol_path": null,
