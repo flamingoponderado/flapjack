@@ -139,8 +139,20 @@ def memGenlistGuard : Bool :=
 theorem mem_genlist_add_suc_val_fixture : (1 : Nat) < 3 ∧ 3 ≤ 4 + 1 :=
   memGenlistAddSucValHOL 4 3 1 (by decide)
 
+/-- HOL `map_the_some_cancel` (`pan_commonPropsScript.sml:332`). -/
+theorem map_the_some_cancel_fixture :
+    ([2, 4, 6] : List Nat).map (fun x => (some x : Option Nat).get (by simp)) =
+      [2, 4, 6] :=
+  mapTheSomeCancelHOL [2, 4, 6]
+
+def mapTheSomeCancelGuard : Bool :=
+  ([2, 4, 6] : List Nat).map (fun x => (some x : Option Nat).getD 0) == [2, 4, 6]
+
+#guard mapTheSomeCancelGuard
+
 def runChecks : IO Bool := do
-  if zipGuard && fmdvGuard && takeDropElZipGuard && genlistGuard && memGenlistGuard then
+  if zipGuard && fmdvGuard && takeDropElZipGuard && genlistGuard && memGenlistGuard
+      && mapTheSomeCancelGuard then
     IO.println
       "PASS exact pan_commonProps zip fupdate not-mem, disjoint take/drop, fm_update_diff_vars, take/drop suffix disjoint, EL disjoint, and empty zip lookup (14 HOL rows)"
     return true

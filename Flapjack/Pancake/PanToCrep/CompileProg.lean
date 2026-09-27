@@ -988,6 +988,131 @@ theorem compileProgExactHOLW_primitive_bridge {width : Nat} [NeZero width]
       rw [hargs]
       rw [htemporaries]
 
+private theorem ofString_injective_on_ranged_names {left right : String}
+    (hleft : Flapjack.Pancake.PanLang.NameRanged left)
+    (hright : Flapjack.Pancake.PanLang.NameRanged right)
+    (h : Flapjack.Basis.Pure.MlString.ofString left =
+      Flapjack.Basis.Pure.MlString.ofString right) : left = right := by
+  have hdecoded := congrArg Flapjack.Basis.Pure.MlString.toStringOfBytes h
+  rw [Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes left hleft,
+    Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes right hright]
+    at hdecoded
+  exact hdecoded
+
+/-- Byte-ranged lookup congruence for the exact and production variable-map
+    updates used by HOL `Dec` and `DecCall`. This deliberately proves lookup
+    agreement only for a ranged update name and ranged query name: arbitrary
+    Lean strings can alias after `ofString` truncates characters to HOL bytes,
+    so equality of the complete production maps would be false. -/
+theorem exactToProduction_decVarUpdate_lookup {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width) (name query : String)
+    (shape : ShapeHOL) (names : List Nat)
+    (hname : Flapjack.Pancake.PanLang.NameRanged name)
+    (hquery : Flapjack.Pancake.PanLang.NameRanged query) :
+    (PanToCrepContextExact.toProduction
+      { context with vars := (HolFiniteMapExact.update context.vars
+          (Flapjack.Basis.Pure.MlString.ofString name, (shape, names))) }).vars query =
+      FUPDATE context.toProduction.vars
+        (name, (Flapjack.Pancake.PanLang.shapeOfHOL shape, names)) query := by
+  have hkey :
+      Flapjack.Basis.Pure.MlString.ofString name =
+          Flapjack.Basis.Pure.MlString.ofString query ↔ name = query := by
+    constructor
+    · exact ofString_injective_on_ranged_names hname hquery
+    · intro heq
+      rw [heq]
+  simp only [PanToCrepContextExact.toProduction,
+    HolFiniteMapExact.lookup_update, FUPDATE]
+  by_cases h : name = query
+  · subst query
+    simp
+  · simp [hkey, h]
+
+/-- The `DecCall` update uses a source-level shape rather than a compiled
+    expression shape. Under the shape's byte-range premise its
+    `shapeToHOL`/`shapeOfHOL` roundtrip reduces it to the same ranged-key
+    lookup congruence as the `Dec` update above. -/
+theorem exactToProduction_decCallVarUpdate_lookup {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width) (name query : String)
+    (shape : Shape) (names : List Nat)
+    (hname : Flapjack.Pancake.PanLang.NameRanged name)
+    (hquery : Flapjack.Pancake.PanLang.NameRanged query)
+    (hshape : ShapeByteRanged shape) :
+    (PanToCrepContextExact.toProduction
+      { context with vars := (HolFiniteMapExact.update context.vars
+          (Flapjack.Basis.Pure.MlString.ofString name,
+            (Flapjack.Pancake.PanLang.shapeToHOL shape, names))) }).vars query =
+      FUPDATE context.toProduction.vars (name, (shape, names)) query := by
+  rw [exactToProduction_decVarUpdate_lookup context name query
+    (Flapjack.Pancake.PanLang.shapeToHOL shape) names hname hquery]
+  simp [Flapjack.Pancake.PanLang.shapeOfHOL_shapeToHOL, hshape]
+
+/-- Context relation used by recursive exact-to-production compilation. The
+    unchanged function and exception maps and `vmax` agree exactly; variable
+    lookups agree on source-reachable byte-ranged names. It intentionally does
+    not assert equality of the full String-keyed variable maps. -/
+def PanToCrepContextExactProdRel {width : Nat} [NeZero width]
+    (exact : PanToCrepContextExact width)
+    (production : PanToCrepHOLContext (BitVec width)) : Prop :=
+  exact.toProduction.funcs = production.funcs ∧
+  exact.toProduction.eids = production.eids ∧
+  exact.vmax = production.vmax ∧
+  (∀ name, Flapjack.Pancake.PanLang.NameRanged name →
+    exact.toProduction.vars name = production.vars name)
+
+/-- A `Dec` variable-map update preserves the ranged context relation needed
+    for compiling the recursive body. Parameters expose the update payload and
+    counter increments so this lemma can be instantiated from the `Dec` clause
+    using its expression codec. -/
+theorem exactToProduction_decContext_relation {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width) (name : String)
+    (exactShape : ShapeHOL) (productionShape : Shape) (names : List Nat)
+    (exactBump productionBump : Nat)
+    (hname : Flapjack.Pancake.PanLang.NameRanged name)
+    (hshape : Flapjack.Pancake.PanLang.shapeOfHOL exactShape = productionShape)
+    (hbump : exactBump = productionBump) :
+    PanToCrepContextExactProdRel
+      { context with
+        vars := HolFiniteMapExact.update context.vars
+          (Flapjack.Basis.Pure.MlString.ofString name, (exactShape, names))
+        vmax := context.vmax + exactBump }
+      { context.toProduction with
+        vars := FUPDATE context.toProduction.vars (name, (productionShape, names))
+        vmax := context.toProduction.vmax + productionBump } := by
+  refine ⟨rfl, rfl, ?_, ?_⟩
+  · simp [PanToCrepContextExact.toProduction, hbump]
+  · intro query hquery
+    simpa [PanToCrepContextExact.toProduction, hshape] using
+      exactToProduction_decVarUpdate_lookup
+      context name query exactShape names hname hquery
+
+/-- Instantiation of the ranged context relation for the source-shape update
+    used by HOL `DecCall`. The source `NameRanged` and `ShapeByteRanged`
+    premises are exactly what make the String/MlString key and shape codecs
+    invertible on the update. -/
+theorem exactToProduction_decCallContext_relation {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width) (name : String) (shape : Shape)
+    (names : List Nat)
+    (hname : Flapjack.Pancake.PanLang.NameRanged name)
+    (hshape : ShapeByteRanged shape) :
+    PanToCrepContextExactProdRel
+      { context with
+        vars := HolFiniteMapExact.update context.vars
+          (Flapjack.Basis.Pure.MlString.ofString name,
+            (Flapjack.Pancake.PanLang.shapeToHOL shape, names))
+        vmax := context.vmax +
+          sizeOfShapeHOL (Flapjack.Pancake.PanLang.shapeToHOL shape) }
+      { context.toProduction with
+        vars := FUPDATE context.toProduction.vars
+          (name, (shape, names))
+        vmax := context.toProduction.vmax + Shape.shapeSize shape } := by
+  apply exactToProduction_decContext_relation
+    context name (Flapjack.Pancake.PanLang.shapeToHOL shape) shape names
+    (sizeOfShapeHOL (Flapjack.Pancake.PanLang.shapeToHOL shape))
+    (Shape.shapeSize shape) hname
+  · exact Flapjack.Pancake.PanLang.shapeOfHOL_shapeToHOL shape hshape
+  · exact sizeOfShapeHOL_shapeToHOL shape
+
 /-! The recursive `Dec` clause bridge (`pan_to_crepScript.sml:141-152`). Both
     compilers ignore the declared `shape` and store the compiled shape: the
     exact clause extends `context` to `bodyContext` (fresh names from the old
