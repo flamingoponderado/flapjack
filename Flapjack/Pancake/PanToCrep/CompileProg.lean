@@ -1887,6 +1887,234 @@ theorem compileProgExactHOLW_call_wrapped_result_handler_missing_eid_bridge
         crepProgOfHOL, Option.some.injEq, Prod.mk.injEq]
     · simp_all
 
+/-- Exact-to-production bridge for the `SOME (SOME (rtk, rt), SOME handler)`
+    Call arm of HOL `compile_def` (`cakeml/pancake/pan_to_crepScript.sml:252-261`)
+    with a successful `wrap_rt (FLOOKUP ctxt.vars rt)` lookup and a successful
+    `eids` lookup: HOL keeps the destination names as result metadata and
+    sequences exact `exp_hdl` with the recursively compiled handler body, without
+    return-slot declarations. Flapjack proof infrastructure; no HOL-tagged
+    declaration. -/
+theorem compileProgExactHOLW_call_wrapped_result_handler_present_eid_bridge
+    {width : Nat} [NeZero width] (context : PanToCrepContextExact width)
+    (kind : VarKind) (resultName function exceptionName exceptionVariable : String)
+    (arguments : List (Exp (BitVec width))) (body : ProgHOL width)
+    (resultShape : Flapjack.Pancake.PanLang.ShapeHOL) (resultNames : List Nat)
+    (exceptionCode : BitVec width)
+    (hwrappedResult :
+      wrapRtHOL
+          (context.vars.lookup (Flapjack.Basis.Pure.MlString.ofString resultName)) =
+        some (resultShape, resultNames))
+    (hpresent :
+      context.eids.lookup (Flapjack.Basis.Pure.MlString.ofString exceptionName) =
+        some exceptionCode)
+    (hfunction : Flapjack.Pancake.PanLang.NameRanged function)
+    (hexceptionName : Flapjack.Pancake.PanLang.NameRanged exceptionName)
+    (hcodec :
+      ∀ expression ∈ arguments,
+        ((compileExpExactHOLW context (expToHOL expression)).1.map crepExpOfHOL,
+          shapeOfHOL (compileExpExactHOLW context (expToHOL expression)).2) =
+          compileExpHOL context.toProduction expression)
+    (hbody :
+      crepProgOfHOL (compileProgExactHOLW context body) =
+        compileProgHOL context.toProduction (progOfHOL body)) :
+    crepProgOfHOL
+        (compileProgExactHOLW context
+          (.call
+            (some (some (kind,
+                Flapjack.Basis.Pure.MlString.ofString resultName),
+              some (Flapjack.Basis.Pure.MlString.ofString exceptionName,
+                Flapjack.Basis.Pure.MlString.ofString exceptionVariable, body)))
+            (Flapjack.Basis.Pure.MlString.ofString function) (arguments.map expToHOL))) =
+      compileProgRiscV context.toProduction
+        (.call
+          (some (some (kind, resultName),
+            some (exceptionName, exceptionVariable, progOfHOL body)))
+          function arguments) := by
+  have hfunctionDecode :=
+    Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes function hfunction
+  have hargs := crepProgOfHOL_compileArgumentList_flatMap context arguments hcodec
+  have hsetup := crepProgOfHOL_expHdlExact context exceptionVariable
+  have hvariables : context.toProduction.vars resultName =
+      (context.vars.lookup (Flapjack.Basis.Pure.MlString.ofString resultName)).map
+        (fun entry =>
+          (Flapjack.Pancake.PanLang.shapeOfHOL entry.1, entry.2)) := rfl
+  have hproductionNames :
+      callDestinationNamesHOL context.toProduction kind resultName = some resultNames := by
+    unfold callDestinationNamesHOL FLOOKUP
+    rw [hvariables, wrapRt_map_shapeOfHOL_snd, hwrappedResult]
+    rfl
+  have hprodEids : context.toProduction.eids exceptionName =
+      context.eids.lookup (Flapjack.Basis.Pure.MlString.ofString exceptionName) := by
+    have h := PanToCrepContextExact.toProduction_eids_lookup context
+      (Flapjack.Basis.Pure.MlString.ofString exceptionName)
+    rwa [Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes exceptionName
+      hexceptionName] at h
+  have hproductionEid :
+      FLOOKUP context.toProduction.eids exceptionName = some exceptionCode := by
+    rw [FLOOKUP, hprodEids, hpresent]
+  simp only [compileProgExactHOLW]
+  split
+  · simp_all
+  · split
+    · simp_all
+    · rename_i resultShape' resultNames' heqWrap code heqLookup
+      simp only [compileCallWrappedResultHandlerPresentEidExactHOLW, compileProgRiscV,
+        compileProgHOL, hproductionNames, hproductionEid]
+      simp only [crepProgOfHOL]
+      rw [hargs, hfunctionDecode, hsetup, hbody]
+      have hsome : some code = some exceptionCode := heqLookup.symm.trans hpresent
+      injection hsome with hcodeEq
+      rw [hcodeEq]
+      have hpair : resultShape' = resultShape ∧ resultNames' = resultNames := by
+        have h := heqWrap.symm.trans hwrappedResult
+        simpa only [Option.some.injEq, Prod.mk.injEq] using h
+      rw [hpair.2]
+
+/-- Exact-to-production bridge for the `SOME (SOME (rtk, rt), SOME handler)`
+    Call arm of HOL `compile_def` (`cakeml/pancake/pan_to_crepScript.sml:252-261`)
+    with a failing `wrap_rt (FLOOKUP ctxt.vars rt)` lookup and a failing `eids`
+    lookup: HOL drops both handler and return metadata and emits a flattened tail
+    call, reducing to the wrapped-result fallback no-handler arm. Flapjack proof
+    infrastructure; no HOL-tagged declaration. -/
+theorem compileProgExactHOLW_call_wrapped_result_fallback_handler_missing_eid_bridge
+    {width : Nat} [NeZero width] (context : PanToCrepContextExact width)
+    (kind : VarKind) (resultName function exceptionName exceptionVariable : String)
+    (arguments : List (Exp (BitVec width))) (body : ProgHOL width)
+    (hwrappedResult :
+      wrapRtHOL
+          (context.vars.lookup (Flapjack.Basis.Pure.MlString.ofString resultName)) =
+        none)
+    (hmissing :
+      context.eids.lookup (Flapjack.Basis.Pure.MlString.ofString exceptionName) =
+        none)
+    (hfunction : Flapjack.Pancake.PanLang.NameRanged function)
+    (hexceptionName : Flapjack.Pancake.PanLang.NameRanged exceptionName)
+    (hcodec :
+      ∀ expression ∈ arguments,
+        ((compileExpExactHOLW context (expToHOL expression)).1.map crepExpOfHOL,
+          shapeOfHOL (compileExpExactHOLW context (expToHOL expression)).2) =
+          compileExpHOL context.toProduction expression) :
+    crepProgOfHOL
+        (compileProgExactHOLW context
+          (.call
+            (some (some (kind,
+                Flapjack.Basis.Pure.MlString.ofString resultName),
+              some (Flapjack.Basis.Pure.MlString.ofString exceptionName,
+                Flapjack.Basis.Pure.MlString.ofString exceptionVariable, body)))
+            (Flapjack.Basis.Pure.MlString.ofString function) (arguments.map expToHOL))) =
+      compileProgRiscV context.toProduction
+        (.call
+          (some (some (kind, resultName),
+            some (exceptionName, exceptionVariable, progOfHOL body)))
+          function arguments) := by
+  have hfunctionDecode :=
+    Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes function hfunction
+  have hargs := crepProgOfHOL_compileArgumentList_flatMap context arguments hcodec
+  have hvariables : context.toProduction.vars resultName =
+      (context.vars.lookup (Flapjack.Basis.Pure.MlString.ofString resultName)).map
+        (fun entry =>
+          (Flapjack.Pancake.PanLang.shapeOfHOL entry.1, entry.2)) := rfl
+  have hproductionNames :
+      callDestinationNamesHOL context.toProduction kind resultName = none := by
+    unfold callDestinationNamesHOL FLOOKUP
+    rw [hvariables, wrapRt_map_shapeOfHOL_snd, hwrappedResult]
+    rfl
+  have hprodEids : context.toProduction.eids exceptionName =
+      context.eids.lookup (Flapjack.Basis.Pure.MlString.ofString exceptionName) := by
+    have h := PanToCrepContextExact.toProduction_eids_lookup context
+      (Flapjack.Basis.Pure.MlString.ofString exceptionName)
+    rwa [Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes exceptionName
+      hexceptionName] at h
+  have hproductionEid : FLOOKUP context.toProduction.eids exceptionName = none := by
+    rw [FLOOKUP, hprodEids, hmissing]
+  simp only [compileProgExactHOLW]
+  split
+  · split
+    · simp_all only [compileCallWrappedResultFallbackHandlerMissingEidExactHOLW,
+        compileCallWrappedResultFallbackNoHandlerExactHOLW, compileProgRiscV,
+        compileProgHOL, crepProgOfHOL]
+      simp only [Option.elim_none]
+    · simp_all
+  · simp_all
+
+/-- Exact-to-production bridge for the `SOME (SOME (rtk, rt), SOME handler)`
+    Call arm of HOL `compile_def` (`cakeml/pancake/pan_to_crepScript.sml:252-261`)
+    with a failing `wrap_rt (FLOOKUP ctxt.vars rt)` lookup and a successful `eids`
+    lookup: HOL keeps the handler but supplies an empty return-name list, emitting
+    `.call (some ([], some (code, handler)))`. Flapjack proof infrastructure; no
+    HOL-tagged declaration. -/
+theorem compileProgExactHOLW_call_wrapped_result_fallback_handler_present_eid_bridge
+    {width : Nat} [NeZero width] (context : PanToCrepContextExact width)
+    (kind : VarKind) (resultName function exceptionName exceptionVariable : String)
+    (arguments : List (Exp (BitVec width))) (body : ProgHOL width)
+    (exceptionCode : BitVec width)
+    (hwrappedResult :
+      wrapRtHOL
+          (context.vars.lookup (Flapjack.Basis.Pure.MlString.ofString resultName)) =
+        none)
+    (hpresent :
+      context.eids.lookup (Flapjack.Basis.Pure.MlString.ofString exceptionName) =
+        some exceptionCode)
+    (hfunction : Flapjack.Pancake.PanLang.NameRanged function)
+    (hexceptionName : Flapjack.Pancake.PanLang.NameRanged exceptionName)
+    (hcodec :
+      ∀ expression ∈ arguments,
+        ((compileExpExactHOLW context (expToHOL expression)).1.map crepExpOfHOL,
+          shapeOfHOL (compileExpExactHOLW context (expToHOL expression)).2) =
+          compileExpHOL context.toProduction expression)
+    (hbody :
+      crepProgOfHOL (compileProgExactHOLW context body) =
+        compileProgHOL context.toProduction (progOfHOL body)) :
+    crepProgOfHOL
+        (compileProgExactHOLW context
+          (.call
+            (some (some (kind,
+                Flapjack.Basis.Pure.MlString.ofString resultName),
+              some (Flapjack.Basis.Pure.MlString.ofString exceptionName,
+                Flapjack.Basis.Pure.MlString.ofString exceptionVariable, body)))
+            (Flapjack.Basis.Pure.MlString.ofString function) (arguments.map expToHOL))) =
+      compileProgRiscV context.toProduction
+        (.call
+          (some (some (kind, resultName),
+            some (exceptionName, exceptionVariable, progOfHOL body)))
+          function arguments) := by
+  have hfunctionDecode :=
+    Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes function hfunction
+  have hargs := crepProgOfHOL_compileArgumentList_flatMap context arguments hcodec
+  have hsetup := crepProgOfHOL_expHdlExact context exceptionVariable
+  have hvariables : context.toProduction.vars resultName =
+      (context.vars.lookup (Flapjack.Basis.Pure.MlString.ofString resultName)).map
+        (fun entry =>
+          (Flapjack.Pancake.PanLang.shapeOfHOL entry.1, entry.2)) := rfl
+  have hproductionNames :
+      callDestinationNamesHOL context.toProduction kind resultName = none := by
+    unfold callDestinationNamesHOL FLOOKUP
+    rw [hvariables, wrapRt_map_shapeOfHOL_snd, hwrappedResult]
+    rfl
+  have hprodEids : context.toProduction.eids exceptionName =
+      context.eids.lookup (Flapjack.Basis.Pure.MlString.ofString exceptionName) := by
+    have h := PanToCrepContextExact.toProduction_eids_lookup context
+      (Flapjack.Basis.Pure.MlString.ofString exceptionName)
+    rwa [Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes exceptionName
+      hexceptionName] at h
+  have hproductionEid :
+      FLOOKUP context.toProduction.eids exceptionName = some exceptionCode := by
+    rw [FLOOKUP, hprodEids, hpresent]
+  simp only [compileProgExactHOLW]
+  split
+  · split
+    · simp_all
+    · rename_i code heqLookup
+      unfold compileCallWrappedResultFallbackHandlerPresentEidExactHOLW
+      simp only [compileProgRiscV, compileProgHOL, hproductionNames, hproductionEid,
+        crepProgOfHOL]
+      rw [hargs, hfunctionDecode, hsetup, hbody]
+      have hsome : some code = some exceptionCode := heqLookup.symm.trans hpresent
+      injection hsome with hcodeEq
+      rw [hcodeEq]
+      rfl
+  · simp_all
+
 theorem compileProgExactHOLW_shmem_store_bridge {width : Nat} [NeZero width]
     (context : PanToCrepContextExact width) (operator : OpSize)
     (value address : Exp (BitVec width))
