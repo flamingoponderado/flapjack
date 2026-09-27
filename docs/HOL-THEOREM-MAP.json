@@ -12329,6 +12329,14 @@
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "panToCrepCallEntryShapeInvariantFiniteExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific call-entry composition for HOL evaluate_shape_invariant_ret_inst2 (pan_to_crepProofScript.sml:3031-3044). It uses exact PanSem evalList and lookup_code results, then combines the exact locals_rel/state_rel invariants with lookupCodeHOLExact_calleeLocalsWf to establish the body-entry locals/globals shape facts. It has no body-evaluation premise and is not itself the HOL theorem. The implicit decidability dictionary for source.memaddrs is evaluator implementation plumbing, not a propositional HOL hypothesis."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
     "lean_name": "panToCrepFiniteReturnPayloadShape",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific Return-clause composition over the finite-context evaluator, exact PanSem state, and exact Pan-to-Crep relations. It proves the HOL-shaped empty-context payload conclusion for this clause but has a clause-level evaluator premise, so it is not evaluate_shape_invariant_ret_inst and remains untagged."
@@ -13061,5 +13069,56 @@
       "lean_name": "holFmapAsFiniteSupportEqualityWitness_slcTlcRwHOL_2",
       "statement_status": "no_hol_reference_pending_classification",
       "reviewer": "flapjack-ds8: Flapjack-specific lookup-level witness for the second slc_tlc_rw conjunct; no HOL theorem original."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "listRelGetElemExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private Flapjack-specific indexed projection from ListRel; used to preserve the HOL LIST_REL formal/argument premise in the exact Call theorem. It is not a separate HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific same-module canonical finite-support roundtrip witness required by the full Call theorem's named PanSemStateFiniteExact map-field qualifier; no separate HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific same-module canonical finite-support roundtrip witness required by the full Call theorem's named PanToCrepContextExact map-field qualifier; no separate HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific same-module canonical finite-support roundtrip witness required by the full Call theorem's named CrepSemHOLState map-field qualifier; no separate HOL declaration."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "call_preserve_state_code_locals_rel",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "panToCrepCallPreserveStateCodeLocalsRelExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanToCrepContextExact.vars",
+      "PanToCrepContextExact.funcs",
+      "PanToCrepContextExact.eids",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.code"
+    ],
+    "reviewer": "flapjack-luna-b source comparison (flapjack-4ac.5.41.6, 2026-09-27): HOL pan_to_crepProofScript.sml:2355-2458 has the explicit rshape quantifier, all thirteen premises in their source order, and the four state_rel/code_rel/excp_rel/locals_rel conclusions in their source order. The Lean theorem preserves the same hypotheses and output shapes over the reviewed ValueHOL, ShapeHOL, ProgHOL, CrepProgHOL, MlS, and positive-width BitVec carriers. In particular hpreLocals is exactly the PRE-call premise locals_rel ctxt s.locals t.locals (HOL 2355-2364); the final conclusion is the distinct POST-call relation locals_rel (ctxt_fc ...) (slc vshs args) (tlc ns args) (HOL 2374-2378). The proof uses the reviewed state/local conjunct helpers and direct code/exception relation unfoldings. The named finite-map carrier translations are exactly the nine listed fields and have same-module canonical roundtrip witnesses; no evaluator/result premise or post-state relation is assumed."
   }
 ]
