@@ -12191,6 +12191,16 @@
   },
   {
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 780,
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
+    "lean_name": "evaluateHOLFiniteState_seq",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "reviewer": "flapjack-luna-a source comparison (2026-09-27; bead flapjack-qj5.3): HOL evaluate_def panSemScript.sml:615 (theorem restatement at line 780) says evaluate (Seq c1 c2,s) = let (res,s1)=fix_clock s (evaluate (c1,s)) in if res=NONE then evaluate (c2,s1) else (res,s1). evaluateHOLFiniteState_seq exposes both recursive calls as total result-option × state pairs, fixes the first pair with fixClockHOLFinite, and branches on the same NONE result; the recursive evaluator's internal optional assembly marker is not in the theorem statement. The proof obtains total outputs for both recursive calls and transports only the decidability evidence in FiniteEvalContext, without adding a semantic premise. The state is PanSemStateFiniteExact with the four named HolFiniteMapExact fields and same-module canonical roundtrip witness. Its fixed positive word width, ProgHOL constructor, and result/state pair agree with HOL; the qualifier records only the finite-map carrier translation."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
     "hol_name": "evaluate_decls_def",
     "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
     "lean_name": "evaluateDeclsHOLFinite",
