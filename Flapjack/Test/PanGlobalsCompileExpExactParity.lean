@@ -14,7 +14,8 @@ namespace Flapjack.Test.PanGlobalsCompileExpExactParity
     `max_globals_size = 16w`. -/
 
 open Flapjack
-open Flapjack.Pancake.PanLang (MlS ShapeHOL ExpHOL)
+open Flapjack.Pancake.PanLang
+  (MlS ShapeHOL ExpHOL expToHOL expOfHOL ExpByteRanged shapeOfHOL)
 open Flapjack.Basis.Pure.MlString (ofString toStringOfBytes)
 
 /-- The probe context of `pan_globals_compile_exp_probeScript.sml` at width 8:
@@ -107,11 +108,68 @@ def parityGuard : Bool :=
 #eval parityGuard
 #guard parityGuard
 
+/-- The production `CakeContext` induced by the exact probe context through the
+    checked `cakeContextOfExact` adapter. -/
+def productionProbeContext : CakeContext 8 :=
+  PanGlobalsContextExact.cakeContextOfExact exactProbeContext
+
+/-- The `global_hit` row through the executed production `compileExpCake`,
+    obtained from the exact row by the kernel-checked
+    `compileExpCake_cakeContextOfExact` bridge. -/
+theorem bridge_global_hit :
+    compileExpCake productionProbeContext (.var .global "g") =
+      .load .one (.op .sub [.topAddr, .const (8 : BitVec 8)]) := by
+  unfold productionProbeContext
+  rw [compileExpCake_cakeContextOfExact exactProbeContext _
+    (by simp [ExpByteRanged])]
+  simp only [expToHOL, expOfHOL, shapeOfHOL, List.map_cons, List.map_nil,
+    global_compile_exp_exact_global_hit]
+
+/-- The `top_addr` row through the executed production `compileExpCake`. -/
+theorem bridge_top_addr :
+    compileExpCake productionProbeContext (.topAddr : Exp (BitVec 8)) =
+      .op .sub [.topAddr, .const (16 : BitVec 8)] := by
+  unfold productionProbeContext
+  rw [compileExpCake_cakeContextOfExact exactProbeContext _
+    (by simp [ExpByteRanged])]
+  simp only [expToHOL, expOfHOL, List.map_cons, List.map_nil,
+    global_compile_exp_exact_top_addr]
+
+/-- The five `pan_globals_compile_exp_probe.out` rows replayed through the
+    executed String-backed `compileExpCake`, as a single Bool fixture. -/
+def productionGuard : Bool :=
+  (match compileExpCake productionProbeContext (.var .local "x") with
+   | .var .local name => name == "x"
+   | _ => false) &&
+  (match compileExpCake productionProbeContext (.var .global "g") with
+   | .load .one (.op .sub [.topAddr, .const address]) =>
+       address == (8 : BitVec 8)
+   | _ => false) &&
+  (match compileExpCake productionProbeContext (.var .global "missing") with
+   | .const value => value == (0 : BitVec 8)
+   | _ => false) &&
+  (match compileExpCake productionProbeContext (.topAddr : Exp (BitVec 8)) with
+   | .op .sub [.topAddr, .const address] => address == (16 : BitVec 8)
+   | _ => false) &&
+  (match compileExpCake productionProbeContext
+      (.op .add [.var .global "g", .topAddr]) with
+   | .op .add [.load .one (.op .sub [.topAddr, .const first]),
+               .op .sub [.topAddr, .const second]] =>
+       first == (8 : BitVec 8) && second == (16 : BitVec 8)
+   | _ => false)
+
+#eval productionGuard
+#guard productionGuard
+
 def runChecks : IO Bool := do
-  let result := parityGuard
-  IO.println (if result then
+  let exactResult := parityGuard
+  let productionResult := productionGuard
+  IO.println (if exactResult then
     "PASS pan_globals compile_exp_def exact-carrier parity (5 HOL rows)"
     else "FAIL pan_globals compile_exp_def exact-carrier parity (5 HOL rows)")
-  pure result
+  IO.println (if productionResult then
+    "PASS pan_globals compileExpCake/cakeContextOfExact bridge parity (5 HOL rows)"
+    else "FAIL pan_globals compileExpCake/cakeContextOfExact bridge parity (5 HOL rows)")
+  pure (exactResult && productionResult)
 
 end Flapjack.Test.PanGlobalsCompileExpExactParity

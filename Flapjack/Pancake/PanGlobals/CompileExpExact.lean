@@ -16,15 +16,30 @@ The `fmap_as_finite_support` qualifier records only the finite-support map
 representation and the `words_as_type_indexed_bitvec` qualifier only the
 type-indexed `'a word` / positive-width `BitVec width` translation; neither
 changes a quantifier, hypothesis, side condition, or conclusion of the HOL
-clauses.  The direct String-backed production `globalCompileExp` remains an
-untagged compatibility path (its adapter to the canonical context lives beside
-it in `PanGlobals.lean`); routing the executed compiler through this exact
-definition is tracked by `flapjack-pxn.18.3.5.8`.
+clauses.
+
+The kernel-checked bridge `compileExpCake_cakeContextOfExact` at the end of this
+module connects the executed String-backed production compiler `compileExpCake`
+to this exact definition under the byte-range hypothesis `ExpByteRanged` that
+the parser supplies: the production result is exactly the `expOfHOL` image of
+`compileExpExactHOL` run on the `expToHOL` image of the input.  It follows the
+`progToHOL`/`progOfHOL` codec pattern: the production `compileExpCake` remains
+untagged, and the exact `compileExpExactHOL` is reached through the
+`cakeContextOfExact` adapter.  It is a bridge, not textual routing: the
+executed `compileDecsCake`/`compileProgCake`/`compileExpCake` chain still
+computes the production function directly.  A total textual route is blocked
+because a production `CakeContext` carries an arbitrary `String → Option _`
+globals function with no finite-support witness for the exact
+`HolFiniteMapExact` field, and because decoding an output name needs the
+byte-range premise; the remaining production routing is tracked by
+`flapjack-pxn.18.3.5.8.29`.
 -/
 
 namespace Flapjack
 
-open Flapjack.Pancake.PanLang (MlS ShapeHOL ExpHOL)
+open Flapjack.Basis.Pure.MlString
+open Flapjack.Pancake.PanLang
+  (MlS ShapeHOL ExpHOL expToHOL expOfHOL ExpByteRanged ListExpByteRanged shapeOfHOL)
 
 /-- Broad function-backed representation paired with support evidence, used
     only to state the finite-support representation roundtrip for
@@ -79,7 +94,21 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width]
   cases context
   rfl
 
+/-- Production `CakeContext` induced by an exact `pan_globals` context.  Names
+    are encoded with the total `ofString` and payload shapes are decoded with
+    `shapeOfHOL`; the two size fields agree definitionally.  This is the
+    production counterpart of the codec bridge below, not a HOL declaration. -/
+def cakeContextOfExact {width : Nat} [NeZero width]
+    (context : PanGlobalsContextExact width) : CakeContext width where
+  globals := fun key =>
+    (context.globals.lookup (ofString key)).map
+      (fun entry => (shapeOfHOL entry.1, entry.2))
+  globalsSize := context.globalsSize
+  maxGlobalsSize := context.maxGlobalsSize
+
 end PanGlobalsContextExact
+
+open PanGlobalsContextExact
 
 /-! ### Exact-carrier `compile_exp_def`
 
@@ -147,4 +176,104 @@ mutual
     all_goals first | sizeOf_list_dec | decreasing_trivial
 end
 
+/-- Kernel-checked codec bridge between the executed String-backed production
+    compiler `compileExpCake` and the reviewed exact `compileExpExactHOL`.  For
+    every exact context and every byte-ranged production expression, running the
+    production compiler on `cakeContextOfExact context` yields exactly the
+    `expOfHOL` image of `compileExpExactHOL context` run on `expToHOL
+    expression`.  This is Flapjack bridge infrastructure (no HOL declaration has
+    this paired representation statement); the production compiler stays
+    untagged.
+
+    It follows the `progToHOL`/`progOfHOL` codec pattern: the `ExpByteRanged`
+    hypothesis is exactly the parser-supplied round-trip premise
+    (`expOfHOL_expToHOL`); the global lookup uses `ofString` on both sides and
+    the emitted shape is decoded by `shapeOfHOL`, so no further premise is
+    needed.  This is a bridge, not textual routing: `compileDecsCake` and
+    `compileProgCake` still call `compileExpCake` textually. -/
+@[simp] theorem compileExpCake_cakeContextOfExact {width : Nat} [NeZero width]
+    (context : PanGlobalsContextExact width) :
+    (expression : Exp (BitVec width)) → ExpByteRanged expression →
+      compileExpCake (cakeContextOfExact context) expression
+        = expOfHOL (compileExpExactHOL context (expToHOL expression)) :=
+  Flapjack.Exp.rec
+    (motive_1 := fun expression =>
+      ExpByteRanged expression →
+        compileExpCake (cakeContextOfExact context) expression
+          = expOfHOL (compileExpExactHOL context (expToHOL expression)))
+    (motive_2 := fun expressions =>
+      ListExpByteRanged expressions →
+        compileExpCake.compileExpCakeList (cakeContextOfExact context) expressions
+          = (compileExpExactHOLList context (expressions.map expToHOL)).map expOfHOL)
+    (motive_3 := fun _ => True)
+    (motive_4 := fun _ => True)
+    (fun _value _ => by
+      simp only [expToHOL, expOfHOL, compileExpExactHOL, compileExpCake])
+    (fun kind name hname => by
+      cases kind with
+      | «local» =>
+          simp only [expToHOL, expOfHOL, compileExpExactHOL, compileExpCake]
+          rw [toStringOfBytes_ofString_of_bytes name hname]
+      | global =>
+          simp only [expToHOL, compileExpExactHOL, compileExpCake,
+            PanGlobalsContextExact.cakeContextOfExact, FLOOKUP]
+          cases h : context.globals.lookup (ofString name) with
+          | none => simp only [Option.map_none, expOfHOL]; try rfl
+          | some entry =>
+              obtain ⟨shape, address⟩ := entry
+              simp only [Option.map_some, expOfHOL, List.map_cons, List.map_nil]
+              try rfl)
+    (fun expressions ih hexpressions => by
+      simp only [expToHOL, expOfHOL, compileExpExactHOL, compileExpCake]
+      rw [ih hexpressions])
+    (fun index value ih hvalue => by
+      simp only [expToHOL, expOfHOL, compileExpExactHOL, compileExpCake]
+      rw [ih hvalue])
+    (fun name fields _ih _ => by
+      simp only [expToHOL, expOfHOL, compileExpExactHOL, compileExpCake]; try rfl)
+    (fun name value _ih _ => by
+      simp only [expToHOL, expOfHOL, compileExpExactHOL, compileExpCake]; try rfl)
+    (fun shape address ih hload => by
+      obtain ⟨hshape, haddress⟩ := hload
+      simp only [expToHOL, expOfHOL, compileExpExactHOL, compileExpCake,
+        Flapjack.Pancake.PanLang.shapeOfHOL_shapeToHOL shape hshape]
+      rw [ih haddress])
+    (fun address ih haddress => by
+      simp only [expToHOL, expOfHOL, compileExpExactHOL, compileExpCake]
+      rw [ih haddress])
+    (fun address ih haddress => by
+      simp only [expToHOL, expOfHOL, compileExpExactHOL, compileExpCake]
+      rw [ih haddress])
+    (fun operator args ih hargs => by
+      simp only [expToHOL, expOfHOL, compileExpExactHOL, compileExpCake]
+      rw [ih hargs])
+    (fun operator args ih hargs => by
+      simp only [expToHOL, expOfHOL, compileExpExactHOL, compileExpCake]
+      rw [ih hargs])
+    (fun operator left right ihl ihr hcmp => by
+      obtain ⟨hl, hr⟩ := hcmp
+      simp only [expToHOL, expOfHOL, compileExpExactHOL, compileExpCake]
+      rw [ihl hl, ihr hr])
+    (fun operator left right ihl ihr hshift => by
+      obtain ⟨hl, hr⟩ := hshift
+      simp only [expToHOL, expOfHOL, compileExpExactHOL, compileExpCake]
+      rw [ihl hl, ihr hr])
+    (fun _ => by
+      simp only [expToHOL, expOfHOL, compileExpExactHOL, compileExpCake])
+    (fun _ => by
+      simp only [expToHOL, expOfHOL, compileExpExactHOL, compileExpCake,
+        PanGlobalsContextExact.cakeContextOfExact, List.map_cons, List.map_nil])
+    (fun _ => by
+      simp only [expToHOL, expOfHOL, compileExpExactHOL, compileExpCake])
+    (fun _ => by
+      simp only [compileExpCake.compileExpCakeList, compileExpExactHOLList,
+        List.map_nil])
+    (fun head tail ihHead ihTail hlist => by
+      obtain ⟨hhead, htail⟩ := hlist
+      simp only [compileExpCake.compileExpCakeList, compileExpExactHOLList,
+        List.map_cons]
+      rw [ihHead hhead, ihTail htail])
+    True.intro
+    (fun _ _ _ _ => True.intro)
+    (fun _ _ _ => True.intro)
 end Flapjack
