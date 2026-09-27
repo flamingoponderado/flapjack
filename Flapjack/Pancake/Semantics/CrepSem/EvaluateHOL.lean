@@ -2988,4 +2988,79 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {ffiState : T
 
 end EvaluateHOL
 
+/-!
+## Proposal for a word-dimension and FFI-universe translation qualifier
+
+Draft proposal for `flapjack-4ac.5.16.5.19`. It requests a new, narrowly scoped
+`@[hol]` qualifier that records the two *representation* differences between HOL
+`crepSem` and the Lean carrier, without authorising any change to a theorem's
+quantifiers, hypotheses, side conditions, conclusions, or evaluator. Nothing
+here is tagged, and no checker rule is changed pending coordinator review.
+
+### Exact carrier relation
+
+HOL `crepSem$state` (`crepSemScript.sml:19-32`) and its Lean counterpart
+`CrepSemHOLState (width : Nat) [NeZero width] (ffiState : Type)` differ only in:
+
+* **Word dimension.** HOL fields use the type-indexed word `'a word`
+  (`wordsTheory`; `word_lab = Word ('a word)`, `panSemScript.sml:17`), whose
+  dimension is `dimindex (:α)` — `CARD α` for finite `α` and `1` otherwise, so
+  always positive. Lean uses `BitVec width` (through `HolWordLab width`), with
+  `width` an explicit `Nat` and `[NeZero width]` restating that positivity. The
+  translation is `width := dimindex (:α)`.
+* **FFI host type.** HOL quantifies the host as the type variable `'ffi`
+  (`ffi : 'ffi ffi_state`); Lean pins it to `σ : Type` (universe `0`) in
+  `HolFfiState σ` (`FfiHOL.lean:115`). The translation is `'ffi := σ`.
+
+Field-by-field (`HOL` ↔ `Lean`): `locals` (`varname |-> 'a word_lab`) ↔
+`HolFiniteMapExact Nat (HolWordLab width)`; `globals` (`5 word |-> 'a word_lab`)
+↔ `HolFiniteMapExact (BitVec 5) (HolWordLab width)`; `code`
+(`funname |-> (varname list # 'a crepLang$prog)`) ↔
+`HolFiniteMapExact MlString (List Nat × CrepProgHOL width)`; `memory`
+(`'a word -> 'a word_lab`) ↔ `BitVec width → HolWordLab width`; `memaddrs` and
+`sh_memaddrs` (`('a word) set`) ↔ `BitVec width → Prop` (set-as-predicate);
+`clock : num` ↔ `Nat`; `be : bool` ↔ `Bool`; `ffi : 'ffi ffi_state` ↔
+`HolFfiState σ`; `base_addr` and `top_addr : 'a word` ↔ `BitVec width`. The
+`result` datatype translates constructor-for-constructor
+(`CrepResultHOLExact`, tagged `result`).
+
+### Conventional translation, not a changed theorem
+
+This is a conventional data-structure translation: (1) `'a word` is by
+construction the `dimindex (:α)`-bit word type, so `BitVec (dimindex (:α))` is
+the same data; (2) `dimindex (:α) ≥ 1` is a theorem of `wordsTheory`, so the
+Lean `[NeZero width]` binder is a translation artifact discharged at every HOL
+instance rather than an added mathematical hypothesis; (3) the Lean FFI
+statement is the HOL proposition at the universe-`0` instance of `'ffi`. No
+hypothesis, side condition, quantifier, or conclusion is added, removed, or
+weakened, and the evaluator itself is unchanged — unlike the forbidden cases (a
+changed evaluator, an extra successful-pass assumption, or a hypothesis that
+already implies the conclusion).
+
+### Proposed qualifier and review rule
+
+Suggested qualifier `(words_as_type_indexed_bitvec)`, usable only when the sole
+representation differences are the word dimension and the FFI universe, and only
+alongside the existing `fmap_as_finite_support` fields for map-valued fields.
+Suggested manifest status `reviewed_words_as_type_indexed_bitvec`. Review
+obligations:
+
+* the tagged declaration must name the word-carrying carrier and cite the
+  `dimindex`-to-`width` instantiation in its local note;
+* the reviewer must confirm every `width`-typed field arose from a HOL `'a word`
+  and that no binder beyond `[NeZero width]` / `{σ : Type}` was added;
+* the FFI universe restriction must be recorded whenever `'ffi` is not pinned to
+  universe `0`; otherwise that component is an identity translation.
+
+A future checker rule could additionally require a same-module adapter showing
+`BitVec width` has the HOL word cardinality (`2^width`) together with the
+`NeZero` discharge; that is out of scope for this proposal.
+
+### Scope
+
+This proposal authorises no tag by itself: `evaluate_def` still needs the `.13.1`
+finite-map witness route approved by the coordinator and the source line (240)
+cited. No checker, lock-file, or manifest change is included here.
+-/
+
 end Flapjack
