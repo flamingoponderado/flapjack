@@ -1908,5 +1908,56 @@ theorem compileExpValRelHOL {width : Nat} {σ : Type} [NeZero width]
       · exact ihtail p hp)
     (fun _fst _snd ih => ih)
 
+/-- Exact port of HOL `eval_map_comp_exp_flat_eq`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:1055-1072`). The
+    successful source evaluations, source/target `state_rel`, `code_rel`,
+    `locals_rel`, and `EVERY localised_exp` premises and the flattened target
+    evaluation conclusion follow HOL's statement exactly. The finite-support
+    relation qualifier records the map fields traversed by those three
+    relation premises; the width-indexed carriers translate HOL words through
+    `BitVec width` with `[NeZero width]`. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "eval_map_comp_exp_flat_eq"
+  (fmap_as_finite_support_relation := [PanSemStateFiniteExact.globals,
+    PanSemStateFiniteExact.code, PanSemStateFiniteExact.locals,
+    CrepSemHOLState.code, CrepSemHOLState.locals,
+    PanToCrepContextExact.vars, PanToCrepContextExact.funcs,
+    PanToCrepContextExact.eids])
+  (words_as_type_indexed_bitvec)]
+theorem evalMapCompExpFlatEqHOL {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ)
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width σ)
+    [hs : DecidablePred state.memaddrs] [ht : DecidablePred targetState.memaddrs]
+    (expressions : List (ExpHOL width))
+    (values : List (ValueHOL width))
+    (hsource : expressions.map state.evalHOLFinite = values.map some)
+    (hstate : panToCrepStateRelFiniteExact state targetState)
+    (hcode : codeRelExactHOLW context state.code targetState.code)
+    (hlocals : panToCrepLocalsRelFiniteExact context state.locals targetState.locals)
+    (hlocalized : expressions.all localisedExpHOL = true) :
+    (expressions.flatMap (fun expression =>
+      (compileExpExactHOLW context expression).1)).map
+        (evalCrepSemHOLExp targetState) =
+      (values.flatMap flattenHOL).map some := by
+  induction expressions generalizing values with
+  | nil =>
+      cases values <;> simp at hsource ⊢
+  | cons expression expressions ih =>
+      cases values with
+      | nil => simp at hsource
+      | cons value values =>
+          simp only [List.map_cons] at hsource
+          rcases List.cons.inj hsource with ⟨heval, htailSource⟩
+          simp only [List.all_cons, Bool.and_eq_true] at hlocalized
+          obtain ⟨hlocalizedHead, hlocalizedTail⟩ := hlocalized
+          cases hcompile : compileExpExactHOLW context expression with
+          | mk compiled shape =>
+              have hhead := compileExpValRelHOL state context targetState
+                expression value compiled shape heval hstate hcode hlocals
+                hlocalizedHead hcompile
+              have htail := ih values htailSource hlocalizedTail
+              simp only [List.flatMap_cons, hcompile, List.map_append]
+              rw [hhead.1, htail]
+
 
 end Flapjack

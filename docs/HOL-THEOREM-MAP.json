@@ -14675,6 +14675,25 @@
     "reviewer": "flapjack-ds10 (bead flapjack-4ac.5.81.14; resolves the PR #1168 review HOLD on the withdrawn compile_exp_val_rel tag): source comparison against HOL compile_exp_val_rel (cakeml/pancake/proofs/pan_to_crepProofScript.sml:130). The six hypotheses and four conclusions match clause-for-clause (eval/evalHOLFinite; state_rel/panToCrepStateRelFiniteExact; code_rel/codeRelExactHOLW; locals_rel/panToCrepLocalsRelFiniteExact; localised_exp/localisedExpHOL; compile_exp/compileExpExactHOLW; and MAP (eval t) es = MAP SOME (flatten v) / expressions.map (evalCrepSemHOLExp targetState) = (flattenHOL value).map some; LENGTH/sizeOfShapeHOL; shape_of/shapeOfHOLExact; is_wf_shape_nil/isWfShapeExactHOL []). The combined qualifier records the two representation differences: HOL is polymorphic in the word dimension ('a word, dimindex) and the FFI-state type (('a,'b) state), while the Lean statement fixes the positive width BitVec width with [NeZero width] and the universe-0 host sigma : Type (words_as_type_indexed_bitvec); and the HOL state/context maps are the finite-support carriers PanSemStateFiniteExact/CrepSemHOLState/PanToCrepContextExact. The relation entries record exactly the fields the premises traverse: state_rel reads PanSemStateFiniteExact.globals; code_rel reads PanSemStateFiniteExact.code, CrepSemHOLState.code, PanToCrepContextExact.funcs and .eids; locals_rel reads PanToCrepContextExact.vars and the locals fields of both states. Fields read only inside the separately tagged and source-reviewed evaluators (source.eshapes through evalHOLFinite, targetState.globals through evalCrepSemHOLExp) occur in no relation hypothesis or conclusion and so are not listed; the qualifier covers only the maps the relation premises traverse. Same-module witnesses holFmapAsFiniteSupportRelationWitness_{PanSemStateFiniteExact,CrepSemHOLState,PanToCrepContextExact} validate the three carriers; no cross-assistant agreement theorem is required (docs/SOUNDNESS.md)."
   },
   {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "eval_map_comp_exp_flat_eq",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "evalMapCompExpFlatEqHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.locals",
+      "CrepSemHOLState.code",
+      "CrepSemHOLState.locals",
+      "PanToCrepContextExact.vars",
+      "PanToCrepContextExact.funcs",
+      "PanToCrepContextExact.eids"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-28; bead flapjack-4ac.5.22) against HOL eval_map_comp_exp_flat_eq (pan_to_crepProofScript.sml:1055-1072). HOL quantifies argexps, args, source state s, target state t and ctxt; it assumes MAP (eval s) argexps = MAP SOME args, state_rel s t, code_rel ctxt s.code t.code, locals_rel ctxt s.locals t.locals, and EVERY localised_exp argexps. The Lean evalMapCompExpFlatEqHOL has the same universally quantified values and exactly those premises over PanSemStateFiniteExact, CrepSemHOLState and PanToCrepContextExact: the map-evaluation premise is expressions.map state.evalHOLFinite = values.map some; relations are panToCrepStateRelFiniteExact, codeRelExactHOLW and panToCrepLocalsRelFiniteExact; localization is List.all localisedExpHOL. Its conclusion is the same flattened result evaluation, using List.flatMap over compileExpExactHOLW output expressions, evalCrepSemHOLExp, and List.flatMap flattenHOL. The proof performs the HOL list induction and applies the exact tagged compile_exp_val_rel for each element; it adds no target-evaluation premise or other side condition. The finite-map relation qualifier lists exactly the fields traversed by the three relation premises, with the same-module carrier witnesses from CompileExpValRel. The BitVec width and universe-0 FFI host translation are recorded by words_as_type_indexed_bitvec."
+  },
+  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",

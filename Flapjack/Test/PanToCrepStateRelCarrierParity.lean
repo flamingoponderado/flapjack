@@ -158,6 +158,28 @@ private theorem loadCaseLocalsRel :
   simp [panToCrepLocalsRelFiniteExact, noOverlapFiniteExact,
     ctxtMaxFiniteExact, loadCaseSource, loadCaseContext, HolFiniteMapExact.empty]
 
+/-- Kernel regression for the full-list HOL `eval_map_comp_exp_flat_eq` port.
+    Two constants exercise the source-list induction and concatenation of their
+    compiled target expressions under exact source/target states and relations. -/
+private def flatCaseExpressions : List (ExpHOL 64) :=
+  [.const (3 : BitVec 64), .const (5 : BitVec 64)]
+
+private def flatCaseValues : List (ValueHOL 64) :=
+  [.val (.word (3 : BitVec 64)), .val (.word (5 : BitVec 64))]
+
+example :
+    (flatCaseExpressions.flatMap (fun expression =>
+      (compileExpExactHOLW loadCaseContext expression).1)).map
+        (evalCrepSemHOLExp loadCaseTarget) =
+      (flatCaseValues.flatMap flattenHOL).map some := by
+  apply evalMapCompExpFlatEqHOL loadCaseSource loadCaseContext loadCaseTarget
+    flatCaseExpressions flatCaseValues
+  · rfl
+  · exact loadCaseStateRel
+  · exact loadCaseCodeRel
+  · exact loadCaseLocalsRel
+  · simp [flatCaseExpressions, localisedExpHOL, everyExpHOL]
+
 private theorem loadCaseAddressIH :
     ∀ (subValue : ValueHOL 64) (subExpressions : List (CrepExpHOL 64))
         (subShape : ShapeHOL),
