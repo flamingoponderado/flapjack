@@ -423,4 +423,17 @@ theorem evalNestedDecsSeqResVarEqCrepHOL {width : Nat} [NeZero width]
   rw [hBodyExact]
   simpa only [evalCrepSemHOLProgExact_eq_core, restoreNestedDecsLocals] using hported
 
+/-- Exact port of HOL `globals_lookup` (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:435-438`):
+`globals_lookup t v = OPT_MMAP (FLOOKUP t.globals) (GENLIST (fun x => n2w x) (size_of_shape (shape_of v)))`.
+HOL's `t.globals` is the `5 word |-> 'a word_lab` finite map of the crepSem state, and `GENLIST ...`
+is `List.range ... |>.map BitVec.ofNat 5`; `OPT_MMAP (FLOOKUP _)` is `List.mapM` over `.lookup`.
+The state finite-map fields use the reviewed `HolFiniteMapExact` translation of HOL's `|->`. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "globals_lookup_def"
+  (fmap_as_finite_support := [locals, globals, code])]
+def globalsLookupHOL {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) (value : ValueHOL width) :
+    Option (List (HolWordLab width)) :=
+  ((List.range (Flapjack.Pancake.PanLang.sizeOfShapeHOL (shapeOfHOLExact value))).map
+    (fun index => BitVec.ofNat 5 index)).mapM state.globals.lookup
+
 end Flapjack
