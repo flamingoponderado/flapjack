@@ -1,0 +1,10 @@
+slc_tlc_slc_x=SOME (ValWord 5w)
+slc_tlc_slc_y=SOME (ValWord 7w)
+slc_tlc_slc_absent=NONE
+slc_tlc_tlc_0=SOME (Word 5w)
+slc_tlc_tlc_1=SOME (Word 7w)
+slc_tlc_tlc_absent=NONE
+slc_tlc_rw_slc_holds=T
+slc_tlc_rw_tlc_holds=T
+slc_tlc_slc_rhs_lookup=SOME (ValWord 5w)
+slc_tlc_tlc_rhs_lookup=SOME (Word 7w)
