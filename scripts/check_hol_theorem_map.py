@@ -321,6 +321,18 @@ DEFINITION_RE = re.compile(
     r"(?:def|abbrev|opaque|theorem|lemma)\s+([^\s:({\[]+)"
 )
 DOCUMENTED_MISMATCHES = {
+    ("Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean", "memLoadFlatRelHOLExact"): (
+        "cakeml/pancake/semantics/crepPropsScript.sml",
+        "mem_load_flat_rel",
+        "flapjack-luna-c (source comparison, 2026-09-27; bead flapjack-4ac.5.81.11.1.1): "
+        "the Lean conclusion and premises follow `mem_load_flat_rel` over exact "
+        "Pan evaluator carriers, but its target is CrepSemHOLState, whose owning "
+        "finite-map structure lives in the separate CrepSem module. The current "
+        "fmap_as_finite_support tag checker requires that owner and its roundtrip "
+        "witness in the declaration's own module; words_as_type_indexed_bitvec "
+        "alone cannot authorize this carrier. Keep this analogue untagged until "
+        "the exact target state carrier/qualifier is available in the counterpart module."
+    ),
     ("Flapjack/Pancake/Semantics/LoopSemStateExact.lean", "LoopSemStateFiniteExact"): (
         "cakeml/pancake/semantics/loopSemScript.sml",
         "state",
@@ -1485,6 +1497,23 @@ DOCUMENTED_MISMATCHES = {
         "DeclHOL and exact compile_prog."
     ),
 }
+
+# Flapjack-specific theorems that support exact HOL ports but are deliberately
+# not ports of standalone HOL declarations. Most proof helpers live under
+# Proofs/ and are inventoried automatically; counterpart-side witnesses and
+# induction helpers belong beside their semantic definitions instead.
+INFRASTRUCTURE_THEOREMS = {
+    ("Flapjack/Pancake/Semantics/CrepProps/MemLoadFlatRel.lean", "holFmapAsFiniteSupportWitness"): (
+        "Same-module canonical finite-support witness required by the qualified "
+        "mem_load_flat_rel port. This witness restates the CrepSemHOLState / "
+        "CrepSemBroadState roundtrip and is not a standalone HOL theorem."
+    ),
+    ("Flapjack/Pancake/Semantics/CrepProps/MemLoadFlatRel.lean", "memLoadHOLExact_flatRead_mutual"): (
+        "Flapjack-specific mutual evaluator-induction helper for the strided "
+        "mem_load_flat_rel analogue. HOL has no standalone declaration with "
+        "this helper statement; its list cases are part of mem_loads_flat_rel."
+    ),
+}
 VALID_STATUSES = {
     "reviewed_exact",
     "reviewed_list_as_array",
@@ -1577,6 +1606,15 @@ def lean_definition_exists(root: Path, lean_path: str, lean_name: str) -> bool:
         (match := DATA_DECLARATION_RE.match(line)) and match.group(1) == lean_name
         for line in source.splitlines()
     ) or any(
+        (match := THEOREM_RE.match(line)) and match.group(1) == lean_name
+        for line in source.splitlines()
+    )
+
+
+def lean_theorem_exists(root: Path, lean_path: str, lean_name: str) -> bool:
+    """Check a theorem helper in any counterpart module, including Semantics/."""
+    source = strip_comments((root / lean_path).read_text(encoding="utf-8"))
+    return any(
         (match := THEOREM_RE.match(line)) and match.group(1) == lean_name
         for line in source.splitlines()
     )
@@ -1704,6 +1742,18 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
             "lean_path": lean_path,
             "lean_name": lean_name,
             "statement_status": "documented_mismatch",
+            "reviewer": reviewer,
+        }
+
+    for (lean_path, lean_name), reviewer in INFRASTRUCTURE_THEOREMS.items():
+        if not lean_theorem_exists(root, lean_path, lean_name):
+            raise ValueError(f"infrastructure theorem is not a current theorem: {lean_path}:{lean_name}")
+        inventory[(lean_path, lean_name)] = {
+            "hol_path": None,
+            "hol_name": None,
+            "lean_path": lean_path,
+            "lean_name": lean_name,
+            "statement_status": "no_hol_reference_pending_classification",
             "reviewer": reviewer,
         }
 
@@ -2208,11 +2258,12 @@ def validate_inventory(
             errors.append(f"Proofs theorem missing from manifest: {key[0]}:{key[1]}")
 
     documented_mismatch_keys = set(DOCUMENTED_MISMATCHES)
+    infrastructure_theorem_keys = set(INFRASTRUCTURE_THEOREMS)
     for key in by_key:
         if key not in tagged and key not in proof_declarations and not (
             key in WITHDRAWN_HOL_DECLARATIONS
             and (data_declarations_ is None or key in data_declarations_)
-        ) and key not in documented_mismatch_keys:
+        ) and key not in documented_mismatch_keys and key not in infrastructure_theorem_keys:
             errors.append(f"manifest entry is not a current declaration: {key[0]}:{key[1]}")
     return errors
 
