@@ -1480,6 +1480,69 @@ theorem compileProgExactHOLW_call_result_no_handler_bridge {width : Nat} [NeZero
   rw [hargs, hfunctionDecode]
   rfl
 
+/-- Encoding an option of `(ShapeHOL, List Nat)` through `shapeOfHOL` preserves
+    the `wrap_rt` normalization: `wrapRtHOL` drops `some (.one, [])` while
+    `wrapRt` drops `some (Shape.one, [])`, and `shapeOfHOL` maps `.one` to
+    `Shape.one` and preserves every other shape. Hence the destination-name
+    projection of the production `wrapRt` on the encoded map equals that of the
+    exact `wrapRtHOL`. Flapjack proof infrastructure. -/
+private theorem wrapRt_map_shapeOfHOL_snd (n : Option (ShapeHOL × List Nat)) :
+    (wrapRt (n.map (fun pair =>
+      (Flapjack.Pancake.PanLang.shapeOfHOL pair.1, pair.2)))).map Prod.snd =
+      (wrapRtHOL n).map Prod.snd := by
+  cases n with
+  | none => rfl
+  | some pair =>
+      obtain ⟨shape, names⟩ := pair
+      cases shape <;> cases names <;>
+        simp [wrapRt, wrapRtHOL, Flapjack.Pancake.PanLang.shapeOfHOL]
+
+/-- Exact-to-production bridge for the `rtyp = SOME (SOME (rtk, rt), NONE)`
+    Call arm of HOL `compile_def` (`cakeml/pancake/pan_to_crepScript.sml:252-261`):
+    the successful `wrap_rt (FLOOKUP ctxt.vars rt)` branch with no exception
+    handler. Both compilers emit a call carrying the destination names as result
+    metadata, so the proof only has to move `crepProgOfHOL` through the compiled
+    argument list, decode the function name, and reconcile the exact
+    `wrapRtHOL` lookup with the production `callDestinationNamesHOL`. Flapjack
+    proof infrastructure; no HOL-tagged declaration. -/
+theorem compileProgExactHOLW_call_wrapped_result_no_handler_bridge
+    {width : Nat} [NeZero width] (context : PanToCrepContextExact width)
+    (kind : VarKind) (resultName function : String)
+    (arguments : List (Exp (BitVec width)))
+    (resultShape : Flapjack.Pancake.PanLang.ShapeHOL) (resultNames : List Nat)
+    (hwrappedResult :
+      wrapRtHOL (context.vars.lookup (Flapjack.Basis.Pure.MlString.ofString resultName)) =
+        some (resultShape, resultNames))
+    (hfunction : Flapjack.Pancake.PanLang.NameRanged function)
+    (hcodec :
+      ∀ expression ∈ arguments,
+        ((compileExpExactHOLW context (expToHOL expression)).1.map crepExpOfHOL,
+          shapeOfHOL (compileExpExactHOLW context (expToHOL expression)).2) =
+          compileExpHOL context.toProduction expression) :
+    crepProgOfHOL
+        (compileProgExactHOLW context
+          (.call (some (some (kind, Flapjack.Basis.Pure.MlString.ofString resultName), none))
+            (Flapjack.Basis.Pure.MlString.ofString function) (arguments.map expToHOL))) =
+      compileProgRiscV context.toProduction
+        (.call (some (some (kind, resultName), none)) function arguments) := by
+  have hfunctionDecode :=
+    Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes function hfunction
+  have hargs := crepProgOfHOL_compileArgumentList_flatMap context arguments hcodec
+  have hvariables : context.toProduction.vars resultName =
+      (context.vars.lookup (Flapjack.Basis.Pure.MlString.ofString resultName)).map
+        (fun entry =>
+          (Flapjack.Pancake.PanLang.shapeOfHOL entry.1, entry.2)) := rfl
+  have hproductionNames :
+      callDestinationNamesHOL context.toProduction kind resultName = some resultNames := by
+    unfold callDestinationNamesHOL FLOOKUP
+    rw [hvariables, wrapRt_map_shapeOfHOL_snd, hwrappedResult]
+    rfl
+  simp only [compileProgExactHOLW]
+  split
+  · simp_all
+  · simp_all only [compileCallWrappedResultNoHandlerExactHOLW, compileProgRiscV, compileProgHOL,
+      crepProgOfHOL, Option.some.injEq, Prod.mk.injEq]
+
 theorem compileProgExactHOLW_shmem_store_bridge {width : Nat} [NeZero width]
     (context : PanToCrepContextExact width) (operator : OpSize)
     (value address : Exp (BitVec width))

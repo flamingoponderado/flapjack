@@ -931,6 +931,26 @@ example :
     simp only [compileExpExactHOLW.eq_1, expToHOL.eq_1, compileExpHOL.eq_1,
       List.map_cons, List.map_nil, crepExpOfHOL.eq_1, shapeOfHOL]
 
+/-- The wrapped-result `Call` bridge (`pan_to_crepScript.sml:252-261`) for a
+    name-ranged callee whose destination `wrap_rt` lookup succeeds with a
+    non-empty name list and a concrete single-argument list. -/
+example :
+    crepProgOfHOL (compileProgExactHOLW (exactLocalAssignContext [7] [8])
+      (.call (some (some (.local, ofString "dst"), none)) (ofString "f")
+        (([.const 5] : List (Exp (BitVec 8))).map expToHOL))) =
+    compileProgRiscV (exactLocalAssignContext [7] [8]).toProduction
+      (.call (some (some (.local, "dst"), none)) "f" [.const 5]) := by
+  refine compileProgExactHOLW_call_wrapped_result_no_handler_bridge
+    (context := exactLocalAssignContext [7] [8]) (kind := .local)
+    (resultName := "dst") (function := "f") (arguments := [.const 5])
+    (resultShape := .one) (resultNames := [7]) ?_ (by decide) ?_
+  · rfl
+  · intro expression hmem
+    simp only [List.mem_singleton] at hmem
+    subst hmem
+    simp only [compileExpExactHOLW.eq_1, expToHOL.eq_1, compileExpHOL.eq_1,
+      List.map_cons, List.map_nil, crepExpOfHOL.eq_1, shapeOfHOL]
+
 /-- The `ExtCall` success bridge (`pan_to_crepScript.sml:274-290`) closes the
     four `One`-shaped operand bindings and the maximum-variable temporary base
     for concrete constant operands. -/
