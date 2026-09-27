@@ -293,22 +293,23 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {σ : Type} :
 
 end CrepEvaluateIndFiniteSupport
 
-/-- Exact clause-for-clause Lean port of HOL `crepSem$evaluate_ind`.
-(`cakeml/pancake/semantics/crepSemScript.sml:440`,
-`REWRITE_RULE [fix_clock_evaluate] evaluate_ind`), reconstructed over the exact
-carriers `CrepProgHOL`, `CrepSemHOLState`, and `CrepResultHOLExact`.  Expression
-guards use the classical spelling `crepExactEvalExpClassical`, proved
-extensionally equal to the reviewed `crepExactEvalExp` by
-`crepExactEvalExpClassical_eq`.  The `Call` clause quantifies HOL's own binders
-`args v6 prog newlocals` and goes through the internal finite-support wrapper
-`lookupCodeHOLFinite`, whose `.lookup` projection is the reviewed exact
-`lookupCodeHOL`; the raw `CrepLocalsExact` result is repackaged as the
+/-- FLAPJACK-SPECIFIC (not a tagged HOL port, so no `@[hol]` tag): clause-for-clause
+reconstruction of HOL `crepSem$evaluate_ind` (`cakeml/pancake/semantics/crepSemScript.sml:440`,
+`REWRITE_RULE [fix_clock_evaluate] evaluate_ind`) over the exact carriers `CrepProgHOL`,
+`CrepSemHOLState`, and `CrepResultHOLExact`.  An earlier exact tag here was WITHDRAWN
+2026-09-27 on coordinator review: the Seq/While clause-equation tags over this same
+evaluator were already withdrawn pending whole-evaluator source review (Call
+domain-stamping and FFI effect agreement), so this induction principle inherits the same
+pending dependency and cannot be tagged until that review is complete.  Expression guards
+use the classical spelling `crepExactEvalExpClassical`, proved extensionally equal to the
+reviewed `crepExactEvalExp` by `crepExactEvalExpClassical_eq`.  The `Call` clause
+quantifies HOL's own binders `args v6 prog newlocals` and goes through the internal
+finite-support wrapper `lookupCodeHOLFinite`, whose `.lookup` projection is the reviewed
+exact `lookupCodeHOL`; the raw `CrepLocalsExact` result is repackaged as the
 finite-support `HolFiniteMapExact` carrier (support witness from
-`lookupCodeHOL_calleeLocals_finiteSupport`).  `fix_clock` has been rewritten
-away (`evaluate_clock` is `evalCrepSemHOLProgExact_clock_le`). -/
-@[hol "cakeml/pancake/semantics/crepSemScript.sml" "evaluate_ind" 440
-  (fmap_as_finite_support := [locals, globals, code])
-  (words_as_type_indexed_bitvec)]
+`lookupCodeHOL_calleeLocals_finiteSupport`).  `fix_clock` has been rewritten away
+(`evaluate_clock` is `evalCrepSemHOLProgExact_clock_le`).  The faithful tagged port is
+tracked by `flapjack-2de.1.1`, blocked by `flapjack-4ac.5.16.5`. -/
 theorem evalCrepSemHOLProgExact_induct {width : Nat} [NeZero width] {σ : Type}
     (P : CrepProgHOL width × CrepSemHOLState width σ → Prop)
     (hskip : ∀ s, P (.skip, s))

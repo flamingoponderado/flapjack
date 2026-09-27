@@ -238,6 +238,29 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
                 self.assertIn("globalFreshName", record["reviewer"])
                 self.assertNotIn(key, tagged)
 
+    def test_crep_evaluate_ind_tag_is_withdrawn(self):
+        tagged = MAP["tagged_declarations"]()
+        manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
+        manifest_by_key = {
+            (record["lean_path"], record["lean_name"]): record
+            for record in manifest
+        }
+        key = (
+            "Flapjack/Pancake/Semantics/CrepSem/EvaluateInd.lean",
+            "evalCrepSemHOLProgExact_induct",
+        )
+        record = manifest_by_key[key]
+        self.assertEqual(
+            (record["hol_path"], record["hol_name"]),
+            ("cakeml/pancake/semantics/crepSemScript.sml", "evaluate_ind"),
+        )
+        self.assertEqual(record["statement_status"], "documented_mismatch")
+        self.assertNotIn("fmap_as_finite_support", record)
+        self.assertNotIn("words_as_type_indexed_bitvec", record)
+        self.assertIn("flapjack-4ac.5.16.5", record["reviewer"])
+        self.assertNotIn(key, tagged)
+        self.assertIn(key, MAP["DOCUMENTED_MISMATCHES"])
+
     def test_crep_sem_state_exact_helpers_have_combined_carrier_qualifiers(self):
         tagged = MAP["tagged_declarations"]()
         manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
