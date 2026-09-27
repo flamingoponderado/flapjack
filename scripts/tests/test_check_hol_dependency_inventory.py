@@ -121,6 +121,79 @@ class TheoryGraphTests(unittest.TestCase):
         self.assertEqual(sorted(INVENTORY.theory_closure(graph, ["e"])), ["e", "f"])
 
 
+class QualifiedCitationTests(unittest.TestCase):
+    """HOL writes qualified references as ``Theory$name``; the ``$`` keeps the
+    two halves inside one identifier token, so the suffix must be resolved
+    explicitly.  A suffix is only accepted when it names a real declaration."""
+
+    def _edges(self, body: str):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            path = root / "exampleScript.sml"
+            path.write_text(body, encoding="utf-8")
+            lines = body.count("\n") + 1
+            declarations = [
+                INVENTORY.Declaration(
+                    "Theorem", "rootThm", "exampleScript.sml", 1, lines, "example"
+                ),
+                INVENTORY.Declaration(
+                    "Definition", "targetDef", "exampleScript.sml", 99, 99, "other"
+                ),
+            ]
+            cache = INVENTORY.SourceCache(root)
+            return INVENTORY.citation_edges(declarations, cache)
+
+    def test_plain_identifier_is_cited(self):
+        edges, _names, resolved = self._edges(
+            "Theory example\nTheorem rootThm:\n  targetDef x\n"
+        )
+        self.assertIn("targetDef", edges["rootThm"])
+        self.assertEqual(resolved, 0)
+
+    def test_resolves_dollar_qualified_citation(self):
+        edges, _names, resolved = self._edges(
+            "Theory example\nTheorem rootThm:\n  other$targetDef x\n"
+        )
+        self.assertIn("targetDef", edges["rootThm"])
+        self.assertEqual(resolved, 1)
+
+    def test_ignores_unknown_dollar_suffix(self):
+        edges, names, resolved = self._edges(
+            "Theory example\nTheorem rootThm:\n  other$missing x\n"
+        )
+        self.assertNotIn("missing", names)
+        self.assertNotIn("targetDef", edges["rootThm"])
+        self.assertEqual(resolved, 0)
+
+    def test_ignores_unrecognised_theory_prefix(self):
+        # ``notatheory`` is not a HOL theory in the index, so even though
+        # ``targetDef`` is a real declaration the token is not a citation.
+        edges, names, resolved = self._edges(
+            "Theory example\nTheorem rootThm:\n  notatheory$targetDef x\n"
+        )
+        self.assertIn("targetDef", names)
+        self.assertNotIn("targetDef", edges["rootThm"])
+        self.assertEqual(resolved, 0)
+
+    def test_qualified_candidates_helper(self):
+        names = {"targetDef"}
+        theories = {"other"}
+        self.assertEqual(
+            INVENTORY.qualified_candidates("other$targetDef", names, theories),
+            ("targetDef",),
+        )
+        self.assertEqual(
+            INVENTORY.qualified_candidates("targetDef", names, theories), ()
+        )
+        self.assertEqual(
+            INVENTORY.qualified_candidates("other$missing", names, theories), ()
+        )
+        self.assertEqual(
+            INVENTORY.qualified_candidates("notatheory$targetDef", names, theories),
+            (),
+        )
+
+
 class CommittedReportTests(unittest.TestCase):
     REPORT = INVENTORY.ROOT / "docs" / "HOL-DEPENDENCY-INVENTORY.md"
 

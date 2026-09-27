@@ -79,4 +79,60 @@ theorem bridgeFixture :
   apply panPrimopCrepPrimop
   rfl
 
+/-- Apply the exact-carrier HOL bridge to the nonzero-carry oracle case. -/
+theorem exactBridgeFixture :
+    crepPrimopHOL .addCarry
+      ((([ValueHOL.val (.word (3 : BitVec 8)), ValueHOL.val (.word (4 : BitVec 8)),
+          ValueHOL.val (.word (2 : BitVec 8))] : List (ValueHOL 8))).flatMap flattenHOL
+        |>.map HolWordLab.toPanWordLab) =
+      some ((flattenHOL
+        (ValueHOL.rStruct [ValueHOL.val (.word (8 : BitVec 8)),
+          ValueHOL.val (.word (0 : BitVec 8))])).map HolWordLab.toPanWordLab) := by
+  apply panPrimopCrepPrimopHOLExact
+  rfl
+
+/-- Direct HOL oracle `crep_valid=SOME [8;0]` for the exact `HolWordLab`
+    carrier primitive. -/
+def crepExactValid : Bool :=
+  match crepPrimopHOLExact .addCarry
+      [.word (3 : BitVec 8), .word 4, .word 2] with
+  | some [.word result, .word overflow] =>
+      result.toNat == 8 && overflow.toNat == 0
+  | _ => false
+
+/-- Direct HOL oracle `crep_overflow=SOME [0;1]` for the exact carrier. -/
+def crepExactOverflow : Bool :=
+  match crepPrimopHOLExact .addCarry
+      [.word (255 : BitVec 8), .word 0, .word 1] with
+  | some [.word result, .word overflow] =>
+      result.toNat == 0 && overflow.toNat == 1
+  | _ => false
+
+/-- Direct HOL oracle failure edge `crep_invalid=NONE` (two arguments). -/
+def crepExactInvalid : Bool :=
+  (crepPrimopHOLExact .addCarry
+    [.word (3 : BitVec 8), .word 4]).isNone
+
+/-- Direct HOL oracle failure edge `crep_zero_args=NONE`. -/
+def crepExactZeroArgs : Bool :=
+  (crepPrimopHOLExact .addCarry ([] : List (HolWordLab 8))).isNone
+
+#guard crepExactValid
+#guard crepExactOverflow
+#guard crepExactInvalid
+#guard crepExactZeroArgs
+
+/-- Apply the exact-shape (no `toPanWordLab` map) HOL bridge to the AddCarry
+    success oracle case. -/
+theorem exactHOLBridgeFixture :
+    crepPrimopHOLExact .addCarry
+      (List.flatMap flattenHOL
+        ([ValueHOL.val (.word (3 : BitVec 8)), ValueHOL.val (.word (4 : BitVec 8)),
+          ValueHOL.val (.word (2 : BitVec 8))] : List (ValueHOL 8))) =
+      some (flattenHOL
+        (ValueHOL.rStruct [ValueHOL.val (.word (8 : BitVec 8)),
+          ValueHOL.val (.word (0 : BitVec 8))])) := by
+  apply panPrimopCrepPrimopExactHOL
+  rfl
+
 end Flapjack.Test.PanCrepPrimopParity
