@@ -605,4 +605,79 @@ theorem optMmapDisjZipFlookup [BEq α] [LawfulBEq α]
         exact hxnot (he ▸ hkey)
       simp [hkx]
 
+/-- Exact port of HOL `genlist_distinct_max`
+    (`cakeml/pancake/semantics/pan_commonPropsScript.sml:208`): the
+    `GENLIST (fun x. SUC x + m) n` slot enumeration is disjoint from any list
+    whose elements are bounded by `m`.  HOL's `distinct_lists` is rendered as
+    `ListDisjoint` and `GENLIST` by `List.range`/`List.map`. -/
+@[hol "cakeml/pancake/semantics/pan_commonPropsScript.sml" "genlist_distinct_max"]
+theorem genlistDistinctMaxHOL (n m : Nat) (ys : List Nat)
+    (hys : ∀ y, y ∈ ys → y ≤ m) :
+    ListDisjoint ((List.range n).map (fun i => i + 1 + m)) ys := by
+  intro value hx hy
+  obtain ⟨i, _hi, rfl⟩ := List.mem_map.mp hx
+  have := hys _ hy
+  omega
+
+/-- Exact port of HOL `genlist_distinct_max'`
+    (`cakeml/pancake/semantics/pan_commonPropsScript.sml:221`): the
+    `m + p`-shifted `GENLIST (fun x. SUC x + (m + p)) n` variant. -/
+@[hol "cakeml/pancake/semantics/pan_commonPropsScript.sml" "genlist_distinct_max'"]
+theorem genlistDistinctMaxShiftedHOL (n m p : Nat) (ys : List Nat)
+    (hys : ∀ y, y ∈ ys → y ≤ m) :
+    ListDisjoint ((List.range n).map (fun i => i + 1 + (m + p))) ys := by
+  intro value hx hy
+  obtain ⟨i, _hi, rfl⟩ := List.mem_map.mp hx
+  have := hys _ hy
+  omega
+
+/-- Exact port of HOL `mem_genlist_add_suc_val`
+    (`cakeml/pancake/semantics/pan_commonPropsScript.sml:234`): every value in
+    the `GENLIST (fun x. SUC x + k) n` interval lies in `(k, n + k]`. -/
+@[hol "cakeml/pancake/semantics/pan_commonPropsScript.sml" "mem_genlist_add_suc_val"]
+theorem memGenlistAddSucValHOL (n x k : Nat) :
+    x ∈ (List.range n).map (fun i => i + 1 + k) → k < x ∧ x ≤ n + k := by
+  intro hx
+  obtain ⟨i, hi, rfl⟩ := List.mem_map.mp hx
+  rw [List.mem_range] at hi
+  omega
+
+/-- Exact port of HOL `update_eq_zip_flookup`
+    (`cakeml/pancake/semantics/pan_commonPropsScript.sml:244`): if `xs` has
+    distinct keys and `xs`, `ys` have equal length, then every in-range index
+    `n` looks up the `n`-th key of `xs` to the `n`-th value of `ys` in
+    `f |++ ZIP (xs, ys)`. HOL `ALL_DISTINCT` is rendered as `List.Nodup`,
+    `FLOOKUP` as the reviewed extensional lookup, `f |++` as `FUPDATE_LIST`,
+    and `EL n` as the bounded `getElem` `xs[n]'hn` (respectively
+    `ys[n]'…`, whose bound follows from `LENGTH xs = LENGTH ys`). -/
+@[hol "cakeml/pancake/semantics/pan_commonPropsScript.sml" "update_eq_zip_flookup"]
+theorem updateEqZipFlookupHOL [BEq α] [LawfulBEq α]
+    (xs : List α) (ys : List β) (f : FiniteMap α β) (n : Nat)
+    (hdistinct : xs.Nodup) (hlen : xs.length = ys.length) (hn : n < xs.length) :
+    FLOOKUP (FUPDATE_LIST f (xs.zip ys)) (xs[n]'hn) =
+      some (ys[n]'(by rw [← hlen]; exact hn)) :=
+  FLOOKUP_FUPDATE_LIST_zip_getElem xs ys f n hdistinct hlen hn
+
+/-- Exact port of HOL `opt_mmap_flookup_update`
+    (`cakeml/pancake/semantics/pan_commonPropsScript.sml:156`): updating a map
+    at a key absent from the queried key list leaves the `OPT_MMAP (FLOOKUP ·)`
+    result unchanged.  HOL's `OPT_MMAP` is the repository's `List.mapM` for
+    `Option`, `~MEM x xs` is rendered as `x ∉ xs`, and `fm |+ (x,y)` as
+    `FUPDATE fm (x, y)`. -/
+@[hol "cakeml/pancake/semantics/pan_commonPropsScript.sml" "opt_mmap_flookup_update"]
+theorem optMmapFlookupUpdateHOL [BEq α] [LawfulBEq α]
+    (fm : FiniteMap α β) (x : α) (y : β) (xs : List α) (ys : List β)
+    (hmap : xs.mapM (fun key => FLOOKUP fm key) = some ys) (hnotmem : x ∉ xs) :
+    xs.mapM (fun key => FLOOKUP (FUPDATE fm (x, y)) key) = some ys := by
+  rw [listMapMCongr (fun key => FLOOKUP (FUPDATE fm (x, y)) key)
+    (fun key => FLOOKUP fm key) xs ?_]
+  · exact hmap
+  · intro key hkey
+    rw [FLOOKUP_update]
+    have hkx : (x == key) = false := by
+      apply beq_eq_false_iff_ne.mpr
+      intro he
+      exact hnotmem (he ▸ hkey)
+    simp [hkx]
+
 end Flapjack
