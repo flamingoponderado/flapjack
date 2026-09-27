@@ -2,6 +2,7 @@ import Flapjack.Pancake.PanLang.Decl
 import Flapjack.Pancake.Semantics.CrepSem.HOLState
 import Flapjack.Pancake.Semantics.PanSem.ValueHOL
 import Flapjack.Pancake.Proofs.PanToCrep.StateRelFiniteSupport
+import Flapjack.Pancake.Proofs.PanToCrep.CompileExpValRel
 
 /-!
 Direct carrier checks paired with `pan_to_crep_state_rel_carrier_probe.out`.
@@ -193,6 +194,210 @@ def slcTlcRwHOLGuard : Bool :=
    | some (.word value) => value == (7 : BitVec 8)
    | _ => false)
 
+/-! Exact-carrier regression for the `Const` case of HOL `compile_exp_val_rel`
+(`pan_to_crepProofScript.sml:143-150`), exercised over the exact carriers with
+the finite-support source evaluator and the exact target evaluator. The state
+relation, code relation, locals relation, and localisation premises of the
+enclosing HOL theorem are irrelevant to `Const` and are not needed here. -/
+example {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) [hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width σ) [ht : DecidablePred targetState.memaddrs]
+    (word : BitVec width) :
+    ([CrepExpHOL.const word].map (evalCrepSemHOLExp targetState)) =
+      (flattenHOL (ValueHOL.val (HolWordLab.word word))).map some :=
+  (compileExpValRelHOL_const state context targetState word
+    (ValueHOL.val (HolWordLab.word word)) [CrepExpHOL.const word] ShapeHOL.one
+    rfl (by simp only [compileExpExactHOLW])).1
+
+example {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) [hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width σ) [ht : DecidablePred targetState.memaddrs]
+    (word : BitVec width) :
+    shapeOfHOLExact (ValueHOL.val (HolWordLab.word word)) = ShapeHOL.one :=
+  (compileExpValRelHOL_const state context targetState word
+    (ValueHOL.val (HolWordLab.word word)) [CrepExpHOL.const word] ShapeHOL.one
+    rfl (by simp only [compileExpExactHOLW])).2.2.1
+/- Exact `locals_rel_lookup_ctxt` (`pan_to_crepProofScript.sml:527-534`)
+    regression over the exact carriers. The fixture is the exact-carrier
+    counterpart of the production `localsRelLookupCtxt_fixture`
+    (`Flapjack/Test/PanToCrepStateRelParity.lean`): one local `x = ValWord 5`
+    at slot `0`, with `shape_of = One` and `flatten = [5]`. No HOL-EVAL oracle
+    exists for `locals_rel_lookup_ctxt` itself (the nearest oracle evidence is
+    the production fixture plus the `pan_upd_locals`/`pan_empty_locals` probe
+    rows), so this row records the exact-carrier derivation and exposes the
+    same slot, flattened value, and shape the production row checks. -/
+
+private def lookupCtxtName : MlS := ml "x"
+
+private def lookupCtxtValue : ValueHOL 8 := .val (.word (5 : BitVec 8))
+
+private def lookupCtxtVars : HolFiniteMapExact MlS (ShapeHOL × List Nat) :=
+  HolFiniteMapExact.empty.update (lookupCtxtName, (ShapeHOL.one, [0]))
+
+private def lookupCtxtContext : PanToCrepContextExact 8 :=
+  { vars := lookupCtxtVars
+    funcs := HolFiniteMapExact.empty
+    eids := HolFiniteMapExact.empty
+    vmax := 0 }
+
+private def lookupCtxtSourceLocals : HolFiniteMapExact MlS (ValueHOL 8) :=
+  HolFiniteMapExact.empty.update (lookupCtxtName, lookupCtxtValue)
+
+private def lookupCtxtTargetLocals : HolFiniteMapExact Nat (HolWordLab 8) :=
+  HolFiniteMapExact.empty.update (0, HolWordLab.word (5 : BitVec 8))
+
+private theorem lookupCtxtVars_lookup (key : MlS) :
+    lookupCtxtVars.lookup key =
+      (if lookupCtxtName == key then some (ShapeHOL.one, [0]) else none) := by
+  unfold lookupCtxtVars HolFiniteMapExact.update HolFiniteMapExact.empty FUPDATE
+  rfl
+
+private theorem lookupCtxtSource_lookup (key : MlS) :
+    lookupCtxtSourceLocals.lookup key =
+      (if lookupCtxtName == key then some lookupCtxtValue else none) := by
+  unfold lookupCtxtSourceLocals HolFiniteMapExact.update HolFiniteMapExact.empty FUPDATE
+  rfl
+
+private theorem lookupCtxtSource_lookup_self :
+    lookupCtxtSourceLocals.lookup lookupCtxtName = some lookupCtxtValue := by
+  rw [lookupCtxtSource_lookup]
+  simp
+
+private theorem lookupCtxtTarget_lookup (key : Nat) :
+    lookupCtxtTargetLocals.lookup key =
+      (if (0 : Nat) == key then some (HolWordLab.word (5 : BitVec 8)) else none) := by
+  unfold lookupCtxtTargetLocals HolFiniteMapExact.update HolFiniteMapExact.empty FUPDATE
+  rfl
+
+private theorem lookupCtxtLocalsRel :
+    panToCrepLocalsRelFiniteExact lookupCtxtContext lookupCtxtSourceLocals
+      lookupCtxtTargetLocals := by
+  refine ⟨?_, ?_, ?_⟩
+  · unfold noOverlapFiniteExact
+    constructor
+    · intro key shape slots hlookup
+      change lookupCtxtVars.lookup key = some (shape, slots) at hlookup
+      rw [lookupCtxtVars_lookup] at hlookup
+      split at hlookup
+      · rcases Option.some.inj hlookup with hpair
+        rcases Prod.mk.inj hpair with ⟨_, hslots⟩
+        subst hslots
+        simp
+      · simp at hlookup
+    · intro key key' shape shape' slots slots' hkey hkey' _hshared
+      change lookupCtxtVars.lookup key = some (shape, slots) at hkey
+      change lookupCtxtVars.lookup key' = some (shape', slots') at hkey'
+      rw [lookupCtxtVars_lookup] at hkey
+      rw [lookupCtxtVars_lookup] at hkey'
+      split at hkey
+      · rename_i hkeycond
+        split at hkey'
+        · rename_i hkey'cond
+          exact (beq_iff_eq.mp hkeycond).symm.trans (beq_iff_eq.mp hkey'cond)
+        · simp at hkey'
+      · simp at hkey
+  · unfold ctxtMaxFiniteExact
+    refine ⟨Nat.zero_le 0, ?_⟩
+    intro key shape slots hlookup slot hslot
+    change lookupCtxtVars.lookup key = some (shape, slots) at hlookup
+    rw [lookupCtxtVars_lookup] at hlookup
+    split at hlookup
+    · rcases Option.some.inj hlookup with hpair
+      rcases Prod.mk.inj hpair with ⟨_, hslots⟩
+      subst hslots
+      simp only [List.mem_singleton] at hslot
+      subst hslot
+      omega
+    · simp at hlookup
+  · intro name value hlookup
+    rw [lookupCtxtSource_lookup] at hlookup
+    split at hlookup
+    · rename_i hcond
+      have hname : name = lookupCtxtName := (beq_iff_eq.mp hcond).symm
+      have hvalue : value = lookupCtxtValue := (Option.some.inj hlookup).symm
+      subst hvalue
+      subst hname
+      refine ⟨[0], [.word (5 : BitVec 8)], ?_, ?_, ?_, ?_⟩
+      · change lookupCtxtVars.lookup lookupCtxtName =
+          some (shapeOfHOLExact lookupCtxtValue, [0])
+        rw [lookupCtxtVars_lookup]
+        simp [shapeOfHOLExact, lookupCtxtValue]
+      · simp [lookupCtxtTarget_lookup]
+      · simp [flattenHOL, lookupCtxtValue]
+      · simp [shapeOfHOLExact, lookupCtxtValue]
+    · simp at hlookup
+
+/-- Kernel-checked row: the exact `locals_rel_lookup_ctxt` port applies to any
+    related exact carrier triple; the existential exposes the four HOL
+    conjuncts. -/
+example {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width)
+    (sourceLocals : HolFiniteMapExact MlS (ValueHOL width))
+    (targetLocals : HolFiniteMapExact Nat (HolWordLab width))
+    (name : MlS) (value : ValueHOL width)
+    (hrel : panToCrepLocalsRelFiniteExact context sourceLocals targetLocals)
+    (hlookup : sourceLocals.lookup name = some value) :
+    ∃ slots, context.vars.lookup name = some (shapeOfHOLExact value, slots) ∧
+      slots.length = (flattenHOL value).length ∧
+      slots.mapM targetLocals.lookup = some (flattenHOL value) ∧
+      isWfShapeExactHOL ([] : StructContextExact) (shapeOfHOLExact value) = true :=
+  panToCrepLocalsRelLookupCtxtFiniteExact context sourceLocals targetLocals
+    name value hrel hlookup
+
+/-- Concrete exact-carrier derivations recovering the slot `[0]`, shape `One`,
+    flattened word `5`, and well-formedness for the one-word local. -/
+private theorem lookupCtxtExactFixture :
+    lookupCtxtContext.vars.lookup lookupCtxtName = some (ShapeHOL.one, [0]) ∧
+    (flattenHOL lookupCtxtValue) = [.word (5 : BitVec 8)] ∧
+    ([0] : List Nat).mapM lookupCtxtTargetLocals.lookup =
+      some (flattenHOL lookupCtxtValue) ∧
+    isWfShapeExactHOL ([] : StructContextExact)
+      (shapeOfHOLExact lookupCtxtValue) = true := by
+  have hextract := panToCrepLocalsRelLookupCtxtFiniteExact lookupCtxtContext
+    lookupCtxtSourceLocals lookupCtxtTargetLocals lookupCtxtName lookupCtxtValue
+    lookupCtxtLocalsRel lookupCtxtSource_lookup_self
+  obtain ⟨slots, hcontext, _hlen, hmap, hwf⟩ := hextract
+  have hslots : slots = [0] := by
+    have h := congrArg (fun option => option.map Prod.snd) hcontext
+    simp only [lookupCtxtContext] at h
+    rw [lookupCtxtVars_lookup] at h
+    simpa using h.symm
+  refine ⟨?_, ?_, ?_, hwf⟩
+  · rw [hslots] at hcontext
+    simpa [shapeOfHOLExact, lookupCtxtValue] using hcontext
+  · simp [flattenHOL, lookupCtxtValue]
+  · rw [hslots] at hmap
+    exact hmap
+
+private def lookupCtxtGuard : Bool :=
+  (match lookupCtxtContext.vars.lookup lookupCtxtName with
+   | some (.one, [0]) => true
+   | _ => false) &&
+    (match flattenHOL lookupCtxtValue with
+     | [.word value] => value == (5 : BitVec 8)
+     | _ => false)
+
+/-! Exact `compile_exp_val_rel` `Var Local` case
+    (`pan_to_crepProofScript.sml:151-165`). The kernel-checked application below
+    confirms the exact-carrier statement and the shape conclusion; it takes the
+    HOL case's hypotheses (successful source evaluation, `locals_rel`, and the
+    exact `compile_exp` result) directly. -/
+
+example {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) [_hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width σ) [ht : DecidablePred targetState.memaddrs]
+    (name : MlS) (value : ValueHOL width)
+    (expressions : List (CrepExpHOL width)) (shape : ShapeHOL)
+    (heval : state.evalHOLFinite (.var .local name) = some value)
+    (hlocals : panToCrepLocalsRelFiniteExact context state.locals targetState.locals)
+    (hcompile : compileExpExactHOLW context (.var .local name) = (expressions, shape)) :
+    shapeOfHOLExact value = shape :=
+  (compileExpValRelHOL_var_local state context targetState name value expressions shape
+    heval hlocals hcompile).2.2.1
+
 def runChecks : IO Bool := do
   let checks := [
     ("HOL state_rel matching empty carrier fields", matchingFieldsOracleCase),
@@ -205,7 +410,9 @@ def runChecks : IO Bool := do
       emptyGlobalLookupOracleCase),
     ("HOL tlc_def exact Nat->word_lab finite map", tlcHOLGuard),
     ("HOL slc_def exact varname->value finite map", slcHOLGuard),
-    ("HOL slc_tlc_rw exact finite-map rewrite", slcTlcRwHOLGuard)]
+    ("HOL slc_tlc_rw exact finite-map rewrite", slcTlcRwHOLGuard),
+    ("HOL locals_rel_lookup_ctxt exact slot, flattened value, and shape",
+      lookupCtxtGuard)]
   for (name, passed) in checks do
     IO.println s!"{if passed then "PASS" else "FAIL"} {name}"
   pure (checks.all Prod.snd)

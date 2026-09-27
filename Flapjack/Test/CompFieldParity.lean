@@ -110,6 +110,19 @@ example :
   · simp [exactFieldShapes, exactFieldValues, shapeOfHOLExact]
   · simp
 
+/-- Exact-carrier `mem_comp_field_lem` regression: the `fallback` direct HOL
+    oracle row selects exactly the HOL `Const 0w` fallback, so the membership
+    disjunction is discharged through its right branch. -/
+example :
+    ∀ expression ∈
+      (compFieldHOL (width := 8) 2
+        ([.one] : List Flapjack.Pancake.PanLang.ShapeHOL)
+        ([.const 4] : List (CrepExpHOL 8))).1,
+      expression ∈ ([.const 4] : List (CrepExpHOL 8)) ∨
+        expression = CrepExpHOL.const (0 : BitVec 8) := by
+  intro expression hmem
+  exact memCompFieldHOLExact_or_zero 2 [.one] [.const 4] expression hmem
+
 example :
     (compileField (α := BitVec 8) 1
         [Flapjack.Shape.one, Flapjack.Shape.comb [Flapjack.Shape.one, Flapjack.Shape.one]]

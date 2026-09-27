@@ -117,6 +117,7 @@ import Flapjack.Pancake.Proofs.PanToCrep.EvaluateNestedAssign
 import Flapjack.Pancake.Proofs.PanToCrep.EvaluateNestedDecs
 import Flapjack.Pancake.Proofs.PanToCrep
 import Flapjack.Pancake.Proofs.PanToCrep.StateRelFiniteSupport
+import Flapjack.Pancake.Proofs.PanToCrep.CompileExpValRel
 import Flapjack.Pancake.Proofs.PanToCrep.Primop
 import Flapjack.Pancake.Proofs.PanToCrep.CompileProgParams
 import Flapjack.Pancake.Proofs.PanToWord
@@ -270,6 +271,9 @@ import Flapjack.Compiler.Backend.RegAlloc
 import Flapjack.Misc.AppList
 import Flapjack.Misc.Sptree
 import Flapjack.Misc.FlatReplicate
+import Flapjack.Misc.FoldrMaxList
+import Flapjack.Misc.Uncurry
+import Flapjack.Misc.OptMmapCong
 import Flapjack.Compiler.Backend.LabLang
 import Flapjack.Compiler.Backend.LabSem
 import Flapjack.Compiler.Backend.LabProps

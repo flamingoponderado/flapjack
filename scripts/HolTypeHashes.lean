@@ -14,6 +14,9 @@ import Flapjack.Compiler.Encoders.Asm
 import Flapjack.Misc.AppList
 import Flapjack.Misc.Sptree
 import Flapjack.Misc.FlatReplicate
+import Flapjack.Misc.FoldrMaxList
+import Flapjack.Misc.Uncurry
+import Flapjack.Misc.OptMmapCong
 import Flapjack.Pancake.CrepInline.Pass
 import Flapjack.Pancake.CrepLang
 import Flapjack.Pancake.CrepLang.Exp
