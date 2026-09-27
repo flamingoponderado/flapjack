@@ -9,6 +9,31 @@ parameter slots and compiled body. -/
 namespace Flapjack.Test.PanToCrepCodeRelParity
 
 open Flapjack
+open Flapjack.Pancake.PanLang (MlS ShapeHOL ProgHOL ExpHOL)
+open Flapjack.Basis.Pure.MlString
+
+private def ml (name : String) : MlS := Flapjack.Basis.Pure.MlString.ofString name
+
+private def exactFunctionContext : HolFiniteMapExact MlS
+    (List (MlS × ShapeHOL) × ShapeHOL) :=
+  HolFiniteMapExact.update HolFiniteMapExact.empty
+    (ml "f", ([(ml "x", .one)], .one))
+
+private def exactCodeContext : PanToCrepContextExact 64 where
+  vars := HolFiniteMapExact.update HolFiniteMapExact.empty
+    (ml "x", (.one, [0]))
+  funcs := exactFunctionContext
+  eids := HolFiniteMapExact.empty
+  vmax := 0
+
+private def exactSourceCode : HolFiniteMapExact MlS
+    (List (MlS × ShapeHOL) × ProgHOL 64 × ShapeHOL) :=
+  HolFiniteMapExact.update HolFiniteMapExact.empty
+    (ml "f", ([(ml "x", .one)], .return (.var .local (ml "x")), .one))
+
+private def exactTargetCode : HolFiniteMapExact MlS (List Nat × CrepProgHOL 64) :=
+  HolFiniteMapExact.update HolFiniteMapExact.empty
+    (ml "f", ([0], .return [.var 0]))
 
 def parameterShapes : List (VarName × Shape) := [("x", .one)]
 def sourceBody : Prog Nat := .return (.var .local "x")
@@ -150,6 +175,28 @@ theorem rejectsUnlocalisedSource :
   have hlocal := (hrel "f" parameterShapes
     (.assign .global "x" (.var .local "x")) .one hsource).1
   simp [localisedProg] at hlocal
+
+/-- The direct HOL `code_rel_matching` row is reproduced over the exact
+    mlstring/word-indexed syntax and finite-support map carriers. -/
+example : codeRelExactHOLW exactCodeContext exactSourceCode exactTargetCode := by
+  intro function variableShapes program returnShape hsource
+  have hentry : ml "f" = function ∧ [(ml "x", ShapeHOL.one)] = variableShapes ∧
+      ProgHOL.return (.var .local (ml "x")) = program ∧ ShapeHOL.one = returnShape := by
+    simpa [exactSourceCode, HolFiniteMapExact.update, HolFiniteMapExact.empty,
+      FUPDATE, ml] using hsource
+  rcases hentry with ⟨rfl, rfl, rfl, rfl⟩
+  constructor
+  · simp [localisedProgHOL, localisedExpHOL, everyExpHOL]
+  constructor
+  · simp [exactCodeContext, exactFunctionContext, HolFiniteMapExact.update,
+      HolFiniteMapExact.empty, FUPDATE]
+  · simp [exactCodeContext, exactFunctionContext, exactTargetCode,
+      HolFiniteMapExact.update, HolFiniteMapExact.empty,
+      FUPDATE, FUPDATE_LIST, ctxtFcExactHOL, compileProgExactHOLW,
+      compileReturnExactHOLW, compileExpExactHOLW,
+      Flapjack.Pancake.PanLang.sizeOfShapeHOL,
+      Flapjack.Pancake.PanLang.sizeOfShapesHOL,
+      Flapjack.Pancake.PanLang.withShapeHOL, List.range, List.range.loop]
 
 #guard matchingTargetGuard
 #guard wrongBodyTargetGuard

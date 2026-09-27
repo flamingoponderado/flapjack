@@ -11,25 +11,38 @@ namespace Flapjack
 
 open Flapjack.Pancake.PanLang
 
-/-! HOL `code_rel_def` (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:32-43`)
-    quantifies a source map, a target map, and an arbitrary HOL compiler
-    context. This definition mirrors those clauses directly over the exact
-    carriers: `MlS`, `ShapeHOL`, `ProgHOL`, `CrepProgHOL`, and
-    `PanToCrepContextExact`. Its body compiles every function in the supplied
-    context with `compileProgExactHOLW`; it does not assume the context came
-    from declarations or a production String map.
+/-! Exact source review of HOL `code_rel_def`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:32-43`). HOL's three
+    explicit arguments are `ctxt`, `s_code`, and `t_code`; inside the relation
+    it universally quantifies `f`, `vshs`, `prog`, and `rsh` in that order.
+    This definition preserves that binder structure and each clause:
 
-    It is deliberately UNTAGGED. `HolFiniteMapExact` is the reviewed canonical
-    finite-support representation, but HOL's `sourceCode` and `targetCode` are
-    independent map parameters rather than fields of one owning structure in
-    this module. The current `(fmap_as_finite_support := [...])` qualifier
-    only accepts named fields of one such carrier structure. Bundling these
-    quantified maps just to satisfy that checker would change the theorem's
-    binder shape, while using raw function maps would admit infinite supports.
-    Keep `code_rel_def` untagged until the checker has a reviewed parameter-map
-    qualifier or another faithful correspondence is approved. This is
-    Flapjack-specific exact-carrier infrastructure, not a claimed HOL port.
+    * a successful source `FLOOKUP` requires `localised_prog prog`;
+    * `ctxt.funcs` must map `f` to the same `(vshs, rsh)`;
+    * `vs` and `shs` are `MAP FST`/`MAP SND` of `vshs`, and `ns` is
+      `GENLIST I (size_of_shape (Comb shs))`;
+    * `nctxt` is exactly `ctxt_fc ctxt.funcs ctxt.eids vs shs ns`;
+    * target lookup must return `(ns, compile nctxt prog)`.
+
+    The carrier comparison is constructor-for-constructor: HOL `mlstring` is
+    `MlS`, HOL `shape`/`prog`/`crepLang$prog` are `ShapeHOL`/`ProgHOL`/
+    `CrepProgHOL`, and HOL's word type is the positive-width `BitVec width`.
+    HOL finite-map parameters `s_code` and `t_code` use the canonical
+    `HolFiniteMapExact` carrier, recorded as bare entries in
+    `fmap_as_finite_support_relation`; the context's `funcs` and `eids` fields
+    use the same representation and are named with their owner. No binder is
+    bundled, no raw function map admits infinite support, and no key or
+    executable behavior is changed. The canonical context roundtrip witness
+    below validates that carrier field translation.
+
+    This is an exact port of the HOL definition, not a theorem establishing
+    `pc_compile_correct` and not evidence that the production String-backed
+    compiler path uses this exact carrier. That executable-path replacement
+    remains tracked on the parent correctness bead.
 -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "code_rel_def"
+  (fmap_as_finite_support_relation := [sourceCode, targetCode,
+    PanToCrepContextExact.funcs, PanToCrepContextExact.eids])]
 def codeRelExactHOLW {width : Nat} [NeZero width]
     (context : PanToCrepContextExact width)
     (sourceCode : HolFiniteMapExact MlS
@@ -45,5 +58,14 @@ def codeRelExactHOLW {width : Nat} [NeZero width]
       let nextContext := ctxtFcExactHOL context.funcs context.eids variables shapes names
       targetCode.lookup function = some
         (names, compileProgExactHOLW nextContext program)
+
+/-- Same-module finite-map relation witness for the imported exact context
+    fields named by `codeRelExactHOLW`'s qualifier. Flapjack representation
+    infrastructure only; the parameter maps are validated directly at their
+    `HolFiniteMapExact` binders, so they need no owner witness. -/
+theorem holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact
+    {width : Nat} [NeZero width] (context : PanToCrepContextExact width) :
+    PanToCrepContextExact.ofBroad (PanToCrepContextExact.toBroad context) = context := by
+  exact PanToCrepContextExact.holFmapAsFiniteSupportWitness context
 
 end Flapjack
