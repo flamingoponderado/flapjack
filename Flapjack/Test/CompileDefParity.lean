@@ -1074,6 +1074,31 @@ example :
       List.map_cons, List.map_nil, crepExpOfHOL.eq_1, shapeOfHOL]
   · simp [compileProgExactHOLW, compileProgHOL, progOfHOL, crepProgOfHOL]
 
+/-- The wrapped-result fallback handler-missing-eid bridge
+    (`pan_to_crepScript.sml:252-261`) drops both handler and metadata and emits a
+    flattened tail call. -/
+example :
+    crepProgOfHOL (compileProgExactHOLW exactRaiseContext
+      (.call
+        (some (some (.local, ofString "dst"), some (ofString "F", ofString "e", .skip)))
+        (ofString "f") (([.const 5] : List (Exp (BitVec 8))).map expToHOL))) =
+    compileProgRiscV exactRaiseContext.toProduction
+      (.call
+        (some (some (.local, "dst"), some ("F", "e", progOfHOL ProgHOL.skip)))
+        "f" [.const 5]) := by
+  refine compileProgExactHOLW_call_wrapped_result_fallback_handler_missing_eid_bridge
+    (context := exactRaiseContext) (kind := .local) (resultName := "dst")
+    (function := "f") (exceptionName := "F") (exceptionVariable := "e")
+    (arguments := [.const 5]) (body := .skip) ?_ ?_ (by decide) (by decide) ?_
+  · rfl
+  · simp [exactRaiseContext, FUPDATE]
+    decide
+  · intro expression hmem
+    simp only [List.mem_singleton] at hmem
+    subst hmem
+    simp only [compileExpExactHOLW.eq_1, expToHOL.eq_1, compileExpHOL.eq_1,
+      List.map_cons, List.map_nil, crepExpOfHOL.eq_1, shapeOfHOL]
+
 /-- The `ExtCall` success bridge (`pan_to_crepScript.sml:274-290`) closes the
     four `One`-shaped operand bindings and the maximum-variable temporary base
     for concrete constant operands. -/
