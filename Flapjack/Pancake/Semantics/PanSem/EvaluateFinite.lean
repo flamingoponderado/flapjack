@@ -780,7 +780,7 @@ theorem evalPanSemRecursiveCallFiniteContext_decCall_return_continuation
       some (body, callee, returnShape))
     (hclock : context.state.clock ≠ 0)
     (hbody : evalPanSemRecursiveCallFiniteContext body
-      (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl) =
+      (callEntryContextHOLFinite context callee) =
       some (some (.returned value), bodyContext))
     (hshape : shapeEqHOL (shapeOfHOLExact value) shape = true ∧
       shapeEqHOL (shapeOfHOLExact value) returnShape = true)
@@ -796,10 +796,19 @@ theorem evalPanSemRecursiveCallFiniteContext_decCall_return_continuation
           { continuationPost.state with
             locals := HolFiniteMapExact.resVarEq continuationPost.state.locals
               (resultName, context.state.locals.lookup resultName) } rfl rfl) := by
+  have hbodyGenerated : evalPanSemRecursiveCallFiniteContext body
+      (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl) =
+      some (some (.returned value), bodyContext) := by
+    calc
+      _ = evalPanSemRecursiveCallFiniteContext body
+          (callEntryContextHOLFinite context callee) := by
+        apply evalPanSemRecursiveCallFiniteContext_callEntryContext_state_normalize
+        rfl
+      _ = _ := hbody
   rw [evalPanSemRecursiveCallFiniteContext.eq_6]
   simp only [hargs]
   rw [hlookup]
-  simp only [if_neg hclock, hbody]
+  simp only [if_neg hclock, hbodyGenerated]
   rw [if_pos (by simp [hshape])]
   rw [hcontinuation]
 
