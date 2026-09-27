@@ -987,6 +987,9 @@ run_probe eval_nested_decs_load_globals_probeScript.sml \
 run_probe compile_to_crep_probeScript.sml compile_to_crep_probe.out \
   empty raise_const raise_pair raise_pair_later raise_pair_later_64 handled_pair done \
   "$cake_dir/pancake/pan_to_crepScript.sml"
+run_probe pan_to_crep_comp_func_probeScript.sml pan_to_crep_comp_func_probe.out \
+  comp_func_skip comp_func_one_parameter_return comp_func_pair_parameter_return \
+  "$cake_dir/pancake/pan_to_crepScript.sml"
 run_probe crep_alookup_compile_probeScript.sml crep_alookup_compile_probe.out \
   source_names_distinct alookup_param_entry "$cake_dir/pancake/pan_to_crepScript.sml"
 run_probe crep_el_compile_probeScript.sml crep_el_compile_probe.out \
