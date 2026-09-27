@@ -565,6 +565,77 @@ theorem crepShMemStoreHOL_ioEvents_prefix {width : Nat} [NeZero width] {σ : Typ
   exact crepShMemStoreExactHOL_ioEvents_prefix name address
     (crepShMemByteWidth operator) state
 
+/-!
+## Carrier-boundary audit for the exact `crepSem$evaluate` port
+
+Declaration-local record (bead `flapjack-4ac.5.16.5.16`) of how each
+`crepSem$state` / `result` component of HOL
+`cakeml/pancake/semantics/crepSemScript.sml:19-43` is translated and of the
+exact residual mismatches that keep `evalCrepSemHOLProg` and its no-decider
+twin `evalCrepSemHOLProgExact` untagged.
+
+Component table (`HOL component` -> `Lean component`):
+
+* `locals : varname |-> 'a word_lab` ->
+  `locals : HolFiniteMapExact Nat (HolWordLab width)`. `varname = num`
+  (`crepLangScript.sml:19`), `word_lab = Word ('a word)`
+  (`panSemScript.sml:17`) with `HolWordLab` the `@[hol ... "word_lab"]` port,
+  and the `|->` field is the reviewed canonical finite-support translation
+  witnessed by `CrepSemHOLState.holFmapAsFiniteSupportWitness`
+  (`CrepSem/HOLState.lean:384`). Exact.
+* `globals : 5 word |-> 'a word_lab` ->
+  `globals : HolFiniteMapExact (BitVec 5) (HolWordLab width)` (HOL `5 word`
+  is `BitVec 5`). Exact.
+* `code : funname |-> (varname list # 'a crepLang$prog)` ->
+  `code : HolFiniteMapExact MlString (List Nat × CrepProgHOL width)`.
+  `funname = mlstring` (`crepLangScript.sml:21`) with `MlString` the faithful
+  carrier; `CrepProgHOL` is the `@[hol ... "prog"]` port. Exact.
+* `memory : 'a word -> 'a word_lab` ->
+  `memory : BitVec width → HolWordLab width`. Exact.
+* `memaddrs : ('a word) set` and `sh_memaddrs : ('a word) set` ->
+  `memaddrs`, `shMemaddrs : BitVec width → Prop`: the standard
+  set-as-predicate translation; the classical `DecidablePred` instances are
+  supplied explicitly by callers.
+* `clock : num` -> `clock : Nat`; `be : bool` -> `be : Bool`. Exact.
+* `ffi : 'ffi ffi_state` -> `ffi : HolFfiState σ`: `HolFfiState` is the
+  `@[hol ... "ffi_state"]` port (`FfiHOL.lean:115`), built from the tagged
+  `HolOracle` / `HolOracleResult` / `HolFfiName` / `HolIoEvent` ports. Exact.
+* `base_addr`, `top_addr : 'a word` -> `baseAddr`, `topAddr : BitVec width`.
+  Exact.
+* `result = Error | TimeOut | Break num | Continue num
+   | Return (('a word_lab) list) | Exception ('a word) | FinalFFI final_event`
+  -> `CrepResultHOLExact width` (the `@[hol ... "result"]` port), whose
+  `Return` payload `List (HolWordLab width)` matches HOL's `('a word_lab) list`
+  and whose `FinalFFI` payload is the tagged `HolFinalEvent`. Exact.
+
+Residual mismatches (not carrier-field differences):
+
+1. **Word dimension and universe.** HOL's `'a word` is indexed by a type `'a`,
+   whereas the Lean carrier fixes the dimension as the Nat `width` and requires
+   `[NeZero width]` (needed by `HolWordLab width`); for the intended widths
+   (8/32/64) this is the standard translation, but HOL quantifies over the
+   dimension without the nonzero side condition. Likewise `{σ : Type}` pins the
+   FFI host type to one universe, whereas HOL's `'ffi` is an arbitrary type
+   variable.
+2. **No general agreement theorem.** `evalCrepSemHOLProg` re-implements HOL's
+   `evaluate` (whose exported rewrite is
+   `evaluate_def[allow_rebind,compute] =
+   REWRITE_RULE [fix_clock_evaluate] evaluate_def`,
+   `crepSemScript.sml:443-444`); clause equations are verified
+   declaration-locally, but no theorem yet states agreement with HOL `evaluate`
+   for all programs and states.
+3. **Legacy `UInt8` helpers** (`crepExactMemLoadByte`,
+   `crepExactMemLoadByteWord8`, `crepExactWriteBytearray`,
+   `crepExactWriteBytearrayWord8`, and
+   `crepClockWordToBytes`/`crepClockWordOfBytes`) are not claimed as exact HOL
+   ports; the exact `ExtCall` path uses the `BitVec 8` helpers.
+4. **`Call` clause restatement** over the no-decider entry point is still
+   outstanding (bead `flapjack-4ac.5.16.5.15`).
+
+Tracking: tag bead `flapjack-4ac.5.16.5`, finite-map owner/witness placement
+`flapjack-4ac.5.16.5.13.1`, this audit `flapjack-4ac.5.16.5.16`.
+-/
+
 /-- Total HOL-shaped `crepSem$evaluate` (`crepSemScript.sml:240-390`) by
     constructor recursion on the exact `CrepProgHOL` syntax over the exact
     finite-support `CrepSemHOLState`. The returned pair is
