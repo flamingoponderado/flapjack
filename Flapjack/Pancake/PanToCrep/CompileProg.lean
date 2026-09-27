@@ -2115,6 +2115,364 @@ theorem compileProgExactHOLW_call_wrapped_result_fallback_handler_present_eid_br
       rfl
   · simp_all
 
+/-- Decode an exact `ProgHOL` `Call` metadata record (faithful `MlString`
+identifiers, exact `ProgHOL` handler body) into the production
+`Option (Option ...)` form consumed by `compileProgHOL`. -/
+def callInfoToProduction {width : Nat} [NeZero width]
+    (info : Option (Option (VarKind × Flapjack.Basis.Pure.MlString.MlString) ×
+      Option (Flapjack.Basis.Pure.MlString.MlString ×
+        Flapjack.Basis.Pure.MlString.MlString × ProgHOL width))) :
+    Option (Option (VarKind × String) ×
+      Option (String × String × Prog (BitVec width))) :=
+  info.map fun entry =>
+    (entry.1.map fun destination =>
+        (destination.1, Flapjack.Basis.Pure.MlString.toStringOfBytes destination.2),
+     entry.2.map fun handler =>
+        (Flapjack.Basis.Pure.MlString.toStringOfBytes handler.1,
+         Flapjack.Basis.Pure.MlString.toStringOfBytes handler.2.1,
+         progOfHOL handler.2.2))
+
+/-- The `toStringOfBytes` image of an `MlString` is `NameRanged`: decoding bytes
+to characters yields codes below 256. -/
+theorem nameRanged_toStringOfBytes
+    (m : Flapjack.Basis.Pure.MlString.MlString) :
+    Flapjack.Pancake.PanLang.NameRanged
+      (Flapjack.Basis.Pure.MlString.toStringOfBytes m) := by
+  intro character hmem
+  simp only [Flapjack.Basis.Pure.MlString.toStringOfBytes, String.toList_ofList,
+    List.mem_map] at hmem
+  obtain ⟨byte, _hbyte, rfl⟩ := hmem
+  have hb : byte.toNat < 256 := by simpa using byte.isLt
+  rw [Flapjack.Basis.Pure.MlString.ofNat_toNat_char byte]
+  exact hb
+
+/-- Assembly bridge for the complete HOL `compile_def` `Call` arm
+(`cakeml/pancake/pan_to_crepScript.sml:222-261`): it covers every `rtyp`
+destination shape, `wrap_rt` outcome, handler presence and `eids` lookup by
+reusing the nine kernel-checked sub-clause bridges.  Flapjack-specific,
+untagged production-routing infrastructure. -/
+theorem compileProgExactHOLW_call_bridge {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width)
+    (info : Option (Option (VarKind × Flapjack.Basis.Pure.MlString.MlString) ×
+      Option (Flapjack.Basis.Pure.MlString.MlString ×
+        Flapjack.Basis.Pure.MlString.MlString × ProgHOL width)))
+    (function : String) (arguments : List (Exp (BitVec width)))
+    (hfunction : Flapjack.Pancake.PanLang.NameRanged function)
+    (hcodec :
+      ∀ expression ∈ arguments,
+        ((compileExpExactHOLW context (expToHOL expression)).1.map crepExpOfHOL,
+          shapeOfHOL (compileExpExactHOLW context (expToHOL expression)).2) =
+          compileExpHOL context.toProduction expression)
+    (hbody :
+      ∀ (body : ProgHOL width),
+        crepProgOfHOL (compileProgExactHOLW context body) =
+          compileProgHOL context.toProduction (progOfHOL body)) :
+    crepProgOfHOL (compileProgExactHOLW context
+        (.call info (Flapjack.Basis.Pure.MlString.ofString function)
+          (arguments.map expToHOL))) =
+      compileProgRiscV context.toProduction
+        (.call (callInfoToProduction info) function arguments) := by
+  cases info with
+  | none =>
+      exact compileProgExactHOLW_call_none_bridge context function arguments
+        hfunction hcodec
+  | some entry =>
+      obtain ⟨destination, handler⟩ := entry
+      cases destination with
+      | none =>
+          cases handler with
+          | none =>
+              exact compileProgExactHOLW_call_result_no_handler_bridge context
+                function arguments hfunction hcodec
+          | some handlerEntry =>
+              obtain ⟨exceptionName, exceptionVariable, body⟩ := handlerEntry
+              cases heid : context.eids.lookup exceptionName with
+              | none =>
+                  have heidOf : context.eids.lookup
+                        (Flapjack.Basis.Pure.MlString.ofString
+                          (Flapjack.Basis.Pure.MlString.toStringOfBytes exceptionName)) =
+                      none := by
+                    rw [Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes]
+                    exact heid
+                  have hsub :=
+                    compileProgExactHOLW_call_handler_missing_eid_bridge
+                      (context := context) (function := function)
+                      (exceptionName :=
+                        Flapjack.Basis.Pure.MlString.toStringOfBytes exceptionName)
+                      (exceptionVariable :=
+                        Flapjack.Basis.Pure.MlString.toStringOfBytes exceptionVariable)
+                      (arguments := arguments) (body := body)
+                      heidOf hfunction (nameRanged_toStringOfBytes exceptionName)
+                      hcodec
+                  rw [Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes exceptionName,
+                    Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes
+                      exceptionVariable] at hsub
+                  rw [show callInfoToProduction
+                        (some (none, some (exceptionName, exceptionVariable, body))) =
+                      some (none, some
+                        (Flapjack.Basis.Pure.MlString.toStringOfBytes exceptionName,
+                         Flapjack.Basis.Pure.MlString.toStringOfBytes exceptionVariable,
+                         progOfHOL body)) from rfl]
+                  exact hsub
+              | some code =>
+                  have hpresentOf : context.eids.lookup
+                        (Flapjack.Basis.Pure.MlString.ofString
+                          (Flapjack.Basis.Pure.MlString.toStringOfBytes exceptionName)) =
+                      some code := by
+                    rw [Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes]
+                    exact heid
+                  have hsub :=
+                    compileProgExactHOLW_call_handler_present_eid_bridge
+                      (context := context) (function := function)
+                      (exceptionName :=
+                        Flapjack.Basis.Pure.MlString.toStringOfBytes exceptionName)
+                      (exceptionVariable :=
+                        Flapjack.Basis.Pure.MlString.toStringOfBytes exceptionVariable)
+                      (arguments := arguments) (body := body) (exceptionCode := code)
+                      hpresentOf hfunction (nameRanged_toStringOfBytes exceptionName)
+                      hcodec (hbody body)
+                  rw [Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes exceptionName,
+                    Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes
+                      exceptionVariable] at hsub
+                  rw [show callInfoToProduction
+                        (some (none, some (exceptionName, exceptionVariable, body))) =
+                      some (none, some
+                        (Flapjack.Basis.Pure.MlString.toStringOfBytes exceptionName,
+                         Flapjack.Basis.Pure.MlString.toStringOfBytes exceptionVariable,
+                         progOfHOL body)) from rfl]
+                  exact hsub
+      | some destEntry =>
+          obtain ⟨kind, resultName⟩ := destEntry
+          cases hwrap : wrapRtHOL (context.vars.lookup resultName) with
+          | none =>
+              cases handler with
+              | none =>
+                  have hwrapOf : wrapRtHOL (context.vars.lookup
+                        (Flapjack.Basis.Pure.MlString.ofString
+                          (Flapjack.Basis.Pure.MlString.toStringOfBytes resultName))) =
+                      none := by
+                    rw [Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes]
+                    exact hwrap
+                  have hsub :=
+                    compileProgExactHOLW_call_wrapped_result_fallback_no_handler_bridge
+                      (context := context) (kind := kind)
+                      (resultName :=
+                        Flapjack.Basis.Pure.MlString.toStringOfBytes resultName)
+                      (function := function) (arguments := arguments)
+                      hwrapOf hfunction hcodec
+                  rw [Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes
+                    resultName] at hsub
+                  rw [show callInfoToProduction
+                        (some (some (kind, resultName), none)) =
+                      some (some (kind,
+                        Flapjack.Basis.Pure.MlString.toStringOfBytes resultName), none)
+                      from rfl]
+                  exact hsub
+              | some handlerEntry =>
+                  obtain ⟨exceptionName, exceptionVariable, body⟩ := handlerEntry
+                  cases heid : context.eids.lookup exceptionName with
+                  | none =>
+                      have hwrapOf : wrapRtHOL (context.vars.lookup
+                            (Flapjack.Basis.Pure.MlString.ofString
+                              (Flapjack.Basis.Pure.MlString.toStringOfBytes
+                                resultName))) = none := by
+                        rw [Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes]
+                        exact hwrap
+                      have heidOf : context.eids.lookup
+                            (Flapjack.Basis.Pure.MlString.ofString
+                              (Flapjack.Basis.Pure.MlString.toStringOfBytes
+                                exceptionName)) = none := by
+                        rw [Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes]
+                        exact heid
+                      have hsub :=
+                        compileProgExactHOLW_call_wrapped_result_fallback_handler_missing_eid_bridge
+                          (context := context) (kind := kind)
+                          (resultName :=
+                            Flapjack.Basis.Pure.MlString.toStringOfBytes resultName)
+                          (function := function)
+                          (exceptionName :=
+                            Flapjack.Basis.Pure.MlString.toStringOfBytes exceptionName)
+                          (exceptionVariable :=
+                            Flapjack.Basis.Pure.MlString.toStringOfBytes
+                              exceptionVariable)
+                          (arguments := arguments) (body := body)
+                          hwrapOf heidOf hfunction (nameRanged_toStringOfBytes exceptionName)
+                          hcodec
+                      rw [Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes resultName,
+                        Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes exceptionName,
+                        Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes
+                          exceptionVariable] at hsub
+                      rw [show callInfoToProduction
+                            (some (some (kind, resultName),
+                              some (exceptionName, exceptionVariable, body))) =
+                          some (some (kind,
+                              Flapjack.Basis.Pure.MlString.toStringOfBytes resultName),
+                            some
+                              (Flapjack.Basis.Pure.MlString.toStringOfBytes exceptionName,
+                               Flapjack.Basis.Pure.MlString.toStringOfBytes
+                                 exceptionVariable,
+                               progOfHOL body)) from rfl]
+                      exact hsub
+                  | some code =>
+                      have hwrapOf : wrapRtHOL (context.vars.lookup
+                            (Flapjack.Basis.Pure.MlString.ofString
+                              (Flapjack.Basis.Pure.MlString.toStringOfBytes
+                                resultName))) = none := by
+                        rw [Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes]
+                        exact hwrap
+                      have hpresentOf : context.eids.lookup
+                            (Flapjack.Basis.Pure.MlString.ofString
+                              (Flapjack.Basis.Pure.MlString.toStringOfBytes
+                                exceptionName)) = some code := by
+                        rw [Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes]
+                        exact heid
+                      have hsub :=
+                        compileProgExactHOLW_call_wrapped_result_fallback_handler_present_eid_bridge
+                          (context := context) (kind := kind)
+                          (resultName :=
+                            Flapjack.Basis.Pure.MlString.toStringOfBytes resultName)
+                          (function := function)
+                          (exceptionName :=
+                            Flapjack.Basis.Pure.MlString.toStringOfBytes exceptionName)
+                          (exceptionVariable :=
+                            Flapjack.Basis.Pure.MlString.toStringOfBytes
+                              exceptionVariable)
+                          (arguments := arguments) (body := body)
+                          (exceptionCode := code)
+                          hwrapOf hpresentOf hfunction
+                          (nameRanged_toStringOfBytes exceptionName) hcodec (hbody body)
+                      rw [Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes resultName,
+                        Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes exceptionName,
+                        Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes
+                          exceptionVariable] at hsub
+                      rw [show callInfoToProduction
+                            (some (some (kind, resultName),
+                              some (exceptionName, exceptionVariable, body))) =
+                          some (some (kind,
+                              Flapjack.Basis.Pure.MlString.toStringOfBytes resultName),
+                            some
+                              (Flapjack.Basis.Pure.MlString.toStringOfBytes exceptionName,
+                               Flapjack.Basis.Pure.MlString.toStringOfBytes
+                                 exceptionVariable,
+                               progOfHOL body)) from rfl]
+                      exact hsub
+          | some wrapEntry =>
+              obtain ⟨resultShape, resultNames⟩ := wrapEntry
+              cases handler with
+              | none =>
+                  have hwrapOf : wrapRtHOL (context.vars.lookup
+                        (Flapjack.Basis.Pure.MlString.ofString
+                          (Flapjack.Basis.Pure.MlString.toStringOfBytes resultName))) =
+                      some (resultShape, resultNames) := by
+                    rw [Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes]
+                    exact hwrap
+                  have hsub :=
+                    compileProgExactHOLW_call_wrapped_result_no_handler_bridge
+                      (context := context) (kind := kind)
+                      (resultName :=
+                        Flapjack.Basis.Pure.MlString.toStringOfBytes resultName)
+                      (function := function) (arguments := arguments)
+                      (resultShape := resultShape) (resultNames := resultNames)
+                      hwrapOf hfunction hcodec
+                  rw [Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes
+                    resultName] at hsub
+                  rw [show callInfoToProduction
+                        (some (some (kind, resultName), none)) =
+                      some (some (kind,
+                        Flapjack.Basis.Pure.MlString.toStringOfBytes resultName), none)
+                      from rfl]
+                  exact hsub
+              | some handlerEntry =>
+                  obtain ⟨exceptionName, exceptionVariable, body⟩ := handlerEntry
+                  cases heid : context.eids.lookup exceptionName with
+                  | none =>
+                      have hwrapOf : wrapRtHOL (context.vars.lookup
+                            (Flapjack.Basis.Pure.MlString.ofString
+                              (Flapjack.Basis.Pure.MlString.toStringOfBytes
+                                resultName))) = some (resultShape, resultNames) := by
+                        rw [Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes]
+                        exact hwrap
+                      have heidOf : context.eids.lookup
+                            (Flapjack.Basis.Pure.MlString.ofString
+                              (Flapjack.Basis.Pure.MlString.toStringOfBytes
+                                exceptionName)) = none := by
+                        rw [Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes]
+                        exact heid
+                      have hsub :=
+                        compileProgExactHOLW_call_wrapped_result_handler_missing_eid_bridge
+                          (context := context) (kind := kind)
+                          (resultName :=
+                            Flapjack.Basis.Pure.MlString.toStringOfBytes resultName)
+                          (function := function)
+                          (exceptionName :=
+                            Flapjack.Basis.Pure.MlString.toStringOfBytes exceptionName)
+                          (exceptionVariable :=
+                            Flapjack.Basis.Pure.MlString.toStringOfBytes
+                              exceptionVariable)
+                          (arguments := arguments) (body := body)
+                          (resultShape := resultShape) (resultNames := resultNames)
+                          hwrapOf heidOf hfunction
+                          (nameRanged_toStringOfBytes exceptionName) hcodec
+                      rw [Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes resultName,
+                        Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes exceptionName,
+                        Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes
+                          exceptionVariable] at hsub
+                      rw [show callInfoToProduction
+                            (some (some (kind, resultName),
+                              some (exceptionName, exceptionVariable, body))) =
+                          some (some (kind,
+                              Flapjack.Basis.Pure.MlString.toStringOfBytes resultName),
+                            some
+                              (Flapjack.Basis.Pure.MlString.toStringOfBytes exceptionName,
+                               Flapjack.Basis.Pure.MlString.toStringOfBytes
+                                 exceptionVariable,
+                               progOfHOL body)) from rfl]
+                      exact hsub
+                  | some code =>
+                      have hwrapOf : wrapRtHOL (context.vars.lookup
+                            (Flapjack.Basis.Pure.MlString.ofString
+                              (Flapjack.Basis.Pure.MlString.toStringOfBytes
+                                resultName))) = some (resultShape, resultNames) := by
+                        rw [Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes]
+                        exact hwrap
+                      have hpresentOf : context.eids.lookup
+                            (Flapjack.Basis.Pure.MlString.ofString
+                              (Flapjack.Basis.Pure.MlString.toStringOfBytes
+                                exceptionName)) = some code := by
+                        rw [Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes]
+                        exact heid
+                      have hsub :=
+                        compileProgExactHOLW_call_wrapped_result_handler_present_eid_bridge
+                          (context := context) (kind := kind)
+                          (resultName :=
+                            Flapjack.Basis.Pure.MlString.toStringOfBytes resultName)
+                          (function := function)
+                          (exceptionName :=
+                            Flapjack.Basis.Pure.MlString.toStringOfBytes exceptionName)
+                          (exceptionVariable :=
+                            Flapjack.Basis.Pure.MlString.toStringOfBytes
+                              exceptionVariable)
+                          (arguments := arguments) (body := body)
+                          (resultShape := resultShape) (resultNames := resultNames)
+                          (exceptionCode := code)
+                          hwrapOf hpresentOf hfunction
+                          (nameRanged_toStringOfBytes exceptionName) hcodec (hbody body)
+                      rw [Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes resultName,
+                        Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes exceptionName,
+                        Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes
+                          exceptionVariable] at hsub
+                      rw [show callInfoToProduction
+                            (some (some (kind, resultName),
+                              some (exceptionName, exceptionVariable, body))) =
+                          some (some (kind,
+                              Flapjack.Basis.Pure.MlString.toStringOfBytes resultName),
+                            some
+                              (Flapjack.Basis.Pure.MlString.toStringOfBytes exceptionName,
+                               Flapjack.Basis.Pure.MlString.toStringOfBytes
+                                 exceptionVariable,
+                               progOfHOL body)) from rfl]
+                      exact hsub
+
 theorem compileProgExactHOLW_shmem_store_bridge {width : Nat} [NeZero width]
     (context : PanToCrepContextExact width) (operator : OpSize)
     (value address : Exp (BitVec width))
