@@ -79,4 +79,16 @@ theorem bridgeFixture :
   apply panPrimopCrepPrimop
   rfl
 
+/-- Apply the exact-carrier HOL bridge to the nonzero-carry oracle case. -/
+theorem exactBridgeFixture :
+    crepPrimopHOL .addCarry
+      ((([ValueHOL.val (.word (3 : BitVec 8)), ValueHOL.val (.word (4 : BitVec 8)),
+          ValueHOL.val (.word (2 : BitVec 8))] : List (ValueHOL 8))).flatMap flattenHOL
+        |>.map HolWordLab.toPanWordLab) =
+      some ((flattenHOL
+        (ValueHOL.rStruct [ValueHOL.val (.word (8 : BitVec 8)),
+          ValueHOL.val (.word (0 : BitVec 8))])).map HolWordLab.toPanWordLab) := by
+  apply panPrimopCrepPrimopHOLExact
+  rfl
+
 end Flapjack.Test.PanCrepPrimopParity

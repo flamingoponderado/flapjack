@@ -13523,5 +13523,13 @@
       "PanToCrepContextExact.eids"
     ],
     "reviewer": "Source comparison against pan_to_crepProofScript.sml:693-748. The Lean statement keeps the seven quantified values (source state, expression, value, target state, context, compiled expressions, shape), all six premises in HOL order (state_rel, eval = SOME, code_rel, locals_rel, localised_exp, compile_exp result), and the universal var_cexp membership conclusion. ExpHOL/MlS/ValueHOL/ShapeHOL/CrepExpHOL and exact finite-support states/context are the reviewed carriers; the finite-map qualifier lists each owner field used by eval or the three relation premises, with same-module roundtrip witnesses. The eval premise locally supplies Classical.propDecidable for the HOL address-set predicate, so the Lean implementation has no extra quantified decidability premise. The conclusion follows from the stronger compileExpExactHOLW_vars_from_context theorem; unused HOL premises remain in the statement. No executable routing claim is made."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/Primop.lean",
+    "lean_name": "panPrimopCrepPrimopHOLExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.16.9): exact-carrier counterpart of HOL pan_primop_crep_primop; untagged pending coordinator source review of the HolWordLab->PanWordLab cross-carrier map used by the reviewed crep_primop_def port."
   }
 ]

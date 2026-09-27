@@ -1,6 +1,7 @@
 import Flapjack.HolRef
 import Flapjack.Pancake.Semantics.CrepSem.Primop
 import Flapjack.Pancake.Semantics.PanSem.Primop
+import Flapjack.Pancake.Semantics.PanSem.ValueHOL
 
 /-!
 The AddCarry primitive case needed by HOL `pc_compile_correct`.
@@ -62,5 +63,38 @@ theorem panPrimopCrepPrimop {width : Nat} [NeZero width]
                   rw [← hprimitive]
                   simp [crepPrimopHOL, panSemFlattenHOL,
                     panSemFlattenValuesHOL]
+
+-- Exact-carrier counterpart (Flapjack-specific; carry review pending): the HOL
+-- statement `pan_primop pop vs = SOME value ==> crep_primop pop (FLAT (MAP flatten vs)) = SOME (flatten value)`
+-- with `panPrimopHOLExact`/`flattenHOL` over the exact `ValueHOL width`/
+-- `HolWordLab width` carriers.  `crepPrimopHOL` is the reviewed `crep_primop_def`
+-- port over `PanWordLab (BitVec width)`, so the exact `HolWordLab` payloads are
+-- carried across with `HolWordLab.toPanWordLab` (a bijection that is `rfl` on
+-- `.word`).  No finite maps occur, so no qualifier applies; not yet tagged
+-- `@[hol]` pending coordinator source review of the cross-carrier map.
+theorem panPrimopCrepPrimopHOLExact {width : Nat} [NeZero width]
+    (operator : PrimOp) (values : List (ValueHOL width)) (value : ValueHOL width)
+    (hprimitive : panPrimopHOLExact operator values = some value) :
+    crepPrimopHOL operator
+        ((values.flatMap flattenHOL).map HolWordLab.toPanWordLab) =
+      some ((flattenHOL value).map HolWordLab.toPanWordLab) := by
+  cases operator
+  cases values with
+  | nil => simp [panPrimopHOLExact] at hprimitive
+  | cons first rest =>
+      cases rest with
+      | nil => simp [panPrimopHOLExact] at hprimitive
+      | cons second rest =>
+          cases rest with
+          | nil => simp [panPrimopHOLExact] at hprimitive
+          | cons third rest =>
+              cases rest with
+              | cons _ _ => simp [panPrimopHOLExact] at hprimitive
+              | nil =>
+                  cases first <;> cases second <;> cases third <;>
+                    simp [panPrimopHOLExact] at hprimitive
+                  rename_i left right carry
+                  rw [← hprimitive]
+                  simp [crepPrimopHOL, flattenHOL, HolWordLab.toPanWordLab]
 
 end Flapjack
