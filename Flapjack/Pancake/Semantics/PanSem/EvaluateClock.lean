@@ -410,7 +410,19 @@ theorem evalPanSemRecursiveCallFiniteContext_clock_le_aux {width : Nat} {σ : Ty
     (intro result hres
      cases hres <;> clockDirect)
 
-/-- HOL `evaluate_clock` over the recursive finite-context evaluator. -/
+/-- FLAPJACK-SPECIFIC (not an exact HOL port, so no `@[hol]` tag): the analogue
+    of HOL `evaluate_clock` (`panSemScript.sml:755-766`,
+    `!prog s r s'. evaluate (prog,s) = (r,s') ==> s'.clock <= s.clock`).
+    HOL quantifies over the faithful `panSem$state`; this theorem is stated over
+    the exact finite-support clause-for-clause evaluator
+    `evalPanSemRecursiveCallFiniteContext`, which takes a `FiniteEvalContext`
+    (state plus threaded `DecidablePred` `memaddrs`/`shMemaddrs` fields) instead
+    of a bare state, and whose carrier `PanSemStateFiniteExact` uses canonical
+    `HolFiniteMapExact` maps rather than HOL's mlstring-keyed finite maps. The
+    extra decider context argument and the finite-map carrier representation are
+    differences beyond `names_as_string`, so the tag is withheld; the faithful
+    HOL `evaluate`/`evaluate_clock` port over the exact context is tracked by
+    `flapjack-qj5` (bead `flapjack-4ac.3.48`). -/
 theorem evalPanSemRecursiveCallFiniteContext_clock_le {width : Nat} {σ : Type} [NeZero width]
     (program : ProgHOL width) (context : FiniteEvalContext width σ)
     (result : Option (PanSemResultExact width) × FiniteEvalContext width σ)
