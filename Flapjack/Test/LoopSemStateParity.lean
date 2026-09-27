@@ -1,4 +1,5 @@
 import Flapjack.Pancake.Semantics.LoopSemState
+import Flapjack.Pancake.Semantics.LoopSemStateExact
 
 /-!
 # Exact `loopSem$state` carrier parity
@@ -107,11 +108,101 @@ example : (LoopSemState.getVarImm (.reg 0) exactState).map loopValueOfWordLocW =
     getVarImm machineState (.reg 0) :=
   LoopSemState.getVarImm_map_eq_of_loopMachineStateRel bridgeSample (.reg 0)
 
+/-! ## Exact finite-support carrier (`LoopSemStateFiniteExact`) production bridge -/
+
+/-- A canonical `HolFfiState` with a failing oracle, related to
+    `trivialFfiState Unit ()`. -/
+private def holTrivialFfi : HolFfiState Unit :=
+  { oracle := fun _ _ _ _ => .final .failed, ffiState := (), ioEvents := [] }
+
+/-- `trivialFfiState Unit ()` is `FfiStateRel`-related to `holTrivialFfi`. -/
+private theorem trivialFfiStateRel :
+    FfiStateRel (trivialFfiState Unit ()) holTrivialFfi := by
+  unfold FfiStateRel
+  refine ⟨rfl, ?_, ?_⟩
+  · simp [trivialFfiState, holTrivialFfi, FfiEventListRel]
+  · intro name holName hname state configuration holConfiguration bytes holBytes hconf hbytes
+    simp [trivialFfiState, holTrivialFfi, OracleResultRel, OutcomeRel]
+
+/-- Sample finite-support carrier: local `0 ↦ Word 7`, all else empty. -/
+private def exactFiniteState : LoopSemStateFiniteExact 8 Unit :=
+  { locals := HolFiniteMapExact.empty.updateEq (0, .word (BitVec.ofNat 8 7))
+  , globals := HolFiniteMapExact.empty
+  , memory := fun _ => .word (BitVec.ofNat 8 0)
+  , mdomain := fun _ => false
+  , shMdomain := fun _ => false
+  , clock := 5
+  , code := HolFiniteMapExact.empty
+  , be := false
+  , ffi := holTrivialFfi
+  , baseAddr := 0
+  , topAddr := 0 }
+
+/-- Production state satisfying `prodRel` for `exactFiniteState`. -/
+private def finiteMachineState : LoopMachineState (BitVec 8) Unit :=
+  { locals := fun name => (exactFiniteState.locals.lookup name).map loopValueOfWordLocW
+  , globals := fun global => (exactFiniteState.globals.lookup global).map loopValueOfWordLocW
+  , memory := fun address => some (loopValueOfWordLocW (exactFiniteState.memory address))
+  , mdomain := exactFiniteState.mdomain
+  , shMdomain := exactFiniteState.shMdomain
+  , clock := exactFiniteState.clock
+  , code := []
+  , be := exactFiniteState.be
+  , ffi := trivialFfiState Unit ()
+  , baseAddr := exactFiniteState.baseAddr
+  , topAddr := exactFiniteState.topAddr }
+
+/-- The exact finite-support carrier satisfies `prodRel` with the sample
+    production state (empty code makes the code conjunct vacuous). -/
+theorem finiteBridgeSample : exactFiniteState.prodRel finiteMachineState := by
+  unfold LoopSemStateFiniteExact.prodRel
+  refine ⟨?_, ?_, ?_, rfl, rfl, rfl, rfl, ?_, rfl, rfl, ?_⟩
+  · intro name; rfl
+  · intro global; rfl
+  · intro address; rfl
+  · simpa [finiteMachineState, exactFiniteState] using trivialFfiStateRel
+  · intro entry hmem; simp [finiteMachineState] at hmem
+
+/-- Register read on the exact carrier transports to the production read. -/
+example : Flapjack.getVarImm finiteMachineState (.reg 0) =
+    some (.word (BitVec.ofNat 8 7)) := by
+  rw [← LoopSemStateFiniteExact.getVarImm_map_eq_of_prodRel finiteBridgeSample (.reg 0)]
+  rfl
+
+/-- Immediate read on the exact carrier transports to the production read. -/
+example : Flapjack.getVarImm finiteMachineState (.imm (BitVec.ofNat 8 9)) =
+    some (.word (BitVec.ofNat 8 9)) :=
+  LoopSemStateFiniteExact.getVarImm_map_eq_of_prodRel finiteBridgeSample
+    (.imm (BitVec.ofNat 8 9))
+
+/-- Recursive `get_vars` transports to the production read. -/
+example : Flapjack.getVars [0] finiteMachineState =
+    some [.word (BitVec.ofNat 8 7)] := by
+  rw [← LoopSemStateFiniteExact.getVars_map_eq_of_prodRel finiteBridgeSample [0]]
+  rfl
+
+/-- A missing local makes the recursive read fail on both sides. -/
+example : Flapjack.getVars [0, 1] finiteMachineState = none := by
+  rw [← LoopSemStateFiniteExact.getVars_map_eq_of_prodRel finiteBridgeSample [0, 1]]
+  rfl
+
+private def finiteBridgeGuard : Bool :=
+  (Flapjack.getVarImm finiteMachineState (.reg 0) ==
+      some (.word (BitVec.ofNat 8 7))) &&
+    (Flapjack.getVarImm finiteMachineState (.imm (BitVec.ofNat 8 9)) ==
+      some (.word (BitVec.ofNat 8 9)))
+
+#guard finiteBridgeGuard
+
 def runChecks : IO Bool := do
   if bridgeGuard then
     IO.println "PASS loopSem exact state carrier fields and production state bridge"
   else
     IO.println "FAIL loopSem exact state carrier bridge"
-  pure bridgeGuard
+  if finiteBridgeGuard then
+    IO.println "PASS loopSem exact finite-support state production bridge"
+  else
+    IO.println "FAIL loopSem exact finite-support state production bridge"
+  pure (bridgeGuard && finiteBridgeGuard)
 
 end Flapjack.Test.LoopSemStateParity
