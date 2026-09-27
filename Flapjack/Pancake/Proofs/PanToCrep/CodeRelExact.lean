@@ -1,5 +1,6 @@
 import Flapjack.Pancake.Proofs.PanToCrep
 import Flapjack.Pancake.PanToCrep.CompileExact
+import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
 
 /-!
 Exact-carrier code relation for the HOL Pancake-to-Crep correctness boundary.
@@ -114,5 +115,63 @@ theorem holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact
     {width : Nat} [NeZero width] (context : PanToCrepContextExact width) :
     PanToCrepContextExact.ofBroad (PanToCrepContextExact.toBroad context) = context := by
   exact PanToCrepContextExact.holFmapAsFiniteSupportWitness context
+
+/-- Same-module finite-map relation witness for the `PanSemStateFiniteExact`
+    carrier, whose `code` field is traversed by the tagged
+    `codeRelExactHOLW_emptyLocals` port. It forwards the canonical
+    `toExact`/`ofExact` roundtrip of the finite-support carrier with its broad
+    `PanSemStateExact` counterpart. Flapjack representation infrastructure only;
+    it is not a port of a HOL declaration. -/
+theorem holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact
+    {width : Nat} {σ : Type} [NeZero width] :
+    (∀ (state : PanSemStateExact width σ) (h : state.FiniteSupport),
+        (PanSemStateFiniteExact.ofExact state h).toExact = state) ∧
+    (∀ state : PanSemStateFiniteExact width σ,
+        PanSemStateFiniteExact.ofExact state.toExact state.toExact_finiteSupport = state) :=
+  PanSemStateFiniteExact.holFmapAsFiniteSupportWitness
+
+/-- Same-module finite-map relation witness for the `CrepSemHOLState` carrier,
+    whose `code` field is traversed by the tagged
+    `codeRelExactHOLW_emptyLocals` port. It forwards the canonical
+    `toBroad`/`ofBroad` roundtrip of the finite-support carrier with its broad
+    `CrepSemBroadState` counterpart. Flapjack representation infrastructure only;
+    it is not a port of a HOL declaration. -/
+theorem holFmapAsFiniteSupportRelationWitness_CrepSemHOLState
+    {width : Nat} [NeZero width] {σ : Type} (state : CrepSemHOLState width σ) :
+    CrepSemBroadState.ofBroad state.toBroad state.toBroad_finiteSupport = state :=
+  CrepSemBroadState.ofBroad_toBroad state
+
+/-- Exact port of HOL `code_rel_empty_locals`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:96-100`):
+    `code_rel ctxt s.code t.code ==>
+       code_rel ctxt (empty_locals s).code (empty_locals t).code`.
+
+    HOL clears only the source and target `locals` fields, so the `code` fields
+    consumed by `code_rel` are unchanged. The Lean statement keeps HOL's context
+    and both state binders over the exact `PanToCrepContextExact`,
+    `PanSemStateFiniteExact`, and `CrepSemHOLState` carriers, and applies the
+    tagged exact `emptyLocalsHOLFinite` / `CrepSemHOLState.emptyLocals` state
+    updates. The relation is the exact `codeRelExactHOLW` port. The only
+    representation translation is the canonical finite-support form of the two
+    traversed `code` fields, recorded by the multi-carrier qualifier; the
+    context's own finite-map fields are already recorded on the tagged
+    `codeRelExactHOLW` relation. `empty_locals` is definitionally the identity
+    on `code`, so the proof is HOL's
+    `rw [code_rel_def, empty_locals_def, panSemTheory.empty_locals_def] >>
+    metis_tac[]`. This tags only the exact proof-side theorem, not the
+    production `codeRel`/`codeRelW` carriers. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "code_rel_empty_locals"
+  (fmap_as_finite_support_relation :=
+    [PanSemStateFiniteExact.code, CrepSemHOLState.code])]
+theorem codeRelExactHOLW_emptyLocals {width : Nat} [NeZero width] {σ : Type}
+    (context : PanToCrepContextExact width)
+    (source : PanSemStateFiniteExact width σ)
+    (target : CrepSemHOLState width σ) :
+    codeRelExactHOLW context source.code target.code →
+      codeRelExactHOLW context (source.emptyLocalsHOLFinite).code
+        (CrepSemHOLState.emptyLocals target).code := by
+  intro hrel
+  simpa only [PanSemStateFiniteExact.emptyLocalsHOLFinite,
+    CrepSemHOLState.emptyLocals] using hrel
 
 end Flapjack
