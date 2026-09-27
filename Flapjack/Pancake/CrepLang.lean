@@ -211,7 +211,9 @@ def loadShape [BEq α] [OfNat α 0] [Add α]
     word element type, while HOL `crepLang$load_shape_def`
     (`cakeml/pancake/crepLangScript.sml:82-86`) is indexed by the word length
     (`address : 'a word`, `0w`, `byte$bytes_in_word`).  The exact width-indexed
-    tag is on `loadShapeBytesW` below. -/
+    tag is on `loadShapeBytesHOLW` (Flapjack/Pancake/CrepLang/Exp.lean), which
+    works over the exact `CrepExpHOL` carrier; `loadShapeBytesW` below is only
+    a production-`CrepExp` adapter and stays untagged. -/
 def loadShapeBytes [BEq α] [OfNat α 0] [Add α] [CrepBytesInWord α]
     (address : α) (count : Nat) (value : CrepExp α) : List (CrepExp α) :=
   match count with
