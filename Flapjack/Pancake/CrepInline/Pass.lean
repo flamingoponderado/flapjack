@@ -352,17 +352,27 @@ list separately so the later `compile_inl_prog` boundary can preserve order.
 
 abbrev CrepInlineMapHOLName := Flapjack.Basis.Pure.MlString.MlString
 
-/-- HOL-shaped helper for `crep_inline$inline_tail_def`
-    (`crep_inlineScript.sml:171-172`): `inline_tail p = Seq Tick p`.
-    This uses the exact `CrepProgHOL width` syntax and is kernel-checked, but is
-    intentionally untagged until the HOL word-width qualifier checker can
-    resolve an indexed inductive carrier. The checker currently accepts a
-    direct `BitVec width` in the tagged signature or a width-indexed structure;
-    `CrepProgHOL` is an inductive datatype. The exact tag/tooling gate is tracked
-    by `flapjack-e7w.2.1.3.1`. -/
+/-- Exact port of HOL `inline_tail_def` (`crep_inlineScript.sml:171-172`):
+    `inline_tail p = Seq Tick p`. The indexed Crep syntax carrier is checked
+    by the `words_as_type_indexed_bitvec` qualifier, which verifies the
+    `CrepProgHOL` constructor payloads against the positive word width. -/
+@[hol "cakeml/pancake/crep_inlineScript.sml" "inline_tail_def" 171
+  (words_as_type_indexed_bitvec)]
 def inlineTailHOLExact {width : Nat} [NeZero width]
     (program : CrepProgHOL width) : CrepProgHOL width :=
   .seq .tick program
+
+/-- Exact port of HOL `arg_load_def` (`crep_inlineScript.sml:59-63`): bind
+    argument values to temporary names, then copy those temporaries into the
+    callee's argument names. Both nested declaration passes use the source
+    lists unchanged, including HOL's length-mismatch behavior. -/
+@[hol "cakeml/pancake/crep_inlineScript.sml" "arg_load_def" 59
+  (words_as_type_indexed_bitvec)]
+def argLoadHOLExact {width : Nat} [NeZero width]
+    (temporaryNames : List Nat) (arguments : List (CrepExpHOL width))
+    (argumentNames : List Nat) (body : CrepProgHOL width) : CrepProgHOL width :=
+  nestedDecsHOL temporaryNames arguments
+    (nestedDecsHOL argumentNames (temporaryNames.map CrepExpHOL.var) body)
 
 structure CrepInlineFmapHOL (width : Nat) [NeZero width] where
   entries : List (CrepInlineMapHOLName × (List Nat × CrepProgHOL width))
@@ -475,6 +485,27 @@ theorem crepInlineMapHOL_lookup {width : Nat} [NeZero width]
     (crepInlineMapHOL inlineNames functions).lookup name =
       List.lookup name (crepInlineSelectedHOLRows inlineNames functions) :=
   CrepInlineFmapHOL.lookup_ofAList name _
+
+/-- Flapjack-specific clause factoring for the structural arms of HOL's
+    `inline_prog_def` (`cakeml/pancake/crep_inlineScript.sml:239-248`). It
+    packages the `Dec`, `Seq`, `If`, and `While` constructor shape over the
+    exact `CrepProgHOL` carrier while leaving recursive results to the caller.
+    The identity fallback and the extra recursive-function argument are
+    infrastructure for assembling the full finite-map recursion; this helper
+    has no standalone HOL original and is deliberately untagged. The separate
+    `Call`/finite-map recursion remains in the parent bead
+    `flapjack-e7w.2.1`. -/
+def inlineProgStructuralHOL {width : Nat} [NeZero width]
+    (recur : CrepInlineFmapHOL width → CrepProgHOL width → CrepProgHOL width)
+    (inlineable : CrepInlineFmapHOL width) :
+    CrepProgHOL width → CrepProgHOL width
+  | .dec name value body => .dec name value (recur inlineable body)
+  | .seq first second =>
+      .seq (recur inlineable first) (recur inlineable second)
+  | .ite condition thenBranch elseBranch =>
+      .ite condition (recur inlineable thenBranch) (recur inlineable elseBranch)
+  | .while condition body => .while condition (recur inlineable body)
+  | program => program
 
 /-- Exact shape of Cake `crep_inline$inline_prog`
     (`cakeml/pancake/crep_inlineScript.sml:203-257`) over the genuine
