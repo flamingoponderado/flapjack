@@ -12916,6 +12916,38 @@
     "reviewer": "Flapjack-specific projection of only the code_rel conjunct in HOL call_preserve_state_code_locals_rel (pan_to_crepProofScript.sml:2355). ctxt_fc preserves ctxt.funcs/eids and Pan/Crep dec_clock preserve the source/target code maps, so the exact codeRelExactHOLW relation is unchanged. This is not the full Call theorem and has no HOL declaration original."
   },
   {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "panToCrepCallContextNoOverlapMaxExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific exact call-context infrastructure for the no_overlap and ctxt_max conjuncts of HOL locals_rel in call_preserve_state_code_locals_rel (pan_to_crepProofScript.sml:2355). It proves these ctxt_fc invariants from distinct flat target slots and the combined shape-size premise; the source theorem's exact argument-binding locals_rel conjunct is not established by this helper."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "shapeSizeShapeOfHOLExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private Flapjack-only shape-size bridge used to compare exact ShapeHOL grouping with the production Shape helper lemmas. It has no separate HOL declaration and does not claim a shape-size HOL port."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "shapeSizeCombShapeOfHOLExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private Flapjack-only list shape-size bridge used to compare exact ShapeHOL grouping with the production Shape helper lemmas. It has no separate HOL declaration and does not claim a shape-size HOL port."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "withShapeHOL_eq_withShapeShapeOfHOL",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private Flapjack-only representation bridge between exact withShapeHOL and the production withShape helper after shapeOfHOL conversion. It has no separate HOL declaration; the exact with_shape_def port remains withShapeHOL."
+  },
+  {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
     "hol_name": "tlc_def",
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
