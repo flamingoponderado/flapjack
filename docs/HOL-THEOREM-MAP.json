@@ -15172,5 +15172,15 @@
     "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-c source comparison (2026-09-27; bead flapjack-4ac.4.60.1.1.5): HOL panPropsScript.sml:724 gives the exact high-run premise, non-timeout premise, and clock-sub conclusion. The genuine p = Tick leaf follows recInduct evaluate_ind >> rw []; evaluate_def at panSemScript.sml:654-655 is if s.clock=0 then (SOME TimeOut,empty_locals s) else (NONE,dec_clock s). Lean retains the full result and post-state equation with no IH or extra premise. Proof uses the non-timeout premise to eliminate zero high clock and the post-state clock equation to prove the lower clock is positive and decrements to st.clock. Carrier qualifiers record the same-module PanPropsEvalStateFiniteExact finite-support carrier and indexed-word translation. The full theorem remains open."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "evaluate_clock_sub",
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
+    "lean_name": "evaluateClockSubReturnCaseHOLFinite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison (2026-09-27; bead flapjack-4ac.4.60.1.1.6): HOL panPropsScript.sml:724 has exactly the high-run equation, non-timeout premise, and low-clock conclusion used here, and recInduct evaluate_ind gives the Return case with no recursive induction hypothesis. HOL evaluate_def's Return clause at panSemScript.sml:638-644 evaluates e; none returns (SOME Error,s), while some value returns (SOME (Return value),empty_locals s) iff size_of_sh_with_ctxt s.structs (shape_of value) <= 32, otherwise (SOME Error,s). Lean uses the exact evalHOLExact, the same 32-bit shape-size branch, and the finite evaluate_def Return equation; no success or clock-bound premise is added. Carrier qualifiers record the PanPropsEvalStateFiniteExact owner for locals/globals/code/eshapes via HolFiniteMapExact and the indexed-word translation. The complete evaluate_clock_sub theorem remains open."
   }
 ]

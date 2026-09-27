@@ -3655,4 +3655,131 @@ theorem evaluateClockSubTickCaseHOLFinite {width : Nat} {σ : Type} [NeZero widt
       congrArg (fun finalState =>
         ((none : Option (PanSemResultExact width)), finalState)) hfinal
 
+/-- Genuine recursive-induction `Return` case of HOL `evaluate_clock_sub`.
+    The exact expression evaluator ignores the clock; the source's return/error
+    branches then differ only by the clock field. -/
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_clock_sub"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateClockSubReturnCaseHOLFinite {width : Nat} {σ : Type} [NeZero width] :
+    ∀ (expression : ExpHOL width)
+      (state : PanPropsEvalStateFiniteExact width σ)
+      (result : Option (PanSemResultExact width))
+      (st : PanPropsEvalStateFiniteExact width σ) (ck : Nat),
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state (.return expression) =
+        (result, { st with clock := st.clock + ck }) →
+      result ≠ some .timeOut →
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair
+        { state with clock := state.clock - ck } (.return expression) = (result, st) := by
+  classical
+  intro expression state result st ck hRun hne
+  let highState := state.toPanSemFinite
+  let highPost := ({ st with clock := st.clock + ck }).toPanSemFinite
+  let lowState : PanPropsEvalStateFiniteExact width σ := { state with clock := state.clock - ck }
+  let lowCanonical := lowState.toPanSemFinite
+  let highMem : DecidablePred highState.memaddrs :=
+    fun address => Classical.propDecidable (highState.memaddrs address)
+  let lowMem : DecidablePred lowCanonical.memaddrs :=
+    fun address => Classical.propDecidable (lowCanonical.memaddrs address)
+  have hCanonical :
+      PanSemStateFiniteExact.evaluateHOLFiniteState highState (.return expression) =
+        (result, highPost) := by
+    apply Prod.ext
+    · have h := congrArg Prod.fst hRun
+      simpa [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair, highState] using h
+    · have h := congrArg (fun pair => pair.2.toPanSemFinite) hRun
+      simpa [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair, highState, highPost] using h
+  have hEvalLow :
+      @evalHOLExact width σ _ lowCanonical.toExact lowMem expression =
+        @evalHOLExact width σ _ highState.toExact highMem expression := by
+    change @evalHOLExact width σ _
+      ({ highState with clock := lowState.clock }).toExact highMem expression = _
+    exact evalHOLExact_upd_clock_eq highState.toExact expression lowState.clock
+  rw [PanSemStateFiniteExact.evaluateHOLFiniteState_return] at hCanonical
+  cases hEval : @evalHOLExact width σ _ highState.toExact highMem expression with
+  | none =>
+      simp [hEval] at hCanonical
+      rcases hCanonical with ⟨hresult, hpost⟩
+      subst result
+      have hst : st = lowState := by
+        cases st <;> simp_all [highState, highPost, lowState,
+          PanPropsEvalStateFiniteExact.toPanSemFinite] <;> omega
+      subst st
+      have hLowCanonical :
+          PanSemStateFiniteExact.evaluateHOLFiniteState lowCanonical
+              (.return expression) = (some .error, lowCanonical) := by
+        simp [PanSemStateFiniteExact.evaluateHOLFiniteState_return, hEvalLow, hEval]
+      apply Prod.ext
+      · change (PanSemStateFiniteExact.evaluateHOLFiniteState lowCanonical
+          (.return expression)).1 = some .error
+        rw [hLowCanonical]
+      · change PanPropsEvalStateFiniteExact.ofPanSemFinite
+          (PanSemStateFiniteExact.evaluateHOLFiniteState lowCanonical
+            (.return expression)).2 = lowState
+        rw [hLowCanonical]
+        exact PanPropsEvalStateFiniteExact.ofPanSemFinite_toPanSemFinite lowState
+  | some value =>
+      have hEvalLowValue :
+          @evalHOLExact width σ _ lowCanonical.toExact lowMem expression = some value := by
+        simpa [hEvalLow] using hEval
+      by_cases hsize : Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL highState.structs
+          (shapeOfHOLExact value) ≤ 32
+      · simp [hEval, hsize] at hCanonical
+        rcases hCanonical with ⟨hresult, hpost⟩
+        have hresult' : some (.returned value) = result := hresult
+        subst result
+        have hsizeLow :
+            Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL lowCanonical.structs
+              (shapeOfHOLExact value) ≤ 32 := by
+          simpa [lowCanonical, lowState, highState,
+            PanPropsEvalStateFiniteExact.toPanSemFinite] using hsize
+        have hLowState :
+            PanSemStateFiniteExact.evaluateHOLFiniteState lowCanonical
+                (.return expression) = (some (.returned value), st.toPanSemFinite) := by
+          rw [PanSemStateFiniteExact.evaluateHOLFiniteState_return]
+          simp only [hEvalLowValue, hsizeLow, if_pos]
+          have hRestored :
+              PanSemStateFiniteExact.emptyLocalsHOLFinite lowCanonical = st.toPanSemFinite := by
+            cases state <;> cases st <;>
+              simp_all [highState, highPost, lowState, lowCanonical,
+                PanPropsEvalStateFiniteExact.toPanSemFinite,
+                PanSemStateFiniteExact.emptyLocalsHOLFinite] <;> omega
+          exact Prod.ext rfl hRestored
+        apply Prod.ext
+        · change (PanSemStateFiniteExact.evaluateHOLFiniteState lowCanonical
+            (.return expression)).1 = some (.returned value)
+          rw [hLowState]
+        · change PanPropsEvalStateFiniteExact.ofPanSemFinite
+            (PanSemStateFiniteExact.evaluateHOLFiniteState lowCanonical
+              (.return expression)).2 = st
+          rw [hLowState]
+          simp [PanPropsEvalStateFiniteExact.ofPanSemFinite_toPanSemFinite]
+      · simp [hEval, hsize] at hCanonical
+        rcases hCanonical with ⟨hresult, hpost⟩
+        have hresult' : some .error = result := hresult
+        subst result
+        have hst : st = lowState := by
+          cases st <;> simp_all [highState, highPost, lowState,
+            PanPropsEvalStateFiniteExact.toPanSemFinite] <;> omega
+        subst st
+        have hsizeLow :
+            ¬ Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL lowCanonical.structs
+              (shapeOfHOLExact value) ≤ 32 := by
+          simpa [lowCanonical, lowState, highState,
+            PanPropsEvalStateFiniteExact.toPanSemFinite] using hsize
+        have hLowCanonical :
+            PanSemStateFiniteExact.evaluateHOLFiniteState lowCanonical
+                (.return expression) = (some .error, lowCanonical) := by
+          rw [PanSemStateFiniteExact.evaluateHOLFiniteState_return]
+          simp [hEvalLowValue, hsizeLow]
+        apply Prod.ext
+        · change (PanSemStateFiniteExact.evaluateHOLFiniteState lowCanonical
+            (.return expression)).1 = some .error
+          rw [hLowCanonical]
+        · change PanPropsEvalStateFiniteExact.ofPanSemFinite
+            (PanSemStateFiniteExact.evaluateHOLFiniteState lowCanonical
+              (.return expression)).2 = lowState
+          rw [hLowCanonical]
+          exact PanPropsEvalStateFiniteExact.ofPanSemFinite_toPanSemFinite lowState
+
 end Flapjack
