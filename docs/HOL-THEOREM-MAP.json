@@ -1,6 +1,15 @@
 [
   {
     "hol_path": "cakeml/pancake/crep_inlineScript.sml",
+    "hol_name": "transform_eoc_def",
+    "lean_path": "Flapjack/Pancake/CrepInline/Pass.lean",
+    "lean_name": "transformEocHOLExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-c source comparison (2026-09-27; bead flapjack-e7w.2.1.6) against crep_inlineScript.sml:137-145. Return maps to crepNestedSeqHOL of returnNames.zipWith Assign values; List.zipWith has HOL MAP2's truncation, and crepNestedSeqHOL is separately tagged for nested_seq_def. Call NONE adds SOME (returnNames, NONE); Call SOME (names, NONE) is preserved; Call SOME (names, SOME (word, handler)) preserves all metadata and recursively transforms only the handler. Dec, While, Seq, and If recurse in source order, and the catch-all is identity. Inputs/outputs use CrepProgHOL/CrepExpHOL, MlString, Nat variable identifiers and BitVec width words, matching the HOL carriers under words_as_type_indexed_bitvec; [NeZero width] retains the positive word dimension. Direct HOL EVAL rows for all branches are in scripts/hol-probes/crep_inline_transform_eoc_probe.out and Lean guard transformEocGuard checks them in Flapjack/Test/CrepInlineTransformEocParity.lean. This exact helper does not establish or claim production inline_prog routing.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_inlineScript.sml",
     "hol_name": "arg_load_def",
     "lean_path": "Flapjack/Pancake/CrepInline/Pass.lean",
     "lean_name": "argLoadHOLExact",
