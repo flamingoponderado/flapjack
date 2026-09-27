@@ -2129,6 +2129,46 @@ theorem evaluateHOLFiniteState_eq_withDeciders {width : Nat} {σ : Type}
   simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
     hmemEq, hsharedEq]
 
+/-- FLAPJACK-SPECIFIC (no standalone HOL declaration): the general state-level
+    projection of the clause-for-clause finite context evaluator. This is the
+    reusable bridge that lets a HOL-shaped `evaluate_def` conjunct name the
+    recursive result `evaluateHOLFiniteState ...` while its proof works with the
+    internal `evalPanSemRecursiveCallFiniteContext` assembly pair. -/
+theorem evaluateHOLFiniteState_eq_recursiveContext
+    {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (program : ProgHOL width) :
+    evaluateHOLFiniteState state program =
+      (match evalPanSemRecursiveCallFiniteContext program
+          ⟨state, fun address => Classical.propDecidable (state.memaddrs address),
+            fun address => Classical.propDecidable (state.shMemaddrs address)⟩ with
+        | some pair => (pair.1, pair.2.state)
+        | none => (none, state)) := by
+  classical
+  simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders]
+
+/-- FLAPJACK-SPECIFIC (no standalone HOL declaration): state-level reading of a
+    known internal recursive-context result. Given an internal assembly pair for
+    `program` over any context with the same state, the state-level evaluator
+    returns exactly its projection. This is the rewrite that aligns a HOL-shaped
+    recursive call `evaluateHOLFiniteState ...` with the internal evaluator's
+    post-state context. -/
+theorem evaluateHOLFiniteState_eq_of_recursiveContext
+    {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (program : ProgHOL width)
+    (context : FiniteEvalContext width σ) (hcontext : context.state = state)
+    (pair : Option (PanSemResultExact width) × FiniteEvalContext width σ)
+    (hpair : evalPanSemRecursiveCallFiniteContext program context = some pair) :
+    evaluateHOLFiniteState state program = (pair.1, pair.2.state) := by
+  classical
+  rw [evaluateHOLFiniteState_eq_recursiveContext]
+  have hctx :
+      (⟨state, fun address => Classical.propDecidable (state.memaddrs address),
+        fun address => Classical.propDecidable (state.shMemaddrs address)⟩ :
+        FiniteEvalContext width σ) = context := by
+    apply FiniteEvalContext.ext
+    exact hcontext.symm
+  rw [hctx, hpair]
+
 /-- FLAPJACK-SPECIFIC recursive bridge (no standalone HOL declaration): a
     pair-shaped recursive evaluation equation can be consumed by the finite
     context evaluator while retaining its post-state context. The outer
