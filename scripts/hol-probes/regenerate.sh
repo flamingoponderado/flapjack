@@ -477,7 +477,9 @@ run_probe compile_shape_probeScript.sml compile_shape_probe.out \
   one compile_shapes_map compiled_shape_wf compiled_shapes_wf \
   "$cake_dir/pancake/pan_structsScript.sml"
 run_probe pan_lang_var_exp_probeScript.sml pan_lang_var_exp_probe.out \
-  local_var global_var nested nested_global "$cake_dir/pancake/panLangScript.sml"
+  local_var global_var nested nested_global \
+  global_var_exp_def global_var_exp_def_primitive \
+  "$cake_dir/pancake/panLangScript.sml"
 run_probe pan_lang_load_store_op_probeScript.sml pan_lang_load_store_op_probe.out \
   load_op8 load_op16 load_opw load_op32 store_op8 store_op16 store_opw store_op32 \
   "$cake_dir/pancake/panLangScript.sml"
