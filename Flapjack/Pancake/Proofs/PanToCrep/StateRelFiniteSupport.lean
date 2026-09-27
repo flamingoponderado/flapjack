@@ -539,19 +539,23 @@ theorem holFmapAsFiniteSupportResultWitness_slcHOL {width : Nat} [NeZero width]
       FUPDATE_LIST_HOL (fun _ => none)
         ((variables.map Prod.fst).zip arguments) key := rfl
 
-/-- Exact port of HOL `slc_tlc_rw`
+/-- Flapjack-only analogue of HOL `slc_tlc_rw`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:2321-2326`):
     `FEMPTY |++ ZIP (MAP FST vsh,args) = slc vsh args ∧
      FEMPTY |++ ZIP (ns,FLAT (MAP flatten args)) = tlc ns args`.
-    Both conjuncts state that the raw HOL finite-map update `|++` on `FEMPTY`
-    is definitionally the named `slc`/`tlc` constructor, over the exact
-    `MlS`/`ShapeHOL`/`ValueHOL`/`HolWordLab` carriers. The
-    `fmap_as_finite_support_result` qualifier records only that both sides use
-    the canonical `HolFiniteMapExact` finite-support translation of HOL
-    `|->`; the same-module witness states the unconditional lookup-level
-    correspondence to the raw `FUPDATE_LIST_HOL` operation. -/
-@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "slc_tlc_rw"
-  (fmap_as_finite_support_result)]
+    Both conjuncts state that the raw finite-map update on `FEMPTY` is
+    definitionally the named `slc`/`tlc` constructor, over the exact
+    `MlS`/`ShapeHOL`/`ValueHOL`/`HolWordLab` carriers, matching `slcHOL`/`tlcHOL`
+    clause-for-clause.
+
+    NOT an exact tagged HOL port: HOL `slc_tlc_rw` is a `Prop`-level
+    two-conjunct theorem, whereas the `fmap_as_finite_support_result` qualifier
+    is defined for declarations whose own result/input carrier is
+    `HolFiniteMapExact`. Applying that qualifier here would only certify a lookup
+    correspondence for one map and cannot express the two-equality statement, so
+    the `@[hol]` tag and its witness were withdrawn (bead flapjack-4ac.5.86).
+    Restoring an exact tag needs a theorem-level finite-map qualifier with
+    genuine witnesses for BOTH map equalities, tracked by flapjack-4ac.5.86.1. -/
 theorem slcTlcRwHOL {width : Nat} [NeZero width]
     (variables : List (MlS × ShapeHOL)) (slots : List Nat)
     (arguments : List (ValueHOL width)) :
@@ -560,19 +564,5 @@ theorem slcTlcRwHOL {width : Nat} [NeZero width]
     (HolFiniteMapExact.updateListEq HolFiniteMapExact.empty
         (slots.zip ((arguments.map flattenHOL).flatten)) = tlcHOL slots arguments) := by
   constructor <;> rfl
-
-/-- Canonical standalone finite-map witness for `slcTlcRwHOL`: the first
-    conjunct's map is the HOL-shaped raw `FUPDATE_LIST_HOL` operation applied to
-    the everywhere-undefined function, unconditionally. The tagged theorem is
-    threaded through as an ignored argument so the witness is stated in terms of
-    the tagged declaration itself; Flapjack-only infrastructure, no separate
-    HOL original. -/
-theorem holFmapAsFiniteSupportResultWitness_slcTlcRwHOL {width : Nat} [NeZero width]
-    (variables : List (MlS × ShapeHOL)) (slots : List Nat)
-    (arguments : List (ValueHOL width)) (key : MlS) :
-    (fun _ => (slcHOL variables arguments).lookup key)
-        (slcTlcRwHOL variables slots arguments) =
-      FUPDATE_LIST_HOL (fun _ => none)
-        ((variables.map Prod.fst).zip arguments) key := rfl
 
 end Flapjack
