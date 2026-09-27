@@ -1,0 +1,8 @@
+skip=Skip
+tick=Tick
+local_assign_from_param=Seq (Assign 1 (Var 0)) Skip
+global_assign_from_param=Skip
+primitive_params=Skip
+seq_tick_return=Seq Tick (Return [Const 5w])
+combined_param_shape=Return [Const 1w; Const 2w]
+done=T
