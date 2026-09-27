@@ -1396,17 +1396,17 @@ class RealCombinedQualifierFixtureTest(unittest.TestCase):
             )
 
     def test_real_carrier_only_declaration_passes_checker(self):
-        # `evalCrepSemHOLProgExact_skip` is an UNTAGGED exact-evaluator clause
+        # `evalCrepSemHOLProgExact_break` is an UNTAGGED exact-evaluator clause
         # whose signature names no literal `BitVec`: the word carrier is the
         # imported `CrepSemHOLState`. The qualifier must resolve that carrier
         # from its real declaration and accept the clause text, with no tag.
         lines = self._lines()
         start = None
         for index, line in enumerate(lines, start=1):
-            if line.startswith("theorem evalCrepSemHOLProgExact_skip"):
+            if line.startswith("theorem evalCrepSemHOLProgExact_break"):
                 start = index
                 break
-        self.assertIsNotNone(start, "evalCrepSemHOLProgExact_skip not found")
+        self.assertIsNotNone(start, "evalCrepSemHOLProgExact_break not found")
         preceding = lines[max(0, start - 4):start - 1]
         self.assertFalse(any("@[hol" in line for line in preceding))
         region = []
@@ -1417,7 +1417,7 @@ class RealCombinedQualifierFixtureTest(unittest.TestCase):
         self.assertEqual(
             CHECKER["words_as_type_indexed_bitvec_errors"](
                 "\n".join(region),
-                "evalCrepSemHOLProgExact_skip",
+                "evalCrepSemHOLProgExact_break",
                 module=self.MODULE_NAME,
                 root=str(Path(__file__).resolve().parents[2]),
                 lines=lines,
