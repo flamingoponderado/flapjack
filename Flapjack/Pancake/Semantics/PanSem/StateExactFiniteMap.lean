@@ -1910,6 +1910,43 @@ theorem evalPanSemRecursiveCallFiniteContext_decCall_body_none
   rw [hlookup]
   simp only [if_neg hclock, hbodyGenerated]
 
+/-- FLAPJACK-SPECIFIC DecCall body-`Break` case for the finite context
+    evaluator: the source clause maps a callee `Break` outcome to `Error` at
+    the fixed callee post-context. -/
+theorem evalPanSemRecursiveCallFiniteContext_decCall_body_break
+    {width : Nat} {σ : Type} [NeZero width]
+    (resultName : MlS) (shape : ShapeHOL) (function : MlS)
+    (arguments : List (ExpHOL width)) (continuation : ProgHOL width)
+    (context : FiniteEvalContext width σ) (values : List (ValueHOL width))
+    (body : ProgHOL width) (callee : HolFiniteMapExact MlS (ValueHOL width))
+    (returnShape : ShapeHOL) (bodyContext : FiniteEvalContext width σ)
+    (hargs : evalListHOLFinite context.state
+      (h := context.memaddrsDecidable) arguments = some values)
+    (hlookup : lookupCodeHOLFinite context.state.code.lookup function values =
+      some (body, callee, returnShape))
+    (hclock : context.state.clock ≠ 0)
+    (hbody : evalPanSemRecursiveCallFiniteContext body
+      (callEntryContextHOLFinite context callee) =
+      some (some .break, bodyContext)) :
+    evalPanSemRecursiveCallFiniteContext
+        (.decCall resultName shape function arguments continuation) context =
+      some (some .error,
+        callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)
+          (some .break) bodyContext) := by
+  have hbodyGenerated : evalPanSemRecursiveCallFiniteContext body
+      (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl) =
+      some (some .break, bodyContext) := by
+    calc
+      _ = evalPanSemRecursiveCallFiniteContext body
+          (callEntryContextHOLFinite context callee) := by
+        apply evalPanSemRecursiveCallFiniteContext_state_eq
+        rfl
+      _ = _ := hbody
+  rw [evalPanSemRecursiveCallFiniteContext.eq_6]
+  simp only [hargs]
+  rw [hlookup]
+  simp only [if_neg hclock, hbodyGenerated]
+
 /-- FLAPJACK-SPECIFIC specialization for the fixed callee context in the
     DecCall equation. This hides the generated finite-domain proof arguments
     behind the canonical `callFixedContextHOLFinite` context. -/
@@ -3321,6 +3358,54 @@ theorem evaluateHOLFiniteState_decCall_body_none {width : Nat} {σ : Type}
       (callEntryStateHOLFinite state callee) body
       (callEntryContextHOLFinite context callee) rfl (none, bodyPost) hbody
   have hcase := evalPanSemRecursiveCallFiniteContext_decCall_body_none
+    resultName shape function arguments continuation context values body callee
+    returnShape bodyContext hargsContext hlookup hclock hbodyContext
+  simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders, context,
+    hcase, callFixedContextHOLFinite, hbodyState]
+
+/-- Exact HOL `evaluate_def` (`panSemScript.sml:556`) DecCall body-`Break`
+    case, from the successful argument/lookup and nonzero-clock clause at
+    lines 694-714. The recursive body induction hypothesis yields `Break` and
+    `bodyPost` from the decremented-clock callee entry. HOL applies `fix_clock`
+    and returns `Error` with the resulting state. The finite-map and
+    width-indexed-word qualifiers record the reviewed carrier translations;
+    no target-evaluation or evaluator-marker premise is added. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 556
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateHOLFiniteState_decCall_body_break {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateFiniteExact width σ)
+    (resultName : MlS) (shape : ShapeHOL) (function : MlS)
+    (arguments : List (ExpHOL width)) (continuation : ProgHOL width)
+    (values : List (ValueHOL width)) (body : ProgHOL width)
+    (callee : HolFiniteMapExact MlS (ValueHOL width)) (returnShape : ShapeHOL)
+    (bodyPost : PanSemStateFiniteExact width σ)
+    (hargs : evalListHOLFinite state
+      (h := fun address => Classical.propDecidable (state.memaddrs address))
+      arguments = some values)
+    (hlookup : lookupCodeHOLFinite state.code.lookup function values =
+      some (body, callee, returnShape))
+    (hclock : state.clock ≠ 0)
+    (hbody : evaluateHOLFiniteState
+      (callEntryStateHOLFinite state callee) body =
+        ((some .break : Option (PanSemResultExact width)), bodyPost)) :
+    evaluateHOLFiniteState state
+        (.decCall resultName shape function arguments continuation : ProgHOL width) =
+      (some .error,
+        (fixClockHOLFinite (callEntryStateHOLFinite state callee)
+          ((some .break : Option (PanSemResultExact width)), bodyPost)).2) := by
+  classical
+  let context : FiniteEvalContext width σ :=
+    ⟨state, fun address => Classical.propDecidable (state.memaddrs address),
+      fun address => Classical.propDecidable (state.shMemaddrs address)⟩
+  have hargsContext : evalListHOLFinite context.state
+      (h := context.memaddrsDecidable) arguments = some values := by
+    simpa [context] using hargs
+  obtain ⟨bodyContext, hbodyContext, hbodyState⟩ :=
+    evalPanSemRecursiveCallFiniteContext_of_evaluateHOLFiniteState
+      (callEntryStateHOLFinite state callee) body
+      (callEntryContextHOLFinite context callee) rfl (some .break, bodyPost) hbody
+  have hcase := evalPanSemRecursiveCallFiniteContext_decCall_body_break
     resultName shape function arguments continuation context values body callee
     returnShape bodyContext hargsContext hlookup hclock hbodyContext
   simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders, context,

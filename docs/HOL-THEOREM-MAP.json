@@ -12647,6 +12647,17 @@
     "hol_name": "evaluate_def",
     "hol_line": 556,
     "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
+    "lean_name": "evaluateHOLFiniteState_decCall_body_break",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-27; bead flapjack-qj5.12.5): Definition evaluate_def at panSemScript.sml:556 has the DecCall clause at lines 694-714. This split selects successful OPT_MMAP arguments and successful lookup_code, a nonzero caller clock, then the recursive body induction hypothesis evaluate(entry, body) = (SOME Break, bodyPost). HOL sets entry to dec_clock s with locals := newlocals, defines eval_prog by fix_clock entry (evaluate body entry), and its (SOME Break, st) branch returns (SOME Error, st). The Lean entry is callEntryStateHOLFinite; the conclusion is (SOME Error, (fixClockHOLFinite entry (SOME Break, bodyPost)).2). The branch selectors and body induction hypothesis match the HOL case; the result is the result-option × state pair with no evaluator assembly marker, target-evaluation premise, or unrelated condition. PanSemStateFiniteExact has positive width [NeZero width], width-indexed words represent HOL words as BitVec width, σ : Type carries the FFI state, and locals/globals/code/eshapes are its canonical same-module HolFiniteMapExact fields. The two qualifiers record only these reviewed carrier translations. Other DecCall clauses and full assembly remain open."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 556,
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
     "lean_name": "evaluateHOLFiniteState_seq",
     "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
     "fmap_as_finite_support": [
