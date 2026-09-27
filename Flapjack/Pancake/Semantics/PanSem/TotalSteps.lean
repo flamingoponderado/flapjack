@@ -1008,14 +1008,21 @@ def panSemTotalExtCallClause [NeZero 64] [BEq (RiscV.Word 64)]
     already been assembled in this module (clock leaves `Skip`/`Break`/`Continue`/
     `Tick`, `Assign`, `Dec` with its continuation, `Primitive`, `Store`,
     `Store32`, `StoreByte`, `Raise`, `Return`, `Annot`, `ShMemLoad`,
-    `ShMemStore`, `ExtCall`).
+    `ShMemStore`, `ExtCall`), and the recursive `Dec` and `If` clauses.
 
-    Clauses that are not yet assembled (`Seq`, `If`, `While`, `Call`,
-    `DecCall`) fall back to `SOME Error` with the state unchanged; this
-    declaration is therefore not the full evaluator and is not tagged as HOL's
-    `evaluate_def`.  It is the assembly step tracked by
-    `flapjack-pxn.18.4.3.77.2`. -/
+    `If` (`panSemScript.sml:618-622`) evaluates its condition through the
+    faithful `evalPanSemStateExp` in the entry state, runs the then-branch for
+    every nonzero word and the else-branch for `0w`, and returns `SOME Error`
+    with the unchanged state for a missing or non-word condition; the selected
+    branch is evaluated recursively in that same state through
+    `panSemTotalIfStep`.
+
+    Clauses that are not yet assembled (`Seq`, `While`, `Call`, `DecCall`) fall
+    back to `SOME Error` with the state unchanged; this declaration is
+    therefore not the full evaluator and is not tagged as HOL's `evaluate_def`.
+    It is the assembly step tracked by `flapjack-pxn.18.4.3.77.2`. -/
 def panSemTotalEvaluatePartial [NeZero 64] [BEq (RiscV.Word 64)]
+    [DecidableEq (RiscV.Word 64)]
     [OfNat (RiscV.Word 64) 0] [OfNat (RiscV.Word 64) 1]
     [OfNat (RiscV.Word 64) 2] [OfNat (RiscV.Word 64) 3]
     [Add (RiscV.Word 64)] [Mul (RiscV.Word 64)] [Sub (RiscV.Word 64)]
@@ -1048,7 +1055,10 @@ def panSemTotalEvaluatePartial [NeZero 64] [BEq (RiscV.Word 64)]
   | .return value => panSemTotalReturnClause state value
   | .annot tag text => panSemTotalAnnotClause state tag text
   | .seq _ _ => (some .error, state)
-  | .ite _ _ _ => (some .error, state)
+  | .ite condition thenBranch elseBranch =>
+      panSemTotalIfStep state (evalPanSemStateExp state condition)
+        (fun next => panSemTotalEvaluatePartial primitive next thenBranch)
+        (fun next => panSemTotalEvaluatePartial primitive next elseBranch)
   | .while _ _ => (some .error, state)
   | .call _ _ _ => (some .error, state)
   | .decCall _ _ _ _ _ => (some .error, state)
