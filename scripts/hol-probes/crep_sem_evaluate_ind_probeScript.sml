@@ -4,8 +4,8 @@
 
   crepSemScript.sml:440 defines
 
-      val evaluate_ind = save_thm("evaluate_ind",
-                    REWRITE_RULE [fix_clock_evaluate] evaluate_ind);
+      Theorem evaluate_ind[allow_rebind] =
+        REWRITE_RULE [fix_clock_evaluate] evaluate_ind
 
   so the per-constructor statement is produced by tdefn and is not textually
   present in the source.  This probe prints the conclusion of the constant so
