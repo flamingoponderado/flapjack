@@ -2648,4 +2648,56 @@ theorem evalCrepSemHOLProgExact_ite_unstamped {width : Nat} [NeZero width]
           · simp only [if_pos hw, hThen]
           · simp only [if_neg hw, hElse]
 
+/-- Flapjack-specific unstamped no-decider restatement of HOL
+`evaluate_def`'s `ShMem` clause at `crepSemScript.sml:292-303`. It evaluates
+the address first and accepts only a `Word`; `is_load` selects the load guard
+(`FLOOKUP locals v = SOME _`) or the stricter store guard
+(`SOME (Word _)`). A failed address or local check returns `Error` with the
+input state, while a successful check forwards the corresponding shared-memory
+helper's result and state. The helpers use classical domain decisions for the
+finite-support carrier. This public no-decider equation has no separate HOL
+declaration, and the finite-support carrier qualification remains under review,
+so it is intentionally untagged. -/
+theorem evalCrepSemHOLProgExact_shMem_unstamped {width : Nat} [NeZero width]
+    {σ : Type} (state : CrepSemHOLState width σ)
+    (operator : CrepMemOp) (name : Nat) (address : CrepExpHOL width) :
+    evalCrepSemHOLProgExact state (.shMem operator name address) =
+      (match crepExactEvalExp state
+          (fun a => Classical.propDecidable (state.memaddrs a)) address with
+       | some (.word addressValue) =>
+           if crepIsLoadMemOp operator then
+             match state.locals.lookup name with
+             | some _ => crepShMemLoadHOL operator name addressValue state
+                 (fun a => Classical.propDecidable (state.shMemaddrs a))
+             | none => (some .error, state)
+           else
+             match state.locals.lookup name with
+             | some (.word _) => crepShMemStoreHOL operator name addressValue state
+                 (fun a => Classical.propDecidable (state.shMemaddrs a))
+             | _ => (some .error, state)
+       | _ => (some .error, state)) := by
+  classical
+  let memDec : (a : BitVec width) → Decidable (state.memaddrs a) :=
+    fun a => Classical.propDecidable (state.memaddrs a)
+  let shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a) :=
+    fun a => Classical.propDecidable (state.shMemaddrs a)
+  calc
+    evalCrepSemHOLProgExact state (.shMem operator name address) =
+        evalCrepSemHOLProg state memDec shMemDec (.shMem operator name address) :=
+      evalCrepSemHOLProgExact_eq_core state (.shMem operator name address)
+        memDec shMemDec
+    _ = (match crepExactEvalExp state memDec address with
+         | some (.word addressValue) =>
+             if crepIsLoadMemOp operator then
+               match state.locals.lookup name with
+               | some _ => crepShMemLoadHOL operator name addressValue state shMemDec
+               | none => (some .error, state)
+             else
+               match state.locals.lookup name with
+               | some (.word _) => crepShMemStoreHOL operator name addressValue state shMemDec
+               | _ => (some .error, state)
+         | _ => (some .error, state)) :=
+      evalCrepSemHOLProg_shMem state memDec shMemDec operator name address
+    _ = _ := by rfl
+
 end Flapjack
