@@ -1350,6 +1350,7 @@ class RealCombinedQualifierFixtureTest(unittest.TestCase):
     """
 
     MODULE = "Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean"
+    MODULE_NAME = "Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL"
     HOL_NAMES = ("sh_mem_load_def", "sh_mem_store_def", "sh_mem_op_def")
     FMAP_FIELDS = ("locals", "globals", "code")
 
@@ -1394,35 +1395,36 @@ class RealCombinedQualifierFixtureTest(unittest.TestCase):
                 hol_name,
             )
 
-    def test_real_carrier_only_declaration_passes_checker(self):
-        # `evalCrepSemHOLProgExact_skip` is an UNTAGGED exact-evaluator clause
-        # whose signature names no literal `BitVec`: the word carrier is the
-        # imported `CrepSemHOLState`. The qualifier must resolve that carrier
-        # from its real declaration and accept the clause text, with no tag.
+    def test_real_imported_carrier_only_clauses_pass_checker(self):
+        # Skip is tagged and Break is not; neither signature names a literal
+        # `BitVec`. Both must resolve the imported CrepSemHOLState word carrier.
         lines = self._lines()
-        start = None
-        for index, line in enumerate(lines, start=1):
-            if line.startswith("theorem evalCrepSemHOLProgExact_skip"):
-                start = index
-                break
-        self.assertIsNotNone(start, "evalCrepSemHOLProgExact_skip not found")
-        preceding = lines[max(0, start - 4):start - 1]
-        self.assertFalse(any("@[hol" in line for line in preceding))
-        region = []
-        for line in lines[start - 1:]:
-            region.append(line)
-            if ":=" in line:
-                break
-        self.assertEqual(
-            CHECKER["words_as_type_indexed_bitvec_errors"](
-                "\n".join(region),
-                "evalCrepSemHOLProgExact_skip",
-                module=self.MODULE,
-                root=str(Path(__file__).resolve().parents[2]),
-                lines=lines,
-            ),
-            [],
-        )
+        for clause, expected_tag in (("skip", True), ("break", False)):
+            name = f"evalCrepSemHOLProgExact_{clause}"
+            with self.subTest(clause=clause):
+                start = next(
+                    (index for index, line in enumerate(lines, start=1)
+                     if line.startswith(f"theorem {name}")),
+                    None,
+                )
+                self.assertIsNotNone(start, f"{name} not found")
+                preceding = lines[max(0, start - 4):start - 1]
+                self.assertEqual(any("@[hol" in line for line in preceding), expected_tag)
+                region = []
+                for line in lines[start - 1:]:
+                    region.append(line)
+                    if ":=" in line:
+                        break
+                self.assertEqual(
+                    CHECKER["words_as_type_indexed_bitvec_errors"](
+                        "\n".join(region),
+                        name,
+                        module=self.MODULE_NAME,
+                        root=str(Path(__file__).resolve().parents[2]),
+                        lines=lines,
+                    ),
+                    [],
+                )
 
     def _tagged(self, lines):
         tagged = {}
@@ -1520,6 +1522,7 @@ class WordsCarrierResolutionTest(unittest.TestCase):
     """
 
     MODULE = "Flapjack/PanToCrep/CarrierExact.lean"
+    MODULE_NAME = "Flapjack.PanToCrep.CarrierExact"
 
     def _checker_globals(self):
         return CHECKER["words_as_type_indexed_bitvec_errors"].__globals__
@@ -1537,6 +1540,15 @@ class WordsCarrierResolutionTest(unittest.TestCase):
             consumer.write_text(consumer_text, encoding="utf-8")
             checker_globals["ROOT"] = root
             try:
+                self.imported_headers = CHECKER["imported_structure_headers"](
+                    self.MODULE_NAME, str(root)
+                )
+                self.imported_field_types = CHECKER[
+                    "imported_structure_field_types"
+                ](self.MODULE_NAME, str(root))
+                self.imported_owners = CHECKER["imported_structure_owners"](
+                    self.MODULE_NAME, str(root)
+                )
                 lines = consumer_text.splitlines()
                 attribute_start = next(
                     (
@@ -1552,7 +1564,7 @@ class WordsCarrierResolutionTest(unittest.TestCase):
                 return CHECKER["words_as_type_indexed_bitvec_errors"](
                     declaration_text,
                     "evalProg",
-                    module=self.MODULE,
+                    module=self.MODULE_NAME,
                     root=str(root),
                     lines=lines,
                 )
@@ -1577,6 +1589,9 @@ class WordsCarrierResolutionTest(unittest.TestCase):
 
     def test_accepts_imported_carrier_with_bitvec_fields(self):
         self.assertEqual(self._run(self.OWNER, self.CONSUMER), [])
+        self.assertIn("CrepStateExact", self.imported_headers)
+        self.assertIn("CrepStateExact", self.imported_field_types)
+        self.assertIn("CrepStateExact", self.imported_owners)
 
     def test_accepts_local_carrier_with_bitvec_fields(self):
         local = "\n".join([
@@ -1648,6 +1663,28 @@ class WordsCarrierResolutionTest(unittest.TestCase):
         errors = self._run(owner, self.CONSUMER)
         self.assertTrue(any("BitVec" in e for e in errors), errors)
 
+    def test_accepts_carrier_field_via_word_abbrev(self):
+        # A reviewed word abbreviation such as `RiscV.Word width` denotes the
+        # standard `BitVec width` translation of HOL `'a word`, so a carrier
+        # typed through the abbrev must satisfy the qualifier.
+        owner = "\n".join([
+            "structure CrepStateExact (width : Nat) [NeZero width] (ffiState : Type) where",
+            "  locals : HolFiniteMapExact Nat (HolWordLab width)",
+            "  memory : RiscV.Word width → HolWordLab width",
+            "  baseAddr : RiscV.Word width",
+        ])
+        self.assertEqual(self._run(owner, self.CONSUMER), [])
+
+    def test_rejects_carrier_word_abbrev_of_other_width(self):
+        # `RiscV.Word 5` is not a word field at the carrier's width identifier.
+        owner = "\n".join([
+            "structure CrepStateExact (width : Nat) [NeZero width] (ffiState : Type) where",
+            "  locals : HolFiniteMapExact Nat (HolWordLab width)",
+            "  memory : RiscV.Word 5 → HolWordLab width",
+        ])
+        errors = self._run(owner, self.CONSUMER)
+        self.assertTrue(any("BitVec" in e for e in errors), errors)
+
     def test_rejects_ambiguous_owners_borrowing_cross_owner_evidence(self):
         # The imported owner has `[NeZero width]` but no `BitVec width` field;
         # the local same-named shadow has a `BitVec width` field but no
@@ -1698,6 +1735,39 @@ class WordsCarrierResolutionTest(unittest.TestCase):
         self.assertTrue(
             any("ambiguous same-named owners" in e for e in errors), errors
         )
+
+
+class RealCrepPropsWordCarrierResolutionTest(unittest.TestCase):
+    """The real CrepProps imports must resolve the exact state carrier."""
+
+    MODULE = "Flapjack/Pancake/Semantics/CrepProps.lean"
+    MODULE_NAME = "Flapjack.Pancake.Semantics.CrepProps"
+    HOL_NAMES = {
+        "dec_clock_simp",
+        "empty_locals_simp",
+        "FLOOKUP_set_globals",
+        "eval_upd_clock_eq",
+        "update_locals_not_vars_eval_eq",
+    }
+
+    def test_real_imported_crep_state_resolves_for_five_tags(self):
+        root = Path(__file__).resolve().parents[2]
+        lines = (root / self.MODULE).read_text(encoding="utf-8").splitlines()
+        sites = {site[2]: site for site in SITES(lines) if site[2] in self.HOL_NAMES}
+        self.assertEqual(set(sites), self.HOL_NAMES)
+        for hol_name, site in sites.items():
+            declaration = CHECKER["tagged_declaration_text"](lines, site[0])
+            self.assertEqual(
+                CHECKER["words_as_type_indexed_bitvec_errors"](
+                    declaration,
+                    hol_name,
+                    module=self.MODULE_NAME,
+                    root=str(root),
+                    lines=lines,
+                ),
+                [],
+                hol_name,
+            )
 
 
 if __name__ == "__main__":

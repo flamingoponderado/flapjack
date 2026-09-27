@@ -194,6 +194,41 @@ theorem finiteBridgeSampleCode :
     · simp [exactFiniteStateCode, sptInsert, sptLookup]
     · first | rfl | simp [loopProgExecRel]
 
+/-- Sample finite-support carrier whose code table has a recursive-constructor
+    entry, so the `prodRel` code conjunct is exercised through a non-`skip`
+    `loopProgExecRel` witness (a `seq` of `skip` and `tick`) as well as the
+    base `skip` entry. -/
+private def exactFiniteStateSeq : LoopSemStateFiniteExact 8 Unit :=
+  { exactFiniteStateCode with
+    code := exactFiniteStateCode.code.updateEq
+      (1, ([], HolLoopProg.seq HolLoopProg.skip HolLoopProg.tick)) }
+
+/-- Production state with the matching two-entry code table. -/
+private def finiteMachineStateSeq : LoopMachineState (BitVec 8) Unit :=
+  { finiteMachineStateCode with
+    code := [(0, [], LoopProg.skip), (1, [], LoopProg.seq LoopProg.skip LoopProg.tick)] }
+
+/-- The code conjunct of `prodRel` holds for a code table containing a recursive
+    constructor, through the `loopProgExecRel` introduction lemmas. -/
+theorem finiteBridgeSampleSeq :
+    exactFiniteStateSeq.prodRel finiteMachineStateSeq := by
+  unfold LoopSemStateFiniteExact.prodRel
+  refine ⟨?_, ?_, ?_, rfl, rfl, rfl, rfl, ?_, rfl, rfl, ?_⟩
+  · intro name; rfl
+  · intro global; rfl
+  · intro address; rfl
+  · simpa [finiteMachineStateSeq, exactFiniteStateSeq, finiteMachineStateCode,
+      exactFiniteStateCode, finiteMachineState, exactFiniteState] using trivialFfiStateRel
+  · intro entry hmem
+    simp only [finiteMachineStateSeq, List.mem_cons, List.mem_nil_iff, or_false] at hmem
+    rcases hmem with rfl | rfl
+    · refine ⟨HolLoopProg.skip, ?_, ?_⟩
+      · simp [exactFiniteStateSeq, exactFiniteStateCode, HolFiniteMapExact.updateEq, FUPDATE_HOL]
+      · exact loopProgExecRel_skip
+    · refine ⟨HolLoopProg.seq HolLoopProg.skip HolLoopProg.tick, ?_, ?_⟩
+      · simp [exactFiniteStateSeq, exactFiniteStateCode, HolFiniteMapExact.updateEq, FUPDATE_HOL]
+      · exact loopProgExecRel_seq loopProgExecRel_skip loopProgExecRel_tick
+
 /-- Register read on the exact carrier transports to the production read. -/
 example : Flapjack.getVarImm finiteMachineState (.reg 0) =
     some (.word (BitVec.ofNat 8 7)) := by

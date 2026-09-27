@@ -143,6 +143,24 @@ constructor family and defensive fallback. `Flapjack.Test.CompileExpParity`
 checks those rows through both the existing production-carrier implementation
 and the exact-carrier `compileExpExactHOLW`; the latter is tagged against
 `compile_exp_def` and uses the exact Pan/Crepe expression and context carriers.
+The general `Load` case regression also pairs one shared 64-bit input across
+`compile_exp_probe.out` (`load_one`), `pan_mem_load_probe.out`
+(`one_load_one`), `crep_load_shape_probe.out` (`load_one`), and
+`crep_eval_load_rv64_probe.out` (`mem_load_one_load_one` and
+`eval_load_one_load_one`). The probes observe `compile_exp`, `mem_load`,
+`load_shape`, and the Crep `mem_load`/`eval` equations at address `3w`, with
+cell value `Word 3w`. The exact-carrier four-conclusion case regression is
+`Flapjack.Test.PanToCrepStateRelCarrierParity.loadCaseAllConclusions`; its
+oracle guard ties the source result, compiled expression, generated Load,
+target memory read, and target expression evaluation to those same rows.
+Regenerate the three changed fixtures from the original read-only HOL sources
+with:
+
+```sh
+CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=pan_mem_load_probeScript.sml scripts/hol-probes/regenerate.sh
+CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=crep_load_shape_probeScript.sml scripts/hol-probes/regenerate.sh
+CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=crep_eval_load_rv64_probeScript.sml scripts/hol-probes/regenerate.sh
+```
 `excp_rel_probe.out` and `ctxt_fc_probe.out` are direct EVALs from
 `pan_to_crepProofTheory`, paired with `Flapjack.Test.PanToCrepRelationsParity`.
 The `functions_projection` row in `ctxt_fc_probe.out` directly checks the
@@ -423,6 +441,20 @@ Tick, Break, and Continue case specializations are tracked separately. The
 parent theorem remains open while other statement cases and the complete
 induction are unfinished. Lean regressions live in
 `Flapjack.Test.PanStructsCompileCorrect`.
+`pan_structs_res_convert_probe.out` records direct HOL EVAL of the `pan_structs`
+result conversion and classification functions at
+`cakeml/pancake/proofs/pan_structsProofScript.sml:992-1009` and `:1028-1031`:
+`convert_res` on `SOME Break`, the recursive `SOME (Return (ValWord 7w))` and
+`SOME (Exception «e» (ValWord 5w))` clauses, and the `NONE`, `Error`, `TimeOut`,
+`Continue`, and `FinalFFI` catch-alls; `is_cont_res` on `NONE`, `Break`,
+`Continue`, `Error`, `TimeOut`, and `Return`; and `res_vs` on `Return`,
+`Exception`, `Break`, `NONE`, and `Continue`. It is regenerated with
+`HOL4=/home/zksecurity/HOL CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=pan_structs_res_convert_probeScript.sml
+scripts/hol-probes/regenerate.sh`, and the same rows are replayed over the exact
+`PanSemResultExact`/`ValueHOL` carriers through `convertResHOL`, `isContResHOL`,
+`isContResHOL_eqDisj`, and `resVsHOL` in
+`Flapjack.Test.PanStructsResConvertParity`.
 `pan_structs_compile_exp_correct_probe.out` records HOL evaluations of Local
 and Global variable-constructor instances and Const-, RStruct-, NStruct-,
 NField-, RField-, Op-, Load-, and faithful Load32-constructor instances of

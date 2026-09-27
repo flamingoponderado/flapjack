@@ -3,10 +3,34 @@ import Flapjack.Pancake.PanGlobals
 import Flapjack.Pancake.PanLang.Decl
 import Flapjack.Pancake.Proofs.PanGlobals.ShapeInfrastructure
 import Flapjack.Pancake.Semantics.PanSem
+import Flapjack.Pancake.Semantics.PanSem.DecExact
 
 namespace Flapjack
 
 open Flapjack.Pancake.PanLang
+
+/-- Exact HOL port of Cake's `good_res_def`
+    (`cakeml/pancake/proofs/pan_globalsProofScript.sml:164-170`):
+
+    `good_res (SOME TimeOut) = F`, `good_res (SOME (Return v)) = F`,
+    `good_res (SOME (Exception l v)) = F`, `good_res (SOME (FinalFFI ev)) = F`,
+    and `good_res _ = T`.
+
+    The five clauses match HOL clause-for-clause over the reviewed exact
+    `panSem$result` carrier `PanSemResultExact` (`DecExact.lean:58`, tagged
+    against `panSemScript.sml:68-75`): `TimeOut`/`Return`/`Exception`/`FinalFFI`
+    map to `false`, and every other result (`NONE`, `SOME Error`, `Break`,
+    `Continue`) maps to `true`.  The payloads are ignored, exactly as in HOL, so
+    the only difference from HOL is the already-reviewed `result` carrier.  No
+    qualifier applies. -/
+@[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "good_res_def"]
+def goodResHOL {width : Nat} [NeZero width] :
+    Option (PanSemResultExact width) → Bool
+  | some (.timeOut) => false
+  | some (.returned _) => false
+  | some (.exception _ _) => false
+  | some (.finalFfi _) => false
+  | _ => true
 
 /-! Flapjack-specific generalization for the parameterized
     \`globalCompileTopForStart\` analogue. The exact HOL-tagged theorem is
@@ -665,6 +689,36 @@ theorem functions_fperm_decs [BEq String] (source target : FunName)
         (globalRenameFunctionName source target entry.1, entry.2.1,
           globalRenameProg source target entry.2.2.1, entry.2.2.2)) :=
   functions_globalRenameDecls source target declarations
+
+/-- Exact port of HOL `functions_fperm_decs`
+    (`cakeml/pancake/proofs/pan_globalsProofScript.sml:1701-1708`):
+    `functions (fperm_decs x y code) =
+     MAP (λ(a,b,c,d). (fperm_name x y a, b, fperm x y c, d)) (functions code)`.
+
+    Over the reviewed word-indexed `DeclHOL width` carrier, `functionsHOL`,
+    `fpermDecsHOL`, `fpermName`, and `fpermHOL` are all exact tagged ports, so
+    the only difference from HOL is the already-reviewed `MlS`/`DeclHOL` carrier
+    (the same carrier as the sibling exact ports `EVERY_fperm_decs` and
+    `FILTER_decs_fperm_decs`), with `[NeZero width]` matching HOL's positive
+    word type.  Renaming a declaration list renames each function-table entry's
+    name via `fpermName` and its body via `fpermHOL`, leaving the parameter
+    shapes and return shape untouched, exactly as in HOL.  No qualifier
+    applies. -/
+@[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "functions_fperm_decs"]
+theorem functionsFpermDecsHOL {width : Nat} [NeZero width] (x y : MlS)
+    (code : List (DeclHOL width)) :
+    functionsHOL (fpermDecsHOL x y code) =
+      (functionsHOL code).map (fun entry =>
+        (fpermName x y entry.1, entry.2.1,
+          fpermHOL x y entry.2.2.1, entry.2.2.2)) := by
+  induction code with
+  | nil => simp [fpermDecsHOL, functionsHOL]
+  | cons d ds ih =>
+      cases d with
+      | function fi => simp [fpermDecsHOL, functionsHOL, ih]
+      | decl shape name value => simp [fpermDecsHOL, functionsHOL, ih]
+      | exnDecl exceptionName shape => simp [fpermDecsHOL, functionsHOL, ih]
+      | name struct fields => simp [fpermDecsHOL, functionsHOL, ih]
 
 /-! Source-shaped port (Flapjack-specific; NOT an exact HOL port) of Cake's `ALL_DISTINCT_fperm_decs`
     (`cakeml/pancake/proofs/pan_globalsProofScript.sml:1711`): renaming

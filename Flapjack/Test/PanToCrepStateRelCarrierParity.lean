@@ -1,5 +1,6 @@
 import Flapjack.Pancake.PanLang.Decl
 import Flapjack.Pancake.Semantics.CrepSem.HOLState
+import Flapjack.Pancake.CrepLang.Exp
 import Flapjack.Pancake.Semantics.PanSem.ValueHOL
 import Flapjack.Pancake.Proofs.PanToCrep.StateRelFiniteSupport
 import Flapjack.Pancake.Proofs.PanToCrep.CompileExpValRel
@@ -69,6 +70,178 @@ private def nonemptyGlobalLookupOracleCase : Bool :=
 
 private def emptyGlobalLookupOracleCase : Bool :=
   (exactEmptyGlobalMap.lookup (ml "global")).isNone
+
+/-! Integrated exact-carrier regression for the general Load case at the common
+    HOL input `Load One (Const 3w)` with memory cell `Word 3w` and domain
+    `{3w}`. The source result is the `one_load_one` row in
+    `pan_mem_load_probe.out`; the exact compiled expression is `load_one` in
+    `compile_exp_probe.out`; `load_shape`'s `load_one` row produces that same
+    `Load (Const 3w)`; and the two added `*_one_load_one` rows in
+    `crep_eval_load_rv64_probe.out` pin its target memory and expression
+    evaluation. This fixture uses matching 64-bit exact HOL word carriers and
+    one concrete source/target state pair, then checks all four conclusions of
+    `compileExpValRelHOL_load`, including target evaluation. -/
+
+private def loadCaseAddress : BitVec 64 := BitVec.ofNat 64 3
+
+private def loadCaseMemory (address : BitVec 64) : HolWordLab 64 :=
+  if address = loadCaseAddress then .word loadCaseAddress else .word 0
+
+private def loadCaseDomain (address : BitVec 64) : Prop := address = loadCaseAddress
+
+private def loadCaseFfi : HolFfiState Unit :=
+  { oracle := fun _ state _ _ => .ret state []
+    ffiState := ()
+    ioEvents := [] }
+
+private def loadCaseSource : PanSemStateFiniteExact 64 Unit where
+  locals := HolFiniteMapExact.empty
+  globals := HolFiniteMapExact.empty
+  structs := []
+  code := HolFiniteMapExact.empty
+  eshapes := HolFiniteMapExact.empty
+  memory := loadCaseMemory
+  memaddrs := loadCaseDomain
+  shMemaddrs := fun _ => False
+  clock := 0
+  be := false
+  ffi := loadCaseFfi
+  baseAddr := 0
+  topAddr := 0
+
+private def loadCaseTarget : CrepSemHOLState 64 Unit where
+  locals := HolFiniteMapExact.empty
+  globals := HolFiniteMapExact.empty
+  code := HolFiniteMapExact.empty
+  memory := loadCaseMemory
+  memaddrs := loadCaseDomain
+  shMemaddrs := fun _ => False
+  clock := 0
+  be := false
+  ffi := loadCaseFfi
+  baseAddr := 0
+  topAddr := 0
+
+private def loadCaseContext : PanToCrepContextExact 64 where
+  vars := HolFiniteMapExact.empty
+  funcs := HolFiniteMapExact.empty
+  eids := HolFiniteMapExact.empty
+  vmax := 0
+
+local instance : DecidablePred loadCaseSource.memaddrs := by
+  intro address
+  change Decidable (address = loadCaseAddress)
+  infer_instance
+
+local instance : DecidablePred loadCaseDomain := by
+  intro address
+  change Decidable (address = loadCaseAddress)
+  infer_instance
+
+local instance : DecidablePred loadCaseTarget.memaddrs := by
+  intro address
+  change Decidable (address = loadCaseAddress)
+  infer_instance
+
+private theorem loadCaseStateRel :
+    panToCrepStateRelFiniteExact loadCaseSource loadCaseTarget := by
+  exact ⟨rfl, rfl, rfl, rfl, by funext key; rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+private theorem loadCaseCodeRel :
+    codeRelExactHOLW loadCaseContext loadCaseSource.code loadCaseTarget.code := by
+  intro function variableShapes program returnShape hlookup
+  simp [loadCaseSource, HolFiniteMapExact.empty] at hlookup
+
+private theorem loadCaseLocalsRel :
+    panToCrepLocalsRelFiniteExact loadCaseContext loadCaseSource.locals
+      loadCaseTarget.locals := by
+  simp [panToCrepLocalsRelFiniteExact, noOverlapFiniteExact,
+    ctxtMaxFiniteExact, loadCaseSource, loadCaseContext, HolFiniteMapExact.empty]
+
+private theorem loadCaseAddressIH :
+    ∀ (subValue : ValueHOL 64) (subExpressions : List (CrepExpHOL 64))
+        (subShape : ShapeHOL),
+      loadCaseSource.evalHOLFinite (ExpHOL.const loadCaseAddress) = some subValue →
+      panToCrepStateRelFiniteExact loadCaseSource loadCaseTarget →
+      codeRelExactHOLW loadCaseContext loadCaseSource.code loadCaseTarget.code →
+      panToCrepLocalsRelFiniteExact loadCaseContext loadCaseSource.locals
+        loadCaseTarget.locals →
+      localisedExpHOL (ExpHOL.const loadCaseAddress) = true →
+      compileExpExactHOLW loadCaseContext (ExpHOL.const loadCaseAddress) =
+        (subExpressions, subShape) →
+      subExpressions.map (evalCrepSemHOLExp loadCaseTarget) =
+          (flattenHOL subValue).map some ∧
+        subExpressions.length = sizeOfShapeHOL subShape ∧
+        shapeOfHOLExact subValue = subShape ∧
+        isWfShapeExactHOL ([] : StructContextExact) subShape = true := by
+  intro subValue subExpressions subShape heval _hstate _hcode _hlocals _hlocalized hcompile
+  exact compileExpValRelHOL_const loadCaseSource loadCaseContext loadCaseTarget
+    loadCaseAddress subValue subExpressions subShape heval hcompile
+
+private theorem loadCaseAllConclusions :
+    ([CrepExpHOL.load (.const loadCaseAddress)].map
+        (evalCrepSemHOLExp loadCaseTarget)) =
+        (flattenHOL (ValueHOL.val (.word loadCaseAddress))).map some ∧
+      ([CrepExpHOL.load (.const loadCaseAddress)] : List (CrepExpHOL 64)).length =
+        sizeOfShapeHOL ShapeHOL.one ∧
+      shapeOfHOLExact (ValueHOL.val (.word loadCaseAddress)) = ShapeHOL.one ∧
+      isWfShapeExactHOL ([] : StructContextExact) ShapeHOL.one = true := by
+  have heval : loadCaseSource.evalHOLFinite
+      (.load ShapeHOL.one (.const loadCaseAddress)) =
+        some (ValueHOL.val (.word loadCaseAddress)) := by
+    rw [PanSemStateFiniteExact.evalHOLFinite_load]
+    rw [PanSemStateFiniteExact.evalHOLFinite_const]
+    simp only [isWfShapeExactHOL]
+    change memLoadHOLExact ShapeHOL.one loadCaseAddress loadCaseDomain
+      loadCaseMemory [] = some (ValueHOL.val (.word loadCaseAddress))
+    unfold Flapjack.memLoadHOLExact
+    simp [loadCaseDomain, loadCaseMemory, loadCaseAddress]
+  have hlocalized : localisedExpHOL (.load ShapeHOL.one
+      (.const loadCaseAddress)) = true := by
+    rfl
+  have hcompile : compileExpExactHOLW loadCaseContext
+      (.load ShapeHOL.one (.const loadCaseAddress)) =
+        ([CrepExpHOL.load (.const loadCaseAddress)], ShapeHOL.one) := by
+    simp [compileExpExactHOLW, loadCaseContext, loadShapeBytesHOLW]
+  have result := compileExpValRelHOL_load loadCaseSource loadCaseContext loadCaseTarget
+    ShapeHOL.one (.const loadCaseAddress) (ValueHOL.val (.word loadCaseAddress))
+    [CrepExpHOL.load (.const loadCaseAddress)] ShapeHOL.one loadCaseAddressIH
+    heval hlocalized loadCaseStateRel loadCaseCodeRel loadCaseLocalsRel hcompile
+  exact result
+
+private def loadCaseHolOracleGuard : Bool :=
+  (match compileExpExactHOLW loadCaseContext
+      (.load ShapeHOL.one (.const loadCaseAddress)) with
+    | ([.load (.const address)], .one) => address == loadCaseAddress
+    | _ => false) &&
+  (match memLoadHOLExact ShapeHOL.one loadCaseAddress loadCaseDomain
+      loadCaseMemory [] with
+    | some (.val (.word value)) => value == loadCaseAddress
+    | _ => false) &&
+  (match loadShapeBytesHOLW (0 : BitVec 64) 1 (.const loadCaseAddress) with
+    | [.load (.const address)] => address == loadCaseAddress
+    | _ => false) &&
+  memLoadCrepSemHOL loadCaseAddress loadCaseTarget ==
+    some (.word loadCaseAddress) &&
+  evalCrepSemHOLExp loadCaseTarget (.load (.const loadCaseAddress)) ==
+    some (.word loadCaseAddress)
+
+#guard loadCaseHolOracleGuard
+
+example : ([CrepExpHOL.load (.const loadCaseAddress)].map
+    (evalCrepSemHOLExp loadCaseTarget)) =
+      (flattenHOL (ValueHOL.val (.word loadCaseAddress))).map some :=
+  loadCaseAllConclusions.1
+
+example : ([CrepExpHOL.load (.const loadCaseAddress)] :
+    List (CrepExpHOL 64)).length = sizeOfShapeHOL ShapeHOL.one :=
+  loadCaseAllConclusions.2.1
+
+example : shapeOfHOLExact (ValueHOL.val (.word loadCaseAddress)) = ShapeHOL.one :=
+  loadCaseAllConclusions.2.2.1
+
+example : isWfShapeExactHOL ([] : StructContextExact) ShapeHOL.one = true :=
+  loadCaseAllConclusions.2.2.2
 
 /-- Kernel-checked row: the exact `state_rel_structs` projection applies to any
     related exact carrier pair, returning the empty source struct context. -/
@@ -371,6 +544,32 @@ private theorem lookupCtxtExactFixture :
   · rw [hslots] at hmap
     exact hmap
 
+/-- Kernel-checked row: the exact `ctxt_max_el_leq` port applies to any exact
+    context satisfying `ctxtMaxFiniteExact`; the selected in-range slot is
+    bounded by `vmax`. -/
+example {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width) (name : MlS) (shape : ShapeHOL)
+    (slots : List Nat) (n : Nat)
+    (hmax : ctxtMaxFiniteExact context.vmax context.vars)
+    (hlookup : context.vars.lookup name = some (shape, slots))
+    (hindex : n < slots.length) :
+    slots[n] ≤ context.vmax :=
+  ctxtMaxElLeqFiniteExact context name shape slots n hmax hlookup hindex
+
+/-- Concrete exact-carrier instance: the one-slot `lookupCtxtContext` fixture
+    (`vars` maps `x` to `(One, [0])`, `vmax = 0`) bounds its selected slot. -/
+private theorem ctxtMaxElLeqFixture :
+    ([0] : List Nat)[0]'(by simp) ≤ lookupCtxtContext.vmax := by
+  have hmax : ctxtMaxFiniteExact lookupCtxtContext.vmax lookupCtxtContext.vars :=
+    lookupCtxtLocalsRel.2.1
+  have hlookup : lookupCtxtContext.vars.lookup lookupCtxtName =
+      some (ShapeHOL.one, [0]) := by
+    change lookupCtxtVars.lookup lookupCtxtName = some (ShapeHOL.one, [0])
+    rw [lookupCtxtVars_lookup]
+    simp
+  exact ctxtMaxElLeqFiniteExact lookupCtxtContext lookupCtxtName ShapeHOL.one
+    [0] 0 hmax hlookup (by simp)
+
 private def lookupCtxtGuard : Bool :=
   (match lookupCtxtContext.vars.lookup lookupCtxtName with
    | some (.one, [0]) => true
@@ -378,6 +577,11 @@ private def lookupCtxtGuard : Bool :=
     (match flattenHOL lookupCtxtValue with
      | [.word value] => value == (5 : BitVec 8)
      | _ => false)
+
+private def ctxtMaxElLeqGuard : Bool :=
+  match lookupCtxtContext.vars.lookup lookupCtxtName with
+  | some (.one, [slot]) => decide (slot ≤ lookupCtxtContext.vmax)
+  | _ => false
 
 /-! Exact `compile_exp_val_rel` `Var Local` case
     (`pan_to_crepProofScript.sml:151-165`). The kernel-checked application below
@@ -719,6 +923,85 @@ example {width : Nat} [NeZero width]
   (compileExpValRelHOL_shift state context targetState operator left right value expressions shape
     hleft hright heval hlocalised hstate hcode hlocals hcompile).2.2.1
 
+/-- Kernel regression for `cexpHeads_compileExpListValRelHOL`: under the HOL
+    premises it yields the heads/evaluation correspondence. -/
+example {width : Nat} [NeZero width]
+    (state : PanSemStateFiniteExact width Unit) [_hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width Unit) [ht : DecidablePred targetState.memaddrs]
+    (fields : List (ExpHOL width)) (values : List (ValueHOL width))
+    (compiled : List (List (CrepExpHOL width) × ShapeHOL))
+    (hrel : ∀ (expression : ExpHOL width), expression ∈ fields →
+        (value : ValueHOL width) → (expressions : List (CrepExpHOL width)) →
+        (shape : ShapeHOL) →
+        state.evalHOLFinite expression = some value →
+        localisedExpHOL expression = true →
+        compileExpExactHOLW context expression = (expressions, shape) →
+        expressions.map (evalCrepSemHOLExp targetState) = (flattenHOL value).map some ∧
+        expressions.length = sizeOfShapeHOL shape ∧
+        shapeOfHOLExact value = shape ∧
+        isWfShapeExactHOL ([] : StructContextExact) shape = true)
+    (heval : state.evalListHOLFinite fields = some values)
+    (hlocalised : everyExpListHOL (width := width) localisedExpPredHOL fields = true)
+    (hall : values.all valueIsWord = true)
+    (hcompile : compileExpExactHOLWList context fields = compiled) :
+    ∃ heads : List (CrepExpHOL width),
+      cexpHeads (compiled.map Prod.fst) = some heads ∧
+      heads.mapM (evalCrepSemHOLExp targetState) =
+        some (values.map (fun value => HolWordLab.word (valueWord value))) :=
+  cexpHeads_compileExpListValRelHOL state context targetState fields hrel values compiled
+    heval hlocalised hall hcompile
+
+/-- Kernel regression for the `Op` case `compileExpValRelHOL_op`. -/
+example {width : Nat} [NeZero width]
+    (state : PanSemStateFiniteExact width Unit) [_hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width Unit) [_ht : DecidablePred targetState.memaddrs]
+    (operator : BinOp) (arguments : List (ExpHOL width))
+    (value : ValueHOL width)
+    (expressions : List (CrepExpHOL width)) (shape : ShapeHOL)
+    (hrel : ∀ (expression : ExpHOL width), expression ∈ arguments →
+        (value : ValueHOL width) → (expressions : List (CrepExpHOL width)) →
+        (shape : ShapeHOL) →
+        state.evalHOLFinite expression = some value →
+        localisedExpHOL expression = true →
+        compileExpExactHOLW context expression = (expressions, shape) →
+        expressions.map (evalCrepSemHOLExp targetState) = (flattenHOL value).map some ∧
+        expressions.length = sizeOfShapeHOL shape ∧
+        shapeOfHOLExact value = shape ∧
+        isWfShapeExactHOL ([] : StructContextExact) shape = true)
+    (heval : state.evalHOLFinite (.op operator arguments) = some value)
+    (hlocalised : localisedExpHOL (.op operator arguments) = true)
+    (hcompile : compileExpExactHOLW context (.op operator arguments) = (expressions, shape)) :
+    shapeOfHOLExact value = shape :=
+  (compileExpValRelHOL_op state context targetState operator arguments value expressions shape
+    hrel heval hlocalised hcompile).2.2.1
+
+/-- Kernel regression for the `Panop` case `compileExpValRelHOL_panop`. -/
+example {width : Nat} [NeZero width]
+    (state : PanSemStateFiniteExact width Unit) [_hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width Unit) [_ht : DecidablePred targetState.memaddrs]
+    (operator : PanOp) (arguments : List (ExpHOL width))
+    (value : ValueHOL width)
+    (expressions : List (CrepExpHOL width)) (shape : ShapeHOL)
+    (hrel : ∀ (expression : ExpHOL width), expression ∈ arguments →
+        (value : ValueHOL width) → (expressions : List (CrepExpHOL width)) →
+        (shape : ShapeHOL) →
+        state.evalHOLFinite expression = some value →
+        localisedExpHOL expression = true →
+        compileExpExactHOLW context expression = (expressions, shape) →
+        expressions.map (evalCrepSemHOLExp targetState) = (flattenHOL value).map some ∧
+        expressions.length = sizeOfShapeHOL shape ∧
+        shapeOfHOLExact value = shape ∧
+        isWfShapeExactHOL ([] : StructContextExact) shape = true)
+    (heval : state.evalHOLFinite (.panop operator arguments) = some value)
+    (hlocalised : localisedExpHOL (.panop operator arguments) = true)
+    (hcompile : compileExpExactHOLW context (.panop operator arguments) = (expressions, shape)) :
+    shapeOfHOLExact value = shape :=
+  (compileExpValRelHOL_panop state context targetState operator arguments value expressions shape
+    hrel heval hlocalised hcompile).2.2.1
+
 def runChecks : IO Bool := do
   let checks := [
     ("HOL state_rel matching empty carrier fields", matchingFieldsOracleCase),
@@ -733,7 +1016,10 @@ def runChecks : IO Bool := do
     ("HOL slc_def exact varname->value finite map", slcHOLGuard),
     ("HOL slc_tlc_rw exact finite-map rewrite", slcTlcRwHOLGuard),
     ("HOL locals_rel_lookup_ctxt exact slot, flattened value, and shape",
-      lookupCtxtGuard)]
+      lookupCtxtGuard),
+    ("HOL ctxt_max_el_leq exact selected slot within vmax", ctxtMaxElLeqGuard),
+    ("HOL compile_exp_val_rel Load case four conclusions on exact carriers",
+      loadCaseHolOracleGuard)]
   for (name, passed) in checks do
     IO.println s!"{if passed then "PASS" else "FAIL"} {name}"
   pure (checks.all Prod.snd)

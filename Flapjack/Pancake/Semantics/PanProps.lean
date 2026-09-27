@@ -2356,4 +2356,104 @@ theorem functionsHOL_eq_FILTER {width : Nat} [NeZero width]
       | exnDecl eid sh => simp [functionsHOL, isFunctionHOL, ih]
       | name nm flds => simp [functionsHOL, isFunctionHOL, ih]
 
+
+/-- Flapjack-specific infrastructure: under the empty structure context, a
+    successful exact `memLoadHOLExact` has `flattenHOL`-length equal to the
+    context-indexed shape size.  This is the size-agreement crux used to
+    render the HOL `crepPropsScript.sml` `mem_load_flat_rel`/`mem_loads_flat_rel`
+    address arithmetic (`size_of_sh_with_ctxt`) over exact carriers. -/
+theorem memLoadHOLExact_length_flatten_context {width : Nat} [NeZero width]
+    (domain : BitVec width → Prop) [DecidablePred domain]
+    (memory : BitVec width → HolWordLab width) :
+    (∀ (shape : Flapjack.Pancake.PanLang.ShapeHOL) (address : BitVec width)
+        (context : StructContextHOLM),
+        Flapjack.Pancake.PanLang.isWfShapeExactHOL
+            ([] : Flapjack.Pancake.PanLang.StructContextExact) shape = true →
+        ∀ value, memLoadHOLExact shape address domain memory context = some value →
+          (flattenHOL value).length =
+            Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL context shape) := by
+  apply memLoadHOLExact.induct (domain := domain) (memory := memory)
+    (motive1 := fun shape address context =>
+      Flapjack.Pancake.PanLang.isWfShapeExactHOL
+          ([] : Flapjack.Pancake.PanLang.StructContextExact) shape = true →
+      ∀ value, memLoadHOLExact shape address domain memory context = some value →
+        (flattenHOL value).length =
+          Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL context shape)
+    (motive2 := fun _ _ _ => True)
+    (motive3 := fun shapes address context =>
+      Flapjack.Pancake.PanLang.isWfShapesExactHOL
+          ([] : Flapjack.Pancake.PanLang.StructContextExact) shapes = true →
+      ∀ values, memLoadsHOLExact shapes address domain memory context = some values →
+        (values.map flattenHOL).flatten.length =
+          Flapjack.Pancake.PanLang.sizeOfShapesWithContextHOL context shapes)
+  · intro address context hdom _hwf value hload
+    rw [memLoadHOLExact.eq_1, if_pos hdom] at hload
+    simp only [Option.some.injEq] at hload
+    subst hload
+    simp [flattenHOL, Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL]
+  · intro address context hndom _hwf value hload
+    rw [memLoadHOLExact.eq_1, if_neg hndom] at hload
+    simp at hload
+  · intro address context shapes values hloads ih3 hwf value hload
+    rw [memLoadHOLExact.eq_2, hloads] at hload
+    simp only [Option.some.injEq] at hload
+    subst hload
+    have hwf' : Flapjack.Pancake.PanLang.isWfShapesExactHOL
+        ([] : Flapjack.Pancake.PanLang.StructContextExact) shapes = true := by
+      simpa only [Flapjack.Pancake.PanLang.isWfShapeExactHOL_comb] using hwf
+    have hih := ih3 hwf' values hloads
+    simpa only [flattenHOL, Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL_comb] using hih
+  · intro address context shapes hloads ih3 hwf value hload
+    rw [memLoadHOLExact.eq_2, hloads] at hload
+    simp at hload
+  · intro address name hwf value hload
+    rw [memLoadHOLExact.eq_3] at hload
+    simp at hload
+  · intro address candidate info rest fields hflds ih2 hwf value hload
+    rw [memLoadHOLExact.eq_4, if_pos rfl, hflds] at hload
+    simp only [Option.some.injEq] at hload
+    subst hload
+    simp only [Flapjack.Pancake.PanLang.isWfShapeExactHOL] at hwf
+    simp at hwf
+  · intro address candidate info rest hflds ih2 hwf value hload
+    rw [memLoadHOLExact.eq_4, if_pos rfl, hflds] at hload
+    simp at hload
+  · intro address name candidate info rest hne ih1 hwf value hload
+    rw [memLoadHOLExact.eq_4, if_neg hne] at hload
+    have hsize : Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL
+        ((candidate, info) :: rest) (.named name) =
+        Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL rest (.named name) := by
+      simp only [Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL,
+        Flapjack.Pancake.PanLang.structContextLookupHOL_cons,
+        if_neg (fun h : name = candidate => hne h.symm)]
+    rw [hsize]
+    exact ih1 hwf value hload
+  · intros; trivial
+  · intros; trivial
+  · intros; trivial
+  · intro address context hwf values hload
+    rw [memLoadsHOLExact.eq_1] at hload
+    simp only [Option.some.injEq] at hload
+    subst hload
+    simp [Flapjack.Pancake.PanLang.sizeOfShapesWithContextHOL]
+  · intro address context shape rest value values hloads hload ih1 ih3 hwf vs h
+    rw [memLoadsHOLExact.eq_2, hload, hloads] at h
+    simp only [Option.some.injEq] at h
+    subst h
+    have hwf' : Flapjack.Pancake.PanLang.isWfShapeExactHOL
+          ([] : Flapjack.Pancake.PanLang.StructContextExact) shape = true ∧
+        Flapjack.Pancake.PanLang.isWfShapesExactHOL
+          ([] : Flapjack.Pancake.PanLang.StructContextExact) rest = true := by
+      simpa only [Flapjack.Pancake.PanLang.isWfShapesExactHOL_cons, Bool.and_eq_true] using hwf
+    have h1 := ih1 hwf'.1 value hload
+    have h2 := ih3 hwf'.2 values hloads
+    simp only [List.map_cons, List.flatten_cons, List.length_append,
+      Flapjack.Pancake.PanLang.sizeOfShapesWithContextHOL_cons, h1, h2]
+  · intro address context shape rest hcontr ih1 ih3 hwf vs h
+    rw [memLoadsHOLExact.eq_2] at h
+    split at h
+    · rename_i value values hload hloads
+      exact (hcontr value values hload hloads).elim
+    · simp at h
+
 end Flapjack

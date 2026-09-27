@@ -65,6 +65,27 @@ WORD_POSITIVITY_EXTRA_RE = re.compile(
 FFI_UNIVERSE_LEVEL_RE = re.compile(r":\s*Type\s+[A-Za-z_][A-Za-z0-9_']*\b")
 FFI_SORT_RE = re.compile(r":\s*Sort\b")
 HOL_FFI_CARRIER_RE = re.compile(r"\bHolFfiState\b")
+# Reviewed word abbreviations that denote a fixed-width `BitVec width` at the
+# same width identifier (for example `RiscV.Word width`).  A carrier field typed
+# through one of these is the standard translation of HOL `'a word` just like a
+# literal `BitVec width` field.
+WORD_CARRIER_ABBREV_NAMES = ("RiscV.Word",)
+
+
+def field_mentions_word_carrier(type_text: str, width_name: str) -> bool:
+    """Whether a field type denotes a word carrier at `width_name`.
+
+    Accepts a literal `BitVec width_name` or a reviewed word abbreviation such
+    as `RiscV.Word width_name`; both translate HOL's type-indexed `'a word`.
+    """
+    if re.search(r"\bBitVec\s+" + re.escape(width_name) + r"\b", type_text):
+        return True
+    for abbrev in WORD_CARRIER_ABBREV_NAMES:
+        if re.search(
+            re.escape(abbrev) + r"\s+" + re.escape(width_name) + r"\b", type_text
+        ):
+            return True
+    return False
 RELATION_FIELD_RE = re.compile(
     r'^\s*([A-Za-z_][A-Za-z0-9_\']*)\s*\.\s*([A-Za-z_][A-Za-z0-9_\']*)\s*$'
 )
@@ -93,6 +114,14 @@ def module_name(path: Path) -> str:
 
 def module_path(module: str) -> Path:
     return ROOT / (module.replace(".", "/") + ".lean")
+
+
+def module_source_file(module: str, root: str | Path) -> Path:
+    """Resolve a dotted module name or repo-relative Lean path under a root."""
+    module_path = Path(module)
+    if module_path.suffix == ".lean" or "/" in module:
+        return Path(root) / module_path
+    return Path(root) / (module.replace(".", "/") + ".lean")
 
 
 def reachable_modules(root: str = "Flapjack") -> set[str]:
@@ -364,14 +393,14 @@ def structure_headers(lines: list[str]) -> dict[str, str]:
 
 @lru_cache(maxsize=None)
 def imported_structure_headers(module: str, root: str) -> dict[str, list[str]]:
-    """Header binders of structures reachable through this module's imports.
+    """Header binders of structures reachable through this dotted module name.
 
     Mirrors `imported_structure_field_types` so the word-dimension qualifier can
     read an imported carrier's `[NeZero width]` discharge from its actual
     declaration rather than from a same-named local duplicate.
     """
     root_path = Path(root)
-    current = root_path / module
+    current = module_source_file(module, root_path)
     if not current.is_file():
         return {}
     pending = list(IMPORT_RE.findall(current.read_text(encoding="utf-8")))
@@ -396,7 +425,9 @@ def imported_structure_headers(module: str, root: str) -> dict[str, list[str]]:
 def imported_structure_owners(
     module: str, root: str
 ) -> dict[str, list[tuple[str, str, dict[str, str]]]]:
-    """Per-owner declarations of imported structures: name -> [(module, header, fields)].
+    """Per-owner declarations of imported structures for a dotted module name.
+
+    The result is name -> [(module, header, fields)].
 
     The word-dimension qualifier must bind each candidate carrier to its own
     module, header, and field set.  Pooling headers and field types across
@@ -405,7 +436,7 @@ def imported_structure_owners(
     the evidence is grouped per declaration here instead.
     """
     root_path = Path(root)
-    current = root_path / module
+    current = module_source_file(module, root_path)
     if not current.is_file():
         return {}
     pending = list(IMPORT_RE.findall(current.read_text(encoding="utf-8")))
@@ -443,7 +474,7 @@ def imported_structure_field_types(
     duplicate.
     """
     root_path = Path(root)
-    current = root_path / module
+    current = module_source_file(module, root_path)
     if not current.is_file():
         return {}
     pending = list(IMPORT_RE.findall(current.read_text(encoding="utf-8")))
@@ -1505,13 +1536,10 @@ def words_as_type_indexed_bitvec_errors(
         r"[\{\(]\s*([A-Za-z_][A-Za-z0-9_']*)\s*:\s*Nat\s*[\}\)]", signature
     )
     has_direct_bitvec = False
-    if "BitVec" in signature and direct_width_match is not None:
+    if direct_width_match is not None:
         direct_width = direct_width_match.group(1)
         has_direct_bitvec = (
-            re.search(
-                r"\bBitVec\s+" + re.escape(direct_width) + r"\b", signature
-            )
-            is not None
+            field_mentions_word_carrier(signature, direct_width)
             and re.search(
                 r"\[\s*NeZero\s+" + re.escape(direct_width) + r"\s*\]", signature
             )
@@ -1554,11 +1582,8 @@ def words_as_type_indexed_bitvec_errors(
                 if width_match is None:
                     continue
                 width_name = width_match.group(1)
-                bitvec_width_re = re.compile(
-                    r"\bBitVec\s+" + re.escape(width_name) + r"\b"
-                )
                 has_bitvec_field = any(
-                    bitvec_width_re.search(type_text) is not None
+                    field_mentions_word_carrier(type_text, width_name)
                     for type_text in fields.values()
                 )
                 nezero_width_re = re.compile(

@@ -48,6 +48,36 @@ def noOverlapFiniteExact {κ β : Type}
       map.lookup key' = some (shape', slots') →
       (∃ slot, slot ∈ slots ∧ slot ∈ slots') → key = key'
 
+/-- Exact port of HOL `no_overlap_wrap_rt_some_all_distinct`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:2461-2467`):
+    `no_overlap fm /\ wrap_rt (FLOOKUP fm r) = SOME (vsh,ns) ==> ALL_DISTINCT ns`.
+    HOL `no_overlap` becomes the exact-map renderer `noOverlapFiniteExact`,
+    `FLOOKUP fm r` becomes `fm.lookup r`, `wrap_rt` becomes the tagged
+    `wrapRtHOL`, and `ALL_DISTINCT ns` becomes `ns.Nodup`. The key type is HOL's
+    polymorphic `'a` and the payload is the exact `ShapeHOL × List Nat`. The
+    qualifier records the single bare finite-map parameter `fm`, whose reviewed
+    canonical carrier is `HolFiniteMapExact`; the only representation difference
+    is that finite-map carrier. The theorem is a symbolic normalization lemma
+    (`wrap_rt` only drops the `(One,[])` slot), so no direct HOL-EVAL oracle row
+    exists; the existing `wrap_rt` probe rows in
+    `scripts/hol-probes/wrap_rt_probe.out` cover the definition only. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "no_overlap_wrap_rt_some_all_distinct"
+  (fmap_as_finite_support_relation := [fm])]
+theorem noOverlapWrapRtSomeAllDistinctFiniteExact {κ : Type}
+    (fm : HolFiniteMapExact κ (ShapeHOL × List Nat)) (r : κ)
+    (vsh : ShapeHOL) (ns : List Nat)
+    (hno : noOverlapFiniteExact fm)
+    (hwrap : wrapRtHOL (fm.lookup r) = some (vsh, ns)) :
+    ns.Nodup := by
+  cases hlookup : fm.lookup r with
+  | none => simp [wrapRtHOL, hlookup] at hwrap
+  | some entry =>
+      rcases entry with ⟨entryShape, entrySlots⟩
+      have hnodup : entrySlots.Nodup := hno.1 r entryShape entrySlots hlookup
+      cases entryShape <;> cases entrySlots <;>
+        simp [wrapRtHOL, hlookup] at hwrap <;>
+        rcases hwrap with ⟨_, hslots⟩ <;> simpa [← hslots] using hnodup
+
 /-- Same-module canonical relation witness for the multi-carrier
     `fmap_as_finite_support_relation` qualifier. It forwards the canonical
     finite-support roundtrip of `PanSemStateFiniteExact`, the carrier owning the
@@ -250,6 +280,58 @@ theorem panToCrepLocalsRelLookupCtxtFiniteExact {width : Nat} [NeZero width]
       _ = (flattenHOL value).length := by rw [← hflatten]
   · rw [hmap, ← hflatten]
 
+namespace CtxtMaxElLeqExact
+
+/-- Canonical finite-map field witness for the imported exact context carrier
+    `PanToCrepContextExact`, required by the `fmap_as_finite_support` qualifier
+    on `ctxtMaxElLeqFiniteExact`. A fresh local namespace is used so the
+    declaration name does not clash with the imported
+    `PanToCrepContextExact.holFmapAsFiniteSupportWitness`; it forwards that
+    roundtrip. Flapjack-only representation infrastructure; it is not a port of
+    a HOL declaration. -/
+theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width) :
+    PanToCrepContextExact.ofBroad (PanToCrepContextExact.toBroad context) = context :=
+  PanToCrepContextExact.holFmapAsFiniteSupportWitness context
+
+end CtxtMaxElLeqExact
+
+/-- Exact port of HOL `ctxt_max_el_leq`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:1493-1503`):
+    `ctxt_max ctxt.vmax ctxt.vars /\
+      FLOOKUP ctxt.vars v = SOME (sh,ns) /\
+      n < LENGTH ns ==> EL n ns <= ctxt.vmax`.
+
+    The implicit HOL context `ctxt` is the Pan-to-Crep `context` record, whose
+    `vars` field is the exact `PanToCrepContextExact.vars` field named by the
+    `fmap_as_finite_support` qualifier (same-module witness
+    `CtxtMaxElLeqExact.holFmapAsFiniteSupportWitness`); `vmax` is `Nat` (HOL
+    `num`) and is not a finite-map field. HOL `ctxt_max` becomes the exact-carrier
+    rendering `ctxtMaxFiniteExact` (the same predicate already used by the
+    tagged `locals_rel_def`), HOL `FLOOKUP` becomes `.lookup`, `EL n ns` becomes
+    the bounded `getElem` `slots[n]`, and `LENGTH`/`<=` become
+    `List.length`/`≤`. The quantifiers, hypotheses, and conclusion keep HOL's
+    shape. The imported width-indexed carrier `PanToCrepContextExact width` has
+    `[NeZero width]` and `BitVec width` exception codes, so HOL's type-indexed
+    `'a word` translation is recorded by the `(words_as_type_indexed_bitvec)`
+    qualifier alongside the finite-support field qualifier. The proof is HOL's
+    `rw [ctxt_max_def]` followed by instantiating the bound at `EL n ns` and
+    using `EL_MEM`. No direct HOL-EVAL oracle row exists for this
+    symbolic-index lemma (the bound proof is needed to select the element), so
+    the kernel-checked instance in
+    `Flapjack/Test/PanToCrepStateRelCarrierParity.lean` replays it concretely. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "ctxt_max_el_leq" 1493
+  (fmap_as_finite_support := [vars])
+  (words_as_type_indexed_bitvec)]
+theorem ctxtMaxElLeqFiniteExact {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width) (v : MlS) (shape : ShapeHOL)
+    (slots : List Nat) (n : Nat)
+    (hmax : ctxtMaxFiniteExact context.vmax context.vars)
+    (hlookup : context.vars.lookup v = some (shape, slots))
+    (hindex : n < slots.length) :
+    slots[n] ≤ context.vmax :=
+  hmax.2 v shape slots hlookup slots[n] (List.getElem_mem hindex)
+
 /-- Exact port of HOL `state_rel_structs[local]`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:59-63`), the
     structural-context projection of `state_rel_def`. The relation qualifier
@@ -407,40 +489,40 @@ theorem panToCrepFiniteEvaluateShapeInvariantRetInst2 {width : Nat} {σ : Type}
     returnShape hstate hlocals hargsFinite hlookup
   let bodyEntry : PanSemStateFiniteExact width σ :=
     {source.decClockHOLFinite with locals := newlocals}
-  let resultSource := PanPropsShapeInvariantStateFiniteExact.ofPanSemFinite bodyEntry
-  let resultPost := PanPropsShapeInvariantStateFiniteExact.ofPanSemFinite postState
+  let resultSource := PanPropsEvalStateFiniteExact.ofPanSemFinite bodyEntry
+  let resultPost := PanPropsEvalStateFiniteExact.ofPanSemFinite postState
   have hsourceLocals : ∀ name value, resultSource.locals.lookup name = some value →
       isWfShapeValueHOLExact resultSource.structs value = true := by
     intro name value hvalue
     exact hentry.1 name value (by
-      simpa [bodyEntry, resultSource, PanPropsShapeInvariantStateFiniteExact.ofPanSemFinite,
-        PanPropsShapeInvariantStateFiniteExact.ofExact, PanSemStateFiniteExact.toExact,
+      simpa [bodyEntry, resultSource, PanPropsEvalStateFiniteExact.ofPanSemFinite,
+        PanPropsEvalStateFiniteExact.ofExact, PanSemStateFiniteExact.toExact,
         PanSemStateFiniteExact.decClockHOLFinite] using hvalue)
   have hsourceGlobals : ∀ name value, resultSource.globals.lookup name = some value →
       isWfShapeValueHOLExact resultSource.structs value = true := by
     intro name value hvalue
     exact hentry.2 name value (by
-      simpa [bodyEntry, resultSource, PanPropsShapeInvariantStateFiniteExact.ofPanSemFinite,
-        PanPropsShapeInvariantStateFiniteExact.ofExact, PanSemStateFiniteExact.toExact,
+      simpa [bodyEntry, resultSource, PanPropsEvalStateFiniteExact.ofPanSemFinite,
+        PanPropsEvalStateFiniteExact.ofExact, PanSemStateFiniteExact.toExact,
         PanSemStateFiniteExact.decClockHOLFinite] using hvalue)
   have hevalInvariant :
-      PanPropsShapeInvariantStateFiniteExact.evaluateHOLFinite resultSource program =
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair resultSource program =
         (some result, resultPost) := by
     have hmap := congrArg
       (fun output : Option (PanSemResultExact width) × PanSemStateFiniteExact width σ =>
-        (output.1, PanPropsShapeInvariantStateFiniteExact.ofPanSemFinite output.2)) hbody
-    simpa [PanPropsShapeInvariantStateFiniteExact.evaluateHOLFinite, resultSource,
+        (output.1, PanPropsEvalStateFiniteExact.ofPanSemFinite output.2)) hbody
+    simpa [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair, resultSource,
       resultPost, bodyEntry] using hmap
   have hinvariant := evaluateIsWfShapeInvariantFiniteExact program resultSource
     (some result) resultPost hevalInvariant hsourceLocals hsourceGlobals
   have hresultWf : Flapjack.panSemResultHOLWf resultSource.structs (some result) := by
-    simpa [resultSource, PanPropsShapeInvariantStateFiniteExact.ofPanSemFinite,
-      PanPropsShapeInvariantStateFiniteExact.ofExact, PanSemStateFiniteExact.toExact] using
+    simpa [resultSource, PanPropsEvalStateFiniteExact.ofPanSemFinite,
+      PanPropsEvalStateFiniteExact.ofExact, PanSemStateFiniteExact.toExact] using
       hinvariant.2.2
   have hsourceStructs : resultSource.structs = [] := by
     have hstructs := panToCrepStateRelFiniteExact_structs source target hstate
-    simpa [resultSource, bodyEntry, PanPropsShapeInvariantStateFiniteExact.ofPanSemFinite,
-      PanPropsShapeInvariantStateFiniteExact.ofExact, PanSemStateFiniteExact.toExact,
+    simpa [resultSource, bodyEntry, PanPropsEvalStateFiniteExact.ofPanSemFinite,
+      PanPropsEvalStateFiniteExact.ofExact, PanSemStateFiniteExact.toExact,
       PanSemStateFiniteExact.decClockHOLFinite] using hstructs
   cases result with
   | returned value =>
@@ -658,35 +740,35 @@ theorem panToCrepFiniteEvaluateShapeInvariantRetInst {width : Nat} {σ : Type}
         isWfShapeValueHOLExact [] value = true
     | _ => True := by
   classical
-  let resultSource := PanPropsShapeInvariantStateFiniteExact.ofPanSemFinite source
-  let resultPost := PanPropsShapeInvariantStateFiniteExact.ofPanSemFinite postState
+  let resultSource := PanPropsEvalStateFiniteExact.ofPanSemFinite source
+  let resultPost := PanPropsEvalStateFiniteExact.ofPanSemFinite postState
   have hinitial := panToCrepExactInitialShapeInvariant
     source target targetLocals.targetLocals relationContext hstate hlocals
   have hsourceLocals : ∀ name value, resultSource.locals.lookup name = some value →
       isWfShapeValueHOLExact resultSource.structs value = true := by
     intro name value hlookup
     exact hinitial.1 name value (by
-      simpa [resultSource, PanPropsShapeInvariantStateFiniteExact.ofPanSemFinite,
-        PanPropsShapeInvariantStateFiniteExact.ofExact, PanSemStateFiniteExact.toExact] using hlookup)
+      simpa [resultSource, PanPropsEvalStateFiniteExact.ofPanSemFinite,
+        PanPropsEvalStateFiniteExact.ofExact, PanSemStateFiniteExact.toExact] using hlookup)
   have hsourceGlobals : ∀ name value, resultSource.globals.lookup name = some value →
       isWfShapeValueHOLExact resultSource.structs value = true := by
     intro name value hlookup
     exact hinitial.2 name value (by
-      simpa [resultSource, PanPropsShapeInvariantStateFiniteExact.ofPanSemFinite,
-        PanPropsShapeInvariantStateFiniteExact.ofExact, PanSemStateFiniteExact.toExact] using hlookup)
+      simpa [resultSource, PanPropsEvalStateFiniteExact.ofPanSemFinite,
+        PanPropsEvalStateFiniteExact.ofExact, PanSemStateFiniteExact.toExact] using hlookup)
   have hevalInvariant :
-      PanPropsShapeInvariantStateFiniteExact.evaluateHOLFinite resultSource program =
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair resultSource program =
         (some result, resultPost) := by
     have hmap := congrArg
       (fun output : Option (PanSemResultExact width) × PanSemStateFiniteExact width σ =>
-        (output.1, PanPropsShapeInvariantStateFiniteExact.ofPanSemFinite output.2)) heval
-    simpa [PanPropsShapeInvariantStateFiniteExact.evaluateHOLFinite, resultSource,
+        (output.1, PanPropsEvalStateFiniteExact.ofPanSemFinite output.2)) heval
+    simpa [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair, resultSource,
       resultPost] using hmap
   have hinvariant := evaluateIsWfShapeInvariantFiniteExact program resultSource
     (some result) resultPost hevalInvariant hsourceLocals hsourceGlobals
   have hresultWf : Flapjack.panSemResultHOLWf source.structs (some result) := by
-    simpa [resultSource, PanPropsShapeInvariantStateFiniteExact.ofPanSemFinite,
-      PanPropsShapeInvariantStateFiniteExact.ofExact, PanSemStateFiniteExact.toExact] using
+    simpa [resultSource, PanPropsEvalStateFiniteExact.ofPanSemFinite,
+      PanPropsEvalStateFiniteExact.ofExact, PanSemStateFiniteExact.toExact] using
       hinvariant.2.2
   have hstructs := panToCrepStateRelFiniteExact_structs
     source target hstate

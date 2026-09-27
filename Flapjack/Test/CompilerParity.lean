@@ -7,6 +7,7 @@ import Flapjack.Test.PanMemoryParity
 import Flapjack.Test.PanShapeParity
 import Flapjack.Test.PanShapeVarsParity
 import Flapjack.Test.PanStructsCompileCorrect
+import Flapjack.Test.PanStructsResConvertParity
 import Flapjack.Test.PanStructsValueValidityParity
 import Flapjack.Test.PanPropsShapeOfWfParity
 import Flapjack.Test.PanPropsEveryExpParity
@@ -314,6 +315,7 @@ import Flapjack.Test.StackToLabFlattenAppParity
 import Flapjack.Test.AsmConfigChecksParity
 import Flapjack.Test.PanSemDecCallErrorParity
 import Flapjack.Test.PanObservationalSemanticsParity
+import Flapjack.Test.PanSemanticsObservationsParity
 import Flapjack.Test.ParserTryDefaultParity
 import Flapjack.Test.ParserExtractSumParity
 import Flapjack.Test.ParserMkleafParity
@@ -411,6 +413,7 @@ import Flapjack.Test.PanSemMemLoadExactParity
 import Flapjack.Test.PanSemEvaluateDeclsFiniteParity
 import Flapjack.Test.PanToCrepMakeVmapParity
 import Flapjack.Test.PanLangGeneratedSizeParity
+import Flapjack.Test.PanSimpProgBridgeParity
 
 /-!
 # Pancake/RISC-V compiler parity tests
@@ -1009,6 +1012,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.AsmConfigChecksParity.runChecks,
     Flapjack.Test.PanSemDecCallErrorParity.runChecks,
     Flapjack.Test.PanObservationalSemanticsParity.runChecks,
+    Flapjack.Test.PanSemanticsObservationsParity.runChecks,
     Flapjack.Test.PanHHandleCallRetParity.runChecks,
     Flapjack.Test.PanMrecParity.runChecks,
     Flapjack.Test.PanHProgDecParity.runChecks,
@@ -1083,6 +1087,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.PanSemEvaluateDeclsFiniteParity.runChecks,
     Flapjack.Test.PanToCrepMakeVmapParity.runChecks,
     Flapjack.Test.PanLangGeneratedSizeParity.runChecks,
+    Flapjack.Test.PanSimpProgBridgeParity.runChecks,
     Flapjack.Test.CrepSemTotalExtCallParity.runChecks
     ].mapM id
   unless results.all id do

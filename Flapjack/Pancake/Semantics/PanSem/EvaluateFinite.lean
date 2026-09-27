@@ -539,7 +539,7 @@ theorem evalPanSemRecursiveCallFiniteContext_decCall_clock_zero {width : Nat} {�
     (hclock : context.state.clock = 0) :
     evalPanSemRecursiveCallFiniteContext
         (.decCall resultName shape function arguments continuation) context =
-      some (some .timeOut, context.withState (emptyLocalsHOLFinite context.state) rfl rfl) := by
+      some (some .timeOut, FiniteEvalContext.emptyLocalsContextHOLFinite context) := by
   rw [evalPanSemRecursiveCallFiniteContext.eq_def]
   dsimp only
   rw [hargs]
@@ -698,6 +698,110 @@ theorem evalPanSemRecursiveCallFiniteContext_decCall_return_shape_mismatch
       simp [hreturn]
     rw [if_neg hshapeNe]
 
+/-- FLAPJACK-SPECIFIC context normalizer (no standalone HOL declaration): a
+    generated recursive-call context is interchangeable with the named
+    DecCall entry context once their state projections agree. The proof
+    arguments stored in the dependent address deciders are deliberately left
+    opaque; `evalPanSemRecursiveCallFiniteContext_state_eq` only needs state
+    equality. -/
+theorem evalPanSemRecursiveCallFiniteContext_callEntryContext_state_normalize
+    {width : Nat} {σ : Type} [NeZero width]
+    (program : ProgHOL width) (context generatedContext : FiniteEvalContext width σ)
+    (callee : HolFiniteMapExact MlS (ValueHOL width))
+    (hstate : generatedContext.state = callEntryStateHOLFinite context.state callee) :
+    evalPanSemRecursiveCallFiniteContext program generatedContext =
+      evalPanSemRecursiveCallFiniteContext program
+        (callEntryContextHOLFinite context callee) := by
+  apply evalPanSemRecursiveCallFiniteContext_state_eq
+  simpa [callEntryContextHOLFinite, FiniteEvalContext.withState] using hstate
+
+/-- FLAPJACK-SPECIFIC context case for HOL `evaluate_def`'s DecCall body
+    outcome (`panSemScript.sml:694-714`): after successful argument evaluation,
+    code lookup, and a nonzero caller clock, a callee outcome of `NONE` returns
+    `Error` with the clock-fixed callee post-state. The body premise is the
+    recursive-call induction hypothesis at the named entry context. This
+    helper uses `FiniteEvalContext`, whose auxiliary decider evidence is not a
+    HOL carrier, so it is not itself a tagged HOL theorem; the finite-state
+    equation remains part of `flapjack-qj5.12`. HOL line 780 is the rewritten
+    equation form; the explicitly clock-fixed result here follows the line-556
+    Definition. -/
+theorem evalPanSemRecursiveCallFiniteContext_decCall_body_none
+    {width : Nat} {σ : Type} [NeZero width]
+    (resultName : MlS) (shape : ShapeHOL) (function : MlS)
+    (arguments : List (ExpHOL width)) (continuation : ProgHOL width)
+    (context : FiniteEvalContext width σ) (values : List (ValueHOL width))
+    (body : ProgHOL width) (callee : HolFiniteMapExact MlS (ValueHOL width))
+    (returnShape : ShapeHOL) (bodyContext : FiniteEvalContext width σ)
+    (hargs : evalListHOLFinite context.state
+      (h := context.memaddrsDecidable) arguments = some values)
+    (hlookup : lookupCodeHOLFinite context.state.code.lookup function values =
+      some (body, callee, returnShape))
+    (hclock : context.state.clock ≠ 0)
+    (hbody : evalPanSemRecursiveCallFiniteContext body
+      (callEntryContextHOLFinite context callee) =
+      some (none, bodyContext)) :
+    evalPanSemRecursiveCallFiniteContext
+        (.decCall resultName shape function arguments continuation) context =
+      some (some .error,
+        callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)
+          none bodyContext) := by
+  have hbodyGenerated : evalPanSemRecursiveCallFiniteContext body
+      (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl) =
+      some (none, bodyContext) := by
+    calc
+      _ = evalPanSemRecursiveCallFiniteContext body
+          (callEntryContextHOLFinite context callee) := by
+        apply evalPanSemRecursiveCallFiniteContext_callEntryContext_state_normalize
+        rfl
+      _ = _ := hbody
+  rw [evalPanSemRecursiveCallFiniteContext.eq_6]
+  simp only [hargs]
+  rw [hlookup]
+  simp only [if_neg hclock, hbodyGenerated]
+
+/-- FLAPJACK-SPECIFIC proof wrapper (no standalone HOL declaration): the
+    DecCall body premise may be supplied at the canonical named entry context.
+    The recursive equation creates an extensionally identical `withState`
+    context with equation-compiler-generated domain proofs; evaluator
+    state-independence bridges those contexts without exposing or rewriting
+    their dependent proof arguments. This keeps the generated DecCall equation
+    and existing projection interface unchanged. -/
+theorem evalPanSemRecursiveCallFiniteContext_decCall_return_shape_mismatch_of_canonical_body
+    {width : Nat} {σ : Type} [NeZero width]
+    (resultName : MlS) (shape : ShapeHOL) (function : MlS)
+    (arguments : List (ExpHOL width)) (continuation : ProgHOL width)
+    (context : FiniteEvalContext width σ) (values : List (ValueHOL width))
+    (body : ProgHOL width) (callee : HolFiniteMapExact MlS (ValueHOL width))
+    (returnShape : ShapeHOL) (value : ValueHOL width)
+    (bodyContext : FiniteEvalContext width σ)
+    (hargs : evalListHOLFinite context.state
+      (h := context.memaddrsDecidable) arguments = some values)
+    (hlookup : lookupCodeHOLFinite context.state.code.lookup function values =
+      some (body, callee, returnShape))
+    (hclock : context.state.clock ≠ 0)
+    (hbody : evalPanSemRecursiveCallFiniteContext body
+      (callEntryContextHOLFinite context callee) =
+      some (some (.returned value), bodyContext))
+    (hshape : shapeEqHOL (shapeOfHOLExact value) shape = false ∨
+      shapeEqHOL (shapeOfHOLExact value) returnShape = false) :
+    evalPanSemRecursiveCallFiniteContext
+        (.decCall resultName shape function arguments continuation) context =
+      some (some .error,
+        callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)
+          (some (.returned value)) bodyContext) := by
+  have hbodyGenerated : evalPanSemRecursiveCallFiniteContext body
+      (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl) =
+      some (some (.returned value), bodyContext) := by
+    calc
+      _ = evalPanSemRecursiveCallFiniteContext body
+          (callEntryContextHOLFinite context callee) := by
+        apply evalPanSemRecursiveCallFiniteContext_callEntryContext_state_normalize
+        rfl
+      _ = _ := hbody
+  exact evalPanSemRecursiveCallFiniteContext_decCall_return_shape_mismatch
+    resultName shape function arguments continuation context values body callee
+    returnShape value bodyContext hargs hlookup hclock hbodyGenerated hshape
+
 /-- HOL `evaluate_def` `DecCall` return branch: when the body returns a value
     whose shape matches both the declaration and code entry, the continuation
     runs from `callContinuationContextHOLFinite` (caller locals plus the result
@@ -720,7 +824,7 @@ theorem evalPanSemRecursiveCallFiniteContext_decCall_return_continuation
       some (body, callee, returnShape))
     (hclock : context.state.clock ≠ 0)
     (hbody : evalPanSemRecursiveCallFiniteContext body
-      (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl) =
+      (callEntryContextHOLFinite context callee) =
       some (some (.returned value), bodyContext))
     (hshape : shapeEqHOL (shapeOfHOLExact value) shape = true ∧
       shapeEqHOL (shapeOfHOLExact value) returnShape = true)
@@ -736,10 +840,19 @@ theorem evalPanSemRecursiveCallFiniteContext_decCall_return_continuation
           { continuationPost.state with
             locals := HolFiniteMapExact.resVarEq continuationPost.state.locals
               (resultName, context.state.locals.lookup resultName) } rfl rfl) := by
+  have hbodyGenerated : evalPanSemRecursiveCallFiniteContext body
+      (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl) =
+      some (some (.returned value), bodyContext) := by
+    calc
+      _ = evalPanSemRecursiveCallFiniteContext body
+          (callEntryContextHOLFinite context callee) := by
+        apply evalPanSemRecursiveCallFiniteContext_callEntryContext_state_normalize
+        rfl
+      _ = _ := hbody
   rw [evalPanSemRecursiveCallFiniteContext.eq_6]
   simp only [hargs]
   rw [hlookup]
-  simp only [if_neg hclock, hbody]
+  simp only [if_neg hclock, hbodyGenerated]
   rw [if_pos (by simp [hshape])]
   rw [hcontinuation]
 
@@ -1432,14 +1545,13 @@ theorem evalPanSemRecursiveCallFiniteContext_decCall_projection {width : Nat} {�
         · have hclock' : context.toExact.state.clock = 0 := hclock
           rw [if_pos hclock, if_pos hclock']
           simp only [Option.map_some, Option.some.injEq]
-          have hb : (context.withState (emptyLocalsHOLFinite context.state) rfl rfl).toExact =
-              context.toExact.withState (emptyLocalsHOLExact context.state.toExact) rfl rfl := by
+          have hb : (FiniteEvalContext.emptyLocalsContextHOLFinite context).toExact =
+              PanSemExactEvalContext.emptyLocalsContextHOLExact context.toExact := by
             apply PanSemExactEvalContext.ext
-            change emptyLocalsHOLExact context.state.toExact =
-              (emptyLocalsHOLFinite context.state).toExact
+            change (emptyLocalsHOLFinite context.state).toExact =
+              emptyLocalsHOLExact context.state.toExact
             rw [toExact_emptyLocalsHOLFinite]
           rw [hb]
-          rfl
         · have hclock' : ¬(context.toExact.state.clock = 0) := hclock
           rw [if_neg hclock, if_neg hclock']
           generalize hent : context.withState
