@@ -58,6 +58,7 @@ import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
 import Flapjack.Pancake.Semantics.PanSem.EvaluateFinite
 import Flapjack.Pancake.Semantics.PanSem.AddClock
 import Flapjack.Pancake.Semantics.PanSem.PanObservationalSemantics
+import Flapjack.Pancake.Semantics.PanSem.EvaluateClock
 import Flapjack.Pancake.Semantics.PanSem.ShMemLoadCase
 import Flapjack.Pancake.Semantics.PanSem.ExtCallCase
 import Flapjack.Pancake.Semantics.PanSem.LocalUpdatesExact
