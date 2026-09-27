@@ -1505,6 +1505,21 @@ pair-shaped finite source evaluator. This is the single unconditional source
 the recursive callee-body evaluation rewritten away by line 780's
 `REWRITE_RULE [fix_clock_evaluate]` (via the finite `fixClockHOLFinite_evaluateState`).
 No extra premise. The full 21-clause assembly remains open under `flapjack-qj5.9`.
+
+Declaration review against `panSemScript.sml:657-693`: the equation preserves
+`OPT_MMAP` argument evaluation and `lookup_code`, the clock-zero timeout state,
+the callee post-state for invalid results, return-shape check, all call-info
+return branches, exception matching/shape/local-validity checks, handler
+evaluation, and empty-locals propagation. `ProgHOL.call` has the same nested
+option/tuple fields as HOL `Call`; its identifiers use faithful `MlS`
+(`MlString`, not Lean `String`) and occur only in map keys or equality tests
+here. The owner state `PanSemStateFiniteExact` carries the named four
+`HolFiniteMapExact` fields, while `ValueHOL` and `ProgHOL` use the reviewed
+positive-width `HolWordLab`/`ExpHOL` carriers. `shapeEqHOL = true` is proved
+equivalent to structural HOL shape equality by `shapeEqHOL_eq_true`. Thus the
+two tag qualifiers record only the finite-map and word-carrier translations;
+no additional premise, name representation, or output behavior difference is
+hidden by them.
 -/
 set_option maxHeartbeats 2000000 in
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
