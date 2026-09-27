@@ -466,7 +466,8 @@ of which leave the `clock` field unchanged. -/
     `set_var`, `empty_locals` and `set_globals` state updates do not change the
     clock component. The three conjuncts match HOL's `set_var`/`empty_locals`/
     `set_globals` clause order. -/
-@[hol "cakeml/pancake/semantics/crepSemScript.sml" "clock_eq_simp" (fmap_as_finite_support := [locals, globals, code])]
+@[hol "cakeml/pancake/semantics/crepSemScript.sml" "clock_eq_simp" (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
 theorem crepSemClockEqSimp {width : Nat} [NeZero width] {ffiState : Type}
     (name : Nat) (value : HolWordLab width) (key : BitVec 5)
     (state : CrepSemHOLState width ffiState) :
@@ -477,7 +478,8 @@ theorem crepSemClockEqSimp {width : Nat} [NeZero width] {ffiState : Type}
 
 /-- Exact port of HOL `sh_mem_load_clock` (`crepSemScript.sml:400-403`):
     `sh_mem_load v addr nb s = (r, s') ⇒ s'.clock = s.clock`. -/
-@[hol "cakeml/pancake/semantics/crepSemScript.sml" "sh_mem_load_clock" (fmap_as_finite_support := [locals, globals, code])]
+@[hol "cakeml/pancake/semantics/crepSemScript.sml" "sh_mem_load_clock" (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
 theorem crepShMemLoadClock {width : Nat} [NeZero width] {σ : Type}
     (name : Nat) (address : BitVec width) (nb : Nat)
     (state : CrepSemHOLState width σ) [DecidablePred state.shMemaddrs]
@@ -496,7 +498,8 @@ theorem crepShMemLoadClock {width : Nat} [NeZero width] {σ : Type}
 
 /-- Exact port of HOL `sh_mem_store_clock` (`crepSemScript.sml:406-409`):
     `sh_mem_store v addr nb s = (r, s') ⇒ s'.clock = s.clock`. -/
-@[hol "cakeml/pancake/semantics/crepSemScript.sml" "sh_mem_store_clock" (fmap_as_finite_support := [locals, globals, code])]
+@[hol "cakeml/pancake/semantics/crepSemScript.sml" "sh_mem_store_clock" (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
 theorem crepShMemStoreClock {width : Nat} [NeZero width] {σ : Type}
     (name : Nat) (address : BitVec width) (nb : Nat)
     (state : CrepSemHOLState width σ) [DecidablePred state.shMemaddrs]
@@ -516,7 +519,8 @@ theorem crepShMemStoreClock {width : Nat} [NeZero width] {σ : Type}
 /-- Exact port of HOL `sh_mem_op_clock` (`crepSemScript.sml:412-419`):
     `sh_mem_op op v addr s = (r, s') ⇒ s'.clock = s.clock`, by dispatching on
     the shared-memory operator to the tagged clock lemmas. -/
-@[hol "cakeml/pancake/semantics/crepSemScript.sml" "sh_mem_op_clock" (fmap_as_finite_support := [locals, globals, code])]
+@[hol "cakeml/pancake/semantics/crepSemScript.sml" "sh_mem_op_clock" (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
 theorem crepShMemOpClock {width : Nat} [NeZero width] {σ : Type}
     (operator : CrepMemOp) (name : Nat) (address : BitVec width)
     (state : CrepSemHOLState width σ) [DecidablePred state.shMemaddrs]
