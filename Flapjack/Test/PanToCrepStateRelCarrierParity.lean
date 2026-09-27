@@ -544,6 +544,181 @@ example {width : Nat} [NeZero width]
   (compileExpValRelHOL_nfield state context targetState name value' value expressions shape
     heval hstate hcompile).2.2.1
 
+/-- Kernel regression for the `RField` case `compileExpValRelHOL_rfield`
+    (HOL `pan_to_crepProofScript.sml:187-214`). -/
+example {width : Nat} [NeZero width]
+    (state : PanSemStateFiniteExact width Unit) [_hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width Unit) [_ht : DecidablePred targetState.memaddrs]
+    (index : Nat) (subExpression : ExpHOL width)
+    (value : ValueHOL width)
+    (expressions : List (CrepExpHOL width)) (shape : ShapeHOL)
+    (hsub : ∀ (subValue : ValueHOL width)
+        (subExpressions : List (CrepExpHOL width)) (subShape : ShapeHOL),
+        state.evalHOLFinite subExpression = some subValue →
+        panToCrepStateRelFiniteExact state targetState →
+        codeRelExactHOLW context state.code targetState.code →
+        panToCrepLocalsRelFiniteExact context state.locals targetState.locals →
+        localisedExpHOL subExpression = true →
+        compileExpExactHOLW context subExpression = (subExpressions, subShape) →
+        subExpressions.map (evalCrepSemHOLExp targetState) = (flattenHOL subValue).map some ∧
+        subExpressions.length = sizeOfShapeHOL subShape ∧
+        shapeOfHOLExact subValue = subShape ∧
+        isWfShapeExactHOL ([] : StructContextExact) subShape = true)
+    (heval : state.evalHOLFinite (.rfield index subExpression) = some value)
+    (hlocalised : localisedExpHOL (.rfield index subExpression) = true)
+    (hstate : panToCrepStateRelFiniteExact state targetState)
+    (hcode : codeRelExactHOLW context state.code targetState.code)
+    (hlocals : panToCrepLocalsRelFiniteExact context state.locals targetState.locals)
+    (hcompile : compileExpExactHOLW context (.rfield index subExpression) = (expressions, shape)) :
+    shapeOfHOLExact value = shape :=
+  (compileExpValRelHOL_rfield state context targetState index subExpression value expressions shape
+    hsub heval hlocalised hstate hcode hlocals hcompile).2.2.1
+
+/-- Kernel regression for the `Load32` case `compileExpValRelHOL_load32`. -/
+example {width : Nat} [NeZero width]
+    (state : PanSemStateFiniteExact width Unit) [_hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width Unit) [_ht : DecidablePred targetState.memaddrs]
+    (subExpression : ExpHOL width)
+    (value : ValueHOL width)
+    (expressions : List (CrepExpHOL width)) (shape : ShapeHOL)
+    (hsub : ∀ (subValue : ValueHOL width)
+        (subExpressions : List (CrepExpHOL width)) (subShape : ShapeHOL),
+        state.evalHOLFinite subExpression = some subValue →
+        panToCrepStateRelFiniteExact state targetState →
+        codeRelExactHOLW context state.code targetState.code →
+        panToCrepLocalsRelFiniteExact context state.locals targetState.locals →
+        localisedExpHOL subExpression = true →
+        compileExpExactHOLW context subExpression = (subExpressions, subShape) →
+        subExpressions.map (evalCrepSemHOLExp targetState) = (flattenHOL subValue).map some ∧
+        subExpressions.length = sizeOfShapeHOL subShape ∧
+        shapeOfHOLExact subValue = subShape ∧
+        isWfShapeExactHOL ([] : StructContextExact) subShape = true)
+    (heval : state.evalHOLFinite (.load32 subExpression) = some value)
+    (hlocalised : localisedExpHOL (.load32 subExpression) = true)
+    (hstate : panToCrepStateRelFiniteExact state targetState)
+    (hcode : codeRelExactHOLW context state.code targetState.code)
+    (hlocals : panToCrepLocalsRelFiniteExact context state.locals targetState.locals)
+    (hcompile : compileExpExactHOLW context (.load32 subExpression) = (expressions, shape)) :
+    shapeOfHOLExact value = shape :=
+  (compileExpValRelHOL_load32 state context targetState subExpression value expressions shape
+    hsub heval hlocalised hstate hcode hlocals hcompile).2.2.1
+
+/-- Kernel regression for the `LoadByte` case `compileExpValRelHOL_loadByte`. -/
+example {width : Nat} [NeZero width]
+    (state : PanSemStateFiniteExact width Unit) [_hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width Unit) [_ht : DecidablePred targetState.memaddrs]
+    (subExpression : ExpHOL width)
+    (value : ValueHOL width)
+    (expressions : List (CrepExpHOL width)) (shape : ShapeHOL)
+    (hsub : ∀ (subValue : ValueHOL width)
+        (subExpressions : List (CrepExpHOL width)) (subShape : ShapeHOL),
+        state.evalHOLFinite subExpression = some subValue →
+        panToCrepStateRelFiniteExact state targetState →
+        codeRelExactHOLW context state.code targetState.code →
+        panToCrepLocalsRelFiniteExact context state.locals targetState.locals →
+        localisedExpHOL subExpression = true →
+        compileExpExactHOLW context subExpression = (subExpressions, subShape) →
+        subExpressions.map (evalCrepSemHOLExp targetState) = (flattenHOL subValue).map some ∧
+        subExpressions.length = sizeOfShapeHOL subShape ∧
+        shapeOfHOLExact subValue = subShape ∧
+        isWfShapeExactHOL ([] : StructContextExact) subShape = true)
+    (heval : state.evalHOLFinite (.loadByte subExpression) = some value)
+    (hlocalised : localisedExpHOL (.loadByte subExpression) = true)
+    (hstate : panToCrepStateRelFiniteExact state targetState)
+    (hcode : codeRelExactHOLW context state.code targetState.code)
+    (hlocals : panToCrepLocalsRelFiniteExact context state.locals targetState.locals)
+    (hcompile : compileExpExactHOLW context (.loadByte subExpression) = (expressions, shape)) :
+    shapeOfHOLExact value = shape :=
+  (compileExpValRelHOL_loadByte state context targetState subExpression value expressions shape
+    hsub heval hlocalised hstate hcode hlocals hcompile).2.2.1
+
+/-- Kernel regression for the `Cmp` case `compileExpValRelHOL_cmp`. -/
+example {width : Nat} [NeZero width]
+    (state : PanSemStateFiniteExact width Unit) [_hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width Unit) [_ht : DecidablePred targetState.memaddrs]
+    (operator : Cmp) (left right : ExpHOL width)
+    (value : ValueHOL width)
+    (expressions : List (CrepExpHOL width)) (shape : ShapeHOL)
+    (hleft : ∀ (subValue : ValueHOL width)
+        (subExpressions : List (CrepExpHOL width)) (subShape : ShapeHOL),
+        state.evalHOLFinite left = some subValue →
+        panToCrepStateRelFiniteExact state targetState →
+        codeRelExactHOLW context state.code targetState.code →
+        panToCrepLocalsRelFiniteExact context state.locals targetState.locals →
+        localisedExpHOL left = true →
+        compileExpExactHOLW context left = (subExpressions, subShape) →
+        subExpressions.map (evalCrepSemHOLExp targetState) = (flattenHOL subValue).map some ∧
+        subExpressions.length = sizeOfShapeHOL subShape ∧
+        shapeOfHOLExact subValue = subShape ∧
+        isWfShapeExactHOL ([] : StructContextExact) subShape = true)
+    (hright : ∀ (subValue : ValueHOL width)
+        (subExpressions : List (CrepExpHOL width)) (subShape : ShapeHOL),
+        state.evalHOLFinite right = some subValue →
+        panToCrepStateRelFiniteExact state targetState →
+        codeRelExactHOLW context state.code targetState.code →
+        panToCrepLocalsRelFiniteExact context state.locals targetState.locals →
+        localisedExpHOL right = true →
+        compileExpExactHOLW context right = (subExpressions, subShape) →
+        subExpressions.map (evalCrepSemHOLExp targetState) = (flattenHOL subValue).map some ∧
+        subExpressions.length = sizeOfShapeHOL subShape ∧
+        shapeOfHOLExact subValue = subShape ∧
+        isWfShapeExactHOL ([] : StructContextExact) subShape = true)
+    (heval : state.evalHOLFinite (.cmp operator left right) = some value)
+    (hlocalised : localisedExpHOL (.cmp operator left right) = true)
+    (hstate : panToCrepStateRelFiniteExact state targetState)
+    (hcode : codeRelExactHOLW context state.code targetState.code)
+    (hlocals : panToCrepLocalsRelFiniteExact context state.locals targetState.locals)
+    (hcompile : compileExpExactHOLW context (.cmp operator left right) = (expressions, shape)) :
+    shapeOfHOLExact value = shape :=
+  (compileExpValRelHOL_cmp state context targetState operator left right value expressions shape
+    hleft hright heval hlocalised hstate hcode hlocals hcompile).2.2.1
+
+/-- Kernel regression for the `Shift` case `compileExpValRelHOL_shift`. -/
+example {width : Nat} [NeZero width]
+    (state : PanSemStateFiniteExact width Unit) [_hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width Unit) [_ht : DecidablePred targetState.memaddrs]
+    (operator : Shift) (left right : ExpHOL width)
+    (value : ValueHOL width)
+    (expressions : List (CrepExpHOL width)) (shape : ShapeHOL)
+    (hleft : ∀ (subValue : ValueHOL width)
+        (subExpressions : List (CrepExpHOL width)) (subShape : ShapeHOL),
+        state.evalHOLFinite left = some subValue →
+        panToCrepStateRelFiniteExact state targetState →
+        codeRelExactHOLW context state.code targetState.code →
+        panToCrepLocalsRelFiniteExact context state.locals targetState.locals →
+        localisedExpHOL left = true →
+        compileExpExactHOLW context left = (subExpressions, subShape) →
+        subExpressions.map (evalCrepSemHOLExp targetState) = (flattenHOL subValue).map some ∧
+        subExpressions.length = sizeOfShapeHOL subShape ∧
+        shapeOfHOLExact subValue = subShape ∧
+        isWfShapeExactHOL ([] : StructContextExact) subShape = true)
+    (hright : ∀ (subValue : ValueHOL width)
+        (subExpressions : List (CrepExpHOL width)) (subShape : ShapeHOL),
+        state.evalHOLFinite right = some subValue →
+        panToCrepStateRelFiniteExact state targetState →
+        codeRelExactHOLW context state.code targetState.code →
+        panToCrepLocalsRelFiniteExact context state.locals targetState.locals →
+        localisedExpHOL right = true →
+        compileExpExactHOLW context right = (subExpressions, subShape) →
+        subExpressions.map (evalCrepSemHOLExp targetState) = (flattenHOL subValue).map some ∧
+        subExpressions.length = sizeOfShapeHOL subShape ∧
+        shapeOfHOLExact subValue = subShape ∧
+        isWfShapeExactHOL ([] : StructContextExact) subShape = true)
+    (heval : state.evalHOLFinite (.shift operator left right) = some value)
+    (hlocalised : localisedExpHOL (.shift operator left right) = true)
+    (hstate : panToCrepStateRelFiniteExact state targetState)
+    (hcode : codeRelExactHOLW context state.code targetState.code)
+    (hlocals : panToCrepLocalsRelFiniteExact context state.locals targetState.locals)
+    (hcompile : compileExpExactHOLW context (.shift operator left right) = (expressions, shape)) :
+    shapeOfHOLExact value = shape :=
+  (compileExpValRelHOL_shift state context targetState operator left right value expressions shape
+    hleft hright heval hlocalised hstate hcode hlocals hcompile).2.2.1
+
 def runChecks : IO Bool := do
   let checks := [
     ("HOL state_rel matching empty carrier fields", matchingFieldsOracleCase),
