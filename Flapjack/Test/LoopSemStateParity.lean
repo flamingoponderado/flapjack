@@ -163,6 +163,37 @@ theorem finiteBridgeSample : exactFiniteState.prodRel finiteMachineState := by
   · simpa [finiteMachineState, exactFiniteState] using trivialFfiStateRel
   · intro entry hmem; simp [finiteMachineState] at hmem
 
+/-- Sample finite-support carrier with a NON-EMPTY code table: entry `0` maps to
+    `([], .skip)`, matching the production code table below. This exercises the
+    `prodRel` code conjunct through `loopProgExecRel` rather than the vacuous
+    empty-table case. -/
+private def exactFiniteStateCode : LoopSemStateFiniteExact 8 Unit :=
+  { exactFiniteState with
+    code := HolFiniteMapExact.empty.updateEq (0, ([], HolLoopProg.skip)) }
+
+/-- Production state with the matching non-empty code table. -/
+private def finiteMachineStateCode : LoopMachineState (BitVec 8) Unit :=
+  { finiteMachineState with code := [(0, [], LoopProg.skip)] }
+
+/-- The exact carrier with a non-empty code table satisfies `prodRel` with the
+    matching production state, exercising the code conjunct through
+    `loopProgExecRel`. -/
+theorem finiteBridgeSampleCode :
+    exactFiniteStateCode.prodRel finiteMachineStateCode := by
+  unfold LoopSemStateFiniteExact.prodRel
+  refine ⟨?_, ?_, ?_, rfl, rfl, rfl, rfl, ?_, rfl, rfl, ?_⟩
+  · intro name; rfl
+  · intro global; rfl
+  · intro address; rfl
+  · simpa [finiteMachineStateCode, exactFiniteStateCode, finiteMachineState,
+      exactFiniteState] using trivialFfiStateRel
+  · intro entry hmem
+    simp [finiteMachineStateCode] at hmem
+    subst hmem
+    refine ⟨HolLoopProg.skip, ?_, ?_⟩
+    · simp [exactFiniteStateCode, HolFiniteMapExact.updateEq, FUPDATE_HOL]
+    · first | rfl | simp [loopProgExecRel]
+
 /-- Register read on the exact carrier transports to the production read. -/
 example : Flapjack.getVarImm finiteMachineState (.reg 0) =
     some (.word (BitVec.ofNat 8 7)) := by
@@ -194,6 +225,12 @@ private def finiteBridgeGuard : Bool :=
 
 #guard finiteBridgeGuard
 
+private def finiteBridgeCodeGuard : Bool :=
+  (exactFiniteStateCode.code.lookup 0).isSome &&
+    (finiteMachineStateCode.code.length == 1)
+
+#guard finiteBridgeCodeGuard
+
 def runChecks : IO Bool := do
   if bridgeGuard then
     IO.println "PASS loopSem exact state carrier fields and production state bridge"
@@ -203,6 +240,10 @@ def runChecks : IO Bool := do
     IO.println "PASS loopSem exact finite-support state production bridge"
   else
     IO.println "FAIL loopSem exact finite-support state production bridge"
-  pure (bridgeGuard && finiteBridgeGuard)
+  if finiteBridgeCodeGuard then
+    IO.println "PASS loopSem exact finite-support non-empty code-table bridge"
+  else
+    IO.println "FAIL loopSem exact finite-support non-empty code-table bridge"
+  pure (bridgeGuard && finiteBridgeGuard && finiteBridgeCodeGuard)
 
 end Flapjack.Test.LoopSemStateParity
