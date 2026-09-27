@@ -13675,5 +13675,13 @@
     "lean_name": "asmIsLoad",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.16.22): exact clause-for-clause port of HOL asmScript.sml:324-330 is_load_def (Load/Load8/Load16/Load32 = T, all others F) over the reviewed exact asm carrier HolMemop (alias of Flapjack.WordMemOp, tagged 'memop'), monomorphic and width-independent with no side conditions."
+  },
+  {
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "FLAT_REPLICATE_NIL",
+    "lean_path": "Flapjack/Misc/FlatReplicate.lean",
+    "lean_name": "flatReplicateNilHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.16.23): HOL miscScript.sml:2120 `!n. FLAT (REPLICATE n []) = []` matches clause-for-clause; HOL FLAT=List.flatten, REPLICATE=List.replicate, element type implicit as in HOL. Direct dependency of pan_to_crepProofScript.sml pc_compile_correct (12 uses)."
   }
 ]
