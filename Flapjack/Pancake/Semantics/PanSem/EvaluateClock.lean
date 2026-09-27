@@ -645,10 +645,8 @@ theorem evaluateHOLFiniteState_call_clock_zero {width : Nat} {σ : Type} [NeZero
     through with no result maps to `Error` at the callee post-state. The RHS
     carries the body output state directly, matching the `fix_clock_evaluate`
     rewrite. One constructor case of the theorem; the full 21-equation theorem
-    remains open. -/
-@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
-  (fmap_as_finite_support := [locals, globals, code, eshapes])
-  (words_as_type_indexed_bitvec)]
+    remains open. This is a Flapjack-specific branch helper: its `hargs`/`hlookup`/`hclock`/`hbody` branch selectors are absent from that unconditional equation, so it is not tagged as a port.
+    -/
 theorem evaluateHOLFiniteState_call_body_error {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ)
     (info : Option (Option (VarKind × MlS) × Option (MlS × MlS × ProgHOL width)))
@@ -702,10 +700,8 @@ theorem evaluateHOLFiniteState_call_body_error {width : Nat} {σ : Type} [NeZero
 
 /-- HOL `evaluate_def` line-780 `Call` body `Break` branch
     (`panSemScript.sml:669`): a callee that breaks maps to `Error` at the callee
-    post-state. One constructor case of the theorem. -/
-@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
-  (fmap_as_finite_support := [locals, globals, code, eshapes])
-  (words_as_type_indexed_bitvec)]
+    post-state. One constructor case of the theorem. This is a Flapjack-specific branch helper: its branch selectors are absent from that unconditional equation, so it is not tagged as a port.
+    -/
 theorem evaluateHOLFiniteState_call_body_break {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ)
     (info : Option (Option (VarKind × MlS) × Option (MlS × MlS × ProgHOL width)))
@@ -758,10 +754,8 @@ theorem evaluateHOLFiniteState_call_body_break {width : Nat} {σ : Type} [NeZero
 
 /-- HOL `evaluate_def` line-780 `Call` body `Continue` branch
     (`panSemScript.sml:670`): a callee that continues maps to `Error` at the
-    callee post-state. One constructor case of the theorem. -/
-@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
-  (fmap_as_finite_support := [locals, globals, code, eshapes])
-  (words_as_type_indexed_bitvec)]
+    callee post-state. One constructor case of the theorem. This is a Flapjack-specific branch helper: its branch selectors are absent from that unconditional equation, so it is not tagged as a port.
+    -/
 theorem evaluateHOLFiniteState_call_body_continue {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ)
     (info : Option (Option (VarKind × MlS) × Option (MlS × MlS × ProgHOL width)))
@@ -815,10 +809,8 @@ theorem evaluateHOLFiniteState_call_body_continue {width : Nat} {σ : Type} [NeZ
 /-- HOL `evaluate_def` line-780 `Call` returned-value branch with
     `caltyp = NONE` (`panSemScript.sml:673-674`): the returned value is
     preserved at empty locals of the callee post-state. One constructor case of
-    the theorem. -/
-@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
-  (fmap_as_finite_support := [locals, globals, code, eshapes])
-  (words_as_type_indexed_bitvec)]
+    the theorem. This is a Flapjack-specific branch helper: its branch selectors are absent from that unconditional equation, so it is not tagged as a port.
+    -/
 theorem evaluateHOLFiniteState_call_return_none {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ)
     (value : ValueHOL width)
@@ -873,10 +865,8 @@ theorem evaluateHOLFiniteState_call_return_none {width : Nat} {σ : Type} [NeZer
 
 /-- HOL `evaluate_def` line-780 `Call` unhandled-exception branch with
     `caltyp = NONE` (`panSemScript.sml:683-684`): the exception propagates at
-    empty locals of the callee post-state. One constructor case of the theorem. -/
-@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
-  (fmap_as_finite_support := [locals, globals, code, eshapes])
-  (words_as_type_indexed_bitvec)]
+    empty locals of the callee post-state. One constructor case of the theorem. This is a Flapjack-specific branch helper: its branch selectors are absent from that unconditional equation, so it is not tagged as a port.
+    -/
 theorem evaluateHOLFiniteState_call_exception_unhandled {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ)
     (exceptionId : MlS) (value : ValueHOL width)
