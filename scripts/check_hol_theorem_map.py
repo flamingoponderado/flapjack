@@ -1478,6 +1478,7 @@ VALID_STATUSES = {
     "reviewed_fmap_as_finite_support",
     "reviewed_fmap_as_finite_support_result",
     "reviewed_fmap_as_finite_support_relation",
+    "reviewed_fmap_as_finite_support_equalities",
     "pending_statement_review",
     "documented_mismatch",
     "no_hol_reference_pending_classification",
@@ -1598,13 +1599,13 @@ def data_declarations(root: Path = ROOT) -> set[tuple[str, str]]:
 
 def tagged_declarations(
     root: Path = ROOT,
-) -> dict[tuple[str, str], tuple[str, str, tuple[str, ...], tuple[str, ...], tuple[str, ...], tuple[str, ...], bool]]:
+) -> dict[tuple[str, str], tuple[str, str, tuple[str, ...], tuple[str, ...], tuple[str, ...], tuple[str, ...], bool, tuple[str, ...], bool]]:
     """Return Lean file/name to HOL file/name for every active ``@[hol]``."""
     tagged: dict[
         tuple[str, str],
         tuple[
             str, str, tuple[str, ...], tuple[str, ...], tuple[str, ...],
-            tuple[str, ...], bool, tuple[str, ...],
+            tuple[str, ...], bool, tuple[str, ...], bool,
         ],
     ] = {}
     for path in REFS["lean_files"]():
@@ -1612,14 +1613,15 @@ def tagged_declarations(
         lines = path.read_text(encoding="utf-8").splitlines()
         for (line, hol_path, hol_name, _hol_line, list_fields,
              names_fields, boundary_fields, fmap_fields, fmap_result,
-             fmap_relation) in HOL_ATTRIBUTE_SITES(lines):
+             fmap_relation, fmap_equalities) in HOL_ATTRIBUTE_SITES(lines):
             lean_name = FIND_LEAN_DECL(lines, line - 1)
             key = (rel, lean_name)
             # Source-line disambiguation is checked against the HOL script by
             # check-hol-refs.py. The inventory keys the declaration by its
             # stable HOL file/name pair, not by an editable source line.
             value = (hol_path, hol_name, list_fields, names_fields,
-                     boundary_fields, fmap_fields, fmap_result, fmap_relation)
+                     boundary_fields, fmap_fields, fmap_result, fmap_relation,
+                     fmap_equalities)
             if key in tagged and tagged[key] != value:
                 raise ValueError(f"conflicting @[hol] references for {rel}:{lean_name}")
             tagged[key] = value
@@ -1632,7 +1634,7 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
     inventory: dict[tuple[str, str], dict[str, Any]] = {}
     for (lean_path, lean_name), (
         hol_path, hol_name, list_fields, names_fields, boundary_fields, fmap_fields,
-        fmap_result, fmap_relation,
+        fmap_result, fmap_relation, fmap_equalities,
     ) in tagged.items():
         entry = {
             "hol_path": hol_path,
@@ -1657,6 +1659,8 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
                 f"{carrier}.{field}" if field else carrier
                 for carrier, field in fmap_relation
             ]
+        if fmap_equalities:
+            entry["fmap_as_finite_support_equalities"] = True
         inventory[(lean_path, lean_name)] = entry
 
     for lean_path, lean_name in proof_theorem_declarations(root):
@@ -1897,12 +1901,14 @@ def validate_inventory(
         fmap_fields = tag[5] if tag is not None else ()
         fmap_result = bool(tag[6]) if tag is not None else False
         fmap_relation = tag[7] if tag is not None else ()
+        fmap_equalities = bool(tag[8]) if tag is not None and len(tag) > 8 else False
         manifest_list_fields = tuple(record.get("list_as_array", ()))
         manifest_names_fields = tuple(record.get("names_as_string", ()))
         manifest_boundary_fields = tuple(record.get("names_as_string_boundary", ()))
         manifest_fmap_fields = tuple(record.get("fmap_as_finite_support", ()))
         manifest_fmap_result = bool(record.get("fmap_as_finite_support_result", False))
         manifest_fmap_relation = tuple(record.get("fmap_as_finite_support_relation", ()))
+        manifest_fmap_equalities = bool(record.get("fmap_as_finite_support_equalities", False))
         tag_fmap_relation = tuple(
             f"{carrier}.{field}" if field else carrier
             for carrier, field in fmap_relation
@@ -1930,6 +1936,10 @@ def validate_inventory(
         if manifest_fmap_relation != tag_fmap_relation:
             errors.append(
                 f"{key[0]}:{key[1]}: manifest fmap_as_finite_support_relation entries do not match its @[hol] tag"
+            )
+        if manifest_fmap_equalities != fmap_equalities:
+            errors.append(
+                f"{key[0]}:{key[1]}: manifest fmap_as_finite_support_equalities does not match its @[hol] tag"
             )
         if fmap_relation and (fmap_fields or fmap_result):
             errors.append(
@@ -1983,6 +1993,33 @@ def validate_inventory(
             if "source" not in reviewer_text:
                 errors.append(
                     f"{key[0]}:{key[1]}: reviewed_fmap_as_finite_support_result requires a "
+                    "source-comparison note in the reviewer field"
+                )
+        if fmap_equalities and (fmap_fields or fmap_result or fmap_relation):
+            errors.append(
+                f"{key[0]}:{key[1]}: fmap_as_finite_support_equalities (theorem-level map "
+                "equalities) is mutually exclusive with the field/result/relation qualifiers"
+            )
+        if fmap_equalities and status == "reviewed_exact":
+            errors.append(
+                f"{key[0]}:{key[1]}: fmap_as_finite_support_equalities @[hol] tag cannot have "
+                "reviewed_exact status; use reviewed_fmap_as_finite_support_equalities after source comparison"
+            )
+        if fmap_equalities and status != "reviewed_fmap_as_finite_support_equalities":
+            errors.append(
+                f"{key[0]}:{key[1]}: fmap_as_finite_support_equalities @[hol] tag needs a reviewed "
+                "source classification (reviewed_fmap_as_finite_support_equalities)"
+            )
+        if not fmap_equalities and status == "reviewed_fmap_as_finite_support_equalities":
+            errors.append(
+                f"{key[0]}:{key[1]}: reviewed_fmap_as_finite_support_equalities needs a "
+                "fmap_as_finite_support_equalities @[hol] tag"
+            )
+        if fmap_equalities:
+            reviewer_text = reviewer.lower() if isinstance(reviewer, str) else ""
+            if "source" not in reviewer_text:
+                errors.append(
+                    f"{key[0]}:{key[1]}: reviewed_fmap_as_finite_support_equalities requires a "
                     "source-comparison note in the reviewer field"
                 )
         if not set(boundary_fields) <= set(names_fields):

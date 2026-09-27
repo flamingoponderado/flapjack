@@ -13181,12 +13181,29 @@
     "reviewer": "flapjack-ds8: Flapjack-specific canonical standalone finite-map witness for slcHOL; no HOL theorem original."
   },
   {
-    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
-    "hol_name": "slc_tlc_rw",
-    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
-    "lean_name": "slcTlcRwHOL",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.86, coordinator HOLD 2026-09-27): HOL slc_tlc_rw (pan_to_crepProofScript.sml:2321-2326) is a Prop-level two-conjunct map-equality theorem; the fmap_as_finite_support_result qualifier is defined only for declarations whose own result/input carrier is HolFiniteMapExact and cannot express two equalities, so the @[hol] tag and its (single-map, ignored-argument) witness were withdrawn. The untagged Flapjack-only analogue slcTlcRwHOL remains; an exact tag needs a theorem-level finite-map qualifier with genuine witnesses for both map equalities, tracked by flapjack-4ac.5.86.1."
+      "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+      "hol_name": "slc_tlc_rw",
+      "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+      "lean_name": "slcTlcRwHOL",
+      "statement_status": "reviewed_fmap_as_finite_support_equalities",
+      "fmap_as_finite_support_equalities": true,
+      "reviewer": "flapjack-ds8 source comparison (bead flapjack-4ac.5.86.1): HOL slc_tlc_rw (pan_to_crepProofScript.sml:2321-2326) states two map equalities FEMPTY |++ ZIP (MAP FST vsh,args) = slc vsh args and FEMPTY |++ ZIP (ns,FLAT (MAP flatten args)) = tlc ns args. The Lean theorem states the same two HolFiniteMapExact equalities over the exact MlS/ShapeHOL/ValueHOL/HolWordLab carriers, with |++ rendered by updateListEq and flatten by flattenHOL. Source review confirms conjunct 1 corresponds to the slc map (witness holFmapAsFiniteSupportEqualityWitness_slcTlcRwHOL_1: lookup of updateListEq empty ((variables.map Prod.fst).zip arguments) equals lookup of slcHOL variables arguments) and conjunct 2 corresponds to the tlc map (witness _2: lookup of updateListEq empty (slots.zip ((arguments.map flattenHOL).flatten)) equals lookup of tlcHOL slots arguments); both witnesses are same-module kernel-checked and do not mention the theorem."
+  },
+  {
+      "hol_path": null,
+      "hol_name": null,
+      "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+      "lean_name": "holFmapAsFiniteSupportEqualityWitness_slcTlcRwHOL_1",
+      "statement_status": "no_hol_reference_pending_classification",
+      "reviewer": "flapjack-ds8: Flapjack-specific lookup-level witness for the first slc_tlc_rw conjunct; no HOL theorem original."
+  },
+  {
+      "hol_path": null,
+      "hol_name": null,
+      "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+      "lean_name": "holFmapAsFiniteSupportEqualityWitness_slcTlcRwHOL_2",
+      "statement_status": "no_hol_reference_pending_classification",
+      "reviewer": "flapjack-ds8: Flapjack-specific lookup-level witness for the second slc_tlc_rw conjunct; no HOL theorem original."
   },
   {
     "hol_path": null,

@@ -93,7 +93,10 @@ private def tlcArguments : List (ValueHOL 8) :=
 /- Concrete exact `tlcHOL` rows for `slots = [0,1]` and two `Val` arguments:
     `flatten` maps each argument to its single word, so the finite map stores
     `0 |-> 5` and `1 |-> 7` and is undefined elsewhere (mirroring HOL
-    `FEMPTY |++ ZIP (ns, FLAT (MAP flatten args))`). -/
+    `FEMPTY |++ ZIP (ns, FLAT (MAP flatten args))`).  Paired with the direct
+    original-HOL oracle `scripts/hol-probes/pan_to_crep_slc_tlc_probe.out`
+    (rows `slc_tlc_tlc_0=SOME (Word 5w)`, `slc_tlc_tlc_1=SOME (Word 7w)`,
+    `slc_tlc_tlc_absent=NONE`). -/
 theorem tlcHOL_zero : (tlcHOL tlcSlots tlcArguments).lookup 0 =
     some (.word (5 : BitVec 8)) := by
   simp only [tlcHOL, tlcSlots, tlcArguments, List.map_cons, List.map_nil,
@@ -128,7 +131,10 @@ private def slcArguments : List (ValueHOL 8) :=
 /- Concrete exact `slcHOL` rows for `vshs = [(x,One),(y,One)]` and two `Val`
     arguments: `ZIP (MAP FST vshs, args)` pairs the `varname`s with the argument
     values, so the finite map stores `x |-> 5` and `y |-> 7` and is undefined
-    elsewhere (mirroring HOL `FEMPTY |++ ZIP (MAP FST vshs, args)`). -/
+    elsewhere (mirroring HOL `FEMPTY |++ ZIP (MAP FST vshs, args)`).  Paired with
+    the direct original-HOL oracle `scripts/hol-probes/pan_to_crep_slc_tlc_probe.out`
+    (rows `slc_tlc_slc_x=SOME (ValWord 5w)`, `slc_tlc_slc_y=SOME (ValWord 7w)`,
+    `slc_tlc_slc_absent=NONE`). -/
 theorem slcHOL_x : (slcHOL slcVariables slcArguments).lookup (ml "x") =
     some (.val (.word (5 : BitVec 8))) := by
   simp only [slcHOL, slcVariables, slcArguments, HolFiniteMapExact.updateListEq,
@@ -159,7 +165,10 @@ def slcHOLGuard : Bool :=
 
 /- Exact `slc_tlc_rw` rewrite rows: applying each conjunct of `slcTlcRwHOL`
     turns the raw HOL `FEMPTY |++ ...` update into the named `slcHOL`/`tlcHOL`
-    map, so the raw lookup agrees with the stored entries. -/
+    map, so the raw lookup agrees with the stored entries.  Paired with the
+    original-HOL oracle rows `slc_tlc_rw_slc_holds=T`, `slc_tlc_rw_tlc_holds=T`,
+    `slc_tlc_slc_rhs_lookup=SOME (ValWord 5w)`, `slc_tlc_tlc_rhs_lookup=SOME (Word 7w)`
+    in `scripts/hol-probes/pan_to_crep_slc_tlc_probe.out`. -/
 theorem slcTlcRwHOL_raw_slc :
     (HolFiniteMapExact.updateListEq HolFiniteMapExact.empty
         ((slcVariables.map Prod.fst).zip slcArguments)).lookup (ml "x") =
