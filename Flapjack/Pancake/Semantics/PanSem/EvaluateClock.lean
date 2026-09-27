@@ -454,6 +454,44 @@ theorem fixClockHOLFinite_evaluate {width : Nat} {σ : Type} [NeZero width]
     simp only [fixClockHOLFinite]
     rw [if_neg (by omega)]
 
+namespace PanSemStateFiniteExact
+
+/-- The line-780 rewrite-restated While conjunct of HOL `evaluate_def`
+    (`panSemScript.sml:780`). Unlike the line-556 equation, HOL has rewritten
+    `fix_clock` away using `fix_clock_evaluate`; the finite evaluator does the
+    same through `fixClockHOLFinite_evaluate`. The clock-zero timeout,
+    condition failure, recursive Continue/NONE cases, Break, and propagation
+    branches remain exactly those of the source definition. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateHOLFiniteState_while_fixClockRewrite
+    {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (condition : ExpHOL width)
+    (body : ProgHOL width) :
+    evaluateHOLFiniteState state (.while condition body : ProgHOL width) =
+    (match @evalHOLFinite width σ _ state
+          (fun address => Classical.propDecidable (state.memaddrs address)) condition with
+       | some (.val (.word word)) =>
+           if word ≠ 0 then
+             if state.clock = 0 then (some .timeOut, emptyLocalsHOLFinite state)
+             else
+               let bodyOutput :=
+                 evaluateHOLFiniteState (decClockHOLFinite state) body
+               match bodyOutput.1 with
+               | none => evaluateHOLFiniteState bodyOutput.2 (.while condition body)
+               | some .continue => evaluateHOLFiniteState bodyOutput.2 (.while condition body)
+               | some .break => (none, bodyOutput.2)
+               | some result => (some result, bodyOutput.2)
+           else (none, state)
+       | _ => (some .error, state)) := by
+  classical
+  rw [evaluateHOLFiniteState_while_total]
+  simp only [fixClockHOLFinite_evaluate]
+  rfl
+
+end PanSemStateFiniteExact
+
 /-! ## Public HOL-shaped clock theorems over the pair-shaped finite evaluator
 
 These are the coordinator-requested public statements: HOL `evaluate_clock` and
