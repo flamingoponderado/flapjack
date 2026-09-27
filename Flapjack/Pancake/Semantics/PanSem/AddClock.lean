@@ -17,7 +17,13 @@ with their projection lemmas, the commutation of the exact state updates
 (`eval c1 = eval c2` when `c1.state = c2.state`), which sidesteps the generated
 `DecidablePred` proof terms of `withState`.
 
-The full result-agreement lemma is still open and tracked by `flapjack-dpvn`.
+The result-agreement lemma `eval_add_clock_mono_aux` and the clock-increase
+FFI-event prefix lemmas (`evalPanSemRecursiveCallContextHOLExact_add_clock_ioEvents_prefix`,
+`..._prefix_getD`, `..._lprefixChain`) below are now proved; their beads
+`flapjack-dpvn` and `flapjack-tu4j` are closed. These declarations are
+Flapjack-specific exact-context infrastructure and carry no `@[hol]` tag
+(HOL's `evaluate_add_clock_eq` / `evaluate_add_clock_io_events_mono` are about
+the production `panProps` evaluator over the faithful `panSem$state`).
 No declaration here carries an `@[hol]` tag.
 -/
 
@@ -259,8 +265,9 @@ theorem eval_context_state {width : Nat} {σ : Type} [NeZero width] (program : P
 
 Flapjack-specific: each exact nonrecursive clause step commutes with
 `stateAddClock`, because it only inspects non-clock fields (`ffi`, memory,
-locals) and updates non-clock fields.  This is infrastructure towards the HOL
-`evaluate_add_clock_eq` analogue; no declaration carries a `@[hol]` tag. -/
+locals) and updates non-clock fields.  This is step infrastructure for the HOL
+`evaluate_add_clock_eq` analogue `eval_add_clock_mono_aux` proved below; no
+declaration carries a `@[hol]` tag. -/
 
 theorem lookupKvarHOLExact_stateAddClock {width : Nat} {σ : Type} [NeZero width]
     (kind : VarKind) (name : MlS) (state : PanSemStateExact width σ) (extra : Nat) :
