@@ -1,5 +1,6 @@
 import Flapjack.Pancake.Semantics.PanSem.FiniteSupportStep
 import Flapjack.Pancake.Semantics.PanSem.StateSimpExact
+import Flapjack.PanObservationalSemantics
 
 /-!
 # Clock-shift infrastructure for the exact `panSem` evaluator
@@ -2361,5 +2362,43 @@ theorem evalPanSemRecursiveCallContextHOLExact_add_clock_ioEvents_prefix_getD
     evalPanSemRecursiveCallContextHOLExact_total program (ctxAddClock context extra)
   simp only [hLow, hHigh, Option.map_some, Option.getD_some]
   exact (eval_add_clock_mono_aux program context extra resultLow resultHigh hLow hHigh).1
+
+/-! ## Clock-indexed event traces form a lprefix chain (bead flapjack-4ac.3.52.3.2)
+
+The clock-indexed FFI event traces of the exact recursive panSem evaluator
+are pairwise list-prefix comparable, which is the chain obligation of the
+`panSemantics` prefix-LUB construction.  Flapjack-specific infrastructure;
+no `@[hol]` tag. -/
+
+@[simp] theorem stateAddClock_add {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateExact width σ) (left right : Nat) :
+    stateAddClock (stateAddClock state left) right = stateAddClock state (left + right) := by
+  simp only [stateAddClock, Nat.add_assoc]
+
+@[simp] theorem ctxAddClock_add {width : Nat} {σ : Type} [NeZero width]
+    (context : PanSemExactEvalContext width σ) (left right : Nat) :
+    ctxAddClock (ctxAddClock context left) right = ctxAddClock context (left + right) := by
+  apply PanSemExactEvalContext.ext
+  simp only [stateAddClock_add]
+
+/-- The clock-indexed event traces of the exact recursive panSem evaluator
+form a pairwise prefix chain: for any two clocks one trace is a list prefix
+of the other. -/
+theorem evalPanSemRecursiveCallContextHOLExact_clock_ioEvents_lprefixChain
+    {width : Nat} {σ : Type} [NeZero width]
+    (program : ProgHOL width) (context : PanSemExactEvalContext width σ) :
+    panLprefixChain (fun k : Nat =>
+      ((evalPanSemRecursiveCallContextHOLExact program (ctxAddClock context k)).map
+        (fun result => result.2.state.ffi.ioEvents)).getD []) := by
+  intro left right
+  rcases Nat.le_total left right with hle | hle
+  · left
+    have hprefix := evalPanSemRecursiveCallContextHOLExact_add_clock_ioEvents_prefix_getD
+        program (ctxAddClock context left) (right - left)
+    rwa [ctxAddClock_add, Nat.add_sub_cancel' hle] at hprefix
+  · right
+    have hprefix := evalPanSemRecursiveCallContextHOLExact_add_clock_ioEvents_prefix_getD
+        program (ctxAddClock context right) (left - right)
+    rwa [ctxAddClock_add, Nat.add_sub_cancel' hle] at hprefix
 
 end Flapjack

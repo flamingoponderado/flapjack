@@ -1395,21 +1395,21 @@ class RealCombinedQualifierFixtureTest(unittest.TestCase):
                 hol_name,
             )
 
-    def test_real_tagged_and_untagged_carrier_only_declarations_pass_checker(self):
-        # Skip is tagged and Break is untagged; neither signature spells out
-        # `BitVec`, so the checker must resolve the imported state carrier.
+    def test_real_imported_carrier_only_clauses_pass_checker(self):
+        # Skip is tagged and Break is not; neither signature names a literal
+        # `BitVec`. Both must resolve the imported CrepSemHOLState word carrier.
         lines = self._lines()
-        for clause, tagged in (("skip", True), ("break", False)):
+        for clause, expected_tag in (("skip", True), ("break", False)):
+            name = f"evalCrepSemHOLProgExact_{clause}"
             with self.subTest(clause=clause):
-                lean_name = f"evalCrepSemHOLProgExact_{clause}"
                 start = next(
                     (index for index, line in enumerate(lines, start=1)
-                     if line.startswith(f"theorem {lean_name}")),
+                     if line.startswith(f"theorem {name}")),
                     None,
                 )
-                self.assertIsNotNone(start, f"{lean_name} not found")
+                self.assertIsNotNone(start, f"{name} not found")
                 preceding = lines[max(0, start - 4):start - 1]
-                self.assertEqual(any("@[hol" in line for line in preceding), tagged)
+                self.assertEqual(any("@[hol" in line for line in preceding), expected_tag)
                 region = []
                 for line in lines[start - 1:]:
                     region.append(line)
@@ -1418,7 +1418,7 @@ class RealCombinedQualifierFixtureTest(unittest.TestCase):
                 self.assertEqual(
                     CHECKER["words_as_type_indexed_bitvec_errors"](
                         "\n".join(region),
-                        lean_name,
+                        name,
                         module=self.MODULE_NAME,
                         root=str(Path(__file__).resolve().parents[2]),
                         lines=lines,

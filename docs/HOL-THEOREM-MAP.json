@@ -554,36 +554,56 @@
     "hol_name": "clock_eq_simp",
     "lean_path": "Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean",
     "lean_name": "crepSemClockEqSimp",
-    "statement_status": "reviewed_fmap_as_finite_support",
-    "fmap_as_finite_support": ["locals", "globals", "code"],
-    "reviewer": "flapjack-ds9 (source comparison, 2026-09-27; bead flapjack-pxn.18.5.5.7.7.19): HOL clock_eq_simp (crepSemScript.sml:392-398, declared [local,simp]) is the conjunction (set_var v w s).clock = s.clock and (empty_locals s).clock = s.clock and (set_globals gv w s).clock = s.clock. The Lean statement is the same three conjuncts in the same order over the tagged exact CrepSemHOLState.setVar/emptyLocals/setGlobals ports (set_var_def:55-57, empty_locals_def:71-74, set_globals_def:61-63). The fmap_as_finite_support qualifier records HOL's |-> locals/globals/code as HolFiniteMapExact, exactly as for the neighbouring state-helper tags; the clock field itself is HOL num vs Nat. Direct HOL EVAL rows clock_eq_simp_set_var/clock_eq_simp_empty_locals/clock_eq_simp_set_globals=T in scripts/hol-probes/crep_clock_helpers_probe.out are replayed by kernel-checked instantiations in Flapjack/Test/CrepShMemHOLParity.lean."
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-27; bead flapjack-pxn.18.5.5.7.7.19): HOL clock_eq_simp (crepSemScript.sml:392-398, declared [local,simp]) is the conjunction (set_var v w s).clock = s.clock and (empty_locals s).clock = s.clock and (set_globals gv w s).clock = s.clock. The Lean statement is the same three conjuncts in the same order over the tagged exact CrepSemHOLState.setVar/emptyLocals/setGlobals ports (set_var_def:55-57, empty_locals_def:71-74, set_globals_def:61-63). The fmap_as_finite_support qualifier records HOL's |-> locals/globals/code as HolFiniteMapExact, exactly as for the neighbouring state-helper tags; the clock field itself is HOL num vs Nat. Direct HOL EVAL rows clock_eq_simp_set_var/clock_eq_simp_empty_locals/clock_eq_simp_set_globals=T in scripts/hol-probes/crep_clock_helpers_probe.out are replayed by kernel-checked instantiations in Flapjack/Test/CrepShMemHOLParity.lean. Qualified additionally with words_as_type_indexed_bitvec (width-indexed BitVec) after source review (bead flapjack-4ac.15).",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
     "hol_name": "sh_mem_load_clock",
     "lean_path": "Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean",
     "lean_name": "crepShMemLoadClock",
-    "statement_status": "reviewed_fmap_as_finite_support",
-    "fmap_as_finite_support": ["locals", "globals", "code"],
-    "reviewer": "flapjack-ds9 (source comparison, 2026-09-27; bead flapjack-pxn.18.5.5.7.7.19): HOL sh_mem_load_clock (crepSemScript.sml:400-403, declared [local]) is sh_mem_load v addr nb s = (r, s') ==> s'.clock = s.clock, quantified over v, addr, nb, s, r, s'. The Lean statement has the identical quantifiers and conclusion over the exact crepShMemLoadExactHOL port and the exact width-indexed state/result carriers; no extra premise, no target-evaluation hypothesis. The fmap_as_finite_support qualifier records the finite-support CrepSemHOLState carrier (HOL |-> locals/globals/code). Direct HOL EVAL rows sh_mem_load_clock and sh_mem_load_clock_nonzero=T in scripts/hol-probes/crep_clock_helpers_probe.out are replayed by kernel-checked instantiations in Flapjack/Test/CrepShMemHOLParity.lean."
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-27; bead flapjack-pxn.18.5.5.7.7.19): HOL sh_mem_load_clock (crepSemScript.sml:400-403, declared [local]) is sh_mem_load v addr nb s = (r, s') ==> s'.clock = s.clock, quantified over v, addr, nb, s, r, s'. The Lean statement has the identical quantifiers and conclusion over the exact crepShMemLoadExactHOL port and the exact width-indexed state/result carriers; no extra premise, no target-evaluation hypothesis. The fmap_as_finite_support qualifier records the finite-support CrepSemHOLState carrier (HOL |-> locals/globals/code). Direct HOL EVAL rows sh_mem_load_clock and sh_mem_load_clock_nonzero=T in scripts/hol-probes/crep_clock_helpers_probe.out are replayed by kernel-checked instantiations in Flapjack/Test/CrepShMemHOLParity.lean. Qualified additionally with words_as_type_indexed_bitvec (width-indexed BitVec) after source review (bead flapjack-4ac.15).",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
     "hol_name": "sh_mem_store_clock",
     "lean_path": "Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean",
     "lean_name": "crepShMemStoreClock",
-    "statement_status": "reviewed_fmap_as_finite_support",
-    "fmap_as_finite_support": ["locals", "globals", "code"],
-    "reviewer": "flapjack-ds9 (source comparison, 2026-09-27; bead flapjack-pxn.18.5.5.7.7.19): HOL sh_mem_store_clock (crepSemScript.sml:406-409, declared [local]) is sh_mem_store v addr nb s = (r, s') ==> s'.clock = s.clock, quantified over v, addr, nb, s, r, s'. The Lean statement matches quantifier for quantifier over the exact crepShMemStoreExactHOL port; the store's FLOOKUP/domain/FFI cases all leave the clock field untouched. No extra hypothesis or target premise. The fmap_as_finite_support qualifier records the finite-support CrepSemHOLState carrier. Direct HOL EVAL rows sh_mem_store_clock and sh_mem_store_clock_nonzero=T in scripts/hol-probes/crep_clock_helpers_probe.out are replayed by kernel-checked instantiations in Flapjack/Test/CrepShMemHOLParity.lean."
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-27; bead flapjack-pxn.18.5.5.7.7.19): HOL sh_mem_store_clock (crepSemScript.sml:406-409, declared [local]) is sh_mem_store v addr nb s = (r, s') ==> s'.clock = s.clock, quantified over v, addr, nb, s, r, s'. The Lean statement matches quantifier for quantifier over the exact crepShMemStoreExactHOL port; the store's FLOOKUP/domain/FFI cases all leave the clock field untouched. No extra hypothesis or target premise. The fmap_as_finite_support qualifier records the finite-support CrepSemHOLState carrier. Direct HOL EVAL rows sh_mem_store_clock and sh_mem_store_clock_nonzero=T in scripts/hol-probes/crep_clock_helpers_probe.out are replayed by kernel-checked instantiations in Flapjack/Test/CrepShMemHOLParity.lean. Qualified additionally with words_as_type_indexed_bitvec (width-indexed BitVec) after source review (bead flapjack-4ac.15).",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
     "hol_name": "sh_mem_op_clock",
     "lean_path": "Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean",
     "lean_name": "crepShMemOpClock",
-    "statement_status": "reviewed_fmap_as_finite_support",
-    "fmap_as_finite_support": ["locals", "globals", "code"],
-    "reviewer": "flapjack-ds9 (source comparison, 2026-09-27; bead flapjack-pxn.18.5.5.7.7.19): HOL sh_mem_op_clock (crepSemScript.sml:412-419, declared [local]) is sh_mem_op op v addr s = (r, s') ==> s'.clock = s.clock, dispatching the eight operators to sh_mem_load_clock/sh_mem_store_clock. The Lean statement is identical over the exact crepShMemOpExactHOL port, proving the conclusion by the tagged crepShMemLoadClock/crepShMemStoreClock at the fixed byte counts 0/1/2/4. The fmap_as_finite_support qualifier records the finite-support CrepSemHOLState carrier. Direct HOL EVAL rows sh_mem_op_clock_load and sh_mem_op_clock_store8=T in scripts/hol-probes/crep_clock_helpers_probe.out are replayed by kernel-checked instantiations in Flapjack/Test/CrepShMemHOLParity.lean."
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-27; bead flapjack-pxn.18.5.5.7.7.19): HOL sh_mem_op_clock (crepSemScript.sml:412-419, declared [local]) is sh_mem_op op v addr s = (r, s') ==> s'.clock = s.clock, dispatching the eight operators to sh_mem_load_clock/sh_mem_store_clock. The Lean statement is identical over the exact crepShMemOpExactHOL port, proving the conclusion by the tagged crepShMemLoadClock/crepShMemStoreClock at the fixed byte counts 0/1/2/4. The fmap_as_finite_support qualifier records the finite-support CrepSemHOLState carrier. Direct HOL EVAL rows sh_mem_op_clock_load and sh_mem_op_clock_store8=T in scripts/hol-probes/crep_clock_helpers_probe.out are replayed by kernel-checked instantiations in Flapjack/Test/CrepShMemHOLParity.lean. Qualified additionally with words_as_type_indexed_bitvec (width-indexed BitVec) after source review (bead flapjack-4ac.15).",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
@@ -11398,8 +11418,9 @@
     "hol_name": "mem_load_def",
     "lean_path": "Flapjack/Pancake/Semantics/PanSem/MemLoadHOL.lean",
     "lean_name": "memLoadHOLExact",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Codex (exact-carrier review against panSemScript.sml:137-166): `ShapeHOL`, `StructInfoHOLExact`/`MlString`, `ValueHOL width`, and `HolWordLab width` preserve HOL shape/value/name/word_lab carriers; `[NeZero width]` represents HOL's positive word dimension and `[DecidablePred domain]` is proof-only Lean evidence. The mutually recursive `memLoadsHOLExact` and `memLoadFldsHOLExact` clauses preserve the empty/success/failure cases and `addr + bytesInWord * n2w (size_of_sh_with_ctxt ...)` progression. `Named` scans the context to the first matching name. Six direct HOL-EVAL rows (One hit/miss, Comb, Named hit/miss, and Comb offset) from `pan_sem_mem_load_exact_probe.out` are reproduced by `PanSemMemLoadExactParity.lean`. The older String-carrier `panMemLoadHOL` remains untagged; this exact moved counterpart is eligible."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "Codex source comparison against panSemScript.sml:137-166: ShapeHOL, StructInfoHOLExact/MlString, ValueHOL width, and HolWordLab width preserve the HOL shape/value/name/word_lab carriers. HOL arbitrary nonempty finite word dimensions are represented by BitVec width with [NeZero width], explicitly recorded by words_as_type_indexed_bitvec; [DecidablePred domain] is proof-only evidence for HOL word-set membership. The mutual memLoadsHOLExact and memLoadFldsHOLExact clauses preserve empty/success/failure and addr + bytesInWord * n2w (size_of_sh_with_ctxt ...) progression. Named scans to the first matching context name. Six direct HOL-EVAL rows from pan_sem_mem_load_exact_probe.out are reproduced by PanSemMemLoadExactParity.lean. This qualifier records only the standard word-dimension model.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "cakeml/pancake/panLangScript.sml",
@@ -14178,5 +14199,35 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-ds8 (source comparison; bead flapjack-2de.12): statement matches HOL crepPropsScript.sml:17-27 clause-for-clause over the exact carriers (OPT_MMAP = List.mapM, FLOOKUP t.locals = t.locals.lookup, MAP Var = map CrepExpHOL.var, eval = evalCrepSemHOLExp); CrepSemHOLState width σ is the type-indexed-word carrier with HOL |-> fields locals/globals/code, hence the combined qualifiers; same-module witness holFmapAsFiniteSupportWitness."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Semantics/CrepProps/MemLoadFlatRel.lean",
+    "lean_name": "memLoadFlatRelHOLExact",
+    "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
+    "hol_name": "mem_load_flat_rel",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "Source-reviewed against crepPropsScript.sml:102-109. HOL mem_load_flat_rel quantifies sh, adr, s, v, n; its Pan mem_load reads s.memaddrs and s.memory, with premises successful read, n < LENGTH (flatten v), and is_wf_shape_nil sh, and concludes Crep mem_load at adr + bytes_in_word * n2w (LENGTH (TAKE n ...)) on the same s equals SOME (EL n ...). Lean uses one CrepSemHOLState target for both Pan memLoadHOLExact domain/memory and Crep memLoadCrepSemHOL, with no split domain/memory equality premises. Exact ShapeHOL/StructContextHOLM/ValueHOL/HolWordLab carriers and bounded List.getElem encode HOL shape/value/list operations. DecidablePred target.memaddrs is proof-only evidence for HOL set membership; NeZero width is the positive word-dimension model. The fmap_as_finite_support qualifier records CrepSemHOLState locals/globals/code and the same-module holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec records HOL 'a word as BitVec width.",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Semantics/CrepProps/MemLoadFlatRel.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific same-module canonical finite-support witness for the CrepSemHOLState locals/globals/code fields used by memLoadFlatRelHOLExact; it restates the imported CrepSemHOLState/CrepSemBroadState roundtrip and is not a separate HOL theorem."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Semantics/CrepProps/MemLoadFlatRel.lean",
+    "lean_name": "memLoadHOLExact_flatRead_mutual",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific mutual evaluator-induction helper for the strided mem_load_flat_rel analogue. HOL has no standalone declaration with this helper statement; its internal list cases are part of mem_loads_flat_rel."
   }
 ]

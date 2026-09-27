@@ -489,9 +489,10 @@ def crepAssignedVarsW {width : Nat} [NeZero width] (program : CrepProg (BitVec w
     `scripts/hol-probes/crep_var_cexp_probe.out` row `base_top=([],[])`
     confirms.
 
-    The expected bridge to the exact syntax-carrier port is
-    `crepExpVarsW e = crepExpVarsHOL (crepExpToHOL e)`; it is not yet proved
-    and is tracked by flapjack-jlj3.7. -/
+    The production form is related to the exact syntax-carrier port
+    `crepExpVarsHOL` by `crepExpVarsW e = crepExpVarsHOL (crepExpToHOL e)`,
+    proved as `crepExpVarsW_eq_crepExpVarsHOL_crepExpToHOL` in
+    `Flapjack/Pancake/CrepLang/Exp.lean` (bead flapjack-jlj3.7). -/
 @[hol "cakeml/pancake/crepLangScript.sml" "var_cexp_def"]
 def crepExpVarsW {width : Nat} [NeZero width] (expression : CrepExp (BitVec width)) : List Nat :=
   crepExpVars expression
