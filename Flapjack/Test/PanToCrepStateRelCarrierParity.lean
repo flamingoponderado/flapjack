@@ -773,6 +773,31 @@ example {width : Nat} [NeZero width]
   (compileExpValRelHOL_op state context targetState operator arguments value expressions shape
     hrel heval hlocalised hcompile).2.2.1
 
+/-- Kernel regression for the `Panop` case `compileExpValRelHOL_panop`. -/
+example {width : Nat} [NeZero width]
+    (state : PanSemStateFiniteExact width Unit) [_hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width Unit) [_ht : DecidablePred targetState.memaddrs]
+    (operator : PanOp) (arguments : List (ExpHOL width))
+    (value : ValueHOL width)
+    (expressions : List (CrepExpHOL width)) (shape : ShapeHOL)
+    (hrel : ∀ (expression : ExpHOL width), expression ∈ arguments →
+        (value : ValueHOL width) → (expressions : List (CrepExpHOL width)) →
+        (shape : ShapeHOL) →
+        state.evalHOLFinite expression = some value →
+        localisedExpHOL expression = true →
+        compileExpExactHOLW context expression = (expressions, shape) →
+        expressions.map (evalCrepSemHOLExp targetState) = (flattenHOL value).map some ∧
+        expressions.length = sizeOfShapeHOL shape ∧
+        shapeOfHOLExact value = shape ∧
+        isWfShapeExactHOL ([] : StructContextExact) shape = true)
+    (heval : state.evalHOLFinite (.panop operator arguments) = some value)
+    (hlocalised : localisedExpHOL (.panop operator arguments) = true)
+    (hcompile : compileExpExactHOLW context (.panop operator arguments) = (expressions, shape)) :
+    shapeOfHOLExact value = shape :=
+  (compileExpValRelHOL_panop state context targetState operator arguments value expressions shape
+    hrel heval hlocalised hcompile).2.2.1
+
 def runChecks : IO Bool := do
   let checks := [
     ("HOL state_rel matching empty carrier fields", matchingFieldsOracleCase),
