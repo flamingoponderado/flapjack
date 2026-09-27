@@ -643,9 +643,11 @@ Every constructor equation below was source-reviewed against
 `cakeml/pancake/pan_to_crepScript.sml:139-307` and its exact helper slice above.
 The only representation qualifier is the exact finite-support carrier for
 HOL's three finite maps; the syntax, positive word width, names, and output
-carrier are otherwise constructor-for-constructor HOL translations. This is
-the proof-side exact compiler. `flapjack-compile` still uses the production
-String-backed path until the separate production bridge is reviewed. -/
+carrier are otherwise constructor-for-constructor HOL translations. The
+parser-backed `flapjack-compile` route executes this definition through
+`compileProgTopHOLProductionExact` after the byte-range and output-codec
+bridges; arbitrary String-backed callers retain the untagged compatibility
+path. -/
 
 @[hol "cakeml/pancake/pan_to_crepScript.sml" "compile_def"
   (fmap_as_finite_support := [vars, funcs, eids])

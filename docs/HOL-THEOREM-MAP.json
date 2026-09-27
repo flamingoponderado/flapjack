@@ -14897,5 +14897,35 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-b source comparison (2026-09-27; bead flapjack-e7w.2.1.2) against crep_inlineScript.sml:36-38. The equation is MAX_LIST (var_prog p); Lean folds max from 0 over crepVarProgHOLExact p, which matches HOL MAX_LIST including the empty-list result. The exact width-indexed carrier translation is the same positive-width BitVec mapping as CrepProgHOL. Direct HOL rows vmax_prog_call_handler_extcall and vmax_prog_skip_zero are in scripts/hol-probes/crep_inline_helper_probe.out and matched by CrepeInline.lean exact-carrier guards."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "evaluate_clock",
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/EvaluateClock.lean",
+    "lean_name": "evaluateHOLFiniteState_clock_le_result",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-pxn.18.3.6.9.23.1): exact statement-shape port of HOL panSemScript.sml:755-766 evaluate_clock (!prog s r s'. evaluate (prog,s) = (r,s') ==> s'.clock <= s.clock) over the pair-shaped finite evaluator evaluateHOLFiniteState on PanSemStateFiniteExact. The equality premise and the result/post-state variables match HOL; the stronger untagged evaluateHOLFiniteState_clock_le remains untagged because it omits them. Carrier maps are the reviewed HolFiniteMapExact locals/globals/code/eshapes fields and the words are BitVec width, recorded by the combined qualifier; no DecidablePred binder or extra premise."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "fix_clock_evaluate",
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/EvaluateClock.lean",
+    "lean_name": "fixClockHOLFinite_evaluateState",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-pxn.18.3.6.9.23.1): exact statement-shape port of HOL panSemScript.sml:768-775 fix_clock_evaluate (fix_clock s (evaluate (prog,s)) = evaluate (prog,s)) over the pair-shaped finite evaluator on PanSemStateFiniteExact. Same reviewed HolFiniteMapExact carrier fields and BitVec width words as evaluateHOLFiniteState_clock_le_result; no extra premise."
   }
 ]
