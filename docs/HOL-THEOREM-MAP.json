@@ -12073,6 +12073,21 @@
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
     "hol_name": "evaluate_def",
     "hol_line": 780,
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/ExtCallCase.lean",
+    "lean_name": "evaluateHOLFiniteState_extCall_source",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "reviewer": "flapjack-luna-c source comparison (2026-09-27; bead flapjack-qj5.7): compared with the ExtCall conjunct at panSemScript.sml:716-728 in evaluate_def line 780. The theorem evaluates configuration, configurationLength, array, and arrayLength against the original state and returns SOME Error with that original state for every failed or nonword result. When all four are ValWord, it performs the two same-address/length read_bytearray calls; either failure returns Error with the original state. The call_FFI split matches exactly: FFI_final event returns SOME (FinalFFI event) and empty_locals state, while FFI_return new_ffi new_bytes returns NONE and updates only memory via write_bytearray at the second address plus ffi := new_ffi. State, expression, function-name, byte-list, and result carriers match the HOL positive word width, mlstring, word8, and option-pair forms; no successful-evaluation or read assumption is added. The four named maps are represented by the same-module HolFiniteMapExact carrier and checked toExact/ofExact roundtrip witness; the qualifier records only that translation. Direct original-HOL EVAL rows and concrete helper guards cover expression failure, nonword, read failure, FFI_final, and FFI_return in pan_sem_e2e_probe.out and PanSemExtCallExactParity. This is one exact constructor case; the full mutually recursive theorem remains open."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 780,
     "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
     "lean_name": "evaluateHOLFiniteState_break",
     "statement_status": "reviewed_fmap_as_finite_support",
