@@ -301,11 +301,102 @@ private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
       parse path.getString name.getString none qualifiers
   | _ => throwError "@[hol]: expected `hol \"<cakeml path>\" \"<HOL declaration name>\" [line] [(list_as_array := [fields])] [(names_as_string := [fields])]`"
 
+/-! Elaborated-type width validation for `(words_as_type_indexed_bitvec)`.
+Runs in the attribute handler on the elaborated declaration type (no textual
+parsing): every `BitVec` dimension must be a nonzero literal or a `Nat` binder
+discharged by a `NeZero` binder of its own. This discharges the policy that the
+qualifier only records the standard positive-width translation of HOL's
+type-indexed `'a word`. -/
+
+private partial def natValue? (e : Expr) : Option Nat :=
+  match e with
+  | .lit (.natVal n) => some n
+  | _ =>
+    match e.getAppFn with
+    | .const ``OfNat.ofNat _ =>
+        match e.getAppArgs[1]? with
+        | some inner => natValue? inner
+        | none => none
+    | _ => none
+
+private def neZeroRef? (e : Expr) : Option Expr :=
+  match e.getAppFn with
+  | .const ``NeZero _ => e.getAppArgs.back?
+  | _ => none
+
+private partial def telescope (e : Expr) (acc : Array Expr) : Array Expr × Expr :=
+  match e with
+  | .forallE _ dom body _ => telescope body (acc.push dom)
+  | body => (acc, body)
+
+private def stripMdata : Expr → Expr
+  | .mdata _ b => stripMdata b
+  | e => e
+
+private partial def wordDims (e : Expr) (depth : Nat) (acc : Array (Expr × Nat)) : Array (Expr × Nat) :=
+  match e with
+  | .app fn arg =>
+      let acc := wordDims fn depth acc
+      let acc := wordDims arg depth acc
+      match fn.getAppFn with
+      | .const ``BitVec _ => acc.push (arg, depth)
+      | _ => acc
+  | .forallE _ dom body _ =>
+      wordDims body (depth + 1) (wordDims dom depth acc)
+  | .lam _ dom body _ =>
+      wordDims body (depth + 1) (wordDims dom depth acc)
+  | .letE _ ty val body _ =>
+      wordDims body (depth + 1) (wordDims val depth (wordDims ty depth acc))
+  | .mdata _ b => wordDims b depth acc
+  | .proj _ _ b => wordDims b depth acc
+  | _ => acc
+
+/-- Problems with the width dimensions of an elaborated declaration type. -/
+private def widthProblems (type : Expr) : Array String := Id.run do
+  let (doms, _) := telescope type #[]
+  let mut out : Array String := #[]
+  for (w, d) in wordDims type 0 #[] do
+    match natValue? w with
+    | some 0 => out := out.push "word dimension is the literal 0"
+    | some _ => pure ()
+    | none =>
+      match w with
+      | .bvar k =>
+          if k < d then
+            let level := d - 1 - k
+            match doms[level]? with
+            | none => out := out.push s!"word dimension bvar {k} is out of telescope range"
+            | some dom =>
+                if stripMdata dom == (.const ``Nat []) then
+                  let hasNeZero := (List.range doms.size).any (fun i =>
+                    match doms[i]? with
+                    | none => false
+                    | some di =>
+                        match neZeroRef? di with
+                        | some (.bvar k2) => k2 < i && i - 1 - k2 == level
+                        | _ => false)
+                  if !hasNeZero then
+                    out := out.push s!"word dimension bvar {k} has no NeZero binder"
+                else
+                  out := out.push s!"word dimension bvar {k} is not bound at Nat"
+          else
+            out := out.push s!"word dimension bvar {k} is out of range"
+      | _ => out := out.push "word dimension is neither a nonzero literal nor a local width identifier"
+  return out
+
 initialize holRefAttribute : ParametricAttribute HolRef ←
   registerParametricAttribute {
     name := `hol
     descr := "original HOL4 declaration (file path and declaration name) ported by this Lean declaration"
     getParam := fun _ stx => parseHolRefAttribute stx
+    afterSet := fun decl ref => do
+      if ref.wordsAsTypeIndexedBitvec then
+        let env ← getEnv
+        match env.find? decl with
+        | some info =>
+            for problem in widthProblems info.type do
+              logError m!"{decl}: (words_as_type_indexed_bitvec) {problem}"
+        | none => pure ()
   }
 
 private def HolRef.qualifierSuffix (ref : HolRef) : String :=

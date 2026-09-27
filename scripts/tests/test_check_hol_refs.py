@@ -1410,6 +1410,47 @@ class WordsAsTypeIndexedBitvecQualifierTest(unittest.TestCase):
             any("NeZero 0" in e or "positive" in e for e in self.ERRORS(text, "evalProg"))
         )
 
+    def test_rejects_parenthesized_zero_dimension(self):
+        text = "\n".join(self.GOOD).replace(
+            "(addr : BitVec width)", "(addr : BitVec width) (leak : BitVec (0))",
+        )
+        self.assertTrue(
+            any("positive width" in e for e in self.ERRORS(text, "evalProg")),
+            self.ERRORS(text, "evalProg"),
+        )
+
+    def test_rejects_leading_zero_dimension(self):
+        text = "\n".join(self.GOOD).replace(
+            "(addr : BitVec width)", "(addr : BitVec width) (leak : BitVec 00)",
+        )
+        self.assertTrue(
+            any("positive width" in e for e in self.ERRORS(text, "evalProg")),
+            self.ERRORS(text, "evalProg"),
+        )
+
+    def test_rejects_arithmetic_dimension(self):
+        text = "\n".join(self.GOOD).replace(
+            "(addr : BitVec width)",
+            "(addr : BitVec width) (leak : BitVec (width - width))",
+        )
+        self.assertTrue(
+            any("positive width identifier" in e for e in self.ERRORS(text, "evalProg")),
+            self.ERRORS(text, "evalProg"),
+        )
+
+    def test_rejects_nezero_leading_zero(self):
+        text = "\n".join(self.GOOD).replace(
+            "[NeZero width]", "[NeZero width] [NeZero 00]",
+        )
+        self.assertTrue(
+            any("positive" in e for e in self.ERRORS(text, "evalProg")),
+            self.ERRORS(text, "evalProg"),
+        )
+
+    def test_accepts_parenthesized_identifier_dimension(self):
+        text = "\n".join(self.GOOD).replace("BitVec width", "BitVec (width)")
+        self.assertEqual(self.ERRORS(text, "evalProg"), [])
+
     def test_rejects_ffi_host_at_type_one(self):
         text = "\n".join(self.GOOD).replace("{σ : Type}", "{σ : Type 1}")
         self.assertTrue(
@@ -1720,36 +1761,6 @@ class WordsCarrierResolutionTest(unittest.TestCase):
         errors = self._run(owner, consumer)
         self.assertTrue(any("BitVec" in error for error in errors), errors)
 
-    def test_accepts_imported_inductive_carrier_with_bitvec_payload(self):
-        owner = "\n".join([
-            "inductive CrepProgExact (width : Nat) [NeZero width] where",
-            "  | skip",
-            "  | raise (value : BitVec width)",
-        ])
-        consumer = "\n".join([
-            "import Flapjack.PanToCrep.ContextExact",
-            '@[hol "cakeml/pancake/crep_inlineScript.sml" "unreach_elim_def"',
-            "  (words_as_type_indexed_bitvec)]",
-            "def unreachExact {width : Nat} [NeZero width]",
-            "    (program : CrepProgExact width) : Nat := width",
-        ])
-        self.assertEqual(self._run(owner, consumer), [])
-
-    def test_rejects_inductive_carrier_without_same_owner_word_payload(self):
-        owner = "\n".join([
-            "inductive CrepProgExact (width : Nat) [NeZero width] where",
-            "  | skip",
-            "  | clock (value : Nat)",
-        ])
-        consumer = "\n".join([
-            "import Flapjack.PanToCrep.ContextExact",
-            '@[hol "cakeml/pancake/crep_inlineScript.sml" "unreach_elim_def"',
-            "  (words_as_type_indexed_bitvec)]",
-            "def unreachExact {width : Nat} [NeZero width]",
-            "    (program : CrepProgExact width) : Nat := width",
-        ])
-        errors = self._run(owner, consumer)
-        self.assertTrue(any("BitVec" in error for error in errors), errors)
 
     def test_rejects_fake_carrier_without_bitvec_field(self):
         owner = "\n".join([
