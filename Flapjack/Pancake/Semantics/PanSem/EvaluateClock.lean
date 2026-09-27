@@ -510,8 +510,9 @@ coordinator evaluator/carrier-fidelity review. -/
     pair-shaped finite source evaluator: for every program and source state the
     evaluated result clock is bounded by the input clock. No `DecidablePred`
     binder (chosen classically in `evaluateHOLFiniteState`) and no success
-    premise. -/
-@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_clock" (fmap_as_finite_support := [locals, globals, code, eshapes]) (words_as_type_indexed_bitvec)]
+    premise. The HOL tag is withheld pending the full line-780 dispatcher
+    (`flapjack-qj5.9.6`), which still needs a fix-clock-free `DecCall` clause;
+    kept untagged per coordinator review. -/
 theorem evaluateHOLFiniteState_clock_le {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) (program : ProgHOL width) :
     (evaluateHOLFiniteState state program).2.clock ≤ state.clock := by
@@ -526,8 +527,8 @@ theorem evaluateHOLFiniteState_clock_le {width : Nat} {σ : Type} [NeZero width]
 /-- Public HOL `fix_clock_evaluate` (`panSemScript.sml:768-775`) shape over the
     pair-shaped finite source evaluator: clamping the evaluated pair at the input
     clock leaves it unchanged. No `DecidablePred` binder (chosen classically) and
-    no success premise. -/
-@[hol "cakeml/pancake/semantics/panSemScript.sml" "fix_clock_evaluate" (fmap_as_finite_support := [locals, globals, code, eshapes]) (words_as_type_indexed_bitvec)]
+    no success premise. The HOL tag is withheld pending the full line-780
+    dispatcher (`flapjack-qj5.9.6`); kept untagged per coordinator review. -/
 theorem fixClockHOLFinite_evaluateState {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) (program : ProgHOL width) :
     fixClockHOLFinite state (evaluateHOLFiniteState state program) =
@@ -1507,6 +1508,21 @@ pair-shaped finite source evaluator. This is the single unconditional source
 the recursive callee-body evaluation rewritten away by line 780's
 `REWRITE_RULE [fix_clock_evaluate]` (via the finite `fixClockHOLFinite_evaluateState`).
 No extra premise. The full 21-clause assembly remains open under `flapjack-qj5.9`.
+
+Declaration review against `panSemScript.sml:657-693`: the equation preserves
+`OPT_MMAP` argument evaluation and `lookup_code`, the clock-zero timeout state,
+the callee post-state for invalid results, return-shape check, all call-info
+return branches, exception matching/shape/local-validity checks, handler
+evaluation, and empty-locals propagation. `ProgHOL.call` has the same nested
+option/tuple fields as HOL `Call`; its identifiers use faithful `MlS`
+(`MlString`, not Lean `String`) and occur only in map keys or equality tests
+here. The owner state `PanSemStateFiniteExact` carries the named four
+`HolFiniteMapExact` fields, while `ValueHOL` and `ProgHOL` use the reviewed
+positive-width `HolWordLab`/`ExpHOL` carriers. `shapeEqHOL = true` is proved
+equivalent to structural HOL shape equality by `shapeEqHOL_eq_true`. Thus the
+two tag qualifiers record only the finite-map and word-carrier translations;
+no additional premise, name representation, or output behavior difference is
+hidden by them.
 -/
 set_option maxHeartbeats 2000000 in
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
