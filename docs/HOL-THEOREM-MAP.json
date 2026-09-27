@@ -14137,5 +14137,18 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-ds8 source comparison (2026-09-27; bead flapjack-4ac.5.16.5.13.1): the first conjunct of HOL's rewritten evaluate_def (crepSemScript.sml:443, originating at line 241) is evaluate (Skip,s)=(NONE,s). evalCrepSemHOLProgExact_skip has exactly the state quantifier and pair-shaped conclusion over CrepProgHOL and the 11-field CrepSemHOLState, over the total exact evaluator; no result premise or extra logical assumption. The fmap_as_finite_support qualifier records HOL's |-> fields locals/globals/code as HolFiniteMapExact, with the same-module canonical witness holFmapAsFiniteSupportWitness in this module re-exporting CrepSemHOLState.holFmapAsFiniteSupportWitness. The words_as_type_indexed_bitvec qualifier records HOL's type-indexed 'a word as BitVec width with [NeZero width] retained. This tag covers only the Skip case; the remaining evaluate_def clauses stay untagged in this slice."
+  },  {
+    "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
+    "hol_name": "lookup_locals_eq_map_vars",
+    "lean_path": "Flapjack/Pancake/Semantics/CrepProps.lean",
+    "lean_name": "lookupLocalsEqMapVarsHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-2de.12): statement matches HOL crepPropsScript.sml:17-27 clause-for-clause over the exact carriers (OPT_MMAP = List.mapM, FLOOKUP t.locals = t.locals.lookup, MAP Var = map CrepExpHOL.var, eval = evalCrepSemHOLExp); CrepSemHOLState width σ is the type-indexed-word carrier with HOL |-> fields locals/globals/code, hence the combined qualifiers; same-module witness holFmapAsFiniteSupportWitness."
   }
 ]
