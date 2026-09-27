@@ -807,7 +807,7 @@ private theorem lookupFieldHOL_isWfShapeValuesHOLExact {width : Nat} [NeZero wid
     invariant now exist, but the evaluator still exposes an assembly marker;
     the final state-level theorem path remains tracked by the open
     `flapjack-4ac.5.83`. Inventory bead `flapjack-4ac.4.67` is closed by
-    source review; the faithful theorem bead `flapjack-4ac.5.83` remains
+    source-review; the faithful theorem bead `flapjack-4ac.5.83` remains
     open. -/
 
 /-- Untagged support: the exact value-level well-formedness predicate implies
