@@ -880,6 +880,24 @@ example :
       List.map_cons, List.map_nil, crepExpOfHOL.eq_1, shapeOfHOL]
   · simp [compileProgExactHOLW, compileProgHOL, progOfHOL, crepProgOfHOL]
 
+/-- The recursive `DecCall` bridge (`pan_to_crepScript.sml:262-272`) closes the
+    declared-shape return-slot allocation, the byte-range decoding of the
+    `MlString` callee, and the recursive body under the extended context for a
+    concrete empty argument list and `.skip` body. -/
+example :
+    crepProgOfHOL (compileProgExactHOLW (exactLocalAssignContext [7] [8])
+      (.decCall (ofString "dst") (shapeToHOL .one) (ofString "f")
+        (([] : List (Exp (BitVec 8))).map expToHOL) .skip)) =
+    compileProgRiscV (exactLocalAssignContext [7] [8]).toProduction
+      (.decCall "dst" .one "f" [] (progOfHOL .skip)) := by
+  apply compileProgExactHOLW_decCall_bridge
+  · rfl
+  · rfl
+  · intro expression hmem
+    simp at hmem
+  · decide
+  · simp [compileProgExactHOLW, compileProgHOL, progOfHOL, crepProgOfHOL]
+
 def exactShMemStoreClauseParity : Bool :=
   (match compileShMemStoreExactHOLW
       (exactLocalAssignContext [7] [8]) .op8 (.var .local (ofString "src")) (.const 3) with
