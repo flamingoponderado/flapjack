@@ -1708,35 +1708,46 @@ theorem evaluateHOLFiniteState_eq_withDeciders {width : Nat} {σ : Type}
   simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
     hmemEq, hsharedEq]
 
-/-- Flapjack-specific clause equation for HOL `panSem$evaluate_def`'s `Skip`
-branch (`panSemScript.sml:557`). The total finite-state view has neither the
-assembly marker nor extra decision-procedure binders. This is not a tag for the
-whole recursive HOL definition. -/
-@[simp] theorem evaluateHOLFiniteState_skip {width : Nat} {σ : Type} [NeZero width]
+/-- HOL `evaluate_def`'s `Skip` equation (the first conjunct of the theorem at
+    `panSemScript.sml:780`, whose definition clause is at line 557). This is one
+    constructor case of the theorem; the full 21-equation theorem remains open.
+    The finite-map qualifier records the four state maps' reviewed canonical
+    finite-support representation. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
+  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+theorem evaluateHOLFiniteState_skip {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) :
     evaluateHOLFiniteState state (.skip : ProgHOL width) = (none, state) := by
   classical
   simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
     evalPanSemRecursiveCallFiniteContext]
+attribute [simp] evaluateHOLFiniteState_skip
 
-/-- Flapjack-specific clause equation for HOL `panSem$evaluate_def`'s `Break`
-branch (`panSemScript.sml:623`); the complete recursive definition remains
-untagged pending its carrier/body review. -/
-@[simp] theorem evaluateHOLFiniteState_break {width : Nat} {σ : Type} [NeZero width]
+/-! HOL `evaluate_def`'s `Break` equation (the conjunct for the source clause at
+`panSemScript.sml:623` in the theorem at line 780). The full 21-equation theorem
+remains open. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
+  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+theorem evaluateHOLFiniteState_break {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) :
     evaluateHOLFiniteState state (.break : ProgHOL width) = (some .break, state) := by
   classical
   simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
     evalPanSemRecursiveCallFiniteContext]
+attribute [simp] evaluateHOLFiniteState_break
 
-/-- Flapjack-specific clause equation for HOL `panSem$evaluate_def`'s `Continue`
-branch (`panSemScript.sml:624`); no full `evaluate_def` port is claimed. -/
-@[simp] theorem evaluateHOLFiniteState_continue {width : Nat} {σ : Type} [NeZero width]
+/-! HOL `evaluate_def`'s `Continue` equation (the conjunct for the source clause
+at `panSemScript.sml:624` in the theorem at line 780). The full 21-equation
+theorem remains open. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
+  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+theorem evaluateHOLFiniteState_continue {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) :
     evaluateHOLFiniteState state (.continue : ProgHOL width) = (some .continue, state) := by
   classical
   simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
     evalPanSemRecursiveCallFiniteContext]
+attribute [simp] evaluateHOLFiniteState_continue
 
 /-- The decider-taking helper is the pair-shaped rendering of the assembly-marker
     evaluator. This bridge is Flapjack-specific infrastructure. -/
