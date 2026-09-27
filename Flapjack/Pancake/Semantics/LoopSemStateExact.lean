@@ -1,4 +1,5 @@
 import Flapjack.Pancake.Semantics.LoopSemState
+import Flapjack.Pancake.Semantics.LoopProps
 import Flapjack.Pancake.LoopLang
 import Flapjack.Pancake.Semantics.CrepSem.HOLState
 import Flapjack.FfiBridge
@@ -222,5 +223,24 @@ theorem LoopSemStateFiniteExact.getVarImm_map_eq_of_prodRel {width : Nat} [NeZer
   cases operand with
   | reg name => exact (h.1 name).symm
   | imm value => rfl
+
+/-- Variable reads through `get_vars` on the production state agree with the
+    exact carrier's recursive read under `prodRel`. -/
+theorem LoopSemStateFiniteExact.getVars_map_eq_of_prodRel {width : Nat} [NeZero width]
+    {F : Type} {state : LoopSemStateFiniteExact width F}
+    {machine : LoopMachineState (BitVec width) F}
+    (h : state.prodRel machine) (names : List Nat) :
+    (LoopSemStateFiniteExact.getVars names state).map (List.map loopValueOfWordLocW) =
+      Flapjack.getVars names machine := by
+  induction names with
+  | nil => rfl
+  | cons name names ih =>
+      rw [LoopSemStateFiniteExact.getVars_cons, Flapjack.getVars, h.1 name]
+      cases hlookup : state.locals.lookup name with
+      | none => rfl
+      | some value =>
+          simp only [Option.bind_some, Option.map_some, Option.map_map]
+          rw [← ih]
+          cases hg : LoopSemStateFiniteExact.getVars names state <;> rfl
 
 end Flapjack
