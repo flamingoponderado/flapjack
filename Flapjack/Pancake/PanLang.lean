@@ -839,14 +839,6 @@ theorem listDisjoint_drop_take_sum (values : List α) (n m p : Nat)
   fun value hright hleft =>
     listDisjoint_take_drop_sum values n m p h value hleft hright
 
-/-! Counterpart of Cake's `distinct_lists_eq_disjoint`
-    (`cakeml/pancake/semantics/pan_commonPropsScript.sml:102`): Cake defines
-    `distinct_lists xs ys` as `EVERY (\x. ~MEM x ys) xs`, which is exactly the
-    `ListDisjoint` predicate below. -/
-theorem forall_not_mem_iff_listDisjoint (xs ys : List α) :
-    (∀ x, x ∈ xs → x ∉ ys) ↔ ListDisjoint xs ys :=
-  Iff.rfl
-
 /-! Counterpart of Cake's `distinct_lists_append`
     (`cakeml/pancake/semantics/pan_commonPropsScript.sml:108`). -/
 theorem listDisjoint_append (xs ys : List α) (h : (xs ++ ys).Nodup) :
