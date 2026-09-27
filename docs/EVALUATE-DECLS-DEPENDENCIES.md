@@ -130,7 +130,10 @@ Coverage review: all 17 named outputs in `pan_evaluate_decls_probe.out` now have
 Name, successful/failing Decl, Function, and Exn rows, this includes local
 preservation, left-to-right global visibility, empty-locals evaluation,
 function-code replacement, bad return shape, duplicate-exception failure, and
-an in-domain byte load in a declaration initializer.
+an in-domain byte load in a declaration initializer. The byte-load row starts
+with empty locals/globals, clock 20, little-endian mode, memory `0 ↦ Word 1w`,
+and domain `{0w}`; `Decl One "g" (LoadByte (Const 0w))` yields both
+`SOME (ValWord 1w)` for global `g` and the unchanged `Word 1w` memory cell.
 The separate production parity module remains a comparison of the production
 String/InfoMap evaluator and does not discharge the exact evaluator's route
 gap.

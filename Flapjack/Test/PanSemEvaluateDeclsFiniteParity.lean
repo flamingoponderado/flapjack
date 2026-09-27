@@ -59,7 +59,9 @@ abbrev stateLoad : PanSemStateFiniteExact 8 Unit :=
 abbrev stateLoadByte : PanSemStateFiniteExact 8 Unit :=
   { state0 with
     memory := fun a => if a = (0 : Word8) then .word 1 else .word 0
-    memaddrs := fun a => a = 0 }
+    memaddrs := fun a => a = 0
+    clock := 20
+    be := false }
 
 abbrev stateLocalX : PanSemStateFiniteExact 8 Unit :=
   { state0 with
