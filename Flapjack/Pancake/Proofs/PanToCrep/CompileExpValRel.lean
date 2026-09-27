@@ -2,6 +2,7 @@ import Flapjack.Pancake.Proofs.PanToCrep.StateRelFiniteSupport
 import Flapjack.Pancake.Proofs.PanToCrep.CodeRelExact
 import Flapjack.Pancake.Semantics.PanSem.EvalFinite
 import Flapjack.Pancake.Semantics.PanProps.LocalisedExpSimps
+import Flapjack.Pancake.Semantics.CrepProps.MemLoadFlatRel
 
 /-!
 Exact-carrier statement of HOL `compile_exp_val_rel`
@@ -1014,6 +1015,184 @@ theorem compileExpValRelHOL_loadByte {width : Nat} {σ : Type} [NeZero width]
       | rStruct subValues =>
           simp only [hsubEval] at heval
           exact absurd heval.symm (Option.some_ne_none value)
+
+/-- Exact-carrier general `Load` case of HOL `compile_exp_val_rel`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:217-256`). This staged
+    case consumes the induction hypothesis for the address expression, then
+    composes the exact `mem_load_flat_rel` and `eval_load_shape_el_rel`
+    counterparts. It keeps HOL's successful source-evaluation premise and
+    proves all four conclusions without assuming target evaluation. HOL proves
+    this as a case of `compile_exp_val_rel`, not as a separately exported
+    theorem, so this case lemma is intentionally untagged. -/
+theorem compileExpValRelHOL_load {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) [_hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width σ) [_ht : DecidablePred targetState.memaddrs]
+    (shape : ShapeHOL) (address : ExpHOL width)
+    (value : ValueHOL width)
+    (expressions : List (CrepExpHOL width)) (outputShape : ShapeHOL)
+    (hsub : ∀ (subValue : ValueHOL width) (subExpressions : List (CrepExpHOL width))
+        (subShape : ShapeHOL),
+        state.evalHOLFinite address = some subValue →
+        panToCrepStateRelFiniteExact state targetState →
+        codeRelExactHOLW context state.code targetState.code →
+        panToCrepLocalsRelFiniteExact context state.locals targetState.locals →
+        localisedExpHOL address = true →
+        compileExpExactHOLW context address = (subExpressions, subShape) →
+        subExpressions.map (evalCrepSemHOLExp targetState) = (flattenHOL subValue).map some ∧
+        subExpressions.length = sizeOfShapeHOL subShape ∧
+        shapeOfHOLExact subValue = subShape ∧
+        isWfShapeExactHOL ([] : StructContextExact) subShape = true)
+    (heval : state.evalHOLFinite (.load shape address) = some value)
+    (hlocalised : localisedExpHOL (.load shape address) = true)
+    (hstate : panToCrepStateRelFiniteExact state targetState)
+    (hcode : codeRelExactHOLW context state.code targetState.code)
+    (hlocals : panToCrepLocalsRelFiniteExact context state.locals targetState.locals)
+    (hcompile : compileExpExactHOLW context (.load shape address) =
+      (expressions, outputShape)) :
+    expressions.map (evalCrepSemHOLExp targetState) = (flattenHOL value).map some ∧
+    expressions.length = sizeOfShapeHOL outputShape ∧
+    shapeOfHOLExact value = outputShape ∧
+    isWfShapeExactHOL ([] : StructContextExact) outputShape = true := by
+  rw [PanSemStateFiniteExact.evalHOLFinite_load] at heval
+  by_cases hwfSource : isWfShapeExactHOL state.structs shape = true
+  · simp only [if_pos hwfSource] at heval
+    cases haddress : state.evalHOLFinite address with
+    | none =>
+        simp only [haddress] at heval
+        exact absurd heval.symm (Option.some_ne_none value)
+    | some addressValue =>
+        cases addressValue with
+        | val addressLab =>
+            cases addressLab with
+            | word addressWord =>
+                simp only [haddress] at heval
+                cases hmemLoad : memLoadHOLExact shape addressWord state.memaddrs
+                    state.memory state.structs with
+                | none =>
+                    simp only [hmemLoad] at heval
+                    exact absurd heval.symm (Option.some_ne_none value)
+                | some loaded =>
+                    simp only [hmemLoad, Option.some.injEq] at heval
+                    have hvalue : value = loaded := heval.symm
+                    have hstructs := panToCrepStateRelFiniteExact_structs state targetState hstate
+                    have hwf : isWfShapeExactHOL ([] : StructContextExact) shape = true := by
+                      simpa only [hstructs] using hwfSource
+                    have hloadedShape : shapeOfHOLExact loaded = shape :=
+                      memLoadHOLExact_some_shapeOf_eq shape addressWord state.memaddrs
+                        state.memory state.structs loaded hmemLoad
+                    have hmemLoadTarget :
+                        memLoadHOLExact shape addressWord targetState.memaddrs
+                          targetState.memory state.structs = some loaded := by
+                      simpa only [hstate.2.1, hstate.1] using hmemLoad
+                    have hloadedLength : (flattenHOL loaded).length = sizeOfShapeHOL shape := by
+                      have hwfLoaded : isWfShapeExactHOL ([] : StructContextExact)
+                          (shapeOfHOLExact loaded) = true := by
+                        simpa only [hloadedShape] using hwf
+                      simpa only [hloadedShape] using
+                        flattenHOL_length_eq_sizeOfShapeHOL loaded hwfLoaded
+                    cases hsubCompile : compileExpExactHOLW context address with
+                    | mk subExpressions subShape =>
+                        have hsubEval : state.evalHOLFinite address =
+                            some (.val (.word addressWord)) := haddress
+                        have hlocalisedAddress : localisedExpHOL address = true := by
+                          simpa only [localisedExpSimpsHOL.2.2.2.2.2.2.1] using hlocalised
+                        have hsubResult := hsub (.val (.word addressWord))
+                          subExpressions subShape hsubEval hstate hcode hlocals
+                          hlocalisedAddress hsubCompile
+                        obtain ⟨hsubMap, hsubLen, hsubShape, _hsubWf⟩ := hsubResult
+                        have hsubShapeOne : subShape = .one := by
+                          simpa only [shapeOfHOLExact] using hsubShape.symm
+                        rw [hsubShapeOne, sizeOfShapeHOL] at hsubLen
+                        have hsubOne : subExpressions.length = 1 := hsubLen
+                        cases subExpressions with
+                        | nil => simp at hsubOne
+                        | cons addressCode addressRest =>
+                            have hrestEmpty : addressRest = [] := by
+                              cases addressRest with
+                              | nil => rfl
+                              | cons x xs => simp at hsubOne
+                            subst addressRest
+                            simp only [List.map_cons, List.map_nil] at hsubMap
+                            have htargetAddress :
+                                evalCrepSemHOLExp targetState addressCode =
+                                  some (.word addressWord) := by
+                              simpa [flattenHOL] using hsubMap
+                            have hcompileLoad := hcompile
+                            simp only [compileExpExactHOLW] at hcompileLoad
+                            rw [hsubCompile] at hcompileLoad
+                            injection hcompileLoad with hExpressions hOutputShape
+                            subst outputShape
+                            subst expressions
+                            have hmap :
+                                (loadShapeBytesHOLW (0 : BitVec width)
+                                    (sizeOfShapeHOL shape) addressCode).map
+                                    (evalCrepSemHOLExp targetState) =
+                                  (flattenHOL loaded).map some := by
+                              apply List.ext_getElem
+                              · simp only [List.length_map, length_loadShapeHOLW,
+                                  hloadedLength]
+                              · intro index hleft hright
+                                have hindex : index < sizeOfShapeHOL shape := by
+                                  simpa only [List.length_map, length_loadShapeHOLW] using hleft
+                                have hflatIndex : index < (flattenHOL loaded).length := by
+                                  simpa only [List.length_map] using hright
+                                have hgenerated := eval_loadShapeBytesHOLW_getElem
+                                  targetState (0 : BitVec width) (sizeOfShapeHOL shape)
+                                  addressCode index hindex
+                                have hflat := memLoadFlatRelHOLExact targetState shape
+                                  addressWord state.structs loaded index hmemLoadTarget
+                                  hflatIndex hwf
+                                have htake : ((flattenHOL loaded).take index).length = index :=
+                                  List.length_take_of_le (Nat.le_of_lt hflatIndex)
+                                rw [htake] at hflat
+                                rw [List.getElem_map (evalCrepSemHOLExp targetState),
+                                  List.getElem_map some]
+                                change evalCrepSemHOLExp targetState
+                                    ((loadShapeBytesHOLW (0 : BitVec width)
+                                      (sizeOfShapeHOL shape) addressCode)[index]'(by
+                                      simpa [length_loadShapeHOLW] using hleft)) =
+                                  some ((flattenHOL loaded)[index]'hflatIndex)
+                                calc
+                                  evalCrepSemHOLExp targetState
+                                      ((loadShapeBytesHOLW (0 : BitVec width)
+                                        (sizeOfShapeHOL shape) addressCode)[index]'(by
+                                        simpa only [length_loadShapeHOLW] using hindex)) =
+                                        evalCrepSemHOLExp targetState
+                                        (.load (.op .add [addressCode,
+                                          .const (BitVec.ofNat width (width / 8) *
+                                            BitVec.ofNat width index)])) := by
+                                        have hgenerated' := hgenerated
+                                        have hzero : (0 : BitVec width) +
+                                            (BitVec.ofNat width (width / 8) *
+                                              BitVec.ofNat width index) =
+                                            BitVec.ofNat width (width / 8) *
+                                              BitVec.ofNat width index := BitVec.zero_add _
+                                        rw [hzero] at hgenerated'
+                                        exact hgenerated'
+                                  _ = memLoadCrepSemHOL
+                                      (addressWord + bytesInWordHOL width *
+                                        BitVec.ofNat width index) targetState := by
+                                        simp [evalCrepSemHOLExp, htargetAddress,
+                                          wordOpHOL, wordOp, bytesInWordHOL,
+                                          memLoadCrepSemHOL] <;> rfl
+                                  _ = some ((flattenHOL loaded)[index]'(by
+                                        simpa only [hloadedLength] using hindex)) := hflat
+                            have hshape : shapeOfHOLExact loaded = shape := hloadedShape
+                            have hloadedWf : isWfShapeExactHOL
+                                ([] : StructContextExact) shape = true := hwf
+                            refine ⟨?_, ?_, ?_, ?_⟩
+                            · simpa only [hvalue] using hmap
+                            · simp only [length_loadShapeHOLW]
+                            · simpa only [hvalue, shapeOfHOLExact] using hshape
+                            · exact hloadedWf
+        | nStruct _ _ =>
+            simp only [haddress] at heval
+            exact absurd heval.symm (Option.some_ne_none value)
+        | rStruct _ =>
+            simp only [haddress] at heval
+            exact absurd heval.symm (Option.some_ne_none value)
+  · simp [hwfSource] at heval
 
 /-- Exact-carrier `Cmp` case of HOL `compile_exp_val_rel`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml`). This is a
