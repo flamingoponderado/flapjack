@@ -1119,21 +1119,14 @@ theorem structsSimpsHOLFinite {width : Nat} {σ : Type} [NeZero width]
   simp [decClockForStructsSimps, emptyLocalsForStructsSimps]
 
 /-!
-### Source-review disposition: `evaluate_structs_invariant`
+### Source-reviewed port: `evaluate_structs_invariant`
 
 HOL `panPropsScript.sml:1210` states
-`evaluate (p, s) = (res, s') ==> s'.structs = s.structs`; the theorem is
-proved directly from `evaluate_invariants`.  There is deliberately no
-`@[hol]` theorem for it here yet.  The direct finite evaluator in
-`PanSemStateFiniteExact.evaluateHOLFinite` currently returns an assembly
-`Option` around its `result option × state` output, while
-`evaluateHOLFiniteViaExact` removes that marker by delegating through the
-unrestricted-map `PanSemStateExact` evaluator.  The source counterpart's
-finite-to-broad projection is proved, but source review and the clause-for-clause
-tagged finite `evaluate_def` are still in progress (`flapjack-qj5`).
-A preservation fact about either adapter alone would
-therefore not yet be a source-reviewed port of this theorem.  The faithful
-finite-state theorem is tracked by `flapjack-4ac.4.63.1`.
+`evaluate (p, s) = (res, s') ==> s'.structs = s.structs`. The exact finite
+state theorem is now tagged below, after the clause-level structural
+preservation proof. It uses the line-780 exact finite `evaluate_def` port and
+does not rely on the unrestricted-map `evaluateHOLFiniteViaExact` adapter or
+add an evaluator-success premise beyond HOL's result equality.
 
 ### Source-review disposition: `evaluate_min_clock`
 

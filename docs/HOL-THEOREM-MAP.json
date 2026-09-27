@@ -13460,6 +13460,21 @@
   },
   {
     "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "evaluate_structs_invariant",
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvaluateResultInvariant.lean",
+    "lean_name": "evaluateStructsInvariantFiniteExact",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Codex source comparison (2026-09-27, bead flapjack-4ac.4.63.1): HOL panPropsScript.sml:1210-1215 (`evaluate_structs_invariant`) has the sole premise `evaluate (p,s) = (res,s')` and conclusion `s'.structs = s.structs`; Lean keeps the same program/source/result/post-state binders, pair-shaped result equality, and unchanged-structs conclusion, with no additional logical premises. Its pair view delegates through the PanProps `toPanSemFinite`/`ofPanSemFinite` codec to the reviewed finite-support recursive evaluator; classical choice of `DecidablePred` membership evidence and the unreachable outer assembly fallback are internal implementation details. The proof derives a successful finite-context evaluator output from that pair equation, then applies the clause-level structural preservation theorem. The carrier is `PanPropsEvalStateFiniteExact`; its four `HolFiniteMapExact` fields (locals/globals/code/eshapes) use the same-module canonical finite-map witness. `MlS`, `StructContextExact`, `PanSemResultExact`, and `ProgHOL` are the reviewed HOL carriers. `[NeZero width]` models HOL's positive word dimension; the word-state fields use the reviewed `BitVec width` translation. This qualifier records only the map and word representations."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
     "hol_name": "evaluate_is_wf_shape_invariant",
     "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvaluateResultInvariant.lean",
     "lean_name": "evaluateIsWfShapeInvariantFiniteExact",
