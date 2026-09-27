@@ -10658,8 +10658,9 @@
     "hol_name": "every_var_exp_def",
     "lean_path": "Flapjack/Pancake/WordLang.lean",
     "lean_name": "everyVarExpHOL",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Codex source review against wordLangScript.sml:85-91: Var applies P, Load recurses, Op applies the list traversal, Shift conjoins both operands, and all other expressions return T. Uses exact WordLangExpHOL so Lookup has the fixed store_name field."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "Codex source review against wordLangScript.sml:85-91: Var applies P, Load recurses, Op applies the list traversal, Shift conjoins both operands, and all other expressions return T. Uses exact WordLangExpHOL so Lookup has the fixed store_name field. Bead flapjack-juqo: the binder is `{width : Nat} [NeZero width]`, recording HOL's positive word dimension (dimindex (:α) >= 1); the only representation difference from HOL is the type-indexed `'a word` -> positive-width `BitVec width` translation, so the `words_as_type_indexed_bitvec` qualifier applies.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "cakeml/compiler/backend/wordLangScript.sml",
