@@ -137,6 +137,46 @@ noncomputable def panSemanticsExactWithLub {width : Nat} {σ : Type} [NeZero wid
   else
     .diverge _ divergenceLub
 
+/-- The clock-indexed entry-evaluation event family of `panEvaluateClock`
+agrees with the additive-clock family of the exact recursive evaluator started
+from the clock-0 context.  This is the bridge that lets the landed
+clock-indexed chain lemma apply to the absolute `s with clock := k` family of
+HOL `semantics_def`. -/
+theorem panExactResultEvents_panEvaluateClock {width : Nat} {σ : Type} [NeZero width]
+    (context : PanSemExactEvalContext width σ) (start : MlS) (clock : Nat) :
+    panExactResultEvents (panEvaluateClock context start clock) =
+      ((evalPanSemRecursiveCallContextHOLExact (panEntryProgram start)
+          (ctxAddClock (panClockContext context 0) clock)).map
+        (fun result => result.2.state.ffi.ioEvents)).getD [] := by
+  have hstate : (panClockContext context clock).state =
+      (ctxAddClock (panClockContext context 0) clock).state := by
+    simp only [panClockContext, PanSemExactEvalContext.withState_state,
+      stateAddClock, Nat.zero_add]
+  have heval := eval_context_state (panEntryProgram start) (panClockContext context clock)
+    (ctxAddClock (panClockContext context 0) clock) hstate
+  unfold panEvaluateClock panExactResultEvents
+  rw [heval]
+  cases h : evalPanSemRecursiveCallContextHOLExact (panEntryProgram start)
+      (ctxAddClock (panClockContext context 0) clock) with
+  | none =>
+      obtain ⟨o, ho⟩ := evalPanSemRecursiveCallContextHOLExact_total (panEntryProgram start)
+        (ctxAddClock (panClockContext context 0) clock)
+      rw [h] at ho
+      exact absurd ho (by simp)
+  | some pair => simp
+
+/-- The clock-indexed event traces of the exact panSem entry evaluation form a
+pairwise prefix chain (no caller-supplied hypothesis): this discharges the
+`divergenceChain` obligation of HOL `semantics_def` from the already-proved
+clock-monotonicity of the exact evaluator. -/
+theorem panEvaluateClock_ioEvents_lprefixChain {width : Nat} {σ : Type} [NeZero width]
+    (context : PanSemExactEvalContext width σ) (start : MlS) :
+    panLprefixChain
+      (fun clock => panExactResultEvents (panEvaluateClock context start clock)) := by
+  simpa only [panExactResultEvents_panEvaluateClock context start] using
+    evalPanSemRecursiveCallContextHOLExact_clock_ioEvents_lprefixChain
+      (panEntryProgram start) (panClockContext context 0)
+
 /-- HOL `panSem$semantics_def` with the shared prefix-LUB construction; the
 caller supplies the `lprefix_chain` proof of the clock-indexed event family
 (the documented deviation from HOL's total `build_lprefix_lub`). -/
@@ -147,5 +187,13 @@ noncomputable def panSemanticsExact {width : Nat} {σ : Type} [NeZero width]
     PanSemExactBehaviour :=
   panSemanticsExactWithLub context start
     (buildPanLprefixLub _ divergenceChain)
+
+/-- HOL `panSem$semantics_def` with the divergence LUB derived from the exact
+evaluator, so no prefix-chain hypothesis is required.  This is the
+evaluator-derived total instance of the source definition (still untagged
+pending coordinator source review). -/
+noncomputable def panSemanticsExactTotal {width : Nat} {σ : Type} [NeZero width]
+    (context : PanSemExactEvalContext width σ) (start : MlS) : PanSemExactBehaviour :=
+  panSemanticsExact context start (panEvaluateClock_ioEvents_lprefixChain context start)
 
 end Flapjack
