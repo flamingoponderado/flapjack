@@ -1364,38 +1364,53 @@ theorem compileProgExactHOLW_extCall_skip_bridge {width : Nat} [NeZero width]
   rcases hguard with h | h | h | h | h | h | h | h
   · cases exactConfigurationShape <;>
       simp_all [compileProgExactHOLW, compileExtCallExactHOLW, compileProgRiscV,
-        compileProgHOL, crepProgOfHOL, shapeOfHOL, List.map_nil, List.map_cons,
-        hproductionConfiguration, hconfigurationShapeSymm, hconfigurationValuesSymm]
+      compileProgHOL, crepProgOfHOL, shapeOfHOL]
   · cases exactConfigurationLengthShape <;>
       simp_all [compileProgExactHOLW, compileExtCallExactHOLW, compileProgRiscV,
-        compileProgHOL, crepProgOfHOL, shapeOfHOL, List.map_nil, List.map_cons,
-        hproductionConfigurationLength, hconfigurationLengthShapeSymm,
-        hconfigurationLengthValuesSymm]
+      compileProgHOL, crepProgOfHOL, shapeOfHOL]
   · cases exactArrayShape <;>
       simp_all [compileProgExactHOLW, compileExtCallExactHOLW, compileProgRiscV,
-        compileProgHOL, crepProgOfHOL, shapeOfHOL, List.map_nil, List.map_cons,
-        hproductionArray, harrayShapeSymm, harrayValuesSymm]
+      compileProgHOL, crepProgOfHOL, shapeOfHOL]
   · cases exactArrayLengthShape <;>
       simp_all [compileProgExactHOLW, compileExtCallExactHOLW, compileProgRiscV,
-        compileProgHOL, crepProgOfHOL, shapeOfHOL, List.map_nil, List.map_cons,
-        hproductionArrayLength, harrayLengthShapeSymm, harrayLengthValuesSymm]
+      compileProgHOL, crepProgOfHOL, shapeOfHOL]
   · subst h
     simp_all [compileProgExactHOLW, compileExtCallExactHOLW, compileProgRiscV,
-      compileProgHOL, crepProgOfHOL, shapeOfHOL, List.map_nil, List.map_cons,
-      hproductionConfiguration, hconfigurationShapeSymm, hconfigurationValuesSymm]
+      compileProgHOL, crepProgOfHOL, List.map_nil]
   · subst h
     simp_all [compileProgExactHOLW, compileExtCallExactHOLW, compileProgRiscV,
-      compileProgHOL, crepProgOfHOL, shapeOfHOL, List.map_nil, List.map_cons,
-      hproductionConfigurationLength, hconfigurationLengthShapeSymm,
-      hconfigurationLengthValuesSymm]
+      compileProgHOL, crepProgOfHOL, List.map_nil]
   · subst h
     simp_all [compileProgExactHOLW, compileExtCallExactHOLW, compileProgRiscV,
-      compileProgHOL, crepProgOfHOL, shapeOfHOL, List.map_nil, List.map_cons,
-      hproductionArray, harrayShapeSymm, harrayValuesSymm]
+      compileProgHOL, crepProgOfHOL, List.map_nil]
   · subst h
     simp_all [compileProgExactHOLW, compileExtCallExactHOLW, compileProgRiscV,
-      compileProgHOL, crepProgOfHOL, shapeOfHOL, List.map_nil, List.map_cons,
-      hproductionArrayLength, harrayLengthShapeSymm, harrayLengthValuesSymm]
+      compileProgHOL, crepProgOfHOL, List.map_nil]
+
+/-- Source-reviewed HOL tail-call clause (`pan_to_crepScript.sml:221-225`), the
+    `rtyp = NONE` arm of `Call`. HOL compiles every argument, flattens the
+    resulting expression lists, and emits a `Call NONE` with no return metadata.
+    The exact clause is `compileCallNoReturnExactHOLW`; the production compiler
+    emits the same tail call over `compileArgsHOL`, so the two sides agree once
+    the argument lists and the (name-ranged) function identifier are decoded. -/
+theorem compileProgExactHOLW_call_none_bridge {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width) (function : String)
+    (arguments : List (Exp (BitVec width)))
+    (hfunction : Flapjack.Pancake.PanLang.NameRanged function)
+    (hcodec : ∀ expression ∈ arguments,
+      ((compileExpExactHOLW context (expToHOL expression)).1.map crepExpOfHOL,
+        shapeOfHOL (compileExpExactHOLW context (expToHOL expression)).2) =
+        compileExpHOL context.toProduction expression) :
+    crepProgOfHOL (compileProgExactHOLW context
+        (.call none (Flapjack.Basis.Pure.MlString.ofString function)
+          (arguments.map expToHOL))) =
+      compileProgRiscV context.toProduction (.call none function arguments) := by
+  have hfunctionDecode :=
+    Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes function hfunction
+  have hargs := crepProgOfHOL_compileArgumentList_flatMap context arguments hcodec
+  simp only [compileProgExactHOLW, compileCallNoReturnExactHOLW, compileProgRiscV,
+    compileProgHOL, crepProgOfHOL]
+  rw [hargs, hfunctionDecode]
 
 theorem compileProgExactHOLW_shmem_store_bridge {width : Nat} [NeZero width]
     (context : PanToCrepContextExact width) (operator : OpSize)

@@ -898,6 +898,22 @@ example :
   · decide
   · simp [compileProgExactHOLW, compileProgHOL, progOfHOL, crepProgOfHOL]
 
+/-- The tail-call bridge (`pan_to_crepScript.sml:221-225`) for a name-ranged
+    callee and a concrete single-argument list. -/
+example :
+    crepProgOfHOL (compileProgExactHOLW (exactLocalAssignContext [7] [8])
+      (.call none (ofString "f")
+        (([.const 5] : List (Exp (BitVec 8))).map expToHOL))) =
+    compileProgRiscV (exactLocalAssignContext [7] [8]).toProduction
+      (.call none "f" [.const 5]) := by
+  apply compileProgExactHOLW_call_none_bridge
+  · decide
+  · intro expression hmem
+    simp only [List.mem_singleton] at hmem
+    subst hmem
+    simp only [compileExpExactHOLW.eq_1, expToHOL.eq_1, compileExpHOL.eq_1,
+      List.map_cons, List.map_nil, crepExpOfHOL.eq_1, shapeOfHOL]
+
 /-- The `ExtCall` success bridge (`pan_to_crepScript.sml:274-290`) closes the
     four `One`-shaped operand bindings and the maximum-variable temporary base
     for concrete constant operands. -/
