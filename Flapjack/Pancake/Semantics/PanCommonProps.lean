@@ -710,4 +710,17 @@ theorem opt_mmap_el {α β : Type} (l : List α) (f : α → Option β) (x : Lis
     List.getElem?_map, List.getElem?_eq_getElem hn', Option.map_some] at hpoint
   exact Option.some.inj hpoint
 
+/-- Exact port of HOL `domsub_commutes_fupdate`
+    (`cakeml/pancake/semantics/pan_commonPropsScript.sml:319`): domain
+    subtraction at a key absent from the update list commutes with the list
+    update.  HOL `\\` is rendered as the Boolean-`BEq` `FDOMSUB`, `|++` as
+    `FUPDATE_LIST`, `~MEM` as list non-membership and `LENGTH` as `length`. -/
+@[hol "cakeml/pancake/semantics/pan_commonPropsScript.sml" "domsub_commutes_fupdate"]
+theorem domsub_commutes_fupdate [BEq α] [LawfulBEq α]
+    (xs : List α) (ys : List β) (fm : FiniteMap α β) (x : α)
+    (h : x ∉ xs) (hlen : xs.length = ys.length) :
+    FDOMSUB (FUPDATE_LIST fm (xs.zip ys)) x =
+      FUPDATE_LIST (FDOMSUB fm x) (xs.zip ys) :=
+  FDOMSUB_FUPDATE_LIST_commutes xs ys fm x h hlen
+
 end Flapjack
