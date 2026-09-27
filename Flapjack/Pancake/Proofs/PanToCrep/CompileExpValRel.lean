@@ -284,4 +284,49 @@ theorem compileExpListValRelHOL {width : Nat} {σ : Type} [NeZero width]
                     rw [hwfouter, hheadRel.2.2.2, htailWf]
                     rfl
 
+/-- Exact `RStruct` case of HOL `compile_exp_val_rel`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:171-198`). The HOL proof
+    inducts over the sub-expression list with the per-element `eval_ind`
+    hypotheses; here that induction hypothesis family is the `hrel` premise and
+    the body is delegated to `compileExpListValRelHOL`. -/
+theorem compileExpValRelHOL_rstruct {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) [_hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width σ) [_ht : DecidablePred targetState.memaddrs]
+    (fields : List (ExpHOL width)) (value : ValueHOL width)
+    (expressions : List (CrepExpHOL width)) (shape : ShapeHOL)
+    (hrel : ∀ (expression : ExpHOL width), expression ∈ fields →
+        (value : ValueHOL width) → (expressions : List (CrepExpHOL width)) →
+        (shape : ShapeHOL) →
+        state.evalHOLFinite expression = some value →
+        localisedExpHOL expression = true →
+        compileExpExactHOLW context expression = (expressions, shape) →
+        expressions.map (evalCrepSemHOLExp targetState) = (flattenHOL value).map some ∧
+        expressions.length = sizeOfShapeHOL shape ∧
+        shapeOfHOLExact value = shape ∧
+        isWfShapeExactHOL ([] : StructContextExact) shape = true)
+    (heval : state.evalHOLFinite (.rstruct fields) = some value)
+    (hlocalised : localisedExpHOL (.rstruct fields) = true)
+    (hcompile : compileExpExactHOLW context (.rstruct fields) = (expressions, shape)) :
+    expressions.map (evalCrepSemHOLExp targetState) = (flattenHOL value).map some ∧
+    expressions.length = sizeOfShapeHOL shape ∧
+    shapeOfHOLExact value = shape ∧
+    isWfShapeExactHOL ([] : StructContextExact) shape = true := by
+  simp only [PanSemStateFiniteExact.evalHOLFinite_rstruct] at heval
+  cases hlist : state.evalListHOLFinite fields with
+  | none =>
+      simp only [hlist, Option.map_none] at heval
+      exact absurd heval.symm (Option.some_ne_none value)
+  | some values =>
+      simp only [hlist, Option.map_some, Option.some.injEq] at heval
+      have hloc : everyExpListHOL (width := width) localisedExpPredHOL fields = true :=
+        hlocalised
+      have hcompiled := hcompile
+      simp only [compileExpExactHOLW] at hcompiled
+      obtain ⟨hExpr, hShape⟩ := Prod.mk.inj hcompiled
+      have hmain := compileExpListValRelHOL state context targetState fields hrel values
+        (compileExpExactHOLWList context fields) hlist hloc rfl
+      rw [← heval, ← hExpr, ← hShape]
+      exact hmain
+
 end Flapjack
