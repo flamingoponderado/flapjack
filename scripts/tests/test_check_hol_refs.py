@@ -868,7 +868,7 @@ class HolAttributeSitesTest(unittest.TestCase):
                     '@[hol "cakeml/pancake/semantics/crepSemScript.sml" "evaluate_def" 240',
                     "  (fmap_as_finite_support := [locals, globals, code])",
                     "  (words_as_type_indexed_bitvec)]",
-                    "def evalProg (state : CrepStateExact width) [NeZero width]",
+                    "def evalProg {width : Nat} (state : CrepStateExact width) [NeZero width]",
                     "    (address : BitVec width) := address",
                 ]),
                 encoding="utf-8",
@@ -1300,6 +1300,19 @@ class WordsAsTypeIndexedBitvecQualifierTest(unittest.TestCase):
         )
 
 
+    def test_rejects_direct_bitvec_of_other_width(self):
+        # `BitVec 5` next to a `Nat` width binder and an unrelated
+        # `[NeZero width]` is not evidence of a `BitVec width` translation.
+        text = "\n".join(self.GOOD).replace("(addr : BitVec width)", "(addr : BitVec 5)")
+        self.assertTrue(any("BitVec" in e for e in self.ERRORS(text, "evalProg")))
+
+    def test_rejects_direct_nezero_of_other_width(self):
+        # `BitVec width` with `[NeZero other]` must not pass: positivity must be
+        # discharged for the same width identifier.
+        text = "\n".join(self.GOOD).replace("[NeZero width]", "[NeZero other]")
+        self.assertTrue(any("BitVec" in e for e in self.ERRORS(text, "evalProg")))
+
+
 THEOREM_MAP = runpy.run_path(
     str(Path(__file__).resolve().parents[1] / "check_hol_theorem_map.py")
 )
@@ -1359,6 +1372,36 @@ class RealCombinedQualifierFixtureTest(unittest.TestCase):
                 [],
                 hol_name,
             )
+
+    def test_real_carrier_only_declaration_passes_checker(self):
+        # `evalCrepSemHOLProgExact_skip` is an UNTAGGED exact-evaluator clause
+        # whose signature names no literal `BitVec`: the word carrier is the
+        # imported `CrepSemHOLState`. The qualifier must resolve that carrier
+        # from its real declaration and accept the clause text, with no tag.
+        lines = self._lines()
+        start = None
+        for index, line in enumerate(lines, start=1):
+            if line.startswith("theorem evalCrepSemHOLProgExact_skip"):
+                start = index
+                break
+        self.assertIsNotNone(start, "evalCrepSemHOLProgExact_skip not found")
+        preceding = lines[max(0, start - 4):start - 1]
+        self.assertFalse(any("@[hol" in line for line in preceding))
+        region = []
+        for line in lines[start - 1:]:
+            region.append(line)
+            if ":=" in line:
+                break
+        self.assertEqual(
+            CHECKER["words_as_type_indexed_bitvec_errors"](
+                "\n".join(region),
+                "evalCrepSemHOLProgExact_skip",
+                module=self.MODULE,
+                root=str(Path(__file__).resolve().parents[2]),
+                lines=lines,
+            ),
+            [],
+        )
 
     def _tagged(self, lines):
         tagged = {}

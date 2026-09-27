@@ -1468,7 +1468,11 @@ def words_as_type_indexed_bitvec_errors(
     proof obligations named in the qualifier: the ``[NeZero width]`` discharge
     of ``dimindex (:α) ≥ 1`` must be retained and must not be restated as an
     extra hypothesis, and an FFI host type must be bound at a ``Type`` universe
-    (no universe-level variable).
+    (no universe-level variable). A direct signature must bind a ``Nat`` width
+    parameter and mention ``BitVec <that width>`` together with
+    ``[NeZero <that width>]``: ``BitVec 5`` next to an unrelated
+    ``[NeZero width]``, or ``BitVec width`` with ``[NeZero other]``, does not
+    qualify.
 
     A signature need not spell out ``BitVec`` when it is stated over a
     width-indexed carrier: the qualifier is also accepted when the signature
@@ -1497,7 +1501,22 @@ def words_as_type_indexed_bitvec_errors(
     signature = stripped.split(":=", 1)[0]
     if not signature.strip():
         signature = stripped
-    has_direct_bitvec = "BitVec" in signature
+    direct_width_match = re.search(
+        r"[\{\(]\s*([A-Za-z_][A-Za-z0-9_']*)\s*:\s*Nat\s*[\}\)]", signature
+    )
+    has_direct_bitvec = False
+    if "BitVec" in signature and direct_width_match is not None:
+        direct_width = direct_width_match.group(1)
+        has_direct_bitvec = (
+            re.search(
+                r"\bBitVec\s+" + re.escape(direct_width) + r"\b", signature
+            )
+            is not None
+            and re.search(
+                r"\[\s*NeZero\s+" + re.escape(direct_width) + r"\s*\]", signature
+            )
+            is not None
+        )
     carrier_ok = False
     if not has_direct_bitvec and lines is not None and module and root:
         local_types = structure_field_types(lines)
