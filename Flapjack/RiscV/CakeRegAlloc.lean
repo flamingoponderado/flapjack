@@ -572,6 +572,53 @@ def mapValues {α : Type u} {β : Type v} (f : α → β) (m : CakeNodeMap α) :
   { slots := m.slots.map (fun entry => entry.map f)
     outside := m.outside.map (fun entry => (entry.1, f entry.2)) }
 
+/-- Mapping every value through `f` commutes with first-match association-list
+    lookup.  Flapjack-only checked helper for the `mapValues` representation
+    law below; no exact HOL declaration. -/
+theorem lookupNatInfo_map_snd {α : Type u} {β : Type v} (f : α → β) (m : NatInfoMap α)
+    (i : Nat) :
+    Flapjack.lookupNatInfo i (m.map (fun entry => (entry.1, f entry.2))) =
+      (Flapjack.lookupNatInfo i m).map f := by
+  induction m with
+  | nil => rfl
+  | cons entry rest ih =>
+      obtain ⟨key, value⟩ := entry
+      by_cases h : (key == i) <;> simp [Flapjack.lookupNatInfo, h, ih]
+
+/-- The production `mapValues` maps the dense and extension dimensions exactly:
+    `get` at every index is the old `get` with the value function applied. -/
+theorem get_mapValues {α : Type u} {β : Type v} (f : α → β)
+    (m : CakeNodeMap α) (i : Nat) :
+    (mapValues f m).get i = (m.get i).map f := by
+  by_cases hi : i < m.slots.size
+  · have hsize : i < (mapValues f m).slots.size := by
+      simpa [mapValues, Array.size_map] using hi
+    rw [show (mapValues f m).get i = (mapValues f m).slots[i] from dif_pos hsize,
+      show m.get i = m.slots[i] from dif_pos hi]
+    simp [mapValues, Array.getElem_map]
+  · have hsize : ¬ i < (mapValues f m).slots.size := by
+      simp [mapValues, Array.size_map, hi]
+    rw [show (mapValues f m).get i = cakeMapLookup (mapValues f m).outside i from
+        dif_neg hsize,
+      show m.get i = cakeMapLookup m.outside i from dif_neg hi]
+    exact lookupNatInfo_map_snd f m.outside i
+
+/-- The checked node-list representation is preserved by the production
+    `mapValues` operation, with the HOL node field mapped pointwise by `f`.
+    This extends the `ofList`/`set` get-set laws to the value-rebuilding
+    operation used by production node-tag fields. -/
+theorem mapValues_representsHOLNodeList {α β : Type u} (f : α → β)
+    (m : CakeNodeMap α) (values : List α) (hrep : RepresentsHOLNodeList m values) :
+    RepresentsHOLNodeList (mapValues f m) (values.map f) := by
+  rcases hrep with ⟨houtside, hsize, hget⟩
+  refine ⟨?_, ?_, ?_⟩
+  · simp [mapValues, houtside]
+  · simp [mapValues, Array.size_map, hsize]
+  · intro i hi
+    have hi' : i < values.length := by simpa [List.length_map] using hi
+    rw [get_mapValues, hget i hi']
+    simp
+
 /-- The field read back as an association list, ascending by node, for
     diagnostics.  Every key keeps the value `get` returns for it. -/
 def toNatInfoMap {α : Type u} (m : CakeNodeMap α) : NatInfoMap α :=
