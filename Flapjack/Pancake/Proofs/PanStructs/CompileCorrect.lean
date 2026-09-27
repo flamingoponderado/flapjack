@@ -130,6 +130,27 @@ def isContResHOL {width : Nat} [NeZero width] :
   | some .continue => true
   | _ => false
 
+/-- Exact port of HOL `res_vs_def`
+    (`cakeml/pancake/proofs/pan_structsProofScript.sml:1028-1031`):
+    `res_vs (SOME (Return v)) = [v]`,
+    `res_vs (SOME (Exception eid ev)) = [ev]`, and `res_vs _ = []`.
+
+    The parameter is HOL's `panSem$result option`, rendered as
+    `Option (PanSemResultExact width)` over the reviewed exact `result` carrier
+    (`DecExact.lean:58`, tagged against `panSemScript.sml:68-75`), and the
+    result element type is the reviewed exact `panSem$v` carrier `ValueHOL`
+    (`panSemScript.sml:22`).  The two matched clauses extract the `Return` and
+    `Exception` payloads verbatim; the catch-all returns the empty list exactly
+    as HOL's catch-all, so `NONE`, `Error`, `TimeOut`, `Break`, `Continue`, and
+    `FinalFFI` all map to `[]`.  The only difference from HOL is the
+    already-reviewed `result`/`v` carriers, so no qualifier applies. -/
+@[hol "cakeml/pancake/proofs/pan_structsProofScript.sml" "res_vs_def"]
+def resVsHOL {width : Nat} [NeZero width] :
+    Option (PanSemResultExact width) → List (ValueHOL width)
+  | some (.returned value) => [value]
+  | some (.exception _ value) => [value]
+  | _ => []
+
 /-! Structural Bool equality for the translated Shape datatype. It performs
     the HOL constructor equality cases recursively and avoids a BEq instance
     for Shape or String. -/
