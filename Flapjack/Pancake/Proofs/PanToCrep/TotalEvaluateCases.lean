@@ -134,6 +134,55 @@ theorem panToCrepExactContinueTransition
         (.continue 0 : CrepProgHOL width) by simp [compileProgExactHOLW]]
     exact evalCrepSemHOLProg_continue targetState memDec shMemDec 0
 
+/-! Source-reviewed prerequisite for HOL `pc_compile_correct[Annot]`.
+The proof resumes this no-op constructor at
+`pan_to_crepProofScript.sml:511-515`; the source evaluator clause is
+`panSemScript.sml:656`, the exact compiler erasure is
+`pan_to_crepScript.sml:307`, and the target `Skip` evaluator clause is
+`crepSemScript.sml:241`. The exact source carrier uses `MlS` tag/text values;
+the compiler erases both and produces `Skip`, so both evaluators preserve their
+states. This helper proves that target transition directly and preserves the
+finite-exact state/local and exception relations without assuming a target run.
+It is only a Flapjack-specific case prerequisite: the exact `code_rel`
+assembly and full `pc_compile_correct` case remain open, so no `@[hol]` tag is
+claimed. The generic String-based `panToCrepPcCompileCorrectAnnotCodeState`
+does not establish this exact-carrier result. -/
+theorem panToCrepExactAnnotTransition
+    {width : Nat} {σ : Type} [NeZero width]
+    (sourceContext : PanSemStateFiniteExact.FiniteEvalContext width σ)
+    (targetState : CrepSemHOLState width σ)
+    (compileContext : PanToCrepContextExact width)
+    (memDec : (a : BitVec width) → Decidable (targetState.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (targetState.shMemaddrs a))
+    (tag text : Flapjack.Pancake.PanLang.MlS)
+    (hstate : panToCrepStateRelFiniteExact sourceContext.state targetState)
+    (hlocals : panToCrepLocalsRelFiniteExact compileContext
+      sourceContext.state.locals targetState.locals)
+    (hexcp : panToCrepExcpRelFiniteExact compileContext.eids
+      sourceContext.state.eshapes) :
+    PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext
+        (.annot tag text : Flapjack.Pancake.PanLang.ProgHOL width) sourceContext =
+      some (none, sourceContext) ∧
+    compileProgExactHOLW compileContext
+        (.annot tag text : Flapjack.Pancake.PanLang.ProgHOL width) =
+      (.skip : CrepProgHOL width) ∧
+    evalCrepSemHOLProg targetState memDec shMemDec
+        (compileProgExactHOLW compileContext
+          (.annot tag text : Flapjack.Pancake.PanLang.ProgHOL width)) =
+      (none, targetState) ∧
+    panToCrepStateRelFiniteExact sourceContext.state targetState ∧
+    panToCrepLocalsRelFiniteExact compileContext
+      sourceContext.state.locals targetState.locals ∧
+    panToCrepExcpRelFiniteExact compileContext.eids
+      sourceContext.state.eshapes := by
+  refine ⟨?_, ?_, ?_, hstate, hlocals, hexcp⟩
+  · simp [PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext]
+  · simp [compileProgExactHOLW]
+  · rw [show compileProgExactHOLW compileContext
+      (.annot tag text : Flapjack.Pancake.PanLang.ProgHOL width) =
+        (.skip : CrepProgHOL width) by simp [compileProgExactHOLW]]
+    exact evalCrepSemHOLProg_skip targetState memDec shMemDec
+
 /-! Source-reviewed prerequisite for HOL `pc_compile_correct[Tick]`.
 The HOL proof resumes this clock-sensitive case at
 `pan_to_crepProofScript.sml:517-524`; its exact transition clauses are
