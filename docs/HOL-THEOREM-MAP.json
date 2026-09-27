@@ -12366,6 +12366,23 @@
     "reviewer": "Flapjack-luna-a source comparison (2026-09-27, flapjack-4ac.5.83/.5.46): HOL evaluate_shape_invariant_ret_inst at pan_to_crepProofScript.sml:3016-3028 quantifies p, s, v, s', t, ctxt, and t_locs and has exactly evaluate (p,s)=(SOME v,s'), state_rel s t, locals_rel ctxt s.locals t_locs; its only conclusion cases are Return and Exception payloads satisfying is_wf_shape_v_nil, else T. Lean panToCrepFiniteEvaluateShapeInvariantRetInst has those same variables/premises/conclusion, with HOL state/result/value/program/shape/name carriers represented by PanSemStateFiniteExact, PanSemResultExact, ValueHOL, ProgHOL, ShapeHOL, and MlS; [NeZero width] is the positive HOL word dimension. state_rel_def and locals_rel_def were compared at pan_to_crepProofScript.sml:45-82; ctxt_max/no_overlap at pan_commonPropsScript.sml:11-24. The only nonidentity representations are the six listed HolFiniteMapExact fields, each with a same-module owning-carrier roundtrip witness. The finite evaluator's 21 constructor clauses were compared with panSemScript.sml:556-761: recursive finite-context clauses mirror Dec/Seq/If/While/Call/DecCall; nonrecursive clauses use exact clause helpers and finite-support post-state reconstruction; the outer assembly marker is total, and the 66-case projection to the broad exact evaluator is kernel-checked. evaluateHOLFiniteState therefore has HOL's result-option × state shape and no additional premise; its unreachable assembly fallback changes no result. The evaluator definition itself remains untagged; this tag claims the reviewed target theorem statement and the listed map translations only."
   },
   {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "panToCrepFiniteEvaluateShapeInvariantRetInst2",
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "evaluate_shape_invariant_ret_inst2",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanToCrepContextExact.vars",
+      "targetLocals",
+      "newlocals"
+    ],
+    "reviewer": "flapjack-luna-a source comparison (2026-09-27, flapjack-4ac.5.47.1.2): HOL evaluate_shape_invariant_ret_inst2 at pan_to_crepProofScript.sml:3031-3044 first-occurrence quantifier order is argexps, s, fname, args, p2, newlocals, rsh, p, v, s', t, ctxt, t_locs. Its five premises are successful OPT_MMAP (eval s) argexps, successful lookup_code s.code fname args, successful evaluate (p, dec_clock s with locals := newlocals), state_rel s t, and pre-call locals_rel ctxt s.locals t_locs; its conclusion is exactly the Return/Exception is_wf_shape_v_nil case split with T otherwise. Lean preserves these separate binders, including lookupBody for p2 and program for p, and these five premises in order. evalListHOLFiniteClassical only chooses Lean's decidability procedure for HOL set membership internally; its body is the exact finite evalListHOLFinite view, so no proposition or typeclass premise is added. The body premise uses the same evaluateHOLFiniteState result-option × state view source-reviewed for evaluate_shape_invariant_ret_inst at line 3016; its finite evaluator clauses and projection are reviewed against panSemScript.sml:556-761. PanSemStateFiniteExact, PanToCrepContextExact, MlS, ValueHOL, ShapeHOL, ProgHOL, and PanSemResultExact supply the source carriers; [NeZero width] represents positive HOL dimindex. The exact locals relation input and source state relation were compared at pan_to_crepProofScript.sml:45-82, and lookup_code_wf_shape_invariant_step at panPropsScript.sml:1233 is kernel-composed by panToCrepCallEntryShapeInvariantFiniteExact. Return/Exception payloads are rendered by isWfShapeValueHOLExact [] and other result constructors by True. The seven named owner/parameter maps are the only accepted finite-support translations; PanSemStateFiniteExact and PanToCrepContextExact have same-module canonical roundtrip witnesses, while targetLocals and newlocals are standalone HolFiniteMapExact parameters. MlS is the exact HOL mlstring carrier, so no String qualifier is used."
+  },
+  {
     "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
     "hol_name": "evaluate_is_wf_shape_invariant",
     "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvaluateResultInvariant.lean",
@@ -13027,6 +13044,23 @@
     "lean_name": "holFmapAsFiniteSupportResultWitness_tlcHOL",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.37): Flapjack-only kernel-checked lookup witness for the standalone finite-map-result qualifier on tlcHOL; no separate HOL original."
+  },
+  {
+    "hol_path": "cakeml/pancake/crepLangScript.sml",
+    "hol_name": "var_cexp_def",
+    "lean_path": "Flapjack/Pancake/CrepLang/Exp.lean",
+    "lean_name": "crepExpVarsHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-c (source comparison, 2026-09-27; crepLangScript.sml:128-130): exact `CrepExpHOL` port of var_cexp. Const/LoadGlob/BaseAddr/TopAddr produce []; Var produces its singleton; Load/Load32/LoadByte recurse; Op/Crepop flatten mapped variable lists; Cmp/Shift concatenate left then right. The constructor arities and Nat variable names match the exact CrepExpHOL carrier. The pre-existing crepExpVarsW tag is on the width-indexed production expression isomorph; this declaration ports the source over the exact CrepExpHOL carrier needed by the faithful evaluator theorem."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
+    "hol_name": "update_locals_not_vars_eval_eq",
+    "lean_path": "Flapjack/Pancake/Semantics/CrepProps.lean",
+    "lean_name": "updateLocalsNotVarsEvalEqCrepHOL",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["locals", "globals", "code"],
+    "reviewer": "flapjack-luna-c (direct source comparison, 2026-09-27; crepPropsScript.sml:115-130): HOL quantifies state s, expression e, successful word_lab result v, assigned name n, and word_lab w. The premise conjunction is `~MEM n (var_cexp e) /\\ eval s e = SOME v`; the conclusion evaluates the exact same expression in the state whose locals are updated with FUPDATE (n,w), yielding SOME v. Lean preserves binder/premise/conclusion order using CrepSemHOLState, CrepExpHOL, HolWordLab, and the exact evalCrepSemHOLExp port. The record update uses HolFiniteMapExact.updateEq, which is FUPDATE_HOL with HOL equality. The exact var_cexp is crepExpVarsHOL on the same CrepExpHOL carrier. The carrier owns finite maps locals/globals/code and the qualifier records only those fields; [NeZero width] represents HOL's positive word dimension and DecidablePred state.memaddrs is the membership decision instance used by the exact evaluator."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
