@@ -4,6 +4,7 @@ import Flapjack.Pancake.Semantics.PanProps
 import Flapjack.Pancake.Semantics.PanSem
 import Flapjack.Pancake.Semantics.PanSem.ValueHOL
 import Flapjack.Pancake.Semantics.PanSem.IsValidValueExact
+import Flapjack.Pancake.Semantics.PanSem.DecExact
 import Flapjack.Pancake.PanLang.Decl
 
 /-!
@@ -86,6 +87,48 @@ decreasing_by
        have hsnd : sizeOf pair.snd < sizeOf pair := by cases pair; simp +arith
        have hlt := List.sizeOf_lt_of_mem hmem
        omega)
+
+/-- Exact port of HOL `convert_res_def`
+    (`cakeml/pancake/proofs/pan_structsProofScript.sml:1005-1009`):
+    `convert_res (SOME Break) = SOME Break`,
+    `convert_res (SOME (Return v)) = SOME (Return (convert_v v))`,
+    `convert_res (SOME (Exception eid ev)) = SOME (Exception eid (convert_v ev))`,
+    and `convert_res res = res`.
+
+    The parameter is HOL's `panSem$result option`, rendered as
+    `Option (PanSemResultExact width)` over the reviewed exact `result` carrier
+    (`DecExact.lean:58`, tagged against `panSemScript.sml:68-75`).  The three
+    matched clauses recurse through the exact `convertV`; the default clause
+    keeps `NONE`, `Error`, `TimeOut`, `Continue`, and `FinalFFI` unchanged,
+    exactly as HOL's catch-all.  The only difference from HOL is the
+    already-reviewed `result` carrier, so no qualifier applies. -/
+@[hol "cakeml/pancake/proofs/pan_structsProofScript.sml" "convert_res_def"]
+def convertResHOL {width : Nat} [NeZero width] :
+    Option (PanSemResultExact width) → Option (PanSemResultExact width)
+  | some .break => some .break
+  | some (.returned value) => some (.returned (convertV value))
+  | some (.exception exceptionId value) => some (.exception exceptionId (convertV value))
+  | res => res
+
+/-- Exact port of HOL `is_cont_res_def`
+    (`cakeml/pancake/proofs/pan_structsProofScript.sml:992-997`):
+    `is_cont_res NONE = T`, `is_cont_res (SOME Break) = T`,
+    `is_cont_res (SOME Continue) = T`, and `is_cont_res _ = F`.
+
+    The parameter is HOL's `panSem$result option`, rendered as
+    `Option (PanSemResultExact width)` over the reviewed exact `result` carrier
+    (`DecExact.lean:58`, tagged against `panSemScript.sml:68-75`).  The three
+    matched clauses and the `NONE` clause return `true`, the catch-all returns
+    `false`, exactly as HOL's clauses; no payload is inspected.  The only
+    difference from HOL is the already-reviewed `result` carrier, so no
+    qualifier applies. -/
+@[hol "cakeml/pancake/proofs/pan_structsProofScript.sml" "is_cont_res_def"]
+def isContResHOL {width : Nat} [NeZero width] :
+    Option (PanSemResultExact width) → Bool
+  | none => true
+  | some .break => true
+  | some .continue => true
+  | _ => false
 
 /-! Structural Bool equality for the translated Shape datatype. It performs
     the HOL constructor equality cases recursively and avoids a BEq instance
