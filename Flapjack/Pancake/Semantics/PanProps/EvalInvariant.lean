@@ -7,6 +7,7 @@ import Flapjack.Pancake.Semantics.PanSem.EvalExact
 import Flapjack.Pancake.Semantics.PanSem.EvaluateDeclsExact
 import Flapjack.Pancake.Semantics.PanSem.DecCallExact
 import Flapjack.Pancake.Semantics.PanSem.FiniteSupportStep
+import Flapjack.Pancake.Semantics.PanSem.EvaluateFinite
 import Flapjack.Pancake.Semantics.PanSem.EvaluateClock
 
 /-!
@@ -3781,5 +3782,82 @@ theorem evaluateClockSubReturnCaseHOLFinite {width : Nat} {σ : Type} [NeZero wi
               (.return expression)).2 = lowState
           rw [hLowCanonical]
           exact PanPropsEvalStateFiniteExact.ofPanSemFinite_toPanSemFinite lowState
+
+/-! ## Unchanged event logs determine the complete FFI state
+
+HOL `io_events_eq_imp_ffi_eq` (`panPropsScript.sml:974-1019`) quantifies in
+order over program, initial state, result, and final state. Its premises are a
+successful evaluation equation and equality of the initial/final FFI event
+lists; it concludes equality of the complete FFI records. The local state
+carrier below exists so the four `|->` fields and their roundtrip witness are
+owned by this PanProps module, as required by its representation qualifier.
+`evaluatePanPropsHOLFiniteState` is only the field-for-field codec around the
+canonical finite PanSem evaluator. The proof transports its successful result
+to the exact broad recursive dispatcher, applies the kernel-checked recursive
+event/FFI invariant, and translates the unchanged FFI field back. -/
+
+/-- PanProps-side representation adapter: execute the canonical finite PanSem
+    evaluator and convert its output state through the field-for-field local
+    carrier codec. It adds no evaluator behavior. -/
+noncomputable def evaluatePanPropsHOLFiniteState {width : Nat} {σ : Type}
+    [NeZero width] (state : PanPropsEvalStateFiniteExact width σ)
+    (program : ProgHOL width) :
+    Option (PanSemResultExact width) × PanPropsEvalStateFiniteExact width σ :=
+  let output := PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite program
+  (output.1, PanPropsEvalStateFiniteExact.ofPanSemFinite output.2)
+
+/-- HOL `io_events_eq_imp_ffi_eq` (`panPropsScript.sml:974`): for the exact
+    finite-map Pan state, successful evaluation and equal endpoint `io_events`
+    imply equality of the complete FFI state, including the oracle and
+    host-state fields. The state quantifiers use this module's canonical
+    `HolFiniteMapExact` translation and roundtrip witness; the word index uses
+    the standard positive-width `BitVec` translation. -/
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "io_events_eq_imp_ffi_eq" 974
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem ioEventsEqImpFfiEqHOLFinite {width : Nat} {σ : Type} [NeZero width] :
+    ∀ (program : ProgHOL width)
+      (state : PanPropsEvalStateFiniteExact width σ)
+      (result : Option (PanSemResultExact width))
+      (post : PanPropsEvalStateFiniteExact width σ),
+      evaluatePanPropsHOLFiniteState state program = (result, post) →
+      state.ffi.ioEvents = post.ffi.ioEvents → post.ffi = state.ffi := by
+  classical
+  intro program state result post heval hevents
+  have hcanonical :
+      PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite program =
+        (result, post.toPanSemFinite) := by
+    apply Prod.ext
+    · simpa [evaluatePanPropsHOLFiniteState] using congrArg Prod.fst heval
+    · simpa [evaluatePanPropsHOLFiniteState] using
+        congrArg PanPropsEvalStateFiniteExact.toPanSemFinite (congrArg Prod.snd heval)
+  let context : PanSemStateFiniteExact.FiniteEvalContext width σ :=
+    ⟨state.toPanSemFinite,
+      fun address => Classical.propDecidable (state.memaddrs address),
+      fun address => Classical.propDecidable (state.shMemaddrs address)⟩
+  obtain ⟨postContext, hrecursive, hpost⟩ :=
+    PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext_of_evaluateHOLFiniteState
+      state.toPanSemFinite program context rfl (result, post.toPanSemFinite) hcanonical
+  have hprojection :=
+    PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext_projection program context
+  rw [hrecursive] at hprojection
+  simp only [Option.map_some] at hprojection
+  have hbroad :
+      evalPanSemRecursiveCallContextHOLExact program context.toExact =
+        some (result, postContext.toExact) := by
+    simpa using hprojection.symm
+  have heventsBroad :
+      context.toExact.state.ffi.ioEvents =
+        postContext.toExact.state.ffi.ioEvents := by
+    simpa [context, PanPropsEvalStateFiniteExact.toPanSemFinite,
+      PanSemStateFiniteExact.toExact, PanPropsEvalStateFiniteExact.toExact,
+      PanSemStateFiniteExact.FiniteEvalContext.toExact, hpost] using hevents
+  have hffiBroad := evalPanSemRecursiveCallContextHOLExact_ffi_eq_of_ioEvents_eq
+    program context.toExact (result, postContext.toExact) hbroad heventsBroad
+  have hffi : state.ffi = post.ffi := by
+    simpa [context, PanPropsEvalStateFiniteExact.toPanSemFinite,
+      PanSemStateFiniteExact.toExact, PanPropsEvalStateFiniteExact.toExact,
+      PanSemStateFiniteExact.FiniteEvalContext.toExact, hpost] using hffiBroad
+  exact hffi.symm
 
 end Flapjack
