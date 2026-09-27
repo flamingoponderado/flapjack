@@ -3586,4 +3586,73 @@ theorem evaluateClockSubAnnotCaseHOLFinite {width : Nat} {σ : Type} [NeZero wid
   subst state
   simp
 
+/-- Genuine `Tick` case of HOL `evaluate_clock_sub`. The non-timeout premise
+    rules out the zero-clock branch; on the positive branch both evaluations
+    decrement the clock once. -/
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_clock_sub"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateClockSubTickCaseHOLFinite {width : Nat} {σ : Type} [NeZero width] :
+    ∀ (state : PanPropsEvalStateFiniteExact width σ)
+      (result : Option (PanSemResultExact width))
+      (st : PanPropsEvalStateFiniteExact width σ) (ck : Nat),
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state .tick =
+        (result, { st with clock := st.clock + ck }) →
+      result ≠ some .timeOut →
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair
+        { state with clock := state.clock - ck } .tick = (result, st) := by
+  classical
+  intro state result st ck hRun hne
+  have hresult := congrArg Prod.fst hRun
+  have hpost := congrArg Prod.snd hRun
+  simp only [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair,
+    PanSemStateFiniteExact.evaluateHOLFiniteState_tick] at hresult hpost
+  by_cases hclock : state.clock = 0
+  · have hresult' : result = some .timeOut := by
+      simpa [PanPropsEvalStateFiniteExact.toPanSemFinite, hclock] using hresult.symm
+    exact (hne hresult').elim
+  · have hresult' : result = none := by
+      have hhighclock : state.toPanSemFinite.clock ≠ 0 := by
+        simpa [PanPropsEvalStateFiniteExact.toPanSemFinite] using hclock
+      simpa [hhighclock] using hresult.symm
+    clear hresult
+    subst result
+    have hpost' :
+      PanPropsEvalStateFiniteExact.ofPanSemFinite
+          (PanSemStateFiniteExact.decClockHOLFinite state.toPanSemFinite) =
+          { st with clock := st.clock + ck } := by
+      simpa only [PanPropsEvalStateFiniteExact.toPanSemFinite, hclock,
+        if_false, PanSemStateFiniteExact.decClockHOLFinite] using hpost
+    have hclockEq : state.clock - 1 = st.clock + ck := by
+      simpa only [PanPropsEvalStateFiniteExact.toPanSemFinite,
+        PanPropsEvalStateFiniteExact.ofPanSemFinite,
+        PanSemStateFiniteExact.decClockHOLFinite] using
+          congrArg PanPropsEvalStateFiniteExact.clock hpost'
+    have hlow : state.clock - ck ≠ 0 := by omega
+    clear hRun hpost
+    have hfinal : { state with clock := state.clock - ck - 1 } = st := by
+      cases state
+      cases st
+      simp_all [PanPropsEvalStateFiniteExact.ofPanSemFinite,
+        PanPropsEvalStateFiniteExact.toPanSemFinite,
+        PanSemStateFiniteExact.decClockHOLFinite]
+      omega
+    have hlowCanonical :
+        ({ state with clock := state.clock - ck }).toPanSemFinite.clock ≠ 0 := by
+      simpa [PanPropsEvalStateFiniteExact.toPanSemFinite] using hlow
+    change
+      ((PanSemStateFiniteExact.evaluateHOLFiniteState
+          ({ state with clock := state.clock - ck }.toPanSemFinite) .tick).1,
+        PanPropsEvalStateFiniteExact.ofPanSemFinite
+          (PanSemStateFiniteExact.evaluateHOLFiniteState
+            ({ state with clock := state.clock - ck }.toPanSemFinite) .tick).2) =
+        (none, st)
+    rw [PanSemStateFiniteExact.evaluateHOLFiniteState_tick]
+    rw [if_neg hlowCanonical]
+    simpa [PanSemStateFiniteExact.decClockHOLFinite,
+      PanPropsEvalStateFiniteExact.toPanSemFinite,
+      PanPropsEvalStateFiniteExact.ofPanSemFinite] using
+      congrArg (fun finalState =>
+        ((none : Option (PanSemResultExact width)), finalState)) hfinal
+
 end Flapjack
