@@ -982,4 +982,39 @@ theorem flookupSetGlobalsCrepSemHOL_locals {width : Nat} [NeZero width] {σ : Ty
       s.locals.lookup name := by
   simp [CrepSemHOLState.setGlobals]
 
+
+/-- Exact port of HOL `eval_upd_clock_eq` (`crepPropsScript.sml:858-872`):
+the exact `crepSem$eval` expression evaluator never reads the state `clock`
+field, so replacing it is invisible. Quantifier order follows HOL's `t, e, ck`. -/
+@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "eval_upd_clock_eq"
+  (fmap_as_finite_support := [locals, globals, code])]
+theorem evalCrepSemHOLExp_upd_clock_eq {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) [DecidablePred state.memaddrs]
+    (expression : CrepExpHOL width) (clock : Nat) :
+    evalCrepSemHOLExp { state with clock := clock } expression =
+      evalCrepSemHOLExp state expression := by
+  refine CrepExpHOL.rec
+    (motive_1 := fun expression =>
+      evalCrepSemHOLExp { state with clock := clock } expression =
+        evalCrepSemHOLExp state expression)
+    (motive_2 := fun expressions =>
+      expressions.mapM (evalCrepSemHOLExp { state with clock := clock }) =
+        expressions.mapM (evalCrepSemHOLExp state))
+    (fun value => by simp only [evalCrepSemHOLExp])
+    (fun name => by simp only [evalCrepSemHOLExp])
+    (fun address ih => by simp only [evalCrepSemHOLExp, ih])
+    (fun address ih => by simp only [evalCrepSemHOLExp, ih])
+    (fun address ih => by simp only [evalCrepSemHOLExp, ih])
+    (fun address => by simp only [evalCrepSemHOLExp])
+    (fun operator args ih => by simp only [evalCrepSemHOLExp, ih])
+    (fun operator args ih => by simp only [evalCrepSemHOLExp, ih])
+    (fun operator left right ihl ihr => by simp only [evalCrepSemHOLExp, ihl, ihr])
+    (fun operator left right ihl ihr => by simp only [evalCrepSemHOLExp, ihl, ihr])
+    (by simp only [evalCrepSemHOLExp])
+    (by simp only [evalCrepSemHOLExp])
+    (by simp only [List.mapM_nil])
+    (fun head tail ihh iht => by simp only [List.mapM_cons, ihh, iht])
+    expression
+
+
 end Flapjack
