@@ -12267,14 +12267,6 @@
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
-    "lean_name": "panToCrepStateRelFiniteExact_structs",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific projection support for the exact finite-support state-relation adapter. It exposes the source structural-context field used by the HOL proof but is not itself a port of state_rel_def. Kept untagged pending multi-carrier finite-map qualifier support and the faithful theorem path flapjack-4ac.5.83."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
     "lean_name": "panToCrepLocalsRelFiniteExact_valueShapeProjection",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific bridge from the literal is_wf_shape_nil (shape_of v) conjunct in the exact local relation to value-level is_wf_shape_v. The proof uses the exact is_wf_shape_v_nil equivalence; it is support for, not a port of, locals_rel_wf_shape. It uses PanToCrepContextExact and remains untagged pending multi-carrier finite-map qualifier support and the faithful theorem path flapjack-4ac.5.83."
@@ -12781,5 +12773,51 @@
       "sourceShapes"
     ],
     "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.16.3): compared against HOL excp_rel_def (pan_to_crepProofScript.sml:16-23): FDOM seids = FDOM ceids is rendered pointwise as equality of definedness on the canonical HolFiniteMapExact lookup, and FLOOKUP ceids e = SOME n becomes compilerCodes.lookup e = some n; the injectivity conjunct and the fact that source values are unrelated to compiler values match clause-for-clause. Both finite maps are standalone exact-map parameters (no owning carrier), so the relation qualifier records them as bare entries. Direct HOL EVAL oracle rows live in scripts/hol-probes/excp_rel_probe.out and Lean fixtures in Flapjack/Test/PanToCrepCodeRelParity.lean."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopSemScript.sml",
+    "hol_name": "get_var_imm_def",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopSemStateExact.lean",
+    "lean_name": "getVarImm",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "locals"
+    ],
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-pxn.18.5.17): HOL `get_var_imm_def` (loopSemScript.sml:165-167) is the two-clause operand-first `get_var_imm (Reg n) s = sptree$lookup n s.locals` / `get_var_imm (Imm w) s = SOME (Word w)`. The Lean declaration is operand-first, reads `LoopSemStateFiniteExact.locals` (the reviewed canonical HolFiniteMapExact translation of HOL's `'a word_loc num_map`), and returns the exact tagged `WordLocW` carrier; no extra hypotheses beyond [NeZero width]. Direct HOL-EVAL oracle parity in Flapjack/Test/LoopGetVarImmParity.lean."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.globals"
+    ],
+    "hol_name": "state_rel_structs",
+    "lean_name": "panToCrepStateRelFiniteExact_structs",
+    "reviewer": "flapjack-ds8 (source comparison; flapjack-pxn.18.3.7.1.3.1): HOL state_rel_structs[local] pan_to_crepProofScript.sml:59-63 is the s.structs = [] projection of state_rel_def; the Lean projection is stated over the reviewed exact relation panToCrepStateRelFiniteExact and concludes source.structs = [] over the exact StructContextExact carrier. Relation qualifier records the same PanSemStateFiniteExact.globals translation as the parent relation."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.globals"
+    ],
+    "hol_name": "state_rel_globals",
+    "lean_name": "panToCrepStateRelFiniteExact_globals",
+    "reviewer": "flapjack-ds8 (source comparison; flapjack-pxn.18.3.7.1.3.1): HOL state_rel_globals[local] pan_to_crepProofScript.sml:65-69 projects s.globals = FEMPTY from state_rel_def; the Lean projection renders FEMPTY pointwise as source.globals.lookup = fun _ => none over the canonical HolFiniteMapExact translation, matching the tagged parent relation. Relation qualifier records the traversed PanSemStateFiniteExact.globals field."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
+    "hol_name": "eval_upd_clock_eq",
+    "lean_path": "Flapjack/Pancake/Semantics/CrepProps.lean",
+    "lean_name": "evalCrepSemHOLExp_upd_clock_eq",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "reviewer": "flapjack-ds8 (bead flapjack-2de.6, 2026-09-27 source comparison): HOL crepPropsScript.sml:858-872 is `!t e ck. eval (t with clock := ck) e = eval t e` over crepSem$eval (exact port evalCrepSemHOLExp, tagged crepSemScript.sml eval_def). Lean keeps HOL's binder order (state, expression, clock), the same `{state with clock := clock}` update, and the same evaluator result; no clause of evalCrepSemHOLExp reads the clock field. The state is the imported CrepSemHOLState carrier owning the three HolFiniteMapExact fields locals/globals/code, with the same-module canonical holFmapAsFiniteSupportWitness (CrepPropsFiniteSupport.holFmapAsFiniteSupportWitness). [NeZero width] models HOL's positive word dimension and DecidablePred state.memaddrs renders HOL word-set membership. Proof by the mutual CrepExpHOL.rec over the expression and its List subterms. The qualifier records only the three finite-map fields."
   }
 ]

@@ -1,4 +1,5 @@
 import Flapjack.Pancake.Semantics.CrepSem.HOLState
+import Flapjack.Pancake.Semantics.CrepProps
 
 /-!
 Direct original-HOL evaluator rows for the exact executable `crepSem$eval_def`
@@ -96,5 +97,15 @@ local instance : DecidablePred exactState64.memaddrs := by
     some (.word (word64 0x55667788))
 #guard evalCrepSemHOLExp exactState64 (.loadByte (.const (word64 8))) ==
     some (.word (word64 136))
+
+#guard evalCrepSemHOLExp { exactState8 with clock := 5 }
+    (.op .sub [.const (word8 7), .const (word8 2)]) ==
+  evalCrepSemHOLExp exactState8 (.op .sub [.const (word8 7), .const (word8 2)])
+
+/-- HOL `eval_upd_clock_eq` row: replacing the clock leaves evaluation unchanged. -/
+example : evalCrepSemHOLExp { exactState8 with clock := 5 }
+    (.op .sub [.const (word8 7), .const (word8 2)]) =
+  evalCrepSemHOLExp exactState8 (.op .sub [.const (word8 7), .const (word8 2)]) :=
+  evalCrepSemHOLExp_upd_clock_eq exactState8 _ 5
 
 end Flapjack.Test.CrepSemEvalExactParity
