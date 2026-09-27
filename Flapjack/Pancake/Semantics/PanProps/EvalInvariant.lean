@@ -1230,14 +1230,17 @@ theorem evalHOL_upd_eshapes_eq {width : Nat} {σ : Type} [NeZero width]
     connects the carrier to the canonical tagged PanSem state. The statement
     follows from the broad untagged analogue `evalHOLExact_updLocals_not_mem`
     over `PanSemStateExact`, bridged through `toExact` and the HOL-equality/`BEq`
-    `FUPDATE` agreement `FUPDATE_HOL_eq_FUPDATE`. HOL binds an unused polymorphic
-    `v`; Lean omits that vacuous binder (it does not occur in the HOL
-    conclusion). `[NeZero width]` records HOL's positive word dimension. -/
+    `FUPDATE` agreement `FUPDATE_HOL_eq_FUPDATE`. HOL quantifies an unused
+    polymorphic `v` (`!s e v n w`); it occurs nowhere in the conclusion, so HOL
+    infers a fresh type variable for it, restored here as the vacuous binder
+    `{ν : Type} (_v : ν)` (spelled `_v` only to satisfy the unused-variable
+    linter; the quantified binder is present). `[NeZero width]`
+    records HOL's positive word dimension. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "update_locals_not_vars_eval_eq_eq"
   (fmap_as_finite_support := [locals, globals, code, eshapes])]
 theorem evalHOL_updLocals_not_mem {width : Nat} {σ : Type} [NeZero width]
     (state : PanPropsEvalStateFiniteExact width σ) [h : DecidablePred state.memaddrs]
-    (expression : ExpHOL width) (name : MlS) (word : ValueHOL width)
+    (expression : ExpHOL width) {ν : Type} (_v : ν) (name : MlS) (word : ValueHOL width)
     (hnot : name ∉ varExpHOL expression) :
     @evalHOL width σ _ { state with locals := state.locals.update (name, word) } h expression =
       @evalHOL width σ _ state h expression := by
