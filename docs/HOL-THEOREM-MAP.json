@@ -6425,13 +6425,14 @@
     "statement_status": "reviewed_exact",
     "reviewer": "Exact port of pan_to_crepProofScript.sml:666: i < LENGTH vs, LENGTH e = size_of_shape (shape_of (RStruct vs)), comp_field i sh e = (es, shp), Comb sh = shape_of (RStruct vs), and MEM ce es imply MEM ce e. Uses exact ShapeHOL, ValueHOL, and CrepExpHOL carriers; [NeZero width] reflects positive HOL word dimension. The source theorem's length premise is retained even though this proof does not need it. Direct HOL-EVAL comp_field rows first/second in scripts/hol-probes/comp_field_probe.out are reproduced over exact carriers in CompFieldParity, which also exercises this theorem at both selections."
   },
-  {
+    {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
     "hol_name": "mem_comp_field_lem",
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
     "lean_name": "memCompFieldHOLExact_or_zero",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Exact port of pan_to_crepProofScript.sml:397-406: forall i l es x, MEM x (FST (comp_field i l es)) implies MEM x es or x = Const 0w. HOL binder order i,l,es,x maps to index,shapes,expressions,expression; exact ShapeHOL and width-indexed CrepExpHOL carriers; HOL Const 0w word literal is CrepExpHOL.const (0 : BitVec width), with [NeZero width] reflecting the positive HOL word dimension. No finite-map or String-name translation is involved. The fallback HOL-EVAL comp_field row ([Const 0w],One) in scripts/hol-probes/comp_field_probe.out is reproduced over exact carriers in CompFieldParity, which exercises this theorem's right disjunct. The production compileField_mem_or_zero stays documented_mismatch."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-ikjm.3): HOL mem_comp_field_lem (pan_to_crepProofScript.sml:397) states that a member of the compiled component field list is either one of the input expressions or the zero constant. The Lean declaration is stated over ShapeHOL/CrepExpHOL width and mentions `CrepExpHOL.const (0 : BitVec width)` directly under [NeZero width], so the HOL `'a word`/`dimindex (:α)` translation is recorded by (words_as_type_indexed_bitvec); no HOL |-> state field is named, so no finite-map qualifier applies.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
