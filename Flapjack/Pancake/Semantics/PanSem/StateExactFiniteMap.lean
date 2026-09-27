@@ -2578,6 +2578,53 @@ theorem evaluateHOLFiniteState_shMemLoad {width : Nat} {σ : Type} [NeZero width
 
 attribute [simp] evaluateHOLFiniteState_shMemLoad
 
+/-- Flapjack-specific proof-irrelevance bridge used to repack results from the
+    broad finite-support subtype. HOL has no declaration for this proof
+    plumbing. -/
+private theorem ofExact_toExact_any {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ)
+    (support : state.toExact.FiniteSupport) :
+    PanSemStateFiniteExact.ofExact state.toExact support = state := by
+  cases state
+  rfl
+
+/-- HOL `evaluate_def`'s ShMemLoad conjunct (`panSemScript.sml:605-610`,
+    restated by the equation theorem at line 780). The address is evaluated
+    first, then `lookup_kvar`; only a word address and word destination call
+    `sh_mem_load_def` with `nb_op op`. Every failed match returns
+    `(SOME Error, s)`. The statement directly names the finite-carrier helper.
+    This theorem is placed beside `PanSemStateFiniteExact`, which owns the four
+    `HolFiniteMapExact` fields recorded by the qualifier and the canonical
+    same-module witness `holFmapAsFiniteSupportWitness`. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
+  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+theorem evaluateHOLFiniteState_shMemLoad_source {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateFiniteExact width σ)
+    (operator : OpSize) (kind : VarKind) (name : MlS)
+    (address : ExpHOL width) :
+    evaluateHOLFiniteState state
+        (.shMemLoad operator kind name address : ProgHOL width) =
+      match @evalHOLFinite width σ _ state
+          (fun current => Classical.propDecidable (state.memaddrs current)) address with
+      | some (.val (.word addr)) =>
+          match lookupKvarHOLFinite kind name state with
+          | some (.val (.word _)) =>
+              let loaded := @shMemLoadHOLFiniteExact width σ _ state
+                (fun current => Classical.propDecidable (state.shMemaddrs current))
+                kind name addr (nbOpHOL operator)
+              (loaded.1, loaded.2)
+          | _ => (some .error, state)
+      | _ => (some .error, state) := by
+  classical
+  simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+    evalPanSemRecursiveCallFiniteContext,
+    Flapjack.shMemLoadClauseHOLExact,
+    evalHOLFinite_eq_toExact] <;>
+    repeat' split <;> simp_all <;> try apply ofExact_toExact_any
+  case h_1 =>
+    exact (Prod.mk.inj
+      (shMemLoadHOLFiniteExact_repack state kind name _ (nbOpHOL operator)))
+
 /-- Flapjack-specific equation for the finite-carrier ShMemStore evaluator.
     This is not tagged as HOL `evaluate_def`: its right-hand side hides the
     explicit source branches behind `shMemStoreClauseHOLFiniteExact`. The

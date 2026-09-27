@@ -1,47 +1,24 @@
 import Flapjack.Pancake.Semantics.PanSem.EvaluateFinite
 
 /-!
-# The HOL `evaluate_def` ShMemLoad equation
+# ShMemLoad finite-carrier case import shim
 
-This case is kept in its own module so case work can proceed independently of
-the shared `EvaluateFinite` clause file. Its conclusion spells out the two
-source matches from `panSemScript.sml:605-610`: first `eval s ad`, then
-`lookup_kvar vk v s`; each failed check returns `(SOME Error, s)`.
-
-The state carrier is `PanSemStateFiniteExact`; its four finite maps are the
-reviewed canonical `HolFiniteMapExact` translation. The successful branch calls
-the finite-carrier `shMemLoadHOLFiniteExact`, which directly expresses
-`sh_mem_load_def`; it does not route through the broad function-backed helper.
-This theorem does not add a decidability premise: the shared-memory predicate
-is decided classically, as the pair evaluator does.
+The tagged `evaluate_def` ShMemLoad equation is declared in
+`StateExactFiniteMap.lean`, beside `PanSemStateFiniteExact`, the carrier that
+owns its four finite maps and canonical finite-support witness. This module
+keeps the older namespace-level name as an untagged forwarder for the direct
+ShMemLoad parity checks; it is not a second HOL declaration.
 -/
 
 namespace Flapjack.Pancake.Semantics.PanSem.ShMemLoadCase
 
 open Flapjack.Pancake.PanLang (ExpHOL MlS ProgHOL)
 
-theorem ofExact_toExact_any {width : Nat} {σ : Type} [NeZero width]
-    (state : Flapjack.PanSemStateFiniteExact width σ)
-    (support : state.toExact.FiniteSupport) :
-    Flapjack.PanSemStateFiniteExact.ofExact state.toExact support = state := by
-  cases state
-  rfl
-
-/- The checker requires the canonical representation witness to live beside
-   every declaration using the finite-map qualifier. This names the imported
-   carrier and its actual `toExact`/`ofExact` roundtrip. -/
-theorem holFmapAsFiniteSupportWitness {width : Nat} {σ : Type} [NeZero width] :
-    (∀ (state : Flapjack.PanSemStateFiniteExact width σ),
-        Flapjack.PanSemStateFiniteExact.ofExact state.toExact state.toExact_finiteSupport = state) := by
-  intro state
-  exact Flapjack.PanSemStateFiniteExact.ofExact_toExact state
-
-/-- HOL `evaluate_def`'s `ShMemLoad` clause (`panSemScript.sml:605-610`).
-    The two nested matches and both error/original-state branches are the
-    source equation itself. The word/word branch calls the direct finite-carrier
-    `sh_mem_load_def` port at `nb_op op`. -/
-@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+/- The tagged source theorem and its canonical finite-map witness live in
+   `StateExactFiniteMap.lean`, alongside the carrier that owns the four map
+   fields. This untagged namespace forwarder preserves the older case-module
+   API for its parity checks; it is Flapjack-specific plumbing, not a second
+   HOL declaration. -/
 theorem evaluateHOLFiniteState_shMemLoad_source {width : Nat} {σ : Type}
     [NeZero width] (state : Flapjack.PanSemStateFiniteExact width σ)
     (operator : Flapjack.OpSize) (kind : Flapjack.VarKind) (name : MlS)
@@ -59,17 +36,8 @@ theorem evaluateHOLFiniteState_shMemLoad_source {width : Nat} {σ : Type}
                 kind name addr (Flapjack.nbOpHOL operator)
               (loaded.1, loaded.2)
           | _ => (some .error, state)
-      | _ => (some .error, state) := by
-  classical
-  simp [Flapjack.PanSemStateFiniteExact.evaluateHOLFiniteState,
-    Flapjack.PanSemStateFiniteExact.evaluateHOLFiniteStateWithDeciders,
-    Flapjack.PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext,
-    Flapjack.shMemLoadClauseHOLExact,
-    Flapjack.PanSemStateFiniteExact.evalHOLFinite_eq_toExact] <;>
-    repeat' split <;> simp_all <;> try apply ofExact_toExact_any
-  case h_1 =>
-    exact (Prod.mk.inj
-      (Flapjack.PanSemStateFiniteExact.shMemLoadHOLFiniteExact_repack
-        state kind name _ (Flapjack.nbOpHOL operator)))
+      | _ => (some .error, state) :=
+  Flapjack.PanSemStateFiniteExact.evaluateHOLFiniteState_shMemLoad_source
+    state operator kind name address
 
 end Flapjack.Pancake.Semantics.PanSem.ShMemLoadCase

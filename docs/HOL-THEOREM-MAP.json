@@ -12233,11 +12233,11 @@
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
     "hol_name": "evaluate_def",
     "hol_line": 780,
-    "lean_path": "Flapjack/Pancake/Semantics/PanSem/ShMemLoadCase.lean",
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
     "lean_name": "evaluateHOLFiniteState_shMemLoad_source",
     "statement_status": "reviewed_fmap_as_finite_support",
     "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
-    "reviewer": "flapjack-luna-c source comparison (2026-09-27; bead flapjack-qj5.10.1): HOL panSemScript.sml:605-610 evaluates the address expression first, then lookup_kvar for the named destination. Only a word address and word destination call sh_mem_load vk v addr (nb_op op); each failure returns (SOME Error,s). The Lean statement has those same nested matches over evalHOLFinite and lookupKvarHOLFinite and uses shMemLoadHOLFiniteExact directly at nbOpHOL operator; its proof shows the existing finite evaluator's broad-helper result repacks to this direct finite-carrier result. No result, destination, or domain-success premise is added. PanSemStateFiniteExact owns the four named HolFiniteMapExact fields with the same-module roundtrip witness. This restores the case tag after the helper carrier mismatch was fixed; the declaration is proof-side and does not claim production compiler routing."
+    "reviewer": "flapjack-luna-c source comparison (2026-09-27; bead flapjack-qj5.10.1): HOL panSemScript.sml:605-610 evaluates the address expression first, then lookup_kvar for the named destination. Only a word address and word destination call sh_mem_load vk v addr (nb_op op); each failure returns (SOME Error,s). The Lean statement has those same nested matches over evalHOLFinite and lookupKvarHOLFinite and uses shMemLoadHOLFiniteExact directly at nbOpHOL operator; its proof shows the existing finite evaluator's broad-helper result repacks to this direct finite-carrier result. No result, destination, or domain-success premise is added. PanSemStateFiniteExact owns the four named HolFiniteMapExact fields with the same-module roundtrip witness. The theorem is declared in StateExactFiniteMap.lean beside its owning carrier and canonical witness; the declaration is proof-side and does not claim production compiler routing."
   },
   {
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
