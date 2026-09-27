@@ -1,6 +1,42 @@
 [
   {
     "hol_path": "cakeml/pancake/crep_inlineScript.sml",
+    "hol_name": "has_return_def",
+    "lean_path": "Flapjack/Pancake/CrepInline/Pass.lean",
+    "lean_name": "hasReturnHOLExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-28; bead flapjack-e7w.2.1) against crep_inlineScript.sml:43-57. Compared Dec, Seq, If, While, Call NONE/SOME handler cases, Return, and identity fallback clause by clause. Uses the exact CrepProgHOL carrier, with the same fixed positive word dimension qualifier; Bool and Nat-list tests implement HOL's truth-valued distinct control logic. helperHasReturnHOLExact in Flapjack/Test/CrepInlineFmapParity.lean checks the If/Return case. This helper alone does not port inline_prog or its finite-map argument.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_inlineScript.sml",
+    "hol_name": "not_branch_ret_def",
+    "lean_path": "Flapjack/Pancake/CrepInline/Pass.lean",
+    "lean_name": "notBranchRetHOLExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-28; bead flapjack-e7w.2.1) against crep_inlineScript.sml:70-85. Dec and Seq recurse as HOL; If and While negate exact has_return results; Call NONE and Call with no return handler return T; a handler call negates has_return on the handler; all other clauses return T. Inputs and outputs retain HOL's indexed Crep syntax and positive-width translation. helperNotBranchRetHOLExact checks an If with a returning branch in Flapjack/Test/CrepInlineFmapParity.lean. This helper alone does not port inline_prog or its finite-map argument.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_inlineScript.sml",
+    "hol_name": "transform_branch_def",
+    "lean_path": "Flapjack/Pancake/CrepInline/Pass.lean",
+    "lean_name": "transformBranchHOLExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-28; bead flapjack-e7w.2.1) against crep_inlineScript.sml:156-169. Return uses nested_seq (MAP2 Assign returnNames values) followed by Break depth; Call NONE inserts return metadata and Break; Call SOME(_,NONE) is preserved; a Call handler recursively transforms only its handler; Dec, Seq, and If recurse at the same depth; While increments depth; remaining constructors are unchanged. `List.zipWith` and `crepNestedSeqHOL` match HOL MAP2 and nested_seq, and the `CrepProgHOL` indexed payloads use words_as_type_indexed_bitvec. helperTransformBranchHOLExact checks the Return clause in Flapjack/Test/CrepInlineFmapParity.lean. This helper alone does not port inline_prog or its finite-map argument.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_inlineScript.sml",
+    "hol_name": "inline_nontail_def",
+    "lean_path": "Flapjack/Pancake/CrepInline/Pass.lean",
+    "lean_name": "inlineNontailHOLExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-28; bead flapjack-e7w.2.1) against crep_inlineScript.sml:191-203. Lean has the same six inputs, result carrier and equation: nested_decs temporaryReturns (REPLICATE (LENGTH temporaryReturns) (Const 0)) (Seq (arg_load temporaryNames arguments argumentNames program) (nested_seq (MAP2 Assign returnNames (MAP Var temporaryReturns))). `nestedDecsHOL`, `argLoadHOLExact`, `List.replicate`, `List.zipWith`, and `crepNestedSeqHOL` retain source list order and truncation behavior. helperInlineNontailHOLExact checks a representative equation in Flapjack/Test/CrepInlineFmapParity.lean. This helper alone does not port inline_prog or its finite-map argument.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_inlineScript.sml",
     "hol_name": "transform_eoc_def",
     "lean_path": "Flapjack/Pancake/CrepInline/Pass.lean",
     "lean_name": "transformEocHOLExact",

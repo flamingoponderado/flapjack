@@ -408,6 +408,90 @@ termination_by program => sizeOf program
 decreasing_by
   all_goals decreasing_trivial
 
+/-- Exact port of HOL `has_return_def` over the indexed Crep carrier. -/
+@[hol "cakeml/pancake/crep_inlineScript.sml" "has_return_def"
+  (words_as_type_indexed_bitvec)]
+def hasReturnHOLExact {width : Nat} [NeZero width] :
+    CrepProgHOL width → Bool
+  | .dec _ _ body => hasReturnHOLExact body
+  | .seq first second => hasReturnHOLExact first || hasReturnHOLExact second
+  | .ite _ first second => hasReturnHOLExact first || hasReturnHOLExact second
+  | .while _ body => hasReturnHOLExact body
+  | .call none _ _ => true
+  | .call (some (_, none)) _ _ => false
+  | .call (some (_, some (_, handler))) _ _ => hasReturnHOLExact handler
+  | .return _ => true
+  | _ => false
+
+/-- Exact port of HOL `not_branch_ret_def` on the indexed Crep carrier.
+    This follows the HOL equations for Dec/Seq/If/While/Call and treats all
+    other constructors as `T`; the Call handler is inspected recursively. -/
+@[hol "cakeml/pancake/crep_inlineScript.sml" "not_branch_ret_def"
+  (words_as_type_indexed_bitvec)]
+def notBranchRetHOLExact {width : Nat} [NeZero width] :
+    CrepProgHOL width → Bool
+  | .dec _ _ body => notBranchRetHOLExact body
+  | .seq first second => notBranchRetHOLExact first && notBranchRetHOLExact second
+  | .ite _ first second =>
+      !(hasReturnHOLExact first) && !(hasReturnHOLExact second)
+  | .while _ body => !(hasReturnHOLExact body)
+  | .call none _ _ => true
+  | .call (some (_, none)) _ _ => true
+  | .call (some (_, some (_, handler))) _ _ => !(hasReturnHOLExact handler)
+  | _ => true
+
+/-- Exact port of HOL `transform_branch_def` over `CrepProgHOL`. It replaces
+    Returns with assignments followed by the current loop Break, handles tail
+    Calls with the same return metadata and Break, and increases the break
+    depth only under While. -/
+@[hol "cakeml/pancake/crep_inlineScript.sml" "transform_branch_def"
+  (words_as_type_indexed_bitvec)]
+def transformBranchHOLExact {width : Nat} [NeZero width] (depth : Nat)
+    (returnNames : List Nat) : CrepProgHOL width → CrepProgHOL width
+  | .return values =>
+      .seq (crepNestedSeqHOL
+        (returnNames.zipWith (fun name value => .assign name value) values))
+        (.break depth)
+  | .call none name arguments =>
+      .seq (.call (some (returnNames, none)) name arguments) (.break depth)
+  | .call (some (names, none)) name arguments =>
+      .call (some (names, none)) name arguments
+  | .call (some (names, some (handler, body))) name arguments =>
+      .call (some (names, some (handler,
+        transformBranchHOLExact depth returnNames body))) name arguments
+  | .dec name value body =>
+      .dec name value (transformBranchHOLExact depth returnNames body)
+  | .while condition body =>
+      .while condition (transformBranchHOLExact (depth + 1) returnNames body)
+  | .seq first second =>
+      .seq (transformBranchHOLExact depth returnNames first)
+        (transformBranchHOLExact depth returnNames second)
+  | .ite condition first second =>
+      .ite condition (transformBranchHOLExact depth returnNames first)
+        (transformBranchHOLExact depth returnNames second)
+  | program => program
+termination_by program => sizeOf program
+decreasing_by
+  all_goals decreasing_trivial
+
+/-- Exact port of HOL `inline_nontail_def` on the exact program carrier. -/
+@[hol "cakeml/pancake/crep_inlineScript.sml" "inline_nontail_def"
+  (words_as_type_indexed_bitvec)]
+def inlineNontailHOLExact {width : Nat} [NeZero width]
+    (program : CrepProgHOL width) (returnNames temporaryReturns temporaryNames : List Nat)
+    (arguments : List (CrepExpHOL width)) (argumentNames : List Nat) :
+    CrepProgHOL width :=
+  nestedDecsHOL temporaryReturns
+    (List.replicate temporaryReturns.length (CrepExpHOL.const 0))
+    (.seq (argLoadHOLExact temporaryNames arguments argumentNames program)
+      (crepNestedSeqHOL
+        (returnNames.zipWith
+          (fun name temporary => .assign name (.var temporary)) temporaryReturns)))
+
+/-- Exact finite-list analogue of HOL `GENLIST (\x. SUC x + base) len`. -/
+def genlistSuccAddHOLExact (base length : Nat) : List Nat :=
+  (List.range length).map (fun offset => offset + base + 1)
+
 structure CrepInlineFmapHOL (width : Nat) [NeZero width] where
   entries : List (CrepInlineMapHOLName × (List Nat × CrepProgHOL width))
   nodupKeys : (entries.map Prod.fst).Nodup
@@ -425,10 +509,12 @@ def lookup [BEq CrepInlineMapHOLName] (name : CrepInlineMapHOLName)
 
 def remove [BEq CrepInlineMapHOLName] [LawfulBEq CrepInlineMapHOLName]
     (name : CrepInlineMapHOLName) (fs : CrepInlineFmapHOL width) :
-    CrepInlineFmapHOL width :=
+  CrepInlineFmapHOL width :=
   { entries := fs.entries.filter (fun e => e.1 != name)
-    nodupKeys := fs.nodupKeys.sublist
-      ((List.filter_sublist (l := fs.entries)).map Prod.fst) }
+    , nodupKeys := fs.nodupKeys.sublist
+        ((List.filter_sublist (l := fs.entries)).map Prod.fst) }
+
+def card (fs : CrepInlineFmapHOL width) : Nat := fs.entries.length
 
 private theorem not_mem_fst_filter_bne [BEq CrepInlineMapHOLName]
     [LawfulBEq CrepInlineMapHOLName] (name : CrepInlineMapHOLName)
@@ -483,6 +569,39 @@ theorem lookup_remove [BEq CrepInlineMapHOLName]
   unfold remove lookup
   exact CrepInlineFmap.lookup_filter_bne key name fs.entries fs.nodupKeys
 
+private theorem length_filter_lt_of_lookup [BEq CrepInlineMapHOLName]
+    [LawfulBEq CrepInlineMapHOLName] (name : CrepInlineMapHOLName)
+    {value : List Nat × CrepProgHOL width}
+    {entries : List (CrepInlineMapHOLName × (List Nat × CrepProgHOL width))}
+    (h : List.lookup name entries = some value) :
+    (entries.filter (fun entry => entry.1 != name)).length < entries.length := by
+  obtain ⟨before, after, heq, hkeys⟩ := List.lookup_eq_some_iff.mp h
+  subst heq
+  have hbefore : before.filter (fun entry => entry.1 != name) = before := by
+    apply List.filter_eq_self.mpr
+    intro entry hentry
+    have hne : entry.1 ≠ name := by
+      have hkey := hkeys entry hentry
+      rw [bne_iff_ne] at hkey
+      exact fun heq => hkey heq.symm
+    simpa using hne
+  have hhead : ((name, value) :: after).filter
+      (fun entry => entry.1 != name) = after.filter
+        (fun entry => entry.1 != name) := by
+    simp [bne_self_eq_false]
+  rw [List.filter_append, hbefore, hhead]
+  simp only [List.length_append, List.length_cons]
+  exact Nat.add_lt_add_left
+    (Nat.lt_succ_of_le (List.length_filter_le _ after)) before.length
+
+theorem card_remove_lt [BEq CrepInlineMapHOLName]
+    [LawfulBEq CrepInlineMapHOLName] (name : CrepInlineMapHOLName)
+    (fs : CrepInlineFmapHOL width) {value : List Nat × CrepProgHOL width}
+    (h : fs.lookup name = some value) :
+    (fs.remove name).card < fs.card := by
+  show (fs.entries.filter (fun entry => entry.1 != name)).length < fs.entries.length
+  exact length_filter_lt_of_lookup name h
+
 theorem lookup_ofAList [BEq CrepInlineMapHOLName]
     [LawfulBEq CrepInlineMapHOLName] (key : CrepInlineMapHOLName)
     (entries : List (CrepInlineMapHOLName × (List Nat × CrepProgHOL width))) :
@@ -526,9 +645,9 @@ theorem crepInlineMapHOL_lookup {width : Nat} [NeZero width]
     exact `CrepProgHOL` carrier while leaving recursive results to the caller.
     The identity fallback and the extra recursive-function argument are
     infrastructure for assembling the full finite-map recursion; this helper
-    has no standalone HOL original and is deliberately untagged. The separate
-    `Call`/finite-map recursion remains in the parent bead
-    `flapjack-e7w.2.1`. -/
+    has no standalone HOL original and is deliberately untagged. The recursive
+    source-shaped assembly is `inlineProgHOLCore` below; it also remains
+    untagged because its inline-map carrier is a unique-key list model. -/
 def inlineProgStructuralHOL {width : Nat} [NeZero width]
     (recur : CrepInlineFmapHOL width → CrepProgHOL width → CrepProgHOL width)
     (inlineable : CrepInlineFmapHOL width) :
@@ -540,6 +659,89 @@ def inlineProgStructuralHOL {width : Nat} [NeZero width]
       .ite condition (recur inlineable thenBranch) (recur inlineable elseBranch)
   | .while condition body => .while condition (recur inlineable body)
   | program => program
+
+/-- Recursive source-shape assembly for HOL `inline_prog_def` on the exact
+    `CrepProgHOL` syntax. Call constructors are split as in HOL's nested case
+    expression so recursive equations remain visible: NONE and handler-free
+    calls recurse into a removed-map callee on lookup hits; handler calls
+    recurse into the handler. The helper clause computations use the exact
+    ports above. This stays untagged because `CrepInlineFmapHOL` is a
+    unique-key list carrier, not HOL's `fmap` or the reviewed canonical
+    `HolFiniteMapExact` translation. Its list length is the finite domain
+    cardinality because keys are unique; the Lean termination proof uses
+    `(card, sizeOf program)`, while HOL's source uses
+    `(CARD (FDOM fs), prog_size program)`. This termination-measure choice does
+    not change the recursive function's equations.
+-/
+def inlineProgHOLCore {width : Nat} [NeZero width]
+    [BEq CrepInlineMapHOLName] [LawfulBEq CrepInlineMapHOLName]
+    (inlineable : CrepInlineFmapHOL width) :
+    CrepProgHOL width → CrepProgHOL width
+  | .call none name arguments =>
+      match _hlookup : inlineable.lookup name with
+      | none => .call none name arguments
+      | some (argumentNames, body) =>
+          let inlinedCallee :=
+            (unreachElimHOLExact
+              (inlineProgHOLCore (inlineable.remove name) body)).1
+          let maxArguments := (arguments.flatMap crepExpVarsHOL).foldl max 0
+          let maxArgumentNames := argumentNames.foldl max 0
+          let temporaryNames :=
+            genlistSuccAddHOLExact (max maxArguments maxArgumentNames)
+              argumentNames.length
+          inlineTailHOLExact
+            (argLoadHOLExact temporaryNames arguments argumentNames inlinedCallee)
+  | .call (some (returnNames, none)) name arguments =>
+      if !crepAllDistinct returnNames then
+        .call (some (returnNames, none)) name arguments
+      else
+        match _hlookup : inlineable.lookup name with
+        | none => .call (some (returnNames, none)) name arguments
+        | some (argumentNames, body) =>
+            let inlinedCallee :=
+              (unreachElimHOLExact
+                (inlineProgHOLCore (inlineable.remove name) body)).1
+            let maxArguments := (arguments.flatMap crepExpVarsHOL).foldl max 0
+            let maxArgumentNames := argumentNames.foldl max 0
+            let temporaryNames :=
+              genlistSuccAddHOLExact (max maxArguments maxArgumentNames)
+                argumentNames.length
+            let maxReturnNames := returnNames.foldl max 0
+            let maxInlinedCallee := crepVmaxProgHOLExact inlinedCallee
+            let maxTemporaryNames := temporaryNames.foldl max 0
+            let temporaryReturns :=
+              genlistSuccAddHOLExact
+                (max maxReturnNames (max maxInlinedCallee maxTemporaryNames))
+                returnNames.length
+            let transformedCallee :=
+              if notBranchRetHOLExact inlinedCallee then
+                .seq .tick (transformEocHOLExact temporaryReturns inlinedCallee)
+              else
+                .while (.const 1)
+                  (transformBranchHOLExact 0 temporaryReturns inlinedCallee)
+            inlineNontailHOLExact transformedCallee returnNames
+              temporaryReturns temporaryNames arguments argumentNames
+  | .call (some (returnNames, some (handler, body))) name arguments =>
+      .call (some (returnNames, some (handler,
+        inlineProgHOLCore inlineable body))) name arguments
+  | .dec name value body =>
+      .dec name value (inlineProgHOLCore inlineable body)
+  | .seq first second =>
+      .seq (inlineProgHOLCore inlineable first)
+        (inlineProgHOLCore inlineable second)
+  | .ite condition first second =>
+      .ite condition (inlineProgHOLCore inlineable first)
+        (inlineProgHOLCore inlineable second)
+  | .while condition body =>
+      .while condition (inlineProgHOLCore inlineable body)
+  | program => program
+termination_by program => (inlineable.card, sizeOf program)
+decreasing_by
+  all_goals
+    first
+    | apply Prod.Lex.right; simp_wf; decreasing_trivial
+    | apply Prod.Lex.left
+      exact CrepInlineFmapHOL.card_remove_lt name inlineable _hlookup
 
 /-- Exact shape of Cake `crep_inline$inline_prog`
     (`cakeml/pancake/crep_inlineScript.sml:203-257`) over the genuine
