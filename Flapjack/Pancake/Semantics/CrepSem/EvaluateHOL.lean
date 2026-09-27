@@ -898,8 +898,19 @@ attached. -/
        | _, _ => (some .error, state)) := by
   rw [evalCrepSemHOLProg.eq_def] <;> rfl
 
-/-- HOL `evaluate (Store32 dst src, s)` (`crepSemScript.sml:270-276`).
-    Finite-support `CrepSemHOLState` counterpart; untagged. -/
+/-- HOL `evaluate (Store32 dst src, s)` (`crepSemScript.sml:274-280`),
+    source-reviewed as one clause only. Both operands use the tagged exact
+    `eval_def` port `evalCrepSemHOLExp` (`crepSemScript.sml:90-137`) through
+    `crepExactEvalExp`; HOL and Lean both require each result to be a `Word`.
+    Converting the source payload with `BitVec.ofNat 32 w.toNat` is HOL's
+    `w2w w` to `word32`. `crepExactMemStore32` delegates to the tagged exact
+    `mem_store_32_def` port `panMemStore32HOL` (`panSemScript.sml:327-342`):
+    alignment, aligned-cell lookup, domain membership at `byte_align`, and the
+    four endian-aware byte replacements match. On success only memory changes
+    and the result is `NONE`; failed operands or store conditions return
+    `Error` with the original state. This is only a local Store32-clause
+    disposition; the enclosing evaluator remains untagged pending other cases
+    and whole-statement/carrier review. -/
 @[simp] theorem evalCrepSemHOLProg_store32 {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ)
     (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
