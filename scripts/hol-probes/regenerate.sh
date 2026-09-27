@@ -1152,6 +1152,9 @@ run_probe pan_structs_compile_exp_probeScript.sml pan_structs_compile_exp_probe.
 run_probe crep_semantics_probeScript.sml crep_semantics_probe.out \
   semantics_timeout_is_nonterminal semantics_break_is_nonterminal \
   "$cake_dir/pancake/semantics/crepSemScript.sml"
+run_probe crep_sem_evaluate_ind_probeScript.sml crep_sem_evaluate_ind_probe.out \
+  evaluate_ind \
+  "$cake_dir/pancake/semantics/crepSemScript.sml"
 run_probe crep_res_var_probeScript.sml crep_res_var_probe.out \
   res_var_delete_hit res_var_update_hit \
   "$cake_dir/pancake/semantics/crepSemScript.sml"
