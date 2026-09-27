@@ -1657,12 +1657,28 @@ def evaluateHOLFiniteStateWithDeciders {width : Nat} {σ : Type} [NeZero width]
   | some pair => (pair.1, pair.2.state)
   | none => (none, state)
 
-/-- FLAPJACK-SPECIFIC exact state-level rendering of HOL `evaluate_def`'s
-    `result option × state` result shape. The decision procedures needed to
-    execute set-membership branches are selected classically in this wrapper,
-    rather than appearing as extra HOL theorem binders. The body directly uses
-    the finite context evaluator; it remains untagged pending source review of
-    every clause and carrier. -/
+/-- Exact finite-support port of HOL `panSem$evaluate_def`
+    (`panSemScript.sml:780`; the recursive clauses are declared at 556-761) over the matching `ProgHOL` and
+    `PanSemStateFiniteExact` carriers. It preserves the HOL result-option ×
+    state pair and all 21 constructor clauses. `FiniteEvalContext` threads
+    Lean's operational `DecidablePred` evidence through local/state updates;
+    this wrapper chooses that evidence classically, so it adds no logical
+    premise. The internal evaluator's outer assembly marker is proved always
+    populated, and `evaluateHOLFiniteStateWithDeciders_eq_getD` shows that its
+    fallback does not change any result.
+
+    The `(fmap_as_finite_support := [locals, globals, code, eshapes])`
+    qualifier records exactly HOL's four finite-map state fields as
+    `HolFiniteMapExact`. `PanSemStateFiniteExact` owns those fields in this
+    module, whose `holFmapAsFiniteSupportWitness` proves the roundtrip to its
+    broad counterpart. Source review compared every recursive and
+    nonrecursive clause, including clock/fix-clock behavior, Dec restoration,
+    Call/DecCall result and exception branches, shape/validity checks, FFI and
+    shared-memory errors, and finite-map updates. The finite-to-broad
+    projection is independently kernel-checked; the evaluator is not routed
+    through the production compiler. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
+  (fmap_as_finite_support := [locals, globals, code, eshapes])]
 noncomputable def evaluateHOLFiniteState {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) (program : ProgHOL width) :
     Option (PanSemResultExact width) × PanSemStateFiniteExact width σ := by

@@ -34,8 +34,7 @@ handler path, and the FFI clauses.
 
 Most declarations here are intentionally **untagged**: the whole-program
 statement shape is not yet the reviewed exact HOL statement (the `RiscV.Word
-width` fixed-width model of HOL's arbitrary finite word dimension, the
-executable `HolFfiState`/`UInt8` byte codec used by the FFI clauses, and the
+width` fixed-width model of HOL's arbitrary finite word dimension and the
 omission of a general agreement proof with the executed interpreter). They are
 declaration-local infrastructure only. The result carrier is the exact
 `CrepResultHOLExact width`, so the `Return`/`Call` clauses no longer project
@@ -67,13 +66,13 @@ call the exact ports with `crepShMemByteWidth operator`.
 * `CrepSemHOLState` is the finite-support `HolFiniteMapExact` translation of
   HOL's `|->` fields; the state helpers `setVar`/`setGlobals`/`updLocals`/
   `emptyLocals`/`resVarEq` implement the HOL updates with HOL `=` equality.
-* `panMemStore32HOL` and `callFFIHOL` use their reviewed exact carriers.
-  The ExtCall byte chain (`panMemLoadByteHOL`, `panMemStoreByteHOL`,
-  `readBytearrayHOL`, `panWriteBytearrayHOL`) currently uses `UInt8`, whereas
-  HOL uses `word8` (`BitVec 8`); those declarations are intentionally untagged
-  pending the faithful byte-carrier work in `flapjack-4ac.5.16.5.4`.
-  `crepClockWordToBytes`/`crepClockWordOfBytes` are likewise not cited here as
-  exact HOL ports.
+* `panMemStore32HOL` and `callFFIHOL` use their reviewed exact carriers. The
+  Crep ExtCall path now uses exact `BitVec 8` helpers
+  `readBytearrayWordHOL`/`panMemLoadByteWord8HOL`/
+  `panWriteBytearrayWord8HOL`. Legacy `UInt8` helpers remain untagged for the
+  other word-load and production-adapter paths; their byte-carrier bridge is
+  not claimed as a HOL port. `crepClockWordToBytes`/`crepClockWordOfBytes` are
+  likewise not cited here as exact HOL ports.
 * `Skip` is fully faithful: `evalCrepSemHOLProg state .skip = (none, state)`,
   matching HOL `evaluate (Skip, s) = (NONE, s)`. The direct oracle row is
   `skip_eval=T` in `scripts/hol-probes/crep_inline_eval_probe.out`.
@@ -144,6 +143,15 @@ def crepExactMemLoadByte {width : Nat} [NeZero width] {σ : Type}
   haveI : DecidablePred state.memaddrs := memDec
   exact panMemLoadByteHOL state.memory state.memaddrs state.be
 
+/-- Exact HOL `mem_load_byte` with the source `word8` carrier, for evaluator
+    clauses whose FFI interface consumes HOL byte lists. -/
+def crepExactMemLoadByteWord8 {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a)) :
+    BitVec width → Option (BitVec 8) := by
+  haveI : DecidablePred state.memaddrs := memDec
+  exact panMemLoadByteWord8HOL state.memory state.memaddrs state.be
+
 /-- Exact HOL `write_bytearray` application with an explicit domain decision. -/
 def crepExactWriteBytearray {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ)
@@ -152,6 +160,15 @@ def crepExactWriteBytearray {width : Nat} [NeZero width] {σ : Type}
     BitVec width → HolWordLab width := by
   haveI : DecidablePred state.memaddrs := memDec
   exact panWriteBytearrayHOL address bytes state.memory state.memaddrs state.be
+
+/-- Exact HOL `write_bytearray` over source `word8` values. -/
+def crepExactWriteBytearrayWord8 {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (address : BitVec width) (bytes : List (BitVec 8)) :
+    BitVec width → HolWordLab width := by
+  haveI : DecidablePred state.memaddrs := memDec
+  exact panWriteBytearrayWord8HOL address bytes state.memory state.memaddrs state.be
 
 
 /-- Exact port of HOL `Datatype result`
@@ -663,19 +680,18 @@ def evalCrepSemHOLProg {width : Nat} [NeZero width] {σ : Type}
             state.locals.lookup arrayLength, state.locals.lookup array with
       | some (.word configLength), some (.word configAddress),
         some (.word arrayLengthValue), some (.word arrayAddress) =>
-          match readBytearrayHOL configAddress configLength.toNat
-                  (crepExactMemLoadByte state memDec),
-                readBytearrayHOL arrayAddress arrayLengthValue.toNat
-                  (crepExactMemLoadByte state memDec) with
+          match readBytearrayWordHOL (byteWidth := 8) configAddress configLength.toNat
+                  (crepExactMemLoadByteWord8 state memDec),
+                readBytearrayWordHOL (byteWidth := 8) arrayAddress arrayLengthValue.toNat
+                  (crepExactMemLoadByteWord8 state memDec) with
           | some configBytes, some arrayBytes =>
               match callFFIHOL state.ffi (.extCall function)
-                  (configBytes.map UInt8.toBitVec)
-                  (arrayBytes.map UInt8.toBitVec) with
+                  configBytes arrayBytes with
               | .final event => (some (.finalFfi event), state)
               | .ret newFfi newBytes =>
                   (none, { state with
-                    memory := crepExactWriteBytearray state memDec arrayAddress
-                      (newBytes.map UInt8.ofBitVec),
+                    memory := crepExactWriteBytearrayWord8 state memDec arrayAddress
+                      newBytes,
                     ffi := newFfi })
           | _, _ => (some .error, state)
       | _, _, _, _ => (some .error, state)
@@ -1083,14 +1099,13 @@ theorem evalCrepSemHOLProg_while_timeout {width : Nat} [NeZero width] {σ : Type
     (`crepSemScript.sml:367-379`): read both byte arrays in
     `(len1,ptr1,len2,ptr2)` lookup order, dispatch `call_FFI (ExtCall ffi_index)`,
     preserve the input state on final/error, and on return write the returned
-    bytes at `ptr2` and install the new FFI state. Source comparison found those
-    branch orders and updates aligned. This equation remains untagged because
-    its byte helpers carry `UInt8` while HOL's `word8` is represented exactly by
-    `BitVec 8`; the necessary codec has no approved HOL qualifier. The precise
-    byte-carrier replacement is `flapjack-4ac.5.16.5.4`. This core equation also
-    exposes explicit domain-decision arguments; the public no-extra-argument
-    wrapper and its core equality are `evalCrepSemHOLProgExact` and
-    `evalCrepSemHOLProgExact_eq_core` (`flapjack-4ac.5.16.5.2`). -/
+    bytes at `ptr2` and install the new FFI state. The branch uses exact
+    `BitVec 8` byte helpers matching HOL `word8`. It remains untagged because
+    this core evaluator exposes explicit domain-decision arguments and the
+    whole evaluator clause/carrier audit is tracked by
+    `flapjack-4ac.5.16.5.2`. The public no-extra-argument wrapper and its core
+    equality are `evalCrepSemHOLProgExact` and `evalCrepSemHOLProgExact_eq_core`
+    (`flapjack-4ac.5.16.5.2`). -/
 @[simp] theorem evalCrepSemHOLProg_extCall {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ)
     (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
@@ -1102,19 +1117,18 @@ theorem evalCrepSemHOLProg_while_timeout {width : Nat} [NeZero width] {σ : Type
              state.locals.lookup arrayLength, state.locals.lookup array with
        | some (.word configLength), some (.word configAddress),
          some (.word arrayLengthValue), some (.word arrayAddress) =>
-           match readBytearrayHOL configAddress configLength.toNat
-                   (crepExactMemLoadByte state memDec),
-                 readBytearrayHOL arrayAddress arrayLengthValue.toNat
-                   (crepExactMemLoadByte state memDec) with
+           match readBytearrayWordHOL (byteWidth := 8) configAddress configLength.toNat
+                   (crepExactMemLoadByteWord8 state memDec),
+                 readBytearrayWordHOL (byteWidth := 8) arrayAddress arrayLengthValue.toNat
+                   (crepExactMemLoadByteWord8 state memDec) with
            | some configBytes, some arrayBytes =>
                match callFFIHOL state.ffi (.extCall function)
-                   (configBytes.map UInt8.toBitVec)
-                   (arrayBytes.map UInt8.toBitVec) with
+                   configBytes arrayBytes with
                | .final event => (some (.finalFfi event), state)
                | .ret newFfi newBytes =>
                    (none, { state with
-                     memory := crepExactWriteBytearray state memDec arrayAddress
-                       (newBytes.map UInt8.ofBitVec),
+                     memory := crepExactWriteBytearrayWord8 state memDec arrayAddress
+                       newBytes,
                      ffi := newFfi })
            | _, _ => (some .error, state)
        | _, _, _, _ => (some .error, state)) := by
