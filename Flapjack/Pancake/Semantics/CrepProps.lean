@@ -998,20 +998,22 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {σ : Type} :
 
 end CrepPropsFiniteSupport
 
-/-- Flapjack-specific untagged analogue of HOL `lookup_locals_eq_map_vars` (`crepPropsScript.sml:17-27`), retained as the intended exact rendering (the `@[hol]` tag is withdrawn pending carrier-qualifier review, see HOLD below): mapping
-the local lookup over a list of variable names equals mapping the exact
-expression evaluator over the corresponding `Var` expressions. HOL's
-`OPT_MMAP (FLOOKUP t.locals) ns` is Lean's `List.mapM t.locals.lookup` and
-`OPT_MMAP (eval t) (MAP Var ns)` is `List.mapM (evalCrepSemHOLExp t)` over
-`CrepExpHOL.var`; `eval`'s `Var` clause is exactly `.locals.lookup`, so no
-side condition beyond the exact carrier is needed.
-
-HOLD (coordinator, 2026-09-27): the `@[hol]` tag is withdrawn pending the DS10
-`words_as_type_indexed_bitvec` policy. `CrepSemHOLState width σ` is the
-type-indexed-word crepSem state carrier, so an fmap-only qualifier does not
-record the HOL word-dimension translation; do not re-tag until the combined
-qualifier lands and the carrier is source-reviewed. The proof is kept as
-untagged infrastructure. -/
+/-- Exact port of HOL `lookup_locals_eq_map_vars`
+    (`cakeml/pancake/semantics/crepPropsScript.sml:17-27`): mapping the local
+    lookup over a list of variable names equals mapping the exact expression
+    evaluator over the corresponding `Var` expressions.  HOL's
+    `OPT_MMAP (FLOOKUP t.locals) ns` is Lean's `List.mapM t.locals.lookup` and
+    `OPT_MMAP (eval t) (MAP Var ns)` is `List.mapM (evalCrepSemHOLExp t)` over
+    `CrepExpHOL.var`; `eval`'s `Var` clause is exactly `.locals.lookup`, so no
+    side condition beyond the exact carrier is needed (the `DecidablePred`
+    argument is the evaluator encoding).  `CrepSemHOLState width σ` is the
+    type-indexed-word crepSem state carrier whose `locals`/`globals`/`code` are
+    HOL `|->` fields, hence the combined `fmap_as_finite_support`/words
+    qualifiers; the same-module forwarding witness is
+    `holFmapAsFiniteSupportWitness` above. -/
+@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "lookup_locals_eq_map_vars"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
 theorem lookupLocalsEqMapVarsHOL {width : Nat} [NeZero width] {σ : Type}
     (ns : List Nat) (t : CrepSemHOLState width σ) [DecidablePred t.memaddrs] :
     ns.mapM t.locals.lookup =
@@ -1026,7 +1028,8 @@ finite-support `CrepSemHOLState` carrier: the ten field equations, with HOL
 `sh_memaddrs`/`be`/`base_addr`/`top_addr` rendered as `shMemaddrs`/`be`/
 `baseAddr`/`topAddr`. -/
 @[hol "cakeml/pancake/semantics/crepPropsScript.sml" "dec_clock_simp"
-  (fmap_as_finite_support := [locals, globals, code])]
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
 theorem decClockCrepSemHOL_simp {width : Nat} [NeZero width] {σ : Type}
     (s : CrepSemHOLState width σ) :
     (decClockCrepSemHOL s).locals = s.locals ∧
@@ -1045,7 +1048,8 @@ theorem decClockCrepSemHOL_simp {width : Nat} [NeZero width] {σ : Type}
 finite-support `CrepSemHOLState` carrier: clearing `locals` to `FEMPTY` preserves
 the other nine fields. -/
 @[hol "cakeml/pancake/semantics/crepPropsScript.sml" "empty_locals_simp"
-  (fmap_as_finite_support := [locals, globals, code])]
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
 theorem emptyLocalsCrepSemHOL_simp {width : Nat} [NeZero width] {σ : Type}
     (s : CrepSemHOLState width σ) :
     (CrepSemHOLState.emptyLocals s).globals = s.globals ∧
@@ -1064,7 +1068,8 @@ theorem emptyLocalsCrepSemHOL_simp {width : Nat} [NeZero width] {σ : Type}
 finite-support `CrepSemHOLState` carrier: setting a global leaves the `locals`
 finite map unchanged. -/
 @[hol "cakeml/pancake/semantics/crepPropsScript.sml" "FLOOKUP_set_globals"
-  (fmap_as_finite_support := [locals, globals, code])]
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
 theorem flookupSetGlobalsCrepSemHOL_locals {width : Nat} [NeZero width] {σ : Type}
     (key : BitVec 5) (value : HolWordLab width) (s : CrepSemHOLState width σ)
     (name : Nat) :
@@ -1145,7 +1150,8 @@ theorem crepShMemStoreHOL_flookup_locals {width : Nat} [NeZero width] {σ : Type
 the exact `crepSem$eval` expression evaluator never reads the state `clock`
 field, so replacing it is invisible. Quantifier order follows HOL's `t, e, ck`. -/
 @[hol "cakeml/pancake/semantics/crepPropsScript.sml" "eval_upd_clock_eq"
-  (fmap_as_finite_support := [locals, globals, code])]
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
 theorem evalCrepSemHOLExp_upd_clock_eq {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ) [DecidablePred state.memaddrs]
     (expression : CrepExpHOL width) (clock : Nat) :
@@ -1318,7 +1324,8 @@ evaluation and absence of the assigned local from `var_cexp`, replacing that
 local preserves the result. The finite-map qualifier records the exact
 `CrepSemHOLState` locals/globals/code carriers. -/
 @[hol "cakeml/pancake/semantics/crepPropsScript.sml" "update_locals_not_vars_eval_eq"
-  (fmap_as_finite_support := [locals, globals, code])]
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
 theorem updateLocalsNotVarsEvalEqCrepHOL {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ) [DecidablePred state.memaddrs]
     (expression : CrepExpHOL width) (value : HolWordLab width)
