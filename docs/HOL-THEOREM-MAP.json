@@ -13083,7 +13083,15 @@
       "code"
     ],
     "reviewer": "flapjack-ds8 (source comparison; bead flapjack-pxn.18.3.5.8.8.7): HOL FLOOKUP_set_globals (crepPropsScript.sml:297-301) `FLOOKUP (set_globals gv w s).locals n = FLOOKUP s.locals n` over the exact finite-support CrepSemHOLState carrier, using the tagged CrepSemHOLState.setGlobals (crepSemScript.sml:61-63), which updates only globals. FLOOKUP is rendered as the canonical HolFiniteMapExact.lookup. Finite-map representation recorded by the qualifier (locals/globals/code); same-module canonical witness forwards CrepSemHOLState.holFmapAsFiniteSupportWitness. Direct HOL row set_globals_direct in crep_store_global_probe.out. Representation-only; no statement/side-condition change."
-  },
+   },
+   {
+     "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
+     "hol_name": "opt_mmap_eval_upd_clock_eq",
+     "lean_path": "Flapjack/Pancake/Semantics/CrepProps.lean",
+     "lean_name": "evalCrepSemHOLExps_upd_clock_eq",
+     "statement_status": "reviewed_exact",
+     "reviewer": "flapjack-ds10 (source comparison; bead flapjack-pxn.18.4.8.2.1): HOL opt_mmap_eval_upd_clock_eq (crepPropsScript.sml:872) `!es s ck. OPT_MMAP (eval (s with clock := ck + s.clock)) es = OPT_MMAP (eval s) es` over the exact tagged evaluator evalCrepSemHOLExp. HOL OPT_MMAP is rendered as List.mapM over Option; the list update uses `clock := ck + state.clock` as in HOL. Follows from the pointwise eval_upd_clock_eq via Flapjack.list_mapM_congr. No representation qualifier (no finite-map field named)."
+   },
   {
     "hol_path": null,
     "hol_name": null,
@@ -13681,5 +13689,21 @@
     "lean_name": "mapTheSomeCancelHOL",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.16.21): HOL `map_the_some_cancel` (`pan_commonPropsScript.sml:332`) states `!xs. MAP (THE \u2218 SOME) xs = xs`; the Lean port `mapTheSomeCancelHOL` renders the partial HOL `THE` applied to `SOME x` as the total `Option.get` with its `isSome` proof, so the statement is clause-for-clause over the standard list carrier with no extra hypothesis."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmScript.sml",
+    "hol_name": "is_load_def",
+    "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
+    "lean_name": "asmIsLoad",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.16.22): exact clause-for-clause port of HOL asmScript.sml:324-330 is_load_def (Load/Load8/Load16/Load32 = T, all others F) over the reviewed exact asm carrier HolMemop (alias of Flapjack.WordMemOp, tagged 'memop'), monomorphic and width-independent with no side conditions."
+  },
+  {
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "FLAT_REPLICATE_NIL",
+    "lean_path": "Flapjack/Misc/FlatReplicate.lean",
+    "lean_name": "flatReplicateNilHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.16.23): HOL miscScript.sml:2120 `!n. FLAT (REPLICATE n []) = []` matches clause-for-clause; HOL FLAT=List.flatten, REPLICATE=List.replicate, element type implicit as in HOL. Direct dependency of pan_to_crepProofScript.sml pc_compile_correct (12 uses)."
   }
 ]
