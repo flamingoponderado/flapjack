@@ -1151,6 +1151,78 @@ example :
     simp only [compileExpExactHOLW.eq_1, expToHOL.eq_1, compileExpHOL.eq_1,
       List.map_cons, List.map_nil, crepExpOfHOL]
 
+/-- The assembly `Call` bridge covers the `rtyp = NONE` arm (`Call NONE`). -/
+example :
+    crepProgOfHOL (compileProgExactHOLW (exactLocalAssignContext [7] [8])
+        (.call none (ofString "f")
+          (([.const 5] : List (Exp (BitVec 8))).map expToHOL))) =
+      compileProgRiscV (exactLocalAssignContext [7] [8]).toProduction
+        (.call none "f" [.const 5]) := by
+  exact compileProgExactHOLW_call_bridge
+    (context := exactLocalAssignContext [7] [8]) (info := none) (function := "f")
+    (arguments := [.const 5]) (by decide)
+    (fun expression hmem => by
+      simp only [List.mem_singleton] at hmem
+      subst hmem
+      simp only [compileExpExactHOLW.eq_1, expToHOL.eq_1, compileExpHOL.eq_1,
+        List.map_cons, List.map_nil, crepExpOfHOL.eq_1, shapeOfHOL])
+    (fun body h => by
+      simp only [callHandlerBody] at h
+      cases h)
+
+/-- The assembly `Call` bridge covers the wrapped-result handler-present-eid
+arm (`SOME (SOME (rtk, rt), SOME handler)` with `wrap_rt` and `eids` both
+succeeding) for `exactWrappedHandlerContext`. -/
+example :
+    crepProgOfHOL (compileProgExactHOLW exactWrappedHandlerContext
+        (.call (some (some (.local, ofString "dst"),
+            some (ofString "E", ofString "e", ProgHOL.skip)))
+          (ofString "f") (([.const 5] : List (Exp (BitVec 8))).map expToHOL))) =
+      compileProgRiscV exactWrappedHandlerContext.toProduction
+        (.call (some (some (.local, "dst"),
+            some ("E", "e", progOfHOL ProgHOL.skip))) "f" [.const 5]) := by
+  exact compileProgExactHOLW_call_bridge
+    (context := exactWrappedHandlerContext)
+    (info := some (some (.local, ofString "dst"),
+      some (ofString "E", ofString "e", ProgHOL.skip)))
+    (function := "f") (arguments := [.const 5]) (by decide)
+    (fun expression hmem => by
+      simp only [List.mem_singleton] at hmem
+      subst hmem
+      simp only [compileExpExactHOLW.eq_1, expToHOL.eq_1, compileExpHOL.eq_1,
+        List.map_cons, List.map_nil, crepExpOfHOL.eq_1, shapeOfHOL])
+    (fun body h => by
+      simp only [callHandlerBody] at h
+      injection h with hb
+      subst hb
+      simp [compileProgExactHOLW, compileProgHOL, progOfHOL, crepProgOfHOL])
+
+/-- The assembly `Call` bridge covers the wrapped-result fallback
+handler-missing-eid arm (`wrap_rt` fails and `eids` is absent). -/
+example :
+    crepProgOfHOL (compileProgExactHOLW (exactLocalAssignContext [7] [8])
+        (.call (some (some (.local, ofString "missing"),
+            some (ofString "E", ofString "e", ProgHOL.skip)))
+          (ofString "f") (([.const 5] : List (Exp (BitVec 8))).map expToHOL))) =
+      compileProgRiscV (exactLocalAssignContext [7] [8]).toProduction
+        (.call (some (some (.local, "missing"),
+            some ("E", "e", progOfHOL ProgHOL.skip))) "f" [.const 5]) := by
+  exact compileProgExactHOLW_call_bridge
+    (context := exactLocalAssignContext [7] [8])
+    (info := some (some (.local, ofString "missing"),
+      some (ofString "E", ofString "e", ProgHOL.skip)))
+    (function := "f") (arguments := [.const 5]) (by decide)
+    (fun expression hmem => by
+      simp only [List.mem_singleton] at hmem
+      subst hmem
+      simp only [compileExpExactHOLW.eq_1, expToHOL.eq_1, compileExpHOL.eq_1,
+        List.map_cons, List.map_nil, crepExpOfHOL.eq_1, shapeOfHOL])
+    (fun body h => by
+      simp only [callHandlerBody] at h
+      injection h with hb
+      subst hb
+      simp [compileProgExactHOLW, compileProgHOL, progOfHOL, crepProgOfHOL])
+
 def exactShMemStoreClauseParity : Bool :=
   (match compileShMemStoreExactHOLW
       (exactLocalAssignContext [7] [8]) .op8 (.var .local (ofString "src")) (.const 3) with
