@@ -1439,10 +1439,11 @@ class RealCombinedQualifierFixtureTest(unittest.TestCase):
             )
 
     def test_real_imported_carrier_only_clauses_pass_checker(self):
-        # Skip is tagged and Break is not; neither signature names a literal
-        # `BitVec`. Both must resolve the imported CrepSemHOLState word carrier.
+        # Skip and Break are currently untagged pending whole-evaluator review;
+        # neither signature names a literal `BitVec`. Both still exercise
+        # resolution of the imported CrepSemHOLState word carrier.
         lines = self._lines()
-        for clause, expected_tag in (("skip", True), ("break", False)):
+        for clause, expected_tag in (("skip", False), ("break", False)):
             name = f"evalCrepSemHOLProgExact_{clause}"
             with self.subTest(clause=clause):
                 start = next(
