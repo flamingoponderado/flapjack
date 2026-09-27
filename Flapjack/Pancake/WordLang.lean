@@ -377,6 +377,47 @@ def everyVarInst {width : Nat} (P : Nat -> Bool) :
   | .fp (.fpMovFromReg _ r1 r2) => if width = 64 then P r1 else (P r1 && P r2)
   | _ => true
 
+/-- Exact HOL `wordLang$every_var_imm` (`wordLangScript.sml:93-96`): the only
+`Reg r` clause is `P r` and every other immediate is `T`.  `[NeZero width]`
+models HOL's positive word dimension (`dimindex (:α) ≥ 1`); unlike the
+production `everyVarImm`, no `BitVec 0` instance is admitted, so the statement
+matches the HOL carrier and the declaration is tagged. -/
+@[hol "cakeml/compiler/backend/wordLangScript.sml" "every_var_imm_def"]
+def everyVarImmHOL {width : Nat} [NeZero width] (P : Nat → Bool) :
+    WordRegImm (BitVec width) → Bool
+  | .reg num => P num
+  | _ => true
+
+/-- Exact HOL `wordLang$every_var_inst` (`wordLangScript.sml:98-133`) over the
+exact instruction carrier, with the two HOL FP-move `dimindex (:α) = 64` tests
+rendered as `width = 64`.  `[NeZero width]` models HOL's positive word
+dimension; the production `everyVarInst` omits that binder and stays
+`documented_mismatch`. -/
+@[hol "cakeml/compiler/backend/wordLangScript.sml" "every_var_inst_def"]
+def everyVarInstHOL {width : Nat} [NeZero width] (P : Nat → Bool) :
+    WordLangInst (BitVec width) → Bool
+  | .const reg _ => P reg
+  | .arith (.binop _ r1 r2 right) => P r1 && P r2 && everyVarImmHOL P right
+  | .arith (.shift _ r1 r2 right) => P r1 && P r2 && everyVarImmHOL P right
+  | .arith (.div r1 r2 r3) => P r1 && P r2 && P r3
+  | .arith (.addCarry r1 r2 r3 r4) => P r1 && P r2 && P r3 && P r4
+  | .arith (.addOverflow r1 r2 r3 r4) => P r1 && P r2 && P r3 && P r4
+  | .arith (.subOverflow r1 r2 r3 r4) => P r1 && P r2 && P r3 && P r4
+  | .arith (.longMul r1 r2 r3 r4) => P r1 && P r2 && P r3 && P r4
+  | .arith (.longDiv r1 r2 r3 r4 r5) => P r1 && P r2 && P r3 && P r4 && P r5
+  | .mem .load reg (.addr base _) => P reg && P base
+  | .mem .store reg (.addr base _) => P reg && P base
+  | .mem .load32 reg (.addr base _) => P reg && P base
+  | .mem .store32 reg (.addr base _) => P reg && P base
+  | .mem .load8 reg (.addr base _) => P reg && P base
+  | .mem .store8 reg (.addr base _) => P reg && P base
+  | .fp (.fpLess reg _ _) => P reg
+  | .fp (.fpLessEqual reg _ _) => P reg
+  | .fp (.fpEqual reg _ _) => P reg
+  | .fp (.fpMovToReg r1 r2 _) => if width = 64 then P r1 else (P r1 && P r2)
+  | .fp (.fpMovFromReg _ r1 r2) => if width = 64 then P r1 else (P r1 && P r2)
+  | _ => true
+
 /-- HOL `wordLang$every_name` (`wordLangScript.sml:127-131`). HOL enumerates
 `toAList`; the `WordLangNumSet` function carrier has no key enumeration, so this
 uses the order-insensitive, duplicate-free domain form `everyNumSetKey`, which
