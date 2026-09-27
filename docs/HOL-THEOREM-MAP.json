@@ -1,5 +1,23 @@
 [
   {
+    "hol_path": "cakeml/pancake/crep_inlineScript.sml",
+    "hol_name": "arg_load_def",
+    "lean_path": "Flapjack/Pancake/CrepInline/Pass.lean",
+    "lean_name": "argLoadHOLExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-c source comparison (2026-09-28; bead flapjack-e7w.2.1.4) against crep_inlineScript.sml:59-63. HOL states arg_load tmp_vars args args_vname p = nested_decs tmp_vars args (nested_decs args_vname (MAP Var tmp_vars) p). Lean has the same four inputs/output over CrepProgHOL/CrepExpHOL width, and uses nestedDecsHOL twice with the same lists and mapping; its unequal-list Skip behavior agrees with the tagged nested_decs_def port. [NeZero width] retains the positive HOL word dimension; words_as_type_indexed_bitvec resolves through the same-owner indexed CrepProgHOL constructor payloads. The direct original HOL EVAL row argload_p=T is in scripts/hol-probes/crep_inline_helper_probe.out; helperArgLoadExactP checks the same width-8 arguments/body/output in Flapjack/Test/CrepInlineFmapParity.lean. This is the helper definition only; production inline_prog routing is not claimed.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_inlineScript.sml",
+    "hol_name": "inline_tail_def",
+    "lean_path": "Flapjack/Pancake/CrepInline/Pass.lean",
+    "lean_name": "inlineTailHOLExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-c source comparison (2026-09-28; bead flapjack-e7w.2.1.3) against crep_inlineScript.sml:171-172. HOL states inline_tail p = Seq Tick p with no additional premise. Lean inlineTailHOLExact has the same one-program input and Crep program output over the exact CrepProgHOL width carrier and the same Seq Tick equation; [NeZero width] retains the positive HOL word dimension. words_as_type_indexed_bitvec records the standard HOL 'a word to BitVec width translation, resolved through the indexed CrepProgHOL inductive's same-owner constructor payloads. The direct original HOL EVAL row tail_p=T is scripts/hol-probes/crep_inline_helper_probe.out; helperTailExactP checks the same width-8 input/output in Flapjack/Test/CrepInlineFmapParity.lean. This is the helper definition only; production inline_prog routing is not claimed.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
