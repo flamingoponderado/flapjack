@@ -1826,6 +1826,24 @@ theorem shMemStoreClauseHOLExact_ioEvents_prefix {width : Nat} {σ : Type} [NeZe
     | exact List.prefix_refl _
     | exact shMemStoreHOLExact_ioEvents_prefix _ _ _ _
 
+/-- If a pair of sequential event traces extends the first trace and the full
+    trace returns to the first trace, the intermediate trace is unchanged.
+    This is the cancellation fact needed to apply recursive FFI-state
+    invariants to each side of a `Seq`. -/
+private theorem ioEvents_middle_eq_of_prefix_chain {α : Type} {first middle last : List α}
+    (hfirst : first <+: middle) (hsecond : middle <+: last) (hend : first = last) :
+    middle = first := by
+  obtain ⟨xs, hxs⟩ := hfirst
+  obtain ⟨ys, hys⟩ := hsecond
+  rw [← hend] at hys
+  have hxslen := congrArg List.length hxs
+  have hyslen := congrArg List.length hys
+  simp only [List.length_append] at hxslen hyslen
+  have hxszero : xs.length = 0 := by omega
+  cases xs with
+  | nil => simpa using hxs.symm
+  | cons x xs => simp at hxszero
+
 set_option maxHeartbeats 2000000 in
 theorem evalPanSemRecursiveCallContextHOLExact_ioEvents_prefix {width : Nat} {σ : Type}
     [NeZero width] (program : ProgHOL width) (context : PanSemExactEvalContext width σ) :
