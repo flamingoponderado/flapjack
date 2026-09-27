@@ -110,6 +110,33 @@ def convertResHOL {width : Nat} [NeZero width] :
   | some (.exception exceptionId value) => some (.exception exceptionId (convertV value))
   | res => res
 
+/-- Exact port of HOL `convert_res_eq_case1[local]`
+    (`cakeml/pancake/proofs/pan_structsProofScript.sml:1012-1019`):
+    `convert_res res = (case res of
+       SOME Break => convert_res (SOME Break)
+     | SOME x => convert_res (SOME x)
+     | NONE => NONE)`.
+
+    The parameter is HOL's `panSem$result option`, rendered as
+    `Option (PanSemResultExact width)` over the reviewed exact `result` carrier
+    (`DecExact.lean:58`, tagged against `panSemScript.sml:68-75`), and
+    `convertResHOL` is the already-reviewed exact port of `convert_res` above.
+    `SOME Break` is `some .break`, `SOME x` is `some x`, `NONE` is `none`, and
+    the HOL `case ... of` is the Lean `match`; the two sides are equal
+    constructor by constructor and no payload is inspected.  The only difference
+    from HOL is the already-reviewed `result` carrier, so no qualifier applies. -/
+@[hol "cakeml/pancake/proofs/pan_structsProofScript.sml" "convert_res_eq_case1"]
+theorem convertResHOL_eqCase1 {width : Nat} [NeZero width]
+    (res : Option (PanSemResultExact width)) :
+    convertResHOL res =
+      (match res with
+        | some .break => convertResHOL (some .break)
+        | some x => convertResHOL (some x)
+        | none => none) := by
+  cases res with
+  | none => rfl
+  | some result => cases result <;> rfl
+
 /-- Exact port of HOL `is_cont_res_def`
     (`cakeml/pancake/proofs/pan_structsProofScript.sml:992-997`):
     `is_cont_res NONE = T`, `is_cont_res (SOME Break) = T`,

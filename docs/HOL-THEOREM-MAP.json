@@ -8152,6 +8152,14 @@
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "convert_res_eq_case1",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "convertResHOL_eqCase1",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-27; bead flapjack-pxn.18.5.3.75): exact port of HOL convert_res_eq_case1[local] (pan_structsProofScript.sml:1012-1019), convert_res res = (case res of SOME Break => convert_res (SOME Break) | SOME x => convert_res (SOME x) | NONE => NONE). The Lean theorem convertResHOL_eqCase1 is over the reviewed exact result carrier PanSemResultExact width (DecExact.lean:58, tagged reviewed_exact against panSemScript.sml:68-75), the same carrier used by the already-reviewed convertResHOL (above); for res : Option (PanSemResultExact width), convertResHOL res equals the Lean match with branches some .break => convertResHOL (some .break), some x => convertResHOL (some x), and none => none. SOME Break is rendered as some .break, SOME x as some x, NONE as none, and HOL case...of as Lean match; the first branch is subsumed by the second in both readings, so the two sides are equal constructor by constructor and no payload is inspected. The only difference from HOL is the already-reviewed result carrier, so no qualifier applies. [NeZero width] discharges HOL's positive dimindex and introduces no new word dimension; no finite-map field and no word-carrier field is traversed."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
     "hol_name": "is_cont_res_def",
     "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
     "lean_name": "isContResHOL",
