@@ -12111,6 +12111,16 @@
   },
   {
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 780,
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
+    "lean_name": "evaluateHOLFiniteState_raise",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "reviewer": "flapjack-luna-a source comparison (2026-09-27; bead flapjack-qj5): the Raise conjunct at panSemScript.sml:645-652 looks up the exception shape and evaluates the expression, then requires shape_of value = sh and size_of_sh_with_ctxt ... (shape_of value) <= 32; success returns SOME (Exception eid value) with empty_locals s and every failure returns Error with s. evaluateHOLFiniteState_raise states that exact lookup/evaluation pair and proposition-level shape/size condition; the evaluator's `shapeEqHOL` test is linked to structural equality by `shapeEqHOL_eq_true`. evalHOLExact on state.toExact is the canonical finite-state translation and adds no logical premise. The same-module finite-map witness supports the named fields. This is one exact constructor case; the full conjunction remains open."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
     "hol_name": "evaluate_decls_def",
     "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
     "lean_name": "evaluateDeclsHOLFinite",
@@ -13379,5 +13389,13 @@
     "lean_name": "panWriteBytearrayWord8HOL",
     "statement_status": "reviewed_exact",
     "reviewer": "Flapjack source comparison (2026-09-27; flapjack-4ac.5.16.5.4): HOL panSemScript.sml:309-316 has [] -> m and a head/tail equation that recursively writes the tail first, stores the head byte into that memory, and returns the original outer m on store failure. Lean has the same recursion over List (BitVec 8), matching HOL word8 list, and invokes the exact mem_store_byte_def port. Direct HOL write_bytearray_changed/write_bytearray_other_unchanged/write_bytearray_out_of_domain observations are replayed by exact-carrier guards in PanSemStateEvalParity.lean."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExactVarSupport.lean",
+    "lean_name": "compileExpExactHOLW_localVar_vars",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific compiler support theorem: pins that exact compile_exp emits precisely the stored slot names for a successful local context lookup and no variable names on a missing lookup. HOL has no separate theorem for this local clause; it supports, but does not state or prove, eval_var_cexp_present_ctxt. No @[hol] tag is claimed."
   }
 ]

@@ -1816,6 +1816,68 @@ theorem evaluateHOLFiniteState_return {width : Nat} {σ : Type} [NeZero width]
 
 attribute [simp] evaluateHOLFiniteState_return
 
+/-! HOL `evaluate_def`'s `Raise` equation (`panSemScript.sml:645-652`), one of
+the line-780 theorem's 21 conjuncts. Its shape test is stated as HOL equality;
+the finite evaluator implements that test with `shapeEqHOL`, whose exact
+equality bridge is `shapeEqHOL_eq_true`. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
+  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+theorem evaluateHOLFiniteState_raise {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (exceptionId : MlS)
+    (expression : ExpHOL width) :
+    evaluateHOLFiniteState state (.raise exceptionId expression : ProgHOL width) =
+      match state.eshapes.lookup exceptionId,
+          @evalHOLExact width σ _ state.toExact
+            (fun address => Classical.propDecidable (state.memaddrs address)) expression with
+      | some shape, some value =>
+          let condition : Prop := shapeOfHOLExact value = shape ∧
+            Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL state.structs
+              (shapeOfHOLExact value) ≤ 32
+          letI : Decidable condition := Classical.propDecidable condition
+          if condition then
+            (some (.exception exceptionId value), emptyLocalsHOLFinite state)
+          else (some .error, state)
+      | _, _ => (some .error, state) := by
+  classical
+  cases hshape : state.eshapes.lookup exceptionId with
+  | none =>
+      cases hvalue : @evalHOLExact width σ _ state.toExact
+          (fun address => Classical.propDecidable (state.memaddrs address)) expression with
+      | none =>
+          simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+            evalPanSemRecursiveCallFiniteContext, hvalue]
+      | some value =>
+          simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+            evalPanSemRecursiveCallFiniteContext, hshape, hvalue]
+  | some shape =>
+      cases hvalue : @evalHOLExact width σ _ state.toExact
+          (fun address => Classical.propDecidable (state.memaddrs address)) expression with
+      | none =>
+          simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+            evalPanSemRecursiveCallFiniteContext, hvalue]
+      | some value =>
+          by_cases heq : shapeOfHOLExact value = shape
+          · by_cases hsize : Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL
+                state.structs (shapeOfHOLExact value) ≤ 32
+            · have hsizeShape :
+                  Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL state.structs shape ≤ 32 := by
+                simpa [heq] using hsize
+              simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+                evalPanSemRecursiveCallFiniteContext, hshape, hvalue,
+                shapeEqHOL_eq_true, heq, hsizeShape]
+              rfl
+            · have hsizeShape :
+                  ¬ Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL state.structs shape ≤ 32 := by
+                simpa [heq] using hsize
+              simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+                evalPanSemRecursiveCallFiniteContext, hshape, hvalue,
+                shapeEqHOL_eq_true, heq, hsizeShape]
+          · simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+              evalPanSemRecursiveCallFiniteContext, hshape, hvalue,
+              shapeEqHOL_eq_true, heq]
+
+attribute [simp] evaluateHOLFiniteState_raise
+
 /-- The decider-taking helper is the pair-shaped rendering of the assembly-marker
     evaluator. This bridge is Flapjack-specific infrastructure. -/
 theorem evaluateHOLFiniteStateWithDeciders_eq_getD {width : Nat} {σ : Type} [NeZero width]
