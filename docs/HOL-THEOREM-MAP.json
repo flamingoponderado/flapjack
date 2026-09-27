@@ -2827,6 +2827,14 @@
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "functions_fperm_decs",
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
+    "lean_name": "functionsFpermDecsHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 (source comparison, bead flapjack-pxn.18.3.5.8.24) HOL functions_fperm_decs (pan_globalsProofScript.sml:1701-1708) states forall x y code, functions (fperm_decs x y code) = MAP (lambda (a,b,c,d). (fperm_name x y a, b, fperm x y c, d)) (functions code). The exact Lean port is over List (DeclHOL width) with the reviewed functionsHOL, fpermDecsHOL, fpermName, and fpermHOL; List.map is HOL MAP, the quadruple lambda is rendered with the right-nested projections entry.1/entry.2.1/entry.2.2.1/entry.2.2.2, and [NeZero width] matches HOL's positive word type. No extra hypotheses, no weakened conclusion, no qualifier."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
     "hol_name": "ALL_DISTINCT_fperm_decs",
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
     "lean_name": "ALL_DISTINCT_fperm_decs",
