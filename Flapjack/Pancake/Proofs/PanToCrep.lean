@@ -4829,4 +4829,25 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width]
 
 end CtxtFcExact
 
+/-- Exact port of HOL `ctxt_fc_funcs_eq`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:2295`):
+    `(ctxt_fc cvs em vs shs ns).funcs = cvs`. The constructed context's
+    `funcs` field is definitionally the supplied function map. The statement
+    keeps HOL's argument order `(cvs, em, vs, shs, ns)` and its unrestricted
+    quantifiers; the only representation difference is the reviewed canonical
+    `HolFiniteMapExact` translation of HOL's `funname |-> ((varname # shape) #
+    shape)` finite map, recorded by the `fmap_as_finite_support` qualifier on
+    the `funcs` field of the exact `PanToCrepContextExact` carrier (names are
+    `MlS` = `mlstring`, shapes are `ShapeHOL` = `shape`). Direct HOL-EVAL row
+    `functions_projection=T` in `scripts/hol-probes/ctxt_fc_probe.out` is
+    replayed by the kernel-checked regression in
+    `Flapjack.Test.PanToCrepContextExactParity`. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "ctxt_fc_funcs_eq"
+  (fmap_as_finite_support := [funcs])]
+theorem ctxtFcFuncsEqHOL {width : Nat} [NeZero width]
+    (cvs : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ShapeHOL))
+    (em : HolFiniteMapExact MlS (BitVec width))
+    (vs : List MlS) (shs : List ShapeHOL) (ns : List Nat) :
+    (ctxtFcExactHOL cvs em vs shs ns : PanToCrepContextExact width).funcs = cvs := rfl
+
 end Flapjack

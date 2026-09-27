@@ -305,6 +305,14 @@ example : (ctxtFcExactHOL (width := 8) probeCvs HolFiniteMapExact.empty [] [] []
     probeCvs :=
   rfl
 
+/-- Direct replay of the HOL-EVAL `functions_projection=T` row
+    (`scripts/hol-probes/ctxt_fc_probe.out`) through the exact
+    `ctxt_fc_funcs_eq` port: the constructed context's `funcs` field is the
+    supplied function map. -/
+example : (ctxtFcExactHOL (width := 8) probeCvs probeEm [probeX, probePair]
+    [.one, .comb [.one, .one]] [0, 1, 2]).funcs = probeCvs :=
+  ctxtFcFuncsEqHOL probeCvs probeEm [probeX, probePair] [.one, .comb [.one, .one]] [0, 1, 2]
+
 example : (ctxtFcExactHOL (width := 8) HolFiniteMapExact.empty HolFiniteMapExact.empty
     [] [] [4, 1, 7, 3]).vmax = 7 := rfl
 
