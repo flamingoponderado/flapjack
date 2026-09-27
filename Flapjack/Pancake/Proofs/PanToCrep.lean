@@ -4818,7 +4818,16 @@ record carrier is the reviewed exact `PanToCrepContextExact`; the
 `fmap_as_finite_support` qualifier records only the canonical finite-support
 representation of its three HOL finite-map fields. Direct HOL-EVAL rows are in
 `scripts/hol-probes/ctxt_fc_probe.out` and replayed by
-`Flapjack.Test.PanToCrepContextExactParity`. -/
+`Flapjack.Test.PanToCrepContextExactParity`.
+
+The reviewed definition-body hash changed after its initial lock because Lean
+resolved the `MlS` equality arguments of `HolFiniteMapExact.updateList`
+differently. The original elaboration used the generic `BEqOfDecidableEq` and
+`LawfulBEq` instances; the current elaboration uses the named
+`instBEqMlS`/`instLawfulBEqMlS` instances from `StateExactFiniteMap`. Both
+`BEq` implementations are `decide (left = right)`, so this is hash-visible
+instance-resolution drift with unchanged HOL `=` behavior, not a declaration
+shape or semantic change. -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "ctxt_fc_def"
   (fmap_as_finite_support := [vars, funcs, eids])]
 def ctxtFcExactHOL {width : Nat} [NeZero width]
