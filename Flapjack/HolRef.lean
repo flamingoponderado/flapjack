@@ -59,7 +59,12 @@ universe-0 Lean host type. It is a translation statement only: a tagged
 declaration must retain `[NeZero width]` (the discharge of HOL's
 `dimindex (:α) ≥ 1`), must not restate positivity as an extra hypothesis, and
 must bind the FFI host type at a `Type` universe when it mentions
-`HolFfiState`. It changes no quantifier, hypothesis, side condition, or
+`HolFfiState`. The signature need not pronounce `BitVec` directly when it is
+stated over a reviewed width-indexed carrier (declared locally or reached
+through imports) whose fields include `BitVec width` fields and whose
+declaration retains `[NeZero width]`; the carrier is resolved from its
+declaration, never accepted by name alone. It changes no quantifier,
+hypothesis, side condition, or
 conclusion, and it requires no cross-assistant agreement theorem. When the
 declaration also carries `fmap_as_finite_support`, use the combined manifest
 status `reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec`; the

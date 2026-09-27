@@ -345,6 +345,53 @@ def structure_field_map(lines: list[str]) -> dict[str, set[str]]:
     return members
 
 
+def structure_headers(lines: list[str]) -> dict[str, str]:
+    """Binders declared before `where` for every structure in this module.
+
+    The `words_as_type_indexed_bitvec` qualifier resolves a width-indexed
+    carrier by its declaration, so the positivity discharge (`[NeZero width]`)
+    is read from the carrier's own header rather than assumed from its name.
+    """
+    headers: dict[str, str] = {}
+    for line in strip_lean_comments("\n".join(lines)).splitlines():
+        match = re.match(
+            r"^\s*structure\s+([A-Za-z0-9_'.]+)(?P<header>.*?)\bwhere\s*$", line
+        )
+        if match:
+            headers.setdefault(match.group(1), match.group("header"))
+    return headers
+
+
+@lru_cache(maxsize=None)
+def imported_structure_headers(module: str, root: str) -> dict[str, list[str]]:
+    """Header binders of structures reachable through this module's imports.
+
+    Mirrors `imported_structure_field_types` so the word-dimension qualifier can
+    read an imported carrier's `[NeZero width]` discharge from its actual
+    declaration rather than from a same-named local duplicate.
+    """
+    root_path = Path(root)
+    current = root_path / module
+    if not current.is_file():
+        return {}
+    pending = list(IMPORT_RE.findall(current.read_text(encoding="utf-8")))
+    visited: set[str] = set()
+    result: dict[str, list[str]] = {}
+    while pending:
+        imported = pending.pop()
+        if imported in visited:
+            continue
+        visited.add(imported)
+        path = root_path / (imported.replace(".", "/") + ".lean")
+        if not path.is_file():
+            continue
+        lines = path.read_text(encoding="utf-8").splitlines()
+        for name, header in structure_headers(lines).items():
+            result.setdefault(name, []).append(header)
+        pending.extend(IMPORT_RE.findall("\n".join(lines)))
+    return result
+
+
 @lru_cache(maxsize=None)
 def imported_structure_field_types(
     module: str, root: str
@@ -1366,7 +1413,11 @@ def names_as_string_errors(
 
 
 def words_as_type_indexed_bitvec_errors(
-    declaration_text: str, declaration: str
+    declaration_text: str,
+    declaration: str,
+    module: str = "",
+    root: str = "",
+    lines: list[str] | None = None,
 ) -> list[str]:
     """Validate the HOL word-dimension / FFI-universe translation qualifier.
 
@@ -1380,6 +1431,13 @@ def words_as_type_indexed_bitvec_errors(
     of ``dimindex (:α) ≥ 1`` must be retained and must not be restated as an
     extra hypothesis, and an FFI host type must be bound at a ``Type`` universe
     (no universe-level variable).
+
+    A signature need not spell out ``BitVec`` when it is stated over a
+    width-indexed carrier: the qualifier is also accepted when the signature
+    names a structure (declared locally or reached through imports) whose
+    fields include ``BitVec``-typed fields and whose own header carries the
+    ``[NeZero width]`` discharge. The carrier is resolved from its declaration,
+    never from its name alone.
     """
     errors: list[str] = []
     if not declaration_text.strip():
@@ -1396,12 +1454,53 @@ def words_as_type_indexed_bitvec_errors(
     signature = stripped.split(":=", 1)[0]
     if not signature.strip():
         signature = stripped
-    if "BitVec" not in signature:
+    has_direct_bitvec = "BitVec" in signature
+    carrier_ok = False
+    if not has_direct_bitvec and lines is not None and module and root:
+        local_types = structure_field_types(lines)
+        local_headers = structure_headers(lines)
+        imported_types = imported_structure_field_types(module, root)
+        imported_headers = imported_structure_headers(module, root)
+        for name in set(local_types) | set(imported_types):
+            if not identifier_token_occurs(signature, name):
+                continue
+            type_maps: list[dict[str, str]] = []
+            header_texts: list[str] = []
+            if name in local_types:
+                type_maps.append(local_types[name])
+                header_texts.append(local_headers.get(name, ""))
+            for _module, _fields, types in imported_types.get(name, []):
+                type_maps.append(types)
+            header_texts.extend(imported_headers.get(name, []))
+            width_names = {
+                width_match.group(1)
+                for header in header_texts
+                for width_match in [
+                    re.search(r"\(\s*([A-Za-z_][A-Za-z0-9_']*)\s*:\s*Nat\s*\)", header)
+                ]
+                if width_match is not None
+            }
+            has_bitvec_field = any(
+                "BitVec" in type_text
+                and identifier_token_occurs(type_text, width_name)
+                for type_map in type_maps
+                for type_text in type_map.values()
+                for width_name in width_names
+            )
+            has_positivity = any("NeZero" in header for header in header_texts)
+            if width_names and has_bitvec_field and (
+                has_positivity or "NeZero" in signature
+            ):
+                carrier_ok = True
+                break
+    if not has_direct_bitvec and not carrier_ok:
         errors.append(
             "words_as_type_indexed_bitvec must name the Lean positive-width word "
-            "carrier `BitVec` that translates HOL `'a word`"
+            "carrier `BitVec` that translates HOL `'a word`, or name a reviewed "
+            "width-indexed carrier structure whose fields include `BitVec`-typed "
+            "fields and whose declaration retains `[NeZero width]`"
         )
-    if "NeZero" not in signature:
+    if "NeZero" not in signature and not carrier_ok:
         errors.append(
             "words_as_type_indexed_bitvec must retain the `[NeZero width]` discharge "
             "of HOL `dimindex (:α) ≥ 1`"
@@ -1556,7 +1655,11 @@ def main(argv: list[str]) -> int:
                 errors.extend(
                     f"{where}: {error}"
                     for error in words_as_type_indexed_bitvec_errors(
-                        tagged_declaration_text(lines, number), lean_decl
+                        tagged_declaration_text(lines, number),
+                        lean_decl,
+                        module=module,
+                        root=str(ROOT),
+                        lines=lines,
                     )
                 )
             target = ROOT / hol_path

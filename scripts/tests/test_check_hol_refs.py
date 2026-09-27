@@ -1446,5 +1446,110 @@ class RealCombinedQualifierFixtureTest(unittest.TestCase):
         self.assertTrue(errors)
 
 
+class WordsCarrierResolutionTest(unittest.TestCase):
+    """Carrier resolution for `(words_as_type_indexed_bitvec)`.
+
+    A tagged signature may omit a literal `BitVec` when it names a reviewed
+    width-indexed carrier whose fields include `BitVec width` fields and whose
+    declaration retains `[NeZero width]`. The carrier is resolved from its
+    declaration (local or imported), never from its name alone.
+    """
+
+    MODULE = "Flapjack/PanToCrep/CarrierExact.lean"
+
+    def _checker_globals(self):
+        return CHECKER["words_as_type_indexed_bitvec_errors"].__globals__
+
+    def _run(self, owner_text, consumer_text):
+        checker_globals = self._checker_globals()
+        original_root = checker_globals["ROOT"]
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            owner = root / "Flapjack" / "PanToCrep" / "ContextExact.lean"
+            consumer = root / self.MODULE
+            owner.parent.mkdir(parents=True)
+            if owner_text is not None:
+                owner.write_text(owner_text, encoding="utf-8")
+            consumer.write_text(consumer_text, encoding="utf-8")
+            checker_globals["ROOT"] = root
+            try:
+                lines = consumer_text.splitlines()
+                return CHECKER["words_as_type_indexed_bitvec_errors"](
+                    consumer_text,
+                    "evalProg",
+                    module=self.MODULE,
+                    root=str(root),
+                    lines=lines,
+                )
+            finally:
+                checker_globals["ROOT"] = original_root
+
+    OWNER = "\n".join([
+        "structure CrepStateExact (width : Nat) [NeZero width] (ffiState : Type) where",
+        "  locals : HolFiniteMapExact Nat (HolWordLab width)",
+        "  memory : BitVec width → HolWordLab width",
+        "  baseAddr : BitVec width",
+    ])
+
+    CONSUMER = "\n".join([
+        "import Flapjack.PanToCrep.ContextExact",
+        '@[hol "cakeml/pancake/semantics/crepSemScript.sml" "evaluate_def" 240',
+        "  (fmap_as_finite_support := [locals])",
+        "  (words_as_type_indexed_bitvec)]",
+        "def evalProg {width : Nat} [NeZero width] {σ : Type}",
+        "    (state : CrepStateExact width σ) : Nat := width",
+    ])
+
+    def test_accepts_imported_carrier_with_bitvec_fields(self):
+        self.assertEqual(self._run(self.OWNER, self.CONSUMER), [])
+
+    def test_accepts_local_carrier_with_bitvec_fields(self):
+        local = "\n".join([
+            self.OWNER,
+            '@[hol "cakeml/pancake/semantics/crepSemScript.sml" "evaluate_def" 240',
+            "  (fmap_as_finite_support := [locals])",
+            "  (words_as_type_indexed_bitvec)]",
+            "def evalProg {width : Nat} [NeZero width] {σ : Type}",
+            "    (state : CrepStateExact width σ) : Nat := width",
+        ])
+        self.assertEqual(self._run(None, local), [])
+
+    def test_rejects_fake_carrier_without_bitvec_field(self):
+        owner = "\n".join([
+            "structure CrepStateExact (width : Nat) [NeZero width] (ffiState : Type) where",
+            "  locals : HolFiniteMapExact Nat (HolWordLab width)",
+            "  clock : Nat",
+        ])
+        errors = self._run(owner, self.CONSUMER)
+        self.assertTrue(any("BitVec" in e for e in errors), errors)
+
+    def test_rejects_carrier_missing_positivity(self):
+        owner = "\n".join([
+            "structure CrepStateExact (width : Nat) (ffiState : Type) where",
+            "  locals : HolFiniteMapExact Nat (HolWordLab width)",
+            "  memory : BitVec width → HolWordLab width",
+        ])
+        consumer = self.CONSUMER.replace(" [NeZero width]", "")
+        errors = self._run(owner, consumer)
+        self.assertTrue(any("NeZero" in e for e in errors), errors)
+
+    def test_rejects_carrier_name_not_declared(self):
+        owner = "\n".join([
+            "structure SomethingElse (width : Nat) [NeZero width] where",
+            "  memory : BitVec width → Nat",
+        ])
+        errors = self._run(owner, self.CONSUMER)
+        self.assertTrue(any("BitVec" in e for e in errors), errors)
+
+    def test_rejects_carrier_width_field_without_width_variable(self):
+        owner = "\n".join([
+            "structure CrepStateExact (width : Nat) [NeZero width] (ffiState : Type) where",
+            "  locals : HolFiniteMapExact Nat (HolWordLab width)",
+            "  tag : BitVec 5",
+        ])
+        errors = self._run(owner, self.CONSUMER)
+        self.assertTrue(any("BitVec" in e for e in errors), errors)
+
+
 if __name__ == "__main__":
     unittest.main()

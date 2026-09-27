@@ -338,7 +338,11 @@ HOL equality and record that comparison in the reviewer note.
 declaration is the standard translation of HOL's type-indexed `'a word`
 (dimension `dimindex (:α)`) to Lean's positive-width `BitVec width` and of HOL's
 `'ffi ffi_state` to a universe-0 Lean host type `σ : Type`. The tagged
-declaration must still name `BitVec`, must retain `[NeZero width]` as the
+declaration must name `BitVec`, or name a reviewed width-indexed carrier
+structure (declared locally or reached through imports) whose fields include
+`BitVec width` fields and whose own declaration retains `[NeZero width]`; the
+carrier is resolved from its declaration, never accepted by name alone. The
+declaration must retain `[NeZero width]` as the
 discharge of HOL's `dimindex (:α) ≥ 1`, and must not restate word-dimension
 positivity as an extra hypothesis (`width ≠ 0`, `0 < width`, `Nat.pos`,
 `NeZero.out`); when it mentions the FFI carrier `HolFfiState`, the host type must
