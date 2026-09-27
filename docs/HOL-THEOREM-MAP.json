@@ -13638,14 +13638,16 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-ds9 (source comparison; bead flapjack-2de.10): HOL sh_mem_store_FLOOKUP_locals (crepPropsScript.sml:312-317) quantifies v addr nb s res t n with the single hypothesis `sh_mem_store v addr nb s = (res, t)` and concludes `FLOOKUP t.locals n = FLOOKUP s.locals n` with no side condition. The Lean declaration matches clause-for-clause (HOL v/n = Nat name/key, res/t the pair components) using `crepShMemStoreExactHOL` (the already-tagged exact sh_mem_store_def port) and renders FLOOKUP as HolFiniteMapExact.lookup. CrepSemHOLState width sigma is the imported width-indexed carrier whose locals/globals/code are HOL |-> maps, so both qualifiers apply; the same-module canonical witness holFmapAsFiniteSupportWitness (namespace CrepPropsFiniteSupport) forwards CrepSemHOLState.holFmapAsFiniteSupportWitness. [NeZero width] is retained as the discharge of HOL dimindex (:alpha) >= 1 with no restated positivity hypothesis; DecidablePred state.shMemaddrs is proof-only evidence for HOL set membership. Representation-only qualifiers; no quantifier, hypothesis, side-condition, or conclusion change. No direct HOL probe row for this declaration was found, so no kernel-checked oracle regression is added (the theorem's proof is kernel-checked by lake build)."
   },
-    {
-      "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
-      "hol_name": "opt_mmap_eval_upd_clock_eq",
-     "lean_path": "Flapjack/Pancake/Semantics/CrepProps.lean",
-     "lean_name": "evalCrepSemHOLExps_upd_clock_eq",
-     "statement_status": "reviewed_exact",
-     "reviewer": "flapjack-ds10 (source comparison; bead flapjack-pxn.18.4.8.2.1): HOL opt_mmap_eval_upd_clock_eq (crepPropsScript.sml:872) `!es s ck. OPT_MMAP (eval (s with clock := ck + s.clock)) es = OPT_MMAP (eval s) es` over the exact tagged evaluator evalCrepSemHOLExp. HOL OPT_MMAP is rendered as List.mapM over Option; the list update uses `clock := ck + state.clock` as in HOL. Follows from the pointwise eval_upd_clock_eq via Flapjack.list_mapM_congr. No representation qualifier (no finite-map field named)."
-   },
+      {
+    "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
+    "hol_name": "opt_mmap_eval_upd_clock_eq",
+    "lean_path": "Flapjack/Pancake/Semantics/CrepProps.lean",
+    "lean_name": "evalCrepSemHOLExps_upd_clock_eq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-ikjm.1): HOL opt_mmap_eval_upd_clock_eq is at crepPropsScript.sml:875 (the earlier note cited :872). It states !es s ck. OPT_MMAP (eval (s with clock := ck + s.clock)) es = OPT_MMAP (eval s) es over the exact tagged evaluator evalCrepSemHOLExp; OPT_MMAP is rendered as List.mapM over Option and the clock update uses ck + s.clock as in HOL. The Lean declaration is width-indexed (BitVec width under [NeZero width]) so it carries (words_as_type_indexed_bitvec); it names no HOL |-> state field, so no fmap_as_finite_support qualifier applies. Representation-only; the statement, quantifiers, and side conditions are unchanged. Derived from the pointwise eval_upd_clock_eq via Flapjack.list_mapM_congr.",
+    "hol_line": 875,
+    "words_as_type_indexed_bitvec": true
+  },
   {
     "hol_path": null,
     "hol_name": null,

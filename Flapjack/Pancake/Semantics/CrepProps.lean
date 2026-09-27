@@ -1380,10 +1380,14 @@ theorem flookupResVarThmHOL [DecidableEq α] (l : HolFiniteMapExact α β)
     rw [FLOOKUP_FUPDATE_HOL]
     rfl
 
-/-- Exact HOL `opt_mmap_eval_upd_clock_eq` (`crepPropsScript.sml:872`): mapping
+/-- Exact HOL `opt_mmap_eval_upd_clock_eq` (`crepPropsScript.sml:875`): mapping
 the exact expression evaluator (after a clock update by `clock + state.clock`)
-over a list of expressions equals mapping the original evaluator. -/
-@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "opt_mmap_eval_upd_clock_eq"]
+over a list of expressions equals mapping the original evaluator. The
+declaration is width-indexed (`BitVec width` under `[NeZero width]`) so it
+carries the word-dimension qualifier; it traverses no HOL `|->` state field,
+so no finite-map qualifier applies. -/
+@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "opt_mmap_eval_upd_clock_eq"
+  (words_as_type_indexed_bitvec)]
 theorem evalCrepSemHOLExps_upd_clock_eq {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ) [DecidablePred state.memaddrs]
     (expressions : List (CrepExpHOL width)) (clock : Nat) :
