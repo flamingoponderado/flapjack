@@ -657,7 +657,8 @@ run_probe pan_sem_ite_e2e_probeScript.sml pan_sem_ite_e2e_probe.out \
   if_true_result exact_if_failed_local \
   "$cake_dir/pancake/semantics/panSemScript.sml"
 # The measure-driven total fragment probe observes Assign/Return/Raise result
-# and state branches, plus their interaction with If selection and Seq stopping.
+# and state branches, plus their interaction with If selection and Seq stopping,
+# including an If whose condition is the non-word value `RStruct []`.
 run_probe pan_sem_total_fragment_stmt_probeScript.sml pan_sem_total_fragment_stmt_probe.out \
   total_assign_ok_result total_assign_ok_local \
   total_assign_bad_result total_assign_bad_local \
@@ -670,7 +671,8 @@ run_probe pan_sem_total_fragment_stmt_probeScript.sml pan_sem_total_fragment_stm
   total_raise_missing_shape_result total_raise_oversize_result \
   total_raise_oversize_local total_if_assign_true_result \
   total_if_assign_true_local total_if_assign_false_result \
-  total_if_assign_false_local total_seq_assign_return_result \
+  total_if_assign_false_local total_if_assign_nonword_result \
+  total_if_assign_nonword_local total_seq_assign_return_result \
   total_seq_assign_return_local total_seq_raise_stop_result \
   total_seq_raise_stop_local \
   "$cake_dir/pancake/semantics/panSemScript.sml"
