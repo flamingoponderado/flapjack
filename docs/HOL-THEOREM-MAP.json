@@ -8107,6 +8107,14 @@
     "reviewer": "flapjack-ds5 (source comparison, 2026-09-25; bead flapjack-pxn.18.3.5.8.19): exact port of HOL convert_v_def (pan_structsProofScript.sml:31-37) over the exact panSem$v carrier ValueHOL (panSemScript.sml:22), whose constructor arities 1/1/2, Val payload HolWordLab width, and MlStringHOL stcname/fldname names match HOL; the [NeZero width] binder mirrors HOL's positive dimindex. The clauses convertV (Val x) = Val x, convertV (RStruct xs) = RStruct (MAP convertV xs), convertV (NStruct nm flds) = RStruct (MAP (\\(nm,v). convertV v) flds) match clause-for-clause; the NStruct record and field names are discarded, so the exact mlstring carrier is carried but never inspected. Regressions: Flapjack.Test.PanStructsCompileCorrect exactConvertNamedRecord reproduces the pan_structs_compile_correct_probe.out:1 row convert_named_record=RStruct [ValWord 3w; ValWord 5w]; the kernel-checked production bridge convertV_toPanValue goes through the Flapjack-specific ValueHOL.toPanValue map."
   },
   {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "convert_res_def",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "convertResHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-27; bead flapjack-pxn.18.5.3.69): exact port of HOL convert_res_def (pan_structsProofScript.sml:1005-1009). HOL's four clauses over panSem$result option are convert_res (SOME Break) = SOME Break, convert_res (SOME (Return v)) = SOME (Return (convert_v v)), convert_res (SOME (Exception eid ev)) = SOME (Exception eid (convert_v ev)), and the catch-all convert_res res = res. The Lean port convertResHOL is over the reviewed exact result carrier PanSemResultExact width (DecExact.lean:58, tagged reviewed_exact against panSemScript.sml:68-75): break => break, returned v => returned (convertV v), exception eid v => exception eid (convertV v), and res => res, which keeps NONE/Error/TimeOut/Continue/FinalFFI unchanged. The three matched clauses recurse through the already-reviewed exact convertV (above); the only difference from HOL is the already-reviewed result carrier. [NeZero width] discharges HOL's positive dimindex and introduces no new word dimension, so no words qualifier applies; the declaration inspects no finite-map field and no word payload field of its own beyond delegating to convertV."
+  },
+  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
