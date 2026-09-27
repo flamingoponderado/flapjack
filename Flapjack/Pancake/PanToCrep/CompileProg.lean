@@ -1414,6 +1414,71 @@ theorem compileProgExactHOLW_global_shmem_load_relation_bridge
   simp [compileProgExactHOLW, compileGlobalShMemLoadExactHOLW,
     compileProgHOL, crepProgOfHOL, progOfHOL]
 
+/-- Relation-polymorphic Store32 case. The two expression codecs suffice
+    because the instruction clause does not inspect other context fields. -/
+theorem compileProgExactHOLW_store32_relation_bridge {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width)
+    (productionContext : PanToCrepHOLContext (BitVec width))
+    (hcontext : PanToCrepContextExactProdRel context productionContext)
+    (address value : ExpHOL width) :
+    crepProgOfHOL (compileProgExactHOLW context (.store32 address value)) =
+      compileProgHOL productionContext
+        (.store32 (expOfHOL address) (expOfHOL value)) := by
+  have haddress := compileExpExactHOLW_prodCodec_of_contextRel
+    context productionContext hcontext address
+  have hvalue := compileExpExactHOLW_prodCodec_of_contextRel
+    context productionContext hcontext value
+  rw [Prod.mk.injEq] at haddress hvalue
+  rcases haddress with ⟨haddressList, _haddressShape⟩
+  rcases hvalue with ⟨hvalueList, _hvalueShape⟩
+  cases hExactAddress : compileExpExactHOLW context address with
+  | mk exactAddresses addressShape =>
+      cases hExactValue : compileExpExactHOLW context value with
+      | mk exactValues valueShape =>
+          cases hProductionAddress :
+              compileExpHOL productionContext (expOfHOL address) with
+          | mk productionAddresses productionAddressShape =>
+              cases hProductionValue :
+                  compileExpHOL productionContext (expOfHOL value) with
+              | mk productionValues productionValueShape =>
+                  cases exactAddresses <;> cases exactValues <;>
+                    cases productionAddresses <;> cases productionValues <;>
+                    simp_all [compileProgExactHOLW, compileStore32ExactHOLW,
+                      compileProgHOL, crepProgOfHOL]
+
+/-- Relation-polymorphic StoreByte case, using the same pair of ranged
+    expression codecs as Store32. -/
+theorem compileProgExactHOLW_store_byte_relation_bridge
+    {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width)
+    (productionContext : PanToCrepHOLContext (BitVec width))
+    (hcontext : PanToCrepContextExactProdRel context productionContext)
+    (address value : ExpHOL width) :
+    crepProgOfHOL (compileProgExactHOLW context (.storeByte address value)) =
+      compileProgHOL productionContext
+        (.storeByte (expOfHOL address) (expOfHOL value)) := by
+  have haddress := compileExpExactHOLW_prodCodec_of_contextRel
+    context productionContext hcontext address
+  have hvalue := compileExpExactHOLW_prodCodec_of_contextRel
+    context productionContext hcontext value
+  rw [Prod.mk.injEq] at haddress hvalue
+  rcases haddress with ⟨haddressList, _haddressShape⟩
+  rcases hvalue with ⟨hvalueList, _hvalueShape⟩
+  cases hExactAddress : compileExpExactHOLW context address with
+  | mk exactAddresses addressShape =>
+      cases hExactValue : compileExpExactHOLW context value with
+      | mk exactValues valueShape =>
+          cases hProductionAddress :
+              compileExpHOL productionContext (expOfHOL address) with
+          | mk productionAddresses productionAddressShape =>
+              cases hProductionValue :
+                  compileExpHOL productionContext (expOfHOL value) with
+              | mk productionValues productionValueShape =>
+                  cases exactAddresses <;> cases exactValues <;>
+                    cases productionAddresses <;> cases productionValues <;>
+                    simp_all [compileProgExactHOLW, compileStoreByteExactHOLW,
+                      compileProgHOL, crepProgOfHOL]
+
 /-! The recursive `Dec` clause bridge (`pan_to_crepScript.sml:141-152`). Both
     compilers ignore the declared `shape` and store the compiled shape: the
     exact clause extends `context` to `bodyContext` (fresh names from the old
