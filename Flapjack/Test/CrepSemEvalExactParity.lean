@@ -108,4 +108,16 @@ example : evalCrepSemHOLExp { exactState8 with clock := 5 }
   evalCrepSemHOLExp exactState8 (.op .sub [.const (word8 7), .const (word8 2)]) :=
   evalCrepSemHOLExp_upd_clock_eq exactState8 _ 5
 
+/-- HOL `eval_load_shape_el_rel` row: the `n`-th generated load of
+    `loadShapeBytesHOLW` evaluates like the strided direct load. -/
+example :
+    evalCrepSemHOLExp exactState8
+        ((loadShapeBytesHOLW (width := 8) (0 : BitVec 8) 2
+            (.const (word8 4)))[1]'(by simp [length_loadShapeHOLW])) =
+      evalCrepSemHOLExp exactState8
+        (.load (.op .add [.const (word8 4),
+          .const ((0 : BitVec 8) + BitVec.ofNat 8 (8 / 8) * BitVec.ofNat 8 1)])) :=
+  eval_loadShapeBytesHOLW_getElem exactState8 (0 : BitVec 8) 2 (.const (word8 4)) 1
+    (by decide)
+
 end Flapjack.Test.CrepSemEvalExactParity

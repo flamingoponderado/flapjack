@@ -14019,5 +14019,13 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.12): staged case lemma for the Panop arm of HOL compile_exp_val_rel; HOL proves it inside pc_compile_correct, no standalone declaration."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
+    "hol_name": "eval_load_shape_el_rel",
+    "lean_path": "Flapjack/Pancake/Semantics/CrepProps.lean",
+    "lean_name": "eval_loadShapeBytesHOLW_getElem",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source-reviewed against crepPropsScript.sml:40. HOL eval_load_shape_el_rel: n < m ==> eval t (EL n (load_shape a m e)) = eval t (Load (Op Add [e; Const (a + bytes_in_word * n2w n)])). Lean states the same over the exact carriers: evalCrepSemHOLExp targetState, loadShapeBytesHOLW for load_shape, bounded getElem for EL, BitVec.ofNat width (width/8) for byte$bytes_in_word (= n2w (dimindex DIV 8), byteScript.sml:193), and BitVec.ofNat width n for n2w. Premise n < count preserved; no extra premises beyond [NeZero width] and the exact evaluator's DecidablePred memaddrs (the same side condition carried by the tagged eval_def port)."
   }
 ]
