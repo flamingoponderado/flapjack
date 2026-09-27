@@ -279,7 +279,21 @@ theorem evalCrepSemHOLProgExact_clock_le {width : Nat} [NeZero width] {σ : Type
       (fun a => Classical.propDecidable (state.shMemaddrs a))]
   exact evalCrepSemHOLProg_clock_le state _ _ program
 
-/-- The exact clause-for-clause Lean statement of HOL `crepSem$evaluate_ind`
+namespace CrepEvaluateIndFiniteSupport
+
+/-- Local same-module witness for the canonical finite-support `CrepSemHOLState`
+carrier used by the qualified `evaluate_ind` port below (an imported witness may
+be re-exported as a local one). -/
+theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {σ : Type} :
+    (∀ (state : CrepSemBroadState width σ) (h : state.FiniteSupport),
+        (CrepSemBroadState.ofBroad state h).toBroad = state) ∧
+    (∀ state : CrepSemHOLState width σ,
+        CrepSemBroadState.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  CrepSemHOLState.holFmapAsFiniteSupportWitness
+
+end CrepEvaluateIndFiniteSupport
+
+/-- Exact clause-for-clause Lean port of HOL `crepSem$evaluate_ind`.
 (`cakeml/pancake/semantics/crepSemScript.sml:440`,
 `REWRITE_RULE [fix_clock_evaluate] evaluate_ind`), reconstructed over the exact
 carriers `CrepProgHOL`, `CrepSemHOLState`, and `CrepResultHOLExact`.  Expression
@@ -292,6 +306,9 @@ extensionally equal to the reviewed `crepExactEvalExp` by
 finite-support `HolFiniteMapExact` carrier (support witness from
 `lookupCodeHOL_calleeLocals_finiteSupport`).  `fix_clock` has been rewritten
 away (`evaluate_clock` is `evalCrepSemHOLProgExact_clock_le`). -/
+@[hol "cakeml/pancake/semantics/crepSemScript.sml" "evaluate_ind" 440
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
 theorem evalCrepSemHOLProgExact_induct {width : Nat} [NeZero width] {σ : Type}
     (P : CrepProgHOL width × CrepSemHOLState width σ → Prop)
     (hskip : ∀ s, P (.skip, s))
