@@ -15093,5 +15093,40 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-c source comparison (2026-09-27; bead flapjack-4ac.4.60.1.1.1) against panPropsScript.sml:724-777. HOL evaluate_clock_sub quantifies p,t,res,st,ck; its premises are exactly evaluate (p,t) = (res, st with clock := st.clock + ck) and res <> SOME TimeOut, and its conclusion runs p from t.clock - ck to (res,st). This Lean declaration is the genuine recInduct Dec case for p = Dec name shape initializer body: it preserves those same premises/conclusion and adds only the recursive body induction hypothesis with the same statement. No success, validity, state-relation, or clock-bound premise is added. The evaluator uses the same-module PanPropsEvalStateFiniteExact owner of locals/globals/code/eshapes as HolFiniteMapExact, with the checked toPanSemFinite/ofPanSemFinite roundtrip witness; [NeZero width] is the indexed word translation. The proof uses the evaluate_def Dec clause, eval_upd_clock_eq, evaluator clock bound, and fieldwise locals restoration. This is a case split only; the assembling theorem remains open."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "evaluate_clock_sub",
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
+    "lean_name": "evaluateClockSubSkipCaseHOLFinite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison (2026-09-27; bead flapjack-4ac.4.60.1.1.2): HOL evaluate_clock_sub at panPropsScript.sml:724 has the same high-run equation, non-timeout premise, and low-clock conclusion. This is its genuine base case for p = Skip after recInduct evaluate_ind >> rw []; evaluate_def at panSemScript.sml:556-557 literally says evaluate (Skip,s) = (NONE,s). The Lean case retains the source assumptions and conclusion (non-timeout is unused, as for HOL simplification) with no induction hypotheses or extra premises. Its finite state is the same-module PanPropsEvalStateFiniteExact owner for locals/globals/code/eshapes via HolFiniteMapExact and the checked roundtrip witness; [NeZero width] is the indexed-word carrier translation. This is a case split only; assembling evaluate_clock_sub remains open."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "evaluate_clock_sub",
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
+    "lean_name": "evaluateClockSubBreakCaseHOLFinite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison (2026-09-27; bead flapjack-4ac.4.60.1.1.3): HOL panPropsScript.sml:724 gives the exact high-run premise, non-timeout premise, and clock-sub conclusion. The genuine p = Break leaf follows the base case of recInduct evaluate_ind >> rw []; evaluate_def at panSemScript.sml:623 states evaluate (Break,s) = (SOME Break,s). Lean retains that statement shape with no induction hypothesis or extra premise; the non-timeout premise is retained and unused because Break is not TimeOut. Carrier qualifiers match the same-module PanPropsEvalStateFiniteExact finite-support witness and indexed word carrier. The full theorem remains open."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "evaluate_clock_sub",
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
+    "lean_name": "evaluateClockSubContinueCaseHOLFinite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison (2026-09-27; bead flapjack-4ac.4.60.1.1.3): HOL panPropsScript.sml:724 gives the exact high-run premise, non-timeout premise, and clock-sub conclusion. The genuine p = Continue leaf follows the base case of recInduct evaluate_ind >> rw []; evaluate_def at panSemScript.sml:624 states evaluate (Continue,s) = (SOME Continue,s). Lean retains that statement shape with no induction hypothesis or extra premise; the non-timeout premise is retained and unused because Continue is not TimeOut. Carrier qualifiers match the same-module PanPropsEvalStateFiniteExact finite-support witness and indexed word carrier. The full theorem remains open."
   }
 ]
