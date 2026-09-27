@@ -15152,5 +15152,15 @@
     "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-c source comparison (2026-09-27; bead flapjack-4ac.4.60.1.1.3): HOL panPropsScript.sml:724 gives the exact high-run premise, non-timeout premise, and clock-sub conclusion. The genuine p = Continue leaf follows the base case of recInduct evaluate_ind >> rw []; evaluate_def at panSemScript.sml:624 states evaluate (Continue,s) = (SOME Continue,s). Lean retains that statement shape with no induction hypothesis or extra premise; the non-timeout premise is retained and unused because Continue is not TimeOut. Carrier qualifiers match the same-module PanPropsEvalStateFiniteExact finite-support witness and indexed word carrier. The full theorem remains open."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "evaluate_clock_sub",
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
+    "lean_name": "evaluateClockSubAnnotCaseHOLFinite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison (2026-09-27; bead flapjack-4ac.4.60.1.1.4): HOL panPropsScript.sml:724 gives the exact high-run premise, non-timeout premise, and clock-sub conclusion. The genuine p = Annot tag text leaf follows the base case of recInduct evaluate_ind >> rw []; evaluate_def at panSemScript.sml:656 states evaluate (Annot _ _,s) = (NONE,s). Lean retains the source statement shape with no induction hypothesis or extra premise, over the same-module PanPropsEvalStateFiniteExact finite-support carrier and indexed-word translation. The full theorem remains open."
   }
 ]
