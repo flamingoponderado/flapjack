@@ -14506,8 +14506,43 @@
     "hol_name": "compile_exp_val_rel",
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
     "lean_name": "compileExpValRelHOL",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds10 (bead flapjack-4ac.5.81; PR #1168 review HOLD 2026-09-27T16:07Z): the tagged `@[hol]` attribute was WITHDRAWN and the declaration is kept untagged. The proof and statement are the exact-carrier counterpart of HOL compile_exp_val_rel (cakeml/pancake/proofs/pan_to_crepProofScript.sml:130) and the six hypotheses / four conclusions match clause-for-clause (eval/evalHOLFinite; state_rel/panToCrepStateRelFiniteExact; code_rel/codeRelExactHOLW; locals_rel/panToCrepLocalsRelFiniteExact; localised_exp/localisedExpHOL; compile_exp/compileExpExactHOLW; and MAP (eval t) es = MAP SOME (flatten v) / expressions.map (evalCrepSemHOLExp targetState) = (flattenHOL value).map some, LENGTH/sizeOfShapeHOL, shape_of/shapeOfHOLExact, is_wf_shape_nil/isWfShapeExactHOL []). The concrete gap is representation only: HOL quantifies the word dimension (`'a word`) and the FFI-state type (`('a,'b) state`) polymorphically, while the Lean statement fixes `BitVec width` with `[NeZero width]` and the universe-0 host `σ : Type` and uses the finite-support carriers PanSemStateFiniteExact/CrepSemHOLState/PanToCrepContextExact. A faithful tag therefore needs the combined fmap_as_finite_support_relation + words_as_type_indexed_bitvec translation (plus same-module relation witnesses), which the reference checker and theorem-map statuses do not currently support; tracked by follow-up bead flapjack-4ac.5.81.14. No cross-assistant agreement theorem is required for a tag (docs/SOUNDNESS.md), so the absence of one is not the reason for keeping this untagged."
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.locals",
+      "CrepSemHOLState.code",
+      "CrepSemHOLState.locals",
+      "PanToCrepContextExact.vars",
+      "PanToCrepContextExact.funcs",
+      "PanToCrepContextExact.eids"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 (bead flapjack-4ac.5.81.14; resolves the PR #1168 review HOLD on the withdrawn compile_exp_val_rel tag): source comparison against HOL compile_exp_val_rel (cakeml/pancake/proofs/pan_to_crepProofScript.sml:130). The six hypotheses and four conclusions match clause-for-clause (eval/evalHOLFinite; state_rel/panToCrepStateRelFiniteExact; code_rel/codeRelExactHOLW; locals_rel/panToCrepLocalsRelFiniteExact; localised_exp/localisedExpHOL; compile_exp/compileExpExactHOLW; and MAP (eval t) es = MAP SOME (flatten v) / expressions.map (evalCrepSemHOLExp targetState) = (flattenHOL value).map some; LENGTH/sizeOfShapeHOL; shape_of/shapeOfHOLExact; is_wf_shape_nil/isWfShapeExactHOL []). The combined qualifier records the two representation differences: HOL is polymorphic in the word dimension ('a word, dimindex) and the FFI-state type (('a,'b) state), while the Lean statement fixes the positive width BitVec width with [NeZero width] and the universe-0 host sigma : Type (words_as_type_indexed_bitvec); and the HOL state/context maps are the finite-support carriers PanSemStateFiniteExact/CrepSemHOLState/PanToCrepContextExact. The relation entries record exactly the fields the premises traverse: state_rel reads PanSemStateFiniteExact.globals; code_rel reads PanSemStateFiniteExact.code, CrepSemHOLState.code, PanToCrepContextExact.funcs and .eids; locals_rel reads PanToCrepContextExact.vars and the locals fields of both states. Same-module witnesses holFmapAsFiniteSupportRelationWitness_{PanSemStateFiniteExact,CrepSemHOLState,PanToCrepContextExact} validate the three carriers; no cross-assistant agreement theorem is required (docs/SOUNDNESS.md)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds10 (bead flapjack-4ac.5.81.14): Flapjack representation infrastructure for the combined fmap_as_finite_support_relation + words_as_type_indexed_bitvec qualifier on compileExpValRelHOL. Same-module canonical relation witness for the imported PanSemStateFiniteExact carrier; forwards its canonical toExact/ofExact roundtrip with the broad PanSemStateExact counterpart. Declared in namespace CompileExpValRelRelationWitnesses to avoid clashing with the identically named witness in the imported state-relation modules. No standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds10 (bead flapjack-4ac.5.81.14): Flapjack representation infrastructure for the combined fmap_as_finite_support_relation + words_as_type_indexed_bitvec qualifier on compileExpValRelHOL. Same-module canonical relation witness for the imported CrepSemHOLState carrier; forwards the canonical toBroad/ofBroad roundtrip with the broad CrepSemBroadState counterpart. Declared in namespace CompileExpValRelRelationWitnesses. No standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds10 (bead flapjack-4ac.5.81.14): Flapjack representation infrastructure for the combined fmap_as_finite_support_relation + words_as_type_indexed_bitvec qualifier on compileExpValRelHOL. Same-module canonical relation witness for the imported PanToCrepContextExact carrier; forwards the canonical toBroad/ofBroad roundtrip with the broad PanToCrepContextBroad counterpart. Declared in namespace CompileExpValRelRelationWitnesses. No standalone HOL declaration."
   },
   {
     "hol_path": null,
@@ -14801,7 +14836,7 @@
       "PanToCrepContextExact.eids"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-b source comparison (2026-09-27; bead flapjack-4ac.5.84) against pan_to_crepProofScript.sml:1077. The Lean binders are exactly es, vs, s, t, ctxt. Its five premises in HOL order are MAP (eval s) es = MAP SOME vs, state_rel s t, code_rel ctxt s.code t.code, locals_rel ctxt s.locals t.locals, and EVERY localised_exp es. Its conclusion ranges over every name in FLAT (MAP var_cexp (FLAT (MAP FST (MAP (compile_exp ctxt) es)))) and returns the exact ctxt.vars FLOOKUP binding and MEM slot-list conclusion. ExpHOL/ValueHOL, PanSemStateFiniteExact/CrepSemHOLState, PanToCrepContextExact, compileExpExactHOLWList, CrepExpHOL/crepExpVarsHOL, and the three exact relation ports supply the corresponding HOL carriers and definitions; no result/evaluator target premise or extra semantic assumption is introduced. The implicit memory-set decider is discharged locally with Classical.propDecidable and is not a theorem premise. The relation finite-map qualifier lists exactly the state/context fields traversed by state_rel, code_rel, locals_rel, and the conclusion, with the same-module canonical witnesses required by the checker. The words_as_type_indexed_bitvec qualifier records HOL's positive type-indexed 'a word as BitVec width under [NeZero width]. Proof derives the conclusion from compileExpExactHOLW_vars_from_context while preserving unused HOL hypotheses. Direct compile_exp oracle rows and exact-carrier regression are in scripts/hol-probes/compile_exp_probe.out and Flapjack.Test.CompileExpParity (finite_map_shadow and its exact 64-bit carrier duplicate). No executable routing claim is made."
+    "reviewer": "flapjack-luna-b source comparison (2026-09-27; bead flapjack-4ac.5.84) against pan_to_crepProofScript.sml:1077. The Lean binders are exactly es, vs, s, t, ctxt. Its five premises in HOL order are MAP (eval s) es = MAP SOME vs, state_rel s t, code_rel ctxt s.code t.code, locals_rel ctxt s.locals t.locals, and EVERY localised_exp es. Its conclusion ranges over every name in FLAT (MAP var_cexp (FLAT (MAP FST (MAP (compile_exp ctxt) es)))) and returns the exact ctxt.vars FLOOKUP binding and MEM slot-list conclusion. ExpHOL/ValueHOL, PanSemStateFiniteExact/CrepSemHOLState, PanToCrepContextExact, compileExpExactHOLWList, CrepExpHOL/crepExpVarsHOL, and the three exact relation ports supply the corresponding HOL carriers and definitions; no result/evaluator target premise or extra semantic assumption is introduced. The implicit memory-set decider is discharged locally with Classical.propDecidable and is not a theorem premise. The relation finite-map qualifier lists exactly the state/context fields traversed by state_rel, code_rel, locals_rel, and the conclusion, with the same-module canonical witnesses required by the checker. This field list is scoped to those relation premises and the conclusion, not recursively to maps read by the source evaluation premise: `_heval` calls the separately tagged PanSemStateFiniteExact.evalHOLFinite, whose eval_def entry records its locals/globals/code/eshapes fields. There is no target expression-evaluation premise. The words_as_type_indexed_bitvec qualifier records HOL's positive type-indexed 'a word as BitVec width under [NeZero width]. Proof derives the conclusion from compileExpExactHOLW_vars_from_context while preserving unused HOL hypotheses. Direct compile_exp oracle rows and exact-carrier regression are in scripts/hol-probes/compile_exp_probe.out and Flapjack.Test.CompileExpParity (finite_map_shadow and its exact 64-bit carrier duplicate). No executable routing claim is made."
   },
   {
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",

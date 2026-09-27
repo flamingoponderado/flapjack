@@ -24,17 +24,18 @@ source evaluator `evalHOLFinite` and target evaluator `evalCrepSemHOLExp`.
 
 The full theorem is assembled at the end of this module as `compileExpValRelHOL`
 (bead `flapjack-4ac.5.81`), the exact target of HOL `compile_exp_val_rel`
-(`cakeml/pancake/proofs/pan_to_crepProofScript.sml:130`). Both are kept untagged:
-the HOL theorem is polymorphic in the word dimension (`'a word`) and the
-FFI-state type (the `('a,'b) state` parameter), while this rendering fixes the
-positive width `BitVec width` (`[NeZero width]`) and the universe-0 host
-`σ : Type`, and represents the HOL state/context maps by the finite-support
-carriers `PanSemStateFiniteExact` / `CrepSemHOLState` / `PanToCrepContextExact`.
-Recording that faithfully needs the combined `fmap_as_finite_support_relation`
-and `words_as_type_indexed_bitvec` translation, which the reference checker and
-theorem-map statuses do not yet support (follow-up bead `flapjack-4ac.5.81.14`).
+(`cakeml/pancake/proofs/pan_to_crepProofScript.sml:130`). It carries the
+combined `(fmap_as_finite_support_relation := [...])` +
+`(words_as_type_indexed_bitvec)` qualifier (bead `flapjack-4ac.5.81.14`): the
+HOL theorem is polymorphic in the word dimension (`'a word`) and the FFI-state
+type (the `('a,'b) state` parameter), while this rendering fixes the positive
+width `BitVec width` (`[NeZero width]`) and the universe-0 host `σ : Type`, and
+represents the HOL state/context maps by the finite-support carriers
+`PanSemStateFiniteExact` / `CrepSemHOLState` / `PanToCrepContextExact`. The
+relation list records exactly the carrier fields the three relation hypotheses
+traverse; the same-module per-carrier witnesses below validate those carriers.
 The individual `compileExpValRelHOL_<constructor>` case lemmas are Flapjack
-proof infrastructure and are likewise untagged.
+proof infrastructure and are untagged.
 -/
 
 namespace Flapjack
@@ -1699,6 +1700,49 @@ theorem compileExpValRelHOL_panop {width : Nat} {σ : Type} [NeZero width]
         simp only [hvals, hfalse, Bool.false_eq_true, if_false] at heval
         exact absurd heval.symm (Option.some_ne_none value)
 
+/- Same-module canonical relation witnesses for the combined qualifier on
+   `compileExpValRelHOL`. Declared in a fresh namespace so they do not clash
+   with the identically named witnesses in the imported state-relation modules;
+   the reference checker matches the unqualified name within this module. -/
+namespace CompileExpValRelRelationWitnesses
+
+/-- Same-module canonical relation witness for the imported `PanSemStateFiniteExact`
+    carrier, whose `globals`, `code`, and `locals` fields are traversed by the
+    `compile_exp_val_rel` hypotheses (`state_rel`, `code_rel`, `locals_rel`). It
+    forwards the canonical `toExact`/`ofExact` roundtrip of the finite-support
+    carrier with its broad `PanSemStateExact` counterpart. Flapjack
+    representation infrastructure only. -/
+theorem holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact
+    {width : Nat} {σ : Type} [NeZero width] :
+    (∀ (state : PanSemStateExact width σ) (h : state.FiniteSupport),
+        (PanSemStateFiniteExact.ofExact state h).toExact = state) ∧
+    (∀ state : PanSemStateFiniteExact width σ,
+        PanSemStateFiniteExact.ofExact state.toExact state.toExact_finiteSupport = state) :=
+  PanSemStateFiniteExact.holFmapAsFiniteSupportWitness
+
+/-- Same-module canonical relation witness for the imported `CrepSemHOLState`
+    carrier, whose `code` and `locals` fields are traversed by
+    `compile_exp_val_rel`'s `code_rel`/`locals_rel` hypotheses. It forwards the
+    canonical `toBroad`/`ofBroad` roundtrip with the broad `CrepSemBroadState`
+    counterpart. Flapjack representation infrastructure only. -/
+theorem holFmapAsFiniteSupportRelationWitness_CrepSemHOLState
+    {width : Nat} [NeZero width] {σ : Type} (state : CrepSemHOLState width σ) :
+    CrepSemBroadState.ofBroad state.toBroad state.toBroad_finiteSupport = state :=
+  CrepSemBroadState.ofBroad_toBroad state
+
+/-- Same-module canonical relation witness for the imported
+    `PanToCrepContextExact` carrier, whose `vars`, `funcs`, and `eids` fields are
+    traversed by `compile_exp_val_rel`'s `code_rel`/`locals_rel` hypotheses. It
+    forwards the canonical `toBroad`/`ofBroad` roundtrip with the broad
+    `PanToCrepContextBroad` counterpart. Flapjack representation infrastructure
+    only. -/
+theorem holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact
+    {width : Nat} [NeZero width] (context : PanToCrepContextExact width) :
+    PanToCrepContextExact.ofBroad (PanToCrepContextExact.toBroad context) = context :=
+  PanToCrepContextExact.holFmapAsFiniteSupportWitness context
+
+end CompileExpValRelRelationWitnesses
+
 /-- Assembled exact-carrier counterpart of HOL `compile_exp_val_rel`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:130`): the full
     expression-evaluation / compilation correspondence over the exact
@@ -1706,18 +1750,40 @@ theorem compileExpValRelHOL_panop {width : Nat} {σ : Type} [NeZero width]
     recursion on the expression, dispatching every constructor to its
     source-reviewed case lemma.
 
-    FLAPJACK-SPECIFIC provisional rendering (no `@[hol]` tag), 2026-09-27.
-    The HOL theorem is polymorphic in the word dimension (`'a word`) and the
-    FFI-state type (the `('a,'b) state` parameter), whereas this statement fixes
-    the positive width `BitVec width` with `[NeZero width]` and the universe-0
-    host `σ : Type`, and uses the finite-support carriers
-    `PanSemStateFiniteExact` / `CrepSemHOLState` / `PanToCrepContextExact`.
-    Those are exactly the translations recorded by
-    `words_as_type_indexed_bitvec` and by a `fmap_as_finite_support_relation`
-    ownership list, so a faithful tag needs the combined qualifier, which the
-    reference checker and theorem-map statuses do not yet provide (follow-up
-    bead `flapjack-4ac.5.81.14`).  No cross-assistant agreement theorem is
-    required for a tag; the only gap is the missing combined qualifier. -/
+    Clause-for-clause comparison with the HOL statement: the six premises
+    (`panSem$eval s e = SOME v`, `state_rel s t`, `code_rel ct s.code t.code`,
+    `locals_rel ct s.locals t.locals`, `localised_exp e`, `compile_exp ct e =
+    (es, sh)`) render as `state.evalHOLFinite expression = some value`,
+    `panToCrepStateRelFiniteExact state targetState`,
+    `codeRelExactHOLW context state.code targetState.code`,
+    `panToCrepLocalsRelFiniteExact context state.locals targetState.locals`,
+    `localisedExpHOL expression = true`, and `compileExpExactHOLW context
+    expression = (expressions, shape)`; the four conclusions render as
+    `expressions.map (evalCrepSemHOLExp targetState) = (flattenHOL value).map
+    some`, `expressions.length = sizeOfShapeHOL shape`, `shapeOfHOLExact value =
+    shape`, and `isWfShapeExactHOL ([] : StructContextExact) shape = true`. No
+    hypothesis, side condition, quantifier, or conclusion differs.
+
+    The combined `(fmap_as_finite_support_relation := [...])` +
+    `(words_as_type_indexed_bitvec)` qualifier records the only representation
+    differences: HOL is polymorphic in the word dimension (`'a word`) and the
+    FFI-state type, whereas this statement fixes the positive width
+    `BitVec width` (`[NeZero width]`) and the universe-0 host `σ : Type`; and the
+    HOL state/context maps are represented by the finite-support carriers. The
+    relation entries are exactly the fields the premises traverse: `state_rel`
+    reads `PanSemStateFiniteExact.globals`; `code_rel` reads
+    `PanSemStateFiniteExact.code` / `CrepSemHOLState.code` and
+    `PanToCrepContextExact.funcs`/`eids`; `locals_rel` reads
+    `PanToCrepContextExact.vars` and the `locals` fields of both states. The
+    same-module witnesses above validate the three carriers. No cross-assistant
+    agreement theorem is required for this tag. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "compile_exp_val_rel"
+  (fmap_as_finite_support_relation := [PanSemStateFiniteExact.globals,
+    PanSemStateFiniteExact.code, PanSemStateFiniteExact.locals,
+    CrepSemHOLState.code, CrepSemHOLState.locals,
+    PanToCrepContextExact.vars, PanToCrepContextExact.funcs,
+    PanToCrepContextExact.eids])
+  (words_as_type_indexed_bitvec)]
 theorem compileExpValRelHOL {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) [hs : DecidablePred state.memaddrs]
     (context : PanToCrepContextExact width)

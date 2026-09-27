@@ -136,6 +136,7 @@ def lock_records(
             "reviewed_fmap_as_finite_support_equalities",
             "reviewed_words_as_type_indexed_bitvec",
             "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+            "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
         }:
             continue
         key = (record["hol_path"], record["hol_name"], record["lean_name"])

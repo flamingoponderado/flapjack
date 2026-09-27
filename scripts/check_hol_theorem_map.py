@@ -1531,6 +1531,7 @@ VALID_STATUSES = {
     "reviewed_fmap_as_finite_support_equalities",
     "reviewed_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
     "pending_statement_review",
     "documented_mismatch",
     "no_hol_reference_pending_classification",
@@ -2055,7 +2056,9 @@ def validate_inventory(
                 "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec needs "
                 "both the fmap_as_finite_support and words_as_type_indexed_bitvec @[hol] qualifiers"
             )
-        if status == combined_relation_words_status and not (words_bitvec and fmap_relation):
+        if status == combined_relation_words_status and not (
+            words_bitvec and fmap_relation
+        ):
             errors.append(
                 f"{key[0]}:{key[1]}: "
                 "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec needs "
@@ -2097,7 +2100,8 @@ def validate_inventory(
         }:
             errors.append(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support_relation @[hol] tag needs a reviewed "
-                "source classification (reviewed_fmap_as_finite_support_relation)"
+                "source classification (reviewed_fmap_as_finite_support_relation, or the combined "
+                "status with words_as_type_indexed_bitvec)"
             )
         if not fmap_relation and status == "reviewed_fmap_as_finite_support_relation":
             errors.append(
@@ -2200,7 +2204,7 @@ def validate_inventory(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support @[hol] tag cannot have reviewed_exact "
                 "status; use reviewed_fmap_as_finite_support after source comparison"
             )
-        if fmap_fields and status != "reviewed_fmap_as_finite_support" and status != combined_words_status:
+        if fmap_fields and status != "reviewed_fmap_as_finite_support" and status != combined_words_status and status != combined_relation_words_status:
             errors.append(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support @[hol] tag needs a reviewed "
                 "source classification (reviewed_fmap_as_finite_support, or the combined "
