@@ -29,12 +29,14 @@ premise and no qualifier:
 * the `Call` clause goes through the reviewed exact `lookupCodeHOL`
   (`CrepSem/LookupCode.lean`).  The reviewed `lookupCodeHOL` returns a raw
   `CrepLocalsExact` (`Nat → Option (HolWordLab width)`) while the state's
-  `locals` field is the finite-support `HolFiniteMapExact`; the helper
-  `updateList_empty_lookup_eq_FUPDATE_LIST` records that the finite-support
-  callee locals' lookup is definitionally that raw map, and
-  `lookupCodeHOL_eq_some_of_code_lookup` records that a successful HOL-shaped
-  code lookup of duplicate-free formals of the right arity produces exactly the
-  raw locals underlying `HolFiniteMapExact.empty.updateList (parameters.zip args)`.
+  `locals` field is the finite-support `HolFiniteMapExact`; the internal wrapper
+  `lookupCodeHOLFinite` repackages a successful lookup into the finite-support
+  carrier, and `lookupCodeHOLFinite_eq_some` / `lookupCodeHOLFinite_eq_some_iff`
+  record that its `.lookup` projection is exactly the reviewed `lookupCodeHOL`.
+  The helper `fupdateList_fempty_finiteSupport` and
+  `lookupCodeHOL_calleeLocals_finiteSupport` supply the finite-support witness
+  for the zipped callee locals.  These declarations are Flapjack-internal
+  infrastructure: no `@[hol]` tag and no qualifier.
 
 The `fix_clock` wrapper is rewritten away as in the HOL line-440 `rewrite`.
 
@@ -61,12 +63,16 @@ Clause-by-clause comparison with `scripts/hol-probes/crep_sem_evaluate_ind_probe
 * `Return`, `Raise` (HOL `'a word` -> `BitVec width`), `Tick` - exact.
 * `Call` - the two HOL IHs; the caltyp selector
   `¬(match caltyp with | none => False | some (rts, _) => ¬ rts.Nodup)` and the
-  argument/clock guards are exact; the `lookup_code` hypothesis is the reviewed
-  `lookupCodeHOL s.code.lookup fname args 0 = some (body,
-  (HolFiniteMapExact.empty.updateList (parameters.zip args)).lookup)`, whose
-  guards are recovered by `lookupCodeHOL_eq_some_of_code_lookup`, and whose raw
-  locals are the finite-support callee locals by
-  `updateList_empty_lookup_eq_FUPDATE_LIST`.
+  argument/clock guards are exact.  The `lookup_code` hypothesis quantifies HOL's
+  own binders `args v6 prog newlocals` and reads
+  `lookupCodeHOLFinite s.code.lookup fname args (List.length args) = some v6`
+  together with `v6 = (prog, newlocals)`, matching HOL
+  `lookup_code s.code fname args (LENGTH args) = SOME v6 ∧ v6 = (prog,newlocals)`.
+  The internal wrapper `lookupCodeHOLFinite` converts the reviewed
+  `lookupCodeHOL`'s raw `CrepLocalsExact` result to the finite-support
+  `HolFiniteMapExact` carrier; its `.lookup` projection recovers
+  `lookupCodeHOL` by `lookupCodeHOLFinite_eq_some` /
+  `lookupCodeHOLFinite_eq_some_iff`.
 * `ExtCall` - exact.
 * Conclusion `∀ v v1, P (v, v1)` - the probe's uncurried motive, exact.
 -/
@@ -114,16 +120,137 @@ local map underlying the finite-support callee locals
 conversion used to phrase the `Call` clause through `lookupCodeHOL`. -/
 theorem lookupCodeHOL_eq_some_of_code_lookup {width : Nat} [NeZero width]
     (code : CrepCodeMapExact width) (fname : MlString)
-    (args : List (HolWordLab width)) (parameters : List Nat)
+    (args : List (HolWordLab width)) (len : Nat) (parameters : List Nat)
     (body : CrepProgHOL width)
     (hcode : code fname = some (parameters, body))
     (hlen : parameters.length = args.length) (hnodup : parameters.Nodup) :
-    lookupCodeHOL code fname args 0 =
+    lookupCodeHOL code fname args len =
       some (body, (HolFiniteMapExact.empty.updateList (parameters.zip args)).lookup) := by
   unfold lookupCodeHOL FLOOKUP
   simp only [hcode]
   rw [if_pos ⟨hlen, hnodup⟩]
   rfl
+
+/-- The zipped callee-local map built by the reviewed exact code lookup has
+finite support.  This is the support obligation needed to repackage the raw
+`CrepLocalsExact` result of `lookupCodeHOL` as a `HolFiniteMapExact`. -/
+theorem fupdateList_fempty_finiteSupport {α β : Type} [BEq α] [LawfulBEq α]
+    (entries : List (α × β)) :
+    ∃ keys : List α, ∀ key, FUPDATE_LIST (FEMPTY : FiniteMap α β) entries key ≠ none →
+      key ∈ keys := by
+  refine ⟨entries.map Prod.fst, ?_⟩
+  intro key hkey
+  cases hlookup : FUPDATE_LIST (FEMPTY : FiniteMap α β) entries key with
+  | none => exact absurd hlookup hkey
+  | some value =>
+      rcases flookupFupdateList_mem_or_base (FEMPTY : FiniteMap α β) entries key value
+        hlookup with hmem | hbase
+      · obtain ⟨entry, hentry, hkeyeq, _⟩ := hmem
+        exact List.mem_map.mpr ⟨entry, hentry, hkeyeq⟩
+      · exact absurd hbase (by simp)
+
+/-- The second component of a successful reviewed exact `lookupCodeHOL` has
+finite support, so it can be represented as the `.lookup` of a
+`HolFiniteMapExact`.  Derived from the reviewed lookup's own definition (the
+successful branch is `FUPDATE_LIST FEMPTY (parameters.zip args)`) via
+`fupdateList_fempty_finiteSupport`. -/
+theorem lookupCodeHOL_calleeLocals_finiteSupport {width : Nat} [NeZero width]
+    (code : CrepCodeMapExact width) (fname : MlString)
+    (args : List (HolWordLab width)) (len : Nat) (body : CrepProgHOL width)
+    (calleeLocals : CrepLocalsExact width)
+    (h : lookupCodeHOL code fname args len = some (body, calleeLocals)) :
+    ∃ keys : List Nat, ∀ key, calleeLocals key ≠ none → key ∈ keys := by
+  unfold lookupCodeHOL at h
+  split at h
+  · exact absurd h (by simp)
+  · rename_i parameters body' hcode
+    by_cases hcond : parameters.length = args.length ∧ parameters.Nodup
+    · rw [if_pos hcond] at h
+      simp only [Option.some.injEq, Prod.mk.injEq] at h
+      obtain ⟨_, hlocals⟩ := h
+      subst hlocals
+      exact fupdateList_fempty_finiteSupport (parameters.zip args)
+    · rw [if_neg hcond] at h
+      exact absurd h (by simp)
+
+/-- Internal canonical finite-support wrapper around the reviewed exact
+`lookupCodeHOL` (`CrepSem/LookupCode.lean:46`).  The reviewed lookup returns a
+raw `CrepLocalsExact` (`Nat → Option (HolWordLab width)`), whereas the state's
+`locals` field is the finite-support `HolFiniteMapExact`; this wrapper
+repackages a successful result into that carrier, with support witness supplied
+by `lookupCodeHOL_calleeLocals_finiteSupport`.  Its `.lookup` projection is
+exactly the reviewed lookup's second component on success, recorded by
+`lookupCodeHOLFinite_eq_some` / `lookupCodeHOLFinite_eq_some_iff`.  Flapjack
+internal infrastructure: no `@[hol]` tag and no qualifier. -/
+noncomputable def lookupCodeHOLFinite {width : Nat} [NeZero width]
+    (code : CrepCodeMapExact width) (fname : MlString)
+    (args : List (HolWordLab width)) (len : Nat) :
+    Option (CrepProgHOL width × HolFiniteMapExact Nat (HolWordLab width)) :=
+  match h : lookupCodeHOL code fname args len with
+  | none => none
+  | some (body, calleeLocals) =>
+      some (body,
+        { lookup := calleeLocals,
+          finiteSupport := lookupCodeHOL_calleeLocals_finiteSupport
+            code fname args len body calleeLocals h })
+
+/-- Two finite-support maps with the same `.lookup` are equal, because the
+`finiteSupport` field is a proof of a proposition. -/
+theorem holFiniteMapExact_eq_of_lookup_eq {α β : Type}
+    {m n : HolFiniteMapExact α β} (h : m.lookup = n.lookup) : m = n := by
+  obtain ⟨lm, pm⟩ := m
+  obtain ⟨ln, pn⟩ := n
+  simp only at h
+  subst h
+  rfl
+
+/-- Forward bridge for `lookupCodeHOLFinite`: a successful wrapper result
+forgets to the reviewed exact `lookupCodeHOL`, with the finite-support locals
+projected through `.lookup`.  This is the exact HOL `lookup_code ... = SOME v6`
+fact underlying the `Call` clause guard. -/
+theorem lookupCodeHOLFinite_eq_some {width : Nat} [NeZero width]
+    (code : CrepCodeMapExact width) (fname : MlString)
+    (args : List (HolWordLab width)) (len : Nat)
+    (prog : CrepProgHOL width) (callee : HolFiniteMapExact Nat (HolWordLab width))
+    (h : lookupCodeHOLFinite code fname args len = some (prog, callee)) :
+    lookupCodeHOL code fname args len = some (prog, callee.lookup) := by
+  unfold lookupCodeHOLFinite at h
+  split at h
+  · simp at h
+  · rename_i body' calleeLocals' heq
+    simp only [Option.some.injEq, Prod.mk.injEq] at h
+    obtain ⟨hb, hcallee⟩ := h
+    have hlookup : calleeLocals' = callee.lookup := by
+      rw [← hcallee]
+    rw [hb, hlookup] at heq
+    exact heq
+
+/-- Bridge for `lookupCodeHOLFinite` in both directions: the wrapper succeeds
+with `(prog, newlocals)` exactly when the reviewed exact `lookupCodeHOL`
+succeeds with `(prog, newlocals.lookup)`. -/
+theorem lookupCodeHOLFinite_eq_some_iff {width : Nat} [NeZero width]
+    (code : CrepCodeMapExact width) (fname : MlString)
+    (args : List (HolWordLab width)) (len : Nat)
+    (prog : CrepProgHOL width) (newlocals : HolFiniteMapExact Nat (HolWordLab width)) :
+    lookupCodeHOLFinite code fname args len = some (prog, newlocals) ↔
+      lookupCodeHOL code fname args len = some (prog, newlocals.lookup) := by
+  constructor
+  · intro h
+    exact lookupCodeHOLFinite_eq_some code fname args len prog newlocals h
+  · intro h
+    unfold lookupCodeHOLFinite
+    split
+    · rename_i heq
+      have hsome : some (prog, newlocals.lookup) = none := h.symm.trans heq
+      simp at hsome
+    · rename_i body' calleeLocals' heq
+      have hsome : some (body', calleeLocals') = some (prog, newlocals.lookup) :=
+        heq.symm.trans h
+      injection hsome with hpair
+      injection hpair with hbody hlookup
+      subst hbody
+      apply congrArg (fun m => some (body', m))
+      exact holFiniteMapExact_eq_of_lookup_eq hlookup
 
 /-- Exact cache-free `Dec` equation over the no-decider evaluator. -/
 theorem evalCrepSemHOLProgExact_dec {width : Nat} [NeZero width] {σ : Type}
@@ -158,12 +285,13 @@ theorem evalCrepSemHOLProgExact_clock_le {width : Nat} [NeZero width] {σ : Type
 carriers `CrepProgHOL`, `CrepSemHOLState`, and `CrepResultHOLExact`.  Expression
 guards use the classical spelling `crepExactEvalExpClassical`, proved
 extensionally equal to the reviewed `crepExactEvalExp` by
-`crepExactEvalExpClassical_eq`.  The `Call` clauses go through the reviewed
-exact `lookupCodeHOL`, with the raw `CrepLocalsExact` result converted to the
-finite-support `HolFiniteMapExact` carrier by
-`updateList_empty_lookup_eq_FUPDATE_LIST` /
-`lookupCodeHOL_eq_some_of_code_lookup`.  `fix_clock` has been rewritten away
-(`evaluate_clock` is `evalCrepSemHOLProgExact_clock_le`). -/
+`crepExactEvalExpClassical_eq`.  The `Call` clause quantifies HOL's own binders
+`args v6 prog newlocals` and goes through the internal finite-support wrapper
+`lookupCodeHOLFinite`, whose `.lookup` projection is the reviewed exact
+`lookupCodeHOL`; the raw `CrepLocalsExact` result is repackaged as the
+finite-support `HolFiniteMapExact` carrier (support witness from
+`lookupCodeHOL_calleeLocals_finiteSupport`).  `fix_clock` has been rewritten
+away (`evaluate_clock` is `evalCrepSemHOLProgExact_clock_le`). -/
 theorem evalCrepSemHOLProgExact_induct {width : Nat} [NeZero width] {σ : Type}
     (P : CrepProgHOL width × CrepSemHOLState width σ → Prop)
     (hskip : ∀ s, P (.skip, s))
@@ -208,35 +336,37 @@ theorem evalCrepSemHOLProgExact_induct {width : Nat} [NeZero width] {σ : Type}
     (hraise : ∀ eid s, P (.raise eid, s))
     (htick : ∀ s, P (.tick, s))
     (hcall : ∀ caltyp fname argexps s,
-        (∀ (args : List (HolWordLab width)) (parameters : List Nat)
-            body eval_prog v4 st v7 eid v v1 v2 v3 eid' p,
+        (∀ (args : List (HolWordLab width))
+            (v6 : CrepProgHOL width × HolFiniteMapExact Nat (HolWordLab width))
+            (prog : CrepProgHOL width)
+            (newlocals : HolFiniteMapExact Nat (HolWordLab width))
+            eval_prog v4 st v7 eid v v1 v2 v3 eid' p,
           argexps.mapM (crepExactEvalExpClassical s) = some args →
-          lookupCodeHOL s.code.lookup fname args 0 =
-            some (body,
-              (HolFiniteMapExact.empty.updateList (parameters.zip args)).lookup) →
+          lookupCodeHOLFinite s.code.lookup fname args (List.length args) = some v6 →
+          v6 = (prog, newlocals) →
           (¬ (match caltyp with
               | none => False
               | some (rts, _) => ¬ rts.Nodup)) →
           s.clock ≠ 0 →
           eval_prog = evalCrepSemHOLProgExact
-            { decClockCrepSemHOL s with
-              locals := HolFiniteMapExact.empty.updateList (parameters.zip args) } body →
+            { decClockCrepSemHOL s with locals := newlocals } prog →
           eval_prog = (v4, st) →
           v4 = some v7 → v7 = .exception eid →
           caltyp = some v → v = (v1, v2) → v2 = some v3 → v3 = (eid', p) →
           eid = eid' →
           P (p, { st with locals := s.locals })) →
-        (∀ (args : List (HolWordLab width)) (parameters : List Nat) body,
+        (∀ (args : List (HolWordLab width))
+            (v6 : CrepProgHOL width × HolFiniteMapExact Nat (HolWordLab width))
+            (prog : CrepProgHOL width)
+            (newlocals : HolFiniteMapExact Nat (HolWordLab width)),
           argexps.mapM (crepExactEvalExpClassical s) = some args →
-          lookupCodeHOL s.code.lookup fname args 0 =
-            some (body,
-              (HolFiniteMapExact.empty.updateList (parameters.zip args)).lookup) →
+          lookupCodeHOLFinite s.code.lookup fname args (List.length args) = some v6 →
+          v6 = (prog, newlocals) →
           (¬ (match caltyp with
               | none => False
               | some (rts, _) => ¬ rts.Nodup)) →
           s.clock ≠ 0 →
-          P (body, { decClockCrepSemHOL s with
-              locals := HolFiniteMapExact.empty.updateList (parameters.zip args) })) →
+          P (prog, { decClockCrepSemHOL s with locals := newlocals })) →
         P (.call caltyp fname argexps, s))
     (hextCall : ∀ ffi_index ptr1 len1 ptr2 len2 s,
         P (.extCall ffi_index ptr1 len1 ptr2 len2, s)) :
@@ -328,26 +458,24 @@ theorem evalCrepSemHOLProgExact_induct {width : Nat} [NeZero width] {σ : Type}
   | call =>
       rename_i ri fn ar
       refine hcall ri fn ar state ?_ ?_
-      · intro args parameters body eval_prog v4 st v7 eid v v1 v2 v3 eid' p
-          _ _ _ hclock heval1 heval2 _ _ _ _ _ _ _
+      · intro args v6 prog newlocals eval_prog v4 st v7 eid v v1 v2 v3 eid' p
+          _ _ _ _ hclock heval1 heval2 _ _ _ _ _ _ _
         have hclk : st.clock < state.clock := by
           have h := evalCrepSemHOLProgExact_clock_le
-            { decClockCrepSemHOL state with
-              locals := HolFiniteMapExact.empty.updateList (parameters.zip args) } body
+            { decClockCrepSemHOL state with locals := newlocals } prog
           rw [heval1.symm] at h
           rw [heval2] at h
           have hd : ({ decClockCrepSemHOL state with
-                locals := HolFiniteMapExact.empty.updateList (parameters.zip args) }).clock <
+                locals := newlocals }).clock <
               state.clock := by
             simp only [decClockCrepSemHOL]; omega
           have hst : st.clock ≤ ({ decClockCrepSemHOL state with
-                locals := HolFiniteMapExact.empty.updateList (parameters.zip args) }).clock := by
+                locals := newlocals }).clock := by
             simpa using h
           omega
         exact ih p { st with locals := state.locals } (hlexClock hclk)
-      · intro args parameters body _ _ _ hclock
-        exact ih body { decClockCrepSemHOL state with
-            locals := HolFiniteMapExact.empty.updateList (parameters.zip args) }
+      · intro args v6 prog newlocals _ _ _ _ hclock
+        exact ih prog { decClockCrepSemHOL state with locals := newlocals }
           (hlexClock (by simp only [decClockCrepSemHOL]; omega))
 
 end Flapjack
