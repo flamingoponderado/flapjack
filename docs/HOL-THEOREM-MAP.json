@@ -12038,6 +12038,15 @@
   },
   {
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "is_valid_value_def",
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
+    "lean_name": "isValidValueHOLFinite",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "reviewer": "flapjack-luna-c source comparison (2026-09-27; bead flapjack-qj5.10): HOL panSemScript.sml:469-475 defines is_valid_value by looking up the selected Local/Global binding with FLOOKUP, returning false when absent, and comparing shape_of on the candidate and existing values when present. isValidValueHOLFinite has the same two branches over PanSemStateFiniteExact; lookupKvarHOLFinite uses the canonical HolFiniteMapExact.lookup translation of FLOOKUP, and shapeOfHOLExact and shapeEqHOL implement the exact value/shape carriers and HOL equality (shapeEqHOL_eq_true records the Bool equality bridge). The four named maps use the same-module HolFiniteMapExact carrier and roundtrip witness. The qualifier records only the finite-map representation."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
     "hol_name": "empty_locals_def",
     "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
     "lean_name": "emptyLocalsHOLFinite",
@@ -12100,16 +12109,6 @@
     "statement_status": "reviewed_fmap_as_finite_support",
     "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
     "reviewer": "flapjack-luna-a source comparison (2026-09-27; bead flapjack-qj5): the first conjunct of HOL's line-780 evaluate_def theorem is evaluate (Skip,s)=(NONE,s), from the Skip clause at panSemScript.sml:557. evaluateHOLFiniteState_skip has exactly the state quantifier and pair-shaped conclusion over ProgHOL and PanSemStateFiniteExact; no result premise or extra logical assumption. The four named finite-map fields use the same-module HolFiniteMapExact carrier and canonical roundtrip witness. This tag covers only the Skip case; the full 21-equation theorem remains open."
-  },
-  {
-    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
-    "hol_name": "evaluate_def",
-    "hol_line": 780,
-    "lean_path": "Flapjack/Pancake/Semantics/PanSem/ShMemLoadCase.lean",
-    "lean_name": "evaluateHOLFiniteState_shMemLoad_source",
-    "statement_status": "reviewed_fmap_as_finite_support",
-    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
-    "reviewer": "flapjack-luna-c source comparison (2026-09-27; bead flapjack-qj5.4): compared with the ShMemLoad conjunct at panSemScript.sml:605-610. The conclusion exposes the same `eval s ad` word/non-word-or-failure match, then `lookup_kvar vk v s` word/non-word-or-missing match; both failing branches return SOME Error with the original state, while only the word/word branch calls sh_mem_load with nb_op op. It quantifies over the reviewed `PanSemStateFiniteExact`, `ProgHOL`, expression, size, kind, and name carriers and adds no logical premise. The successful helper result is translated back with the canonical finite-support proof. The imported carrier is named in the statement, and this case module includes its own checked `toExact`/`ofExact` roundtrip witness for the finite-map qualifier. Direct HOL EVAL guard rows and matching Lean result checks are in pan_sem_store_error_probe.out and PanSemShMemLoadCaseParity."
   },
   {
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
@@ -12250,6 +12249,16 @@
     "statement_status": "reviewed_fmap_as_finite_support",
     "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
     "reviewer": "flapjack-luna-a source comparison (2026-09-27; bead flapjack-qj5.6): HOL evaluate_def panSemScript.sml:558-565 (theorem restatement at line 780) handles Dec by evaluating the initializer, returning Error on failure or shape mismatch, and otherwise recursively evaluating the body after set_var then restoring the original local binding with res_var. evaluateHOLFiniteState_dec_total states the same branches using evalHOLExact, shapeEqHOL, setVarHOLFinite, the total pair-shaped body evaluator, and HolFiniteMapExact.resVarEq. Source definitions res_var_def at lines 505-507 and set_var_def at lines 398-401 use HOL FLOOKUP/FUPDATE; finite-map lookup/update preserve those operations. The body result is not assumed, and the marker-level recursive Option does not occur in the theorem statement; its totality justifies the proof. PanSemStateFiniteExact has the same fixed positive width and result/state shape, and the four listed finite-map fields have the canonical same-module roundtrip witness. The qualifier records only that carrier translation."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 780,
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
+    "lean_name": "evaluateHOLFiniteState_shMemStore_total",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "reviewer": "flapjack-luna-a source comparison (2026-09-27; bead flapjack-qj5.5): HOL evaluate_def panSemScript.sml:611-614 (theorem restatement at line 780) evaluates both address and value expressions in the original state. Only the pair SOME (ValWord addr), SOME (ValWord bytes) calls sh_mem_store bytes addr (nb_op op); all other cases return (SOME Error,s). evaluateHOLFiniteState_shMemStore_total states the direct pair match and invokes exact shMemStoreHOLExact state.toExact bytes addr (nbOpHOL operator); its finite-support witness only reconstructs that exact output on the PanSemStateFiniteExact carrier. The evaluator's clause-level shMemStoreClauseHOLExact and exact result projection prove the equation, including final FFI and successful FFI state results. The theorem assumes neither expression succeeds nor a shared-memory domain condition. The state has HOL's positive word dimension and result/state pair, and its four listed finite-map fields have the same-module canonical roundtrip witness. The qualifier records only this representation translation."
   },
   {
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
@@ -13113,7 +13122,15 @@
       "code"
     ],
     "reviewer": "flapjack-ds8 (source comparison; bead flapjack-pxn.18.3.5.8.8.7): HOL FLOOKUP_set_globals (crepPropsScript.sml:297-301) `FLOOKUP (set_globals gv w s).locals n = FLOOKUP s.locals n` over the exact finite-support CrepSemHOLState carrier, using the tagged CrepSemHOLState.setGlobals (crepSemScript.sml:61-63), which updates only globals. FLOOKUP is rendered as the canonical HolFiniteMapExact.lookup. Finite-map representation recorded by the qualifier (locals/globals/code); same-module canonical witness forwards CrepSemHOLState.holFmapAsFiniteSupportWitness. Direct HOL row set_globals_direct in crep_store_global_probe.out. Representation-only; no statement/side-condition change."
-  },
+   },
+   {
+     "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
+     "hol_name": "opt_mmap_eval_upd_clock_eq",
+     "lean_path": "Flapjack/Pancake/Semantics/CrepProps.lean",
+     "lean_name": "evalCrepSemHOLExps_upd_clock_eq",
+     "statement_status": "reviewed_exact",
+     "reviewer": "flapjack-ds10 (source comparison; bead flapjack-pxn.18.4.8.2.1): HOL opt_mmap_eval_upd_clock_eq (crepPropsScript.sml:872) `!es s ck. OPT_MMAP (eval (s with clock := ck + s.clock)) es = OPT_MMAP (eval s) es` over the exact tagged evaluator evalCrepSemHOLExp. HOL OPT_MMAP is rendered as List.mapM over Option; the list update uses `clock := ck + state.clock` as in HOL. Follows from the pointwise eval_upd_clock_eq via Flapjack.list_mapM_congr. No representation qualifier (no finite-map field named)."
+   },
   {
     "hol_path": null,
     "hol_name": null,
@@ -13679,5 +13696,53 @@
     "lean_name": "optMmapFlookupUpdateHOL",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.16.16): HOL pan_commonPropsScript.sml:156 states OPT_MMAP (FLOOKUP fm) xs = SOME ys /\\ ~MEM x xs ==> OPT_MMAP (FLOOKUP (fm |+ (x,y))) xs = SOME ys. Clause-for-clause over the reviewed extensional finite-map carrier: OPT_MMAP -> List.mapM, ~MEM -> not-in, fm |+ (x,y) -> FUPDATE fm (x,y). No extra hypotheses; proof uses the shared listMapMCongr and FLOOKUP_update."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/pan_commonPropsScript.sml",
+    "hol_name": "distinct_lists_eq_disjoint",
+    "lean_path": "Flapjack/Pancake/Semantics/PanCommonProps.lean",
+    "lean_name": "distinct_lists_eq_disjoint",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.16.18): HOL `distinct_lists_eq_disjoint` (pan_commonPropsScript.sml:102) states `distinct_lists xs ys <=> DISJOINT (set xs) (set ys)`. HOL `distinct_lists` is rendered as the exact Boolean `distinctListsHol xs ys = true` (the established convention for this predicate) and the set-level `DISJOINT (set xs) (set ys)` as the propositional `ListDisjoint xs ys`; the proof is the already-reviewed exact bridge distinctListsHol_eq_true_iff_listDisjoint. No extra hypotheses beyond [DecidableEq \u03b1]; source review only."
+  },
+    {
+    "hol_path": "cakeml/pancake/semantics/pan_commonPropsScript.sml",
+    "hol_name": "opt_mmap_el",
+    "lean_path": "Flapjack/Pancake/Semantics/PanCommonProps.lean",
+    "lean_name": "opt_mmap_el",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.16.19): HOL `Theorem opt_mmap_el` (cakeml/pancake/semantics/pan_commonPropsScript.sml:71) states `OPT_MMAP f l = SOME x /\\ n < LENGTH l ==> f (EL n l) = SOME (EL n x)`.  The Lean theorem `opt_mmap_el` has the same binders/hypotheses/conclusion with `OPT_MMAP` rendered as `List.mapM`, `LENGTH`/`EL` as the bounded `getElem`, and `SOME` as `some`; no extra hypotheses."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/pan_commonPropsScript.sml",
+    "hol_name": "domsub_commutes_fupdate",
+    "lean_path": "Flapjack/Pancake/Semantics/PanCommonProps.lean",
+    "lean_name": "domsub_commutes_fupdate",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.16.20): HOL domsub_commutes_fupdate (pan_commonPropsScript.sml:319) states `~MEM x xs /\\ LENGTH xs = LENGTH ys ==> (fm |++ ZIP (xs,ys)) \\\\ x = (fm \\\\ x) |++ ZIP (xs,ys)`. Lean renders `\\\\` as the reviewed Boolean-BEq FDOMSUB, `|++` as FUPDATE_LIST, `~MEM` as list non-membership and LENGTH as length; the proof reuses the untagged analogue FDOMSUB_FUPDATE_LIST_commutes (Flapjack/FiniteMap/Basic.lean:244). No extra hypotheses or side conditions."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/pan_commonPropsScript.sml",
+    "hol_name": "map_the_some_cancel",
+    "lean_path": "Flapjack/Pancake/Semantics/PanCommonProps.lean",
+    "lean_name": "mapTheSomeCancelHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.16.21): HOL `map_the_some_cancel` (`pan_commonPropsScript.sml:332`) states `!xs. MAP (THE \u2218 SOME) xs = xs`; the Lean port `mapTheSomeCancelHOL` renders the partial HOL `THE` applied to `SOME x` as the total `Option.get` with its `isSome` proof, so the statement is clause-for-clause over the standard list carrier with no extra hypothesis."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmScript.sml",
+    "hol_name": "is_load_def",
+    "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
+    "lean_name": "asmIsLoad",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.16.22): exact clause-for-clause port of HOL asmScript.sml:324-330 is_load_def (Load/Load8/Load16/Load32 = T, all others F) over the reviewed exact asm carrier HolMemop (alias of Flapjack.WordMemOp, tagged 'memop'), monomorphic and width-independent with no side conditions."
+  },
+  {
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "FLAT_REPLICATE_NIL",
+    "lean_path": "Flapjack/Misc/FlatReplicate.lean",
+    "lean_name": "flatReplicateNilHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.16.23): HOL miscScript.sml:2120 `!n. FLAT (REPLICATE n []) = []` matches clause-for-clause; HOL FLAT=List.flatten, REPLICATE=List.replicate, element type implicit as in HOL. Direct dependency of pan_to_crepProofScript.sml pc_compile_correct (12 uses)."
   }
 ]
