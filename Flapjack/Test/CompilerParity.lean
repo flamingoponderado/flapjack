@@ -314,6 +314,7 @@ import Flapjack.Test.StackToLabFlattenAppParity
 import Flapjack.Test.AsmConfigChecksParity
 import Flapjack.Test.PanSemDecCallErrorParity
 import Flapjack.Test.PanObservationalSemanticsParity
+import Flapjack.Test.PanSemanticsObservationsParity
 import Flapjack.Test.ParserTryDefaultParity
 import Flapjack.Test.ParserExtractSumParity
 import Flapjack.Test.ParserMkleafParity
@@ -1010,6 +1011,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.AsmConfigChecksParity.runChecks,
     Flapjack.Test.PanSemDecCallErrorParity.runChecks,
     Flapjack.Test.PanObservationalSemanticsParity.runChecks,
+    Flapjack.Test.PanSemanticsObservationsParity.runChecks,
     Flapjack.Test.PanHHandleCallRetParity.runChecks,
     Flapjack.Test.PanMrecParity.runChecks,
     Flapjack.Test.PanHProgDecParity.runChecks,
