@@ -13183,5 +13183,38 @@
       "CrepSemHOLState.code"
     ],
     "reviewer": "flapjack-luna-b source comparison (flapjack-4ac.5.41.6, 2026-09-27): HOL pan_to_crepProofScript.sml:2355-2458 has the explicit rshape quantifier, all thirteen premises in their source order, and the four state_rel/code_rel/excp_rel/locals_rel conclusions in their source order. The Lean theorem preserves the same hypotheses and output shapes over the reviewed ValueHOL, ShapeHOL, ProgHOL, CrepProgHOL, MlS, and positive-width BitVec carriers. In particular hpreLocals is exactly the PRE-call premise locals_rel ctxt s.locals t.locals (HOL 2355-2364); the final conclusion is the distinct POST-call relation locals_rel (ctxt_fc ...) (slc vshs args) (tlc ns args) (HOL 2374-2378). The proof uses the reviewed state/local conjunct helpers and direct code/exception relation unfoldings. The named finite-map carrier translations are exactly the nine listed fields and have same-module canonical roundtrip witnesses; no evaluator/result premise or post-state relation is assumed."
+  },
+  {
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "read_bytearray_def",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopSem.lean",
+    "lean_name": "readBytearrayWordHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Flapjack source comparison (2026-09-27; flapjack-4ac.5.16.5.4): HOL miscScript.sml:113-121 gives the zero equation SOME [] and successor equation that reads get_byte a, recursively reads at a+1, and propagates either NONE. Lean has the same two equations, with independent positive BitVec widths for HOL address words and returned byte words; [NeZero width] and [NeZero byteWidth] encode HOL's positive dimindex for both word types. Direct evaluator tests replay the HOL read-byte rows in pan_sem_state_eval_probe.out using the byteWidth=8 instance."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "mem_load_byte_def",
+    "lean_path": "Flapjack/Pancake/Semantics/PanSemStateEval.lean",
+    "lean_name": "panMemLoadByteWord8HOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Flapjack source comparison (2026-09-27; flapjack-4ac.5.16.5.4): HOL panSemScript.sml:94-99 looks up m(byte_align w), accepts only Word v, tests byte_align w IN dm, and returns SOME(get_byte w v be) or NONE. Lean matches those cases over the tagged HolWordLab word_loc carrier, total memory and Prop/DecidablePred address set; byte_align and get_byte are rendered by panByteAlignHOL and panGetByteWord8HOL, and the returned HOL word8 is BitVec 8. Direct HOL rows mem_load_byte_def_little_first/little_last/big_first/missing are replayed by exact-carrier guards in PanSemStateEvalParity.lean."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "mem_store_byte_def",
+    "lean_path": "Flapjack/Pancake/Semantics/PanSemStateEval.lean",
+    "lean_name": "panMemStoreByteWord8HOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Flapjack source comparison (2026-09-27; flapjack-4ac.5.16.5.4): HOL panSemScript.sml:300-307 looks up m(byte_align w), accepts Word v, tests the same aligned address in dm, and returns SOME((byte_align w =+ Word(set_byte w b v be))m) or NONE. Lean preserves those cases and pointwise functional update over HolWordLab; b is exactly BitVec 8 and set_byte is rendered by panSetByteHOL. Direct HOL store_byte_hit_some/store_byte_out observations are replayed by exact-carrier guards in PanSemStateEvalParity.lean."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "write_bytearray_def",
+    "hol_line": 309,
+    "lean_path": "Flapjack/Pancake/Semantics/PanSemStateEval.lean",
+    "lean_name": "panWriteBytearrayWord8HOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Flapjack source comparison (2026-09-27; flapjack-4ac.5.16.5.4): HOL panSemScript.sml:309-316 has [] -> m and a head/tail equation that recursively writes the tail first, stores the head byte into that memory, and returns the original outer m on store failure. Lean has the same recursion over List (BitVec 8), matching HOL word8 list, and invokes the exact mem_store_byte_def port. Direct HOL write_bytearray_changed/write_bytearray_other_unchanged/write_bytearray_out_of_domain observations are replayed by exact-carrier guards in PanSemStateEvalParity.lean."
   }
 ]
