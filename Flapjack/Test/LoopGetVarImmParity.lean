@@ -97,12 +97,11 @@ example (state : LoopMachineState (BitVec 64) Nat) (ck : Nat) :
     getVarImmHOL (.imm 5) { state with clock := ck } = getVarImmHOL (.imm 5) state :=
   getVarImmHOL_add_clock_eq (.imm 5) state ck
 
-/-! ## `LoopSemStateFiniteExact` carrier parity (untagged)
+/-! ## `LoopSemStateFiniteExact` carrier parity
 
-The `get_var_imm_def` rendering (`LoopSemStateFiniteExact.getVarImm`) is
-untagged (bead `flapjack-jlj3.1`: HOL `locals` is `sptree$num_map`, not `|->`)
-but reproduces the same HOL-EVAL oracle rows on the finite-support state
-carrier. -/
+The tagged `get_var_imm_def` rendering (`LoopSemStateFiniteExact.getVarImm`)
+uses the exact `Spt` carrier for HOL `locals : num_map` and reproduces the
+HOL-EVAL oracle rows below. -/
 
 private def exactVarImmFfi : HolFfiState Unit :=
   { oracle := fun _ _ _ _ => .final .failed
@@ -110,10 +109,9 @@ private def exactVarImmFfi : HolFfiState Unit :=
     ioEvents := [] }
 
 private def exactVarImmState : LoopSemStateFiniteExact 32 Unit where
-  locals := (HolFiniteMapExact.empty.updateEq (1, WordLocW.word 5)).updateEq
-    (3, WordLocW.loc 9 0)
+  locals := sptInsert 3 (.loc 9 0) (sptInsert 1 (.word 5) Spt.ln)
   globals := HolFiniteMapExact.empty
-  code := HolFiniteMapExact.empty
+  code := Spt.ln
   memory := fun _ => .word 0
   mdomain := fun _ => true
   shMdomain := fun _ => true
@@ -123,10 +121,14 @@ private def exactVarImmState : LoopSemStateFiniteExact 32 Unit where
   baseAddr := 100
   topAddr := 200
 
-example : LoopSemStateFiniteExact.getVarImm (.reg 1) exactVarImmState = some (.word 5) := by decide
-example : LoopSemStateFiniteExact.getVarImm (.reg 2) exactVarImmState = none := by decide
-example : LoopSemStateFiniteExact.getVarImm (.imm 7) exactVarImmState = some (.word 7) := by decide
-example : LoopSemStateFiniteExact.getVarImm (.reg 3) exactVarImmState = some (.loc 9 0) := by decide
+example : LoopSemStateFiniteExact.getVarImm (.reg 1) exactVarImmState = some (.word 5) := by
+  simp [exactVarImmState, LoopSemStateFiniteExact.getVarImm, sptLookup, sptInsert]
+example : LoopSemStateFiniteExact.getVarImm (.reg 2) exactVarImmState = none := by
+  simp [exactVarImmState, LoopSemStateFiniteExact.getVarImm, sptLookup, sptInsert]
+example : LoopSemStateFiniteExact.getVarImm (.imm 7) exactVarImmState = some (.word 7) := by
+  simp [LoopSemStateFiniteExact.getVarImm]
+example : LoopSemStateFiniteExact.getVarImm (.reg 3) exactVarImmState = some (.loc 9 0) := by
+  simp [exactVarImmState, LoopSemStateFiniteExact.getVarImm, sptLookup, sptInsert]
 
 #guard LoopSemStateFiniteExact.getVarImm (.reg 1) exactVarImmState == some (.word 5)
 #guard LoopSemStateFiniteExact.getVarImm (.reg 2) exactVarImmState == none

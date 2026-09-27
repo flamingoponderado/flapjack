@@ -2,6 +2,7 @@ import Flapjack.Pancake.Semantics.LoopSemState
 import Flapjack.Pancake.Semantics.LoopProps
 import Flapjack.Pancake.LoopLang
 import Flapjack.Pancake.Semantics.CrepSem.HOLState
+import Flapjack.Misc.Sptree
 import Flapjack.FfiBridge
 
 /-!
@@ -25,19 +26,17 @@ state =
    ; top_addr    : 'a word |>
 ```
 
-`LoopSemStateFiniteExact` is the source-shaped carrier whose three HOL map
-fields (`locals`, `globals`, `code`) use the reviewed canonical
-`HolFiniteMapExact` translation, whose `code` entries use the exact
-`HolLoopProg` carrier, and whose `ffi` field uses the exact `HolFfiState`.  The
-word dimension is the nonzero `BitVec width` model; `memory` is total and the
-domains are Lean sets, both matching HOL.  **The structure is deliberately
-UNTAGGED.**  HOL `locals` and `code` are `sptree$num_map`, NOT `|->` finite
-maps, so the `fmap_as_finite_support` qualifier (which records only the
-reviewed `|->` -> `HolFiniteMapExact` translation) must not name them.  Only
-`globals` is a genuine `5 word |-> 'a word_loc`.  A faithful port replaces
-`locals`/`code` with the exact `sptree`/`num_map` carrier
-(`Flapjack/Misc/Sptree.lean`); that is tracked on `flapjack-jlj3.1` (with the
-production bridge on `flapjack-pxn.18.5.17.1`).
+`LoopSemStateFiniteExact` is the source-shaped carrier.  HOL `locals` and
+`code` are `sptree$num_map` (`'a word_loc spt` and
+`(num list # 'a loopLang$prog) spt`), rendered by the exact `Spt` datatype
+(`Flapjack/Misc/Sptree.lean`, whose `num_set` abbreviation is the tagged exact
+port of HOL `misc$num_set`); `globals : 5 word |-> 'a word_loc` is the only
+`|->` finite map and uses the reviewed canonical `HolFiniteMapExact`
+translation, recorded by the `fmap_as_finite_support := [globals]` qualifier on
+the tagged `state`.  `code` entries use the exact `HolLoopProg` carrier and the
+`ffi` field uses the exact `HolFfiState`.  The word dimension is the nonzero
+`BitVec width` model; `memory` is total and the domains are Lean sets, both
+matching HOL.
 
 The production `LoopMachineState` bridge and the `get_var_imm`/`get_vars`
 carrier-level statements live in `LoopSemState.lean`; the bridge to the
@@ -47,68 +46,68 @@ production state over this exact carrier is tracked separately on
 
 namespace Flapjack
 
-/-- Broad (unrestricted) counterpart of `LoopSemStateFiniteExact`: the three map
-    fields are plain lookup functions, a strict superset of HOL's finite maps.
-    It exists only to state the canonical finite-map translation witness
-    `holFmapAsFiniteSupportWitness`; `FiniteSupport` cuts out the HOL-image
-    subcarrier. -/
+/-- Broad (unrestricted) counterpart of `LoopSemStateFiniteExact`: `globals` is
+    a plain lookup function, a strict superset of HOL's `|->` finite map.  The
+    `locals`/`code` `sptree` maps are already concrete/finite and are shared
+    verbatim.  It exists only to state the canonical finite-map translation
+    witness `holFmapAsFiniteSupportWitness`; `FiniteSupport` cuts out the
+    HOL-image subcarrier. -/
 structure LoopSemStateBroad (width : Nat) [NeZero width] (F : Type) where
-  locals : Nat → Option (WordLocW width)
+  locals : Spt (WordLocW width)
   globals : BitVec 5 → Option (WordLocW width)
   memory : BitVec width → WordLocW width
   mdomain : BitVec width → Bool
   shMdomain : BitVec width → Bool
   clock : Nat
-  code : Nat → Option (List Nat × HolLoopProg width)
+  code : Spt (List Nat × HolLoopProg width)
   be : Bool
   ffi : HolFfiState F
   baseAddr : BitVec width
   topAddr : BitVec width
 
-/-- Field-wise finite support of `LoopSemStateBroad`, matching HOL's `|->`
-    and `num_map` fields. -/
+/-- Finite support of the `globals` field of `LoopSemStateBroad`, matching
+    HOL's `|->` view. -/
 def LoopSemStateBroad.FiniteSupport {width : Nat} [NeZero width] {F : Type}
     (state : LoopSemStateBroad width F) : Prop :=
-  (∃ keys : List Nat, ∀ key, state.locals key ≠ none → key ∈ keys) ∧
-  (∃ keys : List (BitVec 5), ∀ key, state.globals key ≠ none → key ∈ keys) ∧
-  (∃ keys : List Nat, ∀ key, state.code key ≠ none → key ∈ keys)
+  ∃ keys : List (BitVec 5), ∀ key, state.globals key ≠ none → key ∈ keys
 
 /-- Source-shaped rendering of HOL `loopSem$state`
-    (`loopSemScript.sml:13-27`) over the reviewed canonical finite-map,
-    loop-program, and FFI carriers.
-
-    FLAPJACK-SPECIFIC provisional rendering (no `@[hol]` tag), withdrawn
-    2026-09-27 (bead `flapjack-jlj3.1`, PR #1166 review item 3).  HOL's
-    `locals : ('a word_loc) num_map` and `code : (num list # 'a loopLang$prog)
-    num_map` are `sptree$num_map`, not `|->` finite maps, so the
-    `fmap_as_finite_support` qualifier would overclaim the reviewed `|->`
-    translation.  Only `globals : 5 word |-> 'a word_loc` is a genuine
-    finite map.  A faithful port replaces `locals`/`code` with the exact
-    `sptree`/`num_map` carrier (`Flapjack/Misc/Sptree.lean`); tracked on
-    `flapjack-jlj3.1`. -/
+    (`loopSemScript.sml:13-27`): `locals`/`code` are `sptree$num_map` over the
+    exact `Spt` carrier; `globals` is the only `|->` finite map and carries the
+    `fmap_as_finite_support := [globals]` qualifier.  Every HOL `'a word`
+    occurrence (the `memory`/`mdomain`/`sh_mdomain`/`base_addr`/`top_addr`
+    fields and the `WordLocW` payloads) is rendered as the positive
+    `BitVec width` with the `[NeZero width]` discharge of
+    `dimindex (:α) ≥ 1`, and the FFI host is the universe-0 Lean type `F`, so
+    the `state` tag also carries `(words_as_type_indexed_bitvec)` under the
+    combined status.  The fixed `BitVec 5` globals key is HOL's `5 word`,
+    whose dimension is a literal rather than `dimindex (:α)`. -/
+@[hol "cakeml/pancake/semantics/loopSemScript.sml" "state"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 structure LoopSemStateFiniteExact (width : Nat) [NeZero width] (F : Type) where
-  locals : HolFiniteMapExact Nat (WordLocW width)
+  locals : Spt (WordLocW width)
   globals : HolFiniteMapExact (BitVec 5) (WordLocW width)
   memory : BitVec width → WordLocW width
   mdomain : BitVec width → Bool
   shMdomain : BitVec width → Bool
   clock : Nat
-  code : HolFiniteMapExact Nat (List Nat × HolLoopProg width)
+  code : Spt (List Nat × HolLoopProg width)
   be : Bool
   ffi : HolFfiState F
   baseAddr : BitVec width
   topAddr : BitVec width
 
-/-- Forget the finite-support witnesses, reading every map through `.lookup`. -/
+/-- Forget the finite-support witness of `globals`, reading it through
+    `.lookup`. -/
 def LoopSemStateFiniteExact.toBroad {width : Nat} [NeZero width] {F : Type}
     (state : LoopSemStateFiniteExact width F) : LoopSemStateBroad width F where
-  locals := state.locals.lookup
+  locals := state.locals
   globals := state.globals.lookup
   memory := state.memory
   mdomain := state.mdomain
   shMdomain := state.shMdomain
   clock := state.clock
-  code := state.code.lookup
+  code := state.code
   be := state.be
   ffi := state.ffi
   baseAddr := state.baseAddr
@@ -118,7 +117,7 @@ def LoopSemStateFiniteExact.toBroad {width : Nat} [NeZero width] {F : Type}
 theorem LoopSemStateFiniteExact.toBroad_finiteSupport {width : Nat} [NeZero width]
     {F : Type} (state : LoopSemStateFiniteExact width F) :
     state.toBroad.FiniteSupport :=
-  ⟨state.locals.finiteSupport, state.globals.finiteSupport, state.code.finiteSupport⟩
+  state.globals.finiteSupport
 
 /-- Rebuild the finite-map carrier from a broad state together with a
     finite-support proof; the inverse of `toBroad` on the finite-support
@@ -126,13 +125,13 @@ theorem LoopSemStateFiniteExact.toBroad_finiteSupport {width : Nat} [NeZero widt
 def LoopSemStateBroad.ofBroad {width : Nat} [NeZero width] {F : Type}
     (state : LoopSemStateBroad width F) (h : state.FiniteSupport) :
     LoopSemStateFiniteExact width F where
-  locals := { lookup := state.locals, finiteSupport := h.1 }
-  globals := { lookup := state.globals, finiteSupport := h.2.1 }
+  locals := state.locals
+  globals := { lookup := state.globals, finiteSupport := h }
   memory := state.memory
   mdomain := state.mdomain
   shMdomain := state.shMdomain
   clock := state.clock
-  code := { lookup := state.code, finiteSupport := h.2.2 }
+  code := state.code
   be := state.be
   ffi := state.ffi
   baseAddr := state.baseAddr
@@ -171,25 +170,27 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {F : Type} :
     (get_var_imm (Imm w) s = SOME(Word w))
     ```
 
-    FLAPJACK-SPECIFIC provisional rendering (no `@[hol]` tag), withdrawn
-    2026-09-27 (bead `flapjack-jlj3.1`, PR #1166 review item 3).  The
-    statement reads `LoopSemStateFiniteExact.locals` through the canonical
-    `HolFiniteMapExact` translation, but HOL `locals` is `sptree$num_map`, not
-    `|->`, so the `fmap_as_finite_support` qualifier would overclaim the
-    reviewed translation.  The Lean declaration is operand-first as in HOL and
-    returns the exact `WordLocW` carrier (tagged `word_loc`) with no extra
-    hypotheses beyond `[NeZero width]`; the remaining gap is the `num_map`
-    carrier, tracked on `flapjack-jlj3.1`. -/
+    Exact HOL port: the Lean statement is operand-first as in HOL and reads the
+    `locals` `sptree$num_map` through the exact `Spt` carrier
+    (`sptLookup`, the tagged `Flapjack/Misc/Sptree.lean` rendering of
+    `sptree$lookup`).  It returns the exact `WordLocW` carrier (tagged
+    `word_loc`) with no extra hypotheses beyond `[NeZero width]`.  No
+    `fmap_as_finite_support` qualifier applies: `locals` is a `num_map`, not a
+    `|->` field.  The only carrier translation is HOL's type-indexed `'a word`
+    (the `RegImm`, `WordLocW` and `BitVec width` dimensions) to the positive
+    `BitVec width`, so the tag carries `(words_as_type_indexed_bitvec)`. -/
+@[hol "cakeml/pancake/semantics/loopSemScript.sml" "get_var_imm_def"
+  (words_as_type_indexed_bitvec)]
 def getVarImm {width : Nat} [NeZero width] {F : Type}
     (operand : RegImm (BitVec width)) (state : LoopSemStateFiniteExact width F) :
     Option (WordLocW width) :=
   match operand with
-  | .reg name => state.locals.lookup name
+  | .reg name => sptLookup name state.locals
   | .imm value => some (.word value)
 
 @[simp] theorem getVarImm_reg {width : Nat} [NeZero width] {F : Type}
     (state : LoopSemStateFiniteExact width F) (name : Nat) :
-    getVarImm (.reg name) state = state.locals.lookup name := rfl
+    getVarImm (.reg name) state = sptLookup name state.locals := rfl
 
 @[simp] theorem getVarImm_imm {width : Nat} [NeZero width] {F : Type}
     (state : LoopSemStateFiniteExact width F) (value : BitVec width) :
@@ -200,7 +201,7 @@ def getVars {width : Nat} [NeZero width] {F : Type} :
     List Nat → LoopSemStateFiniteExact width F → Option (List (WordLocW width))
   | [], _ => some []
   | name :: names, state =>
-      (state.locals.lookup name).bind
+      (sptLookup name state.locals).bind
         (fun value => (getVars names state).map (fun values => value :: values))
 
 @[simp] theorem getVars_nil {width : Nat} [NeZero width] {F : Type}
@@ -210,7 +211,7 @@ def getVars {width : Nat} [NeZero width] {F : Type} :
 theorem getVars_cons {width : Nat} [NeZero width] {F : Type}
     (name : Nat) (names : List Nat) (state : LoopSemStateFiniteExact width F) :
     getVars (name :: names) state =
-      (state.locals.lookup name).bind
+      (sptLookup name state.locals).bind
         (fun value => (getVars names state).map (fun values => value :: values)) :=
   rfl
 
@@ -227,7 +228,7 @@ end LoopSemStateFiniteExact
 def LoopSemStateFiniteExact.prodRel {width : Nat} [NeZero width] {F : Type}
     (state : LoopSemStateFiniteExact width F)
     (machine : LoopMachineState (BitVec width) F) : Prop :=
-  (∀ name, machine.locals name = (state.locals.lookup name).map loopValueOfWordLocW) ∧
+  (∀ name, machine.locals name = (sptLookup name state.locals).map loopValueOfWordLocW) ∧
   (∀ global, machine.globals global = (state.globals.lookup global).map loopValueOfWordLocW) ∧
   (∀ address, machine.memory address = some (loopValueOfWordLocW (state.memory address))) ∧
   machine.mdomain = state.mdomain ∧
@@ -238,7 +239,7 @@ def LoopSemStateFiniteExact.prodRel {width : Nat} [NeZero width] {F : Type}
   machine.baseAddr = state.baseAddr ∧
   machine.topAddr = state.topAddr ∧
   (∀ entry, entry ∈ machine.code →
-    ∃ program, state.code.lookup entry.1 = some (entry.2.1, program) ∧
+    ∃ program, sptLookup entry.1 state.code = some (entry.2.1, program) ∧
       loopProgExecRel entry.2.2 program)
 
 /-- Register reads through `get_var_imm` on the production state agree with the
@@ -265,7 +266,7 @@ theorem LoopSemStateFiniteExact.getVars_map_eq_of_prodRel {width : Nat} [NeZero 
   | nil => rfl
   | cons name names ih =>
       rw [LoopSemStateFiniteExact.getVars_cons, Flapjack.getVars, h.1 name]
-      cases hlookup : state.locals.lookup name with
+      cases hlookup : sptLookup name state.locals with
       | none => rfl
       | some value =>
           simp only [Option.bind_some, Option.map_some, Option.map_map]
