@@ -1657,10 +1657,13 @@ def evaluateHOLFiniteStateWithDeciders {width : Nat} {σ : Type} [NeZero width]
   | some pair => (pair.1, pair.2.state)
   | none => (none, state)
 
-/-- Exact finite-support port of HOL `panSem$evaluate_def`
-    (`panSemScript.sml:780`; the recursive clauses are declared at 556-761) over the matching `ProgHOL` and
-    `PanSemStateFiniteExact` carriers. It preserves the HOL result-option ×
-    state pair and all 21 constructor clauses. `FiniteEvalContext` threads
+/-- Flapjack-specific finite-support evaluator aligned with HOL
+    `panSem$evaluate_def` (`panSemScript.sml:556-761`, rewritten as a theorem at
+    line 780). It preserves the result-option × state pair, but this Lean
+    declaration is a function definition, whereas HOL's cited declaration is
+    a conjunction of constructor equations. Those equations still need an
+    exact theorem port (tracked by `flapjack-qj5`); this wrapper must not carry
+    the HOL theorem's tag. `FiniteEvalContext` threads
     Lean's operational `DecidablePred` evidence through local/state updates;
     this wrapper chooses that evidence classically, so it adds no logical
     premise. The internal evaluator's outer assembly marker is proved always
@@ -1677,8 +1680,6 @@ def evaluateHOLFiniteStateWithDeciders {width : Nat} {σ : Type} [NeZero width]
     shared-memory errors, and finite-map updates. The finite-to-broad
     projection is independently kernel-checked; the evaluator is not routed
     through the production compiler. -/
-@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
 noncomputable def evaluateHOLFiniteState {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) (program : ProgHOL width) :
     Option (PanSemResultExact width) × PanSemStateFiniteExact width σ := by
