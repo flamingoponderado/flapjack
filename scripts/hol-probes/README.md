@@ -558,3 +558,12 @@ visible. The exact Lean input carrier and regressions are in
 `Flapjack.Pancake.CrepInline.Pass` and
 `Flapjack.Test.CrepInlineFmapParity`. Refresh it with
 `HOL_PROBE_ONLY=crep_inline_alist_map_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`eval_nested_decs_seq_res_var_eq_probe.out` records direct HOL EVAL cases for
+`pan_to_crepProofScript.sml:596-620`: nested declaration evaluation restores
+both previously bound and absent locals, unequal name/expression lengths
+produce the HOL `Skip` case, and the four theorem premises are checked with
+valid and rejected inputs. The exact evaluator theorem and Lean cases are in
+`Flapjack.Pancake.Proofs.PanToCrep.EvaluateNestedDecs` and
+`Flapjack.Test.CrepNestedDecsSeqResVarEqParity`. Refresh it with
+`HOL_PROBE_ONLY=eval_nested_decs_seq_res_var_eq_probeScript.sml scripts/hol-probes/regenerate.sh`.

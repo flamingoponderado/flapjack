@@ -12169,10 +12169,75 @@
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
     "hol_name": "eval_nested_decs_seq_res_var_eq",
-    "lean_path": "Flapjack/Pancake/Semantics/CrepSem/Eval.lean",
-    "lean_name": "evalCrepHolExp",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-luna-b (source comparison, 2026-09-26; bead flapjack-4ac.5.19; HOL variables es, ns, t, ev, p are implicitly universally quantified. Premises are MAP (eval t) es = MAP SOME ev; LENGTH ns = LENGTH es; distinct_lists ns (FLAT (MAP var_cexp es)); ALL_DISTINCT ns. Conclusion is evaluate (nested_decs ns es p,t) equal to the let-bound evaluate (p,t with locals := t.locals |++ ZIP (ns,ev)), with result locals restored by FOLDL res_var over ZIP (ns, MAP (FLOOKUP t.locals) ns). nestedDecsHOL is syntax only. evalCrepHolExp has production CrepExp/CrepHolState carriers and evalCrepClockProg covers only restricted CrepClockProg/CrepHolState; no complete evaluator over CrepProgHOL/CrepExpHOL/CrepSemHOLState is available. These evaluators cannot express the full theorem, so no @[hol] tag is claimed. Faithful replacement flapjack-4ac.5.19.1 depends on flapjack-4ac.5.82 and flapjack-pxn.18.3.5.8.8."
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateNestedDecs.lean",
+    "lean_name": "evalNestedDecsSeqResVarEqCrepHOL",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["locals", "globals", "code"],
+    "reviewer": "flapjack-luna-c (source comparison, 2026-09-27; bead flapjack-4ac.5.19.1; pan_to_crepProofScript.sml:596-620). HOL universally quantifies es, ns, t, ev, p. The four premises are exactly MAP (eval t) es = MAP SOME ev; LENGTH ns = LENGTH es; distinct_lists ns (FLAT (MAP var_cexp es)); ALL_DISTINCT ns. The conclusion is the complete evaluate equation for nested_decs ns es p: evaluate the body from t with locals updated by FUPDATE_LIST (ZIP (ns,ev)), then restore result locals by FOLDL res_var over ZIP (ns, MAP (FLOOKUP t.locals) ns), preserving result and every other state field. Lean keeps the same four propositions and conclusion shape over CrepExpHOL/CrepProgHOL and the full clocked CrepSemHOLState evaluator; its classical default wrappers only select Decidable procedures for HOL total set predicates and add no theorem premises. nestedDecsUpdatedInput_eq_updateListEq identifies the induction helper's recursive setVar sequence with HolFiniteMapExact.updateListEq on the same ZIP. Source review checked nested_decs_def's unequal-length Skip cases; eval's initial-state expression premise; the declaration-name/expression-variable disjointness used to preserve initializer values after earlier bindings; ALL_DISTINCT used to commute restoration updates; and res_var's absent/present old-local behavior. The fmap_as_finite_support qualifier records only the locals/globals/code HOL |-> fields as HolFiniteMapExact; the same-module holFmapAsFiniteSupportWitness establishes the owning CrepSemHOLState roundtrip with CrepSemBroadState. Direct HOL EVAL cases for old-local present/absent restoration, unequal lengths, and premise rejections are in scripts/hol-probes/eval_nested_decs_seq_res_var_eq_probe.out and are replayed by Flapjack.Test.CrepNestedDecsSeqResVarEqParity. This proof-side port does not change the executed compiler path."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateNestedDecs.lean",
+    "lean_name": "resVarEqCommutesAtDistinctKeys",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only finite-map algebra helper for the induction proof; HOL has no separate declaration commuting two res_var updates at distinct keys."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateNestedDecs.lean",
+    "lean_name": "foldlResVarEqCommutesAtFreshKey",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only fold consequence of the map algebra helper; HOL has no separate declaration commuting one restoration past a fresh-key fold."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateNestedDecs.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module carrier witness required by the fmap_as_finite_support qualifier; it proves the CrepSemHOLState/CrepSemBroadState roundtrip, not a separate HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateNestedDecs.lean",
+    "lean_name": "nestedDecsMemDecNil",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only empty-list equation for transporting Lean's operational memory Decidable argument; HOL set membership has no such explicit parameter."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateNestedDecs.lean",
+    "lean_name": "nestedDecsShMemDecNil",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only empty-list equation for transporting Lean's operational shared-memory Decidable argument; HOL set membership has no such explicit parameter."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateNestedDecs.lean",
+    "lean_name": "evalCrepSemHOLProgDecAfterSetVar",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only evaluator equation exposing Lean's Dec case with the explicit domain-decider transport; it is not a separate HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateNestedDecs.lean",
+    "lean_name": "evalNestedDecsSeqResVarEqCrepHOLWithDeciders",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only proof helper whose explicit DecidablePred parameters are operational Lean evaluator inputs; the public tagged theorem hides them behind classical wrappers, and HOL has no corresponding explicit arguments."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateNestedDecs.lean",
+    "lean_name": "nestedDecsUpdatedInput_eq_updateListEq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only bridge equating the induction helper's recursive setVar sequence with the HOL-shaped FUPDATE_LIST ZIP input; HOL uses that input directly and has no separate bridge declaration."
   },
   {
     "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
