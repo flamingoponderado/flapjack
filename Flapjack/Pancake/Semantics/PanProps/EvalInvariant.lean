@@ -3309,6 +3309,42 @@ theorem evaluateInvariantsSkipCaseHOLFinite {width : Nat} {σ : Type} [NeZero wi
 end Flapjack
 
 
+/-! # The `Break` case of HOL `evaluate_invariants`
+
+HOL evaluates `Break` to `(SOME Break, state)`. This induction leaf keeps the
+source theorem's result premise and all eight field conclusions. The recursive
+cases and assembling theorem remain open in bead `flapjack-4ac.4.61`. -/
+
+namespace Flapjack
+
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_invariants" 1150
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateInvariantsBreakCaseHOLFinite {width : Nat} {σ : Type} [NeZero width] :
+    ∀ (state : PanPropsEvalStateFiniteExact width σ)
+      (result : Option (PanSemResultExact width))
+      (post : PanPropsEvalStateFiniteExact width σ),
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state
+          (.break : ProgHOL width) = (result, post) →
+      post.memaddrs = state.memaddrs ∧
+      post.shMemaddrs = state.shMemaddrs ∧
+      post.be = state.be ∧
+      post.eshapes = state.eshapes ∧
+      post.baseAddr = state.baseAddr ∧
+      post.structs = state.structs ∧
+      post.code = state.code ∧
+      post.ffi.oracle = state.ffi.oracle := by
+  classical
+  intro state result post hRun
+  simp only [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair,
+    PanSemStateFiniteExact.evaluateHOLFiniteState_break,
+    PanPropsEvalStateFiniteExact.ofPanSemFinite_toPanSemFinite] at hRun
+  rcases Prod.mk.inj hRun with ⟨rfl, rfl⟩
+  simp
+
+end Flapjack
+
+
 /-!
 # The `Dec` induction case of HOL `evaluate_clock_sub`
 
