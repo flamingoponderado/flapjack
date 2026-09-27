@@ -120,6 +120,20 @@ def decEvalGuard : Bool :=
   (run (.dec 1 (.const (BitVec.ofNat 64 9)) .skip : CrepProgHOL 64)).2.locals.lookup 0 ==
     some (HolWordLab.word (BitVec.ofNat 64 7))
 
+/-- HOL `dec_shadow_eval`: `res_var` restores the pre-existing local value. -/
+def decShadowGuard : Bool :=
+  resultIsNormal (run (.dec 0 (.const (BitVec.ofNat 64 9)) .skip : CrepProgHOL 64)).1 &&
+  (run (.dec 0 (.const (BitVec.ofNat 64 9)) .skip : CrepProgHOL 64)).2.locals.lookup 0 ==
+    some (HolWordLab.word (BitVec.ofNat 64 7))
+
+/-- HOL `dec_error_eval`: a failed initializer preserves the pre-state. -/
+def decErrorGuard : Bool :=
+  resultIsError (run (.dec 0 (.var 9) .skip : CrepProgHOL 64)).1 &&
+  (run (.dec 0 (.var 9) .skip : CrepProgHOL 64)).2.clock == 5 &&
+  (run (.dec 0 (.var 9) .skip : CrepProgHOL 64)).2.locals.lookup 0 ==
+    some (HolWordLab.word (BitVec.ofNat 64 7)) &&
+  (run (.dec 0 (.var 9) .skip : CrepProgHOL 64)).2.locals.lookup 1 == none
+
 /-- HOL `If` true: a nonzero `Word` condition selects the then-branch. -/
 def ifTrueGuard : Bool :=
   resultIsBreak 4
@@ -161,7 +175,7 @@ def tickEvalGuard : Bool :=
 
 def holOracleRowsMatch : Bool :=
   skipEvalGuard && breakEvalGuard && continueEvalGuard && seqEvalGuard &&
-  decEvalGuard && ifTrueGuard && ifFalseGuard && whileFalseGuard &&
+  decEvalGuard && decShadowGuard && decErrorGuard && ifTrueGuard && ifFalseGuard && whileFalseGuard &&
   whileTimeoutGuard && raiseEvalGuard && returnEvalGuard && tickEvalGuard
 
 #guard holOracleRowsMatch

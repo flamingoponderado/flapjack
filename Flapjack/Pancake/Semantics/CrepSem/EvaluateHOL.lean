@@ -783,9 +783,23 @@ closely as the Lean definition allows. The carrier is the finite-support
 `CrepSemHOLState`; the raw `CrepHolState` is not used. No `@[hol]` tag is
 attached. -/
 
-/-- HOL `evaluate (Dec v e prog, s)` (`crepSemScript.sml:242-249`): evaluate the
-    initialiser; on failure `Error`, otherwise bind `v` and apply `res_var`.
-    Finite-support `CrepSemHOLState` counterpart; untagged. -/
+/-- HOL `evaluate (Dec v e prog, s)` (`crepSemScript.sml:242-249`), source-reviewed
+    as one clause only. `crepExactEvalExp` delegates to the tagged
+    `eval_def` port (`crepSemScript.sml:90-137`): a failed initializer returns
+    `(SOME Error, s)` unchanged. On success, tagged `set_var_def`
+    (`crepSemScript.sml:55-57`) inserts `(v, value)` before recursively
+    evaluating the body. The result state then uses tagged `res_var_def`
+    (`crepSemScript.sml:163-167`) with the *pre-state*
+    `FLOOKUP s.locals v`: `resVarEq` removes the newly bound key when the old
+    lookup was `NONE`, or restores the old value when it was `SOME old`. Its
+    `HolFiniteMapExact` lookup equations reduce to `FDOMSUB_HOL` and
+    `FUPDATE_HOL`, so the finite-support representation preserves both cases.
+    `name : Nat` matches HOL `varname = num`; only locals change, while the
+    body's result and other post-state fields are forwarded. Direct HOL rows
+    `dec_new_local_eval`, `dec_shadow_eval`, and `dec_error_eval` are tracked
+    in `CrepSemTotalEvaluateHOLParity`. This is a local Dec-clause review; the
+    enclosing evaluator remains untagged pending other clauses and whole-
+    statement/carrier review. -/
 @[simp] theorem evalCrepSemHOLProg_dec {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ)
     (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
