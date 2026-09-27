@@ -750,6 +750,35 @@ example {width : Nat} [NeZero width]
   (compileExpValRelHOL_shift state context targetState operator left right value expressions shape
     hleft hright heval hlocalised hstate hcode hlocals hcompile).2.2.1
 
+/-- Kernel regression for `cexpHeads_compileExpListValRelHOL`: under the HOL
+    premises it yields the heads/evaluation correspondence. -/
+example {width : Nat} [NeZero width]
+    (state : PanSemStateFiniteExact width Unit) [_hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width Unit) [ht : DecidablePred targetState.memaddrs]
+    (fields : List (ExpHOL width)) (values : List (ValueHOL width))
+    (compiled : List (List (CrepExpHOL width) × ShapeHOL))
+    (hrel : ∀ (expression : ExpHOL width), expression ∈ fields →
+        (value : ValueHOL width) → (expressions : List (CrepExpHOL width)) →
+        (shape : ShapeHOL) →
+        state.evalHOLFinite expression = some value →
+        localisedExpHOL expression = true →
+        compileExpExactHOLW context expression = (expressions, shape) →
+        expressions.map (evalCrepSemHOLExp targetState) = (flattenHOL value).map some ∧
+        expressions.length = sizeOfShapeHOL shape ∧
+        shapeOfHOLExact value = shape ∧
+        isWfShapeExactHOL ([] : StructContextExact) shape = true)
+    (heval : state.evalListHOLFinite fields = some values)
+    (hlocalised : everyExpListHOL (width := width) localisedExpPredHOL fields = true)
+    (hall : values.all valueIsWord = true)
+    (hcompile : compileExpExactHOLWList context fields = compiled) :
+    ∃ heads : List (CrepExpHOL width),
+      cexpHeads (compiled.map Prod.fst) = some heads ∧
+      heads.mapM (evalCrepSemHOLExp targetState) =
+        some (values.map (fun value => HolWordLab.word (valueWord value))) :=
+  cexpHeads_compileExpListValRelHOL state context targetState fields hrel values compiled
+    heval hlocalised hall hcompile
+
 def runChecks : IO Bool := do
   let checks := [
     ("HOL state_rel matching empty carrier fields", matchingFieldsOracleCase),

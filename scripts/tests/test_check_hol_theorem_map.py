@@ -1640,5 +1640,184 @@ class MultiOwnerFmapRelationStatusTest(unittest.TestCase):
         self.assertTrue(any("do not match its @[hol] tag" in error for error in errors))
 
 
+    def test_rejects_relation_combined_with_field_qualifier(self):
+        tagged = self._tag()
+        key = next(iter(tagged))
+        hol, name, *rest = tagged[key]
+        carriers = rest[5]
+        tagged[key] = (hol, name, (), (), (), ("globals",), False, carriers)
+        errors = MAP["validate_inventory"](
+            [self._record(fmap_as_finite_support=["globals"])], set(), tagged, set())
+        self.assertTrue(any("mutually exclusive" in e for e in errors), errors)
+
+    def test_rejects_relation_combined_with_result_qualifier(self):
+        tagged = self._tag()
+        key = next(iter(tagged))
+        hol, name, *rest = tagged[key]
+        carriers = rest[5]
+        tagged[key] = (hol, name, (), (), (), (), True, carriers)
+        errors = MAP["validate_inventory"]([self._record()], set(), tagged, set())
+        self.assertTrue(any("mutually exclusive" in e for e in errors), errors)
+
+    def test_rejects_relation_without_source_note(self):
+        errors = MAP["validate_inventory"](
+            [self._record(reviewer="no comparison recorded")],
+            set(), self._tag(), set())
+        self.assertTrue(any("source-comparison note" in e for e in errors), errors)
+
+
+class FmapResultFieldExclusionTest(unittest.TestCase):
+    def _record(self, **overrides):
+        record = {
+            "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
+            "hol_name": "make_vmap_def",
+            "lean_path": "Flapjack/Example.lean",
+            "lean_name": "makeVmapExact",
+            "statement_status": "reviewed_fmap_as_finite_support_result",
+            "reviewer": "source comparison of HOL/Lean finite-map carrier",
+            "fmap_as_finite_support_result": True,
+        }
+        record.update(overrides)
+        return record
+
+    def _tag(self, fmap_fields=(), fmap_result=True):
+        return {
+            ("Flapjack/Example.lean", "makeVmapExact"): (
+                "cakeml/pancake/pan_to_crepScript.sml",
+                "make_vmap_def",
+                (), (), (), fmap_fields, fmap_result, (),
+            )
+        }
+
+    def test_rejects_result_combined_with_field_qualifier(self):
+        errors = MAP["validate_inventory"](
+            [self._record(fmap_as_finite_support=["locals"])],
+            set(), self._tag(fmap_fields=("locals",)), set())
+        self.assertTrue(any("mutually exclusive" in e for e in errors), errors)
+
+    def test_rejects_result_without_source_note(self):
+        errors = MAP["validate_inventory"](
+            [self._record(reviewer="checked")], set(), self._tag(), set())
+        self.assertTrue(any("source-comparison note" in e for e in errors), errors)
+
+
+class FmapEqualitiesStatusTest(unittest.TestCase):
+    """Theorem-level map equalities need their own reviewed status."""
+
+    STATUS = "reviewed_fmap_as_finite_support_equalities"
+
+    def _record(self, **overrides):
+        record = {
+            "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+            "hol_name": "slc_tlc_rw",
+            "lean_path": "Flapjack/Example.lean",
+            "lean_name": "slcTlcRw",
+            "statement_status": self.STATUS,
+            "reviewer": "source comparison of each HOL map equality",
+            "fmap_as_finite_support_equalities": True,
+        }
+        record.update(overrides)
+        return record
+
+    def _tag(self, equalities=True, fmap_fields=(), fmap_result=False,
+             fmap_relation=()):
+        return {
+            ("Flapjack/Example.lean", "slcTlcRw"): (
+                "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+                "slc_tlc_rw",
+                (), (), (), fmap_fields, fmap_result, fmap_relation, equalities,
+            )
+        }
+
+    def _errors(self, record, tagged):
+        return MAP["validate_inventory"]([record], set(), tagged, set())
+
+    def test_accepts_equalities_status(self):
+        self.assertEqual(self._errors(self._record(), self._tag()), [])
+
+    def test_rejects_equalities_status_without_qualifier(self):
+        errors = self._errors(self._record(), self._tag(equalities=False))
+        self.assertTrue(
+            any("needs a fmap_as_finite_support_equalities" in e for e in errors),
+            errors,
+        )
+
+    def test_rejects_equalities_tag_without_status(self):
+        errors = self._errors(
+            self._record(statement_status="pending_statement_review",
+                         fmap_as_finite_support_equalities=False),
+            self._tag(),
+        )
+        self.assertTrue(
+            any("needs a reviewed source classification" in e for e in errors),
+            errors,
+        )
+
+    def test_rejects_equalities_tag_with_reviewed_exact(self):
+        errors = self._errors(
+            self._record(statement_status="reviewed_exact"), self._tag())
+        self.assertTrue(
+            any("cannot have reviewed_exact status" in e for e in errors), errors)
+
+
+class CombinedFmapWordsStatusTest(unittest.TestCase):
+    """fmap_as_finite_support must compose with words_as_type_indexed_bitvec."""
+
+    COMBINED = (
+        "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec"
+    )
+
+    def _record(self, **overrides):
+        record = {
+            "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
+            "hol_name": "evaluate_def",
+            "lean_path": "Flapjack/Example.lean",
+            "lean_name": "evalProg",
+            "statement_status": self.COMBINED,
+            "reviewer": "source comparison of HOL/Lean word and finite-map carriers",
+            "fmap_as_finite_support": ["locals", "globals", "code"],
+            "words_as_type_indexed_bitvec": True,
+        }
+        record.update(overrides)
+        return record
+
+    def _tag(self, fmap_fields=("locals", "globals", "code"), words=True):
+        return {
+            ("Flapjack/Example.lean", "evalProg"): (
+                "cakeml/pancake/semantics/crepSemScript.sml",
+                "evaluate_def",
+                (), (), (), fmap_fields, False, (), False, words,
+            )
+        }
+
+    def _errors(self, record, tagged):
+        return MAP["validate_inventory"]([record], set(), tagged, set())
+
+    def test_accepts_combined_status(self):
+        self.assertEqual(self._errors(self._record(), self._tag()), [])
+
+    def test_rejects_combined_status_without_words_qualifier(self):
+        errors = self._errors(self._record(), self._tag(words=False))
+        self.assertTrue(any("needs both" in error for error in errors))
+
+    def test_rejects_combined_status_without_fmap_qualifier(self):
+        errors = self._errors(self._record(), self._tag(fmap_fields=()))
+        self.assertTrue(any("needs both" in error for error in errors))
+
+    def test_rejects_words_status_for_combined_qualifiers(self):
+        errors = self._errors(
+            self._record(statement_status="reviewed_words_as_type_indexed_bitvec"),
+            self._tag(),
+        )
+        self.assertTrue(any("fmap_as_finite_support" in error for error in errors))
+
+    def test_rejects_fmap_status_for_combined_qualifiers(self):
+        errors = self._errors(
+            self._record(statement_status="reviewed_fmap_as_finite_support"),
+            self._tag(),
+        )
+        self.assertTrue(any("words_as_type_indexed_bitvec" in error for error in errors))
+
+
 if __name__ == "__main__":
     unittest.main()
