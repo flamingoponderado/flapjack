@@ -250,6 +250,36 @@ theorem panToCrepLocalsRelLookupCtxtFiniteExact {width : Nat} [NeZero width]
       _ = (flattenHOL value).length := by rw [← hflatten]
   · rw [hmap, ← hflatten]
 
+/-- Exact port of HOL `ctxt_max_el_leq`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:1493-1503`):
+    `ctxt_max ctxt.vmax ctxt.vars /\
+      FLOOKUP ctxt.vars v = SOME (sh,ns) /\
+      n < LENGTH ns ==> EL n ns <= ctxt.vmax`.
+
+    The implicit HOL context `ctxt` is the Pan-to-Crep `context` record, whose
+    `vars` field is the exact `PanToCrepContextExact.vars` field named by the
+    qualifier; `vmax` is `Nat` (HOL `num`) and is not a finite-map field, so no
+    other representation is touched. HOL `ctxt_max` becomes the exact-carrier
+    rendering `ctxtMaxFiniteExact` (the same predicate already used by the
+    tagged `locals_rel_def`), HOL `FLOOKUP` becomes `.lookup`, `EL n ns` becomes
+    the bounded `getElem` `slots[n]`, and `LENGTH`/`<=` become
+    `List.length`/`≤`. The quantifiers, hypotheses, and conclusion keep HOL's
+    shape. The proof is HOL's `rw [ctxt_max_def]` followed by instantiating the
+    bound at `EL n ns` and using `EL_MEM`. No direct HOL-EVAL oracle row exists
+    for this symbolic-index lemma (the bound proof is needed to select the
+    element), so the kernel-checked instance in
+    `Flapjack/Test/PanToCrepStateRelCarrierParity.lean` replays it concretely. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "ctxt_max_el_leq"
+  (fmap_as_finite_support_relation := [PanToCrepContextExact.vars])]
+theorem ctxtMaxElLeqFiniteExact {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width) (v : MlS) (shape : ShapeHOL)
+    (slots : List Nat) (n : Nat)
+    (hmax : ctxtMaxFiniteExact context.vmax context.vars)
+    (hlookup : context.vars.lookup v = some (shape, slots))
+    (hindex : n < slots.length) :
+    slots[n] ≤ context.vmax :=
+  hmax.2 v shape slots hlookup slots[n] (List.getElem_mem hindex)
+
 /-- Exact port of HOL `state_rel_structs[local]`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:59-63`), the
     structural-context projection of `state_rel_def`. The relation qualifier

@@ -371,6 +371,32 @@ private theorem lookupCtxtExactFixture :
   · rw [hslots] at hmap
     exact hmap
 
+/-- Kernel-checked row: the exact `ctxt_max_el_leq` port applies to any exact
+    context satisfying `ctxtMaxFiniteExact`; the selected in-range slot is
+    bounded by `vmax`. -/
+example {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width) (name : MlS) (shape : ShapeHOL)
+    (slots : List Nat) (n : Nat)
+    (hmax : ctxtMaxFiniteExact context.vmax context.vars)
+    (hlookup : context.vars.lookup name = some (shape, slots))
+    (hindex : n < slots.length) :
+    slots[n] ≤ context.vmax :=
+  ctxtMaxElLeqFiniteExact context name shape slots n hmax hlookup hindex
+
+/-- Concrete exact-carrier instance: the one-slot `lookupCtxtContext` fixture
+    (`vars` maps `x` to `(One, [0])`, `vmax = 0`) bounds its selected slot. -/
+private theorem ctxtMaxElLeqFixture :
+    ([0] : List Nat)[0]'(by simp) ≤ lookupCtxtContext.vmax := by
+  have hmax : ctxtMaxFiniteExact lookupCtxtContext.vmax lookupCtxtContext.vars :=
+    lookupCtxtLocalsRel.2.1
+  have hlookup : lookupCtxtContext.vars.lookup lookupCtxtName =
+      some (ShapeHOL.one, [0]) := by
+    change lookupCtxtVars.lookup lookupCtxtName = some (ShapeHOL.one, [0])
+    rw [lookupCtxtVars_lookup]
+    simp
+  exact ctxtMaxElLeqFiniteExact lookupCtxtContext lookupCtxtName ShapeHOL.one
+    [0] 0 hmax hlookup (by simp)
+
 private def lookupCtxtGuard : Bool :=
   (match lookupCtxtContext.vars.lookup lookupCtxtName with
    | some (.one, [0]) => true
@@ -378,6 +404,11 @@ private def lookupCtxtGuard : Bool :=
     (match flattenHOL lookupCtxtValue with
      | [.word value] => value == (5 : BitVec 8)
      | _ => false)
+
+private def ctxtMaxElLeqGuard : Bool :=
+  match lookupCtxtContext.vars.lookup lookupCtxtName with
+  | some (.one, [slot]) => decide (slot ≤ lookupCtxtContext.vmax)
+  | _ => false
 
 def runChecks : IO Bool := do
   let checks := [
@@ -393,7 +424,8 @@ def runChecks : IO Bool := do
     ("HOL slc_def exact varname->value finite map", slcHOLGuard),
     ("HOL slc_tlc_rw exact finite-map rewrite", slcTlcRwHOLGuard),
     ("HOL locals_rel_lookup_ctxt exact slot, flattened value, and shape",
-      lookupCtxtGuard)]
+      lookupCtxtGuard),
+    ("HOL ctxt_max_el_leq exact selected slot within vmax", ctxtMaxElLeqGuard)]
   for (name, passed) in checks do
     IO.println s!"{if passed then "PASS" else "FAIL"} {name}"
   pure (checks.all Prod.snd)

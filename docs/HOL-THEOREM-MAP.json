@@ -12715,6 +12715,18 @@
     "reviewer": "flapjack-ds9 source comparison (2026-09-27, flapjack-4ac.5.88; pan_to_crepProofScript.sml:527-534): HOL locals_rel_lookup_ctxt has the conjunction locals_rel ctxt lcl lcl' /\\ FLOOKUP lcl vr = SOME v as its only premise and concludes ?ns. FLOOKUP ctxt.vars vr = SOME (shape_of v,ns) /\\ LENGTH ns = LENGTH (flatten v) /\\ OPT_MMAP (FLOOKUP lcl') ns = SOME (flatten v) /\\ is_wf_shape_nil (shape_of v). Lean keeps exactly those two premises (curried) and the four existential conjuncts in the same order: FLOOKUP becomes .lookup, shape_of/flatten/is_wf_shape_nil become shapeOfHOLExact/flattenHOL/isWfShapeExactHOL ([] : StructContextExact), and OPT_MMAP becomes List.mapM. The relation traverses the named PanToCrepContextExact.vars field and the standalone sourceLocals/targetLocals parameters; the PanToCrepContextExact same-module canonical witness and the bare parameter binders establish the reviewed finite-support translations. The LENGTH clause is derived from the tagged HOL opt_mmap_length_eq. [NeZero width] models HOL's positive word dimension. This exact-carrier port replaces the withdrawn String-keyed localsRelLookupCtxt analogue (still recorded below as documented_mismatch)."
   },
   {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "ctxt_max_el_leq",
+    "hol_line": 1493,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "ctxtMaxElLeqFiniteExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "PanToCrepContextExact.vars"
+    ],
+    "reviewer": "flapjack-ds9 source comparison (2026-09-27, flapjack-4ac.5.94; pan_to_crepProofScript.sml:1493-1503): HOL ctxt_max_el_leq has the conjunction ctxt_max ctxt.vmax ctxt.vars and FLOOKUP ctxt.vars v = SOME (sh,ns) and n < LENGTH ns as its premise and concludes EL n ns <= ctxt.vmax. Lean keeps exactly those three premise conjuncts (curried) and the same conclusion: ctxt_max becomes the exact-carrier rendering ctxtMaxFiniteExact (the predicate already used inside the tagged locals_rel_def), FLOOKUP becomes .lookup, EL n ns becomes the bounded getElem slots[n], and LENGTH/<= become List.length/<=. The only finite-map value traversed is the named PanToCrepContextExact.vars field, whose same-module canonical witness establishes the reviewed finite-support translation; vmax is Nat and is not a finite-map field. The implicit HOL context ctxt is the pan_to_crep context record; [NeZero width] models HOL's positive word dimension. The proof is HOL's rw [ctxt_max_def] with the bound instantiated at EL n ns and EL_MEM. No direct HOL-EVAL oracle row exists for this symbolic-index lemma, so the kernel-checked concrete instance in Flapjack/Test/PanToCrepStateRelCarrierParity.lean replays it. This exact-carrier port complements the withdrawn String-keyed ctxtMaxGetElemLe analogue (still recorded below as documented_mismatch)."
+  },
+  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
