@@ -13292,6 +13292,22 @@
     "reviewer": "flapjack-ds9 (source comparison, bead flapjack-4ac.4.78; audit flapjack-4ac.6; panPropsScript.sml:1448): HOL's converse characterization: under `EVERY is_exn_decl ds` plus the three well-formedness conditions (distinct ids, ids absent from the table, well-formed shapes), evaluation succeeds and yields exactly the state with the exception table updated by `exceptions ds`. Lean preserves the `s ds s'` order and the three Bool premises using the same all/isNone/isWfShapeExactHOL vocabulary as evaluateDeclsExnsWfHOLFinite; because HOL's `s'` occurs in no hypothesis or conclusion, HOL type inference gives it a fresh independent type variable and Lean binds it fully polymorphically rather than at the narrowed state type. The theorem statement uses evaluateDeclsPanPropsCanonical, whose definition calls canonical tagged PanSemStateFiniteExact.evaluateDeclsHOLFinite on state.toPanSemFinite and maps successful results back with ofPanSemFinite; the finite-map carrier is connected by the field-for-field state codec. The four |-> fields (locals, globals, code, eshapes) are the reviewed canonical HolFiniteMapExact translation recorded by the fmap_as_finite_support qualifier; the same-module canonical witness is holFmapAsFiniteSupportWitness. The qualifier is representation-only and changes no quantifier, hypothesis, or conclusion."
   },
   {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "evaluate_add_clock_or_timeout",
+    "hol_line": 834,
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/ClockTimeout.lean",
+    "lean_name": "evaluateHOLFiniteState_add_clock_or_timeout",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-27, bead flapjack-4ac.4.48.1): HOL panPropsScript.sml:834-857 has arbitrary p, s, q, t, k, q', t' and premises evaluate (p,s) = (q,t with clock := 0), q <> SOME TimeOut, and evaluate (p,s with clock := k) = (q',t'); its result is exactly (q' = SOME TimeOut and k < s.clock) or (q'=q and s.clock <= k and t'=t with clock := k-s.clock). Lean preserves those binders, premise order, and both alternatives over evaluateHOLFiniteState, with no extra logical premise or state/result fact. evaluateHOLFiniteState_eq_evaluate_def is the source-reviewed exact 21-clause line-780 equation port, so the clock theorem reasons over the faithful evaluator. PanSemStateFiniteExact carries the four canonical HolFiniteMapExact |-> fields locals/globals/code/eshapes and the same-module toExact/ofExact roundtrip witness; its positive width-indexed BitVec fields retain [NeZero width]. The finite-support and word qualifiers record only those carrier translations. eval_add_clock_mono_aux and the finite-to-broad projection are Flapjack-only proof infrastructure, not theorem assumptions."
+  },
+  {
     "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
     "hol_name": "pan_exps_of_nested_seq",
     "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
