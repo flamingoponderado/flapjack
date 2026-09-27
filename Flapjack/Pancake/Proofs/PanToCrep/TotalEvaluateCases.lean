@@ -99,6 +99,28 @@ theorem panToCrepExactSkipTransition
         (.skip : CrepProgHOL width) by simp [compileProgExactHOLW]]
     exact evalCrepSemHOLProg_skip targetState memDec shMemDec
 
+/-! First exact evaluator fragment for upstream
+`eval_nested_assign_distinct_eq` (`pan_to_crepProofScript.sml:540`). The
+theorem below isolates a successful Assign leaf over the exact
+`CrepProgHOL`/`CrepSemHOLState` evaluator. It proves the existing local is
+updated to the exact evaluated word_lab value with normal completion. The full
+theorem remains open: it quantifies over arbitrary expression/name lists and
+has five premises, including expression-variable noninterference and distinct
+assignment names; nested Seq composition remains a follow-up. This leaf is
+Flapjack-specific support, not the HOL theorem, and therefore has no `@[hol]`
+tag. -/
+theorem evalCrepSemHOLProg_assign_success
+    {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (name : Nat) (src : CrepExpHOL width) (value old : HolWordLab width)
+    (heval : crepExactEvalExp state memDec src = some value)
+    (hbound : state.locals.lookup name = some old) :
+    evalCrepSemHOLProg state memDec shMemDec (.assign name src) =
+      (none, CrepSemHOLState.setVar name value state) := by
+  rw [evalCrepSemHOLProg_assign, heval, hbound]
+
 /-! Source-reviewed prerequisite for HOL `pc_compile_correct[Break]`.
 The HOL proof resumes this nonrecursive case at
 `pan_to_crepProofScript.sml:499-503`; the source evaluator equation is
