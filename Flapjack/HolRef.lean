@@ -63,7 +63,10 @@ must bind the FFI host type at a `Type` universe when it mentions
 stated over a reviewed width-indexed carrier (declared locally or reached
 through imports) whose fields include `BitVec width` fields and whose
 declaration retains `[NeZero width]`; the carrier is resolved from its
-declaration, never accepted by name alone. It changes no quantifier,
+declaration, never accepted by name alone, and its `[NeZero width]` discharge
+and `BitVec width` field must belong to the SAME owning declaration (a name with
+several owners is rejected as ambiguous unless the signature uniquely resolves
+it). It changes no quantifier,
 hypothesis, side condition, or
 conclusion, and it requires no cross-assistant agreement theorem. When the
 declaration also carries `fmap_as_finite_support`, use the combined manifest

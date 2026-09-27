@@ -1474,8 +1474,19 @@ class WordsCarrierResolutionTest(unittest.TestCase):
             checker_globals["ROOT"] = root
             try:
                 lines = consumer_text.splitlines()
+                attribute_start = next(
+                    (
+                        index
+                        for index, line in enumerate(lines)
+                        if "@[hol" in line
+                    ),
+                    0,
+                )
+                declaration_text = CHECKER["tagged_declaration_text"](
+                    lines, attribute_start
+                )
                 return CHECKER["words_as_type_indexed_bitvec_errors"](
-                    consumer_text,
+                    declaration_text,
                     "evalProg",
                     module=self.MODULE,
                     root=str(root),
@@ -1549,6 +1560,57 @@ class WordsCarrierResolutionTest(unittest.TestCase):
         ])
         errors = self._run(owner, self.CONSUMER)
         self.assertTrue(any("BitVec" in e for e in errors), errors)
+
+    def test_rejects_ambiguous_owners_borrowing_cross_owner_evidence(self):
+        # The imported owner has `[NeZero width]` but no `BitVec width` field;
+        # the local same-named shadow has a `BitVec width` field but no
+        # positivity. Pooling the two owners' evidence would wrongly accept the
+        # tag, so the name is ambiguous and must be rejected.
+        owner = "\n".join([
+            "structure CrepStateExact (width : Nat) [NeZero width] (ffiState : Type) where",
+            "  locals : HolFiniteMapExact Nat (HolWordLab width)",
+            "  clock : Nat",
+        ])
+        consumer = "\n".join([
+            "import Flapjack.PanToCrep.ContextExact",
+            "structure CrepStateExact (width : Nat) (ffiState : Type) where",
+            "  locals : HolFiniteMapExact Nat (HolWordLab width)",
+            "  memory : BitVec width → HolWordLab width",
+            '@[hol "cakeml/pancake/semantics/crepSemScript.sml" "evaluate_def" 240',
+            "  (fmap_as_finite_support := [locals])",
+            "  (words_as_type_indexed_bitvec)]",
+            "def evalProg {width : Nat} [NeZero width] {σ : Type}",
+            "    (state : CrepStateExact width σ) : Nat := width",
+        ])
+        errors = self._run(owner, consumer)
+        self.assertTrue(
+            any("ambiguous same-named owners" in e for e in errors), errors
+        )
+
+    def test_rejects_ambiguous_owners_without_positivity(self):
+        # Both owners are same-named with `BitVec width` fields, but only the
+        # local shadow retains `[NeZero width]`; no single owner supplies both
+        # and the name is ambiguous.
+        owner = "\n".join([
+            "structure CrepStateExact (width : Nat) (ffiState : Type) where",
+            "  locals : HolFiniteMapExact Nat (HolWordLab width)",
+            "  memory : BitVec width → HolWordLab width",
+        ])
+        consumer = "\n".join([
+            "import Flapjack.PanToCrep.ContextExact",
+            "structure CrepStateExact (width : Nat) [NeZero width] (ffiState : Type) where",
+            "  locals : HolFiniteMapExact Nat (HolWordLab width)",
+            "  memory : BitVec width → HolWordLab width",
+            '@[hol "cakeml/pancake/semantics/crepSemScript.sml" "evaluate_def" 240',
+            "  (fmap_as_finite_support := [locals])",
+            "  (words_as_type_indexed_bitvec)]",
+            "def evalProg {width : Nat} [NeZero width] {σ : Type}",
+            "    (state : CrepStateExact width σ) : Nat := width",
+        ])
+        errors = self._run(owner, consumer)
+        self.assertTrue(
+            any("ambiguous same-named owners" in e for e in errors), errors
+        )
 
 
 if __name__ == "__main__":

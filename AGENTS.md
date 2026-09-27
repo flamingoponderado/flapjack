@@ -341,7 +341,11 @@ declaration is the standard translation of HOL's type-indexed `'a word`
 declaration must name `BitVec`, or name a reviewed width-indexed carrier
 structure (declared locally or reached through imports) whose fields include
 `BitVec width` fields and whose own declaration retains `[NeZero width]`; the
-carrier is resolved from its declaration, never accepted by name alone. The
+carrier is resolved from its declaration, never accepted by name alone, and the
+`[NeZero width]` discharge and the `BitVec width` field must come from the SAME
+owning declaration and the same width identifier; a name with several owners (a
+local duplicate shadowing an imported owner) is rejected as ambiguous unless the
+signature uniquely resolves it. The
 declaration must retain `[NeZero width]` as the
 discharge of HOL's `dimindex (:α) ≥ 1`, and must not restate word-dimension
 positivity as an extra hypothesis (`width ≠ 0`, `0 < width`, `Nat.pos`,

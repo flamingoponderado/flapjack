@@ -393,6 +393,44 @@ def imported_structure_headers(module: str, root: str) -> dict[str, list[str]]:
 
 
 @lru_cache(maxsize=None)
+def imported_structure_owners(
+    module: str, root: str
+) -> dict[str, list[tuple[str, str, dict[str, str]]]]:
+    """Per-owner declarations of imported structures: name -> [(module, header, fields)].
+
+    The word-dimension qualifier must bind each candidate carrier to its own
+    module, header, and field set.  Pooling headers and field types across
+    same-named structures (a fake local shadow and an imported owner) would let
+    one owner's `[NeZero width]` combine with another owner's `BitVec` field, so
+    the evidence is grouped per declaration here instead.
+    """
+    root_path = Path(root)
+    current = root_path / module
+    if not current.is_file():
+        return {}
+    pending = list(IMPORT_RE.findall(current.read_text(encoding="utf-8")))
+    visited: set[str] = set()
+    result: dict[str, list[tuple[str, str, dict[str, str]]]] = {}
+    while pending:
+        imported = pending.pop()
+        if imported in visited:
+            continue
+        visited.add(imported)
+        path = root_path / (imported.replace(".", "/") + ".lean")
+        if not path.is_file():
+            continue
+        lines = path.read_text(encoding="utf-8").splitlines()
+        headers = structure_headers(lines)
+        types = structure_field_types(lines)
+        for name, fields in types.items():
+            result.setdefault(name, []).append(
+                (imported, headers.get(name, ""), fields)
+            )
+        pending.extend(IMPORT_RE.findall("\n".join(lines)))
+    return result
+
+
+@lru_cache(maxsize=None)
 def imported_structure_field_types(
     module: str, root: str
 ) -> dict[str, list[tuple[str, set[str], dict[str, str]]]]:
@@ -1437,7 +1475,10 @@ def words_as_type_indexed_bitvec_errors(
     names a structure (declared locally or reached through imports) whose
     fields include ``BitVec``-typed fields and whose own header carries the
     ``[NeZero width]`` discharge. The carrier is resolved from its declaration,
-    never from its name alone.
+    never from its name alone: the `[NeZero width]` and the ``BitVec width``
+    field must belong to the SAME owning declaration and the same width
+    identifier, and a name with several owners (a local duplicate shadowing an
+    imported owner) is rejected as ambiguous.
     """
     errors: list[str] = []
     if not declaration_text.strip():
@@ -1459,40 +1500,48 @@ def words_as_type_indexed_bitvec_errors(
     if not has_direct_bitvec and lines is not None and module and root:
         local_types = structure_field_types(lines)
         local_headers = structure_headers(lines)
-        imported_types = imported_structure_field_types(module, root)
-        imported_headers = imported_structure_headers(module, root)
-        for name in set(local_types) | set(imported_types):
+        imported_owners = imported_structure_owners(module, root)
+        owners_by_name: dict[str, list[tuple[str, str, dict[str, str]]]] = {}
+        for name in set(local_types) | set(imported_owners):
             if not identifier_token_occurs(signature, name):
                 continue
-            type_maps: list[dict[str, str]] = []
-            header_texts: list[str] = []
+            owners: list[tuple[str, str, dict[str, str]]] = []
             if name in local_types:
-                type_maps.append(local_types[name])
-                header_texts.append(local_headers.get(name, ""))
-            for _module, _fields, types in imported_types.get(name, []):
-                type_maps.append(types)
-            header_texts.extend(imported_headers.get(name, []))
-            width_names = {
-                width_match.group(1)
-                for header in header_texts
-                for width_match in [
-                    re.search(r"\(\s*([A-Za-z_][A-Za-z0-9_']*)\s*:\s*Nat\s*\)", header)
-                ]
-                if width_match is not None
-            }
-            has_bitvec_field = any(
-                "BitVec" in type_text
-                and identifier_token_occurs(type_text, width_name)
-                for type_map in type_maps
-                for type_text in type_map.values()
-                for width_name in width_names
+                owners.append(
+                    (module, local_headers.get(name, ""), local_types[name])
+                )
+            owners.extend(imported_owners.get(name, []))
+            owners_by_name[name] = owners
+        ambiguous = [
+            name for name, owners in owners_by_name.items() if len(owners) != 1
+        ]
+        if ambiguous:
+            errors.append(
+                "words_as_type_indexed_bitvec must resolve each width-indexed "
+                "carrier to a single owning declaration; ambiguous same-named "
+                "owners were found for "
+                + ", ".join(sorted(ambiguous))
+                + " (a local duplicate shadowing an imported owner must be "
+                "removed or disambiguated by signature)"
             )
-            has_positivity = any("NeZero" in header for header in header_texts)
-            if width_names and has_bitvec_field and (
-                has_positivity or "NeZero" in signature
-            ):
-                carrier_ok = True
-                break
+        else:
+            for owners in owners_by_name.values():
+                owner_module, header, fields = owners[0]
+                width_match = re.search(
+                    r"\(\s*([A-Za-z_][A-Za-z0-9_']*)\s*:\s*Nat\s*\)", header
+                )
+                if width_match is None:
+                    continue
+                width_name = width_match.group(1)
+                has_bitvec_field = any(
+                    "BitVec" in type_text
+                    and identifier_token_occurs(type_text, width_name)
+                    for type_text in fields.values()
+                )
+                has_positivity = "NeZero" in header or "NeZero" in signature
+                if has_bitvec_field and has_positivity:
+                    carrier_ok = True
+                    break
     if not has_direct_bitvec and not carrier_ok:
         errors.append(
             "words_as_type_indexed_bitvec must name the Lean positive-width word "
