@@ -9,31 +9,37 @@ Finite-support Pan-to-Crep relation infrastructure for the shape-invariant
 proof path. The field types follow HOL `state_rel_def` and `locals_rel_def`:
 `MlS`, `ValueHOL`, `ShapeHOL`, finite-support maps, and `CrepSemHOLState`.
 
-These declarations are intentionally untagged support. The current
-`fmap_as_finite_support` qualifier can certify fields owned by one carrier
-structure, while these relations span the separate PanSem and CrepSem state
-carriers. They are not claims that a HOL relation declaration has been
-ported; the exact theorem tag must wait for reviewed multi-carrier qualifier
-support and the faithful evaluator proof.
+These declarations are untagged relation support. Their conjunctions were
+compared with HOL `state_rel_def` and `locals_rel_def` at
+`pan_to_crepProofScript.sml:45-82`; the finite-map fields are now named through
+their separate owning carriers, with same-module roundtrip witnesses for the
+multi-carrier qualifier. The final theorem
+`panToCrepFiniteEvaluateShapeInvariantRetInst` below now carries the reviewed
+HOL tag. Its faithful `evaluate_is_wf_shape_invariant` prerequisite is tagged
+in `PanProps/EvaluateResultInvariant.lean`; bead `flapjack-4ac.5.83` tracks
+coordinator review of this completed theorem path.
 -/
 
 namespace Flapjack
 
 open Flapjack.Pancake.PanLang
-  (MlS ShapeHOL ExpHOL StructContextExact isWfShapeExactHOL)
+  (MlS ShapeHOL ExpHOL ProgHOL StructContextExact isWfShapeExactHOL)
 
 /-- Flapjack-specific exact-map bound predicate for relation support. It
-    mirrors the shape of HOL `ctxt_max_def`, but is not a tagged port: it takes
-    a bare finite-map parameter without the owning carrier witness required by
-    the current finite-map qualifier. -/
+    has the same quantifiers and bounds as HOL `ctxt_max_def`
+    (`pan_commonPropsScript.sml:11-15`): `0 ≤ n` and every slot from each
+    lookup is at most `n`. `Nat` renders HOL `num`, and its map is the exact
+    `PanToCrepContextExact.vars` field. -/
 def ctxtMaxFiniteExact {κ β : Type}
     (n : Nat) (map : HolFiniteMapExact κ (β × List Nat)) : Prop :=
   0 ≤ n ∧ ∀ key shape slots, map.lookup key = some (shape, slots) →
     ∀ slot ∈ slots, slot ≤ n
 
 /-- Flapjack-specific exact-map overlap predicate for relation support. It
-    mirrors the shape of HOL `no_overlap_def`, but is not a tagged port because
-    its bare map parameter cannot carry the reviewed finite-map qualifier. -/
+    renders HOL `no_overlap_def` (`pan_commonPropsScript.sml:18-24`): each slot
+    list is Nodup and no slot occurs in two distinct key lists. The existential
+    shared-slot formulation is equivalent to HOL's negated `DISJOINT` on the
+    two list sets. The map is `PanToCrepContextExact.vars`. -/
 def noOverlapFiniteExact {κ β : Type}
     (map : HolFiniteMapExact κ (β × List Nat)) : Prop :=
   (∀ key shape slots, map.lookup key = some (shape, slots) → slots.Nodup) ∧
@@ -186,6 +192,25 @@ theorem panToCrepLocalsRelFiniteExact_valueShapeProjection {width : Nat} [NeZero
   rw [hbridge] at hshape
   exact hshape
 
+/-- Exact port of HOL `locals_rel_wf_shape` at
+    `pan_to_crepProofScript.sml:2345`: the same `locals_rel` and present-local
+    lookup premises imply `is_wf_shape_v_nil` for that value. The result is the
+    exact value-level predicate; its only representation translation is the
+    three named finite-map carriers. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "locals_rel_wf_shape" 2345
+  (fmap_as_finite_support_relation :=
+    [PanToCrepContextExact.vars, sourceLocals, targetLocals])]
+theorem panToCrepLocalsRelWfShapeFiniteExact {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width)
+    (sourceLocals : HolFiniteMapExact MlS (ValueHOL width))
+    (targetLocals : HolFiniteMapExact Nat (HolWordLab width))
+    (name : MlS) (value : ValueHOL width)
+    (hrel : panToCrepLocalsRelFiniteExact context sourceLocals targetLocals)
+    (hlookup : sourceLocals.lookup name = some value) :
+    isWfShapeValueHOLExact [] value = true :=
+  panToCrepLocalsRelFiniteExact_valueShapeProjection
+    context sourceLocals targetLocals name value hrel hlookup
+
 /-- Exact port of HOL `state_rel_structs[local]`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:59-63`), the
     structural-context projection of `state_rel_def`. The relation qualifier
@@ -220,17 +245,18 @@ theorem panToCrepStateRelFiniteExact_globals {width : Nat} {σ : Type}
 theorem panToCrepExactInitialShapeInvariant {width : Nat} {σ : Type}
     [NeZero width] (source : PanSemStateFiniteExact width σ)
     (target : CrepSemHOLState width σ)
+    (targetLocals : HolFiniteMapExact Nat (HolWordLab width))
     (context : PanToCrepContextExact width)
     (hstate : panToCrepStateRelFiniteExact source target)
-    (hlocals : panToCrepLocalsRelFiniteExact context source.locals target.locals) :
+    (hlocals : panToCrepLocalsRelFiniteExact context source.locals targetLocals) :
     (∀ name value, source.locals.lookup name = some value →
       isWfShapeValueHOLExact source.structs value = true) ∧
     (∀ name value, source.globals.lookup name = some value →
       isWfShapeValueHOLExact source.structs value = true) := by
   constructor
   · intro name value hlookup
-    have hshape := panToCrepLocalsRelFiniteExact_valueShapeProjection
-      context source.locals target.locals name value hlocals hlookup
+    have hshape := panToCrepLocalsRelWfShapeFiniteExact
+      context source.locals targetLocals name value hlocals hlookup
     have hstruct := panToCrepStateRelFiniteExact_structs source target hstate
     simpa [hstruct] using hshape
   · intro name value hlookup
@@ -246,18 +272,19 @@ theorem panToCrepExactInitialShapeInvariant {width : Nat} {σ : Type}
 theorem panToCrepFiniteReturnPayloadShape {width : Nat} {σ : Type}
     [NeZero width] (source : PanSemStateFiniteExact width σ)
     (target : CrepSemHOLState width σ)
+    (targetLocals : HolFiniteMapExact Nat (HolWordLab width))
     (relationContext : PanToCrepContextExact width)
     (evaluationContext : PanSemStateFiniteExact.FiniteEvalContext width σ)
     (expression : ExpHOL width) (value : ValueHOL width)
     (output : PanSemStateFiniteExact.FiniteEvalContext width σ)
     (hcontext : evaluationContext.state = source)
     (hstate : panToCrepStateRelFiniteExact source target)
-    (hlocals : panToCrepLocalsRelFiniteExact relationContext source.locals target.locals)
+    (hlocals : panToCrepLocalsRelFiniteExact relationContext source.locals targetLocals)
     (heval : PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext
       (.return expression) evaluationContext = some (some (.returned value), output)) :
     isWfShapeExactHOL ([] : StructContextExact) (shapeOfHOLExact value) = true := by
   have hinitial := panToCrepExactInitialShapeInvariant
-    source target relationContext hstate hlocals
+    source target targetLocals relationContext hstate hlocals
   have hpayload := PanSemStateFiniteExact.evalPanSemFiniteReturnPayloadWf
     evaluationContext (by simpa [hcontext] using hinitial.1)
     (by simpa [hcontext] using hinitial.2) expression value output heval
@@ -273,18 +300,19 @@ theorem panToCrepFiniteReturnPayloadShape {width : Nat} {σ : Type}
 theorem panToCrepFiniteRaisePayloadShape {width : Nat} {σ : Type}
     [NeZero width] (source : PanSemStateFiniteExact width σ)
     (target : CrepSemHOLState width σ)
+    (targetLocals : HolFiniteMapExact Nat (HolWordLab width))
     (relationContext : PanToCrepContextExact width)
     (evaluationContext : PanSemStateFiniteExact.FiniteEvalContext width σ)
     (exception : MlS) (expression : ExpHOL width) (value : ValueHOL width)
     (output : PanSemStateFiniteExact.FiniteEvalContext width σ)
     (hcontext : evaluationContext.state = source)
     (hstate : panToCrepStateRelFiniteExact source target)
-    (hlocals : panToCrepLocalsRelFiniteExact relationContext source.locals target.locals)
+    (hlocals : panToCrepLocalsRelFiniteExact relationContext source.locals targetLocals)
     (heval : PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext
       (.raise exception expression) evaluationContext = some (some (.exception exception value), output)) :
     isWfShapeExactHOL ([] : StructContextExact) (shapeOfHOLExact value) = true := by
   have hinitial := panToCrepExactInitialShapeInvariant
-    source target relationContext hstate hlocals
+    source target targetLocals relationContext hstate hlocals
   have hpayload := PanSemStateFiniteExact.evalPanSemFiniteRaisePayloadWf
     evaluationContext (by simpa [hcontext] using hinitial.1)
     (by simpa [hcontext] using hinitial.2) exception expression value output heval
@@ -320,6 +348,171 @@ theorem holFmapAsFiniteSupportResultWitness_tlcHOL {width : Nat} [NeZero width]
     ((tlcHOL slots arguments : HolFiniteMapExact Nat (HolWordLab width))).lookup key =
       FUPDATE_LIST_HOL (fun _ => none)
         (slots.zip ((arguments.map flattenHOL).flatten)) key := rfl
+/-- Finite-support view of the independent HOL `t_locs` map parameter. -/
+abbrev PanToCrepTargetLocalsBroad (width : Nat) [NeZero width] :=
+  Nat → Option (HolWordLab width)
+
+/-- Forget the finite-support proof on HOL `t_locs` while retaining lookups. -/
+def panToCrepTargetLocalsToBroad {width : Nat} [NeZero width]
+    (locals : HolFiniteMapExact Nat (HolWordLab width)) :
+    PanToCrepTargetLocalsBroad width := locals.lookup
+
+/-- Rebuild HOL `t_locs` from its lookup function and finite-domain witness. -/
+def panToCrepTargetLocalsOfBroad {width : Nat} [NeZero width]
+    (locals : PanToCrepTargetLocalsBroad width)
+    (finiteSupport : ∃ keys : List Nat, ∀ key, locals key ≠ none → key ∈ keys) :
+    HolFiniteMapExact Nat (HolWordLab width) :=
+  ⟨locals, finiteSupport⟩
+
+/-- FLAPJACK-SPECIFIC carrier witness (not a HOL declaration): the theorem's
+    independent finite-map parameter roundtrips through its lookup function
+    and finite-domain witness. It is checked separately from the three state
+    owners. -/
+theorem holFmapParameterAsFiniteSupportWitness_panToCrepFiniteEvaluateShapeInvariantRetInst
+    {width : Nat} [NeZero width]
+    (locals : HolFiniteMapExact Nat (HolWordLab width)) :
+    panToCrepTargetLocalsOfBroad (panToCrepTargetLocalsToBroad locals)
+      locals.finiteSupport = locals := by
+  cases locals
+  rfl
+
+/-- Owner structure for the independent finite-map parameter `t_locs`. -/
+structure PanToCrepTargetLocalsExact (width : Nat) [NeZero width] where
+  targetLocals : HolFiniteMapExact Nat (HolWordLab width)
+
+/-- Project the independent `t_locs` carrier to its broad map representation. -/
+def PanToCrepTargetLocalsExact.toBroad {width : Nat} [NeZero width]
+    (locals : PanToCrepTargetLocalsExact width) : PanToCrepTargetLocalsBroad width :=
+  panToCrepTargetLocalsToBroad locals.targetLocals
+
+/-- Rebuild the canonical owner carrier from the broad map and support witness. -/
+def PanToCrepTargetLocalsExact.ofBroad {width : Nat} [NeZero width]
+    (locals : PanToCrepTargetLocalsBroad width)
+    (finiteSupport : ∃ keys : List Nat, ∀ key, locals key ≠ none → key ∈ keys) :
+    PanToCrepTargetLocalsExact width :=
+  ⟨panToCrepTargetLocalsOfBroad locals finiteSupport⟩
+
+/-- The independent map owner roundtrips through its broad counterpart. -/
+theorem PanToCrepTargetLocalsExact.ofBroad_toBroad {width : Nat} [NeZero width]
+    (locals : PanToCrepTargetLocalsExact width) :
+    PanToCrepTargetLocalsExact.ofBroad locals.toBroad
+      locals.targetLocals.finiteSupport = locals := by
+  cases locals
+  rfl
+
+/-- Same-module multi-carrier witness for the exact `t_locs` finite-map field. -/
+theorem holFmapAsFiniteSupportRelationWitness_PanToCrepTargetLocalsExact
+    {width : Nat} [NeZero width] (locals : PanToCrepTargetLocalsExact width) :
+    PanToCrepTargetLocalsExact.ofBroad locals.toBroad
+      locals.targetLocals.finiteSupport = locals :=
+  PanToCrepTargetLocalsExact.ofBroad_toBroad locals
+
+/-- Same-module multi-carrier witness for CrepSem's finite-map fields. -/
+theorem holFmapAsFiniteSupportRelationWitness_CrepSemHOLState
+    {width : Nat} [NeZero width] {σ : Type} (state : CrepSemHOLState width σ) :
+    CrepSemBroadState.ofBroad state.toBroad state.toBroad_finiteSupport = state :=
+  CrepSemBroadState.ofBroad_toBroad state
+
+/-- Source-reviewed port of HOL `evaluate_shape_invariant_ret_inst`
+    (`pan_to_crepProofScript.sml:3016-3028`). The binders `program`, source,
+    result, and postState render HOL `p`, `s`, `v`, and `s'`; the only premises
+    are the successful `evaluate` result, `state_rel`, and `locals_rel`, and the
+    Return/Exception cases conclude the value-level rendering of
+    `is_wf_shape_v_nil`. `state_rel_def` and `locals_rel_def` were compared at
+    `pan_to_crepProofScript.sml:45-82`; `ctxt_max_def` and `no_overlap_def` at
+    `pan_commonPropsScript.sml:11-24`. PanSem maps, context `vars`, and the
+    independent HOL `t_locs` map use the named finite-support owners and their
+    same-module roundtrip witnesses. `ValueHOL`, `PanSemResultExact`,
+    `ProgHOL`, `ShapeHOL`, and `MlS` have exact constructor/field carriers, and
+    `[NeZero width]` matches HOL's positive word dimension.
+
+    The premise is semantically the successful-result clause of HOL
+    `evaluate`, not merely a pair-shaped assumption. The wrapper is
+    noncomputable only because classical choice supplies decidable membership
+    procedures for `memaddrs` and `shMemaddrs`; these are implementation
+    witnesses, not extra theorem premises. Its `getD (none, state)` fallback
+    is unreachable by `evalPanSemRecursiveCallFiniteContext_total` and
+    `evaluateHOLFinite_ne_none`. `evaluateHOLFiniteResult_eq_iff` proves that
+    equality of this pair view is equivalent to a successful output of the
+    assembly-marked evaluator. The 66-case
+    `evalPanSemRecursiveCallFiniteContext_projection`, exposed through
+    `evaluateHOLFinite_toExact`, then identifies that output and post-state
+    with `evalPanSemRecursiveCallContextHOLExact` on the canonical `toExact`
+    state. Its 21 recursive clauses were reviewed against HOL
+    `evaluate_def` (`panSemScript.sml:556-761`); each nonrecursive clause calls
+    the corresponding reviewed exact clause helper and reconstructs the
+    finite-support post-state. The theorem tag therefore rests on the reviewed
+    successful-evaluation semantics and the explicit finite-map translations;
+    it does not tag the evaluator definition itself. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "evaluate_shape_invariant_ret_inst"
+  (fmap_as_finite_support_relation := [PanSemStateFiniteExact.locals,
+    PanSemStateFiniteExact.globals, PanSemStateFiniteExact.code,
+    PanSemStateFiniteExact.eshapes, PanToCrepContextExact.vars,
+    PanToCrepTargetLocalsExact.targetLocals])]
+theorem panToCrepFiniteEvaluateShapeInvariantRetInst {width : Nat} {σ : Type}
+    [NeZero width] (program : ProgHOL width)
+    (source : PanSemStateFiniteExact width σ)
+    (target : CrepSemHOLState width σ)
+    (targetLocals : PanToCrepTargetLocalsExact width)
+    (relationContext : PanToCrepContextExact width)
+    (result : PanSemResultExact width)
+    (postState : PanSemStateFiniteExact width σ)
+    (hstate : panToCrepStateRelFiniteExact source target)
+    (hlocals : panToCrepLocalsRelFiniteExact relationContext
+      source.locals targetLocals.targetLocals)
+    (heval : PanSemStateFiniteExact.evaluateHOLFiniteState source program =
+      (some result, postState)) :
+    match result with
+    | .returned value =>
+        isWfShapeValueHOLExact [] value = true
+    | .exception _ value =>
+        isWfShapeValueHOLExact [] value = true
+    | _ => True := by
+  classical
+  let resultSource := PanPropsShapeInvariantStateFiniteExact.ofPanSemFinite source
+  let resultPost := PanPropsShapeInvariantStateFiniteExact.ofPanSemFinite postState
+  have hinitial := panToCrepExactInitialShapeInvariant
+    source target targetLocals.targetLocals relationContext hstate hlocals
+  have hsourceLocals : ∀ name value, resultSource.locals.lookup name = some value →
+      isWfShapeValueHOLExact resultSource.structs value = true := by
+    intro name value hlookup
+    exact hinitial.1 name value (by
+      simpa [resultSource, PanPropsShapeInvariantStateFiniteExact.ofPanSemFinite,
+        PanPropsShapeInvariantStateFiniteExact.ofExact, PanSemStateFiniteExact.toExact] using hlookup)
+  have hsourceGlobals : ∀ name value, resultSource.globals.lookup name = some value →
+      isWfShapeValueHOLExact resultSource.structs value = true := by
+    intro name value hlookup
+    exact hinitial.2 name value (by
+      simpa [resultSource, PanPropsShapeInvariantStateFiniteExact.ofPanSemFinite,
+        PanPropsShapeInvariantStateFiniteExact.ofExact, PanSemStateFiniteExact.toExact] using hlookup)
+  have hevalInvariant :
+      PanPropsShapeInvariantStateFiniteExact.evaluateHOLFinite resultSource program =
+        (some result, resultPost) := by
+    have hmap := congrArg
+      (fun output : Option (PanSemResultExact width) × PanSemStateFiniteExact width σ =>
+        (output.1, PanPropsShapeInvariantStateFiniteExact.ofPanSemFinite output.2)) heval
+    simpa [PanPropsShapeInvariantStateFiniteExact.evaluateHOLFinite, resultSource,
+      resultPost] using hmap
+  have hinvariant := evaluateIsWfShapeInvariantFiniteExact program resultSource
+    (some result) resultPost hevalInvariant hsourceLocals hsourceGlobals
+  have hresultWf : Flapjack.panSemResultHOLWf source.structs (some result) := by
+    simpa [resultSource, PanPropsShapeInvariantStateFiniteExact.ofPanSemFinite,
+      PanPropsShapeInvariantStateFiniteExact.ofExact, PanSemStateFiniteExact.toExact] using
+      hinvariant.2.2
+  have hstructs := panToCrepStateRelFiniteExact_structs
+    source target hstate
+  cases result with
+  | returned value =>
+      have hvalue :
+          isWfShapeValueHOLExact source.structs value = true := by
+        simpa [Flapjack.panSemResultHOLWf] using hresultWf
+      simpa [hstructs] using hvalue
+  | exception exceptionId value =>
+      have hvalue :
+          isWfShapeValueHOLExact source.structs value = true := by
+        simpa [Flapjack.panSemResultHOLWf] using hresultWf
+      simpa [hstructs] using hvalue
+  | _ => trivial
 
 /-- Exact port of HOL `slc_def` (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:2313-2315`):
     `slc vshs args = FEMPTY |++ ZIP (MAP FST vshs, args)`. The keys are the

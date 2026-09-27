@@ -3568,6 +3568,38 @@
   {
     "hol_path": null,
     "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "PanToCrepTargetLocalsExact.ofBroad_toBroad",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only finite-support carrier roundtrip for PanToCrepTargetLocalsExact. It proves that converting the wrapper to its broad counterpart and back preserves its HolFiniteMapExact targetLocals field. This is representation infrastructure for the evaluate_shape_invariant_ret_inst port, not a HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanToCrepTargetLocalsExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only qualifier witness: names PanToCrepTargetLocalsExact as owner and proves its toBroad/ofBroad roundtrip. The witness supports the finite-support representation qualifier and is not a port of a HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only qualifier witness: names CrepSemHOLState as owner and proves its finite-support/broad-carrier roundtrip. It supports the finite-support representation qualifier and is not a port of a HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only qualifier witness: names PanToCrepContextExact as owner and proves its finite-support/broad-carrier roundtrip. It supports the finite-support representation qualifier and is not a port of a HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
     "lean_name": "mapFlattenMemSomeSupport",
     "statement_status": "no_hol_reference_pending_classification",
@@ -12261,7 +12293,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
     "lean_name": "panToCrepLocalsRelFiniteExact_shapeProjection",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific projection support over exact finite-support PanSem/CrepSem map carriers and the reviewed PanToCrepContextExact context. It extracts the literal final HOL locals_rel_def conjunct is_wf_shape_nil (shape_of v) for a present local; the separate valueShapeProjection derives value-level well-formedness through the exact is_wf_shape_v_nil equivalence. It is not a port of locals_rel_wf_shape. Kept untagged because the current fmap_as_finite_support qualifier cannot represent this multi-carrier relation; the faithful theorem path remains flapjack-4ac.5.83."
+    "reviewer": "Flapjack-specific projection support over exact finite-support PanSem/CrepSem map carriers and the reviewed PanToCrepContextExact context. It extracts the literal final HOL locals_rel_def conjunct is_wf_shape_nil (shape_of v) for a present local; the separate valueShapeProjection derives value-level well-formedness through the exact is_wf_shape_v_nil equivalence. This helper is not itself a port of locals_rel_wf_shape; that exact theorem is panToCrepLocalsRelWfShapeFiniteExact below."
   },
   {
     "hol_path": null,
@@ -12269,7 +12301,21 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
     "lean_name": "panToCrepLocalsRelFiniteExact_valueShapeProjection",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific bridge from the literal is_wf_shape_nil (shape_of v) conjunct in the exact local relation to value-level is_wf_shape_v. The proof uses the exact is_wf_shape_v_nil equivalence; it is support for, not a port of, locals_rel_wf_shape. It uses PanToCrepContextExact and remains untagged pending multi-carrier finite-map qualifier support and the faithful theorem path flapjack-4ac.5.83."
+    "reviewer": "Flapjack-specific bridge from the literal is_wf_shape_nil (shape_of v) conjunct in the exact local relation to value-level is_wf_shape_v. The proof uses the exact is_wf_shape_v_nil equivalence and supports, but is not itself, the tagged locals_rel_wf_shape port."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "locals_rel_wf_shape",
+    "hol_line": 2345,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "panToCrepLocalsRelWfShapeFiniteExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "PanToCrepContextExact.vars",
+      "sourceLocals",
+      "targetLocals"
+    ],
+    "reviewer": "flapjack-luna-a source comparison (2026-09-27, flapjack-4ac.5.83; pan_to_crepProofScript.sml:2345-2351): HOL locals_rel_wf_shape has exactly locals_rel ctxt s_locs t_locs and FLOOKUP s_locs nm = SOME v as premises, concluding is_wf_shape_v_nil v. Lean preserves these premises using panToCrepLocalsRelFiniteExact and sourceLocals.lookup, and concludes isWfShapeValueHOLExact [] value = true, the exact is_wf_shape_v_nil value rendering. The relation's three traversed map carriers are the named PanToCrepContextExact.vars, sourceLocals, and targetLocals; their same-module canonical witnesses establish the reviewed finite-support translations. [NeZero width] models HOL's positive word dimension."
   },
   {
     "hol_path": null,
@@ -12277,7 +12323,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
     "lean_name": "panToCrepExactInitialShapeInvariant",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific composition of the exact finite-support Pan-to-Crep local and state relation support. It derives precisely the locals/globals well-formedness premises needed by the evaluator invariant: local values use locals_rel's literal is_wf_shape_nil (shape_of v) conjunct, source structs are empty by state_rel, and source globals are FEMPTY. It is not a port of evaluate_is_wf_shape_invariant or locals_rel_wf_shape; kept untagged pending the multi-carrier relation qualifier and complete evaluator invariant for flapjack-4ac.5.83."
+    "reviewer": "Flapjack-specific composition of the exact finite-support Pan-to-Crep local and state relations. It derives the initial locals/globals well-formedness premises from locals_rel and state_rel for the tagged evaluate_is_wf_shape_invariant path. The composition helper has no single HOL declaration and remains untagged."
   },
   {
     "hol_path": null,
@@ -12285,7 +12331,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
     "lean_name": "panToCrepFiniteReturnPayloadShape",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific Return-clause composition over the finite-context evaluator, exact PanSem state, and exact Pan-to-Crep relations. It proves the HOL-shaped empty-context payload conclusion for this clause but has a clause-level evaluator premise, so it is not evaluate_shape_invariant_ret_inst and remains untagged pending the complete evaluator invariant and multi-carrier qualifier."
+    "reviewer": "Flapjack-specific Return-clause composition over the finite-context evaluator, exact PanSem state, and exact Pan-to-Crep relations. It proves the HOL-shaped empty-context payload conclusion for this clause but has a clause-level evaluator premise, so it is not evaluate_shape_invariant_ret_inst and remains untagged."
   },
   {
     "hol_path": null,
@@ -12293,7 +12339,40 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
     "lean_name": "panToCrepFiniteRaisePayloadShape",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific Raise-clause composition over the finite-context evaluator, exact PanSem state, and exact Pan-to-Crep relations. It proves the HOL-shaped empty-context payload conclusion for this clause but has a clause-level evaluator premise, so it is not evaluate_shape_invariant_ret_inst and remains untagged pending the complete evaluator invariant and multi-carrier qualifier."
+    "reviewer": "Flapjack-specific Raise-clause composition over the finite-context evaluator, exact PanSem state, and exact Pan-to-Crep relations. It proves the HOL-shaped empty-context payload conclusion for this clause but has a clause-level evaluator premise, so it is not evaluate_shape_invariant_ret_inst and remains untagged."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "panToCrepFiniteEvaluateShapeInvariantRetInst",
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "evaluate_shape_invariant_ret_inst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanToCrepContextExact.vars",
+      "PanToCrepTargetLocalsExact.targetLocals"
+    ],
+    "reviewer": "Flapjack-luna-a source comparison (2026-09-27, flapjack-4ac.5.83/.5.46): HOL evaluate_shape_invariant_ret_inst at pan_to_crepProofScript.sml:3016-3028 quantifies p, s, v, s', t, ctxt, and t_locs and has exactly evaluate (p,s)=(SOME v,s'), state_rel s t, locals_rel ctxt s.locals t_locs; its only conclusion cases are Return and Exception payloads satisfying is_wf_shape_v_nil, else T. Lean panToCrepFiniteEvaluateShapeInvariantRetInst has those same variables/premises/conclusion, with HOL state/result/value/program/shape/name carriers represented by PanSemStateFiniteExact, PanSemResultExact, ValueHOL, ProgHOL, ShapeHOL, and MlS; [NeZero width] is the positive HOL word dimension. state_rel_def and locals_rel_def were compared at pan_to_crepProofScript.sml:45-82; ctxt_max/no_overlap at pan_commonPropsScript.sml:11-24. The only nonidentity representations are the six listed HolFiniteMapExact fields, each with a same-module owning-carrier roundtrip witness. The finite evaluator's 21 constructor clauses were compared with panSemScript.sml:556-761: recursive finite-context clauses mirror Dec/Seq/If/While/Call/DecCall; nonrecursive clauses use exact clause helpers and finite-support post-state reconstruction; the outer assembly marker is total, and the 66-case projection to the broad exact evaluator is kernel-checked. evaluateHOLFiniteState therefore has HOL's result-option × state shape and no additional premise; its unreachable assembly fallback changes no result. The evaluator definition itself remains untagged; this tag claims the reviewed target theorem statement and the listed map translations only."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "evaluate_is_wf_shape_invariant",
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvaluateResultInvariant.lean",
+    "lean_name": "evaluateIsWfShapeInvariantFiniteExact",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "reviewer": "flapjack-luna-a source comparison (2026-09-27, flapjack-4ac.5.83; HOL panPropsScript.sml:1250-1264): binders program/source/result/postState preserve HOL p/s/res/s'; premises are exactly evaluate (p,s)=(res,s') and FEVERY is_wf_shape_v over initial locals and globals; the conclusion is FEVERY over post locals and globals plus the identical SOME Exception/SOME Return/other result match. Lean renders FEVERY as lookup membership implications and uses ValueHOL, PanSemResultExact, ProgHOL, ShapeHOL, MlS, the exact fixed positive word width, StructContextExact, and HolFfiState. The local PanPropsShapeInvariantStateFiniteExact carrier owns the four listed HolFiniteMapExact fields; its same-module holFmapAsFiniteSupportWitness proves roundtrips to/from PanSemStateExact. The qualifier records only this finite-map translation. The pair premise uses evaluateHOLFiniteState: classical choice supplies only DecidablePred witnesses for memaddrs/shMemaddrs, and evalPanSemRecursiveCallFiniteContext_total plus evaluateHOLFinite_ne_none prove the (none,state) fallback unreachable. evaluateHOLFiniteResult_eq_iff equates pair equality with successful assembly output; the kernel-checked 66-case finite-context projection identifies its result/post-state with evalPanSemRecursiveCallContextHOLExact on toExact. All 21 evaluate_def clauses (panSemScript.sml:556-761) were source-compared; each nonrecursive clause calls its reviewed exact helper and rebuilds a finite-support post-state. Thus the evaluator premise has HOL's successful-result semantics and adds no logical assumption."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "holFmapParameterAsFiniteSupportWitness_panToCrepFiniteEvaluateShapeInvariantRetInst",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific finite-map parameter roundtrip witness with no HOL counterpart; supports the qualified t_locs carrier representation."
   },
   {
     "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
@@ -12740,14 +12819,6 @@
       "sourceLocals",
       "targetLocals"
     ]
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
-    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "flapjack-ds8: Flapjack-specific same-module canonical relation witness for the fmap_as_finite_support_relation qualifier on panToCrepLocalsRelFiniteExact. It forwards the canonical ofBroad/toBroad roundtrip of PanToCrepContextExact and has no HOL theorem original."
   },
   {
     "hol_path": "cakeml/pancake/semantics/loopSemScript.sml",
