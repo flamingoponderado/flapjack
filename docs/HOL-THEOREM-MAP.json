@@ -1872,8 +1872,9 @@
     "hol_name": "load_shape_def",
     "lean_path": "Flapjack/Pancake/CrepLang/Exp.lean",
     "lean_name": "loadShapeBytesHOLW",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Source-reviewed against crepLangScript.sml:82-86. Exact carrier is CrepExpHOL width, with BitVec width and [NeZero width]; recursion preserves both HOL branches (address=0w uses Load e, otherwise Load (Op Add [e; Const address])) and advances by width/8 bytes_in_word, with count=0 returning []. The production CrepExp helper remains untagged; loadShapeBytesHOLW_toProduction proves its width wrapper agrees after decoding. Direct HOL rows in scripts/hol-probes/crep_load_shape_probe.out are exercised in Flapjack/Test/CrepeLoadShapeParity.lean."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "Source-reviewed against crepLangScript.sml:82-86 for the HOL word-dimension/FFI translation and finite-map policy. HOL load_shape operates on the type-indexed 'a word (dimension dimindex (:a) >= 1); the Lean declaration retains [NeZero width] as the discharge and uses the standard BitVec width translation (address : BitVec width; stride BitVec.ofNat width (width / 8) = byte$bytes_in_word = n2w (dimindex DIV 8), byteScript.sml:193). No HOL finite-map (|-> or sptree num_map) carrier is traversed: the carrier is the datatype CrepExpHOL width, so no fmap qualifier applies. Qualifiers: (words_as_type_indexed_bitvec). Statement/proof correspond clause-for-clause (address=0w -> Load e; else Load (Op Add [e; Const address]); count=0 -> []). The production loadShapeBytesW adapter remains untagged and loadShapeBytesHOLW_toProduction proves the width wrapper agrees after decoding; direct HOL rows in scripts/hol-probes/crep_load_shape_probe.out are exercised in Flapjack/Test/CrepeLoadShapeParity.lean.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "cakeml/pancake/crepLangScript.sml",
@@ -9278,9 +9279,14 @@
     "hol_name": "eval_def",
     "lean_path": "Flapjack/Pancake/Semantics/CrepSem/HOLState.lean",
     "lean_name": "evalCrepSemHOLExp",
-    "statement_status": "reviewed_fmap_as_finite_support",
-    "fmap_as_finite_support": ["locals", "globals", "code"],
-    "reviewer": "Source-reviewed against crepSemScript.sml:90-137 clause by clause over CrepExpHOL and CrepSemHOLState. Const/Var/Load/LoadGlob/BaseAddr/TopAddr preserve Word wrappers and exact FLOOKUP/mem_load results; Load32 and LoadByte call the tagged panSem mem_load_32_def/mem_load_byte_def ports and widen with HOL w2w; Op uses OPT_MMAP, the vacuous EVERY-is-Word condition on the one-constructor HolWordLab, MAP, and tagged word_op_def; Crepop uses tagged crep_op_def; Cmp uses tagged word_cmp semantics and v2w singleton encoding; Shift uses tagged word_sh semantics with w2n modeled by BitVec.toNat. CrepSemHOLState carries finite-support locals/globals, exact five-bit global keys, code and FFI fields, total HolWordLab memory, memory-domain predicate, endian and base/top words. HOL's nonempty finite word dimension is represented by positive BitVec width. The carrier-level representation qualifier covers all three finite-map fields locals, globals, and code, as required by the quantified CrepSemHOLState carrier; eval reads locals/globals, while code is present but unused. The canonical same-module witness covers the full carrier. Direct HOL observations in crep_eval_probe.out, crep_eval_op_rv64_probe.out, crep_eval_crepop_mul_rv64_probe.out, crep_eval_cmp_rv64_probe.out, crep_eval_shift_rv64_probe.out, crep_eval_load_32_probe.out and crep_eval_load_byte_probe.out are checked in CrepSemEvalExactParity."
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "reviewer": "Source-reviewed against crepSemScript.sml:90-137 clause by clause over CrepExpHOL and CrepSemHOLState. Const/Var/Load/LoadGlob/BaseAddr/TopAddr preserve Word wrappers and exact FLOOKUP/mem_load results; Load32 and LoadByte call the tagged panSem mem_load_32_def/mem_load_byte_def ports and widen with HOL w2w; Op uses OPT_MMAP, the vacuous EVERY-is-Word condition on the one-constructor HolWordLab, MAP, and tagged word_op_def; Crepop uses tagged crep_op_def; Cmp uses tagged word_cmp semantics and v2w singleton encoding; Shift uses tagged word_sh semantics with w2n modeled by BitVec.toNat. CrepSemHOLState carries finite-support locals/globals, exact five-bit global keys, code and FFI fields, total HolWordLab memory, memory-domain predicate, endian and base/top words. HOL's nonempty finite word dimension is represented by positive BitVec width. The carrier-level representation qualifier covers all three finite-map fields locals, globals, and code, as required by the quantified CrepSemHOLState carrier; eval reads locals/globals, while code is present but unused. The canonical same-module witness covers the full carrier. Direct HOL observations in crep_eval_probe.out, crep_eval_op_rv64_probe.out, crep_eval_crepop_mul_rv64_probe.out, crep_eval_cmp_rv64_probe.out, crep_eval_shift_rv64_probe.out, crep_eval_load_32_probe.out and crep_eval_load_byte_probe.out are checked in CrepSemEvalExactParity. Also audited for the HOL word-dimension translation (flapjack-4ac.5.81.11.1.2.1): the signature is width-indexed ({width : Nat} [NeZero width]) and its carrier CrepSemHOLState width ffiState is the reviewed width-indexed structure whose header carries [NeZero width] and whose fields mention BitVec width, so this declaration also carries (words_as_type_indexed_bitvec); HOL 'a word_lab / dimindex (:a) is rendered by BitVec width. Combined manifest status reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
@@ -13852,7 +13858,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
     "lean_name": "compileExpValRelHOL_const",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81): Flapjack proof infrastructure. HOL proves the `Const` case inside `pc_compile_correct` (pan_to_crepProofScript.sml:143-150) and exports no standalone `compile_exp_val_rel` case, so this lemma has no HOL declaration to cite. It is the exact-carrier `Const` constructor case over ExpHOL/ValueHOL/ShapeHOL/CrepExpHOL with the finite-support source evaluator `evalHOLFinite` and target evaluator `evalCrepSemHOLExp`."
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81): Flapjack proof infrastructure. HOL proves the `Const` case inside `compile_exp_val_rel` (pan_to_crepProofScript.sml:143-150) and exports no standalone case declaration, so this lemma has no HOL declaration to cite. It is the exact-carrier `Const` constructor case over ExpHOL/ValueHOL/ShapeHOL/CrepExpHOL with the finite-support source evaluator `evalHOLFinite` and target evaluator `evalCrepSemHOLExp`."
   },
   {
     "hol_path": null,
@@ -13868,7 +13874,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
     "lean_name": "compileExpValRelHOL_var_local",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.2): faithful Var Local constructor case of HOL compile_exp_val_rel (pan_to_crepProofScript.sml:151-165) over the exact MlString/word_lab carriers; HOL proves the cases inside pc_compile_correct and exports no standalone case, so no @[hol] tag."
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.2): faithful Var Local constructor case of HOL compile_exp_val_rel (pan_to_crepProofScript.sml:151-165) over the exact MlString/word_lab carriers; HOL proves this inside compile_exp_val_rel and exports no standalone case, so no @[hol] tag."
   },
   {
     "hol_path": null,
@@ -13892,7 +13898,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
     "lean_name": "compileExpValRelHOL_rstruct",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.4): exact RStruct case of HOL pan_to_crepProofScript.sml:171-198; Flapjack-specific case lemma, no standalone HOL declaration (HOL proves it inside pc_compile_correct)."
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.4): exact RStruct case of HOL pan_to_crepProofScript.sml:171-198; Flapjack-specific case lemma, no standalone HOL declaration (HOL proves it inside compile_exp_val_rel)."
   },
   {
     "hol_path": null,
@@ -14028,7 +14034,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
     "lean_name": "compileExpValRelHOL_op",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.10): exact-carrier staged constructor lemma for the Op case of HOL compile_exp_val_rel (proved inside pc_compile_correct, so no standalone exported HOL declaration to tag). Flapjack-specific infrastructure."
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.10): exact-carrier staged constructor lemma for the Op case of HOL compile_exp_val_rel (proved inside compile_exp_val_rel, so no standalone exported HOL case declaration to tag). Flapjack-specific infrastructure."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
@@ -14044,6 +14050,19 @@
     "hol_path": null,
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.12): staged case lemma for the Panop arm of HOL compile_exp_val_rel; HOL proves it inside pc_compile_correct, no standalone declaration."
-  }
-]
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.12): staged case lemma for the Panop arm of HOL compile_exp_val_rel; HOL proves it inside compile_exp_val_rel, no standalone case declaration."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
+    "hol_name": "eval_load_shape_el_rel",
+    "lean_path": "Flapjack/Pancake/Semantics/CrepProps.lean",
+    "lean_name": "eval_loadShapeBytesHOLW_getElem",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "Source-reviewed against crepPropsScript.sml:40. HOL eval_load_shape_el_rel: n < m ==> eval t (EL n (load_shape a m e)) = eval t (Load (Op Add [e; Const (a + bytes_in_word * n2w n)])). Lean states the same over the exact carriers: evalCrepSemHOLExp targetState, loadShapeBytesHOLW for load_shape, bounded getElem for EL, BitVec.ofNat width (width/8) for byte$bytes_in_word (= n2w (dimindex DIV 8), byteScript.sml:193), and BitVec.ofNat width n for n2w. Premise n < count preserved; no extra premises beyond [NeZero width] and the exact evaluator's DecidablePred memaddrs (the same side condition carried by the tagged eval_def port). Qualifiers: fmap_as_finite_support [locals, globals, code] because the statement quantifies CrepSemHOLState width sigma whose locals/globals/code are HolFiniteMapExact fields (same-module witness holFmapAsFiniteSupportWitness beside the declaration), and words_as_type_indexed_bitvec for the standard translation of HOL 'a word to positive-width BitVec width retaining [NeZero width].",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true
+  }]
