@@ -442,6 +442,32 @@ example {width : Nat} [NeZero width]
   (compileExpListValRelHOL state context targetState fields hrel values compiled
     heval hlocalised hcompile).2.2.1
 
+/-- Kernel regression for the exact `RStruct` case `compileExpValRelHOL_rstruct`
+    (HOL `pan_to_crepProofScript.sml:171-198`). -/
+example {width : Nat} [NeZero width]
+    (state : PanSemStateFiniteExact width Unit) [_hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width Unit) [ht : DecidablePred targetState.memaddrs]
+    (fields : List (ExpHOL width)) (value : ValueHOL width)
+    (expressions : List (CrepExpHOL width)) (shape : ShapeHOL)
+    (hrel : ∀ (expression : ExpHOL width), expression ∈ fields →
+        (value : ValueHOL width) → (expressions : List (CrepExpHOL width)) →
+        (shape : ShapeHOL) →
+        state.evalHOLFinite expression = some value →
+        localisedExpHOL expression = true →
+        compileExpExactHOLW context expression = (expressions, shape) →
+        expressions.map (evalCrepSemHOLExp targetState) = (flattenHOL value).map some ∧
+        expressions.length = sizeOfShapeHOL shape ∧
+        shapeOfHOLExact value = shape ∧
+        isWfShapeExactHOL ([] : StructContextExact) shape = true)
+    (heval : state.evalHOLFinite (.rstruct fields) = some value)
+    (hlocalised : localisedExpHOL (.rstruct fields) = true)
+    (hcompile : compileExpExactHOLW context (.rstruct fields) = (expressions, shape)) :
+    shapeOfHOLExact value = shape :=
+  (compileExpValRelHOL_rstruct state context targetState fields value expressions shape
+    hrel heval hlocalised hcompile).2.2.1
+
+
 def runChecks : IO Bool := do
   let checks := [
     ("HOL state_rel matching empty carrier fields", matchingFieldsOracleCase),
