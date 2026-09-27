@@ -2286,6 +2286,223 @@ theorem compileProgExactHOLW_extCall_skip_bridge {width : Nat} [NeZero width]
     simp_all [compileProgExactHOLW, compileExtCallExactHOLW, compileProgRiscV,
       compileProgHOL, crepProgOfHOL, List.map_nil]
 
+/-- Relation-polymorphic `ExtCall` case.  The four exact/production expression
+    codecs preserve both the `One`/nonempty guards and every value used to
+    compute HOL's maximum temporary index; related contexts then preserve the
+    production-side maximum through `vmax` and the four compiled expressions.
+    This is Flapjack proof infrastructure, source-reviewed against the HOL
+    `compile_def` clause at `pan_to_crepScript.sml:274-290`. -/
+theorem compileProgExactHOLW_extCall_relation_bridge {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width)
+    (productionContext : PanToCrepHOLContext (BitVec width))
+    (hcontext : PanToCrepContextExactProdRel context productionContext)
+    (function : String)
+    (configuration configurationLength array arrayLength : Exp (BitVec width))
+    (hfunction : Flapjack.Pancake.PanLang.NameRanged function)
+    (hconfiguration : Flapjack.Pancake.PanLang.ExpByteRanged configuration)
+    (hconfigurationLength :
+      Flapjack.Pancake.PanLang.ExpByteRanged configurationLength)
+    (harray : Flapjack.Pancake.PanLang.ExpByteRanged array)
+    (harrayLength : Flapjack.Pancake.PanLang.ExpByteRanged arrayLength) :
+    crepProgOfHOL
+        (compileProgExactHOLW context
+          (.extCall (Flapjack.Basis.Pure.MlString.ofString function)
+            (expToHOL configuration) (expToHOL configurationLength)
+            (expToHOL array) (expToHOL arrayLength))) =
+      compileProgHOL productionContext
+        (.extCall function configuration configurationLength array arrayLength) := by
+  have hbaseRel : PanToCrepContextExactProdRel context context.toProduction := by
+    refine ⟨rfl, rfl, rfl, ?_⟩
+    intro name _hname
+    rfl
+  have hbaseConfiguration := compileExpExactHOLW_prodCodec_of_contextRel
+    context context.toProduction hbaseRel (expToHOL configuration)
+  have hbaseConfigurationLength := compileExpExactHOLW_prodCodec_of_contextRel
+    context context.toProduction hbaseRel (expToHOL configurationLength)
+  have hbaseArray := compileExpExactHOLW_prodCodec_of_contextRel
+    context context.toProduction hbaseRel (expToHOL array)
+  have hbaseArrayLength := compileExpExactHOLW_prodCodec_of_contextRel
+    context context.toProduction hbaseRel (expToHOL arrayLength)
+  have hproductionConfiguration := compileExpExactHOLW_prodCodec_of_contextRel
+    context productionContext hcontext (expToHOL configuration)
+  have hproductionConfigurationLength := compileExpExactHOLW_prodCodec_of_contextRel
+    context productionContext hcontext (expToHOL configurationLength)
+  have hproductionArray := compileExpExactHOLW_prodCodec_of_contextRel
+    context productionContext hcontext (expToHOL array)
+  have hproductionArrayLength := compileExpExactHOLW_prodCodec_of_contextRel
+    context productionContext hcontext (expToHOL arrayLength)
+  have hbaseConfiguration' :
+      ((compileExpExactHOLW context (expToHOL configuration)).1.map crepExpOfHOL,
+        shapeOfHOL (compileExpExactHOLW context (expToHOL configuration)).2) =
+        compileExpHOL context.toProduction configuration := by
+    rw [Flapjack.Pancake.PanLang.expOfHOL_expToHOL configuration hconfiguration] at hbaseConfiguration
+    exact hbaseConfiguration
+  have hbaseConfigurationLength' :
+      ((compileExpExactHOLW context (expToHOL configurationLength)).1.map crepExpOfHOL,
+        shapeOfHOL (compileExpExactHOLW context (expToHOL configurationLength)).2) =
+        compileExpHOL context.toProduction configurationLength := by
+    rw [Flapjack.Pancake.PanLang.expOfHOL_expToHOL configurationLength hconfigurationLength] at hbaseConfigurationLength
+    exact hbaseConfigurationLength
+  have hbaseArray' :
+      ((compileExpExactHOLW context (expToHOL array)).1.map crepExpOfHOL,
+        shapeOfHOL (compileExpExactHOLW context (expToHOL array)).2) =
+        compileExpHOL context.toProduction array := by
+    rw [Flapjack.Pancake.PanLang.expOfHOL_expToHOL array harray] at hbaseArray
+    exact hbaseArray
+  have hbaseArrayLength' :
+      ((compileExpExactHOLW context (expToHOL arrayLength)).1.map crepExpOfHOL,
+        shapeOfHOL (compileExpExactHOLW context (expToHOL arrayLength)).2) =
+        compileExpHOL context.toProduction arrayLength := by
+    rw [Flapjack.Pancake.PanLang.expOfHOL_expToHOL arrayLength harrayLength] at hbaseArrayLength
+    exact hbaseArrayLength
+  have hconfigurationCongr :
+      compileExpHOL context.toProduction configuration =
+        compileExpHOL productionContext configuration :=
+    hbaseConfiguration'.symm.trans (by
+      rw [Flapjack.Pancake.PanLang.expOfHOL_expToHOL configuration hconfiguration] at hproductionConfiguration
+      exact hproductionConfiguration)
+  have hconfigurationLengthCongr :
+      compileExpHOL context.toProduction configurationLength =
+        compileExpHOL productionContext configurationLength :=
+    hbaseConfigurationLength'.symm.trans (by
+      rw [Flapjack.Pancake.PanLang.expOfHOL_expToHOL configurationLength hconfigurationLength] at hproductionConfigurationLength
+      exact hproductionConfigurationLength)
+  have harrayCongr :
+      compileExpHOL context.toProduction array =
+        compileExpHOL productionContext array :=
+    hbaseArray'.symm.trans (by
+      rw [Flapjack.Pancake.PanLang.expOfHOL_expToHOL array harray] at hproductionArray
+      exact hproductionArray)
+  have harrayLengthCongr :
+      compileExpHOL context.toProduction arrayLength =
+        compileExpHOL productionContext arrayLength :=
+    hbaseArrayLength'.symm.trans (by
+      rw [Flapjack.Pancake.PanLang.expOfHOL_expToHOL arrayLength harrayLength] at hproductionArrayLength
+      exact hproductionArrayLength)
+  have hvmax : context.toProduction.vmax = productionContext.vmax := by
+    simpa [PanToCrepContextExact.toProduction] using hcontext.2.2.1
+  have hbaseToProduction :
+      compileProgRiscV context.toProduction
+          (.extCall function configuration configurationLength array arrayLength) =
+        compileProgHOL productionContext
+          (.extCall function configuration configurationLength array arrayLength) := by
+    simp [compileProgRiscV, compileProgHOL, hconfigurationCongr,
+      hconfigurationLengthCongr, harrayCongr, harrayLengthCongr]
+  cases hcfg : compileExpExactHOLW context (expToHOL configuration) with
+  | mk cfgVals cfgShape =>
+    cases hcfgLen : compileExpExactHOLW context (expToHOL configurationLength) with
+    | mk cfgLenVals cfgLenShape =>
+      cases harr : compileExpExactHOLW context (expToHOL array) with
+      | mk arrVals arrShape =>
+        cases harrLen : compileExpExactHOLW context (expToHOL arrayLength) with
+        | mk arrLenVals arrLenShape =>
+          cases hcfgProd : compileExpHOL context.toProduction configuration with
+          | mk cfgProdVals cfgProdShape =>
+            cases hcfgLenProd : compileExpHOL context.toProduction
+                configurationLength with
+            | mk cfgLenProdVals cfgLenProdShape =>
+              cases harrProd : compileExpHOL context.toProduction array with
+              | mk arrProdVals arrProdShape =>
+                cases harrLenProd : compileExpHOL context.toProduction
+                    arrayLength with
+                | mk arrLenProdVals arrLenProdShape =>
+                  have hcfgCodec := hbaseConfiguration'
+                  rw [hcfg, hcfgProd] at hcfgCodec
+                  rcases Prod.mk.inj hcfgCodec with ⟨hcfgVals, hcfgShape⟩
+                  have hcfgLenCodec := hbaseConfigurationLength'
+                  rw [hcfgLen, hcfgLenProd] at hcfgLenCodec
+                  rcases Prod.mk.inj hcfgLenCodec with ⟨hcfgLenVals, hcfgLenShape⟩
+                  have harrCodec := hbaseArray'
+                  rw [harr, harrProd] at harrCodec
+                  rcases Prod.mk.inj harrCodec with ⟨harrVals, harrShape⟩
+                  have harrLenCodec := hbaseArrayLength'
+                  rw [harrLen, harrLenProd] at harrLenCodec
+                  rcases Prod.mk.inj harrLenCodec with ⟨harrLenVals, harrLenShape⟩
+                  by_cases hgood : cfgShape = .one ∧ cfgLenShape = .one ∧
+                      arrShape = .one ∧ arrLenShape = .one ∧
+                      cfgVals ≠ [] ∧ cfgLenVals ≠ [] ∧ arrVals ≠ [] ∧ arrLenVals ≠ []
+                  · rcases hgood with ⟨rfl, rfl, rfl, rfl,
+                      hcfgNonempty, hcfgLenNonempty, harrNonempty, harrLenNonempty⟩
+                    rcases cfgVals with _ | ⟨cfgHead, cfgTail⟩
+                    · contradiction
+                    rcases cfgLenVals with _ | ⟨cfgLenHead, cfgLenTail⟩
+                    · contradiction
+                    rcases arrVals with _ | ⟨arrHead, arrTail⟩
+                    · contradiction
+                    rcases arrLenVals with _ | ⟨arrLenHead, arrLenTail⟩
+                    · contradiction
+                    have hcfgProdShape : cfgProdShape = .one := by
+                      simpa [Flapjack.Pancake.PanLang.shapeOfHOL] using hcfgShape.symm
+                    have hcfgLenProdShape : cfgLenProdShape = .one := by
+                      simpa [Flapjack.Pancake.PanLang.shapeOfHOL] using hcfgLenShape.symm
+                    have harrProdShape : arrProdShape = .one := by
+                      simpa [Flapjack.Pancake.PanLang.shapeOfHOL] using harrShape.symm
+                    have harrLenProdShape : arrLenProdShape = .one := by
+                      simpa [Flapjack.Pancake.PanLang.shapeOfHOL] using harrLenShape.symm
+                    have hcfgValues :
+                        List.map crepExpOfHOL (cfgHead :: cfgTail) = cfgProdVals := by
+                      simpa using hcfgVals
+                    have hcfgLenValues :
+                        List.map crepExpOfHOL (cfgLenHead :: cfgLenTail) = cfgLenProdVals := by
+                      simpa using hcfgLenVals
+                    have harrValues :
+                        List.map crepExpOfHOL (arrHead :: arrTail) = arrProdVals := by
+                      simpa using harrVals
+                    have harrLenValues :
+                        List.map crepExpOfHOL (arrLenHead :: arrLenTail) = arrLenProdVals := by
+                      simpa using harrLenVals
+                    simp only [List.map_cons] at hcfgValues hcfgLenValues harrValues harrLenValues
+                    have hcfgProdOut : compileExpHOL context.toProduction configuration =
+                        (crepExpOfHOL cfgHead :: List.map crepExpOfHOL cfgTail, .one) := by
+                      rw [hcfgProd]
+                      exact Prod.ext hcfgValues.symm hcfgProdShape
+                    have hcfgLenProdOut :
+                        compileExpHOL context.toProduction configurationLength =
+                          (crepExpOfHOL cfgLenHead :: List.map crepExpOfHOL cfgLenTail, .one) := by
+                      rw [hcfgLenProd]
+                      exact Prod.ext hcfgLenValues.symm hcfgLenProdShape
+                    have harrProdOut : compileExpHOL context.toProduction array =
+                        (crepExpOfHOL arrHead :: List.map crepExpOfHOL arrTail, .one) := by
+                      rw [harrProd]
+                      exact Prod.ext harrValues.symm harrProdShape
+                    have harrLenProdOut : compileExpHOL context.toProduction arrayLength =
+                        (crepExpOfHOL arrLenHead :: List.map crepExpOfHOL arrLenTail, .one) := by
+                      rw [harrLenProd]
+                      exact Prod.ext harrLenValues.symm harrLenProdShape
+                    have hbridge := compileProgExactHOLW_extCall_success_bridge
+                      context function configuration configurationLength array arrayLength hfunction
+                      cfgHead cfgTail cfgLenHead cfgLenTail arrHead arrTail
+                      arrLenHead arrLenTail
+                      (crepExpOfHOL cfgHead) (List.map crepExpOfHOL cfgTail)
+                      (crepExpOfHOL cfgLenHead) (List.map crepExpOfHOL cfgLenTail)
+                      (crepExpOfHOL arrHead) (List.map crepExpOfHOL arrTail)
+                      (crepExpOfHOL arrLenHead) (List.map crepExpOfHOL arrLenTail)
+                      hcfg hcfgLen harr harrLen
+                      hcfgProdOut hcfgLenProdOut harrProdOut harrLenProdOut
+                      rfl rfl rfl rfl
+                    have hbridge' := hbridge.trans (by
+                      simpa [compileProgRiscV] using hbaseToProduction)
+                    simpa [compileProgRiscV] using hbridge'
+                  · have hguard : cfgShape ≠ .one ∨ cfgLenShape ≠ .one ∨
+                        arrShape ≠ .one ∨ arrLenShape ≠ .one ∨
+                        cfgVals = [] ∨ cfgLenVals = [] ∨ arrVals = [] ∨ arrLenVals = [] := by
+                      by_cases hbad : cfgShape ≠ .one ∨ cfgLenShape ≠ .one ∨
+                          arrShape ≠ .one ∨ arrLenShape ≠ .one ∨
+                          cfgVals = [] ∨ cfgLenVals = [] ∨ arrVals = [] ∨ arrLenVals = []
+                      · exact hbad
+                      · simp_all
+                    have hbridge := compileProgExactHOLW_extCall_skip_bridge
+                      context function configuration configurationLength array arrayLength
+                      cfgVals cfgShape cfgLenVals cfgLenShape arrVals arrShape
+                      arrLenVals arrLenShape cfgProdVals cfgProdShape cfgLenProdVals
+                      cfgLenProdShape arrProdVals arrProdShape arrLenProdVals arrLenProdShape
+                      hcfg hcfgLen harr harrLen
+                      hcfgProd hcfgLenProd harrProd harrLenProd
+                      hcfgShape.symm hcfgLenShape.symm harrShape.symm harrLenShape.symm
+                      hcfgVals.symm hcfgLenVals.symm harrVals.symm harrLenVals.symm hguard
+                    have hbridge' := hbridge.trans (by
+                      simpa [compileProgRiscV] using hbaseToProduction)
+                    simpa [compileProgRiscV] using hbridge'
 /-- Source-reviewed HOL tail-call clause (`pan_to_crepScript.sml:221-225`), the
     `rtyp = NONE` arm of `Call`. HOL compiles every argument, flattens the
     resulting expression lists, and emits a `Call NONE` with no return metadata.
