@@ -3262,6 +3262,17 @@ theorem evaluateDeclsDeclCommuteHOLFinite {width : Nat} {σ : Type} [NeZero widt
   unfold evaluateDeclsPanPropsCanonical
   exact congrArg (fun result => result.map PanPropsEvalStateFiniteExact.ofPanSemFinite) hcanon
 
+/-- Pair-shaped (`result`, state) view of the exact total evaluator over the
+    PanProps carrier. This is the HOL `evaluate ... = (result, t)` shape used by
+    the exact `evaluate_is_wf_shape_invariant` port; it is definitionally the
+    canonical `PanSemStateFiniteExact.evaluateHOLFiniteState` result. -/
+noncomputable def evaluateHOLFinitePair {width : Nat} {σ : Type} [NeZero width]
+    (state : PanPropsEvalStateFiniteExact width σ) (program : ProgHOL width) :
+    Option (PanSemResultExact width) × PanPropsEvalStateFiniteExact width σ := by
+  classical
+  let output := PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite program
+  exact (output.1, ofPanSemFinite output.2)
+
 end PanPropsEvalStateFiniteExact
 
 end Flapjack

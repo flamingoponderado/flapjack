@@ -1376,7 +1376,9 @@ class ValidateInventoryTest(unittest.TestCase):
                                  ("cakeml/pancake/semantics/panSemScript.sml",
                                   hol_name))
                 self.assertEqual(
-                    record["statement_status"], "reviewed_fmap_as_finite_support")
+                    record["statement_status"],
+                    "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec")
+                self.assertTrue(record["words_as_type_indexed_bitvec"])
                 self.assertIn(key, MAP["tagged_declarations"]())
 
 
