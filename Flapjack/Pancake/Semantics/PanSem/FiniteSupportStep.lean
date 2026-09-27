@@ -1826,9 +1826,10 @@ theorem shMemStoreClauseHOLExact_ioEvents_prefix {width : Nat} {σ : Type} [NeZe
     | exact List.prefix_refl _
     | exact shMemStoreHOLExact_ioEvents_prefix _ _ _ _
 
-/-- The clause-level `ShMemLoad` helper preserves the complete FFI state when
-    its event log is unchanged. This exposes the helper's existing exact
-    operation-level result at the recursive evaluator boundary. -/
+/-- Flapjack-specific infrastructure, with no HOL original: the clause-level
+    `ShMemLoad` helper preserves the complete FFI state when its event log is
+    unchanged. This exposes the helper's operation-level result at the
+    recursive evaluator boundary. -/
 theorem shMemLoadClauseHOLExact_ffi_eq_of_ioEvents_eq {width : Nat} {σ : Type}
     [NeZero width] (state : PanSemStateExact width σ) [DecidablePred state.shMemaddrs]
     (operator : OpSize) (kind : VarKind) (name : MlS) (address : ExpHOL width)
@@ -1843,8 +1844,9 @@ theorem shMemLoadClauseHOLExact_ffi_eq_of_ioEvents_eq {width : Nat} {σ : Type}
   all_goals
     exact shMemLoadHOLExact_ffi_eq_of_ioEvents_eq _ _ _ _ _ _ (by assumption)
 
-/-- The clause-level `ShMemStore` helper preserves the complete FFI state when
-    its event log is unchanged, mirroring the exact `ShMemStore` operation. -/
+/-- Flapjack-specific infrastructure, with no HOL original: the clause-level
+    `ShMemStore` helper preserves the complete FFI state when its event log is
+    unchanged, mirroring the exact operation-level helper. -/
 theorem shMemStoreClauseHOLExact_ffi_eq_of_ioEvents_eq {width : Nat} {σ : Type}
     [NeZero width] (state : PanSemStateExact width σ) [DecidablePred state.shMemaddrs]
     (operator : OpSize) (address value : ExpHOL width)
@@ -2286,5 +2288,76 @@ theorem evalPanSemRecursiveCallContextHOLExact_while_ffi_eq_of_ioEvents_eq
     hbody (by rfl) (by simpa only [fixedContext] using hloop) hbodyIH
     (by simpa only [fixedContext] using hloopIH) hend
   exact hentryFfi.trans hcompose
+
+/-- Flapjack-specific infrastructure, with no HOL original: `Call`'s Lean
+    entry/fix-clock context transformations change the Pan state while
+    retaining the exact FFI state. These projections feed recursive body and
+    handler IHs through the evaluator clause. -/
+private theorem callFixedContextHOLExact_recursive_ffi
+    {width : Nat} {σ : Type} [NeZero width]
+    (entry : PanSemStateExact width σ) (bodyResult : Option (PanSemResultExact width))
+    (bodyContext : PanSemExactEvalContext width σ) :
+    (callFixedContextHOLExact entry bodyResult bodyContext).state.ffi = bodyContext.state.ffi := by
+  simp only [callFixedContextHOLExact, PanSemExactEvalContext.withState_state, fixClockHOLExact]
+
+/-- Flapjack-specific infrastructure, with no HOL original: installing a
+    local exception-handler binding leaves the whole FFI carrier equal to the
+    already fixed call context. -/
+private theorem handlerStateHOLExact_recursive_ffi
+    {width : Nat} {σ : Type} [NeZero width]
+    (context fixedContext : PanSemExactEvalContext width σ)
+    (name : MlS) (value : ValueHOL width) :
+    (handlerStateHOLExact context fixedContext name value).ffi = fixedContext.state.ffi := by
+  simp [handlerStateHOLExact, setVarHOLExact]
+
+/-- Flapjack-specific infrastructure, with no HOL original: a `Call`
+    exception-handler context has the same FFI state as the recursively
+    evaluated callee-body endpoint. -/
+private theorem callHandlerContextHOLExact_recursive_ffi
+    {width : Nat} {σ : Type} [NeZero width]
+    (context : PanSemExactEvalContext width σ)
+    (bodyResult : Option (PanSemResultExact width))
+    (bodyContext : PanSemExactEvalContext width σ)
+    (name : MlS) (value : ValueHOL width) :
+    (handlerStateHOLExact context
+      (callFixedContextHOLExact context.state bodyResult bodyContext) name value).ffi =
+        bodyContext.state.ffi := by
+  calc
+    _ = (callFixedContextHOLExact context.state bodyResult bodyContext).state.ffi :=
+      handlerStateHOLExact_recursive_ffi context
+        (callFixedContextHOLExact context.state bodyResult bodyContext) name value
+    _ = bodyContext.state.ffi :=
+      callFixedContextHOLExact_recursive_ffi context.state bodyResult bodyContext
+
+/-- Flapjack-specific infrastructure, with no HOL original: the `DecCall`
+    continuation context installs its result binding without changing any FFI
+    component. -/
+private theorem callContinuationContextHOLExact_recursive_ffi
+    {width : Nat} {σ : Type} [NeZero width]
+    (context fixedContext : PanSemExactEvalContext width σ)
+    (name : MlS) (value : ValueHOL width) :
+    (callContinuationContextHOLExact context fixedContext name value).state.ffi =
+      fixedContext.state.ffi := by
+  change (handlerStateHOLExact context fixedContext name value).ffi = fixedContext.state.ffi
+  exact handlerStateHOLExact_recursive_ffi context fixedContext name value
+
+/-- Flapjack-specific infrastructure, with no HOL original: the `DecCall`
+    continuation starts with the FFI state returned by its callee body, despite
+    resetting locals and installing the result value. -/
+private theorem decCallContinuationContextHOLExact_recursive_ffi
+    {width : Nat} {σ : Type} [NeZero width]
+    (context : PanSemExactEvalContext width σ)
+    (bodyResult : Option (PanSemResultExact width))
+    (bodyContext : PanSemExactEvalContext width σ)
+    (name : MlS) (value : ValueHOL width) :
+    (callContinuationContextHOLExact context
+      (callFixedContextHOLExact context.state bodyResult bodyContext) name value).state.ffi =
+        bodyContext.state.ffi := by
+  calc
+    _ = (callFixedContextHOLExact context.state bodyResult bodyContext).state.ffi :=
+      callContinuationContextHOLExact_recursive_ffi context
+        (callFixedContextHOLExact context.state bodyResult bodyContext) name value
+    _ = bodyContext.state.ffi :=
+      callFixedContextHOLExact_recursive_ffi context.state bodyResult bodyContext
 
 end Flapjack
