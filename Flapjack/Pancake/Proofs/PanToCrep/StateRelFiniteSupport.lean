@@ -294,4 +294,29 @@ theorem holFmapAsFiniteSupportResultWitness_tlcHOL {width : Nat} [NeZero width]
       FUPDATE_LIST_HOL (fun _ => none)
         (slots.zip ((arguments.map flattenHOL).flatten)) key := rfl
 
+/-- Exact port of HOL `slc_def` (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:2313-2315`):
+    `slc vshs args = FEMPTY |++ ZIP (MAP FST vshs, args)`. The keys are the
+    `varname` components (`MlS`) of the `(varname # shape)` pairs and the values
+    are the `panSem$v` arguments (`ValueHOL width`), so the result is the
+    canonical finite-support map over exact carriers. The
+    `fmap_as_finite_support_result` qualifier records only that finite-support
+    representation; the same-module witness below states the unconditional
+    lookup-level correspondence to the raw `FUPDATE_LIST_HOL` operation. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "slc_def"
+  (fmap_as_finite_support_result)]
+def slcHOL {width : Nat} [NeZero width] (variables : List (MlS × ShapeHOL))
+    (arguments : List (ValueHOL width)) : HolFiniteMapExact MlS (ValueHOL width) :=
+  HolFiniteMapExact.updateListEq HolFiniteMapExact.empty
+    ((variables.map Prod.fst).zip arguments)
+
+/-- Canonical standalone finite-map witness for `slcHOL`: its `lookup` is
+    exactly the HOL-shaped raw `FUPDATE_LIST_HOL` operation applied to the
+    everywhere-undefined function, with no premises. -/
+theorem holFmapAsFiniteSupportResultWitness_slcHOL {width : Nat} [NeZero width]
+    (variables : List (MlS × ShapeHOL)) (arguments : List (ValueHOL width))
+    (key : MlS) :
+    ((slcHOL variables arguments : HolFiniteMapExact MlS (ValueHOL width))).lookup key =
+      FUPDATE_LIST_HOL (fun _ => none)
+        ((variables.map Prod.fst).zip arguments) key := rfl
+
 end Flapjack
