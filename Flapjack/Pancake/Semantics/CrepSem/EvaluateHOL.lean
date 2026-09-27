@@ -710,6 +710,40 @@ decreasing_by
        try simp only [true_and] at *
        omega)
 
+/-- A public no-extra-decision-argument entry point for the finite-support
+    evaluator. Classical decidability supplies the two domain tests required by
+    the Lean recursive core; the proof-side behavior is independent of which
+    decision procedures are chosen, as `evalCrepSemHOLProgExact_eq_core`
+    records. This removes the explicit `memDec`/`shMemDec` arguments from the
+    evaluator interface, but is not tagged as HOL `evaluate_def`: the full
+    clause/carrier audit remains incomplete. -/
+noncomputable def evalCrepSemHOLProgExact {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) (program : CrepProgHOL width) :
+    Option (CrepResultHOLExact width) × CrepSemHOLState width σ := by
+  classical
+  exact evalCrepSemHOLProg state
+    (fun a => (inferInstance : Decidable (state.memaddrs a)))
+    (fun a => (inferInstance : Decidable (state.shMemaddrs a))) program
+
+/-- The no-extra-argument entry point agrees with the recursive core for any
+    domain deciders. This kernel-checked equation makes its classical choice
+    invisible in the evaluator result. -/
+theorem evalCrepSemHOLProgExact_eq_core {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) (program : CrepProgHOL width)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a)) :
+    evalCrepSemHOLProgExact state program =
+      evalCrepSemHOLProg state memDec shMemDec program := by
+  classical
+  have hmem : (fun a => Classical.propDecidable (state.memaddrs a)) = memDec := by
+    funext address
+    exact Subsingleton.elim _ _
+  have hshMem : (fun a => Classical.propDecidable (state.shMemaddrs a)) = shMemDec := by
+    funext address
+    exact Subsingleton.elim _ _
+  unfold evalCrepSemHOLProgExact
+  congr 1
+
 /-- Kernel-checked `Skip` constructor equation of the total HOL-shaped
     evaluator, matching HOL `crepSemScript.sml:241`
     `evaluate (Skip, s) = (NONE, s)`. -/
