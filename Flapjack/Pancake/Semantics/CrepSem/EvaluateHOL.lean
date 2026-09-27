@@ -956,8 +956,19 @@ attached. -/
        | _, _ => (some .error, state)) := by
   rw [evalCrepSemHOLProg.eq_def] <;> rfl
 
-/-- HOL `evaluate (StoreGlob dst src, s)` (`crepSemScript.sml:284-287`).
-    Finite-support `CrepSemHOLState` counterpart; untagged. -/
+/-- HOL `evaluate (StoreGlob dst src, s)` (`crepSemScript.sml:288-291`),
+    source-reviewed as one clause only. The source expression is evaluated by
+    the tagged exact `eval_def` port `evalCrepSemHOLExp`
+    (`crepSemScript.sml:90-137`) through `crepExactEvalExp`. HOL accepts any
+    `word_lab` result and unconditionally updates `globals`; the Lean branch
+    likewise has no prior-key-membership guard. `setGlobals` is the tagged
+    `set_globals_def` port (`crepSemScript.sml:61-63`) using HOL-equality
+    `FUPDATE` on the finite-support map, so an absent key is inserted. The
+    destination is `BitVec 5`, matching HOL's fixed `5 word` global key, and
+    values use `HolWordLab`. A failed expression returns `Error` and the
+    original state; success changes only globals and returns `NONE`. This is
+    a local StoreGlob disposition only; the enclosing evaluator remains
+    untagged pending other cases and whole-statement review. -/
 @[simp] theorem evalCrepSemHOLProg_storeGlob {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ)
     (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
