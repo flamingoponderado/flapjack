@@ -3061,6 +3061,79 @@ theorem nameRanged_toStringOfBytes
   rw [Flapjack.Basis.Pure.MlString.ofNat_toNat_char byte]
   exact hb
 
+/-- Relation-polymorphic local Assign case. The existing exact-context bridge
+    handles the local overlap/temporary branches; expression-codec congruence,
+    ranged destination lookup, and equal `vmax` transport it to any related
+    production context. -/
+theorem compileProgExactHOLW_local_assign_relation_bridge
+    {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width)
+    (productionContext : PanToCrepHOLContext (BitVec width))
+    (hcontext : PanToCrepContextExactProdRel context productionContext)
+    (name : MlS) (expression : ExpHOL width) :
+    crepProgOfHOL
+        (compileProgExactHOLW context (.assign .local name expression)) =
+      compileProgHOL productionContext
+        (.assign .local
+          (Flapjack.Basis.Pure.MlString.toStringOfBytes name)
+          (expOfHOL expression)) := by
+  have hbaseRel : PanToCrepContextExactProdRel context context.toProduction := by
+    refine ⟨rfl, rfl, rfl, ?_⟩
+    intro query _hquery
+    rfl
+  have hprodCodec := compileExpExactHOLW_prodCodec_of_contextRel
+    context productionContext hcontext expression
+  have hbaseCodec := compileExpExactHOLW_prodCodec_of_contextRel
+    context context.toProduction hbaseRel expression
+  have hcompiledContextEq :
+      compileExpHOL productionContext (expOfHOL expression) =
+        compileExpHOL context.toProduction (expOfHOL expression) := by
+    exact hprodCodec.symm.trans hbaseCodec
+  have hvarsProd :
+      productionContext.vars
+          (Flapjack.Basis.Pure.MlString.toStringOfBytes name) =
+        (context.vars.lookup name).map
+          (fun entry => (Flapjack.Pancake.PanLang.shapeOfHOL entry.1, entry.2)) := by
+    have hrel := hcontext.2.2.2
+      (Flapjack.Basis.Pure.MlString.toStringOfBytes name)
+      (nameRanged_toStringOfBytes name)
+    rw [PanToCrepContextExact.toProduction_vars_lookup] at hrel
+    exact hrel.symm
+  have hvarsContexts :
+      productionContext.vars
+          (Flapjack.Basis.Pure.MlString.toStringOfBytes name) =
+        context.toProduction.vars
+          (Flapjack.Basis.Pure.MlString.toStringOfBytes name) := by
+    rw [hvarsProd, PanToCrepContextExact.toProduction_vars_lookup]
+  have hvmax : context.vmax = productionContext.vmax := by
+    simpa [PanToCrepContextExact.toProduction] using hcontext.2.2.1
+  have hproductionCongr :
+      compileProgHOL productionContext
+          (.assign .local
+            (Flapjack.Basis.Pure.MlString.toStringOfBytes name)
+            (expOfHOL expression)) =
+        compileProgHOL context.toProduction
+          (.assign .local
+            (Flapjack.Basis.Pure.MlString.toStringOfBytes name)
+            (expOfHOL expression)) := by
+    simp [compileProgHOL, FLOOKUP, freshNamesHOL,
+      PanToCrepContextExact.toProduction, hcompiledContextEq, hvarsContexts, hvmax]
+  have hbaseCodec' :
+      ((compileExpExactHOLW context
+          (Flapjack.Pancake.PanLang.expToHOL (expOfHOL expression))).1.map
+          crepExpOfHOL,
+        shapeOfHOL (compileExpExactHOLW context
+          (Flapjack.Pancake.PanLang.expToHOL (expOfHOL expression))).2) =
+        compileExpHOL context.toProduction (expOfHOL expression) := by
+    simpa using hbaseCodec
+  have hbaseBridge := compileProgExactHOLW_local_assign_bridge context
+    (Flapjack.Basis.Pure.MlString.toStringOfBytes name)
+    (expOfHOL expression) hbaseCodec'
+  have hbridge := hbaseBridge.trans
+    (by simpa [compileProgRiscV] using hproductionCongr.symm)
+  simpa only [Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes,
+    Flapjack.Pancake.PanLang.expToHOL_expOfHOL] using hbridge
+
 /-- Assembly bridge for the complete HOL `compile_def` `Call` arm
 (`cakeml/pancake/pan_to_crepScript.sml:222-261`): it covers every `rtyp`
 destination shape, `wrap_rt` outcome, handler presence and `eids` lookup by
