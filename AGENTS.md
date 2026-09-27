@@ -309,6 +309,19 @@ qualifier is mutually exclusive with `fmap_as_finite_support` and
 manifest status `reviewed_fmap_as_finite_support_relation` with a
 source-comparison note after the reviewer compares each HOL conjunct.
 
+**Combine multi-carrier relation and word translation.** When a HOL relation
+must be represented both through the canonical finite-support map translation
+and through the type-indexed `'a word`/`'ffi` translation, tag the declaration
+with `(fmap_as_finite_support_relation := [...])` and
+`(words_as_type_indexed_bitvec)` together. The manifest status is
+`reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec`, both
+qualifiers are required together, and neither single status is accepted. The
+word-carrier and positivity obligations are checked on the tagged signature as
+for the field-based combination, and the same-module per-carrier relation
+witnesses remain required. This combination is limited to the relation
+qualifier: it cannot be combined with `fmap_as_finite_support`,
+`fmap_as_finite_support_result`, or `fmap_as_finite_support_equalities`.
+
 **Qualify theorem-level finite-map equalities.** Use
 `(fmap_as_finite_support_equalities)` when the tagged declaration is a theorem
 whose conclusion is a conjunction of `HolFiniteMapExact` map *equalities* (for
@@ -345,9 +358,10 @@ declaration is the standard translation of HOL's type-indexed `'a word`
 (dimension `dimindex (:α)`) to Lean's positive-width `BitVec width` and of HOL's
 `'ffi ffi_state` to a universe-0 Lean host type `σ : Type`. The tagged
 declaration must name `BitVec`, or name a reviewed width-indexed carrier
-structure (declared locally or reached through imports) whose own header carries
-`[NeZero <width>]` for its width parameter and some field of that SAME owner
-mentions `BitVec <width>` (directly, or through the single reviewed word abbrev
+structure or inductive family (declared locally or reached through imports)
+whose own header carries `[NeZero <width>]` for its width parameter and some
+field or constructor payload of that SAME owner mentions `BitVec <width>`
+(directly, or through the single reviewed word abbrev
 `RiscV.Word <width>` at `Flapjack/RiscV/Model.lean:17` (`abbrev Word (width :
 Nat) := BitVec width`), which counts as the same `BitVec` carrier at that same
 width identifier) with that same width identifier; the carrier is
@@ -359,12 +373,16 @@ qualify); the check is syntactic and resolves only the known reviewed abbrev
 `RiscV.Word`, not arbitrary abbrev unfolding, so any other word alias does not
 qualify until it is added to the reviewed abbrev list; a name with several owners (a
 local duplicate shadowing an imported owner) is rejected as ambiguous unless the
-signature uniquely resolves it. The
+signature uniquely resolves it. Every word dimension occurring in the tagged
+signature (not only the first) must be bound at its own `Nat` width with its own
+`[NeZero <id>]` discharge; a literal `BitVec 0` dimension and a `[NeZero 0]`
+discharge are rejected as non-positive. The
 declaration must retain `[NeZero width]` as the
 discharge of HOL's `dimindex (:α) ≥ 1`, and must not restate word-dimension
 positivity as an extra hypothesis (`width ≠ 0`, `0 < width`, `Nat.pos`,
 `NeZero.out`); when it mentions the FFI carrier `HolFfiState`, the host type must
-be bound at a `Type` universe without a universe-level variable. This is a
+be bound as `{σ : Type}` (or `Type 0`) without a universe-level variable or a
+`Sort`, and `Type n` for `n ≥ 1` is rejected. This is a
 conventional data-structure translation only: it authorizes no change to
 quantifiers, hypotheses, side conditions, or conclusions, and no cross-assistant
 agreement theorem is required. It cannot use `reviewed_exact`; use manifest

@@ -54,6 +54,33 @@ def cakeNodeMapHolListUpdateGuard : Bool :=
 
 #guard cakeNodeMapHolListUpdateGuard
 
+/-! The production `mapValues` rebuilds every node value.  It preserves the
+    checked dense node-list representation, mapping the HOL field pointwise,
+    which extends the `ofList`/`set` laws to the value-rebuilding operation
+    used by production node-tag fields. -/
+def cakeNodeMapMapValuesGuard : Bool :=
+  let nodes : List Nat := [7, 11, 13]
+  let mapped := CakeNodeMap.mapValues (fun n => n + 1) (CakeNodeMap.ofList nodes)
+  mapped.get 0 == some 8 && mapped.get 2 == some 14 &&
+    mapped.get 3 == none && mapped.slots.size == nodes.length
+
+#guard cakeNodeMapMapValuesGuard
+
+example :
+    CakeNodeMap.RepresentsHOLNodeList
+      (CakeNodeMap.mapValues (fun n : Nat => n + 1)
+        (CakeNodeMap.ofList [7, 11, 13]))
+      [8, 12, 14] := by
+  simpa using CakeNodeMap.mapValues_representsHOLNodeList (fun n : Nat => n + 1)
+    (CakeNodeMap.ofList [7, 11, 13]) [7, 11, 13]
+    (CakeNodeMap.ofList_representsHOLNodeList [7, 11, 13])
+
+example (m : CakeNodeMap Nat) (i : Nat) :
+    (CakeNodeMap.mapValues (fun n : Nat => n + 1) m).get i =
+      (m.get i).map (fun n => n + 1) := by
+  exact CakeNodeMap.get_mapValues (fun n : Nat => n + 1) m i
+
+
 example :
     CakeNodeMap.RepresentsHOLNodeList
       (CakeNodeMap.set (CakeNodeMap.ofList [7, 11, 13]) 1 99)

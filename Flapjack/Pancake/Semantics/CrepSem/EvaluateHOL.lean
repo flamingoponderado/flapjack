@@ -982,25 +982,17 @@ theorem evalCrepSemHOLProgExact_eq_core {width : Nat} [NeZero width] {σ : Type}
   unfold evalCrepSemHOLProgExact
   congr 1
 
-/-- Exact port of the `Skip` conjunct of HOL's rewritten `evaluate_def`
-    (`cakeml/pancake/semantics/crepSemScript.sml:443`, first conjunct
-    originating at line 241): `evaluate (Skip, s) = (NONE, s)`. Over the exact
-    total evaluator `evalCrepSemHOLProgExact` and the 11-field
-    `CrepSemHOLState`, evaluating `Skip` returns the state unchanged. The
-    `fmap_as_finite_support` qualifier records exactly the HOL `|->` fields
-    `locals`, `globals`, and `code` as `HolFiniteMapExact` (with the
-    evaluator-local witness in this module), and `words_as_type_indexed_bitvec`
-    records the `'a word` carrier as `BitVec width` here. Direct source review
-    for `flapjack-4ac.5.16.5.13` (originally tagged under `.13.1`) re-read the
-    rewritten conjunct at `crepSemScript.sml:443` against the originating line
-    241 clause and the 11-field carrier: the `Skip` clause does not mention
-    `fix_clock`, so `REWRITE_RULE [fix_clock_evaluate]` leaves it unchanged, and
-    the state/program-only interface with the exact `(NONE, s)` pair-shape is
-    preserved. The remaining `evaluate_def` clauses stay untagged in this
-    slice. -/
-@[hol "cakeml/pancake/semantics/crepSemScript.sml" "evaluate_def" 443
-  (fmap_as_finite_support := [locals, globals, code])
-  (words_as_type_indexed_bitvec)]
+/-- Flapjack-only `Skip` equation matching the first conjunct of HOL's
+    rewritten `evaluate_def` (`cakeml/pancake/semantics/crepSemScript.sml:443`,
+    originating at line 241): `evaluate (Skip, s) = (NONE, s)`. Over the
+    Flapjack total evaluator `evalCrepSemHOLProgExact`, evaluating `Skip`
+    returns the state unchanged. This declaration is deliberately untagged:
+    its local constructor equation is checked, but no source-reviewed theorem
+    yet establishes that `evalCrepSemHOLProgExact` agrees with HOL `evaluate`
+    across every constructor, including the FFI cases. The map and word
+    qualifiers describe its carrier translations; they do not supply that
+    evaluator-agreement result. Keep this useful local equation as
+    Flapjack-specific infrastructure until that full evaluator gap is closed. -/
 theorem evalCrepSemHOLProgExact_skip {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ) :
     evalCrepSemHOLProgExact state (.skip : CrepProgHOL width) = (none, state) := by
@@ -1497,6 +1489,217 @@ theorem evalCrepSemHOLProg_while_timeout {width : Nat} [NeZero width] {σ : Type
       (if state.clock = 0 then (some .timeOut, CrepSemHOLState.emptyLocals state)
        else (none, decClockCrepSemHOL state)) := by
   rw [evalCrepSemHOLProg.eq_def] <;> rfl
+
+/-! ## FFI preservation for the non-recursive exact clauses
+
+The exact evaluator clauses for `Skip`, `Assign`, `Primitive`, `Store`,
+`Store32`, `StoreByte`, `StoreGlob`, `Break`, `Continue`, `Raise`, `Return` and
+`Tick` never touch `state.ffi`, so each returns a pair whose `.ffi` field is
+`state.ffi` (hence whose `ioEvents` is unchanged).  Only the shared-memory and
+external-call leaves append events.  These equations are the base cases of the
+clock-indexed event-prefix chain (HOL `crepPropsScript.sml:1020`
+`evaluate_add_clock_io_events_mono`) tracked by `flapjack-pxn.18.4.8.2`.
+`Dec` is recursive (it runs its body) and is handled separately. -/
+
+@[simp] theorem evalCrepSemHOLProg_skip_ffi {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a)) :
+    (evalCrepSemHOLProg state memDec shMemDec (.skip : CrepProgHOL width)).2.ffi = state.ffi := by
+  simp
+
+@[simp] theorem evalCrepSemHOLProg_assign_ffi {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (name : Nat) (src : CrepExpHOL width) :
+    (evalCrepSemHOLProg state memDec shMemDec (.assign name src)).2.ffi = state.ffi := by
+  rw [evalCrepSemHOLProg_assign]
+  split
+  · rfl
+  · split <;> rfl
+
+@[simp] theorem evalCrepSemHOLProg_primitive_ffi {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (names : List Nat) (operator : PrimOp) (args : List Nat) :
+    (evalCrepSemHOLProg state memDec shMemDec (.primitive names operator args)).2.ffi =
+      state.ffi := by
+  rw [evalCrepSemHOLProg_primitive]
+  split <;> try rfl
+  all_goals split <;> try rfl
+  all_goals split <;> rfl
+
+@[simp] theorem evalCrepSemHOLProg_store_ffi {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (dst src : CrepExpHOL width) :
+    (evalCrepSemHOLProg state memDec shMemDec (.store dst src)).2.ffi = state.ffi := by
+  rw [evalCrepSemHOLProg_store]
+  split <;> try rfl
+  all_goals split <;> try rfl
+  all_goals split <;> try rfl
+
+@[simp] theorem evalCrepSemHOLProg_store32_ffi {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (dst src : CrepExpHOL width) :
+    (evalCrepSemHOLProg state memDec shMemDec (.store32 dst src)).2.ffi = state.ffi := by
+  rw [evalCrepSemHOLProg_store32]
+  split <;> try rfl
+  all_goals split <;> try rfl
+  all_goals split <;> try rfl
+
+@[simp] theorem evalCrepSemHOLProg_storeByte_ffi {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (dst src : CrepExpHOL width) :
+    (evalCrepSemHOLProg state memDec shMemDec (.storeByte dst src)).2.ffi = state.ffi := by
+  rw [evalCrepSemHOLProg_storeByte]
+  split <;> try rfl
+  all_goals split <;> try rfl
+  all_goals split <;> try rfl
+
+@[simp] theorem evalCrepSemHOLProg_storeGlob_ffi {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (dst : BitVec 5) (src : CrepExpHOL width) :
+    (evalCrepSemHOLProg state memDec shMemDec (.storeGlob dst src)).2.ffi = state.ffi := by
+  rw [evalCrepSemHOLProg_storeGlob]
+  split <;> try rfl
+  all_goals split <;> try rfl
+
+@[simp] theorem evalCrepSemHOLProg_break_ffi {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (label : Nat) :
+    (evalCrepSemHOLProg state memDec shMemDec (.break label : CrepProgHOL width)).2.ffi =
+      state.ffi := by
+  rw [evalCrepSemHOLProg_break]
+
+@[simp] theorem evalCrepSemHOLProg_continue_ffi {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (label : Nat) :
+    (evalCrepSemHOLProg state memDec shMemDec (.continue label : CrepProgHOL width)).2.ffi =
+      state.ffi := by
+  rw [evalCrepSemHOLProg_continue]
+
+@[simp] theorem evalCrepSemHOLProg_raise_ffi {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (exception : BitVec width) :
+    (evalCrepSemHOLProg state memDec shMemDec (.raise exception)).2.ffi = state.ffi := by
+  rw [evalCrepSemHOLProg_raise]
+  rfl
+
+@[simp] theorem evalCrepSemHOLProg_return_ffi {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (values : List (CrepExpHOL width)) :
+    (evalCrepSemHOLProg state memDec shMemDec (.return values)).2.ffi = state.ffi := by
+  rw [evalCrepSemHOLProg_return]
+  split <;> rfl
+
+@[simp] theorem evalCrepSemHOLProg_tick_ffi {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a)) :
+    (evalCrepSemHOLProg state memDec shMemDec (.tick : CrepProgHOL width)).2.ffi = state.ffi := by
+  rw [evalCrepSemHOLProg_tick]
+  split <;> rfl
+
+/-! ## FFI reduction for the recursive non-FFI clauses
+
+The base FFI-preservation lemmas above cover the non-recursive clauses. These
+helpers and equations factor the remaining non-FFI control flow so that the
+event-preservation argument can be lifted clause by clause: the two derived
+states (`crepStampExactDomains`, `fixClockCrepSemHOL`) preserve `ffi`, and each
+recursive clause's result `ffi` is exactly the `ffi` of its sub-evaluation (on a
+state with the same `ffi`). Flapjack infrastructure for the clock-indexed
+`ioEvents` chain tracked by `flapjack-pxn.18.4.8.2`; untagged. `while`, `call`,
+and the FFI-calling `shMem`/`extCall` clauses remain for later children. -/
+
+/-- Domain stamping only rewrites the membership predicates, so it preserves the
+    FFI component of the state. -/
+@[simp] theorem crepStampExactDomains_ffi {width : Nat} [NeZero width] {σ : Type}
+    (base state : CrepSemHOLState width σ) :
+    (crepStampExactDomains base state).ffi = state.ffi := rfl
+
+/-- `fix_clock` only lowers the clock, so it preserves the FFI component of the
+    result state. -/
+@[simp] theorem fixClockCrepSemHOL_ffi {width : Nat} [NeZero width] {σ : Type}
+    {β : Type} (oldState : CrepSemHOLState width σ) (step : β × CrepSemHOLState width σ) :
+    (fixClockCrepSemHOL oldState step).2.ffi = step.2.ffi := rfl
+
+/-- FFI reduction for the `dec` clause: the result `ffi` is the sub-evaluation's
+    `ffi` on the bound state, or the input `ffi` on the failure branch. -/
+theorem evalCrepSemHOLProg_dec_ffi {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (name : Nat) (value : CrepExpHOL width) (body : CrepProgHOL width) :
+    (evalCrepSemHOLProg state memDec shMemDec (.dec name value body)).2.ffi =
+      (match crepExactEvalExp state memDec value with
+       | none => state.ffi
+       | some v =>
+           (evalCrepSemHOLProg (CrepSemHOLState.setVar name v state) memDec shMemDec body).2.ffi) := by
+  rw [evalCrepSemHOLProg_dec]
+  cases h : crepExactEvalExp state memDec value with
+  | none => rfl
+  | some v => rfl
+
+/-- FFI reduction for the `seq` clause: the result `ffi` is the first program's
+    `ffi` when it returns a result, otherwise the second program's `ffi`. -/
+theorem evalCrepSemHOLProg_seq_ffi {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (first second : CrepProgHOL width) :
+    (evalCrepSemHOLProg state memDec shMemDec (.seq first second)).2.ffi =
+      (match fixClockCrepSemHOL state (evalCrepSemHOLProg state memDec shMemDec first) with
+       | (none, stepState) =>
+           (evalCrepSemHOLProg (crepStampExactDomains state stepState) memDec shMemDec second).2.ffi
+       | (some _, stepState) => stepState.ffi) := by
+  rw [evalCrepSemHOLProg_seq]
+  cases h : fixClockCrepSemHOL state (evalCrepSemHOLProg state memDec shMemDec first) with
+  | mk result stepState =>
+      cases result with
+      | none => rfl
+      | some res => rfl
+
+/-- FFI reduction for the `ite` clause: the result `ffi` is the taken branch's
+    `ffi`, or the input `ffi` when the condition is not a `word`. -/
+theorem evalCrepSemHOLProg_ite_ffi {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (condition : CrepExpHOL width) (thenBranch elseBranch : CrepProgHOL width) :
+    (evalCrepSemHOLProg state memDec shMemDec (.ite condition thenBranch elseBranch)).2.ffi =
+      (match crepExactEvalExp state memDec condition with
+       | some (.word w) =>
+           if w ≠ 0 then (evalCrepSemHOLProg state memDec shMemDec thenBranch).2.ffi
+           else (evalCrepSemHOLProg state memDec shMemDec elseBranch).2.ffi
+       | _ => state.ffi) := by
+  rw [evalCrepSemHOLProg_ite]
+  cases h : crepExactEvalExp state memDec condition with
+  | none => rfl
+  | some value =>
+      cases value with
+      | word w =>
+          simp only []
+          by_cases hw : w = 0
+          · simp [hw]
+          · rw [if_pos hw, if_pos hw]
 
 /-- HOL `evaluate (Call caltyp fname argexps, s)` (`crepSemScript.sml:330-363`):
     evaluate the arguments, look up the code, require distinct formals, install

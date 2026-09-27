@@ -1077,25 +1077,21 @@ theorem flookupSetGlobalsCrepSemHOL_locals {width : Nat} [NeZero width] {σ : Ty
       s.locals.lookup name := by
   simp [CrepSemHOLState.setGlobals]
 
-/-- Flapjack-specific untagged analogue of HOL `sh_mem_load_FLOOKUP_locals`
-    (`crepPropsScript.sml:303-310`), retained as the intended exact rendering
-    (the `@[hol]` tag is withdrawn pending carrier-qualifier review, see HOLD
-    below) over the exact finite-support `CrepSemHOLState` carrier and the exact
-    `crepShMemLoadExactHOL` port of `sh_mem_load`: whenever a shared-memory load
-    returns a non-terminal result (`NONE`, `SOME (Continue k)`, or
-    `SOME (Break k)`), it leaves the lookup of any local distinct from the
-    loaded name unchanged. HOL's `v`/`n` are the `Nat` local names `name`/`key`,
-    and the free HOL `k` is the universally quantified `label`. A
-    `(fmap_as_finite_support := [locals, globals, code])` qualifier would record
-    that HOL's `|->` fields are represented by the reviewed `HolFiniteMapExact`
-    translation.
-    HOLD (coordinator, 2026-09-27): exact HOL `sh_mem_load_FLOOKUP_locals`
-    (`cakeml/pancake/semantics/crepPropsScript.sml:303`), but the `@[hol]` tag is
-    WITHDRAWN pending the DS10 `words_as_type_indexed_bitvec` policy: the
-    statement's `address : BitVec width` with `[NeZero width]` translates HOL's
-    type-indexed `'a word` and needs that qualifier (likely combined with
-    `fmap_as_finite_support`) rather than the finite-map qualifier alone. Proof
-    retained as untagged infrastructure. -/
+/-- Exact port of HOL `sh_mem_load_FLOOKUP_locals`
+    (`crepPropsScript.sml:303-310`) over the exact finite-support
+    `CrepSemHOLState` carrier and the exact `crepShMemLoadExactHOL` port of
+    `sh_mem_load`: whenever a shared-memory load returns a non-terminal result
+    (`NONE`, `SOME (Continue k)`, or `SOME (Break k)`), it leaves the lookup of
+    any local distinct from the loaded name unchanged. HOL's `v`/`n` are the
+    `Nat` local names `name`/`key`, and the free HOL `k` is the universally
+    quantified `label`. HOL's `'a word` addresses are the type-indexed
+    `BitVec width` with the `[NeZero width]` discharge, recorded by the combined
+    `(fmap_as_finite_support := [locals, globals, code])`
+    `(words_as_type_indexed_bitvec)` qualifiers; the same-module forwarding
+    witness is `holFmapAsFiniteSupportWitness` above. -/
+@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "sh_mem_load_FLOOKUP_locals"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
 theorem crepShMemLoadHOL_flookup_locals {width : Nat} [NeZero width] {σ : Type}
     (name : Nat) (address : BitVec width) (nb : Nat)
     (state : CrepSemHOLState width σ) [DecidablePred state.shMemaddrs]
@@ -1114,23 +1110,19 @@ theorem crepShMemLoadHOL_flookup_locals {width : Nat} [NeZero width] {σ : Type}
   all_goals
     simp_all [CrepSemHOLState.setVar, FUPDATE_HOL]
 
-/-- Flapjack-specific untagged analogue of HOL `sh_mem_store_FLOOKUP_locals`
-    (`crepPropsScript.sml:312-317`), retained as the intended exact rendering
-    (the `@[hol]` tag is withdrawn pending carrier-qualifier review, see HOLD
-    below) over the exact finite-support `CrepSemHOLState` carrier and the exact
-    `crepShMemStoreExactHOL` port of `sh_mem_store`: a shared-memory store never
-    changes any local lookup (`FLOOKUP t.locals n = FLOOKUP s.locals n`, with no
-    side condition). HOL's `v`/`n` are the `Nat` local names `name`/`key`. A
-    `(fmap_as_finite_support := [locals, globals, code])` qualifier would record
-    that HOL's `|->` fields are represented by the reviewed `HolFiniteMapExact`
-    translation.
-    HOLD (coordinator, 2026-09-27): exact HOL `sh_mem_store_FLOOKUP_locals`
-    (`cakeml/pancake/semantics/crepPropsScript.sml:312`), but the `@[hol]` tag is
-    WITHDRAWN pending the DS10 `words_as_type_indexed_bitvec` policy: the
-    statement's `address : BitVec width` with `[NeZero width]` translates HOL's
-    type-indexed `'a word` and needs that qualifier (likely combined with
-    `fmap_as_finite_support`) rather than the finite-map qualifier alone. Proof
-    retained as untagged infrastructure. -/
+/-- Exact port of HOL `sh_mem_store_FLOOKUP_locals`
+    (`crepPropsScript.sml:312-317`) over the exact finite-support
+    `CrepSemHOLState` carrier and the exact `crepShMemStoreExactHOL` port of
+    `sh_mem_store`: a shared-memory store never changes any local lookup
+    (`FLOOKUP t.locals n = FLOOKUP s.locals n`, with no side condition). HOL's
+    `v`/`n` are the `Nat` local names `name`/`key`. HOL's `'a word` addresses are
+    the type-indexed `BitVec width` with the `[NeZero width]` discharge, recorded
+    by the combined `(fmap_as_finite_support := [locals, globals, code])`
+    `(words_as_type_indexed_bitvec)` qualifiers; the same-module forwarding
+    witness is `holFmapAsFiniteSupportWitness` above. -/
+@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "sh_mem_store_FLOOKUP_locals"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
 theorem crepShMemStoreHOL_flookup_locals {width : Nat} [NeZero width] {σ : Type}
     (name : Nat) (address : BitVec width) (nb : Nat)
     (state : CrepSemHOLState width σ) [DecidablePred state.shMemaddrs]
@@ -1388,10 +1380,17 @@ theorem flookupResVarThmHOL [DecidableEq α] (l : HolFiniteMapExact α β)
     rw [FLOOKUP_FUPDATE_HOL]
     rfl
 
-/-- Exact HOL `opt_mmap_eval_upd_clock_eq` (`crepPropsScript.sml:872`): mapping
+/-- Exact HOL `opt_mmap_eval_upd_clock_eq` (`crepPropsScript.sml:875`): mapping
 the exact expression evaluator (after a clock update by `clock + state.clock`)
-over a list of expressions equals mapping the original evaluator. -/
-@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "opt_mmap_eval_upd_clock_eq"]
+over a list of expressions equals mapping the original evaluator. The
+declaration is width-indexed (`BitVec width` under `[NeZero width]`) so it
+carries the word-dimension qualifier, and it consumes the full
+`CrepSemHOLState` whose `locals`/`globals`/`code` fields are reviewed
+`HolFiniteMapExact` maps that `evalCrepSemHOLExp` reads, matching the sibling
+`eval_upd_clock_eq` tag, so it carries the finite-map qualifier too. -/
+@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "opt_mmap_eval_upd_clock_eq"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
 theorem evalCrepSemHOLExps_upd_clock_eq {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ) [DecidablePred state.memaddrs]
     (expressions : List (CrepExpHOL width)) (clock : Nat) :
