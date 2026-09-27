@@ -209,6 +209,60 @@ class HolTypeHashesTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "manifest qualifiers differ"):
             MODULE.lock_records(manifest, without_equalities)
 
+    def test_words_as_type_indexed_bitvec_qualifier_is_locked(self):
+        manifest = [{
+            **self.manifest[0],
+            "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+            "fmap_as_finite_support": ["locals", "globals", "code"],
+            "words_as_type_indexed_bitvec": True,
+        }]
+        export = [{
+            **self.export[0],
+            "qualifiers": {
+                "list_as_array": [],
+                "names_as_string": [],
+                "names_as_string_boundary": [],
+                "fmap_as_finite_support": ["locals", "globals", "code"],
+                "words_as_type_indexed_bitvec": True,
+            },
+        }]
+        lock = MODULE.expected_lock(manifest, export, "leanprover/lean4:v4")
+        self.assertTrue(lock["records"][0]["qualifiers"]["words_as_type_indexed_bitvec"])
+        without_words = [{
+            **export[0],
+            "qualifiers": {
+                "list_as_array": [],
+                "names_as_string": [],
+                "names_as_string_boundary": [],
+                "fmap_as_finite_support": ["locals", "globals", "code"],
+            },
+        }]
+        with self.assertRaisesRegex(ValueError, "manifest qualifiers differ"):
+            MODULE.lock_records(manifest, without_words)
+
+    def test_words_as_type_indexed_bitvec_only_status_is_locked(self):
+        manifest = [{
+            **self.manifest[0],
+            "statement_status": "reviewed_words_as_type_indexed_bitvec",
+            "words_as_type_indexed_bitvec": True,
+        }]
+        export = [{
+            **self.export[0],
+            "qualifiers": {"words_as_type_indexed_bitvec": True},
+        }]
+        lock = MODULE.expected_lock(manifest, export, "leanprover/lean4:v4")
+        self.assertTrue(lock["records"][0]["qualifiers"]["words_as_type_indexed_bitvec"])
+
+    def test_words_qualifier_export_record_validates(self):
+        MODULE.validate_export_record(
+            {
+                "lean_name": "n", "hol_path": "p", "hol_name": "h",
+                "type_expr": "t",
+                "qualifiers": {"words_as_type_indexed_bitvec": True},
+            },
+            1,
+        )
+
     def test_fmap_qualifier_validates_and_rejects_unknown(self):
         MODULE.validate_export_record(
             {
