@@ -464,6 +464,28 @@ def inlineNontailHOLExact {width : Nat} [NeZero width]
         (returnNames.zipWith (fun name value => .assign name value)
           (temporaryReturns.map CrepExpHOL.var))))
 
+/-- Exact port of HOL `has_return_def`
+    (`cakeml/pancake/crep_inlineScript.sml:41-50`): a tail Call or Return has
+    a return; a Call with explicit return destinations but no handler does
+    not, while a Call with a handler recurses into that handler. -/
+@[hol "cakeml/pancake/crep_inlineScript.sml" "has_return_def"
+  (words_as_type_indexed_bitvec)]
+def hasReturnHOLExact {width : Nat} [NeZero width] :
+    CrepProgHOL width → Bool
+  | .dec _ _ body => hasReturnHOLExact body
+  | .seq first second => hasReturnHOLExact first || hasReturnHOLExact second
+  | .ite _ thenBranch elseBranch =>
+      hasReturnHOLExact thenBranch || hasReturnHOLExact elseBranch
+  | .while _ body => hasReturnHOLExact body
+  | .call none _ _ => true
+  | .call (some (_, none)) _ _ => false
+  | .call (some (_, some (_, handler))) _ _ => hasReturnHOLExact handler
+  | .return _ => true
+  | _ => false
+termination_by program => sizeOf program
+decreasing_by
+  all_goals decreasing_trivial
+
 structure CrepInlineFmapHOL (width : Nat) [NeZero width] where
   entries : List (CrepInlineMapHOLName × (List Nat × CrepProgHOL width))
   nodupKeys : (entries.map Prod.fst).Nodup
