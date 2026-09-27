@@ -14544,14 +14544,8 @@
     "hol_line": 443,
     "lean_path": "Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean",
     "lean_name": "evalCrepSemHOLProgExact_skip",
-    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support": [
-      "locals",
-      "globals",
-      "code"
-    ],
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 direct source comparison (2026-09-27; bead flapjack-4ac.5.16.5.13, originally tagged under .13.1): the first conjunct of HOL's rewritten evaluate_def (crepSemScript.sml:443, originating at line 241) is evaluate (Skip,s)=(NONE,s); the Skip clause does not mention fix_clock, so REWRITE_RULE [fix_clock_evaluate] leaves it unchanged. evalCrepSemHOLProgExact_skip has exactly the state quantifier and pair-shaped conclusion over CrepProgHOL and the 11-field CrepSemHOLState, over the total exact evaluator; no result premise or extra logical assumption. The fmap_as_finite_support qualifier records HOL's |-> fields locals/globals/code as HolFiniteMapExact, with the same-module canonical witness holFmapAsFiniteSupportWitness in this module re-exporting CrepSemHOLState.holFmapAsFiniteSupportWitness. The words_as_type_indexed_bitvec qualifier records HOL's type-indexed 'a word as BitVec width with [NeZero width] retained. This tag covers only the Skip case; the remaining evaluate_def clauses stay untagged in this slice."
+    "statement_status": "documented_mismatch",
+    "reviewer": "Coordinator review HOLD flapjack-l60u (2026-09-27): HOL crepSemScript.sml:443 rewrites evaluate_def; its Skip conjunct originates at line 241 and is the unconditional equation evaluate (Skip,s)=(NONE,s). The local evalCrepSemHOLProgExact_skip equation matches that constructor clause, but it only checks the Skip behavior of Flapjack's evalCrepSemHOLProgExact. No source-reviewed theorem establishes agreement of this total evaluator with HOL evaluate across all constructors, including FFI cases, so this constructor equation alone is not tagged as a port of evaluate_def. The tag and reviewed-type lock were withdrawn; the useful local Skip equation remains untagged infrastructure. Faithful evaluator port remains open under flapjack-4ac.5.16.5 and flapjack-4ac.5.16.5.25."
   },
   {
     "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
