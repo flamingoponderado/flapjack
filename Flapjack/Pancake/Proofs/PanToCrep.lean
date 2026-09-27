@@ -4829,4 +4829,88 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width]
 
 end CtxtFcExact
 
+/-- Flapjack-specific untagged analogue of HOL `ctxt_fc_funcs_eq`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:2295`), retained as the
+    intended exact rendering; the `@[hol]` tag is withdrawn pending
+    carrier-qualifier review (see HOLD below):
+    `(ctxt_fc cvs em vs shs ns).funcs = cvs`. The constructed context's
+    `funcs` field is definitionally the supplied function map. The statement
+    keeps HOL's argument order `(cvs, em, vs, shs, ns)` and its unrestricted
+    quantifiers; the only representation difference is the reviewed canonical
+    `HolFiniteMapExact` translation of HOL's `funname |-> ((varname # shape) #
+    shape)` finite map, which would be recorded by a `fmap_as_finite_support`
+    qualifier on the `funcs` field of the exact `PanToCrepContextExact` carrier
+    (names are
+    `MlS` = `mlstring`, shapes are `ShapeHOL` = `shape`). Direct HOL-EVAL row
+    `functions_projection=T` in `scripts/hol-probes/ctxt_fc_probe.out` is
+    replayed by the kernel-checked regression in
+    `Flapjack.Test.PanToCrepContextExactParity`.
+    HOLD (coordinator, 2026-09-27): exact HOL `ctxt_fc_funcs_eq`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:2295`) over the exact
+    `PanToCrepContextExact` carrier, but the `@[hol]` tag is WITHDRAWN pending
+    the DS10 imported-owner finite-map qualifier policy; the field-only
+    `fmap_as_finite_support := [funcs]` also fails to record the standalone
+    `cvs` map parameter and the translated word dimension of `em`. Proof
+    retained as untagged infrastructure until a policy-authorised combined
+    qualifier is available. -/
+theorem ctxtFcFuncsEqHOL {width : Nat} [NeZero width]
+    (cvs : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ShapeHOL))
+    (em : HolFiniteMapExact MlS (BitVec width))
+    (vs : List MlS) (shs : List ShapeHOL) (ns : List Nat) :
+    (ctxtFcExactHOL cvs em vs shs ns : PanToCrepContextExact width).funcs = cvs := rfl
+
+/-- Flapjack-specific untagged analogue of HOL `ctxt_fc_eids_eq`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:2301`), retained as the
+    intended exact rendering; the `@[hol]` tag is withdrawn pending
+    carrier-qualifier review (see HOLD below):
+    `(ctxt_fc cvs em vs shs ns).eids = em`. The constructed context's
+    `eids` field is definitionally the supplied exception-code map. The
+    statement keeps HOL's argument order `(cvs, em, vs, shs, ns)` and its
+    unrestricted quantifiers; the only representation difference is the
+    reviewed canonical `HolFiniteMapExact` translation of HOL's
+    `eid |-> 'a word` finite map, which would be recorded by a
+    `fmap_as_finite_support` qualifier on the `eids` field of the exact
+    `PanToCrepContextExact` carrier
+    (names are `MlS` = `mlstring`). The direct HOL-EVAL projection row is
+    replayed by the kernel-checked regression in
+    `Flapjack.Test.PanToCrepContextExactParity`.
+    HOLD (coordinator, 2026-09-27): exact HOL `ctxt_fc_eids_eq`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:2301`) over the exact
+    `PanToCrepContextExact` carrier, but the `@[hol]` tag is WITHDRAWN pending
+    the DS10 imported-owner finite-map qualifier policy; the field-only
+    `fmap_as_finite_support := [eids]` also fails to record the standalone
+    `em` map parameter and the translated word dimension of `em`. Proof
+    retained as untagged infrastructure. -/
+theorem ctxtFcEidsEqHOL {width : Nat} [NeZero width]
+    (cvs : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ShapeHOL))
+    (em : HolFiniteMapExact MlS (BitVec width))
+    (vs : List MlS) (shs : List ShapeHOL) (ns : List Nat) :
+    (ctxtFcExactHOL cvs em vs shs ns : PanToCrepContextExact width).eids = em := rfl
+
+/-- Flapjack-specific untagged analogue of HOL `ctxt_fc_vmax`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:2307`), retained as the
+    intended exact rendering; the `@[hol]` tag is withdrawn pending
+    carrier-qualifier review (see HOLD below):
+    `(ctxt_fc ctxt.funcs em vs shs ns).vmax = MAX_LIST ns`. The constructed
+    context's `vmax` field is definitionally `maxList ns`, so the statement is
+    a no-premise projection. The statement keeps HOL's argument order
+    `(cvs, em, vs, shs, ns)` and its unrestricted quantifiers; `.vmax` is a
+    `Nat` that depends only on `ns`, so the conclusion does not traverse any
+    finite-map field and no representation difference is observed in it.
+    Direct HOL-EVAL rows `vmax_nonempty_list=T`/`vmax_empty_list=T` in
+    `scripts/hol-probes/ctxt_fc_probe.out` are replayed by the kernel-checked
+    regression in `Flapjack.Test.PanToCrepContextExactParity`.
+    HOLD (coordinator, 2026-09-27): exact HOL `ctxt_fc_vmax`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:2307`) over the exact
+    `PanToCrepContextExact` carrier, but the `@[hol]` tag is WITHDRAWN pending
+    the DS10 imported-owner finite-map qualifier policy and a qualifier covering
+    the standalone `cvs`/`em` map parameters and the translated word dimension of
+    `em`. Proof retained as untagged infrastructure. -/
+theorem ctxtFcVmaxHOL {width : Nat} [NeZero width]
+    (cvs : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ShapeHOL))
+    (em : HolFiniteMapExact MlS (BitVec width))
+    (vs : List MlS) (shs : List ShapeHOL) (ns : List Nat) :
+    (ctxtFcExactHOL cvs em vs shs ns : PanToCrepContextExact width).vmax =
+      maxList ns := rfl
+
 end Flapjack
