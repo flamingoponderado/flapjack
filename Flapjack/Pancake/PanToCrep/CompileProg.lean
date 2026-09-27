@@ -1343,6 +1343,77 @@ theorem compileProgExactHOLW_return_relation_bridge {width : Nat} [NeZero width]
   · simp [hz, crepProgOfHOL]
     exact hexps
 
+/-- Context-independent leaf clauses remain equal for any related production
+    context. These are recursive-induction base cases with no context lookup or
+    expression compilation. -/
+theorem compileProgExactHOLW_skip_relation_bridge {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width)
+    (productionContext : PanToCrepHOLContext (BitVec width))
+    (_hcontext : PanToCrepContextExactProdRel context productionContext) :
+    crepProgOfHOL (compileProgExactHOLW context (.skip : ProgHOL width)) =
+      compileProgHOL productionContext (progOfHOL (.skip : ProgHOL width)) := by
+  simp [compileProgExactHOLW, compileProgHOL, crepProgOfHOL, progOfHOL]
+
+theorem compileProgExactHOLW_break_relation_bridge {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width)
+    (productionContext : PanToCrepHOLContext (BitVec width))
+    (_hcontext : PanToCrepContextExactProdRel context productionContext) :
+    crepProgOfHOL (compileProgExactHOLW context (.break : ProgHOL width)) =
+      compileProgHOL productionContext (progOfHOL (.break : ProgHOL width)) := by
+  simp [compileProgExactHOLW, compileProgHOL, crepProgOfHOL, progOfHOL]
+
+theorem compileProgExactHOLW_continue_relation_bridge {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width)
+    (productionContext : PanToCrepHOLContext (BitVec width))
+    (_hcontext : PanToCrepContextExactProdRel context productionContext) :
+    crepProgOfHOL (compileProgExactHOLW context (.continue : ProgHOL width)) =
+      compileProgHOL productionContext (progOfHOL (.continue : ProgHOL width)) := by
+  simp [compileProgExactHOLW, compileProgHOL, crepProgOfHOL, progOfHOL]
+
+theorem compileProgExactHOLW_tick_relation_bridge {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width)
+    (productionContext : PanToCrepHOLContext (BitVec width))
+    (_hcontext : PanToCrepContextExactProdRel context productionContext) :
+    crepProgOfHOL (compileProgExactHOLW context (.tick : ProgHOL width)) =
+      compileProgHOL productionContext (progOfHOL (.tick : ProgHOL width)) := by
+  simp [compileProgExactHOLW, compileProgHOL, crepProgOfHOL, progOfHOL]
+
+theorem compileProgExactHOLW_annot_relation_bridge {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width)
+    (productionContext : PanToCrepHOLContext (BitVec width))
+    (_hcontext : PanToCrepContextExactProdRel context productionContext)
+    (tag text : MlS) :
+    crepProgOfHOL (compileProgExactHOLW context (.annot tag text)) =
+      compileProgHOL productionContext (progOfHOL (.annot tag text)) := by
+  simp [compileProgExactHOLW, compileProgHOL, crepProgOfHOL, progOfHOL]
+
+theorem compileProgExactHOLW_global_assign_relation_bridge
+    {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width)
+    (productionContext : PanToCrepHOLContext (BitVec width))
+    (_hcontext : PanToCrepContextExactProdRel context productionContext)
+    (name : MlS) (expression : ExpHOL width) :
+    crepProgOfHOL
+        (compileProgExactHOLW context (.assign .global name expression)) =
+      compileProgHOL productionContext
+        (progOfHOL (.assign .global name expression)) := by
+  simp [compileProgExactHOLW, compileGlobalAssignExactHOLW,
+    compileProgHOL, crepProgOfHOL, progOfHOL]
+
+theorem compileProgExactHOLW_global_shmem_load_relation_bridge
+    {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width)
+    (productionContext : PanToCrepHOLContext (BitVec width))
+    (_hcontext : PanToCrepContextExactProdRel context productionContext)
+    (operator : OpSize) (name : MlS) (address : ExpHOL width) :
+    crepProgOfHOL
+        (compileProgExactHOLW context
+          (.shMemLoad operator .global name address)) =
+      compileProgHOL productionContext
+        (progOfHOL (.shMemLoad operator .global name address)) := by
+  simp [compileProgExactHOLW, compileGlobalShMemLoadExactHOLW,
+    compileProgHOL, crepProgOfHOL, progOfHOL]
+
 /-! The recursive `Dec` clause bridge (`pan_to_crepScript.sml:141-152`). Both
     compilers ignore the declared `shape` and store the compiled shape: the
     exact clause extends `context` to `bodyContext` (fresh names from the old
