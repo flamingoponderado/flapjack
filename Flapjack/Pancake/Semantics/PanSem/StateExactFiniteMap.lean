@@ -2346,6 +2346,35 @@ theorem evaluateHOLFiniteState_primitive {width : Nat} {σ : Type} [NeZero width
 
 attribute [simp] evaluateHOLFiniteState_primitive
 
+/-- Flapjack-specific carrier wrapper for the exact HOL ShMemLoad clause.
+    Keeping the broad evaluator closure behind this helper leaves the tagged
+    finite-carrier theorem unambiguously owned by `PanSemStateFiniteExact`.
+    The HOL clause itself is tagged on the equation below. -/
+noncomputable def shMemLoadClauseHOLFiniteExact {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateFiniteExact width σ) (operator : OpSize)
+    (kind : VarKind) (name : MlS) (address : ExpHOL width) :=
+  let evalExpression := fun (_ : PanSemStateExact width σ) (expression : ExpHOL width) =>
+    @evalHOLExact width σ _ state.toExact
+      (fun address => Classical.propDecidable (state.memaddrs address)) expression
+  @shMemLoadClauseHOLExact width σ _ state.toExact
+    (fun address => Classical.propDecidable (state.shMemaddrs address))
+    operator kind name address evalExpression
+
+/-- Flapjack-specific support transport for the finite-carrier wrapper;
+    HOL has no separate finite-support proposition. -/
+theorem shMemLoadClauseHOLFiniteExact_finiteSupport {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateFiniteExact width σ) (operator : OpSize)
+    (kind : VarKind) (name : MlS) (address : ExpHOL width) :
+    (shMemLoadClauseHOLFiniteExact state operator kind name address).2.FiniteSupport := by
+  unfold shMemLoadClauseHOLFiniteExact
+  exact @shMemLoadClauseHOLExact_finiteSupport width σ _ state.toExact
+    (fun address => Classical.propDecidable (state.shMemaddrs address))
+    operator kind name address
+    (fun (_ : PanSemStateExact width σ) (expression : ExpHOL width) =>
+      @evalHOLExact width σ _ state.toExact
+        (fun address => Classical.propDecidable (state.memaddrs address)) expression)
+    state.toExact_finiteSupport
+
 /-- Flapjack-specific carrier wrapper for the exact HOL ShMemStore clause.
     It is not a separate HOL declaration: the executable clause is
     `shMemStoreClauseHOLExact`, and the HOL `evaluate_def` equation is tagged
@@ -2375,6 +2404,26 @@ theorem shMemStoreClauseHOLFiniteExact_finiteSupport {width : Nat} {σ : Type}
       @evalHOLExact width σ _ state.toExact
         (fun address => Classical.propDecidable (state.memaddrs address)) expression)
     state.toExact_finiteSupport
+
+/-- HOL `evaluate_def`'s `ShMemLoad` equation (`panSemScript.sml:605-610`),
+    one of the line-780 theorem's 21 conjuncts. The exact clause helper
+    evaluates the address, requires a word-valued destination, and delegates
+    to the reviewed `sh_mem_load` definition. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
+  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+theorem evaluateHOLFiniteState_shMemLoad {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (operator : OpSize) (kind : VarKind)
+    (name : MlS) (address : ExpHOL width) :
+    let output := shMemLoadClauseHOLFiniteExact state operator kind name address
+    evaluateHOLFiniteState state (.shMemLoad operator kind name address : ProgHOL width) =
+      (output.1, ofExact output.2
+        (shMemLoadClauseHOLFiniteExact_finiteSupport state operator kind name address)) := by
+  classical
+  simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+    evalPanSemRecursiveCallFiniteContext, shMemLoadClauseHOLFiniteExact]
+  rfl
+
+attribute [simp] evaluateHOLFiniteState_shMemLoad
 
 /-! HOL `evaluate_def`'s `ShMemStore` equation (`panSemScript.sml:611-614`),
 one of the line-780 theorem's 21 conjuncts. The exact clause helper implements

@@ -12184,6 +12184,16 @@
     "hol_name": "evaluate_def",
     "hol_line": 780,
     "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
+    "lean_name": "evaluateHOLFiniteState_shMemLoad",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "reviewer": "flapjack-luna-a source comparison (2026-09-27; bead flapjack-qj5): HOL evaluate_def line 780's ShMemLoad conjunct at panSemScript.sml:605-610 evaluates the address in the original state, accepts a word address only when lookup_kvar finds a word-valued destination, then calls sh_mem_load kind name addr (nb_op op); all other cases return (SOME Error,s). evaluateHOLFiniteState_shMemLoad has the same state/program/result shape and no premises. shMemLoadClauseHOLFiniteExact keeps the broad exact evaluator closure internal and delegates the checks and transition to shMemLoadClauseHOLExact/shMemLoadHOLExact. The latter matches panSemScript.sml:510-527: zero-width reads check addr in sh_memaddrs, nonzero reads check byte_align addr; domain failures return Error/original state; FFI final returns FinalFFI with empty_locals; FFI return reads word_of_bytes F 0w new_bytes, updates the selected local/global with set_kvar, and updates ffi. The finite carrier reconstructs the same poststate with the checked support lemma. State word and FFI carriers match HOL; locals/globals/code/eshapes are the same-module HolFiniteMapExact carriers witnessed by holFmapAsFiniteSupportWitness. The qualifier records only those map-field translations; no eval result, lookup, or address-domain premise is assumed. This is one exact constructor case; the full conjunction remains open."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 780,
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
     "lean_name": "evaluateHOLFiniteState_shMemStore",
     "statement_status": "reviewed_fmap_as_finite_support",
     "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
