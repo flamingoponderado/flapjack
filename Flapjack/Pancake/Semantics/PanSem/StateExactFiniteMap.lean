@@ -1669,6 +1669,58 @@ noncomputable def evaluateHOLFiniteState {width : Nat} {σ : Type} [NeZero width
   classical
   exact evaluateHOLFiniteStateWithDeciders state program
 
+/-- Flapjack-specific bridge: the pair-shaped finite source evaluator does not
+depend on which decision procedures were supplied for the two memory domains.
+This removes auxiliary Lean instance binders when reusing its clause equations
+in the eventual HOL-shaped `evaluate_def` port. -/
+theorem evaluateHOLFiniteState_eq_withDeciders {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateFiniteExact width σ)
+    [hmem : DecidablePred state.memaddrs]
+    [hshared : DecidablePred state.shMemaddrs] (program : ProgHOL width) :
+    evaluateHOLFiniteState state program =
+      evaluateHOLFiniteStateWithDeciders state program := by
+  classical
+  have hmemEq : (fun address => Classical.propDecidable (state.memaddrs address)) =
+      hmem := by
+    funext address
+    exact Subsingleton.elim _ _
+  have hsharedEq : (fun address => Classical.propDecidable (state.shMemaddrs address)) =
+      hshared := by
+    funext address
+    exact Subsingleton.elim _ _
+  simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+    hmemEq, hsharedEq]
+
+/-- Flapjack-specific clause equation for HOL `panSem$evaluate_def`'s `Skip`
+branch (`panSemScript.sml:557`). The total finite-state view has neither the
+assembly marker nor extra decision-procedure binders. This is not a tag for the
+whole recursive HOL definition. -/
+@[simp] theorem evaluateHOLFiniteState_skip {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) :
+    evaluateHOLFiniteState state (.skip : ProgHOL width) = (none, state) := by
+  classical
+  simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+    evalPanSemRecursiveCallFiniteContext]
+
+/-- Flapjack-specific clause equation for HOL `panSem$evaluate_def`'s `Break`
+branch (`panSemScript.sml:623`); the complete recursive definition remains
+untagged pending its carrier/body review. -/
+@[simp] theorem evaluateHOLFiniteState_break {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) :
+    evaluateHOLFiniteState state (.break : ProgHOL width) = (some .break, state) := by
+  classical
+  simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+    evalPanSemRecursiveCallFiniteContext]
+
+/-- Flapjack-specific clause equation for HOL `panSem$evaluate_def`'s `Continue`
+branch (`panSemScript.sml:624`); no full `evaluate_def` port is claimed. -/
+@[simp] theorem evaluateHOLFiniteState_continue {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) :
+    evaluateHOLFiniteState state (.continue : ProgHOL width) = (some .continue, state) := by
+  classical
+  simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+    evalPanSemRecursiveCallFiniteContext]
+
 /-- The decider-taking helper is the pair-shaped rendering of the assembly-marker
     evaluator. This bridge is Flapjack-specific infrastructure. -/
 theorem evaluateHOLFiniteStateWithDeciders_eq_getD {width : Nat} {σ : Type} [NeZero width]
