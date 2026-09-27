@@ -998,20 +998,25 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {σ : Type} :
 
 end CrepPropsFiniteSupport
 
-/-- Flapjack-specific untagged analogue of HOL `lookup_locals_eq_map_vars` (`crepPropsScript.sml:17-27`), retained as the intended exact rendering (the `@[hol]` tag is withdrawn pending carrier-qualifier review, see HOLD below): mapping
-the local lookup over a list of variable names equals mapping the exact
-expression evaluator over the corresponding `Var` expressions. HOL's
-`OPT_MMAP (FLOOKUP t.locals) ns` is Lean's `List.mapM t.locals.lookup` and
-`OPT_MMAP (eval t) (MAP Var ns)` is `List.mapM (evalCrepSemHOLExp t)` over
-`CrepExpHOL.var`; `eval`'s `Var` clause is exactly `.locals.lookup`, so no
-side condition beyond the exact carrier is needed.
+/-- Flapjack-specific untagged analogue of HOL
+`lookup_locals_eq_map_vars` (`crepPropsScript.sml:17-27`). The proposition is
+otherwise clause-for-clause: HOL's `OPT_MMAP (FLOOKUP t.locals) ns` is Lean's
+`List.mapM t.locals.lookup`, and `OPT_MMAP (eval t) (MAP Var ns)` is
+`List.mapM (evalCrepSemHOLExp t)` over `CrepExpHOL.var`; the evaluator's `Var`
+clause is exactly `.locals.lookup`.
 
-HOLD (coordinator, 2026-09-27): the `@[hol]` tag is withdrawn pending the DS10
-`words_as_type_indexed_bitvec` policy. `CrepSemHOLState width σ` is the
-type-indexed-word crepSem state carrier, so an fmap-only qualifier does not
-record the HOL word-dimension translation; do not re-tag until the combined
-qualifier lands and the carrier is source-reviewed. The proof is kept as
-untagged infrastructure. -/
+This declaration is intentionally untagged under the current finite-map
+qualifier rule: `locals` is owned by `CrepSemHOLState` in
+`CrepSem/HOLState.lean`, while the theorem and its local roundtrip witness are
+in `CrepProps.lean`. The approved `(fmap_as_finite_support := [...])`
+translation requires the field-owning carrier structure in the tagged
+declaration's module. The `(words_as_type_indexed_bitvec)` qualifier can record
+the positive-width word carrier reached through imports, but does not relax
+that finite-map owner requirement. Copying the state carrier into this module
+would change the theorem's state type and introduce an unreviewed second
+carrier, so it is not a faithful port. Keep this useful theorem untagged until
+an approved same-module carrier arrangement or qualifier rule supplies the
+missing exact HOL result. -/
 theorem lookupLocalsEqMapVarsHOL {width : Nat} [NeZero width] {σ : Type}
     (ns : List Nat) (t : CrepSemHOLState width σ) [DecidablePred t.memaddrs] :
     ns.mapM t.locals.lookup =
