@@ -160,7 +160,7 @@ theorem crepExpVarsHOLList_eq_flatMap {width : Nat} [NeZero width]
     `CrepExpHOL` carrier. Keep the production `loadShapeBytesW` adapter
     untagged; `loadShapeBytesHOLW_toProduction` below proves that its output is
     the decoded result of this exact definition. -/
-@[hol "cakeml/pancake/crepLangScript.sml" "load_shape_def"]
+@[hol "cakeml/pancake/crepLangScript.sml" "load_shape_def" (words_as_type_indexed_bitvec)]
 def loadShapeBytesHOLW {width : Nat} [NeZero width]
     (address : BitVec width) (count : Nat) (value : CrepExpHOL width) :
     List (CrepExpHOL width) :=

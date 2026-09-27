@@ -1872,8 +1872,9 @@
     "hol_name": "load_shape_def",
     "lean_path": "Flapjack/Pancake/CrepLang/Exp.lean",
     "lean_name": "loadShapeBytesHOLW",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Source-reviewed against crepLangScript.sml:82-86. Exact carrier is CrepExpHOL width, with BitVec width and [NeZero width]; recursion preserves both HOL branches (address=0w uses Load e, otherwise Load (Op Add [e; Const address])) and advances by width/8 bytes_in_word, with count=0 returning []. The production CrepExp helper remains untagged; loadShapeBytesHOLW_toProduction proves its width wrapper agrees after decoding. Direct HOL rows in scripts/hol-probes/crep_load_shape_probe.out are exercised in Flapjack/Test/CrepeLoadShapeParity.lean."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "Source-reviewed against crepLangScript.sml:82-86 for the HOL word-dimension/FFI translation and finite-map policy. HOL load_shape operates on the type-indexed 'a word (dimension dimindex (:a) >= 1); the Lean declaration retains [NeZero width] as the discharge and uses the standard BitVec width translation (address : BitVec width; stride BitVec.ofNat width (width / 8) = byte$bytes_in_word = n2w (dimindex DIV 8), byteScript.sml:193). No HOL finite-map (|-> or sptree num_map) carrier is traversed: the carrier is the datatype CrepExpHOL width, so no fmap qualifier applies. Qualifiers: (words_as_type_indexed_bitvec). Statement/proof correspond clause-for-clause (address=0w -> Load e; else Load (Op Add [e; Const address]); count=0 -> []). The production loadShapeBytesW adapter remains untagged and loadShapeBytesHOLW_toProduction proves the width wrapper agrees after decoding; direct HOL rows in scripts/hol-probes/crep_load_shape_probe.out are exercised in Flapjack/Test/CrepeLoadShapeParity.lean.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "cakeml/pancake/crepLangScript.sml",
