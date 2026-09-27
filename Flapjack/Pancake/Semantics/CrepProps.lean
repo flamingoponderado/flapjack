@@ -1016,8 +1016,8 @@ theorem flookupSetGlobalsCrepSemHOL_locals {width : Nat} [NeZero width] {σ : Ty
     and the free HOL `k` is the universally quantified `label`. The
     `(fmap_as_finite_support := [locals, globals, code])` qualifier records that
     HOL's `|->` fields are represented by the reviewed `HolFiniteMapExact`
-    translation. -/
-/-- HOLD (coordinator, 2026-09-27): exact HOL `sh_mem_load_FLOOKUP_locals`
+    translation. 
+    HOLD (coordinator, 2026-09-27): exact HOL `sh_mem_load_FLOOKUP_locals`
     (`cakeml/pancake/semantics/crepPropsScript.sml:303`), but the `@[hol]` tag is
     WITHDRAWN pending the DS10 `words_as_type_indexed_bitvec` policy: the
     statement's `address : BitVec width` with `[NeZero width]` translates HOL's
@@ -1049,8 +1049,8 @@ theorem crepShMemLoadHOL_flookup_locals {width : Nat} [NeZero width] {σ : Type}
     side condition). HOL's `v`/`n` are the `Nat` local names `name`/`key`. The
     `(fmap_as_finite_support := [locals, globals, code])` qualifier records that
     HOL's `|->` fields are represented by the reviewed `HolFiniteMapExact`
-    translation. -/
-/-- HOLD (coordinator, 2026-09-27): exact HOL `sh_mem_store_FLOOKUP_locals`
+    translation. 
+    HOLD (coordinator, 2026-09-27): exact HOL `sh_mem_store_FLOOKUP_locals`
     (`cakeml/pancake/semantics/crepPropsScript.sml:312`), but the `@[hol]` tag is
     WITHDRAWN pending the DS10 `words_as_type_indexed_bitvec` policy: the
     statement's `address : BitVec width` with `[NeZero width]` translates HOL's

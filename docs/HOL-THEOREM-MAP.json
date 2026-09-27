@@ -3309,6 +3309,9 @@
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Codex (proof inventory)"
   },
+    {"hol_path": null, "hol_name": null, "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean", "lean_name": "ctxtFcEidsEqHOL", "statement_status": "no_hol_reference_pending_classification", "reviewer": "flapjack-ds9 HOLD (coordinator, 2026-09-27): exact-port proof retained as untagged infrastructure; the @[hol] tag was WITHDRAWN pending the DS10 imported-owner finite-map / words_as_type_indexed_bitvec qualifier policy. No HOL tag currently claims this declaration."},
+    {"hol_path": null, "hol_name": null, "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean", "lean_name": "ctxtFcFuncsEqHOL", "statement_status": "no_hol_reference_pending_classification", "reviewer": "flapjack-ds9 HOLD (coordinator, 2026-09-27): exact-port proof retained as untagged infrastructure; the @[hol] tag was WITHDRAWN pending the DS10 imported-owner finite-map / words_as_type_indexed_bitvec qualifier policy. No HOL tag currently claims this declaration."},
+    {"hol_path": null, "hol_name": null, "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean", "lean_name": "ctxtFcVmaxHOL", "statement_status": "no_hol_reference_pending_classification", "reviewer": "flapjack-ds9 HOLD (coordinator, 2026-09-27): exact-port proof retained as untagged infrastructure; the @[hol] tag was WITHDRAWN pending the DS10 imported-owner finite-map / words_as_type_indexed_bitvec qualifier policy. No HOL tag currently claims this declaration."},
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
     "hol_name": "filter_not_mem_self",
@@ -3541,6 +3544,7 @@
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only finite-support carrier roundtrip for PanToCrepTargetLocalsExact. It proves that converting the wrapper to its broad counterpart and back preserves its HolFiniteMapExact targetLocals field. This is representation infrastructure for the evaluate_shape_invariant_ret_inst port, not a HOL declaration."
   },
+    {"hol_path": null, "hol_name": null, "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean", "lean_name": "ctxtMaxElLeqFiniteExact", "statement_status": "no_hol_reference_pending_classification", "reviewer": "flapjack-ds9 HOLD (coordinator, 2026-09-27): exact-port proof retained as untagged infrastructure; the @[hol] tag was WITHDRAWN pending the DS10 imported-owner finite-map / words_as_type_indexed_bitvec qualifier policy. No HOL tag currently claims this declaration."},
   {
     "hol_path": null,
     "hol_name": null,

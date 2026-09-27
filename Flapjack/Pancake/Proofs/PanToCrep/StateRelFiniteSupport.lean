@@ -298,8 +298,8 @@ theorem panToCrepLocalsRelLookupCtxtFiniteExact {width : Nat} [NeZero width]
     bound at `EL n ns` and using `EL_MEM`. No direct HOL-EVAL oracle row exists
     for this symbolic-index lemma (the bound proof is needed to select the
     element), so the kernel-checked instance in
-    `Flapjack/Test/PanToCrepStateRelCarrierParity.lean` replays it concretely. -/
-/-- HOLD (coordinator, 2026-09-27): exact HOL `ctxt_max_el_leq`
+    `Flapjack/Test/PanToCrepStateRelCarrierParity.lean` replays it concretely. 
+    HOLD (coordinator, 2026-09-27): exact HOL `ctxt_max_el_leq`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:1493`) over the exact
     `PanToCrepContextExact` carrier, but the `@[hol]` tag is WITHDRAWN pending
     the DS10 imported-owner finite-map qualifier policy; the quantified carrier
