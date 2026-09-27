@@ -48,8 +48,8 @@ private def stateWordX : PanSemStateFiniteExact 8 Unit :=
 example :
     (evaluateHOLFiniteState baseState
         (.shMemLoad .op8 .local (ml "z") (.const 0) : ProgHOL 8)).1 = some .error := by
-  rw [evaluateHOLFiniteState_shMemLoad_source]
-  simp [baseState, evalHOLFinite, evalHOLExact, lookupKvarHOLExact,
+  rw [PanSemStateFiniteExact.evaluateHOLFiniteState_shMemLoad_source]
+  simp [baseState, evalHOLFinite, evalHOLExact, lookupKvarHOLFinite,
     HolFiniteMapExact.empty]
 
 /-- HOL oracle `shmemload_domain_result`: address and destination are words,
@@ -57,9 +57,9 @@ example :
 example :
     (evaluateHOLFiniteState stateWordX
         (.shMemLoad .op8 .local (ml "x") (.const 0) : ProgHOL 8)).1 = some .error := by
-  rw [evaluateHOLFiniteState_shMemLoad_source]
-  simp [stateWordX, baseState, evalHOLFinite, evalHOLExact, lookupKvarHOLExact,
-    PanSemStateFiniteExact.toExact, shMemLoadHOLExact, nbOpHOL,
+  rw [PanSemStateFiniteExact.evaluateHOLFiniteState_shMemLoad_source]
+  simp [stateWordX, baseState, evalHOLFinite, evalHOLExact, lookupKvarHOLFinite,
+    shMemLoadHOLFiniteExact, nbOpHOL,
     HolFiniteMapExact.update, HolFiniteMapExact.empty, FUPDATE]
 
 /-- HOL oracle `shmemload_address_eval_failure`: evaluation of the address
@@ -68,7 +68,7 @@ example :
     (evaluateHOLFiniteState baseState
         (.shMemLoad .op8 .local (ml "x") (.var .local (ml "z")) : ProgHOL 8)).1 =
       some .error := by
-  rw [evaluateHOLFiniteState_shMemLoad_source]
+  rw [PanSemStateFiniteExact.evaluateHOLFiniteState_shMemLoad_source]
   simp [baseState, evalHOLFinite, evalHOLExact, HolFiniteMapExact.empty]
 
 /-- HOL oracle `shmemload_address_nonword`: address evaluation succeeds with a
@@ -76,7 +76,7 @@ example :
 example :
     (evaluateHOLFiniteState stateWordX
         (.shMemLoad .op8 .local (ml "x") (.rstruct []) : ProgHOL 8)).1 = some .error := by
-  rw [evaluateHOLFiniteState_shMemLoad_source]
+  rw [PanSemStateFiniteExact.evaluateHOLFiniteState_shMemLoad_source]
   simp [stateWordX, baseState, evalHOLFinite, evalHOLExact, HolFiniteMapExact.update,
     HolFiniteMapExact.empty]
 
