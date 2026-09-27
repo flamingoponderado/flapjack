@@ -1767,4 +1767,279 @@ theorem evaluateHOLFiniteState_seq_line780 {width : Nat} {σ : Type} [NeZero wid
   simp only [fixClockHOLFinite_evaluateState state first]
   rfl
 
+/- Assembly of the line-780 `evaluate_def` constructor match from the tagged
+per-clause finite equations: one HOL-shaped `match program with` statement over
+all 21 `ProgHOL` constructors. Each arm is the corresponding tagged clause
+equation. -/
+set_option maxHeartbeats 4000000 in
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateHOLFiniteState_eq_evaluate_def {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (program : ProgHOL width) :
+    evaluateHOLFiniteState state program =
+      match program with
+    | .skip => (none, state)
+    | .dec name shape initializer body =>
+      (let context : FiniteEvalContext width σ :=
+        ⟨state, fun address => Classical.propDecidable (state.memaddrs address),
+          fun address => Classical.propDecidable (state.shMemaddrs address)⟩
+       match @evalHOLExact width σ _ state.toExact context.memaddrsDecidable initializer with
+       | none => (some .error, state)
+       | some value =>
+           if shapeEqHOL shape (shapeOfHOLExact value) then
+             let bodyState := setVarHOLFinite name value state
+             let bodyOutput := evaluateHOLFiniteState bodyState body
+             (bodyOutput.1,
+               { bodyOutput.2 with
+                 locals := HolFiniteMapExact.resVarEq bodyOutput.2.locals
+                   (name, state.locals.lookup name) })
+           else (some .error, state))
+    | .assign kind name source => match @evalHOLExact width σ _ state.toExact
+          (fun address => Classical.propDecidable (state.memaddrs address)) source with
+      | none => (some .error, state)
+      | some value =>
+          if isValidValueHOLFinite state kind name value then
+            (none, setKvarHOLFinite kind name value state)
+          else (some .error, state)
+    | .primitive name operator arguments => match @evalListHOLExact width σ _ state.toExact
+          (fun address => Classical.propDecidable (state.memaddrs address)) arguments with
+      | none => (some .error, state)
+      | some values =>
+          match panPrimopHOLExact operator values with
+          | none => (some .error, state)
+          | some value =>
+              if isValidValueHOLFinite state .local name value then
+                (none, setVarHOLFinite name value state)
+              else (some .error, state)
+    | .store destination source => match @evalHOLExact width σ _ state.toExact
+          (fun address => Classical.propDecidable (state.memaddrs address)) destination with
+      | some (.val (.word address)) =>
+          match @evalHOLExact width σ _ state.toExact
+              (fun address => Classical.propDecidable (state.memaddrs address)) source with
+          | some value =>
+              match @panMemStoresHOL width _ address (flattenHOL value) state.memaddrs
+                  (fun address => Classical.propDecidable (state.memaddrs address)) state.memory with
+              | some memory => (none, { state with memory := memory })
+              | none => (some .error, state)
+          | none => (some .error, state)
+      | _ => (some .error, state)
+    | .store32 destination source => match @evalHOLExact width σ _ state.toExact
+          (fun address => Classical.propDecidable (state.memaddrs address)) destination with
+      | some (.val (.word address)) =>
+          match @evalHOLExact width σ _ state.toExact
+              (fun address => Classical.propDecidable (state.memaddrs address)) source with
+          | some (.val (.word value)) =>
+              match @panMemStore32HOL width _ state.memory state.memaddrs
+                  (fun address => Classical.propDecidable (state.memaddrs address))
+                  state.be address (BitVec.ofNat 32 value.toNat) with
+              | some memory => (none, { state with memory := memory })
+              | none => (some .error, state)
+          | _ => (some .error, state)
+      | _ => (some .error, state)
+    | .storeByte destination source => match @evalHOLExact width σ _ state.toExact
+          (fun address => Classical.propDecidable (state.memaddrs address)) destination with
+      | some (.val (.word address)) =>
+          match @evalHOLExact width σ _ state.toExact
+              (fun address => Classical.propDecidable (state.memaddrs address)) source with
+          | some (.val (.word value)) =>
+              match @panMemStoreByteWord8HOL width _ state.memory state.memaddrs
+                  (fun address => Classical.propDecidable (state.memaddrs address))
+                  state.be address (BitVec.ofNat 8 value.toNat) with
+              | some memory => (none, { state with memory := memory })
+              | none => (some .error, state)
+          | _ => (some .error, state)
+      | _ => (some .error, state)
+    | .seq first second =>
+      (let firstOutput := evaluateHOLFiniteState state first
+       match firstOutput.1 with
+       | none => evaluateHOLFiniteState firstOutput.2 second
+       | some _ => firstOutput)
+    | .ite condition thenBranch elseBranch => match @evalHOLExact width σ _ state.toExact
+          (fun address => Classical.propDecidable (state.memaddrs address)) condition with
+      | some (.val (.word word)) =>
+          if word = 0 then evaluateHOLFiniteState state elseBranch
+          else evaluateHOLFiniteState state thenBranch
+      | _ => (some .error, state)
+    | .while condition body => (match @evalHOLFinite width σ _ state
+          (fun address => Classical.propDecidable (state.memaddrs address)) condition with
+       | some (.val (.word word)) =>
+           if word ≠ 0 then
+             if state.clock = 0 then (some .timeOut, emptyLocalsHOLFinite state)
+             else
+               let bodyOutput :=
+                 evaluateHOLFiniteState (decClockHOLFinite state) body
+               match bodyOutput.1 with
+               | none => evaluateHOLFiniteState bodyOutput.2 (.while condition body)
+               | some .continue => evaluateHOLFiniteState bodyOutput.2 (.while condition body)
+               | some .break => (none, bodyOutput.2)
+               | some result => (some result, bodyOutput.2)
+           else (none, state)
+       | _ => (some .error, state))
+    | .break => (some .break, state)
+    | .continue => (some .continue, state)
+    | .call info function arguments => (match evalListHOLFinite state
+          (h := fun address => Classical.propDecidable (state.memaddrs address)) arguments with
+       | none => (some .error, state)
+       | some values =>
+           match lookupCodeHOLFinite state.code.lookup function values with
+           | none => (some .error, state)
+           | some (body, callee, returnShape) =>
+               if state.clock = 0 then
+                 (some .timeOut, emptyLocalsHOLFinite state)
+               else
+                 match evaluateHOLFiniteState (callEntryStateHOLFinite state callee) body with
+                 | (none, st) => (some .error, st)
+                 | (some .break, st) => (some .error, st)
+                 | (some .continue, st) => (some .error, st)
+                 | (some (.returned value), st) =>
+                     if shapeEqHOL (shapeOfHOLExact value) returnShape then
+                       (match info with
+                        | none => (some (.returned value), emptyLocalsHOLFinite st)
+                        | some (none, _) => (none, { st with locals := state.locals })
+                        | some (some (kind, name), _) =>
+                            if isValidValueHOLExact state.toExact kind name value then
+                              (none, setKvarHOLFinite kind name value
+                                { st with locals := state.locals })
+                            else (some .error, st))
+                     else (some .error, st)
+                 | (some (.exception exceptionId value), st) =>
+                     (match info with
+                      | none =>
+                          (some (.exception exceptionId value), emptyLocalsHOLFinite st)
+                      | some (_, none) =>
+                          (some (.exception exceptionId value), emptyLocalsHOLFinite st)
+                      | some (_, some (handlerId, handlerVar, handlerProgram)) =>
+                          if exceptionId = handlerId then
+                            (match state.eshapes.lookup exceptionId with
+                             | some shape =>
+                                 if shapeEqHOL (shapeOfHOLExact value) shape &&
+                                     isValidValueHOLExact state.toExact .local handlerVar value
+                                 then
+                                   evaluateHOLFiniteState
+                                     (setVarHOLFinite handlerVar value
+                                       { st with locals := state.locals }) handlerProgram
+                                 else (some .error, st)
+                             | none => (some .error, st))
+                          else (some (.exception exceptionId value),
+                            emptyLocalsHOLFinite st))
+                 | (some other, st) => (some other, emptyLocalsHOLFinite st))
+    | .decCall resultName shape function arguments continuation => (match evalListHOLFinite state
+          (h := fun address => Classical.propDecidable (state.memaddrs address)) arguments with
+       | none => (some .error, state)
+       | some values =>
+           match lookupCodeHOLFinite state.code.lookup function values with
+           | none => (some .error, state)
+           | some (body, callee, returnShape) =>
+               if state.clock = 0 then
+                 (some .timeOut, emptyLocalsHOLFinite state)
+               else
+                 let entry := callEntryStateHOLFinite state callee
+                 let bodyOutput := evaluateHOLFiniteState entry body
+                 let fixed := fixClockHOLFinite entry bodyOutput
+                 match bodyOutput.1 with
+                 | none => (some .error, fixed.2)
+                 | some .break => (some .error, fixed.2)
+                 | some .continue => (some .error, fixed.2)
+                 | some (.returned value) =>
+                     if shapeEqHOL (shapeOfHOLExact value) shape &&
+                         shapeEqHOL (shapeOfHOLExact value) returnShape then
+                       let continuationState :=
+                         setVarHOLFinite resultName value
+                           { fixed.2 with locals := state.locals }
+                       let continuationOutput :=
+                         evaluateHOLFiniteState continuationState continuation
+                       (continuationOutput.1,
+                         { continuationOutput.2 with
+                           locals := HolFiniteMapExact.resVarEq
+                             continuationOutput.2.locals
+                             (resultName, state.locals.lookup resultName) })
+                     else (some .error, fixed.2)
+                 | some other => (some other, emptyLocalsHOLFinite fixed.2))
+    | .extCall function configuration configurationLength array arrayLength => match
+        @evalHOLFinite width σ _ state
+          (fun address => Classical.propDecidable (state.memaddrs address)) configuration,
+        @evalHOLFinite width σ _ state
+          (fun address => Classical.propDecidable (state.memaddrs address)) configurationLength,
+        @evalHOLFinite width σ _ state
+          (fun address => Classical.propDecidable (state.memaddrs address)) array,
+        @evalHOLFinite width σ _ state
+          (fun address => Classical.propDecidable (state.memaddrs address)) arrayLength with
+      | some (.val (.word address1)), some (.val (.word length1)),
+        some (.val (.word address2)), some (.val (.word length2)) =>
+          match
+            readBytearrayWordHOL (byteWidth := 8) address1 length1.toNat
+              (@panMemLoadByteWord8HOL width _ state.memory state.memaddrs
+                (fun address => Classical.propDecidable (state.memaddrs address)) state.be),
+            readBytearrayWordHOL (byteWidth := 8) address2 length2.toNat
+              (@panMemLoadByteWord8HOL width _ state.memory state.memaddrs
+                (fun address => Classical.propDecidable (state.memaddrs address)) state.be) with
+          | some bytes1, some bytes2 =>
+              match callFFIHOL state.ffi (.extCall function) bytes1 bytes2 with
+              | .final event =>
+                  (some (.finalFfi event), emptyLocalsHOLFinite state)
+              | .ret newFfi newBytes =>
+                  let nextState : PanSemStateExact width σ :=
+                    { state.toExact with
+                      memory := @panWriteBytearrayWord8HOL width _ address2 newBytes
+                        state.memory state.memaddrs
+                        (fun address => Classical.propDecidable (state.memaddrs address))
+                        state.be
+                      ffi := newFfi }
+                  (none, PanSemStateFiniteExact.ofExact nextState (by
+                    change nextState.FiniteSupport
+                    simpa [nextState, PanSemStateExact.FiniteSupport] using
+                      state.toExact_finiteSupport))
+          | _, _ => (some .error, state)
+      | _, _, _, _ => (some .error, state)
+    | .raise exceptionId expression => match state.eshapes.lookup exceptionId,
+          @evalHOLExact width σ _ state.toExact
+            (fun address => Classical.propDecidable (state.memaddrs address)) expression with
+      | some shape, some value =>
+          let condition : Prop := shapeOfHOLExact value = shape ∧
+            Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL state.structs
+              (shapeOfHOLExact value) ≤ 32
+          letI : Decidable condition := Classical.propDecidable condition
+          if condition then
+            (some (.exception exceptionId value), emptyLocalsHOLFinite state)
+          else (some .error, state)
+      | _, _ => (some .error, state)
+    | .return expression => match @evalHOLExact width σ _ state.toExact
+          (fun address => Classical.propDecidable (state.memaddrs address)) expression with
+      | none => (some .error, state)
+      | some value =>
+          if Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL state.structs
+              (shapeOfHOLExact value) ≤ 32 then
+            (some (.returned value), emptyLocalsHOLFinite state)
+          else (some .error, state)
+    | .shMemLoad operator kind name address => match @evalHOLFinite width σ _ state
+          (fun current => Classical.propDecidable (state.memaddrs current)) address with
+      | some (.val (.word addr)) =>
+          match lookupKvarHOLFinite kind name state with
+          | some (.val (.word _)) =>
+              let loaded := @shMemLoadHOLFiniteExact width σ _ state
+                (fun current => Classical.propDecidable (state.shMemaddrs current))
+                kind name addr (nbOpHOL operator)
+              (loaded.1, loaded.2)
+          | _ => (some .error, state)
+      | _ => (some .error, state)
+    | .shMemStore operator address value =>
+      (let hshmem : DecidablePred state.shMemaddrs :=
+        fun key => Classical.propDecidable (state.shMemaddrs key)
+       let evalAddress := @evalHOLExact width σ _ state.toExact
+         (fun key => Classical.propDecidable (state.memaddrs key)) address
+       let evalValue := @evalHOLExact width σ _ state.toExact
+         (fun key => Classical.propDecidable (state.memaddrs key)) value
+       match evalAddress, evalValue with
+       | some (.val (.word addr)), some (.val (.word bytes)) =>
+           let output := shMemStoreHOLExact state.toExact bytes addr (nbOpHOL operator)
+           (output.1, ofExact output.2
+             (@shMemStoreHOLExact_finiteSupport width σ _ state.toExact hshmem
+               bytes addr (nbOpHOL operator) state.toExact_finiteSupport))
+       | _, _ => (some .error, state))
+    | .tick => (if state.clock = 0 then (some .timeOut, emptyLocalsHOLFinite state)
+       else (none, decClockHOLFinite state))
+    | .annot _tag _text => (none, state) := by
+  cases program <;> (first | rw [evaluateHOLFiniteState_skip] | rw [evaluateHOLFiniteState_dec_total] | rw [evaluateHOLFiniteState_assign] | rw [evaluateHOLFiniteState_primitive] | rw [evaluateHOLFiniteState_store] | rw [evaluateHOLFiniteState_store32] | rw [evaluateHOLFiniteState_storeByte] | rw [evaluateHOLFiniteState_seq_line780] | rw [evaluateHOLFiniteState_ite] | rw [evaluateHOLFiniteState_while_fixClockRewrite] | rw [evaluateHOLFiniteState_break] | rw [evaluateHOLFiniteState_continue] | rw [evaluateHOLFiniteState_call] | rw [evaluateHOLFiniteState_decCall_total] | rw [evaluateHOLFiniteState_extCall_source] | rw [evaluateHOLFiniteState_raise] | rw [evaluateHOLFiniteState_return] | rw [evaluateHOLFiniteState_shMemLoad_source] | rw [evaluateHOLFiniteState_shMemStore_total] | rw [evaluateHOLFiniteState_tick] | rw [evaluateHOLFiniteState_annot]) <;> try (dsimp only; rfl)
+
 end Flapjack
