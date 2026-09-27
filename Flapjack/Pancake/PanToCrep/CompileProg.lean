@@ -3459,6 +3459,46 @@ theorem compileProgExactHOLW_shmem_store_bridge {width : Nat} [NeZero width]
                     rw [List.foldl_max]
                     omega
 
+/-- Relation-polymorphic shared-memory Store case. The four expression
+    outputs and the related `vmax` determine the temporary and error paths; no
+    equality of the full variable maps is required. -/
+theorem compileProgExactHOLW_shmem_store_relation_bridge
+    {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width)
+    (productionContext : PanToCrepHOLContext (BitVec width))
+    (hcontext : PanToCrepContextExactProdRel context productionContext)
+    (operator : OpSize) (value address : ExpHOL width) :
+    crepProgOfHOL
+        (compileProgExactHOLW context (.shMemStore operator value address)) =
+      compileProgHOL productionContext
+        (.shMemStore operator (expOfHOL value) (expOfHOL address)) := by
+  have hvalue := compileExpExactHOLW_prodCodec_of_contextRel
+    context productionContext hcontext value
+  have haddress := compileExpExactHOLW_prodCodec_of_contextRel
+    context productionContext hcontext address
+  rw [Prod.mk.injEq] at hvalue haddress
+  rcases hvalue with ⟨hvalueList, _⟩
+  rcases haddress with ⟨haddressList, _⟩
+  cases hExactValue : compileExpExactHOLW context value with
+  | mk exactValues valueShape =>
+      cases hExactAddress : compileExpExactHOLW context address with
+      | mk exactAddresses addressShape =>
+          cases hProductionValue :
+              compileExpHOL productionContext (expOfHOL value) with
+          | mk productionValues productionValueShape =>
+              cases hProductionAddress :
+                  compileExpHOL productionContext (expOfHOL address) with
+              | mk productionAddresses productionAddressShape =>
+                  cases exactValues <;> cases exactAddresses <;>
+                    cases productionValues <;> cases productionAddresses <;>
+                    simp_all [compileProgExactHOLW, compileShMemStoreExactHOLW,
+                      compileProgHOL, crepProgOfHOL, firstCompiledExpAnyShapeHOL,
+                      maxCrepExpVarHOL, crepExpVarsW, foldr_max_zero_eq_max_getD,
+                      nestedDecs, List.flatMap]
+                  all_goals
+                    rw [List.foldl_max]
+                    omega
+
 /-- The local `ShMemLoad` equation agrees across the exact and production
     carriers once the address compiler results are decoded. Both sides use the
     same exact finite-map destination lookup; missing address heads and missing
