@@ -1734,6 +1734,52 @@ theorem setKvarHOLExact_ffi {width : Nat} {σ : Type} [NeZero width]
     (setKvarHOLExact kind name value state).ffi = state.ffi := by
   cases kind <;> rfl
 
+/-- A successful exact `ExtCall` step with unchanged observable events keeps
+    the whole FFI state. Errors and terminal FFI results leave the source state
+    installed; a returning FFI call is handled by the single-call event/state
+    lemma from `FfiHOL`. -/
+theorem extCallStepHOLExact_ffi_eq_of_ioEvents_eq {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateExact width σ) [DecidablePred state.memaddrs]
+    (evalExpression : PanSemStateExact width σ → ExpHOL width → Option (ValueHOL width))
+    (function : MlS) (ptr1 len1 ptr2 len2 : ExpHOL width)
+    (hevents : (extCallStepHOLExact state evalExpression function ptr1 len1 ptr2 len2).2.ffi.ioEvents =
+      state.ffi.ioEvents) :
+    (extCallStepHOLExact state evalExpression function ptr1 len1 ptr2 len2).2.ffi = state.ffi := by
+  unfold extCallStepHOLExact at hevents ⊢
+  repeat' split
+  all_goals
+    try simp_all [emptyLocalsHOLExact]
+  all_goals
+    exact callFFIHOL_ret_ffi_eq_of_ioEvents_eq _ _ _ _ _ _ (by assumption) (by assumption)
+
+/-- The same unchanged-event consequence for the exact `ShMemLoad` helper. -/
+theorem shMemLoadHOLExact_ffi_eq_of_ioEvents_eq {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateExact width σ) [DecidablePred state.shMemaddrs]
+    (kind : VarKind) (name : MlS) (address : RiscV.Word width) (nb : Nat)
+    (hevents : (shMemLoadHOLExact state kind name address nb).2.ffi.ioEvents =
+      state.ffi.ioEvents) :
+    (shMemLoadHOLExact state kind name address nb).2.ffi = state.ffi := by
+  unfold shMemLoadHOLExact at hevents ⊢
+  repeat' split
+  all_goals
+    try simp_all [emptyLocalsHOLExact, setKvarHOLExact]
+  all_goals
+    exact callFFIHOL_ret_ffi_eq_of_ioEvents_eq _ _ _ _ _ _ (by assumption) (by assumption)
+
+/-- The same unchanged-event consequence for the exact `ShMemStore` helper. -/
+theorem shMemStoreHOLExact_ffi_eq_of_ioEvents_eq {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateExact width σ) [DecidablePred state.shMemaddrs]
+    (word address : RiscV.Word width) (nb : Nat)
+    (hevents : (shMemStoreHOLExact state word address nb).2.ffi.ioEvents =
+      state.ffi.ioEvents) :
+    (shMemStoreHOLExact state word address nb).2.ffi = state.ffi := by
+  unfold shMemStoreHOLExact at hevents ⊢
+  repeat' split
+  all_goals
+    try simp_all
+  all_goals
+    exact callFFIHOL_ret_ffi_eq_of_ioEvents_eq _ _ _ _ _ _ (by assumption) (by assumption)
+
 theorem shMemLoadHOLExact_ioEvents_prefix {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateExact width σ) [DecidablePred state.shMemaddrs]
     (kind : VarKind) (name : MlS) (address : RiscV.Word width) (nb : Nat) :

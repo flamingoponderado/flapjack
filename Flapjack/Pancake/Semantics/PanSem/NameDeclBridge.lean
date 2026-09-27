@@ -815,4 +815,224 @@ theorem evalPanValueExp_bytesInWord_correspondence {width : Nat} [NeZero width]
   simp only [PanSemDeclarationValueOptionRel, evalPanValueExp,
     PanSemStateFiniteExact.evalHOLFinite_bytesInWord, panValueCodecRel_word]
 
+
+/-- Var `Local` arm: production reads `locals name`; the exact evaluator reads
+    `state.locals.lookup (ofString name)`.  The per-name relation is the
+    premise, matching the ranged-key discipline of
+    `PanSemDeclarationGlobalMapRel`. -/
+theorem evalPanValueExp_var_local_correspondence {width : Nat} [NeZero width]
+    [BEq (BitVec width)] [OfNat (BitVec width) 0] [OfNat (BitVec width) 1]
+    [Add (BitVec width)] [Mul (BitVec width)] [Sub (BitVec width)]
+    [AndOp (BitVec width)] [OrOp (BitVec width)] [HXor (BitVec width) (BitVec width) (BitVec width)]
+    [ShiftLeft (BitVec width)] [ShiftRight (BitVec width)] [LT (BitVec width)]
+    [DecidableRel (fun left right : BitVec width => left < right)] [PanCmp (BitVec width)]
+    (state : PanSemStateFiniteExact width Unit) [_hmem : DecidablePred state.memaddrs]
+    (structs : StructContext)
+    (locals globals : VarName → Option (PanValue (BitVec width)))
+    (memory : BitVec width → Option (PanValue (BitVec width)))
+    (baseAddress topAddress bytesInWord : BitVec width)
+    (name : String)
+    (hlocals : PanSemDeclarationValueOptionRel PanValueCodecRel (locals name)
+      (state.locals.lookup (Flapjack.Basis.Pure.MlString.ofString name))) :
+    PanSemDeclarationValueOptionRel PanValueCodecRel
+      (evalPanValueExp structs locals globals memory baseAddress topAddress bytesInWord
+        (.var .local name))
+      (PanSemStateFiniteExact.evalHOLFinite state
+        (.var .local (Flapjack.Basis.Pure.MlString.ofString name))
+        : Option (ValueHOL width)) := by
+  simpa only [evalPanValueExp, PanSemStateFiniteExact.evalHOLFinite_var_local] using hlocals
+
+/-- Var `Global` arm: production reads `globals name`; the exact evaluator reads
+    `state.globals.lookup (ofString name)`.  The per-name relation is the
+    premise. -/
+theorem evalPanValueExp_var_global_correspondence {width : Nat} [NeZero width]
+    [BEq (BitVec width)] [OfNat (BitVec width) 0] [OfNat (BitVec width) 1]
+    [Add (BitVec width)] [Mul (BitVec width)] [Sub (BitVec width)]
+    [AndOp (BitVec width)] [OrOp (BitVec width)] [HXor (BitVec width) (BitVec width) (BitVec width)]
+    [ShiftLeft (BitVec width)] [ShiftRight (BitVec width)] [LT (BitVec width)]
+    [DecidableRel (fun left right : BitVec width => left < right)] [PanCmp (BitVec width)]
+    (state : PanSemStateFiniteExact width Unit) [_hmem : DecidablePred state.memaddrs]
+    (structs : StructContext)
+    (locals globals : VarName → Option (PanValue (BitVec width)))
+    (memory : BitVec width → Option (PanValue (BitVec width)))
+    (baseAddress topAddress bytesInWord : BitVec width)
+    (name : String)
+    (hglobals : PanSemDeclarationValueOptionRel PanValueCodecRel (globals name)
+      (state.globals.lookup (Flapjack.Basis.Pure.MlString.ofString name))) :
+    PanSemDeclarationValueOptionRel PanValueCodecRel
+      (evalPanValueExp structs locals globals memory baseAddress topAddress bytesInWord
+        (.var .global name))
+      (PanSemStateFiniteExact.evalHOLFinite state
+        (.var .global (Flapjack.Basis.Pure.MlString.ofString name))
+        : Option (ValueHOL width)) := by
+  simpa only [evalPanValueExp, PanSemStateFiniteExact.evalHOLFinite_var_global] using hglobals
+
+/-! ### Concrete `hEval` discharges for the `Decl` clause
+
+`evaluateDecls_decl_prefix_congr` clears locals before evaluating the
+declaration expression (production passes `fun _ => none`, the exact evaluator
+uses `evalDeclExpressionHOLFinite`).  The lemmas below discharge its `hEval`
+premise for the memory-free scalar and Var arms of this fragment. -/
+
+/-- `hEval` for a `.const` declaration expression. -/
+theorem evalDeclExpression_const_correspondence {width : Nat} [NeZero width]
+    [BEq (BitVec width)] [OfNat (BitVec width) 0] [OfNat (BitVec width) 1]
+    [Add (BitVec width)] [Mul (BitVec width)] [Sub (BitVec width)]
+    [AndOp (BitVec width)] [OrOp (BitVec width)] [HXor (BitVec width) (BitVec width) (BitVec width)]
+    [ShiftLeft (BitVec width)] [ShiftRight (BitVec width)] [LT (BitVec width)]
+    [DecidableRel (fun left right : BitVec width => left < right)] [PanCmp (BitVec width)]
+    (state : PanSemStateFiniteExact width Unit) [_hmem : DecidablePred state.memaddrs]
+    (structs : StructContext)
+    (globals : VarName → Option (PanValue (BitVec width)))
+    (memory : BitVec width → Option (PanValue (BitVec width)))
+    (baseAddress topAddress bytesInWord : BitVec width) (value : BitVec width) :
+    PanSemDeclarationValueOptionRel PanValueCodecRel
+      (evalPanValueExp structs (fun _ => none) globals memory baseAddress topAddress
+        bytesInWord (.const value))
+      (PanSemStateFiniteExact.evalDeclExpressionHOLFinite state (.const value)) := by
+  have hprod : evalPanValueExp structs (fun _ => none) globals memory baseAddress
+      topAddress bytesInWord (.const value) = some (.word value) := by
+    simp only [evalPanValueExp]
+  have hexact : PanSemStateFiniteExact.evalDeclExpressionHOLFinite state (.const value)
+      = some (.val (.word value)) := rfl
+  rw [hprod, hexact]
+  change PanValueCodecRel (.word value) (.val (.word value))
+  exact panValueCodecRel_word value
+
+/-- `hEval` for a `.var .local` declaration expression: the cleared locals make
+    both sides `none`. -/
+theorem evalDeclExpression_var_local_correspondence {width : Nat} [NeZero width]
+    [BEq (BitVec width)] [OfNat (BitVec width) 0] [OfNat (BitVec width) 1]
+    [Add (BitVec width)] [Mul (BitVec width)] [Sub (BitVec width)]
+    [AndOp (BitVec width)] [OrOp (BitVec width)] [HXor (BitVec width) (BitVec width) (BitVec width)]
+    [ShiftLeft (BitVec width)] [ShiftRight (BitVec width)] [LT (BitVec width)]
+    [DecidableRel (fun left right : BitVec width => left < right)] [PanCmp (BitVec width)]
+    (state : PanSemStateFiniteExact width Unit) [_hmem : DecidablePred state.memaddrs]
+    (structs : StructContext)
+    (globals : VarName → Option (PanValue (BitVec width)))
+    (memory : BitVec width → Option (PanValue (BitVec width)))
+    (baseAddress topAddress bytesInWord : BitVec width) (name : String) :
+    PanSemDeclarationValueOptionRel PanValueCodecRel
+      (evalPanValueExp structs (fun _ => none) globals memory baseAddress topAddress
+        bytesInWord (.var .local name))
+      (PanSemStateFiniteExact.evalDeclExpressionHOLFinite state
+        (.var .local (Flapjack.Basis.Pure.MlString.ofString name))) := by
+  have hprod : evalPanValueExp structs (fun _ => none) globals memory baseAddress
+      topAddress bytesInWord (.var .local name) = none := by
+    simp only [evalPanValueExp]
+  have hexact : PanSemStateFiniteExact.evalDeclExpressionHOLFinite state
+      (.var .local (Flapjack.Basis.Pure.MlString.ofString name)) = none := rfl
+  rw [hprod, hexact]
+  trivial
+
+/-- `hEval` for a `.var .global` declaration expression, from the ranged global
+    map relation. -/
+theorem evalDeclExpression_var_global_correspondence {width : Nat} [NeZero width]
+    [BEq (BitVec width)] [OfNat (BitVec width) 0] [OfNat (BitVec width) 1]
+    [Add (BitVec width)] [Mul (BitVec width)] [Sub (BitVec width)]
+    [AndOp (BitVec width)] [OrOp (BitVec width)] [HXor (BitVec width) (BitVec width) (BitVec width)]
+    [ShiftLeft (BitVec width)] [ShiftRight (BitVec width)] [LT (BitVec width)]
+    [DecidableRel (fun left right : BitVec width => left < right)] [PanCmp (BitVec width)]
+    (state : PanSemStateFiniteExact width Unit) [_hmem : DecidablePred state.memaddrs]
+    (structs : StructContext)
+    (globals : VarName → Option (PanValue (BitVec width)))
+    (memory : BitVec width → Option (PanValue (BitVec width)))
+    (baseAddress topAddress bytesInWord : BitVec width) (name : String)
+    (hglobals : PanSemDeclarationGlobalMapRel PanValueCodecRel globals state.globals)
+    (hname : NameRanged name) :
+    PanSemDeclarationValueOptionRel PanValueCodecRel
+      (evalPanValueExp structs (fun _ => none) globals memory baseAddress topAddress
+        bytesInWord (.var .global name))
+      (PanSemStateFiniteExact.evalDeclExpressionHOLFinite state
+        (.var .global (Flapjack.Basis.Pure.MlString.ofString name))) := by
+  have hprod : evalPanValueExp structs (fun _ => none) globals memory baseAddress
+      topAddress bytesInWord (.var .global name) = globals name := by
+    simp only [evalPanValueExp]
+  have hexact : PanSemStateFiniteExact.evalDeclExpressionHOLFinite state
+      (.var .global (Flapjack.Basis.Pure.MlString.ofString name))
+      = state.globals.lookup (Flapjack.Basis.Pure.MlString.ofString name) := rfl
+  rw [hprod, hexact]
+  exact hglobals name hname
+
+/-- `hEval` for a `.baseAddr` declaration expression.  The state-address arm
+    does not read locals, so clearing locals leaves both sides unchanged. -/
+theorem evalDeclExpression_baseAddr_correspondence {width : Nat} [NeZero width]
+    [BEq (BitVec width)] [OfNat (BitVec width) 0] [OfNat (BitVec width) 1]
+    [Add (BitVec width)] [Mul (BitVec width)] [Sub (BitVec width)]
+    [AndOp (BitVec width)] [OrOp (BitVec width)] [HXor (BitVec width) (BitVec width) (BitVec width)]
+    [ShiftLeft (BitVec width)] [ShiftRight (BitVec width)] [LT (BitVec width)]
+    [DecidableRel (fun left right : BitVec width => left < right)] [PanCmp (BitVec width)]
+    (state : PanSemStateFiniteExact width Unit) [_hmem : DecidablePred state.memaddrs]
+    (structs : StructContext)
+    (globals : VarName → Option (PanValue (BitVec width)))
+    (memory : BitVec width → Option (PanValue (BitVec width)))
+    (baseAddress topAddress bytesInWord : BitVec width)
+    (hbase : baseAddress = state.baseAddr) :
+    PanSemDeclarationValueOptionRel PanValueCodecRel
+      (evalPanValueExp structs (fun _ => none) globals memory baseAddress topAddress
+        bytesInWord (.baseAddr))
+      (PanSemStateFiniteExact.evalDeclExpressionHOLFinite state (.baseAddr)) := by
+  subst hbase
+  have hprod : evalPanValueExp structs (fun _ => none) globals memory state.baseAddr
+      topAddress bytesInWord (.baseAddr) = some (.word state.baseAddr) := by
+    simp only [evalPanValueExp]
+  have hexact : PanSemStateFiniteExact.evalDeclExpressionHOLFinite state (.baseAddr)
+      = some (.val (.word state.baseAddr)) := rfl
+  rw [hprod, hexact]
+  exact panValueCodecRel_word state.baseAddr
+
+/-- `hEval` for a `.topAddr` declaration expression (locals-independent). -/
+theorem evalDeclExpression_topAddr_correspondence {width : Nat} [NeZero width]
+    [BEq (BitVec width)] [OfNat (BitVec width) 0] [OfNat (BitVec width) 1]
+    [Add (BitVec width)] [Mul (BitVec width)] [Sub (BitVec width)]
+    [AndOp (BitVec width)] [OrOp (BitVec width)] [HXor (BitVec width) (BitVec width) (BitVec width)]
+    [ShiftLeft (BitVec width)] [ShiftRight (BitVec width)] [LT (BitVec width)]
+    [DecidableRel (fun left right : BitVec width => left < right)] [PanCmp (BitVec width)]
+    (state : PanSemStateFiniteExact width Unit) [_hmem : DecidablePred state.memaddrs]
+    (structs : StructContext)
+    (globals : VarName → Option (PanValue (BitVec width)))
+    (memory : BitVec width → Option (PanValue (BitVec width)))
+    (baseAddress topAddress bytesInWord : BitVec width)
+    (htop : topAddress = state.topAddr) :
+    PanSemDeclarationValueOptionRel PanValueCodecRel
+      (evalPanValueExp structs (fun _ => none) globals memory baseAddress topAddress
+        bytesInWord (.topAddr))
+      (PanSemStateFiniteExact.evalDeclExpressionHOLFinite state (.topAddr)) := by
+  subst htop
+  have hprod : evalPanValueExp structs (fun _ => none) globals memory baseAddress
+      state.topAddr bytesInWord (.topAddr) = some (.word state.topAddr) := by
+    simp only [evalPanValueExp]
+  have hexact : PanSemStateFiniteExact.evalDeclExpressionHOLFinite state (.topAddr)
+      = some (.val (.word state.topAddr)) := rfl
+  rw [hprod, hexact]
+  exact panValueCodecRel_word state.topAddr
+
+/-- `hEval` for a `.bytesInWord` declaration expression (locals-independent;
+    the exact evaluator returns the canonical `bytesInWordHOL` word). -/
+theorem evalDeclExpression_bytesInWord_correspondence {width : Nat} [NeZero width]
+    [BEq (BitVec width)] [OfNat (BitVec width) 0] [OfNat (BitVec width) 1]
+    [Add (BitVec width)] [Mul (BitVec width)] [Sub (BitVec width)]
+    [AndOp (BitVec width)] [OrOp (BitVec width)] [HXor (BitVec width) (BitVec width) (BitVec width)]
+    [ShiftLeft (BitVec width)] [ShiftRight (BitVec width)] [LT (BitVec width)]
+    [DecidableRel (fun left right : BitVec width => left < right)] [PanCmp (BitVec width)]
+    (state : PanSemStateFiniteExact width Unit) [_hmem : DecidablePred state.memaddrs]
+    (structs : StructContext)
+    (globals : VarName → Option (PanValue (BitVec width)))
+    (memory : BitVec width → Option (PanValue (BitVec width)))
+    (baseAddress topAddress bytesInWord : BitVec width)
+    (hbytes : bytesInWord = bytesInWordHOL width) :
+    PanSemDeclarationValueOptionRel PanValueCodecRel
+      (evalPanValueExp structs (fun _ => none) globals memory baseAddress topAddress
+        bytesInWord (.bytesInWord))
+      (PanSemStateFiniteExact.evalDeclExpressionHOLFinite state (.bytesInWord)) := by
+  subst hbytes
+  have hprod : evalPanValueExp structs (fun _ => none) globals memory baseAddress
+      topAddress (bytesInWordHOL width) (.bytesInWord)
+      = some (.word (bytesInWordHOL width)) := by
+    simp only [evalPanValueExp]
+  have hexact : PanSemStateFiniteExact.evalDeclExpressionHOLFinite state (.bytesInWord)
+      = some (.val (.word (bytesInWordHOL width))) := rfl
+  rw [hprod, hexact]
+  exact panValueCodecRel_word (bytesInWordHOL width)
+
 end Flapjack
