@@ -935,6 +935,27 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {σ : Type} :
 
 end CrepPropsFiniteSupport
 
+/-- Exact HOL `lookup_locals_eq_map_vars` (`crepPropsScript.sml:17-27`): mapping
+the local lookup over a list of variable names equals mapping the exact
+expression evaluator over the corresponding `Var` expressions. HOL's
+`OPT_MMAP (FLOOKUP t.locals) ns` is Lean's `List.mapM t.locals.lookup` and
+`OPT_MMAP (eval t) (MAP Var ns)` is `List.mapM (evalCrepSemHOLExp t)` over
+`CrepExpHOL.var`; `eval`'s `Var` clause is exactly `.locals.lookup`, so no
+side condition beyond the exact carrier is needed. The
+`(fmap_as_finite_support := [locals, globals, code])` qualifier records that
+HOL's `|->` fields are represented by the reviewed `HolFiniteMapExact`
+translation. -/
+@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "lookup_locals_eq_map_vars"
+  (fmap_as_finite_support := [locals, globals, code])]
+theorem lookupLocalsEqMapVarsHOL {width : Nat} [NeZero width] {σ : Type}
+    (ns : List Nat) (t : CrepSemHOLState width σ) [DecidablePred t.memaddrs] :
+    ns.mapM t.locals.lookup =
+      (ns.map (fun name => CrepExpHOL.var (width := width) name)).mapM
+        (evalCrepSemHOLExp t) := by
+  induction ns with
+  | nil => rfl
+  | cons name ns ih => simp [List.mapM_cons, evalCrepSemHOLExp, ih]
+
 /-- Exact HOL `dec_clock_simp` (`crepPropsScript.sml:267-278`) over the exact
 finite-support `CrepSemHOLState` carrier: the ten field equations, with HOL
 `sh_memaddrs`/`be`/`base_addr`/`top_addr` rendered as `shMemaddrs`/`be`/

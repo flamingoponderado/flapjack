@@ -177,4 +177,43 @@ example :
       resVarSample.lookup 1 :=
   Flapjack.flookupResVarDiffEqHOL resVarSample 0 1 none (by decide)
 
+/-! Exact-port fixture for HOL `lookup_locals_eq_map_vars`
+(`crepPropsScript.sml:17-27`): collecting local lookups over a name list equals
+mapping the exact evaluator over the corresponding `.var` expressions, checked
+on a concrete two-local state. -/
+
+private def lookupState : CrepSemHOLState 8 Unit where
+  locals := HolFiniteMapExact.empty.updateList
+    [(0, .word (BitVec.ofNat 8 7)), (1, .word (BitVec.ofNat 8 8))]
+  globals := HolFiniteMapExact.empty
+  code := HolFiniteMapExact.empty
+  memory := fun _ => .word 0
+  memaddrs := fun _ => False
+  shMemaddrs := fun _ => False
+  clock := 3
+  be := false
+  ffi := { oracle := fun _ _ _ _ => .final .failed, ffiState := (), ioEvents := [] }
+  baseAddr := 0
+  topAddr := 100
+
+private instance : DecidablePred lookupState.memaddrs :=
+  fun _ => isFalse (by simp [lookupState])
+
+private def lookupNames : List Nat := [0, 1]
+
+example :
+    lookupNames.mapM lookupState.locals.lookup =
+      some [HolWordLab.word (BitVec.ofNat 8 7), HolWordLab.word (BitVec.ofNat 8 8)] := by
+  rw [Flapjack.lookupLocalsEqMapVarsHOL]
+  simp only [lookupNames, List.map_cons, List.map_nil, List.mapM_cons, List.mapM_nil,
+    evalCrepSemHOLExp]
+  simp only [lookupState, HolFiniteMapExact.lookup_updateList, FUPDATE_LIST_cons]
+  decide
+
+example :
+    ([0, 1] : List Nat).mapM lookupState.locals.lookup =
+      ([CrepExpHOL.var (width := 8) 0, CrepExpHOL.var (width := 8) 1]).mapM
+        (Flapjack.evalCrepSemHOLExp lookupState) :=
+  Flapjack.lookupLocalsEqMapVarsHOL [0, 1] lookupState
+
 end Flapjack.Test.CrepHolStateParity
