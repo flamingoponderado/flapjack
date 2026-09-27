@@ -2677,14 +2677,18 @@ theorem evaluateHOLFiniteState_dec_total {width : Nat} {σ : Type} [NeZero width
           evalPanSemRecursiveCallFiniteContext, hinit, hshape,
           hmem]
 
-/-- Source-reviewed HOL `evaluate_def` Seq conjunct (`panSemScript.sml:615`,
-    restated in the theorem at line 780). It fixes the first pair's clock,
+/-- Source-reviewed HOL `evaluate_def` Seq conjunct (`panSemScript.sml:615`)
+    from the source `Definition evaluate_def` at line 556. That definition
+    explicitly applies `fix_clock` to the first evaluation pair; the theorem
+    restatement at line 780 rewrites that call away using `fix_clock_evaluate`,
+    so this case is tagged to line 556. The full 21-clause assembly remains
+    open under `flapjack-qj5.9`. It fixes the first pair's clock,
     evaluates the second program only when the first result is `NONE`, and
     otherwise returns the fixed pair. Both recursive calls use the total
     pair-shaped evaluator; the internal assembly marker is absent from the
     statement. `PanSemStateFiniteExact` owns the four named `HolFiniteMapExact`
     fields, with the canonical same-module roundtrip witness. -/
-@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 556
   (fmap_as_finite_support := [locals, globals, code, eshapes])]
 theorem evaluateHOLFiniteState_seq {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) (first second : ProgHOL width) :

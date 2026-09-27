@@ -36,6 +36,13 @@ not a function definition. The function-shaped `evaluateHOLFiniteState` tag
 was withdrawn; `flapjack-qj5` tracks the faithful equation theorem. No HOL
 claim is made by the evaluator infrastructure here.
 
+The staged `evaluate_def` case proofs are reviewed against the source
+`Definition evaluate_def` at `panSemScript.sml:556` when their equations retain
+operations such as `fix_clock`; line 780 is the separate `REWRITE_RULE
+[fix_clock_evaluate]` theorem restatement and may have a different equation
+shape. The case theorems do not assemble the full conjunction: the faithful
+21-clause theorem remains tracked by `flapjack-qj5.9`.
+
 The older delegating adapter `evaluateHOLFiniteViaExact` (and its
 `evalPanSemRecursiveCallHOLFinite_of_broad` / `evaluateHOLFiniteViaExact_of_broad`
 translation lemmas) remains as untagged Flapjack-specific infrastructure.
