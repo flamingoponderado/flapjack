@@ -14961,5 +14961,20 @@
     ],
     "reviewer": "flapjack-ds8 source comparison (2026-09-27; bead flapjack-qj5.9.6): HOL panSemScript.sml:780 is Theorem evaluate_def[allow_rebind,compute] = REWRITE_RULE [fix_clock_evaluate] evaluate_def. evaluateHOLFiniteState_eq_evaluate_def states the single HOL-shaped constructor match of the whole evaluator over all 21 ProgHOL constructors, with each arm copied from the corresponding line-780 clause equation (evaluateHOLFiniteState_decCall_fixClockRewrite for DecCall, _dec_total for the integer-return constructor, _seq_line780 and _while_fixClockRewrite for Seq/While), so no arm keeps the line-556 fix_clock wrapper that line 780 rewrites away. No extra premise, result hypothesis, or DecidablePred binder is added beyond the finite clause siblings. The finite state uses the four named HolFiniteMapExact fields with the same-module canonical roundtrip witness in PanSem.EvaluateClockWitness, and the width-indexed word carrier retains [NeZero width], so both (fmap_as_finite_support := [locals, globals, code, eshapes]) and (words_as_type_indexed_bitvec) apply; the qualifiers record only those carrier translations.",
     "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "evaluate_io_events_mono",
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/EvaluateClock.lean",
+    "lean_name": "evaluateHOLFiniteState_ioEvents_mono",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.4.49.1): exact port of HOL panPropsScript.sml:856 evaluate_io_events_mono (!exps s1 res s2. evaluate (exps,s1) = (res,s2) ==> s1.ffi.io_events IS_PREFIX s2.ffi.io_events) over the faithful finite-map evaluator evaluateHOLFiniteState on PanSemStateFiniteExact. IS_PREFIX is rendered as List.IsPrefix (<+:); the premise is the source equality of the evaluate result pair. Proof projects evalPanSemRecursiveCallFiniteContext through evalPanSemRecursiveCallFiniteContext_projection to the exact recursive evaluator and applies the untagged exact prefix lemma evalPanSemRecursiveCallContextHOLExact_ioEvents_prefix (FiniteSupportStep.lean:1784). No extra hypothesis; fmap qualifier names the state locals/globals/code/eshapes and the same-module canonical witness PanSem.EvaluateClockWitness.holFmapAsFiniteSupportWitness."
   }
 ]
