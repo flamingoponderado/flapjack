@@ -74,9 +74,16 @@ def LoopSemStateBroad.FiniteSupport {width : Nat} [NeZero width] {F : Type}
 /-- Source-shaped rendering of HOL `loopSem$state`
     (`loopSemScript.sml:13-27`): `locals`/`code` are `sptree$num_map` over the
     exact `Spt` carrier; `globals` is the only `|->` finite map and carries the
-    `fmap_as_finite_support := [globals]` qualifier. -/
+    `fmap_as_finite_support := [globals]` qualifier.  Every HOL `'a word`
+    occurrence (the `memory`/`mdomain`/`sh_mdomain`/`base_addr`/`top_addr`
+    fields and the `WordLocW` payloads) is rendered as the positive
+    `BitVec width` with the `[NeZero width]` discharge of
+    `dimindex (:α) ≥ 1`, and the FFI host is the universe-0 Lean type `F`, so
+    the `state` tag also carries `(words_as_type_indexed_bitvec)` under the
+    combined status.  The fixed `BitVec 5` globals key is HOL's `5 word`,
+    whose dimension is a literal rather than `dimindex (:α)`. -/
 @[hol "cakeml/pancake/semantics/loopSemScript.sml" "state"
-  (fmap_as_finite_support := [globals])]
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 structure LoopSemStateFiniteExact (width : Nat) [NeZero width] (F : Type) where
   locals : Spt (WordLocW width)
   globals : HolFiniteMapExact (BitVec 5) (WordLocW width)
@@ -169,8 +176,11 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {F : Type} :
     `sptree$lookup`).  It returns the exact `WordLocW` carrier (tagged
     `word_loc`) with no extra hypotheses beyond `[NeZero width]`.  No
     `fmap_as_finite_support` qualifier applies: `locals` is a `num_map`, not a
-    `|->` field. -/
-@[hol "cakeml/pancake/semantics/loopSemScript.sml" "get_var_imm_def"]
+    `|->` field.  The only carrier translation is HOL's type-indexed `'a word`
+    (the `RegImm`, `WordLocW` and `BitVec width` dimensions) to the positive
+    `BitVec width`, so the tag carries `(words_as_type_indexed_bitvec)`. -/
+@[hol "cakeml/pancake/semantics/loopSemScript.sml" "get_var_imm_def"
+  (words_as_type_indexed_bitvec)]
 def getVarImm {width : Nat} [NeZero width] {F : Type}
     (operand : RegImm (BitVec width)) (state : LoopSemStateFiniteExact width F) :
     Option (WordLocW width) :=

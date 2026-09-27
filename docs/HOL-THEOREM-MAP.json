@@ -13727,11 +13727,12 @@
     "hol_name": "state",
     "lean_path": "Flapjack/Pancake/Semantics/LoopSemStateExact.lean",
     "lean_name": "LoopSemStateFiniteExact",
-    "statement_status": "reviewed_fmap_as_finite_support",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
     "fmap_as_finite_support": [
       "globals"
     ],
-    "reviewer": "flapjack-ds10 (source comparison; bead flapjack-jlj3.1.1): HOL loopSem$state (cakeml/pancake/semantics/loopSemScript.sml:13-27) has locals : ('a word_loc) num_map and code : (num list # 'a loopLang$prog) num_map (sptree$num_map) and globals : 5 word |-> 'a word_loc. LoopSemStateFiniteExact now renders locals/code with the exact Spt sptree carrier and globals with the reviewed canonical HolFiniteMapExact translation, so the fmap_as_finite_support qualifier names only `globals` (num_map fields are ineligible for the |-> qualifier per AGENTS.md). code entries use the exact HolLoopProg carrier, ffi the exact HolFfiState, memory is total, domains are Lean sets. The canonical same-module witness holFmapAsFiniteSupportWitness states the toBroad/ofBroad roundtrip. Production LoopMachineState bridge tracked on flapjack-pxn.18.5.17.1."
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 (source comparison; bead flapjack-jlj3.1.1): HOL loopSem$state (cakeml/pancake/semantics/loopSemScript.sml:13-27) has locals : ('a word_loc) num_map and code : (num list # 'a loopLang$prog) num_map (sptree$num_map) and globals : 5 word |-> 'a word_loc. LoopSemStateFiniteExact now renders locals/code with the exact Spt sptree carrier and globals with the reviewed canonical HolFiniteMapExact translation, so the fmap_as_finite_support qualifier names only `globals` (num_map fields are ineligible for the |-> qualifier per AGENTS.md). code entries use the exact HolLoopProg carrier, ffi the exact HolFfiState, memory is total, domains are Lean sets. The canonical same-module witness holFmapAsFiniteSupportWitness states the toBroad/ofBroad roundtrip. Production LoopMachineState bridge tracked on flapjack-pxn.18.5.17.1. The state tag also carries (words_as_type_indexed_bitvec): every HOL 'a word occurrence (memory/mdomain/sh_mdomain/base_addr/top_addr and the WordLocW payloads) is the positive BitVec width with the [NeZero width] discharge of dimindex (:alpha) >= 1; the FFI host is the universe-0 Lean type F; the BitVec 5 globals key is HOL's literal 5 word, not a dimindex dimension."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
@@ -13750,8 +13751,9 @@
     "hol_name": "get_var_imm_def",
     "lean_path": "Flapjack/Pancake/Semantics/LoopSemStateExact.lean",
     "lean_name": "getVarImm",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds10 (source comparison; bead flapjack-jlj3.1.1): HOL get_var_imm_def (loopSemScript.sml:165-167) is the two-clause operand-first get_var_imm (Reg n) s = sptree$lookup n s.locals / get_var_imm (Imm w) s = SOME (Word w). The Lean declaration is operand-first, reads LoopSemStateFiniteExact.locals via the exact Spt sptree carrier (sptLookup name state.locals), and returns the exact tagged WordLocW carrier (word_loc); no extra hypotheses beyond [NeZero width] and no finite-map qualifier applies (num_map is not |->). Direct HOL-EVAL oracle parity in Flapjack/Test/LoopGetVarImmParity.lean."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 (source comparison; bead flapjack-jlj3.1.1): HOL get_var_imm_def (loopSemScript.sml:165-167) is the two-clause operand-first get_var_imm (Reg n) s = sptree$lookup n s.locals / get_var_imm (Imm w) s = SOME (Word w). The Lean declaration is operand-first, reads LoopSemStateFiniteExact.locals via the exact Spt sptree carrier (sptLookup name state.locals), and returns the exact tagged WordLocW carrier (word_loc); no extra hypotheses beyond [NeZero width] and no finite-map qualifier applies (num_map is not |->). Direct HOL-EVAL oracle parity in Flapjack/Test/LoopGetVarImmParity.lean. The tag carries (words_as_type_indexed_bitvec): the only carrier difference from HOL is the type-indexed 'a word in RegImm/WordLocW, rendered as the positive BitVec width with [NeZero width]; no finite-map or other carrier translation is involved."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
