@@ -1586,9 +1586,9 @@ theorem compileProgExactHOLW_call_wrapped_result_fallback_no_handler_bridge
     rfl
   · simp_all
 
-/-- Exact-to-production bridge for the `rtyp = NONE` Call arm of HOL
-    `compile_def` (`cakeml/pancake/pan_to_crepScript.sml:233-235`) with a handler
-    whose `eids` lookup fails: HOL discards the handler and emits the
+/-- Exact-to-production bridge for the `SOME (NONE, SOME handler)` Call arm of
+    HOL `compile_def` (`cakeml/pancake/pan_to_crepScript.sml:233-235`) with a
+    handler whose `eids` lookup fails: HOL discards the handler and emits the
     zero-initialized result call, exactly as the handler-less result arm. The
     proof follows the result/no-handler bridge and additionally reconciles the
     exact `eids.lookup` with the production `eids` finite map. Flapjack proof
@@ -1720,9 +1720,9 @@ private theorem crepProgOfHOL_expHdlExact {width : Nat} [NeZero width]
       rw [crepProgOfHOL_crepNestedSeqHOL, crepProgOfHOL_panMap2_assign,
         crepProgOfHOL_loadGlobalsHOL]
 
-/-- Exact-to-production bridge for the `rtyp = NONE` Call arm of HOL
-    `compile_def` (`cakeml/pancake/pan_to_crepScript.sml:233-239`) with a handler
-    whose `eids` lookup succeeds: HOL keeps the handler, wrapping the recursively
+/-- Exact-to-production bridge for the `SOME (NONE, SOME handler)` Call arm of
+    HOL `compile_def` (`cakeml/pancake/pan_to_crepScript.sml:233-239`) with a
+    handler whose `eids` lookup succeeds: HOL keeps the handler, wrapping the recursively
     compiled body with exact `exp_hdl` and zero-initializing the callee return
     names. The setup bridge `crepProgOfHOL_expHdlExact` reconciles the exact
     `exp_hdl` with the executed production `expHdlFiniteMap`. Flapjack proof
