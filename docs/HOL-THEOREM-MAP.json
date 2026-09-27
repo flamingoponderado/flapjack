@@ -12161,6 +12161,16 @@
   },
   {
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 780,
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
+    "lean_name": "evaluateHOLFiniteState_storeByte",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "reviewer": "flapjack-luna-a source comparison (2026-09-27; bead flapjack-qj5): the StoreByte conjunct at panSemScript.sml:597-603 evaluates both expressions in the original state and accepts only two ValWord results; it calls mem_store_byte with the original memory, domain, and endianness and w2w of the source. Success changes only memory; failed evaluation, non-word values, or an out-of-domain aligned cell returns (SOME Error,s). evaluateHOLFiniteState_storeByte uses the same cases and the exact panMemStoreByteWord8HOL helper, with `BitVec.ofNat 8 value.toNat` representing HOL's word8 w2w. The helper checks byte_align, the aligned-cell domain, applies set_byte with the original byte address/endianness, and preserves all other cells. Its same-module theorem panMemStoreByteHOL_eq_word8 proves that the evaluator's UInt8 adapter agrees as a full memory map with this exact BitVec 8 carrier; no adapter premise is added to the theorem. HolWordLab has one BitVec width payload, state memory/domain are the HOL total map/set carriers, and all four named state maps use the same-module HolFiniteMapExact roundtrip witness. No evaluation or domain fact is assumed. This is one exact constructor case; the full conjunction remains open."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
     "hol_name": "evaluate_decls_def",
     "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
     "lean_name": "evaluateDeclsHOLFinite",
