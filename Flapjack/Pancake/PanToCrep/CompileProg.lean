@@ -3,6 +3,7 @@ import Flapjack.Pancake.CrepInline.Pass
 import Flapjack.Pancake.PanToCrep.Compile
 import Flapjack.Pancake.PanToCrep.CompileExact
 import Flapjack.Pancake.PanToCrep.CompileExpBridge
+import Flapjack.Pancake.PanToCrep.ContextProductionEvidence
 import Flapjack.Pancake.PanLang.Decl
 import Flapjack.Pancake.PanLang.ProgHOLInduction
 
@@ -1076,18 +1077,67 @@ theorem exactToProduction_decCallVarUpdate_lookup {width : Nat} [NeZero width]
     (Flapjack.Pancake.PanLang.shapeToHOL shape) names hname hquery]
   simp [Flapjack.Pancake.PanLang.shapeOfHOL_shapeToHOL, hshape]
 
-/-- Context relation used by recursive exact-to-production compilation. The
-    unchanged function and exception maps and `vmax` agree exactly; variable
-    lookups agree on source-reachable byte-ranged names. It intentionally does
-    not assert equality of the full String-keyed variable maps. -/
+/-- Flapjack-specific context relation used by recursive exact-to-production
+    compilation; there is no standalone HOL declaration for this bridge.
+    Every map agrees at byte-ranged source names, and `vmax` agrees. The
+    ranged domain is essential for all three maps: `MlString.ofString` keeps
+    only the low byte of each character, so a non-ranged String key can alias
+    a valid HOL name. Compiler queries decoded from HOL names are ranged. -/
 def PanToCrepContextExactProdRel {width : Nat} [NeZero width]
     (exact : PanToCrepContextExact width)
     (production : PanToCrepHOLContext (BitVec width)) : Prop :=
-  exact.toProduction.funcs = production.funcs ∧
-  exact.toProduction.eids = production.eids ∧
+  (∀ name, Flapjack.Pancake.PanLang.NameRanged name →
+    exact.toProduction.funcs name = production.funcs name) ∧
+  (∀ name, Flapjack.Pancake.PanLang.NameRanged name →
+    exact.toProduction.eids name = production.eids name) ∧
   exact.vmax = production.vmax ∧
   (∀ name, Flapjack.Pancake.PanLang.NameRanged name →
     exact.toProduction.vars name = production.vars name)
+
+/-- Flapjack-specific counterexample (no HOL original): `ofString` is not
+    injective outside the source byte-name domain: codepoint
+    256 aliases NUL. This checked witness explains why the context relation
+    below is stated only for `NameRanged` lookup keys. -/
+theorem mlString_ofString_alias_outside_byte_range :
+    ∃ bad good : String,
+      bad ≠ good ∧
+      Flapjack.Basis.Pure.MlString.ofString bad =
+        Flapjack.Basis.Pure.MlString.ofString good ∧
+      ¬ Flapjack.Pancake.PanLang.NameRanged bad := by
+  refine ⟨String.singleton (Char.ofNat 256), String.singleton (Char.ofNat 0), ?_⟩
+  decide
+
+/-- Flapjack-specific reflexivity helper for the context relation (no HOL
+    original): the exact context always relates to its own production projection. -/
+theorem panToCrepContextExactProdRel_refl {width : Nat} [NeZero width]
+    (exact : PanToCrepContextExact width) :
+    PanToCrepContextExactProdRel exact exact.toProduction := by
+  refine ⟨?_, ?_, rfl, ?_⟩ <;> intro name _hname <;> rfl
+
+/-- Flapjack-specific production-to-exact context bridge (no HOL original): a
+    production context with the compiler's finite-support and byte-range
+    evidence relates to its exactified context on every valid name. The
+    evidence excludes keys for which `ofString` could alias a different byte
+    name; no total String-map equality is claimed. -/
+theorem panToCrepContextExactOfProduction_relation {width : Nat} [NeZero width]
+    (production : PanToCrepHOLContext (BitVec width))
+    (evidence : PanToCrepContextProductionEvidence production) :
+    PanToCrepContextExactProdRel
+      (panToCrepContextExactOfProduction production evidence) production := by
+  refine ⟨?_, ?_, rfl, ?_⟩
+  · intro name hname
+    simpa [PanToCrepContextExact.toProduction,
+      Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes name hname] using
+      panToCrepContextExactOfProduction_funcs_lookup_roundtrip
+        production evidence name hname
+  · intro name hname
+    simp [PanToCrepContextExact.toProduction,
+      Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes name hname]
+  · intro name hname
+    simpa [PanToCrepContextExact.toProduction,
+      Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes name hname] using
+      panToCrepContextExactOfProduction_vars_lookup_roundtrip
+        production evidence name hname
 
 /-- General-context `Seq` case for the relation-polymorphic recursive
     compiler bridge. Both children retain the same context pair, so the
@@ -1192,7 +1242,11 @@ theorem exactToProduction_decContext_relation {width : Nat} [NeZero width]
       { context.toProduction with
         vars := FUPDATE context.toProduction.vars (name, (productionShape, names))
         vmax := context.toProduction.vmax + productionBump } := by
-  refine ⟨rfl, rfl, ?_, ?_⟩
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · intro query _hquery
+    rfl
+  · intro query _hquery
+    rfl
   · simp [PanToCrepContextExact.toProduction, hbump]
   · intro query hquery
     simpa [PanToCrepContextExact.toProduction, hshape] using
@@ -2312,9 +2366,7 @@ theorem compileProgExactHOLW_extCall_relation_bridge {width : Nat} [NeZero width
       compileProgHOL productionContext
         (.extCall function configuration configurationLength array arrayLength) := by
   have hbaseRel : PanToCrepContextExactProdRel context context.toProduction := by
-    refine ⟨rfl, rfl, rfl, ?_⟩
-    intro name _hname
-    rfl
+    exact panToCrepContextExactProdRel_refl context
   have hbaseConfiguration := compileExpExactHOLW_prodCodec_of_contextRel
     context context.toProduction hbaseRel (expToHOL configuration)
   have hbaseConfigurationLength := compileExpExactHOLW_prodCodec_of_contextRel
@@ -3295,9 +3347,7 @@ theorem compileProgExactHOLW_local_assign_relation_bridge
           (Flapjack.Basis.Pure.MlString.toStringOfBytes name)
           (expOfHOL expression)) := by
   have hbaseRel : PanToCrepContextExactProdRel context context.toProduction := by
-    refine ⟨rfl, rfl, rfl, ?_⟩
-    intro query _hquery
-    rfl
+    exact panToCrepContextExactProdRel_refl context
   have hprodCodec := compileExpExactHOLW_prodCodec_of_contextRel
     context productionContext hcontext expression
   have hbaseCodec := compileExpExactHOLW_prodCodec_of_contextRel
@@ -3366,9 +3416,7 @@ theorem compileProgExactHOLW_raise_relation_bridge
         (.raise (Flapjack.Basis.Pure.MlString.toStringOfBytes exception)
           (expOfHOL expression)) := by
   have hbaseRel : PanToCrepContextExactProdRel context context.toProduction := by
-    refine ⟨rfl, rfl, rfl, ?_⟩
-    intro query _hquery
-    rfl
+    exact panToCrepContextExactProdRel_refl context
   have hprodCodec := compileExpExactHOLW_prodCodec_of_contextRel
     context productionContext hcontext expression
   have hbaseCodec := compileExpExactHOLW_prodCodec_of_contextRel
@@ -3386,9 +3434,9 @@ theorem compileProgExactHOLW_raise_relation_bridge
           (Flapjack.Basis.Pure.MlString.toStringOfBytes exception) =
           context.toProduction.eids
             (Flapjack.Basis.Pure.MlString.toStringOfBytes exception) :=
-        congrArg (fun ids => ids
-          (Flapjack.Basis.Pure.MlString.toStringOfBytes exception))
-          hcontext.2.1.symm
+        (hcontext.2.1
+          (Flapjack.Basis.Pure.MlString.toStringOfBytes exception)
+          (nameRanged_toStringOfBytes exception)).symm
       _ = context.eids.lookup exception :=
         PanToCrepContextExact.toProduction_eids_lookup context exception
   have hvmax : context.vmax = productionContext.vmax := by
@@ -3436,9 +3484,7 @@ theorem compileProgExactHOLW_primitive_relation_bridge
         (.primitive (Flapjack.Basis.Pure.MlString.toStringOfBytes name)
           operator (arguments.map expOfHOL)) := by
   have hbaseRel : PanToCrepContextExactProdRel context context.toProduction := by
-    refine ⟨rfl, rfl, rfl, ?_⟩
-    intro query _hquery
-    rfl
+    exact panToCrepContextExactProdRel_refl context
   have hvarsProd :
       productionContext.vars
           (Flapjack.Basis.Pure.MlString.toStringOfBytes name) =
@@ -3853,9 +3899,7 @@ theorem compileProgExactHOLW_call_contextRel_bridge {width : Nat} [NeZero width]
       compileProgRiscV context.toProduction
         (.call (callInfoToProduction info) function arguments) := by
   have hrel : PanToCrepContextExactProdRel context context.toProduction := by
-    refine ⟨rfl, rfl, rfl, ?_⟩
-    intro name _hname
-    rfl
+    exact panToCrepContextExactProdRel_refl context
   exact compileProgExactHOLW_call_bridge context info function arguments hfunction hcodec
     (fun body hselected => ih body hselected hrel)
 
@@ -3890,9 +3934,7 @@ theorem compileProgExactHOLW_call_relation_bridge {width : Nat} [NeZero width]
       compileProgHOL productionContext
         (.call (callInfoToProduction info) function arguments) := by
   have hbaseRel : PanToCrepContextExactProdRel context context.toProduction := by
-    refine ⟨rfl, rfl, rfl, ?_⟩
-    intro name _hname
-    rfl
+    exact panToCrepContextExactProdRel_refl context
   have hargsFor : ∀ expressions,
       (∀ expression ∈ expressions,
         ((compileExpExactHOLW context (expToHOL expression)).1.map crepExpOfHOL,
@@ -3933,8 +3975,8 @@ theorem compileProgExactHOLW_call_relation_bridge {width : Nat} [NeZero width]
   have hexactToBase := compileProgExactHOLW_call_contextRel_bridge context info
     function arguments hfunction hcodecBase'
     (fun body hselected _hrel => hbody body context.toProduction hselected hbaseRel)
-  have hbaseFuncs : context.toProduction.funcs = productionContext.funcs := hcontext.1
-  have hbaseEids : context.toProduction.eids = productionContext.eids := hcontext.2.1
+  have hbaseFuncs : context.toProduction.funcs function = productionContext.funcs function :=
+    hcontext.1 function hfunction
   have hvmax : context.toProduction.vmax = productionContext.vmax := by
     simpa [PanToCrepContextExact.toProduction] using hcontext.2.2.1
   have hbaseVars := hcontext.2.2.2
@@ -3942,9 +3984,10 @@ theorem compileProgExactHOLW_call_relation_bridge {width : Nat} [NeZero width]
       context.toProduction.eids
           (Flapjack.Basis.Pure.MlString.toStringOfBytes exceptionName) =
         productionContext.eids
-          (Flapjack.Basis.Pure.MlString.toStringOfBytes exceptionName) :=
-    congrArg (fun ids => ids
-      (Flapjack.Basis.Pure.MlString.toStringOfBytes exceptionName)) hbaseEids
+          (Flapjack.Basis.Pure.MlString.toStringOfBytes exceptionName) := by
+    exact hcontext.2.1
+      (Flapjack.Basis.Pure.MlString.toStringOfBytes exceptionName)
+      (nameRanged_toStringOfBytes exceptionName)
   have hbodyCongr : ∀ body, callHandlerBody info = some body →
       compileProgHOL context.toProduction (progOfHOL body) =
         compileProgHOL productionContext (progOfHOL body) := by
@@ -4391,9 +4434,7 @@ theorem compileProgExactHOLW_relation_bridge {width : Nat} [NeZero width]
       | store address value =>
           have hbaseRel : PanToCrepContextExactProdRel exactContext
               exactContext.toProduction := by
-            refine ⟨rfl, rfl, rfl, ?_⟩
-            intro query _hquery
-            rfl
+            exact panToCrepContextExactProdRel_refl exactContext
           let address' := expOfHOL address
           let value' := expOfHOL value
           have haddressBase :
@@ -4464,9 +4505,7 @@ theorem compileProgExactHOLW_relation_bridge {width : Nat} [NeZero width]
           let function' := Flapjack.Basis.Pure.MlString.toStringOfBytes function
           have hbaseRel : PanToCrepContextExactProdRel exactContext
               exactContext.toProduction := by
-            refine ⟨rfl, rfl, rfl, ?_⟩
-            intro query _hquery
-            rfl
+            exact panToCrepContextExactProdRel_refl exactContext
           have hcodecBase : ∀ expression ∈ arguments.map expOfHOL,
               ((compileExpExactHOLW exactContext (expToHOL expression)).1.map crepExpOfHOL,
                 shapeOfHOL (compileExpExactHOLW exactContext (expToHOL expression)).2) =
@@ -4637,6 +4676,47 @@ theorem compileProgExactHOLW_relation_bridge {width : Nat} [NeZero width]
           exact compileProgExactHOLW_annot_relation_bridge exactContext
             productionContext hcontext tag text)
   simpa [motive] using hall program
+
+/-- Flapjack-specific per-function compiler correspondence (no standalone HOL
+    declaration): for every function extracted from a byte-ranged declaration
+    list, the exact `compile_def` body compiler, decoded to production Crep,
+    equals the executed `compFuncHOL` body compiler. The finite-support and
+    name-range facts come from the same production context builder used by
+    `compileToCrepHOL`; the body codec is discharged by the extracted-entry
+    byte-range theorem. -/
+theorem compileFunctionExactProductionBridge {width : Nat} [NeZero width]
+    (declarations : List (Decl (BitVec width)))
+    (entry : FunName × List (VarName × Shape) × Prog (BitVec width) × Shape)
+    (hdecls : ∀ declaration ∈ declarations, DeclByteRanged declaration)
+    (hentry : entry ∈ functionEntries declarations) :
+    crepProgOfHOL
+        (compileProgExactHOLW
+          (panToCrepContextExactOfProduction
+            (panToCrepMkCtxtHOL (panToCrepMakeVmapHOL entry.2.1)
+              (functionInfosHOL declarations)
+              (Shape.shapeSize (.comb (entry.2.1.map Prod.snd)) - 1)
+              (panToCrepGetEidsFromDeclsHOL declarations))
+            (panToCrepFunctionContextProductionEvidence declarations entry
+              hdecls hentry))
+          (progToHOL entry.2.2.1)) =
+      compFuncHOL (functionInfosHOL declarations)
+        (panToCrepGetEidsFromDeclsHOL declarations) entry.2.1 entry.2.2.1 := by
+  let productionContext :=
+    panToCrepMkCtxtHOL (panToCrepMakeVmapHOL entry.2.1)
+      (functionInfosHOL declarations)
+      (Shape.shapeSize (.comb (entry.2.1.map Prod.snd)) - 1)
+      (panToCrepGetEidsFromDeclsHOL declarations)
+  let evidence := panToCrepFunctionContextProductionEvidence declarations entry
+    hdecls hentry
+  let exactContext := panToCrepContextExactOfProduction productionContext evidence
+  have hrelation := panToCrepContextExactOfProduction_relation productionContext evidence
+  have hwhole := compileProgExactHOLW_relation_bridge (progToHOL entry.2.2.1)
+    exactContext productionContext hrelation
+  obtain ⟨_hname, _hparams, _hreturnShape, hbody⟩ :=
+    functionEntries_byteRanged declarations hdecls entry hentry
+  rw [progOfHOL_progToHOL entry.2.2.1 hbody] at hwhole
+  simpa [productionContext, exactContext, evidence, compFuncHOL, compileProgRiscV]
+    using hwhole
 
 /-- Metadata adapter whose compiler input crosses the exact `DeclHOL` carrier
     boundary.  Its side condition is the byte-range premise used by the

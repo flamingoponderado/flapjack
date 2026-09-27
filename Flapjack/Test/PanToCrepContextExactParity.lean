@@ -305,10 +305,45 @@ example : (ctxtFcExactHOL (width := 8) probeCvs HolFiniteMapExact.empty [] [] []
     probeCvs :=
   rfl
 
+/-- Direct replay of the HOL-EVAL `functions_projection=T` row
+    (`scripts/hol-probes/ctxt_fc_probe.out`) through the exact
+    `ctxt_fc_funcs_eq` port: the constructed context's `funcs` field is the
+    supplied function map. -/
+example : (ctxtFcExactHOL (width := 8) probeCvs probeEm [probeX, probePair]
+    [.one, .comb [.one, .one]] [0, 1, 2]).funcs = probeCvs :=
+  ctxtFcFuncsEqHOL probeCvs probeEm [probeX, probePair] [.one, .comb [.one, .one]] [0, 1, 2]
+
+/-- Direct replay of the HOL-EVAL `shaped_slots` row's `eids` field
+    (`scripts/hol-probes/ctxt_fc_probe.out`) through the exact
+    `ctxt_fc_eids_eq` port: the constructed context's `eids` field is the
+    supplied exception-code map. -/
+example : (ctxtFcExactHOL (width := 8) probeCvs probeEm [probeX, probePair]
+    [.one, .comb [.one, .one]] [0, 1, 2]).eids = probeEm :=
+  ctxtFcEidsEqHOL probeCvs probeEm [probeX, probePair] [.one, .comb [.one, .one]] [0, 1, 2]
+
+example : (ctxtFcExactHOL (width := 8) HolFiniteMapExact.empty probeEm
+    [probeX] [.one] [0]).eids = probeEm :=
+  ctxtFcEidsEqHOL HolFiniteMapExact.empty probeEm [probeX] [.one] [0]
+
 example : (ctxtFcExactHOL (width := 8) HolFiniteMapExact.empty HolFiniteMapExact.empty
     [] [] [4, 1, 7, 3]).vmax = 7 := rfl
 
 example : (ctxtFcExactHOL (width := 8) HolFiniteMapExact.empty HolFiniteMapExact.empty
     [] [] []).vmax = 0 := rfl
+
+/-- Direct replay of the HOL-EVAL `vmax_nonempty_list=T` row
+    (`scripts/hol-probes/ctxt_fc_probe.out`) through the exact
+    `ctxt_fc_vmax` port: the constructed context's `vmax` is `MAX_LIST` of the
+    supplied unsorted slot list. -/
+example : (ctxtFcExactHOL (width := 8) HolFiniteMapExact.empty HolFiniteMapExact.empty
+    [] [] [4, 1, 7, 3]).vmax = 7 :=
+  ctxtFcVmaxHOL HolFiniteMapExact.empty HolFiniteMapExact.empty [] [] [4, 1, 7, 3]
+
+/-- Direct replay of the HOL-EVAL `vmax_empty_list=T` row
+    (`scripts/hol-probes/ctxt_fc_probe.out`) through the exact
+    `ctxt_fc_vmax` port: `MAX_LIST []` is `0`. -/
+example : (ctxtFcExactHOL (width := 8) HolFiniteMapExact.empty HolFiniteMapExact.empty
+    [] [] []).vmax = 0 :=
+  ctxtFcVmaxHOL HolFiniteMapExact.empty HolFiniteMapExact.empty [] [] []
 
 end Flapjack.Test.PanToCrepContextExactParity
