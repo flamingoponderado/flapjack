@@ -384,6 +384,23 @@ private theorem crepProgOfHOL_storesHOL {width : Nat} [NeZero width]
       simp only [storesHOL, List.map_cons, crepProgOfHOL, stores]
       split <;> simp [crepExpOfHOL, ih]
 
+private theorem crepProgOfHOL_zipWith_assign {width : Nat} [NeZero width]
+    (names : List Nat) (expressions : List (CrepExpHOL width)) :
+    List.map crepProgOfHOL
+        (List.zipWith (fun name expression => CrepProgHOL.assign name expression)
+          names expressions) =
+      List.zipWith (fun name expression => CrepProg.assign name (crepExpOfHOL expression))
+        names expressions := by
+  rw [List.map_zipWith]
+  simp only [crepProgOfHOL]
+
+private theorem crepExpVarsW_flatMap_crepExpOfHOL {width : Nat} [NeZero width]
+    (expressions : List (CrepExpHOL width)) :
+    expressions.flatMap (fun expression => crepExpVarsW (crepExpOfHOL expression)) =
+      (expressions.map crepExpOfHOL).flatMap crepExpVars := by
+  simp only [crepExpVarsW]
+  rw [List.flatMap_map]
+
 /-- Exact successful-clause bridge for HOL's `Store` equation. It is stated
     over the expression-compiler outputs so the caller supplies the paired
     expression codecs and the successful shape/length condition. This isolates
