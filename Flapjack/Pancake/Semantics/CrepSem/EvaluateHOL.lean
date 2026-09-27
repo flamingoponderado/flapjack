@@ -67,10 +67,13 @@ call the exact ports with `crepShMemByteWidth operator`.
 * `CrepSemHOLState` is the finite-support `HolFiniteMapExact` translation of
   HOL's `|->` fields; the state helpers `setVar`/`setGlobals`/`updLocals`/
   `emptyLocals`/`resVarEq` implement the HOL updates with HOL `=` equality.
-* The memory/FFI clause helpers (`panMemStore32HOL`, `panMemStoreByteHOL`,
-  `panByteAlignHOL`, `readBytearrayHOL`, `panWriteBytearrayHOL`, `callFFIHOL`)
-  are the already-reviewed exact ports; `crepClockWordToBytes` /
-  `crepClockWordOfBytes` are the `word_to_bytes`/`word_of_bytes` byte codecs.
+* `panMemStore32HOL` and `callFFIHOL` use their reviewed exact carriers.
+  The ExtCall byte chain (`panMemLoadByteHOL`, `panMemStoreByteHOL`,
+  `readBytearrayHOL`, `panWriteBytearrayHOL`) currently uses `UInt8`, whereas
+  HOL uses `word8` (`BitVec 8`); those declarations are intentionally untagged
+  pending the faithful byte-carrier work in `flapjack-4ac.5.16.5.4`.
+  `crepClockWordToBytes`/`crepClockWordOfBytes` are likewise not cited here as
+  exact HOL ports.
 * `Skip` is fully faithful: `evalCrepSemHOLProg state .skip = (none, state)`,
   matching HOL `evaluate (Skip, s) = (NONE, s)`. The direct oracle row is
   `skip_eval=T` in `scripts/hol-probes/crep_inline_eval_probe.out`.
@@ -1077,8 +1080,17 @@ theorem evalCrepSemHOLProg_while_timeout {width : Nat} [NeZero width] {σ : Type
   rw [evalCrepSemHOLProg.eq_def] <;> rfl
 
 /-- HOL `evaluate (ExtCall ffi_index ptr1 len1 ptr2 len2, s)`
-    (`crepSemScript.sml:364-381`): read both byte arrays, dispatch the FFI, then
-    on return write the new bytes back and install the new FFI state. -/
+    (`crepSemScript.sml:367-379`): read both byte arrays in
+    `(len1,ptr1,len2,ptr2)` lookup order, dispatch `call_FFI (ExtCall ffi_index)`,
+    preserve the input state on final/error, and on return write the returned
+    bytes at `ptr2` and install the new FFI state. Source comparison found those
+    branch orders and updates aligned. This equation remains untagged because
+    its byte helpers carry `UInt8` while HOL's `word8` is represented exactly by
+    `BitVec 8`; the necessary codec has no approved HOL qualifier. The precise
+    byte-carrier replacement is `flapjack-4ac.5.16.5.4`. This core equation also
+    exposes explicit domain-decision arguments; the public no-extra-argument
+    wrapper and its core equality are `evalCrepSemHOLProgExact` and
+    `evalCrepSemHOLProgExact_eq_core` (`flapjack-4ac.5.16.5.2`). -/
 @[simp] theorem evalCrepSemHOLProg_extCall {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ)
     (memDec : (a : BitVec width) → Decidable (state.memaddrs a))

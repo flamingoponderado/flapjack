@@ -133,8 +133,9 @@ theorem evalPanSemStateExp_op
 
 /-- HOL `byte_align` (`cakeml/.../alignmentScript.sml`): clear the low
     `LOG2 (dimindex DIV 8)` bits.  This is NOT division by `width / 8`; they agree
-    only when `width / 8` is a power of two (e.g. width 64), so the tagged
-    `mem_load_byte_def`/`mem_load_32_def` ports use this exact alignment.  HOL's
+    only when `width / 8` is a power of two (e.g. width 64), so the byte and
+    word-load source equations use this alignment. `mem_load_32_def` is tagged;
+    the UInt8-backed byte helper is untagged pending `.5.16.5.4`. HOL's
     alignment lives in the standard library, outside the CakeML submodule, so
     this helper is untagged. -/
 def panByteAlignHOL {width : Nat} (address : RiscV.Word width) : RiscV.Word width :=
@@ -155,13 +156,15 @@ def panGetByteHOL {width : Nat} (address value : RiscV.Word width)
     else address.toNat % bytesPerWord
   UInt8.ofNat ((value.toNat / 256 ^ byteIndex) % 256)
 
-/-- HOL `byte$get_byte_def`/`byte_index_def` specialized to the source word
-    width. In particular, little endian `w2n address MOD 0` keeps the address
-    as the shift index below one byte. The RISC-V memory helper returns index
-    zero when `bytesInWord = 0`, which differs. The executed
+/-- Flapjack byte-load helper following HOL `mem_load_byte_def` and
+    `byte$get_byte_def`. In particular, little-endian `w2n address MOD 0`
+    keeps the address as the shift index below one byte. The RISC-V memory
+    helper returns index zero when `bytesInWord = 0`, which differs. This
+    helper returns `UInt8`, while HOL `mem_load_byte` returns `word8`
+    (`BitVec 8`); it is untagged pending the faithful byte-carrier replacement
+    tracked by `flapjack-4ac.5.16.5.4`. The executed
     `PanValueMemoryAccess.readByte` widening adapter remains tracked by
-    flapjack-pxn.18.3.6.9.2. -/
-@[hol "cakeml/pancake/semantics/panSemScript.sml" "mem_load_byte_def"]
+    `flapjack-pxn.18.3.6.9.2`. -/
 def panMemLoadByteHOL {width : Nat} [NeZero width]
     (memory : RiscV.Word width → HolWordLab width)
     (domain : RiscV.Word width → Prop) [DecidablePred domain]
@@ -222,13 +225,14 @@ def panSetByteHOL {width : Nat} (address byteValue cell : RiscV.Word width)
   let high := cell.toNat / block
   BitVec.ofNat width (low + (byteValue.toNat % 256) * offset + high * block)
 
-/-- Exact port of HOL `panSem$mem_store_byte`
+/-- Flapjack helper following HOL `panSem$mem_store_byte`
     (`cakeml/pancake/semantics/panSemScript.sml:300-307`):
     `mem_store_byte m dm be w b = case m (byte_align w) of Word v =>
     if byte_align w IN dm then SOME ((byte_align w =+ Word (set_byte w b v be)) m)
-    else NONE`.  As in `panMemLoadByteHOL`, HOL's total `word_lab` memory is a
-    total map into `HolWordLab` and the `word set` domain a `Prop` predicate. -/
-@[hol "cakeml/pancake/semantics/panSemScript.sml" "mem_store_byte_def"]
+    else NONE`. HOL's total `word_lab` memory and address-set carriers are
+    represented directly, but this helper takes `UInt8` instead of HOL
+    `word8` (`BitVec 8`), so it is untagged pending
+    `flapjack-4ac.5.16.5.4`. -/
 def panMemStoreByteHOL {width : Nat} [NeZero width]
     (memory : RiscV.Word width → HolWordLab width)
     (domain : RiscV.Word width → Prop) [DecidablePred domain]
@@ -245,13 +249,14 @@ def panMemStoreByteHOL {width : Nat} [NeZero width]
           else memory current)
       else none
 
-/-- Exact port of HOL `panSem$write_bytearray`
+/-- Flapjack helper following HOL `panSem$write_bytearray`
     (`cakeml/pancake/semantics/panSemScript.sml:309-316`):
     `write_bytearray a [] m dm be = m` and
     `write_bytearray a (b::bs) m dm be = case mem_store_byte
     (write_bytearray (a+1) bs m dm be) dm be a b of SOME m => m | NONE => m`
-    (a failed store keeps the original outer memory). -/
-@[hol "cakeml/pancake/semantics/panSemScript.sml" "write_bytearray_def" 309]
+    (a failed store keeps the original outer memory). Its bytes are
+    `List UInt8` rather than HOL `word8 list` (`List (BitVec 8)`), so this
+    declaration is untagged pending `flapjack-4ac.5.16.5.4`. -/
 def panWriteBytearrayHOL {width : Nat} [NeZero width]
     (address : RiscV.Word width) (bytes : List UInt8)
     (memory : RiscV.Word width → HolWordLab width)
@@ -495,8 +500,8 @@ end
 /-! ## Executed-path widening adapter (flapjack-pxn.18.3.6.9.2)
 
 The executed BitVec-64 memory access `readByte` (via `panSemBitVec64MemoryAccess`)
-agrees with the tagged exact `panMemLoadByteHOL` when the faithful word memory is
-derived from a `PanValue` memory.  These declarations are Flapjack-specific
+agrees with the UInt8-backed byte helper `panMemLoadByteHOL` when the faithful
+word memory is derived from a `PanValue` memory. These declarations are Flapjack-specific
 production-side adapters (not HOL statements); the generic `memoryAccess := none`
 compatibility branch remains untagged and mismatch-tracked. -/
 
@@ -574,8 +579,8 @@ theorem panGetByteHOL_eq_panRiscVGetByteEndian (address value : RiscV.Word 64)
     exact Nat.lt_trans (Nat.mod_lt _ (by decide)) (by decide)
   rw [Nat.mod_eq_of_lt hsmall]
 
-/-- Executed `readByte` at BitVec 64 agrees with the tagged exact
-    `panMemLoadByteHOL` (then widened with `BitVec.ofNat 64`). -/
+/-- Executed `readByte` at BitVec 64 agrees with the UInt8-backed source-equation
+    helper `panMemLoadByteHOL` (then widened with `BitVec.ofNat 64`). -/
 theorem panSemBitVec64ReadByte_eq_panMemLoadByteHOL
     (state : PanSemState (RiscV.Word 64) ffi)
     (memory : RiscV.Word 64 → Option (PanValue (RiscV.Word 64))) (address : RiscV.Word 64) :

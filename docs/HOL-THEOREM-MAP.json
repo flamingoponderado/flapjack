@@ -232,38 +232,6 @@
     "reviewer": "Codex (source comparison; width-generic, requires aligned 2, four set_byte writes at w..w+3, =+ update leaves other addresses unchanged)"
   },
   {
-    "hol_path": "cakeml/misc/miscScript.sml",
-    "hol_name": "read_bytearray_def",
-    "lean_path": "Flapjack/Pancake/Semantics/LoopSem.lean",
-    "lean_name": "readBytearrayHOL",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Codex (source comparison; exact HOL arg order address,length,get_byte; get_byte/word-width are HOL parameters, no extra codec)"
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
-    "hol_name": "mem_load_byte_aux_def",
-    "lean_path": "Flapjack/Pancake/Semantics/LoopSem.lean",
-    "lean_name": "memLoadByteAuxHOL",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Codex (source comparison; exact HOL total word_loc memory m, word-set domain dm, arg order m,dm,be,w, byte_align = LOG2(width/8), no extra codec)"
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
-    "hol_name": "mem_store_byte_aux_def",
-    "lean_path": "Flapjack/Pancake/Semantics/LoopSem.lean",
-    "lean_name": "memStoreByteAuxHOL",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Codex (source comparison; exact HOL total word_loc memory m, word-set domain dm, arg order m,dm,be,w,b, byte_align = LOG2(width/8), no extra codec)"
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
-    "hol_name": "write_bytearray_def",
-    "lean_path": "Flapjack/Pancake/Semantics/LoopSem.lean",
-    "lean_name": "writeBytearrayHOL",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Codex (source comparison; exact HOL arg order a,bs,m,dm,be over total word_loc memory and word-set domain, byte_align via mem_store_byte_aux = LOG2(width/8), no extra codec)"
-  },
-  {
     "hol_path": "cakeml/pancake/crep_arithScript.sml",
     "hol_name": "dest_const_def",
     "lean_path": "Flapjack/Pancake/CrepArith.lean",

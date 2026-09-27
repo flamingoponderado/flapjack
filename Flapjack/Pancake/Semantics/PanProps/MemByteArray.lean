@@ -7,19 +7,15 @@ import Flapjack.Pancake.Semantics.LoopSem
 /-!
 # PanProps byte-array memory invariants
 
-The source review for `write_bytearray_update_byte`
-(`cakeml/pancake/semantics/panPropsScript.sml:1098`) checked the theorem against
-`panSemScript.sml:300-316` and the exact standard-library alignment operations.
-HOL quantifies over a byte list (`word8 list`), two addresses, a total
-`word_lab` memory, an address set, and endianness. It assumes `byte_aligned ad`
-and `m ad = Word w`, then concludes that the recursive bytearray write still
-returns a word at `ad`. Here `byte_aligned ad` is represented by the fixed-point
-equation `panByteAlignHOL ad = ad`; `UInt8` is the fixed 8-bit byte carrier,
-`HolWordLab` is the exact `word_lab` carrier, and the domain is a `Prop` set
-with Lean decidability evidence. All HOL premises and the existential result
-are preserved. The proof establishes the stronger preservation statement
-without needing the alignment premise.
--/
+Source comparison found the equations and theorem premises for
+`write_bytearray_update_byte` (`panPropsScript.sml:1098`) and
+`read_write_bytearray_lemma` (`panPropsScript.sml:1119`) aligned with HOL, but
+both Lean statements use `List UInt8` where HOL uses `word8 list` (Lean's exact
+HOL word8 carrier is `List (BitVec 8)`). Their helper chain has the same
+unqualified mismatch. These declarations are now deliberately untagged; the
+faithful byte-carrier replacement is tracked by
+`flapjack-4ac.5.16.5.4`. `HolWordLab` and the address-set representation remain
+unchanged. -/
 
 namespace Flapjack
 
@@ -92,12 +88,11 @@ theorem panWriteBytearrayPreservesWordAt {width : Nat} [NeZero width]
   exact panWriteBytearrayHOL_preservesWordAt address' bytes memory domain bigEndian
     address word hMemory
 
-/-- Exact statement of HOL `write_bytearray_update_byte`. HOL's
-`byte_aligned ad` is `byte_align ad = ad` (`alignmentScript.sml:27`), rendered
-here with `panByteAlignHOL`; HOL `word8 list` is `List UInt8`. The HOL word
-width remains polymorphic, as does this theorem's `width`. Unlike the support
-lemma above, the alignment and existential word premise form one antecedent. -/
-@[hol "cakeml/pancake/semantics/panPropsScript.sml" "write_bytearray_update_byte"]
+/-- Flapjack analogue of HOL `write_bytearray_update_byte`. Its alignment and
+    word-preservation cases follow HOL, but its bytes are `List UInt8` instead
+    of `word8 list = List (BitVec 8)`, so the HOL tag is intentionally absent.
+    The faithful carrier replacement is tracked by
+    `flapjack-4ac.5.16.5.4`. -/
 theorem writeBytearrayUpdateByte {width : Nat} [NeZero width]
     (bytes : List UInt8) (address address' : RiscV.Word width)
     (memory : RiscV.Word width → HolWordLab width)
@@ -111,24 +106,13 @@ theorem writeBytearrayUpdateByte {width : Nat} [NeZero width]
   exact panWriteBytearrayPreservesWordAt bytes address address' memory domain
     bigEndian haligned word hmemory
 
-/-- Exact statement of HOL `panProps$read_write_bytearray_lemma`
+/-- Flapjack analogue of HOL `panProps$read_write_bytearray_lemma`
     (`cakeml/pancake/semantics/panPropsScript.sml:1119`). Reading `length`
-    bytes with the aligned, in-domain byte loader `panMemLoadByteHOL` and then
-    writing the same bytes back with `panWriteBytearrayHOL` leaves the memory
-    unchanged, provided the word width is `good_dimindex` (32 or 64).
-
-    The carriers are the exact panSem ones: the total `word_lab` memory is
-    `RiscV.Word width → HolWordLab width`, the HOL address set is a `Prop`
-    predicate with `DecidablePred` evidence, `word8` is `UInt8`, the reader is
-    the tagged `panMemLoadByteHOL` (`mem_load_byte_def`) fed to the tagged
-    `readBytearrayHOL` (`read_bytearray_def`), and the write is the tagged
-    `panWriteBytearrayHOL` (`write_bytearray_def`). HOL's `good_dimindex` is
-    `goodDimindex` (`Flapjack/Misc/GoodDimindex.lean`). The proof inducts on the
-    length like HOL, splitting `goodDimindex` to `width = 32 ∨ width = 64` and
-    using the width-generic byte roundtrip `panSetByteHOL_panGetByteHOL`
-    (`PanSem/ByteRoundtrip.lean`, the untagged analogue of standard-library
-    `byte$set_byte_get_byte`) where HOL uses `set_byte_get_byte`. -/
-@[hol "cakeml/pancake/semantics/panPropsScript.sml" "read_write_bytearray_lemma"]
+    bytes with the byte loader and then writing them back leaves memory
+    unchanged on `goodDimindex` widths. Its byte list is `List UInt8`, while
+    HOL uses `word8 list = List (BitVec 8)`, so it is not tagged as the HOL
+    theorem. The faithful byte-carrier replacement is tracked by
+    `flapjack-4ac.5.16.5.4`. -/
 theorem readWriteBytearrayLemma {width : Nat} [NeZero width]
     (length : Nat) (address : RiscV.Word width) (bytes : List UInt8)
     (memory : RiscV.Word width → HolWordLab width)
