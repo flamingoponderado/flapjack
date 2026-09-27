@@ -1237,6 +1237,17 @@ def exactShMemStoreClauseParity : Bool :=
 
 #guard exactShMemStoreClauseParity
 
+/-! The whole tagged `compile_def` ShMemStore case retains HOL's explicit
+    positional shape: `ShMemStore op value address`. This asymmetric row is
+    the direct HOL oracle `shmem_store_clause` from `compile_def_probe.out`. -/
+def exactShMemStoreCompileDefParity : Bool :=
+  match compileProgExactHOLW (exactLocalAssignContext [7] [8])
+      (.shMemStore .op8 (.var .local (ofString "src")) (.const 3)) with
+  | .dec 9 (.const 3) (.shMem .store8 9 (.var 8)) => true
+  | _ => false
+
+#guard exactShMemStoreCompileDefParity
+
 /-! The exact and production compiler clauses agree on HOL's positional
     `ShMemStore value address` operands, including the fresh index coming from
     variables in the first (stored-value) operand. -/

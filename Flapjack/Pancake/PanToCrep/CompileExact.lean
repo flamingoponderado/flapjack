@@ -731,8 +731,8 @@ def compileProgExactHOLW {width : Nat} [NeZero width]
       compileShMemLoadExactHOLW context operator name address
   | .shMemLoad operator .global name address =>
       compileGlobalShMemLoadExactHOLW context operator name address
-  | .shMemStore operator address value =>
-      compileShMemStoreExactHOLW context operator address value
+  | .shMemStore operator value address =>
+      compileShMemStoreExactHOLW context operator value address
   | .tick => .tick
   | .annot _ _ => .skip
 termination_by program => sizeOf program
