@@ -645,6 +645,14 @@ truncation, and the default clause. The exact width-indexed Lean port is
 `Flapjack.Test.CrepInlineTransformEocParity`. Regenerate with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=crep_inline_transform_eoc_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
+`crep_inline_transform_branch_probe.out` records direct HOL EVAL of every arm
+of `transform_branch_def` (`crep_inlineScript.sml:155-164`), including nested
+While loop-depth increments and current-depth Call handlers. The exact
+width-indexed Lean port is `transformBranchHOLExact` in
+`Flapjack.Pancake.CrepInline.Pass`; its guards are in
+`Flapjack.Test.CrepInlineTransformBranchParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=crep_inline_transform_branch_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `fupdate_list_append_commutes_probe.out` records the imported original HOL
 theorem `finite_mapTheory.FUPDATE_LIST_APPEND_COMMUTES` from
 `/home/zksecurity/HOL/src/finite_maps/finite_mapScript.sml:2960`, plus direct

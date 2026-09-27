@@ -408,6 +408,43 @@ termination_by program => sizeOf program
 decreasing_by
   all_goals decreasing_trivial
 
+/-- Exact port of HOL `transform_branch_def`
+    (`cakeml/pancake/crep_inlineScript.sml:155-164`): returns and unhandled
+    calls become assignments followed by a break at the current loop depth;
+    existing return metadata is preserved; handler bodies keep the current
+    depth, while entering a `While` body increments it. -/
+@[hol "cakeml/pancake/crep_inlineScript.sml" "transform_branch_def"
+  (words_as_type_indexed_bitvec)]
+def transformBranchHOLExact {width : Nat} [NeZero width]
+    (loopDepth : Nat) (returnNames : List Nat) :
+    CrepProgHOL width → CrepProgHOL width
+  | .return values =>
+      .seq
+        (crepNestedSeqHOL
+          (returnNames.zipWith (fun name value => .assign name value) values))
+        (.break loopDepth)
+  | .call none name arguments =>
+      .seq (.call (some (returnNames, none)) name arguments) (.break loopDepth)
+  | .call (some (names, none)) name arguments =>
+      .call (some (names, none)) name arguments
+  | .call (some (names, some (handler, body))) name arguments =>
+      .call (some (names, some (handler,
+        transformBranchHOLExact loopDepth returnNames body))) name arguments
+  | .dec name value body =>
+      .dec name value (transformBranchHOLExact loopDepth returnNames body)
+  | .while condition body =>
+      .while condition (transformBranchHOLExact (loopDepth + 1) returnNames body)
+  | .seq first second =>
+      .seq (transformBranchHOLExact loopDepth returnNames first)
+        (transformBranchHOLExact loopDepth returnNames second)
+  | .ite condition thenBranch elseBranch =>
+      .ite condition (transformBranchHOLExact loopDepth returnNames thenBranch)
+        (transformBranchHOLExact loopDepth returnNames elseBranch)
+  | program => program
+termination_by program => sizeOf program
+decreasing_by
+  all_goals decreasing_trivial
+
 structure CrepInlineFmapHOL (width : Nat) [NeZero width] where
   entries : List (CrepInlineMapHOLName × (List Nat × CrepProgHOL width))
   nodupKeys : (entries.map Prod.fst).Nodup
