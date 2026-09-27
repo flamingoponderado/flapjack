@@ -997,6 +997,27 @@ class HolAttributeSitesTest(unittest.TestCase):
                     finally:
                         checker_globals["ROOT"] = original_root
 
+    def test_fmap_as_finite_support_rejects_num_map_sptree_field(self):
+        # A HOL `sptree$num_map` field (here `Spt`) is not a `|->` finite map and
+        # must not be claimed by `fmap_as_finite_support`, even though its Lean
+        # field could plausibly be represented by a finite-map carrier.
+        lines = [
+            "structure LoopStateNumMap where",
+            "  locals : Spt Nat Nat",
+            "  globals : HolFiniteMapExact (BitVec 5) Nat",
+            "",
+            "theorem holFmapAsFiniteSupportWitness :",
+            "    (\u2200 s : LoopStateNumMap, ofBroad (toBroad s) = s) := by rfl",
+        ]
+        errors = CHECKER["fmap_as_finite_support_errors"](
+            lines, ("locals",), "Flapjack/LoopState.lean",
+            "def getVarImm (s : LoopStateNumMap) := s.locals",
+        )
+        self.assertTrue(
+            any("approved HolFiniteMapExact" in error for error in errors),
+            errors,
+        )
+
     def test_fmap_as_finite_support_rejects_raw_type_on_named_carrier(self):
         lines = [
             "structure BroadState where",

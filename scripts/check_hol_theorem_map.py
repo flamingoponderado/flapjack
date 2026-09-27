@@ -321,6 +321,21 @@ DEFINITION_RE = re.compile(
     r"(?:def|abbrev|opaque|theorem|lemma)\s+([^\s:({\[]+)"
 )
 DOCUMENTED_MISMATCHES = {
+    ("Flapjack/Pancake/Semantics/LoopSemStateExact.lean", "LoopSemStateFiniteExact"): (
+        "cakeml/pancake/semantics/loopSemScript.sml",
+        "state",
+        "flapjack-ds10 (bead flapjack-jlj3.1, PR #1166 review item 3): HOL loopSem$state "
+        "locals/code are sptree$num_map, not |-> finite maps, so the fmap_as_finite_support "
+        "qualifier overclaimed the reviewed translation. Tag withdrawn; faithful sptree "
+        "carrier tracked by flapjack-jlj3.1.1.",
+    ),
+    ("Flapjack/Pancake/Semantics/LoopSemStateExact.lean", "getVarImm"): (
+        "cakeml/pancake/semantics/loopSemScript.sml",
+        "get_var_imm_def",
+        "flapjack-ds10 (bead flapjack-jlj3.1, PR #1166 review item 3): HOL locals is "
+        "sptree$num_map, not |->, so the fmap_as_finite_support qualifier overclaimed the "
+        "reviewed translation. Tag withdrawn; faithful sptree carrier tracked by flapjack-jlj3.1.1.",
+    ),
     ("Flapjack/Pancake/Proofs/PanSimp.lean", "collectPanValueStructs_panSimpDecls"): (
         "cakeml/pancake/proofs/pan_simpProofScript.sml",
         "decs_stcnames_compile_prog",
