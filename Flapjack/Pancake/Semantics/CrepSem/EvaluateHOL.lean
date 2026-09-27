@@ -1089,7 +1089,24 @@ theorem evalCrepSemHOLProg_while_timeout {width : Nat} [NeZero width] {σ : Type
     evaluate the arguments, look up the code, require distinct formals, install
     the callee locals under `dec_clock`, run the body under `fix_clock`, then
     handle ordinary completion/`Break`/`Continue` as `Error`, and `Return`/
-    `Exception` including the handler path and `empty_locals` cleanup. -/
+    `Exception` including the handler path and `empty_locals` cleanup.
+
+    Source review against `evaluate_def` lines 335-364 and `lookup_code_def`
+    lines 76-83 found the Call branches and side conditions aligned: `mapM`
+    evaluates the arguments, the direct code-map case is the expanded
+    `lookup_code` formal-count/distinctness check and zipped local installation,
+    the return-info distinctness check precedes timeout, and the recursive
+    body/handler and cleanup cases follow the HOL cases. The handler's
+    `crepStampExactDomains` restores the original
+    domain fields, which the evaluator clauses do not update, so the explicit
+    domain decisions remain valid across that state update.
+
+    This equation intentionally has no `@[hol]` tag. Its evaluator application
+    takes explicit `memDec` and `shMemDec` arguments; HOL's `evaluate` has only
+    the program and state arguments. That evaluator-interface mismatch remains
+    even though the Call case body was source-reviewed. The faithful public
+    evaluator interface is tracked by `flapjack-4ac.5.16.5.2`; this case audit
+    is `flapjack-4ac.5.16.5.1`. -/
 @[simp] theorem evalCrepSemHOLProg_call {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ)
     (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
