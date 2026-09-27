@@ -723,4 +723,14 @@ theorem domsub_commutes_fupdate [BEq α] [LawfulBEq α]
       FUPDATE_LIST (FDOMSUB fm x) (xs.zip ys) :=
   FDOMSUB_FUPDATE_LIST_commutes xs ys fm x h hlen
 
+/-- Exact port of HOL `map_the_some_cancel`
+    (`cakeml/pancake/semantics/pan_commonPropsScript.sml:332`): mapping
+    `THE ∘ SOME` over a list is the identity.  HOL's partial `THE` applied to
+    `SOME x` returns `x`, rendered as the total `Option.get` with its
+    `isSome` proof. -/
+@[hol "cakeml/pancake/semantics/pan_commonPropsScript.sml" "map_the_some_cancel"]
+theorem mapTheSomeCancelHOL {α : Type} (xs : List α) :
+    xs.map (fun x => (some x : Option α).get (by simp)) = xs := by
+  simp
+
 end Flapjack
