@@ -1769,14 +1769,15 @@ theorem evaluateHOLFiniteState_seq_line780 {width : Nat} {σ : Type} [NeZero wid
   simp only [fixClockHOLFinite_evaluateState state first]
   rfl
 
-/- Assembly of the line-780 `evaluate_def` constructor match from the tagged
-per-clause finite equations: one HOL-shaped `match program with` statement over
-all 21 `ProgHOL` constructors. Each arm is the corresponding tagged clause
-equation. -/
+/- FLAPJACK-SPECIFIC provisional assembly (no `@[hol]` tag): the HOL-shaped
+`match program with` statement over all 21 `ProgHOL` constructors, with each
+arm copied from the corresponding tagged clause equation. The tag is withheld
+because the `DecCall` arm currently retains the `fixClockHOLFinite` wrapper of
+the original line-556 `Definition evaluate_def`, whereas the line-780 theorem
+rewrites that wrapper away with `fix_clock_evaluate`; the other twenty arms
+match line 780. Restoring the tag requires a fix-clock-free line-780 `DecCall`
+variant, tracked on `flapjack-qj5.9.6`. -/
 set_option maxHeartbeats 4000000 in
-@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
-  (fmap_as_finite_support := [locals, globals, code, eshapes])
-  (words_as_type_indexed_bitvec)]
 theorem evaluateHOLFiniteState_eq_evaluate_def {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) (program : ProgHOL width) :
     evaluateHOLFiniteState state program =
