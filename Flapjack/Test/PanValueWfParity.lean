@@ -1,4 +1,5 @@
 import Flapjack.PanValues
+import Flapjack.Pancake.Semantics.PanProps
 
 namespace Flapjack.Test.PanValueWfParity
 
@@ -290,3 +291,19 @@ theorem evalPanValueExps_isWfShape_fixture :
 #check @evalPanValueExps_isWfShape
 
 end Flapjack.Test.PanValueWfParity
+
+
+/-! Regression for the exact `memLoadHOLExact` flatten-length / context-size
+    agreement (template for the HOL `mem_load_flat_rel` address arithmetic). -/
+
+example {width : Nat} [NeZero width] :
+    (Flapjack.flattenHOL (Flapjack.ValueHOL.val (Flapjack.HolWordLab.word (0 : BitVec width)))).length =
+      Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL
+        ([] : Flapjack.Pancake.PanLang.StructContextExact)
+        Flapjack.Pancake.PanLang.ShapeHOL.one := by
+  have h := Flapjack.memLoadHOLExact_length_flatten_context (width := width)
+    (fun _ => True) (fun _ => Flapjack.HolWordLab.word (0 : BitVec width))
+  exact h Flapjack.Pancake.PanLang.ShapeHOL.one 0 []
+    (by simp only [Flapjack.Pancake.PanLang.isWfShapeExactHOL])
+    (Flapjack.ValueHOL.val (Flapjack.HolWordLab.word (0 : BitVec width)))
+    (by simp [Flapjack.memLoadHOLExact])
