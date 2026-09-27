@@ -948,6 +948,18 @@ theorem withState_congr {width : Nat} {σ : Type} [NeZero width]
   cases context
   simp only [withState]
 
+/-- FLAPJACK-SPECIFIC context constructor for HOL DecCall timeout: clearing
+    locals preserves both address domains, and naming those proofs keeps the
+    generated DecCall equation from synthesizing dependent `withState` proof
+    arguments against the wrong state endpoint. -/
+def emptyLocalsContextHOLFinite {width : Nat} {σ : Type} [NeZero width]
+    (context : FiniteEvalContext width σ) : FiniteEvalContext width σ :=
+  context.withState (emptyLocalsHOLFinite context.state) (by rfl) (by rfl)
+
+@[simp] theorem emptyLocalsContextHOLFinite_state {width : Nat} {σ : Type}
+    [NeZero width] (context : FiniteEvalContext width σ) :
+    (emptyLocalsContextHOLFinite context).state = emptyLocalsHOLFinite context.state := rfl
+
 /-- FLAPJACK-SPECIFIC (not a HOL declaration): forgetful projection of a finite
     evaluation context to the exact (unrestricted-map) evaluation context, by
     translating the state through `toExact` and reusing the two address-domain
@@ -1394,7 +1406,7 @@ def evalPanSemRecursiveCallFiniteContext {width : Nat} {σ : Type} [NeZero width
               | some (body, callee, returnShape) =>
                   if state.clock = 0 then
                     some (some .timeOut,
-                      context.withState (emptyLocalsHOLFinite state) rfl rfl)
+                      FiniteEvalContext.emptyLocalsContextHOLFinite context)
                   else
                     let entry : PanSemStateFiniteExact width σ := callEntryStateHOLFinite state callee
                     let entryContext := context.withState entry rfl rfl
@@ -1550,6 +1562,28 @@ decreasing_by
     exact Nat.lt_of_le_of_lt
       (fixClockHOLFinite_clock_le entry (bodyResult, bodyContext.state))
       (Nat.sub_lt (Nat.pos_of_ne_zero (by omega)) (by decide))
+
+/-- FLAPJACK-SPECIFIC normalization check for the generated DecCall timeout
+    branch. Naming the cleared-locals context in the evaluator lets this exact
+    branch equation reduce without exposing the equation compiler's dependent
+    proof placeholder. -/
+theorem evalPanSemRecursiveCallFiniteContext_decCall_timeout_branch
+    {width : Nat} {σ : Type} [NeZero width]
+    (resultName : MlS) (shape : ShapeHOL) (function : MlS)
+    (arguments : List (ExpHOL width)) (continuation : ProgHOL width)
+    (context : FiniteEvalContext width σ) (values : List (ValueHOL width))
+    (body : ProgHOL width) (callee : HolFiniteMapExact MlS (ValueHOL width))
+    (returnShape : ShapeHOL)
+    (hargs : evalListHOLFinite context.state
+      (h := context.memaddrsDecidable) arguments = some values)
+    (hlookup : lookupCodeHOLFinite context.state.code.lookup function values =
+      some (body, callee, returnShape))
+    (hclock : context.state.clock = 0) :
+    evalPanSemRecursiveCallFiniteContext
+      (.decCall resultName shape function arguments continuation) context =
+      some (some .timeOut, FiniteEvalContext.emptyLocalsContextHOLFinite context) := by
+  rw [evalPanSemRecursiveCallFiniteContext.eq_6]
+  simp only [hargs, hlookup, if_pos hclock]
 
 /-- HOL `evaluate_decls_def` (`cakeml/pancake/semantics/panSemScript.sml:814-837`)
     over the finite-support state carrier.  Its clauses match the HOL definition
