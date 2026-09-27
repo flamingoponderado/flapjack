@@ -240,12 +240,125 @@ private theorem evalListHOLFinite_mem_isWf {width : Nat} {σ : Type} [NeZero wid
                 · simpa [PanSemStateFiniteExact.evalListHOLFinite] using htail
                 · exact htailMem
 
+/-- Flapjack-specific reduction helper for the Return/Exception result cases
+    used by the evaluator invariant proofs. Its cases mirror the result match
+    in HOL `evaluate_is_wf_shape_invariant`, but it has no standalone HOL
+    declaration. -/
 def panSemResultHOLWf {width : Nat} [NeZero width]
     (structs : Flapjack.Pancake.PanLang.StructContextExact) :
     Option (PanSemResultExact width) → Prop
   | some (.returned value) => isWfShapeValueHOLExact structs value = true
   | some (.exception _ value) => isWfShapeValueHOLExact structs value = true
   | _ => True
+
+/-- Owning finite-map carrier for the exact HOL `evaluate_is_wf_shape_invariant`
+    port below. Its four `|->` fields use the canonical finite-support map
+    translation; the remaining fields follow `PanSemStateExact`. -/
+structure PanPropsShapeInvariantStateFiniteExact (width : Nat) (σ : Type) [NeZero width] where
+  locals : HolFiniteMapExact MlS (ValueHOL width)
+  globals : HolFiniteMapExact MlS (ValueHOL width)
+  structs : Flapjack.Pancake.PanLang.StructContextExact
+  code : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL)
+  eshapes : HolFiniteMapExact MlS ShapeHOL
+  memory : RiscV.Word width → HolWordLab width
+  memaddrs : RiscV.Word width → Prop
+  shMemaddrs : RiscV.Word width → Prop
+  clock : Nat
+  be : Bool
+  ffi : HolFfiState σ
+  baseAddr : RiscV.Word width
+  topAddr : RiscV.Word width
+
+namespace PanPropsShapeInvariantStateFiniteExact
+
+def toExact {width : Nat} {σ : Type} [NeZero width]
+    (state : PanPropsShapeInvariantStateFiniteExact width σ) :
+    PanSemStateExact width σ where
+  locals := state.locals.lookup
+  globals := state.globals.lookup
+  structs := state.structs
+  code := state.code.lookup
+  eshapes := state.eshapes.lookup
+  memory := state.memory
+  memaddrs := state.memaddrs
+  shMemaddrs := state.shMemaddrs
+  clock := state.clock
+  be := state.be
+  ffi := state.ffi
+  baseAddr := state.baseAddr
+  topAddr := state.topAddr
+
+def ofExact {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateExact width σ) (hfinite : state.FiniteSupport) :
+    PanPropsShapeInvariantStateFiniteExact width σ where
+  locals := ⟨state.locals, hfinite.1⟩
+  globals := ⟨state.globals, hfinite.2.1⟩
+  structs := state.structs
+  code := ⟨state.code, hfinite.2.2.1⟩
+  eshapes := ⟨state.eshapes, hfinite.2.2.2⟩
+  memory := state.memory
+  memaddrs := state.memaddrs
+  shMemaddrs := state.shMemaddrs
+  clock := state.clock
+  be := state.be
+  ffi := state.ffi
+  baseAddr := state.baseAddr
+  topAddr := state.topAddr
+
+theorem toExact_ofExact {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateExact width σ) (hfinite : state.FiniteSupport) :
+    (ofExact state hfinite).toExact = state := rfl
+
+theorem toExact_finiteSupport {width : Nat} {σ : Type} [NeZero width]
+    (state : PanPropsShapeInvariantStateFiniteExact width σ) :
+    state.toExact.FiniteSupport :=
+  ⟨state.locals.finiteSupport, state.globals.finiteSupport,
+    state.code.finiteSupport, state.eshapes.finiteSupport⟩
+
+theorem ofExact_toExact {width : Nat} {σ : Type} [NeZero width]
+    (state : PanPropsShapeInvariantStateFiniteExact width σ) :
+    ofExact state.toExact state.toExact_finiteSupport = state := by
+  cases state
+  rfl
+
+/-- Canonical finite-map witness: both conversions round-trip between this
+    owning carrier and the broad exact PanSem state. -/
+theorem holFmapAsFiniteSupportWitness {width : Nat} {σ : Type} [NeZero width] :
+    (∀ (state : PanSemStateExact width σ) (hfinite : state.FiniteSupport),
+      (ofExact state hfinite).toExact = state) ∧
+    (∀ state : PanPropsShapeInvariantStateFiniteExact width σ,
+      ofExact state.toExact state.toExact_finiteSupport = state) :=
+  ⟨fun state hfinite => toExact_ofExact state hfinite,
+    fun state => ofExact_toExact state⟩
+
+def toPanSemFinite {width : Nat} {σ : Type} [NeZero width]
+    (state : PanPropsShapeInvariantStateFiniteExact width σ) :
+    PanSemStateFiniteExact width σ :=
+  PanSemStateFiniteExact.ofExact state.toExact state.toExact_finiteSupport
+
+def ofPanSemFinite {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) :
+    PanPropsShapeInvariantStateFiniteExact width σ :=
+  ofExact state.toExact state.toExact_finiteSupport
+
+@[simp] theorem toPanSemFinite_ofPanSemFinite {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateFiniteExact width σ) :
+    toPanSemFinite (ofPanSemFinite state) = state := by
+  cases state
+  rfl
+
+/-- Pair-shaped evaluator view used to state HOL `evaluate` over this local
+    carrier. The post-state is reconstructed through the canonical finite map
+    translation. -/
+noncomputable def evaluateHOLFinite {width : Nat} {σ : Type} [NeZero width]
+    (state : PanPropsShapeInvariantStateFiniteExact width σ)
+    (program : ProgHOL width) :
+    Option (PanSemResultExact width) × PanPropsShapeInvariantStateFiniteExact width σ := by
+  classical
+  let output := PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite program
+  exact (output.1, ofPanSemFinite output.2)
+
+end PanPropsShapeInvariantStateFiniteExact
 
 private def panSemStateVarsHOLWf {width : Nat} {σ : Type} [NeZero width]
     (structs : Flapjack.Pancake.PanLang.StructContextExact)
@@ -3937,5 +4050,117 @@ theorem evalPanSemRecursiveCallFiniteContext_shapeInvariant
     rcases heval with ⟨rfl, rfl⟩
     exact hInvariant
 end PanSemStateFiniteExact
+
+/-- Exact finite-support port of HOL `evaluate_is_wf_shape_invariant`
+    (`cakeml/pancake/semantics/panPropsScript.sml:1250-1264`). The two input
+    predicates and two post-state predicates are the pointwise rendering of
+    HOL `FEVERY`; the result match is HOL's Return/Exception conclusion. Only
+    the four named finite-map fields use the canonical representation. -/
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_is_wf_shape_invariant"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+theorem evaluateIsWfShapeInvariantFiniteExact {width : Nat} {σ : Type}
+    [NeZero width]
+    (program : ProgHOL width)
+    (source : PanPropsShapeInvariantStateFiniteExact width σ)
+    (result : Option (PanSemResultExact width))
+    (postState : PanPropsShapeInvariantStateFiniteExact width σ)
+    (heval : PanPropsShapeInvariantStateFiniteExact.evaluateHOLFinite source program =
+      (result, postState))
+    (hlocals : ∀ name value, source.locals.lookup name = some value →
+      isWfShapeValueHOLExact source.structs value = true)
+    (hglobals : ∀ name value, source.globals.lookup name = some value →
+      isWfShapeValueHOLExact source.structs value = true) :
+    (∀ name value, postState.locals.lookup name = some value →
+      isWfShapeValueHOLExact postState.structs value = true) ∧
+    (∀ name value, postState.globals.lookup name = some value →
+      isWfShapeValueHOLExact postState.structs value = true) ∧
+    panSemResultHOLWf source.structs result := by
+  classical
+  let panSource := source.toPanSemFinite
+  have hvars : panSemStateVarsHOLWf panSource.structs panSource := by
+    constructor
+    · intro name value hlookup
+      exact hlocals name value (by
+        simpa [panSource, PanPropsShapeInvariantStateFiniteExact.toPanSemFinite,
+          PanPropsShapeInvariantStateFiniteExact.toExact,
+          PanSemStateFiniteExact.ofExact] using hlookup)
+    · intro name value hlookup
+      exact hglobals name value (by
+        simpa [panSource, PanPropsShapeInvariantStateFiniteExact.toPanSemFinite,
+          PanPropsShapeInvariantStateFiniteExact.toExact,
+          PanSemStateFiniteExact.ofExact] using hlookup)
+  have hevalPan : PanSemStateFiniteExact.evaluateHOLFiniteState panSource program =
+      (result, postState.toPanSemFinite) := by
+    let actual := PanSemStateFiniteExact.evaluateHOLFiniteState panSource program
+    have hlocalEval : (actual.1,
+        PanPropsShapeInvariantStateFiniteExact.ofPanSemFinite actual.2) =
+          (result, postState) := by
+      simpa [PanPropsShapeInvariantStateFiniteExact.evaluateHOLFinite, actual,
+        panSource] using heval
+    have hpostCustom : PanPropsShapeInvariantStateFiniteExact.ofPanSemFinite actual.2 =
+        postState := by
+      simpa using congrArg Prod.snd hlocalEval
+    have hpostFinite := congrArg PanPropsShapeInvariantStateFiniteExact.toPanSemFinite hpostCustom
+    apply Prod.ext
+    · simpa [actual] using congrArg Prod.fst hlocalEval
+    · simpa [PanPropsShapeInvariantStateFiniteExact.toPanSemFinite_ofPanSemFinite] using hpostFinite
+  have hevalMarked := (PanSemStateFiniteExact.evaluateHOLFiniteResult_eq_iff
+    panSource program (result, postState.toPanSemFinite)).2 hevalPan
+  let evaluationContext : PanSemStateFiniteExact.FiniteEvalContext width σ :=
+    ⟨panSource, inferInstance, inferInstance⟩
+  have hevalProjection :
+      (PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext
+        program evaluationContext).map
+        (fun pair => (pair.1, pair.2.state)) =
+        some (result, postState.toPanSemFinite) := by
+    simpa [PanSemStateFiniteExact.evaluateHOLFinite, evaluationContext] using hevalMarked
+  have hpostAndResult :
+      postState.toPanSemFinite.structs = panSource.structs ∧
+      panSemStateVarsHOLWf panSource.structs postState.toPanSemFinite ∧
+      panSemResultHOLWf panSource.structs result := by
+    cases hcontextEval : PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext
+        program evaluationContext with
+    | none => simp [hcontextEval] at hevalProjection
+    | some pair =>
+        have hprojectPair : (pair.1, pair.2.state) = (result, postState.toPanSemFinite) := by
+          simpa [hcontextEval] using hevalProjection
+        have hresult : pair.1 = result := congrArg Prod.fst hprojectPair
+        have hstate : pair.2.state = postState.toPanSemFinite :=
+          congrArg Prod.snd hprojectPair
+        have hcontextSuccess :
+            PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext
+              program evaluationContext = some (result, pair.2) := by
+          rw [hcontextEval]
+          cases pair with
+          | mk evalResult evalContext => simp_all
+        have hinvariant :=
+          PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext_shapeInvariant
+            program evaluationContext hvars result pair.2 hcontextSuccess
+        have hpostVars : panSemStateVarsHOLWf panSource.structs
+            postState.toPanSemFinite := by
+          simpa [hstate] using hinvariant.2.1
+        exact ⟨by simpa [hstate] using hinvariant.1, hpostVars, hinvariant.2.2⟩
+  have hstructs : postState.structs = source.structs := by
+    simpa [PanPropsShapeInvariantStateFiniteExact.toPanSemFinite, panSource,
+      PanSemStateFiniteExact.ofExact, PanPropsShapeInvariantStateFiniteExact.toExact] using
+      hpostAndResult.1
+  refine ⟨?_, ?_, ?_⟩
+  · intro name value hlookup
+    have h := hpostAndResult.2.1.1 name value ?_
+    · simpa [PanPropsShapeInvariantStateFiniteExact.toPanSemFinite, panSource,
+        PanSemStateFiniteExact.ofExact, PanPropsShapeInvariantStateFiniteExact.toExact,
+        hstructs] using h
+    · simpa [PanPropsShapeInvariantStateFiniteExact.toPanSemFinite,
+        PanSemStateFiniteExact.ofExact, PanPropsShapeInvariantStateFiniteExact.toExact] using hlookup
+  · intro name value hlookup
+    have h := hpostAndResult.2.1.2 name value ?_
+    · simpa [PanPropsShapeInvariantStateFiniteExact.toPanSemFinite, panSource,
+        PanSemStateFiniteExact.ofExact, PanPropsShapeInvariantStateFiniteExact.toExact,
+        hstructs] using h
+    · simpa [PanPropsShapeInvariantStateFiniteExact.toPanSemFinite,
+        PanSemStateFiniteExact.ofExact, PanPropsShapeInvariantStateFiniteExact.toExact] using hlookup
+  · simpa [panSemResultHOLWf, PanPropsShapeInvariantStateFiniteExact.toPanSemFinite,
+      panSource, PanSemStateFiniteExact.ofExact, PanPropsShapeInvariantStateFiniteExact.toExact] using
+      hpostAndResult.2.2
 
 end Flapjack

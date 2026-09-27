@@ -164,6 +164,25 @@ theorem panToCrepLocalsRelFiniteExact_valueShapeProjection {width : Nat} [NeZero
   rw [hbridge] at hshape
   exact hshape
 
+/-- Exact port of HOL `locals_rel_wf_shape` at
+    `pan_to_crepProofScript.sml:2345`: the same `locals_rel` and present-local
+    lookup premises imply `is_wf_shape_v_nil` for that value. The result is the
+    exact value-level predicate; its only representation translation is the
+    three named finite-map carriers. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "locals_rel_wf_shape" 2345
+  (fmap_as_finite_support_relation :=
+    [PanToCrepContextExact.vars, sourceLocals, targetLocals])]
+theorem panToCrepLocalsRelWfShapeFiniteExact {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width)
+    (sourceLocals : HolFiniteMapExact MlS (ValueHOL width))
+    (targetLocals : HolFiniteMapExact Nat (HolWordLab width))
+    (name : MlS) (value : ValueHOL width)
+    (hrel : panToCrepLocalsRelFiniteExact context sourceLocals targetLocals)
+    (hlookup : sourceLocals.lookup name = some value) :
+    isWfShapeValueHOLExact [] value = true :=
+  panToCrepLocalsRelFiniteExact_valueShapeProjection
+    context sourceLocals targetLocals name value hrel hlookup
+
 /-- Projection of HOL `state_rel_def`'s structural-context conjunct. -/
 theorem panToCrepStateRelFiniteExact_structs {width : Nat} {σ : Type}
     [NeZero width] (source : PanSemStateFiniteExact width σ)
@@ -186,7 +205,7 @@ theorem panToCrepExactInitialShapeInvariant {width : Nat} {σ : Type}
       isWfShapeValueHOLExact source.structs value = true) := by
   constructor
   · intro name value hlookup
-    have hshape := panToCrepLocalsRelFiniteExact_valueShapeProjection
+    have hshape := panToCrepLocalsRelWfShapeFiniteExact
       context source.locals targetLocals name value hlocals hlookup
     have hstruct := panToCrepStateRelFiniteExact_structs source target hstate
     simpa [hstruct] using hshape
@@ -374,44 +393,36 @@ theorem panToCrepFiniteEvaluateShapeInvariantRetInst {width : Nat} {σ : Type}
         isWfShapeValueHOLExact [] value = true
     | _ => True := by
   classical
-  have hevalHelper : PanSemStateFiniteExact.evaluateHOLFiniteResult source program =
-      (some result, postState) := by
-    simpa [PanSemStateFiniteExact.evaluateHOLFiniteState,
-      PanSemStateFiniteExact.evaluateHOLFiniteResult,
-      PanSemStateFiniteExact.evaluateHOLFiniteStateWithDeciders] using heval
-  have hevalMarked := (PanSemStateFiniteExact.evaluateHOLFiniteResult_eq_iff
-    source program (some result, postState)).2 hevalHelper
-  let evaluationContext : PanSemStateFiniteExact.FiniteEvalContext width σ :=
-    ⟨source, inferInstance, inferInstance⟩
-  have hevalProjection :
-      (PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext
-        program evaluationContext).map
-        (fun pair => (pair.1, pair.2.state)) = some (some result, postState) := by
-    simpa [PanSemStateFiniteExact.evaluateHOLFinite, evaluationContext] using hevalMarked
+  let resultSource := PanPropsShapeInvariantStateFiniteExact.ofPanSemFinite source
+  let resultPost := PanPropsShapeInvariantStateFiniteExact.ofPanSemFinite postState
   have hinitial := panToCrepExactInitialShapeInvariant
     source target targetLocals.targetLocals relationContext hstate hlocals
+  have hsourceLocals : ∀ name value, resultSource.locals.lookup name = some value →
+      isWfShapeValueHOLExact resultSource.structs value = true := by
+    intro name value hlookup
+    exact hinitial.1 name value (by
+      simpa [resultSource, PanPropsShapeInvariantStateFiniteExact.ofPanSemFinite,
+        PanPropsShapeInvariantStateFiniteExact.ofExact, PanSemStateFiniteExact.toExact] using hlookup)
+  have hsourceGlobals : ∀ name value, resultSource.globals.lookup name = some value →
+      isWfShapeValueHOLExact resultSource.structs value = true := by
+    intro name value hlookup
+    exact hinitial.2 name value (by
+      simpa [resultSource, PanPropsShapeInvariantStateFiniteExact.ofPanSemFinite,
+        PanPropsShapeInvariantStateFiniteExact.ofExact, PanSemStateFiniteExact.toExact] using hlookup)
+  have hevalInvariant :
+      PanPropsShapeInvariantStateFiniteExact.evaluateHOLFinite resultSource program =
+        (some result, resultPost) := by
+    have hmap := congrArg
+      (fun output : Option (PanSemResultExact width) × PanSemStateFiniteExact width σ =>
+        (output.1, PanPropsShapeInvariantStateFiniteExact.ofPanSemFinite output.2)) heval
+    simpa [PanPropsShapeInvariantStateFiniteExact.evaluateHOLFinite, resultSource,
+      resultPost] using hmap
+  have hinvariant := evaluateIsWfShapeInvariantFiniteExact program resultSource
+    (some result) resultPost hevalInvariant hsourceLocals hsourceGlobals
   have hresultWf : Flapjack.panSemResultHOLWf source.structs (some result) := by
-    cases hcontextEval : PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext
-        program evaluationContext with
-    | none => simp [hcontextEval] at hevalProjection
-    | some pair =>
-        have hprojectPair : (pair.1, pair.2.state) = (some result, postState) := by
-          simpa [hcontextEval] using hevalProjection
-        have hresult : pair.1 = some result := congrArg Prod.fst hprojectPair
-        have hpair : pair = (some result, pair.2) := by
-          apply Prod.ext
-          · exact hresult
-          · rfl
-        have hcontextSuccess :
-            PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext
-              program evaluationContext = some (some result, pair.2) := by
-          rw [hpair] at hcontextEval
-          exact hcontextEval
-        have hinvariant :=
-          PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext_shapeInvariant
-            program evaluationContext ⟨hinitial.1, hinitial.2⟩ (some result) pair.2
-            hcontextSuccess
-        exact hinvariant.2.2
+    simpa [resultSource, PanPropsShapeInvariantStateFiniteExact.ofPanSemFinite,
+      PanPropsShapeInvariantStateFiniteExact.ofExact, PanSemStateFiniteExact.toExact] using
+      hinvariant.2.2
   have hstructs := panToCrepStateRelFiniteExact_structs
     source target hstate
   cases result with
