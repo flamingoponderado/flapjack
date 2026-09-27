@@ -1335,7 +1335,7 @@ theorem compileExpValRelHOL_shift {width : Nat} {σ : Type} [NeZero width]
 /-- Exact `Op` case of HOL `compile_exp_val_rel`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:295-341`), over the exact
     finite-support carriers.  Flapjack-specific staged constructor lemma (HOL
-    proves this case inside `pc_compile_correct`; there is no standalone exported
+    proves this case inside `compile_exp_val_rel`; there is no standalone exported
     declaration to tag). -/
 theorem compileExpValRelHOL_op {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) [_hs : DecidablePred state.memaddrs]
@@ -1432,7 +1432,7 @@ private theorem crepOpCrepWord_compilePanOp {width : Nat} [NeZero width]
     the `Panop` case). Mirrors `compileExpValRelHOL_op` with `panOpHOL` in place
     of `wordOpHOL` and the compiled `.crepOp (compilePanOp operator)`, related
     by `crepOpCrepWord_compilePanOp`. Not an exact HOL declaration (HOL proves
-    this inside `pc_compile_correct`); no `@[hol]` tag. -/
+    this inside `compile_exp_val_rel`); no `@[hol]` tag. -/
 theorem compileExpValRelHOL_panop {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) [_hs : DecidablePred state.memaddrs]
     (context : PanToCrepContextExact width)
