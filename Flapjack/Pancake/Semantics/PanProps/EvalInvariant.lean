@@ -3419,6 +3419,50 @@ theorem evaluateInvariantsAnnotCaseHOLFinite {width : Nat} {σ : Type} [NeZero w
 end Flapjack
 
 
+/-! # The `Tick` case of HOL `evaluate_invariants`
+
+HOL `Tick` changes only the clock on its positive-clock branch and clears only
+locals on timeout. This induction leaf keeps the source evaluator premise and
+all eight state-field conclusions. -/
+
+namespace Flapjack
+
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_invariants" 1150
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateInvariantsTickCaseHOLFinite {width : Nat} {σ : Type} [NeZero width] :
+    ∀ (state : PanPropsEvalStateFiniteExact width σ)
+      (result : Option (PanSemResultExact width))
+      (post : PanPropsEvalStateFiniteExact width σ),
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state
+          (.tick : ProgHOL width) = (result, post) →
+      post.memaddrs = state.memaddrs ∧
+      post.shMemaddrs = state.shMemaddrs ∧
+      post.be = state.be ∧
+      post.eshapes = state.eshapes ∧
+      post.baseAddr = state.baseAddr ∧
+      post.structs = state.structs ∧
+      post.code = state.code ∧
+      post.ffi.oracle = state.ffi.oracle := by
+  classical
+  intro state result post hRun
+  simp only [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair,
+    PanSemStateFiniteExact.evaluateHOLFiniteState_tick] at hRun
+  by_cases hclock : state.toPanSemFinite.clock = 0
+  · simp [hclock, PanPropsEvalStateFiniteExact.ofPanSemFinite,
+      PanSemStateFiniteExact.emptyLocalsHOLFinite] at hRun
+    rcases hRun with ⟨_, hpost⟩
+    cases hpost
+    simp [PanPropsEvalStateFiniteExact.toPanSemFinite]
+  · simp [hclock, PanPropsEvalStateFiniteExact.ofPanSemFinite,
+      PanSemStateFiniteExact.decClockHOLFinite] at hRun
+    rcases hRun with ⟨_, hpost⟩
+    cases hpost
+    simp [PanPropsEvalStateFiniteExact.toPanSemFinite]
+
+end Flapjack
+
+
 /-!
 # The `Dec` induction case of HOL `evaluate_clock_sub`
 

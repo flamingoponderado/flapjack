@@ -15282,5 +15282,16 @@
     "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-a source comparison (2026-09-28; bead flapjack-4ac.4.61) against panPropsScript.sml:1150-1158. This is the genuine p = Annot tag text leaf from recInduct evaluate_ind. It retains the source evaluate premise and all eight conclusions, with no IH or extra premise. evaluate_def at panSemScript.sml:656 returns (NONE,s), so the post-state is exactly the input state. The same-module PanPropsEvalStateFiniteExact carrier uses HolFiniteMapExact for the listed fields and its checked roundtrip witness; [NeZero width] is the indexed-word translation. Skip, Break, and Continue leaves are also ported; recursive cases and assembly remain open."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "evaluate_invariants",
+    "hol_line": 1150,
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
+    "lean_name": "evaluateInvariantsTickCaseHOLFinite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-28; bead flapjack-4ac.4.61) against panPropsScript.sml:1150-1158. This is the genuine p = Tick leaf from recInduct evaluate_ind. It retains the source evaluate premise and all eight conclusions, without an IH or extra premise. evaluate_def at panSemScript.sml:653-655 returns (SOME TimeOut, empty_locals s) at zero clock and (NONE, dec_clock s) otherwise; both branches preserve precisely the eight fields concluded here. The Lean leaf uses evaluateHOLFiniteState_tick, with the same finite-support state owner/witness and indexed-word translation. Skip, Break, Continue, and Annot leaves are also ported; recursive cases and assembly remain open."
   }
 ]
