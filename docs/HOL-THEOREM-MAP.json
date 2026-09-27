@@ -14237,6 +14237,14 @@
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "compileExpValRelHOL_load",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Codex (source comparison with cakeml/pancake/proofs/pan_to_crepProofScript.sml:217-256; bead flapjack-4ac.5.81.11): exact-carrier staged Load case of compile_exp_val_rel. HOL proves Load inside the parent theorem using the address eval_ind hypothesis and composes mem_load_flat_rel with eval_load_shape_el_rel; it exports no standalone case declaration, so this case lemma is Flapjack-specific infrastructure and carries no @[hol] tag."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
     "lean_name": "compileExpValRelHOL_cmp",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.9): Flapjack-specific staged constructor lemma for the exact-carrier `compile_exp_val_rel` case; HOL proves this case inside `compile_exp_val_rel` and exports no standalone declaration, so no `@[hol]` tag is attached."
