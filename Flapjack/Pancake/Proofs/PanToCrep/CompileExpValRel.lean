@@ -23,7 +23,7 @@ source evaluator `evalHOLFinite` and target evaluator `evalCrepSemHOLExp`.
 
 The full theorem is tracked by `flapjack-4ac.5.81`; this slice records the exact
 statement and proves its `Const` case. It is Flapjack proof infrastructure: HOL
-proves the cases inside `pc_compile_correct` and does not export a standalone
+proves the cases inside `compile_exp_val_rel` and does not export a standalone
 `compile_exp_val_rel` case, so nothing here carries an `@[hol]` tag.
 -/
 
