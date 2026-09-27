@@ -106,10 +106,9 @@ The HOL proof resumes this nonrecursive case at
 and the target evaluator equation is `crepSemScript.sml:309`. They give source
 `Break`, compiled `Break 0`, and target `Break 0`, all with unchanged states.
 This helper checks those equations over the finite-support HOL-shaped carriers
-and records preservation of the exact state/local relations. It does not state
-the full `pc_compile_correct` case: exact `code_rel` and `excp_rel` assembly
-remain outside this slice, so this Flapjack-specific equation carries no
-`@[hol]` tag. -/
+and records preservation of the exact state/local/code/exception relations.
+It is still a Flapjack-specific case helper rather than the assembled theorem,
+so it carries no `@[hol]` tag. -/
 theorem panToCrepExactBreakTransition
     {width : Nat} {σ : Type} [NeZero width]
     (sourceContext : PanSemStateFiniteExact.FiniteEvalContext width σ)
@@ -119,7 +118,10 @@ theorem panToCrepExactBreakTransition
     (shMemDec : (a : BitVec width) → Decidable (targetState.shMemaddrs a))
     (hstate : panToCrepStateRelFiniteExact sourceContext.state targetState)
     (hlocals : panToCrepLocalsRelFiniteExact compileContext
-      sourceContext.state.locals targetState.locals) :
+      sourceContext.state.locals targetState.locals)
+    (hcode : codeRelExactHOLW compileContext sourceContext.state.code targetState.code)
+    (hexcp : panToCrepExcpRelFiniteExact compileContext.eids
+      sourceContext.state.eshapes) :
     PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext
         (.break : Flapjack.Pancake.PanLang.ProgHOL width) sourceContext =
       some (some .break, sourceContext) ∧
@@ -132,8 +134,11 @@ theorem panToCrepExactBreakTransition
       (some (.break 0), targetState) ∧
     panToCrepStateRelFiniteExact sourceContext.state targetState ∧
     panToCrepLocalsRelFiniteExact compileContext
-      sourceContext.state.locals targetState.locals := by
-  refine ⟨?_, ?_, ?_, hstate, hlocals⟩
+      sourceContext.state.locals targetState.locals ∧
+    codeRelExactHOLW compileContext sourceContext.state.code targetState.code ∧
+    panToCrepExcpRelFiniteExact compileContext.eids
+      sourceContext.state.eshapes := by
+  refine ⟨?_, ?_, ?_, hstate, hlocals, hcode, hexcp⟩
   · simp [PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext]
   · simp [compileProgExactHOLW]
   · rw [show compileProgExactHOLW compileContext
@@ -148,9 +153,9 @@ The proof resumes the nonrecursive constructor at
 `pan_to_crepScript.sml:220`, and the target evaluator equation is
 `crepSemScript.sml:313`. This slice establishes source `Continue`, compiled
 `Continue 0`, and target `Continue 0`, preserving the exact source/target
-state and local relations. It is not the full `pc_compile_correct` case:
-assembling the exact code and exception relations remains open, so this
-Flapjack-specific helper carries no `@[hol]` tag. The production-codec bridge
+state and local/code/exception relations. It remains a Flapjack-specific case
+helper rather than the full `pc_compile_correct` theorem, so it carries no
+`@[hol]` tag. The production-codec bridge
 `compileProgExactHOLW_continue_bridge` is a distinct theorem and is not
 duplicated here. -/
 theorem panToCrepExactContinueTransition
@@ -162,7 +167,10 @@ theorem panToCrepExactContinueTransition
     (shMemDec : (a : BitVec width) → Decidable (targetState.shMemaddrs a))
     (hstate : panToCrepStateRelFiniteExact sourceContext.state targetState)
     (hlocals : panToCrepLocalsRelFiniteExact compileContext
-      sourceContext.state.locals targetState.locals) :
+      sourceContext.state.locals targetState.locals)
+    (hcode : codeRelExactHOLW compileContext sourceContext.state.code targetState.code)
+    (hexcp : panToCrepExcpRelFiniteExact compileContext.eids
+      sourceContext.state.eshapes) :
     PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext
         (.continue : Flapjack.Pancake.PanLang.ProgHOL width) sourceContext =
       some (some .continue, sourceContext) ∧
@@ -175,8 +183,11 @@ theorem panToCrepExactContinueTransition
       (some (.continue 0), targetState) ∧
     panToCrepStateRelFiniteExact sourceContext.state targetState ∧
     panToCrepLocalsRelFiniteExact compileContext
-      sourceContext.state.locals targetState.locals := by
-  refine ⟨?_, ?_, ?_, hstate, hlocals⟩
+      sourceContext.state.locals targetState.locals ∧
+    codeRelExactHOLW compileContext sourceContext.state.code targetState.code ∧
+    panToCrepExcpRelFiniteExact compileContext.eids
+      sourceContext.state.eshapes := by
+  refine ⟨?_, ?_, ?_, hstate, hlocals, hcode, hexcp⟩
   · simp [PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext]
   · simp [compileProgExactHOLW]
   · rw [show compileProgExactHOLW compileContext
@@ -244,9 +255,9 @@ The HOL proof resumes this clock-sensitive case at
 `crepSemScript.sml:332`. The helper gives both clock branches: at zero both
 evaluators time out and clear locals; above zero both complete normally and
 decrement the clock. It proves the target evaluation directly and preserves
-the exact state/local relations. This remains a Flapjack-specific slice, not
-the full `pc_compile_correct` case, since code/excp relation assembly remains
-open; no `@[hol]` tag is claimed. The existing
+the exact state/local/code/exception relations. This remains a
+Flapjack-specific slice, not the full `pc_compile_correct` case; no `@[hol]`
+tag is claimed. The existing
 `evalPanSemRecursiveCallFiniteContext_tick_projection` relates the finite and
 broad exact Pan clause, while `compileProgExactHOLW_tick_bridge` only compares
 the exact compiler's Tick output after its output codec with production
@@ -260,7 +271,10 @@ theorem panToCrepExactTickTransition
     (shMemDec : (a : BitVec width) → Decidable (targetState.shMemaddrs a))
     (hstate : panToCrepStateRelFiniteExact sourceContext.state targetState)
     (hlocals : panToCrepLocalsRelFiniteExact compileContext
-      sourceContext.state.locals targetState.locals) :
+      sourceContext.state.locals targetState.locals)
+    (hcode : codeRelExactHOLW compileContext sourceContext.state.code targetState.code)
+    (hexcp : panToCrepExcpRelFiniteExact compileContext.eids
+      sourceContext.state.eshapes) :
     let sourcePost :=
       if sourceContext.state.clock = 0 then
         PanSemStateFiniteExact.emptyLocalsHOLFinite sourceContext.state
@@ -289,7 +303,9 @@ theorem panToCrepExactTickTransition
         (some .timeOut, CrepSemHOLState.emptyLocals targetState)
       else (none, decClockCrepSemHOL targetState)) ∧
     panToCrepStateRelFiniteExact sourcePost targetPost ∧
-    panToCrepLocalsRelFiniteExact compileContext sourcePost.locals targetPost.locals := by
+    panToCrepLocalsRelFiniteExact compileContext sourcePost.locals targetPost.locals ∧
+    codeRelExactHOLW compileContext sourcePost.code targetPost.code ∧
+    panToCrepExcpRelFiniteExact compileContext.eids sourcePost.eshapes := by
   let sourcePost : PanSemStateFiniteExact width σ :=
     if sourceContext.state.clock = 0 then
       PanSemStateFiniteExact.emptyLocalsHOLFinite sourceContext.state
@@ -298,6 +314,20 @@ theorem panToCrepExactTickTransition
     if targetState.clock = 0 then
       CrepSemHOLState.emptyLocals targetState
     else decClockCrepSemHOL targetState
+  have hcodePost : codeRelExactHOLW compileContext sourcePost.code targetPost.code := by
+    by_cases hsourceZero : sourceContext.state.clock = 0 <;>
+      by_cases htargetZero : targetState.clock = 0 <;>
+      simpa [sourcePost, targetPost, hsourceZero, htargetZero,
+        PanSemStateFiniteExact.emptyLocalsHOLFinite,
+        PanSemStateFiniteExact.decClockHOLFinite, CrepSemHOLState.emptyLocals,
+        decClockCrepSemHOL] using hcode
+  have hexcpPost : panToCrepExcpRelFiniteExact compileContext.eids sourcePost.eshapes := by
+    by_cases hsourceZero : sourceContext.state.clock = 0 <;>
+      by_cases htargetZero : targetState.clock = 0 <;>
+      simpa [sourcePost, targetPost, hsourceZero, htargetZero,
+        PanSemStateFiniteExact.emptyLocalsHOLFinite,
+        PanSemStateFiniteExact.decClockHOLFinite, CrepSemHOLState.emptyLocals,
+        decClockCrepSemHOL] using hexcp
   rcases hstate with ⟨hmem, hmemaddrs, hshmem, hstructs, hglobals,
     hclock, hbe, hffi, hbase, htop⟩
   have hsource :
@@ -320,7 +350,7 @@ theorem panToCrepExactTickTransition
       (.tick : Flapjack.Pancake.PanLang.ProgHOL width) =
         (.tick : CrepProgHOL width) := by
     simp [compileProgExactHOLW]
-  refine ⟨hsource, hcompile, ?_, ?_, ?_⟩
+  refine ⟨hsource, hcompile, ?_, ?_, ?_, hcodePost, hexcpPost⟩
   · rw [hcompile]
     exact evalCrepSemHOLProg_tick targetState memDec shMemDec
   · by_cases hzero : sourceContext.state.clock = 0
