@@ -3176,6 +3176,35 @@ theorem evaluateHOLFiniteState_decCall_lookup_none {width : Nat} {σ : Type}
   simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
     evalPanSemRecursiveCallFiniteContext.eq_6, hargsExact, hlookup]
 
+/-- Flapjack-specific total-pair rendering of the DecCall clock-exhaustion
+    branch from `panSemScript.sml:694-714`. With successful arguments and code
+    lookup, zero caller clock returns `TimeOut` and clears caller locals. This
+    stays untagged while the word-carrier qualifier for PanSemStateFiniteExact
+    is pending review. -/
+theorem evaluateHOLFiniteState_decCall_clock_zero {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateFiniteExact width σ)
+    (resultName : MlS) (shape : ShapeHOL) (function : MlS)
+    (arguments : List (ExpHOL width)) (continuation : ProgHOL width)
+    (values : List (ValueHOL width)) (body : ProgHOL width)
+    (callee : HolFiniteMapExact MlS (ValueHOL width)) (returnShape : ShapeHOL)
+    (hargs : evalListHOLFinite state
+      (h := fun address => Classical.propDecidable (state.memaddrs address))
+      arguments = some values)
+    (hlookup : lookupCodeHOLFinite state.code.lookup function values =
+      some (body, callee, returnShape))
+    (hclock : state.clock = 0) :
+    evaluateHOLFiniteState state
+        (.decCall resultName shape function arguments continuation : ProgHOL width) =
+      (some .timeOut, emptyLocalsHOLFinite state) := by
+  classical
+  let context : FiniteEvalContext width σ :=
+    ⟨state, fun address => Classical.propDecidable (state.memaddrs address),
+      fun address => Classical.propDecidable (state.shMemaddrs address)⟩
+  have htimeout := evalPanSemRecursiveCallFiniteContext_decCall_timeout_branch
+    resultName shape function arguments continuation context values body callee
+    returnShape hargs hlookup hclock
+  simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders, context, htimeout]
+
 /-- Source-reviewed HOL `evaluate_def` Seq conjunct (`panSemScript.sml:615`)
     from the source `Definition evaluate_def` at line 556. That definition
     explicitly applies `fix_clock` to the first evaluation pair; the theorem
