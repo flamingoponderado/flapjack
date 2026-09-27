@@ -818,8 +818,23 @@ attached. -/
            | none => (some .error, state)) := by
   rw [evalCrepSemHOLProg.eq_def] <;> rfl
 
-/-- HOL `evaluate (Primitive lhss pop rhss, s)` (`crepSemScript.sml:250-256`).
-    Finite-support `CrepSemHOLState` counterpart; untagged. -/
+/-- HOL `evaluate (Primitive lhss pop rhss, s)` (`crepSemScript.sml:250-262`),
+    source-reviewed as a single clause, not as a whole-evaluator port. The
+    `args.mapM state.locals.lookup` branch is HOL's `OPT_MMAP (FLOOKUP
+    s.locals) rhss`; `crepPrimopHOL` is the cited `crep_primop_def`; and the
+    success guard translates `LENGTH` equality, `EVERY IS_SOME`, and
+    `ALL_DISTINCT` before applying the locals `|++ ZIP` update via
+    `updateListEq`. Each failure returns `Error` with the original state.
+
+    The state carrier's keys are `Nat` like HOL `varname`; its locals map uses
+    `HolFiniteMapExact` with HOL equality/update helpers. HOL `word_lab` has
+    only `Word word`, represented by `HolWordLab`; this clause converts through
+    `HolWordLab.toPanWordLab` before `crepPrimopHOL` and back with
+    `PanWordLab.toHolWordLab`. Those conversions are inverse, and the
+    `BitVec width`/`[NeZero width]` carrier supplies the positive-width word
+    parameter. This review covers only the Primitive equation. The enclosing
+    evaluator remains untagged pending the other clauses and whole-statement
+    review. -/
 @[simp] theorem evalCrepSemHOLProg_primitive {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ)
     (memDec : (a : BitVec width) → Decidable (state.memaddrs a))

@@ -903,6 +903,91 @@ private theorem foldr_max_zero_eq_max_getD (xs : List Nat) :
       rw [ih]
       cases hmax : tail.max? <;> simp <;> omega
 
+/-- Flapjack-specific helper: the codec image of the exact compiled argument
+    list equals the production `compileArgsHOL` when the paired `compile_exp`
+    codec holds for every argument. HOL has no separate list lemma here; the
+    source `Primitive` clause is `pan_to_crepScript.sml:164-175`. -/
+private theorem crepProgOfHOL_compileArgumentList_flatMap {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width) (arguments : List (Exp (BitVec width)))
+    (hcodec : ∀ expression ∈ arguments,
+      ((compileExpExactHOLW context (expToHOL expression)).1.map crepExpOfHOL,
+        shapeOfHOL (compileExpExactHOLW context (expToHOL expression)).2) =
+        compileExpHOL context.toProduction expression) :
+    ((compileExpExactHOLWList context (arguments.map expToHOL)).flatMap Prod.fst).map crepExpOfHOL =
+      compileArgsHOL context.toProduction arguments := by
+  induction arguments with
+  | nil => simp [compileExpExactHOLWList, compileArgsHOL]
+  | cons expression rest ih =>
+      have hexp :
+          (compileExpExactHOLW context (expToHOL expression)).1.map crepExpOfHOL =
+            (compileExpHOL context.toProduction expression).1 := by
+        have h := congrArg Prod.fst (hcodec expression (by simp))
+        simpa using h
+      simp only [List.map_cons, compileExpExactHOLWList, compileArgsHOL, List.flatMap_cons,
+        List.map_append]
+      rw [hexp]
+      rw [ih (fun e he => hcodec e (by simp [he]))]
+
+/-- Exact-to-production bridge for HOL `compile_def`'s `Primitive` clause
+    (`pan_to_crepScript.sml:164-175`). The exact clause compiles the whole
+    argument list internally, so the bridge takes a per-argument list codec
+    premise. Covers the missing-variable fallback and the temporaries branch. -/
+theorem compileProgExactHOLW_primitive_bridge {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width) (name : String) (operator : PrimOp)
+    (arguments : List (Exp (BitVec width)))
+    (hcodec : ∀ expression ∈ arguments,
+      ((compileExpExactHOLW context (expToHOL expression)).1.map crepExpOfHOL,
+        shapeOfHOL (compileExpExactHOLW context (expToHOL expression)).2) =
+        compileExpHOL context.toProduction expression) :
+    crepProgOfHOL (compileProgExactHOLW context
+        (.primitive (Flapjack.Basis.Pure.MlString.ofString name) operator
+          (arguments.map expToHOL))) =
+      compileProgRiscV context.toProduction (.primitive name operator arguments) := by
+  have hvariables : context.toProduction.vars name =
+      (context.vars.lookup (Flapjack.Basis.Pure.MlString.ofString name)).map
+        (fun entry => (shapeOfHOL entry.1, entry.2)) := rfl
+  cases hlookup : context.vars.lookup (Flapjack.Basis.Pure.MlString.ofString name) with
+  | none =>
+      simp [compileProgExactHOLW, compilePrimitiveExactHOLW, compileProgRiscV,
+        compileProgHOL, FLOOKUP, hvariables, hlookup, crepProgOfHOL]
+  | some entry =>
+      obtain ⟨entryShape, names⟩ := entry
+      have hProductionVar : FLOOKUP context.toProduction.vars name =
+          some (shapeOfHOL entryShape, names) := by
+        unfold FLOOKUP
+        rw [hvariables, hlookup]
+        rfl
+      have hargs := crepProgOfHOL_compileArgumentList_flatMap context arguments hcodec
+      have hlen :
+          ((compileExpExactHOLWList context (arguments.map expToHOL)).flatMap Prod.fst).length =
+            (compileArgsHOL context.toProduction arguments).length := by
+        rw [← hargs]
+        simp
+      have htemporaries :
+          (List.range
+              ((compileExpExactHOLWList context (arguments.map expToHOL)).flatMap Prod.fst).length).map
+            (fun index => context.vmax + index + 1) =
+          freshNamesHOL context.toProduction
+            (compileArgsHOL context.toProduction arguments).length 1 := by
+        unfold freshNamesHOL
+        rw [hlen]
+        change
+          (List.range (compileArgsHOL context.toProduction arguments).length).map
+              (fun index => context.vmax + index + 1) =
+            (List.range (compileArgsHOL context.toProduction arguments).length).map
+              (fun offset => context.vmax + 1 + offset)
+        apply List.map_congr_left
+        intro index _hin
+        omega
+      simp only [compileProgExactHOLW, compilePrimitiveExactHOLW, compileProgRiscV,
+        compileProgHOL, hProductionVar]
+      rw [hlookup]
+      dsimp only
+      rw [crepProgOfHOL_nestedDecsHOL]
+      simp only [crepProgOfHOL]
+      rw [hargs]
+      rw [htemporaries]
+
 theorem compileProgExactHOLW_shmem_store_bridge {width : Nat} [NeZero width]
     (context : PanToCrepContextExact width) (operator : OpSize)
     (value address : Exp (BitVec width))

@@ -942,7 +942,7 @@ run_probe compile_def_probeScript.sml compile_def_probe.out \
   raise_one_word raise_multiword raise_missing_eid raise_shape_length_fallback \
   shmem_store_clause shmem_store_value_fallback shmem_store_address_fallback \
   shmem_load_local_clause shmem_load_missing_destination shmem_load_address_fallback \
-  dec_one_word dec_multiword dec_shape_length_fallback \
+  dec_one_word dec_multiword dec_declared_shape_ignored dec_shape_length_fallback \
   struct_skip struct_break struct_continue struct_tick struct_annot struct_seq \
   missing_global empty_one_global extra_names_global missing_names_global \
   missing_local empty_one_local extra_names_local missing_names_local valid_local \
