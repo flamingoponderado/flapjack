@@ -3986,6 +3986,90 @@ theorem evaluateHOLFiniteState_while_total {width : Nat} {σ : Type} [NeZero wid
                           FiniteEvalContext.withState_state]
               · rw [if_neg hword, if_neg hword]
 
+/-! ### Global-shape invariant core (flapjack-4ac.4.62.1)
+
+HOL `panPropsScript.sml:1183 evaluate_global_shape_invariant` states that a
+successful `evaluate` preserves the shape of every stored global value.  The
+exact finite evaluator writes globals only through `setGlobalHOLFinite`
+(`is_valid_value`-gated shape-preserving writes on the executed path), so the
+invariant is the preservation of the shape map `globalsShapes`.  These untagged
+lemmas are the shared core; the whole-program induction over the recursive
+evaluator is the remaining step of `flapjack-4ac.4.62`. -/
+
+/-- Shape map of the `globals` table: the shape of each stored value, or `none`
+    for an unbound name. -/
+def globalsShapes {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) : MlS → Option ShapeHOL :=
+  fun name => (state.globals.lookup name).map shapeOfHOLExact
+
+theorem globalsShapes_setVarHOLFinite {width : Nat} {σ : Type} [NeZero width]
+    (name : MlS) (value : ValueHOL width) (state : PanSemStateFiniteExact width σ) :
+    globalsShapes (setVarHOLFinite name value state) = globalsShapes state := rfl
+
+theorem globalsShapes_emptyLocalsHOLFinite {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) :
+    globalsShapes (emptyLocalsHOLFinite state) = globalsShapes state := rfl
+
+theorem globalsShapes_setLocals {width : Nat} {σ : Type} [NeZero width]
+    (map : HolFiniteMapExact MlS (ValueHOL width)) (state : PanSemStateFiniteExact width σ) :
+    globalsShapes { state with locals := map } = globalsShapes state := rfl
+
+theorem globalsShapes_decClockHOLFinite {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) :
+    globalsShapes (decClockHOLFinite state) = globalsShapes state := rfl
+
+theorem globalsShapes_setGlobalHOLFinite_value {width : Nat} {σ : Type} [NeZero width]
+    (name : MlS) (value : ValueHOL width) (state : PanSemStateFiniteExact width σ) :
+    globalsShapes (setGlobalHOLFinite name value state) =
+      FUPDATE (globalsShapes state) (name, shapeOfHOLExact value) := by
+  funext key
+  by_cases h : name == key
+  · simp only [globalsShapes, setGlobalHOLFinite, HolFiniteMapExact.lookup_update, FUPDATE, h, if_true, Option.map_some]
+  · simp only [globalsShapes, setGlobalHOLFinite, HolFiniteMapExact.lookup_update, FUPDATE, h,
+      Bool.false_eq_true, if_false]
+
+/-- A `set_global` write whose value has the shape already stored at `name`
+    (the `is_valid_value Global` condition) preserves the global shape map. -/
+theorem globalsShapes_setGlobalHOLFinite_of_shape {width : Nat} {σ : Type} [NeZero width]
+    (name : MlS) (value : ValueHOL width) (state : PanSemStateFiniteExact width σ)
+    (h : (state.globals.lookup name).map shapeOfHOLExact = some (shapeOfHOLExact value)) :
+    globalsShapes (setGlobalHOLFinite name value state) = globalsShapes state := by
+  rw [globalsShapes_setGlobalHOLFinite_value]
+  funext key
+  by_cases hk : name == key
+  · have hnk : name = key := by simpa only [beq_iff_eq] using hk
+    subst hnk
+    simp only [FUPDATE, hk, if_true]
+    simpa only [globalsShapes] using h.symm
+  · simp only [FUPDATE, hk, Bool.false_eq_true, if_false]
+
+theorem globalsShapes_setKvarHOLFinite_of_shape {width : Nat} {σ : Type} [NeZero width]
+    (kind : VarKind) (name : MlS) (value : ValueHOL width) (state : PanSemStateFiniteExact width σ)
+    (h : (state.globals.lookup name).map shapeOfHOLExact = some (shapeOfHOLExact value)) :
+    globalsShapes (setKvarHOLFinite kind name value state) = globalsShapes state := by
+  cases kind
+  · exact globalsShapes_setVarHOLFinite name value state
+  · exact globalsShapes_setGlobalHOLFinite_of_shape name value state h
+
+/-- Equality of shape maps yields HOL's existential shape-preservation
+    conclusion for every initially bound global. -/
+theorem globalsShapes_exists_shape {width : Nat} {σ : Type} [NeZero width]
+    {source final : PanSemStateFiniteExact width σ}
+    (h : globalsShapes final = globalsShapes source) {name : MlS} {value : ValueHOL width}
+    (hv : source.globals.lookup name = some value) :
+    ∃ value', final.globals.lookup name = some value' ∧
+      shapeOfHOLExact value' = shapeOfHOLExact value := by
+  have h' := congrFun h name
+  simp only [globalsShapes] at h'
+  rw [hv, Option.map_some] at h'
+  cases hlook : final.globals.lookup name with
+  | none => simp only [hlook] at h'; exact absurd h' (by simp)
+  | some value' =>
+      refine ⟨value', rfl, ?_⟩
+      have h'' : some (shapeOfHOLExact value') = some (shapeOfHOLExact value) := by
+        simpa only [hlook, Option.map_some] using h'
+      exact Option.some.inj h''
+
 end PanSemStateFiniteExact
 
 end Flapjack
