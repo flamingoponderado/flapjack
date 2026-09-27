@@ -2,6 +2,7 @@ import Flapjack.Pancake.PanLang.Decl
 import Flapjack.Pancake.Semantics.CrepSem.HOLState
 import Flapjack.Pancake.Semantics.PanSem.ValueHOL
 import Flapjack.Pancake.Proofs.PanToCrep.StateRelFiniteSupport
+import Flapjack.Pancake.Proofs.PanToCrep.CompileExpValRel
 
 /-!
 Direct carrier checks paired with `pan_to_crep_state_rel_carrier_probe.out`.
@@ -192,6 +193,32 @@ def slcTlcRwHOLGuard : Bool :=
       (tlcSlots.zip ((tlcArguments.map flattenHOL).flatten))).lookup 1 with
    | some (.word value) => value == (7 : BitVec 8)
    | _ => false)
+
+/-! Exact-carrier regression for the `Const` case of HOL `compile_exp_val_rel`
+(`pan_to_crepProofScript.sml:143-150`), exercised over the exact carriers with
+the finite-support source evaluator and the exact target evaluator. The state
+relation, code relation, locals relation, and localisation premises of the
+enclosing HOL theorem are irrelevant to `Const` and are not needed here. -/
+example {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) [hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width σ) [ht : DecidablePred targetState.memaddrs]
+    (word : BitVec width) :
+    ([CrepExpHOL.const word].map (evalCrepSemHOLExp targetState)) =
+      (flattenHOL (ValueHOL.val (HolWordLab.word word))).map some :=
+  (compileExpValRelHOL_const state context targetState word
+    (ValueHOL.val (HolWordLab.word word)) [CrepExpHOL.const word] ShapeHOL.one
+    rfl (by simp only [compileExpExactHOLW])).1
+
+example {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) [hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width σ) [ht : DecidablePred targetState.memaddrs]
+    (word : BitVec width) :
+    shapeOfHOLExact (ValueHOL.val (HolWordLab.word word)) = ShapeHOL.one :=
+  (compileExpValRelHOL_const state context targetState word
+    (ValueHOL.val (HolWordLab.word word)) [CrepExpHOL.const word] ShapeHOL.one
+    rfl (by simp only [compileExpExactHOLW])).2.2.1
 
 def runChecks : IO Bool := do
   let checks := [
