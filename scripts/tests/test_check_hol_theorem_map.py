@@ -238,7 +238,7 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
                 self.assertIn("globalFreshName", record["reviewer"])
                 self.assertNotIn(key, tagged)
 
-    def test_crep_sem_state_exact_helpers_are_reviewed_fmap_as_finite_support(self):
+    def test_crep_sem_state_exact_helpers_have_combined_carrier_qualifiers(self):
         tagged = MAP["tagged_declarations"]()
         manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
         manifest_by_key = {
@@ -260,12 +260,14 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
                     ("cakeml/pancake/semantics/crepSemScript.sml", hol_name),
                 )
                 self.assertEqual(
-                    record["statement_status"], "reviewed_fmap_as_finite_support")
+                    record["statement_status"],
+                    "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec")
                 self.assertEqual(
                     record["fmap_as_finite_support"], ["locals", "globals", "code"])
+                self.assertIs(record["words_as_type_indexed_bitvec"], True)
                 self.assertIn(key, tagged)
 
-    def test_crep_sem_holstate_update_helpers_are_reviewed_fmap_as_finite_support(self):
+    def test_crep_sem_holstate_update_helpers_have_combined_carrier_qualifiers(self):
         tagged = MAP["tagged_declarations"]()
         manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
         manifest_by_key = {
@@ -287,9 +289,11 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
                     ("cakeml/pancake/semantics/crepSemScript.sml", hol_name),
                 )
                 self.assertEqual(
-                    record["statement_status"], "reviewed_fmap_as_finite_support")
+                    record["statement_status"],
+                    "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec")
                 self.assertEqual(
                     record["fmap_as_finite_support"], ["locals", "globals", "code"])
+                self.assertIs(record["words_as_type_indexed_bitvec"], True)
                 self.assertIn(key, tagged)
         # The polymorphic finite-map result is now reviewed and tagged. The
         # executable BEq-based resVarW remains a separate documented mismatch.

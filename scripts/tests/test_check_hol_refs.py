@@ -1395,11 +1395,11 @@ class RealCombinedQualifierFixtureTest(unittest.TestCase):
                 hol_name,
             )
 
-    def test_real_carrier_only_declaration_passes_checker(self):
-        # `evalCrepSemHOLProgExact_skip` is an UNTAGGED exact-evaluator clause
-        # whose signature names no literal `BitVec`: the word carrier is the
-        # imported `CrepSemHOLState`. The qualifier must resolve that carrier
-        # from its real declaration and accept the clause text, with no tag.
+    def test_real_tagged_carrier_only_declaration_passes_checker(self):
+        # `evalCrepSemHOLProgExact_skip` is now a tagged HOL case whose
+        # signature names no literal `BitVec`: the word carrier is the imported
+        # `CrepSemHOLState`. The qualifier must resolve that carrier from its
+        # real declaration and accept the clause text.
         lines = self._lines()
         start = None
         for index, line in enumerate(lines, start=1):
@@ -1408,7 +1408,7 @@ class RealCombinedQualifierFixtureTest(unittest.TestCase):
                 break
         self.assertIsNotNone(start, "evalCrepSemHOLProgExact_skip not found")
         preceding = lines[max(0, start - 4):start - 1]
-        self.assertFalse(any("@[hol" in line for line in preceding))
+        self.assertTrue(any("@[hol" in line for line in preceding))
         region = []
         for line in lines[start - 1:]:
             region.append(line)
