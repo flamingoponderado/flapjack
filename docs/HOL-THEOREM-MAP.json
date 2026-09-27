@@ -14019,5 +14019,21 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.12): staged case lemma for the Panop arm of HOL compile_exp_val_rel; HOL proves it inside pc_compile_correct, no standalone declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "memLoadFlatRelHOLExact",
+    "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
+    "hol_name": "mem_load_flat_rel",
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-luna-c (source comparison, 2026-09-27; bead flapjack-4ac.5.81.11.1.1): the Lean conclusion and premises follow mem_load_flat_rel over exact Pan evaluator carriers, but its target is CrepSemHOLState, whose owning finite-map structure lives in the separate CrepSem module. The current fmap_as_finite_support tag checker requires that owner and its roundtrip witness in the declaration's own module; words_as_type_indexed_bitvec alone cannot authorize this carrier. Keep this analogue untagged until the exact target state carrier/qualifier is available in the counterpart module."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "memLoadHOLExact_flatRead_mutual",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific mutual evaluator-induction helper for the strided mem_load_flat_rel analogue. HOL has no standalone declaration with this helper statement; its internal list cases are part of mem_loads_flat_rel."
   }
 ]
