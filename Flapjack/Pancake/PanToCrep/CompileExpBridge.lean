@@ -68,7 +68,7 @@ private theorem shapeOfHOL_byteRanged :
       obtain ⟨source, _hsource, rfl⟩ := List.mem_map.mp hshape
       exact shapeOfHOL_byteRanged source
 
-private theorem expOfHOL_byteRanged {width : Nat} [NeZero width] :
+theorem expOfHOL_byteRanged {width : Nat} [NeZero width] :
     (expression : ExpHOL width) → ExpByteRanged (expOfHOL expression) :=
   ExpHOL.rec
     (motive_1 := fun expression => ExpByteRanged (expOfHOL expression))
