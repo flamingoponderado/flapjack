@@ -613,8 +613,10 @@ scripts/hol-probes/regenerate.sh`.
 `crep_inline_alist_map_probe.out` records direct HOL EVAL of the inline-map
 input carrier at `crep_inlineScript.sml:259-269`: `alist_to_fmap` keeps the
 first duplicate association-list binding, lookups for another row are
-preserved, DOMSUB removes the selected key, and the input row order remains
-visible. The exact Lean input carrier and regressions are in
+preserved, DOMSUB removes the selected key while retaining other lookups, and
+`CARD (FDOM ...)` is 0 for empty, 1 for a single binding, and 2 for duplicate
+`f` rows plus a distinct `g` row. The input row order remains visible. The
+exact Lean input carrier and regressions are in
 `Flapjack.Pancake.CrepInline.Pass` and
 `Flapjack.Test.CrepInlineFmapParity`. Refresh it with
 `HOL_PROBE_ONLY=crep_inline_alist_map_probeScript.sml scripts/hol-probes/regenerate.sh`.
