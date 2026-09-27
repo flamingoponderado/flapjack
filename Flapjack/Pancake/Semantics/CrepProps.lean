@@ -998,20 +998,22 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {σ : Type} :
 
 end CrepPropsFiniteSupport
 
-/-- Flapjack-specific untagged analogue of HOL `lookup_locals_eq_map_vars` (`crepPropsScript.sml:17-27`), retained as the intended exact rendering (the `@[hol]` tag is withdrawn pending carrier-qualifier review, see HOLD below): mapping
-the local lookup over a list of variable names equals mapping the exact
-expression evaluator over the corresponding `Var` expressions. HOL's
-`OPT_MMAP (FLOOKUP t.locals) ns` is Lean's `List.mapM t.locals.lookup` and
-`OPT_MMAP (eval t) (MAP Var ns)` is `List.mapM (evalCrepSemHOLExp t)` over
-`CrepExpHOL.var`; `eval`'s `Var` clause is exactly `.locals.lookup`, so no
-side condition beyond the exact carrier is needed.
-
-HOLD (coordinator, 2026-09-27): the `@[hol]` tag is withdrawn pending the DS10
-`words_as_type_indexed_bitvec` policy. `CrepSemHOLState width σ` is the
-type-indexed-word crepSem state carrier, so an fmap-only qualifier does not
-record the HOL word-dimension translation; do not re-tag until the combined
-qualifier lands and the carrier is source-reviewed. The proof is kept as
-untagged infrastructure. -/
+/-- Exact port of HOL `lookup_locals_eq_map_vars`
+    (`cakeml/pancake/semantics/crepPropsScript.sml:17-27`): mapping the local
+    lookup over a list of variable names equals mapping the exact expression
+    evaluator over the corresponding `Var` expressions.  HOL's
+    `OPT_MMAP (FLOOKUP t.locals) ns` is Lean's `List.mapM t.locals.lookup` and
+    `OPT_MMAP (eval t) (MAP Var ns)` is `List.mapM (evalCrepSemHOLExp t)` over
+    `CrepExpHOL.var`; `eval`'s `Var` clause is exactly `.locals.lookup`, so no
+    side condition beyond the exact carrier is needed (the `DecidablePred`
+    argument is the evaluator encoding).  `CrepSemHOLState width σ` is the
+    type-indexed-word crepSem state carrier whose `locals`/`globals`/`code` are
+    HOL `|->` fields, hence the combined `fmap_as_finite_support`/words
+    qualifiers; the same-module forwarding witness is
+    `holFmapAsFiniteSupportWitness` above. -/
+@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "lookup_locals_eq_map_vars"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
 theorem lookupLocalsEqMapVarsHOL {width : Nat} [NeZero width] {σ : Type}
     (ns : List Nat) (t : CrepSemHOLState width σ) [DecidablePred t.memaddrs] :
     ns.mapM t.locals.lookup =
