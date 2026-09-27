@@ -2475,4 +2475,30 @@ theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type
 
 end PanSemStateFiniteExact
 
+namespace PanSemStateFiniteExact
+
+/-- The finite evaluator's state-level wrapper projects to the broad exact
+    evaluator. This connects the public finite-support wrapper to the
+    clause-level projection proved above; it is Flapjack-specific
+    infrastructure, not a tagged port of `evaluate_def`. -/
+theorem evaluateHOLFinite_toExact {width : Nat} {σ : Type} [NeZero width]
+    (context : FiniteEvalContext width σ) (program : ProgHOL width) :
+    (@evaluateHOLFinite width σ _ context.state context.memaddrsDecidable
+      context.shMemaddrsDecidable program).map
+        (fun pair => (pair.1, pair.2.toExact)) =
+      (evalPanSemRecursiveCallContextHOLExact program context.toExact).map
+        (fun pair => (pair.1, pair.2.state)) := by
+  unfold evaluateHOLFinite
+  simp only [Option.map_map]
+  change Option.map (fun pair => (pair.1, pair.2.state.toExact))
+      (evalPanSemRecursiveCallFiniteContext program context) =
+    Option.map (fun pair => (pair.1, pair.2.state))
+      (evalPanSemRecursiveCallContextHOLExact program context.toExact)
+  have hproj := evalPanSemRecursiveCallFiniteContext_projection program context
+  rw [← hproj]
+  simp only [Option.map_map]
+  rfl
+
+end PanSemStateFiniteExact
+
 end Flapjack

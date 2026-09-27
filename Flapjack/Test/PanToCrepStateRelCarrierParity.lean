@@ -119,6 +119,44 @@ def tlcHOLGuard : Bool :=
   ((tlcHOL tlcSlots tlcArguments).lookup 1 == some (.word (7 : BitVec 8))) &&
   ((tlcHOL tlcSlots tlcArguments).lookup 2 == none)
 
+private def slcVariables : List (MlS × ShapeHOL) :=
+  [(ml "x", .one), (ml "y", .one)]
+
+private def slcArguments : List (ValueHOL 8) :=
+  [.val (.word (5 : BitVec 8)), .val (.word (7 : BitVec 8))]
+
+/- Concrete exact `slcHOL` rows for `vshs = [(x,One),(y,One)]` and two `Val`
+    arguments: `ZIP (MAP FST vshs, args)` pairs the `varname`s with the argument
+    values, so the finite map stores `x |-> 5` and `y |-> 7` and is undefined
+    elsewhere (mirroring HOL `FEMPTY |++ ZIP (MAP FST vshs, args)`). -/
+theorem slcHOL_x : (slcHOL slcVariables slcArguments).lookup (ml "x") =
+    some (.val (.word (5 : BitVec 8))) := by
+  simp only [slcHOL, slcVariables, slcArguments, HolFiniteMapExact.updateListEq,
+    HolFiniteMapExact.empty, FUPDATE_LIST_HOL]
+  rfl
+
+theorem slcHOL_y : (slcHOL slcVariables slcArguments).lookup (ml "y") =
+    some (.val (.word (7 : BitVec 8))) := by
+  simp only [slcHOL, slcVariables, slcArguments, HolFiniteMapExact.updateListEq,
+    HolFiniteMapExact.empty, FUPDATE_LIST_HOL]
+  rfl
+
+theorem slcHOL_absent : (slcHOL slcVariables slcArguments).lookup (ml "z") = none := by
+  simp only [slcHOL, slcVariables, slcArguments, HolFiniteMapExact.updateListEq,
+    HolFiniteMapExact.empty, FUPDATE_LIST_HOL]
+  rfl
+
+def slcHOLGuard : Bool :=
+  (match (slcHOL slcVariables slcArguments).lookup (ml "x") with
+   | some (.val (.word value)) => value == (5 : BitVec 8)
+   | _ => false) &&
+  (match (slcHOL slcVariables slcArguments).lookup (ml "y") with
+   | some (.val (.word value)) => value == (7 : BitVec 8)
+   | _ => false) &&
+  (match (slcHOL slcVariables slcArguments).lookup (ml "z") with
+   | none => true
+   | _ => false)
+
 def runChecks : IO Bool := do
   let checks := [
     ("HOL state_rel matching empty carrier fields", matchingFieldsOracleCase),
@@ -129,7 +167,8 @@ def runChecks : IO Bool := do
       nonemptyGlobalLookupOracleCase),
     ("HOL state_rel empty globals lookup is absent",
       emptyGlobalLookupOracleCase),
-    ("HOL tlc_def exact Nat->word_lab finite map", tlcHOLGuard)]
+    ("HOL tlc_def exact Nat->word_lab finite map", tlcHOLGuard),
+    ("HOL slc_def exact varname->value finite map", slcHOLGuard)]
   for (name, passed) in checks do
     IO.println s!"{if passed then "PASS" else "FAIL"} {name}"
   pure (checks.all Prod.snd)
