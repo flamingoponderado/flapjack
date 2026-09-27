@@ -19,6 +19,49 @@ induction or receive a standalone `@[hol]` reference.
 
 namespace Flapjack
 
+open Flapjack.Pancake.PanLang (MlS ShapeHOL)
+
+/-! The exception-relation conjunct of HOL
+`call_preserve_state_code_locals_rel` (`pan_to_crepProofScript.sml:2355`) is
+stable across the exact call-context and source clock updates. HOL
+`ctxt_fc_def` keeps `ctxt.eids`, and Pan `dec_clock_def` keeps `s.eshapes`;
+the exact carriers expose those equations directly. This is only a projected
+conjunct helper, not a tagged port of the full Call theorem. -/
+theorem panToCrepCallExcpRelFiniteExactContextUpdate
+    {width : Nat} {σ : Type} [NeZero width]
+    (context : PanToCrepContextExact width)
+    (source : PanSemStateFiniteExact width σ)
+    (variableShapes : List (MlS × ShapeHOL))
+    (names : List Nat)
+    (hrel : panToCrepExcpRelFiniteExact context.eids source.eshapes) :
+    panToCrepExcpRelFiniteExact
+      (ctxtFcExactHOL context.funcs context.eids
+        (variableShapes.map Prod.fst) (variableShapes.map Prod.snd) names).eids
+      source.decClockHOLFinite.eshapes := by
+  simpa [ctxtFcExactHOL, PanSemStateFiniteExact.decClockHOLFinite] using hrel
+
+/-! The code-relation conjunct of the HOL Call-preservation theorem is also
+stable under this context/state update. `code_rel_def` reads `ctxt.funcs` and
+`ctxt.eids`, which `ctxt_fc_def` preserves, and it reads both code maps, which
+`dec_clock_def` leaves unchanged. Its compiled function entries therefore
+remain the exact `compile_def` entries. This is only an untagged projected
+conjunct helper. -/
+theorem panToCrepCallCodeRelExactContextUpdate
+    {width : Nat} {σ : Type} [NeZero width]
+    (context : PanToCrepContextExact width)
+    (source : PanSemStateFiniteExact width σ)
+    (target : CrepSemHOLState width σ)
+    (variableShapes : List (MlS × ShapeHOL))
+    (names : List Nat)
+    (hcode : codeRelExactHOLW context source.code target.code) :
+    codeRelExactHOLW
+      (ctxtFcExactHOL context.funcs context.eids
+        (variableShapes.map Prod.fst) (variableShapes.map Prod.snd) names)
+      source.decClockHOLFinite.code
+      (decClockCrepSemHOL target).code := by
+  simpa [codeRelExactHOLW, ctxtFcExactHOL,
+    PanSemStateFiniteExact.decClockHOLFinite, decClockCrepSemHOL] using hcode
+
 /-! The `Skip` constructor case uses the total result×state clauses on both
   sides. The source evaluator uses the production `PanSemState`, and the target
   evaluator uses the code-bearing runtime state converted by `toHolState`. The
@@ -98,6 +141,28 @@ theorem panToCrepExactSkipTransition
       (.skip : Flapjack.Pancake.PanLang.ProgHOL width) =
         (.skip : CrepProgHOL width) by simp [compileProgExactHOLW]]
     exact evalCrepSemHOLProg_skip targetState memDec shMemDec
+
+/-! First exact evaluator fragment for upstream
+`eval_nested_assign_distinct_eq` (`pan_to_crepProofScript.sml:540`). The
+theorem below isolates a successful Assign leaf over the exact
+`CrepProgHOL`/`CrepSemHOLState` evaluator. It proves the existing local is
+updated to the exact evaluated word_lab value with normal completion. The full
+theorem remains open: it quantifies over arbitrary expression/name lists and
+has five premises, including expression-variable noninterference and distinct
+assignment names; nested Seq composition remains a follow-up. This leaf is
+Flapjack-specific support, not the HOL theorem, and therefore has no `@[hol]`
+tag. -/
+theorem evalCrepSemHOLProg_assign_success
+    {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (name : Nat) (src : CrepExpHOL width) (value old : HolWordLab width)
+    (heval : crepExactEvalExp state memDec src = some value)
+    (hbound : state.locals.lookup name = some old) :
+    evalCrepSemHOLProg state memDec shMemDec (.assign name src) =
+      (none, CrepSemHOLState.setVar name value state) := by
+  rw [evalCrepSemHOLProg_assign, heval, hbound]
 
 /-! Source-reviewed prerequisite for HOL `pc_compile_correct[Break]`.
 The HOL proof resumes this nonrecursive case at
