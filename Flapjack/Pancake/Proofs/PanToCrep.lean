@@ -635,7 +635,8 @@ theorem memCompFieldHOLExact {width : Nat} [NeZero width]
     word literal is `CrepExpHOL.const (0 : BitVec width)`. This is the exact
     counterpart of the production analogue `compileField_mem_or_zero`, which
     stays untagged. -/
-@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "mem_comp_field_lem"]
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "mem_comp_field_lem"
+  (words_as_type_indexed_bitvec)]
 theorem memCompFieldHOLExact_or_zero {width : Nat} [NeZero width]
     (index : Nat) (shapes : List Flapjack.Pancake.PanLang.ShapeHOL)
     (expressions : List (CrepExpHOL width)) (expression : CrepExpHOL width)
