@@ -12866,20 +12866,6 @@
     "reviewer": "flapjack-ds10 (bead flapjack-wci6, 2026-09-26; relocated per coordinator HOLD): HOL panPropsScript.sml:664-672 quantifies t, e, esh and concludes eval (t with eshapes := esh) e = eval t e. Lean preserves that quantifier order (state, expression, eshapes map) and the same evaluator result; the expression evaluator never reads eshapes. The state is the PanProps counterpart carrier PanPropsEvalStateFiniteExact, which owns the four HolFiniteMapExact fields and the same-module canonical holFmapAsFiniteSupportWitness, so the fmap_as_finite_support qualifier is checker-valid. evalHOL delegates to the exact broad expression evaluator through toExact. Proof: evalHOLExact_upd_eshapes_eq over the broad carrier by the mutual evalHOLExact.induct. [NeZero width] models HOL's positive word dimension and DecidablePred state.memaddrs renders HOL word-set membership. The qualifier records only the four finite-map fields."
    },
   {
-    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
-    "hol_name": "opt_mmap_eval_upd_clock_eq",
-    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
-    "lean_name": "optMmapEvalHOL_upd_clock_eq",
-    "statement_status": "reviewed_fmap_as_finite_support",
-    "fmap_as_finite_support": [
-      "locals",
-      "globals",
-      "code",
-      "eshapes"
-    ],
-    "reviewer": "flapjack-ds9 (source comparison; bead flapjack-4ac.4.112, 2026-09-27): HOL panPropsScript.sml:674-680 is `!es s ck. OPT_MMAP (eval (s with clock := ck + s.clock)) es = OPT_MMAP (eval s) es`. Lean binds the same order (expressions, state, clock) and the same `clock + state.clock` update; HOL OPT_MMAP is rendered as List.mapM over Option. The state is the PanProps counterpart carrier PanPropsEvalStateFiniteExact, which owns the four HolFiniteMapExact fields (locals/globals/code/eshapes) and the same-module canonical holFmapAsFiniteSupportWitness, so the fmap_as_finite_support qualifier is checker-valid; evalHOL delegates to the exact broad expression evaluator through toExact. Proof: pointwise from the tagged evalHOL_upd_clock_eq by induction on es. [NeZero width] models HOL's positive word dimension and DecidablePred state.memaddrs renders HOL word-set membership. The qualifier records only the four finite-map fields."
-  },
-  {
     "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
     "hol_name": "get_eids_from_decls_def",
     "lean_path": "Flapjack/Pancake/PanToCrep/ContextExact.lean",
@@ -13856,19 +13842,6 @@
       "l"
     ],
     "reviewer": "flapjack-ds9 (source comparison, 2026-09-27; bead flapjack-2de.11): HOL crepPropsScript.sml:249-255 `Theorem flookup_res_var_diff_eq: n <> m ==> FLOOKUP (res_var l (m,v)) n = FLOOKUP l n` against the exact Lean statement flookupResVarDiffEqHOL. HOL quantifies the finite map l, the assigned name m, the lookup key n, the option value v and the side condition n <> m; the Lean statement keeps the same argument order, side condition hne : n != m and conclusion, rendering res_var as the reviewed HolFiniteMapExact.resVarEq (res_var_def) and FLOOKUP as the finite-support .lookup. DecidableEq alpha is Lean's encoding of HOL equality, so no extra side condition is introduced. The bare parameter l is recorded as a finite-support relation entry; source review confirms the FLOOKUP_UPDATE/DOMSUB_FLOOKUP_NEQ branch split (v = none and v = some) matches HOL exactly."
-  },
-  {
-    "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
-    "hol_name": "lookup_locals_eq_map_vars",
-    "lean_path": "Flapjack/Pancake/Semantics/CrepProps.lean",
-    "lean_name": "lookupLocalsEqMapVarsHOL",
-    "statement_status": "reviewed_fmap_as_finite_support",
-    "fmap_as_finite_support": [
-      "locals",
-      "globals",
-      "code"
-    ],
-    "reviewer": "flapjack-ds9 (source comparison, 2026-09-27; bead flapjack-2de.12): HOL crepPropsScript.sml:17-27 `Theorem lookup_locals_eq_map_vars: !ns t. OPT_MMAP (FLOOKUP t.locals) ns = OPT_MMAP (eval t) (MAP Var ns)` against the exact Lean statement lookupLocalsEqMapVarsHOL. HOL universally quantifies the natural-number name list ns and the crepSem state t; the Lean statement keeps the same argument order and equation, rendering OPT_MMAP as core List.mapM, FLOOKUP t.locals as the finite-support .locals.lookup over the reviewed HolFiniteMapExact locals field, and MAP Var ns as List.map over the exact width-indexed CrepExpHOL.var constructor. The eval Var clause is by definition exactly .locals.lookup, so the two sides agree pointwise and the proof is the mapM cons induction; no hypothesis beyond the exact carrier and [DecidablePred t.memaddrs] (Lean's encoding of HOL's classical membership predicate) is introduced, and no quantifier, side condition or conclusion differs. The fmap_as_finite_support qualifier records the reviewed HolFiniteMapExact locals/globals/code fields of CrepSemHOLState."
   },
   {
     "hol_path": "cakeml/misc/miscScript.sml",

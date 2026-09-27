@@ -1233,9 +1233,14 @@ theorem evalHOL_upd_eshapes_eq {width : Nat} {σ : Type} [NeZero width]
     the exact broad expression evaluator through `toExact`. The statement
     follows from the tagged `evalHOL_upd_clock_eq` by induction on `es`. `[NeZero
     width]` models HOL's positive word dimension and `DecidablePred
-    state.memaddrs` is computation evidence for the HOL word-set guard. -/
-@[hol "cakeml/pancake/semantics/panPropsScript.sml" "opt_mmap_eval_upd_clock_eq"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+    state.memaddrs` is computation evidence for the HOL word-set guard.
+
+    HOLD (coordinator, 2026-09-27): the `@[hol]` tag is withdrawn pending the
+    DS10 `words_as_type_indexed_bitvec` policy. `PanPropsEvalStateFiniteExact
+    width σ` is a width-indexed state carrier, so the fmap-only qualifier does
+    not record the HOL word-dimension translation; do not re-tag until the
+    combined qualifier lands and the carrier is source-reviewed. The proof is
+    kept as untagged infrastructure. -/
 theorem optMmapEvalHOL_upd_clock_eq {width : Nat} {σ : Type} [NeZero width]
     (state : PanPropsEvalStateFiniteExact width σ) [h : DecidablePred state.memaddrs]
     (expressions : List (ExpHOL width)) (clock : Nat) :

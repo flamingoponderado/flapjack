@@ -941,12 +941,14 @@ expression evaluator over the corresponding `Var` expressions. HOL's
 `OPT_MMAP (FLOOKUP t.locals) ns` is Lean's `List.mapM t.locals.lookup` and
 `OPT_MMAP (eval t) (MAP Var ns)` is `List.mapM (evalCrepSemHOLExp t)` over
 `CrepExpHOL.var`; `eval`'s `Var` clause is exactly `.locals.lookup`, so no
-side condition beyond the exact carrier is needed. The
-`(fmap_as_finite_support := [locals, globals, code])` qualifier records that
-HOL's `|->` fields are represented by the reviewed `HolFiniteMapExact`
-translation. -/
-@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "lookup_locals_eq_map_vars"
-  (fmap_as_finite_support := [locals, globals, code])]
+side condition beyond the exact carrier is needed.
+
+HOLD (coordinator, 2026-09-27): the `@[hol]` tag is withdrawn pending the DS10
+`words_as_type_indexed_bitvec` policy. `CrepSemHOLState width σ` is the
+type-indexed-word crepSem state carrier, so an fmap-only qualifier does not
+record the HOL word-dimension translation; do not re-tag until the combined
+qualifier lands and the carrier is source-reviewed. The proof is kept as
+untagged infrastructure. -/
 theorem lookupLocalsEqMapVarsHOL {width : Nat} [NeZero width] {σ : Type}
     (ns : List Nat) (t : CrepSemHOLState width σ) [DecidablePred t.memaddrs] :
     ns.mapM t.locals.lookup =
