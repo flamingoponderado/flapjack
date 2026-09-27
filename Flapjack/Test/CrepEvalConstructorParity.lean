@@ -221,6 +221,12 @@ example : evalCrepHolFiniteWordSourceExpWordLab
 #guard (evalCrepRuntimeExp probeState
     (.crepOp .mul [.var 1, .const (word8 3)])).map PanWordLab.word ==
   some (.word (word8 21))
+#guard evalCrepRuntimeExpWordLab probeState
+    (.crepOp .mul [.var 1, .const (word8 3)]) == some (.word (word8 21))
+#guard evalCrepRuntimeExpWordLab probeState
+    (.crepOp .mul [.var 2, .const (word8 3)]) == none
+#guard evalCrepRuntimeExpWordLab probeState
+    (.op .add [.var 1, .const (word8 3)]) == some (.word (word8 10))
 #guard (evalCrepRuntimeExp probeState (.crepOp .mul [.const (word8 4)])).map
     PanWordLab.word == none
 #guard (evalCrepRuntimeExp probeState .baseAddr).map PanWordLab.word ==
