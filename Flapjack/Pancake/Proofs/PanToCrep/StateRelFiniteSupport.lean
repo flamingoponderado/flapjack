@@ -48,6 +48,36 @@ def noOverlapFiniteExact {κ β : Type}
       map.lookup key' = some (shape', slots') →
       (∃ slot, slot ∈ slots ∧ slot ∈ slots') → key = key'
 
+/-- Exact port of HOL `no_overlap_wrap_rt_some_all_distinct`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:2461-2467`):
+    `no_overlap fm /\ wrap_rt (FLOOKUP fm r) = SOME (vsh,ns) ==> ALL_DISTINCT ns`.
+    HOL `no_overlap` becomes the exact-map renderer `noOverlapFiniteExact`,
+    `FLOOKUP fm r` becomes `fm.lookup r`, `wrap_rt` becomes the tagged
+    `wrapRtHOL`, and `ALL_DISTINCT ns` becomes `ns.Nodup`. The key type is HOL's
+    polymorphic `'a` and the payload is the exact `ShapeHOL × List Nat`. The
+    qualifier records the single bare finite-map parameter `fm`, whose reviewed
+    canonical carrier is `HolFiniteMapExact`; the only representation difference
+    is that finite-map carrier. The theorem is a symbolic normalization lemma
+    (`wrap_rt` only drops the `(One,[])` slot), so no direct HOL-EVAL oracle row
+    exists; the existing `wrap_rt` probe rows in
+    `scripts/hol-probes/wrap_rt_probe.out` cover the definition only. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "no_overlap_wrap_rt_some_all_distinct"
+  (fmap_as_finite_support_relation := [fm])]
+theorem noOverlapWrapRtSomeAllDistinctFiniteExact {κ : Type}
+    (fm : HolFiniteMapExact κ (ShapeHOL × List Nat)) (r : κ)
+    (vsh : ShapeHOL) (ns : List Nat)
+    (hno : noOverlapFiniteExact fm)
+    (hwrap : wrapRtHOL (fm.lookup r) = some (vsh, ns)) :
+    ns.Nodup := by
+  cases hlookup : fm.lookup r with
+  | none => simp [wrapRtHOL, hlookup] at hwrap
+  | some entry =>
+      rcases entry with ⟨entryShape, entrySlots⟩
+      have hnodup : entrySlots.Nodup := hno.1 r entryShape entrySlots hlookup
+      cases entryShape <;> cases entrySlots <;>
+        simp [wrapRtHOL, hlookup] at hwrap <;>
+        rcases hwrap with ⟨_, hslots⟩ <;> simpa [← hslots] using hnodup
+
 /-- Same-module canonical relation witness for the multi-carrier
     `fmap_as_finite_support_relation` qualifier. It forwards the canonical
     finite-support roundtrip of `PanSemStateFiniteExact`, the carrier owning the

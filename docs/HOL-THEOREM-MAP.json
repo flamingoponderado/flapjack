@@ -12727,6 +12727,17 @@
     "reviewer": "flapjack-ds9 source comparison (2026-09-27, flapjack-4ac.5.94; pan_to_crepProofScript.sml:1493-1503): HOL ctxt_max_el_leq has the conjunction ctxt_max ctxt.vmax ctxt.vars and FLOOKUP ctxt.vars v = SOME (sh,ns) and n < LENGTH ns as its premise and concludes EL n ns <= ctxt.vmax. Lean keeps exactly those three premise conjuncts (curried) and the same conclusion: ctxt_max becomes the exact-carrier rendering ctxtMaxFiniteExact (the predicate already used inside the tagged locals_rel_def), FLOOKUP becomes .lookup, EL n ns becomes the bounded getElem slots[n], and LENGTH/<= become List.length/<=. The only finite-map value traversed is the named PanToCrepContextExact.vars field, whose same-module canonical witness establishes the reviewed finite-support translation; vmax is Nat and is not a finite-map field. The implicit HOL context ctxt is the pan_to_crep context record; [NeZero width] models HOL's positive word dimension. The proof is HOL's rw [ctxt_max_def] with the bound instantiated at EL n ns and EL_MEM. No direct HOL-EVAL oracle row exists for this symbolic-index lemma, so the kernel-checked concrete instance in Flapjack/Test/PanToCrepStateRelCarrierParity.lean replays it. This exact-carrier port complements the withdrawn String-keyed ctxtMaxGetElemLe analogue (still recorded below as documented_mismatch)."
   },
   {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "no_overlap_wrap_rt_some_all_distinct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "noOverlapWrapRtSomeAllDistinctFiniteExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "fm"
+    ],
+    "reviewer": "flapjack-ds9 source comparison (2026-09-27, flapjack-4ac.5.95; pan_to_crepProofScript.sml:2461-2467): HOL no_overlap_wrap_rt_some_all_distinct has the conjunction no_overlap fm and wrap_rt (FLOOKUP fm r) = SOME (vsh,ns) as its premise and concludes ALL_DISTINCT ns. Lean keeps the same polymorphic key type (HOL 'a becomes the implicit kappa), the same vsh/ns binders over the exact ShapeHOL payload and Nat list, and the same conclusion ns.Nodup. The finite-map argument fm is the only representation difference: it is the bare parameter recorded by the qualifier and bound at the reviewed canonical HolFiniteMapExact carrier; HOL no_overlap becomes the exact-map renderer noOverlapFiniteExact, FLOOKUP fm r becomes fm.lookup r, and wrap_rt becomes the tagged wrapRtHOL (reviewed_exact, pan_to_crepScript.sml wrap_rt_def). ALL_DISTINCT ns is List.Nodup ns. There are no other hypotheses, side conditions, or quantifier differences. No direct HOL-EVAL oracle row exists for this symbolic normalization lemma; the wrap_rt definition rows in scripts/hol-probes/wrap_rt_probe.out cover only wrap_rt itself."
+  },
+  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
