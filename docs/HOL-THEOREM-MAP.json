@@ -14057,8 +14057,22 @@
     "lean_name": "memLoadFlatRelHOLExact",
     "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
     "hol_name": "mem_load_flat_rel",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-luna-c (source comparison, 2026-09-27; bead flapjack-4ac.5.81.11.1.1): the Lean conclusion and premises follow mem_load_flat_rel over exact Pan evaluator carriers, but its target is CrepSemHOLState, whose owning finite-map structure lives in the separate CrepSem module. The current fmap_as_finite_support tag checker requires that owner and its roundtrip witness in the declaration's own module; words_as_type_indexed_bitvec alone cannot authorize this carrier. Keep this analogue untagged until the exact target state carrier/qualifier is available in the counterpart module."
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "Source-reviewed against crepPropsScript.sml:102-109. HOL mem_load_flat_rel quantifies sh, adr, s, v, n; its Pan mem_load reads s.memaddrs and s.memory, with premises successful read, n < LENGTH (flatten v), and is_wf_shape_nil sh, and concludes Crep mem_load at adr + bytes_in_word * n2w (LENGTH (TAKE n ...)) on the same s equals SOME (EL n ...). Lean uses one CrepSemHOLState target for both Pan memLoadHOLExact domain/memory and Crep memLoadCrepSemHOL, with no split domain/memory equality premises. Exact ShapeHOL/StructContextHOLM/ValueHOL/HolWordLab carriers and bounded List.getElem encode HOL shape/value/list operations. DecidablePred target.memaddrs is proof-only evidence for HOL set membership; NeZero width is the positive word-dimension model. The fmap_as_finite_support qualifier records CrepSemHOLState locals/globals/code and the same-module holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec records HOL 'a word as BitVec width.",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific same-module canonical finite-support witness for the CrepSemHOLState locals/globals/code fields used by memLoadFlatRelHOLExact; it restates the imported CrepSemHOLState/CrepSemBroadState roundtrip and is not a separate HOL theorem."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",

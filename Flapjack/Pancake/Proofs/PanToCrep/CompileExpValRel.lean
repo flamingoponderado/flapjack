@@ -1,3 +1,4 @@
+import Flapjack.HolRef
 import Flapjack.Pancake.Proofs.PanToCrep.StateRelFiniteSupport
 import Flapjack.Pancake.Proofs.PanToCrep.CodeRelExact
 import Flapjack.Pancake.Semantics.PanSem.EvalFinite
@@ -1666,26 +1667,33 @@ private theorem memLoadHOLExact_flatRead_mutual {width : Nat} [NeZero width]
         simp [hhead, htail'] at hload
       | some tailValues => exact (hfail headValue tailValues hhead htail).elim
 
-/- Exact-carrier analogue of HOL `mem_load_flat_rel`
-   (`cakeml/pancake/semantics/crepPropsScript.sml:102-109`). Given the exact
-   equalities between the Pan memory/domain arguments and the Crep state's
-   memory/domain, a successful `memLoadHOLExact` result, and nil-context
-   well-formedness, the Crep `mem_load_def` body returns element `n` at the
-   source theorem's `LENGTH (TAKE n ...)` address. This declaration stays
-   untagged: the HOL word is represented here by `BitVec width`, and the target
-   state type is owned by the separate CrepSem module; the current tag checker
-   requires an owning finite-map carrier and witness in the same module before
-   that state representation can be qualified. -/
+namespace CompileExpValRelFiniteSupport
+
+/-- Local same-module witness for the canonical finite-support `CrepSemHOLState`
+carrier used by the qualified `mem_load_flat_rel` port below. -/
+theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {σ : Type} :
+    (∀ (state : CrepSemBroadState width σ) (h : state.FiniteSupport),
+        (CrepSemBroadState.ofBroad state h).toBroad = state) ∧
+    (∀ state : CrepSemHOLState width σ,
+        CrepSemBroadState.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  CrepSemHOLState.holFmapAsFiniteSupportWitness
+
+end CompileExpValRelFiniteSupport
+
+/- Exact-carrier port of HOL `mem_load_flat_rel`
+   (`cakeml/pancake/semantics/crepPropsScript.sml:102-109`). The same target
+   state supplies both Pan `mem_load`'s domain/memory arguments and Crep
+   `mem_load`; there are no split domain/memory equality premises. The positive
+   BitVec dimension and finite-support target maps are recorded by the two
+   representation qualifiers. -/
+@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "mem_load_flat_rel"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
 theorem memLoadFlatRelHOLExact {width : Nat} {σ : Type} [NeZero width]
-    (domain : BitVec width → Prop) [hd : DecidablePred domain]
-    (memory : BitVec width → HolWordLab width)
-    (target : CrepSemHOLState width σ)
-    [ht : DecidablePred target.memaddrs]
-    (hmemaddrs : domain = target.memaddrs)
-    (hmemory : memory = target.memory)
+    (target : CrepSemHOLState width σ) [ht : DecidablePred target.memaddrs]
     (shape : ShapeHOL) (address : BitVec width) (context : StructContextHOLM)
     (value : ValueHOL width) (n : Nat)
-    (hload : memLoadHOLExact shape address domain memory context = some value)
+    (hload : memLoadHOLExact shape address target.memaddrs target.memory context = some value)
     (hn : n < (flattenHOL value).length)
     (hwf : isWfShapeExactHOL ([] : StructContextExact) shape = true) :
     memLoadCrepSemHOL
@@ -1693,10 +1701,10 @@ theorem memLoadFlatRelHOLExact {width : Nat} {σ : Type} [NeZero width]
           ((flattenHOL value).take n).length) target =
       some ((flattenHOL value)[n]'hn) := by
   have hread := memLoadHOLExact_flatRead_mutual
-    domain memory shape address context hwf value hload n hn
+    target.memaddrs target.memory shape address context hwf value hload n hn
   have htake : ((flattenHOL value).take n).length = n :=
     List.length_take_of_le (Nat.le_of_lt hn)
   rw [htake]
-  simpa [memLoadCrepSemHOL, ← hmemaddrs, ← hmemory, memLoadFlatTargetHOL] using hread
+  simpa [memLoadCrepSemHOL, memLoadFlatTargetHOL] using hread
 
 end Flapjack
