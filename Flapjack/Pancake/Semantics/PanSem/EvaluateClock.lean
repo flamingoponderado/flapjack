@@ -511,6 +511,7 @@ coordinator evaluator/carrier-fidelity review. -/
     evaluated result clock is bounded by the input clock. No `DecidablePred`
     binder (chosen classically in `evaluateHOLFiniteState`) and no success
     premise. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_clock" (fmap_as_finite_support := [locals, globals, code, eshapes]) (words_as_type_indexed_bitvec)]
 theorem evaluateHOLFiniteState_clock_le {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) (program : ProgHOL width) :
     (evaluateHOLFiniteState state program).2.clock ≤ state.clock := by
@@ -526,6 +527,7 @@ theorem evaluateHOLFiniteState_clock_le {width : Nat} {σ : Type} [NeZero width]
     pair-shaped finite source evaluator: clamping the evaluated pair at the input
     clock leaves it unchanged. No `DecidablePred` binder (chosen classically) and
     no success premise. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "fix_clock_evaluate" (fmap_as_finite_support := [locals, globals, code, eshapes]) (words_as_type_indexed_bitvec)]
 theorem fixClockHOLFinite_evaluateState {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) (program : ProgHOL width) :
     fixClockHOLFinite state (evaluateHOLFiniteState state program) =
