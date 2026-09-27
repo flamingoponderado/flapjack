@@ -1885,3 +1885,11 @@ run_probe word_to_stack_stub_probeScript.sml word_to_stack_stub_probe.out \
 run_probe word_to_stack_wshareinst_probeScript.sml word_to_stack_wshareinst_probe.out \
   ws_load ws_store32 "$cake_dir/compiler/backend/word_to_stackScript.sml" \
   "$cake_dir/compiler/backend"
+
+# The external HOL finite_map theory theorem used in pc_compile_correct.
+# Unlike CakeML sources, this is deliberately rooted at the separate HOL
+# checkout; check-hol-refs.py currently cannot encode such a path.
+run_probe fupdate_list_append_commutes_probeScript.sml fupdate_list_append_commutes_probe.out \
+  source_theorem overlap_lookup_equal \
+  "$hol_dir/src/finite_maps/finite_mapScript.sml" \
+  "$hol_dir/src/finite_maps"
