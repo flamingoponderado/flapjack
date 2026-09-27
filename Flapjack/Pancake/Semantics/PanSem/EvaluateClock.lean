@@ -494,4 +494,58 @@ theorem fixClockHOLFinite_evaluateState {width : Nat} {σ : Type} [NeZero width]
   classical
   exact fixClockHOLFinite_evaluate state program
 
+/-
+Re-export of the canonical finite-map translation witness for the owning
+    carrier `PanSemStateFiniteExact` (declared in `StateExactFiniteMap.lean`), so
+    that this module's `fmap_as_finite_support`-qualified `@[hol]` declarations
+    carry the same-module checked witness the reference checker requires. The
+    statement is the `toExact`/`ofExact` roundtrip between the finite carrier and
+    its broad counterpart. Declared under a fresh local namespace to avoid a
+    clash with the imported witness of the same name. -/
+namespace PanSem.EvaluateClockWitness
+
+theorem holFmapAsFiniteSupportWitness {width : Nat} {σ : Type} [NeZero width] :
+    (∀ (state : PanSemStateExact width σ) (h : state.FiniteSupport),
+        (ofExact state h).toExact = state) ∧
+    (∀ state : PanSemStateFiniteExact width σ,
+        ofExact state.toExact state.toExact_finiteSupport = state) :=
+  PanSemStateFiniteExact.holFmapAsFiniteSupportWitness
+
+end PanSem.EvaluateClockWitness
+
+/-! ## Line-780 `evaluate_def` rewrite (fix_clock eliminated) over the finite evaluator
+
+HOL restates the clause equations at `panSemScript.sml:780` as
+`Theorem evaluate_def[allow_rebind,compute] = REWRITE_RULE [fix_clock_evaluate] evaluate_def`,
+which removes the explicit `fix_clock` wrapper introduced by the source
+`Definition evaluate_def` at line 556. This section ports the `Seq` conjunct of
+that line-780 restatement over the pair-shaped finite evaluator: the finite
+`fix_clock` lemma `fixClockHOLFinite_evaluateState` rewrites the clamped first
+pair back to the raw evaluated pair. It is tagged to line 780 and is distinct
+from the line-556 tagged `evaluateHOLFiniteState_seq`. -/
+
+/-- HOL `evaluate_def` line-780 `Seq` conjunct (fix_clock-free restatement) over
+    the pair-shaped finite source evaluator: evaluate the first program to a raw
+    result-option × state pair, and recurse on the second only when the first
+    result is `NONE`; otherwise return that raw pair. This is the source
+    `Definition evaluate_def` (line 556) `Seq` clause with its explicit
+    `fix_clock` rewritten away by line 780's `REWRITE_RULE [fix_clock_evaluate]`,
+    via the finite `fixClockHOLFinite_evaluateState`. No extra premise. The
+    carrier/qualifier situation equals the line-556 tagged sibling; the full
+    21-clause assembly remains open under `flapjack-qj5.9`. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateHOLFiniteState_seq_line780 {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (first second : ProgHOL width) :
+    evaluateHOLFiniteState state (.seq first second : ProgHOL width) =
+      (let firstOutput := evaluateHOLFiniteState state first
+       match firstOutput.1 with
+       | none => evaluateHOLFiniteState firstOutput.2 second
+       | some _ => firstOutput) := by
+  classical
+  rw [evaluateHOLFiniteState_seq state first second]
+  simp only [fixClockHOLFinite_evaluateState state first]
+  rfl
+
 end Flapjack
