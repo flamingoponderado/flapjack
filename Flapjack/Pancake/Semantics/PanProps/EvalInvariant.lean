@@ -3821,4 +3821,244 @@ theorem evaluateClockSubReturnCaseHOLFinite {width : Nat} {σ : Type} [NeZero wi
           rw [hLowCanonical]
           exact PanPropsEvalStateFiniteExact.ofPanSemFinite_toPanSemFinite lowState
 
+/-- Genuine nonrecursive `Raise` case of HOL `evaluate_clock_sub`. The exact
+    expression evaluator and the exception-shape lookup are unchanged by the
+    clock update; the successful branch clears locals and the error branches
+    preserve the state, exactly as `evaluate_def` specifies. -/
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_clock_sub"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateClockSubRaiseCaseHOLFinite {width : Nat} {σ : Type} [NeZero width] :
+    ∀ (exceptionId : MlS) (expression : ExpHOL width)
+      (state : PanPropsEvalStateFiniteExact width σ)
+      (result : Option (PanSemResultExact width))
+      (st : PanPropsEvalStateFiniteExact width σ) (ck : Nat),
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state (.raise exceptionId expression) =
+        (result, { st with clock := st.clock + ck }) →
+      result ≠ some .timeOut →
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair
+        { state with clock := state.clock - ck } (.raise exceptionId expression) = (result, st) := by
+  classical
+  intro exceptionId expression state result st ck hRun _hne
+  let highState := state.toPanSemFinite
+  let highPost := ({ st with clock := st.clock + ck }).toPanSemFinite
+  let lowState : PanPropsEvalStateFiniteExact width σ := { state with clock := state.clock - ck }
+  let lowCanonical := lowState.toPanSemFinite
+  let highMem : DecidablePred highState.memaddrs :=
+    fun address => Classical.propDecidable (highState.memaddrs address)
+  let lowMem : DecidablePred lowCanonical.memaddrs :=
+    fun address => Classical.propDecidable (lowCanonical.memaddrs address)
+  have hCanonical :
+      PanSemStateFiniteExact.evaluateHOLFiniteState highState (.raise exceptionId expression) =
+        (result, highPost) := by
+    apply Prod.ext
+    · have h := congrArg Prod.fst hRun
+      simpa [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair, highState] using h
+    · have h := congrArg (fun pair => pair.2.toPanSemFinite) hRun
+      simpa [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair, highState, highPost] using h
+  have hEvalLow :
+      @evalHOLExact width σ _ lowCanonical.toExact lowMem expression =
+        @evalHOLExact width σ _ highState.toExact highMem expression := by
+    change @evalHOLExact width σ _
+      ({ highState with clock := lowState.clock }).toExact highMem expression = _
+    exact evalHOLExact_upd_clock_eq highState.toExact expression lowState.clock
+  have hShapeLow : lowCanonical.eshapes.lookup exceptionId = highState.eshapes.lookup exceptionId := by
+    rfl
+  rw [PanSemStateFiniteExact.evaluateHOLFiniteState_raise] at hCanonical
+  cases hShape : highState.eshapes.lookup exceptionId with
+  | none =>
+      simp [hShape] at hCanonical
+      rcases hCanonical with ⟨hresult, hpost⟩
+      subst result
+      have hst : st = lowState := by
+        cases st <;> simp_all [highState, highPost, lowState,
+          PanPropsEvalStateFiniteExact.toPanSemFinite] <;> omega
+      subst st
+      have hLowCanonical :
+          PanSemStateFiniteExact.evaluateHOLFiniteState lowCanonical
+              (.raise exceptionId expression) = (some .error, lowCanonical) := by
+        simp [PanSemStateFiniteExact.evaluateHOLFiniteState_raise, hShapeLow, hShape]
+      apply Prod.ext
+      · change (PanSemStateFiniteExact.evaluateHOLFiniteState lowCanonical
+          (.raise exceptionId expression)).1 = some .error
+        rw [hLowCanonical]
+      · change PanPropsEvalStateFiniteExact.ofPanSemFinite
+          (PanSemStateFiniteExact.evaluateHOLFiniteState lowCanonical
+            (.raise exceptionId expression)).2 = lowState
+        rw [hLowCanonical]
+        exact PanPropsEvalStateFiniteExact.ofPanSemFinite_toPanSemFinite lowState
+  | some shape =>
+      cases hEval : @evalHOLExact width σ _ highState.toExact highMem expression with
+      | none =>
+          simp [hShape, hEval] at hCanonical
+          rcases hCanonical with ⟨hresult, hpost⟩
+          subst result
+          have hst : st = lowState := by
+            cases st <;> simp_all [highState, highPost, lowState,
+              PanPropsEvalStateFiniteExact.toPanSemFinite] <;> omega
+          subst st
+          have hLowCanonical :
+              PanSemStateFiniteExact.evaluateHOLFiniteState lowCanonical
+                  (.raise exceptionId expression) = (some .error, lowCanonical) := by
+            simp [PanSemStateFiniteExact.evaluateHOLFiniteState_raise,
+              hShapeLow, hShape, hEvalLow, hEval]
+          apply Prod.ext
+          · change (PanSemStateFiniteExact.evaluateHOLFiniteState lowCanonical
+              (.raise exceptionId expression)).1 = some .error
+            rw [hLowCanonical]
+          · change PanPropsEvalStateFiniteExact.ofPanSemFinite
+              (PanSemStateFiniteExact.evaluateHOLFiniteState lowCanonical
+                (.raise exceptionId expression)).2 = lowState
+            rw [hLowCanonical]
+            exact PanPropsEvalStateFiniteExact.ofPanSemFinite_toPanSemFinite lowState
+      | some value =>
+          have hEvalLow :
+              @evalHOLExact width σ _ lowCanonical.toExact lowMem expression = some value := by
+            simpa [hEvalLow] using hEval
+          by_cases heq : shapeOfHOLExact value = shape
+          · by_cases hsize : Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL
+                highState.structs (shapeOfHOLExact value) ≤ 32
+            · have hguard : shapeOfHOLExact value = shape ∧
+                  Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL highState.structs
+                    (shapeOfHOLExact value) ≤ 32 := ⟨heq, hsize⟩
+              simp only [hShape, hEval] at hCanonical
+              change @ite _ _ (Classical.propDecidable
+                (shapeOfHOLExact value = shape ∧
+                  Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL highState.structs
+                    (shapeOfHOLExact value) ≤ 32))
+                (some (.exception exceptionId value),
+                  PanSemStateFiniteExact.emptyLocalsHOLFinite highState)
+                (some .error, highState) = (result, highPost) at hCanonical
+              rw [if_pos hguard] at hCanonical
+              rcases Prod.mk.inj hCanonical with ⟨hresult, hpost⟩
+              subst result
+              clear hCanonical hRun
+              have hsizeLow :
+                  Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL lowCanonical.structs
+                    (shapeOfHOLExact value) ≤ 32 := by
+                simpa [lowCanonical, lowState, highState,
+                  PanPropsEvalStateFiniteExact.toPanSemFinite] using hsize
+              have hLowCanonical :
+                  PanSemStateFiniteExact.evaluateHOLFiniteState lowCanonical
+                      (.raise exceptionId expression) =
+                    (some (.exception exceptionId value), st.toPanSemFinite) := by
+                rw [PanSemStateFiniteExact.evaluateHOLFiniteState_raise]
+                simp only [hShapeLow, hShape, hEvalLow]
+                rw [heq]
+                change @ite _ _ (Classical.propDecidable
+                  (shape = shape ∧
+                    Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL lowCanonical.structs
+                      shape ≤ 32))
+                  (some (PanSemResultExact.exception exceptionId value),
+                    PanSemStateFiniteExact.emptyLocalsHOLFinite lowCanonical)
+                  (some PanSemResultExact.error, lowCanonical) =
+                  (some (PanSemResultExact.exception exceptionId value), st.toPanSemFinite)
+                have hRestored :
+                    PanSemStateFiniteExact.emptyLocalsHOLFinite lowCanonical =
+                      st.toPanSemFinite := by
+                  cases state <;> cases st <;>
+                    simp_all [highState, highPost, lowState, lowCanonical,
+                      PanPropsEvalStateFiniteExact.toPanSemFinite,
+                      PanSemStateFiniteExact.emptyLocalsHOLFinite] <;> omega
+                rw [if_pos ⟨rfl, by simpa [heq] using hsizeLow⟩]
+                exact Prod.ext rfl hRestored
+              apply Prod.ext
+              · change (PanSemStateFiniteExact.evaluateHOLFiniteState lowCanonical
+                  (.raise exceptionId expression)).1 = some (.exception exceptionId value)
+                rw [hLowCanonical]
+              · change PanPropsEvalStateFiniteExact.ofPanSemFinite
+                  (PanSemStateFiniteExact.evaluateHOLFiniteState lowCanonical
+                    (.raise exceptionId expression)).2 = st
+                rw [hLowCanonical]
+                simp [PanPropsEvalStateFiniteExact.ofPanSemFinite_toPanSemFinite]
+            · have hguard : ¬ (shapeOfHOLExact value = shape ∧
+                  Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL highState.structs
+                    (shapeOfHOLExact value) ≤ 32) := by
+                intro hcondition
+                exact hsize hcondition.2
+              simp only [hShape, hEval] at hCanonical
+              change @ite _ _ (Classical.propDecidable
+                (shapeOfHOLExact value = shape ∧
+                  Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL highState.structs
+                    (shapeOfHOLExact value) ≤ 32))
+                (some (.exception exceptionId value),
+                  PanSemStateFiniteExact.emptyLocalsHOLFinite highState)
+                (some .error, highState) = (result, highPost) at hCanonical
+              rw [if_neg hguard] at hCanonical
+              rcases Prod.mk.inj hCanonical with ⟨hresult, hpost⟩
+              subst result
+              clear hCanonical hRun
+              have hsizeLow : ¬ Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL
+                  lowCanonical.structs (shapeOfHOLExact value) ≤ 32 := by
+                intro hle
+                have hstructs : lowCanonical.structs = highState.structs := rfl
+                rw [hstructs] at hle
+                exact hsize hle
+              have hst : st = lowState := by
+                cases st <;> simp_all [highState, highPost, lowState,
+                  PanPropsEvalStateFiniteExact.toPanSemFinite]
+              subst st
+              have hLowCanonical :
+                  PanSemStateFiniteExact.evaluateHOLFiniteState lowCanonical
+                      (.raise exceptionId expression) = (some .error, lowCanonical) := by
+                rw [PanSemStateFiniteExact.evaluateHOLFiniteState_raise]
+                simp only [hShapeLow, hShape, hEvalLow]
+                have hguardLow : ¬ (shapeOfHOLExact value = shape ∧
+                    Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL lowCanonical.structs
+                      (shapeOfHOLExact value) ≤ 32) := by
+                  intro hcondition
+                  exact hsizeLow hcondition.2
+                change @ite _ _ (Classical.propDecidable
+                  (shapeOfHOLExact value = shape ∧
+                    Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL lowCanonical.structs
+                      (shapeOfHOLExact value) ≤ 32))
+                  (some (PanSemResultExact.exception exceptionId value),
+                    PanSemStateFiniteExact.emptyLocalsHOLFinite lowCanonical)
+                  (some PanSemResultExact.error, lowCanonical) =
+                  (some PanSemResultExact.error, lowCanonical)
+                rw [if_neg hguardLow]
+              apply Prod.ext
+              · change (PanSemStateFiniteExact.evaluateHOLFiniteState lowCanonical
+                  (.raise exceptionId expression)).1 = some .error
+                rw [hLowCanonical]
+              · change PanPropsEvalStateFiniteExact.ofPanSemFinite
+                  (PanSemStateFiniteExact.evaluateHOLFiniteState lowCanonical
+                    (.raise exceptionId expression)).2 = lowState
+                rw [hLowCanonical]
+                exact PanPropsEvalStateFiniteExact.ofPanSemFinite_toPanSemFinite lowState
+          · have hguard : ¬ (shapeOfHOLExact value = shape ∧
+                Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL highState.structs
+                  (shapeOfHOLExact value) ≤ 32) := by
+              simp [heq]
+            simp only [hShape, hEval] at hCanonical
+            change @ite _ _ (Classical.propDecidable
+              (shapeOfHOLExact value = shape ∧
+                Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL highState.structs
+                  (shapeOfHOLExact value) ≤ 32))
+              (some (.exception exceptionId value),
+                PanSemStateFiniteExact.emptyLocalsHOLFinite highState)
+              (some .error, highState) = (result, highPost) at hCanonical
+            rw [if_neg hguard] at hCanonical
+            rcases Prod.mk.inj hCanonical with ⟨hresult, hpost⟩
+            subst result
+            clear hCanonical hRun
+            have hst : st = lowState := by
+              cases st <;> simp_all [highState, highPost, lowState,
+                PanPropsEvalStateFiniteExact.toPanSemFinite] <;> omega
+            subst st
+            have hLowCanonical :
+                PanSemStateFiniteExact.evaluateHOLFiniteState lowCanonical
+                    (.raise exceptionId expression) = (some .error, lowCanonical) := by
+              rw [PanSemStateFiniteExact.evaluateHOLFiniteState_raise]
+              simp [hShapeLow, hShape, hEvalLow, heq]
+            apply Prod.ext
+            · change (PanSemStateFiniteExact.evaluateHOLFiniteState lowCanonical
+                (.raise exceptionId expression)).1 = some .error
+              rw [hLowCanonical]
+            · change PanPropsEvalStateFiniteExact.ofPanSemFinite
+                (PanSemStateFiniteExact.evaluateHOLFiniteState lowCanonical
+                  (.raise exceptionId expression)).2 = lowState
+              rw [hLowCanonical]
+              exact PanPropsEvalStateFiniteExact.ofPanSemFinite_toPanSemFinite lowState
+
 end Flapjack
