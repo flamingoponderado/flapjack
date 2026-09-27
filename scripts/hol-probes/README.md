@@ -616,6 +616,15 @@ inlining helper rows. Exact-carrier Lean guards are in
 `Flapjack.Test.CrepeInline`. Regenerate with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=crep_inline_helper_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
+`crep_inline_structural_probe.out` records direct HOL EVAL of the structural
+`Dec`, `Seq`, `If`, and `While` clauses of `inline_prog_def`
+(`crep_inlineScript.sml:239-248`) on exact eight-bit programs with an empty
+inline map. The partial callback-based exact-carrier factoring helper and its
+guards are in `Flapjack.Pancake.CrepInline.Pass` and
+`Flapjack.Test.CrepInlineStructuralHOLParity`; the helper remains untagged and
+does not claim the omitted `Call`/finite-map recursion. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=crep_inline_structural_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `fupdate_list_append_commutes_probe.out` records the imported original HOL
 theorem `finite_mapTheory.FUPDATE_LIST_APPEND_COMMUTES` from
 `/home/zksecurity/HOL/src/finite_maps/finite_mapScript.sml:2960`, plus direct
