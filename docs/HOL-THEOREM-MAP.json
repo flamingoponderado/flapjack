@@ -13872,5 +13872,29 @@
     "lean_name": "compileExpValRelHOL_rstruct",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.4): exact RStruct case of HOL pan_to_crepProofScript.sml:171-198; Flapjack-specific case lemma, no standalone HOL declaration (HOL proves it inside pc_compile_correct)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "compileExpValRelHOL_baseAddr",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.81.5): Flapjack-specific staged constructor lemma for the `BaseAddr` leaf of HOL `pan_to_crepProofScript.sml:130-396` `compile_exp_val_rel`; not a standalone HOL declaration (no `@[hol]` tag). The HOL theorem's `localised_exp`/`code_rel`/`locals_rel` hypotheses are unnecessary in this leaf proof (only `state_rel`, to equate the base addresses), so the staged statement omits them; the full `compile_exp_val_rel` theorem remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "compileExpValRelHOL_topAddr",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.81.5): Flapjack-specific staged constructor lemma for the `TopAddr` leaf of HOL `pan_to_crepProofScript.sml:130-396` `compile_exp_val_rel`; not a standalone HOL declaration (no `@[hol]` tag). The HOL theorem's `localised_exp`/`code_rel`/`locals_rel` hypotheses are unnecessary in this leaf proof (only `state_rel`, to equate the top addresses), so the staged statement omits them; the full `compile_exp_val_rel` theorem remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "compileExpValRelHOL_bytesInWord",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.81.5): Flapjack-specific staged constructor lemma for the `BytesInWord` leaf of HOL `pan_to_crepProofScript.sml:130-396` `compile_exp_val_rel`; not a standalone HOL declaration (no `@[hol]` tag). The HOL theorem's `localised_exp`/`code_rel`/`locals_rel` (and even `state_rel`) hypotheses are unnecessary here because the witness constant `bytesInWord` is identical on both sides, so the staged statement omits them; the full `compile_exp_val_rel` theorem remains open."
   }
 ]
