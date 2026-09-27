@@ -304,14 +304,20 @@ carrier is a finite map. The checker counts the top-level conjuncts `N` of the
 theorem's conclusion and requires, in the same module, one checked witness
 `holFmapAsFiniteSupportEqualityWitness_<declaration>_<i>` for each `i = 1..N`.
 Every witness must state an unconditional lookup equality with a `lookup` on
-both sides, must not be an `↔`, a self-equality, or have a premise that already
-assumes the relation, and must NOT mention the tagged theorem at all (this
-rejects the ignored-proof / threaded-argument pattern that passes a theorem
-application as a term). The qualifier is mutually exclusive with
-`fmap_as_finite_support`, `fmap_as_finite_support_result`, and
-`fmap_as_finite_support_relation`, cannot use `reviewed_exact`, and requires
-manifest status `reviewed_fmap_as_finite_support_equalities` with a
-source-comparison note in the reviewer field.
+both sides, must apply both lookups at the same key, must be syntactically
+associated with its numbered conjunct (each side of the `i`-th witness must
+contain the corresponding side of the `i`-th conjunct), must not be an `↔`, a
+self-equality, or have a premise that already assumes the relation, and must NOT
+mention the tagged theorem at all (this rejects the ignored-proof /
+threaded-argument pattern that passes a theorem application as a term). The
+qualifier is mutually exclusive with `fmap_as_finite_support`,
+`fmap_as_finite_support_result`, and `fmap_as_finite_support_relation`, cannot
+use `reviewed_exact`, and requires manifest status
+`reviewed_fmap_as_finite_support_equalities` with a source-comparison note in the
+reviewer field. The checker validates witness count, naming, shape, per-conjunct
+association, and key consistency only; it does not prove the witnesses correspond
+to the HOL conjuncts, so source review must still compare each numbered witness
+against the HOL map equality and record that comparison in the reviewer note.
 
 **Port the executable path, too.** As HOL definitions are ported, make the
 compiler that `flapjack-compile` actually runs call the reviewed `@[hol]`

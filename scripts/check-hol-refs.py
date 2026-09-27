@@ -760,6 +760,61 @@ def _split_top_level(text: str, separators: tuple[str, ...]) -> tuple[str, str] 
     return None
 
 
+def _split_top_level_all(text: str, separator: str) -> list[str]:
+    """Split at every top-level occurrence of `separator`."""
+    parts: list[str] = []
+    depth = 0
+    index = 0
+    start = 0
+    while index < len(text):
+        char = text[index]
+        if char in "([{":
+            depth += 1
+        elif char in ")]}":
+            depth = max(0, depth - 1)
+        elif depth == 0 and text.startswith(separator, index):
+            parts.append(text[start:index])
+            index += len(separator)
+            start = index
+            continue
+        index += 1
+    parts.append(text[start:])
+    return parts
+
+
+def _normalize_whitespace(text: str) -> str:
+    return "".join(text.split())
+
+
+def _strip_outer_parens(text: str) -> str:
+    """Remove balanced parentheses that enclose the whole expression."""
+    text = text.strip()
+    while len(text) >= 2 and text[0] == "(" and text[-1] == ")":
+        depth = 0
+        balanced = True
+        for index, char in enumerate(text):
+            if char == "(":
+                depth += 1
+            elif char == ")":
+                depth -= 1
+                if depth == 0 and index != len(text) - 1:
+                    balanced = False
+                    break
+        if not balanced:
+            break
+        text = text[1:-1].strip()
+    return text
+
+
+def _lookup_key(side: str) -> str | None:
+    """Whitespace-normalized argument of the last lookup application in `side`."""
+    matches = list(re.finditer(r"(?i)\b(?:lookup|flookup)\b", side))
+    if not matches:
+        return None
+    tail = side[matches[-1].end():]
+    return _normalize_whitespace(tail.strip().rstrip(")").strip())
+
+
 def has_fmap_result_witness(
     lines: list[str], decl_name: str, module: str
 ) -> tuple[bool, str]:
@@ -933,6 +988,7 @@ def _statement_conclusion(text: str) -> str:
 
 def _has_lookup_equality_witness(
     lines: list[str], witness: str, forbidden: str,
+    expected: tuple[str, str] | None = None,
 ) -> tuple[bool, str]:
     source = strip_lean_comments("\n".join(lines))
     pattern = re.compile(
@@ -999,6 +1055,26 @@ def _has_lookup_equality_witness(
                 f"witness `{witness}` must apply a lookup on BOTH sides of its "
                 "equality",
             )
+        left_key = _lookup_key(lhs)
+        right_key = _lookup_key(rhs)
+        if left_key is None or right_key is None or left_key != right_key:
+            return (
+                False,
+                f"witness `{witness}` must apply both lookups at the SAME key",
+            )
+        if expected is not None:
+            expected_lhs = _normalize_whitespace(expected[0])
+            expected_rhs = _normalize_whitespace(expected[1])
+            lhs_norm = _normalize_whitespace(lhs)
+            rhs_norm = _normalize_whitespace(rhs)
+            forward = expected_lhs in lhs_norm and expected_rhs in rhs_norm
+            backward = expected_lhs in rhs_norm and expected_rhs in lhs_norm
+            if not (forward or backward):
+                return (
+                    False,
+                    f"witness `{witness}` is not associated with its numbered "
+                    "finite-map equality conjunct",
+                )
         for premise in premises:
             if re.search(r"(?i)\b(?:lookup|flookup)\b", premise) and (
                 "=" in premise or "\u2194" in premise
@@ -1039,9 +1115,20 @@ def fmap_as_finite_support_equalities_errors(
             "conjunct in the tagged declaration's conclusion"
         )
         return errors
+    conjuncts = _split_top_level_all(conclusion, "\u2227")
     for index in range(1, count + 1):
         witness = fmap_as_finite_support_equalities_witness_name(decl_name, index)
-        ok, message = _has_lookup_equality_witness(lines, witness, decl_name)
+        conjunct = conjuncts[index - 1] if index - 1 < len(conjuncts) else ""
+        expected = _split_top_level(_strip_outer_parens(conjunct), ("=",))
+        if expected is None:
+            errors.append(
+                f"fmap_as_finite_support_equalities conjunct {index} is not a "
+                "map equality"
+            )
+            continue
+        ok, message = _has_lookup_equality_witness(
+            lines, witness, decl_name, expected,
+        )
         if not ok:
             errors.append(
                 f"fmap_as_finite_support_equalities conjunct {index} {message}"
