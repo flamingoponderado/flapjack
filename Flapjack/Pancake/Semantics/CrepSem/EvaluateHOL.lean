@@ -3189,6 +3189,84 @@ theorem evalCrepSemHOLProgExact_storeByte {width : Nat} [NeZero width] {σ : Typ
     (fun a => Classical.propDecidable (state.shMemaddrs a))]
   exact evalCrepSemHOLProg_storeByte state _ _ dst src
 
+open Classical in
+/-- HOL-shaped `Store` clause (`crepSemScript.sml:267-273`) over the no-decider
+    evaluator: `case (eval s dst, eval s src) of (SOME (Word adr), SOME w) =>
+    (case mem_store adr w s.memaddrs s.memory of SOME m => (NONE, s with memory
+    := m) | NONE => (SOME Error, s)) | _ => (SOME Error, s)`, stated with the
+    tagged `evalCrepSemHOLExp` (`eval_def`) and `panMemStoreHOL`
+    (`mem_store_def`) under classical domain decisions. Untagged: the
+    assembled `evaluate_def` theorem is bead `flapjack-4ac.5.16.5.37`. -/
+theorem evalCrepSemHOLProgExact_store_holShape {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) (dst src : CrepExpHOL width) :
+    evalCrepSemHOLProgExact state (.store dst src : CrepProgHOL width) =
+      (match evalCrepSemHOLExp state dst, evalCrepSemHOLExp state src with
+       | some (.word adr), some w =>
+           match panMemStoreHOL adr w state.memaddrs state.memory with
+           | some m => (none, { state with memory := m })
+           | none => (some .error, state)
+       | _, _ => (some .error, state)) := by
+  rw [evalCrepSemHOLProgExact_store]
+  change (match evalCrepSemHOLExp state dst, evalCrepSemHOLExp state src with
+       | some (.word account), some w =>
+           match (fun a => Classical.propDecidable (state.memaddrs a)) account with
+           | .isTrue _ =>
+               (none, { state with memory := fun current =>
+                 if current = account then w else state.memory current })
+           | .isFalse _ => (some .error, state)
+       | _, _ => (some .error, state) :
+         Option (CrepResultHOLExact width) × CrepSemHOLState width σ) = _
+  rcases evalCrepSemHOLExp state dst with _ | ⟨⟨adr⟩⟩ <;>
+    rcases evalCrepSemHOLExp state src with _ | w <;> try rfl
+  simp only [panMemStoreHOL]
+  split <;> simp_all
+
+open Classical in
+/-- HOL-shaped `Store32` clause (`crepSemScript.sml:274-280`) over the no-decider
+    evaluator, with the tagged `evalCrepSemHOLExp` and `panMemStore32HOL`
+    (`mem_store_32_def`). HOL's `w2w w : word32` is `BitVec.ofNat 32 w.toNat`
+    (`n2w (w2n w)`). Untagged pending bead `flapjack-4ac.5.16.5.37`. -/
+theorem evalCrepSemHOLProgExact_store32_holShape {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) (dst src : CrepExpHOL width) :
+    evalCrepSemHOLProgExact state (.store32 dst src : CrepProgHOL width) =
+      (match evalCrepSemHOLExp state dst, evalCrepSemHOLExp state src with
+       | some (.word adr), some (.word w) =>
+           match panMemStore32HOL state.memory state.memaddrs state.be adr
+               (BitVec.ofNat 32 w.toNat) with
+           | some m => (none, { state with memory := m })
+           | none => (some .error, state)
+       | _, _ => (some .error, state)) := by
+  rw [evalCrepSemHOLProgExact_store32] <;> rfl
+
+open Classical in
+/-- HOL-shaped `StoreByte` clause (`crepSemScript.sml:281-287`) over the
+    no-decider evaluator, with the tagged `evalCrepSemHOLExp` and the exact
+    `word8` port `panMemStoreByteWord8HOL` (`mem_store_byte_def`) instead of
+    the legacy `UInt8` helper used by the core. HOL's `w2w w : word8` is
+    `BitVec.ofNat 8 w.toNat`. Untagged pending bead `flapjack-4ac.5.16.5.37`. -/
+theorem evalCrepSemHOLProgExact_storeByte_holShape {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) (dst src : CrepExpHOL width) :
+    evalCrepSemHOLProgExact state (.storeByte dst src : CrepProgHOL width) =
+      (match evalCrepSemHOLExp state dst, evalCrepSemHOLExp state src with
+       | some (.word adr), some (.word w) =>
+           match panMemStoreByteWord8HOL state.memory state.memaddrs state.be adr
+               (BitVec.ofNat 8 w.toNat) with
+           | some m => (none, { state with memory := m })
+           | none => (some .error, state)
+       | _, _ => (some .error, state)) := by
+  rw [evalCrepSemHOLProgExact_storeByte]
+  simp only [crepExactMemStoreByte_eq_word8]
+  change (match evalCrepSemHOLExp state dst, evalCrepSemHOLExp state src with
+       | some (.word address), some (.word w) =>
+           match panMemStoreByteWord8HOL state.memory state.memaddrs state.be
+                   address (UInt8.ofNat w.toNat).toBitVec with
+           | some memory => (none, { state with memory := memory })
+           | none => (some .error, state)
+       | _, _ => (some .error, state) :
+         Option (CrepResultHOLExact width) × CrepSemHOLState width σ) = _
+  rcases evalCrepSemHOLExp state dst with _ | ⟨adr⟩ <;>
+    rcases evalCrepSemHOLExp state src with _ | ⟨w⟩ <;> try rfl
+
 /-- HOL `evaluate (StoreGlob dst src, s)` (`crepSemScript.sml:288-291`) over the
     no-decider interface. -/
 theorem evalCrepSemHOLProgExact_storeGlob {width : Nat} [NeZero width] {σ : Type}
