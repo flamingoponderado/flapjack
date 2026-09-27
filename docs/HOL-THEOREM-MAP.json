@@ -12926,11 +12926,10 @@
     "hol_name": "exp_hdl_def",
     "lean_path": "Flapjack/Pancake/PanToCrep/ExpHdlExact.lean",
     "lean_name": "expHdlExact",
-    "statement_status": "reviewed_fmap_as_finite_support",
-    "fmap_as_finite_support": [
-      "vars"
-    ],
-    "reviewer": "flapjack-ds3 (source comparison, bead flapjack-pxn.18.3.5.8.13.2): HOL exp_hdl_def (pan_to_crepScript.sml:106-112) quantifies over a finite map varname |-> (shape # num list). expHdlExact reads its input through PanToCrepVarsExact.vars, a HolFiniteMapExact MlS (ShapeHOL × List Nat) (the canonical Lean translation of HOL's `|->`), and reproduces the HOL equations clause-for-clause: miss = Skip, hit = crepNestedSeqHOL (panMap2 Assign ns (loadGlobalsHOL 0w ns.length)). Canonical witness holFmapAsFiniteSupportWitness is in the same module. The raw-map expHdlHOL keeps its withdrawn tag (bead flapjack-2s5); expHdlExact_eq_expHdlHOL is the kernel consumer bridge to it, and scripts/hol-probes/exp_hdl_probe.out rows are replayed by Flapjack/Test/ExpHdlHOLParity.lean. The qualifier is representation-only and does not change the quantifiers, side conditions, or conclusion."
+    "statement_status": "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_parameters": ["fm"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison against pan_to_crepScript.sml:106-112 and crepLangScript.sml:33,116-118: Lean keeps HOL's direct fm then v binder order; HolFiniteMapExact MlS (ShapeHOL × List Nat) is the canonical translation of the finite map and its checked parameter witness roundtrips lookup/support. On lookup miss both return Skip. On hit both discard vshp and form nested_seq (MAP2 Assign ns (load_globals 0w (LENGTH ns)); Lean's crepNestedSeqHOL/panMap2/loadGlobalsHOL clauses match. HOL crepLang's LoadGlob field is fixed 5 word, which Lean represents as BitVec 5; the result program's generic word parameter is CrepProgHOL width with [NeZero width], the standard positive-dimensional word translation. Probe rows remain checked by ExpHdlHOLParity. The two qualifiers authorize only these map and word-carrier translations; no extra premise or changed result."
   },
   {
     "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
@@ -13178,12 +13177,9 @@
     "hol_name": "FEVERY_res_var_FLOOKUP",
     "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
     "lean_name": "feveryResVarFlookupHOL",
-    "statement_status": "reviewed_fmap_as_finite_support",
-    "fmap_as_finite_support": [
-      "fm",
-      "fm2"
-    ],
-    "reviewer": "Codex (direct source comparison, 2026-09-26, panPropsScript.sml:1222): HOL quantifies generic predicate P, finite maps fm/fm2, and nm; its single conjunctive antecedent is FEVERY P fm /\\ FEVERY P fm2, concluding FEVERY P (res_var fm (nm,FLOOKUP fm2 nm)). Lean keeps that single conjunction, the generic key/value/predicate types, lookup of fm2 at nm, and the resVarEq update/delete conclusion. PanPropsResVarMapsExact packages the two independent maps as the product fields fm/fm2: its broad counterpart stores both function maps independently, with no coupling condition, and holFmapAsFiniteSupportWitness roundtrips both projections. The only extra field data are intrinsic finite-support proofs, exactly the HOL fmap carrier invariant. The qualifier records only those two canonical map representations. DecidableEq implements HOL equality for update/domain-subtraction lookup; it is an instance, not a logical premise."
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": ["fm", "fm2"],
+    "reviewer": "flapjack-luna-b source comparison with panPropsScript.sml:1222: HOL quantifies P, fm, fm2, nm in that order, assumes the single conjunction FEVERY P fm /\\ FEVERY P fm2, and concludes FEVERY P (res_var fm (nm,FLOOKUP fm2 nm)). Lean now keeps the two independent map binders directly and in that order, the same conjunction and conclusion, with resVarEq implementing HOL update/delete lookup behavior. Each direct HolFiniteMapExact input has a same-module kernel witness roundtripping lookup plus finiteSupport; the qualifier changes only the canonical HOL finite-map carrier. DecidableEq implements HOL key equality and is an instance, not a logical premise."
   },
   {
     "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",

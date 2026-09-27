@@ -18,7 +18,7 @@ class HolAttributeSitesTest(unittest.TestCase):
     def test_single_line(self):
         self.assertEqual(
             list(SITES(['@[hol "cakeml/pancake/pan_globalsScript.sml" "compile_top_def"]'])),
-            [(1, "cakeml/pancake/pan_globalsScript.sml", "compile_top_def", None, (), (), (), (), False, (), False, False)],
+            [(1, "cakeml/pancake/pan_globalsScript.sml", "compile_top_def", None, (), (), (), (), False, (), False, False, ())],
         )
 
     def test_multiline(self):
@@ -29,7 +29,7 @@ class HolAttributeSitesTest(unittest.TestCase):
                 'theorem compileTopShapeWf : True := trivial',
             ])),
             [(1, "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-              "compile_top_shape_wf", None, (), (), (), (), False, (), False, False)],
+              "compile_top_shape_wf", None, (), (), (), (), False, (), False, False, ())],
         )
 
     def test_comments_do_not_count(self):
@@ -39,7 +39,7 @@ class HolAttributeSitesTest(unittest.TestCase):
                 '-- @[hol "cakeml/pancake/pan_globalsScript.sml" "bad"]',
                 '@[hol "cakeml/pancake/pan_globalsScript.sml" "compile_top_def"]',
             ])),
-            [(3, "cakeml/pancake/pan_globalsScript.sml", "compile_top_def", None, (), (), (), (), False, (), False, False)],
+            [(3, "cakeml/pancake/pan_globalsScript.sml", "compile_top_def", None, (), (), (), (), False, (), False, False, ())],
         )
 
     def test_source_line(self):
@@ -47,7 +47,7 @@ class HolAttributeSitesTest(unittest.TestCase):
             list(SITES(['@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml"',
                         '  "locals_rel_wf_shape" 2345]'])),
             [(1, "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
-              "locals_rel_wf_shape", 2345, (), (), (), (), False, (), False, False)],
+              "locals_rel_wf_shape", 2345, (), (), (), (), False, (), False, False, ())],
         )
 
     def test_list_as_array_fields(self):
@@ -57,7 +57,7 @@ class HolAttributeSitesTest(unittest.TestCase):
                 '  "dec_deg_def" (list_as_array := [degrees, moves])]'
             ])),
             [(1, "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
-              "dec_deg_def", None, ("degrees", "moves"), (), (), (), False, (), False, False)],
+              "dec_deg_def", None, ("degrees", "moves"), (), (), (), False, (), False, False, ())],
         )
 
     def test_names_as_string_and_boundary_qualifiers(self):
@@ -68,7 +68,7 @@ class HolAttributeSitesTest(unittest.TestCase):
                 '  (names_as_string_boundary := [generated])]',
             ])),
             [(1, "cakeml/pancake/panLangScript.sml", "varname", None,
-              (), ("name", "generated"), ("generated",), (), False, (), False, False)],
+              (), ("name", "generated"), ("generated",), (), False, (), False, False, ())],
         )
 
     def test_fmap_as_finite_support_fields(self):
@@ -78,7 +78,7 @@ class HolAttributeSitesTest(unittest.TestCase):
                 '  (fmap_as_finite_support := [locals, globals])]'
             ])),
             [(1, "cakeml/pancake/semantics/panSemScript.sml",
-              "set_var_def", None, (), (), (), ("locals", "globals"), False, (), False, False)],
+              "set_var_def", None, (), (), (), ("locals", "globals"), False, (), False, False, ())],
         )
 
     def test_fmap_as_finite_support_result_qualifier(self):
@@ -88,8 +88,48 @@ class HolAttributeSitesTest(unittest.TestCase):
                 '  (fmap_as_finite_support_result)]'
             ])),
             [(1, "cakeml/pancake/pan_to_crepScript.sml",
-              "get_eids_from_decls_def", None, (), (), (), (), True, (), False, False)],
+              "get_eids_from_decls_def", None, (), (), (), (), True, (), False, False, ())],
         )
+
+    def test_fmap_as_finite_support_parameters_qualifier(self):
+        self.assertEqual(
+            list(SITES([
+                '@[hol "cakeml/pancake/semantics/panPropsScript.sml" "FEVERY_res_var_FLOOKUP"',
+                '  (fmap_as_finite_support_parameters := [fm, fm2])]',
+            ])),
+            [(1, "cakeml/pancake/semantics/panPropsScript.sml",
+              "FEVERY_res_var_FLOOKUP", None, (), (), (), (), False, (), False,
+              False, ("fm", "fm2"))],
+        )
+
+    def test_fmap_as_finite_support_parameters_requires_direct_exact_binders_and_witnesses(self):
+        lines = [
+            "theorem holFmapAsFiniteSupportParamWitness_eval_fm",
+            "    (fm : HolFiniteMapExact Nat Nat) :",
+            "    mapofBroad (maptoBroadlookup fm) fm.finiteSupport = fm := by",
+            "  cases fm; rfl",
+            "theorem holFmapAsFiniteSupportParamWitness_eval_fm2",
+            "    (fm2 : HolFiniteMapExact Nat Nat) :",
+            "    mapofBroad (maptoBroadlookup fm2) fm2.finiteSupport = fm2 := by",
+            "  cases fm2; rfl",
+        ]
+        declaration = (
+            "theorem eval (fm : HolFiniteMapExact Nat Nat) "
+            "(fm2 : HolFiniteMapExact Nat Nat) : Prop"
+        )
+        self.assertEqual(
+            CHECKER["fmap_as_finite_support_parameters_errors"](
+                lines, "Example.lean", declaration, "eval", ("fm", "fm2")
+            ),
+            [],
+        )
+
+    def test_fmap_as_finite_support_parameters_rejects_raw_or_missing_binder(self):
+        errors = CHECKER["fmap_as_finite_support_parameters_errors"](
+            [], "Example.lean", "theorem eval (fm : Nat → Option Nat) : Prop",
+            "eval", ("fm",),
+        )
+        self.assertTrue(any("must be an input parameter typed HolFiniteMapExact" in e for e in errors))
 
     def test_fmap_as_finite_support_relation_qualifier(self):
         self.assertEqual(
@@ -99,7 +139,7 @@ class HolAttributeSitesTest(unittest.TestCase):
             ])),
             [(1, "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
               "state_rel_def", None, (), (), (), (), False,
-              (("PanSemStateFiniteExact", "globals"), ("CrepSemHOLState", "locals")), False, False)],
+              (("PanSemStateFiniteExact", "globals"), ("CrepSemHOLState", "locals")), False, False, ())],
         )
 
     def test_fmap_as_finite_support_relation_accepts_two_carriers(self):
@@ -225,7 +265,7 @@ class HolAttributeSitesTest(unittest.TestCase):
                 '  (fmap_as_finite_support_equalities)]'
             ])),
             [(1, "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
-              "slc_tlc_rw", None, (), (), (), (), False, (), True, False)],
+              "slc_tlc_rw", None, (), (), (), (), False, (), True, False, ())],
         )
 
     def test_fmap_as_finite_support_equalities_accepts_two_witnesses(self):
@@ -1258,7 +1298,7 @@ class WordsAsTypeIndexedBitvecQualifierTest(unittest.TestCase):
                 '  (words_as_type_indexed_bitvec)]',
             ])),
             [(1, "cakeml/pancake/semantics/crepSemScript.sml", "evaluate_def", 240,
-              (), (), (), (), False, (), False, True)],
+              (), (), (), (), False, (), False, True, ())],
         )
 
     def test_accepts_dimindex_and_universe(self):
