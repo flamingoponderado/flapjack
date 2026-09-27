@@ -3115,6 +3115,37 @@ theorem compileProgExactHOLW_call_bridge {width : Nat} [NeZero width]
                                progOfHOL body)) from rfl]
                       exact hsub
 
+/-- Context-relation form of the recursive `Call` bridge. `callHandlerBody`
+    limits the induction hypothesis to the exact handler body selected by the
+    call metadata. The body uses the unchanged context, so its ranged relation
+    is the reflexive exact-to-production relation. -/
+theorem compileProgExactHOLW_call_contextRel_bridge {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width)
+    (info : Option (Option (VarKind × Flapjack.Basis.Pure.MlString.MlString) ×
+      Option (Flapjack.Basis.Pure.MlString.MlString ×
+        Flapjack.Basis.Pure.MlString.MlString × ProgHOL width)))
+    (function : String) (arguments : List (Exp (BitVec width)))
+    (hfunction : Flapjack.Pancake.PanLang.NameRanged function)
+    (hcodec : ∀ expression ∈ arguments,
+      ((compileExpExactHOLW context (expToHOL expression)).1.map crepExpOfHOL,
+        shapeOfHOL (compileExpExactHOLW context (expToHOL expression)).2) =
+        compileExpHOL context.toProduction expression)
+    (ih : ∀ body, callHandlerBody info = some body →
+      PanToCrepContextExactProdRel context context.toProduction →
+      crepProgOfHOL (compileProgExactHOLW context body) =
+        compileProgHOL context.toProduction (progOfHOL body)) :
+    crepProgOfHOL (compileProgExactHOLW context
+        (.call info (Flapjack.Basis.Pure.MlString.ofString function)
+          (arguments.map expToHOL))) =
+      compileProgRiscV context.toProduction
+        (.call (callInfoToProduction info) function arguments) := by
+  have hrel : PanToCrepContextExactProdRel context context.toProduction := by
+    refine ⟨rfl, rfl, rfl, ?_⟩
+    intro name _hname
+    rfl
+  exact compileProgExactHOLW_call_bridge context info function arguments hfunction hcodec
+    (fun body hselected => ih body hselected hrel)
+
 theorem compileProgExactHOLW_shmem_store_bridge {width : Nat} [NeZero width]
     (context : PanToCrepContextExact width) (operator : OpSize)
     (value address : Exp (BitVec width))
