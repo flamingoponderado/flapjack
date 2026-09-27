@@ -1225,6 +1225,90 @@ theorem exactToProduction_decCallContext_relation {width : Nat} [NeZero width]
   · exact Flapjack.Pancake.PanLang.shapeOfHOL_shapeToHOL shape hshape
   · exact sizeOfShapeHOL_shapeToHOL shape
 
+/-- Relation-polymorphic `If` case: condition compilation uses the ranged
+    context relation, while both recursive branches preserve the same context
+    pair and use their structural induction hypotheses. -/
+theorem compileProgExactHOLW_if_relation_bridge {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width)
+    (productionContext : PanToCrepHOLContext (BitVec width))
+    (hcontext : PanToCrepContextExactProdRel context productionContext)
+    (condition : ExpHOL width) (thenBranch elseBranch : ProgHOL width)
+    (ih : ∀ program, PanToCrepContextExactProdRel context productionContext →
+      crepProgOfHOL (compileProgExactHOLW context program) =
+        compileProgHOL productionContext (progOfHOL program)) :
+    crepProgOfHOL (compileProgExactHOLW context (.ite condition thenBranch elseBranch)) =
+      compileProgHOL productionContext
+        (.ite (expOfHOL condition) (progOfHOL thenBranch) (progOfHOL elseBranch)) := by
+  have hcodec := compileExpExactHOLW_prodCodec_of_contextRel
+    context productionContext hcontext condition
+  rw [Prod.mk.injEq] at hcodec
+  rcases hcodec with ⟨hexps, _hshape⟩
+  have hthen := ih thenBranch hcontext
+  have helse := ih elseBranch hcontext
+  simp only [compileProgExactHOLW, compileIfExactHOLW]
+  cases hExact : compileExpExactHOLW context condition with
+  | mk exactExpressions exactShape =>
+      cases exactExpressions with
+      | nil =>
+          cases hProduction : compileExpHOL productionContext (expOfHOL condition) with
+          | mk productionExpressions productionShape =>
+              have hExpressions : productionExpressions = [] := by
+                simpa [hExact, hProduction] using hexps.symm
+              simp [compileProgHOL, hProduction, hExpressions, crepProgOfHOL]
+      | cons head tail =>
+          cases hProduction : compileExpHOL productionContext (expOfHOL condition) with
+          | mk productionExpressions productionShape =>
+              have hExpressions : productionExpressions =
+                  (crepExpOfHOL head) :: (tail.map crepExpOfHOL) := by
+                simpa [hExact, hProduction] using hexps.symm
+              cases productionExpressions with
+              | nil => simp at hExpressions
+              | cons productionHead productionTail =>
+                  have hHead : productionHead = crepExpOfHOL head :=
+                    (List.cons.inj hExpressions).1
+                  simp [compileProgHOL, hProduction, hHead, hthen, helse, crepProgOfHOL]
+
+/-- Relation-polymorphic `While` case: condition compilation uses the ranged
+    context relation and the body induction hypothesis keeps the same pair. -/
+theorem compileProgExactHOLW_while_relation_bridge {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width)
+    (productionContext : PanToCrepHOLContext (BitVec width))
+    (hcontext : PanToCrepContextExactProdRel context productionContext)
+    (condition : ExpHOL width) (body : ProgHOL width)
+    (ih : PanToCrepContextExactProdRel context productionContext →
+      crepProgOfHOL (compileProgExactHOLW context body) =
+        compileProgHOL productionContext (progOfHOL body)) :
+    crepProgOfHOL (compileProgExactHOLW context (.while condition body)) =
+      compileProgHOL productionContext
+        (.while (expOfHOL condition) (progOfHOL body)) := by
+  have hcodec := compileExpExactHOLW_prodCodec_of_contextRel
+    context productionContext hcontext condition
+  rw [Prod.mk.injEq] at hcodec
+  rcases hcodec with ⟨hexps, _hshape⟩
+  have hbody := ih hcontext
+  simp only [compileProgExactHOLW, compileWhileExactHOLW]
+  cases hExact : compileExpExactHOLW context condition with
+  | mk exactExpressions exactShape =>
+      cases exactExpressions with
+      | nil =>
+          cases hProduction : compileExpHOL productionContext (expOfHOL condition) with
+          | mk productionExpressions productionShape =>
+              have hExpressions : productionExpressions = [] := by
+                simpa [hExact, hProduction] using hexps.symm
+              simp [compileProgHOL, hProduction, hExpressions, crepProgOfHOL]
+      | cons head tail =>
+          cases hProduction : compileExpHOL productionContext (expOfHOL condition) with
+          | mk productionExpressions productionShape =>
+              have hExpressions : productionExpressions =
+                  (crepExpOfHOL head) :: (tail.map crepExpOfHOL) := by
+                simpa [hExact, hProduction] using hexps.symm
+              cases productionExpressions with
+              | nil => simp at hExpressions
+              | cons productionHead productionTail =>
+                  have hHead : productionHead = crepExpOfHOL head :=
+                    (List.cons.inj hExpressions).1
+                  simp [compileProgHOL, hProduction, hHead, hbody, crepProgOfHOL]
+
 /-! The recursive `Dec` clause bridge (`pan_to_crepScript.sml:141-152`). Both
     compilers ignore the declared `shape` and store the compiled shape: the
     exact clause extends `context` to `bodyContext` (fresh names from the old
