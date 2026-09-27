@@ -168,6 +168,7 @@ import Flapjack.Pancake.PanToCrep.ContextBridge
 import Flapjack.Pancake.PanToCrep.ContextProductionEvidence
 import Flapjack.Pancake.Proofs.CrepArith
 import Flapjack.Pancake.Proofs.CrepInline
+import Flapjack.Pancake.CrepInline.Canonical
 import Flapjack.CompileFunctionDistinct
 import Flapjack.Semantics
 import Flapjack.CrepeSemantics

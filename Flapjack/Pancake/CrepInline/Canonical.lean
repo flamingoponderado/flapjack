@@ -1,0 +1,278 @@
+import Flapjack.Pancake.CrepInline.Pass
+
+/-!
+# `inline_prog` recursive core over the canonical `HolFiniteMapExact`
+
+FLAPJACK-SPECIFIC (not a tagged HOL port, so no `@[hol]` annotation): this
+module carries the recursive core of HOL `inline_prog`
+(`cakeml/pancake/crep_inlineScript.sml:203-257`) over the reviewed canonical
+finite-support carrier while the carrier review is still pending (bead
+`flapjack-e7w.2.1.13`, child of `flapjack-e7w.2.1`; blocks
+`flapjack-e7w.2.2` exact `compile_inl_prog`/`compile_inl_top` wrappers and
+`flapjack-4ac.2.20.2` `compile_prog_def`).
+
+This is the port of HOL `inline_prog`
+(`cakeml/pancake/crep_inlineScript.sml:203-257`) over the reviewed canonical
+finite-support carrier
+`Flapjack.HolFiniteMapExact` (`Flapjack/Pancake/Semantics/CrepSem/HOLState.lean:34`)
+rather than the untagged unique-key list model `CrepInlineFmapHOL`
+(`Flapjack/Pancake/CrepInline/Pass.lean:495`).
+
+The core `inlineProgHOLCoreExact` reproduces the clause structure of
+`inlineProgHOLCore` (`Pass.lean:827`) and of the HOL source equation by
+equation, swapping only the carrier: `FLOOKUP` becomes `fs.lookup` and
+domain subtraction `inlineable_fs \\ e` becomes `fs.erase name`.
+
+**Termination.** `HolFiniteMapExact` stores its finite support as an
+*existential* `∃ keys, ∀ key, lookup key ≠ none → key ∈ keys` (HOLState.lean:36)
+and therefore exposes no canonical cardinality (its witness list may contain
+duplicates and unused keys).  Following the source statement of the task we
+prove `erase` strictly decreases an explicit finite-support cardinality: the
+core carries the support list `supportKeys`, valid by `support_spec`, and
+recurses with `supportKeys.filter (fun k => k != name)` after `fs.erase name`.
+`HolFiniteMapExact.erase_support` shows that filtered list still covers the
+eraser's domain, and `erase_support_length_lt` shows its length strictly
+decreases when the erased key is present.  The measure
+`(supportKeys.length, sizeOf program)` is thus the concrete analogue of HOL's
+`(CARD (FDOM fs), prog_size program)`; `supportKeys.length` is the `CARD (FDOM
+fs)` certificate.  `inlineProgHOLExact` discharges the certificate from the
+carrier's own `finiteSupport` via `Classical.choose`.
+
+Nothing in this file carries an `@[hol]` attribute: the carrier review is not
+yet complete, and the recursive helper cross-system correspondence to HOL is
+still open.  This is deliberately untagged infrastructure for the exact
+carrier port (`flapjack-e7w.2.1.13`).
+-/
+
+namespace Flapjack
+
+namespace CrepInlineProbeCanonical
+
+variable {α : Type} {β : Type} {width : Nat} [NeZero width]
+
+/-! ## Finite-support cardinality certificate -/
+
+/-- HDL `erase_support` support lemma: filtering the erased key out of a support
+    list for `fs` yields a support list for `fs.erase name`.  The eraser's
+    lookup is `FDOMSUB fs.lookup name`, so every defined key is a key of `fs`
+    (hence was in `keys`) and is different from `name`. -/
+theorem HolFiniteMapExact.erase_support [BEq α] [LawfulBEq α]
+    (fs : HolFiniteMapExact α β) (keys : List α)
+    (hkeys : ∀ k, fs.lookup k ≠ none → k ∈ keys) (name : α) :
+    ∀ k, (fs.erase name).lookup k ≠ none →
+      k ∈ keys.filter (fun k => k != name) := by
+  intro k hk
+  have hkfs : fs.lookup k ≠ none := by
+    intro hnone
+    apply hk
+    simp only [HolFiniteMapExact.lookup_erase]
+    unfold FDOMSUB
+    by_cases h : name == k
+    · simp [h]
+    · simp [h, hnone]
+  have hne : k ≠ name := by
+    intro heq
+    subst heq
+    apply hk
+    simp [FDOMSUB]
+  exact List.mem_filter.mpr
+    ⟨hkeys k hkfs, by rw [bne_iff_ne]; exact hne⟩
+
+/-- Erasing a present key strictly decreases the length of the explicit
+    finite-support certificate.  This is the finite-support analogue of HOL's
+    `CARD (FDOM fs)` decrease in the `inline_prog` termination proof. -/
+theorem erase_support_length_lt [BEq α] [LawfulBEq α]
+    (fs : HolFiniteMapExact α β) (keys : List α)
+    (hkeys : ∀ k, fs.lookup k ≠ none → k ∈ keys) (name : α)
+    (hname : fs.lookup name ≠ none) :
+    (keys.filter (fun k => k != name)).length < keys.length :=
+  List.length_filter_lt_length_iff_exists.mpr
+    ⟨name, hkeys name hname, by simp⟩
+
+/-! ## The recursive core -/
+
+/-- Recursive core of HOL `inline_prog` over the canonical
+    `HolFiniteMapExact` inline map.  `inlineable` is the map, `supportKeys`
+    together with `support_spec` is the finite-support cardinality certificate
+    used only for termination.  Every clause mirrors `inlineProgHOLCore`
+    (`Pass.lean:827`) and the HOL equations at
+    `crep_inlineScript.sml:203-257`, with `fs.lookup` for `FLOOKUP` and
+    `fs.erase name` for `inlineable_fs \\ e`. -/
+def inlineProgHOLCoreExact [BEq CrepInlineMapHOLName] [LawfulBEq CrepInlineMapHOLName]
+    (inlineable : HolFiniteMapExact CrepInlineMapHOLName
+      (List Nat × CrepProgHOL width))
+    (supportKeys : List CrepInlineMapHOLName)
+    (support_spec : ∀ key, inlineable.lookup key ≠ none → key ∈ supportKeys) :
+    CrepProgHOL width → CrepProgHOL width
+  | .call none name arguments =>
+      match _hlookup : inlineable.lookup name with
+      | none => .call none name arguments
+      | some (argumentNames, body) =>
+          let inlinedCallee :=
+            (unreachElimHOLExact
+              (inlineProgHOLCoreExact (inlineable.erase name)
+                (supportKeys.filter (fun k => k != name))
+                (HolFiniteMapExact.erase_support inlineable supportKeys support_spec name)
+                body)).1
+          let maxArguments := (arguments.flatMap crepExpVarsHOL).foldl max 0
+          let maxArgumentNames := argumentNames.foldl max 0
+          let temporaryNames :=
+            genlistSuccAddHOLExact (max maxArguments maxArgumentNames)
+              argumentNames.length
+          inlineTailHOLExact
+            (argLoadHOLExact temporaryNames arguments argumentNames inlinedCallee)
+  | .call (some (returnNames, none)) name arguments =>
+      if !crepAllDistinct returnNames then
+        .call (some (returnNames, none)) name arguments
+      else
+        match _hlookup : inlineable.lookup name with
+        | none => .call (some (returnNames, none)) name arguments
+        | some (argumentNames, body) =>
+            let inlinedCallee :=
+              (unreachElimHOLExact
+                (inlineProgHOLCoreExact (inlineable.erase name)
+                  (supportKeys.filter (fun k => k != name))
+                  (HolFiniteMapExact.erase_support inlineable supportKeys support_spec name)
+                  body)).1
+            let maxArguments := (arguments.flatMap crepExpVarsHOL).foldl max 0
+            let maxArgumentNames := argumentNames.foldl max 0
+            let temporaryNames :=
+              genlistSuccAddHOLExact (max maxArguments maxArgumentNames)
+                argumentNames.length
+            let maxReturnNames := returnNames.foldl max 0
+            let maxInlinedCallee := crepVmaxProgHOLExact inlinedCallee
+            let maxTemporaryNames := temporaryNames.foldl max 0
+            let temporaryReturns :=
+              genlistSuccAddHOLExact
+                (max maxReturnNames (max maxInlinedCallee maxTemporaryNames))
+                returnNames.length
+            let transformedCallee :=
+              if notBranchRetHOLExact inlinedCallee then
+                .seq .tick (transformEocHOLExact temporaryReturns inlinedCallee)
+              else
+                .while (.const 1)
+                  (transformBranchHOLExact 0 temporaryReturns inlinedCallee)
+            inlineNontailHOLExact transformedCallee returnNames
+              temporaryReturns temporaryNames arguments argumentNames
+  | .call (some (returnNames, some (handler, body))) name arguments =>
+      .call (some (returnNames, some (handler,
+        inlineProgHOLCoreExact inlineable supportKeys support_spec body))) name arguments
+  | .dec name value body =>
+      .dec name value (inlineProgHOLCoreExact inlineable supportKeys support_spec body)
+  | .seq first second =>
+      .seq (inlineProgHOLCoreExact inlineable supportKeys support_spec first)
+        (inlineProgHOLCoreExact inlineable supportKeys support_spec second)
+  | .ite condition first second =>
+      .ite condition
+        (inlineProgHOLCoreExact inlineable supportKeys support_spec first)
+        (inlineProgHOLCoreExact inlineable supportKeys support_spec second)
+  | .while condition body =>
+      .while condition (inlineProgHOLCoreExact inlineable supportKeys support_spec body)
+  | program => program
+termination_by program => (supportKeys.length, sizeOf program)
+decreasing_by
+  all_goals
+    first
+    | apply Prod.Lex.right; simp_wf; decreasing_trivial
+    | apply Prod.Lex.left
+      exact erase_support_length_lt inlineable supportKeys support_spec name
+        (by simp [_hlookup])
+
+/-! ## Clause equations
+
+These state the defining equations of `inlineProgHOLCoreExact` on each
+constructor, in the clause order of HOL `inline_prog_def`
+(`crep_inlineScript.sml:203-249`).  They are kernel-checked facts about the
+Lean core itself; they carry no `@[hol]` tag because the carrier review is
+incomplete. -/
+
+theorem inlineProgHOLCoreExact_skip [BEq CrepInlineMapHOLName]
+    [LawfulBEq CrepInlineMapHOLName]
+    (inlineable : HolFiniteMapExact CrepInlineMapHOLName
+      (List Nat × CrepProgHOL width))
+    (supportKeys : List CrepInlineMapHOLName)
+    (support_spec : ∀ key, inlineable.lookup key ≠ none → key ∈ supportKeys) :
+    inlineProgHOLCoreExact inlineable supportKeys support_spec .skip = .skip := by
+  simp only [inlineProgHOLCoreExact]
+
+theorem inlineProgHOLCoreExact_dec [BEq CrepInlineMapHOLName]
+    [LawfulBEq CrepInlineMapHOLName]
+    (inlineable : HolFiniteMapExact CrepInlineMapHOLName
+      (List Nat × CrepProgHOL width))
+    (supportKeys : List CrepInlineMapHOLName)
+    (support_spec : ∀ key, inlineable.lookup key ≠ none → key ∈ supportKeys)
+    (name : Nat) (value : CrepExpHOL width) (body : CrepProgHOL width) :
+    inlineProgHOLCoreExact inlineable supportKeys support_spec (.dec name value body) =
+      .dec name value
+        (inlineProgHOLCoreExact inlineable supportKeys support_spec body) := by
+  simp only [inlineProgHOLCoreExact]
+
+theorem inlineProgHOLCoreExact_seq [BEq CrepInlineMapHOLName]
+    [LawfulBEq CrepInlineMapHOLName]
+    (inlineable : HolFiniteMapExact CrepInlineMapHOLName
+      (List Nat × CrepProgHOL width))
+    (supportKeys : List CrepInlineMapHOLName)
+    (support_spec : ∀ key, inlineable.lookup key ≠ none → key ∈ supportKeys)
+    (first second : CrepProgHOL width) :
+    inlineProgHOLCoreExact inlineable supportKeys support_spec (.seq first second) =
+      .seq (inlineProgHOLCoreExact inlineable supportKeys support_spec first)
+        (inlineProgHOLCoreExact inlineable supportKeys support_spec second) := by
+  simp only [inlineProgHOLCoreExact]
+
+theorem inlineProgHOLCoreExact_ite [BEq CrepInlineMapHOLName]
+    [LawfulBEq CrepInlineMapHOLName]
+    (inlineable : HolFiniteMapExact CrepInlineMapHOLName
+      (List Nat × CrepProgHOL width))
+    (supportKeys : List CrepInlineMapHOLName)
+    (support_spec : ∀ key, inlineable.lookup key ≠ none → key ∈ supportKeys)
+    (condition : CrepExpHOL width) (thenBranch elseBranch : CrepProgHOL width) :
+    inlineProgHOLCoreExact inlineable supportKeys support_spec
+        (.ite condition thenBranch elseBranch) =
+      .ite condition
+        (inlineProgHOLCoreExact inlineable supportKeys support_spec thenBranch)
+        (inlineProgHOLCoreExact inlineable supportKeys support_spec elseBranch) := by
+  simp only [inlineProgHOLCoreExact]
+
+theorem inlineProgHOLCoreExact_while [BEq CrepInlineMapHOLName]
+    [LawfulBEq CrepInlineMapHOLName]
+    (inlineable : HolFiniteMapExact CrepInlineMapHOLName
+      (List Nat × CrepProgHOL width))
+    (supportKeys : List CrepInlineMapHOLName)
+    (support_spec : ∀ key, inlineable.lookup key ≠ none → key ∈ supportKeys)
+    (condition : CrepExpHOL width) (body : CrepProgHOL width) :
+    inlineProgHOLCoreExact inlineable supportKeys support_spec (.while condition body) =
+      .while condition
+        (inlineProgHOLCoreExact inlineable supportKeys support_spec body) := by
+  simp only [inlineProgHOLCoreExact]
+
+theorem inlineProgHOLCoreExact_call_handler [BEq CrepInlineMapHOLName]
+    [LawfulBEq CrepInlineMapHOLName]
+    (inlineable : HolFiniteMapExact CrepInlineMapHOLName
+      (List Nat × CrepProgHOL width))
+    (supportKeys : List CrepInlineMapHOLName)
+    (support_spec : ∀ key, inlineable.lookup key ≠ none → key ∈ supportKeys)
+    (returnNames : List Nat) (handler : BitVec width) (body : CrepProgHOL width)
+    (name : CrepInlineMapHOLName) (arguments : List (CrepExpHOL width)) :
+    inlineProgHOLCoreExact inlineable supportKeys support_spec
+        (.call (some (returnNames, some (handler, body))) name arguments) =
+      .call (some (returnNames, some (handler,
+        inlineProgHOLCoreExact inlineable supportKeys support_spec body)))
+        name arguments := by
+  simp only [inlineProgHOLCoreExact]
+
+/-- The `fs`-only entry point: the same recursive core with its finite-support
+    certificate discharged from `HolFiniteMapExact.finiteSupport`.  This is
+    noncomputable because the support witness is extracted classically; the
+    returned `CrepProgHOL` does not depend on the certificate. -/
+noncomputable def inlineProgHOLExact [BEq CrepInlineMapHOLName]
+    [LawfulBEq CrepInlineMapHOLName]
+    (inlineable : HolFiniteMapExact CrepInlineMapHOLName
+      (List Nat × CrepProgHOL width)) :
+    CrepProgHOL width → CrepProgHOL width :=
+  inlineProgHOLCoreExact inlineable
+    (Classical.choose inlineable.finiteSupport)
+    (Classical.choose_spec inlineable.finiteSupport)
+
+end CrepInlineProbeCanonical
+
+end Flapjack
