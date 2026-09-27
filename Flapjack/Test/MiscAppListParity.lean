@@ -1,4 +1,5 @@
 import Flapjack.Misc.AppList
+import Flapjack.Misc.FlatReplicate
 
 /-! Lean regression for the HOL `misc$app_list`/`append` oracle
 (`scripts/hol-probes/misc_app_list_probe.out`). -/
@@ -30,6 +31,15 @@ example :
     appListAppend (.append (.list [4]) (.list [5]) : AppList Nat) =
       appListAppend (.list [4] : AppList Nat) ++ appListAppend (.list [5] : AppList Nat) :=
   (appListAppend_thm (.list [4]) (.list [5]) []).1
+
+example : (List.replicate 3 ([] : List Nat)).flatten = [] := flatReplicateNilHOL 3
+
+example : (List.replicate 0 ([] : List (List Nat))).flatten = [] := flatReplicateNilHOL 0
+
+example : (List.replicate 4 ([] : List Bool)).flatten = [] := flatReplicateNilHOL 4
+
+#guard (List.replicate 5 ([] : List Nat)).flatten == ([] : List Nat)
+
 
 def runChecks : IO Bool := do
   IO.println "PASS misc app_list append_aux/append match all 6 oracle rows"
