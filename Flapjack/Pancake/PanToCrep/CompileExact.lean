@@ -1,7 +1,6 @@
 import Flapjack.Pancake.PanToCrep.Compile
 import Flapjack.Pancake.PanToCrep.ContextExact
 import Flapjack.Pancake.PanToCrep.ExpHdlExact
-import Flapjack.Pancake.PanToCrep.MakeVmapHOL
 import Flapjack.Pancake.Semantics.CrepSem.HOLState
 import Flapjack.Pancake.PanCommon
 
@@ -746,40 +745,6 @@ decreasing_by
   all_goals
     simp_wf
     omega
-
-/-! ### Exact-carrier `comp_func_def`
-
-HOL `pan_to_crep$comp_func` (`cakeml/pancake/pan_to_crepScript.sml:337-343`)
-builds the initial per-function context from the parameter list and then runs
-`compile`:
-
-```
-comp_func fs eids params body =
-  let vmap   = make_vmap params;
-      shapes = MAP SND params;
-      vmax   = size_of_shape (Comb shapes) - 1 in
-  compile (mk_ctxt vmap fs vmax eids) body
-```
-
-The exact Lean port reuses the tagged `panToCrepMakeVmapHOLExact`
-(`make_vmap_def`), `mkCtxtExactHOL` (`mk_ctxt_def`), and `compileProgExactHOLW`
-(`compile_def`) over the exact `MlS`/`ShapeHOL`/`ProgHOL`/`CrepProgHOL`
-carriers. The two HOL finite-map arguments `fs` (`funname |-> (params # shape)`)
-and `eids` (`eid |-> 'a word`) are standalone `HolFiniteMapExact` parameters,
-recorded by the bare `fmap_as_finite_support_relation` entries; the only other
-carrier difference is the type-indexed `'a word` to `BitVec width` translation,
-already fixed by the width-indexed `eids` carrier. -/
-
-@[hol "cakeml/pancake/pan_to_crepScript.sml" "comp_func_def"
-  (fmap_as_finite_support_relation := [fs, eids])]
-def compFuncExactHOL {width : Nat} [NeZero width]
-    (fs : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ShapeHOL))
-    (eids : HolFiniteMapExact MlS (BitVec width))
-    (params : List (MlS × ShapeHOL)) (body : ProgHOL width) : CrepProgHOL width :=
-  let vmap := panToCrepMakeVmapHOLExact params
-  let shapes := params.map Prod.snd
-  let vmax := sizeOfShapeHOL (.comb shapes) - 1
-  compileProgExactHOLW (mkCtxtExactHOL vmap fs vmax eids) body
 
 
 /-! ### Codec helper lemmas for the `compile_exp` production bridge
