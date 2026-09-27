@@ -230,7 +230,13 @@ represented by the reviewed canonical Lean translation `HolFiniteMapExact`
 (a `lookup` function plus a `finiteSupport` proposition). Every named field must
 be declared by ONE owning carrier structure whose field types use
 `HolFiniteMapExact`; a raw function-backed `α → Option β` map is ineligible, and
-fields split across several structures are rejected. The owning carrier may be
+fields split across several structures are rejected. Only HOL `|->` fields are
+eligible: an `sptree$num_map` (for example `loopSem$state`'s `locals`/`code`) is
+a tree map, not a `|->` finite map, so it must not be named here even when the
+Lean field uses `HolFiniteMapExact`. Represent such fields with their own
+reviewed carrier (for example `Flapjack/Misc/Sptree.lean`'s `Spt`) or wait for a
+dedicated qualifier, and leave the affected declaration untagged until then.
+The owning carrier may be
 declared in the tagged module or reached through its transitive imports (for
 example a tagged evaluator whose state carrier lives in a dedicated `HOLState`
 module). Do not declare a local duplicate of an imported state carrier just to
