@@ -299,8 +299,13 @@ theorem panToCrepLocalsRelLookupCtxtFiniteExact {width : Nat} [NeZero width]
     for this symbolic-index lemma (the bound proof is needed to select the
     element), so the kernel-checked instance in
     `Flapjack/Test/PanToCrepStateRelCarrierParity.lean` replays it concretely. -/
-@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "ctxt_max_el_leq"
-  (fmap_as_finite_support_relation := [PanToCrepContextExact.vars])]
+/-- HOLD (coordinator, 2026-09-27): exact HOL `ctxt_max_el_leq`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:1493`) over the exact
+    `PanToCrepContextExact` carrier, but the `@[hol]` tag is WITHDRAWN pending
+    the DS10 imported-owner finite-map qualifier policy; the quantified carrier
+    includes a translated word dimension not recorded by the current
+    `fmap_as_finite_support_relation := [PanToCrepContextExact.vars]` qualifier.
+    Proof retained as untagged infrastructure. -/
 theorem ctxtMaxElLeqFiniteExact {width : Nat} [NeZero width]
     (context : PanToCrepContextExact width) (v : MlS) (shape : ShapeHOL)
     (slots : List Nat) (n : Nat)

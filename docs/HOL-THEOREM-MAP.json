@@ -5671,32 +5671,6 @@
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
-    "hol_name": "ctxt_fc_funcs_eq",
-    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
-    "lean_name": "ctxtFcFuncsEqHOL",
-    "statement_status": "reviewed_fmap_as_finite_support",
-    "fmap_as_finite_support": ["funcs"],
-    "reviewer": "flapjack-ds9 source comparison (bead flapjack-4ac.5.91): HOL ctxt_fc_funcs_eq (pan_to_crepProofScript.sml:2295-2299) states the no-premise projection (ctxt_fc cvs em vs shs ns).funcs = cvs, with HOL `funname |-> ((varname # shape) # shape)` as the funcs field. The Lean theorem ctxtFcFuncsEqHOL states the same projection over the exact PanToCrepContextExact carrier (MlS = mlstring keys, ShapeHOL = shape payloads) with the funcs field in the reviewed HolFiniteMapExact translation; the argument order (cvs, em, vs, shs, ns), the unrestricted quantifiers, and the definitional equality all match, and the only representation difference is the finite-map carrier recorded by the qualifier. Direct HOL-EVAL row functions_projection=T in scripts/hol-probes/ctxt_fc_probe.out is replayed by the kernel-checked regression in Flapjack/Test/PanToCrepContextExactParity.lean."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
-    "hol_name": "ctxt_fc_eids_eq",
-    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
-    "lean_name": "ctxtFcEidsEqHOL",
-    "statement_status": "reviewed_fmap_as_finite_support",
-    "fmap_as_finite_support": ["eids"],
-    "reviewer": "flapjack-ds9 source comparison (bead flapjack-4ac.5.92): HOL ctxt_fc_eids_eq (pan_to_crepProofScript.sml:2301-2305) states the no-premise projection (ctxt_fc cvs em vs shs ns).eids = em, with HOL `eid |-> 'a word` as the eids field. The Lean theorem ctxtFcEidsEqHOL states the same projection over the exact PanToCrepContextExact carrier (MlS = mlstring keys, exception codes are BitVec width) with the eids field in the reviewed HolFiniteMapExact translation; the argument order (cvs, em, vs, shs, ns), the unrestricted quantifiers, and the definitional equality all match, and the only representation difference is the finite-map carrier recorded by the qualifier. Direct HOL-EVAL row shaped_slots in scripts/hol-probes/ctxt_fc_probe.out carries `eids := FEMPTY⟨«E» ↦ 3w⟩` and is replayed by the kernel-checked regression in Flapjack/Test/PanToCrepContextExactParity.lean."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
-    "hol_name": "ctxt_fc_vmax",
-    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
-    "lean_name": "ctxtFcVmaxHOL",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds9 source comparison (bead flapjack-4ac.5.93): HOL ctxt_fc_vmax (pan_to_crepProofScript.sml:2307-2312) proves the no-premise projection (ctxt_fc ctxt.funcs em vs shs ns).vmax = MAX_LIST ns by rw [ctxt_fc_def]. The Lean theorem ctxtFcVmaxHOL states the same projection over the exact PanToCrepContextExact carrier: the first argument is an unrestricted finite map (HOL implicit ctxt.funcs is universally quantified, so a bare cvs is equivalent), the argument order (cvs, em, vs, shs, ns) and the unrestricted quantifiers match, and MAX_LIST is maxList (empty gives 0). The conclusion is a Nat that depends only on ns, so it does not traverse any finite-map field and no list-to-array, name, or finite-map representation difference is observed; the finite-map inputs are inert in the statement, so no qualifier applies. Direct HOL-EVAL rows vmax_nonempty_list=T and vmax_empty_list=T in scripts/hol-probes/ctxt_fc_probe.out are replayed by the kernel-checked regression in Flapjack/Test/PanToCrepContextExactParity.lean."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
     "hol_name": "ctxt_fc_vmax",
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
     "lean_name": "ctxtFcVmax",
@@ -12732,18 +12706,6 @@
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
-    "hol_name": "ctxt_max_el_leq",
-    "hol_line": 1493,
-    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
-    "lean_name": "ctxtMaxElLeqFiniteExact",
-    "statement_status": "reviewed_fmap_as_finite_support_relation",
-    "fmap_as_finite_support_relation": [
-      "PanToCrepContextExact.vars"
-    ],
-    "reviewer": "flapjack-ds9 source comparison (2026-09-27, flapjack-4ac.5.94; pan_to_crepProofScript.sml:1493-1503): HOL ctxt_max_el_leq has the conjunction ctxt_max ctxt.vmax ctxt.vars and FLOOKUP ctxt.vars v = SOME (sh,ns) and n < LENGTH ns as its premise and concludes EL n ns <= ctxt.vmax. Lean keeps exactly those three premise conjuncts (curried) and the same conclusion: ctxt_max becomes the exact-carrier rendering ctxtMaxFiniteExact (the predicate already used inside the tagged locals_rel_def), FLOOKUP becomes .lookup, EL n ns becomes the bounded getElem slots[n], and LENGTH/<= become List.length/<=. The only finite-map value traversed is the named PanToCrepContextExact.vars field, whose same-module canonical witness establishes the reviewed finite-support translation; vmax is Nat and is not a finite-map field. The implicit HOL context ctxt is the pan_to_crep context record; [NeZero width] models HOL's positive word dimension. The proof is HOL's rw [ctxt_max_def] with the bound instantiated at EL n ns and EL_MEM. No direct HOL-EVAL oracle row exists for this symbolic-index lemma, so the kernel-checked concrete instance in Flapjack/Test/PanToCrepStateRelCarrierParity.lean replays it. This exact-carrier port complements the withdrawn String-keyed ctxtMaxGetElemLe analogue (still recorded below as documented_mismatch)."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
     "hol_name": "no_overlap_wrap_rt_some_all_distinct",
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
     "lean_name": "noOverlapWrapRtSomeAllDistinctFiniteExact",
@@ -13230,32 +13192,6 @@
       "code"
     ],
 "reviewer": "flapjack-ds8 (source comparison; bead flapjack-pxn.18.3.5.8.8.7): HOL FLOOKUP_set_globals (crepPropsScript.sml:297-301) `FLOOKUP (set_globals gv w s).locals n = FLOOKUP s.locals n` over the exact finite-support CrepSemHOLState carrier, using the tagged CrepSemHOLState.setGlobals (crepSemScript.sml:61-63), which updates only globals. FLOOKUP is rendered as the canonical HolFiniteMapExact.lookup. Finite-map representation recorded by the qualifier (locals/globals/code); same-module canonical witness forwards CrepSemHOLState.holFmapAsFiniteSupportWitness. Direct HOL row set_globals_direct in crep_store_global_probe.out. Representation-only; no statement/side-condition change."
-    },
-    {
-      "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
-      "hol_name": "sh_mem_load_FLOOKUP_locals",
-      "lean_path": "Flapjack/Pancake/Semantics/CrepProps.lean",
-      "lean_name": "crepShMemLoadHOL_flookup_locals",
-      "statement_status": "reviewed_fmap_as_finite_support",
-      "fmap_as_finite_support": [
-        "locals",
-        "globals",
-        "code"
-      ],
-      "reviewer": "flapjack-ds9 (direct source comparison, 2026-09-27; bead flapjack-2de.9): HOL sh_mem_load_FLOOKUP_locals (crepPropsScript.sml:303-310) is sh_mem_load v addr nb s = (res, t) and n <> v and (res = NONE or res = SOME (Continue k) or res = SOME (Break k)) implies FLOOKUP t.locals n = FLOOKUP s.locals n, with free variables v, addr, nb, s, res, t, n, k. The Lean statement has the identical binder order (name, address, nb, state, res, target, key, label) over the exact tagged crepShMemLoadExactHOL port and the exact finite-support CrepSemHOLState carrier; FLOOKUP is rendered as the canonical HolFiniteMapExact.lookup, n <> v as key <> name, and the free HOL k as the universally quantified label. [NeZero width] is the canonical positive word model and DecidablePred state.shMemaddrs is Lean's decision instance for HOL set membership. The fmap_as_finite_support qualifier records HOL's finite maps as HolFiniteMapExact (locals/globals/code), matching the same-module canonical holFmapAsFiniteSupportWitness. No extra hypothesis, no target-evaluation premise, no changed conclusion. No direct HOL EVAL probe row yet."
-    },
-    {
-      "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
-      "hol_name": "sh_mem_store_FLOOKUP_locals",
-      "lean_path": "Flapjack/Pancake/Semantics/CrepProps.lean",
-      "lean_name": "crepShMemStoreHOL_flookup_locals",
-      "statement_status": "reviewed_fmap_as_finite_support",
-      "fmap_as_finite_support": [
-        "locals",
-        "globals",
-        "code"
-      ],
-      "reviewer": "flapjack-ds9 (direct source comparison, 2026-09-27; bead flapjack-2de.10): HOL sh_mem_store_FLOOKUP_locals (crepPropsScript.sml:312-317) is sh_mem_store v addr nb s = (res, t) implies FLOOKUP t.locals n = FLOOKUP s.locals n, with free variables v, addr, nb, s, res, t, n and no side condition. The Lean statement has the identical binder order (name, address, nb, state, res, target, key) over the exact tagged crepShMemStoreExactHOL port and the exact finite-support CrepSemHOLState carrier; FLOOKUP is rendered as the canonical HolFiniteMapExact.lookup. [NeZero width] is the canonical positive word model and DecidablePred state.shMemaddrs is Lean's decision instance for HOL set membership; the store definition only touches the ffi field, so the locals lookup is preserved in every case. The fmap_as_finite_support qualifier records HOL's finite maps as HolFiniteMapExact (locals/globals/code), matching the same-module canonical holFmapAsFiniteSupportWitness. No extra hypothesis, no target-evaluation premise, no changed conclusion. No direct HOL EVAL probe row yet."
     },
     {
       "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",

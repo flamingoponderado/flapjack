@@ -4842,8 +4842,14 @@ end CtxtFcExact
     `functions_projection=T` in `scripts/hol-probes/ctxt_fc_probe.out` is
     replayed by the kernel-checked regression in
     `Flapjack.Test.PanToCrepContextExactParity`. -/
-@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "ctxt_fc_funcs_eq"
-  (fmap_as_finite_support := [funcs])]
+/-- HOLD (coordinator, 2026-09-27): exact HOL `ctxt_fc_funcs_eq`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:2295`) over the exact
+    `PanToCrepContextExact` carrier, but the `@[hol]` tag is WITHDRAWN pending
+    the DS10 imported-owner finite-map qualifier policy; the field-only
+    `fmap_as_finite_support := [funcs]` also fails to record the standalone
+    `cvs` map parameter and the translated word dimension of `em`. Proof
+    retained as untagged infrastructure until a policy-authorised combined
+    qualifier is available. -/
 theorem ctxtFcFuncsEqHOL {width : Nat} [NeZero width]
     (cvs : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ShapeHOL))
     (em : HolFiniteMapExact MlS (BitVec width))
@@ -4862,8 +4868,13 @@ theorem ctxtFcFuncsEqHOL {width : Nat} [NeZero width]
     (names are `MlS` = `mlstring`). The direct HOL-EVAL projection row is
     replayed by the kernel-checked regression in
     `Flapjack.Test.PanToCrepContextExactParity`. -/
-@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "ctxt_fc_eids_eq"
-  (fmap_as_finite_support := [eids])]
+/-- HOLD (coordinator, 2026-09-27): exact HOL `ctxt_fc_eids_eq`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:2301`) over the exact
+    `PanToCrepContextExact` carrier, but the `@[hol]` tag is WITHDRAWN pending
+    the DS10 imported-owner finite-map qualifier policy; the field-only
+    `fmap_as_finite_support := [eids]` also fails to record the standalone
+    `em` map parameter and the translated word dimension of `em`. Proof
+    retained as untagged infrastructure. -/
 theorem ctxtFcEidsEqHOL {width : Nat} [NeZero width]
     (cvs : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ShapeHOL))
     (em : HolFiniteMapExact MlS (BitVec width))
@@ -4881,7 +4892,12 @@ theorem ctxtFcEidsEqHOL {width : Nat} [NeZero width]
     Direct HOL-EVAL rows `vmax_nonempty_list=T`/`vmax_empty_list=T` in
     `scripts/hol-probes/ctxt_fc_probe.out` are replayed by the kernel-checked
     regression in `Flapjack.Test.PanToCrepContextExactParity`. -/
-@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "ctxt_fc_vmax"]
+/-- HOLD (coordinator, 2026-09-27): exact HOL `ctxt_fc_vmax`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:2307`) over the exact
+    `PanToCrepContextExact` carrier, but the `@[hol]` tag is WITHDRAWN pending
+    the DS10 imported-owner finite-map qualifier policy and a qualifier covering
+    the standalone `cvs`/`em` map parameters and the translated word dimension of
+    `em`. Proof retained as untagged infrastructure. -/
 theorem ctxtFcVmaxHOL {width : Nat} [NeZero width]
     (cvs : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ShapeHOL))
     (em : HolFiniteMapExact MlS (BitVec width))

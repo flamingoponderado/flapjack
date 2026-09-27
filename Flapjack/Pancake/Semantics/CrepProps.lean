@@ -1017,8 +1017,13 @@ theorem flookupSetGlobalsCrepSemHOL_locals {width : Nat} [NeZero width] {σ : Ty
     `(fmap_as_finite_support := [locals, globals, code])` qualifier records that
     HOL's `|->` fields are represented by the reviewed `HolFiniteMapExact`
     translation. -/
-@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "sh_mem_load_FLOOKUP_locals"
-  (fmap_as_finite_support := [locals, globals, code])]
+/-- HOLD (coordinator, 2026-09-27): exact HOL `sh_mem_load_FLOOKUP_locals`
+    (`cakeml/pancake/semantics/crepPropsScript.sml:303`), but the `@[hol]` tag is
+    WITHDRAWN pending the DS10 `words_as_type_indexed_bitvec` policy: the
+    statement's `address : BitVec width` with `[NeZero width]` translates HOL's
+    type-indexed `'a word` and needs that qualifier (likely combined with
+    `fmap_as_finite_support`) rather than the finite-map qualifier alone. Proof
+    retained as untagged infrastructure. -/
 theorem crepShMemLoadHOL_flookup_locals {width : Nat} [NeZero width] {σ : Type}
     (name : Nat) (address : BitVec width) (nb : Nat)
     (state : CrepSemHOLState width σ) [DecidablePred state.shMemaddrs]
@@ -1045,8 +1050,13 @@ theorem crepShMemLoadHOL_flookup_locals {width : Nat} [NeZero width] {σ : Type}
     `(fmap_as_finite_support := [locals, globals, code])` qualifier records that
     HOL's `|->` fields are represented by the reviewed `HolFiniteMapExact`
     translation. -/
-@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "sh_mem_store_FLOOKUP_locals"
-  (fmap_as_finite_support := [locals, globals, code])]
+/-- HOLD (coordinator, 2026-09-27): exact HOL `sh_mem_store_FLOOKUP_locals`
+    (`cakeml/pancake/semantics/crepPropsScript.sml:312`), but the `@[hol]` tag is
+    WITHDRAWN pending the DS10 `words_as_type_indexed_bitvec` policy: the
+    statement's `address : BitVec width` with `[NeZero width]` translates HOL's
+    type-indexed `'a word` and needs that qualifier (likely combined with
+    `fmap_as_finite_support`) rather than the finite-map qualifier alone. Proof
+    retained as untagged infrastructure. -/
 theorem crepShMemStoreHOL_flookup_locals {width : Nat} [NeZero width] {σ : Type}
     (name : Nat) (address : BitVec width) (nb : Nat)
     (state : CrepSemHOLState width σ) [DecidablePred state.shMemaddrs]
