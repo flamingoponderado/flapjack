@@ -24,9 +24,17 @@ source evaluator `evalHOLFinite` and target evaluator `evalCrepSemHOLExp`.
 
 The full theorem is assembled at the end of this module as `compileExpValRelHOL`
 (bead `flapjack-4ac.5.81`), the exact target of HOL `compile_exp_val_rel`
-(`cakeml/pancake/proofs/pan_to_crepProofScript.sml:130`); it carries the
-`@[hol]` tag. The individual `compileExpValRelHOL_<constructor>` case lemmas are
-Flapjack proof infrastructure and stay untagged.
+(`cakeml/pancake/proofs/pan_to_crepProofScript.sml:130`). Both are kept untagged:
+the HOL theorem is polymorphic in the word dimension (`'a word`) and the
+FFI-state type (the `('a,'b) state` parameter), while this rendering fixes the
+positive width `BitVec width` (`[NeZero width]`) and the universe-0 host
+`σ : Type`, and represents the HOL state/context maps by the finite-support
+carriers `PanSemStateFiniteExact` / `CrepSemHOLState` / `PanToCrepContextExact`.
+Recording that faithfully needs the combined `fmap_as_finite_support_relation`
+and `words_as_type_indexed_bitvec` translation, which the reference checker and
+theorem-map statuses do not yet support (follow-up bead `flapjack-4ac.5.81.14`).
+The individual `compileExpValRelHOL_<constructor>` case lemmas are Flapjack
+proof infrastructure and are likewise untagged.
 -/
 
 namespace Flapjack
@@ -1691,13 +1699,25 @@ theorem compileExpValRelHOL_panop {width : Nat} {σ : Type} [NeZero width]
         simp only [hvals, hfalse, Bool.false_eq_true, if_false] at heval
         exact absurd heval.symm (Option.some_ne_none value)
 
-/-- Assembled exact-carrier `compile_exp_val_rel`
-    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml`): the full
+/-- Assembled exact-carrier counterpart of HOL `compile_exp_val_rel`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:130`): the full
     expression-evaluation / compilation correspondence over the exact
     `PanSemStateFiniteExact` / `CrepSemHOLState` carriers.  Built by structural
     recursion on the expression, dispatching every constructor to its
-    source-reviewed case lemma. -/
-@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "compile_exp_val_rel"]
+    source-reviewed case lemma.
+
+    FLAPJACK-SPECIFIC provisional rendering (no `@[hol]` tag), 2026-09-27.
+    The HOL theorem is polymorphic in the word dimension (`'a word`) and the
+    FFI-state type (the `('a,'b) state` parameter), whereas this statement fixes
+    the positive width `BitVec width` with `[NeZero width]` and the universe-0
+    host `σ : Type`, and uses the finite-support carriers
+    `PanSemStateFiniteExact` / `CrepSemHOLState` / `PanToCrepContextExact`.
+    Those are exactly the translations recorded by
+    `words_as_type_indexed_bitvec` and by a `fmap_as_finite_support_relation`
+    ownership list, so a faithful tag needs the combined qualifier, which the
+    reference checker and theorem-map statuses do not yet provide (follow-up
+    bead `flapjack-4ac.5.81.14`).  No cross-assistant agreement theorem is
+    required for a tag; the only gap is the missing combined qualifier. -/
 theorem compileExpValRelHOL {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) [hs : DecidablePred state.memaddrs]
     (context : PanToCrepContextExact width)
