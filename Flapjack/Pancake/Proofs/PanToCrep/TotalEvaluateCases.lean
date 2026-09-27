@@ -91,4 +91,47 @@ theorem panToCrepExactBreakTransition
         (.break 0 : CrepProgHOL width) by simp [compileProgExactHOLW]]
     exact evalCrepSemHOLProg_break targetState memDec shMemDec 0
 
+/-! Source-reviewed prerequisite for HOL `pc_compile_correct[Continue]`.
+The proof resumes the nonrecursive constructor at
+`pan_to_crepProofScript.sml:505-509`; the source evaluator equation is
+`panSemScript.sml:624`, the exact compiler clause is
+`pan_to_crepScript.sml:220`, and the target evaluator equation is
+`crepSemScript.sml:313`. This slice establishes source `Continue`, compiled
+`Continue 0`, and target `Continue 0`, preserving the exact source/target
+state and local relations. It is not the full `pc_compile_correct` case:
+assembling the exact code and exception relations remains open, so this
+Flapjack-specific helper carries no `@[hol]` tag. The production-codec bridge
+`compileProgExactHOLW_continue_bridge` is a distinct theorem and is not
+duplicated here. -/
+theorem panToCrepExactContinueTransition
+    {width : Nat} {σ : Type} [NeZero width]
+    (sourceContext : PanSemStateFiniteExact.FiniteEvalContext width σ)
+    (targetState : CrepSemHOLState width σ)
+    (compileContext : PanToCrepContextExact width)
+    (memDec : (a : BitVec width) → Decidable (targetState.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (targetState.shMemaddrs a))
+    (hstate : panToCrepStateRelFiniteExact sourceContext.state targetState)
+    (hlocals : panToCrepLocalsRelFiniteExact compileContext
+      sourceContext.state.locals targetState.locals) :
+    PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext
+        (.continue : Flapjack.Pancake.PanLang.ProgHOL width) sourceContext =
+      some (some .continue, sourceContext) ∧
+    compileProgExactHOLW compileContext
+        (.continue : Flapjack.Pancake.PanLang.ProgHOL width) =
+      (.continue 0 : CrepProgHOL width) ∧
+    evalCrepSemHOLProg targetState memDec shMemDec
+        (compileProgExactHOLW compileContext
+          (.continue : Flapjack.Pancake.PanLang.ProgHOL width)) =
+      (some (.continue 0), targetState) ∧
+    panToCrepStateRelFiniteExact sourceContext.state targetState ∧
+    panToCrepLocalsRelFiniteExact compileContext
+      sourceContext.state.locals targetState.locals := by
+  refine ⟨?_, ?_, ?_, hstate, hlocals⟩
+  · simp [PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext]
+  · simp [compileProgExactHOLW]
+  · rw [show compileProgExactHOLW compileContext
+      (.continue : Flapjack.Pancake.PanLang.ProgHOL width) =
+        (.continue 0 : CrepProgHOL width) by simp [compileProgExactHOLW]]
+    exact evalCrepSemHOLProg_continue targetState memDec shMemDec 0
+
 end Flapjack
