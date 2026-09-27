@@ -55,6 +55,16 @@ FMAP_AS_FINITE_SUPPORT_RELATION_RE = re.compile(
 FMAP_AS_FINITE_SUPPORT_EQUALITIES_RE = re.compile(
     r'\(\s*fmap_as_finite_support_equalities\s*\)'
 )
+WORDS_AS_TYPE_INDEXED_BITVEC_RE = re.compile(
+    r'\(\s*words_as_type_indexed_bitvec\s*\)'
+)
+WORD_POSITIVITY_EXTRA_RE = re.compile(
+    r"(?:width\s*(?:≠|!=|>|≥)\s*(?:0|1)\b|0\s*<\s*width\b|1\s*≤\s*width\b"
+    r"|Nat\.pos\b|NeZero\.out\b)"
+)
+FFI_UNIVERSE_LEVEL_RE = re.compile(r":\s*Type\s+[A-Za-z_][A-Za-z0-9_']*\b")
+FFI_SORT_RE = re.compile(r":\s*Sort\b")
+HOL_FFI_CARRIER_RE = re.compile(r"\bHolFfiState\b")
 RELATION_FIELD_RE = re.compile(
     r'^\s*([A-Za-z_][A-Za-z0-9_\']*)\s*\.\s*([A-Za-z_][A-Za-z0-9_\']*)\s*$'
 )
@@ -183,6 +193,7 @@ def hol_attribute_sites(lines: list[str]):
                     bool(FMAP_AS_FINITE_SUPPORT_RESULT_RE.search(attribute)),
                     relation_fields_for(),
                     bool(FMAP_AS_FINITE_SUPPORT_EQUALITIES_RE.search(attribute)),
+                    bool(WORDS_AS_TYPE_INDEXED_BITVEC_RE.search(attribute)),
                 )
         start = None
         chunks = []
@@ -332,6 +343,91 @@ def structure_field_map(lines: list[str]) -> dict[str, set[str]]:
         if field and current is not None:
             members[current].add(field.group(1))
     return members
+
+
+def structure_headers(lines: list[str]) -> dict[str, str]:
+    """Binders declared before `where` for every structure in this module.
+
+    The `words_as_type_indexed_bitvec` qualifier resolves a width-indexed
+    carrier by its declaration, so the positivity discharge (`[NeZero width]`)
+    is read from the carrier's own header rather than assumed from its name.
+    """
+    headers: dict[str, str] = {}
+    for line in strip_lean_comments("\n".join(lines)).splitlines():
+        match = re.match(
+            r"^\s*structure\s+([A-Za-z0-9_'.]+)(?P<header>.*?)\bwhere\s*$", line
+        )
+        if match:
+            headers.setdefault(match.group(1), match.group("header"))
+    return headers
+
+
+@lru_cache(maxsize=None)
+def imported_structure_headers(module: str, root: str) -> dict[str, list[str]]:
+    """Header binders of structures reachable through this module's imports.
+
+    Mirrors `imported_structure_field_types` so the word-dimension qualifier can
+    read an imported carrier's `[NeZero width]` discharge from its actual
+    declaration rather than from a same-named local duplicate.
+    """
+    root_path = Path(root)
+    current = root_path / module
+    if not current.is_file():
+        return {}
+    pending = list(IMPORT_RE.findall(current.read_text(encoding="utf-8")))
+    visited: set[str] = set()
+    result: dict[str, list[str]] = {}
+    while pending:
+        imported = pending.pop()
+        if imported in visited:
+            continue
+        visited.add(imported)
+        path = root_path / (imported.replace(".", "/") + ".lean")
+        if not path.is_file():
+            continue
+        lines = path.read_text(encoding="utf-8").splitlines()
+        for name, header in structure_headers(lines).items():
+            result.setdefault(name, []).append(header)
+        pending.extend(IMPORT_RE.findall("\n".join(lines)))
+    return result
+
+
+@lru_cache(maxsize=None)
+def imported_structure_owners(
+    module: str, root: str
+) -> dict[str, list[tuple[str, str, dict[str, str]]]]:
+    """Per-owner declarations of imported structures: name -> [(module, header, fields)].
+
+    The word-dimension qualifier must bind each candidate carrier to its own
+    module, header, and field set.  Pooling headers and field types across
+    same-named structures (a fake local shadow and an imported owner) would let
+    one owner's `[NeZero width]` combine with another owner's `BitVec` field, so
+    the evidence is grouped per declaration here instead.
+    """
+    root_path = Path(root)
+    current = root_path / module
+    if not current.is_file():
+        return {}
+    pending = list(IMPORT_RE.findall(current.read_text(encoding="utf-8")))
+    visited: set[str] = set()
+    result: dict[str, list[tuple[str, str, dict[str, str]]]] = {}
+    while pending:
+        imported = pending.pop()
+        if imported in visited:
+            continue
+        visited.add(imported)
+        path = root_path / (imported.replace(".", "/") + ".lean")
+        if not path.is_file():
+            continue
+        lines = path.read_text(encoding="utf-8").splitlines()
+        headers = structure_headers(lines)
+        types = structure_field_types(lines)
+        for name, fields in types.items():
+            result.setdefault(name, []).append(
+                (imported, headers.get(name, ""), fields)
+            )
+        pending.extend(IMPORT_RE.findall("\n".join(lines)))
+    return result
 
 
 @lru_cache(maxsize=None)
@@ -1354,6 +1450,157 @@ def names_as_string_errors(
     return errors
 
 
+def words_as_type_indexed_bitvec_errors(
+    declaration_text: str,
+    declaration: str,
+    module: str = "",
+    root: str = "",
+    lines: list[str] | None = None,
+) -> list[str]:
+    """Validate the HOL word-dimension / FFI-universe translation qualifier.
+
+    The qualifier records the candidate standard translation of HOL's
+    type-indexed ``'a word`` (dimension ``dimindex (:α)``) to Lean's
+    positive-width ``BitVec width`` and of HOL's ``'ffi ffi_state`` to a
+    universe-0 Lean host type. It is a translation statement only: it changes
+    no quantifier, hypothesis, side condition, or conclusion, and it requires
+    no cross-assistant agreement theorem. The checker enforces the two
+    proof obligations named in the qualifier: the ``[NeZero width]`` discharge
+    of ``dimindex (:α) ≥ 1`` must be retained and must not be restated as an
+    extra hypothesis, and an FFI host type must be bound at a ``Type`` universe
+    (no universe-level variable). A direct signature must bind a ``Nat`` width
+    parameter and mention ``BitVec <that width>`` together with
+    ``[NeZero <that width>]``: ``BitVec 5`` next to an unrelated
+    ``[NeZero width]``, or ``BitVec width`` with ``[NeZero other]``, does not
+    qualify.
+
+    A signature need not spell out ``BitVec`` when it is stated over a
+    width-indexed carrier: the qualifier is also accepted when the signature
+    names a structure (declared locally or reached through imports) whose own
+    header carries ``[NeZero <width>]`` for its width parameter and some field of
+    the SAME owner mentions ``BitVec <width>`` with that same width identifier.
+    The carrier is resolved from its declaration, never from its name alone: the
+    `[NeZero <width>]` and the ``BitVec <width>`` field must belong to the SAME
+    owning declaration and the same width identifier (a header with
+    ``[NeZero other]`` or a field like ``BitVec 5 × HolWordLab width`` does not
+    qualify), and a name with several owners (a local duplicate shadowing an
+    imported owner) is rejected as ambiguous.
+    """
+    errors: list[str] = []
+    if not declaration_text.strip():
+        return [
+            "words_as_type_indexed_bitvec requires a resolvable tagged declaration "
+            f"signature (checked for `{declaration}`)"
+        ]
+    stripped = strip_lean_comments(declaration_text)
+    decl_start = re.search(
+        r"(?:^|\s)(?:def|theorem|lemma|abbrev|instance|structure)\s", stripped
+    )
+    if decl_start is not None:
+        stripped = stripped[decl_start.start():]
+    signature = stripped.split(":=", 1)[0]
+    if not signature.strip():
+        signature = stripped
+    direct_width_match = re.search(
+        r"[\{\(]\s*([A-Za-z_][A-Za-z0-9_']*)\s*:\s*Nat\s*[\}\)]", signature
+    )
+    has_direct_bitvec = False
+    if "BitVec" in signature and direct_width_match is not None:
+        direct_width = direct_width_match.group(1)
+        has_direct_bitvec = (
+            re.search(
+                r"\bBitVec\s+" + re.escape(direct_width) + r"\b", signature
+            )
+            is not None
+            and re.search(
+                r"\[\s*NeZero\s+" + re.escape(direct_width) + r"\s*\]", signature
+            )
+            is not None
+        )
+    carrier_ok = False
+    if not has_direct_bitvec and lines is not None and module and root:
+        local_types = structure_field_types(lines)
+        local_headers = structure_headers(lines)
+        imported_owners = imported_structure_owners(module, root)
+        owners_by_name: dict[str, list[tuple[str, str, dict[str, str]]]] = {}
+        for name in set(local_types) | set(imported_owners):
+            if not identifier_token_occurs(signature, name):
+                continue
+            owners: list[tuple[str, str, dict[str, str]]] = []
+            if name in local_types:
+                owners.append(
+                    (module, local_headers.get(name, ""), local_types[name])
+                )
+            owners.extend(imported_owners.get(name, []))
+            owners_by_name[name] = owners
+        ambiguous = [
+            name for name, owners in owners_by_name.items() if len(owners) != 1
+        ]
+        if ambiguous:
+            errors.append(
+                "words_as_type_indexed_bitvec must resolve each width-indexed "
+                "carrier to a single owning declaration; ambiguous same-named "
+                "owners were found for "
+                + ", ".join(sorted(ambiguous))
+                + " (a local duplicate shadowing an imported owner must be "
+                "removed or disambiguated by signature)"
+            )
+        else:
+            for owners in owners_by_name.values():
+                owner_module, header, fields = owners[0]
+                width_match = re.search(
+                    r"\(\s*([A-Za-z_][A-Za-z0-9_']*)\s*:\s*Nat\s*\)", header
+                )
+                if width_match is None:
+                    continue
+                width_name = width_match.group(1)
+                bitvec_width_re = re.compile(
+                    r"\bBitVec\s+" + re.escape(width_name) + r"\b"
+                )
+                has_bitvec_field = any(
+                    bitvec_width_re.search(type_text) is not None
+                    for type_text in fields.values()
+                )
+                nezero_width_re = re.compile(
+                    r"\[\s*NeZero\s+" + re.escape(width_name) + r"\s*\]"
+                )
+                has_positivity = nezero_width_re.search(header) is not None
+                if has_bitvec_field and has_positivity:
+                    carrier_ok = True
+                    break
+    if not has_direct_bitvec and not carrier_ok:
+        errors.append(
+            "words_as_type_indexed_bitvec must name the Lean positive-width word "
+            "carrier `BitVec` that translates HOL `'a word`, or name a reviewed "
+            "width-indexed carrier structure whose fields include `BitVec`-typed "
+            "fields and whose declaration retains `[NeZero width]`"
+        )
+    if "NeZero" not in signature and not carrier_ok:
+        errors.append(
+            "words_as_type_indexed_bitvec must retain the `[NeZero width]` discharge "
+            "of HOL `dimindex (:α) ≥ 1`"
+        )
+    extra = WORD_POSITIVITY_EXTRA_RE.search(signature)
+    if extra is not None:
+        errors.append(
+            "words_as_type_indexed_bitvec must not restate word-dimension positivity "
+            f"as an extra hypothesis (`{extra.group(0).strip()}`); `[NeZero width]` is "
+            "the only allowed side condition"
+        )
+    if HOL_FFI_CARRIER_RE.search(signature):
+        if ": Type" not in signature and ": Type 0" not in signature:
+            errors.append(
+                "words_as_type_indexed_bitvec must bind the FFI host type at a `Type` "
+                "universe for HOL `'ffi ffi_state`"
+            )
+        if FFI_UNIVERSE_LEVEL_RE.search(signature) or FFI_SORT_RE.search(signature):
+            errors.append(
+                "words_as_type_indexed_bitvec must not introduce an FFI universe-level "
+                "variable or a `Sort`; use the universe-0 `Type` instance"
+            )
+    return errors
+
+
 def hol_declaration_lines(
     path: Path, cache: dict[Path, dict[str, list[int]]]
 ) -> dict[str, list[int]]:
@@ -1429,7 +1676,7 @@ def main(argv: list[str]) -> int:
         module_reported = False
         for (number, hol_path, hol_name, hol_line, list_fields,
              names_fields, boundary_fields, fmap_fields, fmap_result,
-             fmap_relation, fmap_equalities) in hol_attribute_sites(lines):
+             fmap_relation, fmap_equalities, words_bitvec) in hol_attribute_sites(lines):
             where = f"{rel}:{number}"
             lean_decl = find_lean_decl(lines, number - 1)
             if module not in reachable and not module_reported:
@@ -1477,6 +1724,17 @@ def main(argv: list[str]) -> int:
                     f"{where}: {error}"
                     for error in names_as_string_errors(
                         lines, names_fields, boundary_fields, rel, lean_decl
+                    )
+                )
+            if words_bitvec:
+                errors.extend(
+                    f"{where}: {error}"
+                    for error in words_as_type_indexed_bitvec_errors(
+                        tagged_declaration_text(lines, number),
+                        lean_decl,
+                        module=module,
+                        root=str(ROOT),
+                        lines=lines,
                     )
                 )
             target = ROOT / hol_path

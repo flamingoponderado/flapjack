@@ -49,13 +49,15 @@ def validate_export_record(record: Any, line_number: int) -> dict[str, Any]:
         "list_as_array", "names_as_string", "names_as_string_boundary",
         "fmap_as_finite_support", "fmap_as_finite_support_result",
         "fmap_as_finite_support_relation", "fmap_as_finite_support_equalities",
+        "words_as_type_indexed_bitvec",
     }
     if not isinstance(qualifiers, dict) or not set(qualifiers) <= allowed_qualifiers:
         raise ValueError(f"Lean export line {line_number} has invalid qualifiers")
     if any(
         (
             not isinstance(qualifiers.get(key), bool)
-            if key in ("fmap_as_finite_support_result", "fmap_as_finite_support_equalities")
+            if key in ("fmap_as_finite_support_result", "fmap_as_finite_support_equalities",
+                       "words_as_type_indexed_bitvec")
             else not isinstance(value, list) or not all(isinstance(field, str) for field in value)
         )
         for key, value in qualifiers.items()
@@ -131,6 +133,8 @@ def lock_records(
             "reviewed_fmap_as_finite_support_result",
             "reviewed_fmap_as_finite_support_relation",
             "reviewed_fmap_as_finite_support_equalities",
+            "reviewed_words_as_type_indexed_bitvec",
+            "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
         }:
             continue
         key = (record["hol_path"], record["hol_name"], record["lean_name"])
@@ -159,6 +163,8 @@ def lock_records(
             qualifiers["fmap_as_finite_support_result"] = True
         if record.get("fmap_as_finite_support_equalities", False):
             qualifiers["fmap_as_finite_support_equalities"] = True
+        if record.get("words_as_type_indexed_bitvec", False):
+            qualifiers["words_as_type_indexed_bitvec"] = True
         exported_qualifiers = item.get("qualifiers", {})
         if any(exported_qualifiers.get(key, []) != value
                for key, value in qualifiers.items()):
