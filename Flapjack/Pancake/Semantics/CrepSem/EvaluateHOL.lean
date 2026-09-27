@@ -710,6 +710,40 @@ decreasing_by
        try simp only [true_and] at *
        omega)
 
+/-- A public no-extra-decision-argument entry point for the finite-support
+    evaluator. Classical decidability supplies the two domain tests required by
+    the Lean recursive core; the proof-side behavior is independent of which
+    decision procedures are chosen, as `evalCrepSemHOLProgExact_eq_core`
+    records. This removes the explicit `memDec`/`shMemDec` arguments from the
+    evaluator interface, but is not tagged as HOL `evaluate_def`: the full
+    clause/carrier audit remains incomplete. -/
+noncomputable def evalCrepSemHOLProgExact {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) (program : CrepProgHOL width) :
+    Option (CrepResultHOLExact width) × CrepSemHOLState width σ := by
+  classical
+  exact evalCrepSemHOLProg state
+    (fun a => (inferInstance : Decidable (state.memaddrs a)))
+    (fun a => (inferInstance : Decidable (state.shMemaddrs a))) program
+
+/-- The no-extra-argument entry point agrees with the recursive core for any
+    domain deciders. This kernel-checked equation makes its classical choice
+    invisible in the evaluator result. -/
+theorem evalCrepSemHOLProgExact_eq_core {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) (program : CrepProgHOL width)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a)) :
+    evalCrepSemHOLProgExact state program =
+      evalCrepSemHOLProg state memDec shMemDec program := by
+  classical
+  have hmem : (fun a => Classical.propDecidable (state.memaddrs a)) = memDec := by
+    funext address
+    exact Subsingleton.elim _ _
+  have hshMem : (fun a => Classical.propDecidable (state.shMemaddrs a)) = shMemDec := by
+    funext address
+    exact Subsingleton.elim _ _
+  unfold evalCrepSemHOLProgExact
+  congr 1
+
 /-- Kernel-checked `Skip` constructor equation of the total HOL-shaped
     evaluator, matching HOL `crepSemScript.sml:241`
     `evaluate (Skip, s) = (NONE, s)`. -/
@@ -1089,7 +1123,24 @@ theorem evalCrepSemHOLProg_while_timeout {width : Nat} [NeZero width] {σ : Type
     evaluate the arguments, look up the code, require distinct formals, install
     the callee locals under `dec_clock`, run the body under `fix_clock`, then
     handle ordinary completion/`Break`/`Continue` as `Error`, and `Return`/
-    `Exception` including the handler path and `empty_locals` cleanup. -/
+    `Exception` including the handler path and `empty_locals` cleanup.
+
+    Source review against `evaluate_def` lines 335-364 and `lookup_code_def`
+    lines 76-83 found the Call branches and side conditions aligned: `mapM`
+    evaluates the arguments, the direct code-map case is the expanded
+    `lookup_code` formal-count/distinctness check and zipped local installation,
+    the return-info distinctness check precedes timeout, and the recursive
+    body/handler and cleanup cases follow the HOL cases. The handler's
+    `crepStampExactDomains` restores the original
+    domain fields, which the evaluator clauses do not update, so the explicit
+    domain decisions remain valid across that state update.
+
+    This equation intentionally has no `@[hol]` tag. Its evaluator application
+    takes explicit `memDec` and `shMemDec` arguments; HOL's `evaluate` has only
+    the program and state arguments. That evaluator-interface mismatch remains
+    even though the Call case body was source-reviewed. The faithful public
+    evaluator interface is tracked by `flapjack-4ac.5.16.5.2`; this case audit
+    is `flapjack-4ac.5.16.5.1`. -/
 @[simp] theorem evalCrepSemHOLProg_call {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ)
     (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
