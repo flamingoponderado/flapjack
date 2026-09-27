@@ -123,6 +123,17 @@ val _ = print_eval "duplicate_function_names"
             body := panLang$Call (SOME (NONE, NONE)) «f» [];
             return := panLang$One |>]``;
 
+(* A distinct-name row for first_compile_to_crep_all_distinct. The compiler
+   preserves source order and the first component of every output triple. *)
+val _ = print_eval "distinct_function_names"
+  ``pan_to_crep$compile_to_crep
+      [panLang$Function
+         <| name := «f»; inline := F; export := F; params := [];
+            body := panLang$Skip; return := panLang$One |>;
+       panLang$Function
+         <| name := «g»; inline := F; export := F; params := [];
+            body := panLang$Skip; return := panLang$One |>]``;
+
 val _ = print_eval "crep_vars_empty"
   ``pan_to_crep$crep_vars ([] : (mlstring # panLang$shape) list)``;
 

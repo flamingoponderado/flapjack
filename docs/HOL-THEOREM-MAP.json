@@ -7114,6 +7114,15 @@
     "reviewer": "Codex (HOL source comparison, flapjack-yao): HOL panLang prog uses the DeclHOL declaration carrier with mlstring identifiers and HOL expression/shape types, and compile_to_crep returns function entries with HOL CrepProgHOL bodies. Lean quantifies over production Decl (BitVec width) and concludes over compileToCrepHOL's production FunName/generic CrepProg output. These input and output type differences exceed identifier representation, so names_as_string cannot qualify this analogue. It is untagged; exact-carrier replacement depends on DeclHOL and compiler-boundary work, tracked by flapjack-yao.1."
   },
   {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "first_compile_to_crep_all_distinct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "firstCompileToCrepAllDistinctExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-28; bead flapjack-yao.1) against pan_to_crepProofScript.sml:4566-4573. HOL's premise is ALL_DISTINCT (MAP FST (functions prog)); conclusion is ALL_DISTINCT (MAP FST (compile_to_crep prog)), with no extra assumptions. Lean uses the exact `functionsHOL : List (DeclHOL width) -> ...` and exact `compileToCrepExactHOLW` result triples, preserving the same first-name projections and source order; List.Nodup/List.map are the direct ALL_DISTINCT/MAP carriers. [NeZero width] preserves the positive HOL word dimension and words_as_type_indexed_bitvec is the only representation translation. Direct HOL EVAL row distinct_function_names in scripts/hol-probes/compile_to_crep_probe.out is checked over the exact carriers by Flapjack/Test/FirstCompileToCrepAllDistinctExact.lean. The older production-carrier analogue remains separately documented_mismatch and untagged.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateCases.lean",
