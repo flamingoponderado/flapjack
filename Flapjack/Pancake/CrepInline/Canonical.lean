@@ -46,7 +46,7 @@ carrier port (`flapjack-e7w.2.1.13`).
 
 namespace Flapjack
 
-namespace CrepInlineProbeCanonical
+namespace CrepInlineCanonical
 
 variable {α : Type} {β : Type} {width : Nat} [NeZero width]
 
@@ -273,6 +273,46 @@ noncomputable def inlineProgHOLExact [BEq CrepInlineMapHOLName]
     (Classical.choose inlineable.finiteSupport)
     (Classical.choose_spec inlineable.finiteSupport)
 
-end CrepInlineProbeCanonical
+/-- The finite key list `domainKeys` of the unique-key list model is a valid
+    certificate for the canonical `HolFiniteMapExact` view, so the exact
+    recursive core can be run on `crepInlineMapHOL ... .toHolFiniteMapExact`
+    without any extra hypothesis. -/
+theorem domainKeys_spec [BEq CrepInlineMapHOLName] [LawfulBEq CrepInlineMapHOLName]
+    (fs : CrepInlineFmapHOL width) :
+    ∀ key, fs.toHolFiniteMapExact.lookup key ≠ none → key ∈ fs.domainKeys := by
+  intro key h
+  rw [CrepInlineFmapHOL.lookup_toHolFiniteMapExact] at h
+  rw [CrepInlineFmapHOL.mem_domainKeys_iff_lookup]
+  exact h
+
+/-- Regression against the handler row of
+    `scripts/hol-probes/crep_inline_code_inl_probe.out`: the canonical-carrier
+    core keeps the handler arm untouched apart from recursing into its body,
+    exactly as the list-model core and HOL `inline_prog` do. -/
+theorem inlineProgHOLCoreExact_handler_example [BEq CrepInlineMapHOLName]
+    [LawfulBEq CrepInlineMapHOLName]
+    (fs : CrepInlineFmapHOL 8)
+    (returnNames : List Nat) (handler : BitVec 8) (body : CrepProgHOL 8)
+    (name : CrepInlineMapHOLName) (arguments : List (CrepExpHOL 8)) :
+    inlineProgHOLCoreExact fs.toHolFiniteMapExact fs.domainKeys
+        (domainKeys_spec fs)
+        (.call (some (returnNames, some (handler, body))) name arguments) =
+      .call (some (returnNames, some (handler,
+        inlineProgHOLCoreExact fs.toHolFiniteMapExact fs.domainKeys
+          (domainKeys_spec fs) body))) name arguments :=
+  inlineProgHOLCoreExact_call_handler _ _ _ _ _ _ _ _
+
+/-- Regression against the structural (non-call) rows: the canonical-carrier
+    core maps `dec`/`seq` structurally, and irreducible atoms are left alone. -/
+theorem inlineProgHOLCoreExact_structural_example [BEq CrepInlineMapHOLName]
+    [LawfulBEq CrepInlineMapHOLName] (fs : CrepInlineFmapHOL 8) :
+    inlineProgHOLCoreExact fs.toHolFiniteMapExact fs.domainKeys
+        (domainKeys_spec fs)
+        (.dec 1 (.const 2) (.seq .skip .skip) : CrepProgHOL 8) =
+      .dec 1 (.const 2) (.seq .skip .skip) := by
+  rw [inlineProgHOLCoreExact_dec, inlineProgHOLCoreExact_seq,
+    inlineProgHOLCoreExact_skip]
+
+end CrepInlineCanonical
 
 end Flapjack
