@@ -1386,7 +1386,8 @@ theorem evalPanValueExps_option_correspondence {width : Nat} [NeZero width]
     `scripts/hol-probes/word_op_finite_probe.out` (HOL `wordLang$word_op_def`
     Add/Sub/And/Or/Xor, including the arity-mismatch rejection rows) and
     `scripts/hol-probes/pan_sem_state_eval_probe.out` (rows `op_add_fold_three`
-    success and `op_sub_wrong_arity` rejection, checked in
+    success, `op_sub_wrong_arity` arity rejection, and the FAILED-argument rows
+    `op_add_var_missing` / `op_add_const_var_missing`, all checked in
     `Flapjack/Test/PanSemStateEvalParity.lean`). -/
 theorem evalPanValueExp_op_option_correspondence_executed {σ : Type}
     (productionState : PanSemState (RiscV.Word 64) σ)
