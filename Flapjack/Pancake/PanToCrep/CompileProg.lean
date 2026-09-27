@@ -3793,6 +3793,79 @@ theorem compileProgExactHOLW_call_relation_bridge {width : Nat} [NeZero width]
     simpa [compileProgRiscV] using hbaseToProduction)
   simpa [Flapjack.Pancake.PanLang.progOfHOL] using hbridge
 
+/-- Relation-polymorphic Store case. The existing exact-context Store bridge
+    preserves its address-head and value-shape guards; paired expression
+    outputs and related `vmax` transport that result to an arbitrary related
+    production context. -/
+theorem compileProgExactHOLW_store_relation_bridge {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width)
+    (productionContext : PanToCrepHOLContext (BitVec width))
+    (hcontext : PanToCrepContextExactProdRel context productionContext)
+    (address value : Exp (BitVec width))
+    (haddressBase :
+      ((compileExpExactHOLW context (expToHOL address)).1.map crepExpOfHOL,
+        shapeOfHOL (compileExpExactHOLW context (expToHOL address)).2) =
+        compileExpHOL context.toProduction address)
+    (hvalueBase :
+      ((compileExpExactHOLW context (expToHOL value)).1.map crepExpOfHOL,
+        shapeOfHOL (compileExpExactHOLW context (expToHOL value)).2) =
+        compileExpHOL context.toProduction value)
+    (haddressProduction :
+      ((compileExpExactHOLW context (expToHOL address)).1.map crepExpOfHOL,
+        shapeOfHOL (compileExpExactHOLW context (expToHOL address)).2) =
+        compileExpHOL productionContext address)
+    (hvalueProduction :
+      ((compileExpExactHOLW context (expToHOL value)).1.map crepExpOfHOL,
+        shapeOfHOL (compileExpExactHOLW context (expToHOL value)).2) =
+        compileExpHOL productionContext value) :
+    crepProgOfHOL (compileProgExactHOLW context
+        (.store (expToHOL address) (expToHOL value))) =
+      compileProgHOL productionContext (.store address value) := by
+  have haddressCongr : compileExpHOL context.toProduction address =
+      compileExpHOL productionContext address :=
+    haddressBase.symm.trans haddressProduction
+  have hvalueCongr : compileExpHOL context.toProduction value =
+      compileExpHOL productionContext value :=
+    hvalueBase.symm.trans hvalueProduction
+  have hvmax : context.toProduction.vmax = productionContext.vmax := by
+    simpa [PanToCrepContextExact.toProduction] using hcontext.2.2.1
+  cases hexactAddress : compileExpExactHOLW context (expToHOL address) with
+  | mk exactAddresses exactAddressShape =>
+      cases hexactValue : compileExpExactHOLW context (expToHOL value) with
+      | mk exactValues exactValueShape =>
+          cases hproductionAddress : compileExpHOL context.toProduction address with
+          | mk productionAddresses productionAddressShape =>
+              cases hproductionValue : compileExpHOL context.toProduction value with
+              | mk productionValues productionValueShape =>
+                  have haddressCodecPair := haddressBase
+                  rw [hexactAddress, hproductionAddress] at haddressCodecPair
+                  rcases Prod.mk.inj haddressCodecPair with
+                    ⟨haddressCodec, _haddressShapeCodec⟩
+                  have hvalueCodecPair := hvalueBase
+                  rw [hexactValue, hproductionValue] at hvalueCodecPair
+                  rcases Prod.mk.inj hvalueCodecPair with
+                    ⟨hvalueCodec, hvalueShapeCodec⟩
+                  have hproductionValue' :
+                      compileExpHOL context.toProduction value =
+                        (productionValues, productionValueShape) := hproductionValue
+                  have hproductionAddress' :
+                      compileExpHOL context.toProduction address =
+                        (productionAddresses, productionAddressShape) := hproductionAddress
+                  have hbaseBridge := compileProgExactHOLW_store_output_bridge
+                    context address value exactAddresses exactAddressShape exactValues
+                    exactValueShape productionAddresses productionAddressShape
+                    productionValues productionValueShape hexactAddress hexactValue
+                    hproductionAddress' hproductionValue' haddressCodec hvalueCodec
+                    hvalueShapeCodec
+                  have hcontextCongr :
+                      compileProgHOL context.toProduction (.store address value) =
+                        compileProgHOL productionContext (.store address value) := by
+                    simp [compileProgHOL, freshNamesHOL, haddressCongr,
+                      hvalueCongr, hvmax]
+                  have hbridge := hbaseBridge.trans (by
+                    simpa [compileProgRiscV] using hcontextCongr)
+                  simpa [compileProgRiscV] using hbridge
+
 theorem compileProgExactHOLW_shmem_store_bridge {width : Nat} [NeZero width]
     (context : PanToCrepContextExact width) (operator : OpSize)
     (value address : Exp (BitVec width))
