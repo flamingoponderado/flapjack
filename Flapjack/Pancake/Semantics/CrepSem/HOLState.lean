@@ -565,7 +565,7 @@ namespace CrepSemHOLState
     carrier. The `(fmap_as_finite_support := [locals, globals, code])` qualifier
     records that the HOL state's finite maps are represented by
     `HolFiniteMapExact`; the body uses HOL equality (`=`). -/
-@[hol "cakeml/pancake/semantics/crepSemScript.sml" "set_var_def" (fmap_as_finite_support := [locals, globals, code])]
+@[hol "cakeml/pancake/semantics/crepSemScript.sml" "set_var_def" (fmap_as_finite_support := [locals, globals, code]) (words_as_type_indexed_bitvec)]
 def setVar {width : Nat} [NeZero width] {ffiState : Type} (name : Nat)
     (value : HolWordLab width) (state : CrepSemHOLState width ffiState) :
     CrepSemHOLState width ffiState :=
@@ -573,7 +573,7 @@ def setVar {width : Nat} [NeZero width] {ffiState : Type} (name : Nat)
 
 /-- HOL `set_globals` (`crepSemScript.sml:61-63`) over the exact finite-support
     carrier, using HOL equality (`=`). -/
-@[hol "cakeml/pancake/semantics/crepSemScript.sml" "set_globals_def" (fmap_as_finite_support := [locals, globals, code])]
+@[hol "cakeml/pancake/semantics/crepSemScript.sml" "set_globals_def" (fmap_as_finite_support := [locals, globals, code]) (words_as_type_indexed_bitvec)]
 def setGlobals {width : Nat} [NeZero width] {ffiState : Type} (key : BitVec 5)
     (value : HolWordLab width) (state : CrepSemHOLState width ffiState) :
     CrepSemHOLState width ffiState :=
@@ -581,7 +581,7 @@ def setGlobals {width : Nat} [NeZero width] {ffiState : Type} (key : BitVec 5)
 
 /-- HOL `upd_locals` (`crepSemScript.sml:66-68`) over the exact finite-support
     carrier: locals are replaced by `FEMPTY |++ varargs`, using HOL equality. -/
-@[hol "cakeml/pancake/semantics/crepSemScript.sml" "upd_locals_def" (fmap_as_finite_support := [locals, globals, code])]
+@[hol "cakeml/pancake/semantics/crepSemScript.sml" "upd_locals_def" (fmap_as_finite_support := [locals, globals, code]) (words_as_type_indexed_bitvec)]
 def updLocals {width : Nat} [NeZero width] {ffiState : Type}
     (varargs : List (Nat × HolWordLab width))
     (state : CrepSemHOLState width ffiState) : CrepSemHOLState width ffiState :=
@@ -589,7 +589,7 @@ def updLocals {width : Nat} [NeZero width] {ffiState : Type}
 
 /-- HOL `empty_locals` (`crepSemScript.sml:71-74`) over the exact finite-support
     carrier, using `FEMPTY` for locals. -/
-@[hol "cakeml/pancake/semantics/crepSemScript.sml" "empty_locals_def" (fmap_as_finite_support := [locals, globals, code])]
+@[hol "cakeml/pancake/semantics/crepSemScript.sml" "empty_locals_def" (fmap_as_finite_support := [locals, globals, code]) (words_as_type_indexed_bitvec)]
 def emptyLocals {width : Nat} [NeZero width] {ffiState : Type}
     (state : CrepSemHOLState width ffiState) : CrepSemHOLState width ffiState :=
   { state with locals := HolFiniteMapExact.empty }
@@ -689,7 +689,7 @@ end CrepSemHOLState
 /-- Port of HOL `dec_clock_def` (`crepSemScript.sml:145-148`) over the
     finite-support `CrepSemHOLState` carrier, in the same module as the owning
     structure and its canonical `holFmapAsFiniteSupportWitness`. -/
-@[hol "cakeml/pancake/semantics/crepSemScript.sml" "dec_clock_def" (fmap_as_finite_support := [locals, globals, code])]
+@[hol "cakeml/pancake/semantics/crepSemScript.sml" "dec_clock_def" (fmap_as_finite_support := [locals, globals, code]) (words_as_type_indexed_bitvec)]
 def decClockCrepSemHOL {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ) : CrepSemHOLState width σ :=
   { state with clock := state.clock - 1 }
@@ -697,7 +697,7 @@ def decClockCrepSemHOL {width : Nat} [NeZero width] {σ : Type}
 /-- Port of HOL `fix_clock_def` (`crepSemScript.sml:150-152`) over the
     finite-support `CrepSemHOLState` carrier. The result is polymorphic in the
     unconstrained `res` component, as in HOL. -/
-@[hol "cakeml/pancake/semantics/crepSemScript.sml" "fix_clock_def" (fmap_as_finite_support := [locals, globals, code])]
+@[hol "cakeml/pancake/semantics/crepSemScript.sml" "fix_clock_def" (fmap_as_finite_support := [locals, globals, code]) (words_as_type_indexed_bitvec)]
 def fixClockCrepSemHOL {width : Nat} [NeZero width] {σ : Type} {β : Type}
     (oldState : CrepSemHOLState width σ) (step : β × CrepSemHOLState width σ) :
     β × CrepSemHOLState width σ :=
@@ -706,7 +706,7 @@ def fixClockCrepSemHOL {width : Nat} [NeZero width] {σ : Type} {β : Type}
 
 /-- Port of HOL `fix_clock_IMP_LESS_EQ` (`crepSemScript.sml:155-158`):
     `fix_clock` never increases the clock. -/
-@[hol "cakeml/pancake/semantics/crepSemScript.sml" "fix_clock_IMP_LESS_EQ" (fmap_as_finite_support := [locals, globals, code])]
+@[hol "cakeml/pancake/semantics/crepSemScript.sml" "fix_clock_IMP_LESS_EQ" (fmap_as_finite_support := [locals, globals, code]) (words_as_type_indexed_bitvec)]
 theorem fixClockCrepSemHOL_IMP_LESS_EQ {width : Nat} [NeZero width] {σ : Type}
     {β : Type} (state : CrepSemHOLState width σ) (x : β × CrepSemHOLState width σ)
     (res : β) (s1 : CrepSemHOLState width σ)
@@ -722,7 +722,7 @@ theorem fixClockCrepSemHOL_IMP_LESS_EQ {width : Nat} [NeZero width] {σ : Type}
 /-- Port of HOL `mem_load_def` (`crepSemScript.sml:48-51`) over the
     finite-support `CrepSemHOLState` carrier: a total `word → word_lab` memory
     guarded by the `memaddrs` set. -/
-@[hol "cakeml/pancake/semantics/crepSemScript.sml" "mem_load_def" (fmap_as_finite_support := [locals, globals, code])]
+@[hol "cakeml/pancake/semantics/crepSemScript.sml" "mem_load_def" (fmap_as_finite_support := [locals, globals, code]) (words_as_type_indexed_bitvec)]
 def memLoadCrepSemHOL {width : Nat} [NeZero width] {σ : Type}
     (address : BitVec width) (state : CrepSemHOLState width σ)
     [DecidablePred state.memaddrs] :
