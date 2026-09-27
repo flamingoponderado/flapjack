@@ -1753,7 +1753,14 @@ theorem panMemLoad32HOL_codecRel
 /-- Executed-access `.load32` arm correspondence: the production `read32` at the
     executed `panSemBitVec64MemoryAccess` agrees with the finite tagged
     `panMemLoad32HOL` result whenever the executable memory is the finite state
-    memory guarded by `memaddrs` and the `memaddrs`/`be` fields agree. -/
+    memory guarded by `memaddrs` and the `memaddrs`/`be` fields agree.
+
+    Concrete executed-path guards against the direct HOL EVAL rows in
+    `scripts/hol-probes/pan_fixed_load_probe.out` live in
+    `Flapjack/Test/DeclBridgeParity.lean`: `load32_hit=SOME 0x4030201w`
+    (little-endian, address 8), `load32_unaligned=NONE` (address 9),
+    `load32_domain_miss=NONE` (domain `{16w}`), and
+    `load32_big_endian=SOME 0x8070605w` (big-endian, address 8). -/
 theorem evalPanValueExp_load32_option_correspondence_executed {σ : Type}
     (productionState : PanSemState (RiscV.Word 64) σ)
     (state : PanSemStateFiniteExact 64 Unit) [_hmem : DecidablePred state.memaddrs]
@@ -1830,7 +1837,13 @@ theorem evalPanValueExp_load32_option_correspondence_executed {σ : Type}
           | some value =>
               simp only [Option.map_some, PanSemDeclarationValueOptionRel, panValueCodecRel_word]
 
-/-- Executed-access `.loadByte` arm correspondence (same shape as `.load32`). -/
+/-- Executed-access `.loadByte` arm correspondence (same shape as `.load32`).
+
+    Concrete executed-path guards against the direct HOL EVAL rows in
+    `scripts/hol-probes/pan_fixed_load_probe.out` live in
+    `Flapjack/Test/DeclBridgeParity.lean`: `byte_hit=SOME 2w` (little-endian,
+    address 9), `byte_miss=NONE` (domain `{16w}`), and
+    `byte_big_endian=SOME 7w` (big-endian, address 9). -/
 theorem evalPanValueExp_loadByte_option_correspondence_executed {σ : Type}
     (productionState : PanSemState (RiscV.Word 64) σ)
     (state : PanSemStateFiniteExact 64 Unit) [_hmem : DecidablePred state.memaddrs]
