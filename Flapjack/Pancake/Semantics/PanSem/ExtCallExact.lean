@@ -74,6 +74,91 @@ def extCallStepHOLExact {width : Nat} {σ : Type} [NeZero width]
       | _, _ => (some .error, state)
   | _, _, _, _ => (some .error, state)
 
+/-- The legacy UInt8 memory adapter is the projection of the exact HOL `word8`
+    load helper. This bridge is Flapjack-specific infrastructure; it does not
+    retag the UInt8 declaration as an exact HOL port. -/
+theorem panMemLoadByteHOL_eq_word8_projection {width : Nat} [NeZero width]
+    (memory : RiscV.Word width → HolWordLab width)
+    (domain : RiscV.Word width → Prop) [DecidablePred domain]
+    (bigEndian : Bool) (address : RiscV.Word width) :
+    panMemLoadByteHOL memory domain bigEndian address =
+      (panMemLoadByteWord8HOL memory domain bigEndian address).map UInt8.ofBitVec := by
+  simp [panMemLoadByteHOL, panMemLoadByteWord8HOL, panGetByteHOL,
+    panGetByteWord8HOL] <;> rfl
+
+/-- `readBytearrayHOL` is the UInt8 projection of the exact word-valued HOL
+    reader. This preserves the option failure at the first missing byte and
+    maps only successful byte lists. -/
+theorem readBytearrayHOL_eq_word8_projection {width : Nat} [NeZero width]
+    (address : RiscV.Word width) (length : Nat)
+    (getByte : RiscV.Word width → Option (BitVec 8)) :
+    readBytearrayHOL address length (fun a => (getByte a).map UInt8.ofBitVec) =
+      (readBytearrayWordHOL (byteWidth := 8) address length getByte).map
+        (List.map UInt8.ofBitVec) := by
+  induction length generalizing address with
+  | zero => rfl
+  | succ length ih =>
+      simp only [readBytearrayHOL, readBytearrayWordHOL]
+      cases hByte : getByte address with
+      | none => simp
+      | some byte =>
+          simp only [Option.map_some]
+          rw [ih]
+          cases hRest : readBytearrayWordHOL (address + 1) length getByte <;>
+            simp
+
+/-- End-to-end reader bridge for Pan memory: the UInt8 `ExtCall` adapter reads
+    exactly the projection of HOL's `word8 list` byte-array result, including
+    missing-address failure. -/
+theorem panReadBytearrayHOL_eq_word8_projection {width : Nat} [NeZero width]
+    (address : RiscV.Word width) (length : Nat)
+    (memory : RiscV.Word width → HolWordLab width)
+    (domain : RiscV.Word width → Prop) [DecidablePred domain]
+    (bigEndian : Bool) :
+    readBytearrayHOL address length
+        (panMemLoadByteHOL memory domain bigEndian) =
+      (readBytearrayWordHOL (byteWidth := 8) address length
+        (panMemLoadByteWord8HOL memory domain bigEndian)).map
+        (List.map UInt8.ofBitVec) := by
+  have hload : panMemLoadByteHOL memory domain bigEndian =
+      fun address => (panMemLoadByteWord8HOL memory domain bigEndian address).map
+        UInt8.ofBitVec := by
+    funext address
+    exact panMemLoadByteHOL_eq_word8_projection memory domain bigEndian address
+  rw [hload]
+  exact readBytearrayHOL_eq_word8_projection address length
+    (panMemLoadByteWord8HOL memory domain bigEndian)
+
+/-- A UInt8 store agrees with the exact HOL `word8` store after converting the
+    byte at the boundary. The result compares the complete memory maps, so the
+    equality covers both the selected aligned cell and every untouched cell. -/
+theorem panMemStoreByteHOL_eq_word8 {width : Nat} [NeZero width]
+    (memory : RiscV.Word width → HolWordLab width)
+    (domain : RiscV.Word width → Prop) [DecidablePred domain]
+    (bigEndian : Bool) (address : RiscV.Word width) (byte : UInt8) :
+    panMemStoreByteHOL memory domain bigEndian address byte =
+      panMemStoreByteWord8HOL memory domain bigEndian address byte.toBitVec := by
+  simp [panMemStoreByteHOL, panMemStoreByteWord8HOL, panSetByteHOL]
+
+/-- The recursively defined UInt8 byte-array writer is the exact HOL writer
+    projected along `UInt8.toBitVec`. The induction follows HOL's tail-first
+    recursion, including its rule that a failed head store restores the
+    original outer memory. -/
+theorem panWriteBytearrayHOL_eq_word8_projection {width : Nat} [NeZero width]
+    (address : RiscV.Word width) (bytes : List UInt8)
+    (memory : RiscV.Word width → HolWordLab width)
+    (domain : RiscV.Word width → Prop) [DecidablePred domain]
+    (bigEndian : Bool) :
+    panWriteBytearrayHOL address bytes memory domain bigEndian =
+      panWriteBytearrayWord8HOL address (bytes.map UInt8.toBitVec)
+        memory domain bigEndian := by
+  induction bytes generalizing address memory with
+  | nil => rfl
+  | cons byte rest ih =>
+      simp only [panWriteBytearrayHOL, panWriteBytearrayWord8HOL, List.map_cons]
+      rw [ih (address := address + 1) (memory := memory)]
+      rw [panMemStoreByteHOL_eq_word8]
+
 /-- The exact HOL `ExtCall` clause does not change the ordinary memory domain.
     Its returned-byte branch updates only memory and FFI; the final branch
     clears only locals. This lets the recursive evaluator reuse the existing
