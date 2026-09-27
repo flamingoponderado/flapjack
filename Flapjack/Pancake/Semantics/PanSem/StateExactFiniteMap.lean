@@ -2011,7 +2011,7 @@ theorem evalPanSemRecursiveCallFiniteContext_callFixedContext_normalize
     equation, without relying on generated `withState` proof arguments. -/
 theorem evalPanSemRecursiveCallFiniteContext_callContinuationContext_normalize
     {width : Nat} {σ : Type} [NeZero width]
-    (program : ProgHOL width) (context : FiniteEvalContext width σ)
+    (context : FiniteEvalContext width σ)
     (entry : PanSemStateFiniteExact width σ)
     (bodyResult : Option (PanSemResultExact width))
     (bodyContext : FiniteEvalContext width σ)
@@ -2020,17 +2020,15 @@ theorem evalPanSemRecursiveCallFiniteContext_callContinuationContext_normalize
       bodyContext.state.memaddrs)
     (hshared : (fixClockHOLFinite entry (bodyResult, bodyContext.state)).2.shMemaddrs =
       bodyContext.state.shMemaddrs) :
-    evalPanSemRecursiveCallFiniteContext program
-        ((bodyContext.withState
+    ((bodyContext.withState
           (fixClockHOLFinite entry (bodyResult, bodyContext.state)).2 hmem hshared).withState
           (handlerStateHOLFinite context
             (bodyContext.withState
               (fixClockHOLFinite entry (bodyResult, bodyContext.state)).2 hmem hshared)
             resultName value) rfl rfl) =
-      evalPanSemRecursiveCallFiniteContext program
-        (callContinuationContextHOLFinite context
-          (callFixedContextHOLFinite entry bodyResult bodyContext) resultName value) := by
-  apply evalPanSemRecursiveCallFiniteContext_state_eq
+      callContinuationContextHOLFinite context
+        (callFixedContextHOLFinite entry bodyResult bodyContext) resultName value := by
+  apply FiniteEvalContext.ext
   rfl
 
 /-- FLAPJACK-SPECIFIC provisional projection (not a HOL declaration; carries no
