@@ -3513,4 +3513,52 @@ theorem evaluateClockSubSkipCaseHOLFinite {width : Nat} {σ : Type} [NeZero widt
   subst state
   simp
 
+/-- Genuine `Break` case of HOL `evaluate_clock_sub`. The source evaluator
+    returns `(SOME Break,s)` without changing `s`, so the original run equation
+    identifies the clock-subtracted input. -/
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_clock_sub"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateClockSubBreakCaseHOLFinite {width : Nat} {σ : Type} [NeZero width] :
+    ∀ (state : PanPropsEvalStateFiniteExact width σ)
+      (result : Option (PanSemResultExact width))
+      (st : PanPropsEvalStateFiniteExact width σ) (ck : Nat),
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state .break =
+        (result, { st with clock := st.clock + ck }) →
+      result ≠ some .timeOut →
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair
+        { state with clock := state.clock - ck } .break = (result, st) := by
+  classical
+  intro state result st ck hRun _hne
+  simp only [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair,
+    PanSemStateFiniteExact.evaluateHOLFiniteState_break,
+    PanPropsEvalStateFiniteExact.ofPanSemFinite_toPanSemFinite] at hRun ⊢
+  rcases Prod.mk.inj hRun with ⟨rfl, hState⟩
+  subst state
+  simp
+
+/-- Genuine `Continue` case of HOL `evaluate_clock_sub`. The source evaluator
+    returns `(SOME Continue,s)` without changing `s`, so the original run
+    equation identifies the clock-subtracted input. -/
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_clock_sub"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateClockSubContinueCaseHOLFinite {width : Nat} {σ : Type} [NeZero width] :
+    ∀ (state : PanPropsEvalStateFiniteExact width σ)
+      (result : Option (PanSemResultExact width))
+      (st : PanPropsEvalStateFiniteExact width σ) (ck : Nat),
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state .continue =
+        (result, { st with clock := st.clock + ck }) →
+      result ≠ some .timeOut →
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair
+        { state with clock := state.clock - ck } .continue = (result, st) := by
+  classical
+  intro state result st ck hRun _hne
+  simp only [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair,
+    PanSemStateFiniteExact.evaluateHOLFiniteState_continue,
+    PanPropsEvalStateFiniteExact.ofPanSemFinite_toPanSemFinite] at hRun ⊢
+  rcases Prod.mk.inj hRun with ⟨rfl, hState⟩
+  subst state
+  simp
+
 end Flapjack
