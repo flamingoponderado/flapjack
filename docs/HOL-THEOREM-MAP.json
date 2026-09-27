@@ -12636,6 +12636,17 @@
     "hol_name": "evaluate_def",
     "hol_line": 556,
     "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
+    "lean_name": "evaluateHOLFiniteState_decCall_body_none",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-27; bead flapjack-qj5.12.4): Definition evaluate_def at panSemScript.sml:556 has the DecCall clause at lines 694-714. This split selects successful OPT_MMAP arguments and successful lookup_code, a nonzero caller clock, then the recursive body induction hypothesis evaluate(entry, body) = (NONE, bodyPost). HOL sets entry to dec_clock s with locals := newlocals, defines eval_prog by fix_clock entry (evaluate body entry), and its (NONE, st) branch returns (SOME Error, st). The Lean entry is callEntryStateHOLFinite; the conclusion is (SOME Error, (fixClockHOLFinite entry (NONE, bodyPost)).2). The branch selectors and body induction hypothesis match these source conditions; the conclusion has HOL's result-option × state shape with no evaluator assembly marker, target premise, or unrelated assumption. PanSemStateFiniteExact has positive width [NeZero width], width-indexed words model HOL words as BitVec width, σ : Type carries the FFI state, and locals/globals/code/eshapes are its canonical same-module HolFiniteMapExact fields. The two qualifiers record only these reviewed carrier translations. The existing original Pancake probe pan_sem_deccall_error_probe.out observes deccall_error_result=SOME Error for successful lookup with a failing body. Other DecCall branches and full assembly remain open."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 556,
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
     "lean_name": "evaluateHOLFiniteState_seq",
     "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
     "fmap_as_finite_support": [
