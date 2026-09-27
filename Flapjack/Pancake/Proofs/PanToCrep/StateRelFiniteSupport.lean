@@ -48,6 +48,36 @@ def noOverlapFiniteExact {κ β : Type}
       map.lookup key' = some (shape', slots') →
       (∃ slot, slot ∈ slots ∧ slot ∈ slots') → key = key'
 
+/-- Exact port of HOL `no_overlap_wrap_rt_some_all_distinct`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:2461-2467`):
+    `no_overlap fm /\ wrap_rt (FLOOKUP fm r) = SOME (vsh,ns) ==> ALL_DISTINCT ns`.
+    HOL `no_overlap` becomes the exact-map renderer `noOverlapFiniteExact`,
+    `FLOOKUP fm r` becomes `fm.lookup r`, `wrap_rt` becomes the tagged
+    `wrapRtHOL`, and `ALL_DISTINCT ns` becomes `ns.Nodup`. The key type is HOL's
+    polymorphic `'a` and the payload is the exact `ShapeHOL × List Nat`. The
+    qualifier records the single bare finite-map parameter `fm`, whose reviewed
+    canonical carrier is `HolFiniteMapExact`; the only representation difference
+    is that finite-map carrier. The theorem is a symbolic normalization lemma
+    (`wrap_rt` only drops the `(One,[])` slot), so no direct HOL-EVAL oracle row
+    exists; the existing `wrap_rt` probe rows in
+    `scripts/hol-probes/wrap_rt_probe.out` cover the definition only. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "no_overlap_wrap_rt_some_all_distinct"
+  (fmap_as_finite_support_relation := [fm])]
+theorem noOverlapWrapRtSomeAllDistinctFiniteExact {κ : Type}
+    (fm : HolFiniteMapExact κ (ShapeHOL × List Nat)) (r : κ)
+    (vsh : ShapeHOL) (ns : List Nat)
+    (hno : noOverlapFiniteExact fm)
+    (hwrap : wrapRtHOL (fm.lookup r) = some (vsh, ns)) :
+    ns.Nodup := by
+  cases hlookup : fm.lookup r with
+  | none => simp [wrapRtHOL, hlookup] at hwrap
+  | some entry =>
+      rcases entry with ⟨entryShape, entrySlots⟩
+      have hnodup : entrySlots.Nodup := hno.1 r entryShape entrySlots hlookup
+      cases entryShape <;> cases entrySlots <;>
+        simp [wrapRtHOL, hlookup] at hwrap <;>
+        rcases hwrap with ⟨_, hslots⟩ <;> simpa [← hslots] using hnodup
+
 /-- Same-module canonical relation witness for the multi-carrier
     `fmap_as_finite_support_relation` qualifier. It forwards the canonical
     finite-support roundtrip of `PanSemStateFiniteExact`, the carrier owning the
@@ -210,6 +240,82 @@ theorem panToCrepLocalsRelWfShapeFiniteExact {width : Nat} [NeZero width]
     isWfShapeValueHOLExact [] value = true :=
   panToCrepLocalsRelFiniteExact_valueShapeProjection
     context sourceLocals targetLocals name value hrel hlookup
+
+/-- Exact port of HOL `locals_rel_lookup_ctxt`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:527-534`):
+    `locals_rel ctxt lcl lcl' /\ FLOOKUP lcl vr = SOME v ==>
+      ?ns. FLOOKUP ctxt.vars vr = SOME (shape_of v,ns) /\
+        LENGTH ns = LENGTH (flatten v) /\
+        OPT_MMAP (FLOOKUP lcl') ns = SOME (flatten v) /\
+        is_wf_shape_nil (shape_of v)`.
+
+    The relation traverses exactly the three finite-map values named by the
+    qualifier: the owning `PanToCrepContextExact.vars` field and the two
+    standalone exact-map parameters `sourceLocals`/`targetLocals` (bare
+    entries). HOL `FLOOKUP` becomes `.lookup`, `OPT_MMAP` becomes
+    `List.mapM`, `shape_of`/`flatten`/`is_wf_shape_nil` become
+    `shapeOfHOLExact`/`flattenHOL`/`isWfShapeExactHOL []`, and `LENGTH` is
+    `List.length`. The slot-length clause follows from the tagged HOL
+    `opt_mmap_length_eq` applied to the relation's successful map. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "locals_rel_lookup_ctxt"
+  (fmap_as_finite_support_relation :=
+    [PanToCrepContextExact.vars, sourceLocals, targetLocals])]
+theorem panToCrepLocalsRelLookupCtxtFiniteExact {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width)
+    (sourceLocals : HolFiniteMapExact MlS (ValueHOL width))
+    (targetLocals : HolFiniteMapExact Nat (HolWordLab width))
+    (name : MlS) (value : ValueHOL width)
+    (hrel : panToCrepLocalsRelFiniteExact context sourceLocals targetLocals)
+    (hlookup : sourceLocals.lookup name = some value) :
+    ∃ slots,
+      context.vars.lookup name = some (shapeOfHOLExact value, slots) ∧
+      slots.length = (flattenHOL value).length ∧
+      slots.mapM targetLocals.lookup = some (flattenHOL value) ∧
+      isWfShapeExactHOL ([] : StructContextExact) (shapeOfHOLExact value) = true := by
+  obtain ⟨slots, words, hcontext, hmap, hflatten, hwf⟩ :=
+    hrel.2.2 name value hlookup
+  refine ⟨slots, hcontext, ?_, ?_, hwf⟩
+  · calc slots.length = words.length :=
+        opt_mmap_length_eq slots targetLocals.lookup words hmap
+      _ = (flattenHOL value).length := by rw [← hflatten]
+  · rw [hmap, ← hflatten]
+
+/-- Flapjack-specific untagged analogue of HOL `ctxt_max_el_leq`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:1493-1503`), retained as
+    the intended exact rendering; the `@[hol]` tag is withdrawn pending
+    carrier-qualifier review (see HOLD below):
+    `ctxt_max ctxt.vmax ctxt.vars /\
+      FLOOKUP ctxt.vars v = SOME (sh,ns) /\
+      n < LENGTH ns ==> EL n ns <= ctxt.vmax`.
+
+    The implicit HOL context `ctxt` is the Pan-to-Crep `context` record, whose
+    `vars` field is the exact `PanToCrepContextExact.vars` field that the
+    qualifier would name; `vmax` is `Nat` (HOL `num`) and is not a finite-map field, so no
+    other representation is touched. HOL `ctxt_max` becomes the exact-carrier
+    rendering `ctxtMaxFiniteExact` (the same predicate already used by the
+    tagged `locals_rel_def`), HOL `FLOOKUP` becomes `.lookup`, `EL n ns` becomes
+    the bounded `getElem` `slots[n]`, and `LENGTH`/`<=` become
+    `List.length`/`≤`. The quantifiers, hypotheses, and conclusion keep HOL's
+    shape. The proof is HOL's `rw [ctxt_max_def]` followed by instantiating the
+    bound at `EL n ns` and using `EL_MEM`. No direct HOL-EVAL oracle row exists
+    for this symbolic-index lemma (the bound proof is needed to select the
+    element), so the kernel-checked instance in
+    `Flapjack/Test/PanToCrepStateRelCarrierParity.lean` replays it concretely.
+    HOLD (coordinator, 2026-09-27): exact HOL `ctxt_max_el_leq`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:1493`) over the exact
+    `PanToCrepContextExact` carrier, but the `@[hol]` tag is WITHDRAWN pending
+    the DS10 imported-owner finite-map qualifier policy; the quantified carrier
+    includes a translated word dimension not recorded by the current
+    `fmap_as_finite_support_relation := [PanToCrepContextExact.vars]` qualifier.
+    Proof retained as untagged infrastructure. -/
+theorem ctxtMaxElLeqFiniteExact {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width) (v : MlS) (shape : ShapeHOL)
+    (slots : List Nat) (n : Nat)
+    (hmax : ctxtMaxFiniteExact context.vmax context.vars)
+    (hlookup : context.vars.lookup v = some (shape, slots))
+    (hindex : n < slots.length) :
+    slots[n] ≤ context.vmax :=
+  hmax.2 v shape slots hlookup slots[n] (List.getElem_mem hindex)
 
 /-- Exact port of HOL `state_rel_structs[local]`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:59-63`), the

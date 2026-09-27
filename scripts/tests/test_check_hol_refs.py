@@ -18,7 +18,7 @@ class HolAttributeSitesTest(unittest.TestCase):
     def test_single_line(self):
         self.assertEqual(
             list(SITES(['@[hol "cakeml/pancake/pan_globalsScript.sml" "compile_top_def"]'])),
-            [(1, "cakeml/pancake/pan_globalsScript.sml", "compile_top_def", None, (), (), (), (), False, (), False)],
+            [(1, "cakeml/pancake/pan_globalsScript.sml", "compile_top_def", None, (), (), (), (), False, (), False, False)],
         )
 
     def test_multiline(self):
@@ -29,7 +29,7 @@ class HolAttributeSitesTest(unittest.TestCase):
                 'theorem compileTopShapeWf : True := trivial',
             ])),
             [(1, "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-              "compile_top_shape_wf", None, (), (), (), (), False, (), False)],
+              "compile_top_shape_wf", None, (), (), (), (), False, (), False, False)],
         )
 
     def test_comments_do_not_count(self):
@@ -39,7 +39,7 @@ class HolAttributeSitesTest(unittest.TestCase):
                 '-- @[hol "cakeml/pancake/pan_globalsScript.sml" "bad"]',
                 '@[hol "cakeml/pancake/pan_globalsScript.sml" "compile_top_def"]',
             ])),
-            [(3, "cakeml/pancake/pan_globalsScript.sml", "compile_top_def", None, (), (), (), (), False, (), False)],
+            [(3, "cakeml/pancake/pan_globalsScript.sml", "compile_top_def", None, (), (), (), (), False, (), False, False)],
         )
 
     def test_source_line(self):
@@ -47,7 +47,7 @@ class HolAttributeSitesTest(unittest.TestCase):
             list(SITES(['@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml"',
                         '  "locals_rel_wf_shape" 2345]'])),
             [(1, "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
-              "locals_rel_wf_shape", 2345, (), (), (), (), False, (), False)],
+              "locals_rel_wf_shape", 2345, (), (), (), (), False, (), False, False)],
         )
 
     def test_list_as_array_fields(self):
@@ -57,7 +57,7 @@ class HolAttributeSitesTest(unittest.TestCase):
                 '  "dec_deg_def" (list_as_array := [degrees, moves])]'
             ])),
             [(1, "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
-              "dec_deg_def", None, ("degrees", "moves"), (), (), (), False, (), False)],
+              "dec_deg_def", None, ("degrees", "moves"), (), (), (), False, (), False, False)],
         )
 
     def test_names_as_string_and_boundary_qualifiers(self):
@@ -68,7 +68,7 @@ class HolAttributeSitesTest(unittest.TestCase):
                 '  (names_as_string_boundary := [generated])]',
             ])),
             [(1, "cakeml/pancake/panLangScript.sml", "varname", None,
-              (), ("name", "generated"), ("generated",), (), False, (), False)],
+              (), ("name", "generated"), ("generated",), (), False, (), False, False)],
         )
 
     def test_fmap_as_finite_support_fields(self):
@@ -78,7 +78,7 @@ class HolAttributeSitesTest(unittest.TestCase):
                 '  (fmap_as_finite_support := [locals, globals])]'
             ])),
             [(1, "cakeml/pancake/semantics/panSemScript.sml",
-              "set_var_def", None, (), (), (), ("locals", "globals"), False, (), False)],
+              "set_var_def", None, (), (), (), ("locals", "globals"), False, (), False, False)],
         )
 
     def test_fmap_as_finite_support_result_qualifier(self):
@@ -88,7 +88,7 @@ class HolAttributeSitesTest(unittest.TestCase):
                 '  (fmap_as_finite_support_result)]'
             ])),
             [(1, "cakeml/pancake/pan_to_crepScript.sml",
-              "get_eids_from_decls_def", None, (), (), (), (), True, (), False)],
+              "get_eids_from_decls_def", None, (), (), (), (), True, (), False, False)],
         )
 
     def test_fmap_as_finite_support_relation_qualifier(self):
@@ -99,7 +99,7 @@ class HolAttributeSitesTest(unittest.TestCase):
             ])),
             [(1, "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
               "state_rel_def", None, (), (), (), (), False,
-              (("PanSemStateFiniteExact", "globals"), ("CrepSemHOLState", "locals")), False)],
+              (("PanSemStateFiniteExact", "globals"), ("CrepSemHOLState", "locals")), False, False)],
         )
 
     def test_fmap_as_finite_support_relation_accepts_two_carriers(self):
@@ -225,7 +225,7 @@ class HolAttributeSitesTest(unittest.TestCase):
                 '  (fmap_as_finite_support_equalities)]'
             ])),
             [(1, "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
-              "slc_tlc_rw", None, (), (), (), (), False, (), True)],
+              "slc_tlc_rw", None, (), (), (), (), False, (), True, False)],
         )
 
     def test_fmap_as_finite_support_equalities_accepts_two_witnesses(self):
@@ -833,6 +833,117 @@ class HolAttributeSitesTest(unittest.TestCase):
             finally:
                 checker_globals["ROOT"] = original_root
 
+    def test_combined_fmap_words_qualifiers_with_imported_owner(self):
+        """A real imported-owner + evaluator-local witness + both qualifiers.
+
+        Mirrors the crepSem `evaluate_def` arrangement: `CrepSemHOLState` lives
+        in an imported module, the tagged declaration is in the consumer module
+        with a local `holFmapAsFiniteSupportWitness`, and the tag carries both
+        `(fmap_as_finite_support := [...])` and `(words_as_type_indexed_bitvec)`.
+        """
+        checker_globals = CHECKER["fmap_as_finite_support_errors"].__globals__
+        original_root = checker_globals["ROOT"]
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            owner = root / "Flapjack" / "PanToCrep" / "ContextExact.lean"
+            consumer = root / "Flapjack" / "PanToCrep" / "CompileExact.lean"
+            owner.parent.mkdir(parents=True)
+            owner.write_text(
+                "\n".join([
+                    "structure CrepStateExact (width : Nat) where",
+                    "  locals : HolFiniteMapExact Nat (HolWordLab width)",
+                    "  globals : HolFiniteMapExact (BitVec 5) (HolWordLab width)",
+                    "  code : HolFiniteMapExact Name Prog",
+                ]),
+                encoding="utf-8",
+            )
+            consumer.write_text(
+                "\n".join([
+                    "import Flapjack.PanToCrep.ContextExact",
+                    "theorem holFmapAsFiniteSupportWitness",
+                    "    (state : CrepStateExact width) :",
+                    "    CrepStateExact.ofBroad",
+                    "      (CrepStateExact.toBroad state) = state := by",
+                    "  exact CrepStateExact.holFmapAsFiniteSupportWitness state",
+                    '@[hol "cakeml/pancake/semantics/crepSemScript.sml" "evaluate_def" 240',
+                    "  (fmap_as_finite_support := [locals, globals, code])",
+                    "  (words_as_type_indexed_bitvec)]",
+                    "def evalProg {width : Nat} (state : CrepStateExact width) [NeZero width]",
+                    "    (address : BitVec width) := address",
+                ]),
+                encoding="utf-8",
+            )
+            checker_globals["ROOT"] = root
+            try:
+                lines = consumer.read_text(encoding="utf-8").splitlines()
+                declaration_text = CHECKER["tagged_declaration_text"](lines, 6)
+                self.assertEqual(
+                    CHECKER["fmap_as_finite_support_errors"](
+                        lines, ("locals", "globals", "code"),
+                        "Flapjack/PanToCrep/CompileExact.lean",
+                        declaration_text,
+                    ),
+                    [],
+                )
+                self.assertEqual(
+                    CHECKER["words_as_type_indexed_bitvec_errors"](
+                        declaration_text, "evalProg",
+                    ),
+                    [],
+                )
+            finally:
+                checker_globals["ROOT"] = original_root
+
+    def test_fmap_as_finite_support_rejects_local_duplicate_of_imported_owner(self):
+        checker_globals = CHECKER["fmap_as_finite_support_errors"].__globals__
+        original_root = checker_globals["ROOT"]
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            owner = root / "Flapjack" / "PanToCrep" / "ContextExact.lean"
+            consumer = root / "Flapjack" / "PanToCrep" / "CompileExact.lean"
+            owner.parent.mkdir(parents=True)
+            owner.write_text(
+                "\n".join([
+                    "structure PanToCrepContextExact where",
+                    "  vars : HolFiniteMapExact Name Shape",
+                    "  funcs : HolFiniteMapExact Name FunctionInfo",
+                    "  eids : HolFiniteMapExact Name Word",
+                ]),
+                encoding="utf-8",
+            )
+            consumer.write_text(
+                "\n".join([
+                    "import Flapjack.PanToCrep.ContextExact",
+                    "structure PanToCrepContextExact where",
+                    "  vars : HolFiniteMapExact Name Shape",
+                    "  funcs : HolFiniteMapExact Name FunctionInfo",
+                    "  eids : HolFiniteMapExact Name Word",
+                    "theorem holFmapAsFiniteSupportWitness",
+                    "    (context : PanToCrepContextExact) :",
+                    "    PanToCrepContextExact.ofBroad",
+                    "      (PanToCrepContextExact.toBroad context) = context := by",
+                    "  exact PanToCrepContextExact.holFmapAsFiniteSupportWitness context",
+                    '@[hol "cakeml/pancake/pan_to_crepScript.sml" "compile_exp_def"',
+                    "  (fmap_as_finite_support := [vars, funcs, eids])]",
+                    "def compileExpExactHOLW (context : PanToCrepContextExact) := context.vars",
+                ]),
+                encoding="utf-8",
+            )
+            checker_globals["ROOT"] = root
+            try:
+                lines = consumer.read_text(encoding="utf-8").splitlines()
+                errors = CHECKER["fmap_as_finite_support_errors"](
+                    lines, ("vars", "funcs", "eids"),
+                    "Flapjack/PanToCrep/CompileExact.lean",
+                    CHECKER["tagged_declaration_text"](lines, 11),
+                )
+                self.assertTrue(
+                    any("one owning carrier structure" in e for e in errors),
+                    errors,
+                )
+            finally:
+                checker_globals["ROOT"] = original_root
+
     def test_fmap_as_finite_support_rejects_imported_wrong_owner_type_and_witness(self):
         for wrong_field_type, wrong_witness in [
             ("String \u2192 Option Nat", False),
@@ -885,6 +996,27 @@ class HolAttributeSitesTest(unittest.TestCase):
                                                 for e in errors))
                     finally:
                         checker_globals["ROOT"] = original_root
+
+    def test_fmap_as_finite_support_rejects_num_map_sptree_field(self):
+        # A HOL `sptree$num_map` field (here `Spt`) is not a `|->` finite map and
+        # must not be claimed by `fmap_as_finite_support`, even though its Lean
+        # field could plausibly be represented by a finite-map carrier.
+        lines = [
+            "structure LoopStateNumMap where",
+            "  locals : Spt Nat Nat",
+            "  globals : HolFiniteMapExact (BitVec 5) Nat",
+            "",
+            "theorem holFmapAsFiniteSupportWitness :",
+            "    (\u2200 s : LoopStateNumMap, ofBroad (toBroad s) = s) := by rfl",
+        ]
+        errors = CHECKER["fmap_as_finite_support_errors"](
+            lines, ("locals",), "Flapjack/LoopState.lean",
+            "def getVarImm (s : LoopStateNumMap) := s.locals",
+        )
+        self.assertTrue(
+            any("approved HolFiniteMapExact" in error for error in errors),
+            errors,
+        )
 
     def test_fmap_as_finite_support_rejects_raw_type_on_named_carrier(self):
         lines = [
@@ -1102,6 +1234,517 @@ class HolDatatypeDeclarationsTest(unittest.TestCase):
         names = DECL(path, {})
         self.assertEqual(names["expr"], [2])
         self.assertNotIn("field", names)
+
+
+class WordsAsTypeIndexedBitvecQualifierTest(unittest.TestCase):
+    """The word-dimension / FFI-universe translation qualifier."""
+
+    ERRORS = staticmethod(CHECKER["words_as_type_indexed_bitvec_errors"])
+
+    GOOD = (
+        "@[hol \"cakeml/pancake/semantics/crepSemScript.sml\" \"evaluate_def\" 240",
+        "  (fmap_as_finite_support := [locals, globals, code])",
+        "  (words_as_type_indexed_bitvec)]",
+        "def evalProg {width : Nat} [NeZero width] {σ : Type}",
+        "    (state : CrepSemHOLState width σ) (addr : BitVec width)",
+        "    (ffi : HolFfiState σ) : HolWordLab width := HolWordLab.word addr",
+        "",
+    )
+
+    def test_sites_parses_qualifier(self):
+        self.assertEqual(
+            list(SITES([
+                '@[hol "cakeml/pancake/semantics/crepSemScript.sml" "evaluate_def" 240',
+                '  (words_as_type_indexed_bitvec)]',
+            ])),
+            [(1, "cakeml/pancake/semantics/crepSemScript.sml", "evaluate_def", 240,
+              (), (), (), (), False, (), False, True)],
+        )
+
+    def test_accepts_dimindex_and_universe(self):
+        self.assertEqual(self.ERRORS("\n".join(self.GOOD), "evalProg"), [])
+
+    def test_rejects_missing_bitvec(self):
+        text = "\n".join(self.GOOD).replace("BitVec", "Word")
+        self.assertTrue(any("BitVec" in e for e in self.ERRORS(text, "evalProg")))
+
+    def test_rejects_missing_nezero(self):
+        text = "\n".join(self.GOOD).replace("[NeZero width]", "")
+        self.assertTrue(any("NeZero" in e for e in self.ERRORS(text, "evalProg")))
+
+    def test_rejects_extra_positivity_hypothesis(self):
+        text = "\n".join(self.GOOD).replace(
+            "(state : CrepSemHOLState width σ)",
+            "(hpos : width ≠ 0) (state : CrepSemHOLState width σ)",
+        )
+        self.assertTrue(
+            any("positivity" in e for e in self.ERRORS(text, "evalProg"))
+        )
+
+    def test_rejects_ffi_universe_level_variable(self):
+        text = "\n".join(self.GOOD).replace("{σ : Type}", "{σ : Type u}")
+        self.assertTrue(
+            any("universe-level" in e for e in self.ERRORS(text, "evalProg"))
+        )
+
+    def test_rejects_empty_declaration_text(self):
+        self.assertTrue(
+            any("resolvable" in e for e in self.ERRORS("", "evalProg"))
+        )
+
+    def test_accepts_combined_fmap_and_words_qualifiers(self):
+        self.assertEqual(self.ERRORS("\n".join(self.GOOD), "evalProg"), [])
+
+    def test_rejects_bitvec_only_in_body(self):
+        text = "\n".join(self.GOOD).replace(
+            "(addr : BitVec width)",
+            "(addr : Nat)",
+        ).replace(
+            ": HolWordLab width := HolWordLab.word addr",
+            ": Nat := addr + (1 : BitVec width).toNat",
+        )
+        self.assertTrue(any("BitVec" in e for e in self.ERRORS(text, "evalProg")))
+
+    def test_rejects_sort_host_universe(self):
+        text = "\n".join(self.GOOD).replace("{σ : Type}", "{σ : Sort u}")
+        self.assertTrue(
+            any("universe" in e or "Type" in e for e in self.ERRORS(text, "evalProg"))
+        )
+
+    def test_rejects_one_le_width_hypothesis(self):
+        text = "\n".join(self.GOOD).replace(
+            "(state : CrepSemHOLState width σ)",
+            "(hpos : 1 ≤ width) (state : CrepSemHOLState width σ)",
+        )
+        self.assertTrue(
+            any("positivity" in e for e in self.ERRORS(text, "evalProg"))
+        )
+
+
+    def test_rejects_direct_bitvec_of_other_width(self):
+        # `BitVec 5` next to a `Nat` width binder and an unrelated
+        # `[NeZero width]` is not evidence of a `BitVec width` translation.
+        text = "\n".join(self.GOOD).replace("(addr : BitVec width)", "(addr : BitVec 5)")
+        self.assertTrue(any("BitVec" in e for e in self.ERRORS(text, "evalProg")))
+
+    def test_rejects_direct_nezero_of_other_width(self):
+        # `BitVec width` with `[NeZero other]` must not pass: positivity must be
+        # discharged for the same width identifier.
+        text = "\n".join(self.GOOD).replace("[NeZero width]", "[NeZero other]")
+        self.assertTrue(any("BitVec" in e for e in self.ERRORS(text, "evalProg")))
+
+
+THEOREM_MAP = runpy.run_path(
+    str(Path(__file__).resolve().parents[1] / "check_hol_theorem_map.py")
+)
+
+
+class RealCombinedQualifierFixtureTest(unittest.TestCase):
+    """End-to-end positive fixture for the combined fmap+words qualifier.
+
+    The three exact HOL `crepSem` shared-memory ports are committed, real
+    declarations carrying both `(fmap_as_finite_support := [locals, globals,
+    code])` and `(words_as_type_indexed_bitvec)`. This class checks the real
+    declarations through the reference checker and through the theorem-map
+    manifest validator, including negatives that omit each qualifier/status.
+    """
+
+    MODULE = "Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean"
+    MODULE_NAME = "Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL"
+    HOL_NAMES = ("sh_mem_load_def", "sh_mem_store_def", "sh_mem_op_def")
+    FMAP_FIELDS = ("locals", "globals", "code")
+
+    def _lines(self):
+        return (Path(__file__).resolve().parents[2] / self.MODULE).read_text(
+            encoding="utf-8"
+        ).splitlines()
+
+    def _sites(self, lines):
+        found = {}
+        for site in SITES(lines):
+            if site[2] in self.HOL_NAMES:
+                found[site[2]] = site
+        return found
+
+    def test_real_declarations_carry_both_qualifiers(self):
+        sites = self._sites(self._lines())
+        for hol_name in self.HOL_NAMES:
+            self.assertIn(hol_name, sites, f"{hol_name} is no longer tagged")
+            site = sites[hol_name]
+            self.assertEqual(tuple(site[7]), self.FMAP_FIELDS, hol_name)
+            self.assertTrue(site[11], f"{hol_name} must carry (words_as_type_indexed_bitvec)")
+
+    def test_real_declarations_pass_reference_checker(self):
+        lines = self._lines()
+        sites = self._sites(lines)
+        self.assertEqual(set(sites), set(self.HOL_NAMES))
+        for hol_name, site in sites.items():
+            declaration_text = CHECKER["tagged_declaration_text"](lines, site[0])
+            self.assertEqual(
+                CHECKER["fmap_as_finite_support_errors"](
+                    lines, self.FMAP_FIELDS, self.MODULE, declaration_text
+                ),
+                [],
+                hol_name,
+            )
+            self.assertEqual(
+                CHECKER["words_as_type_indexed_bitvec_errors"](
+                    declaration_text, hol_name
+                ),
+                [],
+                hol_name,
+            )
+
+    def test_real_carrier_only_declaration_passes_checker(self):
+        # `evalCrepSemHOLProgExact_skip` is an UNTAGGED exact-evaluator clause
+        # whose signature names no literal `BitVec`: the word carrier is the
+        # imported `CrepSemHOLState`. The qualifier must resolve that carrier
+        # from its real declaration and accept the clause text, with no tag.
+        lines = self._lines()
+        start = None
+        for index, line in enumerate(lines, start=1):
+            if line.startswith("theorem evalCrepSemHOLProgExact_skip"):
+                start = index
+                break
+        self.assertIsNotNone(start, "evalCrepSemHOLProgExact_skip not found")
+        preceding = lines[max(0, start - 4):start - 1]
+        self.assertFalse(any("@[hol" in line for line in preceding))
+        region = []
+        for line in lines[start - 1:]:
+            region.append(line)
+            if ":=" in line:
+                break
+        self.assertEqual(
+            CHECKER["words_as_type_indexed_bitvec_errors"](
+                "\n".join(region),
+                "evalCrepSemHOLProgExact_skip",
+                module=self.MODULE_NAME,
+                root=str(Path(__file__).resolve().parents[2]),
+                lines=lines,
+            ),
+            [],
+        )
+
+    def _tagged(self, lines):
+        tagged = {}
+        for hol_name, site in self._sites(lines).items():
+            value = (
+                site[1], site[2], site[4], site[5], site[6], site[7],
+                site[8], site[9], site[10], site[11],
+            )
+            tagged[(self.MODULE, self._lean_name(hol_name))] = value
+        return tagged
+
+    @staticmethod
+    def _lean_name(hol_name):
+        return {
+            "sh_mem_load_def": "crepShMemLoadExactHOL",
+            "sh_mem_store_def": "crepShMemStoreExactHOL",
+            "sh_mem_op_def": "crepShMemOpExactHOL",
+        }[hol_name]
+
+    def _record(self, hol_name, **overrides):
+        record = {
+            "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
+            "hol_name": hol_name,
+            "lean_path": self.MODULE,
+            "lean_name": self._lean_name(hol_name),
+            "statement_status": (
+                "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec"
+            ),
+            "fmap_as_finite_support": list(self.FMAP_FIELDS),
+            "words_as_type_indexed_bitvec": True,
+            "reviewer": "source comparison of the HOL word/finite-map carriers",
+        }
+        record.update(overrides)
+        return record
+
+    def _errors(self, records, tagged):
+        return THEOREM_MAP["validate_inventory"](records, set(), tagged, set())
+
+    def test_manifest_accepts_real_combined_fixture(self):
+        lines = self._lines()
+        tagged = self._tagged(lines)
+        self.assertEqual(
+            self._errors([self._record(h) for h in self.HOL_NAMES], tagged), []
+        )
+
+    def test_manifest_rejects_real_fixture_omitting_words_qualifier(self):
+        lines = self._lines()
+        tagged = self._tagged(lines)
+        errors = self._errors(
+            [self._record(h, words_as_type_indexed_bitvec=False) for h in self.HOL_NAMES],
+            tagged,
+        )
+        self.assertTrue(errors)
+
+    def test_manifest_rejects_real_fixture_omitting_fmap_qualifier(self):
+        lines = self._lines()
+        tagged = self._tagged(lines)
+        errors = self._errors(
+            [self._record(h, fmap_as_finite_support=[], words_as_type_indexed_bitvec=False)
+             for h in self.HOL_NAMES],
+            tagged,
+        )
+        self.assertTrue(errors)
+
+    def test_manifest_rejects_real_fixture_with_single_status(self):
+        lines = self._lines()
+        tagged = self._tagged(lines)
+        for status in (
+            "reviewed_fmap_as_finite_support",
+            "reviewed_words_as_type_indexed_bitvec",
+        ):
+            errors = self._errors(
+                [self._record(h, statement_status=status) for h in self.HOL_NAMES],
+                tagged,
+            )
+            self.assertTrue(errors, status)
+
+    def test_manifest_rejects_real_fixture_omitting_combined_status(self):
+        lines = self._lines()
+        tagged = self._tagged(lines)
+        errors = self._errors(
+            [self._record(h, statement_status="reviewed_exact") for h in self.HOL_NAMES],
+            tagged,
+        )
+        self.assertTrue(errors)
+
+
+class WordsCarrierResolutionTest(unittest.TestCase):
+    """Carrier resolution for `(words_as_type_indexed_bitvec)`.
+
+    A tagged signature may omit a literal `BitVec` when it names a reviewed
+    width-indexed carrier whose fields include `BitVec width` fields and whose
+    declaration retains `[NeZero width]`. The carrier is resolved from its
+    declaration (local or imported), never from its name alone.
+    """
+
+    MODULE = "Flapjack/PanToCrep/CarrierExact.lean"
+    MODULE_NAME = "Flapjack.PanToCrep.CarrierExact"
+
+    def _checker_globals(self):
+        return CHECKER["words_as_type_indexed_bitvec_errors"].__globals__
+
+    def _run(self, owner_text, consumer_text):
+        checker_globals = self._checker_globals()
+        original_root = checker_globals["ROOT"]
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            owner = root / "Flapjack" / "PanToCrep" / "ContextExact.lean"
+            consumer = root / self.MODULE
+            owner.parent.mkdir(parents=True)
+            if owner_text is not None:
+                owner.write_text(owner_text, encoding="utf-8")
+            consumer.write_text(consumer_text, encoding="utf-8")
+            checker_globals["ROOT"] = root
+            try:
+                self.imported_headers = CHECKER["imported_structure_headers"](
+                    self.MODULE_NAME, str(root)
+                )
+                self.imported_field_types = CHECKER[
+                    "imported_structure_field_types"
+                ](self.MODULE_NAME, str(root))
+                self.imported_owners = CHECKER["imported_structure_owners"](
+                    self.MODULE_NAME, str(root)
+                )
+                lines = consumer_text.splitlines()
+                attribute_start = next(
+                    (
+                        index
+                        for index, line in enumerate(lines)
+                        if "@[hol" in line
+                    ),
+                    0,
+                )
+                declaration_text = CHECKER["tagged_declaration_text"](
+                    lines, attribute_start
+                )
+                return CHECKER["words_as_type_indexed_bitvec_errors"](
+                    declaration_text,
+                    "evalProg",
+                    module=self.MODULE_NAME,
+                    root=str(root),
+                    lines=lines,
+                )
+            finally:
+                checker_globals["ROOT"] = original_root
+
+    OWNER = "\n".join([
+        "structure CrepStateExact (width : Nat) [NeZero width] (ffiState : Type) where",
+        "  locals : HolFiniteMapExact Nat (HolWordLab width)",
+        "  memory : BitVec width → HolWordLab width",
+        "  baseAddr : BitVec width",
+    ])
+
+    CONSUMER = "\n".join([
+        "import Flapjack.PanToCrep.ContextExact",
+        '@[hol "cakeml/pancake/semantics/crepSemScript.sml" "evaluate_def" 240',
+        "  (fmap_as_finite_support := [locals])",
+        "  (words_as_type_indexed_bitvec)]",
+        "def evalProg {width : Nat} [NeZero width] {σ : Type}",
+        "    (state : CrepStateExact width σ) : Nat := width",
+    ])
+
+    def test_accepts_imported_carrier_with_bitvec_fields(self):
+        self.assertEqual(self._run(self.OWNER, self.CONSUMER), [])
+        self.assertIn("CrepStateExact", self.imported_headers)
+        self.assertIn("CrepStateExact", self.imported_field_types)
+        self.assertIn("CrepStateExact", self.imported_owners)
+
+    def test_accepts_local_carrier_with_bitvec_fields(self):
+        local = "\n".join([
+            self.OWNER,
+            '@[hol "cakeml/pancake/semantics/crepSemScript.sml" "evaluate_def" 240',
+            "  (fmap_as_finite_support := [locals])",
+            "  (words_as_type_indexed_bitvec)]",
+            "def evalProg {width : Nat} [NeZero width] {σ : Type}",
+            "    (state : CrepStateExact width σ) : Nat := width",
+        ])
+        self.assertEqual(self._run(None, local), [])
+
+    def test_rejects_fake_carrier_without_bitvec_field(self):
+        owner = "\n".join([
+            "structure CrepStateExact (width : Nat) [NeZero width] (ffiState : Type) where",
+            "  locals : HolFiniteMapExact Nat (HolWordLab width)",
+            "  clock : Nat",
+        ])
+        errors = self._run(owner, self.CONSUMER)
+        self.assertTrue(any("BitVec" in e for e in errors), errors)
+
+    def test_rejects_carrier_missing_positivity(self):
+        owner = "\n".join([
+            "structure CrepStateExact (width : Nat) (ffiState : Type) where",
+            "  locals : HolFiniteMapExact Nat (HolWordLab width)",
+            "  memory : BitVec width → HolWordLab width",
+        ])
+        consumer = self.CONSUMER.replace(" [NeZero width]", "")
+        errors = self._run(owner, consumer)
+        self.assertTrue(any("NeZero" in e for e in errors), errors)
+
+    def test_rejects_carrier_name_not_declared(self):
+        owner = "\n".join([
+            "structure SomethingElse (width : Nat) [NeZero width] where",
+            "  memory : BitVec width → Nat",
+        ])
+        errors = self._run(owner, self.CONSUMER)
+        self.assertTrue(any("BitVec" in e for e in errors), errors)
+
+    def test_rejects_carrier_width_field_without_width_variable(self):
+        owner = "\n".join([
+            "structure CrepStateExact (width : Nat) [NeZero width] (ffiState : Type) where",
+            "  locals : HolFiniteMapExact Nat (HolWordLab width)",
+            "  tag : BitVec 5",
+        ])
+        errors = self._run(owner, self.CONSUMER)
+        self.assertTrue(any("BitVec" in e for e in errors), errors)
+
+    def test_rejects_owner_header_nezero_different_width(self):
+        # The owner's header discharges a DIFFERENT width identifier, so the
+        # caller's own `[NeZero width]` must not substitute for carrier
+        # positivity.
+        owner = "\n".join([
+            "structure CrepStateExact (width : Nat) [NeZero other] (ffiState : Type) where",
+            "  locals : HolFiniteMapExact Nat (HolWordLab width)",
+            "  memory : BitVec width → HolWordLab width",
+        ])
+        errors = self._run(owner, self.CONSUMER)
+        self.assertTrue(any("BitVec" in e for e in errors), errors)
+
+    def test_rejects_field_bitvec_of_other_width(self):
+        # A field mentioning `BitVec` and the width token separately (here
+        # `BitVec 5 × HolWordLab width`) is not an actual `BitVec width` field.
+        owner = "\n".join([
+            "structure CrepStateExact (width : Nat) [NeZero width] (ffiState : Type) where",
+            "  locals : HolFiniteMapExact Nat (HolWordLab width)",
+            "  memory : BitVec 5 × HolWordLab width",
+        ])
+        errors = self._run(owner, self.CONSUMER)
+        self.assertTrue(any("BitVec" in e for e in errors), errors)
+
+    def test_rejects_ambiguous_owners_borrowing_cross_owner_evidence(self):
+        # The imported owner has `[NeZero width]` but no `BitVec width` field;
+        # the local same-named shadow has a `BitVec width` field but no
+        # positivity. Pooling the two owners' evidence would wrongly accept the
+        # tag, so the name is ambiguous and must be rejected.
+        owner = "\n".join([
+            "structure CrepStateExact (width : Nat) [NeZero width] (ffiState : Type) where",
+            "  locals : HolFiniteMapExact Nat (HolWordLab width)",
+            "  clock : Nat",
+        ])
+        consumer = "\n".join([
+            "import Flapjack.PanToCrep.ContextExact",
+            "structure CrepStateExact (width : Nat) (ffiState : Type) where",
+            "  locals : HolFiniteMapExact Nat (HolWordLab width)",
+            "  memory : BitVec width → HolWordLab width",
+            '@[hol "cakeml/pancake/semantics/crepSemScript.sml" "evaluate_def" 240',
+            "  (fmap_as_finite_support := [locals])",
+            "  (words_as_type_indexed_bitvec)]",
+            "def evalProg {width : Nat} [NeZero width] {σ : Type}",
+            "    (state : CrepStateExact width σ) : Nat := width",
+        ])
+        errors = self._run(owner, consumer)
+        self.assertTrue(
+            any("ambiguous same-named owners" in e for e in errors), errors
+        )
+
+    def test_rejects_ambiguous_owners_without_positivity(self):
+        # Both owners are same-named with `BitVec width` fields, but only the
+        # local shadow retains `[NeZero width]`; no single owner supplies both
+        # and the name is ambiguous.
+        owner = "\n".join([
+            "structure CrepStateExact (width : Nat) (ffiState : Type) where",
+            "  locals : HolFiniteMapExact Nat (HolWordLab width)",
+            "  memory : BitVec width → HolWordLab width",
+        ])
+        consumer = "\n".join([
+            "import Flapjack.PanToCrep.ContextExact",
+            "structure CrepStateExact (width : Nat) [NeZero width] (ffiState : Type) where",
+            "  locals : HolFiniteMapExact Nat (HolWordLab width)",
+            "  memory : BitVec width → HolWordLab width",
+            '@[hol "cakeml/pancake/semantics/crepSemScript.sml" "evaluate_def" 240',
+            "  (fmap_as_finite_support := [locals])",
+            "  (words_as_type_indexed_bitvec)]",
+            "def evalProg {width : Nat} [NeZero width] {σ : Type}",
+            "    (state : CrepStateExact width σ) : Nat := width",
+        ])
+        errors = self._run(owner, consumer)
+        self.assertTrue(
+            any("ambiguous same-named owners" in e for e in errors), errors
+        )
+
+
+class RealCrepPropsWordCarrierResolutionTest(unittest.TestCase):
+    """The real CrepProps imports must resolve the exact state carrier."""
+
+    MODULE = "Flapjack/Pancake/Semantics/CrepProps.lean"
+    MODULE_NAME = "Flapjack.Pancake.Semantics.CrepProps"
+    HOL_NAMES = {
+        "dec_clock_simp",
+        "empty_locals_simp",
+        "FLOOKUP_set_globals",
+        "eval_upd_clock_eq",
+        "update_locals_not_vars_eval_eq",
+    }
+
+    def test_real_imported_crep_state_resolves_for_five_tags(self):
+        root = Path(__file__).resolve().parents[2]
+        lines = (root / self.MODULE).read_text(encoding="utf-8").splitlines()
+        sites = {site[2]: site for site in SITES(lines) if site[2] in self.HOL_NAMES}
+        self.assertEqual(set(sites), self.HOL_NAMES)
+        for hol_name, site in sites.items():
+            declaration = CHECKER["tagged_declaration_text"](lines, site[0])
+            self.assertEqual(
+                CHECKER["words_as_type_indexed_bitvec_errors"](
+                    declaration,
+                    hol_name,
+                    module=self.MODULE_NAME,
+                    root=str(root),
+                    lines=lines,
+                ),
+                [],
+                hol_name,
+            )
 
 
 if __name__ == "__main__":

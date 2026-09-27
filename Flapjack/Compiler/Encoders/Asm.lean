@@ -923,4 +923,14 @@ def asmOkExact {width : Nat} [NeZero width] (instruction : HolAsm width)
   | .jumpReg register => asmRegOkExact register config
   | .loc register offset => asmRegOkExact register config && asmLocOffsetOkExact config offset
 
+/-- Exact port of HOL `asmScript$is_load_def` (`asmScript.sml:324-330`):
+    `is_load` is true for the four load memory operations.  The carrier
+    `HolMemop` is the reviewed exact alias of the eight-constructor
+    `Flapjack.WordMemOp` (`memop`), so the clause-for-clause equations match. -/
+@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "is_load_def"]
+def asmIsLoad (operator : HolMemop) : Bool :=
+  match operator with
+  | .load | .load8 | .load16 | .load32 => true
+  | _ => false
+
 end Flapjack.Compiler.Encoders.Asm

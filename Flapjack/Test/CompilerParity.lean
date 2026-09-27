@@ -272,6 +272,7 @@ import Flapjack.Test.PanSemPrimitiveErrorExactParity
 import Flapjack.Test.PanSemAssignErrorExactParity
 import Flapjack.Test.PanSemStoreErrorExactParity
 import Flapjack.Test.PanSemShMemLoadCaseParity
+import Flapjack.Test.PanSemExtCallCaseParity
 import Flapjack.Test.PanSemStore32ErrorExactParity
 import Flapjack.Test.PanSemIteErrorExactParity
 import Flapjack.Test.PanSemFuelDecompositionParity
@@ -410,6 +411,7 @@ import Flapjack.Test.PanSemMemLoadExactParity
 import Flapjack.Test.PanSemEvaluateDeclsFiniteParity
 import Flapjack.Test.PanToCrepMakeVmapParity
 import Flapjack.Test.PanLangGeneratedSizeParity
+import Flapjack.Test.PanSimpProgBridgeParity
 
 /-!
 # Pancake/RISC-V compiler parity tests
@@ -1082,6 +1084,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.PanSemEvaluateDeclsFiniteParity.runChecks,
     Flapjack.Test.PanToCrepMakeVmapParity.runChecks,
     Flapjack.Test.PanLangGeneratedSizeParity.runChecks,
+    Flapjack.Test.PanSimpProgBridgeParity.runChecks,
     Flapjack.Test.CrepSemTotalExtCallParity.runChecks
     ].mapM id
   unless results.all id do

@@ -13,6 +13,10 @@ import Flapjack.Compiler.Backend.StackRemove
 import Flapjack.Compiler.Encoders.Asm
 import Flapjack.Misc.AppList
 import Flapjack.Misc.Sptree
+import Flapjack.Misc.FlatReplicate
+import Flapjack.Misc.FoldrMaxList
+import Flapjack.Misc.Uncurry
+import Flapjack.Misc.OptMmapCong
 import Flapjack.Pancake.CrepInline.Pass
 import Flapjack.Pancake.CrepLang
 import Flapjack.Pancake.CrepLang.Exp
@@ -78,6 +82,7 @@ import Flapjack.Pancake.Semantics.PanSem.ValueHOL
 import Flapjack.Pancake.Semantics.PanSem.StateExact
 import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
 import Flapjack.Pancake.Semantics.PanSem.ShMemLoadCase
+import Flapjack.Pancake.Semantics.PanSem.ExtCallCase
 import Flapjack.Pancake.Semantics.PanSem.LocalUpdatesExact
 import Flapjack.Pancake.Semantics.PanSem.IsValidValueExact
 import Flapjack.Pancake.Semantics.PanSem.DecExact
@@ -144,7 +149,8 @@ elab "#emit_hol_type_hashes" : command => do
             ("fmap_as_finite_support_result", toJson ref.fmapAsFiniteSupportResult),
             ("fmap_as_finite_support_relation",
               toJson (ref.fmapAsFiniteSupportRelation.map (fun entry => if entry.1.isEmpty then entry.2 else s!"{entry.1}.{entry.2}"))),
-            ("fmap_as_finite_support_equalities", toJson ref.fmapAsFiniteSupportEqualities)])]
+            ("fmap_as_finite_support_equalities", toJson ref.fmapAsFiniteSupportEqualities),
+            ("words_as_type_indexed_bitvec", toJson ref.wordsAsTypeIndexedBitvec)])]
         match definitionBody? info with
         | some body =>
             fields := fields ++ [("value_expr", toJson (reprStr (canonicalExpr body)))]

@@ -25,14 +25,19 @@ state =
    ; top_addr    : 'a word |>
 ```
 
-`LoopSemStateFiniteExact` is the source-shaped carrier whose three HOL finite
-maps (`locals`, `globals`, `code`) use the reviewed canonical
+`LoopSemStateFiniteExact` is the source-shaped carrier whose three HOL map
+fields (`locals`, `globals`, `code`) use the reviewed canonical
 `HolFiniteMapExact` translation, whose `code` entries use the exact
 `HolLoopProg` carrier, and whose `ffi` field uses the exact `HolFfiState`.  The
 word dimension is the nonzero `BitVec width` model; `memory` is total and the
-domains are Lean sets, both matching HOL.  The structure carries an exact
-`@[hol]` `state` tag with the `fmap_as_finite_support` qualifier naming exactly
-the three translated map fields.
+domains are Lean sets, both matching HOL.  **The structure is deliberately
+UNTAGGED.**  HOL `locals` and `code` are `sptree$num_map`, NOT `|->` finite
+maps, so the `fmap_as_finite_support` qualifier (which records only the
+reviewed `|->` -> `HolFiniteMapExact` translation) must not name them.  Only
+`globals` is a genuine `5 word |-> 'a word_loc`.  A faithful port replaces
+`locals`/`code` with the exact `sptree`/`num_map` carrier
+(`Flapjack/Misc/Sptree.lean`); that is tracked on `flapjack-jlj3.1` (with the
+production bridge on `flapjack-pxn.18.5.17.1`).
 
 The production `LoopMachineState` bridge and the `get_var_imm`/`get_vars`
 carrier-level statements live in `LoopSemState.lean`; the bridge to the
@@ -68,10 +73,19 @@ def LoopSemStateBroad.FiniteSupport {width : Nat} [NeZero width] {F : Type}
   (∃ keys : List (BitVec 5), ∀ key, state.globals key ≠ none → key ∈ keys) ∧
   (∃ keys : List Nat, ∀ key, state.code key ≠ none → key ∈ keys)
 
-/-- Exact HOL `loopSem$state` (`loopSemScript.sml:13-27`) over the reviewed
-    canonical finite-map, loop-program, and FFI carriers. -/
-@[hol "cakeml/pancake/semantics/loopSemScript.sml" "state"
-  (fmap_as_finite_support := [locals, globals, code])]
+/-- Source-shaped rendering of HOL `loopSem$state`
+    (`loopSemScript.sml:13-27`) over the reviewed canonical finite-map,
+    loop-program, and FFI carriers.
+
+    FLAPJACK-SPECIFIC provisional rendering (no `@[hol]` tag), withdrawn
+    2026-09-27 (bead `flapjack-jlj3.1`, PR #1166 review item 3).  HOL's
+    `locals : ('a word_loc) num_map` and `code : (num list # 'a loopLang$prog)
+    num_map` are `sptree$num_map`, not `|->` finite maps, so the
+    `fmap_as_finite_support` qualifier would overclaim the reviewed `|->`
+    translation.  Only `globals : 5 word |-> 'a word_loc` is a genuine
+    finite map.  A faithful port replaces `locals`/`code` with the exact
+    `sptree`/`num_map` carrier (`Flapjack/Misc/Sptree.lean`); tracked on
+    `flapjack-jlj3.1`. -/
 structure LoopSemStateFiniteExact (width : Nat) [NeZero width] (F : Type) where
   locals : HolFiniteMapExact Nat (WordLocW width)
   globals : HolFiniteMapExact (BitVec 5) (WordLocW width)
@@ -149,7 +163,7 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {F : Type} :
   ⟨fun state h => LoopSemStateBroad.toBroad_ofBroad state h,
     fun state => LoopSemStateBroad.ofBroad_toBroad state⟩
 
-/-- Exact port of HOL `get_var_imm_def`
+/-- Source-shaped `get_var_imm_def`
     (`cakeml/pancake/semantics/loopSemScript.sml:165-167`):
 
     ```
@@ -157,14 +171,15 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {F : Type} :
     (get_var_imm (Imm w) s = SOME(Word w))
     ```
 
-    The Lean statement is operand-first as in HOL, reads the `locals` field of
-    the exact `LoopSemStateFiniteExact` state carrier (the reviewed canonical
-    `HolFiniteMapExact` translation of HOL's `'a word_loc num_map`, hence the
-    `(fmap_as_finite_support := [locals])` qualifier), and returns the exact
-    `WordLocW` carrier (tagged `word_loc`). No extra hypotheses beyond
-    `[NeZero width]`. -/
-@[hol "cakeml/pancake/semantics/loopSemScript.sml" "get_var_imm_def"
-  (fmap_as_finite_support := [locals])]
+    FLAPJACK-SPECIFIC provisional rendering (no `@[hol]` tag), withdrawn
+    2026-09-27 (bead `flapjack-jlj3.1`, PR #1166 review item 3).  The
+    statement reads `LoopSemStateFiniteExact.locals` through the canonical
+    `HolFiniteMapExact` translation, but HOL `locals` is `sptree$num_map`, not
+    `|->`, so the `fmap_as_finite_support` qualifier would overclaim the
+    reviewed translation.  The Lean declaration is operand-first as in HOL and
+    returns the exact `WordLocW` carrier (tagged `word_loc`) with no extra
+    hypotheses beyond `[NeZero width]`; the remaining gap is the `num_map`
+    carrier, tracked on `flapjack-jlj3.1`. -/
 def getVarImm {width : Nat} [NeZero width] {F : Type}
     (operand : RegImm (BitVec width)) (state : LoopSemStateFiniteExact width F) :
     Option (WordLocW width) :=
