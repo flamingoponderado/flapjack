@@ -1081,8 +1081,35 @@ def crepRuntimeSharedAddressValid (state : CrepRuntimeState α σ)
     (operator : CrepMemOp) (address : α) : Bool :=
   state.shMemaddrs (crepRuntimeSharedAddress state operator address)
 
+/-- HOL-shaped `word_lab` memory-cell load: HOL `crepSem$eval`'s `Load`
+primitive returns the wrapped `word_lab` cell directly instead of its unwrapped
+word.  Flapjack-specific adapter infrastructure (the arbitrary
+`CrepRuntimeState` memory hooks are not HOL's fixed primitives), so no `@[hol]`
+tag is attached; the shipped bare `crepRuntimeLoad` is kept as its `panTheWord`
+projection for existing callers.  Tracked by bead flapjack-pxn.18.4.3.48.1. -/
+def crepRuntimeLoadWordLab (state : CrepRuntimeState α σ) (address : α) :
+    Option (PanWordLab α) :=
+  if state.memaddrs address then some (state.memory address) else none
+
 def crepRuntimeLoad (state : CrepRuntimeState α σ) (address : α) : Option α :=
   if state.memaddrs address then some (panTheWord (state.memory address)) else none
+
+/-- The shipped bare `crepRuntimeLoad` is exactly the `panTheWord` projection of
+the HOL-shaped `word_lab` load core `crepRuntimeLoadWordLab`. -/
+theorem crepRuntimeLoadWordLab_panTheWord (state : CrepRuntimeState α σ) (address : α) :
+    (crepRuntimeLoadWordLab state address).map panTheWord = crepRuntimeLoad state address := by
+  by_cases h : state.memaddrs address <;>
+    simp [crepRuntimeLoadWordLab, crepRuntimeLoad, panTheWord, h]
+
+/-- Reading the shipped bare load result back through `PanWordLab.word` recovers
+the HOL-shaped `word_lab` load core. -/
+@[simp] theorem crepRuntimeLoad_map_word_eq (state : CrepRuntimeState α σ) (address : α) :
+    (crepRuntimeLoad state address).map PanWordLab.word =
+      crepRuntimeLoadWordLab state address := by
+  rw [← crepRuntimeLoadWordLab_panTheWord]
+  cases crepRuntimeLoadWordLab state address with
+  | none => rfl
+  | some cell => cases cell; rfl
 
 /-- The executed runtime word load is the tagged HOL `mem_load` on the
     `toHolState` view, with the `word_lab` cell projected by `panTheWord`. -/
@@ -1092,12 +1119,61 @@ theorem crepRuntimeLoad_eq_memLoadCrepHol (state : CrepRuntimeState α σ) (addr
   by_cases h : state.memaddrs address <;>
     simp [crepRuntimeLoad, memLoadCrepHol, CrepRuntimeState.toHolState, h]
 
+/-- HOL-shaped `word_lab` byte load core.  See `crepRuntimeLoadWordLab` for why
+no `@[hol]` tag is attached; `crepRuntimeLoadByte` is its `panTheWord`
+projection. -/
+def crepRuntimeLoadByteWordLab [Add α] [OfNat α 1]
+    (state : CrepRuntimeState α σ) (address : α) : Option (PanWordLab α) :=
+  let alignedAddress := state.memoryModel.byteAlign state.bytesInWord address
+  if state.memaddrs alignedAddress then
+    pure (.word (state.memoryModel.getByte state.bytesInWord address
+      (panTheWord (state.memory alignedAddress)) state.bigEndian))
+  else none
+
 def crepRuntimeLoadByte [Add α] [OfNat α 1]
     (state : CrepRuntimeState α σ) (address : α) : Option α :=
   let alignedAddress := state.memoryModel.byteAlign state.bytesInWord address
   if state.memaddrs alignedAddress then
     pure (state.memoryModel.getByte state.bytesInWord address
       (panTheWord (state.memory alignedAddress)) state.bigEndian)
+  else none
+
+/-- The shipped bare `crepRuntimeLoadByte` is exactly the `panTheWord`
+projection of the HOL-shaped `word_lab` byte load core. -/
+theorem crepRuntimeLoadByteWordLab_panTheWord [Add α] [OfNat α 1]
+    (state : CrepRuntimeState α σ) (address : α) :
+    (crepRuntimeLoadByteWordLab state address).map panTheWord =
+      crepRuntimeLoadByte state address := by
+  by_cases h : state.memaddrs (state.memoryModel.byteAlign state.bytesInWord address) <;>
+    simp [crepRuntimeLoadByteWordLab, crepRuntimeLoadByte, panTheWord, h]
+
+/-- Reading the shipped bare byte load result back through `PanWordLab.word`
+recovers the HOL-shaped `word_lab` byte load core. -/
+@[simp] theorem crepRuntimeLoadByte_map_word_eq [Add α] [OfNat α 1]
+    (state : CrepRuntimeState α σ) (address : α) :
+    (crepRuntimeLoadByte state address).map PanWordLab.word =
+      crepRuntimeLoadByteWordLab state address := by
+  rw [← crepRuntimeLoadByteWordLab_panTheWord]
+  cases crepRuntimeLoadByteWordLab state address with
+  | none => rfl
+  | some cell => cases cell; rfl
+
+/-- HOL-shaped `word_lab` 4-byte load core.  See `crepRuntimeLoadWordLab` for
+why no `@[hol]` tag is attached; `crepRuntimeLoad32` is its `panTheWord`
+projection. -/
+def crepRuntimeLoad32WordLab [Add α] [OfNat α 1]
+    (state : CrepRuntimeState α σ) (address : α) : Option (PanWordLab α) :=
+  if state.memoryModel.aligned 4 address then
+    let alignedAddress := state.memoryModel.byteAlign state.bytesInWord address
+    if state.memaddrs alignedAddress then
+      let value := panTheWord (state.memory alignedAddress)
+      pure (.word (state.memoryModel.wordOfBytes32 state.bigEndian
+        [state.memoryModel.getByte state.bytesInWord address value state.bigEndian,
+         state.memoryModel.getByte state.bytesInWord (address + 1) value state.bigEndian,
+         state.memoryModel.getByte state.bytesInWord (address + 1 + 1) value state.bigEndian,
+         state.memoryModel.getByte state.bytesInWord (address + 1 + 1 + 1)
+           value state.bigEndian]))
+    else none
   else none
 
 def crepRuntimeLoad32 [Add α] [OfNat α 1]
@@ -1114,6 +1190,29 @@ def crepRuntimeLoad32 [Add α] [OfNat α 1]
            value state.bigEndian])
     else none
   else none
+
+/-- The shipped bare `crepRuntimeLoad32` is exactly the `panTheWord` projection
+of the HOL-shaped `word_lab` 4-byte load core. -/
+theorem crepRuntimeLoad32WordLab_panTheWord [Add α] [OfNat α 1]
+    (state : CrepRuntimeState α σ) (address : α) :
+    (crepRuntimeLoad32WordLab state address).map panTheWord =
+      crepRuntimeLoad32 state address := by
+  by_cases h1 : state.memoryModel.aligned 4 address
+  · by_cases h2 : state.memaddrs (state.memoryModel.byteAlign state.bytesInWord address)
+    · simp [crepRuntimeLoad32WordLab, crepRuntimeLoad32, panTheWord, h1, h2]
+    · simp [crepRuntimeLoad32WordLab, crepRuntimeLoad32, h1, h2]
+  · simp [crepRuntimeLoad32WordLab, crepRuntimeLoad32, h1]
+
+/-- Reading the shipped bare 4-byte load result back through `PanWordLab.word`
+recovers the HOL-shaped `word_lab` 4-byte load core. -/
+@[simp] theorem crepRuntimeLoad32_map_word_eq [Add α] [OfNat α 1]
+    (state : CrepRuntimeState α σ) (address : α) :
+    (crepRuntimeLoad32 state address).map PanWordLab.word =
+      crepRuntimeLoad32WordLab state address := by
+  rw [← crepRuntimeLoad32WordLab_panTheWord]
+  cases crepRuntimeLoad32WordLab state address with
+  | none => rfl
+  | some cell => cases cell; rfl
 
 def crepRuntimeStore [BEq α] (state : CrepRuntimeState α σ)
     (address value : α) : Option (CrepRuntimeState α σ) :=
@@ -1676,24 +1775,6 @@ theorem evalCrepRuntimeExp_topAddr_wordLab
       some (.word state.topAddress) := by
   simp [evalCrepRuntimeExp]
 
-def crepRuntimeExtCallExp
-    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
-    [Sub α] [AndOp α] [OrOp α] [HXor α α α]
-    [ShiftLeft α] [ShiftRight α] [LT α]
-    [DecidableRel (fun left right : α => left < right)] [PanCmp α]
-    (handler : CrepRuntimeFfiHandler α σ ε)
-    (state : CrepRuntimeState α σ) (function : FunName)
-    (configuration configurationLength array arrayLength : CrepExp α) :
-    CrepRuntimeStep α σ ε :=
-  match evalCrepRuntimeExp state configuration,
-      evalCrepRuntimeExp state configurationLength,
-      evalCrepRuntimeExp state array,
-      evalCrepRuntimeExp state arrayLength with
-  | some configuration, some configurationLength, some array, some arrayLength =>
-      crepRuntimeExtCallValues handler state function configuration configurationLength
-        array arrayLength
-  | _, _, _, _ => (.error, state)
-
 def evalCrepRuntimeExps
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α]
@@ -1726,13 +1807,13 @@ def evalCrepRuntimeExpWordLab
   | .var name => state.locals name
   | .load address => do
       let address ← (evalCrepRuntimeExpWordLab state address).map panTheWord
-      (crepRuntimeLoad state address).map PanWordLab.word
+      crepRuntimeLoadWordLab state address
   | .load32 address => do
       let address ← (evalCrepRuntimeExpWordLab state address).map panTheWord
-      (crepRuntimeLoad32 state address).map PanWordLab.word
+      crepRuntimeLoad32WordLab state address
   | .loadByte address => do
       let address ← (evalCrepRuntimeExpWordLab state address).map panTheWord
-      (crepRuntimeLoadByte state address).map PanWordLab.word
+      crepRuntimeLoadByteWordLab state address
   | .loadGlob address => state.globals address
   | .op operator expressions => do
       let values ← expressions.mapM (fun expression =>
@@ -1796,6 +1877,38 @@ def crepRuntimeSharedMemExp
   | some address => crepRuntimeSharedMem handler state operator name address
   | none => (.error, state)
 
+/-- Crep external-call step whose four FFI argument expressions are evaluated by
+the HOL-shaped `word_lab` core `evalCrepRuntimeExpWordLab` instead of the
+unwrapped `evalCrepRuntimeExp`.  Reading each wrapped cell back through
+`panTheWord` recovers exactly the previous behavior
+(`evalCrepRuntimeExpWordLab_panTheWord`), while at width 64 the core equals the
+tagged `evalCrepSemHOLExp` at the canonical executed state
+(`ExecutedWordLabBridge.evalCrepRuntimeExpWordLab_executed`).
+
+This helper is currently unused: the executed compiler routes `.extCall` through
+the four-local `crepRuntimeExtCall`, which reads `state.locals` directly and
+evaluates no expressions.  It is kept (and routed through the HOL-shaped core
+rather than the bare evaluator) as future-proofing so a future expression-based
+ext-call path cannot silently bypass the reviewed evaluator.  The remaining
+widths/contexts stay explicit and unchanged. -/
+def crepRuntimeExtCallExp
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α]
+    [ShiftLeft α] [ShiftRight α] [LT α]
+    [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (handler : CrepRuntimeFfiHandler α σ ε)
+    (state : CrepRuntimeState α σ) (function : FunName)
+    (configuration configurationLength array arrayLength : CrepExp α) :
+    CrepRuntimeStep α σ ε :=
+  match (evalCrepRuntimeExpWordLab state configuration).map panTheWord,
+      (evalCrepRuntimeExpWordLab state configurationLength).map panTheWord,
+      (evalCrepRuntimeExpWordLab state array).map panTheWord,
+      (evalCrepRuntimeExpWordLab state arrayLength).map panTheWord with
+  | some configuration, some configurationLength, some array, some arrayLength =>
+      crepRuntimeExtCallValues handler state function configuration configurationLength
+        array arrayLength
+  | _, _, _, _ => (.error, state)
+
 /-- Reading the production wrapped cell back through `PanWordLab.word` recovers
 it, since `PanWordLab` has the single `word` constructor.  Flapjack-only adapter
 infrastructure. -/
@@ -1851,7 +1964,14 @@ theorem evalCrepRuntimeExp_wordLab_projection
         simpa [Option.map_map, Function.comp_def, panTheWord] using hmap
       exact hmap'.symm
     rw [hchild]
-    simp [crepRuntimeLoad, Option.map_bind, Function.comp_def]
+    change Option.map PanWordLab.word
+        (Option.bind (evalCrepRuntimeExp state address) (fun a => crepRuntimeLoad state a)) =
+      Option.bind (evalCrepRuntimeExp state address) (fun a => crepRuntimeLoadWordLab state a)
+    rw [Option.map_bind]
+    apply congrArg (Option.bind (evalCrepRuntimeExp state address))
+    funext a
+    simp only [Function.comp_def]
+    exact crepRuntimeLoad_map_word_eq (state := state) (address := a)
   case load32 address ih =>
     simp only [evalCrepRuntimeExp, evalCrepRuntimeExpWordLab]
     have hchild : (evalCrepRuntimeExpWordLab state address).map panTheWord =
@@ -1862,7 +1982,14 @@ theorem evalCrepRuntimeExp_wordLab_projection
         simpa [Option.map_map, Function.comp_def, panTheWord] using hmap
       exact hmap'.symm
     rw [hchild]
-    simp [crepRuntimeLoad32, Option.map_bind, Function.comp_def]
+    change Option.map PanWordLab.word
+        (Option.bind (evalCrepRuntimeExp state address) (fun a => crepRuntimeLoad32 state a)) =
+      Option.bind (evalCrepRuntimeExp state address) (fun a => crepRuntimeLoad32WordLab state a)
+    rw [Option.map_bind]
+    apply congrArg (Option.bind (evalCrepRuntimeExp state address))
+    funext a
+    simp only [Function.comp_def]
+    exact crepRuntimeLoad32_map_word_eq (state := state) (address := a)
   case loadByte address ih =>
     simp only [evalCrepRuntimeExp, evalCrepRuntimeExpWordLab]
     have hchild : (evalCrepRuntimeExpWordLab state address).map panTheWord =
@@ -1873,7 +2000,14 @@ theorem evalCrepRuntimeExp_wordLab_projection
         simpa [Option.map_map, Function.comp_def, panTheWord] using hmap
       exact hmap'.symm
     rw [hchild]
-    simp [crepRuntimeLoadByte, Option.map_bind, Function.comp_def]
+    change Option.map PanWordLab.word
+        (Option.bind (evalCrepRuntimeExp state address) (fun a => crepRuntimeLoadByte state a)) =
+      Option.bind (evalCrepRuntimeExp state address) (fun a => crepRuntimeLoadByteWordLab state a)
+    rw [Option.map_bind]
+    apply congrArg (Option.bind (evalCrepRuntimeExp state address))
+    funext a
+    simp only [Function.comp_def]
+    exact crepRuntimeLoadByte_map_word_eq (state := state) (address := a)
   case op operator expressions ih =>
     have hpoint : ∀ e ∈ expressions,
         (evalCrepRuntimeExpWordLab state e).map panTheWord =

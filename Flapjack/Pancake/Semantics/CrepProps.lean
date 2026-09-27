@@ -1,4 +1,5 @@
 import Flapjack.HolRef
+import Flapjack.FiniteMap
 import Flapjack.Pancake.CrepLang
 import Flapjack.Pancake.CrepLang.Exp
 import Flapjack.Pancake.CrepLang.Prog
@@ -1199,5 +1200,19 @@ theorem flookupResVarThmHOL [DecidableEq α] (l : HolFiniteMapExact α β)
         FLOOKUP (FUPDATE_HOL l.lookup (m, value)) n from rfl]
     rw [FLOOKUP_FUPDATE_HOL]
     rfl
+
+/-- Exact HOL `opt_mmap_eval_upd_clock_eq` (`crepPropsScript.sml:872`): mapping
+the exact expression evaluator (after a clock update by `clock + state.clock`)
+over a list of expressions equals mapping the original evaluator. -/
+@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "opt_mmap_eval_upd_clock_eq"]
+theorem evalCrepSemHOLExps_upd_clock_eq {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) [DecidablePred state.memaddrs]
+    (expressions : List (CrepExpHOL width)) (clock : Nat) :
+    expressions.mapM
+        (fun e => evalCrepSemHOLExp { state with clock := clock + state.clock } e) =
+      expressions.mapM (fun e => evalCrepSemHOLExp state e) :=
+  Flapjack.list_mapM_congr _ _ expressions
+    (fun e _ => evalCrepSemHOLExp_upd_clock_eq state e (clock + state.clock))
+
 
 end Flapjack
