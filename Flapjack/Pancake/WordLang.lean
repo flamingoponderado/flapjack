@@ -382,7 +382,8 @@ def everyVarInst {width : Nat} (P : Nat -> Bool) :
 models HOL's positive word dimension (`dimindex (:α) ≥ 1`); unlike the
 production `everyVarImm`, no `BitVec 0` instance is admitted, so the statement
 matches the HOL carrier and the declaration is tagged. -/
-@[hol "cakeml/compiler/backend/wordLangScript.sml" "every_var_imm_def"]
+@[hol "cakeml/compiler/backend/wordLangScript.sml" "every_var_imm_def"
+  (words_as_type_indexed_bitvec)]
 def everyVarImmHOL {width : Nat} [NeZero width] (P : Nat → Bool) :
     WordRegImm (BitVec width) → Bool
   | .reg num => P num
@@ -393,7 +394,8 @@ exact instruction carrier, with the two HOL FP-move `dimindex (:α) = 64` tests
 rendered as `width = 64`.  `[NeZero width]` models HOL's positive word
 dimension; the production `everyVarInst` omits that binder and stays
 `documented_mismatch`. -/
-@[hol "cakeml/compiler/backend/wordLangScript.sml" "every_var_inst_def"]
+@[hol "cakeml/compiler/backend/wordLangScript.sml" "every_var_inst_def"
+  (words_as_type_indexed_bitvec)]
 def everyVarInstHOL {width : Nat} [NeZero width] (P : Nat → Bool) :
     WordLangInst (BitVec width) → Bool
   | .const reg _ => P reg

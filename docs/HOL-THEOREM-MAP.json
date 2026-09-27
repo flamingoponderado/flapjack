@@ -10682,16 +10682,18 @@
     "hol_name": "every_var_imm_def",
     "lean_path": "Flapjack/Pancake/WordLang.lean",
     "lean_name": "everyVarImmHOL",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds5 (source comparison, 2026-09-27; bead flapjack-yuc3, remaining gap of flapjack-5ldn): exact HOL wordLang$every_var_imm (wordLangScript.sml:93-96) over the exact register/word carrier WordRegImm (BitVec width): Reg applies P and every other immediate is T; [NeZero width] models HOL positive dimindex (:α) >= 1, whereas the untagged production everyVarImm omits the binder and stays documented_mismatch. Mirrors the reviewed everyVarExpHOL pattern."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-27; bead flapjack-yuc3, remaining gap of flapjack-5ldn): exact HOL wordLang$every_var_imm (wordLangScript.sml:93-96) over the exact register/word carrier WordRegImm (BitVec width); this entry records the standard translation of HOL type-indexed word to BitVec width with [NeZero width] (HOL dimindex (:a) = width, positive), which is the only carrier difference: Reg applies P and every other immediate is T; [NeZero width] models HOL positive dimindex (:α) >= 1, whereas the untagged production everyVarImm omits the binder and stays documented_mismatch. Mirrors the reviewed everyVarExpHOL pattern."
   },
   {
     "hol_path": "cakeml/compiler/backend/wordLangScript.sml",
     "hol_name": "every_var_inst_def",
     "lean_path": "Flapjack/Pancake/WordLang.lean",
     "lean_name": "everyVarInstHOL",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds5 (source comparison, 2026-09-27; bead flapjack-yuc3, remaining gap of flapjack-5ldn): clause-for-clause HOL wordLang$every_var_inst (wordLangScript.sml:98-133) over WordLangInst (BitVec width): Const/Arith (Binop, Shift, Div, AddCarry, AddOverflow, SubOverflow, LongMul, LongDiv)/Mem (Load, Store, Load32, Store32, Load8, Store8)/FP (FPLess, FPLessEqual, FPEqual, FPMovToReg, FPMovFromReg) plus catch-all T; the two HOL dimindex (:α) = 64 FP-move tests render as width = 64. [NeZero width] models HOL positive word dimension; production everyVarInst omits the binder and stays documented_mismatch. Regression: 20 exact-carrier rows in Flapjack/Test/WordLangEveryVarParity.lean."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-27; bead flapjack-yuc3, remaining gap of flapjack-5ldn): clause-for-clause HOL wordLang$every_var_inst (wordLangScript.sml:98-133) over WordLangInst (BitVec width); this entry records the standard translation of HOL type-indexed word to BitVec width with [NeZero width] (HOL dimindex (:a) = width, positive), which is the only carrier difference: Const/Arith (Binop, Shift, Div, AddCarry, AddOverflow, SubOverflow, LongMul, LongDiv)/Mem (Load, Store, Load32, Store32, Load8, Store8)/FP (FPLess, FPLessEqual, FPEqual, FPMovToReg, FPMovFromReg) plus catch-all T; the two HOL dimindex (:α) = 64 FP-move tests render as width = 64. [NeZero width] models HOL positive word dimension; production everyVarInst omits the binder and stays documented_mismatch. Regression: 20 exact-carrier rows in Flapjack/Test/WordLangEveryVarParity.lean."
   },
   {
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
