@@ -253,6 +253,45 @@ class HolTypeHashesTest(unittest.TestCase):
         lock = MODULE.expected_lock(manifest, export, "leanprover/lean4:v4")
         self.assertTrue(lock["records"][0]["qualifiers"]["words_as_type_indexed_bitvec"])
 
+    def test_combined_relation_words_status_is_locked(self):
+        manifest = [{
+            **self.manifest[0],
+            "statement_status": (
+                "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec"
+            ),
+            "fmap_as_finite_support_relation": ["PanState.globals", "CrepState.code"],
+            "words_as_type_indexed_bitvec": True,
+        }]
+        export = [{
+            **self.export[0],
+            "qualifiers": {
+                "list_as_array": [],
+                "names_as_string": [],
+                "names_as_string_boundary": [],
+                "fmap_as_finite_support": [],
+                "fmap_as_finite_support_relation": ["PanState.globals", "CrepState.code"],
+                "words_as_type_indexed_bitvec": True,
+            },
+        }]
+        lock = MODULE.expected_lock(manifest, export, "leanprover/lean4:v4")
+        self.assertEqual(
+            lock["records"][0]["qualifiers"]["fmap_as_finite_support_relation"],
+            ["PanState.globals", "CrepState.code"],
+        )
+        self.assertTrue(lock["records"][0]["qualifiers"]["words_as_type_indexed_bitvec"])
+        without_relation = [{
+            **export[0],
+            "qualifiers": {
+                "list_as_array": [],
+                "names_as_string": [],
+                "names_as_string_boundary": [],
+                "fmap_as_finite_support": [],
+                "words_as_type_indexed_bitvec": True,
+            },
+        }]
+        with self.assertRaisesRegex(ValueError, "manifest qualifiers differ"):
+            MODULE.lock_records(manifest, without_relation)
+
     def test_words_qualifier_export_record_validates(self):
         MODULE.validate_export_record(
             {
