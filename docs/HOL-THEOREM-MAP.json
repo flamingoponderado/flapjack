@@ -13437,5 +13437,71 @@
     "lean_name": "compileExpExactHOLW_localVar_vars",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific compiler support theorem: pins that exact compile_exp emits precisely the stored slot names for a successful local context lookup and no variable names on a missing lookup. HOL has no separate theorem for this local clause; it supports, but does not state or prove, eval_var_cexp_present_ctxt. No @[hol] tag is claimed."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExactVarSupport.lean",
+    "lean_name": "crepVars_flatMap_take_subset",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only list support lemma: every variable in an expression selected by take was already in the original list. This is proof infrastructure for exact compile_exp variable provenance and has no HOL declaration. No @[hol] tag is claimed."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExactVarSupport.lean",
+    "lean_name": "crepVars_flatMap_drop_subset",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only list support lemma: every variable in an expression selected by drop was already in the original list. This is proof infrastructure for exact compile_exp variable provenance and has no HOL declaration. No @[hol] tag is claimed."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExactVarSupport.lean",
+    "lean_name": "compFieldHOL_vars_subset",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only compiler support lemma: comp_field cannot introduce variable names because its output selects or drops a sublist of its input expressions. This proves no source-level or semantic premises and has no separate HOL declaration. No @[hol] tag is claimed."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExactVarSupport.lean",
+    "lean_name": "cexpHeads_vars_subset",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only compiler support lemma: cexp_heads outputs only variables present in one of its source expressions. This is proof infrastructure for exact compile_exp variable provenance and has no separate HOL theorem. No @[hol] tag is claimed."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExactVarSupport.lean",
+    "lean_name": "loadShapeBytesHOLW_vars_subset",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only compiler support lemma: load_shape output variable names originate in its address expression. It is proof infrastructure for exact compile_exp variable provenance and has no separate HOL theorem. No @[hol] tag is claimed."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExactVarSupport.lean",
+    "lean_name": "compileExpExactHOLW_vars_from_context",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific compiler support theorem: recursively proves that each variable name emitted by exact compile_exp or compile_exp over a list comes from a slot list in the exact context.vars finite map. It does not claim eval_var_cexp_present_ctxt: evaluator, state_rel, code_rel, locals_rel, and localized_exp premises and implications are absent. No @[hol] tag is claimed."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "eval_var_cexp_present_ctxt",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "evalVarCexpPresentContextExactHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.code",
+      "PanToCrepContextExact.vars",
+      "PanToCrepContextExact.funcs",
+      "PanToCrepContextExact.eids"
+    ],
+    "reviewer": "Source comparison against pan_to_crepProofScript.sml:693-748. The Lean statement keeps the seven quantified values (source state, expression, value, target state, context, compiled expressions, shape), all six premises in HOL order (state_rel, eval = SOME, code_rel, locals_rel, localised_exp, compile_exp result), and the universal var_cexp membership conclusion. ExpHOL/MlS/ValueHOL/ShapeHOL/CrepExpHOL and exact finite-support states/context are the reviewed carriers; the finite-map qualifier lists each owner field used by eval or the three relation premises, with same-module roundtrip witnesses. The eval premise locally supplies Classical.propDecidable for the HOL address-set predicate, so the Lean implementation has no extra quantified decidability premise. The conclusion follows from the stronger compileExpExactHOLW_vars_from_context theorem; unused HOL premises remain in the statement. No executable routing claim is made."
   }
 ]
