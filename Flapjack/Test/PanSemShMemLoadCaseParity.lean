@@ -49,7 +49,7 @@ example :
     (evaluateHOLFiniteState baseState
         (.shMemLoad .op8 .local (ml "z") (.const 0) : ProgHOL 8)).1 = some .error := by
   rw [evaluateHOLFiniteState_shMemLoad_source]
-  simp [baseState, evalHOLFinite, evalHOLExact, lookupKvarHOLExact,
+  simp [baseState, evalHOLFinite, evalHOLExact, lookupKvarHOLFinite,
     HolFiniteMapExact.empty]
 
 /-- HOL oracle `shmemload_domain_result`: address and destination are words,
@@ -58,8 +58,8 @@ example :
     (evaluateHOLFiniteState stateWordX
         (.shMemLoad .op8 .local (ml "x") (.const 0) : ProgHOL 8)).1 = some .error := by
   rw [evaluateHOLFiniteState_shMemLoad_source]
-  simp [stateWordX, baseState, evalHOLFinite, evalHOLExact, lookupKvarHOLExact,
-    PanSemStateFiniteExact.toExact, shMemLoadHOLExact, nbOpHOL,
+  simp [stateWordX, baseState, evalHOLFinite, evalHOLExact, lookupKvarHOLFinite,
+    shMemLoadHOLFiniteExact, nbOpHOL,
     HolFiniteMapExact.update, HolFiniteMapExact.empty, FUPDATE]
 
 /-- HOL oracle `shmemload_address_eval_failure`: evaluation of the address

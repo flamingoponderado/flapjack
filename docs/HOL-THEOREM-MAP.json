@@ -12005,6 +12005,15 @@
   },
   {
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "sh_mem_load_def",
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
+    "lean_name": "shMemLoadHOLFiniteExact",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "reviewer": "flapjack-luna-c source comparison (2026-09-27; bead flapjack-qj5.10.1): HOL panSemScript.sml:510-527 tests the raw address for nb=0 and byte_align address otherwise; an address outside sh_memaddrs returns (SOME Error,s). In-domain branches call call_FFI with SharedMem MappedRead, [n2w nb], and word_to_bytes addr F. FFI_final returns SOME (FinalFFI outcome) with empty_locals s. FFI_return stores ValWord (word_of_bytes F 0w new_bytes) via set_kvar, then updates ffi to new_ffi. shMemLoadHOLFiniteExact has those branches directly on PanSemStateFiniteExact, using the exact Pan word/FFI helpers and finite-map set/empty operations; it does not call broad shMemLoadHOLExact. Its four named maps are owned by PanSemStateFiniteExact and use the same-module HolFiniteMapExact roundtrip witness. The finite-support qualifier records only that carrier translation; the implicit decidability evidence is classical and adds no semantic premise. The existing eight-row pan_sem_sh_mem_probe.out guard checks the equivalent broad helper, and shMemLoadHOLFiniteExact_toExact proves pointwise agreement on every finite state. The helper is proof-side so far; production routing remains open."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
     "hol_name": "empty_locals_def",
     "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
     "lean_name": "emptyLocalsHOLFinite",
@@ -12177,6 +12186,16 @@
     "statement_status": "reviewed_fmap_as_finite_support",
     "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
     "reviewer": "flapjack-luna-a source comparison (2026-09-27; bead flapjack-qj5): the StoreByte conjunct at panSemScript.sml:597-603 evaluates both expressions in the original state and accepts only two ValWord results; it calls mem_store_byte with the original memory, domain, and endianness and w2w of the source. Success changes only memory; failed evaluation, non-word values, or an out-of-domain aligned cell returns (SOME Error,s). evaluateHOLFiniteState_storeByte uses the same cases and the exact panMemStoreByteWord8HOL helper, with `BitVec.ofNat 8 value.toNat` representing HOL's word8 w2w. The helper checks byte_align, the aligned-cell domain, applies set_byte with the original byte address/endianness, and preserves all other cells. Its same-module theorem panMemStoreByteHOL_eq_word8 proves that the evaluator's UInt8 adapter agrees as a full memory map with this exact BitVec 8 carrier; no adapter premise is added to the theorem. HolWordLab has one BitVec width payload, state memory/domain are the HOL total map/set carriers, and all four named state maps use the same-module HolFiniteMapExact roundtrip witness. No evaluation or domain fact is assumed. This is one exact constructor case; the full conjunction remains open."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 780,
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/ShMemLoadCase.lean",
+    "lean_name": "evaluateHOLFiniteState_shMemLoad_source",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "reviewer": "flapjack-luna-c source comparison (2026-09-27; bead flapjack-qj5.10.1): HOL panSemScript.sml:605-610 evaluates the address expression first, then lookup_kvar for the named destination. Only a word address and word destination call sh_mem_load vk v addr (nb_op op); each failure returns (SOME Error,s). The Lean statement has those same nested matches over evalHOLFinite and lookupKvarHOLFinite and uses shMemLoadHOLFiniteExact directly at nbOpHOL operator; its proof shows the existing finite evaluator's broad-helper result repacks to this direct finite-carrier result. No result, destination, or domain-success premise is added. PanSemStateFiniteExact owns the four named HolFiniteMapExact fields with the same-module roundtrip witness. This restores the case tag after the helper carrier mismatch was fixed; the declaration is proof-side and does not claim production compiler routing."
   },
   {
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",

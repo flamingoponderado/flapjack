@@ -372,6 +372,121 @@ def emptyLocalsHOLFinite {width : Nat} {σ : Type} [NeZero width]
     (emptyLocalsHOLFinite state).toExact = emptyLocalsHOLExact state.toExact :=
   rfl
 
+/-- Flapjack-specific composition of finite-map `set_kvar` with the FFI field
+    update used by a successful shared-memory read. HOL has no standalone
+    declaration for this composed helper; `sh_mem_load_def` names the two
+    operations separately. -/
+def setKvarFfiHOLFinite {width : Nat} {σ : Type} [NeZero width]
+    (kind : VarKind) (name : MlS) (value : ValueHOL width)
+    (state : PanSemStateFiniteExact width σ) (newFfi : HolFfiState σ) :
+    PanSemStateFiniteExact width σ :=
+  { setKvarHOLFinite kind name value state with ffi := newFfi }
+
+/-- Flapjack-specific projection bridge for `setKvarFfiHOLFinite`; it has no
+    standalone HOL declaration because it only packages two state updates. -/
+@[simp] theorem toExact_setKvarFfiHOLFinite {width : Nat} {σ : Type}
+    [NeZero width] (kind : VarKind) (name : MlS) (value : ValueHOL width)
+    (state : PanSemStateFiniteExact width σ) (newFfi : HolFfiState σ) :
+    (setKvarFfiHOLFinite kind name value state newFfi).toExact =
+      { setKvarHOLExact kind name value state.toExact with ffi := newFfi } := by
+  change { (setKvarHOLFinite kind name value state).toExact with ffi := newFfi } = _
+  rw [toExact_setKvarHOLFinite]
+
+/-- HOL `sh_mem_load_def` (`cakeml/pancake/semantics/panSemScript.sml:510-527`)
+    over the finite-map state carrier. The branches follow HOL directly: test
+    the raw address when `nb = 0`, otherwise the byte-aligned address; call
+    `call_FFI` with `SharedMem MappedRead`, `[n2w nb]`, and
+    `word_to_bytes addr F`; on `FFI_final`, clear locals; on `FFI_return`,
+    install the loaded word with `set_kvar` and update only `ffi`. The four
+    map fields use the canonical finite-support carrier recorded by the tag. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "sh_mem_load_def"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+def shMemLoadHOLFiniteExact {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) [DecidablePred state.shMemaddrs]
+    (kind : VarKind) (name : MlS) (address : RiscV.Word width) (nb : Nat) :
+    Option (PanSemResultExact width) × PanSemStateFiniteExact width σ :=
+  if nb = 0 then
+    if state.shMemaddrs address then
+      match callFFIHOL state.ffi (.sharedMem .mappedRead) [BitVec.ofNat 8 nb]
+          (panWordToBytesHOL address false) with
+      | .final event => (some (.finalFfi event), emptyLocalsHOLFinite state)
+      | .ret newFfi newBytes =>
+          (none, setKvarFfiHOLFinite kind name
+            (.val (.word (panWordOfBytesHOL false 0 newBytes))) state newFfi)
+    else (some .error, state)
+  else
+    if state.shMemaddrs (panByteAlignHOL address) then
+      match callFFIHOL state.ffi (.sharedMem .mappedRead) [BitVec.ofNat 8 nb]
+          (panWordToBytesHOL address false) with
+      | .final event => (some (.finalFfi event), emptyLocalsHOLFinite state)
+      | .ret newFfi newBytes =>
+          (none, setKvarFfiHOLFinite kind name
+            (.val (.word (panWordOfBytesHOL false 0 newBytes))) state newFfi)
+    else (some .error, state)
+
+/-- Flapjack-specific representation bridge, not a separate HOL declaration:
+    forgetting finite-map support after the direct finite-carrier load gives
+    the broad helper's result on the same finite input. -/
+theorem shMemLoadHOLFiniteExact_toExact {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) [DecidablePred state.shMemaddrs]
+    (kind : VarKind) (name : MlS) (address : RiscV.Word width) (nb : Nat) :
+    let loaded := shMemLoadHOLFiniteExact state kind name address nb
+    (loaded.1, loaded.2.toExact) =
+      shMemLoadHOLExact state.toExact kind name address nb := by
+  classical
+  by_cases hnb : nb = 0
+  · subst nb
+    by_cases haddr : state.shMemaddrs address
+    · cases hffi : callFFIHOL state.ffi (.sharedMem .mappedRead)
+          [BitVec.ofNat 8 0]
+          (panWordToBytesHOL address false) with
+      | final event =>
+          simp [shMemLoadHOLFiniteExact, shMemLoadHOLExact, haddr, hffi]
+      | ret newFfi newBytes =>
+          simp [shMemLoadHOLFiniteExact, shMemLoadHOLExact, haddr, hffi]
+    · simp [shMemLoadHOLFiniteExact, shMemLoadHOLExact, haddr]
+  · by_cases haddr : state.shMemaddrs (panByteAlignHOL address)
+    · cases hffi : callFFIHOL state.ffi (.sharedMem .mappedRead) [BitVec.ofNat 8 nb]
+          (panWordToBytesHOL address false) with
+      | final event =>
+          simp [shMemLoadHOLFiniteExact, shMemLoadHOLExact, hnb, haddr, hffi]
+      | ret newFfi newBytes =>
+          simp [shMemLoadHOLFiniteExact, shMemLoadHOLExact, hnb, haddr, hffi]
+    · simp [shMemLoadHOLFiniteExact, shMemLoadHOLExact, hnb, haddr]
+
+/-- Flapjack-specific proof-irrelevance bridge for the finite/broad carrier
+    roundtrip. HOL has no declaration for this proof plumbing. -/
+private theorem ofExact_eq_finite_of_toExact_eq {width : Nat} {σ : Type}
+    [NeZero width] (broad : PanSemStateExact width σ)
+    (finite : PanSemStateFiniteExact width σ) (h : broad = finite.toExact)
+    (support : broad.FiniteSupport) :
+    ofExact broad support = finite := by
+  cases h
+  exact ofExact_toExact finite
+
+/-- Flapjack-specific representation bridge, not a separate HOL declaration:
+    rebuilding the broad load result with its finite-support proof gives the
+    direct finite-carrier helper's result. -/
+theorem shMemLoadHOLFiniteExact_repack {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) [DecidablePred state.shMemaddrs]
+    (kind : VarKind) (name : MlS) (address : RiscV.Word width) (nb : Nat) :
+    let loaded := shMemLoadHOLFiniteExact state kind name address nb
+    let broad := shMemLoadHOLExact state.toExact kind name address nb
+    (broad.1, ofExact broad.2
+    (shMemLoadHOLExact_finiteSupport state.toExact kind name address nb
+        state.toExact_finiteSupport)) = (loaded.1, loaded.2) := by
+  have h := shMemLoadHOLFiniteExact_toExact state kind name address nb
+  dsimp only at h
+  apply Prod.ext
+  · exact (congrArg Prod.fst h).symm
+  · have hsnd :
+        (shMemLoadHOLExact state.toExact kind name address nb).2 =
+          (shMemLoadHOLFiniteExact state kind name address nb).2.toExact :=
+      (congrArg Prod.snd h).symm
+    exact ofExact_eq_finite_of_toExact_eq _ _ hsnd
+      (shMemLoadHOLExact_finiteSupport state.toExact kind name address nb
+        state.toExact_finiteSupport)
+
 /-- The finite-support local write is compatible with the broad exact one. -/
 @[simp] theorem toExact_setVarHOLFinite {width : Nat} {σ : Type} [NeZero width]
     (name : MlS) (value : ValueHOL width) (state : PanSemStateFiniteExact width σ) :
