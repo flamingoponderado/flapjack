@@ -12710,5 +12710,30 @@
     "lean_name": "holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "flapjack-ds8: Flapjack-specific same-module canonical relation witness for the fmap_as_finite_support_relation qualifier on panToCrepLocalsRelFiniteExact. It forwards the canonical ofBroad/toBroad roundtrip of PanToCrepContextExact and has no HOL theorem original."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopSemScript.sml",
+    "hol_name": "state",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopSemStateExact.lean",
+    "lean_name": "LoopSemStateFiniteExact",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "reviewer": "flapjack-ds8 source comparison (bead flapjack-pxn.18.5.17.1): HOL loopSem$state (cakeml/pancake/semantics/loopSemScript.sml:13-27) is the record <| locals : ('a word_loc) num_map; globals : 5 word |-> 'a word_loc; memory : 'a word -> 'a word_loc; mdomain/sh_mdomain : ('a word) set; clock : num; code : (num list # 'a loopLang$prog) num_map; be : bool; ffi : 'ffi ffi_state; base_addr/top_addr : 'a word |>. LoopSemStateFiniteExact mirrors it field-for-field over the nonzero BitVec width model: locals/globals/code use the reviewed canonical HolFiniteMapExact translation, code entries use the exact HolLoopProg carrier, ffi uses the exact HolFfiState, memory is total, and domains are Lean sets. The qualifier records exactly the three translated finite-map fields; the canonical same-module witness holFmapAsFiniteSupportWitness states the toBroad/ofBroad roundtrip. The production LoopMachineState bridge over this exact carrier is tracked separately.",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ]
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "excp_rel_def",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "panToCrepExcpRelFiniteExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "compilerCodes",
+      "sourceShapes"
+    ],
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.16.3): compared against HOL excp_rel_def (pan_to_crepProofScript.sml:16-23): FDOM seids = FDOM ceids is rendered pointwise as equality of definedness on the canonical HolFiniteMapExact lookup, and FLOOKUP ceids e = SOME n becomes compilerCodes.lookup e = some n; the injectivity conjunct and the fact that source values are unrelated to compiler values match clause-for-clause. Both finite maps are standalone exact-map parameters (no owning carrier), so the relation qualifier records them as bare entries. Direct HOL EVAL oracle rows live in scripts/hol-probes/excp_rel_probe.out and Lean fixtures in Flapjack/Test/PanToCrepCodeRelParity.lean."
   }
 ]
