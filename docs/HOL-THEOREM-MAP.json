@@ -13250,6 +13250,19 @@
     "reviewer": "flapjack-luna-b source comparison (flapjack-4ac.5.41.6, 2026-09-27): HOL pan_to_crepProofScript.sml:2355-2458 has the explicit rshape quantifier, all thirteen premises in their source order, and the four state_rel/code_rel/excp_rel/locals_rel conclusions in their source order. The Lean theorem preserves the same hypotheses and output shapes over the reviewed ValueHOL, ShapeHOL, ProgHOL, CrepProgHOL, MlS, and positive-width BitVec carriers. In particular hpreLocals is exactly the PRE-call premise locals_rel ctxt s.locals t.locals (HOL 2355-2364); the final conclusion is the distinct POST-call relation locals_rel (ctxt_fc ...) (slc vshs args) (tlc ns args) (HOL 2374-2378). The proof uses the reviewed state/local conjunct helpers and direct code/exception relation unfoldings. The named finite-map carrier translations are exactly the nine listed fields and have same-module canonical roundtrip witnesses; no evaluator/result premise or post-state relation is assumed."
   },
   {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "globals_lookup_def",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateNestedDecs.lean",
+    "lean_name": "globalsLookupHOL",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.60.1.1): source comparison of HOL globals_lookup_def (pan_to_crepProofScript.sml:435-438) against this exact port. HOL OPT_MMAP (FLOOKUP t.globals) (GENLIST (fun x => n2w x) (size_of_shape (shape_of v))) is rendered as List.mapM over the reviewed HolFiniteMapExact translation of the crepSem state's 5 word |-> 'a word_lab globals map, with GENLIST ... = List.range ... |> List.map BitVec.ofNat 5 and size_of_shape/shape_of = sizeOfShapeHOL/shapeOfHOLExact. The production String/PanValue globalsLookup stays a documented_mismatch."
+  },
+  {
     "hol_path": "cakeml/misc/miscScript.sml",
     "hol_name": "read_bytearray_def",
     "lean_path": "Flapjack/Pancake/Semantics/LoopSem.lean",
