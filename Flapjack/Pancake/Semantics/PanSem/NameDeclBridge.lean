@@ -1478,7 +1478,13 @@ def PanValueMemoryCodecRel {width : Nat} [NeZero width]
      else none)
 
 /-- Full executed-path `.load`/.one arm correspondence (success and rejection)
-    over the finite-support evaluator, under the memory correspondence. -/
+    over the finite-support evaluator, under the memory correspondence.
+
+    Paired with the direct original-Pancake HOL EVAL rows in
+    `scripts/hol-probes/pan_sem_state_eval_probe.out`: `word_load_hit`
+    (success, `SOME (ValWord 0x1122334455667788w)`) and `word_load_miss`
+    (memory-domain rejection, `NONE`), reproduced by the Lean regressions in
+    `Flapjack/Test/DeclBridgeParity.lean`. -/
 theorem evalPanValueExp_load_one_option_correspondence {width : Nat} [NeZero width]
     [BEq (BitVec width)] [OfNat (BitVec width) 0] [OfNat (BitVec width) 1]
     [Add (BitVec width)] [Mul (BitVec width)] [Sub (BitVec width)]
