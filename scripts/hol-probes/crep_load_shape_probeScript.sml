@@ -21,6 +21,10 @@ val _ = print_eval "empty"
   ``crepLang$load_shape (0w : 32 word) 0 (crepLang$Const (7w : 32 word))``;
 val _ = print_eval "zero_one"
   ``crepLang$load_shape (0w : 32 word) 1 (crepLang$Const (7w : 32 word))``;
+(* Align the generated Crep Load expression with compile_exp's `load_one`. *)
+val _ = print_eval "load_one"
+  ``crepLang$load_shape (0w : 64 word) 1
+      (crepLang$Const (3w : 64 word))``;
 val _ = print_eval "zero_two"
   ``crepLang$load_shape (0w : 32 word) 2 (crepLang$Const (7w : 32 word))``;
 val _ = print_eval "nonzero_two"
