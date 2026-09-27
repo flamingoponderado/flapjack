@@ -14000,5 +14000,13 @@
     "lean_name": "cexpHeads_compileExpListValRelHOL",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.10.2): Flapjack-specific list-level heads-correspondence infrastructure used by the exact compile_exp_val_rel Op/Panop cases; no HOL declaration corresponds directly."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "compileExpValRelHOL_op",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.10): exact-carrier staged constructor lemma for the Op case of HOL compile_exp_val_rel (proved inside pc_compile_correct, so no standalone exported HOL declaration to tag). Flapjack-specific infrastructure."
   }
 ]
