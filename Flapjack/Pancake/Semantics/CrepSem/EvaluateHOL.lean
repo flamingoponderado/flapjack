@@ -2912,4 +2912,80 @@ theorem evalCrepSemHOLProgExact_call {width : Nat} [NeZero width] {σ : Type}
                else (some .error, state)) := by
   simp only [evalCrepSemHOLProgExact]
   exact evalCrepSemHOLProg_call state _ _ returnInfo function arguments
+
+/-!
+## Proposal: imported-owner + evaluator-local finite-map witness for `evaluate_def`
+
+Source-reviewed proposal for bead `flapjack-4ac.5.16.5.13.1` (coordinator review
+of the `fmap_as_finite_support` placement policy). NOT applied: `evaluate_def`
+stays untagged until the coordinator rules, and `scripts/check-hol-refs.py` is
+not modified.
+
+### What the checker already supports
+
+`check-hol-refs.py:338` `imported_structure_field_types(module, ROOT)` walks the
+tagged module's transitive imports and maps structure name -> source module,
+fields, types. `fmap_as_finite_support_errors` then disambiguates the owning
+carrier by the tagged declaration's own text: if exactly one candidate structure
+name occurs in that text, it is the owner. `has_fmap_witness` (:461) requires, in
+the tagged module's own source, a theorem literally named
+`holFmapAsFiniteSupportWitness` (the regex is anchored on the unqualified name,
+so a fresh namespace matches) whose statement names the owning structure and
+contains a matching `toX`/`ofX` roundtrip pair. So an imported owner plus an
+evaluator-local witness already typechecks against the checker; only
+`AGENTS.md`'s "same-module owner" prose is stricter.
+
+### Carrier correspondence (exact HOL field types -> Lean carriers)
+
+| HOL `crepSem$state` field (`crepSemScript.sml:19-32`) | Lean carrier |
+| --- | --- |
+| `locals : varname |-> 'a word_lab` (`varname = num`) | `HolFiniteMapExact Nat (HolWordLab width)` |
+| `globals : 5 word |-> 'a word_lab` | `HolFiniteMapExact (BitVec 5) (HolWordLab width)` |
+| `code : funname |-> (varname list # 'a prog)` (`funname = mlstring`) | `HolFiniteMapExact MlString (List Nat × CrepProgHOL width)` |
+| `memory : 'a word -> 'a word_lab` | `BitVec width → HolWordLab width` |
+| `memaddrs`, `sh_memaddrs : ('a word) set` | `BitVec width → Prop` (deciders supplied explicitly) |
+| `clock : num`, `be : bool` | `Nat`, `Bool` |
+| `ffi : 'ffi ffi_state` | `HolFfiState σ` (`@[hol ... "ffi_state"]`) |
+| `base_addr`, `top_addr : 'a word` | `BitVec width` |
+
+Owning carrier for the finite-map qualifier: `CrepSemHOLState` (declared in the
+transitive import `CrepSem/HOLState.lean`), qualified fields
+`[locals, globals, code]`.
+
+### What the evaluator-local witness establishes
+
+The theorem below re-exports the canonical roundtrip between the broad state
+`CrepSemBroadState` and the finite-support `CrepSemHOLState` so the checker finds
+a witness in this module, without clashing with
+`CrepSemHOLState.holFmapAsFiniteSupportWitness` (fresh `EvaluateHOL` namespace).
+It establishes the invertibility of the finite-map carrier translation only; it
+says nothing about the word dimension, the FFI universe, or evaluator agreement.
+
+### Word-dimension / FFI-universe mismatch
+
+Tracked separately by `flapjack-4ac.5.16.5.19`: HOL indexes words by the type
+variable `'a` and quantifies the host type `'ffi`, whereas the Lean carrier fixes
+the dimension as `Nat` `width` with `[NeZero width]` (needed by
+`HolWordLab width`) and pins the host to `{σ : Type}`. A `@[hol]` tag cannot
+absorb the `NeZero` side condition as an extra hypothesis, and no
+word-dimension qualifier exists; this needs a qualifier/policy ruling.
+-/
+
+namespace EvaluateHOL
+
+/-- Evaluator-local kernel witness that the `CrepSemHOLState` finite-map carrier
+is invertibly related to the broad carrier `CrepSemBroadState`. FLAPJACK-SPECIFIC
+infrastructure (no `@[hol]` tag): it is the same proposition as
+`CrepSemHOLState.holFmapAsFiniteSupportWitness`, re-exported here so the
+finite-map `@[hol]` qualifier has a witness declared in this module. See the
+proposal block above (bead `flapjack-4ac.5.16.5.13.1`). -/
+theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {ffiState : Type} :
+    (∀ (state : CrepSemBroadState width ffiState) (h : state.FiniteSupport),
+        (CrepSemBroadState.ofBroad state h).toBroad = state) ∧
+    (∀ state : CrepSemHOLState width ffiState,
+        CrepSemBroadState.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  CrepSemHOLState.holFmapAsFiniteSupportWitness
+
+end EvaluateHOL
+
 end Flapjack
