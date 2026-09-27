@@ -982,35 +982,17 @@ theorem evalCrepSemHOLProgExact_eq_core {width : Nat} [NeZero width] {σ : Type}
   unfold evalCrepSemHOLProgExact
   congr 1
 
-/-- Exact port of the `Skip` conjunct of HOL's rewritten `evaluate_def`
-    (`cakeml/pancake/semantics/crepSemScript.sml:443`, first conjunct
-    originating at line 241): `evaluate (Skip, s) = (NONE, s)`. Over the exact
-    total evaluator `evalCrepSemHOLProgExact` and the 11-field
-    `CrepSemHOLState`, evaluating `Skip` returns the state unchanged. The
-    `fmap_as_finite_support` qualifier records exactly the HOL `|->` fields
-    `locals`, `globals`, and `code` as `HolFiniteMapExact` (with the
-    evaluator-local witness in this module), and `words_as_type_indexed_bitvec`
-    records the `'a word` carrier as `BitVec width` here. Direct source review
-    for `flapjack-luna-b` (bead `flapjack-l60u`) compared the 11 state fields
-    against `crepSemScript.sml:19-32`: `locals`, `globals`, and `code` are the
-    three qualified finite maps; `memory` is a total word-to-`word_lab`
-    function; `memaddrs` and `sh_memaddrs` are predicates for HOL sets; `clock`
-    and `be` are `Nat` and `Bool`; `ffi` is the exact tagged `HolFfiState σ`;
-    and `base_addr`/`top_addr` are width-indexed words. The program is the
-    constructor-for-constructor `CrepProgHOL width`, and the evaluator result
-    carrier is `CrepResultHOLExact width` with the tagged `HolWordLab` and
-    `HolFinalEvent` payloads. The only carrier translations used by this tag
-    are the three named finite-support maps and HOL's positive type-indexed
-    word dimension to `BitVec width` under `[NeZero width]`. The Skip equation
-    itself is unconditional: it has no branch selector or extra premise, and
-    concludes exactly `(NONE, s)`. Its source clause at line 241 contains no
-    `fix_clock`, so `REWRITE_RULE [fix_clock_evaluate]` leaves it unchanged at
-    line 443. This review supports this one constructor equation only; the
-    total evaluator's agreement for all other clauses remains open and those
-    `evaluate_def` clauses stay untagged. -/
-@[hol "cakeml/pancake/semantics/crepSemScript.sml" "evaluate_def" 443
-  (fmap_as_finite_support := [locals, globals, code])
-  (words_as_type_indexed_bitvec)]
+/-- Flapjack-only `Skip` equation matching the first conjunct of HOL's
+    rewritten `evaluate_def` (`cakeml/pancake/semantics/crepSemScript.sml:443`,
+    originating at line 241): `evaluate (Skip, s) = (NONE, s)`. Over the
+    Flapjack total evaluator `evalCrepSemHOLProgExact`, evaluating `Skip`
+    returns the state unchanged. This declaration is deliberately untagged:
+    its local constructor equation is checked, but no source-reviewed theorem
+    yet establishes that `evalCrepSemHOLProgExact` agrees with HOL `evaluate`
+    across every constructor, including the FFI cases. The map and word
+    qualifiers describe its carrier translations; they do not supply that
+    evaluator-agreement result. Keep this useful local equation as
+    Flapjack-specific infrastructure until that full evaluator gap is closed. -/
 theorem evalCrepSemHOLProgExact_skip {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ) :
     evalCrepSemHOLProgExact state (.skip : CrepProgHOL width) = (none, state) := by
