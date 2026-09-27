@@ -12091,6 +12091,16 @@
   },
   {
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 780,
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
+    "lean_name": "evaluateHOLFiniteState_tick",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "reviewer": "flapjack-luna-a source comparison (2026-09-27; bead flapjack-qj5): the Tick conjunct at panSemScript.sml:654-655 of theorem evaluate_def line 780 returns (SOME TimeOut, empty_locals s) at clock zero and (NONE, dec_clock s) otherwise. evaluateHOLFiniteState_tick states those same branches over the finite state using the exact finite empty-local and dec-clock operations; its only condition is the HOL clock test. The same-module HolFiniteMapExact witness supports the explicitly named four-field qualifier. This is one exact constructor case; the full conjunction remains open."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
     "hol_name": "evaluate_decls_def",
     "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
     "lean_name": "evaluateDeclsHOLFinite",
