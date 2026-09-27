@@ -39,4 +39,18 @@ example {width : Nat} [NeZero width] :
       (.stackAlloc 3 : HolProg width) :=
   progWToHolProg_holProgToProgW _
 
+/-- The executed `ProgW` FFI field is the `toStringOfBytes` image of the exact
+`mlstring` name (`holProgToProgW_ffi`). -/
+example : holProgToProgW (width := 8)
+      ((.ffi (MlString.implode [c8 65, c8 66]) 1 2 3 4 5) : HolProg 8) =
+    (.ffi (toStringOfBytes (MlString.implode [c8 65, c8 66])) 1 2 3 4 5) :=
+  holProgToProgW_ffi _ 1 2 3 4 5
+
+/-- Encoding an executed `ProgW` `String` FFI name gives the `ofString` image
+(`progWToHolProg_ffi`). -/
+example : progWToHolProg (width := 8)
+      ((.ffi "AB" 1 2 3 4 5) : Flapjack.Compiler.Backend.StackCarrier.ProgW (BitVec 8)) =
+    (.ffi (ofString "AB") 1 2 3 4 5) :=
+  progWToHolProg_ffi _ 1 2 3 4 5
+
 end Flapjack.Test.MlStringBridgeParity
