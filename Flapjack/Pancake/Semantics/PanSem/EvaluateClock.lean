@@ -454,4 +454,44 @@ theorem fixClockHOLFinite_evaluate {width : Nat} {σ : Type} [NeZero width]
     simp only [fixClockHOLFinite]
     rw [if_neg (by omega)]
 
+/-! ## Public HOL-shaped clock theorems over the pair-shaped finite evaluator
+
+These are the coordinator-requested public statements: HOL `evaluate_clock` and
+`fix_clock_evaluate` shape over `PanSemStateFiniteExact` /
+`evaluateHOLFiniteState`, with **no** explicit `DecidablePred` binders and **no**
+success premise. The decidability witnesses are chosen classically inside
+`evaluateHOLFiniteState`, so they add no logical premise, and the pair-shaped
+evaluator is total, so the earlier `= some result` hypotheses are unnecessary.
+They remain untagged: the carrier `PanSemStateFiniteExact` uses canonical
+`HolFiniteMapExact` maps (not HOL's mlstring-keyed finite maps) and the evaluator
+threads operational deciders, so HOL's `@[hol]` tags stay withheld pending
+coordinator evaluator/carrier-fidelity review. -/
+
+/-- Public HOL `evaluate_clock` (`panSemScript.sml:755-766`) shape over the
+    pair-shaped finite source evaluator: for every program and source state the
+    evaluated result clock is bounded by the input clock. No `DecidablePred`
+    binder (chosen classically in `evaluateHOLFiniteState`) and no success
+    premise. -/
+theorem evaluateHOLFiniteState_clock_le {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (program : ProgHOL width) :
+    (evaluateHOLFiniteState state program).2.clock ≤ state.clock := by
+  classical
+  rw [evaluateHOLFiniteState_eq_withDeciders state program]
+  unfold evaluateHOLFiniteStateWithDeciders
+  split
+  · rename_i pair hpair
+    exact evalPanSemRecursiveCallFiniteContext_clock_le program _ pair hpair
+  · exact Nat.le_refl _
+
+/-- Public HOL `fix_clock_evaluate` (`panSemScript.sml:768-775`) shape over the
+    pair-shaped finite source evaluator: clamping the evaluated pair at the input
+    clock leaves it unchanged. No `DecidablePred` binder (chosen classically) and
+    no success premise. -/
+theorem fixClockHOLFinite_evaluateState {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (program : ProgHOL width) :
+    fixClockHOLFinite state (evaluateHOLFiniteState state program) =
+      evaluateHOLFiniteState state program := by
+  classical
+  exact fixClockHOLFinite_evaluate state program
+
 end Flapjack
