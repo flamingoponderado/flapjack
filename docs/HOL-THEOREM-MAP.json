@@ -12931,5 +12931,22 @@
     "lean_name": "holFmapAsFiniteSupportResultWitness_tlcHOL",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.37): Flapjack-only kernel-checked lookup witness for the standalone finite-map-result qualifier on tlcHOL; no separate HOL original."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "slc_def",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "slcHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_result",
+    "fmap_as_finite_support_result": true,
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.36): HOL slc_def (pan_to_crepProofScript.sml:2313-2315) = slc vshs args = FEMPTY |++ ZIP (MAP FST vshs, args); keys varname=mlstring map to the exact MlS carrier, values 'a v map to ValueHOL width, and the result is the canonical HolFiniteMapExact MlS (ValueHOL width). The same-module witness holFmapAsFiniteSupportResultWitness_slcHOL states the unconditional lookup correspondence to the raw FUPDATE_LIST_HOL operation."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "holFmapAsFiniteSupportResultWitness_slcHOL",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds8: Flapjack-specific canonical standalone finite-map witness for slcHOL; no HOL theorem original."
   }
 ]
