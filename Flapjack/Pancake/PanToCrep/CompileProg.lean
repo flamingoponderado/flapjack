@@ -1187,6 +1187,231 @@ theorem compileProgExactHOLW_decCall_bridge {width : Nat} [NeZero width]
   dsimp only
   simp only [allocatedNamesHOL]
 
+/-- Source-reviewed HOL `ExtCall` success clause (`pan_to_crepScript.sml:274-290`).
+    When all four operand shapes are `One` and all four compiled operand lists
+    are nonempty, HOL binds four temporaries numbered from one past the maximum
+    variable occurring in any compiled operand and emits the target `ExtCall`.
+    The caller supplies the two compiler results per operand and the decoded
+    heads; the temporary bound is aligned from the four full value-list codecs. -/
+theorem compileProgExactHOLW_extCall_success_bridge {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width) (function : String)
+    (configuration configurationLength array arrayLength : Exp (BitVec width))
+    (hfunction : Flapjack.Pancake.PanLang.NameRanged function)
+    (exactConfiguration : CrepExpHOL width)
+    (exactConfigurationRest : List (CrepExpHOL width))
+    (exactConfigurationLength : CrepExpHOL width)
+    (exactConfigurationLengthRest : List (CrepExpHOL width))
+    (exactArray : CrepExpHOL width) (exactArrayRest : List (CrepExpHOL width))
+    (exactArrayLength : CrepExpHOL width)
+    (exactArrayLengthRest : List (CrepExpHOL width))
+    (productionConfiguration : CrepExp (BitVec width))
+    (productionConfigurationRest : List (CrepExp (BitVec width)))
+    (productionConfigurationLength : CrepExp (BitVec width))
+    (productionConfigurationLengthRest : List (CrepExp (BitVec width)))
+    (productionArray : CrepExp (BitVec width))
+    (productionArrayRest : List (CrepExp (BitVec width)))
+    (productionArrayLength : CrepExp (BitVec width))
+    (productionArrayLengthRest : List (CrepExp (BitVec width)))
+    (hexactConfiguration : compileExpExactHOLW context (expToHOL configuration) =
+      (exactConfiguration :: exactConfigurationRest, .one))
+    (hexactConfigurationLength : compileExpExactHOLW context (expToHOL configurationLength) =
+      (exactConfigurationLength :: exactConfigurationLengthRest, .one))
+    (hexactArray : compileExpExactHOLW context (expToHOL array) =
+      (exactArray :: exactArrayRest, .one))
+    (hexactArrayLength : compileExpExactHOLW context (expToHOL arrayLength) =
+      (exactArrayLength :: exactArrayLengthRest, .one))
+    (hproductionConfiguration : compileExpHOL context.toProduction configuration =
+      (productionConfiguration :: productionConfigurationRest, .one))
+    (hproductionConfigurationLength : compileExpHOL context.toProduction configurationLength =
+      (productionConfigurationLength :: productionConfigurationLengthRest, .one))
+    (hproductionArray : compileExpHOL context.toProduction array =
+      (productionArray :: productionArrayRest, .one))
+    (hproductionArrayLength : compileExpHOL context.toProduction arrayLength =
+      (productionArrayLength :: productionArrayLengthRest, .one))
+    (hvaluesConfiguration :
+      (exactConfiguration :: exactConfigurationRest).map crepExpOfHOL =
+        productionConfiguration :: productionConfigurationRest)
+    (hvaluesConfigurationLength :
+      (exactConfigurationLength :: exactConfigurationLengthRest).map crepExpOfHOL =
+        productionConfigurationLength :: productionConfigurationLengthRest)
+    (hvaluesArray : (exactArray :: exactArrayRest).map crepExpOfHOL =
+        productionArray :: productionArrayRest)
+    (hvaluesArrayLength :
+      (exactArrayLength :: exactArrayLengthRest).map crepExpOfHOL =
+        productionArrayLength :: productionArrayLengthRest) :
+    crepProgOfHOL (compileProgExactHOLW context
+        (.extCall (Flapjack.Basis.Pure.MlString.ofString function)
+          (expToHOL configuration) (expToHOL configurationLength)
+          (expToHOL array) (expToHOL arrayLength))) =
+      compileProgRiscV context.toProduction
+        (.extCall function configuration configurationLength array arrayLength) := by
+  have hfunctionDecode :
+      Flapjack.Basis.Pure.MlString.toStringOfBytes
+        (Flapjack.Basis.Pure.MlString.ofString function) = function :=
+    Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes function hfunction
+  have hmax :
+      List.foldl (fun maximum variableIndex => Nat.max maximum variableIndex) 0
+        (((exactConfiguration :: exactConfigurationRest) ++
+          (exactConfigurationLength :: exactConfigurationLengthRest) ++
+          (exactArray :: exactArrayRest) ++
+          (exactArrayLength :: exactArrayLengthRest)).flatMap
+          (fun value => crepExpVarsW (crepExpOfHOL value))) =
+      maxCrepExpVarHOL
+        ((productionConfiguration :: productionConfigurationRest) ++
+          (productionConfigurationLength :: productionConfigurationLengthRest) ++
+          (productionArray :: productionArrayRest) ++
+          (productionArrayLength :: productionArrayLengthRest)) := by
+    rw [crepExpVarsW_flatMap_crepExpOfHOL]
+    simp only [maxCrepExpVarHOL, List.map_append,
+      hvaluesConfiguration, hvaluesConfigurationLength, hvaluesArray,
+      hvaluesArrayLength]
+  have hheadConfiguration :
+      crepExpOfHOL exactConfiguration = productionConfiguration := by
+    have h := hvaluesConfiguration
+    simp only [List.map_cons] at h
+    exact (List.cons.inj h).1
+  have hheadConfigurationLength :
+      crepExpOfHOL exactConfigurationLength = productionConfigurationLength := by
+    have h := hvaluesConfigurationLength
+    simp only [List.map_cons] at h
+    exact (List.cons.inj h).1
+  have hheadArray : crepExpOfHOL exactArray = productionArray := by
+    have h := hvaluesArray
+    simp only [List.map_cons] at h
+    exact (List.cons.inj h).1
+  have hheadArrayLength :
+      crepExpOfHOL exactArrayLength = productionArrayLength := by
+    have h := hvaluesArrayLength
+    simp only [List.map_cons] at h
+    exact (List.cons.inj h).1
+  simp only [compileProgExactHOLW, compileExtCallExactHOLW, compileProgRiscV,
+    compileProgHOL, hexactConfiguration, hexactConfigurationLength, hexactArray,
+    hexactArrayLength, hproductionConfiguration, hproductionConfigurationLength,
+    hproductionArray, hproductionArrayLength]
+  rw [hmax]
+  simp only [crepProgOfHOL, nestedDecs, hheadConfiguration,
+    hheadConfigurationLength, hheadArray, hheadArrayLength, hfunctionDecode]
+
+/-- Source-reviewed HOL `ExtCall` fallback clause (`pan_to_crepScript.sml:274-290`).
+    HOL `compile_ext_call` returns `Skip` unless every one of the four operand
+    shapes is `One` and every compiled operand list is nonempty. The caller
+    supplies the decoded compiler results and a guard-failure disjunction; the
+    production equation agrees because each decoded shape/value failure is
+    preserved by `shapeOfHOL` and `List.map crepExpOfHOL`. -/
+theorem compileProgExactHOLW_extCall_skip_bridge {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width) (function : String)
+    (configuration configurationLength array arrayLength : Exp (BitVec width))
+    (exactConfigurationValues : List (CrepExpHOL width))
+    (exactConfigurationShape : ShapeHOL)
+    (exactConfigurationLengthValues : List (CrepExpHOL width))
+    (exactConfigurationLengthShape : ShapeHOL)
+    (exactArrayValues : List (CrepExpHOL width)) (exactArrayShape : ShapeHOL)
+    (exactArrayLengthValues : List (CrepExpHOL width))
+    (exactArrayLengthShape : ShapeHOL)
+    (productionConfigurationValues : List (CrepExp (BitVec width)))
+    (productionConfigurationShape : Shape)
+    (productionConfigurationLengthValues : List (CrepExp (BitVec width)))
+    (productionConfigurationLengthShape : Shape)
+    (productionArrayValues : List (CrepExp (BitVec width)))
+    (productionArrayShape : Shape)
+    (productionArrayLengthValues : List (CrepExp (BitVec width)))
+    (productionArrayLengthShape : Shape)
+    (hexactConfiguration : compileExpExactHOLW context (expToHOL configuration) =
+      (exactConfigurationValues, exactConfigurationShape))
+    (hexactConfigurationLength : compileExpExactHOLW context (expToHOL configurationLength) =
+      (exactConfigurationLengthValues, exactConfigurationLengthShape))
+    (hexactArray : compileExpExactHOLW context (expToHOL array) =
+      (exactArrayValues, exactArrayShape))
+    (hexactArrayLength : compileExpExactHOLW context (expToHOL arrayLength) =
+      (exactArrayLengthValues, exactArrayLengthShape))
+    (hproductionConfiguration : compileExpHOL context.toProduction configuration =
+      (productionConfigurationValues, productionConfigurationShape))
+    (hproductionConfigurationLength : compileExpHOL context.toProduction configurationLength =
+      (productionConfigurationLengthValues, productionConfigurationLengthShape))
+    (hproductionArray : compileExpHOL context.toProduction array =
+      (productionArrayValues, productionArrayShape))
+    (hproductionArrayLength : compileExpHOL context.toProduction arrayLength =
+      (productionArrayLengthValues, productionArrayLengthShape))
+    (hconfigurationShapeSymm :
+      productionConfigurationShape = shapeOfHOL exactConfigurationShape)
+    (hconfigurationLengthShapeSymm :
+      productionConfigurationLengthShape = shapeOfHOL exactConfigurationLengthShape)
+    (harrayShapeSymm : productionArrayShape = shapeOfHOL exactArrayShape)
+    (harrayLengthShapeSymm :
+      productionArrayLengthShape = shapeOfHOL exactArrayLengthShape)
+    (hconfigurationValuesSymm :
+      productionConfigurationValues = exactConfigurationValues.map crepExpOfHOL)
+    (hconfigurationLengthValuesSymm :
+      productionConfigurationLengthValues = exactConfigurationLengthValues.map crepExpOfHOL)
+    (harrayValuesSymm :
+      productionArrayValues = exactArrayValues.map crepExpOfHOL)
+    (harrayLengthValuesSymm :
+      productionArrayLengthValues = exactArrayLengthValues.map crepExpOfHOL)
+    (hguard : exactConfigurationShape ≠ .one
+      ∨ exactConfigurationLengthShape ≠ .one
+      ∨ exactArrayShape ≠ .one
+      ∨ exactArrayLengthShape ≠ .one
+      ∨ exactConfigurationValues = []
+      ∨ exactConfigurationLengthValues = []
+      ∨ exactArrayValues = []
+      ∨ exactArrayLengthValues = []) :
+    crepProgOfHOL (compileProgExactHOLW context
+        (.extCall (Flapjack.Basis.Pure.MlString.ofString function)
+          (expToHOL configuration) (expToHOL configurationLength)
+          (expToHOL array) (expToHOL arrayLength))) =
+      compileProgRiscV context.toProduction
+        (.extCall function configuration configurationLength array arrayLength) := by
+  rcases hguard with h | h | h | h | h | h | h | h
+  · cases exactConfigurationShape <;>
+      simp_all [compileProgExactHOLW, compileExtCallExactHOLW, compileProgRiscV,
+      compileProgHOL, crepProgOfHOL, shapeOfHOL]
+  · cases exactConfigurationLengthShape <;>
+      simp_all [compileProgExactHOLW, compileExtCallExactHOLW, compileProgRiscV,
+      compileProgHOL, crepProgOfHOL, shapeOfHOL]
+  · cases exactArrayShape <;>
+      simp_all [compileProgExactHOLW, compileExtCallExactHOLW, compileProgRiscV,
+      compileProgHOL, crepProgOfHOL, shapeOfHOL]
+  · cases exactArrayLengthShape <;>
+      simp_all [compileProgExactHOLW, compileExtCallExactHOLW, compileProgRiscV,
+      compileProgHOL, crepProgOfHOL, shapeOfHOL]
+  · subst h
+    simp_all [compileProgExactHOLW, compileExtCallExactHOLW, compileProgRiscV,
+      compileProgHOL, crepProgOfHOL, List.map_nil]
+  · subst h
+    simp_all [compileProgExactHOLW, compileExtCallExactHOLW, compileProgRiscV,
+      compileProgHOL, crepProgOfHOL, List.map_nil]
+  · subst h
+    simp_all [compileProgExactHOLW, compileExtCallExactHOLW, compileProgRiscV,
+      compileProgHOL, crepProgOfHOL, List.map_nil]
+  · subst h
+    simp_all [compileProgExactHOLW, compileExtCallExactHOLW, compileProgRiscV,
+      compileProgHOL, crepProgOfHOL, List.map_nil]
+
+/-- Source-reviewed HOL tail-call clause (`pan_to_crepScript.sml:221-225`), the
+    `rtyp = NONE` arm of `Call`. HOL compiles every argument, flattens the
+    resulting expression lists, and emits a `Call NONE` with no return metadata.
+    The exact clause is `compileCallNoReturnExactHOLW`; the production compiler
+    emits the same tail call over `compileArgsHOL`, so the two sides agree once
+    the argument lists and the (name-ranged) function identifier are decoded. -/
+theorem compileProgExactHOLW_call_none_bridge {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width) (function : String)
+    (arguments : List (Exp (BitVec width)))
+    (hfunction : Flapjack.Pancake.PanLang.NameRanged function)
+    (hcodec : ∀ expression ∈ arguments,
+      ((compileExpExactHOLW context (expToHOL expression)).1.map crepExpOfHOL,
+        shapeOfHOL (compileExpExactHOLW context (expToHOL expression)).2) =
+        compileExpHOL context.toProduction expression) :
+    crepProgOfHOL (compileProgExactHOLW context
+        (.call none (Flapjack.Basis.Pure.MlString.ofString function)
+          (arguments.map expToHOL))) =
+      compileProgRiscV context.toProduction (.call none function arguments) := by
+  have hfunctionDecode :=
+    Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes function hfunction
+  have hargs := crepProgOfHOL_compileArgumentList_flatMap context arguments hcodec
+  simp only [compileProgExactHOLW, compileCallNoReturnExactHOLW, compileProgRiscV,
+    compileProgHOL, crepProgOfHOL]
+  rw [hargs, hfunctionDecode]
+
 theorem compileProgExactHOLW_shmem_store_bridge {width : Nat} [NeZero width]
     (context : PanToCrepContextExact width) (operator : OpSize)
     (value address : Exp (BitVec width))
