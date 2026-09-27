@@ -611,6 +611,81 @@ theorem evalPanSemRecursiveCallFiniteContext_call_return_shape_mismatch
     simp
   rw [if_neg hshapeNe]
 
+/-- HOL `evaluate_def` Call body `NONE` branch (`panSemScript.sml:668`): a callee
+    that falls through with no result maps to `Error` at the clock-fixed callee
+    state. Untagged clause equation; it does not claim the whole evaluator. -/
+theorem evalPanSemRecursiveCallFiniteContext_call_body_none
+    {width : Nat} {σ : Type} [NeZero width]
+    (info : Option (Option (VarKind × MlS) × Option (MlS × MlS × ProgHOL width)))
+    (function : MlS) (arguments : List (ExpHOL width))
+    (context : FiniteEvalContext width σ) (values : List (ValueHOL width))
+    (body : ProgHOL width) (callee : HolFiniteMapExact MlS (ValueHOL width))
+    (returnShape : ShapeHOL) (bodyContext : FiniteEvalContext width σ)
+    (hargs : evalListHOLFinite context.state
+      (h := context.memaddrsDecidable) arguments = some values)
+    (hlookup : lookupCodeHOLFinite context.state.code.lookup function values =
+      some (body, callee, returnShape))
+    (hclock : context.state.clock ≠ 0)
+    (hbody : evalPanSemRecursiveCallFiniteContext body
+      (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl) =
+      some (none, bodyContext)) :
+    evalPanSemRecursiveCallFiniteContext (.call info function arguments) context =
+      some (some .error,
+        callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)
+          none bodyContext) := by
+  rw [evalPanSemRecursiveCallFiniteContext.eq_5]
+  simp only [hargs, hlookup, if_neg hclock, hbody]
+
+/-- HOL `evaluate_def` Call body `Break` branch (`panSemScript.sml:669`): a callee
+    that breaks maps to `Error` at the clock-fixed callee state. Untagged clause
+    equation; it does not claim the whole evaluator. -/
+theorem evalPanSemRecursiveCallFiniteContext_call_body_break
+    {width : Nat} {σ : Type} [NeZero width]
+    (info : Option (Option (VarKind × MlS) × Option (MlS × MlS × ProgHOL width)))
+    (function : MlS) (arguments : List (ExpHOL width))
+    (context : FiniteEvalContext width σ) (values : List (ValueHOL width))
+    (body : ProgHOL width) (callee : HolFiniteMapExact MlS (ValueHOL width))
+    (returnShape : ShapeHOL) (bodyContext : FiniteEvalContext width σ)
+    (hargs : evalListHOLFinite context.state
+      (h := context.memaddrsDecidable) arguments = some values)
+    (hlookup : lookupCodeHOLFinite context.state.code.lookup function values =
+      some (body, callee, returnShape))
+    (hclock : context.state.clock ≠ 0)
+    (hbody : evalPanSemRecursiveCallFiniteContext body
+      (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl) =
+      some (some .break, bodyContext)) :
+    evalPanSemRecursiveCallFiniteContext (.call info function arguments) context =
+      some (some .error,
+        callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)
+          (some .break) bodyContext) := by
+  rw [evalPanSemRecursiveCallFiniteContext.eq_5]
+  simp only [hargs, hlookup, if_neg hclock, hbody]
+
+/-- HOL `evaluate_def` Call body `Continue` branch (`panSemScript.sml:670`): a
+    callee that continues maps to `Error` at the clock-fixed callee state.
+    Untagged clause equation; it does not claim the whole evaluator. -/
+theorem evalPanSemRecursiveCallFiniteContext_call_body_continue
+    {width : Nat} {σ : Type} [NeZero width]
+    (info : Option (Option (VarKind × MlS) × Option (MlS × MlS × ProgHOL width)))
+    (function : MlS) (arguments : List (ExpHOL width))
+    (context : FiniteEvalContext width σ) (values : List (ValueHOL width))
+    (body : ProgHOL width) (callee : HolFiniteMapExact MlS (ValueHOL width))
+    (returnShape : ShapeHOL) (bodyContext : FiniteEvalContext width σ)
+    (hargs : evalListHOLFinite context.state
+      (h := context.memaddrsDecidable) arguments = some values)
+    (hlookup : lookupCodeHOLFinite context.state.code.lookup function values =
+      some (body, callee, returnShape))
+    (hclock : context.state.clock ≠ 0)
+    (hbody : evalPanSemRecursiveCallFiniteContext body
+      (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl) =
+      some (some .continue, bodyContext)) :
+    evalPanSemRecursiveCallFiniteContext (.call info function arguments) context =
+      some (some .error,
+        callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)
+          (some .continue) bodyContext) := by
+  rw [evalPanSemRecursiveCallFiniteContext.eq_5]
+  simp only [hargs, hlookup, if_neg hclock, hbody]
+
 /-- HOL `evaluate_def` Call matched-exception branch
     (`panSemScript.sml:682-688`): after the body yields an exception whose id
     matches the handler, the caller's finite `eshapes` lookup supplies its

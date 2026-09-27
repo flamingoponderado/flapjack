@@ -14620,5 +14620,21 @@
     ],
     "reviewer": "flapjack-ds8 source comparison (2026-09-27; bead flapjack-qj5.9.3): HOL evaluate_def line-780 Call conjunct clock-exhaustion branch: s.clock = 0 after successful args and code lookup gives (SOME TimeOut, empty_locals s). The Lean statement matches with clock = 0, successful-args and code-entry premises, and the total pair (SOME TimeOut, emptyLocalsHOLFinite s) over ProgHOL/PanSemStateFiniteExact; the branch precedes the body evaluation so the source inner fix_clock does not apply. Same finite-map/width qualifiers as the sibling Call branches.",
     "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 780,
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/EvaluateClock.lean",
+    "lean_name": "evaluateHOLFiniteState_call_body_error",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds8 (bead flapjack-qj5.9.4): source-comparison review of the HOL evaluate_def line-780 Call body NONE branch (panSemScript.sml:668, with the fix_clock_evaluate rewrite removing the inner fix_clock on the recursive callee-body evaluation). The tagged equation states the finite evaluator returns Error with the callee body post-state directly, matching the rewritten HOL clause; the HOL finite-map state fields locals/globals/code/eshapes are the reviewed canonical HolFiniteMapExact representation (PanSemStateFiniteExact owning carrier in StateExactFiniteMap.lean with the same-module witness re-exported here), and the width-indexed word carrier is BitVec width under [NeZero width]. One constructor case of the 21-equation theorem, which remains open."
   }
 ]
