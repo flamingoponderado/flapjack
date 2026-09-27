@@ -4850,4 +4850,24 @@ theorem ctxtFcFuncsEqHOL {width : Nat} [NeZero width]
     (vs : List MlS) (shs : List ShapeHOL) (ns : List Nat) :
     (ctxtFcExactHOL cvs em vs shs ns : PanToCrepContextExact width).funcs = cvs := rfl
 
+/-- Exact port of HOL `ctxt_fc_eids_eq`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:2301`):
+    `(ctxt_fc cvs em vs shs ns).eids = em`. The constructed context's
+    `eids` field is definitionally the supplied exception-code map. The
+    statement keeps HOL's argument order `(cvs, em, vs, shs, ns)` and its
+    unrestricted quantifiers; the only representation difference is the
+    reviewed canonical `HolFiniteMapExact` translation of HOL's
+    `eid |-> 'a word` finite map, recorded by the `fmap_as_finite_support`
+    qualifier on the `eids` field of the exact `PanToCrepContextExact` carrier
+    (names are `MlS` = `mlstring`). The direct HOL-EVAL projection row is
+    replayed by the kernel-checked regression in
+    `Flapjack.Test.PanToCrepContextExactParity`. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "ctxt_fc_eids_eq"
+  (fmap_as_finite_support := [eids])]
+theorem ctxtFcEidsEqHOL {width : Nat} [NeZero width]
+    (cvs : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ShapeHOL))
+    (em : HolFiniteMapExact MlS (BitVec width))
+    (vs : List MlS) (shs : List ShapeHOL) (ns : List Nat) :
+    (ctxtFcExactHOL cvs em vs shs ns : PanToCrepContextExact width).eids = em := rfl
+
 end Flapjack

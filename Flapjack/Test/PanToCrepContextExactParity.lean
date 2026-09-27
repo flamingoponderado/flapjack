@@ -313,6 +313,18 @@ example : (ctxtFcExactHOL (width := 8) probeCvs probeEm [probeX, probePair]
     [.one, .comb [.one, .one]] [0, 1, 2]).funcs = probeCvs :=
   ctxtFcFuncsEqHOL probeCvs probeEm [probeX, probePair] [.one, .comb [.one, .one]] [0, 1, 2]
 
+/-- Direct replay of the HOL-EVAL `shaped_slots` row's `eids` field
+    (`scripts/hol-probes/ctxt_fc_probe.out`) through the exact
+    `ctxt_fc_eids_eq` port: the constructed context's `eids` field is the
+    supplied exception-code map. -/
+example : (ctxtFcExactHOL (width := 8) probeCvs probeEm [probeX, probePair]
+    [.one, .comb [.one, .one]] [0, 1, 2]).eids = probeEm :=
+  ctxtFcEidsEqHOL probeCvs probeEm [probeX, probePair] [.one, .comb [.one, .one]] [0, 1, 2]
+
+example : (ctxtFcExactHOL (width := 8) HolFiniteMapExact.empty probeEm
+    [probeX] [.one] [0]).eids = probeEm :=
+  ctxtFcEidsEqHOL HolFiniteMapExact.empty probeEm [probeX] [.one] [0]
+
 example : (ctxtFcExactHOL (width := 8) HolFiniteMapExact.empty HolFiniteMapExact.empty
     [] [] [4, 1, 7, 3]).vmax = 7 := rfl
 
