@@ -8139,6 +8139,14 @@
     "reviewer": "flapjack-ds9 (source comparison, 2026-09-27; bead flapjack-pxn.18.5.3.71): exact port of HOL res_vs_def (pan_structsProofScript.sml:1028-1031). HOL's three clauses over panSem$result option are res_vs (SOME (Return v)) = [v], res_vs (SOME (Exception eid ev)) = [ev], and the catch-all res_vs _ = []. The Lean port resVsHOL is over the reviewed exact result carrier PanSemResultExact width (DecExact.lean:58, tagged reviewed_exact against panSemScript.sml:68-75) and returns the reviewed exact panSem$v carrier ValueHOL width (panSemScript.sml:22, reviewed_exact via convert_v_def): some (returned v) => [v], some (exception _ v) => [v], and _ => []. The two matched clauses extract the Return and Exception payloads verbatim; the catch-all keeps NONE, Error, TimeOut, Break, Continue, and FinalFFI mapped to the empty list exactly as HOL. No payload field is inspected beyond returning the whole value; the only difference from HOL is the already-reviewed result/v carriers, so no qualifier applies. [NeZero width] discharges HOL's positive dimindex and introduces no new word dimension; the declaration traverses no finite-map field."
   },
   {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "every_convert_v_eq",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "everyConvertVEq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-27; bead flapjack-pxn.18.5.3.73): exact port of HOL every_convert_v_eq[local] (pan_structsProofScript.sml:268-271), EVERY (\\w. case w of Val _ => T | _ => F) vs ==> MAP convert_v vs = vs. The Lean port everyConvertVEq is over the reviewed exact panSem$v carrier ValueHOL width (panSemScript.sml:22, tagged reviewed_exact via convert_v_def); the EVERY premise is rendered as the membership-quantified forall w in vs, match w with .val _ => True | _ => False, MAP convert_v as List.map convertV, conclusion vs.map convertV = vs, and the [NeZero width] binder mirrors HOL's positive dimindex. The HOL predicate admits only the Val constructor; the val case is convert_v (Val x) = Val x, so the list is unchanged, and the rStruct/nStruct cases contradict the premise. No payload, mlstring name, word dimension, or finite-map field is inspected, so the only difference from HOL is the already-reviewed ValueHOL carrier and no qualifier applies."
+  },
+  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",

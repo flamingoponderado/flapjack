@@ -151,6 +151,30 @@ def resVsHOL {width : Nat} [NeZero width] :
   | some (.exception _ value) => [value]
   | _ => []
 
+/-- Exact port of HOL `every_convert_v_eq[local]`
+    (`cakeml/pancake/proofs/pan_structsProofScript.sml:268-271`):
+    `EVERY (\w. case w of Val _ => T | _ => F) vs ==> MAP convert_v vs = vs`.
+
+    The list element type is the reviewed exact `panSem$v` carrier `ValueHOL`
+    (`panSemScript.sml:22`, tagged `reviewed_exact` via `convert_v_def`), the
+    `EVERY` premise is rendered as the membership-quantified
+    `∀ w ∈ vs, match w with | .val _ => True | _ => False`, and `MAP convert_v`
+    as `List.map convertV`. Only the `Val` case can satisfy the premise, and
+    `convert_v (Val x) = Val x` leaves the list unchanged; no payload, name, or
+    word dimension is inspected, so the only difference from HOL is the
+    already-reviewed carrier and no qualifier applies. -/
+@[hol "cakeml/pancake/proofs/pan_structsProofScript.sml" "every_convert_v_eq"]
+theorem everyConvertVEq {width : Nat} [NeZero width] (vs : List (ValueHOL width))
+    (h : ∀ w ∈ vs, match w with | .val _ => True | _ => False) :
+    vs.map convertV = vs := by
+  induction vs with
+  | nil => rfl
+  | cons w ws ih =>
+    rw [List.map_cons, List.cons.injEq]
+    constructor
+    · cases w <;> simp_all [convertV]
+    · exact ih (fun x hx => h x (by simp [hx]))
+
 /-! Structural Bool equality for the translated Shape datatype. It performs
     the HOL constructor equality cases recursively and avoids a BEq instance
     for Shape or String. -/
