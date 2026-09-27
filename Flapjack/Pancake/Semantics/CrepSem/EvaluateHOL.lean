@@ -985,13 +985,11 @@ theorem evalCrepSemHOLProgExact_eq_core {width : Nat} [NeZero width] {σ : Type}
     preserves the state clock here. The state is the 11-field
     `CrepSemHOLState`; the qualifier records exactly its HOL `|->` fields
     `locals`, `globals`, and `code` as `HolFiniteMapExact`. It remains
-    untagged because the supplied `AGENTS.md` requires the owning carrier
-    structure itself to be declared in the tagged declaration's module;
-    `CrepSemHOLState` is imported from `HOLState.lean`. The local canonical
-    witness does not satisfy that separate ownership requirement. The exact
-    HOL clause is present and kernel-checked, but the qualified HOL port awaits
-    a faithful same-module carrier arrangement; see
-    `flapjack-4ac.5.16.5.13.1`. -/
+    untagged pending source review of the whole clause set and carriers (tags
+    are HOLD); the imported `CrepSemHOLState` owner with the evaluator-local
+    witness in this module is an accepted arrangement, and the words qualifier's
+    carrier route resolves the clause signature. See the current-status note at
+    the end of this file (`flapjack-4ac.5.16.5`, `.13.1`). -/
 theorem evalCrepSemHOLProgExact_skip {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ) :
     evalCrepSemHOLProgExact state (.skip : CrepProgHOL width) = (none, state) := by
@@ -2553,8 +2551,8 @@ no-extra-argument entry point `evalCrepSemHOLProgExact`, whose classical
 state/program-only interface. They are declaration-local, UNTAGGED
 infrastructure: the whole `evaluate_def` tag still awaits the recursive-clause
 disposition (the recursive calls thread the base-state decision procedures
-through derived/stamped states) and the carrier-placement review tracked by
-`flapjack-4ac.5.16.5.13.1`. -/
+through derived/stamped states); tags are HOLD pending source review of the
+clause set and carriers. -/
 
 /-- HOL `evaluate (Break n, s)` (`crepSemScript.sml:309`) over the no-decider
     interface. -/
@@ -2735,8 +2733,8 @@ through derived states (`fixClockCrepSemHOL`, `decClockCrepSemHOL`,
 `crepStampExactDomains` normalization makes the base decisions definitionally
 valid for the stamped state, so each recursive call folds to
 `evalCrepSemHOLProgExact`. Declaration-local, UNTAGGED infrastructure. The
-enclosing `evaluate_def` tag still awaits the carrier-placement review
-tracked by `flapjack-4ac.5.16.5.13.1`. -/
+enclosing `evaluate_def` tag still awaits source review of the clause set and
+carriers (tags are HOLD). -/
 
 /-- HOL `evaluate (Seq c1 c2, s)` (`crepSemScript.sml:292-295`) over the
     no-decider interface. -/
@@ -2922,179 +2920,36 @@ theorem evalCrepSemHOLProgExact_call {width : Nat} [NeZero width] {σ : Type}
   exact evalCrepSemHOLProg_call state _ _ returnInfo function arguments
 
 /-!
-## Proposal: imported-owner + evaluator-local finite-map witness for `evaluate_def`
+## Current status of the exact `crepSem$evaluate_def` port
 
-Source-reviewed proposal for bead `flapjack-4ac.5.16.5.13.1` (coordinator review
-of the `fmap_as_finite_support` placement policy). NOT applied: `evaluate_def`
-stays untagged until the coordinator rules, and `scripts/check-hol-refs.py` is
-not modified.
+Declaration-local status note for beads `flapjack-4ac.5.16.5`, `flapjack-4ac.5.16.5.13.1`,
+`flapjack-4ac.5.16.5.19`, `flapjack-4ac.5.16.5.20` and `flapjack-4ac.5.16.5.22`.
 
-### What the checker already supports
-
-`check-hol-refs.py:338` `imported_structure_field_types(module, ROOT)` walks the
-tagged module's transitive imports and maps structure name -> source module,
-fields, types. `fmap_as_finite_support_errors` then disambiguates the owning
-carrier by the tagged declaration's own text: if exactly one candidate structure
-name occurs in that text, it is the owner. `has_fmap_witness` (:461) requires, in
-the tagged module's own source, a theorem literally named
-`holFmapAsFiniteSupportWitness` (the regex is anchored on the unqualified name,
-so a fresh namespace matches) whose statement names the owning structure and
-contains a matching `toX`/`ofX` roundtrip pair. So an imported owner plus an
-evaluator-local witness already typechecks against the checker; only
-`AGENTS.md`'s "same-module owner" prose is stricter.
-
-### Carrier correspondence (exact HOL field types -> Lean carriers)
-
-| HOL `crepSem$state` field (`crepSemScript.sml:19-32`) | Lean carrier |
-| --- | --- |
-| `locals : varname |-> 'a word_lab` (`varname = num`) | `HolFiniteMapExact Nat (HolWordLab width)` |
-| `globals : 5 word |-> 'a word_lab` | `HolFiniteMapExact (BitVec 5) (HolWordLab width)` |
-| `code : funname |-> (varname list # 'a prog)` (`funname = mlstring`) | `HolFiniteMapExact MlString (List Nat × CrepProgHOL width)` |
-| `memory : 'a word -> 'a word_lab` | `BitVec width → HolWordLab width` |
-| `memaddrs`, `sh_memaddrs : ('a word) set` | `BitVec width → Prop` (deciders supplied explicitly) |
-| `clock : num`, `be : bool` | `Nat`, `Bool` |
-| `ffi : 'ffi ffi_state` | `HolFfiState σ` (`@[hol ... "ffi_state"]`) |
-| `base_addr`, `top_addr : 'a word` | `BitVec width` |
-
-Owning carrier for the finite-map qualifier: `CrepSemHOLState` (declared in the
-transitive import `CrepSem/HOLState.lean`), qualified fields
-`[locals, globals, code]`.
-
-### What the evaluator-local witness establishes
-
-The theorem below re-exports the canonical roundtrip between the broad state
-`CrepSemBroadState` and the finite-support `CrepSemHOLState` so the checker finds
-a witness in this module, without clashing with
-`CrepSemHOLState.holFmapAsFiniteSupportWitness` (fresh `EvaluateHOL` namespace).
-It establishes the invertibility of the finite-map carrier translation only; it
-says nothing about the word dimension, the FFI universe, or evaluator agreement.
-
-### Word-dimension / FFI-universe mismatch
-
-Tracked separately by `flapjack-4ac.5.16.5.19`: HOL indexes words by the type
-variable `'a` and quantifies the host type `'ffi`, whereas the Lean carrier fixes
-the dimension as `Nat` `width` with `[NeZero width]` (needed by
-`HolWordLab width`) and pins the host to `{σ : Type}`. A `@[hol]` tag cannot
-absorb the `NeZero` side condition as an extra hypothesis, and no
-word-dimension qualifier exists; this needs a qualifier/policy ruling.
--/
-
-namespace EvaluateHOL
-
-/-- Evaluator-local kernel witness that the `CrepSemHOLState` finite-map carrier
-is invertibly related to the broad carrier `CrepSemBroadState`. FLAPJACK-SPECIFIC
-infrastructure (no `@[hol]` tag): it is the same proposition as
-`CrepSemHOLState.holFmapAsFiniteSupportWitness`, re-exported here so the
-finite-map `@[hol]` qualifier has a witness declared in this module. See the
-proposal block above (bead `flapjack-4ac.5.16.5.13.1`). -/
-theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {ffiState : Type} :
-    (∀ (state : CrepSemBroadState width ffiState) (h : state.FiniteSupport),
-        (CrepSemBroadState.ofBroad state h).toBroad = state) ∧
-    (∀ state : CrepSemHOLState width ffiState,
-        CrepSemBroadState.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
-  CrepSemHOLState.holFmapAsFiniteSupportWitness
-
-end EvaluateHOL
-
-/-!
-## Proposal for a word-dimension and FFI-universe translation qualifier
-
-Draft proposal for `flapjack-4ac.5.16.5.19`. It requests a new, narrowly scoped
-`@[hol]` qualifier that records the two *representation* differences between HOL
-`crepSem` and the Lean carrier, without authorising any change to a theorem's
-quantifiers, hypotheses, side conditions, conclusions, or evaluator. Nothing
-here is tagged, and no checker rule is changed pending coordinator review.
-
-### Exact carrier relation
-
-HOL `crepSem$state` (`crepSemScript.sml:19-32`) and its Lean counterpart
-`CrepSemHOLState (width : Nat) [NeZero width] (ffiState : Type)` differ only in:
-
-* **Word dimension.** HOL fields use the type-indexed word `'a word`
-  (`wordsTheory`; `word_lab = Word ('a word)`, `panSemScript.sml:17`), whose
-  dimension is `dimindex (:α)` — `CARD α` for finite `α` and `1` otherwise, so
-  always positive. Lean uses `BitVec width` (through `HolWordLab width`), with
-  `width` an explicit `Nat` and `[NeZero width]` restating that positivity. The
-  translation is `width := dimindex (:α)`.
-* **FFI host type.** HOL quantifies the host as the type variable `'ffi`
-  (`ffi : 'ffi ffi_state`); Lean pins it to `σ : Type` (universe `0`) in
-  `HolFfiState σ` (`FfiHOL.lean:115`). The translation is `'ffi := σ`.
-
-Field-by-field (`HOL` ↔ `Lean`): `locals` (`varname |-> 'a word_lab`) ↔
-`HolFiniteMapExact Nat (HolWordLab width)`; `globals` (`5 word |-> 'a word_lab`)
-↔ `HolFiniteMapExact (BitVec 5) (HolWordLab width)`; `code`
-(`funname |-> (varname list # 'a crepLang$prog)`) ↔
-`HolFiniteMapExact MlString (List Nat × CrepProgHOL width)`; `memory`
-(`'a word -> 'a word_lab`) ↔ `BitVec width → HolWordLab width`; `memaddrs` and
-`sh_memaddrs` (`('a word) set`) ↔ `BitVec width → Prop` (set-as-predicate);
-`clock : num` ↔ `Nat`; `be : bool` ↔ `Bool`; `ffi : 'ffi ffi_state` ↔
-`HolFfiState σ`; `base_addr` and `top_addr : 'a word` ↔ `BitVec width`. The
-`result` datatype translates constructor-for-constructor
-(`CrepResultHOLExact`, tagged `result`).
-
-### Conventional translation, not a changed theorem
-
-This is a conventional data-structure translation: (1) `'a word` is by
-construction the `dimindex (:α)`-bit word type, so `BitVec (dimindex (:α))` is
-the same data; (2) `dimindex (:α) ≥ 1` is a theorem of `wordsTheory`, so the
-Lean `[NeZero width]` binder is a translation artifact discharged at every HOL
-instance rather than an added mathematical hypothesis; (3) the Lean FFI
-statement is the HOL proposition at the universe-`0` instance of `'ffi`. No
-hypothesis, side condition, quantifier, or conclusion is added, removed, or
-weakened, and the evaluator itself is unchanged — unlike the forbidden cases (a
-changed evaluator, an extra successful-pass assumption, or a hypothesis that
-already implies the conclusion).
-
-### Proposed qualifier and review rule
-
-Suggested qualifier `(words_as_type_indexed_bitvec)`, usable only when the sole
-representation differences are the word dimension and the FFI universe, and only
-alongside the existing `fmap_as_finite_support` fields for map-valued fields.
-Suggested manifest status `reviewed_words_as_type_indexed_bitvec`. Review
-obligations:
-
-* the tagged declaration must name the word-carrying carrier and cite the
-  `dimindex`-to-`width` instantiation in its local note;
-* the reviewer must confirm every `width`-typed field arose from a HOL `'a word`
-  and that no binder beyond `[NeZero width]` / `{σ : Type}` was added;
-* the FFI universe restriction must be recorded whenever `'ffi` is not pinned to
-  universe `0`; otherwise that component is an identity translation.
-
-A future checker rule could additionally require a same-module adapter showing
-`BitVec width` has the HOL word cardinality (`2^width`) together with the
-`NeZero` discharge; that is out of scope for this proposal.
-
-### Signature-visibility limit for `crepSem evaluate_def` clauses
-
-A live check (`scripts/check-hol-refs.py`) of the exact carrier shows that the
-words qualifier is *not* attachable to the `crepSem` `evaluate_def` clause
-equations as written. Temporarily tagging `evalCrepSemHOLProgExact_skip` with
-`(fmap_as_finite_support := [locals, globals, code])
-(words_as_type_indexed_bitvec)` is rejected with
-
-```
-words_as_type_indexed_bitvec must name the Lean positive-width word carrier
-`BitVec` that translates HOL `'a word`
-```
-
-because the clause statement names only `CrepSemHOLState width σ` and
-`CrepProgHOL width`; no literal `BitVec` occurs in its signature (the word type
-is hidden inside the state/program carriers). The same holds for the whole
-`evalCrepSemHOLProg`/`evalCrepSemHOLProgExact` statements. So the composition
-"`words_as_type_indexed_bitvec` must accompany `fmap_as_finite_support` for
-`evaluate_def`" requested during review is unsatisfiable under the current
-checker rule. Two options for the ruling: (a) tag `evaluate_def` clauses
-fmap-only and record the `dimindex`/`'ffi` translation in the reviewer note (no
-words qualifier, since no word type is syntactically visible); or (b) extend the
-words rule to accept a reviewed width-indexed carrier
-(`HolWordLab`/`CrepProgHOL`/`CrepSemHOLState`) as evidence of the translation.
-No checker rule is changed here.
-
-### Scope
-
-This proposal authorises no tag by itself: `evaluate_def` still needs the `.13.1`
-finite-map witness route approved by the coordinator and the source line (240)
-cited. No checker, lock-file, or manifest change is included here.
+* **Carrier placement.** The finite-map owner `CrepSemHOLState` is reached through
+  the transitive import `CrepSem/HOLState.lean`. `AGENTS.md` permits an imported owner
+  together with an evaluator-local witness, and this module declares one in
+  `namespace CrepSemShMemExact`
+  (`CrepSemShMemExact.holFmapAsFiniteSupportWitness`, a re-export of the canonical
+  `CrepSemHOLState.holFmapAsFiniteSupportWitness` roundtrip). The reference checker
+  resolves the owner from the tagged declaration's own signature and binds the
+  `[NeZero <width>]` discharge and the `BitVec <width>` field to the same owning
+  declaration and the same width identifier.
+* **Word dimension / FFI universe.** HOL's `'a word` (dimension `dimindex (:α)`)
+  translates to `BitVec width`, and `'ffi ffi_state` to `HolFfiState σ` with
+  `σ : Type`. The qualifier `(words_as_type_indexed_bitvec)` records this and is
+  implemented in `Flapjack/HolRef.lean` and `scripts/check-hol-refs.py` (under
+  coordinator review). It accepts a literal `BitVec <width>` signature, or a
+  reviewed width-indexed carrier (local or imported) whose own header carries
+  `[NeZero <width>]` and which mentions `BitVec <width>`.
+* **Evaluator tag.** `evalCrepSemHOLProg` / `evalCrepSemHOLProgExact` and the named
+  clause equations remain **untagged** pending source review of the clause set and
+  carriers. The eventual tag cites
+  `cakeml/pancake/semantics/crepSemScript.sml:240` (the rewritten equation is
+  rebound at `:443`) with `(fmap_as_finite_support := [locals, globals, code])`
+  and, once approved, `(words_as_type_indexed_bitvec)` under the combined manifest
+  status `reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec`. The clause
+  signatures name `CrepSemHOLState`/`CrepProgHOL` rather than a literal `BitVec`;
+  the carrier route above is what admits the word translation for them.
 -/
 
 end Flapjack
