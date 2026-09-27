@@ -4,6 +4,7 @@ import Flapjack.Pancake.Semantics.CrepSem.TotalEval
 import Flapjack.Pancake.Semantics.PanSem.EvaluateFinite
 import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
 import Flapjack.Pancake.PanToCrep.CompileProg
+import Flapjack.Pancake.Proofs.PanToCrep.CodeRelExact
 import Flapjack.Pancake.Proofs.PanToCrep.StateRelFiniteSupport
 import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
 
@@ -142,11 +143,12 @@ The proof resumes this no-op constructor at
 `crepSemScript.sml:241`. The exact source carrier uses `MlS` tag/text values;
 the compiler erases both and produces `Skip`, so both evaluators preserve their
 states. This helper proves that target transition directly and preserves the
-finite-exact state/local and exception relations without assuming a target run.
-It is only a Flapjack-specific case prerequisite: the exact `code_rel`
-assembly and full `pc_compile_correct` case remain open, so no `@[hol]` tag is
-claimed. The generic String-based `panToCrepPcCompileCorrectAnnotCodeState`
-does not establish this exact-carrier result. -/
+finite-exact state/code/local/exception relations without assuming a target
+run. `code_rel_def` is represented by `codeRelExactHOLW`; this no-op case
+carries it unchanged. This remains a Flapjack-specific prerequisite rather
+than the full `pc_compile_correct` case, so no `@[hol]` tag is claimed. The
+generic String-based `panToCrepPcCompileCorrectAnnotCodeState` does not
+establish this exact-carrier result. -/
 theorem panToCrepExactAnnotTransition
     {width : Nat} {σ : Type} [NeZero width]
     (sourceContext : PanSemStateFiniteExact.FiniteEvalContext width σ)
@@ -158,6 +160,8 @@ theorem panToCrepExactAnnotTransition
     (hstate : panToCrepStateRelFiniteExact sourceContext.state targetState)
     (hlocals : panToCrepLocalsRelFiniteExact compileContext
       sourceContext.state.locals targetState.locals)
+    (hcode : codeRelExactHOLW compileContext sourceContext.state.code
+      targetState.code)
     (hexcp : panToCrepExcpRelFiniteExact compileContext.eids
       sourceContext.state.eshapes) :
     PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext
@@ -173,9 +177,10 @@ theorem panToCrepExactAnnotTransition
     panToCrepStateRelFiniteExact sourceContext.state targetState ∧
     panToCrepLocalsRelFiniteExact compileContext
       sourceContext.state.locals targetState.locals ∧
+    codeRelExactHOLW compileContext sourceContext.state.code targetState.code ∧
     panToCrepExcpRelFiniteExact compileContext.eids
       sourceContext.state.eshapes := by
-  refine ⟨?_, ?_, ?_, hstate, hlocals, hexcp⟩
+  refine ⟨?_, ?_, ?_, hstate, hlocals, hcode, hexcp⟩
   · simp [PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext]
   · simp [compileProgExactHOLW]
   · rw [show compileProgExactHOLW compileContext
