@@ -1,6 +1,7 @@
 import Flapjack.Misc.AppList
 import Flapjack.Misc.FlatReplicate
 import Flapjack.Misc.Uncurry
+import Flapjack.Misc.OptMmapCong
 
 /-! Lean regression for the HOL `misc$app_list`/`append` oracle
 (`scripts/hol-probes/misc_app_list_probe.out`). -/
@@ -61,3 +62,20 @@ example : ¬ Function.uncurry (fun a b : Nat => a + b) (2, 3) = 6 := by
 
 example : (∃ a b : Nat, ((4, 7) : Nat × Nat) = (a, b) ∧ a * b = 28) :=
   (Flapjack.uncurryEqPairHOL (fun a b : Nat => a * b) (4, 7) 28).mp rfl
+
+-- Exact HOL `OPT_MMAP_CONG` (`cakeml/misc/miscScript.sml:2481`).
+example :
+    ([1, 2, 3] : List Nat).mapM (fun n => if n = 2 then none else some (n + 10)) =
+      ([1, 2, 3] : List Nat).mapM (fun n => if n = 2 then none else some (n + 10)) :=
+  Flapjack.optMmapCongHOL _ _ _ _ rfl (fun _ _ => rfl)
+
+example :
+    ([1, 2, 3] : List Nat).mapM (fun n => some (n + 1)) =
+      ([1, 2, 3] : List Nat).mapM (fun n => some (n + 1)) :=
+  Flapjack.optMmapCongHOL _ _ _ _ rfl (fun _ _ => rfl)
+
+example :
+    ([5, 6] : List Nat).mapM (fun n => some n) =
+      ([5, 6] : List Nat).mapM (fun n => some (n + 0)) :=
+  Flapjack.optMmapCongHOL _ _ (fun n => some n) (fun n => some (n + 0))
+    rfl (fun _ _ => by simp)
