@@ -2469,35 +2469,6 @@ theorem compileProgExactHOLW_extCall_relation_bridge {width : Nat} [NeZero width
                         (crepExpOfHOL arrLenHead :: List.map crepExpOfHOL arrLenTail, .one) := by
                       rw [harrLenProd]
                       exact Prod.ext harrLenValues.symm harrLenProdShape
-                    have hcfgValues :
-                        List.map crepExpOfHOL (cfgHead :: cfgTail) = cfgProdVals := by
-                      simpa using hcfgVals
-                    have hcfgLenValues :
-                        List.map crepExpOfHOL (cfgLenHead :: cfgLenTail) = cfgLenProdVals := by
-                      simpa using hcfgLenVals
-                    have harrValues :
-                        List.map crepExpOfHOL (arrHead :: arrTail) = arrProdVals := by
-                      simpa using harrVals
-                    have harrLenValues :
-                        List.map crepExpOfHOL (arrLenHead :: arrLenTail) = arrLenProdVals := by
-                      simpa using harrLenVals
-                    have hcfgProdOut : compileExpHOL context.toProduction configuration =
-                        (crepExpOfHOL cfgHead :: List.map crepExpOfHOL cfgTail, .one) := by
-                      rw [hcfgProd]
-                      exact Prod.ext hcfgValues.symm hcfgProdShape
-                    have hcfgLenProdOut :
-                        compileExpHOL context.toProduction configurationLength =
-                          (crepExpOfHOL cfgLenHead :: List.map crepExpOfHOL cfgLenTail, .one) := by
-                      rw [hcfgLenProd]
-                      exact Prod.ext hcfgLenValues.symm hcfgLenProdShape
-                    have harrProdOut : compileExpHOL context.toProduction array =
-                        (crepExpOfHOL arrHead :: List.map crepExpOfHOL arrTail, .one) := by
-                      rw [harrProd]
-                      exact Prod.ext harrValues.symm harrProdShape
-                    have harrLenProdOut : compileExpHOL context.toProduction arrayLength =
-                        (crepExpOfHOL arrLenHead :: List.map crepExpOfHOL arrLenTail, .one) := by
-                      rw [harrLenProd]
-                      exact Prod.ext harrLenValues.symm harrLenProdShape
                     have hbridge := compileProgExactHOLW_extCall_success_bridge
                       context function configuration configurationLength array arrayLength hfunction
                       cfgHead cfgTail cfgLenHead cfgLenTail arrHead arrTail
@@ -2515,31 +2486,11 @@ theorem compileProgExactHOLW_extCall_relation_bridge {width : Nat} [NeZero width
                   · have hguard : cfgShape ≠ .one ∨ cfgLenShape ≠ .one ∨
                         arrShape ≠ .one ∨ arrLenShape ≠ .one ∨
                         cfgVals = [] ∨ cfgLenVals = [] ∨ arrVals = [] ∨ arrLenVals = [] := by
-                      by_cases h1 : cfgShape = .one
-                      · by_cases h2 : cfgLenShape = .one
-                        · by_cases h3 : arrShape = .one
-                          · by_cases h4 : arrLenShape = .one
-                            · by_cases h5 : cfgVals = []
-                              · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h5))))
-                              · by_cases h6 : cfgLenVals = []
-                                · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h6)))))
-                                · by_cases h7 : arrVals = []
-                                  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h7))))))
-                                  · by_cases h8 : arrLenVals = []
-                                    · exact Or.inr (by
-                                        exact Or.inr (by
-                                          exact Or.inr (by
-                                            exact Or.inr (by
-                                              exact Or.inr (by
-                                                exact Or.inr (by
-                                                  exact Or.inr h8))))))
-                                    · exact False.elim (hgood ⟨h1, h2, h3, h4,
-                                        by simpa using h5, by simpa using h6,
-                                        by simpa using h7, by simpa using h8⟩)
-                            · exact Or.inr (Or.inr (Or.inr (Or.inl h4)))
-                          · exact Or.inr (Or.inr (Or.inl h3))
-                        · exact Or.inr (Or.inl h2)
-                      · exact Or.inl h1
+                      by_cases hbad : cfgShape ≠ .one ∨ cfgLenShape ≠ .one ∨
+                          arrShape ≠ .one ∨ arrLenShape ≠ .one ∨
+                          cfgVals = [] ∨ cfgLenVals = [] ∨ arrVals = [] ∨ arrLenVals = []
+                      · exact hbad
+                      · simp_all
                     have hbridge := compileProgExactHOLW_extCall_skip_bridge
                       context function configuration configurationLength array arrayLength
                       cfgVals cfgShape cfgLenVals cfgLenShape arrVals arrShape
