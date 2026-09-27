@@ -1185,4 +1185,98 @@ theorem panSemDeclarationValueListRel_mapM_projection {width : Nat} [NeZero widt
           rw [ih restE htail]
           rfl
 
+/-- Binop `Op` arm.  The executable clause evaluates the arguments, projects the
+    results to words and applies the executed `access.wordOp`; the finite
+    evaluator applies the tagged `wordOpHOL` to the exact value list.  Given the
+    per-argument relation, a successful argument evaluation, and that the
+    executed memory access agrees with `wordOpHOL`, the two `.op` results are
+    related. -/
+theorem evalPanValueExp_op_correspondence {width : Nat} [NeZero width]
+    [BEq (BitVec width)] [OfNat (BitVec width) 0] [OfNat (BitVec width) 1]
+    [Add (BitVec width)] [Mul (BitVec width)] [Sub (BitVec width)]
+    [AndOp (BitVec width)] [OrOp (BitVec width)] [HXor (BitVec width) (BitVec width) (BitVec width)]
+    [ShiftLeft (BitVec width)] [ShiftRight (BitVec width)] [LT (BitVec width)]
+    [DecidableRel (fun left right : BitVec width => left < right)] [PanCmp (BitVec width)]
+    (state : PanSemStateFiniteExact width Unit) [_hmem : DecidablePred state.memaddrs]
+    (structs : StructContext)
+    (locals globals : VarName → Option (PanValue (BitVec width)))
+    (memory : BitVec width → Option (PanValue (BitVec width)))
+    (baseAddress topAddress bytesInWord : BitVec width)
+    (access : PanValueMemoryAccess (BitVec width))
+    (operator : BinOp) (arguments : List (Exp (BitVec width)))
+    (values : List (PanValue (BitVec width)))
+    (hvalues : evalPanValueExp.evalPanValueExps structs locals globals memory baseAddress
+        topAddress bytesInWord arguments (memoryAccess := some access) = some values)
+    (hargs : ∀ e ∈ arguments,
+      PanSemDeclarationValueOptionRel PanValueCodecRel
+        (evalPanValueExp structs locals globals memory baseAddress topAddress bytesInWord e
+          (memoryAccess := some access))
+        (state.evalHOLFinite (expToHOL e)))
+    (hwordOp : ∀ words : List (BitVec width),
+      access.wordOp operator words = wordOpHOL operator words) :
+    PanSemDeclarationValueOptionRel PanValueCodecRel
+      (evalPanValueExp structs locals globals memory baseAddress topAddress bytesInWord
+        (.op operator arguments) (memoryAccess := some access))
+      (state.evalHOLFinite (.op operator (arguments.map expToHOL))
+        : Option (ValueHOL width)) := by
+  obtain ⟨exacts, hexactList, hrelList⟩ :=
+    evalPanValueExps_list_correspondence state structs locals globals memory baseAddress
+      topAddress bytesInWord (some access) arguments values hvalues hargs
+  have hAllWord := panSemDeclarationValueListRel_all_valueIsWord values exacts hrelList
+  have hProj := panSemDeclarationValueListRel_mapM_projection values exacts hrelList
+  have hprod : evalPanValueExp structs locals globals memory baseAddress topAddress bytesInWord
+      (.op operator arguments) (memoryAccess := some access) =
+      (access.wordOp operator (exacts.map valueWord)).map PanValue.word := by
+    simp only [evalPanValueExp]
+    rw [hvalues]
+    simp [hProj]
+  have hexact : state.evalHOLFinite (.op operator (arguments.map expToHOL)) =
+      (wordOpHOL operator (exacts.map valueWord)).map (fun word => .val (.word word)) := by
+    rw [PanSemStateFiniteExact.evalHOLFinite_op, hexactList]
+    dsimp only
+    rw [hAllWord]
+    rfl
+  rw [hprod, hexact, hwordOp (exacts.map valueWord)]
+  cases hwo : wordOpHOL operator (exacts.map valueWord) with
+  | none => simp only [Option.map_none, PanSemDeclarationValueOptionRel]
+  | some word =>
+      simp only [Option.map_some, PanSemDeclarationValueOptionRel, panValueCodecRel_word]
+
+/-- Executed-path instance of `evalPanValueExp_op_correspondence`: with the
+access supplied by the executed 64-bit RISC-V memory model
+`panSemBitVec64MemoryAccess`, the `hwordOp` premise is discharged by
+`panSemBitVec64MemoryAccess_wordOp` (rfl), so the `.op` correspondence carries
+no undischarged semantic premise.  Direct original-HOL oracles:
+`scripts/hol-probes/word_op_finite_probe.out` (HOL `wordLang$word_op_def`
+Add/Sub/And/Or/Xor rows) together with the `pan_sem_state_eval_probe.out` rows
+`op_add_fold_three` / `op_sub_wrong_arity`, the latter pinned in
+`Flapjack/Test/PanSemStateEvalParity.lean`. -/
+theorem evalPanValueExp_op_correspondence_executed
+    {σ : Type}
+    (productionState : PanSemState (RiscV.Word 64) σ)
+    (state : PanSemStateFiniteExact 64 Unit) [_hmem : DecidablePred state.memaddrs]
+    (structs : StructContext)
+    (locals globals : VarName → Option (PanValue (RiscV.Word 64)))
+    (memory : RiscV.Word 64 → Option (PanValue (RiscV.Word 64)))
+    (baseAddress topAddress bytesInWord : RiscV.Word 64)
+    (operator : BinOp) (arguments : List (Exp (RiscV.Word 64)))
+    (values : List (PanValue (RiscV.Word 64)))
+    (hvalues : evalPanValueExp.evalPanValueExps structs locals globals memory baseAddress
+        topAddress bytesInWord arguments
+        (memoryAccess := some (panSemBitVec64MemoryAccess productionState)) = some values)
+    (hargs : ∀ e ∈ arguments,
+      PanSemDeclarationValueOptionRel PanValueCodecRel
+        (evalPanValueExp structs locals globals memory baseAddress topAddress bytesInWord e
+          (memoryAccess := some (panSemBitVec64MemoryAccess productionState)))
+        (state.evalHOLFinite (expToHOL e))) :
+    PanSemDeclarationValueOptionRel PanValueCodecRel
+      (evalPanValueExp structs locals globals memory baseAddress topAddress bytesInWord
+        (.op operator arguments)
+        (memoryAccess := some (panSemBitVec64MemoryAccess productionState)))
+      (state.evalHOLFinite (.op operator (arguments.map expToHOL))) :=
+  evalPanValueExp_op_correspondence state structs locals globals memory
+    baseAddress topAddress bytesInWord (panSemBitVec64MemoryAccess productionState)
+    operator arguments values hvalues hargs
+    (fun words => panSemBitVec64MemoryAccess_wordOp productionState operator words)
+
 end Flapjack

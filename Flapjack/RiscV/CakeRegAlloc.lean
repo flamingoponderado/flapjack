@@ -808,6 +808,158 @@ def toNatInfoMap {α : Type u} (m : CakeNodeMap α) : NatInfoMap α :=
   (List.range m.slots.size).filterMap
     (fun i => (m.get i).map (fun v => (i, v))) ++ m.outside
 
+/-! ### Reading a node field back out
+
+`toNatInfoMap` is the production readback that rebuilds the HOL-shaped
+first-binding association list from the array-backed field.  The lemmas below
+pin that readback to the exact indexed HOL node list and show it inverts
+`ofNatInfoMap`'s dense `mapIdx` embedding, so a `RepresentsHOLNodeList` field
+can be read back clause-for-clause.  These support statements remain untagged;
+they do not by themselves authorize a `list_as_array` qualifier on a HOL
+theorem. -/
+
+/-- A `filterMap` only depends on its function's values on the list.  Helper
+    for the offset-indexed readback law below; no exact HOL declaration. -/
+theorem filterMap_congr_list {α : Type u} {β : Type v} {f g : α → Option β}
+    {l : List α} (h : ∀ a ∈ l, f a = g a) :
+    l.filterMap f = l.filterMap g := by
+  induction l with
+  | nil => rfl
+  | cons a l ih =>
+      rw [List.filterMap_cons, List.filterMap_cons, h a (by simp),
+        ih (fun b hb => h b (by simp [hb]))]
+
+/-- An `mapIdx` only depends on its function's values pointwise.  Helper for
+    the offset-indexed readback law below; no exact HOL declaration. -/
+theorem mapIdx_congr_list {α : Type u} {β : Type v} {f g : Nat → α → β}
+    {l : List α} (h : ∀ i a, f i a = g i a) :
+    l.mapIdx f = l.mapIdx g := by
+  rw [List.mapIdx_eq_zipIdx_map, List.mapIdx_eq_zipIdx_map]
+  apply List.map_congr_left
+  intro p _
+  obtain ⟨a, i⟩ := p
+  exact h i a
+
+/-- A bounded node field whose in-range reads are exactly the HOL list elements
+    rebuilds the indexed HOL association list at any offset.  Helper for
+    `toNatInfoMap_eq_mapIdx`; no exact HOL declaration. -/
+theorem range_filterMap_get_add_eq_mapIdx {α : Type u} (values : List α)
+    (g : Nat → Option α) (s : Nat)
+    (h : ∀ i, (hi : i < values.length) → g (i + s) = some (values.get ⟨i, hi⟩)) :
+    (List.range values.length).filterMap
+        (fun j => (g (j + s)).map (fun v => (j + s, v))) =
+      values.mapIdx (fun i v => (i + s, v)) := by
+  induction values generalizing s with
+  | nil => simp
+  | cons x xs ih =>
+      simp only [List.length_cons]
+      rw [List.range_succ_eq_map, List.mapIdx_cons]
+      simp only [List.filterMap_cons]
+      have h0 : g (0 + s) = some x := by
+        have := h 0 (by simp)
+        simpa using this
+      rw [h0]
+      simp only [Option.map_some]
+      rw [List.filterMap_map]
+      rw [List.cons.injEq]
+      refine ⟨rfl, ?_⟩
+      have hfl : List.filterMap ((fun j => (g (j + s)).map (fun v => (j + s, v))) ∘ Nat.succ)
+            (List.range xs.length) =
+          List.filterMap (fun j => (g (j + (s + 1))).map (fun v => (j + (s + 1), v)))
+            (List.range xs.length) := by
+        apply filterMap_congr_list
+        intro a _
+        change (g ((a + 1) + s)).map (fun v => ((a + 1) + s, v)) =
+          (g (a + (s + 1))).map (fun v => (a + (s + 1), v))
+        rw [show (a + 1) + s = a + (s + 1) by omega]
+      have hmi : xs.mapIdx (fun i v => ((i + 1) + s, v)) =
+          xs.mapIdx (fun i v => (i + (s + 1), v)) := by
+        apply mapIdx_congr_list
+        intro i v
+        rw [show (i + 1) + s = i + (s + 1) by omega]
+      rw [hfl, hmi]
+      exact ih (s := s + 1) (fun j hj => by
+        have hj' : j + 1 < (x :: xs).length := by simpa using hj
+        have hgj := h (j + 1) hj'
+        have hidx : (j + 1) + s = j + (s + 1) := by omega
+        rw [hidx] at hgj
+        simpa using hgj)
+
+/-- The production `toNatInfoMap` readback of a represented node field is
+    exactly the HOL indexed node list: the dense in-range reads supply
+    `(i, values[i])`, the range covers every index, and the extension map is
+    empty.  This is the readback direction of the `ofList`/`set`/`ofNatInfoMap`
+    array representation. -/
+theorem toNatInfoMap_eq_mapIdx {α : Type u} (m : CakeNodeMap α)
+    (values : List α) (hrep : RepresentsHOLNodeList m values) :
+    toNatInfoMap m = values.mapIdx (fun i v => (i, v)) := by
+  rcases hrep with ⟨hout, hsize, hget⟩
+  have hread := range_filterMap_get_add_eq_mapIdx values m.get 0 hget
+  simp only [toNatInfoMap, hout, List.append_nil, hsize]
+  simpa using hread
+
+/-- A first-binding association-list lookup misses a key that never appears.
+    Helper for the readback lookup agreement; no exact HOL declaration. -/
+theorem lookupNatInfo_eq_none_of_forall_ne {α : Type u} (m : NatInfoMap α) (i : Nat)
+    (h : ∀ e ∈ m, e.1 ≠ i) : Flapjack.lookupNatInfo i m = none := by
+  induction m with
+  | nil => rfl
+  | cons e rest ih =>
+      obtain ⟨k, v⟩ := e
+      have hk : k ≠ i := h (k, v) (by simp)
+      have hk' : (k == i) = false := by
+        rw [Bool.eq_false_iff]
+        intro hki
+        exact hk (beq_iff_eq.mp hki)
+      simp only [Flapjack.lookupNatInfo, hk']
+      exact ih (fun e he => h e (by simp [he]))
+
+/-- A first-binding association-list lookup never finds a key at or above the
+    field dimension.  Helper for the readback lookup agreement; no exact HOL
+    declaration. -/
+theorem lookupNatInfo_mapIdx_add_of_ge {α : Type u} (values : List α) (s i : Nat)
+    (hi : values.length + s ≤ i) :
+    Flapjack.lookupNatInfo i (values.mapIdx (fun j v => (j + s, v))) = none := by
+  apply lookupNatInfo_eq_none_of_forall_ne
+  intro e he
+  have hlt := mapIdx_fst_lt values s e he
+  omega
+
+/-- The production `toNatInfoMap` readback agrees with `get` at every index:
+    reading the rebuilt association list through the HOL first-binding lookup is
+    the same as reading the array field.  This closes the lookup-agreement
+    direction of the array representation. -/
+theorem lookupNatInfo_toNatInfoMap {α : Type u} (m : CakeNodeMap α)
+    (values : List α) (hrep : RepresentsHOLNodeList m values) (i : Nat) :
+    Flapjack.lookupNatInfo i (toNatInfoMap m) = m.get i := by
+  rcases hrep with ⟨hout, hsize, hget⟩
+  rw [toNatInfoMap_eq_mapIdx m values ⟨hout, hsize, hget⟩]
+  by_cases hi : i < values.length
+  · have hmi : m.get i = some (values.get ⟨i, hi⟩) := hget i hi
+    rw [hmi]
+    have hread : Flapjack.lookupNatInfo i (values.mapIdx (fun j v => (j + 0, v))) =
+        some (values.get ⟨i, hi⟩) := lookupNatInfo_mapIdx_add values 0 i hi
+    simpa using hread
+  · have hge : values.length ≤ i := Nat.le_of_not_gt hi
+    have hnone : Flapjack.lookupNatInfo i (values.mapIdx (fun j v => (j + 0, v))) =
+        none := lookupNatInfo_mapIdx_add_of_ge values 0 i (by simpa using hge)
+    have hnone' : Flapjack.lookupNatInfo i (values.mapIdx (fun i v => (i, v))) =
+        none := by simpa using hnone
+    rw [hnone']
+    have hnot : ¬ i < m.slots.size := by rw [hsize]; exact hi
+    unfold get
+    rw [dif_neg hnot, hout]
+    simp [cakeMapLookup, Flapjack.lookupNatInfo]
+
+/-- Rebuilding a represented node field from its `toNatInfoMap` readback
+    recovers the same HOL node list.  This is the roundtrip for the production
+    readback and the `ofNatInfoMap` dense `mapIdx` embedding. -/
+theorem toNatInfoMap_representsHOLNodeList {α : Type u} (m : CakeNodeMap α)
+    (values : List α) (hrep : RepresentsHOLNodeList m values) :
+    RepresentsHOLNodeList (ofNatInfoMap values.length (toNatInfoMap m)) values := by
+  rw [toNatInfoMap_eq_mapIdx m values hrep]
+  exact ofNatInfoMap_mapIdx_representsHOLNodeList values
+
 end CakeNodeMap
 
 def cakeSpillCostMap (nextNode : Nat) (costs : NatInfoMap Nat) : CakeNodeMap Nat :=
