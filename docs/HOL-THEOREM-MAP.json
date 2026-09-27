@@ -15293,5 +15293,16 @@
     "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-a source comparison (2026-09-28; bead flapjack-4ac.4.61) against panPropsScript.sml:1150-1158. This is the genuine p = Tick leaf from recInduct evaluate_ind. It retains the source evaluate premise and all eight conclusions, without an IH or extra premise. evaluate_def at panSemScript.sml:653-655 returns (SOME TimeOut, empty_locals s) at zero clock and (NONE, dec_clock s) otherwise; both branches preserve precisely the eight fields concluded here. The Lean leaf uses evaluateHOLFiniteState_tick, with the same finite-support state owner/witness and indexed-word translation. Skip, Break, Continue, and Annot leaves are also ported; recursive cases and assembly remain open."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "evaluate_invariants",
+    "hol_line": 1150,
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
+    "lean_name": "evaluateInvariantsReturnCaseHOLFinite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-28; bead flapjack-4ac.4.61) against panPropsScript.sml:1150-1158. This is the genuine p = Return expression case from recInduct evaluate_ind. It retains the source evaluator result/post pair premise and all eight state conclusions with no IH or extra premise. evaluate_def at panSemScript.sml:638-644 returns Error with the input state when expression evaluation fails or the size bound exceeds 32; a fitting value returns Return value with empty_locals s. All outcomes preserve exactly the eight listed fields. The Lean case uses evalHOLExact, the same 32-word size bound, and evaluateHOLFiniteState_return on PanPropsEvalStateFiniteExact's checked finite-support carrier. Skip, Break, Continue, Annot, and Tick leaves are also ported; recursive cases and assembly remain open."
   }
 ]
