@@ -715,6 +715,44 @@ theorem card_remove_lt [BEq CrepInlineMapHOLName]
   show (fs.entries.filter (fun entry => entry.1 != name)).length < fs.entries.length
   exact length_filter_lt_of_lookup name h
 
+/-- Refine the canonical finite-support map with the duplicate-free list of
+    exactly the keys where HOL lookup is defined. This permits a list length to
+    serve as `CARD (FDOM fs)` without treating the source support witness as an
+    exact domain. This carrier adapter is Flapjack-specific infrastructure. -/
+def toHolFiniteMapWithDomain [BEq CrepInlineMapHOLName]
+    [LawfulBEq CrepInlineMapHOLName]
+    (fs : CrepInlineFmapHOL width) :
+    HolFiniteMapWithDomain CrepInlineMapHOLName
+      (List Nat × CrepProgHOL width) where
+  map := fs.toHolFiniteMapExact
+  keys := fs.domainKeys
+  keys_nodup := fs.domainKeys_nodup
+  keys_iff_lookup := fs.mem_domainKeys_iff_lookup
+
+/-- The exact finite-domain measure of the refined HOL inline-map carrier is
+    the already-proved entry cardinality of the unique-key representation. -/
+theorem domainCard_toHolFiniteMapWithDomain [BEq CrepInlineMapHOLName]
+    [LawfulBEq CrepInlineMapHOLName] (fs : CrepInlineFmapHOL width) :
+    fs.toHolFiniteMapWithDomain.domainCard = fs.card := by
+  simp [HolFiniteMapWithDomain.domainCard, toHolFiniteMapWithDomain, card,
+    domainKeys]
+
+/-- Removing an existing Crep inline binding from the refined carrier strictly
+    decreases the HOL finite-domain measure. -/
+theorem domainCard_remove_toHolFiniteMapWithDomain
+    [BEq CrepInlineMapHOLName] [LawfulBEq CrepInlineMapHOLName]
+    [DecidableEq CrepInlineMapHOLName] (fs : CrepInlineFmapHOL width)
+    (name : CrepInlineMapHOLName) {value : List Nat × CrepProgHOL width}
+    (h : fs.lookup name = some value) :
+    (fs.remove name).toHolFiniteMapWithDomain.domainCard <
+      fs.toHolFiniteMapWithDomain.domainCard := by
+  calc
+    (fs.remove name).toHolFiniteMapWithDomain.domainCard = (fs.remove name).card :=
+      domainCard_toHolFiniteMapWithDomain (fs.remove name)
+    _ < fs.card := card_remove_lt name fs h
+    _ = fs.toHolFiniteMapWithDomain.domainCard :=
+      (domainCard_toHolFiniteMapWithDomain fs).symm
+
 theorem lookup_ofAList [BEq CrepInlineMapHOLName]
     [LawfulBEq CrepInlineMapHOLName] (key : CrepInlineMapHOLName)
     (entries : List (CrepInlineMapHOLName × (List Nat × CrepProgHOL width))) :
