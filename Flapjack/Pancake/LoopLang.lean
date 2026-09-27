@@ -273,9 +273,104 @@ def loopProgExecRel {width : Nat} [NeZero width] :
         executableArray = faithfulArray ∧
         executableArrayLength = faithfulArrayLength ∧
         numSetListRel executableLive faithfulLive
-  | _, _ => False
+  | _, _ => false
 termination_by _ faithful => sizeOf faithful
 decreasing_by
   all_goals decreasing_trivial
+
+/-! ### Introduction lemmas for `loopProgExecRel`
+
+Flapjack bridge infrastructure (no `@[hol]` tag): introduction/closure rules for
+the executable/faithful program relation, so code tables built from the exact
+`loopLang$prog` carrier can be related to production programs through every
+non-`num_set` constructor and recursively through `seq`/`mark`.  Constructors
+carrying `num_set` live sets are intentionally not covered here, since the
+executable side stores an explicit `List Nat` and the enumeration bridge is a
+separate prerequisite. -/
+
+theorem loopProgExecRel_skip {width : Nat} [NeZero width] :
+    loopProgExecRel (width := width) (.skip : LoopProg (BitVec width)) .skip := by
+  simp [loopProgExecRel]
+
+theorem loopProgExecRel_assign {width : Nat} [NeZero width] (name : Nat)
+    (value : HolLoopExp width) :
+    loopProgExecRel (width := width) (.assign name (holLoopExpToExecutable value))
+      (.assign name value) := by
+  simp [loopProgExecRel, loopExpExecRel]
+
+theorem loopProgExecRel_primitive {width : Nat} [NeZero width] (destinations : List Nat)
+    (operator : PrimOp) (arguments : List Nat) :
+    loopProgExecRel (width := width) (.primitive destinations operator arguments)
+      (.primitive destinations operator arguments) := by
+  simp [loopProgExecRel]
+
+theorem loopProgExecRel_arith {width : Nat} [NeZero width] (operation : LoopArith) :
+    loopProgExecRel (width := width) (.arith operation) (.arith operation) := by
+  simp [loopProgExecRel]
+
+theorem loopProgExecRel_load32 {width : Nat} [NeZero width] (address destination : Nat) :
+    loopProgExecRel (width := width) (.load32 address destination)
+      (.load32 address destination) := by
+  simp [loopProgExecRel]
+
+theorem loopProgExecRel_loadByte {width : Nat} [NeZero width] (address destination : Nat) :
+    loopProgExecRel (width := width) (.loadByte address destination)
+      (.loadByte address destination) := by
+  simp [loopProgExecRel]
+
+theorem loopProgExecRel_store32 {width : Nat} [NeZero width] (address value : Nat) :
+    loopProgExecRel (width := width) (.store32 address value)
+      (.store32 address value) := by
+  simp [loopProgExecRel]
+
+theorem loopProgExecRel_storeByte {width : Nat} [NeZero width] (address value : Nat) :
+    loopProgExecRel (width := width) (.storeByte address value)
+      (.storeByte address value) := by
+  simp [loopProgExecRel]
+
+theorem loopProgExecRel_break {width : Nat} [NeZero width] (label : Nat) :
+    loopProgExecRel (width := width) (.break label) (.break label) := by
+  simp [loopProgExecRel]
+
+theorem loopProgExecRel_continue {width : Nat} [NeZero width] (label : Nat) :
+    loopProgExecRel (width := width) (.continue label) (.continue label) := by
+  simp [loopProgExecRel]
+
+theorem loopProgExecRel_raise {width : Nat} [NeZero width] (exception : Nat) :
+    loopProgExecRel (width := width) (.raise exception) (.raise exception) := by
+  simp [loopProgExecRel]
+
+theorem loopProgExecRel_return {width : Nat} [NeZero width] (values : List Nat) :
+    loopProgExecRel (width := width) (.return values) (.return values) := by
+  simp [loopProgExecRel]
+
+theorem loopProgExecRel_tick {width : Nat} [NeZero width] :
+    loopProgExecRel (width := width) (.tick : LoopProg (BitVec width)) .tick := by
+  simp [loopProgExecRel]
+
+theorem loopProgExecRel_fail {width : Nat} [NeZero width] :
+    loopProgExecRel (width := width) (.fail : LoopProg (BitVec width)) .fail := by
+  simp [loopProgExecRel]
+
+theorem loopProgExecRel_locValue {width : Nat} [NeZero width] (destination source : Nat) :
+    loopProgExecRel (width := width) (.locValue destination source)
+      (.locValue destination source) := by
+  simp [loopProgExecRel]
+
+theorem loopProgExecRel_seq {width : Nat} [NeZero width]
+    {executableFirst : LoopProg (BitVec width)} {faithfulFirst : HolLoopProg width}
+    {executableSecond : LoopProg (BitVec width)} {faithfulSecond : HolLoopProg width}
+    (hFirst : loopProgExecRel executableFirst faithfulFirst)
+    (hSecond : loopProgExecRel executableSecond faithfulSecond) :
+    loopProgExecRel (.seq executableFirst executableSecond)
+      (.seq faithfulFirst faithfulSecond) := by
+  simp only [loopProgExecRel]
+  exact ⟨hFirst, hSecond⟩
+
+theorem loopProgExecRel_mark {width : Nat} [NeZero width]
+    {executableBody : LoopProg (BitVec width)} {faithfulBody : HolLoopProg width}
+    (h : loopProgExecRel executableBody faithfulBody) :
+    loopProgExecRel (.mark executableBody) (.mark faithfulBody) := by
+  simpa only [loopProgExecRel] using h
 
 end Flapjack

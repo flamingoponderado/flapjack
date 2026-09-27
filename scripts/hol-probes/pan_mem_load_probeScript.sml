@@ -22,6 +22,11 @@ fun print_eval label q =
 val _ = print_eval "one_hit"
   ``mem_load One (10w : 64 word) {10w}
       (\a : 64 word. Word 3w) []``
+(* This row aligns the source Load input/value with compile_exp's `load_one`
+   and the Crep evaluator's generated Load regression. *)
+val _ = print_eval "one_load_one"
+  ``mem_load One (3w : 64 word) {3w}
+      (\a : 64 word. Word 3w) []``
 val _ = print_eval "one_miss"
   ``mem_load One (11w : 64 word) {10w}
       (\a : 64 word. Word 3w) []``
