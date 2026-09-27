@@ -3,6 +3,7 @@ import Flapjack.Pancake.Semantics.CrepSem.Primop
 import Flapjack.Pancake.Semantics.CrepSem.LookupCode
 import Flapjack.Pancake.Semantics.CrepSem.TotalEval
 import Flapjack.Pancake.Semantics.PanSemStateEval
+import Flapjack.Pancake.Semantics.PanSem.ExtCallExact
 import Flapjack.Pancake.Semantics.LoopSem
 import Flapjack.FfiHOL
 
@@ -170,6 +171,49 @@ def crepExactWriteBytearrayWord8 {width : Nat} [NeZero width] {σ : Type}
   haveI : DecidablePred state.memaddrs := memDec
   exact panWriteBytearrayWord8HOL address bytes state.memory state.memaddrs state.be
 
+/-- The `UInt8`-carrier store-byte helper is kernel-equal to the exact source
+    `word8` helper: it differs only by the byte carrier
+    (`UInt8` vs `BitVec 8`), through `panMemStoreByteHOL_eq_word8`. -/
+theorem crepExactMemStoreByte_eq_word8 {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (address : BitVec width) (byte : UInt8) :
+    crepExactMemStoreByte state memDec address byte =
+      @panMemStoreByteWord8HOL width _ state.memory state.memaddrs memDec state.be
+        address byte.toBitVec := by
+  unfold crepExactMemStoreByte
+  exact @panMemStoreByteHOL_eq_word8 width _ state.memory state.memaddrs memDec state.be
+    address byte
+
+/-- The `UInt8`-carrier load-byte helper is kernel-equal (up to `UInt8.ofBitVec`
+    on each result) to the exact source `word8` helper, through
+    `panMemLoadByteHOL_eq_word8_projection`. -/
+theorem crepExactMemLoadByte_eq_word8 {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a)) :
+    crepExactMemLoadByte state memDec =
+      fun address =>
+        (@panMemLoadByteWord8HOL width _ state.memory state.memaddrs memDec state.be
+          address).map UInt8.ofBitVec := by
+  funext address
+  unfold crepExactMemLoadByte
+  exact @panMemLoadByteHOL_eq_word8_projection width _ state.memory state.memaddrs memDec
+    state.be address
+
+/-- The `UInt8`-carrier write-bytearray helper is kernel-equal to the exact
+    source `word8` helper on the byte list mapped through `UInt8.toBitVec`,
+    through `panWriteBytearrayHOL_eq_word8_projection`. -/
+theorem crepExactWriteBytearray_eq_word8 {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (address : BitVec width) (bytes : List UInt8) :
+    crepExactWriteBytearray state memDec address bytes =
+      @panWriteBytearrayWord8HOL width _ address (bytes.map UInt8.toBitVec) state.memory
+        state.memaddrs memDec state.be := by
+  unfold crepExactWriteBytearray
+  exact @panWriteBytearrayHOL_eq_word8_projection width _ address bytes state.memory
+    state.memaddrs memDec state.be
+
 
 /-- Exact port of HOL `Datatype result`
     (`cakeml/pancake/semantics/crepSemScript.sml:36-44`):
@@ -289,8 +333,11 @@ end CrepSemShMemExact
     FFI state. The `(fmap_as_finite_support := [locals, globals, code])`
     qualifier records that HOL's `|->` fields are represented by
     `HolFiniteMapExact`; the positive-width `BitVec width` model represents HOL's
-    nonempty finite word dimension. -/
-@[hol "cakeml/pancake/semantics/crepSemScript.sml" "sh_mem_load_def" (fmap_as_finite_support := [locals, globals, code])]
+    nonempty finite word dimension, recorded by the
+    `(words_as_type_indexed_bitvec)` qualifier (HOL `'a word` with dimension
+    `dimindex (:α)` translated to `BitVec width` with the `[NeZero width]`
+    discharge). -/
+@[hol "cakeml/pancake/semantics/crepSemScript.sml" "sh_mem_load_def" (fmap_as_finite_support := [locals, globals, code]) (words_as_type_indexed_bitvec)]
 def crepShMemLoadExactHOL {width : Nat} [NeZero width] {σ : Type}
     (name : Nat) (address : BitVec width) (nb : Nat)
     (state : CrepSemHOLState width σ) [DecidablePred state.shMemaddrs] :
@@ -340,8 +387,10 @@ def crepShMemLoadHOL {width : Nat} [NeZero width] {σ : Type}
     `word_to_bytes w F ++ word_to_bytes addr F` (or its `TAKE nb` prefix for
     `nb ≠ 0`). A terminal result keeps the state, a returned result installs the
     new FFI state. The `(fmap_as_finite_support := [locals, globals, code])`
-    qualifier records the finite-map representation. -/
-@[hol "cakeml/pancake/semantics/crepSemScript.sml" "sh_mem_store_def" (fmap_as_finite_support := [locals, globals, code])]
+    qualifier records the finite-map representation; the
+    `(words_as_type_indexed_bitvec)` qualifier records the `'a word` /
+    `dimindex (:α)` to `BitVec width` / `[NeZero width]` translation. -/
+@[hol "cakeml/pancake/semantics/crepSemScript.sml" "sh_mem_store_def" (fmap_as_finite_support := [locals, globals, code]) (words_as_type_indexed_bitvec)]
 def crepShMemStoreExactHOL {width : Nat} [NeZero width] {σ : Type}
     (name : Nat) (address : BitVec width) (nb : Nat)
     (state : CrepSemHOLState width σ) [DecidablePred state.shMemaddrs] :
@@ -371,8 +420,11 @@ def crepShMemStoreExactHOL {width : Nat} [NeZero width] {σ : Type}
 /-- Exact HOL `sh_mem_op_def` (`crepSemScript.sml:210-218`): dispatch the eight
     shared-memory operators to `sh_mem_load`/`sh_mem_store` at the fixed byte
     counts `0` (`Load`/`Store`), `1` (`Load8`/`Store8`), `2`
-    (`Load16`/`Store16`) and `4` (`Load32`/`Store32`), clause for clause. -/
-@[hol "cakeml/pancake/semantics/crepSemScript.sml" "sh_mem_op_def" (fmap_as_finite_support := [locals, globals, code])]
+    (`Load16`/`Store16`) and `4` (`Load32`/`Store32`), clause for clause. The
+    `(fmap_as_finite_support := [locals, globals, code])` and
+    `(words_as_type_indexed_bitvec)` qualifiers record the finite-map and
+    word-dimension translations. -/
+@[hol "cakeml/pancake/semantics/crepSemScript.sml" "sh_mem_op_def" (fmap_as_finite_support := [locals, globals, code]) (words_as_type_indexed_bitvec)]
 def crepShMemOpExactHOL {width : Nat} [NeZero width] {σ : Type}
     (operator : CrepMemOp) (name : Nat) (address : BitVec width)
     (state : CrepSemHOLState width σ) [DecidablePred state.shMemaddrs] :
@@ -564,6 +616,82 @@ theorem crepShMemStoreHOL_ioEvents_prefix {width : Nat} [NeZero width] {σ : Typ
   simp only [crepShMemStoreHOL]
   exact crepShMemStoreExactHOL_ioEvents_prefix name address
     (crepShMemByteWidth operator) state
+
+/-!
+## Carrier-boundary audit for the exact `crepSem$evaluate` port
+
+Declaration-local record (bead `flapjack-4ac.5.16.5.16`) of how each
+`crepSem$state` / `result` component of HOL
+`cakeml/pancake/semantics/crepSemScript.sml:19-43` is translated and of the
+exact residual mismatches that keep `evalCrepSemHOLProg` and its no-decider
+twin `evalCrepSemHOLProgExact` untagged.
+
+Component table (`HOL component` -> `Lean component`):
+
+* `locals : varname |-> 'a word_lab` ->
+  `locals : HolFiniteMapExact Nat (HolWordLab width)`. `varname = num`
+  (`crepLangScript.sml:19`), `word_lab = Word ('a word)`
+  (`panSemScript.sml:17`) with `HolWordLab` the `@[hol ... "word_lab"]` port,
+  and the `|->` field is the reviewed canonical finite-support translation
+  witnessed by `CrepSemHOLState.holFmapAsFiniteSupportWitness`
+  (`CrepSem/HOLState.lean:384`). Exact.
+* `globals : 5 word |-> 'a word_lab` ->
+  `globals : HolFiniteMapExact (BitVec 5) (HolWordLab width)` (HOL `5 word`
+  is `BitVec 5`). Exact.
+* `code : funname |-> (varname list # 'a crepLang$prog)` ->
+  `code : HolFiniteMapExact MlString (List Nat × CrepProgHOL width)`.
+  `funname = mlstring` (`crepLangScript.sml:21`) with `MlString` the faithful
+  carrier; `CrepProgHOL` is the `@[hol ... "prog"]` port. Exact.
+* `memory : 'a word -> 'a word_lab` ->
+  `memory : BitVec width → HolWordLab width`. Exact.
+* `memaddrs : ('a word) set` and `sh_memaddrs : ('a word) set` ->
+  `memaddrs`, `shMemaddrs : BitVec width → Prop`: the standard
+  set-as-predicate translation; the classical `DecidablePred` instances are
+  supplied explicitly by callers.
+* `clock : num` -> `clock : Nat`; `be : bool` -> `be : Bool`. Exact.
+* `ffi : 'ffi ffi_state` -> `ffi : HolFfiState σ`: `HolFfiState` is the
+  `@[hol ... "ffi_state"]` port (`FfiHOL.lean:115`), built from the tagged
+  `HolOracle` / `HolOracleResult` / `HolFfiName` / `HolIoEvent` ports. Exact.
+* `base_addr`, `top_addr : 'a word` -> `baseAddr`, `topAddr : BitVec width`.
+  Exact.
+* `result = Error | TimeOut | Break num | Continue num
+   | Return (('a word_lab) list) | Exception ('a word) | FinalFFI final_event`
+  -> `CrepResultHOLExact width` (the `@[hol ... "result"]` port), whose
+  `Return` payload `List (HolWordLab width)` matches HOL's `('a word_lab) list`
+  and whose `FinalFFI` payload is the tagged `HolFinalEvent`. Exact.
+
+Residual mismatches (not carrier-field differences):
+
+1. **Word dimension and universe.** HOL's `'a word` is indexed by a type `'a`,
+   whereas the Lean carrier fixes the dimension as the Nat `width` and requires
+   `[NeZero width]` (needed by `HolWordLab width`); for the intended widths
+   (8/32/64) this is the standard translation, but HOL quantifies over the
+   dimension without the nonzero side condition. Likewise `{σ : Type}` pins the
+   FFI host type to one universe, whereas HOL's `'ffi` is an arbitrary type
+   variable.
+2. **No general agreement theorem.** `evalCrepSemHOLProg` re-implements HOL's
+   `evaluate` (whose exported rewrite is
+   `evaluate_def[allow_rebind,compute] =
+   REWRITE_RULE [fix_clock_evaluate] evaluate_def`,
+   `crepSemScript.sml:443-444`); clause equations are verified
+   declaration-locally, but no theorem yet states agreement with HOL `evaluate`
+   for all programs and states.
+3. **Legacy `UInt8` helpers** (`crepExactMemStoreByte`, `crepExactMemLoadByte`,
+   `crepExactWriteBytearray`) keep the `UInt8` byte carrier used by the runtime
+   FFI interface; they are kernel-equal to the exact source `word8` helpers by
+   the bridges `crepExactMemStoreByte_eq_word8`,
+   `crepExactMemLoadByte_eq_word8` and `crepExactWriteBytearray_eq_word8`
+   (from `panMemStoreByteHOL_eq_word8` / `panMemLoadByteHOL_eq_word8_projection`
+   / `panWriteBytearrayHOL_eq_word8_projection`, `PanSem/ExtCallExact.lean`),
+   so the only residual deviation is the surface byte carrier
+   (`UInt8` vs `BitVec 8`), not semantics. (`crepClockWordToBytes` /
+   `crepClockWordOfBytes` remain untagged.)
+4. **`Call` clause restatement** over the no-decider entry point is landed
+   (`evalCrepSemHOLProgExact_call`, bead `flapjack-4ac.5.16.5.17`).
+
+Tracking: tag bead `flapjack-4ac.5.16.5`, finite-map owner/witness placement
+`flapjack-4ac.5.16.5.13.1`, this audit `flapjack-4ac.5.16.5.16`.
+-/
 
 /-- Total HOL-shaped `crepSem$evaluate` (`crepSemScript.sml:240-390`) by
     constructor recursion on the exact `CrepProgHOL` syntax over the exact
@@ -857,13 +985,11 @@ theorem evalCrepSemHOLProgExact_eq_core {width : Nat} [NeZero width] {σ : Type}
     preserves the state clock here. The state is the 11-field
     `CrepSemHOLState`; the qualifier records exactly its HOL `|->` fields
     `locals`, `globals`, and `code` as `HolFiniteMapExact`. It remains
-    untagged because the supplied `AGENTS.md` requires the owning carrier
-    structure itself to be declared in the tagged declaration's module;
-    `CrepSemHOLState` is imported from `HOLState.lean`. The local canonical
-    witness does not satisfy that separate ownership requirement. The exact
-    HOL clause is present and kernel-checked, but the qualified HOL port awaits
-    a faithful same-module carrier arrangement; see
-    `flapjack-4ac.5.16.5.13.1`. -/
+    untagged pending source review of the whole clause set and carriers (tags
+    are HOLD); the imported `CrepSemHOLState` owner with the evaluator-local
+    witness in this module is an accepted arrangement, and the words qualifier's
+    carrier route resolves the clause signature. See the current-status note at
+    the end of this file (`flapjack-4ac.5.16.5`, `.13.1`). -/
 theorem evalCrepSemHOLProgExact_skip {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ) :
     evalCrepSemHOLProgExact state (.skip : CrepProgHOL width) = (none, state) := by
@@ -2416,6 +2542,400 @@ theorem evalCrepSemHOLProg_seq_normal_of_eval_eq {width : Nat} [NeZero width]
   rw [hfirst]
   simp [fixClockCrepSemHOL]
 
+/-! ## No-decider clause equations for the non-recursive fragment
+
+These restate the named `evaluate_def` clause equations over the public
+no-extra-argument entry point `evalCrepSemHOLProgExact`, whose classical
+`DecidablePred` instances are invisible in the result
+(`evalCrepSemHOLProgExact_eq_core`). Each equation therefore has HOL's
+state/program-only interface. They are declaration-local, UNTAGGED
+infrastructure: the whole `evaluate_def` tag still awaits the recursive-clause
+disposition (the recursive calls thread the base-state decision procedures
+through derived/stamped states); tags are HOLD pending source review of the
+clause set and carriers. -/
+
+/-- HOL `evaluate (Break n, s)` (`crepSemScript.sml:309`) over the no-decider
+    interface. -/
+theorem evalCrepSemHOLProgExact_break {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) (label : Nat) :
+    evalCrepSemHOLProgExact state (.break label : CrepProgHOL width) =
+      (some (.break label), state) := by
+  simp only [evalCrepSemHOLProgExact]
+  exact evalCrepSemHOLProg_break state _ _ label
+
+/-- HOL `evaluate (Continue n, s)` (`crepSemScript.sml:310`) over the no-decider
+    interface. -/
+theorem evalCrepSemHOLProgExact_continue {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) (label : Nat) :
+    evalCrepSemHOLProgExact state (.continue label : CrepProgHOL width) =
+      (some (.continue label), state) := by
+  simp only [evalCrepSemHOLProgExact]
+  exact evalCrepSemHOLProg_continue state _ _ label
+
+/-- HOL `evaluate (Raise eid, s)` (`crepSemScript.sml:326`) over the no-decider
+    interface. -/
+theorem evalCrepSemHOLProgExact_raise {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) (exception : BitVec width) :
+    evalCrepSemHOLProgExact state (.raise exception : CrepProgHOL width) =
+      (some (.exception exception), CrepSemHOLState.emptyLocals state) := by
+  simp only [evalCrepSemHOLProgExact]
+  exact evalCrepSemHOLProg_raise state _ _ exception
+
+/-- HOL `evaluate (Tick, s)` (`crepSemScript.sml:327-329`) over the no-decider
+    interface. -/
+theorem evalCrepSemHOLProgExact_tick {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) :
+    evalCrepSemHOLProgExact state (.tick : CrepProgHOL width) =
+      (if state.clock = 0 then (some .timeOut, CrepSemHOLState.emptyLocals state)
+       else (none, decClockCrepSemHOL state)) := by
+  simp only [evalCrepSemHOLProgExact]
+  exact evalCrepSemHOLProg_tick state _ _
+
+/-- HOL `evaluate (Primitive lhss pop rhss, s)` (`crepSemScript.sml:250-262`)
+    over the no-decider interface. -/
+theorem evalCrepSemHOLProgExact_primitive {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) (names : List Nat) (operator : PrimOp)
+    (args : List Nat) :
+    evalCrepSemHOLProgExact state
+        (.primitive names operator args : CrepProgHOL width) =
+      (match args.mapM state.locals.lookup with
+       | some ws =>
+           match crepPrimopHOLExact operator ws with
+           | some results =>
+               if names.length = results.length &&
+                  names.all (fun v => (state.locals.lookup v).isSome) &&
+                  names.Nodup then
+                 (none, { state with
+                   locals := state.locals.updateListEq (names.zip results) })
+               else (some .error, state)
+           | none => (some .error, state)
+       | none => (some .error, state)) := by
+  simp only [evalCrepSemHOLProgExact]
+  exact evalCrepSemHOLProg_primitive state _ _ names operator args
+
+/-- HOL `evaluate (Assign v src, s)` (`crepSemScript.sml:257-262`) over the
+    no-decider interface. -/
+theorem evalCrepSemHOLProgExact_assign {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) (name : Nat) (src : CrepExpHOL width) :
+    evalCrepSemHOLProgExact state (.assign name src : CrepProgHOL width) =
+      (match crepExactEvalExp state
+               (fun a => Classical.propDecidable (state.memaddrs a)) src with
+       | none => (some .error, state)
+       | some w =>
+           match state.locals.lookup name with
+           | some _ => (none, CrepSemHOLState.setVar name w state)
+           | none => (some .error, state)) := by
+  rw [evalCrepSemHOLProgExact_eq_core state (.assign name src)
+    (fun a => Classical.propDecidable (state.memaddrs a))
+    (fun a => Classical.propDecidable (state.shMemaddrs a))]
+  exact evalCrepSemHOLProg_assign state _ _ name src
+
+/-- HOL `evaluate (Store dst src, s)` (`crepSemScript.sml:263-269`) over the
+    no-decider interface. -/
+theorem evalCrepSemHOLProgExact_store {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) (dst src : CrepExpHOL width) :
+    evalCrepSemHOLProgExact state (.store dst src : CrepProgHOL width) =
+      (match crepExactEvalExp state
+               (fun a => Classical.propDecidable (state.memaddrs a)) dst,
+             crepExactEvalExp state
+               (fun a => Classical.propDecidable (state.memaddrs a)) src with
+       | some (.word account), some w =>
+           match (fun a => Classical.propDecidable (state.memaddrs a)) account with
+           | .isTrue _ =>
+               (none, { state with memory := fun current =>
+                 if current = account then w else state.memory current })
+           | .isFalse _ => (some .error, state)
+       | _, _ => (some .error, state)) := by
+  rw [evalCrepSemHOLProgExact_eq_core state (.store dst src)
+    (fun a => Classical.propDecidable (state.memaddrs a))
+    (fun a => Classical.propDecidable (state.shMemaddrs a))]
+  exact evalCrepSemHOLProg_store state _ _ dst src
+
+/-- HOL `evaluate (Store32 dst src, s)` (`crepSemScript.sml:274-280`) over the
+    no-decider interface. -/
+theorem evalCrepSemHOLProgExact_store32 {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) (dst src : CrepExpHOL width) :
+    evalCrepSemHOLProgExact state (.store32 dst src : CrepProgHOL width) =
+      (match crepExactEvalExp state
+               (fun a => Classical.propDecidable (state.memaddrs a)) dst,
+             crepExactEvalExp state
+               (fun a => Classical.propDecidable (state.memaddrs a)) src with
+       | some (.word address), some (.word w) =>
+           match crepExactMemStore32 state
+                   (fun a => Classical.propDecidable (state.memaddrs a))
+                   address (BitVec.ofNat 32 w.toNat) with
+           | some memory => (none, { state with memory := memory })
+           | none => (some .error, state)
+       | _, _ => (some .error, state)) := by
+  rw [evalCrepSemHOLProgExact_eq_core state (.store32 dst src)
+    (fun a => Classical.propDecidable (state.memaddrs a))
+    (fun a => Classical.propDecidable (state.shMemaddrs a))]
+  exact evalCrepSemHOLProg_store32 state _ _ dst src
+
+/-- HOL `evaluate (StoreByte dst src, s)` (`crepSemScript.sml:281-287`) over the
+    no-decider interface. -/
+theorem evalCrepSemHOLProgExact_storeByte {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) (dst src : CrepExpHOL width) :
+    evalCrepSemHOLProgExact state (.storeByte dst src : CrepProgHOL width) =
+      (match crepExactEvalExp state
+               (fun a => Classical.propDecidable (state.memaddrs a)) dst,
+             crepExactEvalExp state
+               (fun a => Classical.propDecidable (state.memaddrs a)) src with
+       | some (.word address), some (.word w) =>
+           match crepExactMemStoreByte state
+                   (fun a => Classical.propDecidable (state.memaddrs a))
+                   address (UInt8.ofNat w.toNat) with
+           | some memory => (none, { state with memory := memory })
+           | none => (some .error, state)
+       | _, _ => (some .error, state)) := by
+  rw [evalCrepSemHOLProgExact_eq_core state (.storeByte dst src)
+    (fun a => Classical.propDecidable (state.memaddrs a))
+    (fun a => Classical.propDecidable (state.shMemaddrs a))]
+  exact evalCrepSemHOLProg_storeByte state _ _ dst src
+
+/-- HOL `evaluate (StoreGlob dst src, s)` (`crepSemScript.sml:288-291`) over the
+    no-decider interface. -/
+theorem evalCrepSemHOLProgExact_storeGlob {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) (dst : BitVec 5) (src : CrepExpHOL width) :
+    evalCrepSemHOLProgExact state (.storeGlob dst src : CrepProgHOL width) =
+      (match crepExactEvalExp state
+               (fun a => Classical.propDecidable (state.memaddrs a)) src with
+       | some w => (none, CrepSemHOLState.setGlobals dst w state)
+       | none => (some .error, state)) := by
+  rw [evalCrepSemHOLProgExact_eq_core state (.storeGlob dst src)
+    (fun a => Classical.propDecidable (state.memaddrs a))
+    (fun a => Classical.propDecidable (state.shMemaddrs a))]
+  exact evalCrepSemHOLProg_storeGlob state _ _ dst src
+
+/-- HOL `evaluate (Return es, s)` (`crepSemScript.sml:324-325`) over the
+    no-decider interface. -/
+theorem evalCrepSemHOLProgExact_return {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) (values : List (CrepExpHOL width)) :
+    evalCrepSemHOLProgExact state (.return values : CrepProgHOL width) =
+      (match values.mapM (@evalCrepSemHOLExp width ‹NeZero width› σ state
+                 (fun a => Classical.propDecidable (state.memaddrs a))) with
+       | some ws => (some (.return ws), CrepSemHOLState.emptyLocals state)
+       | none => (some .error, state)) := by
+  rw [evalCrepSemHOLProgExact_eq_core state (.return values)
+    (fun a => Classical.propDecidable (state.memaddrs a))
+    (fun a => Classical.propDecidable (state.shMemaddrs a))]
+  exact evalCrepSemHOLProg_return state _ _ values
+
+
+
+/-! ## No-decider clause equations for the recursive fragment
+
+These restate the named `evaluate_def` recursive-clause equations over the
+public no-extra-argument entry point `evalCrepSemHOLProgExact`. The recursive
+calls of the core evaluator thread the base state's explicit domain decisions
+through derived states (`fixClockCrepSemHOL`, `decClockCrepSemHOL`,
+`crepStampExactDomains`), all of which preserve `memaddrs`/`shMemaddrs`; the
+`crepStampExactDomains` normalization makes the base decisions definitionally
+valid for the stamped state, so each recursive call folds to
+`evalCrepSemHOLProgExact`. Declaration-local, UNTAGGED infrastructure. The
+enclosing `evaluate_def` tag still awaits source review of the clause set and
+carriers (tags are HOLD). -/
+
+/-- HOL `evaluate (If e c1 c2, s)` (`crepSemScript.sml:304-308`) over the no-decider interface. -/
+theorem evalCrepSemHOLProgExact_ite {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) (condition : CrepExpHOL width)
+    (thenBranch elseBranch : CrepProgHOL width) :
+    evalCrepSemHOLProgExact state (.ite condition thenBranch elseBranch) =
+      (match crepExactEvalExp state
+               (fun a => Classical.propDecidable (state.memaddrs a)) condition with
+       | some (.word w) =>
+           if w ≠ 0 then evalCrepSemHOLProgExact state thenBranch
+           else evalCrepSemHOLProgExact state elseBranch
+       | _ => (some .error, state)) := by
+  simp only [evalCrepSemHOLProgExact]
+  exact evalCrepSemHOLProg_ite state _ _ condition thenBranch elseBranch
+
+
+/-- HOL `evaluate (While e c, s)` (`crepSemScript.sml:313-317`) over the no-decider interface. -/
+theorem evalCrepSemHOLProgExact_while {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) (condition : CrepExpHOL width)
+    (body : CrepProgHOL width) :
+    evalCrepSemHOLProgExact state (.while condition body) =
+      (match crepExactEvalExp state
+               (fun a => Classical.propDecidable (state.memaddrs a)) condition with
+       | some (.word w) =>
+           if w ≠ 0 then
+             if _hclock : state.clock = 0 then
+               (some .timeOut, CrepSemHOLState.emptyLocals state)
+             else
+               let decState := decClockCrepSemHOL state
+               let fixed := fixClockCrepSemHOL decState
+                 (evalCrepSemHOLProgExact decState body)
+               match _hfixed : fixed with
+               | (none, loopState) =>
+                   evalCrepSemHOLProgExact (crepStampExactDomains state loopState)
+                     (.while condition body)
+               | (some (.continue 0), loopState) =>
+                   evalCrepSemHOLProgExact (crepStampExactDomains state loopState)
+                     (.while condition body)
+               | (some (.break 0), loopState) => (none, loopState)
+               | (result, loopState) => (exitLoopCrepResult result, loopState)
+           else (none, state)
+       | _ => (some .error, state)) := by
+  simp only [evalCrepSemHOLProgExact]
+  exact evalCrepSemHOLProg_while state _ _ condition body
+
+
+/-- HOL `evaluate (ShMem op name e, s)` (`crepSemScript.sml:384-394`) over the no-decider interface. -/
+theorem evalCrepSemHOLProgExact_shMem {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) (operator : CrepMemOp) (name : Nat)
+    (address : CrepExpHOL width) :
+    evalCrepSemHOLProgExact state (.shMem operator name address) =
+      (match crepExactEvalExp state
+               (fun a => Classical.propDecidable (state.memaddrs a)) address with
+       | some (.word addressValue) =>
+           if crepIsLoadMemOp operator then
+             match state.locals.lookup name with
+             | some _ => crepShMemLoadHOL operator name addressValue state
+                 (fun a => Classical.propDecidable (state.shMemaddrs a))
+             | none => (some .error, state)
+           else
+             match state.locals.lookup name with
+             | some (.word _) => crepShMemStoreHOL operator name addressValue state
+                 (fun a => Classical.propDecidable (state.shMemaddrs a))
+             | _ => (some .error, state)
+       | _ => (some .error, state)) := by
+  simp only [evalCrepSemHOLProgExact]
+  exact evalCrepSemHOLProg_shMem state _ _ operator name address
+
+
+/-- HOL `evaluate (ExtCall ffi_index ptr1 len1 ptr2 len2, s)` (`crepSemScript.sml:367-379`) over the no-decider interface. -/
+theorem evalCrepSemHOLProgExact_extCall {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) (function : MlString)
+    (configuration configurationLength array arrayLength : Nat) :
+    evalCrepSemHOLProgExact state
+        (.extCall function configuration configurationLength array arrayLength) =
+      (match state.locals.lookup configurationLength, state.locals.lookup configuration,
+             state.locals.lookup arrayLength, state.locals.lookup array with
+       | some (.word configLength), some (.word configAddress),
+         some (.word arrayLengthValue), some (.word arrayAddress) =>
+           match readBytearrayWordHOL (byteWidth := 8) configAddress configLength.toNat
+                   (crepExactMemLoadByteWord8 state
+                     (fun a => Classical.propDecidable (state.memaddrs a))),
+                 readBytearrayWordHOL (byteWidth := 8) arrayAddress arrayLengthValue.toNat
+                   (crepExactMemLoadByteWord8 state
+                     (fun a => Classical.propDecidable (state.memaddrs a))) with
+           | some configBytes, some arrayBytes =>
+               match callFFIHOL state.ffi (.extCall function)
+                   configBytes arrayBytes with
+               | .final event => (some (.finalFfi event), state)
+               | .ret newFfi newBytes =>
+                   (none, { state with
+                     memory := crepExactWriteBytearrayWord8 state
+                       (fun a => Classical.propDecidable (state.memaddrs a))
+                       arrayAddress newBytes,
+                     ffi := newFfi })
+           | _, _ => (some .error, state)
+       | _, _, _, _ => (some .error, state)) := by
+  simp only [evalCrepSemHOLProgExact]
+  exact evalCrepSemHOLProg_extCall state _ _ function configuration configurationLength array arrayLength
+
+/-- HOL `evaluate (Call ret function arguments, s)`
+    (`crepSemScript.sml:330-357`) over the no-decider interface. Matching HOL's
+    `proceed` helper is inlined; the equality holds because the derived call /
+    handler states preserve `memaddrs`/`shMemaddrs` definitionally. -/
+theorem evalCrepSemHOLProgExact_call {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (returnInfo : Option (List Nat × Option (BitVec width × CrepProgHOL width)))
+    (function : MlString) (arguments : List (CrepExpHOL width)) :
+    evalCrepSemHOLProgExact state (.call returnInfo function arguments) =
+      (match arguments.mapM (@evalCrepSemHOLExp width ‹NeZero width› σ state
+               (fun a => Classical.propDecidable (state.memaddrs a))) with
+       | none => (some .error, state)
+       | some values =>
+           match state.code.lookup function with
+           | none => (some .error, state)
+           | some (parameters, body) =>
+               if parameters.length = values.length && parameters.Nodup then
+                 let proceed : Option (CrepResultHOLExact width) ×
+                     CrepSemHOLState width σ :=
+                   if _hclock : state.clock = 0 then
+                     (some .timeOut, CrepSemHOLState.emptyLocals state)
+                   else
+                     let calleeLocals :=
+                       HolFiniteMapExact.empty.updateList (parameters.zip values)
+                     let callee : CrepSemHOLState width σ :=
+                       { state with locals := calleeLocals }
+                     let decCallee := decClockCrepSemHOL callee
+                     let fixed := fixClockCrepSemHOL decCallee
+                       (evalCrepSemHOLProgExact decCallee body)
+                     match _hfixed : fixed with
+                     | (none, bodyState) => (some .error, bodyState)
+                     | (some (.break _), bodyState) => (some .error, bodyState)
+                     | (some (.continue _), bodyState) => (some .error, bodyState)
+                     | (some (.return retvs), bodyState) =>
+                         match returnInfo with
+                         | none => (some (.return retvs),
+                             CrepSemHOLState.emptyLocals bodyState)
+                         | some (rts, _) =>
+                             if retvs.length ≠ rts.length then
+                               (some .error, bodyState)
+                             else
+                              match rts.mapM state.locals.lookup with
+                              | some _ => (none, { bodyState with
+                                  locals := state.locals.updateListEq
+                                    (rts.zip retvs) })
+                              | none => (some .error, bodyState)
+                     | (some (.exception eid), bodyState) =>
+                         match returnInfo with
+                         | none => (some (.exception eid),
+                             CrepSemHOLState.emptyLocals bodyState)
+                         | some (_, none) => (some (.exception eid),
+                             CrepSemHOLState.emptyLocals bodyState)
+                         | some (_, some (eid', handlerBody)) =>
+                             let handlerState : CrepSemHOLState width σ :=
+                               crepStampExactDomains state
+                                 { bodyState with locals := state.locals }
+                             if eid = eid' then
+                               evalCrepSemHOLProgExact handlerState handlerBody
+                             else (some (.exception eid),
+                               CrepSemHOLState.emptyLocals bodyState)
+                     | (some result, bodyState) =>
+                         (some result, CrepSemHOLState.emptyLocals bodyState)
+                 match returnInfo with
+                 | some (rts, _) => if rts.Nodup then proceed else (some .error, state)
+                 | none => proceed
+               else (some .error, state)) := by
+  simp only [evalCrepSemHOLProgExact]
+  exact evalCrepSemHOLProg_call state _ _ returnInfo function arguments
+
+/-!
+## Current status of the exact `crepSem$evaluate_def` port
+
+Declaration-local status note for beads `flapjack-4ac.5.16.5`, `flapjack-4ac.5.16.5.13.1`,
+`flapjack-4ac.5.16.5.19`, `flapjack-4ac.5.16.5.20` and `flapjack-4ac.5.16.5.22`.
+
+* **Carrier placement.** The finite-map owner `CrepSemHOLState` is reached through
+  the transitive import `CrepSem/HOLState.lean`. `AGENTS.md` permits an imported owner
+  together with an evaluator-local witness, and this module declares one in
+  `namespace CrepSemShMemExact`
+  (`CrepSemShMemExact.holFmapAsFiniteSupportWitness`, a re-export of the canonical
+  `CrepSemHOLState.holFmapAsFiniteSupportWitness` roundtrip). The reference checker
+  resolves the owner from the tagged declaration's own signature and binds the
+  `[NeZero <width>]` discharge and the `BitVec <width>` field to the same owning
+  declaration and the same width identifier.
+* **Word dimension / FFI universe.** HOL's `'a word` (dimension `dimindex (:α)`)
+  translates to `BitVec width`, and `'ffi ffi_state` to `HolFfiState σ` with
+  `σ : Type`. The qualifier `(words_as_type_indexed_bitvec)` records this and is
+  implemented in `Flapjack/HolRef.lean` and `scripts/check-hol-refs.py` (under
+  coordinator review). It accepts a literal `BitVec <width>` signature, or a
+  reviewed width-indexed carrier (local or imported) whose own header carries
+  `[NeZero <width>]` and which mentions `BitVec <width>`.
+* **Evaluator tag.** `evalCrepSemHOLProg` / `evalCrepSemHOLProgExact` and the named
+  clause equations remain **untagged** pending source review of the clause set and
+  carriers. The eventual tag cites
+  `cakeml/pancake/semantics/crepSemScript.sml:240` (the rewritten equation is
+  rebound at `:443`) with `(fmap_as_finite_support := [locals, globals, code])`
+  and, once approved, `(words_as_type_indexed_bitvec)` under the combined manifest
+  status `reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec`. The clause
+  signatures name `CrepSemHOLState`/`CrepProgHOL` rather than a literal `BitVec`;
+  the carrier route above is what admits the word translation for them.
+-/
 /-- Flapjack-specific, unstamped `Seq` equation for the no-decider exact
 evaluator. HOL `evaluate_def` at `crepSemScript.sml:303-306` evaluates the first
 command, applies `fix_clock`, then evaluates the second command on that exact
