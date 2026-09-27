@@ -130,6 +130,30 @@ def isContResHOL {width : Nat} [NeZero width] :
   | some .continue => true
   | _ => false
 
+/-- Exact port of HOL `is_cont_res_eq_disj[local]`
+    (`cakeml/pancake/proofs/pan_structsProofScript.sml:999-1003`):
+    `is_cont_res res = (res = NONE \/ res = SOME Break \/ res = SOME Continue)`.
+
+    The parameter is HOL's `panSem$result option`, rendered as
+    `Option (PanSemResultExact width)` over the reviewed exact `result` carrier
+    (`DecExact.lean:58`, tagged against `panSemScript.sml:68-75`); the Bool
+    equality against a disjunction is rendered as the iff
+    `isContResHOL res = true ↔ res = none ∨ res = some .break ∨
+    res = some .continue`.  `isContResHOL` is `true` exactly on `NONE`,
+    `SOME Break`, and `SOME Continue`, so the two sides coincide constructor by
+    constructor; no payload is inspected.  The only difference from HOL is the
+    already-reviewed `result` carrier and the standard Bool-to-Prop rendering of
+    the disjunctive equality, so no qualifier applies. -/
+@[hol "cakeml/pancake/proofs/pan_structsProofScript.sml" "is_cont_res_eq_disj"]
+theorem isContResHOL_eqDisj {width : Nat} [NeZero width]
+    (res : Option (PanSemResultExact width)) :
+    (isContResHOL res = true) ↔
+      res = none ∨ res = some .break ∨ res = some .continue := by
+  cases res with
+  | none => simp [isContResHOL]
+  | some result =>
+      cases result <;> simp [isContResHOL]
+
 /-- Exact port of HOL `res_vs_def`
     (`cakeml/pancake/proofs/pan_structsProofScript.sml:1028-1031`):
     `res_vs (SOME (Return v)) = [v]`,

@@ -1765,6 +1765,7 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         ("Flapjack/Pancake/Proofs/PanGlobals.lean", "goodResHOL"),
         ("Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean", "convertResHOL"),
         ("Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean", "isContResHOL"),
+        ("Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean", "isContResHOL_eqDisj"),
         ("Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean", "resVsHOL"),
         ("Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean", "everyConvertVEq"),
         ("Flapjack/Pancake/Proofs/PanStructs/StructInfosOkExact.lean",
