@@ -692,4 +692,22 @@ theorem distinct_lists_eq_disjoint {α : Type} [DecidableEq α] (xs ys : List α
     (distinctListsHol xs ys = true) ↔ ListDisjoint xs ys :=
   distinctListsHol_eq_true_iff_listDisjoint xs ys
 
+/-- Exact port of HOL `opt_mmap_el`
+    (`cakeml/pancake/semantics/pan_commonPropsScript.sml:71`): a successful
+    `OPT_MMAP` maps the `n`-th element of the input to the `n`-th element of
+    the output.  HOL's `EL` is rendered as the bounded `getElem` (the same
+    rendering used by `FLOOKUP_FUPDATE_LIST_zip_getElem`). -/
+@[hol "cakeml/pancake/semantics/pan_commonPropsScript.sml" "opt_mmap_el"]
+theorem opt_mmap_el {α β : Type} (l : List α) (f : α → Option β) (x : List β)
+    (n : Nat) (h : l.mapM f = some x) (hn : n < l.length) :
+    f (l[n]'hn) =
+      some (x[n]'(by rw [← opt_mmap_length_eq l f x h]; exact hn)) := by
+  have hlen := opt_mmap_length_eq l f x h
+  have hn' : n < x.length := by rw [← hlen]; exact hn
+  have hmap := (optMmapEqSome l f x).mp h
+  have hpoint := congrArg (fun ys => ys[n]?) hmap
+  rw [List.getElem?_map, List.getElem?_eq_getElem hn, Option.map_some,
+    List.getElem?_map, List.getElem?_eq_getElem hn', Option.map_some] at hpoint
+  exact Option.some.inj hpoint
+
 end Flapjack

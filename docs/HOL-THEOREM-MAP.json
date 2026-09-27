@@ -13643,5 +13643,13 @@
     "lean_name": "distinct_lists_eq_disjoint",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.16.18): HOL `distinct_lists_eq_disjoint` (pan_commonPropsScript.sml:102) states `distinct_lists xs ys <=> DISJOINT (set xs) (set ys)`. HOL `distinct_lists` is rendered as the exact Boolean `distinctListsHol xs ys = true` (the established convention for this predicate) and the set-level `DISJOINT (set xs) (set ys)` as the propositional `ListDisjoint xs ys`; the proof is the already-reviewed exact bridge distinctListsHol_eq_true_iff_listDisjoint. No extra hypotheses beyond [DecidableEq \u03b1]; source review only."
+  },
+    {
+    "hol_path": "cakeml/pancake/semantics/pan_commonPropsScript.sml",
+    "hol_name": "opt_mmap_el",
+    "lean_path": "Flapjack/Pancake/Semantics/PanCommonProps.lean",
+    "lean_name": "opt_mmap_el",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.16.19): HOL `Theorem opt_mmap_el` (cakeml/pancake/semantics/pan_commonPropsScript.sml:71) states `OPT_MMAP f l = SOME x /\\ n < LENGTH l ==> f (EL n l) = SOME (EL n x)`.  The Lean theorem `opt_mmap_el` has the same binders/hypotheses/conclusion with `OPT_MMAP` rendered as `List.mapM`, `LENGTH`/`EL` as the bounded `getElem`, and `SOME` as `some`; no extra hypotheses."
   }
 ]
