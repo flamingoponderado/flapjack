@@ -29,6 +29,20 @@ def prodContext {width : Nat} [NeZero width]
     (context : CompileExpContextExact width) :
     PanToCrepHOLContext (BitVec width) := context.toProduction
 
+/-- The pre-c9 expression adapter projected the exact context to `vars` and
+    `vmax`, filling `funcs` and `eids` with empty maps. This focused kernel
+    equality records that the old and full-context adapters produce the same
+    output for local-variable expressions, the expression clause that reads
+    the variable map. The recursive expression clauses are unchanged by c9;
+    they call this same compiler recursively. -/
+theorem compileExpHOL_oldProjection_localVar_eq {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (name : VarName) :
+    compileExpHOL context.toProduction (.var .local name) =
+      compileExpHOL
+        { context.toProduction with funcs := fun _ => none, eids := fun _ => none }
+        (.var .local name) := by
+  simp [compileExpHOL.eq_2, FLOOKUP]
+
 end CompileExpContextExact
 
 private theorem stringOfBytes_byteRanged (name : MlS) :
