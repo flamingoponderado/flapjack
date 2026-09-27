@@ -1,6 +1,7 @@
 import Flapjack.Pancake.PanLang.Decl
 import Flapjack.Pancake.Semantics.CrepSem.HOLState
 import Flapjack.Pancake.Semantics.PanSem.ValueHOL
+import Flapjack.Pancake.Proofs.PanToCrep.StateRelFiniteSupport
 
 /-!
 Direct carrier checks paired with `pan_to_crep_state_rel_carrier_probe.out`.
@@ -67,6 +68,22 @@ private def nonemptyGlobalLookupOracleCase : Bool :=
 
 private def emptyGlobalLookupOracleCase : Bool :=
   (exactEmptyGlobalMap.lookup (ml "global")).isNone
+
+/-- Kernel-checked row: the exact `state_rel_structs` projection applies to any
+    related exact carrier pair, returning the empty source struct context. -/
+example {width : Nat} [NeZero width] {σ : Type}
+    (source : PanSemStateFiniteExact width σ) (target : CrepSemHOLState width σ)
+    (hrel : panToCrepStateRelFiniteExact source target) :
+    source.structs = [] :=
+  panToCrepStateRelFiniteExact_structs source target hrel
+
+/-- Kernel-checked row: the exact `state_rel_globals` projection applies to any
+    related exact carrier pair, returning the pointwise-empty globals map. -/
+example {width : Nat} [NeZero width] {σ : Type}
+    (source : PanSemStateFiniteExact width σ) (target : CrepSemHOLState width σ)
+    (hrel : panToCrepStateRelFiniteExact source target) :
+    source.globals.lookup = (fun _ => none) :=
+  panToCrepStateRelFiniteExact_globals source target hrel
 
 def runChecks : IO Bool := do
   let checks := [

@@ -1,4 +1,5 @@
 import Flapjack.Pancake.Semantics.LoopSemState
+import Flapjack.Pancake.Semantics.LoopProps
 import Flapjack.Pancake.LoopLang
 import Flapjack.Pancake.Semantics.CrepSem.HOLState
 import Flapjack.FfiBridge
@@ -148,8 +149,22 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {F : Type} :
   ⟨fun state h => LoopSemStateBroad.toBroad_ofBroad state h,
     fun state => LoopSemStateBroad.ofBroad_toBroad state⟩
 
-/-- Exact `get_var_imm_def` (`loopSemScript.sml:165-167`) on the finite-support
-    carrier, operand first as in HOL. -/
+/-- Exact port of HOL `get_var_imm_def`
+    (`cakeml/pancake/semantics/loopSemScript.sml:165-167`):
+
+    ```
+    (get_var_imm ((Reg n):'a reg_imm) ^s = sptree$lookup n s.locals) /\
+    (get_var_imm (Imm w) s = SOME(Word w))
+    ```
+
+    The Lean statement is operand-first as in HOL, reads the `locals` field of
+    the exact `LoopSemStateFiniteExact` state carrier (the reviewed canonical
+    `HolFiniteMapExact` translation of HOL's `'a word_loc num_map`, hence the
+    `(fmap_as_finite_support := [locals])` qualifier), and returns the exact
+    `WordLocW` carrier (tagged `word_loc`). No extra hypotheses beyond
+    `[NeZero width]`. -/
+@[hol "cakeml/pancake/semantics/loopSemScript.sml" "get_var_imm_def"
+  (fmap_as_finite_support := [locals])]
 def getVarImm {width : Nat} [NeZero width] {F : Type}
     (operand : RegImm (BitVec width)) (state : LoopSemStateFiniteExact width F) :
     Option (WordLocW width) :=
@@ -222,5 +237,24 @@ theorem LoopSemStateFiniteExact.getVarImm_map_eq_of_prodRel {width : Nat} [NeZer
   cases operand with
   | reg name => exact (h.1 name).symm
   | imm value => rfl
+
+/-- Variable reads through `get_vars` on the production state agree with the
+    exact carrier's recursive read under `prodRel`. -/
+theorem LoopSemStateFiniteExact.getVars_map_eq_of_prodRel {width : Nat} [NeZero width]
+    {F : Type} {state : LoopSemStateFiniteExact width F}
+    {machine : LoopMachineState (BitVec width) F}
+    (h : state.prodRel machine) (names : List Nat) :
+    (LoopSemStateFiniteExact.getVars names state).map (List.map loopValueOfWordLocW) =
+      Flapjack.getVars names machine := by
+  induction names with
+  | nil => rfl
+  | cons name names ih =>
+      rw [LoopSemStateFiniteExact.getVars_cons, Flapjack.getVars, h.1 name]
+      cases hlookup : state.locals.lookup name with
+      | none => rfl
+      | some value =>
+          simp only [Option.bind_some, Option.map_some, Option.map_map]
+          rw [← ih]
+          cases hg : LoopSemStateFiniteExact.getVars names state <;> rfl
 
 end Flapjack
