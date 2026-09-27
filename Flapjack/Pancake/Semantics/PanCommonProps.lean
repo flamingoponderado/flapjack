@@ -519,4 +519,90 @@ theorem not_mem_fst_zip_flookup_empty [BEq α] [LawfulBEq α]
     FLOOKUP (FUPDATE_LIST FEMPTY (xs.zip ys)) x = none := by
   rw [FLOOKUP_FUPDATE_LIST_zip_not_mem xs ys FEMPTY x hlen hnot, FLOOKUP_empty]
 
+/-- `mapM` congruence: pointwise-equal maps on the elements of a list give the
+    same `OPT_MMAP` result.  Flapjack-specific proof infrastructure for the
+    exact `opt_mmap_disj_zip_flookup` port below; no exact HOL counterpart. -/
+private theorem listMapMCongr {α β : Type} (g h : α → Option β) (xs : List α)
+    (hgh : ∀ x, x ∈ xs → g x = h x) : xs.mapM g = xs.mapM h := by
+  induction xs with
+  | nil => rfl
+  | cons x xs ih =>
+    rw [List.mapM_cons, List.mapM_cons, hgh x (by simp),
+      ih (fun y hy => hgh y (by simp [hy]))]
+
+/-- Exact port of HOL `opt_mmap_some_eq_zip_flookup`
+    (`cakeml/pancake/semantics/pan_commonPropsScript.sml:170`): folding the
+    `(key,value)` list over a finite map makes every key look up its paired
+    value, provided the key list is duplicate-free and the lengths agree.
+    HOL's `OPT_MMAP (FLOOKUP _)` is rendered as `List.mapM` over `FLOOKUP`, and
+    `ALL_DISTINCT`/`LENGTH` as `Nodup`/`length`. -/
+@[hol "cakeml/pancake/semantics/pan_commonPropsScript.sml" "opt_mmap_some_eq_zip_flookup"]
+theorem optMmapSomeEqZipFlookup [BEq α] [LawfulBEq α]
+    (xs : List α) (f : FiniteMap α β) (ys : List β)
+    (hdistinct : xs.Nodup) (hlen : xs.length = ys.length) :
+    xs.mapM (fun key => FLOOKUP (FUPDATE_LIST f (xs.zip ys)) key) = some ys := by
+  induction xs generalizing ys f with
+  | nil => cases ys <;> simp_all
+  | cons x xs ih =>
+    cases ys with
+    | nil => simp at hlen
+    | cons y ys =>
+      obtain ⟨hxnot, hdistinct'⟩ := List.nodup_cons.mp hdistinct
+      have hlen' : xs.length = ys.length := by
+        simp only [List.length_cons] at hlen
+        omega
+      have hxzip : x ∉ (xs.zip ys).map Prod.fst := by
+        intro hmem
+        obtain ⟨p, hp, hfst⟩ := List.mem_map.mp hmem
+        obtain ⟨hpin, _hpy⟩ := List.of_mem_zip hp
+        rw [hfst] at hpin
+        exact hxnot hpin
+      rw [List.zip_cons_cons, FUPDATE_LIST_cons, List.mapM_cons]
+      have hhead : FLOOKUP (FUPDATE_LIST (FUPDATE f (x, y)) (xs.zip ys)) x = some y := by
+        rw [FLOOKUP_FUPDATE_LIST_not_mem (FUPDATE f (x, y)) (xs.zip ys) x hxzip,
+          FLOOKUP_update]
+        simp
+      have htail :
+          xs.mapM (fun key => FLOOKUP (FUPDATE_LIST (FUPDATE f (x, y)) (xs.zip ys)) key)
+            = some ys :=
+        ih (ys := ys) (f := FUPDATE f (x, y)) hdistinct' hlen'
+      rw [hhead, htail]
+      rfl
+
+/-- Exact port of HOL `opt_mmap_disj_zip_flookup`
+    (`cakeml/pancake/semantics/pan_commonPropsScript.sml:188`): if the updated
+    keys are disjoint from the queried keys, the list update is invisible to the
+    query.  HOL's `distinct_lists` is rendered as `ListDisjoint`. -/
+@[hol "cakeml/pancake/semantics/pan_commonPropsScript.sml" "opt_mmap_disj_zip_flookup"]
+theorem optMmapDisjZipFlookup [BEq α] [LawfulBEq α]
+    (xs : List α) (f : FiniteMap α β) (ys : List α) (zs : List β)
+    (hdisj : ListDisjoint xs ys) (hlen : xs.length = zs.length) :
+    ys.mapM (fun key => FLOOKUP (FUPDATE_LIST f (xs.zip zs)) key) =
+      ys.mapM (fun key => FLOOKUP f key) := by
+  induction xs generalizing zs f with
+  | nil => rfl
+  | cons x xs ih =>
+    cases zs with
+    | nil => simp at hlen
+    | cons z zs =>
+      have hlen' : xs.length = zs.length := by
+        simp only [List.length_cons] at hlen
+        omega
+      have hxnot : x ∉ ys := by
+        intro hmem
+        exact hdisj x (by simp) hmem
+      have hdisj' : ListDisjoint xs ys := by
+        intro value hin hin'
+        exact hdisj value (by simp [hin]) hin'
+      rw [List.zip_cons_cons, FUPDATE_LIST_cons]
+      rw [ih (zs := zs) (f := FUPDATE f (x, z)) hdisj' hlen']
+      apply listMapMCongr
+      intro key hkey
+      rw [FLOOKUP_update]
+      have hkx : (x == key) = false := by
+        apply beq_eq_false_iff_ne.mpr
+        intro he
+        exact hxnot (he ▸ hkey)
+      simp [hkx]
+
 end Flapjack

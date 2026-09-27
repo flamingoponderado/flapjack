@@ -16,7 +16,11 @@ Method (first slice; deliberately coarse, see limitations below):
    root theorem.
 3. Lexically cited closure: a citation fixed point over that pool, starting at
    the root theorem.  A declaration is "cited" when its name occurs as an
-   identifier token in the source span of a cited declaration.  This is a
+   identifier token in the source span of a cited declaration.  HOL-qualified
+   ``Theory$name`` tokens are resolved to their unqualified ``name`` when the
+   prefix is a recognised theory name and that name is a known declaration
+   (dotted ``nameTheory.name`` tokens already split naturally because ``.`` is
+   not an identifier character).  This is a
    *lexical reachability set*: it is not a HOL dependency set, and it is not a
    bound in either direction (see limitations).  The count is of unique
    declaration NAMES, not of declaration identities; the per-kind, per-area
@@ -66,6 +70,7 @@ DEFAULT_ROOT_THEORY = "pan_to_targetProof"
 
 TAG_RE = re.compile(r'@\[hol\s+"([^"]+)"\s+"([^"]+)"')
 IDENT = re.compile(r"[A-Za-z_][A-Za-z0-9_'$]*")
+QUALIFIED_SEP = "$"
 
 AREA_ORDER = [
     "pancake",
@@ -184,16 +189,44 @@ class SourceCache:
         return "\n".join(lines[max(start - 1, 0) : end])
 
 
+def qualified_candidates(
+    token: str, names: set[str], theories: set[str]
+) -> tuple[str, ...]:
+    """Resolve a HOL-qualified identifier token to an unqualified name.
+
+    HOL writes qualified references as ``Theory$name`` (and ``nameTheory.name``,
+    whose dotted form already tokenises into ``nameTheory`` and ``name``).  The
+    identifier grammar keeps ``$`` inside a single token, so ``Theory$name`` is
+    seen as one token and would otherwise be missed.  We require BOTH that the
+    part before the last ``$`` is a recognised theory name (a theory that owns
+    an indexed declaration) and that the suffix is a known declaration name.
+    Requiring the theory prefix means a token such as ``foo$bar`` is not treated
+    as a citation merely because ``bar`` happens to name a real declaration,
+    since ``foo`` is not a theory in the index.
+    """
+    if QUALIFIED_SEP not in token:
+        return ()
+    prefix, _, suffix = token.rpartition(QUALIFIED_SEP)
+    return (suffix,) if prefix in theories and suffix in names else ()
+
+
 def citation_edges(
     declarations: list[Declaration],
     cache: SourceCache,
-) -> tuple[dict[str, set[str]], set[str]]:
+) -> tuple[dict[str, set[str]], set[str], int]:
     names = {declaration.name for declaration in declarations}
+    theories = {declaration.theory for declaration in declarations}
     edges: dict[str, set[str]] = defaultdict(set)
+    qualified_resolved = 0
     for declaration in declarations:
         tokens = set(IDENT.findall(cache.span(declaration.path, declaration.start, declaration.end)))
-        edges[declaration.name].update((tokens & names) - {declaration.name})
-    return edges, names
+        candidates = set(tokens)
+        for token in tokens:
+            for candidate in qualified_candidates(token, names, theories):
+                candidates.add(candidate)
+                qualified_resolved += 1
+        edges[declaration.name].update((candidates & names) - {declaration.name})
+    return edges, names, qualified_resolved
 
 
 def required_closure(edges: dict[str, set[str]], root: str) -> set[str]:
@@ -256,7 +289,7 @@ def main() -> int:
     in_closure = [d for d in declarations if d.theory in closure]
 
     cache = SourceCache(CAKEML)
-    edges, _names = citation_edges(in_closure, cache)
+    edges, _names, qualified_resolved = citation_edges(in_closure, cache)
     required = required_closure(edges, args.root_theorem)
 
     root_decls = [d for d in in_closure if d.name == args.root_theorem]
@@ -386,6 +419,10 @@ def main() -> int:
         "(first with that name in index order) for the per-kind, per-area and "
         "per-theory breakdowns"
     )
+    lines.append(
+        f"- HOL-qualified `Theory$name` token occurrences resolved to an "
+        f"unqualified declaration name: `{qualified_resolved}`"
+    )
     lines.append("")
     lines.append("## Validation")
     lines.append("")
@@ -489,9 +526,14 @@ def main() -> int:
         "may still have a correct untagged Lean analogue."
     )
     lines.append(
-        "- This first slice does not yet resolve `Theory$name` / `nameTheory.name` "
-        "qualified citations, nor distinguish HOL helper lemmas that Lean proof "
-        "restructuring makes unnecessary."
+        "- `Theory$name` qualified citations are resolved to the unqualified "
+        "`name` when the prefix is a recognised theory name and `name` is a "
+        "known declaration; dotted `nameTheory.name` "
+        "citations already split on `.`.  Theory-qualified identities are still "
+        "not tracked separately, so same-named declarations in different "
+        "theories still collapse into one node, and this slice does not yet "
+        "distinguish HOL helper lemmas that Lean proof restructuring makes "
+        "unnecessary."
     )
     lines.append("- `.hol-index/` is generated and git-ignored; numbers move with the CakeML revision.")
     lines.append(
@@ -544,6 +586,7 @@ def main() -> int:
                 "tagged_required": len(tagged_here),
                 "untagged_required": len(untagged_here),
                 "cited_without_any_tag": len(untagged_anywhere),
+                "qualified_citations_resolved": qualified_resolved,
             },
             "required": [
                 {"theory": name_theory[name], "name": name}
