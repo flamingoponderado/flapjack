@@ -1,4 +1,5 @@
 import Flapjack.Pancake.Proofs.PanToCrep
+import Flapjack.Pancake.Proofs.PanToCrep.CodeRelExact
 
 /-! Nonvacuous checks for HOL `code_rel_def`, paired with the direct
 CakeML/HOL oracle in `scripts/hol-probes/code_rel_probe.out`. The source map
