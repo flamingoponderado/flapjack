@@ -565,6 +565,17 @@ visible. The exact Lean input carrier and regressions are in
 `Flapjack.Test.CrepInlineFmapParity`. Refresh it with
 `HOL_PROBE_ONLY=crep_inline_alist_map_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
+`fupdate_list_append_commutes_probe.out` records the imported original HOL
+theorem `finite_mapTheory.FUPDATE_LIST_APPEND_COMMUTES` from
+`/home/zksecurity/HOL/src/finite_maps/finite_mapScript.sml:2960`, plus direct
+HOL evaluation of disjoint and overlapping key examples. The theorem is used
+in `cakeml/pancake/proofs/pan_to_crepProofScript.sml:1001,1197`; its exact
+HOL-equality Lean port and guards are in `Flapjack.FiniteMap.Basic` and
+`Flapjack.Test.FupdateListAppendCommutesParity`. It remains untagged because
+`scripts/check-hol-refs.py` currently accepts only `cakeml/...sml` references.
+Refresh it with
+`HOL_PROBE_ONLY=fupdate_list_append_commutes_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
+
 `eval_nested_decs_seq_res_var_eq_probe.out` records direct HOL EVAL cases for
 `pan_to_crepProofScript.sml:596-620`: nested declaration evaluation restores
 both previously bound and absent locals, unequal name/expression lengths

@@ -2529,6 +2529,90 @@ theorem evaluateHOLFiniteState_dec {width : Nat} {σ : Type} [NeZero width]
 
 attribute [simp] evaluateHOLFiniteState_dec
 
+/-- Source-reviewed HOL `evaluate_def` Seq conjunct (`panSemScript.sml:615`,
+    restated in the theorem at line 780). It fixes the first pair's clock,
+    evaluates the second program only when the first result is `NONE`, and
+    otherwise returns the fixed pair. Both recursive calls use the total
+    pair-shaped evaluator; the internal assembly marker is absent from the
+    statement. `PanSemStateFiniteExact` owns the four named `HolFiniteMapExact`
+    fields, with the canonical same-module roundtrip witness. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
+  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+theorem evaluateHOLFiniteState_seq {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (first second : ProgHOL width) :
+    evaluateHOLFiniteState state (.seq first second : ProgHOL width) =
+      (let firstOutput := evaluateHOLFiniteState state first
+       let fixed := fixClockHOLFinite state firstOutput
+       match fixed.1 with
+       | none => evaluateHOLFiniteState fixed.2 second
+       | some _ => fixed) := by
+  classical
+  let context : FiniteEvalContext width σ :=
+    ⟨state, fun address => Classical.propDecidable (state.memaddrs address),
+      fun address => Classical.propDecidable (state.shMemaddrs address)⟩
+  obtain ⟨firstPair, hfirst⟩ := evalPanSemRecursiveCallFiniteContext_total first context
+  have hfirstOutput : evaluateHOLFiniteState state first =
+      (firstPair.1, firstPair.2.state) := by
+    simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders, context, hfirst]
+  let fixed := fixClockHOLFinite state (firstPair.1, firstPair.2.state)
+  cases hresult : firstPair.1 with
+  | none =>
+      have hseq' : evalPanSemRecursiveCallFiniteContext (.seq first second) context =
+          evalPanSemRecursiveCallFiniteContext second
+            (firstPair.2.withState fixed.2 rfl rfl) := by
+        rw [evalPanSemRecursiveCallFiniteContext.eq_def]
+        simp only [hfirst, hresult]
+        rfl
+      have hctx : firstPair.2.withState fixed.2 rfl rfl =
+          (⟨fixed.2, fun address => Classical.propDecidable (fixed.2.memaddrs address),
+            fun address => Classical.propDecidable (fixed.2.shMemaddrs address)⟩ :
+            FiniteEvalContext width σ) := by
+        apply FiniteEvalContext.ext
+        rfl
+      let secondContext := firstPair.2.withState fixed.2 rfl rfl
+      obtain ⟨secondPair, hsecond⟩ :=
+        evalPanSemRecursiveCallFiniteContext_total second secondContext
+      have hsecondGlobal : evalPanSemRecursiveCallFiniteContext second
+          (⟨fixed.2, fun address => Classical.propDecidable (fixed.2.memaddrs address),
+            fun address => Classical.propDecidable (fixed.2.shMemaddrs address)⟩ :
+            FiniteEvalContext width σ) = some secondPair := by
+        rw [← hctx]
+        exact hsecond
+      change (match evalPanSemRecursiveCallFiniteContext (.seq first second) context with
+        | some pair => (pair.1, pair.2.state)
+        | none => (none, state)) = _
+      rw [hseq']
+      rw [hfirstOutput]
+      rw [hctx]
+      rw [hresult]
+      simp only [hsecondGlobal]
+      have hsecondOutput : evaluateHOLFiniteState fixed.2 second =
+          (secondPair.1, secondPair.2.state) := by
+        simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders, hsecondGlobal]
+      have hsecondOutput' : evaluateHOLFiniteState
+          (fixClockHOLFinite state
+            ((none : Option (PanSemResultExact width)), firstPair.2.state)).2 second =
+            (secondPair.1, secondPair.2.state) := by
+        simpa [fixed, hresult, fixClockHOLFinite] using hsecondOutput
+      change (secondPair.1, secondPair.2.state) =
+        evaluateHOLFiniteState
+          (fixClockHOLFinite state
+            ((none : Option (PanSemResultExact width)), firstPair.2.state)).2 second
+      rw [hsecondOutput']
+  | some result =>
+      have hseq' : evalPanSemRecursiveCallFiniteContext (.seq first second) context =
+          some (some result, firstPair.2.withState fixed.2 rfl rfl) := by
+        rw [evalPanSemRecursiveCallFiniteContext.eq_def]
+        simp only [hfirst, hresult]
+        rfl
+      change (match evalPanSemRecursiveCallFiniteContext (.seq first second) context with
+        | some pair => (pair.1, pair.2.state)
+        | none => (none, state)) = _
+      rw [hseq']
+      rw [hfirstOutput]
+      rw [hresult]
+      simp [fixed, fixClockHOLFinite, FiniteEvalContext.withState]
+
 /-- The decider-taking helper is the pair-shaped rendering of the assembly-marker
     evaluator. This bridge is Flapjack-specific infrastructure. -/
 theorem evaluateHOLFiniteStateWithDeciders_eq_getD {width : Nat} {σ : Type} [NeZero width]
