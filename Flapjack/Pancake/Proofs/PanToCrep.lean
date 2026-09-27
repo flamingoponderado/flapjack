@@ -19,6 +19,7 @@ import Flapjack.Pancake.PanToCrep.Compile
 import Flapjack.Pancake.PanToCrep.CompileProg
 import Flapjack.Pancake.PanToCrep.ContextExact
 import Flapjack.Pancake.Proofs.PanToCrep.CompileExpVmax
+import Flapjack.Pancake.Proofs.PanToCrep.CompileExactVarSupport
 import Flapjack.CrepeCompileExpVariables
 import Flapjack.PanToCrepMaxList
 
