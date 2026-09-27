@@ -3449,7 +3449,20 @@ structure CrepEvalArg (width : Nat) (σ : Type) [NeZero width] where
   program : CrepProgHOL width
 
 /-- General well-founded induction principle for `evalCrepSemHOLProg`,
-    matching its `(state.clock, sizeOf program)` lexicographic measure. -/
+    matching its `(state.clock, sizeOf program)` lexicographic measure.
+
+    FLAPJACK-SPECIFIC (untagged). The intended HOL original is
+    `crepSemScript.sml:440 evaluate_ind[allow_rebind] =
+    REWRITE_RULE [fix_clock_evaluate] evaluate_ind`, the auto-generated
+    induction principle of the total clocked evaluator. This principle is
+    deliberately **not** tagged: (i) its motive carries the two explicit
+    domain decision procedures `memDec`/`shMemDec`, whereas HOL `evaluate`
+    takes only `(prog, s)`; (ii) the well-founded relation here is
+    `Prod.Lex Nat.lt Nat.lt (state.clock, sizeOf program)`, whereas HOL's
+    generated relation is the internal `tdefn` measure on `(prog, s)`; and
+    (iii) the carrier is `CrepSemHOLState width σ` with `BitVec width` in
+    place of HOL `('a,'ffi) crepSem$state` with `'a word`. A faithful tagged
+    port is tracked by `flapjack-2de.1.1`. -/
 theorem evalCrepSemHOLProg.inductHOL_general {width : Nat} [NeZero width] {σ : Type}
     {motive : (state : CrepSemHOLState width σ) →
       ((a : BitVec width) → Decidable (state.memaddrs a)) →
@@ -3477,7 +3490,14 @@ theorem evalCrepSemHOLProg.inductHOL_general {width : Nat} [NeZero width] {σ : 
 
 /-- Per-constructor well-founded induction principle for the exact
     `evalCrepSemHOLProg`, with one case handler per `CrepProgHOL` constructor and
-    induction hypotheses for the sub-programs actually passed by the evaluator. -/
+    induction hypotheses for the sub-programs actually passed by the evaluator.
+
+    FLAPJACK-SPECIFIC (untagged). This is a constructor-structured helper, not
+    HOL's `evaluate_ind`: several handlers carry extra branch-selector
+    hypotheses (e.g. the `Call` body-result/handler equation with `eid = eid'`,
+    the `Seq` `fixClockCrepSemHOL` step equation) and every handler threads the
+    explicit `memDec`/`shMemDec` deciders. Per the fleet tag policy such
+    branch helpers stay untagged; the faithful tagged port is `flapjack-2de.1.1`. -/
 theorem evalCrepSemHOLProg.inductHOL {width : Nat} [NeZero width] {σ : Type}
     {motive : (state : CrepSemHOLState width σ) →
       ((a : BitVec width) → Decidable (state.memaddrs a)) →
