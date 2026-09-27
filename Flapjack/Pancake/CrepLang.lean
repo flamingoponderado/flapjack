@@ -487,7 +487,11 @@ def crepAssignedVarsW {width : Nat} [NeZero width] (program : CrepProg (BitVec w
     `var_cexp BaseAddr = [] \/\ var_cexp TopAddr = []`), so the Lean `.topAddr`
     clause is the exact counterpart; oracle
     `scripts/hol-probes/crep_var_cexp_probe.out` row `base_top=([],[])`
-    confirms. -/
+    confirms.
+
+    The production form is related to the exact syntax-carrier port
+    `crepExpVarsHOL` by `crepExpVarsW e = crepExpVarsHOL (crepExpToHOL e)`;
+    proving that bridge is tracked by a follow-up bead (flapjack-jlj3.3). -/
 @[hol "cakeml/pancake/crepLangScript.sml" "var_cexp_def"]
 def crepExpVarsW {width : Nat} [NeZero width] (expression : CrepExp (BitVec width)) : List Nat :=
   crepExpVars expression
