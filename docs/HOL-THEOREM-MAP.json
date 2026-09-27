@@ -13657,5 +13657,13 @@
     "lean_name": "mapTheSomeCancelHOL",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.16.21): HOL `map_the_some_cancel` (`pan_commonPropsScript.sml:332`) states `!xs. MAP (THE \u2218 SOME) xs = xs`; the Lean port `mapTheSomeCancelHOL` renders the partial HOL `THE` applied to `SOME x` as the total `Option.get` with its `isSome` proof, so the statement is clause-for-clause over the standard list carrier with no extra hypothesis."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmScript.sml",
+    "hol_name": "is_load_def",
+    "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
+    "lean_name": "asmIsLoad",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.16.22): exact clause-for-clause port of HOL asmScript.sml:324-330 is_load_def (Load/Load8/Load16/Load32 = T, all others F) over the reviewed exact asm carrier HolMemop (alias of Flapjack.WordMemOp, tagged 'memop'), monomorphic and width-independent with no side conditions."
   }
 ]
