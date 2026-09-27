@@ -779,6 +779,54 @@ example :
     HolFiniteMapExact.lookup_update, FUPDATE, FLOOKUP, crepExpOfHOL,
     shapeOfHOL]
 
+/-- The local-Assign bridge retains the missing-variable `Skip` fallback. -/
+example :
+    crepProgOfHOL (compileProgExactHOLW exactReturnContext
+      (.assign .local (ofString "dst") (expToHOL (.const (BitVec.ofNat 8 5))))) =
+    compileProgRiscV exactReturnContext.toProduction
+      (.assign .local "dst" (.const (BitVec.ofNat 8 5))) := by
+  apply compileProgExactHOLW_local_assign_bridge
+  simp only [compileExpExactHOLW.eq_1, expToHOL.eq_1, compileExpHOL.eq_1,
+    List.map_cons, List.map_nil, crepExpOfHOL.eq_1, shapeOfHOL]
+
+/-- The local-Assign bridge retains the destination/source length-mismatch
+    `Skip` fallback. -/
+example :
+    crepProgOfHOL (compileProgExactHOLW (exactLocalAssignContext [7, 8] [9])
+      (.assign .local (ofString "dst") (expToHOL (.const (BitVec.ofNat 8 5))))) =
+    compileProgRiscV (exactLocalAssignContext [7, 8] [9]).toProduction
+      (.assign .local "dst" (.const (BitVec.ofNat 8 5))) := by
+  apply compileProgExactHOLW_local_assign_bridge
+  simp only [compileExpExactHOLW.eq_1, expToHOL.eq_1, compileExpHOL.eq_1,
+    List.map_cons, List.map_nil, crepExpOfHOL.eq_1, shapeOfHOL]
+
+/-- The local-Assign bridge covers the disjoint direct `nested_seq` branch. -/
+example :
+    crepProgOfHOL (compileProgExactHOLW (exactLocalAssignContext [7] [8])
+      (.assign .local (ofString "dst")
+        (expToHOL (.var .local "src")))) =
+    compileProgRiscV (exactLocalAssignContext [7] [8]).toProduction
+      (.assign .local "dst" (.var .local "src")) := by
+  apply compileProgExactHOLW_local_assign_bridge
+  simp [compileExpExactHOLW.eq_2, expToHOL.eq_2, compileExpHOL.eq_2,
+    PanToCrepContextExact.toProduction, exactLocalAssignContext,
+    HolFiniteMapExact.lookup_update, FUPDATE, FLOOKUP, crepExpOfHOL,
+    shapeOfHOL]
+
+/-- The local-Assign bridge covers the interfering-variable fresh-temporary
+    branch. -/
+example :
+    crepProgOfHOL (compileProgExactHOLW (exactLocalAssignContext [7] [7])
+      (.assign .local (ofString "dst")
+        (expToHOL (.var .local "src")))) =
+    compileProgRiscV (exactLocalAssignContext [7] [7]).toProduction
+      (.assign .local "dst" (.var .local "src")) := by
+  apply compileProgExactHOLW_local_assign_bridge
+  simp [compileExpExactHOLW.eq_2, expToHOL.eq_2, compileExpHOL.eq_2,
+    PanToCrepContextExact.toProduction, exactLocalAssignContext,
+    HolFiniteMapExact.lookup_update, FUPDATE, FLOOKUP, crepExpOfHOL,
+    shapeOfHOL]
+
 def exactShMemStoreClauseParity : Bool :=
   (match compileShMemStoreExactHOLW
       (exactLocalAssignContext [7] [8]) .op8 (.var .local (ofString "src")) (.const 3) with
