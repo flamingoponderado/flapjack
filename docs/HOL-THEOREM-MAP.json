@@ -13579,5 +13579,13 @@
     "lean_name": "memGenlistAddSucValHOL",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.16.13): HOL `!n x k. MEM x (GENLIST (\\x. SUC x + k) n) ==> k < x /\\ x <= n + k` (pan_commonPropsScript.sml:234) matches clause-for-clause; `GENLIST (fun x. SUC x + k) n` renders as `(List.range n).map (fun i => i + 1 + k)`, `MEM` as `\u2208`, over Nat; no side conditions. Used by pan_to_crepProofScript.sml (pc_compile_correct dependency)."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/pan_commonPropsScript.sml",
+    "hol_name": "update_eq_zip_flookup",
+    "lean_path": "Flapjack/Pancake/Semantics/PanCommonProps.lean",
+    "lean_name": "updateEqZipFlookupHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.16.15): HOL `update_eq_zip_flookup` (pan_commonPropsScript.sml:244) is `!xs f ys n. ALL_DISTINCT xs /\\ LENGTH xs = LENGTH ys /\\ n < LENGTH xs ==> FLOOKUP (f |++ ZIP (xs,ys)) (EL n xs) = SOME (EL n ys)`. The Lean statement is clause-for-clause: ALL_DISTINCT as List.Nodup, FLOOKUP as the reviewed extensional lookup, `f |++` as FUPDATE_LIST, ZIP/elementwise-pair as List.zip, and EL as the bounded List.getElem (the ys index bound follows from LENGTH equality). No extra hypotheses; only the standard [BEq \u03b1] [LawfulBEq \u03b1] instance conventions used by the neighbouring reviewed_exact opt_mmap lemmas."
   }
 ]
