@@ -495,9 +495,9 @@ theorem noOverlapWrapRtNodup
     authorize the `Shape`/expression carriers, and no `NameRanged` witness
     exists because the output is a membership disjunction, not a name. The
     exact-carrier `comp_field` port is the tagged `compFieldHOL`
-    (`PanToCrep.lean`); a faithful exact port of this MEM lemma is tracked by
-    `flapjack-pxn.18.3.5.8.8` (the production analogue is used by the
-    `pan_to_crep` proof development). -/
+    (`PanToCrep.lean`); the faithful exact port of this MEM lemma is the
+    tagged `memCompFieldHOLExact_or_zero` below (this production analogue is
+    used by the `pan_to_crep` proof development). -/
 theorem compileField_mem_or_zero
     [OfNat α 0]
     (index : Nat) (shapes : List Shape) (expressions : List (CrepExp α))
@@ -625,6 +625,43 @@ theorem memCompFieldHOLExact {width : Nat} [NeZero width]
   have hmem' : candidate ∈ (compFieldHOL index shapes expressions).1 := by
     simpa [hcompiled] using hmem
   exact compFieldHOL_mem_of_index_lt index shapes expressions candidate hindex' hmem'
+
+/-- Exact port of HOL `mem_comp_field_lem`
+    (`pan_to_crepProofScript.sml:397-406`), which states
+    `!i l es x. MEM x (FST (comp_field i l es)) ==> MEM x es \/ x = Const 0w`.
+    The binder order `index`, `shapes`, `expressions`, `expression` follows
+    HOL's `i`, `l`, `es`, `x`; the shape and expression carriers are the exact
+    `ShapeHOL` and width-indexed `CrepExpHOL width`, and HOL's `Const 0w`
+    word literal is `CrepExpHOL.const (0 : BitVec width)`. This is the exact
+    counterpart of the production analogue `compileField_mem_or_zero`, which
+    stays untagged. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "mem_comp_field_lem"]
+theorem memCompFieldHOLExact_or_zero {width : Nat} [NeZero width]
+    (index : Nat) (shapes : List Flapjack.Pancake.PanLang.ShapeHOL)
+    (expressions : List (CrepExpHOL width)) (expression : CrepExpHOL width)
+    (hmem : expression ∈ (compFieldHOL index shapes expressions).1) :
+    expression ∈ expressions ∨ expression = CrepExpHOL.const (0 : BitVec width) := by
+  induction shapes generalizing index expressions with
+  | nil =>
+      simp [compFieldHOL] at hmem
+      exact Or.inr hmem
+  | cons shape shapes ih =>
+      cases index with
+      | zero =>
+          left
+          exact List.mem_of_mem_take hmem
+      | succ index =>
+          have hdrop : expression ∈
+              (compFieldHOL index shapes
+                (expressions.drop
+                  (Flapjack.Pancake.PanLang.sizeOfShapeHOL shape))).1 := by
+            simpa [compFieldHOL] using hmem
+          rcases ih index
+              (expressions.drop
+                (Flapjack.Pancake.PanLang.sizeOfShapeHOL shape)) hdrop with
+            hinput | hzero
+          · exact Or.inl (List.mem_of_mem_drop hinput)
+          · exact Or.inr hzero
 
 /-- HOL `filter_not_mem_self`: filtering a list by non-membership in that
     same list removes every element. -/
