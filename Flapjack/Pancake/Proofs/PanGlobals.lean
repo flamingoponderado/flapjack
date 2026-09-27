@@ -9,21 +9,26 @@ namespace Flapjack
 
 open Flapjack.Pancake.PanLang
 
-/-- Exact HOL port of Cake's `good_res_def`
+/-- Cake's `good_res_def`
     (`cakeml/pancake/proofs/pan_globalsProofScript.sml:164-170`):
 
     `good_res (SOME TimeOut) = F`, `good_res (SOME (Return v)) = F`,
     `good_res (SOME (Exception l v)) = F`, `good_res (SOME (FinalFFI ev)) = F`,
     and `good_res _ = T`.
 
-    The five clauses match HOL clause-for-clause over the reviewed exact
-    `panSem$result` carrier `PanSemResultExact` (`DecExact.lean:58`, tagged
-    against `panSemScript.sml:68-75`): `TimeOut`/`Return`/`Exception`/`FinalFFI`
-    map to `false`, and every other result (`NONE`, `SOME Error`, `Break`,
-    `Continue`) maps to `true`.  The payloads are ignored, exactly as in HOL, so
-    the only difference from HOL is the already-reviewed `result` carrier.  No
-    qualifier applies. -/
-@[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "good_res_def"]
+    The five clauses match HOL clause-for-clause, but this declaration is NOT a
+    faithful exact port and carries no `@[hol]` tag.  HOL `good_res` is over the
+    word-parametrized `panSem$result` (`('a) result` with `word_lab` payloads),
+    whereas this declaration fixes the result carrier to the width-indexed
+    inductive `PanSemResultExact width` (`DecExact.lean:58`, `[NeZero width]`,
+    `ValueHOL width` payloads) whose `word_lab` is represented by `HolWordLab`.
+    Payload-insensitivity does not erase that type-shape translation, so the
+    `(words_as_type_indexed_bitvec)` qualifier is needed; the checker currently
+    validates only direct `BitVec <width>` occurrences and reviewed *structure*
+    carriers, so it cannot validate this width-indexed *inductive* carrier.  The
+    tag is therefore withdrawn pending a checker extension for reviewed
+    width-indexed inductive carriers (tasks/DS10); see bead `flapjack-ikjm.2`.
+    No finite-map qualifier applies: no HOL `|->` state field is named. -/
 def goodResHOL {width : Nat} [NeZero width] :
     Option (PanSemResultExact width) → Bool
   | some (.timeOut) => false

@@ -38,6 +38,15 @@ DATA_DECLARATION_RE = re.compile(
 # inventory small and source-reviewed; a mismatch row is not generated merely
 # because an arbitrary Lean def happens to mention a HOL name.
 WITHDRAWN_HOL_DECLARATIONS = {
+    ("Flapjack/Pancake/Proofs/PanGlobals.lean", "goodResHOL"): (
+        "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+        "good_res_def",
+        "flapjack-ds8 (bead flapjack-ikjm.2): HOL good_res_def classifies the word-parametrized "
+        "panSem$result; the Lean declaration fixes the carrier to the width-indexed inductive "
+        "PanSemResultExact width.  The required (words_as_type_indexed_bitvec) qualifier cannot be "
+        "validated for an inductive carrier, so the @[hol] tag was withdrawn pending a checker "
+        "extension for reviewed width-indexed inductive carriers."
+    ),
     ("Flapjack/Compiler/Encoders/Asm.lean", "asmRegOk"): (
         "cakeml/compiler/encoders/asm/asmScript.sml",
         "reg_ok_def",
@@ -1785,7 +1794,6 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         ("Flapjack/Pancake/Proofs/PanToCrep.lean", "firstCompileProgAllDistinct"),
         ("Flapjack/Pancake/Proofs/PanGlobals.lean", "map_pick_up_first"),
         ("Flapjack/Pancake/Proofs/PanGlobals.lean", "tuple_4_o"),
-        ("Flapjack/Pancake/Proofs/PanGlobals.lean", "goodResHOL"),
         ("Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean", "convertResHOL"),
         ("Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean", "convertResHOL_eqCase1"),
         ("Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean", "isContResHOL"),
