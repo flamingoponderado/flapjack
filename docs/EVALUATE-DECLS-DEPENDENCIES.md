@@ -14,8 +14,8 @@ review has been done yet.
 
 | Lean | HOL | Status |
 | --- | --- | --- |
-| `Flapjack.evaluateDecls` (`Flapjack/Pancake/Semantics/PanSem.lean:2635`) | `evaluate_decls_def` (`cakeml/pancake/semantics/panSemScript.sml:813`) | production analogue, **not an exact port and untagged**: generic `Decl α`, `PanSemDeclarationState`, String/`InfoMap` carriers, production `evalPanValueExp` and `isWfShape` |
-| `PanSemStateFiniteExact.evaluateDeclsHOLFinite` (`Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean:1158`) | `evaluate_decls_def` (`panSemScript.sml:813`) | separate exact finite-support port, tagged with `fmap_as_finite_support := [locals, globals, code, eshapes]`; this does not by itself establish that production `evaluateDecls` calls it |
+| `Flapjack.evaluateDecls` (`Flapjack/Pancake/Semantics/PanSem.lean:2642`) | `evaluate_decls_def` (`cakeml/pancake/semantics/panSemScript.sml:813`) | production analogue, **not an exact port and untagged**: generic `Decl α`, `PanSemDeclarationState`, String/`InfoMap` carriers, production `evalPanValueExp` and `isWfShape` |
+| `PanSemStateFiniteExact.evaluateDeclsHOLFinite` (`Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean:1389`) | `evaluate_decls_def` (`panSemScript.sml:813`) | separate exact finite-support port, tagged with `fmap_as_finite_support := [locals, globals, code, eshapes]`; this does not by itself establish that production `evaluateDecls` calls it |
 
 The production definition has analogous `Name`, `Decl`, `Function`, and
 `ExnDecl` branches, but matching branch names do not establish a port. HOL uses
@@ -39,20 +39,20 @@ infrastructure.
 
 | Dependency | Lean (file:line) | HOL counterpart | Classification | Bead |
 | --- | --- | --- | --- | --- |
-| `evalPanValueExp` (production) | `Flapjack/PanValues.lean:1261` | `eval_def` (`panSemScript.sml:209`) | **reviewed, not exact** (pure/value subset follows `eval_def`; production struct/memory/Op path and projected state differ as detailed in `.18.3.6.2`). An exact finite-support `evalHOLFinite`/`evalHOLExact` port exists separately; no production route has been source-reviewed as an unconditional or premise-discharged bridge | `.18.3.6.2`, `.18.3.6.9`; production route `.18.3.6.10` |
+| `evalPanValueExp` (production) | `Flapjack/PanValues.lean:1459` | `eval_def` (`panSemScript.sml:209`) | **reviewed, not exact** (pure/value subset follows `eval_def`; production struct/memory/Op path and projected state differ as detailed in `.18.3.6.2`). An exact finite-support `evalHOLFinite`/`evalHOLExact` port exists separately; no production route has been source-reviewed as an unconditional or premise-discharged bridge | `.18.3.6.2`, `.18.3.6.9`; production route `.18.3.6.10` |
 | `isWfShape` (production) | `Flapjack/Pancake/PanStatic.lean:140` | `is_wf_shape_def` (`panLangScript.sml:139`) | production String/`StructContext` predicate remains distinct from exact `isWfShapeHOL`; do not infer production use from the proof-side port. StructInfo fields and name equality differ; see `.18.3.6.3` and the exact Shape carrier bead | `.18.3.6.7`; production route `.18.3.6.10` |
-| `panValueShape` | `Flapjack/PanValues.lean:518` | `shape_of_def` (`panSemScript.sml:80`) | **exact in content**: unused `context` parameter, but proved equal to the tagged `panSemShapeOf` by `panValueShape_eq_panSemShapeOf_tagged` (`PanSem.lean:50`); kept untagged (extra parameter) | `.18.3.6.4` |
+| `panValueShape` | `Flapjack/PanValues.lean:519` | `shape_of_def` (`panSemScript.sml:80`) | **exact in content**: unused `context` parameter, but proved equal to the tagged `panSemShapeOf` by `panValueShape_eq_panSemShapeOf_tagged` (`PanSem.lean:50`); kept untagged (extra parameter) | `.18.3.6.4` |
 | `panShapeMatches` | `Flapjack/PanValues.lean:1112` | HOL `=` on `Shape` (`sh = shape_of res`) | **representation**: structural `Bool` using `==` for `Named`; `panShapeMatches_eq_true` justifies equality under `[LawfulBEq String]`, but production key carrier remains String | `.18.3.6.4`, production route `.18.3.6.10` |
-| `lookupInfo` | `Flapjack/Pancake/PanLang.lean:71` | `alist$ALOOKUP` / `FLOOKUP` | **exact in content under lawful keys**: key-polymorphic first-match lookup; `==` reflects HOL `=` under `[LawfulBEq κ]` (equals core `List.lookup`, `lookupInfo_eq_lookup`). Untagged because the HOL source (`alistTheory`) is HOL stdlib outside the cakeml submodule and the def quantifies `[BEq κ]`; tagged `ALOOKUP_MAP3`/`ALOOKUP_MAP4` ports exist | `.18.3.6.5` |
+| `lookupInfo` | `Flapjack/Pancake/PanLang.lean:126` | `alist$ALOOKUP` / `FLOOKUP` | **exact in content under lawful keys**: key-polymorphic first-match lookup; `==` reflects HOL `=` under `[LawfulBEq κ]` (equals core `List.lookup`, `lookupInfo_eq_lookup`). Untagged because the HOL source (`alistTheory`) is HOL stdlib outside the cakeml submodule and the def quantifies `[BEq κ]`; tagged `ALOOKUP_MAP3`/`ALOOKUP_MAP4` ports exist | `.18.3.6.5` |
 | `panSemDeclUpdateGlobal` | `Flapjack/Pancake/Semantics/PanSem.lean:2544` | `globals |+ (v,res)` (`FUPDATE` on a finite map) | **exact in content**: `panSemDeclUpdateGlobal_eq_FUPDATE` proves it equals the repo `FUPDATE` on the finite-map view (`VarName → Option (PanValue α)`) under `[LawfulBEq String]`. Untagged (HOL `finite_mapTheory` is stdlib; repo `FUPDATE` quantifies `[BEq α]`) | `.18.3.6.5` (+ key-equality gap `.18.5.5.19`) |
 | `panSemDeclUpdateInfo` | `Flapjack/Pancake/Semantics/PanSem.lean:2531` | `code |+ ...` / `eshapes |+ ...` (sptree update) | **representation-refined**: association list (with duplicate removal) vs finite map; `lookupInfo_panSemDeclUpdateInfo` proves lookups after the update agree with `FUPDATE` of `fun k => lookupInfo k entries`; untagged (stdlib source + `[BEq String]`) | `.18.3.6.5` (+ key-equality gap `.18.5.5.19`) |
-| `Decl` | `Flapjack/Pancake/PanLang.lean:220` | `panLang$decl` datatype | datatype | existing `.18.3.5.5` |
-| `Shape` | `Flapjack/Pancake/PanLang.lean:21` | `panLang$shape` datatype | datatype | existing `.18.3.5.2` |
-| `Exp` (inside `.decl`) | `Flapjack/Pancake/PanLang.lean:135` | `panLang$exp` datatype | datatype | existing `.18.3.5.3` |
-| `Prog` (inside `.function`) | `Flapjack/Pancake/PanLang.lean` | `panLang$prog` datatype | datatype | existing `.18.3.5.4` |
-| production word/value carriers | `Flapjack/PanValues.lean:19,29` | `word_lab` / `v` (`panSemScript.sml:17,22`) | production `PanValue.word` carries generic `α`, unlike HOL `Val (Word w)`; exact `HolWordLab`/`ValueHOL` carriers exist in the PanSem counterpart, but their existence does not prove the production codec for every constructor | `.18.3.6.8`; production bridge `.18.3.6.10` |
-| `PanSemDeclarationState` | `Flapjack/Pancake/Semantics/PanSem.lean:86` | `panSem$state` record | production representation: split state with String-keyed `InfoMap` `code`/`eshapes`; not the exact `MlString` finite-map state. The exact finite-support owner is `PanSemStateFiniteExact` | production bridge `.18.3.6.10` |
-| `PanSemFunctionEntry` | `Flapjack/Pancake/Semantics/PanSem.lean:74` | `(params,(body,return))` tuple in the `code` map | representation: named record vs tuple | note (below) |
+| `Decl` | `Flapjack/Pancake/PanLang.lean:408` | `panLang$decl` datatype | datatype | existing `.18.3.5.5` |
+| `Shape` | `Flapjack/Pancake/PanLang.lean:71` | `panLang$shape` datatype | datatype | existing `.18.3.5.2` |
+| `Exp` (inside `.decl`) | `Flapjack/Pancake/PanLang.lean:255` | `panLang$exp` datatype | datatype | existing `.18.3.5.3` |
+| `Prog` (inside `.function`) | `Flapjack/Pancake/PanLang.lean:364` | `panLang$prog` datatype | datatype | existing `.18.3.5.4` |
+| production word/value carriers | `Flapjack/PanValues.lean:48` | `word_lab` / `v` (`panSemScript.sml:17,22`) | production `PanValue.word` carries generic `α`, unlike HOL `Val (Word w)`; exact `HolWordLab`/`ValueHOL` carriers exist in the PanSem counterpart, but their existence does not prove the production codec for every constructor | `.18.3.6.8`; production bridge `.18.3.6.10` |
+| `PanSemDeclarationState` | `Flapjack/Pancake/Semantics/PanSem.lean:262` | `panSem$state` record | production representation: split state with String-keyed `InfoMap` `code`/`eshapes`; not the exact `MlString` finite-map state. The exact finite-support owner is `PanSemStateFiniteExact` | production bridge `.18.3.6.10` |
+| `PanSemFunctionEntry` | `Flapjack/Pancake/Semantics/PanSem.lean:250` | `(params,(body,return))` tuple in the `code` map | representation: named record vs tuple | note (below) |
 
 ## One-layer frontier of HOL-defined calls
 
@@ -112,3 +112,14 @@ infrastructure.
 
 Datatype reviews for `Decl`, `Shape`, `Exp`, `prog` are owned by the existing
 `flapjack-pxn.18.3.5.2`–`.18.3.5.5` beads.
+
+2026-09-27 source refresh: production `evaluateDecls` remains the generic
+String/`InfoMap` path at `PanSem.lean:2642`; its `Name` clause is a no-op, its
+`Decl` branch calls `evalPanValueExp`, `panValueShape`, and `panShapeMatches`,
+and its function/exception branches call production `isWfShape` and
+`lookupInfo`. The tagged `evaluateDeclsHOLFinite` at
+`StateExactFiniteMap.lean:1389` uses `DeclHOL`, `MlString`, `evalHOLFinite`,
+`shapeOfHOLExact`, `isWfShapeExactHOL`, and exact finite maps. This refresh only
+updates source locations and records the current code path; it adds no tag and
+establishes no production-equivalence claim. The route/equivalence obligation
+remains in `.18.3.6.10`, blocked by production carrier bridge `.18.3.5.8`.
