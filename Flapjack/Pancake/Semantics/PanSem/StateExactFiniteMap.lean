@@ -1976,6 +1976,45 @@ theorem evaluateHOLFiniteState_eq_withDeciders {width : Nat} {σ : Type}
   simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
     hmemEq, hsharedEq]
 
+/-- FLAPJACK-SPECIFIC recursive bridge (no standalone HOL declaration): a
+    pair-shaped recursive evaluation equation can be consumed by the finite
+    context evaluator while retaining its post-state context. The outer
+    `Option` remains internal to this helper and is witnessed as `some`; the
+    returned fact exposes only a source result and its state projection. -/
+theorem evalPanSemRecursiveCallFiniteContext_of_evaluateHOLFiniteState
+    {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (program : ProgHOL width)
+    (context : FiniteEvalContext width σ) (hcontext : context.state = state)
+    (output : Option (PanSemResultExact width) × PanSemStateFiniteExact width σ)
+    (houtput : evaluateHOLFiniteState state program = output) :
+    ∃ postContext : FiniteEvalContext width σ,
+      evalPanSemRecursiveCallFiniteContext program context =
+        some (output.1, postContext) ∧ postContext.state = output.2 := by
+  classical
+  let classicalContext : FiniteEvalContext width σ :=
+    ⟨state,
+      fun address => Classical.propDecidable (state.memaddrs address),
+      fun address => Classical.propDecidable (state.shMemaddrs address)⟩
+  have hcontexts : context = classicalContext := by
+    apply FiniteEvalContext.ext
+    exact hcontext
+  obtain ⟨pair, hpair⟩ :=
+    evalPanSemRecursiveCallFiniteContext_total program context
+  have hclassicalPair :
+      evalPanSemRecursiveCallFiniteContext program classicalContext = some pair := by
+    rw [← hcontexts]
+    exact hpair
+  have hevaluate :
+      evaluateHOLFiniteState state program = (pair.1, pair.2.state) := by
+    simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+      classicalContext, hclassicalPair]
+  have hpairOutput : (pair.1, pair.2.state) = output := hevaluate.symm.trans houtput
+  refine ⟨pair.2, ?_, ?_⟩
+  · have hresult : pair.1 = output.1 := congrArg Prod.fst hpairOutput
+    rw [← hresult]
+    exact hpair
+  · exact congrArg Prod.snd hpairOutput
+
 /-- Flapjack-specific projection fact: mapping the recursive evaluator's
     assembly `Option` through its pair/state projection commutes with a
     conditional recursive branch. -/
