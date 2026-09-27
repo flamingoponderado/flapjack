@@ -1237,6 +1237,8 @@ theorem panToCrepExactTickTransition
     and the exact relation premises. The source syntax is constructor-for-
     constructor `ExpHOL`, `MlS` is HOL `mlstring`, and `localisedExpHOL` is its
     exact predicate port. No target evaluation or result assumption is added.
+    `words_as_type_indexed_bitvec` records HOL's positive type-indexed word
+    dimension as `BitVec width` under `[NeZero width]`.
 
     The conclusion follows from the stronger exact compiler-only provenance
     theorem `compileExpExactHOLW_vars_from_context`; evaluator and relation
@@ -1247,7 +1249,8 @@ theorem panToCrepExactTickTransition
     PanSemStateFiniteExact.locals, PanSemStateFiniteExact.globals,
     PanSemStateFiniteExact.code, CrepSemHOLState.locals, CrepSemHOLState.code,
     PanToCrepContextExact.vars, PanToCrepContextExact.funcs,
-    PanToCrepContextExact.eids])]
+    PanToCrepContextExact.eids])
+  (words_as_type_indexed_bitvec)]
 theorem evalVarCexpPresentContextExactHOL
     {width : Nat} {ffiState : Type} [NeZero width]
     (source : PanSemStateFiniteExact width ffiState)
@@ -1275,5 +1278,50 @@ theorem evalVarCexpPresentContextExactHOL
       (compileExpExactHOLW context expression).1.flatMap crepExpVarsHOL := by
     simpa [hcompile] using hname
   exact hSupport.1 expression name hcompiledName
+
+/-- Exact port of HOL `eval_map_var_cexp_present_ctxt`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:1077`). The five
+    universally quantified inputs are the expression list, values, source
+    state, target state, and Pan-to-Crep context. Its premises preserve HOL's
+    successful `MAP (eval s) es`, `state_rel`, `code_rel`, `locals_rel`, and
+    `EVERY localised_exp` conjuncts. The conclusion is the exact nested
+    `FLAT`/`MAP` variable-name membership from each compiled expression to a
+    slot list in `ctxt.vars`. `compileExpExactHOLWList` and
+    `crepExpVarsHOL` preserve HOL's `compile_exp` and `var_cexp` structure;
+    source/target/context carriers and cross-pass relations use the exact
+    finite-support ports. The relation qualifier lists the map fields read by
+    the three relation premises and context conclusion. The evaluator premise
+    supplies classical decidability locally for the HOL memory-set predicate;
+    it introduces no premise. The proof uses the stronger exact compiler-only
+    provenance lemma, while retaining the evaluator and relation hypotheses to
+    match HOL's statement. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "eval_map_var_cexp_present_ctxt"
+  (fmap_as_finite_support_relation := [
+    PanSemStateFiniteExact.locals, PanSemStateFiniteExact.globals,
+    PanSemStateFiniteExact.code, CrepSemHOLState.locals, CrepSemHOLState.code,
+    PanToCrepContextExact.vars, PanToCrepContextExact.funcs,
+    PanToCrepContextExact.eids])
+  (words_as_type_indexed_bitvec)]
+theorem evalMapVarCexpPresentContextExactHOL
+    {width : Nat} {ffiState : Type} [NeZero width]
+    (expressions : List (Flapjack.Pancake.PanLang.ExpHOL width))
+    (values : List (ValueHOL width))
+    (source : PanSemStateFiniteExact width ffiState)
+    (target : CrepSemHOLState width ffiState)
+    (context : PanToCrepContextExact width)
+    (_heval : letI : DecidablePred source.memaddrs :=
+      fun address => Classical.propDecidable (source.memaddrs address)
+      expressions.map source.evalHOLFinite = values.map some)
+    (_hstate : panToCrepStateRelFiniteExact source target)
+    (_hcode : codeRelExactHOLW context source.code target.code)
+    (_hlocals : panToCrepLocalsRelFiniteExact context source.locals target.locals)
+    (_hlocalized : expressions.all localisedExpHOL = true) :
+    ∀ name, name ∈
+        ((compileExpExactHOLWList context expressions).flatMap Prod.fst).flatMap
+          crepExpVarsHOL →
+      ∃ sourceName shape slots,
+        context.vars.lookup sourceName = some (shape, slots) ∧ name ∈ slots := by
+  intro name hname
+  exact (compileExpExactHOLW_vars_from_context context).2 expressions name hname
 
 end Flapjack
