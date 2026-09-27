@@ -300,9 +300,11 @@ source-comparison note after the reviewer compares each HOL conjunct.
 `(fmap_as_finite_support_equalities)` when the tagged declaration is a theorem
 whose conclusion is a conjunction of `HolFiniteMapExact` map *equalities* (for
 example HOL `slc_tlc_rw`), rather than a declaration whose own result/input
-carrier is a finite map. The checker counts the top-level conjuncts `N` of the
-theorem's conclusion and requires, in the same module, one checked witness
-`holFmapAsFiniteSupportEqualityWitness_<declaration>_<i>` for each `i = 1..N`.
+carrier is a finite map. This is a conjunction-specific qualifier, so at least
+two top-level equality conjuncts are required. The checker counts the top-level
+conjuncts `N` of the theorem's conclusion and requires, in the same module, one
+checked witness `holFmapAsFiniteSupportEqualityWitness_<declaration>_<i>` for
+each `i = 1..N`.
 Every witness must state an unconditional lookup equality with a `lookup` on
 both sides, must apply both lookups at the same key, must be syntactically
 associated with its numbered conjunct (each side of the `i`-th witness must
@@ -314,10 +316,11 @@ qualifier is mutually exclusive with `fmap_as_finite_support`,
 `fmap_as_finite_support_result`, and `fmap_as_finite_support_relation`, cannot
 use `reviewed_exact`, and requires manifest status
 `reviewed_fmap_as_finite_support_equalities` with a source-comparison note in the
-reviewer field. The checker validates witness count, naming, shape, per-conjunct
-association, and key consistency only; it does not prove the witnesses correspond
-to the HOL conjuncts, so source review must still compare each numbered witness
-against the HOL map equality and record that comparison in the reviewer note.
+reviewer field. The checker's checks are syntactic: it validates witness count,
+naming, lookup shape, same-key application, and per-conjunct association, but it
+does not prove that the Lean witnesses and conjuncts correspond to the HOL map
+equalities, so source review must still compare each numbered witness against the
+HOL equality and record that comparison in the reviewer note.
 
 **Port the executable path, too.** As HOL definitions are ported, make the
 compiler that `flapjack-compile` actually runs call the reviewed `@[hol]`

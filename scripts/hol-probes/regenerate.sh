@@ -979,6 +979,12 @@ run_probe pan_to_crep_state_rel_carrier_probeScript.sml pan_to_crep_state_rel_ca
   state_rel_empty_globals_lookup state_rel_named_struct_carrier \
   "$cake_dir/pancake/proofs/pan_to_crepProofScript.sml" \
   "$cake_dir/pancake/proofs"
+run_probe pan_to_crep_slc_tlc_probeScript.sml pan_to_crep_slc_tlc_probe.out \
+  slc_tlc_slc_x slc_tlc_slc_y slc_tlc_slc_absent slc_tlc_tlc_0 slc_tlc_tlc_1 \
+  slc_tlc_tlc_absent slc_tlc_rw_slc_holds slc_tlc_rw_tlc_holds \
+  slc_tlc_slc_rhs_lookup slc_tlc_tlc_rhs_lookup \
+  "$cake_dir/pancake/proofs/pan_to_crepProofScript.sml" \
+  "$cake_dir/pancake/proofs"
 run_probe ctxt_fc_probeScript.sml ctxt_fc_probe.out \
   shaped_slots empty_maximum functions_projection vmax_nonempty_list vmax_empty_list \
   "$cake_dir/pancake/proofs/pan_to_crepProofScript.sml" \

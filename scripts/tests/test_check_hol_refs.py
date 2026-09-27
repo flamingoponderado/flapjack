@@ -265,6 +265,17 @@ class HolAttributeSitesTest(unittest.TestCase):
         )
         self.assertTrue(any("conjunct 2" in error for error in errors))
 
+    def test_fmap_as_finite_support_equalities_rejects_non_conjunction(self):
+        declaration = (
+            "theorem slcTlcRwHOL :\n"
+            "    (HolFiniteMapExact.empty = a)"
+        )
+        lines = [declaration + " := by rfl"]
+        errors = CHECKER["fmap_as_finite_support_equalities_errors"](
+            lines, "Example.lean", declaration, "slcTlcRwHOL",
+        )
+        self.assertTrue(any("at least two" in error for error in errors))
+
     def test_fmap_as_finite_support_equalities_rejects_ignored_proof_witness(self):
         declaration = (
             "theorem slcTlcRwHOL :\n"

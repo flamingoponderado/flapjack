@@ -1099,6 +1099,14 @@ def fmap_as_finite_support_equalities_errors(
     mention the tagged theorem, so the ignored-proof/threaded-argument pattern is
     rejected. The tagged declaration's own statement must use the approved
     `HolFiniteMapExact` translation.
+
+    This is a conjunction-specific qualifier, so at least two top-level equality
+    conjuncts are required. The checks are syntactic: the checker enforces witness
+    count, naming, lookup shape, same-key application, and per-conjunct textual
+    association, but it does NOT prove that the Lean witnesses and conjuncts
+    correspond to the HOL map equalities. Source review must compare each numbered
+    witness against the HOL equality and record that comparison in the reviewer
+    note.
     """
     errors: list[str] = []
     if "HolFiniteMapExact" not in declaration_text:
@@ -1109,10 +1117,10 @@ def fmap_as_finite_support_equalities_errors(
         )
     conclusion = _statement_conclusion(declaration_text)
     count = _count_top_level_conjuncts(conclusion)
-    if count < 1:
+    if count < 2:
         errors.append(
-            "fmap_as_finite_support_equalities found no finite-map equality "
-            "conjunct in the tagged declaration's conclusion"
+            "fmap_as_finite_support_equalities requires at least two finite-map "
+            "equality conjuncts in the tagged declaration's conclusion"
         )
         return errors
     conjuncts = _split_top_level_all(conclusion, "\u2227")
