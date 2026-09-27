@@ -1560,9 +1560,10 @@ class WordsCarrierResolutionTest(unittest.TestCase):
     """Carrier resolution for `(words_as_type_indexed_bitvec)`.
 
     A tagged signature may omit a literal `BitVec` when it names a reviewed
-    width-indexed carrier whose fields include `BitVec width` fields and whose
-    declaration retains `[NeZero width]`. The carrier is resolved from its
-    declaration (local or imported), never from its name alone.
+    width-indexed structure or inductive carrier whose fields/constructor
+    payloads include `BitVec width` and whose declaration retains
+    `[NeZero width]`. The carrier is resolved from its declaration (local or
+    imported), never from its name alone.
     """
 
     MODULE = "Flapjack/PanToCrep/CarrierExact.lean"
@@ -1647,6 +1648,68 @@ class WordsCarrierResolutionTest(unittest.TestCase):
             "    (state : CrepStateExact width σ) : Nat := width",
         ])
         self.assertEqual(self._run(None, local), [])
+
+    def test_accepts_imported_inductive_carrier_with_bitvec_payload(self):
+        owner = "\n".join([
+            "inductive CrepProgExact (width : Nat) [NeZero width] where",
+            "  | skip",
+            "  | raise (value : BitVec width)",
+        ])
+        consumer = "\n".join([
+            "import Flapjack.PanToCrep.ContextExact",
+            '@[hol "cakeml/pancake/crep_inlineScript.sml" "unreach_elim_def"',
+            "  (words_as_type_indexed_bitvec)]",
+            "def unreachExact {width : Nat} [NeZero width]",
+            "    (program : CrepProgExact width) : Nat := width",
+        ])
+        self.assertEqual(self._run(owner, consumer), [])
+
+    def test_rejects_inductive_carrier_without_same_owner_word_payload(self):
+        owner = "\n".join([
+            "inductive CrepProgExact (width : Nat) [NeZero width] where",
+            "  | skip",
+            "  | clock (value : Nat)",
+        ])
+        consumer = "\n".join([
+            "import Flapjack.PanToCrep.ContextExact",
+            '@[hol "cakeml/pancake/crep_inlineScript.sml" "unreach_elim_def"',
+            "  (words_as_type_indexed_bitvec)]",
+            "def unreachExact {width : Nat} [NeZero width]",
+            "    (program : CrepProgExact width) : Nat := width",
+        ])
+        errors = self._run(owner, consumer)
+        self.assertTrue(any("BitVec" in error for error in errors), errors)
+
+    def test_accepts_imported_inductive_carrier_with_bitvec_payload(self):
+        owner = "\n".join([
+            "inductive CrepProgExact (width : Nat) [NeZero width] where",
+            "  | skip",
+            "  | raise (value : BitVec width)",
+        ])
+        consumer = "\n".join([
+            "import Flapjack.PanToCrep.ContextExact",
+            '@[hol "cakeml/pancake/crep_inlineScript.sml" "unreach_elim_def"',
+            "  (words_as_type_indexed_bitvec)]",
+            "def unreachExact {width : Nat} [NeZero width]",
+            "    (program : CrepProgExact width) : Nat := width",
+        ])
+        self.assertEqual(self._run(owner, consumer), [])
+
+    def test_rejects_inductive_carrier_without_same_owner_word_payload(self):
+        owner = "\n".join([
+            "inductive CrepProgExact (width : Nat) [NeZero width] where",
+            "  | skip",
+            "  | clock (value : Nat)",
+        ])
+        consumer = "\n".join([
+            "import Flapjack.PanToCrep.ContextExact",
+            '@[hol "cakeml/pancake/crep_inlineScript.sml" "unreach_elim_def"',
+            "  (words_as_type_indexed_bitvec)]",
+            "def unreachExact {width : Nat} [NeZero width]",
+            "    (program : CrepProgExact width) : Nat := width",
+        ])
+        errors = self._run(owner, consumer)
+        self.assertTrue(any("BitVec" in error for error in errors), errors)
 
     def test_rejects_fake_carrier_without_bitvec_field(self):
         owner = "\n".join([
