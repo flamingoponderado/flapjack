@@ -398,6 +398,25 @@ example {width : Nat} {σ : Type} [NeZero width]
   (compileExpValRelHOL_var_local state context targetState name value expressions shape
     heval hlocals hcompile).2.2.1
 
+/-- The global-variable localisation premise of the `Var Global` case is
+    unreachable: `localised_exp` rejects global variables. -/
+example {width : Nat} [NeZero width] (name : MlS) :
+    localisedExpHOL (width := width) (.var .global name) = false := by
+  simp only [localisedExpHOL, everyExpHOL]
+
+example {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) [_hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width σ) [ht : DecidablePred targetState.memaddrs]
+    (name : MlS) (value : ValueHOL width)
+    (expressions : List (CrepExpHOL width)) (shape : ShapeHOL)
+    (heval : state.evalHOLFinite (.var .global name) = some value)
+    (hlocalised : localisedExpHOL (width := width) (.var .global name) = true)
+    (hcompile : compileExpExactHOLW context (.var .global name) = (expressions, shape)) :
+    shapeOfHOLExact value = shape :=
+  (compileExpValRelHOL_var_global state context targetState name value expressions shape
+    heval hlocalised hcompile).2.2.1
+
 def runChecks : IO Bool := do
   let checks := [
     ("HOL state_rel matching empty carrier fields", matchingFieldsOracleCase),
