@@ -1774,9 +1774,13 @@ end CompileExpValRelRelationWitnesses
     reads `PanSemStateFiniteExact.globals`; `code_rel` reads
     `PanSemStateFiniteExact.code` / `CrepSemHOLState.code` and
     `PanToCrepContextExact.funcs`/`eids`; `locals_rel` reads
-    `PanToCrepContextExact.vars` and the `locals` fields of both states. The
-    same-module witnesses above validate the three carriers. No cross-assistant
-    agreement theorem is required for this tag. -/
+    `PanToCrepContextExact.vars` and the `locals` fields of both states. Fields
+    read only inside the separately tagged and source-reviewed evaluators
+    (`state.eshapes` through `evalHOLFinite`, `targetState.globals` through
+    `evalCrepSemHOLExp`) occur in no relation hypothesis or conclusion and so are
+    not listed; the qualifier covers only the maps the relation premises
+    traverse. The same-module witnesses above validate the three carriers. No
+    cross-assistant agreement theorem is required for this tag. -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "compile_exp_val_rel"
   (fmap_as_finite_support_relation := [PanSemStateFiniteExact.globals,
     PanSemStateFiniteExact.code, PanSemStateFiniteExact.locals,
