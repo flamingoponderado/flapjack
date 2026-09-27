@@ -193,6 +193,11 @@ failure. The matching restricted total state evaluator and Lean guards are in
 `Flapjack.Pancake.Semantics.CrepSem.TotalEval` and
 `Flapjack.Test.CrepSemTotalStoreParity`; the restricted evaluator has no
 whole-definition `@[hol]` tag.
+`pan_sem_store_error_probe.out` includes direct HOL `evaluate` rows for
+ShMemLoad address-evaluation failure, a non-word address, missing destination,
+and shared-memory-domain rejection. `Flapjack.Pancake.Semantics.PanSem.ShMemLoadCase`
+ports the literal nested matches from `evaluate_def`; its finite-carrier Lean
+guards live in `Flapjack.Test.PanSemShMemLoadCaseParity`.
 `crep_arith_dest_const_probe.out` records direct HOL EVAL of
 `crep_arith$dest_const_def` at
 `cakeml/pancake/crep_arithScript.sml:10-12` for a constant, variable, load,

@@ -271,6 +271,7 @@ import Flapjack.Test.PanSemDecErrorExactParity
 import Flapjack.Test.PanSemPrimitiveErrorExactParity
 import Flapjack.Test.PanSemAssignErrorExactParity
 import Flapjack.Test.PanSemStoreErrorExactParity
+import Flapjack.Test.PanSemShMemLoadCaseParity
 import Flapjack.Test.PanSemStore32ErrorExactParity
 import Flapjack.Test.PanSemIteErrorExactParity
 import Flapjack.Test.PanSemFuelDecompositionParity
