@@ -570,3 +570,13 @@ valid and rejected inputs. The exact evaluator theorem and Lean cases are in
 `Flapjack.Pancake.Proofs.PanToCrep.EvaluateNestedDecs` and
 `Flapjack.Test.CrepNestedDecsSeqResVarEqParity`. Refresh it with
 `HOL_PROBE_ONLY=eval_nested_decs_seq_res_var_eq_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`eval_nested_decs_load_globals_probe.out` records direct HOL EVAL instances of
+`evaluate_nested_decs_load_globals` at `pan_to_crepProofScript.sml:4139-4176`:
+loading one global word while restoring an old local, and loading a two-word
+struct while restoring one old local and preserving an absent local. Each row
+checks the complete theorem premise conjunction, including `globals_lookup`,
+the 32-word limit, distinct target locals, and the exact generated
+`load_globals` expression count, then evaluates the theorem's full result and
+post-state equation. Refresh with
+`HOL_PROBE_ONLY=eval_nested_decs_load_globals_probeScript.sml scripts/hol-probes/regenerate.sh`.
