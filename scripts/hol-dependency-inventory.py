@@ -17,9 +17,10 @@ Method (first slice; deliberately coarse, see limitations below):
 3. Lexically cited closure: a citation fixed point over that pool, starting at
    the root theorem.  A declaration is "cited" when its name occurs as an
    identifier token in the source span of a cited declaration.  HOL-qualified
-   ``Theory$name`` tokens are resolved to their unqualified ``name`` when that
-   name is a known declaration (dotted ``nameTheory.name`` tokens already split
-   naturally because ``.`` is not an identifier character).  This is a
+   ``Theory$name`` tokens are resolved to their unqualified ``name`` when the
+   prefix is a recognised theory name and that name is a known declaration
+   (dotted ``nameTheory.name`` tokens already split naturally because ``.`` is
+   not an identifier character).  This is a
    *lexical reachability set*: it is not a HOL dependency set, and it is not a
    bound in either direction (see limitations).  The count is of unique
    declaration NAMES, not of declaration identities; the per-kind, per-area
@@ -188,21 +189,25 @@ class SourceCache:
         return "\n".join(lines[max(start - 1, 0) : end])
 
 
-def qualified_candidates(token: str, names: set[str]) -> tuple[str, ...]:
+def qualified_candidates(
+    token: str, names: set[str], theories: set[str]
+) -> tuple[str, ...]:
     """Resolve a HOL-qualified identifier token to an unqualified name.
 
     HOL writes qualified references as ``Theory$name`` (and ``nameTheory.name``,
     whose dotted form already tokenises into ``nameTheory`` and ``name``).  The
     identifier grammar keeps ``$`` inside a single token, so ``Theory$name`` is
-    seen as one token and would otherwise be missed.  We only accept a suffix
-    that is itself a known declaration name, so a standalone identifier that
-    merely contains ``$`` (for example an infix ``foo$bar``) cannot invent a
-    citation to an unrelated declaration.
+    seen as one token and would otherwise be missed.  We require BOTH that the
+    part before the last ``$`` is a recognised theory name (a theory that owns
+    an indexed declaration) and that the suffix is a known declaration name.
+    Requiring the theory prefix means a token such as ``foo$bar`` is not treated
+    as a citation merely because ``bar`` happens to name a real declaration,
+    since ``foo`` is not a theory in the index.
     """
     if QUALIFIED_SEP not in token:
         return ()
-    suffix = token.rsplit(QUALIFIED_SEP, 1)[1]
-    return (suffix,) if suffix in names else ()
+    prefix, _, suffix = token.rpartition(QUALIFIED_SEP)
+    return (suffix,) if prefix in theories and suffix in names else ()
 
 
 def citation_edges(
@@ -210,13 +215,14 @@ def citation_edges(
     cache: SourceCache,
 ) -> tuple[dict[str, set[str]], set[str], int]:
     names = {declaration.name for declaration in declarations}
+    theories = {declaration.theory for declaration in declarations}
     edges: dict[str, set[str]] = defaultdict(set)
     qualified_resolved = 0
     for declaration in declarations:
         tokens = set(IDENT.findall(cache.span(declaration.path, declaration.start, declaration.end)))
         candidates = set(tokens)
         for token in tokens:
-            for candidate in qualified_candidates(token, names):
+            for candidate in qualified_candidates(token, names, theories):
                 candidates.add(candidate)
                 qualified_resolved += 1
         edges[declaration.name].update((candidates & names) - {declaration.name})
@@ -521,7 +527,8 @@ def main() -> int:
     )
     lines.append(
         "- `Theory$name` qualified citations are resolved to the unqualified "
-        "`name` when it is a known declaration; dotted `nameTheory.name` "
+        "`name` when the prefix is a recognised theory name and `name` is a "
+        "known declaration; dotted `nameTheory.name` "
         "citations already split on `.`.  Theory-qualified identities are still "
         "not tracked separately, so same-named declarations in different "
         "theories still collapse into one node, and this slice does not yet "

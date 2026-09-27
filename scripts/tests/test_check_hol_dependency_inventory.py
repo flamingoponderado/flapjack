@@ -165,11 +165,33 @@ class QualifiedCitationTests(unittest.TestCase):
         self.assertNotIn("targetDef", edges["rootThm"])
         self.assertEqual(resolved, 0)
 
+    def test_ignores_unrecognised_theory_prefix(self):
+        # ``notatheory`` is not a HOL theory in the index, so even though
+        # ``targetDef`` is a real declaration the token is not a citation.
+        edges, names, resolved = self._edges(
+            "Theory example\nTheorem rootThm:\n  notatheory$targetDef x\n"
+        )
+        self.assertIn("targetDef", names)
+        self.assertNotIn("targetDef", edges["rootThm"])
+        self.assertEqual(resolved, 0)
+
     def test_qualified_candidates_helper(self):
         names = {"targetDef"}
-        self.assertEqual(INVENTORY.qualified_candidates("other$targetDef", names), ("targetDef",))
-        self.assertEqual(INVENTORY.qualified_candidates("targetDef", names), ())
-        self.assertEqual(INVENTORY.qualified_candidates("other$missing", names), ())
+        theories = {"other"}
+        self.assertEqual(
+            INVENTORY.qualified_candidates("other$targetDef", names, theories),
+            ("targetDef",),
+        )
+        self.assertEqual(
+            INVENTORY.qualified_candidates("targetDef", names, theories), ()
+        )
+        self.assertEqual(
+            INVENTORY.qualified_candidates("other$missing", names, theories), ()
+        )
+        self.assertEqual(
+            INVENTORY.qualified_candidates("notatheory$targetDef", names, theories),
+            (),
+        )
 
 
 class CommittedReportTests(unittest.TestCase):

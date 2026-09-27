@@ -18,7 +18,7 @@ The cited-declaration counts below are a **lexical reachability set** computed f
   - by kind: Datatype: 118, Definition: 1848, Theorem: 4628
   - by area: pancake: 544, cakeml_backend: 5708, cakeml_semantics: 167, cakeml_other: 21, basis: 29, other: 125
   - each cited name is attributed to one representative declaration (first with that name in index order) for the per-kind, per-area and per-theory breakdowns
-- HOL-qualified `Theory$name` token occurrences resolved to an unqualified declaration name: `1021`
+- HOL-qualified `Theory$name` token occurrences resolved to an unqualified declaration name: `1020`
 
 ## Validation
 
@@ -29,7 +29,7 @@ All count invariants hold:
 
 ## Lean coverage of the lexically cited set
 
-- Distinct textual `@[hol]` `(theory, name)` matches under `Flapjack/`: `548` (not the validated tag count)
+- Distinct textual `@[hol]` `(theory, name)` matches under `Flapjack/`: `550` (not the validated tag count)
 - Lexically cited names with a textual `(theory, name)` match: `270`
 - Lexically cited names with no textual `(theory, name)` match: `6324`
 - ... of which also have no same-name textual match anywhere: `6270` (name heuristic: neither an over- nor an under-approximation of genuinely missing ports)
@@ -441,6 +441,6 @@ python3 scripts/hol-dependency-inventory.py --list   # full cited list
 - Tactic scripts, simplifier sets, and rewrite rules use lemmas without naming them in the declaration span, so the lexical set is NOT an upper bound on actual HOL dependencies.
 - Comment and shadowed-identifier mentions are false positives, and name collisions across theories are collapsed, so the count of cited names with no tag is NOT a lower bound on genuinely missing ports.
 - Lean matches are found textually and may include comments; use check-hol-refs.py for the validated attribute count. Definitions and datatypes are included, and an untagged declaration may still have a correct untagged Lean analogue.
-- `Theory$name` qualified citations are resolved to the unqualified `name` when it is a known declaration; dotted `nameTheory.name` citations already split on `.`.  Theory-qualified identities are still not tracked separately, so same-named declarations in different theories still collapse into one node, and this slice does not yet distinguish HOL helper lemmas that Lean proof restructuring makes unnecessary.
+- `Theory$name` qualified citations are resolved to the unqualified `name` when the prefix is a recognised theory name and `name` is a known declaration; dotted `nameTheory.name` citations already split on `.`.  Theory-qualified identities are still not tracked separately, so same-named declarations in different theories still collapse into one node, and this slice does not yet distinguish HOL helper lemmas that Lean proof restructuring makes unnecessary.
 - `.hol-index/` is generated and git-ignored; numbers move with the CakeML revision.
 - Theory ancestors are restricted to identifier tokens in the `Ancestors` header (trailing `[attributes]` stripped, section keywords terminate the list); a malformed `theory-deps.txt` is rejected rather than silently folded into the closure.
