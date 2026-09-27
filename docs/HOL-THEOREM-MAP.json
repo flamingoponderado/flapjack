@@ -1,6 +1,15 @@
 [
   {
     "hol_path": "cakeml/pancake/crep_inlineScript.sml",
+    "hol_name": "has_return_def",
+    "lean_path": "Flapjack/Pancake/CrepInline/Pass.lean",
+    "lean_name": "hasReturnHOLExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-c source comparison (2026-09-27; bead flapjack-e7w.2.1.9) against crep_inlineScript.sml:41-50. Return is true; Dec/Seq/If/While recurse with the HOL Boolean operators; Call NONE is true, SOME (_, NONE) is false, and SOME (_, SOME (word, handler)) recurses into handler; every other constructor is false. The Lean definition has the same exact CrepProgHOL input and Bool output. Call names and payloads use MlString/BitVec width as in HOL under words_as_type_indexed_bitvec; [NeZero width] keeps the positive word dimension. Direct HOL EVAL rows for every clause are in scripts/hol-probes/crep_inline_has_return_probe.out and Lean guard hasReturnGuard checks the same width-8 cases in Flapjack/Test/CrepInlineHasReturnParity. This predicate is an exact helper only and does not establish production inline_prog routing.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_inlineScript.sml",
     "hol_name": "inline_nontail_def",
     "lean_path": "Flapjack/Pancake/CrepInline/Pass.lean",
     "lean_name": "inlineNontailHOLExact",
