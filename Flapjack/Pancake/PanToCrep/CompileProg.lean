@@ -2,6 +2,7 @@ import Flapjack.HolRef
 import Flapjack.Pancake.CrepInline.Pass
 import Flapjack.Pancake.PanToCrep.Compile
 import Flapjack.Pancake.PanToCrep.CompileExact
+import Flapjack.Pancake.PanToCrep.CompileExpBridge
 import Flapjack.Pancake.PanLang.Decl
 
 /-!
@@ -1059,6 +1060,68 @@ def PanToCrepContextExactProdRel {width : Nat} [NeZero width]
   exact.vmax = production.vmax ∧
   (∀ name, Flapjack.Pancake.PanLang.NameRanged name →
     exact.toProduction.vars name = production.vars name)
+
+/-- The context relation is preserved by parallel exact/production variable
+    updates when their keys are source-ranged and their decoded payloads agree.
+    Unlike the base-context helper above, this form composes through recursive
+    Dec and DecCall nests. -/
+theorem exactProdRel_decUpdate {width : Nat} [NeZero width]
+    (exact : PanToCrepContextExact width)
+    (production : PanToCrepHOLContext (BitVec width))
+    (hrel : PanToCrepContextExactProdRel exact production)
+    (name : String) (exactShape : ShapeHOL) (productionShape : Shape)
+    (names : List Nat) (exactBump productionBump : Nat)
+    (hname : Flapjack.Pancake.PanLang.NameRanged name)
+    (hshape : Flapjack.Pancake.PanLang.shapeOfHOL exactShape = productionShape)
+    (hbump : exactBump = productionBump) :
+    PanToCrepContextExactProdRel
+      { exact with
+        vars := HolFiniteMapExact.update exact.vars
+          (Flapjack.Basis.Pure.MlString.ofString name, (exactShape, names))
+        vmax := exact.vmax + exactBump }
+      { production with
+        vars := FUPDATE production.vars (name, (productionShape, names))
+        vmax := production.vmax + productionBump } := by
+  rcases hrel with ⟨hfuncs, heids, hvmax, hvars⟩
+  refine ⟨hfuncs, heids, ?_, ?_⟩
+  · simpa [hbump] using congrArg (fun value => value + exactBump) hvmax
+  · intro query hquery
+    have hkey :
+        Flapjack.Basis.Pure.MlString.ofString name =
+            Flapjack.Basis.Pure.MlString.ofString query ↔ name = query := by
+      constructor
+      · exact ofString_injective_on_ranged_names hname hquery
+      · intro heq
+        rw [heq]
+    simp only [PanToCrepContextExact.toProduction,
+      HolFiniteMapExact.lookup_update, FUPDATE]
+    by_cases h : name = query
+    · subst query
+      simp [hshape]
+    · have hExact : Flapjack.Basis.Pure.MlString.ofString name ≠
+        Flapjack.Basis.Pure.MlString.ofString query := by
+        intro heq
+        exact h (hkey.mp heq)
+      have hbase :
+          (exact.vars.lookup (Flapjack.Basis.Pure.MlString.ofString query)).map
+              (fun value => (Flapjack.Pancake.PanLang.shapeOfHOL value.1, value.2)) =
+            production.vars query := by
+        simpa [PanToCrepContextExact.toProduction] using hvars query hquery
+      simpa [beq_iff_eq, hExact, h] using hbase
+
+/-- The recursive expression codec under a ranged exact/production context
+    relation. This packages the expression congruence with the exact compiler
+    codec for use by program-clause induction. -/
+theorem compileExpExactHOLW_prodCodec_of_contextRel {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width)
+    (production : PanToCrepHOLContext (BitVec width))
+    (hrel : PanToCrepContextExactProdRel context production)
+    (expression : ExpHOL width) :
+    ((compileExpExactHOLW context expression).1.map crepExpOfHOL,
+        shapeOfHOL (compileExpExactHOLW context expression).2)
+      = compileExpHOL production (expOfHOL expression) := by
+  exact compileExpExactHOLW_prodCodec_of_ranged_vars context production
+    hrel.2.2.2 expression
 
 /-- A `Dec` variable-map update preserves the ranged context relation needed
     for compiling the recursive body. Parameters expose the update payload and
