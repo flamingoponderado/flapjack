@@ -1095,6 +1095,65 @@ theorem evalCrepSemHOLExp_updateLocals_eq_of_not_vars {width : Nat} [NeZero widt
       simp only [List.mapM_cons, ihHead hhead, ihTail htail])
     expression hfresh
 
+/-- Flapjack-only finite-list extension of the exact `var_cexp` noninterference
+helper above. A list of HOL-equality local updates whose keys are all absent
+from an expression leaves its exact evaluator result unchanged. There is no
+separate HOL declaration for this list helper; it supports the induction in
+`eval_nested_assign_distinct_eq`. -/
+def evalCrepSemHOLExpWithMemDec {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (address : BitVec width) → Decidable (state.memaddrs address))
+    (expression : CrepExpHOL width) : Option (HolWordLab width) := by
+  letI : DecidablePred state.memaddrs := memDec
+  exact evalCrepSemHOLExp state expression
+
+theorem evalCrepSemHOLExpWithMemDec_updateLocals_eq_of_not_vars
+    {width : Nat} [NeZero width]
+    {σ : Type} (state : CrepSemHOLState width σ)
+    (memDec : (address : BitVec width) → Decidable (state.memaddrs address))
+    (expression : CrepExpHOL width) (name : Nat) (word : HolWordLab width)
+    (hfresh : name ∉ crepExpVarsHOL expression) :
+    evalCrepSemHOLExpWithMemDec { state with locals := state.locals.updateEq (name, word) }
+        memDec expression = evalCrepSemHOLExpWithMemDec state memDec expression := by
+  change evalCrepSemHOLExp
+      { state with locals := state.locals.updateEq (name, word) } expression =
+    evalCrepSemHOLExp state expression
+  letI : DecidablePred state.memaddrs := memDec
+  exact evalCrepSemHOLExp_updateLocals_eq_of_not_vars
+    state expression name word hfresh
+
+theorem evalCrepSemHOLExp_updateLocalsList_eq_of_not_vars {width : Nat} [NeZero width]
+    {σ : Type} (state : CrepSemHOLState width σ)
+    (memDec : (address : BitVec width) → Decidable (state.memaddrs address))
+    (expression : CrepExpHOL width) (entries : List (Nat × HolWordLab width))
+    (hfresh : ∀ entry, entry ∈ entries → entry.1 ∉ crepExpVarsHOL expression) :
+    evalCrepSemHOLExpWithMemDec
+        { state with locals := state.locals.updateListEq entries } memDec expression =
+      evalCrepSemHOLExpWithMemDec state memDec expression := by
+  induction entries generalizing state with
+  | nil => rfl
+  | cons entry entries ih =>
+      have hfreshHead : entry.1 ∉ crepExpVarsHOL expression :=
+        hfresh entry (by simp)
+      have hfreshTail : ∀ item, item ∈ entries →
+          item.1 ∉ crepExpVarsHOL expression := by
+        intro item hmem
+        exact hfresh item (by simp [hmem])
+      let updated : CrepSemHOLState width σ :=
+        { state with locals := state.locals.updateEq entry }
+      have htail := ih updated memDec hfreshTail
+      have hhead := evalCrepSemHOLExpWithMemDec_updateLocals_eq_of_not_vars
+        state memDec expression entry.1 entry.2 hfreshHead
+      have hstate :
+          ({ state with locals := state.locals.updateListEq (entry :: entries) } :
+            CrepSemHOLState width σ) =
+          { updated with locals := updated.locals.updateListEq entries } := by
+        cases state
+        simp [updated, HolFiniteMapExact.updateListEq,
+          HolFiniteMapExact.updateEq, FUPDATE_LIST_HOL_cons]
+      cases hstate
+      exact htail.trans hhead
+
 /-- Exact port of HOL `crepProps$update_locals_not_vars_eval_eq`
 (`crepPropsScript.sml:115-130`): under successful exact Crep expression
 evaluation and absence of the assigned local from `var_cexp`, replacing that
