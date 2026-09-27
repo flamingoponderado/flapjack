@@ -12181,16 +12181,6 @@
   },
   {
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
-    "hol_name": "evaluate_def",
-    "hol_line": 780,
-    "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
-    "lean_name": "evaluateHOLFiniteState_dec",
-    "statement_status": "reviewed_fmap_as_finite_support",
-    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
-    "reviewer": "flapjack-luna-a source comparison (2026-09-27; bead flapjack-qj5): the HOL Dec conjunct at panSemScript.sml:558-565 evaluates the initializer in the original state; failure or a shape mismatch returns (SOME Error,s). On a matching shape, it inserts (name,value) into locals, evaluates the body, and restores that local using res_var with FLOOKUP of the original locals. evaluateHOLFiniteState_dec states this constructor equation with the source state/name/shape/initializer/body quantifiers and no extra premises. The tagged statement now exposes these cases directly, using shapeEqHOL validated against HOL equality and HolFiniteMapExact.resVarEq for res_var; the recursive branch uses the same finite evaluation context/result projection as evaluateHOLFiniteState. The helper's optional-marker fallback is unreachable by the kernel-checked evalPanSemRecursiveCallFiniteContext_total theorem, so it adds no behavior or premise. PanSemStateFiniteExact uses HOL's positive fixed word-width/FFI carriers, and its locals/globals/code/eshapes fields are HolFiniteMapExact with the same-module holFmapAsFiniteSupportWitness. The qualifier records only those map translations; no evaluation, shape, or recursive-result hypothesis is added. This is one exact constructor case; the full conjunction remains open."
-  },
-  {
-    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
     "hol_name": "evaluate_decls_def",
     "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
     "lean_name": "evaluateDeclsHOLFinite",

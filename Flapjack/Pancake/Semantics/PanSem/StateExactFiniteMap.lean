@@ -2444,7 +2444,8 @@ attribute [simp] evaluateHOLFiniteState_shMemStore
 /-- Flapjack-specific finite-carrier rendering of HOL's `Dec` clause. The
     recursive body call and restoration step mirror `evaluate_def`; the
     `resVarEq` update is the canonical finite-map form of HOL `res_var`. The
-    tagged equation below is the HOL declaration port. -/
+    optional assembly marker makes its equation unsuitable as the HOL theorem
+    statement, so it remains untagged infrastructure. -/
 noncomputable def evaluateDecClauseHOLFiniteExact {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) (name : MlS) (shape : ShapeHOL)
     (initializer : ExpHOL width) (body : ProgHOL width) :
@@ -2469,11 +2470,11 @@ noncomputable def evaluateDecClauseHOLFiniteExact {width : Nat} {σ : Type} [NeZ
               (result, (postContext.withState restored rfl rfl).state)
         else (some .error, state)
 
-/-! HOL `evaluate_def`'s `Dec` equation (`panSemScript.sml:558-565`), one of
-the line-780 theorem's 21 conjuncts. The tagged statement below exposes the
-initializer result, shape test, body execution, and `res_var` restoration. -/
-@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+/-! Flapjack-specific finite-carrier `Dec` equation. This declaration is not
+tagged as HOL `evaluate_def`: the internal optional assembly-marker result of
+`evalPanSemRecursiveCallFiniteContext` leaves an extra unreachable `none`
+branch in its statement. The faithful total pair-shaped theorem remains open
+under `flapjack-qj5`; keep `evaluateDecClauseHOLFiniteExact` as infrastructure. -/
 theorem evaluateHOLFiniteState_dec {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) (name : MlS) (shape : ShapeHOL)
     (initializer : ExpHOL width) (body : ProgHOL width) :
