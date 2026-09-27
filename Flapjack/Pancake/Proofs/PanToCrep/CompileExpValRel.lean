@@ -22,10 +22,11 @@ This module preserves that shape over the exact carriers `ExpHOL width`,
 `CrepSemHOLState`, and `PanToCrepContextExact`, with the exact finite-support
 source evaluator `evalHOLFinite` and target evaluator `evalCrepSemHOLExp`.
 
-The full theorem is tracked by `flapjack-4ac.5.81`; this slice records the exact
-statement and proves its `Const` case. It is Flapjack proof infrastructure: HOL
-proves the cases inside `compile_exp_val_rel` and does not export a standalone
-`compile_exp_val_rel` case, so nothing here carries an `@[hol]` tag.
+The full theorem is assembled at the end of this module as `compileExpValRelHOL`
+(bead `flapjack-4ac.5.81`), the exact target of HOL `compile_exp_val_rel`
+(`cakeml/pancake/proofs/pan_to_crepProofScript.sml:130`); it carries the
+`@[hol]` tag. The individual `compileExpValRelHOL_<constructor>` case lemmas are
+Flapjack proof infrastructure and stay untagged.
 -/
 
 namespace Flapjack
@@ -40,9 +41,9 @@ open Flapjack.Pancake.PanLang
     `codeRelExactHOLW`/`panToCrepLocalsRelFiniteExact`, and `localised_exp` is
     `localisedExpHOL`.
 
-    This is the target of the full port (`flapjack-4ac.5.81`); the constructor
-    case below does not complete it. -/
-def compileExpValRelHOL {width : Nat} {σ : Type} [NeZero width]
+    This is the exact-carrier statement assembled by `compileExpValRelHOL` below
+    (bead `flapjack-4ac.5.81`). -/
+def compileExpValRelHOLProp {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ)
     (context : PanToCrepContextExact width)
     (targetState : CrepSemHOLState width σ)
@@ -1689,6 +1690,133 @@ theorem compileExpValRelHOL_panop {width : Nat} {σ : Type} [NeZero width]
           | true => exact absurd hb hall
         simp only [hvals, hfalse, Bool.false_eq_true, if_false] at heval
         exact absurd heval.symm (Option.some_ne_none value)
+
+/-- Assembled exact-carrier `compile_exp_val_rel`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml`): the full
+    expression-evaluation / compilation correspondence over the exact
+    `PanSemStateFiniteExact` / `CrepSemHOLState` carriers.  Built by structural
+    recursion on the expression, dispatching every constructor to its
+    source-reviewed case lemma. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "compile_exp_val_rel"]
+theorem compileExpValRelHOL {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) [hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width σ) [ht : DecidablePred targetState.memaddrs] :
+    compileExpValRelHOLProp state context targetState := by
+  let Conclusion : ValueHOL width → List (CrepExpHOL width) → ShapeHOL → Prop :=
+    fun value expressions shape =>
+      expressions.map (evalCrepSemHOLExp targetState) = (flattenHOL value).map some ∧
+      expressions.length = sizeOfShapeHOL shape ∧
+      shapeOfHOLExact value = shape ∧
+      isWfShapeExactHOL ([] : StructContextExact) shape = true
+  let Case : ExpHOL width → Prop := fun e =>
+    ∀ (value : ValueHOL width) (expressions : List (CrepExpHOL width)) (shape : ShapeHOL),
+      state.evalHOLFinite e = some value →
+      panToCrepStateRelFiniteExact state targetState →
+      codeRelExactHOLW context state.code targetState.code →
+      panToCrepLocalsRelFiniteExact context state.locals targetState.locals →
+      localisedExpHOL e = true →
+      compileExpExactHOLW context e = (expressions, shape) →
+      Conclusion value expressions shape
+  exact ExpHOL.rec
+    (motive_1 := Case)
+    (motive_2 := fun l => ∀ e ∈ l, Case e)
+    (motive_3 := fun l => ∀ p ∈ l, Case p.2)
+    (motive_4 := fun p => Case p.2)
+    (fun word => by
+      intro value expressions shape heval _hstate _hcode _hlocals _hlocalised hcompile
+      exact compileExpValRelHOL_const state context targetState word value expressions shape
+        heval hcompile)
+    (fun kind name => by
+      intro value expressions shape heval _hstate _hcode hlocals hlocalised hcompile
+      cases kind
+      · exact compileExpValRelHOL_var_local state context targetState name value
+          expressions shape heval hlocals hcompile
+      · exact compileExpValRelHOL_var_global state context targetState name value
+          expressions shape heval hlocalised hcompile)
+    (fun fields ih => by
+      intro value expressions shape heval hstate hcode hlocals hlocalised hcompile
+      exact compileExpValRelHOL_rstruct state context targetState fields value expressions shape
+        (fun e he v es sh hev hl hc => ih e he v es sh hev hstate hcode hlocals hl hc)
+        heval hlocalised hcompile)
+    (fun index subExpression ih => by
+      intro value expressions shape heval hstate hcode hlocals hlocalised hcompile
+      exact compileExpValRelHOL_rfield state context targetState index subExpression value
+        expressions shape
+        (fun sv ses ssh hev hs hc hl hcomp => ih sv ses ssh hev hs hc hl hcomp)
+        heval hlocalised hstate hcode hlocals hcompile)
+    (fun name fields _ih => by
+      intro value expressions shape heval hstate _hcode _hlocals _hlocalised hcompile
+      exact compileExpValRelHOL_nstruct state context targetState name fields value
+        expressions shape heval hstate hcompile)
+    (fun name value' _ih => by
+      intro value expressions shape heval hstate _hcode _hlocals _hlocalised hcompile
+      exact compileExpValRelHOL_nfield state context targetState name value' value
+        expressions shape heval hstate hcompile)
+    (fun shape address ih => by
+      intro value expressions outputShape heval hstate hcode hlocals hlocalised hcompile
+      exact compileExpValRelHOL_load state context targetState shape address value expressions
+        outputShape
+        (fun sv ses ssh hev hs hc hl hcomp => ih sv ses ssh hev hs hc hl hcomp)
+        heval hlocalised hstate hcode hlocals hcompile)
+    (fun subExpression ih => by
+      intro value expressions shape heval hstate hcode hlocals hlocalised hcompile
+      exact compileExpValRelHOL_load32 state context targetState subExpression value
+        expressions shape
+        (fun sv ses ssh hev hs hc hl hcomp => ih sv ses ssh hev hs hc hl hcomp)
+        heval hlocalised hstate hcode hlocals hcompile)
+    (fun subExpression ih => by
+      intro value expressions shape heval hstate hcode hlocals hlocalised hcompile
+      exact compileExpValRelHOL_loadByte state context targetState subExpression value
+        expressions shape
+        (fun sv ses ssh hev hs hc hl hcomp => ih sv ses ssh hev hs hc hl hcomp)
+        heval hlocalised hstate hcode hlocals hcompile)
+    (fun operator arguments ih => by
+      intro value expressions shape heval hstate hcode hlocals hlocalised hcompile
+      exact compileExpValRelHOL_op state context targetState operator arguments value
+        expressions shape
+        (fun e he v es sh hev hl hc => ih e he v es sh hev hstate hcode hlocals hl hc)
+        heval hlocalised hcompile)
+    (fun operator arguments ih => by
+      intro value expressions shape heval hstate hcode hlocals hlocalised hcompile
+      exact compileExpValRelHOL_panop state context targetState operator arguments value
+        expressions shape
+        (fun e he v es sh hev hl hc => ih e he v es sh hev hstate hcode hlocals hl hc)
+        heval hlocalised hcompile)
+    (fun operator left right ihleft ihright => by
+      intro value expressions shape heval hstate hcode hlocals hlocalised hcompile
+      exact compileExpValRelHOL_cmp state context targetState operator left right value
+        expressions shape
+        (fun sv ses ssh hev hs hc hl hcomp => ihleft sv ses ssh hev hs hc hl hcomp)
+        (fun sv ses ssh hev hs hc hl hcomp => ihright sv ses ssh hev hs hc hl hcomp)
+        heval hlocalised hstate hcode hlocals hcompile)
+    (fun operator left right ihleft ihright => by
+      intro value expressions shape heval hstate hcode hlocals hlocalised hcompile
+      exact compileExpValRelHOL_shift state context targetState operator left right value
+        expressions shape
+        (fun sv ses ssh hev hs hc hl hcomp => ihleft sv ses ssh hev hs hc hl hcomp)
+        (fun sv ses ssh hev hs hc hl hcomp => ihright sv ses ssh hev hs hc hl hcomp)
+        heval hlocalised hstate hcode hlocals hcompile)
+    (fun value expressions shape heval hstate _hcode _hlocals _hlocalised hcompile =>
+        compileExpValRelHOL_baseAddr state context targetState value expressions shape
+          heval hstate hcompile)
+    (fun value expressions shape heval hstate _hcode _hlocals _hlocalised hcompile =>
+        compileExpValRelHOL_topAddr state context targetState value expressions shape
+          heval hstate hcompile)
+    (fun value expressions shape heval _hstate _hcode _hlocals _hlocalised hcompile =>
+        compileExpValRelHOL_bytesInWord state context targetState value expressions shape
+          heval hcompile)
+    (fun _e he => by simp at he)
+    (fun head tail ihhead ihtail e he => by
+      rcases List.mem_cons.mp he with rfl | he
+      · exact ihhead
+      · exact ihtail e he)
+    (fun _p hp => by simp at hp)
+    (fun head tail ihhead ihtail p hp => by
+      rcases List.mem_cons.mp hp with rfl | hp
+      · exact ihhead
+      · exact ihtail p hp)
+    (fun _fst _snd ih => ih)
 
 
 end Flapjack

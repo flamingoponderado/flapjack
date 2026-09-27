@@ -14320,6 +14320,14 @@
     "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.10): HOL miscScript.sml:2481 `Theorem OPT_MMAP_CONG` is `!l1 l2 f f'. (l1 = l2) /\\ (!x. MEM x l2 ==> (f x = f' x)) ==> (OPT_MMAP f l1 = OPT_MMAP f' l2)`. The Lean statement `optMmapCongHOL (l1 l2 : List \u03b1) (f f' : \u03b1 \u2192 Option \u03b2) (hlen : l1 = l2) (h : \u2200 x, x \u2208 l2 \u2192 f x = f' x) : l1.mapM f = l2.mapM f'` matches clause-for-clause: HOL `OPT_MMAP` is rendered by core `List.mapM`, `MEM x l2` by list membership, and `LENGTH`/list equality directly; no extra hypotheses or carriers."
   },
   {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "compile_exp_val_rel",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "compileExpValRelHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds10 (bead flapjack-4ac.5.81): clause-for-clause source review against HOL compile_exp_val_rel (cakeml/pancake/proofs/pan_to_crepProofScript.sml:130). HOL hypotheses panSem$eval s e = SOME v / state_rel s t / code_rel ct s.code t.code / locals_rel ct s.locals t.locals / localised_exp e / compile_exp ct e = (es, sh) correspond to state.evalHOLFinite expression = some value / panToCrepStateRelFiniteExact state targetState / codeRelExactHOLW context state.code targetState.code / panToCrepLocalsRelFiniteExact context state.locals targetState.locals / localisedExpHOL expression = true / compileExpExactHOLW context expression = (expressions, shape). HOL conclusion MAP (eval t) es = MAP SOME (flatten v) / LENGTH es = size_of_shape sh / shape_of v = sh / is_wf_shape_nil sh corresponds to expressions.map (evalCrepSemHOLExp targetState) = (flattenHOL value).map some / expressions.length = sizeOfShapeHOL shape / shapeOfHOLExact value = shape / isWfShapeExactHOL ([] : StructContextExact) shape = true. No extra hypotheses or weakened conclusions. The theorem is assembled by structural ExpHOL.rec induction from the exact-carrier case lemmas (kept untagged); the statement names whole reviewed carriers and applies already-tagged relations, so no finite-map qualifier is used (precedent: isWfShapeExactHOL_length_flatten)."
+  },
+  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
