@@ -991,13 +991,23 @@ theorem evalCrepSemHOLProgExact_eq_core {width : Nat} [NeZero width] {σ : Type}
     `locals`, `globals`, and `code` as `HolFiniteMapExact` (with the
     evaluator-local witness in this module), and `words_as_type_indexed_bitvec`
     records the `'a word` carrier as `BitVec width` here. Direct source review
-    for `flapjack-4ac.5.16.5.13` (originally tagged under `.13.1`) re-read the
-    rewritten conjunct at `crepSemScript.sml:443` against the originating line
-    241 clause and the 11-field carrier: the `Skip` clause does not mention
-    `fix_clock`, so `REWRITE_RULE [fix_clock_evaluate]` leaves it unchanged, and
-    the state/program-only interface with the exact `(NONE, s)` pair-shape is
-    preserved. The remaining `evaluate_def` clauses stay untagged in this
-    slice. -/
+    for `flapjack-luna-b` (bead `flapjack-l60u`) compared the 11 state fields
+    against `crepSemScript.sml:19-32`: `locals`, `globals`, and `code` are the
+    three qualified finite maps; `memory` is a total word-to-`word_lab`
+    function; `memaddrs` and `sh_memaddrs` are predicates for HOL sets; `clock`
+    and `be` are `Nat` and `Bool`; `ffi` is the exact tagged `HolFfiState σ`;
+    and `base_addr`/`top_addr` are width-indexed words. The program is the
+    constructor-for-constructor `CrepProgHOL width`, and the evaluator result
+    carrier is `CrepResultHOLExact width` with the tagged `HolWordLab` and
+    `HolFinalEvent` payloads. The only carrier translations used by this tag
+    are the three named finite-support maps and HOL's positive type-indexed
+    word dimension to `BitVec width` under `[NeZero width]`. The Skip equation
+    itself is unconditional: it has no branch selector or extra premise, and
+    concludes exactly `(NONE, s)`. Its source clause at line 241 contains no
+    `fix_clock`, so `REWRITE_RULE [fix_clock_evaluate]` leaves it unchanged at
+    line 443. This review supports this one constructor equation only; the
+    total evaluator's agreement for all other clauses remains open and those
+    `evaluate_def` clauses stay untagged. -/
 @[hol "cakeml/pancake/semantics/crepSemScript.sml" "evaluate_def" 443
   (fmap_as_finite_support := [locals, globals, code])
   (words_as_type_indexed_bitvec)]
