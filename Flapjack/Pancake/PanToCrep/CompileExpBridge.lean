@@ -36,6 +36,76 @@ def prodContext {width : Nat} [NeZero width]
 
 end CompileExpContextExact
 
+private theorem stringOfBytes_byteRanged (name : MlS) :
+    ∀ c ∈ toStringOfBytes name |>.toList, c.toNat < 256 := by
+  intro c hc
+  unfold toStringOfBytes at hc
+  simp only [String.toList_ofList, List.mem_map] at hc
+  rcases hc with ⟨b, _hb, rfl⟩
+  rw [Flapjack.Basis.Pure.MlString.ofNat_toNat_char]
+  have hlt : b.toNat < 256 := by
+    have h := b.isLt
+    omega
+  exact hlt
+
+private theorem shapeOfHOL_byteRanged :
+    (shape : ShapeHOL) → ShapeByteRanged (shapeOfHOL shape)
+  | .one => by simp [ShapeByteRanged, shapeOfHOL]
+  | .named name => by
+      simpa [ShapeByteRanged, shapeOfHOL] using stringOfBytes_byteRanged name
+  | .comb fields => by
+      simp only [shapeOfHOL, ShapeByteRanged]
+      intro shape hshape
+      obtain ⟨source, _hsource, rfl⟩ := List.mem_map.mp hshape
+      exact shapeOfHOL_byteRanged source
+
+private theorem expOfHOL_byteRanged {width : Nat} [NeZero width] :
+    (expression : ExpHOL width) → ExpByteRanged (expOfHOL expression) :=
+  ExpHOL.rec
+    (motive_1 := fun expression => ExpByteRanged (expOfHOL expression))
+    (motive_2 := fun expressions =>
+      ListExpByteRanged (expressions.map expOfHOL))
+    (motive_3 := fun fields =>
+      ListFieldByteRanged (fields.map
+        (fun p => (toStringOfBytes p.1, expOfHOL p.2))))
+    (motive_4 := fun field =>
+      (∀ c ∈ toStringOfBytes field.1 |>.toList, c.toNat < 256) ∧
+        ExpByteRanged (expOfHOL field.2))
+    (by simp [expOfHOL, ExpByteRanged])
+    (fun _kind name => by
+      simpa [expOfHOL, ExpByteRanged] using stringOfBytes_byteRanged name)
+    (fun _fields ih => by simpa [expOfHOL, ExpByteRanged, ListExpByteRanged] using ih)
+    (fun _index _value ih => by simpa [expOfHOL, ExpByteRanged] using ih)
+    (fun name _fields ih => by
+      simpa [expOfHOL, ExpByteRanged, ListFieldByteRanged] using
+        And.intro (stringOfBytes_byteRanged name) ih)
+    (fun name _value ih => by
+      simpa [expOfHOL, ExpByteRanged] using
+        And.intro (stringOfBytes_byteRanged name) ih)
+    (fun shape _address ih => by
+      simpa [expOfHOL, ExpByteRanged] using
+        And.intro (shapeOfHOL_byteRanged shape) ih)
+    (fun _address ih => by simpa [expOfHOL, ExpByteRanged] using ih)
+    (fun _address ih => by simpa [expOfHOL, ExpByteRanged] using ih)
+    (fun _operator _args ih => by simpa [expOfHOL, ExpByteRanged] using ih)
+    (fun _operator _args ih => by simpa [expOfHOL, ExpByteRanged] using ih)
+    (fun _operator _left _right ihl ihr => by
+      simpa [expOfHOL, ExpByteRanged] using And.intro ihl ihr)
+    (fun _operator _left _right ihl ihr => by
+      simpa [expOfHOL, ExpByteRanged] using And.intro ihl ihr)
+    (by simp [expOfHOL, ExpByteRanged])
+    (by simp [expOfHOL, ExpByteRanged])
+    (by simp [expOfHOL, ExpByteRanged])
+    (by simp [ListExpByteRanged])
+    (fun _head _tail ihHead ihTail => by
+      simpa [ListExpByteRanged, List.map] using And.intro ihHead ihTail)
+    (by simp [ListFieldByteRanged])
+    (fun _head _tail ihHead ihTail => by
+      simpa [ListFieldByteRanged, List.map] using
+        And.intro ihHead.1 (And.intro ihHead.2 ihTail))
+    (fun fst snd ih => by
+      exact ⟨stringOfBytes_byteRanged fst, ih⟩)
+
 /-- Codec agreement between the production and exact expression compilers at a
     single expression. The first component is the compiled expression list
     (production mapped forward by `crepExpToHOL`) and the second the result
@@ -727,5 +797,36 @@ theorem compileExpBridge_pair {width : Nat} [NeZero width]
       = compileExpHOL (CompileExpContextExact.prodContext context) expression :=
   Prod.ext (compileExpBridge_codecImage context expression)
     (compileExpBridge_shapeOfHOL context expression hbyte)
+
+private theorem compileExpHOL_exact_shapeByteRanged {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (expression : ExpHOL width) :
+    ShapeByteRanged
+      (compileExpHOL (CompileExpContextExact.prodContext context)
+        (expOfHOL expression)).2 := by
+  apply compileExpHOL_shapeByteRanged
+  · intro name value hlookup
+    change Option.map (fun entry => (shapeOfHOL entry.1, entry.2))
+      (context.vars.lookup (ofString name)) = some value at hlookup
+    cases hmap : context.vars.lookup (ofString name) with
+    | none => simp [hmap] at hlookup
+    | some entry =>
+        simp only [hmap, Option.map_some, Option.some.injEq] at hlookup
+        cases hlookup
+        exact shapeOfHOL_byteRanged entry.1
+  · exact expOfHOL_byteRanged expression
+
+/-- The exact expression compiler's decoded output is unconditionally the
+    production compiler result for every exact context and HOL expression.
+    This is Flapjack bridge infrastructure (there is no separate HOL theorem
+    with this paired representation statement). -/
+theorem compileExpExactHOLW_prodCodec {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (expression : ExpHOL width) :
+    ((compileExpExactHOLW context expression).1.map crepExpOfHOL,
+        shapeOfHOL (compileExpExactHOLW context expression).2)
+      = compileExpHOL (CompileExpContextExact.prodContext context)
+          (expOfHOL expression) := by
+  simpa only [expToHOL_expOfHOL] using
+    compileExpBridge_pair context (expOfHOL expression)
+      (compileExpHOL_exact_shapeByteRanged context expression)
 
 end Flapjack
