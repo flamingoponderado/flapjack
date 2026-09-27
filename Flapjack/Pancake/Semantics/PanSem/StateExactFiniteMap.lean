@@ -3143,6 +3143,35 @@ theorem evaluateHOLFiniteState_decCall_args_none {width : Nat} {σ : Type}
   simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
     evalPanSemRecursiveCallFiniteContext.eq_6, hargsExact]
 
+/-- Exact HOL `evaluate_def` (`panSemScript.sml:556`) DecCall lookup-failure
+    case, corresponding to the failed `lookup_code` branch at lines 699-714:
+    successful argument evaluation followed by a missing code entry returns
+    `Error` with the caller state unchanged. The premise selects only that
+    source branch; the statement remains the total result/state pair. The
+    four state maps use the same-module canonical finite-support witness. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 556
+  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+theorem evaluateHOLFiniteState_decCall_lookup_none {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateFiniteExact width σ)
+    (resultName : MlS) (shape : ShapeHOL) (function : MlS)
+    (arguments : List (ExpHOL width)) (continuation : ProgHOL width)
+    (values : List (ValueHOL width))
+    (hargs : evalListHOLFinite state
+      (h := fun address => Classical.propDecidable (state.memaddrs address))
+      arguments = some values)
+    (hlookup : lookupCodeHOLFinite state.code.lookup function values = none) :
+    evaluateHOLFiniteState state
+        (.decCall resultName shape function arguments continuation : ProgHOL width) =
+      (some .error, state) := by
+  classical
+  have hargsExact :
+      @evalListHOLExact width σ _ state.toExact
+        (fun address => Classical.propDecidable (state.memaddrs address)) arguments =
+        some values := by
+    simpa only [evalListHOLFinite_eq_toExact] using hargs
+  simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+    evalPanSemRecursiveCallFiniteContext.eq_6, hargsExact, hlookup]
+
 /-- Source-reviewed HOL `evaluate_def` Seq conjunct (`panSemScript.sml:615`)
     from the source `Definition evaluate_def` at line 556. That definition
     explicitly applies `fix_clock` to the first evaluation pair; the theorem
