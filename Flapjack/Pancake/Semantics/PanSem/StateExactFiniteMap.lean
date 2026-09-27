@@ -2161,6 +2161,191 @@ theorem evaluateHOLFiniteState_store32 {width : Nat} {σ : Type} [NeZero width]
 
 attribute [simp] evaluateHOLFiniteState_store32
 
+/-! HOL `evaluate_def`'s `StoreByte` equation (`panSemScript.sml:597-603`),
+one of the line-780 theorem's 21 conjuncts. The byte argument is HOL `word8`
+(Lean `BitVec 8`) after `w2w`; the exact memory helper preserves the aligned
+cell update and every untouched cell. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
+  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+theorem evaluateHOLFiniteState_storeByte {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (destination source : ExpHOL width) :
+    evaluateHOLFiniteState state (.storeByte destination source : ProgHOL width) =
+      match @evalHOLExact width σ _ state.toExact
+          (fun address => Classical.propDecidable (state.memaddrs address)) destination with
+      | some (.val (.word address)) =>
+          match @evalHOLExact width σ _ state.toExact
+              (fun address => Classical.propDecidable (state.memaddrs address)) source with
+          | some (.val (.word value)) =>
+              match @panMemStoreByteWord8HOL width _ state.memory state.memaddrs
+                  (fun address => Classical.propDecidable (state.memaddrs address))
+                  state.be address (BitVec.ofNat 8 value.toNat) with
+              | some memory => (none, { state with memory := memory })
+              | none => (some .error, state)
+          | _ => (some .error, state)
+      | _ => (some .error, state) := by
+  classical
+  cases hevalDestination : @evalHOLExact width σ _ state.toExact
+      (fun address => Classical.propDecidable (state.memaddrs address)) destination with
+  | none =>
+      simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+        evalPanSemRecursiveCallFiniteContext, evalPanSemNonrecursiveHOLFinite,
+        evalPanSemNonrecursiveHOLExact, storeByteStepHOLExact, hevalDestination,
+        ofExact_toExact]
+  | some destinationValue =>
+      cases destinationValue with
+      | val destinationPayload =>
+          cases destinationPayload with
+          | word address =>
+              cases hevalSource : @evalHOLExact width σ _ state.toExact
+                  (fun address => Classical.propDecidable (state.memaddrs address)) source with
+              | none =>
+                  simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+                    evalPanSemRecursiveCallFiniteContext, evalPanSemNonrecursiveHOLFinite,
+                    evalPanSemNonrecursiveHOLExact, storeByteStepHOLExact,
+                    hevalDestination, hevalSource, ofExact_toExact]
+              | some value =>
+                  cases value with
+                  | val payload =>
+                      cases payload with
+                      | word value =>
+                          cases hmemory : @panMemStoreByteWord8HOL width _ state.memory
+                              state.memaddrs
+                              (fun address => Classical.propDecidable (state.memaddrs address))
+                              state.be address (BitVec.ofNat 8 value.toNat) with
+                          | none =>
+                              have hmemoryExact : @panMemStoreByteWord8HOL width _ state.memory
+                                  state.memaddrs
+                                  (fun address => Classical.propDecidable (state.memaddrs address))
+                                  state.be address (BitVec.setWidth 8 value) = none := by
+                                simpa using hmemory
+                              have hmemory' : @panMemStoreByteHOL width _ state.memory
+                                  state.memaddrs
+                                  (fun address => Classical.propDecidable (state.memaddrs address))
+                                  state.be address (UInt8.ofNat value.toNat) = none := by
+                                rw [panMemStoreByteHOL_eq_word8]
+                                have hbyte : (UInt8.ofNat value.toNat).toBitVec =
+                                    BitVec.ofNat 8 value.toNat := by
+                                  rfl
+                                rw [hbyte]
+                                exact hmemory
+                              simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+                                evalPanSemRecursiveCallFiniteContext,
+                                evalPanSemNonrecursiveHOLFinite, evalPanSemNonrecursiveHOLExact,
+                                storeByteStepHOLExact, hevalDestination, hevalSource, hmemory',
+                                hmemoryExact,
+                                ofExact_toExact]
+                          | some memory =>
+                              have hmemoryExact : @panMemStoreByteWord8HOL width _ state.memory
+                                  state.memaddrs
+                                  (fun address => Classical.propDecidable (state.memaddrs address))
+                                  state.be address (BitVec.setWidth 8 value) = some memory := by
+                                simpa using hmemory
+                              have hmemory' : @panMemStoreByteHOL width _ state.memory
+                                  state.memaddrs
+                                  (fun address => Classical.propDecidable (state.memaddrs address))
+                                  state.be address (UInt8.ofNat value.toNat) = some memory := by
+                                rw [panMemStoreByteHOL_eq_word8]
+                                have hbyte : (UInt8.ofNat value.toNat).toBitVec =
+                                    BitVec.ofNat 8 value.toNat := by
+                                  rfl
+                                rw [hbyte]
+                                exact hmemory
+                              have hsupport :
+                                  ({ state.toExact with memory := memory } :
+                                    PanSemStateExact width σ).FiniteSupport :=
+                                state.toExact_finiteSupport
+                              have hroundtrip :
+                                  ofExact ({ state.toExact with memory := memory }) hsupport =
+                                    { state with memory := memory } := by
+                                cases state
+                                rfl
+                              simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+                                evalPanSemRecursiveCallFiniteContext,
+                                evalPanSemNonrecursiveHOLFinite, evalPanSemNonrecursiveHOLExact,
+                                storeByteStepHOLExact, hevalDestination, hevalSource, hmemory',
+                                hmemoryExact,
+                                hroundtrip]
+                  | rStruct _ | nStruct _ _ =>
+                      simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+                        evalPanSemRecursiveCallFiniteContext, evalPanSemNonrecursiveHOLFinite,
+                        evalPanSemNonrecursiveHOLExact, storeByteStepHOLExact,
+                        hevalDestination, hevalSource, ofExact_toExact]
+      | rStruct _ | nStruct _ _ =>
+          simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+            evalPanSemRecursiveCallFiniteContext, evalPanSemNonrecursiveHOLFinite,
+            evalPanSemNonrecursiveHOLExact, storeByteStepHOLExact,
+            hevalDestination, ofExact_toExact]
+
+attribute [simp] evaluateHOLFiniteState_storeByte
+
+/-! HOL `evaluate_def`'s `Primitive` equation (`panSemScript.sml:573-582`),
+one of the line-780 theorem's 21 conjuncts. Argument expressions use
+`OPT_MMAP eval`; `panPrimopHOLExact` is the tagged exact `pan_primop` port,
+and a valid result updates only locals. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
+  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+theorem evaluateHOLFiniteState_primitive {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (name : MlS) (operator : PrimOp)
+    (arguments : List (ExpHOL width)) :
+    evaluateHOLFiniteState state (.primitive name operator arguments : ProgHOL width) =
+      match @evalListHOLExact width σ _ state.toExact
+          (fun address => Classical.propDecidable (state.memaddrs address)) arguments with
+      | none => (some .error, state)
+      | some values =>
+          match panPrimopHOLExact operator values with
+          | none => (some .error, state)
+          | some value =>
+              if isValidValueHOLExact state.toExact .local name value then
+                (none, setVarHOLFinite name value state)
+              else (some .error, state) := by
+  classical
+  cases heval : @evalListHOLExact width σ _ state.toExact
+      (fun address => Classical.propDecidable (state.memaddrs address)) arguments with
+  | none =>
+      simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+        evalPanSemRecursiveCallFiniteContext, evalPanSemNonrecursiveHOLFinite,
+        evalPanSemNonrecursiveHOLExact, primitiveStepHOLExact, heval,
+        ofExact_toExact]
+  | some values =>
+      cases hprim : panPrimopHOLExact operator values with
+      | none =>
+          simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+            evalPanSemRecursiveCallFiniteContext, evalPanSemNonrecursiveHOLFinite,
+            evalPanSemNonrecursiveHOLExact, primitiveStepHOLExact, heval, hprim,
+            ofExact_toExact]
+      | some value =>
+          by_cases hvalid : isValidValueHOLExact state.toExact .local name value = true
+          · have hsupport :
+                (setVarHOLExact name value state.toExact).FiniteSupport :=
+              PanSemStateExact.finiteSupport_setVar state.toExact_finiteSupport name value
+            have hroundtrip :
+                ofExact (setVarHOLExact name value state.toExact) hsupport =
+                  setVarHOLFinite name value state := by
+              cases state <;>
+                simp only [PanSemStateFiniteExact.mk.injEq, ofExact,
+                  setVarHOLExact, setVarHOLFinite]
+              all_goals repeat' constructor
+              all_goals
+                apply HolFiniteMapExact.ext
+                funext current
+                by_cases h : current = name
+                · simp [HolFiniteMapExact.update, FUPDATE, h]
+                · have h' : name ≠ current := fun h' => h h'.symm
+                  simp [HolFiniteMapExact.update, FUPDATE, h, h']
+            simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+              evalPanSemRecursiveCallFiniteContext, evalPanSemNonrecursiveHOLFinite,
+              evalPanSemNonrecursiveHOLExact, primitiveStepHOLExact,
+              heval, hprim, hvalid, hroundtrip]
+          · have hinvalid :
+                isValidValueHOLExact state.toExact .local name value = false :=
+              Bool.eq_false_iff.mpr hvalid
+            simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+              evalPanSemRecursiveCallFiniteContext, evalPanSemNonrecursiveHOLFinite,
+              evalPanSemNonrecursiveHOLExact, primitiveStepHOLExact,
+              heval, hprim, hinvalid, ofExact_toExact]
+
+attribute [simp] evaluateHOLFiniteState_primitive
+
 /-- The decider-taking helper is the pair-shaped rendering of the assembly-marker
     evaluator. This bridge is Flapjack-specific infrastructure. -/
 theorem evaluateHOLFiniteStateWithDeciders_eq_getD {width : Nat} {σ : Type} [NeZero width]

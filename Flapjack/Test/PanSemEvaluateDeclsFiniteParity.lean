@@ -56,6 +56,18 @@ abbrev stateLoad : PanSemStateFiniteExact 8 Unit :=
     memory := fun a => if a = (0 : Word8) then .word 9 else .word 0
     memaddrs := fun a => a = 0 }
 
+abbrev stateLocalX : PanSemStateFiniteExact 8 Unit :=
+  { state0 with
+    locals := emptyValues.update (ml "x", .val (.word 3)) }
+
+abbrev stateOldFunction : PanSemStateFiniteExact 8 Unit :=
+  { state0 with
+    code := emptyCode.update (ml "f", ([], ProgHOL.skip, ShapeHOL.one)) }
+
+abbrev stateExistingException : PanSemStateFiniteExact 8 Unit :=
+  { state0 with
+    eshapes := emptyShapes.update (ml "E", ShapeHOL.one) }
+
 def functionDecl : FunDeclHOL 8 :=
   { name := ml "f"
     inline := false
@@ -119,6 +131,32 @@ def declWordLoadUpdateGuard : Bool :=
   | some result => wordOfGlobal result "g" == some 9
   | none => false
 
+/-- Oracle `decl_bad_load_shape`: the source load fails and the declaration is rejected. -/
+def declBadLoadShapeGuard : Bool :=
+  (evaluateDeclsHOLFinite state0
+    [DeclHOL.decl ShapeHOL.one (ml "g")
+      (ExpHOL.load (ShapeHOL.named (ml "Missing")) (ExpHOL.const 0))]).isNone
+
+/-- Oracle `decl_preserves_locals`: declaration evaluation leaves input locals unchanged. -/
+def declPreservesLocalsGuard : Bool :=
+  match evaluateDeclsHOLFinite stateLocalX
+      [DeclHOL.decl ShapeHOL.one (ml "g") (ExpHOL.const 7)] with
+  | some result => wordOfGlobal result "g" == some 7 && wordOfLocal result "x" == some 3
+  | none => false
+
+/-- Oracle `decl_left_to_right`: later declarations observe earlier global updates. -/
+def declLeftToRightGuard : Bool :=
+  match evaluateDeclsHOLFinite state0
+      [ DeclHOL.decl ShapeHOL.one (ml "g") (ExpHOL.const 7)
+      , DeclHOL.decl ShapeHOL.one (ml "h") (ExpHOL.var .global (ml "g")) ] with
+  | some result => wordOfGlobal result "g" == some 7 && wordOfGlobal result "h" == some 7
+  | none => false
+
+/-- Oracle `decl_empty_locals_failure`: expression evaluation uses empty locals. -/
+def declEmptyLocalsFailureGuard : Bool :=
+  (evaluateDeclsHOLFinite stateLocalX
+    [DeclHOL.decl ShapeHOL.one (ml "g") (ExpHOL.var .local (ml "x"))]).isNone
+
 /-- Oracle `decl_shape_failure`: mismatched declared shape fails. -/
 def declShapeFailureGuard : Bool :=
   (evaluateDeclsHOLFinite state0
@@ -130,17 +168,34 @@ def functionCodeUpdateGuard : Bool :=
   | some result => codeIsExpected result "f"
   | none => false
 
+/-- Oracle `function_code_replacement`: a function update replaces its prior code entry. -/
+def functionCodeReplacementGuard : Bool :=
+  match evaluateDeclsHOLFinite stateOldFunction [DeclHOL.function functionDecl] with
+  | some result => codeIsExpected result "f"
+  | none => false
+
 /-- Oracle `function_bad_param_shape`: a bad parameter shape fails. -/
 def functionBadParamShapeGuard : Bool :=
   (evaluateDeclsHOLFinite state0
     [DeclHOL.function { functionDecl with
         params := [(ml "x", ShapeHOL.named (ml "Missing"))] }]).isNone
 
+/-- Oracle `function_bad_return_shape`: an invalid return shape rejects the function. -/
+def functionBadReturnShapeGuard : Bool :=
+  (evaluateDeclsHOLFinite state0
+    [DeclHOL.function { functionDecl with
+      returnShape := ShapeHOL.named (ml "Missing") }]).isNone
+
 /-- Oracle `exn_shape_update`: `SOME One`. -/
 def exnShapeUpdateGuard : Bool :=
   match evaluateDeclsHOLFinite state0 [DeclHOL.exnDecl (ml "E") ShapeHOL.one] with
   | some result => eshapeIsOne result "E"
   | none => false
+
+/-- Oracle `exn_duplicate_failure`: an existing exception identifier is rejected. -/
+def exnDuplicateFailureGuard : Bool :=
+  (evaluateDeclsHOLFinite stateExistingException
+    [DeclHOL.exnDecl (ml "E") ShapeHOL.one]).isNone
 
 /-- Oracle `exn_bad_shape_failure`: a bad exception shape fails. -/
 def exnBadShapeFailureGuard : Bool :=
@@ -149,13 +204,18 @@ def exnBadShapeFailureGuard : Bool :=
 
 def evaluateDeclsFiniteGuard : Bool :=
   emptyGuard && nameNoopGuard && declGlobalUpdateGuard && declWordLoadUpdateGuard &&
-    declShapeFailureGuard && functionCodeUpdateGuard && functionBadParamShapeGuard &&
-    exnShapeUpdateGuard && exnBadShapeFailureGuard
+    declBadLoadShapeGuard && declPreservesLocalsGuard && declLeftToRightGuard &&
+    declEmptyLocalsFailureGuard && declShapeFailureGuard && functionCodeUpdateGuard &&
+    functionCodeReplacementGuard && functionBadParamShapeGuard &&
+    functionBadReturnShapeGuard && exnShapeUpdateGuard && exnDuplicateFailureGuard &&
+    exnBadShapeFailureGuard
 
 #eval emptyGuard
 #eval nameNoopGuard
 #eval declGlobalUpdateGuard
 #eval declWordLoadUpdateGuard
+#eval declPreservesLocalsGuard
+#eval declLeftToRightGuard
 #eval functionCodeUpdateGuard
 #eval exnShapeUpdateGuard
 
@@ -163,10 +223,17 @@ def evaluateDeclsFiniteGuard : Bool :=
 #guard nameNoopGuard
 #guard declGlobalUpdateGuard
 #guard declWordLoadUpdateGuard
+#guard declBadLoadShapeGuard
+#guard declPreservesLocalsGuard
+#guard declLeftToRightGuard
+#guard declEmptyLocalsFailureGuard
 #guard declShapeFailureGuard
 #guard functionCodeUpdateGuard
+#guard functionCodeReplacementGuard
 #guard functionBadParamShapeGuard
+#guard functionBadReturnShapeGuard
 #guard exnShapeUpdateGuard
+#guard exnDuplicateFailureGuard
 #guard exnBadShapeFailureGuard
 #guard evaluateDeclsFiniteGuard
 
