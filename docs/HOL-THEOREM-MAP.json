@@ -13893,6 +13893,17 @@
     "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.16.25): source comparison of cakeml/pancake/semantics/crepPropsScript.sml:257-263 against the exact Lean statement. HOL quantifies the finite map l, key m, lookup key n and option v freely (no side conditions); the Lean statement renders res_var as the reviewed HolFiniteMapExact.resVarEq (res_var_def) and FLOOKUP as the finite-support .lookup, with DecidableEq alpha encoding HOL equality. The bare parameter l is recorded as a finite-support relation entry; source review confirms the if n = m then v else l.lookup n branch structure matches HOL exactly."
   },
   {
+    "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
+    "hol_name": "flookup_res_var_diff_eq",
+    "lean_path": "Flapjack/Pancake/Semantics/CrepProps.lean",
+    "lean_name": "flookupResVarDiffEqHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "l"
+    ],
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-27; bead flapjack-2de.11): HOL crepPropsScript.sml:249-255 `Theorem flookup_res_var_diff_eq: n <> m ==> FLOOKUP (res_var l (m,v)) n = FLOOKUP l n` against the exact Lean statement flookupResVarDiffEqHOL. HOL quantifies the finite map l, the assigned name m, the lookup key n, the option value v and the side condition n <> m; the Lean statement keeps the same argument order, side condition hne : n != m and conclusion, rendering res_var as the reviewed HolFiniteMapExact.resVarEq (res_var_def) and FLOOKUP as the finite-support .lookup. DecidableEq alpha is Lean's encoding of HOL equality, so no extra side condition is introduced. The bare parameter l is recorded as a finite-support relation entry; source review confirms the FLOOKUP_UPDATE/DOMSUB_FLOOKUP_NEQ branch split (v = none and v = some) matches HOL exactly."
+  },
+  {
     "hol_path": "cakeml/misc/miscScript.sml",
     "hol_name": "OPT_MMAP_CONG",
     "lean_path": "Flapjack/Misc/OptMmapCong.lean",

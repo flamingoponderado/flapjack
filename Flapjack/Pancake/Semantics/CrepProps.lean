@@ -1229,6 +1229,32 @@ theorem updateLocalsNotVarsEvalEqCrepHOL {width : Nat} [NeZero width] {σ : Type
         expression = some value := by
   rw [evalCrepSemHOLExp_updateLocals_eq_of_not_vars state expression name word hfresh, heval]
 
+/-- Exact port of HOL `flookup_res_var_diff_eq`
+    (`cakeml/pancake/semantics/crepPropsScript.sml:249-255`):
+    `n <> m ==> FLOOKUP (res_var l (m, v)) n = FLOOKUP l n`.
+    HOL `res_var` is rendered as the reviewed `HolFiniteMapExact.resVarEq`
+    (`res_var_def`), `FLOOKUP` as the finite-support `.lookup`, and the
+    quantified finite map `l` is recorded as a bare finite-support parameter.
+    `DecidableEq α` is Lean's encoding of HOL `=`, so the statement is
+    polymorphic in the key type exactly as in HOL. -/
+@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "flookup_res_var_diff_eq"
+  (fmap_as_finite_support_relation := [l])]
+theorem flookupResVarDiffEqHOL [DecidableEq α] (l : HolFiniteMapExact α β)
+    (m n : α) (v : Option β) (hne : n ≠ m) :
+    (HolFiniteMapExact.resVarEq l (m, v)).lookup n = l.lookup n := by
+  cases v with
+  | none =>
+    simp only [HolFiniteMapExact.lookup_resVarEq_none]
+    rw [show FDOMSUB_HOL l.lookup m n = FLOOKUP (FDOMSUB_HOL l.lookup m) n from rfl]
+    rw [FLOOKUP_FDOMSUB_HOL]
+    simp [FLOOKUP, if_neg hne]
+  | some value =>
+    simp only [HolFiniteMapExact.lookup_resVarEq_some]
+    rw [show FUPDATE_HOL l.lookup (m, value) n =
+        FLOOKUP (FUPDATE_HOL l.lookup (m, value)) n from rfl]
+    rw [FLOOKUP_FUPDATE_HOL]
+    simp [FLOOKUP, if_neg hne]
+
 /-- Exact port of HOL `flookup_res_var_thm`
     (`cakeml/pancake/semantics/crepPropsScript.sml:257-263`):
     `FLOOKUP (res_var l (m, v)) n = if n = m then v else FLOOKUP l n`.

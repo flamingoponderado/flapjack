@@ -164,4 +164,17 @@ example :
   rw [Flapjack.flookupResVarThmHOL]
   simp
 
+/-- Exact-port fixture for HOL `flookup_res_var_diff_eq`
+(`crepPropsScript.sml:249-255`): a `res_var` delete/update at key `0` leaves the
+lookup at the distinct key `1` equal to the original map's lookup. -/
+example :
+    (HolFiniteMapExact.resVarEq resVarSample (0, (some 9 : Option Nat))).lookup 1 =
+      resVarSample.lookup 1 :=
+  Flapjack.flookupResVarDiffEqHOL resVarSample 0 1 (some 9) (by decide)
+
+example :
+    (HolFiniteMapExact.resVarEq resVarSample (0, (none : Option Nat))).lookup 1 =
+      resVarSample.lookup 1 :=
+  Flapjack.flookupResVarDiffEqHOL resVarSample 0 1 none (by decide)
+
 end Flapjack.Test.CrepHolStateParity
