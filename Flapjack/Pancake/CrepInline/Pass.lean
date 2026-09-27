@@ -352,6 +352,18 @@ list separately so the later `compile_inl_prog` boundary can preserve order.
 
 abbrev CrepInlineMapHOLName := Flapjack.Basis.Pure.MlString.MlString
 
+/-- HOL-shaped helper for `crep_inline$inline_tail_def`
+    (`crep_inlineScript.sml:171-172`): `inline_tail p = Seq Tick p`.
+    This uses the exact `CrepProgHOL width` syntax and is kernel-checked, but is
+    intentionally untagged until the HOL word-width qualifier checker can
+    resolve an indexed inductive carrier. The checker currently accepts a
+    direct `BitVec width` in the tagged signature or a width-indexed structure;
+    `CrepProgHOL` is an inductive datatype. The exact tag/tooling gate is tracked
+    by `flapjack-e7w.2.1.3.1`. -/
+def inlineTailHOLExact {width : Nat} [NeZero width]
+    (program : CrepProgHOL width) : CrepProgHOL width :=
+  .seq .tick program
+
 structure CrepInlineFmapHOL (width : Nat) [NeZero width] where
   entries : List (CrepInlineMapHOLName × (List Nat × CrepProgHOL width))
   nodupKeys : (entries.map Prod.fst).Nodup

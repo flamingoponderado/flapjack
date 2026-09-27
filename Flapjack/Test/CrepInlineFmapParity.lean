@@ -284,6 +284,16 @@ theorem helperTailP :
       .seq .tick (.seq (.dec 1 (.const 1) (.return [.var 2])) .skip) := by
   simp [helperP, crepInlineTail]
 
+/-- Exact-carrier regression for `inline_tail_def`, matching the direct HOL
+    `tail_p` row in `crep_inline_helper_probe.out` at width 8. -/
+private def helperExactP : CrepProgHOL 8 :=
+  .seq (.dec 1 (.const 1) (.return [.var 2])) .skip
+
+theorem helperTailExactP :
+    inlineTailHOLExact helperExactP =
+      .seq .tick (.seq (.dec 1 (.const 1) (.return [.var 2])) .skip) := by
+  rfl
+
 theorem helperArgLoadP :
     crepArgLoad [20] [.const 5] [7] helperBody =
       .dec 20 (.const 5) (.dec 7 (.var 20) (.dec 1 (.const 1) .skip)) := by
