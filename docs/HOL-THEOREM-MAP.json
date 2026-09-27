@@ -13232,6 +13232,19 @@
     },
     {
       "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
+      "hol_name": "sh_mem_store_FLOOKUP_locals",
+      "lean_path": "Flapjack/Pancake/Semantics/CrepProps.lean",
+      "lean_name": "crepShMemStoreHOL_flookup_locals",
+      "statement_status": "reviewed_fmap_as_finite_support",
+      "fmap_as_finite_support": [
+        "locals",
+        "globals",
+        "code"
+      ],
+      "reviewer": "flapjack-ds9 (direct source comparison, 2026-09-27; bead flapjack-2de.10): HOL sh_mem_store_FLOOKUP_locals (crepPropsScript.sml:312-317) is sh_mem_store v addr nb s = (res, t) implies FLOOKUP t.locals n = FLOOKUP s.locals n, with free variables v, addr, nb, s, res, t, n and no side condition. The Lean statement has the identical binder order (name, address, nb, state, res, target, key) over the exact tagged crepShMemStoreExactHOL port and the exact finite-support CrepSemHOLState carrier; FLOOKUP is rendered as the canonical HolFiniteMapExact.lookup. [NeZero width] is the canonical positive word model and DecidablePred state.shMemaddrs is Lean's decision instance for HOL set membership; the store definition only touches the ffi field, so the locals lookup is preserved in every case. The fmap_as_finite_support qualifier records HOL's finite maps as HolFiniteMapExact (locals/globals/code), matching the same-module canonical holFmapAsFiniteSupportWitness. No extra hypothesis, no target-evaluation premise, no changed conclusion. No direct HOL EVAL probe row yet."
+    },
+    {
+      "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
       "hol_name": "opt_mmap_eval_upd_clock_eq",
      "lean_path": "Flapjack/Pancake/Semantics/CrepProps.lean",
      "lean_name": "evalCrepSemHOLExps_upd_clock_eq",

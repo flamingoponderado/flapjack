@@ -1016,6 +1016,30 @@ theorem crepShMemLoadHOL_flookup_locals {width : Nat} [NeZero width] {σ : Type}
   all_goals
     simp_all [CrepSemHOLState.setVar, FUPDATE_HOL]
 
+/-- Exact HOL `sh_mem_store_FLOOKUP_locals` (`crepPropsScript.sml:312-317`)
+    over the exact finite-support `CrepSemHOLState` carrier and the exact
+    `crepShMemStoreExactHOL` port of `sh_mem_store`: a shared-memory store never
+    changes any local lookup (`FLOOKUP t.locals n = FLOOKUP s.locals n`, with no
+    side condition). HOL's `v`/`n` are the `Nat` local names `name`/`key`. The
+    `(fmap_as_finite_support := [locals, globals, code])` qualifier records that
+    HOL's `|->` fields are represented by the reviewed `HolFiniteMapExact`
+    translation. -/
+@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "sh_mem_store_FLOOKUP_locals"
+  (fmap_as_finite_support := [locals, globals, code])]
+theorem crepShMemStoreHOL_flookup_locals {width : Nat} [NeZero width] {σ : Type}
+    (name : Nat) (address : BitVec width) (nb : Nat)
+    (state : CrepSemHOLState width σ) [DecidablePred state.shMemaddrs]
+    (res : Option (CrepResultHOLExact width)) (target : CrepSemHOLState width σ)
+    (key : Nat)
+    (hstep : crepShMemStoreExactHOL name address nb state = (res, target)) :
+    target.locals.lookup key = state.locals.lookup key := by
+  unfold crepShMemStoreExactHOL at hstep
+  repeat' split at hstep
+  all_goals
+    rcases hstep with ⟨rfl, rfl⟩
+  all_goals
+    rfl
+
 
 /-- Exact port of HOL `eval_upd_clock_eq` (`crepPropsScript.sml:858-872`):
 the exact `crepSem$eval` expression evaluator never reads the state `clock`
