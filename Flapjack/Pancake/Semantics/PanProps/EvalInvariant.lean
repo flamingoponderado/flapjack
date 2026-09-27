@@ -3561,4 +3561,29 @@ theorem evaluateClockSubContinueCaseHOLFinite {width : Nat} {σ : Type} [NeZero 
   subst state
   simp
 
+/-- Genuine `Annot` case of HOL `evaluate_clock_sub`. The annotation has no
+    semantic effect, so this leaf uses the same direct clock-state argument as
+    `Skip`. -/
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_clock_sub"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateClockSubAnnotCaseHOLFinite {width : Nat} {σ : Type} [NeZero width] :
+    ∀ (tag text : MlS)
+      (state : PanPropsEvalStateFiniteExact width σ)
+      (result : Option (PanSemResultExact width))
+      (st : PanPropsEvalStateFiniteExact width σ) (ck : Nat),
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state (.annot tag text) =
+        (result, { st with clock := st.clock + ck }) →
+      result ≠ some .timeOut →
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair
+        { state with clock := state.clock - ck } (.annot tag text) = (result, st) := by
+  classical
+  intro tag text state result st ck hRun _hne
+  simp only [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair,
+    PanSemStateFiniteExact.evaluateHOLFiniteState_annot,
+    PanPropsEvalStateFiniteExact.ofPanSemFinite_toPanSemFinite] at hRun ⊢
+  rcases Prod.mk.inj hRun with ⟨rfl, hState⟩
+  subst state
+  simp
+
 end Flapjack
