@@ -1603,42 +1603,124 @@ def names_as_string_errors(
     return errors
 
 
+_DIMENSION_IDENT_RE = re.compile(r"[A-Za-z_][A-Za-z0-9_']*")
+_DIMENSION_DIGITS_RE = re.compile(r"[0-9]+")
+_DIMENSION_DIGITS_PAREN_RE = re.compile(r"[0-9]+")
+
+
+def word_dimension_atoms(text: str) -> list[tuple[str, bool]]:
+    """Structurally read the dimension argument of every word-carrier use.
+
+    Rather than a partial regex over bare ``BitVec <id>`` / ``BitVec <digits>``
+    spellings, this scans each word carrier (``BitVec`` or a reviewed
+    abbreviation) and consumes the actual following dimension atom, so parenthesised
+    and arithmetic forms are seen instead of silently skipped. Returns
+    ``(atom, parenthesised)`` pairs where ``atom`` is the unparenthesised text of
+    the dimension argument; a carrier with no readable argument is skipped.
+    """
+    atoms: list[tuple[str, bool]] = []
+    for match in WORD_CARRIER_TOKEN_RE.finditer(text):
+        pos = match.end()
+        while pos < len(text) and text[pos].isspace():
+            pos += 1
+        if pos >= len(text):
+            continue
+        char = text[pos]
+        if char == "(":
+            depth = 0
+            start = pos
+            while pos < len(text):
+                if text[pos] == "(":
+                    depth += 1
+                elif text[pos] == ")":
+                    depth -= 1
+                    if depth == 0:
+                        pos += 1
+                        break
+                pos += 1
+            atoms.append((text[start + 1:pos - 1].strip(), True))
+        elif char.isdigit():
+            start = pos
+            while pos < len(text) and text[pos].isdigit():
+                pos += 1
+            atoms.append((text[start:pos], False))
+        elif char.isalpha() or char == "_":
+            start = pos
+            while pos < len(text) and (text[pos].isalnum() or text[pos] in "_'"):
+                pos += 1
+            atoms.append((text[start:pos], False))
+    return atoms
+
+
+def word_dimension_identifier_atoms(text: str) -> list[str]:
+    """The identifier word dimensions in `text` (parenthesised or bare)."""
+    identifiers: list[str] = []
+    for atom, parenthesised in word_dimension_atoms(text):
+        if parenthesised:
+            if _DIMENSION_IDENT_RE.fullmatch(atom) and not atom[0].isdigit():
+                identifiers.append(atom)
+        elif _DIMENSION_IDENT_RE.fullmatch(atom):
+            identifiers.append(atom)
+    return identifiers
+
+
 def word_dimension_errors(text: str) -> list[str]:
     """Reject every nonpositive or unconstrained word dimension in `text`.
 
-    Inspects EVERY `BitVec` (or reviewed word-abbreviation) dimension in the
-    given scope, not just the first: each identifier dimension must be a bound
-    ``Nat`` parameter with its own ``[NeZero <width>]`` discharge, a literal
-    ``0`` dimension is rejected, and a ``[NeZero 0]`` instance is rejected.
+    Inspects every word dimension structurally: an identifier dimension must be a
+    bound ``Nat`` parameter with its own ``[NeZero <width>]`` discharge; a numeric
+    dimension (including leading-zero and parenthesised spellings such as ``00``,
+    ``(0)``) must be positive; and a parenthesised or arithmetic dimension that is
+    neither a plain identifier nor plain digits (``(width - width)``, ``(0 + 0)``)
+    is rejected rather than skipped.
     """
     errors: list[str] = []
-    for match in WORD_DIMENSION_ID_RE.finditer(text):
-        width = match.group(1)
+    for atom, parenthesised in word_dimension_atoms(text):
+        inner = atom
+        if parenthesised and _DIMENSION_DIGITS_RE.fullmatch(inner):
+            spelling = f"BitVec ({inner})"
+        elif _DIMENSION_DIGITS_RE.fullmatch(inner):
+            spelling = f"BitVec {inner}"
+        elif parenthesised and _DIMENSION_IDENT_RE.fullmatch(inner) and not inner[0].isdigit():
+            spelling = f"BitVec ({inner})"
+        elif not parenthesised and _DIMENSION_IDENT_RE.fullmatch(inner):
+            spelling = f"BitVec {inner}"
+        else:
+            errors.append(
+                f"`BitVec ({inner})` is not a positive width identifier; every word "
+                "dimension in scope must be an explicit `Nat` parameter with its own "
+                "`[NeZero <width>]` discharge"
+            )
+            continue
+        if _DIMENSION_DIGITS_RE.fullmatch(inner):
+            if int(inner) == 0:
+                errors.append(
+                    f"`{spelling}` is not a positive width; the qualifier records HOL's "
+                    "positive `dimindex (:α)` dimension"
+                )
+            continue
+        width = inner
         if NAT_WIDTH_BINDER_RE.search(text) is None or re.search(
             r"[\{\(]\s*" + re.escape(width) + r"\s*:\s*Nat\s*[\}\)]", text
         ) is None:
             errors.append(
-                f"`BitVec {width}` is not at a `Nat` width binder; every word "
+                f"`{spelling}` is not at a `Nat` width binder; every word "
                 "dimension in scope must be an explicit positive-width parameter"
             )
         elif re.search(
             r"\[\s*NeZero\s+" + re.escape(width) + r"\s*\]", text
         ) is None:
             errors.append(
-                f"`BitVec {width}` lacks its own `[NeZero {width}]` discharge; "
+                f"`{spelling}` lacks its own `[NeZero {width}]` discharge; "
                 "every word dimension in scope must be constrained"
             )
-    for match in WORD_DIMENSION_LITERAL_RE.finditer(text):
-        if match.group(1) == "0":
+    if re.search(r"\[\s*NeZero\s+\(?\s*([0-9]+)\s*\)?\s*\]", text) is not None:
+        zero = re.search(r"\[\s*NeZero\s+\(?\s*([0-9]+)\s*\)?\s*\]", text)
+        if int(zero.group(1)) == 0:
             errors.append(
-                "`BitVec 0` is not a positive width; the qualifier records HOL's "
-                "positive `dimindex (:α)` dimension"
+                "`[NeZero 0]` is not a valid positivity discharge; the dimension must "
+                "be a positive width identifier"
             )
-    if re.search(r"\[\s*NeZero\s+0\s*\]", text) is not None:
-        errors.append(
-            "`[NeZero 0]` is not a valid positivity discharge; the dimension must "
-            "be a positive width identifier"
-        )
     return errors
 
 
@@ -1699,9 +1781,7 @@ def words_as_type_indexed_bitvec_errors(
         signature = stripped
 
     errors.extend(word_dimension_errors(signature))
-    direct_ids = set(
-        match.group(1) for match in WORD_DIMENSION_ID_RE.finditer(signature)
-    )
+    direct_ids = set(word_dimension_identifier_atoms(signature))
     # A literal dimension such as `BitVec 5` (the `5 word` globals key type, say)
     # is not itself the `dimindex (:α)` translation; only an identifier dimension
     # takes the direct route. A literal-only signature still has to resolve a
@@ -1760,10 +1840,7 @@ def words_as_type_indexed_bitvec_errors(
                 _owner_module, header, fields = owners[0]
                 owner_text = header + "\n" + "\n".join(fields.values())
                 owner_errors = word_dimension_errors(owner_text)
-                owner_ids = set(
-                    match.group(1)
-                    for match in WORD_DIMENSION_ID_RE.finditer(owner_text)
-                )
+                owner_ids = set(word_dimension_identifier_atoms(owner_text))
                 owner_widths = set(
                     match.group(1) for match in NAT_WIDTH_BINDER_RE.finditer(owner_text)
                 )
