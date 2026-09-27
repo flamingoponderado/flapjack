@@ -318,8 +318,9 @@ end
 mutual
 /-- Exact HOL `wordLang$every_var_exp` (`wordLangScript.sml:85-91`): every
 register occurring in an exact expression satisfies `P`. -/
-@[hol "cakeml/compiler/backend/wordLangScript.sml" "every_var_exp_def"]
-def everyVarExpHOL {width : Nat} (P : Nat → Bool) :
+@[hol "cakeml/compiler/backend/wordLangScript.sml" "every_var_exp_def"
+  (words_as_type_indexed_bitvec)]
+def everyVarExpHOL {width : Nat} [NeZero width] (P : Nat → Bool) :
     WordLangExpHOL (BitVec width) → Bool
   | .var num => P num
   | .load exp => everyVarExpHOL P exp
@@ -329,7 +330,7 @@ def everyVarExpHOL {width : Nat} (P : Nat → Bool) :
 
 /-- Flapjack helper for the HOL `EVERY (every_var_exp P)` traversal on exact
 expressions. -/
-def everyVarExpsHOL {width : Nat} (P : Nat → Bool) :
+def everyVarExpsHOL {width : Nat} [NeZero width] (P : Nat → Bool) :
     List (WordLangExpHOL (BitVec width)) → Bool
   | [] => true
   | expression :: expressions =>
