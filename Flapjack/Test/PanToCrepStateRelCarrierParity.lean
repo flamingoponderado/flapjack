@@ -468,6 +468,50 @@ example {width : Nat} [NeZero width]
     hrel heval hlocalised hcompile).2.2.1
 
 
+/-- Kernel regression for the exact `BaseAddr` case `compileExpValRelHOL_baseAddr`
+    (HOL `pan_to_crepProofScript.sml:130-396`). -/
+example {width : Nat} [NeZero width]
+    (state : PanSemStateFiniteExact width Unit) [_hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width Unit) [_ht : DecidablePred targetState.memaddrs]
+    (value : ValueHOL width)
+    (expressions : List (CrepExpHOL width)) (shape : ShapeHOL)
+    (heval : state.evalHOLFinite .baseAddr = some value)
+    (hstate : panToCrepStateRelFiniteExact state targetState)
+    (hcompile : compileExpExactHOLW context .baseAddr = (expressions, shape)) :
+    shapeOfHOLExact value = shape :=
+  (compileExpValRelHOL_baseAddr state context targetState value expressions shape
+    heval hstate hcompile).2.2.1
+
+/-- Kernel regression for the exact `TopAddr` case `compileExpValRelHOL_topAddr`
+    (HOL `pan_to_crepProofScript.sml:130-396`). -/
+example {width : Nat} [NeZero width]
+    (state : PanSemStateFiniteExact width Unit) [_hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width Unit) [_ht : DecidablePred targetState.memaddrs]
+    (value : ValueHOL width)
+    (expressions : List (CrepExpHOL width)) (shape : ShapeHOL)
+    (heval : state.evalHOLFinite .topAddr = some value)
+    (hstate : panToCrepStateRelFiniteExact state targetState)
+    (hcompile : compileExpExactHOLW context .topAddr = (expressions, shape)) :
+    shapeOfHOLExact value = shape :=
+  (compileExpValRelHOL_topAddr state context targetState value expressions shape
+    heval hstate hcompile).2.2.1
+
+/-- Kernel regression for the exact `BytesInWord` case
+    `compileExpValRelHOL_bytesInWord` (HOL `pan_to_crepProofScript.sml:130-396`). -/
+example {width : Nat} [NeZero width]
+    (state : PanSemStateFiniteExact width Unit) [_hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width Unit) [_ht : DecidablePred targetState.memaddrs]
+    (value : ValueHOL width)
+    (expressions : List (CrepExpHOL width)) (shape : ShapeHOL)
+    (heval : state.evalHOLFinite .bytesInWord = some value)
+    (hcompile : compileExpExactHOLW context .bytesInWord = (expressions, shape)) :
+    shapeOfHOLExact value = shape :=
+  (compileExpValRelHOL_bytesInWord state context targetState value expressions shape
+    heval hcompile).2.2.1
+
 def runChecks : IO Bool := do
   let checks := [
     ("HOL state_rel matching empty carrier fields", matchingFieldsOracleCase),
