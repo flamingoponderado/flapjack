@@ -402,6 +402,26 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
         self.assertTrue(MAP["lean_definition_exists"](MAP["ROOT"], *key))
         self.assertNotIn(key, MAP["tagged_declarations"]())
 
+    def test_pansem_evaluate_clock_carrier_mismatch_is_documented(self):
+        key = (
+            "Flapjack/Pancake/Semantics/PanSem/EvaluateClock.lean",
+            "evalPanSemRecursiveCallFiniteContext_clock_le",
+        )
+        inventory = {
+            (record["lean_path"], record["lean_name"]): record
+            for record in MAP["build_inventory"]()
+        }
+        record = inventory[key]
+        self.assertEqual(
+            (record["hol_path"], record["hol_name"]),
+            ("cakeml/pancake/semantics/panSemScript.sml", "evaluate_clock"),
+        )
+        self.assertEqual(record["statement_status"], "documented_mismatch")
+        self.assertIn("FiniteEvalContext", record["reviewer"])
+        self.assertIn("flapjack-qj5", record["reviewer"])
+        self.assertTrue(MAP["lean_definition_exists"](MAP["ROOT"], *key))
+        self.assertNotIn(key, MAP["tagged_declarations"]())
+
     def test_pan_props_res_var_flookup_mismatches_are_documented(self):
         inventory = {
             (record["lean_path"], record["lean_name"]): record

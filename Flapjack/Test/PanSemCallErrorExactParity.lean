@@ -162,11 +162,10 @@ private def fallThroughState : PanSemExactState Word64 Unit :=
 private def callFallThroughGuard : Bool :=
   isFallThroughError 4 1 (evaluate fallThroughState (.call none "f" [.const 1]))
 
-/-- Result matcher for a callee that finishes with `Break` or `Continue`: an
-    `Error` at the decremented callee clock whose `p` local holds the bound
-    argument and whose caller-local view (`x`) is empty, pairing the
-    `call_break_caller_locals=NONE` / `call_continue_caller_locals=NONE` rows of
-    `pan_sem_call_callee_terminal_probe.out`. -/
+/-- Result matcher for a callee that finishes with `Continue`: an `Error` at the
+    decremented callee clock whose `p` local holds the bound argument and whose
+    caller-local view (`x`) is empty. The `Break` counterpart is
+    `isTerminalBreakError`; both pair with the corresponding HOL oracle rows. -/
 private def isTerminalError (clock value : Nat)
     (result : Option (PanValueFfiClockResult Word64 Unit)) : Bool :=
   match result with
@@ -190,8 +189,25 @@ private def continueState : PanSemExactState Word64 Unit :=
   exactStateOf <| { (exactLegacy 5 callerLocalX (fun _ => none)
       parameterContracts) with functions := [("f", ["p"], .continue)] }
 
+/-- Break-specific matcher pairing all four rows of
+    `scripts/hol-probes/pan_sem_call_callee_terminal_probe.out`: the fourth row
+    `call_break_caller_locals=NONE` requires the caller's `x` local to be absent
+    in the callee post-state, in addition to the `Error`/`p`/clock rows shared
+    with `isTerminalError`. -/
+private def isTerminalBreakError (clock value : Nat)
+    (result : Option (PanValueFfiClockResult Word64 Unit)) : Bool :=
+  match result with
+  | some (.control control, n) =>
+      match control with
+      | .error locals _ _ _ =>
+          n == clock && (match locals "p" with
+            | some (.word w) => w == BitVec.ofNat 64 value
+            | _ => false) && (locals "x").isNone
+      | _ => false
+  | _ => false
+
 private def callBreakGuard : Bool :=
-  isTerminalError 4 1 (evaluate breakState (.call none "f" [.const 1]))
+  isTerminalBreakError 4 1 (evaluate breakState (.call none "f" [.const 1]))
 
 private def callContinueGuard : Bool :=
   isTerminalError 4 1 (evaluate continueState (.call none "f" [.const 1]))
@@ -456,8 +472,8 @@ def runChecks : IO Bool := do
     IO.println "PASS exact-state Call callee fallthrough rejects with Error and callee locals"
   else IO.println "FAIL exact-state Call callee fallthrough rejects with Error and callee locals"
   if callBreakGuard then
-    IO.println "PASS exact-state Call callee break rejects with Error and callee locals"
-  else IO.println "FAIL exact-state Call callee break rejects with Error and callee locals"
+    IO.println "PASS exact-state Call callee break rejects with Error, callee locals, and absent caller x"
+  else IO.println "FAIL exact-state Call callee break rejects with Error, callee locals, and absent caller x"
   if callContinueGuard then
     IO.println "PASS exact-state Call callee continue rejects with Error and callee locals"
   else IO.println "FAIL exact-state Call callee continue rejects with Error and callee locals"
