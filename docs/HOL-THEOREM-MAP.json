@@ -13960,5 +13960,13 @@
     "lean_name": "compileExpValRelHOL_shift",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.9): Flapjack-specific staged constructor lemma for the exact-carrier `compile_exp_val_rel` case; HOL proves this case inside `pc_compile_correct` and exports no standalone declaration, so no `@[hol]` tag is attached."
+  },
+  {
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "IMP_OPT_MMAP_EQ",
+    "lean_path": "Flapjack/Misc/OptMmapCong.lean",
+    "lean_name": "impOptMmapEq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.81.10.1): HOL miscScript.sml:2491 IMP_OPT_MMAP_EQ quantifies only l1/l2 and leaves f1/f2 free (schematic, implicitly universal on instantiation); the Lean statement binds all four explicitly. MAP = List.map, OPT_MMAP = List.mapM, no side conditions or carrier differences."
   }
 ]

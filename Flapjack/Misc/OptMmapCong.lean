@@ -38,20 +38,21 @@ theorem optMmapCongHOL {α β : Type} (l1 l2 : List α) (f f' : α → Option β
       simp only [List.mapM_cons]
       rw [h a (by simp), ih (fun x hx => h x (by simp [hx]))]
 
-/-- Closed form of HOL's `misc$IMP_OPT_MMAP_EQ`
-(`cakeml/misc/miscScript.sml:2491`), which is stated there with the two
-functions `f1`, `f2` as free variables:
+/-- Exact port of HOL's `misc$IMP_OPT_MMAP_EQ`
+(`cakeml/misc/miscScript.sml:2491`):
 
 ```
 Theorem IMP_OPT_MMAP_EQ:
    !l1 l2. (MAP f1 l1 = MAP f2 l2) ==> (OPT_MMAP f1 l1 = OPT_MMAP f2 l2)
 ```
 
-Because the HOL declaration is open (it does not quantify `f1`/`f2`), this
-Lean statement is the corresponding closed generalization over `List.mapM`,
-used to relate the compiled-expression image list with the source evaluation
-list in the `compile_exp_val_rel` `Op`/`Panop` cases.  It is Flapjack-only
-infrastructure and therefore carries no `@[hol]` tag. -/
+The HOL declaration quantifies only `l1`/`l2` and leaves `f1`/`f2` free, so
+the stored theorem is schematic in `f1`/`f2` (implicitly universally
+quantified whenever it is instantiated).  The Lean statement makes those two
+quantifiers explicit; `MAP` is `List.map` and `OPT_MMAP` is `List.mapM`.
+Used to relate the compiled-expression image list with the source evaluation
+list in the `compile_exp_val_rel` `Op`/`Panop` cases. -/
+@[hol "cakeml/misc/miscScript.sml" "IMP_OPT_MMAP_EQ"]
 theorem impOptMmapEq {α β γ : Type} (f1 : α → Option γ) (f2 : β → Option γ)
     (l1 : List α) (l2 : List β) (h : l1.map f1 = l2.map f2) :
     l1.mapM f1 = l2.mapM f2 := by
