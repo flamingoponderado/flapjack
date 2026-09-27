@@ -22,6 +22,11 @@ AGENTS.md production-path rule.  It shows that the `String` FFI field of `ProgW`
 is the image of the faithful `mlstring` field under
 `Flapjack.Basis.Pure.MlString.toStringOfBytes`, so the exact `MlString`
 theorems can be transported onto programs whose FFI names are byte strings.
+The program-level FFI-name correspondence is stated explicitly by
+`holProgToProgW_ffi` (exact `mlstring` name maps to its `toStringOfBytes` image)
+and `progWToHolProg_ffi` (executed `String` name maps to its `ofString` image);
+together with `progWToHolProg_holProgToProgW` these pin the FFI-name field
+relationship without routing the executed compiler through `HolProg`.
 -/
 
 namespace Flapjack.Compiler.Backend
@@ -61,5 +66,33 @@ theorem progWToHolProg_holProgToProgW {width : Nat} [NeZero width]
       HolAddr.of_to]
   case case6 => rename_i rh t h ih2 ih1; cases rh <;> cases h <;> simp_all
   all_goals (try rfl)
+
+/-- FFI-name correspondence for the executed path: decoding an exact `HolProg`
+`FFI` node turns the faithful `MlString` name into its byte-string image under
+`MlString.toStringOfBytes`.  This is the program-level statement that the
+executed `ProgW` FFI field is the `toStringOfBytes` image of the HOL `mlstring`
+field. -/
+theorem holProgToProgW_ffi {width : Nat} [NeZero width] (name : Flapjack.Basis.Pure.MlString.MlString)
+    (configuration configurationLength array arrayLength returnAddress : Nat) :
+    holProgToProgW (width := width)
+        (Prog.ffi name configuration configurationLength array arrayLength
+          returnAddress : HolProg width) =
+      (Prog.ffi (MlString.toStringOfBytes name) configuration configurationLength
+        array arrayLength returnAddress : ProgW (BitVec width)) := by
+  unfold holProgToProgW
+  rw [Prog.map.eq_def]
+
+/-- FFI-name correspondence in the reverse direction: encoding an executed
+`ProgW` `FFI` node turns the byte-string name into its faithful `MlString` image
+under `MlString.ofString`. -/
+theorem progWToHolProg_ffi {width : Nat} [NeZero width] (name : String)
+    (configuration configurationLength array arrayLength returnAddress : Nat) :
+    progWToHolProg (width := width)
+        (Prog.ffi name configuration configurationLength array arrayLength
+          returnAddress : ProgW (BitVec width)) =
+      (Prog.ffi (MlString.ofString name) configuration configurationLength array
+        arrayLength returnAddress : HolProg width) := by
+  unfold progWToHolProg
+  rw [Prog.map.eq_def]
 
 end Flapjack.Compiler.Backend
