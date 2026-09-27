@@ -13044,5 +13044,56 @@
     "lean_name": "slcTlcRwHOL",
     "statement_status": "documented_mismatch",
     "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.86, coordinator HOLD 2026-09-27): HOL slc_tlc_rw (pan_to_crepProofScript.sml:2321-2326) is a Prop-level two-conjunct map-equality theorem; the fmap_as_finite_support_result qualifier is defined only for declarations whose own result/input carrier is HolFiniteMapExact and cannot express two equalities, so the @[hol] tag and its (single-map, ignored-argument) witness were withdrawn. The untagged Flapjack-only analogue slcTlcRwHOL remains; an exact tag needs a theorem-level finite-map qualifier with genuine witnesses for both map equalities, tracked by flapjack-4ac.5.86.1."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "listRelGetElemExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private Flapjack-specific indexed projection from ListRel; used to preserve the HOL LIST_REL formal/argument premise in the exact Call theorem. It is not a separate HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific same-module canonical finite-support roundtrip witness required by the full Call theorem's named PanSemStateFiniteExact map-field qualifier; no separate HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific same-module canonical finite-support roundtrip witness required by the full Call theorem's named PanToCrepContextExact map-field qualifier; no separate HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific same-module canonical finite-support roundtrip witness required by the full Call theorem's named CrepSemHOLState map-field qualifier; no separate HOL declaration."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "call_preserve_state_code_locals_rel",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "panToCrepCallPreserveStateCodeLocalsRelExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "PanToCrepContextExact.vars",
+      "PanToCrepContextExact.funcs",
+      "PanToCrepContextExact.eids",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.code"
+    ],
+    "reviewer": "flapjack-luna-b source comparison (flapjack-4ac.5.41.6, 2026-09-27): HOL pan_to_crepProofScript.sml:2355-2458 has the explicit rshape quantifier, all thirteen premises in their source order, and the four state_rel/code_rel/excp_rel/locals_rel conclusions in their source order. The Lean theorem preserves the same hypotheses and output shapes over the reviewed ValueHOL, ShapeHOL, ProgHOL, CrepProgHOL, MlS, and positive-width BitVec carriers. In particular hpreLocals is exactly the PRE-call premise locals_rel ctxt s.locals t.locals (HOL 2355-2364); the final conclusion is the distinct POST-call relation locals_rel (ctxt_fc ...) (slc vshs args) (tlc ns args) (HOL 2374-2378). The proof uses the reviewed state/local conjunct helpers and direct code/exception relation unfoldings. The named finite-map carrier translations are exactly the nine listed fields and have same-module canonical roundtrip witnesses; no evaluator/result premise or post-state relation is assumed."
   }
 ]
