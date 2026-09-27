@@ -15,7 +15,12 @@ control result, and restore either a shadowed value or an absent local:
   unchanged;
 * `Return` of an evaluable expression is `SOME (Return v)` with the state
   unchanged; a failed expression is `SOME Error`;
-* `Raise` mirrors `Return` with `SOME (Exception eid v)`.
+* `Raise` mirrors `Return` with `SOME (Exception eid v)`;
+* the partial dispatcher evaluates `If` by the HOL clause: a nonzero word
+  condition runs the then-branch, `0w` runs the else-branch, and a missing or
+  non-word (`RStruct []`) condition is `SOME Error` with the state unchanged,
+  matching `pan_sem_ite_e2e_probe.out` and the new
+  `total_if_assign_nonword_*` rows in `pan_sem_total_fragment_stmt_probe.out`.
 
 These are untagged interface checks for the future exact `evaluate_def` port,
 not a port of `evaluate` itself. The expression oracle is
@@ -297,9 +302,56 @@ def partialSeqGuard : Bool :=
   isErrorResult (panSemTotalEvaluatePartial (fun _ _ => none) stepsState
     (.seq .skip .skip)).1
 
+/-- The dispatcher implements the HOL `If` clause: a nonzero word condition runs
+    the then-branch and a `0w` condition runs the else-branch. The direct oracle
+    rows are `if_true_result`, `if_false_result`, and
+    `total_if_assign_true_result` / `total_if_assign_false_result`. -/
+def partialIteTrueGuard : Bool :=
+  let result := panSemTotalEvaluatePartial (fun _ _ => none) stepsState
+    (.ite (.const (BitVec.ofNat 64 1))
+      (.assign .local "x" (.const (BitVec.ofNat 64 9))) .skip)
+  isNoneResult result.1 && wordAt result.2.locals "x" 9
+
+def partialIteFalseGuard : Bool :=
+  let result := panSemTotalEvaluatePartial (fun _ _ => none) stepsState
+    (.ite (.const (BitVec.ofNat 64 0))
+      (.assign .local "x" (.const (BitVec.ofNat 64 9))) .skip)
+  isNoneResult result.1 && wordAt result.2.locals "x" 7
+
+/-- A condition that evaluates successfully to a non-word value (`RStruct []`)
+    is rejected with `SOME Error` and the state unchanged, matching the direct
+    oracle row `exact_if_nonword_result`. -/
+def partialIteNonwordGuard : Bool :=
+  let result := panSemTotalEvaluatePartial (fun _ _ => none) stepsState
+    (.ite (.rStruct [])
+      (.assign .local "x" (.const (BitVec.ofNat 64 9))) .skip)
+  isErrorResult result.1 && wordAt result.2.locals "x" 7 &&
+    result.2.clock == stepsState.clock
+
+/-- A condition whose own evaluation fails (an unbound local) is rejected with
+    `SOME Error` and the state unchanged, matching `exact_if_failed_result`. -/
+def partialIteFailedGuard : Bool :=
+  let result := panSemTotalEvaluatePartial (fun _ _ => none) stepsState
+    (.ite (.var .local "missing")
+      (.assign .local "x" (.const (BitVec.ofNat 64 9))) .skip)
+  isErrorResult result.1 && wordAt result.2.locals "x" 7 &&
+    result.2.clock == stepsState.clock
+
+/-- The selected branch is evaluated recursively in the entry state: a `Tick`
+    then-branch decrements the clock, and the else-branch does not. -/
+def partialIteRecursionGuard : Bool :=
+  let thenTick := panSemTotalEvaluatePartial (fun _ _ => none) stepsState
+    (.ite (.const (BitVec.ofNat 64 1)) .tick .skip)
+  let elseSkip := panSemTotalEvaluatePartial (fun _ _ => none) stepsState
+    (.ite (.const (BitVec.ofNat 64 0)) .tick .skip)
+  isNoneResult thenTick.1 && thenTick.2.clock == 4 &&
+    isNoneResult elseSkip.1 && elseSkip.2.clock == 5
+
 def partialEvaluateGuard : Bool :=
   partialSkipGuard && partialBreakGuard && partialAssignGuard &&
-    partialDecGuard && partialDecMissingBindingControlGuard && partialSeqGuard
+    partialDecGuard && partialDecMissingBindingControlGuard && partialSeqGuard &&
+    partialIteTrueGuard && partialIteFalseGuard && partialIteNonwordGuard &&
+    partialIteFailedGuard && partialIteRecursionGuard
 
 /-- Deterministic mapped-read/write oracle returning eight zero bytes. -/
 def shMemTestFfi : FfiState Unit :=
@@ -644,12 +696,59 @@ def stepsGuard : Bool :=
 #guard stepsGuard
 #guard partialDecMissingBindingControlGuard
 
+/-- Kernel-checked regressions for the total `If` step. A nonzero word condition
+    selects the then-branch (`panSemScript.sml:618-622`). -/
+example :
+    panSemTotalIfStep stepsState (some (.word (BitVec.ofNat 64 1)))
+        (fun next => panSemTotalEvaluatePartial (fun _ _ => none) next
+          (.assign .local "x" (.const (BitVec.ofNat 64 9))))
+        (fun next => panSemTotalEvaluatePartial (fun _ _ => none) next .skip) =
+      panSemTotalEvaluatePartial (fun _ _ => none) stepsState
+        (.assign .local "x" (.const (BitVec.ofNat 64 9))) := by
+  apply panSemTotalIfStep_nonzero
+  decide
+
+/-- A `0w` condition selects the else-branch. -/
+example :
+    panSemTotalIfStep stepsState (some (.word (BitVec.ofNat 64 0)))
+        (fun next => panSemTotalEvaluatePartial (fun _ _ => none) next
+          (.assign .local "x" (.const (BitVec.ofNat 64 9))))
+        (fun next => panSemTotalEvaluatePartial (fun _ _ => none) next .skip) =
+      panSemTotalEvaluatePartial (fun _ _ => none) stepsState .skip := by
+  apply panSemTotalIfStep_zero
+
+/-- A missing condition evaluation is `SOME Error` with the unchanged state. -/
+example :
+    panSemTotalIfStep stepsState none
+        (fun next => panSemTotalEvaluatePartial (fun _ _ => none) next
+          (.assign .local "x" (.const (BitVec.ofNat 64 9))))
+        (fun next => panSemTotalEvaluatePartial (fun _ _ => none) next .skip) =
+      (some .error, stepsState) := rfl
+
+/-- A condition whose value is not a word is also `SOME Error` with the unchanged
+    state, matching the HOL `_ => (SOME Error, s)` fallback. -/
+example :
+    panSemTotalIfStep stepsState (some (.rStruct []))
+        (fun next => panSemTotalEvaluatePartial (fun _ _ => none) next
+          (.assign .local "x" (.const (BitVec.ofNat 64 9))))
+        (fun next => panSemTotalEvaluatePartial (fun _ _ => none) next .skip) =
+      (some .error, stepsState) := rfl
+
+/-- Kernel-checked regressions for the concrete dispatcher outputs, backed by the
+    direct HOL oracle rows `if_true_result`, `if_false_result`,
+    `exact_if_nonword_result`, and `exact_if_failed_result`. -/
+example : partialIteTrueGuard = true := by native_decide
+example : partialIteFalseGuard = true := by native_decide
+example : partialIteNonwordGuard = true := by native_decide
+example : partialIteFailedGuard = true := by native_decide
+example : partialIteRecursionGuard = true := by native_decide
+
 def runChecks : IO Bool := do
   if stepsGuard then
-    IO.println "PASS total PanSem statement-clause assembly steps (Assign/Return/Raise/Primitive/Annot/Store/Dec/ShMem/While/DecCall/Call/ExtCall)"
+    IO.println "PASS total PanSem statement-clause assembly steps (Assign/Return/Raise/Primitive/Annot/Store/Dec/If/ShMem/While/DecCall/Call/ExtCall)"
     pure true
   else
-    IO.println "FAIL total PanSem statement-clause assembly steps (Assign/Return/Raise)"
+    IO.println "FAIL total PanSem statement-clause assembly steps (Assign/Return/Raise/If)"
     pure false
 
 end Flapjack.Test.PanSemTotalStepsParity
