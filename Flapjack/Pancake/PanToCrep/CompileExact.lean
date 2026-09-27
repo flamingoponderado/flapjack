@@ -773,6 +773,34 @@ def compFuncExactHOLW {width : Nat} [NeZero width]
   let vmax := sizeOfShapeHOL (.comb shapes) - 1
   compileProgExactHOLW (mkCtxtExactHOL vmap fs vmax eids) body
 
+/-! ### Exact declaration-only `compile_to_crep_def`
+
+This is the HOL pan_to_crepScript.sml:383-391 definition over
+`List (DeclHOL width)`: project functions in source order, build the function
+and exception-code maps from the original declarations, then emit one
+`(name, crep_vars params, comp params body)` triple per projected function.
+`makeFuncsExactHOL`, `getEidsFromDeclsHOL`, `functionsHOL`, `crepVarsHOL`, and
+`compFuncExactHOLW` are the already reviewed tagged dependencies. The
+finite-map values are local intermediates and do not occur in this
+declaration's input or output type, so no finite-map carrier qualifier applies
+here; their individual definition tags record their own result translations.
+The only outer type translation is HOL's positive type-indexed word to
+`BitVec width`. The production String-backed `compileToCrepHOL` route is still
+separate; routing the executable compiler through this exact declaration-only
+definition remains tracked by `flapjack-pxn.18.3.1.3`, and the exact
+`compile_prog` boundary by `flapjack-4ac.2.20.2`. -/
+@[hol "cakeml/pancake/pan_to_crepScript.sml" "compile_to_crep_def"
+  (words_as_type_indexed_bitvec)]
+def compileToCrepExactHOLW {width : Nat} [NeZero width]
+    (declarations : List (DeclHOL width)) :
+    List (MlS × List Nat × CrepProgHOL width) :=
+  let prog := functionsHOL declarations
+  let fs := makeFuncsExactHOL prog
+  let eids := getEidsFromDeclsHOL declarations
+  prog.map (fun entry =>
+    (entry.1, crepVarsHOL entry.2.1,
+      compFuncExactHOLW fs eids entry.2.1 entry.2.2.1))
+
 
 /-! ### Codec helper lemmas for the `compile_exp` production bridge
 

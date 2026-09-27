@@ -1,6 +1,15 @@
 [
   {
     "hol_path": "cakeml/pancake/crep_inlineScript.sml",
+    "hol_name": "transform_eoc_def",
+    "lean_path": "Flapjack/Pancake/CrepInline/Pass.lean",
+    "lean_name": "transformEocHOLExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-c source comparison (2026-09-27; bead flapjack-e7w.2.1.6) against crep_inlineScript.sml:137-145. Return maps to crepNestedSeqHOL of returnNames.zipWith Assign values; List.zipWith has HOL MAP2's truncation, and crepNestedSeqHOL is separately tagged for nested_seq_def. Call NONE adds SOME (returnNames, NONE); Call SOME (names, NONE) is preserved; Call SOME (names, SOME (word, handler)) preserves all metadata and recursively transforms only the handler. Dec, While, Seq, and If recurse in source order, and the catch-all is identity. Inputs/outputs use CrepProgHOL/CrepExpHOL, MlString, Nat variable identifiers and BitVec width words, matching the HOL carriers under words_as_type_indexed_bitvec; [NeZero width] retains the positive word dimension. Direct HOL EVAL rows for all branches are in scripts/hol-probes/crep_inline_transform_eoc_probe.out and Lean guard transformEocGuard checks them in Flapjack/Test/CrepInlineTransformEocParity.lean. This exact helper does not establish or claim production inline_prog routing.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_inlineScript.sml",
     "hol_name": "arg_load_def",
     "lean_path": "Flapjack/Pancake/CrepInline/Pass.lean",
     "lean_name": "argLoadHOLExact",
@@ -2225,6 +2234,15 @@
     "fmap_as_finite_support_relation": ["fs", "eids"],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-a source comparison (2026-09-27, bead flapjack-4ac.2.14.1; pan_to_crepScript.sml:337-343): the HOL definition has four curried binders fs, eids, params, body and no premises; it defines vmap = make_vmap params, shapes = MAP SND params, vmax = size_of_shape (Comb shapes) - 1, then returns compile (mk_ctxt vmap fs vmax eids) body. compFuncExactHOLW has the same binders/order and body, using tagged panToCrepMakeVmapHOLExact, sizeOfShapeHOL, mkCtxtExactHOL, and compileProgExactHOLW. The input fs/eids finite maps are the only finite-support translations, listed as standalone exact HolFiniteMapExact parameters; MlS/ShapeHOL/ProgHOL/CrepProgHOL are the reviewed exact syntax/name/program carriers. HOL's type-indexed word is represented by BitVec width with [NeZero width], recorded by words_as_type_indexed_bitvec. No premise, success condition, or output case is added. Direct original HOL EVAL rows are in scripts/hol-probes/pan_to_crep_comp_func_probe.out and checked by Flapjack.Test.PanToCrepCompFuncExactParity. The existing String-backed compFuncHOL stays untagged; production routing remains tracked by flapjack-pxn.18.3.5.8."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
+    "hol_name": "compile_to_crep_def",
+    "lean_path": "Flapjack/Pancake/PanToCrep/CompileExact.lean",
+    "lean_name": "compileToCrepExactHOLW",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-27, bead flapjack-4ac.2.19.1; pan_to_crepScript.sml:383-391): the unconditionally declared result is an ordered list of triples (mlstring, num list, Crep program), computed by projecting functions decls, constructing make_funcs from that ordered projection and get_eids_from_decls from the original declarations, then mapping (name, params, body, return) to (name, crep_vars params, comp params body). compileToCrepExactHOLW has the same sole declaration-list input and triple-list output over DeclHOL width/MlS/List Nat/CrepProgHOL width; it uses exactly the tagged functionsHOL, makeFuncsExactHOL, getEidsFromDeclsHOL, crepVarsHOL and compFuncExactHOLW helpers and deliberately ignores the projected return field in the final mapping just as HOL does. List.map preserves output order and duplicate function declarations. makeFuncsExactHOL uses the reviewed HOL alist_to_fmap right-fold behavior: the first duplicate name wins for callees, while every function row is still emitted; direct HOL row duplicate_function_names and its exact DeclHOL regression demonstrate both behaviors. The direct raise_const EVAL row also checks exception-ID derivation through getEidsFromDeclsHOL. Maps are local intermediate values, not fields or binders of this declaration, so no finite-map representation qualifier applies; their helper declarations record their standalone map result translations. The positive width-indexed HOL word carrier is represented by BitVec width with [NeZero width], recorded by words_as_type_indexed_bitvec. Original rows are in scripts/hol-probes/compile_to_crep_probe.out and exact-carrier Lean checks are in Flapjack/Test/CompileToCrepeParity.lean. This is a tagged proof-side declaration only: the production String-backed compileToCrepHOL path is not routed through it; that executable gap is tracked by flapjack-pxn.18.3.1.3, and the larger exact compile_prog boundary by flapjack-4ac.2.20.2."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
@@ -14945,5 +14963,21 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-ds8 (source comparison; bead flapjack-pxn.18.3.6.9.23.1): exact statement-shape port of HOL panSemScript.sml:768-775 fix_clock_evaluate (fix_clock s (evaluate (prog,s)) = evaluate (prog,s)) over the pair-shaped finite evaluator on PanSemStateFiniteExact. Same reviewed HolFiniteMapExact carrier fields and BitVec width words as evaluateHOLFiniteState_clock_le_result; no extra premise."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 780,
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/EvaluateClock.lean",
+    "lean_name": "evaluateHOLFiniteState_eq_evaluate_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "reviewer": "flapjack-ds8 source comparison (2026-09-27; bead flapjack-qj5.9.6): HOL panSemScript.sml:780 is Theorem evaluate_def[allow_rebind,compute] = REWRITE_RULE [fix_clock_evaluate] evaluate_def. evaluateHOLFiniteState_eq_evaluate_def states the single HOL-shaped constructor match of the whole evaluator over all 21 ProgHOL constructors, with each arm copied from the corresponding line-780 clause equation (evaluateHOLFiniteState_decCall_fixClockRewrite for DecCall, _dec_total for the integer-return constructor, _seq_line780 and _while_fixClockRewrite for Seq/While), so no arm keeps the line-556 fix_clock wrapper that line 780 rewrites away. No extra premise, result hypothesis, or DecidablePred binder is added beyond the finite clause siblings. The finite state uses the four named HolFiniteMapExact fields with the same-module canonical roundtrip witness in PanSem.EvaluateClockWitness, and the width-indexed word carrier retains [NeZero width], so both (fmap_as_finite_support := [locals, globals, code, eshapes]) and (words_as_type_indexed_bitvec) apply; the qualifiers record only those carrier translations.",
+    "words_as_type_indexed_bitvec": true
   }
 ]

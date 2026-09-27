@@ -374,6 +374,40 @@ def argLoadHOLExact {width : Nat} [NeZero width]
   nestedDecsHOL temporaryNames arguments
     (nestedDecsHOL argumentNames (temporaryNames.map CrepExpHOL.var) body)
 
+/-- Exact port of HOL `transform_eoc_def`
+    (`cakeml/pancake/crep_inlineScript.sml:137-145`): returns become
+    `nested_seq (MAP2 Assign rets values)`, calls without return metadata gain
+    the return list, existing return metadata is preserved, and handlers are
+    transformed recursively. Names stay in the exact `MlString` carrier. -/
+@[hol "cakeml/pancake/crep_inlineScript.sml" "transform_eoc_def"
+  (words_as_type_indexed_bitvec)]
+def transformEocHOLExact {width : Nat} [NeZero width]
+    (returnNames : List Nat) : CrepProgHOL width → CrepProgHOL width
+  | .return values =>
+      crepNestedSeqHOL
+        (returnNames.zipWith (fun name value => .assign name value) values)
+  | .call none name arguments =>
+      .call (some (returnNames, none)) name arguments
+  | .call (some (names, none)) name arguments =>
+      .call (some (names, none)) name arguments
+  | .call (some (names, some (handler, body))) name arguments =>
+      .call (some (names, some (handler, transformEocHOLExact returnNames body)))
+        name arguments
+  | .dec name value body =>
+      .dec name value (transformEocHOLExact returnNames body)
+  | .while condition body =>
+      .while condition (transformEocHOLExact returnNames body)
+  | .seq first second =>
+      .seq (transformEocHOLExact returnNames first)
+        (transformEocHOLExact returnNames second)
+  | .ite condition thenBranch elseBranch =>
+      .ite condition (transformEocHOLExact returnNames thenBranch)
+        (transformEocHOLExact returnNames elseBranch)
+  | program => program
+termination_by program => sizeOf program
+decreasing_by
+  all_goals decreasing_trivial
+
 structure CrepInlineFmapHOL (width : Nat) [NeZero width] where
   entries : List (CrepInlineMapHOLName × (List Nat × CrepProgHOL width))
   nodupKeys : (entries.map Prod.fst).Nodup
@@ -485,6 +519,27 @@ theorem crepInlineMapHOL_lookup {width : Nat} [NeZero width]
     (crepInlineMapHOL inlineNames functions).lookup name =
       List.lookup name (crepInlineSelectedHOLRows inlineNames functions) :=
   CrepInlineFmapHOL.lookup_ofAList name _
+
+/-- Flapjack-specific clause factoring for the structural arms of HOL's
+    `inline_prog_def` (`cakeml/pancake/crep_inlineScript.sml:239-248`). It
+    packages the `Dec`, `Seq`, `If`, and `While` constructor shape over the
+    exact `CrepProgHOL` carrier while leaving recursive results to the caller.
+    The identity fallback and the extra recursive-function argument are
+    infrastructure for assembling the full finite-map recursion; this helper
+    has no standalone HOL original and is deliberately untagged. The separate
+    `Call`/finite-map recursion remains in the parent bead
+    `flapjack-e7w.2.1`. -/
+def inlineProgStructuralHOL {width : Nat} [NeZero width]
+    (recur : CrepInlineFmapHOL width → CrepProgHOL width → CrepProgHOL width)
+    (inlineable : CrepInlineFmapHOL width) :
+    CrepProgHOL width → CrepProgHOL width
+  | .dec name value body => .dec name value (recur inlineable body)
+  | .seq first second =>
+      .seq (recur inlineable first) (recur inlineable second)
+  | .ite condition thenBranch elseBranch =>
+      .ite condition (recur inlineable thenBranch) (recur inlineable elseBranch)
+  | .while condition body => .while condition (recur inlineable body)
+  | program => program
 
 /-- Exact shape of Cake `crep_inline$inline_prog`
     (`cakeml/pancake/crep_inlineScript.sml:203-257`) over the genuine

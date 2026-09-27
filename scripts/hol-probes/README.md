@@ -67,6 +67,18 @@ byte-array reads, expression failure, nonword arguments, and `FFI_final`;
 these are checked by `Flapjack.Test.PanSemExtCallExactParity`. The finite-
 carrier source equation is tagged in
 `Flapjack.Pancake.Semantics.PanSem.ExtCallCase`.
+`compile_to_crep_probe.out` records direct HOL EVAL rows for the full
+declaration-only `compile_to_crep_def`, including `raise_const`, `handled_pair`,
+duplicate exception IDs, and `duplicate_function_names`. The latter confirms
+both duplicate function entries remain in source order while the internal
+`make_funcs` map uses the first entry's return shape. `Flapjack.Test.CompileToCrepeParity`
+replays `raise_const` and `duplicate_function_names` over exact
+`DeclHOL`/`CrepProgHOL` carriers through the tagged `compileToCrepExactHOLW`;
+the `handled_pair` and duplicate exception rows remain covered by its
+production-carrier fixtures. The exact tagged definition remains proof-side;
+executable routing is tracked separately by `flapjack-pxn.18.3.1.3`.
+Regenerate the direct HOL fixture with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=compile_to_crep_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
 `compile_def_probe.out` also records direct HOL evaluations of `Return`
 (`return`, `multi_return`, and the empty-struct return), paired
 `Store32`/`StoreByte` success and fallback rows, `If`/`While` success and
@@ -615,6 +627,23 @@ StoreGlob's ignored address. It also retains the existing `unreach_elim` and
 inlining helper rows. Exact-carrier Lean guards are in
 `Flapjack.Test.CrepeInline`. Regenerate with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=crep_inline_helper_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`crep_inline_structural_probe.out` records direct HOL EVAL of the structural
+`Dec`, `Seq`, `If`, and `While` clauses of `inline_prog_def`
+(`crep_inlineScript.sml:239-248`) on exact eight-bit programs with an empty
+inline map. The partial callback-based exact-carrier factoring helper and its
+guards are in `Flapjack.Pancake.CrepInline.Pass` and
+`Flapjack.Test.CrepInlineStructuralHOLParity`; the helper remains untagged and
+does not claim the omitted `Call`/finite-map recursion. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=crep_inline_structural_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`crep_inline_transform_eoc_probe.out` records direct HOL EVAL of every arm of
+`transform_eoc_def` (`crep_inlineScript.sml:137-145`), including Call return
+metadata, recursive handlers, structural control flow, Return/`MAP2` length
+truncation, and the default clause. The exact width-indexed Lean port is
+`transformEocHOLExact` in `Flapjack.Pancake.CrepInline.Pass`; its guards are in
+`Flapjack.Test.CrepInlineTransformEocParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=crep_inline_transform_eoc_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `fupdate_list_append_commutes_probe.out` records the imported original HOL
 theorem `finite_mapTheory.FUPDATE_LIST_APPEND_COMMUTES` from

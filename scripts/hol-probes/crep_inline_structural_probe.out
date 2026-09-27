@@ -1,0 +1,4 @@
+inline_prog_empty_dec=T
+inline_prog_empty_seq=T
+inline_prog_empty_if=T
+inline_prog_empty_while=T
