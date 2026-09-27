@@ -486,6 +486,27 @@ theorem crepInlineMapHOL_lookup {width : Nat} [NeZero width]
       List.lookup name (crepInlineSelectedHOLRows inlineNames functions) :=
   CrepInlineFmapHOL.lookup_ofAList name _
 
+/-- Flapjack-specific clause factoring for the structural arms of HOL's
+    `inline_prog_def` (`cakeml/pancake/crep_inlineScript.sml:239-248`). It
+    packages the `Dec`, `Seq`, `If`, and `While` constructor shape over the
+    exact `CrepProgHOL` carrier while leaving recursive results to the caller.
+    The identity fallback and the extra recursive-function argument are
+    infrastructure for assembling the full finite-map recursion; this helper
+    has no standalone HOL original and is deliberately untagged. The separate
+    `Call`/finite-map recursion remains in the parent bead
+    `flapjack-e7w.2.1`. -/
+def inlineProgStructuralHOL {width : Nat} [NeZero width]
+    (recur : CrepInlineFmapHOL width → CrepProgHOL width → CrepProgHOL width)
+    (inlineable : CrepInlineFmapHOL width) :
+    CrepProgHOL width → CrepProgHOL width
+  | .dec name value body => .dec name value (recur inlineable body)
+  | .seq first second =>
+      .seq (recur inlineable first) (recur inlineable second)
+  | .ite condition thenBranch elseBranch =>
+      .ite condition (recur inlineable thenBranch) (recur inlineable elseBranch)
+  | .while condition body => .while condition (recur inlineable body)
+  | program => program
+
 /-- Exact shape of Cake `crep_inline$inline_prog`
     (`cakeml/pancake/crep_inlineScript.sml:203-257`) over the genuine
     finite-map representation above.  The recursion follows the source script
