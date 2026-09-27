@@ -1300,5 +1300,151 @@ class WordsAsTypeIndexedBitvecQualifierTest(unittest.TestCase):
         )
 
 
+THEOREM_MAP = runpy.run_path(
+    str(Path(__file__).resolve().parents[1] / "check_hol_theorem_map.py")
+)
+
+
+class RealCombinedQualifierFixtureTest(unittest.TestCase):
+    """End-to-end positive fixture for the combined fmap+words qualifier.
+
+    The three exact HOL `crepSem` shared-memory ports are committed, real
+    declarations carrying both `(fmap_as_finite_support := [locals, globals,
+    code])` and `(words_as_type_indexed_bitvec)`. This class checks the real
+    declarations through the reference checker and through the theorem-map
+    manifest validator, including negatives that omit each qualifier/status.
+    """
+
+    MODULE = "Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean"
+    HOL_NAMES = ("sh_mem_load_def", "sh_mem_store_def", "sh_mem_op_def")
+    FMAP_FIELDS = ("locals", "globals", "code")
+
+    def _lines(self):
+        return (Path(__file__).resolve().parents[2] / self.MODULE).read_text(
+            encoding="utf-8"
+        ).splitlines()
+
+    def _sites(self, lines):
+        found = {}
+        for site in SITES(lines):
+            if site[2] in self.HOL_NAMES:
+                found[site[2]] = site
+        return found
+
+    def test_real_declarations_carry_both_qualifiers(self):
+        sites = self._sites(self._lines())
+        for hol_name in self.HOL_NAMES:
+            self.assertIn(hol_name, sites, f"{hol_name} is no longer tagged")
+            site = sites[hol_name]
+            self.assertEqual(tuple(site[7]), self.FMAP_FIELDS, hol_name)
+            self.assertTrue(site[11], f"{hol_name} must carry (words_as_type_indexed_bitvec)")
+
+    def test_real_declarations_pass_reference_checker(self):
+        lines = self._lines()
+        sites = self._sites(lines)
+        self.assertEqual(set(sites), set(self.HOL_NAMES))
+        for hol_name, site in sites.items():
+            declaration_text = CHECKER["tagged_declaration_text"](lines, site[0])
+            self.assertEqual(
+                CHECKER["fmap_as_finite_support_errors"](
+                    lines, self.FMAP_FIELDS, self.MODULE, declaration_text
+                ),
+                [],
+                hol_name,
+            )
+            self.assertEqual(
+                CHECKER["words_as_type_indexed_bitvec_errors"](
+                    declaration_text, hol_name
+                ),
+                [],
+                hol_name,
+            )
+
+    def _tagged(self, lines):
+        tagged = {}
+        for hol_name, site in self._sites(lines).items():
+            value = (
+                site[1], site[2], site[4], site[5], site[6], site[7],
+                site[8], site[9], site[10], site[11],
+            )
+            tagged[(self.MODULE, self._lean_name(hol_name))] = value
+        return tagged
+
+    @staticmethod
+    def _lean_name(hol_name):
+        return {
+            "sh_mem_load_def": "crepShMemLoadExactHOL",
+            "sh_mem_store_def": "crepShMemStoreExactHOL",
+            "sh_mem_op_def": "crepShMemOpExactHOL",
+        }[hol_name]
+
+    def _record(self, hol_name, **overrides):
+        record = {
+            "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
+            "hol_name": hol_name,
+            "lean_path": self.MODULE,
+            "lean_name": self._lean_name(hol_name),
+            "statement_status": (
+                "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec"
+            ),
+            "fmap_as_finite_support": list(self.FMAP_FIELDS),
+            "words_as_type_indexed_bitvec": True,
+            "reviewer": "source comparison of the HOL word/finite-map carriers",
+        }
+        record.update(overrides)
+        return record
+
+    def _errors(self, records, tagged):
+        return THEOREM_MAP["validate_inventory"](records, set(), tagged, set())
+
+    def test_manifest_accepts_real_combined_fixture(self):
+        lines = self._lines()
+        tagged = self._tagged(lines)
+        self.assertEqual(
+            self._errors([self._record(h) for h in self.HOL_NAMES], tagged), []
+        )
+
+    def test_manifest_rejects_real_fixture_omitting_words_qualifier(self):
+        lines = self._lines()
+        tagged = self._tagged(lines)
+        errors = self._errors(
+            [self._record(h, words_as_type_indexed_bitvec=False) for h in self.HOL_NAMES],
+            tagged,
+        )
+        self.assertTrue(errors)
+
+    def test_manifest_rejects_real_fixture_omitting_fmap_qualifier(self):
+        lines = self._lines()
+        tagged = self._tagged(lines)
+        errors = self._errors(
+            [self._record(h, fmap_as_finite_support=[], words_as_type_indexed_bitvec=False)
+             for h in self.HOL_NAMES],
+            tagged,
+        )
+        self.assertTrue(errors)
+
+    def test_manifest_rejects_real_fixture_with_single_status(self):
+        lines = self._lines()
+        tagged = self._tagged(lines)
+        for status in (
+            "reviewed_fmap_as_finite_support",
+            "reviewed_words_as_type_indexed_bitvec",
+        ):
+            errors = self._errors(
+                [self._record(h, statement_status=status) for h in self.HOL_NAMES],
+                tagged,
+            )
+            self.assertTrue(errors, status)
+
+    def test_manifest_rejects_real_fixture_omitting_combined_status(self):
+        lines = self._lines()
+        tagged = self._tagged(lines)
+        errors = self._errors(
+            [self._record(h, statement_status="reviewed_exact") for h in self.HOL_NAMES],
+            tagged,
+        )
+        self.assertTrue(errors)
+
+
 if __name__ == "__main__":
     unittest.main()

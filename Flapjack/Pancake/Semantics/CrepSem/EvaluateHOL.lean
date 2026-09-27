@@ -333,8 +333,11 @@ end CrepSemShMemExact
     FFI state. The `(fmap_as_finite_support := [locals, globals, code])`
     qualifier records that HOL's `|->` fields are represented by
     `HolFiniteMapExact`; the positive-width `BitVec width` model represents HOL's
-    nonempty finite word dimension. -/
-@[hol "cakeml/pancake/semantics/crepSemScript.sml" "sh_mem_load_def" (fmap_as_finite_support := [locals, globals, code])]
+    nonempty finite word dimension, recorded by the
+    `(words_as_type_indexed_bitvec)` qualifier (HOL `'a word` with dimension
+    `dimindex (:α)` translated to `BitVec width` with the `[NeZero width]`
+    discharge). -/
+@[hol "cakeml/pancake/semantics/crepSemScript.sml" "sh_mem_load_def" (fmap_as_finite_support := [locals, globals, code]) (words_as_type_indexed_bitvec)]
 def crepShMemLoadExactHOL {width : Nat} [NeZero width] {σ : Type}
     (name : Nat) (address : BitVec width) (nb : Nat)
     (state : CrepSemHOLState width σ) [DecidablePred state.shMemaddrs] :
@@ -384,8 +387,10 @@ def crepShMemLoadHOL {width : Nat} [NeZero width] {σ : Type}
     `word_to_bytes w F ++ word_to_bytes addr F` (or its `TAKE nb` prefix for
     `nb ≠ 0`). A terminal result keeps the state, a returned result installs the
     new FFI state. The `(fmap_as_finite_support := [locals, globals, code])`
-    qualifier records the finite-map representation. -/
-@[hol "cakeml/pancake/semantics/crepSemScript.sml" "sh_mem_store_def" (fmap_as_finite_support := [locals, globals, code])]
+    qualifier records the finite-map representation; the
+    `(words_as_type_indexed_bitvec)` qualifier records the `'a word` /
+    `dimindex (:α)` to `BitVec width` / `[NeZero width]` translation. -/
+@[hol "cakeml/pancake/semantics/crepSemScript.sml" "sh_mem_store_def" (fmap_as_finite_support := [locals, globals, code]) (words_as_type_indexed_bitvec)]
 def crepShMemStoreExactHOL {width : Nat} [NeZero width] {σ : Type}
     (name : Nat) (address : BitVec width) (nb : Nat)
     (state : CrepSemHOLState width σ) [DecidablePred state.shMemaddrs] :
@@ -415,8 +420,11 @@ def crepShMemStoreExactHOL {width : Nat} [NeZero width] {σ : Type}
 /-- Exact HOL `sh_mem_op_def` (`crepSemScript.sml:210-218`): dispatch the eight
     shared-memory operators to `sh_mem_load`/`sh_mem_store` at the fixed byte
     counts `0` (`Load`/`Store`), `1` (`Load8`/`Store8`), `2`
-    (`Load16`/`Store16`) and `4` (`Load32`/`Store32`), clause for clause. -/
-@[hol "cakeml/pancake/semantics/crepSemScript.sml" "sh_mem_op_def" (fmap_as_finite_support := [locals, globals, code])]
+    (`Load16`/`Store16`) and `4` (`Load32`/`Store32`), clause for clause. The
+    `(fmap_as_finite_support := [locals, globals, code])` and
+    `(words_as_type_indexed_bitvec)` qualifiers record the finite-map and
+    word-dimension translations. -/
+@[hol "cakeml/pancake/semantics/crepSemScript.sml" "sh_mem_op_def" (fmap_as_finite_support := [locals, globals, code]) (words_as_type_indexed_bitvec)]
 def crepShMemOpExactHOL {width : Nat} [NeZero width] {σ : Type}
     (operator : CrepMemOp) (name : Nat) (address : BitVec width)
     (state : CrepSemHOLState width σ) [DecidablePred state.shMemaddrs] :
