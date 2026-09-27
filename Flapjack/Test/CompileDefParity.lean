@@ -898,6 +898,32 @@ example :
   · decide
   · simp [compileProgExactHOLW, compileProgHOL, progOfHOL, crepProgOfHOL]
 
+/-- The `ExtCall` success bridge (`pan_to_crepScript.sml:274-290`) closes the
+    four `One`-shaped operand bindings and the maximum-variable temporary base
+    for concrete constant operands. -/
+example :
+    crepProgOfHOL (compileProgExactHOLW (exactLocalAssignContext [7] [8])
+      (.extCall (ofString "f") (expToHOL (.const 5)) (expToHOL (.const 6))
+        (expToHOL (.const 7)) (expToHOL (.const 8)))) =
+    compileProgRiscV (exactLocalAssignContext [7] [8]).toProduction
+      (.extCall "f" (.const 5) (.const 6) (.const 7) (.const 8)) := by
+  refine compileProgExactHOLW_extCall_success_bridge
+    (context := exactLocalAssignContext [7] [8]) (function := "f")
+    (configuration := .const 5) (configurationLength := .const 6)
+    (array := .const 7) (arrayLength := .const 8) (hfunction := by decide)
+    (exactConfiguration := .const 5) (exactConfigurationRest := [])
+    (exactConfigurationLength := .const 6) (exactConfigurationLengthRest := [])
+    (exactArray := .const 7) (exactArrayRest := [])
+    (exactArrayLength := .const 8) (exactArrayLengthRest := [])
+    (productionConfiguration := .const 5) (productionConfigurationRest := [])
+    (productionConfigurationLength := .const 6) (productionConfigurationLengthRest := [])
+    (productionArray := .const 7) (productionArrayRest := [])
+    (productionArrayLength := .const 8) (productionArrayLengthRest := [])
+    ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_
+  all_goals
+    simp only [compileExpExactHOLW.eq_1, expToHOL.eq_1, compileExpHOL.eq_1,
+      List.map_cons, List.map_nil, crepExpOfHOL]
+
 def exactShMemStoreClauseParity : Bool :=
   (match compileShMemStoreExactHOLW
       (exactLocalAssignContext [7] [8]) .op8 (.var .local (ofString "src")) (.const 3) with
