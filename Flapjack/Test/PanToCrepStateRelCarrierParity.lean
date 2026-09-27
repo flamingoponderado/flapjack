@@ -157,6 +157,33 @@ def slcHOLGuard : Bool :=
    | none => true
    | _ => false)
 
+/- Exact `slc_tlc_rw` rewrite rows: applying each conjunct of `slcTlcRwHOL`
+    turns the raw HOL `FEMPTY |++ ...` update into the named `slcHOL`/`tlcHOL`
+    map, so the raw lookup agrees with the stored entries. -/
+theorem slcTlcRwHOL_raw_slc :
+    (HolFiniteMapExact.updateListEq HolFiniteMapExact.empty
+        ((slcVariables.map Prod.fst).zip slcArguments)).lookup (ml "x") =
+      some (.val (.word (5 : BitVec 8))) := by
+  rw [(slcTlcRwHOL slcVariables tlcSlots slcArguments).1]
+  exact slcHOL_x
+
+theorem slcTlcRwHOL_raw_tlc :
+    (HolFiniteMapExact.updateListEq HolFiniteMapExact.empty
+        (tlcSlots.zip ((tlcArguments.map flattenHOL).flatten))).lookup 1 =
+      some (.word (7 : BitVec 8)) := by
+  rw [(slcTlcRwHOL slcVariables tlcSlots tlcArguments).2]
+  exact tlcHOL_one
+
+def slcTlcRwHOLGuard : Bool :=
+  (match (HolFiniteMapExact.updateListEq HolFiniteMapExact.empty
+      ((slcVariables.map Prod.fst).zip slcArguments)).lookup (ml "x") with
+   | some (.val (.word value)) => value == (5 : BitVec 8)
+   | _ => false) &&
+  (match (HolFiniteMapExact.updateListEq HolFiniteMapExact.empty
+      (tlcSlots.zip ((tlcArguments.map flattenHOL).flatten))).lookup 1 with
+   | some (.word value) => value == (7 : BitVec 8)
+   | _ => false)
+
 def runChecks : IO Bool := do
   let checks := [
     ("HOL state_rel matching empty carrier fields", matchingFieldsOracleCase),
@@ -168,7 +195,8 @@ def runChecks : IO Bool := do
     ("HOL state_rel empty globals lookup is absent",
       emptyGlobalLookupOracleCase),
     ("HOL tlc_def exact Nat->word_lab finite map", tlcHOLGuard),
-    ("HOL slc_def exact varname->value finite map", slcHOLGuard)]
+    ("HOL slc_def exact varname->value finite map", slcHOLGuard),
+    ("HOL slc_tlc_rw exact finite-map rewrite", slcTlcRwHOLGuard)]
   for (name, passed) in checks do
     IO.println s!"{if passed then "PASS" else "FAIL"} {name}"
   pure (checks.all Prod.snd)

@@ -13036,5 +13036,13 @@
     "lean_name": "holFmapAsFiniteSupportResultWitness_slcHOL",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "flapjack-ds8: Flapjack-specific canonical standalone finite-map witness for slcHOL; no HOL theorem original."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "slc_tlc_rw",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "slcTlcRwHOL",
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.86, coordinator HOLD 2026-09-27): HOL slc_tlc_rw (pan_to_crepProofScript.sml:2321-2326) is a Prop-level two-conjunct map-equality theorem; the fmap_as_finite_support_result qualifier is defined only for declarations whose own result/input carrier is HolFiniteMapExact and cannot express two equalities, so the @[hol] tag and its (single-map, ignored-argument) witness were withdrawn. The untagged Flapjack-only analogue slcTlcRwHOL remains; an exact tag needs a theorem-level finite-map qualifier with genuine witnesses for both map equalities, tracked by flapjack-4ac.5.86.1."
   }
 ]
