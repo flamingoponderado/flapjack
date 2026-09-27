@@ -412,6 +412,33 @@ def exactReturnContext : CompileExpContextExact 8 where
   eids := HolFiniteMapExact.empty
   vmax := 0
 
+private def exactStoreBridgeContext : PanToCrepContextExact 8 where
+  vars := HolFiniteMapExact.empty
+  funcs := HolFiniteMapExact.empty
+  eids := HolFiniteMapExact.empty
+  vmax := 0
+
+example :
+    crepProgOfHOL (compileProgExactHOLW exactStoreBridgeContext
+        (.store (expToHOL (.const (3 : BitVec 8)))
+          (expToHOL (.const (4 : BitVec 8))))) =
+      compileProgRiscV exactStoreBridgeContext.toProduction
+        (.store (.const 3) (.const 4)) := by
+  apply compileProgExactHOLW_store_success_bridge
+    (exactAddress := .const 3)
+    (exactAddressRest := [])
+    (exactAddressShape := .one)
+    (exactValues := [.const 4])
+    (exactValueShape := .one)
+    (productionAddress := .const 3)
+    (productionAddressRest := [])
+    (productionAddressShape := .one)
+    (productionValues := [.const 4])
+    (productionValueShape := .one)
+  all_goals simp [exactStoreBridgeContext, compileExpExactHOLW,
+    compileExpHOL, expToHOL, shapeOfHOL, crepExpOfHOL,
+    PanToCrepContextExact.toProduction]
+
 def exactLocalAssignContext (destinationNames sourceNames : List Nat) :
     CompileExpContextExact 8 where
   vars := (HolFiniteMapExact.empty.update

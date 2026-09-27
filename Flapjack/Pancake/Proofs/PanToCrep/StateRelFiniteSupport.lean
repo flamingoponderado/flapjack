@@ -183,12 +183,34 @@ theorem panToCrepLocalsRelWfShapeFiniteExact {width : Nat} [NeZero width]
   panToCrepLocalsRelFiniteExact_valueShapeProjection
     context sourceLocals targetLocals name value hrel hlookup
 
-/-- Projection of HOL `state_rel_def`'s structural-context conjunct. -/
+/-- Exact port of HOL `state_rel_structs[local]`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:59-63`), the
+    structural-context projection of `state_rel_def`. The relation qualifier
+    records the same `PanSemStateFiniteExact.globals` translation as the parent
+    relation (this projection does not read that field, but the tagged
+    declaration is stated over the reviewed exact relation). -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "state_rel_structs"
+  (fmap_as_finite_support_relation := [PanSemStateFiniteExact.globals])]
 theorem panToCrepStateRelFiniteExact_structs {width : Nat} {σ : Type}
     [NeZero width] (source : PanSemStateFiniteExact width σ)
     (target : CrepSemHOLState width σ)
     (hrel : panToCrepStateRelFiniteExact source target) :
     source.structs = [] := hrel.2.2.2.1
+
+/-- Exact port of HOL `state_rel_globals[local]`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:65-69`), the globals
+    projection of `state_rel_def`. HOL concludes `s.globals = FEMPTY`; the
+    canonical `HolFiniteMapExact` translation renders `FEMPTY` pointwise as
+    `lookup = fun _ => none`, exactly as in the tagged parent relation. The
+    relation qualifier records the traversed `PanSemStateFiniteExact.globals`
+    field. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "state_rel_globals"
+  (fmap_as_finite_support_relation := [PanSemStateFiniteExact.globals])]
+theorem panToCrepStateRelFiniteExact_globals {width : Nat} {σ : Type}
+    [NeZero width] (source : PanSemStateFiniteExact width σ)
+    (target : CrepSemHOLState width σ)
+    (hrel : panToCrepStateRelFiniteExact source target) :
+    source.globals.lookup = (fun _ => none) := hrel.2.2.2.2.1
 
 /-- The exact Pan-to-Crep relations provide the initial locals/globals shape
     hypotheses used by the PanSem evaluator invariant. -/

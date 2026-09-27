@@ -1,6 +1,7 @@
 import Flapjack.LoopGetVarImm
 import Flapjack.Pancake.Semantics.LoopSem
 import Flapjack.Pancake.Semantics.LoopProps
+import Flapjack.Pancake.Semantics.LoopSemStateExact
 
 /-!
 # Original-domain parity for `loopSem.get_var_imm`
@@ -96,12 +97,50 @@ example (state : LoopMachineState (BitVec 64) Nat) (ck : Nat) :
     getVarImmHOL (.imm 5) { state with clock := ck } = getVarImmHOL (.imm 5) state :=
   getVarImmHOL_add_clock_eq (.imm 5) state ck
 
+/-! ## Exact `LoopSemStateFiniteExact` carrier parity
+
+The tagged exact `get_var_imm_def` port (`LoopSemStateFiniteExact.getVarImm`)
+reproduces the same HOL-EVAL oracle rows on the finite-support state carrier. -/
+
+private def exactVarImmFfi : HolFfiState Unit :=
+  { oracle := fun _ _ _ _ => .final .failed
+    ffiState := ()
+    ioEvents := [] }
+
+private def exactVarImmState : LoopSemStateFiniteExact 32 Unit where
+  locals := (HolFiniteMapExact.empty.updateEq (1, WordLocW.word 5)).updateEq
+    (3, WordLocW.loc 9 0)
+  globals := HolFiniteMapExact.empty
+  code := HolFiniteMapExact.empty
+  memory := fun _ => .word 0
+  mdomain := fun _ => true
+  shMdomain := fun _ => true
+  clock := 10
+  be := false
+  ffi := exactVarImmFfi
+  baseAddr := 100
+  topAddr := 200
+
+example : LoopSemStateFiniteExact.getVarImm (.reg 1) exactVarImmState = some (.word 5) := by decide
+example : LoopSemStateFiniteExact.getVarImm (.reg 2) exactVarImmState = none := by decide
+example : LoopSemStateFiniteExact.getVarImm (.imm 7) exactVarImmState = some (.word 7) := by decide
+example : LoopSemStateFiniteExact.getVarImm (.reg 3) exactVarImmState = some (.loc 9 0) := by decide
+
+#guard LoopSemStateFiniteExact.getVarImm (.reg 1) exactVarImmState == some (.word 5)
+#guard LoopSemStateFiniteExact.getVarImm (.reg 2) exactVarImmState == none
+#guard LoopSemStateFiniteExact.getVarImm (.imm 7) exactVarImmState == some (.word 7)
+#guard LoopSemStateFiniteExact.getVarImm (.reg 3) exactVarImmState == some (.loc 9 0)
+
 def runChecks : IO Bool := do
   let checks :=
     [ ("Loop get_var_imm register hit", getVarImm probeState (.reg 1) == originalRegHit),
       ("Loop get_var_imm register miss", getVarImm probeState (.reg 2) == originalRegMiss),
       ("Loop get_var_imm immediate", getVarImm probeState (.imm 7) == originalImmWord),
-      ("Loop get_var_imm location value", getVarImm probeState (.reg 3) == originalRegLoc) ]
+      ("Loop get_var_imm location value", getVarImm probeState (.reg 3) == originalRegLoc),
+      ("Exact loopSem get_var_imm register hit", LoopSemStateFiniteExact.getVarImm (.reg 1) exactVarImmState == some (.word 5)),
+      ("Exact loopSem get_var_imm register miss", LoopSemStateFiniteExact.getVarImm (.reg 2) exactVarImmState == none),
+      ("Exact loopSem get_var_imm immediate", LoopSemStateFiniteExact.getVarImm (.imm 7) exactVarImmState == some (.word 7)),
+      ("Exact loopSem get_var_imm location value", LoopSemStateFiniteExact.getVarImm (.reg 3) exactVarImmState == some (.loc 9 0)) ]
   let results ← checks.mapM fun (name, ok) => do
     if ok then
       IO.println s!"PASS {name}"
