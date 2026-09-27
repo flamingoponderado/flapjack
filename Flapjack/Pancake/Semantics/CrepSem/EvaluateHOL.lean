@@ -2328,4 +2328,183 @@ theorem evalCrepSemHOLProg_seq_normal_of_eval_eq {width : Nat} [NeZero width]
   rw [hfirst]
   simp [fixClockCrepSemHOL]
 
+/-! ## No-decider clause equations for the non-recursive fragment
+
+These restate the named `evaluate_def` clause equations over the public
+no-extra-argument entry point `evalCrepSemHOLProgExact`, whose classical
+`DecidablePred` instances are invisible in the result
+(`evalCrepSemHOLProgExact_eq_core`). Each equation therefore has HOL's
+state/program-only interface. They are declaration-local, UNTAGGED
+infrastructure: the whole `evaluate_def` tag still awaits the recursive-clause
+disposition (the recursive calls thread the base-state decision procedures
+through derived/stamped states) and the carrier-placement review tracked by
+`flapjack-4ac.5.16.5.13.1`. -/
+
+/-- HOL `evaluate (Break n, s)` (`crepSemScript.sml:309`) over the no-decider
+    interface. -/
+theorem evalCrepSemHOLProgExact_break {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) (label : Nat) :
+    evalCrepSemHOLProgExact state (.break label : CrepProgHOL width) =
+      (some (.break label), state) := by
+  simp only [evalCrepSemHOLProgExact]
+  exact evalCrepSemHOLProg_break state _ _ label
+
+/-- HOL `evaluate (Continue n, s)` (`crepSemScript.sml:310`) over the no-decider
+    interface. -/
+theorem evalCrepSemHOLProgExact_continue {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) (label : Nat) :
+    evalCrepSemHOLProgExact state (.continue label : CrepProgHOL width) =
+      (some (.continue label), state) := by
+  simp only [evalCrepSemHOLProgExact]
+  exact evalCrepSemHOLProg_continue state _ _ label
+
+/-- HOL `evaluate (Raise eid, s)` (`crepSemScript.sml:326`) over the no-decider
+    interface. -/
+theorem evalCrepSemHOLProgExact_raise {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) (exception : BitVec width) :
+    evalCrepSemHOLProgExact state (.raise exception : CrepProgHOL width) =
+      (some (.exception exception), CrepSemHOLState.emptyLocals state) := by
+  simp only [evalCrepSemHOLProgExact]
+  exact evalCrepSemHOLProg_raise state _ _ exception
+
+/-- HOL `evaluate (Tick, s)` (`crepSemScript.sml:327-329`) over the no-decider
+    interface. -/
+theorem evalCrepSemHOLProgExact_tick {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) :
+    evalCrepSemHOLProgExact state (.tick : CrepProgHOL width) =
+      (if state.clock = 0 then (some .timeOut, CrepSemHOLState.emptyLocals state)
+       else (none, decClockCrepSemHOL state)) := by
+  simp only [evalCrepSemHOLProgExact]
+  exact evalCrepSemHOLProg_tick state _ _
+
+/-- HOL `evaluate (Primitive lhss pop rhss, s)` (`crepSemScript.sml:250-262`)
+    over the no-decider interface. -/
+theorem evalCrepSemHOLProgExact_primitive {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) (names : List Nat) (operator : PrimOp)
+    (args : List Nat) :
+    evalCrepSemHOLProgExact state
+        (.primitive names operator args : CrepProgHOL width) =
+      (match args.mapM state.locals.lookup with
+       | some ws =>
+           match crepPrimopHOLExact operator ws with
+           | some results =>
+               if names.length = results.length &&
+                  names.all (fun v => (state.locals.lookup v).isSome) &&
+                  names.Nodup then
+                 (none, { state with
+                   locals := state.locals.updateListEq (names.zip results) })
+               else (some .error, state)
+           | none => (some .error, state)
+       | none => (some .error, state)) := by
+  simp only [evalCrepSemHOLProgExact]
+  exact evalCrepSemHOLProg_primitive state _ _ names operator args
+
+/-- HOL `evaluate (Assign v src, s)` (`crepSemScript.sml:257-262`) over the
+    no-decider interface. -/
+theorem evalCrepSemHOLProgExact_assign {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) (name : Nat) (src : CrepExpHOL width) :
+    evalCrepSemHOLProgExact state (.assign name src : CrepProgHOL width) =
+      (match crepExactEvalExp state
+               (fun a => Classical.propDecidable (state.memaddrs a)) src with
+       | none => (some .error, state)
+       | some w =>
+           match state.locals.lookup name with
+           | some _ => (none, CrepSemHOLState.setVar name w state)
+           | none => (some .error, state)) := by
+  rw [evalCrepSemHOLProgExact_eq_core state (.assign name src)
+    (fun a => Classical.propDecidable (state.memaddrs a))
+    (fun a => Classical.propDecidable (state.shMemaddrs a))]
+  exact evalCrepSemHOLProg_assign state _ _ name src
+
+/-- HOL `evaluate (Store dst src, s)` (`crepSemScript.sml:263-269`) over the
+    no-decider interface. -/
+theorem evalCrepSemHOLProgExact_store {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) (dst src : CrepExpHOL width) :
+    evalCrepSemHOLProgExact state (.store dst src : CrepProgHOL width) =
+      (match crepExactEvalExp state
+               (fun a => Classical.propDecidable (state.memaddrs a)) dst,
+             crepExactEvalExp state
+               (fun a => Classical.propDecidable (state.memaddrs a)) src with
+       | some (.word account), some w =>
+           match (fun a => Classical.propDecidable (state.memaddrs a)) account with
+           | .isTrue _ =>
+               (none, { state with memory := fun current =>
+                 if current = account then w else state.memory current })
+           | .isFalse _ => (some .error, state)
+       | _, _ => (some .error, state)) := by
+  rw [evalCrepSemHOLProgExact_eq_core state (.store dst src)
+    (fun a => Classical.propDecidable (state.memaddrs a))
+    (fun a => Classical.propDecidable (state.shMemaddrs a))]
+  exact evalCrepSemHOLProg_store state _ _ dst src
+
+/-- HOL `evaluate (Store32 dst src, s)` (`crepSemScript.sml:274-280`) over the
+    no-decider interface. -/
+theorem evalCrepSemHOLProgExact_store32 {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) (dst src : CrepExpHOL width) :
+    evalCrepSemHOLProgExact state (.store32 dst src : CrepProgHOL width) =
+      (match crepExactEvalExp state
+               (fun a => Classical.propDecidable (state.memaddrs a)) dst,
+             crepExactEvalExp state
+               (fun a => Classical.propDecidable (state.memaddrs a)) src with
+       | some (.word address), some (.word w) =>
+           match crepExactMemStore32 state
+                   (fun a => Classical.propDecidable (state.memaddrs a))
+                   address (BitVec.ofNat 32 w.toNat) with
+           | some memory => (none, { state with memory := memory })
+           | none => (some .error, state)
+       | _, _ => (some .error, state)) := by
+  rw [evalCrepSemHOLProgExact_eq_core state (.store32 dst src)
+    (fun a => Classical.propDecidable (state.memaddrs a))
+    (fun a => Classical.propDecidable (state.shMemaddrs a))]
+  exact evalCrepSemHOLProg_store32 state _ _ dst src
+
+/-- HOL `evaluate (StoreByte dst src, s)` (`crepSemScript.sml:281-287`) over the
+    no-decider interface. -/
+theorem evalCrepSemHOLProgExact_storeByte {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) (dst src : CrepExpHOL width) :
+    evalCrepSemHOLProgExact state (.storeByte dst src : CrepProgHOL width) =
+      (match crepExactEvalExp state
+               (fun a => Classical.propDecidable (state.memaddrs a)) dst,
+             crepExactEvalExp state
+               (fun a => Classical.propDecidable (state.memaddrs a)) src with
+       | some (.word address), some (.word w) =>
+           match crepExactMemStoreByte state
+                   (fun a => Classical.propDecidable (state.memaddrs a))
+                   address (UInt8.ofNat w.toNat) with
+           | some memory => (none, { state with memory := memory })
+           | none => (some .error, state)
+       | _, _ => (some .error, state)) := by
+  rw [evalCrepSemHOLProgExact_eq_core state (.storeByte dst src)
+    (fun a => Classical.propDecidable (state.memaddrs a))
+    (fun a => Classical.propDecidable (state.shMemaddrs a))]
+  exact evalCrepSemHOLProg_storeByte state _ _ dst src
+
+/-- HOL `evaluate (StoreGlob dst src, s)` (`crepSemScript.sml:288-291`) over the
+    no-decider interface. -/
+theorem evalCrepSemHOLProgExact_storeGlob {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) (dst : BitVec 5) (src : CrepExpHOL width) :
+    evalCrepSemHOLProgExact state (.storeGlob dst src : CrepProgHOL width) =
+      (match crepExactEvalExp state
+               (fun a => Classical.propDecidable (state.memaddrs a)) src with
+       | some w => (none, CrepSemHOLState.setGlobals dst w state)
+       | none => (some .error, state)) := by
+  rw [evalCrepSemHOLProgExact_eq_core state (.storeGlob dst src)
+    (fun a => Classical.propDecidable (state.memaddrs a))
+    (fun a => Classical.propDecidable (state.shMemaddrs a))]
+  exact evalCrepSemHOLProg_storeGlob state _ _ dst src
+
+/-- HOL `evaluate (Return es, s)` (`crepSemScript.sml:324-325`) over the
+    no-decider interface. -/
+theorem evalCrepSemHOLProgExact_return {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) (values : List (CrepExpHOL width)) :
+    evalCrepSemHOLProgExact state (.return values : CrepProgHOL width) =
+      (match values.mapM (@evalCrepSemHOLExp width ‹NeZero width› σ state
+                 (fun a => Classical.propDecidable (state.memaddrs a))) with
+       | some ws => (some (.return ws), CrepSemHOLState.emptyLocals state)
+       | none => (some .error, state)) := by
+  rw [evalCrepSemHOLProgExact_eq_core state (.return values)
+    (fun a => Classical.propDecidable (state.memaddrs a))
+    (fun a => Classical.propDecidable (state.shMemaddrs a))]
+  exact evalCrepSemHOLProg_return state _ _ values
+
 end Flapjack
