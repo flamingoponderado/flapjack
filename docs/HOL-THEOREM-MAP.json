@@ -5456,10 +5456,10 @@
   {
     "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
     "hol_name": "struct_infos_ok_def",
-    "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
-    "lean_name": "structInfosOk",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-main and flapjack-seven-luna (source comparison with pan_structsProofScript.sml:68-76: four predicate clauses match, but HOL uses mlstring names and a fields/size-only struct_info, while production StructContext uses String identifiers and StructInfo adds a shapedFields cache. The different record/context carriers cannot be covered by names_as_string. Keep the analogue untagged pending exact-carrier work flapjack-pxn.18.3.5.8.)"
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/StructInfosOkExact.lean",
+    "lean_name": "structInfosOkHOLExact",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source-reviewed against pan_structsProofScript.sml:68-76. All four HOL clauses are preserved: distinct field keys per entry, distinct context keys, per-index field-shape well-formedness against DROP (i+1) context, and size equality using the full context. Lean uses StructContextExact/MlS/ShapeHOL/StructInfoHOLExact, whose fields/size-only entry matches HOL; HOL Boolean truth is represented as a Lean proposition. Direct original-HOL instance row: scripts/hol-probes/afindi_probe.out:13; exact-carrier regression: Flapjack.Test.PanStructsAfindiParity.structInfosOkHOLExact_cons_fixture."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
@@ -5480,10 +5480,42 @@
   {
     "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
     "hol_name": "struct_infos_ok_cons",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/StructInfosOkExact.lean",
+    "lean_name": "structInfosOkHOLExact_cons",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source-reviewed against pan_structsProofScript.sml:132-139. The five premises and conclusion match: prior invariant; distinct field names; fresh structure name; EVERY exact is_wf_shape over xs for field shapes; and size from size_of_sh_with_ctxt xs. Lean uses the exact MlS/ShapeHOL/StructContextExact/fields-and-size carriers, List.Nodup for ALL_DISTINCT, and isWfShapesExactHOL for EVERY. The proof carries old-entry suffix and size obligations through size_of_sh_with_ctxt_drop. Direct HOL theorem-instantiation row: scripts/hol-probes/afindi_probe.out:13; Lean regression: Flapjack.Test.PanStructsAfindiParity.structInfosOkHOLExact_cons_fixture."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",
     "lean_name": "structInfosOk_cons",
-    "statement_status": "documented_mismatch",
-    "reviewer": "Codex (P0 source review: the five conjunctive premises and struct_infos_ok conclusion match struct_infos_ok_cons logically: prior invariant, distinct field keys, fresh struct key, field-shape well-formedness, and computed size. It remains untagged because HOL uses MlS/ShapeHOL/StructContextExact with fields/size-only struct_info, while Lean uses String-backed production StructName/Shape/StructContext and cache-augmented StructInfo. Its well-formedness and size checks use production String-keyed lookup; names_as_string cannot bridge the context/record carrier mismatch. The existing afindi_probe records the direct HOL theorem instance. The exact-carrier invariant and cons/append ports are tracked by flapjack-pxn.18.3.5.8.18."
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Production String/cache-backed analogue only; its precise carrier mismatch and the exact MlS/ShapeHOL port are documented beside the declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/StructInfosOkExact.lean",
+    "lean_name": "structInfosOkExact_lookup_mem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private support lemma for the exact struct_infos_ok_cons size proof; no independent HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/StructInfosOkExact.lean",
+    "lean_name": "structInfosOkExact_lookup_drop",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private support lemma for the exact struct_infos_ok_cons size proof; no independent HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/StructInfosOkExact.lean",
+    "lean_name": "structInfosOkExact_sizeDrop",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Local specialization used only inside the exact struct_infos_ok_cons proof; the independently tagged size_of_sh_with_ctxt_drop port remains in PanStructs/CompileCorrect.lean."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
