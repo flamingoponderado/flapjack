@@ -437,10 +437,13 @@ def loopShMemHook (state : LoopMachineState (RiscV.Word 64) F)
   | .word address => loopShMemOp state operator name address
   | .loc _ _ => (some .error, state)
 
-/-- Width-generic exact port of HOL `read_bytearray_def` (`miscScript.sml:113`).
-    The byte reader is supplied as HOL's own `get_byte` argument, so no extra
-    codec parameter is introduced; the word type is a parameter as in HOL. -/
-@[hol "cakeml/misc/miscScript.sml" "read_bytearray_def"]
+/-- Flapjack byte-array reader with the recursive equation and argument order
+    of HOL `read_bytearray_def` (`miscScript.sml:113`). It fixes the result
+    element to `UInt8`; HOL leaves the `get_byte` result word type polymorphic,
+    and the Crep call site specializes it to HOL `word8` (`BitVec 8`). Since
+    `UInt8` is a different Lean carrier and no qualifier is approved for this
+    translation, this declaration is untagged. The faithful `BitVec 8` helper
+    is tracked by `flapjack-4ac.5.16.5.4`. -/
 def readBytearrayHOL {width : Nat} (address : RiscV.Word width) (length : Nat)
     (getByte : RiscV.Word width → Option UInt8) : Option (List UInt8) :=
   match length with
@@ -475,12 +478,13 @@ def riscvByteAlignHOL {width : Nat} [NeZero width] (address : RiscV.Word width) 
   let bits := Nat.log2 (width / 8)
   (address >>> bits) <<< bits
 
-/-- Width-generic exact port of HOL `mem_load_byte_aux_def`
-    (`wordSemScript.sml:159`).  As in HOL, `memory` is a total
+/-- Flapjack byte-loader helper following HOL `mem_load_byte_aux_def`
+    (`wordSemScript.sml:159`). As in HOL, `memory` is a total
     `'a word -> 'a word_loc` map (Lean `LoopValue` is the `word_loc`
-    counterpart) and `domain` is the address set `dm`; the word type is a
-    parameter, so no extra codec parameter is introduced. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "mem_load_byte_aux_def"]
+    counterpart) and `domain` is the address set `dm`. Its result carrier is
+    `UInt8`, while HOL returns `word8` (`BitVec 8`); this unqualified carrier
+    difference prevents an exact tag. The faithful byte-carrier replacement is
+    tracked by `flapjack-4ac.5.16.5.4`. -/
 def memLoadByteAuxHOL {width : Nat} [NeZero width]
     (memory : RiscV.Word width → LoopValue (RiscV.Word width))
     (domain : RiscV.Word width → Prop) [DecidablePred domain]
@@ -504,11 +508,12 @@ def riscvSetByteHOL {width : Nat} [NeZero width] (bigEndian : Bool)
   let mask := ~~~((BitVec.ofNat width 0xFF) <<< index)
   (value &&& mask) ||| ((BitVec.ofNat width byte.toNat) <<< index)
 
-/-- Width-generic exact port of HOL `mem_store_byte_aux_def`
-    (`wordSemScript.sml:171`).  As in HOL, `memory` is a total
-    `'a word -> 'a word_loc` map and `domain` is the address set `dm`, so no
-    extra codec parameter is introduced. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "mem_store_byte_aux_def"]
+/-- Flapjack byte-store helper following HOL `mem_store_byte_aux_def`
+    (`wordSemScript.sml:171`). As in HOL, `memory` is a total
+    `'a word -> 'a word_loc` map and `domain` is the address set `dm`. Its byte
+    argument is `UInt8`, while HOL's is `word8` (`BitVec 8`); this declaration is
+    untagged pending the faithful carrier replacement tracked by
+    `flapjack-4ac.5.16.5.4`. -/
 def memStoreByteAuxHOL {width : Nat} [NeZero width]
     (memory : RiscV.Word width → LoopValue (RiscV.Word width))
     (domain : RiscV.Word width → Prop) [DecidablePred domain]
@@ -524,11 +529,11 @@ def memStoreByteAuxHOL {width : Nat} [NeZero width]
       else none
   | _ => none
 
-/-- Width-generic exact port of HOL `write_bytearray_def`
-    (`wordSemScript.sml:178`).  The argument order matches HOL
-    `write_bytearray a bs m dm be`; as in HOL, a failed byte store leaves the
-    original memory unchanged. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "write_bytearray_def"]
+/-- Flapjack byte-array writer following HOL `write_bytearray_def`
+    (`wordSemScript.sml:178`). The argument order and failed-store behavior
+    match HOL `write_bytearray a bs m dm be`, but its bytes are `List UInt8`
+    rather than HOL `word8 list` (`List (BitVec 8)`). It remains untagged until
+    the faithful carrier replacement tracked by `flapjack-4ac.5.16.5.4`. -/
 def writeBytearrayHOL {width : Nat} [NeZero width]
     (address : RiscV.Word width) (bytes : List UInt8)
     (memory : RiscV.Word width → LoopValue (RiscV.Word width))
@@ -742,12 +747,14 @@ def memStore32HOL {width : Nat} [NeZero width]
         else none
   else none
 
-/-! FLAPJACK-SPECIFIC (not exact tagged ports).  The following byte-array
+/-! FLAPJACK-SPECIFIC (not exact tagged ports). The following byte-array
     helpers are the 64-bit RISC-V instances of HOL's polymorphic word memory
-    codec.  The exact width-generic ports are `readBytearrayHOL`,
-    `memLoadByteAuxHOL`, `memStoreByteAuxHOL` and `writeBytearrayHOL` above; the
+    codec. The recursive equations of `readBytearrayHOL`,
+    `memLoadByteAuxHOL`, `memStoreByteAuxHOL` and `writeBytearrayHOL` follow HOL,
+    but their byte carrier is `UInt8` rather than `word8` (`BitVec 8`); the
+    faithful replacements are tracked by `flapjack-4ac.5.16.5.4`. The
     definitions below are their `width := 64`, little-endian specializations
-    using the reviewed RV64 codec.  They convert the machine's partial,
+    using the reviewed RV64 codec. They convert the machine's partial,
     `Bool`-valued memory/domain representation into HOL's total `word_loc` map
     and address set.  The width-polymorphic `ExtCall`/hook boundaries remain
     tracked by flapjack-s6a.3.3.1. -/
