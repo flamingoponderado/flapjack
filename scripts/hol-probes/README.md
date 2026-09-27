@@ -625,6 +625,14 @@ guards are in `Flapjack.Pancake.CrepInline.Pass` and
 does not claim the omitted `Call`/finite-map recursion. Regenerate with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=crep_inline_structural_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
+`crep_inline_transform_eoc_probe.out` records direct HOL EVAL of every arm of
+`transform_eoc_def` (`crep_inlineScript.sml:137-145`), including Call return
+metadata, recursive handlers, structural control flow, Return/`MAP2` length
+truncation, and the default clause. The exact width-indexed Lean port is
+`transformEocHOLExact` in `Flapjack.Pancake.CrepInline.Pass`; its guards are in
+`Flapjack.Test.CrepInlineTransformEocParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=crep_inline_transform_eoc_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `fupdate_list_append_commutes_probe.out` records the imported original HOL
 theorem `finite_mapTheory.FUPDATE_LIST_APPEND_COMMUTES` from
 `/home/zksecurity/HOL/src/finite_maps/finite_mapScript.sml:2960`, plus direct
