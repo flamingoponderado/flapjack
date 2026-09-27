@@ -151,6 +151,82 @@ def eraseEq [DecidableEq α] (map : HolFiniteMapExact α β) (key : α) :
     · simp [FDOMSUB_HOL, h] at hk
     · simpa [FDOMSUB_HOL, h] using hk
 
+end HolFiniteMapExact
+
+/-- A finite-support HOL map bundled with a duplicate-free witness list that is
+    exactly its defined lookup domain. The existential `finiteSupport` field on
+    `HolFiniteMapExact` alone permits duplicate and unused witness keys, so it
+    cannot directly serve as the `CARD (FDOM map)` recursion measure. This
+    refined carrier makes that domain explicit. -/
+structure HolFiniteMapWithDomain (α β : Type) where
+  map : HolFiniteMapExact α β
+  keys : List α
+  keys_nodup : keys.Nodup
+  keys_iff_lookup : ∀ key, key ∈ keys ↔ map.lookup key ≠ none
+
+namespace HolFiniteMapWithDomain
+
+/-- The HOL finite-domain cardinality for the refined carrier. -/
+def domainCard [DecidableEq α] (map : HolFiniteMapWithDomain α β) : Nat :=
+  map.keys.length
+
+/-- HOL `DOMSUB` on the map and exact support list. -/
+def eraseEq [DecidableEq α] (map : HolFiniteMapWithDomain α β) (key : α) :
+    HolFiniteMapWithDomain α β where
+  map := map.map.eraseEq key
+  keys := map.keys.filter (fun query => decide (query ≠ key))
+  keys_nodup := map.keys_nodup.filter _
+  keys_iff_lookup := by
+    intro query
+    rw [List.mem_filter]
+    constructor
+    · intro h
+      have hneq : query ≠ key := of_decide_eq_true h.2
+      have hlookup := (map.keys_iff_lookup query).mp h.1
+      simpa [HolFiniteMapExact.eraseEq, FDOMSUB_HOL, hneq] using hlookup
+    · intro h
+      have hparts : query ≠ key ∧ map.map.lookup query ≠ none := by
+        simpa [HolFiniteMapExact.eraseEq, FDOMSUB_HOL] using h
+      exact ⟨(map.keys_iff_lookup query).mpr hparts.2,
+        decide_eq_true hparts.1⟩
+
+private theorem filter_length_lt_of_mem [DecidableEq α]
+    (keys : List α) (key : α) (hnodup : keys.Nodup)
+    (hmem : key ∈ keys) :
+    (keys.filter (fun query => decide (query ≠ key))).length < keys.length := by
+  induction keys with
+  | nil => simp at hmem
+  | cons head tail ih =>
+      simp only [List.nodup_cons] at hnodup
+      simp only [List.mem_cons] at hmem
+      rcases hmem with hhead | htail
+      · subst head
+        simp only [List.filter_cons]
+        simp
+        exact Nat.lt_succ_of_le (List.length_filter_le _ _)
+      · have hne : head ≠ key := by
+          intro heq
+          apply hnodup.1
+          simpa [heq] using htail
+        have htailLt := ih hnodup.2 htail
+        simp [hne]
+        omega
+
+/-- Removing a defined key strictly decreases the explicit finite-domain
+    cardinality, matching HOL `CARD (FDOM fs)`. -/
+theorem domainCard_eraseEq_lt [DecidableEq α]
+    (map : HolFiniteMapWithDomain α β) (key : α)
+    (h : map.map.lookup key ≠ none) :
+    (map.eraseEq key).domainCard < map.domainCard := by
+  change (List.filter (fun query => decide (query ≠ key)) map.keys).length <
+    map.keys.length
+  exact filter_length_lt_of_mem map.keys key map.keys_nodup
+    ((map.keys_iff_lookup key).mpr h)
+
+end HolFiniteMapWithDomain
+
+namespace HolFiniteMapExact
+
 /-- HOL-equality port of `crepSem$res_var` (`crepSemScript.sml:163-166`) on the
     finite-support carrier: `NONE` subtracts the key from the domain, `SOME v`
     updates it. Uses `DecidableEq` (HOL `=`) so HOL's polymorphic key type is
