@@ -442,8 +442,9 @@ def loopShMemHook (state : LoopMachineState (RiscV.Word 64) F)
     element to `UInt8`; HOL leaves the `get_byte` result word type polymorphic,
     and the Crep call site specializes it to HOL `word8` (`BitVec 8`). Since
     `UInt8` is a different Lean carrier and no qualifier is approved for this
-    translation, this declaration is untagged. The faithful `BitVec 8` helper
-    is tracked by `flapjack-4ac.5.16.5.4`. -/
+    translation, this declaration remains untagged. The exact positive-width
+    helper is `readBytearrayWordHOL`; its `UInt8` projection is proved in
+    `PanSem/ExtCallExact.lean`. -/
 def readBytearrayHOL {width : Nat} (address : RiscV.Word width) (length : Nat)
     (getByte : RiscV.Word width → Option UInt8) : Option (List UInt8) :=
   match length with

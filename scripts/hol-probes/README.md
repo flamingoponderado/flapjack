@@ -119,8 +119,11 @@ context `vmax`; the four operands must also have shape `One` and nonempty
 compiled lists. The exact untagged `compileExtCallExactHOLW` clause slice and
 Lean checks live in `Flapjack.Test.CompileDefParity`. Regenerate the direct HOL
 fixture with
-`CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=compile_def_probeScript.sml bash scripts/hol-probes/regenerate.sh`:
-absent lookups, the
+`CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=compile_def_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
+`dec_declared_shape_ignored` confirms that `Dec` stores the shape returned by
+`compile_exp`, not its declared shape; the exact compiler guard in
+`Flapjack.Test.CompileDefParity` checks the same two-word result.
+The fixture also covers absent lookups, the
 `One`/empty-list fallback, and inconsistent shape/name-list lengths. The
 matching Lean cases live in `Flapjack.Test.CompileDefParity`. The
 `struct_skip`, `struct_seq`, `struct_break`, `struct_continue`, `struct_tick`,

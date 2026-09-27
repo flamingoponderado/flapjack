@@ -172,10 +172,10 @@ def panGetByteWord8HOL {width : Nat} (address value : RiscV.Word width)
     keeps the address as the shift index below one byte. The RISC-V memory
     helper returns index zero when `bytesInWord = 0`, which differs. This
     helper returns `UInt8`, while HOL `mem_load_byte` returns `word8`
-    (`BitVec 8`); it is untagged pending the faithful byte-carrier replacement
-    tracked by `flapjack-4ac.5.16.5.4`. The executed
-    `PanValueMemoryAccess.readByte` widening adapter remains tracked by
-    `flapjack-pxn.18.3.6.9.2`. -/
+    (`BitVec 8`), so it remains untagged. The exact `word8` counterpart is
+    `panMemLoadByteWord8HOL`; the UInt8 projection is kernel-checked in
+    `PanSem/ExtCallExact.lean`. The executed `PanValueMemoryAccess.readByte`
+    widening adapter remains tracked by `flapjack-pxn.18.3.6.9.2`. -/
 def panMemLoadByteHOL {width : Nat} [NeZero width]
     (memory : RiscV.Word width → HolWordLab width)
     (domain : RiscV.Word width → Prop) [DecidablePred domain]
@@ -261,8 +261,9 @@ def panSetByteHOL {width : Nat} (address byteValue cell : RiscV.Word width)
     if byte_align w IN dm then SOME ((byte_align w =+ Word (set_byte w b v be)) m)
     else NONE`. HOL's total `word_lab` memory and address-set carriers are
     represented directly, but this helper takes `UInt8` instead of HOL
-    `word8` (`BitVec 8`), so it is untagged pending
-    `flapjack-4ac.5.16.5.4`. -/
+    `word8` (`BitVec 8`), so it remains untagged. The exact sibling
+    `panMemStoreByteWord8HOL` is tagged; their full-memory equality is proved in
+    `PanSem/ExtCallExact.lean`. -/
 def panMemStoreByteHOL {width : Nat} [NeZero width]
     (memory : RiscV.Word width → HolWordLab width)
     (domain : RiscV.Word width → Prop) [DecidablePred domain]
@@ -307,7 +308,9 @@ def panMemStoreByteWord8HOL {width : Nat} [NeZero width]
     (write_bytearray (a+1) bs m dm be) dm be a b of SOME m => m | NONE => m`
     (a failed store keeps the original outer memory). Its bytes are
     `List UInt8` rather than HOL `word8 list` (`List (BitVec 8)`), so this
-    declaration is untagged pending `flapjack-4ac.5.16.5.4`. -/
+    declaration remains untagged. The exact `word8 list` sibling is
+    `panWriteBytearrayWord8HOL`, and a recursive projection proof is in
+    `PanSem/ExtCallExact.lean`. -/
 def panWriteBytearrayHOL {width : Nat} [NeZero width]
     (address : RiscV.Word width) (bytes : List UInt8)
     (memory : RiscV.Word width → HolWordLab width)
