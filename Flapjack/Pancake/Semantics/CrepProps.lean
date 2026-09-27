@@ -935,7 +935,7 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {σ : Type} :
 
 end CrepPropsFiniteSupport
 
-/-- Exact HOL `lookup_locals_eq_map_vars` (`crepPropsScript.sml:17-27`): mapping
+/-- Flapjack-specific untagged analogue of HOL `lookup_locals_eq_map_vars` (`crepPropsScript.sml:17-27`), retained as the intended exact rendering (the `@[hol]` tag is withdrawn pending carrier-qualifier review, see HOLD below): mapping
 the local lookup over a list of variable names equals mapping the exact
 expression evaluator over the corresponding `Var` expressions. HOL's
 `OPT_MMAP (FLOOKUP t.locals) ns` is Lean's `List.mapM t.locals.lookup` and
@@ -1009,15 +1009,17 @@ theorem flookupSetGlobalsCrepSemHOL_locals {width : Nat} [NeZero width] {σ : Ty
       s.locals.lookup name := by
   simp [CrepSemHOLState.setGlobals]
 
-/-- Exact HOL `sh_mem_load_FLOOKUP_locals` (`crepPropsScript.sml:303-310`) over
-    the exact finite-support `CrepSemHOLState` carrier and the exact
+/-- Flapjack-specific untagged analogue of HOL `sh_mem_load_FLOOKUP_locals`
+    (`crepPropsScript.sml:303-310`), retained as the intended exact rendering
+    (the `@[hol]` tag is withdrawn pending carrier-qualifier review, see HOLD
+    below) over the exact finite-support `CrepSemHOLState` carrier and the exact
     `crepShMemLoadExactHOL` port of `sh_mem_load`: whenever a shared-memory load
     returns a non-terminal result (`NONE`, `SOME (Continue k)`, or
     `SOME (Break k)`), it leaves the lookup of any local distinct from the
     loaded name unchanged. HOL's `v`/`n` are the `Nat` local names `name`/`key`,
-    and the free HOL `k` is the universally quantified `label`. The
-    `(fmap_as_finite_support := [locals, globals, code])` qualifier records that
-    HOL's `|->` fields are represented by the reviewed `HolFiniteMapExact`
+    and the free HOL `k` is the universally quantified `label`. A
+    `(fmap_as_finite_support := [locals, globals, code])` qualifier would record
+    that HOL's `|->` fields are represented by the reviewed `HolFiniteMapExact`
     translation. 
     HOLD (coordinator, 2026-09-27): exact HOL `sh_mem_load_FLOOKUP_locals`
     (`cakeml/pancake/semantics/crepPropsScript.sml:303`), but the `@[hol]` tag is
@@ -1044,13 +1046,15 @@ theorem crepShMemLoadHOL_flookup_locals {width : Nat} [NeZero width] {σ : Type}
   all_goals
     simp_all [CrepSemHOLState.setVar, FUPDATE_HOL]
 
-/-- Exact HOL `sh_mem_store_FLOOKUP_locals` (`crepPropsScript.sml:312-317`)
-    over the exact finite-support `CrepSemHOLState` carrier and the exact
+/-- Flapjack-specific untagged analogue of HOL `sh_mem_store_FLOOKUP_locals`
+    (`crepPropsScript.sml:312-317`), retained as the intended exact rendering
+    (the `@[hol]` tag is withdrawn pending carrier-qualifier review, see HOLD
+    below) over the exact finite-support `CrepSemHOLState` carrier and the exact
     `crepShMemStoreExactHOL` port of `sh_mem_store`: a shared-memory store never
     changes any local lookup (`FLOOKUP t.locals n = FLOOKUP s.locals n`, with no
-    side condition). HOL's `v`/`n` are the `Nat` local names `name`/`key`. The
-    `(fmap_as_finite_support := [locals, globals, code])` qualifier records that
-    HOL's `|->` fields are represented by the reviewed `HolFiniteMapExact`
+    side condition). HOL's `v`/`n` are the `Nat` local names `name`/`key`. A
+    `(fmap_as_finite_support := [locals, globals, code])` qualifier would record
+    that HOL's `|->` fields are represented by the reviewed `HolFiniteMapExact`
     translation. 
     HOLD (coordinator, 2026-09-27): exact HOL `sh_mem_store_FLOOKUP_locals`
     (`cakeml/pancake/semantics/crepPropsScript.sml:312`), but the `@[hol]` tag is

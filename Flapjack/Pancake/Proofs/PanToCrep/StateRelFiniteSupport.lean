@@ -280,15 +280,17 @@ theorem panToCrepLocalsRelLookupCtxtFiniteExact {width : Nat} [NeZero width]
       _ = (flattenHOL value).length := by rw [← hflatten]
   · rw [hmap, ← hflatten]
 
-/-- Exact port of HOL `ctxt_max_el_leq`
-    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:1493-1503`):
+/-- Flapjack-specific untagged analogue of HOL `ctxt_max_el_leq`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:1493-1503`), retained as
+    the intended exact rendering; the `@[hol]` tag is withdrawn pending
+    carrier-qualifier review (see HOLD below):
     `ctxt_max ctxt.vmax ctxt.vars /\
       FLOOKUP ctxt.vars v = SOME (sh,ns) /\
       n < LENGTH ns ==> EL n ns <= ctxt.vmax`.
 
     The implicit HOL context `ctxt` is the Pan-to-Crep `context` record, whose
-    `vars` field is the exact `PanToCrepContextExact.vars` field named by the
-    qualifier; `vmax` is `Nat` (HOL `num`) and is not a finite-map field, so no
+    `vars` field is the exact `PanToCrepContextExact.vars` field that the
+    qualifier would name; `vmax` is `Nat` (HOL `num`) and is not a finite-map field, so no
     other representation is touched. HOL `ctxt_max` becomes the exact-carrier
     rendering `ctxtMaxFiniteExact` (the same predicate already used by the
     tagged `locals_rel_def`), HOL `FLOOKUP` becomes `.lookup`, `EL n ns` becomes

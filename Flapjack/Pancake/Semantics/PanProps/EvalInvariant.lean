@@ -1220,16 +1220,18 @@ theorem evalHOL_upd_eshapes_eq {width : Nat} {σ : Type} [NeZero width]
   simp only [evalHOL]
   exact evalHOLExact_upd_eshapes_eq state.toExact expression eshapes.lookup
 
-/-- Exact finite-support port of HOL `panProps$opt_mmap_eval_upd_clock_eq`
-    (`cakeml/pancake/semantics/panPropsScript.sml:674-680`):
+/-- Flapjack-specific untagged analogue of HOL `panProps$opt_mmap_eval_upd_clock_eq`
+    (`cakeml/pancake/semantics/panPropsScript.sml:674-680`), retained as the
+    intended exact finite-support rendering; the `@[hol]` tag is withdrawn
+    pending carrier-qualifier review (see HOLD below):
     `!es s ck. OPT_MMAP (eval (s with clock := ck + s.clock)) es =
        OPT_MMAP (eval s) es`. HOL binds `es`, `s`, `ck` and advances the clock by
     `ck + s.clock`, matching the `{ state with clock := clock + state.clock }`
     update below; HOL's `OPT_MMAP` is Lean's `List.mapM`. The state is the
     PanProps counterpart carrier `PanPropsEvalStateFiniteExact`, which owns the
     four `HolFiniteMapExact` fields (locals/globals/code/eshapes) and the
-    same-module canonical `holFmapAsFiniteSupportWitness`, so the
-    `fmap_as_finite_support` qualifier is checker-valid; `evalHOL` delegates to
+    same-module canonical `holFmapAsFiniteSupportWitness`, so a
+    `fmap_as_finite_support` qualifier would be checker-valid; `evalHOL` delegates to
     the exact broad expression evaluator through `toExact`. The statement
     follows from the tagged `evalHOL_upd_clock_eq` by induction on `es`. `[NeZero
     width]` models HOL's positive word dimension and `DecidablePred
