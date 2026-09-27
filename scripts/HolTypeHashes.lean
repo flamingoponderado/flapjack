@@ -46,6 +46,7 @@ import Flapjack.Pancake.Proofs.PanToCrep.CompileProgParams
 import Flapjack.Pancake.Proofs.PanToWord
 import Flapjack.Pancake.Proofs.PanToCrep.Primop
 import Flapjack.Pancake.Proofs.PanToCrep.StateRelFiniteSupport
+import Flapjack.Pancake.Proofs.PanToCrep.TotalEvaluateCases
 import Flapjack.Pancake.Semantics.CrepProps
 import Flapjack.Pancake.Semantics.CrepSem
 import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
