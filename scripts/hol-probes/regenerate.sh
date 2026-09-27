@@ -1893,3 +1893,11 @@ run_probe fupdate_list_append_commutes_probeScript.sml fupdate_list_append_commu
   source_theorem overlap_lookup_equal \
   "$hol_dir/src/finite_maps/finite_mapScript.sml" \
   "$hol_dir/src/finite_maps"
+
+# The pan_commonProps genlist probe observes `mem_genlist_add_suc_val`
+# (pan_commonPropsScript.sml:234): membership in `GENLIST (fun x. SUC x + k) n`
+# implies the value lies in `(k, n + k]`.
+run_probe pan_common_props_genlist_probeScript.sml pan_common_props_genlist_probe.out \
+  genlist_mem_3 genlist_mem_0 genlist_mem_6 genlist_done \
+  "$cake_dir/pancake/semantics/pan_commonPropsScript.sml" \
+  "$cake_dir/pancake/semantics"

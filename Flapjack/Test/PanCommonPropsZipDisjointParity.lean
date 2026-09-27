@@ -105,8 +105,42 @@ theorem not_mem_fst_zip_flookup_empty_fixture :
     FLOOKUP (FUPDATE_LIST FEMPTY (([1, 2] : List Nat).zip [10, 20])) 9 = none :=
   not_mem_fst_zip_flookup_empty [1, 2] [10, 20] 9 (by decide) (by decide) (by decide)
 
+-- HOL `genlist_distinct_max` (`pan_commonPropsScript.sml:208`).
+def genlistGuard : Bool :=
+  (((List.range 3).map (fun x => x + 1 + 4)) : List Nat).all
+    (fun x => !decide (x ∈ ([0, 1, 2, 4] : List Nat)))
+
+#guard genlistGuard
+
+/-- HOL `genlist_distinct_max` (`pan_commonPropsScript.sml:208`). -/
+theorem genlist_distinct_max_fixture :
+    ListDisjoint (((List.range 3).map (fun x => x + 1 + 4)) : List Nat) [0, 1, 2, 4] :=
+  genlistDistinctMaxHOL 3 4 [0, 1, 2, 4]
+    (by intro y hy; simp [List.mem_cons] at hy; omega)
+
+/-- HOL `genlist_distinct_max'` (`pan_commonPropsScript.sml:221`). -/
+theorem genlist_distinct_max_shifted_fixture :
+    ListDisjoint (((List.range 3).map (fun x => x + 1 + (4 + 5))) : List Nat) [0, 1, 2, 4] :=
+  genlistDistinctMaxShiftedHOL 3 4 5 [0, 1, 2, 4]
+    (by intro y hy; simp [List.mem_cons] at hy; omega)
+
+-- HOL `mem_genlist_add_suc_val` (`pan_commonPropsScript.sml:234`), pinned by the
+-- checked-in oracle `scripts/hol-probes/pan_common_props_genlist_probe.out`
+-- (`genlist_mem_3=T`, `genlist_mem_0=F`, `genlist_mem_6=F`).
+def memGenlistGuard : Bool :=
+  (((List.range 4).map (fun x => x + 1 + 1)) : List Nat).all (fun x => decide (1 < x ∧ x ≤ 4 + 1)) &&
+    (((List.range 4).map (fun x => x + 1 + 1)) : List Nat).contains 3 &&
+    !((((List.range 4).map (fun x => x + 1 + 1)) : List Nat).contains 0) &&
+    !((((List.range 4).map (fun x => x + 1 + 1)) : List Nat).contains 6)
+
+#guard memGenlistGuard
+
+/-- HOL `mem_genlist_add_suc_val` (`pan_commonPropsScript.sml:234`). -/
+theorem mem_genlist_add_suc_val_fixture : (1 : Nat) < 3 ∧ 3 ≤ 4 + 1 :=
+  memGenlistAddSucValHOL 4 3 1 (by decide)
+
 def runChecks : IO Bool := do
-  if zipGuard && fmdvGuard && takeDropElZipGuard then
+  if zipGuard && fmdvGuard && takeDropElZipGuard && genlistGuard && memGenlistGuard then
     IO.println
       "PASS exact pan_commonProps zip fupdate not-mem, disjoint take/drop, fm_update_diff_vars, take/drop suffix disjoint, EL disjoint, and empty zip lookup (14 HOL rows)"
     return true

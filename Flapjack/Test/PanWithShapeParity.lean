@@ -354,15 +354,15 @@ def foldrMaxGuard : Bool :=
     `genlist_distinct_max'` (`pan_commonPropsScript.sml:234/208/221`). -/
 
 theorem mem_genlist_add_suc_val_fixture : (1 : Nat) < 3 ∧ 3 ≤ 4 + 1 :=
-  mem_genlist_add_suc_val 4 3 1 (by decide)
+  memGenlistAddSucValHOL 4 3 1 (by decide)
 
 theorem genlist_distinct_max_fixture :
     ListDisjoint ((List.range 3).map (fun i => i + 1 + 0)) [0] :=
-  genlist_distinct_max 3 0 [0] (by intro y hy; simp at hy; omega)
+  genlistDistinctMaxHOL 3 0 [0] (by intro y hy; simp at hy; omega)
 
 theorem genlist_distinct_max'_fixture :
     ListDisjoint ((List.range 3).map (fun i => i + 1 + (0 + 2))) [0] :=
-  genlist_distinct_max' 3 0 2 [0] (by intro y hy; simp at hy; omega)
+  genlistDistinctMaxShiftedHOL 3 0 2 [0] (by intro y hy; simp at hy; omega)
 
 def genlistGuard : Bool :=
   ((List.range 3).map (fun i => i + 1 + 0)).all
