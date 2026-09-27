@@ -548,14 +548,15 @@ theorem holFmapAsFiniteSupportResultWitness_slcHOL {width : Nat} [NeZero width]
     `MlS`/`ShapeHOL`/`ValueHOL`/`HolWordLab` carriers, matching `slcHOL`/`tlcHOL`
     clause-for-clause.
 
-    NOT an exact tagged HOL port: HOL `slc_tlc_rw` is a `Prop`-level
-    two-conjunct theorem, whereas the `fmap_as_finite_support_result` qualifier
-    is defined for declarations whose own result/input carrier is
-    `HolFiniteMapExact`. Applying that qualifier here would only certify a lookup
-    correspondence for one map and cannot express the two-equality statement, so
-    the `@[hol]` tag and its witness were withdrawn (bead flapjack-4ac.5.86).
-    Restoring an exact tag needs a theorem-level finite-map qualifier with
-    genuine witnesses for BOTH map equalities, tracked by flapjack-4ac.5.86.1. -/
+    This is a theorem-level finite-map equality: its conclusion is a conjunction
+    of two `HolFiniteMapExact` map equalities, so it carries the dedicated
+    `(fmap_as_finite_support_equalities)` qualifier. Each conjunct is witnessed
+    at the lookup level by a same-module checked theorem below
+    (`holFmapAsFiniteSupportEqualityWitness_slcTlcRwHOL_1`/`_2`); neither witness
+    mentions this theorem, so the qualification is genuine rather than an
+    ignored-proof threading. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "slc_tlc_rw"
+  (fmap_as_finite_support_equalities)]
 theorem slcTlcRwHOL {width : Nat} [NeZero width]
     (variables : List (MlS × ShapeHOL)) (slots : List Nat)
     (arguments : List (ValueHOL width)) :
@@ -564,5 +565,19 @@ theorem slcTlcRwHOL {width : Nat} [NeZero width]
     (HolFiniteMapExact.updateListEq HolFiniteMapExact.empty
         (slots.zip ((arguments.map flattenHOL).flatten)) = tlcHOL slots arguments) := by
   constructor <;> rfl
+
+/-- Lookup-level witness for the first `slc_tlc_rw` conjunct (the `slc` side). -/
+theorem holFmapAsFiniteSupportEqualityWitness_slcTlcRwHOL_1 {width : Nat} [NeZero width]
+    (variables : List (MlS × ShapeHOL)) (arguments : List (ValueHOL width)) (key : MlS) :
+    (HolFiniteMapExact.updateListEq HolFiniteMapExact.empty
+        ((variables.map Prod.fst).zip arguments)).lookup key =
+      (slcHOL variables arguments).lookup key := rfl
+
+/-- Lookup-level witness for the second `slc_tlc_rw` conjunct (the `tlc` side). -/
+theorem holFmapAsFiniteSupportEqualityWitness_slcTlcRwHOL_2 {width : Nat} [NeZero width]
+    (slots : List Nat) (arguments : List (ValueHOL width)) (key : Nat) :
+    (HolFiniteMapExact.updateListEq HolFiniteMapExact.empty
+        (slots.zip ((arguments.map flattenHOL).flatten))).lookup key =
+      (tlcHOL slots arguments).lookup key := rfl
 
 end Flapjack

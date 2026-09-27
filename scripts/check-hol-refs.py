@@ -52,6 +52,9 @@ FMAP_AS_FINITE_SUPPORT_RESULT_RE = re.compile(
 FMAP_AS_FINITE_SUPPORT_RELATION_RE = re.compile(
     r'\(\s*fmap_as_finite_support_relation\s*:=\s*\[([^]]*)\]\s*\)'
 )
+FMAP_AS_FINITE_SUPPORT_EQUALITIES_RE = re.compile(
+    r'\(\s*fmap_as_finite_support_equalities\s*\)'
+)
 RELATION_FIELD_RE = re.compile(
     r'^\s*([A-Za-z_][A-Za-z0-9_\']*)\s*\.\s*([A-Za-z_][A-Za-z0-9_\']*)\s*$'
 )
@@ -179,6 +182,7 @@ def hol_attribute_sites(lines: list[str]):
                     fields_for(FMAP_AS_FINITE_SUPPORT_RE),
                     bool(FMAP_AS_FINITE_SUPPORT_RESULT_RE.search(attribute)),
                     relation_fields_for(),
+                    bool(FMAP_AS_FINITE_SUPPORT_EQUALITIES_RE.search(attribute)),
                 )
         start = None
         chunks = []
@@ -844,6 +848,15 @@ def has_fmap_result_witness(
                 f"witness `{witness}` does not apply a lookup to the tagged "
                 "declaration's side of the conclusion",
             )
+        if not re.match(
+            rf"^[\s(]*{re.escape(decl_name)}\b", target_side.strip()
+        ):
+            return (
+                False,
+                f"witness `{witness}` does not apply the lookup directly to the "
+                f"tagged declaration `{decl_name}`; an ignored-proof "
+                "(threaded-argument) witness is rejected",
+            )
         binder_zone = statement[:colon] if colon >= 0 else ""
         for premise in ([binder_zone] if binder_zone else []) + premises:
             if (
@@ -881,6 +894,158 @@ def fmap_as_finite_support_result_errors(
     ok, message = has_fmap_result_witness(lines, decl_name, module)
     if not ok:
         errors.append(f"fmap_as_finite_support_result {message}")
+    return errors
+
+
+def fmap_as_finite_support_equalities_witness_name(decl_name: str, index: int) -> str:
+    return f"holFmapAsFiniteSupportEqualityWitness_{decl_name}_{index}"
+
+
+def _count_top_level_conjuncts(text: str) -> int:
+    count = 1
+    depth = 0
+    index = 0
+    while index < len(text):
+        char = text[index]
+        if char in "([{":
+            depth += 1
+        elif char in ")]}":
+            depth = max(0, depth - 1)
+        elif depth == 0 and text.startswith("\u2227", index):
+            count += 1
+            index += 1
+        index += 1
+    return count
+
+
+def _statement_conclusion(text: str) -> str:
+    """Statement conclusion of a declaration text, with body and premises removed."""
+    body = text.split(":=", 1)[0]
+    colon = _last_top_level_colon(body)
+    conclusion = body[colon + 1:] if colon >= 0 else body
+    rest = conclusion
+    while True:
+        split = _split_top_level(rest, ("\u2192", "->"))
+        if split is None:
+            return rest
+        rest = split[1]
+
+
+def _has_lookup_equality_witness(
+    lines: list[str], witness: str, forbidden: str,
+) -> tuple[bool, str]:
+    source = strip_lean_comments("\n".join(lines))
+    pattern = re.compile(
+        rf"^\s*(?:@\[[\s\S]*?\]\s*)?(?:private\s+|protected\s+)?"
+        rf"(?:theorem|lemma)\s+{re.escape(witness)}\b(?P<statement>[\s\S]*?):=",
+        re.M,
+    )
+    matches = list(pattern.finditer(source))
+    if not matches:
+        return (False, f"has no same-module checked witness `{witness}`")
+    for match in matches:
+        statement = match.group("statement")
+        if forbidden and identifier_token_occurs(statement, forbidden):
+            return (
+                False,
+                f"witness `{witness}` mentions the tagged theorem `{forbidden}`; "
+                "an ignored-proof (threaded-argument) witness is rejected",
+            )
+        colon = _last_top_level_colon(statement)
+        conclusion = statement[colon + 1:] if colon >= 0 else statement
+        segments: list[str] = []
+        rest = conclusion
+        while True:
+            split = _split_top_level(rest, ("\u2192", "->"))
+            if split is None:
+                segments.append(rest)
+                break
+            segments.append(split[0])
+            rest = split[1]
+        premises, final = segments[:-1], segments[-1]
+        binder_zone = statement[:colon] if colon >= 0 else ""
+        if re.search(r"(?i)\b(?:lookup|flookup)\b", binder_zone) and (
+            "=" in binder_zone or "\u2194" in binder_zone
+        ):
+            return (
+                False,
+                f"witness `{witness}` assumes the target relation in a premise "
+                "instead of proving it",
+            )
+        if _split_top_level(final, ("\u2194",)) is not None:
+            return (
+                False,
+                f"witness `{witness}` must state an equality, not an iff",
+            )
+        relation = _split_top_level(final, ("=",))
+        if relation is None:
+            return (
+                False,
+                f"witness `{witness}` is vacuous: no equality conclusion",
+            )
+        lhs, rhs = relation
+        if "".join(lhs.split()) == "".join(rhs.split()):
+            return (
+                False,
+                f"witness `{witness}` is a self-equality; it does not "
+                "establish lookup-level correspondence",
+            )
+        if not (
+            re.search(r"(?i)\b(?:lookup|flookup)\b", lhs)
+            and re.search(r"(?i)\b(?:lookup|flookup)\b", rhs)
+        ):
+            return (
+                False,
+                f"witness `{witness}` must apply a lookup on BOTH sides of its "
+                "equality",
+            )
+        for premise in premises:
+            if re.search(r"(?i)\b(?:lookup|flookup)\b", premise) and (
+                "=" in premise or "\u2194" in premise
+            ):
+                return (
+                    False,
+                    f"witness `{witness}` assumes the target relation in a "
+                    "premise instead of proving it",
+                )
+    return (True, "")
+
+
+def fmap_as_finite_support_equalities_errors(
+    lines: list[str], module: str,
+    declaration_text: str, decl_name: str,
+) -> list[str]:
+    """Validate a theorem whose conclusion is a conjunction of finite-map equalities.
+
+    HOL theorems such as `slc_tlc_rw` conclude several `|->` map equalities.
+    Each conjunct must be witnessed at the lookup level by a same-module checked
+    `holFmapAsFiniteSupportEqualityWitness_<decl>_<index>`; the witnesses must not
+    mention the tagged theorem, so the ignored-proof/threaded-argument pattern is
+    rejected. The tagged declaration's own statement must use the approved
+    `HolFiniteMapExact` translation.
+    """
+    errors: list[str] = []
+    if "HolFiniteMapExact" not in declaration_text:
+        errors.append(
+            "fmap_as_finite_support_equalities requires the tagged declaration's "
+            "conclusion to use the approved HolFiniteMapExact translation; a raw "
+            "`\u03b1 \u2192 Option \u03b2` function map is ineligible"
+        )
+    conclusion = _statement_conclusion(declaration_text)
+    count = _count_top_level_conjuncts(conclusion)
+    if count < 1:
+        errors.append(
+            "fmap_as_finite_support_equalities found no finite-map equality "
+            "conjunct in the tagged declaration's conclusion"
+        )
+        return errors
+    for index in range(1, count + 1):
+        witness = fmap_as_finite_support_equalities_witness_name(decl_name, index)
+        ok, message = _has_lookup_equality_witness(lines, witness, decl_name)
+        if not ok:
+            errors.append(
+                f"fmap_as_finite_support_equalities conjunct {index} {message}"
+            )
     return errors
 
 
@@ -1082,7 +1247,7 @@ def main(argv: list[str]) -> int:
         module_reported = False
         for (number, hol_path, hol_name, hol_line, list_fields,
              names_fields, boundary_fields, fmap_fields, fmap_result,
-             fmap_relation) in hol_attribute_sites(lines):
+             fmap_relation, fmap_equalities) in hol_attribute_sites(lines):
             where = f"{rel}:{number}"
             lean_decl = find_lean_decl(lines, number - 1)
             if module not in reachable and not module_reported:
@@ -1116,6 +1281,13 @@ def main(argv: list[str]) -> int:
                     f"{where}: {error}"
                     for error in fmap_as_finite_support_relation_errors(
                         lines, fmap_relation, rel, tagged_declaration_text(lines, number)
+                    )
+                )
+            if fmap_equalities:
+                errors.extend(
+                    f"{where}: {error}"
+                    for error in fmap_as_finite_support_equalities_errors(
+                        lines, rel, tagged_declaration_text(lines, number), lean_decl
                     )
                 )
             if names_fields or boundary_fields:

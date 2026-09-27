@@ -296,6 +296,23 @@ qualifier is mutually exclusive with `fmap_as_finite_support` and
 manifest status `reviewed_fmap_as_finite_support_relation` with a
 source-comparison note after the reviewer compares each HOL conjunct.
 
+**Qualify theorem-level finite-map equalities.** Use
+`(fmap_as_finite_support_equalities)` when the tagged declaration is a theorem
+whose conclusion is a conjunction of `HolFiniteMapExact` map *equalities* (for
+example HOL `slc_tlc_rw`), rather than a declaration whose own result/input
+carrier is a finite map. The checker counts the top-level conjuncts `N` of the
+theorem's conclusion and requires, in the same module, one checked witness
+`holFmapAsFiniteSupportEqualityWitness_<declaration>_<i>` for each `i = 1..N`.
+Every witness must state an unconditional lookup equality with a `lookup` on
+both sides, must not be an `↔`, a self-equality, or have a premise that already
+assumes the relation, and must NOT mention the tagged theorem at all (this
+rejects the ignored-proof / threaded-argument pattern that passes a theorem
+application as a term). The qualifier is mutually exclusive with
+`fmap_as_finite_support`, `fmap_as_finite_support_result`, and
+`fmap_as_finite_support_relation`, cannot use `reviewed_exact`, and requires
+manifest status `reviewed_fmap_as_finite_support_equalities` with a
+source-comparison note in the reviewer field.
+
 **Port the executable path, too.** As HOL definitions are ported, make the
 compiler that `flapjack-compile` actually runs call the reviewed `@[hol]`
 definitions. A tagged proof-only duplicate beside a different production
