@@ -765,14 +765,18 @@ theorem evalCrepSemHOLProgExact_eq_core {width : Nat} [NeZero width] {σ : Type}
 
 /-- HOL's rewritten `evaluate_def` at `crepSemScript.sml:443`, Skip case
     (originating at line 241), over the no-decider state/program interface:
-    evaluating Skip returns `(NONE, s)`. The equation is kernel-checked and its
-    carrier uses `CrepSemHOLState`'s finite-support locals/globals/code maps.
-    It is deliberately untagged: this declaration is in `EvaluateHOL.lean`,
-    while the owning carrier structure and canonical finite-map witness are in
-    `HOLState.lean`; the `fmap_as_finite_support` checker requires the owner and
-    witness in the tagged declaration's same module. An unqualified tag would
-    hide that representation translation. Bead `flapjack-4ac.5.16.5.13.1`
-    tracks a faithful qualified-tagging path; the evaluator parent remains open. -/
+    evaluating Skip returns `(NONE, s)`. Rewriting the original definition by
+    `fix_clock_evaluate` leaves this equation unchanged because `fix_clock`
+    preserves the state clock here. The state is the 11-field
+    `CrepSemHOLState`; the qualifier records exactly its HOL `|->` fields
+    `locals`, `globals`, and `code` as `HolFiniteMapExact`. It remains
+    untagged because the supplied `AGENTS.md` requires the owning carrier
+    structure itself to be declared in the tagged declaration's module;
+    `CrepSemHOLState` is imported from `HOLState.lean`. The local canonical
+    witness does not satisfy that separate ownership requirement. The exact
+    HOL clause is present and kernel-checked, but the qualified HOL port awaits
+    a faithful same-module carrier arrangement; see
+    `flapjack-4ac.5.16.5.13.1`. -/
 theorem evalCrepSemHOLProgExact_skip {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ) :
     evalCrepSemHOLProgExact state (.skip : CrepProgHOL width) = (none, state) := by
