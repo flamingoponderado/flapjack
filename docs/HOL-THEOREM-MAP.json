@@ -15304,5 +15304,16 @@
     "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-a source comparison (2026-09-28; bead flapjack-4ac.4.61) against panPropsScript.sml:1150-1158. This is the genuine p = Return expression case from recInduct evaluate_ind. It retains the source evaluator result/post pair premise and all eight state conclusions with no IH or extra premise. evaluate_def at panSemScript.sml:638-644 returns Error with the input state when expression evaluation fails or the size bound exceeds 32; a fitting value returns Return value with empty_locals s. All outcomes preserve exactly the eight listed fields. The Lean case uses evalHOLExact, the same 32-word size bound, and evaluateHOLFiniteState_return on PanPropsEvalStateFiniteExact's checked finite-support carrier. Skip, Break, Continue, Annot, and Tick leaves are also ported; recursive cases and assembly remain open."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "evaluate_invariants",
+    "hol_line": 1150,
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
+    "lean_name": "evaluateInvariantsAssignCaseHOLFinite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-28; bead flapjack-4ac.4.61) against panPropsScript.sml:1150-1158 and panSemScript.sml:566-572. This is the genuine Assign kind/name/source leaf from recInduct evaluate_ind. It retains the source evaluator pair premise and all eight conclusions with no induction hypothesis or added precondition. evaluate_def yields Error with the same state for expression failure or invalid assignment; success uses set_kvar, which updates only locals or globals. The Lean statement uses the canonical pair evaluator and PanPropsEvalStateFiniteExact's same-module checked finite-support carrier plus indexed words. Skip, Break, Continue, Annot, Tick, and Return leaves are also ported; recursive cases and assembly remain open."
   }
 ]
