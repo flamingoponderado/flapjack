@@ -12081,6 +12081,16 @@
   },
   {
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 780,
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
+    "lean_name": "evaluateHOLFiniteState_annot",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "reviewer": "flapjack-luna-a source comparison (2026-09-27; bead flapjack-qj5): the Annot conjunct at panSemScript.sml:656 of theorem evaluate_def line 780 states evaluate (Annot _ _,s)=(NONE,s). evaluateHOLFiniteState_annot quantifies the two annotation strings and source state and returns the identical (none,state) pair; there are no premises. The same-module HolFiniteMapExact witness supports the explicitly named four-field qualifier. This is one exact constructor case; the full conjunction remains open."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
     "hol_name": "evaluate_decls_def",
     "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
     "lean_name": "evaluateDeclsHOLFinite",

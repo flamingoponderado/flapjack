@@ -1749,6 +1749,19 @@ theorem evaluateHOLFiniteState_continue {width : Nat} {σ : Type} [NeZero width]
     evalPanSemRecursiveCallFiniteContext]
 attribute [simp] evaluateHOLFiniteState_continue
 
+/-! HOL `evaluate_def`'s `Annot` equation (`panSemScript.sml:656`), one of the
+line-780 theorem's 21 conjuncts. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
+  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+theorem evaluateHOLFiniteState_annot {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (tag text : MlS) :
+    evaluateHOLFiniteState state (.annot tag text : ProgHOL width) = (none, state) := by
+  classical
+  simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+    evalPanSemRecursiveCallFiniteContext]
+
+attribute [simp] evaluateHOLFiniteState_annot
+
 /-- The decider-taking helper is the pair-shaped rendering of the assembly-marker
     evaluator. This bridge is Flapjack-specific infrastructure. -/
 theorem evaluateHOLFiniteStateWithDeciders_eq_getD {width : Nat} {σ : Type} [NeZero width]
