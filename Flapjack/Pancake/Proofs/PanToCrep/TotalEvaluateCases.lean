@@ -4,6 +4,7 @@ import Flapjack.Pancake.Semantics.CrepSem.TotalEval
 import Flapjack.Pancake.Semantics.PanSem.EvaluateFinite
 import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
 import Flapjack.Pancake.PanToCrep.CompileProg
+import Flapjack.Pancake.Semantics.PanSem.DecCallExact
 import Flapjack.Pancake.Proofs.PanToCrep.CodeRelExact
 import Flapjack.Pancake.Proofs.PanToCrep.StateRelFiniteSupport
 import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
@@ -20,7 +21,7 @@ induction or receive a standalone `@[hol]` reference.
 namespace Flapjack
 
 open Flapjack.Pancake.PanLang
-  (MlS ShapeHOL shapeOfHOL sizeOfShapeHOL sizeOfShapeHOL_comb
+  (MlS ShapeHOL ProgHOL shapeOfHOL sizeOfShapeHOL sizeOfShapeHOL_comb
     sizeOfShapesHOL sizeOfShapesHOL_cons withShapeHOL isWfShapeExactHOL
     StructContextExact)
 
@@ -652,6 +653,147 @@ theorem panToCrepCallLocalsRelArgumentBindingsExact
       hargumentWf⟩
     simpa [groups] using hmapGroups
   · simp at hbase
+
+/-! The three owning carriers used by the exact Call theorem's finite-map
+relations. These same-module witnesses make the named carrier translations
+visible to the HOL-reference checker. -/
+namespace CallPreservationFiniteMapWitnesses
+
+theorem holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact
+    {width : Nat} {σ : Type} [NeZero width] :
+    (∀ (state : PanSemStateExact width σ) (h : state.FiniteSupport),
+        (PanSemStateFiniteExact.ofExact state h).toExact = state) ∧
+    (∀ state : PanSemStateFiniteExact width σ,
+        PanSemStateFiniteExact.ofExact state.toExact state.toExact_finiteSupport = state) :=
+  ⟨fun state h => PanSemStateFiniteExact.toExact_ofExact state h,
+    fun state => PanSemStateFiniteExact.ofExact_toExact state⟩
+
+theorem holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact
+    {width : Nat} [NeZero width] (context : PanToCrepContextExact width) :
+    PanToCrepContextExact.ofBroad (PanToCrepContextExact.toBroad context) = context := by
+  cases context
+  rfl
+
+theorem holFmapAsFiniteSupportRelationWitness_CrepSemHOLState
+    {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) :
+    CrepSemBroadState.ofBroad state.toBroad state.toBroad_finiteSupport = state :=
+  CrepSemBroadState.ofBroad_toBroad state
+
+end CallPreservationFiniteMapWitnesses
+
+private theorem listRelGetElemExact {α β : Type} {R : α → β → Prop}
+    {xs : List α} {ys : List β} (h : ListRel R xs ys) :
+    ∀ i (hxs : i < xs.length) (hys : i < ys.length),
+      R (xs[i]'hxs) (ys[i]'hys) := by
+  induction h with
+  | nil =>
+      intro i hxs _
+      simp at hxs
+  | cons head tail ih =>
+      intro i hxs hys
+      cases i with
+      | zero => simpa using head
+      | succ i =>
+          exact ih i (by simpa using hxs) (by simpa using hys)
+
+/-! Exact port of HOL `call_preserve_state_code_locals_rel`
+(`pan_to_crepProofScript.sml:2355-2458`). The premise `hpreLocals` is the
+pre-call relation `locals_rel ctxt s.locals t.locals` at source lines
+2355-2364. The final conjunct instead relates the newly installed callee
+locals under `ctxt_fc` at lines 2374-2378; these are distinct contexts and
+maps. The statement keeps all HOL premises and all four conclusions in their
+source order. Its only carrier translation is the listed canonical
+finite-support representation of the named Pan and Crep maps. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml"
+  "call_preserve_state_code_locals_rel"
+  (fmap_as_finite_support_relation := [
+    PanSemStateFiniteExact.locals, PanSemStateFiniteExact.globals,
+    PanSemStateFiniteExact.code, PanSemStateFiniteExact.eshapes,
+    PanToCrepContextExact.vars, PanToCrepContextExact.funcs,
+    PanToCrepContextExact.eids, CrepSemHOLState.locals, CrepSemHOLState.code])]
+theorem panToCrepCallPreserveStateCodeLocalsRelExact
+    {width : Nat} {σ : Type} [NeZero width]
+    (returnShape : ShapeHOL)
+    (context : PanToCrepContextExact width)
+    (source : PanSemStateFiniteExact width σ)
+    (target : CrepSemHOLState width σ)
+    (functionName : MlS)
+    (variableShapes : List (MlS × ShapeHOL))
+    (program : ProgHOL width)
+    (arguments : List (ValueHOL width)) (names : List Nat)
+    (hDistinctVariables : (variableShapes.map Prod.fst).Nodup)
+    (hArgumentShapes : ListRel
+      (fun variableShape argument =>
+        variableShape.2 = shapeOfHOLExact argument) variableShapes arguments)
+    (hstate : panToCrepStateRelFiniteExact source target)
+    (hcode : codeRelExactHOLW context source.code target.code)
+    (hexcp : panToCrepExcpRelFiniteExact context.eids source.eshapes)
+    (hpreLocals : panToCrepLocalsRelFiniteExact
+      context source.locals target.locals)
+    (_hsourceCodeLookup : source.code.lookup functionName =
+      some (variableShapes, program, returnShape))
+    (_hcontextFunctionLookup : context.funcs.lookup functionName =
+      some (variableShapes, returnShape))
+    (hDistinctNames : names.Nodup)
+    (_hShapeSize : sizeOfShapeHOL (.comb (variableShapes.map Prod.snd)) =
+      (arguments.map flattenHOL).flatten.length)
+    (_htargetCodeLookup : target.code.lookup functionName =
+      some (names, compileProgExactHOLW
+        (ctxtFcExactHOL context.funcs context.eids
+          (variableShapes.map Prod.fst) (variableShapes.map Prod.snd) names)
+        program))
+    (hNamesLength : names.length = (arguments.map flattenHOL).flatten.length)
+    (hArgumentsWellFormed : ∀ argument, argument ∈ arguments →
+        isWfShapeExactHOL ([] : StructContextExact)
+        (shapeOfHOLExact argument) = true) :
+    panToCrepStateRelFiniteExact
+        ({source.decClockHOLFinite with
+          locals := slcHOL variableShapes arguments})
+        ({decClockCrepSemHOL target with
+          locals := tlcHOL names arguments}) ∧
+    codeRelExactHOLW
+        (ctxtFcExactHOL context.funcs context.eids
+          (variableShapes.map Prod.fst) (variableShapes.map Prod.snd) names)
+        source.decClockHOLFinite.code (decClockCrepSemHOL target).code ∧
+    panToCrepExcpRelFiniteExact
+        (ctxtFcExactHOL context.funcs context.eids
+          (variableShapes.map Prod.fst) (variableShapes.map Prod.snd) names).eids
+        source.decClockHOLFinite.eshapes ∧
+    panToCrepLocalsRelFiniteExact
+        (ctxtFcExactHOL context.funcs context.eids
+          (variableShapes.map Prod.fst) (variableShapes.map Prod.snd) names)
+        (slcHOL variableShapes arguments) (tlcHOL names arguments) := by
+  have _preCallLocalsWasAssumed := hpreLocals
+  have hlengthAndShapes :=
+    vshapesArgsRel_imp_eq_len_MAP variableShapes arguments hArgumentShapes
+  have hlength : variableShapes.length = arguments.length := hlengthAndShapes.1
+  have hshapeAt : ∀ i (hvariable : i < variableShapes.length)
+      (hargument : i < arguments.length),
+      (variableShapes[i]'hvariable).2 =
+        shapeOfHOLExact (arguments[i]'hargument) := by
+    intro i hvariable hargument
+    exact listRelGetElemExact hArgumentShapes i hvariable hargument
+  have hstatePost := panToCrepCallStateRelFiniteExactLocalUpdate
+    source target (slcHOL variableShapes arguments) (tlcHOL names arguments) hstate
+  have hcodePost :
+      codeRelExactHOLW
+        (ctxtFcExactHOL context.funcs context.eids
+          (variableShapes.map Prod.fst) (variableShapes.map Prod.snd) names)
+        source.decClockHOLFinite.code (decClockCrepSemHOL target).code := by
+    simpa [codeRelExactHOLW, ctxtFcExactHOL,
+      PanSemStateFiniteExact.decClockHOLFinite, decClockCrepSemHOL] using hcode
+  have hexcpPost :
+      panToCrepExcpRelFiniteExact
+        (ctxtFcExactHOL context.funcs context.eids
+          (variableShapes.map Prod.fst) (variableShapes.map Prod.snd) names).eids
+        source.decClockHOLFinite.eshapes := by
+    simpa [ctxtFcExactHOL, PanSemStateFiniteExact.decClockHOLFinite] using hexcp
+  have hlocalsPost := panToCrepCallLocalsRelArgumentBindingsExact
+    context variableShapes arguments names hDistinctVariables hlength hshapeAt
+    hDistinctNames hNamesLength hArgumentsWellFormed
+  refine ⟨?_, hcodePost, hexcpPost, hlocalsPost⟩
+  simpa [PanSemStateFiniteExact.decClockHOLFinite, decClockCrepSemHOL] using hstatePost
 
 /-! The exception-relation conjunct of HOL
 `call_preserve_state_code_locals_rel` (`pan_to_crepProofScript.sml:2355`) is
