@@ -473,6 +473,108 @@ example {width : Nat} [NeZero width]
   (compileExpListValRelHOL state context targetState fields hrel values compiled
     heval hlocalised hcompile).2.2.1
 
+/-- Kernel regression for the exact `RStruct` case `compileExpValRelHOL_rstruct`
+    (HOL `pan_to_crepProofScript.sml:171-198`). -/
+example {width : Nat} [NeZero width]
+    (state : PanSemStateFiniteExact width Unit) [_hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width Unit) [ht : DecidablePred targetState.memaddrs]
+    (fields : List (ExpHOL width)) (value : ValueHOL width)
+    (expressions : List (CrepExpHOL width)) (shape : ShapeHOL)
+    (hrel : ∀ (expression : ExpHOL width), expression ∈ fields →
+        (value : ValueHOL width) → (expressions : List (CrepExpHOL width)) →
+        (shape : ShapeHOL) →
+        state.evalHOLFinite expression = some value →
+        localisedExpHOL expression = true →
+        compileExpExactHOLW context expression = (expressions, shape) →
+        expressions.map (evalCrepSemHOLExp targetState) = (flattenHOL value).map some ∧
+        expressions.length = sizeOfShapeHOL shape ∧
+        shapeOfHOLExact value = shape ∧
+        isWfShapeExactHOL ([] : StructContextExact) shape = true)
+    (heval : state.evalHOLFinite (.rstruct fields) = some value)
+    (hlocalised : localisedExpHOL (.rstruct fields) = true)
+    (hcompile : compileExpExactHOLW context (.rstruct fields) = (expressions, shape)) :
+    shapeOfHOLExact value = shape :=
+  (compileExpValRelHOL_rstruct state context targetState fields value expressions shape
+    hrel heval hlocalised hcompile).2.2.1
+
+
+/-- Kernel regression for the exact `BaseAddr` case `compileExpValRelHOL_baseAddr`
+    (HOL `pan_to_crepProofScript.sml:130-396`). -/
+example {width : Nat} [NeZero width]
+    (state : PanSemStateFiniteExact width Unit) [_hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width Unit) [_ht : DecidablePred targetState.memaddrs]
+    (value : ValueHOL width)
+    (expressions : List (CrepExpHOL width)) (shape : ShapeHOL)
+    (heval : state.evalHOLFinite .baseAddr = some value)
+    (hstate : panToCrepStateRelFiniteExact state targetState)
+    (hcompile : compileExpExactHOLW context .baseAddr = (expressions, shape)) :
+    shapeOfHOLExact value = shape :=
+  (compileExpValRelHOL_baseAddr state context targetState value expressions shape
+    heval hstate hcompile).2.2.1
+
+/-- Kernel regression for the exact `TopAddr` case `compileExpValRelHOL_topAddr`
+    (HOL `pan_to_crepProofScript.sml:130-396`). -/
+example {width : Nat} [NeZero width]
+    (state : PanSemStateFiniteExact width Unit) [_hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width Unit) [_ht : DecidablePred targetState.memaddrs]
+    (value : ValueHOL width)
+    (expressions : List (CrepExpHOL width)) (shape : ShapeHOL)
+    (heval : state.evalHOLFinite .topAddr = some value)
+    (hstate : panToCrepStateRelFiniteExact state targetState)
+    (hcompile : compileExpExactHOLW context .topAddr = (expressions, shape)) :
+    shapeOfHOLExact value = shape :=
+  (compileExpValRelHOL_topAddr state context targetState value expressions shape
+    heval hstate hcompile).2.2.1
+
+/-- Kernel regression for the exact `BytesInWord` case
+    `compileExpValRelHOL_bytesInWord` (HOL `pan_to_crepProofScript.sml:130-396`). -/
+example {width : Nat} [NeZero width]
+    (state : PanSemStateFiniteExact width Unit) [_hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width Unit) [_ht : DecidablePred targetState.memaddrs]
+    (value : ValueHOL width)
+    (expressions : List (CrepExpHOL width)) (shape : ShapeHOL)
+    (heval : state.evalHOLFinite .bytesInWord = some value)
+    (hcompile : compileExpExactHOLW context .bytesInWord = (expressions, shape)) :
+    shapeOfHOLExact value = shape :=
+  (compileExpValRelHOL_bytesInWord state context targetState value expressions shape
+    heval hcompile).2.2.1
+
+/-- Kernel regression for the vacuous `NStruct` case
+    `compileExpValRelHOL_nstruct` (HOL `pan_to_crepProofScript.sml:130-396`). -/
+example {width : Nat} [NeZero width]
+    (state : PanSemStateFiniteExact width Unit) [_hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width Unit) [_ht : DecidablePred targetState.memaddrs]
+    (name : MlS) (fields : List (MlS × ExpHOL width))
+    (value : ValueHOL width)
+    (expressions : List (CrepExpHOL width)) (shape : ShapeHOL)
+    (heval : state.evalHOLFinite (.nstruct name fields) = some value)
+    (hstate : panToCrepStateRelFiniteExact state targetState)
+    (hcompile : compileExpExactHOLW context (.nstruct name fields) = (expressions, shape)) :
+    shapeOfHOLExact value = shape :=
+  (compileExpValRelHOL_nstruct state context targetState name fields value expressions shape
+    heval hstate hcompile).2.2.1
+
+/-- Kernel regression for the vacuous `NField` case
+    `compileExpValRelHOL_nfield` (HOL `pan_to_crepProofScript.sml:130-396`). -/
+example {width : Nat} [NeZero width]
+    (state : PanSemStateFiniteExact width Unit) [_hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width Unit) [_ht : DecidablePred targetState.memaddrs]
+    (name : MlS) (value' : ExpHOL width)
+    (value : ValueHOL width)
+    (expressions : List (CrepExpHOL width)) (shape : ShapeHOL)
+    (heval : state.evalHOLFinite (.nfield name value') = some value)
+    (hstate : panToCrepStateRelFiniteExact state targetState)
+    (hcompile : compileExpExactHOLW context (.nfield name value') = (expressions, shape)) :
+    shapeOfHOLExact value = shape :=
+  (compileExpValRelHOL_nfield state context targetState name value' value expressions shape
+    heval hstate hcompile).2.2.1
+
 def runChecks : IO Bool := do
   let checks := [
     ("HOL state_rel matching empty carrier fields", matchingFieldsOracleCase),

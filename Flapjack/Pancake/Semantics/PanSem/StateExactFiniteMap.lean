@@ -1165,6 +1165,24 @@ def callFixedContextHOLFinite {width : Nat} {σ : Type} [NeZero width]
   bodyContext.withState
     (fixClockHOLFinite entry (bodyResult, bodyContext.state)).2 rfl rfl
 
+/-- `callFixedContextHOLFinite` is independent of the equality proofs used to
+    transport the memory-domain deciders. This normalizes the generated
+    fixed-body `withState` context in the recursive DecCall equation. -/
+theorem callFixedContextHOLFinite_normalize {width : Nat} {σ : Type} [NeZero width]
+    (entry : PanSemStateFiniteExact width σ)
+    (bodyResult : Option (PanSemResultExact width))
+    (bodyContext : FiniteEvalContext width σ)
+    (hmem : (fixClockHOLFinite entry (bodyResult, bodyContext.state)).2.memaddrs =
+      bodyContext.state.memaddrs)
+    (hshared : (fixClockHOLFinite entry (bodyResult, bodyContext.state)).2.shMemaddrs =
+      bodyContext.state.shMemaddrs) :
+    bodyContext.withState (fixClockHOLFinite entry (bodyResult, bodyContext.state)).2
+        hmem hshared =
+      callFixedContextHOLFinite entry bodyResult bodyContext := by
+  unfold callFixedContextHOLFinite
+  exact FiniteEvalContext.withState_congr bodyContext
+    (fixClockHOLFinite entry (bodyResult, bodyContext.state)).2 hmem rfl hshared rfl
+
 /-- FLAPJACK-SPECIFIC (not a HOL declaration): the named finite fixed context
     projects to the broad named fixed context. -/
 theorem toExact_callFixedContextHOLFinite {width : Nat} {σ : Type} [NeZero width]
@@ -1186,6 +1204,28 @@ def callEntryStateHOLFinite {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ)
     (callee : HolFiniteMapExact MlS (ValueHOL width)) : PanSemStateFiniteExact width σ :=
   { state with clock := state.clock - 1, locals := callee }
+
+/-- FLAPJACK-SPECIFIC (not a HOL declaration): the named finite
+    `Call`/`DecCall` entry context. -/
+def callEntryContextHOLFinite {width : Nat} {σ : Type} [NeZero width]
+    (context : FiniteEvalContext width σ)
+    (callee : HolFiniteMapExact MlS (ValueHOL width)) : FiniteEvalContext width σ :=
+  context.withState (callEntryStateHOLFinite context.state callee) rfl rfl
+
+/-- `callEntryContextHOLFinite` is independent of the equality proofs used to
+    transport the memory-domain deciders. This normalizes the generated
+    `withState` arguments in the recursive evaluator equation to the named
+    DecCall entry context. -/
+theorem callEntryContextHOLFinite_normalize {width : Nat} {σ : Type} [NeZero width]
+    (context : FiniteEvalContext width σ)
+    (callee : HolFiniteMapExact MlS (ValueHOL width))
+    (hmem : (callEntryStateHOLFinite context.state callee).memaddrs = context.state.memaddrs)
+    (hshared : (callEntryStateHOLFinite context.state callee).shMemaddrs = context.state.shMemaddrs) :
+    context.withState (callEntryStateHOLFinite context.state callee) hmem hshared =
+      callEntryContextHOLFinite context callee := by
+  unfold callEntryContextHOLFinite
+  exact FiniteEvalContext.withState_congr context
+    (callEntryStateHOLFinite context.state callee) hmem rfl hshared rfl
 
 /-- FLAPJACK-SPECIFIC (not a HOL declaration): the named finite entry state
     projects to the broad named entry state. -/
@@ -1749,6 +1789,20 @@ theorem evalPanSemRecursiveCallFiniteContext_total {width : Nat} {σ : Type} [Ne
     cases program <;> simp_all [evalPanSemNonrecursiveHOLFinite, evalPanSemNonrecursiveHOLExact]
     · exact decNeg _ _ _ _ rfl rfl rfl rfl
     · exact x9 _ _ _ _ _ rfl rfl rfl rfl rfl
+
+/-- FLAPJACK-SPECIFIC (not a HOL declaration): the finite recursive evaluator
+    depends on a `FiniteEvalContext` only through its source state. This is the
+    finite-support counterpart of `eval_context_state` in `AddClock.lean` and
+    avoids unfolding the generated `DecidablePred` proof terms when normalizing
+    recursive body and continuation calls. -/
+theorem evalPanSemRecursiveCallFiniteContext_state_eq {width : Nat} {σ : Type}
+    [NeZero width] (program : ProgHOL width)
+    (context context' : FiniteEvalContext width σ)
+    (hstate : context.state = context'.state) :
+    evalPanSemRecursiveCallFiniteContext program context =
+      evalPanSemRecursiveCallFiniteContext program context' :=
+  congrArg (evalPanSemRecursiveCallFiniteContext program)
+    (FiniteEvalContext.ext hstate)
 
 /-- FLAPJACK-SPECIFIC provisional projection (not a HOL declaration; carries no
     `@[hol]` tag): the state-level view of the clause-for-clause finite context
