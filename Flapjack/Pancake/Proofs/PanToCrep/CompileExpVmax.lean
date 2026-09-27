@@ -448,7 +448,7 @@ theorem genlistVmaxDistinctListsCompiledExps
       ((argExpressions.map (compileExpHOL context)).flatMap
         (fun compiled => compiled.1.flatMap crepExpVars)) = true := by
   rw [distinctListsHol_eq_true_iff_listDisjoint]
-  apply listDisjoint_range_add count context.vmax _
+  apply genlistDistinctMaxHOL count context.vmax _
   intro name hname
   simp only [List.mem_flatMap] at hname
   rcases hname with ⟨compiled, hcompiled, hvars⟩

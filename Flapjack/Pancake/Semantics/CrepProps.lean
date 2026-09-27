@@ -3,6 +3,10 @@ import Flapjack.Pancake.CrepLang
 import Flapjack.Pancake.CrepLang.Exp
 import Flapjack.Pancake.CrepLang.Prog
 import Flapjack.Pancake.Semantics.CrepSem
+import Flapjack.Pancake.Semantics.CrepSem.HOLState
+import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
+import Flapjack.Pancake.PanCommon
+import Flapjack.Pancake.Semantics.PanCommonProps
 
 /-!
 Crepe language properties from `cakeml/pancake/semantics/crepPropsScript.sml`.
@@ -873,5 +877,302 @@ theorem crepExpVars_of_mem_loadShapeW {width : Nat} [NeZero width]
   rw [← loadShape_eq_loadShapeBytes_of_stride_eq address CrepBytesInWord.bytesInWord count value
     rfl] at h
   exact crepExpVars_of_mem_loadShape address CrepBytesInWord.bytesInWord count value n h
+
+/-- Exact port of Cake `crepProps$exps_of_def`
+    (`cakeml/pancake/semantics/crepPropsScript.sml:1282-1299`) over the exact
+    `CrepProgHOL`/`CrepExpHOL` carriers. Collects the expressions that occur
+    directly in a Crepe program: the `Dec` value, both `Seq` sides, the `If`
+    condition and branches, the `While` condition and body, the `Call`
+    arguments plus the handler body when present, both store operands, the
+    `StoreGlob` value, the `Return` values, the `Assign` value and the
+    `ShMem` address; every other constructor contributes nothing. The `Call`
+    function name is an `MlString` in both carriers and is ignored by HOL, so
+    there is no name-carrier mismatch. -/
+@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "exps_of_def"]
+def crepExpsOfHOL {width : Nat} [NeZero width] : CrepProgHOL width → List (CrepExpHOL width)
+  | .dec _ value body => value :: crepExpsOfHOL body
+  | .seq first second => crepExpsOfHOL first ++ crepExpsOfHOL second
+  | .ite condition thenBranch elseBranch =>
+      condition :: (crepExpsOfHOL thenBranch ++ crepExpsOfHOL elseBranch)
+  | .while condition body => condition :: crepExpsOfHOL body
+  | .call none _ args => args
+  | .call (some (_, none)) _ args => args
+  | .call (some (_, some (_, handler))) _ args => args ++ crepExpsOfHOL handler
+  | .store address value => [address, value]
+  | .store32 address value => [address, value]
+  | .storeByte address value => [address, value]
+  | .storeGlob _ value => [value]
+  | .return values => values
+  | .assign _ value => [value]
+  | .shMem _ _ address => [address]
+  | _ => []
+termination_by program => sizeOf program
+decreasing_by
+  all_goals decreasing_trivial
+
+/-! ### Exact finite-support `crepProps` state facts
+
+These restate the Cake `crepPropsScript.sml` whole-state facts over the reviewed
+exact `CrepSemHOLState` carrier, whose `locals`/`globals`/`code` fields are the
+finite-support `HolFiniteMapExact` translation of HOL's `|->` maps (the carrier
+is imported from the `crepSem` counterpart, like the other crepSem helpers).
+The `fmap_as_finite_support` qualifier requires a same-module canonical witness,
+provided immediately below. -/
+
+namespace CrepPropsFiniteSupport
+
+/-- Canonical same-module witness for the `fmap_as_finite_support` qualifier used
+by the tagged `crepProps` state facts in this module. The finite-map fields of
+`CrepSemHOLState` are invertibly related to the broad function-backed
+`CrepSemBroadState`; the proof is the imported canonical witness. -/
+theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {σ : Type} :
+    (∀ (state : CrepSemBroadState width σ) (h : state.FiniteSupport),
+        (CrepSemBroadState.ofBroad state h).toBroad = state) ∧
+    (∀ state : CrepSemHOLState width σ,
+        CrepSemBroadState.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  CrepSemHOLState.holFmapAsFiniteSupportWitness
+
+end CrepPropsFiniteSupport
+
+/-- Exact HOL `dec_clock_simp` (`crepPropsScript.sml:267-278`) over the exact
+finite-support `CrepSemHOLState` carrier: the ten field equations, with HOL
+`sh_memaddrs`/`be`/`base_addr`/`top_addr` rendered as `shMemaddrs`/`be`/
+`baseAddr`/`topAddr`. -/
+@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "dec_clock_simp"
+  (fmap_as_finite_support := [locals, globals, code])]
+theorem decClockCrepSemHOL_simp {width : Nat} [NeZero width] {σ : Type}
+    (s : CrepSemHOLState width σ) :
+    (decClockCrepSemHOL s).locals = s.locals ∧
+      (decClockCrepSemHOL s).globals = s.globals ∧
+      (decClockCrepSemHOL s).code = s.code ∧
+      (decClockCrepSemHOL s).memory = s.memory ∧
+      (decClockCrepSemHOL s).memaddrs = s.memaddrs ∧
+      (decClockCrepSemHOL s).shMemaddrs = s.shMemaddrs ∧
+      (decClockCrepSemHOL s).be = s.be ∧
+      (decClockCrepSemHOL s).ffi = s.ffi ∧
+      (decClockCrepSemHOL s).baseAddr = s.baseAddr ∧
+      (decClockCrepSemHOL s).topAddr = s.topAddr := by
+  simp [decClockCrepSemHOL]
+
+/-- Exact HOL `empty_locals_simp` (`crepPropsScript.sml:282-294`) over the exact
+finite-support `CrepSemHOLState` carrier: clearing `locals` to `FEMPTY` preserves
+the other nine fields. -/
+@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "empty_locals_simp"
+  (fmap_as_finite_support := [locals, globals, code])]
+theorem emptyLocalsCrepSemHOL_simp {width : Nat} [NeZero width] {σ : Type}
+    (s : CrepSemHOLState width σ) :
+    (CrepSemHOLState.emptyLocals s).globals = s.globals ∧
+      (CrepSemHOLState.emptyLocals s).code = s.code ∧
+      (CrepSemHOLState.emptyLocals s).memory = s.memory ∧
+      (CrepSemHOLState.emptyLocals s).memaddrs = s.memaddrs ∧
+      (CrepSemHOLState.emptyLocals s).shMemaddrs = s.shMemaddrs ∧
+      (CrepSemHOLState.emptyLocals s).clock = s.clock ∧
+      (CrepSemHOLState.emptyLocals s).be = s.be ∧
+      (CrepSemHOLState.emptyLocals s).ffi = s.ffi ∧
+      (CrepSemHOLState.emptyLocals s).baseAddr = s.baseAddr ∧
+      (CrepSemHOLState.emptyLocals s).topAddr = s.topAddr := by
+  simp [CrepSemHOLState.emptyLocals]
+
+/-- Exact HOL `FLOOKUP_set_globals` (`crepPropsScript.sml:297-301`) over the exact
+finite-support `CrepSemHOLState` carrier: setting a global leaves the `locals`
+finite map unchanged. -/
+@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "FLOOKUP_set_globals"
+  (fmap_as_finite_support := [locals, globals, code])]
+theorem flookupSetGlobalsCrepSemHOL_locals {width : Nat} [NeZero width] {σ : Type}
+    (key : BitVec 5) (value : HolWordLab width) (s : CrepSemHOLState width σ)
+    (name : Nat) :
+    (CrepSemHOLState.setGlobals key value s).locals.lookup name =
+      s.locals.lookup name := by
+  simp [CrepSemHOLState.setGlobals]
+
+
+/-- Exact port of HOL `eval_upd_clock_eq` (`crepPropsScript.sml:858-872`):
+the exact `crepSem$eval` expression evaluator never reads the state `clock`
+field, so replacing it is invisible. Quantifier order follows HOL's `t, e, ck`. -/
+@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "eval_upd_clock_eq"
+  (fmap_as_finite_support := [locals, globals, code])]
+theorem evalCrepSemHOLExp_upd_clock_eq {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) [DecidablePred state.memaddrs]
+    (expression : CrepExpHOL width) (clock : Nat) :
+    evalCrepSemHOLExp { state with clock := clock } expression =
+      evalCrepSemHOLExp state expression := by
+  refine CrepExpHOL.rec
+    (motive_1 := fun expression =>
+      evalCrepSemHOLExp { state with clock := clock } expression =
+        evalCrepSemHOLExp state expression)
+    (motive_2 := fun expressions =>
+      expressions.mapM (evalCrepSemHOLExp { state with clock := clock }) =
+        expressions.mapM (evalCrepSemHOLExp state))
+    (fun value => by simp only [evalCrepSemHOLExp])
+    (fun name => by simp only [evalCrepSemHOLExp])
+    (fun address ih => by simp only [evalCrepSemHOLExp, ih])
+    (fun address ih => by simp only [evalCrepSemHOLExp, ih])
+    (fun address ih => by simp only [evalCrepSemHOLExp, ih])
+    (fun address => by simp only [evalCrepSemHOLExp])
+    (fun operator args ih => by simp only [evalCrepSemHOLExp, ih])
+    (fun operator args ih => by simp only [evalCrepSemHOLExp, ih])
+    (fun operator left right ihl ihr => by simp only [evalCrepSemHOLExp, ihl, ihr])
+    (fun operator left right ihl ihr => by simp only [evalCrepSemHOLExp, ihl, ihr])
+    (by simp only [evalCrepSemHOLExp])
+    (by simp only [evalCrepSemHOLExp])
+    (by simp only [List.mapM_nil])
+    (fun head tail ihh iht => by simp only [List.mapM_cons, ihh, iht])
+    expression
+
+/-- Flapjack-specific equality helper for exact Crep expression evaluation.
+An update of a local absent from `var_cexp` does not change the `eval_def`
+result. This stronger equality statement is support for the successful-result
+HOL theorem below, and is not a separate HOL declaration. -/
+theorem evalCrepSemHOLExp_updateLocals_eq_of_not_vars {width : Nat} [NeZero width]
+    {σ : Type} (state : CrepSemHOLState width σ) [DecidablePred state.memaddrs]
+    (expression : CrepExpHOL width) (name : Nat) (word : HolWordLab width)
+    (hfresh : name ∉ crepExpVarsHOL expression) :
+    evalCrepSemHOLExp { state with locals := state.locals.updateEq (name, word) }
+        expression = evalCrepSemHOLExp state expression := by
+  let updated : CrepSemHOLState width σ :=
+    { state with locals := state.locals.updateEq (name, word) }
+  letI : DecidablePred updated.memaddrs := fun address => by
+    change Decidable (state.memaddrs address)
+    exact inferInstance
+  change evalCrepSemHOLExp updated expression = evalCrepSemHOLExp state expression
+  refine CrepExpHOL.rec
+    (motive_1 := fun expression =>
+      name ∉ crepExpVarsHOL expression →
+        evalCrepSemHOLExp updated expression = evalCrepSemHOLExp state expression)
+    (motive_2 := fun expressions =>
+      (∀ expression, expression ∈ expressions → name ∉ crepExpVarsHOL expression) →
+        expressions.mapM (evalCrepSemHOLExp updated) =
+          expressions.mapM (evalCrepSemHOLExp state))
+    (fun _ _ => by simp only [evalCrepSemHOLExp])
+    (fun variableName hfresh => by
+      have hne : variableName ≠ name := by
+        intro heq
+        subst variableName
+        exact hfresh (by simp [crepExpVarsHOL])
+      simp [evalCrepSemHOLExp, updated, HolFiniteMapExact.updateEq, FUPDATE_HOL, hne])
+    (fun address ih hfresh => by
+      have hsub : name ∉ crepExpVarsHOL address := by simpa [crepExpVarsHOL] using hfresh
+      simp only [evalCrepSemHOLExp, ih hsub]
+      simp [updated])
+    (fun address ih hfresh => by
+      have hsub : name ∉ crepExpVarsHOL address := by simpa [crepExpVarsHOL] using hfresh
+      simp only [evalCrepSemHOLExp, ih hsub]
+      simp [updated])
+    (fun address ih hfresh => by
+      have hsub : name ∉ crepExpVarsHOL address := by simpa [crepExpVarsHOL] using hfresh
+      simp only [evalCrepSemHOLExp, ih hsub]
+      simp [updated])
+    (fun _ _ => by simp [evalCrepSemHOLExp, updated])
+    (fun _ args ih hfresh => by
+      have hargs : ∀ expression, expression ∈ args → name ∉ crepExpVarsHOL expression := by
+        intro expression hmem hvar
+        have hmemVars : name ∈ crepExpVarsHOLList args := by
+          rw [crepExpVarsHOLList_eq_flatMap]
+          exact List.mem_flatMap.mpr ⟨expression, hmem, hvar⟩
+        exact hfresh hmemVars
+      simp only [evalCrepSemHOLExp, ih hargs])
+    (fun _ args ih hfresh => by
+      have hargs : ∀ expression, expression ∈ args → name ∉ crepExpVarsHOL expression := by
+        intro expression hmem hvar
+        have hmemVars : name ∈ crepExpVarsHOLList args := by
+          rw [crepExpVarsHOLList_eq_flatMap]
+          exact List.mem_flatMap.mpr ⟨expression, hmem, hvar⟩
+        exact hfresh hmemVars
+      simp only [evalCrepSemHOLExp, ih hargs])
+    (fun _ left right ihl ihr hfresh => by
+      have ⟨hleft, hright⟩ : name ∉ crepExpVarsHOL left ∧
+          name ∉ crepExpVarsHOL right := by simpa [crepExpVarsHOL] using hfresh
+      simp only [evalCrepSemHOLExp, ihl hleft, ihr hright])
+    (fun _ left right ihl ihr hfresh => by
+      have ⟨hleft, hright⟩ : name ∉ crepExpVarsHOL left ∧
+          name ∉ crepExpVarsHOL right := by simpa [crepExpVarsHOL] using hfresh
+      simp only [evalCrepSemHOLExp, ihl hleft, ihr hright])
+    (by simp [evalCrepSemHOLExp, updated])
+    (by simp [evalCrepSemHOLExp, updated])
+    (fun _ => by simp only [List.mapM_nil])
+    (fun head tail ihHead ihTail hfresh => by
+      have hhead : name ∉ crepExpVarsHOL head := hfresh head (by simp)
+      have htail : ∀ expression, expression ∈ tail → name ∉ crepExpVarsHOL expression := by
+        intro expression hmem
+        exact hfresh expression (by simp [hmem])
+      simp only [List.mapM_cons, ihHead hhead, ihTail htail])
+    expression hfresh
+
+/-- Flapjack-only finite-list extension of the exact `var_cexp` noninterference
+helper above. A list of HOL-equality local updates whose keys are all absent
+from an expression leaves its exact evaluator result unchanged. There is no
+separate HOL declaration for this list helper; it supports the induction in
+`eval_nested_assign_distinct_eq`. -/
+def evalCrepSemHOLExpWithMemDec {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (address : BitVec width) → Decidable (state.memaddrs address))
+    (expression : CrepExpHOL width) : Option (HolWordLab width) := by
+  letI : DecidablePred state.memaddrs := memDec
+  exact evalCrepSemHOLExp state expression
+
+theorem evalCrepSemHOLExpWithMemDec_updateLocals_eq_of_not_vars
+    {width : Nat} [NeZero width]
+    {σ : Type} (state : CrepSemHOLState width σ)
+    (memDec : (address : BitVec width) → Decidable (state.memaddrs address))
+    (expression : CrepExpHOL width) (name : Nat) (word : HolWordLab width)
+    (hfresh : name ∉ crepExpVarsHOL expression) :
+    evalCrepSemHOLExpWithMemDec { state with locals := state.locals.updateEq (name, word) }
+        memDec expression = evalCrepSemHOLExpWithMemDec state memDec expression := by
+  change evalCrepSemHOLExp
+      { state with locals := state.locals.updateEq (name, word) } expression =
+    evalCrepSemHOLExp state expression
+  letI : DecidablePred state.memaddrs := memDec
+  exact evalCrepSemHOLExp_updateLocals_eq_of_not_vars
+    state expression name word hfresh
+
+theorem evalCrepSemHOLExp_updateLocalsList_eq_of_not_vars {width : Nat} [NeZero width]
+    {σ : Type} (state : CrepSemHOLState width σ)
+    (memDec : (address : BitVec width) → Decidable (state.memaddrs address))
+    (expression : CrepExpHOL width) (entries : List (Nat × HolWordLab width))
+    (hfresh : ∀ entry, entry ∈ entries → entry.1 ∉ crepExpVarsHOL expression) :
+    evalCrepSemHOLExpWithMemDec
+        { state with locals := state.locals.updateListEq entries } memDec expression =
+      evalCrepSemHOLExpWithMemDec state memDec expression := by
+  induction entries generalizing state with
+  | nil => rfl
+  | cons entry entries ih =>
+      have hfreshHead : entry.1 ∉ crepExpVarsHOL expression :=
+        hfresh entry (by simp)
+      have hfreshTail : ∀ item, item ∈ entries →
+          item.1 ∉ crepExpVarsHOL expression := by
+        intro item hmem
+        exact hfresh item (by simp [hmem])
+      let updated : CrepSemHOLState width σ :=
+        { state with locals := state.locals.updateEq entry }
+      have htail := ih updated memDec hfreshTail
+      have hhead := evalCrepSemHOLExpWithMemDec_updateLocals_eq_of_not_vars
+        state memDec expression entry.1 entry.2 hfreshHead
+      have hstate :
+          ({ state with locals := state.locals.updateListEq (entry :: entries) } :
+            CrepSemHOLState width σ) =
+          { updated with locals := updated.locals.updateListEq entries } := by
+        cases state
+        simp [updated, HolFiniteMapExact.updateListEq,
+          HolFiniteMapExact.updateEq, FUPDATE_LIST_HOL_cons]
+      cases hstate
+      exact htail.trans hhead
+
+/-- Exact port of HOL `crepProps$update_locals_not_vars_eval_eq`
+(`crepPropsScript.sml:115-130`): under successful exact Crep expression
+evaluation and absence of the assigned local from `var_cexp`, replacing that
+local preserves the result. The finite-map qualifier records the exact
+`CrepSemHOLState` locals/globals/code carriers. -/
+@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "update_locals_not_vars_eval_eq"
+  (fmap_as_finite_support := [locals, globals, code])]
+theorem updateLocalsNotVarsEvalEqCrepHOL {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) [DecidablePred state.memaddrs]
+    (expression : CrepExpHOL width) (value : HolWordLab width)
+    (name : Nat) (word : HolWordLab width)
+    (hfresh : name ∉ crepExpVarsHOL expression)
+    (heval : evalCrepSemHOLExp state expression = some value) :
+    evalCrepSemHOLExp { state with locals := state.locals.updateEq (name, word) }
+        expression = some value := by
+  rw [evalCrepSemHOLExp_updateLocals_eq_of_not_vars state expression name word hfresh, heval]
+
 
 end Flapjack

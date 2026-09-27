@@ -270,6 +270,62 @@ authorize changed quantifiers, hypotheses, conclusions, `BEq` side conditions,
 or word-model differences, and the manifest must use status
 `reviewed_fmap_as_finite_support_result` after source comparison.
 
+**Qualify multi-carrier finite-map relations.** Use
+`(fmap_as_finite_support_relation := [Carrier.field, ...])` when a HOL relation
+mentions multiple carrier structures and needs explicit ownership for the
+finite-map fields it actually traverses (for example HOL `state_rel_def`,
+whose only translated finite-map field is `PanSemStateFiniteExact.globals`). Each
+entry names one field of one carrier; the carrier must be declared in the module
+or reachable through its imports and that field's type must be the reviewed
+canonical `HolFiniteMapExact` translation (a raw `α → Option β` map is
+ineligible). The tagged declaration must name every entry carrier. The qualifier
+covers only the listed maps (and their HOL vs Lean representation); a bare
+entry (a name without a dot) records a standalone finite-map parameter of the
+tagged declaration, which must bind that name at the reviewed canonical
+`HolFiniteMapExact` translation and needs no carrier witness, while a
+`Carrier.field` entry must name one field of one carrier that is declared in the
+module or reachable through its imports with a `HolFiniteMapExact` field. The
+qualifier does not authorize changed quantifiers, hypotheses, conclusions, `BEq`
+side conditions, or word-model differences. Each distinct entry carrier needs a
+same-module checked canonical witness
+`holFmapAsFiniteSupportRelationWitness_<Carrier>` naming the carrier and stating a
+genuine `toX`/`ofX` roundtrip with its broad counterpart (a carrier named in the
+statement that contributes no translated finite-map field needs no witness). This
+qualifier is mutually exclusive with `fmap_as_finite_support` and
+`fmap_as_finite_support_result`, cannot use `reviewed_exact`, and requires
+manifest status `reviewed_fmap_as_finite_support_relation` with a
+source-comparison note after the reviewer compares each HOL conjunct.
+
+**Qualify theorem-level finite-map equalities.** Use
+`(fmap_as_finite_support_equalities)` when the tagged declaration is a theorem
+whose conclusion is a conjunction of `HolFiniteMapExact` map *equalities* (for
+example HOL `slc_tlc_rw`), rather than a declaration whose own result/input
+carrier is a finite map. This is a conjunction-specific qualifier, so at least
+two top-level equality conjuncts are required. The checker counts the top-level
+conjuncts `N` of the theorem's conclusion and requires, in the same module, one
+checked witness `holFmapAsFiniteSupportEqualityWitness_<declaration>_<i>` for
+each `i = 1..N`.
+Every witness must state an unconditional equality with each side shaped
+precisely as `<map expression>.lookup <key>` (only safe outer parentheses may
+wrap a side), where the key is a universally bound identifier in the statement
+(no fixed keys, no wrapping `let`, prefix lookup, or nested term), must apply
+both lookups at the same key, must be syntactically associated with its numbered
+conjunct (each side of the `i`-th witness must be exactly the corresponding side
+of the `i`-th conjunct), must not be an `↔`, a self-equality, or have a premise
+that already assumes the relation, and must NOT mention the tagged theorem at all
+(this rejects the ignored-proof / threaded-argument pattern that passes a theorem
+application as a term, and the inert-`let` bypass that hides a reference to the
+tagged theorem behind a discarded binder). The qualifier is mutually exclusive
+with `fmap_as_finite_support`, `fmap_as_finite_support_result`, and
+`fmap_as_finite_support_relation`, cannot use `reviewed_exact`, and requires
+manifest status `reviewed_fmap_as_finite_support_equalities` with a
+source-comparison note in the reviewer field. The checker's checks are syntactic:
+it validates witness count, naming, exact equality shape, same-key application, a
+universally bound key, and per-conjunct association, but it does not prove that
+the Lean witnesses and conjuncts correspond to the HOL map equalities, so source
+review must still compare each numbered witness against the
+HOL equality and record that comparison in the reviewer note.
+
 **Port the executable path, too.** As HOL definitions are ported, make the
 compiler that `flapjack-compile` actually runs call the reviewed `@[hol]`
 definitions. A tagged proof-only duplicate beside a different production

@@ -1,6 +1,7 @@
 import Flapjack.Pancake.PanToCrep.ContextBridge
 import Flapjack.Pancake.PanToCrep.ContextProductionEvidence
 import Flapjack.Pancake.PanLang.Decl
+import Flapjack.Pancake.Proofs.PanToCrep
 
 /-!
 Kernel checks for the exact Pan-to-Crep context's finite-map fields and the
@@ -11,7 +12,8 @@ canonical finite-support roundtrip. Field payloads match the direct HOL
 namespace Flapjack.Test.PanToCrepContextExactParity
 
 open Flapjack
-open Flapjack.Pancake.PanLang (MlS ShapeHOL NameRanged ShapeByteRanged shapeOfHOL)
+open Flapjack.Pancake.PanLang (MlS ShapeHOL NameRanged ShapeByteRanged shapeOfHOL
+  withShapeHOL sizeOfShapeHOL)
 open Flapjack.Basis.Pure.MlString
 open Flapjack.Pancake.PanLang (DeclByteRanged FunDeclByteRanged ParamByteRanged
   ListParamByteRanged ProgByteRanged ExpByteRanged)
@@ -101,6 +103,21 @@ example : sample.eids.lookup e = some (2 : BitVec 8) := by
   simp [sample, e, HolFiniteMapExact.update, HolFiniteMapExact.empty, FUPDATE]
 
 example : sample.vmax = 3 := rfl
+
+/-! Exact HOL `mk_ctxt_def` construction: the reviewed `mkCtxtExactHOL` packs
+its four arguments into the exact record with HOL's argument order and field
+assignment, so it returns the same record as the direct field fixture above. -/
+example :
+    (mkCtxtExactHOL sample.vars sample.funcs sample.vmax sample.eids) = sample := rfl
+
+example : (mkCtxtExactHOL sample.vars sample.funcs sample.vmax sample.eids).vmax = 3 := rfl
+
+example :
+    (mkCtxtExactHOL sample.vars sample.funcs sample.vmax sample.eids).eids.lookup e =
+      some (2 : BitVec 8) := by
+  change sample.eids.lookup e = some (2 : BitVec 8)
+  simp [sample, e, HolFiniteMapExact.update, HolFiniteMapExact.empty, FUPDATE]
+
 
 /-! The production bridge exposes exact context lookups to the String/Shape
 compiler boundary using decoded byte names and shapes. -/
@@ -212,5 +229,86 @@ private def compilerContextExact : PanToCrepContextExact 8 :=
   panToCrepContextExactOfProduction compilerContext compilerContextEvidence
 
 example : compilerContextExact.vmax = 0 := rfl
+
+/-! Exact HOL `ctxt_fc_def` rows: replay the direct HOL-EVAL probe
+`scripts/hol-probes/ctxt_fc_probe.out`. The rows `shaped_slots`,
+`zip_truncates_and_empty_slots`, `empty_maximum`, `functions_projection`,
+`vmax_nonempty_list`, and `vmax_empty_list` are checked field by field on the
+exact `ctxtFcExactHOL` construction. -/
+
+private def probeX : MlS := Flapjack.Basis.Pure.MlString.ofString "x"
+private def probePair : MlS := Flapjack.Basis.Pure.MlString.ofString "pair"
+private def probeIgnored : MlS := Flapjack.Basis.Pure.MlString.ofString "ignored"
+
+private def probeCvs : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ShapeHOL) :=
+  (HolFiniteMapExact.empty).update (f, ([], .one))
+
+private def probeEm : HolFiniteMapExact MlS (BitVec 8) :=
+  (HolFiniteMapExact.empty).update (e, (3 : BitVec 8))
+
+private def probeCtxt : PanToCrepContextExact 8 :=
+  ctxtFcExactHOL probeCvs probeEm [probeX, probePair]
+    [.one, .comb [.one, .one]] [0, 1, 2]
+
+example : probeCtxt.vars.lookup probeX = some (.one, [0]) := by
+  simp [probeCtxt, ctxtFcExactHOL, probeX, probePair, withShapeHOL, sizeOfShapeHOL,
+    HolFiniteMapExact.updateList, HolFiniteMapExact.empty, FUPDATE_LIST, FUPDATE]
+  decide
+
+example : probeCtxt.vars.lookup probePair =
+    some (.comb [.one, .one], [1, 2]) := by
+  simp [probeCtxt, ctxtFcExactHOL, probePair, probeX, withShapeHOL, sizeOfShapeHOL,
+    HolFiniteMapExact.updateList, HolFiniteMapExact.empty, FUPDATE_LIST, FUPDATE]
+
+example : probeCtxt.funcs.lookup f = some ([], .one) := by
+  simp [probeCtxt, ctxtFcExactHOL, probeCvs, f,
+    HolFiniteMapExact.update, HolFiniteMapExact.empty, FUPDATE]
+
+example : probeCtxt.eids.lookup e = some (3 : BitVec 8) := by
+  simp [probeCtxt, ctxtFcExactHOL, probeEm, e,
+    HolFiniteMapExact.update, HolFiniteMapExact.empty, FUPDATE]
+
+example : probeCtxt.vmax = 2 := rfl
+
+private def truncatedCtxt : PanToCrepContextExact 8 :=
+  ctxtFcExactHOL HolFiniteMapExact.empty HolFiniteMapExact.empty
+    [probeX, probeIgnored] [.one] []
+
+example : truncatedCtxt.vars.lookup probeX = some (.one, []) := by
+  simp [truncatedCtxt, ctxtFcExactHOL, probeX, withShapeHOL, sizeOfShapeHOL,
+    HolFiniteMapExact.updateList, HolFiniteMapExact.empty, FUPDATE_LIST, FUPDATE]
+
+example : truncatedCtxt.vars.lookup probeIgnored = none := by
+  simp [truncatedCtxt, ctxtFcExactHOL, probeIgnored, probeX, withShapeHOL,
+    sizeOfShapeHOL, HolFiniteMapExact.updateList, HolFiniteMapExact.empty,
+    FUPDATE_LIST, FUPDATE]
+  decide
+
+example : truncatedCtxt.vmax = 0 := rfl
+
+private def emptyCtxt : PanToCrepContextExact 8 :=
+  ctxtFcExactHOL HolFiniteMapExact.empty HolFiniteMapExact.empty [] [] []
+
+example : emptyCtxt.vars.lookup probeX = none := by
+  simp [emptyCtxt, ctxtFcExactHOL, HolFiniteMapExact.updateList,
+    HolFiniteMapExact.empty, probeX, FUPDATE_LIST]
+
+example : emptyCtxt.funcs.lookup f = none := by
+  simp [emptyCtxt, ctxtFcExactHOL, HolFiniteMapExact.empty, f]
+
+example : emptyCtxt.eids.lookup e = none := by
+  simp [emptyCtxt, ctxtFcExactHOL, HolFiniteMapExact.empty, e]
+
+example : emptyCtxt.vmax = 0 := rfl
+
+example : (ctxtFcExactHOL (width := 8) probeCvs HolFiniteMapExact.empty [] [] []).funcs =
+    probeCvs :=
+  rfl
+
+example : (ctxtFcExactHOL (width := 8) HolFiniteMapExact.empty HolFiniteMapExact.empty
+    [] [] [4, 1, 7, 3]).vmax = 7 := rfl
+
+example : (ctxtFcExactHOL (width := 8) HolFiniteMapExact.empty HolFiniteMapExact.empty
+    [] [] []).vmax = 0 := rfl
 
 end Flapjack.Test.PanToCrepContextExactParity

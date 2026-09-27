@@ -1,9 +1,9 @@
 /-
-# Exact `ExtCall` clause step over the exact MlString carrier
+# Untagged `ExtCall` clause step over the exact MlString carrier
 
-This module ports the `ExtCall` clause of HOL `panSem$evaluate_def`
+This module reproduces the `ExtCall` clause of HOL `panSem$evaluate_def`
 (`cakeml/pancake/semantics/panSemScript.sml:711-726`) over the exact,
-`mlstring`-keyed `PanSemStateExact` carrier:
+`mlstring`-keyed `PanSemStateExact` carrier, but is not an exact theorem port:
 
 ```
 evaluate (ExtCall ffi_index ptr1 len1 ptr2 len2, s) =
@@ -22,13 +22,12 @@ evaluate (ExtCall ffi_index ptr1 len1 ptr2 len2, s) =
 ```
 
 The four arguments are evaluated independently by the caller-supplied
-`evalExpression`; the byte reads use the tagged exact `panMemLoadByteHOL`
-(`mem_load_byte_def`) through `readBytearrayHOL` (`read_bytearray_def`), the
-call uses the tagged exact `callFFIHOL` (`call_FFI_def`), and the returned bytes
-are written back with the tagged exact `panWriteBytearrayHOL`
-(`write_bytearray_def`). `word8` lists are carried as `BitVec 8` in the exact
-`HolFfiState`; the small untagged converters below only bridge `UInt8` (used by
-the memory codec) with `BitVec 8` (used by the FFI carrier).
+`evalExpression`; branch order, FFI dispatch and state updates follow HOL. The
+byte reads and writes use the exact `BitVec 8` HOL `word8` carrier through
+`readBytearrayWordHOL`, `panMemLoadByteWord8HOL`, and
+`panWriteBytearrayWord8HOL`. The generic evaluator step remains untagged
+because it is one recursive clause with caller-supplied expression evaluation,
+not HOL's mutually recursive `evaluate_def` declaration.
 
 This declaration is deliberately UNTAGGED: the tag belongs on the whole mutual
 `evaluate_def` once the recursive dispatcher exists, not on one callback
@@ -43,14 +42,6 @@ import Flapjack.FfiHOL
 namespace Flapjack
 
 open Flapjack.Pancake.PanLang (MlS ExpHOL)
-
-/-- Bridge a `word8` list carried as `UInt8` (the memory codec's byte type) to
-    the exact FFI carrier's `BitVec 8`. -/
-def bytesToHOL (bytes : List UInt8) : List (BitVec 8) := bytes.map UInt8.toBitVec
-
-/-- Bridge the exact FFI carrier's `BitVec 8` byte list back to the memory
-    codec's `UInt8` byte type. -/
-def bytesFromHOL (bytes : List (BitVec 8)) : List UInt8 := bytes.map UInt8.ofBitVec
 
 /-- Exact `ExtCall` clause step over `PanSemStateExact`.  The four expression
     arguments are evaluated through `evalExpression`; both byte arrays must read
@@ -67,21 +58,106 @@ def extCallStepHOLExact {width : Nat} {σ : Type} [NeZero width]
         evalExpression state ptr2, evalExpression state len2 with
   | some (.val (.word address1)), some (.val (.word length1)),
     some (.val (.word address2)), some (.val (.word length2)) =>
-      match readBytearrayHOL address1 length1.toNat
-              (panMemLoadByteHOL state.memory state.memaddrs state.be),
-            readBytearrayHOL address2 length2.toNat
-              (panMemLoadByteHOL state.memory state.memaddrs state.be) with
+      match readBytearrayWordHOL (byteWidth := 8) address1 length1.toNat
+              (panMemLoadByteWord8HOL state.memory state.memaddrs state.be),
+            readBytearrayWordHOL (byteWidth := 8) address2 length2.toNat
+              (panMemLoadByteWord8HOL state.memory state.memaddrs state.be) with
       | some bytes, some bytes2 =>
           match callFFIHOL state.ffi (.extCall function)
-              (bytesToHOL bytes) (bytesToHOL bytes2) with
+              bytes bytes2 with
           | .final event => (some (.finalFfi event), emptyLocalsHOLExact state)
           | .ret newFfi newBytes =>
               (none, { state with
-                        memory := panWriteBytearrayHOL address2 (bytesFromHOL newBytes)
+                        memory := panWriteBytearrayWord8HOL address2 newBytes
                           state.memory state.memaddrs state.be,
                         ffi := newFfi })
       | _, _ => (some .error, state)
   | _, _, _, _ => (some .error, state)
+
+/-- The legacy UInt8 memory adapter is the projection of the exact HOL `word8`
+    load helper. This bridge is Flapjack-specific infrastructure; it does not
+    retag the UInt8 declaration as an exact HOL port. -/
+theorem panMemLoadByteHOL_eq_word8_projection {width : Nat} [NeZero width]
+    (memory : RiscV.Word width → HolWordLab width)
+    (domain : RiscV.Word width → Prop) [DecidablePred domain]
+    (bigEndian : Bool) (address : RiscV.Word width) :
+    panMemLoadByteHOL memory domain bigEndian address =
+      (panMemLoadByteWord8HOL memory domain bigEndian address).map UInt8.ofBitVec := by
+  simp [panMemLoadByteHOL, panMemLoadByteWord8HOL, panGetByteHOL,
+    panGetByteWord8HOL] <;> rfl
+
+/-- `readBytearrayHOL` is the UInt8 projection of the exact word-valued HOL
+    reader. This preserves the option failure at the first missing byte and
+    maps only successful byte lists. -/
+theorem readBytearrayHOL_eq_word8_projection {width : Nat} [NeZero width]
+    (address : RiscV.Word width) (length : Nat)
+    (getByte : RiscV.Word width → Option (BitVec 8)) :
+    readBytearrayHOL address length (fun a => (getByte a).map UInt8.ofBitVec) =
+      (readBytearrayWordHOL (byteWidth := 8) address length getByte).map
+        (List.map UInt8.ofBitVec) := by
+  induction length generalizing address with
+  | zero => rfl
+  | succ length ih =>
+      simp only [readBytearrayHOL, readBytearrayWordHOL]
+      cases hByte : getByte address with
+      | none => simp
+      | some byte =>
+          simp only [Option.map_some]
+          rw [ih]
+          cases hRest : readBytearrayWordHOL (address + 1) length getByte <;>
+            simp
+
+/-- End-to-end reader bridge for Pan memory: the UInt8 `ExtCall` adapter reads
+    exactly the projection of HOL's `word8 list` byte-array result, including
+    missing-address failure. -/
+theorem panReadBytearrayHOL_eq_word8_projection {width : Nat} [NeZero width]
+    (address : RiscV.Word width) (length : Nat)
+    (memory : RiscV.Word width → HolWordLab width)
+    (domain : RiscV.Word width → Prop) [DecidablePred domain]
+    (bigEndian : Bool) :
+    readBytearrayHOL address length
+        (panMemLoadByteHOL memory domain bigEndian) =
+      (readBytearrayWordHOL (byteWidth := 8) address length
+        (panMemLoadByteWord8HOL memory domain bigEndian)).map
+        (List.map UInt8.ofBitVec) := by
+  have hload : panMemLoadByteHOL memory domain bigEndian =
+      fun address => (panMemLoadByteWord8HOL memory domain bigEndian address).map
+        UInt8.ofBitVec := by
+    funext address
+    exact panMemLoadByteHOL_eq_word8_projection memory domain bigEndian address
+  rw [hload]
+  exact readBytearrayHOL_eq_word8_projection address length
+    (panMemLoadByteWord8HOL memory domain bigEndian)
+
+/-- A UInt8 store agrees with the exact HOL `word8` store after converting the
+    byte at the boundary. The result compares the complete memory maps, so the
+    equality covers both the selected aligned cell and every untouched cell. -/
+theorem panMemStoreByteHOL_eq_word8 {width : Nat} [NeZero width]
+    (memory : RiscV.Word width → HolWordLab width)
+    (domain : RiscV.Word width → Prop) [DecidablePred domain]
+    (bigEndian : Bool) (address : RiscV.Word width) (byte : UInt8) :
+    panMemStoreByteHOL memory domain bigEndian address byte =
+      panMemStoreByteWord8HOL memory domain bigEndian address byte.toBitVec := by
+  simp [panMemStoreByteHOL, panMemStoreByteWord8HOL, panSetByteHOL]
+
+/-- The recursively defined UInt8 byte-array writer is the exact HOL writer
+    projected along `UInt8.toBitVec`. The induction follows HOL's tail-first
+    recursion, including its rule that a failed head store restores the
+    original outer memory. -/
+theorem panWriteBytearrayHOL_eq_word8_projection {width : Nat} [NeZero width]
+    (address : RiscV.Word width) (bytes : List UInt8)
+    (memory : RiscV.Word width → HolWordLab width)
+    (domain : RiscV.Word width → Prop) [DecidablePred domain]
+    (bigEndian : Bool) :
+    panWriteBytearrayHOL address bytes memory domain bigEndian =
+      panWriteBytearrayWord8HOL address (bytes.map UInt8.toBitVec)
+        memory domain bigEndian := by
+  induction bytes generalizing address memory with
+  | nil => rfl
+  | cons byte rest ih =>
+      simp only [panWriteBytearrayHOL, panWriteBytearrayWord8HOL, List.map_cons]
+      rw [ih (address := address + 1) (memory := memory)]
+      rw [panMemStoreByteHOL_eq_word8]
 
 /-- The exact HOL `ExtCall` clause does not change the ordinary memory domain.
     Its returned-byte branch updates only memory and FFI; the final branch
@@ -130,8 +206,8 @@ theorem extCallStepHOLExact_read_error {width : Nat} {σ : Type} [NeZero width]
     (h2 : evalExpression state len1 = some (.val (.word length1)))
     (h3 : evalExpression state ptr2 = some (.val (.word address2)))
     (h4 : evalExpression state len2 = some (.val (.word length2)))
-    (hread : readBytearrayHOL address1 length1.toNat
-        (panMemLoadByteHOL state.memory state.memaddrs state.be) = none) :
+    (hread : readBytearrayWordHOL (byteWidth := 8) address1 length1.toNat
+        (panMemLoadByteWord8HOL state.memory state.memaddrs state.be) = none) :
     extCallStepHOLExact state evalExpression function ptr1 len1 ptr2 len2
       = (some .error, state) := by
   simp [extCallStepHOLExact, h1, h2, h3, h4, hread]
@@ -142,16 +218,16 @@ theorem extCallStepHOLExact_final {width : Nat} {σ : Type} [NeZero width]
     (evalExpression : PanSemStateExact width σ → ExpHOL width → Option (ValueHOL width))
     (function : MlS) (ptr1 len1 ptr2 len2 : ExpHOL width)
     (address1 length1 address2 length2 : RiscV.Word width)
-    (bytes bytes2 : List UInt8) (event : HolFinalEvent)
+    (bytes bytes2 : List (BitVec 8)) (event : HolFinalEvent)
     (h1 : evalExpression state ptr1 = some (.val (.word address1)))
     (h2 : evalExpression state len1 = some (.val (.word length1)))
     (h3 : evalExpression state ptr2 = some (.val (.word address2)))
     (h4 : evalExpression state len2 = some (.val (.word length2)))
-    (hread1 : readBytearrayHOL address1 length1.toNat
-        (panMemLoadByteHOL state.memory state.memaddrs state.be) = some bytes)
-    (hread2 : readBytearrayHOL address2 length2.toNat
-        (panMemLoadByteHOL state.memory state.memaddrs state.be) = some bytes2)
-    (hcall : callFFIHOL state.ffi (.extCall function) (bytesToHOL bytes) (bytesToHOL bytes2)
+    (hread1 : readBytearrayWordHOL (byteWidth := 8) address1 length1.toNat
+        (panMemLoadByteWord8HOL state.memory state.memaddrs state.be) = some bytes)
+    (hread2 : readBytearrayWordHOL (byteWidth := 8) address2 length2.toNat
+        (panMemLoadByteWord8HOL state.memory state.memaddrs state.be) = some bytes2)
+    (hcall : callFFIHOL state.ffi (.extCall function) bytes bytes2
         = .final event) :
     extCallStepHOLExact state evalExpression function ptr1 len1 ptr2 len2
       = (some (.finalFfi event), emptyLocalsHOLExact state) := by
@@ -164,22 +240,40 @@ theorem extCallStepHOLExact_returned {width : Nat} {σ : Type} [NeZero width]
     (evalExpression : PanSemStateExact width σ → ExpHOL width → Option (ValueHOL width))
     (function : MlS) (ptr1 len1 ptr2 len2 : ExpHOL width)
     (address1 length1 address2 length2 : RiscV.Word width)
-    (bytes bytes2 : List UInt8) (newFfi : HolFfiState σ) (newBytes : List (BitVec 8))
+    (bytes bytes2 newBytes : List (BitVec 8)) (newFfi : HolFfiState σ)
     (h1 : evalExpression state ptr1 = some (.val (.word address1)))
     (h2 : evalExpression state len1 = some (.val (.word length1)))
     (h3 : evalExpression state ptr2 = some (.val (.word address2)))
     (h4 : evalExpression state len2 = some (.val (.word length2)))
-    (hread1 : readBytearrayHOL address1 length1.toNat
-        (panMemLoadByteHOL state.memory state.memaddrs state.be) = some bytes)
-    (hread2 : readBytearrayHOL address2 length2.toNat
-        (panMemLoadByteHOL state.memory state.memaddrs state.be) = some bytes2)
-    (hcall : callFFIHOL state.ffi (.extCall function) (bytesToHOL bytes) (bytesToHOL bytes2)
+    (hread1 : readBytearrayWordHOL (byteWidth := 8) address1 length1.toNat
+        (panMemLoadByteWord8HOL state.memory state.memaddrs state.be) = some bytes)
+    (hread2 : readBytearrayWordHOL (byteWidth := 8) address2 length2.toNat
+        (panMemLoadByteWord8HOL state.memory state.memaddrs state.be) = some bytes2)
+    (hcall : callFFIHOL state.ffi (.extCall function) bytes bytes2
         = .ret newFfi newBytes) :
     extCallStepHOLExact state evalExpression function ptr1 len1 ptr2 len2
       = (none, { state with
-                   memory := panWriteBytearrayHOL address2 (bytesFromHOL newBytes)
+                   memory := panWriteBytearrayWord8HOL address2 newBytes
                      state.memory state.memaddrs state.be,
                    ffi := newFfi }) := by
   simp [extCallStepHOLExact, h1, h2, h3, h4, hread1, hread2, hcall]
+
+/-- The exact `ExtCall` clause only ever prefix-extends the FFI `ioEvents`
+    trace: the final branch clears locals (FFI unchanged) and the returned
+    branch installs `callFFIHOL`'s new FFI state, whose `ioEvents` is a list
+    prefix by `callFFIHOL_return_ioEvents_prefix`.  All error branches leave the
+    state untouched.  This is the `ExtCall` leaf of the evaluator's clock
+    monotonicity argument. -/
+theorem extCallStepHOLExact_ioEvents_prefix {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateExact width σ) [DecidablePred state.memaddrs]
+    (evalExpression : PanSemStateExact width σ → ExpHOL width → Option (ValueHOL width))
+    (function : MlS) (ptr1 len1 ptr2 len2 : ExpHOL width) :
+    state.ffi.ioEvents <+:
+      (extCallStepHOLExact state evalExpression function ptr1 len1 ptr2 len2).2.ffi.ioEvents := by
+  unfold extCallStepHOLExact
+  split <;> (try split) <;> (try split) <;>
+    first
+    | exact List.prefix_refl _
+    | exact callFFIHOL_return_ioEvents_prefix _ _ _ _ _ _ (by assumption)
 
 end Flapjack

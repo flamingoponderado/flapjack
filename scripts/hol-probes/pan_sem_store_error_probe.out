@@ -11,4 +11,6 @@ store32_ok_result=NONE
 store32_ok_clock=5
 shmemload_unbound_result=SOME Error
 shmemload_domain_result=SOME Error
+shmemload_address_eval_failure=SOME Error
+shmemload_address_nonword=SOME Error
 shmemstore_domain_result=SOME Error

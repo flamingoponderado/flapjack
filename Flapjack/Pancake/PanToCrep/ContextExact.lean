@@ -147,6 +147,34 @@ theorem toProduction_shapeByteRanged : (shape : ShapeHOL) →
 
 end PanToCrepContextExact
 
+/-- Exact port of HOL `pan_to_crep$mk_ctxt`
+    (`cakeml/pancake/pan_to_crepScript.sml:310-316`):
+    `mk_ctxt vmap fs m (es:eid |-> 'a word) =
+       <|vars := vmap; funcs := fs; eids := es; vmax := m|>`.
+
+    The argument order (`vmap`, `fs`, `m`, `es`) and the field assignment match
+    HOL clause for clause. The record carrier is the reviewed exact
+    `PanToCrepContextExact`: `vars`/`funcs`/`eids` are the canonical
+    `HolFiniteMapExact` translation of HOL `|->` (MlString keys, `ShapeHOL`
+    values, `BitVec width` exception codes), and `vmax` is `Nat`. The
+    `fmap_as_finite_support` qualifier records only the finite-support
+    representation of the three HOL finite-map fields; it does not change the
+    quantifier, the argument order, or the resulting record. Direct HOL-EVAL
+    field rows for this construction live in
+    `scripts/hol-probes/compile_to_crep_probe.out` (`mk_ctxt_fields`) and are
+    replayed by `Flapjack.Test.PanToCrepContextExactParity`. -/
+@[hol "cakeml/pancake/pan_to_crepScript.sml" "mk_ctxt_def"
+  (fmap_as_finite_support := [vars, funcs, eids])]
+def mkCtxtExactHOL {width : Nat} [NeZero width]
+    (vmap : HolFiniteMapExact MlS (ShapeHOL × List Nat))
+    (fs : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ShapeHOL))
+    (m : Nat) (es : HolFiniteMapExact MlS (BitVec width)) :
+    PanToCrepContextExact width where
+  vars := vmap
+  funcs := fs
+  eids := es
+  vmax := m
+
 /-- HOL `pan_to_crep$get_eids_from_decls`' association list
     (`pan_to_crepScript.sml:356-364`): the exception names of a declaration list
     paired with their `GENLIST`-indexed word codes (`MAP FST (exceptions decls)`

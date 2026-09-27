@@ -1,0 +1,9 @@
+clock_eq_simp_set_var=T
+clock_eq_simp_empty_locals=T
+clock_eq_simp_set_globals=T
+sh_mem_load_clock=T
+sh_mem_load_clock_nonzero=T
+sh_mem_store_clock=T
+sh_mem_store_clock_nonzero=T
+sh_mem_op_clock_load=T
+sh_mem_op_clock_store8=T

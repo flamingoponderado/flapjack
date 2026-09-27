@@ -1,4 +1,5 @@
 import Flapjack.Pancake.PanToCrep.Compile
+import Flapjack.Pancake.Semantics.PanCommonProps
 
 namespace Flapjack
 
@@ -1081,7 +1082,7 @@ theorem genlist_vmax_distinct_lists_compiled_exps
     ListDisjoint ((List.range n).map (fun i => i + 1 + context.maxVar))
       ((argexps.map (compileExp context)).flatMap
         (fun entry => entry.1.flatMap crepExpVars)) := by
-  apply genlist_distinct_max n context.maxVar _
+  apply genlistDistinctMaxHOL n context.maxVar _
   intro varName hvar
   simp only [List.mem_flatMap] at hvar
   obtain ⟨compiled, hcompiled, hvar⟩ := hvar

@@ -18,7 +18,7 @@ class HolAttributeSitesTest(unittest.TestCase):
     def test_single_line(self):
         self.assertEqual(
             list(SITES(['@[hol "cakeml/pancake/pan_globalsScript.sml" "compile_top_def"]'])),
-            [(1, "cakeml/pancake/pan_globalsScript.sml", "compile_top_def", None, (), (), (), (), False)],
+            [(1, "cakeml/pancake/pan_globalsScript.sml", "compile_top_def", None, (), (), (), (), False, (), False)],
         )
 
     def test_multiline(self):
@@ -29,7 +29,7 @@ class HolAttributeSitesTest(unittest.TestCase):
                 'theorem compileTopShapeWf : True := trivial',
             ])),
             [(1, "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-              "compile_top_shape_wf", None, (), (), (), (), False)],
+              "compile_top_shape_wf", None, (), (), (), (), False, (), False)],
         )
 
     def test_comments_do_not_count(self):
@@ -39,7 +39,7 @@ class HolAttributeSitesTest(unittest.TestCase):
                 '-- @[hol "cakeml/pancake/pan_globalsScript.sml" "bad"]',
                 '@[hol "cakeml/pancake/pan_globalsScript.sml" "compile_top_def"]',
             ])),
-            [(3, "cakeml/pancake/pan_globalsScript.sml", "compile_top_def", None, (), (), (), (), False)],
+            [(3, "cakeml/pancake/pan_globalsScript.sml", "compile_top_def", None, (), (), (), (), False, (), False)],
         )
 
     def test_source_line(self):
@@ -47,7 +47,7 @@ class HolAttributeSitesTest(unittest.TestCase):
             list(SITES(['@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml"',
                         '  "locals_rel_wf_shape" 2345]'])),
             [(1, "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
-              "locals_rel_wf_shape", 2345, (), (), (), (), False)],
+              "locals_rel_wf_shape", 2345, (), (), (), (), False, (), False)],
         )
 
     def test_list_as_array_fields(self):
@@ -57,7 +57,7 @@ class HolAttributeSitesTest(unittest.TestCase):
                 '  "dec_deg_def" (list_as_array := [degrees, moves])]'
             ])),
             [(1, "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
-              "dec_deg_def", None, ("degrees", "moves"), (), (), (), False)],
+              "dec_deg_def", None, ("degrees", "moves"), (), (), (), False, (), False)],
         )
 
     def test_names_as_string_and_boundary_qualifiers(self):
@@ -68,7 +68,7 @@ class HolAttributeSitesTest(unittest.TestCase):
                 '  (names_as_string_boundary := [generated])]',
             ])),
             [(1, "cakeml/pancake/panLangScript.sml", "varname", None,
-              (), ("name", "generated"), ("generated",), (), False)],
+              (), ("name", "generated"), ("generated",), (), False, (), False)],
         )
 
     def test_fmap_as_finite_support_fields(self):
@@ -78,7 +78,7 @@ class HolAttributeSitesTest(unittest.TestCase):
                 '  (fmap_as_finite_support := [locals, globals])]'
             ])),
             [(1, "cakeml/pancake/semantics/panSemScript.sml",
-              "set_var_def", None, (), (), (), ("locals", "globals"), False)],
+              "set_var_def", None, (), (), (), ("locals", "globals"), False, (), False)],
         )
 
     def test_fmap_as_finite_support_result_qualifier(self):
@@ -88,8 +88,374 @@ class HolAttributeSitesTest(unittest.TestCase):
                 '  (fmap_as_finite_support_result)]'
             ])),
             [(1, "cakeml/pancake/pan_to_crepScript.sml",
-              "get_eids_from_decls_def", None, (), (), (), (), True)],
+              "get_eids_from_decls_def", None, (), (), (), (), True, (), False)],
         )
+
+    def test_fmap_as_finite_support_relation_qualifier(self):
+        self.assertEqual(
+            list(SITES([
+                '@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "state_rel_def"',
+                '  (fmap_as_finite_support_relation := [PanSemStateFiniteExact.globals, CrepSemHOLState.locals])]'
+            ])),
+            [(1, "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+              "state_rel_def", None, (), (), (), (), False,
+              (("PanSemStateFiniteExact", "globals"), ("CrepSemHOLState", "locals")), False)],
+        )
+
+    def test_fmap_as_finite_support_relation_accepts_two_carriers(self):
+        lines = [
+            "structure Source where",
+            "  globals : HolFiniteMapExact MlS (ValueHOL width)",
+            "",
+            "structure Target where",
+            "  locals : HolFiniteMapExact Nat (HolWordLab width)",
+            "",
+            "theorem holFmapAsFiniteSupportRelationWitness_Source :",
+            "    Source.toBroad (Source.ofBroad s) = s := rfl",
+            "",
+            "theorem holFmapAsFiniteSupportRelationWitness_Target :",
+            "    Target.toBroad (Target.ofBroad t) = t := rfl",
+        ]
+        errors = CHECKER["fmap_as_finite_support_relation_errors"](
+            lines,
+            (("Source", "globals"), ("Target", "locals")),
+            "Example.lean",
+            "def stateRel (source : Source) (target : Target) : Prop",
+        )
+        self.assertEqual(errors, [])
+
+    def test_fmap_as_finite_support_relation_rejects_raw_option_map(self):
+        lines = [
+            "structure Source where",
+            "  globals : MlS \u2192 Option (ValueHOL width)",
+            "",
+            "theorem holFmapAsFiniteSupportRelationWitness_Source :",
+            "    Source.toBroad (Source.ofBroad s) = s := rfl",
+        ]
+        errors = CHECKER["fmap_as_finite_support_relation_errors"](
+            lines, (("Source", "globals"),), "Example.lean",
+            "def stateRel (source : Source) : Prop",
+        )
+        self.assertTrue(any("HolFiniteMapExact" in e for e in errors))
+
+    def test_fmap_as_finite_support_relation_requires_per_carrier_witness(self):
+        lines = [
+            "structure Source where",
+            "  globals : HolFiniteMapExact MlS (ValueHOL width)",
+        ]
+        errors = CHECKER["fmap_as_finite_support_relation_errors"](
+            lines, (("Source", "globals"),), "Example.lean",
+            "def stateRel (source : Source) : Prop",
+        )
+        self.assertTrue(
+            any("holFmapAsFiniteSupportRelationWitness_Source" in e for e in errors)
+        )
+
+    def test_fmap_as_finite_support_relation_requires_carrier_in_declaration(self):
+        lines = [
+            "structure Source where",
+            "  globals : HolFiniteMapExact MlS (ValueHOL width)",
+            "",
+            "theorem holFmapAsFiniteSupportRelationWitness_Source :",
+            "    Source.toBroad (Source.ofBroad s) = s := rfl",
+        ]
+        errors = CHECKER["fmap_as_finite_support_relation_errors"](
+            lines, (("Source", "globals"),), "Example.lean",
+            "def stateRel (a : Type) : Prop",
+        )
+        self.assertTrue(any("not named in the tagged declaration" in e for e in errors))
+
+    def test_fmap_as_finite_support_relation_rejects_unknown_carrier(self):
+        lines = ["def stateRel : Prop := True"]
+        errors = CHECKER["fmap_as_finite_support_relation_errors"](
+            lines, (("Nope", "globals"),), "Example.lean", "def stateRel : Prop",
+        )
+        self.assertTrue(any("not a structure" in e for e in errors))
+
+    def test_fmap_as_finite_support_relation_rejects_duplicate_entries(self):
+        lines = [
+            "structure Source where",
+            "  globals : HolFiniteMapExact MlS (ValueHOL width)",
+            "",
+            "theorem holFmapAsFiniteSupportRelationWitness_Source :",
+            "    Source.toBroad (Source.ofBroad s) = s := rfl",
+        ]
+        errors = CHECKER["fmap_as_finite_support_relation_errors"](
+            lines, (("Source", "globals"), ("Source", "globals")), "Example.lean",
+            "def stateRel (source : Source) : Prop",
+        )
+        self.assertTrue(any("distinct" in e for e in errors))
+
+    def test_fmap_as_finite_support_relation_accepts_bare_parameters(self):
+        lines = [
+            "structure Ctxt where",
+            "  vars : HolFiniteMapExact MlS (ShapeHOL \u00d7 List Nat)",
+            "",
+            "theorem holFmapAsFiniteSupportRelationWitness_Ctxt :",
+            "    Ctxt.toBroad (Ctxt.ofBroad c) = c := rfl",
+        ]
+        errors = CHECKER["fmap_as_finite_support_relation_errors"](
+            lines,
+            (("Ctxt", "vars"), ("sourceLocals", ""), ("targetLocals", "")),
+            "Example.lean",
+            "def localsRel (context : Ctxt) (sourceLocals : HolFiniteMapExact MlS (ValueHOL width)) (targetLocals : HolFiniteMapExact Nat (HolWordLab width)) : Prop",
+        )
+        self.assertEqual(errors, [])
+
+    def test_fmap_as_finite_support_relation_rejects_raw_parameter(self):
+        lines = ["def localsRel (sourceLocals : MlS \u2192 Option (ValueHOL width)) : Prop := True"]
+        errors = CHECKER["fmap_as_finite_support_relation_errors"](
+            lines, (("sourceLocals", ""),), "Example.lean",
+            "def localsRel (sourceLocals : MlS \u2192 Option (ValueHOL width)) : Prop := True",
+        )
+        self.assertTrue(any("sourceLocals" in e and "HolFiniteMapExact" in e for e in errors))
+
+    def test_fmap_as_finite_support_relation_rejects_unbound_parameter(self):
+        lines = ["def localsRel (other : HolFiniteMapExact MlS (ValueHOL width)) : Prop := True"]
+        errors = CHECKER["fmap_as_finite_support_relation_errors"](
+            lines, (("sourceLocals", ""),), "Example.lean",
+            "def localsRel (other : HolFiniteMapExact MlS (ValueHOL width)) : Prop := True",
+        )
+        self.assertTrue(any("sourceLocals" in e for e in errors))
+
+    def test_fmap_as_finite_support_equalities_qualifier(self):
+        self.assertEqual(
+            list(SITES([
+                '@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "slc_tlc_rw"',
+                '  (fmap_as_finite_support_equalities)]'
+            ])),
+            [(1, "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+              "slc_tlc_rw", None, (), (), (), (), False, (), True)],
+        )
+
+    def test_fmap_as_finite_support_equalities_accepts_two_witnesses(self):
+        declaration = (
+            "theorem slcTlcRwHOL {width : Nat} [NeZero width] :\n"
+            "    (HolFiniteMapExact.updateListEq HolFiniteMapExact.empty xs = slcHOL xs args) \u2227\n"
+            "    (HolFiniteMapExact.updateListEq HolFiniteMapExact.empty ys = tlcHOL ys args)"
+        )
+        lines = [
+            declaration + " := by constructor <;> rfl",
+            "",
+            "theorem holFmapAsFiniteSupportEqualityWitness_slcTlcRwHOL_1 (k : Nat) :",
+            "    (HolFiniteMapExact.updateListEq HolFiniteMapExact.empty xs).lookup k =",
+            "      (slcHOL xs args).lookup k := rfl",
+            "",
+            "theorem holFmapAsFiniteSupportEqualityWitness_slcTlcRwHOL_2 (k : Nat) :",
+            "    (HolFiniteMapExact.updateListEq HolFiniteMapExact.empty ys).lookup k =",
+            "      (tlcHOL ys args).lookup k := rfl",
+        ]
+        errors = CHECKER["fmap_as_finite_support_equalities_errors"](
+            lines, "Example.lean", declaration, "slcTlcRwHOL",
+        )
+        self.assertEqual(errors, [])
+
+    def test_fmap_as_finite_support_equalities_requires_both_witnesses(self):
+        declaration = (
+            "theorem slcTlcRwHOL :\n"
+            "    (HolFiniteMapExact.empty = a) \u2227 (HolFiniteMapExact.empty = b)"
+        )
+        lines = [
+            declaration + " := by constructor <;> rfl",
+            "theorem holFmapAsFiniteSupportEqualityWitness_slcTlcRwHOL_1 :",
+            "    (HolFiniteMapExact.empty).lookup k = a.lookup k := rfl",
+        ]
+        errors = CHECKER["fmap_as_finite_support_equalities_errors"](
+            lines, "Example.lean", declaration, "slcTlcRwHOL",
+        )
+        self.assertTrue(any("conjunct 2" in error for error in errors))
+
+    def test_fmap_as_finite_support_equalities_rejects_non_conjunction(self):
+        declaration = (
+            "theorem slcTlcRwHOL :\n"
+            "    (HolFiniteMapExact.empty = a)"
+        )
+        lines = [declaration + " := by rfl"]
+        errors = CHECKER["fmap_as_finite_support_equalities_errors"](
+            lines, "Example.lean", declaration, "slcTlcRwHOL",
+        )
+        self.assertTrue(any("at least two" in error for error in errors))
+
+    def test_fmap_as_finite_support_equalities_rejects_ignored_proof_witness(self):
+        declaration = (
+            "theorem slcTlcRwHOL :\n"
+            "    (HolFiniteMapExact.empty = a) \u2227 (HolFiniteMapExact.empty = b)"
+        )
+        lines = [
+            declaration + " := by constructor <;> rfl",
+            "theorem holFmapAsFiniteSupportEqualityWitness_slcTlcRwHOL_1 :",
+            "    (fun _ => a.lookup k) slcTlcRwHOL = b.lookup k := rfl",
+            "theorem holFmapAsFiniteSupportEqualityWitness_slcTlcRwHOL_2 :",
+            "    a.lookup k = b.lookup k := rfl",
+        ]
+        errors = CHECKER["fmap_as_finite_support_equalities_errors"](
+            lines, "Example.lean", declaration, "slcTlcRwHOL",
+        )
+        self.assertTrue(any("ignored-proof" in error for error in errors))
+
+    def test_fmap_as_finite_support_equalities_rejects_self_equality(self):
+        declaration = (
+            "theorem slcTlcRwHOL :\n"
+            "    (HolFiniteMapExact.empty = a) \u2227 (HolFiniteMapExact.empty = b)"
+        )
+        lines = [
+            declaration + " := by constructor <;> rfl",
+            "theorem holFmapAsFiniteSupportEqualityWitness_slcTlcRwHOL_1 :",
+            "    a.lookup k = a.lookup k := rfl",
+            "theorem holFmapAsFiniteSupportEqualityWitness_slcTlcRwHOL_2 :",
+            "    a.lookup k = b.lookup k := rfl",
+        ]
+        errors = CHECKER["fmap_as_finite_support_equalities_errors"](
+            lines, "Example.lean", declaration, "slcTlcRwHOL",
+        )
+        self.assertTrue(any("self-equality" in error for error in errors))
+
+    def test_fmap_as_finite_support_equalities_rejects_one_sided_lookup(self):
+        declaration = (
+            "theorem slcTlcRwHOL :\n"
+            "    (HolFiniteMapExact.empty = a) \u2227 (HolFiniteMapExact.empty = b)"
+        )
+        lines = [
+            declaration + " := by constructor <;> rfl",
+            "theorem holFmapAsFiniteSupportEqualityWitness_slcTlcRwHOL_1 :",
+            "    a.lookup k = b := rfl",
+            "theorem holFmapAsFiniteSupportEqualityWitness_slcTlcRwHOL_2 :",
+            "    a.lookup k = b.lookup k := rfl",
+        ]
+        errors = CHECKER["fmap_as_finite_support_equalities_errors"](
+            lines, "Example.lean", declaration, "slcTlcRwHOL",
+        )
+        self.assertTrue(any("BOTH sides" in error for error in errors))
+
+    def test_fmap_as_finite_support_equalities_rejects_iff_witness(self):
+        declaration = (
+            "theorem slcTlcRwHOL :\n"
+            "    (HolFiniteMapExact.empty = a) \u2227 (HolFiniteMapExact.empty = b)"
+        )
+        lines = [
+            declaration + " := by constructor <;> rfl",
+            "theorem holFmapAsFiniteSupportEqualityWitness_slcTlcRwHOL_1 :",
+            "    a.lookup k = b.lookup k \u2194 True := Iff.rfl",
+            "theorem holFmapAsFiniteSupportEqualityWitness_slcTlcRwHOL_2 :",
+            "    a.lookup k = b.lookup k := rfl",
+        ]
+        errors = CHECKER["fmap_as_finite_support_equalities_errors"](
+            lines, "Example.lean", declaration, "slcTlcRwHOL",
+        )
+        self.assertTrue(any("not an iff" in error for error in errors))
+
+    def test_fmap_as_finite_support_equalities_rejects_premise_assumed_relation(self):
+        declaration = (
+            "theorem slcTlcRwHOL :\n"
+            "    (HolFiniteMapExact.empty = a) \u2227 (HolFiniteMapExact.empty = b)"
+        )
+        lines = [
+            declaration + " := by constructor <;> rfl",
+            "theorem holFmapAsFiniteSupportEqualityWitness_slcTlcRwHOL_1",
+            "    (h : a.lookup k = b.lookup k) : a.lookup k = b.lookup k := h",
+            "theorem holFmapAsFiniteSupportEqualityWitness_slcTlcRwHOL_2 :",
+            "    a.lookup k = b.lookup k := rfl",
+        ]
+        errors = CHECKER["fmap_as_finite_support_equalities_errors"](
+            lines, "Example.lean", declaration, "slcTlcRwHOL",
+        )
+        self.assertTrue(any("assumes the target relation" in error for error in errors))
+
+    def test_fmap_as_finite_support_equalities_rejects_raw_option_map(self):
+        declaration = "theorem slcTlcRwHOL :\n    (a = b) \u2227 (c = d)"
+        errors = CHECKER["fmap_as_finite_support_equalities_errors"](
+            [declaration + " := by constructor <;> rfl"],
+            "Example.lean", declaration, "slcTlcRwHOL",
+        )
+        self.assertTrue(any("HolFiniteMapExact" in error for error in errors))
+
+    def test_fmap_as_finite_support_equalities_rejects_unrelated_witnesses(self):
+        declaration = (
+            "theorem slcTlcRwHOL :\n"
+            "    (HolFiniteMapExact.empty = a) \u2227 (HolFiniteMapExact.empty = b)"
+        )
+        lines = [
+            declaration + " := by constructor <;> rfl",
+            "theorem holFmapAsFiniteSupportEqualityWitness_slcTlcRwHOL_1 :",
+            "    p.lookup k = q.lookup k := rfl",
+            "theorem holFmapAsFiniteSupportEqualityWitness_slcTlcRwHOL_2 :",
+            "    r.lookup k = s.lookup k := rfl",
+        ]
+        errors = CHECKER["fmap_as_finite_support_equalities_errors"](
+            lines, "Example.lean", declaration, "slcTlcRwHOL",
+        )
+        self.assertTrue(any("not associated" in error for error in errors))
+
+    def test_fmap_as_finite_support_equalities_rejects_mismatched_keys(self):
+        declaration = (
+            "theorem slcTlcRwHOL :\n"
+            "    (HolFiniteMapExact.empty = a) \u2227 (HolFiniteMapExact.empty = b)"
+        )
+        lines = [
+            declaration + " := by constructor <;> rfl",
+            "theorem holFmapAsFiniteSupportEqualityWitness_slcTlcRwHOL_1 :",
+            "    (HolFiniteMapExact.empty).lookup k = a.lookup j := rfl",
+            "theorem holFmapAsFiniteSupportEqualityWitness_slcTlcRwHOL_2 :",
+            "    (HolFiniteMapExact.empty).lookup k = b.lookup k := rfl",
+        ]
+        errors = CHECKER["fmap_as_finite_support_equalities_errors"](
+            lines, "Example.lean", declaration, "slcTlcRwHOL",
+        )
+        self.assertTrue(any("SAME key" in error for error in errors))
+
+    def test_fmap_as_finite_support_equalities_rejects_inert_let_bypass(self):
+        declaration = (
+            "theorem slcTlcRwHOL :\n"
+            "    (HolFiniteMapExact.empty = a) \u2227 (HolFiniteMapExact.empty = b)"
+        )
+        lines = [
+            declaration + " := by constructor <;> rfl",
+            "theorem holFmapAsFiniteSupportEqualityWitness_slcTlcRwHOL_1 (k : Nat) :",
+            "    (let _ := HolFiniteMapExact.empty; HolFiniteMapExact.empty.lookup k) =",
+            "      (let _ := a; HolFiniteMapExact.empty.lookup k) := rfl",
+            "theorem holFmapAsFiniteSupportEqualityWitness_slcTlcRwHOL_2 (k : Nat) :",
+            "    (HolFiniteMapExact.empty).lookup k = b.lookup k := rfl",
+        ]
+        errors = CHECKER["fmap_as_finite_support_equalities_errors"](
+            lines, "Example.lean", declaration, "slcTlcRwHOL",
+        )
+        self.assertTrue(
+            any("not associated" in error or "precisely" in error for error in errors)
+        )
+
+    def test_fmap_as_finite_support_equalities_rejects_fixed_key(self):
+        declaration = (
+            "theorem slcTlcRwHOL :\n"
+            "    (HolFiniteMapExact.empty = a) \u2227 (HolFiniteMapExact.empty = b)"
+        )
+        lines = [
+            declaration + " := by constructor <;> rfl",
+            "theorem holFmapAsFiniteSupportEqualityWitness_slcTlcRwHOL_1 :",
+            "    (HolFiniteMapExact.empty).lookup 0 = a.lookup 0 := rfl",
+            "theorem holFmapAsFiniteSupportEqualityWitness_slcTlcRwHOL_2 :",
+            "    (HolFiniteMapExact.empty).lookup 0 = b.lookup 0 := rfl",
+        ]
+        errors = CHECKER["fmap_as_finite_support_equalities_errors"](
+            lines, "Example.lean", declaration, "slcTlcRwHOL",
+        )
+        self.assertTrue(any("universally" in error for error in errors))
+
+    def test_fmap_as_finite_support_result_rejects_ignored_proof_witness(self):
+        lines = [
+            "def getEidsFromDeclsHOL : HolFiniteMapExact MlS (BitVec width) := fun _ => none",
+            "theorem helper : (getEidsFromDeclsHOL d).lookup k = (raw d).lookup k := rfl",
+            "theorem holFmapAsFiniteSupportResultWitness_getEidsFromDeclsHOL",
+            "    (d : DeclHOL width) (k : MlS) :",
+            "    (fun _ => (getEidsFromDeclsHOL d).lookup k) helper =",
+            "      (raw d).lookup k :=",
+            "  rfl",
+        ]
+        errors = CHECKER["fmap_as_finite_support_result_errors"](
+            lines, "Example.lean",
+            "def getEidsFromDeclsHOL : HolFiniteMapExact MlS (BitVec width)",
+            "getEidsFromDeclsHOL",
+        )
+        self.assertTrue(any("directly" in error for error in errors))
 
     def test_fmap_as_finite_support_result_accepts_lookup_witness(self):
         lines = [
@@ -423,6 +789,102 @@ class HolAttributeSitesTest(unittest.TestCase):
             "the type must be read from the disambiguated owning carrier, not the "
             "first structure declaring the field",
         )
+
+    def test_fmap_as_finite_support_accepts_imported_carrier_witness(self):
+        checker_globals = CHECKER["fmap_as_finite_support_errors"].__globals__
+        original_root = checker_globals["ROOT"]
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            owner = root / "Flapjack" / "PanToCrep" / "ContextExact.lean"
+            consumer = root / "Flapjack" / "PanToCrep" / "CompileExact.lean"
+            owner.parent.mkdir(parents=True)
+            owner.write_text(
+                "\n".join([
+                    "structure PanToCrepContextExact where",
+                    "  vars : HolFiniteMapExact Name Shape",
+                    "  funcs : HolFiniteMapExact Name FunctionInfo",
+                    "  eids : HolFiniteMapExact Name Word",
+                ]),
+                encoding="utf-8",
+            )
+            consumer.write_text(
+                "\n".join([
+                    "import Flapjack.PanToCrep.ContextExact",
+                    "theorem holFmapAsFiniteSupportWitness",
+                    "    (context : PanToCrepContextExact) :",
+                    "    PanToCrepContextExact.ofBroad",
+                    "      (PanToCrepContextExact.toBroad context) = context := by",
+                    "  exact PanToCrepContextExact.holFmapAsFiniteSupportWitness context",
+                    '@[hol "cakeml/pancake/pan_to_crepScript.sml" "compile_exp_def"',
+                    "  (fmap_as_finite_support := [vars, funcs, eids])]",
+                    "def compileExpExactHOLW (context : PanToCrepContextExact) := context.vars",
+                ]),
+                encoding="utf-8",
+            )
+            checker_globals["ROOT"] = root
+            try:
+                lines = consumer.read_text(encoding="utf-8").splitlines()
+                errors = CHECKER["fmap_as_finite_support_errors"](
+                    lines, ("vars", "funcs", "eids"),
+                    "Flapjack/PanToCrep/CompileExact.lean",
+                    CHECKER["tagged_declaration_text"](lines, 6),
+                )
+                self.assertEqual(errors, [])
+            finally:
+                checker_globals["ROOT"] = original_root
+
+    def test_fmap_as_finite_support_rejects_imported_wrong_owner_type_and_witness(self):
+        for wrong_field_type, wrong_witness in [
+            ("String \u2192 Option Nat", False),
+            ("HolFiniteMapExact Name Shape", True),
+        ]:
+            with self.subTest(wrong_field_type=wrong_field_type,
+                              wrong_witness=wrong_witness):
+                checker_globals = CHECKER["fmap_as_finite_support_errors"].__globals__
+                original_root = checker_globals["ROOT"]
+                with tempfile.TemporaryDirectory() as directory:
+                    root = Path(directory)
+                    owner = root / "Flapjack" / "PanToCrep" / "ContextExact.lean"
+                    consumer = root / "Flapjack" / "PanToCrep" / "CompileExact.lean"
+                    owner.parent.mkdir(parents=True)
+                    owner.write_text(
+                        "\n".join([
+                            "structure PanToCrepContextExact where",
+                            f"  vars : {wrong_field_type}",
+                            "structure OtherContext where",
+                            "  vars : HolFiniteMapExact Name Shape",
+                        ]),
+                        encoding="utf-8",
+                    )
+                    witness_owner = "OtherContext" if wrong_witness else "PanToCrepContextExact"
+                    consumer.write_text(
+                        "\n".join([
+                            "import Flapjack.PanToCrep.ContextExact",
+                            "theorem holFmapAsFiniteSupportWitness",
+                            f"    (context : {witness_owner}) :",
+                            f"    {witness_owner}.ofBroad ({witness_owner}.toBroad context) = context := by",
+                            f"  exact {witness_owner}.roundtrip context",
+                            '@[hol "cakeml/pancake/pan_to_crepScript.sml" "compile_exp_def"',
+                            "  (fmap_as_finite_support := [vars])]",
+                            "def compileExpExactHOLW (context : PanToCrepContextExact) := context.vars",
+                        ]),
+                        encoding="utf-8",
+                    )
+                    checker_globals["ROOT"] = root
+                    try:
+                        lines = consumer.read_text(encoding="utf-8").splitlines()
+                        errors = CHECKER["fmap_as_finite_support_errors"](
+                            lines, ("vars",),
+                            "Flapjack/PanToCrep/CompileExact.lean",
+                            CHECKER["tagged_declaration_text"](lines, 6),
+                        )
+                        if wrong_witness:
+                            self.assertTrue(any("canonical witness" in e for e in errors))
+                        else:
+                            self.assertTrue(any("approved HolFiniteMapExact" in e
+                                                for e in errors))
+                    finally:
+                        checker_globals["ROOT"] = original_root
 
     def test_fmap_as_finite_support_rejects_raw_type_on_named_carrier(self):
         lines = [

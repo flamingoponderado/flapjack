@@ -191,10 +191,10 @@ def parityGuard : Bool :=
 #eval parityGuard
 #guard parityGuard
 
-/-! `pan_to_crep$compile` chooses a shared-store temporary from the largest
-    variable in the *address* expression (`pan_to_crepScript.sml:291-299`).
-    This small oracle catches the accidental value-based choice that aliases a
-    store's address when the value is a lower-numbered local. -/
+/-! HOL's `ShMemStore` constructor operands are positional value then address;
+    `compile_def` allocates the shared-store temporary from the first operand
+    (`pan_to_crepScript.sml:285-293`). This production parity row gives that
+    stored-value operand a higher variable than the destination address. -/
 def shMemStoreAddressTempContext : CompileContext Nat :=
   { vars := [("out", (.one, [2])), ("len", (.one, [1]))], functions := [],
     exceptions := [], maxVar := 2, bytesInWord := 8 }
