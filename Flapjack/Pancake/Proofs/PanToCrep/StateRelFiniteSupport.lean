@@ -84,6 +84,33 @@ def panToCrepStateRelFiniteExact {width : Nat} {σ : Type} [NeZero width]
     source.baseAddr = target.baseAddr ∧
     source.topAddr = target.topAddr
 
+/-- The `state_rel` conjunct of HOL `call_preserve_state_code_locals_rel`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:2355`) is preserved by
+    the call-entry clock decrement and arbitrary replacement of the source
+    and target locals. The source theorem's `state_rel_def` (`:45-58`) does not
+    mention locals; its only clock condition is equality. Both HOL
+    `dec_clock_def` declarations decrement equal clocks identically. This is
+    only that one projected conjunct: the code, exception, and locals relation
+    conjuncts are not established here, and this helper deliberately has no
+    `@[hol]` tag for the full Call theorem. -/
+theorem panToCrepCallStateRelFiniteExactLocalUpdate
+    {width : Nat} {σ : Type} [NeZero width]
+    (source : PanSemStateFiniteExact width σ)
+    (target : CrepSemHOLState width σ)
+    (sourceLocals : HolFiniteMapExact MlS (ValueHOL width))
+    (targetLocals : HolFiniteMapExact Nat (HolWordLab width))
+    (hstate : panToCrepStateRelFiniteExact source target) :
+    panToCrepStateRelFiniteExact
+      ({source.decClockHOLFinite with locals := sourceLocals})
+      ({decClockCrepSemHOL target with locals := targetLocals}) := by
+  rcases hstate with
+    ⟨hmemory, hmemaddrs, hshmemaddrs, hstructs, hglobals, hclock,
+      hbe, hffi, hbaseAddr, htopAddr⟩
+  simp [panToCrepStateRelFiniteExact,
+    PanSemStateFiniteExact.decClockHOLFinite, decClockCrepSemHOL,
+    hmemory, hmemaddrs, hshmemaddrs, hstructs, hglobals, hclock,
+    hbe, hffi, hbaseAddr, htopAddr]
+
 /-- Exact port of HOL `locals_rel_def`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:71-78`). The relation
     traverses exactly three finite-map values: `context.vars` (the owning
