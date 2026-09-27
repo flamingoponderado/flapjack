@@ -1708,6 +1708,26 @@ theorem evaluateHOLFiniteState_eq_withDeciders {width : Nat} {σ : Type}
   simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
     hmemEq, hsharedEq]
 
+/-- Flapjack-specific projection fact: mapping the recursive evaluator's
+    assembly `Option` through its pair/state projection commutes with a
+    conditional recursive branch. -/
+theorem projectFiniteEvalResult_if {width : Nat} {σ : Type} [NeZero width]
+    {condition : Prop} [Decidable condition]
+    (state : PanSemStateFiniteExact width σ)
+    (left right : Option (Option (PanSemResultExact width) × FiniteEvalContext width σ)) :
+    (match (if condition then left else right) with
+      | some pair => (pair.1, pair.2.state)
+      | none => (none, state)) =
+      if condition then
+        (match left with
+          | some pair => (pair.1, pair.2.state)
+          | none => (none, state))
+      else
+        (match right with
+          | some pair => (pair.1, pair.2.state)
+          | none => (none, state)) := by
+  by_cases h : condition <;> simp [h]
+
 /-- HOL `evaluate_def`'s `Skip` equation (the first conjunct of the theorem at
     `panSemScript.sml:780`, whose definition clause is at line 557). This is one
     constructor case of the theorem; the full 21-equation theorem remains open.
@@ -1815,6 +1835,107 @@ theorem evaluateHOLFiniteState_return {width : Nat} {σ : Type} [NeZero width]
           evalPanSemRecursiveCallFiniteContext, hvalue, hsize]
 
 attribute [simp] evaluateHOLFiniteState_return
+
+/-! HOL `evaluate_def`'s `Raise` equation (`panSemScript.sml:645-652`), one of
+the line-780 theorem's 21 conjuncts. Its shape test is stated as HOL equality;
+the finite evaluator implements that test with `shapeEqHOL`, whose exact
+equality bridge is `shapeEqHOL_eq_true`. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
+  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+theorem evaluateHOLFiniteState_raise {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (exceptionId : MlS)
+    (expression : ExpHOL width) :
+    evaluateHOLFiniteState state (.raise exceptionId expression : ProgHOL width) =
+      match state.eshapes.lookup exceptionId,
+          @evalHOLExact width σ _ state.toExact
+            (fun address => Classical.propDecidable (state.memaddrs address)) expression with
+      | some shape, some value =>
+          let condition : Prop := shapeOfHOLExact value = shape ∧
+            Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL state.structs
+              (shapeOfHOLExact value) ≤ 32
+          letI : Decidable condition := Classical.propDecidable condition
+          if condition then
+            (some (.exception exceptionId value), emptyLocalsHOLFinite state)
+          else (some .error, state)
+      | _, _ => (some .error, state) := by
+  classical
+  cases hshape : state.eshapes.lookup exceptionId with
+  | none =>
+      cases hvalue : @evalHOLExact width σ _ state.toExact
+          (fun address => Classical.propDecidable (state.memaddrs address)) expression with
+      | none =>
+          simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+            evalPanSemRecursiveCallFiniteContext, hvalue]
+      | some value =>
+          simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+            evalPanSemRecursiveCallFiniteContext, hshape, hvalue]
+  | some shape =>
+      cases hvalue : @evalHOLExact width σ _ state.toExact
+          (fun address => Classical.propDecidable (state.memaddrs address)) expression with
+      | none =>
+          simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+            evalPanSemRecursiveCallFiniteContext, hvalue]
+      | some value =>
+          by_cases heq : shapeOfHOLExact value = shape
+          · by_cases hsize : Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL
+                state.structs (shapeOfHOLExact value) ≤ 32
+            · have hsizeShape :
+                  Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL state.structs shape ≤ 32 := by
+                simpa [heq] using hsize
+              simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+                evalPanSemRecursiveCallFiniteContext, hshape, hvalue,
+                shapeEqHOL_eq_true, heq, hsizeShape]
+              rfl
+            · have hsizeShape :
+                  ¬ Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL state.structs shape ≤ 32 := by
+                simpa [heq] using hsize
+              simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+                evalPanSemRecursiveCallFiniteContext, hshape, hvalue,
+                shapeEqHOL_eq_true, heq, hsizeShape]
+          · simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+              evalPanSemRecursiveCallFiniteContext, hshape, hvalue,
+              shapeEqHOL_eq_true, heq]
+
+attribute [simp] evaluateHOLFiniteState_raise
+
+/-! HOL `evaluate_def`'s `If` equation (`panSemScript.sml:618-622`), one of
+the line-780 theorem's 21 conjuncts. The equivalent zero test swaps the two
+branches: HOL's `word <> 0w ? then : else` is rendered as
+`word = 0 ? else : then` on the exact `BitVec width` carrier. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
+  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+theorem evaluateHOLFiniteState_ite {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (condition : ExpHOL width)
+    (thenBranch elseBranch : ProgHOL width) :
+    evaluateHOLFiniteState state (.ite condition thenBranch elseBranch) =
+      match @evalHOLExact width σ _ state.toExact
+          (fun address => Classical.propDecidable (state.memaddrs address)) condition with
+      | some (.val (.word word)) =>
+          if word = 0 then evaluateHOLFiniteState state elseBranch
+          else evaluateHOLFiniteState state thenBranch
+      | _ => (some .error, state) := by
+  classical
+  cases heval : @evalHOLExact width σ _ state.toExact
+      (fun address => Classical.propDecidable (state.memaddrs address)) condition with
+  | none =>
+      simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+        evalPanSemRecursiveCallFiniteContext, heval]
+  | some value =>
+      cases value with
+      | val payload =>
+          cases payload with
+          | word word =>
+              simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+                evalPanSemRecursiveCallFiniteContext, heval]
+              rw [projectFiniteEvalResult_if]
+      | rStruct fields =>
+          simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+            evalPanSemRecursiveCallFiniteContext, heval]
+      | nStruct name fields =>
+          simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+            evalPanSemRecursiveCallFiniteContext, heval]
+
+attribute [simp] evaluateHOLFiniteState_ite
 
 /-- The decider-taking helper is the pair-shaped rendering of the assembly-marker
     evaluator. This bridge is Flapjack-specific infrastructure. -/
