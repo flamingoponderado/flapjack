@@ -48,7 +48,8 @@ mutual
       `ShapeHOL`, `MlS`, and `CrepExpHOL width` preserve HOL's carriers and
       every fallback equation. -/
   @[hol "cakeml/pancake/pan_to_crepScript.sml" "compile_exp_def"
-    (fmap_as_finite_support := [vars, funcs, eids])]
+    (fmap_as_finite_support := [vars, funcs, eids])
+    (words_as_type_indexed_bitvec)]
   def compileExpExactHOLW {width : Nat} [NeZero width]
       (context : PanToCrepContextExact width) :
       Flapjack.Pancake.PanLang.ExpHOL width →
@@ -643,7 +644,8 @@ the proof-side exact compiler. `flapjack-compile` still uses the production
 String-backed path until the separate production bridge is reviewed. -/
 
 @[hol "cakeml/pancake/pan_to_crepScript.sml" "compile_def"
-  (fmap_as_finite_support := [vars, funcs, eids])]
+  (fmap_as_finite_support := [vars, funcs, eids])
+  (words_as_type_indexed_bitvec)]
 def compileProgExactHOLW {width : Nat} [NeZero width]
     (context : PanToCrepContextExact width) :
     Flapjack.Pancake.PanLang.ProgHOL width → CrepProgHOL width
