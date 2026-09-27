@@ -11,23 +11,26 @@ forbidden result, chooses a successful `Return`/`FinalFFI` witness, and
 otherwise returns the `build_lprefix_lub` of the clock-indexed FFI-event
 prefixes.
 
-This module provides the exact observational behaviour carrier and the
-clock-indexed entry evaluation over the already-ported exact clocked evaluator
-`evalPanSemRecursiveCallContextHOLExact` and the exact state `PanSemStateExact`.
+This module provides a Flapjack-specific observational behaviour carrier and
+the clock-indexed entry evaluation over the already-ported exact clocked
+evaluator `evalPanSemRecursiveCallContextHOLExact`.  Its state and result
+carriers are the Flapjack-exact `PanSemStateExact`/`PanSemResultExact`, whose
+map fields are unrestricted lookup functions and whose domain membership is
+carried by `PanSemExactEvalContext` deciders; these are NOT HOL's finite-map
+and total-`word_lab` carriers.
 
--- FLAPJACK-SPECIFIC (deviation to document, not an exact `@[hol]` port of
--- `panSem$semantics_def`): the exact evaluator carries the two domain-membership
--- decision procedures inside `PanSemExactEvalContext`, and the shared
--- prefix-LUB construction requires a caller-supplied proof that the
--- clock-indexed event family is an `lprefix_chain`.  HOL's `semantics_def`
--- instead calls its total `evaluate` with no instance argument and its
--- `build_lprefix_lub` is total (no chain hypothesis).  The clock-indexed chain
--- of this very evaluator is already proved as
--- `evalPanSemRecursiveCallContextHOLExact_clock_ioEvents_lprefixChain`
--- (commit 7dc5f4aba, bead `flapjack-4ac.3.52.3.2`); a total-lub `panSemanticsExact`
--- that instantiates `divergenceChain` with that theorem is tracked as the
--- follow-up slice of `flapjack-4ac.3.52.2`.  No `@[hol]` tag is attached until
--- that gap is closed.
+-- FLAPJACK-SPECIFIC (no `@[hol]` tag): this is not an exact `@[hol]` port of
+-- `panSem$semantics_def` because (a) the exact evaluator carries the two
+-- domain-membership decision procedures inside `PanSemExactEvalContext` and its
+-- state/output map carriers are unrestricted functions (not HOL's finite maps),
+-- and (b) the divergence branch uses the shared `LoopLprefixLub` carrier whose
+-- witness is a `panLprefixChain` proof, whereas HOL's `build_lprefix_lub` is
+-- total (no chain hypothesis).  The clock-indexed chain of this evaluator is
+-- proved as `evalPanSemRecursiveCallContextHOLExact_clock_ioEvents_lprefixChain`
+-- (commit 7dc5f4aba, bead `flapjack-4ac.3.52.3.2`), and the total, no-hypothesis
+-- definition `panSemanticsExactTotal` supplies it, but that still uses the
+-- `panLprefixChain`-indexed `LoopLprefixLub` carrier rather than HOL's total
+-- `build_lprefix_lub`, so no `@[hol]` tag is attached.
 -/
 
 namespace Flapjack
