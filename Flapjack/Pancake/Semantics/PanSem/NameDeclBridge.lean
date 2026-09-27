@@ -1,11 +1,11 @@
 import Flapjack.Pancake.Semantics.PanSem
 import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+import Flapjack.Pancake.PanLang.Decl
 
 /-!
-The production and exact finite-support clauses for HOL `Name` declarations
-are both no-ops. This module records that constructor-level congruence without
-claiming the still-missing relation between the full production and exact
-state carriers.
+This module records constructor-level production/exact congruence for the HOL
+`Name` and `ExnDecl` clauses without claiming the still-missing relation
+between the full production and exact state carriers.
 
 HOL source review: `cakeml/pancake/semantics/panSemScript.sml:814-837`
 defines `evaluate_decls s (Name nm flds::ds) = evaluate_decls s ds`; production
@@ -24,12 +24,22 @@ The original HOL EVAL row `name_noop` is recorded in
 `scripts/hol-probes/pan_evaluate_decls_probe.out` and checked for both the
 executed production evaluator (`PanEvaluateDeclsParity`) and the tagged
 finite-support evaluator (`PanSemEvaluateDeclsFiniteParity`).
+
+For `ExnDecl`, HOL checks absence in `s.eshapes` and exact `is_wf_shape`, then
+updates only `eshapes` before recursing. The relational lemma below compares
+the production `InfoMap` lookup/update with the canonical finite-map lookup/
+update on byte-ranged identifiers and carries the memory-domain component
+unchanged. It assumes equality of the production and exact shape-well-formed
+checks and a recursive-tail induction hypothesis; the full struct/state
+relation remains unproved. The original HOL `exn_decl_ok` and failure rows in
+the same probe file are exercised by `PanSemEvaluateDeclsExactParity`.
 -/
 
 namespace Flapjack
 
 open Flapjack.Pancake.PanLang
-  (DeclHOL declOfHOL declToHOL DeclByteRanged MlS ShapeHOL)
+  (DeclHOL declOfHOL declToHOL DeclByteRanged NameRanged ShapeByteRanged MlS
+    ShapeHOL isWfShapeExactHOL shapeToHOL)
 
 /-- Relate evaluator results by relating successful states and requiring both
     evaluators to agree on failure. -/
@@ -51,6 +61,143 @@ def PanSemDeclarationDomainRel {width : Nat} {σ : Type}
     (production : PanSemDeclarationState (BitVec width) σ)
     (exact : PanSemStateFiniteExact width σ) : Prop :=
   ∀ address, production.memoryAccess.domain address = true ↔ exact.memaddrs address
+
+/-- The exception-shape component of an exact-to-production declaration-state
+    relation. Queries are restricted to byte-ranged names because production
+    `String` is not a lossless carrier for arbitrary HOL `mlstring` keys. -/
+def PanSemDeclarationEshapeMapRel (production : InfoMap Shape)
+    (exact : HolFiniteMapExact MlS ShapeHOL) : Prop :=
+  ∀ name, NameRanged name →
+    (lookupInfo name production).map shapeToHOL =
+      exact.lookup (Flapjack.Basis.Pure.MlString.ofString name)
+
+/-- Domain and exception-map components carried by the `ExnDecl` slice. This
+    is deliberately not the complete state relation required by the parent. -/
+def PanSemDeclarationExnContextRel {width : Nat} {σ : Type} [NeZero width]
+    (production : PanSemDeclarationState (BitVec width) σ)
+    (exact : PanSemStateFiniteExact width σ) : Prop :=
+  PanSemDeclarationDomainRel production exact ∧
+    PanSemDeclarationEshapeMapRel production.eshapes exact.eshapes
+
+/-- `panSemDeclUpdateInfo` and HOL finite-map update preserve the ranged
+    exception-map relation, including the updated key. -/
+theorem panSemDeclarationEshapeMapRel_update
+    (production : InfoMap Shape) (exact : HolFiniteMapExact MlS ShapeHOL)
+    (name : String) (shape : Shape)
+    (hname : NameRanged name)
+    (hrel : PanSemDeclarationEshapeMapRel production exact) :
+    PanSemDeclarationEshapeMapRel
+      (panSemDeclUpdateInfo production name shape)
+      (HolFiniteMapExact.update exact
+        (Flapjack.Basis.Pure.MlString.ofString name, shapeToHOL shape)) := by
+  intro key hkey
+  by_cases heq : key = name
+  · subst key
+    simp [panSemDeclUpdateInfo, lookupInfo, HolFiniteMapExact.update, FUPDATE]
+  · have hkeyNe : Flapjack.Basis.Pure.MlString.ofString key ≠
+        Flapjack.Basis.Pure.MlString.ofString name := by
+      intro h
+      apply heq
+      have hk := congrArg Flapjack.Basis.Pure.MlString.toStringOfBytes h
+      simpa only [Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes
+        key hkey, Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes
+        name hname] using hk
+    have hprod := lookupInfo_panSemDeclUpdateInfo production name shape key
+    have hne : name ≠ key := fun h => heq h.symm
+    calc
+      Option.map shapeToHOL
+          (lookupInfo key (panSemDeclUpdateInfo production name shape)) =
+          Option.map shapeToHOL
+            (FLOOKUP (FUPDATE (fun k => lookupInfo k production)
+              (name, shape)) key) := by rw [hprod]
+      _ = (HolFiniteMapExact.update exact
+          (Flapjack.Basis.Pure.MlString.ofString name, shapeToHOL shape)).lookup
+            (Flapjack.Basis.Pure.MlString.ofString key) := by
+        simpa [FLOOKUP, FLOOKUP_update, FUPDATE, HolFiniteMapExact.lookup_update,
+          hne, hkeyNe, hkeyNe.symm] using
+          hrel key hkey
+
+/-- Relational `ExnDecl` case of HOL `evaluate_decls_def`. The lookup and
+    shape-well-formedness facts are the exact cross-carrier premises for its
+    branch test. The only recursive premise is the tail relation after the
+    matching map updates; the production Boolean memory domain is carried
+    unchanged. This proves one constructor case, not the complete evaluator
+    bridge or a relation for the other state fields. -/
+theorem evaluateDecls_exnDecl_prefix_congr {width : Nat} {σ : Type}
+    [NeZero width]
+    (productionState : PanSemDeclarationState (BitVec width) σ)
+    (exactState : PanSemStateFiniteExact width σ)
+    [hmem : DecidablePred exactState.memaddrs]
+    (exceptionName : String) (shape : Shape)
+    (hbytes : DeclByteRanged
+      (.exnDecl exceptionName shape : Decl (BitVec width)))
+    (declarations : List (DeclHOL width))
+    (hcontext : PanSemDeclarationExnContextRel productionState exactState)
+    (hshapeWf : isWfShape productionState.runtime.structs shape =
+      isWfShapeExactHOL exactState.structs (shapeToHOL shape))
+    (htail : ∀ (production : PanSemDeclarationState (BitVec width) σ)
+        (exact : PanSemStateFiniteExact width σ)
+        [DecidablePred exact.memaddrs],
+      PanSemDeclarationExnContextRel production exact →
+      PanSemDeclarationOutputRel PanSemDeclarationExnContextRel
+        (evaluateDecls production (declarations.map declOfHOL))
+        (PanSemStateFiniteExact.evaluateDeclsHOLFinite exact declarations)) :
+    PanSemDeclarationOutputRel PanSemDeclarationExnContextRel
+      (evaluateDecls productionState
+        (declOfHOL (declToHOL
+          (.exnDecl exceptionName shape : Decl (BitVec width))) ::
+          declarations.map declOfHOL))
+      (PanSemStateFiniteExact.evaluateDeclsHOLFinite exactState
+        (declToHOL (.exnDecl exceptionName shape : Decl (BitVec width)) ::
+          declarations)) := by
+  have hproductionCodec :
+      declOfHOL (declToHOL
+        (.exnDecl exceptionName shape : Decl (BitVec width))) =
+        .exnDecl exceptionName shape :=
+    Flapjack.Pancake.PanLang.declOfHOL_declToHOL _ hbytes
+  rcases hbytes with ⟨hname, hshape⟩
+  have hlookup := hcontext.2 exceptionName hname
+  rw [hproductionCodec]
+  simp only [evaluateDecls,
+    PanSemStateFiniteExact.evaluateDeclsHOLFinite, declToHOL]
+  cases hprod : lookupInfo exceptionName productionState.eshapes with
+  | none =>
+      have hexact : exactState.eshapes.lookup
+          (Flapjack.Basis.Pure.MlString.ofString exceptionName) = none := by
+        simpa [hprod] using hlookup.symm
+      by_cases hwf : isWfShape productionState.runtime.structs shape
+      · have hwfExact : isWfShapeExactHOL exactState.structs (shapeToHOL shape) := by
+          rw [← hshapeWf]
+          exact hwf
+        let productionUpdated : PanSemDeclarationState (BitVec width) σ :=
+          { productionState with eshapes :=
+              panSemDeclUpdateInfo productionState.eshapes exceptionName shape }
+        let exactMapUpdated : HolFiniteMapExact MlS ShapeHOL :=
+          exactState.eshapes.update
+          (Flapjack.Basis.Pure.MlString.ofString exceptionName, shapeToHOL shape)
+        let exactUpdated : PanSemStateFiniteExact width σ :=
+          { exactState with eshapes := exactMapUpdated }
+        letI : DecidablePred exactUpdated.memaddrs := hmem
+        have hupdated : PanSemDeclarationExnContextRel
+            productionUpdated exactUpdated := by
+          constructor
+          · exact hcontext.1
+          · exact panSemDeclarationEshapeMapRel_update productionState.eshapes
+              exactState.eshapes exceptionName shape hname hcontext.2
+        have htail' := htail productionUpdated exactUpdated hupdated
+        simpa [productionUpdated, exactUpdated, hprod, hexact, hwf, hwfExact,
+          PanSemDeclarationOutputRel] using htail'
+      · have hwfExact : isWfShapeExactHOL exactState.structs
+            (shapeToHOL shape) = false := by
+          rw [← hshapeWf]
+          exact Bool.eq_false_iff.mpr hwf
+        simp [hexact, hwf, hwfExact, PanSemDeclarationOutputRel]
+  | some oldShape =>
+      have hexact : exactState.eshapes.lookup
+        (Flapjack.Basis.Pure.MlString.ofString exceptionName) =
+            some (shapeToHOL oldShape) := by
+        simpa [hprod] using hlookup.symm
+      simp [hexact, PanSemDeclarationOutputRel]
 
 /-- Flapjack-specific clause equation: production `Name` evaluation is the
     identity on a singleton declaration. There is no HOL tag here because the
