@@ -1,0 +1,19 @@
+ret_inst2_args=SOME []
+
+ret_inst2_lookup=SOME (Return (Const 7w),FEMPTY,One)
+
+ret_inst2_body_run=(SOME (Return (ValWord 7w)),
+ <|locals := FEMPTY; globals := FEMPTY; structs := [];
+   code := FEMPTY⟨«f» ↦ ([],Return (Const 7w),One)⟩; memory := t.memory;
+   memaddrs := t.memaddrs; sh_memaddrs := t.sh_memaddrs;
+   clock := t.clock − 1; be := t.be; ffi := t.ffi; base_addr := t.base_addr;
+   top_addr := t.top_addr|>)
+
+ret_inst2_state_rel=T
+
+ret_inst2_locals_rel=((∀x a xs. T) ∧ ∀x y a b xs ys. T) ∧ (∀v a xs. T) ∧ ∀vname v. T
+
+ret_inst2_five_premise_return=((∀x a xs. T) ∧ ∀x y a b xs ys. T) ∧ (∀v a xs. T) ∧ ∀vname v. T
+
+ret_inst2_return_result=SOME (Return (ValWord 7w))
+

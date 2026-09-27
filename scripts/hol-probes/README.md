@@ -158,6 +158,15 @@ String/Shape states satisfy the relation. Regenerate with
 HOL_PROBE_ONLY=pan_to_crep_state_rel_carrier_probeScript.sml
 scripts/hol-probes/regenerate.sh` when using a read-only CakeML checkout whose
 compiled theories match the source commit.
+`pan_to_crep_ret_inst2_probe.out` evaluates the five premises of
+`evaluate_shape_invariant_ret_inst2` at
+`pan_to_crepProofScript.sml:3031-3044` on a concrete empty-argument call setup:
+the source `OPT_MMAP`, successful code lookup, body `Return (Const 7w)` run,
+matching `state_rel`, and empty `locals_rel`. It also records the combined
+five-premise row and result constructor. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=pan_to_crep_ret_inst2_probeScript.sml
+scripts/hol-probes/regenerate.sh` against the matching built CakeML theories.
 `code_rel_probe.out` records the HOL-inferred source/target code-map types,
 compiled parameter return, localisation outcomes, function-signature lookup,
 and target entry. The probe also proves matching and deliberately mismatching
