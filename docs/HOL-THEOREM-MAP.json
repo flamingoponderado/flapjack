@@ -13856,5 +13856,29 @@
     "lean_name": "compileExpValRelHOL_rstruct",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.4): exact RStruct case of HOL pan_to_crepProofScript.sml:171-198; Flapjack-specific case lemma, no standalone HOL declaration (HOL proves it inside pc_compile_correct)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "compileExpValRelHOL_baseAddr",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.81.5): Flapjack-specific exact-to-production helper for the `BaseAddr` case of HOL `pan_to_crepProofScript.sml:130-396` `compile_exp_val_rel`; no standalone HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "compileExpValRelHOL_topAddr",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.81.5): Flapjack-specific exact-to-production helper for the `TopAddr` case of HOL `pan_to_crepProofScript.sml:130-396` `compile_exp_val_rel`; no standalone HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "compileExpValRelHOL_bytesInWord",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.81.5): Flapjack-specific exact-to-production helper for the `BytesInWord` case of HOL `pan_to_crepProofScript.sml:130-396` `compile_exp_val_rel`; no standalone HOL theorem."
   }
 ]

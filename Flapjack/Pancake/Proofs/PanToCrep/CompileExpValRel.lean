@@ -329,4 +329,101 @@ theorem compileExpValRelHOL_rstruct {width : Nat} {σ : Type} [NeZero width]
       rw [← heval, ← hExpr, ← hShape]
       exact hmain
 
+/-- Exact `BaseAddr` case of HOL `compile_exp_val_rel`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:130-396`, the catch-all
+    `eval_def`/`compile_exp_def` case): `eval` returns the state's base address
+    as a word and the compiler emits the `BaseAddr` expression, whose Crep
+    evaluation returns the target's base address; `state_rel` equates them. -/
+theorem compileExpValRelHOL_baseAddr {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) [_hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width σ) [_ht : DecidablePred targetState.memaddrs]
+    (value : ValueHOL width)
+    (expressions : List (CrepExpHOL width)) (shape : ShapeHOL)
+    (heval : state.evalHOLFinite .baseAddr = some value)
+    (hstate : panToCrepStateRelFiniteExact state targetState)
+    (hcompile : compileExpExactHOLW context .baseAddr = (expressions, shape)) :
+    expressions.map (evalCrepSemHOLExp targetState) = (flattenHOL value).map some ∧
+    expressions.length = sizeOfShapeHOL shape ∧
+    shapeOfHOLExact value = shape ∧
+    isWfShapeExactHOL ([] : StructContextExact) shape = true := by
+  have hval : value = .val (.word state.baseAddr) := by
+    have h := heval
+    simp only [PanSemStateFiniteExact.evalHOLFinite_baseAddr] at h
+    exact (Option.some.inj h).symm
+  have hcomp := hcompile
+  simp only [compileExpExactHOLW] at hcomp
+  obtain ⟨rfl, rfl⟩ := Prod.mk.inj hcomp
+  subst hval
+  have haddr : targetState.baseAddr = state.baseAddr :=
+    hstate.2.2.2.2.2.2.2.2.1.symm
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · simp [evalCrepSemHOLExp, flattenHOL, haddr]
+  · simp [sizeOfShapeHOL]
+  · simp [shapeOfHOLExact]
+  · simp [isWfShapeExactHOL]
+
+/-- Exact `TopAddr` case of HOL `compile_exp_val_rel`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:130-396`, the catch-all
+    `eval_def`/`compile_exp_def` case): the `TopAddr` counterpart of
+    `compileExpValRelHOL_baseAddr`. -/
+theorem compileExpValRelHOL_topAddr {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) [_hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width σ) [_ht : DecidablePred targetState.memaddrs]
+    (value : ValueHOL width)
+    (expressions : List (CrepExpHOL width)) (shape : ShapeHOL)
+    (heval : state.evalHOLFinite .topAddr = some value)
+    (hstate : panToCrepStateRelFiniteExact state targetState)
+    (hcompile : compileExpExactHOLW context .topAddr = (expressions, shape)) :
+    expressions.map (evalCrepSemHOLExp targetState) = (flattenHOL value).map some ∧
+    expressions.length = sizeOfShapeHOL shape ∧
+    shapeOfHOLExact value = shape ∧
+    isWfShapeExactHOL ([] : StructContextExact) shape = true := by
+  have hval : value = .val (.word state.topAddr) := by
+    have h := heval
+    simp only [PanSemStateFiniteExact.evalHOLFinite_topAddr] at h
+    exact (Option.some.inj h).symm
+  have hcomp := hcompile
+  simp only [compileExpExactHOLW] at hcomp
+  obtain ⟨rfl, rfl⟩ := Prod.mk.inj hcomp
+  subst hval
+  have haddr : targetState.topAddr = state.topAddr :=
+    hstate.2.2.2.2.2.2.2.2.2.symm
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · simp [evalCrepSemHOLExp, flattenHOL, haddr]
+  · simp [sizeOfShapeHOL]
+  · simp [shapeOfHOLExact]
+  · simp [isWfShapeExactHOL]
+
+/-- Exact `BytesInWord` case of HOL `compile_exp_val_rel`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:130-396`, the catch-all
+    case): `eval` returns `bytesInWord` and the compiler emits the matching
+    `Const`; the Crep side returns the same word. -/
+theorem compileExpValRelHOL_bytesInWord {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) [_hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width σ) [_ht : DecidablePred targetState.memaddrs]
+    (value : ValueHOL width)
+    (expressions : List (CrepExpHOL width)) (shape : ShapeHOL)
+    (heval : state.evalHOLFinite .bytesInWord = some value)
+    (hcompile : compileExpExactHOLW context .bytesInWord = (expressions, shape)) :
+    expressions.map (evalCrepSemHOLExp targetState) = (flattenHOL value).map some ∧
+    expressions.length = sizeOfShapeHOL shape ∧
+    shapeOfHOLExact value = shape ∧
+    isWfShapeExactHOL ([] : StructContextExact) shape = true := by
+  have hval : value = .val (.word (bytesInWordHOL width)) := by
+    have h := heval
+    simp only [PanSemStateFiniteExact.evalHOLFinite_bytesInWord] at h
+    exact (Option.some.inj h).symm
+  have hcomp := hcompile
+  simp only [compileExpExactHOLW] at hcomp
+  obtain ⟨rfl, rfl⟩ := Prod.mk.inj hcomp
+  subst hval
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · simp [evalCrepSemHOLExp, flattenHOL, bytesInWordHOL]
+  · simp [sizeOfShapeHOL]
+  · simp [shapeOfHOLExact]
+  · simp [isWfShapeExactHOL]
+
 end Flapjack
