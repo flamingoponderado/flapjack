@@ -123,3 +123,13 @@ and its function/exception branches call production `isWfShape` and
 updates source locations and records the current code path; it adds no tag and
 establishes no production-equivalence claim. The route/equivalence obligation
 remains in `.18.3.6.10`, blocked by production carrier bridge `.18.3.5.8`.
+
+Coverage review: all 16 named outputs in `pan_evaluate_decls_probe.out` now have
+`#guard`s against `evaluateDeclsHOLFinite` in
+`Flapjack/Test/PanSemEvaluateDeclsFiniteParity.lean`. Besides the prior empty,
+Name, successful/failing Decl, Function, and Exn rows, this includes local
+preservation, left-to-right global visibility, empty-locals evaluation,
+function-code replacement, bad return shape, and duplicate-exception failure.
+The separate production parity module remains a comparison of the production
+String/InfoMap evaluator and does not discharge the exact evaluator's route
+gap.
