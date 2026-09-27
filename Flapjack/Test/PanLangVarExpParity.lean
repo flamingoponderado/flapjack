@@ -61,8 +61,12 @@ example : varExpHOL nestedHOL = [xName, yName] := by
 /-! ## `global_var_exp` specified-fragment parity over the exact `ExpHOL`
 
 HOL's `global_var_exp_def` is partial: `Load32`, `BaseAddr`, `TopAddr` and
-`BytesInWord` are `ARB`, so `globalVarExpHOL` is untagged and extends the
-specification there.  The oracle rows below cover the specified fragment. -/
+`BytesInWord` are `ARB`, so the total `globalVarExpHOL` is untagged and extends
+the specification there.  The exact thirteen specified clauses HOL states are
+ported by the tagged theorem `globalVarExpHOL_spec`
+(`Flapjack/Pancake/PanLang/Exp.lean`), whose HOL statement (and the ARB
+primitive) is pinned by `scripts/hol-probes/pan_lang_var_exp_probe.out`.  The
+oracle rows below cover the specified fragment. -/
 
 #guard (globalVarExpHOL (.var .global (ofString "g") : ExpHOL 8)) == [ofString "g"]
 #guard globalVarExpHOL nestedHOL == [ofString "g", ofString "addr"]
@@ -72,6 +76,12 @@ example : globalVarExpHOL (.var .global (ofString "g") : ExpHOL 8) = [ofString "
 
 example : globalVarExpHOL nestedHOL = [ofString "g", ofString "addr"] := by
   simp [globalVarExpHOL, nestedHOL]
+
+/-- The `global_var` oracle row follows from the tagged HOL specified clause
+`∀v. global_var_exp (Var Global v) = [v]` (`globalVarExpHOL_spec`), so the
+kernel checks it against the ported statement, not only by evaluation. -/
+example : globalVarExpHOL (.var .global (ofString "g") : ExpHOL 8) = [ofString "g"] :=
+  (globalVarExpHOL_spec (width := 8)).2.2.1 (ofString "g")
 
 /-! ## Production-to-exact bridge for `var_exp`
 
