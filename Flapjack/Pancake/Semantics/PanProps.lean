@@ -121,23 +121,23 @@ in `flapjack-4ac.4.105.1` and the exact PanSem semantics port
 (`panPropsScript.sml:974-1019`): its quantified variables are `p`, `s`, `res`,
 and `t`; the premises are `evaluate (p,s) = (res,t)` and equality of the
 initial and final `ffi.io_events` lists, and the conclusion is equality of the
-entire final and initial `ffi_state` records. The Lean `HolFfiState` carrier
-preserves HOL's oracle, host-state, and event-list fields, and
-`PanSemStateFiniteExact` contains that exact carrier. `evaluateHOLFinite`
-retains an outer `Option` assembly marker; `evaluateHOLFiniteState` exposes a
-pair-shaped result/state interface but is documented as Flapjack-specific and
-projects the same finite-context dispatcher. The pair shape alone does not
-establish that this dispatcher is the HOL `evaluate` relation. There is not
-yet a kernel-checked induction theorem over the current evaluator proving that
-equal event lists force equality of both the oracle and host-state fields
-through the recursive Call, DecCall, Seq, and While cases. The local helper
-`callFFIHOL_ret_ffi_eq_of_ioEvents_eq` proves this consequence for one
-successful FFI call, and matching `extCallStepHOLExact`, `shMemLoadHOLExact`,
-and `shMemStoreHOLExact` lemmas lift it across those individual transition
-steps. They do not establish the recursive evaluator result. No similar
-event-prefix lemma is tagged as this theorem. The faithful theorem port is
-tracked by `flapjack-4ac.4.51.1`; it must state the same successful-evaluation
-and event-equality premises and prove equality of the complete `HolFfiState`. -/
+entire final and initial `ffi_state` records. The exact theorem
+`ioEventsEqImpFfiEqHOLFinite` in `PanProps/EvalInvariant.lean` keeps this
+quantifier order, both premises, and the full FFI-state conclusion. Its
+`PanPropsEvalStateFiniteExact` carrier owns the four HOL finite-map fields and
+the same-module roundtrip witness; `HolFfiState` preserves the oracle,
+host-state, and event-list fields. Its `evaluatePanPropsHOLFiniteState` adapter
+only translates that carrier field-for-field to the canonical finite PanSem
+evaluator. The finite evaluator's successful pair is bridged to the exact broad
+recursive evaluator by the checked finite-to-broad projection, then the
+recursive induction `evalPanSemRecursiveCallContextHOLExact_ffi_eq_of_ioEvents_eq`
+proves complete FFI equality from the unchanged endpoint events. The tag
+records the four `HolFiniteMapExact` state fields and the positive-width
+`BitVec` translation; neither qualifier changes the theorem's logical shape.
+Source comparison checked the HOL cases ShMemLoad, ShMemStore, Call, DecCall,
+Seq, ExtCall, and While against the clause evaluator and recursive proof. The
+theorem is tracked by `flapjack-4ac.4.51.1`; its type lock and full gates must
+pass before closure. -/
 
 /-! Source review for HOL `evaluate_io_events_mono`
 (`panPropsScript.sml:856-876`): HOL quantifies `exps`, `s1`, `res`, `s2`, assumes
