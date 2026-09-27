@@ -712,6 +712,234 @@ theorem evaluateHOLFiniteState_call_body_error {width : Nat} {σ : Type} [NeZero
   rw [hcall]
   simp only [hpostContext]
 
+/-- HOL `evaluate_def` line-780 `Call` body `Break` branch
+    (`panSemScript.sml:669`): a callee that breaks maps to `Error` at the callee
+    post-state. One constructor case of the theorem. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateHOLFiniteState_call_body_break {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ)
+    (info : Option (Option (VarKind × MlS) × Option (MlS × MlS × ProgHOL width)))
+    (function : MlS) (arguments : List (ExpHOL width)) (values : List (ValueHOL width))
+    (body : ProgHOL width) (callee : HolFiniteMapExact MlS (ValueHOL width))
+    (returnShape : ShapeHOL) (postState : PanSemStateFiniteExact width σ)
+    (hargs : evalListHOLFinite state
+      (h := fun address => Classical.propDecidable (state.memaddrs address))
+      arguments = some values)
+    (hlookup : lookupCodeHOLFinite state.code.lookup function values =
+      some (body, callee, returnShape))
+    (hclock : state.clock ≠ 0)
+    (hbody : evaluateHOLFiniteState (callEntryStateHOLFinite state callee) body =
+      (some .break, postState)) :
+    evaluateHOLFiniteState state (.call info function arguments : ProgHOL width) =
+      (some .error, postState) := by
+  classical
+  let context : FiniteEvalContext width σ :=
+    ⟨state, fun address => Classical.propDecidable (state.memaddrs address),
+      fun address => Classical.propDecidable (state.shMemaddrs address)⟩
+  have hargsContext : evalListHOLFinite context.state
+      (h := context.memaddrsDecidable) arguments = some values := by
+    simpa only [context] using hargs
+  have hlookupContext :
+      lookupCodeHOLFinite context.state.code.lookup function values =
+        some (body, callee, returnShape) := by
+    simpa only [context] using hlookup
+  have hclockContext : context.state.clock ≠ 0 := by
+    simpa only [context] using hclock
+  obtain ⟨postContext, hbodyInternal, hpostContext⟩ :=
+    evalPanSemRecursiveCallFiniteContext_of_evaluateHOLFiniteState
+      (callEntryStateHOLFinite state callee) body
+      (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl)
+      (by rfl) (some .break, postState) hbody
+  have hfixed :
+      callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)
+        (some .break) postContext = postContext :=
+    callFixedContextHOLFinite_eq_of_body (callEntryStateHOLFinite context.state callee)
+      body (some .break) postContext (by rw [hpostContext]; exact hbody)
+  have hcall := evalPanSemRecursiveCallFiniteContext_call_body_break
+    info function arguments context values body callee returnShape postContext    hargsContext hlookupContext hclockContext hbodyInternal
+  rw [hfixed] at hcall
+  rw [evaluateHOLFiniteState_eq_withDeciders state (.call info function arguments)]
+  simp only [evaluateHOLFiniteStateWithDeciders]
+  rw [show (⟨state, fun address => Classical.propDecidable (state.memaddrs address),
+        fun address => Classical.propDecidable (state.shMemaddrs address)⟩ :
+        FiniteEvalContext width σ) = context from rfl]
+  rw [hcall]
+  simp only [hpostContext]
+
+/-- HOL `evaluate_def` line-780 `Call` body `Continue` branch
+    (`panSemScript.sml:670`): a callee that continues maps to `Error` at the
+    callee post-state. One constructor case of the theorem. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateHOLFiniteState_call_body_continue {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ)
+    (info : Option (Option (VarKind × MlS) × Option (MlS × MlS × ProgHOL width)))
+    (function : MlS) (arguments : List (ExpHOL width)) (values : List (ValueHOL width))
+    (body : ProgHOL width) (callee : HolFiniteMapExact MlS (ValueHOL width))
+    (returnShape : ShapeHOL) (postState : PanSemStateFiniteExact width σ)
+    (hargs : evalListHOLFinite state
+      (h := fun address => Classical.propDecidable (state.memaddrs address))
+      arguments = some values)
+    (hlookup : lookupCodeHOLFinite state.code.lookup function values =
+      some (body, callee, returnShape))
+    (hclock : state.clock ≠ 0)
+    (hbody : evaluateHOLFiniteState (callEntryStateHOLFinite state callee) body =
+      (some .continue, postState)) :
+    evaluateHOLFiniteState state (.call info function arguments : ProgHOL width) =
+      (some .error, postState) := by
+  classical
+  let context : FiniteEvalContext width σ :=
+    ⟨state, fun address => Classical.propDecidable (state.memaddrs address),
+      fun address => Classical.propDecidable (state.shMemaddrs address)⟩
+  have hargsContext : evalListHOLFinite context.state
+      (h := context.memaddrsDecidable) arguments = some values := by
+    simpa only [context] using hargs
+  have hlookupContext :
+      lookupCodeHOLFinite context.state.code.lookup function values =
+        some (body, callee, returnShape) := by
+    simpa only [context] using hlookup
+  have hclockContext : context.state.clock ≠ 0 := by
+    simpa only [context] using hclock
+  obtain ⟨postContext, hbodyInternal, hpostContext⟩ :=
+    evalPanSemRecursiveCallFiniteContext_of_evaluateHOLFiniteState
+      (callEntryStateHOLFinite state callee) body
+      (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl)
+      (by rfl) (some .continue, postState) hbody
+  have hfixed :
+      callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)
+        (some .continue) postContext = postContext :=
+    callFixedContextHOLFinite_eq_of_body (callEntryStateHOLFinite context.state callee)
+      body (some .continue) postContext (by rw [hpostContext]; exact hbody)
+  have hcall := evalPanSemRecursiveCallFiniteContext_call_body_continue
+    info function arguments context values body callee returnShape postContext    hargsContext hlookupContext hclockContext hbodyInternal
+  rw [hfixed] at hcall
+  rw [evaluateHOLFiniteState_eq_withDeciders state (.call info function arguments)]
+  simp only [evaluateHOLFiniteStateWithDeciders]
+  rw [show (⟨state, fun address => Classical.propDecidable (state.memaddrs address),
+        fun address => Classical.propDecidable (state.shMemaddrs address)⟩ :
+        FiniteEvalContext width σ) = context from rfl]
+  rw [hcall]
+  simp only [hpostContext]
+
+/-- HOL `evaluate_def` line-780 `Call` returned-value branch with
+    `caltyp = NONE` (`panSemScript.sml:673-674`): the returned value is
+    preserved at empty locals of the callee post-state. One constructor case of
+    the theorem. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateHOLFiniteState_call_return_none {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ)
+    (value : ValueHOL width)
+    (function : MlS) (arguments : List (ExpHOL width)) (values : List (ValueHOL width))
+    (body : ProgHOL width) (callee : HolFiniteMapExact MlS (ValueHOL width))
+    (returnShape : ShapeHOL) (postState : PanSemStateFiniteExact width σ)
+    (hargs : evalListHOLFinite state
+      (h := fun address => Classical.propDecidable (state.memaddrs address))
+      arguments = some values)
+    (hlookup : lookupCodeHOLFinite state.code.lookup function values =
+      some (body, callee, returnShape))
+    (hclock : state.clock ≠ 0)
+    (hbody : evaluateHOLFiniteState (callEntryStateHOLFinite state callee) body =
+      (some (.returned value), postState))
+    (hshape : shapeEqHOL (shapeOfHOLExact value) returnShape = true) :
+    evaluateHOLFiniteState state (.call none function arguments : ProgHOL width) =
+      (some (.returned value), emptyLocalsHOLFinite postState) := by
+  classical
+  let context : FiniteEvalContext width σ :=
+    ⟨state, fun address => Classical.propDecidable (state.memaddrs address),
+      fun address => Classical.propDecidable (state.shMemaddrs address)⟩
+  have hargsContext : evalListHOLFinite context.state
+      (h := context.memaddrsDecidable) arguments = some values := by
+    simpa only [context] using hargs
+  have hlookupContext :
+      lookupCodeHOLFinite context.state.code.lookup function values =
+        some (body, callee, returnShape) := by
+    simpa only [context] using hlookup
+  have hclockContext : context.state.clock ≠ 0 := by
+    simpa only [context] using hclock
+  obtain ⟨postContext, hbodyInternal, hpostContext⟩ :=
+    evalPanSemRecursiveCallFiniteContext_of_evaluateHOLFiniteState
+      (callEntryStateHOLFinite state callee) body
+      (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl)
+      (by rfl) (some (.returned value), postState) hbody
+  have hfixed :
+      callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)
+        (some (.returned value)) postContext = postContext :=
+    callFixedContextHOLFinite_eq_of_body (callEntryStateHOLFinite context.state callee)
+      body (some (.returned value)) postContext (by rw [hpostContext]; exact hbody)
+  have hcall := evalPanSemRecursiveCallFiniteContext_call_return_none
+    function arguments context values body callee returnShape value postContext
+    hargsContext hlookupContext hclockContext hbodyInternal hshape
+  rw [hfixed] at hcall
+  rw [evaluateHOLFiniteState_eq_withDeciders state (.call none function arguments)]
+  simp only [evaluateHOLFiniteStateWithDeciders]
+  rw [show (⟨state, fun address => Classical.propDecidable (state.memaddrs address),
+        fun address => Classical.propDecidable (state.shMemaddrs address)⟩ :
+        FiniteEvalContext width σ) = context from rfl]
+  rw [hcall]
+  simp only [FiniteEvalContext.withState_state, hpostContext]
+
+/-- HOL `evaluate_def` line-780 `Call` unhandled-exception branch with
+    `caltyp = NONE` (`panSemScript.sml:683-684`): the exception propagates at
+    empty locals of the callee post-state. One constructor case of the theorem. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateHOLFiniteState_call_exception_unhandled {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ)
+    (exceptionId : MlS) (value : ValueHOL width)
+    (function : MlS) (arguments : List (ExpHOL width)) (values : List (ValueHOL width))
+    (body : ProgHOL width) (callee : HolFiniteMapExact MlS (ValueHOL width))
+    (returnShape : ShapeHOL) (postState : PanSemStateFiniteExact width σ)
+    (hargs : evalListHOLFinite state
+      (h := fun address => Classical.propDecidable (state.memaddrs address))
+      arguments = some values)
+    (hlookup : lookupCodeHOLFinite state.code.lookup function values =
+      some (body, callee, returnShape))
+    (hclock : state.clock ≠ 0)
+    (hbody : evaluateHOLFiniteState (callEntryStateHOLFinite state callee) body =
+      (some (.exception exceptionId value), postState)) :
+    evaluateHOLFiniteState state (.call none function arguments : ProgHOL width) =
+      (some (.exception exceptionId value), emptyLocalsHOLFinite postState) := by
+  classical
+  let context : FiniteEvalContext width σ :=
+    ⟨state, fun address => Classical.propDecidable (state.memaddrs address),
+      fun address => Classical.propDecidable (state.shMemaddrs address)⟩
+  have hargsContext : evalListHOLFinite context.state
+      (h := context.memaddrsDecidable) arguments = some values := by
+    simpa only [context] using hargs
+  have hlookupContext :
+      lookupCodeHOLFinite context.state.code.lookup function values =
+        some (body, callee, returnShape) := by
+    simpa only [context] using hlookup
+  have hclockContext : context.state.clock ≠ 0 := by
+    simpa only [context] using hclock
+  obtain ⟨postContext, hbodyInternal, hpostContext⟩ :=
+    evalPanSemRecursiveCallFiniteContext_of_evaluateHOLFiniteState
+      (callEntryStateHOLFinite state callee) body
+      (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl)
+      (by rfl) (some (.exception exceptionId value), postState) hbody
+  have hfixed :
+      callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)
+        (some (.exception exceptionId value)) postContext = postContext :=
+    callFixedContextHOLFinite_eq_of_body (callEntryStateHOLFinite context.state callee)
+      body (some (.exception exceptionId value)) postContext (by rw [hpostContext]; exact hbody)
+  have hcall := evalPanSemRecursiveCallFiniteContext_call_exception_unhandled
+    function arguments context values body callee returnShape exceptionId value postContext
+    hargsContext hlookupContext hclockContext hbodyInternal
+  rw [hfixed] at hcall
+  rw [evaluateHOLFiniteState_eq_withDeciders state (.call none function arguments)]
+  simp only [evaluateHOLFiniteStateWithDeciders]
+  rw [show (⟨state, fun address => Classical.propDecidable (state.memaddrs address),
+        fun address => Classical.propDecidable (state.shMemaddrs address)⟩ :
+        FiniteEvalContext width σ) = context from rfl]
+  rw [hcall]
+  simp only [FiniteEvalContext.withState_state, hpostContext]
+
 /-
 Re-export of the canonical finite-map translation witness for the owning
     carrier `PanSemStateFiniteExact` (declared in `StateExactFiniteMap.lean`), so
