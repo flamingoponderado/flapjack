@@ -1749,6 +1749,73 @@ theorem evaluateHOLFiniteState_continue {width : Nat} {σ : Type} [NeZero width]
     evalPanSemRecursiveCallFiniteContext]
 attribute [simp] evaluateHOLFiniteState_continue
 
+/-! HOL `evaluate_def`'s `Annot` equation (`panSemScript.sml:656`), one of the
+line-780 theorem's 21 conjuncts. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
+  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+theorem evaluateHOLFiniteState_annot {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (tag text : MlS) :
+    evaluateHOLFiniteState state (.annot tag text : ProgHOL width) = (none, state) := by
+  classical
+  simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+    evalPanSemRecursiveCallFiniteContext]
+
+attribute [simp] evaluateHOLFiniteState_annot
+
+/-! HOL `evaluate_def`'s `Tick` equation (`panSemScript.sml:654-655`), one of
+the line-780 theorem's 21 conjuncts. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
+  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+theorem evaluateHOLFiniteState_tick {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) :
+    evaluateHOLFiniteState state (.tick : ProgHOL width) =
+      (if state.clock = 0 then (some .timeOut, emptyLocalsHOLFinite state)
+       else (none, decClockHOLFinite state)) := by
+  classical
+  by_cases hclock : state.clock = 0
+  · simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+      evalPanSemRecursiveCallFiniteContext, hclock]
+    rfl
+  · simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+      evalPanSemRecursiveCallFiniteContext, hclock]
+    rfl
+
+attribute [simp] evaluateHOLFiniteState_tick
+
+/-! HOL `evaluate_def`'s `Return` equation (`panSemScript.sml:638-644`), one of
+the line-780 theorem's 21 conjuncts. The expression result uses HOL `eval` via
+the canonical broad projection `state.toExact`; the result and state pair are
+returned over the finite-support carrier. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
+  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+theorem evaluateHOLFiniteState_return {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (expression : ExpHOL width) :
+    evaluateHOLFiniteState state (.return expression : ProgHOL width) =
+      match @evalHOLExact width σ _ state.toExact
+          (fun address => Classical.propDecidable (state.memaddrs address)) expression with
+      | none => (some .error, state)
+      | some value =>
+          if Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL state.structs
+              (shapeOfHOLExact value) ≤ 32 then
+            (some (.returned value), emptyLocalsHOLFinite state)
+          else (some .error, state) := by
+  classical
+  cases hvalue : @evalHOLExact width σ _ state.toExact
+      (fun address => Classical.propDecidable (state.memaddrs address)) expression with
+  | none =>
+      simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+        evalPanSemRecursiveCallFiniteContext, hvalue]
+  | some value =>
+      by_cases hsize : Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL
+          state.structs (shapeOfHOLExact value) ≤ 32
+      · simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+          evalPanSemRecursiveCallFiniteContext, hvalue, hsize]
+        rfl
+      · simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+          evalPanSemRecursiveCallFiniteContext, hvalue, hsize]
+
+attribute [simp] evaluateHOLFiniteState_return
+
 /-- The decider-taking helper is the pair-shaped rendering of the assembly-marker
     evaluator. This bridge is Flapjack-specific infrastructure. -/
 theorem evaluateHOLFiniteStateWithDeciders_eq_getD {width : Nat} {σ : Type} [NeZero width]
