@@ -3134,6 +3134,75 @@ theorem compileProgExactHOLW_local_assign_relation_bridge
   simpa only [Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes,
     Flapjack.Pancake.PanLang.expToHOL_expOfHOL] using hbridge
 
+/-- Relation-polymorphic Raise case. The related exception lookup, expression
+    codec, and `vmax` equality preserve the missing-id, shape-mismatch, and
+    successful temporary/store branches of the exact-context bridge. -/
+theorem compileProgExactHOLW_raise_relation_bridge
+    {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width)
+    (productionContext : PanToCrepHOLContext (BitVec width))
+    (hcontext : PanToCrepContextExactProdRel context productionContext)
+    (exception : MlS) (expression : ExpHOL width) :
+    crepProgOfHOL
+        (compileProgExactHOLW context (.raise exception expression)) =
+      compileProgHOL productionContext
+        (.raise (Flapjack.Basis.Pure.MlString.toStringOfBytes exception)
+          (expOfHOL expression)) := by
+  have hbaseRel : PanToCrepContextExactProdRel context context.toProduction := by
+    refine ⟨rfl, rfl, rfl, ?_⟩
+    intro query _hquery
+    rfl
+  have hprodCodec := compileExpExactHOLW_prodCodec_of_contextRel
+    context productionContext hcontext expression
+  have hbaseCodec := compileExpExactHOLW_prodCodec_of_contextRel
+    context context.toProduction hbaseRel expression
+  have hcompiledContextEq :
+      compileExpHOL productionContext (expOfHOL expression) =
+        compileExpHOL context.toProduction (expOfHOL expression) := by
+    exact hprodCodec.symm.trans hbaseCodec
+  have hexceptionLookup :
+      productionContext.eids
+          (Flapjack.Basis.Pure.MlString.toStringOfBytes exception) =
+        context.eids.lookup exception := by
+    calc
+      productionContext.eids
+          (Flapjack.Basis.Pure.MlString.toStringOfBytes exception) =
+          context.toProduction.eids
+            (Flapjack.Basis.Pure.MlString.toStringOfBytes exception) :=
+        congrArg (fun ids => ids
+          (Flapjack.Basis.Pure.MlString.toStringOfBytes exception))
+          hcontext.2.1.symm
+      _ = context.eids.lookup exception :=
+        PanToCrepContextExact.toProduction_eids_lookup context exception
+  have hvmax : context.vmax = productionContext.vmax := by
+    simpa [PanToCrepContextExact.toProduction] using hcontext.2.2.1
+  have hproductionCongr :
+      compileProgHOL productionContext
+          (.raise (Flapjack.Basis.Pure.MlString.toStringOfBytes exception)
+            (expOfHOL expression)) =
+        compileProgHOL context.toProduction
+          (.raise (Flapjack.Basis.Pure.MlString.toStringOfBytes exception)
+            (expOfHOL expression)) := by
+    simp [compileProgHOL, FLOOKUP, freshNamesHOL,
+      PanToCrepContextExact.toProduction, hcompiledContextEq,
+      hexceptionLookup, hvmax,
+      Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes]
+  have hbaseCodec' :
+      ((compileExpExactHOLW context
+          (Flapjack.Pancake.PanLang.expToHOL (expOfHOL expression))).1.map
+          crepExpOfHOL,
+        shapeOfHOL (compileExpExactHOLW context
+          (Flapjack.Pancake.PanLang.expToHOL (expOfHOL expression))).2) =
+        compileExpHOL context.toProduction (expOfHOL expression) := by
+    simpa using hbaseCodec
+  have hbaseBridge := compileProgExactHOLW_raise_bridge context
+    (Flapjack.Basis.Pure.MlString.toStringOfBytes exception)
+    (expOfHOL expression) hbaseCodec'
+  have hbridge := hbaseBridge.trans
+    (by simpa [compileProgRiscV] using hproductionCongr.symm)
+  simpa only [Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes,
+    Flapjack.Pancake.PanLang.expToHOL_expOfHOL] using hbridge
+
 /-- Relation-polymorphic Primitive case. The exact-context case theorem covers
     missing destinations and temporary allocation; the ranged context
     relation supplies the destination lookup, argument-list codec, and `vmax`
