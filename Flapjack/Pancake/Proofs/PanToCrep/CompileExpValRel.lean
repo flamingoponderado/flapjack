@@ -89,4 +89,54 @@ theorem compileExpValRelHOL_const {width : Nat} {σ : Type} [NeZero width]
     simp [evalCrepSemHOLExp, flattenHOL, shapeOfHOLExact, sizeOfShapeHOL,
       isWfShapeExactHOL]
 
+/-- Equation for the target evaluator on a local variable, matching the `Var`
+    clause of `crepSemScript.sml:90-137`. -/
+private theorem evalCrepSemHOLExp_var {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) [DecidablePred state.memaddrs] (name : Nat) :
+    evalCrepSemHOLExp state (.var name) = state.locals.lookup name := by
+  simp only [evalCrepSemHOLExp]
+
+/-- Faithful `Var Local` constructor case of HOL `compile_exp_val_rel`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:151-165`). The premises
+    are exactly the HOL case's successful source evaluation, `locals_rel`, and
+    `compile_exp` result; the target code/state relation and localisation
+    premises are irrelevant to this case and are not repeated. All four HOL
+    conclusions are proved over the exact carriers with no target-evaluation
+    premise and no RISC-V-only invariant. -/
+theorem compileExpValRelHOL_var_local {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) [_hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width σ) [ht : DecidablePred targetState.memaddrs]
+    (name : MlS) (value : ValueHOL width)
+    (expressions : List (CrepExpHOL width)) (shape : ShapeHOL)
+    (heval : state.evalHOLFinite (ExpHOL.var .local name) = some value)
+    (hlocals : panToCrepLocalsRelFiniteExact context state.locals targetState.locals)
+    (hcompile : compileExpExactHOLW context (ExpHOL.var .local name) =
+      (expressions, shape)) :
+    expressions.map (evalCrepSemHOLExp targetState) = (flattenHOL value).map some ∧
+    expressions.length = sizeOfShapeHOL shape ∧
+    shapeOfHOLExact value = shape ∧
+    isWfShapeExactHOL ([] : StructContextExact) shape = true := by
+  have hval : state.locals.lookup name = some value := by
+    simpa only [PanSemStateFiniteExact.evalHOLFinite_var_local] using heval
+  obtain ⟨slots, hcontext, hslotsLen, hmapM, hwf⟩ :=
+    panToCrepLocalsRelLookupCtxtFiniteExact context state.locals targetState.locals
+      name value hlocals hval
+  have hcomp := hcompile
+  simp only [compileExpExactHOLW] at hcomp
+  rw [hcontext] at hcomp
+  dsimp only at hcomp
+  obtain ⟨rfl, rfl⟩ := Prod.mk.inj hcomp
+  have hmap : slots.map targetState.locals.lookup = (flattenHOL value).map some :=
+    (optMmapEqSome slots targetState.locals.lookup (flattenHOL value)).mp hmapM
+  have hfun : (evalCrepSemHOLExp targetState ∘ CrepExpHOL.var) =
+      targetState.locals.lookup :=
+    funext (fun n => evalCrepSemHOLExp_var targetState n)
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · rw [List.map_map, hfun]
+    exact hmap
+  · rw [List.length_map, hslotsLen, flattenHOL_length_eq_sizeOfShapeHOL value hwf]
+  · rfl
+  · exact hwf
+
 end Flapjack
