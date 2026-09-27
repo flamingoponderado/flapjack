@@ -2100,4 +2100,27 @@ def evalCrepSemHOLProgAfterSeqStep {width : Nat} [NeZero width] {σ : Type}
     (crepSeqStepMemDec state memDec shMemDec first)
     (crepSeqStepShMemDec state memDec shMemDec first) second
 
+/-- Flapjack-only normal-branch equation for the exact HOL `Seq` evaluator.
+Given an explicit ordinary first-step result, this exposes the recursive
+call on precisely the clock-clamped, domain-stamped state used by
+`crepSem$evaluate` (`crepSemScript.sml:300-303`). The dependent match in
+`evalCrepSemHOLProg_seq` otherwise obscures this rewrite during list
+induction. This equation is evaluator infrastructure, not a separate HOL
+declaration. -/
+theorem evalCrepSemHOLProg_seq_normal_of_eval_eq {width : Nat} [NeZero width]
+    {σ : Type} (state : CrepSemHOLState width σ)
+    (memDec : (address : BitVec width) → Decidable (state.memaddrs address))
+    (shMemDec : (address : BitVec width) → Decidable (state.shMemaddrs address))
+    (first second : CrepProgHOL width) (stepState : CrepSemHOLState width σ)
+    (hfirst : evalCrepSemHOLProg state memDec shMemDec first = (none, stepState)) :
+    evalCrepSemHOLProg state memDec shMemDec (.seq first second) =
+      evalCrepSemHOLProg
+        (crepStampExactDomains state
+          (fixClockCrepSemHOL state
+            ((none : Option (CrepResultHOLExact width)), stepState)).2)
+    memDec shMemDec second := by
+  rw [evalCrepSemHOLProg_seq]
+  rw [hfirst]
+  simp [fixClockCrepSemHOL]
+
 end Flapjack
