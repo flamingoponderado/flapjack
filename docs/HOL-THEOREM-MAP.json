@@ -12616,39 +12616,6 @@
     "hol_name": "evaluate_def",
     "hol_line": 556,
     "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
-    "lean_name": "evaluateHOLFiniteState_decCall_args_none",
-    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-a source comparison (2026-09-27; bead flapjack-qj5.12): Definition evaluate_def at panSemScript.sml:556 has DecCall at lines 694-714. This piece is the OPT_MMAP (eval s) argexps = NONE branch and returns (SOME Error,s). The premise selects only that source branch through evalListHOLFinite; evalListHOLFinite_eq_toExact connects it to HOL's evaluator. The conclusion is the total result-option × state pair, with no recursive assembly marker or target-evaluation premise. PanSemStateFiniteExact has positive width [NeZero width], and its width-indexed word fields use RiscV.Word width = BitVec width; σ : Type carries the HOL FFI state. Its locals/globals/code/eshapes are same-module HolFiniteMapExact fields with the canonical roundtrip witness. The two qualifiers record only these reviewed carrier translations. Remaining DecCall branches and full 21-clause assembly remain open."
-  },
-  {
-    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
-    "hol_name": "evaluate_def",
-    "hol_line": 556,
-    "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
-    "lean_name": "evaluateHOLFiniteState_decCall_lookup_none",
-    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-a source comparison (2026-09-27; bead flapjack-qj5.12): Definition evaluate_def at panSemScript.sml:556 has DecCall at lines 694-714. This piece selects successful OPT_MMAP (eval s) argexps and failed lookup_code s.code fname args; HOL returns (SOME Error,s). The premises select these source branches through the finite-carrier argument-list result and finite code-map lookup; the exact evaluator and canonical map carrier preserve the HOL operations. The conclusion is the total result-option × state pair, with no recursive assembly marker or target-evaluation premise. PanSemStateFiniteExact has positive width [NeZero width], and its width-indexed word fields use RiscV.Word width = BitVec width; σ : Type carries the HOL FFI state. Its locals/globals/code/eshapes are same-module HolFiniteMapExact fields with the canonical roundtrip witness. The two qualifiers record only these reviewed carrier translations. Remaining DecCall branches and full 21-clause assembly remain open."
-  },
-  {
-    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
-    "hol_name": "evaluate_def",
-    "hol_line": 556,
-    "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
-    "lean_name": "evaluateHOLFiniteState_decCall_body_none",
-    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-a source comparison (2026-09-27; bead flapjack-qj5.12.4): Definition evaluate_def at panSemScript.sml:556 has the DecCall clause at lines 694-714. This split selects successful OPT_MMAP arguments and successful lookup_code, a nonzero caller clock, then the recursive body induction hypothesis evaluate(entry, body) = (NONE, bodyPost). HOL sets entry to dec_clock s with locals := newlocals, defines eval_prog by fix_clock entry (evaluate body entry), and its (NONE, st) branch returns (SOME Error, st). The Lean entry is callEntryStateHOLFinite; the conclusion is (SOME Error, (fixClockHOLFinite entry (NONE, bodyPost)).2). The branch selectors and body induction hypothesis match these source conditions; the conclusion has HOL's result-option × state shape with no evaluator assembly marker, target premise, or unrelated assumption. PanSemStateFiniteExact has positive width [NeZero width], width-indexed words model HOL words as BitVec width, σ : Type carries the FFI state, and locals/globals/code/eshapes are its canonical same-module HolFiniteMapExact fields. The two qualifiers record only these reviewed carrier translations. The existing original Pancake probe pan_sem_deccall_error_probe.out observes deccall_error_result=SOME Error for successful lookup with a failing body. Other DecCall branches and full assembly remain open."
-  },
-  {
-    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
-    "hol_name": "evaluate_def",
-    "hol_line": 556,
-    "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
     "lean_name": "evaluateHOLFiniteState_seq",
     "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
     "fmap_as_finite_support": [
@@ -14588,53 +14555,5 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific mutual evaluator-induction helper for the strided mem_load_flat_rel analogue. HOL has no standalone declaration with this helper statement; its internal list cases are part of mem_loads_flat_rel."
-  },
-  {
-    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
-    "hol_name": "evaluate_def",
-    "hol_line": 780,
-    "lean_path": "Flapjack/Pancake/Semantics/PanSem/EvaluateClock.lean",
-    "lean_name": "evaluateHOLFiniteState_call_args_none",
-    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support": [
-      "locals",
-      "globals",
-      "code",
-      "eshapes"
-    ],
-    "reviewer": "flapjack-ds8 source comparison (2026-09-27; bead flapjack-qj5.9.3): HOL evaluate_def line-780 Call conjunct (panSemScript.sml:556 clause, rewritten at 780) argument-evaluation-failure branch: OPT_MMAP (eval s) argexps = NONE gives (SOME Error, s). The Lean statement has the same state quantifier, info/function/arguments binders, the branch-selecting argument premise, and the pair-shaped (SOME Error, s) conclusion over ProgHOL/PanSemStateFiniteExact; no result premise and no inner fix_clock on this branch. Four finite-map fields use the same-module re-exported canonical HolFiniteMapExact witness; width qualifier justified by BitVec width with [NeZero width].",
-    "words_as_type_indexed_bitvec": true
-  },
-  {
-    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
-    "hol_name": "evaluate_def",
-    "hol_line": 780,
-    "lean_path": "Flapjack/Pancake/Semantics/PanSem/EvaluateClock.lean",
-    "lean_name": "evaluateHOLFiniteState_call_lookup_none",
-    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support": [
-      "locals",
-      "globals",
-      "code",
-      "eshapes"
-    ],
-    "reviewer": "flapjack-ds8 source comparison (2026-09-27; bead flapjack-qj5.9.3): HOL evaluate_def line-780 Call conjunct code-lookup-failure branch: successful OPT_MMAP followed by lookup_code = NONE gives (SOME Error, s). The Lean statement keeps the source argument-values premise and the missing-code-entry premise and concludes the total pair (SOME Error, s) over ProgHOL/PanSemStateFiniteExact. No inner fix_clock applies. Same finite-map/width qualifiers as the sibling Call branches.",
-    "words_as_type_indexed_bitvec": true
-  },
-  {
-    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
-    "hol_name": "evaluate_def",
-    "hol_line": 780,
-    "lean_path": "Flapjack/Pancake/Semantics/PanSem/EvaluateClock.lean",
-    "lean_name": "evaluateHOLFiniteState_call_clock_zero",
-    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support": [
-      "locals",
-      "globals",
-      "code",
-      "eshapes"
-    ],
-    "reviewer": "flapjack-ds8 source comparison (2026-09-27; bead flapjack-qj5.9.3): HOL evaluate_def line-780 Call conjunct clock-exhaustion branch: s.clock = 0 after successful args and code lookup gives (SOME TimeOut, empty_locals s). The Lean statement matches with clock = 0, successful-args and code-entry premises, and the total pair (SOME TimeOut, emptyLocalsHOLFinite s) over ProgHOL/PanSemStateFiniteExact; the branch precedes the body evaluation so the source inner fix_clock does not apply. Same finite-map/width qualifiers as the sibling Call branches.",
-    "words_as_type_indexed_bitvec": true
   }
 ]
