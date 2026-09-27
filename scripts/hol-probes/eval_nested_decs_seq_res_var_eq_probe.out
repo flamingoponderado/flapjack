@@ -1,0 +1,7 @@
+nested_decs_restore_absent_local=T
+nested_decs_restore_existing_local=T
+nested_decs_length_mismatch_skip=T
+valid_declaration_premises=T
+duplicate_names_rejected=F
+expression_interference_rejected=F
+length_premise_rejected=F

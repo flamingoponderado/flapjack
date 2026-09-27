@@ -955,6 +955,13 @@ run_probe eval_nested_assign_distinct_eq_probeScript.sml eval_nested_assign_dist
   assign_list_success duplicate_names_all_distinct expression_interference_distinct_lists \
   "$cake_dir/pancake/proofs/pan_to_crepProofScript.sml" \
   "$cake_dir/pancake/proofs"
+run_probe eval_nested_decs_seq_res_var_eq_probeScript.sml \
+  eval_nested_decs_seq_res_var_eq_probe.out \
+  nested_decs_restore_absent_local nested_decs_restore_existing_local \
+  nested_decs_length_mismatch_skip valid_declaration_premises \
+  duplicate_names_rejected expression_interference_rejected length_premise_rejected \
+  "$cake_dir/pancake/proofs/pan_to_crepProofScript.sml" \
+  "$cake_dir/pancake/proofs"
 run_probe compile_to_crep_probeScript.sml compile_to_crep_probe.out \
   empty raise_const raise_pair raise_pair_later raise_pair_later_64 handled_pair done \
   "$cake_dir/pancake/pan_to_crepScript.sml"
