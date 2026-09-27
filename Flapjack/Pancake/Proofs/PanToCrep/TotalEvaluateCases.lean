@@ -50,6 +50,55 @@ theorem panToCrepTotalSkipStateCase
   refine ⟨targetState, by simp, hstate, ?_, hexcp, hlocals⟩
   exact hcode
 
+/-! Source-reviewed prerequisite for HOL `pc_compile_correct[Skip]`.
+The proof resumes this leaf case at `pan_to_crepProofScript.sml:493-496`;
+the source evaluator clause is `panSemScript.sml:557`, the exact compiler
+clause is `pan_to_crepScript.sml:140`, and the target evaluator clause is
+`crepSemScript.sml:241`. Over `ProgHOL` and `CrepProgHOL`, source `Skip`
+evaluates to normal completion without changing the source state, compiles to
+target `Skip`, and the total Crep evaluator returns normal completion with the
+same target state. This exact-carrier helper carries state/code/local/exception
+relations unchanged and assumes no target run or result. It is distinct from
+`panToCrepTotalSkipStateCase`, which uses production Pan/Crep carriers. This is
+not the full `pc_compile_correct` theorem and carries no `@[hol]` tag. -/
+theorem panToCrepExactSkipTransition
+    {width : Nat} {σ : Type} [NeZero width]
+    (sourceContext : PanSemStateFiniteExact.FiniteEvalContext width σ)
+    (targetState : CrepSemHOLState width σ)
+    (compileContext : PanToCrepContextExact width)
+    (memDec : (a : BitVec width) → Decidable (targetState.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (targetState.shMemaddrs a))
+    (hstate : panToCrepStateRelFiniteExact sourceContext.state targetState)
+    (hlocals : panToCrepLocalsRelFiniteExact compileContext
+      sourceContext.state.locals targetState.locals)
+    (hcode : codeRelExactHOLW compileContext sourceContext.state.code
+      targetState.code)
+    (hexcp : panToCrepExcpRelFiniteExact compileContext.eids
+      sourceContext.state.eshapes) :
+    PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext
+        (.skip : Flapjack.Pancake.PanLang.ProgHOL width) sourceContext =
+      some (none, sourceContext) ∧
+    compileProgExactHOLW compileContext
+        (.skip : Flapjack.Pancake.PanLang.ProgHOL width) =
+      (.skip : CrepProgHOL width) ∧
+    evalCrepSemHOLProg targetState memDec shMemDec
+        (compileProgExactHOLW compileContext
+          (.skip : Flapjack.Pancake.PanLang.ProgHOL width)) =
+      (none, targetState) ∧
+    panToCrepStateRelFiniteExact sourceContext.state targetState ∧
+    panToCrepLocalsRelFiniteExact compileContext
+      sourceContext.state.locals targetState.locals ∧
+    codeRelExactHOLW compileContext sourceContext.state.code targetState.code ∧
+    panToCrepExcpRelFiniteExact compileContext.eids
+      sourceContext.state.eshapes := by
+  refine ⟨?_, ?_, ?_, hstate, hlocals, hcode, hexcp⟩
+  · simp [PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext]
+  · simp [compileProgExactHOLW]
+  · rw [show compileProgExactHOLW compileContext
+      (.skip : Flapjack.Pancake.PanLang.ProgHOL width) =
+        (.skip : CrepProgHOL width) by simp [compileProgExactHOLW]]
+    exact evalCrepSemHOLProg_skip targetState memDec shMemDec
+
 /-! Source-reviewed prerequisite for HOL `pc_compile_correct[Break]`.
 The HOL proof resumes this nonrecursive case at
 `pan_to_crepProofScript.sml:499-503`; the source evaluator equation is
