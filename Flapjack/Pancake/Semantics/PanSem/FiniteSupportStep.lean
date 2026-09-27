@@ -1826,6 +1826,24 @@ theorem shMemStoreClauseHOLExact_ioEvents_prefix {width : Nat} {σ : Type} [NeZe
     | exact List.prefix_refl _
     | exact shMemStoreHOLExact_ioEvents_prefix _ _ _ _
 
+/-- If a pair of sequential event traces extends the first trace and the full
+    trace returns to the first trace, the intermediate trace is unchanged.
+    This is the cancellation fact needed to apply recursive FFI-state
+    invariants to each side of a `Seq`. -/
+private theorem ioEvents_middle_eq_of_prefix_chain {α : Type} {first middle last : List α}
+    (hfirst : first <+: middle) (hsecond : middle <+: last) (hend : first = last) :
+    middle = first := by
+  obtain ⟨xs, hxs⟩ := hfirst
+  obtain ⟨ys, hys⟩ := hsecond
+  rw [← hend] at hys
+  have hxslen := congrArg List.length hxs
+  have hyslen := congrArg List.length hys
+  simp only [List.length_append] at hxslen hyslen
+  have hxszero : xs.length = 0 := by omega
+  cases xs with
+  | nil => simpa using hxs.symm
+  | cons x xs => simp at hxszero
+
 set_option maxHeartbeats 2000000 in
 theorem evalPanSemRecursiveCallContextHOLExact_ioEvents_prefix {width : Nat} {σ : Type}
     [NeZero width] (program : ProgHOL width) (context : PanSemExactEvalContext width σ) :
@@ -2107,5 +2125,59 @@ theorem evalPanSemRecursiveCallContextHOLExact_ioEvents_prefix {width : Nat} {σ
     (try simp only [Option.some.injEq] at hres) <;>
     (try cases hres) <;>
     exact List.prefix_refl _
+
+/-- Composition fact for the successful `Seq` branch that evaluates its second
+    program. The recursive induction hypotheses apply after the prefix lemma
+    forces the middle trace to equal both endpoints. -/
+theorem evalPanSemRecursiveCallContextHOLExact_seq_ffi_eq_of_ioEvents_eq
+    {width : Nat} {σ : Type} [NeZero width]
+    (first second : ProgHOL width) (context middleContext : PanSemExactEvalContext width σ)
+    (result : Option (PanSemResultExact width) × PanSemExactEvalContext width σ)
+    (hfirst : evalPanSemRecursiveCallContextHOLExact first context = some (none, middleContext))
+    (hsecond : evalPanSemRecursiveCallContextHOLExact second
+      (middleContext.withState
+        (fixClockHOLExact context.state
+          ((none : Option (PanSemResultExact width)), middleContext.state)).2 rfl rfl) = some result)
+    (hfirstIH : ∀ result,
+      evalPanSemRecursiveCallContextHOLExact first context = some result →
+      context.state.ffi.ioEvents = result.2.state.ffi.ioEvents →
+      context.state.ffi = result.2.state.ffi)
+    (hsecondIH : ∀ result,
+      evalPanSemRecursiveCallContextHOLExact second
+        (middleContext.withState
+          (fixClockHOLExact context.state
+            ((none : Option (PanSemResultExact width)), middleContext.state)).2 rfl rfl) = some result →
+      (middleContext.withState
+        (fixClockHOLExact context.state
+          ((none : Option (PanSemResultExact width)), middleContext.state)).2 rfl rfl).state.ffi.ioEvents =
+          result.2.state.ffi.ioEvents →
+      (middleContext.withState
+        (fixClockHOLExact context.state
+          ((none : Option (PanSemResultExact width)), middleContext.state)).2 rfl rfl).state.ffi =
+          result.2.state.ffi)
+    (hevents : context.state.ffi.ioEvents = result.2.state.ffi.ioEvents) :
+    context.state.ffi = result.2.state.ffi := by
+  let fixedContext := middleContext.withState
+    (fixClockHOLExact context.state
+      ((none : Option (PanSemResultExact width)), middleContext.state)).2 rfl rfl
+  have hfirstPrefix := evalPanSemRecursiveCallContextHOLExact_ioEvents_prefix
+    first context (none, middleContext) hfirst
+  have hsecondPrefix := evalPanSemRecursiveCallContextHOLExact_ioEvents_prefix
+    second fixedContext result (by simpa only [fixedContext] using hsecond)
+  have hfixedEvents : fixedContext.state.ffi.ioEvents = middleContext.state.ffi.ioEvents := rfl
+  have hmiddleEq := ioEvents_middle_eq_of_prefix_chain hfirstPrefix
+    (by simpa only [hfixedEvents] using hsecondPrefix) hevents
+  have hfirstFfi := hfirstIH (none, middleContext) hfirst hmiddleEq.symm
+  have hsecondEvents : fixedContext.state.ffi.ioEvents = result.2.state.ffi.ioEvents := by
+    calc
+      fixedContext.state.ffi.ioEvents = middleContext.state.ffi.ioEvents := hfixedEvents
+      _ = context.state.ffi.ioEvents := hmiddleEq
+      _ = result.2.state.ffi.ioEvents := hevents
+  have hsecondFfi := hsecondIH result (by simpa only [fixedContext] using hsecond) hsecondEvents
+  have hfixedFfi : fixedContext.state.ffi = middleContext.state.ffi := rfl
+  calc
+    context.state.ffi = middleContext.state.ffi := hfirstFfi
+    _ = fixedContext.state.ffi := hfixedFfi.symm
+    _ = result.2.state.ffi := hsecondFfi
 
 end Flapjack
