@@ -599,6 +599,131 @@ theorem compileProgExactHOLW_store_output_bridge {width : Nat} [NeZero width]
               productionValueShape hexactAddress hexactValue hproductionAddress
               hproductionValue hvaluesCodec hshapeCodec hsuccess
 
+/-- The exact `Raise` clause agrees with production whenever its compiled
+    expression is paired by the expression codec. This preserves both
+    source-level fallbacks (missing exception id and expression shape/list
+    length mismatch) as well as the successful sequence of local declarations,
+    global saves, and final raise. The temporary names agree because both
+    clauses allocate the compiled value count starting at `vmax + 1`. -/
+theorem compileProgExactHOLW_raise_bridge {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width) (exceptionName : String)
+    (expression : Exp (BitVec width))
+    (hcodec :
+      ((compileExpExactHOLW context (expToHOL expression)).1.map crepExpOfHOL,
+        shapeOfHOL (compileExpExactHOLW context (expToHOL expression)).2) =
+        compileExpHOL context.toProduction expression) :
+    crepProgOfHOL
+        (compileProgExactHOLW context
+          (.raise (Flapjack.Basis.Pure.MlString.ofString exceptionName)
+            (expToHOL expression))) =
+      compileProgRiscV context.toProduction (.raise exceptionName expression) := by
+  have hsize (shape : ShapeHOL) :
+      Shape.shapeSize (shapeOfHOL shape) = sizeOfShapeHOL shape := by
+    have h := sizeOfShapeHOL_shapeToHOL (shapeOfHOL shape)
+    simpa only [shapeToHOL_shapeOfHOL] using h.symm
+  cases hExact : compileExpExactHOLW context (expToHOL expression) with
+  | mk exactValues exactShape =>
+      cases hProduction : compileExpHOL context.toProduction expression with
+      | mk productionValues productionShape =>
+          have hcodec' := hcodec
+          rw [hExact, hProduction] at hcodec'
+          simp only [Prod.mk.injEq] at hcodec'
+          rcases hcodec' with ⟨hvalues, hshape⟩
+          have hlength : exactValues.length = productionValues.length := by
+            have h := congrArg List.length hvalues
+            simpa using h
+          cases hEid : context.eids.lookup
+              (Flapjack.Basis.Pure.MlString.ofString exceptionName) with
+          | none =>
+              have hProductionEid :
+                  context.toProduction.eids exceptionName = none := by
+                simpa [PanToCrepContextExact.toProduction,
+                  Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes] using hEid
+              simp [compileProgExactHOLW, compileRaiseExactHOLW,
+                compileProgRiscV, compileProgHOL, FLOOKUP, hProductionEid, hEid,
+                crepProgOfHOL]
+          | some exceptionCode =>
+              have hProductionEid :
+                  context.toProduction.eids exceptionName = some exceptionCode := by
+                simpa [PanToCrepContextExact.toProduction,
+                  Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes] using hEid
+              have hshapeCount : sizeOfShapeHOL exactShape =
+                  Shape.shapeSize productionShape := by
+                calc
+                  sizeOfShapeHOL exactShape = Shape.shapeSize (shapeOfHOL exactShape) :=
+                    (hsize exactShape).symm
+                  _ = Shape.shapeSize productionShape := by rw [hshape]
+              have htemporaries :
+                  (List.range (sizeOfShapeHOL exactShape)).map
+                    (fun index => context.vmax + index + 1) =
+                    freshNamesHOL context.toProduction
+                      (Shape.shapeSize productionShape) 1 := by
+                unfold freshNamesHOL
+                change (List.range (sizeOfShapeHOL exactShape)).map
+                    (fun index => context.vmax + index + 1) =
+                  (List.range (Shape.shapeSize productionShape)).map
+                    (fun offset => context.vmax + 1 + offset)
+                rw [hshapeCount]
+                apply List.map_congr_left
+                intro index hin
+                omega
+              by_cases hcount : sizeOfShapeHOL exactShape = exactValues.length
+              · have hproductionCount : productionValues.length =
+                    Shape.shapeSize productionShape := by
+                  calc
+                    productionValues.length = exactValues.length := hlength.symm
+                    _ = sizeOfShapeHOL exactShape := hcount.symm
+                    _ = Shape.shapeSize (shapeOfHOL exactShape) := (hsize exactShape).symm
+                    _ = Shape.shapeSize productionShape := by rw [hshape]
+                have hnames :
+                    (List.range exactValues.length).map
+                      (fun index => context.vmax + index + 1) =
+                      freshNamesHOL context.toProduction
+                        (Shape.shapeSize productionShape) 1 := by
+                  rw [← hcount]
+                  exact htemporaries
+                have hstores :
+                    ∀ address : BitVec 5,
+                    ((storeGlobalsHOL (width := width) address
+                      ((freshNamesHOL context.toProduction
+                        (Shape.shapeSize productionShape) 1).map
+                          (CrepExpHOL.var (width := width)))).map
+                        (crepProgOfHOL (width := width))) =
+                  storeGlobals address
+                    ((freshNamesHOL context.toProduction
+                      (Shape.shapeSize productionShape) 1).map
+                        (CrepExp.var (α := BitVec width))) := by
+                  intro address
+                  induction freshNamesHOL context.toProduction
+                      (Shape.shapeSize productionShape) 1 generalizing address with
+                  | nil => simp [storeGlobalsHOL, storeGlobals]
+                  | cons name names ih =>
+                      simp [storeGlobalsHOL, storeGlobals, crepProgOfHOL,
+                        crepExpOfHOL, ih]
+                simp [compileProgExactHOLW, compileRaiseExactHOLW,
+                  compileProgRiscV, compileProgHOL, FLOOKUP, hProductionEid,
+                  hEid, hExact, hProduction, hcount, hproductionCount,
+                  hnames, hvalues, crepProgOfHOL,
+                  crepProgOfHOL_nestedDecsHOL, crepProgOfHOL_crepNestedSeqHOL]
+                apply congrArg (fun body =>
+                  nestedDecs (freshNamesHOL context.toProduction
+                    (Shape.shapeSize productionShape) 1) productionValues body)
+                apply congrArg crepNestedSeq
+                exact hstores (0 : BitVec 5)
+              · have hproductionMismatch : productionValues.length ≠
+                    Shape.shapeSize productionShape := by
+                  intro hproductionCount
+                  apply hcount
+                  calc
+                    sizeOfShapeHOL exactShape = Shape.shapeSize (shapeOfHOL exactShape) :=
+                      (hsize exactShape).symm
+                    _ = Shape.shapeSize productionShape := by rw [hshape]
+                    _ = productionValues.length := hproductionCount.symm
+                    _ = exactValues.length := hlength.symm
+                simp [compileProgExactHOLW, compileRaiseExactHOLW,
+                  compileProgRiscV, compileProgHOL, FLOOKUP, hProductionEid, hEid,
+                  hExact, hProduction, hcount, hproductionMismatch, crepProgOfHOL]
+
 /-- Source-reviewed HOL `ShMemStore` clause bridge (`pan_to_crepScript.sml`,
     `compile_def`): its operands are positional `value` then `address`. The
     production `Prog.shMemStore` names its two fields `address` and `value`,
