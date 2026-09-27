@@ -506,13 +506,14 @@ They remain untagged: the carrier `PanSemStateFiniteExact` uses canonical
 threads operational deciders, so HOL's `@[hol]` tags stay withheld pending
 coordinator evaluator/carrier-fidelity review. -/
 
-/-- Public HOL `evaluate_clock` (`panSemScript.sml:755-766`) shape over the
-    pair-shaped finite source evaluator: for every program and source state the
-    evaluated result clock is bounded by the input clock. No `DecidablePred`
-    binder (chosen classically in `evaluateHOLFiniteState`) and no success
-    premise. The HOL tag is withheld pending the full line-780 dispatcher
-    (`flapjack-qj5.9.6`), which still needs a fix-clock-free `DecCall` clause;
-    kept untagged per coordinator review. -/
+/-- Stronger untagged clock bound over the pair-shaped finite source evaluator:
+    for every program and source state the evaluated result clock is bounded by
+    the input clock. No `DecidablePred` binder (chosen classically in
+    `evaluateHOLFiniteState`) and no success premise. Kept untagged: it is
+    mathematically derivable from HOL `evaluate_clock` but omits HOL's result and
+    post-state variables and its equality premise, so it is not an exact
+    statement-shape port. The exact-shape tagged corollary is
+    `evaluateHOLFiniteState_clock_le_result` below. -/
 theorem evaluateHOLFiniteState_clock_le {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) (program : ProgHOL width) :
     (evaluateHOLFiniteState state program).2.clock ≤ state.clock := by
@@ -524,11 +525,35 @@ theorem evaluateHOLFiniteState_clock_le {width : Nat} {σ : Type} [NeZero width]
     exact evalPanSemRecursiveCallFiniteContext_clock_le program _ pair hpair
   · exact Nat.le_refl _
 
-/-- Public HOL `fix_clock_evaluate` (`panSemScript.sml:768-775`) shape over the
-    pair-shaped finite source evaluator: clamping the evaluated pair at the input
-    clock leaves it unchanged. No `DecidablePred` binder (chosen classically) and
-    no success premise. The HOL tag is withheld pending the full line-780
-    dispatcher (`flapjack-qj5.9.6`); kept untagged per coordinator review. -/
+/-- Exact-shape port of HOL `evaluate_clock` (`panSemScript.sml:755-766`):
+    `!prog s r s'. evaluate (prog,s) = (r,s') ==> s'.clock <= s.clock`. Over the
+    pair-shaped finite evaluator this is the result/state-indexed corollary of
+    the stronger untagged `evaluateHOLFiniteState_clock_le`; the source state maps
+    are the reviewed `HolFiniteMapExact` fields of `PanSemStateFiniteExact`, and
+    the words are positive-width `BitVec width`. The equality premise and the
+    result/post-state variables match HOL exactly; no `DecidablePred` binder or
+    extra premise. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_clock"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateHOLFiniteState_clock_le_result {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (program : ProgHOL width)
+    (result : Option (PanSemResultExact width)) (st : PanSemStateFiniteExact width σ)
+    (h : evaluateHOLFiniteState state program = (result, st)) :
+    st.clock ≤ state.clock := by
+  have hle := evaluateHOLFiniteState_clock_le state program
+  rw [h] at hle
+  exact hle
+
+/-- Exact-shape port of HOL `fix_clock_evaluate` (`panSemScript.sml:768-775`):
+    `fix_clock s (evaluate (prog,s)) = evaluate (prog,s)`. Over the pair-shaped
+    finite evaluator, clamping the evaluated pair at the input clock leaves it
+    unchanged. No `DecidablePred` binder (chosen classically) and no success
+    premise. The source state maps are the reviewed `HolFiniteMapExact` fields of
+    `PanSemStateFiniteExact`, and the words are positive-width `BitVec width`. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "fix_clock_evaluate"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem fixClockHOLFinite_evaluateState {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) (program : ProgHOL width) :
     fixClockHOLFinite state (evaluateHOLFiniteState state program) =
