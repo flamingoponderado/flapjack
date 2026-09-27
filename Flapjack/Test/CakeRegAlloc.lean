@@ -80,6 +80,42 @@ example (m : CakeNodeMap Nat) (i : Nat) :
       (m.get i).map (fun n => n + 1) := by
   exact CakeNodeMap.get_mapValues (fun n : Nat => n + 1) m i
 
+/-! The production `ofNatInfoMap` fold builds a node field from a HOL
+    association list.  Fed the dense indexed list of a HOL node field it agrees
+    with the first-binding lookup and rebuilds exactly the same dense field as
+    `ofList`; an out-of-range key stays in the extension map but is still read
+    back by `get`. -/
+def cakeNodeMapOfNatInfoMapGuard : Bool :=
+  let values : List Nat := [7, 11, 13]
+  let indexed := values.mapIdx (fun i v => (i, v))
+  let built := CakeNodeMap.ofNatInfoMap values.length indexed
+  let dense := CakeNodeMap.ofList values
+  let extended := CakeNodeMap.ofNatInfoMap values.length (indexed ++ [(5, 99)])
+  built.get 0 == some 7 && built.get 1 == some 11 &&
+    built.get 2 == some 13 && built.get 3 == none &&
+    built.slots.size == values.length && built.outside == [] &&
+    (List.range values.length).all (fun i => built.get i == dense.get i) &&
+    extended.get 5 == some 99 && extended.outside == [(5, 99)]
+
+#guard cakeNodeMapOfNatInfoMapGuard
+
+example :
+    CakeNodeMap.RepresentsHOLNodeList
+      (CakeNodeMap.ofNatInfoMap 3 ([7, 11, 13].mapIdx (fun i v => (i, v))))
+      [7, 11, 13] :=
+  CakeNodeMap.ofNatInfoMap_mapIdx_representsHOLNodeList [7, 11, 13]
+
+example (m : Flapjack.NatInfoMap Nat) (i : Nat) :
+    CakeNodeMap.get (CakeNodeMap.ofNatInfoMap 4 m) i =
+      Flapjack.RiscV.CakeRegAlloc.cakeMapLookup m i :=
+  CakeNodeMap.get_ofNatInfoMap 4 m i
+
+example :
+    CakeNodeMap.get
+      (CakeNodeMap.ofNatInfoMap 3 ([7, 11, 13].mapIdx (fun i v => (i, v)))) 1 =
+        some 11 := by
+  rw [CakeNodeMap.get_ofNatInfoMap]
+  exact CakeNodeMap.lookupNatInfo_mapIdx_add [7, 11, 13] 0 1 (by decide)
 
 example :
     CakeNodeMap.RepresentsHOLNodeList
