@@ -417,6 +417,12 @@ run_probe crep_inline_helper_probeScript.sml crep_inline_helper_probe.out \
 run_probe crep_inline_structural_probeScript.sml crep_inline_structural_probe.out \
   inline_prog_empty_dec inline_prog_empty_while \
   "$cake_dir/pancake/crep_inlineScript.sml" "$cake_dir/pancake"
+run_probe crep_inline_transform_eoc_probeScript.sml crep_inline_transform_eoc_probe.out \
+  transform_eoc_return_zip transform_eoc_call_none transform_eoc_call_returns \
+  transform_eoc_call_handler transform_eoc_call_handler_value \
+  transform_eoc_dec transform_eoc_while transform_eoc_seq transform_eoc_if \
+  transform_eoc_default \
+  "$cake_dir/pancake/crep_inlineScript.sml" "$cake_dir/pancake"
 run_probe crep_inline_cont_res_probeScript.sml crep_inline_cont_res_probe.out \
   cont_res_none cont_res_done "$cake_dir/pancake/proofs/crep_inlineProofScript.sml" \
   "$cake_dir/pancake/proofs"
