@@ -130,10 +130,13 @@ projects the same finite-context dispatcher. The pair shape alone does not
 establish that this dispatcher is the HOL `evaluate` relation. There is not
 yet a kernel-checked induction theorem over the current evaluator proving that
 equal event lists force equality of both the oracle and host-state fields
-in every Call, DecCall, ExtCall, and shared-memory branch. No similar
-event-prefix lemma is tagged as this theorem. The faithful theorem port is
-tracked by `flapjack-4ac.4.51.1`; it must state the same successful-evaluation
-and event-equality premises and prove equality of the complete `HolFfiState`. -/
+through the recursive Call, DecCall, Seq, and While cases. The local helper
+`callFFIHOL_ret_ffi_eq_of_ioEvents_eq` proves this consequence for one
+successful FFI call, but it does not establish the recursive evaluator result.
+No similar event-prefix lemma is tagged as this theorem. The faithful theorem
+port is tracked by `flapjack-4ac.4.51.1`; it must state the same
+successful-evaluation and event-equality premises and prove equality of the
+complete `HolFfiState`. -/
 
 /-! Source review for HOL `evaluate_io_events_mono`
 (`panPropsScript.sml:856-876`): HOL quantifies `exps`, `s1`, `res`, `s2`, assumes
