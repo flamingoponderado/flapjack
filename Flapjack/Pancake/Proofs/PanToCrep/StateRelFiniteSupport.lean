@@ -13,9 +13,10 @@ These declarations are untagged relation support. Their conjunctions were
 compared with HOL `state_rel_def` and `locals_rel_def` at
 `pan_to_crepProofScript.sml:45-82`; the finite-map fields are now named through
 their separate owning carriers, with same-module roundtrip witnesses for the
-multi-carrier qualifier. The final theorem remains untagged until the direct
-finite-map `evaluate_def` source review and tag are completed (bead
-`flapjack-qj5`).
+multi-carrier qualifier. The final theorem
+`panToCrepFiniteEvaluateShapeInvariantRetInst` below now carries the reviewed
+HOL tag. The separate faithful `evaluate_is_wf_shape_invariant` result-invariant
+dependency remains open as bead `flapjack-4ac.5.83`.
 -/
 
 namespace Flapjack
@@ -330,17 +331,24 @@ theorem holFmapAsFiniteSupportRelationWitness_CrepSemHOLState
     `ProgHOL`, `ShapeHOL`, and `MlS` have exact constructor/field carriers, and
     `[NeZero width]` matches HOL's positive word dimension.
 
-    The premise uses the pair-shaped `evaluateHOLFiniteState` view of the
-    finite context evaluator. Its recursive clauses were compared with all 21
-    HOL `evaluate_def` constructors (panSemScript.sml:556-761); nonrecursive
-    clauses call the reviewed exact clause helpers and rewrap finite-support
-    post-states. The outer recursive assembly marker is proved total, so the
-    wrapper's fallback is unreachable. The kernel-checked 66-case
+    The premise is semantically the successful-result clause of HOL
+    `evaluate`, not merely a pair-shaped assumption. The wrapper is
+    noncomputable only because classical choice supplies decidable membership
+    procedures for `memaddrs` and `shMemaddrs`; these are implementation
+    witnesses, not extra theorem premises. Its `getD (none, state)` fallback
+    is unreachable by `evalPanSemRecursiveCallFiniteContext_total` and
+    `evaluateHOLFinite_ne_none`. `evaluateHOLFiniteResult_eq_iff` proves that
+    equality of this pair view is equivalent to a successful output of the
+    assembly-marked evaluator. The 66-case
     `evalPanSemRecursiveCallFiniteContext_projection`, exposed through
-    `evaluateHOLFinite_toExact`, proves agreement with the broad exact
-    evaluator. The evaluator definition remains untagged;
-    this theorem's tag claims only the source-reviewed theorem statement and
-    its explicit finite-map carrier translations. -/
+    `evaluateHOLFinite_toExact`, then identifies that output and post-state
+    with `evalPanSemRecursiveCallContextHOLExact` on the canonical `toExact`
+    state. Its 21 recursive clauses were reviewed against HOL
+    `evaluate_def` (`panSemScript.sml:556-761`); each nonrecursive clause calls
+    the corresponding reviewed exact clause helper and reconstructs the
+    finite-support post-state. The theorem tag therefore rests on the reviewed
+    successful-evaluation semantics and the explicit finite-map translations;
+    it does not tag the evaluator definition itself. -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "evaluate_shape_invariant_ret_inst"
   (fmap_as_finite_support_relation := [PanSemStateFiniteExact.locals,
     PanSemStateFiniteExact.globals, PanSemStateFiniteExact.code,
