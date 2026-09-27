@@ -64,14 +64,15 @@ theorem panPrimopCrepPrimop {width : Nat} [NeZero width]
                   simp [crepPrimopHOL, panSemFlattenHOL,
                     panSemFlattenValuesHOL]
 
--- Exact-carrier counterpart (Flapjack-specific; carry review pending): the HOL
--- statement `pan_primop pop vs = SOME value ==> crep_primop pop (FLAT (MAP flatten vs)) = SOME (flatten value)`
+-- Exact-carrier, mapped variant (Flapjack-specific support; NOT the HOL-shaped
+-- statement): the HOL statement
+-- `pan_primop pop vs = SOME value ==> crep_primop pop (FLAT (MAP flatten vs)) = SOME (flatten value)`
 -- with `panPrimopHOLExact`/`flattenHOL` over the exact `ValueHOL width`/
--- `HolWordLab width` carriers.  `crepPrimopHOL` is the reviewed `crep_primop_def`
--- port over `PanWordLab (BitVec width)`, so the exact `HolWordLab` payloads are
--- carried across with `HolWordLab.toPanWordLab` (a bijection that is `rfl` on
--- `.word`).  No finite maps occur, so no qualifier applies; not yet tagged
--- `@[hol]` pending coordinator source review of the cross-carrier map.
+-- `HolWordLab width` carriers, but with `crepPrimopHOL` (the untagged executable
+-- `PanWordLab (BitVec width)` rendering of `crep_primop_def`).  The exact
+-- `HolWordLab` payloads are carried across with `HolWordLab.toPanWordLab`.
+-- The HOL-shaped port is `panPrimopCrepPrimopExactHOL` below (tagged
+-- `pan_primop_crep_primop`); this mapped variant is kept as untagged support.
 theorem panPrimopCrepPrimopHOLExact {width : Nat} [NeZero width]
     (operator : PrimOp) (values : List (ValueHOL width)) (value : ValueHOL width)
     (hprimitive : panPrimopHOLExact operator values = some value) :
@@ -97,14 +98,15 @@ theorem panPrimopCrepPrimopHOLExact {width : Nat} [NeZero width]
                   rw [← hprimitive]
                   simp [crepPrimopHOL, flattenHOL, HolWordLab.toPanWordLab]
 
-/-- Exact-shape port of HOL `pan_primop_crep_primop`
+/-- Exact port of HOL `pan_primop_crep_primop`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:1096-1099`):
     `pan_primop pop vs = SOME value ==> crep_primop pop (FLAT (MAP flatten vs)) = SOME (flatten value)`.
     Both sides use the exact `word_lab` carrier `HolWordLab` and the exact
     `panPrimopHOLExact`/`flattenHOL`/`crepPrimopHOLExact`; there is NO explicit
     `HolWordLab.toPanWordLab` map in the statement, so the shape matches HOL.
-    This is UNTAGGED pending coordinator source review of the newly defined
-    exact-carrier `crepPrimopHOLExact` (`flapjack-4ac.5.16.9.1`). -/
+    The mapped `PanWordLab` variant is `panPrimopCrepPrimopHOLExact` below
+    (untagged support). -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "pan_primop_crep_primop"]
 theorem panPrimopCrepPrimopExactHOL {width : Nat} [NeZero width]
     (operator : PrimOp) (values : List (ValueHOL width)) (value : ValueHOL width)
     (hprimitive : panPrimopHOLExact operator values = some value) :

@@ -107,9 +107,9 @@
     "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
     "hol_name": "crep_primop_def",
     "lean_path": "Flapjack/Pancake/Semantics/CrepSem/Primop.lean",
-    "lean_name": "crepPrimopHOL",
+    "lean_name": "crepPrimopHOLExact",
     "statement_status": "reviewed_exact",
-    "reviewer": "Codex (independent carrier/side-condition audit; HOL crep_primop_def crepSemScript.sml:221 is over a word_lab list; Lean PanWordLab (BitVec width) matches ctor arity and fixed width payload like the reviewed loopPrimopHOL; [NeZero width] matches HOL positive dimindex; LENGTH = 3 renders as the exactly-three .word list pattern since word_lab is one-constructor so EVERY isWord is automatic; result SOME [Word res; Word co] and word_add_carry match; direct HOL rows crep_valid/overflow/invalid/zero_args/four_args/nonzero_carry in pan_crep_primop_probe.out)"
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.16.9.1): exact port of HOL crep_primop_def over the exact word_lab carrier HolWordLab (crepSemScript.sml:221); clause-for-clause on the single Word constructor so EVERY isWord is automatic and only the exact-three arity survives; the previous PanWordLab rendering crepPrimopHOL is now an untagged executable rendering related by the proved conversion equation crepPrimopHOL_eq_map_toPanWordLab. Direct HOL rows crep_valid/overflow/nonzero_carry/invalid/zero_args/four_args in pan_crep_primop_probe.out reproduced by Flapjack/Test/PanCrepPrimopParity.lean. Executable routing through crepPrimopHOLExact tracked by flapjack-4ac.5.16.9.2."
   },
   {
     "hol_path": "cakeml/pancake/panLangScript.sml",
@@ -13549,11 +13549,11 @@
     "reviewer": "flapjack-ds8 (source comparison against pan_commonPropsScript.sml:188 opt_mmap_disj_zip_flookup; HOL distinct_lists rendered as ListDisjoint, OPT_MMAP as List.mapM over FLOOKUP, over the reviewed extensional FiniteMap carrier; used by pc_compile_correct[Primitive])"
   },
   {
-    "hol_path": null,
-    "hol_name": null,
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "pan_primop_crep_primop",
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/Primop.lean",
     "lean_name": "panPrimopCrepPrimopExactHOL",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.16.9.1): exact-shape port of HOL pan_primop_crep_primop (pan_to_crepProofScript.sml:1096-1099) over the exact HolWordLab word_lab carrier; untagged pending coordinator source review of the new crepPrimopHOLExact carrier declaration."
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.16.9.1): exact port of HOL pan_primop_crep_primop (pan_to_crepProofScript.sml:1096-1099) with the exact HOL shape pan_primop pop vs = SOME value ==> crep_primop pop (FLAT (MAP flatten vs)) = SOME (flatten value), NO cross-carrier map: panPrimopHOLExact (pan_primop_def, panSemScript.sml:196), flattenHOL (flatten_def) and crepPrimopHOLExact (crep_primop_def, crepSemScript.sml:221) are all exact HolWordLab ports. Direct HOL rows pan_valid/overflow/invalid in pan_crep_primop_probe.out reproduced by Flapjack/Test/PanCrepPrimopParity.lean. The mapped PanWordLab variant panPrimopCrepPrimopHOLExact remains untagged support."
   }
 ]
