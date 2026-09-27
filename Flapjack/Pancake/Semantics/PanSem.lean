@@ -2028,6 +2028,210 @@ theorem panSemEvaluateExactState_call_error_of_callee_error
     path therefore does not reject a return based on that table. The exact
     state-owned evaluator checks the source code-map return shape. -/
 
+/-- HOL `Call` (`panSemScript.sml:667-672`) rejects a callee whose returned
+    value shape disagrees with the source code-map entry's `returnShape`,
+    returning `(SOME Error, st)` with the callee's post-call globals, memory,
+    FFI state and clock, and no caller locals.  This is that rejection branch
+    over the source `PanSemState` and its state-owned code map.  Untagged: the
+    executed result is the reduced structured pair, not HOL's literal
+    `result option # state` pairing. -/
+theorem panSemEvaluateCodeState_call_error_of_returnShapeMismatch
+    [BEq α] [OfNat α 0] [OfNat α 1] [OfNat α 2] [OfNat α 3] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (context : PanValueFfiContext α)
+    (primitive : PanPrimitiveHandler α)
+    (handler : PanValueStatefulFfiHandler α σ)
+    (bytesInWord : α) (state : PanSemState α (FfiState σ))
+    (function : FunName) (value : α)
+    (hentry : panSemCodeLookup state.code function =
+      some ([], .return (.const value), .comb [.one, .one]))
+    (hclock : state.clock ≠ 0)
+    (memoryAccess : Option (PanValueMemoryAccess α) := none) :
+    panSemEvaluateCodeState context primitive handler bytesInWord state
+      (.call none function [] : Prog α) (memoryAccess := memoryAccess) =
+      some (.control (.error (fun _ => none) state.globals state.memory
+        state.ffi), decPanClock state.clock) := by
+  have hlookupCall : lookupPanSemCodeCall state.structs state.code function [] =
+      some (.return (.const value), .comb [.one, .one], fun _ => none) := by
+    unfold lookupPanSemCodeCall
+    rw [hentry]
+    simp [panSemCodeArgumentsMatch, bindPanValueParameters]
+  have hargs : evalPanValueExps state.structs state.locals state.globals state.memory
+      state.baseAddress state.topAddress bytesInWord []
+      (memoryAccess := memoryAccess) = some [] := by
+    simp [evalPanValueExps, evalPanValueExp.evalPanValueExps]
+  have hcost : 1 ≤ panSemProgFuel (.call none function [] : Prog α) := by
+    simp [panSemProgFuel, panSemCallInfoFuel, panSemExpListFuel]
+  have hclockPos : 2 ≤ state.clock + 1 := by omega
+  have hbodyPos : 2 ≤ max (panSemProgFuel (.call none function [] : Prog α))
+      (panSemCodeBodyFuel state.code) + 1 := by
+    have hmax : panSemProgFuel (.call none function [] : Prog α) ≤
+        max (panSemProgFuel (.call none function [] : Prog α))
+          (panSemCodeBodyFuel state.code) := Nat.le_max_left _ _
+    have hmaxPos : 1 ≤ max (panSemProgFuel (.call none function [] : Prog α))
+        (panSemCodeBodyFuel state.code) := Nat.le_trans hcost hmax
+    omega
+  have hbound : 4 ≤ panSemCodeEvaluateFuel state
+      (.call none function [] : Prog α) := by
+    unfold panSemCodeEvaluateFuel
+    have hproduct := Nat.mul_le_mul hclockPos hbodyPos
+    omega
+  unfold panSemEvaluateCodeState panSemEvaluateCodeStateWithFuel
+  cases hfuel : panSemCodeEvaluateFuel state (.call none function [] : Prog α) with
+  | zero => omega
+  | succ fuel =>
+      cases fuel with
+      | zero => omega
+      | succ fuel =>
+          cases fuel with
+          | zero => omega
+          | succ fuel =>
+              cases fuel with
+              | zero => omega
+              | succ fuel =>
+                  simp [evalPanValueFfiClockCodeProg, evalPanValueFfiClockCodeCall,
+                    panValueCallArgumentsValue, evalPanValueFfiClockLeaf,
+                    evalPanValueFfiProgSteps, panValueReturnResult,
+                    evalPanValueExpCounted, evalPanValueExp, hargs, hlookupCall, hclock,
+                    panValueShape, panShapeMatches, decPanClock]
+
+/-- HOL `Call` invalid-return-shape rejection for a callee with one parameter.
+    The callee's initial parameter binding is discarded together with the rest
+    of the caller locals, so the parameter local is absent in the `Error`
+    result.  Untagged, like the nullary variant above. -/
+theorem panSemEvaluateCodeState_call_error_of_returnShapeMismatch_param
+    [BEq α] [OfNat α 0] [OfNat α 1] [OfNat α 2] [OfNat α 3] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (context : PanValueFfiContext α)
+    (primitive : PanPrimitiveHandler α)
+    (handler : PanValueStatefulFfiHandler α σ)
+    (bytesInWord : α) (state : PanSemState α (FfiState σ))
+    (function : FunName) (argument value : α)
+    (hentry : panSemCodeLookup state.code function =
+      some ([("x", .one)], .return (.const value), .comb [.one, .one]))
+    (hclock : state.clock ≠ 0)
+    (memoryAccess : Option (PanValueMemoryAccess α) := none) :
+    panSemEvaluateCodeState context primitive handler bytesInWord state
+      (.call none function [.const argument] : Prog α)
+      (memoryAccess := memoryAccess) =
+      some (.control (.error (fun _ => none) state.globals state.memory
+        state.ffi), decPanClock state.clock) := by
+  have hlookupCall : lookupPanSemCodeCall state.structs state.code function
+      [.word argument] = some
+        (.return (.const value), .comb [.one, .one],
+          fun key => if key == "x" then some (.word argument) else none) := by
+    unfold lookupPanSemCodeCall
+    rw [hentry]
+    simp [panSemCodeArgumentsMatch, bindPanValueParameters, panValueShape,
+      panShapeMatches]
+    all_goals
+      funext key
+      simp [updatePanValueMap, beq_iff_eq]
+  have hargs : evalPanValueExps state.structs state.locals state.globals state.memory
+      state.baseAddress state.topAddress bytesInWord [.const argument]
+      (memoryAccess := memoryAccess) = some [.word argument] := by
+    simp [evalPanValueExps, evalPanValueExp.evalPanValueExps, evalPanValueExp]
+  have hcost : 1 ≤ panSemProgFuel (.call none function [.const argument] : Prog α) := by
+    simp [panSemProgFuel, panSemCallInfoFuel, panSemExpFuel, panSemExpListFuel]
+  have hclockPos : 2 ≤ state.clock + 1 := by omega
+  have hbodyPos : 2 ≤ max (panSemProgFuel (.call none function [.const argument] : Prog α))
+      (panSemCodeBodyFuel state.code) + 1 := by
+    have hmax : panSemProgFuel (.call none function [.const argument] : Prog α) ≤
+        max (panSemProgFuel (.call none function [.const argument] : Prog α))
+          (panSemCodeBodyFuel state.code) := Nat.le_max_left _ _
+    have hmaxPos : 1 ≤ max (panSemProgFuel (.call none function [.const argument] : Prog α))
+        (panSemCodeBodyFuel state.code) := Nat.le_trans hcost hmax
+    omega
+  have hbound : 4 ≤ panSemCodeEvaluateFuel state
+      (.call none function [.const argument] : Prog α) := by
+    unfold panSemCodeEvaluateFuel
+    have hproduct := Nat.mul_le_mul hclockPos hbodyPos
+    omega
+  unfold panSemEvaluateCodeState panSemEvaluateCodeStateWithFuel
+  cases hfuel : panSemCodeEvaluateFuel state
+      (.call none function [.const argument] : Prog α) with
+  | zero => omega
+  | succ fuel =>
+      cases fuel with
+      | zero => omega
+      | succ fuel =>
+          cases fuel with
+          | zero => omega
+          | succ fuel =>
+              cases fuel with
+              | zero => omega
+              | succ fuel =>
+                  simp [evalPanValueFfiClockCodeProg, evalPanValueFfiClockCodeCall,
+                    panValueCallArgumentsValue, evalPanValueFfiClockLeaf,
+                    evalPanValueFfiProgSteps, panValueReturnResult,
+                    evalPanValueExpCounted, evalPanValueExp, hargs, hlookupCall, hclock,
+                    panValueShape, panShapeMatches, decPanClock]
+
+/-- HOL `DecCall` invalid-return-shape rejection: the state-owned call helper
+    already rejects the mismatched callee return shape, and the `DecCall`
+    wrapper propagates that `Error` without running the continuation.  Untagged,
+    like the `Call` variants above. -/
+theorem panSemEvaluateCodeState_decCall_error_of_returnShapeMismatch
+    [BEq α] [OfNat α 0] [OfNat α 1] [OfNat α 2] [OfNat α 3] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (context : PanValueFfiContext α)
+    (primitive : PanPrimitiveHandler α)
+    (handler : PanValueStatefulFfiHandler α σ)
+    (bytesInWord : α) (state : PanSemState α (FfiState σ))
+    (name function : FunName) (value : α)
+    (hentry : panSemCodeLookup state.code function =
+      some ([], .return (.const value), .comb [.one, .one]))
+    (hclock : state.clock ≠ 0)
+    (memoryAccess : Option (PanValueMemoryAccess α) := none) :
+    panSemEvaluateCodeState context primitive handler bytesInWord state
+      (.decCall name .one function [] .skip : Prog α)
+      (memoryAccess := memoryAccess) =
+      some (.control (.error (fun _ => none) state.globals state.memory
+        state.ffi), decPanClock state.clock) := by
+  let program : Prog α := .decCall name .one function [] .skip
+  have hprogramFuel : panSemProgFuel program = 2 := by
+    simp [program, panSemProgFuel, panSemExpListFuel]
+  have hclockLower : 2 ≤ state.clock + 1 := by omega
+  have hbodyLower : 3 ≤ max (panSemProgFuel program)
+      (panSemCodeBodyFuel state.code) + 1 := by
+    rw [hprogramFuel]
+    omega
+  have hfuelLower : 5 ≤ panSemCodeEvaluateFuel state program := by
+    unfold panSemCodeEvaluateFuel
+    have hmul := Nat.mul_le_mul hclockLower hbodyLower
+    omega
+  obtain ⟨tail, hfuelLeft⟩ := Nat.exists_eq_add_of_le hfuelLower
+  have hfuel : panSemCodeEvaluateFuel state program = tail + 5 := by
+    rw [hfuelLeft]
+    omega
+  have hargs : evalPanValueExps state.structs state.locals state.globals state.memory
+      state.baseAddress state.topAddress bytesInWord []
+      (memoryAccess := memoryAccess) = some [] := by
+    simp [evalPanValueExps, evalPanValueExp.evalPanValueExps]
+  have hcallee : lookupPanSemCodeCall state.structs state.code function [] =
+      some (.return (.const value), .comb [.one, .one], fun _ => none) := by
+    unfold lookupPanSemCodeCall
+    rw [hentry]
+    simp [panSemCodeArgumentsMatch, bindPanValueParameters]
+  unfold panSemEvaluateCodeState panSemEvaluateCodeStateWithFuel
+  have hfuelConcrete : panSemCodeEvaluateFuel state
+      (.decCall name .one function [] .skip : Prog α) = tail + 5 := by
+    simpa [program] using hfuel
+  rw [hfuelConcrete]
+  have hsucc1 : tail + 1 = Nat.succ tail := by omega
+  have hsucc2 : tail + 2 = Nat.succ (tail + 1) := by omega
+  have hsucc3 : tail + 3 = Nat.succ (tail + 2) := by omega
+  have hsucc4 : tail + 4 = Nat.succ (tail + 3) := by omega
+  have hsucc5 : tail + 5 = Nat.succ (tail + 4) := by omega
+  rw [hsucc5, hsucc4, hsucc3, hsucc2, hsucc1]
+  simp [evalPanValueFfiClockCodeProg, evalPanValueFfiClockCodeDecCall,
+    evalPanValueFfiClockCodeCall, panValueCallArgumentsValue, evalPanValueFfiClockLeaf,
+    evalPanValueFfiProgSteps, panValueReturnResult, evalPanValueExpCounted, evalPanValueExp,
+    hargs, hcallee, hclock, panValueShape, panShapeMatches, decPanClock]
+
 /-- HOL `Dec` (`panSemScript.sml:558-565`) whose initialiser expression fails to
     evaluate returns `(SOME Error, s)` with the unchanged source state.  Stated
     over the exact source state with the state-owned memory access; untagged
