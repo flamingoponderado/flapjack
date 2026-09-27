@@ -20,19 +20,28 @@ open Flapjack.Pancake.PanLang
 
 namespace CompileExpContextExact
 
-/-- Production finite-map context induced by an exact compile context. The
-    production side is a function-backed `FiniteMap` keyed by `String`; every
-    name is encoded with `ofString` and the stored `ShapeHOL` is decoded with
-    `shapeOfHOL`. `funcs`/`eids` are never read by `compileExpHOL`. -/
+/-- Production context induced by an exact compiler context. Retain all three
+    decoded maps and `vmax`, so the expression codec's production side uses the
+    same full context as the program-clause bridges. `compileExpHOL` reads only
+    `vars` and `vmax`; preserving `funcs`/`eids` here therefore does not change
+    its result. -/
 def prodContext {width : Nat} [NeZero width]
     (context : CompileExpContextExact width) :
-    PanToCrepHOLContext (BitVec width) where
-  vars := fun name =>
-    (context.vars.lookup (ofString name)).map
-      (fun entry => (shapeOfHOL entry.1, entry.2))
-  funcs := fun _ => none
-  eids := fun _ => none
-  vmax := context.vmax
+    PanToCrepHOLContext (BitVec width) := context.toProduction
+
+/-- The pre-c9 expression adapter projected the exact context to `vars` and
+    `vmax`, filling `funcs` and `eids` with empty maps. This focused kernel
+    equality records that the old and full-context adapters produce the same
+    output for local-variable expressions, the expression clause that reads
+    the variable map. The recursive expression clauses are unchanged by c9;
+    they call this same compiler recursively. -/
+theorem compileExpHOL_oldProjection_localVar_eq {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width) (name : VarName) :
+    compileExpHOL context.toProduction (.var .local name) =
+      compileExpHOL
+        { context.toProduction with funcs := fun _ => none, eids := fun _ => none }
+        (.var .local name) := by
+  simp [compileExpHOL.eq_2, FLOOKUP]
 
 end CompileExpContextExact
 
@@ -152,13 +161,15 @@ theorem compileExpBridge_var {width : Nat} [NeZero width]
       compileExpExactHOLW.eq_2, expToHOL.eq_2]
     cases h : context.vars.lookup (ofString name) with
     | none =>
-        simp only [CompileExpContextExact.prodContext, h, FLOOKUP,
+        simp only [CompileExpContextExact.prodContext,
+          PanToCrepContextExact.toProduction, h, FLOOKUP,
           Option.map_none, List.map_cons, List.map_nil, crepExpToHOL.eq_1,
           shapeToHOL]
         constructor <;> trivial
     | some entry =>
         obtain ⟨shape, names⟩ := entry
-        simp only [CompileExpContextExact.prodContext, h, FLOOKUP,
+        simp only [CompileExpContextExact.prodContext,
+          PanToCrepContextExact.toProduction, h, FLOOKUP,
           Option.map_some, shapeToHOL_shapeOfHOL]
         constructor
         · rw [List.map_map]
@@ -761,6 +772,96 @@ theorem compileExpHOL_shapeByteRanged {width : Nat} [NeZero width]
     (fun _head _tail _ih1 _ih2 => True.intro)
     (fun _fst _snd _ih => True.intro)
 
+private theorem compileExpListHOL_eq_of_pointwise {width : Nat} [NeZero width]
+    (left right : PanToCrepHOLContext (BitVec width))
+    (expressions : List (Exp (BitVec width)))
+    (hpoint : ∀ expression ∈ expressions,
+      compileExpHOL left expression = compileExpHOL right expression) :
+    compileExpHOL.compileExpListHOL left expressions =
+      compileExpHOL.compileExpListHOL right expressions := by
+  induction expressions with
+  | nil => simp [compileExpHOL.compileExpListHOL]
+  | cons head tail ih =>
+      simp only [compileExpHOL.compileExpListHOL.eq_2]
+      rw [hpoint head (by simp)]
+      congr 1
+      apply ih
+      intro expression hmem
+      exact hpoint expression (by simp [hmem])
+
+/-- Expression-compiler congruence for contexts whose variable maps agree on
+    byte-ranged names. `compileExpHOL` does not inspect the function or
+    exception maps. This is the production-side congruence needed to carry the
+    exact-to-production context relation through recursive Dec/DecCall bodies;
+    arbitrary String keys remain outside its premise. -/
+theorem compileExpHOL_congr_of_ranged_vars {width : Nat} [NeZero width]
+    (left right : PanToCrepHOLContext (BitVec width))
+    (hvars : ∀ name, NameRanged name → left.vars name = right.vars name) :
+    (expression : Exp (BitVec width)) → ExpByteRanged expression →
+      compileExpHOL left expression = compileExpHOL right expression :=
+  Flapjack.Exp.rec
+    (motive_1 := fun expression => ExpByteRanged expression →
+      compileExpHOL left expression = compileExpHOL right expression)
+    (motive_2 := fun expressions => ListExpByteRanged expressions →
+      ∀ expression ∈ expressions,
+        compileExpHOL left expression = compileExpHOL right expression)
+    (motive_3 := fun _ => True)
+    (motive_4 := fun _ => True)
+    (fun _value _ => by simp [compileExpHOL.eq_1])
+    (fun kind name hname => by
+      cases kind with
+      | «local» =>
+          simp only [ExpByteRanged] at hname
+          simp [compileExpHOL.eq_2, FLOOKUP, hvars name hname]
+      | global => simp [compileExpHOL.eq_3])
+    (fun expressions ih hexpressions => by
+      have hpoint : ∀ expression ∈ expressions,
+          compileExpHOL left expression = compileExpHOL right expression :=
+        ih hexpressions
+      have hcompiled := compileExpListHOL_eq_of_pointwise left right expressions hpoint
+      simp only [compileExpHOL.eq_4, hcompiled])
+    (fun _index expression ih hexpression => by
+      simp [compileExpHOL.eq_5, ih hexpression])
+    (fun _name _fields _ihs _ => by simp [compileExpHOL.eq_6])
+    (fun _name _expression _ih _ => by
+      simp [compileExpHOL.eq_7])
+    (fun _shape expression ih hexpression => by
+      simp [compileExpHOL.eq_8, ih hexpression.2])
+    (fun expression ih hexpression => by
+      simp [compileExpHOL.eq_9, ih hexpression])
+    (fun expression ih hexpression => by
+      simp [compileExpHOL.eq_10, ih hexpression])
+    (fun _operator expressions ih hexpressions => by
+      have hpoint : ∀ expression ∈ expressions,
+          compileExpHOL left expression = compileExpHOL right expression :=
+        ih hexpressions
+      have hcompiled := compileExpListHOL_eq_of_pointwise left right expressions hpoint
+      simp [compileExpHOL.eq_11, hcompiled])
+    (fun _operator expressions ih hexpressions => by
+      have hpoint : ∀ expression ∈ expressions,
+          compileExpHOL left expression = compileExpHOL right expression :=
+        ih hexpressions
+      have hcompiled := compileExpListHOL_eq_of_pointwise left right expressions hpoint
+      simp [compileExpHOL.eq_12, hcompiled])
+    (fun _operator leftExp rightExp ihLeft ihRight hparent => by
+      simp [compileExpHOL.eq_13, ihLeft hparent.1, ihRight hparent.2])
+    (fun _operator leftExp rightExp ihLeft ihRight hparent => by
+      simp [compileExpHOL.eq_14, ihLeft hparent.1, ihRight hparent.2])
+    (by simp [compileExpHOL.eq_15])
+    (by simp [compileExpHOL.eq_16])
+    (by simp [compileExpHOL.eq_17])
+    (by simp)
+    (fun head tail ihHead ihTail hlist => by
+      intro expression hmem
+      simp only [List.mem_cons] at hmem
+      rcases hmem with heq | htail
+      · subst expression
+        exact ihHead hlist.1
+      · exact ihTail hlist.2 _ htail)
+    True.intro
+    (fun _head _tail _ih1 _ih2 => True.intro)
+    (fun _fst _snd _ih => True.intro)
+
 /-! ### Codec-direction corollaries
 
 `compileExpBridge` is stated in the `crepExpToHOL` direction. Downstream
@@ -828,5 +929,26 @@ theorem compileExpExactHOLW_prodCodec {width : Nat} [NeZero width]
   simpa only [expToHOL_expOfHOL] using
     compileExpBridge_pair context (expOfHOL expression)
       (compileExpHOL_exact_shapeByteRanged context expression)
+
+/-- The exact expression codec remains valid when the production context is
+    related to the exact context only on source-reachable byte-ranged variable
+    keys. This is the context-general form needed by the recursive program
+    bridge after Dec/DecCall updates. -/
+theorem compileExpExactHOLW_prodCodec_of_ranged_vars {width : Nat} [NeZero width]
+    (context : CompileExpContextExact width)
+    (production : PanToCrepHOLContext (BitVec width))
+    (hvars : ∀ name, NameRanged name →
+      context.toProduction.vars name = production.vars name)
+    (expression : ExpHOL width) :
+    ((compileExpExactHOLW context expression).1.map crepExpOfHOL,
+        shapeOfHOL (compileExpExactHOLW context expression).2)
+      = compileExpHOL production (expOfHOL expression) := by
+  have hcodec := compileExpExactHOLW_prodCodec context expression
+  calc
+    _ = compileExpHOL context.toProduction (expOfHOL expression) := by
+      simpa [CompileExpContextExact.prodContext] using hcodec
+    _ = compileExpHOL production (expOfHOL expression) :=
+      compileExpHOL_congr_of_ranged_vars context.toProduction production hvars
+        (expOfHOL expression) (expOfHOL_byteRanged expression)
 
 end Flapjack
