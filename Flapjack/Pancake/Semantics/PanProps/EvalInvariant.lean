@@ -3356,8 +3356,7 @@ theorem evaluateClockSubDecCaseHOLFinite {width : Nat} {σ : Type} [NeZero width
           (PanSemStateFiniteExact.evaluateHOLFiniteState lowState.toPanSemFinite
             (.dec name shape initializer body)).2 = lowState
         rw [hLowCanonical]
-        simp [lowState, lowCanonical,
-          PanPropsEvalStateFiniteExact.ofPanSemFinite_toPanSemFinite]
+        exact PanPropsEvalStateFiniteExact.ofPanSemFinite_toPanSemFinite lowState
   | some value =>
       have hInitLowValue : @evalHOLExact width σ _ lowCanonical.toExact lowMem initializer = some value := by
         simp only [hInitLow, hInit]
@@ -3485,7 +3484,33 @@ theorem evaluateClockSubDecCaseHOLFinite {width : Nat} {σ : Type} [NeZero width
             (PanSemStateFiniteExact.evaluateHOLFiniteState lowState.toPanSemFinite
               (.dec name shape initializer body)).2 = lowState
           rw [hLowCanonical]
-          simp [lowState, lowCanonical,
-            PanPropsEvalStateFiniteExact.ofPanSemFinite_toPanSemFinite]
+          exact PanPropsEvalStateFiniteExact.ofPanSemFinite_toPanSemFinite lowState
+
+/-! # The `Skip` induction case of HOL `evaluate_clock_sub`
+
+This leaf case keeps the theorem's original high-run equation and non-timeout
+assumption.  The HOL `Skip` clause returns the unchanged state, so its clock
+equation identifies the lower-clock input directly. -/
+
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_clock_sub"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateClockSubSkipCaseHOLFinite {width : Nat} {σ : Type} [NeZero width] :
+    ∀ (state : PanPropsEvalStateFiniteExact width σ)
+      (result : Option (PanSemResultExact width))
+      (st : PanPropsEvalStateFiniteExact width σ) (ck : Nat),
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state .skip =
+        (result, { st with clock := st.clock + ck }) →
+      result ≠ some .timeOut →
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair
+        { state with clock := state.clock - ck } .skip = (result, st) := by
+  classical
+  intro state result st ck hRun _hne
+  simp only [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair,
+    PanSemStateFiniteExact.evaluateHOLFiniteState_skip,
+    PanPropsEvalStateFiniteExact.ofPanSemFinite_toPanSemFinite] at hRun ⊢
+  rcases Prod.mk.inj hRun with ⟨rfl, hState⟩
+  subst state
+  simp
 
 end Flapjack
