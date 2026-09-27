@@ -441,6 +441,20 @@ Tick, Break, and Continue case specializations are tracked separately. The
 parent theorem remains open while other statement cases and the complete
 induction are unfinished. Lean regressions live in
 `Flapjack.Test.PanStructsCompileCorrect`.
+`pan_structs_res_convert_probe.out` records direct HOL EVAL of the `pan_structs`
+result conversion and classification functions at
+`cakeml/pancake/proofs/pan_structsProofScript.sml:992-1009` and `:1028-1031`:
+`convert_res` on `SOME Break`, the recursive `SOME (Return (ValWord 7w))` and
+`SOME (Exception «e» (ValWord 5w))` clauses, and the `NONE`, `Error`, `TimeOut`,
+`Continue`, and `FinalFFI` catch-alls; `is_cont_res` on `NONE`, `Break`,
+`Continue`, `Error`, `TimeOut`, and `Return`; and `res_vs` on `Return`,
+`Exception`, `Break`, `NONE`, and `Continue`. It is regenerated with
+`HOL4=/home/zksecurity/HOL CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=pan_structs_res_convert_probeScript.sml
+scripts/hol-probes/regenerate.sh`, and the same rows are replayed over the exact
+`PanSemResultExact`/`ValueHOL` carriers through `convertResHOL`, `isContResHOL`,
+`isContResHOL_eqDisj`, and `resVsHOL` in
+`Flapjack.Test.PanStructsResConvertParity`.
 `pan_structs_compile_exp_correct_probe.out` records HOL evaluations of Local
 and Global variable-constructor instances and Const-, RStruct-, NStruct-,
 NField-, RField-, Op-, Load-, and faithful Load32-constructor instances of

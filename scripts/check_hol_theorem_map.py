@@ -484,6 +484,21 @@ DOCUMENTED_MISMATCHES = {
         "port depends on the exact panSem evaluate and is tracked by "
         "flapjack-pxn.18.4.4 / flapjack-pxn.18.4.3 and flapjack-pxn.18.3.6.9. "
     ),
+    ("Flapjack/Pancake/Semantics/PanSem/EvaluateClock.lean", "evalPanSemRecursiveCallFiniteContext_clock_le"): (
+        "cakeml/pancake/semantics/panSemScript.sml",
+        "evaluate_clock",
+        "flapjack-ds5 (source comparison, 2026-09-27; bead flapjack-4ac.3.48; "
+        "FLAPJACK-SPECIFIC, documented_mismatch). HOL evaluate_clock "
+        "(panSemScript.sml:755-766) bounds s'.clock <= s.clock over the faithful "
+        "panSem$state. The untagged Lean analogue "
+        "evalPanSemRecursiveCallFiniteContext_clock_le proves the same bound over "
+        "the exact finite-support clause-for-clause evaluator, which takes a "
+        "FiniteEvalContext (state plus threaded DecidablePred memaddrs/shMemaddrs) "
+        "rather than a bare state, and uses canonical HolFiniteMapExact maps "
+        "rather than HOL's mlstring-keyed finite maps. The extra decider context "
+        "argument and finite-map carrier are differences beyond names_as_string. "
+        "The faithful port is tracked by flapjack-qj5. "
+    ),
     ("Flapjack/Pancake/Semantics/PanSem/ClockExact.lean", "fixClockHOLExact_IMP_LESS_EQ"): (
         "cakeml/pancake/semantics/panSemScript.sml",
         "fix_clock_IMP_LESS_EQ",
@@ -1764,7 +1779,13 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         ("Flapjack/Pancake/Proofs/PanGlobals.lean", "tuple_4_o"),
         ("Flapjack/Pancake/Proofs/PanGlobals.lean", "goodResHOL"),
         ("Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean", "convertResHOL"),
+        ("Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean", "convertResHOL_eqCase1"),
         ("Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean", "isContResHOL"),
+        ("Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean", "isContResHOL_eqDisj"),
+        ("Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean", "resVsHOL"),
+        ("Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean", "everyConvertVEq"),
+        ("Flapjack/Pancake/Proofs/PanStructs/StructInfosOkExact.lean",
+         "structInfosOkHOLExact_lookup_fields_nodup"),
         ("Flapjack/Pancake/Proofs/PanGlobals.lean", "ALOOKUP_MAP3"),
         ("Flapjack/Pancake/Proofs/PanGlobals.lean", "ALOOKUP_MAP4"),
         ("Flapjack/Pancake/PanGlobals.lean", "fpermName"),
@@ -1778,6 +1799,7 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         ("Flapjack/Pancake/Proofs/PanGlobals.lean", "fpermName_cong"),
         ("Flapjack/Pancake/Proofs/PanGlobals.lean", "EVERY_fperm_decsHOL"),
         ("Flapjack/Pancake/Proofs/PanGlobals.lean", "FILTER_decs_fperm_decsHOL"),
+        ("Flapjack/Pancake/Proofs/PanGlobals.lean", "functionsFpermDecsHOL"),
         ("Flapjack/Pancake/Proofs/PanToCrep.lean", "mod_eq_of_lt_eq"),
         ("Flapjack/Pancake/Proofs/PanToCrep.lean", "option_ne_none_iff_exists"),
         ("Flapjack/Pancake/Proofs/PanToCrep.lean", "prod_mk_pair_eq_id"),

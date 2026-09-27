@@ -280,34 +280,49 @@ theorem panToCrepLocalsRelLookupCtxtFiniteExact {width : Nat} [NeZero width]
       _ = (flattenHOL value).length := by rw [← hflatten]
   · rw [hmap, ← hflatten]
 
-/-- Flapjack-specific untagged analogue of HOL `ctxt_max_el_leq`
-    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:1493-1503`), retained as
-    the intended exact rendering; the `@[hol]` tag is withdrawn pending
-    carrier-qualifier review (see HOLD below):
+namespace CtxtMaxElLeqExact
+
+/-- Canonical finite-map field witness for the imported exact context carrier
+    `PanToCrepContextExact`, required by the `fmap_as_finite_support` qualifier
+    on `ctxtMaxElLeqFiniteExact`. A fresh local namespace is used so the
+    declaration name does not clash with the imported
+    `PanToCrepContextExact.holFmapAsFiniteSupportWitness`; it forwards that
+    roundtrip. Flapjack-only representation infrastructure; it is not a port of
+    a HOL declaration. -/
+theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width) :
+    PanToCrepContextExact.ofBroad (PanToCrepContextExact.toBroad context) = context :=
+  PanToCrepContextExact.holFmapAsFiniteSupportWitness context
+
+end CtxtMaxElLeqExact
+
+/-- Exact port of HOL `ctxt_max_el_leq`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:1493-1503`):
     `ctxt_max ctxt.vmax ctxt.vars /\
       FLOOKUP ctxt.vars v = SOME (sh,ns) /\
       n < LENGTH ns ==> EL n ns <= ctxt.vmax`.
 
     The implicit HOL context `ctxt` is the Pan-to-Crep `context` record, whose
-    `vars` field is the exact `PanToCrepContextExact.vars` field that the
-    qualifier would name; `vmax` is `Nat` (HOL `num`) and is not a finite-map field, so no
-    other representation is touched. HOL `ctxt_max` becomes the exact-carrier
+    `vars` field is the exact `PanToCrepContextExact.vars` field named by the
+    `fmap_as_finite_support` qualifier (same-module witness
+    `CtxtMaxElLeqExact.holFmapAsFiniteSupportWitness`); `vmax` is `Nat` (HOL
+    `num`) and is not a finite-map field. HOL `ctxt_max` becomes the exact-carrier
     rendering `ctxtMaxFiniteExact` (the same predicate already used by the
     tagged `locals_rel_def`), HOL `FLOOKUP` becomes `.lookup`, `EL n ns` becomes
     the bounded `getElem` `slots[n]`, and `LENGTH`/`<=` become
     `List.length`/`≤`. The quantifiers, hypotheses, and conclusion keep HOL's
-    shape. The proof is HOL's `rw [ctxt_max_def]` followed by instantiating the
-    bound at `EL n ns` and using `EL_MEM`. No direct HOL-EVAL oracle row exists
-    for this symbolic-index lemma (the bound proof is needed to select the
-    element), so the kernel-checked instance in
-    `Flapjack/Test/PanToCrepStateRelCarrierParity.lean` replays it concretely.
-    HOLD (coordinator, 2026-09-27): exact HOL `ctxt_max_el_leq`
-    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:1493`) over the exact
-    `PanToCrepContextExact` carrier, but the `@[hol]` tag is WITHDRAWN pending
-    the DS10 imported-owner finite-map qualifier policy; the quantified carrier
-    includes a translated word dimension not recorded by the current
-    `fmap_as_finite_support_relation := [PanToCrepContextExact.vars]` qualifier.
-    Proof retained as untagged infrastructure. -/
+    shape. The imported width-indexed carrier `PanToCrepContextExact width` has
+    `[NeZero width]` and `BitVec width` exception codes, so HOL's type-indexed
+    `'a word` translation is recorded by the `(words_as_type_indexed_bitvec)`
+    qualifier alongside the finite-support field qualifier. The proof is HOL's
+    `rw [ctxt_max_def]` followed by instantiating the bound at `EL n ns` and
+    using `EL_MEM`. No direct HOL-EVAL oracle row exists for this
+    symbolic-index lemma (the bound proof is needed to select the element), so
+    the kernel-checked instance in
+    `Flapjack/Test/PanToCrepStateRelCarrierParity.lean` replays it concretely. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "ctxt_max_el_leq" 1493
+  (fmap_as_finite_support := [vars])
+  (words_as_type_indexed_bitvec)]
 theorem ctxtMaxElLeqFiniteExact {width : Nat} [NeZero width]
     (context : PanToCrepContextExact width) (v : MlS) (shape : ShapeHOL)
     (slots : List Nat) (n : Nat)

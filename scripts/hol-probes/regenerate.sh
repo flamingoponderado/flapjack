@@ -120,6 +120,14 @@ run_probe pan_structs_compile_correct_probeScript.sml pan_structs_compile_correc
   compile_correct_tick_positive_source compile_correct_tick_positive_converted \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" \
   "$cake_dir/pancake/proofs"
+run_probe pan_structs_res_convert_probeScript.sml pan_structs_res_convert_probe.out \
+  convert_res_break convert_res_return_val convert_res_exception convert_res_none \
+  convert_res_error convert_res_timeout convert_res_continue convert_res_final_ffi \
+  is_cont_res_none is_cont_res_break is_cont_res_continue is_cont_res_error \
+  is_cont_res_timeout is_cont_res_return res_vs_return res_vs_exception \
+  res_vs_break res_vs_none res_vs_continue \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" \
+  "$cake_dir/pancake/proofs"
 run_probe pan_structs_compile_exp_correct_probeScript.sml pan_structs_compile_exp_correct_probe.out \
   compile_exp_correct_local_var compile_exp_correct_global_var compile_exp_correct_const \
   compile_exp_correct_mmap_nonempty compile_exp_correct_rstruct \
