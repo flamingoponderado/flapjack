@@ -2278,6 +2278,74 @@ theorem evaluateHOLFiniteState_storeByte {width : Nat} {σ : Type} [NeZero width
 
 attribute [simp] evaluateHOLFiniteState_storeByte
 
+/-! HOL `evaluate_def`'s `Primitive` equation (`panSemScript.sml:573-582`),
+one of the line-780 theorem's 21 conjuncts. Argument expressions use
+`OPT_MMAP eval`; `panPrimopHOLExact` is the tagged exact `pan_primop` port,
+and a valid result updates only locals. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
+  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+theorem evaluateHOLFiniteState_primitive {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (name : MlS) (operator : PrimOp)
+    (arguments : List (ExpHOL width)) :
+    evaluateHOLFiniteState state (.primitive name operator arguments : ProgHOL width) =
+      match @evalListHOLExact width σ _ state.toExact
+          (fun address => Classical.propDecidable (state.memaddrs address)) arguments with
+      | none => (some .error, state)
+      | some values =>
+          match panPrimopHOLExact operator values with
+          | none => (some .error, state)
+          | some value =>
+              if isValidValueHOLExact state.toExact .local name value then
+                (none, setVarHOLFinite name value state)
+              else (some .error, state) := by
+  classical
+  cases heval : @evalListHOLExact width σ _ state.toExact
+      (fun address => Classical.propDecidable (state.memaddrs address)) arguments with
+  | none =>
+      simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+        evalPanSemRecursiveCallFiniteContext, evalPanSemNonrecursiveHOLFinite,
+        evalPanSemNonrecursiveHOLExact, primitiveStepHOLExact, heval,
+        ofExact_toExact]
+  | some values =>
+      cases hprim : panPrimopHOLExact operator values with
+      | none =>
+          simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+            evalPanSemRecursiveCallFiniteContext, evalPanSemNonrecursiveHOLFinite,
+            evalPanSemNonrecursiveHOLExact, primitiveStepHOLExact, heval, hprim,
+            ofExact_toExact]
+      | some value =>
+          by_cases hvalid : isValidValueHOLExact state.toExact .local name value = true
+          · have hsupport :
+                (setVarHOLExact name value state.toExact).FiniteSupport :=
+              PanSemStateExact.finiteSupport_setVar state.toExact_finiteSupport name value
+            have hroundtrip :
+                ofExact (setVarHOLExact name value state.toExact) hsupport =
+                  setVarHOLFinite name value state := by
+              cases state <;>
+                simp only [PanSemStateFiniteExact.mk.injEq, ofExact,
+                  setVarHOLExact, setVarHOLFinite]
+              all_goals repeat' constructor
+              all_goals
+                apply HolFiniteMapExact.ext
+                funext current
+                by_cases h : current = name
+                · simp [HolFiniteMapExact.update, FUPDATE, h]
+                · have h' : name ≠ current := fun h' => h h'.symm
+                  simp [HolFiniteMapExact.update, FUPDATE, h, h']
+            simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+              evalPanSemRecursiveCallFiniteContext, evalPanSemNonrecursiveHOLFinite,
+              evalPanSemNonrecursiveHOLExact, primitiveStepHOLExact,
+              heval, hprim, hvalid, hroundtrip]
+          · have hinvalid :
+                isValidValueHOLExact state.toExact .local name value = false :=
+              Bool.eq_false_iff.mpr hvalid
+            simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+              evalPanSemRecursiveCallFiniteContext, evalPanSemNonrecursiveHOLFinite,
+              evalPanSemNonrecursiveHOLExact, primitiveStepHOLExact,
+              heval, hprim, hinvalid, ofExact_toExact]
+
+attribute [simp] evaluateHOLFiniteState_primitive
+
 /-- The decider-taking helper is the pair-shaped rendering of the assembly-marker
     evaluator. This bridge is Flapjack-specific infrastructure. -/
 theorem evaluateHOLFiniteStateWithDeciders_eq_getD {width : Nat} {σ : Type} [NeZero width]
