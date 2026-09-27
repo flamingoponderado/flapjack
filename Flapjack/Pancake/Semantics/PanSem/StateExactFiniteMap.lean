@@ -2346,6 +2346,189 @@ theorem evaluateHOLFiniteState_primitive {width : Nat} {σ : Type} [NeZero width
 
 attribute [simp] evaluateHOLFiniteState_primitive
 
+/-- Flapjack-specific carrier wrapper for the exact HOL ShMemLoad clause.
+    Keeping the broad evaluator closure behind this helper leaves the tagged
+    finite-carrier theorem unambiguously owned by `PanSemStateFiniteExact`.
+    The HOL clause itself is tagged on the equation below. -/
+noncomputable def shMemLoadClauseHOLFiniteExact {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateFiniteExact width σ) (operator : OpSize)
+    (kind : VarKind) (name : MlS) (address : ExpHOL width) :=
+  let evalExpression := fun (_ : PanSemStateExact width σ) (expression : ExpHOL width) =>
+    @evalHOLExact width σ _ state.toExact
+      (fun address => Classical.propDecidable (state.memaddrs address)) expression
+  @shMemLoadClauseHOLExact width σ _ state.toExact
+    (fun address => Classical.propDecidable (state.shMemaddrs address))
+    operator kind name address evalExpression
+
+/-- Flapjack-specific support transport for the finite-carrier wrapper;
+    HOL has no separate finite-support proposition. -/
+theorem shMemLoadClauseHOLFiniteExact_finiteSupport {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateFiniteExact width σ) (operator : OpSize)
+    (kind : VarKind) (name : MlS) (address : ExpHOL width) :
+    (shMemLoadClauseHOLFiniteExact state operator kind name address).2.FiniteSupport := by
+  unfold shMemLoadClauseHOLFiniteExact
+  exact @shMemLoadClauseHOLExact_finiteSupport width σ _ state.toExact
+    (fun address => Classical.propDecidable (state.shMemaddrs address))
+    operator kind name address
+    (fun (_ : PanSemStateExact width σ) (expression : ExpHOL width) =>
+      @evalHOLExact width σ _ state.toExact
+        (fun address => Classical.propDecidable (state.memaddrs address)) expression)
+    state.toExact_finiteSupport
+
+/-- Flapjack-specific carrier wrapper for the exact HOL ShMemStore clause.
+    It is not a separate HOL declaration: the executable clause is
+    `shMemStoreClauseHOLExact`, and the HOL `evaluate_def` equation is tagged
+    below. Keeping the broad evaluator closure here leaves the tagged
+    finite-carrier theorem unambiguously owned by `PanSemStateFiniteExact`. -/
+noncomputable def shMemStoreClauseHOLFiniteExact {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (operator : OpSize)
+    (address value : ExpHOL width) :=
+  let evalExpression := fun (_ : PanSemStateExact width σ) (expression : ExpHOL width) =>
+    @evalHOLExact width σ _ state.toExact
+      (fun address => Classical.propDecidable (state.memaddrs address)) expression
+  @shMemStoreClauseHOLExact width σ _ state.toExact
+    (fun address => Classical.propDecidable (state.shMemaddrs address))
+    operator address value evalExpression
+
+/-- Flapjack-specific support transport for the finite-carrier wrapper above;
+    HOL has no separate finite-support proposition. -/
+theorem shMemStoreClauseHOLFiniteExact_finiteSupport {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateFiniteExact width σ) (operator : OpSize)
+    (address value : ExpHOL width) :
+    (shMemStoreClauseHOLFiniteExact state operator address value).2.FiniteSupport := by
+  unfold shMemStoreClauseHOLFiniteExact
+  exact @shMemStoreClauseHOLExact_finiteSupport width σ _ state.toExact
+    (fun address => Classical.propDecidable (state.shMemaddrs address))
+    operator address value
+    (fun (_ : PanSemStateExact width σ) (expression : ExpHOL width) =>
+      @evalHOLExact width σ _ state.toExact
+        (fun address => Classical.propDecidable (state.memaddrs address)) expression)
+    state.toExact_finiteSupport
+
+/-- Flapjack-specific equation for the finite-carrier ShMemLoad evaluator.
+    This is not tagged as HOL `evaluate_def`: its right-hand side hides the
+    explicit source branches behind `shMemLoadClauseHOLFiniteExact`. The
+    faithful case-shaped theorem remains open in `flapjack-qj5.1`. -/
+theorem evaluateHOLFiniteState_shMemLoad {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (operator : OpSize) (kind : VarKind)
+    (name : MlS) (address : ExpHOL width) :
+    let output := shMemLoadClauseHOLFiniteExact state operator kind name address
+    evaluateHOLFiniteState state (.shMemLoad operator kind name address : ProgHOL width) =
+      (output.1, ofExact output.2
+        (shMemLoadClauseHOLFiniteExact_finiteSupport state operator kind name address)) := by
+  classical
+  simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+    evalPanSemRecursiveCallFiniteContext, shMemLoadClauseHOLFiniteExact]
+  rfl
+
+attribute [simp] evaluateHOLFiniteState_shMemLoad
+
+/-- Flapjack-specific equation for the finite-carrier ShMemStore evaluator.
+    This is not tagged as HOL `evaluate_def`: its right-hand side hides the
+    explicit source branches behind `shMemStoreClauseHOLFiniteExact`. The
+    faithful case-shaped theorem remains open in `flapjack-qj5.2`. -/
+theorem evaluateHOLFiniteState_shMemStore {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (operator : OpSize)
+    (address value : ExpHOL width) :
+    let output := shMemStoreClauseHOLFiniteExact state operator address value
+    evaluateHOLFiniteState state (.shMemStore operator address value : ProgHOL width) =
+      (output.1, ofExact output.2
+        (shMemStoreClauseHOLFiniteExact_finiteSupport state operator address value)) := by
+  classical
+  simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+    evalPanSemRecursiveCallFiniteContext, shMemStoreClauseHOLFiniteExact]
+  rfl
+
+attribute [simp] evaluateHOLFiniteState_shMemStore
+
+/-- Flapjack-specific finite-carrier rendering of HOL's `Dec` clause. The
+    recursive body call and restoration step mirror `evaluate_def`; the
+    `resVarEq` update is the canonical finite-map form of HOL `res_var`. The
+    optional assembly marker makes its equation unsuitable as the HOL theorem
+    statement, so it remains untagged infrastructure. -/
+noncomputable def evaluateDecClauseHOLFiniteExact {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (name : MlS) (shape : ShapeHOL)
+    (initializer : ExpHOL width) (body : ProgHOL width) :
+    Option (PanSemResultExact width) × PanSemStateFiniteExact width σ := by
+  classical
+  let context : FiniteEvalContext width σ :=
+    ⟨state, fun address => Classical.propDecidable (state.memaddrs address),
+      fun address => Classical.propDecidable (state.shMemaddrs address)⟩
+  exact match evalHOLFinite state initializer with
+    | none => (some .error, state)
+    | some value =>
+        if shapeEqHOL shape (shapeOfHOLExact value) then
+          let bodyState := setVarHOLFinite name value state
+          let bodyContext := context.withState bodyState rfl rfl
+          match evalPanSemRecursiveCallFiniteContext body bodyContext with
+          | none => (none, state)
+          | some (result, postContext) =>
+              let restored : PanSemStateFiniteExact width σ :=
+                { postContext.state with
+                  locals := HolFiniteMapExact.resVarEq postContext.state.locals
+                    (name, state.locals.lookup name) }
+              (result, (postContext.withState restored rfl rfl).state)
+        else (some .error, state)
+
+/-! Flapjack-specific finite-carrier `Dec` equation. This declaration is not
+tagged as HOL `evaluate_def`: the internal optional assembly-marker result of
+`evalPanSemRecursiveCallFiniteContext` leaves an extra unreachable `none`
+branch in its statement. The faithful total pair-shaped theorem remains open
+under `flapjack-qj5`; keep `evaluateDecClauseHOLFiniteExact` as infrastructure. -/
+theorem evaluateHOLFiniteState_dec {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (name : MlS) (shape : ShapeHOL)
+    (initializer : ExpHOL width) (body : ProgHOL width) :
+    evaluateHOLFiniteState state (.dec name shape initializer body : ProgHOL width) =
+      (let context : FiniteEvalContext width σ :=
+        ⟨state, fun address => Classical.propDecidable (state.memaddrs address),
+          fun address => Classical.propDecidable (state.shMemaddrs address)⟩
+       match @evalHOLExact width σ _ state.toExact context.memaddrsDecidable initializer with
+       | none => (some .error, state)
+       | some value =>
+           if shapeEqHOL shape (shapeOfHOLExact value) then
+             let bodyState := setVarHOLFinite name value state
+             let bodyContext := context.withState bodyState rfl rfl
+             match evalPanSemRecursiveCallFiniteContext body bodyContext with
+             | none => (none, state)
+             | some (result, postContext) =>
+                 let restored : PanSemStateFiniteExact width σ :=
+                   { postContext.state with
+                     locals := HolFiniteMapExact.resVarEq postContext.state.locals
+                       (name, state.locals.lookup name) }
+                 (result, (postContext.withState restored rfl rfl).state)
+           else (some .error, state)) := by
+  classical
+  let hmem : DecidablePred state.memaddrs :=
+    fun address => Classical.propDecidable (state.memaddrs address)
+  let hshared : DecidablePred state.shMemaddrs :=
+    fun address => Classical.propDecidable (state.shMemaddrs address)
+  letI : DecidablePred state.memaddrs := hmem
+  letI : DecidablePred state.shMemaddrs := hshared
+  cases hinit : @evalHOLExact width σ _ state.toExact hmem initializer with
+  | none =>
+      simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+        evalPanSemRecursiveCallFiniteContext, hinit]
+  | some value =>
+      by_cases hshape : shapeEqHOL shape (shapeOfHOLExact value) = true
+      · cases hbody : evalPanSemRecursiveCallFiniteContext body
+          (({ state := state,
+              memaddrsDecidable := fun address => Classical.propDecidable (state.memaddrs address),
+              shMemaddrsDecidable := fun address => Classical.propDecidable (state.shMemaddrs address) } :
+            FiniteEvalContext width σ).withState (setVarHOLFinite name value state) rfl rfl) with
+        | none =>
+            simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+              evalPanSemRecursiveCallFiniteContext,
+              hinit, hshape, hbody]
+        | some pair =>
+            simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+              evalPanSemRecursiveCallFiniteContext,
+              hinit, hshape, hbody]
+      · simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+          evalPanSemRecursiveCallFiniteContext,
+          hinit, hshape]
+
+attribute [simp] evaluateHOLFiniteState_dec
+
 /-- The decider-taking helper is the pair-shaped rendering of the assembly-marker
     evaluator. This bridge is Flapjack-specific infrastructure. -/
 theorem evaluateHOLFiniteStateWithDeciders_eq_getD {width : Nat} {σ : Type} [NeZero width]

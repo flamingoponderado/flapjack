@@ -22,12 +22,18 @@ executable recursion maps onto the tagged width-indexed Lean recursion
 * `frameBitmapWordsAux_map`/`frameBitmapWords_map` : mapping each `Nat` bitmap
   word through `BitVec.ofNat width` reproduces `wordListW` exactly.
 
-These lemmas are deliberately **untagged**.  The remaining, already-documented
-mismatch is upstream of the recursion: `writeBitmap` builds the Boolean bitmap
-from a list of `names` (`List.contains`), whereas HOL `write_bitmap` uses
-`toAList live` and `MEM` over a finite map.  Bridging that name-set computation
-(and the `dimindex(:'a) - 1 = wordBits - 1` identification) is tracked
-separately; the recursion itself is bridged here.
+* `writeBitmap_eq_writeBitmapHOL` : the whole executed `writeBitmap` (including
+  its name-set construction) maps onto the HOL-shaped `writeBitmapHOL` at the
+  faithful `wordBits = width` stride, so the executed bitmap builder is
+  kernel-checked equal to the exact recursion for every input.
+
+These lemmas are deliberately **untagged**.  HOL `write_bitmap` reads
+`toAList live` only through `MEM`, so its value depends solely on the domain of
+`live`; `writeBitmapHOL` takes that domain as a `List Nat` and its
+`writeBitmapHOL_domain_insensitive` theorem records exactly that insensitivity.
+`writeBitmap_eq_writeBitmapHOL` closes the previously-documented name-set gap:
+the executable `List.contains` bitmap and the exact `decide (· ∈ names)` bitmap
+produce the same words.
 -/
 
 namespace Flapjack.RiscV.CakeAlloc
@@ -133,5 +139,32 @@ theorem writeBitmap_map {width : Nat} [NeZero width] (live : List Nat) (k f' wor
         (wordBits - 1) := by
   dsimp only [writeBitmap]
   exact frameBitmapWords_map (wordBits - 1) _
+
+/-- Executable `List.contains` equals the decidable-membership bitmap test, the
+form HOL `write_bitmap` uses (`MEM` over `toAList live`). -/
+theorem contains_eq_decide_mem (names : List Nat) (slot : Nat) :
+    names.contains slot = decide (slot ∈ names) := by
+  unfold List.contains
+  rw [List.elem_eq_mem]
+
+/-- The executed bitmap builder `writeBitmap` (with its `List.contains`
+name-set) maps onto the HOL-shaped `writeBitmapHOL` at stride `width`, for every
+input.  This closes the previously-documented gap: the name-set construction is
+now kernel-checked equal on all inputs, not just the word recursion. -/
+theorem writeBitmap_eq_writeBitmapHOL {width : Nat} [NeZero width]
+    (live : List Nat) (k f' : Nat) :
+    (writeBitmap live k f' width).map (BitVec.ofNat width) =
+      writeBitmapHOL (width := width) live k f' := by
+  rw [writeBitmap_map]
+  unfold writeBitmapHOL
+  have hbits :
+      (List.range f').map (fun slot =>
+          (live.map (fun r => (f' - 1) - (r / 2 - k))).contains slot) =
+        (List.range f').map (fun slot =>
+          decide (slot ∈ live.map (fun r => (f' - 1) - (r / 2 - k)))) := by
+    apply List.map_congr_left
+    intro slot _
+    exact contains_eq_decide_mem _ _
+  rw [hbits]
 
 end Flapjack.RiscV.CakeAlloc
