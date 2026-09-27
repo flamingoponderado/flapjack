@@ -445,6 +445,25 @@ termination_by program => sizeOf program
 decreasing_by
   all_goals decreasing_trivial
 
+/-- Exact port of HOL `inline_nontail_def`
+    (`cakeml/pancake/crep_inlineScript.sml:193-201`). It zero-initializes the
+    temporary return variables, loads call arguments into the callee, then
+    copies the available temporary returns back to caller destinations using
+    HOL `MAP2` truncation. -/
+@[hol "cakeml/pancake/crep_inlineScript.sml" "inline_nontail_def"
+  (words_as_type_indexed_bitvec)]
+def inlineNontailHOLExact {width : Nat} [NeZero width]
+    (program : CrepProgHOL width) (returnNames temporaryReturns temporaryNames : List Nat)
+    (arguments : List (CrepExpHOL width)) (argumentNames : List Nat) :
+    CrepProgHOL width :=
+  nestedDecsHOL temporaryReturns
+    (List.replicate temporaryReturns.length (.const 0))
+    (.seq
+      (argLoadHOLExact temporaryNames arguments argumentNames program)
+      (crepNestedSeqHOL
+        (returnNames.zipWith (fun name value => .assign name value)
+          (temporaryReturns.map CrepExpHOL.var))))
+
 structure CrepInlineFmapHOL (width : Nat) [NeZero width] where
   entries : List (CrepInlineMapHOLName × (List Nat × CrepProgHOL width))
   nodupKeys : (entries.map Prod.fst).Nodup

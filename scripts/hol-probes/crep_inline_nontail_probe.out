@@ -1,0 +1,3 @@
+inline_nontail_scalar=T
+inline_nontail_map2_truncates=T
+inline_nontail_arg_shape_mismatch=T
