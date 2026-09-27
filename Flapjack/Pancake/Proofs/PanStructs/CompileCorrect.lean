@@ -110,6 +110,33 @@ def convertResHOL {width : Nat} [NeZero width] :
   | some (.exception exceptionId value) => some (.exception exceptionId (convertV value))
   | res => res
 
+/-- Exact port of HOL `convert_res_eq_case1[local]`
+    (`cakeml/pancake/proofs/pan_structsProofScript.sml:1012-1019`):
+    `convert_res res = (case res of
+       SOME Break => convert_res (SOME Break)
+     | SOME x => convert_res (SOME x)
+     | NONE => NONE)`.
+
+    The parameter is HOL's `panSem$result option`, rendered as
+    `Option (PanSemResultExact width)` over the reviewed exact `result` carrier
+    (`DecExact.lean:58`, tagged against `panSemScript.sml:68-75`), and
+    `convertResHOL` is the already-reviewed exact port of `convert_res` above.
+    `SOME Break` is `some .break`, `SOME x` is `some x`, `NONE` is `none`, and
+    the HOL `case ... of` is the Lean `match`; the two sides are equal
+    constructor by constructor and no payload is inspected.  The only difference
+    from HOL is the already-reviewed `result` carrier, so no qualifier applies. -/
+@[hol "cakeml/pancake/proofs/pan_structsProofScript.sml" "convert_res_eq_case1"]
+theorem convertResHOL_eqCase1 {width : Nat} [NeZero width]
+    (res : Option (PanSemResultExact width)) :
+    convertResHOL res =
+      (match res with
+        | some .break => convertResHOL (some .break)
+        | some x => convertResHOL (some x)
+        | none => none) := by
+  cases res with
+  | none => rfl
+  | some result => cases result <;> rfl
+
 /-- Exact port of HOL `is_cont_res_def`
     (`cakeml/pancake/proofs/pan_structsProofScript.sml:992-997`):
     `is_cont_res NONE = T`, `is_cont_res (SOME Break) = T`,
@@ -129,6 +156,75 @@ def isContResHOL {width : Nat} [NeZero width] :
   | some .break => true
   | some .continue => true
   | _ => false
+
+/-- Exact port of HOL `is_cont_res_eq_disj[local]`
+    (`cakeml/pancake/proofs/pan_structsProofScript.sml:999-1003`):
+    `is_cont_res res = (res = NONE \/ res = SOME Break \/ res = SOME Continue)`.
+
+    The parameter is HOL's `panSem$result option`, rendered as
+    `Option (PanSemResultExact width)` over the reviewed exact `result` carrier
+    (`DecExact.lean:58`, tagged against `panSemScript.sml:68-75`); the Bool
+    equality against a disjunction is rendered as the iff
+    `isContResHOL res = true ↔ res = none ∨ res = some .break ∨
+    res = some .continue`.  `isContResHOL` is `true` exactly on `NONE`,
+    `SOME Break`, and `SOME Continue`, so the two sides coincide constructor by
+    constructor; no payload is inspected.  The only difference from HOL is the
+    already-reviewed `result` carrier and the standard Bool-to-Prop rendering of
+    the disjunctive equality, so no qualifier applies. -/
+@[hol "cakeml/pancake/proofs/pan_structsProofScript.sml" "is_cont_res_eq_disj"]
+theorem isContResHOL_eqDisj {width : Nat} [NeZero width]
+    (res : Option (PanSemResultExact width)) :
+    (isContResHOL res = true) ↔
+      res = none ∨ res = some .break ∨ res = some .continue := by
+  cases res with
+  | none => simp [isContResHOL]
+  | some result =>
+      cases result <;> simp [isContResHOL]
+
+/-- Exact port of HOL `res_vs_def`
+    (`cakeml/pancake/proofs/pan_structsProofScript.sml:1028-1031`):
+    `res_vs (SOME (Return v)) = [v]`,
+    `res_vs (SOME (Exception eid ev)) = [ev]`, and `res_vs _ = []`.
+
+    The parameter is HOL's `panSem$result option`, rendered as
+    `Option (PanSemResultExact width)` over the reviewed exact `result` carrier
+    (`DecExact.lean:58`, tagged against `panSemScript.sml:68-75`), and the
+    result element type is the reviewed exact `panSem$v` carrier `ValueHOL`
+    (`panSemScript.sml:22`).  The two matched clauses extract the `Return` and
+    `Exception` payloads verbatim; the catch-all returns the empty list exactly
+    as HOL's catch-all, so `NONE`, `Error`, `TimeOut`, `Break`, `Continue`, and
+    `FinalFFI` all map to `[]`.  The only difference from HOL is the
+    already-reviewed `result`/`v` carriers, so no qualifier applies. -/
+@[hol "cakeml/pancake/proofs/pan_structsProofScript.sml" "res_vs_def"]
+def resVsHOL {width : Nat} [NeZero width] :
+    Option (PanSemResultExact width) → List (ValueHOL width)
+  | some (.returned value) => [value]
+  | some (.exception _ value) => [value]
+  | _ => []
+
+/-- Exact port of HOL `every_convert_v_eq[local]`
+    (`cakeml/pancake/proofs/pan_structsProofScript.sml:268-271`):
+    `EVERY (\w. case w of Val _ => T | _ => F) vs ==> MAP convert_v vs = vs`.
+
+    The list element type is the reviewed exact `panSem$v` carrier `ValueHOL`
+    (`panSemScript.sml:22`, tagged `reviewed_exact` via `convert_v_def`), the
+    `EVERY` premise is rendered as the membership-quantified
+    `∀ w ∈ vs, match w with | .val _ => True | _ => False`, and `MAP convert_v`
+    as `List.map convertV`. Only the `Val` case can satisfy the premise, and
+    `convert_v (Val x) = Val x` leaves the list unchanged; no payload, name, or
+    word dimension is inspected, so the only difference from HOL is the
+    already-reviewed carrier and no qualifier applies. -/
+@[hol "cakeml/pancake/proofs/pan_structsProofScript.sml" "every_convert_v_eq"]
+theorem everyConvertVEq {width : Nat} [NeZero width] (vs : List (ValueHOL width))
+    (h : ∀ w ∈ vs, match w with | .val _ => True | _ => False) :
+    vs.map convertV = vs := by
+  induction vs with
+  | nil => rfl
+  | cons w ws ih =>
+    rw [List.map_cons, List.cons.injEq]
+    constructor
+    · cases w <;> simp_all [convertV]
+    · exact ih (fun x hx => h x (by simp [hx]))
 
 /-! Structural Bool equality for the translated Shape datatype. It performs
     the HOL constructor equality cases recursively and avoids a BEq instance
