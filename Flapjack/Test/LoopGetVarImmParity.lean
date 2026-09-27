@@ -122,10 +122,14 @@ private def exactVarImmState : LoopSemStateFiniteExact 32 Unit where
   baseAddr := 100
   topAddr := 200
 
-example : LoopSemStateFiniteExact.getVarImm (.reg 1) exactVarImmState = some (.word 5) := by decide
-example : LoopSemStateFiniteExact.getVarImm (.reg 2) exactVarImmState = none := by decide
-example : LoopSemStateFiniteExact.getVarImm (.imm 7) exactVarImmState = some (.word 7) := by decide
-example : LoopSemStateFiniteExact.getVarImm (.reg 3) exactVarImmState = some (.loc 9 0) := by decide
+example : LoopSemStateFiniteExact.getVarImm (.reg 1) exactVarImmState = some (.word 5) := by
+  simp [exactVarImmState, LoopSemStateFiniteExact.getVarImm, sptLookup, sptInsert]
+example : LoopSemStateFiniteExact.getVarImm (.reg 2) exactVarImmState = none := by
+  simp [exactVarImmState, LoopSemStateFiniteExact.getVarImm, sptLookup, sptInsert]
+example : LoopSemStateFiniteExact.getVarImm (.imm 7) exactVarImmState = some (.word 7) := by
+  simp [LoopSemStateFiniteExact.getVarImm]
+example : LoopSemStateFiniteExact.getVarImm (.reg 3) exactVarImmState = some (.loc 9 0) := by
+  simp [exactVarImmState, LoopSemStateFiniteExact.getVarImm, sptLookup, sptInsert]
 
 #guard LoopSemStateFiniteExact.getVarImm (.reg 1) exactVarImmState == some (.word 5)
 #guard LoopSemStateFiniteExact.getVarImm (.reg 2) exactVarImmState == none
