@@ -264,6 +264,47 @@ theorem panToCrepExactInitialShapeInvariant {width : Nat} {σ : Type}
     rw [hglobals] at hlookup
     simp at hlookup
 
+/-- Flapjack-specific call-entry invariant for HOL
+    `evaluate_shape_invariant_ret_inst2` (`pan_to_crepProofScript.sml:3031-3044`).
+    The successful exact `evalListHOLFinite` premise is HOL's
+    `OPT_MMAP (eval s) argexps = SOME args`, and `hlookup` is the exact
+    `lookup_code` result over the same finite-support code carrier. Existing
+    `lookupCodeHOLExact_calleeLocalsWf` proves that the successful lookup binds
+    only shape-valid locals; `panToCrepExactInitialShapeInvariant` supplies the
+    source locals/globals facts from the exact `state_rel`/`locals_rel`
+    premises. The conclusion is precisely the locals/globals invariant for
+    `dec_clock s with locals := newlocals` used by the body evaluator. Lean's
+    implicit decidability dictionary for `s.memaddrs` is implementation
+    plumbing for `eval`; callers supply it classically, so it adds no
+    proposition to the HOL premises. This is proof infrastructure rather than
+    a standalone HOL declaration, so it has no `@[hol]` tag and does not assume
+    any body-evaluation result. -/
+theorem panToCrepCallEntryShapeInvariantFiniteExact {width : Nat} {σ : Type}
+    [NeZero width] (source : PanSemStateFiniteExact width σ)
+    [DecidablePred source.memaddrs]
+    (target : CrepSemHOLState width σ)
+    (targetLocals : HolFiniteMapExact Nat (HolWordLab width))
+    (relationContext : PanToCrepContextExact width)
+    (arguments : List (ExpHOL width)) (values : List (ValueHOL width))
+    (fname : MlS) (body : ProgHOL width)
+    (newlocals : HolFiniteMapExact MlS (ValueHOL width))
+    (returnShape : ShapeHOL)
+    (hstate : panToCrepStateRelFiniteExact source target)
+    (hlocals : panToCrepLocalsRelFiniteExact relationContext
+      source.locals targetLocals)
+    (hargs : source.evalListHOLFinite arguments = some values)
+    (hlookup : Flapjack.lookupCodeHOLExact source.code.lookup fname values =
+      some (body, newlocals.lookup, returnShape)) :
+    (∀ name value, newlocals.lookup name = some value →
+      isWfShapeValueHOLExact source.structs value = true) ∧
+    (∀ name value, source.globals.lookup name = some value →
+      isWfShapeValueHOLExact source.structs value = true) := by
+  have hinitial := panToCrepExactInitialShapeInvariant source target
+    targetLocals relationContext hstate hlocals
+  have hcallee := lookupCodeHOLExact_calleeLocalsWf source arguments values
+    fname body newlocals.lookup returnShape hargs hlookup hinitial.1 hinitial.2
+  exact ⟨hcallee, hinitial.2⟩
+
 /-- Flapjack-specific Return-clause composition: exact Pan-to-Crep relations
     supply the evaluator's initial map hypotheses, and the finite evaluator's
     Return clause proves the HOL-shaped empty-context payload conclusion. This
