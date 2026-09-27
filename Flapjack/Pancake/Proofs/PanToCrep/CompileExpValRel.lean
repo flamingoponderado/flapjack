@@ -1511,4 +1511,5 @@ theorem compileExpValRelHOL_panop {width : Nat} {σ : Type} [NeZero width]
         simp only [hvals, hfalse, Bool.false_eq_true, if_false] at heval
         exact absurd heval.symm (Option.some_ne_none value)
 
+
 end Flapjack

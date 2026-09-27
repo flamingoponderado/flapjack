@@ -1395,35 +1395,36 @@ class RealCombinedQualifierFixtureTest(unittest.TestCase):
                 hol_name,
             )
 
-    def test_real_tagged_carrier_only_declaration_passes_checker(self):
-        # `evalCrepSemHOLProgExact_skip` is now a tagged HOL case whose
-        # signature names no literal `BitVec`: the word carrier is the imported
-        # `CrepSemHOLState`. The qualifier must resolve that carrier from its
-        # real declaration and accept the clause text.
+    def test_real_imported_carrier_only_clauses_pass_checker(self):
+        # Skip is tagged and Break is not; neither signature names a literal
+        # `BitVec`. Both must resolve the imported CrepSemHOLState word carrier.
         lines = self._lines()
-        start = None
-        for index, line in enumerate(lines, start=1):
-            if line.startswith("theorem evalCrepSemHOLProgExact_skip"):
-                start = index
-                break
-        self.assertIsNotNone(start, "evalCrepSemHOLProgExact_skip not found")
-        preceding = lines[max(0, start - 4):start - 1]
-        self.assertTrue(any("@[hol" in line for line in preceding))
-        region = []
-        for line in lines[start - 1:]:
-            region.append(line)
-            if ":=" in line:
-                break
-        self.assertEqual(
-            CHECKER["words_as_type_indexed_bitvec_errors"](
-                "\n".join(region),
-                "evalCrepSemHOLProgExact_skip",
-                module=self.MODULE_NAME,
-                root=str(Path(__file__).resolve().parents[2]),
-                lines=lines,
-            ),
-            [],
-        )
+        for clause, expected_tag in (("skip", True), ("break", False)):
+            name = f"evalCrepSemHOLProgExact_{clause}"
+            with self.subTest(clause=clause):
+                start = next(
+                    (index for index, line in enumerate(lines, start=1)
+                     if line.startswith(f"theorem {name}")),
+                    None,
+                )
+                self.assertIsNotNone(start, f"{name} not found")
+                preceding = lines[max(0, start - 4):start - 1]
+                self.assertEqual(any("@[hol" in line for line in preceding), expected_tag)
+                region = []
+                for line in lines[start - 1:]:
+                    region.append(line)
+                    if ":=" in line:
+                        break
+                self.assertEqual(
+                    CHECKER["words_as_type_indexed_bitvec_errors"](
+                        "\n".join(region),
+                        name,
+                        module=self.MODULE_NAME,
+                        root=str(Path(__file__).resolve().parents[2]),
+                        lines=lines,
+                    ),
+                    [],
+                )
 
     def _tagged(self, lines):
         tagged = {}
