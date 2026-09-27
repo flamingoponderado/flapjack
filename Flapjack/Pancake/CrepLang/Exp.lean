@@ -102,8 +102,8 @@ mutual
   It lives beside the exact `CrepExpHOL` syntax carrier, matching the source
   script's `crepLangScript.sml` counterpart.  It is expected to agree with the
   production width-indexed `crepExpVarsW` under the `crepExpToHOL` codec
-  (`crepExpVarsW e = crepExpVarsHOL (crepExpToHOL e)`); that bridge is tracked
-  by a follow-up bead (flapjack-jlj3.3). -/
+  (`crepExpVarsW e = crepExpVarsHOL (crepExpToHOL e)`); that unproved bridge is
+  tracked by flapjack-jlj3.7. -/
   @[hol "cakeml/pancake/crepLangScript.sml" "var_cexp_def"]
   def crepExpVarsHOL {width : Nat} [NeZero width] : CrepExpHOL width → List Nat
     | .const _ => []
