@@ -12948,6 +12948,62 @@
     "reviewer": "Private Flapjack-only representation bridge between exact withShapeHOL and the production withShape helper after shapeOfHOL conversion. It has no separate HOL declaration; the exact with_shape_def port remains withShapeHOL."
   },
   {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "shapeSizeCombHOL_eq_flattenHOL_length",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private Flapjack-specific exact-carrier support for the Call locals_rel proof. Relates exact ShapeHOL size to exact ValueHOL flatten lengths from the pointwise HOL shape relation and is_wf_shape_v_nil premise; it is not a separately claimed HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "withShapeHOL_getElem_length_exact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private Flapjack-specific exact-carrier support showing a withShapeHOL argument group has the exact flatten length under the HOL shape and well-formedness premises. It is not a separately claimed HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "withShapeHOL_getElem_eq_take_drop",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private Flapjack-specific exact-carrier bridge for the with_shape take/drop window. It reuses the exact with_shape_def port through the proved production-shape representation equality; it is not a separate HOL theorem port."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "withShapeHOL_mapFlatten",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private Flapjack-specific exact-carrier partition lemma showing that withShapeHOL partitions flattened exact arguments by their source shapes under is_wf_shape_v_nil. It is proof support, not a separate HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "tlcHOL_lookup_getElem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private Flapjack-specific lookup projection for the exact tlcHOL finite-support carrier. It uses the reviewed tlc_def finite-support witness and list update facts; it is not a separate HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "tlcHOLWithShapeMapM",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Private Flapjack-specific exact-carrier proof support establishing the per-argument target mapM flatten clause used by HOL locals_rel. It is not the full call_preserve_state_code_locals_rel theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "panToCrepCallLocalsRelArgumentBindingsExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific projection of the third locals_rel conjunct of HOL call_preserve_state_code_locals_rel (pan_to_crepProofScript.sml:2355), proved over exact slcHOL/tlcHOL, MlS, ShapeHOL, ValueHOL, and finite-support maps. The helper omits irrelevant full-theorem premises and is not the full theorem or a HOL-tagged declaration."
+  },
+  {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
     "hol_name": "tlc_def",
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
