@@ -14585,5 +14585,53 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific mutual evaluator-induction helper for the strided mem_load_flat_rel analogue. HOL has no standalone declaration with this helper statement; its internal list cases are part of mem_loads_flat_rel."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 780,
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/EvaluateClock.lean",
+    "lean_name": "evaluateHOLFiniteState_call_args_none",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "reviewer": "flapjack-ds8 source comparison (2026-09-27; bead flapjack-qj5.9.3): HOL evaluate_def line-780 Call conjunct (panSemScript.sml:556 clause, rewritten at 780) argument-evaluation-failure branch: OPT_MMAP (eval s) argexps = NONE gives (SOME Error, s). The Lean statement has the same state quantifier, info/function/arguments binders, the branch-selecting argument premise, and the pair-shaped (SOME Error, s) conclusion over ProgHOL/PanSemStateFiniteExact; no result premise and no inner fix_clock on this branch. Four finite-map fields use the same-module re-exported canonical HolFiniteMapExact witness; width qualifier justified by BitVec width with [NeZero width].",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 780,
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/EvaluateClock.lean",
+    "lean_name": "evaluateHOLFiniteState_call_lookup_none",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "reviewer": "flapjack-ds8 source comparison (2026-09-27; bead flapjack-qj5.9.3): HOL evaluate_def line-780 Call conjunct code-lookup-failure branch: successful OPT_MMAP followed by lookup_code = NONE gives (SOME Error, s). The Lean statement keeps the source argument-values premise and the missing-code-entry premise and concludes the total pair (SOME Error, s) over ProgHOL/PanSemStateFiniteExact. No inner fix_clock applies. Same finite-map/width qualifiers as the sibling Call branches.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 780,
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/EvaluateClock.lean",
+    "lean_name": "evaluateHOLFiniteState_call_clock_zero",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "reviewer": "flapjack-ds8 source comparison (2026-09-27; bead flapjack-qj5.9.3): HOL evaluate_def line-780 Call conjunct clock-exhaustion branch: s.clock = 0 after successful args and code lookup gives (SOME TimeOut, empty_locals s). The Lean statement matches with clock = 0, successful-args and code-entry premises, and the total pair (SOME TimeOut, emptyLocalsHOLFinite s) over ProgHOL/PanSemStateFiniteExact; the branch precedes the body evaluation so the source inner fix_clock does not apply. Same finite-map/width qualifiers as the sibling Call branches.",
+    "words_as_type_indexed_bitvec": true
   }
 ]
