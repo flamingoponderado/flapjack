@@ -52,6 +52,30 @@ state a real `toX`/`ofX` roundtrip with that owner's broad counterpart. The
 qualifier records only the finite-map carrier translations; the relation's
 quantifiers, hypotheses, conclusions, and lookup semantics need their own
 source comparison.
+The `words_as_type_indexed_bitvec` qualifier records the candidate standard
+translation of HOL's type-indexed `'a word` (dimension `dimindex (:α)`) to
+Lean's positive-width `BitVec width`, and of HOL's `'ffi ffi_state` to a
+universe-0 Lean host type. It is a translation statement only: a tagged
+declaration must retain `[NeZero width]` (the discharge of HOL's
+`dimindex (:α) ≥ 1`), must not restate positivity as an extra hypothesis, and
+must bind the FFI host type at a `Type` universe when it mentions
+`HolFfiState`. The signature need not pronounce `BitVec` directly when it is
+stated over a reviewed width-indexed carrier (declared locally or reached
+through imports) whose own header carries `[NeZero <width>]` for its width
+parameter and some field of that SAME owner mentions `BitVec <width>` with that
+same width identifier; the carrier is resolved from its
+declaration, never accepted by name alone, and its `[NeZero <width>]` discharge
+and `BitVec <width>` field must belong to the SAME owning declaration and the
+same width identifier (a header with `[NeZero other]` or a field such as
+`BitVec 5 × HolWordLab width` does not qualify; a name with
+several owners is rejected as ambiguous unless the signature uniquely resolves
+it). It changes no quantifier,
+hypothesis, side condition, or
+conclusion, and it requires no cross-assistant agreement theorem. When the
+declaration also carries `fmap_as_finite_support`, use the combined manifest
+status `reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec`; the
+reference checker reads only the tagged declaration's signature (not its proof
+or body) and records both qualifiers.
 The attribute is inert for the kernel; it exists so that
 
 * a reader can find the original statement without a lookup table, whatever
@@ -139,6 +163,18 @@ structure HolRef where
       authorize changed hypotheses, conclusions, side conditions, or word-model
       differences. -/
   fmapAsFiniteSupportEqualities : Bool := false
+  /-- The candidate standard translation of HOL's type-indexed `'a word` (with
+      dimension `dimindex (:α)`) to Lean's positive-width `BitVec width` and of
+      HOL's `'ffi ffi_state` to a universe-0 Lean host type. A declaration
+      carrying this qualifier must still name `BitVec`, must retain `[NeZero
+      width]` as the discharge of HOL's `dimindex (:α) ≥ 1`, must not restate
+      word-dimension positivity as an extra hypothesis, and (when it mentions
+      the FFI carrier `HolFfiState`) must bind the host type at a `Type`
+      universe without a universe-level variable. The qualifier records a
+      conventional data-structure translation only; it authorizes no change to
+      quantifiers, hypotheses, side conditions, or conclusions, and no
+      cross-assistant agreement theorem is required. -/
+  wordsAsTypeIndexedBitvec : Bool := false
   deriving Inhabited, Repr, BEq
 
 open Lean
@@ -151,13 +187,15 @@ syntax "(" "fmap_as_finite_support" ":=" "[" ident,+ "]" ")" : holQualifier
 syntax "(" "fmap_as_finite_support_result" ")" : holQualifier
 syntax "(" "fmap_as_finite_support_relation" ":=" "[" ident,* "]" ")" : holQualifier
 syntax "(" "fmap_as_finite_support_equalities" ")" : holQualifier
+syntax "(" "words_as_type_indexed_bitvec" ")" : holQualifier
 syntax (name := hol) "hol " str str (num)? holQualifier* : attr
 
 private def checkedHolRef (path name : String) (line? : Option Nat := none)
     (listAsArray namesAsString namesAsStringBoundary fmapAsFiniteSupport : Array String := #[])
     (fmapAsFiniteSupportResult : Bool := false)
     (fmapAsFiniteSupportRelation : Array (String × String) := #[])
-    (fmapAsFiniteSupportEqualities : Bool := false) : CoreM HolRef := do
+    (fmapAsFiniteSupportEqualities : Bool := false)
+    (wordsAsTypeIndexedBitvec : Bool := false) : CoreM HolRef := do
   unless path.startsWith "cakeml/" && path.endsWith ".sml" do
     throwError "@[hol]: path must be a repository-relative `cakeml/...Script.sml` file, got {path}"
   if name.isEmpty || name.any Char.isWhitespace then
@@ -174,7 +212,7 @@ private def checkedHolRef (path name : String) (line? : Option Nat := none)
     throwError "@[hol]: fmap_as_finite_support fields must be distinct"
   if fmapAsFiniteSupportRelation.toList.eraseDups.length != fmapAsFiniteSupportRelation.size then
     throwError "@[hol]: fmap_as_finite_support_relation entries must be distinct"
-  pure { path, name, line?, listAsArray, namesAsString, namesAsStringBoundary, fmapAsFiniteSupport, fmapAsFiniteSupportResult, fmapAsFiniteSupportRelation, fmapAsFiniteSupportEqualities }
+  pure { path, name, line?, listAsArray, namesAsString, namesAsStringBoundary, fmapAsFiniteSupport, fmapAsFiniteSupportResult, fmapAsFiniteSupportRelation, fmapAsFiniteSupportEqualities, wordsAsTypeIndexedBitvec }
 
 private def parseHolQualifier (stx : Syntax) : CoreM (String × Array String × Bool × Array (String × String)) := do
   match stx with
@@ -200,6 +238,8 @@ private def parseHolQualifier (stx : Syntax) : CoreM (String × Array String × 
       pure ("fmap_as_finite_support_relation", #[], false, pairs)
   | `(holQualifier| (fmap_as_finite_support_equalities)) =>
       pure ("fmap_as_finite_support_equalities", #[], true, #[])
+  | `(holQualifier| (words_as_type_indexed_bitvec)) =>
+      pure ("words_as_type_indexed_bitvec", #[], true, #[])
   | _ => throwError "@[hol]: malformed qualifier"
 
 private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
@@ -211,6 +251,7 @@ private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
     let mut fmapAsFiniteSupportResult : Bool := false
     let mut fmapAsFiniteSupportRelation : Array (String × String) := #[]
     let mut fmapAsFiniteSupportEqualities : Bool := false
+    let mut wordsAsTypeIndexedBitvec : Bool := false
     for qualifier in qualifiers do
       let (kind, fields, isResult, pairs) ← parseHolQualifier qualifier
       if kind == "list_as_array" then listAsArray := listAsArray ++ fields
@@ -219,8 +260,9 @@ private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
       else if kind == "fmap_as_finite_support_result" then fmapAsFiniteSupportResult := isResult
       else if kind == "fmap_as_finite_support_relation" then fmapAsFiniteSupportRelation := fmapAsFiniteSupportRelation ++ pairs
       else if kind == "fmap_as_finite_support_equalities" then fmapAsFiniteSupportEqualities := isResult
+      else if kind == "words_as_type_indexed_bitvec" then wordsAsTypeIndexedBitvec := isResult
       else fmapAsFiniteSupport := fmapAsFiniteSupport ++ fields
-    checkedHolRef path name line? listAsArray namesAsString namesAsStringBoundary fmapAsFiniteSupport fmapAsFiniteSupportResult fmapAsFiniteSupportRelation fmapAsFiniteSupportEqualities
+    checkedHolRef path name line? listAsArray namesAsString namesAsStringBoundary fmapAsFiniteSupport fmapAsFiniteSupportResult fmapAsFiniteSupportRelation fmapAsFiniteSupportEqualities wordsAsTypeIndexedBitvec
   match stx with
   | `(attr| hol $path:str $name:str $line:num $qualifiers:holQualifier*) =>
       parse path.getString name.getString (some line.getNat) qualifiers
@@ -250,7 +292,9 @@ private def HolRef.qualifierSuffix (ref : HolRef) : String :=
     s!" (fmap_as_finite_support_relation := [{String.intercalate ", " (ref.fmapAsFiniteSupportRelation.toList.map (fun entry => if entry.1.isEmpty then entry.2 else s!"{entry.1}.{entry.2}"))}])"
   let fmapAsFiniteSupportEqualities := if ref.fmapAsFiniteSupportEqualities then
     " (fmap_as_finite_support_equalities)" else ""
-  listAsArray ++ namesAsString ++ namesAsStringBoundary ++ fmapAsFiniteSupport ++ fmapAsFiniteSupportResult ++ fmapAsFiniteSupportRelation ++ fmapAsFiniteSupportEqualities
+  let wordsAsTypeIndexedBitvec := if ref.wordsAsTypeIndexedBitvec then
+    " (words_as_type_indexed_bitvec)" else ""
+  listAsArray ++ namesAsString ++ namesAsStringBoundary ++ fmapAsFiniteSupport ++ fmapAsFiniteSupportResult ++ fmapAsFiniteSupportRelation ++ fmapAsFiniteSupportEqualities ++ wordsAsTypeIndexedBitvec
 
 /-! Parser regressions for the original syntax, each qualifier alone, and both
 qualifiers together. These elaborate temporary syntax values only; they do not
