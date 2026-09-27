@@ -375,17 +375,20 @@ private theorem nestedDecsUpdatedInput_eq_updateListEq
 recursive update state used by the induction helper is linked to the explicit
 `FUPDATE_LIST` ZIP input by `nestedDecsUpdatedInput_eq_updateListEq`. -/
 
-/-- Exact port of `pan_to_crepProofScript.sml:596-620`, over the exact
-`CrepProgHOL`/`CrepExpHOL` and finite-support `CrepSemHOLState` carriers.
-The four premises are exactly successful initialiser evaluation, equal name
-and expression lengths, declaration-name/expression-variable disjointness,
-and distinct declaration names. The conclusion is HOL's complete
-`nested_decs` evaluation equation with the original local bindings restored by
-`FOLDL res_var`. The finite-map qualifier records the canonical
-`HolFiniteMapExact` representation for HOL's `locals`, `globals`, and `code`;
-the same-module witness above checks its carrier roundtrip. -/
-@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "eval_nested_decs_seq_res_var_eq"
-  (fmap_as_finite_support := [locals, globals, code])]
+/-- FLAPJACK-SPECIFIC provisional rendering (no `@[hol]` tag), withdrawn
+2026-09-27 (bead flapjack-64k0, PR #1166 review item 2). The conclusion is over
+`evalCrepSemHOLProgExact`, the Lean no-decider wrapper around the
+re-implemented evaluator `evalCrepSemHOLProg`. Because the theorem quantifies
+over an arbitrary continuation `body`, its exactness requires the evaluator to
+agree with HOL `evaluate` for every program, including the legacy-`UInt8`
+store-byte and memory clauses; no such agreement theorem exists (the evaluator
+is explicitly untagged pending the fixed-width / FFI / agreement audit in
+`CrepSem/EvaluateHOL.lean`), and the recursive clauses thread the base-state
+decisions through `crepStampExactDomains`. The finite-map qualifier's
+owner/witness placement is also unresolved (`flapjack-4ac.5.16.5.13.1`). HOL
+candidate: `eval_nested_decs_seq_res_var_eq`
+(`pan_to_crepProofScript.sml:596-620`). Faithful port tracked by
+`flapjack-4ac.5.16.5`. -/
 theorem evalNestedDecsSeqResVarEqCrepHOL {width : Nat} [NeZero width]
     {σ : Type} (state : CrepSemHOLState width σ)
     (expressions : List (CrepExpHOL width)) (names : List Nat)
@@ -481,21 +484,21 @@ private theorem loadGlobalsHOL_zero_eq_range {width : Nat} [NeZero width]
     rw [hload]
     simp
 
-/-- Exact port of HOL `evaluate_nested_decs_load_globals`
-    (`pan_to_crepProofScript.sml:4139-4176`) over the exact Crep program and
-    finite-map state carriers. The quantified values, names, and body are the
-    HOL variables `rv`, `rvs`, `vs`, and `p`; the four premises remain in HOL
-    order: exact `globals_lookup`, shape size at most 32, distinct names, and
-    name count equal to shape size. The conclusion is the complete generated
-    `nested_decs`/`load_globals` evaluation equation, including the exact
-    `FOLDL res_var` restoration from the original locals. The only carrier
-    translation is the named finite-support representation for the state maps.
-    The proof uses the previously source-reviewed general nested-declaration
-    evaluator theorem and derives its expression-evaluation premise from the
-    exact `globals_lookupHOL` definition. -/
-@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml"
-  "evaluate_nested_decs_load_globals"
-  (fmap_as_finite_support := [locals, globals, code])]
+/-- FLAPJACK-SPECIFIC provisional rendering (no `@[hol]` tag), withdrawn
+    2026-09-27 (bead flapjack-64k0, PR #1166 review item 2). The conclusion is
+    over `evalCrepSemHOLProgExact`, the Lean no-decider wrapper around the
+    re-implemented evaluator `evalCrepSemHOLProg`. As with the general
+    nested-declaration equation it depends on, the theorem quantifies over an
+    arbitrary continuation `body`, so exactness would require a kernel-checked
+    agreement between `evalCrepSemHOLProg` and HOL `evaluate` for every program,
+    including the legacy-`UInt8` store-byte and memory clauses; no such theorem
+    exists and the evaluator is explicitly untagged pending the fixed-width /
+    FFI / agreement audit (`CrepSem/EvaluateHOL.lean`). The finite-map
+    qualifier's owner/witness placement is also unresolved
+    (`flapjack-4ac.5.16.5.13.1`). HOL candidate:
+    `evaluate_nested_decs_load_globals`
+    (`pan_to_crepProofScript.sml:4139-4176`). Faithful port tracked by
+    `flapjack-4ac.5.16.5`. -/
 theorem evaluateNestedDecsLoadGlobalsCrepHOL {width : Nat} [NeZero width]
     {σ : Type} (state : CrepSemHOLState width σ) (value : ValueHOL width)
     (values : List (HolWordLab width)) (names : List Nat)

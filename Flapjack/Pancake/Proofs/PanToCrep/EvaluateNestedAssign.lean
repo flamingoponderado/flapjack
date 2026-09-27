@@ -168,15 +168,17 @@ theorem evalNestedAssignDistinctEqCrepHOLWithDeciders {width : Nat} [NeZero widt
                     HolFiniteMapExact.updateListEq, HolFiniteMapExact.updateEq,
                     FUPDATE_LIST_HOL_cons] using htail
 
-/-- Exact port of `pan_to_crepProofScript.sml:540-575`, over the exact HOL
-`CrepProgHOL`/`CrepExpHOL` and finite-support `CrepSemHOLState` carriers. The
-five propositions are respectively expression success, successful old-local
-lookup, assignment/expression variable disjointness, distinct assignment
-names, and equal list lengths. `evalCrepSemHOLExpDefault` and the canonical
-`evalCrepSemHOLProgExact` select the classical decisions needed for HOL's total
-set predicates; they add no logical premise to HOL's theorem. -/
-@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "eval_nested_assign_distinct_eq"
-  (fmap_as_finite_support := [locals, globals, code])]
+/-- FLAPJACK-SPECIFIC provisional rendering (no `@[hol]` tag), withdrawn
+2026-09-27 (bead flapjack-64k0, PR #1166 review item 2). The statement is over
+`evalCrepSemHOLProgExact`, the Lean no-decider wrapper around the
+re-implemented evaluator `evalCrepSemHOLProg`, which is itself explicitly
+untagged pending the fixed-width / FFI / agreement audit (see the module notes
+of `CrepSem/EvaluateHOL.lean`): no kernel-checked agreement theorem with HOL
+`evaluate` exists, and the recursive clauses thread the base-state decisions
+through `crepStampExactDomains`. The finite-map qualifier's owner/witness
+placement is likewise unresolved (`flapjack-4ac.5.16.5.13.1`). HOL candidate:
+`eval_nested_assign_distinct_eq` (`pan_to_crepProofScript.sml:540-575`).
+Faithful port tracked by `flapjack-4ac.5.16.5`. -/
 theorem evalNestedAssignDistinctEqCrepHOL {width : Nat} [NeZero width]
     {σ : Type} (state : CrepSemHOLState width σ)
     (expressions : List (CrepExpHOL width)) (names : List Nat)
