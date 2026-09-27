@@ -3349,9 +3349,43 @@
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Codex (proof inventory)"
   },
-    {"hol_path": null, "hol_name": null, "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean", "lean_name": "ctxtFcEidsEqHOL", "statement_status": "no_hol_reference_pending_classification", "reviewer": "flapjack-ds9 HOLD (coordinator, 2026-09-27): exact-port proof retained as untagged infrastructure; the @[hol] tag was WITHDRAWN pending the DS10 imported-owner finite-map / words_as_type_indexed_bitvec qualifier policy. No HOL tag currently claims this declaration."},
-    {"hol_path": null, "hol_name": null, "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean", "lean_name": "ctxtFcFuncsEqHOL", "statement_status": "no_hol_reference_pending_classification", "reviewer": "flapjack-ds9 HOLD (coordinator, 2026-09-27): exact-port proof retained as untagged infrastructure; the @[hol] tag was WITHDRAWN pending the DS10 imported-owner finite-map / words_as_type_indexed_bitvec qualifier policy. No HOL tag currently claims this declaration."},
-    {"hol_path": null, "hol_name": null, "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean", "lean_name": "ctxtFcVmaxHOL", "statement_status": "no_hol_reference_pending_classification", "reviewer": "flapjack-ds9 HOLD (coordinator, 2026-09-27): exact-port proof retained as untagged infrastructure; the @[hol] tag was WITHDRAWN pending the DS10 imported-owner finite-map / words_as_type_indexed_bitvec qualifier policy. No HOL tag currently claims this declaration."},
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "ctxt_fc_funcs_eq",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "ctxtFcFuncsEqHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "funcs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-09-27; beads flapjack-4ac.5.91, recovered after the words/imported-owner policy landed): HOL ctxt_fc_funcs_eq (pan_to_crepProofScript.sml:2295-2299) states the no-premise projection (ctxt_fc cvs em vs shs ns).funcs = cvs, with HOL `funname |-> ((varname # shape) # shape)` as the funcs field. The Lean theorem ctxtFcFuncsEqHOL states the same projection over the exact PanToCrepContextExact carrier (MlS = mlstring keys, ShapeHOL = shape payloads) with the funcs field in the reviewed HolFiniteMapExact translation; the argument order (cvs, em, vs, shs, ns), the unrestricted quantifiers, and the definitional equality all match, and the only representation difference is the finite-map carrier recorded by the fmap_as_finite_support qualifier on the imported carrier PanToCrepContextExact (same-module witness CtxtFcExact.holFmapAsFiniteSupportWitness). HOL word-dimension audit (flapjack-4ac.14 policy): the signature is width-indexed with BitVec width exception codes and [NeZero width], so (words_as_type_indexed_bitvec) also applies and the combined status is used. Direct HOL-EVAL row functions_projection=T in scripts/hol-probes/ctxt_fc_probe.out is replayed by the kernel-checked regression in Flapjack/Test/PanToCrepContextExactParity.lean."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "ctxt_fc_eids_eq",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "ctxtFcEidsEqHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "eids"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-09-27; beads flapjack-4ac.5.92, recovered after the words/imported-owner policy landed): HOL ctxt_fc_eids_eq (pan_to_crepProofScript.sml:2301-2305) states the no-premise projection (ctxt_fc cvs em vs shs ns).eids = em, with HOL `eid |-> 'a word` as the eids field. The Lean theorem ctxtFcEidsEqHOL states the same projection over the exact PanToCrepContextExact carrier (MlS = mlstring keys, exception codes are BitVec width) with the eids field in the reviewed HolFiniteMapExact translation; the argument order (cvs, em, vs, shs, ns), the unrestricted quantifiers, and the definitional equality all match, and the only representation difference is the finite-map carrier recorded by the fmap_as_finite_support qualifier on the imported carrier PanToCrepContextExact (same-module witness CtxtFcExact.holFmapAsFiniteSupportWitness). HOL word-dimension audit (flapjack-4ac.14 policy): the signature is width-indexed with BitVec width exception codes and [NeZero width], so (words_as_type_indexed_bitvec) also applies and the combined status is used. Direct HOL-EVAL row shaped_slots in scripts/hol-probes/ctxt_fc_probe.out carries `eids := FEMPTY⟨«E» ↦ 3w⟩` and is replayed by the kernel-checked regression in Flapjack/Test/PanToCrepContextExactParity.lean."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "ctxt_fc_vmax",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "ctxtFcVmaxHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "funcs",
+      "eids"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-09-27; beads flapjack-4ac.5.93, recovered after the words/imported-owner policy landed): HOL ctxt_fc_vmax (pan_to_crepProofScript.sml:2307-2312) proves the no-premise projection (ctxt_fc ctxt.funcs em vs shs ns).vmax = MAX_LIST ns by rw [ctxt_fc_def]. HOL's first argument ctxt.funcs is a projection of an implicitly universally quantified context record and ctxt_fc ignores it in the vmax clause, so the Lean statement's bare cvs argument is equivalent. The Lean theorem ctxtFcVmaxHOL states the same projection over the exact PanToCrepContextExact carrier; the argument order (cvs, em, vs, shs, ns) and the unrestricted quantifiers match, and MAX_LIST is maxList. The conclusion is a Nat that depends only on ns and does not traverse a finite-map field, but the term is stated over the imported exact carrier and binds the cvs/em maps to its funcs/eids fields, so the fmap_as_finite_support := [funcs, eids] qualifier records that canonical HolFiniteMapExact translation (same-module witness CtxtFcExact.holFmapAsFiniteSupportWitness). HOL word-dimension audit (flapjack-4ac.14 policy): the signature is width-indexed with BitVec width exception codes and [NeZero width], so (words_as_type_indexed_bitvec) also applies and the combined status is used. Direct HOL-EVAL rows vmax_nonempty_list=T and vmax_empty_list=T in scripts/hol-probes/ctxt_fc_probe.out are replayed by the kernel-checked regression in Flapjack/Test/PanToCrepContextExactParity.lean."
+  },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
     "hol_name": "filter_not_mem_self",
@@ -3584,7 +3618,27 @@
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only finite-support carrier roundtrip for PanToCrepTargetLocalsExact. It proves that converting the wrapper to its broad counterpart and back preserves its HolFiniteMapExact targetLocals field. This is representation infrastructure for the evaluate_shape_invariant_ret_inst port, not a HOL declaration."
   },
-    {"hol_path": null, "hol_name": null, "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean", "lean_name": "ctxtMaxElLeqFiniteExact", "statement_status": "no_hol_reference_pending_classification", "reviewer": "flapjack-ds9 HOLD (coordinator, 2026-09-27): exact-port proof retained as untagged infrastructure; the @[hol] tag was WITHDRAWN pending the DS10 imported-owner finite-map / words_as_type_indexed_bitvec qualifier policy. No HOL tag currently claims this declaration."},
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "ctxt_max_el_leq",
+    "hol_line": 1493,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "ctxtMaxElLeqFiniteExact",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-09-27; bead flapjack-4ac.5.94, recovered after the words/imported-owner policy landed): HOL ctxt_max_el_leq (pan_to_crepProofScript.sml:1493-1503) has the conjunction ctxt_max ctxt.vmax ctxt.vars and FLOOKUP ctxt.vars v = SOME (sh,ns) and n < LENGTH ns as its premise and concludes EL n ns <= ctxt.vmax. Lean keeps exactly those three premise conjuncts (curried) and the same conclusion: ctxt_max becomes the exact-carrier rendering ctxtMaxFiniteExact (the predicate already used inside the tagged locals_rel_def), FLOOKUP becomes .lookup, EL n ns becomes the bounded getElem slots[n], and LENGTH/<= become List.length/<=. The only finite-map value traversed is the named PanToCrepContextExact.vars field of the imported exact carrier, whose same-module canonical field witness CtxtMaxElLeqExact.holFmapAsFiniteSupportWitness establishes the reviewed finite-support translation; vmax is Nat and is not a finite-map field. HOL word-dimension audit (flapjack-4ac.14 policy): the imported carrier PanToCrepContextExact width carries [NeZero width] and BitVec width exception codes, so (words_as_type_indexed_bitvec) also applies and the combined status is used. The proof is HOL's rw [ctxt_max_def] with the bound instantiated at EL n ns and EL_MEM. No direct HOL-EVAL oracle row exists for this symbolic-index lemma, so the kernel-checked concrete instance in Flapjack/Test/PanToCrepStateRelCarrierParity.lean replays it. This exact-carrier port complements the withdrawn String-keyed ctxtMaxGetElemLe analogue (still recorded below as documented_mismatch)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module carrier evidence required by scripts/check-hol-refs.py for the tagged ctxtMaxElLeqFiniteExact fmap_as_finite_support qualifier. It is declared under the fresh namespace CtxtMaxElLeqExact and forwards PanToCrepContextExact.holFmapAsFiniteSupportWitness, the toBroad/ofBroad roundtrip of the imported exact carrier. It has no HOL declaration."
+  },
   {
     "hol_path": null,
     "hol_name": null,
@@ -13172,6 +13226,21 @@
       "eshapes"
     ],
     "reviewer": "flapjack-ds10 (bead flapjack-wci6, 2026-09-26; relocated per coordinator HOLD): HOL panPropsScript.sml:664-672 quantifies t, e, esh and concludes eval (t with eshapes := esh) e = eval t e. Lean preserves that quantifier order (state, expression, eshapes map) and the same evaluator result; the expression evaluator never reads eshapes. The state is the PanProps counterpart carrier PanPropsEvalStateFiniteExact, which owns the four HolFiniteMapExact fields and the same-module canonical holFmapAsFiniteSupportWitness, so the fmap_as_finite_support qualifier is checker-valid. evalHOL delegates to the exact broad expression evaluator through toExact. Proof: evalHOLExact_upd_eshapes_eq over the broad carrier by the mutual evalHOLExact.induct. [NeZero width] models HOL's positive word dimension and DecidablePred state.memaddrs renders HOL word-set membership. The qualifier records only the four finite-map fields."
+   },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "opt_mmap_eval_upd_clock_eq",
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
+    "lean_name": "optMmapEvalHOL_upd_clock_eq",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-09-27; bead flapjack-4ac.4.112, recovered after the words/imported-owner policy landed): HOL panPropsScript.sml:674-680 states !es s ck. OPT_MMAP (eval (s with clock := ck + s.clock)) es = OPT_MMAP (eval s) es. The Lean theorem optMmapEvalHOL_upd_clock_eq preserves HOL's binder order (state, expressions, clock), the same clock+state.clock update, and the same OPT_MMAP/List.mapM equality; it follows from the tagged evalHOL_upd_clock_eq by induction on the expression list, with no additional hypothesis or quantifier change. The state is the PanProps counterpart carrier PanPropsEvalStateFiniteExact, which owns the four HolFiniteMapExact fields (locals/globals/code/eshapes) and the same-module canonical holFmapAsFiniteSupportWitness, recorded by the fmap_as_finite_support qualifier. HOL word-dimension audit (flapjack-4ac.14 policy): the carrier is width-indexed ([NeZero width] with RiscV.Word width fields), so (words_as_type_indexed_bitvec) also applies and the combined status is used. DecidablePred state.memaddrs is computation evidence for HOL word-set membership. No direct HOL probe row exists for this list theorem."
    },
   {
     "hol_path": "cakeml/pancake/pan_to_crepScript.sml",

@@ -1220,29 +1220,27 @@ theorem evalHOL_upd_eshapes_eq {width : Nat} {σ : Type} [NeZero width]
   simp only [evalHOL]
   exact evalHOLExact_upd_eshapes_eq state.toExact expression eshapes.lookup
 
-/-- Flapjack-specific untagged analogue of HOL `panProps$opt_mmap_eval_upd_clock_eq`
-    (`cakeml/pancake/semantics/panPropsScript.sml:674-680`), retained as the
-    intended exact finite-support rendering; the `@[hol]` tag is withdrawn
-    pending carrier-qualifier review (see HOLD below):
+/-- Exact port of HOL `panProps$opt_mmap_eval_upd_clock_eq`
+    (`cakeml/pancake/semantics/panPropsScript.sml:674-680`):
     `!es s ck. OPT_MMAP (eval (s with clock := ck + s.clock)) es =
        OPT_MMAP (eval s) es`. HOL binds `es`, `s`, `ck` and advances the clock by
     `ck + s.clock`, matching the `{ state with clock := clock + state.clock }`
     update below; HOL's `OPT_MMAP` is Lean's `List.mapM`. The state is the
     PanProps counterpart carrier `PanPropsEvalStateFiniteExact`, which owns the
     four `HolFiniteMapExact` fields (locals/globals/code/eshapes) and the
-    same-module canonical `holFmapAsFiniteSupportWitness`, so a
-    `fmap_as_finite_support` qualifier would be checker-valid; `evalHOL` delegates to
-    the exact broad expression evaluator through `toExact`. The statement
-    follows from the tagged `evalHOL_upd_clock_eq` by induction on `es`. `[NeZero
-    width]` models HOL's positive word dimension and `DecidablePred
-    state.memaddrs` is computation evidence for the HOL word-set guard.
-
-    HOLD (coordinator, 2026-09-27): the `@[hol]` tag is withdrawn pending the
-    DS10 `words_as_type_indexed_bitvec` policy. `PanPropsEvalStateFiniteExact
-    width σ` is a width-indexed state carrier, so the fmap-only qualifier does
-    not record the HOL word-dimension translation; do not re-tag until the
-    combined qualifier lands and the carrier is source-reviewed. The proof is
-    kept as untagged infrastructure. -/
+    same-module canonical `holFmapAsFiniteSupportWitness`, so the
+    `fmap_as_finite_support` qualifier is checker-valid; `evalHOL` delegates to
+    the exact broad expression evaluator through `toExact`. The carrier is
+    width-indexed (`[NeZero width]` with `RiscV.Word width` fields), so HOL's
+    type-indexed `'a word` translation is recorded by the
+    `(words_as_type_indexed_bitvec)` qualifier alongside the finite-support field
+    qualifier. The statement follows from the tagged `evalHOL_upd_clock_eq` by
+    induction on `es`. `[NeZero width]` models HOL's positive word dimension and
+    `DecidablePred state.memaddrs` is computation evidence for the HOL word-set
+    guard. -/
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "opt_mmap_eval_upd_clock_eq"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem optMmapEvalHOL_upd_clock_eq {width : Nat} {σ : Type} [NeZero width]
     (state : PanPropsEvalStateFiniteExact width σ) [h : DecidablePred state.memaddrs]
     (expressions : List (ExpHOL width)) (clock : Nat) :
