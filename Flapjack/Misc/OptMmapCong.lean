@@ -38,4 +38,34 @@ theorem optMmapCongHOL {α β : Type} (l1 l2 : List α) (f f' : α → Option β
       simp only [List.mapM_cons]
       rw [h a (by simp), ih (fun x hx => h x (by simp [hx]))]
 
+/-- Closed form of HOL's `misc$IMP_OPT_MMAP_EQ`
+(`cakeml/misc/miscScript.sml:2491`), which is stated there with the two
+functions `f1`, `f2` as free variables:
+
+```
+Theorem IMP_OPT_MMAP_EQ:
+   !l1 l2. (MAP f1 l1 = MAP f2 l2) ==> (OPT_MMAP f1 l1 = OPT_MMAP f2 l2)
+```
+
+Because the HOL declaration is open (it does not quantify `f1`/`f2`), this
+Lean statement is the corresponding closed generalization over `List.mapM`,
+used to relate the compiled-expression image list with the source evaluation
+list in the `compile_exp_val_rel` `Op`/`Panop` cases.  It is Flapjack-only
+infrastructure and therefore carries no `@[hol]` tag. -/
+theorem impOptMmapEq {α β γ : Type} (f1 : α → Option γ) (f2 : β → Option γ)
+    (l1 : List α) (l2 : List β) (h : l1.map f1 = l2.map f2) :
+    l1.mapM f1 = l2.mapM f2 := by
+  induction l1 generalizing l2 with
+  | nil =>
+      cases l2 with
+      | nil => rfl
+      | cons b bs => simp at h
+  | cons a as ih =>
+      cases l2 with
+      | nil => simp at h
+      | cons b bs =>
+          simp only [List.map_cons, List.mapM_cons] at h ⊢
+          injection h with hhead htail
+          rw [hhead, ih bs htail]
+
 end Flapjack
