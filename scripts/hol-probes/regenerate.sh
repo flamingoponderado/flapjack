@@ -1155,7 +1155,7 @@ run_probe crep_eval_load_32_probeScript.sml crep_eval_load_32_probe.out \
 # The eval Load (word cell) probe observes the fixed RV64 total word -> word_lab
 # memory cell read: a live cell and the memaddrs domain failure.
 run_probe crep_eval_load_rv64_probeScript.sml crep_eval_load_rv64_probe.out \
-  mem_load_valid eval_load_outside_domain \
+  mem_load_valid eval_load_one_load_one \
   "$cake_dir/pancake/semantics/crepSemScript.sml" \
   "$cake_dir/pancake/semantics"
 # The eval StoreByte probe observes HOL set_byte at a nonzero byte offset: the

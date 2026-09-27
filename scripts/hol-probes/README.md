@@ -143,6 +143,24 @@ constructor family and defensive fallback. `Flapjack.Test.CompileExpParity`
 checks those rows through both the existing production-carrier implementation
 and the exact-carrier `compileExpExactHOLW`; the latter is tagged against
 `compile_exp_def` and uses the exact Pan/Crepe expression and context carriers.
+The general `Load` case regression also pairs one shared 64-bit input across
+`compile_exp_probe.out` (`load_one`), `pan_mem_load_probe.out`
+(`one_load_one`), `crep_load_shape_probe.out` (`load_one`), and
+`crep_eval_load_rv64_probe.out` (`mem_load_one_load_one` and
+`eval_load_one_load_one`). The probes observe `compile_exp`, `mem_load`,
+`load_shape`, and the Crep `mem_load`/`eval` equations at address `3w`, with
+cell value `Word 3w`. The exact-carrier four-conclusion case regression is
+`Flapjack.Test.PanToCrepStateRelCarrierParity.loadCaseAllConclusions`; its
+oracle guard ties the source result, compiled expression, generated Load,
+target memory read, and target expression evaluation to those same rows.
+Regenerate the three changed fixtures from the original read-only HOL sources
+with:
+
+```sh
+CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=pan_mem_load_probeScript.sml scripts/hol-probes/regenerate.sh
+CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=crep_load_shape_probeScript.sml scripts/hol-probes/regenerate.sh
+CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=crep_eval_load_rv64_probeScript.sml scripts/hol-probes/regenerate.sh
+```
 `excp_rel_probe.out` and `ctxt_fc_probe.out` are direct EVALs from
 `pan_to_crepProofTheory`, paired with `Flapjack.Test.PanToCrepRelationsParity`.
 The `functions_projection` row in `ctxt_fc_probe.out` directly checks the

@@ -1,4 +1,5 @@
 empty=[]
 zero_one=[Load (Const 7w)]
+load_one=[Load (Const 3w)]
 zero_two=[Load (Const 7w); Load (Op Add [Const 7w; Const 4w])]
 nonzero_two=[Load (Op Add [Const 7w; Const 4w]); Load (Op Add [Const 7w; Const 8w])]
