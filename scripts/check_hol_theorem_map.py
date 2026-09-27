@@ -1728,6 +1728,8 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         ("Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean", "convertResHOL"),
         ("Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean", "isContResHOL"),
         ("Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean", "resVsHOL"),
+        ("Flapjack/Pancake/Proofs/PanStructs/StructInfosOkExact.lean",
+         "structInfosOkHOLExact_lookup_fields_nodup"),
         ("Flapjack/Pancake/Proofs/PanGlobals.lean", "ALOOKUP_MAP3"),
         ("Flapjack/Pancake/Proofs/PanGlobals.lean", "ALOOKUP_MAP4"),
         ("Flapjack/Pancake/PanGlobals.lean", "fpermName"),

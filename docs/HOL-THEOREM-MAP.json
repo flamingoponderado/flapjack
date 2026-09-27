@@ -5470,6 +5470,14 @@
     "reviewer": "Source-reviewed against pan_structsProofScript.sml:132-139. The five premises and conclusion match: prior invariant; distinct field names; fresh structure name; EVERY exact is_wf_shape over xs for field shapes; and size from size_of_sh_with_ctxt xs. Lean uses the exact MlS/ShapeHOL/StructContextExact/fields-and-size carriers, List.Nodup for ALL_DISTINCT, and isWfShapesExactHOL for EVERY. The proof carries old-entry suffix and size obligations through size_of_sh_with_ctxt_drop. Direct HOL theorem-instantiation row: scripts/hol-probes/afindi_probe.out:13; Lean regression: Flapjack.Test.PanStructsAfindiParity.structInfosOkHOLExact_cons_fixture."
   },
   {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "alookup_map_structs_ok",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/StructInfosOkExact.lean",
+    "lean_name": "structInfosOkHOLExact_lookup_fields_nodup",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source-reviewed against pan_structsProofScript.sml:243. HOL's local Theorem alookup_map_structs_ok states that ALOOKUP s_ctxt nm = SOME info together with struct_infos_ok s_ctxt implies ALL_DISTINCT (MAP FST info.fields). Lean keeps the exact StructContextExact/StructInfoHOLExact/MlS carriers, uses the reviewed ALOOKUP analogue structContextLookupHOL and the exact structInfosOkHOLExact invariant, and states ALL_DISTINCT (MAP FST ...) as List.Nodup. Direct original-HOL instance row: scripts/hol-probes/afindi_probe.out:14; exact-carrier regression: Flapjack.Test.PanStructsAfindiParity.structInfosOkHOLExact_lookup_fields_nodup_fixture."
+  },
+  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanStructs.lean",

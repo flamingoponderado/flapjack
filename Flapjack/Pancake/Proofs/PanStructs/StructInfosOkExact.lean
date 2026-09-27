@@ -318,4 +318,31 @@ theorem structInfosOkHOLExact_append (xs ys : StructContextExact)
   have hdrop := structInfosOkHOLExact_drop xs.length (xs ++ ys) hok
   simpa using hdrop
 
+/-- Exact HOL `alookup_map_structs_ok`
+    (`pan_structsProofScript.sml:243`): a structure found by `ALOOKUP` in a
+    valid context has distinct field names. The context and the returned entry
+    are the exact `StructContextExact`/`StructInfoHOLExact` carriers, lookup is
+    the reviewed `ALOOKUP` analogue `structContextLookupHOL`, and
+    `ALL_DISTINCT (MAP FST info.fields)` is `(info.fields.map Prod.fst).Nodup`. -/
+@[hol "cakeml/pancake/proofs/pan_structsProofScript.sml" "alookup_map_structs_ok"]
+theorem structInfosOkHOLExact_lookup_fields_nodup (name : MlS)
+    (context : StructContextExact) (info : StructInfoHOLExact)
+    (hlookup : structContextLookupHOL name context = some info)
+    (hok : structInfosOkHOLExact context) :
+    (info.fields.map Prod.fst).Nodup := by
+  induction context with
+  | nil => simp [structContextLookupHOL] at hlookup
+  | cons entry rest ih =>
+      obtain ⟨candidate, entryInfo⟩ := entry
+      rw [structContextLookupHOL_cons] at hlookup
+      by_cases hmatch : name = candidate
+      · rw [if_pos hmatch] at hlookup
+        have heq : entryInfo = info := Option.some.inj hlookup
+        subst heq
+        exact hok.1 (candidate, entryInfo) (by simp)
+      · rw [if_neg hmatch] at hlookup
+        have hrest : structInfosOkHOLExact rest := by
+          simpa using structInfosOkHOLExact_drop 1 ((candidate, entryInfo) :: rest) hok
+        exact ih hlookup hrest
+
 end Flapjack.Pancake.Proofs.PanStructs.StructInfosOkExact
