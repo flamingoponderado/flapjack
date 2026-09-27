@@ -2056,6 +2056,12 @@ def validate_inventory(
                 "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec needs "
                 "both the fmap_as_finite_support and words_as_type_indexed_bitvec @[hol] qualifiers"
             )
+        if words_bitvec and fmap_relation and status != combined_relation_words_status:
+            errors.append(
+                f"{key[0]}:{key[1]}: fmap_as_finite_support_relation combined with "
+                "words_as_type_indexed_bitvec requires the combined review status "
+                "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec"
+            )
         if status == combined_relation_words_status and not (
             words_bitvec and fmap_relation
         ):
@@ -2077,7 +2083,7 @@ def validate_inventory(
             errors.append(
                 f"{key[0]}:{key[1]}: words_as_type_indexed_bitvec @[hol] tag needs a reviewed "
                 "source classification (reviewed_words_as_type_indexed_bitvec, or the combined "
-                "status alongside fmap_as_finite_support or fmap_as_finite_support_relation)"
+                "status alongside fmap_as_finite_support / fmap_as_finite_support_relation)"
             )
         if not words_bitvec and status == "reviewed_words_as_type_indexed_bitvec":
             errors.append(
