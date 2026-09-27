@@ -13606,6 +13606,36 @@
     "reviewer": "flapjack-ds8 (source comparison; bead flapjack-pxn.18.3.5.8.8.7): HOL FLOOKUP_set_globals (crepPropsScript.sml:297-301) `FLOOKUP (set_globals gv w s).locals n = FLOOKUP s.locals n` over the exact finite-support CrepSemHOLState carrier, using the tagged CrepSemHOLState.setGlobals (crepSemScript.sml:61-63), which updates only globals. FLOOKUP is rendered as the canonical HolFiniteMapExact.lookup. Finite-map representation recorded by the qualifier (locals/globals/code); same-module canonical witness forwards CrepSemHOLState.holFmapAsFiniteSupportWitness. Direct HOL row set_globals_direct in crep_store_global_probe.out. Representation-only; no statement/side-condition change. flapjack-ds8 (bead flapjack-4ac.12): this theorem is stated over the IMPORTED width-indexed carrier CrepSemHOLState, so it needs (words_as_type_indexed_bitvec) too, but scripts/check-hol-refs.py cannot resolve imported carriers (module-vs-path bug tracked by flapjack-4ac.13). The word-dimension qualifier is therefore intentionally omitted pending that checker fix; the finite-map fields are unchanged.",
     "words_as_type_indexed_bitvec": true
   },
+  {
+    "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
+    "hol_name": "sh_mem_load_FLOOKUP_locals",
+    "hol_line": 303,
+    "lean_path": "Flapjack/Pancake/Semantics/CrepProps.lean",
+    "lean_name": "crepShMemLoadHOL_flookup_locals",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 (source comparison; bead flapjack-2de.9): HOL sh_mem_load_FLOOKUP_locals (crepPropsScript.sml:303-310) quantifies v addr nb s res t n k with hypotheses `sh_mem_load v addr nb s = (res, t)`, `n <> v`, and `res = NONE \\/ res = SOME (Continue k) \\/ res = SOME (Break k)`, concluding `FLOOKUP t.locals n = FLOOKUP s.locals n`. The Lean declaration has exactly those quantifiers (HOL v/n = Nat name/key, free k = Nat label; res/t are the pair components) and the same three hypotheses with `crepShMemLoadExactHOL` (the already-tagged exact sh_mem_load_def port) and conclusion rendered as HolFiniteMapExact.lookup. CrepSemHOLState width sigma is the imported width-indexed carrier whose locals/globals/code are HOL |-> maps, so both qualifiers apply; the same-module canonical witness holFmapAsFiniteSupportWitness (namespace CrepPropsFiniteSupport) forwards CrepSemHOLState.holFmapAsFiniteSupportWitness. [NeZero width] is retained as the discharge of HOL dimindex (:alpha) >= 1, with no extra positivity hypothesis; DecidablePred state.shMemaddrs is proof-only evidence for HOL set membership. Representation-only qualifiers; no quantifier, hypothesis, side-condition, or conclusion change. No direct HOL probe row for this declaration was found, so no kernel-checked oracle regression is added (the theorem's proof is kernel-checked by lake build)."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
+    "hol_name": "sh_mem_store_FLOOKUP_locals",
+    "hol_line": 312,
+    "lean_path": "Flapjack/Pancake/Semantics/CrepProps.lean",
+    "lean_name": "crepShMemStoreHOL_flookup_locals",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 (source comparison; bead flapjack-2de.10): HOL sh_mem_store_FLOOKUP_locals (crepPropsScript.sml:312-317) quantifies v addr nb s res t n with the single hypothesis `sh_mem_store v addr nb s = (res, t)` and concludes `FLOOKUP t.locals n = FLOOKUP s.locals n` with no side condition. The Lean declaration matches clause-for-clause (HOL v/n = Nat name/key, res/t the pair components) using `crepShMemStoreExactHOL` (the already-tagged exact sh_mem_store_def port) and renders FLOOKUP as HolFiniteMapExact.lookup. CrepSemHOLState width sigma is the imported width-indexed carrier whose locals/globals/code are HOL |-> maps, so both qualifiers apply; the same-module canonical witness holFmapAsFiniteSupportWitness (namespace CrepPropsFiniteSupport) forwards CrepSemHOLState.holFmapAsFiniteSupportWitness. [NeZero width] is retained as the discharge of HOL dimindex (:alpha) >= 1 with no restated positivity hypothesis; DecidablePred state.shMemaddrs is proof-only evidence for HOL set membership. Representation-only qualifiers; no quantifier, hypothesis, side-condition, or conclusion change. No direct HOL probe row for this declaration was found, so no kernel-checked oracle regression is added (the theorem's proof is kernel-checked by lake build)."
+  },
     {
       "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
       "hol_name": "opt_mmap_eval_upd_clock_eq",
