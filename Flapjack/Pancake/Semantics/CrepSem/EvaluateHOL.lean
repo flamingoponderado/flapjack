@@ -3950,4 +3950,469 @@ theorem evalCrepSemHOLProg.inductHOL {width : Nat} [NeZero width] {σ : Type}
   | «return» values => exact hreturn state memDec shMemDec values
   | shMem operator name address => exact hshMem state memDec shMemDec operator name address
   | tick => exact htick state memDec shMemDec
+private def CrepClockBounded {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (program : CrepProgHOL width) : Prop :=
+  (evalCrepSemHOLProg state memDec shMemDec program).2.clock ≤ state.clock
+
+private theorem decClock_clock_lt {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) (h : state.clock ≠ 0) :
+    (decClockCrepSemHOL state).clock < state.clock := by
+  rw [decClockCrepSemHOL_clock']; omega
+
+private theorem decClock_clock_le {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) :
+    (decClockCrepSemHOL state).clock ≤ state.clock := by
+  rw [decClockCrepSemHOL_clock']; omega
+
+private theorem fixClock_clock_le {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (step : Option (CrepResultHOLExact width) × CrepSemHOLState width σ) :
+    (fixClockCrepSemHOL state step).2.clock ≤ state.clock := by
+  cases h : fixClockCrepSemHOL state step with
+  | mk r s' => exact fixClockCrepSemHOL_IMP_LESS_EQ state step r s' h
+
+private theorem shMemLoadClockEq {width : Nat} [NeZero width] {σ : Type}
+    (operator : CrepMemOp) (name : Nat) (address : BitVec width)
+    (state : CrepSemHOLState width σ) [hsh : DecidablePred state.shMemaddrs] :
+    (crepShMemLoadHOL operator name address state hsh).2.clock = state.clock := by
+  cases h : crepShMemLoadHOL operator name address state hsh with
+  | mk r s' =>
+    exact crepShMemLoadClock name address (crepShMemByteWidth operator) state r s' h
+
+private theorem shMemStoreClockEq {width : Nat} [NeZero width] {σ : Type}
+    (operator : CrepMemOp) (name : Nat) (address : BitVec width)
+    (state : CrepSemHOLState width σ) [hsh : DecidablePred state.shMemaddrs] :
+    (crepShMemStoreHOL operator name address state hsh).2.clock = state.clock := by
+  cases h : crepShMemStoreHOL operator name address state hsh with
+  | mk r s' =>
+    exact crepShMemStoreClock name address (crepShMemByteWidth operator) state r s' h
+
+set_option linter.unusedVariables false in
+theorem crepWhileStep_clock_le {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (condition : CrepExpHOL width) (body : CrepProgHOL width)
+    (loopStep : Option (CrepResultHOLExact width) × CrepSemHOLState width σ)
+    (hstep : loopStep.2.clock ≤ state.clock)
+    (hrec : (evalCrepSemHOLProg (crepStampExactDomains state loopStep.2)
+        memDec shMemDec (.while condition body)).2.clock ≤ state.clock) :
+    (match hfixed : loopStep with
+     | (none, loopState) =>
+         evalCrepSemHOLProg (crepStampExactDomains state loopState) memDec shMemDec
+           (.while condition body)
+     | (some (.continue 0), loopState) =>
+         evalCrepSemHOLProg (crepStampExactDomains state loopState) memDec shMemDec
+           (.while condition body)
+     | (some (.break 0), loopState) => (none, loopState)
+     | (result, loopState) => (exitLoopCrepResult result, loopState)).2.clock ≤
+        state.clock := by
+  split <;> (first | exact hrec | exact hstep)
+
+set_option linter.unusedVariables false in
+theorem crepCallFixed_clock_le {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (returnInfo : Option (List Nat × Option (BitVec width × CrepProgHOL width)))
+    (fixed : Option (CrepResultHOLExact width) × CrepSemHOLState width σ)
+    (hfix : fixed.2.clock ≤ state.clock)
+    (hhandler : ∀ (handlerBody : CrepProgHOL width),
+        (evalCrepSemHOLProg
+          (crepStampExactDomains state { fixed.2 with locals := state.locals })
+          memDec shMemDec handlerBody).2.clock ≤ state.clock) :
+    (match hfixed : fixed with
+     | (none, bodyState) => (some CrepResultHOLExact.error, bodyState)
+     | (some (CrepResultHOLExact.break _), bodyState) => (some CrepResultHOLExact.error, bodyState)
+     | (some (CrepResultHOLExact.continue _), bodyState) => (some CrepResultHOLExact.error, bodyState)
+     | (some (CrepResultHOLExact.return retvs), bodyState) =>
+         match returnInfo with
+         | none => (some (CrepResultHOLExact.return retvs), CrepSemHOLState.emptyLocals bodyState)
+         | some (rts, _) =>
+             if retvs.length ≠ rts.length then (some CrepResultHOLExact.error, bodyState)
+             else match rts.mapM state.locals.lookup with
+               | some _ => (none, { bodyState with
+                   locals := state.locals.updateListEq
+                     (rts.zip retvs) })
+               | none => (some CrepResultHOLExact.error, bodyState)
+     | (some (CrepResultHOLExact.exception eid), bodyState) =>
+         match returnInfo with
+         | none =>
+             (some (CrepResultHOLExact.exception eid), CrepSemHOLState.emptyLocals bodyState)
+         | some (_, none) =>
+             (some (CrepResultHOLExact.exception eid), CrepSemHOLState.emptyLocals bodyState)
+         | some (_, some (eid', handlerBody)) =>
+             if eid = eid' then
+               evalCrepSemHOLProg
+                 (crepStampExactDomains state { bodyState with locals := state.locals })
+                 memDec shMemDec handlerBody
+             else (some (CrepResultHOLExact.exception eid), CrepSemHOLState.emptyLocals bodyState)
+     | (some result, bodyState) =>
+         (some result, CrepSemHOLState.emptyLocals bodyState)).2.clock ≤
+        state.clock := by
+  split
+  · exact hfix
+  · exact hfix
+  · exact hfix
+  · split
+    · exact hfix
+    · split
+      · exact hfix
+      · split
+        · exact hfix
+        · exact hfix
+  · split
+    · exact hfix
+    · exact hfix
+    · split
+      · exact hhandler _
+      · exact hfix
+  · exact hfix
+
+set_option maxHeartbeats 6400000 in
+set_option maxRecDepth 4000 in
+theorem evalCrepSemHOLProg_clock_le {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (program : CrepProgHOL width) :
+    (evalCrepSemHOLProg state memDec shMemDec program).2.clock ≤ state.clock := by
+  have hmain : ∀ (c : Nat) (state : CrepSemHOLState width σ), state.clock ≤ c →
+      ∀ (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+        (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+        (program : CrepProgHOL width),
+        CrepClockBounded state memDec shMemDec program := by
+    intro c
+    induction c using Nat.strongRecOn with
+    | ind c ihClock =>
+      intro state hclk memDec shMemDec program
+      have inner : ∀ (n : Nat) (program : CrepProgHOL width), sizeOf program ≤ n →
+          ∀ (state : CrepSemHOLState width σ), state.clock ≤ c →
+          ∀ (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+            (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a)),
+            CrepClockBounded state memDec shMemDec program := by
+        intro n
+        induction n using Nat.strongRecOn with
+        | ind n ihSize =>
+          intro program hsize state hclk memDec shMemDec
+          cases program with
+          | skip =>
+              simp [CrepClockBounded, evalCrepSemHOLProg_skip]
+          | dec name value body =>
+              have hsub : sizeOf body < n := by
+                have h1 : sizeOf body < sizeOf (CrepProgHOL.dec name value body) := by
+                  decreasing_trivial
+                omega
+              have ihBody := ihSize (sizeOf body) hsub body (by omega)
+              unfold CrepClockBounded
+              rw [evalCrepSemHOLProg_dec]
+              split
+              · simp
+              · rename_i v _
+                have hb := ihBody (CrepSemHOLState.setVar name v state)
+                  (by simp only [CrepSemHOLState.setVar]; exact hclk) memDec shMemDec
+                unfold CrepClockBounded at hb
+                simpa only [CrepSemHOLState.setVar] using hb
+          | primitive names operator args =>
+              unfold CrepClockBounded
+              rw [evalCrepSemHOLProg_primitive]
+              repeat' (first | split | simp_all)
+          | assign name src =>
+              unfold CrepClockBounded
+              rw [evalCrepSemHOLProg_assign]
+              split
+              · simp
+              · rename_i value _
+                split <;> simp [CrepSemHOLState.setVar]
+          | store dst src =>
+              unfold CrepClockBounded
+              rw [evalCrepSemHOLProg_store]
+              repeat' (first | split | simp_all)
+          | store32 dst src =>
+              unfold CrepClockBounded
+              rw [evalCrepSemHOLProg_store32]
+              repeat' (first | split | simp_all)
+          | storeByte dst src =>
+              unfold CrepClockBounded
+              rw [evalCrepSemHOLProg_storeByte]
+              repeat' (first | split | simp_all)
+          | storeGlob dst src =>
+              unfold CrepClockBounded
+              rw [evalCrepSemHOLProg_storeGlob]
+              split <;> simp [CrepSemHOLState.setGlobals]
+          | seq first second =>
+              have hsubF : sizeOf first < n := by
+                have h1 : sizeOf first < sizeOf (CrepProgHOL.seq first second) := by
+                  decreasing_trivial
+                omega
+              have hsubS : sizeOf second < n := by
+                have h1 : sizeOf second < sizeOf (CrepProgHOL.seq first second) := by
+                  decreasing_trivial
+                omega
+              have ihFirst := ihSize (sizeOf first) hsubF first (by omega)
+              have ihSecond := ihSize (sizeOf second) hsubS second (by omega)
+              unfold CrepClockBounded
+              simp only [evalCrepSemHOLProg_seq]
+              split
+              · rename_i stepState hstep
+                have hSecond := ihSecond (crepStampExactDomains state stepState)
+                  (by
+                    have hb := fixClockCrepSemHOL_IMP_LESS_EQ state
+                      (evalCrepSemHOLProg state memDec shMemDec first) none stepState
+                      (by simpa using hstep)
+                    change stepState.clock ≤ c
+                    omega)
+                  memDec shMemDec
+                unfold CrepClockBounded at hSecond
+                exact Nat.le_trans hSecond
+                  (by
+                    change stepState.clock ≤ state.clock
+                    exact fixClockCrepSemHOL_IMP_LESS_EQ state
+                      (evalCrepSemHOLProg state memDec shMemDec first) none stepState
+                      (by simpa using hstep))
+              · rename_i val stepState hstep
+                have hstep' : fixClockCrepSemHOL state
+                    (evalCrepSemHOLProg state memDec shMemDec first) = (some val, stepState) :=
+                  hstep
+                rw [hstep']
+                exact fixClockCrepSemHOL_IMP_LESS_EQ state
+                  (evalCrepSemHOLProg state memDec shMemDec first) (some val) stepState hstep
+          | ite condition thenBranch elseBranch =>
+              have hsubT : sizeOf thenBranch < n := by
+                have h1 : sizeOf thenBranch <
+                    sizeOf (CrepProgHOL.ite condition thenBranch elseBranch) := by
+                  decreasing_trivial
+                omega
+              have hsubE : sizeOf elseBranch < n := by
+                have h1 : sizeOf elseBranch <
+                    sizeOf (CrepProgHOL.ite condition thenBranch elseBranch) := by
+                  decreasing_trivial
+                omega
+              have ihThen := ihSize (sizeOf thenBranch) hsubT thenBranch (by omega)
+              have ihElse := ihSize (sizeOf elseBranch) hsubE elseBranch (by omega)
+              unfold CrepClockBounded
+              rw [evalCrepSemHOLProg_ite]
+              split
+              · rename_i w
+                split
+                · exact ihThen state hclk memDec shMemDec
+                · exact ihElse state hclk memDec shMemDec
+              · simp
+          | «while» condition body =>
+              unfold CrepClockBounded
+              rw [evalCrepSemHOLProg_while]
+              split
+              · rename_i w
+                split
+                · split
+                  · simp [CrepSemHOLState.emptyLocals]
+                  · rename_i hne
+                    have hfixLe : (fixClockCrepSemHOL (decClockCrepSemHOL state)
+                        (evalCrepSemHOLProg (decClockCrepSemHOL state) memDec shMemDec
+                          body)).2.clock ≤ state.clock :=
+                      Nat.le_trans
+                        (fixClock_clock_le (decClockCrepSemHOL state)
+                          (evalCrepSemHOLProg (decClockCrepSemHOL state) memDec shMemDec body))
+                        (decClock_clock_le state)
+                    refine crepWhileStep_clock_le state memDec shMemDec condition body
+                      (fixClockCrepSemHOL (decClockCrepSemHOL state)
+                        (evalCrepSemHOLProg (decClockCrepSemHOL state) memDec shMemDec
+                          body)) hfixLe ?_
+                    have hclock : (fixClockCrepSemHOL (decClockCrepSemHOL state)
+                          (evalCrepSemHOLProg (decClockCrepSemHOL state) memDec shMemDec
+                            body)).2.clock < c :=
+                      Nat.lt_of_le_of_lt
+                        (fixClock_clock_le (decClockCrepSemHOL state)
+                          (evalCrepSemHOLProg (decClockCrepSemHOL state) memDec shMemDec body))
+                        (Nat.lt_of_lt_of_le (decClock_clock_lt state hne) hclk)
+                    have h := ihClock
+                      (fixClockCrepSemHOL (decClockCrepSemHOL state)
+                        (evalCrepSemHOLProg (decClockCrepSemHOL state) memDec shMemDec
+                          body)).2.clock hclock
+                      (crepStampExactDomains state
+                        (fixClockCrepSemHOL (decClockCrepSemHOL state)
+                          (evalCrepSemHOLProg (decClockCrepSemHOL state) memDec shMemDec
+                            body)).2)
+                      (Nat.le_refl _) memDec shMemDec (.while condition body)
+                    unfold CrepClockBounded at h
+                    exact Nat.le_trans h hfixLe
+                · simp
+              · simp
+          | «break» label =>
+              simp [CrepClockBounded, evalCrepSemHOLProg_break]
+          | «continue» label =>
+              simp [CrepClockBounded, evalCrepSemHOLProg_continue]
+          | call calleeInfo function arguments =>
+              unfold CrepClockBounded
+              rw [evalCrepSemHOLProg_call]
+              split
+              · simp
+              · rename_i values _
+                split
+                · simp
+                · rename_i parameters body _
+                  split
+                  · dsimp only
+                    split
+                    · rename_i rts snd
+                      split
+                      · dsimp only
+                        split
+                        · simp [CrepSemHOLState.emptyLocals]
+                        · rename_i hne
+                          refine crepCallFixed_clock_le state memDec shMemDec (some (rts, snd)) _ ?_ ?_
+                          · exact Nat.le_trans (fixClock_clock_le _ _) (decClock_clock_le _)
+                          · intro handlerBody
+                            have hclock : (crepStampExactDomains state
+                                  { (fixClockCrepSemHOL (decClockCrepSemHOL
+                                      { state with locals :=
+                                        HolFiniteMapExact.empty.updateList (parameters.zip values) })
+                                    (evalCrepSemHOLProg (decClockCrepSemHOL
+                                      { state with locals :=
+                                        HolFiniteMapExact.empty.updateList (parameters.zip values) })
+                                      memDec shMemDec body)).2 with
+                                    locals := state.locals }).clock < c := by
+                              change (fixClockCrepSemHOL (decClockCrepSemHOL
+                                    { state with locals :=
+                                      HolFiniteMapExact.empty.updateList (parameters.zip values) })
+                                  (evalCrepSemHOLProg (decClockCrepSemHOL
+                                    { state with locals :=
+                                      HolFiniteMapExact.empty.updateList (parameters.zip values) })
+                                    memDec shMemDec body)).2.clock < c
+                              exact Nat.lt_of_le_of_lt (fixClock_clock_le _ _)
+                                (Nat.lt_of_lt_of_le (decClock_clock_lt _ hne) hclk)
+                            have h := ihClock
+                              (crepStampExactDomains state
+                                { (fixClockCrepSemHOL (decClockCrepSemHOL
+                                    { state with locals :=
+                                      HolFiniteMapExact.empty.updateList (parameters.zip values) })
+                                  (evalCrepSemHOLProg (decClockCrepSemHOL
+                                    { state with locals :=
+                                      HolFiniteMapExact.empty.updateList (parameters.zip values) })
+                                    memDec shMemDec body)).2 with
+                                  locals := state.locals }).clock hclock
+                              (crepStampExactDomains state
+                                { (fixClockCrepSemHOL (decClockCrepSemHOL
+                                    { state with locals :=
+                                      HolFiniteMapExact.empty.updateList (parameters.zip values) })
+                                  (evalCrepSemHOLProg (decClockCrepSemHOL
+                                    { state with locals :=
+                                      HolFiniteMapExact.empty.updateList (parameters.zip values) })
+                                    memDec shMemDec body)).2 with
+                                  locals := state.locals })
+                              (Nat.le_refl _) memDec shMemDec handlerBody
+                            unfold CrepClockBounded at h
+                            exact Nat.le_trans h
+                              (Nat.le_trans (fixClock_clock_le _ _) (decClock_clock_le _))
+                      · simp
+                    · dsimp only
+                      split
+                      · simp [CrepSemHOLState.emptyLocals]
+                      · rename_i hne
+                        refine crepCallFixed_clock_le state memDec shMemDec none _ ?_ ?_
+                        · exact Nat.le_trans (fixClock_clock_le _ _) (decClock_clock_le _)
+                        · intro handlerBody
+                          have hclock : (crepStampExactDomains state
+                                { (fixClockCrepSemHOL (decClockCrepSemHOL
+                                    { state with locals :=
+                                      HolFiniteMapExact.empty.updateList (parameters.zip values) })
+                                  (evalCrepSemHOLProg (decClockCrepSemHOL
+                                    { state with locals :=
+                                      HolFiniteMapExact.empty.updateList (parameters.zip values) })
+                                    memDec shMemDec body)).2 with
+                                  locals := state.locals }).clock < c := by
+                            change (fixClockCrepSemHOL (decClockCrepSemHOL
+                                  { state with locals :=
+                                    HolFiniteMapExact.empty.updateList (parameters.zip values) })
+                                (evalCrepSemHOLProg (decClockCrepSemHOL
+                                  { state with locals :=
+                                    HolFiniteMapExact.empty.updateList (parameters.zip values) })
+                                  memDec shMemDec body)).2.clock < c
+                            exact Nat.lt_of_le_of_lt (fixClock_clock_le _ _)
+                              (Nat.lt_of_lt_of_le (decClock_clock_lt _ hne) hclk)
+                          have h := ihClock
+                            (crepStampExactDomains state
+                              { (fixClockCrepSemHOL (decClockCrepSemHOL
+                                  { state with locals :=
+                                    HolFiniteMapExact.empty.updateList (parameters.zip values) })
+                                (evalCrepSemHOLProg (decClockCrepSemHOL
+                                  { state with locals :=
+                                    HolFiniteMapExact.empty.updateList (parameters.zip values) })
+                                  memDec shMemDec body)).2 with
+                                locals := state.locals }).clock hclock
+                            (crepStampExactDomains state
+                              { (fixClockCrepSemHOL (decClockCrepSemHOL
+                                  { state with locals :=
+                                    HolFiniteMapExact.empty.updateList (parameters.zip values) })
+                                (evalCrepSemHOLProg (decClockCrepSemHOL
+                                  { state with locals :=
+                                    HolFiniteMapExact.empty.updateList (parameters.zip values) })
+                                  memDec shMemDec body)).2 with
+                                locals := state.locals })
+                            (Nat.le_refl _) memDec shMemDec handlerBody
+                          unfold CrepClockBounded at h
+                          exact Nat.le_trans h
+                            (Nat.le_trans (fixClock_clock_le _ _) (decClock_clock_le _))
+                  · simp
+          | extCall function configuration configurationLength array arrayLength =>
+              unfold CrepClockBounded
+              rw [evalCrepSemHOLProg_extCall]
+              repeat' (first | split | simp_all)
+          | «raise» exception =>
+              simp [CrepClockBounded, evalCrepSemHOLProg_raise, CrepSemHOLState.emptyLocals]
+          | «return» values =>
+              unfold CrepClockBounded
+              rw [evalCrepSemHOLProg_return]
+              split <;> simp [CrepSemHOLState.emptyLocals]
+          | shMem operator name address =>
+              unfold CrepClockBounded
+              rw [evalCrepSemHOLProg_shMem]
+              split
+              · rename_i addressValue heq
+                split
+                · split
+                  · rw [shMemLoadClockEq operator name addressValue state]
+                    exact Nat.le_refl _
+                  · simp
+                · split
+                  · rw [shMemStoreClockEq operator name addressValue state]
+                    exact Nat.le_refl _
+                  · simp
+              · simp
+          | tick =>
+              unfold CrepClockBounded
+              rw [evalCrepSemHOLProg_tick]
+              split
+              · simp [CrepSemHOLState.emptyLocals]
+              · simp only [decClockCrepSemHOL]; omega
+      exact inner (sizeOf program) program (by omega) state hclk memDec shMemDec
+  exact hmain state.clock state (by omega) memDec shMemDec program
+
+/-- HOL `fix_clock_evaluate` (`cakeml/pancake/semantics/crepSemScript.sml:432-437`) over the
+exact no-decider evaluator: `fixClockCrepSemHOL` is the identity on any result of
+`evalCrepSemHOLProgExact`, because the run never raises the clock
+(`evalCrepSemHOLProg_clock_le`, HOL `evaluate_clock`, crepSemScript.sml:420-430). This is the
+Flapjack-side statement behind HOL `fix_clock_evaluate`; it is deliberately untagged pending the
+full exact-evaluator clause/carrier review. -/
+theorem fixClockCrepSemHOL_evalCrepSemHOLProgExact {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) (program : CrepProgHOL width) :
+    fixClockCrepSemHOL state (evalCrepSemHOLProgExact state program) =
+      evalCrepSemHOLProgExact state program := by
+  classical
+  have hclock : (evalCrepSemHOLProgExact state program).2.clock ≤ state.clock := by
+    rw [evalCrepSemHOLProgExact_eq_core state program
+      (fun a => Classical.propDecidable (state.memaddrs a))
+      (fun a => Classical.propDecidable (state.shMemaddrs a))]
+    exact evalCrepSemHOLProg_clock_le state _ _ program
+  cases h : evalCrepSemHOLProgExact state program with
+  | mk res fin =>
+    have hfin : fin.clock ≤ state.clock := by
+      rw [h] at hclock
+      exact hclock
+    simp only [fixClockCrepSemHOL]
+    rw [if_neg (by omega)]
+
 end Flapjack
