@@ -41,14 +41,17 @@ private theorem compileParamVars_byteRanged
         exact ⟨hp.1, hp.2⟩
       · exact ih (offset + Shape.shapeSize shape) htail entry htailMem
 
-private theorem functionEntries_byteRanged {width : Nat}
+/-- Flapjack-specific extracted-entry invariant (no HOL original): the parser's
+    `DeclByteRanged` premise supplies the name, parameter, return-shape, and
+    body codec premises for every `functionEntries` result. -/
+theorem functionEntries_byteRanged {width : Nat}
     (declarations : List (Decl (BitVec width)))
     (hranged : ∀ d ∈ declarations, DeclByteRanged d) :
     ∀ entry ∈ functionEntries declarations,
       NameRanged entry.1 ∧
         (∀ parameter ∈ entry.2.1,
           NameRanged parameter.1 ∧ ShapeByteRanged parameter.2) ∧
-        ShapeByteRanged entry.2.2.2 := by
+        ShapeByteRanged entry.2.2.2 ∧ ProgByteRanged entry.2.2.1 := by
   induction declarations with
   | nil => simp [functionEntries]
   | cons declaration declarations ih =>
@@ -64,7 +67,7 @@ private theorem functionEntries_byteRanged {width : Nat}
           simp only [List.mem_cons] at hentry
           rcases hentry with hhead | htailMem
           · cases hhead
-            exact ⟨hfd.1, hfd.2.1, hfd.2.2.2⟩
+            exact ⟨hfd.1, hfd.2.1, hfd.2.2.2, hfd.2.2.1⟩
           · exact ih htail entry htailMem
       | decl shape name value =>
           simp only [functionEntries]
@@ -117,7 +120,7 @@ private theorem panToCrepMakeFuncs_entries_byteRanged {width : Nat}
     have hproject := functionEntries_byteRanged declarations hranged
     rw [panToCrepMakeFuncs_eq_map] at hmem
     rcases List.mem_map.mp hmem with ⟨source, hsource, rfl⟩
-    rcases hproject source hsource with ⟨hn, hp, hs⟩
+    rcases hproject source hsource with ⟨hn, hp, hs, _hbody⟩
     exact ⟨hn, hp, hs⟩
   simpa only [List.mem_reverse] using hentries
 
