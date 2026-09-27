@@ -1775,6 +1775,76 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} {σ : Type} [NeZero width] :
 
 end PanSem.EvaluateClockWitness
 
+namespace PanSemStateFiniteExact
+
+/-- HOL `evaluate_def` line-780 `DecCall` conjunct, restated by
+    `REWRITE_RULE [fix_clock_evaluate]` from the original line-556 definition.
+    The only semantic change in the displayed right-hand side is that the
+    fixed callee-body pair is replaced with the raw total evaluator pair, as
+    justified by `fixClockHOLFinite_evaluateState`. Every branch still follows
+    the source order: argument evaluation, code lookup, clock timeout, callee
+    result dispatch, both return-shape tests, continuation evaluation, and
+    caller-local restoration. No branch selector or evaluator-result
+    hypothesis is added. The rewrite's output equality is exactly
+    `fixClockHOLFinite_evaluateState entry body`; it is applied to the full
+    recursive pair before matching its result, so result and post-state remain
+    equal branch by branch. The original output rows
+    `deccall_code_map_clock_9` and `deccall_restores_existing_local` are
+    recorded in `scripts/hol-probes/pan_sem_e2e_probe.out` and checked by the
+    direct Lean regressions in `Flapjack/Test/PanSemTotalEvalExactParity.lean`.
+    The four finite-map fields and positive word width use the same reviewed
+    carriers as the line-556 sibling. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateHOLFiniteState_decCall_fixClockRewrite {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateFiniteExact width σ)
+    (resultName : MlS) (shape : ShapeHOL) (function : MlS)
+    (arguments : List (ExpHOL width)) (continuation : ProgHOL width) :
+    evaluateHOLFiniteState state
+        (.decCall resultName shape function arguments continuation : ProgHOL width) =
+      (match evalListHOLFinite state
+          (h := fun address => Classical.propDecidable (state.memaddrs address)) arguments with
+       | none => (some .error, state)
+       | some values =>
+           match lookupCodeHOLFinite state.code.lookup function values with
+           | none => (some .error, state)
+           | some (body, callee, returnShape) =>
+               if state.clock = 0 then
+                 (some .timeOut, emptyLocalsHOLFinite state)
+               else
+                 let entry := callEntryStateHOLFinite state callee
+                 let bodyOutput := evaluateHOLFiniteState entry body
+                 match bodyOutput.1 with
+                 | none => (some .error, bodyOutput.2)
+                 | some .break => (some .error, bodyOutput.2)
+                 | some .continue => (some .error, bodyOutput.2)
+                 | some (.returned value) =>
+                     if shapeEqHOL (shapeOfHOLExact value) shape &&
+                         shapeEqHOL (shapeOfHOLExact value) returnShape then
+                       let continuationState :=
+                         setVarHOLFinite resultName value
+                           { bodyOutput.2 with locals := state.locals }
+                       let continuationOutput :=
+                         evaluateHOLFiniteState continuationState continuation
+                       (continuationOutput.1,
+                         { continuationOutput.2 with
+                           locals := HolFiniteMapExact.resVarEq
+                             continuationOutput.2.locals
+                             (resultName, state.locals.lookup resultName) })
+                     else (some .error, bodyOutput.2)
+                 | some other => (some other, emptyLocalsHOLFinite bodyOutput.2)) := by
+  classical
+  have hbodyFix (entry : PanSemStateFiniteExact width σ) (body : ProgHOL width) :
+      fixClockHOLFinite entry (evaluateHOLFiniteState entry body) =
+        evaluateHOLFiniteState entry body :=
+    Flapjack.fixClockHOLFinite_evaluateState entry body
+  rw [evaluateHOLFiniteState_decCall_total]
+  simp only [hbodyFix]
+  rfl
+
+end PanSemStateFiniteExact
+
 /-! ## Line-780 `evaluate_def` rewrite (fix_clock eliminated) over the finite evaluator
 
 HOL restates the clause equations at `panSemScript.sml:780` as
