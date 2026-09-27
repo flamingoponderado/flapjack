@@ -20,14 +20,28 @@ expression compiler on that production context through the reviewed
 (ofPass context) (expToHOL e))`.
 
 This is Flapjack routing infrastructure, not a HOL declaration, so nothing here
-carries an `@[hol]` tag.  It is also *not* textual routing: the production
-`compileDecsCake`/`compileProgCake`/`compileExpCake` bodies are unchanged and
-still compute the production function directly.  A body-level route is blocked
-because those functions are total over arbitrary `String` (so they cannot
-discharge the `ExpByteRanged`/`NameRanged` premise the codec needs inside their
-bodies) and because `CakeContext.globals` erases the finite-support structure
-(`α → Option β`) that the exact `HolFiniteMapExact` field requires.  The
-remaining production routing is tracked by `flapjack-pxn.18.3.5.8.29`. -/
+carries an `@[hol]` tag.  The legacy `compileDecsCake`/`compileProgCake`/
+`compileExpCake` bodies are unchanged and still compute the production
+String-backed function directly; they cannot be rewritten in place because they
+are total over arbitrary `String` and `CakeContext.globals` erases the
+finite-support structure (`α → Option β`) the exact `HolFiniteMapExact` field
+requires.
+
+The byte-ranged executable path added below *is* textual routing, however:
+`compileExpRouteCake` (this module) has body
+`expOfHOL (compileExpExactHOL (ofPass context) (expToHOL e))`, and
+`compileProgCakeOfExact`/`compileDecsCakeOfExact` thread `GlobalPassContext`
+through the executed decl/prog compiler, with kernel-checked equalities
+`compileProgCakeOfExact_eq` (under `ProgByteRanged`) and
+`compileDecsCakeOfExact_eq` (under `IsCakeCanonical` + `DeclByteRanged`) to the
+production functions.  The executed `globalCompileTopForStartSomeCakeOfExact`
+(`PanGlobalsByteRanged.lean`) and `Pipeline.lean:654` run these routed siblings
+on the parser-proof (byte-range) branch, so that branch textually calls the
+tagged `compileExpExactHOL`.
+
+The fallback branch (input not proved byte-ranged) remains the legacy
+production functions; this is not a claim that all arbitrary `String` inputs
+are routed. -/
 
 namespace Flapjack
 
