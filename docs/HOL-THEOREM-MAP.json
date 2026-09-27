@@ -2904,6 +2904,30 @@
     "reviewer": "flapjack-ds9 (source comparison, bead flapjack-pxn.18.3.5.8.21): HOL new_main_name_def (pan_globalsScript.sml:224) new_main_name decls = fresh_name «main» (MAP FST (functions decls)) is ported exactly over the exact List (DeclHOL width) carrier: functionsHOL is the tagged mlstring-keyed functions port, so (functionsHOL decls).map Prod.fst is MAP FST (functions decls); the seed is ofString \"main\" and the search is the tagged exact freshNameMlS. No qualifier applies. The production String-carrier globalNewMainName remains a separately recorded documented mismatch. Direct HOL rows empty/two_collisions/mixed/absent in pan_globals_new_main_name_probe.out are replayed by Flapjack.Test.PanGlobalsNewMainNameExactParity."
   },
   {
+    "hol_path": "cakeml/pancake/pan_globalsScript.sml",
+    "hol_name": "context",
+    "lean_path": "Flapjack/Pancake/PanGlobals/CompileExpExact.lean",
+    "lean_name": "PanGlobalsContextExact",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 (source comparison, bead flapjack-pxn.18.3.5.8.27): HOL context (pan_globalsScript.sml:10-16) context = <| globals : varname |-> shape # 'a word; globals_size : 'a word; max_globals_size : 'a word |>. The exact carrier PanGlobalsContextExact width reproduces the three fields: globals is the reviewed canonical HolFiniteMapExact MlS (ShapeHOL × BitVec width) translation of the HOL varname |-> shape # 'a word finite map (MlS = mlstring varname keys, ShapeHOL payload, BitVec width = 'a word), and globalsSize/maxGlobalsSize are BitVec width. The same-module holFmapAsFiniteSupportWitness proves the ofBroad/toBroad roundtrip. fmap_as_finite_support records only the finite-support map representation of globals and words_as_type_indexed_bitvec only the type-indexed 'a word -> BitVec width translation; no field, quantifier, or side condition is changed."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_globalsScript.sml",
+    "hol_name": "compile_exp_def",
+    "lean_path": "Flapjack/Pancake/PanGlobals/CompileExpExact.lean",
+    "lean_name": "compileExpExactHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 (source comparison, bead flapjack-pxn.18.3.5.8.27; pan_globalsScript.sml:18-46): checked every clause of compile_exp_def against direct EVAL rows in scripts/hol-probes/pan_globals_compile_exp_probe.out. Var Local identity; Var Global FLOOKUP on ctxt.globals, SOME (sh,addr) -> Load sh (Op Sub [TopAddr; Const addr]) and NONE -> Const 0w; RStruct/RField recursion over exact ExpHOL; NStruct/NField -> Const 0w; Load/LoadByte/Load32 address recursion; Op/Panop MAP recursion; Cmp/Shift two-operand recursion; TopAddr -> Op Sub [TopAddr; Const max_globals_size]; catch-all compile_exp ctxt e = e for Const/BaseAddr/BytesInWord. Carriers ExpHOL width/ShapeHOL/MlS and the PanGlobalsContextExact finite-map field are exact: the sole representation difference is ctxt.globals, the HOL varname |-> shape # 'a word finite map rendered by the canonical HolFiniteMapExact (same-module holFmapAsFiniteSupportWitness proves the broad roundtrip), plus the type-indexed 'a word -> BitVec width translation recorded by words_as_type_indexed_bitvec. No quantifier, hypothesis, side condition, or conclusion is changed. The direct String-backed production globalCompileExp remains an untagged compatibility path with its compileExpCake adapter in PanGlobals.lean; routing the executed compiler through this exact definition remains tracked by flapjack-pxn.18.3.5.8. Direct HOL rows local/global_hit/global_miss/top_addr/nested are replayed by Flapjack.Test.PanGlobalsCompileExpExactParity."
+  },
+  {
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
     "hol_name": "fresh_name_correct",
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
@@ -15128,5 +15152,15 @@
     "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-c source comparison (2026-09-27; bead flapjack-4ac.4.60.1.1.3): HOL panPropsScript.sml:724 gives the exact high-run premise, non-timeout premise, and clock-sub conclusion. The genuine p = Continue leaf follows the base case of recInduct evaluate_ind >> rw []; evaluate_def at panSemScript.sml:624 states evaluate (Continue,s) = (SOME Continue,s). Lean retains that statement shape with no induction hypothesis or extra premise; the non-timeout premise is retained and unused because Continue is not TimeOut. Carrier qualifiers match the same-module PanPropsEvalStateFiniteExact finite-support witness and indexed word carrier. The full theorem remains open."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "evaluate_clock_sub",
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
+    "lean_name": "evaluateClockSubAnnotCaseHOLFinite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison (2026-09-27; bead flapjack-4ac.4.60.1.1.4): HOL panPropsScript.sml:724 gives the exact high-run premise, non-timeout premise, and clock-sub conclusion. The genuine p = Annot tag text leaf follows the base case of recInduct evaluate_ind >> rw []; evaluate_def at panSemScript.sml:656 states evaluate (Annot _ _,s) = (NONE,s). Lean retains the source statement shape with no induction hypothesis or extra premise, over the same-module PanPropsEvalStateFiniteExact finite-support carrier and indexed-word translation. The full theorem remains open."
   }
 ]

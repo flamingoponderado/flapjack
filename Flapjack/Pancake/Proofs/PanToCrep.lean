@@ -4818,7 +4818,12 @@ record carrier is the reviewed exact `PanToCrepContextExact`; the
 `fmap_as_finite_support` qualifier records only the canonical finite-support
 representation of its three HOL finite-map fields. Direct HOL-EVAL rows are in
 `scripts/hol-probes/ctxt_fc_probe.out` and replayed by
-`Flapjack.Test.PanToCrepContextExactParity`. -/
+`Flapjack.Test.PanToCrepContextExactParity`.
+
+`updateList` is explicitly instantiated with Lean's generic
+`BEqOfDecidableEq`/`LawfulBEq` pair for `MlS`. This keeps the definition's
+equality dictionary tied to HOL `=` independently of the named but equivalent
+`MlS` instances imported through the production inline-pass dependency. -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "ctxt_fc_def"
   (fmap_as_finite_support := [vars, funcs, eids])]
 def ctxtFcExactHOL {width : Nat} [NeZero width]
@@ -4826,7 +4831,11 @@ def ctxtFcExactHOL {width : Nat} [NeZero width]
     (em : HolFiniteMapExact MlS (BitVec width))
     (vs : List MlS) (shs : List ShapeHOL) (ns : List Nat) :
     PanToCrepContextExact width where
-  vars := HolFiniteMapExact.updateList
+  vars := @HolFiniteMapExact.updateList MlS (ShapeHOL × List Nat)
+    (@instBEqOfDecidableEq MlS
+      Flapjack.Basis.Pure.MlString.instDecidableEqMlString)
+    (@instLawfulBEq MlS
+      Flapjack.Basis.Pure.MlString.instDecidableEqMlString)
     (HolFiniteMapExact.empty : HolFiniteMapExact MlS (ShapeHOL × List Nat))
     (vs.zip (shs.zip (withShapeHOL shs ns)))
   funcs := cvs
