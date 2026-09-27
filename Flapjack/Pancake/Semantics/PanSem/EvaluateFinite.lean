@@ -539,7 +539,7 @@ theorem evalPanSemRecursiveCallFiniteContext_decCall_clock_zero {width : Nat} {Ï
     (hclock : context.state.clock = 0) :
     evalPanSemRecursiveCallFiniteContext
         (.decCall resultName shape function arguments continuation) context =
-      some (some .timeOut, context.withState (emptyLocalsHOLFinite context.state) rfl rfl) := by
+      some (some .timeOut, FiniteEvalContext.emptyLocalsContextHOLFinite context) := by
   rw [evalPanSemRecursiveCallFiniteContext.eq_def]
   dsimp only
   rw [hargs]
@@ -1432,14 +1432,13 @@ theorem evalPanSemRecursiveCallFiniteContext_decCall_projection {width : Nat} {Ï
         Â· have hclock' : context.toExact.state.clock = 0 := hclock
           rw [if_pos hclock, if_pos hclock']
           simp only [Option.map_some, Option.some.injEq]
-          have hb : (context.withState (emptyLocalsHOLFinite context.state) rfl rfl).toExact =
-              context.toExact.withState (emptyLocalsHOLExact context.state.toExact) rfl rfl := by
+          have hb : (FiniteEvalContext.emptyLocalsContextHOLFinite context).toExact =
+              PanSemExactEvalContext.emptyLocalsContextHOLExact context.toExact := by
             apply PanSemExactEvalContext.ext
-            change emptyLocalsHOLExact context.state.toExact =
-              (emptyLocalsHOLFinite context.state).toExact
+            change (emptyLocalsHOLFinite context.state).toExact =
+              emptyLocalsHOLExact context.state.toExact
             rw [toExact_emptyLocalsHOLFinite]
           rw [hb]
-          rfl
         Â· have hclock' : Â¬(context.toExact.state.clock = 0) := hclock
           rw [if_neg hclock, if_neg hclock']
           generalize hent : context.withState
