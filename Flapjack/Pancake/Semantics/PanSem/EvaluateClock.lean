@@ -501,10 +501,13 @@ These are the coordinator-requested public statements: HOL `evaluate_clock` and
 success premise. The decidability witnesses are chosen classically inside
 `evaluateHOLFiniteState`, so they add no logical premise, and the pair-shaped
 evaluator is total, so the earlier `= some result` hypotheses are unnecessary.
-They remain untagged: the carrier `PanSemStateFiniteExact` uses canonical
-`HolFiniteMapExact` maps (not HOL's mlstring-keyed finite maps) and the evaluator
-threads operational deciders, so HOL's `@[hol]` tags stay withheld pending
-coordinator evaluator/carrier-fidelity review. -/
+The stronger premise-free bound `evaluateHOLFiniteState_clock_le` below stays
+untagged (it omits HOL's result/post-state variables and equality premise),
+while the exact-shape corollary `evaluateHOLFiniteState_clock_le_result` and
+`fixClockHOLFinite_evaluateState` carry the reviewed
+`(fmap_as_finite_support := [locals, globals, code, eshapes])`
+`(words_as_type_indexed_bitvec)` tags after coordinator source/carrier review
+(bead `flapjack-pxn.18.3.6.9.23.1`). -/
 
 /-- Stronger untagged clock bound over the pair-shaped finite source evaluator:
     for every program and source state the evaluated result clock is bounded by
@@ -1532,7 +1535,8 @@ pair-shaped finite source evaluator. This is the single unconditional source
 `Definition evaluate_def` (line 556) `Call` clause with the inner `fix_clock` on
 the recursive callee-body evaluation rewritten away by line 780's
 `REWRITE_RULE [fix_clock_evaluate]` (via the finite `fixClockHOLFinite_evaluateState`).
-No extra premise. The full 21-clause assembly remains open under `flapjack-qj5.9`.
+No extra premise. The full 21-clause assembly is
+`evaluateHOLFiniteState_eq_evaluate_def` (bead `flapjack-qj5.9.6`).
 
 Declaration review against `panSemScript.sml:657-693`: the equation preserves
 `OPT_MMAP` argument evaluation and `lookup_code`, the clock-zero timeout state,
@@ -1864,7 +1868,8 @@ from the line-556 tagged `evaluateHOLFiniteState_seq`. -/
     `fix_clock` rewritten away by line 780's `REWRITE_RULE [fix_clock_evaluate]`,
     via the finite `fixClockHOLFinite_evaluateState`. No extra premise. The
     carrier/qualifier situation equals the line-556 tagged sibling; the full
-    21-clause assembly remains open under `flapjack-qj5.9`. -/
+    21-clause assembly is `evaluateHOLFiniteState_eq_evaluate_def`
+    (bead `flapjack-qj5.9.6`). -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
   (fmap_as_finite_support := [locals, globals, code, eshapes])
   (words_as_type_indexed_bitvec)]
