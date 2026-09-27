@@ -1,0 +1,181 @@
+import Flapjack.Pancake.Semantics.PanSem.AddClock
+import Flapjack.Pancake.Semantics.PanSem.EvaluateClock
+import Flapjack.Pancake.Semantics.PanSem.EvaluateFinite
+
+/-!
+# HOL `evaluate_add_clock_or_timeout` over the exact finite-map PanSem evaluator
+
+FLAPJACK-SPECIFIC (untagged): Lean rendering of HOL
+`cakeml/pancake/semantics/panPropsScript.sml:834-857`
+`evaluate_add_clock_or_timeout` over the finite-map evaluator
+`evaluateHOLFiniteState`.
+
+The statement is HOL's: if the run at the input state `s` fixes its result
+clock to `0` and is not a timeout, then running the same program at any other
+clock `k` either times out (only when `k` is smaller than `s.clock`) or returns
+the same result with the clock shifted by `k - s.clock`.
+
+The proof lifts both finite runs to the broad exact evaluator
+`evalPanSemRecursiveCallContextHOLExact` through the kernel-checked projection
+`evalPanSemRecursiveCallFiniteContext_projection`, then applies the
+Flapjack-specific clock-shift lemma `eval_add_clock_mono_aux`. No declaration
+here carries an `@[hol]` tag.
+-/
+
+open Flapjack.Pancake.PanLang (ProgHOL)
+open Flapjack.PanSemStateFiniteExact
+
+namespace Flapjack
+
+/-- `toExact` is injective on the finite-support carrier: the canonical
+    finite-map fields are determined by their lookup functions and the
+    finite-support proofs are propositionally irrelevant. -/
+theorem PanSemStateFiniteExact.toExact_injective {width : Nat} {σ : Type} [NeZero width]
+    {a b : PanSemStateFiniteExact width σ} (h : a.toExact = b.toExact) : a = b := by
+  cases a with
+  | mk al ag ast ac ae amm amem asm aclk abe affi aba ata =>
+    cases b with
+    | mk bl bg bst bc be bmm bmem bsm bclk bbe bffi bba bta =>
+      simp only [PanSemStateFiniteExact.toExact] at h
+      injection h with h1 h2 h3 h4 h5 h6 h7 h8 h9 h10 h11 h12 h13
+      have e1 : al = bl := HolFiniteMapExact.ext h1
+      have e2 : ag = bg := HolFiniteMapExact.ext h2
+      have e4 : ac = bc := HolFiniteMapExact.ext h4
+      have e5 : ae = be := HolFiniteMapExact.ext h5
+      rw [e1, e2, h3, e4, e5, h6, h7, h8, h9, h10, h11, h12, h13]
+
+/-- HOL `evaluate_add_clock_or_timeout`
+    (`cakeml/pancake/semantics/panPropsScript.sml:834-857`) over the finite-map
+    evaluator `evaluateHOLFiniteState`. Untagged Flapjack-specific
+    infrastructure. -/
+theorem evaluateHOLFiniteState_add_clock_or_timeout {width : Nat} {σ : Type} [NeZero width]
+    (p : ProgHOL width) (s : PanSemStateFiniteExact width σ)
+    (q : Option (PanSemResultExact width)) (t : PanSemStateFiniteExact width σ)
+    (h0 : evaluateHOLFiniteState s p = (q, { t with clock := 0 }))
+    (hnt : q ≠ some .timeOut)
+    (k : Nat) (q' : Option (PanSemResultExact width)) (t' : PanSemStateFiniteExact width σ)
+    (hk : evaluateHOLFiniteState { s with clock := k } p = (q', t')) :
+    (q' = some .timeOut ∧ k < s.clock) ∨
+      (q' = q ∧ s.clock ≤ k ∧ t' = { t with clock := k - s.clock }) := by
+  classical
+  let hm : DecidablePred s.memaddrs := fun a => Classical.propDecidable (s.memaddrs a)
+  let hs : DecidablePred s.shMemaddrs := fun a => Classical.propDecidable (s.shMemaddrs a)
+  let fcS : FiniteEvalContext width σ := ⟨s, hm, hs⟩
+  let fcK : FiniteEvalContext width σ := ⟨{ s with clock := k }, hm, hs⟩
+  obtain ⟨out, hrecS⟩ := evalPanSemRecursiveCallFiniteContext_total p fcS
+  obtain ⟨outK, hrecK⟩ := evalPanSemRecursiveCallFiniteContext_total p fcK
+  have h0w : evaluateHOLFiniteStateWithDeciders s p (h := hm) (hshared := hs) =
+      (q, { t with clock := 0 }) := by
+    rw [← evaluateHOLFiniteState_eq_withDeciders (state := s) (hmem := hm) (hshared := hs)
+      (program := p)]
+    exact h0
+  simp only [evaluateHOLFiniteStateWithDeciders, fcS, hrecS] at h0w
+  have hkw : evaluateHOLFiniteStateWithDeciders { s with clock := k } p
+      (h := hm) (hshared := hs) = (q', t') := by
+    rw [← evaluateHOLFiniteState_eq_withDeciders (state := { s with clock := k })
+      (hmem := hm) (hshared := hs) (program := p)]
+    exact hk
+  simp only [evaluateHOLFiniteStateWithDeciders, fcK, hrecK] at hkw
+  have hout1 : out.1 = q := congrArg Prod.fst h0w
+  have hout2 : out.2.state = { t with clock := 0 } := congrArg Prod.snd h0w
+  have houtK1 : outK.1 = q' := congrArg Prod.fst hkw
+  have houtK2 : outK.2.state = t' := congrArg Prod.snd hkw
+  have hLow : evalPanSemRecursiveCallContextHOLExact p fcS.toExact =
+      some (out.1, out.2.toExact) := by
+    have hproj := evalPanSemRecursiveCallFiniteContext_projection p fcS
+    simp only [hrecS, Option.map_some] at hproj
+    exact hproj.symm
+  have hHighK : evalPanSemRecursiveCallContextHOLExact p fcK.toExact =
+      some (outK.1, outK.2.toExact) := by
+    have hproj := evalPanSemRecursiveCallFiniteContext_projection p fcK
+    simp only [hrecK, Option.map_some] at hproj
+    exact hproj.symm
+  have hstate1 : outK.2.toExact.state = t'.toExact := by
+    change outK.2.state.toExact = t'.toExact
+    rw [houtK2]
+  have hstate2 : out.2.toExact.state =
+      ({ t with clock := 0 } : PanSemStateFiniteExact width σ).toExact := by
+    change out.2.state.toExact = _
+    rw [hout2]
+  by_cases hle : s.clock ≤ k
+  · right
+    have hstateA : (ctxAddClock fcS.toExact (k - s.clock)).state = fcK.toExact.state := by
+      change stateAddClock s.toExact (k - s.clock) =
+        ({ s with clock := k } : PanSemStateFiniteExact width σ).toExact
+      rw [show stateAddClock s.toExact (k - s.clock) =
+          { s.toExact with clock := s.clock + (k - s.clock) } from rfl]
+      rw [show s.clock + (k - s.clock) = k from by omega]
+    have hHighA : evalPanSemRecursiveCallContextHOLExact p
+        (ctxAddClock fcS.toExact (k - s.clock)) = some (outK.1, outK.2.toExact) :=
+      (eval_context_state p (ctxAddClock fcS.toExact (k - s.clock)) fcK.toExact hstateA).trans
+        hHighK
+    have hmono := eval_add_clock_mono_aux p fcS.toExact (k - s.clock)
+      (out.1, out.2.toExact) (outK.1, outK.2.toExact) hLow hHighA
+    have hne : (out.1, out.2.toExact).1 ≠ some .timeOut := by
+      rw [hout1]
+      exact hnt
+    have hres := hmono.2 hne
+    have hres1 : outK.1 = out.1 := (Prod.mk.inj hres).1
+    have hres2 : outK.2.toExact = ctxAddClock out.2.toExact (k - s.clock) := (Prod.mk.inj hres).2
+    refine ⟨?_, hle, ?_⟩
+    · rw [← houtK1, hres1, hout1]
+    · have hEq : t'.toExact =
+          stateAddClock ({ t with clock := 0 } : PanSemStateFiniteExact width σ).toExact
+            (k - s.clock) := by
+        rw [← hstate1]
+        have h := congrArg PanSemExactEvalContext.state hres2
+        change outK.2.toExact.state = stateAddClock out.2.toExact.state (k - s.clock) at h
+        rw [hstate2] at h
+        exact h
+      have hEq2 : t'.toExact =
+          ({ t with clock := k - s.clock } : PanSemStateFiniteExact width σ).toExact := by
+        rw [hEq]
+        rw [show stateAddClock ({ t with clock := 0 } : PanSemStateFiniteExact width σ).toExact
+              (k - s.clock) =
+            ({ { t with clock := 0 } with clock :=
+                ({ t with clock := 0 } : PanSemStateFiniteExact width σ).toExact.clock +
+                  (k - s.clock) } : PanSemStateFiniteExact width σ).toExact from rfl]
+        rw [show ({ t with clock := 0 } : PanSemStateFiniteExact width σ).toExact.clock = 0
+            from rfl]
+        rw [Nat.zero_add]
+      exact PanSemStateFiniteExact.toExact_injective hEq2
+  · left
+    have hklt : k < s.clock := by omega
+    by_cases hq' : q' = some .timeOut
+    · exact ⟨hq', hklt⟩
+    · exfalso
+      have hstateB : (ctxAddClock fcK.toExact (s.clock - k)).state = fcS.toExact.state := by
+        change stateAddClock ({ s with clock := k } : PanSemStateFiniteExact width σ).toExact
+            (s.clock - k) = s.toExact
+        rw [show stateAddClock ({ s with clock := k } : PanSemStateFiniteExact width σ).toExact
+              (s.clock - k) =
+            { ({ s with clock := k } : PanSemStateFiniteExact width σ).toExact with
+              clock := ({ s with clock := k } :
+                PanSemStateFiniteExact width σ).toExact.clock + (s.clock - k) } from rfl]
+        rw [show ({ s with clock := k } : PanSemStateFiniteExact width σ).toExact.clock = k
+            from rfl]
+        rw [show k + (s.clock - k) = s.clock from by omega]
+      have hHighB : evalPanSemRecursiveCallContextHOLExact p
+          (ctxAddClock fcK.toExact (s.clock - k)) = some (out.1, out.2.toExact) :=
+        (eval_context_state p (ctxAddClock fcK.toExact (s.clock - k)) fcS.toExact hstateB).trans
+          hLow
+      have hmono := eval_add_clock_mono_aux p fcK.toExact (s.clock - k)
+        (outK.1, outK.2.toExact) (out.1, out.2.toExact) hHighK hHighB
+      have hne : (outK.1, outK.2.toExact).1 ≠ some .timeOut := by
+        rw [houtK1]
+        exact hq'
+      have hres := hmono.2 hne
+      have hres2 : out.2.toExact = ctxAddClock outK.2.toExact (s.clock - k) :=
+        (Prod.mk.inj hres).2
+      have hmem : out.2.toExact.state.clock = 0 := by
+        change out.2.state.toExact.clock = 0
+        rw [hout2]
+      have hz : s.clock - k = 0 := by
+        have h : out.2.toExact.state.clock =
+            outK.2.toExact.state.clock + (s.clock - k) :=
+          congrArg PanSemStateExact.clock (congrArg PanSemExactEvalContext.state hres2)
+        have h0 : outK.2.toExact.state.clock + (s.clock - k) = 0 := by rw [← h, hmem]
+        exact (Nat.add_eq_zero_iff.mp h0).2
+      omega
+
+end Flapjack

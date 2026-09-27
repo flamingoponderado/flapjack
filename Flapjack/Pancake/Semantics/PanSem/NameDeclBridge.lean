@@ -51,7 +51,7 @@ namespace Flapjack
 open Flapjack.Pancake.PanLang
   (DeclHOL declOfHOL declToHOL DeclByteRanged NameRanged ShapeByteRanged MlS
     ShapeHOL isWfShapeExactHOL shapeToHOL FunDeclOf funDeclToHOL paramToHOL
-    progToHOL ProgHOL)
+    progToHOL ProgHOL ExpHOL expToHOL)
 
 /-- Relate evaluator results by relating successful states and requiring both
     evaluators to agree on failure. -/
@@ -483,6 +483,229 @@ theorem evaluateDecls_function_prefix_congr {width : Nat} {σ : Type}
           exactState.code declaration hfun hcontext.2.2
       have htail' := htail productionUpdated exactUpdated hupdated
       simpa [productionUpdated, exactUpdated, panSemFunctionEntryOfDecl, hexact,
-        PanSemDeclarationOutputRel] using htail'
+      PanSemDeclarationOutputRel] using htail'
+
+/-- Relate the successful values of the production `String`-backed evaluator
+    and the exact `ValueHOL` evaluator. This relation deliberately leaves the
+    cross-carrier value translation to the caller. -/
+def PanSemStateFiniteExact.evalDeclExpressionHOLFinite {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateFiniteExact width σ)
+    [hmem : DecidablePred state.memaddrs] (expression : ExpHOL width) :
+    Option (ValueHOL width) := by
+  let emptyState := PanSemStateFiniteExact.emptyLocalsHOLFinite state
+  letI : DecidablePred emptyState.memaddrs := hmem
+  exact PanSemStateFiniteExact.evalHOLFinite emptyState expression
+
+/-- Exact `Decl` equation with its cleared-locals evaluator result named. This
+    preserves the exact evaluator's own locally installed memory-domain
+    decision procedure, avoiding any transport assumption about the
+    state-indexed `DecidablePred` instance. -/
+theorem PanSemStateFiniteExact.evaluateDeclsHOLFinite_decl_clause
+    {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ)
+    [hmem : DecidablePred state.memaddrs]
+    (shape : ShapeHOL) (name : MlS) (expression : ExpHOL width)
+    (declarations : List (DeclHOL width)) :
+    PanSemStateFiniteExact.evaluateDeclsHOLFinite state
+      (.decl shape name expression :: declarations) =
+      match PanSemStateFiniteExact.evalDeclExpressionHOLFinite state expression with
+      | some value =>
+          if shapeEqHOL shape (shapeOfHOLExact value) then
+            letI : DecidablePred
+                (PanSemStateFiniteExact.setGlobalHOLFinite name value state).memaddrs := hmem
+            PanSemStateFiniteExact.evaluateDeclsHOLFinite
+              (PanSemStateFiniteExact.setGlobalHOLFinite name value state) declarations
+          else none
+      | none => none := by
+  rfl
+
+def PanSemDeclarationValueOptionRel {width : Nat} [NeZero width]
+    (valueRel : PanValue (BitVec width) → ValueHOL width → Prop) :
+    Option (PanValue (BitVec width)) → Option (ValueHOL width) → Prop
+  | none, none => True
+  | some production, some exact => valueRel production exact
+  | _, _ => False
+
+/-- Compare the global maps at byte-ranged String/MlString keys. This is the
+    global component needed by the value `Decl` case; it does not identify the
+    production String carrier with arbitrary HOL `mlstring` keys. -/
+def PanSemDeclarationGlobalMapRel {width : Nat} [NeZero width]
+    (valueRel : PanValue (BitVec width) → ValueHOL width → Prop)
+    (production : VarName → Option (PanValue (BitVec width)))
+    (exact : HolFiniteMapExact MlS (ValueHOL width)) : Prop :=
+  ∀ name, NameRanged name →
+    PanSemDeclarationValueOptionRel valueRel (production name)
+      (exact.lookup (Flapjack.Basis.Pure.MlString.ofString name))
+
+/-- The `Decl` context retains domain, exception, and function-code relations,
+    adding only the ranged global-map relation that this constructor updates. -/
+def PanSemDeclarationDeclContextRel {width : Nat} {σ : Type}
+    [NeZero width]
+    (valueRel : PanValue (BitVec width) → ValueHOL width → Prop)
+    (production : PanSemDeclarationState (BitVec width) σ)
+    (exact : PanSemStateFiniteExact width σ) : Prop :=
+  PanSemDeclarationDomainRel production exact ∧
+    PanSemDeclarationEshapeMapRel production.eshapes exact.eshapes ∧
+    PanSemDeclarationCodeMapRel production.code exact.code ∧
+    PanSemDeclarationGlobalMapRel valueRel production.runtime.globals exact.globals
+
+/-- Production's executable global update and HOL's exact `FUPDATE` preserve
+    the ranged global-map relation at the updated key and all other ranged
+    queries. The successful values are related explicitly by `hvalue`. -/
+theorem panSemDeclarationGlobalMapRel_update {width : Nat}
+    [NeZero width]
+    [BEq String] [LawfulBEq String]
+    (valueRel : PanValue (BitVec width) → ValueHOL width → Prop)
+    (production : VarName → Option (PanValue (BitVec width)))
+    (exact : HolFiniteMapExact MlS (ValueHOL width))
+    (name : String) (productionValue : PanValue (BitVec width))
+    (exactValue : ValueHOL width)
+    (hname : NameRanged name)
+    (hvalue : valueRel productionValue exactValue)
+    (hrel : PanSemDeclarationGlobalMapRel valueRel production exact) :
+    PanSemDeclarationGlobalMapRel valueRel
+      (panSemDeclUpdateGlobal production name productionValue)
+      (exact.update
+        (Flapjack.Basis.Pure.MlString.ofString name, exactValue)) := by
+  intro query hquery
+  by_cases heq : query = name
+  · subst query
+    rw [HolFiniteMapExact.lookup_update_pointwise]
+    simp [PanSemDeclarationValueOptionRel, panSemDeclUpdateGlobal, hvalue]
+  · have hkeyNe : Flapjack.Basis.Pure.MlString.ofString query ≠
+        Flapjack.Basis.Pure.MlString.ofString name := by
+      intro h
+      apply heq
+      have hk := congrArg Flapjack.Basis.Pure.MlString.toStringOfBytes h
+      simpa only [Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes
+        query hquery, Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes
+        name hname] using hk
+    have hprod : panSemDeclUpdateGlobal production name productionValue query =
+        production query := by
+      simp [panSemDeclUpdateGlobal, heq]
+    rw [hprod, HolFiniteMapExact.lookup_update_pointwise]
+    simp only [if_neg hkeyNe]
+    exact hrel query hquery
+
+/-- The `Decl` constructor case of production/exact `evaluateDecls`.
+
+    Source review: `cakeml/pancake/semantics/panSemScript.sml:817-828` clears
+    locals before evaluating the expression, returns `NONE` on expression
+    failure, requires `shape_of res = sh`, updates only globals on success,
+    and recurses. The premises below state (rather than prove) that this
+    production/exact expression pair has related optional results and that
+    their carrier-specific shape tests agree. Thus this is a constructor
+    congruence conditional on those facts, not an expression-evaluator
+    equivalence or a complete `evaluate_decls` bridge. -/
+theorem evaluateDecls_decl_prefix_congr {width : Nat} {σ : Type}
+    [NeZero width]
+    [BEq (BitVec width)] [OfNat (BitVec width) 0] [OfNat (BitVec width) 1]
+    [Add (BitVec width)] [Mul (BitVec width)] [Sub (BitVec width)]
+    [AndOp (BitVec width)] [OrOp (BitVec width)]
+    [HXor (BitVec width) (BitVec width) (BitVec width)]
+    [ShiftLeft (BitVec width)] [ShiftRight (BitVec width)] [LT (BitVec width)]
+    [DecidableRel (fun left right : BitVec width => left < right)]
+    [PanCmp (BitVec width)] [BEq String] [LawfulBEq String]
+    (productionState : PanSemDeclarationState (BitVec width) σ)
+    (exactState : PanSemStateFiniteExact width σ)
+    [hmem : DecidablePred exactState.memaddrs]
+    (shape : Shape) (name : String) (expression : Exp (BitVec width))
+    (hbytes : DeclByteRanged (.decl shape name expression : Decl (BitVec width)))
+    (declarations : List (DeclHOL width))
+    (valueRel : PanValue (BitVec width) → ValueHOL width → Prop)
+    (hcontext : PanSemDeclarationDeclContextRel valueRel productionState exactState)
+    (hEval : PanSemDeclarationValueOptionRel valueRel
+      (evalPanValueExp productionState.runtime.structs (fun _ => none)
+        productionState.runtime.globals productionState.runtime.memory
+        productionState.runtime.baseAddress productionState.runtime.topAddress
+        productionState.runtime.bytesInWord expression
+        (memoryAccess := some productionState.memoryAccess))
+      (PanSemStateFiniteExact.evalDeclExpressionHOLFinite exactState
+        (expToHOL expression)))
+    (hshape : ∀ productionValue exactValue,
+      valueRel productionValue exactValue →
+      panShapeMatches (panValueShape productionState.runtime.structs productionValue)
+        shape =
+      shapeEqHOL (shapeToHOL shape) (shapeOfHOLExact exactValue))
+    (htail : ∀ (production : PanSemDeclarationState (BitVec width) σ)
+        (exact : PanSemStateFiniteExact width σ)
+        [DecidablePred exact.memaddrs],
+      PanSemDeclarationDeclContextRel valueRel production exact →
+      PanSemDeclarationOutputRel (PanSemDeclarationDeclContextRel valueRel)
+        (evaluateDecls production (declarations.map declOfHOL))
+        (PanSemStateFiniteExact.evaluateDeclsHOLFinite exact declarations)) :
+    PanSemDeclarationOutputRel (PanSemDeclarationDeclContextRel valueRel)
+      (evaluateDecls productionState
+        (declOfHOL (declToHOL (.decl shape name expression : Decl (BitVec width))) ::
+          declarations.map declOfHOL))
+      (PanSemStateFiniteExact.evaluateDeclsHOLFinite exactState
+        (declToHOL (.decl shape name expression : Decl (BitVec width)) ::
+          declarations)) := by
+  have hproductionCodec :
+      declOfHOL (declToHOL (.decl shape name expression : Decl (BitVec width))) =
+        .decl shape name expression :=
+    Flapjack.Pancake.PanLang.declOfHOL_declToHOL _ hbytes
+  rw [hproductionCodec]
+  simp only [evaluateDecls, declToHOL]
+  rw [PanSemStateFiniteExact.evaluateDeclsHOLFinite_decl_clause]
+  let productionResult :=
+    evalPanValueExp productionState.runtime.structs (fun _ => none)
+      productionState.runtime.globals productionState.runtime.memory
+      productionState.runtime.baseAddress productionState.runtime.topAddress
+      productionState.runtime.bytesInWord expression
+      (memoryAccess := some productionState.memoryAccess)
+  let exactResult := PanSemStateFiniteExact.evalDeclExpressionHOLFinite exactState
+    (expToHOL expression)
+  have hresults : PanSemDeclarationValueOptionRel valueRel productionResult exactResult := by
+    simpa only [productionResult] using hEval
+  have hproductionEval :
+      evalPanValueExp productionState.runtime.structs (fun _ => none)
+        productionState.runtime.globals productionState.runtime.memory
+        productionState.runtime.baseAddress productionState.runtime.topAddress
+        productionState.runtime.bytesInWord expression
+        (memoryAccess := some productionState.memoryAccess) = productionResult := rfl
+  rw [hproductionEval]
+  cases hp : productionResult with
+  | none =>
+      cases he : exactResult with
+      | none => simp [exactResult, he,
+          PanSemDeclarationOutputRel]
+      | some exactValue => simp [PanSemDeclarationValueOptionRel, hp, he] at hresults
+  | some productionValue =>
+      cases he : exactResult with
+      | none => simp [PanSemDeclarationValueOptionRel, hp, he] at hresults
+      | some exactValue =>
+          have hvalue : valueRel productionValue exactValue := by
+            simpa [PanSemDeclarationValueOptionRel, hp, he] using hresults
+          by_cases hmatch : panShapeMatches
+              (panValueShape productionState.runtime.structs productionValue) shape
+          · have hmatchExact : shapeEqHOL (shapeToHOL shape)
+                (shapeOfHOLExact exactValue) = true := by
+              rw [← hshape productionValue exactValue hvalue]
+              exact hmatch
+            let productionUpdated : PanSemDeclarationState (BitVec width) σ :=
+              { productionState with runtime :=
+                  { productionState.runtime with globals :=
+                      (panSemDeclUpdateGlobal productionState.runtime.globals name
+                        productionValue) } }
+            let exactUpdated : PanSemStateFiniteExact width σ :=
+              PanSemStateFiniteExact.setGlobalHOLFinite
+                (Flapjack.Basis.Pure.MlString.ofString name) exactValue exactState
+            letI : DecidablePred exactUpdated.memaddrs := hmem
+            have hupdated : PanSemDeclarationDeclContextRel valueRel
+                productionUpdated exactUpdated := by
+              refine ⟨hcontext.1, hcontext.2.1, hcontext.2.2.1, ?_⟩
+              exact panSemDeclarationGlobalMapRel_update valueRel
+                productionState.runtime.globals exactState.globals name
+                productionValue exactValue hbytes.2.1 hvalue hcontext.2.2.2
+            have htail' := htail productionUpdated exactUpdated hupdated
+            simpa [productionResult, exactResult, productionUpdated, exactUpdated,
+              hp, he, hmatch, hmatchExact, PanSemDeclarationOutputRel] using htail'
+          · have hmatchExact : shapeEqHOL (shapeToHOL shape)
+                (shapeOfHOLExact exactValue) = false := by
+              rw [← hshape productionValue exactValue hvalue]
+              exact Bool.eq_false_iff.mpr hmatch
+            simp [exactResult, he, hmatch, hmatchExact,
+              PanSemDeclarationOutputRel]
 
 end Flapjack
