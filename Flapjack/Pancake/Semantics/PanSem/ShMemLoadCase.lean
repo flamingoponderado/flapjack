@@ -1,17 +1,22 @@
 import Flapjack.Pancake.Semantics.PanSem.EvaluateFinite
 
 /-!
-# The HOL `evaluate_def` ShMemLoad equation
+# PanSem ShMemLoad equation (tag withheld)
 
 This case is kept in its own module so case work can proceed independently of
-the shared `EvaluateFinite` clause file. The tagged conclusion spells out the
-two source matches from `panSemScript.sml:605-610`: first `eval s ad`, then
-`lookup_kvar vk v s`; each failed check returns `(SOME Error, s)`, while the
-word/word branch calls the exact `sh_mem_load` rendering with `nb_op op`.
+the shared `EvaluateFinite` clause file. Its conclusion spells out the two
+source matches from `panSemScript.sml:605-610`: first `eval s ad`, then
+`lookup_kvar vk v s`; each failed check returns `(SOME Error, s)`.
 
 The state carrier is `PanSemStateFiniteExact`; its four finite maps are the
-reviewed canonical `HolFiniteMapExact` translation. This declaration does not
-add a decidability premise: the shared-memory predicate is decided
+reviewed canonical `HolFiniteMapExact` translation. The `@[hol]` tag is
+withheld because the successful branch calls `shMemLoadHOLExact` on
+`state.toExact`. That helper is typed over `PanSemStateExact`, whose four map
+fields are unrestricted lookup functions. Repacking its result with `ofExact`
+proves support preservation for this input but does not change the helper's
+declared carrier. A faithful finite-carrier `sh_mem_load_def` and a case
+statement using it directly are tracked by `flapjack-qj5.10.1`. This theorem
+does not add a decidability premise: the shared-memory predicate is decided
 classically, as the pair evaluator does.
 -/
 
@@ -26,22 +31,8 @@ theorem ofExact_toExact_any {width : Nat} {σ : Type} [NeZero width]
   cases state
   rfl
 
-/- The checker requires the canonical representation witness to live beside
-   every declaration using the finite-map qualifier. This names the imported
-   carrier and its actual `toExact`/`ofExact` roundtrip. -/
-theorem holFmapAsFiniteSupportWitness {width : Nat} {σ : Type} [NeZero width] :
-    (∀ (state : Flapjack.PanSemStateFiniteExact width σ),
-        Flapjack.PanSemStateFiniteExact.ofExact state.toExact state.toExact_finiteSupport = state) := by
-  intro state
-  exact Flapjack.PanSemStateFiniteExact.ofExact_toExact state
-
-/-- HOL `evaluate_def`'s `ShMemLoad` clause (`panSemScript.sml:605-610`).
-    The two nested matches and both error/original-state branches are the
-    source equation itself. The successful branch is precisely HOL's
-    `sh_mem_load vk v addr (nb_op op) s`, translated through the canonical
-    finite-support carrier. -/
-@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+/-- Flapjack-specific ShMemLoad case equation. The exact HOL tag remains
+    withheld for the helper-carrier mismatch documented at module scope. -/
 theorem evaluateHOLFiniteState_shMemLoad_source {width : Nat} {σ : Type}
     [NeZero width] (state : Flapjack.PanSemStateFiniteExact width σ)
     (operator : Flapjack.OpSize) (kind : Flapjack.VarKind) (name : MlS)

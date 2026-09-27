@@ -272,6 +272,30 @@ def lookupKvarHOLFinite {width : Nat} {σ : Type} [NeZero width]
       lookupKvarHOLExact kind name state.toExact := by
   cases kind <;> rfl
 
+/-- HOL `is_valid_value_def` (`cakeml/pancake/semantics/panSemScript.sml:469-475`)
+    over the finite-map state carrier. It performs the selected `FLOOKUP` and
+    compares the two `shape_of` results; absent variables are invalid. The
+    finite-map qualifier records the carrier translation used by
+    `PanSemStateFiniteExact`. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "is_valid_value_def"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+def isValidValueHOLFinite {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (kind : VarKind) (name : MlS)
+    (value : ValueHOL width) : Bool :=
+  match lookupKvarHOLFinite kind name state with
+  | some existing => shapeEqHOL (shapeOfHOLExact value) (shapeOfHOLExact existing)
+  | none => false
+
+/-- Finite-map and broad lookup renderings agree on a finite carrier state. -/
+@[simp] theorem isValidValueHOLFinite_eq {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateFiniteExact width σ) (kind : VarKind)
+    (name : MlS) (value : ValueHOL width) :
+    isValidValueHOLFinite state kind name value =
+      isValidValueHOLExact state.toExact kind name value := by
+  unfold isValidValueHOLFinite isValidValueHOLExact
+    lookupKvarHOLFinite lookupKvarHOLExact
+  cases kind <;> rfl
+
 /-- HOL `set_var_def` (`cakeml/pancake/semantics/panSemScript.sml:398-401`):
     `set_var v value s = s with locals := s.locals |+ (v,value)`.  The `|+`
     (FUPDATE) is the canonical `HolFiniteMapExact.update` on the finite-support
@@ -1950,7 +1974,7 @@ theorem evaluateHOLFiniteState_assign {width : Nat} {σ : Type} [NeZero width]
           (fun address => Classical.propDecidable (state.memaddrs address)) source with
       | none => (some .error, state)
       | some value =>
-          if isValidValueHOLExact state.toExact kind name value then
+          if isValidValueHOLFinite state kind name value then
             (none, setKvarHOLFinite kind name value state)
           else (some .error, state) := by
   classical
@@ -1962,7 +1986,7 @@ theorem evaluateHOLFiniteState_assign {width : Nat} {σ : Type} [NeZero width]
         evalPanSemNonrecursiveHOLExact, assignStepHOLExact, heval,
         ofExact_toExact]
   | some value =>
-      by_cases hvalid : isValidValueHOLExact state.toExact kind name value = true
+      by_cases hvalid : isValidValueHOLFinite state kind name value = true
       · have hsupport :
             (setKvarHOLExact kind name value state.toExact).FiniteSupport :=
           PanSemStateExact.finiteSupport_setKvar state.toExact_finiteSupport kind name value
@@ -1982,14 +2006,22 @@ theorem evaluateHOLFiniteState_assign {width : Nat} {σ : Type} [NeZero width]
             · simp [HolFiniteMapExact.update, FUPDATE, h]
             · have h' : name ≠ current := fun h' => h h'.symm
               simp [HolFiniteMapExact.update, FUPDATE, h, h']
-        simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+        have hvalidWide :
+            isValidValueHOLExact state.toExact kind name value = true := by
+          simpa only [← isValidValueHOLFinite_eq] using hvalid
+        simp [isValidValueHOLFinite_eq, evaluateHOLFiniteState,
+          evaluateHOLFiniteStateWithDeciders,
           evalPanSemRecursiveCallFiniteContext, evalPanSemNonrecursiveHOLFinite,
-          evalPanSemNonrecursiveHOLExact, assignStepHOLExact, heval, hvalid, hroundtrip]
-      · have hinvalid : isValidValueHOLExact state.toExact kind name value = false :=
+          evalPanSemNonrecursiveHOLExact, assignStepHOLExact, heval, hvalidWide, hroundtrip]
+      · have hinvalid : isValidValueHOLFinite state kind name value = false :=
           Bool.eq_false_iff.mpr hvalid
-        simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+        have hinvalidWide :
+            isValidValueHOLExact state.toExact kind name value = false := by
+          simpa only [← isValidValueHOLFinite_eq] using hinvalid
+        simp [isValidValueHOLFinite_eq, evaluateHOLFiniteState,
+          evaluateHOLFiniteStateWithDeciders,
           evalPanSemRecursiveCallFiniteContext, evalPanSemNonrecursiveHOLFinite,
-          evalPanSemNonrecursiveHOLExact, assignStepHOLExact, heval, hinvalid,
+          evalPanSemNonrecursiveHOLExact, assignStepHOLExact, heval, hinvalidWide,
           ofExact_toExact]
 
 attribute [simp] evaluateHOLFiniteState_assign
@@ -2295,7 +2327,7 @@ theorem evaluateHOLFiniteState_primitive {width : Nat} {σ : Type} [NeZero width
           match panPrimopHOLExact operator values with
           | none => (some .error, state)
           | some value =>
-              if isValidValueHOLExact state.toExact .local name value then
+              if isValidValueHOLFinite state .local name value then
                 (none, setVarHOLFinite name value state)
               else (some .error, state) := by
   classical
@@ -2314,7 +2346,7 @@ theorem evaluateHOLFiniteState_primitive {width : Nat} {σ : Type} [NeZero width
             evalPanSemNonrecursiveHOLExact, primitiveStepHOLExact, heval, hprim,
             ofExact_toExact]
       | some value =>
-          by_cases hvalid : isValidValueHOLExact state.toExact .local name value = true
+          by_cases hvalid : isValidValueHOLFinite state .local name value = true
           · have hsupport :
                 (setVarHOLExact name value state.toExact).FiniteSupport :=
               PanSemStateExact.finiteSupport_setVar state.toExact_finiteSupport name value
@@ -2332,17 +2364,25 @@ theorem evaluateHOLFiniteState_primitive {width : Nat} {σ : Type} [NeZero width
                 · simp [HolFiniteMapExact.update, FUPDATE, h]
                 · have h' : name ≠ current := fun h' => h h'.symm
                   simp [HolFiniteMapExact.update, FUPDATE, h, h']
-            simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+            have hvalidWide :
+                isValidValueHOLExact state.toExact .local name value = true := by
+              simpa only [← isValidValueHOLFinite_eq] using hvalid
+            simp [isValidValueHOLFinite_eq, evaluateHOLFiniteState,
+              evaluateHOLFiniteStateWithDeciders,
               evalPanSemRecursiveCallFiniteContext, evalPanSemNonrecursiveHOLFinite,
               evalPanSemNonrecursiveHOLExact, primitiveStepHOLExact,
-              heval, hprim, hvalid, hroundtrip]
+              heval, hprim, hvalidWide, hroundtrip]
           · have hinvalid :
-                isValidValueHOLExact state.toExact .local name value = false :=
+                isValidValueHOLFinite state .local name value = false :=
               Bool.eq_false_iff.mpr hvalid
-            simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+            have hinvalidWide :
+                isValidValueHOLExact state.toExact .local name value = false := by
+              simpa only [← isValidValueHOLFinite_eq] using hinvalid
+            simp [isValidValueHOLFinite_eq, evaluateHOLFiniteState,
+              evaluateHOLFiniteStateWithDeciders,
               evalPanSemRecursiveCallFiniteContext, evalPanSemNonrecursiveHOLFinite,
               evalPanSemNonrecursiveHOLExact, primitiveStepHOLExact,
-              heval, hprim, hinvalid, ofExact_toExact]
+              heval, hprim, hinvalidWide, ofExact_toExact]
 
 attribute [simp] evaluateHOLFiniteState_primitive
 
