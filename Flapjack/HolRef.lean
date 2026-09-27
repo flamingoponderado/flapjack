@@ -58,8 +58,12 @@ Lean's positive-width `BitVec width`, and of HOL's `'ffi ffi_state` to a
 universe-0 Lean host type. It is a translation statement only: a tagged
 declaration must retain `[NeZero width]` (the discharge of HOL's
 `dimindex (:α) ≥ 1`), must not restate positivity as an extra hypothesis, and
-must bind the FFI host type at a `Type` universe when it mentions
-`HolFfiState`. The signature need not pronounce `BitVec` directly when it is
+must bind the FFI host type as `{σ : Type}` (or `Type 0`) without a
+universe-level variable or `Sort` when it mentions `HolFfiState`. Every word
+dimension in scope (not only the first) must be bound at its own `Nat` width
+with its own `[NeZero <id>]` discharge; a literal `BitVec 0` and a `[NeZero 0]`
+discharge are rejected as non-positive. The signature need not pronounce
+`BitVec` directly when it is
 stated over a reviewed width-indexed carrier (declared locally or reached
 through imports) whose own header carries `[NeZero <width>]` for its width
 parameter and some field of that SAME owner mentions `BitVec <width>` with that
