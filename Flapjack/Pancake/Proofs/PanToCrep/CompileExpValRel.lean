@@ -496,4 +496,83 @@ theorem compileExpValRelHOL_nfield {width : Nat} {σ : Type} [NeZero width]
           Bool.false_eq_true, if_false] at heval <;>
         exact absurd heval.symm (Option.some_ne_none value)
 
+/-! ### `compFieldHOL` slice correspondence
+
+The exact `RField` leaf of `compile_exp_val_rel` needs the correspondence
+between the compiled sub-expression list (whose evaluation is the flattened
+value list covered by `compileExpListValRelHOL`) and `compFieldHOL`, which
+consumes `sizeOfShapeHOL` expressions per taken field.  `compFieldHOL_slice`
+records that correspondence for every list index. -/
+
+private theorem compFieldHOL_slice
+    {width : Nat} {σ : Type} [NeZero width]
+    (targetState : CrepSemHOLState width σ) [DecidablePred targetState.memaddrs]
+    (values : List (ValueHOL width)) (cexp : List (CrepExpHOL width))
+    (hEval : cexp.map (evalCrepSemHOLExp targetState)
+      = (flattenHOL (.rStruct values)).map some)
+    (hvalues : isWfShapesExactHOL ([] : StructContextExact) (values.map shapeOfHOLExact) = true) :
+    ∀ (index : Nat) (value : ValueHOL width), values[index]? = some value →
+      (compFieldHOL index (values.map shapeOfHOLExact) cexp).1.map
+          (evalCrepSemHOLExp targetState) = (flattenHOL value).map some
+      ∧ (compFieldHOL index (values.map shapeOfHOLExact) cexp).2 = shapeOfHOLExact value
+      ∧ (compFieldHOL index (values.map shapeOfHOLExact) cexp).1.length
+          = sizeOfShapeHOL (shapeOfHOLExact value)
+      ∧ isWfShapeExactHOL ([] : StructContextExact) (shapeOfHOLExact value) = true := by
+  induction values generalizing cexp with
+  | nil =>
+      intro index value hget
+      simp at hget
+  | cons v rest ih =>
+      intro index value hget
+      have hWfHead : isWfShapeExactHOL ([] : StructContextExact) (shapeOfHOLExact v) = true := by
+        have h := hvalues
+        simp only [List.map_cons, isWfShapesExactHOL_cons, Bool.and_eq_true] at h
+        exact h.1
+      have hWfRest :
+          isWfShapesExactHOL ([] : StructContextExact) (rest.map shapeOfHOLExact) = true := by
+        have h := hvalues
+        simp only [List.map_cons, isWfShapesExactHOL_cons, Bool.and_eq_true] at h
+        exact h.2
+      have hsizeHead : (flattenHOL v).length = sizeOfShapeHOL (shapeOfHOLExact v) :=
+        flattenHOL_length_eq_sizeOfShapeHOL v hWfHead
+      have hmapSomeLen :
+          (List.map some (flattenHOL v)).length = sizeOfShapeHOL (shapeOfHOLExact v) := by
+        simpa only [List.length_map] using hsizeHead
+      have hEvalSplit : cexp.map (evalCrepSemHOLExp targetState)
+          = (flattenHOL v).map some
+            ++ (flattenHOL (.rStruct rest)).map some := by
+        rw [hEval]
+        simp only [flattenHOL, List.map_cons, List.flatten_cons, List.map_append]
+      have hlenCexp : cexp.length = (flattenHOL (.rStruct (v :: rest))).length := by
+        have h := congrArg List.length hEval
+        simpa only [List.length_map] using h
+      cases index with
+      | zero =>
+          simp only [List.getElem?_cons_zero, Option.some.injEq] at hget
+          subst hget
+          have htake : (cexp.take (sizeOfShapeHOL (shapeOfHOLExact v))).map
+              (evalCrepSemHOLExp targetState) = (flattenHOL v).map some := by
+            rw [List.map_take, hEvalSplit, ← hmapSomeLen, List.take_left]
+          have hbound : sizeOfShapeHOL (shapeOfHOLExact v) ≤ cexp.length := by
+            rw [hlenCexp, ← hsizeHead]
+            simp only [flattenHOL, List.map_cons, List.flatten_cons, List.length_append]
+            omega
+          refine ⟨?_, ?_, ?_, hWfHead⟩
+          · simp only [List.map_cons, compFieldHOL]
+            rw [if_true]
+            exact htake
+          · simp only [List.map_cons, compFieldHOL]
+            rw [if_true]
+          · simp only [List.map_cons, compFieldHOL]
+            rw [if_true]
+            rw [List.length_take, Nat.min_eq_left hbound]
+      | succ k =>
+          simp only [List.getElem?_cons_succ] at hget
+          have hdrop : (cexp.drop (sizeOfShapeHOL (shapeOfHOLExact v))).map
+              (evalCrepSemHOLExp targetState) = (flattenHOL (.rStruct rest)).map some := by
+            rw [List.map_drop, hEvalSplit, ← hmapSomeLen, List.drop_left]
+          have hrec :=
+            ih (cexp.drop (sizeOfShapeHOL (shapeOfHOLExact v))) hdrop hWfRest k value hget
+          simpa only [List.map_cons, compFieldHOL, Nat.succ_ne_zero, if_false,
+            Nat.succ_sub_one] using hrec
 end Flapjack
