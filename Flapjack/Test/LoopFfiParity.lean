@@ -12,8 +12,10 @@ The observations are compared with the direct 64-bit HOL oracle
 lookups, byte loads and byte-array reads, plus returned, terminal `FinalFFI`,
 and malformed-local outcomes. The byte helpers `memLoadByteAuxHOL`,
 `memStoreByteAuxHOL`, `readBytearrayHOL` and `writeBytearrayHOL` (in `LoopSem`)
-are width-generic exact ports; the RV64 `ExtCall` executable path remains
-untagged because HOL states the evaluator polymorphically.
+follow HOL's recursive equations but use `UInt8` where the relevant HOL byte
+carrier is `word8` (`BitVec 8`); they are untagged pending the faithful carrier
+replacement tracked by `flapjack-4ac.5.16.5.4`. The RV64 `ExtCall` executable
+path is also untagged because HOL states the evaluator polymorphically.
 -/
 
 namespace Flapjack.Test.LoopFfiParity

@@ -37,6 +37,44 @@ The older delegating adapter `evaluateHOLFiniteViaExact` (and its
 `evalPanSemRecursiveCallHOLFinite_of_broad` / `evaluateHOLFiniteViaExact_of_broad`
 translation lemmas) remains as untagged Flapjack-specific infrastructure.
 
+Source audit (Luna A, 2026-09-27), compared against the complete HOL
+`evaluate_def` block at `panSemScript.sml:556-761`:
+
+* `Skip`, `Break`, `Continue`, and `Annot` preserve the state and return the
+  corresponding HOL result; `Tick` distinguishes zero clock (`TimeOut` and
+  empty locals) from decrement-and-`NONE`.
+* `Dec` evaluates the initializer, checks `shape_of` equality, installs the
+  value for the body, and restores the previous local with `res_var`.
+  `Assign`, `Primitive`, `Store`, `Store32`, and `StoreByte` retain the source
+  error branches and update only the HOL-selected variable or memory field.
+* `ShMemLoad` and `ShMemStore` use the source helpers, including value-kind,
+  lookup, and memory-domain failures. `Return` and `Raise` retain the shape
+  size bound, exception-shape lookup, and empty-locals behavior.
+* `Seq` fixes the first result's clock and evaluates the second command only
+  for `NONE`; `If` uses the source zero/nonzero word split. `While` checks the
+  zero clock before the body, decrements before body evaluation, fixes its
+  result clock, and recurs only for `NONE`/`Continue`; `Break` becomes `NONE`.
+* `Call` and `DecCall` preserve argument evaluation and exact code lookup,
+  zero-clock timeout, callee-local entry, fixed-clock body outcome split,
+  return-shape and validity checks, exception-handler lookup/validation, and
+  local restoration. `DecCall` additionally checks both declared return
+  shapes, runs its continuation with the result binding, then restores the
+  prior result local. The focused Call/DecCall equations and projection proofs
+  cover the outcome-specific branches.
+* `ExtCall` retains all four expression checks, both byte-array reads, FFI
+  final/return branches, and the source memory/FFI updates.
+
+The exact data carriers are `ProgHOL`/`ExpHOL`/`ShapeHOL` and
+`PanSemStateFiniteExact`: words retain the source width, identifiers use
+`MlS`, and the four finite maps use the reviewed `HolFiniteMapExact`
+representation recorded by the state's qualifier and roundtrip witness.
+`shapeEqHOL_eq_true` establishes the Boolean shape comparison used by the
+evaluator. The finite-to-broad theorem below is a kernel-checked projection
+for every constructor; the state-level wrapper's `evaluateHOLFiniteState_eq_getD`
+bridge removes the assembly marker without changing the result/state pair.
+No mismatch was found. This is source-review evidence, not a restoration of
+the `evaluate_def` tag; that tag remains withheld pending coordinator review.
+
 The module also carries the per-constructor projection equivalence to the broad
 exact evaluator (`flapjack-6yq`): `..._skip_projection` / `_break_projection` /
 `_continue_projection` / `_annot_projection` and the `assign` / `primitive` /
@@ -1433,6 +1471,16 @@ theorem callFixedContextHOLFinite_toExact {width : Nat} {σ : Type} [NeZero widt
   rw [toExact_callFixedContextHOLFinite]
   congr 1
 
+/- Source-review note for HOL `evaluate_def` (`panSemScript.sml:556-761`):
+    the 66-case induction below projects every finite-context branch to the
+    broad evaluator. The finite clauses preserve HOL's evaluation/error
+    splits for all 21 constructors; the detailed clause groups and carrier
+    review are recorded at this module's header. In particular, the finite
+    projection uses `evalHOLFinite`/`lookupCodeHOLFinite`, finite-map
+    `resVarEq` restoration, and the named Call/DecCall entry/fixed/continuation
+    bridges. This proves finite-to-broad agreement; it does not by itself
+    establish the broad evaluator's HOL correspondence, so the
+    `evaluate_def` tag remains withheld pending coordinator review. -/
 set_option maxHeartbeats 2000000 in
 theorem evalPanSemRecursiveCallFiniteContext_projection {width : Nat} {σ : Type} [NeZero width]
     (program : ProgHOL width) (context : FiniteEvalContext width σ) :

@@ -232,38 +232,6 @@
     "reviewer": "Codex (source comparison; width-generic, requires aligned 2, four set_byte writes at w..w+3, =+ update leaves other addresses unchanged)"
   },
   {
-    "hol_path": "cakeml/misc/miscScript.sml",
-    "hol_name": "read_bytearray_def",
-    "lean_path": "Flapjack/Pancake/Semantics/LoopSem.lean",
-    "lean_name": "readBytearrayHOL",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Codex (source comparison; exact HOL arg order address,length,get_byte; get_byte/word-width are HOL parameters, no extra codec)"
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
-    "hol_name": "mem_load_byte_aux_def",
-    "lean_path": "Flapjack/Pancake/Semantics/LoopSem.lean",
-    "lean_name": "memLoadByteAuxHOL",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Codex (source comparison; exact HOL total word_loc memory m, word-set domain dm, arg order m,dm,be,w, byte_align = LOG2(width/8), no extra codec)"
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
-    "hol_name": "mem_store_byte_aux_def",
-    "lean_path": "Flapjack/Pancake/Semantics/LoopSem.lean",
-    "lean_name": "memStoreByteAuxHOL",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Codex (source comparison; exact HOL total word_loc memory m, word-set domain dm, arg order m,dm,be,w,b, byte_align = LOG2(width/8), no extra codec)"
-  },
-  {
-    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
-    "hol_name": "write_bytearray_def",
-    "lean_path": "Flapjack/Pancake/Semantics/LoopSem.lean",
-    "lean_name": "writeBytearrayHOL",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Codex (source comparison; exact HOL arg order a,bs,m,dm,be over total word_loc memory and word-set domain, byte_align via mem_store_byte_aux = LOG2(width/8), no extra codec)"
-  },
-  {
     "hol_path": "cakeml/pancake/crep_arithScript.sml",
     "hol_name": "dest_const_def",
     "lean_path": "Flapjack/Pancake/CrepArith.lean",
@@ -6278,14 +6246,6 @@
     "reviewer": "flapjack-ds8 (source comparison, 2026-09-26; bead flapjack-4ac.4.59.1). HOL miscScript.sml:4315 defines good_dimindex (:'a) as dimindex (:'a) = 32 \\/ dimindex (:'a) = 64. Lean goodDimindex takes the word width (the HOL dimindex) and is exactly width = 32 \\/ width = 64. No extra cases or side conditions."
   },
   {
-    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
-    "hol_name": "read_write_bytearray_lemma",
-    "lean_path": "Flapjack/Pancake/Semantics/PanProps/MemByteArray.lean",
-    "lean_name": "readWriteBytearrayLemma",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds8 (source comparison, 2026-09-26; bead flapjack-4ac.4.59.1). HOL panPropsScript.sml:1119 quantifies n : num, addr : 'a word, bytes : word8 list and proves good_dimindex(:a) /\\ read_bytearray addr n (mem_load_byte m addrs be) = SOME bytes ==> write_bytearray addr bytes m addrs be = m. The Lean statement has the same single conjunction antecedent and the same conclusion: memory is the total HolWordLab map (HOL 'a word -> 'a word_lab), domain is the Prop predicate with DecidablePred evidence (HOL word set), bytes is List UInt8 (HOL word8 list), the reader is panMemLoadByteHOL (mem_load_byte_def) fed to readBytearrayHOL (read_bytearray_def), and the write is panWriteBytearrayHOL (write_bytearray_def). goodDimindex width is the HOL good_dimindex. The proof inducts on length like HOL and uses the width-generic byte roundtrip panSetByteHOL_panGetByteHOL (ByteRoundtrip.lean, the untagged analogue of byteScript.sml:847) after splitting good_dimindex to width = 32 \\/ width = 64, exactly as HOL uses set_byte_get_byte and good_dimindex_def."
-  },
-  {
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
     "hol_name": "mem_load_32_alt",
     "lean_path": "Flapjack/Pancake/Semantics/PanSem/MemLoad32Alt.lean",
@@ -10271,14 +10231,6 @@
   },
   {
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
-    "hol_name": "mem_load_byte_def",
-    "lean_path": "Flapjack/Pancake/Semantics/PanSemStateEval.lean",
-    "lean_name": "panMemLoadByteHOL",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Codex (source comparison; exact HOL byte_align = clear low LOG2(width/8) bits via panByteAlignHOL, NOT division by width/8; total word_lab memory rendered as a total HolWordLab map and the word set as a Prop/DecidablePred domain; returns the exact word8 option; direct HOL rows mem_load_byte_def_little_first/little_last/big_first/missing plus width-24 mem_load_byte_def_w24_addr5=SOME 17w)"
-  },
-  {
-    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
     "hol_name": "mem_load_32_def",
     "lean_path": "Flapjack/Pancake/Semantics/PanSemStateEval.lean",
     "lean_name": "panMemLoad32HOL",
@@ -10887,22 +10839,6 @@
   },
   {
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
-    "hol_name": "mem_store_byte_def",
-    "lean_path": "Flapjack/Pancake/Semantics/PanSemStateEval.lean",
-    "lean_name": "panMemStoreByteHOL",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Codex (statement compared against panSemScript.sml:300-307; HOL total word_lab memory rendered as a total map into HolWordLab and the word set domain as a Prop predicate, as in the tagged mem_load_byte_def port; byte value is UInt8, set_byte via panSetByteHOL (standard-library helper, untagged). Direct HOL-EVAL rows store_byte_hit_some/store_byte_out/store_byte_other_unchanged reproduced by Lean guards in Flapjack/Test/PanSemStateEvalParity.lean.)"
-  },
-  {
-    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
-    "hol_name": "write_bytearray_def",
-    "lean_path": "Flapjack/Pancake/Semantics/PanSemStateEval.lean",
-    "lean_name": "panWriteBytearrayHOL",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Codex (statement compared against panSemScript.sml:309-316; tail-first recursion via panMemStoreByteHOL, a failed store keeps the original outer memory. Direct HOL-EVAL rows write_bytearray_changed/write_bytearray_other_unchanged/write_bytearray_out_of_domain reproduced by Lean guards in Flapjack/Test/PanSemStateEvalParity.lean.)"
-  },
-  {
-    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
     "hol_name": "mem_store_def",
     "lean_path": "Flapjack/Pancake/Semantics/PanSemStateEval.lean",
     "lean_name": "panMemStoreHOL",
@@ -11120,7 +11056,7 @@
       "globals",
       "code"
     ],
-    "reviewer": "flapjack-luna-c (source comparison against pan_to_crepProofScript.sml:540-575 and crepSemScript.sml:240-303, 2026-09-27): quantifies the exact Crep expression list, assignment names, expression results and previous lookup results. The five premises match HOL in order: MAP eval success, OPT_MMAP old-local lookup success, distinct_lists between assigned names and all expression variables, ALL_DISTINCT names, and equal lengths. The conclusion is evaluate (nested_seq (MAP2 Assign names expressions), state) = (NONE, state with locals := locals |++ ZIP (names, values)); List.zipWith/crepNestedSeqHOL and updateListEq/FUPDATE_LIST_HOL implement those equations. CrepSemHOLState carries exact CrepProgHOL/CrepExpHOL and HolWordLab carriers; all and only the locals/globals/code finite maps receive the reviewed canonical HolFiniteMapExact translation. The checker-verified same-module witness ties this carrier to CrepSemBroadState. Lean's operational memory-domain Decidable procedures are hidden behind Flapjack-only classical wrappers, so they add no theorem premise. Direct HOL success and premise-rejection rows are in eval_nested_assign_distinct_eq_probe.out; exact Lean theorem instantiation and regression are in CrepNestedAssignDistinctHOLParity.lean."
+    "reviewer": "flapjack-luna-c (source comparison against pan_to_crepProofScript.sml:540-575 and crepSemScript.sml:240-303, 2026-09-27): quantifies the exact Crep expression list, assignment names, expression results and previous lookup results. The five premises match HOL in order: MAP eval success, OPT_MMAP old-local lookup success, distinct_lists between assigned names and all expression variables, ALL_DISTINCT names, and equal lengths. The conclusion is evaluate (nested_seq (MAP2 Assign names expressions), state) = (NONE, state with locals := locals |++ ZIP (names, values)); List.zipWith/crepNestedSeqHOL and updateListEq/FUPDATE_LIST_HOL implement those equations. CrepSemHOLState carries exact CrepProgHOL/CrepExpHOL and HolWordLab carriers; all and only the locals/globals/code finite maps receive the reviewed canonical HolFiniteMapExact translation. The checker-verified same-module witness ties this carrier to CrepSemBroadState. The tagged conclusion now invokes the canonical evalCrepSemHOLProgExact entry, whose decision choice is theorem-proved independent by evalCrepSemHOLProgExact_eq_core; the prior proof-local duplicate was definitionally the same recursive call. Lean's operational memory-domain Decidable procedures are hidden behind Flapjack-only classical wrappers, so they add no theorem premise. Direct HOL success and premise-rejection rows are in eval_nested_assign_distinct_eq_probe.out; exact Lean theorem instantiation and regression are in CrepNestedAssignDistinctHOLParity.lean."
   },
   {
     "hol_path": null,
@@ -12371,14 +12307,6 @@
     "statement_status": "reviewed_fmap_as_finite_support",
     "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
     "reviewer": "flapjack-ds9 (source comparison, bead flapjack-4ac.4.78; audit flapjack-4ac.6; panPropsScript.sml:1448): HOL's converse characterization: under `EVERY is_exn_decl ds` plus the three well-formedness conditions (distinct ids, ids absent from the table, well-formed shapes), evaluation succeeds and yields exactly the state with the exception table updated by `exceptions ds`. Lean preserves the `s ds s'` order and the three Bool premises using the same all/isNone/isWfShapeExactHOL vocabulary as evaluateDeclsExnsWfHOLFinite; because HOL's `s'` occurs in no hypothesis or conclusion, HOL type inference gives it a fresh independent type variable and Lean binds it fully polymorphically rather than at the narrowed state type. The theorem statement uses evaluateDeclsPanPropsCanonical, whose definition calls canonical tagged PanSemStateFiniteExact.evaluateDeclsHOLFinite on state.toPanSemFinite and maps successful results back with ofPanSemFinite; the finite-map carrier is connected by the field-for-field state codec. The four |-> fields (locals, globals, code, eshapes) are the reviewed canonical HolFiniteMapExact translation recorded by the fmap_as_finite_support qualifier; the same-module canonical witness is holFmapAsFiniteSupportWitness. The qualifier is representation-only and changes no quantifier, hypothesis, or conclusion."
-  },
-  {
-    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
-    "hol_name": "write_bytearray_update_byte",
-    "lean_path": "Flapjack/Pancake/Semantics/PanProps/MemByteArray.lean",
-    "lean_name": "writeBytearrayUpdateByte",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-main (direct source review, 2026-09-26; bead flapjack-4ac.4.58.1): HOL panPropsScript.sml:1098-1104 quantifies bytes, ad, ad', m, adrs, be. The single antecedent is byte_aligned ad AND an existential Word cell at m ad; the conclusion existentially witnesses a Word cell at ad after write_bytearray ad' bytes m adrs be. Lean retains the same order and conjunction, with polymorphic word width, UInt8 for HOL word8, HolWordLab for HOL word_lab, and panByteAlignHOL ad = ad for byte_aligned ad (alignmentScript.sml:27). DecidablePred domain is computational evidence for HOL set membership, not a logical side condition."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",

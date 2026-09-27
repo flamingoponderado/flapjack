@@ -217,8 +217,9 @@ theorem evalPanSemStateExp_op_delegates (operator : BinOp)
   (evalPanSemStateExp littleEndianState (.op .sub [.const 3, .const 5]))
   (BitVec.ofNat 64 0xFFFFFFFFFFFFFFFE)
 
-/- Exact `mem_load_byte_def` port over the faithful total word-cell memory.
-   The expected values are the checked-in direct HOL rows
+/- Source-equation observations for `mem_load_byte_def` over the faithful total
+   word-cell memory, specialized to Flapjack's UInt8 result carrier. The
+   expected values are the checked-in direct HOL rows
    `mem_load_byte_def_little_first/little_last/big_first/missing` in
    `scripts/hol-probes/pan_sem_state_eval_probe.out`. -/
 def holMemory64 : Word64 → HolWordLab 64 :=
@@ -340,8 +341,9 @@ private abbrev dom4All : RiscV.Word 4 → Prop := fun _ => True
 
 /-! ### Executed-path widening adapter (flapjack-pxn.18.3.6.9.2) -/
 
-/-- The executed `readByte` on the source state agrees with the tagged exact
-    `panMemLoadByteHOL` over the word view of its `PanValue` memory. -/
+/-- The executed `readByte` on the source state agrees with the UInt8-backed
+    `panMemLoadByteHOL` source-equation helper over the word view of its
+    `PanValue` memory. -/
 example :
     (panSemBitVec64MemoryAccess littleEndianState).readByte
         (panSemBitVec64MemoryAccess littleEndianState).domain littleEndianState.memory

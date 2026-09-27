@@ -1,9 +1,9 @@
 /-
-# Exact `ExtCall` clause step over the exact MlString carrier
+# Untagged `ExtCall` clause step over the exact MlString carrier
 
-This module ports the `ExtCall` clause of HOL `panSem$evaluate_def`
+This module reproduces the `ExtCall` clause of HOL `panSem$evaluate_def`
 (`cakeml/pancake/semantics/panSemScript.sml:711-726`) over the exact,
-`mlstring`-keyed `PanSemStateExact` carrier:
+`mlstring`-keyed `PanSemStateExact` carrier, but is not an exact theorem port:
 
 ```
 evaluate (ExtCall ffi_index ptr1 len1 ptr2 len2, s) =
@@ -22,13 +22,12 @@ evaluate (ExtCall ffi_index ptr1 len1 ptr2 len2, s) =
 ```
 
 The four arguments are evaluated independently by the caller-supplied
-`evalExpression`; the byte reads use the tagged exact `panMemLoadByteHOL`
-(`mem_load_byte_def`) through `readBytearrayHOL` (`read_bytearray_def`), the
-call uses the tagged exact `callFFIHOL` (`call_FFI_def`), and the returned bytes
-are written back with the tagged exact `panWriteBytearrayHOL`
-(`write_bytearray_def`). `word8` lists are carried as `BitVec 8` in the exact
-`HolFfiState`; the small untagged converters below only bridge `UInt8` (used by
-the memory codec) with `BitVec 8` (used by the FFI carrier).
+`evalExpression`; branch order, FFI dispatch and state updates follow HOL. The
+FFI boundary uses `BitVec 8`, but the memory byte helpers use `UInt8` for HOL
+`word8` (`BitVec 8`), and the small converters below only prove a value-level
+codec. No approved HOL qualifier records that representation change, so those
+helper definitions and this clause step remain untagged. The faithful exact
+byte carrier is tracked by `flapjack-4ac.5.16.5.4`.
 
 This declaration is deliberately UNTAGGED: the tag belongs on the whole mutual
 `evaluate_def` once the recursive dispatcher exists, not on one callback

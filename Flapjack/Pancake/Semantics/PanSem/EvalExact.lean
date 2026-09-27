@@ -28,8 +28,9 @@ Every lookup is `=`-keyed (`MlString` derives
 `DecidableEq`); the shape
 comparisons go through `shapeEqHOL` (whose `= true` reading is proved exact in
 `IsValidValueExact.lean`); loads reuse the tagged exact `memLoadHOLExact`
-(`mem_load_def`), `panMemLoad32HOL` (`mem_load_32_def`), `panMemLoadByteHOL`
-(`mem_load_byte_def`); the wording operations reuse the tagged exact `wordOpHOL`
+(`mem_load_def`) and `panMemLoad32HOL` (`mem_load_32_def`); byte loads reuse
+the untagged UInt8-backed `panMemLoadByteHOL` pending the word8 carrier work
+(`flapjack-4ac.5.16.5.4`). The wording operations reuse the tagged exact `wordOpHOL`
 (`word_op_def`), `panOpHOL` (`pan_op_def`), `wordCmpHOL` (`word_cmp_def`) and
 `wordShiftHOL` (`word_sh_def`).
 
@@ -48,8 +49,9 @@ values.  The mutual list helpers `evalListHOLExact`/`evalListFieldsHOLExact` and
 `ALOOKUP` renderings and are untagged.  The shape comparisons go through
 `shapeEqHOL` (whose `= true` reading is proved exact in
 `IsValidValueExact.lean`); loads reuse the tagged exact `memLoadHOLExact`
-(`mem_load_def`), `panMemLoad32HOL` (`mem_load_32_def`), `panMemLoadByteHOL`
-(`mem_load_byte_def`); the wording operations reuse the tagged exact `wordOpHOL`
+(`mem_load_def`) and `panMemLoad32HOL` (`mem_load_32_def`); byte loads reuse
+the untagged UInt8-backed `panMemLoadByteHOL` pending the word8 carrier work
+(`flapjack-4ac.5.16.5.4`). The wording operations reuse the tagged exact `wordOpHOL`
 (`word_op_def`), `panOpHOL` (`pan_op_def`), `wordCmpHOL` (`word_cmp_def`) and
 `wordShiftHOL` (`word_sh_def`).
 
