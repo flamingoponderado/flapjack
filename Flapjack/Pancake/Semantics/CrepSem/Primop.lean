@@ -33,11 +33,12 @@ def crepPrimopHOLExact {width : Nat} [NeZero width] :
 
     This is NOT the canonical exact port: `crepPrimopHOLExact` above is the
     tagged `crep_primop_def` (over the exact `word_lab` carrier `HolWordLab`).
-    The executed Crep evaluator (`Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean`)
-    still calls this `PanWordLab` version, mapping payloads with
-    `HolWordLab.toPanWordLab`; `crepPrimopHOL_eq_map_toPanWordLab` below is the
-    proved conversion equation. Routing the evaluator through
-    `crepPrimopHOLExact` is tracked by `flapjack-4ac.5.16.9.1.1`. -/
+    The executed Crep evaluator
+    (`Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean`) now calls
+    `crepPrimopHOLExact` directly; this `PanWordLab` rendering is retained for
+    the differential-parity fixtures and is related to the exact version by
+    `crepPrimopHOL_eq_map_toPanWordLab` below (payloads mapped with
+    `HolWordLab.toPanWordLab`). -/
 def crepPrimopHOL {width : Nat} [NeZero width] :
     PrimOp → List (PanWordLab (BitVec width)) →
       Option (List (PanWordLab (BitVec width)))
@@ -48,8 +49,8 @@ def crepPrimopHOL {width : Nat} [NeZero width] :
 
 /-- The executable `PanWordLab` rendering `crepPrimopHOL` agrees with the exact
     `crepPrimopHOLExact` after mapping payloads with `HolWordLab.toPanWordLab`.
-    This is the conversion equation that keeps the untagged production rendering
-    on the executed path equivalent to the tagged exact declaration. -/
+    This is the conversion equation that keeps the retained untagged
+    parity-fixture rendering equivalent to the tagged exact declaration. -/
 theorem crepPrimopHOL_eq_map_toPanWordLab {width : Nat} [NeZero width]
     (operator : PrimOp) (arguments : List (HolWordLab width)) :
     crepPrimopHOL operator (arguments.map HolWordLab.toPanWordLab) =
