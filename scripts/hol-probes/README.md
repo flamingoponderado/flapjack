@@ -67,6 +67,18 @@ byte-array reads, expression failure, nonword arguments, and `FFI_final`;
 these are checked by `Flapjack.Test.PanSemExtCallExactParity`. The finite-
 carrier source equation is tagged in
 `Flapjack.Pancake.Semantics.PanSem.ExtCallCase`.
+`compile_to_crep_probe.out` records direct HOL EVAL rows for the full
+declaration-only `compile_to_crep_def`, including `raise_const`, `handled_pair`,
+duplicate exception IDs, and `duplicate_function_names`. The latter confirms
+both duplicate function entries remain in source order while the internal
+`make_funcs` map uses the first entry's return shape. `Flapjack.Test.CompileToCrepeParity`
+replays `raise_const` and `duplicate_function_names` over exact
+`DeclHOL`/`CrepProgHOL` carriers through the tagged `compileToCrepExactHOLW`;
+the `handled_pair` and duplicate exception rows remain covered by its
+production-carrier fixtures. The exact tagged definition remains proof-side;
+executable routing is tracked separately by `flapjack-pxn.18.3.1.3`.
+Regenerate the direct HOL fixture with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=compile_to_crep_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
 `compile_def_probe.out` also records direct HOL evaluations of `Return`
 (`return`, `multi_return`, and the empty-struct return), paired
 `Store32`/`StoreByte` success and fallback rows, `If`/`While` success and
