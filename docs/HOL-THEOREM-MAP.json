@@ -12843,5 +12843,22 @@
     "lean_name": "panToCrepCallCodeRelExactContextUpdate",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific projection of only the code_rel conjunct in HOL call_preserve_state_code_locals_rel (pan_to_crepProofScript.sml:2355). ctxt_fc preserves ctxt.funcs/eids and Pan/Crep dec_clock preserve the source/target code maps, so the exact codeRelExactHOLW relation is unchanged. This is not the full Call theorem and has no HOL declaration original."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "tlc_def",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "tlcHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_result",
+    "fmap_as_finite_support_result": true,
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.37): exact port of HOL tlc_def (pan_to_crepProofScript.sml:2317-2319) `tlc ns args = FEMPTY |++ ZIP (ns, FLAT (MAP flatten args))`. Keys num->Nat and values 'a word_lab->HolWordLab width match; `|++` is rendered by the reviewed HolFiniteMapExact.updateListEq (HOL FUPDATE_LIST with HOL =), and flatten is the tagged flattenHOL. The standalone result qualifier records only the finite-support representation; the same-module holFmapAsFiniteSupportResultWitness_tlcHOL states the unconditional lookup-level correspondence to raw FUPDATE_LIST_HOL. Production tlc stays an untagged documented carrier mismatch."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "holFmapAsFiniteSupportResultWitness_tlcHOL",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.37): Flapjack-only kernel-checked lookup witness for the standalone finite-map-result qualifier on tlcHOL; no separate HOL original."
   }
 ]

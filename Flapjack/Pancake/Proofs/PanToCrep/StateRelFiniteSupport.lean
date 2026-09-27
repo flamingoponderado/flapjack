@@ -294,4 +294,31 @@ theorem panToCrepFiniteRaisePayloadShape {width : Nat} {σ : Type}
     simpa [hstructs] using hpayload
   exact isWfShapeValueHOLExact_shapeOfHOLExact [] value hvalue
 
+/-- Exact port of HOL `tlc_def`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:2317-2319`):
+    `tlc ns args = FEMPTY |++ ZIP (ns, FLAT (MAP flatten args))`. Keys are
+    `num` (`Nat`) and values are `'a word_lab` (`HolWordLab width`), so the
+    result carrier is the canonical finite-support
+    `HolFiniteMapExact Nat (HolWordLab width)`; `|++` is the reviewed
+    `HolFiniteMapExact.updateListEq` rendering of HOL `FUPDATE_LIST` (HOL `=`),
+    and HOL `flatten` is the tagged `flattenHOL`. The standalone
+    `fmap_as_finite_support_result` qualifier records only that finite-support
+    representation; the same-module witness below states the unconditional
+    lookup-level correspondence to the raw `FUPDATE_LIST_HOL` operation. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "tlc_def"
+  (fmap_as_finite_support_result)]
+def tlcHOL {width : Nat} [NeZero width] (slots : List Nat)
+    (arguments : List (ValueHOL width)) : HolFiniteMapExact Nat (HolWordLab width) :=
+  HolFiniteMapExact.updateListEq HolFiniteMapExact.empty
+    (slots.zip ((arguments.map flattenHOL).flatten))
+
+/-- Canonical standalone finite-map witness for `tlcHOL`: its `lookup` is
+    exactly the HOL-shaped raw `FUPDATE_LIST_HOL` operation applied to the
+    everywhere-undefined function, with no premises. -/
+theorem holFmapAsFiniteSupportResultWitness_tlcHOL {width : Nat} [NeZero width]
+    (slots : List Nat) (arguments : List (ValueHOL width)) (key : Nat) :
+    ((tlcHOL slots arguments : HolFiniteMapExact Nat (HolWordLab width))).lookup key =
+      FUPDATE_LIST_HOL (fun _ => none)
+        (slots.zip ((arguments.map flattenHOL).flatten)) key := rfl
+
 end Flapjack
