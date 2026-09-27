@@ -2346,6 +2346,34 @@ theorem evaluateHOLFiniteState_primitive {width : Nat} {σ : Type} [NeZero width
 
 attribute [simp] evaluateHOLFiniteState_primitive
 
+/-! HOL `evaluate_def`'s `ShMemStore` equation (`panSemScript.sml:611-614`),
+one of the line-780 theorem's 21 conjuncts. The exact clause helper implements
+the two word checks and delegates to the reviewed `sh_mem_store` definition;
+the finite carrier reconstructs its returned state with the checked support
+proof. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
+  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+theorem evaluateHOLFiniteState_shMemStore {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (operator : OpSize)
+    (address value : ExpHOL width) :
+    let evalExpression := fun (_ : PanSemStateExact width σ) (expression : ExpHOL width) =>
+      @evalHOLExact width σ _ state.toExact
+        (fun address => Classical.propDecidable (state.memaddrs address)) expression
+    let output := @shMemStoreClauseHOLExact width σ _ state.toExact
+      (fun address => Classical.propDecidable (state.shMemaddrs address))
+      operator address value evalExpression
+    evaluateHOLFiniteState state (.shMemStore operator address value : ProgHOL width) =
+      (output.1, ofExact output.2
+        (@shMemStoreClauseHOLExact_finiteSupport width σ _ state.toExact
+          (fun address => Classical.propDecidable (state.shMemaddrs address))
+          operator address value evalExpression state.toExact_finiteSupport)) := by
+  classical
+  simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+    evalPanSemRecursiveCallFiniteContext]
+  rfl
+
+attribute [simp] evaluateHOLFiniteState_shMemStore
+
 /-- The decider-taking helper is the pair-shaped rendering of the assembly-marker
     evaluator. This bridge is Flapjack-specific infrastructure. -/
 theorem evaluateHOLFiniteStateWithDeciders_eq_getD {width : Nat} {σ : Type} [NeZero width]

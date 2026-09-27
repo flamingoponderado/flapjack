@@ -12181,6 +12181,16 @@
   },
   {
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 780,
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
+    "lean_name": "evaluateHOLFiniteState_shMemStore",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "reviewer": "flapjack-luna-a source comparison (2026-09-27; bead flapjack-qj5): HOL evaluate_def line 780's ShMemStore conjunct at panSemScript.sml:611-614 evaluates both address and value expressions in the original state, accepts exactly (SOME (ValWord addr), SOME (ValWord bytes)), and delegates to sh_mem_store bytes addr (nb_op op); all other evaluation/value cases return (SOME Error,s). evaluateHOLFiniteState_shMemStore states the same constructor equation without premises: its evalHOLExact closure captures state.toExact for both expression evaluations, and shMemStoreClauseHOLExact implements those word checks and delegates to shMemStoreHOLExact. The helper follows panSemScript.sml:529-547 exactly: zero-width writes test addr against sh_memaddrs; nonzero writes test byte_align addr; failed domain checks return Error; FFI final results return FinalFFI with the original state; FFI returns update only ffi and return NONE. The finite evaluator reconstructs the same broad poststate using the checked clause finite-support proof. Word/FFI carriers match HOL, and locals/globals/code/eshapes are the same-module HolFiniteMapExact carriers with holFmapAsFiniteSupportWitness. The explicitly named qualifier records only those four map-field translations; no eval result, domain condition, or other premise is added. This is one exact constructor case; the full conjunction remains open."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
     "hol_name": "evaluate_decls_def",
     "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
     "lean_name": "evaluateDeclsHOLFinite",
