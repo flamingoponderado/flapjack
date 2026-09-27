@@ -56,6 +56,13 @@ abbrev stateLoad : PanSemStateFiniteExact 8 Unit :=
     memory := fun a => if a = (0 : Word8) then .word 9 else .word 0
     memaddrs := fun a => a = 0 }
 
+abbrev stateLoadByte : PanSemStateFiniteExact 8 Unit :=
+  { state0 with
+    memory := fun a => if a = (0 : Word8) then .word 1 else .word 0
+    memaddrs := fun a => a = 0
+    clock := 20
+    be := false }
+
 abbrev stateLocalX : PanSemStateFiniteExact 8 Unit :=
   { state0 with
     locals := emptyValues.update (ml "x", .val (.word 3)) }
@@ -131,6 +138,13 @@ def declWordLoadUpdateGuard : Bool :=
   | some result => wordOfGlobal result "g" == some 9
   | none => false
 
+/-- Oracle `decl_byte_load_update`: `SOME (ValWord 1w), Word 1w`. -/
+def declByteLoadUpdateGuard : Bool :=
+  match evaluateDeclsHOLFinite stateLoadByte
+      [DeclHOL.decl ShapeHOL.one (ml "g") (ExpHOL.loadByte (ExpHOL.const 0))] with
+  | some result => wordOfGlobal result "g" == some 1 && result.memory 0 == .word 1
+  | none => false
+
 /-- Oracle `decl_bad_load_shape`: the source load fails and the declaration is rejected. -/
 def declBadLoadShapeGuard : Bool :=
   (evaluateDeclsHOLFinite state0
@@ -204,6 +218,7 @@ def exnBadShapeFailureGuard : Bool :=
 
 def evaluateDeclsFiniteGuard : Bool :=
   emptyGuard && nameNoopGuard && declGlobalUpdateGuard && declWordLoadUpdateGuard &&
+    declByteLoadUpdateGuard &&
     declBadLoadShapeGuard && declPreservesLocalsGuard && declLeftToRightGuard &&
     declEmptyLocalsFailureGuard && declShapeFailureGuard && functionCodeUpdateGuard &&
     functionCodeReplacementGuard && functionBadParamShapeGuard &&
@@ -214,6 +229,7 @@ def evaluateDeclsFiniteGuard : Bool :=
 #eval nameNoopGuard
 #eval declGlobalUpdateGuard
 #eval declWordLoadUpdateGuard
+#eval declByteLoadUpdateGuard
 #eval declPreservesLocalsGuard
 #eval declLeftToRightGuard
 #eval functionCodeUpdateGuard
@@ -223,6 +239,7 @@ def evaluateDeclsFiniteGuard : Bool :=
 #guard nameNoopGuard
 #guard declGlobalUpdateGuard
 #guard declWordLoadUpdateGuard
+#guard declByteLoadUpdateGuard
 #guard declBadLoadShapeGuard
 #guard declPreservesLocalsGuard
 #guard declLeftToRightGuard
