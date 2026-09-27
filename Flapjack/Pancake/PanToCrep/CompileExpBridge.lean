@@ -20,19 +20,14 @@ open Flapjack.Pancake.PanLang
 
 namespace CompileExpContextExact
 
-/-- Production finite-map context induced by an exact compile context. The
-    production side is a function-backed `FiniteMap` keyed by `String`; every
-    name is encoded with `ofString` and the stored `ShapeHOL` is decoded with
-    `shapeOfHOL`. `funcs`/`eids` are never read by `compileExpHOL`. -/
+/-- Production context induced by an exact compiler context. Retain all three
+    decoded maps and `vmax`, so the expression codec's production side uses the
+    same full context as the program-clause bridges. `compileExpHOL` reads only
+    `vars` and `vmax`; preserving `funcs`/`eids` here therefore does not change
+    its result. -/
 def prodContext {width : Nat} [NeZero width]
     (context : CompileExpContextExact width) :
-    PanToCrepHOLContext (BitVec width) where
-  vars := fun name =>
-    (context.vars.lookup (ofString name)).map
-      (fun entry => (shapeOfHOL entry.1, entry.2))
-  funcs := fun _ => none
-  eids := fun _ => none
-  vmax := context.vmax
+    PanToCrepHOLContext (BitVec width) := context.toProduction
 
 end CompileExpContextExact
 
@@ -152,13 +147,15 @@ theorem compileExpBridge_var {width : Nat} [NeZero width]
       compileExpExactHOLW.eq_2, expToHOL.eq_2]
     cases h : context.vars.lookup (ofString name) with
     | none =>
-        simp only [CompileExpContextExact.prodContext, h, FLOOKUP,
+        simp only [CompileExpContextExact.prodContext,
+          PanToCrepContextExact.toProduction, h, FLOOKUP,
           Option.map_none, List.map_cons, List.map_nil, crepExpToHOL.eq_1,
           shapeToHOL]
         constructor <;> trivial
     | some entry =>
         obtain ⟨shape, names⟩ := entry
-        simp only [CompileExpContextExact.prodContext, h, FLOOKUP,
+        simp only [CompileExpContextExact.prodContext,
+          PanToCrepContextExact.toProduction, h, FLOOKUP,
           Option.map_some, shapeToHOL_shapeOfHOL]
         constructor
         · rw [List.map_map]
