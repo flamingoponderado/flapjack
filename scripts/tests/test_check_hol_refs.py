@@ -833,6 +833,56 @@ class HolAttributeSitesTest(unittest.TestCase):
             finally:
                 checker_globals["ROOT"] = original_root
 
+    def test_fmap_as_finite_support_rejects_local_duplicate_of_imported_owner(self):
+        checker_globals = CHECKER["fmap_as_finite_support_errors"].__globals__
+        original_root = checker_globals["ROOT"]
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            owner = root / "Flapjack" / "PanToCrep" / "ContextExact.lean"
+            consumer = root / "Flapjack" / "PanToCrep" / "CompileExact.lean"
+            owner.parent.mkdir(parents=True)
+            owner.write_text(
+                "\n".join([
+                    "structure PanToCrepContextExact where",
+                    "  vars : HolFiniteMapExact Name Shape",
+                    "  funcs : HolFiniteMapExact Name FunctionInfo",
+                    "  eids : HolFiniteMapExact Name Word",
+                ]),
+                encoding="utf-8",
+            )
+            consumer.write_text(
+                "\n".join([
+                    "import Flapjack.PanToCrep.ContextExact",
+                    "structure PanToCrepContextExact where",
+                    "  vars : HolFiniteMapExact Name Shape",
+                    "  funcs : HolFiniteMapExact Name FunctionInfo",
+                    "  eids : HolFiniteMapExact Name Word",
+                    "theorem holFmapAsFiniteSupportWitness",
+                    "    (context : PanToCrepContextExact) :",
+                    "    PanToCrepContextExact.ofBroad",
+                    "      (PanToCrepContextExact.toBroad context) = context := by",
+                    "  exact PanToCrepContextExact.holFmapAsFiniteSupportWitness context",
+                    '@[hol "cakeml/pancake/pan_to_crepScript.sml" "compile_exp_def"',
+                    "  (fmap_as_finite_support := [vars, funcs, eids])]",
+                    "def compileExpExactHOLW (context : PanToCrepContextExact) := context.vars",
+                ]),
+                encoding="utf-8",
+            )
+            checker_globals["ROOT"] = root
+            try:
+                lines = consumer.read_text(encoding="utf-8").splitlines()
+                errors = CHECKER["fmap_as_finite_support_errors"](
+                    lines, ("vars", "funcs", "eids"),
+                    "Flapjack/PanToCrep/CompileExact.lean",
+                    CHECKER["tagged_declaration_text"](lines, 11),
+                )
+                self.assertTrue(
+                    any("one owning carrier structure" in e for e in errors),
+                    errors,
+                )
+            finally:
+                checker_globals["ROOT"] = original_root
+
     def test_fmap_as_finite_support_rejects_imported_wrong_owner_type_and_witness(self):
         for wrong_field_type, wrong_witness in [
             ("String \u2192 Option Nat", False),

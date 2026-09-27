@@ -228,23 +228,30 @@ qualifier to production declarations until checker tests and source review pass.
 `(fmap_as_finite_support := [field, ...])` when a HOL `|->` finite-map field is
 represented by the reviewed canonical Lean translation `HolFiniteMapExact`
 (a `lookup` function plus a `finiteSupport` proposition). Every named field must
-be declared by ONE owning carrier structure in the same module, whose field
-types use `HolFiniteMapExact`; a raw function-backed `α → Option β` map is
-ineligible, and fields split across several structures are rejected. When a
-module declares several structures with the same field names (for example a
-broad state and its finite-support counterpart), the tagged declaration's own
-carrier disambiguates: the owner must be named in that declaration's signature.
-The module must contain the checked canonical witness
-`holFmapAsFiniteSupportWitness`,
-whose statement names that owning structure and states a real `toX`/`ofX`
-roundtrip between it and its broad counterpart (a bare `State -> Broad -> State`
-arrow, or an unrelated counterpart mention, is rejected; the broad counterpart
-need not be declared in the same module). The
-reference checker verifies field/owner/carrier/witness shape and Lake checks the
-proof; neither establishes HOL correspondence. The qualifier is a representation
-statement only: it does not authorize changed quantifiers, hypotheses,
-conclusions, `BEq` side conditions, or word-model differences, and every tagged
-declaration still needs its own statement/side-condition review.
+be declared by ONE owning carrier structure whose field types use
+`HolFiniteMapExact`; a raw function-backed `α → Option β` map is ineligible, and
+fields split across several structures are rejected. The owning carrier may be
+declared in the tagged module or reached through its transitive imports (for
+example a tagged evaluator whose state carrier lives in a dedicated `HOLState`
+module). Do not declare a local duplicate of an imported state carrier just to
+satisfy placement; a same-named local copy that shadows the imported owner is
+rejected as ambiguous. When several in-scope structures declare the same field
+names, the tagged declaration's own signature disambiguates: the owner must be
+named there as a whole identifier. The tagged module must contain the checked
+canonical witness `holFmapAsFiniteSupportWitness`, whose statement names that
+owning structure and states a real `toX`/`ofX` roundtrip between it and its broad
+counterpart (a bare `State -> Broad -> State` arrow, or an unrelated counterpart
+mention, is rejected; the broad counterpart need not be declared in the same
+module). A witness declared under a fresh local namespace (to avoid clashing with
+an imported witness of the same name) is acceptable, and an imported witness may
+be re-exported as a local one. The reference checker verifies
+field/owner/carrier/witness shape and Lake checks the proof; neither establishes
+HOL correspondence. Source review must additionally confirm the imported owner is
+the reviewed carrier the evaluator actually uses, that no local duplicate carrier
+shadows it, and that the witness is non-vacuous. The qualifier is a
+representation statement only: it does not authorize changed quantifiers,
+hypotheses, conclusions, `BEq` side conditions, or word-model differences, and
+every tagged declaration still needs its own statement/side-condition review.
 
 **Qualify standalone finite-map carriers.** Use
 `(fmap_as_finite_support_result)` when a tagged declaration is not a structure
