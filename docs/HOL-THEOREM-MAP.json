@@ -13946,7 +13946,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
     "lean_name": "compileExpValRelHOL_cmp",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.9): Flapjack-specific staged constructor lemma for the exact-carrier `compile_exp_val_rel` case; HOL proves this case inside `pc_compile_correct` and exports no standalone declaration, so no `@[hol]` tag is attached."
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.9): Flapjack-specific staged constructor lemma for the exact-carrier `compile_exp_val_rel` case; HOL proves this case inside `compile_exp_val_rel` and exports no standalone declaration, so no `@[hol]` tag is attached."
   },
   {
     "hol_path": null,
@@ -13954,7 +13954,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
     "lean_name": "compileExpValRelHOL_shift",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.9): Flapjack-specific staged constructor lemma for the exact-carrier `compile_exp_val_rel` case; HOL proves this case inside `pc_compile_correct` and exports no standalone declaration, so no `@[hol]` tag is attached."
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.9): Flapjack-specific staged constructor lemma for the exact-carrier `compile_exp_val_rel` case; HOL proves this case inside `compile_exp_val_rel` and exports no standalone declaration, so no `@[hol]` tag is attached."
   },
   {
     "hol_path": "cakeml/misc/miscScript.sml",
@@ -13995,5 +13995,29 @@
     "lean_name": "cexpHeads_compileExpListValRelHOL",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.10.2): Flapjack-specific list-level heads-correspondence infrastructure used by the exact compile_exp_val_rel Op/Panop cases; no HOL declaration corresponds directly."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "compileExpValRelHOL_op",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.10): exact-carrier staged constructor lemma for the Op case of HOL compile_exp_val_rel (proved inside pc_compile_correct, so no standalone exported HOL declaration to tag). Flapjack-specific infrastructure."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "crepOpCrepWord_compilePanOp",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.12): private Flapjack-specific helper relating the executed crep Op to the exact pan Op; no HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "compileExpValRelHOL_panop",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.12): staged case lemma for the Panop arm of HOL compile_exp_val_rel; HOL proves it inside pc_compile_correct, no standalone declaration."
   }
 ]
