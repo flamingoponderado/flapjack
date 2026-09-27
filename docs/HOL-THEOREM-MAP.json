@@ -2138,7 +2138,15 @@
     "statement_status": "reviewed_fmap_as_finite_support",
     "fmap_as_finite_support": ["vars", "funcs", "eids"],
     "reviewer": "flapjack-luna-b (source comparison, bead flapjack-pxn.18.3.5.8.13.29; pan_to_crepScript.sml:139-307): compared every Prog constructor equation and recursive context update against compile_def and its direct EVAL rows in scripts/hol-probes/compile_def_probe.out. Skip, Dec (declared shape ignored, extended vars store compile_exp shape/names, vmax update and shape-length fallback), local/global Assign, Primitive, Store, Store32/StoreByte, Return, Raise, Seq, If/While, Break/Continue, all Call rtyp/wrap_rt/handler/eid branches, DecCall, ExtCall, ShMemStore, local/global ShMemLoad, Tick, and Annot match. The compiled-shape update was re-reviewed against pan_to_crepScript.sml:141-152 after fixing an earlier declared-shape mismatch; direct HOL row dec_declared_shape_ignored in compile_def_probe.out and the matching exact-compiler guard pin the difference. An additional exactDecClauseParity guard covers declared size two versus compiled size one. The exact syntax and word carriers are ProgHOL width/ExpHOL width/ShapeHOL/MlS and CrepProgHOL width with [NeZero width]. PanToCrepContextExact's vars/funcs/eids are the only representation difference, using HolFiniteMapExact; the same-module holFmapAsFiniteSupportWitness proves its toBroad/ofBroad roundtrip. Production String-backed compiler remains separate and is not claimed to execute this definition; routing is tracked by parent flapjack-pxn.18.3.5.8.13."
-  },
+   },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "good_res_def",
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals.lean",
+    "lean_name": "goodResHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 (source comparison, 2026-09-27; bead flapjack-pxn.18.3.5.8.23): HOL good_res_def (pan_globalsProofScript.sml:164-170) is the five-clause predicate good_res (SOME TimeOut)=F, good_res (SOME (Return v))=F, good_res (SOME (Exception l v))=F, good_res (SOME (FinalFFI ev))=F, good_res _=T over panSem$result option, ignoring every payload. The exact Lean port goodResHOL is over the reviewed exact result carrier PanSemResultExact width (DecExact.lean:58, tagged reviewed_exact against panSemScript.sml:68-75): timeOut/returned/exception/finalFfi => false and none/error/break/continue => true, clause-for-clause with the same ignored payloads and the same boolean result. [NeZero width] discharges HOL's positive dimindex. The only difference from HOL is the already-reviewed result carrier, so no qualifier applies. The declaration inspects no payload, so no finite-map or word-carrier field is traversed."
+   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
     "hol_name": "compile_top_only_functions_or_exns",
