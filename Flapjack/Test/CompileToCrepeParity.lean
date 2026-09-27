@@ -1,4 +1,5 @@
 import Flapjack.Pancake.PanToCrep.Compile
+import Flapjack.Pancake.PanToCrep.CompileExact
 import Flapjack.Pancake.CrepToLoop
 import Flapjack.Pancake.LoopToWord
 import Flapjack.RiscV.WordToStack
@@ -6,6 +7,55 @@ import Flapjack.RiscV.WordToStack
 namespace Flapjack.Test.CompileToCrepeParity
 
 open Flapjack
+open Flapjack.Pancake.PanLang (DeclHOL FunDeclHOL MlS ShapeHOL ExpHOL ProgHOL)
+
+private abbrev holMl (name : String) : MlS := Flapjack.Basis.Pure.MlString.ofString name
+
+/-! Exact `duplicate_function_names` row from the direct HOL probe.  Both
+same-name declarations remain in the returned list in source order, while the
+call compiled for `g` uses the first `f` return shape and allocates two words. -/
+private def exactDuplicateFunctionNameDecls : List (DeclHOL 8) :=
+  [ .function
+      { name := holMl "f", inline := false, exported := false, params := [],
+        body := .skip, returnShape := .comb [.one, .one] }
+  , .function
+      { name := holMl "f", inline := false, exported := false, params := [],
+        body := .skip, returnShape := .one }
+  , .function
+      { name := holMl "g", inline := false, exported := false, params := [],
+        body := .call (some (none, none)) (holMl "f") [], returnShape := .one }
+  ]
+
+private def exactDuplicateFunctionNameOracle : Bool :=
+  match Flapjack.compileToCrepExactHOLW exactDuplicateFunctionNameDecls with
+  | [ (first, [], .skip), (second, [], .skip),
+      (caller, [], .dec 1 (.const zero1)
+        (.dec 2 (.const zero2)
+          (.call (some ([1, 2], none)) called []))) ] =>
+      first == holMl "f" && second == holMl "f" && caller == holMl "g" &&
+        called == holMl "f" && zero1 == (0 : BitVec 8) && zero2 == (0 : BitVec 8)
+  | _ => false
+
+#guard exactDuplicateFunctionNameOracle
+
+private def exactRaiseConstDecls : List (DeclHOL 8) :=
+  [ .exnDecl (holMl "E") ShapeHOL.one
+  , .function
+      { name := holMl "f", inline := false, exported := false,
+        params := [(holMl "x", ShapeHOL.one)],
+        body := .raise (holMl "E") (.const 7), returnShape := ShapeHOL.one }
+  ]
+
+private def exactRaiseConstOracle : Bool :=
+  match Flapjack.compileToCrepExactHOLW exactRaiseConstDecls with
+  | [(name, [0], .seq
+       (.dec 1 (.const seven) (.seq (.storeGlob address (.var 1)) .skip))
+       (.raise exceptionCode))] =>
+      name == holMl "f" && seven == (7 : BitVec 8) &&
+        address == (0 : BitVec 5) && exceptionCode == (0 : BitVec 8)
+  | _ => false
+
+#guard exactRaiseConstOracle
 
 /-! Direct `raise_const` result from `compile_to_crep_probe.out`, now checked
 at the exact HOL declaration-only boundary over a 64-bit word. The exception
@@ -571,6 +621,8 @@ def parityGuard : Bool :=
 def runChecks : IO Bool := do
   let results := [
     ("raised constant", parityGuard),
+    ("exact declaration-only raised constant", exactRaiseConstOracle),
+    ("exact duplicate function names", exactDuplicateFunctionNameOracle),
     ("duplicate exception names through HOL compiler", holDuplicateExceptionProductionOracle),
     ("duplicate exception names through production metadata", holDuplicateExceptionMetadataOracle),
     ("declaration-only two-word exception", holPairRaiseProductionOracle),

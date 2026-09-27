@@ -1527,6 +1527,7 @@ VALID_STATUSES = {
     "reviewed_fmap_as_finite_support",
     "reviewed_fmap_as_finite_support_result",
     "reviewed_fmap_as_finite_support_relation",
+    "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_equalities",
     "reviewed_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
@@ -2042,6 +2043,12 @@ def validate_inventory(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support combined with "
                 "words_as_type_indexed_bitvec requires the combined review status "
                 "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec"
+            )
+        if words_bitvec and fmap_relation and status != combined_relation_words_status:
+            errors.append(
+                f"{key[0]}:{key[1]}: fmap_as_finite_support_relation combined with "
+                "words_as_type_indexed_bitvec requires the combined review status "
+                "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec"
             )
         if status == combined_words_status and not (words_bitvec and fmap_fields):
             errors.append(

@@ -106,6 +106,23 @@ val _ = print_eval "duplicate_exceptions"
             body := panLang$Raise «F» (panLang$Const (9w : 8 word));
             return := panLang$One |>]``;
 
+(* `functions` keeps both same-name functions in source order, while the
+   `make_funcs` alist map keeps the first return shape.  The call in `g`
+   therefore allocates two result words from the first `f` declaration. *)
+val _ = print_eval "duplicate_function_names"
+  ``pan_to_crep$compile_to_crep
+      [panLang$Function
+         <| name := «f»; inline := F; export := F; params := [];
+            body := panLang$Skip;
+            return := panLang$Comb [panLang$One; panLang$One] |>;
+       panLang$Function
+         <| name := «f»; inline := F; export := F; params := [];
+            body := panLang$Skip; return := panLang$One |>;
+       panLang$Function
+         <| name := «g»; inline := F; export := F; params := [];
+            body := panLang$Call (SOME (NONE, NONE)) «f» [];
+            return := panLang$One |>]``;
+
 val _ = print_eval "crep_vars_empty"
   ``pan_to_crep$crep_vars ([] : (mlstring # panLang$shape) list)``;
 

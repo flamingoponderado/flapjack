@@ -40,6 +40,12 @@ open Flapjack.Pancake.PanLang
     `pc_compile_correct` and not evidence that the production String-backed
     compiler path uses this exact carrier. That executable-path replacement
     remains tracked on the parent correctness bead.
+
+    No separate `(words_as_type_indexed_bitvec)` qualifier is attached: that
+    flag cannot be combined with `fmap_as_finite_support_relation` under the
+    current manifest schema (no reviewed status carries both), and the traced
+    finite maps are already named above. The schema question is tracked by
+    flapjack-ikjm.4.
 -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "code_rel_def"
   (fmap_as_finite_support_relation := [sourceCode, targetCode,
@@ -84,7 +90,10 @@ def codeRelExactHOLW {width : Nat} [NeZero width]
     imported `code_rel_def` tag; the same-module checked witness
     `holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact` validates the
     context carrier. This tags only the exact proof-side relation, not the
-    production `codeRel`/`codeRelW`, which remain on the parent bead. -/
+    production `codeRel`/`codeRelW`, which remain on the parent bead.
+
+    No separate `(words_as_type_indexed_bitvec)` qualifier is attached; see the
+    schema note on `codeRelExactHOLW` above (tracked by flapjack-ikjm.4). -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "code_rel_imp"
   (fmap_as_finite_support_relation := [sourceCode, targetCode,
     PanToCrepContextExact.funcs, PanToCrepContextExact.eids])]
@@ -159,7 +168,10 @@ theorem holFmapAsFiniteSupportRelationWitness_CrepSemHOLState
     on `code`, so the proof is HOL's
     `rw [code_rel_def, empty_locals_def, panSemTheory.empty_locals_def] >>
     metis_tac[]`. This tags only the exact proof-side theorem, not the
-    production `codeRel`/`codeRelW` carriers. -/
+    production `codeRel`/`codeRelW` carriers.
+
+    No separate `(words_as_type_indexed_bitvec)` qualifier is attached; see the
+    schema note on `codeRelExactHOLW` above (tracked by flapjack-ikjm.4). -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "code_rel_empty_locals"
   (fmap_as_finite_support_relation :=
     [PanSemStateFiniteExact.code, CrepSemHOLState.code])]

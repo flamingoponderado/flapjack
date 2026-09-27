@@ -1,0 +1,10 @@
+transform_eoc_return_zip=T
+transform_eoc_call_none=T
+transform_eoc_call_returns=T
+transform_eoc_call_handler=T
+transform_eoc_call_handler_value=Call (SOME ([12],SOME (3w,Seq (Assign 10 (Var 3)) Skip))) «f» [Var 2]
+transform_eoc_dec=T
+transform_eoc_while=T
+transform_eoc_seq=T
+transform_eoc_if=T
+transform_eoc_default=T

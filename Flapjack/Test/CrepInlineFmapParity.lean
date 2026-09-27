@@ -55,6 +55,90 @@ theorem exactMapDomsub :
   rw [CrepInlineFmapHOL.lookup_remove]
   simp
 
+/-- Exact-syntax recursive core: a finite-map hit inserts the inlined body,
+    and recursive self-calls are left untouched after DOMSUB removes the
+    callee from the map. -/
+private def exactRecursiveRows : CrepInlineFmapHOL 8 :=
+  CrepInlineFmapHOL.insert (exactKey "f") ([], .call none (exactKey "f") [])
+    CrepInlineFmapHOL.empty
+
+def exactRecursiveSelfCallRemoved : Bool :=
+  match inlineProgHOLCore exactRecursiveRows
+      (.call none (exactKey "f") [] : CrepProgHOL 8) with
+  | .seq .tick (.call none name []) => name == exactKey "f"
+  | _ => false
+
+#guard exactRecursiveSelfCallRemoved
+
+def exactRecursiveStructuralDec : Bool :=
+  match inlineProgHOLCore CrepInlineFmapHOL.empty
+      (.dec 1 (.const 2) (.seq .tick .skip) : CrepProgHOL 8) with
+  | .dec 1 (.const 2) (.seq .tick .skip) => true
+  | _ => false
+
+#guard exactRecursiveStructuralDec
+
+/-- Exact-carrier recursive-core cases paired with the direct Cake EVAL rows
+    in `scripts/hol-probes/crep_inline_code_inl_probe.out`: hit, miss,
+    self-call after removal, argument loading, and handler call. -/
+def inlineProgHOLCoreOracleGuard : Bool :=
+  let key := exactKey "f"
+  let absent := exactKey "g"
+  let map := crepInlineMapHOL [key] exactRows
+  let hit := match inlineProgHOLCore map (.call none key [] : CrepProgHOL 8) with
+    | .seq .tick .skip => true
+    | _ => false
+  let miss := match inlineProgHOLCore map (.call none absent [] : CrepProgHOL 8) with
+    | .call none name [] => name == absent
+    | _ => false
+  let nestedMap := CrepInlineFmapHOL.insert key ([], .call none key [])
+    CrepInlineFmapHOL.empty
+  let nested := match inlineProgHOLCore nestedMap (.call none key [] : CrepProgHOL 8) with
+    | .seq .tick (.call none name []) => name == key
+    | _ => false
+  let argMap := CrepInlineFmapHOL.insert key
+    ([7], .dec 1 (.const 1) .skip) CrepInlineFmapHOL.empty
+  let arguments := match inlineProgHOLCore argMap
+      (.call none key [.const 5] : CrepProgHOL 8) with
+    | .seq .tick
+        (.dec 8 (.const 5) (.dec 7 (.var 8) (.dec 1 (.const 1) .skip))) => true
+    | _ => false
+  let handler := match inlineProgHOLCore map
+      (.call (some ([1], some (2, .skip))) key [] : CrepProgHOL 8) with
+    | .call (some ([1], some (2, .skip))) name [] => name == key
+    | _ => false
+  hit && miss && nested && arguments && handler
+
+#guard inlineProgHOLCoreOracleGuard
+
+/-- Exact-carrier `unreach_elim_def` leaves Skip unchanged and has no exit. -/
+theorem exactUnreachSkip :
+    unreachElimHOLExact (CrepProgHOL.skip : CrepProgHOL 8) = (.skip, none) := rfl
+
+/-- The exact source clause reports an ordinary Return exit. -/
+theorem exactUnreachReturn :
+    unreachElimHOLExact (CrepProgHOL.return [] : CrepProgHOL 8) =
+      (.return [], some .return) := rfl
+
+/-- HOL Seq short-circuits after a returning first command. -/
+theorem exactUnreachSeqShortCircuit :
+    unreachElimHOLExact
+        (CrepProgHOL.seq (.return []) .tick : CrepProgHOL 8) =
+      (.return [], some .return) := rfl
+
+/-- HOL While discards a body exit because the loop can execute zero times. -/
+theorem exactUnreachWhileDropsExit :
+    unreachElimHOLExact
+        (CrepProgHOL.while (.const 1) (.return []) : CrepProgHOL 8) =
+      (.while (.const 1) (.return []), none) := rfl
+
+/-- The first nested case in HOL's If merge gives the second exit when the
+    first branch reports Return. -/
+theorem exactUnreachIfMergePriority :
+    unreachElimHOLExact
+        (CrepProgHOL.ite (.const 0) (.return []) (.raise 0) : CrepProgHOL 8) =
+      (.ite (.const 0) (.return []) (.raise 0), some .exception) := rfl
+
 def fmapEntries : CrepInlineFmap Nat :=
   CrepInlineFmap.insert "f" ([7], CrepProg.skip) CrepInlineFmap.empty
 
@@ -255,6 +339,55 @@ theorem helperTailP :
     crepInlineTail helperP =
       .seq .tick (.seq (.dec 1 (.const 1) (.return [.var 2])) .skip) := by
   simp [helperP, crepInlineTail]
+
+/-- Exact-carrier regression for `inline_tail_def`, matching the direct HOL
+    `tail_p` row in `crep_inline_helper_probe.out` at width 8. -/
+private def helperExactP : CrepProgHOL 8 :=
+  .seq (.dec 1 (.const 1) (.return [.var 2])) .skip
+
+theorem helperTailExactP :
+    inlineTailHOLExact helperExactP =
+      .seq .tick (.seq (.dec 1 (.const 1) (.return [.var 2])) .skip) := by
+  rfl
+
+/-- Exact-carrier regression for `arg_load_def`, matching the direct HOL
+    `argload_p` row in `crep_inline_helper_probe.out` at width 8. -/
+private def helperExactBody : CrepProgHOL 8 :=
+  .dec 1 (.const 1) .skip
+
+theorem helperArgLoadExactP :
+    argLoadHOLExact [20] [.const 5] [7] helperExactBody =
+      .dec 20 (.const 5) (.dec 7 (.var 20) (.dec 1 (.const 1) .skip)) := by
+  rfl
+
+/-- Exact width-indexed `has_return_def` and `not_branch_ret_def` clauses:
+    an If branch Return is detected by the first and rejected by the second. -/
+private def exactBranchReturn : CrepProgHOL 8 :=
+  .ite (.const 1) (.return [.var 2]) .skip
+
+theorem helperHasReturnHOLExact : hasReturnHOLExact exactBranchReturn = true := by
+  rfl
+
+theorem helperNotBranchRetHOLExact :
+    notBranchRetHOLExact exactBranchReturn = false := by
+  rfl
+
+/-- Exact `transform_branch_def`: one returned value is assigned before the
+    zero-depth Break; `nested_seq` leaves its terminating Skip explicit. -/
+theorem helperTransformBranchHOLExact :
+    transformBranchHOLExact 0 [10] (.return [.var 2] : CrepProgHOL 8) =
+      .seq (.seq (.assign 10 (.var 2)) .skip) (.break 0) := by
+  simp [transformBranchHOLExact, crepNestedSeqHOL]
+
+/-- Exact `inline_nontail_def` using the same `nested_decs` and `nested_seq`
+    behavior as the source, including its explicit Skip terminator. -/
+theorem helperInlineNontailHOLExact :
+    inlineNontailHOLExact (.skip : CrepProgHOL 8) [10] [11] [20]
+      [.const 5] [7] =
+      .dec 11 (.const 0)
+        (.seq (.dec 20 (.const 5) (.dec 7 (.var 20) .skip))
+          (.seq (.assign 10 (.var 11)) .skip)) := by
+  rfl
 
 theorem helperArgLoadP :
     crepArgLoad [20] [.const 5] [7] helperBody =
