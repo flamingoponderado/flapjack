@@ -3533,8 +3533,8 @@ theorem evaluateHOLFiniteState_decCall_body_continue {width : Nat} {σ : Type}
   simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders, context,
     hcase, callFixedContextHOLFinite, hbodyState]
 
-/-- HOL `evaluate_def`'s DecCall conjunct (`panSemScript.sml:694-714`), as
-    restated in the conjunction at line 780. It exposes argument/code lookup
+/-- HOL `evaluate_def`'s original DecCall conjunct (`panSemScript.sml:694-714`,
+    in the Definition beginning at line 556). It exposes argument/code lookup
     failure, timeout, all fixed callee result cases, both return-shape checks,
     continuation evaluation, caller-binding restoration, and the
     empty-locals fallback. Only constructor inputs are hypotheses;
@@ -3550,8 +3550,10 @@ theorem evaluateHOLFiniteState_decCall_body_continue {width : Nat} {σ : Type}
     branch selectors, result assumptions, or assembly-marker `none` case.
     `PanSemStateFiniteExact` has HOL's 13 state fields; the four map fields use
     the same-module `HolFiniteMapExact` roundtrip witness, and its width-indexed
-    `BitVec` carrier is the reviewed positive HOL word translation. -/
-@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
+    `BitVec` carrier is the reviewed positive HOL word translation. Because
+    this RHS retains `fixClockHOLFinite`, it cites the original line-556
+    Definition, not the line-780 theorem rewritten by `fix_clock_evaluate`. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 556
   (fmap_as_finite_support := [locals, globals, code, eshapes])
   (words_as_type_indexed_bitvec)]
 theorem evaluateHOLFiniteState_decCall_total {width : Nat} {σ : Type}
