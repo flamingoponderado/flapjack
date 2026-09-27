@@ -3,6 +3,7 @@ import Flapjack.Pancake.Semantics.CrepSem.Primop
 import Flapjack.Pancake.Semantics.CrepSem.LookupCode
 import Flapjack.Pancake.Semantics.CrepSem.TotalEval
 import Flapjack.Pancake.Semantics.PanSemStateEval
+import Flapjack.Pancake.Semantics.PanSem.ExtCallExact
 import Flapjack.Pancake.Semantics.LoopSem
 import Flapjack.FfiHOL
 
@@ -169,6 +170,49 @@ def crepExactWriteBytearrayWord8 {width : Nat} [NeZero width] {σ : Type}
     BitVec width → HolWordLab width := by
   haveI : DecidablePred state.memaddrs := memDec
   exact panWriteBytearrayWord8HOL address bytes state.memory state.memaddrs state.be
+
+/-- The `UInt8`-carrier store-byte helper is kernel-equal to the exact source
+    `word8` helper: it differs only by the byte carrier
+    (`UInt8` vs `BitVec 8`), through `panMemStoreByteHOL_eq_word8`. -/
+theorem crepExactMemStoreByte_eq_word8 {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (address : BitVec width) (byte : UInt8) :
+    crepExactMemStoreByte state memDec address byte =
+      @panMemStoreByteWord8HOL width _ state.memory state.memaddrs memDec state.be
+        address byte.toBitVec := by
+  unfold crepExactMemStoreByte
+  exact @panMemStoreByteHOL_eq_word8 width _ state.memory state.memaddrs memDec state.be
+    address byte
+
+/-- The `UInt8`-carrier load-byte helper is kernel-equal (up to `UInt8.ofBitVec`
+    on each result) to the exact source `word8` helper, through
+    `panMemLoadByteHOL_eq_word8_projection`. -/
+theorem crepExactMemLoadByte_eq_word8 {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a)) :
+    crepExactMemLoadByte state memDec =
+      fun address =>
+        (@panMemLoadByteWord8HOL width _ state.memory state.memaddrs memDec state.be
+          address).map UInt8.ofBitVec := by
+  funext address
+  unfold crepExactMemLoadByte
+  exact @panMemLoadByteHOL_eq_word8_projection width _ state.memory state.memaddrs memDec
+    state.be address
+
+/-- The `UInt8`-carrier write-bytearray helper is kernel-equal to the exact
+    source `word8` helper on the byte list mapped through `UInt8.toBitVec`,
+    through `panWriteBytearrayHOL_eq_word8_projection`. -/
+theorem crepExactWriteBytearray_eq_word8 {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (address : BitVec width) (bytes : List UInt8) :
+    crepExactWriteBytearray state memDec address bytes =
+      @panWriteBytearrayWord8HOL width _ address (bytes.map UInt8.toBitVec) state.memory
+        state.memaddrs memDec state.be := by
+  unfold crepExactWriteBytearray
+  exact @panWriteBytearrayHOL_eq_word8_projection width _ address bytes state.memory
+    state.memaddrs memDec state.be
 
 
 /-- Exact port of HOL `Datatype result`
@@ -624,13 +668,18 @@ Residual mismatches (not carrier-field differences):
    `crepSemScript.sml:443-444`); clause equations are verified
    declaration-locally, but no theorem yet states agreement with HOL `evaluate`
    for all programs and states.
-3. **Legacy `UInt8` helpers** (`crepExactMemLoadByte`,
-   `crepExactMemLoadByteWord8`, `crepExactWriteBytearray`,
-   `crepExactWriteBytearrayWord8`, and
-   `crepClockWordToBytes`/`crepClockWordOfBytes`) are not claimed as exact HOL
-   ports; the exact `ExtCall` path uses the `BitVec 8` helpers.
-4. **`Call` clause restatement** over the no-decider entry point is still
-   outstanding (bead `flapjack-4ac.5.16.5.15`).
+3. **Legacy `UInt8` helpers** (`crepExactMemStoreByte`, `crepExactMemLoadByte`,
+   `crepExactWriteBytearray`) keep the `UInt8` byte carrier used by the runtime
+   FFI interface; they are kernel-equal to the exact source `word8` helpers by
+   the bridges `crepExactMemStoreByte_eq_word8`,
+   `crepExactMemLoadByte_eq_word8` and `crepExactWriteBytearray_eq_word8`
+   (from `panMemStoreByteHOL_eq_word8` / `panMemLoadByteHOL_eq_word8_projection`
+   / `panWriteBytearrayHOL_eq_word8_projection`, `PanSem/ExtCallExact.lean`),
+   so the only residual deviation is the surface byte carrier
+   (`UInt8` vs `BitVec 8`), not semantics. (`crepClockWordToBytes` /
+   `crepClockWordOfBytes` remain untagged.)
+4. **`Call` clause restatement** over the no-decider entry point is landed
+   (`evalCrepSemHOLProgExact_call`, bead `flapjack-4ac.5.16.5.17`).
 
 Tracking: tag bead `flapjack-4ac.5.16.5`, finite-map owner/witness placement
 `flapjack-4ac.5.16.5.13.1`, this audit `flapjack-4ac.5.16.5.16`.
