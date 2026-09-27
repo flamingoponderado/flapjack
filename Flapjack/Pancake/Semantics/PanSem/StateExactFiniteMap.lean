@@ -1669,6 +1669,28 @@ noncomputable def evaluateHOLFiniteState {width : Nat} {σ : Type} [NeZero width
   classical
   exact evaluateHOLFiniteStateWithDeciders state program
 
+/-- Flapjack-specific bridge: the pair-shaped finite source evaluator does not
+depend on which decision procedures were supplied for the two memory domains.
+This removes auxiliary Lean instance binders when reusing its clause equations
+in the eventual HOL-shaped `evaluate_def` port. -/
+theorem evaluateHOLFiniteState_eq_withDeciders {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateFiniteExact width σ)
+    [hmem : DecidablePred state.memaddrs]
+    [hshared : DecidablePred state.shMemaddrs] (program : ProgHOL width) :
+    evaluateHOLFiniteState state program =
+      evaluateHOLFiniteStateWithDeciders state program := by
+  classical
+  have hmemEq : (fun address => Classical.propDecidable (state.memaddrs address)) =
+      hmem := by
+    funext address
+    exact Subsingleton.elim _ _
+  have hsharedEq : (fun address => Classical.propDecidable (state.shMemaddrs address)) =
+      hshared := by
+    funext address
+    exact Subsingleton.elim _ _
+  simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+    hmemEq, hsharedEq]
+
 /-- Flapjack-specific clause equation for HOL `panSem$evaluate_def`'s `Skip`
 branch (`panSemScript.sml:557`). The total finite-state view has neither the
 assembly marker nor extra decision-procedure binders. This is not a tag for the
