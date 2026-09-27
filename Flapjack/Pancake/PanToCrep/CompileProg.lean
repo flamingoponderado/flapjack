@@ -1098,6 +1098,95 @@ theorem compileProgExactHOLW_dec_bridge {width : Nat} [NeZero width]
     rw [if_pos (by simp [hcount]), if_neg hcountProduction]
     simp only [crepProgOfHOL]
 
+/-! The recursive `DecCall` bridge (`pan_to_crepScript.sml:262-272`). Both
+    compilers allocate the declared return shape's slots from the old `vmax`,
+    extend the variable map with `(name, (shape, names))` and `vmax` by the
+    shape size, zero-initialize the return slots, then emit the target `Call`
+    followed by the recursively compiled body. The body is compiled under the
+    extended contexts, so `hbody` is taken there (as for `Dec`); `hfunction`
+    is the byte-range evidence needed to decode the `MlString` callee. -/
+theorem compileProgExactHOLW_decCall_bridge {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width) (name function : String)
+    (shape : Shape) (arguments : List (Exp (BitVec width))) (body : ProgHOL width)
+    (bodyContext : PanToCrepContextExact width)
+    (nextContext : PanToCrepHOLContext (BitVec width))
+    (hbodyContext :
+      bodyContext =
+        { context with
+          vars := context.vars.update (Flapjack.Basis.Pure.MlString.ofString name,
+            (shapeToHOL shape,
+              (List.range (sizeOfShapeHOL (shapeToHOL shape))).map
+                (fun index => context.vmax + index + 1)))
+          vmax := context.vmax + sizeOfShapeHOL (shapeToHOL shape) })
+    (hnextContext :
+      nextContext =
+        { context.toProduction with
+          vars := FUPDATE context.toProduction.vars
+            (name, (shape,
+              (List.range (Shape.shapeSize shape)).map
+                (fun offset => context.toProduction.vmax + 1 + offset)))
+          vmax := context.toProduction.vmax + Shape.shapeSize shape })
+    (hcodec : ∀ expression ∈ arguments,
+      ((compileExpExactHOLW context (expToHOL expression)).1.map crepExpOfHOL,
+        shapeOfHOL (compileExpExactHOLW context (expToHOL expression)).2) =
+        compileExpHOL context.toProduction expression)
+    (hfunction : Flapjack.Pancake.PanLang.NameRanged function)
+    (hbody :
+      crepProgOfHOL (compileProgExactHOLW bodyContext body) =
+        compileProgHOL nextContext (progOfHOL body)) :
+    crepProgOfHOL
+        (compileProgExactHOLW context
+          (.decCall (Flapjack.Basis.Pure.MlString.ofString name) (shapeToHOL shape)
+            (Flapjack.Basis.Pure.MlString.ofString function)
+            (arguments.map expToHOL) body)) =
+      compileProgRiscV context.toProduction
+        (.decCall name shape function arguments (progOfHOL body)) := by
+  have hsize (shape : ShapeHOL) :
+      Shape.shapeSize (shapeOfHOL shape) = sizeOfShapeHOL shape := by
+    have h := sizeOfShapeHOL_shapeToHOL (shapeOfHOL shape)
+    simpa only [shapeToHOL_shapeOfHOL] using h.symm
+  have hsizeArg : sizeOfShapeHOL (shapeToHOL shape) = Shape.shapeSize shape :=
+    sizeOfShapeHOL_shapeToHOL shape
+  have hfunctionDecode :
+      Flapjack.Basis.Pure.MlString.toStringOfBytes
+        (Flapjack.Basis.Pure.MlString.ofString function) = function :=
+    Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes function hfunction
+  have hnames :
+      (List.range (sizeOfShapeHOL (shapeToHOL shape))).map
+          (fun index => context.vmax + index + 1) =
+        allocatedNamesHOL context.toProduction shape := by
+    rw [hsizeArg]
+    unfold allocatedNamesHOL
+    apply List.map_congr_left
+    intro index _hin
+    change context.vmax + index + 1 = context.vmax + 1 + index
+    omega
+  have hvalues :
+      ((List.replicate
+            ((List.range (sizeOfShapeHOL (shapeToHOL shape))).map
+              (fun index => context.vmax + index + 1)).length
+            (CrepExpHOL.const (0 : BitVec width))).map crepExpOfHOL) =
+        (allocatedNamesHOL context.toProduction shape).map
+          (fun _ => CrepExp.const (0 : BitVec width)) := by
+    rw [hnames, List.map_replicate]
+    simp only [crepExpOfHOL]
+    rw [List.map_const']
+  have hargs :=
+    crepProgOfHOL_compileArgumentList_flatMap context arguments hcodec
+  subst hbodyContext
+  subst hnextContext
+  simp only [compileProgExactHOLW, compileDecCallExactHOLW, compileProgRiscV,
+    compileProgHOL]
+  rw [crepProgOfHOL_nestedDecsHOL]
+  simp only [crepProgOfHOL]
+  rw [hbody]
+  rw [hvalues]
+  rw [hargs]
+  rw [hfunctionDecode]
+  rw [hnames]
+  dsimp only
+  simp only [allocatedNamesHOL]
+
 theorem compileProgExactHOLW_shmem_store_bridge {width : Nat} [NeZero width]
     (context : PanToCrepContextExact width) (operator : OpSize)
     (value address : Exp (BitVec width))
