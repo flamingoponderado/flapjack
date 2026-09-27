@@ -97,6 +97,39 @@ decreasing_by
     | (rename_i h; simp_all only [CrepExpHOL.op.sizeOf_spec, CrepExpHOL.crepOp.sizeOf_spec];
        have := List.sizeOf_lt_of_mem h; omega)
 
+mutual
+  /-- Exact-carrier port of HOL `crepLang$var_cexp_def` for `CrepExpHOL`.
+  It lives beside the exact `CrepExpHOL` syntax carrier, matching the source
+  script's `crepLangScript.sml` counterpart. -/
+  @[hol "cakeml/pancake/crepLangScript.sml" "var_cexp_def"]
+  def crepExpVarsHOL {width : Nat} [NeZero width] : CrepExpHOL width → List Nat
+    | .const _ => []
+    | .var name => [name]
+    | .load address | .load32 address | .loadByte address => crepExpVarsHOL address
+    | .loadGlob _ => []
+    | .op _ expressions | .crepOp _ expressions => crepExpVarsHOLList expressions
+    | .cmp _ left right | .shift _ left right =>
+        crepExpVarsHOL left ++ crepExpVarsHOL right
+    | .baseAddr | .topAddr => []
+
+  /-- Flapjack-only list recursion helper for the exact `var_cexp` port; HOL
+  has no separately named list helper declaration. -/
+  def crepExpVarsHOLList {width : Nat} [NeZero width] :
+      List (CrepExpHOL width) → List Nat
+    | [] => []
+    | expression :: expressions =>
+        crepExpVarsHOL expression ++ crepExpVarsHOLList expressions
+end
+
+/-- Flapjack-only recursion bridge between the helper and `List.flatMap`; no
+separate HOL declaration. -/
+theorem crepExpVarsHOLList_eq_flatMap {width : Nat} [NeZero width]
+    (expressions : List (CrepExpHOL width)) :
+    crepExpVarsHOLList expressions = expressions.flatMap crepExpVarsHOL := by
+  induction expressions with
+  | nil => rfl
+  | cons expression expressions ih => simp [crepExpVarsHOLList, ih]
+
 @[simp] theorem crepExpToHOL_crepExpOfHOL {width : Nat} [NeZero width] :
     (e : CrepExpHOL width) → crepExpToHOL (crepExpOfHOL e) = e := by
   intro e

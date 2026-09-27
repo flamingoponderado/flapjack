@@ -1959,4 +1959,145 @@ theorem crepStampExactDomains_evalCrepSemHOLProg {width : Nat} [NeZero width] {�
     (evalCrepSemHOLProg_preserves_memaddrs state memDec shMemDec program)
     (evalCrepSemHOLProg_preserves_shMemaddrs state memDec shMemDec program)
 
+/-- Flapjack-only transport of an explicit memory-domain decision procedure
+    across a proved equality of exact state projections. This keeps the
+    evaluator's membership decider explicit instead of introducing classical
+    typeclass search for a derived state. There is no separate HOL declaration
+    for this Lean equality-elimination helper. -/
+def crepMemDecTransport {width : Nat} [NeZero width] {σ : Type}
+    {base updated : CrepSemHOLState width σ}
+    (hdom : base.memaddrs = updated.memaddrs)
+    (memDec : (address : BitVec width) → Decidable (base.memaddrs address)) :
+    (address : BitVec width) → Decidable (updated.memaddrs address) :=
+  fun address => hdom ▸ memDec address
+
+/-- Shared-memory counterpart of `crepMemDecTransport`; Flapjack-only, with no
+    separate HOL declaration. -/
+def crepShMemDecTransport {width : Nat} [NeZero width] {σ : Type}
+    {base updated : CrepSemHOLState width σ}
+    (hdom : base.shMemaddrs = updated.shMemaddrs)
+    (shMemDec : (address : BitVec width) → Decidable (base.shMemaddrs address)) :
+    (address : BitVec width) → Decidable (updated.shMemaddrs address) :=
+  fun address => hdom ▸ shMemDec address
+
+/-- Transport the explicit deciders across HOL `set_var`, whose exact-carrier
+    update changes only `locals`. The projection equalities are kernel-checked
+    by the corresponding state-update lemmas. This transport helper has no
+    separate HOL declaration. -/
+def crepSetVarMemDec {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (address : BitVec width) → Decidable (state.memaddrs address))
+    (name : Nat) (value : HolWordLab width) :
+    (address : BitVec width) →
+      Decidable ((CrepSemHOLState.setVar name value state).memaddrs address) :=
+  crepMemDecTransport (base := state) (updated := CrepSemHOLState.setVar name value state)
+    (by simp) memDec
+
+/-- Shared-memory decider transport across HOL `set_var`; Flapjack-only, with
+    no separate HOL declaration. -/
+def crepSetVarShMemDec {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (shMemDec : (address : BitVec width) → Decidable (state.shMemaddrs address))
+    (name : Nat) (value : HolWordLab width) :
+    (address : BitVec width) →
+      Decidable ((CrepSemHOLState.setVar name value state).shMemaddrs address) :=
+  crepShMemDecTransport
+    (base := state) (updated := CrepSemHOLState.setVar name value state) (by simp) shMemDec
+
+/-- Flapjack-only typed bridge exercising the exact recursive evaluator after
+    HOL `set_var`, with both explicit domain deciders transported to the updated
+    local state. It is infrastructure only and has no separate HOL declaration. -/
+def evalCrepSemHOLProgAfterSetVar {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (address : BitVec width) → Decidable (state.memaddrs address))
+    (shMemDec : (address : BitVec width) → Decidable (state.shMemaddrs address))
+    (name : Nat) (value : HolWordLab width) (program : CrepProgHOL width) :=
+  evalCrepSemHOLProg (CrepSemHOLState.setVar name value state)
+    (crepSetVarMemDec state memDec name value)
+    (crepSetVarShMemDec state shMemDec name value) program
+
+/-- Transport an explicit decider across `fix_clock`; this helper exposes the
+    projection equality even when the step state itself came from evaluation.
+    This Flapjack helper has no separate HOL declaration. -/
+def crepFixClockMemDec {width : Nat} [NeZero width] {σ : Type} {β : Type}
+    (state : CrepSemHOLState width σ) (step : β × CrepSemHOLState width σ)
+    (memDec : (address : BitVec width) → Decidable (step.2.memaddrs address)) :
+    (address : BitVec width) →
+      Decidable ((fixClockCrepSemHOL state step).2.memaddrs address) :=
+  crepMemDecTransport (base := step.2)
+    (updated := (fixClockCrepSemHOL state step).2) (by simp) memDec
+
+/-- Shared-memory decider transport across `fix_clock`; Flapjack-only, with no
+    separate HOL declaration. -/
+def crepFixClockShMemDec {width : Nat} [NeZero width] {σ : Type} {β : Type}
+    (state : CrepSemHOLState width σ) (step : β × CrepSemHOLState width σ)
+    (shMemDec : (address : BitVec width) → Decidable (step.2.shMemaddrs address)) :
+    (address : BitVec width) →
+      Decidable ((fixClockCrepSemHOL state step).2.shMemaddrs address) :=
+  crepShMemDecTransport (base := step.2)
+    (updated := (fixClockCrepSemHOL state step).2) (by simp) shMemDec
+
+/-- Flapjack-only typed bridge exercising exact recursive evaluation after a
+    `fix_clock` result state, reusing explicit deciders from the step state. It
+    has no separate HOL declaration. -/
+def evalCrepSemHOLProgAfterFixClock {width : Nat} [NeZero width] {σ : Type} {β : Type}
+    (state : CrepSemHOLState width σ) (step : β × CrepSemHOLState width σ)
+    (memDec : (address : BitVec width) → Decidable (step.2.memaddrs address))
+    (shMemDec : (address : BitVec width) → Decidable (step.2.shMemaddrs address))
+    (program : CrepProgHOL width) :=
+  evalCrepSemHOLProg (fixClockCrepSemHOL state step).2
+    (crepFixClockMemDec state step memDec)
+    (crepFixClockShMemDec state step shMemDec) program
+
+/-- Transport the input-state deciders to the exact result state of a `Seq`
+    first command after `fix_clock`. This composes the evaluator's domain
+    preservation with the clock projection equation and type-locks the exact
+    dependent `DecidablePred` required by a recursive evaluation. Flapjack-only,
+    with no separate HOL declaration. -/
+def crepSeqStepMemDec {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (address : BitVec width) → Decidable (state.memaddrs address))
+    (shMemDec : (address : BitVec width) → Decidable (state.shMemaddrs address))
+    (first : CrepProgHOL width) :
+    (address : BitVec width) →
+      Decidable ((fixClockCrepSemHOL state
+        (evalCrepSemHOLProg state memDec shMemDec first)).2.memaddrs address) :=
+  crepMemDecTransport (base := state)
+    (updated := (fixClockCrepSemHOL state
+      (evalCrepSemHOLProg state memDec shMemDec first)).2)
+    (by
+      simp only [fixClockCrepSemHOL_memaddrs]
+      exact (evalCrepSemHOLProg_preserves_memaddrs state memDec shMemDec first).symm) memDec
+
+/-- Shared-memory decider transport for the `Seq` first-command step;
+    Flapjack-only, with no separate HOL declaration. -/
+def crepSeqStepShMemDec {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (address : BitVec width) → Decidable (state.memaddrs address))
+    (shMemDec : (address : BitVec width) → Decidable (state.shMemaddrs address))
+    (first : CrepProgHOL width) :
+    (address : BitVec width) →
+      Decidable ((fixClockCrepSemHOL state
+        (evalCrepSemHOLProg state memDec shMemDec first)).2.shMemaddrs address) :=
+  crepShMemDecTransport (base := state)
+    (updated := (fixClockCrepSemHOL state
+      (evalCrepSemHOLProg state memDec shMemDec first)).2)
+    (by
+      simp only [fixClockCrepSemHOL_shMemaddrs]
+      exact (evalCrepSemHOLProg_preserves_shMemaddrs state memDec shMemDec first).symm) shMemDec
+
+/-- Flapjack-only typed `Seq` recursive-call bridge. The state is precisely
+    the clamped result of the first command, while each membership procedure
+    is the input-state decider transported via the evaluator/fix_clock domain
+    equalities above. It has no separate HOL declaration. -/
+def evalCrepSemHOLProgAfterSeqStep {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (memDec : (address : BitVec width) → Decidable (state.memaddrs address))
+    (shMemDec : (address : BitVec width) → Decidable (state.shMemaddrs address))
+    (first second : CrepProgHOL width) :=
+  evalCrepSemHOLProg
+    (fixClockCrepSemHOL state (evalCrepSemHOLProg state memDec shMemDec first)).2
+    (crepSeqStepMemDec state memDec shMemDec first)
+    (crepSeqStepShMemDec state memDec shMemDec first) second
+
 end Flapjack
