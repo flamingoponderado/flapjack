@@ -40,6 +40,7 @@ shmem_load_missing_destination=Skip
 shmem_load_address_fallback=Skip
 dec_one_word=Dec 1 (Const 4w) (Return [Var 1])
 dec_multiword=Dec 1 (Const 1w) (Dec 2 (Const 2w) Tick)
+dec_declared_shape_ignored=Dec 1 (Const 4w) (Dec 2 (Const 5w) (Return [Var 2]))
 dec_shape_length_fallback=Skip
 struct_skip=Skip
 struct_break=Break 0

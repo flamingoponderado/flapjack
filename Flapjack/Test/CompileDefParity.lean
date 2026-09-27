@@ -938,6 +938,16 @@ def exactDecClauseParity : Bool :=
 
 #guard exactDecClauseParity
 
+/- Direct HOL `compile_def_probe.out` row `dec_declared_shape_ignored`:
+   `compile_exp` returns a two-word shape even though the source Dec declares
+   One, so the body must see the compiled shape and select its second field. -/
+#guard match compileProgExactHOLW exactReturnContext
+    (.dec (ofString "pair") .one
+      (.rstruct [.const (4 : BitVec 8), .const 5])
+      (.return (.rfield 1 (.var .local (ofString "pair"))))) with
+  | .dec 1 (.const 4) (.dec 2 (.const 5) (.return [.var 2])) => true
+  | _ => false
+
 def exactDecCallClauseParity : Bool :=
   (match compileDecCallExactHOLW (exactDecCallContext 4) (ofString "x") .one
       (ofString "f") [.const 3]
