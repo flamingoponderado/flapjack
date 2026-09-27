@@ -97,4 +97,36 @@ theorem panPrimopCrepPrimopHOLExact {width : Nat} [NeZero width]
                   rw [← hprimitive]
                   simp [crepPrimopHOL, flattenHOL, HolWordLab.toPanWordLab]
 
+/-- Exact-shape port of HOL `pan_primop_crep_primop`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:1096-1099`):
+    `pan_primop pop vs = SOME value ==> crep_primop pop (FLAT (MAP flatten vs)) = SOME (flatten value)`.
+    Both sides use the exact `word_lab` carrier `HolWordLab` and the exact
+    `panPrimopHOLExact`/`flattenHOL`/`crepPrimopHOLExact`; there is NO explicit
+    `HolWordLab.toPanWordLab` map in the statement, so the shape matches HOL.
+    This is UNTAGGED pending coordinator source review of the newly defined
+    exact-carrier `crepPrimopHOLExact` (`flapjack-4ac.5.16.9.1`). -/
+theorem panPrimopCrepPrimopExactHOL {width : Nat} [NeZero width]
+    (operator : PrimOp) (values : List (ValueHOL width)) (value : ValueHOL width)
+    (hprimitive : panPrimopHOLExact operator values = some value) :
+    crepPrimopHOLExact operator (values.flatMap flattenHOL) =
+      some (flattenHOL value) := by
+  cases operator
+  cases values with
+  | nil => simp [panPrimopHOLExact] at hprimitive
+  | cons first rest =>
+      cases rest with
+      | nil => simp [panPrimopHOLExact] at hprimitive
+      | cons second rest =>
+          cases rest with
+          | nil => simp [panPrimopHOLExact] at hprimitive
+          | cons third rest =>
+              cases rest with
+              | cons _ _ => simp [panPrimopHOLExact] at hprimitive
+              | nil =>
+                  cases first <;> cases second <;> cases third <;>
+                    simp [panPrimopHOLExact] at hprimitive
+                  rename_i left right carry
+                  rw [← hprimitive]
+                  simp [crepPrimopHOLExact, flattenHOL]
+
 end Flapjack
