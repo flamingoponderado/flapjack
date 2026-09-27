@@ -377,16 +377,17 @@ recursive update state used by the induction helper is linked to the explicit
 
 /-- FLAPJACK-SPECIFIC provisional rendering (no `@[hol]` tag), withdrawn
 2026-09-27 (bead flapjack-64k0, PR #1166 review item 2). The conclusion is over
-`evalCrepSemHOLProgExact`, the Lean no-decider wrapper around the
-re-implemented evaluator `evalCrepSemHOLProg`. Because the theorem quantifies
-over an arbitrary continuation `body`, its exactness requires the evaluator to
-agree with HOL `evaluate` for every program, including the legacy-`UInt8`
-store-byte and memory clauses; no such agreement theorem exists (the evaluator
-is explicitly untagged pending the fixed-width / FFI / agreement audit in
-`CrepSem/EvaluateHOL.lean`), and the recursive clauses thread the base-state
-decisions through `crepStampExactDomains`. The finite-map qualifier's
-owner/witness placement is also unresolved (`flapjack-4ac.5.16.5.13.1`). HOL
-candidate: `eval_nested_decs_seq_res_var_eq`
+`evalCrepSemHOLProgExact`, the no-decider classical wrapper around the
+re-implemented evaluator `evalCrepSemHOLProg` whose full clause set is not yet
+source-reviewed against `evaluate_def`. Because the theorem quantifies over an
+arbitrary continuation `body`, its exactness depends on that full evaluator
+clause review, which is still open (see the module notes of
+`CrepSem/EvaluateHOL.lean`). Concrete gaps: the recursive clauses thread the
+base-state decisions through `crepStampExactDomains`, whose reachability for
+the derived states is unreviewed; the byte-store clause still routes through
+the legacy `UInt8` helpers; and the finite-map qualifier's owner/witness
+placement is unresolved (`flapjack-4ac.5.16.5.13.1`). HOL candidate:
+`eval_nested_decs_seq_res_var_eq`
 (`pan_to_crepProofScript.sml:596-620`). Faithful port tracked by
 `flapjack-4ac.5.16.5`. -/
 theorem evalNestedDecsSeqResVarEqCrepHOL {width : Nat} [NeZero width]
@@ -486,17 +487,17 @@ private theorem loadGlobalsHOL_zero_eq_range {width : Nat} [NeZero width]
 
 /-- FLAPJACK-SPECIFIC provisional rendering (no `@[hol]` tag), withdrawn
     2026-09-27 (bead flapjack-64k0, PR #1166 review item 2). The conclusion is
-    over `evalCrepSemHOLProgExact`, the Lean no-decider wrapper around the
-    re-implemented evaluator `evalCrepSemHOLProg`. As with the general
+    over `evalCrepSemHOLProgExact`, the no-decider classical wrapper around the
+    re-implemented evaluator `evalCrepSemHOLProg` whose full clause set is not
+    yet source-reviewed against `evaluate_def`. As with the general
     nested-declaration equation it depends on, the theorem quantifies over an
-    arbitrary continuation `body`, so exactness would require a kernel-checked
-    agreement between `evalCrepSemHOLProg` and HOL `evaluate` for every program,
-    including the legacy-`UInt8` store-byte and memory clauses; no such theorem
-    exists and the evaluator is explicitly untagged pending the fixed-width /
-    FFI / agreement audit (`CrepSem/EvaluateHOL.lean`). The finite-map
-    qualifier's owner/witness placement is also unresolved
-    (`flapjack-4ac.5.16.5.13.1`). HOL candidate:
-    `evaluate_nested_decs_load_globals`
+    arbitrary continuation `body`, so its exactness depends on that still-open
+    full clause review. Concrete gaps: the recursive clauses thread the
+    base-state decisions through `crepStampExactDomains`, whose reachability
+    for the derived states is unreviewed; the byte-store clause still routes
+    through the legacy `UInt8` helpers; and the finite-map qualifier's
+    owner/witness placement is unresolved (`flapjack-4ac.5.16.5.13.1`). HOL
+    candidate: `evaluate_nested_decs_load_globals`
     (`pan_to_crepProofScript.sml:4139-4176`). Faithful port tracked by
     `flapjack-4ac.5.16.5`. -/
 theorem evaluateNestedDecsLoadGlobalsCrepHOL {width : Nat} [NeZero width]

@@ -170,13 +170,14 @@ theorem evalNestedAssignDistinctEqCrepHOLWithDeciders {width : Nat} [NeZero widt
 
 /-- FLAPJACK-SPECIFIC provisional rendering (no `@[hol]` tag), withdrawn
 2026-09-27 (bead flapjack-64k0, PR #1166 review item 2). The statement is over
-`evalCrepSemHOLProgExact`, the Lean no-decider wrapper around the
-re-implemented evaluator `evalCrepSemHOLProg`, which is itself explicitly
-untagged pending the fixed-width / FFI / agreement audit (see the module notes
-of `CrepSem/EvaluateHOL.lean`): no kernel-checked agreement theorem with HOL
-`evaluate` exists, and the recursive clauses thread the base-state decisions
-through `crepStampExactDomains`. The finite-map qualifier's owner/witness
-placement is likewise unresolved (`flapjack-4ac.5.16.5.13.1`). HOL candidate:
+`evalCrepSemHOLProgExact`, the no-decider classical wrapper around the
+re-implemented evaluator `evalCrepSemHOLProg` whose full clause set is not yet
+source-reviewed against `evaluate_def` (see the module notes of
+`CrepSem/EvaluateHOL.lean`). Concrete gaps: the recursive clauses thread the
+base-state decisions through `crepStampExactDomains`, whose reachability for
+the derived states is unreviewed; the byte-store clause still routes through
+the legacy `UInt8` helpers; and the finite-map qualifier's owner/witness
+placement is unresolved (`flapjack-4ac.5.16.5.13.1`). HOL candidate:
 `eval_nested_assign_distinct_eq` (`pan_to_crepProofScript.sml:540-575`).
 Faithful port tracked by `flapjack-4ac.5.16.5`. -/
 theorem evalNestedAssignDistinctEqCrepHOL {width : Nat} [NeZero width]
