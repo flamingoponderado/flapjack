@@ -3,10 +3,34 @@ import Flapjack.Pancake.PanGlobals
 import Flapjack.Pancake.PanLang.Decl
 import Flapjack.Pancake.Proofs.PanGlobals.ShapeInfrastructure
 import Flapjack.Pancake.Semantics.PanSem
+import Flapjack.Pancake.Semantics.PanSem.DecExact
 
 namespace Flapjack
 
 open Flapjack.Pancake.PanLang
+
+/-- Exact HOL port of Cake's `good_res_def`
+    (`cakeml/pancake/proofs/pan_globalsProofScript.sml:164-170`):
+
+    `good_res (SOME TimeOut) = F`, `good_res (SOME (Return v)) = F`,
+    `good_res (SOME (Exception l v)) = F`, `good_res (SOME (FinalFFI ev)) = F`,
+    and `good_res _ = T`.
+
+    The five clauses match HOL clause-for-clause over the reviewed exact
+    `panSem$result` carrier `PanSemResultExact` (`DecExact.lean:58`, tagged
+    against `panSemScript.sml:68-75`): `TimeOut`/`Return`/`Exception`/`FinalFFI`
+    map to `false`, and every other result (`NONE`, `SOME Error`, `Break`,
+    `Continue`) maps to `true`.  The payloads are ignored, exactly as in HOL, so
+    the only difference from HOL is the already-reviewed `result` carrier.  No
+    qualifier applies. -/
+@[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "good_res_def"]
+def goodResHOL {width : Nat} [NeZero width] :
+    Option (PanSemResultExact width) → Bool
+  | some (.timeOut) => false
+  | some (.returned _) => false
+  | some (.exception _ _) => false
+  | some (.finalFfi _) => false
+  | _ => true
 
 /-! Flapjack-specific generalization for the parameterized
     \`globalCompileTopForStart\` analogue. The exact HOL-tagged theorem is
