@@ -1309,6 +1309,40 @@ theorem compileProgExactHOLW_while_relation_bridge {width : Nat} [NeZero width]
                     (List.cons.inj hExpressions).1
                   simp [compileProgHOL, hProduction, hHead, hbody, crepProgOfHOL]
 
+/-- Relation-polymorphic `Return` case. The exact and production compilers
+    consume the same HOL expression, and the ranged context relation supplies
+    the expression-codec equality needed to compare emitted names, expressions,
+    and shape sizes. -/
+theorem compileProgExactHOLW_return_relation_bridge {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width)
+    (productionContext : PanToCrepHOLContext (BitVec width))
+    (hcontext : PanToCrepContextExactProdRel context productionContext)
+    (expression : ExpHOL width) :
+    crepProgOfHOL (compileProgExactHOLW context (.return expression)) =
+      compileProgHOL productionContext (.return (expOfHOL expression)) := by
+  have hcodec := compileExpExactHOLW_prodCodec_of_contextRel
+    context productionContext hcontext expression
+  rw [Prod.mk.injEq] at hcodec
+  rcases hcodec with ⟨hexps, hshape⟩
+  have hsize (shape : ShapeHOL) :
+      Shape.shapeSize (shapeOfHOL shape) = sizeOfShapeHOL shape := by
+    have h := sizeOfShapeHOL_shapeToHOL (shapeOfHOL shape)
+    simpa only [shapeToHOL_shapeOfHOL] using h.symm
+  have hprodsize :
+      Shape.shapeSize (compileExpHOL productionContext (expOfHOL expression)).2 =
+        sizeOfShapeHOL (compileExpExactHOLW context expression).2 := by
+    calc
+      Shape.shapeSize (compileExpHOL productionContext (expOfHOL expression)).2 =
+          Shape.shapeSize (shapeOfHOL (compileExpExactHOLW context expression).2) := by
+            rw [← hshape]
+      _ = sizeOfShapeHOL (compileExpExactHOLW context expression).2 := hsize _
+  simp only [compileProgExactHOLW, compileProgHOL, compileReturnExactHOLW]
+  rw [hprodsize]
+  by_cases hz : sizeOfShapeHOL (compileExpExactHOLW context expression).2 = 0
+  · simp [hz, crepProgOfHOL]
+  · simp [hz, crepProgOfHOL]
+    exact hexps
+
 /-! The recursive `Dec` clause bridge (`pan_to_crepScript.sml:141-152`). Both
     compilers ignore the declared `shape` and store the compiled shape: the
     exact clause extends `context` to `bodyContext` (fresh names from the old
