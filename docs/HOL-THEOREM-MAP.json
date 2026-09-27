@@ -12707,5 +12707,17 @@
       "globals",
       "code"
     ]
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "excp_rel_def",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "panToCrepExcpRelFiniteExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "compilerCodes",
+      "sourceShapes"
+    ],
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.16.3): compared against HOL excp_rel_def (pan_to_crepProofScript.sml:16-23): FDOM seids = FDOM ceids is rendered pointwise as equality of definedness on the canonical HolFiniteMapExact lookup, and FLOOKUP ceids e = SOME n becomes compilerCodes.lookup e = some n; the injectivity conjunct and the fact that source values are unrelated to compiler values match clause-for-clause. Both finite maps are standalone exact-map parameters (no owning carrier), so the relation qualifier records them as bare entries. Direct HOL EVAL oracle rows live in scripts/hol-probes/excp_rel_probe.out and Lean fixtures in Flapjack/Test/PanToCrepCodeRelParity.lean."
   }
 ]
