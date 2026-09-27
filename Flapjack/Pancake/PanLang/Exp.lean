@@ -425,7 +425,7 @@ theorem varExpHOL_expToHOL {width : Nat} [NeZero width] :
         from by simpa only [Function.comp_def] using ih2])
     (fun _fst _snd ih => ih)
 
-/-! ### `panLang$global_var_exp` (specified fragment; no exact tag) -/
+/-! ### `panLang$global_var_exp` (partial; specified clauses tagged) -/
 
 /-- Exact-carrier counterpart of HOL `panLang$global_var_exp`
 (`cakeml/pancake/panLangScript.sml:278-291`), collecting global variable names
@@ -441,9 +441,12 @@ ARB`, and the exported `global_var_exp_def` theorem contains only the thirteen
 clauses above.  A total Lean function must choose values for those four
 constructors, so `globalVarExpHOL` extends HOL's specification (it recurses on
 `Load32` and returns `[]` on the three nullary address constructors, matching
-production `expGlobalVars`).  The tag is therefore withheld; the exact HOL
-clause fragment agrees, but the ARB cases have no HOL equation to port.  ARB /
-partial rendering is tracked by the child bead of `flapjack-4ac.1.39`. -/
+production `expGlobalVars`).  The *function* is therefore untagged; the exact
+specified equations HOL does state are ported as the tagged theorem
+`globalVarExpHOL_spec` below, the same treatment used for the partial
+`panSem$theValWord_def` (a tagged specified equation beside an untagged total
+rendering).  The ARB cases have no HOL equation to port; the partial rendering
+and the counterpart inventory are tracked by `flapjack-4ac.1.39`. -/
 def globalVarExpHOL {width : Nat} [NeZero width] : ExpHOL width → List MlS
   | .const _ => []
   | .var .local _ => []
@@ -475,6 +478,48 @@ decreasing_by
     | (rename_i elem mem
        have hlt := List.sizeOf_lt_of_mem mem
        omega)
+
+/-- Exact port of the exported equation theorem HOL `panLang$global_var_exp_def`
+(`cakeml/pancake/panLangScript.sml:278-291`) over the exact `ExpHOL`/`MlS`
+carriers: the thirteen clauses HOL actually states, in HOL's order and with the
+same `FLAT (MAP …)`/`++` aggregations.  HOL's definition is partial --- the
+generated `global_var_exp_def_primitive` leaves `Load32`/`BaseAddr`/`TopAddr`/
+`BytesInWord` as `ARB` --- so the total `globalVarExpHOL` stays untagged and only
+this specified-equation fragment carries the `@[hol]` tag, mirroring the
+`theValWord_def` treatment.  The exact HOL statement (and the ARB primitive) is
+pinned in `scripts/hol-probes/pan_lang_var_exp_probe.out`, exercised over the
+exact carrier by `Flapjack/Test/PanLangVarExpParity.lean`. -/
+@[hol "cakeml/pancake/panLangScript.sml" "global_var_exp_def"]
+theorem globalVarExpHOL_spec {width : Nat} [NeZero width] :
+    (∀ value : BitVec width,
+        globalVarExpHOL (.const value : ExpHOL width) = []) ∧
+    (∀ name : MlS, globalVarExpHOL (.var .local name : ExpHOL width) = []) ∧
+    (∀ name : MlS, globalVarExpHOL (.var .global name : ExpHOL width) = [name]) ∧
+    (∀ fields : List (ExpHOL width),
+        globalVarExpHOL (.rstruct fields) = (fields.map globalVarExpHOL).flatten) ∧
+    (∀ (index : Nat) (value : ExpHOL width),
+        globalVarExpHOL (.rfield index value) = globalVarExpHOL value) ∧
+    (∀ (name : MlS) (fields : List (MlS × ExpHOL width)),
+        globalVarExpHOL (.nstruct name fields) =
+          (fields.map (fun pair => globalVarExpHOL pair.2)).flatten) ∧
+    (∀ (name : MlS) (value : ExpHOL width),
+        globalVarExpHOL (.nfield name value) = globalVarExpHOL value) ∧
+    (∀ (shape : ShapeHOL) (address : ExpHOL width),
+        globalVarExpHOL (.load shape address) = globalVarExpHOL address) ∧
+    (∀ address : ExpHOL width,
+        globalVarExpHOL (.loadByte address) = globalVarExpHOL address) ∧
+    (∀ (operator : BinOp) (args : List (ExpHOL width)),
+        globalVarExpHOL (.op operator args) = (args.map globalVarExpHOL).flatten) ∧
+    (∀ (operator : PanOp) (args : List (ExpHOL width)),
+        globalVarExpHOL (.panop operator args) = (args.map globalVarExpHOL).flatten) ∧
+    (∀ (operator : Cmp) (left right : ExpHOL width),
+        globalVarExpHOL (.cmp operator left right) =
+          globalVarExpHOL left ++ globalVarExpHOL right) ∧
+    (∀ (operator : Shift) (left right : ExpHOL width),
+        globalVarExpHOL (.shift operator left right) =
+          globalVarExpHOL left ++ globalVarExpHOL right) := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;>
+    (intros; simp [globalVarExpHOL])
 
 /-! ### Exact panLang$shape_val -/
 

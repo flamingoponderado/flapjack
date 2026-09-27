@@ -117,6 +117,38 @@ example :
   rw [CakeNodeMap.get_ofNatInfoMap]
   exact CakeNodeMap.lookupNatInfo_mapIdx_add [7, 11, 13] 0 1 (by decide)
 
+/-! The production `toNatInfoMap` readback reconstructs the HOL indexed node
+    list from the array field, agrees with `get` at every index (in range and
+    past the dense dimension), and inverts `ofNatInfoMap`'s dense embedding. -/
+def cakeNodeMapToNatInfoMapGuard : Bool :=
+  let values : List Nat := [7, 11, 13]
+  let dense := CakeNodeMap.ofList values
+  dense.toNatInfoMap == values.mapIdx (fun i v => (i, v)) &&
+    Flapjack.lookupNatInfo 0 dense.toNatInfoMap == dense.get 0 &&
+    Flapjack.lookupNatInfo 1 dense.toNatInfoMap == dense.get 1 &&
+    Flapjack.lookupNatInfo 3 dense.toNatInfoMap == dense.get 3
+
+#guard cakeNodeMapToNatInfoMapGuard
+
+example :
+    (CakeNodeMap.ofList [7, 11, 13]).toNatInfoMap =
+      [7, 11, 13].mapIdx (fun i v => (i, v)) :=
+  CakeNodeMap.toNatInfoMap_eq_mapIdx (CakeNodeMap.ofList [7, 11, 13]) [7, 11, 13]
+    (CakeNodeMap.ofList_representsHOLNodeList [7, 11, 13])
+
+example (i : Nat) :
+    Flapjack.lookupNatInfo i (CakeNodeMap.ofList [7, 11, 13]).toNatInfoMap =
+      (CakeNodeMap.ofList [7, 11, 13]).get i :=
+  CakeNodeMap.lookupNatInfo_toNatInfoMap (CakeNodeMap.ofList [7, 11, 13])
+    [7, 11, 13] (CakeNodeMap.ofList_representsHOLNodeList [7, 11, 13]) i
+
+example :
+    CakeNodeMap.RepresentsHOLNodeList
+      (CakeNodeMap.ofNatInfoMap 3 (CakeNodeMap.ofList [7, 11, 13]).toNatInfoMap)
+      [7, 11, 13] :=
+  CakeNodeMap.toNatInfoMap_representsHOLNodeList (CakeNodeMap.ofList [7, 11, 13])
+    [7, 11, 13] (CakeNodeMap.ofList_representsHOLNodeList [7, 11, 13])
+
 example :
     CakeNodeMap.RepresentsHOLNodeList
       (CakeNodeMap.set (CakeNodeMap.ofList [7, 11, 13]) 1 99)

@@ -213,6 +213,10 @@ theorem evalPanSemStateExp_op_delegates (operator : BinOp)
     (.op .xor [.const 1, .const 2, .const 4]))
   (BitVec.ofNat 64 7)
 #guard isNoneResult (evalPanSemStateExp littleEndianState (.op .sub []))
+#guard isNoneResult
+  (evalPanSemStateExp littleEndianState (.op .add [.var .local "x", .const 2]))
+#guard isNoneResult
+  (evalPanSemStateExp littleEndianState (.op .add [.const 1, .var .local "y"]))
 #guard isWordResult
   (evalPanSemStateExp littleEndianState (.op .sub [.const 3, .const 5]))
   (BitVec.ofNat 64 0xFFFFFFFFFFFFFFFE)
@@ -562,9 +566,12 @@ example (hwf : isWfShape ([] : StructContext) Shape.one = true) :
 /-! ## Exact `panSem$eval_def` evaluator parity (flapjack-pxn.18.3.6.9.3)
 
 The HOL rows are the `word_load_hit`, `byte_little_first`, `word32_little`,
-`op_add_fold_three`, and `op_sub_wrong_arity` lines of
+`op_add_fold_three`, `op_sub_wrong_arity`, `op_add_var_missing`, and
+`op_add_const_var_missing` lines of
 `scripts/hol-probes/pan_sem_state_eval_probe.out` (direct HOL EVAL of
-`panSem$eval`). -/
+`panSem$eval`).  The two `*_missing` rows exercise a FAILED argument
+evaluation (`Var Local` under empty locals), distinct from the word-op arity
+rejection rows. -/
 
 abbrev holEvalState : PanSemHolState 64 Unit :=
   { locals := fun _ => none
@@ -596,6 +603,8 @@ def evalWordResult (result : Option (HolValue 64)) : Option Word64 :=
 #guard evalWordResult (evalHOL holEvalState (.op .add [.const 1, .const 2, .const 3])) ==
   some 6
 #guard evalWordResult (evalHOL holEvalState (.op .sub [.const 1])) == none
+#guard evalWordResult (evalHOL holEvalState (.op .add [.var .local "x", .const 2])) == none
+#guard evalWordResult (evalHOL holEvalState (.op .add [.const 1, .var .local "y"])) == none
 
 /-- State with a single `Pair` struct (field `f : One`), matching the
     `nstruct_*` rows of `scripts/hol-probes/pan_sem_state_eval_probe.out`. -/
