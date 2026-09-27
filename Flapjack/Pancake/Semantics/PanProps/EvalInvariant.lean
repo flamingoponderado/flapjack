@@ -3555,6 +3555,152 @@ theorem evaluateInvariantsAssignCaseHOLFinite {width : Nat} {σ : Type} [NeZero 
 end Flapjack
 
 
+/-! # The `Primitive` induction case of HOL `evaluate_invariants`
+
+HOL `Primitive` either reports Error with the input state or writes its result
+to locals. Since the invariant fields exclude locals, each outcome preserves
+all eight fields. -/
+
+open Flapjack.Pancake.PanLang (MlS ProgHOL)
+
+namespace Flapjack
+
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_invariants" 1150
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateInvariantsPrimitiveCaseHOLFinite {width : Nat} {σ : Type} [NeZero width] :
+    ∀ (name : MlS) (operator : PrimOp) (arguments : List (ExpHOL width))
+      (state : PanPropsEvalStateFiniteExact width σ)
+      (result : Option (PanSemResultExact width))
+      (post : PanPropsEvalStateFiniteExact width σ),
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state
+          (.primitive name operator arguments : ProgHOL width) = (result, post) →
+      post.memaddrs = state.memaddrs ∧
+      post.shMemaddrs = state.shMemaddrs ∧
+      post.be = state.be ∧
+      post.eshapes = state.eshapes ∧
+      post.baseAddr = state.baseAddr ∧
+      post.structs = state.structs ∧
+      post.code = state.code ∧
+      post.ffi.oracle = state.ffi.oracle := by
+  classical
+  intro name operator arguments state result post hRun
+  cases heval : @evalListHOLExact width σ _ state.toPanSemFinite.toExact
+      (fun address => Classical.propDecidable (state.toPanSemFinite.memaddrs address))
+      arguments with
+  | none =>
+      simp [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair,
+        PanSemStateFiniteExact.evaluateHOLFiniteState_primitive, heval] at hRun
+      rcases hRun with ⟨_, rfl⟩
+      simp
+  | some values =>
+      cases hprim : panPrimopHOLExact operator values with
+      | none =>
+          simp [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair,
+            PanSemStateFiniteExact.evaluateHOLFiniteState_primitive, heval, hprim] at hRun
+          rcases hRun with ⟨_, rfl⟩
+          simp
+      | some value =>
+          by_cases hvalid : Flapjack.isValidValueHOLExact
+              state.toPanSemFinite.toExact .local name value = true
+          · simp [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair,
+              PanSemStateFiniteExact.evaluateHOLFiniteState_primitive,
+              heval, hprim, hvalid] at hRun
+            rcases hRun with ⟨_, hpost⟩
+            cases hpost
+            simp [PanPropsEvalStateFiniteExact.ofPanSemFinite,
+              PanPropsEvalStateFiniteExact.toPanSemFinite,
+              PanSemStateFiniteExact.setVarHOLFinite]
+          · have hinvalid : Flapjack.isValidValueHOLExact
+                state.toPanSemFinite.toExact .local name value = false :=
+              Bool.eq_false_iff.mpr hvalid
+            simp [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair,
+              PanSemStateFiniteExact.evaluateHOLFiniteState_primitive,
+              heval, hprim, hinvalid] at hRun
+            rcases hRun with ⟨_, rfl⟩
+            simp
+
+end Flapjack
+
+
+/-! # The `Raise` induction case of HOL `evaluate_invariants`
+
+HOL `Raise` either returns Error with the input state or clears only locals
+when producing an exception, preserving all eight invariant fields. -/
+
+open Flapjack.Pancake.PanLang (ExpHOL MlS ProgHOL)
+
+namespace Flapjack
+
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_invariants" 1150
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateInvariantsRaiseCaseHOLFinite {width : Nat} {σ : Type} [NeZero width] :
+    ∀ (exceptionId : MlS) (expression : ExpHOL width)
+      (state : PanPropsEvalStateFiniteExact width σ)
+      (result : Option (PanSemResultExact width))
+      (post : PanPropsEvalStateFiniteExact width σ),
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state
+          (.raise exceptionId expression : ProgHOL width) = (result, post) →
+      post.memaddrs = state.memaddrs ∧
+      post.shMemaddrs = state.shMemaddrs ∧
+      post.be = state.be ∧
+      post.eshapes = state.eshapes ∧
+      post.baseAddr = state.baseAddr ∧
+      post.structs = state.structs ∧
+      post.code = state.code ∧
+      post.ffi.oracle = state.ffi.oracle := by
+  classical
+  intro exceptionId expression state result post hRun
+  cases hshape : state.toPanSemFinite.eshapes.lookup exceptionId with
+  | none =>
+      cases heval : @evalHOLExact width σ _ state.toPanSemFinite.toExact
+          (fun address => Classical.propDecidable (state.toPanSemFinite.memaddrs address))
+          expression <;>
+        simp [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair,
+          PanSemStateFiniteExact.evaluateHOLFiniteState_raise, hshape, heval] at hRun <;>
+        rcases hRun with ⟨_, rfl⟩ <;> simp
+  | some shape =>
+      cases heval : @evalHOLExact width σ _ state.toPanSemFinite.toExact
+          (fun address => Classical.propDecidable (state.toPanSemFinite.memaddrs address))
+          expression with
+      | none =>
+          simp [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair,
+            PanSemStateFiniteExact.evaluateHOLFiniteState_raise, hshape, heval] at hRun
+          rcases hRun with ⟨_, rfl⟩
+          simp
+      | some value =>
+          by_cases heq : shapeOfHOLExact value = shape
+          · by_cases hsize : Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL
+                state.toPanSemFinite.structs (shapeOfHOLExact value) ≤ 32
+            · have hsizeShape : Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL
+                  state.toPanSemFinite.structs shape ≤ 32 := by
+                simpa [heq] using hsize
+              simp [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair,
+                PanSemStateFiniteExact.evaluateHOLFiniteState_raise,
+                hshape, heval, heq, hsizeShape] at hRun
+              rcases hRun with ⟨_, hpost⟩
+              cases hpost
+              simp [PanPropsEvalStateFiniteExact.ofPanSemFinite,
+                PanPropsEvalStateFiniteExact.toPanSemFinite,
+                PanSemStateFiniteExact.emptyLocalsHOLFinite]
+            · have hnotSize : ¬ Flapjack.Pancake.PanLang.sizeOfShapeWithContextHOL
+                  state.toPanSemFinite.structs shape ≤ 32 := by
+                simpa [heq] using hsize
+              simp [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair,
+                PanSemStateFiniteExact.evaluateHOLFiniteState_raise,
+                hshape, heval, heq, hnotSize] at hRun
+              rcases hRun with ⟨_, rfl⟩
+              simp
+          · simp [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair,
+              PanSemStateFiniteExact.evaluateHOLFiniteState_raise,
+              hshape, heval, heq] at hRun
+            rcases hRun with ⟨_, rfl⟩
+            simp
+
+end Flapjack
+
+
 /-!
 # The `Dec` induction case of HOL `evaluate_clock_sub`
 
