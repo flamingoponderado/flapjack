@@ -1145,9 +1145,27 @@ theorem evalCrepSemHOLProg_while_timeout {width : Nat} [NeZero width] {σ : Type
        | none => (some .error, state)) := by
   rw [evalCrepSemHOLProg.eq_def] <;> rfl
 
-/-- HOL `evaluate (ShMem op v ad, s)` (`crepSemScript.sml:288-299`): loads accept
-    any bound variable and delegate to `sh_mem_load`; stores require a `Word`
-    local and delegate to `sh_mem_store`. -/
+/-- HOL `evaluate (ShMem op v ad, s)` (`crepSemScript.sml:292-303`),
+    source-reviewed as one clause only. The address uses the tagged exact
+    `eval_def` port `evalCrepSemHOLExp` (`crepSemScript.sml:90-137`) and both
+    HOL and Lean require a `Word` result. `CrepMemOp` is the width-independent
+    eight-constructor mirror of `asm$memop` used by the HOL Crep/loop syntax.
+    `crepIsLoadMemOp`'s four load cases and four false cases reproduce HOL
+    `is_load_def` (`cakeml/pancake/loop_callScript.sml:10-15`). Loads require
+    the named local to exist; stores require it to contain a word. Since
+    `HolWordLab` is the
+    one-constructor `word_lab = Word word` carrier, both local guards match
+    HOL's `FLOOKUP` patterns.
+
+    The load/store adapters dispatch each of the eight `CrepMemOp` constructors
+    with the same byte count as tagged `crepShMemOpExactHOL` for HOL
+    `sh_mem_op_def` (`crepSemScript.sml:210-218`): `Load`/`Store` 0, `8` 1,
+    `16` 2, `32` 4. They delegate to the tagged exact `sh_mem_load_def` and
+    `sh_mem_store_def` helpers. Outer address/local failures return `Error`
+    with the original state; helper results and post-states are forwarded,
+    including FFI final/return effects. This is a local ShMem-clause review;
+    the enclosing evaluator remains untagged pending all other cases and
+    whole-statement/carrier review. -/
 @[simp] theorem evalCrepSemHOLProg_shMem {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ)
     (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
