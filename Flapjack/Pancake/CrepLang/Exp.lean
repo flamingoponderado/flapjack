@@ -100,10 +100,10 @@ decreasing_by
 mutual
   /-- Exact-carrier port of HOL `crepLang$var_cexp_def` for `CrepExpHOL`.
   It lives beside the exact `CrepExpHOL` syntax carrier, matching the source
-  script's `crepLangScript.sml` counterpart.  It is expected to agree with the
+  script's `crepLangScript.sml` counterpart.  It agrees with the
   production width-indexed `crepExpVarsW` under the `crepExpToHOL` codec
-  (`crepExpVarsW e = crepExpVarsHOL (crepExpToHOL e)`); that unproved bridge is
-  tracked by flapjack-jlj3.7. -/
+  (`crepExpVarsW e = crepExpVarsHOL (crepExpToHOL e)`), proved below as
+  `crepExpVarsW_eq_crepExpVarsHOL_crepExpToHOL` (bead flapjack-jlj3.7). -/
   @[hol "cakeml/pancake/crepLangScript.sml" "var_cexp_def"]
   def crepExpVarsHOL {width : Nat} [NeZero width] : CrepExpHOL width → List Nat
     | .const _ => []
@@ -133,6 +133,44 @@ theorem crepExpVarsHOLList_eq_flatMap {width : Nat} [NeZero width]
   | nil => rfl
   | cons expression expressions ih => simp [crepExpVarsHOLList, ih]
 
+
+/-- Production/exact agreement for the `var_cexp` family: the width-indexed
+production `crepExpVarsW` computes the same variable list as the exact
+syntax-carrier port `crepExpVarsHOL` read through the `crepExpToHOL` codec.
+This is the bridge promised by the two docstrings (bead `flapjack-jlj3.7`). -/
+theorem crepExpVarsW_eq_crepExpVarsHOL_crepExpToHOL {width : Nat} [NeZero width]
+    (expression : CrepExp (BitVec width)) :
+    crepExpVarsW expression = crepExpVarsHOL (crepExpToHOL expression) := by
+  fun_induction crepExpToHOL expression <;>
+    simp_all [crepExpVarsW, crepExpVars, crepExpVarsHOL]
+  case case7 operator args ih =>
+    have hlist : crepExpVars.crepExpVarsList args =
+        crepExpVarsHOLList (args.map crepExpToHOL) := by
+      induction args with
+      | nil => simp only [List.map_nil, crepExpVars.crepExpVarsList, crepExpVarsHOLList]
+      | cons head tail ihtail =>
+          have hhead : crepExpVars head = crepExpVarsHOL (crepExpToHOL head) :=
+            ih head (by simp)
+          have htail : crepExpVars.crepExpVarsList tail =
+              crepExpVarsHOLList (tail.map crepExpToHOL) :=
+            ihtail (fun x hx => ih x (by simp [hx]))
+          simp only [List.map_cons, crepExpVars.crepExpVarsList, crepExpVarsHOLList]
+          rw [htail, hhead]
+    exact hlist
+  case case8 operator args ih =>
+    have hlist : crepExpVars.crepExpVarsList args =
+        crepExpVarsHOLList (args.map crepExpToHOL) := by
+      induction args with
+      | nil => simp only [List.map_nil, crepExpVars.crepExpVarsList, crepExpVarsHOLList]
+      | cons head tail ihtail =>
+          have hhead : crepExpVars head = crepExpVarsHOL (crepExpToHOL head) :=
+            ih head (by simp)
+          have htail : crepExpVars.crepExpVarsList tail =
+              crepExpVarsHOLList (tail.map crepExpToHOL) :=
+            ihtail (fun x hx => ih x (by simp [hx]))
+          simp only [List.map_cons, crepExpVars.crepExpVarsList, crepExpVarsHOLList]
+          rw [htail, hhead]
+    exact hlist
 @[simp] theorem crepExpToHOL_crepExpOfHOL {width : Nat} [NeZero width] :
     (e : CrepExpHOL width) → crepExpToHOL (crepExpOfHOL e) = e := by
   intro e
