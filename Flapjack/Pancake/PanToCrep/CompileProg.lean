@@ -158,7 +158,7 @@ def compileProgTopHOLProductionExact {width : Nat} [NeZero width]
     List (FunName × List Nat × CrepProg (BitVec width)) :=
   let functions := functionEntries declarations
   let functionMap := functionInfosHOL declarations
-  let exceptionMap := panToCrepGetEidsFromDeclsHOL declarations
+  let exceptionMap := panToCrepGetEidsFromDeclsOfExactHOL declarations hdecls
   let inlineNames :=
     (functionEntries (declarations.filter inlinableThroughHOL)).map
       fun (name, _, _, _) => name
@@ -169,8 +169,13 @@ def compileProgTopHOLProductionExact {width : Nat} [NeZero width]
         functionMap
         (Shape.shapeSize (.comb (entry.2.1.map Prod.snd)) - 1)
         exceptionMap
-    let evidence := panToCrepFunctionContextProductionEvidence declarations entry
-      hdecls entryWithProof.property
+    have hmap : exceptionMap = panToCrepGetEidsFromDeclsHOL declarations := by
+      dsimp [exceptionMap]
+      exact panToCrepGetEidsFromDeclsOfExactHOL_eq declarations hdecls
+    let evidence := by
+      simpa [productionContext, hmap] using
+        panToCrepFunctionContextProductionEvidence declarations entry
+          hdecls entryWithProof.property
     let exactContext := panToCrepContextExactOfProduction productionContext evidence
     let exactParams := entry.2.1.map fun (name, shape) =>
       (Flapjack.Basis.Pure.MlString.ofString name,
@@ -5091,7 +5096,10 @@ theorem compileProgTopHOLProductionExact_eq {width : Nat} [NeZero width]
   unfold compileProgTopHOLProductionExact compileProgTopHOL
   let functions := functionEntries declarations
   let functionMap := functionInfosHOL declarations
-  let exceptionMap := panToCrepGetEidsFromDeclsHOL declarations
+  let exceptionMap := panToCrepGetEidsFromDeclsOfExactHOL declarations hdecls
+  have hmap : exceptionMap = panToCrepGetEidsFromDeclsHOL declarations := by
+    dsimp [exceptionMap]
+    exact panToCrepGetEidsFromDeclsOfExactHOL_eq declarations hdecls
   let inlineNames :=
     (functionEntries (declarations.filter inlinableThroughHOL)).map
       fun (name, _, _, _) => name
@@ -5103,8 +5111,10 @@ theorem compileProgTopHOLProductionExact_eq {width : Nat} [NeZero width]
             functionMap
             (Shape.shapeSize (.comb (entry.2.1.map Prod.snd)) - 1)
             exceptionMap
-        let evidence := panToCrepFunctionContextProductionEvidence declarations entry
-          hdecls entryWithProof.property
+        let evidence := by
+          simpa [productionContext, hmap] using
+            panToCrepFunctionContextProductionEvidence declarations entry
+              hdecls entryWithProof.property
         let exactContext := panToCrepContextExactOfProduction productionContext evidence
         let exactParams := entry.2.1.map fun (name, shape) =>
           (Flapjack.Basis.Pure.MlString.ofString name,
@@ -5118,7 +5128,8 @@ theorem compileProgTopHOLProductionExact_eq {width : Nat} [NeZero width]
             entryWithProof.val.2.2.1)) := by
     apply List.map_congr_left
     intro entryWithProof _hmem
-    simpa [functionMap, exceptionMap] using
+    simpa [functionMap, exceptionMap,
+      panToCrepGetEidsFromDeclsOfExactHOL_eq declarations hdecls] using
       compileFunctionExactHOLWProductionBridge declarations entryWithProof.val
         hdecls entryWithProof.property
   have hcompiled :
@@ -5142,7 +5153,8 @@ theorem compileProgTopHOLProductionExact_eq {width : Nat} [NeZero width]
           (entry.1, panToCrepVars entry.2.1,
             compFuncHOL functionMap exceptionMap entry.2.1 entry.2.2.1)) =
           compileToCrepHOL declarations := by
-      simp [compileToCrepHOL, functions, functionMap, exceptionMap,
+      rw [hmap]
+      simp [compileToCrepHOL, functions, functionMap,
         functionInfosHOL_eq_makeFuncsHOL]
     exact hattach.trans hproductionMap
   change compileInlTopHOL inlineNames
@@ -5153,8 +5165,11 @@ theorem compileProgTopHOLProductionExact_eq {width : Nat} [NeZero width]
             functionMap
             (Shape.shapeSize (.comb (entry.2.1.map Prod.snd)) - 1)
             exceptionMap
-        let evidence := panToCrepFunctionContextProductionEvidence declarations entry
-          hdecls entryWithProof.property
+        have hmapLocal := hmap
+        let evidence := by
+          simpa [productionContext, hmapLocal] using
+            panToCrepFunctionContextProductionEvidence declarations entry
+              hdecls entryWithProof.property
         let exactContext := panToCrepContextExactOfProduction productionContext evidence
         let exactParams := entry.2.1.map fun (name, shape) =>
           (Flapjack.Basis.Pure.MlString.ofString name,
