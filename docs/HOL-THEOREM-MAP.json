@@ -6838,14 +6838,15 @@
     "hol_name": "code_rel_def",
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CodeRelExact.lean",
     "lean_name": "codeRelExactHOLW",
-    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
     "fmap_as_finite_support_relation": [
       "sourceCode",
       "targetCode",
       "PanToCrepContextExact.funcs",
       "PanToCrepContextExact.eids"
     ],
-    "reviewer": "flapjack-luna-b source review (flapjack-pxn.18.4.3.73): HOL code_rel_def at pan_to_crepProofScript.sml:32-43 is code_rel ctxt s_code t_code with inner universal binders f, vshs, prog, rsh; the Lean codeRelExactHOLW keeps that order and all three clauses: source lookup implies localised_prog, ctxt.funcs lookup returns (vshs,rsh), and target lookup returns (GENLIST I (size_of_shape (Comb (MAP SND vshs))), compile (ctxt_fc ctxt.funcs ctxt.eids (MAP FST vshs) (MAP SND vshs) ns) prog). Exact carriers match: MlS=mlstring, ShapeHOL=shape, ProgHOL=prog, CrepProgHOL=crepLang$prog, positive-width BitVec=HOL word. The source/target HOL finite-map parameters are kept as separate Lean binders and use HolFiniteMapExact; the two traversed context map fields funcs/eids are likewise HolFiniteMapExact on PanToCrepContextExact. Relation qualifier records those two parameters and exact owner fields; a same-module witness forwards the context ofBroad/toBroad roundtrip. This tags only the exact proof-side definition, not production codeRel/codeRelW or pc_compile_correct; production path still uses String-backed maps and remains open on the parent bead."
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source review (flapjack-pxn.18.4.3.73): HOL code_rel_def at pan_to_crepProofScript.sml:32-43 is code_rel ctxt s_code t_code with inner universal binders f, vshs, prog, rsh; the Lean codeRelExactHOLW keeps that order and all three clauses: source lookup implies localised_prog, ctxt.funcs lookup returns (vshs,rsh), and target lookup returns (GENLIST I (size_of_shape (Comb (MAP SND vshs))), compile (ctxt_fc ctxt.funcs ctxt.eids (MAP FST vshs) (MAP SND vshs) ns) prog). Exact carriers match: MlS=mlstring, ShapeHOL=shape, ProgHOL=prog, CrepProgHOL=crepLang$prog, positive-width BitVec=HOL word. The source/target HOL finite-map parameters are kept as separate Lean binders and use HolFiniteMapExact; the two traversed context map fields funcs/eids are likewise HolFiniteMapExact on PanToCrepContextExact. Relation qualifier records those two parameters and exact owner fields; a same-module witness forwards the context ofBroad/toBroad roundtrip. This tags only the exact proof-side definition, not production codeRel/codeRelW or pc_compile_correct; production path still uses String-backed maps and remains open on the parent bead. The combined words_as_type_indexed_bitvec qualifier records the type-indexed 'a word -> BitVec width translation (bead flapjack-ikjm.4)."
   },
   {
     "hol_path": null,
@@ -6860,14 +6861,15 @@
     "hol_name": "code_rel_imp",
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CodeRelExact.lean",
     "lean_name": "codeRelExactHOLW_imp",
-    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
     "fmap_as_finite_support_relation": [
       "sourceCode",
       "targetCode",
       "PanToCrepContextExact.funcs",
       "PanToCrepContextExact.eids"
     ],
-    "reviewer": "flapjack-ds9 source comparison (bead flapjack-4ac.5.89): HOL code_rel_imp (pan_to_crepProofScript.sml:81-91) is `code_rel ctxt s_code t_code ==> all f vshs prog rsh. FLOOKUP s_code f = SOME (vshs, prog, rsh) ==> localised_prog prog and FLOOKUP ctxt.funcs f = SOME (vshs, rsh) and, with vs = MAP FST vshs, shs = MAP SND vshs, ns = GENLIST I (size_of_shape (Comb shs)), nctxt = ctxt_fc ctxt.funcs ctxt.eids vs shs ns, FLOOKUP t_code f = SOME (ns, compile nctxt prog)`. The Lean codeRelExactHOLW_imp keeps the outer codeRelExactHOLW hypothesis and the per-entry conclusion clause for clause, with MlS = mlstring, ShapeHOL = shape, ProgHOL width = panLang$prog, CrepProgHOL width = crepLang$prog, positive-width BitVec width = HOL word, and the let-bound vs/shs/ns/nctxt/compile body matching ctxtFcExactHOL/compileProgExactHOLW. The proof is the definitional unfolding of codeRelExactHOLW, mirroring HOL's `fs [code_rel_def] >> metis_tac[]`. No hypothesis, quantifier, side condition, or conclusion is added, changed, or weakened. The relation qualifier records the same standalone sourceCode/targetCode HolFiniteMapExact parameters and the traversed PanToCrepContextExact.funcs/eids fields as the code_rel_def tag; the same-module witness holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact forwards the context ofBroad/toBroad roundtrip. Tags only the exact proof-side relation, not production codeRel/codeRelW or pc_compile_correct."
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (bead flapjack-4ac.5.89): HOL code_rel_imp (pan_to_crepProofScript.sml:81-91) is `code_rel ctxt s_code t_code ==> all f vshs prog rsh. FLOOKUP s_code f = SOME (vshs, prog, rsh) ==> localised_prog prog and FLOOKUP ctxt.funcs f = SOME (vshs, rsh) and, with vs = MAP FST vshs, shs = MAP SND vshs, ns = GENLIST I (size_of_shape (Comb shs)), nctxt = ctxt_fc ctxt.funcs ctxt.eids vs shs ns, FLOOKUP t_code f = SOME (ns, compile nctxt prog)`. The Lean codeRelExactHOLW_imp keeps the outer codeRelExactHOLW hypothesis and the per-entry conclusion clause for clause, with MlS = mlstring, ShapeHOL = shape, ProgHOL width = panLang$prog, CrepProgHOL width = crepLang$prog, positive-width BitVec width = HOL word, and the let-bound vs/shs/ns/nctxt/compile body matching ctxtFcExactHOL/compileProgExactHOLW. The proof is the definitional unfolding of codeRelExactHOLW, mirroring HOL's `fs [code_rel_def] >> metis_tac[]`. No hypothesis, quantifier, side condition, or conclusion is added, changed, or weakened. The relation qualifier records the same standalone sourceCode/targetCode HolFiniteMapExact parameters and the traversed PanToCrepContextExact.funcs/eids fields as the code_rel_def tag; the same-module witness holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact forwards the context ofBroad/toBroad roundtrip. Tags only the exact proof-side relation, not production codeRel/codeRelW or pc_compile_correct. The combined words_as_type_indexed_bitvec qualifier records the type-indexed 'a word -> BitVec width translation (bead flapjack-ikjm.4)."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
@@ -7106,12 +7108,13 @@
     "hol_name": "code_rel_empty_locals",
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CodeRelExact.lean",
     "lean_name": "codeRelExactHOLW_emptyLocals",
-    "statement_status": "reviewed_fmap_as_finite_support_relation",
-    "reviewer": "flapjack-ds9 source comparison (bead flapjack-4ac.5.90): HOL code_rel_empty_locals (pan_to_crepProofScript.sml:96-100) is code_rel ctxt s.code t.code ==> code_rel ctxt (empty_locals s).code (empty_locals t).code with no other premises. The Lean codeRelExactHOLW_emptyLocals keeps the same context and both state binders over PanToCrepContextExact/PanSemStateFiniteExact/CrepSemHOLState, applies the tagged exact PanSemStateFiniteExact.emptyLocalsHOLFinite and CrepSemHOLState.emptyLocals updates, and uses the exact codeRelExactHOLW relation. HOL empty_locals clears only the locals field, so the two code fields passed to code_rel are definitionally unchanged; the proof is the definitional unfolding mirroring HOL's rw [code_rel_def, empty_locals_def, panSemTheory.empty_locals_def] >> metis_tac[]. The relation qualifier records only the canonical HolFiniteMapExact translation of the two traversed code fields PanSemStateFiniteExact.code and CrepSemHOLState.code; the context's own funcs/eids translation is already recorded on the tagged codeRelExactHOLW relation. Same-module witnesses holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact and holFmapAsFiniteSupportRelationWitness_CrepSemHOLState forward the canonical roundtrips. No quantifier, hypothesis, side condition, or conclusion is added, changed, or weakened. This tags only the exact proof-side theorem, not the production codeRel/codeRelW carriers.",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-ds9 source comparison (bead flapjack-4ac.5.90): HOL code_rel_empty_locals (pan_to_crepProofScript.sml:96-100) is code_rel ctxt s.code t.code ==> code_rel ctxt (empty_locals s).code (empty_locals t).code with no other premises. The Lean codeRelExactHOLW_emptyLocals keeps the same context and both state binders over PanToCrepContextExact/PanSemStateFiniteExact/CrepSemHOLState, applies the tagged exact PanSemStateFiniteExact.emptyLocalsHOLFinite and CrepSemHOLState.emptyLocals updates, and uses the exact codeRelExactHOLW relation. HOL empty_locals clears only the locals field, so the two code fields passed to code_rel are definitionally unchanged; the proof is the definitional unfolding mirroring HOL's rw [code_rel_def, empty_locals_def, panSemTheory.empty_locals_def] >> metis_tac[]. The relation qualifier records only the canonical HolFiniteMapExact translation of the two traversed code fields PanSemStateFiniteExact.code and CrepSemHOLState.code; the context's own funcs/eids translation is already recorded on the tagged codeRelExactHOLW relation. Same-module witnesses holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact and holFmapAsFiniteSupportRelationWitness_CrepSemHOLState forward the canonical roundtrips. No quantifier, hypothesis, side condition, or conclusion is added, changed, or weakened. This tags only the exact proof-side theorem, not the production codeRel/codeRelW carriers. The combined words_as_type_indexed_bitvec qualifier records the type-indexed 'a word -> BitVec width translation (bead flapjack-ikjm.4).",
     "fmap_as_finite_support_relation": [
       "PanSemStateFiniteExact.code",
       "CrepSemHOLState.code"
-    ]
+    ],
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": null,
