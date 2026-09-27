@@ -1553,4 +1553,35 @@ theorem evalPanValueExp_load_one_option_correspondence {width : Nat} [NeZero wid
           | word payload =>
               split <;> simp only [PanSemDeclarationValueOptionRel, panValueCodecRel_word]
 
+/-! ### Offset agreement for the flat-Load recursion (flapjack-rdc.2.1.1) -/
+
+/-- The production flat-load recursion advances by
+`panValueFlatOffset bytesInWord address k` (repeated addition), while the finite
+`memLoadsHOLExact`/`memLoadFldsHOLExact` advance by
+`address + bytesInWordHOL width * BitVec.ofNat width k`.  This lemma records the
+agreement at the executed `bytesInWord = bytesInWordHOL width`. -/
+theorem panValueFlatOffset_bitvec_add {width : Nat} [NeZero width]
+    (address : BitVec width) (k : Nat) :
+    panValueFlatOffset (bytesInWordHOL width) address k =
+      address + bytesInWordHOL width * BitVec.ofNat width k := by
+  induction k with
+  | zero => simp [panValueFlatOffset]
+  | succ k ih =>
+      have hsucc : BitVec.ofNat width (k + 1) = BitVec.ofNat width k + 1 := by
+        rw [BitVec.ofNat_add]
+        have h1 : BitVec.ofNat width 1 = (1 : BitVec width) :=
+          (BitVec.natCast_eq_ofNat width 1).symm
+        rw [h1]
+      calc panValueFlatOffset (bytesInWordHOL width) address (k + 1)
+          = panValueFlatOffset (bytesInWordHOL width) address k + bytesInWordHOL width := rfl
+        _ = address + bytesInWordHOL width * BitVec.ofNat width k + bytesInWordHOL width := by
+              rw [ih]
+        _ = address + bytesInWordHOL width * (BitVec.ofNat width k + 1) := by
+              rw [BitVec.mul_add]
+              rw [show bytesInWordHOL width * (1 : BitVec width) = bytesInWordHOL width from
+                BitVec.mul_one _]
+              ac_rfl
+        _ = address + bytesInWordHOL width * BitVec.ofNat width (k + 1) := by
+              rw [← hsucc]
+
 end Flapjack

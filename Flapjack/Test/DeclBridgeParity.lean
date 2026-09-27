@@ -60,4 +60,11 @@ example (productionState : PanSemState (RiscV.Word 64) Unit)
   evalPanValueExp_op_option_correspondence_executed productionState state structs locals
     globals memory baseAddress topAddress bytesInWord operator arguments hargs
 
+
+/-- Offset agreement used by the flat-Load recursion (`flapjack-rdc.2.1.1`). -/
+example (address : BitVec 8) (k : Nat) :
+    panValueFlatOffset (bytesInWordHOL 8) address k =
+      address + bytesInWordHOL 8 * BitVec.ofNat 8 k :=
+  panValueFlatOffset_bitvec_add address k
+
 end Flapjack.Test.DeclBridgeParity
