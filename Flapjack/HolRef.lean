@@ -43,6 +43,15 @@ does not authorize changed quantifiers, hypotheses, conclusions, `BEq` side
 conditions, or word-model differences.
 It does not authorize any other carrier, statement, or behavior difference.
 Qualified declarations remain subject to the checker and reviewed manifest.
+The `fmap_as_finite_support_relation` qualifier is the multi-owner form for a
+HOL relation whose finite maps come from several carrier structures. It lists
+`Owner.field` entries, requires each field to use `HolFiniteMapExact` and each
+owner to appear in the tagged statement, and requires one same-module checked
+`holFmapAsFiniteSupportRelationWitness_<Owner>` per owner. Each witness must
+state a real `toX`/`ofX` roundtrip with that owner's broad counterpart. The
+qualifier records only the finite-map carrier translations; the relation's
+quantifiers, hypotheses, conclusions, and lookup semantics need their own
+source comparison.
 The attribute is inert for the kernel; it exists so that
 
 * a reader can find the original statement without a lookup table, whatever
