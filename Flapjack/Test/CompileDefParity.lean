@@ -992,6 +992,27 @@ example :
     simp only [compileExpExactHOLW.eq_1, expToHOL.eq_1, compileExpHOL.eq_1,
       List.map_cons, List.map_nil, crepExpOfHOL.eq_1, shapeOfHOL]
 
+/-- The result-arm Call handler-present-eid bridge
+    (`pan_to_crepScript.sml:233-239`): the `eids` table binds `"E"` to code `12`,
+    so the handler is kept and the callee return names are zero-initialized. -/
+example :
+    crepProgOfHOL (compileProgExactHOLW exactRaiseContext
+      (.call (some (none, some (ofString "E", ofString "e", .skip))) (ofString "f")
+        (([.const 5] : List (Exp (BitVec 8))).map expToHOL))) =
+    compileProgRiscV exactRaiseContext.toProduction
+      (.call (some (none, some ("E", "e", progOfHOL ProgHOL.skip))) "f" [.const 5]) := by
+  refine compileProgExactHOLW_call_handler_present_eid_bridge
+    (context := exactRaiseContext) (function := "f") (exceptionName := "E")
+    (exceptionVariable := "e") (arguments := [.const 5]) (body := .skip)
+    (exceptionCode := BitVec.ofNat 8 12) ?_ (by decide) (by decide) ?_ ?_
+  · simp [exactRaiseContext, FUPDATE]
+  · intro expression hmem
+    simp only [List.mem_singleton] at hmem
+    subst hmem
+    simp only [compileExpExactHOLW.eq_1, expToHOL.eq_1, compileExpHOL.eq_1,
+      List.map_cons, List.map_nil, crepExpOfHOL.eq_1, shapeOfHOL]
+  · simp [compileProgExactHOLW, compileProgHOL, progOfHOL, crepProgOfHOL]
+
 /-- The `ExtCall` success bridge (`pan_to_crepScript.sml:274-290`) closes the
     four `One`-shaped operand bindings and the maximum-variable temporary base
     for concrete constant operands. -/
