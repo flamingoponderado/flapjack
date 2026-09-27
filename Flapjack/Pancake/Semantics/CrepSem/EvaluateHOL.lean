@@ -867,8 +867,20 @@ attached. -/
        | none => (some .error, state)) := by
   rw [evalCrepSemHOLProg.eq_def] <;> rfl
 
-/-- HOL `evaluate (Store dst src, s)` (`crepSemScript.sml:263-269`). Finite-support
-    `CrepSemHOLState` counterpart; untagged. -/
+/-- HOL `evaluate (Store dst src, s)` (`crepSemScript.sml:263-269`),
+    source-reviewed as one clause only. Both expressions use the tagged exact
+    `eval_def` port `evalCrepSemHOLExp` (`crepSemScript.sml:90-137`), through
+    `crepExactEvalExp`; its explicit `memDec` is Lean decidability evidence.
+    HOL accepts only a `Word` address but any `word_lab` source value, exactly
+    the patterns below. `memDec account` is HOL's `account IN s.memaddrs` test.
+    Success updates only memory at that address and returns `NONE`; failure of
+    either expression or the domain check returns `Error` with the original
+    state. The pointwise memory function in this equation is HOL's `addr =+ w`
+    update from `mem_store_def` (`panSemScript.sml:373-378`), also implemented
+    by the tagged `panMemStoreHOL` helper in `PanSemStateEval.lean`. The state
+    uses the reviewed positive-width `BitVec` / `HolWordLab` carriers. This
+    establishes a local Store-clause disposition only; the enclosing evaluator
+    remains untagged pending the other cases and whole-statement review. -/
 @[simp] theorem evalCrepSemHOLProg_store {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ)
     (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
