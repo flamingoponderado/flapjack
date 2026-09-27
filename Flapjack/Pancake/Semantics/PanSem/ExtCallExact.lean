@@ -23,11 +23,11 @@ evaluate (ExtCall ffi_index ptr1 len1 ptr2 len2, s) =
 
 The four arguments are evaluated independently by the caller-supplied
 `evalExpression`; branch order, FFI dispatch and state updates follow HOL. The
-FFI boundary uses `BitVec 8`, but the memory byte helpers use `UInt8` for HOL
-`word8` (`BitVec 8`), and the small converters below only prove a value-level
-codec. No approved HOL qualifier records that representation change, so those
-helper definitions and this clause step remain untagged. The faithful exact
-byte carrier is tracked by `flapjack-4ac.5.16.5.4`.
+byte reads and writes use the exact `BitVec 8` HOL `word8` carrier through
+`readBytearrayWordHOL`, `panMemLoadByteWord8HOL`, and
+`panWriteBytearrayWord8HOL`. The generic evaluator step remains untagged
+because it is one recursive clause with caller-supplied expression evaluation,
+not HOL's mutually recursive `evaluate_def` declaration.
 
 This declaration is deliberately UNTAGGED: the tag belongs on the whole mutual
 `evaluate_def` once the recursive dispatcher exists, not on one callback
@@ -42,14 +42,6 @@ import Flapjack.FfiHOL
 namespace Flapjack
 
 open Flapjack.Pancake.PanLang (MlS ExpHOL)
-
-/-- Bridge a `word8` list carried as `UInt8` (the memory codec's byte type) to
-    the exact FFI carrier's `BitVec 8`. -/
-def bytesToHOL (bytes : List UInt8) : List (BitVec 8) := bytes.map UInt8.toBitVec
-
-/-- Bridge the exact FFI carrier's `BitVec 8` byte list back to the memory
-    codec's `UInt8` byte type. -/
-def bytesFromHOL (bytes : List (BitVec 8)) : List UInt8 := bytes.map UInt8.ofBitVec
 
 /-- Exact `ExtCall` clause step over `PanSemStateExact`.  The four expression
     arguments are evaluated through `evalExpression`; both byte arrays must read
@@ -66,17 +58,17 @@ def extCallStepHOLExact {width : Nat} {σ : Type} [NeZero width]
         evalExpression state ptr2, evalExpression state len2 with
   | some (.val (.word address1)), some (.val (.word length1)),
     some (.val (.word address2)), some (.val (.word length2)) =>
-      match readBytearrayHOL address1 length1.toNat
-              (panMemLoadByteHOL state.memory state.memaddrs state.be),
-            readBytearrayHOL address2 length2.toNat
-              (panMemLoadByteHOL state.memory state.memaddrs state.be) with
+      match readBytearrayWordHOL (byteWidth := 8) address1 length1.toNat
+              (panMemLoadByteWord8HOL state.memory state.memaddrs state.be),
+            readBytearrayWordHOL (byteWidth := 8) address2 length2.toNat
+              (panMemLoadByteWord8HOL state.memory state.memaddrs state.be) with
       | some bytes, some bytes2 =>
           match callFFIHOL state.ffi (.extCall function)
-              (bytesToHOL bytes) (bytesToHOL bytes2) with
+              bytes bytes2 with
           | .final event => (some (.finalFfi event), emptyLocalsHOLExact state)
           | .ret newFfi newBytes =>
               (none, { state with
-                        memory := panWriteBytearrayHOL address2 (bytesFromHOL newBytes)
+                        memory := panWriteBytearrayWord8HOL address2 newBytes
                           state.memory state.memaddrs state.be,
                         ffi := newFfi })
       | _, _ => (some .error, state)
@@ -129,8 +121,8 @@ theorem extCallStepHOLExact_read_error {width : Nat} {σ : Type} [NeZero width]
     (h2 : evalExpression state len1 = some (.val (.word length1)))
     (h3 : evalExpression state ptr2 = some (.val (.word address2)))
     (h4 : evalExpression state len2 = some (.val (.word length2)))
-    (hread : readBytearrayHOL address1 length1.toNat
-        (panMemLoadByteHOL state.memory state.memaddrs state.be) = none) :
+    (hread : readBytearrayWordHOL (byteWidth := 8) address1 length1.toNat
+        (panMemLoadByteWord8HOL state.memory state.memaddrs state.be) = none) :
     extCallStepHOLExact state evalExpression function ptr1 len1 ptr2 len2
       = (some .error, state) := by
   simp [extCallStepHOLExact, h1, h2, h3, h4, hread]
@@ -141,16 +133,16 @@ theorem extCallStepHOLExact_final {width : Nat} {σ : Type} [NeZero width]
     (evalExpression : PanSemStateExact width σ → ExpHOL width → Option (ValueHOL width))
     (function : MlS) (ptr1 len1 ptr2 len2 : ExpHOL width)
     (address1 length1 address2 length2 : RiscV.Word width)
-    (bytes bytes2 : List UInt8) (event : HolFinalEvent)
+    (bytes bytes2 : List (BitVec 8)) (event : HolFinalEvent)
     (h1 : evalExpression state ptr1 = some (.val (.word address1)))
     (h2 : evalExpression state len1 = some (.val (.word length1)))
     (h3 : evalExpression state ptr2 = some (.val (.word address2)))
     (h4 : evalExpression state len2 = some (.val (.word length2)))
-    (hread1 : readBytearrayHOL address1 length1.toNat
-        (panMemLoadByteHOL state.memory state.memaddrs state.be) = some bytes)
-    (hread2 : readBytearrayHOL address2 length2.toNat
-        (panMemLoadByteHOL state.memory state.memaddrs state.be) = some bytes2)
-    (hcall : callFFIHOL state.ffi (.extCall function) (bytesToHOL bytes) (bytesToHOL bytes2)
+    (hread1 : readBytearrayWordHOL (byteWidth := 8) address1 length1.toNat
+        (panMemLoadByteWord8HOL state.memory state.memaddrs state.be) = some bytes)
+    (hread2 : readBytearrayWordHOL (byteWidth := 8) address2 length2.toNat
+        (panMemLoadByteWord8HOL state.memory state.memaddrs state.be) = some bytes2)
+    (hcall : callFFIHOL state.ffi (.extCall function) bytes bytes2
         = .final event) :
     extCallStepHOLExact state evalExpression function ptr1 len1 ptr2 len2
       = (some (.finalFfi event), emptyLocalsHOLExact state) := by
@@ -163,20 +155,20 @@ theorem extCallStepHOLExact_returned {width : Nat} {σ : Type} [NeZero width]
     (evalExpression : PanSemStateExact width σ → ExpHOL width → Option (ValueHOL width))
     (function : MlS) (ptr1 len1 ptr2 len2 : ExpHOL width)
     (address1 length1 address2 length2 : RiscV.Word width)
-    (bytes bytes2 : List UInt8) (newFfi : HolFfiState σ) (newBytes : List (BitVec 8))
+    (bytes bytes2 newBytes : List (BitVec 8)) (newFfi : HolFfiState σ)
     (h1 : evalExpression state ptr1 = some (.val (.word address1)))
     (h2 : evalExpression state len1 = some (.val (.word length1)))
     (h3 : evalExpression state ptr2 = some (.val (.word address2)))
     (h4 : evalExpression state len2 = some (.val (.word length2)))
-    (hread1 : readBytearrayHOL address1 length1.toNat
-        (panMemLoadByteHOL state.memory state.memaddrs state.be) = some bytes)
-    (hread2 : readBytearrayHOL address2 length2.toNat
-        (panMemLoadByteHOL state.memory state.memaddrs state.be) = some bytes2)
-    (hcall : callFFIHOL state.ffi (.extCall function) (bytesToHOL bytes) (bytesToHOL bytes2)
+    (hread1 : readBytearrayWordHOL (byteWidth := 8) address1 length1.toNat
+        (panMemLoadByteWord8HOL state.memory state.memaddrs state.be) = some bytes)
+    (hread2 : readBytearrayWordHOL (byteWidth := 8) address2 length2.toNat
+        (panMemLoadByteWord8HOL state.memory state.memaddrs state.be) = some bytes2)
+    (hcall : callFFIHOL state.ffi (.extCall function) bytes bytes2
         = .ret newFfi newBytes) :
     extCallStepHOLExact state evalExpression function ptr1 len1 ptr2 len2
       = (none, { state with
-                   memory := panWriteBytearrayHOL address2 (bytesFromHOL newBytes)
+                   memory := panWriteBytearrayWord8HOL address2 newBytes
                      state.memory state.memaddrs state.be,
                    ffi := newFfi }) := by
   simp [extCallStepHOLExact, h1, h2, h3, h4, hread1, hread2, hcall]

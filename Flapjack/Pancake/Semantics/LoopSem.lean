@@ -453,6 +453,22 @@ def readBytearrayHOL {width : Nat} (address : RiscV.Word width) (length : Nat)
       let rest ← readBytearrayHOL (address + 1) length getByte
       pure (byte :: rest)
 
+/-- Exact positive-word specialization family of HOL `read_bytearray_def`
+    (`cakeml/misc/miscScript.sml:113`): both the address word and returned
+    byte word retain their independent HOL dimensions. The zero/successor
+    recursion and failure propagation match the two HOL equations directly. -/
+@[hol "cakeml/misc/miscScript.sml" "read_bytearray_def"]
+def readBytearrayWordHOL {width byteWidth : Nat} [NeZero width] [NeZero byteWidth]
+    (address : RiscV.Word width) (length : Nat)
+    (getByte : RiscV.Word width → Option (BitVec byteWidth)) :
+    Option (List (BitVec byteWidth)) :=
+  match length with
+  | 0 => some []
+  | length + 1 => do
+      let byte ← getByte address
+      let rest ← readBytearrayWordHOL (address + 1) length getByte
+      pure (byte :: rest)
+
 /-- Width-generic port of HOL `byte$get_byte` (`src/n-bit/byteScript.sml:21`).
     That script is part of the HOL standard library rather than the CakeML
     submodule, so this declaration carries no HOL tag.  The byte shift is
