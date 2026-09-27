@@ -12151,6 +12151,16 @@
   },
   {
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 780,
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
+    "lean_name": "evaluateHOLFiniteState_store32",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "reviewer": "flapjack-luna-a source comparison (2026-09-27; bead flapjack-qj5): the Store32 conjunct at panSemScript.sml:590-596 evaluates destination and source in the original state, accepts only two ValWord results, and calls mem_store_32 with the state's memory, domain, and endianness plus w2w of the source word. Success changes only memory; failed evaluation, non-word values, unaligned addresses, or an out-of-domain write return (SOME Error,s). evaluateHOLFiniteState_store32 uses those same cases and panMemStore32HOL; `BitVec.ofNat 32 value.toNat` is the low 32 bits/zero extension specified by HOL w2w. The exact memory helper implements aligned-cell lookup, the 4-byte update in HOL byte order, and unchanged memory outside the aligned cell. HOL word_lab is represented as HolWordLab width with one BitVec width payload, and the 32-bit operand as BitVec 32. The four named state maps use the same-module HolFiniteMapExact roundtrip witness; the qualifier records only that representation. No evaluation, alignment, or domain fact is assumed. This is one exact constructor case; the full conjunction remains open."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
     "hol_name": "evaluate_decls_def",
     "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
     "lean_name": "evaluateDeclsHOLFinite",
