@@ -15228,5 +15228,15 @@
     "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-c source comparison (2026-09-27; bead flapjack-4ac.4.60.1.1.7): HOL panPropsScript.sml:724-727 quantifies p,t,res,st,ck with exactly the high-run equation evaluate (p,t) = (res, st with clock := st.clock + ck), the non-timeout premise, and the conclusion evaluating p from t.clock - ck to (res,st). This is the genuine nonrecursive Raise case produced by recInduct evaluate_ind; it adds no IH or other premise, and the non-timeout premise is retained (unused for this non-timing constructor). HOL evaluate_def at panSemScript.sml:645-652 checks FLOOKUP s.eshapes eid and eval s e; it returns Exception eid value and empty_locals s only when shape_of value = sh and size_of_shape_with_ctxt s.structs (shape_of value) <= 32, otherwise Error and the unchanged state. The Lean case uses exact evalHOLExact, lookup and ordinary shape equality, the same 32-bit size bound, and the exact finite Raise equation; it preserves both state-update branches. Carrier qualifiers record the same-module PanPropsEvalStateFiniteExact owner for locals/globals/code/eshapes via HolFiniteMapExact and the indexed-word translation. The full evaluate_clock_sub theorem remains open."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "io_events_eq_imp_ffi_eq",
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
+    "lean_name": "ioEventsEqImpFfiEqHOLFinite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-28; bead flapjack-4ac.4.51.1; HOL panPropsScript.sml:974-1019): the declaration quantifies p, s, res, and t and states evaluate (p,s) = (res,t) and s.ffi.io_events = t.ffi.io_events ==> t.ffi = s.ffi. The Lean theorem retains this order and both premises and concludes equality of complete HolFfiState, including oracle, host-state, and event fields. PanPropsEvalStateFiniteExact owns the four listed HolFiniteMapExact fields and same-module holFmapAsFiniteSupportWitness. Its toPanSemFinite/ofPanSemFinite codec is field-for-field. evaluatePanPropsHOLFiniteState delegates to the canonical finite context evaluator and only converts the output carrier. The checked finite-context projection relates successful outputs to evalPanSemRecursiveCallContextHOLExact; its recursive event/FFI induction covers ShMemLoad, ShMemStore, Call, DecCall, Seq, ExtCall, and While, matching HOL evaluate_ind cases. The finite-map and indexed-word qualifiers record only the reviewed state/word translations."
   }
 ]
