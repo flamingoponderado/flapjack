@@ -94,30 +94,24 @@ private def tlcArguments : List (ValueHOL 8) :=
     `flatten` maps each argument to its single word, so the finite map stores
     `0 |-> 5` and `1 |-> 7` and is undefined elsewhere (mirroring HOL
     `FEMPTY |++ ZIP (ns, FLAT (MAP flatten args))`). -/
-set_option linter.unusedSimpArgs false in
 theorem tlcHOL_zero : (tlcHOL tlcSlots tlcArguments).lookup 0 =
     some (.word (5 : BitVec 8)) := by
   simp only [tlcHOL, tlcSlots, tlcArguments, List.map_cons, List.map_nil,
-    List.flatten_cons, List.flatten_nil, List.zip_cons_cons, List.zip_nil_left,
-    flattenHOL, HolFiniteMapExact.updateListEq, HolFiniteMapExact.empty,
-    FUPDATE_LIST_HOL, List.foldl_cons, List.foldl_nil, FUPDATE_HOL]
+    List.flatten_cons, List.flatten_nil, flattenHOL,
+    HolFiniteMapExact.updateListEq, HolFiniteMapExact.empty, FUPDATE_LIST_HOL]
   decide
 
-set_option linter.unusedSimpArgs false in
 theorem tlcHOL_one : (tlcHOL tlcSlots tlcArguments).lookup 1 =
     some (.word (7 : BitVec 8)) := by
   simp only [tlcHOL, tlcSlots, tlcArguments, List.map_cons, List.map_nil,
-    List.flatten_cons, List.flatten_nil, List.zip_cons_cons, List.zip_nil_left,
-    flattenHOL, HolFiniteMapExact.updateListEq, HolFiniteMapExact.empty,
-    FUPDATE_LIST_HOL, List.foldl_cons, List.foldl_nil, FUPDATE_HOL]
+    List.flatten_cons, List.flatten_nil, flattenHOL,
+    HolFiniteMapExact.updateListEq, HolFiniteMapExact.empty, FUPDATE_LIST_HOL]
   decide
 
-set_option linter.unusedSimpArgs false in
 theorem tlcHOL_absent : (tlcHOL tlcSlots tlcArguments).lookup 2 = none := by
   simp only [tlcHOL, tlcSlots, tlcArguments, List.map_cons, List.map_nil,
-    List.flatten_cons, List.flatten_nil, List.zip_cons_cons, List.zip_nil_left,
-    flattenHOL, HolFiniteMapExact.updateListEq, HolFiniteMapExact.empty,
-    FUPDATE_LIST_HOL, List.foldl_cons, List.foldl_nil, FUPDATE_HOL]
+    List.flatten_cons, List.flatten_nil, flattenHOL,
+    HolFiniteMapExact.updateListEq, HolFiniteMapExact.empty, FUPDATE_LIST_HOL]
   decide
 
 def tlcHOLGuard : Bool :=
