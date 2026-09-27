@@ -1,7 +1,9 @@
 (*
   Direct source-evaluation oracle for the statement constructors added to the
   measure-driven total PanSem fragment. It records Assign success/Error,
-  Return success/Error, Raise success/Error, and these clauses under If/Seq.
+  Return success/Error, Raise success/Error, and these clauses under If/Seq,
+  including an `If` whose condition evaluates to the non-word value
+  `RStruct []` and must produce `SOME Error` while retaining the state.
   Reference: cakeml/pancake/semantics/panSemScript.sml:566-630.
 *)
 load "bossLib";
@@ -106,6 +108,13 @@ val _ = print_eval "total_if_assign_false_result"
 val _ = print_eval "total_if_assign_false_local"
   ``FLOOKUP (SND (panSem$evaluate
       (panLang$If (panLang$Const (0w:8 word)) ^assignOk panLang$Skip, ^baseState))).locals
+      (strlit "x")``;
+val _ = print_eval "total_if_assign_nonword_result"
+  ``FST (panSem$evaluate
+      (panLang$If (panLang$RStruct []) ^assignOk panLang$Skip, ^baseState))``;
+val _ = print_eval "total_if_assign_nonword_local"
+  ``FLOOKUP (SND (panSem$evaluate
+      (panLang$If (panLang$RStruct []) ^assignOk panLang$Skip, ^baseState))).locals
       (strlit "x")``;
 val _ = print_eval "total_seq_assign_return_result"
   ``FST (panSem$evaluate (panLang$Seq ^assignOk ^returnOk, ^baseState))``;

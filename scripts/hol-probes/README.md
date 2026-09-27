@@ -67,6 +67,17 @@ byte-array reads, expression failure, nonword arguments, and `FFI_final`;
 these are checked by `Flapjack.Test.PanSemExtCallExactParity`. The finite-
 carrier source equation is tagged in
 `Flapjack.Pancake.Semantics.PanSem.ExtCallCase`.
+`pan_sem_ite_e2e_probe.out` records direct HOL `evaluate` rows for the `If`
+equation at `cakeml/pancake/semantics/panSemScript.sml:618-622`: a nonzero word
+condition selects the then-branch, `0w` selects the else-branch, and a condition
+that evaluates to the non-word value `RStruct []` (or fails to evaluate) returns
+`SOME Error` while retaining the state. The matching Lean guards for the
+measure-driven fragment and the expression-conditioned fragment live in
+`Flapjack.Test.PanSemTotalParity`. `pan_sem_total_fragment_stmt_probe.out` adds
+`If` selection over the exact `Assign` clause, including the non-word
+`RStruct []` condition row `total_if_assign_nonword_result` / `_local`; the
+production partial dispatcher's matching `If` guards and kernel-checked
+regressions are in `Flapjack.Test.PanSemTotalStepsParity`.
 `compile_to_crep_probe.out` records direct HOL EVAL rows for the full
 declaration-only `compile_to_crep_def`, including `raise_const`, `handled_pair`,
 duplicate exception IDs, and `duplicate_function_names`. The latter confirms
