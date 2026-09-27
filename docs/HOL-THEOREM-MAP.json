@@ -13531,5 +13531,21 @@
     "lean_name": "panPrimopCrepPrimopHOLExact",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.16.9): exact-carrier counterpart of HOL pan_primop_crep_primop; untagged pending coordinator source review of the HolWordLab->PanWordLab cross-carrier map used by the reviewed crep_primop_def port."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/pan_commonPropsScript.sml",
+    "hol_name": "opt_mmap_some_eq_zip_flookup",
+    "lean_path": "Flapjack/Pancake/Semantics/PanCommonProps.lean",
+    "lean_name": "optMmapSomeEqZipFlookup",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison against pan_commonPropsScript.sml:170 opt_mmap_some_eq_zip_flookup; HOL OPT_MMAP (FLOOKUP (f |++ ZIP (xs,ys))) xs = SOME ys with ALL_DISTINCT/LENGTH rendered as List.mapM over FLOOKUP, FUPDATE_LIST, Nodup/length over the reviewed extensional FiniteMap carrier; used by pc_compile_correct[Primitive])"
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/pan_commonPropsScript.sml",
+    "hol_name": "opt_mmap_disj_zip_flookup",
+    "lean_path": "Flapjack/Pancake/Semantics/PanCommonProps.lean",
+    "lean_name": "optMmapDisjZipFlookup",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison against pan_commonPropsScript.sml:188 opt_mmap_disj_zip_flookup; HOL distinct_lists rendered as ListDisjoint, OPT_MMAP as List.mapM over FLOOKUP, over the reviewed extensional FiniteMap carrier; used by pc_compile_correct[Primitive])"
   }
 ]
