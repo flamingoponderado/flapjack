@@ -1,0 +1,3 @@
+comp_func_skip=Skip
+comp_func_one_parameter_return=Return [Var 0]
+comp_func_pair_parameter_return=Return [Var 0; Var 1]

@@ -2004,6 +2004,33 @@ theorem evalPanSemRecursiveCallFiniteContext_callFixedContext_normalize
   apply evalPanSemRecursiveCallFiniteContext_state_eq
   rfl
 
+/-- FLAPJACK-SPECIFIC (not a HOL declaration): the generated successful
+    `DecCall` continuation context and the named finite `callContinuationContextHOLFinite`
+    have the same state. This keeps the clock-fixed body context and the
+    caller-local restoration visible when proving the unconditional DecCall
+    equation, without relying on generated `withState` proof arguments. -/
+theorem evalPanSemRecursiveCallFiniteContext_callContinuationContext_normalize
+    {width : Nat} {σ : Type} [NeZero width]
+    (context : FiniteEvalContext width σ)
+    (entry : PanSemStateFiniteExact width σ)
+    (bodyResult : Option (PanSemResultExact width))
+    (bodyContext : FiniteEvalContext width σ)
+    (resultName : MlS) (value : ValueHOL width)
+    (hmem : (fixClockHOLFinite entry (bodyResult, bodyContext.state)).2.memaddrs =
+      bodyContext.state.memaddrs)
+    (hshared : (fixClockHOLFinite entry (bodyResult, bodyContext.state)).2.shMemaddrs =
+      bodyContext.state.shMemaddrs) :
+    ((bodyContext.withState
+          (fixClockHOLFinite entry (bodyResult, bodyContext.state)).2 hmem hshared).withState
+          (handlerStateHOLFinite context
+            (bodyContext.withState
+              (fixClockHOLFinite entry (bodyResult, bodyContext.state)).2 hmem hshared)
+            resultName value) rfl rfl) =
+      callContinuationContextHOLFinite context
+        (callFixedContextHOLFinite entry bodyResult bodyContext) resultName value := by
+  apply FiniteEvalContext.ext
+  rfl
+
 /-- FLAPJACK-SPECIFIC provisional projection (not a HOL declaration; carries no
     `@[hol]` tag): the state-level view of the clause-for-clause finite context
     evaluator `evalPanSemRecursiveCallFiniteContext`.
@@ -2101,6 +2128,46 @@ theorem evaluateHOLFiniteState_eq_withDeciders {width : Nat} {σ : Type}
     exact Subsingleton.elim _ _
   simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
     hmemEq, hsharedEq]
+
+/-- FLAPJACK-SPECIFIC (no standalone HOL declaration): the general state-level
+    projection of the clause-for-clause finite context evaluator. This is the
+    reusable bridge that lets a HOL-shaped `evaluate_def` conjunct name the
+    recursive result `evaluateHOLFiniteState ...` while its proof works with the
+    internal `evalPanSemRecursiveCallFiniteContext` assembly pair. -/
+theorem evaluateHOLFiniteState_eq_recursiveContext
+    {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (program : ProgHOL width) :
+    evaluateHOLFiniteState state program =
+      (match evalPanSemRecursiveCallFiniteContext program
+          ⟨state, fun address => Classical.propDecidable (state.memaddrs address),
+            fun address => Classical.propDecidable (state.shMemaddrs address)⟩ with
+        | some pair => (pair.1, pair.2.state)
+        | none => (none, state)) := by
+  classical
+  simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders]
+
+/-- FLAPJACK-SPECIFIC (no standalone HOL declaration): state-level reading of a
+    known internal recursive-context result. Given an internal assembly pair for
+    `program` over any context with the same state, the state-level evaluator
+    returns exactly its projection. This is the rewrite that aligns a HOL-shaped
+    recursive call `evaluateHOLFiniteState ...` with the internal evaluator's
+    post-state context. -/
+theorem evaluateHOLFiniteState_eq_of_recursiveContext
+    {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (program : ProgHOL width)
+    (context : FiniteEvalContext width σ) (hcontext : context.state = state)
+    (pair : Option (PanSemResultExact width) × FiniteEvalContext width σ)
+    (hpair : evalPanSemRecursiveCallFiniteContext program context = some pair) :
+    evaluateHOLFiniteState state program = (pair.1, pair.2.state) := by
+  classical
+  rw [evaluateHOLFiniteState_eq_recursiveContext]
+  have hctx :
+      (⟨state, fun address => Classical.propDecidable (state.memaddrs address),
+        fun address => Classical.propDecidable (state.shMemaddrs address)⟩ :
+        FiniteEvalContext width σ) = context := by
+    apply FiniteEvalContext.ext
+    exact hcontext.symm
+  rw [hctx, hpair]
 
 /-- FLAPJACK-SPECIFIC recursive bridge (no standalone HOL declaration): a
     pair-shaped recursive evaluation equation can be consumed by the finite
@@ -3465,6 +3532,200 @@ theorem evaluateHOLFiniteState_decCall_body_continue {width : Nat} {σ : Type}
     returnShape bodyContext hargsContext hlookup hclock hbodyContext
   simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders, context,
     hcase, callFixedContextHOLFinite, hbodyState]
+
+/-- HOL `evaluate_def`'s original DecCall conjunct (`panSemScript.sml:694-714`,
+    in the Definition beginning at line 556). It exposes argument/code lookup
+    failure, timeout, all fixed callee result cases, both return-shape checks,
+    continuation evaluation, caller-binding restoration, and the
+    empty-locals fallback. Only constructor inputs are hypotheses;
+    branch-selected helper theorems above remain untagged.
+
+    Source review: `callEntryStateHOLFinite` decrements the caller clock and
+    installs `newlocals`; `fixClockHOLFinite` preserves the recursive result
+    and applies HOL `fix_clock` to the post-state. The return case checks
+    `shape_of retv = shape` and `shape_of retv = return_sh`, sets `rt` in the
+    fixed state with caller locals, evaluates `prog1`, then restores the old
+    `rt` binding with `res_var`. Every other result uses the exact fixed state
+    and the HOL empty-locals behavior where required. The statement has no
+    branch selectors, result assumptions, or assembly-marker `none` case.
+    `PanSemStateFiniteExact` has HOL's 13 state fields; the four map fields use
+    the same-module `HolFiniteMapExact` roundtrip witness, and its width-indexed
+    `BitVec` carrier is the reviewed positive HOL word translation. Because
+    this RHS retains `fixClockHOLFinite`, it cites the original line-556
+    Definition, not the line-780 theorem rewritten by `fix_clock_evaluate`. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 556
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateHOLFiniteState_decCall_total {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateFiniteExact width σ)
+    (resultName : MlS) (shape : ShapeHOL) (function : MlS)
+    (arguments : List (ExpHOL width)) (continuation : ProgHOL width) :
+    evaluateHOLFiniteState state
+        (.decCall resultName shape function arguments continuation : ProgHOL width) =
+      (match evalListHOLFinite state
+          (h := fun address => Classical.propDecidable (state.memaddrs address)) arguments with
+       | none => (some .error, state)
+       | some values =>
+           match lookupCodeHOLFinite state.code.lookup function values with
+           | none => (some .error, state)
+           | some (body, callee, returnShape) =>
+               if state.clock = 0 then
+                 (some .timeOut, emptyLocalsHOLFinite state)
+               else
+                 let entry := callEntryStateHOLFinite state callee
+                 let bodyOutput := evaluateHOLFiniteState entry body
+                 let fixed := fixClockHOLFinite entry bodyOutput
+                 match bodyOutput.1 with
+                 | none => (some .error, fixed.2)
+                 | some .break => (some .error, fixed.2)
+                 | some .continue => (some .error, fixed.2)
+                 | some (.returned value) =>
+                     if shapeEqHOL (shapeOfHOLExact value) shape &&
+                         shapeEqHOL (shapeOfHOLExact value) returnShape then
+                       let continuationState :=
+                         setVarHOLFinite resultName value
+                           { fixed.2 with locals := state.locals }
+                       let continuationOutput :=
+                         evaluateHOLFiniteState continuationState continuation
+                       (continuationOutput.1,
+                         { continuationOutput.2 with
+                           locals := HolFiniteMapExact.resVarEq
+                             continuationOutput.2.locals
+                             (resultName, state.locals.lookup resultName) })
+                     else (some .error, fixed.2)
+                 | some other => (some other, emptyLocalsHOLFinite fixed.2)) := by
+  classical
+  let hmem : DecidablePred state.memaddrs :=
+    fun address => Classical.propDecidable (state.memaddrs address)
+  let hshared : DecidablePred state.shMemaddrs :=
+    fun address => Classical.propDecidable (state.shMemaddrs address)
+  let context : FiniteEvalContext width σ := ⟨state, hmem, hshared⟩
+  change (match evalPanSemRecursiveCallFiniteContext
+      (.decCall resultName shape function arguments continuation) context with
+    | some pair => (pair.1, pair.2.state)
+    | none => (none, state)) = _
+  rw [evalPanSemRecursiveCallFiniteContext.eq_6]
+  cases hargs : evalListHOLFinite state arguments with
+  | none => simp [context]
+  | some values =>
+      have hargsContext : evalListHOLFinite context.state
+          (h := context.memaddrsDecidable) arguments = some values := by
+        simpa [context] using hargs
+      cases hlookup : lookupCodeHOLFinite state.code.lookup function values with
+      | none => simp [context, hlookup]
+      | some entryData =>
+          have hlookupContext : lookupCodeHOLFinite context.state.code.lookup
+              function values = some entryData := by
+            simpa [context] using hlookup
+          obtain ⟨body, callee, returnShape⟩ := entryData
+          by_cases hclock : state.clock = 0
+          · simp [context, hlookup, hclock]
+          · let entry := callEntryStateHOLFinite state callee
+            have hclockContext : context.state.clock ≠ 0 := by
+              simpa [context] using hclock
+            let entryContext := callEntryContextHOLFinite context callee
+            obtain ⟨bodyPair, hbody⟩ :=
+              evalPanSemRecursiveCallFiniteContext_total body entryContext
+            have hbodyGenerated :=
+              evalPanSemRecursiveCallFiniteContext_callEntryContext_normalize
+                body context callee rfl rfl
+            have hbodyGenerated' : evalPanSemRecursiveCallFiniteContext body
+                (context.withState entry rfl rfl) = some bodyPair := by
+              rw [hbodyGenerated]
+              exact hbody
+            let entryClassical : FiniteEvalContext width σ :=
+              ⟨entry,
+                fun address => Classical.propDecidable (entry.memaddrs address),
+                fun address => Classical.propDecidable (entry.shMemaddrs address)⟩
+            have hbodyClassical :
+                evalPanSemRecursiveCallFiniteContext body entryClassical =
+                  some bodyPair := by
+              rw [evalPanSemRecursiveCallFiniteContext_state_eq
+                body entryClassical entryContext rfl]
+              exact hbody
+            have hbodyState : evaluateHOLFiniteState entry body =
+                (bodyPair.1, bodyPair.2.state) := by
+              simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+                entryClassical, hbodyClassical]
+            simp only [hlookupContext, if_neg hclockContext,
+              hbodyGenerated, entryContext, hbody, hlookup, if_neg hclock]
+            cases hresult : bodyPair.1 with
+            | none => simp [hbodyState, hresult, context, entry,
+                fixClockHOLFinite, callFixedContextHOLFinite]
+            | some bodyResult =>
+                cases bodyResult with
+                | error => simp [hbodyState, hresult, context, entry,
+                    fixClockHOLFinite, callFixedContextHOLFinite, emptyLocalsHOLFinite]
+                | timeOut => simp [hbodyState, hresult, context, entry,
+                    fixClockHOLFinite, callFixedContextHOLFinite, emptyLocalsHOLFinite]
+                | «break» => simp [hbodyState, hresult, context, entry,
+                    fixClockHOLFinite, callFixedContextHOLFinite]
+                | «continue» => simp [hbodyState, hresult, context, entry,
+                    fixClockHOLFinite, callFixedContextHOLFinite]
+                | finalFfi event => simp [hbodyState, hresult, context, entry,
+                    fixClockHOLFinite, callFixedContextHOLFinite, emptyLocalsHOLFinite]
+                | exception exceptionId value => simp [hbodyState, hresult,
+                    context, entry, fixClockHOLFinite, callFixedContextHOLFinite,
+                    emptyLocalsHOLFinite]
+                | returned value =>
+                    by_cases hshape :
+                        (shapeEqHOL (shapeOfHOLExact value) shape &&
+                          shapeEqHOL (shapeOfHOLExact value) returnShape) = true
+                    · let fixedContext := callFixedContextHOLFinite entry
+                        (some (PanSemResultExact.returned value)) bodyPair.2
+                      let continuationContext := callContinuationContextHOLFinite
+                        context fixedContext resultName value
+                      let continuationState := setVarHOLFinite resultName value
+                        {(fixClockHOLFinite entry
+                          (some (PanSemResultExact.returned value), bodyPair.2.state)).2 with
+                          locals := state.locals}
+                      simp only [hshape]
+                      obtain ⟨continuationPair, hcontinuation⟩ :=
+                        evalPanSemRecursiveCallFiniteContext_total continuation
+                          continuationContext
+                      have hcontinuationGenerated :
+                          evalPanSemRecursiveCallFiniteContext continuation
+                            (callContinuationContextHOLFinite context
+                              (callFixedContextHOLFinite
+                                (callEntryStateHOLFinite context.state callee)
+                                (some (PanSemResultExact.returned value)) bodyPair.2)
+                              resultName value) = some continuationPair := by
+                        simpa [entry, fixedContext, continuationContext] using hcontinuation
+                      let continuationClassical : FiniteEvalContext width σ :=
+                        ⟨continuationState,
+                          fun address => Classical.propDecidable
+                            (continuationState.memaddrs address),
+                          fun address => Classical.propDecidable
+                            (continuationState.shMemaddrs address)⟩
+                      have hcontinuationClassical :
+                          evalPanSemRecursiveCallFiniteContext continuation
+                              continuationClassical = some continuationPair := by
+                        rw [evalPanSemRecursiveCallFiniteContext_state_eq
+                          continuation continuationClassical continuationContext rfl]
+                        exact hcontinuation
+                      have hcontinuationState : evaluateHOLFiniteState
+                          continuationState continuation =
+                            (continuationPair.1, continuationPair.2.state) := by
+                        simp [evaluateHOLFiniteState,
+                          evaluateHOLFiniteStateWithDeciders,
+                          continuationClassical, hcontinuationClassical]
+                      have hreturnedResult : continuationPair.1 =
+                          (evaluateHOLFiniteState continuationState continuation).1 :=
+                        (congrArg Prod.fst hcontinuationState).symm
+                      have hreturnedPost : continuationPair.2.state =
+                          (evaluateHOLFiniteState continuationState continuation).2 :=
+                        (congrArg Prod.snd hcontinuationState).symm
+                      have hcontinuationStateEq : continuationState =
+                          setVarHOLFinite resultName value
+                            {(fixClockHOLFinite entry
+                              (some (PanSemResultExact.returned value), bodyPair.2.state)).2 with
+                              locals := state.locals} := by rfl
+                      simp [hbodyState, hresult, hshape, hcontinuationGenerated,
+                        hreturnedResult, hreturnedPost, hcontinuationStateEq,
+                        context, entry,
+                        fixClockHOLFinite, HolFiniteMapExact.resVarEq]
+                    · simp [hbodyState, hresult, hshape, context, entry,
+                        fixClockHOLFinite, callFixedContextHOLFinite]
 
 /-- Source-reviewed HOL `evaluate_def` Seq conjunct (`panSemScript.sml:615`)
     from the source `Definition evaluate_def` at line 556. That definition
