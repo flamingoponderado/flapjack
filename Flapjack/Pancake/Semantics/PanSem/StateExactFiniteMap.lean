@@ -1937,6 +1937,63 @@ theorem evaluateHOLFiniteState_ite {width : Nat} {σ : Type} [NeZero width]
 
 attribute [simp] evaluateHOLFiniteState_ite
 
+/-! HOL `evaluate_def`'s `Assign` equation (`panSemScript.sml:566-572`), one
+of the line-780 theorem's 21 conjuncts. `isValidValueHOLExact` is the reviewed
+Boolean validity test and `setKvarHOLFinite` is the canonical finite update. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
+  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+theorem evaluateHOLFiniteState_assign {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (kind : VarKind) (name : MlS)
+    (source : ExpHOL width) :
+    evaluateHOLFiniteState state (.assign kind name source : ProgHOL width) =
+      match @evalHOLExact width σ _ state.toExact
+          (fun address => Classical.propDecidable (state.memaddrs address)) source with
+      | none => (some .error, state)
+      | some value =>
+          if isValidValueHOLExact state.toExact kind name value then
+            (none, setKvarHOLFinite kind name value state)
+          else (some .error, state) := by
+  classical
+  cases heval : @evalHOLExact width σ _ state.toExact
+      (fun address => Classical.propDecidable (state.memaddrs address)) source with
+  | none =>
+      simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+        evalPanSemRecursiveCallFiniteContext, evalPanSemNonrecursiveHOLFinite,
+        evalPanSemNonrecursiveHOLExact, assignStepHOLExact, heval,
+        ofExact_toExact]
+  | some value =>
+      by_cases hvalid : isValidValueHOLExact state.toExact kind name value = true
+      · have hsupport :
+            (setKvarHOLExact kind name value state.toExact).FiniteSupport :=
+          PanSemStateExact.finiteSupport_setKvar state.toExact_finiteSupport kind name value
+        have hroundtrip :
+            ofExact (setKvarHOLExact kind name value state.toExact) hsupport =
+              setKvarHOLFinite kind name value state := by
+          cases kind <;> cases state <;>
+            simp only [PanSemStateFiniteExact.mk.injEq, ofExact,
+              setKvarHOLExact, setKvarHOLFinite, setVarHOLFinite,
+              setGlobalHOLFinite]
+          all_goals
+            repeat' constructor
+          all_goals
+            apply HolFiniteMapExact.ext
+            funext current
+            by_cases h : current = name
+            · simp [HolFiniteMapExact.update, FUPDATE, h]
+            · have h' : name ≠ current := fun h' => h h'.symm
+              simp [HolFiniteMapExact.update, FUPDATE, h, h']
+        simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+          evalPanSemRecursiveCallFiniteContext, evalPanSemNonrecursiveHOLFinite,
+          evalPanSemNonrecursiveHOLExact, assignStepHOLExact, heval, hvalid, hroundtrip]
+      · have hinvalid : isValidValueHOLExact state.toExact kind name value = false :=
+          Bool.eq_false_iff.mpr hvalid
+        simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+          evalPanSemRecursiveCallFiniteContext, evalPanSemNonrecursiveHOLFinite,
+          evalPanSemNonrecursiveHOLExact, assignStepHOLExact, heval, hinvalid,
+          ofExact_toExact]
+
+attribute [simp] evaluateHOLFiniteState_assign
+
 /-- The decider-taking helper is the pair-shaped rendering of the assembly-marker
     evaluator. This bridge is Flapjack-specific infrastructure. -/
 theorem evaluateHOLFiniteStateWithDeciders_eq_getD {width : Nat} {σ : Type} [NeZero width]
