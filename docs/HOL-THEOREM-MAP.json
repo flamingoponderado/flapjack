@@ -12727,5 +12727,16 @@
       "sourceShapes"
     ],
     "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.16.3): compared against HOL excp_rel_def (pan_to_crepProofScript.sml:16-23): FDOM seids = FDOM ceids is rendered pointwise as equality of definedness on the canonical HolFiniteMapExact lookup, and FLOOKUP ceids e = SOME n becomes compilerCodes.lookup e = some n; the injectivity conjunct and the fact that source values are unrelated to compiler values match clause-for-clause. Both finite maps are standalone exact-map parameters (no owning carrier), so the relation qualifier records them as bare entries. Direct HOL EVAL oracle rows live in scripts/hol-probes/excp_rel_probe.out and Lean fixtures in Flapjack/Test/PanToCrepCodeRelParity.lean."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopSemScript.sml",
+    "hol_name": "get_var_imm_def",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopSemStateExact.lean",
+    "lean_name": "getVarImm",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": [
+      "locals"
+    ],
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-pxn.18.5.17): HOL `get_var_imm_def` (loopSemScript.sml:165-167) is the two-clause operand-first `get_var_imm (Reg n) s = sptree$lookup n s.locals` / `get_var_imm (Imm w) s = SOME (Word w)`. The Lean declaration is operand-first, reads `LoopSemStateFiniteExact.locals` (the reviewed canonical HolFiniteMapExact translation of HOL's `'a word_loc num_map`), and returns the exact tagged `WordLocW` carrier; no extra hypotheses beyond [NeZero width]. Direct HOL-EVAL oracle parity in Flapjack/Test/LoopGetVarImmParity.lean."
   }
 ]

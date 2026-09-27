@@ -149,8 +149,22 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {F : Type} :
   ⟨fun state h => LoopSemStateBroad.toBroad_ofBroad state h,
     fun state => LoopSemStateBroad.ofBroad_toBroad state⟩
 
-/-- Exact `get_var_imm_def` (`loopSemScript.sml:165-167`) on the finite-support
-    carrier, operand first as in HOL. -/
+/-- Exact port of HOL `get_var_imm_def`
+    (`cakeml/pancake/semantics/loopSemScript.sml:165-167`):
+
+    ```
+    (get_var_imm ((Reg n):'a reg_imm) ^s = sptree$lookup n s.locals) /\
+    (get_var_imm (Imm w) s = SOME(Word w))
+    ```
+
+    The Lean statement is operand-first as in HOL, reads the `locals` field of
+    the exact `LoopSemStateFiniteExact` state carrier (the reviewed canonical
+    `HolFiniteMapExact` translation of HOL's `'a word_loc num_map`, hence the
+    `(fmap_as_finite_support := [locals])` qualifier), and returns the exact
+    `WordLocW` carrier (tagged `word_loc`). No extra hypotheses beyond
+    `[NeZero width]`. -/
+@[hol "cakeml/pancake/semantics/loopSemScript.sml" "get_var_imm_def"
+  (fmap_as_finite_support := [locals])]
 def getVarImm {width : Nat} [NeZero width] {F : Type}
     (operand : RegImm (BitVec width)) (state : LoopSemStateFiniteExact width F) :
     Option (WordLocW width) :=
