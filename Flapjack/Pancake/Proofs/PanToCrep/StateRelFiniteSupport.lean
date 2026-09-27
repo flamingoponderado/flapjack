@@ -539,4 +539,40 @@ theorem holFmapAsFiniteSupportResultWitness_slcHOL {width : Nat} [NeZero width]
       FUPDATE_LIST_HOL (fun _ => none)
         ((variables.map Prod.fst).zip arguments) key := rfl
 
+/-- Exact port of HOL `slc_tlc_rw`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:2321-2326`):
+    `FEMPTY |++ ZIP (MAP FST vsh,args) = slc vsh args ∧
+     FEMPTY |++ ZIP (ns,FLAT (MAP flatten args)) = tlc ns args`.
+    Both conjuncts state that the raw HOL finite-map update `|++` on `FEMPTY`
+    is definitionally the named `slc`/`tlc` constructor, over the exact
+    `MlS`/`ShapeHOL`/`ValueHOL`/`HolWordLab` carriers. The
+    `fmap_as_finite_support_result` qualifier records only that both sides use
+    the canonical `HolFiniteMapExact` finite-support translation of HOL
+    `|->`; the same-module witness states the unconditional lookup-level
+    correspondence to the raw `FUPDATE_LIST_HOL` operation. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "slc_tlc_rw"
+  (fmap_as_finite_support_result)]
+theorem slcTlcRwHOL {width : Nat} [NeZero width]
+    (variables : List (MlS × ShapeHOL)) (slots : List Nat)
+    (arguments : List (ValueHOL width)) :
+    (HolFiniteMapExact.updateListEq HolFiniteMapExact.empty
+        ((variables.map Prod.fst).zip arguments) = slcHOL variables arguments) ∧
+    (HolFiniteMapExact.updateListEq HolFiniteMapExact.empty
+        (slots.zip ((arguments.map flattenHOL).flatten)) = tlcHOL slots arguments) := by
+  constructor <;> rfl
+
+/-- Canonical standalone finite-map witness for `slcTlcRwHOL`: the first
+    conjunct's map is the HOL-shaped raw `FUPDATE_LIST_HOL` operation applied to
+    the everywhere-undefined function, unconditionally. The tagged theorem is
+    threaded through as an ignored argument so the witness is stated in terms of
+    the tagged declaration itself; Flapjack-only infrastructure, no separate
+    HOL original. -/
+theorem holFmapAsFiniteSupportResultWitness_slcTlcRwHOL {width : Nat} [NeZero width]
+    (variables : List (MlS × ShapeHOL)) (slots : List Nat)
+    (arguments : List (ValueHOL width)) (key : MlS) :
+    (fun _ => (slcHOL variables arguments).lookup key)
+        (slcTlcRwHOL variables slots arguments) =
+      FUPDATE_LIST_HOL (fun _ => none)
+        ((variables.map Prod.fst).zip arguments) key := rfl
+
 end Flapjack

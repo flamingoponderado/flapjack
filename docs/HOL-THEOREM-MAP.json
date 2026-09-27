@@ -12948,5 +12948,22 @@
     "lean_name": "holFmapAsFiniteSupportResultWitness_slcHOL",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "flapjack-ds8: Flapjack-specific canonical standalone finite-map witness for slcHOL; no HOL theorem original."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "slc_tlc_rw",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "slcTlcRwHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_result",
+    "fmap_as_finite_support_result": true,
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.86): exact port of HOL slc_tlc_rw (pan_to_crepProofScript.sml:2321-2326). Both conjuncts state that the raw HOL finite-map update FEMPTY |++ ... is definitionally the named slc/tlc constructor, over the exact MlS/ShapeHOL/ValueHOL/HolWordLab carriers, matching slcHOL/tlcHOL clause-for-clause. The fmap_as_finite_support_result qualifier records only that both sides use the canonical HolFiniteMapExact translation of HOL |->; the same-module witness states the unconditional lookup-level correspondence to the raw FUPDATE_LIST_HOL operation. The pre-existing production String/PanValue slcTlcRw remains an untagged documented mismatch."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "holFmapAsFiniteSupportResultWitness_slcTlcRwHOL",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.86): Flapjack-only canonical standalone finite-map witness for slcTlcRwHOL; no separate HOL original."
   }
 ]
