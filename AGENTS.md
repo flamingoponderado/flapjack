@@ -309,6 +309,19 @@ qualifier is mutually exclusive with `fmap_as_finite_support` and
 manifest status `reviewed_fmap_as_finite_support_relation` with a
 source-comparison note after the reviewer compares each HOL conjunct.
 
+**Combine multi-carrier relation and word translation.** When a HOL relation
+must be represented both through the canonical finite-support map translation
+and through the type-indexed `'a word`/`'ffi` translation, tag the declaration
+with `(fmap_as_finite_support_relation := [...])` and
+`(words_as_type_indexed_bitvec)` together. The manifest status is
+`reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec`, both
+qualifiers are required together, and neither single status is accepted. The
+word-carrier and positivity obligations are checked on the tagged signature as
+for the field-based combination, and the same-module per-carrier relation
+witnesses remain required. This combination is limited to the relation
+qualifier: it cannot be combined with `fmap_as_finite_support`,
+`fmap_as_finite_support_result`, or `fmap_as_finite_support_equalities`.
+
 **Qualify theorem-level finite-map equalities.** Use
 `(fmap_as_finite_support_equalities)` when the tagged declaration is a theorem
 whose conclusion is a conjunction of `HolFiniteMapExact` map *equalities* (for
