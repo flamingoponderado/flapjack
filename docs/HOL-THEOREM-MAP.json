@@ -10961,6 +10961,14 @@
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "panToCrepExactSkipTransition",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific exact-carrier prerequisite for HOL pc_compile_correct[Skip]: over ProgHOL/CrepProgHOL and finite-exact Pan/Crep states, proves the source Skip result/state, exact compile_def output, and target Skip result/state, carrying state_rel/code_rel/locals_rel/excp_rel unchanged without a target-run premise. It is distinct from production-carrier panToCrepTotalSkipStateCase, is not the full theorem, and has no @[hol] tag."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
     "lean_name": "panToCrepExactBreakTransition",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific prerequisite for HOL pc_compile_correct[Break]: records the finite-context Pan Break result/state, exact compiler Break 0 output, and Crep Break 0 result/state, preserving exact state and locals relations. It does not assemble code_rel/excp_rel or the full existential conclusion and is not a standalone HOL declaration."
@@ -10972,6 +10980,22 @@
     "lean_name": "panToCrepExactContinueTransition",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific prerequisite for HOL pc_compile_correct[Continue]: records the finite-context Pan Continue result/state, exact compiler Continue 0 output, and Crep Continue 0 result/state, preserving exact state and locals relations. It does not assemble code_rel/excp_rel or the full existential conclusion and is not a standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "panToCrepExactTickTransition",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific prerequisite for HOL pc_compile_correct[Tick]: records the exact Pan/Crep Tick results in both zero and nonzero clock branches, exact compiler Tick output, and post-state state_rel/locals_rel. It does not assemble code_rel/excp_rel or the full existential conclusion and is not a standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "panToCrepExactAnnotTransition",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific prerequisite for HOL pc_compile_correct[Annot]: over exact ProgHOL/MlS carriers, records the Pan Annot result/state, compile_def erasure to Crep Skip, target Skip result/state, and preservation of exact state_rel/code_rel/locals_rel/excp_rel using codeRelExactHOLW. It does not assemble the full existential conclusion and is not a standalone HOL declaration; no @[hol] tag is claimed."
   },
   {
     "hol_path": "cakeml/misc/miscScript.sml",
