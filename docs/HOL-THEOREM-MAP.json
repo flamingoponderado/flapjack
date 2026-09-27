@@ -6479,6 +6479,28 @@
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "code_rel_def",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CodeRelExact.lean",
+    "lean_name": "codeRelExactHOLW",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "sourceCode",
+      "targetCode",
+      "PanToCrepContextExact.funcs",
+      "PanToCrepContextExact.eids"
+    ],
+    "reviewer": "flapjack-luna-b source review (flapjack-pxn.18.4.3.73): HOL code_rel_def at pan_to_crepProofScript.sml:32-43 is code_rel ctxt s_code t_code with inner universal binders f, vshs, prog, rsh; the Lean codeRelExactHOLW keeps that order and all three clauses: source lookup implies localised_prog, ctxt.funcs lookup returns (vshs,rsh), and target lookup returns (GENLIST I (size_of_shape (Comb (MAP SND vshs))), compile (ctxt_fc ctxt.funcs ctxt.eids (MAP FST vshs) (MAP SND vshs) ns) prog). Exact carriers match: MlS=mlstring, ShapeHOL=shape, ProgHOL=prog, CrepProgHOL=crepLang$prog, positive-width BitVec=HOL word. The source/target HOL finite-map parameters are kept as separate Lean binders and use HolFiniteMapExact; the two traversed context map fields funcs/eids are likewise HolFiniteMapExact on PanToCrepContextExact. Relation qualifier records those two parameters and exact owner fields; a same-module witness forwards the context ofBroad/toBroad roundtrip. This tags only the exact proof-side definition, not production codeRel/codeRelW or pc_compile_correct; production path still uses String-backed maps and remains open on the parent bead."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CodeRelExact.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific same-module finite-map relation witness forwarding the canonical ofBroad/toBroad roundtrip of PanToCrepContextExact for the codeRelExactHOLW relation qualifier; it has no HOL theorem original."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
     "hol_name": "state_rel_def",
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
     "lean_name": "stateRel",
