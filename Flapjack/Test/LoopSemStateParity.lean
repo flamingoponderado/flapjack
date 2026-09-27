@@ -126,13 +126,13 @@ private theorem trivialFfiStateRel :
 
 /-- Sample finite-support carrier: local `0 ↦ Word 7`, all else empty. -/
 private def exactFiniteState : LoopSemStateFiniteExact 8 Unit :=
-  { locals := HolFiniteMapExact.empty.updateEq (0, .word (BitVec.ofNat 8 7))
+  { locals := sptInsert 0 (.word (BitVec.ofNat 8 7)) Spt.ln
   , globals := HolFiniteMapExact.empty
   , memory := fun _ => .word (BitVec.ofNat 8 0)
   , mdomain := fun _ => false
   , shMdomain := fun _ => false
   , clock := 5
-  , code := HolFiniteMapExact.empty
+  , code := Spt.ln
   , be := false
   , ffi := holTrivialFfi
   , baseAddr := 0
@@ -140,7 +140,7 @@ private def exactFiniteState : LoopSemStateFiniteExact 8 Unit :=
 
 /-- Production state satisfying `prodRel` for `exactFiniteState`. -/
 private def finiteMachineState : LoopMachineState (BitVec 8) Unit :=
-  { locals := fun name => (exactFiniteState.locals.lookup name).map loopValueOfWordLocW
+  { locals := fun name => (sptLookup name exactFiniteState.locals).map loopValueOfWordLocW
   , globals := fun global => (exactFiniteState.globals.lookup global).map loopValueOfWordLocW
   , memory := fun address => some (loopValueOfWordLocW (exactFiniteState.memory address))
   , mdomain := exactFiniteState.mdomain
@@ -169,7 +169,7 @@ theorem finiteBridgeSample : exactFiniteState.prodRel finiteMachineState := by
     empty-table case. -/
 private def exactFiniteStateCode : LoopSemStateFiniteExact 8 Unit :=
   { exactFiniteState with
-    code := HolFiniteMapExact.empty.updateEq (0, ([], HolLoopProg.skip)) }
+    code := sptInsert 0 ([], HolLoopProg.skip) Spt.ln }
 
 /-- Production state with the matching non-empty code table. -/
 private def finiteMachineStateCode : LoopMachineState (BitVec 8) Unit :=
@@ -191,7 +191,7 @@ theorem finiteBridgeSampleCode :
     simp [finiteMachineStateCode] at hmem
     subst hmem
     refine ⟨HolLoopProg.skip, ?_, ?_⟩
-    · simp [exactFiniteStateCode, HolFiniteMapExact.updateEq, FUPDATE_HOL]
+    · simp [exactFiniteStateCode, sptInsert, sptLookup]
     · first | rfl | simp [loopProgExecRel]
 
 /-- Register read on the exact carrier transports to the production read. -/
@@ -226,7 +226,7 @@ private def finiteBridgeGuard : Bool :=
 #guard finiteBridgeGuard
 
 private def finiteBridgeCodeGuard : Bool :=
-  (exactFiniteStateCode.code.lookup 0).isSome &&
+  (sptLookup 0 exactFiniteStateCode.code).isSome &&
     (finiteMachineStateCode.code.length == 1)
 
 #guard finiteBridgeCodeGuard
