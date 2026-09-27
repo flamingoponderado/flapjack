@@ -879,4 +879,321 @@ theorem compileExpValRelHOL_loadByte {width : Nat} {σ : Type} [NeZero width]
           simp only [hsubEval] at heval
           exact absurd heval.symm (Option.some_ne_none value)
 
+/-- Exact-carrier `Cmp` case of HOL `compile_exp_val_rel`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml`). This is a
+    Flapjack-specific staged constructor lemma: it consumes the induction
+    hypotheses `hleft`/`hright` for the two sub-expressions and proves the leaf
+    directly; the full `compile_exp_val_rel` theorem remains open (bead
+    flapjack-4ac.5.81). -/
+theorem compileExpValRelHOL_cmp {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) [_hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width σ) [_ht : DecidablePred targetState.memaddrs]
+    (operator : Cmp) (left right : ExpHOL width)
+    (value : ValueHOL width)
+    (expressions : List (CrepExpHOL width)) (shape : ShapeHOL)
+    (hleft : ∀ (subValue : ValueHOL width) (subExpressions : List (CrepExpHOL width))
+        (subShape : ShapeHOL),
+        state.evalHOLFinite left = some subValue →
+        panToCrepStateRelFiniteExact state targetState →
+        codeRelExactHOLW context state.code targetState.code →
+        panToCrepLocalsRelFiniteExact context state.locals targetState.locals →
+        localisedExpHOL left = true →
+        compileExpExactHOLW context left = (subExpressions, subShape) →
+        subExpressions.map (evalCrepSemHOLExp targetState) = (flattenHOL subValue).map some ∧
+        subExpressions.length = sizeOfShapeHOL subShape ∧
+        shapeOfHOLExact subValue = subShape ∧
+        isWfShapeExactHOL ([] : StructContextExact) subShape = true)
+    (hright : ∀ (subValue : ValueHOL width) (subExpressions : List (CrepExpHOL width))
+        (subShape : ShapeHOL),
+        state.evalHOLFinite right = some subValue →
+        panToCrepStateRelFiniteExact state targetState →
+        codeRelExactHOLW context state.code targetState.code →
+        panToCrepLocalsRelFiniteExact context state.locals targetState.locals →
+        localisedExpHOL right = true →
+        compileExpExactHOLW context right = (subExpressions, subShape) →
+        subExpressions.map (evalCrepSemHOLExp targetState) = (flattenHOL subValue).map some ∧
+        subExpressions.length = sizeOfShapeHOL subShape ∧
+        shapeOfHOLExact subValue = subShape ∧
+        isWfShapeExactHOL ([] : StructContextExact) subShape = true)
+    (heval : state.evalHOLFinite (.cmp operator left right) = some value)
+    (hlocalised : localisedExpHOL (.cmp operator left right) = true)
+    (hstate : panToCrepStateRelFiniteExact state targetState)
+    (hcode : codeRelExactHOLW context state.code targetState.code)
+    (hlocals : panToCrepLocalsRelFiniteExact context state.locals targetState.locals)
+    (hcompile : compileExpExactHOLW context (.cmp operator left right) =
+      (expressions, shape)) :
+    expressions.map (evalCrepSemHOLExp targetState) = (flattenHOL value).map some ∧
+    expressions.length = sizeOfShapeHOL shape ∧
+    shapeOfHOLExact value = shape ∧
+    isWfShapeExactHOL ([] : StructContextExact) shape = true := by
+  have hlocBoth : localisedExpHOL left = true ∧ localisedExpHOL right = true := by
+    simpa only [localisedExpHOL, everyExpHOL, Bool.true_and, Bool.and_eq_true]
+      using hlocalised
+  obtain ⟨hlocLeft, hlocRight⟩ := hlocBoth
+  rw [PanSemStateFiniteExact.evalHOLFinite_cmp] at heval
+  cases hleftEval : state.evalHOLFinite left with
+  | none =>
+      simp only [hleftEval] at heval
+      exact absurd heval.symm (Option.some_ne_none value)
+  | some leftValue =>
+      cases leftValue with
+      | val leftWordLab =>
+          cases leftWordLab with
+          | word lword =>
+              cases hrightEval : state.evalHOLFinite right with
+              | none =>
+                  simp only [hleftEval, hrightEval] at heval
+                  exact absurd heval.symm (Option.some_ne_none value)
+              | some rightValue =>
+                  cases rightValue with
+                  | val rightWordLab =>
+                      cases rightWordLab with
+                      | word rword =>
+                          simp only [hleftEval, hrightEval, Option.some.injEq] at heval
+                          cases hleftCompile : compileExpExactHOLW context left with
+                          | mk leftExps leftShape =>
+                              cases hrightCompile : compileExpExactHOLW context right with
+                              | mk rightExps rightShape =>
+                                  have hleftRes := hleft (.val (.word lword)) leftExps leftShape
+                                    hleftEval hstate hcode hlocals hlocLeft hleftCompile
+                                  obtain ⟨hleftMap, hleftLen, hleftShape, _⟩ := hleftRes
+                                  have hrightRes := hright (.val (.word rword)) rightExps rightShape
+                                    hrightEval hstate hcode hlocals hlocRight hrightCompile
+                                  obtain ⟨hrightMap, hrightLen, hrightShape, _⟩ := hrightRes
+                                  simp only [shapeOfHOLExact] at hleftShape hrightShape
+                                  have hleftShapeOne : leftShape = .one := hleftShape.symm
+                                  have hrightShapeOne : rightShape = .one := hrightShape.symm
+                                  rw [hleftShapeOne] at hleftLen
+                                  rw [hrightShapeOne] at hrightLen
+                                  simp only [flattenHOL, List.map_cons, List.map_nil] at hleftMap hrightMap
+                                  simp only [sizeOfShapeHOL] at hleftLen hrightLen
+                                  cases leftExps with
+                                  | nil =>
+                                      simp only [List.map_nil] at hleftMap
+                                      exact absurd hleftMap (by simp)
+                                  | cons lcode lrest =>
+                                      simp only [List.map_cons] at hleftMap
+                                      injection hleftMap with hlcodeEq _
+                                      have hlrestNil : lrest = [] := by
+                                        have hlenRest : lrest.length = 0 := by
+                                          simp only [List.length_cons] at hleftLen
+                                          omega
+                                        cases lrest with
+                                        | nil => rfl
+                                        | cons _ _ => simp at hlenRest
+                                      subst hlrestNil
+                                      cases rightExps with
+                                      | nil =>
+                                          simp only [List.map_nil] at hrightMap
+                                          exact absurd hrightMap (by simp)
+                                      | cons rcode rrest =>
+                                          simp only [List.map_cons] at hrightMap
+                                          injection hrightMap with hrcodeEq _
+                                          have hrrestNil : rrest = [] := by
+                                            have hlenRest : rrest.length = 0 := by
+                                              simp only [List.length_cons] at hrightLen
+                                              omega
+                                            cases rrest with
+                                            | nil => rfl
+                                            | cons _ _ => simp at hlenRest
+                                          subst hrrestNil
+                                          have hcmpCrep : evalCrepSemHOLExp targetState
+                                              (.cmp operator lcode rcode) =
+                                              some (.word (Compiler.Encoders.Asm.wordCmpResultHOL
+                                                operator lword rword)) := by
+                                            simp only [evalCrepSemHOLExp, hlcodeEq, hrcodeEq]
+                                            rfl
+                                          have hcompile' := hcompile
+                                          simp only [compileExpExactHOLW] at hcompile'
+                                          rw [hleftCompile] at hcompile'
+                                          rw [hrightCompile] at hcompile'
+                                          rw [hleftShapeOne] at hcompile'
+                                          rw [hrightShapeOne] at hcompile'
+                                          dsimp only at hcompile'
+                                          injection hcompile' with hexpr hshape
+                                          rw [← heval, ← hexpr, ← hshape]
+                                          refine ⟨?_, ?_, ?_, ?_⟩
+                                          · simp only [List.map_cons, List.map_nil, hcmpCrep, flattenHOL,
+                                              Compiler.Encoders.Asm.wordCmpResultHOL]
+                                          · simp only [List.length_cons, List.length_nil, sizeOfShapeHOL]
+                                          · simp only [shapeOfHOLExact]
+                                          · simp only [isWfShapeExactHOL]
+                  | nStruct structName fields =>
+                      simp only [hleftEval, hrightEval] at heval
+                      exact absurd heval.symm (Option.some_ne_none value)
+                  | rStruct rightValues =>
+                      simp only [hleftEval, hrightEval] at heval
+                      exact absurd heval.symm (Option.some_ne_none value)
+      | nStruct structName fields =>
+          cases hrightEval : state.evalHOLFinite right <;>
+            simp only [hleftEval, hrightEval] at heval <;>
+            exact absurd heval.symm (Option.some_ne_none value)
+      | rStruct leftValues =>
+          cases hrightEval : state.evalHOLFinite right <;>
+            simp only [hleftEval, hrightEval] at heval <;>
+            exact absurd heval.symm (Option.some_ne_none value)
+
+/-- Exact-carrier `Shift` case of HOL `compile_exp_val_rel`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml`). This is a
+    Flapjack-specific staged constructor lemma: it consumes the induction
+    hypotheses `hleft`/`hright` for the two sub-expressions and proves the leaf
+    directly; the full `compile_exp_val_rel` theorem remains open (bead
+    flapjack-4ac.5.81). -/
+theorem compileExpValRelHOL_shift {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) [_hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width σ) [_ht : DecidablePred targetState.memaddrs]
+    (operator : Shift) (left right : ExpHOL width)
+    (value : ValueHOL width)
+    (expressions : List (CrepExpHOL width)) (shape : ShapeHOL)
+    (hleft : ∀ (subValue : ValueHOL width) (subExpressions : List (CrepExpHOL width))
+        (subShape : ShapeHOL),
+        state.evalHOLFinite left = some subValue →
+        panToCrepStateRelFiniteExact state targetState →
+        codeRelExactHOLW context state.code targetState.code →
+        panToCrepLocalsRelFiniteExact context state.locals targetState.locals →
+        localisedExpHOL left = true →
+        compileExpExactHOLW context left = (subExpressions, subShape) →
+        subExpressions.map (evalCrepSemHOLExp targetState) = (flattenHOL subValue).map some ∧
+        subExpressions.length = sizeOfShapeHOL subShape ∧
+        shapeOfHOLExact subValue = subShape ∧
+        isWfShapeExactHOL ([] : StructContextExact) subShape = true)
+    (hright : ∀ (subValue : ValueHOL width) (subExpressions : List (CrepExpHOL width))
+        (subShape : ShapeHOL),
+        state.evalHOLFinite right = some subValue →
+        panToCrepStateRelFiniteExact state targetState →
+        codeRelExactHOLW context state.code targetState.code →
+        panToCrepLocalsRelFiniteExact context state.locals targetState.locals →
+        localisedExpHOL right = true →
+        compileExpExactHOLW context right = (subExpressions, subShape) →
+        subExpressions.map (evalCrepSemHOLExp targetState) = (flattenHOL subValue).map some ∧
+        subExpressions.length = sizeOfShapeHOL subShape ∧
+        shapeOfHOLExact subValue = subShape ∧
+        isWfShapeExactHOL ([] : StructContextExact) subShape = true)
+    (heval : state.evalHOLFinite (.shift operator left right) = some value)
+    (hlocalised : localisedExpHOL (.shift operator left right) = true)
+    (hstate : panToCrepStateRelFiniteExact state targetState)
+    (hcode : codeRelExactHOLW context state.code targetState.code)
+    (hlocals : panToCrepLocalsRelFiniteExact context state.locals targetState.locals)
+    (hcompile : compileExpExactHOLW context (.shift operator left right) =
+      (expressions, shape)) :
+    expressions.map (evalCrepSemHOLExp targetState) = (flattenHOL value).map some ∧
+    expressions.length = sizeOfShapeHOL shape ∧
+    shapeOfHOLExact value = shape ∧
+    isWfShapeExactHOL ([] : StructContextExact) shape = true := by
+  have hlocBoth : localisedExpHOL left = true ∧ localisedExpHOL right = true := by
+    simpa only [localisedExpHOL, everyExpHOL, Bool.true_and, Bool.and_eq_true]
+      using hlocalised
+  obtain ⟨hlocLeft, hlocRight⟩ := hlocBoth
+  rw [PanSemStateFiniteExact.evalHOLFinite_shift] at heval
+  cases hleftEval : state.evalHOLFinite left with
+  | none =>
+      simp only [hleftEval] at heval
+      exact absurd heval.symm (Option.some_ne_none value)
+  | some leftValue =>
+      cases leftValue with
+      | val leftWordLab =>
+          cases leftWordLab with
+          | word lword =>
+              cases hrightEval : state.evalHOLFinite right with
+              | none =>
+                  simp only [hleftEval, hrightEval] at heval
+                  exact absurd heval.symm (Option.some_ne_none value)
+              | some rightValue =>
+                  cases rightValue with
+                  | val rightWordLab =>
+                      cases rightWordLab with
+                      | word rword =>
+                          simp only [hleftEval, hrightEval] at heval
+                          cases hshift : wordShiftHOL operator lword rword.toNat with
+                          | none =>
+                              simp only [hshift, Option.map_none] at heval
+                              exact absurd heval.symm (Option.some_ne_none value)
+                          | some sword =>
+                              simp only [hshift, Option.map_some, Option.some.injEq] at heval
+                              cases hleftCompile : compileExpExactHOLW context left with
+                              | mk leftExps leftShape =>
+                                  cases hrightCompile : compileExpExactHOLW context right with
+                                  | mk rightExps rightShape =>
+                                      have hleftRes := hleft (.val (.word lword)) leftExps leftShape
+                                        hleftEval hstate hcode hlocals hlocLeft hleftCompile
+                                      obtain ⟨hleftMap, hleftLen, hleftShape, _⟩ := hleftRes
+                                      have hrightRes := hright (.val (.word rword)) rightExps rightShape
+                                        hrightEval hstate hcode hlocals hlocRight hrightCompile
+                                      obtain ⟨hrightMap, hrightLen, hrightShape, _⟩ := hrightRes
+                                      simp only [shapeOfHOLExact] at hleftShape hrightShape
+                                      have hleftShapeOne : leftShape = .one := hleftShape.symm
+                                      have hrightShapeOne : rightShape = .one := hrightShape.symm
+                                      rw [hleftShapeOne] at hleftLen
+                                      rw [hrightShapeOne] at hrightLen
+                                      simp only [flattenHOL, List.map_cons, List.map_nil] at hleftMap hrightMap
+                                      simp only [sizeOfShapeHOL] at hleftLen hrightLen
+                                      cases leftExps with
+                                      | nil =>
+                                          simp only [List.map_nil] at hleftMap
+                                          exact absurd hleftMap (by simp)
+                                      | cons lcode lrest =>
+                                          simp only [List.map_cons] at hleftMap
+                                          injection hleftMap with hlcodeEq _
+                                          have hlrestNil : lrest = [] := by
+                                            have hlenRest : lrest.length = 0 := by
+                                              simp only [List.length_cons] at hleftLen
+                                              omega
+                                            cases lrest with
+                                            | nil => rfl
+                                            | cons _ _ => simp at hlenRest
+                                          subst hlrestNil
+                                          cases rightExps with
+                                          | nil =>
+                                              simp only [List.map_nil] at hrightMap
+                                              exact absurd hrightMap (by simp)
+                                          | cons rcode rrest =>
+                                              simp only [List.map_cons] at hrightMap
+                                              injection hrightMap with hrcodeEq _
+                                              have hrrestNil : rrest = [] := by
+                                                have hlenRest : rrest.length = 0 := by
+                                                  simp only [List.length_cons] at hrightLen
+                                                  omega
+                                                cases rrest with
+                                                | nil => rfl
+                                                | cons _ _ => simp at hlenRest
+                                              subst hrrestNil
+                                              have hshiftCrep : evalCrepSemHOLExp targetState
+                                                  (.shift operator lcode rcode) = some (.word sword) := by
+                                                simp only [evalCrepSemHOLExp, hlcodeEq, hrcodeEq]
+                                                show Option.map HolWordLab.word
+                                                    (wordShiftHOL operator lword rword.toNat) =
+                                                  some (.word sword)
+                                                rw [hshift]
+                                                rfl
+                                              have hcompile' := hcompile
+                                              simp only [compileExpExactHOLW] at hcompile'
+                                              rw [hleftCompile] at hcompile'
+                                              rw [hrightCompile] at hcompile'
+                                              rw [hleftShapeOne] at hcompile'
+                                              rw [hrightShapeOne] at hcompile'
+                                              dsimp only at hcompile'
+                                              injection hcompile' with hexpr hshape
+                                              rw [← heval, ← hexpr, ← hshape]
+                                              refine ⟨?_, ?_, ?_, ?_⟩
+                                              · simp only [List.map_cons, List.map_nil, hshiftCrep, flattenHOL]
+                                              · simp only [List.length_cons, List.length_nil, sizeOfShapeHOL]
+                                              · simp only [shapeOfHOLExact]
+                                              · simp only [isWfShapeExactHOL]
+                  | nStruct structName fields =>
+                      simp only [hleftEval, hrightEval] at heval
+                      exact absurd heval.symm (Option.some_ne_none value)
+                  | rStruct rightValues =>
+                      simp only [hleftEval, hrightEval] at heval
+                      exact absurd heval.symm (Option.some_ne_none value)
+      | nStruct structName fields =>
+          cases hrightEval : state.evalHOLFinite right <;>
+            simp only [hleftEval, hrightEval] at heval <;>
+            exact absurd heval.symm (Option.some_ne_none value)
+      | rStruct leftValues =>
+          cases hrightEval : state.evalHOLFinite right <;>
+            simp only [hleftEval, hrightEval] at heval <;>
+            exact absurd heval.symm (Option.some_ne_none value)
+
 end Flapjack

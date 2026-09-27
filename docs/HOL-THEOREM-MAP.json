@@ -13944,5 +13944,21 @@
     "lean_name": "compileExpValRelHOL_loadByte",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific staged LoadByte constructor lemma for the exact-carrier compile_exp_val_rel (HOL pan_to_crepProofScript.sml LoadByte case), consuming the sub-expression induction hypothesis; no standalone HOL declaration, so no @[hol] tag (bead flapjack-4ac.5.81.8)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "compileExpValRelHOL_cmp",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.9): Flapjack-specific staged constructor lemma for the exact-carrier `compile_exp_val_rel` case; HOL proves this case inside `pc_compile_correct` and exports no standalone declaration, so no `@[hol]` tag is attached."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "compileExpValRelHOL_shift",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.9): Flapjack-specific staged constructor lemma for the exact-carrier `compile_exp_val_rel` case; HOL proves this case inside `pc_compile_correct` and exports no standalone declaration, so no `@[hol]` tag is attached."
   }
 ]
