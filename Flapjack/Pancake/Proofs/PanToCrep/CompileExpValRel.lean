@@ -575,4 +575,308 @@ private theorem compFieldHOL_slice
             ih (cexp.drop (sizeOfShapeHOL (shapeOfHOLExact v))) hdrop hWfRest k value hget
           simpa only [List.map_cons, compFieldHOL, Nat.succ_ne_zero, if_false,
             Nat.succ_sub_one] using hrec
+
+/-- Flapjack-specific staged constructor lemma for the `RField` leaf of the
+    exact `compile_exp_val_rel` induction
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:187-214`). It is not a
+    standalone HOL declaration: it consumes the induction hypothesis `hsub` for
+    the sub-expression (the relation at the sub-expression only) and otherwise
+    proves the leaf directly; the full `compile_exp_val_rel` theorem remains
+    open (bead flapjack-4ac.5.81). -/
+theorem compileExpValRelHOL_rfield {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) [_hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width σ) [_ht : DecidablePred targetState.memaddrs]
+    (index : Nat) (subExpression : ExpHOL width)
+    (value : ValueHOL width)
+    (expressions : List (CrepExpHOL width)) (shape : ShapeHOL)
+    (hsub : ∀ (subValue : ValueHOL width) (subExpressions : List (CrepExpHOL width))
+        (subShape : ShapeHOL),
+        state.evalHOLFinite subExpression = some subValue →
+        panToCrepStateRelFiniteExact state targetState →
+        codeRelExactHOLW context state.code targetState.code →
+        panToCrepLocalsRelFiniteExact context state.locals targetState.locals →
+        localisedExpHOL subExpression = true →
+        compileExpExactHOLW context subExpression = (subExpressions, subShape) →
+        subExpressions.map (evalCrepSemHOLExp targetState) = (flattenHOL subValue).map some ∧
+        subExpressions.length = sizeOfShapeHOL subShape ∧
+        shapeOfHOLExact subValue = subShape ∧
+        isWfShapeExactHOL ([] : StructContextExact) subShape = true)
+    (heval : state.evalHOLFinite (.rfield index subExpression) = some value)
+    (hlocalised : localisedExpHOL (.rfield index subExpression) = true)
+    (hstate : panToCrepStateRelFiniteExact state targetState)
+    (hcode : codeRelExactHOLW context state.code targetState.code)
+    (hlocals : panToCrepLocalsRelFiniteExact context state.locals targetState.locals)
+    (hcompile : compileExpExactHOLW context (.rfield index subExpression) =
+      (expressions, shape)) :
+    expressions.map (evalCrepSemHOLExp targetState) = (flattenHOL value).map some ∧
+    expressions.length = sizeOfShapeHOL shape ∧
+    shapeOfHOLExact value = shape ∧
+    isWfShapeExactHOL ([] : StructContextExact) shape = true := by
+  have hlocSub : localisedExpHOL subExpression = true := hlocalised
+  rw [PanSemStateFiniteExact.evalHOLFinite_rfield] at heval
+  cases hsubEval : state.evalHOLFinite subExpression with
+  | none =>
+      simp only [hsubEval] at heval
+      exact absurd heval.symm (Option.some_ne_none value)
+  | some subValue =>
+      cases subValue with
+      | val word =>
+          simp only [hsubEval] at heval
+          exact absurd heval.symm (Option.some_ne_none value)
+      | nStruct name fields =>
+          simp only [hsubEval] at heval
+          exact absurd heval.symm (Option.some_ne_none value)
+      | rStruct values =>
+          simp only [hsubEval] at heval
+          cases hsubCompile : compileExpExactHOLW context subExpression with
+          | mk subExpressions subShape =>
+              have hsubRes := hsub (.rStruct values) subExpressions subShape hsubEval
+                hstate hcode hlocals hlocSub hsubCompile
+              obtain ⟨hsubMap, _hsubLen, hsubShape, hsubWf⟩ := hsubRes
+              simp only [shapeOfHOLExact] at hsubShape
+              simp only [compileExpExactHOLW, hsubCompile] at hcompile
+              cases subShape with
+              | one => exact absurd hsubShape (by simp)
+              | named nm => exact absurd hsubShape (by simp)
+              | comb shapes =>
+                  injection hsubShape with hshapes
+                  dsimp only at hcompile
+                  cases hcf : compFieldHOL index shapes subExpressions with
+                  | mk cfExprs cfShape =>
+                      rw [hcf] at hcompile
+                      injection hcompile with hE hS
+                      have hWfShapes : isWfShapesExactHOL ([] : StructContextExact)
+                          (values.map shapeOfHOLExact) = true := by
+                        have h := hsubWf
+                        rw [← hshapes, isWfShapeExactHOL_comb] at h
+                        exact h
+                      have hslice := compFieldHOL_slice targetState values subExpressions
+                        hsubMap hWfShapes index value heval
+                      simp only [hshapes, hcf, hE, hS] at hslice
+                      refine ⟨hslice.1, ?_, ?_, ?_⟩
+                      · simpa only [hslice.2.1.symm] using hslice.2.2.1
+                      · exact hslice.2.1.symm
+                      · simpa only [hslice.2.1.symm] using hslice.2.2.2
+
+/-- Exact-carrier `Load32` case of HOL `compile_exp_val_rel`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml`). This is a
+    Flapjack-specific staged constructor lemma: it consumes the induction
+    hypothesis `hsub` for the sub-expression and proves the leaf directly; the
+    full `compile_exp_val_rel` theorem remains open (bead flapjack-4ac.5.81). -/
+theorem compileExpValRelHOL_load32 {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) [_hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width σ) [_ht : DecidablePred targetState.memaddrs]
+    (subExpression : ExpHOL width)
+    (value : ValueHOL width)
+    (expressions : List (CrepExpHOL width)) (shape : ShapeHOL)
+    (hsub : ∀ (subValue : ValueHOL width) (subExpressions : List (CrepExpHOL width))
+        (subShape : ShapeHOL),
+        state.evalHOLFinite subExpression = some subValue →
+        panToCrepStateRelFiniteExact state targetState →
+        codeRelExactHOLW context state.code targetState.code →
+        panToCrepLocalsRelFiniteExact context state.locals targetState.locals →
+        localisedExpHOL subExpression = true →
+        compileExpExactHOLW context subExpression = (subExpressions, subShape) →
+        subExpressions.map (evalCrepSemHOLExp targetState) = (flattenHOL subValue).map some ∧
+        subExpressions.length = sizeOfShapeHOL subShape ∧
+        shapeOfHOLExact subValue = subShape ∧
+        isWfShapeExactHOL ([] : StructContextExact) subShape = true)
+    (heval : state.evalHOLFinite (.load32 subExpression) = some value)
+    (hlocalised : localisedExpHOL (.load32 subExpression) = true)
+    (hstate : panToCrepStateRelFiniteExact state targetState)
+    (hcode : codeRelExactHOLW context state.code targetState.code)
+    (hlocals : panToCrepLocalsRelFiniteExact context state.locals targetState.locals)
+    (hcompile : compileExpExactHOLW context (.load32 subExpression) =
+      (expressions, shape)) :
+    expressions.map (evalCrepSemHOLExp targetState) = (flattenHOL value).map some ∧
+    expressions.length = sizeOfShapeHOL shape ∧
+    shapeOfHOLExact value = shape ∧
+    isWfShapeExactHOL ([] : StructContextExact) shape = true := by
+  have hlocSub : localisedExpHOL subExpression = true := hlocalised
+  rw [PanSemStateFiniteExact.evalHOLFinite_load32] at heval
+  cases hsubEval : state.evalHOLFinite subExpression with
+  | none =>
+      simp only [hsubEval] at heval
+      exact absurd heval.symm (Option.some_ne_none value)
+  | some subValue =>
+      cases subValue with
+      | val wlab =>
+          cases wlab with
+          | word word =>
+              cases hload : panMemLoad32HOL state.memory state.memaddrs state.be word with
+              | none =>
+                  simp only [hsubEval, hload, Option.map_none] at heval
+                  exact absurd heval.symm (Option.some_ne_none value)
+              | some loaded =>
+                  simp only [hsubEval, hload, Option.map_some, Option.some.injEq] at heval
+                  cases hsubCompile : compileExpExactHOLW context subExpression with
+                  | mk subExpressions subShape =>
+                      have hsubRes := hsub (.val (.word word)) subExpressions subShape
+                        hsubEval hstate hcode hlocals hlocSub hsubCompile
+                      obtain ⟨hsubMap, hsubLen, hsubShape, _hsubWf⟩ := hsubRes
+                      simp only [shapeOfHOLExact] at hsubShape
+                      have hsubShapeOne : subShape = .one := hsubShape.symm
+                      rw [hsubShapeOne] at hsubLen
+                      simp only [flattenHOL, List.map_cons, List.map_nil] at hsubMap
+                      simp only [sizeOfShapeHOL] at hsubLen
+                      cases subExpressions with
+                      | nil =>
+                          simp only [List.map_nil] at hsubMap
+                          exact absurd hsubMap (by simp)
+                      | cons code rest =>
+                          simp only [List.map_cons] at hsubMap
+                          injection hsubMap with hcodeEq hrestMap
+                          have hlenCons : rest.length = 0 := by
+                            simp only [List.length_cons] at hsubLen
+                            omega
+                          have hrestNil : rest = [] := by
+                            cases rest with
+                            | nil => rfl
+                            | cons x xs => simp at hlenCons
+                          subst hrestNil
+                          have hloadCrep : evalCrepSemHOLExp targetState (.load32 code) =
+                              some (.word (BitVec.ofNat width loaded.toNat)) := by
+                            have hmem : targetState.memory = state.memory := hstate.1.symm
+                            have hmemaddrs : targetState.memaddrs = state.memaddrs :=
+                              hstate.2.1.symm
+                            have hbe : targetState.be = state.be :=
+                              hstate.2.2.2.2.2.2.1.symm
+                            simp only [evalCrepSemHOLExp, hcodeEq, hmem, hmemaddrs, hbe]
+                            show Option.map
+                                (fun loadedValue => HolWordLab.word
+                                  (BitVec.ofNat width loadedValue.toNat))
+                                (panMemLoad32HOL state.memory state.memaddrs state.be word) =
+                              some (.word (BitVec.ofNat width loaded.toNat))
+                            rw [hload]
+                            rfl
+                          have hcompile' := hcompile
+                          simp only [compileExpExactHOLW] at hcompile'
+                          rw [hsubCompile] at hcompile'
+                          rw [hsubShapeOne] at hcompile'
+                          injection hcompile' with hexpr hshape
+                          rw [← heval, ← hexpr, ← hshape]
+                          refine ⟨?_, ?_, ?_, ?_⟩
+                          · simp only [List.map_cons, List.map_nil, hloadCrep, flattenHOL]
+                          · simp only [List.length_cons, List.length_nil, sizeOfShapeHOL]
+                          · simp only [shapeOfHOLExact]
+                          · simp only [isWfShapeExactHOL]
+      | nStruct structName fields =>
+          simp only [hsubEval] at heval
+          exact absurd heval.symm (Option.some_ne_none value)
+      | rStruct subValues =>
+          simp only [hsubEval] at heval
+          exact absurd heval.symm (Option.some_ne_none value)
+
+/-- Exact-carrier `LoadByte` case of HOL `compile_exp_val_rel`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml`). This is a
+    Flapjack-specific staged constructor lemma: it consumes the induction
+    hypothesis `hsub` for the sub-expression and proves the leaf directly; the
+    full `compile_exp_val_rel` theorem remains open (bead flapjack-4ac.5.81). -/
+theorem compileExpValRelHOL_loadByte {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) [_hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width σ) [_ht : DecidablePred targetState.memaddrs]
+    (subExpression : ExpHOL width)
+    (value : ValueHOL width)
+    (expressions : List (CrepExpHOL width)) (shape : ShapeHOL)
+    (hsub : ∀ (subValue : ValueHOL width) (subExpressions : List (CrepExpHOL width))
+        (subShape : ShapeHOL),
+        state.evalHOLFinite subExpression = some subValue →
+        panToCrepStateRelFiniteExact state targetState →
+        codeRelExactHOLW context state.code targetState.code →
+        panToCrepLocalsRelFiniteExact context state.locals targetState.locals →
+        localisedExpHOL subExpression = true →
+        compileExpExactHOLW context subExpression = (subExpressions, subShape) →
+        subExpressions.map (evalCrepSemHOLExp targetState) = (flattenHOL subValue).map some ∧
+        subExpressions.length = sizeOfShapeHOL subShape ∧
+        shapeOfHOLExact subValue = subShape ∧
+        isWfShapeExactHOL ([] : StructContextExact) subShape = true)
+    (heval : state.evalHOLFinite (.loadByte subExpression) = some value)
+    (hlocalised : localisedExpHOL (.loadByte subExpression) = true)
+    (hstate : panToCrepStateRelFiniteExact state targetState)
+    (hcode : codeRelExactHOLW context state.code targetState.code)
+    (hlocals : panToCrepLocalsRelFiniteExact context state.locals targetState.locals)
+    (hcompile : compileExpExactHOLW context (.loadByte subExpression) =
+      (expressions, shape)) :
+    expressions.map (evalCrepSemHOLExp targetState) = (flattenHOL value).map some ∧
+    expressions.length = sizeOfShapeHOL shape ∧
+    shapeOfHOLExact value = shape ∧
+    isWfShapeExactHOL ([] : StructContextExact) shape = true := by
+  have hlocSub : localisedExpHOL subExpression = true := hlocalised
+  rw [PanSemStateFiniteExact.evalHOLFinite_loadByte] at heval
+  cases hsubEval : state.evalHOLFinite subExpression with
+  | none =>
+      simp only [hsubEval] at heval
+      exact absurd heval.symm (Option.some_ne_none value)
+  | some subValue =>
+      cases subValue with
+      | val wlab =>
+          cases wlab with
+          | word word =>
+              cases hload : panMemLoadByteHOL state.memory state.memaddrs state.be word with
+              | none =>
+                  simp only [hsubEval, hload, Option.map_none] at heval
+                  exact absurd heval.symm (Option.some_ne_none value)
+              | some loaded =>
+                  simp only [hsubEval, hload, Option.map_some, Option.some.injEq] at heval
+                  cases hsubCompile : compileExpExactHOLW context subExpression with
+                  | mk subExpressions subShape =>
+                      have hsubRes := hsub (.val (.word word)) subExpressions subShape
+                        hsubEval hstate hcode hlocals hlocSub hsubCompile
+                      obtain ⟨hsubMap, hsubLen, hsubShape, _hsubWf⟩ := hsubRes
+                      simp only [shapeOfHOLExact] at hsubShape
+                      have hsubShapeOne : subShape = .one := hsubShape.symm
+                      rw [hsubShapeOne] at hsubLen
+                      simp only [flattenHOL, List.map_cons, List.map_nil] at hsubMap
+                      simp only [sizeOfShapeHOL] at hsubLen
+                      cases subExpressions with
+                      | nil =>
+                          simp only [List.map_nil] at hsubMap
+                          exact absurd hsubMap (by simp)
+                      | cons code rest =>
+                          simp only [List.map_cons] at hsubMap
+                          injection hsubMap with hcodeEq hrestMap
+                          have hlenCons : rest.length = 0 := by
+                            simp only [List.length_cons] at hsubLen
+                            omega
+                          have hrestNil : rest = [] := by
+                            cases rest with
+                            | nil => rfl
+                            | cons x xs => simp at hlenCons
+                          subst hrestNil
+                          have hloadCrep : evalCrepSemHOLExp targetState (.loadByte code) =
+                              some (.word (BitVec.ofNat width loaded.toNat)) := by
+                            have hmem : targetState.memory = state.memory := hstate.1.symm
+                            have hmemaddrs : targetState.memaddrs = state.memaddrs :=
+                              hstate.2.1.symm
+                            have hbe : targetState.be = state.be :=
+                              hstate.2.2.2.2.2.2.1.symm
+                            simp only [evalCrepSemHOLExp, hcodeEq, hmem, hmemaddrs, hbe]
+                            show Option.map
+                                (fun loadedValue => HolWordLab.word
+                                  (BitVec.ofNat width loadedValue.toNat))
+                                (panMemLoadByteHOL state.memory state.memaddrs state.be word) =
+                              some (.word (BitVec.ofNat width loaded.toNat))
+                            rw [hload]
+                            rfl
+                          have hcompile' := hcompile
+                          simp only [compileExpExactHOLW] at hcompile'
+                          rw [hsubCompile] at hcompile'
+                          rw [hsubShapeOne] at hcompile'
+                          injection hcompile' with hexpr hshape
+                          rw [← heval, ← hexpr, ← hshape]
+                          refine ⟨?_, ?_, ?_, ?_⟩
+                          · simp only [List.map_cons, List.map_nil, hloadCrep, flattenHOL]
+                          · simp only [List.length_cons, List.length_nil, sizeOfShapeHOL]
+                          · simp only [shapeOfHOLExact]
+                          · simp only [isWfShapeExactHOL]
+      | nStruct structName fields =>
+          simp only [hsubEval] at heval
+          exact absurd heval.symm (Option.some_ne_none value)
+      | rStruct subValues =>
+          simp only [hsubEval] at heval
+          exact absurd heval.symm (Option.some_ne_none value)
+
 end Flapjack
