@@ -2,3 +2,50 @@ local_var=[«x»]
 global_var=[«g»]
 nested=[«x»; «y»]
 nested_global=[«g»; «addr»]
+global_var_exp_def=(∀w. global_var_exp (Const w) = []) ∧
+(∀v. global_var_exp (Var Local v) = []) ∧
+(∀v. global_var_exp (Var Global v) = [v]) ∧
+(∀es. global_var_exp (RStruct es) = FLAT (MAP (λa. global_var_exp a) es)) ∧
+(∀i e. global_var_exp (RField i e) = global_var_exp e) ∧
+(∀sn fes.
+   global_var_exp (NStruct sn fes) =
+   FLAT (MAP ((λa. global_var_exp a) ∘ SND) fes)) ∧
+(∀fld e. global_var_exp (NField fld e) = global_var_exp e) ∧
+(∀sh e. global_var_exp (Load sh e) = global_var_exp e) ∧
+(∀e. global_var_exp (LoadByte e) = global_var_exp e) ∧
+(∀es bop. global_var_exp (Op bop es) = FLAT (MAP (λa. global_var_exp a) es)) ∧
+(∀op es. global_var_exp (Panop op es) = FLAT (MAP (λa. global_var_exp a) es)) ∧
+(∀e2 e1 c.
+   global_var_exp (Cmp c e1 e2) = global_var_exp e1 ++ global_var_exp e2) ∧
+∀sh e2 e1.
+  global_var_exp (Shift sh e1 e2) = global_var_exp e1 ++ global_var_exp e2
+global_var_exp_def_primitive=global_var_exp =
+WFREC
+  (@R. WF R ∧ (∀es a. MEM a es ⇒ R a (RStruct es)) ∧
+       (∀i e. R e (RField i e)) ∧
+       (∀sn fes x a. MEM x fes ∧ a = SND x ⇒ R a (NStruct sn fes)) ∧
+       (∀fld e. R e (NField fld e)) ∧ (∀sh e. R e (Load sh e)) ∧
+       (∀e. R e (LoadByte e)) ∧ (∀bop es a. MEM a es ⇒ R a (Op bop es)) ∧
+       (∀op es a. MEM a es ⇒ R a (Panop op es)) ∧
+       (∀e1 c e2. R e2 (Cmp c e1 e2)) ∧ (∀e2 c e1. R e1 (Cmp c e1 e2)) ∧
+       (∀e2 sh e1. R e1 (Shift sh e1 e2)) ∧ ∀e1 sh e2. R e2 (Shift sh e1 e2))
+  (λglobal_var_exp a'.
+       case a' of
+         Const w => I []
+       | Var Local v => I []
+       | Var Global v => I [v]
+       | RStruct es => I (FLAT (MAP (λa. global_var_exp a) es))
+       | RField i e => I (global_var_exp e)
+       | NStruct sn fes => I (FLAT (MAP ((λa. global_var_exp a) ∘ SND) fes))
+       | NField fld e' => I (global_var_exp e')
+       | Load sh e'' => I (global_var_exp e'')
+       | Load32 v13 => ARB
+       | LoadByte e'³' => I (global_var_exp e'³')
+       | Op bop es' => I (FLAT (MAP (λa. global_var_exp a) es'))
+       | Panop op es'' => I (FLAT (MAP (λa. global_var_exp a) es''))
+       | Cmp c e1 e2 => I (global_var_exp e1 ++ global_var_exp e2)
+       | Shift sh' e1' e2' => I (global_var_exp e1' ++ global_var_exp e2')
+       | BaseAddr => ARB
+       | TopAddr => ARB
+       | BytesInWord => ARB)
+DONE
