@@ -420,10 +420,22 @@ def bridgeParityGuard : Bool :=
     wordListW (width := 64) [true, false] 4) &&
   ((Flapjack.RiscV.CakeAlloc.frameBitmapWords 2
       [true, true, true, true, true]).map (BitVec.ofNat 64) ==
-    wordListW (width := 64) [true, true, true, true, true] 2)
+    wordListW (width := 64) [true, true, true, true, true] 2) &&
+  ((Flapjack.RiscV.CakeAlloc.writeBitmap [0, 1, 2] 0 8 8).map (BitVec.ofNat 8) ==
+    writeBitmapHOL (width := 8) [0, 1, 2] 0 8) &&
+  ((Flapjack.RiscV.CakeAlloc.writeBitmap [2, 4, 6] 0 8 8).map (BitVec.ofNat 8) ==
+    writeBitmapHOL (width := 8) [2, 4, 6] 0 8) &&
+  ((Flapjack.RiscV.CakeAlloc.writeBitmap [0, 2, 4] 0 64 64).map (BitVec.ofNat 64) ==
+    writeBitmapHOL (width := 64) [0, 2, 4] 0 64)
 
 #eval bridgeParityGuard
 #guard bridgeParityGuard
+
+/-- The executed `writeBitmap` (with its `List.contains` name-set) maps onto the
+HOL-shaped `writeBitmapHOL`, kernel-checked on all inputs. -/
+example : (Flapjack.RiscV.CakeAlloc.writeBitmap [0, 1, 2] 0 8 8).map (BitVec.ofNat 8) =
+    writeBitmapHOL (width := 8) [0, 1, 2] 0 8 :=
+  Flapjack.RiscV.CakeAlloc.writeBitmap_eq_writeBitmapHOL [0, 1, 2] 0 8
 
 /-- Arbitrary-input executable/tagged `bitsToWord` equivalence (stronger than
 in-range). -/
@@ -912,7 +924,7 @@ example : wShareInst (α := BitVec 64) .store 5 (.addr 3 9) (2, 7, 9)
 
 def runChecks : IO Bool := do
   IO.println "PASS Word-to-Stack HOL bitmap, stack-slot, and program-combinator oracle rows"
-  IO.println "PASS executable Cake bitmap recursion maps to tagged bitsToWordW/wordListW"
+  IO.println "PASS executable Cake bitmap recursion and name-set map to tagged bitsToWordW/wordListW/writeBitmapHOL"
   IO.println "PASS stackLang store_name datatype oracle rows"
   pure (parityGuard && wordListParityGuard && chunkToBitsParityGuard &&
     chunkToBitmapParityGuard && writeBitmapParityGuard && insertBitmapParityGuard &&
