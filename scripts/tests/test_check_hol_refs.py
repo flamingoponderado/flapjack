@@ -1210,6 +1210,34 @@ class WordsAsTypeIndexedBitvecQualifierTest(unittest.TestCase):
             any("resolvable" in e for e in self.ERRORS("", "evalProg"))
         )
 
+    def test_accepts_combined_fmap_and_words_qualifiers(self):
+        self.assertEqual(self.ERRORS("\n".join(self.GOOD), "evalProg"), [])
+
+    def test_rejects_bitvec_only_in_body(self):
+        text = "\n".join(self.GOOD).replace(
+            "(addr : BitVec width)",
+            "(addr : Nat)",
+        ).replace(
+            ": HolWordLab width := HolWordLab.word addr",
+            ": Nat := addr + (1 : BitVec width).toNat",
+        )
+        self.assertTrue(any("BitVec" in e for e in self.ERRORS(text, "evalProg")))
+
+    def test_rejects_sort_host_universe(self):
+        text = "\n".join(self.GOOD).replace("{σ : Type}", "{σ : Sort u}")
+        self.assertTrue(
+            any("universe" in e or "Type" in e for e in self.ERRORS(text, "evalProg"))
+        )
+
+    def test_rejects_one_le_width_hypothesis(self):
+        text = "\n".join(self.GOOD).replace(
+            "(state : CrepSemHOLState width σ)",
+            "(hpos : 1 ≤ width) (state : CrepSemHOLState width σ)",
+        )
+        self.assertTrue(
+            any("positivity" in e for e in self.ERRORS(text, "evalProg"))
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

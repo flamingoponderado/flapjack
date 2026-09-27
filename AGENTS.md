@@ -347,7 +347,12 @@ conventional data-structure translation only: it authorizes no change to
 quantifiers, hypotheses, side conditions, or conclusions, and no cross-assistant
 agreement theorem is required. It cannot use `reviewed_exact`; use manifest
 status `reviewed_words_as_type_indexed_bitvec` after comparing the HOL and Lean
-declarations. The reference checker enforces the syntactic obligations above; it
+declarations. When the same declaration also carries
+`fmap_as_finite_support`, use the combined status
+`reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec` (both qualifiers
+required together; the checker rejects either one missing). The reference
+checker reads the tagged declaration's signature, not its proof or body, when
+verifying the `BitVec`/`NeZero`/`Type` obligations; it remains syntactic and
 does not prove HOL-to-Lean correspondence, so source review must compare the
 declaration itself.
 

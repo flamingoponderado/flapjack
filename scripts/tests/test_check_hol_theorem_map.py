@@ -1640,5 +1640,64 @@ class MultiOwnerFmapRelationStatusTest(unittest.TestCase):
         self.assertTrue(any("do not match its @[hol] tag" in error for error in errors))
 
 
+class CombinedFmapWordsStatusTest(unittest.TestCase):
+    """fmap_as_finite_support must compose with words_as_type_indexed_bitvec."""
+
+    COMBINED = (
+        "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec"
+    )
+
+    def _record(self, **overrides):
+        record = {
+            "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
+            "hol_name": "evaluate_def",
+            "lean_path": "Flapjack/Example.lean",
+            "lean_name": "evalProg",
+            "statement_status": self.COMBINED,
+            "reviewer": "source comparison of HOL/Lean word and finite-map carriers",
+            "fmap_as_finite_support": ["locals", "globals", "code"],
+            "words_as_type_indexed_bitvec": True,
+        }
+        record.update(overrides)
+        return record
+
+    def _tag(self, fmap_fields=("locals", "globals", "code"), words=True):
+        return {
+            ("Flapjack/Example.lean", "evalProg"): (
+                "cakeml/pancake/semantics/crepSemScript.sml",
+                "evaluate_def",
+                (), (), (), fmap_fields, False, (), False, words,
+            )
+        }
+
+    def _errors(self, record, tagged):
+        return MAP["validate_inventory"]([record], set(), tagged, set())
+
+    def test_accepts_combined_status(self):
+        self.assertEqual(self._errors(self._record(), self._tag()), [])
+
+    def test_rejects_combined_status_without_words_qualifier(self):
+        errors = self._errors(self._record(), self._tag(words=False))
+        self.assertTrue(any("needs both" in error for error in errors))
+
+    def test_rejects_combined_status_without_fmap_qualifier(self):
+        errors = self._errors(self._record(), self._tag(fmap_fields=()))
+        self.assertTrue(any("needs both" in error for error in errors))
+
+    def test_rejects_words_status_for_combined_qualifiers(self):
+        errors = self._errors(
+            self._record(statement_status="reviewed_words_as_type_indexed_bitvec"),
+            self._tag(),
+        )
+        self.assertTrue(any("fmap_as_finite_support" in error for error in errors))
+
+    def test_rejects_fmap_status_for_combined_qualifiers(self):
+        errors = self._errors(
+            self._record(statement_status="reviewed_fmap_as_finite_support"),
+            self._tag(),
+        )
+        self.assertTrue(any("words_as_type_indexed_bitvec" in error for error in errors))
+
+
 if __name__ == "__main__":
     unittest.main()
