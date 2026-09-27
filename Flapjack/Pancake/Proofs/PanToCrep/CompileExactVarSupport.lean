@@ -1,7 +1,5 @@
 import Flapjack.Pancake.PanToCrep.CompileExact
 
-set_option linter.unusedSimpArgs false
-
 /-!
 Compiler-only support facts for the exact Pan-to-Crep expression compiler.
 These Flapjack lemmas use the exact `ExpHOL`/`CrepExpHOL` syntax and
@@ -155,15 +153,15 @@ theorem compileExpExactHOLW_vars_from_context {width : Nat} [NeZero width]
     apply compileExpExactHOLW.induct (context := context)
       (motive1 := expSupport) (motive2 := listSupport)
     · intro value name hname
-      simp [expSupport, compileExpExactHOLW, crepExpVarsHOL] at hname
+      simp [compileExpExactHOLW, crepExpVarsHOL] at hname
     · intro sourceName shape slots hlookup name hname
-      simp [expSupport, compileExpExactHOLW, hlookup,
+      simp [compileExpExactHOLW, hlookup,
         crepExpVarsHOL, List.flatMap_map] at hname
       exact ⟨sourceName, shape, slots, hlookup, hname⟩
     · intro sourceName hlookup name hname
-      simp [expSupport, compileExpExactHOLW, hlookup, crepExpVarsHOL] at hname
+      simp [compileExpExactHOLW, hlookup, crepExpVarsHOL] at hname
     · intro sourceName name hname
-      simp [expSupport, compileExpExactHOLW, crepExpVarsHOL] at hname
+      simp [compileExpExactHOLW, crepExpVarsHOL] at hname
     · intro expressions hexpressions name hname
       exact hexpressions name (by simpa [compileExpExactHOLW] using hname)
     · intro index expression compiled shapes hshape hexpression name hname
@@ -201,9 +199,9 @@ theorem compileExpExactHOLW_vars_from_context {width : Nat} [NeZero width]
             simpa only [compileExpExactHOLW, hcompiled, hshape] using hname
           simp [hshape, crepExpVarsHOL] at hname'
     · intro structName fields name hname
-      simp [expSupport, compileExpExactHOLW, crepExpVarsHOL] at hname
+      simp [compileExpExactHOLW, crepExpVarsHOL] at hname
     · intro fieldName expression name hname
-      simp [expSupport, compileExpExactHOLW, crepExpVarsHOL] at hname
+      simp [compileExpExactHOLW, crepExpVarsHOL] at hname
     · intro shape expression address tail resultShape hcompiled hexpression name hname
       have haddress : name ∈ crepExpVarsHOL address := by
         have hload := loadShapeBytesHOLW_vars_subset (0 : BitVec width)
@@ -220,16 +218,16 @@ theorem compileExpExactHOLW_vars_from_context {width : Nat} [NeZero width]
       simp [compileExpExactHOLW, hcompiled, crepExpVarsHOL] at hname
     · intro expression address tail hcompiled hexpression name hname
       have haddress : name ∈ crepExpVarsHOL address := by
-        simpa [expSupport, compileExpExactHOLW, hcompiled, crepExpVarsHOL] using hname
+        simpa [compileExpExactHOLW, hcompiled, crepExpVarsHOL] using hname
       exact hexpression name (List.mem_flatMap.mpr ⟨address, by rw [hcompiled]; simp, haddress⟩)
     · intro expression hnone hexpression name hname
-      simp [compileExpExactHOLW, hnone, crepExpVarsHOL] at hname
+      simp [compileExpExactHOLW, crepExpVarsHOL] at hname
     · intro expression address tail hcompiled hexpression name hname
       have haddress : name ∈ crepExpVarsHOL address := by
-        simpa [expSupport, compileExpExactHOLW, hcompiled, crepExpVarsHOL] using hname
+        simpa [compileExpExactHOLW, hcompiled, crepExpVarsHOL] using hname
       exact hexpression name (List.mem_flatMap.mpr ⟨address, by rw [hcompiled]; simp, haddress⟩)
     · intro expression hnone hexpression name hname
-      simp [compileExpExactHOLW, hnone, crepExpVarsHOL] at hname
+      simp [compileExpExactHOLW, crepExpVarsHOL] at hname
     · intro operator expressions heads hheads hexpressions name hname
       have hhead : name ∈ heads.flatMap crepExpVarsHOL :=
         by simpa [compileExpExactHOLW, hheads, crepExpVarsHOL,
@@ -268,7 +266,7 @@ theorem compileExpExactHOLW_vars_from_context {width : Nat} [NeZero width]
       simp [compileExpExactHOLW, hnone, crepExpVarsHOL] at hname
     · intro operator left right leftHead leftTail leftShape rightHead rightTail rightShape
         hright hleft hleftSupport hrightSupport name hname
-      simp [expSupport, compileExpExactHOLW, hleft, hright, crepExpVarsHOL] at hname
+      simp [compileExpExactHOLW, hleft, hright, crepExpVarsHOL] at hname
       rcases hname with hleftName | hrightName
       · exact hleftSupport name (List.mem_flatMap.mpr
           ⟨leftHead, by rw [hleft]; simp, hleftName⟩)
@@ -289,7 +287,7 @@ theorem compileExpExactHOLW_vars_from_context {width : Nat} [NeZero width]
                 rightShape hleft hright)
     · intro operator left right leftHead leftTail leftShape rightHead rightTail rightShape
         hright hleft hleftSupport hrightSupport name hname
-      simp [expSupport, compileExpExactHOLW, hleft, hright, crepExpVarsHOL] at hname
+      simp [compileExpExactHOLW, hleft, hright, crepExpVarsHOL] at hname
       rcases hname with hleftName | hrightName
       · exact hleftSupport name (List.mem_flatMap.mpr
           ⟨leftHead, by rw [hleft]; simp, hleftName⟩)
@@ -315,10 +313,10 @@ theorem compileExpExactHOLW_vars_from_context {width : Nat} [NeZero width]
     · intro name hname
       simp [compileExpExactHOLW, crepExpVarsHOL] at hname
     · intro name hname
-      simp [listSupport, compileExpExactHOLWList] at hname
+      simp [compileExpExactHOLWList] at hname
     · intro expression expressions hexpression hexpressions name hname
-      simp only [listSupport, compileExpExactHOLWList, List.flatMap_cons,
-        List.map_cons, List.flatMap_append] at hname
+      simp only [compileExpExactHOLWList, List.flatMap_cons,
+        List.flatMap_append] at hname
       rcases List.mem_append.mp hname with hhead | htail
       · exact hexpression name hhead
       · exact hexpressions name htail
@@ -327,11 +325,11 @@ theorem compileExpExactHOLW_vars_from_context {width : Nat} [NeZero width]
     induction expressions with
     | nil =>
         intro name hname
-        simp [listSupport, compileExpExactHOLWList, crepExpVarsHOL] at hname
+        simp [compileExpExactHOLWList] at hname
     | cons expression expressions ih =>
         intro name hname
-        simp only [listSupport, compileExpExactHOLWList, List.flatMap_cons,
-          List.map_cons, List.flatMap_append] at hname
+        simp only [compileExpExactHOLWList, List.flatMap_cons,
+          List.flatMap_append] at hname
         rcases List.mem_append.mp hname with hhead | htail
         · exact hExpAll expression name hhead
         · exact ih name htail
