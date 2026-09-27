@@ -763,6 +763,27 @@ theorem evalCrepSemHOLProgExact_eq_core {width : Nat} [NeZero width] {σ : Type}
   unfold evalCrepSemHOLProgExact
   congr 1
 
+/-- HOL's rewritten `evaluate_def` at `crepSemScript.sml:443`, Skip case
+    (originating at line 241), over the no-decider state/program interface:
+    evaluating Skip returns `(NONE, s)`. The equation is kernel-checked and its
+    carrier uses `CrepSemHOLState`'s finite-support locals/globals/code maps.
+    It is deliberately untagged: this declaration is in `EvaluateHOL.lean`,
+    while the owning carrier structure and canonical finite-map witness are in
+    `HOLState.lean`; the `fmap_as_finite_support` checker requires the owner and
+    witness in the tagged declaration's same module. An unqualified tag would
+    hide that representation translation. Bead `flapjack-4ac.5.16.5.13.1`
+    tracks a faithful qualified-tagging path; the evaluator parent remains open. -/
+theorem evalCrepSemHOLProgExact_skip {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) :
+    evalCrepSemHOLProgExact state (.skip : CrepProgHOL width) = (none, state) := by
+  calc
+    evalCrepSemHOLProgExact state (.skip : CrepProgHOL width) =
+        evalCrepSemHOLProg state
+          (fun a => Classical.propDecidable (state.memaddrs a))
+          (fun a => Classical.propDecidable (state.shMemaddrs a)) .skip :=
+      evalCrepSemHOLProgExact_eq_core state .skip _ _
+    _ = (none, state) := by simp [evalCrepSemHOLProg]
+
 /-- Kernel-checked `Skip` constructor equation of the total HOL-shaped
     evaluator, matching HOL `crepSemScript.sml:241`
     `evaluate (Skip, s) = (NONE, s)`. -/
