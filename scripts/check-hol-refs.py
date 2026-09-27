@@ -95,6 +95,14 @@ def module_path(module: str) -> Path:
     return ROOT / (module.replace(".", "/") + ".lean")
 
 
+def module_source_file(module: str, root: str | Path) -> Path:
+    """Resolve a dotted module name or repo-relative Lean path under a root."""
+    module_path = Path(module)
+    if module_path.suffix == ".lean" or "/" in module:
+        return Path(root) / module_path
+    return Path(root) / (module.replace(".", "/") + ".lean")
+
+
 def reachable_modules(root: str = "Flapjack") -> set[str]:
     """Modules transitively imported from the library root."""
     seen: set[str] = set()
@@ -364,14 +372,14 @@ def structure_headers(lines: list[str]) -> dict[str, str]:
 
 @lru_cache(maxsize=None)
 def imported_structure_headers(module: str, root: str) -> dict[str, list[str]]:
-    """Header binders of structures reachable through this module's imports.
+    """Header binders of structures reachable through this dotted module name.
 
     Mirrors `imported_structure_field_types` so the word-dimension qualifier can
     read an imported carrier's `[NeZero width]` discharge from its actual
     declaration rather than from a same-named local duplicate.
     """
     root_path = Path(root)
-    current = root_path / module
+    current = module_source_file(module, root_path)
     if not current.is_file():
         return {}
     pending = list(IMPORT_RE.findall(current.read_text(encoding="utf-8")))
@@ -396,7 +404,9 @@ def imported_structure_headers(module: str, root: str) -> dict[str, list[str]]:
 def imported_structure_owners(
     module: str, root: str
 ) -> dict[str, list[tuple[str, str, dict[str, str]]]]:
-    """Per-owner declarations of imported structures: name -> [(module, header, fields)].
+    """Per-owner declarations of imported structures for a dotted module name.
+
+    The result is name -> [(module, header, fields)].
 
     The word-dimension qualifier must bind each candidate carrier to its own
     module, header, and field set.  Pooling headers and field types across
@@ -405,7 +415,7 @@ def imported_structure_owners(
     the evidence is grouped per declaration here instead.
     """
     root_path = Path(root)
-    current = root_path / module
+    current = module_source_file(module, root_path)
     if not current.is_file():
         return {}
     pending = list(IMPORT_RE.findall(current.read_text(encoding="utf-8")))
@@ -443,7 +453,7 @@ def imported_structure_field_types(
     duplicate.
     """
     root_path = Path(root)
-    current = root_path / module
+    current = module_source_file(module, root_path)
     if not current.is_file():
         return {}
     pending = list(IMPORT_RE.findall(current.read_text(encoding="utf-8")))
