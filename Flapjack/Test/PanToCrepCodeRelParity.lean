@@ -199,6 +199,74 @@ example : codeRelExactHOLW exactCodeContext exactSourceCode exactTargetCode := b
       Flapjack.Pancake.PanLang.sizeOfShapesHOL,
       Flapjack.Pancake.PanLang.withShapeHOL, List.range, List.range.loop]
 
+/-- HOL `code_rel_imp` kernel regression on the exact fixture: the extracted
+    per-entry clause of `codeRelExactHOLW_imp` applied to the `f` entry of
+    `exactSourceCode` yields `localisedProgHOL`, reproducing the direct HOL
+    `code_rel_matching` row at the clause level. -/
+theorem codeRelImpExtractsMatchingEntry
+    (hrel : codeRelExactHOLW exactCodeContext exactSourceCode exactTargetCode) :
+    localisedProgHOL (width := 64)
+        (ProgHOL.return (.var .local (ml "x"))) = true := by
+  have hlookup :
+      exactSourceCode.lookup (ml "f") =
+        some ([(ml "x", ShapeHOL.one)],
+          ProgHOL.return (.var .local (ml "x")), ShapeHOL.one) := by
+    simp [exactSourceCode, HolFiniteMapExact.update, HolFiniteMapExact.empty,
+      FUPDATE, ml]
+  exact (codeRelExactHOLW_imp exactCodeContext exactSourceCode exactTargetCode hrel
+    (ml "f") [(ml "x", ShapeHOL.one)]
+    (ProgHOL.return (.var .local (ml "x"))) ShapeHOL.one hlookup).1
+
+/-- Exact `PanSemStateFiniteExact` fixture whose `code` field is the direct HOL
+    `code_rel` probe's source map. -/
+private def exactPanState : PanSemStateFiniteExact 64 Unit where
+  locals := HolFiniteMapExact.empty
+  globals := HolFiniteMapExact.empty
+  structs := []
+  code := exactSourceCode
+  eshapes := HolFiniteMapExact.empty
+  memory := fun _ => .word 0
+  memaddrs := fun _ => False
+  shMemaddrs := fun _ => False
+  clock := 0
+  be := false
+  ffi := initialHolFfiState (fun _ _ _ _ => .ret () []) ()
+  baseAddr := 0
+  topAddr := 0
+
+/-- Exact `CrepSemHOLState` fixture whose `code` field is the direct HOL
+    `code_rel` probe's target map. -/
+private def exactCrepState : CrepSemHOLState 64 Unit where
+  locals := HolFiniteMapExact.empty
+  globals := HolFiniteMapExact.empty
+  code := exactTargetCode
+  memory := fun _ => .word 0
+  memaddrs := fun _ => False
+  shMemaddrs := fun _ => False
+  clock := 0
+  be := false
+  ffi := initialHolFfiState (fun _ _ _ _ => .ret () []) ()
+  baseAddr := 0
+  topAddr := 0
+
+/-- Kernel-checked regression for the exact `code_rel_empty_locals` port on the
+    direct HOL `code_rel` probe fixture: HOL `empty_locals` only clears locals,
+    so both fixture `code` maps are definitionally unchanged. -/
+theorem emptyLocalsFixesProbeCodeMaps :
+    exactPanState.emptyLocalsHOLFinite.code = exactSourceCode ∧
+      (CrepSemHOLState.emptyLocals exactCrepState).code = exactTargetCode :=
+  ⟨rfl, rfl⟩
+
+/-- Kernel-checked regression for the exact `code_rel_empty_locals` port: the
+    probe's matching `code_rel` instance is preserved after clearing locals on
+    both the exact source and target states. -/
+theorem emptyLocalsPreservesProbeCodeRel
+    (hrel : codeRelExactHOLW exactCodeContext exactSourceCode exactTargetCode) :
+    codeRelExactHOLW exactCodeContext
+      exactPanState.emptyLocalsHOLFinite.code
+      (CrepSemHOLState.emptyLocals exactCrepState).code :=
+  codeRelExactHOLW_emptyLocals exactCodeContext exactPanState exactCrepState hrel
+
 #guard matchingTargetGuard
 #guard wrongBodyTargetGuard
 #guard compiledReturnGuard

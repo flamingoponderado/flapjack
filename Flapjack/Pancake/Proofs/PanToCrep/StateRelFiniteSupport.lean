@@ -211,6 +211,45 @@ theorem panToCrepLocalsRelWfShapeFiniteExact {width : Nat} [NeZero width]
   panToCrepLocalsRelFiniteExact_valueShapeProjection
     context sourceLocals targetLocals name value hrel hlookup
 
+/-- Exact port of HOL `locals_rel_lookup_ctxt`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:527-534`):
+    `locals_rel ctxt lcl lcl' /\ FLOOKUP lcl vr = SOME v ==>
+      ?ns. FLOOKUP ctxt.vars vr = SOME (shape_of v,ns) /\
+        LENGTH ns = LENGTH (flatten v) /\
+        OPT_MMAP (FLOOKUP lcl') ns = SOME (flatten v) /\
+        is_wf_shape_nil (shape_of v)`.
+
+    The relation traverses exactly the three finite-map values named by the
+    qualifier: the owning `PanToCrepContextExact.vars` field and the two
+    standalone exact-map parameters `sourceLocals`/`targetLocals` (bare
+    entries). HOL `FLOOKUP` becomes `.lookup`, `OPT_MMAP` becomes
+    `List.mapM`, `shape_of`/`flatten`/`is_wf_shape_nil` become
+    `shapeOfHOLExact`/`flattenHOL`/`isWfShapeExactHOL []`, and `LENGTH` is
+    `List.length`. The slot-length clause follows from the tagged HOL
+    `opt_mmap_length_eq` applied to the relation's successful map. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "locals_rel_lookup_ctxt"
+  (fmap_as_finite_support_relation :=
+    [PanToCrepContextExact.vars, sourceLocals, targetLocals])]
+theorem panToCrepLocalsRelLookupCtxtFiniteExact {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width)
+    (sourceLocals : HolFiniteMapExact MlS (ValueHOL width))
+    (targetLocals : HolFiniteMapExact Nat (HolWordLab width))
+    (name : MlS) (value : ValueHOL width)
+    (hrel : panToCrepLocalsRelFiniteExact context sourceLocals targetLocals)
+    (hlookup : sourceLocals.lookup name = some value) :
+    ∃ slots,
+      context.vars.lookup name = some (shapeOfHOLExact value, slots) ∧
+      slots.length = (flattenHOL value).length ∧
+      slots.mapM targetLocals.lookup = some (flattenHOL value) ∧
+      isWfShapeExactHOL ([] : StructContextExact) (shapeOfHOLExact value) = true := by
+  obtain ⟨slots, words, hcontext, hmap, hflatten, hwf⟩ :=
+    hrel.2.2 name value hlookup
+  refine ⟨slots, hcontext, ?_, ?_, hwf⟩
+  · calc slots.length = words.length :=
+        opt_mmap_length_eq slots targetLocals.lookup words hmap
+      _ = (flattenHOL value).length := by rw [← hflatten]
+  · rw [hmap, ← hflatten]
+
 /-- Exact port of HOL `state_rel_structs[local]`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:59-63`), the
     structural-context projection of `state_rel_def`. The relation qualifier
