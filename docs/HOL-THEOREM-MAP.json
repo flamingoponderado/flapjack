@@ -12614,28 +12614,6 @@
     "hol_name": "evaluate_def",
     "hol_line": 556,
     "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
-    "lean_name": "evaluateHOLFiniteState_decCall_args_none",
-    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-a source comparison (2026-09-27; bead flapjack-qj5.12): Definition evaluate_def at panSemScript.sml:556 has DecCall at lines 694-714. This piece is the OPT_MMAP (eval s) argexps = NONE branch and returns (SOME Error,s). The premise selects only that source branch through evalListHOLFinite; evalListHOLFinite_eq_toExact connects it to HOL's evaluator. The conclusion is the total result-option × state pair, with no recursive assembly marker or target-evaluation premise. PanSemStateFiniteExact has positive width [NeZero width], and its width-indexed word fields use RiscV.Word width = BitVec width; σ : Type carries the HOL FFI state. Its locals/globals/code/eshapes are same-module HolFiniteMapExact fields with the canonical roundtrip witness. The two qualifiers record only these reviewed carrier translations. Remaining DecCall branches and full 21-clause assembly remain open."
-  },
-  {
-    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
-    "hol_name": "evaluate_def",
-    "hol_line": 556,
-    "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
-    "lean_name": "evaluateHOLFiniteState_decCall_lookup_none",
-    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-a source comparison (2026-09-27; bead flapjack-qj5.12): Definition evaluate_def at panSemScript.sml:556 has DecCall at lines 694-714. This piece selects successful OPT_MMAP (eval s) argexps and failed lookup_code s.code fname args; HOL returns (SOME Error,s). The premises select these source branches through the finite-carrier argument-list result and finite code-map lookup; the exact evaluator and canonical map carrier preserve the HOL operations. The conclusion is the total result-option × state pair, with no recursive assembly marker or target-evaluation premise. PanSemStateFiniteExact has positive width [NeZero width], and its width-indexed word fields use RiscV.Word width = BitVec width; σ : Type carries the HOL FFI state. Its locals/globals/code/eshapes are same-module HolFiniteMapExact fields with the canonical roundtrip witness. The two qualifiers record only these reviewed carrier translations. Remaining DecCall branches and full 21-clause assembly remain open."
-  },
-  {
-    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
-    "hol_name": "evaluate_def",
-    "hol_line": 556,
-    "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
     "lean_name": "evaluateHOLFiniteState_seq",
     "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
     "fmap_as_finite_support": [
