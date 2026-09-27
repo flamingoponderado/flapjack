@@ -2126,4 +2126,58 @@ theorem evalPanSemRecursiveCallContextHOLExact_ioEvents_prefix {width : Nat} {σ
     (try cases hres) <;>
     exact List.prefix_refl _
 
+/-- Composition fact for the successful `Seq` branch that evaluates its second
+    program. The recursive induction hypotheses apply after the prefix lemma
+    forces the middle trace to equal both endpoints. -/
+theorem evalPanSemRecursiveCallContextHOLExact_seq_ffi_eq_of_ioEvents_eq
+    {width : Nat} {σ : Type} [NeZero width]
+    (first second : ProgHOL width) (context middleContext : PanSemExactEvalContext width σ)
+    (result : Option (PanSemResultExact width) × PanSemExactEvalContext width σ)
+    (hfirst : evalPanSemRecursiveCallContextHOLExact first context = some (none, middleContext))
+    (hsecond : evalPanSemRecursiveCallContextHOLExact second
+      (middleContext.withState
+        (fixClockHOLExact context.state
+          ((none : Option (PanSemResultExact width)), middleContext.state)).2 rfl rfl) = some result)
+    (hfirstIH : ∀ result,
+      evalPanSemRecursiveCallContextHOLExact first context = some result →
+      context.state.ffi.ioEvents = result.2.state.ffi.ioEvents →
+      context.state.ffi = result.2.state.ffi)
+    (hsecondIH : ∀ result,
+      evalPanSemRecursiveCallContextHOLExact second
+        (middleContext.withState
+          (fixClockHOLExact context.state
+            ((none : Option (PanSemResultExact width)), middleContext.state)).2 rfl rfl) = some result →
+      (middleContext.withState
+        (fixClockHOLExact context.state
+          ((none : Option (PanSemResultExact width)), middleContext.state)).2 rfl rfl).state.ffi.ioEvents =
+          result.2.state.ffi.ioEvents →
+      (middleContext.withState
+        (fixClockHOLExact context.state
+          ((none : Option (PanSemResultExact width)), middleContext.state)).2 rfl rfl).state.ffi =
+          result.2.state.ffi)
+    (hevents : context.state.ffi.ioEvents = result.2.state.ffi.ioEvents) :
+    context.state.ffi = result.2.state.ffi := by
+  let fixedContext := middleContext.withState
+    (fixClockHOLExact context.state
+      ((none : Option (PanSemResultExact width)), middleContext.state)).2 rfl rfl
+  have hfirstPrefix := evalPanSemRecursiveCallContextHOLExact_ioEvents_prefix
+    first context (none, middleContext) hfirst
+  have hsecondPrefix := evalPanSemRecursiveCallContextHOLExact_ioEvents_prefix
+    second fixedContext result (by simpa only [fixedContext] using hsecond)
+  have hfixedEvents : fixedContext.state.ffi.ioEvents = middleContext.state.ffi.ioEvents := rfl
+  have hmiddleEq := ioEvents_middle_eq_of_prefix_chain hfirstPrefix
+    (by simpa only [hfixedEvents] using hsecondPrefix) hevents
+  have hfirstFfi := hfirstIH (none, middleContext) hfirst hmiddleEq.symm
+  have hsecondEvents : fixedContext.state.ffi.ioEvents = result.2.state.ffi.ioEvents := by
+    calc
+      fixedContext.state.ffi.ioEvents = middleContext.state.ffi.ioEvents := hfixedEvents
+      _ = context.state.ffi.ioEvents := hmiddleEq
+      _ = result.2.state.ffi.ioEvents := hevents
+  have hsecondFfi := hsecondIH result (by simpa only [fixedContext] using hsecond) hsecondEvents
+  have hfixedFfi : fixedContext.state.ffi = middleContext.state.ffi := rfl
+  calc
+    context.state.ffi = middleContext.state.ffi := hfirstFfi
+    _ = fixedContext.state.ffi := hfixedFfi.symm
+    _ = result.2.state.ffi := hsecondFfi
+
 end Flapjack
