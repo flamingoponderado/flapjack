@@ -13683,5 +13683,13 @@
     "lean_name": "flatReplicateNilHOL",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.16.23): HOL miscScript.sml:2120 `!n. FLAT (REPLICATE n []) = []` matches clause-for-clause; HOL FLAT=List.flatten, REPLICATE=List.replicate, element type implicit as in HOL. Direct dependency of pan_to_crepProofScript.sml pc_compile_correct (12 uses)."
+  },
+  {
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "FOLDR_MAX_0_MAX_LIST",
+    "lean_path": "Flapjack/Misc/FoldrMaxList.lean",
+    "lean_name": "foldrMaxZeroMaxListHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.16.24): HOL miscScript.sml:630 'Theorem FOLDR_MAX_0_MAX_LIST: !ls. FOLDR MAX 0 ls = MAX_LIST ls'. Clause-for-clause over num: FOLDR MAX 0 -> List.foldr max 0; MAX_LIST (HOL rich_list, MAX_LIST [] = 0 / MAX_LIST (h::t) = MAX h (MAX_LIST t)) -> the reviewed executable maxList at Flapjack/PanToCrepMaxList.lean:29. No extra hypotheses or side conditions; direct proof dependency of pc_compile_correct (pan_to_crepProofScript.sml:1998 and :4501-4532)."
   }
 ]
