@@ -12347,6 +12347,16 @@
     "hol_name": "evaluate_def",
     "hol_line": 556,
     "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
+    "lean_name": "evaluateHOLFiniteState_decCall_args_none",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "reviewer": "flapjack-luna-a source comparison (2026-09-27; bead flapjack-qj5.12): Definition evaluate_def at panSemScript.sml:556 has the DecCall clause at lines 694-714. This piece is exactly the leftmost OPT_MMAP (eval s) argexps = NONE branch, which returns (SOME Error,s). The Lean case premise is evalListHOLFinite state arguments = none under the classical finite-domain decision procedure; evalListHOLFinite_eq_toExact connects it definitionally to HOL's OPT_MMAP evaluator. The conclusion is the total result-option × state pair, with no recursive assembly marker or target-evaluation premise. PanSemStateFiniteExact carries HOL's positive width and exact program/value types; its locals/globals/code/eshapes are the same-module HolFiniteMapExact fields with canonical roundtrip witness. The qualifier records only this finite-map representation. This is one genuine DecCall source case; the remaining DecCall branches and full 21-clause conjunction remain open under flapjack-qj5.12 and flapjack-qj5.9."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 556,
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
     "lean_name": "evaluateHOLFiniteState_seq",
     "statement_status": "reviewed_fmap_as_finite_support",
     "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],

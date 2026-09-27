@@ -3117,6 +3117,32 @@ theorem evaluateHOLFiniteState_dec_total {width : Nat} {σ : Type} [NeZero width
           evalPanSemRecursiveCallFiniteContext, hinit, hshape,
           hmem]
 
+/-- Exact HOL `evaluate_def` (`panSemScript.sml:556`) DecCall argument-failure
+    case, corresponding to the `OPT_MMAP (eval s) argexps = NONE` branch at
+    lines 699-714: it returns `Error` with the caller state unchanged. This is
+    a genuine source case with a branch selector and no target-evaluation
+    premise. `PanSemStateFiniteExact` records the four HOL finite maps through
+    its canonical same-module witness. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 556
+  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+theorem evaluateHOLFiniteState_decCall_args_none {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateFiniteExact width σ)
+    (resultName : MlS) (shape : ShapeHOL) (function : MlS)
+    (arguments : List (ExpHOL width)) (continuation : ProgHOL width)
+    (hargs : evalListHOLFinite state
+      (h := fun address => Classical.propDecidable (state.memaddrs address))
+      arguments = none) :
+    evaluateHOLFiniteState state
+        (.decCall resultName shape function arguments continuation : ProgHOL width) =
+      (some .error, state) := by
+  classical
+  have hargsExact :
+      @evalListHOLExact width σ _ state.toExact
+        (fun address => Classical.propDecidable (state.memaddrs address)) arguments = none := by
+    simpa only [evalListHOLFinite_eq_toExact] using hargs
+  simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+    evalPanSemRecursiveCallFiniteContext.eq_6, hargsExact]
+
 /-- Source-reviewed HOL `evaluate_def` Seq conjunct (`panSemScript.sml:615`)
     from the source `Definition evaluate_def` at line 556. That definition
     explicitly applies `fix_clock` to the first evaluation pair; the theorem
