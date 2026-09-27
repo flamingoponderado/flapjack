@@ -14818,5 +14818,23 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-ds8 (source comparison; bead flapjack-qj5.9.5.2): the single unconditional HOL panSemScript.sml:780 line-780 Call conjunct (Definition evaluate_def line 556, rewrite removing only the inner fix_clock on the recursive callee-body evaluation via fix_clock_evaluate). Exact clause-for-clause over PanSemStateFiniteExact: OPT_MMAP/eval -> evalListHOLFinite, lookup_code -> lookupCodeHOLFinite, clock=0 -> (some .timeOut, empty_locals s), body result NONE/Break/Continue -> (some Error, st), Return with shape_of <> return_sh -> Error, identity/result/kvar call types, Exception handler shapes, and the catch-all (some other, st) -> (some other, empty_locals st). The internal fixClock/callFixedContext wrappers are eliminated by fixClockHOLFinite_evaluateState and callFixedContextHOLFinite_eq_of_body, matching line 780. Carriers: state maps are reviewed HolFiniteMapExact via the same-module canonical witness; wide word payloads are BitVec width. No extra premise; the full 21-clause assembly remains open under flapjack-qj5.9."
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_inlineScript.sml",
+    "hol_name": "var_prog_def",
+    "lean_path": "Flapjack/Pancake/CrepInline.lean",
+    "lean_name": "crepVarProgHOLExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-27; bead flapjack-e7w.2.1.2) against crep_inlineScript.sml:11-33. All 19 CrepProgHOL constructors match var_prog_def: Dec and Assign destinations precede expression vars; Primitive emits lhs then rhs; Store/Store32/StoreByte concatenate both expressions; StoreGlob ignores its address; Seq and If preserve HOL concatenation order; While prepends condition vars; Call emits flattened arguments then return vars then handler vars when present, and ignores exception labels/function names; ExtCall emits all four numeric vars; Return flattens value vars; ShMem emits its var then address; Skip/Break/Continue/Raise/Tick return empty. Exp variables use the exact crepExpVarsHOL port. The carrier is width-indexed CrepProgHOL with [NeZero width] and BitVec width words, recorded by the words_as_type_indexed_bitvec qualifier; no names, maps, or theorem premises differ. Direct HOL rows var_prog_call_handler_extcall, var_prog_skip_empty, and var_prog_storeglob_ignores_address are in scripts/hol-probes/crep_inline_helper_probe.out and matched by CrepeInline.lean exact-carrier guards."
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_inlineScript.sml",
+    "hol_name": "vmax_prog_def",
+    "lean_path": "Flapjack/Pancake/CrepInline.lean",
+    "lean_name": "crepVmaxProgHOLExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-27; bead flapjack-e7w.2.1.2) against crep_inlineScript.sml:36-38. The equation is MAX_LIST (var_prog p); Lean folds max from 0 over crepVarProgHOLExact p, which matches HOL MAX_LIST including the empty-list result. The exact width-indexed carrier translation is the same positive-width BitVec mapping as CrepProgHOL. Direct HOL rows vmax_prog_call_handler_extcall and vmax_prog_skip_zero are in scripts/hol-probes/crep_inline_helper_probe.out and matched by CrepeInline.lean exact-carrier guards."
   }
 ]

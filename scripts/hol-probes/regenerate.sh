@@ -412,7 +412,8 @@ run_probe crep_inline_alist_map_probeScript.sml crep_inline_alist_map_probe.out 
   alist_duplicate_first input_rows_order "$cake_dir/pancake/crep_inlineScript.sml" \
   "$cake_dir/pancake"
 run_probe crep_inline_helper_probeScript.sml crep_inline_helper_probe.out \
-  eoc_p unreach_p "$cake_dir/pancake/crep_inlineScript.sml" "$cake_dir/pancake"
+  var_prog_call_handler_extcall unreach_p \
+  "$cake_dir/pancake/crep_inlineScript.sml" "$cake_dir/pancake"
 run_probe crep_inline_cont_res_probeScript.sml crep_inline_cont_res_probe.out \
   cont_res_none cont_res_done "$cake_dir/pancake/proofs/crep_inlineProofScript.sml" \
   "$cake_dir/pancake/proofs"

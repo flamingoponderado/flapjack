@@ -63,6 +63,69 @@ def crepInlineAnalysisCakeParity : Bool :=
 
 #guard crepInlineAnalysisCakeParity
 
+open Flapjack.Basis.Pure.MlString
+
+private abbrev CrepHOL8 := CrepProgHOL 8
+
+/-! Exact-carrier checks for the new `var_prog_def`/`vmax_prog_def` ports.
+    These mirror the generic rows above while using HOL `MlString` names and
+    the width-indexed `CrepProgHOL 8` syntax. Direct HOL-EVAL rows are in
+    `scripts/hol-probes/crep_inline_helper_probe.out`. -/
+def crepVarProgHOLExactCakeParity : Bool :=
+  crepVarProgHOLExact
+      (.dec 9 (.var 1) (.return [.var 2]) : CrepHOL8) = [9, 1, 2] &&
+  crepVarProgHOLExact (.assign 3 (.var 4) : CrepHOL8) = [3, 4] &&
+  crepVarProgHOLExact (.store (.var 5) (.const 0) : CrepHOL8) = [5] &&
+  crepVarProgHOLExact (.store32 (.var 5) (.var 6) : CrepHOL8) = [5, 6] &&
+  crepVarProgHOLExact (.storeByte (.var 5) (.var 6) : CrepHOL8) = [5, 6] &&
+  crepVarProgHOLExact (.storeGlob 7 (.var 8) : CrepHOL8) = [8] &&
+  crepVarProgHOLExact
+      (.seq (.assign 3 (.var 4)) (.return [.var 5]) : CrepHOL8) = [3, 4, 5] &&
+  crepVarProgHOLExact (.ite (.var 8) (.assign 9 (.var 10)) .skip : CrepHOL8) =
+    [8, 9, 10] &&
+  crepVarProgHOLExact (.while (.var 11) (.assign 12 (.var 13)) : CrepHOL8) =
+    [11, 12, 13] &&
+  crepVarProgHOLExact (.call none (ofString "f") [.var 14, .const 0] : CrepHOL8) =
+    [14] &&
+  crepVarProgHOLExact
+      (.call (some ([15], none)) (ofString "f") [.var 16] : CrepHOL8) =
+    [16, 15] &&
+  crepVarProgHOLExact
+      (.call (some ([17], some (18, .assign 19 (.var 20)))) (ofString "f")
+        [.var 21] : CrepHOL8) = [21, 17, 19, 20] &&
+  crepVarProgHOLExact (.extCall (ofString "ffi") 22 23 24 25 : CrepHOL8) =
+    [22, 23, 24, 25] &&
+  crepVarProgHOLExact (.return [.var 26, .const 0] : CrepHOL8) = [26] &&
+  crepVarProgHOLExact (.shMem .store 27 (.var 28) : CrepHOL8) = [27, 28] &&
+  crepVarProgHOLExact (.primitive [29, 30] .addCarry [31, 32] : CrepHOL8) =
+    [29, 30, 31, 32] &&
+  crepVarProgHOLExact (.skip : CrepHOL8) = []
+
+#guard crepVarProgHOLExactCakeParity
+
+def crepVmaxProgHOLExactCakeParity : Bool :=
+  crepVmaxProgHOLExact (.skip : CrepHOL8) = 0 &&
+  crepVmaxProgHOLExact
+      (.call (some ([8], some (9, .assign 10 (.var 11)))) (ofString "f")
+        [.var 7] : CrepHOL8) = 11 &&
+  crepVmaxProgHOLExact (.extCall (ofString "ffi") 12 13 14 15 : CrepHOL8) = 15 &&
+  crepVmaxProgHOLExact
+      (.seq (.assign 4 (.var 3)) (.return [.var 9]) : CrepHOL8) = 9
+
+#guard crepVmaxProgHOLExactCakeParity
+
+#guard crepVarProgHOLExact
+    (.seq
+      (.call (some ([12], some (3, .assign 13 (.var 14)))) (ofString "f")
+        [.var 10, .var 11])
+      (.extCall (ofString "g") 20 21 22 23) : CrepHOL8) =
+    [10, 11, 12, 13, 14, 20, 21, 22, 23]
+#guard crepVmaxProgHOLExact
+    (.seq
+      (.call (some ([12], some (3, .assign 13 (.var 14)))) (ofString "f")
+        [.var 10, .var 11])
+      (.extCall (ofString "g") 20 21 22 23) : CrepHOL8) = 23
+
 #guard crepVmaxProg
     (.seq (.assign 4 (.var 3)) (.return [.var 9]) : CrepProg Nat) = 9
 #guard crepHasReturn (.return [.const 0] : CrepProg Nat)
