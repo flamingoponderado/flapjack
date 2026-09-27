@@ -358,9 +358,10 @@ declaration is the standard translation of HOL's type-indexed `'a word`
 (dimension `dimindex (:α)`) to Lean's positive-width `BitVec width` and of HOL's
 `'ffi ffi_state` to a universe-0 Lean host type `σ : Type`. The tagged
 declaration must name `BitVec`, or name a reviewed width-indexed carrier
-structure (declared locally or reached through imports) whose own header carries
-`[NeZero <width>]` for its width parameter and some field of that SAME owner
-mentions `BitVec <width>` (directly, or through the single reviewed word abbrev
+structure or inductive family (declared locally or reached through imports)
+whose own header carries `[NeZero <width>]` for its width parameter and some
+field or constructor payload of that SAME owner mentions `BitVec <width>`
+(directly, or through the single reviewed word abbrev
 `RiscV.Word <width>` at `Flapjack/RiscV/Model.lean:17` (`abbrev Word (width :
 Nat) := BitVec width`), which counts as the same `BitVec` carrier at that same
 width identifier) with that same width identifier; the carrier is
