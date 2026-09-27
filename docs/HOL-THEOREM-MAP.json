@@ -12747,7 +12747,7 @@
   {
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
     "hol_name": "evaluate_def",
-    "hol_line": 780,
+    "hol_line": 556,
     "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
     "lean_name": "evaluateHOLFiniteState_decCall_total",
     "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
@@ -12757,7 +12757,7 @@
       "code",
       "eshapes"
     ],
-    "reviewer": "flapjack-luna-a source comparison (2026-09-27; bead flapjack-qj5.12.6): compared with the DecCall conjunct at panSemScript.sml:694-714 in the Definition evaluate_def at line 556 and its line-780 theorem restatement. The Lean equation has exactly the constructor inputs and result/state pair: OPT_MMAP eval of arguments, lookup_code, zero-clock timeout with empty_locals, entry clock decrement/new locals, fix_clock body pair, NONE/Break/Continue to Error, both return shape checks, continuation after set_var using caller locals, res_var restoration, and empty_locals for other outcomes. There are no hargs/hlookup/hclock selectors, target-result assumptions, or recursive assembly-marker branch. Source helpers implement the same HOL operations: callEntryStateHOLFinite decrements clock/sets newlocals, fixClockHOLFinite preserves the result, shapeEqHOL implements HOL shape equality, and HolFiniteMapExact.resVarEq implements res_var/FLOOKUP/FUPDATE. PanSemStateFiniteExact is the matching 13-field state carrier; the four named maps use the same-module canonical HolFiniteMapExact witness. The width-indexed BitVec/NeZero carrier is the reviewed HOL positive word translation. The qualifiers record only those carrier translations; all statement branches were compared directly with the cited HOL clause.",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-27; bead flapjack-qj5.12.6): compared with the DecCall conjunct at panSemScript.sml:694-714 in the original Definition evaluate_def at line 556; the retained fix_clock means it is NOT the line-780 rewritten conjunct. The Lean equation has exactly the constructor inputs and result/state pair: OPT_MMAP eval of arguments, lookup_code, zero-clock timeout with empty_locals, entry clock decrement/new locals, fix_clock body pair, NONE/Break/Continue to Error, both return shape checks, continuation after set_var using caller locals, res_var restoration, and empty_locals for other outcomes. There are no hargs/hlookup/hclock selectors, target-result assumptions, or recursive assembly-marker branch. Source helpers implement the same HOL operations: callEntryStateHOLFinite decrements clock/sets newlocals, fixClockHOLFinite preserves the result, shapeEqHOL implements HOL shape equality, and HolFiniteMapExact.resVarEq implements res_var/FLOOKUP/FUPDATE. PanSemStateFiniteExact is the matching 13-field state carrier; the four named maps use the same-module canonical HolFiniteMapExact witness. The width-indexed BitVec/NeZero carrier is the reviewed HOL positive word translation. The qualifiers record only those carrier translations; all statement branches were compared directly with the cited HOL clause.",
     "words_as_type_indexed_bitvec": true
   },
   {
