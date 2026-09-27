@@ -698,6 +698,66 @@ theorem evalPanSemRecursiveCallFiniteContext_decCall_return_shape_mismatch
       simp [hreturn]
     rw [if_neg hshapeNe]
 
+/-- FLAPJACK-SPECIFIC context normalizer (no standalone HOL declaration): a
+    generated recursive-call context is interchangeable with the named
+    DecCall entry context once their state projections agree. The proof
+    arguments stored in the dependent address deciders are deliberately left
+    opaque; `evalPanSemRecursiveCallFiniteContext_state_eq` only needs state
+    equality. -/
+theorem evalPanSemRecursiveCallFiniteContext_callEntryContext_state_normalize
+    {width : Nat} {σ : Type} [NeZero width]
+    (program : ProgHOL width) (context generatedContext : FiniteEvalContext width σ)
+    (callee : HolFiniteMapExact MlS (ValueHOL width))
+    (hstate : generatedContext.state = callEntryStateHOLFinite context.state callee) :
+    evalPanSemRecursiveCallFiniteContext program generatedContext =
+      evalPanSemRecursiveCallFiniteContext program
+        (callEntryContextHOLFinite context callee) := by
+  apply evalPanSemRecursiveCallFiniteContext_state_eq
+  simpa [callEntryContextHOLFinite, FiniteEvalContext.withState] using hstate
+
+/-- FLAPJACK-SPECIFIC proof wrapper (no standalone HOL declaration): the
+    DecCall body premise may be supplied at the canonical named entry context.
+    The recursive equation creates an extensionally identical `withState`
+    context with equation-compiler-generated domain proofs; evaluator
+    state-independence bridges those contexts without exposing or rewriting
+    their dependent proof arguments. This keeps the generated DecCall equation
+    and existing projection interface unchanged. -/
+theorem evalPanSemRecursiveCallFiniteContext_decCall_return_shape_mismatch_of_canonical_body
+    {width : Nat} {σ : Type} [NeZero width]
+    (resultName : MlS) (shape : ShapeHOL) (function : MlS)
+    (arguments : List (ExpHOL width)) (continuation : ProgHOL width)
+    (context : FiniteEvalContext width σ) (values : List (ValueHOL width))
+    (body : ProgHOL width) (callee : HolFiniteMapExact MlS (ValueHOL width))
+    (returnShape : ShapeHOL) (value : ValueHOL width)
+    (bodyContext : FiniteEvalContext width σ)
+    (hargs : evalListHOLFinite context.state
+      (h := context.memaddrsDecidable) arguments = some values)
+    (hlookup : lookupCodeHOLFinite context.state.code.lookup function values =
+      some (body, callee, returnShape))
+    (hclock : context.state.clock ≠ 0)
+    (hbody : evalPanSemRecursiveCallFiniteContext body
+      (callEntryContextHOLFinite context callee) =
+      some (some (.returned value), bodyContext))
+    (hshape : shapeEqHOL (shapeOfHOLExact value) shape = false ∨
+      shapeEqHOL (shapeOfHOLExact value) returnShape = false) :
+    evalPanSemRecursiveCallFiniteContext
+        (.decCall resultName shape function arguments continuation) context =
+      some (some .error,
+        callFixedContextHOLFinite (callEntryStateHOLFinite context.state callee)
+          (some (.returned value)) bodyContext) := by
+  have hbodyGenerated : evalPanSemRecursiveCallFiniteContext body
+      (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl) =
+      some (some (.returned value), bodyContext) := by
+    calc
+      _ = evalPanSemRecursiveCallFiniteContext body
+          (callEntryContextHOLFinite context callee) := by
+        apply evalPanSemRecursiveCallFiniteContext_callEntryContext_state_normalize
+        rfl
+      _ = _ := hbody
+  exact evalPanSemRecursiveCallFiniteContext_decCall_return_shape_mismatch
+    resultName shape function arguments continuation context values body callee
+    returnShape value bodyContext hargs hlookup hclock hbodyGenerated hshape
+
 /-- HOL `evaluate_def` `DecCall` return branch: when the body returns a value
     whose shape matches both the declaration and code entry, the continuation
     runs from `callContinuationContextHOLFinite` (caller locals plus the result
