@@ -13864,5 +13864,13 @@
     "lean_name": "compileExpListValRelHOL",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.4.1): list-level companion of HOL pan_to_crepProofScript.sml:171-198 (the RStruct eval_ind induction step); Flapjack-specific helper, no standalone HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "compileExpValRelHOL_rstruct",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.4): exact RStruct case of HOL pan_to_crepProofScript.sml:171-198; Flapjack-specific case lemma, no standalone HOL declaration (HOL proves it inside pc_compile_correct)."
   }
 ]
