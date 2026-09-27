@@ -1118,4 +1118,71 @@ theorem evalPanValueExps_list_correspondence {width : Nat} [NeZero width]
                   simp only [PanSemStateFiniteExact.evalListHOLFinite, evalListHOLExact, h3,
                     hexactList]
 
+/-! ### Word-projection helpers for the Op arm (flapjack-rdc.3.2) -/
+
+/-- The executable/exact value codec holds only for word payloads (forward
+    direction). -/
+theorem panValueCodecRel_exists_word {width : Nat} [NeZero width]
+    (production : PanValue (BitVec width)) (exact : ValueHOL width)
+    (h : PanValueCodecRel production exact) :
+    ∃ word : BitVec width, production = .word word ∧ exact = .val (.word word) := by
+  cases exact with
+  | val wrapper =>
+      cases wrapper with
+      | word word => exact ⟨word, h, rfl⟩
+  | rStruct fields => change False at h; exact h.elim
+  | nStruct name fields => change False at h; exact h.elim
+
+/-- Every exact value related to an executable value is a word. -/
+theorem panSemDeclarationValueListRel_all_valueIsWord {width : Nat} [NeZero width] :
+    ∀ (productions : List (PanValue (BitVec width))) (exacts : List (ValueHOL width)),
+      PanSemDeclarationValueListRel PanValueCodecRel productions exacts →
+      exacts.all valueIsWord = true := by
+  intro productions
+  induction productions with
+  | nil =>
+      intro exacts h
+      cases exacts with
+      | nil => rfl
+      | cons exact restE => change False at h; exact h.elim
+  | cons production rest ih =>
+      intro exacts h
+      cases exacts with
+      | nil => change False at h; exact h.elim
+      | cons exact restE =>
+          simp only [PanSemDeclarationValueListRel] at h
+          obtain ⟨hhead, htail⟩ := h
+          obtain ⟨word, hpw, hexw⟩ := panValueCodecRel_exists_word production exact hhead
+          subst hpw
+          subst hexw
+          simp only [List.all_cons, valueIsWord, Bool.true_and]
+          exact ih restE htail
+
+/-- Projecting the executable values to words agrees with the exact `valueWord`
+    list. -/
+theorem panSemDeclarationValueListRel_mapM_projection {width : Nat} [NeZero width] :
+    ∀ (productions : List (PanValue (BitVec width))) (exacts : List (ValueHOL width)),
+      PanSemDeclarationValueListRel PanValueCodecRel productions exacts →
+      productions.mapM panValueWordProjection = some (exacts.map valueWord) := by
+  intro productions
+  induction productions with
+  | nil =>
+      intro exacts h
+      cases exacts with
+      | nil => rfl
+      | cons exact restE => change False at h; exact h.elim
+  | cons production rest ih =>
+      intro exacts h
+      cases exacts with
+      | nil => change False at h; exact h.elim
+      | cons exact restE =>
+          simp only [PanSemDeclarationValueListRel] at h
+          obtain ⟨hhead, htail⟩ := h
+          obtain ⟨word, hpw, hexw⟩ := panValueCodecRel_exists_word production exact hhead
+          subst hpw
+          subst hexw
+          simp only [List.mapM_cons, panValueWordProjection, valueWord, List.map_cons]
+          rw [ih restE htail]
+          rfl
+
 end Flapjack
