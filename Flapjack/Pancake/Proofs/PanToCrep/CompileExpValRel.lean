@@ -284,6 +284,142 @@ theorem compileExpListValRelHOL {width : Nat} {σ : Type} [NeZero width]
                     rw [hwfouter, hheadRel.2.2.2, htailWf]
                     rfl
 
+/-- `cexpHeads` over a list of singleton lists. -/
+private theorem cexpHeads_map_singleton {β : Type} (l : List β) :
+    cexpHeads (l.map (fun b => [b])) = some l := by
+  induction l with
+  | nil => rfl
+  | cons b bs ih => simp only [List.map_cons, cexpHeads, ih]
+
+/-- `cexpHeads` prepends a singleton head. -/
+private theorem cexpHeads_cons_singleton {β : Type} (b : β) (l : List (List β))
+    (heads : List β) (h : cexpHeads l = some heads) :
+    cexpHeads ([b] :: l) = some (b :: heads) := by
+  simp only [cexpHeads]
+  rw [h]
+
+/-- A word-valued exact value is `Val (Word w)` for some word `w`. -/
+private theorem valueIsWord_eq_true_iff {width : Nat} [NeZero width] (value : ValueHOL width) :
+    valueIsWord value = true ↔ ∃ word, value = ValueHOL.val (HolWordLab.word word) := by
+  cases value with
+  | val lab => cases lab with
+    | word word => simp [valueIsWord]
+  | rStruct fields => simp [valueIsWord]
+  | nStruct name fields => simp [valueIsWord]
+
+/-- List-level heads correspondence used by the `Op`/`Panop` cases of HOL
+    `compile_exp_val_rel` (`cakeml/pancake/proofs/pan_to_crepProofScript.sml`).
+    Given the per-member statement (the `eval_ind` induction hypothesis family)
+    and a successful, all-word `evalListHOLFinite`, the `cexpHeads` of the
+    compiled first components evaluates elementwise to the words of the source
+    values. Untagged Flapjack-specific infrastructure. -/
+theorem cexpHeads_compileExpListValRelHOL {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) [hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width σ) [ht : DecidablePred targetState.memaddrs]
+    (fields : List (ExpHOL width))
+    (hrel : ∀ (expression : ExpHOL width), expression ∈ fields →
+        (value : ValueHOL width) → (expressions : List (CrepExpHOL width)) →
+        (shape : ShapeHOL) →
+        state.evalHOLFinite expression = some value →
+        localisedExpHOL expression = true →
+        compileExpExactHOLW context expression = (expressions, shape) →
+        expressions.map (evalCrepSemHOLExp targetState) = (flattenHOL value).map some ∧
+        expressions.length = sizeOfShapeHOL shape ∧
+        shapeOfHOLExact value = shape ∧
+        isWfShapeExactHOL ([] : StructContextExact) shape = true)
+    : ∀ (values : List (ValueHOL width))
+        (compiled : List (List (CrepExpHOL width) × ShapeHOL)),
+      state.evalListHOLFinite fields = some values →
+      everyExpListHOL (width := width) localisedExpPredHOL fields = true →
+      values.all valueIsWord = true →
+      compileExpExactHOLWList context fields = compiled →
+      ∃ heads : List (CrepExpHOL width),
+        cexpHeads (compiled.map Prod.fst) = some heads ∧
+        heads.mapM (evalCrepSemHOLExp targetState) =
+          some (values.map (fun value => HolWordLab.word (valueWord value))) := by
+  induction fields with
+  | nil =>
+      intro values compiled heval _hevery hall hcompile
+      obtain rfl : values = [] := by
+        simpa only [PanSemStateFiniteExact.evalListHOLFinite_eq_toExact, evalListHOLExact,
+          Option.some.injEq] using heval.symm
+      obtain rfl : compiled = [] := by
+        simpa only [compileExpExactHOLWList] using hcompile.symm
+      exact ⟨[], by simp only [List.map_nil, cexpHeads], by simp [List.mapM_nil]⟩
+  | cons head tail ih =>
+      intro values compiled heval hevery hall hcompile
+      have hdec : everyExpListHOL (width := width) localisedExpPredHOL (head :: tail) =
+          (everyExpHOL localisedExpPredHOL head &&
+            everyExpListHOL (width := width) localisedExpPredHOL tail) := rfl
+      rw [hdec, Bool.and_eq_true] at hevery
+      obtain ⟨hlocHead, hlocTail⟩ := hevery
+      have hlocHead' : localisedExpHOL head = true := hlocHead
+      rw [PanSemStateFiniteExact.evalListHOLFinite_eq_toExact, evalListHOLExact] at heval
+      rw [compileExpExactHOLWList] at hcompile
+      cases hh : evalHOLExact state.toExact head with
+      | none => simp [hh] at heval
+      | some headValue =>
+          cases ht' : evalListHOLExact state.toExact tail with
+          | none => simp [hh, ht'] at heval
+          | some tailValues =>
+              have hvalues : headValue :: tailValues = values := by
+                simpa only [hh, ht', Option.some.injEq] using heval
+              rw [← hvalues] at hall
+              simp only [List.all_cons, Bool.and_eq_true] at hall
+              obtain ⟨hheadWord, htailWord⟩ := hall
+              obtain ⟨word, rfl⟩ := (valueIsWord_eq_true_iff headValue).mp hheadWord
+              have hevalHead : state.evalHOLFinite head = some (.val (.word word)) := by
+                rw [PanSemStateFiniteExact.evalHOLFinite_eq_toExact]; exact hh
+              have hevalTail : state.evalListHOLFinite tail = some tailValues := by
+                rw [PanSemStateFiniteExact.evalListHOLFinite_eq_toExact]; exact ht'
+              cases hhead : compileExpExactHOLW context head with
+              | mk headEs headShape =>
+                  rw [hhead] at hcompile
+                  have hcompiled : compiled =
+                      (headEs, headShape) :: compileExpExactHOLWList context tail :=
+                    hcompile.symm
+                  have hheadRel :=
+                    hrel head (by simp) (.val (.word word)) headEs headShape
+                      hevalHead hlocHead' hhead
+                  have htailRel :
+                      ∀ (expression : ExpHOL width), expression ∈ tail →
+                        (value : ValueHOL width) → (expressions : List (CrepExpHOL width)) →
+                        (shape : ShapeHOL) →
+                        state.evalHOLFinite expression = some value →
+                        localisedExpHOL expression = true →
+                        compileExpExactHOLW context expression = (expressions, shape) →
+                        expressions.map (evalCrepSemHOLExp targetState) =
+                            (flattenHOL value).map some ∧
+                          expressions.length = sizeOfShapeHOL shape ∧
+                          shapeOfHOLExact value = shape ∧
+                          isWfShapeExactHOL ([] : StructContextExact) shape = true :=
+                    fun expression hmem => hrel expression (List.mem_cons_of_mem head hmem)
+                  obtain ⟨headsTail, hcexpTail, hmapTail⟩ :=
+                    ih htailRel tailValues (compileExpExactHOLWList context tail)
+                      hevalTail hlocTail htailWord rfl
+                  have hheadMap : headEs.map (evalCrepSemHOLExp targetState) =
+                      [some (.word word)] := by
+                    rw [hheadRel.1]
+                    simp only [flattenHOL, List.map_cons, List.map_nil]
+                  have hlen1 : headEs.length = 1 := by
+                    have h := congrArg List.length hheadMap
+                    simpa only [List.length_map, List.length_cons, List.length_nil] using h
+                  obtain ⟨x, hx⟩ := List.length_eq_one_iff.mp hlen1
+                  subst hx
+                  have hxEval : evalCrepSemHOLExp targetState x = some (.word word) := by
+                    have h := hheadMap
+                    rw [List.map_cons, List.map_nil] at h
+                    exact (List.cons.inj h).1
+                  refine ⟨x :: headsTail, ?_, ?_⟩
+                  · rw [hcompiled]
+                    rw [show List.map Prod.fst (([x], headShape) :: compileExpExactHOLWList context tail) =
+                          [x] :: List.map Prod.fst (compileExpExactHOLWList context tail) from rfl]
+                    exact cexpHeads_cons_singleton x _ headsTail hcexpTail
+                  · rw [List.mapM_cons]
+                    rw [hxEval, hmapTail, ← hvalues]
+                    rfl
+
 /-- Exact `RStruct` case of HOL `compile_exp_val_rel`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:171-198`). The HOL proof
     inducts over the sub-expression list with the per-element `eval_ind`
