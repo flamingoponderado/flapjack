@@ -457,13 +457,16 @@ example :
           (expToHOL (.const (4 : BitVec 8))))) =
       compileProgRiscV exactStoreBridgeContext.toProduction
         (.store (.rStruct []) (.const 4)) := by
-  apply compileProgExactHOLW_store_empty_address_bridge
-    (exactAddressShape := .comb []) (productionAddressShape := .comb [])
-  · simp [compileExpExactHOLW, compileExpExactHOLWList, expToHOL]
-  · simp [compileExpHOL, compileExpHOL.compileExpListHOL]
+  apply compileProgExactHOLW_store_output_bridge
+    (exactAddresses := []) (exactAddressShape := .comb [])
+    (exactValues := [.const 4]) (exactValueShape := .one)
+    (productionAddresses := []) (productionAddressShape := .comb [])
+    (productionValues := [.const 4]) (productionValueShape := .one)
+  all_goals simp [compileExpExactHOLW, compileExpExactHOLWList, expToHOL,
+    compileExpHOL, compileExpHOL.compileExpListHOL, shapeOfHOL, crepExpOfHOL]
 
 example :
-    crepProgOfHOL (compileProgExactHOLW exactStoreLengthMismatchContext
+  crepProgOfHOL (compileProgExactHOLW exactStoreLengthMismatchContext
         (.store (expToHOL (.var .local
           (toStringOfBytes exactStoreAddressName) : Exp (BitVec 8)))
           (expToHOL (.var .local
@@ -472,12 +475,11 @@ example :
         (.store (.var .local (toStringOfBytes exactStoreAddressName))
           (.var .local (toStringOfBytes exactStoreValueName))) := by
   have hnameNe : ofString "value" ≠ ofString "ad" := by decide
-  apply compileProgExactHOLW_store_length_mismatch_bridge
-    (exactAddress := .var 3) (exactAddressRest := [])
-    (exactAddressShape := .one) (exactValues := []) (exactValueShape := .one)
-    (productionAddress := .var 3) (productionAddressRest := [])
-    (productionAddressShape := .one) (productionValues := [])
-    (productionValueShape := .one)
+  apply compileProgExactHOLW_store_output_bridge
+    (exactAddresses := [.var 3]) (exactAddressShape := .one)
+    (exactValues := []) (exactValueShape := .one)
+    (productionAddresses := [.var 3]) (productionAddressShape := .one)
+    (productionValues := []) (productionValueShape := .one)
   · simp [compileExpExactHOLW, expToHOL, exactStoreLengthMismatchContext,
       exactStoreAddressName, HolFiniteMapExact.lookup_update, FUPDATE,
       ofString_toStringOfBytes, hnameNe]
@@ -496,9 +498,9 @@ example :
       simp [exactStoreLengthMismatchContext, exactStoreValueName,
         HolFiniteMapExact.lookup_update, FUPDATE, shapeOfHOL]
     simp [compileExpHOL, FLOOKUP, hlookup]
+  · simp [crepExpOfHOL]
   · rfl
   · simp [shapeOfHOL]
-  · decide
 
 def exactLocalAssignContext (destinationNames sourceNames : List Nat) :
     CompileExpContextExact 8 where
