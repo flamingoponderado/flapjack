@@ -682,6 +682,34 @@
   },
   {
     "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
+    "hol_name": "evaluate_def",
+    "lean_path": "Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean",
+    "lean_name": "evalCrepSemHOLProgExact_seq_fixClockFree",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "reviewer": "Source comparison (bead flapjack-4ac.5.16.5.26): the Seq clause of HOL evaluate_def as rebound at crepSemScript.sml:443 (evaluate_def = REWRITE_RULE [fix_clock_evaluate] evaluate_def). The primal Seq clause (:303-306) fixes the clock around the first command; line 443 eliminates that fix_clock via fix_clock_evaluate (:432-437), leaving let (res,s1) = evaluate (c1,s) in if res = NONE then evaluate (c2,s1) else (res,s1). The Lean statement is that clause over the no-decider exact evaluator: evalCrepSemHOLProgExact state (.seq first second) = (let step := evalCrepSemHOLProgExact state first; match step with | (none, stepState) => evalCrepSemHOLProgExact stepState second | (some _, _) => step). Derived from the reviewed line-240 no-decider Seq equation evalCrepSemHOLProgExact_seq and the reviewed exact fix_clock identity fixClockCrepSemHOL_evalCrepSemHOLProgExact (bead flapjack-4ac.5.16.5.25). fmap_as_finite_support records the CrepSemHOLState finite-support carrier; words_as_type_indexed_bitvec records the dimension-indexed BitVec translation.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
+    "hol_name": "evaluate_def",
+    "lean_path": "Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean",
+    "lean_name": "evalCrepSemHOLProgExact_while_fixClockFree",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "reviewer": "Source comparison (bead flapjack-4ac.5.16.5.29): the While clause of HOL evaluate_def as rebound at crepSemScript.sml:443 (evaluate_def = REWRITE_RULE [fix_clock_evaluate] evaluate_def). The primal While clause (:314-325) wraps the body run in fix_clock (dec_clock s): let (res,s1) = fix_clock (dec_clock s) (evaluate (c,dec_clock s)) in case res of SOME (Continue 0) => evaluate (While e c,s1) | NONE => evaluate (While e c,s1) | SOME (Break 0) => (NONE,s1) | _ => (exit_loop res,s1). Line 443 eliminates the fix_clock via fix_clock_evaluate (:432-437), leaving a plain let (res,s1) = evaluate (c,dec_clock s) in ... . The Lean statement is that clause over the no-decider exact evaluator: evalCrepSemHOLProgExact state (.while condition body) = the condition match with the dec-clocked body run and the Continue/NONE re-entry, Break 0 => (none, loopState), other => (exitLoopCrepResult result, loopState) branches. Derived from the reviewed line-240 no-decider While equation evalCrepSemHOLProgExact_while_unstamped and the reviewed exact fix_clock identity fixClockCrepSemHOL_evalCrepSemHOLProgExact (bead flapjack-4ac.5.16.5.25). fmap_as_finite_support records the CrepSemHOLState finite-support carrier; words_as_type_indexed_bitvec records the dimension-indexed BitVec translation.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
     "hol_name": "eval_def",
     "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
     "lean_name": "evalCrepHolFiniteStateSource_load",
@@ -14675,6 +14703,25 @@
     "reviewer": "flapjack-ds10 (bead flapjack-4ac.5.81.14; resolves the PR #1168 review HOLD on the withdrawn compile_exp_val_rel tag): source comparison against HOL compile_exp_val_rel (cakeml/pancake/proofs/pan_to_crepProofScript.sml:130). The six hypotheses and four conclusions match clause-for-clause (eval/evalHOLFinite; state_rel/panToCrepStateRelFiniteExact; code_rel/codeRelExactHOLW; locals_rel/panToCrepLocalsRelFiniteExact; localised_exp/localisedExpHOL; compile_exp/compileExpExactHOLW; and MAP (eval t) es = MAP SOME (flatten v) / expressions.map (evalCrepSemHOLExp targetState) = (flattenHOL value).map some; LENGTH/sizeOfShapeHOL; shape_of/shapeOfHOLExact; is_wf_shape_nil/isWfShapeExactHOL []). The combined qualifier records the two representation differences: HOL is polymorphic in the word dimension ('a word, dimindex) and the FFI-state type (('a,'b) state), while the Lean statement fixes the positive width BitVec width with [NeZero width] and the universe-0 host sigma : Type (words_as_type_indexed_bitvec); and the HOL state/context maps are the finite-support carriers PanSemStateFiniteExact/CrepSemHOLState/PanToCrepContextExact. The relation entries record exactly the fields the premises traverse: state_rel reads PanSemStateFiniteExact.globals; code_rel reads PanSemStateFiniteExact.code, CrepSemHOLState.code, PanToCrepContextExact.funcs and .eids; locals_rel reads PanToCrepContextExact.vars and the locals fields of both states. Fields read only inside the separately tagged and source-reviewed evaluators (source.eshapes through evalHOLFinite, targetState.globals through evalCrepSemHOLExp) occur in no relation hypothesis or conclusion and so are not listed; the qualifier covers only the maps the relation premises traverse. Same-module witnesses holFmapAsFiniteSupportRelationWitness_{PanSemStateFiniteExact,CrepSemHOLState,PanToCrepContextExact} validate the three carriers; no cross-assistant agreement theorem is required (docs/SOUNDNESS.md)."
   },
   {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "eval_map_comp_exp_flat_eq",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "evalMapCompExpFlatEqHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.locals",
+      "CrepSemHOLState.code",
+      "CrepSemHOLState.locals",
+      "PanToCrepContextExact.vars",
+      "PanToCrepContextExact.funcs",
+      "PanToCrepContextExact.eids"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-28; bead flapjack-4ac.5.22) against HOL eval_map_comp_exp_flat_eq (pan_to_crepProofScript.sml:1055-1072). HOL quantifies argexps, args, source state s, target state t and ctxt; it assumes MAP (eval s) argexps = MAP SOME args, state_rel s t, code_rel ctxt s.code t.code, locals_rel ctxt s.locals t.locals, and EVERY localised_exp argexps. The Lean evalMapCompExpFlatEqHOL has the same universally quantified values and exactly those premises over PanSemStateFiniteExact, CrepSemHOLState and PanToCrepContextExact: the map-evaluation premise is expressions.map state.evalHOLFinite = values.map some; relations are panToCrepStateRelFiniteExact, codeRelExactHOLW and panToCrepLocalsRelFiniteExact; localization is List.all localisedExpHOL. Its conclusion is the same flattened result evaluation, using List.flatMap over compileExpExactHOLW output expressions, evalCrepSemHOLExp, and List.flatMap flattenHOL. The proof performs the HOL list induction and applies the exact tagged compile_exp_val_rel for each element; it adds no target-evaluation premise or other side condition. The finite-map relation qualifier lists exactly the fields traversed by the three relation premises, with the same-module carrier witnesses from CompileExpValRel. The BitVec width and universe-0 FFI host translation are recorded by words_as_type_indexed_bitvec."
+  },
+  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
@@ -15162,5 +15209,25 @@
     "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-c source comparison (2026-09-27; bead flapjack-4ac.4.60.1.1.4): HOL panPropsScript.sml:724 gives the exact high-run premise, non-timeout premise, and clock-sub conclusion. The genuine p = Annot tag text leaf follows the base case of recInduct evaluate_ind >> rw []; evaluate_def at panSemScript.sml:656 states evaluate (Annot _ _,s) = (NONE,s). Lean retains the source statement shape with no induction hypothesis or extra premise, over the same-module PanPropsEvalStateFiniteExact finite-support carrier and indexed-word translation. The full theorem remains open."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "evaluate_clock_sub",
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
+    "lean_name": "evaluateClockSubTickCaseHOLFinite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison (2026-09-27; bead flapjack-4ac.4.60.1.1.5): HOL panPropsScript.sml:724 gives the exact high-run premise, non-timeout premise, and clock-sub conclusion. The genuine p = Tick leaf follows recInduct evaluate_ind >> rw []; evaluate_def at panSemScript.sml:654-655 is if s.clock=0 then (SOME TimeOut,empty_locals s) else (NONE,dec_clock s). Lean retains the full result and post-state equation with no IH or extra premise. Proof uses the non-timeout premise to eliminate zero high clock and the post-state clock equation to prove the lower clock is positive and decrements to st.clock. Carrier qualifiers record the same-module PanPropsEvalStateFiniteExact finite-support carrier and indexed-word translation. The full theorem remains open."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "evaluate_clock_sub",
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
+    "lean_name": "evaluateClockSubReturnCaseHOLFinite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison (2026-09-27; bead flapjack-4ac.4.60.1.1.6): HOL panPropsScript.sml:724 has exactly the high-run equation, non-timeout premise, and low-clock conclusion used here, and recInduct evaluate_ind gives the Return case with no recursive induction hypothesis. HOL evaluate_def's Return clause at panSemScript.sml:638-644 evaluates e; none returns (SOME Error,s), while some value returns (SOME (Return value),empty_locals s) iff size_of_sh_with_ctxt s.structs (shape_of value) <= 32, otherwise (SOME Error,s). Lean uses the exact evalHOLExact, the same 32-bit shape-size branch, and the finite evaluate_def Return equation; no success or clock-bound premise is added. Carrier qualifiers record the PanPropsEvalStateFiniteExact owner for locals/globals/code/eshapes via HolFiniteMapExact and the indexed-word translation. The complete evaluate_clock_sub theorem remains open."
   }
 ]

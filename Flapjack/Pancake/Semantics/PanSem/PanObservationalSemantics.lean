@@ -12,25 +12,24 @@ otherwise returns the `build_lprefix_lub` of the clock-indexed FFI-event
 prefixes.
 
 This module provides a Flapjack-specific observational behaviour carrier and
-the clock-indexed entry evaluation over the already-ported exact clocked
-evaluator `evalPanSemRecursiveCallContextHOLExact`.  Its state and result
-carriers are the Flapjack-exact `PanSemStateExact`/`PanSemResultExact`, whose
-map fields are unrestricted lookup functions and whose domain membership is
-carried by `PanSemExactEvalContext` deciders; these are NOT HOL's finite-map
-and total-`word_lab` carriers.
+the clock-indexed entry evaluation by composing the recursive evaluator
+`evalPanSemRecursiveCallContextHOLExact`.  That evaluator uses
+`PanSemStateExact`: its `locals`, `globals`, `code`, and `eshapes` fields are
+unrestricted lookup functions rather than HOL finite maps, and its evaluation
+context carries `DecidablePred` witnesses for the two memory sets.  Although
+`PanSemResultExact` and the FFI event types follow the HOL constructors, this
+overall state/result construction is not an exact port of HOL's
+`evaluate (prog, s with clock := k)` type.
 
 -- FLAPJACK-SPECIFIC (no `@[hol]` tag): this is not an exact `@[hol]` port of
--- `panSem$semantics_def` because (a) the exact evaluator carries the two
--- domain-membership decision procedures inside `PanSemExactEvalContext` and its
--- state/output map carriers are unrestricted functions (not HOL's finite maps),
--- and (b) the divergence branch uses the shared `LoopLprefixLub` carrier whose
--- witness is a `panLprefixChain` proof, whereas HOL's `build_lprefix_lub` is
--- total (no chain hypothesis).  The clock-indexed chain of this evaluator is
--- proved as `evalPanSemRecursiveCallContextHOLExact_clock_ioEvents_lprefixChain`
--- (commit 7dc5f4aba, bead `flapjack-4ac.3.52.3.2`), and the total, no-hypothesis
--- definition `panSemanticsExactTotal` supplies it, but that still uses the
--- `panLprefixChain`-indexed `LoopLprefixLub` carrier rather than HOL's total
--- `build_lprefix_lub`, so no `@[hol]` tag is attached.
+-- `panSem$semantics_def`: (a) its evaluator context carries memory-set
+-- `DecidablePred` witnesses, and its state map fields are unrestricted lookup
+-- functions rather than HOL finite maps; (b) the divergence result stores a
+-- `PanLprefixLub` witness, not HOL's `build_lprefix_lub` result.  The clocked
+-- event family is proved to be a prefix chain, so `panSemanticsExactTotal`
+-- needs no caller-supplied chain hypothesis.  That proof does not establish
+-- that `PanLprefixLub` is HOL's `build_lprefix_lub`; the state and LUB carrier
+-- gaps remain, so no `@[hol]` tag is attached.
 -/
 
 namespace Flapjack
@@ -46,9 +45,9 @@ inductive PanSemExactOutcome where
   deriving DecidableEq, Repr
 
 /-- Observational behaviour of a panSem program, mirroring the HOL `semantics`
-result constructors (`Fail`/`Terminate`/`Diverge`).  The divergence case carries
-the event family and its least upper bound, exactly as in HOL's
-`build_lprefix_lub` construction. -/
+result constructors (`Fail`/`Terminate`/`Diverge`).  The divergence case uses
+Flapjack's `PanLprefixLub` carrier; no equivalence with HOL's
+`build_lprefix_lub` has been established. -/
 inductive PanSemExactBehaviour where
   | diverge (family : Nat → List HolIoEvent) (trace : PanLprefixLub family)
   | terminate (outcome : PanSemExactOutcome) (events : List HolIoEvent)
@@ -65,8 +64,10 @@ def panClockContext {width : Nat} {σ : Type} [NeZero width]
     PanSemExactEvalContext width σ :=
   context.withState { context.state with clock := clock } rfl rfl
 
-/-- Clock-indexed entry evaluation `evaluate (Call NONE start [], s with clock := k)`,
-returning the exact `(result option, state)` pair of HOL `evaluate`. -/
+/-- Clock-indexed entry evaluation for `Call NONE start []` at absolute clock
+    `clock`.  It returns the corresponding result and state projection using
+    `PanSemStateExact`; this broad map carrier and its decidability context are
+    not HOL's finite-map state. -/
 def panEvaluateClock {width : Nat} {σ : Type} [NeZero width]
     (context : PanSemExactEvalContext width σ) (start : MlS) (clock : Nat) :
     Option (PanSemResultExact width) × PanSemStateExact width σ :=
@@ -140,11 +141,11 @@ noncomputable def panSemanticsExactWithLub {width : Nat} {σ : Type} [NeZero wid
   else
     .diverge _ divergenceLub
 
-/-- The clock-indexed entry-evaluation event family of `panEvaluateClock`
-agrees with the additive-clock family of the exact recursive evaluator started
-from the clock-0 context.  This is the bridge that lets the landed
-clock-indexed chain lemma apply to the absolute `s with clock := k` family of
-HOL `semantics_def`. -/
+/-- Flapjack-specific bridge lemma (no direct HOL declaration): the event family
+    of `panEvaluateClock` agrees with the additive-clock family of the recursive
+    evaluator started from the clock-0 context.  It lets the chain lemma apply
+    to the absolute `s with clock := k` family used by HOL `semantics_def`; the
+    state and LUB carrier differences in the module note still apply. -/
 theorem panExactResultEvents_panEvaluateClock {width : Nat} {σ : Type} [NeZero width]
     (context : PanSemExactEvalContext width σ) (start : MlS) (clock : Nat) :
     panExactResultEvents (panEvaluateClock context start clock) =
@@ -168,10 +169,11 @@ theorem panExactResultEvents_panEvaluateClock {width : Nat} {σ : Type} [NeZero 
       exact absurd ho (by simp)
   | some pair => simp
 
-/-- The clock-indexed event traces of the exact panSem entry evaluation form a
-pairwise prefix chain (no caller-supplied hypothesis): this discharges the
-`divergenceChain` obligation of HOL `semantics_def` from the already-proved
-clock-monotonicity of the exact evaluator. -/
+/-- Flapjack-specific bridge lemma (no direct HOL declaration): the clock-indexed
+    event traces used by this semantics construction form a pairwise prefix
+    chain, with no caller-supplied hypothesis.  It discharges the internal
+    `divergenceChain` argument using evaluator clock monotonicity; it does not
+    identify `PanLprefixLub` with HOL `build_lprefix_lub`. -/
 theorem panEvaluateClock_ioEvents_lprefixChain {width : Nat} {σ : Type} [NeZero width]
     (context : PanSemExactEvalContext width σ) (start : MlS) :
     panLprefixChain
@@ -180,9 +182,9 @@ theorem panEvaluateClock_ioEvents_lprefixChain {width : Nat} {σ : Type} [NeZero
     evalPanSemRecursiveCallContextHOLExact_clock_ioEvents_lprefixChain
       (panEntryProgram start) (panClockContext context 0)
 
-/-- HOL `panSem$semantics_def` with the shared prefix-LUB construction; the
-caller supplies the `lprefix_chain` proof of the clock-indexed event family
-(the documented deviation from HOL's total `build_lprefix_lub`). -/
+/-- Flapjack-specific variant of HOL `panSem$semantics_def` with an explicit
+    `PanLprefixLub` witness.  The total wrapper below derives the chain proof;
+    this variant is not identified with HOL's `build_lprefix_lub`. -/
 noncomputable def panSemanticsExact {width : Nat} {σ : Type} [NeZero width]
     (context : PanSemExactEvalContext width σ) (start : MlS)
     (divergenceChain : panLprefixChain
@@ -191,10 +193,11 @@ noncomputable def panSemanticsExact {width : Nat} {σ : Type} [NeZero width]
   panSemanticsExactWithLub context start
     (buildPanLprefixLub _ divergenceChain)
 
-/-- HOL `panSem$semantics_def` with the divergence LUB derived from the exact
-evaluator, so no prefix-chain hypothesis is required.  This is the
-evaluator-derived total instance of the source definition (still untagged
-pending coordinator source review). -/
+/-- Flapjack-specific observational composition for HOL `panSem$semantics_def`.
+    It derives the prefix-chain argument internally, but still uses
+    `PanSemStateExact` with unrestricted map fields and `PanLprefixLub`; neither
+    carrier is identified here with HOL's finite-map state and
+    `build_lprefix_lub`.  See the module note; no `@[hol]` tag is valid. -/
 noncomputable def panSemanticsExactTotal {width : Nat} {σ : Type} [NeZero width]
     (context : PanSemExactEvalContext width σ) (start : MlS) : PanSemExactBehaviour :=
   panSemanticsExact context start (panEvaluateClock_ioEvents_lprefixChain context start)
