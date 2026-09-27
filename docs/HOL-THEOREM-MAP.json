@@ -12238,7 +12238,17 @@
     "lean_name": "evaluateHOLFiniteState_seq",
     "statement_status": "reviewed_fmap_as_finite_support",
     "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
-    "reviewer": "flapjack-luna-a source comparison (2026-09-27; beads flapjack-qj5.3 and flapjack-yh3l): the Seq conjunct at panSemScript.sml:615 belongs to the source Definition evaluate_def at line 556, whose RHS explicitly applies fix_clock to the first evaluation pair. The separate line-780 theorem is REWRITE_RULE [fix_clock_evaluate] evaluate_def and removes that explicit fix_clock, so this Lean statement is tagged to line 556. evaluateHOLFiniteState_seq exposes both recursive calls as total result-option × state pairs, fixes the first pair with fixClockHOLFinite, and branches on the same NONE result; its internal optional assembly marker is absent from the statement. The proof obtains total outputs for both recursive calls and adds no semantic premise. The finite state uses the four named HolFiniteMapExact fields and their same-module canonical roundtrip witness; the qualifier records only this carrier translation. This is a staged case, not the full conjunction: exact 21-clause assembly remains open under flapjack-qj5.9."
+    "reviewer": "flapjack-luna-a source comparison (2026-09-27; beads flapjack-qj5.3 and flapjack-qj5.11): the Seq conjunct at panSemScript.sml:615 belongs to the source Definition evaluate_def at line 556, whose RHS explicitly applies fix_clock to the first evaluation pair. The separate line-780 theorem is REWRITE_RULE [fix_clock_evaluate] evaluate_def and removes that explicit fix_clock, so this Lean statement is tagged to line 556. evaluateHOLFiniteState_seq exposes both recursive calls as total result-option × state pairs, fixes the first pair with fixClockHOLFinite, and branches on the same NONE result; its internal optional assembly marker is absent from the statement. The proof obtains total outputs for both recursive calls and adds no semantic premise. The finite state uses the four named HolFiniteMapExact fields and their same-module canonical roundtrip witness; the qualifier records only this carrier translation. This is a staged case, not the full conjunction: exact 21-clause assembly remains open under flapjack-qj5.9."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 556,
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
+    "lean_name": "evaluateHOLFiniteState_while_total",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "reviewer": "flapjack-luna-a source comparison (2026-09-27; bead flapjack-qj5.8): the While conjunct at panSemScript.sml:630 belongs to Definition evaluate_def line 556. It evaluates the condition in the input state; non-word/failure returns Error with that state; a zero word returns NONE with that state; a nonzero word times out with empty_locals at clock zero; otherwise it evaluates the body at dec_clock s, applies fix_clock to the body pair, recurs on NONE/Continue, converts Break to NONE, and propagates other results. The Lean statement exposes those same branches with the finite total pair evaluator and no assembly-marker none branch or result premise. The four finite-map fields use the same-module canonical HolFiniteMapExact roundtrip witness; the qualifier records only that representation. This is a staged case; full 21-clause assembly remains open under flapjack-qj5.9."
   },
   {
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
