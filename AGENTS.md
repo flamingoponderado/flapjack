@@ -305,21 +305,25 @@ two top-level equality conjuncts are required. The checker counts the top-level
 conjuncts `N` of the theorem's conclusion and requires, in the same module, one
 checked witness `holFmapAsFiniteSupportEqualityWitness_<declaration>_<i>` for
 each `i = 1..N`.
-Every witness must state an unconditional lookup equality with a `lookup` on
-both sides, must apply both lookups at the same key, must be syntactically
-associated with its numbered conjunct (each side of the `i`-th witness must
-contain the corresponding side of the `i`-th conjunct), must not be an `↔`, a
-self-equality, or have a premise that already assumes the relation, and must NOT
-mention the tagged theorem at all (this rejects the ignored-proof /
-threaded-argument pattern that passes a theorem application as a term). The
-qualifier is mutually exclusive with `fmap_as_finite_support`,
-`fmap_as_finite_support_result`, and `fmap_as_finite_support_relation`, cannot
-use `reviewed_exact`, and requires manifest status
-`reviewed_fmap_as_finite_support_equalities` with a source-comparison note in the
-reviewer field. The checker's checks are syntactic: it validates witness count,
-naming, lookup shape, same-key application, and per-conjunct association, but it
-does not prove that the Lean witnesses and conjuncts correspond to the HOL map
-equalities, so source review must still compare each numbered witness against the
+Every witness must state an unconditional equality with each side shaped
+precisely as `<map expression>.lookup <key>` (only safe outer parentheses may
+wrap a side), where the key is a universally bound identifier in the statement
+(no fixed keys, no wrapping `let`, prefix lookup, or nested term), must apply
+both lookups at the same key, must be syntactically associated with its numbered
+conjunct (each side of the `i`-th witness must be exactly the corresponding side
+of the `i`-th conjunct), must not be an `↔`, a self-equality, or have a premise
+that already assumes the relation, and must NOT mention the tagged theorem at all
+(this rejects the ignored-proof / threaded-argument pattern that passes a theorem
+application as a term, and the inert-`let` bypass that hides a reference to the
+tagged theorem behind a discarded binder). The qualifier is mutually exclusive
+with `fmap_as_finite_support`, `fmap_as_finite_support_result`, and
+`fmap_as_finite_support_relation`, cannot use `reviewed_exact`, and requires
+manifest status `reviewed_fmap_as_finite_support_equalities` with a
+source-comparison note in the reviewer field. The checker's checks are syntactic:
+it validates witness count, naming, exact equality shape, same-key application, a
+universally bound key, and per-conjunct association, but it does not prove that
+the Lean witnesses and conjuncts correspond to the HOL map equalities, so source
+review must still compare each numbered witness against the
 HOL equality and record that comparison in the reviewer note.
 
 **Port the executable path, too.** As HOL definitions are ported, make the

@@ -237,11 +237,11 @@ class HolAttributeSitesTest(unittest.TestCase):
         lines = [
             declaration + " := by constructor <;> rfl",
             "",
-            "theorem holFmapAsFiniteSupportEqualityWitness_slcTlcRwHOL_1 :",
+            "theorem holFmapAsFiniteSupportEqualityWitness_slcTlcRwHOL_1 (k : Nat) :",
             "    (HolFiniteMapExact.updateListEq HolFiniteMapExact.empty xs).lookup k =",
             "      (slcHOL xs args).lookup k := rfl",
             "",
-            "theorem holFmapAsFiniteSupportEqualityWitness_slcTlcRwHOL_2 :",
+            "theorem holFmapAsFiniteSupportEqualityWitness_slcTlcRwHOL_2 (k : Nat) :",
             "    (HolFiniteMapExact.updateListEq HolFiniteMapExact.empty ys).lookup k =",
             "      (tlcHOL ys args).lookup k := rfl",
         ]
@@ -402,6 +402,43 @@ class HolAttributeSitesTest(unittest.TestCase):
             lines, "Example.lean", declaration, "slcTlcRwHOL",
         )
         self.assertTrue(any("SAME key" in error for error in errors))
+
+    def test_fmap_as_finite_support_equalities_rejects_inert_let_bypass(self):
+        declaration = (
+            "theorem slcTlcRwHOL :\n"
+            "    (HolFiniteMapExact.empty = a) \u2227 (HolFiniteMapExact.empty = b)"
+        )
+        lines = [
+            declaration + " := by constructor <;> rfl",
+            "theorem holFmapAsFiniteSupportEqualityWitness_slcTlcRwHOL_1 (k : Nat) :",
+            "    (let _ := HolFiniteMapExact.empty; HolFiniteMapExact.empty.lookup k) =",
+            "      (let _ := a; HolFiniteMapExact.empty.lookup k) := rfl",
+            "theorem holFmapAsFiniteSupportEqualityWitness_slcTlcRwHOL_2 (k : Nat) :",
+            "    (HolFiniteMapExact.empty).lookup k = b.lookup k := rfl",
+        ]
+        errors = CHECKER["fmap_as_finite_support_equalities_errors"](
+            lines, "Example.lean", declaration, "slcTlcRwHOL",
+        )
+        self.assertTrue(
+            any("not associated" in error or "precisely" in error for error in errors)
+        )
+
+    def test_fmap_as_finite_support_equalities_rejects_fixed_key(self):
+        declaration = (
+            "theorem slcTlcRwHOL :\n"
+            "    (HolFiniteMapExact.empty = a) \u2227 (HolFiniteMapExact.empty = b)"
+        )
+        lines = [
+            declaration + " := by constructor <;> rfl",
+            "theorem holFmapAsFiniteSupportEqualityWitness_slcTlcRwHOL_1 :",
+            "    (HolFiniteMapExact.empty).lookup 0 = a.lookup 0 := rfl",
+            "theorem holFmapAsFiniteSupportEqualityWitness_slcTlcRwHOL_2 :",
+            "    (HolFiniteMapExact.empty).lookup 0 = b.lookup 0 := rfl",
+        ]
+        errors = CHECKER["fmap_as_finite_support_equalities_errors"](
+            lines, "Example.lean", declaration, "slcTlcRwHOL",
+        )
+        self.assertTrue(any("universally" in error for error in errors))
 
     def test_fmap_as_finite_support_result_rejects_ignored_proof_witness(self):
         lines = [
