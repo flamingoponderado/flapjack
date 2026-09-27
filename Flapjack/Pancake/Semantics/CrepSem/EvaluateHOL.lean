@@ -4457,4 +4457,46 @@ theorem evalCrepSemHOLProgExact_seq_fixClockFree {width : Nat} [NeZero width]
        | (some _, _) => step) := by
   rw [evalCrepSemHOLProgExact_seq, fixClockCrepSemHOL_evalCrepSemHOLProgExact]
 
+/-- Fix-clock-free `While` clause of HOL `evaluate_def` as rebound at
+`cakeml/pancake/semantics/crepSemScript.sml:443` (`evaluate_def =
+REWRITE_RULE [fix_clock_evaluate] evaluate_def`). The primal equation
+(`:314-325`) wraps the body run in `fix_clock (dec_clock s)`:
+`let (res,s1) = fix_clock (dec_clock s) (evaluate (c,dec_clock s)) in case res of
+SOME (Continue 0) => evaluate (While e c,s1) | NONE => evaluate (While e c,s1)
+| SOME (Break 0) => (NONE,s1) | _ => (exit_loop res,s1)`. The line-443 rebind
+eliminates the `fix_clock` with `fix_clock_evaluate` (`:432-437`), leaving a
+plain `let (res,s1) = evaluate (c,dec_clock s) in ...`. This theorem derives
+that clause over the no-decider exact evaluator by rewriting the reviewed
+line-240 `While` equation `evalCrepSemHOLProgExact_while_unstamped` with the
+exact `fixClockCrepSemHOL_evalCrepSemHOLProgExact` identity (bead
+`flapjack-4ac.5.16.5.25`). The statement must keep a named match on the
+unfixed body run so both sides are syntactically identical named matches. -/
+@[hol "cakeml/pancake/semantics/crepSemScript.sml" "evaluate_def" 443
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
+theorem evalCrepSemHOLProgExact_while_fixClockFree {width : Nat} [NeZero width]
+    {σ : Type} (state : CrepSemHOLState width σ) (condition : CrepExpHOL width)
+    (body : CrepProgHOL width) :
+    evalCrepSemHOLProgExact state (.while condition body) =
+      (match crepExactEvalExp state
+          (fun a => Classical.propDecidable (state.memaddrs a)) condition with
+       | some (.word w) =>
+           if w ≠ 0 then
+             if _hclock : state.clock = 0 then
+               (some .timeOut, CrepSemHOLState.emptyLocals state)
+             else
+               let decState := decClockCrepSemHOL state
+               match _hbody : evalCrepSemHOLProgExact decState body with
+               | (none, loopState) =>
+                   evalCrepSemHOLProgExact loopState (.while condition body)
+               | (some (.continue 0), loopState) =>
+                   evalCrepSemHOLProgExact loopState (.while condition body)
+               | (some (.break 0), loopState) => (none, loopState)
+               | (result, loopState) => (exitLoopCrepResult result, loopState)
+           else (none, state)
+       | _ => (some .error, state)) := by
+  rw [evalCrepSemHOLProgExact_while_unstamped]
+  simp only []
+  rw [fixClockCrepSemHOL_evalCrepSemHOLProgExact]
+
 end Flapjack
