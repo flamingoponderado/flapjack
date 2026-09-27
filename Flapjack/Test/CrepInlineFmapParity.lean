@@ -55,6 +55,34 @@ theorem exactMapDomsub :
   rw [CrepInlineFmapHOL.lookup_remove]
   simp
 
+/-- Exact-carrier `unreach_elim_def` leaves Skip unchanged and has no exit. -/
+theorem exactUnreachSkip :
+    unreachElimHOLExact (CrepProgHOL.skip : CrepProgHOL 8) = (.skip, none) := rfl
+
+/-- The exact source clause reports an ordinary Return exit. -/
+theorem exactUnreachReturn :
+    unreachElimHOLExact (CrepProgHOL.return [] : CrepProgHOL 8) =
+      (.return [], some .return) := rfl
+
+/-- HOL Seq short-circuits after a returning first command. -/
+theorem exactUnreachSeqShortCircuit :
+    unreachElimHOLExact
+        (CrepProgHOL.seq (.return []) .tick : CrepProgHOL 8) =
+      (.return [], some .return) := rfl
+
+/-- HOL While discards a body exit because the loop can execute zero times. -/
+theorem exactUnreachWhileDropsExit :
+    unreachElimHOLExact
+        (CrepProgHOL.while (.const 1) (.return []) : CrepProgHOL 8) =
+      (.while (.const 1) (.return []), none) := rfl
+
+/-- The first nested case in HOL's If merge gives the second exit when the
+    first branch reports Return. -/
+theorem exactUnreachIfMergePriority :
+    unreachElimHOLExact
+        (CrepProgHOL.ite (.const 0) (.return []) (.raise 0) : CrepProgHOL 8) =
+      (.ite (.const 0) (.return []) (.raise 0), some .exception) := rfl
+
 def fmapEntries : CrepInlineFmap Nat :=
   CrepInlineFmap.insert "f" ([7], CrepProg.skip) CrepInlineFmap.empty
 
@@ -255,6 +283,16 @@ theorem helperTailP :
     crepInlineTail helperP =
       .seq .tick (.seq (.dec 1 (.const 1) (.return [.var 2])) .skip) := by
   simp [helperP, crepInlineTail]
+
+/-- Exact-carrier regression for `inline_tail_def`, matching the direct HOL
+    `tail_p` row in `crep_inline_helper_probe.out` at width 8. -/
+private def helperExactP : CrepProgHOL 8 :=
+  .seq (.dec 1 (.const 1) (.return [.var 2])) .skip
+
+theorem helperTailExactP :
+    inlineTailHOLExact helperExactP =
+      .seq .tick (.seq (.dec 1 (.const 1) (.return [.var 2])) .skip) := by
+  rfl
 
 theorem helperArgLoadP :
     crepArgLoad [20] [.const 5] [7] helperBody =
