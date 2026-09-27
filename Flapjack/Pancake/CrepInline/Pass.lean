@@ -633,15 +633,41 @@ theorem mem_domainKeys_iff_lookup [BEq CrepInlineMapHOLName]
     key ∈ fs.domainKeys ↔ fs.lookup key ≠ none := by
   exact mem_fst_iff_lookup key fs.entries
 
-/-- The cardinality of the finite domain support list. Its `Nodup` witness is
-    `domainKeys_nodup`, so this length counts each HOL key exactly once. -/
-def domainCard (fs : CrepInlineFmapHOL width) : Nat := fs.domainKeys.length
+/- The canonical finite-support carrier stores `mlstring` keys as byte lists.
+   Hashing those bytes supplies the `Std.HashSet` implementation used below;
+   `BEq`/`LawfulBEq` for this exact key type are provided by
+   `StateExactFiniteMap`. -/
+instance : Hashable CrepInlineMapHOLName where
+  hash key := hash key.explode
 
-/-- Because the input carrier has unique keys, entry count equals the finite
-    domain cardinality used by HOL's `CARD (FDOM inlineable_fs)`. -/
+/-- The represented finite domain as an extensional set of HOL keys. -/
+def domainSupport (fs : CrepInlineFmapHOL width) :
+    Std.HashSet CrepInlineMapHOLName := Std.HashSet.ofList fs.domainKeys
+
+theorem mem_domainSupport_iff_lookup
+    (fs : CrepInlineFmapHOL width) (key : CrepInlineMapHOLName) :
+    key ∈ fs.domainSupport ↔ fs.lookup key ≠ none := by
+  rw [domainSupport, Std.HashSet.mem_ofList, List.contains_iff_mem,
+    mem_domainKeys_iff_lookup]
+
+/-- The cardinality of the finite domain, represented by a deduplicating set
+    whose membership is exactly HOL lookup being defined. -/
+def domainCard (fs : CrepInlineFmapHOL width) : Nat := fs.domainSupport.size
+
+/-- Because the carrier keys are duplicate-free, its number of entries equals
+    the size of the extensional finite domain represented by `domainSupport`.
+    The domain membership theorem ties that set to HOL's `FDOM` via lookup. -/
 theorem card_eq_domain_cardinality (fs : CrepInlineFmapHOL width) :
     fs.card = fs.domainCard := by
-  simp [card, domainCard, domainKeys]
+  have hpair : fs.domainKeys.Pairwise (fun a b => (a == b) = false) :=
+    (List.nodup_iff_pairwise_ne.mp fs.domainKeys_nodup).imp (by
+      intro a b hne
+      cases hbeq : a == b with
+      | false => rfl
+      | true => exact False.elim (hne (beq_iff_eq.mp hbeq)))
+  change fs.card = (Std.HashSet.ofList fs.domainKeys).size
+  rw [Std.HashSet.size_ofList hpair]
+  simp [card, domainKeys]
 
 /-- Removing a key from the entry carrier agrees extensionally with HOL
     `DOMSUB` (`HolFiniteMapExact.eraseEq`) on its finite-support map view. -/

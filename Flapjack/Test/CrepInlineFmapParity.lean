@@ -76,6 +76,18 @@ theorem exactFiniteSupportLookupMiss :
     exactMap.toHolFiniteMapExact.lookup (exactKey "missing") = none := by
   decide
 
+theorem exactFiniteSupportDomainHit :
+    exactKey "f" ∈ exactMap.domainSupport := by
+  rw [CrepInlineFmapHOL.mem_domainSupport_iff_lookup]
+  have hlookup : exactMap.lookup (exactKey "f") =
+      some ([7], CrepProgHOL.skip) := exactMapDuplicateFirst
+  exact fun h => by rw [hlookup] at h; cases h
+
+theorem exactFiniteSupportDomainMiss :
+    exactKey "missing" ∉ exactMap.domainSupport := by
+  rw [CrepInlineFmapHOL.mem_domainSupport_iff_lookup]
+  decide
+
 /-- Removal commutes with HOL `DOMSUB` at the full map level and retains other
     keys, matching the source-level map operation. -/
 theorem exactFiniteSupportDomsub :
@@ -100,15 +112,21 @@ theorem exactFiniteSupportEmptyCard :
     (CrepInlineFmapHOL.empty : CrepInlineFmapHOL 8).domainCard = 0 := rfl
 
 theorem exactFiniteSupportHitCard : exactSingleMap.domainCard = 1 := by
+  rw [← CrepInlineFmapHOL.card_eq_domain_cardinality]
   rfl
 
 /-- A duplicate source row is normalized by `alist_to_fmap`; it contributes
     one distinct key and the first binding remains the lookup result. -/
 theorem exactFiniteSupportDuplicateCard : exactMap.domainCard = 1 := by
+  rw [← CrepInlineFmapHOL.card_eq_domain_cardinality]
   rfl
 
 theorem exactFiniteSupportMixedDuplicateCard : exactBothMap.domainCard = 2 := by
+  rw [← CrepInlineFmapHOL.card_eq_domain_cardinality]
   rfl
+
+theorem exactFiniteSupportCardIsDomainSize : exactBothMap.card = exactBothMap.domainSupport.size := by
+  exact CrepInlineFmapHOL.card_eq_domain_cardinality exactBothMap
 
 /-- Exact-syntax recursive core: a finite-map hit inserts the inlined body,
     and recursive self-calls are left untouched after DOMSUB removes the
