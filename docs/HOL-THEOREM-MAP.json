@@ -11398,8 +11398,9 @@
     "hol_name": "mem_load_def",
     "lean_path": "Flapjack/Pancake/Semantics/PanSem/MemLoadHOL.lean",
     "lean_name": "memLoadHOLExact",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Codex (exact-carrier review against panSemScript.sml:137-166): `ShapeHOL`, `StructInfoHOLExact`/`MlString`, `ValueHOL width`, and `HolWordLab width` preserve HOL shape/value/name/word_lab carriers; `[NeZero width]` represents HOL's positive word dimension and `[DecidablePred domain]` is proof-only Lean evidence. The mutually recursive `memLoadsHOLExact` and `memLoadFldsHOLExact` clauses preserve the empty/success/failure cases and `addr + bytesInWord * n2w (size_of_sh_with_ctxt ...)` progression. `Named` scans the context to the first matching name. Six direct HOL-EVAL rows (One hit/miss, Comb, Named hit/miss, and Comb offset) from `pan_sem_mem_load_exact_probe.out` are reproduced by `PanSemMemLoadExactParity.lean`. The older String-carrier `panMemLoadHOL` remains untagged; this exact moved counterpart is eligible."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "Codex source comparison against panSemScript.sml:137-166: ShapeHOL, StructInfoHOLExact/MlString, ValueHOL width, and HolWordLab width preserve the HOL shape/value/name/word_lab carriers. HOL arbitrary nonempty finite word dimensions are represented by BitVec width with [NeZero width], explicitly recorded by words_as_type_indexed_bitvec; [DecidablePred domain] is proof-only evidence for HOL word-set membership. The mutual memLoadsHOLExact and memLoadFldsHOLExact clauses preserve empty/success/failure and addr + bytesInWord * n2w (size_of_sh_with_ctxt ...) progression. Named scans to the first matching context name. Six direct HOL-EVAL rows from pan_sem_mem_load_exact_probe.out are reproduced by PanSemMemLoadExactParity.lean. This qualifier records only the standard word-dimension model.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "cakeml/pancake/panLangScript.sml",
@@ -14168,5 +14169,35 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-ds8 (source comparison; bead flapjack-2de.12): statement matches HOL crepPropsScript.sml:17-27 clause-for-clause over the exact carriers (OPT_MMAP = List.mapM, FLOOKUP t.locals = t.locals.lookup, MAP Var = map CrepExpHOL.var, eval = evalCrepSemHOLExp); CrepSemHOLState width σ is the type-indexed-word carrier with HOL |-> fields locals/globals/code, hence the combined qualifiers; same-module witness holFmapAsFiniteSupportWitness."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Semantics/CrepProps/MemLoadFlatRel.lean",
+    "lean_name": "memLoadFlatRelHOLExact",
+    "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
+    "hol_name": "mem_load_flat_rel",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "Source-reviewed against crepPropsScript.sml:102-109. HOL mem_load_flat_rel quantifies sh, adr, s, v, n; its Pan mem_load reads s.memaddrs and s.memory, with premises successful read, n < LENGTH (flatten v), and is_wf_shape_nil sh, and concludes Crep mem_load at adr + bytes_in_word * n2w (LENGTH (TAKE n ...)) on the same s equals SOME (EL n ...). Lean uses one CrepSemHOLState target for both Pan memLoadHOLExact domain/memory and Crep memLoadCrepSemHOL, with no split domain/memory equality premises. Exact ShapeHOL/StructContextHOLM/ValueHOL/HolWordLab carriers and bounded List.getElem encode HOL shape/value/list operations. DecidablePred target.memaddrs is proof-only evidence for HOL set membership; NeZero width is the positive word-dimension model. The fmap_as_finite_support qualifier records CrepSemHOLState locals/globals/code and the same-module holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec records HOL 'a word as BitVec width.",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Semantics/CrepProps/MemLoadFlatRel.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific same-module canonical finite-support witness for the CrepSemHOLState locals/globals/code fields used by memLoadFlatRelHOLExact; it restates the imported CrepSemHOLState/CrepSemBroadState roundtrip and is not a separate HOL theorem."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Semantics/CrepProps/MemLoadFlatRel.lean",
+    "lean_name": "memLoadHOLExact_flatRead_mutual",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific mutual evaluator-induction helper for the strided mem_load_flat_rel analogue. HOL has no standalone declaration with this helper statement; its internal list cases are part of mem_loads_flat_rel."
   }
 ]

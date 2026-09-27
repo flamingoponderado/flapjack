@@ -48,7 +48,8 @@ def bytesInWordHOL (width : Nat) : BitVec width := BitVec.ofNat width (width / 8
 
 mutual
   /-- Exact port of HOL `mem_load` (`cakeml/pancake/semantics/panSemScript.sml:137`). -/
-  @[hol "cakeml/pancake/semantics/panSemScript.sml" "mem_load_def"]
+  @[hol "cakeml/pancake/semantics/panSemScript.sml" "mem_load_def"
+    (words_as_type_indexed_bitvec)]
   def memLoadHOLExact {width : Nat} [NeZero width] (shape : Flapjack.Pancake.PanLang.ShapeHOL)
       (address : BitVec width) (domain : BitVec width → Prop) [DecidablePred domain]
       (memory : BitVec width → HolWordLab width) (context : StructContextHOLM) :
