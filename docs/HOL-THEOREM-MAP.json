@@ -685,28 +685,16 @@
     "hol_name": "evaluate_def",
     "lean_path": "Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean",
     "lean_name": "evalCrepSemHOLProgExact_seq_fixClockFree",
-    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support": [
-      "locals",
-      "globals",
-      "code"
-    ],
-    "reviewer": "Source comparison (bead flapjack-4ac.5.16.5.26): the Seq clause of HOL evaluate_def as rebound at crepSemScript.sml:443 (evaluate_def = REWRITE_RULE [fix_clock_evaluate] evaluate_def). The primal Seq clause (:303-306) fixes the clock around the first command; line 443 eliminates that fix_clock via fix_clock_evaluate (:432-437), leaving let (res,s1) = evaluate (c1,s) in if res = NONE then evaluate (c2,s1) else (res,s1). The Lean statement is that clause over the no-decider exact evaluator: evalCrepSemHOLProgExact state (.seq first second) = (let step := evalCrepSemHOLProgExact state first; match step with | (none, stepState) => evalCrepSemHOLProgExact stepState second | (some _, _) => step). Derived from the reviewed line-240 no-decider Seq equation evalCrepSemHOLProgExact_seq and the reviewed exact fix_clock identity fixClockCrepSemHOL_evalCrepSemHOLProgExact (bead flapjack-4ac.5.16.5.25). fmap_as_finite_support records the CrepSemHOLState finite-support carrier; words_as_type_indexed_bitvec records the dimension-indexed BitVec translation.",
-    "words_as_type_indexed_bitvec": true
+    "statement_status": "documented_mismatch",
+    "reviewer": "Untagged Flapjack-specific Seq analogue of HOL evaluate_def at crepSemScript.sml:443. Its evaluator is evalCrepSemHOLProgExact; whole-evaluator agreement with HOL evaluate has not yet been reviewed across Call, domain stamping, and FFI. The equation remains useful infrastructure but cannot claim an exact HOL port."
   },
   {
     "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
     "hol_name": "evaluate_def",
     "lean_path": "Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean",
     "lean_name": "evalCrepSemHOLProgExact_while_fixClockFree",
-    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support": [
-      "locals",
-      "globals",
-      "code"
-    ],
-    "reviewer": "Source comparison (bead flapjack-4ac.5.16.5.29): the While clause of HOL evaluate_def as rebound at crepSemScript.sml:443 (evaluate_def = REWRITE_RULE [fix_clock_evaluate] evaluate_def). The primal While clause (:314-325) wraps the body run in fix_clock (dec_clock s): let (res,s1) = fix_clock (dec_clock s) (evaluate (c,dec_clock s)) in case res of SOME (Continue 0) => evaluate (While e c,s1) | NONE => evaluate (While e c,s1) | SOME (Break 0) => (NONE,s1) | _ => (exit_loop res,s1). Line 443 eliminates the fix_clock via fix_clock_evaluate (:432-437), leaving a plain let (res,s1) = evaluate (c,dec_clock s) in ... . The Lean statement is that clause over the no-decider exact evaluator: evalCrepSemHOLProgExact state (.while condition body) = the condition match with the dec-clocked body run and the Continue/NONE re-entry, Break 0 => (none, loopState), other => (exitLoopCrepResult result, loopState) branches. Derived from the reviewed line-240 no-decider While equation evalCrepSemHOLProgExact_while_unstamped and the reviewed exact fix_clock identity fixClockCrepSemHOL_evalCrepSemHOLProgExact (bead flapjack-4ac.5.16.5.25). fmap_as_finite_support records the CrepSemHOLState finite-support carrier; words_as_type_indexed_bitvec records the dimension-indexed BitVec translation.",
-    "words_as_type_indexed_bitvec": true
+    "statement_status": "documented_mismatch",
+    "reviewer": "Untagged Flapjack-specific While analogue of HOL evaluate_def at crepSemScript.sml:443. Its evaluator is evalCrepSemHOLProgExact; whole-evaluator agreement with HOL evaluate has not yet been reviewed across Call, domain stamping, and FFI. The equation remains useful infrastructure but cannot claim an exact HOL port."
   },
   {
     "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
