@@ -12827,5 +12827,21 @@
     "lean_name": "panToCrepCallStateRelFiniteExactLocalUpdate",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific projection of only the state_rel conjunct in HOL call_preserve_state_code_locals_rel (pan_to_crepProofScript.sml:2355). It proves that exact Pan/Crep states remain related after dec_clock and arbitrary locals replacement because state_rel_def (lines 45-58) does not mention locals and equates clocks. It is not the full Call theorem and has no HOL declaration original."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "panToCrepCallExcpRelFiniteExactContextUpdate",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific projection of only the excp_rel conjunct in HOL call_preserve_state_code_locals_rel (pan_to_crepProofScript.sml:2355). The exact ctxt_fc context preserves ctxt.eids and Pan dec_clock preserves s.eshapes, so the exact relation is unchanged. This is not the full Call theorem and has no HOL declaration original."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "panToCrepCallCodeRelExactContextUpdate",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific projection of only the code_rel conjunct in HOL call_preserve_state_code_locals_rel (pan_to_crepProofScript.sml:2355). ctxt_fc preserves ctxt.funcs/eids and Pan/Crep dec_clock preserve the source/target code maps, so the exact codeRelExactHOLW relation is unchanged. This is not the full Call theorem and has no HOL declaration original."
   }
 ]
