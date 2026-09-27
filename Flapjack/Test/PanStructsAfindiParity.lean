@@ -42,6 +42,16 @@ theorem structInfosOkHOLExact_append_fixture :
   apply structInfosOkHOLExact_append [] [(exactStructName, exactStructInfo)]
   exact structInfosOkHOLExact_cons_fixture
 
+/-! Exact-carrier replay of the `alookup_map_structs_ok` row in
+`scripts/hol-probes/afindi_probe.out:14`: the singleton context's successful
+`ALOOKUP` of `«S»` yields a structure whose field names are distinct. -/
+theorem structInfosOkHOLExact_lookup_fields_nodup_fixture :
+    (exactStructInfo.fields.map Prod.fst).Nodup := by
+  apply structInfosOkHOLExact_lookup_fields_nodup exactStructName
+    [(exactStructName, exactStructInfo)] exactStructInfo
+  · simp [structContextLookupHOL_cons, exactStructName]
+  · exact structInfosOkHOLExact_cons_fixture
+
 /-! Direct parity for `pan_structs$afindi_def`
     (`pan_structsScript.sml:25`). -/
 def entries : List (String × Nat) := [("a", 10), ("b", 20), ("c", 30)]

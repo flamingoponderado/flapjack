@@ -1988,6 +1988,45 @@ theorem evaluateHOLFiniteState_eq_withDeciders {width : Nat} {σ : Type}
   simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
     hmemEq, hsharedEq]
 
+/-- FLAPJACK-SPECIFIC recursive bridge (no standalone HOL declaration): a
+    pair-shaped recursive evaluation equation can be consumed by the finite
+    context evaluator while retaining its post-state context. The outer
+    `Option` remains internal to this helper and is witnessed as `some`; the
+    returned fact exposes only a source result and its state projection. -/
+theorem evalPanSemRecursiveCallFiniteContext_of_evaluateHOLFiniteState
+    {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (program : ProgHOL width)
+    (context : FiniteEvalContext width σ) (hcontext : context.state = state)
+    (output : Option (PanSemResultExact width) × PanSemStateFiniteExact width σ)
+    (houtput : evaluateHOLFiniteState state program = output) :
+    ∃ postContext : FiniteEvalContext width σ,
+      evalPanSemRecursiveCallFiniteContext program context =
+        some (output.1, postContext) ∧ postContext.state = output.2 := by
+  classical
+  let classicalContext : FiniteEvalContext width σ :=
+    ⟨state,
+      fun address => Classical.propDecidable (state.memaddrs address),
+      fun address => Classical.propDecidable (state.shMemaddrs address)⟩
+  have hcontexts : context = classicalContext := by
+    apply FiniteEvalContext.ext
+    exact hcontext
+  obtain ⟨pair, hpair⟩ :=
+    evalPanSemRecursiveCallFiniteContext_total program context
+  have hclassicalPair :
+      evalPanSemRecursiveCallFiniteContext program classicalContext = some pair := by
+    rw [← hcontexts]
+    exact hpair
+  have hevaluate :
+      evaluateHOLFiniteState state program = (pair.1, pair.2.state) := by
+    simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+      classicalContext, hclassicalPair]
+  have hpairOutput : (pair.1, pair.2.state) = output := hevaluate.symm.trans houtput
+  refine ⟨pair.2, ?_, ?_⟩
+  · have hresult : pair.1 = output.1 := congrArg Prod.fst hpairOutput
+    rw [← hresult]
+    exact hpair
+  · exact congrArg Prod.snd hpairOutput
+
 /-- Flapjack-specific projection fact: mapping the recursive evaluator's
     assembly `Option` through its pair/state projection commutes with a
     conditional recursive branch. -/
@@ -3106,6 +3145,95 @@ theorem evaluateHOLFiniteState_dec_total {width : Nat} {σ : Type} [NeZero width
       · simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
           evalPanSemRecursiveCallFiniteContext, hinit, hshape,
           hmem]
+
+/-- Exact HOL `evaluate_def` (`panSemScript.sml:556`) DecCall argument-failure
+    case, corresponding to the `OPT_MMAP (eval s) argexps = NONE` branch at
+    lines 699-714: it returns `Error` with the caller state unchanged. This is
+    a genuine source case with a branch selector and no target-evaluation
+    premise. `PanSemStateFiniteExact` records the four HOL finite maps through
+    its canonical same-module witness. The combined qualifiers record those
+    maps and HOL's positive word dimension as `BitVec width`; `σ : Type` models
+    the HOL FFI state carrier. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 556
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateHOLFiniteState_decCall_args_none {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateFiniteExact width σ)
+    (resultName : MlS) (shape : ShapeHOL) (function : MlS)
+    (arguments : List (ExpHOL width)) (continuation : ProgHOL width)
+    (hargs : evalListHOLFinite state
+      (h := fun address => Classical.propDecidable (state.memaddrs address))
+      arguments = none) :
+    evaluateHOLFiniteState state
+        (.decCall resultName shape function arguments continuation : ProgHOL width) =
+      (some .error, state) := by
+  classical
+  have hargsExact :
+      @evalListHOLExact width σ _ state.toExact
+        (fun address => Classical.propDecidable (state.memaddrs address)) arguments = none := by
+    simpa only [evalListHOLFinite_eq_toExact] using hargs
+  simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+    evalPanSemRecursiveCallFiniteContext.eq_6, hargsExact]
+
+/-- Exact HOL `evaluate_def` (`panSemScript.sml:556`) DecCall lookup-failure
+    case, corresponding to the failed `lookup_code` branch at lines 699-714:
+    successful argument evaluation followed by a missing code entry returns
+    `Error` with the caller state unchanged. The premise selects only that
+    source branch; the statement remains the total result/state pair. The
+    combined qualifiers record the four finite-support maps and HOL's positive
+    word dimension as `BitVec width`; `σ : Type` models the HOL FFI state. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 556
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateHOLFiniteState_decCall_lookup_none {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateFiniteExact width σ)
+    (resultName : MlS) (shape : ShapeHOL) (function : MlS)
+    (arguments : List (ExpHOL width)) (continuation : ProgHOL width)
+    (values : List (ValueHOL width))
+    (hargs : evalListHOLFinite state
+      (h := fun address => Classical.propDecidable (state.memaddrs address))
+      arguments = some values)
+    (hlookup : lookupCodeHOLFinite state.code.lookup function values = none) :
+    evaluateHOLFiniteState state
+        (.decCall resultName shape function arguments continuation : ProgHOL width) =
+      (some .error, state) := by
+  classical
+  have hargsExact :
+      @evalListHOLExact width σ _ state.toExact
+        (fun address => Classical.propDecidable (state.memaddrs address)) arguments =
+        some values := by
+    simpa only [evalListHOLFinite_eq_toExact] using hargs
+  simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+    evalPanSemRecursiveCallFiniteContext.eq_6, hargsExact, hlookup]
+
+/-- Flapjack-specific total-pair rendering of the DecCall clock-exhaustion
+    branch from `panSemScript.sml:694-714`. With successful arguments and code
+    lookup, zero caller clock returns `TimeOut` and clears caller locals. This
+    stays untagged while the word-carrier qualifier for PanSemStateFiniteExact
+    is pending review. -/
+theorem evaluateHOLFiniteState_decCall_clock_zero {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateFiniteExact width σ)
+    (resultName : MlS) (shape : ShapeHOL) (function : MlS)
+    (arguments : List (ExpHOL width)) (continuation : ProgHOL width)
+    (values : List (ValueHOL width)) (body : ProgHOL width)
+    (callee : HolFiniteMapExact MlS (ValueHOL width)) (returnShape : ShapeHOL)
+    (hargs : evalListHOLFinite state
+      (h := fun address => Classical.propDecidable (state.memaddrs address))
+      arguments = some values)
+    (hlookup : lookupCodeHOLFinite state.code.lookup function values =
+      some (body, callee, returnShape))
+    (hclock : state.clock = 0) :
+    evaluateHOLFiniteState state
+        (.decCall resultName shape function arguments continuation : ProgHOL width) =
+      (some .timeOut, emptyLocalsHOLFinite state) := by
+  classical
+  let context : FiniteEvalContext width σ :=
+    ⟨state, fun address => Classical.propDecidable (state.memaddrs address),
+      fun address => Classical.propDecidable (state.shMemaddrs address)⟩
+  have htimeout := evalPanSemRecursiveCallFiniteContext_decCall_timeout_branch
+    resultName shape function arguments continuation context values body callee
+    returnShape hargs hlookup hclock
+  simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders, context, htimeout]
 
 /-- Source-reviewed HOL `evaluate_def` Seq conjunct (`panSemScript.sml:615`)
     from the source `Definition evaluate_def` at line 556. That definition
