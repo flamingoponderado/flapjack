@@ -1762,6 +1762,26 @@ theorem evaluateHOLFiniteState_annot {width : Nat} {σ : Type} [NeZero width]
 
 attribute [simp] evaluateHOLFiniteState_annot
 
+/-! HOL `evaluate_def`'s `Tick` equation (`panSemScript.sml:654-655`), one of
+the line-780 theorem's 21 conjuncts. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
+  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+theorem evaluateHOLFiniteState_tick {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) :
+    evaluateHOLFiniteState state (.tick : ProgHOL width) =
+      (if state.clock = 0 then (some .timeOut, emptyLocalsHOLFinite state)
+       else (none, decClockHOLFinite state)) := by
+  classical
+  by_cases hclock : state.clock = 0
+  · simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+      evalPanSemRecursiveCallFiniteContext, hclock]
+    rfl
+  · simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+      evalPanSemRecursiveCallFiniteContext, hclock]
+    rfl
+
+attribute [simp] evaluateHOLFiniteState_tick
+
 /-- The decider-taking helper is the pair-shaped rendering of the assembly-marker
     evaluator. This bridge is Flapjack-specific infrastructure. -/
 theorem evaluateHOLFiniteStateWithDeciders_eq_getD {width : Nat} {σ : Type} [NeZero width]
