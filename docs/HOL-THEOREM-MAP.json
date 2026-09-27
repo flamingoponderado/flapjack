@@ -10936,6 +10936,14 @@
     "reviewer": "Flapjack-only total Skip induction-case support: uses the total measured PanSem Skip clause and total Crep HOL-state Skip clause, then carries state_rel, state-owned code_rel, excp_rel, and locals_rel to the unchanged runtime post-state. This is not a standalone HOL declaration or the full pc_compile_correct theorem."
   },
   {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
+    "lean_name": "panToCrepExactBreakTransition",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific prerequisite for HOL pc_compile_correct[Break]: records the finite-context Pan Break result/state, exact compiler Break 0 output, and Crep Break 0 result/state, preserving exact state and locals relations. It does not assemble code_rel/excp_rel or the full existential conclusion and is not a standalone HOL declaration."
+  },
+  {
     "hol_path": "cakeml/misc/miscScript.sml",
     "hol_name": "num_set",
     "lean_path": "Flapjack/Misc/Sptree.lean",
@@ -12665,5 +12673,26 @@
     "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "flapjack-ds8: Flapjack-specific same-module canonical relation witness for the fmap_as_finite_support_relation qualifier on panToCrepStateRelFiniteExact. It forwards the canonical roundtrip of PanSemStateFiniteExact and has no HOL theorem original."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "locals_rel_def",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "panToCrepLocalsRelFiniteExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "reviewer": "flapjack-ds8 source comparison (bead flapjack-pxn.18.3.7.1.3.1.4, approved by coordinator after comparing HOL locals_rel_def lines 71-78 with Lean lines 82-93): clause-for-clause match. no_overlap/ctxt_max map to noOverlapFiniteExact/ctxtMaxFiniteExact; FLOOKUP m k = SOME x maps to m.lookup k = some x; shape_of to shapeOfHOLExact; OPT_MMAP (FLOOKUP t_locals) ns = SOME vs to slots.mapM targetLocals.lookup = some words; flatten v = vs to flattenHOL value = words; is_wf_shape_nil (shape_of v) to isWfShapeExactHOL [] (shapeOfHOLExact value) = true. Exactly three finite maps are traversed: context.vars (owning PanToCrepContextExact field, recorded dotted) and the standalone parameters sourceLocals/targetLocals (recorded bare, bound at the canonical HolFiniteMapExact translation). No extra hypotheses beyond [NeZero width]; no production String/Shape relation is tagged.",
+    "fmap_as_finite_support_relation": [
+      "PanToCrepContextExact.vars",
+      "sourceLocals",
+      "targetLocals"
+    ]
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-ds8: Flapjack-specific same-module canonical relation witness for the fmap_as_finite_support_relation qualifier on panToCrepLocalsRelFiniteExact. It forwards the canonical ofBroad/toBroad roundtrip of PanToCrepContextExact and has no HOL theorem original."
   }
 ]
