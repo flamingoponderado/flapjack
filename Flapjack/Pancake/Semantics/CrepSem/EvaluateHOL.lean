@@ -2678,8 +2678,7 @@ through derived states (`fixClockCrepSemHOL`, `decClockCrepSemHOL`,
 `crepStampExactDomains` normalization makes the base decisions definitionally
 valid for the stamped state, so each recursive call folds to
 `evalCrepSemHOLProgExact`. Declaration-local, UNTAGGED infrastructure. The
-enclosing `evaluate_def` tag still awaits the `Call` clause, whose `proceed`
-let-binding does not fold syntactically, plus the carrier-placement review
+enclosing `evaluate_def` tag still awaits the carrier-placement review
 tracked by `flapjack-4ac.5.16.5.13.1`. -/
 
 /-- HOL `evaluate (Seq c1 c2, s)` (`crepSemScript.sml:292-295`) over the
@@ -2795,4 +2794,73 @@ theorem evalCrepSemHOLProgExact_extCall {width : Nat} [NeZero width] {σ : Type}
        | _, _, _, _ => (some .error, state)) := by
   simp only [evalCrepSemHOLProgExact]
   exact evalCrepSemHOLProg_extCall state _ _ function configuration configurationLength array arrayLength
+
+/-- HOL `evaluate (Call ret function arguments, s)`
+    (`crepSemScript.sml:330-357`) over the no-decider interface. Matching HOL's
+    `proceed` helper is inlined; the equality holds because the derived call /
+    handler states preserve `memaddrs`/`shMemaddrs` definitionally. -/
+theorem evalCrepSemHOLProgExact_call {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (returnInfo : Option (List Nat × Option (BitVec width × CrepProgHOL width)))
+    (function : MlString) (arguments : List (CrepExpHOL width)) :
+    evalCrepSemHOLProgExact state (.call returnInfo function arguments) =
+      (match arguments.mapM (@evalCrepSemHOLExp width ‹NeZero width› σ state
+               (fun a => Classical.propDecidable (state.memaddrs a))) with
+       | none => (some .error, state)
+       | some values =>
+           match state.code.lookup function with
+           | none => (some .error, state)
+           | some (parameters, body) =>
+               if parameters.length = values.length && parameters.Nodup then
+                 let proceed : Option (CrepResultHOLExact width) ×
+                     CrepSemHOLState width σ :=
+                   if _hclock : state.clock = 0 then
+                     (some .timeOut, CrepSemHOLState.emptyLocals state)
+                   else
+                     let calleeLocals :=
+                       HolFiniteMapExact.empty.updateList (parameters.zip values)
+                     let callee : CrepSemHOLState width σ :=
+                       { state with locals := calleeLocals }
+                     let decCallee := decClockCrepSemHOL callee
+                     let fixed := fixClockCrepSemHOL decCallee
+                       (evalCrepSemHOLProgExact decCallee body)
+                     match _hfixed : fixed with
+                     | (none, bodyState) => (some .error, bodyState)
+                     | (some (.break _), bodyState) => (some .error, bodyState)
+                     | (some (.continue _), bodyState) => (some .error, bodyState)
+                     | (some (.return retvs), bodyState) =>
+                         match returnInfo with
+                         | none => (some (.return retvs),
+                             CrepSemHOLState.emptyLocals bodyState)
+                         | some (rts, _) =>
+                             if retvs.length ≠ rts.length then
+                               (some .error, bodyState)
+                             else
+                              match rts.mapM state.locals.lookup with
+                              | some _ => (none, { bodyState with
+                                  locals := state.locals.updateListEq
+                                    (rts.zip retvs) })
+                              | none => (some .error, bodyState)
+                     | (some (.exception eid), bodyState) =>
+                         match returnInfo with
+                         | none => (some (.exception eid),
+                             CrepSemHOLState.emptyLocals bodyState)
+                         | some (_, none) => (some (.exception eid),
+                             CrepSemHOLState.emptyLocals bodyState)
+                         | some (_, some (eid', handlerBody)) =>
+                             let handlerState : CrepSemHOLState width σ :=
+                               crepStampExactDomains state
+                                 { bodyState with locals := state.locals }
+                             if eid = eid' then
+                               evalCrepSemHOLProgExact handlerState handlerBody
+                             else (some (.exception eid),
+                               CrepSemHOLState.emptyLocals bodyState)
+                     | (some result, bodyState) =>
+                         (some result, CrepSemHOLState.emptyLocals bodyState)
+                 match returnInfo with
+                 | some (rts, _) => if rts.Nodup then proceed else (some .error, state)
+                 | none => proceed
+               else (some .error, state)) := by
+  simp only [evalCrepSemHOLProgExact]
+  exact evalCrepSemHOLProg_call state _ _ returnInfo function arguments
 end Flapjack
