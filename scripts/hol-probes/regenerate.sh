@@ -90,6 +90,15 @@ run_probe() {
         | sed '/^<<HOL message:/,/^  pattern completion.*>>$/d; /^$/d' > "$output"
     fi
   fi
+  # The first and last rows delimit the captured HOL transcript, but every
+  # listed row is part of the probe's regression contract. Check middle rows
+  # too, so extending a probe cannot silently drop an older sentinel.
+  for label in "${labels[@]}"; do
+    if ! grep -q "^${label}=" "$output"; then
+      echo "Expected HOL probe row '$label' missing from $output_name" >&2
+      exit 1
+    fi
+  done
 }
 
 # Run from the local HOL object directory when Holmake has populated it, so
@@ -1163,7 +1172,7 @@ run_probe crep_eval_load_32_probeScript.sml crep_eval_load_32_probe.out \
 # The eval Load (word cell) probe observes the fixed RV64 total word -> word_lab
 # memory cell read: a live cell and the memaddrs domain failure.
 run_probe crep_eval_load_rv64_probeScript.sml crep_eval_load_rv64_probe.out \
-  mem_load_valid eval_load_one_load_one \
+  mem_load_valid eval_load_outside_domain eval_load_one_load_one \
   "$cake_dir/pancake/semantics/crepSemScript.sml" \
   "$cake_dir/pancake/semantics"
 # The eval StoreByte probe observes HOL set_byte at a nonzero byte offset: the
