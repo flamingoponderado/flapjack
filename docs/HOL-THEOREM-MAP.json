@@ -12063,6 +12063,16 @@
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
     "hol_name": "evaluate_def",
     "hol_line": 780,
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/ShMemLoadCase.lean",
+    "lean_name": "evaluateHOLFiniteState_shMemLoad_source",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "reviewer": "flapjack-luna-c source comparison (2026-09-27; bead flapjack-qj5.4): compared with the ShMemLoad conjunct at panSemScript.sml:605-610. The conclusion exposes the same `eval s ad` word/non-word-or-failure match, then `lookup_kvar vk v s` word/non-word-or-missing match; both failing branches return SOME Error with the original state, while only the word/word branch calls sh_mem_load with nb_op op. It quantifies over the reviewed `PanSemStateFiniteExact`, `ProgHOL`, expression, size, kind, and name carriers and adds no logical premise. The successful helper result is translated back with the canonical finite-support proof. The imported carrier is named in the statement, and this case module includes its own checked `toExact`/`ofExact` roundtrip witness for the finite-map qualifier. Direct HOL EVAL guard rows and matching Lean result checks are in pan_sem_store_error_probe.out and PanSemShMemLoadCaseParity."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 780,
     "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
     "lean_name": "evaluateHOLFiniteState_break",
     "statement_status": "reviewed_fmap_as_finite_support",
@@ -13585,5 +13595,45 @@
     "lean_name": "panPrimopCrepPrimopExactHOL",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.16.9.1): exact port of HOL pan_primop_crep_primop (pan_to_crepProofScript.sml:1096-1099) with the exact HOL shape pan_primop pop vs = SOME value ==> crep_primop pop (FLAT (MAP flatten vs)) = SOME (flatten value), NO cross-carrier map: panPrimopHOLExact (pan_primop_def, panSemScript.sml:196), flattenHOL (flatten_def) and crepPrimopHOLExact (crep_primop_def, crepSemScript.sml:221) are all exact HolWordLab ports. Direct HOL rows pan_valid/overflow/invalid in pan_crep_primop_probe.out reproduced by Flapjack/Test/PanCrepPrimopParity.lean. The mapped PanWordLab variant panPrimopCrepPrimopHOLExact remains untagged support."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/pan_commonPropsScript.sml",
+    "hol_name": "genlist_distinct_max",
+    "lean_path": "Flapjack/Pancake/Semantics/PanCommonProps.lean",
+    "lean_name": "genlistDistinctMaxHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.16.12): HOL genlist_distinct_max is stated over HOL lists with `distinct_lists` and `GENLIST (fun x. SUC x + m) n`. The Lean statement uses the reviewed `ListDisjoint` rendering of `distinct_lists` and `(List.range n).map (fun i => i + 1 + m)` for `GENLIST`, with the same hypotheses, the same `m`/`m + p` bounds and no extra side conditions."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/pan_commonPropsScript.sml",
+    "hol_name": "genlist_distinct_max'",
+    "lean_path": "Flapjack/Pancake/Semantics/PanCommonProps.lean",
+    "lean_name": "genlistDistinctMaxShiftedHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.16.12): HOL genlist_distinct_max' is stated over HOL lists with `distinct_lists` and `GENLIST (fun x. SUC x + m) n`. The Lean statement uses the reviewed `ListDisjoint` rendering of `distinct_lists` and `(List.range n).map (fun i => i + 1 + m)` for `GENLIST`, with the same hypotheses, the same `m`/`m + p` bounds and no extra side conditions."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/pan_commonPropsScript.sml",
+    "hol_name": "mem_genlist_add_suc_val",
+    "lean_path": "Flapjack/Pancake/Semantics/PanCommonProps.lean",
+    "lean_name": "memGenlistAddSucValHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.16.13): HOL `!n x k. MEM x (GENLIST (\\x. SUC x + k) n) ==> k < x /\\ x <= n + k` (pan_commonPropsScript.sml:234) matches clause-for-clause; `GENLIST (fun x. SUC x + k) n` renders as `(List.range n).map (fun i => i + 1 + k)`, `MEM` as `\u2208`, over Nat; no side conditions. Used by pan_to_crepProofScript.sml (pc_compile_correct dependency)."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/pan_commonPropsScript.sml",
+    "hol_name": "update_eq_zip_flookup",
+    "lean_path": "Flapjack/Pancake/Semantics/PanCommonProps.lean",
+    "lean_name": "updateEqZipFlookupHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.16.15): HOL `update_eq_zip_flookup` (pan_commonPropsScript.sml:244) is `!xs f ys n. ALL_DISTINCT xs /\\ LENGTH xs = LENGTH ys /\\ n < LENGTH xs ==> FLOOKUP (f |++ ZIP (xs,ys)) (EL n xs) = SOME (EL n ys)`. The Lean statement is clause-for-clause: ALL_DISTINCT as List.Nodup, FLOOKUP as the reviewed extensional lookup, `f |++` as FUPDATE_LIST, ZIP/elementwise-pair as List.zip, and EL as the bounded List.getElem (the ys index bound follows from LENGTH equality). No extra hypotheses; only the standard [BEq \u03b1] [LawfulBEq \u03b1] instance conventions used by the neighbouring reviewed_exact opt_mmap lemmas."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/pan_commonPropsScript.sml",
+    "hol_name": "opt_mmap_flookup_update",
+    "lean_path": "Flapjack/Pancake/Semantics/PanCommonProps.lean",
+    "lean_name": "optMmapFlookupUpdateHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.5.16.16): HOL pan_commonPropsScript.sml:156 states OPT_MMAP (FLOOKUP fm) xs = SOME ys /\\ ~MEM x xs ==> OPT_MMAP (FLOOKUP (fm |+ (x,y))) xs = SOME ys. Clause-for-clause over the reviewed extensional finite-map carrier: OPT_MMAP -> List.mapM, ~MEM -> not-in, fm |+ (x,y) -> FUPDATE fm (x,y). No extra hypotheses; proof uses the shared listMapMCongr and FLOOKUP_update."
   }
 ]
