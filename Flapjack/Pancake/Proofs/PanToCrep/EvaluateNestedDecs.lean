@@ -436,4 +436,136 @@ def globalsLookupHOL {width : Nat} [NeZero width] {σ : Type}
   ((List.range (Flapjack.Pancake.PanLang.sizeOfShapeHOL (shapeOfHOLExact value))).map
     (fun index => BitVec.ofNat 5 index)).mapM state.globals.lookup
 
+/-- Flapjack-only list-length proof for the exact `loadGlobalsHOL` recursive
+    definition; HOL has no standalone length theorem for this helper. -/
+private theorem loadGlobalsHOL_length {width : Nat} [NeZero width]
+    (address : BitVec 5) (count : Nat) :
+    (loadGlobalsHOL (width := width) address count).length = count := by
+  induction count generalizing address with
+  | zero => rfl
+  | succ count ih => simp [loadGlobalsHOL, ih]
+
+/-- Flapjack-only zero-base expansion of exact `loadGlobalsHOL`; HOL has no
+    separate theorem equating this list with `GENLIST`'s elementwise form. -/
+private theorem loadGlobalsHOL_zero_eq_range {width : Nat} [NeZero width]
+    (count : Nat) :
+    loadGlobalsHOL (width := width) 0 count =
+      (List.range count).map (fun index =>
+        CrepExpHOL.loadGlob (BitVec.ofNat 5 index)) := by
+  have hGetElem (address : BitVec 5) (index : Nat) (hi : index < count) :
+      (loadGlobalsHOL (width := width) address count)[index]'(by
+        simpa [loadGlobalsHOL_length] using hi) =
+          CrepExpHOL.loadGlob (address + BitVec.ofNat 5 index) := by
+    induction count generalizing address index with
+    | zero => omega
+    | succ count ih =>
+        cases index with
+        | zero => simp [loadGlobalsHOL]
+        | succ index =>
+            have hIndex : index < count := by omega
+            simp only [loadGlobalsHOL, List.getElem_cons_succ]
+            rw [ih (address + 1) index hIndex]
+            have hAddress :
+                (address + 1) + BitVec.ofNat 5 index =
+                  address + BitVec.ofNat 5 (index + 1) := by
+              rw [BitVec.ofNat_add]
+              simp
+              ac_rfl
+            rw [hAddress]
+  apply List.ext_getElem
+  · simp [loadGlobalsHOL_length]
+  · intro index hleft hright
+    have hindex : index < count := by
+      simpa only [loadGlobalsHOL_length] using hleft
+    have hload := hGetElem (0 : BitVec 5) index hindex
+    rw [hload]
+    simp
+
+/-- Exact port of HOL `evaluate_nested_decs_load_globals`
+    (`pan_to_crepProofScript.sml:4139-4176`) over the exact Crep program and
+    finite-map state carriers. The quantified values, names, and body are the
+    HOL variables `rv`, `rvs`, `vs`, and `p`; the four premises remain in HOL
+    order: exact `globals_lookup`, shape size at most 32, distinct names, and
+    name count equal to shape size. The conclusion is the complete generated
+    `nested_decs`/`load_globals` evaluation equation, including the exact
+    `FOLDL res_var` restoration from the original locals. The only carrier
+    translation is the named finite-support representation for the state maps.
+    The proof uses the previously source-reviewed general nested-declaration
+    evaluator theorem and derives its expression-evaluation premise from the
+    exact `globals_lookupHOL` definition. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml"
+  "evaluate_nested_decs_load_globals"
+  (fmap_as_finite_support := [locals, globals, code])]
+theorem evaluateNestedDecsLoadGlobalsCrepHOL {width : Nat} [NeZero width]
+    {σ : Type} (state : CrepSemHOLState width σ) (value : ValueHOL width)
+    (values : List (HolWordLab width)) (names : List Nat)
+    (body : CrepProgHOL width)
+    (hLookup : globalsLookupHOL state value = some values)
+    (_hSize : Flapjack.Pancake.PanLang.sizeOfShapeHOL (shapeOfHOLExact value) ≤ 32)
+    (hDistinct : names.Nodup)
+    (hLength : names.length =
+      Flapjack.Pancake.PanLang.sizeOfShapeHOL (shapeOfHOLExact value)) :
+    evalCrepSemHOLProgExact state
+        (nestedDecsHOL names
+          (loadGlobalsHOL (width := width) 0
+            (Flapjack.Pancake.PanLang.sizeOfShapeHOL (shapeOfHOLExact value))) body) =
+      let result := evalCrepSemHOLProgExact
+        { state with locals := state.locals.updateListEq (names.zip values) } body
+      (result.1, { result.2 with locals :=
+        ((List.zip names (names.map state.locals.lookup)).foldl
+          (fun current entry => HolFiniteMapExact.resVarEq current entry) result.2.locals) }) := by
+  let count := Flapjack.Pancake.PanLang.sizeOfShapeHOL (shapeOfHOLExact value)
+  let expressions := loadGlobalsHOL (width := width) 0 count
+  have hLookupMapM :
+      ((List.range count).map (fun index => BitVec.ofNat 5 index)).mapM
+        state.globals.lookup = some values := by
+    simpa [globalsLookupHOL, count] using hLookup
+  have hLookupMap :
+      (List.range count).map
+        (fun index => state.globals.lookup (BitVec.ofNat 5 index)) =
+          values.map some := by
+    have hMap :=
+      (list_mapM_eq_some_map_some state.globals.lookup
+        ((List.range count).map (fun index => BitVec.ofNat 5 index)) values).mp
+        hLookupMapM
+    simpa only [List.map_map, Function.comp_def] using hMap
+  have hLoadEval :
+      expressions.map (evalCrepSemHOLExpDefault state) = values.map some := by
+    change (loadGlobalsHOL (width := width) 0 count).map
+      (evalCrepSemHOLExpDefault state) = values.map some
+    rw [loadGlobalsHOL_zero_eq_range]
+    have hEvalLoad (index : Nat) :
+        evalCrepSemHOLExpDefault state
+            (CrepExpHOL.loadGlob (BitVec.ofNat 5 index)) =
+          state.globals.lookup (BitVec.ofNat 5 index) := by
+      simp [evalCrepSemHOLExpDefault, evalCrepSemHOLExpWithMemDec,
+        evalCrepSemHOLExp]
+    have hFunctions :
+        (fun index => evalCrepSemHOLExpDefault state
+          (CrepExpHOL.loadGlob (BitVec.ofNat 5 index))) =
+        (fun index => state.globals.lookup (BitVec.ofNat 5 index)) := by
+      funext index
+      exact hEvalLoad index
+    simp only [List.map_map]
+    change (List.range count).map (fun index =>
+      evalCrepSemHOLExpDefault state
+        (CrepExpHOL.loadGlob (BitVec.ofNat 5 index))) = values.map some
+    rw [hFunctions]
+    exact hLookupMap
+  have hLoadLength : expressions.length = count := by
+    change (loadGlobalsHOL (width := width) 0 count).length = count
+    exact loadGlobalsHOL_length (width := width) 0 count
+  have hLoadVariables : expressions.flatMap crepExpVarsHOL = [] := by
+    change (loadGlobalsHOL (width := width) 0 count).flatMap crepExpVarsHOL = []
+    rw [loadGlobalsHOL_zero_eq_range]
+    simp [crepExpVarsHOL]
+  have hExpressionDistinct :
+      distinctListsHol names (expressions.flatMap crepExpVarsHOL) = true := by
+    rw [hLoadVariables]
+    simp [distinctListsHol]
+  have hNested := evalNestedDecsSeqResVarEqCrepHOL state expressions names
+    values body hLoadEval (by simpa [hLoadLength] using hLength)
+    hExpressionDistinct hDistinct
+  simpa [expressions, count] using hNested
+
 end Flapjack
