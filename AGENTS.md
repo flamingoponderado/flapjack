@@ -359,12 +359,16 @@ qualify); the check is syntactic and resolves only the known reviewed abbrev
 `RiscV.Word`, not arbitrary abbrev unfolding, so any other word alias does not
 qualify until it is added to the reviewed abbrev list; a name with several owners (a
 local duplicate shadowing an imported owner) is rejected as ambiguous unless the
-signature uniquely resolves it. The
+signature uniquely resolves it. Every word dimension occurring in the tagged
+signature (not only the first) must be bound at its own `Nat` width with its own
+`[NeZero <id>]` discharge; a literal `BitVec 0` dimension and a `[NeZero 0]`
+discharge are rejected as non-positive. The
 declaration must retain `[NeZero width]` as the
 discharge of HOL's `dimindex (:α) ≥ 1`, and must not restate word-dimension
 positivity as an extra hypothesis (`width ≠ 0`, `0 < width`, `Nat.pos`,
 `NeZero.out`); when it mentions the FFI carrier `HolFfiState`, the host type must
-be bound at a `Type` universe without a universe-level variable. This is a
+be bound as `{σ : Type}` (or `Type 0`) without a universe-level variable or a
+`Sort`, and `Type n` for `n ≥ 1` is rejected. This is a
 conventional data-structure translation only: it authorizes no change to
 quantifiers, hypotheses, side conditions, or conclusions, and no cross-assistant
 agreement theorem is required. It cannot use `reviewed_exact`; use manifest

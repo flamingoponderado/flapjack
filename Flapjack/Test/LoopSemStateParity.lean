@@ -126,13 +126,13 @@ private theorem trivialFfiStateRel :
 
 /-- Sample finite-support carrier: local `0 ↦ Word 7`, all else empty. -/
 private def exactFiniteState : LoopSemStateFiniteExact 8 Unit :=
-  { locals := HolFiniteMapExact.empty.updateEq (0, .word (BitVec.ofNat 8 7))
+  { locals := sptInsert 0 (.word (BitVec.ofNat 8 7)) Spt.ln
   , globals := HolFiniteMapExact.empty
   , memory := fun _ => .word (BitVec.ofNat 8 0)
   , mdomain := fun _ => false
   , shMdomain := fun _ => false
   , clock := 5
-  , code := HolFiniteMapExact.empty
+  , code := Spt.ln
   , be := false
   , ffi := holTrivialFfi
   , baseAddr := 0
@@ -140,7 +140,7 @@ private def exactFiniteState : LoopSemStateFiniteExact 8 Unit :=
 
 /-- Production state satisfying `prodRel` for `exactFiniteState`. -/
 private def finiteMachineState : LoopMachineState (BitVec 8) Unit :=
-  { locals := fun name => (exactFiniteState.locals.lookup name).map loopValueOfWordLocW
+  { locals := fun name => (sptLookup name exactFiniteState.locals).map loopValueOfWordLocW
   , globals := fun global => (exactFiniteState.globals.lookup global).map loopValueOfWordLocW
   , memory := fun address => some (loopValueOfWordLocW (exactFiniteState.memory address))
   , mdomain := exactFiniteState.mdomain
@@ -169,7 +169,7 @@ theorem finiteBridgeSample : exactFiniteState.prodRel finiteMachineState := by
     empty-table case. -/
 private def exactFiniteStateCode : LoopSemStateFiniteExact 8 Unit :=
   { exactFiniteState with
-    code := HolFiniteMapExact.empty.updateEq (0, ([], HolLoopProg.skip)) }
+    code := sptInsert 0 ([], HolLoopProg.skip) Spt.ln }
 
 /-- Production state with the matching non-empty code table. -/
 private def finiteMachineStateCode : LoopMachineState (BitVec 8) Unit :=
@@ -191,7 +191,7 @@ theorem finiteBridgeSampleCode :
     simp [finiteMachineStateCode] at hmem
     subst hmem
     refine ⟨HolLoopProg.skip, ?_, ?_⟩
-    · simp [exactFiniteStateCode, HolFiniteMapExact.updateEq, FUPDATE_HOL]
+    · simp [exactFiniteStateCode, sptLookup]
     · first | rfl | simp [loopProgExecRel]
 
 /-- Sample finite-support carrier whose code table has a recursive-constructor
@@ -200,8 +200,8 @@ theorem finiteBridgeSampleCode :
     base `skip` entry. -/
 private def exactFiniteStateSeq : LoopSemStateFiniteExact 8 Unit :=
   { exactFiniteStateCode with
-    code := exactFiniteStateCode.code.updateEq
-      (1, ([], HolLoopProg.seq HolLoopProg.skip HolLoopProg.tick)) }
+    code := sptInsert 1 ([], HolLoopProg.seq HolLoopProg.skip HolLoopProg.tick)
+      exactFiniteStateCode.code }
 
 /-- Production state with the matching two-entry code table. -/
 private def finiteMachineStateSeq : LoopMachineState (BitVec 8) Unit :=
@@ -223,17 +223,17 @@ theorem finiteBridgeSampleSeq :
     simp only [finiteMachineStateSeq, List.mem_cons, List.mem_nil_iff, or_false] at hmem
     rcases hmem with rfl | rfl
     · refine ⟨HolLoopProg.skip, ?_, ?_⟩
-      · simp [exactFiniteStateSeq, exactFiniteStateCode, HolFiniteMapExact.updateEq, FUPDATE_HOL]
+      · simp [exactFiniteStateSeq, exactFiniteStateCode, sptInsert, sptLookup]
       · exact loopProgExecRel_skip
     · refine ⟨HolLoopProg.seq HolLoopProg.skip HolLoopProg.tick, ?_, ?_⟩
-      · simp [exactFiniteStateSeq, exactFiniteStateCode, HolFiniteMapExact.updateEq, FUPDATE_HOL]
+      · simp [exactFiniteStateSeq, exactFiniteStateCode, sptInsert, sptLookup]
       · exact loopProgExecRel_seq loopProgExecRel_skip loopProgExecRel_tick
 
 /-- Register read on the exact carrier transports to the production read. -/
 example : Flapjack.getVarImm finiteMachineState (.reg 0) =
     some (.word (BitVec.ofNat 8 7)) := by
   rw [← LoopSemStateFiniteExact.getVarImm_map_eq_of_prodRel finiteBridgeSample (.reg 0)]
-  rfl
+  simp [exactFiniteState, sptLookup, loopValueOfWordLocW]
 
 /-- Immediate read on the exact carrier transports to the production read. -/
 example : Flapjack.getVarImm finiteMachineState (.imm (BitVec.ofNat 8 9)) =
@@ -245,12 +245,12 @@ example : Flapjack.getVarImm finiteMachineState (.imm (BitVec.ofNat 8 9)) =
 example : Flapjack.getVars [0] finiteMachineState =
     some [.word (BitVec.ofNat 8 7)] := by
   rw [← LoopSemStateFiniteExact.getVars_map_eq_of_prodRel finiteBridgeSample [0]]
-  rfl
+  simp [LoopSemStateFiniteExact.getVars, exactFiniteState, sptLookup, loopValueOfWordLocW]
 
 /-- A missing local makes the recursive read fail on both sides. -/
 example : Flapjack.getVars [0, 1] finiteMachineState = none := by
   rw [← LoopSemStateFiniteExact.getVars_map_eq_of_prodRel finiteBridgeSample [0, 1]]
-  rfl
+  simp [LoopSemStateFiniteExact.getVars, exactFiniteState, sptLookup]
 
 private def finiteBridgeGuard : Bool :=
   (Flapjack.getVarImm finiteMachineState (.reg 0) ==
@@ -261,7 +261,7 @@ private def finiteBridgeGuard : Bool :=
 #guard finiteBridgeGuard
 
 private def finiteBridgeCodeGuard : Bool :=
-  (exactFiniteStateCode.code.lookup 0).isSome &&
+  (sptLookup 0 exactFiniteStateCode.code).isSome &&
     (finiteMachineStateCode.code.length == 1)
 
 #guard finiteBridgeCodeGuard

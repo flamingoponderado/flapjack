@@ -13890,8 +13890,12 @@
     "hol_name": "state",
     "lean_path": "Flapjack/Pancake/Semantics/LoopSemStateExact.lean",
     "lean_name": "LoopSemStateFiniteExact",
-    "statement_status": "documented_mismatch",
-    "reviewer": "WITHDRAWN 2026-09-27 (bead flapjack-jlj3.1, PR #1166 review item 3). HOL loopSem$state (cakeml/pancake/semantics/loopSemScript.sml:13-27) has locals : ('a word_loc) num_map and code : (num list # 'a loopLang$prog) num_map, which are sptree$num_map, NOT |-> finite maps; only globals : 5 word |-> 'a word_loc is a genuine finite map. LoopSemStateFiniteExact represented all three with HolFiniteMapExact and tagged (fmap_as_finite_support := [locals, globals, code]), overclaiming the reviewed `|->` translation for locals/code. The @[hol] tag is removed; the structure and proofs remain. Faithful port replaces locals/code with the exact sptree/num_map carrier (Flapjack/Misc/Sptree.lean), tracked on flapjack-jlj3.1 and the production bridge on flapjack-pxn.18.5.17.1."
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 (source comparison; bead flapjack-jlj3.1.1): HOL loopSem$state (cakeml/pancake/semantics/loopSemScript.sml:13-27) has locals : ('a word_loc) num_map and code : (num list # 'a loopLang$prog) num_map (sptree$num_map) and globals : 5 word |-> 'a word_loc. LoopSemStateFiniteExact now renders locals/code with the exact Spt sptree carrier and globals with the reviewed canonical HolFiniteMapExact translation, so the fmap_as_finite_support qualifier names only `globals` (num_map fields are ineligible for the |-> qualifier per AGENTS.md). code entries use the exact HolLoopProg carrier, ffi the exact HolFfiState, memory is total, domains are Lean sets. The canonical same-module witness holFmapAsFiniteSupportWitness states the toBroad/ofBroad roundtrip. Production LoopMachineState bridge tracked on flapjack-pxn.18.5.17.1. The state tag also carries (words_as_type_indexed_bitvec): every HOL 'a word occurrence (memory/mdomain/sh_mdomain/base_addr/top_addr and the WordLocW payloads) is the positive BitVec width with the [NeZero width] discharge of dimindex (:alpha) >= 1; the FFI host is the universe-0 Lean type F; the BitVec 5 globals key is HOL's literal 5 word, not a dimindex dimension."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
@@ -13910,8 +13914,9 @@
     "hol_name": "get_var_imm_def",
     "lean_path": "Flapjack/Pancake/Semantics/LoopSemStateExact.lean",
     "lean_name": "getVarImm",
-    "statement_status": "documented_mismatch",
-    "reviewer": "WITHDRAWN 2026-09-27 (bead flapjack-jlj3.1, PR #1166 review item 3). HOL get_var_imm_def (loopSemScript.sml:165-167) is the two-clause operand-first get_var_imm (Reg n) s = sptree$lookup n s.locals / get_var_imm (Imm w) s = SOME (Word w). HOL locals is sptree$num_map, NOT |->, so the (fmap_as_finite_support := [locals]) qualifier overclaimed the reviewed `|->` translation. The @[hol] tag is removed; the declaration and proofs remain (they reproduce the HOL-EVAL oracle rows in Flapjack/Test/LoopGetVarImmParity.lean). Faithful port tracked on flapjack-jlj3.1."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 (source comparison; bead flapjack-jlj3.1.1): HOL get_var_imm_def (loopSemScript.sml:165-167) is the two-clause operand-first get_var_imm (Reg n) s = sptree$lookup n s.locals / get_var_imm (Imm w) s = SOME (Word w). The Lean declaration is operand-first, reads LoopSemStateFiniteExact.locals via the exact Spt sptree carrier (sptLookup name state.locals), and returns the exact tagged WordLocW carrier (word_loc); no extra hypotheses beyond [NeZero width] and no finite-map qualifier applies (num_map is not |->). Direct HOL-EVAL oracle parity in Flapjack/Test/LoopGetVarImmParity.lean. The tag carries (words_as_type_indexed_bitvec): the only carrier difference from HOL is the type-indexed 'a word in RegImm/WordLocW, rendered as the positive BitVec width with [NeZero width]; no finite-map or other carrier translation is involved."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
@@ -14479,6 +14484,14 @@
     "lean_name": "optMmapCongHOL",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds8 (source comparison; bead flapjack-4ac.10): HOL miscScript.sml:2481 `Theorem OPT_MMAP_CONG` is `!l1 l2 f f'. (l1 = l2) /\\ (!x. MEM x l2 ==> (f x = f' x)) ==> (OPT_MMAP f l1 = OPT_MMAP f' l2)`. The Lean statement `optMmapCongHOL (l1 l2 : List α) (f f' : α → Option β) (hlen : l1 = l2) (h : ∀ x, x ∈ l2 → f x = f' x) : l1.mapM f = l2.mapM f'` matches clause-for-clause: HOL `OPT_MMAP` is rendered by core `List.mapM`, `MEM x l2` by list membership, and `LENGTH`/list equality directly; no extra hypotheses or carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "compile_exp_val_rel",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel.lean",
+    "lean_name": "compileExpValRelHOL",
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-ds10 (bead flapjack-4ac.5.81; PR #1168 review HOLD 2026-09-27T16:07Z): the tagged `@[hol]` attribute was WITHDRAWN and the declaration is kept untagged. The proof and statement are the exact-carrier counterpart of HOL compile_exp_val_rel (cakeml/pancake/proofs/pan_to_crepProofScript.sml:130) and the six hypotheses / four conclusions match clause-for-clause (eval/evalHOLFinite; state_rel/panToCrepStateRelFiniteExact; code_rel/codeRelExactHOLW; locals_rel/panToCrepLocalsRelFiniteExact; localised_exp/localisedExpHOL; compile_exp/compileExpExactHOLW; and MAP (eval t) es = MAP SOME (flatten v) / expressions.map (evalCrepSemHOLExp targetState) = (flattenHOL value).map some, LENGTH/sizeOfShapeHOL, shape_of/shapeOfHOLExact, is_wf_shape_nil/isWfShapeExactHOL []). The concrete gap is representation only: HOL quantifies the word dimension (`'a word`) and the FFI-state type (`('a,'b) state`) polymorphically, while the Lean statement fixes `BitVec width` with `[NeZero width]` and the universe-0 host `σ : Type` and uses the finite-support carriers PanSemStateFiniteExact/CrepSemHOLState/PanToCrepContextExact. A faithful tag therefore needs the combined fmap_as_finite_support_relation + words_as_type_indexed_bitvec translation (plus same-module relation witnesses), which the reference checker and theorem-map statuses do not currently support; tracked by follow-up bead flapjack-4ac.5.81.14. No cross-assistant agreement theorem is required for a tag (docs/SOUNDNESS.md), so the absence of one is not the reason for keeping this untagged."
   },
   {
     "hol_path": null,
