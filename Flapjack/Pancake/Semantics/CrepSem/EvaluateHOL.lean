@@ -2416,4 +2416,76 @@ theorem evalCrepSemHOLProg_seq_normal_of_eval_eq {width : Nat} [NeZero width]
   rw [hfirst]
   simp [fixClockCrepSemHOL]
 
+/-- Flapjack-specific, unstamped `Seq` equation for the no-decider exact
+evaluator. HOL `evaluate_def` at `crepSemScript.sml:303-306` evaluates the first
+command, applies `fix_clock`, then evaluates the second command on that exact
+fixed state when the result is `NONE`; otherwise it returns the fixed pair.
+The finite evaluator core internally restates domain deciders with
+`crepStampExactDomains`, but `evalCrepSemHOLProg_preserves_domains` and
+`crepStampExactDomains_eq_self` show that stamp is identity on the recursive
+state, so it is absent from this theorem's statement. This theorem remains
+untagged: its Lean carrier uses the finite-support map representation and its
+qualifier/tag eligibility is still under review. -/
+theorem evalCrepSemHOLProgExact_seq {width : Nat} [NeZero width]
+    {σ : Type} (state : CrepSemHOLState width σ)
+    (first second : CrepProgHOL width) :
+    evalCrepSemHOLProgExact state (.seq first second) =
+      (let step := fixClockCrepSemHOL state
+        (evalCrepSemHOLProgExact state first)
+       match step with
+       | (none, stepState) => evalCrepSemHOLProgExact stepState second
+       | (some _, _) => step) := by
+  classical
+  let memDec : (a : BitVec width) → Decidable (state.memaddrs a) :=
+    fun a => Classical.propDecidable (state.memaddrs a)
+  let shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a) :=
+    fun a => Classical.propDecidable (state.shMemaddrs a)
+  let firstResult := evalCrepSemHOLProg state memDec shMemDec first
+  have hFirstExact :
+      evalCrepSemHOLProgExact state first = firstResult := by
+    dsimp [firstResult]
+    exact evalCrepSemHOLProgExact_eq_core state first memDec shMemDec
+  have hSeqExact :
+      evalCrepSemHOLProgExact state (.seq first second) =
+        evalCrepSemHOLProg state memDec shMemDec (.seq first second) :=
+    evalCrepSemHOLProgExact_eq_core state (.seq first second) memDec shMemDec
+  rw [hSeqExact, evalCrepSemHOLProg_seq, hFirstExact]
+  dsimp only [firstResult]
+  cases hFirst : evalCrepSemHOLProg state memDec shMemDec first with
+  | mk result firstState =>
+      cases result with
+      | none =>
+          simp only [fixClockCrepSemHOL]
+          let stepState : CrepSemHOLState width σ :=
+            (fixClockCrepSemHOL state
+              ((none : Option (CrepResultHOLExact width)), firstState)).2
+          have hDomains := evalCrepSemHOLProg_preserves_domains
+            state memDec shMemDec first
+          simp only [CrepDomainsPreserved] at hDomains
+          rw [hFirst] at hDomains
+          have hStamp : crepStampExactDomains state stepState = stepState := by
+            apply crepStampExactDomains_eq_self
+            · simp only [stepState, fixClockCrepSemHOL_memaddrs]
+              exact hDomains.1
+            · simp only [stepState, fixClockCrepSemHOL_shMemaddrs]
+              exact hDomains.2
+          change evalCrepSemHOLProg
+              (crepStampExactDomains state stepState) memDec shMemDec second =
+            evalCrepSemHOLProgExact stepState second
+          have hSecondStamped :
+              evalCrepSemHOLProgExact (crepStampExactDomains state stepState) second =
+                evalCrepSemHOLProg (crepStampExactDomains state stepState)
+                  memDec shMemDec second := by
+            exact evalCrepSemHOLProgExact_eq_core
+              (crepStampExactDomains state stepState) second memDec shMemDec
+          calc
+            evalCrepSemHOLProg
+                (crepStampExactDomains state stepState) memDec shMemDec second =
+              evalCrepSemHOLProgExact (crepStampExactDomains state stepState) second :=
+                hSecondStamped.symm
+            _ = evalCrepSemHOLProgExact stepState second :=
+              congrArg (fun s => evalCrepSemHOLProgExact s second) hStamp
+      | some result =>
+          simp only [fixClockCrepSemHOL]
+
 end Flapjack
