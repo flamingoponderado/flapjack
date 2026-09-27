@@ -525,6 +525,14 @@ def exactRaiseContext : CompileExpContextExact 8 where
     (ofString "E", BitVec.ofNat 8 12)
   vmax := 0
 
+/-- Context combining a successful wrapped-result destination `dst` with a
+    found handler EID `E`, for the wrapped-result handler-present-eid bridge. -/
+def exactWrappedHandlerContext : CompileExpContextExact 8 where
+  vars := HolFiniteMapExact.empty.update (ofString "dst", (.one, [7]))
+  funcs := HolFiniteMapExact.empty
+  eids := HolFiniteMapExact.empty.update (ofString "E", BitVec.ofNat 8 12)
+  vmax := 0
+
 def exactMalformedRaiseContext : CompileExpContextExact 8 where
   vars := HolFiniteMapExact.empty.update
     (ofString "bad", (.comb [.one, .one], [9]))
@@ -1038,6 +1046,33 @@ example :
     subst hmem
     simp only [compileExpExactHOLW.eq_1, expToHOL.eq_1, compileExpHOL.eq_1,
       List.map_cons, List.map_nil, crepExpOfHOL.eq_1, shapeOfHOL]
+
+/-- The wrapped-result handler-present-eid bridge
+    (`pan_to_crepScript.sml:252-261`) keeps the destination names and sequences
+    `exp_hdl` with the recursively compiled handler body. -/
+example :
+    crepProgOfHOL (compileProgExactHOLW exactWrappedHandlerContext
+      (.call
+        (some (some (.local, ofString "dst"), some (ofString "E", ofString "e", .skip)))
+        (ofString "f") (([.const 5] : List (Exp (BitVec 8))).map expToHOL))) =
+    compileProgRiscV exactWrappedHandlerContext.toProduction
+      (.call
+        (some (some (.local, "dst"), some ("E", "e", progOfHOL ProgHOL.skip)))
+        "f" [.const 5]) := by
+  refine compileProgExactHOLW_call_wrapped_result_handler_present_eid_bridge
+    (context := exactWrappedHandlerContext) (kind := .local)
+    (resultName := "dst") (function := "f") (exceptionName := "E")
+    (exceptionVariable := "e") (arguments := [.const 5]) (body := .skip)
+    (resultShape := .one) (resultNames := [7]) (exceptionCode := BitVec.ofNat 8 12)
+    ?_ ?_ (by decide) (by decide) ?_ ?_
+  · simp [exactWrappedHandlerContext, FUPDATE, wrapRtHOL]
+  · simp [exactWrappedHandlerContext, FUPDATE]
+  · intro expression hmem
+    simp only [List.mem_singleton] at hmem
+    subst hmem
+    simp only [compileExpExactHOLW.eq_1, expToHOL.eq_1, compileExpHOL.eq_1,
+      List.map_cons, List.map_nil, crepExpOfHOL.eq_1, shapeOfHOL]
+  · simp [compileProgExactHOLW, compileProgHOL, progOfHOL, crepProgOfHOL]
 
 /-- The `ExtCall` success bridge (`pan_to_crepScript.sml:274-290`) closes the
     four `One`-shaped operand bindings and the maximum-variable temporary base
