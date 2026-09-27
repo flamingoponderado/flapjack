@@ -2,6 +2,7 @@ import Flapjack.Pancake.PanLang.Decl
 import Flapjack.Pancake.Semantics.CrepSem.HOLState
 import Flapjack.Pancake.Semantics.PanSem.ValueHOL
 import Flapjack.Pancake.Proofs.PanToCrep.StateRelFiniteSupport
+import Flapjack.Pancake.Proofs.PanToCrep.CompileExpValRel
 
 /-!
 Direct carrier checks paired with `pan_to_crep_state_rel_carrier_probe.out`.
@@ -193,6 +194,31 @@ def slcTlcRwHOLGuard : Bool :=
    | some (.word value) => value == (7 : BitVec 8)
    | _ => false)
 
+/-! Exact-carrier regression for the `Const` case of HOL `compile_exp_val_rel`
+(`pan_to_crepProofScript.sml:143-150`), exercised over the exact carriers with
+the finite-support source evaluator and the exact target evaluator. The state
+relation, code relation, locals relation, and localisation premises of the
+enclosing HOL theorem are irrelevant to `Const` and are not needed here. -/
+example {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) [hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width σ) [ht : DecidablePred targetState.memaddrs]
+    (word : BitVec width) :
+    ([CrepExpHOL.const word].map (evalCrepSemHOLExp targetState)) =
+      (flattenHOL (ValueHOL.val (HolWordLab.word word))).map some :=
+  (compileExpValRelHOL_const state context targetState word
+    (ValueHOL.val (HolWordLab.word word)) [CrepExpHOL.const word] ShapeHOL.one
+    rfl (by simp only [compileExpExactHOLW])).1
+
+example {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) [hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width σ) [ht : DecidablePred targetState.memaddrs]
+    (word : BitVec width) :
+    shapeOfHOLExact (ValueHOL.val (HolWordLab.word word)) = ShapeHOL.one :=
+  (compileExpValRelHOL_const state context targetState word
+    (ValueHOL.val (HolWordLab.word word)) [CrepExpHOL.const word] ShapeHOL.one
+    rfl (by simp only [compileExpExactHOLW])).2.2.1
 /- Exact `locals_rel_lookup_ctxt` (`pan_to_crepProofScript.sml:527-534`)
     regression over the exact carriers. The fixture is the exact-carrier
     counterpart of the production `localsRelLookupCtxt_fixture`
@@ -352,6 +378,44 @@ private def lookupCtxtGuard : Bool :=
     (match flattenHOL lookupCtxtValue with
      | [.word value] => value == (5 : BitVec 8)
      | _ => false)
+
+/-! Exact `compile_exp_val_rel` `Var Local` case
+    (`pan_to_crepProofScript.sml:151-165`). The kernel-checked application below
+    confirms the exact-carrier statement and the shape conclusion; it takes the
+    HOL case's hypotheses (successful source evaluation, `locals_rel`, and the
+    exact `compile_exp` result) directly. -/
+
+example {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) [_hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width σ) [ht : DecidablePred targetState.memaddrs]
+    (name : MlS) (value : ValueHOL width)
+    (expressions : List (CrepExpHOL width)) (shape : ShapeHOL)
+    (heval : state.evalHOLFinite (.var .local name) = some value)
+    (hlocals : panToCrepLocalsRelFiniteExact context state.locals targetState.locals)
+    (hcompile : compileExpExactHOLW context (.var .local name) = (expressions, shape)) :
+    shapeOfHOLExact value = shape :=
+  (compileExpValRelHOL_var_local state context targetState name value expressions shape
+    heval hlocals hcompile).2.2.1
+
+/-- The global-variable localisation premise of the `Var Global` case is
+    unreachable: `localised_exp` rejects global variables. -/
+example {width : Nat} [NeZero width] (name : MlS) :
+    localisedExpHOL (width := width) (.var .global name) = false := by
+  simp only [localisedExpHOL, everyExpHOL]
+
+example {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) [_hs : DecidablePred state.memaddrs]
+    (context : PanToCrepContextExact width)
+    (targetState : CrepSemHOLState width σ) [ht : DecidablePred targetState.memaddrs]
+    (name : MlS) (value : ValueHOL width)
+    (expressions : List (CrepExpHOL width)) (shape : ShapeHOL)
+    (heval : state.evalHOLFinite (.var .global name) = some value)
+    (hlocalised : localisedExpHOL (width := width) (.var .global name) = true)
+    (hcompile : compileExpExactHOLW context (.var .global name) = (expressions, shape)) :
+    shapeOfHOLExact value = shape :=
+  (compileExpValRelHOL_var_global state context targetState name value expressions shape
+    heval hlocalised hcompile).2.2.1
 
 def runChecks : IO Bool := do
   let checks := [
