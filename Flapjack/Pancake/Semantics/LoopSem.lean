@@ -457,7 +457,12 @@ def readBytearrayHOL {width : Nat} (address : RiscV.Word width) (length : Nat)
 /-- Exact positive-word specialization family of HOL `read_bytearray_def`
     (`cakeml/misc/miscScript.sml:113`): both the address word and returned
     byte word retain their independent HOL dimensions. The zero/successor
-    recursion and failure propagation match the two HOL equations directly. -/
+    recursion and failure propagation match the two HOL equations directly.
+    HOL's `get_byte` result word type is polymorphic (see the comment above
+    `read_bytearray_def`), so the independent `byteWidth` parameter is faithful.
+    `(words_as_type_indexed_bitvec)` is inapplicable here because the
+    declaration binds two independent dimension parameters (both guarded by
+    `[NeZero]`); the checker rejects the qualifier in that case. -/
 @[hol "cakeml/misc/miscScript.sml" "read_bytearray_def"]
 def readBytearrayWordHOL {width byteWidth : Nat} [NeZero width] [NeZero byteWidth]
     (address : RiscV.Word width) (length : Nat)
