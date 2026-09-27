@@ -187,11 +187,11 @@ private abbrev loadMissProductionState : PanSemState (RiscV.Word 64) Unit :=
 
 private theorem loadHitDom (address : RiscV.Word 64) :
     loadHitProductionState.memaddrs address = (loadHitState 0).memaddrs address := by
-  simp [loadHitProductionState, loadHitState]
+  simp
 
 private theorem loadMissDom (address : RiscV.Word 64) :
     loadMissProductionState.memaddrs address = loadMissState.memaddrs address := by
-  simp [loadMissProductionState, loadMissState, loadHitProductionState]
+  simp
 
 private theorem addressConstExecCorrespondence {σ : Type} (state : PanSemStateFiniteExact 64 Unit)
     [DecidablePred state.memaddrs] (productionState : PanSemState (RiscV.Word 64) σ)
@@ -233,5 +233,55 @@ example :
     loadMissState [] noLocals noGlobals missMemory 0 100 addressConst
     missMemoryCodecRel loadMissDom
     (addressConstExecCorrespondence loadMissState loadMissProductionState missMemory 0 100)
+
+/-- **Concrete executed-access witness, `.load32`.** -/
+example :
+    PanSemDeclarationValueOptionRel PanValueCodecRel
+      (evalPanValueExp [] noLocals noGlobals (hitMemory 0x1122334455667788)
+        0 100 panSemBitVec64BytesInWord (.load32 addressConst)
+        (memoryAccess := some (panSemBitVec64MemoryAccess (loadHitProductionState))))
+      ((loadHitState 0x1122334455667788).evalHOLFinite (.load32 (expToHOL addressConst))) :=
+  evalPanValueExp_load32_option_correspondence_executed (loadHitProductionState)
+    (loadHitState 0x1122334455667788) [] noLocals noGlobals (hitMemory 0x1122334455667788) 0 100 addressConst
+    (hitMemoryCodecRel 0x1122334455667788) (loadHitDom) (by rfl)
+    (addressConstExecCorrespondence (loadHitState 0x1122334455667788) (loadHitProductionState) (hitMemory 0x1122334455667788) 0 100)
+
+/-- **Concrete executed-access witness, `.load32`.** -/
+example :
+    PanSemDeclarationValueOptionRel PanValueCodecRel
+      (evalPanValueExp [] noLocals noGlobals (missMemory)
+        0 100 panSemBitVec64BytesInWord (.load32 addressConst)
+        (memoryAccess := some (panSemBitVec64MemoryAccess (loadMissProductionState))))
+      ((loadMissState).evalHOLFinite (.load32 (expToHOL addressConst))) :=
+  evalPanValueExp_load32_option_correspondence_executed (loadMissProductionState)
+    (loadMissState) [] noLocals noGlobals (missMemory) 0 100 addressConst
+    (missMemoryCodecRel) (loadMissDom) (by rfl)
+    (addressConstExecCorrespondence (loadMissState) (loadMissProductionState) (missMemory) 0 100)
+
+/-- **Concrete executed-access witness, `.loadByte`.** -/
+example :
+    PanSemDeclarationValueOptionRel PanValueCodecRel
+      (evalPanValueExp [] noLocals noGlobals (hitMemory 0x1122334455667788)
+        0 100 panSemBitVec64BytesInWord (.loadByte addressConst)
+        (memoryAccess := some (panSemBitVec64MemoryAccess (loadHitProductionState))))
+      ((loadHitState 0x1122334455667788).evalHOLFinite (.loadByte (expToHOL addressConst))) :=
+  evalPanValueExp_loadByte_option_correspondence_executed (loadHitProductionState)
+    (loadHitState 0x1122334455667788) [] noLocals noGlobals (hitMemory 0x1122334455667788) 0 100 addressConst
+    (hitMemoryCodecRel 0x1122334455667788) (loadHitDom) (by rfl)
+    (addressConstExecCorrespondence (loadHitState 0x1122334455667788) (loadHitProductionState) (hitMemory 0x1122334455667788) 0 100)
+
+/-- **Concrete executed-access witness, `.loadByte`.** -/
+example :
+    PanSemDeclarationValueOptionRel PanValueCodecRel
+      (evalPanValueExp [] noLocals noGlobals (missMemory)
+        0 100 panSemBitVec64BytesInWord (.loadByte addressConst)
+        (memoryAccess := some (panSemBitVec64MemoryAccess (loadMissProductionState))))
+      ((loadMissState).evalHOLFinite (.loadByte (expToHOL addressConst))) :=
+  evalPanValueExp_loadByte_option_correspondence_executed (loadMissProductionState)
+    (loadMissState) [] noLocals noGlobals (missMemory) 0 100 addressConst
+    (missMemoryCodecRel) (loadMissDom) (by rfl)
+    (addressConstExecCorrespondence (loadMissState) (loadMissProductionState) (missMemory) 0 100)
+
+
 
 end Flapjack.Test.DeclBridgeParity

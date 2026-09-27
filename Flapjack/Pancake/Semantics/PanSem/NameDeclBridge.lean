@@ -1665,5 +1665,247 @@ theorem evalPanValueExp_load_one_option_correspondence_executed {σ : Type}
           | word payload =>
               split <;> simp only [PanSemDeclarationValueOptionRel, panValueCodecRel_word]
 
+/-! ### Memory-codec agreement for the Load32/LoadByte finite arms (flapjack-rdc.4) -/
+
+/-- Under `PanValueMemoryCodecRel`, the executed word view agrees with the finite
+    total memory at in-domain addresses. -/
+theorem panValueWordHOL_eq_of_memCodecRel
+    (_productionState : PanSemState (RiscV.Word 64) σ)
+    (state : PanSemStateFiniteExact 64 Unit) [_hmem : DecidablePred state.memaddrs]
+    (memory : RiscV.Word 64 → Option (PanValue (RiscV.Word 64)))
+    (hMem : PanValueMemoryCodecRel memory state) (address : RiscV.Word 64)
+    (hdom : state.memaddrs address) :
+    panValueWordHOL memory address = state.memory address := by
+  have h := hMem address
+  rw [if_pos hdom] at h
+  simp only [panValueWordHOL, h]
+
+/-- Under `PanValueMemoryCodecRel`, the executed definedness guard is the
+    decidability of the finite domain. -/
+theorem panValueWordDefined_eq_of_memCodecRel
+    (_productionState : PanSemState (RiscV.Word 64) σ)
+    (state : PanSemStateFiniteExact 64 Unit) [_hmem : DecidablePred state.memaddrs]
+    (memory : RiscV.Word 64 → Option (PanValue (RiscV.Word 64)))
+    (hMem : PanValueMemoryCodecRel memory state) (address : RiscV.Word 64) :
+    panValueWordDefined memory address = decide (state.memaddrs address) := by
+  have h := hMem address
+  by_cases hdom : state.memaddrs address
+  · rw [if_pos hdom] at h
+    simp only [panValueWordDefined, h, hdom, decide_true]
+  · rw [if_neg hdom] at h
+    simp only [panValueWordDefined, h, hdom, decide_false]
+
+/-- The executed (code-map evaluator) `mem_load_byte` agrees with the finite
+    `panMemLoadByteHOL` on the same address under the memory codec and equal
+    addresses/endianness. -/
+theorem panMemLoadByteHOL_codecRel
+    (productionState : PanSemState (RiscV.Word 64) σ)
+    (state : PanSemStateFiniteExact 64 Unit) [_hmem : DecidablePred state.memaddrs]
+    (memory : RiscV.Word 64 → Option (PanValue (RiscV.Word 64)))
+    (hMem : PanValueMemoryCodecRel memory state)
+    (hdom : ∀ address, productionState.memaddrs address = state.memaddrs address)
+    (hbe : productionState.be = state.be) (address : RiscV.Word 64) :
+    panMemLoadByteHOL (panValueWordHOL memory)
+        (fun a => productionState.memaddrs a && panValueWordDefined memory a = true)
+        productionState.be address
+      = panMemLoadByteHOL state.memory state.memaddrs state.be address := by
+  simp only [panMemLoadByteHOL, panValueWordHOL, panValueWordDefined]
+  rw [hbe]
+  by_cases h : state.memaddrs (panByteAlignHOL (width := 64) address)
+  · have hp : productionState.memaddrs (panByteAlignHOL (width := 64) address) = true := by
+      rw [← hdom (panByteAlignHOL (width := 64) address)] at h
+      exact h
+    simp only [hMem (panByteAlignHOL (width := 64) address), if_pos h, hp, decide_true,
+      Bool.true_and, if_true]
+  · have hp : productionState.memaddrs (panByteAlignHOL (width := 64) address) = false := by
+      cases hb : productionState.memaddrs (panByteAlignHOL (width := 64) address) <;> simp_all
+    simp only [hMem (panByteAlignHOL (width := 64) address), if_neg h, hp, Bool.false_and,
+      Bool.false_eq_true, if_false]
+
+/-- The executed (code-map evaluator) `mem_load_32` agrees with the finite
+    `panMemLoad32HOL` on the same address under the memory codec and equal
+    addresses/endianness. -/
+theorem panMemLoad32HOL_codecRel
+    (productionState : PanSemState (RiscV.Word 64) σ)
+    (state : PanSemStateFiniteExact 64 Unit) [_hmem : DecidablePred state.memaddrs]
+    (memory : RiscV.Word 64 → Option (PanValue (RiscV.Word 64)))
+    (hMem : PanValueMemoryCodecRel memory state)
+    (hdom : ∀ address, productionState.memaddrs address = state.memaddrs address)
+    (hbe : productionState.be = state.be) (address : RiscV.Word 64) :
+    panMemLoad32HOL (panValueWordHOL memory)
+        (fun a => productionState.memaddrs a && panValueWordDefined memory a = true)
+        productionState.be address
+      = panMemLoad32HOL state.memory state.memaddrs state.be address := by
+  simp only [panMemLoad32HOL, panValueWordHOL, panValueWordDefined]
+  rw [hbe]
+  by_cases h : state.memaddrs (panByteAlignHOL (width := 64) address)
+  · have hp : productionState.memaddrs (panByteAlignHOL (width := 64) address) = true := by
+      rw [← hdom (panByteAlignHOL (width := 64) address)] at h
+      exact h
+    simp only [hMem (panByteAlignHOL (width := 64) address), if_pos h, hp, decide_true,
+      Bool.true_and, if_true]
+  · have hp : productionState.memaddrs (panByteAlignHOL (width := 64) address) = false := by
+      cases hb : productionState.memaddrs (panByteAlignHOL (width := 64) address) <;> simp_all
+    simp only [hMem (panByteAlignHOL (width := 64) address), if_neg h, hp, Bool.false_and,
+      Bool.false_eq_true, if_false]
+
+
+/-- Executed-access `.load32` arm correspondence: the production `read32` at the
+    executed `panSemBitVec64MemoryAccess` agrees with the finite tagged
+    `panMemLoad32HOL` result whenever the executable memory is the finite state
+    memory guarded by `memaddrs` and the `memaddrs`/`be` fields agree. -/
+theorem evalPanValueExp_load32_option_correspondence_executed {σ : Type}
+    (productionState : PanSemState (RiscV.Word 64) σ)
+    (state : PanSemStateFiniteExact 64 Unit) [_hmem : DecidablePred state.memaddrs]
+    (structs : StructContext)
+    (locals globals : VarName → Option (PanValue (RiscV.Word 64)))
+    (memory : RiscV.Word 64 → Option (PanValue (RiscV.Word 64)))
+    (baseAddress topAddress : RiscV.Word 64)
+    (addressExpression : Exp (RiscV.Word 64))
+    (hMem : PanValueMemoryCodecRel memory state)
+    (hdom : ∀ address, productionState.memaddrs address = state.memaddrs address)
+    (hbe : productionState.be = state.be)
+    (haddr : PanSemDeclarationValueOptionRel PanValueCodecRel
+      (evalPanValueExp structs locals globals memory baseAddress topAddress
+        panSemBitVec64BytesInWord addressExpression
+        (memoryAccess := some (panSemBitVec64MemoryAccess productionState)))
+      (state.evalHOLFinite (expToHOL addressExpression))) :
+    PanSemDeclarationValueOptionRel PanValueCodecRel
+      (evalPanValueExp structs locals globals memory baseAddress topAddress
+        panSemBitVec64BytesInWord (.load32 addressExpression)
+        (memoryAccess := some (panSemBitVec64MemoryAccess productionState)))
+      (state.evalHOLFinite (.load32 (expToHOL addressExpression))) := by
+  cases ha : evalPanValueExp structs locals globals memory baseAddress topAddress
+      panSemBitVec64BytesInWord addressExpression
+      (memoryAccess := some (panSemBitVec64MemoryAccess productionState)) with
+  | none =>
+      rw [ha] at haddr
+      cases hf : state.evalHOLFinite (expToHOL addressExpression) with
+      | none =>
+          have hprod : evalPanValueExp structs locals globals memory baseAddress topAddress
+              panSemBitVec64BytesInWord (.load32 addressExpression)
+              (memoryAccess := some (panSemBitVec64MemoryAccess productionState)) = none := by
+            simp only [evalPanValueExp]
+            rw [ha]
+            rfl
+          have hfin : state.evalHOLFinite (.load32 (expToHOL addressExpression)) = none := by
+            rw [PanSemStateFiniteExact.evalHOLFinite_load32]
+            simp only [hf]
+          rw [hprod, hfin]
+          simp only [PanSemDeclarationValueOptionRel]
+      | some fv => rw [hf] at haddr; simp only [PanSemDeclarationValueOptionRel] at haddr
+  | some pv =>
+      rw [ha] at haddr
+      cases hf : state.evalHOLFinite (expToHOL addressExpression) with
+      | none => rw [hf] at haddr; simp only [PanSemDeclarationValueOptionRel] at haddr
+      | some fv =>
+          rw [hf] at haddr
+          simp only [PanSemDeclarationValueOptionRel] at haddr
+          obtain ⟨address, hpv, hfv⟩ := panValueCodecRel_exists_word pv fv haddr
+          subst hpv; subst hfv
+          have hread : (panSemBitVec64MemoryAccess productionState).read32
+              (panSemBitVec64MemoryAccess productionState).domain memory
+              panSemBitVec64BytesInWord address
+              = (panMemLoad32HOL state.memory state.memaddrs state.be address).map
+                  (fun value => BitVec.ofNat 64 value.toNat) := by
+            rw [panSemBitVec64Read32_eq_panMemLoad32HOL]
+            rw [panMemLoad32HOL_codecRel productionState state memory hMem hdom hbe address]
+          have hprod : evalPanValueExp structs locals globals memory baseAddress topAddress
+              panSemBitVec64BytesInWord (.load32 addressExpression)
+              (memoryAccess := some (panSemBitVec64MemoryAccess productionState))
+              = (panMemLoad32HOL state.memory state.memaddrs state.be address).map
+                  (fun value => PanValue.word (BitVec.ofNat 64 value.toNat)) := by
+            simp only [evalPanValueExp]
+            rw [ha]
+            simp [hread, Option.map_map]
+            rfl
+          have hfin : state.evalHOLFinite (.load32 (expToHOL addressExpression))
+              = (panMemLoad32HOL state.memory state.memaddrs state.be address).map
+                  (fun value => ValueHOL.val (HolWordLab.word (BitVec.ofNat 64 value.toNat))) := by
+            rw [PanSemStateFiniteExact.evalHOLFinite_load32]
+            simp only [hf]
+          rw [hprod, hfin]
+          cases hload : panMemLoad32HOL state.memory state.memaddrs state.be address with
+          | none => simp only [Option.map_none, PanSemDeclarationValueOptionRel]
+          | some value =>
+              simp only [Option.map_some, PanSemDeclarationValueOptionRel, panValueCodecRel_word]
+
+/-- Executed-access `.loadByte` arm correspondence (same shape as `.load32`). -/
+theorem evalPanValueExp_loadByte_option_correspondence_executed {σ : Type}
+    (productionState : PanSemState (RiscV.Word 64) σ)
+    (state : PanSemStateFiniteExact 64 Unit) [_hmem : DecidablePred state.memaddrs]
+    (structs : StructContext)
+    (locals globals : VarName → Option (PanValue (RiscV.Word 64)))
+    (memory : RiscV.Word 64 → Option (PanValue (RiscV.Word 64)))
+    (baseAddress topAddress : RiscV.Word 64)
+    (addressExpression : Exp (RiscV.Word 64))
+    (hMem : PanValueMemoryCodecRel memory state)
+    (hdom : ∀ address, productionState.memaddrs address = state.memaddrs address)
+    (hbe : productionState.be = state.be)
+    (haddr : PanSemDeclarationValueOptionRel PanValueCodecRel
+      (evalPanValueExp structs locals globals memory baseAddress topAddress
+        panSemBitVec64BytesInWord addressExpression
+        (memoryAccess := some (panSemBitVec64MemoryAccess productionState)))
+      (state.evalHOLFinite (expToHOL addressExpression))) :
+    PanSemDeclarationValueOptionRel PanValueCodecRel
+      (evalPanValueExp structs locals globals memory baseAddress topAddress
+        panSemBitVec64BytesInWord (.loadByte addressExpression)
+        (memoryAccess := some (panSemBitVec64MemoryAccess productionState)))
+      (state.evalHOLFinite (.loadByte (expToHOL addressExpression))) := by
+  cases ha : evalPanValueExp structs locals globals memory baseAddress topAddress
+      panSemBitVec64BytesInWord addressExpression
+      (memoryAccess := some (panSemBitVec64MemoryAccess productionState)) with
+  | none =>
+      rw [ha] at haddr
+      cases hf : state.evalHOLFinite (expToHOL addressExpression) with
+      | none =>
+          have hprod : evalPanValueExp structs locals globals memory baseAddress topAddress
+              panSemBitVec64BytesInWord (.loadByte addressExpression)
+              (memoryAccess := some (panSemBitVec64MemoryAccess productionState)) = none := by
+            simp only [evalPanValueExp]
+            rw [ha]
+            rfl
+          have hfin : state.evalHOLFinite (.loadByte (expToHOL addressExpression)) = none := by
+            rw [PanSemStateFiniteExact.evalHOLFinite_loadByte]
+            simp only [hf]
+          rw [hprod, hfin]
+          simp only [PanSemDeclarationValueOptionRel]
+      | some fv => rw [hf] at haddr; simp only [PanSemDeclarationValueOptionRel] at haddr
+  | some pv =>
+      rw [ha] at haddr
+      cases hf : state.evalHOLFinite (expToHOL addressExpression) with
+      | none => rw [hf] at haddr; simp only [PanSemDeclarationValueOptionRel] at haddr
+      | some fv =>
+          rw [hf] at haddr
+          simp only [PanSemDeclarationValueOptionRel] at haddr
+          obtain ⟨address, hpv, hfv⟩ := panValueCodecRel_exists_word pv fv haddr
+          subst hpv; subst hfv
+          have hread : (panSemBitVec64MemoryAccess productionState).readByte
+              (panSemBitVec64MemoryAccess productionState).domain memory
+              panSemBitVec64BytesInWord address
+              = (panMemLoadByteHOL state.memory state.memaddrs state.be address).map
+                  (fun byte => BitVec.ofNat 64 byte.toNat) := by
+            rw [panSemBitVec64ReadByte_eq_panMemLoadByteHOL]
+            rw [panMemLoadByteHOL_codecRel productionState state memory hMem hdom hbe address]
+          have hprod : evalPanValueExp structs locals globals memory baseAddress topAddress
+              panSemBitVec64BytesInWord (.loadByte addressExpression)
+              (memoryAccess := some (panSemBitVec64MemoryAccess productionState))
+              = (panMemLoadByteHOL state.memory state.memaddrs state.be address).map
+                  (fun byte => PanValue.word (BitVec.ofNat 64 byte.toNat)) := by
+            simp only [evalPanValueExp]
+            rw [ha]
+            simp [hread, Option.map_map]
+            rfl
+          have hfin : state.evalHOLFinite (.loadByte (expToHOL addressExpression))
+              = (panMemLoadByteHOL state.memory state.memaddrs state.be address).map
+                  (fun byte => ValueHOL.val (HolWordLab.word (BitVec.ofNat 64 byte.toNat))) := by
+            rw [PanSemStateFiniteExact.evalHOLFinite_loadByte]
+            simp only [hf]
+          rw [hprod, hfin]
+          cases hload : panMemLoadByteHOL state.memory state.memaddrs state.be address with
+          | none => simp only [Option.map_none, PanSemDeclarationValueOptionRel]
+          | some byte =>
+              simp only [Option.map_some, PanSemDeclarationValueOptionRel, panValueCodecRel_word]
+
 
 end Flapjack
