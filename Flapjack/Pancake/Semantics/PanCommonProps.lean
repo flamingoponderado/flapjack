@@ -642,4 +642,20 @@ theorem memGenlistAddSucValHOL (n x k : Nat) :
   rw [List.mem_range] at hi
   omega
 
+/-- Exact port of HOL `update_eq_zip_flookup`
+    (`cakeml/pancake/semantics/pan_commonPropsScript.sml:244`): if `xs` has
+    distinct keys and `xs`, `ys` have equal length, then every in-range index
+    `n` looks up the `n`-th key of `xs` to the `n`-th value of `ys` in
+    `f |++ ZIP (xs, ys)`. HOL `ALL_DISTINCT` is rendered as `List.Nodup`,
+    `FLOOKUP` as the reviewed extensional lookup, `f |++` as `FUPDATE_LIST`,
+    and `EL n` as the bounded `getElem` `xs[n]'hn` (respectively
+    `ys[n]'…`, whose bound follows from `LENGTH xs = LENGTH ys`). -/
+@[hol "cakeml/pancake/semantics/pan_commonPropsScript.sml" "update_eq_zip_flookup"]
+theorem updateEqZipFlookupHOL [BEq α] [LawfulBEq α]
+    (xs : List α) (ys : List β) (f : FiniteMap α β) (n : Nat)
+    (hdistinct : xs.Nodup) (hlen : xs.length = ys.length) (hn : n < xs.length) :
+    FLOOKUP (FUPDATE_LIST f (xs.zip ys)) (xs[n]'hn) =
+      some (ys[n]'(by rw [← hlen]; exact hn)) :=
+  FLOOKUP_FUPDATE_LIST_zip_getElem xs ys f n hdistinct hlen hn
+
 end Flapjack

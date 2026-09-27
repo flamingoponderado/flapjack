@@ -1886,14 +1886,6 @@ run_probe word_to_stack_wshareinst_probeScript.sml word_to_stack_wshareinst_prob
   ws_load ws_store32 "$cake_dir/compiler/backend/word_to_stackScript.sml" \
   "$cake_dir/compiler/backend"
 
-# The external HOL finite_map theory theorem used in pc_compile_correct.
-# Unlike CakeML sources, this is deliberately rooted at the separate HOL
-# checkout; check-hol-refs.py currently cannot encode such a path.
-run_probe fupdate_list_append_commutes_probeScript.sml fupdate_list_append_commutes_probe.out \
-  source_theorem overlap_lookup_equal \
-  "$hol_dir/src/finite_maps/finite_mapScript.sml" \
-  "$hol_dir/src/finite_maps"
-
 # The pan_commonProps genlist probe observes `mem_genlist_add_suc_val`
 # (pan_commonPropsScript.sml:234): membership in `GENLIST (fun x. SUC x + k) n`
 # implies the value lies in `(k, n + k]`.
@@ -1901,3 +1893,11 @@ run_probe pan_common_props_genlist_probeScript.sml pan_common_props_genlist_prob
   genlist_mem_3 genlist_mem_0 genlist_mem_6 genlist_done \
   "$cake_dir/pancake/semantics/pan_commonPropsScript.sml" \
   "$cake_dir/pancake/semantics"
+
+# The external HOL finite_map theory theorem used in pc_compile_correct.
+# Unlike CakeML sources, this is deliberately rooted at the separate HOL
+# checkout; check-hol-refs.py currently cannot encode such a path.
+run_probe fupdate_list_append_commutes_probeScript.sml fupdate_list_append_commutes_probe.out \
+  source_theorem overlap_lookup_equal \
+  "$hol_dir/src/finite_maps/finite_mapScript.sml" \
+  "$hol_dir/src/finite_maps"
