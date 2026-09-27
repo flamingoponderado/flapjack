@@ -329,11 +329,14 @@ theorem compileExpValRelHOL_rstruct {width : Nat} {σ : Type} [NeZero width]
       rw [← heval, ← hExpr, ← hShape]
       exact hmain
 
-/-- Exact `BaseAddr` case of HOL `compile_exp_val_rel`
+/-- Flapjack-specific staged constructor lemma for the `BaseAddr` leaf of the
+    exact `compile_exp_val_rel` induction
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:130-396`, the catch-all
-    `eval_def`/`compile_exp_def` case): `eval` returns the state's base address
-    as a word and the compiler emits the `BaseAddr` expression, whose Crep
-    evaluation returns the target's base address; `state_rel` equates them. -/
+    `eval_def`/`compile_exp_def` case). It is not a standalone HOL declaration:
+    the HOL theorem's `localised_exp`, `code_rel` and `locals_rel` hypotheses
+    are unnecessary in this leaf proof (only `state_rel` is used, to equate the
+    base addresses), so the statement keeps just `state_rel`; the full
+    `compile_exp_val_rel` theorem remains open (bead flapjack-4ac.5.81). -/
 theorem compileExpValRelHOL_baseAddr {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) [_hs : DecidablePred state.memaddrs]
     (context : PanToCrepContextExact width)
@@ -363,10 +366,15 @@ theorem compileExpValRelHOL_baseAddr {width : Nat} {σ : Type} [NeZero width]
   · simp [shapeOfHOLExact]
   · simp [isWfShapeExactHOL]
 
-/-- Exact `TopAddr` case of HOL `compile_exp_val_rel`
+/-- Flapjack-specific staged constructor lemma for the `TopAddr` leaf of the
+    exact `compile_exp_val_rel` induction
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:130-396`, the catch-all
-    `eval_def`/`compile_exp_def` case): the `TopAddr` counterpart of
-    `compileExpValRelHOL_baseAddr`. -/
+    `eval_def`/`compile_exp_def` case), the `TopAddr` counterpart of
+    `compileExpValRelHOL_baseAddr`. It is not a standalone HOL declaration: the
+    HOL theorem's `localised_exp`, `code_rel` and `locals_rel` hypotheses are
+    unnecessary in this leaf proof (only `state_rel` is used, to equate the top
+    addresses); the full `compile_exp_val_rel` theorem remains open (bead
+    flapjack-4ac.5.81). -/
 theorem compileExpValRelHOL_topAddr {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) [_hs : DecidablePred state.memaddrs]
     (context : PanToCrepContextExact width)
@@ -396,10 +404,15 @@ theorem compileExpValRelHOL_topAddr {width : Nat} {σ : Type} [NeZero width]
   · simp [shapeOfHOLExact]
   · simp [isWfShapeExactHOL]
 
-/-- Exact `BytesInWord` case of HOL `compile_exp_val_rel`
+/-- Flapjack-specific staged constructor lemma for the `BytesInWord` leaf of
+    the exact `compile_exp_val_rel` induction
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:130-396`, the catch-all
     case): `eval` returns `bytesInWord` and the compiler emits the matching
-    `Const`; the Crep side returns the same word. -/
+    `Const`; the Crep side returns the same word. It is not a standalone HOL
+    declaration: the HOL theorem's `localised_exp`, `code_rel`, `locals_rel`
+    (and even `state_rel`) hypotheses are unnecessary here because the witness
+    is the constant `bytesInWord` on both sides; the full
+    `compile_exp_val_rel` theorem remains open (bead flapjack-4ac.5.81). -/
 theorem compileExpValRelHOL_bytesInWord {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) [_hs : DecidablePred state.memaddrs]
     (context : PanToCrepContextExact width)
