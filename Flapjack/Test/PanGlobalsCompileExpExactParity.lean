@@ -1,5 +1,6 @@
 import Flapjack.Pancake.PanGlobals
 import Flapjack.Pancake.PanGlobals.CompileExpExact
+import Flapjack.Pancake.PanGlobals.CompileExpExactRoute
 
 namespace Flapjack.Test.PanGlobalsCompileExpExactParity
 
@@ -15,7 +16,7 @@ namespace Flapjack.Test.PanGlobalsCompileExpExactParity
 
 open Flapjack
 open Flapjack.Pancake.PanLang
-  (MlS ShapeHOL ExpHOL expToHOL expOfHOL ExpByteRanged shapeOfHOL)
+  (MlS ShapeHOL ExpHOL expToHOL expOfHOL ExpByteRanged ShapeByteRanged shapeOfHOL)
 open Flapjack.Basis.Pure.MlString (ofString toStringOfBytes)
 
 /-- The probe context of `pan_globals_compile_exp_probeScript.sml` at width 8:
@@ -161,15 +162,98 @@ def productionGuard : Bool :=
 #eval productionGuard
 #guard productionGuard
 
+/-! ### Routing the executed `cakeContextOfPass` path through `compileExpExactHOL` -/
+
+/-- The probe's production `GlobalPassContext`: the association-list analogue of
+    `exactProbeContext` with `globals = «g» ↦ (One, 8w)`, `globals_size = 1w`,
+    `max_globals_size = 16w`, and the canonical word operations. -/
+def productionPassContext : GlobalPassContext (BitVec 8) where
+  globals := [("g", (Shape.one, 8))]
+  globalsSize := 1
+  maxGlobalsSize := 16
+  bytesInWord := 1
+  fromNat := fun value => BitVec.ofNat 8 value
+
+/-- The probe context's stored shapes are byte-ranged, as the routing equality
+    `compileExpCake_ofPass_eq` requires. -/
+theorem productionPassContext_shapes :
+    ∀ entry ∈ productionPassContext.globals, ShapeByteRanged entry.2.1 := by
+  intro entry hmem
+  simp only [productionPassContext, List.mem_singleton] at hmem
+  subst hmem
+  simp only [ShapeByteRanged]
+
+/-- The `global_hit` row through the executed `cakeContextOfPass` production
+    path, routed through the reviewed `compileExpExactHOL` by
+    `compileExpCake_ofPass_eq`. -/
+theorem routed_global_hit :
+    compileExpCake (cakeContextOfPass productionPassContext) (.var .global "g")
+      = .load .one (.op .sub [.topAddr, .const (8 : BitVec 8)]) := by
+  rw [compileExpCake_ofPass_eq productionPassContext productionPassContext_shapes _
+    (by simp [ExpByteRanged])]
+  simp only [expToHOL]
+  rw [compileExpExactHOL.eq_3]
+  simp only [PanGlobalsContextExact.ofPass_globals_lookup]
+  rw [Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes "g" (by decide)]
+  simp only [productionPassContext, lookupInfo, List.map_cons, List.map_nil,
+    beq_self_eq_true, if_true, Option.map_some, expOfHOL]
+  rw [Flapjack.Pancake.PanLang.shapeOfHOL_shapeToHOL Shape.one (by simp [ShapeByteRanged])]
+
+/-- The `top_addr` row through the executed `cakeContextOfPass` production path,
+    routed through the reviewed `compileExpExactHOL`. -/
+theorem routed_top_addr :
+    compileExpCake (cakeContextOfPass productionPassContext) (.topAddr : Exp (BitVec 8))
+      = .op .sub [.topAddr, .const (16 : BitVec 8)] := by
+  rw [compileExpCake_ofPass_eq productionPassContext productionPassContext_shapes _
+    (by simp [ExpByteRanged])]
+  simp only [expToHOL]
+  rw [compileExpExactHOL.eq_16]
+  simp only [PanGlobalsContextExact.ofPass, expOfHOL, List.map_cons, List.map_nil]
+  rfl
+
+/-- The five `pan_globals_compile_exp_probe.out` rows replayed through the
+    executed `cakeContextOfPass` production context (the finite-support
+    association-list view), as a single Bool fixture. -/
+def routedProductionGuard : Bool :=
+  (match compileExpCake (cakeContextOfPass productionPassContext)
+      (.var .local "x") with
+   | .var .local name => name == "x"
+   | _ => false) &&
+  (match compileExpCake (cakeContextOfPass productionPassContext)
+      (.var .global "g") with
+   | .load .one (.op .sub [.topAddr, .const address]) => address == (8 : BitVec 8)
+   | _ => false) &&
+  (match compileExpCake (cakeContextOfPass productionPassContext)
+      (.var .global "missing") with
+   | .const value => value == (0 : BitVec 8)
+   | _ => false) &&
+  (match compileExpCake (cakeContextOfPass productionPassContext)
+      (.topAddr : Exp (BitVec 8)) with
+   | .op .sub [.topAddr, .const address] => address == (16 : BitVec 8)
+   | _ => false) &&
+  (match compileExpCake (cakeContextOfPass productionPassContext)
+      (.op .add [.var .global "g", .topAddr]) with
+   | .op .add [.load .one (.op .sub [.topAddr, .const first]),
+               .op .sub [.topAddr, .const second]] =>
+       first == (8 : BitVec 8) && second == (16 : BitVec 8)
+   | _ => false)
+
+#eval routedProductionGuard
+#guard routedProductionGuard
+
 def runChecks : IO Bool := do
   let exactResult := parityGuard
   let productionResult := productionGuard
+  let routedResult := routedProductionGuard
   IO.println (if exactResult then
     "PASS pan_globals compile_exp_def exact-carrier parity (5 HOL rows)"
     else "FAIL pan_globals compile_exp_def exact-carrier parity (5 HOL rows)")
   IO.println (if productionResult then
     "PASS pan_globals compileExpCake/cakeContextOfExact bridge parity (5 HOL rows)"
     else "FAIL pan_globals compileExpCake/cakeContextOfExact bridge parity (5 HOL rows)")
-  pure (exactResult && productionResult)
+  IO.println (if routedResult then
+    "PASS pan_globals compileExpCake/ofPass routed parity (5 HOL rows)"
+    else "FAIL pan_globals compileExpCake/ofPass routed parity (5 HOL rows)")
+  pure (exactResult && productionResult && routedResult)
 
 end Flapjack.Test.PanGlobalsCompileExpExactParity
