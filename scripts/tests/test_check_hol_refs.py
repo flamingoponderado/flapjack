@@ -1333,6 +1333,49 @@ class WordsAsTypeIndexedBitvecQualifierTest(unittest.TestCase):
         text = "\n".join(self.GOOD).replace("[NeZero width]", "[NeZero other]")
         self.assertTrue(any("BitVec" in e for e in self.ERRORS(text, "evalProg")))
 
+    def test_rejects_second_unconstrained_width(self):
+        # A second word dimension must also be bound at a `Nat` width with its
+        # own `[NeZero <id>]` discharge.
+        text = "\n".join(self.GOOD).replace(
+            "(addr : BitVec width)",
+            "(addr : BitVec width) (other : BitVec otherWidth)",
+        ).replace(
+            "{width : Nat} [NeZero width] {σ : Type}",
+            "{width : Nat} {otherWidth : Nat} [NeZero width] {σ : Type}",
+        )
+        self.assertTrue(
+            any("otherWidth" in e for e in self.ERRORS(text, "evalProg"))
+        )
+
+    def test_rejects_bitvec_zero_beside_good_width(self):
+        text = "\n".join(self.GOOD).replace(
+            "(addr : BitVec width)",
+            "(addr : BitVec width) (zero : BitVec 0)",
+        )
+        self.assertTrue(
+            any("BitVec 0" in e or "positive" in e for e in self.ERRORS(text, "evalProg"))
+        )
+
+    def test_rejects_bitvec_zero_as_only_word(self):
+        text = "\n".join(self.GOOD).replace("(addr : BitVec width)", "(addr : BitVec 0)")
+        self.assertTrue(
+            any("BitVec 0" in e or "BitVec" in e for e in self.ERRORS(text, "evalProg"))
+        )
+
+    def test_rejects_nezero_zero(self):
+        text = "\n".join(self.GOOD).replace(
+            "[NeZero width]", "[NeZero width] [NeZero 0]",
+        )
+        self.assertTrue(
+            any("NeZero 0" in e or "positive" in e for e in self.ERRORS(text, "evalProg"))
+        )
+
+    def test_rejects_ffi_host_at_type_one(self):
+        text = "\n".join(self.GOOD).replace("{σ : Type}", "{σ : Type 1}")
+        self.assertTrue(
+            any("universe" in e or "Type" in e for e in self.ERRORS(text, "evalProg"))
+        )
+
 
 THEOREM_MAP = runpy.run_path(
     str(Path(__file__).resolve().parents[1] / "check_hol_theorem_map.py")
@@ -1396,10 +1439,11 @@ class RealCombinedQualifierFixtureTest(unittest.TestCase):
             )
 
     def test_real_imported_carrier_only_clauses_pass_checker(self):
-        # Skip is tagged and Break is not; neither signature names a literal
-        # `BitVec`. Both must resolve the imported CrepSemHOLState word carrier.
+        # Skip and Break are currently untagged pending whole-evaluator review;
+        # neither signature names a literal `BitVec`. Both still exercise
+        # resolution of the imported CrepSemHOLState word carrier.
         lines = self._lines()
-        for clause, expected_tag in (("skip", True), ("break", False)):
+        for clause, expected_tag in (("skip", False), ("break", False)):
             name = f"evalCrepSemHOLProgExact_{clause}"
             with self.subTest(clause=clause):
                 start = next(
