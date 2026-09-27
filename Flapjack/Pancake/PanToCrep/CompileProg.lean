@@ -1088,6 +1088,28 @@ def PanToCrepContextExactProdRel {width : Nat} [NeZero width]
   (∀ name, Flapjack.Pancake.PanLang.NameRanged name →
     exact.toProduction.vars name = production.vars name)
 
+/-- General-context `Seq` case for the relation-polymorphic recursive
+    compiler bridge. Both children retain the same context pair, so the
+    induction hypotheses consume the incoming ranged relation directly. -/
+theorem compileProgExactHOLW_seq_relation_bridge {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width)
+    (productionContext : PanToCrepHOLContext (BitVec width))
+    (hcontext : PanToCrepContextExactProdRel context productionContext)
+    (first second : Flapjack.Pancake.PanLang.ProgHOL width)
+    (hfirst : ∀ exactContext productionContext,
+      PanToCrepContextExactProdRel exactContext productionContext →
+      crepProgOfHOL (compileProgExactHOLW exactContext first) =
+        compileProgHOL productionContext (progOfHOL first))
+    (hsecond : ∀ exactContext productionContext,
+      PanToCrepContextExactProdRel exactContext productionContext →
+      crepProgOfHOL (compileProgExactHOLW exactContext second) =
+        compileProgHOL productionContext (progOfHOL second)) :
+    crepProgOfHOL (compileProgExactHOLW context (.seq first second)) =
+      compileProgHOL productionContext (progOfHOL (.seq first second)) := by
+  simp [compileProgExactHOLW, compileProgHOL, crepProgOfHOL, progOfHOL,
+    hfirst context productionContext hcontext,
+    hsecond context productionContext hcontext]
+
 /-- The context relation is preserved by parallel exact/production variable
     updates when their keys are source-ranged and their decoded payloads agree.
     Unlike the base-context helper above, this form composes through recursive
