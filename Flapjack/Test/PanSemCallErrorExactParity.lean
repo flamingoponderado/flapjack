@@ -137,8 +137,11 @@ private def oracleParameterState : PanSemExactState Word64 Unit :=
   exactStateOf <| { (exactLegacy 5 localsWithX (fun _ => none) parameterContracts) with
       functions := [("f", ["p"], .skip)] }
 
-/-- Result matcher for the callee-fallthrough rejection: an `Error` at the
-    decremented callee clock whose `p` local still holds the bound argument. -/
+/-- Result matcher for the callee-fallthrough rejection, pairing all four rows
+    of `scripts/hol-probes/pan_sem_call_callee_normal_probe.out`: an `Error` at
+    the decremented callee clock, whose `p` local still holds the bound
+    argument and whose caller's `x` local is absent (the result carries the
+    callee's post-call state, whose locals hold only the bound parameters). -/
 private def isFallThroughError (clock value : Nat)
     (result : Option (PanValueFfiClockResult Word64 Unit)) : Bool :=
   match result with
@@ -147,7 +150,7 @@ private def isFallThroughError (clock value : Nat)
       | .error locals _ _ _ =>
           n == clock && (match locals "p" with
             | some (.word w) => w == BitVec.ofNat 64 value
-            | _ => false)
+            | _ => false) && (locals "x").isNone
       | _ => false
   | _ => false
 
