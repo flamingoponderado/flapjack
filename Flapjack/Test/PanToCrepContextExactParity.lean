@@ -331,4 +331,19 @@ example : (ctxtFcExactHOL (width := 8) HolFiniteMapExact.empty HolFiniteMapExact
 example : (ctxtFcExactHOL (width := 8) HolFiniteMapExact.empty HolFiniteMapExact.empty
     [] [] []).vmax = 0 := rfl
 
+/-- Direct replay of the HOL-EVAL `vmax_nonempty_list=T` row
+    (`scripts/hol-probes/ctxt_fc_probe.out`) through the exact
+    `ctxt_fc_vmax` port: the constructed context's `vmax` is `MAX_LIST` of the
+    supplied unsorted slot list. -/
+example : (ctxtFcExactHOL (width := 8) HolFiniteMapExact.empty HolFiniteMapExact.empty
+    [] [] [4, 1, 7, 3]).vmax = 7 :=
+  ctxtFcVmaxHOL HolFiniteMapExact.empty HolFiniteMapExact.empty [] [] [4, 1, 7, 3]
+
+/-- Direct replay of the HOL-EVAL `vmax_empty_list=T` row
+    (`scripts/hol-probes/ctxt_fc_probe.out`) through the exact
+    `ctxt_fc_vmax` port: `MAX_LIST []` is `0`. -/
+example : (ctxtFcExactHOL (width := 8) HolFiniteMapExact.empty HolFiniteMapExact.empty
+    [] [] []).vmax = 0 :=
+  ctxtFcVmaxHOL HolFiniteMapExact.empty HolFiniteMapExact.empty [] [] []
+
 end Flapjack.Test.PanToCrepContextExactParity

@@ -5691,6 +5691,14 @@
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
     "hol_name": "ctxt_fc_vmax",
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
+    "lean_name": "ctxtFcVmaxHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds9 source comparison (bead flapjack-4ac.5.93): HOL ctxt_fc_vmax (pan_to_crepProofScript.sml:2307-2312) proves the no-premise projection (ctxt_fc ctxt.funcs em vs shs ns).vmax = MAX_LIST ns by rw [ctxt_fc_def]. The Lean theorem ctxtFcVmaxHOL states the same projection over the exact PanToCrepContextExact carrier: the first argument is an unrestricted finite map (HOL implicit ctxt.funcs is universally quantified, so a bare cvs is equivalent), the argument order (cvs, em, vs, shs, ns) and the unrestricted quantifiers match, and MAX_LIST is maxList (empty gives 0). The conclusion is a Nat that depends only on ns, so it does not traverse any finite-map field and no list-to-array, name, or finite-map representation difference is observed; the finite-map inputs are inert in the statement, so no qualifier applies. Direct HOL-EVAL rows vmax_nonempty_list=T and vmax_empty_list=T in scripts/hol-probes/ctxt_fc_probe.out are replayed by the kernel-checked regression in Flapjack/Test/PanToCrepContextExactParity.lean."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "ctxt_fc_vmax",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
     "lean_name": "ctxtFcVmax",
     "statement_status": "documented_mismatch",
     "reviewer": "Codex (HOL MAX_LIST and Lean maxList slot projection match with no premises; direct HOL-EVAL empty and unsorted nonempty rows paired with kernel-checked Lean theorem instances) Tag withdrawn (Flapjack-specific; not an exact HOL port): statement is keyed by `FunName`/`VarName`/`ExceptionId` = `String` or embeds a `PanToCrepProofContext`/`PanToCrepHOLContext` with `String`-keyed finite maps, while HOL `pan_to_crepProofScript.sml` keys names by `funname`/`varname`/`eid` = `mlstring`; exact MlString carrier tracked by `flapjack-pxn.18.3.5.8`."

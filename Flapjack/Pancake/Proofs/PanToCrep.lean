@@ -4870,4 +4870,23 @@ theorem ctxtFcEidsEqHOL {width : Nat} [NeZero width]
     (vs : List MlS) (shs : List ShapeHOL) (ns : List Nat) :
     (ctxtFcExactHOL cvs em vs shs ns : PanToCrepContextExact width).eids = em := rfl
 
+/-- Exact port of HOL `ctxt_fc_vmax`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:2307`):
+    `(ctxt_fc ctxt.funcs em vs shs ns).vmax = MAX_LIST ns`. The constructed
+    context's `vmax` field is definitionally `maxList ns`, so the statement is
+    a no-premise projection. The statement keeps HOL's argument order
+    `(cvs, em, vs, shs, ns)` and its unrestricted quantifiers; `.vmax` is a
+    `Nat` that depends only on `ns`, so the conclusion does not traverse any
+    finite-map field and no representation difference is observed in it.
+    Direct HOL-EVAL rows `vmax_nonempty_list=T`/`vmax_empty_list=T` in
+    `scripts/hol-probes/ctxt_fc_probe.out` are replayed by the kernel-checked
+    regression in `Flapjack.Test.PanToCrepContextExactParity`. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "ctxt_fc_vmax"]
+theorem ctxtFcVmaxHOL {width : Nat} [NeZero width]
+    (cvs : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ShapeHOL))
+    (em : HolFiniteMapExact MlS (BitVec width))
+    (vs : List MlS) (shs : List ShapeHOL) (ns : List Nat) :
+    (ctxtFcExactHOL cvs em vs shs ns : PanToCrepContextExact width).vmax =
+      maxList ns := rfl
+
 end Flapjack
