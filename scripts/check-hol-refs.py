@@ -391,6 +391,113 @@ def structure_headers(lines: list[str]) -> dict[str, str]:
     return headers
 
 
+def inductive_constructor_types(lines: list[str]) -> dict[str, dict[str, str]]:
+    """Constructor payload text for indexed inductive carriers.
+
+    Exact word-indexed syntax families can carry their `BitVec width` values
+    through constructor arguments instead of structure fields. Keep each
+    constructor's text attached to the owning inductive declaration so width
+    evidence remains owner-local.
+    """
+    owners: dict[str, dict[str, str]] = {}
+    current: str | None = None
+    owner_indent: int | None = None
+    constructor_indent: int | None = None
+    constructor_name: str | None = None
+    constructor_lines: list[str] = []
+
+    def flush() -> None:
+        if current is not None and constructor_name is not None:
+            owners[current][f"constructor:{constructor_name}"] = " ".join(
+                constructor_lines
+            ).strip()
+
+    for line in strip_lean_comments("\n".join(lines)).splitlines():
+        declaration = re.match(
+            r"^(\s*)inductive\s+([A-Za-z0-9_'.]+).*\bwhere\s*$", line
+        )
+        if declaration:
+            flush()
+            current = declaration.group(2)
+            owner_indent = len(declaration.group(1))
+            constructor_indent = None
+            constructor_name = None
+            constructor_lines = []
+            owners.setdefault(current, {})
+            continue
+        if current is None or owner_indent is None or not line.strip():
+            continue
+        indent = len(line) - len(line.lstrip())
+        if indent <= owner_indent:
+            flush()
+            current = None
+            owner_indent = None
+            constructor_indent = None
+            constructor_name = None
+            constructor_lines = []
+            continue
+        constructor = re.match(r"^\s*\|\s*([A-Za-z_][A-Za-z0-9_']*)", line)
+        if constructor:
+            flush()
+            constructor_indent = indent
+            constructor_name = constructor.group(1)
+            constructor_lines = [line.strip()]
+        elif constructor_name is not None and constructor_indent is not None:
+            if indent > constructor_indent:
+                constructor_lines.append(line.strip())
+            else:
+                flush()
+                constructor_indent = None
+                constructor_name = None
+                constructor_lines = []
+    flush()
+    return owners
+
+
+def inductive_headers(lines: list[str]) -> dict[str, str]:
+    """Binders before `where` for width-indexed inductive carriers."""
+    headers: dict[str, str] = {}
+    for line in strip_lean_comments("\n".join(lines)).splitlines():
+        match = re.match(
+            r"^\s*inductive\s+([A-Za-z0-9_'.]+)(?P<header>.*?)\bwhere\s*$",
+            line,
+        )
+        if match:
+            headers.setdefault(match.group(1), match.group("header"))
+    return headers
+
+
+@lru_cache(maxsize=None)
+def imported_inductive_owners(
+    module: str, root: str
+) -> dict[str, list[tuple[str, str, dict[str, str]]]]:
+    """Per-owner headers and constructor payloads of imported inductives."""
+    root_path = Path(root)
+    current = module_source_file(module, root_path)
+    if not current.is_file():
+        return {}
+    pending = list(IMPORT_RE.findall(current.read_text(encoding="utf-8")))
+    visited: set[str] = set()
+    result: dict[str, list[tuple[str, str, dict[str, str]]]] = {}
+    while pending:
+        imported = pending.pop()
+        if imported in visited:
+            continue
+        visited.add(imported)
+        path = root_path / (imported.replace(".", "/") + ".lean")
+        if not path.is_file():
+            continue
+        lines = path.read_text(encoding="utf-8").splitlines()
+        headers = inductive_headers(lines)
+        payloads = inductive_constructor_types(lines)
+        for name, header in headers.items():
+            result.setdefault(name, []).append(
+                (imported, header, payloads.get(name, {}))
+            )
+        pending.extend(IMPORT_RE.findall("\n".join(lines)))
+    return result
+
+
 @lru_cache(maxsize=None)
 def imported_structure_headers(module: str, root: str) -> dict[str, list[str]]:
     """Header binders of structures reachable through this dotted module name.
@@ -1507,12 +1614,13 @@ def words_as_type_indexed_bitvec_errors(
 
     A signature need not spell out ``BitVec`` when it is stated over a
     width-indexed carrier: the qualifier is also accepted when the signature
-    names a structure (declared locally or reached through imports) whose own
-    header carries ``[NeZero <width>]`` for its width parameter and some field of
-    the SAME owner mentions ``BitVec <width>`` with that same width identifier.
+    names a structure or inductive family (declared locally or reached through
+    imports) whose own header carries ``[NeZero <width>]`` for its width
+    parameter and a field or constructor payload of the SAME owner mentions
+    ``BitVec <width>`` with that same width identifier.
     The carrier is resolved from its declaration, never from its name alone: the
-    `[NeZero <width>]` and the ``BitVec <width>`` field must belong to the SAME
-    owning declaration and the same width identifier (a header with
+    `[NeZero <width>]` and the ``BitVec <width>`` field or payload must belong
+    to the SAME owning declaration and the same width identifier (a header with
     ``[NeZero other]`` or a field like ``BitVec 5 × HolWordLab width`` does not
     qualify), and a name with several owners (a local duplicate shadowing an
     imported owner) is rejected as ambiguous.
@@ -1548,8 +1656,15 @@ def words_as_type_indexed_bitvec_errors(
     carrier_ok = False
     if not has_direct_bitvec and lines is not None and module and root:
         local_types = structure_field_types(lines)
+        local_types.update(inductive_constructor_types(lines))
         local_headers = structure_headers(lines)
-        imported_owners = imported_structure_owners(module, root)
+        local_headers.update(inductive_headers(lines))
+        imported_owners = {
+            name: list(owners)
+            for name, owners in imported_structure_owners(module, root).items()
+        }
+        for name, owners in imported_inductive_owners(module, root).items():
+            imported_owners.setdefault(name, []).extend(owners)
         owners_by_name: dict[str, list[tuple[str, str, dict[str, str]]]] = {}
         for name in set(local_types) | set(imported_owners):
             if not identifier_token_occurs(signature, name):

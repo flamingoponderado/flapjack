@@ -1913,6 +1913,23 @@
     "reviewer": "flapjack-deepseek-three (inductive compared constructor-by-constructor against the Datatype prog at crepLangScript.sml:41-66: all 19 constructors and field types match, the `'a word` payloads are carried by BitVec width with [NeZero width], StoreGlob keeps the fixed 5-word address, Call/ExtCall names are MlString (HOL funname=mlstring), and varnames/Break/Continue stay num; the generic production CrepProg (alpha) with String function names stays untagged; total kernel isomorphisms crepProgToHOL/crepProgOfHOL with @[simp] forward roundtrip and a byte-ranged reverse roundtrip live in Flapjack/Pancake/CrepLang/Prog.lean; direct HOL oracle scripts/hol-probes/crep_lang_prog_probe.{sml,out} and guards in Flapjack/Test/CrepProgHOLParity.lean)"
   },
   {
+    "hol_path": "cakeml/pancake/crep_inlineScript.sml",
+    "hol_name": "early_exit",
+    "lean_path": "Flapjack/Pancake/CrepInline.lean",
+    "lean_name": "CrepEarlyExitHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-b (source comparison, flapjack-e7w.2.1.1): exact three-constructor port of the early_exit datatype at crep_inlineScript.sml:87-89; Exn, Ret, Loop_exit map in order to exception, return, loopExit, with no payloads or extra cases."
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_inlineScript.sml",
+    "hol_name": "unreach_elim_def",
+    "lean_path": "Flapjack/Pancake/CrepInline.lean",
+    "lean_name": "unreachElimHOLExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-b (source comparison, flapjack-e7w.2.1.1): compared every equation in crep_inlineScript.sml:90-135. Return/Raise/Break/Continue report their corresponding exit; Seq returns the transformed first clause immediately when its exit is non-NONE, otherwise transforms the second; Dec propagates; If transforms both branches and uses HOL's ordered Ret/Exn/Loop_exit merge; While transforms the body but always returns NONE; Call NONE reports Ret, SOME (rts,NONE) reports NONE, and SOME (rts,SOME (w,hdl)) transforms hdl but returns NONE; all other clauses preserve the program and return NONE. The exact CrepProgHOL width-indexed carrier and result type match all HOL constructors; words_as_type_indexed_bitvec records HOL's arbitrary positive word dimension as BitVec width under the retained [NeZero width]. No evaluator, pass simulation, or helper-agreement premise is added. Structural Lean regression cases cover the Skip, Return, Seq short-circuit, While, and If priority cases. This tag covers unreach_elim_def only, not inline_prog_def.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
     "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
     "hol_name": "lookup_code_def",
     "lean_path": "Flapjack/Pancake/Semantics/CrepSem/LookupCode.lean",
