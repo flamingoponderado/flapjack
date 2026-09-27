@@ -474,40 +474,40 @@ theorem panToCrepFiniteEvaluateShapeInvariantRetInst2 {width : Nat} {σ : Type}
     returnShape hstate hlocals hargsFinite hlookup
   let bodyEntry : PanSemStateFiniteExact width σ :=
     {source.decClockHOLFinite with locals := newlocals}
-  let resultSource := PanPropsShapeInvariantStateFiniteExact.ofPanSemFinite bodyEntry
-  let resultPost := PanPropsShapeInvariantStateFiniteExact.ofPanSemFinite postState
+  let resultSource := PanPropsEvalStateFiniteExact.ofPanSemFinite bodyEntry
+  let resultPost := PanPropsEvalStateFiniteExact.ofPanSemFinite postState
   have hsourceLocals : ∀ name value, resultSource.locals.lookup name = some value →
       isWfShapeValueHOLExact resultSource.structs value = true := by
     intro name value hvalue
     exact hentry.1 name value (by
-      simpa [bodyEntry, resultSource, PanPropsShapeInvariantStateFiniteExact.ofPanSemFinite,
-        PanPropsShapeInvariantStateFiniteExact.ofExact, PanSemStateFiniteExact.toExact,
+      simpa [bodyEntry, resultSource, PanPropsEvalStateFiniteExact.ofPanSemFinite,
+        PanPropsEvalStateFiniteExact.ofExact, PanSemStateFiniteExact.toExact,
         PanSemStateFiniteExact.decClockHOLFinite] using hvalue)
   have hsourceGlobals : ∀ name value, resultSource.globals.lookup name = some value →
       isWfShapeValueHOLExact resultSource.structs value = true := by
     intro name value hvalue
     exact hentry.2 name value (by
-      simpa [bodyEntry, resultSource, PanPropsShapeInvariantStateFiniteExact.ofPanSemFinite,
-        PanPropsShapeInvariantStateFiniteExact.ofExact, PanSemStateFiniteExact.toExact,
+      simpa [bodyEntry, resultSource, PanPropsEvalStateFiniteExact.ofPanSemFinite,
+        PanPropsEvalStateFiniteExact.ofExact, PanSemStateFiniteExact.toExact,
         PanSemStateFiniteExact.decClockHOLFinite] using hvalue)
   have hevalInvariant :
-      PanPropsShapeInvariantStateFiniteExact.evaluateHOLFinite resultSource program =
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair resultSource program =
         (some result, resultPost) := by
     have hmap := congrArg
       (fun output : Option (PanSemResultExact width) × PanSemStateFiniteExact width σ =>
-        (output.1, PanPropsShapeInvariantStateFiniteExact.ofPanSemFinite output.2)) hbody
-    simpa [PanPropsShapeInvariantStateFiniteExact.evaluateHOLFinite, resultSource,
+        (output.1, PanPropsEvalStateFiniteExact.ofPanSemFinite output.2)) hbody
+    simpa [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair, resultSource,
       resultPost, bodyEntry] using hmap
   have hinvariant := evaluateIsWfShapeInvariantFiniteExact program resultSource
     (some result) resultPost hevalInvariant hsourceLocals hsourceGlobals
   have hresultWf : Flapjack.panSemResultHOLWf resultSource.structs (some result) := by
-    simpa [resultSource, PanPropsShapeInvariantStateFiniteExact.ofPanSemFinite,
-      PanPropsShapeInvariantStateFiniteExact.ofExact, PanSemStateFiniteExact.toExact] using
+    simpa [resultSource, PanPropsEvalStateFiniteExact.ofPanSemFinite,
+      PanPropsEvalStateFiniteExact.ofExact, PanSemStateFiniteExact.toExact] using
       hinvariant.2.2
   have hsourceStructs : resultSource.structs = [] := by
     have hstructs := panToCrepStateRelFiniteExact_structs source target hstate
-    simpa [resultSource, bodyEntry, PanPropsShapeInvariantStateFiniteExact.ofPanSemFinite,
-      PanPropsShapeInvariantStateFiniteExact.ofExact, PanSemStateFiniteExact.toExact,
+    simpa [resultSource, bodyEntry, PanPropsEvalStateFiniteExact.ofPanSemFinite,
+      PanPropsEvalStateFiniteExact.ofExact, PanSemStateFiniteExact.toExact,
       PanSemStateFiniteExact.decClockHOLFinite] using hstructs
   cases result with
   | returned value =>
@@ -725,35 +725,35 @@ theorem panToCrepFiniteEvaluateShapeInvariantRetInst {width : Nat} {σ : Type}
         isWfShapeValueHOLExact [] value = true
     | _ => True := by
   classical
-  let resultSource := PanPropsShapeInvariantStateFiniteExact.ofPanSemFinite source
-  let resultPost := PanPropsShapeInvariantStateFiniteExact.ofPanSemFinite postState
+  let resultSource := PanPropsEvalStateFiniteExact.ofPanSemFinite source
+  let resultPost := PanPropsEvalStateFiniteExact.ofPanSemFinite postState
   have hinitial := panToCrepExactInitialShapeInvariant
     source target targetLocals.targetLocals relationContext hstate hlocals
   have hsourceLocals : ∀ name value, resultSource.locals.lookup name = some value →
       isWfShapeValueHOLExact resultSource.structs value = true := by
     intro name value hlookup
     exact hinitial.1 name value (by
-      simpa [resultSource, PanPropsShapeInvariantStateFiniteExact.ofPanSemFinite,
-        PanPropsShapeInvariantStateFiniteExact.ofExact, PanSemStateFiniteExact.toExact] using hlookup)
+      simpa [resultSource, PanPropsEvalStateFiniteExact.ofPanSemFinite,
+        PanPropsEvalStateFiniteExact.ofExact, PanSemStateFiniteExact.toExact] using hlookup)
   have hsourceGlobals : ∀ name value, resultSource.globals.lookup name = some value →
       isWfShapeValueHOLExact resultSource.structs value = true := by
     intro name value hlookup
     exact hinitial.2 name value (by
-      simpa [resultSource, PanPropsShapeInvariantStateFiniteExact.ofPanSemFinite,
-        PanPropsShapeInvariantStateFiniteExact.ofExact, PanSemStateFiniteExact.toExact] using hlookup)
+      simpa [resultSource, PanPropsEvalStateFiniteExact.ofPanSemFinite,
+        PanPropsEvalStateFiniteExact.ofExact, PanSemStateFiniteExact.toExact] using hlookup)
   have hevalInvariant :
-      PanPropsShapeInvariantStateFiniteExact.evaluateHOLFinite resultSource program =
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair resultSource program =
         (some result, resultPost) := by
     have hmap := congrArg
       (fun output : Option (PanSemResultExact width) × PanSemStateFiniteExact width σ =>
-        (output.1, PanPropsShapeInvariantStateFiniteExact.ofPanSemFinite output.2)) heval
-    simpa [PanPropsShapeInvariantStateFiniteExact.evaluateHOLFinite, resultSource,
+        (output.1, PanPropsEvalStateFiniteExact.ofPanSemFinite output.2)) heval
+    simpa [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair, resultSource,
       resultPost] using hmap
   have hinvariant := evaluateIsWfShapeInvariantFiniteExact program resultSource
     (some result) resultPost hevalInvariant hsourceLocals hsourceGlobals
   have hresultWf : Flapjack.panSemResultHOLWf source.structs (some result) := by
-    simpa [resultSource, PanPropsShapeInvariantStateFiniteExact.ofPanSemFinite,
-      PanPropsShapeInvariantStateFiniteExact.ofExact, PanSemStateFiniteExact.toExact] using
+    simpa [resultSource, PanPropsEvalStateFiniteExact.ofPanSemFinite,
+      PanPropsEvalStateFiniteExact.ofExact, PanSemStateFiniteExact.toExact] using
       hinvariant.2.2
   have hstructs := panToCrepStateRelFiniteExact_structs
     source target hstate

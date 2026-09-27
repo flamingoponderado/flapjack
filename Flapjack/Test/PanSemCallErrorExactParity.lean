@@ -129,8 +129,19 @@ private def parameterState : PanSemExactState Word64 Unit :=
   exactStateOf <| { (exactLegacy 5 (fun _ => some (.word 7)) (fun _ => none)
       parameterContracts) with functions := [("f", ["p"], .skip)] }
 
-/-- Result matcher for the callee-fallthrough rejection: an `Error` at the
-    decremented callee clock whose `p` local still holds the bound argument. -/
+/-- HOL-oracle-constant parity fixture.  The checked-in probe
+    `scripts/hol-probes/pan_sem_call_arity_probe.out` runs both mismatches at
+    `clock := 5` with local `x = ValWord 3w`; this state uses those exact
+    constants so the Lean guards pair row-for-row with the HOL `EVAL` output. -/
+private def oracleParameterState : PanSemExactState Word64 Unit :=
+  exactStateOf <| { (exactLegacy 5 localsWithX (fun _ => none) parameterContracts) with
+      functions := [("f", ["p"], .skip)] }
+
+/-- Result matcher for the callee-fallthrough rejection, pairing all four rows
+    of `scripts/hol-probes/pan_sem_call_callee_normal_probe.out`: an `Error` at
+    the decremented callee clock, whose `p` local still holds the bound
+    argument and whose caller's `x` local is absent (the result carries the
+    callee's post-call state, whose locals hold only the bound parameters). -/
 private def isFallThroughError (clock value : Nat)
     (result : Option (PanValueFfiClockResult Word64 Unit)) : Bool :=
   match result with
@@ -139,7 +150,7 @@ private def isFallThroughError (clock value : Nat)
       | .error locals _ _ _ =>
           n == clock && (match locals "p" with
             | some (.word w) => w == BitVec.ofNat 64 value
-            | _ => false)
+            | _ => false) && (locals "x").isNone
       | _ => false
   | _ => false
 
@@ -227,6 +238,15 @@ private def callParamArityGuard : Bool :=
 private def callParamShapeGuard : Bool :=
   isErrorKeeping 5 7 (evaluate parameterState (.call none "f" [.rStruct []]))
 
+/-- Oracle-row parity for `call_arity_miss_result`/`call_arity_miss_locals`/
+    `call_arity_miss_clock`. -/
+private def oracleArityGuard : Bool :=
+  isErrorKeeping 5 3 (evaluate oracleParameterState (.call none "f" []))
+
+/-- Oracle-row parity for `call_arity_shape_miss_result`. -/
+private def oracleShapeGuard : Bool :=
+  isErrorKeeping 5 3 (evaluate oracleParameterState (.call none "f" [.rStruct []]))
+
 private def callMissingGuard : Bool :=
   isErrorKeeping 5 3 (evaluate memoryState missingCall)
 
@@ -235,7 +255,8 @@ private def callDomainGuard : Bool :=
 
 private def callGuard : Bool :=
   callLoadMissGuard && callMissingGuard && callDomainGuard &&
-    callParamArityGuard && callParamShapeGuard && callFallThroughGuard &&
+    callParamArityGuard && callParamShapeGuard && oracleArityGuard && oracleShapeGuard &&
+    callFallThroughGuard &&
     callBreakGuard && callContinueGuard && callCalleeErrorGuard && callReturnContractConflictGuard
 
 #guard callGuard
@@ -295,6 +316,12 @@ def runChecks : IO Bool := do
   if callParamShapeGuard then
     IO.println "PASS exact-state Call parameter shape mismatch keeps state and clock"
   else IO.println "FAIL exact-state Call parameter shape mismatch keeps state and clock"
+  if oracleArityGuard then
+    IO.println "PASS HOL-oracle Call arity mismatch (clock 5, x = ValWord 3w)"
+  else IO.println "FAIL HOL-oracle Call arity mismatch (clock 5, x = ValWord 3w)"
+  if oracleShapeGuard then
+    IO.println "PASS HOL-oracle Call shape mismatch (clock 5, x = ValWord 3w)"
+  else IO.println "FAIL HOL-oracle Call shape mismatch (clock 5, x = ValWord 3w)"
   if callFallThroughGuard then
     IO.println "PASS exact-state Call callee fallthrough rejects with Error and callee locals"
   else IO.println "FAIL exact-state Call callee fallthrough rejects with Error and callee locals"

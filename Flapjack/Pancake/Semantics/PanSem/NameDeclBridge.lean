@@ -4,7 +4,7 @@ import Flapjack.Pancake.PanLang.Decl
 
 /-!
 This module records constructor-level production/exact congruence for the HOL
-`Name` and `ExnDecl` clauses without claiming the still-missing relation
+`Name`, `Function`, and `ExnDecl` clauses without claiming the still-missing relation
 between the full production and exact state carriers.
 
 HOL source review: `cakeml/pancake/semantics/panSemScript.sml:814-837`
@@ -25,6 +25,17 @@ The original HOL EVAL row `name_noop` is recorded in
 executed production evaluator (`PanEvaluateDeclsParity`) and the tagged
 finite-support evaluator (`PanSemEvaluateDeclsFiniteParity`).
 
+For `Function`, HOL's `panSemScript.sml:829-832` checks every parameter shape
+and the return shape, then updates only `code` with the semantic
+`(params, body, return)` payload. Production stores the same payload in
+`PanSemFunctionEntry`; its inline/export fields are not in the code-map value.
+`PanSemDeclarationCodeMapRel` compares that payload at byte-ranged keys. The
+Function prefix theorem assumes exact equality of both carrier-specific shape
+checks and a recursive-tail relation after the code-map update. The direct
+original `function_code_update`, `function_code_replacement`,
+`function_bad_param_shape`, and `function_bad_return_shape` EVAL rows are
+checked by `PanSemEvaluateDeclsExactParity` and `PanEvaluateDeclsParity`.
+
 For `ExnDecl`, HOL checks absence in `s.eshapes` and exact `is_wf_shape`, then
 updates only `eshapes` before recursing. The relational lemma below compares
 the production `InfoMap` lookup/update with the canonical finite-map lookup/
@@ -39,7 +50,8 @@ namespace Flapjack
 
 open Flapjack.Pancake.PanLang
   (DeclHOL declOfHOL declToHOL DeclByteRanged NameRanged ShapeByteRanged MlS
-    ShapeHOL isWfShapeExactHOL shapeToHOL)
+    ShapeHOL isWfShapeExactHOL shapeToHOL FunDeclOf funDeclToHOL paramToHOL
+    progToHOL ProgHOL)
 
 /-- Relate evaluator results by relating successful states and requiring both
     evaluators to agree on failure. -/
@@ -311,5 +323,166 @@ theorem evaluateDecls_name_singleton_domain_rel {width : Nat} {σ : Type}
     simp [PanSemStateFiniteExact.evaluateDeclsHOLFinite, declToHOL]
   rw [hproduction, hexact]
   exact hdomain
+
+/-- Map a production source-code entry to the exact code-map payload stored by
+    HOL `evaluate_decls`: parameter shapes, body, and return shape. The
+    function's inline/export flags are syntax metadata, not fields of the
+    semantic `(params, (body, return))` code entry. -/
+def panSemFunctionEntryToHOL {width : Nat} [NeZero width]
+    (entry : PanSemFunctionEntry (BitVec width)) :
+    List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL :=
+  (entry.params.map paramToHOL, progToHOL entry.body, shapeToHOL entry.returnShape)
+
+/-- The semantic code-map entry carried by a production function declaration.
+    This intentionally drops the source-only inline/export flags, matching
+    HOL's `(fi.params, (fi.body, fi.return))` payload. -/
+def panSemFunctionEntryOfDecl {width : Nat} [NeZero width]
+    (declaration : FunDeclOf width) : PanSemFunctionEntry (BitVec width) :=
+  { params := declaration.params
+    body := declaration.body
+    returnShape := declaration.returnShape }
+
+/-- Relate the production association-list code map to HOL's exact finite
+    code map on byte-ranged queried keys. Values are compared after encoding
+    each production entry as the exact HOL `(params, body, return)` payload. -/
+def PanSemDeclarationCodeMapRel {width : Nat} [NeZero width]
+    (production : InfoMap (PanSemFunctionEntry (BitVec width)))
+    (exact : HolFiniteMapExact MlS
+      (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL)) : Prop :=
+  ∀ name, NameRanged name →
+    (lookupInfo name production).map panSemFunctionEntryToHOL =
+      exact.lookup (Flapjack.Basis.Pure.MlString.ofString name)
+
+/-- The Function-prefix context relation retains the explicit memory-domain
+    and exception-map components and adds only the ranged code-map relation
+    touched by the HOL Function clause. -/
+def PanSemDeclarationFunctionContextRel {width : Nat} {σ : Type}
+    [NeZero width]
+    (production : PanSemDeclarationState (BitVec width) σ)
+    (exact : PanSemStateFiniteExact width σ) : Prop :=
+  PanSemDeclarationDomainRel production exact ∧
+    PanSemDeclarationEshapeMapRel production.eshapes exact.eshapes ∧
+    PanSemDeclarationCodeMapRel production.code exact.code
+
+/-- The production `InfoMap` update and exact HOL finite-map update preserve
+    the code-map relation at ranged keys. At the updated key, both payloads are
+    encodings of the same production declaration; other ranged keys cannot
+    alias the updated key after `MlString.ofString`. -/
+theorem panSemDeclarationCodeMapRel_update {width : Nat} [NeZero width]
+    (production : InfoMap (PanSemFunctionEntry (BitVec width)))
+    (exact : HolFiniteMapExact MlS
+      (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL))
+    (declaration : FunDeclOf width)
+    (hname : NameRanged declaration.name)
+    (hrel : PanSemDeclarationCodeMapRel production exact) :
+    PanSemDeclarationCodeMapRel
+      (panSemDeclUpdateInfo production declaration.name
+        (panSemFunctionEntryOfDecl declaration))
+      (exact.update ((funDeclToHOL declaration).name,
+        ((funDeclToHOL declaration).params, (funDeclToHOL declaration).body,
+          (funDeclToHOL declaration).returnShape))) := by
+  intro name hnameQuery
+  rw [lookupInfo_panSemDeclUpdateInfo]
+  by_cases heq : name = declaration.name
+  · subst name
+    rw [HolFiniteMapExact.lookup_update_pointwise]
+    simp [FLOOKUP, FUPDATE, panSemFunctionEntryToHOL,
+      panSemFunctionEntryOfDecl, funDeclToHOL]
+  · have hkeyNe : Flapjack.Basis.Pure.MlString.ofString name ≠
+        (funDeclToHOL declaration).name := by
+      intro h
+      apply heq
+      have hk := congrArg Flapjack.Basis.Pure.MlString.toStringOfBytes h
+      simpa only [funDeclToHOL, Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes
+        name hnameQuery, Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes
+        declaration.name hname] using hk
+    have hne : declaration.name ≠ name := fun h => heq h.symm
+    rw [HolFiniteMapExact.lookup_update_pointwise]
+    simp [FLOOKUP, FUPDATE, hne, hkeyNe,
+      hrel name hnameQuery]
+
+/-- Relational `Function` case of HOL `evaluate_decls_def`. The exact
+    well-formedness equality is precisely the cross-carrier premise needed to
+    align the clause's branch test. On success only the code-map component is
+    updated; on failure both evaluators return `none`. The recursive premise
+    is restricted to the explicit domain/exception/code relation, so this is
+    one constructor case rather than a whole-state or complete evaluator
+    equivalence. -/
+theorem evaluateDecls_function_prefix_congr {width : Nat} {σ : Type}
+    [NeZero width]
+    (productionState : PanSemDeclarationState (BitVec width) σ)
+    (exactState : PanSemStateFiniteExact width σ)
+    [hmem : DecidablePred exactState.memaddrs]
+    (declaration : FunDeclOf width)
+    (hbytes : DeclByteRanged (.function declaration : Decl (BitVec width)))
+    (declarations : List (DeclHOL width))
+    (hcontext : PanSemDeclarationFunctionContextRel productionState exactState)
+    (hwf :
+      (declaration.params.all (fun parameter =>
+        isWfShape productionState.runtime.structs parameter.2) &&
+        isWfShape productionState.runtime.structs declaration.returnShape) =
+      ((funDeclToHOL declaration).params.all (fun parameter =>
+        isWfShapeExactHOL exactState.structs parameter.2) &&
+        isWfShapeExactHOL exactState.structs
+          (funDeclToHOL declaration).returnShape))
+    (htail : ∀ (production : PanSemDeclarationState (BitVec width) σ)
+        (exact : PanSemStateFiniteExact width σ)
+        [DecidablePred exact.memaddrs],
+      PanSemDeclarationFunctionContextRel production exact →
+      PanSemDeclarationOutputRel PanSemDeclarationFunctionContextRel
+        (evaluateDecls production (declarations.map declOfHOL))
+        (PanSemStateFiniteExact.evaluateDeclsHOLFinite exact declarations)) :
+    PanSemDeclarationOutputRel PanSemDeclarationFunctionContextRel
+      (evaluateDecls productionState
+        (declOfHOL (declToHOL (.function declaration : Decl (BitVec width))) ::
+          declarations.map declOfHOL))
+      (PanSemStateFiniteExact.evaluateDeclsHOLFinite exactState
+        (declToHOL (.function declaration : Decl (BitVec width)) ::
+          declarations)) := by
+  have hproductionCodec :
+      declOfHOL (declToHOL (.function declaration : Decl (BitVec width))) =
+        .function declaration :=
+    Flapjack.Pancake.PanLang.declOfHOL_declToHOL _ hbytes
+  rw [hproductionCodec]
+  simp only [evaluateDecls,
+    PanSemStateFiniteExact.evaluateDeclsHOLFinite, declToHOL]
+  cases hprod : (declaration.params.all (fun parameter =>
+      isWfShape productionState.runtime.structs parameter.2) &&
+      isWfShape productionState.runtime.structs declaration.returnShape) with
+  | false =>
+      have hexact :
+          ((funDeclToHOL declaration).params.all (fun parameter =>
+            isWfShapeExactHOL exactState.structs parameter.2) &&
+            isWfShapeExactHOL exactState.structs
+              (funDeclToHOL declaration).returnShape) = false := by
+        rw [← hwf]
+        exact hprod
+      simp [hexact, PanSemDeclarationOutputRel]
+  | true =>
+      have hexact :
+          ((funDeclToHOL declaration).params.all (fun parameter =>
+            isWfShapeExactHOL exactState.structs parameter.2) &&
+            isWfShapeExactHOL exactState.structs
+              (funDeclToHOL declaration).returnShape) = true := by
+        rw [← hwf]
+        exact hprod
+      let productionUpdated : PanSemDeclarationState (BitVec width) σ :=
+        { productionState with code := (panSemDeclUpdateInfo productionState.code
+          declaration.name (panSemFunctionEntryOfDecl declaration)) }
+      let exactUpdated : PanSemStateFiniteExact width σ :=
+        { exactState with code := (exactState.code.update
+          ((funDeclToHOL declaration).name,
+            ((funDeclToHOL declaration).params, (funDeclToHOL declaration).body,
+              (funDeclToHOL declaration).returnShape))) }
+      letI : DecidablePred exactUpdated.memaddrs := hmem
+      have hupdated : PanSemDeclarationFunctionContextRel
+          productionUpdated exactUpdated := by
+        refine ⟨hcontext.1, hcontext.2.1, ?_⟩
+        rcases hbytes with ⟨hfun⟩
+        exact panSemDeclarationCodeMapRel_update productionState.code
+          exactState.code declaration hfun hcontext.2.2
+      have htail' := htail productionUpdated exactUpdated hupdated
+      simpa [productionUpdated, exactUpdated, panSemFunctionEntryOfDecl, hexact,
+        PanSemDeclarationOutputRel] using htail'
 
 end Flapjack

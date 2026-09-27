@@ -120,7 +120,8 @@ theorem HolFiniteMapExact.lookup_update_pointwise {α β : Type} [BEq α] [Lawfu
     witness `holFmapAsFiniteSupportWitness` below is the roundtrip between this
     structure and the broad `PanSemStateExact`. -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "state"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 structure PanSemStateFiniteExact (width : Nat) (σ : Type) [NeZero width] where
   locals : HolFiniteMapExact MlS (ValueHOL width)
   globals : HolFiniteMapExact MlS (ValueHOL width)
@@ -218,7 +219,8 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} {σ : Type} [NeZero width] :
     clause; the state carrier's four finite-map fields (`locals`, `globals`,
     `code`, `eshapes`) are recorded by the `fmap_as_finite_support` qualifier. -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "dec_clock_def"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 def decClockHOLFinite {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) : PanSemStateFiniteExact width σ :=
   { state with clock := state.clock - 1 }
@@ -235,7 +237,8 @@ def decClockHOLFinite {width : Nat} {σ : Type} [NeZero width]
     clamped clock match clause for clause; the four finite-map fields are
     recorded by the `fmap_as_finite_support` qualifier. -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "fix_clock_def"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 def fixClockHOLFinite {width : Nat} {σ : Type} [NeZero width] {β : Type}
     (oldState : PanSemStateFiniteExact width σ)
     (step : β × PanSemStateFiniteExact width σ) :
@@ -257,7 +260,8 @@ def fixClockHOLFinite {width : Nat} {σ : Type} [NeZero width] {β : Type}
     the standard Lean translation of `FLOOKUP` and the carrier's finite-map
     fields are recorded by the `fmap_as_finite_support` qualifier. -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "lookup_kvar_def"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 def lookupKvarHOLFinite {width : Nat} {σ : Type} [NeZero width]
     (kind : VarKind) (name : MlS) (state : PanSemStateFiniteExact width σ) :
     Option (ValueHOL width) :=
@@ -279,7 +283,8 @@ def lookupKvarHOLFinite {width : Nat} {σ : Type} [NeZero width]
     finite-map qualifier records the carrier translation used by
     `PanSemStateFiniteExact`. -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "is_valid_value_def"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 def isValidValueHOLFinite {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) (kind : VarKind) (name : MlS)
     (value : ValueHOL width) : Bool :=
@@ -305,7 +310,8 @@ def isValidValueHOLFinite {width : Nat} {σ : Type} [NeZero width]
     qualifier (canonical witness `holFmapAsFiniteSupportWitness` in this
     module). -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "set_var_def"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 def setVarHOLFinite {width : Nat} {σ : Type} [NeZero width]
     (name : MlS) (value : ValueHOL width) (state : PanSemStateFiniteExact width σ) :
     PanSemStateFiniteExact width σ :=
@@ -317,7 +323,8 @@ def setVarHOLFinite {width : Nat} {σ : Type} [NeZero width]
     finite-map fields are recorded by the `fmap_as_finite_support` qualifier
     (canonical witness `holFmapAsFiniteSupportWitness` in this module). -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "set_global_def"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 def setGlobalHOLFinite {width : Nat} {σ : Type} [NeZero width]
     (name : MlS) (value : ValueHOL width) (state : PanSemStateFiniteExact width σ) :
     PanSemStateFiniteExact width σ :=
@@ -330,7 +337,8 @@ def setGlobalHOLFinite {width : Nat} {σ : Type} [NeZero width]
     `eshapes` fields are the canonical finite-map representation, recorded by the
     `fmap_as_finite_support` qualifier. -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "set_kvar_def"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 def setKvarHOLFinite {width : Nat} {σ : Type} [NeZero width]
     (kind : VarKind) (name : MlS) (value : ValueHOL width)
     (state : PanSemStateFiniteExact width σ) : PanSemStateFiniteExact width σ :=
@@ -358,7 +366,8 @@ def setKvarHOLFinite {width : Nat} {σ : Type} [NeZero width]
     canonical empty finite map (`HolFiniteMapExact.empty`); the carrier's
     finite-map fields are recorded by the `fmap_as_finite_support` qualifier. -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "empty_locals_def"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 def emptyLocalsHOLFinite {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) : PanSemStateFiniteExact width σ :=
   { state with
@@ -401,7 +410,8 @@ def setKvarFfiHOLFinite {width : Nat} {σ : Type} [NeZero width]
     install the loaded word with `set_kvar` and update only `ffi`. The four
     map fields use the canonical finite-support carrier recorded by the tag. -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "sh_mem_load_def"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 def shMemLoadHOLFiniteExact {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) [DecidablePred state.shMemaddrs]
     (kind : VarKind) (name : MlS) (address : RiscV.Word width) (nb : Nat) :
@@ -558,7 +568,8 @@ theorem shMemLoadHOLFiniteExact_repack {width : Nat} {σ : Type} [NeZero width]
     `fmap_as_finite_support` qualifier (canonical `HolFiniteMapExact`
     translation, witness `holFmapAsFiniteSupportWitness`). -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "eval_def"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 def evalHOLFinite {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) [h : DecidablePred state.memaddrs] :
     ExpHOL width → Option (ValueHOL width) :=
@@ -1599,7 +1610,8 @@ theorem evalPanSemRecursiveCallFiniteContext_decCall_timeout_branch
     `fmap_as_finite_support` qualifier (canonical witness
     `holFmapAsFiniteSupportWitness` in this module). -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_decls_def"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 def evaluateDeclsHOLFinite {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) [h : DecidablePred state.memaddrs] :
     List (DeclHOL width) → Option (PanSemStateFiniteExact width σ)
@@ -2041,7 +2053,8 @@ theorem projectFiniteEvalResult_if {width : Nat} {σ : Type} [NeZero width]
     The finite-map qualifier records the four state maps' reviewed canonical
     finite-support representation. -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem evaluateHOLFiniteState_skip {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) :
     evaluateHOLFiniteState state (.skip : ProgHOL width) = (none, state) := by
@@ -2054,7 +2067,8 @@ attribute [simp] evaluateHOLFiniteState_skip
 `panSemScript.sml:623` in the theorem at line 780). The full 21-equation theorem
 remains open. -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem evaluateHOLFiniteState_break {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) :
     evaluateHOLFiniteState state (.break : ProgHOL width) = (some .break, state) := by
@@ -2067,7 +2081,8 @@ attribute [simp] evaluateHOLFiniteState_break
 at `panSemScript.sml:624` in the theorem at line 780). The full 21-equation
 theorem remains open. -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem evaluateHOLFiniteState_continue {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) :
     evaluateHOLFiniteState state (.continue : ProgHOL width) = (some .continue, state) := by
@@ -2079,7 +2094,8 @@ attribute [simp] evaluateHOLFiniteState_continue
 /-! HOL `evaluate_def`'s `Annot` equation (`panSemScript.sml:656`), one of the
 line-780 theorem's 21 conjuncts. -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem evaluateHOLFiniteState_annot {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) (tag text : MlS) :
     evaluateHOLFiniteState state (.annot tag text : ProgHOL width) = (none, state) := by
@@ -2092,7 +2108,8 @@ attribute [simp] evaluateHOLFiniteState_annot
 /-! HOL `evaluate_def`'s `Tick` equation (`panSemScript.sml:654-655`), one of
 the line-780 theorem's 21 conjuncts. -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem evaluateHOLFiniteState_tick {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) :
     evaluateHOLFiniteState state (.tick : ProgHOL width) =
@@ -2114,7 +2131,8 @@ the line-780 theorem's 21 conjuncts. The expression result uses HOL `eval` via
 the canonical broad projection `state.toExact`; the result and state pair are
 returned over the finite-support carrier. -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem evaluateHOLFiniteState_return {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) (expression : ExpHOL width) :
     evaluateHOLFiniteState state (.return expression : ProgHOL width) =
@@ -2148,7 +2166,8 @@ the line-780 theorem's 21 conjuncts. Its shape test is stated as HOL equality;
 the finite evaluator implements that test with `shapeEqHOL`, whose exact
 equality bridge is `shapeEqHOL_eq_true`. -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem evaluateHOLFiniteState_raise {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) (exceptionId : MlS)
     (expression : ExpHOL width) :
@@ -2210,7 +2229,8 @@ the line-780 theorem's 21 conjuncts. The equivalent zero test swaps the two
 branches: HOL's `word <> 0w ? then : else` is rendered as
 `word = 0 ? else : then` on the exact `BitVec width` carrier. -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem evaluateHOLFiniteState_ite {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) (condition : ExpHOL width)
     (thenBranch elseBranch : ProgHOL width) :
@@ -2248,7 +2268,8 @@ attribute [simp] evaluateHOLFiniteState_ite
 of the line-780 theorem's 21 conjuncts. `isValidValueHOLFinite` is the reviewed
 Boolean validity test and `setKvarHOLFinite` is the canonical finite update. -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem evaluateHOLFiniteState_assign {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) (kind : VarKind) (name : MlS)
     (source : ExpHOL width) :
@@ -2314,7 +2335,8 @@ of the line-780 theorem's 21 conjuncts. Both expressions use the original
 state, writes use `mem_stores` over the exact memory domain, and failed
 evaluation or an out-of-domain write returns `Error` with the original state. -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem evaluateHOLFiniteState_store {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) (destination source : ExpHOL width) :
     evaluateHOLFiniteState state (.store destination source : ProgHOL width) =
@@ -2386,7 +2408,8 @@ of the line-780 theorem's 21 conjuncts. It evaluates both expressions against
 the original state, requires word values, and preserves the state on every
 failure. HOL `w2w` is the low 32 bits, expressed as `BitVec.ofNat 32`. -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem evaluateHOLFiniteState_store32 {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) (destination source : ExpHOL width) :
     evaluateHOLFiniteState state (.store32 destination source : ProgHOL width) =
@@ -2481,7 +2504,8 @@ one of the line-780 theorem's 21 conjuncts. The byte argument is HOL `word8`
 (Lean `BitVec 8`) after `w2w`; the exact memory helper preserves the aligned
 cell update and every untouched cell. -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem evaluateHOLFiniteState_storeByte {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) (destination source : ExpHOL width) :
     evaluateHOLFiniteState state (.storeByte destination source : ProgHOL width) =
@@ -2598,7 +2622,8 @@ one of the line-780 theorem's 21 conjuncts. Argument expressions use
 `OPT_MMAP eval`; `panPrimopHOLExact` is the tagged exact `pan_primop` port,
 and a valid result updates only locals. -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem evaluateHOLFiniteState_primitive {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) (name : MlS) (operator : PrimOp)
     (arguments : List (ExpHOL width)) :
@@ -2775,7 +2800,8 @@ private theorem ofExact_emptyLocals_toExact {width : Nat} {σ : Type} [NeZero wi
     `HolFiniteMapExact` fields recorded by the qualifier and the canonical
     same-module witness `holFmapAsFiniteSupportWitness`. -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem evaluateHOLFiniteState_shMemLoad_source {width : Nat} {σ : Type}
     [NeZero width] (state : PanSemStateFiniteExact width σ)
     (operator : OpSize) (kind : VarKind) (name : MlS)
@@ -2810,7 +2836,8 @@ theorem evaluateHOLFiniteState_shMemLoad_source {width : Nat} {σ : Type}
     which owns its four `HolFiniteMapExact` fields and the same-module canonical
     witness `holFmapAsFiniteSupportWitness`. -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem evaluateHOLFiniteState_extCall_source {width : Nat} {σ : Type}
     [NeZero width] (state : PanSemStateFiniteExact width σ)
     (function : MlS) (configuration configurationLength array arrayLength : ExpHOL width) :
@@ -2890,7 +2917,8 @@ attribute [simp] evaluateHOLFiniteState_shMemStore
     kernel-checked finite-support result. The four named state maps use the
     same-module canonical finite-support witness. -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem evaluateHOLFiniteState_shMemStore_total {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) (operator : OpSize)
     (address value : ExpHOL width) :
@@ -3049,7 +3077,8 @@ attribute [simp] evaluateHOLFiniteState_dec
     the finite map's `lookup` and `resVarEq`. The four named state maps use the
     same-module canonical finite-support witness. -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem evaluateHOLFiniteState_dec_total {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) (name : MlS) (shape : ShapeHOL)
     (initializer : ExpHOL width) (body : ProgHOL width) :
@@ -3217,7 +3246,8 @@ theorem evaluateHOLFiniteState_decCall_clock_zero {width : Nat} {σ : Type}
     statement. `PanSemStateFiniteExact` owns the four named `HolFiniteMapExact`
     fields, with the canonical same-module roundtrip witness. -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 556
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem evaluateHOLFiniteState_seq {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) (first second : ProgHOL width) :
     evaluateHOLFiniteState state (.seq first second : ProgHOL width) =
@@ -3336,7 +3366,8 @@ theorem evaluateHOLFiniteResult_eq_iff {width : Nat} {σ : Type} [NeZero width]
     separate rewrite-restated theorem. This is a staged case equation, while
     the full 21-clause assembly remains open under `flapjack-qj5.9`. -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 556
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem evaluateHOLFiniteState_while_total {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) (condition : ExpHOL width)
     (body : ProgHOL width) :
