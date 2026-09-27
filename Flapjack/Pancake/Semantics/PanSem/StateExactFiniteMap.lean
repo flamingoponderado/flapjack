@@ -2446,6 +2446,77 @@ theorem evaluateHOLFiniteState_shMemStore {width : Nat} {σ : Type} [NeZero widt
 
 attribute [simp] evaluateHOLFiniteState_shMemStore
 
+/-- Flapjack-specific finite-carrier rendering of HOL's `Dec` clause. The
+    recursive body call and restoration step mirror `evaluate_def`; the
+    `resVarEq` update is the canonical finite-map form of HOL `res_var`. The
+    tagged equation below is the HOL declaration port. -/
+noncomputable def evaluateDecClauseHOLFiniteExact {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (name : MlS) (shape : ShapeHOL)
+    (initializer : ExpHOL width) (body : ProgHOL width) :
+    Option (PanSemResultExact width) × PanSemStateFiniteExact width σ := by
+  classical
+  let context : FiniteEvalContext width σ :=
+    ⟨state, fun address => Classical.propDecidable (state.memaddrs address),
+      fun address => Classical.propDecidable (state.shMemaddrs address)⟩
+  exact match evalHOLFinite state initializer with
+    | none => (some .error, state)
+    | some value =>
+        if shapeEqHOL shape (shapeOfHOLExact value) then
+          let bodyState := setVarHOLFinite name value state
+          let bodyContext := context.withState bodyState rfl rfl
+          match evalPanSemRecursiveCallFiniteContext body bodyContext with
+          | none => (none, state)
+          | some (result, postContext) =>
+              let restored : PanSemStateFiniteExact width σ :=
+                { postContext.state with
+                  locals := HolFiniteMapExact.resVarEq postContext.state.locals
+                    (name, state.locals.lookup name) }
+              (result, (postContext.withState restored rfl rfl).state)
+        else (some .error, state)
+
+/-! HOL `evaluate_def`'s `Dec` equation (`panSemScript.sml:558-565`), one of
+the line-780 theorem's 21 conjuncts. The initializer shape check, recursive
+body execution with the inserted local, and restoration of the original local
+match the source clause. -/
+@[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
+  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+theorem evaluateHOLFiniteState_dec {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (name : MlS) (shape : ShapeHOL)
+    (initializer : ExpHOL width) (body : ProgHOL width) :
+    evaluateHOLFiniteState state (.dec name shape initializer body : ProgHOL width) =
+      evaluateDecClauseHOLFiniteExact state name shape initializer body := by
+  classical
+  let hmem : DecidablePred state.memaddrs :=
+    fun address => Classical.propDecidable (state.memaddrs address)
+  let hshared : DecidablePred state.shMemaddrs :=
+    fun address => Classical.propDecidable (state.shMemaddrs address)
+  letI : DecidablePred state.memaddrs := hmem
+  letI : DecidablePred state.shMemaddrs := hshared
+  cases hinit : @evalHOLExact width σ _ state.toExact hmem initializer with
+  | none =>
+      simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+        evalPanSemRecursiveCallFiniteContext, evaluateDecClauseHOLFiniteExact, hinit]
+  | some value =>
+      by_cases hshape : shapeEqHOL shape (shapeOfHOLExact value) = true
+      · cases hbody : evalPanSemRecursiveCallFiniteContext body
+          (({ state := state,
+              memaddrsDecidable := fun address => Classical.propDecidable (state.memaddrs address),
+              shMemaddrsDecidable := fun address => Classical.propDecidable (state.shMemaddrs address) } :
+            FiniteEvalContext width σ).withState (setVarHOLFinite name value state) rfl rfl) with
+        | none =>
+            simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+              evalPanSemRecursiveCallFiniteContext, evaluateDecClauseHOLFiniteExact,
+              hinit, hshape, hbody]
+        | some pair =>
+            simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+              evalPanSemRecursiveCallFiniteContext, evaluateDecClauseHOLFiniteExact,
+              hinit, hshape, hbody]
+      · simp [evaluateHOLFiniteState, evaluateHOLFiniteStateWithDeciders,
+          evalPanSemRecursiveCallFiniteContext, evaluateDecClauseHOLFiniteExact,
+          hinit, hshape]
+
+attribute [simp] evaluateHOLFiniteState_dec
+
 /-- The decider-taking helper is the pair-shaped rendering of the assembly-marker
     evaluator. This bridge is Flapjack-specific infrastructure. -/
 theorem evaluateHOLFiniteStateWithDeciders_eq_getD {width : Nat} {σ : Type} [NeZero width]
