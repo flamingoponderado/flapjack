@@ -12051,6 +12051,36 @@
   },
   {
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 780,
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
+    "lean_name": "evaluateHOLFiniteState_skip",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "reviewer": "flapjack-luna-a source comparison (2026-09-27; bead flapjack-qj5): the first conjunct of HOL's line-780 evaluate_def theorem is evaluate (Skip,s)=(NONE,s), from the Skip clause at panSemScript.sml:557. evaluateHOLFiniteState_skip has exactly the state quantifier and pair-shaped conclusion over ProgHOL and PanSemStateFiniteExact; no result premise or extra logical assumption. The four named finite-map fields use the same-module HolFiniteMapExact carrier and canonical roundtrip witness. This tag covers only the Skip case; the full 21-equation theorem remains open."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 780,
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
+    "lean_name": "evaluateHOLFiniteState_break",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "reviewer": "flapjack-luna-a source comparison (2026-09-27; bead flapjack-qj5): the Break conjunct at panSemScript.sml:623 of theorem evaluate_def line 780 states evaluate (Break,s)=(SOME Break,s). evaluateHOLFiniteState_break has the same state quantifier and pair result over ProgHOL and PanSemStateFiniteExact, with no premise. The same-module HolFiniteMapExact witness supports the explicitly named four-field qualifier. This is one exact constructor case; the full conjunction remains open."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 780,
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
+    "lean_name": "evaluateHOLFiniteState_continue",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "reviewer": "flapjack-luna-a source comparison (2026-09-27; bead flapjack-qj5): the Continue conjunct at panSemScript.sml:624 of theorem evaluate_def line 780 states evaluate (Continue,s)=(SOME Continue,s). evaluateHOLFiniteState_continue has the same state quantifier and pair result over ProgHOL and PanSemStateFiniteExact, with no premise. The same-module HolFiniteMapExact witness supports the explicitly named four-field qualifier. This is one exact constructor case; the full conjunction remains open."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
     "hol_name": "evaluate_decls_def",
     "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
     "lean_name": "evaluateDeclsHOLFinite",
