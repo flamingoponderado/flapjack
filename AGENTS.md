@@ -347,12 +347,17 @@ declaration is the standard translation of HOL's type-indexed `'a word`
 declaration must name `BitVec`, or name a reviewed width-indexed carrier
 structure (declared locally or reached through imports) whose own header carries
 `[NeZero <width>]` for its width parameter and some field of that SAME owner
-mentions `BitVec <width>` with that same width identifier; the carrier is
+mentions `BitVec <width>` (directly, or through the single reviewed word abbrev
+`RiscV.Word <width>` at `Flapjack/RiscV/Model.lean:17` (`abbrev Word (width :
+Nat) := BitVec width`), which counts as the same `BitVec` carrier at that same
+width identifier) with that same width identifier; the carrier is
 resolved from its declaration, never accepted by name alone, and the
-`[NeZero <width>]` discharge and the `BitVec <width>` field must come from the
+`[NeZero <width>]` discharge and the word-carrier field must come from the
 SAME owning declaration and the same width identifier (a header with
 `[NeZero other]` or a field such as `BitVec 5 × HolWordLab width` does not
-qualify); a name with several owners (a
+qualify); the check is syntactic and resolves only the known reviewed abbrev
+`RiscV.Word`, not arbitrary abbrev unfolding, so any other word alias does not
+qualify until it is added to the reviewed abbrev list; a name with several owners (a
 local duplicate shadowing an imported owner) is rejected as ambiguous unless the
 signature uniquely resolves it. The
 declaration must retain `[NeZero width]` as the

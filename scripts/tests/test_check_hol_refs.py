@@ -1663,6 +1663,28 @@ class WordsCarrierResolutionTest(unittest.TestCase):
         errors = self._run(owner, self.CONSUMER)
         self.assertTrue(any("BitVec" in e for e in errors), errors)
 
+    def test_accepts_carrier_field_via_word_abbrev(self):
+        # A reviewed word abbreviation such as `RiscV.Word width` denotes the
+        # standard `BitVec width` translation of HOL `'a word`, so a carrier
+        # typed through the abbrev must satisfy the qualifier.
+        owner = "\n".join([
+            "structure CrepStateExact (width : Nat) [NeZero width] (ffiState : Type) where",
+            "  locals : HolFiniteMapExact Nat (HolWordLab width)",
+            "  memory : RiscV.Word width → HolWordLab width",
+            "  baseAddr : RiscV.Word width",
+        ])
+        self.assertEqual(self._run(owner, self.CONSUMER), [])
+
+    def test_rejects_carrier_word_abbrev_of_other_width(self):
+        # `RiscV.Word 5` is not a word field at the carrier's width identifier.
+        owner = "\n".join([
+            "structure CrepStateExact (width : Nat) [NeZero width] (ffiState : Type) where",
+            "  locals : HolFiniteMapExact Nat (HolWordLab width)",
+            "  memory : RiscV.Word 5 → HolWordLab width",
+        ])
+        errors = self._run(owner, self.CONSUMER)
+        self.assertTrue(any("BitVec" in e for e in errors), errors)
+
     def test_rejects_ambiguous_owners_borrowing_cross_owner_evidence(self):
         # The imported owner has `[NeZero width]` but no `BitVec width` field;
         # the local same-named shadow has a `BitVec width` field but no
