@@ -389,8 +389,8 @@ private theorem crepProgOfHOL_storesHOL {width : Nat} [NeZero width]
     expression codecs and the successful shape/length condition. This isolates
     the Store-specific proof: exact and production reserve the same address
     slot, allocate `vmax + 2 + i` for each value, and use the same fixed
-    `bytes_in_word` stride after decoding. The unguarded mismatch/fallback
-    cases remain part of bead `flapjack-pxn.18.3.5.8.13.30.1.12`. -/
+    `bytes_in_word` stride after decoding. The two `Skip` cases are handled by
+    the empty-address and shape/list-length bridge theorems below. -/
 theorem compileProgExactHOLW_store_success_bridge {width : Nat} [NeZero width]
     (context : PanToCrepContextExact width)
     (address value : Exp (BitVec width))
@@ -457,6 +457,85 @@ theorem compileProgExactHOLW_store_success_bridge {width : Nat} [NeZero width]
     simp [crepExpOfHOL]
   rw [hvar]
   simp [crepExpOfHOL]
+
+/-- Exact-to-production bridge for HOL's `Store` address-head fallback. The
+    HOL `compile_def` equation returns `Skip` when `compile_exp ctxt ad` has
+    no head (pan_to_crepScript.sml:174-184); the exact and production
+    compilers therefore agree without inspecting the value expression. -/
+theorem compileProgExactHOLW_store_empty_address_bridge {width : Nat}
+    [NeZero width]
+    (context : PanToCrepContextExact width)
+    (address value : Exp (BitVec width))
+    (exactAddressShape : ShapeHOL) (productionAddressShape : Shape)
+    (hexactAddress : compileExpExactHOLW context (expToHOL address) =
+      ([], exactAddressShape))
+    (hproductionAddress : compileExpHOL context.toProduction address =
+      ([], productionAddressShape)) :
+    crepProgOfHOL (compileProgExactHOLW context
+        (.store (expToHOL address) (expToHOL value))) =
+      compileProgRiscV context.toProduction (.store address value) := by
+  simp only [compileProgExactHOLW, compileStoreExactHOLW, hexactAddress,
+    compileProgRiscV, compileProgHOL, hproductionAddress]
+  simp [crepProgOfHOL]
+
+/-- Exact-to-production bridge for the HOL `Store` shape/list-length
+    fallback. The caller supplies the paired expression codecs and shape
+    codec; these imply that the production guard also fails whenever the HOL
+    `size_of_shape sh = LENGTH es` guard fails. The HOL equation returns
+    `Skip` in both cases (pan_to_crepScript.sml:174-184). -/
+theorem compileProgExactHOLW_store_length_mismatch_bridge {width : Nat}
+    [NeZero width]
+    (context : PanToCrepContextExact width)
+    (address value : Exp (BitVec width))
+    (exactAddress : CrepExpHOL width) (exactAddressRest : List (CrepExpHOL width))
+    (exactAddressShape : ShapeHOL)
+    (exactValues : List (CrepExpHOL width)) (exactValueShape : ShapeHOL)
+    (productionAddress : CrepExp (BitVec width))
+    (productionAddressRest : List (CrepExp (BitVec width)))
+    (productionAddressShape : Shape)
+    (productionValues : List (CrepExp (BitVec width)))
+    (productionValueShape : Shape)
+    (hexactAddress : compileExpExactHOLW context (expToHOL address) =
+      (exactAddress :: exactAddressRest, exactAddressShape))
+    (hexactValue : compileExpExactHOLW context (expToHOL value) =
+      (exactValues, exactValueShape))
+    (hproductionAddress : compileExpHOL context.toProduction address =
+      (productionAddress :: productionAddressRest, productionAddressShape))
+    (hproductionValue : compileExpHOL context.toProduction value =
+      (productionValues, productionValueShape))
+    (hvaluesCodec : exactValues.map crepExpOfHOL = productionValues)
+    (hshapeCodec : shapeOfHOL exactValueShape = productionValueShape)
+    (hmismatch : sizeOfShapeHOL exactValueShape ≠ exactValues.length) :
+    crepProgOfHOL (compileProgExactHOLW context
+        (.store (expToHOL address) (expToHOL value))) =
+      compileProgRiscV context.toProduction (.store address value) := by
+  have hsize (shape : ShapeHOL) :
+      Shape.shapeSize (shapeOfHOL shape) = sizeOfShapeHOL shape := by
+    have h := sizeOfShapeHOL_shapeToHOL (shapeOfHOL shape)
+    simpa only [shapeToHOL_shapeOfHOL] using h.symm
+  have hlength : exactValues.length = productionValues.length := by
+    have h := congrArg List.length hvaluesCodec
+    simpa using h
+  have hshapeSize :
+      sizeOfShapeHOL exactValueShape = Shape.shapeSize productionValueShape := by
+    calc
+      sizeOfShapeHOL exactValueShape =
+          Shape.shapeSize (shapeOfHOL exactValueShape) := (hsize _).symm
+      _ = Shape.shapeSize productionValueShape :=
+        congrArg Shape.shapeSize hshapeCodec
+  have hproductionMismatch :
+      Shape.shapeSize productionValueShape ≠ productionValues.length := by
+    intro hproductionSuccess
+    apply hmismatch
+    calc
+      sizeOfShapeHOL exactValueShape = Shape.shapeSize productionValueShape :=
+        hshapeSize
+      _ = productionValues.length := hproductionSuccess
+      _ = exactValues.length := hlength.symm
+  simp only [compileProgExactHOLW, compileStoreExactHOLW, hexactAddress,
+    hexactValue, compileProgRiscV, compileProgHOL, hproductionAddress,
+    hproductionValue]
+  simp [crepProgOfHOL, hmismatch, Ne.symm hproductionMismatch]
 
 /-- Source-reviewed HOL `ShMemStore` clause bridge (`pan_to_crepScript.sml`,
     `compile_def`): its operands are positional `value` then `address`. The

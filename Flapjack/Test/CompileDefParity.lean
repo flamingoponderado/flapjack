@@ -418,6 +418,18 @@ private def exactStoreBridgeContext : PanToCrepContextExact 8 where
   eids := HolFiniteMapExact.empty
   vmax := 0
 
+private def exactStoreLengthMismatchContext : PanToCrepContextExact 8 where
+  vars := (HolFiniteMapExact.empty.update
+      (ofString "ad", (.one, [3]))).update
+    (ofString "value", (.one, []))
+  funcs := HolFiniteMapExact.empty
+  eids := HolFiniteMapExact.empty
+  vmax := 3
+
+private def exactStoreAddressName : MlS := ofString "ad"
+
+private def exactStoreValueName : MlS := ofString "value"
+
 example :
     crepProgOfHOL (compileProgExactHOLW exactStoreBridgeContext
         (.store (expToHOL (.const (3 : BitVec 8)))
@@ -438,6 +450,55 @@ example :
   all_goals simp [exactStoreBridgeContext, compileExpExactHOLW,
     compileExpHOL, expToHOL, shapeOfHOL, crepExpOfHOL,
     PanToCrepContextExact.toProduction]
+
+example :
+    crepProgOfHOL (compileProgExactHOLW exactStoreBridgeContext
+        (.store (expToHOL (.rStruct [] : Exp (BitVec 8)))
+          (expToHOL (.const (4 : BitVec 8))))) =
+      compileProgRiscV exactStoreBridgeContext.toProduction
+        (.store (.rStruct []) (.const 4)) := by
+  apply compileProgExactHOLW_store_empty_address_bridge
+    (exactAddressShape := .comb []) (productionAddressShape := .comb [])
+  · simp [compileExpExactHOLW, compileExpExactHOLWList, expToHOL]
+  · simp [compileExpHOL, compileExpHOL.compileExpListHOL]
+
+example :
+    crepProgOfHOL (compileProgExactHOLW exactStoreLengthMismatchContext
+        (.store (expToHOL (.var .local
+          (toStringOfBytes exactStoreAddressName) : Exp (BitVec 8)))
+          (expToHOL (.var .local
+            (toStringOfBytes exactStoreValueName) : Exp (BitVec 8))))) =
+      compileProgRiscV exactStoreLengthMismatchContext.toProduction
+        (.store (.var .local (toStringOfBytes exactStoreAddressName))
+          (.var .local (toStringOfBytes exactStoreValueName))) := by
+  have hnameNe : ofString "value" ≠ ofString "ad" := by decide
+  apply compileProgExactHOLW_store_length_mismatch_bridge
+    (exactAddress := .var 3) (exactAddressRest := [])
+    (exactAddressShape := .one) (exactValues := []) (exactValueShape := .one)
+    (productionAddress := .var 3) (productionAddressRest := [])
+    (productionAddressShape := .one) (productionValues := [])
+    (productionValueShape := .one)
+  · simp [compileExpExactHOLW, expToHOL, exactStoreLengthMismatchContext,
+      exactStoreAddressName, HolFiniteMapExact.lookup_update, FUPDATE,
+      ofString_toStringOfBytes, hnameNe]
+  · simp [compileExpExactHOLW, expToHOL, exactStoreLengthMismatchContext,
+      exactStoreValueName, HolFiniteMapExact.lookup_update, FUPDATE,
+      ofString_toStringOfBytes]
+  · have hlookup : exactStoreLengthMismatchContext.toProduction.vars
+        (toStringOfBytes exactStoreAddressName) = some (.one, [3]) := by
+      rw [PanToCrepContextExact.toProduction_vars_lookup]
+      simp [exactStoreLengthMismatchContext, exactStoreAddressName,
+        HolFiniteMapExact.lookup_update, FUPDATE, hnameNe, shapeOfHOL]
+    simp [compileExpHOL, FLOOKUP, hlookup]
+  · have hlookup : exactStoreLengthMismatchContext.toProduction.vars
+        (toStringOfBytes exactStoreValueName) = some (.one, []) := by
+      rw [PanToCrepContextExact.toProduction_vars_lookup]
+      simp [exactStoreLengthMismatchContext, exactStoreValueName,
+        HolFiniteMapExact.lookup_update, FUPDATE, shapeOfHOL]
+    simp [compileExpHOL, FLOOKUP, hlookup]
+  · rfl
+  · simp [shapeOfHOL]
+  · decide
 
 def exactLocalAssignContext (destinationNames sourceNames : List Nat) :
     CompileExpContextExact 8 where
