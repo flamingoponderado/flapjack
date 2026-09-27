@@ -199,6 +199,24 @@ example : codeRelExactHOLW exactCodeContext exactSourceCode exactTargetCode := b
       Flapjack.Pancake.PanLang.sizeOfShapesHOL,
       Flapjack.Pancake.PanLang.withShapeHOL, List.range, List.range.loop]
 
+/-- HOL `code_rel_imp` kernel regression on the exact fixture: the extracted
+    per-entry clause of `codeRelExactHOLW_imp` applied to the `f` entry of
+    `exactSourceCode` yields `localisedProgHOL`, reproducing the direct HOL
+    `code_rel_matching` row at the clause level. -/
+theorem codeRelImpExtractsMatchingEntry
+    (hrel : codeRelExactHOLW exactCodeContext exactSourceCode exactTargetCode) :
+    localisedProgHOL (width := 64)
+        (ProgHOL.return (.var .local (ml "x"))) = true := by
+  have hlookup :
+      exactSourceCode.lookup (ml "f") =
+        some ([(ml "x", ShapeHOL.one)],
+          ProgHOL.return (.var .local (ml "x")), ShapeHOL.one) := by
+    simp [exactSourceCode, HolFiniteMapExact.update, HolFiniteMapExact.empty,
+      FUPDATE, ml]
+  exact (codeRelExactHOLW_imp exactCodeContext exactSourceCode exactTargetCode hrel
+    (ml "f") [(ml "x", ShapeHOL.one)]
+    (ProgHOL.return (.var .local (ml "x"))) ShapeHOL.one hlookup).1
+
 #guard matchingTargetGuard
 #guard wrongBodyTargetGuard
 #guard compiledReturnGuard

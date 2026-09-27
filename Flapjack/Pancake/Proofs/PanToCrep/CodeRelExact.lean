@@ -59,6 +59,53 @@ def codeRelExactHOLW {width : Nat} [NeZero width]
       targetCode.lookup function = some
         (names, compileProgExactHOLW nextContext program)
 
+/-- Exact port of HOL `code_rel_imp`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:81-91`):
+    `code_rel ctxt s_code t_code ==>` then for all `f`, `vshs`, `prog`, `rsh`,
+    `FLOOKUP s_code f = SOME (vshs, prog, rsh)` implies `localised_prog prog`
+    and `FLOOKUP ctxt.funcs f = SOME (vshs, rsh)` and, with
+    `vs = MAP FST vshs`, `shs = MAP SND vshs`,
+    `ns = GENLIST I (size_of_shape (Comb shs))`,
+    `nctxt = ctxt_fc ctxt.funcs ctxt.eids vs shs ns`,
+    `FLOOKUP t_code f = SOME (ns, compile nctxt prog)`.
+
+    The Lean statement keeps HOL's outer `code_rel` hypothesis and the
+    per-entry conclusion over the exact `codeRelExactHOLW` relation, clause for
+    clause: source lookup yields `localisedProgHOL`, `context.funcs` returns the
+    same `(vshs, rsh)`, and the target lookup returns the compiled program under
+    `ctxtFcExactHOL`. The carriers are `MlS` = `mlstring`, `ShapeHOL` = `shape`,
+    `ProgHOL width` = `'a panLang$prog`, `CrepProgHOL width` = `'a crepLang$prog`,
+    and the positive-width `BitVec width` = HOL `'a word`. The proof is the
+    definitional unfolding of `codeRelExactHOLW` (HOL's
+    `fs [code_rel_def] >> metis_tac[]`). The relation qualifier records the two
+    standalone `HolFiniteMapExact` parameters `sourceCode`/`targetCode` and the
+    traversed `PanToCrepContextExact.funcs`/`eids` owner fields, matching the
+    imported `code_rel_def` tag; the same-module checked witness
+    `holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact` validates the
+    context carrier. This tags only the exact proof-side relation, not the
+    production `codeRel`/`codeRelW`, which remain on the parent bead. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "code_rel_imp"
+  (fmap_as_finite_support_relation := [sourceCode, targetCode,
+    PanToCrepContextExact.funcs, PanToCrepContextExact.eids])]
+theorem codeRelExactHOLW_imp {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width)
+    (sourceCode : HolFiniteMapExact MlS
+      (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL))
+    (targetCode : HolFiniteMapExact MlS (List Nat × CrepProgHOL width)) :
+    codeRelExactHOLW context sourceCode targetCode →
+    ∀ function variableShapes program returnShape,
+      sourceCode.lookup function = some (variableShapes, program, returnShape) →
+        localisedProgHOL program = true ∧
+        context.funcs.lookup function = some (variableShapes, returnShape) ∧
+        let variables := variableShapes.map Prod.fst
+        let shapes := variableShapes.map Prod.snd
+        let names := List.range (sizeOfShapeHOL (.comb shapes))
+        let nextContext := ctxtFcExactHOL context.funcs context.eids variables shapes names
+        targetCode.lookup function = some
+          (names, compileProgExactHOLW nextContext program) := by
+  intro hcodeRel
+  simpa only [codeRelExactHOLW] using hcodeRel
+
 /-- Same-module finite-map relation witness for the imported exact context
     fields named by `codeRelExactHOLW`'s qualifier. Flapjack representation
     infrastructure only; the parameter maps are validated directly at their

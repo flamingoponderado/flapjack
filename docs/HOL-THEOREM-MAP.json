@@ -6573,6 +6573,20 @@
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "code_rel_imp",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CodeRelExact.lean",
+    "lean_name": "codeRelExactHOLW_imp",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "sourceCode",
+      "targetCode",
+      "PanToCrepContextExact.funcs",
+      "PanToCrepContextExact.eids"
+    ],
+    "reviewer": "flapjack-ds9 source comparison (bead flapjack-4ac.5.89): HOL code_rel_imp (pan_to_crepProofScript.sml:81-91) is `code_rel ctxt s_code t_code ==> all f vshs prog rsh. FLOOKUP s_code f = SOME (vshs, prog, rsh) ==> localised_prog prog and FLOOKUP ctxt.funcs f = SOME (vshs, rsh) and, with vs = MAP FST vshs, shs = MAP SND vshs, ns = GENLIST I (size_of_shape (Comb shs)), nctxt = ctxt_fc ctxt.funcs ctxt.eids vs shs ns, FLOOKUP t_code f = SOME (ns, compile nctxt prog)`. The Lean codeRelExactHOLW_imp keeps the outer codeRelExactHOLW hypothesis and the per-entry conclusion clause for clause, with MlS = mlstring, ShapeHOL = shape, ProgHOL width = panLang$prog, CrepProgHOL width = crepLang$prog, positive-width BitVec width = HOL word, and the let-bound vs/shs/ns/nctxt/compile body matching ctxtFcExactHOL/compileProgExactHOLW. The proof is the definitional unfolding of codeRelExactHOLW, mirroring HOL's `fs [code_rel_def] >> metis_tac[]`. No hypothesis, quantifier, side condition, or conclusion is added, changed, or weakened. The relation qualifier records the same standalone sourceCode/targetCode HolFiniteMapExact parameters and the traversed PanToCrepContextExact.funcs/eids fields as the code_rel_def tag; the same-module witness holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact forwards the context ofBroad/toBroad roundtrip. Tags only the exact proof-side relation, not production codeRel/codeRelW or pc_compile_correct."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
     "hol_name": "state_rel_def",
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
     "lean_name": "stateRel",
