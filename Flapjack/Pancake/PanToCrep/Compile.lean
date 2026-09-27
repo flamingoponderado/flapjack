@@ -1,6 +1,7 @@
 import Flapjack.HolRef
 import Flapjack.Pancake.PanToCrep
 import Flapjack.Pancake.PanGlobals
+import Flapjack.Pancake.PanLang.Decl
 
 /-!
 Core statement lowering from Flapjack to Crepe.
@@ -1198,6 +1199,69 @@ def panToCrepGetEidsFromDeclsHOL
   let names := (exceptionEntries declarations).map Prod.fst
   FUPDATE_LIST FEMPTY
     (names.zip ((List.range names.length).map (BitVec.ofNat width))).reverse
+
+/-! The parser-backed production route has the stronger `DeclByteRanged`
+    premise needed to encode every source name as an HOL `MlString`. This
+    adapter runs the reviewed `exceptionsHOL` definition to choose names, then
+    decodes those names only at the existing production map boundary. -/
+def panToCrepGetEidsFromDeclsOfExactHOL {width : Nat} [NeZero width]
+    (declarations : List (Decl (BitVec width)))
+    (_hdecls : ∀ declaration ∈ declarations,
+      Flapjack.Pancake.PanLang.DeclByteRanged declaration) :
+    FiniteMap ExceptionId (BitVec width) :=
+  let names := ((Flapjack.Pancake.PanLang.exceptionsHOL
+      (declarations.map Flapjack.Pancake.PanLang.declToHOL)).map
+        (fun entry => (Flapjack.Pancake.PanLang.paramOfHOL entry).1))
+  FUPDATE_LIST FEMPTY
+    (names.zip ((List.range names.length).map (BitVec.ofNat width))).reverse
+
+private theorem declOfHOL_map_declToHOL_eq {width : Nat} [NeZero width]
+    (declarations : List (Decl (BitVec width)))
+    (hdecls : ∀ declaration ∈ declarations,
+      Flapjack.Pancake.PanLang.DeclByteRanged declaration) :
+    (declarations.map Flapjack.Pancake.PanLang.declToHOL).map
+      Flapjack.Pancake.PanLang.declOfHOL = declarations := by
+  induction declarations with
+  | nil => rfl
+  | cons declaration declarations ih =>
+      have hhead : Flapjack.Pancake.PanLang.DeclByteRanged declaration :=
+        hdecls declaration (by simp)
+      have htail : ∀ d ∈ declarations, Flapjack.Pancake.PanLang.DeclByteRanged d := by
+        intro d hd
+        exact hdecls d (by simp [hd])
+      simp [Flapjack.Pancake.PanLang.declOfHOL_declToHOL declaration hhead, ih htail]
+
+private theorem exceptionsHOL_names_of_exact_eq {width : Nat} [NeZero width]
+    (declarations : List (Decl (BitVec width)))
+    (hdecls : ∀ declaration ∈ declarations,
+      Flapjack.Pancake.PanLang.DeclByteRanged declaration) :
+    ((Flapjack.Pancake.PanLang.exceptionsHOL
+        (declarations.map Flapjack.Pancake.PanLang.declToHOL)).map
+          (fun entry => (Flapjack.Pancake.PanLang.paramOfHOL entry).1)) =
+      (exceptionEntries declarations).map Prod.fst := by
+  have hexact := Flapjack.Pancake.PanLang.exceptionsHOL_map_paramOfHOL
+    (declarations.map Flapjack.Pancake.PanLang.declToHOL)
+  calc
+    _ = ((Flapjack.Pancake.PanLang.exceptionsHOL
+        (declarations.map Flapjack.Pancake.PanLang.declToHOL)).map
+          Flapjack.Pancake.PanLang.paramOfHOL).map Prod.fst := by
+          rw [List.map_map]
+          rfl
+    _ = (exceptionEntries
+        ((declarations.map Flapjack.Pancake.PanLang.declToHOL).map
+          Flapjack.Pancake.PanLang.declOfHOL)).map Prod.fst := by
+          rw [hexact]
+    _ = (exceptionEntries declarations).map Prod.fst := by
+          rw [declOfHOL_map_declToHOL_eq declarations hdecls]
+
+theorem panToCrepGetEidsFromDeclsOfExactHOL_eq {width : Nat} [NeZero width]
+    (declarations : List (Decl (BitVec width)))
+    (hdecls : ∀ declaration ∈ declarations,
+      Flapjack.Pancake.PanLang.DeclByteRanged declaration) :
+    panToCrepGetEidsFromDeclsOfExactHOL declarations hdecls =
+      panToCrepGetEidsFromDeclsHOL declarations := by
+  unfold panToCrepGetEidsFromDeclsOfExactHOL panToCrepGetEidsFromDeclsHOL
+  rw [exceptionsHOL_names_of_exact_eq declarations hdecls]
 
 /-! HOL `compile_to_crep_def` (`cakeml/pancake/pan_to_crepScript.sml:383-391`):
 
