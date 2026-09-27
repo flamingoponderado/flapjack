@@ -1584,4 +1584,86 @@ theorem panValueFlatOffset_bitvec_add {width : Nat} [NeZero width]
         _ = address + bytesInWordHOL width * BitVec.ofNat width (k + 1) := by
               rw [← hsucc]
 
+/-- Executed-access `.load`/.one arm correspondence: the production evaluator
+    uses `some (panSemBitVec64MemoryAccess productionState)`, whose `readWord`
+    is the domain-gated direct memory read, so the `.one` Load result agrees
+    with the finite-support tagged `memLoadHOLExact` (success and rejection)
+    whenever the executable memory is the finite state memory guarded by
+    `memaddrs` and the two `memaddrs` predicates agree.
+
+    Paired with the direct original-Pancake HOL EVAL rows
+    `word_load_hit`/`word_load_miss` in
+    `scripts/hol-probes/pan_sem_state_eval_probe.out`; see the concrete
+    regressions in `Flapjack/Test/DeclBridgeParity.lean`. -/
+theorem evalPanValueExp_load_one_option_correspondence_executed {σ : Type}
+    (productionState : PanSemState (RiscV.Word 64) σ)
+    (state : PanSemStateFiniteExact 64 Unit) [_hmem : DecidablePred state.memaddrs]
+    (structs : StructContext)
+    (locals globals : VarName → Option (PanValue (RiscV.Word 64)))
+    (memory : RiscV.Word 64 → Option (PanValue (RiscV.Word 64)))
+    (baseAddress topAddress : RiscV.Word 64)
+    (addressExpression : Exp (RiscV.Word 64))
+    (hMem : PanValueMemoryCodecRel memory state)
+    (hdom : ∀ address, productionState.memaddrs address = state.memaddrs address)
+    (haddr : PanSemDeclarationValueOptionRel PanValueCodecRel
+      (evalPanValueExp structs locals globals memory baseAddress topAddress
+        panSemBitVec64BytesInWord addressExpression
+        (memoryAccess := some (panSemBitVec64MemoryAccess productionState)))
+      (state.evalHOLFinite (expToHOL addressExpression))) :
+    PanSemDeclarationValueOptionRel PanValueCodecRel
+      (evalPanValueExp structs locals globals memory baseAddress topAddress
+        panSemBitVec64BytesInWord (.load .one addressExpression)
+        (memoryAccess := some (panSemBitVec64MemoryAccess productionState)))
+      (state.evalHOLFinite (.load .one (expToHOL addressExpression))) := by
+  cases ha : evalPanValueExp structs locals globals memory baseAddress topAddress
+      panSemBitVec64BytesInWord addressExpression
+      (memoryAccess := some (panSemBitVec64MemoryAccess productionState)) with
+  | none =>
+      rw [ha] at haddr
+      cases hf : state.evalHOLFinite (expToHOL addressExpression) with
+      | none =>
+          have hprod : evalPanValueExp structs locals globals memory baseAddress topAddress
+              panSemBitVec64BytesInWord (.load .one addressExpression)
+              (memoryAccess := some (panSemBitVec64MemoryAccess productionState)) = none := by
+            simp only [evalPanValueExp]
+            rw [ha]
+            rfl
+          have hfin : state.evalHOLFinite (.load .one (expToHOL addressExpression)) = none := by
+            rw [PanSemStateFiniteExact.evalHOLFinite_load]
+            simp only [hf, isWfShapeExactHOL, if_true]
+          rw [hprod, hfin]
+          simp only [PanSemDeclarationValueOptionRel]
+      | some fv => rw [hf] at haddr; simp only [PanSemDeclarationValueOptionRel] at haddr
+  | some pv =>
+      rw [ha] at haddr
+      cases hf : state.evalHOLFinite (expToHOL addressExpression) with
+      | none => rw [hf] at haddr; simp only [PanSemDeclarationValueOptionRel] at haddr
+      | some fv =>
+          rw [hf] at haddr
+          simp only [PanSemDeclarationValueOptionRel] at haddr
+          obtain ⟨address, hpv, hfv⟩ := panValueCodecRel_exists_word pv fv haddr
+          subst hpv; subst hfv
+          rw [show evalPanValueExp structs locals globals memory baseAddress topAddress
+                panSemBitVec64BytesInWord (.load .one addressExpression)
+                (memoryAccess := some (panSemBitVec64MemoryAccess productionState)) =
+                (if state.memaddrs address then
+                   (match state.memory address with | .word value => some (PanValue.word value))
+                 else none) from by
+              simp only [evalPanValueExp]
+              rw [ha]
+              simp [panValueFlatLoad, panValueFlatReadWord, panValueFlatLoadFuel,
+                isWfShape, panValueFlatShapeFuel, panSemBitVec64MemoryAccess,
+                panValueMemoryAccessOfModel, hdom address, hMem address]
+              split <;> simp_all]
+          rw [show state.evalHOLFinite (.load .one (expToHOL addressExpression)) =
+                (if state.memaddrs address then
+                   (match state.memory address with | .word value => some (.val (.word value)))
+                 else none) from by
+              rw [PanSemStateFiniteExact.evalHOLFinite_load]
+              simp only [hf, isWfShapeExactHOL, if_true, memLoadHOLExact]]
+          cases hmem : state.memory address with
+          | word payload =>
+              split <;> simp only [PanSemDeclarationValueOptionRel, panValueCodecRel_word]
+
+
 end Flapjack

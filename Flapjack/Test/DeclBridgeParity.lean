@@ -164,4 +164,74 @@ example (address : BitVec 8) (k : Nat) :
       address + bytesInWordHOL 8 * BitVec.ofNat 8 k :=
   panValueFlatOffset_bitvec_add address k
 
+/-- The production state matching `loadHitState`: the source memory is
+    unconstrained here (the bridge reads it through `memory`), only the
+    `memaddrs` domain must agree with the finite state. -/
+private abbrev loadHitProductionState : PanSemState (RiscV.Word 64) Unit :=
+  { locals := noLocals
+    globals := noGlobals
+    structs := []
+    code := []
+    exceptionShapes := fun _ => none
+    memory := fun _ => none
+    memaddrs := fun address => address = 0
+    sharedMemaddrs := fun _ => False
+    clock := 5
+    be := false
+    ffi := ()
+    baseAddress := 0
+    topAddress := 100 }
+
+private abbrev loadMissProductionState : PanSemState (RiscV.Word 64) Unit :=
+  { loadHitProductionState with memaddrs := fun _ => False }
+
+private theorem loadHitDom (address : RiscV.Word 64) :
+    loadHitProductionState.memaddrs address = (loadHitState 0).memaddrs address := by
+  simp [loadHitProductionState, loadHitState]
+
+private theorem loadMissDom (address : RiscV.Word 64) :
+    loadMissProductionState.memaddrs address = loadMissState.memaddrs address := by
+  simp [loadMissProductionState, loadMissState, loadHitProductionState]
+
+private theorem addressConstExecCorrespondence {σ : Type} (state : PanSemStateFiniteExact 64 Unit)
+    [DecidablePred state.memaddrs] (productionState : PanSemState (RiscV.Word 64) σ)
+    (memory : BitVec 64 → Option (PanValue (BitVec 64)))
+    (baseAddress topAddress : BitVec 64) :
+    PanSemDeclarationValueOptionRel PanValueCodecRel
+      (evalPanValueExp [] noLocals noGlobals memory baseAddress topAddress
+        panSemBitVec64BytesInWord addressConst
+        (memoryAccess := some (panSemBitVec64MemoryAccess productionState)))
+      (state.evalHOLFinite (expToHOL addressConst)) := by
+  simp only [PanSemDeclarationValueOptionRel, evalPanValueExp, expToHOL,
+    PanSemStateFiniteExact.evalHOLFinite_const, panValueCodecRel_word]
+
+/-- **Concrete executed-access witness, success.**  The executed RV64
+    `memoryAccess` path against the direct HOL EVAL row `word_load_hit`. -/
+example :
+    PanSemDeclarationValueOptionRel PanValueCodecRel
+      (evalPanValueExp [] noLocals noGlobals (hitMemory 0x1122334455667788)
+        0 100 panSemBitVec64BytesInWord (.load .one addressConst)
+        (memoryAccess := some (panSemBitVec64MemoryAccess loadHitProductionState)))
+      ((loadHitState 0x1122334455667788).evalHOLFinite
+        (.load .one (expToHOL addressConst))) :=
+  evalPanValueExp_load_one_option_correspondence_executed loadHitProductionState
+    (loadHitState 0x1122334455667788) [] noLocals noGlobals
+    (hitMemory 0x1122334455667788) 0 100 addressConst
+    (hitMemoryCodecRel 0x1122334455667788) loadHitDom
+    (addressConstExecCorrespondence (loadHitState 0x1122334455667788)
+      loadHitProductionState (hitMemory 0x1122334455667788) 0 100)
+
+/-- **Concrete executed-access witness, domain miss.**  Direct HOL EVAL row
+    `word_load_miss=NONE` on the executed RV64 `memoryAccess` path. -/
+example :
+    PanSemDeclarationValueOptionRel PanValueCodecRel
+      (evalPanValueExp [] noLocals noGlobals missMemory
+        0 100 panSemBitVec64BytesInWord (.load .one addressConst)
+        (memoryAccess := some (panSemBitVec64MemoryAccess loadMissProductionState)))
+      (loadMissState.evalHOLFinite (.load .one (expToHOL addressConst))) :=
+  evalPanValueExp_load_one_option_correspondence_executed loadMissProductionState
+    loadMissState [] noLocals noGlobals missMemory 0 100 addressConst
+    missMemoryCodecRel loadMissDom
+    (addressConstExecCorrespondence loadMissState loadMissProductionState missMemory 0 100)
+
 end Flapjack.Test.DeclBridgeParity
