@@ -801,9 +801,20 @@ attached. -/
            (step.1, { step.2 with locals := step.2.locals.resVarEq (name, old) })) := by
   rw [evalCrepSemHOLProg.eq_def] <;> rfl
 
-/-- HOL `evaluate (Assign v src, s)` (`crepSemScript.sml:257-262`): the variable
-    must already be bound. Finite-support `CrepSemHOLState` counterpart;
-    untagged. -/
+/-- HOL `evaluate (Assign v src, s)` (`crepSemScript.sml:257-262`),
+    source-reviewed as one clause only. `crepExactEvalExp state memDec src`
+    delegates to the tagged exact `evalCrepSemHOLExp` port of `eval_def`
+    (`crepSemScript.sml:90-137`); `memDec` supplies Lean's decidability
+    evidence and does not change the evaluator's result. On `NONE`, this clause
+    returns `Error` and the original state. On `SOME w`, it requires
+    `state.locals.lookup name` to be defined, then `setVar` performs HOL's
+    `set_var_def` update (`crepSemScript.sml:55-57`) with `FUPDATE` / `|+`;
+    an absent local returns `Error` and leaves state unchanged. `name : Nat`
+    matches HOL `varname = num`, values use the one-constructor `HolWordLab`
+    `word_lab` carrier, and the state maps use the reviewed finite-support
+    translation. This supports an exact Assign-clause disposition only; the
+    enclosing evaluator remains untagged pending all other cases and whole-
+    statement review. -/
 @[simp] theorem evalCrepSemHOLProg_assign {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ)
     (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
