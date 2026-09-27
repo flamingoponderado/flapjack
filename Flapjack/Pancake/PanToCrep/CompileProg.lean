@@ -2132,6 +2132,22 @@ def callInfoToProduction {width : Nat} [NeZero width]
          Flapjack.Basis.Pure.MlString.toStringOfBytes handler.2.1,
          progOfHOL handler.2.2))
 
+/-- The (at most one) exception-handler body carried by an exact `Call`
+metadata record, if any.  Used to state the assembled `Call` bridge with a
+premise about only the handler program actually present in `info`, rather
+than a universally quantified body premise. -/
+def callHandlerBody {width : Nat} [NeZero width]
+    (info : Option (Option (VarKind × Flapjack.Basis.Pure.MlString.MlString) ×
+      Option (Flapjack.Basis.Pure.MlString.MlString ×
+        Flapjack.Basis.Pure.MlString.MlString × ProgHOL width))) :
+    Option (ProgHOL width) :=
+  match info with
+  | none => none
+  | some entry =>
+      match entry.2 with
+      | none => none
+      | some handler => some handler.2.2
+
 /-- The `toStringOfBytes` image of an `MlString` is `NameRanged`: decoding bytes
 to characters yields codes below 256. -/
 theorem nameRanged_toStringOfBytes
@@ -2149,7 +2165,9 @@ theorem nameRanged_toStringOfBytes
 /-- Assembly bridge for the complete HOL `compile_def` `Call` arm
 (`cakeml/pancake/pan_to_crepScript.sml:222-261`): it covers every `rtyp`
 destination shape, `wrap_rt` outcome, handler presence and `eids` lookup by
-reusing the nine kernel-checked sub-clause bridges.  Flapjack-specific,
+reusing the nine kernel-checked sub-clause bridges.  The recursive premise
+`hbody` is stated only for the handler body actually carried by `info`
+(via `callHandlerBody`), not for every `ProgHOL`.  Flapjack-specific,
 untagged production-routing infrastructure. -/
 theorem compileProgExactHOLW_call_bridge {width : Nat} [NeZero width]
     (context : PanToCrepContextExact width)
@@ -2165,6 +2183,7 @@ theorem compileProgExactHOLW_call_bridge {width : Nat} [NeZero width]
           compileExpHOL context.toProduction expression)
     (hbody :
       ∀ (body : ProgHOL width),
+        callHandlerBody info = some body →
         crepProgOfHOL (compileProgExactHOLW context body) =
           compileProgHOL context.toProduction (progOfHOL body)) :
     crepProgOfHOL (compileProgExactHOLW context
@@ -2230,7 +2249,7 @@ theorem compileProgExactHOLW_call_bridge {width : Nat} [NeZero width]
                         Flapjack.Basis.Pure.MlString.toStringOfBytes exceptionVariable)
                       (arguments := arguments) (body := body) (exceptionCode := code)
                       hpresentOf hfunction (nameRanged_toStringOfBytes exceptionName)
-                      hcodec (hbody body)
+                      hcodec (hbody body (by rfl))
                   rw [Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes exceptionName,
                     Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes
                       exceptionVariable] at hsub
@@ -2340,7 +2359,7 @@ theorem compileProgExactHOLW_call_bridge {width : Nat} [NeZero width]
                           (arguments := arguments) (body := body)
                           (exceptionCode := code)
                           hwrapOf hpresentOf hfunction
-                          (nameRanged_toStringOfBytes exceptionName) hcodec (hbody body)
+                          (nameRanged_toStringOfBytes exceptionName) hcodec (hbody body (by rfl))
                       rw [Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes resultName,
                         Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes exceptionName,
                         Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes
@@ -2456,7 +2475,7 @@ theorem compileProgExactHOLW_call_bridge {width : Nat} [NeZero width]
                           (resultShape := resultShape) (resultNames := resultNames)
                           (exceptionCode := code)
                           hwrapOf hpresentOf hfunction
-                          (nameRanged_toStringOfBytes exceptionName) hcodec (hbody body)
+                          (nameRanged_toStringOfBytes exceptionName) hcodec (hbody body (by rfl))
                       rw [Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes resultName,
                         Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes exceptionName,
                         Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes
