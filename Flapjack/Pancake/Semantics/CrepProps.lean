@@ -573,6 +573,69 @@ theorem length_loadShapeHOLW {width : Nat} [NeZero width]
     (loadShapeBytesHOLW address count value).length = count := by
   induction count generalizing address <;> simp [loadShapeBytesHOLW, *]
 
+/-- BitVec stride algebra used by the exact `eval_load_shape_el_rel` port:
+    advancing the running address by one `bytes_in_word` matches HOL's closed
+    form `a + bytes_in_word * n2w n`. -/
+private theorem loadShape_stride_step {width : Nat}
+    (address stride : BitVec width) (n : Nat) :
+    (address + stride) + stride * BitVec.ofNat width n =
+      address + stride * BitVec.ofNat width (n + 1) := by
+  rw [BitVec.ofNat_add, BitVec.mul_add]
+  simp only [BitVec.mul_one]
+  ac_rfl
+
+/-- The zero-address special case: HOL `load_shape 0 _ e` emits the bare
+    `Load e`, which evaluates exactly like `Load (Op Add [e; Const 0])`. -/
+private theorem eval_load_op_add_zero {width : Nat} [NeZero width] {σ : Type}
+    (targetState : CrepSemHOLState width σ) [DecidablePred targetState.memaddrs]
+    (value : CrepExpHOL width) :
+    evalCrepSemHOLExp targetState
+        (.load (.op .add [value, .const (0 : BitVec width)])) =
+      evalCrepSemHOLExp targetState (.load value) := by
+  cases h : evalCrepSemHOLExp targetState value with
+  | none => simp [evalCrepSemHOLExp, h]
+  | some lab =>
+      cases lab with
+      | word w => simp [evalCrepSemHOLExp, h, wordOpHOL, wordOp]
+
+/-- Exact width-indexed counterpart of HOL `crepProps$eval_load_shape_el_rel`
+    (`cakeml/pancake/semantics/crepPropsScript.sml:40`): for `n < count`, the
+    `n`-th generated load of `loadShapeBytesHOLW` evaluates exactly like the
+    strided `Load (Op Add [e; Const (a + bytes_in_word * n2w n)])`, where the
+    byte stride `bytes_in_word` is `n2w (width DIV 8)` and `n2w` is
+    `BitVec.ofNat`. -/
+@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "eval_load_shape_el_rel"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
+theorem eval_loadShapeBytesHOLW_getElem {width : Nat} [NeZero width] {σ : Type}
+    (targetState : CrepSemHOLState width σ) [DecidablePred targetState.memaddrs]
+    (address : BitVec width) (count : Nat) (value : CrepExpHOL width) (n : Nat)
+    (hn : n < count) :
+    evalCrepSemHOLExp targetState
+        ((loadShapeBytesHOLW address count value)[n]'(by
+          simpa only [length_loadShapeHOLW] using hn)) =
+      evalCrepSemHOLExp targetState
+        (.load (.op .add [value,
+          .const (address + BitVec.ofNat width (width / 8) * BitVec.ofNat width n)])) := by
+  induction count generalizing address n with
+  | zero => omega
+  | succ count ih =>
+      simp only [loadShapeBytesHOLW]
+      cases n with
+      | zero =>
+          simp only [List.getElem_cons_zero]
+          split
+          · rename_i hcond
+            have haddr : address = 0 := by simpa only [beq_iff_eq] using hcond
+            subst haddr
+            exact (eval_load_op_add_zero targetState value).symm
+          · simp
+      | succ n =>
+          have hn' : n < count := by omega
+          rw [List.getElem_cons_succ]
+          rw [ih (address := address + BitVec.ofNat width (width / 8)) (n := n) hn']
+          rw [loadShape_stride_step]
+
 theorem length_loadShape_eq_shapeW {width : Nat} [NeZero width]
     (count : Nat) (address : BitVec width) (value : CrepExp (BitVec width)) :
     (loadShapeBytesW address count value).length = count := by
