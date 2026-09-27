@@ -335,8 +335,10 @@ theorem holFmapAsFiniteSupportRelationWitness_CrepSemHOLState
     HOL `evaluate_def` constructors (panSemScript.sml:556-761); nonrecursive
     clauses call the reviewed exact clause helpers and rewrap finite-support
     post-states. The outer recursive assembly marker is proved total, so the
-    wrapper's fallback is unreachable. The 66-case projection proves agreement
-    with the broad exact evaluator. The evaluator definition remains untagged;
+    wrapper's fallback is unreachable. The kernel-checked 66-case
+    `evalPanSemRecursiveCallFiniteContext_projection`, exposed through
+    `evaluateHOLFinite_toExact`, proves agreement with the broad exact
+    evaluator. The evaluator definition remains untagged;
     this theorem's tag claims only the source-reviewed theorem statement and
     its explicit finite-map carrier translations. -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "evaluate_shape_invariant_ret_inst"
