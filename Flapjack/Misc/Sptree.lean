@@ -153,6 +153,110 @@ def sptListInsert : List Nat → NumSet → NumSet
   | [], tree => tree
   | key :: keys, tree => sptListInsert keys (sptInsert key () tree)
 
+/-- HOL `sptree$mk_BN` (`HOL/src/finite_maps/sptreeScript.sml:88-92`): collapse
+two empty children back to `LN`.  The HOL source lives in the HOL
+installation's `src/finite_maps`, outside `cakeml/`, so this rendering is
+Flapjack infrastructure and carries no `@[hol]` tag. -/
+def sptMkBN {α : Type} (left right : Spt α) : Spt α :=
+  match left, right with
+  | .ln, .ln => .ln
+  | _, _ => .bn left right
+
+/-- HOL `sptree$mk_BS` (`HOL/src/finite_maps/sptreeScript.sml:94-98`): collapse
+the two empty children around a value to `LS`.  Untagged Flapjack
+infrastructure, as for `sptMkBN`. -/
+def sptMkBS {α : Type} (left : Spt α) (value : α) (right : Spt α) : Spt α :=
+  match left, right with
+  | .ln, .ln => .ls value
+  | _, _ => .bs left value right
+
+/-- HOL `sptree$delete` (`HOL/src/finite_maps/sptreeScript.sml:99-113`) with the
+recursive key arithmetic `(k - 1) DIV 2` and the `mk_BN`/`mk_BS` collapsing.
+Untagged Flapjack infrastructure (source outside `cakeml/`). -/
+def sptDelete {α : Type} (key : Nat) : Spt α → Spt α
+  | .ln => .ln
+  | .ls value => if key = 0 then .ln else .ls value
+  | .bn left right =>
+      if key = 0 then .bn left right
+      else if key % 2 = 0 then sptMkBN (sptDelete ((key - 1) / 2) left) right
+      else sptMkBN left (sptDelete ((key - 1) / 2) right)
+  | .bs left value right =>
+      if key = 0 then .bn left right
+      else if key % 2 = 0 then
+        sptMkBS (sptDelete ((key - 1) / 2) left) value right
+      else sptMkBS left value (sptDelete ((key - 1) / 2) right)
+
+/-- HOL `sptree$union` (`HOL/src/finite_maps/sptreeScript.sml:219-244`).  The
+left operand's value wins on shared keys, matching HOL's clause order.
+Untagged Flapjack infrastructure (source outside `cakeml/`). -/
+def sptUnion {α : Type} : Spt α → Spt α → Spt α
+  | .ln, right => right
+  | .ls value, right =>
+      match right with
+      | .ln => .ls value
+      | .ls _ => .ls value
+      | .bn first second => .bs first value second
+      | .bs first _ second => .bs first value second
+  | .bn first second, right =>
+      match right with
+      | .ln => .bn first second
+      | .ls value => .bs first value second
+      | .bn first' second' => .bn (sptUnion first first') (sptUnion second second')
+      | .bs first' value second' =>
+          .bs (sptUnion first first') value (sptUnion second second')
+  | .bs first value second, right =>
+      match right with
+      | .ln => .bs first value second
+      | .ls _ => .bs first value second
+      | .bn first' second' =>
+          .bs (sptUnion first first') value (sptUnion second second')
+      | .bs first' _ second' =>
+          .bs (sptUnion first first') value (sptUnion second second')
+termination_by left _ => sizeOf left
+
+/-- HOL `sptree$inter` (`HOL/src/finite_maps/sptreeScript.sml:272-291`): keep
+only keys present in both trees, with the left operand's value.
+Untagged Flapjack infrastructure (source outside `cakeml/`). -/
+def sptInter {α : Type} : Spt α → Spt α → Spt α
+  | .ln, _ => .ln
+  | .ls value, right =>
+      match right with
+      | .ln => .ln
+      | .ls _ => .ls value
+      | .bn _ _ => .ln
+      | .bs _ _ _ => .ls value
+  | .bn first second, right =>
+      match right with
+      | .ln => .ln
+      | .ls _ => .ln
+      | .bn first' second' => sptMkBN (sptInter first first') (sptInter second second')
+      | .bs first' _ second' =>
+          sptMkBN (sptInter first first') (sptInter second second')
+  | .bs first value second, right =>
+      match right with
+      | .ln => .ln
+      | .ls _ => .ls value
+      | .bn first' second' =>
+          sptMkBN (sptInter first first') (sptInter second second')
+      | .bs first' _ second' =>
+          sptMkBS (sptInter first first') value (sptInter second second')
+termination_by left _ => sizeOf left
+
+/-- HOL `list_delete` (`cakeml/compiler/backend/backend_commonScript.sml:180-182`):
+delete each key (with unit value) from the tree, left to right. -/
+@[hol "cakeml/compiler/backend/backend_commonScript.sml" "list_delete_def"]
+def sptListDelete : List Nat → NumSet → NumSet
+  | [], tree => tree
+  | key :: keys, tree => sptListDelete keys (sptDelete key tree)
+
+/-- HOL `oEL` (`HOL/src/list/src/listScript.sml:5482-5484`): the `n`-th list
+element as an option.  Untagged Flapjack infrastructure (source outside
+`cakeml/`). -/
+def sptOel {α : Type} : Nat → List α → Option α
+  | _, [] => none
+  | 0, value :: _ => some value
+  | n + 1, _ :: rest => sptOel n rest
+
 /-- Rebuild an spt tree with the root value replaced by `v` (keying at index
 `sptInsert 0`). This is the key-`0` insertion pattern of HOL sptree `insert`:
 inserting key `0` writes at the root of whatever tree it is given. Flapjack
