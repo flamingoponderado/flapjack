@@ -23,3 +23,11 @@ val _ = print_eval "prog_if_basic"
       (loopLang$Const (3w : 8 word))
       3 4
       (insert 1 () (insert 2 () LN))``
+val _ = print_eval "prog_if_wrong_result"
+  ``crep_to_loop$prog_if
+      asm$NotEqual
+      [loopLang$Skip] [loopLang$Tick]
+      (loopLang$Const (2w : 8 word))
+      (loopLang$Const (3w : 8 word))
+      3 4
+      (insert 1 () (insert 2 () LN)) = [loopLang$Skip]``
