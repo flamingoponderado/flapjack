@@ -1,5 +1,9 @@
 import Flapjack.Pancake.CrepToLoop.Proofs.RelationsExact
 import Flapjack.Pancake.Semantics.LoopSemStateExact.Evaluate
+import Flapjack.Pancake.Semantics.LoopProps.EvalExact
+import Flapjack.Pancake.Semantics.LoopProps.NestedSeqExact
+import Flapjack.Pancake.Semantics.ByteAlignBridge
+import Flapjack.Pancake.CrepToLoop.Proofs.CompExpOutRel
 
 /-!
 # crep_to_loop `comp_exp_preserves_eval`, split by HOL's `eval_ind` cases
@@ -314,5 +318,121 @@ theorem crepToLoop_comp_exp_preserves_eval_load {width : Nat} [NeZero width] {σ
           LoopSemStateFiniteExact.memLoad, hdom, if_true]
         exact congrArg some (h4 w hd).symm
       · simp [if_neg hd] at he
+
+/-- Flapjack bridge (no HOL declaration; HOL's LoadByte case unfolds
+    `panSem$mem_load_byte_def` and `wordSem$mem_load_byte_aux_def` inline): under
+    `mem_rel` and the `state_rel` domain equation, a Crep byte load succeeds on
+    the Loop side with the same byte, widened identically. -/
+private theorem memLoadByte_bridge {width : Nat} [NeZero width]
+    (smem : BitVec width → HolWordLab width) (dom : BitVec width → Prop) [DecidablePred dom]
+    (tmem : BitVec width → WordLocW width) (tdom : BitVec width → Bool)
+    (be : Bool) (a : BitVec width) (byte : UInt8)
+    (hdom : dom = fun x => tdom x = true) (hm : crepToLoopMemRelHOLExact smem tmem dom)
+    (h : panMemLoadByteHOL smem dom be a = some byte) :
+    ∃ b, memLoadByteAuxExact tmem tdom be a = some b ∧
+      b.setWidth width = BitVec.ofNat width byte.toNat := by
+  unfold panMemLoadByteHOL at h
+  cases hv : smem (panByteAlignHOL a) with
+  | word val =>
+    simp only [hv] at h
+    by_cases hd : dom (panByteAlignHOL a)
+    · rw [if_pos hd, Option.some.injEq] at h
+      subst h
+      have hmv := hm _ hd
+      rw [hv] at hmv
+      have htd : tdom (panByteAlignHOL a) = true := by subst hdom; exact hd
+      refine ⟨getByteHOL8 a val be, ?_, ?_⟩
+      · unfold memLoadByteAuxExact
+        rw [riscvByteAlignHOL_eq_panByteAlignHOL, ← hmv]
+        simp [wlabWlocExact, htd]
+      · rw [panGetByteHOL_eq_riscvGetByteHOL]
+        apply BitVec.eq_of_toNat_eq
+        simp [getByteHOL8, riscvGetByteHOL, byteIndexHOL]
+    · rw [if_neg hd] at h
+      cases h
+
+/-- Flapjack helper (no HOL declaration): HOL's LoadByte/Load32 cases close the
+    `domain l ⊆ domain t_locals` conjunct under `insert tmp' () l` with
+    `SUBSET_INSERT_RIGHT`; this is that step for the exact `locals_rel`. -/
+private theorem locals_rel_insert_domain {width : Nat} [NeZero width]
+    (ctxt : CrepToLoopContextExact) (o : NumSet)
+    (sl : HolFiniteMapExact Nat (HolWordLab width)) (tl : Spt (WordLocW width)) (m : Nat)
+    (h : crepToLoopLocalsRelExact ctxt o sl tl) (hm : sptMem m tl) :
+    crepToLoopLocalsRelExact ctxt (sptInsert m () o) sl tl := by
+  refine ⟨h.1, h.2.1, fun k hk => ?_, fun vn val hv => ?_⟩
+  · rcases (sptMem_sptInsert k m () o).mp hk with rfl | hk
+    · exact hm
+    · exact h.2.2.1 k hk
+  · obtain ⟨n, h1, h2, h3⟩ := h.2.2.2 vn val hv
+    exact ⟨n, h1, (sptMem_sptInsert n m () o).mpr (Or.inr h2), h3⟩
+
+/-- `comp_exp_preserves_eval`, case `LoadByte e` (`crep_to_loopProofScript.sml:772-786`
+    statement; case proof at 996-1035), with the `eval_ind` hypothesis for the
+    address sub-expression `e`. -/
+@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "comp_exp_preserves_eval"
+  (fmap_as_finite_support_relation := [CrepToLoopContextExact.vars,
+    CrepToLoopContextExact.funcs, CrepSemHOLState.locals, CrepSemHOLState.globals,
+    CrepSemHOLState.code, LoopSemStateFiniteExact.globals])
+  (words_as_type_indexed_bitvec)]
+theorem crepToLoop_comp_exp_preserves_eval_loadByte {width : Nat} [NeZero width] {σ : Type} :
+    ∀ (s : CrepSemHOLState width σ) [DecidablePred s.memaddrs] (e : CrepExpHOL width),
+      crepToLoopCompExpPreservesEvalAt s e →
+    ∀ (v : HolWordLab width) (t : LoopSemStateFiniteExact width σ)
+      (ctxt : CrepToLoopContextExact) (tmp : Nat) (l : NumSet)
+      (p : List (HolLoopProg width)) (le : HolLoopExp width) (ntmp : Nat) (nl : NumSet),
+      evalCrepSemHOLExp s (.loadByte e) = some v ∧
+        crepToLoopStateRelExact s t ∧
+        crepToLoopMemRelHOLExact s.memory t.memory s.memaddrs ∧
+        crepToLoopGlobalsRelHOLExact s.globals t.globals ∧
+        crepToLoopCodeRelExact ctxt s.code t.code ∧
+        crepToLoopLocalsRelExact ctxt l s.locals t.locals ∧
+        compileExpHOLExact ctxt tmp l (.loadByte e) = (p, le, ntmp, nl) ∧
+        ctxt.vmax < tmp →
+      ∃ (ck : Nat) (st : LoopSemStateFiniteExact width σ),
+        LoopSemStateFiniteExact.evaluate (loopNestedSeqHOL p)
+            { t with clock := t.clock + ck } = (none, st) ∧
+        LoopSemStateFiniteExact.eval st le = some (wlabWlocExact v) ∧
+        crepToLoopStateRelExact s st ∧
+        crepToLoopMemRelHOLExact s.memory st.memory s.memaddrs ∧
+        crepToLoopGlobalsRelHOLExact s.globals st.globals ∧
+        crepToLoopCodeRelExact ctxt s.code st.code ∧
+        crepToLoopLocalsRelExact ctxt nl s.locals st.locals := by
+  intro s _ e ih v t ctxt tmp l p le ntmp nl ⟨he, hs, hm, hg, hc, hl, hcomp, hv⟩
+  cases hea : evalCrepSemHOLExp s e with
+  | none => simp [evalCrepSemHOLExp, hea] at he
+  | some a =>
+    cases a with
+    | word w =>
+      cases hb : panMemLoadByteHOL s.memory s.memaddrs s.be w with
+      | none => simp [evalCrepSemHOLExp, hea, hb] at he
+      | some byte =>
+        have hv' : v = .word (BitVec.ofNat width byte.toNat) := by
+          simp [evalCrepSemHOLExp, hea, hb] at he; exact he.symm
+        subst hv'
+        rcases hA : compileExpHOLExact ctxt tmp l e with ⟨c, val, m, o⟩
+        have hout := (compileExpHOLExact_out_rel ctxt tmp l e).2.1
+        rw [hA] at hout
+        rw [compileExpHOLExact, hA] at hcomp
+        simp only [Prod.mk.injEq] at hcomp
+        obtain ⟨rfl, rfl, rfl, rfl⟩ := hcomp
+        obtain ⟨ck, st, h1, h2, h3, h4, h5, h6, h7⟩ :=
+          ih (.word w) t ctxt tmp l c val m o ⟨hea, hs, hm, hg, hc, hl, hA, hv⟩
+        obtain ⟨b, hbl, hbw⟩ :=
+          memLoadByte_bridge s.memory s.memaddrs st.memory st.mdomain s.be w byte h3.1 h4 hb
+        rw [h3.2.2.2.1] at hbl
+        have hvm : ctxt.vmax < m := Nat.lt_of_lt_of_le hv hout
+        refine ⟨ck, LoopSemStateFiniteExact.setVar m (.word (b.setWidth width))
+            (LoopSemStateFiniteExact.setVar m (.word w) st), ?_, ?_, h3, h4, h5, h6, ?_⟩
+        · rw [LoopSemStateFiniteExact.evaluate_nested_seq_append_none c _ st _ h1]
+          simp [loopNestedSeqHOL, LoopSemStateFiniteExact.evaluate_seq,
+            LoopSemStateFiniteExact.evaluate, h2, LoopSemStateFiniteExact.setVar, wlabWlocExact,
+            sptLookup_sptInsert, hbl]
+        · simp [LoopSemStateFiniteExact.eval, LoopSemStateFiniteExact.setVar,
+            sptLookup_sptInsert, wlabWlocExact, hbw]
+        · refine locals_rel_insert_domain ctxt o s.locals _ m
+            (crepToLoopLocalsRelExact_insert_gt_vmax ctxt o s.locals _ m _
+              (crepToLoopLocalsRelExact_insert_gt_vmax ctxt o s.locals _ m _ h7 hvm) hvm) ?_
+          simp [sptMem, sptDomain, LoopSemStateFiniteExact.setVar,
+            sptLookup_sptInsert]
 
 end Flapjack
