@@ -1,4 +1,5 @@
 import Flapjack.Pancake.CrepToLoop
+import Flapjack.Pancake.CrepLang.Exp
 import Flapjack.Pancake.Semantics.CrepSem.HOLState
 import Flapjack.Basis.Pure.MlString
 import Flapjack.Compiler.Encoders.Asm
@@ -103,5 +104,124 @@ def findLabExact (context : CrepToLoopContextExact) (function : MlString) : Nat 
   match context.funcs.lookup function with
   | some (label, _) => label
   | none => 0
+
+/-- Exact HOL `prog_if_def`: materialize both expressions, branch on the
+comparison, and insert both temporaries into the HOL `num_set`. -/
+@[hol "cakeml/pancake/crep_to_loopScript.sml" "prog_if_def"
+  (words_as_type_indexed_bitvec)]
+def progIfHOLExact {width : Nat} [NeZero width]
+    (operator : Cmp) (first second : List (HolLoopProg width))
+    (left right : HolLoopExp width) (condition rightRegister : Nat)
+    (live : NumSet) : List (HolLoopProg width) :=
+  first ++ second ++
+    [.assign condition left,
+     .assign rightRegister right,
+     .ite operator condition (.reg rightRegister)
+       (.assign condition (.const 1))
+       (.assign condition (.const 0))
+       (sptListInsert [condition, rightRegister] live)]
+
+/-- Exact HOL `compile_crepop_def`, including the ARMv7 two-result case. -/
+@[hol "cakeml/pancake/crep_to_loopScript.sml" "compile_crepop_def"
+  (words_as_type_indexed_bitvec)]
+def compileCrepopHOLExact {width : Nat} [NeZero width]
+    (operator : CrepOp) (target : AsmArchitecture)
+    (left right tmp : Nat) (_live : NumSet) : List (HolLoopProg width) × Nat :=
+  match operator with
+  | .mul =>
+      if target = .armv7 then
+        ([.arith (.longMul tmp (tmp + 1) left right)], tmp + 1)
+      else
+        ([.arith (.longMul tmp tmp left right)], tmp)
+
+mutual
+  /-- Exact HOL `compile_exp_def` over the source Crep and Loop carriers. This
+  is proof-side exact infrastructure for now: production `loopCompileExp`
+  consumes generic `CrepExp`/list-backed `LoopContext` and emits the
+  String-capable, list-live `LoopProg`, whereas this definition consumes
+  `CrepExpHOL`, the `MlString`/finite-map context, and emits `HolLoopProg` with
+  `NumSet`. No production-routing or material-performance exception is
+  claimed. The exact compiler-path bridge is open work linked to
+  `flapjack-pxn.18.5.6.28`. -/
+  @[hol "cakeml/pancake/crep_to_loopScript.sml" "compile_exp_def"
+    (fmap_as_finite_support := [vars, funcs]) (words_as_type_indexed_bitvec)]
+  def compileExpHOLExact {width : Nat} [NeZero width]
+      (context : CrepToLoopContextExact) (tmp : Nat) (live : NumSet) :
+      CrepExpHOL width → List (HolLoopProg width) × HolLoopExp width × Nat × NumSet
+    | .baseAddr => ([], .baseAddr, tmp, live)
+    | .topAddr => ([], .topAddr, tmp, live)
+    | .const value => ([], .const value, tmp, live)
+    | .var name =>
+        ([], .var (match context.vars.lookup name with | some value => value | none => 0), tmp, live)
+    | .load address =>
+        let (code, value, next, outLive) := compileExpHOLExact context tmp live address
+        (code, .load value, next, outLive)
+    | .load32 address =>
+        let (code, value, next, outLive) := compileExpHOLExact context tmp live address
+        (code ++ [.assign next value, .load32 next next], .var next,
+          next + 1, sptInsert next () outLive)
+    | .loadByte address =>
+        let (code, value, next, outLive) := compileExpHOLExact context tmp live address
+        (code ++ [.assign next value, .loadByte next next], .var next,
+          next + 1, sptInsert next () outLive)
+    | .loadGlob address => ([], .lookup address, tmp, live)
+    | .op operator expressions =>
+        let (code, values, next, outLive) := compileExpsHOLExact context tmp live expressions
+        (code, .op operator values, next, outLive)
+    | .crepOp operator expressions =>
+        let (code, values, next, outLive) := compileExpsHOLExact context tmp live expressions
+        let (operationCode, destination) :=
+          compileCrepopHOLExact operator context.target next (next + 1)
+            (next + values.length)
+            (sptListInsert ((List.range values.length).map (fun offset => next + offset)) outLive)
+        let valueAssignments := (List.range values.length).zipWith
+          (fun offset value => HolLoopProg.assign (next + offset) value) values
+        (code ++ valueAssignments ++ operationCode, .var destination,
+          destination + 1,
+          sptInsert destination ()
+            (sptListInsert
+              ((List.range (destination - next)).map (fun offset => next + offset))
+              outLive))
+    | .cmp operator left right =>
+        let (leftCode, leftValue, leftNext, leftLive) :=
+          compileExpHOLExact context tmp live left
+        let (rightCode, rightValue, rightNext, rightLive) :=
+          compileExpHOLExact context leftNext leftLive right
+        let condition := rightNext + 1
+        let rightRegister := rightNext + 2
+        (progIfHOLExact operator leftCode rightCode leftValue rightValue
+            condition rightRegister rightLive,
+          .var condition, rightNext + 3,
+          sptListInsert [condition, rightRegister] rightLive)
+    | .shift operator left right =>
+        let (leftCode, leftValue, leftNext, leftLive) :=
+          compileExpHOLExact context tmp live left
+        let (rightCode, rightValue, rightNext, rightLive) :=
+          compileExpHOLExact context leftNext leftLive right
+        (leftCode ++ rightCode, .shift operator leftValue rightValue, rightNext, rightLive)
+  termination_by expression => sizeOf expression
+  decreasing_by
+    all_goals simp_wf
+    all_goals first
+      | decreasing_trivial
+      | (rename_i h; simp_all only [CrepExpHOL.op.sizeOf_spec, CrepExpHOL.crepOp.sizeOf_spec];
+         have := List.sizeOf_lt_of_mem h; omega)
+
+  /-- Flapjack-only helper for the mutual list recursion in `compile_exp_def`;
+  HOL's `compile_exps` is local to the source script. -/
+  def compileExpsHOLExact {width : Nat} [NeZero width]
+      (context : CrepToLoopContextExact) (tmp : Nat) (live : NumSet) :
+      List (CrepExpHOL width) →
+        List (HolLoopProg width) × List (HolLoopExp width) × Nat × NumSet
+    | [] => ([], [], tmp, live)
+    | expression :: expressions =>
+        let (code, value, next, outLive) := compileExpHOLExact context tmp live expression
+        let (tailCode, tailValues, finalTemp, finalLive) :=
+          compileExpsHOLExact context next outLive expressions
+        (code ++ tailCode, value :: tailValues, finalTemp, finalLive)
+  termination_by expressions => sizeOf expressions
+  decreasing_by
+    all_goals first | sizeOf_list_dec | decreasing_trivial
+end
 
 end Flapjack

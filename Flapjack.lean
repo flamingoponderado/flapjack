@@ -308,6 +308,7 @@ import Flapjack.Pancake.CrepToLoop.ContextExact
 import Flapjack.Pancake.CrepToLoop.ProgIfExact
 import Flapjack.Pancake.CrepToLoop.Optimise
 import Flapjack.Pancake.CrepToLoop.StateRel
+import Flapjack.Test.CrepToLoopCompileExpExactParity
 import Flapjack.Test.CrepFindLabParity
 import Flapjack.Pancake.LoopLive
 import Flapjack.Pancake.LoopLive.ExactAssignedVars
