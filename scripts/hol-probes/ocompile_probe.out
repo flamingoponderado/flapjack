@@ -4,3 +4,4 @@ return_const=Mark
   (Seq (Mark (Assign 1 (Const 17w)))
      (Mark (Seq (Mark (Return [1])) (Mark Skip))))
 post_return_skip=Mark Skip
+ffi=Mark (FFI «f» 5 6 7 8 LN)

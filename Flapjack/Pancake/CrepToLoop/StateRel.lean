@@ -161,22 +161,25 @@ theorem crepToLoopStateRel_intro {width : Nat} [NeZero width] {σ : Type} (s : C
 def wlabWloc {width : Nat} [NeZero width] : PanWordLab (BitVec width) → LoopValue (BitVec width)
   | .word value => .word value
 
-/-- Exact port of HOL `globals_rel_def`
-    (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:54-58`): every source
-    global lookup is matched by the target's `wlab_wloc` image.  HOL's
-    `FLOOKUP` on `5 word |-> 'a word_loc` is the target field application;
-    the source `globals` is the same `BitVec 5`-indexed option finite map. -/
-@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "globals_rel_def"]
+/-- Production-carrier analogue of HOL `globals_rel_def`
+    (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:54-58`), retained for
+    the executable bridge. This is not an exact HOL port: its inputs are raw
+    option-valued functions rather than HOL `|->` finite maps, and its values
+    use production `PanWordLab`/`LoopValue` instead of `HolWordLab`/`WordLocW`.
+    The exact-carrier port is `crepToLoopGlobalsRelHOLExact` in
+    `Proofs/RelationsExact.lean` (bead `flapjack-pxn.18.5.6.33.18`). -/
 def crepToLoopGlobalsRel {width : Nat} [NeZero width]
     (sglobals : BitVec 5 → Option (PanWordLab (BitVec width)))
     (tglobals : BitVec 5 → Option (LoopValue (BitVec width))) : Prop :=
   ∀ address value, sglobals address = some value → tglobals address = some (wlabWloc value)
 
-/-- Exact port of HOL `globals_rel_intro`
-    (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:203-209`), which is an
-    implication: assuming the relation, unpack the universally quantified
-    lookup agreement. -/
-@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "globals_rel_intro"]
+/-- Production-carrier analogue of HOL `globals_rel_intro`
+    (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:211-216`), retained for
+    the executable bridge. It inherits the raw-function and production-value
+    carrier mismatch documented on `crepToLoopGlobalsRel`, so it is not tagged
+    as an exact HOL port. The exact-carrier theorem is
+    `crepToLoopGlobalsRelHOLExact_intro` in `Proofs/RelationsExact.lean`
+    (bead `flapjack-pxn.18.5.6.33.18`). -/
 theorem crepToLoopGlobalsRel_intro {width : Nat} [NeZero width]
     (sglobals : BitVec 5 → Option (PanWordLab (BitVec width)))
     (tglobals : BitVec 5 → Option (LoopValue (BitVec width)))
@@ -288,29 +291,27 @@ theorem crepToLoopStateRelExact_clock_add_zero {width : Nat} [NeZero width] {σ 
     rw [crepToLoopStateRelExact] at h ⊢
     simpa using h⟩
 
-/-- Exact port of HOL `mem_rel_def`
-    (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:49-52`):
-    `mem_rel smem tmem dom <=> !ad. ad IN dom ==> wlab_wloc (smem ad) = tmem ad`.
-
-    HOL's `loopSem$state.memory` is TOTAL (`'a word → 'a word_loc`) and the
-    crep side is already total (`crepSem$state.memory : 'a word → 'a word_lab`),
-    so the relation is stated over total memories. `LoopMachineState.memory` is
-    Option-valued, so production instantiates the target memory through the
-    total view `loopMemoryTotal default t` below; `mem_rel` only constrains
-    addresses in `dom`, where the view agrees with the `some`-defined field.
-    HOL's `ad IN dom` is the set-as-predicate rendering `dom ad = true`, matching
-    the `mdomain`/`shMdomain` fields. -/
-@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "mem_rel_def"]
+/-- Production-carrier analogue of HOL `mem_rel_def`
+    (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:49-52`), retained for
+    the executable bridge. It is not an exact port: it uses `PanWordLab` and
+    `LoopValue` rather than `HolWordLab` and `WordLocW`, and the domain is
+    `BitVec width → Bool` rather than HOL's set predicate
+    (`BitVec width → Prop`). HOL's memories are total functions; production's
+    loop memory is option-valued and uses a total view at the bridge boundary.
+    The exact total-memory/Prop-domain port is `crepToLoopMemRelHOLExact` in
+    `Proofs/RelationsExact.lean` (bead `flapjack-pxn.18.5.6.33.18`). -/
 def crepToLoopMemRel {width : Nat} [NeZero width]
     (smem : BitVec width → PanWordLab (BitVec width))
     (tmem : BitVec width → LoopValue (BitVec width))
     (dom : BitVec width → Bool) : Prop :=
   ∀ ad, dom ad = true → wlabWloc (smem ad) = tmem ad
 
-/-- Exact port of HOL `mem_rel_intro`
-    (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:203-209`), which is an
-    implication: assuming `mem_rel`, unpack the pointwise lookup equation. -/
-@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "mem_rel_intro"]
+/-- Production-carrier analogue of HOL `mem_rel_intro`
+    (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:203-209`), retained for
+    the executable bridge. It inherits the domain/value-carrier mismatch
+    documented on `crepToLoopMemRel`, so it is not tagged as an exact HOL port.
+    The exact-carrier theorem is `crepToLoopMemRelHOLExact_intro` in
+    `Proofs/RelationsExact.lean` (bead `flapjack-pxn.18.5.6.33.18`). -/
 theorem crepToLoopMemRel_intro {width : Nat} [NeZero width]
     (smem : BitVec width → PanWordLab (BitVec width))
     (tmem : BitVec width → LoopValue (BitVec width))
@@ -1263,5 +1264,34 @@ def crepToLoopCodeRelExact {width : Nat} [NeZero width]
                let nctxt := ctxtFcExact ctxt.target ctxt.funcs ns args
                sptLookup loc t_code =
                  some (args, ocompileHOLExact nctxt (listToNumSetHOLExact args) prog))
+
+/-- Exact port of HOL `code_rel_intro`
+    (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:187-200`): assuming
+    `code_rel`, expose its `distinct_funcs` conjunct and its universally
+    quantified per-source-function existential. The exact carriers and
+    `fmap_as_finite_support_relation`/word qualifiers are the same as
+    `crepToLoopCodeRelExact`; no target lookup result or extra context premise
+    is assumed. -/
+@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "code_rel_intro"
+  (fmap_as_finite_support_relation := [CrepToLoopContextExact.funcs, s_code])
+  (words_as_type_indexed_bitvec)]
+theorem crepToLoopCodeRelExact_intro {width : Nat} [NeZero width]
+    (ctxt : CrepToLoopContextExact)
+    (s_code : HolFiniteMapExact MlS (List Nat × CrepProgHOL width))
+    (t_code : Spt (List Nat × HolLoopProg width)) :
+    crepToLoopCodeRelExact ctxt s_code t_code →
+      crepToLoopDistinctFuncs ctxt.funcs.lookup ∧
+        ∀ (f : MlS) (ns : List Nat) (prog : CrepProgHOL width),
+          s_code.lookup f = some (ns, prog) →
+            ∃ loc len : Nat,
+              ctxt.funcs.lookup f = some (loc, len) ∧
+                ns.length = len ∧
+                  (let args := List.range len
+                   let nctxt := ctxtFcExact ctxt.target ctxt.funcs ns args
+                   sptLookup loc t_code =
+                     some (args, ocompileHOLExact nctxt (listToNumSetHOLExact args) prog)) := by
+  intro h
+  rw [crepToLoopCodeRelExact] at h
+  exact h
 
 end Flapjack
