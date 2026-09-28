@@ -11451,6 +11451,14 @@
   {
     "hol_path": null,
     "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect.lean",
+    "lean_name": "pcCompileCorrectAt_skip",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.4.3.94): the Skip case of HOL pc_compile_correct (pan_to_crepProofScript.sml:442-468, resumed at :493-497), stated against pcCompileCorrectAt, the HOL induction predicate P (v, v1) over the tagged total evaluateHOLFiniteState / evalCrepSemHOLProgExact, the tagged compileProgExactHOLW, and the tagged exact state_rel/code_rel/excp_rel/locals_rel/globals_lookup/localised_prog. It has all HOL hypotheses and conclusion conjuncts, an existential target run, and no target-run or post-state premise. Untagged because it is one constructor case; the assembled pc_compile_correct remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
     "lean_name": "panToCrepExactBreakTransition",
     "statement_status": "no_hol_reference_pending_classification",
@@ -15404,6 +15412,17 @@
     "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-a source comparison (2026-09-28; bead flapjack-4ac.4.61) against panPropsScript.sml:1150-1158 and panSemScript.sml:573-582. This is the genuine Primitive name/operator/arguments leaf from recInduct evaluate_ind. It retains the source evaluator pair premise and all eight conclusions with no IH or extra precondition. Expression-list failure, primitive failure, and invalid local result preserve the input state; a valid result uses set_var, which updates only locals. The Lean case uses OPT_MMAP's evalListHOLExact and panPrimopHOLExact from the reviewed finite-support indexed-word evaluator. Skip, Break, Continue, Annot, Tick, Return, and Assign leaves are also ported; recursive cases and assembly remain open."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "evaluate_invariants",
+    "hol_line": 1150,
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
+    "lean_name": "evaluateInvariantsDecCaseHOLFinite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-28; bead flapjack-4ac.4.61) against panPropsScript.sml:1150-1158 and panSemScript.sml:558-565. This is the genuine Dec name/shape/initializer/body induction case from recInduct evaluate_ind. It retains the evaluator result/post premise, the body induction hypothesis, and all eight conclusions with no extra assumptions. evaluate_def preserves the original state when initializer evaluation or shape checking fails; otherwise it binds the local, evaluates the body, and restores the old local binding, leaving each invariant field unchanged by construction or the body IH. The Lean statement uses evaluateHOLFiniteState_dec_total, which is the total HOL-shaped clause, over the checked PanProps finite-support carrier and indexed words. Other recursive cases and assembly remain open."
   },
   {
     "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
