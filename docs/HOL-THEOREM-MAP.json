@@ -19797,5 +19797,20 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.14) against opt_mmap_lhss_locals_rel at crep_to_loopProofScript.sml:2300-2320 ([local]). HOL `∀lhss (s:('a,'b) crepSem$state) (t:('a,'c) loopSem$state) ctxt l. EVERY (λv. IS_SOME (FLOOKUP s.locals v)) lhss ∧ ALL_DISTINCT lhss ∧ locals_rel ctxt l s.locals t.locals ⇒ ∃nlhss. OPT_MMAP (FLOOKUP ctxt.vars) lhss = SOME nlhss ∧ LENGTH nlhss = LENGTH lhss ∧ EVERY (λn. n ∈ domain l) nlhss ∧ ALL_DISTINCT nlhss`. Lean keeps binders in order over CrepSemHOLState width σ, LoopSemStateFiniteExact width F, CrepToLoopContextExact, NumSet; the same three-conjunct premise (EVERY as ∀ v ∈ lhss, IS_SOME as Option.isSome, ALL_DISTINCT as List.Nodup) and four-conjunct existential conclusion (OPT_MMAP as List.mapM, domain as sptMem). The relation qualifier lists the traversed HOL |-> maps ctxt.vars and s.locals; HolWordLab/WordLocW are the reviewed width-indexed `'a word` carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "evaluate_io_mono_rephrases",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
+    "lean_name": "evaluateIOMonoRephrases",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "ds10 (bead flapjack-pxn.18.5.6.34.3): exact port of HOL evaluate_io_mono_rephrases[local] (crep_to_loopProofScript.sml:4066-4070), the LIST_CONJ of crepPropsTheory.evaluate_add_clock_io_events_mono and loopPropsTheory.evaluate_add_clock_io_events_mono each specialized at `s with clock := k` via the source SIMP_RULE (srw_ss()) []. Lean keeps the two exact state carriers separate (CrepSemHOLState and LoopSemStateFiniteExact); each conjunct keeps its own `!extra` (k bound once), matching the source LIST_CONJ binder shape. The exact evaluators consume finite-map fields, so the relation qualifier records CrepSemHOLState.locals/globals/code and LoopSemStateFiniteExact.globals, validated by the same-module witnesses holFmapAsFiniteSupportRelationWitness_CrepSemHOLState and holFmapAsFiniteSupportRelationWitness_LoopSemStateFiniteExact; words_as_type_indexed_bitvec records the two width-indexed carriers. Both conjuncts are the already-tagged one-carrier monotonicity theorems Flapjack.crepPropsEvaluateAddClockIoEventsMono and Flapjack.LoopSemStateFiniteExact.evaluate_add_clock_io_events_mono. No extra side conditions. Replayed by the evaluate_io_mono example and evaluateIOMonoGuard in Flapjack/Test/CrepToLoopParity.lean."
   }
 ]
