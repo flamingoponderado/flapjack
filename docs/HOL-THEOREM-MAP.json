@@ -7916,6 +7916,30 @@
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panSemCodeRanged_panStructConvertState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack plumbing (bead flapjack-pxn.18.4.3.77.2.15.5): instantiates PanSemCodeRanged at panStructConvertState via PanSemCodeRanged.map_structCompile, from byte-ranged source entries and a CtxBR structure context. No HOL declaration; not a port claim."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panSemCodeRanged_panStructConvertState_of_functionEntries",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack plumbing (bead flapjack-pxn.18.4.3.77.2.15.5): derives ranged code after panStructConvertState from DeclByteRanged declarations through functionEntries_panLangEntryByteRanged and a CtxBR structure context. No HOL declaration; not a port claim."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panSemCodeRanged_panStructFiniteStateFromMaps",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack plumbing (bead flapjack-pxn.18.4.3.77.2.15.5): instantiates PanSemCodeRanged at panStructFiniteStateFromMaps.runtime from byte-ranged code entries. No HOL declaration; not a port claim."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
     "lean_name": "panSemExceptionShapesRanged_panStructConvertState",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack plumbing: instantiates the untagged PanSemExceptionShapesRanged predicate at panStructConvertState, discharging the Raise agreement's hexnRanged premise from the source predicate and CtxBR context.structs. No HOL declaration; not a port claim."
