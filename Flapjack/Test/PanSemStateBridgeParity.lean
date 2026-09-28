@@ -692,6 +692,112 @@ theorem witnessProd_not_ranged : ¬ PanSemStateRelExecRanged witnessProd := by
   · simp [witnessProd, updatePanValueMap]
   · exact nonByteRangedValue_not_ranged
 
+/-! ## Runtime FFI/primitive value-range boundary (bead
+    `flapjack-pxn.18.4.3.77.2.15.2`)
+
+Kernel-checked guards for the boundary results added to `TotalEvalExpBridge.lean`:
+the production `ExtCall` constructor preserves `PanSemStateRelExecRanged`
+unconditionally, the production `Primitive` constructor preserves it under the
+runtime premise `PanPrimitiveHandlerByteRanged`, and the boundary is crossed by a
+non-byte-ranged primitive result or a pre-existing non-byte-ranged global. -/
+
+/-- A byte-ranged primitive handler returning a constant word. -/
+def byteRangedPrimitive : PanPrimitiveHandler W :=
+  fun _ _ => some (PanValue.word (7 : W))
+
+/-- A struct value whose structure name and fields are byte-ranged. -/
+def goodStructValue : PanValue W :=
+  .nStruct "Good" [("ok", .word (0 : W))]
+
+/-- A value with the same shape as `goodStructValue` but a non-byte-ranged field
+    name, so it is not `PanValueByteRanged` yet assignment-valid against it. -/
+def badFieldValue : PanValue W :=
+  .nStruct "Good" [("\u20ac", .word (0 : W))]
+
+/-- The out-of-range field value is not byte-ranged. -/
+theorem badFieldValue_not_ranged : ¬ PanValueByteRanged badFieldValue := by
+  intro h
+  simp only [badFieldValue, PanValueByteRanged, NameRanged, String.toList] at h
+  exact absurd (h.2 ("\u20ac", PanValue.word (0 : W)) (by simp)).1 (by decide)
+
+/-- A primitive handler returning the out-of-range field value. -/
+def nonRangedPrimitive : PanPrimitiveHandler W :=
+  fun _ _ => some badFieldValue
+
+/-- The production `ExtCall` clause preserves `PanSemStateRelExecRanged` on the
+    fixture for arbitrary constant arguments. -/
+example : PanSemStateRelExecRanged
+    (panSemTotalExtCallClause bridgeExecProdState ""
+      (.const (0 : W)) (.const (0 : W)) (.const (0 : W)) (.const (0 : W))).2 :=
+  PanSemStateRelExecRanged.extCallClause bridgeExecProdState_ranged ""
+    (.const (0 : W)) (.const (0 : W)) (.const (0 : W)) (.const (0 : W))
+
+/-- The production `Primitive` clause preserves `PanSemStateRelExecRanged` under
+    the byte-ranged handler premise. -/
+example : PanSemStateRelExecRanged
+    (panSemTotalPrimitiveClause bridgeExecProdState "x" .addCarry
+      [.const (7 : W)] byteRangedPrimitive).2 :=
+  PanSemStateRelExecRanged.primitiveClause bridgeExecProdState_ranged "x" .addCarry
+    [.const (7 : W)] byteRangedPrimitive (by
+      intro operator values value h
+      simp only [byteRangedPrimitive, Option.some.injEq] at h
+      subst h
+      simp [PanValueByteRanged])
+
+/-- Production state carrying a byte-ranged `"Good"` struct in local `"x"`, so a
+    shape-matching non-byte-ranged assignment is accepted. -/
+def primitiveBoundaryState : PanSemState W (FfiState Unit) :=
+  { bridgeExecProdState with
+    locals := fun name => if name = "x" then some goodStructValue else none }
+
+/-- The boundary state is `PanSemStateRelExecRanged` before the primitive call. -/
+theorem primitiveBoundaryState_ranged :
+    PanSemStateRelExecRanged primitiveBoundaryState := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro name value h
+    simp only [primitiveBoundaryState, bridgeExecProdState] at h
+    split at h
+    · rename_i hname
+      rw [Option.some.injEq] at h
+      subst h
+      simp [goodStructValue, PanValueByteRanged, NameRanged]
+    · exact absurd h (by simp)
+  · intro name value h
+    simp only [primitiveBoundaryState, bridgeExecProdState] at h
+    exact absurd h (by simp)
+  · simpa only [primitiveBoundaryState, bridgeExecProdState] using
+      bridgeExecProdState_ranged.2.2
+
+/-- The primitive boundary is crossed: the non-byte-ranged handler result is
+    installed into `"x"` and the resulting state fails
+    `PanSemStateRelExecRanged`. -/
+theorem primitiveBoundary_crossed :
+    ¬ PanSemStateRelExecRanged
+        (panSemTotalPrimitiveClause primitiveBoundaryState "x" .addCarry
+          [] nonRangedPrimitive).2 := by
+  apply primitiveClause_not_ranged_of_nonRanged primitiveBoundaryState "x" .addCarry
+    [] nonRangedPrimitive [] badFieldValue
+  · simp [evalPanSemStateExps, evalPanValueExps, evalPanValueExp.evalPanValueExps]
+  · rfl
+  · simp [panValueAssignmentValid, primitiveBoundaryState, bridgeExecProdState,
+      goodStructValue, badFieldValue, panValueShape, panShapeMatches]
+  · exact badFieldValue_not_ranged
+
+/-- A state carrying a non-byte-ranged value in global `"g"` (the initial/stored
+    global boundary). -/
+def badGlobalState : PanSemState W (FfiState Unit) :=
+  { bridgeExecProdState with
+    globals := fun name => if name = "g" then some badFieldValue else none }
+
+/-- The `ExtCall` boundary is not repaired: it leaves the non-byte-ranged global
+    unchanged, so the resulting state still fails `PanSemStateRelExecRanged`. -/
+example : ¬ PanSemStateRelExecRanged
+    (panSemTotalExtCallClause badGlobalState ""
+      (.const (0 : W)) (.const (0 : W)) (.const (0 : W)) (.const (0 : W))).2 :=
+  extCallClause_not_ranged_of_global_nonRanged badGlobalState ""
+    (.const (0 : W)) (.const (0 : W)) (.const (0 : W)) (.const (0 : W))
+    "g" badFieldValue (by simp [badGlobalState]) badFieldValue_not_ranged
+
 def runChecks : IO Bool := do
   IO.println "PASS production/exact PanSemState codec bridge (value/entry/struct/state)"
   pure true

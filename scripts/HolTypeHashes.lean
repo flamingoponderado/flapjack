@@ -67,6 +67,7 @@ import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.If
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Dec
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Tick
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Annot
+import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.While
 import Flapjack.Pancake.Proofs.PanToCrep.NotMemContextAssignedMemGt
 import Flapjack.Pancake.Semantics.CrepProps
 import Flapjack.Pancake.Semantics.CrepProps.MemLoadFlatRel
