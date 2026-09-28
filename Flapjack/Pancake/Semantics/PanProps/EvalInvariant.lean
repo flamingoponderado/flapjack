@@ -6006,6 +6006,42 @@ theorem evaluateHOLFinitePair_clock_le {width : Nat} {σ : Type} [NeZero width]
     state.clock
   exact h
 
+/-- Flapjack-specific pair wrapper for the `While` clause of HOL
+    `evaluate_def` (`panSemScript.sml:630`). HOL has no separate pair-wrapper
+    declaration; this infrastructure exposes that exact clause through the
+    PanProps finite-state codec for the recursive-induction proof. -/
+theorem evaluateHOLFinitePair_while {width : Nat} {σ : Type} [NeZero width]
+    (state : PanPropsEvalStateFiniteExact width σ) (condition : ExpHOL width)
+    (body : ProgHOL width) :
+    PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state (.while condition body) =
+      (let canonical := state.toPanSemFinite
+       let conditionResult := @PanSemStateFiniteExact.evalHOLFinite width σ _ canonical
+         (fun address => Classical.propDecidable (canonical.memaddrs address)) condition
+       let output : Option (PanSemResultExact width) × PanSemStateFiniteExact width σ :=
+         match conditionResult with
+         | some (.val (.word word)) =>
+             if word ≠ 0 then
+               if canonical.clock = 0 then
+                 (some .timeOut, PanSemStateFiniteExact.emptyLocalsHOLFinite canonical)
+               else
+                 let entry := PanSemStateFiniteExact.decClockHOLFinite canonical
+                 let bodyOutput := PanSemStateFiniteExact.evaluateHOLFiniteState entry body
+                 let fixed := PanSemStateFiniteExact.fixClockHOLFinite entry bodyOutput
+                 match bodyOutput.1 with
+                 | none => PanSemStateFiniteExact.evaluateHOLFiniteState fixed.2
+                     (.while condition body)
+                 | some .continue => PanSemStateFiniteExact.evaluateHOLFiniteState fixed.2
+                     (.while condition body)
+                 | some .break => (none, fixed.2)
+                 | some result => (some result, fixed.2)
+             else (none, canonical)
+         | _ => (some .error, canonical)
+       (output.1, PanPropsEvalStateFiniteExact.ofPanSemFinite output.2)) := by
+  classical
+  unfold PanPropsEvalStateFiniteExact.evaluateHOLFinitePair
+  rw [PanSemStateFiniteExact.evaluateHOLFiniteState_while_total]
+  rfl
+
 /-- Genuine recursive-induction `Seq` case of HOL `evaluate_clock_sub`. The
     high-clock source run is split at the first statement; both recursive
     induction hypotheses use the same clock decrement, and the second is
