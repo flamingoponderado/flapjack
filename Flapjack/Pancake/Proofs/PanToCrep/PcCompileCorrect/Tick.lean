@@ -2,35 +2,47 @@ import Flapjack.HolRef
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Call
 
 /-!
-# `pc_compile_correct` Annot case over the exact carriers
+# `pc_compile_correct` Tick case over the exact carriers
 
-The `Annot` case of HOL `pc_compile_correct`
+The `Tick` case of HOL `pc_compile_correct`
 (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:442-468`, resumed at
-`:511-515`): against `pcCompileCorrectAt`, then in HOL's own shape as the tagged
-`pcCompileCorrect_Annot` (bead `flapjack-pxn.18.4.3.100`).
+`:517-523`): against `pcCompileCorrectAt`, then in HOL's own shape as the tagged
+`pcCompileCorrect_Tick` (bead `flapjack-pxn.18.4.3.100`).
 -/
 
 namespace Flapjack
 
 open Flapjack.Pancake.PanLang (MlS ShapeHOL ProgHOL ExpHOL sizeOfShapeHOL)
 
-/-- HOL `pc_compile_correct[Annot]` (`pan_to_crepProofScript.sml:511-515`) against
-    `pcCompileCorrectAt`: source `Annot` returns `(NONE, s)`, `compile ctxt
-    (Annot _ _) = Skip`, and target `Skip` returns `(NONE, t)`. Untagged: the
-    tagged HOL-shaped statement is `pcCompileCorrect_Annot`. -/
-theorem pcCompileCorrectAt_annot {width : Nat} {σ : Type} [NeZero width]
-    (tag text : MlS) (source : PanSemStateFiniteExact width σ) :
-    pcCompileCorrectAt (.annot tag text : ProgHOL width) source := by
+/-- HOL `pc_compile_correct[Tick]` (`pan_to_crepProofScript.sml:517-523`) against
+    `pcCompileCorrectAt`. Both clocks agree by `state_rel`. At clock zero both
+    sides time out with `empty_locals`; otherwise both decrement the clock and
+    keep their locals. No target run is assumed. Untagged: the tagged HOL-shaped
+    statement is `pcCompileCorrect_Tick`. -/
+theorem pcCompileCorrectAt_tick {width : Nat} {σ : Type} [NeZero width]
+    (source : PanSemStateFiniteExact width σ) :
+    pcCompileCorrectAt (.tick : ProgHOL width) source := by
   intro res s1 t ctxt hrun _ hstate hcode hexcp hlocals _
-  rw [PanSemStateFiniteExact.evaluateHOLFiniteState_annot] at hrun
-  obtain ⟨rfl, rfl⟩ := Prod.mk.inj hrun
-  refine ⟨none, t, ?_, hstate, hcode, hexcp, rfl, hlocals⟩
-  simpa [compileProgExactHOLW] using evalCrepSemHOLProgExact_skip t
+  rw [PanSemStateFiniteExact.evaluateHOLFiniteState_tick] at hrun
+  have hclk : source.clock = t.clock := hstate.2.2.2.2.2.1
+  simp only [compileProgExactHOLW]
+  rw [evalCrepSemHOLProgExact_tick]
+  by_cases hc : source.clock = 0
+  · rw [if_pos hc] at hrun
+    obtain ⟨rfl, rfl⟩ := Prod.mk.inj hrun
+    rw [if_pos (hclk ▸ hc)]
+    exact ⟨_, _, rfl, panToCrepStateRelFiniteExact_emptyLocals source t hstate, hcode, hexcp, rfl⟩
+  · rw [if_neg hc] at hrun
+    obtain ⟨rfl, rfl⟩ := Prod.mk.inj hrun
+    rw [if_neg (hclk ▸ hc)]
+    refine ⟨_, _, rfl, ?_, hcode, hexcp, rfl, hlocals⟩
+    simpa [panToCrepStateRelFiniteExact, PanSemStateFiniteExact.decClockHOLFinite,
+      decClockCrepSemHOL, hclk] using hstate
 
-namespace PcCompileCorrectAnnotWitnesses
+namespace PcCompileCorrectTickWitnesses
 
 /-! Same-module canonical relation witnesses for the three carriers named by the
-tagged Annot case below (delegating to the imported checked witnesses). -/
+tagged Tick case below (delegating to the imported checked witnesses). -/
 
 theorem holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact
     {width : Nat} {σ : Type} [NeZero width] :
@@ -52,12 +64,12 @@ theorem holFmapAsFiniteSupportRelationWitness_CrepSemHOLState
     CrepSemBroadState.ofBroad state.toBroad state.toBroad_finiteSupport = state :=
   CallPreservationFiniteMapWitnesses.holFmapAsFiniteSupportRelationWitness_CrepSemHOLState state
 
-end PcCompileCorrectAnnotWitnesses
+end PcCompileCorrectTickWitnesses
 
-/-- HOL `pc_compile_correct`, `Annot` constructor case
+/-- HOL `pc_compile_correct`, `Tick` constructor case
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:442-468`, proved by
-    `recInduct panSemTheory.evaluate_ind` with the case resumed at `:511`).
-    HOL's printed `evaluate_ind` Annot conjunct is `!v0 v1 s. P (Annot v0 v1,s)`, with no IH.
+    `recInduct panSemTheory.evaluate_ind` with the case resumed at `:517`).
+    HOL's printed `evaluate_ind` Tick conjunct is `!s. P (Tick,s)`, with no IH.
     `P` is HOL's induction predicate, unfolded as in `pcCompileCorrectAtHOL`: the
     conjunctive premise and the inline `case res of`. The translation is the one
     reviewed for `pcCompileCorrect_Call`. -/
@@ -68,20 +80,19 @@ end PcCompileCorrectAnnotWitnesses
     CrepSemHOLState.code, PanToCrepContextExact.vars, PanToCrepContextExact.funcs,
     PanToCrepContextExact.eids])
   (words_as_type_indexed_bitvec)]
-theorem pcCompileCorrect_Annot {width : Nat} {σ : Type} [NeZero width] :
-    ∀ (v0 v1 : MlS) (s : PanSemStateFiniteExact width σ)
-      (res : Option (PanSemResultExact width))
+theorem pcCompileCorrect_Tick {width : Nat} {σ : Type} [NeZero width] :
+    ∀ (s : PanSemStateFiniteExact width σ) (res : Option (PanSemResultExact width))
       (s1 : PanSemStateFiniteExact width σ) (t : CrepSemHOLState width σ)
       (ctxt : PanToCrepContextExact width),
-      s.evaluateHOLFiniteState (.annot v0 v1 : ProgHOL width) = (res, s1) ∧
+      s.evaluateHOLFiniteState (.tick : ProgHOL width) = (res, s1) ∧
         res ≠ some .error ∧ panToCrepStateRelFiniteExact s t ∧
         codeRelExactHOLW ctxt s.code t.code ∧
         panToCrepExcpRelFiniteExact ctxt.eids s.eshapes ∧
         panToCrepLocalsRelFiniteExact ctxt s.locals t.locals ∧
-        localisedProgHOL (.annot v0 v1 : ProgHOL width) = true →
+        localisedProgHOL (.tick : ProgHOL width) = true →
       ∃ (res1 : Option (CrepResultHOLExact width)) (t1 : CrepSemHOLState width σ),
         evalCrepSemHOLProgExact t
-            (compileProgExactHOLW ctxt (.annot v0 v1 : ProgHOL width)) =
+            (compileProgExactHOLW ctxt (.tick : ProgHOL width)) =
           (res1, t1) ∧
         panToCrepStateRelFiniteExact s1 t1 ∧ codeRelExactHOLW ctxt s1.code t1.code ∧
         panToCrepExcpRelFiniteExact ctxt.eids s1.eshapes ∧
@@ -103,9 +114,9 @@ theorem pcCompileCorrect_Annot {width : Nat} {σ : Type} [NeZero width] :
                    globalsLookupHOL t1 v' = some (flattenHOL v') ∧
                      sizeOfShapeHOL (shapeOfHOLExact v') ≤ 32))
         | some (.finalFfi f) => res1 = some (.finalFfi f) := by
-  intro v0 v1 s res s1 t ctxt ⟨hrun, hres, hstate, hcode, hexcp, hlocals, hloc⟩
+  intro s res s1 t ctxt ⟨hrun, hres, hstate, hcode, hexcp, hlocals, hloc⟩
   obtain ⟨res1, t1, h1, h2, h3, h4, h5⟩ :=
-    pcCompileCorrectAt_annot v0 v1 s res s1 t ctxt hrun hres hstate hcode hexcp hlocals hloc
+    pcCompileCorrectAt_tick s res s1 t ctxt hrun hres hstate hcode hexcp hlocals hloc
   refine ⟨res1, t1, h1, h2, h3, h4, ?_⟩
   rcases res with _ | r
   · exact h5
