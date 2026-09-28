@@ -154,9 +154,28 @@ end PcCompileCorrectExtCallWitnesses
 theorem pcCompileCorrect_ExtCall {width : Nat} {σ : Type} [NeZero width]
     (function : MlS) (configuration configurationLength array arrayLength : ExpHOL width)
     (source : Flapjack.PanSemStateFiniteExact width σ) :
-    Flapjack.pcCompileCorrectAt
-      (.extCall function configuration configurationLength array arrayLength : ProgHOL width)
-      source := by
+    ∀ (res : Option (PanSemResultExact width)) (s1 : PanSemStateFiniteExact width σ)
+      (t : CrepSemHOLState width σ) (ctxt : PanToCrepContextExact width),
+      source.evaluateHOLFiniteState
+        (.extCall function configuration configurationLength array arrayLength : ProgHOL width) =
+          (res, s1) →
+      res ≠ some .error →
+      panToCrepStateRelFiniteExact source t →
+      codeRelExactHOLW ctxt source.code t.code →
+      panToCrepExcpRelFiniteExact ctxt.eids source.eshapes →
+      panToCrepLocalsRelFiniteExact ctxt source.locals t.locals →
+      localisedProgHOL
+        (.extCall function configuration configurationLength array arrayLength : ProgHOL width) =
+          true →
+      ∃ (res1 : Option (CrepResultHOLExact width)) (t1 : CrepSemHOLState width σ),
+        evalCrepSemHOLProgExact t
+          (compileProgExactHOLW ctxt
+            (.extCall function configuration configurationLength array arrayLength : ProgHOL width)) =
+            (res1, t1) ∧
+        panToCrepStateRelFiniteExact s1 t1 ∧
+        codeRelExactHOLW ctxt s1.code t1.code ∧
+        panToCrepExcpRelFiniteExact ctxt.eids s1.eshapes ∧
+        pcCompileCorrectResultRel ctxt s1 t1 res res1 := by
   classical
   intro res s1 t ctxt hrun hres hstate hcode hexcp hlocals hloc
   rw [Flapjack.PanSemStateFiniteExact.evaluateHOLFiniteState_extCall_source] at hrun

@@ -1244,6 +1244,52 @@ example : PanSemExceptionShapesRanged
       subst hmem
       exact ⟨by decide, by simp [ShapeByteRanged]⟩)
 
+/-- Kernel-checked regression for the `ShMemLoad` production/exact agreement
+    (`flapjack-pxn.18.4.3.77.2.14.12`) on the bridge fixture: the theorem is
+    instantiated with a constant address expression, a local destination and a
+    byte-ranged primitive handler. -/
+example :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluate byteRangedPrimitive
+          (.shMemLoad .opW .local (toStringOfBytes (ofString "x"))
+            (expOfHOL (ExpHOL.const (0 : W))) : Prog W) bridgeExecProdState).1
+        (evaluateHOLFiniteState bridgeExecExactState
+          (.shMemLoad .opW .local (ofString "x")
+            (ExpHOL.const (0 : W)) : ProgHOL 64)).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluate byteRangedPrimitive
+          (.shMemLoad .opW .local (toStringOfBytes (ofString "x"))
+            (expOfHOL (ExpHOL.const (0 : W))) : Prog W) bridgeExecProdState).2
+        (evaluateHOLFiniteState bridgeExecExactState
+          (.shMemLoad .opW .local (ofString "x")
+            (ExpHOL.const (0 : W)) : ProgHOL 64)).2.toExact :=
+  panSemTotalEvaluate_shMemLoad_agree byteRangedPrimitive bridgeExecProdState
+    bridgeExecExactState bridgeStateRelExec bridgeExecProdState_ranged .opW .local
+    (ofString "x") (ExpHOL.const (0 : W))
+
+/-- Kernel-checked regression for the `ShMemStore` production/exact agreement
+    (`flapjack-pxn.18.4.3.77.2.14.17`) on the bridge fixture: the theorem is
+    instantiated with constant address/value expressions and a byte-ranged
+    primitive handler. -/
+example :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluate byteRangedPrimitive
+          (.shMemStore .opW (expOfHOL (ExpHOL.const (0 : W)))
+            (expOfHOL (ExpHOL.const (0 : W))) : Prog W) bridgeExecProdState).1
+        (evaluateHOLFiniteState bridgeExecExactState
+          (.shMemStore .opW (ExpHOL.const (0 : W))
+            (ExpHOL.const (0 : W)) : ProgHOL 64)).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluate byteRangedPrimitive
+          (.shMemStore .opW (expOfHOL (ExpHOL.const (0 : W)))
+            (expOfHOL (ExpHOL.const (0 : W))) : Prog W) bridgeExecProdState).2
+        (evaluateHOLFiniteState bridgeExecExactState
+          (.shMemStore .opW (ExpHOL.const (0 : W))
+            (ExpHOL.const (0 : W)) : ProgHOL 64)).2.toExact :=
+  panSemTotalEvaluate_shMemStore_agree byteRangedPrimitive bridgeExecProdState
+    bridgeExecExactState bridgeStateRelExec bridgeExecProdState_ranged .opW
+    (ExpHOL.const (0 : W)) (ExpHOL.const (0 : W))
+
 /-- A kernel-checked use-site fixture for the canonical
     `panSemTotalEvaluateCake` specialization exercises the proved
     Primitive-clause agreement on related production/exact carriers.  It is a
@@ -1273,28 +1319,7 @@ example :
         simp only [List.mem_singleton] at he
         subst he
         trivial⟩)
-/-- Kernel-checked regression for the `ShMemLoad` production/exact agreement
-    (`flapjack-pxn.18.4.3.77.2.14.12`) on the bridge fixture: the theorem is
-    instantiated with a constant address expression, a local destination and a
-    byte-ranged primitive handler. -/
-example :
-    PanSemHOLResultOptionRel
-        (panSemTotalEvaluate byteRangedPrimitive
-          (.shMemLoad .opW .local (toStringOfBytes (ofString "x"))
-            (expOfHOL (ExpHOL.const (0 : W))) : Prog W) bridgeExecProdState).1
-        (evaluateHOLFiniteState bridgeExecExactState
-          (.shMemLoad .opW .local (ofString "x")
-            (ExpHOL.const (0 : W)) : ProgHOL 64)).1 ∧
-      PanSemStateRelExec
-        (panSemTotalEvaluate byteRangedPrimitive
-          (.shMemLoad .opW .local (toStringOfBytes (ofString "x"))
-            (expOfHOL (ExpHOL.const (0 : W))) : Prog W) bridgeExecProdState).2
-        (evaluateHOLFiniteState bridgeExecExactState
-          (.shMemLoad .opW .local (ofString "x")
-            (ExpHOL.const (0 : W)) : ProgHOL 64)).2.toExact :=
-  panSemTotalEvaluate_shMemLoad_agree byteRangedPrimitive bridgeExecProdState
-    bridgeExecExactState bridgeStateRelExec bridgeExecProdState_ranged .opW .local
-    (ofString "x") (ExpHOL.const (0 : W))
+
 def runChecks : IO Bool := do
   IO.println "PASS production/exact PanSemState codec bridge (value/entry/struct/state)"
   pure true
