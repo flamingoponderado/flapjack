@@ -17603,7 +17603,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/ShMemStore.lean",
     "lean_name": "pcCompileCorrectAt_shMemStore",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-only proof of the HOL evaluate_ind ShMemStore conjunct against pcCompileCorrectAt; the exact HOL-shaped assembled case is the separately tagged pcCompileCorrect_ShmStore; this helper has no standalone HOL declaration"
+    "reviewer": "Flapjack-only proof of the HOL evaluate_ind ShMemStore conjunct against pcCompileCorrectAt; the exact HOL-shaped assembled case is the separately tagged pcCompileCorrect_ShMemStore; this helper has no standalone HOL declaration"
   },
   {
     "hol_path": null,
@@ -17611,7 +17611,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/ShMemStore.lean",
     "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_ShmStore; forwards the imported checked roundtrip; no HOL declaration"
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_ShMemStore; forwards the imported checked roundtrip; no HOL declaration"
   },
   {
     "hol_path": null,
@@ -17619,7 +17619,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/ShMemStore.lean",
     "lean_name": "holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_ShmStore; forwards the imported checked roundtrip; no HOL declaration"
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_ShMemStore; forwards the imported checked roundtrip; no HOL declaration"
   },
   {
     "hol_path": null,
@@ -17627,13 +17627,13 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/ShMemStore.lean",
     "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_ShmStore; forwards the imported checked roundtrip; no HOL declaration"
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_ShMemStore; forwards the imported checked roundtrip; no HOL declaration"
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
     "hol_name": "pc_compile_correct",
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/ShMemStore.lean",
-    "lean_name": "pcCompileCorrect_ShmStore",
+    "lean_name": "pcCompileCorrect_ShMemStore",
     "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
     "fmap_as_finite_support_relation": [
       "PanSemStateFiniteExact.locals",
