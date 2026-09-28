@@ -1,6 +1,7 @@
 import Flapjack.Ffi
 import Flapjack.Basis.Pure.MlString
 import Flapjack.HolRef
+import Flapjack.Misc.LList
 
 /-!
 # Exact HOL `ffi_state` carrier
@@ -268,5 +269,24 @@ theorem callFFIHOL_result_ioEvents_prefix {σ : Type u} (state : HolFfiState σ)
         nextFfi nextBytes hresult
   | final event =>
       exact List.prefix_refl _
+
+/-- Exact port of HOL
+    `Datatype outcome = Success | Resource_limit_hit | FFI_outcome final_event`
+    (`cakeml/semantics/ffi/ffiScript.sml:82-84`). -/
+@[hol "cakeml/semantics/ffi/ffiScript.sml" "outcome"]
+inductive HolOutcome where
+  | success
+  | resourceLimitHit
+  | ffiOutcome (event : HolFinalEvent)
+
+/-- Exact port of HOL
+    `Datatype behaviour = Diverge (io_event llist) | Terminate outcome (io_event list) | Fail`
+    (`cakeml/semantics/ffi/ffiScript.sml:89-101`), with HOL's `llist` as the
+    rendering `HolLList` of HOL's own `llist` type definition. -/
+@[hol "cakeml/semantics/ffi/ffiScript.sml" "behaviour"]
+inductive HolBehaviour where
+  | diverge (events : HolLList HolIoEvent)
+  | terminate (outcome : HolOutcome) (events : List HolIoEvent)
+  | fail
 
 end Flapjack
