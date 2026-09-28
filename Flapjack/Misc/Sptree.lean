@@ -489,14 +489,6 @@ def sptListInsert : List Nat → NumSet → NumSet
   | [], tree => tree
   | key :: keys, tree => sptListInsert keys (sptInsert key () tree)
 
-/-! HOL `sptree$list_to_num_set` (`HOL/src/finite_maps/sptreeScript.sml:2026-2030`)
-is right-recursive and is not the same definition as `list_insert` above. The
-HOL source is outside the CakeML submodule, so this structural rendering is
-Flapjack infrastructure rather than a separately tagged Pancake declaration. -/
-def sptListToNumSet : List Nat → NumSet
-  | [] => .ln
-  | key :: keys => sptInsert key () (sptListToNumSet keys)
-
 /-- HOL `sptree$mk_BN` (`HOL/src/finite_maps/sptreeScript.sml:88-92`): collapse
 two empty children back to `LN`.  The HOL source lives in the HOL
 installation's `src/finite_maps`, outside `cakeml/`, so this rendering is

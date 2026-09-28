@@ -46,11 +46,10 @@ catch-all are in `scripts/hol-probes/loop_props_cut_sets_probe.out`.
 `comp_syntax_ok_def` over those carriers; direct HOL EVAL rows for positive
 and negative Loop/Seq cases and both residual If existential cases are in
 `loop_props_comp_syntax_probe.out`.
-`Flapjack.Test.CrepToLoopCompFuncExactParity` guards the exact
-`crep_to_loop$comp_func_def` wrapper over the faithful context/program
-carriers; direct HOL-EVAL rows for Skip, one and two parameters, and duplicate
-parameter names plus a conditional row exposing initial live-set construction
-are in `crep_to_loop_comp_func_probe.out`.
+`Flapjack.Test.CrepToLoopCompFuncParity` replays the canonical direct
+`crep_to_loop$comp_func_def` output rows and the right-recursive
+`list_to_num_set` rows in `crep_to_loop_comp_func_probe.out` and
+`crep_to_loop_list_to_num_set_probe.out`.
 `Flapjack.Test.LoopDecClockParity` probes `dec_clock_def` at lines 42--43 of
 the same source.
 `Flapjack.Test.LoopFixClockParity` probes `fix_clock_def` at lines 46--49.
@@ -652,8 +651,9 @@ the live-set builder used by `comp_func_def` at
 `list_to_num_set (n::ns) = insert n () (list_to_num_set ns)` with `LN` as the
 base case. The untagged Lean helper `Flapjack.listToNumSetHOLExact` in
 `Flapjack/Pancake/CrepToLoop/ContextExact.lean` reproduces the same right
-recursion. `Flapjack.Test.CrepToLoopCompFuncExactParity` checks the exact
-`comp_func_def` output rows, including the projected initial live set.
+recursion. `Flapjack.Test.CrepToLoopCompFuncParity` checks the exact
+`comp_func_def` output rows, including the projected initial live set, and
+the direct `list_to_num_set` EVAL rows.
 Refresh with
 `HOL_PROBE_ONLY=crep_to_loop_list_to_num_set_probeScript.sml scripts/hol-probes/regenerate.sh`.
 `crep_to_loop_ocompile_probe.out` records direct HOL EVAL rows for
