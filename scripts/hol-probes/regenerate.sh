@@ -1394,6 +1394,10 @@ run_probe loop_sem_cut_state_probeScript.sml loop_sem_cut_state_probe.out \
 run_probe loop_sem_cut_res_probeScript.sml loop_sem_cut_res_probe.out \
   result_short_circuit clock_decrement_and_cut \
   "$cake_dir/pancake/semantics/loopSemScript.sml"
+run_probe loop_sem_cut_zero_probeScript.sml loop_sem_cut_zero_probe.out \
+  cut0_success_lookup cut0_missing cut0_empty_live cut0_res_short_circuit \
+  cut0_res_missing_error cut0_res_timeout cut0_res_decrement \
+  "$cake_dir/pancake/semantics/loopSemScript.sml"
 run_probe loop_sem_sh_mem_load_probeScript.sml loop_sem_sh_mem_load_probe.out \
   return_zero_width aligned_domain_original_payload \
   "$cake_dir/pancake/semantics/loopSemScript.sml"

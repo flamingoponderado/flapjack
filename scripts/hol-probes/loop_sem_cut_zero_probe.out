@@ -1,0 +1,7 @@
+cut0_success_lookup=SOME (Word 5w)
+cut0_missing=NONE
+cut0_empty_live=NONE
+cut0_res_short_circuit=(SOME (Break 3),SOME (Word 5w),7)
+cut0_res_missing_error=(SOME Error,NONE,7)
+cut0_res_timeout=(SOME TimeOut,NONE,0)
+cut0_res_decrement=(NONE,SOME (Word 5w),4)

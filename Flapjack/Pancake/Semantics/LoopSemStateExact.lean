@@ -445,6 +445,170 @@ def loopPrimop {width : Nat} [NeZero width] :
       some [.word res, .word co]
   | _, _ => none
 
+/-- Computable subset test on the exact spt carrier: enumerate the keys of
+    `left` through an absolute-key map `g` and check each is present in
+    `right`.  Untagged Flapjack infrastructure. -/
+def sptSubsetAux {α β : Type} (right : Spt β) (g : Nat → Nat) : Spt α → Bool
+  | .ln => true
+  | .ls _ => (sptLookup (g 0) right).isSome
+  | .bn first second =>
+      sptSubsetAux right (fun m => g (2 * m + 2)) first &&
+        sptSubsetAux right (fun m => g (2 * m + 1)) second
+  | .bs first _ second =>
+      (sptLookup (g 0) right).isSome &&
+        (sptSubsetAux right (fun m => g (2 * m + 2)) first &&
+          sptSubsetAux right (fun m => g (2 * m + 1)) second)
+
+/-- Correctness of `sptSubsetAux`: the Boolean test accepts exactly when every
+    key of `left`, mapped by `g`, lies in `right`. -/
+theorem sptSubsetAux_eq_true {α β : Type} (right : Spt β) :
+    ∀ (g : Nat → Nat) (left : Spt α),
+      sptSubsetAux right g left = true ↔ ∀ key, sptMem key left → sptMem (g key) right := by
+  intro g left
+  induction left generalizing g with
+  | ln => simp [sptSubsetAux]
+  | ls value =>
+      simp only [sptSubsetAux]
+      constructor
+      · intro h key hk
+        have hk0 : key = 0 := (sptMem_ls key value).mp hk
+        subst hk0
+        exact (sptMem_iff_lookup _ _).mpr (Option.isSome_iff_exists.mp h)
+      · intro h
+        exact Option.isSome_iff_exists.mpr
+          ((sptMem_iff_lookup _ _).mp (h 0 ((sptMem_ls 0 value).mpr rfl)))
+  | bn first second ihl ihr =>
+      simp only [sptSubsetAux, Bool.and_eq_true, sptMem_bn]
+      rw [ihl (fun m => g (2 * m + 2)), ihr (fun m => g (2 * m + 1))]
+      constructor
+      · rintro ⟨hl, hr⟩ key (⟨m, hm, hk⟩ | ⟨m, hm, hk⟩)
+        · subst hk; exact hl m hm
+        · subst hk; exact hr m hm
+      · intro h
+        exact ⟨fun m hm => h (2 * m + 2) (Or.inl ⟨m, hm, rfl⟩),
+          fun m hm => h (2 * m + 1) (Or.inr ⟨m, hm, rfl⟩)⟩
+  | bs first value second ihl ihr =>
+      simp only [sptSubsetAux, Bool.and_eq_true, sptMem_bs]
+      rw [ihl (fun m => g (2 * m + 2)), ihr (fun m => g (2 * m + 1))]
+      constructor
+      · rintro ⟨h0, hl, hr⟩ key (h0' | ⟨m, hm, hk⟩ | ⟨m, hm, hk⟩)
+        · subst h0'
+          exact (sptMem_iff_lookup _ _).mpr (Option.isSome_iff_exists.mp h0)
+        · subst hk; exact hl m hm
+        · subst hk; exact hr m hm
+      · intro h
+        exact ⟨Option.isSome_iff_exists.mpr ((sptMem_iff_lookup _ _).mp (h 0 (Or.inl rfl))),
+          fun m hm => h (2 * m + 2) (Or.inr (Or.inl ⟨m, hm, rfl⟩)),
+          fun m hm => h (2 * m + 1) (Or.inr (Or.inr ⟨m, hm, rfl⟩))⟩
+
+/-- Predicate rendering of HOL set inclusion on `sptree$num_set`
+    (`domain live SUBSET domain s.locals`, `loopSemScript.sml:186`): HOL sets are
+    rendered as membership predicates (`sptMem`), so subset is the pointwise
+    implication.  Used by the exact `cut_state` guard.  Untagged Flapjack
+    infrastructure (HOL `SUBSET` over `num_set` is outside the carrier
+    translation). -/
+def sptSubsetLive {α β : Type} (left : Spt α) (right : Spt β) : Prop :=
+  ∀ key, sptMem key left → sptMem key right
+
+/-- The computable subset test decides `sptSubsetLive`. -/
+theorem sptSubsetAux_id_eq_true {α β : Type} (left : Spt α) (right : Spt β) :
+    sptSubsetAux right id left = true ↔ sptSubsetLive left right :=
+  sptSubsetAux_eq_true right id left
+
+/-- Decision procedure for the `cut_state` guard: enumerate the finite live set
+    and look each key up in the local map. -/
+instance sptSubsetLiveDecidable {α β : Type} (left : Spt α) (right : Spt β) :
+    Decidable (sptSubsetLive left right) :=
+  decidable_of_iff (sptSubsetAux right id left = true) (sptSubsetAux_id_eq_true left right)
+
+/-- Exact HOL `cut_state_def`
+    (`cakeml/pancake/semantics/loopSemScript.sml:182-187`):
+    `cut_state live s = if domain live SUBSET domain s.locals then
+    SOME (s with locals := inter s.locals live) else NONE`.  The set inclusion
+    `domain live SUBSET domain s.locals` is rendered as `sptSubsetLive`, and the
+    restricted local map uses the heterogeneous `sptInter`.  The guard is a
+    finite-set inclusion decided by the computable `sptSubsetAux` enumeration
+    (`sptSubsetLiveDecidable`), so the definition is executable; the production
+    executable counterpart is `Flapjack.cutLoopState`. -/
+@[hol "cakeml/pancake/semantics/loopSemScript.sml" "cut_state_def"
+  (words_as_type_indexed_bitvec)]
+def cutState {width : Nat} [NeZero width] {F : Type} (live : NumSet)
+    (state : LoopSemStateFiniteExact width F) :
+    Option (LoopSemStateFiniteExact width F) :=
+  if sptSubsetLive live state.locals then
+    some { state with locals := sptInter state.locals live }
+  else none
+
+/-- `cutState` succeeds exactly when the live keys are all locals, returning the
+    state with `locals` restricted to the live keys. -/
+theorem cutState_of_subset {width : Nat} [NeZero width] {F : Type}
+    (live : NumSet) (state : LoopSemStateFiniteExact width F)
+    (h : sptSubsetLive live state.locals) :
+    cutState live state = some { state with locals := sptInter state.locals live } := by
+  unfold cutState
+  rw [if_pos h]
+
+/-- `cutState` fails exactly when some live key is not a local. -/
+theorem cutState_eq_none_of_not_subset {width : Nat} [NeZero width] {F : Type}
+    (live : NumSet) (state : LoopSemStateFiniteExact width F)
+    (h : ¬ sptSubsetLive live state.locals) :
+    cutState live state = none := by
+  unfold cutState
+  rw [if_neg h]
+
+/-- `cut_state` preserves the clock (HOL's `s with locals := inter s.locals live`
+    updates only `locals`). -/
+theorem cutState_some_clock {width : Nat} [NeZero width] {F : Type}
+    {live : NumSet} {state cut : LoopSemStateFiniteExact width F}
+    (h : cutState live state = some cut) : cut.clock = state.clock := by
+  by_cases hsub : sptSubsetLive live state.locals
+  · rw [cutState_of_subset live state hsub] at h
+    injection h with h
+    subst h
+    rfl
+  · rw [cutState_eq_none_of_not_subset live state hsub] at h
+    exact absurd h (by simp)
+
+/-- `cut_state` preserves every field except `locals`. -/
+theorem cutState_some_frame {width : Nat} [NeZero width] {F : Type}
+    {live : NumSet} {state cut : LoopSemStateFiniteExact width F}
+    (h : cutState live state = some cut) :
+    cut.globals = state.globals ∧ cut.memory = state.memory ∧
+      cut.mdomain = state.mdomain ∧ cut.shMdomain = state.shMdomain ∧
+      cut.clock = state.clock ∧ cut.code = state.code ∧ cut.be = state.be ∧
+      cut.ffi = state.ffi ∧ cut.baseAddr = state.baseAddr ∧
+      cut.topAddr = state.topAddr := by
+  by_cases hsub : sptSubsetLive live state.locals
+  · rw [cutState_of_subset live state hsub] at h
+    injection h with h
+    subst h
+    exact ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+  · rw [cutState_eq_none_of_not_subset live state hsub] at h
+    exact absurd h (by simp)
+
+/-- Exact HOL `cut_res_def`
+    (`cakeml/pancake/semantics/loopSemScript.sml:189-197`):
+    `cut_res live (res,s) = if res ≠ NONE then (res,s) else
+    case cut_state live s of NONE => (SOME Error,s)
+    | SOME s => if s.clock = 0 then (SOME TimeOut, s with locals := LN)
+                else (res, dec_clock s)`.  The `SOME` branch rebinds `s` to the
+    cut state and `res` is `NONE`, so the final branch returns
+    `(NONE, dec_clock cut)`. -/
+@[hol "cakeml/pancake/semantics/loopSemScript.sml" "cut_res_def"
+  (words_as_type_indexed_bitvec)]
+def cutRes {width : Nat} [NeZero width] {F : Type} (live : NumSet)
+    (step : Option (LoopResultExact width) × LoopSemStateFiniteExact width F) :
+    Option (LoopResultExact width) × LoopSemStateFiniteExact width F :=
+  match step.1 with
+  | some result => (some result, step.2)
+  | none =>
+      match cutState live step.2 with
+      | none => (some .error, step.2)
+      | some cut =>
+          if cut.clock = 0 then
+            (some .timeOut, { cut with locals := .ln })
+          else (none, decClock cut)
+
 end LoopSemStateFiniteExact
 
 /-- Reverse/coverage direction of the exact/production code-table relation:
