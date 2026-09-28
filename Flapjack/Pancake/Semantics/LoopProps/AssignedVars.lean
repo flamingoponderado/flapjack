@@ -20,13 +20,13 @@ theorem holAssignedVarsSeqSplit {width : Nat} [NeZero width]
   "assigned_vars_nested_seq_split" (words_as_type_indexed_bitvec)]
 theorem holAssignedVarsNestedSeqSplit {width : Nat} [NeZero width]
     (p q : List (HolLoopProg width)) :
-    holLoopAssignedVars (holLoopNestedSeq (p ++ q)) =
-      holLoopAssignedVars (holLoopNestedSeq p) ++
-        holLoopAssignedVars (holLoopNestedSeq q) := by
+    holLoopAssignedVars (loopNestedSeqHOL (p ++ q)) =
+      holLoopAssignedVars (loopNestedSeqHOL p) ++
+        holLoopAssignedVars (loopNestedSeqHOL q) := by
   induction p with
-  | nil => simp [holLoopNestedSeq, holLoopAssignedVars]
+  | nil => simp [loopNestedSeqHOL, holLoopAssignedVars]
   | cons statement statements ih =>
-      simp [holLoopNestedSeq, holLoopAssignedVars, ih, List.append_assoc]
+      simp [loopNestedSeqHOL, holLoopAssignedVars, ih, List.append_assoc]
 
 /-- Exact HOL `assigned_vars_nested_assign`. `List.zipWith` renders HOL
     `MAP2`; the sole equal-length premise is preserved. -/
@@ -36,7 +36,7 @@ theorem holAssignedVarsNestedAssign {width : Nat} [NeZero width]
     (xs : List Nat) (ys : List (HolLoopExp width))
     (hLength : xs.length = ys.length) :
     holLoopAssignedVars
-      (holLoopNestedSeq (List.zipWith HolLoopProg.assign xs ys)) = xs := by
+      (loopNestedSeqHOL (List.zipWith HolLoopProg.assign xs ys)) = xs := by
   induction xs generalizing ys with
   | nil =>
       cases ys with
@@ -47,6 +47,6 @@ theorem holAssignedVarsNestedAssign {width : Nat} [NeZero width]
       | nil => simp at hLength
       | cons y ys =>
           simp only [List.length_cons, Nat.succ.injEq] at hLength
-          simp [holLoopNestedSeq, holLoopAssignedVars, ih ys hLength]
+          simp [loopNestedSeqHOL, holLoopAssignedVars, ih ys hLength]
 
 end Flapjack
