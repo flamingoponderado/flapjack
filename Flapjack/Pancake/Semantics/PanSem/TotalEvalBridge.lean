@@ -1,6 +1,7 @@
 import Flapjack.Pancake.Semantics.PanSem.TotalEval
 import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
 import Flapjack.Pancake.Semantics.PanSem.StateBridge
+import Flapjack.Pancake.Semantics.ShMemBytesBridge
 import Flapjack.FfiBridge
 
 /-!
@@ -952,4 +953,499 @@ theorem panSemStateRelExec_store32 {σ : Type}
       panSemBitVec64WordModel, panSemWordModel, RiscV.panRiscVMemoryModel,
       RiscV.aligned, panMemStore32HOL, hal]
 
+/-! ## Production/exact shared-memory FFI byte-codec and result correspondence
+
+The executed `ShMemLoad`/`ShMemStore` clauses call the shared-memory FFI through
+`panShMemLoad` with the canonical RISC-V 64 target context
+`riscv64PanValueFfiContext` (byte codec `riscv64GetByte`/`riscv64PutBytes`,
+`panRiscVByteAlign`), while the exact evaluator calls `callFFIHOL` with the HOL
+standard-library codec `panWordToBytesHOL`/`panWordOfBytesHOL` (`panGetByteHOL`,
+`panSetByteHOL`) and `panByteAlignHOL`.  The lemmas below record that the two
+byte representations agree under `BytesRel`, that the executed and exact
+shared-memory calls agree under `FfiStateRel`, and that decoding the returned
+bytes yields the same word.  They are Flapjack-specific bridge infrastructure;
+no HOL declaration corresponds to a production carrier.  Everything here is
+untagged. -/
+
+/-- The production shared-memory width mapping is the exact tagged HOL port
+    `nbOpHOL` (`nb_op_def`). -/
+theorem panValueFfiWidth_eq_nbOpHOL : panValueFfiWidth = nbOpHOL := by
+  funext size
+  cases size <;> rfl
+
+/-- The total shared-memory context exposes the production shared-memory address
+    predicate as its FFI domain. -/
+theorem panSemTotalShMemContext_sharedDomain {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ)) (address : RiscV.Word 64) :
+    (panSemTotalShMemContext state).sharedDomain address = state.sharedMemaddrs address :=
+  rfl
+
+/-- The canonical RISC-V 64 context byte alignment is HOL `byte_align` at width
+    64. -/
+theorem riscv64PanValueFfiContext_byteAlign_eq_panByteAlignHOL
+    (domain : RiscV.Word 64 → Bool) (address : RiscV.Word 64) :
+    (riscv64PanValueFfiContext domain).byteAlign address =
+      panByteAlignHOL (width := 64) address := by
+  simp only [riscv64PanValueFfiContext, RiscV.panRiscVByteAlign, panByteAlignHOL,
+    show (BitVec.toNat (8 : RiscV.Word 64)) = 8 by decide,
+    show (64 / 8 : Nat) = 8 by decide,
+    show (Nat.log2 8) = 3 by decide,
+    show (2 ^ 3 : Nat) = 8 by decide,
+    show (8 : Nat) = 0 ↔ False by decide, if_false]
+
+/-- The executed RISC-V byte alignment at byte count 8 is HOL `byte_align`. -/
+theorem panRiscVByteAlign_eight_eq_panByteAlignHOL (address : RiscV.Word 64) :
+    RiscV.panRiscVByteAlign (8 : RiscV.Word 64) address =
+      panByteAlignHOL (width := 64) address :=
+  (panSemBitVec64ByteAlign_eq_panRiscV address).symm.trans
+    (panSemBitVec64ByteAlign_eq_panByteAlignHOL address)
+
+/-- A successful shared-memory `callFfi` returns bytes of the same length as the
+    request bytes, because the non-identity oracle branch checks that length. -/
+theorem callFfi_sharedMem_returned_length {σ : Type} (state : FfiState σ)
+    (op : FfiShmemOp) (configuration bytes nextBytes : List UInt8) (nextState : FfiState σ)
+    (h : callFfi state (.sharedMem op) configuration bytes = .returned nextState nextBytes) :
+    nextBytes.length = bytes.length := by
+  have hne : (FfiName.sharedMem op) ≠ .extCall "" := by intro hh; cases hh
+  unfold callFfi at h
+  rw [if_neg hne] at h
+  split at h
+  · rename_i ns nb hor
+    by_cases hl : nb.length = bytes.length
+    · rw [if_pos hl] at h
+      injection h with _ hb
+      rw [← hb]
+      exact hl
+    · rw [if_neg hl] at h
+      exact absurd h (by simp)
+  · rename_i outcome hor
+    exact absurd h (by simp)
+
+/-- The executed shared-memory byte extraction is the HOL byte helper at the
+    production width. -/
+theorem riscv64GetByte_eq_panRiscVGetByte (index : Nat) (address : RiscV.Word 64) :
+    riscv64GetByte index address =
+      UInt8.ofNat (RiscV.panRiscVGetByte (8 : RiscV.Word 64)
+        (BitVec.ofNat 64 index) address).toNat :=
+  rfl
+
+/-- The canonical RISC-V 64 context byte encoding agrees with the exact HOL
+    `word_to_bytes` codec under `BytesRel`. -/
+theorem riscv64PanValueFfiContext_wordToBytes_bytesRel
+    (domain : RiscV.Word 64 → Bool) (address : RiscV.Word 64) :
+    BytesRel ((riscv64PanValueFfiContext domain).wordToBytes address false)
+      (panWordToBytesHOL (width := 64) address false) := by
+  unfold BytesRel riscv64PanValueFfiContext panWordToBytesHOL
+  simp only [List.map_map]
+  rw [show (64 / 8 : Nat) = 8 by decide]
+  apply List.map_congr_left
+  intro index hindex
+  simp only [Function.comp_apply]
+  have hidx : (BitVec.ofNat 64 index : RiscV.Word 64).toNat = index := by
+    rw [BitVec.toNat_ofNat,
+      Nat.mod_eq_of_lt (by have := List.mem_range.mp hindex; omega)]
+  have hget : riscv64GetByte index address =
+      UInt8.ofNat (RiscV.panRiscVGetByteEndian (8 : RiscV.Word 64)
+        (BitVec.ofNat 64 index) address false).toNat := by
+    unfold riscv64GetByte
+    simp only [RiscV.panRiscVGetByteEndian, RiscV.panRiscVGetByte, RiscV.panRiscVByteIndex,
+      Bool.false_eq_true, if_false, hidx]
+  have hbridge := panGetByteHOL_eq_panRiscVGetByteEndian
+    (BitVec.ofNat 64 index) address false
+  rw [hget, hbridge]
+  simp only [BitVec.toNat_ofNat, UInt8.toNat_ofNat', Nat.mod_mod,
+    show (2 ^ 8 : Nat) = 256 by decide]
+
+/-- Extraction-side `RiscV.panRiscVSetByte` at byte count 8 is the exact HOL
+    `panSetByteHOL` little-endian write. -/
+theorem panRiscVSetByte_eq_panSetByteHOL (address byte value : RiscV.Word 64) :
+    RiscV.panRiscVSetByte (8 : RiscV.Word 64) address byte value =
+      panSetByteHOL address byte value false := by
+  simp only [RiscV.panRiscVSetByte, RiscV.panRiscVByteIndex, panSetByteHOL,
+    Bool.false_eq_true, if_false]
+  rw [show (BitVec.toNat (8 : RiscV.Word 64)) = 8 by decide]
+  simp only [show (8 : Nat) = 0 ↔ False by decide, if_false,
+    show (64 / 8 : Nat) = 8 by decide]
+
+/-- Writing byte `k` of a word whose bytes below `k` are the value itself (no
+    higher set bytes) adds `b * 256^k`, matching `panSetByteHOL` at a small
+    address. -/
+theorem panSetByteHOL_ofNat_lt (k : Nat) (hk8 : k < 8) (b : BitVec 8) (V : Nat)
+    (hV : V < 256 ^ k) :
+    panSetByteHOL (BitVec.ofNat 64 k) (BitVec.ofNat 64 b.toNat)
+        (BitVec.ofNat 64 V) false =
+      BitVec.ofNat 64 (V + b.toNat * 256 ^ k) := by
+  have hk : k < 2 ^ 64 := by omega
+  have hV64 : V < 2 ^ 64 := by
+    have hle : 256 ^ k ≤ 256 ^ 8 := Nat.pow_le_pow_right (by decide) (by omega)
+    have h8 : 256 ^ 8 = 2 ^ 64 := by decide
+    omega
+  have hb64 : b.toNat < 2 ^ 64 := by have := b.isLt; omega
+  have hlow : V % 256 ^ k = V := Nat.mod_eq_of_lt hV
+  have hhigh : V / (256 ^ k * 256) = 0 := by
+    apply Nat.div_eq_of_lt
+    have hle : 256 ^ k ≤ 256 ^ k * 256 :=
+      Nat.le_mul_of_pos_right (m := 256) (256 ^ k) (by decide)
+    omega
+  simp only [panSetByteHOL, Bool.false_eq_true, if_false,
+    BitVec.toNat_ofNat, Nat.mod_eq_of_lt hk, Nat.mod_eq_of_lt hV64,
+    Nat.mod_eq_of_lt hb64, Nat.mod_eq_of_lt b.isLt,
+    show (64 / 8 : Nat) = 8 by decide, Nat.mod_eq_of_lt hk8,
+    hlow, hhigh, Nat.zero_mul, Nat.add_zero]
+
+/-- Word-cell form of `panSetByteHOL_ofNat_lt`. -/
+theorem panSetByteHOL_word_lt (k : Nat) (hk8 : k < 8) (b : BitVec 8)
+    (v : RiscV.Word 64) (hv : v.toNat < 256 ^ k) :
+    panSetByteHOL (BitVec.ofNat 64 k) (BitVec.ofNat 64 b.toNat) v false =
+      BitVec.ofNat 64 (v.toNat + b.toNat * 256 ^ k) := by
+  have hv_eq : v = BitVec.ofNat 64 v.toNat := by
+    apply BitVec.eq_of_toNat_eq
+    rw [BitVec.toNat_ofNat, Nat.mod_eq_of_lt v.isLt]
+  conv => lhs; rw [hv_eq]
+  exact panSetByteHOL_ofNat_lt k hk8 b v.toNat hv
+
+/-- The executed `riscv64PutBytes` decoder is the little-endian byte sum used by
+    the exact HOL decoder, provided the written window fits the word. -/
+theorem riscv64PutBytes_eq_ofNat_leSumB (i : Nat) (bytes : List UInt8)
+    (v : RiscV.Word 64) (hi : i + bytes.length ≤ 8) (hv : v.toNat < 256 ^ i) :
+    riscv64PutBytes false i bytes v =
+      BitVec.ofNat 64 (v.toNat + leSumB i (bytes.map byteToBits)) := by
+  induction bytes generalizing i v with
+  | nil =>
+      simp only [riscv64PutBytes, List.map_nil, leSumB, List.zipIdx_nil,
+        List.foldl_nil, Nat.add_zero]
+      apply BitVec.eq_of_toNat_eq
+      rw [BitVec.toNat_ofNat, Nat.mod_eq_of_lt v.isLt]
+  | cons b bs ih =>
+      simp only [riscv64PutBytes, List.map_cons]
+      rw [panRiscVSetByte_eq_panSetByteHOL]
+      have hi8 : i < 8 := by simp only [List.length_cons] at hi; omega
+      have hstep := panSetByteHOL_word_lt i hi8 (byteToBits b) v hv
+      rw [byteToBits_toNat] at hstep
+      rw [hstep]
+      have hb : b.toNat < 256 := b.toNat_lt
+      have hb' : b.toNat * 256 ^ i ≤ 255 * 256 ^ i :=
+        Nat.mul_le_mul_right (256 ^ i) (by omega)
+      have hlt : v.toNat + b.toNat * 256 ^ i < 256 ^ (i + 1) := by
+        rw [Nat.pow_succ]
+        calc v.toNat + b.toNat * 256 ^ i < 256 ^ i + 255 * 256 ^ i :=
+              Nat.add_lt_add_of_lt_of_le hv hb'
+          _ = 256 ^ i * 256 := by omega
+      have hS : v.toNat + b.toNat * 256 ^ i < 2 ^ 64 := by
+        have hp : 256 ^ (i + 1) ≤ 2 ^ 64 := by
+          calc 256 ^ (i + 1) ≤ 256 ^ 8 := Nat.pow_le_pow_right (by decide) (by omega)
+            _ = 2 ^ 64 := by decide
+        omega
+      have hv' : (BitVec.ofNat 64 (v.toNat + b.toNat * 256 ^ i)).toNat < 256 ^ (i + 1) := by
+        rw [BitVec.toNat_ofNat, Nat.mod_eq_of_lt hS]
+        exact hlt
+      rw [ih (i + 1) _ (by simp only [List.length_cons] at hi; omega) hv']
+      rw [BitVec.toNat_ofNat, Nat.mod_eq_of_lt hS, leSumB_cons, byteToBits_toNat]
+      congr 1
+      omega
+
+/-- `leSumB` depends only on the natural values of the bytes. -/
+theorem leSumB_eq_of_map_toNat_eq (k : Nat) (l₂ : List (BitVec 8))
+    {l₁ : List (BitVec 8)} (h : l₁.map BitVec.toNat = l₂.map BitVec.toNat) :
+    leSumB k l₁ = leSumB k l₂ := by
+  induction l₁ generalizing k l₂ with
+  | nil => cases l₂ <;> simp_all [leSumB]
+  | cons a t ih =>
+      cases l₂ with
+      | nil => simp at h
+      | cons b u =>
+          simp only [List.map_cons, List.cons.injEq] at h
+          obtain ⟨ha, ht⟩ := h
+          rw [leSumB_cons, leSumB_cons, ha, ih (k + 1) u ht]
+
+/-- The executed shared-memory decoder `riscv64PutBytes` computes the same word
+    as the exact HOL `word_of_bytes` decoder when the returned byte lists are
+    `BytesRel`-related and the returned list fits the 64-bit word. -/
+theorem riscv64PutBytes_eq_panWordOfBytesHOL (bytes : List UInt8)
+    (holBytes : List (BitVec 8)) (h : BytesRel bytes holBytes)
+    (hlen : bytes.length = 8) :
+    riscv64PutBytes false 0 bytes 0 =
+      panWordOfBytesHOL (width := 64) false 0 holBytes := by
+  have hlenH' : holBytes.length = 8 := by
+    have := congrArg List.length h
+    simpa [BytesRel, List.length_map, hlen] using this
+  have hsum : leSumB 0 (bytes.map byteToBits) = leSumB 0 holBytes := by
+    apply leSumB_eq_of_map_toNat_eq 0 holBytes
+    rw [List.map_map]
+    have hb : (List.map (BitVec.toNat ∘ byteToBits) bytes) = bytes.map UInt8.toNat := by
+      apply List.map_congr_left
+      intro b _
+      exact byteToBits_toNat b
+    rw [hb]
+    exact h.symm
+  rw [riscv64PutBytes_eq_ofNat_leSumB 0 bytes 0 (by omega) (by decide)]
+  have hp : panWordOfBytesHOL (width := 64) false (0 : RiscV.Word 64) holBytes
+      = BitVec.ofNat 64 (leSumB 0 holBytes) := by
+    have h' := panWordOfBytesHOL_eq_ofNat_le (width := 64) (by decide) 0 holBytes (by omega)
+    simpa using h'
+  rw [hp, show (BitVec.toNat (0 : RiscV.Word 64)) = 0 by decide, Nat.zero_add, hsum]
+
+/-- Production/exact shared-memory FFI calls agree under `FfiStateRel` for
+    `BytesRel`-related byte and configuration lists.  This covers the oracle
+    returned (matching and mismatched length) and finalised branches without
+    assuming any particular oracle run: the correspondence follows from the
+    persistent `OracleRel` inside `FfiStateRel`. -/
+theorem ffiResultRel_callFfi_sharedMem {σ : Type} (prod : FfiState σ)
+    (exact : HolFfiState σ) (hffi : FfiStateRel prod exact)
+    (op : FfiShmemOp) (holOp : HolShmemOp) (hop : ShmemOpRel op holOp)
+    (configuration : List UInt8) (holConfiguration : List (BitVec 8))
+    (bytes : List UInt8) (holBytes : List (BitVec 8))
+    (hcfg : BytesRel configuration holConfiguration) (hbytes : BytesRel bytes holBytes) :
+    FfiResultRel (callFfi prod (.sharedMem op) configuration bytes)
+      (callFFIHOL exact (.sharedMem holOp) holConfiguration holBytes) := by
+  obtain ⟨hstate, hevents, horacle⟩ := hffi
+  have hne : (FfiName.sharedMem op) ≠ .extCall "" := by intro h; cases h
+  have hneH : (HolFfiName.sharedMem holOp) ≠
+      .extCall (Flapjack.Basis.Pure.MlString.MlString.implode []) := by intro h; cases h
+  have hcorr := horacle (.sharedMem op) (.sharedMem holOp) hop prod.state
+    configuration holConfiguration bytes holBytes hcfg hbytes
+  have hlen_of (a : List UInt8) (b : List (BitVec 8)) (h : BytesRel a b) :
+      b.length = a.length := by
+    have := congrArg List.length h
+    simpa [BytesRel, List.length_map] using this
+  cases hprod : prod.oracle (.sharedMem op) prod.state configuration bytes with
+  | final outcome =>
+      have hcorr' := hcorr
+      rw [hprod, ← hstate] at hcorr'
+      cases hexa : exact.oracle (.sharedMem holOp) exact.ffiState
+          holConfiguration holBytes with
+      | final holOutcome =>
+          rw [hexa] at hcorr'
+          rw [callFfi_nonextCall_final prod _ hne _ _ outcome hprod,
+            callFFIHOL_final exact _ _ _ holOutcome hneH hexa]
+          exact ⟨hop, hcfg, hbytes, hcorr'⟩
+      | ret hs hb =>
+          rw [hexa] at hcorr'
+          exact hcorr'.elim
+  | returned nextState nextBytes =>
+      have hcorr' := hcorr
+      rw [hprod, ← hstate] at hcorr'
+      cases hexa : exact.oracle (.sharedMem holOp) exact.ffiState
+          holConfiguration holBytes with
+      | final holOutcome =>
+          rw [hexa] at hcorr'
+          exact hcorr'.elim
+      | ret hState hBytes =>
+          rw [hexa] at hcorr'
+          obtain ⟨hst, hbytesRel⟩ := hcorr'
+          by_cases hlen : nextBytes.length = bytes.length
+          · have hlenH : hBytes.length = holBytes.length := by
+              rw [hlen_of nextBytes hBytes hbytesRel, hlen,
+                ← hlen_of bytes holBytes hbytes]
+            rw [callFfi_nonextCall_success prod _ hne _ _ nextState nextBytes hprod hlen,
+              callFFIHOL_ret exact _ _ _ hState hBytes hneH hexa, if_pos hlenH]
+            exact ⟨⟨hst.symm,
+              ffiEventListRel_append hevents
+                ⟨⟨hop, hcfg, bytesPairRel_zip hbytes hbytesRel⟩, trivial⟩,
+              horacle⟩, hbytesRel⟩
+          · have hlenHf : ¬ hBytes.length = holBytes.length := by
+              intro hh
+              apply hlen
+              calc nextBytes.length = hBytes.length :=
+                    (hlen_of nextBytes hBytes hbytesRel).symm
+                _ = holBytes.length := hh
+                _ = bytes.length := hlen_of bytes holBytes hbytes
+            rw [callFfi_nonextCall_return_lengthFailure prod _ hne _ _ nextState nextBytes
+                hprod hlen, callFFIHOL_ret exact _ _ _ hState hBytes hneH hexa,
+              if_neg hlenHf]
+            exact ⟨hop, hcfg, hbytes, Or.inl ⟨rfl, rfl⟩⟩
+
+
+/-- Production/exact agreement for the executed shared-memory load body
+    (`panShMemLoad` against the exact `shMemLoadHOLFiniteExact`), including the
+    destination local/global write and the FFI state update.  The domain test,
+    the `callFfi`/`callFFIHOL` result correspondence (via
+    `ffiResultRel_callFfi_sharedMem`), the returned-byte decoding
+    (`riscv64PutBytes_eq_panWordOfBytesHOL`) and the resulting
+    `PanSemStateRelExec` are all established here; no oracle run is assumed. -/
+theorem panShMemLoad_agree {σ : Type}
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (kind : VarKind) (name : MlS) (hname : NameRanged (toStringOfBytes name))
+    (size : OpSize) (addr : RiscV.Word 64) :
+    PanSemHOLResultOptionRel
+        (panSemTotalShMemLoadResult production
+          (panShMemLoad (panSemTotalShMemContext production)
+            (panSemTotalShMemState production) kind (toStringOfBytes name) size addr)).1
+        (@shMemLoadHOLFiniteExact 64 σ _ exact
+          (fun current => Classical.propDecidable (exact.shMemaddrs current))
+          kind name addr (nbOpHOL size)).1 ∧
+      PanSemStateRelExec
+        (panSemTotalShMemLoadResult production
+          (panShMemLoad (panSemTotalShMemContext production)
+            (panSemTotalShMemState production) kind (toStringOfBytes name) size addr)).2
+        (@shMemLoadHOLFiniteExact 64 σ _ exact
+          (fun current => Classical.propDecidable (exact.shMemaddrs current))
+          kind name addr (nbOpHOL size)).2.toExact := by
+  obtain ⟨hlocals, hglobals, hstructs, hcode, heshapes, hmem, hmemaddrs, hshared,
+    hclock, hbe, hffiRel, hbase, htop⟩ := hrel
+  have hrelRaw : PanSemStateRelExec production exact.toExact :=
+    ⟨hlocals, hglobals, hstructs, hcode, heshapes, hmem, hmemaddrs, hshared,
+      hclock, hbe, hffiRel, hbase, htop⟩
+  have hcfgRel : BytesRel [UInt8.ofNat (panValueFfiWidth size)]
+      [BitVec.ofNat 8 (nbOpHOL size)] := by
+    rw [panValueFfiWidth_eq_nbOpHOL]
+    simp [BytesRel, UInt8.toNat_ofNat',
+      show (2 ^ 8 : Nat) = 256 by decide]
+  have hbytesRel := riscv64PanValueFfiContext_wordToBytes_bytesRel
+    production.sharedMemaddrs addr
+  have hFFI : FfiResultRel
+      (callFfi production.ffi (.sharedMem .mappedRead)
+        [UInt8.ofNat (panValueFfiWidth size)]
+        ((riscv64PanValueFfiContext production.sharedMemaddrs).wordToBytes addr false))
+      (callFFIHOL exact.ffi (.sharedMem .mappedRead)
+        [BitVec.ofNat 8 (nbOpHOL size)]
+        (panWordToBytesHOL (width := 64) addr false)) :=
+    ffiResultRel_callFfi_sharedMem production.ffi exact.ffi hffiRel
+      .mappedRead .mappedRead (Or.inl ⟨rfl, rfl⟩) _ _ _ _ hcfgRel hbytesRel
+  rw [riscv64PanValueFfiContext_wordToBytes_eq_getByte] at hFFI
+  rw [panValueFfiWidth_eq_nbOpHOL] at hFFI
+  simp only [panShMemLoad, panSemTotalShMemLoadResult, shMemLoadHOLFiniteExact,
+    panValueFfiWidth_eq_nbOpHOL, panSemTotalShMemContext, panSemTotalShMemState,
+    panSemTotalShMemStateBack, riscv64PanValueFfiContext]
+  by_cases h0 : nbOpHOL size = 0
+  · simp only [h0, if_true] at *
+    by_cases hs : exact.shMemaddrs addr
+    · have hp : production.sharedMemaddrs addr = true := (hshared addr).mpr hs
+      simp only [hp, Bool.not_true, Bool.false_eq_true, if_false, hs, if_true] at *
+      cases hcall : callFfi production.ffi (.sharedMem .mappedRead) [UInt8.ofNat 0]
+          (List.map (fun index => riscv64GetByte index addr) (List.range 8)) with
+      | returned nextFfi bytes =>
+          rw [hcall] at hFFI
+          cases hcallH : callFFIHOL exact.ffi (.sharedMem .mappedRead) [BitVec.ofNat 8 0]
+              (panWordToBytesHOL (width := 64) addr false) with
+          | ret newFfi newBytes =>
+              rw [hcallH] at hFFI
+              obtain ⟨hffiNew, hbytesRel'⟩ := hFFI
+              have hlen : bytes.length = 8 := by
+                have h := callFfi_sharedMem_returned_length production.ffi .mappedRead
+                  [UInt8.ofNat 0]
+                  (List.map (fun index => riscv64GetByte index addr) (List.range 8))
+                  bytes nextFfi hcall
+                simpa using h
+              have hloaded := riscv64PutBytes_eq_panWordOfBytesHOL bytes newBytes hbytesRel' hlen
+              have hloaded' : riscv64PutBytes false 0 bytes (0#64) =
+                  panWordOfBytesHOL false (0#64) newBytes := by
+                simpa using hloaded
+              constructor
+              · cases kind <;> simp only [PanSemHOLResultOptionRel]
+              · cases kind
+                · have h1 : PanSemStateRelExec { production with ffi := nextFfi }
+                      ({ exact with ffi := newFfi }).toExact := by
+                    simpa using PanSemStateRelExec.setFfi hrelRaw hffiNew
+                  have h2 := PanSemStateRelExec.updateLocals
+                    (exact := { exact with ffi := newFfi }) h1
+                    (toStringOfBytes name) hname (.word (riscv64PutBytes false 0 bytes 0))
+                  rw [toExact_setKvarFfiHOLFinite]
+                  simp only [toExact_setVarHOLFinite] at h2
+                  simpa [hloaded, hloaded', panValueToHOL_word, ofString_toStringOfBytes,
+                    setKvarHOLExact, setVarHOLExact, PanSemStateFiniteExact.toExact] using h2
+                · have h1 : PanSemStateRelExec { production with ffi := nextFfi }
+                      ({ exact with ffi := newFfi }).toExact := by
+                    simpa using PanSemStateRelExec.setFfi hrelRaw hffiNew
+                  have h2 := PanSemStateRelExec.updateGlobals
+                    (exact := { exact with ffi := newFfi }) h1
+                    (toStringOfBytes name) hname (.word (riscv64PutBytes false 0 bytes 0))
+                  rw [toExact_setKvarFfiHOLFinite]
+                  simpa [hloaded, hloaded', panValueToHOL_word, ofString_toStringOfBytes,
+                    setKvarHOLExact, setGlobalHOLExact, PanSemStateFiniteExact.toExact] using h2
+          | final exactEvent =>
+              rw [hcallH] at hFFI
+              exact False.elim hFFI
+      | final event =>
+          rw [hcall] at hFFI
+          cases hcallH : callFFIHOL exact.ffi (.sharedMem .mappedRead) [BitVec.ofNat 8 0]
+              (panWordToBytesHOL (width := 64) addr false) with
+          | ret newFfi newBytes =>
+              rw [hcallH] at hFFI
+              exact False.elim hFFI
+          | final exactEvent =>
+              rw [hcallH] at hFFI
+              constructor
+              · exact hFFI
+              · simp only [toExact_emptyLocalsHOLFinite]
+                exact PanSemStateRelExec.emptyLocals hrelRaw
+
+    · have hp : production.sharedMemaddrs addr = false := by
+        cases hb : production.sharedMemaddrs addr with
+        | false => rfl
+        | true => exact absurd ((hshared addr).mp hb) hs
+      simp only [hp, Bool.not_false, if_true, hs, if_false] at *
+      exact ⟨trivial, hrelRaw⟩
+  · simp only [if_neg h0] at *
+    rw [panRiscVByteAlign_eight_eq_panByteAlignHOL] at *
+    by_cases hs : exact.shMemaddrs (panByteAlignHOL addr)
+    · have hp : production.sharedMemaddrs (panByteAlignHOL addr) = true :=
+        (hshared (panByteAlignHOL addr)).mpr hs
+      simp only [hp, Bool.not_true, Bool.false_eq_true, if_false, hs, if_true] at *
+      cases hcall : callFfi production.ffi (.sharedMem .mappedRead) [UInt8.ofNat (nbOpHOL size)]
+          (List.map (fun index => riscv64GetByte index addr) (List.range 8)) with
+      | returned nextFfi bytes =>
+          rw [hcall] at hFFI
+          cases hcallH : callFFIHOL exact.ffi (.sharedMem .mappedRead) [BitVec.ofNat 8 (nbOpHOL size)]
+              (panWordToBytesHOL (width := 64) addr false) with
+          | ret newFfi newBytes =>
+              rw [hcallH] at hFFI
+              obtain ⟨hffiNew, hbytesRel'⟩ := hFFI
+              have hlen : bytes.length = 8 := by
+                have h := callFfi_sharedMem_returned_length production.ffi .mappedRead
+                  [UInt8.ofNat (nbOpHOL size)]
+                  (List.map (fun index => riscv64GetByte index addr) (List.range 8))
+                  bytes nextFfi hcall
+                simpa using h
+              have hloaded := riscv64PutBytes_eq_panWordOfBytesHOL bytes newBytes hbytesRel' hlen
+              have hloaded' : riscv64PutBytes false 0 bytes (0#64) =
+                  panWordOfBytesHOL false (0#64) newBytes := by
+                simpa using hloaded
+              constructor
+              · cases kind <;> simp only [PanSemHOLResultOptionRel]
+              · cases kind
+                · have h1 : PanSemStateRelExec { production with ffi := nextFfi }
+                      ({ exact with ffi := newFfi }).toExact := by
+                    simpa using PanSemStateRelExec.setFfi hrelRaw hffiNew
+                  have h2 := PanSemStateRelExec.updateLocals
+                    (exact := { exact with ffi := newFfi }) h1
+                    (toStringOfBytes name) hname (.word (riscv64PutBytes false 0 bytes 0))
+                  rw [toExact_setKvarFfiHOLFinite]
+                  simp only [toExact_setVarHOLFinite] at h2
+                  simpa [hloaded, hloaded', panValueToHOL_word, ofString_toStringOfBytes,
+                    setKvarHOLExact, setVarHOLExact, PanSemStateFiniteExact.toExact] using h2
+                · have h1 : PanSemStateRelExec { production with ffi := nextFfi }
+                      ({ exact with ffi := newFfi }).toExact := by
+                    simpa using PanSemStateRelExec.setFfi hrelRaw hffiNew
+                  have h2 := PanSemStateRelExec.updateGlobals
+                    (exact := { exact with ffi := newFfi }) h1
+                    (toStringOfBytes name) hname (.word (riscv64PutBytes false 0 bytes 0))
+                  rw [toExact_setKvarFfiHOLFinite]
+                  simpa [hloaded, hloaded', panValueToHOL_word, ofString_toStringOfBytes,
+                    setKvarHOLExact, setGlobalHOLExact, PanSemStateFiniteExact.toExact] using h2
+          | final exactEvent =>
+              rw [hcallH] at hFFI
+              exact False.elim hFFI
+      | final event =>
+          rw [hcall] at hFFI
+          cases hcallH : callFFIHOL exact.ffi (.sharedMem .mappedRead) [BitVec.ofNat 8 (nbOpHOL size)]
+              (panWordToBytesHOL (width := 64) addr false) with
+          | ret newFfi newBytes =>
+              rw [hcallH] at hFFI
+              exact False.elim hFFI
+          | final exactEvent =>
+              rw [hcallH] at hFFI
+              constructor
+              · exact hFFI
+              · simp only [toExact_emptyLocalsHOLFinite]
+                exact PanSemStateRelExec.emptyLocals hrelRaw
+
+    · have hp : production.sharedMemaddrs (panByteAlignHOL addr) = false := by
+        cases hb : production.sharedMemaddrs (panByteAlignHOL addr) with
+        | false => rfl
+        | true => exact absurd ((hshared (panByteAlignHOL addr)).mp hb) hs
+      simp only [hp, Bool.not_false, if_true, hs, if_false] at *
+      exact ⟨trivial, hrelRaw⟩
 end Flapjack

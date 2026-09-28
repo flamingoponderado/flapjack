@@ -3472,7 +3472,120 @@ theorem panSemTotalEvaluate_store32_agree {σ : Type}
               (BitVec.ofNat 32 w.toNat) <;>
             intro hb <;> first | exact hb.elim | exact ⟨trivial, hrel⟩ | exact ⟨trivial, hb⟩
 
+
+/-- Production/exact agreement for the `ShMemLoad` constructor.  The address is
+    evaluated on both sides; a non-word address, a missing or non-word
+    destination binding, or a shared-memory domain miss returns `Error` with the
+    state unchanged, while a successful read delegates to the executed/exact
+    shared-memory load agreement `panShMemLoad_agree` (canonical RISC-V 64 FFI
+    byte codec and `callFfi`/`callFFIHOL` correspondence).  No target-run,
+    result, or post-state premise is assumed. -/
+theorem panSemTotalEvaluate_shMemLoad_agree {σ : Type}
+    (primitive : PanPrimitiveHandler (RiscV.Word 64))
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (hranged : PanSemStateRelExecRanged production)
+    (size : OpSize) (kind : VarKind) (name : MlS) (address : ExpHOL 64) :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluate primitive
+          (.shMemLoad size kind (toStringOfBytes name) (expOfHOL address) :
+            Prog (RiscV.Word 64)) production).1
+        (evaluateHOLFiniteState exact (.shMemLoad size kind name address : ProgHOL 64)).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluate primitive
+          (.shMemLoad size kind (toStringOfBytes name) (expOfHOL address) :
+            Prog (RiscV.Word 64)) production).2
+        (evaluateHOLFiniteState exact (.shMemLoad size kind name address : ProgHOL 64)).2.toExact := by
+  have hname : NameRanged (toStringOfBytes name) := nameRanged_toStringOfBytes_bridge name
+  have hval := evalPanSemStateExp_agree production exact hrel hranged
+    (expOfHOL address) (expOfHOL_byteRanged_bridge address)
+  simp only [expToHOL_expOfHOL] at hval
+  have hclass := evalHOLFinite_eq_classical exact address
+  have hrelRaw := hrel
+  obtain ⟨hlocals, hglobals, hstructs, hcode, heshapes, hmem, hmemaddrs, hshared,
+    hclock, hbe, hffiRel, hbase, htop⟩ := hrelRaw
+  have hrel : PanSemStateRelExec production exact.toExact :=
+    ⟨hlocals, hglobals, hstructs, hcode, heshapes, hmem, hmemaddrs, hshared, hclock,
+      hbe, hffiRel, hbase, htop⟩
+  rw [panSemTotalEvaluate, evaluateHOLFiniteState_shMemLoad_source]
+  unfold panSemTotalShMemLoadClause panSemTotalExprStep
+  rw [show @evalHOLFinite 64 σ _ exact
+      (fun current => Classical.propDecidable (exact.memaddrs current)) address
+      = exact.evalHOLFinite address from hclass]
+  cases hest : evalPanSemStateExp production (expOfHOL address) with
+  | none =>
+      have hexactEval : exact.evalHOLFinite address = none := by
+        rw [← hval, hest]; rfl
+      rw [hexactEval]
+      exact ⟨trivial, hrel⟩
+  | some value =>
+      have hvalue : exact.evalHOLFinite address = some (panValueToHOL value) := by
+        rw [← hval, hest]; rfl
+      rw [hvalue]
+      cases value with
+      | word addr =>
+          simp only [panValueToHOL_word]
+          cases kind
+          · have hx_of (v : Option (PanValue (RiscV.Word 64)))
+                (h : production.locals (toStringOfBytes name) = v) :
+                lookupKvarHOLFinite .local name exact = Option.map panValueToHOL v := by
+              have hh := hlocals (toStringOfBytes name) hname
+              rw [h, ofString_toStringOfBytes] at hh
+              show exact.locals.lookup name = Option.map panValueToHOL v
+              exact hh.symm
+            cases hp : production.locals (toStringOfBytes name) with
+            | none =>
+                rw [hx_of none hp]
+                exact ⟨trivial, hrel⟩
+            | some v =>
+                cases v with
+                | word w =>
+                    rw [hx_of (some (.word w)) hp]
+                    simp only [Option.map_some, panValueToHOL_word]
+                    exact panShMemLoad_agree production exact hrel .local name hname size addr
+                | rStruct fields =>
+                    rw [hx_of (some (.rStruct fields)) hp]
+                    simp only [Option.map_some, panValueToHOL]
+                    exact ⟨trivial, hrel⟩
+                | nStruct nm fields =>
+                    rw [hx_of (some (.nStruct nm fields)) hp]
+                    simp only [Option.map_some, panValueToHOL]
+                    exact ⟨trivial, hrel⟩
+          · have hx_of (v : Option (PanValue (RiscV.Word 64)))
+                (h : production.globals (toStringOfBytes name) = v) :
+                lookupKvarHOLFinite .global name exact = Option.map panValueToHOL v := by
+              have hh := hglobals (toStringOfBytes name) hname
+              rw [h, ofString_toStringOfBytes] at hh
+              show exact.globals.lookup name = Option.map panValueToHOL v
+              exact hh.symm
+            cases hp : production.globals (toStringOfBytes name) with
+            | none =>
+                rw [hx_of none hp]
+                exact ⟨trivial, hrel⟩
+            | some v =>
+                cases v with
+                | word w =>
+                    rw [hx_of (some (.word w)) hp]
+                    simp only [Option.map_some, panValueToHOL_word]
+                    exact panShMemLoad_agree production exact hrel .global name hname size addr
+                | rStruct fields =>
+                    rw [hx_of (some (.rStruct fields)) hp]
+                    simp only [Option.map_some, panValueToHOL]
+                    exact ⟨trivial, hrel⟩
+                | nStruct nm fields =>
+                    rw [hx_of (some (.nStruct nm fields)) hp]
+                    simp only [Option.map_some, panValueToHOL]
+                    exact ⟨trivial, hrel⟩
+      | rStruct fields =>
+          simp only [panValueToHOL]
+          exact ⟨trivial, hrel⟩
+      | nStruct nm fields =>
+          simp only [panValueToHOL]
+          exact ⟨trivial, hrel⟩
+
 /-! ## Rangedness preservation and the `PanSemStateRelExec`/rangedness boundary
+
 
 `PanSemStateRelExecRanged` (`:94`) is the byte-range premise of the all-16
 expression agreement.  This section records which production state updates
