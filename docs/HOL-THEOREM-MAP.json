@@ -14985,6 +14985,21 @@
     "reviewer": "flapjack-opus source comparison (2026-09-28; beads flapjack-4ac.5.16.5.33/.34/.35/.36/.37): compared all 19 conjuncts of the line-443 rebound evaluate_def (REWRITE_RULE [fix_clock_evaluate] of crepSemScript.sml:240-379) with the 19 arms of this one match-program equation over evalCrepSemHOLProgExact. Skip/Break/Continue/Raise/Tick are identical. Dec evaluates the body on s with locals |+ (v,value) (updateEq) and restores with res_var (resVarEq) of FLOOKUP s.locals v. Primitive uses OPT_MMAP (FLOOKUP s.locals), crep_primop, and the Prop guard LENGTH/EVERY IS_SOME/ALL_DISTINCT with |++ ZIP. Assign/StoreGlob/Return use the tagged eval_def (evalCrepSemHOLExp), |+, set_globals, and empty_locals. Store/Store32/StoreByte use the tagged mem_store/mem_store_32/word8 mem_store_byte, with w2w = BitVec.ofNat. ShMem uses is_load (crepIsLoadMemOp, clause-for-clause asm is_load_def on CrepMemOp, the prog-reviewed memop carrier) and the tagged sh_mem_op port. Seq/While/Call have no fix_clock (line 443) and use plain matches with no domain stamping; Seq is if res = NONE; While matches res as Continue 0/NONE/Break 0/exit_loop. Call has OPT_MMAP eval args, lookup_code via lookupCodeFiniteHOL (lookup_code_def on the finite-support carrier, proved equal on lookups to the tagged lookupCodeHOL), the caltyp ALL_DISTINCT guard before the clock test, and callee state (dec_clock s) with locals := newlocals. Its Return/Exception/fall-through branches match HOL, and the handler runs on st with locals := s.locals. ExtCall uses the tagged read_bytearray/mem_load_byte/call_FFI/write_bytearray with HOL's ptr/len order. There is no premise, no result hypothesis, and no extra quantifier. HOL word sets are Prop predicates, decided classically (open Classical; choice invisible by evalCrepSemHOLProgExact_eq_core). The locals/globals/code |-> fields use the canonical HolFiniteMapExact carrier (same-module CrepSemShMemExact.holFmapAsFiniteSupportWitness), and 'a word/'ffi use the BitVec width [NeZero width]/σ : Type translation, hence the combined status. Each arm is proved by an untagged clause lemma; the tag is only on this assembly. Original-HOL oracle rows cover every arm; crep_evaluate_def_arms_probe.out (Flapjack.Test.CrepSemEvaluateDefArmsParity) adds Primitive and the Call handler catch/mismatch/absent/duplicate-rts cases."
   },
   {
+    "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
+    "hol_name": "evaluate_ind",
+    "hol_line": 440,
+    "lean_path": "Flapjack/Pancake/Semantics/CrepSem/EvaluateInd.lean",
+    "lean_name": "evalCrepSemHOLProgExact_induct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source-reviewed against crep_sem_evaluate_ind_probe.out and crepSemScript.sml:440 (REWRITE_RULE [fix_clock_evaluate] evaluate_ind). The uncurried motive and !v v1 conclusion, 19 clauses in HOL order, binder order, guards, and recursive IHs are clause-for-clause. Dec and If use the classical expression evaluator, extensionally equal to the reviewed exact evaluator by crepExactEvalExpClassical_eq. Call quantifies args/v6/prog/newlocals in the HOL shape and uses lookupCodeHOLFinite; its lookup projection is the reviewed lookupCodeHOL by lookupCodeHOLFinite_eq_some_iff, with a checked finite-support witness. The fix_clock rewrite uses evalCrepSemHOLProgExact_clock_le. The prior coordinator hold on whole-evaluator agreement is resolved by the merged exact evaluate_def source review at 5fde1a499: all 19 arms agree, including unstamped Call, LENGTH args lookup, and word8 FFI handling. Only the reviewed CrepSemHOLState finite-support locals/globals/code carrier and HOL 'a word as BitVec width are translated; there are no extra premises or hypotheses."
+  },
+  {
     "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
     "hol_name": "lookup_locals_eq_map_vars",
     "lean_path": "Flapjack/Pancake/Semantics/CrepProps.lean",
