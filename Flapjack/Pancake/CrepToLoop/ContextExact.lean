@@ -5,7 +5,6 @@ import Flapjack.Pancake.CrepArith
 import Flapjack.Pancake.LoopLive
 import Flapjack.Basis.Pure.MlString
 import Flapjack.Compiler.Encoders.Asm
-import Flapjack.Pancake.LoopLive
 
 /-!
 Exact finite-map carrier and context helpers for `crep_to_loopScript.sml`.
