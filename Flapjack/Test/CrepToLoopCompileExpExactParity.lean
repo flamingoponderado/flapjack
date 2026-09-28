@@ -17,6 +17,11 @@ def contextWithVar : CrepToLoopContextExact :=
 
 def live : NumSet := sptListInsert [1, 2] .ln
 
+example : progIfHOLExact (width := 8) .equal [] [] (.const 1) (.const 0) 6 7 live =
+    [.assign 6 (.const 1), .assign 7 (.const 0),
+     .ite .equal 6 (.reg 7) (.assign 6 (.const 1)) (.assign 6 (.const 0))
+       (sptListInsert [6, 7] live)] := rfl
+
 example : compileCrepopHOLExact (width := 8) .mul .riscv 2 3 4 live =
     ([.arith (.longMul 4 4 2 3)], 4) := rfl
 

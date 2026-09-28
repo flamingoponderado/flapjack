@@ -210,6 +210,15 @@ CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=pan_mem_load_probeScr
 CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=crep_load_shape_probeScript.sml scripts/hol-probes/regenerate.sh
 CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=crep_eval_load_rv64_probeScript.sml scripts/hol-probes/regenerate.sh
 ```
+The same direct `mem_load_def` probe also records the recursive rows
+`recursive_mem_loads_two_words`, `recursive_comb_two_words`, and
+`recursive_named_two_fields`. They use a two-cell 64-bit memory with addresses
+0 and 8, so the fixture pins `bytes_in_word * size_of_sh_with_ctxt` as well as
+the list, `RStruct`, and two-field `NStruct` result shapes. Matching exact
+production-to-HOL kernel guards are in
+`Flapjack.Test.DeclBridgeParity`; regenerate them with the command above for
+`pan_mem_load_probeScript.sml`.
+
 `excp_rel_probe.out` and `ctxt_fc_probe.out` are direct EVALs from
 `pan_to_crepProofTheory`, paired with `Flapjack.Test.PanToCrepRelationsParity`.
 The `functions_projection` row in `ctxt_fc_probe.out` directly checks the
@@ -573,10 +582,12 @@ The `prog_if_probe.out` fixture probes the comparison-materialization helper
 canonical live-set insertion order.
 The `compile_crepop_probe.out` fixture probes both RISC-V and ARMv7 `Mul`
 branches of `compile_crepop_def` at line 42 of the same source.
-`crep_to_loop_compile_exp_probe.out` records direct HOL EVAL rows for
-`compile_exp_def` and its local mutual list helper `compile_exps`, including
-variable lookup, Load32 temporary allocation, n-ary Op mapping, Mul lowering,
-comparison temporaries/live-set insertion, Shift, and list compilation. The
+`crep_to_loop_compile_exp_probe.out` starts with a direct `prog_if_def` row on
+exactly the arguments used by the `cmp` expression row, then records direct HOL
+EVAL rows for `compile_exp_def` and its local mutual list helper `compile_exps`,
+including variable lookup, Load32 temporary allocation, n-ary Op mapping, Mul
+lowering, comparison temporaries/live-set insertion, Shift, and list
+compilation. The
 exact-carrier Lean equations are in
 `Flapjack.Test.CrepToLoopCompileExpExactParity`. The tagged definitions use the
 source `context` and Loop carriers; the generic production compiler is not
