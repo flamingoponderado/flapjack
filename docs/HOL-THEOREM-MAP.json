@@ -20007,5 +20007,101 @@
     "lean_name": "CrepToLoopSemanticsRunRes",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.6.34.4) against the Datatype semantics_run_res at crep_to_loopProofScript.sml:4127-4130: `semantics_run_res = RunError | CompleteResult 'a | Incomplete`. Lean CrepToLoopSemanticsRunRes α keeps the three constructors in HOL order with the same arities (CompleteResult carries the single 'a payload) and one type parameter. It is a separate Lean type from panProps' SemanticsRunResHOL because HOL declares a fresh datatype in crep_to_loopProof; constructor names are Lean-qualified by the type."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "loopLive_compile_correct_skip",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.8.1.1): case piece `Skip` of loop_live compile_correct (loop_liveProofScript.sml:17-37 statement; Resume compile_correct[Skip] at 66-69; HOL proves the theorem by recInduct loopSemTheory.evaluate_ind with one Resume block per constructor). The piece keeps HOL's quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises (evaluate (v,v1) = (res,s1), res ≠ SOME Error, shrink lt v l0 = (prog1,l1), subspt (inter v1.locals l1) locals) and the full existential conclusion including the eight-way case split on res (oEL as sptOel, inter as sptInter, subspt as sptSubspt), over the exact LoopSemStateFiniteExact.evaluate (evaluate_def) and the tagged shrinkHOL (shrink_def). Proof: shrink Skip l = (Skip, l); evaluate unchanged, new_locals = locals. Qualifiers: loopSem state globals as canonical HolFiniteMapExact; width-indexed word carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "loopLive_compile_correct_fail",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.8.1.1): case piece `Fail` of loop_live compile_correct (loop_liveProofScript.sml:17-37 statement; Resume compile_correct[Fail] at 71-74; HOL proves the theorem by recInduct loopSemTheory.evaluate_ind with one Resume block per constructor). The piece keeps HOL's quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises (evaluate (v,v1) = (res,s1), res ≠ SOME Error, shrink lt v l0 = (prog1,l1), subspt (inter v1.locals l1) locals) and the full existential conclusion including the eight-way case split on res (oEL as sptOel, inter as sptInter, subspt as sptSubspt), over the exact LoopSemStateFiniteExact.evaluate (evaluate_def) and the tagged shrinkHOL (shrink_def). Proof: evaluate Fail = SOME Error, excluded by res ≠ SOME Error. Qualifiers: loopSem state globals as canonical HolFiniteMapExact; width-indexed word carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "loopLive_compile_correct_tick",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.8.1.1): case piece `Tick` of loop_live compile_correct (loop_liveProofScript.sml:17-37 statement; Resume compile_correct[Tick] at 76-79; HOL proves the theorem by recInduct loopSemTheory.evaluate_ind with one Resume block per constructor). The piece keeps HOL's quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises (evaluate (v,v1) = (res,s1), res ≠ SOME Error, shrink lt v l0 = (prog1,l1), subspt (inter v1.locals l1) locals) and the full existential conclusion including the eight-way case split on res (oEL as sptOel, inter as sptInter, subspt as sptSubspt), over the exact LoopSemStateFiniteExact.evaluate (evaluate_def) and the tagged shrinkHOL (shrink_def). Proof: shrink Tick l = (Tick, l); both clock branches; timeout sets locals to LN on both sides. Qualifiers: loopSem state globals as canonical HolFiniteMapExact; width-indexed word carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "loopLive_compile_correct_continue",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.8.1.1): case piece `Continue` of loop_live compile_correct (loop_liveProofScript.sml:17-37 statement; Resume compile_correct[Continue] at 81-87; HOL proves the theorem by recInduct loopSemTheory.evaluate_ind with one Resume block per constructor). The piece keeps HOL's quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises (evaluate (v,v1) = (res,s1), res ≠ SOME Error, shrink lt v l0 = (prog1,l1), subspt (inter v1.locals l1) locals) and the full existential conclusion including the eight-way case split on res (oEL as sptOel, inter as sptInter, subspt as sptSubspt), over the exact LoopSemStateFiniteExact.evaluate (evaluate_def) and the tagged shrinkHOL (shrink_def). Proof: shrink returns the oEL cont set; the premise is the conclusion. Qualifiers: loopSem state globals as canonical HolFiniteMapExact; width-indexed word carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "loopLive_compile_correct_break",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.8.1.1): case piece `Break` of loop_live compile_correct (loop_liveProofScript.sml:17-37 statement; Resume compile_correct[Break] at 89-95; HOL proves the theorem by recInduct loopSemTheory.evaluate_ind with one Resume block per constructor). The piece keeps HOL's quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises (evaluate (v,v1) = (res,s1), res ≠ SOME Error, shrink lt v l0 = (prog1,l1), subspt (inter v1.locals l1) locals) and the full existential conclusion including the eight-way case split on res (oEL as sptOel, inter as sptInter, subspt as sptSubspt), over the exact LoopSemStateFiniteExact.evaluate (evaluate_def) and the tagged shrinkHOL (shrink_def). Proof: shrink returns the oEL brk set; the premise is the conclusion. Qualifiers: loopSem state globals as canonical HolFiniteMapExact; width-indexed word carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "loopLive_compile_correct_mark",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.8.1.1): case piece `Mark` of loop_live compile_correct (loop_liveProofScript.sml:17-37 statement; Resume compile_correct[Mark] at 97-99; HOL proves the theorem by recInduct loopSemTheory.evaluate_ind with one Resume block per constructor). The piece keeps HOL's quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises (evaluate (v,v1) = (res,s1), res ≠ SOME Error, shrink lt v l0 = (prog1,l1), subspt (inter v1.locals l1) locals) and the full existential conclusion including the eight-way case split on res (oEL as sptOel, inter as sptInter, subspt as sptSubspt), over the exact LoopSemStateFiniteExact.evaluate (evaluate_def) and the tagged shrinkHOL (shrink_def). Proof: shrink (Mark p) = shrink p and evaluate (Mark p) = evaluate p, so it is the evaluate_ind hypothesis for p (stated by the untagged loopLiveCompileCorrectAt p v1, which unfolds to exactly the HOL statement at (p, v1)). Qualifiers: loopSem state globals as canonical HolFiniteMapExact; width-indexed word carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "loopLive_compile_correct_return",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.8.1.1): case piece `Return` of loop_live compile_correct (loop_liveProofScript.sml:17-37 statement; Resume compile_correct[Return] at 101-110; HOL proves the theorem by recInduct loopSemTheory.evaluate_ind with one Resume block per constructor). The piece keeps HOL's quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises (evaluate (v,v1) = (res,s1), res ≠ SOME Error, shrink lt v l0 = (prog1,l1), subspt (inter v1.locals l1) locals) and the full existential conclusion including the eight-way case split on res (oEL as sptOel, inter as sptInter, subspt as sptSubspt), over the exact LoopSemStateFiniteExact.evaluate (evaluate_def) and the tagged shrinkHOL (shrink_def). Proof: get_vars ns agrees on locals via subspt (inter v1.locals (list_insert ns LN)) locals; call_env [] replaces locals. Qualifiers: loopSem state globals as canonical HolFiniteMapExact; width-indexed word carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "loopLive_compile_correct_raise",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.8.1.1): case piece `Raise` of loop_live compile_correct (loop_liveProofScript.sml:17-37 statement; Resume compile_correct[Raise] at 112-116; HOL proves the theorem by recInduct loopSemTheory.evaluate_ind with one Resume block per constructor). The piece keeps HOL's quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises (evaluate (v,v1) = (res,s1), res ≠ SOME Error, shrink lt v l0 = (prog1,l1), subspt (inter v1.locals l1) locals) and the full existential conclusion including the eight-way case split on res (oEL as sptOel, inter as sptInter, subspt as sptSubspt), over the exact LoopSemStateFiniteExact.evaluate (evaluate_def) and the tagged shrinkHOL (shrink_def). Proof: lookup v agrees via subspt (inter v1.locals (insert v () LN)) locals; call_env [] replaces locals. Qualifiers: loopSem state globals as canonical HolFiniteMapExact; width-indexed word carriers."
   }
 ]

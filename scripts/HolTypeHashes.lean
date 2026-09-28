@@ -46,6 +46,7 @@ import Flapjack.Pancake.CrepToLoop.Proofs.MakeFuncsLemmas
 import Flapjack.Pancake.CrepToLoop.Proofs.WriteBytearrayMemRel
 import Flapjack.Pancake.CrepToLoop.Proofs.CodeRel2
 import Flapjack.Pancake.CrepToLoop.Proofs.SemanticsWrapper
+import Flapjack.Pancake.Proofs.LoopLive.CompileCorrect
 import Flapjack.Pancake.CrepToLoop.StateRel
 import Flapjack.Pancake.LoopLang.AssignedVars
 import Flapjack.Pancake.Semantics.LoopProps.AssignedVars
