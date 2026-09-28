@@ -18290,6 +18290,15 @@
     "words_as_type_indexed_bitvec": true
   },
   {
+    "hol_path": "cakeml/pancake/semantics/loopPropsScript.sml",
+    "hol_name": "cut_sets_def",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopProps/CutSets.lean",
+    "lean_name": "cutSetsHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-b source comparison (2026-09-28, bead flapjack-pxn.18.5.6.36) against loopPropsScript.sml:40-55. Every defining clause is retained over HolLoopProg and NumSet: Skip returns the input set; LocValue/Assign insert the destination; Load32/LoadByte insert the second variable; Seq applies cut_sets to its first then second program; If returns its stored num_set; LLongDiv and LLongMul insert the two destinations in HOL's nested order; LDiv inserts its destination; all other constructors return the input. HolLoopProg's prog and loop_arith constructors/fields match loopLangScript.sml, NumSet is exactly Spt Unit (`num_set` at miscScript.sml:787), and sptInsert follows HOL sptree insert; no list-backed production analogue is used. The sole qualifier is HOL positive word dimension to BitVec width. Direct source EVAL rows for all these clauses are in scripts/hol-probes/loop_props_cut_sets_probe.out and each row is replayed by an exact-carrier Lean guard in Flapjack/Test/LoopPropsCutSetsParity.lean. This tagged helper does not claim production LoopLive routing.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
     "hol_name": "assigned_vars_MAPi_Assign",
     "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/AssignedVars.lean",
