@@ -4243,6 +4243,41 @@ theorem evalCrepSemHOLProg.inductHOL {width : Nat} [NeZero width] {σ : Type}
   | «return» values => exact hreturn state memDec shMemDec values
   | shMem operator name address => exact hshMem state memDec shMemDec operator name address
   | tick => exact htick state memDec shMemDec
+
+/-- Decider-free well-founded induction principle for the classical exact
+    evaluator `evalCrepSemHOLProgExact`: the motive is over `(program, state)`
+    only, with the relation
+
+      `Prod.Lex Nat.lt Nat.lt (state.clock, sizeOf program)`
+
+    which matches HOL's `inv_image (measure I LEX measure (prog_size (K 0)))
+    (λ(prog,s). (s.clock, prog))` in `crepSemScript.sml:381-382` up to
+    `prog_size (K 0)` being Lean's `sizeOf` on `CrepProgHOL`, and the deciders
+    instantiated classically.
+
+    FLAPJACK-SPECIFIC (untagged). This is a step towards the faithful tagged
+    port of HOL `crepSemScript.sml:440 evaluate_ind`; that port additionally
+    needs HOL's per-constructor case-clause statement, captured by the HOL probe
+    `scripts/hol-probes/crep_sem_evaluate_ind_probeScript.sml`, and is tracked
+    by `flapjack-2de.1.1` / `flapjack-2de.1.1.1`. -/
+theorem evalCrepSemHOLProgExact_inductLex {width : Nat} [NeZero width] {σ : Type}
+    {motive : CrepProgHOL width → CrepSemHOLState width σ → Prop}
+    (step : ∀ (program : CrepProgHOL width) (state : CrepSemHOLState width σ),
+      (∀ (program' : CrepProgHOL width) (state' : CrepSemHOLState width σ),
+        Prod.Lex Nat.lt Nat.lt (state'.clock, sizeOf program') (state.clock, sizeOf program) →
+        motive program' state') →
+      motive program state) :
+    ∀ (program : CrepProgHOL width) (state : CrepSemHOLState width σ), motive program state := by
+  intro program state
+  exact (evalCrepSemHOLProg.inductHOL_general
+    (motive := fun state _ _ program => motive program state)
+    (fun state memDec shMemDec program ih =>
+      step program state (fun p' s' hlt =>
+        ih s' (fun a => Classical.propDecidable (s'.memaddrs a))
+          (fun a => Classical.propDecidable (s'.shMemaddrs a)) p' hlt))
+    state (fun a => Classical.propDecidable (state.memaddrs a))
+      (fun a => Classical.propDecidable (state.shMemaddrs a)) program)
+
 private def CrepClockBounded {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ)
     (memDec : (a : BitVec width) → Decidable (state.memaddrs a))

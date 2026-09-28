@@ -238,6 +238,32 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
                 self.assertIn("globalFreshName", record["reviewer"])
                 self.assertNotIn(key, tagged)
 
+    def test_crep_evaluate_ind_exact_tag(self):
+        tagged = MAP["tagged_declarations"]()
+        manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
+        manifest_by_key = {
+            (record["lean_path"], record["lean_name"]): record
+            for record in manifest
+        }
+        key = (
+            "Flapjack/Pancake/Semantics/CrepSem/EvaluateInd.lean",
+            "evalCrepSemHOLProgExact_induct",
+        )
+        record = manifest_by_key[key]
+        self.assertEqual(
+            (record["hol_path"], record["hol_name"]),
+            ("cakeml/pancake/semantics/crepSemScript.sml", "evaluate_ind"),
+        )
+        self.assertEqual(
+            record["statement_status"],
+            "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+        )
+        self.assertEqual(record["fmap_as_finite_support"], ["locals", "globals", "code"])
+        self.assertTrue(record["words_as_type_indexed_bitvec"])
+        self.assertIn("flapjack-2de.1.1", record["reviewer"])
+        self.assertIn(key, tagged)
+        self.assertNotIn(key, MAP["DOCUMENTED_MISMATCHES"])
+
     def test_crep_sem_state_exact_helpers_have_combined_carrier_qualifiers(self):
         tagged = MAP["tagged_declarations"]()
         manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
