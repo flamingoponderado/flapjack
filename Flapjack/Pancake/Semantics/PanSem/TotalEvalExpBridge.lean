@@ -2962,9 +2962,10 @@ This section resolves that boundary and narrows it precisely:
   the handler's `PanValue` result into `locals`, so its rangedness is conditional
   on the runtime predicate `PanPrimitiveHandlerByteRanged` (every value returned
   by the handler is `PanValueByteRanged`);
-* a negative witness (`primitiveClause_not_ranged_of_nonRanged`,
-  `extCallClause_not_ranged_of_global_nonRanged`) shows the boundary is crossed
-  when those runtime predicates fail.
+* a negative witness (`primitiveClause_not_ranged_of_nonRanged`) shows how an
+  out-of-range primitive result crosses the boundary; a second witness
+  (`extCallClause_not_ranged_of_global_nonRanged`) shows that `ExtCall` cannot
+  repair a pre-existing out-of-range global.
 
 The remaining runtime source outside these two clauses is the *initial* global
 map (or any other direct global installation), which no evaluator clause
