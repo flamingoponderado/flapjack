@@ -31,6 +31,7 @@ import os
 import re
 import sys
 from functools import lru_cache
+from stat import S_ISREG
 from collections.abc import Iterable
 from pathlib import Path
 
@@ -129,6 +130,46 @@ HOL_HEADER_KEYWORDS = (
     "Type",
 )
 IMPORT_RE = re.compile(r"^import\s+(Flapjack(?:\.[A-Za-z0-9_]+)*)", re.M)
+
+
+class _LeanFileInfo:
+    """One read of a Lean source file plus its lazily memoized parses.
+
+    The transitive-import walkers below visit the same imported files once per
+    tagged module; re-reading and re-parsing them each time dominated the run
+    time.  Results are keyed by path, size, and mtime (see `_lean_file_info`),
+    so a file rewritten between calls (as the checker tests do) is re-read.
+    """
+
+    def __init__(self, text: str) -> None:
+        self.text = text
+        self.lines = text.splitlines()
+        self.imports = IMPORT_RE.findall(text)
+        self._memo: dict[str, object] = {}
+
+    def parsed(self, key: str, parse):
+        if key not in self._memo:
+            self._memo[key] = parse(self)
+        return self._memo[key]
+
+
+_LEAN_FILE_INFO: dict[tuple[str, int, int], _LeanFileInfo] = {}
+
+
+def _lean_file_info(path: Path) -> _LeanFileInfo | None:
+    """The memoized contents of `path`, or None when it is not a regular file."""
+    try:
+        stat = path.stat()
+    except OSError:
+        return None
+    if not S_ISREG(stat.st_mode):
+        return None
+    key = (str(path), stat.st_size, stat.st_mtime_ns)
+    info = _LEAN_FILE_INFO.get(key)
+    if info is None:
+        info = _LeanFileInfo(path.read_text(encoding="utf-8"))
+        _LEAN_FILE_INFO[key] = info
+    return info
 
 
 def module_name(path: Path) -> str:
@@ -254,58 +295,62 @@ def hol_attribute_sites(lines: list[str]):
         attribute_bracket_depth = 0
 
 
+_COMMENT_START_RE = re.compile(r'/-|--|"')
+_BLOCK_COMMENT_TOKEN_RE = re.compile(r"/-|-/")
+_STRING_TOKEN_RE = re.compile(r'\\.|"', re.S)
+_NOT_NEWLINE_RE = re.compile(r"[^\n]")
+
+
 def strip_lean_comments(text: str) -> str:
-    """Remove nested Lean comments while preserving strings and line breaks."""
+    """Remove nested Lean comments while preserving strings and line breaks.
+
+    Comment characters become spaces (line breaks are kept) so offsets and
+    line numbers are unchanged.  Scanning jumps between the next significant
+    token with precompiled regexes instead of stepping one character at a
+    time; tokens are matched leftmost-first, as a character-by-character scan
+    would.
+    """
     result: list[str] = []
-    index = 0
-    depth = 0
-    in_string = False
-    escaped = False
-    line_comment = False
-    while index < len(text):
-        if line_comment:
-            if text[index] == "\n":
-                line_comment = False
-                result.append("\n")
-            else:
-                result.append(" ")
-            index += 1
-        elif depth:
-            if text.startswith("/-", index):
-                depth += 1
-                result.extend((" ", " "))
-                index += 2
-            elif text.startswith("-/", index):
-                depth -= 1
-                result.extend((" ", " "))
-                index += 2
-            else:
-                result.append("\n" if text[index] == "\n" else " ")
-                index += 1
-        elif in_string:
-            char = text[index]
-            result.append(char)
-            if escaped:
-                escaped = False
-            elif char == "\\":
-                escaped = True
-            elif char == '"':
-                in_string = False
-            index += 1
-        elif text.startswith("/-", index):
-            depth = 1
-            result.extend((" ", " "))
-            index += 2
-        elif text.startswith("--", index):
-            line_comment = True
-            result.extend((" ", " "))
-            index += 2
+    pos = 0
+    length = len(text)
+    while pos < length:
+        match = _COMMENT_START_RE.search(text, pos)
+        if match is None:
+            result.append(text[pos:])
+            break
+        start = match.start()
+        result.append(text[pos:start])
+        token = match.group()
+        if token == '"':
+            cursor = match.end()
+            while True:
+                inner = _STRING_TOKEN_RE.search(text, cursor)
+                if inner is None:
+                    end = length
+                    break
+                cursor = inner.end()
+                if inner.group() == '"':
+                    end = cursor
+                    break
+            result.append(text[start:end])
+            pos = end
+        elif token == "--":
+            newline = text.find("\n", start)
+            end = length if newline < 0 else newline
+            result.append(" " * (end - start))
+            pos = end
         else:
-            char = text[index]
-            result.append(char)
-            if char == '"':
-                in_string = True
-            index += 1
+            depth = 1
+            cursor = match.end()
+            while depth:
+                inner = _BLOCK_COMMENT_TOKEN_RE.search(text, cursor)
+                if inner is None:
+                    cursor = length
+                    break
+                depth += 1 if inner.group() == "/-" else -1
+                cursor = inner.end()
+            result.append(_NOT_NEWLINE_RE.sub(" ", text[start:cursor]))
+            pos = cursor
     return "".join(result)
 
 
@@ -492,10 +537,10 @@ def imported_inductive_owners(
 ) -> dict[str, list[tuple[str, str, dict[str, str]]]]:
     """Imported width-indexed inductives, with payloads scoped to each owner."""
     root_path = Path(root)
-    current = module_source_file(module, root_path)
-    if not current.is_file():
+    current = _lean_file_info(module_source_file(module, root_path))
+    if current is None:
         return {}
-    pending = list(IMPORT_RE.findall(current.read_text(encoding="utf-8")))
+    pending = list(current.imports)
     visited: set[str] = set()
     result: dict[str, list[tuple[str, str, dict[str, str]]]] = {}
     while pending:
@@ -503,17 +548,20 @@ def imported_inductive_owners(
         if imported in visited:
             continue
         visited.add(imported)
-        path = root_path / (imported.replace(".", "/") + ".lean")
-        if not path.is_file():
+        info = _lean_file_info(root_path / (imported.replace(".", "/") + ".lean"))
+        if info is None:
             continue
-        lines = path.read_text(encoding="utf-8").splitlines()
-        headers = inductive_headers(lines)
-        payloads = inductive_constructor_types(lines)
+        lines = info.lines
+        headers = info.parsed("inductive_headers", lambda i: inductive_headers(i.lines))
+        payloads = info.parsed(
+            "inductive_constructor_types",
+            lambda i: inductive_constructor_types(i.lines),
+        )
         for name, header in headers.items():
             result.setdefault(name, []).append(
                 (imported, header, payloads.get(name, {}))
             )
-        pending.extend(IMPORT_RE.findall("\n".join(lines)))
+        pending.extend(info.imports)
     return result
 
 
@@ -526,10 +574,10 @@ def imported_structure_headers(module: str, root: str) -> dict[str, list[str]]:
     declaration rather than from a same-named local duplicate.
     """
     root_path = Path(root)
-    current = module_source_file(module, root_path)
-    if not current.is_file():
+    current = _lean_file_info(module_source_file(module, root_path))
+    if current is None:
         return {}
-    pending = list(IMPORT_RE.findall(current.read_text(encoding="utf-8")))
+    pending = list(current.imports)
     visited: set[str] = set()
     result: dict[str, list[str]] = {}
     while pending:
@@ -537,13 +585,15 @@ def imported_structure_headers(module: str, root: str) -> dict[str, list[str]]:
         if imported in visited:
             continue
         visited.add(imported)
-        path = root_path / (imported.replace(".", "/") + ".lean")
-        if not path.is_file():
+        info = _lean_file_info(root_path / (imported.replace(".", "/") + ".lean"))
+        if info is None:
             continue
-        lines = path.read_text(encoding="utf-8").splitlines()
-        for name, header in structure_headers(lines).items():
+        lines = info.lines
+        for name, header in info.parsed(
+            "structure_headers", lambda i: structure_headers(i.lines)
+        ).items():
             result.setdefault(name, []).append(header)
-        pending.extend(IMPORT_RE.findall("\n".join(lines)))
+        pending.extend(info.imports)
     return result
 
 
@@ -562,10 +612,10 @@ def imported_structure_owners(
     the evidence is grouped per declaration here instead.
     """
     root_path = Path(root)
-    current = module_source_file(module, root_path)
-    if not current.is_file():
+    current = _lean_file_info(module_source_file(module, root_path))
+    if current is None:
         return {}
-    pending = list(IMPORT_RE.findall(current.read_text(encoding="utf-8")))
+    pending = list(current.imports)
     visited: set[str] = set()
     result: dict[str, list[tuple[str, str, dict[str, str]]]] = {}
     while pending:
@@ -573,17 +623,19 @@ def imported_structure_owners(
         if imported in visited:
             continue
         visited.add(imported)
-        path = root_path / (imported.replace(".", "/") + ".lean")
-        if not path.is_file():
+        info = _lean_file_info(root_path / (imported.replace(".", "/") + ".lean"))
+        if info is None:
             continue
-        lines = path.read_text(encoding="utf-8").splitlines()
-        headers = structure_headers(lines)
-        types = structure_field_types(lines)
+        lines = info.lines
+        headers = info.parsed("structure_headers", lambda i: structure_headers(i.lines))
+        types = info.parsed(
+            "structure_field_types", lambda i: structure_field_types(i.lines)
+        )
         for name, fields in types.items():
             result.setdefault(name, []).append(
                 (imported, headers.get(name, ""), fields)
             )
-        pending.extend(IMPORT_RE.findall("\n".join(lines)))
+        pending.extend(info.imports)
     return result
 
 
@@ -600,10 +652,10 @@ def imported_structure_field_types(
     duplicate.
     """
     root_path = Path(root)
-    current = module_source_file(module, root_path)
-    if not current.is_file():
+    current = _lean_file_info(module_source_file(module, root_path))
+    if current is None:
         return {}
-    pending = list(IMPORT_RE.findall(current.read_text(encoding="utf-8")))
+    pending = list(current.imports)
     visited: set[str] = set()
     result: dict[str, list[tuple[str, set[str], dict[str, str]]]] = {}
     while pending:
@@ -611,17 +663,19 @@ def imported_structure_field_types(
         if imported in visited:
             continue
         visited.add(imported)
-        path = root_path / (imported.replace(".", "/") + ".lean")
-        if not path.is_file():
+        info = _lean_file_info(root_path / (imported.replace(".", "/") + ".lean"))
+        if info is None:
             continue
-        lines = path.read_text(encoding="utf-8").splitlines()
-        members = structure_field_map(lines)
-        types = structure_field_types(lines)
+        lines = info.lines
+        members = info.parsed("structure_field_map", lambda i: structure_field_map(i.lines))
+        types = info.parsed(
+            "structure_field_types", lambda i: structure_field_types(i.lines)
+        )
         for name, fields in members.items():
             result.setdefault(name, []).append(
                 (imported, fields, types.get(name, {}))
             )
-        pending.extend(IMPORT_RE.findall("\n".join(lines)))
+        pending.extend(info.imports)
     return result
 
 
@@ -709,6 +763,27 @@ def tagged_declaration_text(lines: list[str], attribute_start: int) -> str:
 
 TO_FUNCTION_RE = re.compile(r"\bto([A-Z][A-Za-z0-9_']*)")
 OF_FUNCTION_RE = re.compile(r"\bof([A-Z][A-Za-z0-9_']*)")
+FMAP_WITNESS_RE = re.compile(
+    r"^\s*(?:@\[[\s\S]*?\]\s*)?(?:private\s+|protected\s+)?"
+    r"(?:theorem|lemma)\s+holFmapAsFiniteSupportWitness\b"
+    r"(?P<statement>[\s\S]*?):=",
+    re.M,
+)
+
+
+@lru_cache(maxsize=None)
+def _fmap_witness_statements(source: str) -> tuple[str, ...]:
+    """Statements of every `holFmapAsFiniteSupportWitness` in `source`.
+
+    The scan does not depend on the carrier being checked, so it is shared by
+    every qualified declaration in a module.  A source that never mentions the
+    witness name cannot match, which skips the lazy attribute scan entirely.
+    """
+    if "holFmapAsFiniteSupportWitness" not in source:
+        return ()
+    return tuple(
+        match.group("statement") for match in FMAP_WITNESS_RE.finditer(source)
+    )
 
 
 def has_fmap_witness(
@@ -729,15 +804,7 @@ def has_fmap_witness(
     """
     if not owning:
         return False
-    source = strip_lean_comments("\n".join(lines))
-    pattern = re.compile(
-        rf"^\s*(?:@\[[\s\S]*?\]\s*)?(?:private\s+|protected\s+)?"
-        rf"(?:theorem|lemma)\s+holFmapAsFiniteSupportWitness\b"
-        rf"(?P<statement>[\s\S]*?):=",
-        re.M,
-    )
-    for match in pattern.finditer(source):
-        statement = match.group("statement")
+    for statement in _fmap_witness_statements(strip_lean_comments("\n".join(lines))):
         if not identifier_token_occurs(statement, owning):
             continue
         if "=" not in statement and "\u2194" not in statement:
@@ -1904,19 +1971,20 @@ def words_as_type_indexed_bitvec_errors(
         else:
             candidate_errors: list[str] = []
             def has_hol_tag(owner_module: str, owner_name: str) -> bool:
-                path = module_source_file(owner_module, Path(root))
-                if not path.is_file():
+                info = _lean_file_info(module_source_file(owner_module, Path(root)))
+                if info is None:
                     return False
-                source_lines = strip_lean_comments(
-                    path.read_text(encoding="utf-8")
-                ).splitlines()
+                source_lines = info.parsed(
+                    "stripped_lines",
+                    lambda i: strip_lean_comments(i.text).splitlines(),
+                )
+                inductive_re = re.compile(
+                    rf"^\s*inductive\s+{re.escape(owner_name)}(?:\s|\()"
+                )
                 declaration_line = next(
                     (
                         index for index, line in enumerate(source_lines)
-                        if re.match(
-                            rf"^\s*inductive\s+{re.escape(owner_name)}(?:\s|\()",
-                            line,
-                        )
+                        if inductive_re.match(line)
                     ),
                     None,
                 )
