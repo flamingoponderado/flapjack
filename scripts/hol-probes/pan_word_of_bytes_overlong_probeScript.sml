@@ -9,10 +9,10 @@
    set_byte a b (word_of_bytes be (a + 1w) bs) be`, so the FIRST byte of the
    list is written OUTERMOST at address 0 and later bytes are written at
    increasing addresses (which wrap modulo `dimindex (:'a) DIV 8`). Hence at
-   address 0 the earliest byte of each residue wins and only the first
-   `dimindex (:'a) DIV 8` bytes survive; the discarded bytes are exactly the
-   ones the Lean `panWordOfBytesHOL`/`crepClockWordOfBytes` little-endian
-   decoders drop modulo `2 ^ dimindex`.
+   address 0 the earliest byte of each residue wins. For widths at least 8,
+   only the first `dimindex (:'a) DIV 8` bytes survive; for sub-byte widths,
+   the initial address-zero write retains only the word's available low bits.
+   This matches the Lean `panWordOfBytesHOL`/`crepClockWordOfBytes` decoders.
 
    `set_byte_def` is `[nocompute]`, so `EVAL` alone leaves the recursive chain
    symbolic; the rows below first unfold `word_of_bytes_def`/`set_byte_def`
@@ -108,5 +108,16 @@ val _ = print_eval "w9_overlong_take_one"
 (* Width 12: `dimindex DIV 8 = 1`, same one-byte-per-word behaviour. *)
 val _ = print_eval "w12_overlong_four"
   (``word_of_bytes F (0w : 12 word) [7w; 9w; 11w; 13w] : 12 word``);
+
+(* Sub-byte word dimensions have dimindex DIV 8 = 0.  HOL's byte_index then
+   uses the unwrapped word address; at initial address 0 the outermost first
+   byte fills the available low bits and the later byte slices are above the
+   word. *)
+val _ = print_eval "w1_overlong_three"
+  (``word_of_bytes F (0w : 1 word) [1w; 3w; 5w] : 1 word``);
+val _ = print_eval "w7_overlong_three"
+  (``word_of_bytes F (0w : 7 word) [127w; 3w; 5w] : 7 word``);
+val _ = print_eval "w7_first_byte_truncates"
+  (``word_of_bytes F (0w : 7 word) [255w; 3w; 5w] = 127w``);
 
 val _ = print ("done=ok\n");

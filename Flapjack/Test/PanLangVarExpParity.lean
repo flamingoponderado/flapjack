@@ -1,5 +1,6 @@
 import Flapjack.Pancake.PanLang
 import Flapjack.Pancake.PanLang.Exp
+import Flapjack.Pancake.PanLang.Prog
 
 /-!
 # Pancake local/global expression-variable parity
@@ -108,5 +109,16 @@ example : (varExpHOL (expToHOL nestedProd)).map toStringOfBytes =
     simp [nestedProd, ExpByteRanged, ListExpByteRanged, ListFieldByteRanged,
       ShapeByteRanged]
   exact varExpHOL_expToHOL_decode_of_expByteRanged nestedProd hnested
+
+/-- A parser/pass-style program rangedness premise supplies the expression
+byte-range fact needed by the same production/HOL bridge. -/
+example : (varExpHOL (expToHOL nestedProd)).map toStringOfBytes =
+    expLocalVars nestedProd := by
+  let program : Prog (BitVec 8) := .return nestedProd
+  have hprogram : ProgByteRanged program := by
+    simp [program, ProgByteRanged, nestedProd, ExpByteRanged,
+      ListExpByteRanged, ListFieldByteRanged, ShapeByteRanged]
+  exact varExpHOL_expToHOL_decode_of_progByteRanged program hprogram nestedProd
+    (by simp [program, expsOf])
 
 end Flapjack.Test.PanLangVarExpParity
