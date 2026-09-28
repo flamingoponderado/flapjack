@@ -2930,6 +2930,108 @@ theorem panSemTotalEvaluate_assign_agree_of_progByteRanged {σ : Type}
   exact panSemTotalEvaluate_assign_agree primitive production exact hrel hranged
     kind name hname e he
 
+/-- Production/exact agreement for the `Store` constructor, assembled from the
+    all-constructor expression agreement
+    (`evalPanSemStateExp_agree`/`evalHOLFinite_eq_classical`) and the
+    `TotalEvalBridge` clause slice `panSemTotalStoreClause_agree`.  Both the
+    destination and the source evaluation agreement are discharged from their
+    `ExpByteRanged` hypotheses; the success, invalid-address (non-word
+    destination), and failed-expression branches are all covered without any
+    target run, result, or post-state premise. -/
+theorem panSemTotalEvaluate_store_agree {σ : Type}
+    (primitive : PanPrimitiveHandler (RiscV.Word 64))
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (hranged : PanSemStateRelExecRanged production)
+    (address value : Exp (RiscV.Word 64))
+    (haddress : ExpByteRanged address) (hvalue : ExpByteRanged value) :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluate primitive (.store address value) production).1
+        (evaluateHOLFiniteState exact (.store (expToHOL address) (expToHOL value))).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluate primitive (.store address value) production).2
+        (evaluateHOLFiniteState exact (.store (expToHOL address) (expToHOL value))).2.toExact := by
+  rw [panSemTotalEvaluate]
+  have haddr := evalPanSemStateExp_agree production exact hrel hranged address haddress
+  have hclassAddr := evalHOLFinite_eq_classical exact (expToHOL address)
+  cases hAddr : evalPanSemStateExp production address with
+  | none =>
+      have hexactAddr : @evalHOLExact 64 σ _ exact.toExact
+          (fun a => Classical.propDecidable (exact.memaddrs a)) (expToHOL address) = none := by
+        rw [hclassAddr, ← haddr, hAddr]
+        rfl
+      rw [panSemTotalStoreClause_none production address value hAddr]
+      simp only [evaluateHOLFiniteState_store, hexactAddr]
+      exact ⟨trivial, hrel⟩
+  | some addrValue =>
+      have hexactAddr : @evalHOLExact 64 σ _ exact.toExact
+          (fun a => Classical.propDecidable (exact.memaddrs a)) (expToHOL address)
+          = some (panValueToHOL addrValue) := by
+        rw [hclassAddr, ← haddr, hAddr]
+        rfl
+      cases addrValue with
+      | word addr =>
+          have hval := evalPanSemStateExp_agree production exact hrel hranged value hvalue
+          have hclassVal := evalHOLFinite_eq_classical exact (expToHOL value)
+          cases hValue : evalPanSemStateExp production value with
+          | none =>
+              have hexactValue : @evalHOLExact 64 σ _ exact.toExact
+                  (fun a => Classical.propDecidable (exact.memaddrs a)) (expToHOL value) = none := by
+                rw [hclassVal, ← hval, hValue]
+                rfl
+              have hclause : panSemTotalStoreClause production address value = (some .error, production) := by
+                simp [panSemTotalStoreClause, panSemTotalExprStep, hAddr, hValue]
+              rw [hclause]
+              simp only [evaluateHOLFiniteState_store, hexactAddr, panValueToHOL_word, hexactValue]
+              exact ⟨trivial, hrel⟩
+          | some storedValue =>
+              have hexactAddr' : @evalHOLExact 64 σ _ exact.toExact
+                  (fun a => Classical.propDecidable (exact.memaddrs a)) (expToHOL address)
+                  = some (.val (.word addr)) := by
+                simpa only [panValueToHOL_word] using hexactAddr
+              have hexactValue : @evalHOLExact 64 σ _ exact.toExact
+                  (fun a => Classical.propDecidable (exact.memaddrs a)) (expToHOL value)
+                  = some (panValueToHOL storedValue) := by
+                rw [hclassVal, ← hval, hValue]
+                rfl
+              exact panSemTotalStoreClause_agree production exact hrel address value addr storedValue
+                hAddr hValue hexactAddr' hexactValue
+      | rStruct fields =>
+          have hclause : panSemTotalStoreClause production address value = (some .error, production) := by
+            simp [panSemTotalStoreClause, panSemTotalExprStep, hAddr]
+          rw [hclause]
+          simp only [evaluateHOLFiniteState_store, hexactAddr, panValueToHOL]
+          exact ⟨trivial, hrel⟩
+      | nStruct name fields =>
+          have hclause : panSemTotalStoreClause production address value = (some .error, production) := by
+            simp [panSemTotalStoreClause, panSemTotalExprStep, hAddr]
+          rw [hclause]
+          simp only [evaluateHOLFiniteState_store, hexactAddr, panValueToHOL]
+          exact ⟨trivial, hrel⟩
+
+/-- The fully assembled production/exact `Store`-clause agreement with both
+    expression premises (`ExpByteRanged address`, `ExpByteRanged value`)
+    discharged from the executed program node's `ProgByteRanged` hypothesis
+    (mirroring `panSemTotalEvaluate_assign_agree_of_progByteRanged`). -/
+theorem panSemTotalEvaluate_store_agree_of_progByteRanged {σ : Type}
+    (primitive : PanPrimitiveHandler (RiscV.Word 64))
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (hranged : PanSemStateRelExecRanged production)
+    (address value : Exp (RiscV.Word 64))
+    (hprogram : ProgByteRanged (.store address value)) :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluate primitive (.store address value) production).1
+        (evaluateHOLFiniteState exact (.store (expToHOL address) (expToHOL value))).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluate primitive (.store address value) production).2
+        (evaluateHOLFiniteState exact (.store (expToHOL address) (expToHOL value))).2.toExact := by
+  obtain ⟨haddress, hvalue⟩ := hprogram
+  exact panSemTotalEvaluate_store_agree primitive production exact hrel hranged
+    address value haddress hvalue
+
 /-! ## Production/exact agreement for the `Return` and `Raise` constructors
 
 `panSemTotalReturnClause` (`TotalSteps.lean:177`) and `panSemTotalRaiseClause`
@@ -3248,6 +3350,115 @@ theorem panSemTotalEvaluate_raise_agree {σ : Type}
             dsimp only
             rw [if_neg (fun h => hcond (hcondBool.mp h))]
             exact ⟨trivial, hrel⟩
+
+/-- Production/exact agreement for the `StoreByte` constructor: both evaluators
+    evaluate the destination and the source to words, then store the low byte;
+    evaluation failure, a non-word operand, or a failed store yields `Error` with
+    the state unchanged.  The memory step is `panSemStateRelExec_storeByte`. -/
+theorem panSemTotalEvaluate_storeByte_agree {σ : Type}
+    (primitive : PanPrimitiveHandler (RiscV.Word 64))
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (hranged : PanSemStateRelExecRanged production)
+    (destination source : ExpHOL 64) :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluate primitive
+          (.storeByte (expOfHOL destination) (expOfHOL source) : Prog (RiscV.Word 64))
+          production).1
+        (evaluateHOLFiniteState exact (.storeByte destination source : ProgHOL 64)).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluate primitive
+          (.storeByte (expOfHOL destination) (expOfHOL source) : Prog (RiscV.Word 64))
+          production).2
+        (evaluateHOLFiniteState exact (.storeByte destination source : ProgHOL 64)).2.toExact := by
+  have hd := evalPanSemStateExp_agree production exact hrel hranged
+    (expOfHOL destination) (expOfHOL_byteRanged_bridge destination)
+  have hs := evalPanSemStateExp_agree production exact hrel hranged
+    (expOfHOL source) (expOfHOL_byteRanged_bridge source)
+  simp only [expToHOL_expOfHOL, ← evalHOLFinite_eq_classical] at hd hs
+  rw [panSemTotalEvaluate, evaluateHOLFiniteState_storeByte, ← hd]
+  unfold panSemTotalStoreByteClause panSemTotalExprStep
+  cases hed : evalPanSemStateExp production (expOfHOL destination) with
+  | none => exact ⟨trivial, hrel⟩
+  | some dv =>
+    cases dv with
+    | rStruct _ => simp only [Option.map_some, panValueToHOL.eq_2]; exact ⟨trivial, hrel⟩
+    | nStruct _ _ => simp only [Option.map_some, panValueToHOL.eq_3]; exact ⟨trivial, hrel⟩
+    | word a =>
+      simp only [Option.map_some, panValueToHOL_word]
+      rw [← hs]
+      cases hes : evalPanSemStateExp production (expOfHOL source) with
+      | none => exact ⟨trivial, hrel⟩
+      | some sv =>
+        cases sv with
+        | rStruct _ => simp only [Option.map_some, panValueToHOL.eq_2]; exact ⟨trivial, hrel⟩
+        | nStruct _ _ => simp only [Option.map_some, panValueToHOL.eq_3]; exact ⟨trivial, hrel⟩
+        | word w =>
+          simp only [Option.map_some, panValueToHOL_word]
+          have hb := panSemStateRelExec_storeByte production exact.toExact hrel a w
+          revert hb
+          cases (panSemBitVec64MemoryAccess production).storeByte
+              (panSemBitVec64MemoryAccess production).domain
+              production.memory panSemBitVec64BytesInWord a w <;>
+            cases @panMemStoreByteWord8HOL 64 _ exact.memory exact.memaddrs
+              (fun a => Classical.propDecidable (exact.memaddrs a)) exact.be a
+              (BitVec.ofNat 8 w.toNat) <;>
+            intro hb <;> first | exact hb.elim | exact ⟨trivial, hrel⟩ | exact ⟨trivial, hb⟩
+
+/-- Production/exact agreement for the `Store32` constructor, analogous to
+    `panSemTotalEvaluate_storeByte_agree`; the memory step (alignment, domain,
+    and the big/little-endian byte order) is `panSemStateRelExec_store32`. -/
+theorem panSemTotalEvaluate_store32_agree {σ : Type}
+    (primitive : PanPrimitiveHandler (RiscV.Word 64))
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (hranged : PanSemStateRelExecRanged production)
+    (destination source : ExpHOL 64) :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluate primitive
+          (.store32 (expOfHOL destination) (expOfHOL source) : Prog (RiscV.Word 64))
+          production).1
+        (evaluateHOLFiniteState exact (.store32 destination source : ProgHOL 64)).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluate primitive
+          (.store32 (expOfHOL destination) (expOfHOL source) : Prog (RiscV.Word 64))
+          production).2
+        (evaluateHOLFiniteState exact (.store32 destination source : ProgHOL 64)).2.toExact := by
+  have hd := evalPanSemStateExp_agree production exact hrel hranged
+    (expOfHOL destination) (expOfHOL_byteRanged_bridge destination)
+  have hs := evalPanSemStateExp_agree production exact hrel hranged
+    (expOfHOL source) (expOfHOL_byteRanged_bridge source)
+  simp only [expToHOL_expOfHOL, ← evalHOLFinite_eq_classical] at hd hs
+  rw [panSemTotalEvaluate, evaluateHOLFiniteState_store32, ← hd]
+  unfold panSemTotalStore32Clause panSemTotalExprStep
+  cases hed : evalPanSemStateExp production (expOfHOL destination) with
+  | none => exact ⟨trivial, hrel⟩
+  | some dv =>
+    cases dv with
+    | rStruct _ => simp only [Option.map_some, panValueToHOL.eq_2]; exact ⟨trivial, hrel⟩
+    | nStruct _ _ => simp only [Option.map_some, panValueToHOL.eq_3]; exact ⟨trivial, hrel⟩
+    | word a =>
+      simp only [Option.map_some, panValueToHOL_word]
+      rw [← hs]
+      cases hes : evalPanSemStateExp production (expOfHOL source) with
+      | none => exact ⟨trivial, hrel⟩
+      | some sv =>
+        cases sv with
+        | rStruct _ => simp only [Option.map_some, panValueToHOL.eq_2]; exact ⟨trivial, hrel⟩
+        | nStruct _ _ => simp only [Option.map_some, panValueToHOL.eq_3]; exact ⟨trivial, hrel⟩
+        | word w =>
+          simp only [Option.map_some, panValueToHOL_word]
+          have hb := panSemStateRelExec_store32 production exact.toExact hrel a w
+          revert hb
+          cases (panSemBitVec64MemoryAccess production).store32
+              (panSemBitVec64MemoryAccess production).domain
+              production.memory panSemBitVec64BytesInWord a w <;>
+            cases @panMemStore32HOL 64 _ exact.memory exact.memaddrs
+              (fun a => Classical.propDecidable (exact.memaddrs a)) exact.be a
+              (BitVec.ofNat 32 w.toNat) <;>
+            intro hb <;> first | exact hb.elim | exact ⟨trivial, hrel⟩ | exact ⟨trivial, hb⟩
 
 /-! ## Rangedness preservation and the `PanSemStateRelExec`/rangedness boundary
 
