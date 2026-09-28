@@ -1116,8 +1116,9 @@ post-state components except that the clock is zero.  Its proof depends on
 premise.  There is deliberately no `@[hol]` theorem for this result yet:
 `evaluateHOLFiniteViaExact` is the total pair-shaped adapter, but it delegates
 through the unrestricted-map `PanSemStateExact` evaluator, while the direct
-finite evaluator's projection is proved and its tagged `evaluate_def` remains
-in progress (`flapjack-qj5`). The faithful finite-state theorem
+finite evaluator's projection is proved and the tagged panSem `evaluate_def`
+assembly is `evaluateHOLFiniteState_eq_evaluate_def`
+(`PanSem/EvaluateClock.lean`). The faithful finite-state theorem
 is tracked by `flapjack-4ac.4.47.1`.
 -/
 
@@ -4220,9 +4221,9 @@ end Flapjack
 This genuine induction case keeps the source theorem's evaluator premise and
 all eight state-field conclusions.  HOL's `Skip` clause returns the original
 state, so this leaf is immediate over the reviewed finite-support carrier.
-The `Dec`, `If`, `Seq`, `While`, `DecCall`, and `Call` cases now have separate
-exact tagged proofs. The assembling theorem remains open in bead
-`flapjack-4ac.4.61`. -/
+The `Dec`, `If`, `Seq`, `While`, `DecCall`, and `Call` cases have separate
+exact tagged proofs, and the assembling theorem is the tagged
+`evaluateInvariantsHOLFinite` below (bead `flapjack-4ac.4.61`). -/
 
 open Flapjack.Pancake.PanLang (ProgHOL)
 
@@ -4260,7 +4261,8 @@ end Flapjack
 
 HOL evaluates `Break` to `(SOME Break, state)`. This induction leaf keeps the
 source theorem's result premise and all eight field conclusions. The recursive
-cases and assembling theorem remain open in bead `flapjack-4ac.4.61`. -/
+cases and the assembling theorem `evaluateInvariantsHOLFinite` below are
+tagged (bead `flapjack-4ac.4.61`). -/
 
 namespace Flapjack
 
