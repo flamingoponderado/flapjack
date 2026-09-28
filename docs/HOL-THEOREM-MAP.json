@@ -15041,8 +15041,14 @@
     "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
     "hol_name": "evaluate_ind",
     "hol_line": 440,
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds5 (2026-09-27, beads flapjack-2de.1.1 and flapjack-4ac.5.16.5): tag WITHDRAWN on coordinator review. The induction principle is kernel-checked and clause-for-clause follows crepSemScript.sml:440 evaluate_ind (uncurried pair motive, !v v1. P (v,v1), 19 clauses in HOL order, HOL's own guards and IHs, fix_clock rewritten away), but it is over evalCrepSemHOLProgExact, the same exact evaluator whose Seq/While clause-equation tags were already withdrawn pending whole-evaluator source review (Call domain-stamping and FFI effect agreement). The induction principle inherits that pending dependency, so no @[hol] tag is claimed and the qualifiers are removed. The faithful tagged port is tracked by flapjack-2de.1.1, which is blocked by flapjack-4ac.5.16.5. Retained as untagged Flapjack-specific infrastructure."
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-28; beads flapjack-2de.1 and flapjack-2de.1.1; cakeml/pancake/semantics/crepSemScript.sml:440 evaluate_ind = REWRITE_RULE [fix_clock_evaluate] evaluate_ind): the theorem reconstructs the rewritten principle clause-for-clause and is now tagged. Uncurried pair motive P : CrepProgHOL width x CrepSemHOLState width σ -> Prop with conclusion !v v1. P (v,v1); the 19 clauses appear in HOL order with HOL's own guards and recursive IHs (checked against the direct probe scripts/hol-probes/crep_sem_evaluate_ind_probe.out): Skip; Dec (crepExactEvalExpClassical s e = some value, IH over setVar); Primitive/Assign/Store/Store32/StoreByte; StoreGlob with HOL's fixed 5 word destination as BitVec 5; ShMem; Seq (both IHs, res = none); If (word guard); Break/Continue (num as Nat); While (the three HOL IHs incl. body at decClockCrepSemHOL and the continue/none self-recursion); Return/Raise/Tick; Call (HOL binders args v6 prog newlocals with lookup_code spelled through the reviewed lookupCodeHOL; body IH at decClockCrepSemHOL with the finite-support callee locals and the exception-handler IH at the caller locals); ExtCall. fix_clock is rewritten away using the evaluate_clock analogue evalCrepSemHOLProgExact_clock_le. The previously open translation deltas are internal and add no premise: crepExactEvalExpClassical is proved extensionally equal to the reviewed crepExactEvalExp by crepExactEvalExpClassical_eq, and lookupCodeHOLFinite_eq_some/_iff record that the finite-support wrapper projects exactly to the reviewed lookupCodeHOL. Representation recorded by the qualifiers: the motive's CrepSemHOLState locals/globals/code are the canonical HolFiniteMapExact translation (same-module witness CrepEvaluateIndFiniteSupport.holFmapAsFiniteSupportWitness), HOL's type-indexed word is BitVec width with [NeZero width], and 'ffi is a host σ : Type. The evaluator itself was source-reviewed and tagged as the line-443 evaluate_def in unified PR #1169 at 5fde1a499 (bead flapjack-4ac.5.16.5), which is why the earlier withdrawal is lifted."
   },
   {
     "hol_path": null,

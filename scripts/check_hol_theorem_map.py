@@ -337,16 +337,6 @@ DOCUMENTED_MISMATCHES = {
         "whole-evaluator agreement between evalCrepSemHOLProgExact and HOL evaluate has not "
         "been reviewed across Call, domain stamping, and FFI. Tag withdrawn pending that review.",
     ),
-    ("Flapjack/Pancake/Semantics/CrepSem/EvaluateInd.lean", "evalCrepSemHOLProgExact_induct"): (
-        "cakeml/pancake/semantics/crepSemScript.sml",
-        "evaluate_ind",
-        "flapjack-ds5 (2026-09-27, beads flapjack-2de.1.1 and flapjack-4ac.5.16.5): tag WITHDRAWN "
-        "on coordinator review. The induction principle is kernel-checked and clause-for-clause "
-        "follows crepSemScript.sml:440 evaluate_ind, but it is over evalCrepSemHOLProgExact, whose "
-        "Seq/While clause tags were already withdrawn pending whole-evaluator agreement across "
-        "Call, domain stamping, and FFI. No @[hol] tag is claimed; the faithful tagged port is "
-        "tracked by flapjack-2de.1.1, blocked by flapjack-4ac.5.16.5.",
-    ),
     ("Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean", "evalCrepSemHOLProgExact_while_fixClockFree"): (
         "cakeml/pancake/semantics/crepSemScript.sml",
         "evaluate_def",
