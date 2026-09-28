@@ -384,7 +384,7 @@ theorem two_pow_eight_mul_succ_eq_pow256 (e : Nat) :
 /-- Reading back the byte just written at the same address (little-endian) returns
     that byte: `panSetByteHOL` overwrites the byte at the written residue. -/
 theorem panGetByteHOL_panSetByteHOL_self {width : Nat} [NeZero width]
-    (hdiv : width % 8 = 0) (k : Nat) (hk : k < width / 8) (b : BitVec 8)
+    (h8w : 8 ≤ width) (k : Nat) (hk : k < width / 8) (b : BitVec 8)
     (X : RiscV.Word width) :
     (panGetByteHOL (BitVec.ofNat width k)
         (panSetByteHOL (BitVec.ofNat width k) (BitVec.ofNat width b.toNat) X false)
@@ -401,9 +401,7 @@ theorem panGetByteHOL_panSetByteHOL_self {width : Nat} [NeZero width]
   have hb : b.toNat < 256 := b.isLt
   have hbb : (UInt8.ofNat b.toNat).toNat = b.toNat := by
     rw [UInt8.toNat_ofNat', Nat.mod_eq_of_lt b.isLt]
-  have h8 : 8 ≤ width :=
-    Nat.le_of_dvd (Nat.pos_of_ne_zero (NeZero.ne width)) (Nat.dvd_of_mod_eq_zero hdiv)
-  have hset := panSetByteHOL_toNat (width := width) h8 (BitVec.ofNat width k)
+  have hset := panSetByteHOL_toNat (width := width) h8w (BitVec.ofNat width k)
     X (UInt8.ofNat b.toNat) false
   rw [hbi, two_pow_eight_mul_eq_pow256, two_pow_eight_mul_succ_eq_pow256, hbb] at hset
   simp only [panGetByteHOL, Bool.false_eq_true, if_false, haddr, Nat.mod_eq_of_lt hk]
