@@ -18318,6 +18318,18 @@
   },
   {
     "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
+    "hol_name": "comp_func_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Optimise.lean",
+    "lean_name": "compFuncHOLExact",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_parameters": [
+      "fs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-28, bead flapjack-pxn.18.5.6.35) against crep_to_loopScript.sml:235-240. HOL has binders target, fs, params, body and no premises; it constructs make_vmap params = FEMPTY |++ ZIP (params, GENLIST I (LENGTH params)), vmax = LENGTH params - 1, and initial live list_to_num_set (GENLIST I (LENGTH params)), then calls compile (mk_ctxt target vmap fs vmax) live body. compFuncHOLExact preserves the four binders and result shape over AsmArchitecture, HolFiniteMapExact MlString maps, CrepProgHOL width, and HolLoopProg width, using updateList, List.range, sptListInsert, mkCtxtExact, and compileHOLExact. The standalone fs map parameter is the only finite-map qualifier; the positive width-indexed word translation is recorded separately. It adds no hypothesis, branch, or success condition. Original direct EVAL rows for Skip, one/two params, and duplicate parameter names are in scripts/hol-probes/crep_to_loop_comp_func_probe.out and replayed by Flapjack.Test.CrepToLoopCompFuncExactParity. Production crepCompFunc remains String/list-backed and continues to be tracked by the linked production bridge flapjack-pxn.18.5.6.28.1."
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
     "hol_name": "compile_crepop_def",
     "lean_path": "Flapjack/Pancake/CrepToLoop/ContextExact.lean",
     "lean_name": "compileCrepopHOLExact",

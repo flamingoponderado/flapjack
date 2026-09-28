@@ -42,6 +42,10 @@ additionally probes `pan_op_def` at lines 191--193.
 clauses over `HolLoopProg`/`NumSet`; its direct HOL outputs for Skip,
 LocValue, Assign, Load32/LoadByte, Seq, If, each Arith variant, and the
 catch-all are in `scripts/hol-probes/loop_props_cut_sets_probe.out`.
+`Flapjack.Test.CrepToLoopCompFuncExactParity` guards the exact
+`crep_to_loop$comp_func_def` wrapper over the faithful context/program
+carriers; direct HOL-EVAL rows for Skip, one and two parameters, and duplicate
+parameter names are in `crep_to_loop_comp_func_probe.out`.
 `Flapjack.Test.LoopDecClockParity` probes `dec_clock_def` at lines 42--43 of
 the same source.
 `Flapjack.Test.LoopFixClockParity` probes `fix_clock_def` at lines 46--49.
