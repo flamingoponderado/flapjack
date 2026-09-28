@@ -313,7 +313,9 @@ run_probe crep_to_loop_ctxt_max_probeScript.sml crep_to_loop_ctxt_max_probe.out 
   ctxt_max_within ctxt_max_absent "$cake_dir/pancake/proofs/crep_to_loopProofScript.sml" \
   "$cake_dir/pancake/proofs"
 run_probe crep_to_loop_locals_rel_probeScript.sml crep_to_loop_locals_rel_probe.out \
-  ctxt_vars_lookup subset_domain_component \
+  ctxt_vars_lookup ctxt_max_component set_domain_mem map_lookup \
+  subset_domain_component locals_rel_true locals_rel_domain_false \
+  locals_rel_value_false \
   "$cake_dir/pancake/proofs/crep_to_loopProofScript.sml" \
   "$cake_dir/pancake/proofs"
 run_probe crep_to_loop_locals_insert_probeScript.sml crep_to_loop_locals_insert_probe.out \
