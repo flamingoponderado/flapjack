@@ -6,6 +6,7 @@ import Flapjack.Pancake.Semantics.LoopSemStateExact
 import Flapjack.LoopStateResult
 import Flapjack.Compiler.Encoders.Asm
 import Flapjack.Misc.Sptree
+import Flapjack.Pancake.PanLang.Shape
 
 /-!
 State relation analogue for the Crepe-to-Loop lowering, based on
@@ -1002,5 +1003,82 @@ theorem sptListInsert_append (xs ys : List Nat) (tree : NumSet) :
   | cons x xs ih =>
     simp only [List.cons_append, sptListInsert]
     rw [ih (sptInsert x () tree), sptListInsert_insert x ys tree]
+
+/-! ## Exact `crep_to_loop` context carrier
+
+HOL `crep_to_loop$context` (`cakeml/pancake/crep_to_loopScript.sml:11-18`) stores
+`vars : varname |-> num` (with `varname = num`), `funcs : funname |-> num # num`
+(with `funname = mlstring`), `vmax : num` and `target : architecture`. The exact
+carrier below renders both HOL finite maps with the reviewed canonical
+`HolFiniteMapExact` translation (numeric variable keys, `mlstring` function keys)
+and keeps `AsmArchitecture` for the HOL `architecture` datatype. The earlier
+`CrepToLoopFiniteMapContext` is the production/representational analogue with
+`String`-keyed `funcs` and stays untagged. -/
+
+open Flapjack.Pancake.PanLang (MlS)
+
+/-- Broad function-backed representation of the exact `crep_to_loop` context,
+    used only to state the finite-support representation roundtrip. -/
+structure CrepToLoopContextBroad where
+  varsLookup : Nat → Option Nat
+  varsFiniteSupport : ∃ keys : List Nat, ∀ key, varsLookup key ≠ none → key ∈ keys
+  funcsLookup : MlS → Option (Nat × Nat)
+  funcsFiniteSupport : ∃ keys : List MlS, ∀ key, funcsLookup key ≠ none → key ∈ keys
+  vmax : Nat
+  target : Compiler.Encoders.Asm.AsmArchitecture
+
+/-- Exact HOL `crep_to_loop$context` record (`crep_to_loopScript.sml:11-18`).
+    Its `vars`/`funcs` fields use the reviewed `HolFiniteMapExact` translation of
+    the HOL finite maps; the key carriers are the exact `Nat` (`varname = num`)
+    and `MlS` (`funname = mlstring`). -/
+@[hol "cakeml/pancake/crep_to_loopScript.sml" "context"
+  (fmap_as_finite_support := [vars, funcs])]
+structure CrepToLoopContextExact where
+  vars : HolFiniteMapExact Nat Nat
+  funcs : HolFiniteMapExact MlS (Nat × Nat)
+  vmax : Nat
+  target : Compiler.Encoders.Asm.AsmArchitecture
+
+namespace CrepToLoopContextExact
+
+/-- Forget the finite-map wrappers while retaining their finite-support
+    witnesses. -/
+def toBroad (context : CrepToLoopContextExact) : CrepToLoopContextBroad where
+  varsLookup := context.vars.lookup
+  varsFiniteSupport := context.vars.finiteSupport
+  funcsLookup := context.funcs.lookup
+  funcsFiniteSupport := context.funcs.finiteSupport
+  vmax := context.vmax
+  target := context.target
+
+/-- Reconstruct the canonical finite-support carrier from its broad record. -/
+def ofBroad (context : CrepToLoopContextBroad) : CrepToLoopContextExact where
+  vars := ⟨context.varsLookup, context.varsFiniteSupport⟩
+  funcs := ⟨context.funcsLookup, context.funcsFiniteSupport⟩
+  vmax := context.vmax
+  target := context.target
+
+/-- Canonical finite-support witness required by the `context` qualifier. -/
+theorem holFmapAsFiniteSupportWitness (context : CrepToLoopContextExact) :
+    ofBroad (toBroad context) = context := by
+  cases context
+  rfl
+
+end CrepToLoopContextExact
+
+/-- Exact port of HOL `ctxt_fc_def`
+    (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:73-81`). Cake's
+    `FEMPTY |++ ZIP (ns, args)` is `HolFiniteMapExact.updateList` from the empty
+    exact map, and `MAX_LIST args` is `args.foldr max 0`. The `funcs` map is
+    passed through unchanged. -/
+@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "ctxt_fc_def"
+  (fmap_as_finite_support := [vars, funcs])]
+def ctxtFcExact (target : Compiler.Encoders.Asm.AsmArchitecture)
+    (cvs : HolFiniteMapExact MlS (Nat × Nat)) (ns args : List Nat) :
+    CrepToLoopContextExact where
+  vars := HolFiniteMapExact.updateList HolFiniteMapExact.empty (ns.zip args)
+  funcs := cvs
+  vmax := args.foldr max 0
+  target := target
 
 end Flapjack
