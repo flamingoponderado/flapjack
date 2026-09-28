@@ -10,7 +10,7 @@ This module proves the ExtCall constructor conjunct in HOL's `evaluate_ind`.
 
 namespace Flapjack
 
-open Flapjack.Pancake.PanLang (MlS ProgHOL ExpHOL)
+open Flapjack.Pancake.PanLang (MlS ProgHOL ExpHOL sizeOfShapeHOL)
 
 /-- Lean-only specialization of `compile_exp_val_rel` used to expose a single
     compiled word expression in the ExtCall case. HOL proves this extraction
@@ -142,8 +142,10 @@ end PcCompileCorrectExtCallWitnesses
     congruence helper to preserve the source/target memory relation under their
     independently chosen `DecidablePred` instances. The source/target
     evaluators, compiler, and relations are the exact carriers described in
-    `PcCompileCorrect.lean`; no target-run, result, or post-state relation is
-    assumed. -/
+    `PcCompileCorrect.lean`. Like the other constructor cases, this theorem
+    uses HOL's single conjunctive premise and spells out the result `case`
+    rather than referring to `pcCompileCorrectResultRel`; no target-run,
+    result, or post-state relation is assumed. -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "pc_compile_correct"
   (fmap_as_finite_support_relation := [PanSemStateFiniteExact.locals,
     PanSemStateFiniteExact.globals, PanSemStateFiniteExact.code,
@@ -158,12 +160,12 @@ theorem pcCompileCorrect_ExtCall {width : Nat} {σ : Type} [NeZero width]
       (t : CrepSemHOLState width σ) (ctxt : PanToCrepContextExact width),
       source.evaluateHOLFiniteState
         (.extCall function configuration configurationLength array arrayLength : ProgHOL width) =
-          (res, s1) →
-      res ≠ some .error →
-      panToCrepStateRelFiniteExact source t →
-      codeRelExactHOLW ctxt source.code t.code →
-      panToCrepExcpRelFiniteExact ctxt.eids source.eshapes →
-      panToCrepLocalsRelFiniteExact ctxt source.locals t.locals →
+          (res, s1) ∧
+      res ≠ some .error ∧
+      panToCrepStateRelFiniteExact source t ∧
+      codeRelExactHOLW ctxt source.code t.code ∧
+      panToCrepExcpRelFiniteExact ctxt.eids source.eshapes ∧
+      panToCrepLocalsRelFiniteExact ctxt source.locals t.locals ∧
       localisedProgHOL
         (.extCall function configuration configurationLength array arrayLength : ProgHOL width) =
           true →
@@ -175,9 +177,26 @@ theorem pcCompileCorrect_ExtCall {width : Nat} {σ : Type} [NeZero width]
         panToCrepStateRelFiniteExact s1 t1 ∧
         codeRelExactHOLW ctxt s1.code t1.code ∧
         panToCrepExcpRelFiniteExact ctxt.eids s1.eshapes ∧
-        pcCompileCorrectResultRel ctxt s1 t1 res res1 := by
+        match res with
+        | none => res1 = none ∧ panToCrepLocalsRelFiniteExact ctxt s1.locals t1.locals
+        | some .error => False
+        | some .timeOut => res1 = some .timeOut
+        | some .break =>
+            res1 = some (.break 0) ∧ panToCrepLocalsRelFiniteExact ctxt s1.locals t1.locals
+        | some .continue =>
+            res1 = some (.continue 0) ∧ panToCrepLocalsRelFiniteExact ctxt s1.locals t1.locals
+        | some (.returned rv) => res1 = some (.return (flattenHOL rv))
+        | some (.exception eid value) =>
+            (match ctxt.eids.lookup eid with
+            | none => False
+            | some name =>
+                res1 = some (.exception name) ∧
+                (1 ≤ sizeOfShapeHOL (shapeOfHOLExact value) →
+                  globalsLookupHOL t1 value = some (flattenHOL value) ∧
+                    sizeOfShapeHOL (shapeOfHOLExact value) ≤ 32))
+        | some (.finalFfi event) => res1 = some (.finalFfi event) := by
   classical
-  intro res s1 t ctxt hrun hres hstate hcode hexcp hlocals hloc
+  intro res s1 t ctxt ⟨hrun, hres, hstate, hcode, hexcp, hlocals, hloc⟩
   rw [Flapjack.PanSemStateFiniteExact.evaluateHOLFiniteState_extCall_source] at hrun
   split at hrun <;> simp_all
   all_goals try { apply False.elim; apply hres; exact (congrArg Prod.fst hrun).symm }

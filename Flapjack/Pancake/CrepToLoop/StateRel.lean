@@ -1,6 +1,8 @@
 import Flapjack.HolRef
 import Flapjack.Pancake.CrepToLoop
 import Flapjack.Pancake.Semantics.CrepSem
+import Flapjack.Pancake.Semantics.CrepSem.HOLState
+import Flapjack.Pancake.Semantics.LoopSemStateExact
 import Flapjack.LoopStateResult
 import Flapjack.Compiler.Encoders.Asm
 import Flapjack.Misc.Sptree
@@ -157,8 +159,8 @@ theorem memLookupFromAListSomeExact {α : Type}
 
     Direct HOL oracle: `scripts/hol-probes/crep_to_loop_state_rel_probe.out`
     rows `memaddrs_mdomain_mem`, `sh_memaddrs_sh_mdomain_mem`, `clock_eq`,
-    `be_eq`, `base_eq`, `top_eq`, `clock_mismatch`. Faithful exact-carrier port
-    is tracked by `flapjack-pxn.18.5.6.9.1`. -/
+    `be_eq`, `base_eq`, `top_eq`, `clock_mismatch`. The exact-carrier port is
+    `crepToLoopStateRelExact` below (bead `flapjack-pxn.18.5.6.31.1`). -/
 def crepToLoopStateRel {width : Nat} [NeZero width] {σ : Type} (s : CrepHolState (BitVec width) σ)
     (t : LoopMachineState (BitVec width) σ) : Prop :=
   s.memaddrs = t.mdomain ∧
@@ -187,8 +189,8 @@ def crepToLoopStateRel {width : Nat} [NeZero width] {σ : Type} (s : CrepHolStat
     the conclusion is a `Prop`/iff, not a name. Direct HOL oracle:
     `scripts/hol-probes/crep_to_loop_state_rel_probe.out` rows
     `memaddrs_mdomain_mem`, `sh_memaddrs_sh_mdomain_mem`, `clock_eq`, `be_eq`,
-    `base_eq`, `top_eq`, `clock_mismatch`. Faithful exact-carrier port is
-    tracked by `flapjack-pxn.18.5.6.9.1`. -/
+    `base_eq`, `top_eq`, `clock_mismatch`. The exact-carrier port is
+    `crepToLoopStateRelExact_intro` below (bead `flapjack-pxn.18.5.6.31.1`). -/
 theorem crepToLoopStateRel_intro {width : Nat} [NeZero width] {σ : Type} (s : CrepHolState (BitVec width) σ)
     (t : LoopMachineState (BitVec width) σ) :
     crepToLoopStateRel s t ↔
@@ -265,14 +267,76 @@ theorem crepToLoopGlobalsRel_iff {width : Nat} [NeZero width]
     `be_eq`, `base_eq`, `top_eq`, `clock_mismatch` pin the seven-field relation;
     the theorem is exercised by the kernel-checked example in
     `Flapjack/Test/CrepToLoopParity.lean` (`state_rel_clock_add_zero`,
-    ~lines 363-368). Faithful exact-carrier port is tracked by
-    `flapjack-pxn.18.5.6.9.1`. -/
+    ~lines 363-368). The exact-carrier port is
+    `crepToLoopStateRelExact_clock_add_zero` below (bead `flapjack-pxn.18.5.6.31.1`). -/
 theorem crepToLoopStateRel_clock_add_zero {width : Nat} [NeZero width] {σ : Type}
     (s : CrepHolState (BitVec width) σ)
     (t : LoopMachineState (BitVec width) σ) (h : crepToLoopStateRel s t) :
     ∃ ck, crepToLoopStateRel s { t with clock := ck + t.clock } :=
   ⟨0, by
     rw [crepToLoopStateRel] at h ⊢
+    simpa using h⟩
+
+/-! ## Exact-carrier `state_rel` (`crep_to_loopProofScript.sml:31-41`, `:163-172`, `:219-223`)
+
+`crepToLoopStateRel` above is stated over the production `CrepHolState`/
+`LoopMachineState` carriers and its tag is withdrawn for that carrier mismatch.
+The exact ports of the two HOL datatypes are `CrepSemHOLState`
+(`crepSem$state`) and `LoopSemStateFiniteExact` (`loopSem$state`); over them the
+seven HOL field equations are stated verbatim. HOL's `memaddrs`/`sh_memaddrs`
+and `mdomain`/`sh_mdomain` are `set`s; the Crep carrier renders them as
+predicates and the Loop carrier as Boolean membership maps, so the Loop side is
+read through the same set-as-Bool rendering already tagged for `mem_rel`
+(`ad IN dom` becomes `dom ad = true`), i.e. the predicate
+`fun address => t.mdomain address = true`. -/
+
+/-- Exact port of HOL `crep_to_loop$state_rel_def`
+    (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:31-41`) over the exact
+    `crepSem$state`/`loopSem$state` ports. The seven field equations match HOL
+    clause-for-clause; the two domain fields use the reviewed set-as-Bool
+    rendering (see the section note), and the word length uses the standard
+    `BitVec width` translation with the `[NeZero width]` discharge of HOL's
+    positive `dimindex (:α)`. -/
+@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "state_rel_def"
+  (words_as_type_indexed_bitvec)]
+def crepToLoopStateRelExact {width : Nat} [NeZero width] {σ : Type}
+    (s : CrepSemHOLState width σ) (t : LoopSemStateFiniteExact width σ) : Prop :=
+  s.memaddrs = (fun address => t.mdomain address = true) ∧
+    s.shMemaddrs = (fun address => t.shMdomain address = true) ∧
+    s.clock = t.clock ∧
+    s.be = t.be ∧
+    s.ffi = t.ffi ∧
+    s.baseAddr = t.baseAddr ∧
+    s.topAddr = t.topAddr
+
+/-- Exact port of HOL `crep_to_loop$state_rel_intro`
+    (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:163-172`): the relation
+    unfolds to the seven-field conjunction over the exact carriers. -/
+@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "state_rel_intro"
+  (words_as_type_indexed_bitvec)]
+theorem crepToLoopStateRelExact_intro {width : Nat} [NeZero width] {σ : Type}
+    (s : CrepSemHOLState width σ) (t : LoopSemStateFiniteExact width σ) :
+    crepToLoopStateRelExact s t ↔
+      s.memaddrs = (fun address => t.mdomain address = true) ∧
+        s.shMemaddrs = (fun address => t.shMdomain address = true) ∧
+        s.clock = t.clock ∧
+        s.be = t.be ∧
+        s.ffi = t.ffi ∧
+        s.baseAddr = t.baseAddr ∧
+        s.topAddr = t.topAddr :=
+  Iff.rfl
+
+/-- Exact port of HOL `crep_to_loop$state_rel_clock_add_zero`
+    (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:219-223`): advancing
+    the target clock by any amount preserves the relation. -/
+@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "state_rel_clock_add_zero"
+  (words_as_type_indexed_bitvec)]
+theorem crepToLoopStateRelExact_clock_add_zero {width : Nat} [NeZero width] {σ : Type}
+    (s : CrepSemHOLState width σ) (t : LoopSemStateFiniteExact width σ)
+    (h : crepToLoopStateRelExact s t) :
+    ∃ ck, crepToLoopStateRelExact s { t with clock := ck + t.clock } :=
+  ⟨0, by
+    rw [crepToLoopStateRelExact] at h ⊢
     simpa using h⟩
 
 /-- Exact port of HOL `mem_rel_def`
@@ -498,8 +562,8 @@ structure CrepToLoopFiniteMapContext where
     rows `ctxt_vars_lookup`, `distinct_component`, `ctxt_max_component`,
     `set_domain_mem`, `map_lookup`, `subset_domain_component`; exercised by
     `Flapjack/Test/CrepToLoopParity.lean` (`localsRelContext` and the
-    `crepToLoopLocalsRelHOL` examples/fixtures). Faithful exact-carrier port
-    tracked by `flapjack-pxn.18.5.6.9.1`. -/
+    `crepToLoopLocalsRelHOL` examples/fixtures). The exact-carrier port is
+    tracked by `flapjack-pxn.18.5.6.31.2` (MlString-keyed context carrier). -/
 def crepToLoopLocalsRelHOL {width : Nat} [NeZero width]
     (ctxt : CrepToLoopFiniteMapContext)
     (live : Nat → Bool)
