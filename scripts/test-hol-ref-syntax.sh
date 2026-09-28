@@ -45,4 +45,53 @@ if lake env lean "$test_file" >/dev/null 2>&1; then
   exit 1
 fi
 
+# A literal or compound `NeZero` argument is never a valid positivity
+# discharge, a reducible zero-width abbreviation must be unfolded, and nested
+# binders must be resolved in their own de Bruijn context.
+printf '%s\n' \
+  'import Flapjack.HolRef' \
+  '@[hol "cakeml/pancake/semantics/panSemScript.sml" "state" (words_as_type_indexed_bitvec)]' \
+  'theorem literalNeZero [NeZero 5] (x : BitVec 5) : True := trivial' > "$test_file"
+if lake env lean "$test_file" >/dev/null 2>&1; then
+  echo 'literal NeZero binder under the words qualifier was accepted' >&2
+  exit 1
+fi
+
+printf '%s\n' \
+  'import Flapjack.HolRef' \
+  '@[hol "cakeml/pancake/semantics/panSemScript.sml" "state" (words_as_type_indexed_bitvec)]' \
+  'theorem compoundNeZero {w : Nat} [NeZero (w - w)] (x : BitVec w) : True := trivial' > "$test_file"
+if lake env lean "$test_file" >/dev/null 2>&1; then
+  echo 'compound NeZero binder under the words qualifier was accepted' >&2
+  exit 1
+fi
+
+printf '%s\n' \
+  'import Flapjack.HolRef' \
+  'abbrev ZeroWord (w : Nat) := BitVec w' \
+  '@[hol "cakeml/pancake/semantics/panSemScript.sml" "state" (words_as_type_indexed_bitvec)]' \
+  'theorem zeroWidthAbbrev (x : ZeroWord 0) : True := trivial' > "$test_file"
+if lake env lean "$test_file" >/dev/null 2>&1; then
+  echo 'zero-width reducible abbreviation under the words qualifier was accepted' >&2
+  exit 1
+fi
+
+printf '%s\n' \
+  'import Flapjack.HolRef' \
+  '@[hol "cakeml/pancake/semantics/panSemScript.sml" "state" (words_as_type_indexed_bitvec)]' \
+  'theorem nestedMissingNeZero (f : (u : Unit) → (m : Nat) → BitVec m) : True := trivial' > "$test_file"
+if lake env lean "$test_file" >/dev/null 2>&1; then
+  echo 'nested forall with an undischarged width under the words qualifier was accepted' >&2
+  exit 1
+fi
+
+printf '%s\n' \
+  'import Flapjack.HolRef' \
+  '@[hol "cakeml/pancake/semantics/panSemScript.sml" "state" (words_as_type_indexed_bitvec)]' \
+  'theorem nestedBoundNeZero (a : ∀ {w : Nat} [NeZero w], BitVec w) : True := trivial' > "$test_file"
+if ! lake env lean "$test_file" >/dev/null 2>&1; then
+  echo 'nested forall with its own NeZero binder was rejected' >&2
+  exit 1
+fi
+
 echo 'HOL reference attribute syntax: exact and qualified forms pass; invalid qualifiers rejected'
