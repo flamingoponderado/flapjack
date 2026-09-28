@@ -15483,5 +15483,16 @@
     "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-a source comparison (2026-09-28; bead flapjack-4ac.4.61) against panPropsScript.sml:1150-1158 and panSemScript.sml:614-617. This is the genuine Seq induction case from recInduct evaluate_ind. It retains the source evaluator result/post pair equation, the first-command IH, the second-command IH, and all eight HOL conclusions, with no additional premise. The HOL Seq clause applies fix_clock to the first command, evaluates the second command only when the first result is NONE, and otherwise returns the fixed first result/state. The Lean proof uses the exact finite-state Seq equation and composes the two IHs; fixClockHOLFinite changes only clock, so each listed field is preserved. The theorem uses the checked PanProps finite-support carrier and indexed-word translation. Other recursive cases and the assembling theorem remain open."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "evaluate_invariants",
+    "hol_line": 1150,
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
+    "lean_name": "evaluateInvariantsWhileCaseHOLFinite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-28; bead flapjack-4ac.4.61) against panPropsScript.sml:1150-1158 and panSemScript.sml:621-637, 729-737. This is the genuine While induction case from recInduct evaluate_ind. It retains the source evaluator result/post pair premise, the body-program IH, the recursive While IH only for a lower-clock state, and exactly the eight HOL field conclusions. evaluate_def returns Error/original state for condition failure or non-word values, NONE/original state for zero, TimeOut/empty_locals at clock zero, and otherwise fixes the decremented-clock body result before recursing on NONE/Continue, exiting on Break, or propagating all other results. The termination relation is lexicographic on (clock, prog_size): the body is smaller by program size, and the self-call uses fixed_clock(dec_clock state), whose clock is strictly lower. Lean uses the source-shaped finite-state pair evaluator and checked PanProps finite-support/indexed-word carriers. Call/DecCall and the assembling theorem remain open."
   }
 ]
