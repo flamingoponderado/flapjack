@@ -2282,6 +2282,15 @@
   },
   {
     "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
+    "hol_name": "compile_prog_def",
+    "lean_path": "Flapjack/Pancake/PanToCrep/CompileExact.lean",
+    "lean_name": "compileProgDeclsHOLW",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-27; bead flapjack-4ac.2.20.2; pan_to_crepScript.sml:393-397): HOL compile_prog_def is compile_prog prog = let inl_fs_names = MAP FST (functions (FILTER inlinable prog)); to_crep = compile_to_crep prog in compile_inl_top inl_fs_names to_crep, with input 'a prog and result (mlstring # num list # 'a crepLang$prog) list and no hypotheses. The Lean definition reproduces that let structure and operand order clause-for-clause: inlinableHOL/functionsHOL map the FILTER/functions half (MlS names), the declaration-only half is the tagged compileToCrepExactHOLW, and the inline half is the exact compileInlTopHOLExact over MlS names and CrepProgHOL triples (unsorted-inline-map carrier reviewed under flapjack-e7w.1; exact compile_inl_prog/compile_inl_top wrappers landed untagged pending carrier review, flapjack-e7w.2.2). Carriers are DeclHOL width/ShapeHOL/ExpHOL/MlS and CrepProgHOL width with [NeZero width]; the only outer translation is HOL's positive type-indexed word to BitVec width (words_as_type_indexed_bitvec). The finite maps used inside are local intermediates and do not occur in the declaration's input or output type, so no finite-map carrier qualifier applies here; their own declaration tags record their result translations. No hypothesis, side condition, success branch, or conclusion is added or weakened."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
     "hol_name": "comp_func_def",
     "lean_path": "Flapjack/Pancake/PanToCrep/CompileExact.lean",
     "lean_name": "compFuncExactHOLW",
@@ -10673,6 +10682,24 @@
     "reviewer": "Coordinator source review (bead flapjack-pxn.18.5.15.1.4): HOL every_var_inst_def uses a positive-dimensional word type; Lean everyVarInst allows BitVec 0 because width : Nat has no [NeZero width] binder. The HOL tag was withdrawn. The executable helper remains untagged until the width binder and callers are reviewed."
   },
   {
+    "hol_path": "cakeml/compiler/backend/wordLangScript.sml",
+    "hol_name": "every_var_imm_def",
+    "lean_path": "Flapjack/Pancake/WordLang.lean",
+    "lean_name": "everyVarImmHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-27; bead flapjack-yuc3, remaining gap of flapjack-5ldn): exact HOL wordLang$every_var_imm (wordLangScript.sml:93-96) over the exact register/word carrier WordRegImm (BitVec width); this entry records the standard translation of HOL type-indexed word to BitVec width with [NeZero width] (HOL dimindex (:a) = width, positive), which is the only carrier difference: Reg applies P and every other immediate is T; [NeZero width] models HOL positive dimindex (:α) >= 1, whereas the untagged production everyVarImm omits the binder and stays documented_mismatch. Mirrors the reviewed everyVarExpHOL pattern."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/wordLangScript.sml",
+    "hol_name": "every_var_inst_def",
+    "lean_path": "Flapjack/Pancake/WordLang.lean",
+    "lean_name": "everyVarInstHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-27; bead flapjack-yuc3, remaining gap of flapjack-5ldn): clause-for-clause HOL wordLang$every_var_inst (wordLangScript.sml:98-133) over WordLangInst (BitVec width); this entry records the standard translation of HOL type-indexed word to BitVec width with [NeZero width] (HOL dimindex (:a) = width, positive), which is the only carrier difference: Const/Arith (Binop, Shift, Div, AddCarry, AddOverflow, SubOverflow, LongMul, LongDiv)/Mem (Load, Store, Load32, Store32, Load8, Store8)/FP (FPLess, FPLessEqual, FPEqual, FPMovToReg, FPMovFromReg) plus catch-all T; the two HOL dimindex (:α) = 64 FP-move tests render as width = 64. [NeZero width] models HOL positive word dimension; production everyVarInst omits the binder and stays documented_mismatch. Regression: 20 exact-carrier rows in Flapjack/Test/WordLangEveryVarParity.lean."
+  },
+  {
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
     "hol_name": "mem_load_32_def",
     "lean_path": "Flapjack/Pancake/Semantics/PanSemStateEval.lean",
@@ -15048,6 +15075,21 @@
       "code"
     ],
     "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Semantics/CrepSem/EvaluateInd.lean",
+    "lean_name": "evalCrepSemHOLProgExact_induct",
+    "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
+    "hol_name": "evaluate_ind",
+    "hol_line": 440,
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-28; beads flapjack-2de.1 and flapjack-2de.1.1; cakeml/pancake/semantics/crepSemScript.sml:440 evaluate_ind = REWRITE_RULE [fix_clock_evaluate] evaluate_ind): the theorem reconstructs the rewritten principle clause-for-clause and is now tagged. Uncurried pair motive P : CrepProgHOL width x CrepSemHOLState width σ -> Prop with conclusion !v v1. P (v,v1); the 19 clauses appear in HOL order with HOL's own guards and recursive IHs (checked against the direct probe scripts/hol-probes/crep_sem_evaluate_ind_probe.out): Skip; Dec (crepExactEvalExpClassical s e = some value, IH over setVar); Primitive/Assign/Store/Store32/StoreByte; StoreGlob with HOL's fixed 5 word destination as BitVec 5; ShMem; Seq (both IHs, res = none); If (word guard); Break/Continue (num as Nat); While (the three HOL IHs incl. body at decClockCrepSemHOL and the continue/none self-recursion); Return/Raise/Tick; Call (HOL binders args v6 prog newlocals with lookup_code spelled through the reviewed lookupCodeHOL; body IH at decClockCrepSemHOL with the finite-support callee locals and the exception-handler IH at the caller locals); ExtCall. fix_clock is rewritten away using the evaluate_clock analogue evalCrepSemHOLProgExact_clock_le. The previously open translation deltas are internal and add no premise: crepExactEvalExpClassical is proved extensionally equal to the reviewed crepExactEvalExp by crepExactEvalExpClassical_eq, and lookupCodeHOLFinite_eq_some/_iff record that the finite-support wrapper projects exactly to the reviewed lookupCodeHOL. Representation recorded by the qualifiers: the motive's CrepSemHOLState locals/globals/code are the canonical HolFiniteMapExact translation (same-module witness CrepEvaluateIndFiniteSupport.holFmapAsFiniteSupportWitness), HOL's type-indexed word is BitVec width with [NeZero width], and 'ffi is a host σ : Type. The evaluator itself was source-reviewed and tagged as the line-443 evaluate_def in unified PR #1169 at 5fde1a499 (bead flapjack-4ac.5.16.5), which is why the earlier withdrawal is lifted."
   },
   {
     "hol_path": null,
