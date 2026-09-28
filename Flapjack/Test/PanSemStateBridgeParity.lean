@@ -521,6 +521,41 @@ example : Flapjack.Basis.Pure.MlString.ofString "S" =
     Flapjack.Basis.Pure.MlString.ofString "T" → ("S" : String) = "T" :=
   ofString_injective_of_ranged (by decide) (by decide)
 
+/-! ## Structured-constructor bridge guards
+
+Kernel-checked guards for the `nStruct`/`nField`/`load` carrier bridges in
+`TotalEvalExpBridge.lean`: the `HolValue` codec, the cache-augmented
+`struct_info` encoding, named-field lookup commutation, and the folded
+`nStruct` field-shape check. -/
+
+/-- The `HolValue` codec encodes a named structure with `ofString` names. -/
+example : holValueToHOL (HolValue.nStruct "P" [(("x" : String), HolValue.val (PanWordLab.word (3 : W)))]) =
+    ValueHOL.nStruct (Flapjack.Basis.Pure.MlString.ofString "P")
+      [(Flapjack.Basis.Pure.MlString.ofString "x", ValueHOL.val (HolWordLab.word (3 : W)))] := by
+  simp [holValueToHOL]
+
+/-- The cache-augmented `struct_info` encoding maps field shapes with `shapeToHOL`. -/
+example : (structInfoCacheToHOL { fields := [("x", Shape.one)], size := 1 } : StructInfoHOLExact).fields =
+    [(Flapjack.Basis.Pure.MlString.ofString "x", ShapeHOL.one)] := by
+  simp [structInfoCacheToHOL, shapeToHOL]
+
+/-- Named-field lookup commutes with the value codec. -/
+example : Option.map panValueToHOL
+      (lookupPanValueField "y"
+        [("x", PanValue.word (1 : W)), ("y", PanValue.word (2 : W))]) =
+    lookupFieldHOL (Flapjack.Basis.Pure.MlString.ofString "y")
+      [(Flapjack.Basis.Pure.MlString.ofString "x", ValueHOL.val (HolWordLab.word (1 : W))),
+       (Flapjack.Basis.Pure.MlString.ofString "y", ValueHOL.val (HolWordLab.word (2 : W)))] := by
+  simpa using lookupPanValueField_map "y"
+    [("x", PanValue.word (1 : W)), ("y", PanValue.word (2 : W))]
+    (by decide) (by decide)
+
+/-- The folded `nStruct` check equals the encoded-shape check on matching names. -/
+example : panValueFieldsExactHOL ([] : StructContext)
+      [("x", Shape.one)]
+      [("x", PanValue.word (4 : W))] = true := by
+  simp [panValueFieldsExactHOL, panShapeMatches, panValueShape]
+
 def runChecks : IO Bool := do
   IO.println "PASS production/exact PanSemState codec bridge (value/entry/struct/state)"
   pure true
