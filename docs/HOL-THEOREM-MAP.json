@@ -19234,7 +19234,7 @@
     "lean_name": "crepPrimopLoopPrimopHOL",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "deepseek source comparison (bead flapjack-pxn.18.5.6.33.8) against crep_primop_loop_primop at crep_to_loopProofScript.sml:2337-2355. HOL quantifies pop over panLang$primop, ws : 'a word_lab list, res_ws : 'a word_lab list with the single premise crep_primop pop ws = SOME res_ws, concluding loop_primop pop (MAP wlab_wloc ws) = SOME (MAP wlab_wloc res_ws). Clause case review: pop is the single AddCarry constructor; crep_primop and loop_primop share the identical LENGTH args = 3 /\\ EVERY isWord guard and the same word_add_carry payload computation, so the only content is the word_lab -> word_loc constructor correspondence: wlab_wloc (panSem$Word w) = wordLang$Word w. Lean uses the exact reviewed crepPrimopHOLExact (HolWordLab, tagged crep_primop_def) and the exact WordLocW-valued loop_primop port LoopSemStateFiniteExact.loopPrimop (tagged loop_primop_def), bridged by the exact wlabWlocHOL (HolWordLab.word v -> WordLocW.word v). The exact word_loc carrier requires the WordLocW-valued loop_primop; the Flapjack LoopValue-valued loopPrimopHOL is a different carrier and is deliberately not used. No qualifier is needed because HolWordLab and WordLocW are the reviewed exact word_lab/word_loc carriers. Direct HOL EVAL rows crep_valid/loop_valid_mapped/preserve_valid/crep_overflow/loop_overflow_mapped/preserve_overflow/crep_nonzero_carry/loop_nonzero_carry_mapped/preserve_nonzero_carry/crep_invalid_two/preserve_invalid_two/crep_invalid_four/preserve_invalid_four in scripts/hol-probes/crep_primop_loop_primop_probe.out are replayed by Flapjack.Test.CrepPrimopLoopPrimopParity (#guards plus kernel-checked examples applying crepPrimopLoopPrimopHOL)."
+    "reviewer": "deepseek source comparison (bead flapjack-pxn.18.5.6.33.8) against crep_primop_loop_primop at crep_to_loopProofScript.sml:2337-2355. HOL quantifies pop over panLang$primop, ws : 'a word_lab list, res_ws : 'a word_lab list with the single premise crep_primop pop ws = SOME res_ws, concluding loop_primop pop (MAP wlab_wloc ws) = SOME (MAP wlab_wloc res_ws). Clause case review: pop is the single AddCarry constructor; crep_primop and loop_primop share the identical LENGTH args = 3 /\\ EVERY isWord guard and the same word_add_carry payload computation, so the only content is the word_lab -> word_loc constructor correspondence: wlab_wloc (panSem$Word w) = wordLang$Word w. Lean uses the exact reviewed crepPrimopHOLExact (HolWordLab, tagged crep_primop_def) and the exact WordLocW-valued loop_primop port LoopSemStateFiniteExact.loopPrimop (tagged loop_primop_def), bridged by the exact wlabWlocHOL (HolWordLab.word v -> WordLocW.word v). The exact word_loc carrier requires the WordLocW-valued loop_primop; the Flapjack LoopValue-valued loopPrimopHOL is a different carrier and is deliberately not used. The words_as_type_indexed_bitvec qualifier records the type-indexed BitVec rendering of HOL polymorphic word_lab and word_loc carriers; HolWordLab and WordLocW are otherwise reviewed exact carriers. Direct HOL EVAL rows crep_valid/loop_valid_mapped/preserve_valid/crep_overflow/loop_overflow_mapped/preserve_overflow/crep_nonzero_carry/loop_nonzero_carry_mapped/preserve_nonzero_carry/crep_invalid_two/preserve_invalid_two/crep_invalid_four/preserve_invalid_four in scripts/hol-probes/crep_primop_loop_primop_probe.out are replayed by Flapjack.Test.CrepPrimopLoopPrimopParity (#guards plus kernel-checked examples applying crepPrimopLoopPrimopHOL)."
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
@@ -19387,7 +19387,7 @@
     "lean_name": "comp_syn_ok_seq2",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.16): HOL comp_syn_ok_seq2 (loopPropsScript.sml:739-741) `!l p q. comp_syntax_ok l p /\\ comp_syntax_ok (cut_sets l p) q ==> comp_syntax_ok l (Seq p q)`; same variables, premise and conclusion. Over the tagged compSyntaxOkHOL (HOL bool as = true), cutSetsHOL and holLoopNestedSeq; HOL domain as sptDomain/sptMem. (words_as_type_indexed_bitvec): width-indexed Loop carriers."
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.16): HOL comp_syn_ok_seq2 (loopPropsScript.sml:739-741) `!l p q. comp_syntax_ok l p /\\ comp_syntax_ok (cut_sets l p) q ==> comp_syntax_ok l (Seq p q)`; same variables, premise and conclusion. Over the tagged compSyntaxOkHOL (HOL bool as = true), cutSetsHOL and loopNestedSeqHOL; HOL domain as sptDomain/sptMem. (words_as_type_indexed_bitvec): width-indexed Loop carriers."
   },
   {
     "hol_path": "cakeml/pancake/semantics/loopPropsScript.sml",
@@ -19396,7 +19396,7 @@
     "lean_name": "comp_syn_ok_nested_seq",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.16): HOL comp_syn_ok_nested_seq (loopPropsScript.sml:748-751) `!p q l. comp_syntax_ok l (nested_seq p) ∧ comp_syntax_ok (cut_sets l (nested_seq p)) (nested_seq q) ==> comp_syntax_ok l (nested_seq (p ++ q))`; same statement. Over the tagged compSyntaxOkHOL (HOL bool as = true), cutSetsHOL and holLoopNestedSeq; HOL domain as sptDomain/sptMem. (words_as_type_indexed_bitvec): width-indexed Loop carriers."
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.16): HOL comp_syn_ok_nested_seq (loopPropsScript.sml:748-751) `!p q l. comp_syntax_ok l (nested_seq p) ∧ comp_syntax_ok (cut_sets l (nested_seq p)) (nested_seq q) ==> comp_syntax_ok l (nested_seq (p ++ q))`; same statement. Over the tagged compSyntaxOkHOL (HOL bool as = true), cutSetsHOL and loopNestedSeqHOL; HOL domain as sptDomain/sptMem. (words_as_type_indexed_bitvec): width-indexed Loop carriers."
   },
   {
     "hol_path": "cakeml/pancake/semantics/loopPropsScript.sml",
@@ -19405,7 +19405,7 @@
     "lean_name": "comp_syn_ok_nested_seq2",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.16): HOL comp_syn_ok_nested_seq2 (loopPropsScript.sml:757-760) `!p q l. comp_syntax_ok l (nested_seq (p ++ q)) ==> comp_syntax_ok l (nested_seq p) ∧ comp_syntax_ok (cut_sets l (nested_seq p)) (nested_seq q)`; same statement. Over the tagged compSyntaxOkHOL (HOL bool as = true), cutSetsHOL and holLoopNestedSeq; HOL domain as sptDomain/sptMem. (words_as_type_indexed_bitvec): width-indexed Loop carriers."
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.16): HOL comp_syn_ok_nested_seq2 (loopPropsScript.sml:757-760) `!p q l. comp_syntax_ok l (nested_seq (p ++ q)) ==> comp_syntax_ok l (nested_seq p) ∧ comp_syntax_ok (cut_sets l (nested_seq p)) (nested_seq q)`; same statement. Over the tagged compSyntaxOkHOL (HOL bool as = true), cutSetsHOL and loopNestedSeqHOL; HOL domain as sptDomain/sptMem. (words_as_type_indexed_bitvec): width-indexed Loop carriers."
   },
   {
     "hol_path": "cakeml/pancake/semantics/loopPropsScript.sml",
@@ -19414,7 +19414,7 @@
     "lean_name": "cut_sets_union_domain_subset",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.16): HOL cut_sets_union_domain_subset (loopPropsScript.sml:810-812) `!p l. comp_syntax_ok l p ==> domain l ⊆ domain (cut_sets l p)`; ⊆ as pointwise implication of the sptDomain predicates. Over the tagged compSyntaxOkHOL (HOL bool as = true), cutSetsHOL and holLoopNestedSeq; HOL domain as sptDomain/sptMem. (words_as_type_indexed_bitvec): width-indexed Loop carriers."
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.16): HOL cut_sets_union_domain_subset (loopPropsScript.sml:810-812) `!p l. comp_syntax_ok l p ==> domain l ⊆ domain (cut_sets l p)`; ⊆ as pointwise implication of the sptDomain predicates. Over the tagged compSyntaxOkHOL (HOL bool as = true), cutSetsHOL and loopNestedSeqHOL; HOL domain as sptDomain/sptMem. (words_as_type_indexed_bitvec): width-indexed Loop carriers."
   },
   {
     "hol_path": "cakeml/pancake/semantics/loopPropsScript.sml",
@@ -19423,7 +19423,7 @@
     "lean_name": "cut_sets_union_domain_union",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.16): HOL cut_sets_union_domain_union (loopPropsScript.sml:820-822) `!p l. comp_syntax_ok l p ==> ?(l' :num_set). domain (cut_sets l p) = domain l ∪ domain l'`; the set equation as an equality of sptDomain predicates with ∪ as pointwise disjunction. Over the tagged compSyntaxOkHOL (HOL bool as = true), cutSetsHOL and holLoopNestedSeq; HOL domain as sptDomain/sptMem. (words_as_type_indexed_bitvec): width-indexed Loop carriers."
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.16): HOL cut_sets_union_domain_union (loopPropsScript.sml:820-822) `!p l. comp_syntax_ok l p ==> ?(l' :num_set). domain (cut_sets l p) = domain l ∪ domain l'`; the set equation as an equality of sptDomain predicates with ∪ as pointwise disjunction. Over the tagged compSyntaxOkHOL (HOL bool as = true), cutSetsHOL and loopNestedSeqHOL; HOL domain as sptDomain/sptMem. (words_as_type_indexed_bitvec): width-indexed Loop carriers."
   },
   {
     "hol_path": "cakeml/pancake/semantics/loopPropsScript.sml",
@@ -19432,7 +19432,7 @@
     "lean_name": "comp_syn_impl_cut_sets_subspt",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.16): HOL comp_syn_impl_cut_sets_subspt (loopPropsScript.sml:831-833) `!p l. comp_syntax_ok l p ==> subspt l (cut_sets l p)`; subspt as the reviewed sptSubspt. Over the tagged compSyntaxOkHOL (HOL bool as = true), cutSetsHOL and holLoopNestedSeq; HOL domain as sptDomain/sptMem. (words_as_type_indexed_bitvec): width-indexed Loop carriers."
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.16): HOL comp_syn_impl_cut_sets_subspt (loopPropsScript.sml:831-833) `!p l. comp_syntax_ok l p ==> subspt l (cut_sets l p)`; subspt as the reviewed sptSubspt. Over the tagged compSyntaxOkHOL (HOL bool as = true), cutSetsHOL and loopNestedSeqHOL; HOL domain as sptDomain/sptMem. (words_as_type_indexed_bitvec): width-indexed Loop carriers."
   },
   {
     "hol_path": "cakeml/pancake/semantics/loopPropsScript.sml",
@@ -19441,6 +19441,69 @@
     "lean_name": "comp_syn_cut_sets_mem_domain",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.16): HOL comp_syn_cut_sets_mem_domain (loopPropsScript.sml:841-844) `!p l n. comp_syntax_ok l p /\\ n ∈ domain l ==> n ∈ domain (cut_sets l p)`; n ∈ domain as sptMem. Over the tagged compSyntaxOkHOL (HOL bool as = true), cutSetsHOL and holLoopNestedSeq; HOL domain as sptDomain/sptMem. (words_as_type_indexed_bitvec): width-indexed Loop carriers."
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.16): HOL comp_syn_cut_sets_mem_domain (loopPropsScript.sml:841-844) `!p l n. comp_syntax_ok l p /\\ n ∈ domain l ==> n ∈ domain (cut_sets l p)`; n ∈ domain as sptMem. Over the tagged compSyntaxOkHOL (HOL bool as = true), cutSetsHOL and loopNestedSeqHOL; HOL domain as sptDomain/sptMem. (words_as_type_indexed_bitvec): width-indexed Loop carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "compile_exp_out_rel_cases",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpOutRel.lean",
+    "lean_name": "compile_exp_out_rel_cases",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.32.3): HOL compile_exp_out_rel_cases (crep_to_loopProofScript.sml:420-427) is `(!ct tmp l e p le ntmp nl. compile_exp ct tmp l e = (p,le,ntmp,nl) ==> comp_syntax_ok l (nested_seq p) /\\ tmp <= ntmp /\\ nl = cut_sets l (nested_seq p)) /\\ (!ct tmp l e p le ntmp nl. compile_exps ct tmp l e = (p,le,ntmp,nl) ==> comp_syntax_ok l (nested_seq p) /\\ tmp <= ntmp /\\ nl = cut_sets l (nested_seq p) /\\ LENGTH le = LENGTH e)`; Lean states both conjuncts with the same variables in HOL order, premises and conclusions. Over the tagged exact compileExpHOLExact/compileExpsHOLExact, compSyntaxOkHOL (HOL bool as = true), cutSetsHOL and loopNestedSeqHOL; nl = cut_sets l (nested_seq p) is the structural NumSet equality (proved with sptree insert idempotence/commutation). fmap_as_finite_support [vars, funcs]: exact context carrier; same-module re-exported canonical witness. (words_as_type_indexed_bitvec): width-indexed Crep/Loop carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "compile_exp_out_rel",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpOutRel.lean",
+    "lean_name": "compile_exp_out_rel",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.32.3): HOL compile_exp_out_rel (crep_to_loopProofScript.sml:589) is `compile_exp_out_rel_cases |> CONJUNCT1`; Lean is that conjunct. Over the tagged exact compileExpHOLExact/compileExpsHOLExact, compSyntaxOkHOL (HOL bool as = true), cutSetsHOL and loopNestedSeqHOL; nl = cut_sets l (nested_seq p) is the structural NumSet equality (proved with sptree insert idempotence/commutation). fmap_as_finite_support [vars, funcs]: exact context carrier; same-module re-exported canonical witness. (words_as_type_indexed_bitvec): width-indexed Crep/Loop carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "compile_exps_out_rel",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpOutRel.lean",
+    "lean_name": "compile_exps_out_rel",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.32.3): HOL compile_exps_out_rel (crep_to_loopProofScript.sml:590) is `compile_exp_out_rel_cases |> CONJUNCT2`; Lean is that conjunct. Over the tagged exact compileExpHOLExact/compileExpsHOLExact, compSyntaxOkHOL (HOL bool as = true), cutSetsHOL and loopNestedSeqHOL; nl = cut_sets l (nested_seq p) is the structural NumSet equality (proved with sptree insert idempotence/commutation). fmap_as_finite_support [vars, funcs]: exact context carrier; same-module re-exported canonical witness. (words_as_type_indexed_bitvec): width-indexed Crep/Loop carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopPropsScript.sml",
+    "hol_name": "comp_syn_ok_upd_local_clock",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopProps/CompSyntaxOkEvalExact.lean",
+    "lean_name": "comp_syn_ok_upd_local_clock",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.17): HOL comp_syn_ok_upd_local_clock (loopPropsScript.sml:851-855) `!p s res t l. evaluate (p,s) = (res,t) /\\ comp_syntax_ok l p ==> t = s with <|locals := t.locals; clock := t.clock|>`; same variables, premise and conclusion (structure update on the exact state). Proved by well-founded induction on HOL's (clock, prog size) measure; non-comp_syntax_ok constructors are refuted by the premise. Over the tagged exact evaluate, compSyntaxOkHOL (HOL bool as = true) and holLoopAssignedVars; n ∈ domain l as sptMem. fmap_as_finite_support [globals]: quantifies over LoopSemStateFiniteExact whose HOL |-> globals is the canonical HolFiniteMapExact carrier; same-module re-exported canonical witness."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopPropsScript.sml",
+    "hol_name": "comp_syn_ok_lookup_locals_eq",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopProps/CompSyntaxOkEvalExact.lean",
+    "lean_name": "comp_syn_ok_lookup_locals_eq",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.17): HOL comp_syn_ok_lookup_locals_eq (loopPropsScript.sml:907-912) `!p s res t l n. evaluate (p,s) = (res,t) /\\ res <> SOME TimeOut /\\ comp_syntax_ok l p /\\ n ∈ domain l /\\ ~MEM n (assigned_vars p) ==> lookup n t.locals = lookup n s.locals`; same variables, five-conjunct premise and conclusion. Over the tagged exact evaluate, compSyntaxOkHOL (HOL bool as = true) and holLoopAssignedVars; n ∈ domain l as sptMem. fmap_as_finite_support [globals]: quantifies over LoopSemStateFiniteExact whose HOL |-> globals is the canonical HolFiniteMapExact carrier; same-module re-exported canonical witness."
   }
 ]
