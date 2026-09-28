@@ -10921,6 +10921,18 @@
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "locals_rel_cutset_prop",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
+    "lean_name": "crepToLoopLocalsRelExact_cutset_prop",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars"
+    ],
+    "reviewer": "flapjack-ds10 source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.2) against locals_rel_cutset_prop at crep_to_loopProofScript.sml:236-244. HOL states `locals_rel ct cset lcl lcl' /\\ locals_rel ct cset' lcl lcl'' /\\ subspt cset cset' ==> locals_rel ct cset lcl lcl''` (proved via rw [locals_rel_def], subspt_domain, SUBSET_TRANS, and res_tac on the per-name obligation). The Lean source comparison keeps the same three-premise implication over the exact carriers: CrepToLoopContextExact (tags context), cset/cset' : NumSet, lcl : HolFiniteMapExact Nat (HolWordLab width), lcl'/lcl'' : Spt (WordLocW width); the HOL `subspt` premise is rendered by the untagged sptSubspt (HOL subspt_def, HOL/src/finite_maps/sptreeScript.sml:1737-1741, with sptMem for `k IN domain`). distinct_vars/ctxt_max are inherited from the first relation, the num_set-domain conjunct follows from sptSubspt and the second relation, and the per-name lookup conjunct from the second relation plus uniqueness of FLOOKUP ct.vars vname. Direct HOL oracle rows appear in scripts/hol-probes/crep_to_loop_locals_rel_probe.out and the lemma is exercised by Flapjack/Test/CrepToLoopParity.lean. Qualifiers: only ctxt.vars is an exact finite-map field and HolWordLab/WordLocW are the reviewed width-indexed `'a word` carriers.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
     "hol_name": "state_rel_def",
     "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
     "lean_name": "crepToLoopStateRelExact",
