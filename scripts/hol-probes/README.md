@@ -54,6 +54,12 @@ all-width equation to the production RISC-V target is in
 boundary and its matching cases live in
 `Flapjack.Pancake.Semantics.PanSemStateEval` and
 `Flapjack.Test.PanSemStateEvalParity`.
+`pan_sem_mem_domain_probe.out` pins the ordinary-memory domain boundary used
+by the production/exact `PanSemState` bridge: an in-domain `Load One` hit, an
+out-of-domain miss even when the total HOL cell holds a word, a statement-level
+`Store`/`Load` roundtrip, an out-of-domain `Store` failure, and a raw
+`mem_stores`/`mem_load` roundtrip. Its Lean regressions live in
+`Flapjack.Test.PanSemStateBridgeParity`.
 `pan_sem_e2e_probe.out` records direct HOL evaluation cases for nonempty
 state-owned code maps, including recursive Call, DecCall, nested Call/DecCall,
 and clock timeout. `pan_sem_call_return_shape_probe.out` adds Call and DecCall
