@@ -18624,27 +18624,36 @@
     "hol_name": "sh_mem_load_def",
     "lean_path": "Flapjack/Pancake/Semantics/LoopSemStateExact/ShMem.lean",
     "lean_name": "shMemLoad",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.4): HOL sh_mem_load v addr nb s (loopSemScript.sml:198-215), clause for clause over LoopSemStateFiniteExact: nb = 0 tests addr IN s.sh_mdomain, otherwise byte_align addr IN s.sh_mdomain (riscvByteAlignHOL); both call call_FFI s.ffi (SharedMem MappedRead) [n2w nb] (word_to_bytes addr F) via tagged callFFIHOL with panWordToBytesHOL; FFI_final outcome => (SOME (FinalFFI outcome), call_env [] s); FFI_return new_ffi new_bytes => (NONE, (set_var v (Word (word_of_bytes F 0w new_bytes)) s) with ffi := new_ffi) using panWordOfBytesHOL; outside the domain (SOME Error, s). HOL's extra `| _ => (SOME Error, s)` arm in the nb <> 0 branch is unreachable (ffi_result has exactly FFI_return/FFI_final) and Lean's exhaustive match omits it. The byte codecs are the same untagged HOL standard-library renderings reviewers accepted for crepSem sh_mem_load_def. HOL rows of loop_sem_sh_mem_load_probe.out, loop_sem_sh_mem_store_probe.out and loop_sem_sh_mem_op_probe.out are checked by Flapjack.Test.LoopSemShMemExactParity. The (words_as_type_indexed_bitvec) qualifier records 'a word as BitVec width with [NeZero width] and 'ffi as {F : Type}."
+    "reviewer": "flapjack-luna-b source comparison (2026-09-28; bead flapjack-up10.5): HOL sh_mem_load (loopSemScript.sml:198-215) tests addr in sh_mdomain for nb=0 and byte_align addr otherwise; both branches call mapped-read FFI with [n2w nb] and word_to_bytes addr F, returning FinalFFI with call_env [] or NONE after writing word_of_bytes to local v and installing new_ffi; domain failure returns Error with original state. Lean has the same branches. HOL's nb<>0 catch-all is unreachable because ffi_result has exactly final/return constructors; Lean's exhaustive match is equivalent. The exact state owner LoopSemStateFiniteExact has globals as its sole |-> field, represented by HolFiniteMapExact. This module contains the canonical holFmapAsFiniteSupportWitness re-export proving the actual toBroad/ofBroad roundtrip. Probe parity remains in LoopSemShMemExactParity. The finite qualifier records only globals; words_as_type_indexed_bitvec records the positive width and FFI host translation."
   },
   {
     "hol_path": "cakeml/pancake/semantics/loopSemScript.sml",
     "hol_name": "sh_mem_store_def",
     "lean_path": "Flapjack/Pancake/Semantics/LoopSemStateExact/ShMem.lean",
     "lean_name": "shMemStore",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.4): HOL sh_mem_store v addr nb s (loopSemScript.sml:217-240): case lookup v s.locals (sptLookup) of SOME (Word w) => domain test as in sh_mem_load; payload word_to_bytes w F ++ word_to_bytes addr F for nb = 0 and TAKE nb (word_to_bytes w F) ++ word_to_bytes addr F otherwise, sent with call_FFI s.ffi (SharedMem MappedWrite) [n2w nb]; FFI_final => (SOME (FinalFFI outcome), call_env [] s); FFI_return new_ffi _ => (NONE, s with ffi := new_ffi); domain failure and any non-Word lookup give (SOME Error, s). HOL rows of loop_sem_sh_mem_load_probe.out, loop_sem_sh_mem_store_probe.out and loop_sem_sh_mem_op_probe.out are checked by Flapjack.Test.LoopSemShMemExactParity. (words_as_type_indexed_bitvec) as for shMemLoad."
+    "reviewer": "flapjack-luna-b source comparison (2026-09-28; bead flapjack-up10.5): HOL sh_mem_store (loopSemScript.sml:217-240) first requires locals lookup v = SOME (Word w); it uses the same domain rule as sh_mem_load, sends full word bytes plus address bytes for nb=0 or TAKE nb of word bytes plus address otherwise, and calls mapped-write FFI. Final returns FinalFFI with call_env []; FFI_return installs only new_ffi and returns NONE; bad lookup/domain returns Error with original state. Lean matches each case and payload. The exact state owner LoopSemStateFiniteExact has globals as its only |-> field, and this module contains the canonical toBroad/ofBroad witness re-export. Direct probe parity is checked in LoopSemShMemExactParity. Qualifiers record only globals carrier and the separate word-width translation."
   },
   {
     "hol_path": "cakeml/pancake/semantics/loopSemScript.sml",
     "hol_name": "sh_mem_op_def",
     "lean_path": "Flapjack/Pancake/Semantics/LoopSemStateExact/ShMem.lean",
     "lean_name": "shMemOp",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.4): HOL sh_mem_op (loopSemScript.sml:255-264) dispatches the eight memop constructors (CrepMemOp, the reviewed crepLang memop carrier) to sh_mem_load/sh_mem_store with byte counts Load/Store 0, Load8/Store8 1, Load16/Store16 2, Load32/Store32 4; Lean has the same eight equations; rows of loop_sem_sh_mem_op_probe.out are checked by Flapjack.Test.LoopSemShMemExactParity. (words_as_type_indexed_bitvec) as for shMemLoad."
+    "reviewer": "flapjack-luna-b source comparison (2026-09-28; bead flapjack-up10.5): HOL sh_mem_op (loopSemScript.sml:255-264) dispatches the same eight Load/Store width constructors to sh_mem_load/sh_mem_store with byte counts 0, 1, 2, or 4; Lean has the same eight equations over CrepMemOp. Its state carrier is LoopSemStateFiniteExact with globals as its sole |-> field, and this module contains the canonical same-module witness re-export. Direct rows are checked by LoopSemShMemExactParity. Qualifiers record only globals carrier and the positive-width word translation."
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
