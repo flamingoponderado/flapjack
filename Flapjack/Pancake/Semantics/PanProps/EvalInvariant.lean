@@ -7356,3 +7356,104 @@ theorem evaluateClockSubRaiseCaseHOLFinite {width : Nat} {σ : Type} [NeZero wid
               rw [hLowCanonical]
               exact PanPropsEvalStateFiniteExact.ofPanSemFinite_toPanSemFinite lowState
 end Flapjack
+
+
+/-! # The `ShMemLoad` induction case of HOL `evaluate_invariants`
+
+HOL `ShMemLoad` (`sh_mem_load_def`) returns Error with the input state, or
+calls the shared-memory FFI and then either clears locals (`FinalFFI`) or writes
+the loaded word to the destination variable together with the returned FFI
+state. `call_FFI` keeps the oracle, so all eight invariant fields are
+preserved. -/
+
+open Flapjack.Pancake.PanLang (ExpHOL MlS ProgHOL)
+
+namespace Flapjack
+
+/-- The eight `evaluate_invariants` fields for one `ShMemLoad` step of the
+    canonical finite evaluator. Untagged infrastructure for the tagged
+    `ShMemLoad` case. -/
+theorem shMemLoadStepFieldsHOLFinite {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (operator : OpSize) (kind : VarKind)
+    (name : MlS) (address : ExpHOL width) :
+    let post := (PanSemStateFiniteExact.evaluateHOLFiniteState state
+      (.shMemLoad operator kind name address : ProgHOL width)).2
+    post.memaddrs = state.memaddrs ∧ post.shMemaddrs = state.shMemaddrs ∧
+      post.be = state.be ∧ post.eshapes = state.eshapes ∧
+      post.baseAddr = state.baseAddr ∧ post.structs = state.structs ∧
+      post.code = state.code ∧ post.ffi.oracle = state.ffi.oracle := by
+  classical
+  intro post
+  have hstep : ∀ (kind : VarKind) (addr : RiscV.Word width) (nb : Nat),
+      let q := (@PanSemStateFiniteExact.shMemLoadHOLFiniteExact width σ _ state
+        (fun current => Classical.propDecidable (state.shMemaddrs current))
+        kind name addr nb).2
+      q.memaddrs = state.memaddrs ∧ q.shMemaddrs = state.shMemaddrs ∧
+        q.be = state.be ∧ q.eshapes = state.eshapes ∧
+        q.baseAddr = state.baseAddr ∧ q.structs = state.structs ∧
+        q.code = state.code ∧ q.ffi.oracle = state.ffi.oracle := by
+    intro kind addr nb q
+    simp only [q, PanSemStateFiniteExact.shMemLoadHOLFiniteExact]
+    split <;> split
+    all_goals
+      first
+      | (simp; done)
+      | (split
+         · simp [PanSemStateFiniteExact.emptyLocalsHOLFinite]
+         · rename_i newFfi newBytes hcall
+           have horacle := callFFIHOL_ret_oracle state.ffi _ _ _ newFfi newBytes hcall
+           cases kind <;>
+             simp [PanSemStateFiniteExact.setKvarFfiHOLFinite,
+               PanSemStateFiniteExact.setKvarHOLFinite, PanSemStateFiniteExact.setVarHOLFinite,
+               PanSemStateFiniteExact.setGlobalHOLFinite, horacle])
+  simp only [post]
+  rw [PanSemStateFiniteExact.evaluateHOLFiniteState_shMemLoad_source]
+  split
+  · split
+    · exact hstep kind _ _
+    · simp
+  · simp
+
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_invariants" 1150
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateInvariantsShMemLoadCaseHOLFinite {width : Nat} {σ : Type} [NeZero width] :
+    ∀ (operator : OpSize) (kind : VarKind) (name : MlS) (address : ExpHOL width)
+      (state : PanPropsEvalStateFiniteExact width σ)
+      (result : Option (PanSemResultExact width))
+      (post : PanPropsEvalStateFiniteExact width σ),
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state
+          (.shMemLoad operator kind name address : ProgHOL width) = (result, post) →
+      post.memaddrs = state.memaddrs ∧
+      post.shMemaddrs = state.shMemaddrs ∧
+      post.be = state.be ∧
+      post.eshapes = state.eshapes ∧
+      post.baseAddr = state.baseAddr ∧
+      post.structs = state.structs ∧
+      post.code = state.code ∧
+      post.ffi.oracle = state.ffi.oracle := by
+  classical
+  intro operator kind name address state result post hRun
+  have hcanonical :
+      PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite
+          (.shMemLoad operator kind name address : ProgHOL width) =
+        (result, post.toPanSemFinite) := by
+    have hpair := congrArg
+      (fun output => (output.1, PanPropsEvalStateFiniteExact.toPanSemFinite output.2)) hRun
+    have hpair' :
+        (PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite
+          (.shMemLoad operator kind name address : ProgHOL width)).1 = result ∧
+        (PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite
+          (.shMemLoad operator kind name address : ProgHOL width)).2 = post.toPanSemFinite := by
+      simpa [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair] using hpair
+    exact Prod.ext hpair'.1 hpair'.2
+  have hpost : post.toPanSemFinite =
+      (PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite
+        (.shMemLoad operator kind name address : ProgHOL width)).2 :=
+    (Prod.mk.inj hcanonical).2.symm
+  have hfields := shMemLoadStepFieldsHOLFinite state.toPanSemFinite operator kind name address
+  simp only at hfields
+  rw [← hpost] at hfields
+  simpa [PanPropsEvalStateFiniteExact.toPanSemFinite] using hfields
+
+end Flapjack

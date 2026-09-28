@@ -55,6 +55,45 @@ private def isNoneResult {α : Type} (result : Option α) : Bool :=
   | none => true
   | some _ => false
 
+/- The generic read32/HOL mem_load_32 relationship is checked at the small
+   and production widths in both byte orders. These comparisons use the
+   source-shaped `panMemLoad32HOL` helper as the oracle; the universal proof
+   itself also covers missing cells, non-word cells, out-of-domain cells, and
+   unaligned addresses. -/
+private def read32WidthFixture {width : Nat} [NeZero width] (bigEndian : Bool) :
+    PanSemState (RiscV.Word width) Unit :=
+  { locals := fun _ => none
+    globals := fun _ => none
+    structs := []
+    code := []
+    exceptionShapes := fun _ => none
+    memory := fun address =>
+      if address == 0 then some (.word (BitVec.ofNat width 0x11223344)) else none
+    memaddrs := fun _ => true
+    sharedMemaddrs := fun _ => false
+    clock := 0
+    be := bigEndian
+    ffi := ()
+    baseAddress := 0
+    topAddress := 0 }
+
+private def read32WidthFixtureAgrees {width : Nat} [NeZero width] (bigEndian : Bool) : Bool :=
+  let state := read32WidthFixture (width := width) bigEndian
+  (panSemWordMemoryAccess state).read32 (panSemWordMemoryAccess state).domain
+      state.memory (panSemBytesInWord (width := width)) 0 ==
+    (panMemLoad32HOL (width := width) (panValueWordHOL state.memory)
+      (fun a => state.memaddrs a && panValueWordDefined state.memory a = true)
+      state.be 0).map (fun word => BitVec.ofNat width word.toNat)
+
+#guard read32WidthFixtureAgrees (width := 1) false
+#guard read32WidthFixtureAgrees (width := 1) true
+#guard read32WidthFixtureAgrees (width := 8) false
+#guard read32WidthFixtureAgrees (width := 8) true
+#guard read32WidthFixtureAgrees (width := 24) false
+#guard read32WidthFixtureAgrees (width := 24) true
+#guard read32WidthFixtureAgrees (width := 64) false
+#guard read32WidthFixtureAgrees (width := 64) true
+
 private def isErrorControlResult
     (result : Option (PanValueFfiClockResult Word64 Unit)) : Bool :=
   match result with

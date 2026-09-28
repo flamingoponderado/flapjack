@@ -17536,5 +17536,21 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-28, bead flapjack-pxn.18.4.3.107; pan_to_crepProofScript.sml:442-468, Store case resumed at :1726-1856; panSemScript.sml:777-778 rebound evaluate_ind). Store constructor piece of HOL pc_compile_correct (AGENTS splitting rule, same tag, suffixed name), in the reviewed shape of pcCompileCorrect_Call. HOL's printed evaluate_ind Store conjunct (hol run on panSemTheory.evaluate_ind) is !dst src s. P (Store dst src,s) (no IH); binders dst src s kept. Lean keeps the binders, IH binders/side conditions in HOL order, and P = pcCompileCorrectAtHOL (reviewed with the Call case). The conclusion is P (Store ..., s) unfolded: binders res s1 t ctxt, the conjunctive premise, and the existential target run with state_rel/code_rel/excp_rel and inline case res of. evaluate is the tagged total evaluateHOLFiniteState and evalCrepSemHOLProgExact; eval is the tagged exact expression evaluator with the classical address decision used by the tagged Pan arm; compile/relations/globals_lookup/flatten/shape_of/size_of_shape/localised_prog are the tagged exact ports; qualifiers and same-module witnesses as for the Call case. Proof via untagged pcCompileCorrectAt_store. No target-run or post-state premise."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "evaluate_invariants",
+    "hol_line": 1150,
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
+    "lean_name": "evaluateInvariantsShMemLoadCaseHOLFinite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-4ac.4.61.3) against panPropsScript.sml:1150-1158 (the >~[ShMemLoad] branch) and panSemScript.sml ShMemLoad/sh_mem_load_def. This is the genuine p = ShMemLoad op v ad leaf of recInduct evaluate_ind: the HOL evaluate_ind conjunct (scripts/hol-probes/pan_sem_evaluate_ind_probe.out:10) is ∀op vk v ad s. P (ShMemLoad op vk v ad,s) with no recursive induction hypothesis and no premise; the Lean statement quantifies operator/kind/name/address/state (= op vk v ad s) plus the source result/post pair and only the source run equation, and concludes exactly the eight source fields in source order, in the same shape as the reviewed ExtCall/Store sibling cases. evaluate_def evaluates the address, requires a word address and an existing word destination (lookup_kvar), then calls sh_mem_load with nb_op op; sh_mem_load checks the shared domain (byte-aligned for nb <> 0), calls call_FFI (SharedMem MappedRead), and on FFI_final returns (SOME (FinalFFI e), empty_locals s) while on FFI_return writes the loaded word with set_kvar and installs the new ffi state; every other pattern returns (SOME Error, s). These change only locals/globals and ffi, and the returned ffi keeps the oracle (Flapjack-only callFFIHOL_ret_oracle), so none of the eight fields changes. The step lemma shMemLoadStepFieldsHOLFinite is untagged infrastructure over the tagged evaluateHOLFiniteState_shMemLoad_source clause. The same-module PanPropsEvalStateFiniteExact carrier uses HolFiniteMapExact for locals/globals/code/eshapes via its checked roundtrip witness and [NeZero width] is the indexed-word translation. Recursive cases, ShMemStore, and the assembly remain open."
   }
 ]
