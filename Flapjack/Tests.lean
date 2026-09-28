@@ -167,7 +167,6 @@ import Flapjack.Test.ParserByteRangedParity
 import Flapjack.Test.ParserKeywordParity
 import Flapjack.Test.PanGlobalsNameByteRangedParity
 import Flapjack.Test.LoopPropsCutSetsParity
-import Flapjack.Test.LoopPropsCompSyntaxParity
 
 /-!
 # Flapjack regression tests

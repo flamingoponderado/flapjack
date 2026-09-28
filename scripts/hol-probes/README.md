@@ -42,13 +42,6 @@ additionally probes `pan_op_def` at lines 191--193.
 clauses over `HolLoopProg`/`NumSet`; its direct HOL outputs for Skip,
 LocValue, Assign, Load32/LoadByte, Seq, If, each Arith variant, and the
 catch-all are in `scripts/hol-probes/loop_props_cut_sets_probe.out`.
-`Flapjack.Test.LoopPropsCompSyntaxParity` guards the exact Boolean
-`comp_syntax_ok_def` clauses over the same carriers, including Loop live-set
-equality, Seq cut-set threading, and the If existential fold condition. Its
-direct HOL EVAL rows are in `scripts/hol-probes/loop_props_comp_syntax_ok_probe.out`.
-The exact proof-side definition is `compSyntaxOkHOLExact` in
-`Flapjack.Pancake.Semantics.LoopProps.CompSyntax`; it does not claim production
-compiler routing through the list-backed `loopCompSyntaxOk`.
 `Flapjack.Test.LoopDecClockParity` probes `dec_clock_def` at lines 42--43 of
 the same source.
 `Flapjack.Test.LoopFixClockParity` probes `fix_clock_def` at lines 46--49.

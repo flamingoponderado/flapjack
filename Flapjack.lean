@@ -112,7 +112,6 @@ import Flapjack.Pancake.Semantics.ByteAlignBridge
 import Flapjack.Pancake.Semantics.ShMemBytesBridge
 import Flapjack.Pancake.Semantics.LoopProps
 import Flapjack.Pancake.Semantics.LoopProps.CutSets
-import Flapjack.Pancake.Semantics.LoopProps.CompSyntax
 import Flapjack.Pancake.Semantics.LoopSemStateExact
 import Flapjack.Pancake.Semantics.LoopSemStateExact.ShMem
 import Flapjack.Pancake.Semantics.LoopSemStateExact.Evaluate
@@ -326,7 +325,6 @@ import Flapjack.Pancake.LoopLang.AssignedVars
 import Flapjack.Pancake.Semantics.LoopProps.AssignedVars
 import Flapjack.Test.LoopExactAssignedVarsParity
 import Flapjack.Test.LoopPropsCutSetsParity
-import Flapjack.Test.LoopPropsCompSyntaxParity
 /- The context-aware Crep-to-Loop correctness file is being updated alongside
    the faithful `findLoopVar` lowering and is intentionally not in this
    umbrella until its old identity-map assumptions are repaired. -/

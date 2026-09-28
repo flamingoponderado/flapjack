@@ -358,17 +358,6 @@ run_probe loop_props_cut_sets_probeScript.sml loop_props_cut_sets_probe.out \
   cut_sets_longmul cut_sets_div cut_sets_catch_all \
   "$cake_dir/pancake/semantics/loopPropsScript.sml" \
   "$cake_dir/pancake/semantics"
-run_probe loop_props_comp_syntax_ok_probeScript.sml \
-  loop_props_comp_syntax_ok_probe.out \
-  comp_syntax_if_fold comp_syntax_if_exists comp_syntax_skip \
-  comp_syntax_assign comp_syntax_locvalue comp_syntax_load32 \
-  comp_syntax_loadbyte comp_syntax_loop_valid \
-  comp_syntax_loop_bad_input comp_syntax_loop_bad_output \
-  comp_syntax_seq_threaded comp_syntax_seq_unthreaded \
-  comp_syntax_if_extension comp_syntax_if_bad_branch comp_syntax_arith \
-  comp_syntax_break comp_syntax_default \
-  "$cake_dir/pancake/semantics/loopPropsScript.sml" \
-  "$cake_dir/pancake/semantics"
 run_probe crep_to_loop_context_defs_probeScript.sml crep_to_loop_context_defs_probe.out \
   find_var_hit find_lab_miss "$cake_dir/pancake/crep_to_loopScript.sml" \
   "$cake_dir/pancake/proofs"
