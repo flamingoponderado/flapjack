@@ -2683,8 +2683,8 @@ theorem evalPanSemStateExp_agree {σ : Type}
     (e : Exp (RiscV.Word 64)) (he : ExpByteRanged e) :
     Option.map panValueToHOL (evalPanSemStateExp state e) =
       exact.evalHOLFinite (expToHOL e) := by
-  simpa only [evalPanSemStateExp] using
-    evalPanValueExp_agree state exact hrel hranged e he
+  rw [evalPanSemStateExp_64_eq_previous]
+  exact evalPanValueExp_agree state exact hrel hranged e he
 
 /-! ## Rangedness preservation and the `PanSemStateRelExec`/rangedness boundary
 
