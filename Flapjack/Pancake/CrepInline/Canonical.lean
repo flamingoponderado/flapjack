@@ -511,6 +511,142 @@ private def inlTopProbeOracle : Bool :=
 
 #guard inlTopProbeOracle
 
+/-! ## Support-independence of the inline core
+
+These facts justify the executable HOL-shaped wrappers above: the recursive
+`inlineProgHOLCoreExact` result does not depend on the certificate list/proof it
+is run with, so the certified executable `compileInlProgHOLExactWithSupport`
+(used by the tagged `compileInlTopHOLExact`) agrees with the HOL-shaped
+`compileInlProgHOLExact`, which extracts the existential support classically.
+Untagged Flapjack-specific infrastructure (bead flapjack-e7w.2.2.1). -/
+
+theorem inlineProgHOLCoreExact_support_independent [BEq CrepInlineMapHOLName]
+    [LawfulBEq CrepInlineMapHOLName]
+    (inlineable : HolFiniteMapExact CrepInlineMapHOLName (List Nat × CrepProgHOL width))
+    (supportKeys₁ : List CrepInlineMapHOLName)
+    (support₁ : ∀ key, inlineable.lookup key ≠ none → key ∈ supportKeys₁)
+    (supportKeys₂ : List CrepInlineMapHOLName)
+    (support₂ : ∀ key, inlineable.lookup key ≠ none → key ∈ supportKeys₂)
+    (program : CrepProgHOL width) :
+    inlineProgHOLCoreExact inlineable supportKeys₁ support₁ program =
+      inlineProgHOLCoreExact inlineable supportKeys₂ support₂ program := by
+  refine @inlineProgHOLCoreExact.induct width _ _ _
+    (fun inlineable supportKeys support_spec prog =>
+      ∀ (supportKeys₂ : List CrepInlineMapHOLName)
+        (support₂ : ∀ key, inlineable.lookup key ≠ none → key ∈ supportKeys₂),
+        inlineProgHOLCoreExact inlineable supportKeys support_spec prog =
+          inlineProgHOLCoreExact inlineable supportKeys₂ support₂ prog)
+    ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_
+    inlineable supportKeys₁ support₁ program supportKeys₂ support₂
+  · intro inlineable supportKeys support_spec name arguments hl supportKeys₂ support₂
+    simp only [inlineProgHOLCoreExact]
+    rw [hl]
+  · intro inlineable supportKeys support_spec name arguments argumentNames body hl ih
+      supportKeys₂ support₂
+    simp only [inlineProgHOLCoreExact]
+    rw [hl]
+    simp only []
+    rw [ih (supportKeys₂.filter (fun k => k != name))
+      (HolFiniteMapExact.erase_support inlineable supportKeys₂ support₂ name)]
+  · intro inlineable supportKeys support_spec returnNames name arguments hd supportKeys₂ support₂
+    simp only [inlineProgHOLCoreExact, hd, if_true]
+  · intro inlineable supportKeys support_spec returnNames name arguments hd hl supportKeys₂ support₂
+    simp only [inlineProgHOLCoreExact]
+    simp only [if_neg hd]
+    rw [hl]
+  · intro inlineable supportKeys support_spec returnNames name arguments hd argumentNames body hl ih
+      supportKeys₂ support₂
+    simp only [inlineProgHOLCoreExact]
+    simp only [if_neg hd]
+    rw [hl]
+    simp only []
+    rw [ih (supportKeys₂.filter (fun k => k != name))
+      (HolFiniteMapExact.erase_support inlineable supportKeys₂ support₂ name)]
+  · intro inlineable supportKeys support_spec returnNames handler body name arguments ih
+      supportKeys₂ support₂
+    simp only [inlineProgHOLCoreExact]
+    rw [ih supportKeys₂ support₂]
+  · intro inlineable supportKeys support_spec name value body ih supportKeys₂ support₂
+    simp only [inlineProgHOLCoreExact]
+    rw [ih supportKeys₂ support₂]
+  · intro inlineable supportKeys support_spec first second ih1 ih2 supportKeys₂ support₂
+    simp only [inlineProgHOLCoreExact]
+    rw [ih1 supportKeys₂ support₂, ih2 supportKeys₂ support₂]
+  · intro inlineable supportKeys support_spec condition first second ih1 ih2 supportKeys₂ support₂
+    simp only [inlineProgHOLCoreExact]
+    rw [ih1 supportKeys₂ support₂, ih2 supportKeys₂ support₂]
+  · intro inlineable supportKeys support_spec condition body ih supportKeys₂ support₂
+    simp only [inlineProgHOLCoreExact]
+    rw [ih supportKeys₂ support₂]
+  · intro inlineable supportKeys support_spec program hcn hcs hch hdec hseq hite hwhile
+      supportKeys₂ support₂
+    cases program with
+    | call ret name args =>
+        cases ret with
+        | none => exact absurd rfl (hcn name args)
+        | some p =>
+            obtain ⟨rn, hb⟩ := p
+            cases hb with
+            | none => exact absurd rfl (hcs rn name args)
+            | some hb' =>
+                obtain ⟨handler, body⟩ := hb'
+                exact absurd rfl (hch rn handler body name args)
+    | dec name value body => exact absurd rfl (hdec name value body)
+    | seq first second => exact absurd rfl (hseq first second)
+    | ite c a b => exact absurd rfl (hite c a b)
+    | «while» c b => exact absurd rfl (hwhile c b)
+    | skip => simp only [inlineProgHOLCoreExact]
+    | assign name value => simp only [inlineProgHOLCoreExact]
+    | primitive names operator args => simp only [inlineProgHOLCoreExact]
+    | store address value => simp only [inlineProgHOLCoreExact]
+    | store32 address value => simp only [inlineProgHOLCoreExact]
+    | storeByte address value => simp only [inlineProgHOLCoreExact]
+    | storeGlob address value => simp only [inlineProgHOLCoreExact]
+    | «break» label => simp only [inlineProgHOLCoreExact]
+    | «continue» label => simp only [inlineProgHOLCoreExact]
+    | extCall function configuration configurationLength array arrayLength =>
+        simp only [inlineProgHOLCoreExact]
+    | raise exception => simp only [inlineProgHOLCoreExact]
+    | «return» values => simp only [inlineProgHOLCoreExact]
+    | shMem operator name address => simp only [inlineProgHOLCoreExact]
+    | tick => simp only [inlineProgHOLCoreExact]
+
+theorem inlineProgHOLCoreExact_eq_inlineProgHOLExact [BEq CrepInlineMapHOLName]
+    [LawfulBEq CrepInlineMapHOLName]
+    (inlineable : HolFiniteMapExact CrepInlineMapHOLName (List Nat × CrepProgHOL width))
+    (supportKeys : List CrepInlineMapHOLName)
+    (support_spec : ∀ key, inlineable.lookup key ≠ none → key ∈ supportKeys)
+    (program : CrepProgHOL width) :
+    inlineProgHOLCoreExact inlineable supportKeys support_spec program =
+      inlineProgHOLExact inlineable program := by
+  unfold inlineProgHOLExact
+  exact inlineProgHOLCoreExact_support_independent inlineable supportKeys support_spec
+    (Classical.choose inlineable.finiteSupport)
+    (Classical.choose_spec inlineable.finiteSupport) program
+
+theorem compileInlProgHOLExactWithSupport_eq_compileInlProgHOLExact [BEq CrepInlineMapHOLName]
+    [LawfulBEq CrepInlineMapHOLName]
+    (inl_fs : HolFiniteMapExact CrepInlineMapHOLName (List Nat × CrepProgHOL width))
+    (supportKeys : List CrepInlineMapHOLName)
+    (support_spec : ∀ key, inl_fs.lookup key ≠ none → key ∈ supportKeys)
+    (prog : List (CrepInlineMapHOLName × List Nat × CrepProgHOL width)) :
+    compileInlProgHOLExactWithSupport inl_fs supportKeys support_spec prog =
+      compileInlProgHOLExact inl_fs prog := by
+  simp only [compileInlProgHOLExactWithSupport, compileInlProgHOLExact]
+  apply List.map_congr_left
+  intro triple _
+  rw [inlineProgHOLCoreExact_eq_inlineProgHOLExact]
+
+theorem compileInlTopHOLExact_eq_compileInlProgHOLExact [BEq CrepInlineMapHOLName]
+    [LawfulBEq CrepInlineMapHOLName]
+    (inl_fname : List CrepInlineMapHOLName)
+    (prog : List (CrepInlineMapHOLName × List Nat × CrepProgHOL width)) :
+    compileInlTopHOLExact inl_fname prog =
+      compileInlProgHOLExact
+        (alistToFmapHOLExact (prog.filter fun triple => inl_fname.contains triple.1)) prog := by
+  unfold compileInlTopHOLExact
+  exact compileInlProgHOLExactWithSupport_eq_compileInlProgHOLExact _ _ _ _
+
 end CrepInlineCanonical
 
 end Flapjack
