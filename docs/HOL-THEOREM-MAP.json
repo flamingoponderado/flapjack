@@ -17998,5 +17998,89 @@
     "fmap_as_finite_support": [
       "funcs"
     ]
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopSemScript.sml",
+    "hol_name": "result",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopSemStateExact.lean",
+    "lean_name": "LoopResultExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.1): HOL Datatype result (loopSemScript.sml:30-38): Result ('w word_loc list) | Exception 'w word_loc | Break num | Continue num | TimeOut | FinalFFI final_event | Error. Lean has the same seven constructors in order with WordLocW width (tagged word_loc) and HolFinalEvent (final_event). The only carrier translation is HOL's type-indexed 'a word (in WordLocW width / BitVec width) to positive BitVec width, so the tag carries (words_as_type_indexed_bitvec); no extra hypotheses beyond [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopSemScript.sml",
+    "hol_name": "dec_clock_def",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopSemStateExact.lean",
+    "lean_name": "decClock",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.1): HOL dec_clock s = s with clock := s.clock - 1 (loopSemScript.sml:42-44); Lean updates only clock by the same natural subtraction over LoopSemStateFiniteExact. The only carrier translation is HOL's type-indexed 'a word (in WordLocW width / BitVec width) to positive BitVec width, so the tag carries (words_as_type_indexed_bitvec); no extra hypotheses beyond [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopSemScript.sml",
+    "hol_name": "fix_clock_def",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopSemStateExact.lean",
+    "lean_name": "fixClock",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.1): HOL fix_clock old_s (res,new_s) = (res, new_s with clock := if old_s.clock < new_s.clock then old_s.clock else new_s.clock) (loopSemScript.sml:46-50); Lean is polymorphic in the result type like HOL, keeps res, and sets the clock by the same conditional. The only carrier translation is HOL's type-indexed 'a word (in WordLocW width / BitVec width) to positive BitVec width, so the tag carries (words_as_type_indexed_bitvec); no extra hypotheses beyond [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopSemScript.sml",
+    "hol_name": "set_var_def",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopSemStateExact.lean",
+    "lean_name": "setVar",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.1): HOL set_var v x s = s with locals := insert v x s.locals (loopSemScript.sml:108-111); Lean uses sptInsert, the exact rendering of sptree$insert, on the Spt locals. The only carrier translation is HOL's type-indexed 'a word (in WordLocW width / BitVec width) to positive BitVec width, so the tag carries (words_as_type_indexed_bitvec); no extra hypotheses beyond [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopSemScript.sml",
+    "hol_name": "set_vars_def",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopSemStateExact.lean",
+    "lean_name": "setVars",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.1): HOL set_vars vs xs s = s with locals := alist_insert vs xs s.locals (loopSemScript.sml:113-116); Lean uses sptAlistInsert, the clause-for-clause rendering of sptree$alist_insert (HOL-library, untagged). HOL rows in loop_sem_set_vars_probe.out are checked by Flapjack.Test.LoopSemStateExactHelpersParity. The only carrier translation is HOL's type-indexed 'a word (in WordLocW width / BitVec width) to positive BitVec width, so the tag carries (words_as_type_indexed_bitvec); no extra hypotheses beyond [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopSemScript.sml",
+    "hol_name": "get_vars_def",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopSemStateExact.lean",
+    "lean_name": "getVars",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.1): HOL get_vars [] s = SOME [] / get_vars (v::vs) s = case lookup v s.locals of NONE => NONE | SOME x => (case get_vars vs s of NONE => NONE | SOME xs => SOME (x::xs)) (loopSemScript.sml:98-107); Lean is the same recursion via Option.bind/map over sptLookup, state second as in HOL. The only carrier translation is HOL's type-indexed 'a word (in WordLocW width / BitVec width) to positive BitVec width, so the tag carries (words_as_type_indexed_bitvec); no extra hypotheses beyond [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopSemScript.sml",
+    "hol_name": "call_env_def",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopSemStateExact.lean",
+    "lean_name": "callEnv",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.1): HOL call_env args s = s with locals := fromList args (loopSemScript.sml:177-180); Lean uses sptFromList, the exact FOLDL rendering of sptree$fromList (HOL-library, untagged). HOL rows in loop_sem_call_env_probe.out are checked by LoopSemStateExactHelpersParity. The only carrier translation is HOL's type-indexed 'a word (in WordLocW width / BitVec width) to positive BitVec width, so the tag carries (words_as_type_indexed_bitvec); no extra hypotheses beyond [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopSemScript.sml",
+    "hol_name": "find_code_def",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopSemStateExact.lean",
+    "lean_name": "findCode",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.1): HOL find_code (loopSemScript.sml:147-163): direct SOME p looks up p, checks LENGTH args = LENGTH params and returns (fromAList (ZIP (params,args)), exp); NONE fails on [] and otherwise requires LAST args = Loc loc 0, looks up loc, checks LENGTH args = LENGTH params + 1 and binds ZIP (params, FRONT args). Lean mirrors each branch with List.getLast and List.dropLast over the exact Spt code carrier and HolLoopProg; every row of loop_sem_find_code_probe.out is checked by LoopSemStateExactHelpersParity. The only carrier translation is HOL's type-indexed 'a word (in WordLocW width / BitVec width) to positive BitVec width, so the tag carries (words_as_type_indexed_bitvec); no extra hypotheses beyond [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopSemScript.sml",
+    "hol_name": "set_globals_def",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopSemStateExact.lean",
+    "lean_name": "setGlobals",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.1): HOL set_globals gv w s = s with globals := s.globals |+ (gv,w) (loopSemScript.sml:52-55); Lean updates the globals HolFiniteMapExact (the reviewed canonical |-> carrier of LoopSemStateFiniteExact, witness holFmapAsFiniteSupportWitness in this module) with update (FUPDATE). The only carrier translation is HOL's type-indexed 'a word (in WordLocW width / BitVec width) to positive BitVec width, so the tag carries (words_as_type_indexed_bitvec); no extra hypotheses beyond [NeZero width]."
   }
 ]
