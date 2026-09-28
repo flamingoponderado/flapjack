@@ -147,6 +147,7 @@ import Flapjack.Test.PanValueFfiClockLe
 import Flapjack.Test.PanValueEvaluatorStability
 import Flapjack.Test.PanToCrepMaxListParity
 import Flapjack.Test.PanToCrepRelationsParity
+import Flapjack.Test.PanToCrepRetInst2Parity
 import Flapjack.Test.PanToCrepUtilitiesParity
 import Flapjack.Test.BackendCommonCarryParity
 import Flapjack.Test.PanCrepPrimopParity
@@ -174,6 +175,7 @@ import Flapjack.Test.CrepeLoadShapeParity
 import Flapjack.Test.CrepToLoopCutsetParity
 import Flapjack.Test.CrepToLoopParity
 import Flapjack.Test.CrepToLoopDecLive
+import Flapjack.Test.CrepToLoopOcompileHOLParity
 import Flapjack.Test.CakeRegAlloc
 import Flapjack.Test.WordDeadCodeParity
 import Flapjack.Test.CrepeNestedSeqParity
@@ -918,6 +920,7 @@ def main : IO Unit := do
     Flapjack.Test.CrepToLoopCutsetParity.runChecks,
     Flapjack.Test.CrepToLoopParity.runChecks,
     Flapjack.Test.CrepToLoopDecLive.runChecks,
+    Flapjack.Test.CrepToLoopOcompileHOLParity.runChecks,
     Flapjack.Test.CakeRegAlloc.runChecks,
     Flapjack.Test.CakeWordAllocParity.runChecks,
     Flapjack.Test.CrepeNestedSeqParity.runChecks,
@@ -950,6 +953,7 @@ def main : IO Unit := do
     Flapjack.Test.FmEmptyZipAlistParity.runChecks,
     Flapjack.Test.FupdateListAppendCommutesParity.runChecks,
     Flapjack.Test.PanToCrepRelationsParity.runChecks,
+    Flapjack.Test.PanToCrepRetInst2Parity.runChecks,
     Flapjack.Test.PanToCrepCodeRelParity.runChecks,
     Flapjack.Test.PanToCrepStateRelParity.runChecks,
     Flapjack.Test.PanToCrepStateRelCarrierParity.runChecks,
