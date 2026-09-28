@@ -112,6 +112,7 @@ import Flapjack.Pancake.Semantics.ByteAlignBridge
 import Flapjack.Pancake.Semantics.ShMemBytesBridge
 import Flapjack.Pancake.Semantics.LoopProps
 import Flapjack.Pancake.Semantics.LoopProps.CutSets
+import Flapjack.Pancake.Semantics.LoopProps.CompSyntaxOk
 import Flapjack.Pancake.Semantics.LoopSemStateExact
 import Flapjack.Pancake.Semantics.LoopSemStateExact.ShMem
 import Flapjack.Pancake.Semantics.LoopSemStateExact.Evaluate
@@ -322,16 +323,21 @@ import Flapjack.Pancake.CrepToLoop.Proofs.CompExpTmpBound
 import Flapjack.Pancake.CrepToLoop.Proofs.CompExpLeTmpDomain
 import Flapjack.Pancake.CrepToLoop.Proofs.LoopEvaluateHelpers
 import Flapjack.Pancake.CrepToLoop.Proofs.CompExpSyntaxHelpers
+import Flapjack.Pancake.CrepToLoop.Proofs.CompExpSurvives
+import Flapjack.Pancake.CrepToLoop.Proofs.LocalListHelpers
+import Flapjack.Pancake.CrepToLoop.Proofs.CrepEvalHelpers
 import Flapjack.Pancake.CrepToLoop.Optimise
 import Flapjack.Pancake.CrepToLoop.StateRel
 import Flapjack.Test.CrepToLoopCompileExpExactParity
 import Flapjack.Test.CrepToLoopCompileExactParity
+import Flapjack.Test.CrepToLoopCompFuncParity
 import Flapjack.Test.CrepFindLabParity
 import Flapjack.Pancake.LoopLive
 import Flapjack.Pancake.LoopLang.AssignedVars
 import Flapjack.Pancake.Semantics.LoopProps.AssignedVars
 import Flapjack.Test.LoopExactAssignedVarsParity
 import Flapjack.Test.LoopPropsCutSetsParity
+import Flapjack.Test.LoopPropsCompSyntaxOkParity
 import Flapjack.Test.CrepToLoopSurvivesMapiAssignParity
 /- The context-aware Crep-to-Loop correctness file is being updated alongside
    the faithful `findLoopVar` lowering and is intentionally not in this
