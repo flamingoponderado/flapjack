@@ -4,3 +4,6 @@ one_miss=NONE
 comb_hit=SOME (RStruct [ValWord 3w; ValWord 5w])
 named_hit=SOME (NStruct «Pair» [(«left»,ValWord 3w); («right»,ValWord 5w)])
 named_suffix_blocked=NONE
+recursive_mem_loads_two_words=SOME [ValWord 17w; ValWord 34w]
+recursive_comb_two_words=SOME (RStruct [ValWord 17w; ValWord 34w])
+recursive_named_two_fields=SOME (NStruct «S» [(«f»,ValWord 17w); («g»,ValWord 34w)])

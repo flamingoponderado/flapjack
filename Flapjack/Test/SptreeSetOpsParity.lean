@@ -37,11 +37,33 @@ def sptreeSetOpsGuard : Bool :=
 
 #guard sptreeSetOpsGuard
 
+/-- Mixed-payload parity rows for the HETEROGENEOUS `sptInter`
+(`Spt α → Spt β → Spt α`), matching `sptree_inter_mixed_probe.out`: the result
+keeps the LEFT operand's values on keys present in both trees. -/
+def sptreeInterMixedGuard : Bool :=
+  -- inter_mixed_keys=[4]
+  ((sptToAList (sptInter (sptFromAList [(0, (7 : Nat)), (4, 8)]) (sptFromAList [(4, ()), (9, ())]))).map Prod.fst
+      == [4]) &&
+  -- inter_mixed_vals=[8]
+  ((sptToAList (sptInter (sptFromAList [(0, (7 : Nat)), (4, 8)]) (sptFromAList [(4, ()), (9, ())]))).map Prod.snd
+      == [8]) &&
+  -- inter_mixed_left_only=[false]
+  ((sptToAList (sptInter (sptFromAList [(0, true), (4, false)]) (sptFromAList [(1, ()), (4, ())]))).map Prod.snd
+      == [false]) &&
+  -- inter_mixed_disjoint=T
+  sptIsEmpty (sptInter (sptFromAList [(0, (7 : Nat))]) (sptFromAList [(1, ())]))
+
+#guard sptreeInterMixedGuard
+
 def runChecks : IO Bool := do
   if sptreeSetOpsGuard then
     IO.println "PASS sptree set operations HOL parity"
   else
     IO.println "FAIL sptree set operations HOL parity"
-  pure sptreeSetOpsGuard
+  if sptreeInterMixedGuard then
+    IO.println "PASS heterogeneous sptree inter (mixed-payload) HOL parity"
+  else
+    IO.println "FAIL heterogeneous sptree inter (mixed-payload) HOL parity"
+  pure (sptreeSetOpsGuard && sptreeInterMixedGuard)
 
 end Flapjack.Test.SptreeSetOpsParity

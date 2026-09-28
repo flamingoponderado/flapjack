@@ -210,6 +210,15 @@ CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=pan_mem_load_probeScr
 CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=crep_load_shape_probeScript.sml scripts/hol-probes/regenerate.sh
 CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=crep_eval_load_rv64_probeScript.sml scripts/hol-probes/regenerate.sh
 ```
+The same direct `mem_load_def` probe also records the recursive rows
+`recursive_mem_loads_two_words`, `recursive_comb_two_words`, and
+`recursive_named_two_fields`. They use a two-cell 64-bit memory with addresses
+0 and 8, so the fixture pins `bytes_in_word * size_of_sh_with_ctxt` as well as
+the list, `RStruct`, and two-field `NStruct` result shapes. Matching exact
+production-to-HOL kernel guards are in
+`Flapjack.Test.DeclBridgeParity`; regenerate them with the command above for
+`pan_mem_load_probeScript.sml`.
+
 `excp_rel_probe.out` and `ctxt_fc_probe.out` are direct EVALs from
 `pan_to_crepProofTheory`, paired with `Flapjack.Test.PanToCrepRelationsParity`.
 The `functions_projection` row in `ctxt_fc_probe.out` directly checks the
@@ -573,15 +582,25 @@ The `prog_if_probe.out` fixture probes the comparison-materialization helper
 canonical live-set insertion order.
 The `compile_crepop_probe.out` fixture probes both RISC-V and ARMv7 `Mul`
 branches of `compile_crepop_def` at line 42 of the same source.
-`crep_to_loop_compile_exp_probe.out` records direct HOL EVAL rows for
-`compile_exp_def` and its local mutual list helper `compile_exps`, including
-variable lookup, Load32 temporary allocation, n-ary Op mapping, Mul lowering,
-comparison temporaries/live-set insertion, Shift, and list compilation. The
+`crep_to_loop_compile_exp_probe.out` starts with a direct `prog_if_def` row on
+exactly the arguments used by the `cmp` expression row, then records direct HOL
+EVAL rows for `compile_exp_def` and its local mutual list helper `compile_exps`,
+including variable lookup, Load32 temporary allocation, n-ary Op mapping, Mul
+lowering, comparison temporaries/live-set insertion, Shift, and list
+compilation. The
 exact-carrier Lean equations are in
 `Flapjack.Test.CrepToLoopCompileExpExactParity`. The tagged definitions use the
 source `context` and Loop carriers; the generic production compiler is not
-claimed to route through them yet, and exact `compile_def`/`comp_func_def`
-routing remains open.
+claimed to route through them yet. Exact `compile_def` is now ported over the
+HOL carriers in `Flapjack.Test.CrepToLoopCompileExactParity`; production
+routing through it is tracked by bead `flapjack-pxn.18.5.6.28.1`, while the
+dependent `comp_func_def` port remains separate work.
+`crep_to_loop_compile_probe.out` records direct HOL EVAL results for all 19
+constructors in `compile_def`, including a function call with a mapped label,
+mapped return, and handler. Its exact-carrier Lean equations are in
+`Flapjack.Test.CrepToLoopCompileExactParity`. The compiler is still proof-side;
+the production `CrepProg`/`LoopProg` path does not yet use the exact carriers,
+and a separate production bridge remains required.
 The original Pancake source-level support boundary is also explicit in
 `cakeml/pancake/proofs/loop_to_wordProofScript.sml:2285-2291`: `LLongDiv` is
 accepted by `loop_inst_ok` only for `x86_64`. Consequently, RISC-V parity must
@@ -784,3 +803,11 @@ small `fromAList` trees and records their `toAList` key order, emptiness and
 `oEL` results.  `Flapjack.Test.SptreeSetOpsParity` checks the Lean renderings
 in `Flapjack/Misc/Sptree.lean` against every row.  Refresh with
 `HOL_PROBE_ONLY=sptree_set_ops_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`sptree_inter_mixed_probe` evaluates the HETEROGENEOUS `sptree$inter`
+(`'a num_map -> 'b num_map -> 'a num_map`) on mixed-payload `fromAList` trees and
+records that the result keeps the LEFT operand's values on keys present in both
+trees; it loads only `bossLib`/`sptreeTheory` (no CakeML `preamble`), so it runs
+in a bare HOL session.  `Flapjack.Test.SptreeSetOpsParity.sptreeInterMixedGuard`
+checks the Lean `sptInter` against every row.  Refresh with
+`HOL_PROBE_ONLY=sptree_inter_mixed_probeScript.sml scripts/hol-probes/regenerate.sh`.

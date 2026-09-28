@@ -208,7 +208,8 @@ run_probe get_stack_only_probeScript.sml get_stack_only_probe.out \
   skip assign_leaf "$cake_dir/compiler/backend/word_allocScript.sml" \
   "$cake_dir/compiler/backend"
 run_probe pan_mem_load_probeScript.sml pan_mem_load_probe.out \
-  one_hit named_suffix_blocked "$cake_dir/pancake/semantics/panSemScript.sml"
+  one_hit recursive_mem_loads_two_words recursive_comb_two_words \
+  recursive_named_two_fields "$cake_dir/pancake/semantics/panSemScript.sml"
 run_probe pan_sem_state_eval_probeScript.sml pan_sem_state_eval_probe.out \
   word_load_hit eval_nested_load_shape pan_sem_state_eval_done \
   "$cake_dir/pancake/semantics/panSemScript.sml"
@@ -1283,7 +1284,10 @@ run_probe prog_if_probeScript.sml prog_if_probe.out \
   prog_if_basic prog_if_basic prog_if_wrong_result prog_if_wrong_result \
   "$cake_dir/pancake/crep_to_loopScript.sml"
 run_probe crep_to_loop_compile_exp_probeScript.sml crep_to_loop_compile_exp_probe.out \
-  base compile_exps \
+  prog_if base var_hit load32 op_nary crepop_mul cmp shift compile_exps \
+  "$cake_dir/pancake/crep_to_loopScript.sml"
+run_probe crep_to_loop_compile_probeScript.sml crep_to_loop_compile_probe.out \
+  loop_nested_seq_empty compile_ext_call \
   "$cake_dir/pancake/crep_to_loopScript.sml"
 run_probe compile_crepop_probeScript.sml compile_crepop_probe.out \
   compile_crepop_mul_riscv compile_crepop_mul_armv7 \
@@ -1391,6 +1395,10 @@ run_probe loop_sem_cut_state_probeScript.sml loop_sem_cut_state_probe.out \
   hit_first loc_preserved "$cake_dir/pancake/semantics/loopSemScript.sml"
 run_probe loop_sem_cut_res_probeScript.sml loop_sem_cut_res_probe.out \
   result_short_circuit clock_decrement_and_cut \
+  "$cake_dir/pancake/semantics/loopSemScript.sml"
+run_probe loop_sem_cut_zero_probeScript.sml loop_sem_cut_zero_probe.out \
+  cut0_success_lookup cut0_missing cut0_empty_live cut0_res_short_circuit \
+  cut0_res_missing_error cut0_res_timeout cut0_res_decrement \
   "$cake_dir/pancake/semantics/loopSemScript.sml"
 run_probe loop_sem_sh_mem_load_probeScript.sml loop_sem_sh_mem_load_probe.out \
   return_zero_width aligned_domain_original_payload \
@@ -1688,6 +1696,12 @@ run_probe sptree_set_ops_probeScript.sml sptree_set_ops_probe.out \
   union_keys oel_miss \
   "$cake_dir/compiler/backend/backend_commonScript.sml" \
   "$cake_dir/compiler/backend"
+# Mixed-payload oracle for the heterogeneous HOL sptree$inter used by loopSem
+# cut_state (flapjack-pxgp.2.1): the result keeps the left operand's values.
+run_probe sptree_inter_mixed_probeScript.sml sptree_inter_mixed_probe.out \
+  inter_mixed_keys inter_mixed_disjoint \
+  "$cake_dir/pancake/loop_liveScript.sml" \
+  "$cake_dir/pancake"
 # The num_set/spt probe observes the exact HOL sptree lookup/insert/wf/isEmpty
 # behaviour for the unit-spt carrier used as num_set.
 run_probe num_set_spt_probeScript.sml num_set_spt_probe.out \
