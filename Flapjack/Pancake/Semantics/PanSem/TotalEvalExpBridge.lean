@@ -2,6 +2,7 @@ import Flapjack.Pancake.Semantics.PanSem.TotalEvalBridge
 import Flapjack.Pancake.Semantics.PanSem.EvalFinite
 import Flapjack.Pancake.Semantics.PanSem.MemLoadHOL
 import Flapjack.Pancake.Semantics.PanSem.StateExactFinite
+import Flapjack.Pancake.Semantics.PanSem.Primop
 import Flapjack.Pancake.PanStructsByteRanged
 import Flapjack.Pancake.Semantics.PanProps
 
@@ -3044,6 +3045,325 @@ theorem panSemTotalEvaluate_store_agree_of_progByteRanged {σ : Type}
   exact panSemTotalEvaluate_store_agree primitive production exact hrel hranged
     address value haddress hvalue
 
+/-! ## Production/exact agreement for the `Primitive` constructor
+
+`panSemTotalPrimitiveClause` (`TotalSteps.lean:367`) evaluates the argument
+expressions, runs the production handler `primitive`, and installs a valid
+result into `locals`; its exact counterpart is the tagged
+`evaluateHOLFiniteState_primitive` (`StateExactFiniteMap.lean:2809`), which
+replaces the handler by the built-in `panPrimopHOLExact` and the validity test
+by `isValidValueHOLFinite`.
+
+Unlike `Assign`/`Store`, the handler is live and there is no production/exact
+bridge between the arbitrarily supplied `primitive` and the built-in
+`panPrimopHOLExact` (the latter is a fixed function of the operator and encoded
+argument list, while `primitive` is an unconstrained `PanPrimitiveHandler`
+parameter of `panSemTotalEvaluate`).  The agreement therefore takes the handler
+correspondence as an input side condition — the value/result relationship that
+mirrors the evaluated-destination/value hypotheses of the `Store` slice — plus
+the runtime range predicate `PanPrimitiveHandlerByteRanged` used to derive the
+assignment-validity parity through
+`panValueAssignmentValid_eq_isValidValueHOLFinite`.  Only the argument-list
+agreement and the produced-value validity are discharged from the executed
+program's `ProgByteRanged` evidence; no target run, result, or post-state
+relation is assumed.  Untagged Flapjack-specific bridge infrastructure. -/
+
+/-- Runtime predicate on a primitive handler: every value it returns is
+    byte-ranged.  Unlike the FFI, the production `Primitive` clause installs this
+    value directly into `locals`, so this is the exact premise needed to preserve
+    `PanSemStateRelExecRanged` across the constructor. -/
+def PanPrimitiveHandlerByteRanged (primitive : PanPrimitiveHandler (RiscV.Word 64)) : Prop :=
+  ∀ (operator : PrimOp) (values : List (PanValue (RiscV.Word 64)))
+    (value : PanValue (RiscV.Word 64)),
+    primitive operator values = some value → PanValueByteRanged value
+
+/-- Argument-list expression agreement: for a byte-ranged argument list, the
+    production `evalPanSemStateExps` and the exact `evalListHOLExact` return
+    corresponding lists under `panValueToHOL`.  Assembled from the per-expression
+    agreement `evalPanValueExp_agree` through
+    `evalPanValueExps_eq_evalListHOLExact_of`; the finite-support rendering and
+    the `Classical`-instance call are identified by the decidable-predicate
+    subsingleton. -/
+private theorem evalPanSemStateExps_agree {σ : Type}
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (hranged : PanSemStateRelExecRanged production)
+    (arguments : List (Exp (RiscV.Word 64)))
+    (harguments : ∀ e ∈ arguments, ExpByteRanged e) :
+    Option.map (List.map panValueToHOL) (evalPanSemStateExps production arguments)
+      = @evalListHOLExact 64 σ _ exact.toExact
+          (fun address => Classical.propDecidable (exact.memaddrs address))
+          (arguments.map expToHOL) := by
+  rw [evalPanSemStateExps_64_eq_previous]
+  have hclass : @evalListHOLExact 64 σ _ exact.toExact
+      (fun address => Classical.propDecidable (exact.memaddrs address))
+      (arguments.map expToHOL) = exact.evalListHOLFinite (arguments.map expToHOL) := by
+    unfold PanSemStateFiniteExact.evalListHOLFinite
+    rw [Subsingleton.elim (fun address => Classical.propDecidable (exact.memaddrs address))
+      (inferInstance : DecidablePred exact.memaddrs)]
+  rw [hclass]
+  exact evalPanValueExps_eq_evalListHOLExact_of production.structs production.locals
+    production.globals production.memory production.baseAddress production.topAddress
+    panSemBitVec64BytesInWord (some (panSemBitVec64MemoryAccess production)) exact arguments
+    (fun e he => evalPanValueExp_agree production exact hrel hranged e (harguments e he))
+
+/-- Production/exact agreement for the `Primitive` constructor, assembled from the
+    argument-list agreement `evalPanSemStateExps_agree`, the assignment-validity
+    parity `panValueAssignmentValid_eq_isValidValueHOLFinite`, and the
+    `TotalEvalBridge` clause slice `panSemTotalPrimitiveClause_agree`.  The
+    handler correspondence `hprim` relates the arbitrary production handler to
+    the built-in `panPrimopHOLExact` on encoded argument lists; the runtime range
+    predicate `hprimRanged` supplies the byte range of the produced value for the
+    validity parity.  The failed-argument-list, handler-`none`, valid-assignment,
+    and invalid-assignment branches are all covered without any target run,
+    result, or post-state premise. -/
+theorem panSemTotalEvaluate_primitive_agree {σ : Type}
+    (primitive : PanPrimitiveHandler (RiscV.Word 64))
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (hranged : PanSemStateRelExecRanged production)
+    (name : VarName) (hname : NameRanged name) (operator : PrimOp)
+    (arguments : List (Exp (RiscV.Word 64)))
+    (harguments : ∀ e ∈ arguments, ExpByteRanged e)
+    (hprim : ∀ (values : List (PanValue (RiscV.Word 64))),
+      Option.map panValueToHOL (primitive operator values)
+        = panPrimopHOLExact operator (values.map panValueToHOL))
+    (hprimRanged : PanPrimitiveHandlerByteRanged primitive) :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluate primitive (.primitive name operator arguments) production).1
+        (evaluateHOLFiniteState exact
+          (.primitive (ofString name) operator (arguments.map expToHOL))).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluate primitive (.primitive name operator arguments) production).2
+        (evaluateHOLFiniteState exact
+          (.primitive (ofString name) operator (arguments.map expToHOL))).2.toExact := by
+  rw [panSemTotalEvaluate]
+  have hlist := evalPanSemStateExps_agree production exact hrel hranged arguments harguments
+  cases hargs : evalPanSemStateExps production arguments with
+  | none =>
+      have hexactNone : @evalListHOLExact 64 σ _ exact.toExact
+          (fun address => Classical.propDecidable (exact.memaddrs address))
+          (arguments.map expToHOL) = none := by
+        rw [← hlist, hargs]
+        rfl
+      rw [panSemTotalPrimitiveClause_none production name operator arguments primitive hargs]
+      simp only [evaluateHOLFiniteState_primitive, hexactNone]
+      exact ⟨trivial, hrel⟩
+  | some values =>
+      have hexactSome : @evalListHOLExact 64 σ _ exact.toExact
+          (fun address => Classical.propDecidable (exact.memaddrs address))
+          (arguments.map expToHOL) = some (values.map panValueToHOL) := by
+        rw [← hlist, hargs]
+        rfl
+      exact panSemTotalPrimitiveClause_agree production exact hrel name hname operator
+        arguments primitive values hargs hexactSome (hprim values)
+        (fun value hprimValue =>
+          panValueAssignmentValid_eq_isValidValueHOLFinite production exact hrel hranged
+            .local name hname value (hprimRanged operator values value hprimValue))
+
+/-- The fully assembled production/exact `Primitive`-clause agreement with the
+    identifier and argument byte-range premises discharged from the executed
+    program node's `ProgByteRanged` hypothesis (mirroring
+    `panSemTotalEvaluate_store_agree_of_progByteRanged`).  The handler
+    correspondence and its runtime range predicate remain explicit. -/
+theorem panSemTotalEvaluate_primitive_agree_of_progByteRanged {σ : Type}
+    (primitive : PanPrimitiveHandler (RiscV.Word 64))
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (hranged : PanSemStateRelExecRanged production)
+    (name : VarName) (operator : PrimOp) (arguments : List (Exp (RiscV.Word 64)))
+    (hprogram : ProgByteRanged (.primitive name operator arguments))
+    (hprim : ∀ (values : List (PanValue (RiscV.Word 64))),
+      Option.map panValueToHOL (primitive operator values)
+        = panPrimopHOLExact operator (values.map panValueToHOL))
+    (hprimRanged : PanPrimitiveHandlerByteRanged primitive) :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluate primitive (.primitive name operator arguments) production).1
+        (evaluateHOLFiniteState exact
+          (.primitive (ofString name) operator (arguments.map expToHOL))).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluate primitive (.primitive name operator arguments) production).2
+        (evaluateHOLFiniteState exact
+          (.primitive (ofString name) operator (arguments.map expToHOL))).2.toExact := by
+  obtain ⟨hname, harguments⟩ := hprogram
+  exact panSemTotalEvaluate_primitive_agree primitive production exact hrel hranged
+    name hname operator arguments harguments hprim hprimRanged
+
+/-- Canonical total source-semantics entrypoint for the production `panSem$`
+    evaluator on the executable compiler path: `panSemTotalEvaluate` specialised
+    to the production primitive handler `panPrimopHOL`.  The general evaluator is
+    handler-parametric, so this names the concrete handler that the source
+    semantics is intended to run.  Not a HOL declaration; untagged. -/
+abbrev panSemTotalEvaluateCake {σ : Type} :
+    Prog (RiscV.Word 64) → PanSemState (RiscV.Word 64) (FfiState σ) →
+      Option (PanSemHOLResult (RiscV.Word 64)) ×
+        PanSemState (RiscV.Word 64) (FfiState σ) :=
+  panSemTotalEvaluate (primitive := panPrimopHOL)
+
+@[simp] theorem panSemTotalEvaluateCake_eq {σ : Type}
+    (program : Prog (RiscV.Word 64))
+    (state : PanSemState (RiscV.Word 64) (FfiState σ)) :
+    panSemTotalEvaluateCake program state = panSemTotalEvaluate panPrimopHOL program state :=
+  rfl
+
+/-! ### The canonical handler `panPrimopHOL`
+
+The handler side conditions of `panSemTotalEvaluate_primitive_agree` are not an
+extra assumption for the canonical production handler `panPrimopHOL`: they are
+theorems.  `panPrimopHOL_bridge` establishes the value-level correspondence to
+the exact `panPrimopHOLExact`, and `panPrimopHOL_byteRanged` establishes that
+every value it produces is byte-ranged.  Instantiating the general theorem with
+these two lemmas makes the `Primitive` constructor agreement premise-free for the
+canonical handler.  Untagged Flapjack-specific bridge infrastructure. -/
+
+/-- Value-level correspondence of the canonical production handler
+    `panPrimopHOL` with the exact `panPrimopHOLExact` under the codec
+    `panValueToHOL`.  Both sides return `none` except for `addCarry` applied to
+    exactly three word values, where both return the same `rStruct` of the two
+    carry words. -/
+theorem panPrimopHOL_bridge :
+    ∀ (operator : PrimOp) (values : List (PanValue (RiscV.Word 64))),
+      Option.map panValueToHOL (panPrimopHOL operator values) =
+        panPrimopHOLExact operator (values.map panValueToHOL) := by
+  intro operator values
+  cases operator
+  cases values with
+  | nil => simp [panPrimopHOL, panPrimopHOLExact]
+  | cons first rest =>
+      cases rest with
+      | nil => cases first <;> simp [panPrimopHOL, panPrimopHOLExact]
+      | cons second rest =>
+          cases rest with
+          | nil =>
+              cases first <;> cases second <;>
+                simp [panPrimopHOL, panPrimopHOLExact]
+          | cons third rest =>
+              cases rest with
+              | nil =>
+                  cases first <;> cases second <;> cases third <;>
+                    simp [panPrimopHOL, panPrimopHOLExact]
+              | cons fourth rest =>
+                  simp [panPrimopHOL, panPrimopHOLExact]
+
+/-- The canonical production handler `panPrimopHOL` is byte-ranged: the only
+    successful case returns an `rStruct` of two word values, both of which are
+    byte-ranged. -/
+theorem panPrimopHOL_byteRanged : PanPrimitiveHandlerByteRanged panPrimopHOL := by
+  intro operator values value hprim
+  cases operator
+  cases values with
+  | nil => simp [panPrimopHOL] at hprim
+  | cons first rest =>
+      cases rest with
+      | nil => simp [panPrimopHOL] at hprim
+      | cons second rest =>
+          cases rest with
+          | nil => simp [panPrimopHOL] at hprim
+          | cons third rest =>
+              cases rest with
+              | cons _ _ => simp [panPrimopHOL] at hprim
+              | nil =>
+                  cases first <;> cases second <;> cases third <;>
+                    simp [panPrimopHOL] at hprim
+                  rw [← hprim]
+                  simp [PanValueByteRanged]
+
+/-- Premise-free `Primitive`-clause agreement for the canonical production
+    handler `panPrimopHOL`: the two handler side conditions of
+    `panSemTotalEvaluate_primitive_agree` are discharged by
+    `panPrimopHOL_bridge` and `panPrimopHOL_byteRanged`. -/
+theorem panSemTotalEvaluate_primitive_agree_panPrimopHOL {σ : Type}
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (hranged : PanSemStateRelExecRanged production)
+    (name : VarName) (hname : NameRanged name) (operator : PrimOp)
+    (arguments : List (Exp (RiscV.Word 64)))
+    (harguments : ∀ e ∈ arguments, ExpByteRanged e) :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluate panPrimopHOL (.primitive name operator arguments)
+          production).1
+        (evaluateHOLFiniteState exact
+          (.primitive (ofString name) operator (arguments.map expToHOL))).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluate panPrimopHOL (.primitive name operator arguments)
+          production).2
+        (evaluateHOLFiniteState exact
+          (.primitive (ofString name) operator (arguments.map expToHOL))).2.toExact :=
+  panSemTotalEvaluate_primitive_agree panPrimopHOL production exact hrel hranged
+    name hname operator arguments harguments
+    (fun values => panPrimopHOL_bridge operator values) panPrimopHOL_byteRanged
+
+/-- Premise-free `Primitive`-clause agreement for the canonical production
+    handler `panPrimopHOL`, with the identifier and argument byte-range premises
+    discharged from the executed program node's `ProgByteRanged` hypothesis
+    (mirroring `panSemTotalEvaluate_primitive_agree_of_progByteRanged`). -/
+theorem panSemTotalEvaluate_primitive_agree_panPrimopHOL_of_progByteRanged {σ : Type}
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (hranged : PanSemStateRelExecRanged production)
+    (name : VarName) (operator : PrimOp) (arguments : List (Exp (RiscV.Word 64)))
+    (hprogram : ProgByteRanged (.primitive name operator arguments)) :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluate panPrimopHOL (.primitive name operator arguments)
+          production).1
+        (evaluateHOLFiniteState exact
+          (.primitive (ofString name) operator (arguments.map expToHOL))).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluate panPrimopHOL (.primitive name operator arguments)
+          production).2
+        (evaluateHOLFiniteState exact
+          (.primitive (ofString name) operator (arguments.map expToHOL))).2.toExact := by
+  obtain ⟨hname, harguments⟩ := hprogram
+  exact panSemTotalEvaluate_primitive_agree_panPrimopHOL production exact hrel
+    hranged name hname operator arguments harguments
+
+/-- `Primitive`-clause agreement for the named canonical entrypoint
+    `panSemTotalEvaluateCake` (definitionally `panSemTotalEvaluate panPrimopHOL`)
+    against the tagged exact HOL evaluator, via the canonical
+    `panPrimopHOL_bridge`. -/
+theorem panSemTotalEvaluateCake_primitive_agree {σ : Type}
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (hranged : PanSemStateRelExecRanged production)
+    (name : VarName) (hname : NameRanged name) (operator : PrimOp)
+    (arguments : List (Exp (RiscV.Word 64)))
+    (harguments : ∀ e ∈ arguments, ExpByteRanged e) :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluateCake (.primitive name operator arguments) production).1
+        (evaluateHOLFiniteState exact
+          (.primitive (ofString name) operator (arguments.map expToHOL))).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluateCake (.primitive name operator arguments) production).2
+        (evaluateHOLFiniteState exact
+          (.primitive (ofString name) operator (arguments.map expToHOL))).2.toExact :=
+  panSemTotalEvaluate_primitive_agree_panPrimopHOL production exact hrel hranged
+    name hname operator arguments harguments
+
+/-- `ProgByteRanged`-premise form of `panSemTotalEvaluateCake_primitive_agree`. -/
+theorem panSemTotalEvaluateCake_primitive_agree_of_progByteRanged {σ : Type}
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (hranged : PanSemStateRelExecRanged production)
+    (name : VarName) (operator : PrimOp) (arguments : List (Exp (RiscV.Word 64)))
+    (hprogram : ProgByteRanged (.primitive name operator arguments)) :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluateCake (.primitive name operator arguments) production).1
+        (evaluateHOLFiniteState exact
+          (.primitive (ofString name) operator (arguments.map expToHOL))).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluateCake (.primitive name operator arguments) production).2
+        (evaluateHOLFiniteState exact
+          (.primitive (ofString name) operator (arguments.map expToHOL))).2.toExact :=
+  panSemTotalEvaluate_primitive_agree_panPrimopHOL_of_progByteRanged production exact
+    hrel hranged name operator arguments hprogram
+
 /-! ## Production/exact agreement for the `Return` and `Raise` constructors
 
 `panSemTotalReturnClause` (`TotalSteps.lean:177`) and `panSemTotalRaiseClause`
@@ -3064,7 +3384,7 @@ Untagged Flapjack-specific bridge infrastructure; no `@[hol]` tag. -/
 
 /-- The `toStringOfBytes` image of an `MlString` is `NameRanged`: decoding bytes
     to characters yields codes below 256. -/
-private theorem nameRanged_toStringOfBytes_bridge (m : MlS) :
+theorem nameRanged_toStringOfBytes_bridge (m : MlS) :
     NameRanged (toStringOfBytes m) := by
   intro character hmem
   simp only [toStringOfBytes, String.toList_ofList, List.mem_map] at hmem
@@ -3074,7 +3394,7 @@ private theorem nameRanged_toStringOfBytes_bridge (m : MlS) :
   exact hb
 
 /-- Decoding a `ShapeHOL` to a production shape is byte-ranged. -/
-private theorem shapeOfHOL_byteRanged_bridge :
+theorem shapeOfHOL_byteRanged_bridge :
     (shape : ShapeHOL) → ShapeByteRanged (shapeOfHOL shape)
   | .one => by simp [ShapeByteRanged, shapeOfHOL]
   | .named name => by
@@ -3088,7 +3408,7 @@ private theorem shapeOfHOL_byteRanged_bridge :
 /-- A decoded exact expression is byte-ranged, so the production
     `ExpByteRanged` premise of the expression agreement is always available for
     `expOfHOL`. -/
-private theorem expOfHOL_byteRanged_bridge {width : Nat} [NeZero width] :
+theorem expOfHOL_byteRanged_bridge {width : Nat} [NeZero width] :
     (expression : ExpHOL width) → ExpByteRanged (expOfHOL expression) :=
   ExpHOL.rec
     (motive_1 := fun expression => ExpByteRanged (expOfHOL expression))
@@ -3908,15 +4228,6 @@ theorem ffiResultByteRanged_of_callFfi_returned {σ : Type} (state : FfiState σ
     (_h : callFfi state name configuration bytes = .returned nextFfi nextBytes) :
     FfiResultByteRanged (.returned nextFfi nextBytes) :=
   bytesByteRanged nextBytes
-
-/-- Runtime predicate on a primitive handler: every value it returns is
-    byte-ranged.  Unlike the FFI, the production `Primitive` clause installs this
-    value directly into `locals`, so this is the exact premise needed to preserve
-    `PanSemStateRelExecRanged` across the constructor. -/
-def PanPrimitiveHandlerByteRanged (primitive : PanPrimitiveHandler (RiscV.Word 64)) : Prop :=
-  ∀ (operator : PrimOp) (values : List (PanValue (RiscV.Word 64)))
-    (value : PanValue (RiscV.Word 64)),
-    primitive operator values = some value → PanValueByteRanged value
 
 /-- `panEmptyLocals` preserves `PanSemStateRelExecRanged`: only the local map is
     replaced, by the everywhere-`none` map. -/
