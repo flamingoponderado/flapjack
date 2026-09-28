@@ -41,6 +41,8 @@ import Flapjack.Pancake.CrepToLoop.Proofs.RelationsExact
 import Flapjack.Pancake.CrepToLoop.Proofs.LocalsRelHelpers
 import Flapjack.Pancake.CrepToLoop.Proofs.LocalsRelOptMmap
 import Flapjack.Pancake.CrepToLoop.Proofs.SemanticsWrapper
+import Flapjack.Pancake.CrepToLoop.Proofs.MakeFuncsLemmas
+import Flapjack.Pancake.CrepToLoop.Proofs.NotMemContextAssigned
 import Flapjack.Pancake.CrepToLoop.StateRel
 import Flapjack.Pancake.LoopToWord
 import Flapjack.Pancake.LoopLang.AssignedVars
