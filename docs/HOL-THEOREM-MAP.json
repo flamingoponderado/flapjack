@@ -18109,64 +18109,55 @@
   {
     "hol_path": "cakeml/pancake/loopLangScript.sml",
     "hol_name": "assigned_vars_def",
-    "lean_path": "Flapjack/Pancake/LoopLive/ExactAssignedVars.lean",
+    "lean_path": "Flapjack/Pancake/LoopLang/AssignedVars.lean",
     "lean_name": "holLoopAssignedVars",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "reviewer": "flapjack-luna-b source comparison (2026-09-28, bead flapjack-pxn.18.5.17.1.1.2) against loopLangScript.sml:94-111. All HOL prog constructors match HolLoopProg; the definition preserves each assigned_vars clause, including Call return/exception-handler ordering and the empty default. BitVec width is the reviewed type-indexed word translation.",
+    "reviewer": "flapjack-luna-b source comparison (2026-09-28, bead flapjack-pxn.18.5.17.1.1.2) against loopLangScript.sml:94-111. All HOL prog constructors match HolLoopProg; the definition preserves each assigned_vars clause, including Call return/exception-handler ordering and the empty default. BitVec width is the reviewed type-indexed word translation. Declaration relocated to a submodule of its HOL source counterpart after coordinator placement HOLD.",
     "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "cakeml/pancake/loopLangScript.sml",
     "hol_name": "nested_seq_def",
-    "lean_path": "Flapjack/Pancake/LoopLive/ExactAssignedVars.lean",
+    "lean_path": "Flapjack/Pancake/LoopLang/AssignedVars.lean",
     "lean_name": "holLoopNestedSeq",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "reviewer": "flapjack-luna-b source comparison (2026-09-28, bead flapjack-pxn.18.5.17.1.1.2) against loopLangScript.sml:72-75. Empty lists yield Skip; cons yields Seq head (nested_seq tail), with the exact HolLoopProg carrier and type-indexed BitVec word translation.",
+    "reviewer": "flapjack-luna-b source comparison (2026-09-28, bead flapjack-pxn.18.5.17.1.1.2) against loopLangScript.sml:72-75. Empty lists yield Skip; cons yields Seq head (nested_seq tail), with the exact HolLoopProg carrier and type-indexed BitVec word translation. Declaration relocated to a submodule of its HOL source counterpart after coordinator placement HOLD.",
     "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "cakeml/pancake/semantics/loopPropsScript.sml",
     "hol_name": "assigned_vars_seq_split",
-    "lean_path": "Flapjack/Pancake/LoopLive/ExactAssignedVars.lean",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopProps/AssignedVars.lean",
     "lean_name": "holAssignedVarsSeqSplit",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "reviewer": "flapjack-luna-b source comparison (2026-09-28, bead flapjack-pxn.18.5.17.1.1.2) against loopPropsScript.sml:890-892. Binder order q then p is retained and conclusion is exactly assigned_vars (Seq p q) = assigned_vars p ++ assigned_vars q over HolLoopProg; only the reviewed word-width translation applies.",
+    "reviewer": "flapjack-luna-b source comparison (2026-09-28, bead flapjack-pxn.18.5.17.1.1.2) against loopPropsScript.sml:890-892. Binder order q then p is retained and conclusion is exactly assigned_vars (Seq p q) = assigned_vars p ++ assigned_vars q over HolLoopProg; only the reviewed word-width translation applies. Declaration relocated to a submodule of its HOL source counterpart after coordinator placement HOLD.",
     "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "cakeml/pancake/semantics/loopPropsScript.sml",
     "hol_name": "assigned_vars_nested_seq_split",
-    "lean_path": "Flapjack/Pancake/LoopLive/ExactAssignedVars.lean",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopProps/AssignedVars.lean",
     "lean_name": "holAssignedVarsNestedSeqSplit",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "reviewer": "flapjack-luna-b source comparison (2026-09-28, bead flapjack-pxn.18.5.17.1.1.2) against loopPropsScript.sml:880-887. List binders p,q, nested_seq calls, concatenation, and assigned_vars conclusion are preserved over HolLoopProg; only type-indexed word width is translated.",
+    "reviewer": "flapjack-luna-b source comparison (2026-09-28, bead flapjack-pxn.18.5.17.1.1.2) against loopPropsScript.sml:880-887. List binders p,q, nested_seq calls, concatenation, and assigned_vars conclusion are preserved over HolLoopProg; only type-indexed word width is translated. Declaration relocated to a submodule of its HOL source counterpart after coordinator placement HOLD.",
     "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "cakeml/pancake/semantics/loopPropsScript.sml",
     "hol_name": "assigned_vars_nested_assign",
-    "lean_path": "Flapjack/Pancake/LoopLive/ExactAssignedVars.lean",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopProps/AssignedVars.lean",
     "lean_name": "holAssignedVarsNestedAssign",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "reviewer": "flapjack-luna-b source comparison (2026-09-28, bead flapjack-pxn.18.5.17.1.1.2) against loopPropsScript.sml:897-902. xs, ys, the sole LENGTH xs = LENGTH ys premise, MAP2 Assign, nested_seq, and result xs are retained. Lean List.zipWith is the matching MAP2 list operation; width is the reviewed BitVec translation.",
+    "reviewer": "flapjack-luna-b source comparison (2026-09-28, bead flapjack-pxn.18.5.17.1.1.2) against loopPropsScript.sml:897-902. xs, ys, the sole LENGTH xs = LENGTH ys premise, MAP2 Assign, nested_seq, and result xs are retained. Lean List.zipWith is the matching MAP2 list operation; width is the reviewed BitVec translation. Declaration relocated to a submodule of its HOL source counterpart after coordinator placement HOLD.",
     "words_as_type_indexed_bitvec": true
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
     "hol_name": "assigned_vars_MAPi_Assign",
-    "lean_path": "Flapjack/Pancake/LoopLive/ExactAssignedVars.lean",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/AssignedVars.lean",
     "lean_name": "holAssignedVarsMapiAssign",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "reviewer": "flapjack-luna-b source comparison (2026-09-28, bead flapjack-pxn.18.5.17.1.1.2) against crep_to_loopProofScript.sml:355-362. les then offset binders, indexed Assign name n+offset, nested_seq, and generated name list are exact. List.mapIdx mirrors MAPi, while List.map over List.range les.length renders GENLIST; only word width is translated.",
-    "words_as_type_indexed_bitvec": true
-  },
-  {
-    "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
-    "hol_name": "prog_if_def",
-    "lean_path": "Flapjack/Pancake/CrepToLoop/ProgIfExact.lean",
-    "lean_name": "progIfExact",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "reviewer": "flapjack-luna-b source comparison (2026-09-28, bead flapjack-pxn.18.5.17.1.1.2) against crep_to_loopScript.sml:34-40. Binder order cmp,p,q,e,e',n,m,l and output concatenation/Assign/If clauses are preserved. HolLoopProg/Exp, SPT-backed NumSet, exact Cmp, and BitVec width are the reviewed carriers; list_insert is sptListInsert. The exact helper remains distinct from the String-backed production progIf.",
+    "reviewer": "flapjack-luna-b source comparison (2026-09-28, bead flapjack-pxn.18.5.17.1.1.2) against crep_to_loopProofScript.sml:355-362. les then offset binders, indexed Assign name n+offset, nested_seq, and generated name list are exact. List.mapIdx mirrors MAPi, while List.map over List.range les.length renders GENLIST; only word width is translated. Declaration relocated to a submodule of its HOL source counterpart after coordinator placement HOLD.",
     "words_as_type_indexed_bitvec": true
   },
   {

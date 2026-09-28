@@ -25,9 +25,10 @@ import Flapjack.Pancake.CrepLang.Exp
 import Flapjack.Pancake.CrepLang.Prog
 import Flapjack.Pancake.CrepToLoop
 import Flapjack.Pancake.CrepToLoop.ContextExact
-import Flapjack.Pancake.CrepToLoop.ProgIfExact
+import Flapjack.Pancake.CrepToLoop.Proofs.AssignedVars
 import Flapjack.Pancake.CrepToLoop.StateRel
-import Flapjack.Pancake.LoopLive.ExactAssignedVars
+import Flapjack.Pancake.LoopLang.AssignedVars
+import Flapjack.Pancake.Semantics.LoopProps.AssignedVars
 import Flapjack.Pancake.PanCommon
 import Flapjack.Pancake.PanGlobals
 import Flapjack.Pancake.PanGlobals.CompileExpExact
