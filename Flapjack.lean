@@ -57,6 +57,7 @@ import Flapjack.Pancake.Semantics.PanSem.TotalSteps
 import Flapjack.Pancake.Semantics.PanSem.ValueHOL
 import Flapjack.Pancake.Semantics.PanSem.StateExact
 import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+import Flapjack.Pancake.Semantics.PanSem.TotalEvalBridge
 import Flapjack.Pancake.Semantics.PanSem.EvaluateFinite
 import Flapjack.Pancake.Semantics.PanSem.AddClock
 import Flapjack.Pancake.Semantics.PanSem.PanObservationalSemantics
@@ -159,6 +160,7 @@ import Flapjack.Pancake.CrepLang.Exp
 import Flapjack.Pancake.CrepLang.Prog
 import Flapjack.Pancake.Semantics.CrepProps
 import Flapjack.Pancake.Semantics.CrepProps.MemLoadFlatRel
+import Flapjack.Pancake.Semantics.CrepProps.EvaluateAddClock
 import Flapjack.Pancake.WordConvs
 import Flapjack.Pancake.PanToCrep
 import Flapjack.CrepeCompileExpVariables

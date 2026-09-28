@@ -210,7 +210,7 @@ run_probe get_stack_only_probeScript.sml get_stack_only_probe.out \
 run_probe pan_mem_load_probeScript.sml pan_mem_load_probe.out \
   one_hit named_suffix_blocked "$cake_dir/pancake/semantics/panSemScript.sml"
 run_probe pan_sem_state_eval_probeScript.sml pan_sem_state_eval_probe.out \
-  word_load_hit pan_sem_state_eval_done \
+  word_load_hit eval_nested_load_shape pan_sem_state_eval_done \
   "$cake_dir/pancake/semantics/panSemScript.sml"
 run_probe pan_sem_mem_domain_probeScript.sml pan_sem_mem_domain_probe.out \
   domain_load_hit domain_load_miss_present domain_store_then_load_hit \
@@ -221,6 +221,11 @@ run_probe pan_shape_of_probeScript.sml pan_shape_of_probe.out \
   word nstruct "$cake_dir/pancake/semantics/panSemScript.sml"
 run_probe pan_evaluate_decls_probeScript.sml pan_evaluate_decls_probe.out \
   empty exn_bad_shape_failure "$cake_dir/pancake/semantics/panSemScript.sml"
+run_probe pan_clock_program_route_probeScript.sml pan_clock_program_route_probe.out \
+  duplicate_function_front_update duplicate_function_front_update_changed_metadata \
+  nested_callee_return_shape_rejected \
+  "$cake_dir/pancake/semantics/panSemScript.sml" \
+  "$cake_dir/pancake/semantics"
 run_probe pan_word_helpers_probeScript.sml pan_word_helpers_probe.out \
   is_word the_val_word "$cake_dir/pancake/semantics/panSemScript.sml"
 run_probe pan_op_probeScript.sml pan_op_probe.out \

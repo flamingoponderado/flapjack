@@ -976,13 +976,8 @@ theorem evalPanValueFfiClockProgram_of_declarations_and_raised_call
     (memoryHandler : Option (PanValueMemoryFfiHandler α σ) := none)
     (hdeclarations : evalPanValueDeclarations initial.source declarations
       (memoryAccess := memoryAccess) = some state)
-    (hcall : evalPanValueFfiClockCall context primitive handler state.structs
-      state.functions state.baseAddress state.topAddress state.bytesInWord fuel
-      (fun _ => none) state.globals state.memory initial.ffi clock none entry arguments
-      (memoryAccess := memoryAccess)
-      (contracts := some (PanValueCallContracts.mk state.returnShapes
-        state.exceptions state.parameterShapes))
-      (memoryHandler := memoryHandler) =
+    (hcall : evalPanValueFfiClockProgramCodeCall context primitive handler state fuel state.globals state.memory initial.ffi clock entry arguments
+      (memoryAccess := memoryAccess) (memoryHandler := memoryHandler) =
       some (.control (.raised (fun _ => none) globals memory ffi exception value),
         nextClock)) :
     evalPanValueFfiClockProgram context initial clock primitive handler fuel
@@ -1015,22 +1010,12 @@ theorem evalPanValueFfiClockProgram_of_declarations_and_raised_call_cross_clock
     (memoryHandler : Option (PanValueMemoryFfiHandler α σ) := none)
     (hdeclarations : evalPanValueDeclarations initial.source declarations
       (memoryAccess := memoryAccess) = some state)
-    (hcall : evalPanValueFfiClockCall context primitive handler state.structs
-      state.functions state.baseAddress state.topAddress state.bytesInWord fuel
-      (fun _ => none) state.globals state.memory initial.ffi clock none entry arguments
-      (memoryAccess := memoryAccess)
-      (contracts := some (PanValueCallContracts.mk state.returnShapes
-        state.exceptions state.parameterShapes))
-      (memoryHandler := memoryHandler) =
+    (hcall : evalPanValueFfiClockProgramCodeCall context primitive handler state fuel state.globals state.memory initial.ffi clock entry arguments
+      (memoryAccess := memoryAccess) (memoryHandler := memoryHandler) =
       some (.control (.raised (fun _ => none) globals memory ffi exception value),
         nextClock))
-    (hcallShift : evalPanValueFfiClockCall context primitive handler state.structs
-      state.functions state.baseAddress state.topAddress state.bytesInWord fuel
-      (fun _ => none) state.globals state.memory initial.ffi (clock + ck) none entry arguments
-      (memoryAccess := memoryAccess)
-      (contracts := some (PanValueCallContracts.mk state.returnShapes
-        state.exceptions state.parameterShapes))
-      (memoryHandler := memoryHandler) =
+    (hcallShift : evalPanValueFfiClockProgramCodeCall context primitive handler state fuel state.globals state.memory initial.ffi (clock + ck) entry arguments
+      (memoryAccess := memoryAccess) (memoryHandler := memoryHandler) =
       some (.control (.raised (fun _ => none) globals memory ffi exception value),
         nextClock + ck)) :
     evalPanValueFfiClockProgram context initial clock primitive handler fuel
@@ -1069,20 +1054,10 @@ theorem evalPanValueFfiClockProgram_of_declarations_and_call_cross_clock
     (hdeclarations : evalPanValueDeclarations initial.source declarations
       (memoryAccess := memoryAccess) = some state)
     (hentry : lookupInfo entry state.returnShapes = none)
-    (hcall : evalPanValueFfiClockCall context primitive handler state.structs
-      state.functions state.baseAddress state.topAddress state.bytesInWord fuel
-      (fun _ => none) state.globals state.memory initial.ffi clock none entry arguments
-      (memoryAccess := memoryAccess)
-      (contracts := some (PanValueCallContracts.mk state.returnShapes
-        state.exceptions state.parameterShapes))
-      (memoryHandler := memoryHandler) = some (outcome, nextClock))
-    (hcallShift : evalPanValueFfiClockCall context primitive handler state.structs
-      state.functions state.baseAddress state.topAddress state.bytesInWord fuel
-      (fun _ => none) state.globals state.memory initial.ffi (clock + ck) none entry arguments
-      (memoryAccess := memoryAccess)
-      (contracts := some (PanValueCallContracts.mk state.returnShapes
-        state.exceptions state.parameterShapes))
-      (memoryHandler := memoryHandler) = some (outcome, nextClock + ck)) :
+    (hcall : evalPanValueFfiClockProgramCodeCall context primitive handler state fuel state.globals state.memory initial.ffi clock entry arguments
+      (memoryAccess := memoryAccess) (memoryHandler := memoryHandler) = some (outcome, nextClock))
+    (hcallShift : evalPanValueFfiClockProgramCodeCall context primitive handler state fuel state.globals state.memory initial.ffi (clock + ck) entry arguments
+      (memoryAccess := memoryAccess) (memoryHandler := memoryHandler) = some (outcome, nextClock + ck)) :
     evalPanValueFfiClockProgram context initial clock primitive handler fuel
       declarations entry arguments (memoryAccess := memoryAccess)
       (memoryHandler := memoryHandler) = some (outcome, nextClock) ∧
@@ -1114,13 +1089,8 @@ theorem evalPanValueFfiClockProgram_of_declarations_and_timeout_call
     (memoryHandler : Option (PanValueMemoryFfiHandler α σ) := none)
     (hdeclarations : evalPanValueDeclarations initial.source declarations
       (memoryAccess := memoryAccess) = some state)
-    (hcall : evalPanValueFfiClockCall context primitive handler state.structs
-      state.functions state.baseAddress state.topAddress state.bytesInWord fuel
-      (fun _ => none) state.globals state.memory initial.ffi clock none entry arguments
-      (memoryAccess := memoryAccess)
-      (contracts := some (PanValueCallContracts.mk state.returnShapes
-        state.exceptions state.parameterShapes))
-      (memoryHandler := memoryHandler) =
+    (hcall : evalPanValueFfiClockProgramCodeCall context primitive handler state fuel state.globals state.memory initial.ffi clock entry arguments
+      (memoryAccess := memoryAccess) (memoryHandler := memoryHandler) =
       some (.timeout (fun _ => none) globals memory ffi, nextClock)) :
     evalPanValueFfiClockProgram context initial clock primitive handler fuel
       declarations entry arguments (memoryAccess := memoryAccess)
@@ -1150,13 +1120,8 @@ theorem evalPanValueFfiClockProgram_of_declarations_and_finalFfi_call
     (memoryHandler : Option (PanValueMemoryFfiHandler α σ) := none)
     (hdeclarations : evalPanValueDeclarations initial.source declarations
       (memoryAccess := memoryAccess) = some state)
-    (hcall : evalPanValueFfiClockCall context primitive handler state.structs
-      state.functions state.baseAddress state.topAddress state.bytesInWord fuel
-      (fun _ => none) state.globals state.memory initial.ffi clock none entry arguments
-      (memoryAccess := memoryAccess)
-      (contracts := some (PanValueCallContracts.mk state.returnShapes
-        state.exceptions state.parameterShapes))
-      (memoryHandler := memoryHandler) =
+    (hcall : evalPanValueFfiClockProgramCodeCall context primitive handler state fuel state.globals state.memory initial.ffi clock entry arguments
+      (memoryAccess := memoryAccess) (memoryHandler := memoryHandler) =
       some (.control (.finalFfi locals globals memory ffi event), nextClock)) :
     evalPanValueFfiClockProgram context initial clock primitive handler fuel
       declarations entry arguments (memoryAccess := memoryAccess)
@@ -1185,13 +1150,8 @@ theorem evalPanValueFfiClockProgram_of_declarations_and_returned_call
     (memoryHandler : Option (PanValueMemoryFfiHandler α σ) := none)
     (hdeclarations : evalPanValueDeclarations initial.source declarations
       (memoryAccess := memoryAccess) = some state)
-    (hcall : evalPanValueFfiClockCall context primitive handler state.structs
-      state.functions state.baseAddress state.topAddress state.bytesInWord fuel
-      (fun _ => none) state.globals state.memory initial.ffi clock none entry arguments
-      (memoryAccess := memoryAccess)
-      (contracts := some (PanValueCallContracts.mk state.returnShapes
-        state.exceptions state.parameterShapes))
-      (memoryHandler := memoryHandler) =
+    (hcall : evalPanValueFfiClockProgramCodeCall context primitive handler state fuel state.globals state.memory initial.ffi clock entry arguments
+      (memoryAccess := memoryAccess) (memoryHandler := memoryHandler) =
       some (.control (.returned locals globals memory ffi [value]), nextClock))
     (hentry : lookupInfo entry state.returnShapes = some shape)
     (hshape : panShapeMatches (panValueShape state.structs value) shape = true) :
@@ -1219,13 +1179,8 @@ theorem evalPanValueFfiClockProgram_of_declarations_and_call
     (hdeclarations : evalPanValueDeclarations initial.source declarations
       (memoryAccess := memoryAccess) = some state)
     (hentry : lookupInfo entry state.returnShapes = none)
-    (hcall : evalPanValueFfiClockCall context primitive handler state.structs
-      state.functions state.baseAddress state.topAddress state.bytesInWord fuel
-      (fun _ => none) state.globals state.memory initial.ffi clock none entry arguments
-      (memoryAccess := memoryAccess)
-      (contracts := some (PanValueCallContracts.mk state.returnShapes
-        state.exceptions state.parameterShapes))
-      (memoryHandler := memoryHandler) = some (outcome, nextClock)) :
+    (hcall : evalPanValueFfiClockProgramCodeCall context primitive handler state fuel state.globals state.memory initial.ffi clock entry arguments
+      (memoryAccess := memoryAccess) (memoryHandler := memoryHandler) = some (outcome, nextClock)) :
     evalPanValueFfiClockProgram context initial clock primitive handler fuel
       declarations entry arguments (memoryAccess := memoryAccess)
       (memoryHandler := memoryHandler) = some (outcome, nextClock) := by
