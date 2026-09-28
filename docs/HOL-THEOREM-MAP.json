@@ -16352,6 +16352,147 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-28, bead flapjack-pxn.18.4.3.95.4; pan_to_crepProofScript.sml:1252-1257): HOL !ctxt p x. ctxt_max ctxt.vmax ctxt.vars /\\ (!v sh ns'. FLOOKUP ctxt.vars v = SOME (sh, ns') ==> ~MEM x ns') /\\ x <= ctxt.vmax ==> ~MEM x (assigned_free_vars (compile ctxt p)). Lean keeps the binders ctxt p x and the single conjunctive premise in HOL order; ctxt_max is ctxtMaxFiniteExact (same quantifiers and bounds as ctxt_max_def) over PanToCrepContextExact.vars, FLOOKUP is HolFiniteMapExact.lookup, MEM is membership, compile is the tagged compileProgExactHOLW (compile_def), assigned_free_vars is the tagged crepAssignedFreeVarsHOL. The relation qualifier names only PanToCrepContextExact.vars. 'a word is BitVec width with [NeZero width]."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/DecCall.lean",
+    "lean_name": "compileDecCallShape",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only helper for the pc_compile_correct DecCall case (bead flapjack-pxn.18.4.3.95); HOL proves this reasoning inline in the DecCall Resume block, so there is no separate CakeML HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/DecCall.lean",
+    "lean_name": "decCallSlots_nodup",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only helper for the pc_compile_correct DecCall case (bead flapjack-pxn.18.4.3.95); HOL proves this reasoning inline in the DecCall Resume block, so there is no separate CakeML HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/DecCall.lean",
+    "lean_name": "decCallSlots_gt",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only helper for the pc_compile_correct DecCall case (bead flapjack-pxn.18.4.3.95); HOL proves this reasoning inline in the DecCall Resume block, so there is no separate CakeML HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/DecCall.lean",
+    "lean_name": "crepNestedDecCallTarget",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only helper for the pc_compile_correct DecCall case (bead flapjack-pxn.18.4.3.95); HOL proves this reasoning inline in the DecCall Resume block, so there is no separate CakeML HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/DecCall.lean",
+    "lean_name": "crepNestedDecCallTimeout",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only helper for the pc_compile_correct DecCall case (bead flapjack-pxn.18.4.3.95); HOL proves this reasoning inline in the DecCall Resume block, so there is no separate CakeML HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/DecCall.lean",
+    "lean_name": "mapM_congr_mem'",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only helper for the pc_compile_correct DecCall case (bead flapjack-pxn.18.4.3.95); HOL proves this reasoning inline in the DecCall Resume block, so there is no separate CakeML HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/DecCall.lean",
+    "lean_name": "decCallCtxt_lookup_ne",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only helper for the pc_compile_correct DecCall case (bead flapjack-pxn.18.4.3.95); HOL proves this reasoning inline in the DecCall Resume block, so there is no separate CakeML HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/DecCall.lean",
+    "lean_name": "decCallCtxt_lookup_eq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only helper for the pc_compile_correct DecCall case (bead flapjack-pxn.18.4.3.95); HOL proves this reasoning inline in the DecCall Resume block, so there is no separate CakeML HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/DecCall.lean",
+    "lean_name": "decCallLocalsRestore",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only helper for the pc_compile_correct DecCall case (bead flapjack-pxn.18.4.3.95); HOL proves this reasoning inline in the DecCall Resume block, so there is no separate CakeML HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/DecCall.lean",
+    "lean_name": "fupdateListHOL_zip_not_mem'",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only helper for the pc_compile_correct DecCall case (bead flapjack-pxn.18.4.3.95); HOL proves this reasoning inline in the DecCall Resume block, so there is no separate CakeML HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/DecCall.lean",
+    "lean_name": "lookup_updateListEq_zip_not_mem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only helper for the pc_compile_correct DecCall case (bead flapjack-pxn.18.4.3.95); HOL proves this reasoning inline in the DecCall Resume block, so there is no separate CakeML HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/DecCall.lean",
+    "lean_name": "pcCompileCorrectAt_decCall",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only helper for the pc_compile_correct DecCall case (bead flapjack-pxn.18.4.3.95); HOL proves this reasoning inline in the DecCall Resume block, so there is no separate CakeML HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/DecCall.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_DecCall; forwards the imported checked roundtrip; no HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/DecCall.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_DecCall; forwards the imported checked roundtrip; no HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/DecCall.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_DecCall; forwards the imported checked roundtrip; no HOL declaration"
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "pc_compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/DecCall.lean",
+    "lean_name": "pcCompileCorrect_DecCall",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "PanToCrepContextExact.vars",
+      "PanToCrepContextExact.funcs",
+      "PanToCrepContextExact.eids"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-28, bead flapjack-pxn.18.4.3.95; pan_to_crepProofScript.sml:442-468, DecCall case resumed at :4233; panSemScript.sml:777-778 rebound evaluate_ind). This is the DecCall constructor piece of HOL pc_compile_correct (AGENTS splitting rule: HOL's own case structure, same tag, suffixed name), stated exactly like the reviewed pcCompileCorrect_Call. The statement is the DecCall conjunct of the rebound evaluate_ind instantiated at HOL's induction predicate P. Binders rt shape fname argexps prog1 s are as in the evaluate_ind DecCall conjunct. The two IHs are transcribed binder-for-binder from HOL's printed conjunct (captured with hol run on panSemTheory.evaluate_ind), in HOL order, including the TFL equation binders v2 v7 eval_prog v v3 and every side condition: OPT_MMAP (eval s) argexps = SOME args, lookup_code s.code fname args = SOME v2, v2 = (prog,v7), v7 = (newlocals,return_sh), s.clock <> 0, and for the continuation IH eval_prog = evaluate (prog, dec_clock s with locals := newlocals), eval_prog = (v,st), v = SOME v3, v3 = Return retv, shape_of retv = shape, shape_of retv = return_sh. The IHs conclude P (prog1, set_var rt retv (st with locals := s.locals)) and P (prog, dec_clock s with locals := newlocals). P is pcCompileCorrectAtHOL (reviewed with the Call case); the conclusion is P (DecCall rt shape fname argexps prog1, s), unfolded with the conjunctive premise and inline case res of. Translation: evaluate is the tagged total evaluateHOLFiniteState (line-780 evaluate_def assembly, DecCall arm evaluateHOLFiniteState_decCall_fixClockRewrite) and the tagged evalCrepSemHOLProgExact; OPT_MMAP (eval s) and lookup_code are the helpers of the tagged Pan DecCall arm (evalListHOLFinite with the classical address decision, lookupCodeHOLFinite); dec_clock and set_var are the tagged decClockHOLFinite/setVarHOLFinite; compile/state_rel/code_rel/excp_rel/locals_rel/globals_lookup/flatten/shape_of/size_of_shape/localised_prog are the tagged exact ports. The relation qualifier lists the finite maps the statement traverses on its three carriers (same-module witnesses in PcCompileCorrectDecCallWitnesses); 'a word/'ffi use the BitVec width [NeZero width]/sigma : Type translation. The proof reduces to the untagged pcCompileCorrectAt_decCall via pcCompileCorrectAt_iff_HOL. No target-run or post-state premise. Note: the type-hash lock pins this statement, not the bodies of the untagged pcCompileCorrectAtHOL or helpers."
   }
 ,
   {

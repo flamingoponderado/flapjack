@@ -134,6 +134,7 @@ import Flapjack.Pancake.Proofs.PanToCrep.CompileProgParams
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect
 import Flapjack.Pancake.Proofs.PanToCrep.EvalDistinctLists
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Call
+import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.DecCall
 import Flapjack.Pancake.Proofs.PanToCrep.NotMemContextAssignedMemGt
 import Flapjack.Pancake.Proofs.PanToWord
 import Flapjack.Pipeline
