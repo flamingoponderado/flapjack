@@ -450,6 +450,53 @@ theorem unique_lprefix_lub {ls : HolLList α → Prop} {ll1 ll2 : HolLList α}
     (h1 : lprefixLub ls ll1) (h2 : lprefixLub ls ll2) : ll1 = ll2 :=
   lprefix_antisym (h1.2 ll2 h2.1) (h2.2 ll1 h1.1)
 
+/-- A cons peels its head. -/
+theorem lhd_lcons (h : α) (t : HolLList α) : lhd (lcons h t) = some h := by
+  simp [lhd, lcons]
+
+/-- The tail of a cons is the original tail. -/
+theorem ltl_lcons (h : α) (t : HolLList α) : ltl (lcons h t) = some t := by
+  have hrep : (⟨fun n => (lcons h t).rep (n + 1),
+      fun n hk => (lcons h t).ok (n + 1) hk⟩ : HolLList α) = t :=
+    ext_of_rep (fun n => by simp [lcons])
+  simp only [ltl, lhd_lcons, Option.some.injEq]
+  exact hrep
+
+/-- A finite lazy list has a `some` prefix of any length up to its length. -/
+theorem ltake_of_LLengthRel {ll : HolLList α} {n : Nat} (h : LLengthRel ll n) :
+    ∃ xs : List α, ltake n ll = some xs := by
+  induction h with
+  | lnil => exact ⟨[], rfl⟩
+  | lcons hd k t _ ih =>
+      obtain ⟨xs, hxs⟩ := ih
+      exact ⟨hd :: xs, by simp [ltake, lhd_lcons, ltl_lcons, hxs]⟩
+
+/-- A finite lazy list has a finite `toList`. -/
+theorem toList_of_LFinite {ll : HolLList α} (h : LFinite ll) :
+    ∃ xs : List α, toList ll = some xs := by
+  obtain ⟨n, hnlen, hnrel⟩ := llength_spec h
+  obtain ⟨xs, hxs⟩ := ltake_of_LLengthRel hnrel
+  refine ⟨xs, ?_⟩
+  unfold toList
+  rw [if_pos h, hnlen]
+  simp only [Option.getD_some]
+  exact hxs
+
+/-- A finite lazy list is never the `none` of `toList`. -/
+theorem toList_ne_none_of_LFinite {ll : HolLList α} (h : LFinite ll) :
+    toList ll ≠ none := by
+  obtain ⟨xs, hxs⟩ := toList_of_LFinite h
+  rw [hxs]
+  exact Option.some_ne_none xs
+
+/-- If `toList` is `none` the list is infinite and defined at every index. -/
+theorem rep_some_of_toList_none {ll : HolLList α} (h : toList ll = none) :
+    ∀ n, ∃ x, ll.rep n = some x := by
+  intro n
+  by_cases hn : ll.rep n = none
+  · exact absurd h (toList_ne_none_of_LFinite (LFinite_of_rep_none hn))
+  · exact Option.ne_none_iff_exists'.mp hn
+
 end HolLList
 
 end Flapjack
