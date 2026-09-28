@@ -908,6 +908,280 @@ theorem evalPanValueFfiClockCodeProg_ite_fuel_mono
         exact ihProg k result hfk locals globals memory ffi clock elseBranch ma contracts
           memoryHandler h
 
+/-- Flapjack-specific fuel plumbing for the source-program `Seq` constructor.
+    The recursive calls preserve the exact `fixPanClock`-adjusted first result
+    and then use monotonicity for the second program. -/
+theorem evalPanValueFfiClockCodeProg_seq_fuel_mono
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (context : PanValueFfiContext α) (primitive : PanPrimitiveHandler α)
+    (handler : PanValueStatefulFfiHandler α σ) (structs : StructContext)
+    (code : PanSemCodeMap α) (exceptionShapes : ExceptionId → Option Shape)
+    (baseAddress topAddress bytesInWord : α) (fuel : Nat)
+    (ihProg : PanValueFfiClockCodeProgFuelMono context primitive handler structs code
+      exceptionShapes baseAddress topAddress bytesInWord fuel) :
+    ∀ fuel' result, fuel + 1 ≤ fuel' →
+      ∀ (locals globals : VarName → Option (PanValue α))
+        (memory : α → Option (PanValue α)) (ffi : FfiState σ) (clock : Nat)
+        (first second : Prog α) (ma : Option (PanValueMemoryAccess α))
+        (contracts : Option PanValueCallContracts)
+        (memoryHandler : Option (PanValueMemoryFfiHandler α σ)),
+      evalPanValueFfiClockCodeProg context primitive handler structs code
+        exceptionShapes baseAddress topAddress bytesInWord (fuel + 1) locals globals
+        memory ffi clock (.seq first second) ma contracts memoryHandler = some result →
+      evalPanValueFfiClockCodeProg context primitive handler structs code
+        exceptionShapes baseAddress topAddress bytesInWord fuel' locals globals
+        memory ffi clock (.seq first second) ma contracts memoryHandler = some result := by
+  intro fuel' result hle locals globals memory ffi clock first second ma contracts
+    memoryHandler h
+  obtain ⟨k, rfl⟩ : ∃ k, fuel' = k + 1 := ⟨fuel' - 1, by omega⟩
+  have hfk : fuel ≤ k := by omega
+  rw [evalPanValueFfiClockCodeProg] at h
+  rw [evalPanValueFfiClockCodeProg]
+  cases hfirst : evalPanValueFfiClockCodeProg context primitive handler structs code
+      exceptionShapes baseAddress topAddress bytesInWord fuel locals globals memory ffi clock
+      first ma contracts memoryHandler with
+  | none => simp [hfirst] at h
+  | some firstPair =>
+      obtain ⟨firstOutcome, firstClock⟩ := firstPair
+      have hfirst' := ihProg k (firstOutcome, firstClock) hfk locals globals memory ffi clock
+        first ma contracts memoryHandler hfirst
+      cases firstOutcome with
+      | timeout nextLocals nextGlobals nextMemory nextFfi =>
+          simpa [evalPanValueFfiClockCodeProg, hfirst, hfirst', fixPanClock] using h
+      | control controlResult =>
+          cases controlResult with
+          | normal nextLocals nextGlobals nextMemory nextFfi =>
+              have hsecond :
+                  evalPanValueFfiClockCodeProg context primitive handler structs code
+                    exceptionShapes baseAddress topAddress bytesInWord fuel nextLocals
+                    nextGlobals nextMemory nextFfi (min clock firstClock) second ma contracts
+                    memoryHandler = some result := by
+                simpa [evalPanValueFfiClockCodeProg, hfirst, fixPanClock] using h
+              have hsecond' := ihProg k result hfk nextLocals nextGlobals nextMemory nextFfi
+                (min clock firstClock) second ma contracts memoryHandler hsecond
+              simp [hfirst', hsecond']
+          | broke nextLocals nextGlobals nextMemory nextFfi =>
+              simpa [evalPanValueFfiClockCodeProg, hfirst, hfirst', fixPanClock] using h
+          | continued nextLocals nextGlobals nextMemory nextFfi =>
+              simpa [evalPanValueFfiClockCodeProg, hfirst, hfirst', fixPanClock] using h
+          | error nextLocals nextGlobals nextMemory nextFfi =>
+              simpa [evalPanValueFfiClockCodeProg, hfirst, hfirst', fixPanClock] using h
+          | finalFfi nextLocals nextGlobals nextMemory nextFfi event =>
+              simpa [evalPanValueFfiClockCodeProg, hfirst, hfirst', fixPanClock] using h
+          | returned nextLocals nextGlobals nextMemory nextFfi values =>
+              simpa [evalPanValueFfiClockCodeProg, hfirst, hfirst', fixPanClock] using h
+          | raised nextLocals nextGlobals nextMemory nextFfi exception value =>
+              simpa [evalPanValueFfiClockCodeProg, hfirst, hfirst', fixPanClock] using h
+
+/-- Flapjack-specific fuel plumbing for source `While`: preserve the body
+    result, apply `fixPanClock`, and use the recursive-program hypothesis for
+    the next loop iteration. -/
+theorem evalPanValueFfiClockCodeProg_while_fuel_mono
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (context : PanValueFfiContext α) (primitive : PanPrimitiveHandler α)
+    (handler : PanValueStatefulFfiHandler α σ) (structs : StructContext)
+    (code : PanSemCodeMap α) (exceptionShapes : ExceptionId → Option Shape)
+    (baseAddress topAddress bytesInWord : α) (fuel : Nat)
+    (ihProg : PanValueFfiClockCodeProgFuelMono context primitive handler structs code
+      exceptionShapes baseAddress topAddress bytesInWord fuel) :
+    ∀ fuel' result, fuel + 1 ≤ fuel' →
+      ∀ (locals globals : VarName → Option (PanValue α))
+        (memory : α → Option (PanValue α)) (ffi : FfiState σ) (clock : Nat)
+        (condition : Exp α) (body : Prog α)
+        (ma : Option (PanValueMemoryAccess α))
+        (contracts : Option PanValueCallContracts)
+        (memoryHandler : Option (PanValueMemoryFfiHandler α σ)),
+      evalPanValueFfiClockCodeProg context primitive handler structs code
+        exceptionShapes baseAddress topAddress bytesInWord (fuel + 1) locals globals
+        memory ffi clock (.while condition body) ma contracts memoryHandler = some result →
+      evalPanValueFfiClockCodeProg context primitive handler structs code
+        exceptionShapes baseAddress topAddress bytesInWord fuel' locals globals
+        memory ffi clock (.while condition body) ma contracts memoryHandler = some result := by
+  intro fuel' result hle locals globals memory ffi clock condition body ma contracts
+    memoryHandler h
+  obtain ⟨k, rfl⟩ : ∃ k, fuel' = k + 1 := ⟨fuel' - 1, by omega⟩
+  have hfk : fuel ≤ k := by omega
+  rw [evalPanValueFfiClockCodeProg] at h
+  rw [evalPanValueFfiClockCodeProg]
+  cases hcondition : panValueIteConditionValue structs baseAddress topAddress bytesInWord
+      locals globals memory condition ma with
+  | none => simp [hcondition] at h ⊢; exact h
+  | some conditionValue =>
+      by_cases hcondZero : conditionValue == 0
+      · simp [hcondition, hcondZero] at h ⊢; exact h
+      · by_cases hclock : clock == 0
+        · simp [hcondition, hcondZero, hclock] at h ⊢; exact h
+        · simp [hcondition, hcondZero, hclock] at h ⊢
+          cases hbody : evalPanValueFfiClockCodeProg context primitive handler structs code
+              exceptionShapes baseAddress topAddress bytesInWord fuel locals globals memory ffi
+              (decPanClock clock) body ma contracts memoryHandler with
+          | none => simp [hbody] at h
+          | some bodyPair =>
+              obtain ⟨bodyOutcome, bodyClock⟩ := bodyPair
+              have hbody' := ihProg k (bodyOutcome, bodyClock) hfk locals globals memory ffi
+                (decPanClock clock) body ma contracts memoryHandler hbody
+              cases bodyOutcome with
+              | timeout nextLocals nextGlobals nextMemory nextFfi =>
+                  simpa [evalPanValueFfiClockCodeProg, hcondition, hcondZero, hclock,
+                    hbody, hbody', fixPanClock] using h
+              | control controlResult =>
+                  cases controlResult with
+                  | normal nextLocals nextGlobals nextMemory nextFfi =>
+                      have hloop :
+                          evalPanValueFfiClockCodeProg context primitive handler structs code
+                            exceptionShapes baseAddress topAddress bytesInWord fuel nextLocals
+                            nextGlobals nextMemory nextFfi (min (decPanClock clock) bodyClock)
+                            (.while condition body) ma contracts memoryHandler = some result := by
+                        simpa [evalPanValueFfiClockCodeProg, hcondition, hcondZero, hclock,
+                          hbody, fixPanClock] using h
+                      have hloop' := ihProg k result hfk nextLocals nextGlobals nextMemory
+                        nextFfi (min (decPanClock clock) bodyClock) (.while condition body) ma
+                        contracts memoryHandler hloop
+                      simp [hbody', hloop']
+                  | continued nextLocals nextGlobals nextMemory nextFfi =>
+                      have hloop :
+                          evalPanValueFfiClockCodeProg context primitive handler structs code
+                            exceptionShapes baseAddress topAddress bytesInWord fuel nextLocals
+                            nextGlobals nextMemory nextFfi (min (decPanClock clock) bodyClock)
+                            (.while condition body) ma contracts memoryHandler = some result := by
+                        simpa [evalPanValueFfiClockCodeProg, hcondition, hcondZero, hclock,
+                          hbody, fixPanClock] using h
+                      have hloop' := ihProg k result hfk nextLocals nextGlobals nextMemory
+                        nextFfi (min (decPanClock clock) bodyClock) (.while condition body) ma
+                        contracts memoryHandler hloop
+                      simp [hbody', hloop']
+                  | broke nextLocals nextGlobals nextMemory nextFfi =>
+                      simpa [evalPanValueFfiClockCodeProg, hcondition, hcondZero, hclock,
+                        hbody, hbody', fixPanClock] using h
+                  | error nextLocals nextGlobals nextMemory nextFfi =>
+                      simpa [evalPanValueFfiClockCodeProg, hcondition, hcondZero, hclock,
+                        hbody, hbody', fixPanClock] using h
+                  | finalFfi nextLocals nextGlobals nextMemory nextFfi event =>
+                      simpa [evalPanValueFfiClockCodeProg, hcondition, hcondZero, hclock,
+                        hbody, hbody', fixPanClock] using h
+                  | returned nextLocals nextGlobals nextMemory nextFfi values =>
+                      simpa [evalPanValueFfiClockCodeProg, hcondition, hcondZero, hclock,
+                        hbody, hbody', fixPanClock] using h
+                  | raised nextLocals nextGlobals nextMemory nextFfi exception value =>
+                      simpa [evalPanValueFfiClockCodeProg, hcondition, hcondZero, hclock,
+                        hbody, hbody', fixPanClock] using h
+
+/-- Flapjack-specific fuel plumbing for source `Dec`: the accepted value and
+    local update are fuel-independent, leaving the recursive body IH. -/
+theorem evalPanValueFfiClockCodeProg_dec_fuel_mono
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (context : PanValueFfiContext α) (primitive : PanPrimitiveHandler α)
+    (handler : PanValueStatefulFfiHandler α σ) (structs : StructContext)
+    (code : PanSemCodeMap α) (exceptionShapes : ExceptionId → Option Shape)
+    (baseAddress topAddress bytesInWord : α) (fuel : Nat)
+    (ihProg : PanValueFfiClockCodeProgFuelMono context primitive handler structs code
+      exceptionShapes baseAddress topAddress bytesInWord fuel) :
+    ∀ fuel' result, fuel + 1 ≤ fuel' →
+      ∀ (locals globals : VarName → Option (PanValue α))
+        (memory : α → Option (PanValue α)) (ffi : FfiState σ) (clock : Nat)
+        (name : VarName) (shape : Shape) (value : Exp α) (body : Prog α)
+        (ma : Option (PanValueMemoryAccess α))
+        (contracts : Option PanValueCallContracts)
+        (memoryHandler : Option (PanValueMemoryFfiHandler α σ)),
+      evalPanValueFfiClockCodeProg context primitive handler structs code
+        exceptionShapes baseAddress topAddress bytesInWord (fuel + 1) locals globals
+        memory ffi clock (.dec name shape value body) ma contracts memoryHandler = some result →
+      evalPanValueFfiClockCodeProg context primitive handler structs code
+        exceptionShapes baseAddress topAddress bytesInWord fuel' locals globals
+        memory ffi clock (.dec name shape value body) ma contracts memoryHandler = some result := by
+  intro fuel' result hle locals globals memory ffi clock name shape value body ma contracts
+    memoryHandler h
+  obtain ⟨k, rfl⟩ : ∃ k, fuel' = k + 1 := ⟨fuel' - 1, by omega⟩
+  have hfk : fuel ≤ k := by omega
+  rw [evalPanValueFfiClockCodeProg] at h
+  rw [evalPanValueFfiClockCodeProg]
+  cases hvalue : panValueDecAcceptedValue structs baseAddress topAddress bytesInWord locals
+      globals memory value ma shape with
+  | none => simp [hvalue] at h ⊢; exact h
+  | some evaluated =>
+      cases hbody : evalPanValueFfiClockCodeProg context primitive handler structs code
+          exceptionShapes baseAddress topAddress bytesInWord fuel
+          (updatePanValueMap locals name evaluated) globals memory ffi clock body ma contracts
+          memoryHandler with
+      | none => simp [hvalue, hbody] at h
+      | some bodyPair =>
+          have hbody' := ihProg k bodyPair hfk
+            (updatePanValueMap locals name evaluated) globals memory ffi clock body ma contracts
+            memoryHandler hbody
+          simpa [evalPanValueFfiClockCodeProg, hvalue, hbody, hbody'] using h
+
+/-- The source-program `DecCall` constructor delegates to the state-owned
+    DecCall evaluator, whose continuation case is covered by its helper theorem. -/
+theorem evalPanValueFfiClockCodeProg_decCall_fuel_mono
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (context : PanValueFfiContext α) (primitive : PanPrimitiveHandler α)
+    (handler : PanValueStatefulFfiHandler α σ) (structs : StructContext)
+    (code : PanSemCodeMap α) (exceptionShapes : ExceptionId → Option Shape)
+    (baseAddress topAddress bytesInWord : α) (fuel : Nat)
+    (ihDecCall : PanValueFfiClockCodeDecCallFuelMono context primitive handler structs code
+      exceptionShapes baseAddress topAddress bytesInWord fuel) :
+    ∀ fuel' result, fuel + 1 ≤ fuel' →
+      ∀ (locals globals : VarName → Option (PanValue α))
+        (memory : α → Option (PanValue α)) (ffi : FfiState σ) (clock : Nat)
+        (name : VarName) (shape : Shape) (function : FunName)
+        (arguments : List (Exp α)) (body : Prog α)
+        (ma : Option (PanValueMemoryAccess α))
+        (contracts : Option PanValueCallContracts)
+        (memoryHandler : Option (PanValueMemoryFfiHandler α σ)),
+      evalPanValueFfiClockCodeProg context primitive handler structs code
+        exceptionShapes baseAddress topAddress bytesInWord (fuel + 1) locals globals
+        memory ffi clock (.decCall name shape function arguments body) ma contracts
+        memoryHandler = some result →
+      evalPanValueFfiClockCodeProg context primitive handler structs code
+        exceptionShapes baseAddress topAddress bytesInWord fuel' locals globals
+        memory ffi clock (.decCall name shape function arguments body) ma contracts
+        memoryHandler = some result := by
+  intro fuel' result hle locals globals memory ffi clock name shape function arguments body ma
+    contracts memoryHandler h
+  obtain ⟨k, rfl⟩ : ∃ k, fuel' = k + 1 := ⟨fuel' - 1, by omega⟩
+  have hfk : fuel ≤ k := by omega
+  rw [evalPanValueFfiClockCodeProg] at h
+  rw [evalPanValueFfiClockCodeProg]
+  exact ihDecCall k result hfk locals globals memory ffi clock name shape function arguments
+    body ma contracts memoryHandler h
+
+/-- The source-program `raise` equation does not recurse on the fuel. -/
+theorem evalPanValueFfiClockCodeProg_raise_fuel_mono
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (context : PanValueFfiContext α) (primitive : PanPrimitiveHandler α)
+    (handler : PanValueStatefulFfiHandler α σ) (structs : StructContext)
+    (code : PanSemCodeMap α) (exceptionShapes : ExceptionId → Option Shape)
+    (baseAddress topAddress bytesInWord : α) (fuel : Nat) :
+    ∀ fuel' result, fuel + 1 ≤ fuel' →
+      ∀ (locals globals : VarName → Option (PanValue α))
+        (memory : α → Option (PanValue α)) (ffi : FfiState σ) (clock : Nat)
+        (exception : ExceptionId) (value : Exp α)
+        (ma : Option (PanValueMemoryAccess α))
+        (contracts : Option PanValueCallContracts)
+        (memoryHandler : Option (PanValueMemoryFfiHandler α σ)),
+      evalPanValueFfiClockCodeProg context primitive handler structs code
+        exceptionShapes baseAddress topAddress bytesInWord (fuel + 1) locals globals
+        memory ffi clock (.raise exception value) ma contracts memoryHandler = some result →
+      evalPanValueFfiClockCodeProg context primitive handler structs code
+        exceptionShapes baseAddress topAddress bytesInWord fuel' locals globals
+        memory ffi clock (.raise exception value) ma contracts memoryHandler = some result := by
+  intro fuel' result hle locals globals memory ffi clock exception value ma contracts
+    memoryHandler h
+  obtain ⟨k, rfl⟩ : ∃ k, fuel' = k + 1 := ⟨fuel' - 1, by omega⟩
+  rw [evalPanValueFfiClockCodeProg] at h
+  rw [evalPanValueFfiClockCodeProg]
+  exact h
+
 /-- **Fuel monotonicity for the public clocked evaluator.** As with the stepped
 entry point, the clock is preserved exactly; only the fuel is relaxed. -/
 theorem evalPanValueFfiClockProgram_fuel_mono
