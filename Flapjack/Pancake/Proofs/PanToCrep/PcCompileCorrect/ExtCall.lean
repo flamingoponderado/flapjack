@@ -264,7 +264,7 @@ theorem pcCompileCorrect_ExtCall {width : Nat} {σ : Type} [NeZero width]
     · exact hcode
     · exact hexcp
     · rfl
-    
+
   case h_2 =>
     all_goals try
       have hresEq : res = some Flapjack.PanSemResultExact.error := by
