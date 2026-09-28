@@ -20453,5 +20453,66 @@
     "lean_name": "post_setVar",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack helper for the loop_live compile_correct NONE postcondition after set_var y on both sides; no separate CakeML declaration"
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
+    "hol_name": "dom_vars_of_exp_in",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "dom_vars_of_exp_in",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.8) against dom_vars_of_exp_in at loop_liveProofScript.sml:792-793: `v ∈ domain l ⇒ v ∈ domain (vars_of_exp x l)` with free variables v, l, x quantified in order of occurrence; domain membership as sptMem, vars_of_exp the tagged varsOfExpHOL."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
+    "hol_name": "get_vars_subspt",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "get_vars_subspt",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.8) against get_vars_subspt at loop_liveProofScript.sml:828-832 ([local]): `∀rhss ws s extra locals. get_vars rhss s = SOME ws ∧ subspt (inter s.locals (list_insert rhss extra)) locals ⇒ get_vars rhss (s with locals := locals) = SOME ws`; binders in order, get_vars as the tagged LoopSemStateFiniteExact.getVars (get_vars_def), list_insert as sptListInsert (HOL sptree list_insert: insert the head then recurse), inter/subspt as sptInter/sptSubspt."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "loopLive_compile_correct_primitive",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.8) against case piece `Primitive` of loop_live compile_correct (statement loop_liveProofScript.sml:17-37; Resume compile_correct[Primitive] at 844-856). No sub-program; HOL quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the payload in place of v, all four premises and full conclusion as in the other pieces. Proof: get_vars_subspt for the arguments, then set_vars (alist_insert) on both sides via lookup_alist_insert_any; keys outside lhss are live in list_insert rhss (list_delete lhss l0); failure branches excluded by res ≠ SOME Error."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "loopLive_compile_correct_arith",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.8) against case piece `Arith` of loop_live compile_correct (statement loop_liveProofScript.sml:17-37; Resume compile_correct[Arith] at 781-790). No sub-program; HOL quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the payload in place of v, all four premises and full conclusion as in the other pieces. Proof: by cases on the arith op (LDiv/LLongMul/LLongDiv): source registers from subspt of arith_vars, destinations set on both sides with set_var; failure branches excluded by res ≠ SOME Error."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "sptLookup_sptListDelete",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack sptree helper (HOL lookup_list_delete-style): lookup after list_delete; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "holAlookup_zip_none",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper (HOL ALOOKUP_NONE + MAP_ZIP): ALOOKUP of an equal-length ZIP is NONE only off the key list; no separate CakeML declaration"
   }
 ]
