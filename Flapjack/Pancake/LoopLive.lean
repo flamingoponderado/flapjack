@@ -1786,4 +1786,36 @@ mutual
     all_goals omega
 end
 
+/-- Exact HOL `loop_live$mark_all` (`cakeml/pancake/loop_liveScript.sml:189-215`)
+over `HolLoopProg width`.  Runs after `shrinkHOL`; returns the rewritten program
+and a Boolean flag recording whether the program is a `Mark`-able compound.  The
+final catch-all clause mirrors HOL's `mark_all prog = (Mark prog, T)`. -/
+@[hol "cakeml/pancake/loop_liveScript.sml" "mark_all_def" (words_as_type_indexed_bitvec)]
+def markAllHOL {width : Nat} [NeZero width] : HolLoopProg width → HolLoopProg width × Bool
+  | .seq first second =>
+      let (first', firstMarked) := markAllHOL first
+      let (second', secondMarked) := markAllHOL second
+      let marked := firstMarked && secondMarked
+      (if marked then .mark (.seq first' second') else .seq first' second', marked)
+  | .loop liveIn body liveOut =>
+      let (body', _) := markAllHOL body
+      (.loop liveIn body' liveOut, false)
+  | .ite operator condition right thenBranch elseBranch live =>
+      let (then', thenMarked) := markAllHOL thenBranch
+      let (else', elseMarked) := markAllHOL elseBranch
+      let marked := thenMarked && elseMarked
+      let program := .ite operator condition right then' else' live
+      (if marked then .mark program else program, marked)
+  | .mark body => markAllHOL body
+  | .call returns target arguments none =>
+      (.mark (.call returns target arguments none), true)
+  | .call returns target arguments (some (exception, handler, normal, liveOut)) =>
+      let (handler', handlerMarked) := markAllHOL handler
+      let (normal', normalMarked) := markAllHOL normal
+      let marked := handlerMarked && normalMarked
+      let program :=
+        .call returns target arguments (some (exception, handler', normal', liveOut))
+      (if marked then .mark program else program, marked)
+  | program => (.mark program, true)
+
 end Flapjack
