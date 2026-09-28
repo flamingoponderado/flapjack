@@ -14932,6 +14932,24 @@
   },
   {
     "hol_path": "cakeml/pancake/semantics/loopSemScript.sml",
+    "hol_name": "cut_state_def",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopSemStateExact.lean",
+    "lean_name": "cutState",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 (source comparison; bead flapjack-pxgp.2): HOL cut_state_def (loopSemScript.sml:182-187) is cut_state live s = if domain live SUBSET domain s.locals then SOME (s with locals := inter s.locals live) else NONE. The Lean declaration is the exact rendering over LoopSemStateFiniteExact: the live set is the exact Spt num_set carrier NumSet, `inter` is the heterogeneous sptInter (left operand's values win, left type retained), and `domain live SUBSET domain s.locals` is rendered as the pointwise sptMem implication sptSubsetLive (the project's predicate rendering of HOL sets, cf. sptDomain/sptMem). No extra hypotheses beyond [NeZero width]; the guard is a finite-set inclusion so the definition is the classical (noncomputable) rendering; the production executable counterpart is Flapjack.cutLoopState. The tag carries (words_as_type_indexed_bitvec): the only carrier difference from HOL is the type-indexed 'a word in LoopSemStateFiniteExact/WordLocW, rendered as the positive BitVec width with [NeZero width]. sptree$num_map is not a |-> finite map, so no finite-map qualifier applies."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopSemScript.sml",
+    "hol_name": "cut_res_def",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopSemStateExact.lean",
+    "lean_name": "cutRes",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 (source comparison; bead flapjack-pxgp.2): HOL cut_res_def (loopSemScript.sml:189-197) is cut_res live (res,s) = if res <> NONE then (res,s) else case cut_state live s of NONE => (SOME Error,s) | SOME s => if s.clock = 0 then (SOME TimeOut, s with locals := LN) else (res, dec_clock s). The Lean declaration matches clause-for-clause over the exact LoopResultExact result carrier and LoopSemStateFiniteExact state, with cutState and decClock (tagged dec_clock_def); the SOME branch rebinds s to the cut state and res is NONE there, so the final branch returns (none, decClock cut). No extra hypotheses beyond [NeZero width]; the classical rendering is inherited from cutState. The tag carries (words_as_type_indexed_bitvec) for the same type-indexed 'a word translation."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopSemScript.sml",
     "hol_name": "get_var_imm_def",
     "lean_path": "Flapjack/Pancake/Semantics/LoopSemStateExact.lean",
     "lean_name": "getVarImm",
