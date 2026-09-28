@@ -17609,5 +17609,21 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-a source comparison (2026-09-28, bead flapjack-pxn.18.4.3.112; pan_to_crepProofScript.sml:442-468, ShMemStore case resumed at :1960-1989; panSemScript.sml:611-614; pan_to_crepScript.sml:291-297; crepSemScript.sml:186-208). HOL's evaluate_ind ShMemStore conjunct is !op ad e s. P (ShMemStore op ad e,s), with no IH. The source evaluator evaluates ad as address, e as bytes, and calls sh_mem_store bytes addr. The compiler binds compiled e to a fresh local n+1 above all variables of compiled address ad, then emits ShMem (store_op op) (n+1) ad; the Crep evaluator reads that local as the stored word and ad as the address. Lean's constructor arity and all three exact definitions match those clauses. This declaration unfolds pcCompileCorrectAt as in pcCompileCorrect_Store and retains HOL's premises, existential target run, state/code/exception relations, and inline result cases. Qualifiers are identical to reviewed pcCompileCorrect_Store; this declaration's carrier owners and the same-module roundtrip witnesses are checked here. No target-run or post-state premise."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "evaluate_ind",
+    "hol_line": 777,
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/EvaluateInd.lean",
+    "lean_name": "evaluateIndHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-28, bead flapjack-4ac.3.50; panSemScript.sml:777-778 Theorem evaluate_ind[allow_rebind] = REWRITE_RULE [fix_clock_evaluate] evaluate_ind). The Lean statement is the HOL theorem ∀P. (21 conjuncts) ⇒ ∀v v1. P (v,v1) with P on (program, state) pairs, and each conjunct transcribed binder for binder and in HOL order from the checked HOL print scripts/hol-probes/pan_sem_evaluate_ind_probe.out: Skip; Dec with ∀value. eval s e = SOME value ∧ sh = shape_of value ⇒ P (prog, s with locals := s.locals⟨v ↦ value⟩); the IH-free Assign/Primitive/Store/Store32/StoreByte/ShMemLoad/ShMemStore; Seq with (∀res s1. (res,s1) = evaluate (c1,s) ∧ res = NONE ⇒ P (c2,s1)) ∧ P (c1,s); If with ∀v1 v6 w. eval s e = SOME v1 ∧ v1 = Val v6 ∧ v6 = Word w ⇒ P (if w ≠ 0w then c1 else c2, s); Break; Continue; While's three IHs (Continue re-entry, NONE re-entry, body at dec_clock s) with all side conditions; Return; Raise; Tick; Annot v0 v1; Call's handler and callee IHs with TFL binders args v7 prog v12 newlocals return_sh eval_prog v4 st v8 eid exn v v1 v2 v3 eid' v5 evar p sh; DecCall's continuation and callee IHs with binders args v2 prog v7 newlocals return_sh eval_prog v st v3 retv; ExtCall ffi_index ptr1 len1 ptr2 len2. These are the same IH transcriptions already reviewed for the tagged pc_compile_correct Call/DecCall/While/If/Seq/Dec cases. evaluate is the tagged total evaluateHOLFiniteState (line-780 evaluate_def); eval s and OPT_MMAP (eval s) are evalHOLExact s.toExact / evalListHOLFinite with the classical address decision of the tagged Pan clauses; lookup_code/dec_clock/set_var/is_valid_value/shape_of are lookupCodeHOLFinite/decClockHOLFinite/setVarHOLFinite/isValidValueHOLExact s.toExact/shapeOfHOLExact; ⟨v ↦ value⟩ is HolFiniteMapExact.update (FUPDATE); FLOOKUP is .lookup. The proof is well-founded recursion on (s.clock, sizeOf p), using the tagged evaluate_clock (evaluateHOLFiniteState_clock_le) and dec_clock; no evaluator case analysis and no extra premise. PanSemStateFiniteExact locals/globals/code/eshapes use the canonical finite-support carrier (same-module witness); 'a word is BitVec width with [NeZero width]."
   }
 ]
