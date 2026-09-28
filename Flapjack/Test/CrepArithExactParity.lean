@@ -15,9 +15,8 @@ against the tagged exact-carrier ports `crepDest2ExpHOL`, `crepMulConstHOL`,
 
 `dest_2exp`/`mul_const` rows are kernel-checked `example`s; `simp_exp`/
 `simp_prog` rows are replayed through `#guard` on the executable definitions
-(their well-founded recursion is not reducible by `simp`, and adding new
-`native_decide` uses is disallowed by the native-decide allowlist).  No
-`native_decide`.
+(their well-founded recursion is not reducible by `simp`, so no proof term is
+produced and no trusted-evaluator axiom is attached).
 -/
 
 set_option linter.unusedSimpArgs false
