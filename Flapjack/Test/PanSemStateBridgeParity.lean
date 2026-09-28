@@ -1244,6 +1244,36 @@ example : PanSemExceptionShapesRanged
       subst hmem
       exact ⟨by decide, by simp [ShapeByteRanged]⟩)
 
+/-- The canonical `panSemTotalEvaluateCake` entrypoint (the executable
+    production `panSemTotalEvaluate` specialized to the canonical `panPrimopHOL`
+    handler) exercises the proved Primitive-clause agreement on the
+    executed-carrier fixture, so the `.77.2.14` assembly has an explicit
+    reviewable use-site. -/
+example :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluateCake
+          (.primitive "x" .addCarry ([.const (7 : W)] : List (Exp W)))
+          bridgeExecProdState).1
+        (evaluateHOLFiniteState bridgeExecExactState
+          (.primitive (ofString "x") .addCarry
+            (([.const (7 : W)] : List (Exp W)).map expToHOL))).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluateCake
+          (.primitive "x" .addCarry ([.const (7 : W)] : List (Exp W)))
+          bridgeExecProdState).2
+        (evaluateHOLFiniteState bridgeExecExactState
+          (.primitive (ofString "x") .addCarry
+            (([.const (7 : W)] : List (Exp W)).map expToHOL))).2.toExact :=
+  panSemTotalEvaluateCake_primitive_agree_of_progByteRanged bridgeExecProdState
+    bridgeExecExactState bridgeStateRelExec bridgeExecProdState_ranged "x" .addCarry
+    ([.const (7 : W)] : List (Exp W))
+    (by
+      simp only [ProgByteRanged, NameRanged]
+      exact ⟨by decide, fun e he => by
+        simp only [List.mem_singleton] at he
+        subst he
+        trivial⟩)
+
 def runChecks : IO Bool := do
   IO.println "PASS production/exact PanSemState codec bridge (value/entry/struct/state)"
   pure true
