@@ -573,10 +573,12 @@ The `prog_if_probe.out` fixture probes the comparison-materialization helper
 canonical live-set insertion order.
 The `compile_crepop_probe.out` fixture probes both RISC-V and ARMv7 `Mul`
 branches of `compile_crepop_def` at line 42 of the same source.
-`crep_to_loop_compile_exp_probe.out` records direct HOL EVAL rows for
-`compile_exp_def` and its local mutual list helper `compile_exps`, including
-variable lookup, Load32 temporary allocation, n-ary Op mapping, Mul lowering,
-comparison temporaries/live-set insertion, Shift, and list compilation. The
+`crep_to_loop_compile_exp_probe.out` starts with a direct `prog_if_def` row on
+exactly the arguments used by the `cmp` expression row, then records direct HOL
+EVAL rows for `compile_exp_def` and its local mutual list helper `compile_exps`,
+including variable lookup, Load32 temporary allocation, n-ary Op mapping, Mul
+lowering, comparison temporaries/live-set insertion, Shift, and list
+compilation. The
 exact-carrier Lean equations are in
 `Flapjack.Test.CrepToLoopCompileExpExactParity`. The tagged definitions use the
 source `context` and Loop carriers; the generic production compiler is not

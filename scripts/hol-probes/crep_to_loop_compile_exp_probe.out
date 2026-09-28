@@ -1,3 +1,6 @@
+prog_if=[Assign 6 (Const 1w); Assign 7 (Const 0w);
+ If Equal 6 (Reg 7) (Assign 6 (Const 1w)) (Assign 6 (Const 0w))
+   ⦕ 1; 2; 6; 7 ⦖]
 base=([],BaseAddr,5,⦕ 1; 2 ⦖)
 var_hit=([],Var 7,5,⦕ 1; 2 ⦖)
 load32=([Assign 5 (Const 3w); Load32 5 5],Var 5,6,⦕ 1; 2; 5 ⦖)

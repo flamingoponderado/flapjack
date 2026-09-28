@@ -1281,7 +1281,7 @@ run_probe prog_if_probeScript.sml prog_if_probe.out \
   prog_if_basic prog_if_basic prog_if_wrong_result prog_if_wrong_result \
   "$cake_dir/pancake/crep_to_loopScript.sml"
 run_probe crep_to_loop_compile_exp_probeScript.sml crep_to_loop_compile_exp_probe.out \
-  base compile_exps \
+  prog_if base var_hit load32 op_nary crepop_mul cmp shift compile_exps \
   "$cake_dir/pancake/crep_to_loopScript.sml"
 run_probe crep_to_loop_compile_probeScript.sml crep_to_loop_compile_probe.out \
   loop_nested_seq_empty compile_ext_call \
