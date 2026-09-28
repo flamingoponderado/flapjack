@@ -3128,7 +3128,7 @@ private theorem crepProgOfHOL_panMap2_assign {width : Nat} [NeZero width]
 
 private theorem crepProgOfHOL_expHdlExact {width : Nat} [NeZero width]
     (context : PanToCrepContextExact width) (v : String) :
-    crepProgOfHOL (expHdlExact (width := width) ⟨context.vars⟩
+    crepProgOfHOL (expHdlExact (width := width) context.vars
         (Flapjack.Basis.Pure.MlString.ofString v)) =
       expHdlFiniteMap (α := BitVec width) context.toProduction.vars v := by
   have hvars : context.toProduction.vars v =

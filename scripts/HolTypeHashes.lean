@@ -18,6 +18,7 @@ import Flapjack.Misc.FoldrMaxList
 import Flapjack.Misc.Uncurry
 import Flapjack.Misc.OptMmapCong
 import Flapjack.Pancake.CrepInline.Pass
+import Flapjack.Pancake.CrepInline.Canonical
 import Flapjack.Pancake.CrepLang
 import Flapjack.Pancake.CrepLang.Exp
 import Flapjack.Pancake.CrepLang.Prog
@@ -157,6 +158,7 @@ elab "#emit_hol_type_hashes" : command => do
             ("names_as_string_boundary", toJson ref.namesAsStringBoundary),
             ("fmap_as_finite_support", toJson ref.fmapAsFiniteSupport),
             ("fmap_as_finite_support_result", toJson ref.fmapAsFiniteSupportResult),
+            ("fmap_as_finite_support_parameters", toJson ref.fmapAsFiniteSupportParameters),
             ("fmap_as_finite_support_relation",
               toJson (ref.fmapAsFiniteSupportRelation.map (fun entry => if entry.1.isEmpty then entry.2 else s!"{entry.1}.{entry.2}"))),
             ("fmap_as_finite_support_equalities", toJson ref.fmapAsFiniteSupportEqualities),

@@ -549,7 +549,7 @@ theorem compileCallSomeShape {width : Nat} [NeZero width] (ctxt : PanToCrepConte
       simp [compileCallHandlerMissingEidExactHOLW, compileCallResultNoHandlerExactHOLW,
         hfuncs, cargs]
     · rename_i code _
-      refine ⟨_, hrts (some (code, CrepProgHOL.seq (expHdlExact ⟨ctxt.vars⟩ evar)
+      refine ⟨_, hrts (some (code, CrepProgHOL.seq (expHdlExact ctxt.vars evar)
         (compileProgExactHOLW ctxt p))), Or.inr ⟨_, _, rfl, rfl, ?_⟩⟩
       simp [compileCallHandlerPresentEidExactHOLW, hfuncs, cargs]
   · split
@@ -868,7 +868,7 @@ theorem compileCallDestNoneShape {width : Nat} [NeZero width] (ctxt : PanToCrepC
     · exact ⟨none, by simp [compileCallHandlerMissingEidExactHOLW,
         compileCallResultNoHandlerExactHOLW, hfuncs]⟩
     · rename_i code _
-      exact ⟨some (code, CrepProgHOL.seq (expHdlExact ⟨ctxt.vars⟩ evar)
+      exact ⟨some (code, CrepProgHOL.seq (expHdlExact ctxt.vars evar)
         (compileProgExactHOLW ctxt p)), by simp [compileCallHandlerPresentEidExactHOLW, hfuncs]⟩
 
 /-- For a `wrap_rt (FLOOKUP ctxt.vars rt) = SOME (sh, ns)` destination,
@@ -898,7 +898,7 @@ theorem compileCallDestSomeShape {width : Nat} [NeZero width] (ctxt : PanToCrepC
       · exact ⟨none, by simp [compileCallWrappedResultHandlerMissingEidExactHOLW,
           compileCallWrappedResultNoHandlerExactHOLW]⟩
       · rename_i code _
-        exact ⟨some (code, CrepProgHOL.seq (expHdlExact ⟨ctxt.vars⟩ evar)
+        exact ⟨some (code, CrepProgHOL.seq (expHdlExact ctxt.vars evar)
           (compileProgExactHOLW ctxt p)), by
             simp [compileCallWrappedResultHandlerPresentEidExactHOLW]⟩
 private theorem fupdateListHOL_zip_mem_indep {α β : Type} [DecidableEq α] (k : α) :

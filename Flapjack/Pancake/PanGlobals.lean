@@ -1164,12 +1164,14 @@ open Flapjack.Basis.Pure.MlString (MlString ofString toStringOfBytes)
 reviewed word-indexed `List (DeclHOL width)` carrier and reuse the already
 tagged sibling ports `isNameHOL`/`isExnDeclHOL`/`isDeclHOL`/`isFunctionHOL`
 (`panLangScript.sml:234-249`, `:314-317`), `freshNameHOL` (`fresh_name_def`),
-and `functionsHOL` (`functions_def`).  The production analogues
-`globalResortDecls`/`globalNewMainName`/`globalDeclShapes` below still consume
-generic `Decl α`, whose expressions carry `α` in `Const` and whose identifiers
-and `Shape` are `String`; routing the executed compiler through these exact
-definitions is the exact-carrier production task tracked by
-`flapjack-6nn.3.1`. -/
+and `functionsHOL` (`functions_def`). The parser-proved executable path in
+`globalCompileTopForStartSomeCakeOfExact` routes resorting, generated-main
+naming, and shape collection through these definitions, then decodes through
+the checked byte-range codecs. Generic `Decl α` callers still use
+`globalResortDecls`/`globalNewMainName`/`globalDeclShapes`; inputs without the
+parser byte-range proof remain on that compatibility path. The exact route and
+its output equality are in `PanGlobalsByteRanged.lean`
+(`flapjack-6nn.3.1`). -/
 
 /-- Exact port of HOL `resort_decls_def`
     (`cakeml/pancake/pan_globalsScript.sml:179`):
