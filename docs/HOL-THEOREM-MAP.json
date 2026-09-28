@@ -13107,7 +13107,21 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateNestedDecs.lean",
     "lean_name": "evalNestedDecsSeqResVarEqCrepHOL",
     "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds10 (2026-09-27; bead flapjack-64k0, PR #1166 review item 2): @[hol] tag WITHDRAWN on concrete source-shape/carrier gaps. The conclusion is over evalCrepSemHOLProgExact, the no-decider classical wrapper around the re-implemented evaluator evalCrepSemHOLProg, and the theorem quantifies over an arbitrary continuation body, so its exactness depends on the still-open full clause review of that evaluator against evaluate_def. Gaps: the recursive clauses thread base-state decisions through crepStampExactDomains, whose reachability for the derived states is unreviewed; the byte-store clause still routes through the legacy UInt8 helpers; and the finite-map qualifier's owner/witness placement is unresolved (flapjack-4ac.5.16.5.13.1). HOL candidate eval_nested_decs_seq_res_var_eq (pan_to_crepProofScript.sml:596-620); faithful port tracked by flapjack-4ac.5.16.5."
+    "reviewer": "flapjack-ds10 (2026-09-27; bead flapjack-64k0, PR #1166 review item 2): @[hol] tag WITHDRAWN on concrete source-shape/carrier gaps. The conclusion is over evalCrepSemHOLProgExact, the no-decider classical wrapper around the re-implemented evaluator evalCrepSemHOLProg, and the theorem quantifies over an arbitrary continuation body, so its exactness depends on the still-open full clause review of that evaluator against evaluate_def. Gaps: the recursive clauses thread base-state decisions through crepStampExactDomains, whose reachability for the derived states is unreviewed; the byte-store clause still routes through the legacy UInt8 helpers; and the finite-map qualifier's owner/witness placement is unresolved (flapjack-4ac.5.16.5.13.1). HOL candidate eval_nested_decs_seq_res_var_eq (pan_to_crepProofScript.sml:596-620); faithful port tracked by flapjack-4ac.5.16.5. Superseded (2026-09-28, flapjack-opus, bead flapjack-pxn.18.4.3.94.3): the withdrawal gaps are resolved. The Crep evaluator's clause set is source-reviewed and tagged (evalCrepSemHOLProgExact_eq_evaluate_def), crepStampExactDomains no longer appears in the tagged equations, byte stores use the word8 port, and the CrepSemHOLState qualifier owner/witness is settled. The HOL-shaped statement evalNestedDecsSeqResVarEqHOL is now tagged; this Flapjack-shaped form (separate premises, let-bound result) stays untagged."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "eval_nested_decs_seq_res_var_eq",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateNestedDecs.lean",
+    "lean_name": "evalNestedDecsSeqResVarEqHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-28, bead flapjack-pxn.18.4.3.94.3; pan_to_crepProofScript.sml:596-620): HOL !es ns t ev p. MAP (eval t) es = MAP SOME ev /\\ LENGTH ns = LENGTH es /\\ distinct_lists ns (FLAT (MAP var_cexp es)) /\\ ALL_DISTINCT ns ==> let (q,r) = evaluate (p, t with locals := t.locals |++ ZIP (ns,ev)) in evaluate (nested_decs ns es p, t) = (q, r with locals := FOLDL res_var r.locals (ZIP (ns, MAP (FLOOKUP t.locals) ns))). Lean keeps the binder order es ns t ev p and the single conjunctive premise. eval is the tagged evalCrepSemHOLExp with the classical address-set decision (as in the tagged Crep evaluate_def arms), and evaluate is the tagged evalCrepSemHOLProgExact (line-443 evaluate_def assembly). MAP/LENGTH/FLAT/ALL_DISTINCT are List.map/length/flatMap/Nodup, and var_cexp/distinct_lists/nested_decs/res_var are the tagged crepExpVarsHOL/distinctListsHol/nestedDecsHOL/HolFiniteMapExact.resVarEq. |++ ZIP is updateListEq (zip), FLOOKUP t.locals is t.locals.lookup, and HOL's let (q,r) = ... in is an outer match on the pair. The CrepSemHOLState locals/globals/code maps use the canonical HolFiniteMapExact carrier (same-module witness), and 'a word/'ffi use the BitVec width [NeZero width]/σ : Type translation. The proof delegates to the untagged evalNestedDecsSeqResVarEqCrepHOL."
   },
   {
     "hol_path": null,
