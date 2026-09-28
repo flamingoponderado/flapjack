@@ -17,14 +17,14 @@ namespace Flapjack
 theorem holSurvivesMapiAssign {width : Nat} [NeZero width]
     (n : Nat) (les : List (HolLoopExp width)) (offset : Nat) :
     survivesHOLExact n
-      (holLoopNestedSeq
+      (loopNestedSeqHOL
         (les.mapIdx (fun index expression =>
           HolLoopProg.assign (index + offset) expression))) = true := by
   induction les generalizing offset with
-  | nil => simp [holLoopNestedSeq, survivesHOLExact]
+  | nil => simp [loopNestedSeqHOL, survivesHOLExact]
   | cons expression expressions ih =>
       simp only [List.mapIdx_cons]
-      simp [holLoopNestedSeq, survivesHOLExact, ih, Nat.add_assoc,
+      simp [loopNestedSeqHOL, survivesHOLExact, ih, Nat.add_assoc,
         Nat.add_comm 1 offset]
 
 end Flapjack

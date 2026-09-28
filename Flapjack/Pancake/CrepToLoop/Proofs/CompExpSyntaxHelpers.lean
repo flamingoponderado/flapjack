@@ -36,14 +36,14 @@ theorem not_mem_assigned_mem_gt_comp_exp_cases :
       compileExpHOLExact ctxt tmp l e = (p, le, ntmp, nl) ∧
       crepToLoopCtxtMax ctxt.vmax ctxt.vars.lookup ∧
       (∀ v m, ctxt.vars.lookup v = some m → n ≠ m) ∧ n < tmp →
-      n ∉ holLoopAssignedVars (holLoopNestedSeq p)) ∧
+      n ∉ holLoopAssignedVars (loopNestedSeqHOL p)) ∧
     (∀ (ctxt : CrepToLoopContextExact) (tmp : Nat) (l : NumSet) (e : List (CrepExpHOL width))
       (p : List (HolLoopProg width)) (le : List (HolLoopExp width)) (ntmp : Nat) (nl : NumSet)
       (n : Nat),
       compileExpsHOLExact ctxt tmp l e = (p, le, ntmp, nl) ∧
       crepToLoopCtxtMax ctxt.vmax ctxt.vars.lookup ∧
       (∀ v m, ctxt.vars.lookup v = some m → n ≠ m) ∧ n < tmp →
-      n ∉ holLoopAssignedVars (holLoopNestedSeq p)) :=
+      n ∉ holLoopAssignedVars (loopNestedSeqHOL p)) :=
   ⟨fun ctxt tmp l e p le ntmp nl n ⟨h, _, _, hn⟩ hm => by
       have := (comp_exp_assigned_vars_tmp_bound ctxt tmp l e p le ntmp nl n ⟨h, hm⟩).1; omega,
    fun ctxt tmp l e p le ntmp nl n ⟨h, _, _, hn⟩ hm => by
@@ -59,7 +59,7 @@ theorem not_mem_assigned_mem_gt_comp_exp :
       compileExpHOLExact ctxt tmp l e = (p, le, ntmp, nl) ∧
       crepToLoopCtxtMax ctxt.vmax ctxt.vars.lookup ∧
       (∀ v m, ctxt.vars.lookup v = some m → n ≠ m) ∧ n < tmp →
-      n ∉ holLoopAssignedVars (holLoopNestedSeq p) :=
+      n ∉ holLoopAssignedVars (loopNestedSeqHOL p) :=
   not_mem_assigned_mem_gt_comp_exp_cases.1
 
 /-- Exact HOL `not_mem_assigned_mem_gt_comp_exps` (`crep_to_loopProofScript.sml:1559`,
@@ -73,7 +73,7 @@ theorem not_mem_assigned_mem_gt_comp_exps :
       compileExpsHOLExact ctxt tmp l e = (p, le, ntmp, nl) ∧
       crepToLoopCtxtMax ctxt.vmax ctxt.vars.lookup ∧
       (∀ v m, ctxt.vars.lookup v = some m → n ≠ m) ∧ n < tmp →
-      n ∉ holLoopAssignedVars (holLoopNestedSeq p) :=
+      n ∉ holLoopAssignedVars (loopNestedSeqHOL p) :=
   not_mem_assigned_mem_gt_comp_exp_cases.2
 
 /-- Exact HOL `assigned_vars_nested_seq_assign` (`crep_to_loopProofScript.sml:1562-1564`). -/
@@ -81,12 +81,12 @@ theorem not_mem_assigned_mem_gt_comp_exps :
   (words_as_type_indexed_bitvec)]
 theorem assigned_vars_nested_seq_assign :
     ∀ (vs : List Nat) (es : List (HolLoopExp width)), vs.length = es.length →
-      holLoopAssignedVars (holLoopNestedSeq (List.zipWith HolLoopProg.assign vs es)) = vs
+      holLoopAssignedVars (loopNestedSeqHOL (List.zipWith HolLoopProg.assign vs es)) = vs
   | [], [], _ => rfl
   | [], _ :: _, h => by simp at h
   | _ :: _, [], h => by simp at h
   | v :: vs, e :: es, h => by
-      simp only [List.zipWith_cons_cons, holLoopNestedSeq, holLoopAssignedVars, List.singleton_append]
+      simp only [List.zipWith_cons_cons, loopNestedSeqHOL, holLoopAssignedVars, List.singleton_append]
       rw [assigned_vars_nested_seq_assign vs es (by simpa using h)]
 
 /-- Exact HOL `cut_sets_MAPi_Assign` (`crep_to_loopProofScript.sml:342-345`):
@@ -96,12 +96,12 @@ theorem assigned_vars_nested_seq_assign :
   (words_as_type_indexed_bitvec)]
 theorem cut_sets_MAPi_Assign :
     ∀ (les : List (HolLoopExp width)) (cs : NumSet) (offset : Nat),
-      cutSetsHOL cs (holLoopNestedSeq
+      cutSetsHOL cs (loopNestedSeqHOL
         (les.mapIdx (fun n e => HolLoopProg.assign (n + offset) e))) =
       sptListInsert ((List.range les.length).map (offset + ·)) cs
-  | [], cs, offset => by simp [holLoopNestedSeq, cutSetsHOL, sptListInsert]
+  | [], cs, offset => by simp [loopNestedSeqHOL, cutSetsHOL, sptListInsert]
   | e :: es, cs, offset => by
-      simp only [List.mapIdx_cons, holLoopNestedSeq, cutSetsHOL, List.length_cons,
+      simp only [List.mapIdx_cons, loopNestedSeqHOL, cutSetsHOL, List.length_cons,
         List.range_succ_eq_map, List.map_cons, List.map_map, sptListInsert]
       have ih := cut_sets_MAPi_Assign es (sptInsert (0 + offset) () cs) (offset + 1)
       have hf : (fun n e => HolLoopProg.assign (n + 1 + offset) e) =
