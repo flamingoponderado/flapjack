@@ -15364,6 +15364,17 @@
     "hol_name": "evaluate_invariants",
     "hol_line": 1150,
     "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
+    "lean_name": "evaluateInvariantsStoreCaseHOLFinite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-28; bead flapjack-4ac.4.61) against panPropsScript.sml:1150-1158 and panSemScript.sml:583-589. This is the genuine Store destination/source leaf from recInduct evaluate_ind. It retains the source evaluator result/post pair premise and all eight conclusions with no IH or added precondition. evaluate_def returns Error with the original state if either expression fails, the destination is not a word, or mem_stores fails; success changes only memory. The Lean case uses evaluateHOLFiniteState_store on PanPropsEvalStateFiniteExact's checked finite-support carrier and the indexed-word model. Recursive cases and assembly remain open."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "evaluate_invariants",
+    "hol_line": 1150,
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
     "lean_name": "evaluateInvariantsRaiseCaseHOLFinite",
     "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
     "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],

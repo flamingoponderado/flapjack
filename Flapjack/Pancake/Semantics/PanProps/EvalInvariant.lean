@@ -3760,6 +3760,126 @@ theorem evaluateInvariantsRaiseCaseHOLFinite {width : Nat} {σ : Type} [NeZero w
 end Flapjack
 
 
+/-! # The `Store` induction case of HOL `evaluate_invariants`
+
+HOL `Store` can update only `memory`; on any failed evaluation or store it
+returns the input state. Therefore all eight fields in the invariant are
+preserved. -/
+
+open Flapjack.Pancake.PanLang (ExpHOL ProgHOL)
+
+namespace Flapjack
+
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_invariants" 1150
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateInvariantsStoreCaseHOLFinite {width : Nat} {σ : Type} [NeZero width] :
+    ∀ (destination source : ExpHOL width)
+      (state : PanPropsEvalStateFiniteExact width σ)
+      (result : Option (PanSemResultExact width))
+      (post : PanPropsEvalStateFiniteExact width σ),
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state
+          (.store destination source : ProgHOL width) = (result, post) →
+      post.memaddrs = state.memaddrs ∧
+      post.shMemaddrs = state.shMemaddrs ∧
+      post.be = state.be ∧
+      post.eshapes = state.eshapes ∧
+      post.baseAddr = state.baseAddr ∧
+      post.structs = state.structs ∧
+      post.code = state.code ∧
+      post.ffi.oracle = state.ffi.oracle := by
+  classical
+  intro destination source state result post hRun
+  have hcanonical :
+      PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite
+          (.store destination source : ProgHOL width) =
+        (result, post.toPanSemFinite) := by
+    have hpair := congrArg
+      (fun output => (output.1, PanPropsEvalStateFiniteExact.toPanSemFinite output.2)) hRun
+    have hpair' :
+        (PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite
+          (.store destination source : ProgHOL width)).1 = result ∧
+        (PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite
+          (.store destination source : ProgHOL width)).2 = post.toPanSemFinite := by
+      simpa [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair] using hpair
+    exact Prod.ext hpair'.1 hpair'.2
+  rw [PanSemStateFiniteExact.evaluateHOLFiniteState_store] at hcanonical
+  have hpreserved (memory : RiscV.Word width → HolWordLab width)
+      (hpost : post.toPanSemFinite = {state.toPanSemFinite with memory := memory}) :
+      post.memaddrs = state.memaddrs ∧
+      post.shMemaddrs = state.shMemaddrs ∧
+      post.be = state.be ∧
+      post.eshapes = state.eshapes ∧
+      post.baseAddr = state.baseAddr ∧
+      post.structs = state.structs ∧
+      post.code = state.code ∧
+      post.ffi.oracle = state.ffi.oracle := by
+    constructor
+    · change post.toPanSemFinite.memaddrs = state.toPanSemFinite.memaddrs
+      rw [hpost]
+    constructor
+    · change post.toPanSemFinite.shMemaddrs = state.toPanSemFinite.shMemaddrs
+      rw [hpost]
+    constructor
+    · change post.toPanSemFinite.be = state.toPanSemFinite.be
+      rw [hpost]
+    constructor
+    · change post.toPanSemFinite.eshapes = state.toPanSemFinite.eshapes
+      rw [hpost]
+    constructor
+    · change post.toPanSemFinite.baseAddr = state.toPanSemFinite.baseAddr
+      rw [hpost]
+    constructor
+    · change post.toPanSemFinite.structs = state.toPanSemFinite.structs
+      rw [hpost]
+    constructor
+    · change post.toPanSemFinite.code = state.toPanSemFinite.code
+      rw [hpost]
+    · change post.toPanSemFinite.ffi.oracle = state.toPanSemFinite.ffi.oracle
+      rw [hpost]
+  -- The canonical clause has three possible evaluation failures and a
+  -- successful memory update; split those HOL cases without weakening the
+  -- source evaluator premise.
+  cases hdestination : @evalHOLExact width σ _ state.toPanSemFinite.toExact
+      (fun address => Classical.propDecidable (state.toPanSemFinite.memaddrs address))
+      destination with
+  | none =>
+      simp [hdestination] at hcanonical
+      rcases hcanonical with ⟨_, hpost⟩
+      exact hpreserved state.memory hpost.symm
+  | some destinationValue =>
+      cases destinationValue with
+      | val destinationPayload =>
+          cases destinationPayload with
+          | word address =>
+              cases hsource : @evalHOLExact width σ _ state.toPanSemFinite.toExact
+                  (fun address => Classical.propDecidable (state.toPanSemFinite.memaddrs address))
+                  source with
+              | none =>
+                  simp [hdestination, hsource] at hcanonical
+                  rcases hcanonical with ⟨_, hpost⟩
+                  exact hpreserved state.memory hpost.symm
+              | some value =>
+                  cases hstore : @panMemStoresHOL width _ address (flattenHOL value)
+                      state.toPanSemFinite.memaddrs
+                      (fun address => Classical.propDecidable
+                        (state.toPanSemFinite.memaddrs address)) state.toPanSemFinite.memory with
+                  | none =>
+                      simp [hdestination, hsource, hstore] at hcanonical
+                      rcases hcanonical with ⟨_, hpost⟩
+                      exact hpreserved state.memory hpost.symm
+                  | some memory =>
+                      simp [hdestination, hsource, hstore] at hcanonical
+                      rcases hcanonical with ⟨_, hpost⟩
+                      exact hpreserved memory hpost.symm
+      | rStruct _ | nStruct _ _ =>
+          simp [hdestination] at hcanonical
+          rcases hcanonical with ⟨_, hpost⟩
+          exact hpreserved state.memory hpost.symm
+
+end Flapjack
+
+
 /-!
 # The `Dec` induction case of HOL `evaluate_clock_sub`
 
