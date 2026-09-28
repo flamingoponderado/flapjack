@@ -1,6 +1,7 @@
 import Flapjack.Pancake.Semantics.PanSem.ShMemExact
 import Flapjack.Pancake.Semantics.CrepSem.TotalEval
 import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
+import Flapjack.Pancake.Semantics.ByteAlignBridge
 
 /-!
 # Byte-list bridge between the exact Pan and Crep shared-memory primitives
@@ -361,5 +362,64 @@ theorem panWacc_append {width : Nat} [NeZero width] (bs es : List (BitVec 8)) (a
       rw [ih (a + 1) C]
       have h : a + 1 + rest.length = a + (rest.length + 1) := by omega
       rw [h]
+
+
+/-! ## Byte write/read projection at the written residue
+
+`panGetByteHOL_panSetByteHOL_self` reads back the byte just written at the same
+address, i.e. `panSetByteHOL` replaces the byte at the written residue.  This is
+the core projection fact for the overlong truncation argument: a later write at
+the same residue erases the earlier byte. -/
+
+/-- `2 ^ (8 * e) = 256 ^ e`. -/
+theorem two_pow_eight_mul_eq_pow256 (e : Nat) : (2 : Nat) ^ (8 * e) = 256 ^ e := by
+  rw [show (256 : Nat) = 2 ^ 8 by decide, Nat.pow_mul]
+
+/-- `2 ^ (8 * e + 8) = 256 ^ (e + 1)`. -/
+theorem two_pow_eight_mul_succ_eq_pow256 (e : Nat) :
+    (2 : Nat) ^ (8 * e + 8) = 256 ^ (e + 1) := by
+  have h : 8 * e + 8 = 8 * (e + 1) := by omega
+  rw [h, show (256 : Nat) = 2 ^ 8 by decide, Nat.pow_mul]
+
+/-- Reading back the byte just written at the same address (little-endian) returns
+    that byte: `panSetByteHOL` overwrites the byte at the written residue. -/
+theorem panGetByteHOL_panSetByteHOL_self {width : Nat} [NeZero width]
+    (hdiv : width % 8 = 0) (k : Nat) (hk : k < width / 8) (b : BitVec 8)
+    (X : RiscV.Word width) :
+    (panGetByteHOL (BitVec.ofNat width k)
+        (panSetByteHOL (BitVec.ofNat width k) (BitVec.ofNat width b.toNat) X false)
+        false).toNat = b.toNat := by
+  have hkw : k < 2 ^ width :=
+    Nat.lt_of_le_of_lt (Nat.le_trans (Nat.le_of_lt hk) (Nat.div_le_self width 8))
+      Nat.lt_two_pow_self
+  have haddr : (BitVec.ofNat width k : RiscV.Word width).toNat = k := by
+    rw [BitVec.toNat_ofNat, Nat.mod_eq_of_lt hkw]
+  have hbi : byteBitIndex (BitVec.ofNat width k) false = 8 * k := by
+    simp only [byteBitIndex, Bool.false_eq_true, if_false, haddr, Nat.mod_eq_of_lt hk]
+  have h256 : 0 < 256 ^ k := Nat.pow_pos (by decide)
+  have hlow : X.toNat % 256 ^ k < 256 ^ k := Nat.mod_lt _ h256
+  have hb : b.toNat < 256 := b.isLt
+  have hbb : (UInt8.ofNat b.toNat).toNat = b.toNat := by
+    rw [UInt8.toNat_ofNat', Nat.mod_eq_of_lt b.isLt]
+  have hset := panSetByteHOL_toNat (width := width) hdiv (BitVec.ofNat width k)
+    X (UInt8.ofNat b.toNat) false
+  rw [hbi, two_pow_eight_mul_eq_pow256, two_pow_eight_mul_succ_eq_pow256, hbb] at hset
+  simp only [panGetByteHOL, Bool.false_eq_true, if_false, haddr, Nat.mod_eq_of_lt hk]
+  rw [UInt8.toNat_ofNat', Nat.mod_mod, hset]
+  have harr : BitVec.toNat X / 256 ^ (k + 1) * 256 ^ (k + 1) +
+        b.toNat * 256 ^ k + BitVec.toNat X % 256 ^ k
+      = 256 ^ k * (256 * (BitVec.toNat X / 256 ^ (k + 1))) +
+        (b.toNat * 256 ^ k + BitVec.toNat X % 256 ^ k) := by
+    rw [Nat.pow_add_one]
+    ac_rfl
+  rw [harr, Nat.mul_add_div h256]
+  have hbc : (b.toNat * 256 ^ k + BitVec.toNat X % 256 ^ k) / 256 ^ k = b.toNat := by
+    rw [Nat.add_comm, Nat.mul_comm b.toNat (256 ^ k), Nat.add_mul_div_left _ _ h256,
+      Nat.div_eq_of_lt hlow, Nat.zero_add]
+  rw [hbc]
+  rw [show 256 * (BitVec.toNat X / 256 ^ (k + 1)) + b.toNat
+      = b.toNat + (BitVec.toNat X / 256 ^ (k + 1)) * 256 by
+        rw [Nat.mul_comm 256 (BitVec.toNat X / 256 ^ (k + 1)), Nat.add_comm]]
+  rw [Nat.add_mul_mod_self_right, Nat.mod_eq_of_lt hb]
 
 end Flapjack
