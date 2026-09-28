@@ -25,37 +25,37 @@ def seqSplitNegative : Bool :=
 
 def nestedSeqSplitPositive : Bool :=
   decide (holLoopAssignedVars
-    (holLoopNestedSeq
+    (loopNestedSeqHOL
       (([.assign 1 (wvar 0), .assign 2 (wvar 1)] : List (HolLoopProg 64)) ++
         [.assign 3 (wvar 2)])) = [1, 2, 3])
 
 def nestedSeqSplitNegative : Bool :=
   decide (holLoopAssignedVars
-    (holLoopNestedSeq
+    (loopNestedSeqHOL
       (([.assign 1 (wvar 0), .assign 2 (wvar 1)] : List (HolLoopProg 64)) ++
         [.assign 3 (wvar 2)])) = [1, 2, 8])
 
 def nestedAssignPositive : Bool :=
   decide (holLoopAssignedVars
-    (holLoopNestedSeq
+    (loopNestedSeqHOL
       (List.zipWith HolLoopProg.assign [3, 4, 5]
         [wvar 0, wvar 1, wvar 2])) = [3, 4, 5])
 
 def nestedAssignNegative : Bool :=
   decide (holLoopAssignedVars
-    (holLoopNestedSeq
+    (loopNestedSeqHOL
       (List.zipWith HolLoopProg.assign [3, 4, 5]
         [wvar 0, wvar 1, wvar 2])) = [3, 4, 8])
 
 def mapIdxAssignPositive : Bool :=
   decide (holLoopAssignedVars
-    (holLoopNestedSeq
+    (loopNestedSeqHOL
       (([wvar 0, wvar 1] : List (HolLoopExp 64)).mapIdx
         (fun index expression => .assign (index + 3) expression))) = [3, 4])
 
 def mapIdxAssignNegative : Bool :=
   decide (holLoopAssignedVars
-    (holLoopNestedSeq
+    (loopNestedSeqHOL
       (([wvar 0, wvar 1] : List (HolLoopExp 64)).mapIdx
         (fun index expression => .assign (index + 3) expression))) = [3, 5])
 

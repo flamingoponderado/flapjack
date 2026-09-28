@@ -9,28 +9,28 @@ open Flapjack
 
 theorem survivesMapiAssignNilHOLFixture :
     survivesHOLExact 4
-      (holLoopNestedSeq
+      (loopNestedSeqHOL
         (([] : List (HolLoopExp 64)).mapIdx (fun index expression =>
           HolLoopProg.assign (index + 3) expression))) = true :=
   holSurvivesMapiAssign 4 [] 3
 
 theorem survivesMapiAssignOneHOLFixture :
     survivesHOLExact 9
-      (holLoopNestedSeq
+      (loopNestedSeqHOL
         (([HolLoopExp.var 0] : List (HolLoopExp 64)).mapIdx
           (fun index expression => HolLoopProg.assign (index + 5) expression))) = true :=
   holSurvivesMapiAssign 9 [HolLoopExp.var 0] 5
 
 theorem survivesMapiAssignThreeHOLFixture :
     survivesHOLExact 17
-      (holLoopNestedSeq
+      (loopNestedSeqHOL
         (([HolLoopExp.var 0, .var 1, .var 2] : List (HolLoopExp 64)).mapIdx
           (fun index expression => HolLoopProg.assign (index + 7) expression))) = true :=
   holSurvivesMapiAssign 17 [HolLoopExp.var 0, .var 1, .var 2] 7
 
 theorem survivesMapiAssignZeroOffsetHOLFixture :
     survivesHOLExact 0
-      (holLoopNestedSeq
+      (loopNestedSeqHOL
         (([HolLoopExp.var 0, .var 1] : List (HolLoopExp 64)).mapIdx
           (fun index expression => HolLoopProg.assign (index + 0) expression))) = true :=
   holSurvivesMapiAssign 0 [HolLoopExp.var 0, .var 1] 0
