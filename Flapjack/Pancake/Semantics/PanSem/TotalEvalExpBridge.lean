@@ -11,21 +11,27 @@ import Flapjack.Pancake.PanStructsByteRanged
 `PanSemStateRelExec` between the executable production `PanSemState` and the
 exact `PanSemStateFiniteExact`, but only the expression-free `Prog` leaf clauses.
 
-This module proves the missing prerequisite: for the production `Exp`
-constructors that do not need a structured-context or structured-load carrier
-bridge, the executable expression evaluator `evalPanSemStateExp` agrees with the
-exact `evalHOLExact` on the `expToHOL` image.  The agreement is stated through
-the value codec `panValueToHOL` (the executable `PanValue` is mapped into the
-exact `ValueHOL` carrier), for arbitrary hosts `σ`.
+This module proves the missing prerequisite: for every production `Exp`
+constructor, the executable expression evaluator agrees with the exact
+`evalHOLExact` on the `expToHOL` image.  The agreement is stated through the
+value codec `panValueToHOL` (the executable `PanValue` is mapped into the exact
+`ValueHOL` carrier), for arbitrary hosts `σ`.
 
-The constructors proved here are `const`, `var`, `rStruct`, `rField`,
+All sixteen production `Exp` constructors (`const`, `var`, `rStruct`, `rField`,
 `baseAddr`, `topAddr`, `bytesInWord`, `op`, `panOp`, `cmp`, `shift`, `load32`,
-and `loadByte`, together with the list/field/name/shape/memory bridge
-infrastructure.  The three remaining constructors (`nStruct`, `nField`, `load`)
-need the production `StructContext` / `panMemLoadHOL` versus the exact
-`StructContextExact` / `memLoadHOLExact` carrier agreement; they are tracked by
-the child bead `flapjack-pxn.18.4.3.77.2.12.1` and are deliberately not claimed
-here.
+`loadByte`, `nStruct`, `nField`, and `load`) now have per-constructor
+production/exact agreement lemmas, together with the
+list/field/name/shape/memory bridge infrastructure and the production
+`StructContext` / `panMemLoadHOL` versus exact `StructContextExact` /
+`memLoadHOLExact` carrier bridges for the structured clauses.  The all-16
+assembly `evalPanValueExp_agree`, its state-owned wrapper
+`evalPanSemStateExp_agree`, and the companion result-rangedness theorem
+`evalPanValueExp_byteRanged` (with the `panValueFlatLoad_*` rangedness lemmas)
+are kernel-checked.  This establishes agreement between the *production
+evaluator* and the exact HOL-shaped evaluator; it does **not** yet establish
+that the executed compiler path runs these definitions, and the agreement is not
+unconditional for arbitrary production states (see the preservation obligation
+below).
 
 ## Representation premises
 
@@ -42,8 +48,17 @@ premises are therefore needed and recorded explicitly rather than assumed away:
   structure context are byte-ranged, so a stored record's field-name lookups and
   a context shape comparison agree with their `mlstring` images.
 
-Neither premise is a semantic condition on evaluation: both hold for
-parser-produced programs and states.  Everything in this module is untagged
+These are **unproved preservation obligations**, not facts that follow from
+parser origin: parsing constrains the program syntax and identifier bytes, but it
+does not constrain runtime FFI return values, initial globals, or stored record
+structures to the byte range that HOL `char`/`mlstring` represents, and it says
+nothing about the production state updates.  Consequently every agreement
+theorem in this module (`evalPanValueExp_agree`, `evalPanSemStateExp_agree`, and
+`evalPanValueExp_byteRanged`) carries these premises as explicit hypotheses; the
+result is *not* unconditional for arbitrary production states.  Discharging or
+precisely narrowing this obligation is tracked by the blocker bead
+`flapjack-pxn.18.4.3.77.2.15`, which blocks the full total-evaluate assembly
+bead `flapjack-pxn.18.4.3.77.2.14`.  Everything in this module is untagged
 Flapjack-specific bridge infrastructure; no `@[hol]` tag is attached.
 -/
 
@@ -895,8 +910,9 @@ theorem evalPanValueExp_loadByte_agree {σ : Type}
 
 /-! ## Structured-carrier bridges for the `.nStruct`/`.nField`/`.load` clauses
 
-The remaining three structured constructors need the production `String`-keyed
-carriers (`StructContext`/`StructContextHOL`/`HolValue`/`Shape`) bridged to the
+The three structured constructors (`nStruct`/`nField`/`load`) need the
+production `String`-keyed carriers
+(`StructContext`/`StructContextHOL`/`HolValue`/`Shape`) bridged to the
 exact `MlString`-keyed carriers (`StructContextExact`/`ValueHOL`/`ShapeHOL`)
 under the byte-range premises.  `holValueToHOL` is the forward value codec,
 `structContextLookupHOL_structContextToHOL` the context lookup bridge,
