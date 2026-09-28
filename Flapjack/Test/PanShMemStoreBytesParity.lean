@@ -1,4 +1,5 @@
 import Flapjack.Pancake.Semantics.PanSemStateEval
+import Flapjack.Pancake.Semantics.PanSem.ShMemExact
 
 /-!
 # Shared-store byte payload parity against HOL `sh_mem_store`
@@ -87,6 +88,17 @@ def bigEndianRowsMatch : Bool :=
 def rowsMatch : Bool := payloadRowsMatch && bigEndianRowsMatch
 
 #guard rowsMatch
+
+/-! Literal decoder results from the direct HOL
+`pan_word_of_bytes_overlong_probe.out` rows. These guard the small-width
+behavior in addition to the Pan/Crep decoder equality theorem. -/
+private def overlongBytes : List (BitVec 8) := [1, 3, 5]
+#guard panWordOfBytesHOL false (0 : RiscV.Word 1) overlongBytes == (1 : RiscV.Word 1)
+#guard panWordOfBytesHOL false (0 : RiscV.Word 7) ([127, 3, 5] : List (BitVec 8)) ==
+  (127 : RiscV.Word 7)
+#guard panWordOfBytesHOL false (0 : RiscV.Word 9) overlongBytes == (1 : RiscV.Word 9)
+#guard panWordOfBytesHOL false (0 : RiscV.Word 12) ([7, 9, 11, 13] : List (BitVec 8)) ==
+  (7 : RiscV.Word 12)
 
 def runChecks : IO Bool := do
   if rowsMatch then
