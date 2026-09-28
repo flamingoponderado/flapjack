@@ -23,6 +23,8 @@ val _ = print_eval "avma_one"
 val _ = print_eval "avma_two"
   ``loopLang$assigned_vars (loopLang$nested_seq (MAPi (\n. loopLang$Assign (n + 3)) ([Var 0; Var 1] : 64 word exp list))) =
     GENLIST (\n. n + 3) (LENGTH ([Var 0; Var 1] : 64 word exp list))``;
+val _ = print_eval "avma_two_negative"
+  ``loopLang$assigned_vars (loopLang$nested_seq (MAPi (\n. loopLang$Assign (n + 3)) ([Var 0; Var 1] : 64 word exp list))) = [3; 5]``;
 val _ = print_eval "avma_three"
   ``loopLang$assigned_vars (loopLang$nested_seq (MAPi (\n. loopLang$Assign (n + 7)) ([Var 0; Var 1; Var 2] : 64 word exp list))) =
     GENLIST (\n. n + 7) (LENGTH ([Var 0; Var 1; Var 2] : 64 word exp list))``;
