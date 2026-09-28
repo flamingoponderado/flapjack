@@ -10933,6 +10933,18 @@
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "locals_rel_insert_gt_vmax",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
+    "lean_name": "crepToLoopLocalsRelExact_insert_gt_vmax",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "ds10 (bead flapjack-pxn.18.5.6.33.3): exact port of HOL locals_rel_insert_gt_vmax (crep_to_loopProofScript.sml:226-234). HOL inserts an arbitrary word_loc at a fresh index n above ct.vmax; the Lean statement inserts a WordLocW at n : Nat into the Spt (WordLocW width) target locals and keeps cset/lcl/ctxt fixed, with the same ct.vmax < n premise and no extra hypothesis. The sptree$insert is rendered by the exact sptInsert on Spt (new untagged support sptLookup_sptInsert_ne / sptMem_sptInsert in Flapjack/Misc/Sptree.lean); the domain conjunct uses sptMem_sptInsert and the per-name conjunct uses sptLookup_sptInsert_ne with n' < n forced by ctxt_max (n' <= ctxt.vmax < n). Direct HOL oracle rows: scripts/hol-probes/crep_to_loop_locals_insert_probe.out (insert_same, insert_other_unchanged, gt_vmax_bounded_survives, subset_preserved) and crep_to_loop_locals_rel_probe.out (locals_rel_insert_after_true, insert_gt_vmax_lookup_unchanged); matching Lean checks in Flapjack/Test/CrepToLoopParity.lean."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
     "hol_name": "state_rel_def",
     "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
     "lean_name": "crepToLoopStateRelExact",
