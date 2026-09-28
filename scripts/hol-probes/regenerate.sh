@@ -348,6 +348,12 @@ run_probe loop_props_assigned_vars_probeScript.sml loop_props_assigned_vars_prob
   avs_seq_split avs_nested_assign_three \
   "$cake_dir/pancake/semantics/loopPropsScript.sml" \
   "$cake_dir/pancake/semantics"
+run_probe loop_props_cut_sets_probeScript.sml loop_props_cut_sets_probe.out \
+  cut_sets_skip cut_sets_locvalue cut_sets_assign cut_sets_load32 \
+  cut_sets_loadbyte cut_sets_seq cut_sets_if cut_sets_longdiv \
+  cut_sets_longmul cut_sets_div cut_sets_catch_all \
+  "$cake_dir/pancake/semantics/loopPropsScript.sml" \
+  "$cake_dir/pancake/semantics"
 run_probe crep_to_loop_context_defs_probeScript.sml crep_to_loop_context_defs_probe.out \
   find_var_hit find_lab_miss "$cake_dir/pancake/crep_to_loopScript.sml" \
   "$cake_dir/pancake/proofs"
