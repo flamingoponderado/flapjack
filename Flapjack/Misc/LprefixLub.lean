@@ -497,6 +497,51 @@ theorem rep_some_of_toList_none {ll : HolLList α} (h : toList ll = none) :
   · exact absurd h (toList_ne_none_of_LFinite (LFinite_of_rep_none hn))
   · exact Option.ne_none_iff_exists'.mp hn
 
+/-- Converse of `lprefix_rep`: if `b` is defined wherever `a` is, then `a` is
+    an `lprefix` of `b`. -/
+theorem lprefix_of_rep_agree {a b : HolLList α}
+    (h : ∀ n x, a.rep n = some x → b.rep n = some x) : lprefix a b := by
+  unfold lprefix
+  cases ha : toList a with
+  | none =>
+      dsimp only
+      apply ext_of_rep
+      intro n
+      obtain ⟨x, hx⟩ := rep_some_of_toList_none ha n
+      rw [hx, h n x hx]
+  | some xs =>
+      dsimp only
+      cases hb : toList b with
+      | none =>
+          dsimp only
+          apply ltake_of_rep
+          intro i hi
+          have hai : a.rep i = some xs[i] := by
+            rw [toList_eq_some_rep ha i, dif_pos hi]
+          exact h i xs[i] hai
+      | some ys =>
+          dsimp only
+          have hlt : xs.length ≤ ys.length := Nat.le_of_not_lt fun hys => by
+            have hai : a.rep ys.length = some xs[ys.length] := by
+              rw [toList_eq_some_rep ha ys.length, dif_pos hys]
+            have hbi : b.rep ys.length = some xs[ys.length] := h _ _ hai
+            have hby : b.rep ys.length = none := by
+              rw [toList_eq_some_rep hb ys.length, dif_neg (Nat.lt_irrefl ys.length)]
+            rw [hby] at hbi
+            cases hbi
+          rw [List.prefix_iff_eq_take]
+          apply List.ext_getElem
+          · simp [List.length_take, Nat.min_eq_left hlt]
+          · intro j hj1 hj2
+            rw [List.getElem_take]
+            have haj : a.rep j = some xs[j] := by
+              rw [toList_eq_some_rep ha j, dif_pos hj1]
+            have hbj : b.rep j = some xs[j] := h j _ haj
+            have hby : b.rep j = some ys[j] := by
+              rw [toList_eq_some_rep hb j, dif_pos (Nat.lt_of_lt_of_le hj1 hlt)]
+            rw [hby] at hbj
+            exact (Option.some.inj hbj).symm
+
 end HolLList
 
 end Flapjack
