@@ -19555,5 +19555,70 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.17): HOL comp_syn_ok_lookup_locals_eq (loopPropsScript.sml:907-912) `!p s res t l n. evaluate (p,s) = (res,t) /\\ res <> SOME TimeOut /\\ comp_syntax_ok l p /\\ n ∈ domain l /\\ ~MEM n (assigned_vars p) ==> lookup n t.locals = lookup n s.locals`; same variables, five-conjunct premise and conclusion. Over the tagged exact evaluate, compSyntaxOkHOL (HOL bool as = true) and holLoopAssignedVars; n ∈ domain l as sptMem. fmap_as_finite_support [globals]: quantifies over LoopSemStateFiniteExact whose HOL |-> globals is the canonical HolFiniteMapExact carrier; same-module re-exported canonical witness."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopPropsScript.sml",
+    "hol_name": "nested_seq_pure_evaluation",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopProps/CompSyntaxOkEvalExact.lean",
+    "lean_name": "nested_seq_pure_evaluation",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.18): HOL nested_seq_pure_evaluation (loopPropsScript.sml:1103-1113) `!p q t r st l m e v ck ck'. evaluate (nested_seq p,t with clock := ck + t.clock) = (NONE,st) /\\ evaluate (nested_seq q,st with clock := ck' + st.clock) = (NONE,r) /\\ comp_syntax_ok l (nested_seq p) /\\ comp_syntax_ok (cut_sets l (nested_seq p)) (nested_seq q) /\\ (!n. MEM n (assigned_vars (nested_seq p)) ==> n < m) /\\ (!n. MEM n (assigned_vars (nested_seq q)) ==> m <= n) /\\ (!n. MEM n (locals_touched e) ==> n < m /\\ n ∈ domain (cut_sets l (nested_seq p))) /\\ eval st e = SOME v ==> eval r e = SOME v`; Lean binds the same eleven variables in HOL order with the same eight-conjunct premise and conclusion over the tagged exact evaluate/eval, loopNestedSeqHOL, compSyntaxOkHOL (= true), cutSetsHOL, holLoopAssignedVars, holLoopLocalsTouched, sptMem. Proof follows HOL: comp_syn_ok_upd_local_clock + comp_syn_ok_lookup_locals_eq + locals_touched_eq_eval_eq. fmap_as_finite_support [globals]: LoopSemStateFiniteExact carrier; same-module re-exported canonical witness."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "wlab_wloc_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/RelationsExact.lean",
+    "lean_name": "wlabWlocExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.31.3): HOL wlab_wloc_def (crep_to_loopProofScript.sml:45-47) `wlab_wloc (panSem$Word w) = wordLang$Word w`; Lean maps the exact HolWordLab.word to WordLocW.word, the single clause. Exact-carrier port alongside the production-carrier StateRel rendering (PanWordLab/LoopValue), so exact CrepSemHOLState/LoopSemStateFiniteExact fields can be related. (words_as_type_indexed_bitvec): HOL 'a word as BitVec width with [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "mem_rel_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/RelationsExact.lean",
+    "lean_name": "crepToLoopMemRelHOLExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.31.3): HOL mem_rel_def (crep_to_loopProofScript.sml:49-52) `mem_rel smem tmem dom <=> !ad. ad ∈ dom ⇒ wlab_wloc (smem ad) = tmem ad`; smem/tmem as the exact total memories BitVec width -> HolWordLab/WordLocW and dom : 'a word set as the predicate BitVec width -> Prop (the carrier of the exact crepSem memaddrs). Exact-carrier port alongside the production-carrier StateRel rendering (PanWordLab/LoopValue), so exact CrepSemHOLState/LoopSemStateFiniteExact fields can be related. (words_as_type_indexed_bitvec): HOL 'a word as BitVec width with [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "globals_rel_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/RelationsExact.lean",
+    "lean_name": "crepToLoopGlobalsRelHOLExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "sglobals",
+      "tglobals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.31.3): HOL globals_rel_def (crep_to_loopProofScript.sml:54-58) `globals_rel sglobals tglobals <=> !ad v. FLOOKUP sglobals ad = SOME v ==> FLOOKUP tglobals ad = SOME (wlab_wloc v)`; same quantifiers and implication. fmap_as_finite_support_relation [sglobals, tglobals]: both parameters are standalone HOL |-> finite maps (5 word |-> 'a word_lab / 'a word_loc) bound at the canonical HolFiniteMapExact translation, FLOOKUP as .lookup. Exact-carrier port alongside the production-carrier StateRel rendering (PanWordLab/LoopValue), so exact CrepSemHOLState/LoopSemStateFiniteExact fields can be related. (words_as_type_indexed_bitvec): HOL 'a word as BitVec width with [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "mem_rel_intro",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/RelationsExact.lean",
+    "lean_name": "crepToLoopMemRelHOLExact_intro",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.31.3): HOL mem_rel_intro (crep_to_loopProofScript.sml:203-205) `mem_rel smem tmem dm ==> !ad. ad ∈ dm ⇒ wlab_wloc (smem ad) = tmem ad` (free smem tmem dm); same statement over crepToLoopMemRelHOLExact. Exact-carrier port alongside the production-carrier StateRel rendering (PanWordLab/LoopValue), so exact CrepSemHOLState/LoopSemStateFiniteExact fields can be related. (words_as_type_indexed_bitvec): HOL 'a word as BitVec width with [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "globals_rel_intro",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/RelationsExact.lean",
+    "lean_name": "crepToLoopGlobalsRelHOLExact_intro",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "sglobals",
+      "tglobals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.31.3): HOL globals_rel_intro (crep_to_loopProofScript.sml:211-214) `globals_rel sglobals tglobals ==> !ad v. FLOOKUP sglobals ad = SOME v ==> FLOOKUP tglobals ad = SOME (wlab_wloc v)`; same statement over crepToLoopGlobalsRelHOLExact. fmap_as_finite_support_relation [sglobals, tglobals]: both parameters are standalone HOL |-> finite maps (5 word |-> 'a word_lab / 'a word_loc) bound at the canonical HolFiniteMapExact translation, FLOOKUP as .lookup. Exact-carrier port alongside the production-carrier StateRel rendering (PanWordLab/LoopValue), so exact CrepSemHOLState/LoopSemStateFiniteExact fields can be related. (words_as_type_indexed_bitvec): HOL 'a word as BitVec width with [NeZero width]."
   }
 ]
