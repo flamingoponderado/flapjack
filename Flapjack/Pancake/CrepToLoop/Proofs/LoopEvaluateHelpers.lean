@@ -182,5 +182,64 @@ theorem evaluate_twice_cases (prog : HolLoopProg width) (s : LoopSemStateFiniteE
       obtain ⟨rfl, rfl⟩ := hadd
       exact ⟨rfl, s4.clock, by rw [with_clock_with_clock]⟩
 
+theorem findCode_none_append_loc (args1 : List (WordLocW width)) (loc : Nat)
+    (code : Spt (List Nat × HolLoopProg width)) :
+    findCode none (args1 ++ [WordLocW.loc loc 0]) code =
+      (match sptLookup loc code with
+       | none => none
+       | some (params, exp) =>
+          if args1.length = params.length then some (sptFromAList (params.zip args1), exp)
+          else none) := by
+  cases args1 with
+  | nil =>
+    simp only [List.nil_append, findCode, List.getLast_singleton]
+    cases sptLookup loc code with
+    | none => rfl
+    | some pe =>
+      obtain ⟨params, exp⟩ := pe
+      cases params <;> simp [List.dropLast]
+  | cons a rest =>
+    have e : a :: (rest ++ [WordLocW.loc loc 0]) = (a :: rest) ++ [WordLocW.loc loc 0] := rfl
+    simp only [List.cons_append]
+    unfold findCode
+    simp only [e, List.getLast_concat, List.dropLast_concat, List.length_append,
+      List.length_singleton]
+    cases sptLookup loc code with
+    | none => rfl
+    | some pe =>
+      obtain ⟨params, exp⟩ := pe
+      simp only
+      by_cases hl : (a :: rest).length = params.length
+      · rw [if_pos hl, if_pos (by omega)]
+      · rw [if_neg hl, if_neg (by omega)]
+
+/-- Exact HOL `find_code_collapse_cases` (`crep_to_loopProofScript.sml:3264-3272`,
+    `[local]`); its free variables `dest loc args1 st` are universally quantified
+    and `TAKE` is `List.take`. -/
+@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "find_code_collapse_cases"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
+theorem find_code_collapse_cases (dest : Option Nat) (loc : Nat) (args1 : List (WordLocW width))
+    (st : LoopSemStateFiniteExact width F) :
+    (dest ≠ none → dest = some loc) →
+      findCode dest (args1 ++ List.take (match dest with | none => 1 | some _ => 0)
+          [WordLocW.loc loc 0]) st.code =
+        (match sptLookup loc st.code with
+         | none => none
+         | some (params, exp) =>
+            if args1.length = params.length then some (sptFromAList (params.zip args1), exp)
+            else none) := by
+  intro hd
+  cases dest with
+  | some d =>
+    have : d = loc := Option.some.inj (hd (by simp))
+    subst this
+    simp only [List.take_zero, List.append_nil, findCode]
+    cases sptLookup d st.code with
+    | none => rfl
+    | some pe => obtain ⟨params, exp⟩ := pe; rfl
+  | none =>
+    simp only [List.take_succ_cons, List.take_zero]
+    exact findCode_none_append_loc args1 loc st.code
+
 end LoopSemStateFiniteExact
 end Flapjack
