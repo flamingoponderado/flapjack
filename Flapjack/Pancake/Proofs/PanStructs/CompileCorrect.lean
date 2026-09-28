@@ -933,6 +933,91 @@ theorem panSemExceptionShapesRanged_panStructConvertState {σ : Type}
   have hmap := h.map_structCompileShape context.structs hc
   simpa only [PanSemExceptionShapesRanged, panStructConvertState] using hmap
 
+/-- The `pan_structs` value conversion preserves `PanValueByteRanged`: the word
+    case is unchanged, `rStruct` carries the predicate over the converted field
+    list, and `nStruct` drops its record and field names and converts only the
+    field values, so the name-range obligations disappear. The proof is the
+    simultaneous induction over the three mutually recursive convert functions.
+    Untagged Flapjack plumbing. -/
+theorem panValueByteRanged_panStructConvertValue {width : Nat} [NeZero width]
+    (value : PanValue (BitVec width)) :
+    PanValueByteRanged (panStructConvertValue value) :=
+  panStructConvertValue.induct
+    (fun value => PanValueByteRanged (panStructConvertValue value))
+    (fun fields => ∀ value ∈ panStructConvertFieldValues fields,
+      PanValueByteRanged value)
+    (fun values => ∀ value ∈ panStructConvertValues values,
+      PanValueByteRanged value)
+    (fun v => by simp only [panStructConvertValue, PanValueByteRanged])
+    (fun fields ih => by
+      simp only [panStructConvertValue, PanValueByteRanged]
+      exact ih)
+    (fun name fields ih => by
+      simp only [panStructConvertValue, PanValueByteRanged]
+      exact ih)
+    (fun v hv => by simp only [panStructConvertFieldValues] at hv; cases hv)
+    (fun fst value fields ihv ihfs v hv => by
+      simp only [panStructConvertFieldValues, List.mem_cons] at hv
+      rcases hv with h | h
+      · rw [h]; exact ihv
+      · exact ihfs v h)
+    (fun v hv => by simp only [panStructConvertValues] at hv; cases hv)
+    (fun value values ihv ihvs v hv => by
+      simp only [panStructConvertValues, List.mem_cons] at hv
+      rcases hv with h | h
+      · rw [h]; exact ihv
+      · exact ihvs v h)
+    value
+
+/-- Globals of the concrete `pan_structs` state conversion are byte-ranged when
+    produced from any source state: the stored value is routed through
+    `panStructConvertValue`. Untagged Flapjack plumbing. -/
+theorem panValueByteRanged_of_globals_panStructConvertState {σ : Type}
+    [BEq String] (context : StructPassContext)
+    (state : PanSemState (RiscV.Word 64) (FfiState σ)) :
+    ∀ name value, (panStructConvertState context state).globals name = some value →
+      PanValueByteRanged value := by
+  intro name value h
+  simp only [panStructConvertState] at h
+  cases hg : state.globals name with
+  | none => simp [hg] at h
+  | some v =>
+      simp only [hg, Option.map_some, Option.some.injEq] at h
+      rw [← h]
+      exact panValueByteRanged_panStructConvertValue v
+
+/-- Locals of the concrete `pan_structs` state conversion are byte-ranged when
+    produced from any source state: the stored value is routed through
+    `panStructConvertValue`. Untagged Flapjack plumbing. -/
+theorem panValueByteRanged_of_locals_panStructConvertState {σ : Type}
+    [BEq String] (context : StructPassContext)
+    (state : PanSemState (RiscV.Word 64) (FfiState σ)) :
+    ∀ name value, (panStructConvertState context state).locals name = some value →
+      PanValueByteRanged value := by
+  intro name value h
+  simp only [panStructConvertState] at h
+  cases hg : state.locals name with
+  | none => simp [hg] at h
+  | some v =>
+      simp only [hg, Option.map_some, Option.some.injEq] at h
+      rw [← h]
+      exact panValueByteRanged_panStructConvertValue v
+
+/-- The concrete `pan_structs` state conversion lands in the ranged executable
+    state relation `PanSemStateRelExecRanged`: converted locals and globals are
+    byte-ranged and the converted structure context is `[]`. This discharges the
+    initial-state locals and globals byte-range conjuncts for the state produced
+    after the pass. Untagged Flapjack plumbing. -/
+theorem panSemStateRelExecRanged_panStructConvertState {σ : Type}
+    [BEq String] (context : StructPassContext)
+    (state : PanSemState (RiscV.Word 64) (FfiState σ)) :
+    PanSemStateRelExecRanged (panStructConvertState context state) := by
+  refine ⟨?_, ?_, ?_⟩
+  · exact panValueByteRanged_of_locals_panStructConvertState context state
+  · exact panValueByteRanged_of_globals_panStructConvertState context state
+  · simp [panStructConvertState, StructContext.toHOL,
+      Pancake.PanLang.StructContextByteRanged]
+
 /-- The concrete `pan_structs` state conversion preserves the ranged-code
     invariant used by the total evaluator bridge. Source code entries must be
     byte-ranged, and the structure context must be byte-ranged; the proof

@@ -16,6 +16,19 @@ example :
         .rStruct [.word 3, .word 5] := by
   simp [panStructConvertValue, panStructConvertFieldValues]
 
+/-! Initial-state byte-range discharge for the `pan_structs`-converted production
+state (bead `flapjack-pxn.18.4.3.77.2.15.6`). The conversion rewrites every
+`.nStruct` into a name-free `.rStruct`, so a converted value is byte-ranged
+unconditionally; only the converted state is claimed, not the raw source state. -/
+example :
+    PanValueByteRanged (panStructConvertValue
+      (.nStruct "Pair" [("left", .word (3 : BitVec 64))] : PanValue (BitVec 64))) :=
+  panValueByteRanged_panStructConvertValue _
+
+example (context : StructPassContext) (state : PanSemState (RiscV.Word 64) (FfiState Unit)) :
+    PanSemStateRelExecRanged (panStructConvertState context state) :=
+  panSemStateRelExecRanged_panStructConvertState context state
+
 /-- Exact-carrier reproduction of the HOL oracle row
     `convert_named_record=RStruct [ValWord 3w; ValWord 5w]` in
     `scripts/hol-probes/pan_structs_compile_correct_probe.out`: the tagged exact
