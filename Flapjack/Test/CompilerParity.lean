@@ -411,6 +411,7 @@ import Flapjack.Test.LoopSemStateExactHelpersParity
 import Flapjack.Test.LoopSemEvalExactParity
 import Flapjack.Test.LoopSemShMemExactParity
 import Flapjack.Test.LoopSemWordMemExactParity
+import Flapjack.Test.LoopSemPrimopBytesExactParity
 import Flapjack.Test.SptreeSetOpsParity
 import Flapjack.Test.WordSimpSeqAssocParity
 import Flapjack.Test.RiscVFarTransferParity
@@ -1099,6 +1100,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.LoopSemEvalExactParity.runChecks,
     Flapjack.Test.LoopSemShMemExactParity.runChecks,
     Flapjack.Test.LoopSemWordMemExactParity.runChecks,
+    Flapjack.Test.LoopSemPrimopBytesExactParity.runChecks,
     Flapjack.Test.SptreeSetOpsParity.runChecks,
     Flapjack.Test.CrepLocalsWordLabParity.runChecks,
     Flapjack.Test.CrepMemoryRelParity.runChecks,

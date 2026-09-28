@@ -423,6 +423,28 @@ def exitLoop {width : Nat} [NeZero width] :
   | some (.continue n) => some (.continue (n - 1))
   | res => res
 
+/-- Exact HOL `loop_primop_def` (`loopSemScript.sml:242-253`) over the exact
+    `word_loc` carrier `WordLocW`:
+
+    ```
+    loop_primop AddCarry args =
+      if LENGTH args = 3 ∧ EVERY isWord args then
+        let l = theWord (EL 0 args); r = theWord (EL 1 args);
+            ci = theWord (EL 2 args); (res, co) = word_add_carry l r ci
+        in SOME [Word res; Word co]
+      else NONE
+    ```
+
+    The length-three, all-`Word` guard is the single list pattern. -/
+@[hol "cakeml/pancake/semantics/loopSemScript.sml" "loop_primop_def"
+  (words_as_type_indexed_bitvec)]
+def loopPrimop {width : Nat} [NeZero width] :
+    PrimOp → List (WordLocW width) → Option (List (WordLocW width))
+  | .addCarry, [.word l, .word r, .word ci] =>
+      let (res, co) := wordAddCarryHOL l r ci
+      some [.word res, .word co]
+  | _, _ => none
+
 end LoopSemStateFiniteExact
 
 /-- Reverse/coverage direction of the exact/production code-table relation:
