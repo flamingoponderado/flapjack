@@ -1,5 +1,6 @@
 import Flapjack.Pancake.Semantics.PanSem.StateBridge
 import Flapjack.Pancake.Semantics.PanSem.TotalEvalBridge
+import Flapjack.Pancake.Semantics.PanSem.TotalEvalExpBridge
 import Flapjack.Pancake.Semantics.PanSemStateEval
 
 /-!
@@ -492,6 +493,33 @@ theorem bridgeStateRelExec_ffi_negative :
   obtain ⟨_, _, _, _, _, _, _, _, _, _, hffi, _, _⟩ := hrel
   simpa [bridgeExecProdState, bridgeExecExactStateDiffFfi, bridgeExecExactState,
     bridgeProdFfi, FfiEventListRel] using hffi.2.1
+
+/-! ## Expression-evaluation agreement infrastructure
+
+Kernel-checked concrete guards for the production/exact expression agreement in
+`Flapjack/Pancake/Semantics/PanSem/TotalEvalExpBridge.lean`. -/
+
+/-- The word projection of the encoding of a production word value. -/
+example : panValueWordProjection (PanValue.word (7 : W)) = some 7 := by
+  simp
+
+/-- For a structured value the projection is `none` on both the production value
+    and the encoded exact value. -/
+example : panValueWordProjection (PanValue.rStruct ([] : List (PanValue W))) = none ∧
+    valueIsWord (panValueToHOL (PanValue.rStruct ([] : List (PanValue W)))) = false := by
+  simp [panValueToHOL_rStruct, valueIsWord]
+
+/-- The exact shape of an encoded named structure is the encoded shape. -/
+example : shapeOfHOLExact (panValueToHOL (PanValue.nStruct "P" ([] : List (String × PanValue W)))) =
+    ShapeHOL.named (Flapjack.Basis.Pure.MlString.ofString "P") := by
+  simpa [panValueShape, shapeToHOL] using
+    shapeOfHOLExact_panValueToHOL ([] : StructContext)
+      (PanValue.nStruct "P" ([] : List (String × PanValue W)))
+
+/-- `ofString` is injective on byte-ranged names. -/
+example : Flapjack.Basis.Pure.MlString.ofString "S" =
+    Flapjack.Basis.Pure.MlString.ofString "T" → ("S" : String) = "T" :=
+  ofString_injective_of_ranged (by decide) (by decide)
 
 def runChecks : IO Bool := do
   IO.println "PASS production/exact PanSemState codec bridge (value/entry/struct/state)"
