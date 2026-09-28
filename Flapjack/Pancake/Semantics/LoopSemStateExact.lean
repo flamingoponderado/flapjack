@@ -445,6 +445,104 @@ def loopPrimop {width : Nat} [NeZero width] :
       some [.word res, .word co]
   | _, _ => none
 
+open Classical
+
+/-- Predicate rendering of HOL set inclusion on `sptree$num_set`
+    (`domain live SUBSET domain s.locals`, `loopSemScript.sml:186`): HOL sets are
+    rendered as membership predicates (`sptMem`), so subset is the pointwise
+    implication.  Used by the exact `cut_state` guard.  Untagged Flapjack
+    infrastructure (HOL `SUBSET` over `num_set` is outside the carrier
+    translation). -/
+def sptSubsetLive {α β : Type} (left : Spt α) (right : Spt β) : Prop :=
+  ∀ key, sptMem key left → sptMem key right
+
+/-- Exact HOL `cut_state_def`
+    (`cakeml/pancake/semantics/loopSemScript.sml:182-187`):
+    `cut_state live s = if domain live SUBSET domain s.locals then
+    SOME (s with locals := inter s.locals live) else NONE`.  The set inclusion
+    `domain live SUBSET domain s.locals` is rendered as `sptSubsetLive`, and the
+    restricted local map uses the heterogeneous `sptInter`.  The guard is a
+    finite-set inclusion, so this is the classical (noncomputable) rendering;
+    the production executable counterpart is `Flapjack.cutLoopState`. -/
+@[hol "cakeml/pancake/semantics/loopSemScript.sml" "cut_state_def"
+  (words_as_type_indexed_bitvec)]
+noncomputable def cutState {width : Nat} [NeZero width] {F : Type} (live : NumSet)
+    (state : LoopSemStateFiniteExact width F) :
+    Option (LoopSemStateFiniteExact width F) :=
+  if sptSubsetLive live state.locals then
+    some { state with locals := sptInter state.locals live }
+  else none
+
+/-- `cutState` succeeds exactly when the live keys are all locals, returning the
+    state with `locals` restricted to the live keys. -/
+theorem cutState_of_subset {width : Nat} [NeZero width] {F : Type}
+    (live : NumSet) (state : LoopSemStateFiniteExact width F)
+    (h : sptSubsetLive live state.locals) :
+    cutState live state = some { state with locals := sptInter state.locals live } := by
+  unfold cutState
+  rw [if_pos h]
+
+/-- `cutState` fails exactly when some live key is not a local. -/
+theorem cutState_eq_none_of_not_subset {width : Nat} [NeZero width] {F : Type}
+    (live : NumSet) (state : LoopSemStateFiniteExact width F)
+    (h : ¬ sptSubsetLive live state.locals) :
+    cutState live state = none := by
+  unfold cutState
+  rw [if_neg h]
+
+/-- `cut_state` preserves the clock (HOL's `s with locals := inter s.locals live`
+    updates only `locals`). -/
+theorem cutState_some_clock {width : Nat} [NeZero width] {F : Type}
+    {live : NumSet} {state cut : LoopSemStateFiniteExact width F}
+    (h : cutState live state = some cut) : cut.clock = state.clock := by
+  by_cases hsub : sptSubsetLive live state.locals
+  · rw [cutState_of_subset live state hsub] at h
+    injection h with h
+    subst h
+    rfl
+  · rw [cutState_eq_none_of_not_subset live state hsub] at h
+    exact absurd h (by simp)
+
+/-- `cut_state` preserves every field except `locals`. -/
+theorem cutState_some_frame {width : Nat} [NeZero width] {F : Type}
+    {live : NumSet} {state cut : LoopSemStateFiniteExact width F}
+    (h : cutState live state = some cut) :
+    cut.globals = state.globals ∧ cut.memory = state.memory ∧
+      cut.mdomain = state.mdomain ∧ cut.shMdomain = state.shMdomain ∧
+      cut.clock = state.clock ∧ cut.code = state.code ∧ cut.be = state.be ∧
+      cut.ffi = state.ffi ∧ cut.baseAddr = state.baseAddr ∧
+      cut.topAddr = state.topAddr := by
+  by_cases hsub : sptSubsetLive live state.locals
+  · rw [cutState_of_subset live state hsub] at h
+    injection h with h
+    subst h
+    exact ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+  · rw [cutState_eq_none_of_not_subset live state hsub] at h
+    exact absurd h (by simp)
+
+/-- Exact HOL `cut_res_def`
+    (`cakeml/pancake/semantics/loopSemScript.sml:189-197`):
+    `cut_res live (res,s) = if res ≠ NONE then (res,s) else
+    case cut_state live s of NONE => (SOME Error,s)
+    | SOME s => if s.clock = 0 then (SOME TimeOut, s with locals := LN)
+                else (res, dec_clock s)`.  The `SOME` branch rebinds `s` to the
+    cut state and `res` is `NONE`, so the final branch returns
+    `(NONE, dec_clock cut)`. -/
+@[hol "cakeml/pancake/semantics/loopSemScript.sml" "cut_res_def"
+  (words_as_type_indexed_bitvec)]
+noncomputable def cutRes {width : Nat} [NeZero width] {F : Type} (live : NumSet)
+    (step : Option (LoopResultExact width) × LoopSemStateFiniteExact width F) :
+    Option (LoopResultExact width) × LoopSemStateFiniteExact width F :=
+  match step.1 with
+  | some result => (some result, step.2)
+  | none =>
+      match cutState live step.2 with
+      | none => (some .error, step.2)
+      | some cut =>
+          if cut.clock = 0 then
+            (some .timeOut, { cut with locals := .ln })
+          else (none, decClock cut)
+
 end LoopSemStateFiniteExact
 
 /-- Reverse/coverage direction of the exact/production code-table relation:
