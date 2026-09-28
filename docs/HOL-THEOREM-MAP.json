@@ -18468,18 +18468,24 @@
     "hol_name": "dec_clock_def",
     "lean_path": "Flapjack/Pancake/Semantics/LoopSemStateExact.lean",
     "lean_name": "decClock",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.1): HOL dec_clock s = s with clock := s.clock - 1 (loopSemScript.sml:42-44); Lean updates only clock by the same natural subtraction over LoopSemStateFiniteExact. The only carrier translation is HOL's type-indexed 'a word (in WordLocW width / BitVec width) to positive BitVec width, so the tag carries (words_as_type_indexed_bitvec); no extra hypotheses beyond [NeZero width]."
+    "reviewer": "flapjack-luna-b source comparison (2026-09-28; bead flapjack-up10.1): HOL dec_clock s = s with clock := s.clock - 1 (loopSemScript.sml:42-44); Lean updates only clock by the same natural subtraction over LoopSemStateFiniteExact. Its HOL state carrier has exactly one |-> field, globals (loopSemScript.sml:13-27), represented by HolFiniteMapExact; locals and code are sptree num_maps, not |-> fields. The same-module canonical holFmapAsFiniteSupportWitness is a real toBroad/ofBroad roundtrip for LoopSemStateFiniteExact. HOL's type-indexed 'a word is represented by positive BitVec width, so both fmap_as_finite_support := [globals] and words_as_type_indexed_bitvec are recorded. No statement or runtime behavior changed."
   },
   {
     "hol_path": "cakeml/pancake/semantics/loopSemScript.sml",
     "hol_name": "fix_clock_def",
     "lean_path": "Flapjack/Pancake/Semantics/LoopSemStateExact.lean",
     "lean_name": "fixClock",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.1): HOL fix_clock old_s (res,new_s) = (res, new_s with clock := if old_s.clock < new_s.clock then old_s.clock else new_s.clock) (loopSemScript.sml:46-50); Lean is polymorphic in the result type like HOL, keeps res, and sets the clock by the same conditional. The only carrier translation is HOL's type-indexed 'a word (in WordLocW width / BitVec width) to positive BitVec width, so the tag carries (words_as_type_indexed_bitvec); no extra hypotheses beyond [NeZero width]."
+    "reviewer": "flapjack-luna-b source comparison (2026-09-28; bead flapjack-up10.1): HOL fix_clock old_s (res,new_s) returns (res, new_s with clock := if old_s.clock < new_s.clock then old_s.clock else new_s.clock) (loopSemScript.sml:46-50); Lean preserves polymorphic res and uses the same comparison and selected clock. Its HOL state carrier has exactly one |-> field, globals (loopSemScript.sml:13-27), represented by HolFiniteMapExact; locals and code are sptree num_maps, not |-> fields. The same-module canonical holFmapAsFiniteSupportWitness is a real toBroad/ofBroad roundtrip for LoopSemStateFiniteExact. HOL's type-indexed 'a word is represented by positive BitVec width, so both fmap_as_finite_support := [globals] and words_as_type_indexed_bitvec are recorded. No statement or runtime behavior changed."
   },
   {
     "hol_path": "cakeml/pancake/semantics/loopSemScript.sml",

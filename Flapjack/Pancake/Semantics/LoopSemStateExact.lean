@@ -242,7 +242,8 @@ inductive LoopResultExact (width : Nat) [NeZero width] where
 
 /-- Exact HOL `dec_clock_def` (`loopSemScript.sml:42-44`):
     `dec_clock s = s with clock := s.clock - 1`. -/
-@[hol "cakeml/pancake/semantics/loopSemScript.sml" "dec_clock_def" (words_as_type_indexed_bitvec)]
+@[hol "cakeml/pancake/semantics/loopSemScript.sml" "dec_clock_def"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 def decClock {width : Nat} [NeZero width] {F : Type}
     (state : LoopSemStateFiniteExact width F) : LoopSemStateFiniteExact width F :=
   { state with clock := state.clock - 1 }
@@ -250,7 +251,8 @@ def decClock {width : Nat} [NeZero width] {F : Type}
 /-- Exact HOL `fix_clock_def` (`loopSemScript.sml:46-50`):
     `fix_clock old_s (res,new_s) = (res, new_s with clock := if old_s.clock <
     new_s.clock then old_s.clock else new_s.clock)`. -/
-@[hol "cakeml/pancake/semantics/loopSemScript.sml" "fix_clock_def" (words_as_type_indexed_bitvec)]
+@[hol "cakeml/pancake/semantics/loopSemScript.sml" "fix_clock_def"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 def fixClock {width : Nat} [NeZero width] {F : Type} {β : Type}
     (old : LoopSemStateFiniteExact width F) (step : β × LoopSemStateFiniteExact width F) :
     β × LoopSemStateFiniteExact width F :=
