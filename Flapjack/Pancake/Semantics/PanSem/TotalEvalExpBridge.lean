@@ -2,6 +2,7 @@ import Flapjack.Pancake.Semantics.PanSem.TotalEvalBridge
 import Flapjack.Pancake.Semantics.PanSem.EvalFinite
 import Flapjack.Pancake.Semantics.PanSem.MemLoadHOL
 import Flapjack.Pancake.Semantics.PanSem.StateExactFinite
+import Flapjack.Pancake.Semantics.PanSem.Primop
 import Flapjack.Pancake.PanStructsByteRanged
 
 /-!
@@ -3178,6 +3179,119 @@ theorem panSemTotalEvaluate_primitive_agree_of_progByteRanged {σ : Type}
   obtain ⟨hname, harguments⟩ := hprogram
   exact panSemTotalEvaluate_primitive_agree primitive production exact hrel hranged
     name hname operator arguments harguments hprim hprimRanged
+
+/-! ### The canonical handler `panPrimopHOL`
+
+The handler side conditions of `panSemTotalEvaluate_primitive_agree` are not an
+extra assumption for the canonical production handler `panPrimopHOL`: they are
+theorems.  `panPrimopHOL_bridge` establishes the value-level correspondence to
+the exact `panPrimopHOLExact`, and `panPrimopHOL_byteRanged` establishes that
+every value it produces is byte-ranged.  Instantiating the general theorem with
+these two lemmas makes the `Primitive` constructor agreement premise-free for the
+canonical handler.  Untagged Flapjack-specific bridge infrastructure. -/
+
+/-- Value-level correspondence of the canonical production handler
+    `panPrimopHOL` with the exact `panPrimopHOLExact` under the codec
+    `panValueToHOL`.  Both sides return `none` except for `addCarry` applied to
+    exactly three word values, where both return the same `rStruct` of the two
+    carry words. -/
+theorem panPrimopHOL_bridge :
+    ∀ (operator : PrimOp) (values : List (PanValue (RiscV.Word 64))),
+      Option.map panValueToHOL (panPrimopHOL operator values) =
+        panPrimopHOLExact operator (values.map panValueToHOL) := by
+  intro operator values
+  cases operator
+  cases values with
+  | nil => simp [panPrimopHOL, panPrimopHOLExact]
+  | cons first rest =>
+      cases rest with
+      | nil => cases first <;> simp [panPrimopHOL, panPrimopHOLExact]
+      | cons second rest =>
+          cases rest with
+          | nil =>
+              cases first <;> cases second <;>
+                simp [panPrimopHOL, panPrimopHOLExact]
+          | cons third rest =>
+              cases rest with
+              | nil =>
+                  cases first <;> cases second <;> cases third <;>
+                    simp [panPrimopHOL, panPrimopHOLExact]
+              | cons fourth rest =>
+                  simp [panPrimopHOL, panPrimopHOLExact]
+
+/-- The canonical production handler `panPrimopHOL` is byte-ranged: the only
+    successful case returns an `rStruct` of two word values, both of which are
+    byte-ranged. -/
+theorem panPrimopHOL_byteRanged : PanPrimitiveHandlerByteRanged panPrimopHOL := by
+  intro operator values value hprim
+  cases operator
+  cases values with
+  | nil => simp [panPrimopHOL] at hprim
+  | cons first rest =>
+      cases rest with
+      | nil => simp [panPrimopHOL] at hprim
+      | cons second rest =>
+          cases rest with
+          | nil => simp [panPrimopHOL] at hprim
+          | cons third rest =>
+              cases rest with
+              | cons _ _ => simp [panPrimopHOL] at hprim
+              | nil =>
+                  cases first <;> cases second <;> cases third <;>
+                    simp [panPrimopHOL] at hprim
+                  rw [← hprim]
+                  simp [PanValueByteRanged]
+
+/-- Premise-free `Primitive`-clause agreement for the canonical production
+    handler `panPrimopHOL`: the two handler side conditions of
+    `panSemTotalEvaluate_primitive_agree` are discharged by
+    `panPrimopHOL_bridge` and `panPrimopHOL_byteRanged`. -/
+theorem panSemTotalEvaluate_primitive_agree_panPrimopHOL {σ : Type}
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (hranged : PanSemStateRelExecRanged production)
+    (name : VarName) (hname : NameRanged name) (operator : PrimOp)
+    (arguments : List (Exp (RiscV.Word 64)))
+    (harguments : ∀ e ∈ arguments, ExpByteRanged e) :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluate panPrimopHOL (.primitive name operator arguments)
+          production).1
+        (evaluateHOLFiniteState exact
+          (.primitive (ofString name) operator (arguments.map expToHOL))).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluate panPrimopHOL (.primitive name operator arguments)
+          production).2
+        (evaluateHOLFiniteState exact
+          (.primitive (ofString name) operator (arguments.map expToHOL))).2.toExact :=
+  panSemTotalEvaluate_primitive_agree panPrimopHOL production exact hrel hranged
+    name hname operator arguments harguments
+    (fun values => panPrimopHOL_bridge operator values) panPrimopHOL_byteRanged
+
+/-- Premise-free `Primitive`-clause agreement for the canonical production
+    handler `panPrimopHOL`, with the identifier and argument byte-range premises
+    discharged from the executed program node's `ProgByteRanged` hypothesis
+    (mirroring `panSemTotalEvaluate_primitive_agree_of_progByteRanged`). -/
+theorem panSemTotalEvaluate_primitive_agree_panPrimopHOL_of_progByteRanged {σ : Type}
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (hranged : PanSemStateRelExecRanged production)
+    (name : VarName) (operator : PrimOp) (arguments : List (Exp (RiscV.Word 64)))
+    (hprogram : ProgByteRanged (.primitive name operator arguments)) :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluate panPrimopHOL (.primitive name operator arguments)
+          production).1
+        (evaluateHOLFiniteState exact
+          (.primitive (ofString name) operator (arguments.map expToHOL))).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluate panPrimopHOL (.primitive name operator arguments)
+          production).2
+        (evaluateHOLFiniteState exact
+          (.primitive (ofString name) operator (arguments.map expToHOL))).2.toExact := by
+  obtain ⟨hname, harguments⟩ := hprogram
+  exact panSemTotalEvaluate_primitive_agree_panPrimopHOL production exact hrel
+    hranged name hname operator arguments harguments
 
 /-! ## Production/exact agreement for the `Return` and `Raise` constructors
 
