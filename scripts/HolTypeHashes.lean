@@ -37,6 +37,7 @@ import Flapjack.Pancake.CrepToLoop.Proofs.CompExpSurvives
 import Flapjack.Pancake.CrepToLoop.Proofs.LocalListHelpers
 import Flapjack.Pancake.CrepToLoop.Proofs.CrepEvalHelpers
 import Flapjack.Pancake.CrepToLoop.Proofs.CompExpOutRel
+import Flapjack.Pancake.CrepToLoop.Proofs.RelationsExact
 import Flapjack.Pancake.CrepToLoop.StateRel
 import Flapjack.Pancake.LoopLang.AssignedVars
 import Flapjack.Pancake.Semantics.LoopProps.AssignedVars
@@ -119,6 +120,7 @@ import Flapjack.Pancake.Semantics.LoopSemStateExact.Semantics
 import Flapjack.Pancake.Semantics.LoopProps.EvaluateClockExact
 import Flapjack.Pancake.Semantics.LoopProps.EvaluateIoEventsExact
 import Flapjack.Pancake.Semantics.LoopProps.EvalExact
+import Flapjack.Pancake.Semantics.LoopProps.EveryProg
 import Flapjack.Pancake.Semantics.LoopProps.NestedSeqExact
 import Flapjack.Pancake.Semantics.LoopProps.UnassignedVarsExact
 import Flapjack.Pancake.Semantics.LoopProps.NestedSeqSyntaxExact

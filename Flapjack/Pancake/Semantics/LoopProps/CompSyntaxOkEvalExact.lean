@@ -1,5 +1,6 @@
 import Flapjack.Pancake.Semantics.LoopProps.CompSyntaxOkLemmas
 import Flapjack.Pancake.Semantics.LoopProps.UnassignedVarsExact
+import Flapjack.Pancake.Semantics.LoopProps.EvalExact
 
 /-!
 # loopProps `comp_syntax_ok` evaluator lemmas
@@ -317,6 +318,37 @@ theorem comp_syn_ok_lookup_locals_eq :
         sptMem n l ∧ n ∉ holLoopAssignedVars p →
       sptLookup n t.locals = sptLookup n s.locals :=
   fun p s res t l n ⟨h, hne, hc, hn, hna⟩ => compSyntaxOk_lookup_locals n p s res t l h hne hc hn hna
+
+/-- Exact HOL `nested_seq_pure_evaluation` (`loopPropsScript.sml:1103-1113`). -/
+@[hol "cakeml/pancake/semantics/loopPropsScript.sml" "nested_seq_pure_evaluation"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
+theorem nested_seq_pure_evaluation :
+    ∀ (p q : List (HolLoopProg width)) (t r st : LoopSemStateFiniteExact width F) (l : NumSet)
+      (m : Nat) (e : HolLoopExp width) (v : WordLocW width) (ck ck' : Nat),
+      evaluate (loopNestedSeqHOL p) { t with clock := ck + t.clock } = (none, st) ∧
+      evaluate (loopNestedSeqHOL q) { st with clock := ck' + st.clock } = (none, r) ∧
+      compSyntaxOkHOL l (loopNestedSeqHOL p) = true ∧
+      compSyntaxOkHOL (cutSetsHOL l (loopNestedSeqHOL p)) (loopNestedSeqHOL q) = true ∧
+      (∀ n, n ∈ holLoopAssignedVars (loopNestedSeqHOL p) → n < m) ∧
+      (∀ n, n ∈ holLoopAssignedVars (loopNestedSeqHOL q) → m ≤ n) ∧
+      (∀ n, n ∈ holLoopLocalsTouched e → n < m ∧ sptMem n (cutSetsHOL l (loopNestedSeqHOL p))) ∧
+      eval st e = some v →
+      eval r e = some v := by
+  intro p q t r st l m e v ck ck' ⟨_, h2, _, hcq, _, hq, he, hv⟩
+  have hframe := comp_syn_ok_upd_local_clock _ _ _ _ _ ⟨h2, hcq⟩
+  rw [← hv]
+  apply locals_touched_eq_eval_eq
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
+  · rw [hframe]
+  · rw [hframe]
+  · rw [hframe]
+  · rw [hframe]
+  · rw [hframe]
+  · intro n hn
+    obtain ⟨hlt, hmem⟩ := he n hn
+    have := comp_syn_ok_lookup_locals_eq _ _ _ _ _ n
+      ⟨h2, by simp, hcq, hmem, fun hna => absurd (hq n hna) (by omega)⟩
+    rw [this]
 
 end LoopSemStateFiniteExact
 end Flapjack
