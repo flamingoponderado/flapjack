@@ -1,0 +1,9 @@
+comp_exp_const=Const 7w
+comp_exp_var=Var 9
+comp_exp_var_miss=Var 0
+comp_exp_lookup=Lookup (Temp 5w)
+comp_exp_base_addr=Lookup CurrHeap
+comp_exp_top_addr=Op Add [Lookup CurrHeap; ShiftN Lsl (Lookup HeapLength) 1]
+comp_exp_load=Load (Var 9)
+comp_exp_shift=ShiftN Lsl (Var 9) 1
+comp_exp_op=Op Add [Var 9; Const 1w]
