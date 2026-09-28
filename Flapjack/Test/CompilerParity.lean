@@ -251,6 +251,7 @@ import Flapjack.Test.PanSemTotalEvalExactParity
 import Flapjack.Test.PanRiscVByteAlignParity
 import Flapjack.Test.PanSemValueHOLParity
 import Flapjack.Test.PanSemStateExactParity
+import Flapjack.Test.PanSemStateBridgeParity
 import Flapjack.Test.PanSemLocalUpdatesExactParity
 import Flapjack.Test.PanPropsShapeResVarParity
 import Flapjack.Test.PanCommonPropsZipDisjointParity
@@ -960,6 +961,7 @@ def main : IO Unit := do
     Flapjack.Test.PanRiscVByteAlignParity.runChecks,
     Flapjack.Test.PanSemValueHOLParity.runChecks,
     Flapjack.Test.PanSemStateExactParity.runChecks,
+    Flapjack.Test.PanSemStateBridgeParity.runChecks,
     Flapjack.Test.PanSemLocalUpdatesExactParity.runChecks,
     Flapjack.Test.PanPropsShapeResVarParity.runChecks,
     Flapjack.Test.PanCommonPropsZipDisjointParity.runChecks,
