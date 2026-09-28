@@ -6678,6 +6678,172 @@ theorem evaluateClockSubAnnotCaseHOLFinite {width : Nat} {σ : Type} [NeZero wid
   subst state
   simp
 
+/-- Genuine `Assign` case of HOL `evaluate_clock_sub`. HOL `evaluate_def`'s
+    `Assign` clause (`panSemScript.sml:566-572`) evaluates the source
+    expression, fails with `SOME Error` and the unchanged state when the
+    lookup is invalid, and otherwise performs the keyed-variable write with
+    `set_kvar`. The exact expression evaluator ignores the clock, validation
+    reads only locals/globals, and `set_kvar` copies the clock from its input,
+    so the clock-subtracted run reaches the same result and post-state. -/
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_clock_sub"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateClockSubAssignCaseHOLFinite {width : Nat} {σ : Type} [NeZero width]
+    (kind : VarKind) (name : MlS) (source : ExpHOL width) :
+    ∀ (state : PanPropsEvalStateFiniteExact width σ)
+      (result : Option (PanSemResultExact width))
+      (st : PanPropsEvalStateFiniteExact width σ) (ck : Nat),
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state
+          (.assign kind name source : ProgHOL width) =
+        (result, { st with clock := st.clock + ck }) →
+      result ≠ some .timeOut →
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair
+        { state with clock := state.clock - ck } (.assign kind name source) =
+          (result, st) := by
+  classical
+  intro state result st ck hRun _hne
+  let highState := state.toPanSemFinite
+  let highPost := ({ st with clock := st.clock + ck }).toPanSemFinite
+  let lowState : PanPropsEvalStateFiniteExact width σ := { state with clock := state.clock - ck }
+  let lowCanonical := lowState.toPanSemFinite
+  let highMem : DecidablePred highState.memaddrs :=
+    fun address => Classical.propDecidable (highState.memaddrs address)
+  let lowMem : DecidablePred lowCanonical.memaddrs :=
+    fun address => Classical.propDecidable (lowCanonical.memaddrs address)
+  have hCanonical :
+      PanSemStateFiniteExact.evaluateHOLFiniteState highState
+          (.assign kind name source) = (result, highPost) := by
+    apply Prod.ext
+    · have h := congrArg Prod.fst hRun
+      simpa [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair, highState] using h
+    · have h := congrArg (fun pair => pair.2.toPanSemFinite) hRun
+      simpa [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair, highState, highPost] using h
+  have hEvalLow :
+      @evalHOLExact width σ _ lowCanonical.toExact lowMem source =
+        @evalHOLExact width σ _ highState.toExact highMem source := by
+    change @evalHOLExact width σ _
+      ({ highState with clock := lowState.clock }).toExact highMem source = _
+    exact evalHOLExact_upd_clock_eq highState.toExact source lowState.clock
+  rw [PanSemStateFiniteExact.evaluateHOLFiniteState_assign] at hCanonical
+  cases hEval : @evalHOLExact width σ _ highState.toExact highMem source with
+  | none =>
+      simp [hEval] at hCanonical
+      rcases hCanonical with ⟨hresult, hpost⟩
+      subst result
+      have hst : st = lowState := by
+        cases st <;> simp_all [highState, highPost, lowState,
+          PanPropsEvalStateFiniteExact.toPanSemFinite] <;> omega
+      subst st
+      have hLowCanonical :
+          PanSemStateFiniteExact.evaluateHOLFiniteState lowCanonical
+              (.assign kind name source) = (some .error, lowCanonical) := by
+        simp [PanSemStateFiniteExact.evaluateHOLFiniteState_assign, hEvalLow, hEval]
+      apply Prod.ext
+      · change (PanSemStateFiniteExact.evaluateHOLFiniteState lowCanonical
+          (.assign kind name source)).1 = some .error
+        rw [hLowCanonical]
+      · change PanPropsEvalStateFiniteExact.ofPanSemFinite
+          (PanSemStateFiniteExact.evaluateHOLFiniteState lowCanonical
+            (.assign kind name source)).2 = lowState
+        rw [hLowCanonical]
+        exact PanPropsEvalStateFiniteExact.ofPanSemFinite_toPanSemFinite lowState
+  | some value =>
+      have hEvalLowValue :
+          @evalHOLExact width σ _ lowCanonical.toExact lowMem source = some value := by
+        simpa [hEvalLow] using hEval
+      have hvalidEq :
+          PanSemStateFiniteExact.isValidValueHOLFinite lowCanonical kind name value =
+            PanSemStateFiniteExact.isValidValueHOLFinite highState kind name value := by
+        cases kind <;> rfl
+      by_cases hvalid :
+          PanSemStateFiniteExact.isValidValueHOLFinite highState kind name value = true
+      · have hvalidLow :
+            PanSemStateFiniteExact.isValidValueHOLFinite lowCanonical kind name value = true := by
+          rw [hvalidEq]; exact hvalid
+        have hvalidLowExact :
+            isValidValueHOLExact lowCanonical.toExact kind name value = true := by
+          simpa only [PanSemStateFiniteExact.isValidValueHOLFinite_eq] using hvalidLow
+        simp only [hEval, hvalid] at hCanonical
+        rcases Prod.mk.inj hCanonical with ⟨hresult, hpost⟩
+        subst result
+        have hstateClock : state.clock = st.clock + ck := by
+          have h := congrArg PanSemStateFiniteExact.clock hpost
+          cases kind <;>
+            simpa [highState, highPost, PanSemStateFiniteExact.setKvarHOLFinite,
+              PanSemStateFiniteExact.setVarHOLFinite,
+              PanSemStateFiniteExact.setGlobalHOLFinite,
+              PanPropsEvalStateFiniteExact.toPanSemFinite] using h
+        have hlowClock : lowCanonical.clock = st.clock := by
+          simp only [lowCanonical, lowState,
+            PanPropsEvalStateFiniteExact.toPanSemFinite]
+          omega
+        have hKvarCommute :
+            PanSemStateFiniteExact.setKvarHOLFinite kind name value lowCanonical =
+              { PanSemStateFiniteExact.setKvarHOLFinite kind name value highState with
+                  clock := lowCanonical.clock } := by
+          cases kind <;> rfl
+        have hLowSecond : PanPropsEvalStateFiniteExact.ofPanSemFinite
+            (PanSemStateFiniteExact.setKvarHOLFinite kind name value lowCanonical) = st := by
+          rw [hKvarCommute]
+          rw [show PanPropsEvalStateFiniteExact.ofPanSemFinite
+                ({ PanSemStateFiniteExact.setKvarHOLFinite kind name value highState with
+                    clock := lowCanonical.clock }) =
+              { PanPropsEvalStateFiniteExact.ofPanSemFinite
+                  (PanSemStateFiniteExact.setKvarHOLFinite kind name value highState) with
+                  clock := lowCanonical.clock } from rfl]
+          have hpostOf : PanPropsEvalStateFiniteExact.ofPanSemFinite
+              (PanSemStateFiniteExact.setKvarHOLFinite kind name value highState) =
+              { st with clock := st.clock + ck } := by
+            rw [hpost]
+            exact PanPropsEvalStateFiniteExact.ofPanSemFinite_toPanSemFinite _
+          rw [hpostOf, hlowClock]
+        have hLowCanonical :
+            PanSemStateFiniteExact.evaluateHOLFiniteState lowCanonical
+                (.assign kind name source) =
+              (none,
+                PanSemStateFiniteExact.setKvarHOLFinite kind name value lowCanonical) := by
+          simp [PanSemStateFiniteExact.evaluateHOLFiniteState_assign, hEvalLowValue,
+            hvalidLowExact]
+        apply Prod.ext
+        · change (PanSemStateFiniteExact.evaluateHOLFiniteState lowCanonical
+            (.assign kind name source)).1 = none
+          rw [hLowCanonical]
+        · change PanPropsEvalStateFiniteExact.ofPanSemFinite
+            (PanSemStateFiniteExact.evaluateHOLFiniteState lowCanonical
+              (.assign kind name source)).2 = st
+          rw [hLowCanonical]
+          exact hLowSecond
+      · have hinvalid :
+            PanSemStateFiniteExact.isValidValueHOLFinite highState kind name value = false :=
+          Bool.eq_false_iff.mpr hvalid
+        have hvalidLowFalse :
+            PanSemStateFiniteExact.isValidValueHOLFinite lowCanonical kind name value = false := by
+          rw [hvalidEq]; exact hinvalid
+        have hvalidLowFalseExact :
+            isValidValueHOLExact lowCanonical.toExact kind name value = false := by
+          simpa only [PanSemStateFiniteExact.isValidValueHOLFinite_eq] using hvalidLowFalse
+        simp only [hEval, hinvalid] at hCanonical
+        rcases Prod.mk.inj hCanonical with ⟨hresult, hpost⟩
+        subst result
+        have hst : st = lowState := by
+          cases st <;> simp_all [highState, highPost, lowState,
+            PanPropsEvalStateFiniteExact.toPanSemFinite] <;> omega
+        subst st
+        have hLowCanonical :
+            PanSemStateFiniteExact.evaluateHOLFiniteState lowCanonical
+                (.assign kind name source) = (some .error, lowCanonical) := by
+          simp [PanSemStateFiniteExact.evaluateHOLFiniteState_assign, hEvalLowValue,
+            hvalidLowFalseExact]
+        apply Prod.ext
+        · change (PanSemStateFiniteExact.evaluateHOLFiniteState lowCanonical
+            (.assign kind name source)).1 = some .error
+          rw [hLowCanonical]
+        · change PanPropsEvalStateFiniteExact.ofPanSemFinite
+            (PanSemStateFiniteExact.evaluateHOLFiniteState lowCanonical
+              (.assign kind name source)).2 = lowState
+          rw [hLowCanonical]
+          exact PanPropsEvalStateFiniteExact.ofPanSemFinite_toPanSemFinite lowState
+
 /-- Genuine `Tick` case of HOL `evaluate_clock_sub`. The non-timeout premise
     rules out the zero-clock branch; on the positive branch both evaluations
     decrement the clock once. -/
@@ -7286,6 +7452,107 @@ theorem evaluateInvariantsShMemLoadCaseHOLFinite {width : Nat} {σ : Type} [NeZe
         (.shMemLoad operator kind name address : ProgHOL width)).2 :=
     (Prod.mk.inj hcanonical).2.symm
   have hfields := shMemLoadStepFieldsHOLFinite state.toPanSemFinite operator kind name address
+  simp only at hfields
+  rw [← hpost] at hfields
+  simpa [PanPropsEvalStateFiniteExact.toPanSemFinite] using hfields
+
+end Flapjack
+
+
+/-! # The `ShMemStore` induction case of HOL `evaluate_invariants`
+
+HOL `ShMemStore` (`sh_mem_store_def`) returns Error with the input state, or
+calls the shared-memory FFI and then returns the input state (`FinalFFI`) or the
+input state with the returned FFI state. `call_FFI` keeps the oracle, so all
+eight invariant fields are preserved. -/
+
+open Flapjack.Pancake.PanLang (ExpHOL MlS ProgHOL)
+
+namespace Flapjack
+
+/-- `sh_mem_store` returns either its input state or the input state with only
+    `ffi` replaced by an FFI state with the same oracle. Untagged infrastructure. -/
+private theorem shMemStoreHOLExact_shape {width : Nat} {σ : Type} [NeZero width]
+    (st : PanSemStateExact width σ) [DecidablePred st.shMemaddrs]
+    (w a : RiscV.Word width) (nb : Nat) :
+    (∃ r0, shMemStoreHOLExact st w a nb = (r0, st)) ∨
+      ∃ r0 f, shMemStoreHOLExact st w a nb = (r0, { st with ffi := f }) ∧
+        f.oracle = st.ffi.oracle := by
+  rcases hq : shMemStoreHOLExact st w a nb with ⟨r0, q⟩
+  unfold shMemStoreHOLExact at hq
+  split at hq <;> split at hq
+  all_goals
+    first
+    | (obtain ⟨rfl, rfl⟩ := Prod.mk.inj hq; exact Or.inl ⟨_, rfl⟩)
+    | (split at hq
+       · obtain ⟨rfl, rfl⟩ := Prod.mk.inj hq; exact Or.inl ⟨_, rfl⟩
+       · rename_i newFfi newBytes hcall
+         obtain ⟨rfl, rfl⟩ := Prod.mk.inj hq
+         exact Or.inr ⟨_, newFfi, rfl, callFFIHOL_ret_oracle st.ffi _ _ _ newFfi newBytes hcall⟩)
+
+/-- The eight `evaluate_invariants` fields for one `ShMemStore` step of the
+    canonical finite evaluator. Untagged infrastructure for the tagged
+    `ShMemStore` case. -/
+theorem shMemStoreStepFieldsHOLFinite {width : Nat} {σ : Type} [NeZero width]
+    (s : PanSemStateFiniteExact width σ) (op : OpSize) (ad e : ExpHOL width) :
+    let post := (PanSemStateFiniteExact.evaluateHOLFiniteState s
+      (.shMemStore op ad e : ProgHOL width)).2
+    post.memaddrs = s.memaddrs ∧ post.shMemaddrs = s.shMemaddrs ∧
+      post.be = s.be ∧ post.eshapes = s.eshapes ∧
+      post.baseAddr = s.baseAddr ∧ post.structs = s.structs ∧
+      post.code = s.code ∧ post.ffi.oracle = s.ffi.oracle := by
+  classical
+  intro post
+  simp only [post]
+  rw [PanSemStateFiniteExact.evaluateHOLFiniteState_shMemStore_total]
+  dsimp only
+  split
+  · rename_i addr bytes _ _
+    rcases @shMemStoreHOLExact_shape width σ _ s.toExact
+        (fun key => Classical.propDecidable (s.shMemaddrs key)) bytes addr (nbOpHOL op) with
+      ⟨r0, hG⟩ | ⟨r0, f, hG, hor⟩
+    · simp [hG, PanSemStateFiniteExact.ofExact, PanSemStateFiniteExact.toExact]
+    · simp [hG, hor, PanSemStateFiniteExact.ofExact, PanSemStateFiniteExact.toExact]
+  · simp
+
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_invariants" 1150
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateInvariantsShMemStoreCaseHOLFinite {width : Nat} {σ : Type} [NeZero width] :
+    ∀ (op : OpSize) (ad e : ExpHOL width)
+      (s : PanPropsEvalStateFiniteExact width σ)
+      (res : Option (PanSemResultExact width))
+      (st : PanPropsEvalStateFiniteExact width σ),
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair s
+          (.shMemStore op ad e : ProgHOL width) = (res, st) →
+      st.memaddrs = s.memaddrs ∧
+      st.shMemaddrs = s.shMemaddrs ∧
+      st.be = s.be ∧
+      st.eshapes = s.eshapes ∧
+      st.baseAddr = s.baseAddr ∧
+      st.structs = s.structs ∧
+      st.code = s.code ∧
+      st.ffi.oracle = s.ffi.oracle := by
+  classical
+  intro op ad e s res st hRun
+  have hcanonical :
+      PanSemStateFiniteExact.evaluateHOLFiniteState s.toPanSemFinite
+          (.shMemStore op ad e : ProgHOL width) =
+        (res, st.toPanSemFinite) := by
+    have hpair := congrArg
+      (fun output => (output.1, PanPropsEvalStateFiniteExact.toPanSemFinite output.2)) hRun
+    have hpair' :
+        (PanSemStateFiniteExact.evaluateHOLFiniteState s.toPanSemFinite
+          (.shMemStore op ad e : ProgHOL width)).1 = res ∧
+        (PanSemStateFiniteExact.evaluateHOLFiniteState s.toPanSemFinite
+          (.shMemStore op ad e : ProgHOL width)).2 = st.toPanSemFinite := by
+      simpa [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair] using hpair
+    exact Prod.ext hpair'.1 hpair'.2
+  have hpost : st.toPanSemFinite =
+      (PanSemStateFiniteExact.evaluateHOLFiniteState s.toPanSemFinite
+        (.shMemStore op ad e : ProgHOL width)).2 :=
+    (Prod.mk.inj hcanonical).2.symm
+  have hfields := shMemStoreStepFieldsHOLFinite s.toPanSemFinite op ad e
   simp only at hfields
   rw [← hpost] at hfields
   simpa [PanPropsEvalStateFiniteExact.toPanSemFinite] using hfields
