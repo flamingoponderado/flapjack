@@ -4321,6 +4321,22 @@ private theorem evaluateInvariantsCallBodyResultBranchesHOLFinite
     exact hfinish handlerRun.2 (by simpa [handlerRun] using congrArg Prod.snd hhandlerEval)
       hhandlerFields
 
+/-! # HOL `OPT_MMAP eval` rendering for the finite Call carrier
+
+The checked-in `evaluate_ind` probe states the Call premises using HOL's
+`OPT_MMAP (eval s) argexps`. `evalListHOLFinite` is the finite-support carrier
+rendering of that operation. This Flapjack-specific bridge is untagged because
+it translates the HOL list operation to Lean `List.mapM`; the source-level Call
+case using it remains a separate open porting task.
+-/
+
+private theorem evalListHOLFinite_eq_mapM {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateFiniteExact width σ)
+    [DecidablePred state.memaddrs] (expressions : List (ExpHOL width)) :
+    state.evalListHOLFinite expressions = expressions.mapM (state.evalHOLFinite) := by
+  rw [PanSemStateFiniteExact.evalListHOLFinite_eq_toExact]
+  exact evalListHOLExact_eq_mapM state.toExact expressions
+
 /-! # General Call invariant helper (not the exact HOL induction case)
 
 This useful helper assumes invariant preservation for any two programs run at

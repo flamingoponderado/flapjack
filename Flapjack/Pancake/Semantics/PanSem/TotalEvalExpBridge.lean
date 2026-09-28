@@ -2938,4 +2938,254 @@ theorem not_ranged_of_global_nonRanged {σ : Type}
   intro hr
   exact hv (hr.2.1 name value h)
 
+/-! ## Runtime FFI/primitive value-range boundary for `PanSemStateRelExecRanged`
+
+`flapjack-pxn.18.4.3.77.2.15.1` recorded which identifier-preserving production
+state updates preserve the byte-range premise `PanSemStateRelExecRanged` (`:94`),
+and exhibited the `PanSemStateRelExec`/rangedness gap (`nonByteRangedValue`,
+`not_ranged_of_local_nonRanged`, `not_ranged_of_global_nonRanged`).  The remaining
+question is where a non-byte-ranged value can *enter* the executable state at
+runtime, since parsing constrains neither FFI results nor primitive-handler
+results.
+
+This section resolves that boundary and narrows it precisely:
+
+* the production `ExtCall` clause (`panSemTotalExtCallClause`) writes the FFI's
+  returned *bytes* through `panSemTotalMachineWriteBytes` and installs the new
+  `FfiState`; it never installs a `PanValue` into `locals` or `globals`.  Hence
+  the value-map conjuncts of `PanSemStateRelExecRanged` are preserved
+  **unconditionally** by the production `ExtCall` constructor: the FFI cannot
+  introduce a non-byte-ranged local/global value at all.  The only
+  identifier-carrying FFI payload is the event name, whose range obligation is
+  the explicit runtime predicate `FfiResultByteRanged` below;
+* the production `Primitive` clause (`panSemTotalPrimitiveClause`) *does* install
+  the handler's `PanValue` result into `locals`, so its rangedness is conditional
+  on the runtime predicate `PanPrimitiveHandlerByteRanged` (every value returned
+  by the handler is `PanValueByteRanged`);
+* a negative witness (`primitiveClause_not_ranged_of_nonRanged`) shows how an
+  out-of-range primitive result crosses the boundary; a second witness
+  (`extCallClause_not_ranged_of_global_nonRanged`) shows that `ExtCall` cannot
+  repair a pre-existing out-of-range global.
+
+The remaining runtime source outside these two clauses is the *initial* global
+map (or any other direct global installation), which no evaluator clause
+constrains; it is documented as the residual obligation rather than discharged
+here.  Everything in this section is untagged Flapjack-specific bridge
+infrastructure; no `@[hol]` tag is attached. -/
+
+/-- Every production `UInt8` is `< 256`, so an FFI byte payload is always
+    byte-ranged. -/
+def BytesByteRanged (bytes : List UInt8) : Prop :=
+  ∀ b ∈ bytes, b.toNat < 256
+
+theorem bytesByteRanged (bytes : List UInt8) : BytesByteRanged bytes :=
+  fun b _ => b.toNat_lt
+
+/-- Explicit runtime FFI value-range predicate.  The production FFI returns only
+    byte payloads (`List UInt8`, always `< 256`) plus one identifier-carrying
+    event name; the host-state component is abstract (`σ`) and carries no
+    `PanValue`.  So the predicate is exactly the byte-range obligation on the
+    event name, reusing `FfiNameByteRanged` (`FfiBridge.lean:573`). -/
+def FfiResultByteRanged {σ : Type} : FfiResult σ → Prop
+  | .returned _ bytes => BytesByteRanged bytes
+  | .final event => FfiNameByteRanged event.name
+
+/-- A returned FFI result is always byte-ranged: its payload is `UInt8`. -/
+theorem ffiResultByteRanged_returned {σ : Type} (state : FfiState σ) (bytes : List UInt8) :
+    FfiResultByteRanged (.returned state bytes) :=
+  bytesByteRanged bytes
+
+/-- A final FFI result is byte-ranged exactly when its event name is. -/
+theorem ffiResultByteRanged_final_iff (σ : Type) (event : FfiFinalEvent) :
+    FfiResultByteRanged (σ := σ) (.final event) ↔ FfiNameByteRanged event.name :=
+  Iff.rfl
+
+/-- The FFI's observable payload is byte-ranged on the successful-return path
+    regardless of the call name; only the `.final` event name carries an
+    identifier whose range is not automatic. -/
+theorem ffiResultByteRanged_of_callFfi_returned {σ : Type} (state : FfiState σ)
+    (name : FfiName) (configuration bytes : List UInt8) (nextFfi : FfiState σ)
+    (nextBytes : List UInt8)
+    (_h : callFfi state name configuration bytes = .returned nextFfi nextBytes) :
+    FfiResultByteRanged (.returned nextFfi nextBytes) :=
+  bytesByteRanged nextBytes
+
+/-- Runtime predicate on a primitive handler: every value it returns is
+    byte-ranged.  Unlike the FFI, the production `Primitive` clause installs this
+    value directly into `locals`, so this is the exact premise needed to preserve
+    `PanSemStateRelExecRanged` across the constructor. -/
+def PanPrimitiveHandlerByteRanged (primitive : PanPrimitiveHandler (RiscV.Word 64)) : Prop :=
+  ∀ (operator : PrimOp) (values : List (PanValue (RiscV.Word 64)))
+    (value : PanValue (RiscV.Word 64)),
+    primitive operator values = some value → PanValueByteRanged value
+
+/-- `panEmptyLocals` preserves `PanSemStateRelExecRanged`: only the local map is
+    replaced, by the everywhere-`none` map. -/
+theorem PanSemStateRelExecRanged.panEmptyLocals {σ : Type}
+    {state : PanSemState (RiscV.Word 64) (FfiState σ)}
+    (h : PanSemStateRelExecRanged state) :
+    PanSemStateRelExecRanged (Flapjack.panEmptyLocals state) := by
+  refine ⟨?_, h.2.1, h.2.2⟩
+  intro name value hv
+  rw [show (Flapjack.panEmptyLocals state).locals name = none from rfl] at hv
+  exact absurd hv (by simp)
+
+/-- `panSemTotalMachineWriteBytes` changes only the memory map, so it preserves
+    `PanSemStateRelExecRanged` definitionally. -/
+theorem PanSemStateRelExecRanged.machineWriteBytes {σ : Type}
+    {state : PanSemState (RiscV.Word 64) (FfiState σ)}
+    (h : PanSemStateRelExecRanged state) (address : RiscV.Word 64) (bytes : List UInt8) :
+    PanSemStateRelExecRanged (panSemTotalMachineWriteBytes state address bytes) :=
+  h.of_fields rfl rfl rfl
+
+/-- A single evaluated-expression step preserves `PanSemStateRelExecRanged` when
+    the continuation does.  On evaluation failure the step returns the entry
+    state unchanged. -/
+theorem PanSemStateRelExecRanged.exprStep {σ : Type}
+    {state : PanSemState (RiscV.Word 64) (FfiState σ)}
+    (h : PanSemStateRelExecRanged state) (expression : Exp (RiscV.Word 64))
+    (onValue : PanValue (RiscV.Word 64) →
+      Option (PanSemHOLResult (RiscV.Word 64)) ×
+        PanSemState (RiscV.Word 64) (FfiState σ))
+    (honValue : ∀ value, PanSemStateRelExecRanged (onValue value).2) :
+    PanSemStateRelExecRanged (panSemTotalExprStep state expression onValue).2 := by
+  unfold panSemTotalExprStep
+  split
+  · exact honValue _
+  · exact h
+
+/-- A single evaluated-expression-list step preserves `PanSemStateRelExecRanged`
+    when the continuation does. -/
+theorem PanSemStateRelExecRanged.exprListStep {σ : Type}
+    {state : PanSemState (RiscV.Word 64) (FfiState σ)}
+    (h : PanSemStateRelExecRanged state) (expressions : List (Exp (RiscV.Word 64)))
+    (onValues : List (PanValue (RiscV.Word 64)) →
+      Option (PanSemHOLResult (RiscV.Word 64)) ×
+        PanSemState (RiscV.Word 64) (FfiState σ))
+    (honValues : ∀ values, PanSemStateRelExecRanged (onValues values).2) :
+    PanSemStateRelExecRanged (panSemTotalExprListStep state expressions onValues).2 := by
+  unfold panSemTotalExprListStep
+  split
+  · exact honValues _
+  · exact h
+
+/-- The production `ExtCall` composition step preserves `PanSemStateRelExecRanged`
+    unconditionally.  Its value-map conjuncts are untouched: the final-event
+    branch clears only `locals`, and the returned branch rewrites only `memory`
+    and `ffi`.  The FFI's returned bytes are always byte-ranged and no `PanValue`
+    is installed, so no FFI range premise is needed. -/
+theorem PanSemStateRelExecRanged.extCallStep {σ : Type}
+    {state : PanSemState (RiscV.Word 64) (FfiState σ)}
+    (h : PanSemStateRelExecRanged state)
+    (evaluatedPtr1 evaluatedLen1 evaluatedPtr2 evaluatedLen2 : Option (PanValue (RiscV.Word 64)))
+    (function : FunName) :
+    PanSemStateRelExecRanged
+      (panSemTotalExtCallStep state evaluatedPtr1 evaluatedLen1 evaluatedPtr2 evaluatedLen2
+        (panSemTotalMachineReadBytes state)
+        (fun ffi name configurationBytes arrayBytes => callFfi ffi name configurationBytes arrayBytes)
+        (panSemTotalMachineWriteBytes) function).2 := by
+  unfold panSemTotalExtCallStep
+  split
+  · split
+    · split
+      · exact h.panEmptyLocals
+      · refine h.of_fields ?_ ?_ ?_ <;> simp [panSemTotalMachineWriteBytes]
+    · exact h
+  · exact h
+
+/-- The production `ExtCall` clause preserves `PanSemStateRelExecRanged`
+    unconditionally: the four argument evaluations leave the value maps and
+    structure context untouched, and the FFI step only writes memory / installs
+    the new `FfiState`. -/
+theorem PanSemStateRelExecRanged.extCallClause {σ : Type}
+    {state : PanSemState (RiscV.Word 64) (FfiState σ)}
+    (h : PanSemStateRelExecRanged state) (function : FunName)
+    (configuration configurationLength array arrayLength : Exp (RiscV.Word 64)) :
+    PanSemStateRelExecRanged
+      (panSemTotalExtCallClause state function configuration configurationLength
+        array arrayLength).2 := by
+  unfold panSemTotalExtCallClause
+  apply PanSemStateRelExecRanged.exprStep h
+  intro configurationValue
+  apply PanSemStateRelExecRanged.exprStep h
+  intro configurationLengthValue
+  apply PanSemStateRelExecRanged.exprStep h
+  intro arrayValue
+  apply PanSemStateRelExecRanged.exprStep h
+  intro arrayLengthValue
+  exact PanSemStateRelExecRanged.extCallStep h _ _ _ _ function
+
+/-- The production `Primitive` clause preserves `PanSemStateRelExecRanged`
+    provided the runtime predicate `PanPrimitiveHandlerByteRanged` holds: only the
+    successful, valid-assignment branch installs the handler's value into
+    `locals`, by `PanSemStateRelExecRanged.updateLocals`. -/
+theorem PanSemStateRelExecRanged.primitiveClause {σ : Type}
+    {state : PanSemState (RiscV.Word 64) (FfiState σ)}
+    (h : PanSemStateRelExecRanged state) (name : VarName) (operator : PrimOp)
+    (arguments : List (Exp (RiscV.Word 64))) (primitive : PanPrimitiveHandler (RiscV.Word 64))
+    (hprim : PanPrimitiveHandlerByteRanged primitive) :
+    PanSemStateRelExecRanged
+      (panSemTotalPrimitiveClause state name operator arguments primitive).2 := by
+  unfold panSemTotalPrimitiveClause
+  apply PanSemStateRelExecRanged.exprListStep h
+  intro values
+  split
+  · rename_i value hvalue
+    split
+    · rename_i hvalid
+      exact h.updateLocals name value (hprim operator values value hvalue)
+    · exact h
+  · exact h
+
+/-- **Negative witness (primitive boundary).** If the primitive handler returns a
+    non-byte-ranged value on a successful, valid-assignment path, the resulting
+    state fails `PanSemStateRelExecRanged`.  This is the exact runtime boundary
+    where the premise can be crossed. -/
+theorem primitiveClause_not_ranged_of_nonRanged {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ)) (name : VarName) (operator : PrimOp)
+    (arguments : List (Exp (RiscV.Word 64))) (primitive : PanPrimitiveHandler (RiscV.Word 64))
+    (values : List (PanValue (RiscV.Word 64))) (value : PanValue (RiscV.Word 64))
+    (heval : evalPanSemStateExps state arguments = some values)
+    (hprim : primitive operator values = some value)
+    (hvalid : panValueAssignmentValid state.structs state.locals state.globals
+      .local name value = true)
+    (hv : ¬ PanValueByteRanged value) :
+    ¬ PanSemStateRelExecRanged
+        (panSemTotalPrimitiveClause state name operator arguments primitive).2 := by
+  rw [panSemTotalPrimitiveClause_ok state name operator arguments primitive values value
+    heval hprim hvalid]
+  exact not_ranged_of_local_nonRanged
+    { state with locals := updatePanValueMap state.locals name value } name value
+    (by simp [updatePanValueMap]) hv
+
+/-- The production `ExtCall` clause never changes the global map: it only clears
+    `locals` (final event) or rewrites `memory`/`ffi` (returned). -/
+theorem panSemTotalExtCallClause_globals {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ)) (function : FunName)
+    (configuration configurationLength array arrayLength : Exp (RiscV.Word 64)) :
+    (panSemTotalExtCallClause state function configuration configurationLength
+        array arrayLength).2.globals = state.globals := by
+  simp only [panSemTotalExtCallClause, panSemTotalExprStep, panSemTotalExtCallStep,
+    panSemTotalMachineReadBytes, panSemTotalMachineWriteBytes, panEmptyLocals]
+  repeat' (first | rfl | split)
+
+/-- **Negative witness (residual global boundary).** `ExtCall` does not repair a
+    pre-existing non-byte-ranged global: the production clause leaves `globals`
+    unchanged, so if the entry state already holds an out-of-range global (the
+    initial/stored-global boundary) the resulting state still fails
+    `PanSemStateRelExecRanged`. -/
+theorem extCallClause_not_ranged_of_global_nonRanged {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ)) (function : FunName)
+    (configuration configurationLength array arrayLength : Exp (RiscV.Word 64))
+    (name : VarName) (value : PanValue (RiscV.Word 64))
+    (h : state.globals name = some value) (hv : ¬ PanValueByteRanged value) :
+    ¬ PanSemStateRelExecRanged
+        (panSemTotalExtCallClause state function configuration configurationLength
+          array arrayLength).2 := by
+  intro hr
+  exact not_ranged_of_global_nonRanged
+    (panSemTotalExtCallClause state function configuration configurationLength
+      array arrayLength).2 name value
+    (by rw [panSemTotalExtCallClause_globals]; exact h) hv hr
+
 end Flapjack
