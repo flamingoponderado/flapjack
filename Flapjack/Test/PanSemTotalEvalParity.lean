@@ -168,34 +168,10 @@ def evalGuards : Bool :=
 #guard callZeroClockTimeoutGuard
 #guard evalGuards
 
-/-- Kernel-checked regressions for the direct HOL `Call` row: result 7 and
-    decremented clock 9. -/
-example : callCodeMapGuard = true := by native_decide
-
-/-- Kernel-checked regression for the recursive `Call`-into-`DecCall` row. -/
-example : recursiveCallGuard = true := by native_decide
-
-/-- Kernel-checked regression for the direct `DecCall` row. -/
-example : decCallCodeMapGuard = true := by native_decide
-
-/-- Kernel-checked regression for the nested `DecCall`/`DecCall` row. -/
-example : nestedDecCallGuard = true := by native_decide
-
-/-- Kernel-checked regression for the nested `Call`/`Call` row. -/
-example : nestedCallGuard = true := by native_decide
-
-/-- Kernel-checked regression for the recursion-timeout rows. -/
-example : recursiveCallTimeoutGuard = true := by native_decide
-example : recursiveDecCallTimeoutGuard = true := by native_decide
-example : callZeroClockTimeoutGuard = true := by native_decide
-
-/-- The clock after a successful `Call NONE "id" [Const 7]` is exactly the
-    source clock decremented once, and the callee's `Return` clears the caller
-    locals (HOL `Call` with `caltyp = NONE`). -/
-example :
-    (panSemTotalEvaluate (fun _ _ => none)
-        (.call none "id" [.const (BitVec.ofNat 64 7)]) callState).2.clock = 9 := by
-  native_decide
+-- The clock after a successful `Call NONE "id" [Const 7]` is exactly the
+-- source clock decremented once (HOL `Call` with `caltyp = NONE`).
+#guard (panSemTotalEvaluate (fun _ _ => none)
+  (.call none "id" [.const (BitVec.ofNat 64 7)]) callState).2.clock == 9
 
 def runChecks : IO Bool := do
   if evalGuards then
