@@ -37,6 +37,27 @@ val _ = print_eval "duplicate_function_front_update"
           FST (evaluate (panLang$Call NONE (strlit "main") [], s'))
     | NONE => ARB``;
 
+(* The older helper has a different formal parameter list and return shape.
+   Both its code and metadata are shadowed by the later declaration. *)
+val helper_old_metadata = ``<| name := strlit "helper"; inline := F; export := F;
+  params := [(strlit "old_arg", One)];
+  body := panLang$Return
+    (panLang$Var panLang$Local (strlit "old_arg")); return := One |>``;
+val helper_new_metadata = ``<| name := strlit "helper"; inline := F; export := F;
+  params := []; body := panLang$Return (panLang$RStruct []);
+  return := Comb [] |>``;
+val main_comb = ``<| name := strlit "main"; inline := F; export := T;
+  params := []; body := panLang$Call NONE (strlit "helper") [];
+  return := Comb [] |>``;
+
+val _ = print_eval "duplicate_function_front_update_changed_metadata"
+  ``case evaluate_decls ^state0
+        [Function ^helper_old_metadata; Function ^helper_new_metadata;
+         Function ^main_comb] of
+      | SOME s' =>
+          FST (evaluate (panLang$Call NONE (strlit "main") [], s'))
+    | NONE => ARB``;
+
 val helper_bad_return = ``<| name := strlit "helper"; inline := F; export := F;
   params := []; body := panLang$Return (panLang$RStruct []); return := One |>``;
 val main_comb_return = ``<| name := strlit "main"; inline := F; export := T;

@@ -135,6 +135,36 @@ def clockedDuplicateFunctionRouteMatchesHol : Bool :=
 
 #guard clockedDuplicateFunctionRouteMatchesHol
 
+/-- HOL's newest duplicate function declaration also owns its formal parameter
+    names and return shape. The older `helper` has one formal and returns a
+    word, while the later binding has no formals and returns `Comb []`. The
+    source-owned code map must ignore the shadowed entry before consulting the
+    latest metadata. Oracle: `duplicate_function_front_update_changed_metadata`
+    in `scripts/hol-probes/pan_clock_program_route_probe.out`. -/
+def clockedDuplicateFunctionChangedMetadataDeclarations : List (Decl Nat) :=
+  [.function
+      { name := "helper", inline := false, exported := false,
+        params := [("old_arg", .one)],
+        body := .return (.var .local "old_arg"), returnShape := .one },
+   .function
+      { name := "helper", inline := false, exported := false, params := [],
+        body := .return (.rStruct []), returnShape := .comb [] },
+   .function
+      { name := "main", inline := false, exported := true, params := [],
+        body := .call none "helper" [], returnShape := .comb [] }]
+
+def clockedDuplicateFunctionChangedMetadataResult :=
+  evalPanValueFfiClockProgram memoryFfiTestContext memoryFfiInitial 20
+    (fun _ _ => none) memoryFfiTestHandler 20
+    clockedDuplicateFunctionChangedMetadataDeclarations "main" []
+
+def clockedDuplicateFunctionChangedMetadataMatchesHol : Bool :=
+  match clockedDuplicateFunctionChangedMetadataResult with
+  | some (.control (.returned _ _ _ _ [.rStruct []]), _) => true
+  | _ => false
+
+#guard clockedDuplicateFunctionChangedMetadataMatchesHol
+
 /-- The original `evaluate` oracle rejects a nested callee whose returned
     value violates that function's declared return shape, even when the entry
     function's return shape would accept the value. -/
