@@ -1265,36 +1265,6 @@ def crepToLoopCodeRelExact {width : Nat} [NeZero width]
                sptLookup loc t_code =
                  some (args, ocompileHOLExact nctxt (listToNumSetHOLExact args) prog))
 
-/-- Exact port of HOL `code_rel2_def`
-    (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:3842-3844`):
-
-```
-code_rel2 ctxt s_code t_code <=>
-  code_rel ctxt (FMAP_MAP2 (\(s, n, p). (n, crep_arith$simp_prog p)) s_code) t_code
-```
-
-The only difference from `crepToLoopCodeRelExact` (`code_rel_def`) is the
-source-map transform: HOL `FMAP_MAP2` is the reviewed
-`HolFiniteMapExact.map2`, which preserves keys and maps each present value with
-the key available to the callback (HOL `FLOOKUP (FMAP_MAP2 f m) k =
-OPTION_MAP (\v. f (k,v)) (FLOOKUP m k)`), so the stored result of the callback
-*is* the new value. The HOL lambda pattern `(\(s, n, p). ...)` therefore
-receives the callback pair `(key, (n, p))`, binds the key to the discarded `s`,
-and returns `(n, crep_arith$simp_prog p)` — rendered here as
-`(entry.2.1, crepSimpProgHOL entry.2.2)` on the exact `MlS`-keyed source carrier.
-The program body is the tagged exact `crepSimpProgHOL` (`simp_prog_def`); no
-extra hypothesis, side condition, or relation change is introduced. -/
-@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "code_rel2_def"
-  (fmap_as_finite_support_relation := [CrepToLoopContextExact.funcs, s_code])
-  (words_as_type_indexed_bitvec)]
-def crepToLoopCodeRel2Exact {width : Nat} [NeZero width]
-    (ctxt : CrepToLoopContextExact)
-    (s_code : HolFiniteMapExact Flapjack.Pancake.PanLang.MlS
-      (List Nat × CrepProgHOL width))
-    (t_code : Spt (List Nat × HolLoopProg width)) : Prop :=
-  crepToLoopCodeRelExact ctxt
-    (s_code.map2 (fun entry => (entry.2.1, crepSimpProgHOL entry.2.2))) t_code
-
 /-- Exact port of HOL `code_rel_intro`
     (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:187-200`): assuming
     `code_rel`, expose its `distinct_funcs` conjunct and its universally

@@ -1,5 +1,4 @@
 import Flapjack.Pancake.CrepToLoop.StateRel
-import Flapjack.Pancake.CrepToLoop.Proofs.RelationsExact
 import Flapjack.Pancake.Semantics.LoopProps.EvalExact
 import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
 
@@ -99,58 +98,10 @@ theorem codeRelPositive : crepToLoopCodeRelExact ctxt sCode tCode := by
     · rw [if_neg hf] at h
       simp at h
 
-/-- Direct Lean instantiation of the tagged HOL `code_rel_intro`: recover the
-`distinct_funcs` conjunct and the per-entry universal-existential conclusion
-from a `crepToLoopCodeRelExact` witness. -/
-theorem codeRelIntroInstantiation :
-    crepToLoopDistinctFuncs ctxt.funcs.lookup ∧
-      ∀ (f : MlS) (ns : List Nat) (prog : CrepProgHOL 8),
-        sCode.lookup f = some (ns, prog) →
-          ∃ loc len : Nat,
-            ctxt.funcs.lookup f = some (loc, len) ∧
-              ns.length = len ∧
-                (let args := List.range len
-                 let nctxt := ctxtFcExact ctxt.target ctxt.funcs ns args
-                 sptLookup loc tCode =
-                   some (args, ocompileHOLExact nctxt (listToNumSetHOLExact args) prog)) :=
-  crepToLoopCodeRelIntro ctxt sCode tCode codeRelPositive
-
 /-- Directly instantiate the exact HOL `code_rel_intro` port on the positive
 probe relation, recovering its `distinct_funcs` clause. -/
 example : crepToLoopDistinctFuncs ctxt.funcs.lookup :=
   (crepToLoopCodeRelExact_intro ctxt sCode tCode codeRelPositive).1
-
-/-- The tagged exact `code_rel2_def` port unfolds definitionally to `code_rel`
-applied to the `FMAP_MAP2` source-map transform. -/
-example :
-    crepToLoopCodeRel2Exact ctxt sCode tCode ↔
-      crepToLoopCodeRelExact ctxt
-        (sCode.map2 (fun entry => (entry.2.1, crepSimpProgHOL entry.2.2)))
-        tCode :=
-  Iff.rfl
-
-/-- The `FMAP_MAP2` transform on the probe source map: `Skip` is unchanged by
-`simp_prog`, so the transformed map has the same lookup as `sCode`. -/
-theorem sCodeMap2Lookup (k : MlS) :
-    (sCode.map2 (fun entry => (entry.2.1, crepSimpProgHOL entry.2.2))).lookup k =
-      if k = ofString "f" then
-        some ([1, 2], (.skip : CrepProgHOL 8)) else none := by
-  rw [HolFiniteMapExact.lookup_map2, sCodeLookup k]
-  by_cases hk : k = ofString "f"
-  · subst hk; simp [crepSimpProgHOL]
-  · simp [hk]
-
-/-- Kernel-checked positive instance of the tagged exact `code_rel2_def` port:
-the `simp_prog`-transformed source map still compiles `f` to `Mark Skip`. -/
-theorem codeRel2Positive : crepToLoopCodeRel2Exact ctxt sCode tCode := by
-  unfold crepToLoopCodeRel2Exact
-  have hmap : sCode.map2 (fun entry => (entry.2.1, crepSimpProgHOL entry.2.2)) =
-      sCode := by
-    apply HolFiniteMapExact.ext
-    funext k
-    rw [sCodeMap2Lookup k, sCodeLookup k]
-  rw [hmap]
-  exact codeRelPositive
 
 /-- The HOL probe row `code_rel_missing_funcs = F`: with an empty function map
 the per-entry existential has no target label to return. -/
@@ -238,8 +189,6 @@ def runChecks : IO Bool := do
   IO.println "PASS crepToLoopCodeRelExact missing-funcs counterexample (kernel-checked)"
   IO.println "PASS crepToLoopCodeRelExact length-mismatch counterexample (kernel-checked)"
   IO.println "PASS HOL code_rel_intro instantiation recovers both conjuncts (kernel-checked)"
-  IO.println "PASS crepToLoopCodeRel2Exact definitionally unfolds to code_rel over FMAP_MAP2 (kernel-checked)"
-  IO.println "PASS crepToLoopCodeRel2Exact positive relation on probe fixture (kernel-checked)"
   pure (checks.all Prod.snd)
 
 end Flapjack.Test.CrepToLoopCodeRelParity

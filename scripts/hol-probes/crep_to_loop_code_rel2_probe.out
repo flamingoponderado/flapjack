@@ -1,3 +1,0 @@
-code_rel2_skip_map2=SOME ([1; 2],Skip)
-code_rel2_mul_map2=SOME ([1; 2],Assign 1 (Shift Lsl (Var 2) (Const 1w)))
-code_rel2_key_absent=NONE
