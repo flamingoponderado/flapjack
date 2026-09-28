@@ -1,5 +1,6 @@
 import Flapjack.Pancake.CrepToLoop
 import Flapjack.Pancake.CrepToLoop.StateRel
+import Flapjack.Pancake.CrepToLoop.Proofs.LocalsRelHelpers
 import Flapjack.Misc.Sptree
 
 /-!
@@ -644,6 +645,22 @@ example
     crepToLoopLocalsRelExact localsRelOracleCtxt localsRelOracleSet
       localsRelOracleSource localsRelOracleInsertTarget :=
   crepToLoopLocalsRelExact_insert_gt_vmax _ _ _ _ _ _ h hgt
+
+-- `evaluate_io_mono_rephrases` (`crep_to_loopProofScript.sml:4066`): the two
+-- `evaluate_add_clock_io_events_mono` rephrasings at `clock := k` vs
+-- `clock := k + extra`, over the exact Crep and loopSem evaluators.
+example :
+    ((evalCrepSemHOLProgExact { stateRelExactCrep with clock := 2 } (CrepProgHOL.skip)).2.ffi.ioEvents <+:
+        (evalCrepSemHOLProgExact { stateRelExactCrep with clock := 2 + 3 } (CrepProgHOL.skip)).2.ffi.ioEvents) ∧
+      ((LoopSemStateFiniteExact.evaluate (HolLoopProg.skip) { stateRelExactLoop with clock := 2 }).2.ffi.ioEvents <+:
+        (LoopSemStateFiniteExact.evaluate (HolLoopProg.skip) { stateRelExactLoop with clock := 2 + 3 }).2.ffi.ioEvents) :=
+  ⟨(evaluateIOMonoRephrases (CrepProgHOL.skip) stateRelExactCrep (HolLoopProg.skip) stateRelExactLoop 2).1 3,
+    (evaluateIOMonoRephrases (CrepProgHOL.skip) stateRelExactCrep (HolLoopProg.skip) stateRelExactLoop 2).2 3⟩
+
+def evaluateIOMonoGuard : Bool :=
+  decide ((LoopSemStateFiniteExact.evaluate (HolLoopProg.skip) { stateRelExactLoop with clock := 2 }).2.ffi.ioEvents.length = 0)
+
+#guard evaluateIOMonoGuard
 
 def runChecks : IO Bool := do
   let results := [declarationRenamingMatches,
