@@ -1344,6 +1344,14 @@ run_probe loop_props_survives_probeScript.sml \
   call_default assign_default \
   "$cake_dir/pancake/semantics/loopPropsScript.sml" \
   "$cake_dir/pancake/semantics"
+run_probe loop_props_comp_syntax_ok_probeScript.sml \
+  loop_props_comp_syntax_ok_probe.out \
+  comp_skip comp_assign comp_locvalue comp_load32 comp_loadbyte comp_break \
+  comp_arith comp_seq comp_seq_cutset comp_loop_ok comp_loop_bad \
+  comp_store_fallback comp_raise_fallback comp_tick_fallback \
+  comp_if_unreduced comp_if_nonmatching comp_if_witness_ok \
+  "$cake_dir/pancake/semantics/loopPropsScript.sml" \
+  "$cake_dir/pancake/semantics"
 run_probe loop_sem_call_env_probeScript.sml \
   loop_sem_call_env_probe.out \
   arg_zero arg_missing "$cake_dir/pancake/semantics/loopSemScript.sml"

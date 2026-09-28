@@ -18356,6 +18356,15 @@
     "words_as_type_indexed_bitvec": true
   },
   {
+    "hol_path": "cakeml/pancake/semantics/loopPropsScript.sml",
+    "hol_name": "comp_syntax_ok_def",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopProps/CompSyntaxOk.lean",
+    "lean_name": "compSyntaxOkHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-ds9 source comparison (2026-09-28, bead flapjack-pxn.18.5.6.38) against loopPropsScript.sml:57-73. Clause review over the exact width-indexed HolLoopProg/NumSet (Spt Unit) carriers: Skip/Assign/Arith/Break/LocValue/Load32/LoadByte return T; Loop lin p lout returns (l = lin /\\ l = lout /\\ comp_syntax_ok lin p), rendered as decide (live = liveIn) && decide (live = liveOut) && recursive body; Seq p q returns comp_syntax_ok l p /\\ comp_syntax_ok (cut_sets l p) q, using the tagged cutSetsHOL; If c n r p q nl returns comp_syntax_ok l p /\\ comp_syntax_ok l q /\\ (EXISTS ns. nl = FOLDL (\\sp n. insert n () sp) l ns) and every other constructor returns F. The If set-extension condition is rendered literally as HOL's classical existential over List Nat; because Spt Unit equality is structural (derived DecidableEq) and FOLDL insert can build a structurally different tree with the same keys, this is NOT the same as a sptSubsetLive condition. The existential has no computable decision procedure (the search space is infinite), so the clause is decided by Classical.propDecidable and compSyntaxOkHOL is noncomputable, matching HOL's genuinely non-computable EXISTS; the result stays Bool. Only HOL's positive word dimension to BitVec width is translated. Direct HOL EVAL rows for Skip/Assign/LocValue/Load32/LoadByte/Break/Arith, Seq threading through cut_sets, matched and mismatched Loop, the Store/Raise/Tick fallbacks, and the two unreduced If existentials are in scripts/hol-probes/loop_props_comp_syntax_ok_probe.out, with the matching If row comp_if_witness_ok=T proved by exhibiting the witness list. Each row is replayed by a kernel-checked guard in Flapjack/Test/LoopPropsCompSyntaxOkParity. This tagged definition is proof-side infrastructure; no production loop_live routing claim is made.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
     "hol_name": "assigned_vars_MAPi_Assign",
     "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/AssignedVars.lean",

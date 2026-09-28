@@ -52,6 +52,22 @@ Seq, and the catch-all case. The exact width-indexed `HolLoopProg` port
 `survivesHOLExact` is in `Flapjack.Pancake.Semantics.LoopProps`; its replay
 guards are in `Flapjack.Test.LoopPropsSurvivesParity`. Refresh with
 `HOL_PROBE_ONLY=loop_props_survives_probeScript.sml scripts/hol-probes/regenerate.sh`.
+`loop_props_comp_syntax_ok_probe.out` records direct HOL EVAL rows for
+`comp_syntax_ok_def` at
+`cakeml/pancake/semantics/loopPropsScript.sml:57-73`: Skip/Assign/LocValue/
+Load32/LoadByte/Break/Arith return T, Seq threads the live set through
+`cut_sets`, a `Loop` whose in/out sets agree returns the recursive body result
+while a mismatched `Loop` returns F, `Store`/`Raise`/`Tick` take the F
+fallback, and the If set-extension condition is HOL's classical
+`EXISTS ns. nl = FOLDL (\sp n. insert n () sp) l ns`. HOL EVAL cannot search
+over `List num`, so the two If rows print the residual existential
+(`comp_if_unreduced`, `comp_if_nonmatching`) rather than a T/F; the matching If
+row `comp_if_witness_ok=T` is proved separately by instantiating the witness
+list. The exact width-indexed definition `compSyntaxOkHOL` is in
+`Flapjack.Pancake.Semantics.LoopProps.CompSyntaxOk`; the residual existential is
+kept literally, so the definition is `noncomputable`, and its kernel-checked
+replay rows are in `Flapjack.Test.LoopPropsCompSyntaxOkParity`. Refresh with
+`HOL_PROBE_ONLY=loop_props_comp_syntax_ok_probeScript.sml scripts/hol-probes/regenerate.sh`.
 `Flapjack.Test.PanEvaluateDeclsParity` probes `evaluate_decls_def` at
 `cakeml/pancake/semantics/panSemScript.sml:814-835`, including each declaration
 constructor, ordered global updates, local clearing during initializer
