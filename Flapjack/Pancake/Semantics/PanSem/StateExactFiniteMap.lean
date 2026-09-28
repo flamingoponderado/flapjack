@@ -4921,6 +4921,47 @@ theorem evalPanSemRecursiveCallFiniteContext_globalsShapesInvariant {width : Nat
         simp only [globalsShapesExact, setKvarHOLExact, if_neg hk]
         exact hkey
 
+/-- Per-name globals shape preservation for the top-level finite PanSem evaluator.
+HOL `panPropsScript.sml:1183 evaluate_global_shape_invariant` states
+`evaluate (p,s) = (res,st) ∧ FLOOKUP s.globals n = SOME v ⇒
+∃v'. FLOOKUP st.globals n = SOME v' ∧ shape_of v' = shape_of v`;
+this is that statement (curried, `FLOOKUP` as `lookup`, `shape_of` as `shapeOfHOLExact`) under the
+type-indexed `'a word` / `'ffi` translation, obtained by lifting the delivered recursive
+`evalPanSemRecursiveCallFiniteContext_globalsShapesInvariant` through
+`evalPanSemRecursiveCallFiniteContext_of_evaluateHOLFiniteState`. -/
+theorem evaluateHOLFiniteState_global_shape_invariant {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (program : ProgHOL width)
+    (res : Option (PanSemResultExact width)) (st : PanSemStateFiniteExact width σ)
+    (name : MlS) (value : ValueHOL width)
+    (heval : evaluateHOLFiniteState state program = (res, st))
+    (hlookup : state.globals.lookup name = some value) :
+    ∃ value', st.globals.lookup name = some value' ∧
+      shapeOfHOLExact value' = shapeOfHOLExact value := by
+  classical
+  let context : FiniteEvalContext width σ :=
+    ⟨state, (fun address => Classical.propDecidable (state.memaddrs address)),
+      (fun address => Classical.propDecidable (state.shMemaddrs address))⟩
+  obtain ⟨postContext, hevalCtx, hstate⟩ :=
+    evalPanSemRecursiveCallFiniteContext_of_evaluateHOLFiniteState state program context rfl
+      (res, st) heval
+  have hglob :=
+    evalPanSemRecursiveCallFiniteContext_globalsShapesInvariant program context res postContext
+      hevalCtx
+  rw [hstate] at hglob
+  change globalsShapes st = globalsShapes state at hglob
+  obtain ⟨w, hw⟩ : ∃ w : ValueHOL width, st.globals.lookup name = some w ∧
+      shapeOfHOLExact w = shapeOfHOLExact value := by
+    have hfun := congrFun hglob name
+    simp only [globalsShapes] at hfun
+    rw [hlookup] at hfun
+    cases h : st.globals.lookup name with
+    | none => rw [h] at hfun; simp at hfun
+    | some w =>
+        rw [h] at hfun
+        simp only [Option.map_some] at hfun
+        exact ⟨w, rfl, by simpa using hfun⟩
+  exact ⟨w, hw.1, hw.2⟩
+
 end GlobalsShapesInvariant
 
 end PanSemStateFiniteExact
