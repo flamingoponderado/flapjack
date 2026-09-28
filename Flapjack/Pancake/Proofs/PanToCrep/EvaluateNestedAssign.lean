@@ -168,21 +168,27 @@ theorem evalNestedAssignDistinctEqCrepHOLWithDeciders {width : Nat} [NeZero widt
                     HolFiniteMapExact.updateListEq, HolFiniteMapExact.updateEq,
                     FUPDATE_LIST_HOL_cons] using htail
 
-/-- FLAPJACK-SPECIFIC provisional rendering (no `@[hol]` tag), withdrawn
-2026-09-27 (bead flapjack-64k0, PR #1166 review item 2). The statement is over
-`evalCrepSemHOLProgExact`, the no-decider classical wrapper around the
-re-implemented evaluator `evalCrepSemHOLProg` whose full clause set is not yet
-source-reviewed against `evaluate_def` (see the module notes of
-`CrepSem/EvaluateHOL.lean`). Concrete gaps: the recursive clauses thread the
-base-state decisions through `crepStampExactDomains`, whose reachability for
-the derived states is unreviewed; the byte-store clause still routes through
-the legacy `UInt8` helpers; and the finite-map qualifier's owner/witness
-placement is unresolved (`flapjack-4ac.5.16.5.13.1`). HOL candidate:
-`eval_nested_assign_distinct_eq` (`pan_to_crepProofScript.sml:540-575`).
-Faithful port tracked by `flapjack-4ac.5.16.5`. -/
+/-- Exact port of HOL `eval_nested_assign_distinct_eq`
+(`cakeml/pancake/proofs/pan_to_crepProofScript.sml:540-581`). The five HOL
+premises map clause-for-clause: `MAP (eval t) es = MAP SOME ev` is the
+classical expression list evaluation, `OPT_MMAP (FLOOKUP t.locals) ns = SOME vs`
+is the local lookup list, `distinct_lists ns (FLAT (MAP var_cexp es))` is
+`distinctListsHol`, `ALL_DISTINCT ns` is `names.Nodup`, and
+`LENGTH ns = LENGTH es`. The conclusion evaluates `nested_seq (MAP2 Assign ns es)`
+to `(NONE, t with locals := t.locals |++ ZIP (ns, ev))`, matching
+`crepNestedSeqHOL`, `CrepProgHOL.assign`, and the exact `|++` rendering
+`HolFiniteMapExact.updateListEq`. Tag restored 2026-09-28 (bead
+`flapjack-pxn.18.4.3.114`) after the previously cited gaps were closed:
+crepStampExactDomains domain inertness (`flapjack-4ac.5.16.5.32`), the exact
+`UInt8`/word8 byte bridges (`flapjack-4ac.5.16.5.18`), the reviewed 19-arm
+crepSem `evaluate_def` tag, and the imported-owner plus evaluator-local witness
+rule (`flapjack-4ac.5.16.5.21`). -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "eval_nested_assign_distinct_eq"
+  (fmap_as_finite_support := [locals])
+  (words_as_type_indexed_bitvec)]
 theorem evalNestedAssignDistinctEqCrepHOL {width : Nat} [NeZero width]
-    {σ : Type} (state : CrepSemHOLState width σ)
-    (expressions : List (CrepExpHOL width)) (names : List Nat)
+    {σ : Type} (expressions : List (CrepExpHOL width)) (names : List Nat)
+    (state : CrepSemHOLState width σ)
     (values oldValues : List (HolWordLab width))
     (hEval : expressions.map (evalCrepSemHOLExpDefault state) = values.map some)
     (hLocals : names.mapM state.locals.lookup = some oldValues)

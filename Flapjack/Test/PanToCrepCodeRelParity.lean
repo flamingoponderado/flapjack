@@ -10,7 +10,7 @@ parameter slots and compiled body. -/
 namespace Flapjack.Test.PanToCrepCodeRelParity
 
 open Flapjack
-open Flapjack.Pancake.PanLang (MlS ShapeHOL ProgHOL ExpHOL)
+open Flapjack.Pancake.PanLang (MlS ShapeHOL ProgHOL ExpHOL DeclHOL functionsHOL)
 open Flapjack.Basis.Pure.MlString
 
 private def ml (name : String) : MlS := Flapjack.Basis.Pure.MlString.ofString name
@@ -35,6 +35,30 @@ private def exactSourceCode : HolFiniteMapExact MlS
 private def exactTargetCode : HolFiniteMapExact MlS (List Nat × CrepProgHOL 64) :=
   HolFiniteMapExact.update HolFiniteMapExact.empty
     (ml "f", ([0], .return [.var 0]))
+
+private def generatedInitialDecls : List (DeclHOL 64) :=
+  [.function {
+    name := ml "f"
+    inline := false
+    exported := false
+    params := []
+    body := .skip
+    returnShape := .one
+  }]
+
+private def generatedInitialContext : PanToCrepContextExact 64 :=
+  mkCtxtExactHOL HolFiniteMapExact.empty
+    (makeFuncsExactHOL (functionsHOL generatedInitialDecls)) 0
+    (getEidsFromDeclsHOL generatedInitialDecls)
+
+private def generatedInitialSource : HolFiniteMapExact MlS
+    (List (MlS × ShapeHOL) × ProgHOL 64 × ShapeHOL) :=
+  HolFiniteMapExact.empty.updateList (functionsHOL generatedInitialDecls).reverse
+
+private def generatedInitialTarget : HolFiniteMapExact MlS
+    (List Nat × CrepProgHOL 64) :=
+  HolFiniteMapExact.empty.updateList
+    (compileToCrepExactHOLW generatedInitialDecls).reverse
 
 def parameterShapes : List (VarName × Shape) := [("x", .one)]
 def sourceBody : Prog Nat := .return (.var .local "x")
@@ -198,6 +222,28 @@ example : codeRelExactHOLW exactCodeContext exactSourceCode exactTargetCode := b
       Flapjack.Pancake.PanLang.sizeOfShapeHOL,
       Flapjack.Pancake.PanLang.sizeOfShapesHOL,
       Flapjack.Pancake.PanLang.withShapeHOL, List.range, List.range.loop]
+
+/-- Direct original HOL EVAL/proof row `code_rel_generated_initial_proved` in
+    `scripts/hol-probes/code_rel_probe.out`: for a singleton source function,
+    the initial context built by `make_funcs`/`get_eids_from_decls`, the source
+    `alist_to_fmap (functions ...)`, and target
+    `alist_to_fmap (compile_to_crep ...)` satisfy the exact `code_rel` theorem. -/
+example : codeRelExactHOLW generatedInitialContext generatedInitialSource
+    generatedInitialTarget :=
+  mkCtxtCodeImpCodeRelExactHOLW generatedInitialDecls (by decide) (by
+    intro entry hmem
+    have hentry : entry = (ml "f", [], ProgHOL.skip, ShapeHOL.one) := by
+      simpa [generatedInitialDecls, functionsHOL] using hmem
+    subst entry
+    rfl)
+
+def generatedInitialCodeRelGuard : Bool :=
+  match generatedInitialSource.lookup (ml "f"),
+      generatedInitialTarget.lookup (ml "f") with
+  | some ([], .skip, .one), some ([], .skip) => true
+  | _, _ => false
+
+#guard generatedInitialCodeRelGuard
 
 /-- HOL `code_rel_imp` kernel regression on the exact fixture: the extracted
     per-entry clause of `codeRelExactHOLW_imp` applied to the `f` entry of

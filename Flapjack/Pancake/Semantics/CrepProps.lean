@@ -6,6 +6,7 @@ import Flapjack.Pancake.CrepLang.Prog
 import Flapjack.Pancake.Semantics.CrepSem
 import Flapjack.Pancake.Semantics.CrepSem.HOLState
 import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
+import Flapjack.Pancake.Semantics.CrepSem.EvaluateInd
 import Flapjack.Pancake.Semantics.CrepSem.EventsMono
 import Flapjack.Pancake.Semantics.CrepSem.AddClock
 import Flapjack.Pancake.PanCommon
@@ -1531,5 +1532,698 @@ theorem flookupResVarDistinctZipEqHOL {α β : Type} [DecidableEq α] :
       have hxk : x ≠ k := hx.1
       cases y <;> simp [HolFiniteMapExact.resVarEq, HolFiniteMapExact.lookup_eraseEq,
         HolFiniteMapExact.lookup_updateEq, FDOMSUB_HOL, FUPDATE_HOL, hxk]
+
+private abbrev crepUnassignedFreeVarsMotive {width : Nat} [NeZero width] {σ : Type}
+    (x : CrepProgHOL width × CrepSemHOLState width σ) : Prop :=
+  ∀ (res : Option (CrepResultHOLExact width)) (t : CrepSemHOLState width σ) (n k : Nat),
+    evalCrepSemHOLProgExact x.2 x.1 = (res, t) →
+    (res = none ∨ res = some (.continue k) ∨ res = some (.break k)) →
+    n ∉ crepAssignedFreeVarsHOL x.1 →
+    t.locals.lookup n = x.2.locals.lookup n
+
+private theorem fupdListHOLZipNotMemU {α β : Type} [DecidableEq α] (k : α) :
+    ∀ (xs : List α) (ys : List β) (f : FiniteMap α β), k ∉ xs →
+      FUPDATE_LIST_HOL f (xs.zip ys) k = f k
+  | [], _, f, _ => by simp [FUPDATE_LIST_HOL]
+  | _ :: _, [], f, _ => by simp [FUPDATE_LIST_HOL]
+  | x :: xs, y :: ys, f, hk => by
+      simp only [List.mem_cons, not_or] at hk
+      rw [List.zip_cons_cons, FUPDATE_LIST_HOL_cons, fupdListHOLZipNotMemU k xs ys _ hk.2]
+      simp [FUPDATE_HOL, hk.1]
+
+private theorem lookup_updateListEq_not_mem {α β : Type} [DecidableEq α]
+    (m : HolFiniteMapExact α β) (xs : List α) (ys : List β) (k : α) (hk : k ∉ xs) :
+    (m.updateListEq (xs.zip ys)).lookup k = m.lookup k := by
+  simp only [HolFiniteMapExact.lookup_updateListEq]
+  exact fupdListHOLZipNotMemU k xs ys m.lookup hk
+
+private theorem lookup_updateEq_ne {α β : Type} [DecidableEq α]
+    (m : HolFiniteMapExact α β) (x : α) (v : β) (k : α) (hk : k ≠ x) :
+    (m.updateEq (x, v)).lookup k = m.lookup k := by
+  simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, hk]
+
+private theorem shMemLoad_locals {width : Nat} [NeZero width] {σ : Type}
+    (name : Nat) (addr : BitVec width) (nb : Nat) (s : CrepSemHOLState width σ)
+    [DecidablePred s.shMemaddrs] (res : Option (CrepResultHOLExact width))
+    (t : CrepSemHOLState width σ) (n k : Nat)
+    (h : crepShMemLoadExactHOL name addr nb s = (res, t))
+    (hres : res = none ∨ res = some (.continue k) ∨ res = some (.break k)) (hn : n ≠ name) :
+    t.locals.lookup n = s.locals.lookup n := by
+  unfold crepShMemLoadExactHOL at h
+  split at h <;> split at h <;> (try split at h) <;>
+    (obtain ⟨rfl, rfl⟩ := Prod.mk.inj h) <;>
+    first
+      | exact lookup_updateEq_ne _ _ _ n hn
+      | (simp at hres; done)
+
+private theorem shMemStore_locals {width : Nat} [NeZero width] {σ : Type}
+    (name : Nat) (addr : BitVec width) (nb : Nat) (s : CrepSemHOLState width σ)
+    [DecidablePred s.shMemaddrs] (res : Option (CrepResultHOLExact width))
+    (t : CrepSemHOLState width σ) (n k : Nat)
+    (h : crepShMemStoreExactHOL name addr nb s = (res, t))
+    (hres : res = none ∨ res = some (.continue k) ∨ res = some (.break k)) :
+    t.locals.lookup n = s.locals.lookup n := by
+  unfold crepShMemStoreExactHOL at h
+  split at h
+  · split at h <;> split at h <;> (try split at h) <;>
+      (obtain ⟨rfl, rfl⟩ := Prod.mk.inj h) <;>
+      first
+        | rfl
+        | (simp at hres; done)
+  · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
+
+private theorem lookupCodeFinite_eq_HOLFinite {width : Nat} [NeZero width]
+    (c : HolFiniteMapExact Flapjack.Basis.Pure.MlString.MlString (List Nat × CrepProgHOL width))
+    (f : Flapjack.Basis.Pure.MlString.MlString) (args : List (HolWordLab width)) (len : Nat) :
+    lookupCodeFiniteHOL c f args len = lookupCodeHOLFinite c.lookup f args len := by
+  have h1 := lookupCodeFiniteHOL_lookup c f args len
+  unfold lookupCodeHOLFinite
+  split
+  · rename_i hn
+    rw [hn] at h1
+    cases hF : lookupCodeFiniteHOL c f args len with
+    | none => rfl
+    | some val => rw [hF] at h1; simp at h1
+  · rename_i body cl hs
+    rw [hs] at h1
+    cases hF : lookupCodeFiniteHOL c f args len with
+    | none => rw [hF] at h1; simp at h1
+    | some val =>
+        obtain ⟨b, m⟩ := val
+        rw [hF] at h1
+        simp only [Option.map_some, Option.some.injEq, Prod.mk.injEq] at h1
+        obtain ⟨rfl, hm⟩ := h1
+        congr 2
+        exact holFiniteMapExact_eq_of_lookup_eq hm
+
+private theorem crepUnassignedFreeVarsEvaluateSameInduct {width : Nat} [NeZero width] {σ : Type} :
+    ∀ x : CrepProgHOL width × CrepSemHOLState width σ, crepUnassignedFreeVarsMotive x := by
+  intro x
+  obtain ⟨p, s⟩ := x
+  apply evalCrepSemHOLProgExact_induct (P := crepUnassignedFreeVarsMotive)
+  · -- skip
+    intro s res t n k h _ _
+    rw [evalCrepSemHOLProgExact_skip] at h
+    obtain ⟨-, rfl⟩ := Prod.mk.inj h; rfl
+  · -- dec
+    intro v e prog s ih res t n k h hres hn
+    classical
+    rw [evalCrepSemHOLProgExact_dec_holShape] at h
+    cases he : @evalCrepSemHOLExp width _ σ s
+        (fun address => Classical.propDecidable (s.memaddrs address)) e with
+    | none =>
+        rw [he] at h
+        obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
+    | some val =>
+        rw [he] at h
+        dsimp only at h
+        rcases hb : evalCrepSemHOLProgExact
+            { s with locals := s.locals.updateEq (v, val) } prog with ⟨q, r⟩
+        rw [hb] at h
+        obtain ⟨rfl, rfl⟩ := Prod.mk.inj h
+        simp only [crepAssignedFreeVarsHOL, List.mem_filter, bne_iff_ne, ne_eq, not_and,
+          Decidable.not_not] at hn
+        show (r.locals.resVarEq (v, s.locals.lookup v)).lookup n = s.locals.lookup n
+        rw [HolFiniteMapExact.holFmapAsFiniteSupportResultWitness_resVarEq]
+        by_cases hnv : n = v
+        · subst hnv; cases s.locals.lookup n <;>
+            simp [FDOMSUB_HOL, FUPDATE_HOL]
+        · have hih := ih val he q r n k hb hres (fun hm => hnv (hn hm))
+          have hih' : r.locals.lookup n = s.locals.lookup n :=
+            hih.trans (lookup_updateEq_ne s.locals v val n hnv)
+          clear hih
+          have hih := hih'
+          cases s.locals.lookup v <;> simp [FDOMSUB_HOL, FUPDATE_HOL, hnv, hih]
+  · -- primitive
+    intro names op args s res t n k h hres hn
+    classical
+    rw [evalCrepSemHOLProgExact_primitive_holShape] at h
+    simp only [crepAssignedFreeVarsHOL] at hn
+    split at h
+    · split at h
+      · split at h
+        · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h
+          exact lookup_updateListEq_not_mem _ _ _ n hn
+        · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
+      · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
+    · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
+  · -- assign
+    intro v src s res t n k h hres hn
+    classical
+    rw [evalCrepSemHOLProgExact_assign_holShape] at h
+    simp only [crepAssignedFreeVarsHOL, List.mem_singleton] at hn
+    split at h
+    · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
+    · split at h
+      · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h
+        exact lookup_updateEq_ne _ _ _ n hn
+      · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
+  · -- store
+    intro dst src s res t n k h hres _
+    classical
+    rw [evalCrepSemHOLProgExact_store_holShape] at h
+    split at h
+    · split at h
+      · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; rfl
+      · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
+    · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
+  · -- store32
+    intro dst src s res t n k h hres _
+    classical
+    rw [evalCrepSemHOLProgExact_store32_holShape] at h
+    split at h
+    · split at h
+      · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; rfl
+      · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
+    · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
+  · -- storeByte
+    intro dst src s res t n k h hres _
+    classical
+    rw [evalCrepSemHOLProgExact_storeByte_holShape] at h
+    split at h
+    · split at h
+      · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; rfl
+      · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
+    · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
+  · -- storeGlob
+    intro dst src s res t n k h hres _
+    classical
+    rw [evalCrepSemHOLProgExact_storeGlob_holShape] at h
+    split at h
+    · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; rfl
+    · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
+  · -- shMem
+    intro op v ad s res t n k h hres hn
+    classical
+    rw [evalCrepSemHOLProgExact_shMem_holShape] at h
+    simp only [crepAssignedFreeVarsHOL, List.mem_singleton] at hn
+    have key : ∀ (res : Option (CrepResultHOLExact width)) (t : CrepSemHOLState width σ) a,
+        crepShMemOpExactHOL op v a s = (res, t) →
+        (res = none ∨ res = some (.continue k) ∨ res = some (.break k)) →
+        t.locals.lookup n = s.locals.lookup n := by
+      intro res t a h' hres'
+      cases op <;> simp only [crepShMemOpExactHOL] at h' <;>
+        first
+          | exact shMemLoad_locals v a _ s res t n k h' hres' hn
+          | exact shMemStore_locals v a _ s res t n k h' hres'
+    split at h
+    · split at h
+      · split at h
+        · exact key res t _ h hres
+        · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
+      · split at h
+        · exact key res t _ h hres
+        · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
+    · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
+  · -- seq
+    intro c1 c2 s ih2 ih1 res t n k h hres hn
+    classical
+    rw [evalCrepSemHOLProgExact_seq_holShape] at h
+    simp only [crepAssignedFreeVarsHOL, List.mem_append, not_or] at hn
+    rcases h1 : evalCrepSemHOLProgExact s c1 with ⟨r1, s1⟩
+    rw [h1] at h
+    dsimp only at h
+    by_cases hr1 : r1 = none
+    · rw [if_pos hr1] at h
+      rw [ih2 r1 s1 h1.symm hr1 res t n k h hres hn.2]
+      exact ih1 r1 s1 n k h1 (Or.inl hr1) hn.1
+    · rw [if_neg hr1] at h
+      obtain ⟨rfl, rfl⟩ := Prod.mk.inj h
+      exact ih1 _ _ n k h1 hres hn.1
+  · -- ite
+    intro e c1 c2 s ih res t n k h hres hn
+    classical
+    rw [evalCrepSemHOLProgExact_ite_holShape] at h
+    simp only [crepAssignedFreeVarsHOL, List.mem_append, not_or] at hn
+    split at h
+    · rename_i w hw
+      have := ih _ w hw rfl res t n k h hres (by split <;> simp_all)
+      exact this
+    · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
+  · -- break
+    intro l s res t n k h _ _
+    rw [evalCrepSemHOLProgExact_break] at h
+    obtain ⟨-, rfl⟩ := Prod.mk.inj h; rfl
+  · -- continue
+    intro l s res t n k h _ _
+    rw [evalCrepSemHOLProgExact_continue] at h
+    obtain ⟨-, rfl⟩ := Prod.mk.inj h; rfl
+  · -- while
+    intro e c s ihCont ihNone ihBody res t n k h hres hn
+    classical
+    rw [evalCrepSemHOLProgExact_while_holShape] at h
+    simp only [crepAssignedFreeVarsHOL] at hn
+    split at h
+    · rename_i w hw
+      by_cases hw0 : w ≠ 0
+      · rw [if_pos hw0] at h
+        by_cases hc : s.clock = 0
+        · rw [if_pos hc] at h
+          obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
+        · rw [if_neg hc] at h
+          rcases hb : evalCrepSemHOLProgExact (decClockCrepSemHOL s) c with ⟨r, s1⟩
+          rw [hb] at h
+          dsimp only at h
+          have hdec : (decClockCrepSemHOL s).locals.lookup n = s.locals.lookup n := rfl
+          have body_ok : ∀ j, (r = none ∨ r = some (.continue j) ∨ r = some (.break j)) →
+              s1.locals.lookup n = s.locals.lookup n := fun j hj =>
+            (ihBody _ w hw rfl hw0 hc r s1 n j hb hj hn).trans hdec
+          have hn' : n ∉ crepAssignedFreeVarsHOL (CrepProgHOL.while e c) := by
+            simpa [crepAssignedFreeVarsHOL] using hn
+          rcases r with _ | r
+          · rw [ihNone _ w none s1 hw rfl hw0 hc hb.symm rfl res t n k h hres hn']
+            exact body_ok 0 (Or.inl rfl)
+          · cases r with
+            | «continue» j =>
+                cases j with
+                | zero =>
+                    rw [ihCont _ w _ s1 _ 0 hw rfl hw0 hc hb.symm rfl rfl rfl res t n k h hres hn']
+                    exact body_ok 0 (Or.inr (Or.inl rfl))
+                | succ j =>
+                    obtain ⟨rfl, rfl⟩ := Prod.mk.inj h
+                    exact body_ok (j + 1) (Or.inr (Or.inl rfl))
+            | «break» j =>
+                cases j with
+                | zero =>
+                    obtain ⟨rfl, rfl⟩ := Prod.mk.inj h
+                    exact body_ok 0 (Or.inr (Or.inr rfl))
+                | succ j =>
+                    obtain ⟨rfl, rfl⟩ := Prod.mk.inj h
+                    exact body_ok (j + 1) (Or.inr (Or.inr rfl))
+            | _ =>
+                obtain ⟨rfl, rfl⟩ := Prod.mk.inj h
+                simp [exitLoopCrepResult] at hres
+      · rw [if_neg hw0] at h
+        obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; rfl
+    · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
+  · -- return
+    intro es s res t n k h hres _
+    classical
+    rw [evalCrepSemHOLProgExact_return_holShape] at h
+    split at h <;> (obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres)
+  · -- raise
+    intro eid s res t n k h hres _
+    rw [evalCrepSemHOLProgExact_raise] at h
+    obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
+  · -- tick
+    intro s res t n k h hres _
+    rw [evalCrepSemHOLProgExact_tick] at h
+    split at h
+    · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
+    · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; rfl
+  · -- call
+    intro caltyp f argexps s ihH ihB res t n k h hres hn
+    classical
+    rw [evalCrepSemHOLProgExact_call_holShape] at h
+    cases ha : argexps.mapM (@evalCrepSemHOLExp width _ σ s
+        (fun address => Classical.propDecidable (s.memaddrs address))) with
+    | none => rw [ha] at h; obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
+    | some args =>
+      rw [ha] at h
+      dsimp only at h
+      cases hl : lookupCodeFiniteHOL s.code f args args.length with
+      | none => rw [hl] at h; obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
+      | some pl =>
+        obtain ⟨prog, nl⟩ := pl
+        rw [hl] at h
+        dsimp only at h
+        have hl' : lookupCodeHOLFinite s.code.lookup f args args.length = some (prog, nl) := by
+          rw [← lookupCodeFinite_eq_HOLFinite]; exact hl
+        rcases caltyp with _ | ⟨rts, hh⟩
+        · -- caltyp = NONE: no outcome is NONE/Continue/Break
+          dsimp only at h
+          split at h
+          · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
+          split at h
+          · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
+          rcases hb : evalCrepSemHOLProgExact { decClockCrepSemHOL s with locals := nl } prog with
+            ⟨r, st⟩
+          rw [hb] at h
+          rcases r with _ | r
+          · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
+          · cases r <;> (obtain ⟨rfl, rfl⟩ := Prod.mk.inj h) <;> simp at hres
+        · dsimp only at h
+          split at h
+          · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
+          rename_i hg
+          split at h
+          · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
+          rename_i hc
+          rcases hb : evalCrepSemHOLProgExact { decClockCrepSemHOL s with locals := nl } prog with
+            ⟨r, st⟩
+          rw [hb] at h
+          have hnr : n ∉ rts := by
+            rcases hh with _ | ⟨_, _⟩ <;>
+              simp only [crepAssignedFreeVarsHOL, List.mem_append, not_or] at hn <;>
+              first | exact hn | exact hn.1
+          rcases r with _ | r
+          · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
+          · cases r with
+            | «break» _ => obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
+            | «continue» _ => obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
+            | error => obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
+            | timeOut => obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
+            | finalFfi _ => obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
+            | «return» retvs =>
+                dsimp only at h
+                split at h
+                · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
+                · split at h
+                  · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h
+                    exact lookup_updateListEq_not_mem _ _ _ n hnr
+                  · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
+            | exception eid =>
+                rcases hh with _ | ⟨eid', hp⟩
+                · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
+                · dsimp only at h
+                  simp only [crepAssignedFreeVarsHOL, List.mem_append, not_or] at hn
+                  split at h
+                  · rename_i he
+                    have hih := ihH args (prog, nl) prog nl (some (.exception eid), st)
+                      (some (.exception eid)) st (.exception eid) eid _ rts (some (eid', hp))
+                      (eid', hp) eid' hp ha hl' rfl hg hc hb.symm rfl rfl rfl rfl rfl rfl rfl he
+                    exact hih res t n k h hres hn.2
+                  · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
+  · -- extCall
+    intro f p1 l1 p2 l2 s res t n k h hres _
+    classical
+    rw [evalCrepSemHOLProgExact_extCall_holShape] at h
+    split at h
+    · split at h
+      · split at h
+        · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
+        · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; rfl
+      · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
+    · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
+
+/-- Exact port of HOL `crepProps$unassigned_free_vars_evaluate_same`
+    (`cakeml/pancake/semantics/crepPropsScript.sml:330-374`):
+    `!p s res t n k. evaluate (p,s) = (res,t) /\
+      (res = NONE \/ res = SOME (Continue k) \/ res = SOME (Break k)) /\
+      ~MEM n (assigned_free_vars p) ==> FLOOKUP t.locals n = FLOOKUP s.locals n`.
+    `evaluate` is the tagged line-443 Crep evaluator `evalCrepSemHOLProgExact`,
+    `assigned_free_vars` is the tagged `crepAssignedFreeVarsHOL`, and `FLOOKUP` is
+    `.lookup`. As in HOL, the proof is `recInduct evaluate_ind`, using the tagged
+    Crep `evaluate_ind` (`evalCrepSemHOLProgExact_induct`) and the tagged clause
+    equations. The `CrepSemHOLState` maps use the canonical finite-support
+    translation, and `'a word` is `BitVec width`. -/
+@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "unassigned_free_vars_evaluate_same"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
+theorem crepUnassignedFreeVarsEvaluateSameHOL {width : Nat} [NeZero width] {σ : Type} :
+    ∀ (p : CrepProgHOL width) (s : CrepSemHOLState width σ)
+      (res : Option (CrepResultHOLExact width)) (t : CrepSemHOLState width σ) (n k : Nat),
+      evalCrepSemHOLProgExact s p = (res, t) ∧
+        (res = none ∨ res = some (.continue k) ∨ res = some (.break k)) ∧
+        n ∉ crepAssignedFreeVarsHOL p →
+      t.locals.lookup n = s.locals.lookup n := by
+  intro p s res t n k ⟨h, hres, hn⟩
+  exact crepUnassignedFreeVarsEvaluateSameInduct (p, s) res t n k h hres hn
+
+private theorem updateListEq_cons' {α β : Type} [DecidableEq α]
+    (m : HolFiniteMapExact α β) (e : α × β) (l : List (α × β)) :
+    m.updateListEq (e :: l) = (m.updateEq e).updateListEq l := by
+  apply HolFiniteMapExact.ext
+  funext k
+  rfl
+
+private theorem updateListEq_nil' {α β : Type} [DecidableEq α] (m : HolFiniteMapExact α β) :
+    m.updateListEq [] = m := by
+  apply HolFiniteMapExact.ext
+  funext k
+  rfl
+
+private theorem genlistAddrs_succ (a : BitVec 5) (n : Nat) :
+    (List.range (n + 1)).map (fun x => a + BitVec.ofNat 5 x) =
+      a :: (List.range n).map (fun x => (a + 1) + BitVec.ofNat 5 x) := by
+  rw [List.range_succ_eq_map, List.map_cons, List.map_map]
+  congr 1
+  · simp
+  · apply List.map_congr_left
+    intro x _
+    simp only [Function.comp]
+    rw [BitVec.add_assoc]
+    congr 1
+    apply BitVec.eq_of_toNat_eq
+    simp [BitVec.toNat_add, BitVec.toNat_ofNat]
+    omega
+
+/-- Exact port of HOL `crepProps$evaluate_seq_store_globals_res`
+    (`crepPropsScript.sml:566-572`): `!vars vs t a. ALL_DISTINCT vars /\
+    LENGTH vars = LENGTH vs /\ w2n a + LENGTH vs <= 32 ==>
+    evaluate (nested_seq (store_globals a (MAP Var vars)),
+      t with locals := t.locals |++ ZIP (vars,vs)) =
+    (NONE, t with <|locals := t.locals |++ ZIP (vars,vs);
+      globals := t.globals |++ ZIP (GENLIST (λx. a + n2w x) (LENGTH vs), vs)|>)`.
+    `evaluate` is the tagged `evalCrepSemHOLProgExact`, `nested_seq`/`store_globals`
+    are the tagged `crepNestedSeqHOL`/`storeGlobalsHOL`, `|++` is `updateListEq`,
+    `ALL_DISTINCT` is `Nodup`, `w2n` is `toNat`, and `GENLIST f n` is
+    `(List.range n).map f` with `n2w` the `BitVec.ofNat 5` cast. -/
+@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "evaluate_seq_store_globals_res"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateSeqStoreGlobalsResHOL {width : Nat} [NeZero width] {σ : Type} :
+    ∀ (vars : List Nat) (vs : List (HolWordLab width)) (t : CrepSemHOLState width σ)
+      (a : BitVec 5),
+      vars.Nodup ∧ vars.length = vs.length ∧ a.toNat + vs.length ≤ 32 →
+      evalCrepSemHOLProgExact { t with locals := t.locals.updateListEq (vars.zip vs) }
+          (crepNestedSeqHOL (storeGlobalsHOL a (vars.map CrepExpHOL.var))) =
+        (none, { t with
+          locals := t.locals.updateListEq (vars.zip vs)
+          globals := t.globals.updateListEq
+            (((List.range vs.length).map (fun x => a + BitVec.ofNat 5 x)).zip vs) }) := by
+  intro vars
+  induction vars with
+  | nil =>
+      intro vs t a ⟨_, hlen, _⟩
+      cases vs with
+      | cons _ _ => simp at hlen
+      | nil =>
+          simp only [List.map_nil, storeGlobalsHOL, crepNestedSeqHOL, List.zip_nil_right,
+            List.length_nil, List.range_zero, updateListEq_nil']
+          exact evalCrepSemHOLProgExact_skip _
+  | cons h vars ih =>
+      intro vs t a ⟨hnd, hlen, hbound⟩
+      cases vs with
+      | nil => simp at hlen
+      | cons v vs =>
+          simp only [List.nodup_cons] at hnd
+          simp only [List.length_cons, Nat.add_right_cancel_iff] at hlen
+          simp only [List.length_cons] at hbound
+          simp only [List.map_cons, storeGlobalsHOL, crepNestedSeqHOL]
+          rw [evalCrepSemHOLProgExact_seq_holShape, evalCrepSemHOLProgExact_storeGlob]
+          have hlk : ({ t with locals := t.locals.updateListEq ((h :: vars).zip (v :: vs)) } :
+              CrepSemHOLState width σ).locals.lookup h = some v := by
+            simp only [List.zip_cons_cons, HolFiniteMapExact.lookup_updateListEq,
+              FUPDATE_LIST_HOL_cons]
+            rw [fupdListHOLZipNotMemU h vars vs _ hnd.1]
+            simp [FUPDATE_HOL]
+          rw [show crepExactEvalExp
+              ({ t with locals := t.locals.updateListEq ((h :: vars).zip (v :: vs)) } :
+                CrepSemHOLState width σ) (fun a => Classical.propDecidable _)
+              (CrepExpHOL.var h) = some v from by
+                unfold crepExactEvalExp; simp only [evalCrepSemHOLExp]; exact hlk]
+          dsimp only
+          rw [if_pos rfl]
+          let t'' : CrepSemHOLState width σ :=
+            { t with locals := t.locals.updateEq (h, v), globals := t.globals.updateEq (a, v) }
+          have hst : CrepSemHOLState.setGlobals a v
+              ({ t with locals := t.locals.updateListEq ((h :: vars).zip (v :: vs)) } :
+                CrepSemHOLState width σ) =
+              { t'' with locals := t''.locals.updateListEq (vars.zip vs) } := by
+            simp only [CrepSemHOLState.setGlobals, List.zip_cons_cons, updateListEq_cons', t'']
+          have hb : (a + 1).toNat + vs.length ≤ 32 := by
+            have h1 : (1 : BitVec 5).toNat = 1 := rfl
+            rw [BitVec.toNat_add, h1]
+            omega
+          rw [hst, ih vs t'' (a + 1) ⟨hnd.2, hlen, hb⟩, List.length_cons, genlistAddrs_succ,
+            List.zip_cons_cons,
+            updateListEq_cons', List.zip_cons_cons, updateListEq_cons']
+
+private theorem evalCrepStore_locals {width : Nat} [NeZero width] {σ : Type}
+    (s : CrepSemHOLState width σ) (d e : CrepExpHOL width) :
+    (evalCrepSemHOLProgExact s (.store d e : CrepProgHOL width)).2.locals = s.locals := by
+  rw [evalCrepSemHOLProgExact_store]
+  split
+  · split <;> rfl
+  · rfl
+
+/-- Exact port of HOL `crepProps$evaluate_seq_stroes_locals_eq`
+    (`crepPropsScript.sml:483-495`): `!es ad a s res t.
+    evaluate (nested_seq (stores ad es a),s) = (res,t) ==> t.locals = s.locals`.
+    `evaluate` is the tagged `evalCrepSemHOLProgExact` and `nested_seq`/`stores`
+    are the tagged `crepNestedSeqHOL`/`storesHOL`. -/
+@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "evaluate_seq_stroes_locals_eq"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateSeqStoresLocalsEqHOL {width : Nat} [NeZero width] {σ : Type} :
+    ∀ (es : List (CrepExpHOL width)) (ad : CrepExpHOL width) (a : BitVec width)
+      (s : CrepSemHOLState width σ) (res : Option (CrepResultHOLExact width))
+      (t : CrepSemHOLState width σ),
+      evalCrepSemHOLProgExact s (crepNestedSeqHOL (storesHOL ad es a)) = (res, t) →
+      t.locals = s.locals := by
+  intro es
+  induction es with
+  | nil =>
+      intro ad a s res t h
+      simp only [storesHOL, crepNestedSeqHOL, evalCrepSemHOLProgExact_skip] at h
+      obtain ⟨_, rfl⟩ := Prod.mk.inj h
+      rfl
+  | cons e es ih =>
+      intro ad a s res t h
+      simp only [storesHOL, crepNestedSeqHOL] at h
+      rw [evalCrepSemHOLProgExact_seq_holShape] at h
+      have hl := evalCrepStore_locals s
+        (if a == 0 then ad else .op .add [ad, .const a]) e
+      rcases h1 : evalCrepSemHOLProgExact s
+          (.store (if a == 0 then ad else .op .add [ad, .const a]) e) with ⟨r1, s1⟩
+      rw [h1] at h hl
+      dsimp only at h hl
+      split at h
+      · rw [ih ad _ s1 res t h, hl]
+      · obtain ⟨_, rfl⟩ := Prod.mk.inj h
+        exact hl
+
+private theorem crepExactEvalExp_var {width : Nat} [NeZero width] {σ : Type}
+    (s : CrepSemHOLState width σ) (n : Nat) :
+    crepExactEvalExp s (fun a => Classical.propDecidable (s.memaddrs a)) (.var n) =
+      s.locals.lookup n := by
+  unfold crepExactEvalExp; simp only [evalCrepSemHOLExp]
+
+private theorem crepExactEvalExp_storeAddr {width : Nat} [NeZero width] {σ : Type}
+    (s : CrepSemHOLState width σ) (ad : Nat) (addr a : BitVec width)
+    (had : s.locals.lookup ad = some (.word addr)) :
+    crepExactEvalExp s (fun x => Classical.propDecidable (s.memaddrs x))
+        (if a == 0 then CrepExpHOL.var ad else .op .add [.var ad, .const a]) =
+      some (.word (addr + a)) := by
+  unfold crepExactEvalExp
+  by_cases ha : a = 0
+  · subst ha
+    simp [evalCrepSemHOLExp, had]
+  · have : (a == 0) = false := by simpa using ha
+    rw [this]
+    simp [evalCrepSemHOLExp, had, List.mapM_cons, wordOpHOL, wordOp]
+
+/-- The `evaluate_seq_stores_mem_state_rel` induction, over any state whose
+    locals bind `ad` to `Word addr` and `es` to `vs`. -/
+private theorem evalSeqStoresMem {width : Nat} [NeZero width] {σ : Type} (ad : Nat) :
+    ∀ (es : List Nat) (vs : List (HolWordLab width)) (a : BitVec width)
+      (s : CrepSemHOLState width σ) (addr : BitVec width) (m : BitVec width → HolWordLab width)
+      (res : Option (CrepResultHOLExact width)) (t : CrepSemHOLState width σ),
+      es.mapM s.locals.lookup = some vs →
+      s.locals.lookup ad = some (.word addr) →
+      @panMemStoresHOL width _ (addr + a) vs s.memaddrs
+          (fun x => Classical.propDecidable (s.memaddrs x)) s.memory = some m →
+      evalCrepSemHOLProgExact s
+          (crepNestedSeqHOL (storesHOL (.var ad) (es.map CrepExpHOL.var) a)) = (res, t) →
+      res = none ∧ t = { s with memory := m }
+  | [], vs, a, s, addr, m, res, t, hes, _, hm, h => by
+      have hvs : vs = [] := by simp at hes; exact hes
+      subst hvs
+      simp only [panMemStoresHOL, Option.some.injEq] at hm
+      subst hm
+      simp only [List.map_nil, storesHOL, crepNestedSeqHOL, evalCrepSemHOLProgExact_skip] at h
+      obtain ⟨rfl, rfl⟩ := Prod.mk.inj h
+      exact ⟨rfl, rfl⟩
+  | e :: es, vs, a, s, addr, m, res, t, hes, had, hm, h => by
+      simp only [List.mapM_cons] at hes
+      cases hv : s.locals.lookup e with
+      | none => simp [hv] at hes
+      | some v =>
+      cases hvs : es.mapM s.locals.lookup with
+      | none => simp [hv, hvs] at hes
+      | some vs' =>
+      simp [hv, hvs] at hes
+      subst hes
+      simp only [panMemStoresHOL] at hm
+      cases hm1 : @panMemStoreHOL width _ (addr + a) v s.memaddrs
+          (fun x => Classical.propDecidable (s.memaddrs x)) s.memory with
+      | none => simp [hm1] at hm
+      | some m1 =>
+      rw [hm1] at hm
+      dsimp only at hm
+      have hdom : s.memaddrs (addr + a) := by
+        by_cases hn : s.memaddrs (addr + a)
+        · exact hn
+        · simp [panMemStoreHOL, hn] at hm1
+      have hm1' : m1 = fun current => if current = addr + a then v else s.memory current := by
+        simp [panMemStoreHOL, hdom] at hm1
+        exact hm1.symm
+      simp only [List.map_cons, storesHOL, crepNestedSeqHOL] at h
+      rw [evalCrepSemHOLProgExact_seq_holShape, evalCrepSemHOLProgExact_store,
+        crepExactEvalExp_storeAddr s ad addr a had, crepExactEvalExp_var, hv] at h
+      dsimp only at h
+      split at h
+      · rename_i hdec
+        rw [if_pos rfl] at h
+        have hstep := evalSeqStoresMem ad es vs' (a + BitVec.ofNat width (width / 8))
+          { s with memory := m1 } addr m res t hvs had
+          (by rw [← BitVec.add_assoc]; exact hm) (by rw [hm1']; exact h)
+        refine ⟨hstep.1, ?_⟩
+        rw [hstep.2]
+      · rename_i hn _
+        exact absurd hdom hn
+
+private theorem mapM_cons_some_inv {α β : Type} (f : α → Option β) (x : α) (xs : List α)
+    (y : β) (ys : List β) (h : (x :: xs).mapM f = some (y :: ys)) :
+    f x = some y ∧ xs.mapM f = some ys := by
+  simp only [List.mapM_cons] at h
+  cases hx : f x with
+  | none => simp [hx] at h
+  | some b =>
+      cases hxs : xs.mapM f with
+      | none => simp [hx, hxs] at h
+      | some zs =>
+          simp [hx, hxs] at h
+          obtain ⟨rfl, rfl⟩ := h
+          exact ⟨rfl, rfl⟩
+
+private theorem mapM_lookup_updateListEq_crep {β : Type}
+    (m : HolFiniteMapExact Nat β) (xs : List Nat) (ys : List β)
+    (hnodup : xs.Nodup) (hlen : xs.length = ys.length) :
+    xs.mapM (m.updateListEq (xs.zip ys)).lookup = some ys := by
+  have hfun : (m.updateListEq (xs.zip ys)).lookup =
+      fun key => FLOOKUP (FUPDATE_LIST m.lookup (xs.zip ys)) key := by
+    funext key
+    simp only [HolFiniteMapExact.lookup_updateListEq, FUPDATE_LIST_HOL_eq_FUPDATE_LIST, FLOOKUP]
+  rw [hfun]
+  exact optMmapSomeEqZipFlookup xs m.lookup ys hnodup hlen
+
+/-- Exact port of HOL `crepProps$evaluate_seq_stores_mem_state_rel`
+    (`crepPropsScript.sml:498-515`): `!es vs ad a s res t addr m.
+    LENGTH es = LENGTH vs /\ ~MEM ad es /\ ALL_DISTINCT es /\
+    mem_stores (addr+a) vs s.memaddrs s.memory = SOME m /\
+    evaluate (nested_seq (stores (Var ad) (MAP Var es) a),
+      s with locals := s.locals |++ ((ad,Word addr)::ZIP (es,vs))) = (res,t) ==>
+    res = NONE /\ t.memory = m /\ t.memaddrs = s.memaddrs /\
+    t.sh_memaddrs = s.sh_memaddrs /\ (t.be <=> s.be) /\ t.ffi = s.ffi /\
+    t.code = s.code /\ t.clock = s.clock /\ t.base_addr = s.base_addr /\
+    t.top_addr = s.top_addr`. `mem_stores` is the tagged `panMemStoresHOL`
+    with the classical address decision, `|++` is `updateListEq`, and the
+    evaluator and syntax are the tagged exact ports. -/
+@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "evaluate_seq_stores_mem_state_rel"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateSeqStoresMemStateRelHOL {width : Nat} [NeZero width] {σ : Type} :
+    ∀ (es : List Nat) (vs : List (HolWordLab width)) (ad : Nat) (a : BitVec width)
+      (s : CrepSemHOLState width σ) (res : Option (CrepResultHOLExact width))
+      (t : CrepSemHOLState width σ) (addr : BitVec width) (m : BitVec width → HolWordLab width),
+      es.length = vs.length ∧ ad ∉ es ∧ es.Nodup ∧
+        @panMemStoresHOL width _ (addr + a) vs s.memaddrs
+          (fun x => Classical.propDecidable (s.memaddrs x)) s.memory = some m ∧
+        evalCrepSemHOLProgExact
+          { s with locals := s.locals.updateListEq ((ad, .word addr) :: es.zip vs) }
+          (crepNestedSeqHOL (storesHOL (.var ad) (es.map CrepExpHOL.var) a)) = (res, t) →
+      res = none ∧ t.memory = m ∧ t.memaddrs = s.memaddrs ∧ t.shMemaddrs = s.shMemaddrs ∧
+        t.be = s.be ∧ t.ffi = s.ffi ∧ t.code = s.code ∧ t.clock = s.clock ∧
+        t.baseAddr = s.baseAddr ∧ t.topAddr = s.topAddr := by
+  intro es vs ad a s res t addr m ⟨hlen, had, hnd, hm, h⟩
+  have hall := mapM_lookup_updateListEq_crep s.locals (ad :: es) (.word addr :: vs)
+    (List.nodup_cons.mpr ⟨had, hnd⟩) (by simp [hlen])
+  obtain ⟨hl, hls⟩ := mapM_cons_some_inv _ ad es (.word addr) vs hall
+  obtain ⟨rfl, rfl⟩ := evalSeqStoresMem ad es vs a
+    { s with locals := s.locals.updateListEq ((ad, .word addr) :: es.zip vs) } addr m res t
+    hls hl hm h
+  exact ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 end Flapjack

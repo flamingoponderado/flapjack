@@ -4847,6 +4847,117 @@ theorem globalsShapes_decCall_arm {width : Nat} {σ : Type} [NeZero width]
                     exact hEmpty (some (.finalFfi event) :
                       Option (PanSemResultExact width))
 
+section GlobalsShapesInvariant
+
+set_option maxHeartbeats 4000000
+set_option backward.isDefEq.respectTransparency false
+
+/-- HOL `panPropsScript.sml:1183` `evaluate_global_shape_invariant` lifted to the exact
+PanSem recursive evaluator: the full-program evaluation preserves the global shape map.
+Flapjack-specific infrastructure; see `globalsShapes` and the per-arm lemmas in
+`PanSem/GlobalsShapesExact.lean`. -/
+theorem evalPanSemRecursiveCallFiniteContext_globalsShapesInvariant {width : Nat} {σ : Type}
+    [NeZero width] (program : ProgHOL width) (sourceContext : FiniteEvalContext width σ) :
+    ∀ result output, evalPanSemRecursiveCallFiniteContext program sourceContext = some (result, output) →
+      globalsShapes output.state = globalsShapes sourceContext.state := by
+  fun_induction evalPanSemRecursiveCallFiniteContext program sourceContext
+  all_goals
+    intro result output heval
+    (try (simp only [Option.some.injEq, Prod.mk.injEq] at heval))
+    (try (rcases heval with ⟨rfl, rfl⟩))
+    (try (simp only [FiniteEvalContext.withState_state] at *))
+    (try (rename_i ihA; simp only [ihA _ _ (by assumption)] at *))
+    (try (rename_i ihB; simp only [ihB _ _ (by assumption)] at *))
+    (try (simp only [globalsShapes_setLocals, globalsShapes_emptyLocalsHOLFinite,
+      globalsShapes_decClockHOLFinite] at *))
+    (try rfl)
+    (try assumption)
+    (try (dsimp (config := { zeta := true }) at *))
+    (try assumption)
+    (try (simp_all [globalsShapes_eq_globalsShapesExact_toExact]))
+    (try (dsimp (config := { zeta := true }) at *))
+    (try assumption)
+
+  case case66 =>
+    rename_i inst context state other pair a14 a13 a12 a11 a10 a9 a8 a7 a6 a5 a4 a3 a2 a1 a0 hres
+    simpa only [globalsShapes_eq_globalsShapesExact_toExact] using
+      @evalPanSemNonrecursiveHOLFinite_globalsShapes width σ _ state context.memaddrsDecidable
+        context.shMemaddrsDecidable other pair.1 pair.2 hres
+  case case63 =>
+    rename_i inst context state size kind name address evalExpression output
+    change globalsShapesExact output.snd = globalsShapesExact context.state.toExact
+    exact @shMemLoadClauseHOLExact_globalsShapesExact width σ _ state.toExact
+      context.shMemaddrsDecidable size kind name address
+      (fun x expression => @evalHOLExact width σ _ state.toExact context.memaddrsDecidable expression)
+  case case64 =>
+    rename_i inst context state size address value evalExpression output
+    change globalsShapesExact output.snd = globalsShapesExact context.state.toExact
+    exact @shMemStoreClauseHOLExact_globalsShapesExact width σ _ state.toExact
+      context.shMemaddrsDecidable size address value
+      (fun x expression => @evalHOLExact width σ _ state.toExact context.memaddrsDecidable expression)
+  case case46 =>
+    rename_i inst context state resultName shape func arguments continuation values x3 body callee returnShape x2 hclock entry entryContext post1 value result post restored fixedContext continuationContext hshape x1 x ih2 ih1
+    exact ih1.trans ih2
+  case case28 =>
+    rename_i inst context state func arguments values x2 body callee returnShape x1 hclock entry entryContext postContext value hshape kind name snd hvalid x fixedContext ih1
+    cases kind
+    · change globalsShapesExact postContext.state.toExact = globalsShapesExact context.state.toExact
+      exact ih1
+    · funext key
+      by_cases hk : key = name
+      · have hshapeVal := isValidValueHOLExact_global_shape state.toExact name value hvalid
+        simp only [globalsShapesExact, setKvarHOLExact, if_true, hk, Option.map_some]
+        exact hshapeVal.symm
+      · have hkey := congrFun ih1 key
+        simp only [globalsShapesExact, setKvarHOLExact, if_neg hk]
+        exact hkey
+
+/-- Per-name globals shape preservation for the top-level finite PanSem evaluator.
+HOL `panPropsScript.sml:1183 evaluate_global_shape_invariant` states
+`evaluate (p,s) = (res,st) ∧ FLOOKUP s.globals n = SOME v ⇒
+∃v'. FLOOKUP st.globals n = SOME v' ∧ shape_of v' = shape_of v`;
+this is that statement (curried, `FLOOKUP` as `lookup`, `shape_of` as `shapeOfHOLExact`) under the
+type-indexed `'a word` / `'ffi` translation, obtained by lifting the delivered recursive
+`evalPanSemRecursiveCallFiniteContext_globalsShapesInvariant` through
+`evalPanSemRecursiveCallFiniteContext_of_evaluateHOLFiniteState`. -/
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_global_shape_invariant"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateHOLFiniteState_global_shape_invariant {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (program : ProgHOL width)
+    (res : Option (PanSemResultExact width)) (st : PanSemStateFiniteExact width σ)
+    (name : MlS) (value : ValueHOL width)
+    (heval : evaluateHOLFiniteState state program = (res, st))
+    (hlookup : state.globals.lookup name = some value) :
+    ∃ value', st.globals.lookup name = some value' ∧
+      shapeOfHOLExact value' = shapeOfHOLExact value := by
+  classical
+  let context : FiniteEvalContext width σ :=
+    ⟨state, (fun address => Classical.propDecidable (state.memaddrs address)),
+      (fun address => Classical.propDecidable (state.shMemaddrs address))⟩
+  obtain ⟨postContext, hevalCtx, hstate⟩ :=
+    evalPanSemRecursiveCallFiniteContext_of_evaluateHOLFiniteState state program context rfl
+      (res, st) heval
+  have hglob :=
+    evalPanSemRecursiveCallFiniteContext_globalsShapesInvariant program context res postContext
+      hevalCtx
+  rw [hstate] at hglob
+  change globalsShapes st = globalsShapes state at hglob
+  obtain ⟨w, hw⟩ : ∃ w : ValueHOL width, st.globals.lookup name = some w ∧
+      shapeOfHOLExact w = shapeOfHOLExact value := by
+    have hfun := congrFun hglob name
+    simp only [globalsShapes] at hfun
+    rw [hlookup] at hfun
+    cases h : st.globals.lookup name with
+    | none => rw [h] at hfun; simp at hfun
+    | some w =>
+        rw [h] at hfun
+        simp only [Option.map_some] at hfun
+        exact ⟨w, rfl, by simpa using hfun⟩
+  exact ⟨w, hw.1, hw.2⟩
+
+end GlobalsShapesInvariant
+
 end PanSemStateFiniteExact
 
 end Flapjack
