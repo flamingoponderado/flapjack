@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.BackendCommon
+import Flapjack.Compiler.Backend.Semantics.WordSem
 import Flapjack.Compiler.Backend.RegAlloc
 import Flapjack.AstHOL
 import Flapjack.Compiler.Backend.StackLang
@@ -98,6 +99,7 @@ import Flapjack.Pancake.LoopLive
 import Flapjack.Pancake.Semantics.LoopProps
 import Flapjack.Pancake.Semantics.LoopSem
 import Flapjack.Pancake.Semantics.LoopSemStateExact
+import Flapjack.Pancake.Semantics.LoopSemStateExact.ShMem
 import Flapjack.Pancake.Semantics.PanCommonProps
 import Flapjack.Pancake.Semantics.PanProps
 import Flapjack.Pancake.Semantics.PanProps.EvalInvariant
