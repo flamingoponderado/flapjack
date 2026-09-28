@@ -1076,7 +1076,9 @@ run_probe ctxt_fc_probeScript.sml ctxt_fc_probe.out \
   "$cake_dir/pancake/proofs"
 run_probe code_rel_probeScript.sml code_rel_probe.out \
   code_rel_type compiled_return localised_return localised_global_assignment \
-  function_signature_lookup target_function_lookup code_rel_rejects_unlocalised_source \
+  function_signature_lookup target_function_lookup code_rel_generated_initial \
+  code_rel_generated_initial_proved \
+  code_rel_rejects_unlocalised_source \
   "$cake_dir/pancake/proofs/pan_to_crepProofScript.sml" \
   "$cake_dir/pancake/proofs"
 run_probe globals_lookup_probeScript.sml globals_lookup_probe.out \
