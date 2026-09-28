@@ -19945,5 +19945,14 @@
     "lean_name": "initial_prog_make_funcs_el",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.20) against initial_prog_make_funcs_el at crep_to_loopProofScript.sml:3942-3945. HOL `!prog start n. FLOOKUP (make_funcs prog) start = SOME (n + first_name,0) ==> (start, [], (SND o SND) (EL n prog)) = EL n prog /\\ n < LENGTH prog` (polymorphic prog). Lean keeps the binders and premise (tagged crepToLoopMakeFuncsHOL, first_name as the tagged firstLoopName) and renders the conclusion as `∃ hn : n < prog.length, (start, [], (prog[n]'hn).2.2) = prog[n]'hn`: HOL's second conjunct is the witness of the bound under which the first conjunct's EL is the bounds-checked prog[n]; since that conjunct pins n in range the two conclusions are equivalent. Reviewer should confirm this EL rendering is acceptable."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "write_bytearray_mem_rel",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/WriteBytearrayMemRel.lean",
+    "lean_name": "write_bytearray_mem_rel",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.6.17.1.3) against write_bytearray_mem_rel at crep_to_loopProofScript.sml:251-256. HOL `!nb sm tm w dm be. mem_rel sm tm dm ==> mem_rel (write_bytearray w nb sm dm be) (write_bytearray w nb tm dm be) dm` (panSem write_bytearray on the source, wordSem write_bytearray on the target). Lean keeps the binders in order (nb : List (BitVec 8) = word8 list, sm total HolWordLab memory, tm total WordLocW memory, w, dm, be), the single premise and the conclusion, over the tagged crepToLoopMemRelHOLExact (mem_rel_def), panWriteBytearrayWord8HOL (panSem write_bytearray_def) and writeBytearrayExact (wordSem write_bytearray_def). HOL's one address set dm is dm : BitVec width -> Bool, passed as-is to the Bool-domain wordSem port and as the Prop view (fun a => dm a = true) to the panSem port and mem_rel: the set-as-Bool rendering of the tagged exact state_rel. The panSem port's DecidablePred is the concrete instance of that view, not a hypothesis. There is NO width premise, unlike the withdrawn writeBytearrayMemRel (hdiv): the untagged panSetByteHOL_eq_setByteHOL8 bridge holds at every positive width (existing panSetByteHOL_eq_riscvSetByteHOL for 8 <= width, direct arithmetic for width < 8)."
   }
 ]
