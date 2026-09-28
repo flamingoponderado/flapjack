@@ -64,6 +64,69 @@ noncomputable def buildLprefixLubF (ls : HolLList α → Prop) (n : Nat) : Optio
 noncomputable def buildLprefixLub (ls : HolLList α → Prop) : HolLList α :=
   lunfold (buildLprefixLubF ls) 0
 
+/-! ### `rep`/`lnth` bridge lemmas
+
+`HolLrepOk` makes `rep` downward-closed (a `none` persists), so `lnth` is exactly
+`rep`.  These connect the `ltl`/`lhd`-based `lnth` to the `rep` function. -/
+
+/-- A `none` at `k` forces a `none` at `k+1` (downward closure of `HolLrepOk`). -/
+theorem rep_none_succ (ll : HolLList α) {k : Nat} (h : ll.rep k = none) :
+    ll.rep (k + 1) = none := by
+  rw [Option.eq_none_iff_forall_ne_some]
+  intro v hv
+  have hk' : (ll.rep (k + 1)) ≠ none := by rw [hv]; exact Option.some_ne_none v
+  exact (Option.isSome_iff_ne_none.mp (ll.ok k (Option.isSome_iff_ne_none.mpr hk'))) h
+
+/-- A `none` in the representation persists to every larger index. -/
+theorem rep_none_of_le (ll : HolLList α) {m n : Nat} (hm : ll.rep m = none) (hle : m ≤ n) :
+    ll.rep n = none := by
+  obtain ⟨d, rfl⟩ := Nat.le.dest hle
+  clear hle
+  induction d with
+  | zero => simpa using hm
+  | succ d ih =>
+      rw [Nat.add_succ]
+      exact rep_none_succ ll ih
+
+/-- `lnth` reads the underlying representation. -/
+theorem lnth_eq_rep (n : Nat) (ll : HolLList α) : lnth n ll = ll.rep n := by
+  induction n generalizing ll with
+  | zero => rfl
+  | succ n ih =>
+      show (ll.ltl.map (lnth n)).join = ll.rep (n + 1)
+      cases h0 : ll.rep 0 with
+      | none =>
+          have hrep : ll.rep (n + 1) = none := rep_none_of_le ll h0 (Nat.zero_le _)
+          have hltl : ll.ltl = none := by simp [ltl, lhd, h0]
+          simp [hltl, hrep]
+      | some hd =>
+          have ht : ll.ltl =
+              some ⟨fun k => ll.rep (k + 1), fun k hk => ll.ok (k + 1) hk⟩ := by
+            simp [ltl, lhd, h0]
+          rw [ht]
+          simp only [Option.map_some, Option.join]
+          rw [ih]
+          rfl
+
+/-- `lnth` is `none` from `m` on whenever it is `none` at `m` and `m ≤ n`. -/
+theorem lnth_none_mono {m n : Nat} (ll : HolLList α) (h : lnth m ll = none) (hle : m ≤ n) :
+    lnth n ll = none := by
+  rw [lnth_eq_rep] at h ⊢
+  exact rep_none_of_le ll h hle
+
+/-- HOL `not_exists_lprefix_chain_nth`
+    (`lprefix_lubScript.sml:215-218`), unconditional in Lean: if no member of the
+    family has a value at `n`, then `lprefix_chain_nth n ls` is `none`. -/
+theorem lprefixChainNth_eq_none {n : Nat} {ls : HolLList α → Prop}
+    (h : ∀ l, ls l → lnth n l = none) : lprefixChainNth n ls = none := by
+  unfold lprefixChainNth holOptionSome
+  split
+  · rename_i hx
+    rcases hx with ⟨x, l, hl, hlth⟩
+    rw [h l hl] at hlth
+    cases hlth
+  · rfl
+
 end HolLList
 
 end Flapjack
