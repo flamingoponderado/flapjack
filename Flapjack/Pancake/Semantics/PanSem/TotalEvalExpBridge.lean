@@ -2794,9 +2794,9 @@ theorem PanSemStateRelExecRanged.setFfi {σ : Type}
     PanSemStateRelExecRanged { state with ffi := ffi } :=
   h.of_fields rfl rfl rfl
 
-/-- The memory update preserves `PanSemStateRelExecRanged`: memory holds word
-    payloads, which are always byte-ranged, and the premise does not constrain
-    the memory map. -/
+/-- The memory update preserves `PanSemStateRelExecRanged` because the premise
+    does not constrain the memory map. This does not establish rangedness of
+    values read from memory. -/
 theorem PanSemStateRelExecRanged.setMemory {σ : Type}
     {state : PanSemState (RiscV.Word 64) (FfiState σ)}
     (h : PanSemStateRelExecRanged state)
