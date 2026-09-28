@@ -19999,5 +19999,13 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.22) against mk_ctxt_code_imp_code_rel2 at crep_to_loopProofScript.sml:3861-3866. HOL `!c crep_code start np. ALL_DISTINCT (MAP FST crep_code) /\\ ALOOKUP crep_code start = SOME ([],np) ==> code_rel2 (mk_ctxt c FEMPTY (make_funcs crep_code) 0) (alist_to_fmap crep_code) (fromAList (crep_to_loop$compile_prog c crep_code))`. Lean keeps the binders in order (c as the AsmArchitecture carrier of compile_prog, crep_code at compile_prog's argument type, start : MlString, np), both premises (ALL_DISTINCT as List.Nodup, ALOOKUP as holAlookup; the second premise is unused by HOL's proof too), and the conclusion over the tagged crepToLoopCodeRel2Exact, mkCtxtExact (mk_ctxt_def) with HolFiniteMapExact.empty as FEMPTY, crepToLoopMakeFuncsExactHOL (the exact-carrier make_funcs used by the tagged compileProgHOLExact; shown pointwise equal to the tagged polymorphic crepToLoopMakeFuncsHOL), alistToFmapCodeExact (HOL alist_to_fmap: first occurrence wins, via updateList of the reversed list), sptFromAList (fromAList) and compileProgHOLExact. All finite maps are values of those definitions, none a binder, so as for the tagged compile_prog_def only the words qualifier applies."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "semantics_run_res",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/SemanticsWrapper.lean",
+    "lean_name": "CrepToLoopSemanticsRunRes",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.6.34.4) against the Datatype semantics_run_res at crep_to_loopProofScript.sml:4127-4130: `semantics_run_res = RunError | CompleteResult 'a | Incomplete`. Lean CrepToLoopSemanticsRunRes α keeps the three constructors in HOL order with the same arities (CompleteResult carries the single 'a payload) and one type parameter. It is a separate Lean type from panProps' SemanticsRunResHOL because HOL declares a fresh datatype in crep_to_loopProof; constructor names are Lean-qualified by the type."
   }
 ]
