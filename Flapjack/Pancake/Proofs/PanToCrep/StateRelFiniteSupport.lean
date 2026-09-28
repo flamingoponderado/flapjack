@@ -121,6 +121,75 @@ def panToCrepStateRelFiniteExact {width : Nat} {σ : Type} [NeZero width]
     source.baseAddr = target.baseAddr ∧
     source.topAddr = target.topAddr
 
+/-- Flapjack-specific congruence support for the returned-byte ExtCall case of
+    `pc_compile_correct`: `state_rel_def` gives equality of the source and
+    target memory domains, so `write_bytearray_def` should produce equal memory
+    functions after the same address/bytes/endian update. The two evaluators
+    may carry separately synthesized `DecidablePred` instances for those
+    equal domains. This lemma makes that proof-irrelevant decision argument
+    explicit and proves that it cannot change the write result. It has no
+    standalone HOL declaration; it is support for the `ExtCall` constructor
+    proof, not a separately tagged port. -/
+theorem panWriteBytearrayWord8HOL_domainCongr
+    {width : Nat} [NeZero width]
+    (address : RiscV.Word width) (bytes : List (BitVec 8))
+    (memory : RiscV.Word width → HolWordLab width)
+    (domainSource domainTarget : RiscV.Word width → Prop)
+    (domainSourceDecidable : DecidablePred domainSource)
+    (domainTargetDecidable : DecidablePred domainTarget)
+    (bigEndian : Bool)
+    (hdomain : domainSource = domainTarget) :
+    @panWriteBytearrayWord8HOL width _ address bytes memory domainSource
+        domainSourceDecidable bigEndian =
+      @panWriteBytearrayWord8HOL width _ address bytes memory domainTarget
+        domainTargetDecidable bigEndian := by
+  subst domainTarget
+  have hdec : domainSourceDecidable = domainTargetDecidable := by
+    funext current
+    exact Subsingleton.elim _ _
+  subst domainTargetDecidable
+  rfl
+
+/-- Flapjack-specific preservation of the `state_rel_def` projection used by
+    the ExtCall returned-byte proof. HOL `write_bytearray_def` updates the same
+    memory in both states, while the Pan and Crep carriers may carry distinct
+    decision procedures for equal memory domains. The domain-congruence lemma
+    above aligns those writes; all other `state_rel_def` fields are unchanged,
+    except that both FFI fields become `newFfi`. This is a proof helper for the
+    ExtCall constructor case and has no standalone HOL declaration. -/
+theorem panToCrepStateRelFiniteExact_writeBytearray
+    {width : Nat} {σ : Type} [NeZero width]
+    (source : PanSemStateFiniteExact width σ)
+    (target : CrepSemHOLState width σ)
+    (address : RiscV.Word width) (bytes : List (BitVec 8))
+    (sourceDecidable : DecidablePred source.memaddrs)
+    (targetDecidable : DecidablePred target.memaddrs)
+    (newFfi : HolFfiState σ)
+    (hstate : panToCrepStateRelFiniteExact source target) :
+    panToCrepStateRelFiniteExact
+      (PanSemStateFiniteExact.ofExact
+        {source.toExact with
+          memory := @panWriteBytearrayWord8HOL width _ address bytes source.memory
+            source.memaddrs sourceDecidable source.be
+          ffi := newFfi}
+        (by simpa [PanSemStateExact.FiniteSupport] using source.toExact_finiteSupport))
+      {target with
+        memory := @panWriteBytearrayWord8HOL width _ address bytes target.memory
+          target.memaddrs targetDecidable target.be
+        ffi := newFfi} := by
+  rcases hstate with ⟨hmemory, hmemaddrs, hshMemaddrs, hstructs, hglobals,
+    hclock, hbe, _hffi, hbaseAddr, htopAddr⟩
+  have hwriteDomain :
+      @panWriteBytearrayWord8HOL width _ address bytes target.memory source.memaddrs
+        sourceDecidable target.be =
+      @panWriteBytearrayWord8HOL width _ address bytes target.memory target.memaddrs
+        targetDecidable target.be :=
+    panWriteBytearrayWord8HOL_domainCongr address bytes target.memory
+      source.memaddrs target.memaddrs sourceDecidable targetDecidable target.be hmemaddrs
+  simp [panToCrepStateRelFiniteExact, PanSemStateFiniteExact.ofExact,
+    hwriteDomain, hmemory, hmemaddrs, hshMemaddrs, hstructs, hglobals,
+    hclock, hbe, hbaseAddr, htopAddr]
+
 /-- The `state_rel` conjunct of HOL `call_preserve_state_code_locals_rel`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:2355`) is preserved by
     the call-entry clock decrement and arbitrary replacement of the source

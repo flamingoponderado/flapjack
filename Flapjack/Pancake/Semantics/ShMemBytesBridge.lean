@@ -543,4 +543,92 @@ theorem panWord_eq_of_getByte_eq {width : Nat} [NeZero width] (hdiv : width % 8 
   · exact Nat.lt_of_lt_of_eq X.isLt hpow
   · exact Nat.lt_of_lt_of_eq Y.isLt hpow
 
+
+/-! ## Address-parameterised decoder `toNat` characterization
+
+The bridge from the byte-level decoder to the little-endian sum: for an address
+`a` and a word cell `C`, `panWacc a l C` keeps the low `a` residues of `C`, the
+high part of `C` above the written window, and contributes `leSumB a l` on the
+window. -/
+
+
+theorem mul_div_self_of_add_of_dvd {m D X L : Nat} (hm : 0 < m) (hd : m ∣ D)
+    (hX : X = L + D) (hL : L < m) : X / m * m = D := by
+  subst hX
+  obtain ⟨k, rfl⟩ := hd
+  rw [Nat.add_mul_div_left _ _ hm, Nat.div_eq_of_lt hL, Nat.zero_add, Nat.mul_comm]
+
+theorem mod_eq_of_add_of_dvd {m D X L : Nat} (hd : m ∣ D) (hX : X = L + D) :
+    X % m = L % m := by
+  subst hX
+  obtain ⟨k, rfl⟩ := hd
+  rw [Nat.add_mul_mod_self_left]
+
+theorem panWacc_toNat_formula {width : Nat} [NeZero width] (hdiv : width % 8 = 0)
+    (l : List (BitVec 8)) (a : Nat) (C : RiscV.Word width)
+    (ha : a + l.length ≤ width / 8) :
+    (panWacc a l C).toNat =
+      leSumB a l + (C.toNat / 256 ^ (a + l.length)) * 256 ^ (a + l.length)
+        + C.toNat % 256 ^ a := by
+  induction l generalizing a with
+  | nil =>
+      simp only [panWacc, leSumB, List.zipIdx_nil, List.foldl_nil, List.length_nil,
+        Nat.add_zero, Nat.zero_add]
+      rw [Nat.mul_comm (C.toNat / 256 ^ a) (256 ^ a)]
+      exact (Nat.div_add_mod C.toNat (256 ^ a)).symm
+  | cons b rest ih =>
+      have ha1 : a + 1 + rest.length ≤ width / 8 := by
+        simp only [List.length_cons] at ha; omega
+      have halt : a < width / 8 := by omega
+      have hbi : byteBitIndex (BitVec.ofNat width a) false = 8 * a := by
+        have hkw : a < 2 ^ width :=
+          Nat.lt_of_le_of_lt (Nat.le_trans (Nat.le_of_lt halt) (Nat.div_le_self width 8))
+            Nat.lt_two_pow_self
+        have haddr : (BitVec.ofNat width a : RiscV.Word width).toNat = a := by
+          rw [BitVec.toNat_ofNat, Nat.mod_eq_of_lt hkw]
+        simp only [byteBitIndex, Bool.false_eq_true, if_false, haddr, Nat.mod_eq_of_lt halt]
+      have hset := panSetByteHOL_toNat (width := width) hdiv (BitVec.ofNat width a)
+        (panWacc (a + 1) rest C) (UInt8.ofNat b.toNat) false
+      have hbb : BitVec.ofNat width (UInt8.ofNat b.toNat).toNat = BitVec.ofNat width b.toNat := by
+        rw [UInt8.toNat_ofNat', Nat.mod_eq_of_lt b.isLt]
+      have hbb2 : (UInt8.ofNat b.toNat).toNat = b.toNat := by
+        rw [UInt8.toNat_ofNat', Nat.mod_eq_of_lt b.isLt]
+      rw [hbb, hbi, two_pow_eight_mul_eq_pow256 a,
+        two_pow_eight_mul_succ_eq_pow256 a] at hset
+      rw [ih (a + 1) ha1] at hset
+      simp only [panWacc, List.length_cons]
+      rw [hset]
+      rw [show a + (rest.length + 1) = a + 1 + rest.length by omega]
+      generalize hS : leSumB (a + 1) rest = S
+      generalize hq : C.toNat / 256 ^ (a + 1 + rest.length) = q
+      generalize hLdef : C.toNat % 256 ^ (a + 1) = L
+      have hm1 : 0 < 256 ^ (a + 1) := Nat.pow_pos (by decide)
+      have hSd1 : 256 ^ (a + 1) ∣ S := by rw [← hS]; exact leSumB_dvd rest (a + 1)
+      have hHd1 : 256 ^ (a + 1) ∣ q * 256 ^ (a + 1 + rest.length) :=
+        ⟨q * 256 ^ rest.length, by rw [Nat.pow_add]; ac_rfl⟩
+      have hSH : 256 ^ (a + 1) ∣ S + q * 256 ^ (a + 1 + rest.length) :=
+        Nat.dvd_add hSd1 hHd1
+      have hX : S + q * 256 ^ (a + 1 + rest.length) + L
+          = L + (S + q * 256 ^ (a + 1 + rest.length)) := by ac_rfl
+      have hdiv' := mul_div_self_of_add_of_dvd (m := 256 ^ (a + 1))
+        (D := S + q * 256 ^ (a + 1 + rest.length))
+        (X := S + q * 256 ^ (a + 1 + rest.length) + L) (L := L)
+        hm1 hSH hX (by rw [← hLdef]; exact Nat.mod_lt _ hm1)
+      have hSd0 : 256 ^ a ∣ S := Nat.dvd_trans ⟨256, by rw [Nat.pow_add_one]⟩ hSd1
+      have hHd0 : 256 ^ a ∣ q * 256 ^ (a + 1 + rest.length) :=
+        ⟨q * 256 ^ (1 + rest.length), by
+          rw [show a + 1 + rest.length = a + (1 + rest.length) by omega, Nat.pow_add]
+          ac_rfl⟩
+      have hSH0 : 256 ^ a ∣ S + q * 256 ^ (a + 1 + rest.length) :=
+        Nat.dvd_add hSd0 hHd0
+      have hmod' := mod_eq_of_add_of_dvd (m := 256 ^ a)
+        (D := S + q * 256 ^ (a + 1 + rest.length))
+        (X := S + q * 256 ^ (a + 1 + rest.length) + L) (L := L) hSH0 hX
+      rw [hdiv', hmod', ← hLdef,
+        show 256 ^ (a + 1) = 256 ^ a * 256 by rw [Nat.pow_succ, Nat.mul_comm],
+        Nat.mod_mul_right_mod, leSumB_cons, ← hS]
+      rw [hbb2]
+      ac_rfl
+
+
 end Flapjack

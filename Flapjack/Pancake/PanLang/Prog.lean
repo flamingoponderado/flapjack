@@ -142,6 +142,159 @@ def ProgByteRanged {width : Nat} : Prog (BitVec width) → Prop
   | .tick => True
   | .annot tag text => NameRanged tag ∧ NameRanged text
 
+/-- **Program rangedness projects to expression rangedness.**  Every expression
+    occurring directly in a `ProgByteRanged` program (`Flapjack.expsOf`,
+    `cakeml/pancake/semantics/panPropsScript.sml:1336`) is itself
+    `ExpByteRanged`.  This is the projection from the executed parser/pass
+    byte-range hypothesis on a program to the per-expression
+    `ExpByteRanged` premise of the production/exact evaluation bridge: the
+    `ProgByteRanged` clauses are stated on exactly the expressions `expsOf`
+    collects (including the `call` exception-handler body and the `decCall`
+    body), so the proof is a structural recursion over the program.
+
+    Since `ExpByteRanged (.load shape address)` itself requires
+    `ShapeByteRanged shape`, this lemma also yields byte-range of every shape
+    loaded by a ranged program; the declaration-level shapes (parameters,
+    return shape, `decl`/`exnDecl`/`name` shapes) are the other conjuncts of
+    `DeclByteRanged` (`Flapjack/Pancake/PanLang/Decl.lean`).
+
+    Untagged Flapjack-specific bridge infrastructure; no `@[hol]` tag. -/
+theorem expsOf_byteRanged {width : Nat} :
+    ∀ program : Prog (BitVec width), ProgByteRanged program →
+      ∀ e ∈ expsOf program, ExpByteRanged e
+  | .skip, _ => by simp [expsOf]
+  | .dec name shape value body, h => by
+      simp only [ProgByteRanged] at h
+      rcases h with ⟨_, _, hvalue, hbody⟩
+      intro e he
+      simp only [expsOf, List.mem_cons] at he
+      rcases he with rfl | he
+      · exact hvalue
+      · exact expsOf_byteRanged body hbody e he
+  | .assign kind name value, h => by
+      simp only [ProgByteRanged] at h
+      intro e he
+      simp only [expsOf, List.mem_singleton] at he
+      subst he
+      exact h.2
+  | .primitive name operator arguments, h => by
+      simp only [ProgByteRanged] at h
+      intro e he
+      simp only [expsOf] at he
+      exact h.2 e he
+  | .store address value, h => by
+      simp only [ProgByteRanged] at h
+      intro e he
+      simp only [expsOf, List.mem_cons, List.mem_nil_iff, or_false] at he
+      rcases he with rfl | rfl
+      · exact h.1
+      · exact h.2
+  | .store32 address value, h => by
+      simp only [ProgByteRanged] at h
+      intro e he
+      simp only [expsOf, List.mem_cons, List.mem_nil_iff, or_false] at he
+      rcases he with rfl | rfl
+      · exact h.1
+      · exact h.2
+  | .storeByte address value, h => by
+      simp only [ProgByteRanged] at h
+      intro e he
+      simp only [expsOf, List.mem_cons, List.mem_nil_iff, or_false] at he
+      rcases he with rfl | rfl
+      · exact h.1
+      · exact h.2
+  | .seq first second, h => by
+      simp only [ProgByteRanged] at h
+      intro e he
+      simp only [expsOf, List.mem_append] at he
+      rcases he with he | he
+      · exact expsOf_byteRanged first h.1 e he
+      · exact expsOf_byteRanged second h.2 e he
+  | .ite condition thenBranch elseBranch, h => by
+      simp only [ProgByteRanged] at h
+      intro e he
+      simp only [expsOf, List.mem_cons, List.mem_append] at he
+      rcases he with rfl | he | he
+      · exact h.1
+      · exact expsOf_byteRanged thenBranch h.2.1 e he
+      · exact expsOf_byteRanged elseBranch h.2.2 e he
+  | .while condition body, h => by
+      simp only [ProgByteRanged] at h
+      intro e he
+      simp only [expsOf, List.mem_cons] at he
+      rcases he with rfl | he
+      · exact h.1
+      · exact expsOf_byteRanged body h.2 e he
+  | .break, _ => by simp [expsOf]
+  | .continue, _ => by simp [expsOf]
+  | .call none function arguments, h => by
+      simp only [ProgByteRanged] at h
+      intro e he
+      simp only [expsOf, List.append_nil] at he
+      exact h.2.1 e he
+  | .call (some (kindOpt, none)) function arguments, h => by
+      simp only [ProgByteRanged] at h
+      intro e he
+      simp only [expsOf, List.append_nil] at he
+      exact h.2.1 e he
+  | .call (some (kindOpt, some (exception, handlerVar, handler))) function arguments, h => by
+      simp only [ProgByteRanged] at h
+      rcases h with ⟨_, hargs, _, _, _, hbody⟩
+      intro e he
+      simp only [expsOf, List.mem_append] at he
+      rcases he with he | he
+      · exact hargs e he
+      · exact expsOf_byteRanged handler hbody e he
+  | .decCall name shape function arguments body, h => by
+      simp only [ProgByteRanged] at h
+      rcases h with ⟨_, _, _, hargs, hbody⟩
+      intro e he
+      simp only [expsOf, List.mem_append] at he
+      rcases he with he | he
+      · exact hargs e he
+      · exact expsOf_byteRanged body hbody e he
+  | .extCall function configuration configurationLength array arrayLength, h => by
+      simp only [ProgByteRanged] at h
+      intro e he
+      simp only [expsOf, List.mem_cons, List.mem_nil_iff, or_false] at he
+      rcases he with rfl | rfl | rfl | rfl
+      · exact h.2.1
+      · exact h.2.2.1
+      · exact h.2.2.2.1
+      · exact h.2.2.2.2
+  | .raise exception value, h => by
+      simp only [ProgByteRanged] at h
+      intro e he
+      simp only [expsOf, List.mem_singleton] at he
+      subst he
+      exact h.2
+  | .return value, h => by
+      simp only [ProgByteRanged] at h
+      intro e he
+      simp only [expsOf, List.mem_singleton] at he
+      subst he
+      exact h
+  | .shMemLoad size kind name address, h => by
+      simp only [ProgByteRanged] at h
+      intro e he
+      simp only [expsOf, List.mem_singleton] at he
+      subst he
+      exact h.2
+  | .shMemStore size address value, h => by
+      simp only [ProgByteRanged] at h
+      intro e he
+      simp only [expsOf, List.mem_cons, List.mem_nil_iff, or_false] at he
+      rcases he with rfl | rfl
+      · exact h.1
+      · exact h.2
+  | .tick, _ => by simp [expsOf]
+  | .annot tag text, h => by
+      intro e he
+      simp only [expsOf] at he
+      exact absurd he (by simp)
+termination_by program _ => sizeOf program
+decreasing_by all_goals decreasing_trivial
+
 /-- Encode a production program into the exact HOL-shaped carrier.  Identifiers
     use the total `ofString`, expressions use `expToHOL`, and shapes use
     `shapeToHOL`. -/
