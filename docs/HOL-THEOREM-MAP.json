@@ -11512,7 +11512,7 @@
     "lean_path": "Flapjack/Pancake/LoopLang.lean",
     "lean_name": "HolLoopExp",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-main (HOL/Lean source comparison: 8 exp ctors Const/Var/Lookup/Load/Op/Shift/BaseAddr/TopAddr at fixed BitVec width; HOL binop Add/Sub/And/Or/Xor and Shift Lsl/Lsr/Asr/Ror)"
+    "reviewer": "flapjack-luna-a (direct comparison with loopLangScript.sml:19-28 and imported carriers: 8 exp ctors Const/Var/Lookup/Load/Op/Shift/BaseAddr/TopAddr; Const is BitVec width, Lookup is literal BitVec 5, BinOp has the same five HOL asm$binop constructors, and Shift is the tagged ast$shift carrier)"
   },
   {
     "hol_path": "cakeml/pancake/loopLangScript.sml",
@@ -12025,7 +12025,7 @@
     "lean_path": "Flapjack/Pancake/LoopLang.lean",
     "lean_name": "HolLoopProg",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-deepseek-two (independent HOL/Lean comparison: all 24 prog constructors and field types match loopLangScript.sml:30-60; word width fixed at BitVec width; num_set fields use the exact Spt Unit carrier; shMem uses CrepMemOp whose eight constructors match asm$memop; FFI name is the exact MlString carrier)"
+    "reviewer": "flapjack-luna-a (direct comparison with loopLangScript.sml:30-60 and imported carriers: all 24 constructors and fields match; words are fixed BitVec width and literal BitVec 5; num_set is exact Spt Unit; BinOp/Cmp have the same asm constructors; RegImm maps HOL Reg/Imm to Lean .reg/.imm with matching Nat/word payloads; CrepMemOp is a separate Lean datatype whose eight nullary constructors match asm$memop in order; PrimOp, LoopArith and Shift are exact tagged carriers; FFI uses exact MlString. This is a datatype shape review, not a claim that arbitrary MlString names roundtrip to String; the executable bridge is partial on that codec boundary.)"
   },
   {
     "hol_path": "cakeml/compiler/backend/stackLangScript.sml",
