@@ -9,6 +9,8 @@ Exact ports of HOL `panProps$list_rel_length_shape_of_flatten_better[local]` and
 HOL `LIST_REL` is the exact `ListRel`, `EVERY is_wf_shape_v_nil` is membership
 over `isWfShapeValueHOLExact []`, and `size_of_shape`/`shape_of`/`flatten` are
 the tagged `sizeOfShapeHOL`/`shapeOfHOLExact`/`flattenHOL` over `ValueHOL`.
+HOL's `'a word` is the positive-width word carrier of `ValueHOL width`
+(`words_as_type_indexed_bitvec`).
 -/
 
 namespace Flapjack
@@ -20,7 +22,8 @@ open Flapjack.Pancake.PanLang (MlS ShapeHOL sizeOfShapeHOL sizeOfShapesHOL
     (`panPropsScript.sml:244-253`): `LIST_REL (λvsh arg. vsh = shape_of arg)
     vshs args /\ EVERY is_wf_shape_v_nil args ==>
     size_of_shape (Comb vshs) = LENGTH (FLAT (MAP flatten args))`. -/
-@[hol "cakeml/pancake/semantics/panPropsScript.sml" "list_rel_length_shape_of_flatten_better"]
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "list_rel_length_shape_of_flatten_better"
+  (words_as_type_indexed_bitvec)]
 theorem listRelLengthShapeOfFlattenBetterHOL {width : Nat} [NeZero width] :
     ∀ (vshs : List ShapeHOL) (args : List (ValueHOL width)),
       ListRel (fun vsh arg => vsh = shapeOfHOLExact arg) vshs args ∧
@@ -42,7 +45,8 @@ theorem listRelLengthShapeOfFlattenBetterHOL {width : Nat} [NeZero width] :
     (`panPropsScript.sml:256-262`): `LIST_REL (λvsh arg. SND vsh = shape_of arg)
     vshs args /\ EVERY is_wf_shape_v_nil args ==>
     size_of_shape (Comb (MAP SND vshs)) = LENGTH (FLAT (MAP flatten args))`. -/
-@[hol "cakeml/pancake/semantics/panPropsScript.sml" "list_rel_length_shape_of_flatten"]
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "list_rel_length_shape_of_flatten"
+  (words_as_type_indexed_bitvec)]
 theorem listRelLengthShapeOfFlattenHOL {width : Nat} [NeZero width] :
     ∀ (vshs : List (MlS × ShapeHOL)) (args : List (ValueHOL width)),
       ListRel (fun vsh arg => vsh.2 = shapeOfHOLExact arg) vshs args ∧
