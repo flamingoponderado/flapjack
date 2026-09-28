@@ -27,6 +27,33 @@ def pipelineDiagnosticsConfig : WordStackConfig :=
 def diagnosticCompiledMain : CompiledFunction Nat :=
   { name := "main", params := [], body := .skip, returnShape := .one }
 
+private def routedSkipFunction : CompiledFunction (BitVec 64) :=
+  { name := "main", params := [], body := .skip, returnShape := .one }
+
+private def nonByteRoutedFunction : CompiledFunction (BitVec 64) :=
+  { name := "λ", params := [],
+    body := .extCall "λ" 0 0 0 0,
+    returnShape := .one }
+
+/-- Byte-ranged pipeline input takes the exact `compile_def`/`ocompile_def`
+route, including the canonical executable projection. -/
+def routedSkipShape : Bool :=
+  match pipelineLoopFunctionsSourceRouted (width := 64) .rv64i 1
+      [routedSkipFunction] with
+  | [(1, [], .mark .skip)] => true
+  | _ => false
+
+#guard routedSkipShape
+
+/-- An out-of-byte-range function name keeps the old production route; the
+exact `MlString` conversion is not used for a truncated Lean `String`. -/
+example : pipelineLoopFunctionsSourceRouted (width := 64) .rv64i 1
+    [nonByteRoutedFunction] =
+      pipelineLoopFunctionsSource .rv64i 1 [nonByteRoutedFunction] := by
+  simp [pipelineLoopFunctionsSourceRouted, nonByteRoutedFunction,
+    pipelineFunctionInfos, crepMakeFuncsAt, CrepNameRangedBool,
+    CrepProgNameRangedBool, pipelineLoopFunctionsSource]
+
 example :
     pipelineFunctionNameAtLabel 1 [diagnosticCompiledMain] 1 = some "main" := by
   rfl

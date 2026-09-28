@@ -7,7 +7,7 @@ import Flapjack.Pancake.Semantics.LoopProps.AssignedVars
 Counterpart of `cakeml/pancake/proofs/crep_to_loopProofScript.sml`'s
 `comp_exp_assigned_vars_tmp_bound_cases` (line 593) and its two projections
 (679-680) over the exact `compileExpHOLExact`/`compileExpsHOLExact`,
-`holLoopAssignedVars` and `holLoopNestedSeq` (bead `flapjack-pxn.18.5.6.32.1`).
+`holLoopAssignedVars` and `loopNestedSeqHOL` (bead `flapjack-pxn.18.5.6.32.1`).
 -/
 
 namespace Flapjack
@@ -90,12 +90,12 @@ end
 
 theorem zipAssign_assigned (k : Nat) :
     ∀ (is : List Nat) (vs : List (HolLoopExp width)) (x : Nat),
-      x ∈ holLoopAssignedVars (holLoopNestedSeq
+      x ∈ holLoopAssignedVars (loopNestedSeqHOL
         (List.zipWith (fun i v => HolLoopProg.assign (k + i) v) is vs)) → ∃ i ∈ is, x = k + i
-  | [], _, x, h => by simp [holLoopNestedSeq, holLoopAssignedVars] at h
-  | _ :: _, [], x, h => by simp [holLoopNestedSeq, holLoopAssignedVars] at h
+  | [], _, x, h => by simp [loopNestedSeqHOL, holLoopAssignedVars] at h
+  | _ :: _, [], x, h => by simp [loopNestedSeqHOL, holLoopAssignedVars] at h
   | i :: is, v :: vs, x, h => by
-      simp only [List.zipWith_cons_cons, holLoopNestedSeq, holLoopAssignedVars,
+      simp only [List.zipWith_cons_cons, loopNestedSeqHOL, holLoopAssignedVars,
         List.mem_append, List.mem_singleton] at h
       rcases h with h | h
       · exact ⟨i, List.mem_cons_self, h⟩
@@ -105,10 +105,10 @@ theorem zipAssign_assigned (k : Nat) :
 mutual
 theorem compileExpHOLExact_assigned_bound (ct : CrepToLoopContextExact) (tmp : Nat) (l : NumSet) :
     ∀ (e : CrepExpHOL width) (n : Nat),
-      n ∈ holLoopAssignedVars (holLoopNestedSeq (compileExpHOLExact ct tmp l e).1) →
+      n ∈ holLoopAssignedVars (loopNestedSeqHOL (compileExpHOLExact ct tmp l e).1) →
       tmp ≤ n ∧ n < (compileExpHOLExact ct tmp l e).2.2.1
   | .baseAddr, n, h | .topAddr, n, h | .const _, n, h | .var _, n, h | .loadGlob _, n, h => by
-      simp [compileExpHOLExact, holLoopNestedSeq, holLoopAssignedVars] at h
+      simp [compileExpHOLExact, loopNestedSeqHOL, holLoopAssignedVars] at h
   | .load a, n, h => by
       have ih := compileExpHOLExact_assigned_bound ct tmp l a n
       rcases hA : compileExpHOLExact ct tmp l a with ⟨c, v, m, o⟩
@@ -119,7 +119,7 @@ theorem compileExpHOLExact_assigned_bound (ct : CrepToLoopContextExact) (tmp : N
       have hle := compileExpHOLExact_tmp_le ct tmp l a
       rcases hA : compileExpHOLExact ct tmp l a with ⟨c, v, m, o⟩
       rw [hA] at ih hle; simp only at ih hle
-      simp only [compileExpHOLExact, hA, holAssignedVarsNestedSeqSplit, holLoopNestedSeq,
+      simp only [compileExpHOLExact, hA, holAssignedVarsNestedSeqSplit, loopNestedSeqHOL,
         holLoopAssignedVars, List.mem_append, List.mem_singleton, List.append_nil] at h ⊢
       rcases h with h | h | h
       · have := ih h; omega
@@ -147,11 +147,11 @@ theorem compileExpHOLExact_assigned_bound (ct : CrepToLoopContextExact) (tmp : N
       · have := ih h; omega
       · obtain ⟨i, hi, rfl⟩ := zipAssign_assigned m _ _ n h
         simp only [List.mem_range] at hi; omega
-      · have hoc : ∀ x ∈ holLoopAssignedVars (holLoopNestedSeq oc), m + vs.length ≤ x ∧ x ≤ d := by
+      · have hoc : ∀ x ∈ holLoopAssignedVars (loopNestedSeqHOL oc), m + vs.length ≤ x ∧ x ≤ d := by
           cases o
           simp only [compileCrepopHOLExact] at hB
           split at hB <;> (simp only [Prod.mk.injEq] at hB; obtain ⟨rfl, rfl⟩ := hB) <;>
-            simp [holLoopNestedSeq, holLoopAssignedVars] <;> omega
+            simp [loopNestedSeqHOL, holLoopAssignedVars] <;> omega
         have := hoc n h; omega
   | .cmp o a b, n, h => by
       have iha := compileExpHOLExact_assigned_bound ct tmp l a n
@@ -163,7 +163,7 @@ theorem compileExpHOLExact_assigned_bound (ct : CrepToLoopContextExact) (tmp : N
       rcases hB : compileExpHOLExact ct m ol b with ⟨c', v', m', ol'⟩
       rw [hB] at ihb hlb; simp only at ihb hlb
       simp only [compileExpHOLExact, hA, hB, progIfHOLExact, holAssignedVarsNestedSeqSplit,
-        holLoopNestedSeq, holLoopAssignedVars, List.mem_append, List.mem_singleton,
+        loopNestedSeqHOL, holLoopAssignedVars, List.mem_append, List.mem_singleton,
         List.append_nil] at h ⊢
       rcases h with ((h | h) | h | h | h | h)
       · have := iha h; omega
@@ -186,9 +186,9 @@ termination_by e => sizeOf e
 
 theorem compileExpsHOLExact_assigned_bound (ct : CrepToLoopContextExact) (tmp : Nat) (l : NumSet) :
     ∀ (es : List (CrepExpHOL width)) (n : Nat),
-      n ∈ holLoopAssignedVars (holLoopNestedSeq (compileExpsHOLExact ct tmp l es).1) →
+      n ∈ holLoopAssignedVars (loopNestedSeqHOL (compileExpsHOLExact ct tmp l es).1) →
       tmp ≤ n ∧ n < (compileExpsHOLExact ct tmp l es).2.2.1
-  | [], n, h => by simp [compileExpsHOLExact, holLoopNestedSeq, holLoopAssignedVars] at h
+  | [], n, h => by simp [compileExpsHOLExact, loopNestedSeqHOL, holLoopAssignedVars] at h
   | e :: es, n, h => by
       have iha := compileExpHOLExact_assigned_bound ct tmp l e n
       have hla := compileExpHOLExact_tmp_le ct tmp l e
@@ -224,12 +224,12 @@ theorem comp_exp_assigned_vars_tmp_bound_cases :
     (∀ (ct : CrepToLoopContextExact) (tmp : Nat) (l : NumSet) (e : CrepExpHOL width)
       (p : List (HolLoopProg width)) (le : HolLoopExp width) (ntmp : Nat) (nl : NumSet) (n : Nat),
       compileExpHOLExact ct tmp l e = (p, le, ntmp, nl) ∧
-        n ∈ holLoopAssignedVars (holLoopNestedSeq p) → tmp ≤ n ∧ n < ntmp) ∧
+        n ∈ holLoopAssignedVars (loopNestedSeqHOL p) → tmp ≤ n ∧ n < ntmp) ∧
     (∀ (ct : CrepToLoopContextExact) (tmp : Nat) (l : NumSet) (e : List (CrepExpHOL width))
       (p : List (HolLoopProg width)) (le : List (HolLoopExp width)) (ntmp : Nat) (nl : NumSet)
       (n : Nat),
       compileExpsHOLExact ct tmp l e = (p, le, ntmp, nl) ∧
-        n ∈ holLoopAssignedVars (holLoopNestedSeq p) → tmp ≤ n ∧ n < ntmp) :=
+        n ∈ holLoopAssignedVars (loopNestedSeqHOL p) → tmp ≤ n ∧ n < ntmp) :=
   ⟨fun ct tmp l e p le ntmp nl n ⟨h, hn⟩ => by
       have := compileExpHOLExact_assigned_bound ct tmp l e n; rw [h] at this; exact this hn,
    fun ct tmp l e p le ntmp nl n ⟨h, hn⟩ => by
@@ -243,7 +243,7 @@ theorem comp_exp_assigned_vars_tmp_bound :
     ∀ (ct : CrepToLoopContextExact) (tmp : Nat) (l : NumSet) (e : CrepExpHOL width)
       (p : List (HolLoopProg width)) (le : HolLoopExp width) (ntmp : Nat) (nl : NumSet) (n : Nat),
       compileExpHOLExact ct tmp l e = (p, le, ntmp, nl) ∧
-        n ∈ holLoopAssignedVars (holLoopNestedSeq p) → tmp ≤ n ∧ n < ntmp :=
+        n ∈ holLoopAssignedVars (loopNestedSeqHOL p) → tmp ≤ n ∧ n < ntmp :=
   comp_exp_assigned_vars_tmp_bound_cases.1
 
 /-- Exact HOL `comp_exps_assigned_vars_tmp_bound`
@@ -255,7 +255,7 @@ theorem comp_exps_assigned_vars_tmp_bound :
       (p : List (HolLoopProg width)) (le : List (HolLoopExp width)) (ntmp : Nat) (nl : NumSet)
       (n : Nat),
       compileExpsHOLExact ct tmp l e = (p, le, ntmp, nl) ∧
-        n ∈ holLoopAssignedVars (holLoopNestedSeq p) → tmp ≤ n ∧ n < ntmp :=
+        n ∈ holLoopAssignedVars (loopNestedSeqHOL p) → tmp ≤ n ∧ n < ntmp :=
   comp_exp_assigned_vars_tmp_bound_cases.2
 
 end Flapjack
