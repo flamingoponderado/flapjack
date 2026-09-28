@@ -18,3 +18,6 @@ fun print_eval label q =
 val _ = print_eval "compile_crepop_mul_riscv"
   ``crep_to_loop$compile_crepop
       crepLang$Mul RISC_V 2 3 4 LN``
+val _ = print_eval "compile_crepop_mul_armv7"
+  ``crep_to_loop$compile_crepop
+      crepLang$Mul ARMv7 2 3 4 LN``

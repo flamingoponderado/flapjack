@@ -10,10 +10,14 @@ def oCompile [OfNat α 0] [OfNat α 1]
     LoopProg α :=
   loopLiveOptimise (compileCrepToLoop context live program)
 
-/-! Source-named port of CakeML Pancake's `comp_func_def`
-    (`crep_to_loopScript.sml:235`).  This keeps the source compiler's
-    `make_vmap`/`vmax`/initial-live construction together with `oCompile`,
-    rather than duplicating those choices in a pipeline entry point. -/
+/-! Production helper corresponding to the shape of CakeML Pancake's
+    `comp_func_def` (`crep_to_loopScript.sml:235`). It is intentionally
+    untagged: it uses RISC-V `Architecture`, String-keyed production function
+    maps, and the generic executable `LoopProg`, while HOL uses `asm$architecture`,
+    `mlstring` keys, and `HolLoopProg`; moreover it calls the production
+    `compileCrepToLoop`/`loopLiveOptimise`, not an exact `compile_def` port.
+    The exact `comp_func_def` remains blocked on the faithful program compiler
+    tracked by `flapjack-pxn.18.5.6.28`. -/
 def crepCompFunc [OfNat α 0] [OfNat α 1]
     (target : RiscV.Architecture) (functions : InfoMap (Nat × Nat))
     (params : List Nat) (body : CrepProg α) : LoopProg α :=
