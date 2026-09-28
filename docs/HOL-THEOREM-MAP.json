@@ -686,7 +686,7 @@
     "lean_path": "Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean",
     "lean_name": "evalCrepSemHOLProgExact_seq_fixClockFree",
     "statement_status": "documented_mismatch",
-    "reviewer": "Untagged Flapjack-specific Seq analogue of HOL evaluate_def at crepSemScript.sml:443. Its evaluator is evalCrepSemHOLProgExact; whole-evaluator agreement with HOL evaluate has not yet been reviewed across Call, domain stamping, and FFI. The equation remains useful infrastructure but cannot claim an exact HOL port."
+    "reviewer": "Untagged Flapjack-specific Seq analogue of HOL evaluate_def at crepSemScript.sml:443. Its evaluator is evalCrepSemHOLProgExact; whole-evaluator agreement with HOL evaluate has not yet been reviewed across Call, domain stamping, and FFI. The equation remains useful infrastructure but cannot claim an exact HOL port. Superseded as the evaluator-agreement gap by the tagged assembly evalCrepSemHOLProgExact_eq_evaluate_def (bead flapjack-4ac.5.16.5.37); this clause lemma stays untagged."
   },
   {
     "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
@@ -694,7 +694,7 @@
     "lean_path": "Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean",
     "lean_name": "evalCrepSemHOLProgExact_while_fixClockFree",
     "statement_status": "documented_mismatch",
-    "reviewer": "Untagged Flapjack-specific While analogue of HOL evaluate_def at crepSemScript.sml:443. Its evaluator is evalCrepSemHOLProgExact; whole-evaluator agreement with HOL evaluate has not yet been reviewed across Call, domain stamping, and FFI. The equation remains useful infrastructure but cannot claim an exact HOL port."
+    "reviewer": "Untagged Flapjack-specific While analogue of HOL evaluate_def at crepSemScript.sml:443. Its evaluator is evalCrepSemHOLProgExact; whole-evaluator agreement with HOL evaluate has not yet been reviewed across Call, domain stamping, and FFI. The equation remains useful infrastructure but cannot claim an exact HOL port. Superseded as the evaluator-agreement gap by the tagged assembly evalCrepSemHOLProgExact_eq_evaluate_def (bead flapjack-4ac.5.16.5.37); this clause lemma stays untagged."
   },
   {
     "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
@@ -14963,7 +14963,22 @@
     "lean_path": "Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean",
     "lean_name": "evalCrepSemHOLProgExact_skip",
     "statement_status": "documented_mismatch",
-    "reviewer": "Coordinator review HOLD flapjack-l60u (2026-09-27): HOL crepSemScript.sml:443 rewrites evaluate_def; its Skip conjunct originates at line 241 and is the unconditional equation evaluate (Skip,s)=(NONE,s). The local evalCrepSemHOLProgExact_skip equation matches that constructor clause, but it only checks the Skip behavior of Flapjack's evalCrepSemHOLProgExact. No source-reviewed theorem establishes agreement of this total evaluator with HOL evaluate across all constructors, including FFI cases, so this constructor equation alone is not tagged as a port of evaluate_def. The tag and reviewed-type lock were withdrawn; the useful local Skip equation remains untagged infrastructure. Faithful evaluator port remains open under flapjack-4ac.5.16.5 and flapjack-4ac.5.16.5.25."
+    "reviewer": "Coordinator review HOLD flapjack-l60u (2026-09-27): HOL crepSemScript.sml:443 rewrites evaluate_def; its Skip conjunct originates at line 241 and is the unconditional equation evaluate (Skip,s)=(NONE,s). The local evalCrepSemHOLProgExact_skip equation matches that constructor clause, but it only checks the Skip behavior of Flapjack's evalCrepSemHOLProgExact. No source-reviewed theorem establishes agreement of this total evaluator with HOL evaluate across all constructors, including FFI cases, so this constructor equation alone is not tagged as a port of evaluate_def. The tag and reviewed-type lock were withdrawn; the useful local Skip equation remains untagged infrastructure. Faithful evaluator port remains open under flapjack-4ac.5.16.5 and flapjack-4ac.5.16.5.25. Superseded as the evaluator-agreement gap by the tagged assembly evalCrepSemHOLProgExact_eq_evaluate_def (bead flapjack-4ac.5.16.5.37); this clause lemma stays untagged."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 443,
+    "lean_path": "Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean",
+    "lean_name": "evalCrepSemHOLProgExact_eq_evaluate_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-28; beads flapjack-4ac.5.16.5.33/.34/.35/.36/.37): compared all 19 conjuncts of the line-443 rebound evaluate_def (REWRITE_RULE [fix_clock_evaluate] of crepSemScript.sml:240-379) with the 19 arms of this one match-program equation over evalCrepSemHOLProgExact. Skip/Break/Continue/Raise/Tick are identical. Dec evaluates the body on s with locals |+ (v,value) (updateEq) and restores with res_var (resVarEq) of FLOOKUP s.locals v. Primitive uses OPT_MMAP (FLOOKUP s.locals), crep_primop, and the Prop guard LENGTH/EVERY IS_SOME/ALL_DISTINCT with |++ ZIP. Assign/StoreGlob/Return use the tagged eval_def (evalCrepSemHOLExp), |+, set_globals, and empty_locals. Store/Store32/StoreByte use the tagged mem_store/mem_store_32/word8 mem_store_byte, with w2w = BitVec.ofNat. ShMem uses is_load (crepIsLoadMemOp, clause-for-clause asm is_load_def on CrepMemOp, the prog-reviewed memop carrier) and the tagged sh_mem_op port. Seq/While/Call have no fix_clock (line 443) and use plain matches with no domain stamping; Seq is if res = NONE; While matches res as Continue 0/NONE/Break 0/exit_loop. Call has OPT_MMAP eval args, lookup_code via lookupCodeFiniteHOL (lookup_code_def on the finite-support carrier, proved equal on lookups to the tagged lookupCodeHOL), the caltyp ALL_DISTINCT guard before the clock test, and callee state (dec_clock s) with locals := newlocals. Its Return/Exception/fall-through branches match HOL, and the handler runs on st with locals := s.locals. ExtCall uses the tagged read_bytearray/mem_load_byte/call_FFI/write_bytearray with HOL's ptr/len order. There is no premise, no result hypothesis, and no extra quantifier. HOL word sets are Prop predicates, decided classically (open Classical; choice invisible by evalCrepSemHOLProgExact_eq_core). The locals/globals/code |-> fields use the canonical HolFiniteMapExact carrier (same-module CrepSemShMemExact.holFmapAsFiniteSupportWitness), and 'a word/'ffi use the BitVec width [NeZero width]/σ : Type translation, hence the combined status. Each arm is proved by an untagged clause lemma; the tag is only on this assembly. Original-HOL oracle rows cover every arm; crep_evaluate_def_arms_probe.out (Flapjack.Test.CrepSemEvaluateDefArmsParity) adds Primitive and the Call handler catch/mismatch/absent/duplicate-rts cases."
   },
   {
     "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
@@ -15341,6 +15356,50 @@
     "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-a source comparison (2026-09-28; bead flapjack-4ac.4.61) against panPropsScript.sml:1150-1158 and panSemScript.sml:573-582. This is the genuine Primitive name/operator/arguments leaf from recInduct evaluate_ind. It retains the source evaluator pair premise and all eight conclusions with no IH or extra precondition. Expression-list failure, primitive failure, and invalid local result preserve the input state; a valid result uses set_var, which updates only locals. The Lean case uses OPT_MMAP's evalListHOLExact and panPrimopHOLExact from the reviewed finite-support indexed-word evaluator. Skip, Break, Continue, Annot, Tick, Return, and Assign leaves are also ported; recursive cases and assembly remain open."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "evaluate_invariants",
+    "hol_line": 1150,
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
+    "lean_name": "evaluateInvariantsIfCaseHOLFinite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-28; bead flapjack-4ac.4.61) against panPropsScript.sml:1150-1158 and panSemScript.sml:621-626. This is the genuine If condition/then/else case from recInduct evaluate_ind. It keeps the evaluator pair premise, both recursive branch induction hypotheses, and all eight conclusions, with no other preconditions. evaluate_def evaluates the condition once; a word selects then for nonzero and else for zero; all other values return Error with the input state. The Lean case uses the canonical exact finite-state evaluator on PanPropsEvalStateFiniteExact's checked finite-support carrier and indexed words. Other recursive cases and assembly remain open."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "evaluate_invariants",
+    "hol_line": 1150,
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
+    "lean_name": "evaluateInvariantsStore32CaseHOLFinite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-28; bead flapjack-4ac.4.61) against panPropsScript.sml:1150-1158 and panSemScript.sml:590-596. This is the genuine Store32 destination/source leaf from recInduct evaluate_ind. It retains the source evaluator result/post pair premise and all eight conclusions with no IH or added precondition. evaluate_def requires word-valued destination and source, then mem_store_32; all failed patterns return Error with the original state and success changes only memory. Lean uses evaluateHOLFiniteState_store32 on PanPropsEvalStateFiniteExact's checked finite-support carrier and indexed-word model. Recursive cases and assembly remain open."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "evaluate_invariants",
+    "hol_line": 1150,
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
+    "lean_name": "evaluateInvariantsStoreByteCaseHOLFinite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-28; bead flapjack-4ac.4.61) against panPropsScript.sml:1150-1158 and panSemScript.sml:597-603. This is the genuine StoreByte destination/source leaf from recInduct evaluate_ind. It retains the source evaluator result/post pair premise and all eight conclusions with no IH or added precondition. evaluate_def requires word-valued destination and source, then stores the low byte via mem_store_byte; every failed pattern returns Error with the original state and success changes only memory. Lean uses evaluateHOLFiniteState_storeByte on PanPropsEvalStateFiniteExact's checked finite-support carrier and indexed-word model. Recursive cases and assembly remain open."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "evaluate_invariants",
+    "hol_line": 1150,
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
+    "lean_name": "evaluateInvariantsStoreCaseHOLFinite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-28; bead flapjack-4ac.4.61) against panPropsScript.sml:1150-1158 and panSemScript.sml:583-589. This is the genuine Store destination/source leaf from recInduct evaluate_ind. It retains the source evaluator result/post pair premise and all eight conclusions with no IH or added precondition. evaluate_def returns Error with the original state if either expression fails, the destination is not a word, or mem_stores fails; success changes only memory. The Lean case uses evaluateHOLFiniteState_store on PanPropsEvalStateFiniteExact's checked finite-support carrier and the indexed-word model. Recursive cases and assembly remain open."
   },
   {
     "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
