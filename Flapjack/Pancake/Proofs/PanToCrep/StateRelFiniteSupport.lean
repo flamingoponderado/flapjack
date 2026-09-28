@@ -489,10 +489,12 @@ noncomputable def evalListHOLFiniteClassical {width : Nat} {σ : Type}
     three premises keep HOL's conjunction order. The relation qualifier records
     the finite maps that `state_rel`/`locals_rel` traverse: the source
     `globals`, the context `vars`, the source locals, and the standalone target
-    locals `tLocs`. -/
+    locals `tLocs`. HOL's `'a word`/`'ffi` are the positive-width `BitVec width`
+    and `σ : Type` carriers (`words_as_type_indexed_bitvec`). -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "opt_mmap_eval_is_wf_shape_v"
   (fmap_as_finite_support_relation := [PanSemStateFiniteExact.globals,
-    PanSemStateFiniteExact.locals, PanToCrepContextExact.vars, tLocs])]
+    PanSemStateFiniteExact.locals, PanToCrepContextExact.vars, tLocs])
+  (words_as_type_indexed_bitvec)]
 theorem optMmapEvalIsWfShapeVHOL {width : Nat} {σ : Type} [NeZero width]
     (es : List (ExpHOL width)) (vs : List (ValueHOL width))
     (s : PanSemStateFiniteExact width σ) (t : CrepSemHOLState width σ)
