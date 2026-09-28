@@ -781,17 +781,18 @@ compatibility branch remains untagged and mismatch-tracked. -/
 
 /-- Word view of a `PanValue` memory: word cells are kept, non-word cells and
     absent addresses are read as the zero word (the `HolWordLab` total memory). -/
-def panValueWordHOL (memory : RiscV.Word 64 → Option (PanValue (RiscV.Word 64))) :
-    RiscV.Word 64 → HolWordLab 64 :=
+def panValueWordHOL {width : Nat} [NeZero width]
+    (memory : RiscV.Word width → Option (PanValue (RiscV.Word width))) :
+    RiscV.Word width → HolWordLab width :=
   fun address => match memory address with
     | some (.word value) => .word value
     | _ => .word 0
 
 /-- Definedness of a `PanValue` memory cell as a word (the `Prop` domain's
     decidable Boolean guard). -/
-def panValueWordDefined
-    (memory : RiscV.Word 64 → Option (PanValue (RiscV.Word 64))) :
-    RiscV.Word 64 → Bool :=
+def panValueWordDefined {width : Nat} [NeZero width]
+    (memory : RiscV.Word width → Option (PanValue (RiscV.Word width))) :
+    RiscV.Word width → Bool :=
   fun address => match memory address with
     | some (.word _) => true
     | _ => false
@@ -1083,6 +1084,170 @@ theorem panSemBitVec64Read32_eq_panMemLoad32HOL (state : PanSemState (RiscV.Word
             by_cases hg : address.toNat % 4 = 0 <;> simp [hg]
       | rStruct fs => simp [panValueWordDefined, hcell]
       | nStruct nm fs => simp [panValueWordDefined, hcell]
+
+/-- The RISC-V byte combiner's generic-width result is the HOL `word32`
+    result converted to the evaluator's word width. This is infrastructure for
+    the width-polymorphic `read32`/`mem_load_32` relation below, not a HOL
+    theorem port. -/
+theorem panRiscVWordOfBytes_width_eq_word32_cast {width : Nat} [NeZero width]
+    (bigEndian : Bool) (b0 b1 b2 b3 : RiscV.Word width)
+    (h0 : b0.toNat < 256) (h1 : b1.toNat < 256)
+    (h2 : b2.toNat < 256) (h3 : b3.toNat < 256) :
+    RiscV.panRiscVWordOfBytes (width := width) bigEndian [b0, b1, b2, b3] =
+      BitVec.ofNat width
+        ((RiscV.panRiscVWordOfBytes (width := 32) bigEndian
+          [BitVec.ofNat 32 b0.toNat, BitVec.ofNat 32 b1.toNat,
+           BitVec.ofNat 32 b2.toNat, BitVec.ofNat 32 b3.toNat]).toNat) := by
+  cases bigEndian
+  · have hraw : b0.toNat + 256 * b1.toNat + 256 ^ 2 * b2.toNat +
+        256 ^ 3 * b3.toNat < 2 ^ 32 := by omega
+    have hb0 : b0.toNat < 2 ^ 32 := by omega
+    have hb1 : b1.toNat < 2 ^ 32 := by omega
+    have hb2 : b2.toNat < 2 ^ 32 := by omega
+    have hb3 : b3.toNat < 2 ^ 32 := by omega
+    apply BitVec.eq_of_toNat_eq
+    simp [RiscV.panRiscVWordOfBytes, BitVec.toNat_ofNat, Nat.mod_eq_of_lt hraw,
+      Nat.mod_eq_of_lt hb0, Nat.mod_eq_of_lt hb1,
+      Nat.mod_eq_of_lt hb2, Nat.mod_eq_of_lt hb3]
+  · have hraw : b3.toNat + 256 * b2.toNat + 256 ^ 2 * b1.toNat +
+        256 ^ 3 * b0.toNat < 2 ^ 32 := by omega
+    have hb0 : b0.toNat < 2 ^ 32 := by omega
+    have hb1 : b1.toNat < 2 ^ 32 := by omega
+    have hb2 : b2.toNat < 2 ^ 32 := by omega
+    have hb3 : b3.toNat < 2 ^ 32 := by omega
+    apply BitVec.eq_of_toNat_eq
+    simp [RiscV.panRiscVWordOfBytes, BitVec.toNat_ofNat, Nat.mod_eq_of_lt hraw,
+      Nat.mod_eq_of_lt hb0, Nat.mod_eq_of_lt hb1,
+      Nat.mod_eq_of_lt hb2, Nat.mod_eq_of_lt hb3]
+
+/-- The generic source memory model uses the same address alignment predicate
+    as HOL `aligned 2` in `mem_load_32_def`. -/
+theorem panSemWordModel_aligned4_eq_decide {width : Nat} [NeZero width]
+    (address : RiscV.Word width) :
+    (panSemWordModel (width := width)).aligned 4 address =
+      decide (address.toNat % 4 = 0) := by
+  change RiscV.aligned address 4 = decide (address.toNat % 4 = 0)
+  simp [RiscV.aligned]
+
+/-- The generic model retains RISC-V's fixed `word32` decoder, converted to
+    the carrier width by the enclosing evaluator. -/
+theorem panSemWordModel_wordOfBytes32_eq_riscv {width : Nat} [NeZero width]
+    (bigEndian : Bool) (bytes : List (RiscV.Word width)) :
+    (panSemWordModel (width := width)).wordOfBytes32 bigEndian bytes =
+      RiscV.panRiscVWordOfBytes bigEndian bytes := by
+  rfl
+
+/-- `panGetByteHOL`'s UInt8 rendering and the generic model's source `word8`
+    rendering have the same byte value at every positive width. -/
+theorem panGetByteHOL_toNat_eq_word8 {width : Nat} [NeZero width]
+    (address value : RiscV.Word width) (bigEndian : Bool) :
+    (panGetByteHOL address value bigEndian).toNat =
+      (panGetByteWord8HOL address value bigEndian).toNat := by
+  simp [panGetByteHOL, panGetByteWord8HOL]
+
+private theorem bitVecSetWidth_eq_ofNat_toNat {sourceWidth targetWidth : Nat}
+    (value : BitVec sourceWidth) :
+    BitVec.setWidth targetWidth value = BitVec.ofNat targetWidth value.toNat := by
+  apply BitVec.eq_of_toNat_eq
+  simp only [BitVec.toNat_setWidth, BitVec.toNat_ofNat]
+
+/-- Width-polymorphic source relation for the executed generic read32 adapter.
+    The optional PanValue memory is viewed as HOL's total `word_lab` memory by
+    replacing absent/non-word cells with zero; the HOL address domain is
+    intersected with the word-defined cells so that both sides reject missing
+    and non-word cells. The result converts HOL's fixed `word32` into the
+    evaluator's carrier width, matching the `.load32` clause in `evalHOL`. -/
+theorem panSemWordRead32_eq_panMemLoad32HOL {width : Nat} [NeZero width]
+    (state : PanSemState (RiscV.Word width) ffi)
+    (memory : RiscV.Word width → Option (PanValue (RiscV.Word width)))
+    (address : RiscV.Word width) :
+    (panSemWordMemoryAccess state).read32
+        (panSemWordMemoryAccess state).domain memory (panSemBytesInWord (width := width)) address
+      = (panMemLoad32HOL (width := width) (panValueWordHOL memory)
+          (fun a => state.memaddrs a && panValueWordDefined memory a = true) state.be address).map
+          (fun word => BitVec.ofNat width word.toNat) := by
+  change panModelRead32 (panSemWordModel (width := width)) state.memaddrs
+      (panValueWordMemory memory) (panSemBytesInWord (width := width)) address state.be = _
+  simp only [panModelRead32, panMemLoad32HOL]
+  rw [panSemWordModel_aligned4_eq_decide]
+  simp only [panSemWordModel_byteAlign_isHOL]
+  by_cases halign : address.toNat % 4 = 0
+  · simp [halign]
+    cases hcell : memory (panByteAlignHOL (width := width) address) with
+    | none => simp [panValueWordMemory, panValueWordDefined, hcell]
+    | some cell =>
+        cases cell with
+        | word value =>
+            simp only [panValueWordMemory, panValueWordHOL, panValueWordDefined, hcell]
+            cases hdom : state.memaddrs (panByteAlignHOL (width := width) address) with
+            | false => simp
+            | true =>
+              simp
+              have hbyte0 : (panSemWordModel (width := width)).getByte
+                (panSemBytesInWord (width := width)) address value state.be =
+                BitVec.ofNat width (panGetByteHOL address value state.be).toNat := by
+                rw [panSemWordModel_getByte_isHOL, panGetByteHOL_toNat_eq_word8]
+              have hbyte1 : (panSemWordModel (width := width)).getByte
+                (panSemBytesInWord (width := width)) (address + (1#width)) value state.be =
+                BitVec.ofNat width (panGetByteHOL (address + (1#width)) value state.be).toNat := by
+                rw [panSemWordModel_getByte_isHOL, panGetByteHOL_toNat_eq_word8]
+              have hbyte2 : (panSemWordModel (width := width)).getByte
+                (panSemBytesInWord (width := width)) (address + (2#width)) value state.be =
+                BitVec.ofNat width (panGetByteHOL (address + (2#width)) value state.be).toNat := by
+                rw [panSemWordModel_getByte_isHOL, panGetByteHOL_toNat_eq_word8]
+              have hbyte3 : (panSemWordModel (width := width)).getByte
+                (panSemBytesInWord (width := width)) (address + (3#width)) value state.be =
+                BitVec.ofNat width (panGetByteHOL (address + (3#width)) value state.be).toNat := by
+                rw [panSemWordModel_getByte_isHOL, panGetByteHOL_toNat_eq_word8]
+              have hlt0 : ((panSemWordModel (width := width)).getByte
+                (panSemBytesInWord (width := width)) address value state.be).toNat < 256 := by
+                rw [hbyte0]
+                simp only [BitVec.toNat_ofNat]
+                exact Nat.lt_of_le_of_lt (Nat.mod_le _ _) (by
+                  simp [panGetByteHOL]; omega)
+              have hlt1 : ((panSemWordModel (width := width)).getByte
+                (panSemBytesInWord (width := width)) (address + (1#width)) value state.be).toNat < 256 := by
+                rw [hbyte1]
+                simp only [BitVec.toNat_ofNat]
+                exact Nat.lt_of_le_of_lt (Nat.mod_le _ _) (by
+                  simp [panGetByteHOL]; omega)
+              have hlt2 : ((panSemWordModel (width := width)).getByte
+                (panSemBytesInWord (width := width)) (address + (2#width)) value state.be).toNat < 256 := by
+                rw [hbyte2]
+                simp only [BitVec.toNat_ofNat]
+                exact Nat.lt_of_le_of_lt (Nat.mod_le _ _) (by
+                  simp [panGetByteHOL]; omega)
+              have hlt3 : ((panSemWordModel (width := width)).getByte
+                (panSemBytesInWord (width := width)) (address + (3#width)) value state.be).toNat < 256 := by
+                rw [hbyte3]
+                simp only [BitVec.toNat_ofNat]
+                exact Nat.lt_of_le_of_lt (Nat.mod_le _ _) (by
+                  simp [panGetByteHOL]; omega)
+              rw [hbyte0, hbyte1, hbyte2, hbyte3]
+              rw [panSemWordModel_wordOfBytes32_eq_riscv]
+              have hlt0' : (BitVec.ofNat width (panGetByteHOL address value state.be).toNat).toNat < 256 := by
+                rw [← hbyte0]
+                exact hlt0
+              have hlt1' : (BitVec.ofNat width (panGetByteHOL (address + (1#width)) value state.be).toNat).toNat < 256 := by
+                rw [← hbyte1]
+                exact hlt1
+              have hlt2' : (BitVec.ofNat width (panGetByteHOL (address + (2#width)) value state.be).toNat).toNat < 256 := by
+                rw [← hbyte2]
+                exact hlt2
+              have hlt3' : (BitVec.ofNat width (panGetByteHOL (address + (3#width)) value state.be).toNat).toNat < 256 := by
+                rw [← hbyte3]
+                exact hlt3
+              have hdecode := panRiscVWordOfBytes_width_eq_word32_cast state.be
+                (BitVec.ofNat width (panGetByteHOL address value state.be).toNat)
+                (BitVec.ofNat width (panGetByteHOL (address + (1#width)) value state.be).toNat)
+                (BitVec.ofNat width (panGetByteHOL (address + (2#width)) value state.be).toNat)
+                (BitVec.ofNat width (panGetByteHOL (address + (3#width)) value state.be).toNat)
+                hlt0' hlt1' hlt2' hlt3'
+              rw [hdecode]
+              simp only [bitVecSetWidth_eq_ofNat_toNat, BitVec.toNat_ofNat]
+        | rStruct _ => simp [panValueWordMemory, panValueWordDefined, hcell]
+        | nStruct _ _ => simp [panValueWordMemory, panValueWordDefined, hcell]
+  · simp [halign]
 
 /-! ### Structured `.load` word-node bridge (flapjack-pxn.18.3.6.9.2.2)
 
