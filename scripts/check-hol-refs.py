@@ -1901,7 +1901,43 @@ def words_as_type_indexed_bitvec_errors(
             )
         else:
             candidate_errors: list[str] = []
-            for owners in owners_by_name.values():
+            def exact_hol_word_lab_carrier() -> bool:
+                # ValueHOL stores word values through the exact HOL `word_lab`
+                # wrapper. Do not bless HolWordLab by its name: resolve its
+                # unique declaration and check its positive width and sole
+                # BitVec payload before accepting the aggregate ValueHOL.
+                nested_owners: list[tuple[str, str, dict[str, str]]] = []
+                if "HolWordLab" in local_types:
+                    nested_owners.append((
+                        module, local_headers.get("HolWordLab", ""),
+                        local_types["HolWordLab"],
+                    ))
+                nested_owners.extend(imported_owners.get("HolWordLab", []))
+                if len(nested_owners) != 1:
+                    return False
+                _nested_module, nested_header, nested_payloads = nested_owners[0]
+                nested_text = nested_header + "\n" + "\n".join(
+                    nested_payloads.values()
+                )
+                nested_ids = word_dimension_identifier_atoms(nested_text)
+                nested_widths = {
+                    match.group(1) for match in NAT_WIDTH_BINDER_RE.finditer(nested_header)
+                }
+                if (
+                    word_dimension_errors(nested_text)
+                    or len(nested_ids) != 1
+                    or nested_ids[0] not in nested_widths
+                    or len(nested_payloads) != 1
+                ):
+                    return False
+                payload = next(iter(nested_payloads.values()))
+                fields = re.findall(
+                    r"\(\s*[A-Za-z_][A-Za-z0-9_']*\s*:\s*([^()]+?)\s*\)",
+                    payload,
+                )
+                return fields == [f"BitVec {nested_ids[0]}"]
+
+            for owner_name, owners in owners_by_name.items():
                 _owner_module, header, fields = owners[0]
                 owner_text = header + "\n" + "\n".join(fields.values())
                 owner_errors = word_dimension_errors(owner_text)
@@ -1915,6 +1951,25 @@ def words_as_type_indexed_bitvec_errors(
                 ):
                     carrier_ok = True
                     break
+                # Exact HOL `panSem$v` (`ValueHOL`) contains `HolWordLab width`
+                # in its Val constructor. Resolve both owners independently:
+                # ValueHOL must retain positive width, and HolWordLab must be
+                # its exact one-constructor BitVec wrapper at positive width.
+                if owner_name == "ValueHOL":
+                    value_text = owner_text.replace("HolWordLab", "BitVec")
+                    value_ids = word_dimension_identifier_atoms(value_text)
+                    value_widths = {
+                        match.group(1)
+                        for match in NAT_WIDTH_BINDER_RE.finditer(header)
+                    }
+                    if (
+                        not word_dimension_errors(value_text)
+                        and value_ids
+                        and all(identifier in value_widths for identifier in value_ids)
+                        and exact_hol_word_lab_carrier()
+                    ):
+                        carrier_ok = True
+                        break
                 if owner_ids and not candidate_errors:
                     candidate_errors = owner_errors
             if not carrier_ok and candidate_errors:

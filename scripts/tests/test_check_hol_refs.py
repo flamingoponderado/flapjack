@@ -1745,6 +1745,53 @@ class WordsCarrierResolutionTest(unittest.TestCase):
         ])
         self.assertEqual(self._run(owner, consumer), [])
 
+    VALUE_HOL_OWNER = "\n".join([
+        "inductive HolWordLab (width : Nat) [NeZero width] where",
+        "  | word (value : BitVec width)",
+        "inductive ValueHOL (width : Nat) [NeZero width] where",
+        "  | val (value : HolWordLab width)",
+        "  | rStruct (fields : List (ValueHOL width))",
+        "  | nStruct (name : MlS) (fields : List (MlS × ValueHOL width))",
+    ])
+
+    VALUE_HOL_CONSUMER = "\n".join([
+        "import Flapjack.PanToCrep.ContextExact",
+        '@[hol "cakeml/pancake/semantics/panSemScript.sml" "flatten_def"',
+        "  (words_as_type_indexed_bitvec)]",
+        "def flattenExact {width : Nat} [NeZero width]",
+        "    (value : ValueHOL width) : Nat := width",
+    ])
+
+    def test_accepts_value_hol_only_through_resolved_word_lab_payload(self):
+        self.assertEqual(
+            self._run(self.VALUE_HOL_OWNER, self.VALUE_HOL_CONSUMER), []
+        )
+
+    def test_rejects_value_hol_without_width_indexed_word_payload(self):
+        owner = self.VALUE_HOL_OWNER.replace(
+            "  | val (value : HolWordLab width)",
+            "  | val (value : Nat)",
+        )
+        errors = self._run(owner, self.VALUE_HOL_CONSUMER)
+        self.assertTrue(any("BitVec" in error for error in errors), errors)
+
+    def test_rejects_value_hol_if_word_lab_payload_is_not_positive_bitvec(self):
+        owner = self.VALUE_HOL_OWNER.replace(
+            "inductive HolWordLab (width : Nat) [NeZero width] where",
+            "inductive HolWordLab (width : Nat) where",
+        )
+        errors = self._run(owner, self.VALUE_HOL_CONSUMER)
+        self.assertTrue(
+            any("positive width" in error or "NeZero" in error for error in errors),
+            errors,
+        )
+
+    def test_rejects_unrelated_aggregate_with_word_lab_field(self):
+        owner = self.VALUE_HOL_OWNER.replace("ValueHOL", "OtherValue")
+        consumer = self.VALUE_HOL_CONSUMER.replace("ValueHOL", "OtherValue")
+        errors = self._run(owner, consumer)
+        self.assertTrue(any("BitVec" in error for error in errors), errors)
+
     def test_rejects_inductive_carrier_without_same_owner_word_payload(self):
         owner = "\n".join([
             "inductive CrepProgExact (width : Nat) [NeZero width] where",
