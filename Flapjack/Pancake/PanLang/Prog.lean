@@ -295,6 +295,17 @@ theorem expsOf_byteRanged {width : Nat} :
 termination_by program _ => sizeOf program
 decreasing_by all_goals decreasing_trivial
 
+/-- For every expression occurring in a ranged production program, the tagged
+    HOL `var_exp` codec decodes back to the production `expLocalVars` result.
+    `expsOf_byteRanged` discharges the byte-name boundary from the same
+    `ProgByteRanged` premise supplied by parser/pass invariants. -/
+theorem varExpHOL_expToHOL_decode_of_progByteRanged {width : Nat} [NeZero width]
+    (program : Prog (BitVec width)) (hprogram : ProgByteRanged program)
+    (expression : Exp (BitVec width)) (hmem : expression ∈ expsOf program) :
+    (varExpHOL (expToHOL expression)).map toStringOfBytes = expLocalVars expression :=
+  varExpHOL_expToHOL_decode_of_expByteRanged expression
+    (expsOf_byteRanged program hprogram expression hmem)
+
 /-- Encode a production program into the exact HOL-shaped carrier.  Identifiers
     use the total `ofString`, expressions use `expToHOL`, and shapes use
     `shapeToHOL`. -/
