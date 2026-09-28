@@ -3275,8 +3275,9 @@ end Flapjack
 This genuine induction case keeps the source theorem's evaluator premise and
 all eight state-field conclusions.  HOL's `Skip` clause returns the original
 state, so this leaf is immediate over the reviewed finite-support carrier.
-The recursive `Dec`, `Seq`, `While`, `Call`, and `DecCall` cases remain open in
-bead `flapjack-4ac.4.61`. -/
+The `Dec`, `If`, and `Seq` cases now have separate exact tagged proofs. The
+`While`, `Call`, and `DecCall` cases and assembling theorem remain open in bead
+`flapjack-4ac.4.61`. -/
 
 open Flapjack.Pancake.PanLang (ProgHOL)
 
