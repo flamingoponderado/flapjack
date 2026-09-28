@@ -17584,6 +17584,14 @@
   {
     "hol_path": null,
     "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/ShMemLoad.lean",
+    "lean_name": "pcCompileCorrectAt_shMemLoad",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only proof of the HOL evaluate_ind ShMemLoad conjunct (pan_to_crepProofScript.sml:1912-1958) against pcCompileCorrectAt, bead flapjack-pxn.18.4.3.111.2. It carries one extra side condition 8 <= width (at least one whole byte per word) because the untagged Crep clock byte decoder crepClockWordOfBytes only agrees with the Pan/HOL word_of_bytes decoder under that condition; that generic-width decoder repair is tracked by flapjack-pxn.18.4.3.111.1.1.2.1, so this declaration remains untagged until the exact HOL conjunct is available; it has no standalone HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/ShMemStore.lean",
     "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
     "statement_status": "no_hol_reference_pending_classification",
