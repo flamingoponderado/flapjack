@@ -542,6 +542,77 @@ theorem lprefix_of_rep_agree {a b : HolLList α}
             rw [hby] at hbj
             exact (Option.some.inj hbj).symm
 
+/-- Upper-bound half of `buildLprefixLub_thm`: every chain member is an
+    `lprefix` of `buildLprefixLub ls`. -/
+theorem buildLprefixLub_upper {ls : HolLList α → Prop} (hchain : lprefixChain ls) :
+    ∀ ll, ls ll → lprefix ll (buildLprefixLub ls) := by
+  intro ll hl
+  apply lprefix_of_rep_agree
+  intro n x hx
+  rw [← lnth_eq_rep] at hx
+  have hcn : lprefixChainNth n ls = some x :=
+    exists_lprefixChainNth hchain ⟨ll, hl, hx⟩
+  rw [← lnth_eq_rep]
+  rw [lnth_buildLprefixLub hchain n]
+  exact hcn
+
+/-- Least-upper-bound half of `buildLprefixLub_thm`: `buildLprefixLub ls` is
+    below every upper bound of the chain. -/
+theorem buildLprefixLub_least {ls : HolLList α → Prop} (hchain : lprefixChain ls) :
+    ∀ ub, (∀ ll, ls ll → lprefix ll ub) → lprefix (buildLprefixLub ls) ub := by
+  intro ub hub
+  apply lprefix_of_rep_agree
+  intro n x hx
+  rw [← lnth_eq_rep] at hx
+  rw [lnth_buildLprefixLub hchain n] at hx
+  obtain ⟨l, hl, hln⟩ := holOptionSome_some hx
+  rw [← lnth_eq_rep]
+  exact lprefix_lnth (hub l hl) hln
+
+/-- HOL `build_lprefix_lub_thm` (`lprefix_lubScript.sml:451-454`). -/
+theorem buildLprefixLub_thm {ls : HolLList α → Prop} (hchain : lprefixChain ls) :
+    lprefixLub ls (buildLprefixLub ls) :=
+  ⟨buildLprefixLub_upper hchain, buildLprefixLub_least hchain⟩
+
+/-- HOL `lprefix_lub_nth` (`lprefix_lubScript.sml:319-322`). -/
+theorem lprefix_lub_nth {ls : HolLList α → Prop} (hchain : lprefixChain ls)
+    {lub : HolLList α} :
+    (lprefixLub ls lub ↔ ∀ n, lnth n lub = lprefixChainNth n ls) := by
+  constructor
+  · intro hlub n
+    rw [unique_lprefix_lub hlub (buildLprefixLub_thm hchain)]
+    exact lnth_buildLprefixLub hchain n
+  · intro hnth
+    constructor
+    · intro ll hl
+      apply lprefix_of_rep_agree
+      intro n x hx
+      rw [← lnth_eq_rep] at hx
+      have hcn : lprefixChainNth n ls = some x :=
+        exists_lprefixChainNth hchain ⟨ll, hl, hx⟩
+      rw [← lnth_eq_rep]
+      rw [hnth n]
+      exact hcn
+    · intro ub hub
+      apply lprefix_of_rep_agree
+      intro n x hx
+      rw [← lnth_eq_rep] at hx
+      rw [hnth n] at hx
+      obtain ⟨l, hl, hln⟩ := holOptionSome_some hx
+      rw [← lnth_eq_rep]
+      exact lprefix_lnth (hub l hl) hln
+
+/-- HOL `build_prefix_lub_intro` (`lprefix_lubScript.sml:515-517`). -/
+theorem build_prefix_lub_intro {ls : HolLList α → Prop} (hchain : lprefixChain ls)
+    {lub : HolLList α} :
+    (lprefixLub ls lub ↔ lub = buildLprefixLub ls) := by
+  constructor
+  · intro hlub
+    exact unique_lprefix_lub hlub (buildLprefixLub_thm hchain)
+  · intro h
+    rw [h]
+    exact buildLprefixLub_thm hchain
+
 end HolLList
 
 end Flapjack
