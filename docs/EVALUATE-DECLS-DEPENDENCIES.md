@@ -25,8 +25,9 @@ the exact `panSem$state`, `DeclHOL` over `MlString` names, finite maps, and
 split `PanSemDeclarationState` with String-keyed association-list `InfoMap`s,
 the production expression evaluator, and Bool shape comparison. A separate
 kernel-checked finite-support definition carries the `evaluate_decls_def` tag.
-There is now a conditional semantic bridge, `PanSemEntryState.evaluateDecls_agree`,
-between the production evaluator and that exact evaluator. It is for fixed
+There is now a conditional semantic bridge,
+`PanSemEntryState.evaluateDecls_agree` (`PanSem/EntryState.lean:197`), between
+the production evaluator and that exact evaluator. It is for fixed
 `Word 64`, byte-ranged production declarations mapped through `declToHOL`, and
 an initial `PanSemDeclEntryRel` state. That relation requires
 `PanSemStateRelExec`, its ranged companion, and the canonical production
@@ -38,6 +39,15 @@ unconditional result for arbitrary `String` names, `Decl α`, or `InfoMap`
 states. The route/bridge slice `flapjack-pxn.18.3.6.10` is recorded closed;
 the parent audit remains open for remaining dependency reviews and explicit
 representation limits.
+
+The remaining limits are tracked rather than silently accepted: the generic
+`Exp α` production datatype does not itself encode HOL's width-indexed word
+payload (`flapjack-pxn.18.3.5.3.1`), and generic `[BEq]` helper APIs do not
+establish HOL key equality without lawfulness (`flapjack-pxn.18.5.5.19`). The
+conditional theorem above does not remove either carrier/side-condition
+boundary for arbitrary production inputs. Keep the evaluator and its generic
+dependencies untagged unless a specific exact statement and carrier review
+justifies a tag.
 
 2026-09-28 refresh: production `evaluateDecls` is at line 2914 and the exact
 finite-support definition is at line 1616. Source review of
