@@ -11472,6 +11472,14 @@
   {
     "hol_path": null,
     "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect.lean",
+    "lean_name": "pcCompileCorrectAt_skip",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.4.3.94): the Skip case of HOL pc_compile_correct (pan_to_crepProofScript.sml:442-468, resumed at :493-497), stated against pcCompileCorrectAt, the HOL induction predicate P (v, v1) over the tagged total evaluateHOLFiniteState / evalCrepSemHOLProgExact, the tagged compileProgExactHOLW, and the tagged exact state_rel/code_rel/excp_rel/locals_rel/globals_lookup/localised_prog. It has all HOL hypotheses and conclusion conjuncts, an existential target run, and no target-run or post-state premise. Untagged because it is one constructor case; the assembled pc_compile_correct remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/TotalEvaluateCases.lean",
     "lean_name": "panToCrepExactBreakTransition",
     "statement_status": "no_hol_reference_pending_classification",
@@ -15464,5 +15472,16 @@
     "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-a source comparison (2026-09-28; bead flapjack-4ac.4.61) against panPropsScript.sml:1150-1158 and panSemScript.sml:645-652. This is the genuine Raise exceptionId/expression leaf from recInduct evaluate_ind. It retains the source evaluator result/post pair premise and all eight conclusions without an IH or extra precondition. Missing exception shape, expression failure, shape mismatch, and oversized values return Error with the input state; a matching value within the 32-word bound returns Exception and clears only locals. The Lean case uses the same finite-support state and indexed-word carriers. Recursive cases and the assembling evaluate_invariants theorem remain open."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "evaluate_invariants",
+    "hol_line": 1150,
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
+    "lean_name": "evaluateInvariantsSeqCaseHOLFinite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-28; bead flapjack-4ac.4.61) against panPropsScript.sml:1150-1158 and panSemScript.sml:614-617. This is the genuine Seq induction case from recInduct evaluate_ind. It retains the source evaluator result/post pair equation, the first-command IH, the second-command IH, and all eight HOL conclusions, with no additional premise. The HOL Seq clause applies fix_clock to the first command, evaluates the second command only when the first result is NONE, and otherwise returns the fixed first result/state. The Lean proof uses the exact finite-state Seq equation and composes the two IHs; fixClockHOLFinite changes only clock, so each listed field is preserved. The theorem uses the checked PanProps finite-support carrier and indexed-word translation. Other recursive cases and the assembling theorem remain open."
   }
 ]
