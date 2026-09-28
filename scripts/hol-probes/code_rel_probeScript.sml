@@ -39,6 +39,10 @@ val unlocalised_source =
   ``FEMPTY |+ («f», ([(«x», panLang$One)],
       panLang$Assign panLang$Global «x» (panLang$Var panLang$Local «x»),
       panLang$One))``;
+val generated_pan_code =
+  ``[panLang$Function
+      <|name := «f»; inline := F; export := F; params := [];
+        body := panLang$Skip; return := panLang$One|>]``;
 
 val _ = print_eval "compiled_return" ``pan_to_crep$compile ^context
   (panLang$Return (panLang$Var panLang$Local «x»))``;
@@ -51,6 +55,12 @@ val _ = print_eval "function_signature_lookup"
   ``FLOOKUP (^context).funcs «f»``;
 val _ = print_eval "target_function_lookup"
   ``FLOOKUP ^matching_target «f»``;
+val _ = print_eval "code_rel_generated_initial"
+  ``code_rel
+      (mk_ctxt FEMPTY (make_funcs (functions ^generated_pan_code)) 0
+        (get_eids_from_decls ^generated_pan_code))
+      (alist_to_fmap (functions ^generated_pan_code))
+      (alist_to_fmap (pan_to_crep$compile_to_crep ^generated_pan_code))``;
 
 fun prove_and_print label proposition =
   let
@@ -67,6 +77,18 @@ fun prove_and_print label proposition =
 
 val _ = prove_and_print "code_rel_matching"
   ``code_rel ^context ^source_code ^matching_target``;
+val _ =
+  let
+    val generated_relation = ``code_rel
+      (mk_ctxt FEMPTY (make_funcs (functions ^generated_pan_code)) 0
+        (get_eids_from_decls ^generated_pan_code))
+      (alist_to_fmap (functions ^generated_pan_code))
+      (alist_to_fmap (pan_to_crep$compile_to_crep ^generated_pan_code))``
+    val _ = prove (generated_relation,
+      irule pan_to_crepProofTheory.mk_ctxt_code_imp_code_rel THEN EVAL_TAC)
+  in
+    print "code_rel_generated_initial_proved=PASS\n"
+  end;
 val _ = prove_and_print "code_rel_rejects_wrong_body"
   ``~code_rel ^context ^source_code ^bad_body_target``;
 val _ = prove_and_print "code_rel_rejects_missing_function_signature"
