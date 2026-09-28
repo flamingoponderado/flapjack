@@ -487,7 +487,11 @@ The port below uses the reviewed exact renderings of all four carriers: the
 `ctxt_max` conjuncts are the parametric tagged renderings. Direct HOL oracle
 rows are in `scripts/hol-probes/crep_to_loop_locals_rel_probe.out`
 (`ctxt_vars_lookup`, `distinct_component`, `ctxt_max_component`,
-`set_domain_mem`, `map_lookup`, `subset_domain_component`). -/
+`set_domain_mem`, `map_lookup`, `subset_domain_component`), together with direct
+relation rows (`locals_rel_true`, `locals_rel_domain_false`,
+`locals_rel_value_false`) that decide the whole relation on a concrete
+num-keyed instance; the matching kernel-checked Lean rows are in
+`Flapjack.Test.CrepToLoopParity`. -/
 @[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "locals_rel_def"
   (fmap_as_finite_support := [vars, funcs])
   (words_as_type_indexed_bitvec)]
