@@ -1690,6 +1690,7 @@ VALID_STATUSES = {
     "reviewed_fmap_as_finite_support_result",
     "reviewed_fmap_as_finite_support_parameters",
     "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
+    "reviewed_fmap_as_finite_support_result_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_relation",
     "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_equalities",
@@ -2220,6 +2221,9 @@ def validate_inventory(
         combined_parameter_words_status = (
             "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec"
         )
+        combined_result_words_status = (
+            "reviewed_fmap_as_finite_support_result_words_as_type_indexed_bitvec"
+        )
         if words_bitvec and fmap_fields and status != combined_words_status:
             errors.append(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support combined with "
@@ -2237,6 +2241,12 @@ def validate_inventory(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support_parameters combined with "
                 "words_as_type_indexed_bitvec requires the combined review status "
                 "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec"
+            )
+        if words_bitvec and fmap_result and status != combined_result_words_status:
+            errors.append(
+                f"{key[0]}:{key[1]}: fmap_as_finite_support_result combined with "
+                "words_as_type_indexed_bitvec requires the combined review status "
+                "reviewed_fmap_as_finite_support_result_words_as_type_indexed_bitvec"
             )
         if status == combined_words_status and not (words_bitvec and fmap_fields):
             errors.append(
@@ -2266,6 +2276,14 @@ def validate_inventory(
                 "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec needs "
                 "both the fmap_as_finite_support_parameters and words_as_type_indexed_bitvec qualifiers"
             )
+        if status == combined_result_words_status and not (
+            words_bitvec and fmap_result
+        ):
+            errors.append(
+                f"{key[0]}:{key[1]}: "
+                "reviewed_fmap_as_finite_support_result_words_as_type_indexed_bitvec needs "
+                "both the fmap_as_finite_support_result and words_as_type_indexed_bitvec @[hol] qualifiers"
+            )
         if words_bitvec and status == "reviewed_exact":
             errors.append(
                 f"{key[0]}:{key[1]}: words_as_type_indexed_bitvec @[hol] tag cannot have "
@@ -2276,6 +2294,7 @@ def validate_inventory(
             combined_words_status,
             combined_relation_words_status,
             combined_parameter_words_status,
+            combined_result_words_status,
         }:
             errors.append(
                 f"{key[0]}:{key[1]}: words_as_type_indexed_bitvec @[hol] tag needs a reviewed "
@@ -2356,12 +2375,19 @@ def validate_inventory(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support_result @[hol] tag cannot have "
                 "reviewed_exact status; use reviewed_fmap_as_finite_support_result after source comparison"
             )
-        if fmap_result and status != "reviewed_fmap_as_finite_support_result":
+        if fmap_result and status not in {
+            "reviewed_fmap_as_finite_support_result",
+            combined_result_words_status,
+        }:
             errors.append(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support_result @[hol] tag needs a reviewed "
-                "source classification (reviewed_fmap_as_finite_support_result)"
+                "source classification (reviewed_fmap_as_finite_support_result, or its "
+                "combined status with words_as_type_indexed_bitvec)"
             )
-        if not fmap_result and status == "reviewed_fmap_as_finite_support_result":
+        if not fmap_result and status in {
+            "reviewed_fmap_as_finite_support_result",
+            combined_result_words_status,
+        }:
             errors.append(
                 f"{key[0]}:{key[1]}: reviewed_fmap_as_finite_support_result needs a "
                 "fmap_as_finite_support_result @[hol] tag"

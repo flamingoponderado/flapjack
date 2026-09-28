@@ -519,9 +519,12 @@ carrier `MlString`. HOL `alist_to_fmap` is `FOLDR FUPDATE FEMPTY`, so the
 first duplicate function name wins, while `FUPDATE_LIST_HOL` is a left fold
 whose last duplicate wins; reversing the association list restores HOL's
 first-wins order. `updateListEq` builds the map so the finite-support witness
-is discharged by the definition itself. Untagged helper for the exact
-`compile_prog_def` port, mirroring the untagged `makeVmapExact`; the tagged
-production rendering stays `crepToLoopMakeFuncsHOL` in `StateRel.lean`. -/
+is discharged by the definition itself. This is the exact finite-support
+carrier rendering of `make_funcs_def`; the standalone result qualifier is
+backed by the lookup witness below. The production-carrier helper in
+`StateRel.lean` is retained separately as Flapjack-specific infrastructure. -/
+@[hol "cakeml/pancake/crep_to_loopScript.sml" "make_funcs_def"
+  (fmap_as_finite_support_result) (words_as_type_indexed_bitvec)]
 def crepToLoopMakeFuncsExactHOL {width : Nat} [NeZero width]
     (prog : List (MlString × List Nat × CrepProgHOL width)) :
     HolFiniteMapExact MlString (Nat × Nat) :=
@@ -529,6 +532,20 @@ def crepToLoopMakeFuncsExactHOL {width : Nat} [NeZero width]
     ((prog.zip (List.range prog.length)).map
       (fun entry =>
         (entry.1.1, (firstLoopName + entry.2, entry.1.2.1.length)))).reverse
+
+/-- Canonical standalone finite-map result witness for the exact HOL
+`make_funcs_def` carrier above. The lookup is the HOL-equality fold of updates
+over the reversed association list, which is the `FOLDR FUPDATE FEMPTY`
+behavior of `alist_to_fmap` and therefore preserves the first duplicate key. -/
+theorem holFmapAsFiniteSupportResultWitness_crepToLoopMakeFuncsExactHOL
+    {width : Nat} [NeZero width]
+    (prog : List (MlString × List Nat × CrepProgHOL width)) (key : MlString) :
+    (crepToLoopMakeFuncsExactHOL prog).lookup key =
+      FUPDATE_LIST_HOL (FEMPTY : FiniteMap MlString (Nat × Nat))
+        (((prog.zip (List.range prog.length)).map
+          (fun entry =>
+            (entry.1.1, (firstLoopName + entry.2, entry.1.2.1.length)))).reverse) key := by
+  rfl
 
 /-- Exact HOL `compile_prog_def` (`cakeml/pancake/crep_to_loopScript.sml:257-265`)
 over the exact `MlString`/`CrepProgHOL width`/`HolLoopProg width` carriers.
@@ -541,7 +558,7 @@ Clause-by-clause source review against the HOL text:
   `(List.range prog.length).map (fun n => n + firstLoopName)`;
 * `comp = comp_func target (make_funcs prog)` is
   `compFuncHOLExact target (crepToLoopMakeFuncsExactHOL prog)`, using the exact
-  tagged `comp_func_def` and the untagged `make_funcs_def` helper above;
+  tagged `comp_func_def` and the finite-support tagged `make_funcs_def` above;
 * `MAP2 (λn (name, params, body). (n, (GENLIST I o LENGTH) params,
   loop_live$optimise (comp params (crep_arith$simp_prog body)))) fnums prog`
   is `List.zipWith (fun n entry => (n, List.range entry.2.1.length,
