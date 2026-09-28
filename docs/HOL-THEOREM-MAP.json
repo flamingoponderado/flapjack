@@ -17410,5 +17410,33 @@
     "lean_name": "isSome_of_mapM_some",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Lean-only private list helper for the pc_compile_correct Primitive case (bead flapjack-pxn.18.4.3.106); HOL uses opt_mmap_eq_some/EVERY_MEM inline"
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
+    "lean_path": "Flapjack/Pancake/Semantics/CrepProps.lean",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "hol_name": "evaluate_seq_stroes_locals_eq",
+    "lean_name": "evaluateSeqStoresLocalsEqHOL",
+    "reviewer": "flapjack-opus source comparison (2026-09-28, bead flapjack-pxn.18.4.3.107.1; crepPropsScript.sml:483-495): HOL !es ad a s res t. evaluate (nested_seq (stores ad es a),s) = (res,t) ==> t.locals = s.locals. Lean keeps the binders es ad a s res t (es : exp list, ad : exp, a : word) and the single premise; evaluate is the tagged line-443 evalCrepSemHOLProgExact, nested_seq/stores are the tagged crepNestedSeqHOL/storesHOL (stores_def: ad when a = 0w, else Op Add [ad; Const a], stride bytes_in_word = n2w (dimindex DIV 8)). CrepSemHOLState locals/globals/code use the canonical finite-support carrier (same-module witness); 'a word is BitVec width with [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
+    "lean_path": "Flapjack/Pancake/Semantics/CrepProps.lean",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "hol_name": "evaluate_seq_stores_mem_state_rel",
+    "lean_name": "evaluateSeqStoresMemStateRelHOL",
+    "reviewer": "flapjack-opus source comparison (2026-09-28, bead flapjack-pxn.18.4.3.107.1; crepPropsScript.sml:498-515): HOL !es vs ad a s res t addr m. LENGTH es = LENGTH vs /\\ ~MEM ad es /\\ ALL_DISTINCT es /\\ mem_stores (addr+a) vs s.memaddrs s.memory = SOME m /\\ evaluate (nested_seq (stores (Var ad) (MAP Var es) a), s with locals := s.locals |++ ((ad,Word addr)::ZIP (es,vs))) = (res,t) ==> res = NONE /\\ t.memory = m /\\ t.memaddrs = s.memaddrs /\\ t.sh_memaddrs = s.sh_memaddrs /\\ (t.be <=> s.be) /\\ t.ffi = s.ffi /\\ t.code = s.code /\\ t.clock = s.clock /\\ t.base_addr = s.base_addr /\\ t.top_addr = s.top_addr. Lean keeps the binders in HOL order and the conjunctive premise and conclusion (<=> on bool is =). mem_stores is the tagged panMemStoresHOL (panSem mem_stores_def, used by crepSem) with the classical address decision, |++ is updateListEq, ALL_DISTINCT is Nodup, ~MEM is ∉, and the evaluator/syntax are the tagged exact ports. CrepSemHOLState locals/globals/code use the canonical finite-support carrier; 'a word is BitVec width with [NeZero width]."
   }
 ]
