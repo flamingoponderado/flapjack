@@ -63,6 +63,7 @@ import Flapjack.Pancake.Semantics.PanSem.PrimitiveProductionBridge
 import Flapjack.Pancake.Semantics.PanSem.TotalEvalCallBridge
 import Flapjack.Pancake.Semantics.PanSem.TotalEvalRanged
 import Flapjack.Pancake.Semantics.PanSem.TotalEvalExtCallBridge
+import Flapjack.Pancake.Semantics.PanSem.TotalEvalAgree
 import Flapjack.Pancake.Semantics.PanSem.EvaluateFinite
 import Flapjack.Pancake.Semantics.PanSem.AddClock
 import Flapjack.Pancake.Semantics.PanSem.PanObservationalSemantics
@@ -152,6 +153,7 @@ import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Tick
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Annot
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Return
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.While
+import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Assembly
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.StoreByte
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Store32
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Raise
