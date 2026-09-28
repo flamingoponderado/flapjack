@@ -4236,6 +4236,150 @@ theorem evaluateInvariantsIfCaseHOLFinite {width : Nat} {σ : Type} [NeZero widt
 end Flapjack
 
 
+/-! # The `Dec` induction case of HOL `evaluate_invariants`
+
+The `Dec` leaf retains the body induction hypothesis. The initializer/shape
+failure clauses preserve the state; on success the body hypothesis applies to
+the bound state, and restoring the old local binding changes none of the eight
+invariant fields. -/
+
+open Flapjack.Pancake.PanLang (MlS ShapeHOL ExpHOL ProgHOL)
+
+namespace Flapjack
+
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_invariants" 1150
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateInvariantsDecCaseHOLFinite {width : Nat} {σ : Type} [NeZero width] :
+    ∀ (name : MlS) (shape : ShapeHOL) (initializer : ExpHOL width)
+      (body : ProgHOL width)
+      (state : PanPropsEvalStateFiniteExact width σ)
+      (result : Option (PanSemResultExact width))
+      (post : PanPropsEvalStateFiniteExact width σ),
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state
+          (.dec name shape initializer body : ProgHOL width) = (result, post) →
+      (∀ (bodyState : PanPropsEvalStateFiniteExact width σ)
+        (bodyResult : Option (PanSemResultExact width))
+        (bodyPost : PanPropsEvalStateFiniteExact width σ),
+        PanPropsEvalStateFiniteExact.evaluateHOLFinitePair bodyState body =
+          (bodyResult, bodyPost) →
+        bodyPost.memaddrs = bodyState.memaddrs ∧
+        bodyPost.shMemaddrs = bodyState.shMemaddrs ∧
+        bodyPost.be = bodyState.be ∧
+        bodyPost.eshapes = bodyState.eshapes ∧
+        bodyPost.baseAddr = bodyState.baseAddr ∧
+        bodyPost.structs = bodyState.structs ∧
+        bodyPost.code = bodyState.code ∧
+        bodyPost.ffi.oracle = bodyState.ffi.oracle) →
+      post.memaddrs = state.memaddrs ∧
+      post.shMemaddrs = state.shMemaddrs ∧
+      post.be = state.be ∧
+      post.eshapes = state.eshapes ∧
+      post.baseAddr = state.baseAddr ∧
+      post.structs = state.structs ∧
+      post.code = state.code ∧
+      post.ffi.oracle = state.ffi.oracle := by
+  classical
+  intro name shape initializer body state result post hRun ihBody
+  have hcanonical :
+      PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite
+          (.dec name shape initializer body : ProgHOL width) =
+        (result, post.toPanSemFinite) := by
+    have hpair := congrArg
+      (fun output => (output.1, PanPropsEvalStateFiniteExact.toPanSemFinite output.2)) hRun
+    have hpair' :
+        (PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite
+          (.dec name shape initializer body : ProgHOL width)).1 = result ∧
+        (PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite
+          (.dec name shape initializer body : ProgHOL width)).2 = post.toPanSemFinite := by
+      simpa [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair] using hpair
+    exact Prod.ext hpair'.1 hpair'.2
+  rw [PanSemStateFiniteExact.evaluateHOLFiniteState_dec_total] at hcanonical
+  let hmem : DecidablePred state.toPanSemFinite.memaddrs :=
+    fun address => Classical.propDecidable (state.toPanSemFinite.memaddrs address)
+  cases hinit : @evalHOLExact width σ _ state.toPanSemFinite.toExact hmem initializer with
+  | none =>
+      simp [hinit, hmem] at hcanonical
+      rcases hcanonical with ⟨_, hpost⟩
+      have hstate : post = state := by
+        simpa using congrArg PanPropsEvalStateFiniteExact.ofPanSemFinite hpost.symm
+      subst post
+      simp
+  | some value =>
+      by_cases hshape : shapeEqHOL shape (shapeOfHOLExact value) = true
+      · let bodyState := PanSemStateFiniteExact.setVarHOLFinite name value state.toPanSemFinite
+        let bodyStateProps := PanPropsEvalStateFiniteExact.ofPanSemFinite bodyState
+        let bodyOutput := PanSemStateFiniteExact.evaluateHOLFiniteState bodyState body
+        let bodyPostProps := PanPropsEvalStateFiniteExact.ofPanSemFinite bodyOutput.2
+        have hbodyRun :
+            PanPropsEvalStateFiniteExact.evaluateHOLFinitePair bodyStateProps body =
+              (bodyOutput.1, bodyPostProps) := by
+          simp [bodyStateProps, bodyPostProps, bodyOutput,
+            PanPropsEvalStateFiniteExact.evaluateHOLFinitePair]
+        have hbody := ihBody bodyStateProps bodyOutput.1 bodyPostProps hbodyRun
+        have hbody' :
+            bodyOutput.2.memaddrs = state.toPanSemFinite.memaddrs ∧
+            bodyOutput.2.shMemaddrs = state.toPanSemFinite.shMemaddrs ∧
+            bodyOutput.2.be = state.toPanSemFinite.be ∧
+            bodyOutput.2.eshapes = state.toPanSemFinite.eshapes ∧
+            bodyOutput.2.baseAddr = state.toPanSemFinite.baseAddr ∧
+            bodyOutput.2.structs = state.toPanSemFinite.structs ∧
+            bodyOutput.2.code = state.toPanSemFinite.code ∧
+            bodyOutput.2.ffi.oracle = state.toPanSemFinite.ffi.oracle := by
+          simpa [bodyStateProps, bodyPostProps, bodyState,
+            PanPropsEvalStateFiniteExact.ofPanSemFinite,
+            PanSemStateFiniteExact.setVarHOLFinite] using hbody
+        let restored : PanSemStateFiniteExact width σ :=
+          { bodyOutput.2 with locals :=
+              (HolFiniteMapExact.resVarEq bodyOutput.2.locals
+                (name, state.toPanSemFinite.locals.lookup name)) }
+        have hpostRaw := congrArg Prod.snd hcanonical
+        simp only [hinit, if_pos hshape] at hpostRaw
+        have hpost : post.toPanSemFinite = restored := by
+          simpa [restored, bodyState, bodyOutput,
+            PanSemStateFiniteExact.setVarHOLFinite] using hpostRaw.symm
+        rcases hbody' with ⟨hmem', hshared', hbe', heshapes', hbase', hstructs', hcode', horacle'⟩
+        constructor
+        · change post.toPanSemFinite.memaddrs = state.toPanSemFinite.memaddrs
+          rw [hpost]
+          simpa [restored] using hmem'
+        constructor
+        · change post.toPanSemFinite.shMemaddrs = state.toPanSemFinite.shMemaddrs
+          rw [hpost]
+          simpa [restored] using hshared'
+        constructor
+        · change post.toPanSemFinite.be = state.toPanSemFinite.be
+          rw [hpost]
+          simpa [restored] using hbe'
+        constructor
+        · change post.toPanSemFinite.eshapes = state.toPanSemFinite.eshapes
+          rw [hpost]
+          simpa [restored] using heshapes'
+        constructor
+        · change post.toPanSemFinite.baseAddr = state.toPanSemFinite.baseAddr
+          rw [hpost]
+          simpa [restored] using hbase'
+        constructor
+        · change post.toPanSemFinite.structs = state.toPanSemFinite.structs
+          rw [hpost]
+          simpa [restored] using hstructs'
+        constructor
+        · change post.toPanSemFinite.code = state.toPanSemFinite.code
+          rw [hpost]
+          simpa [restored] using hcode'
+        · change post.toPanSemFinite.ffi.oracle = state.toPanSemFinite.ffi.oracle
+          rw [hpost]
+          simpa [restored] using horacle'
+      · have hpostRaw := congrArg Prod.snd hcanonical
+        simp only [hinit, if_neg hshape] at hpostRaw
+        have hstate : post = state := by
+          simpa using congrArg PanPropsEvalStateFiniteExact.ofPanSemFinite hpostRaw.symm
+        subst post
+        simp
+
+end Flapjack
+
+
 /-!
 # The `Dec` induction case of HOL `evaluate_clock_sub`
 
