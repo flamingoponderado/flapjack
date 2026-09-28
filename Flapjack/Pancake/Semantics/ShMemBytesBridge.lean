@@ -318,4 +318,48 @@ example : panWordOfBytesHOL (width := 64) false (0 : RiscV.Word 64)
 example : panWordOfBytesHOL (width := 64) false (0 : RiscV.Word 64) [255, 1]
     = crepClockWordOfBytes ([255, 1].map UInt8.ofBitVec) := by decide
 
+/-! ## Address-parameterised decoder and its concatenation law
+
+`panWacc a bs C` is `panWordOfBytesHOL false (ofNat width a) bs` with the
+decoded cell kept explicit (head byte outermost at the lowest address).  The
+concatenation law exposes how a byte list splits into its first `bs.length`
+bytes (applied to the accumulator) and its continuation (applied deeper).
+This is the stepping stone for the unconditional overlong equality: once
+`panWacc a l` is shown independent of its cell argument for `l.length = width/8`
+(every residue is written exactly once), the continuation `e` is erased. -/
+
+/-- Address-parameterised exact Pan byte decoder with explicit accumulator. -/
+def panWacc {width : Nat} [NeZero width] (a : Nat) :
+    List (BitVec 8) → RiscV.Word width → RiscV.Word width
+  | [], C => C
+  | b :: bs, C =>
+      panSetByteHOL (BitVec.ofNat width a) (BitVec.ofNat width b.toNat) (panWacc (a + 1) bs C) false
+
+/-- `panWordOfBytesHOL` is `panWacc` started from the zero cell, for any address
+    whose `Nat` value plus the list length does not overflow the word. -/
+theorem panWordOfBytesHOL_eq_panWacc {width : Nat} [NeZero width] (bs : List (BitVec 8))
+    (a : Nat) (ha : a + bs.length ≤ 2 ^ width) :
+    panWordOfBytesHOL (width := width) false (BitVec.ofNat width a) bs = panWacc a bs 0 := by
+  induction bs generalizing a with
+  | nil => simp [panWordOfBytesHOL, panWacc]
+  | cons b rest ih =>
+      have ha' : a + 1 + rest.length ≤ 2 ^ width := by simp only [List.length_cons] at ha; omega
+      have hsucc : (BitVec.ofNat width a : RiscV.Word width) + 1 = BitVec.ofNat width (a + 1) := by
+        simp [BitVec.ofNat_add]
+      rw [panWordOfBytesHOL, hsucc, ih (a + 1) ha', panWacc]
+
+/-- Concatenation law for `panWacc`: a byte list splits into its first
+    `bs.length` bytes, applied to the accumulator at address `a`, and the
+    continuation `es`, applied deeper at address `a + bs.length`. -/
+theorem panWacc_append {width : Nat} [NeZero width] (bs es : List (BitVec 8)) (a : Nat)
+    (C : RiscV.Word width) :
+    panWacc a (bs ++ es) C = panWacc a bs (panWacc (a + bs.length) es C) := by
+  induction bs generalizing a C with
+  | nil => simp [panWacc]
+  | cons b rest ih =>
+      simp only [List.cons_append, List.length_cons, panWacc]
+      rw [ih (a + 1) C]
+      have h : a + 1 + rest.length = a + (rest.length + 1) := by omega
+      rw [h]
+
 end Flapjack
