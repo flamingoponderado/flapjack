@@ -43,6 +43,10 @@ additionally probes `pan_op_def` at lines 191--193.
 `find_reg_imm_def`, `toNumSet_def`, `fromNumSet_def`, and
 `mk_new_cutset_def` at `cakeml/pancake/loop_to_wordScript.sml:10-53`; the
 kernel-checked Lean replay is `Flapjack.Test.LoopToWordExactParity`.
+`loop_to_word_comp_exp_probe.out` records direct HOL EVAL rows for the exact
+loopLang-to-wordLang expression compiler `comp_exp_def` at
+`cakeml/pancake/loop_to_wordScript.sml:22-40`; its kernel-checked Lean replay
+is also `Flapjack.Test.LoopToWordExactParity`.
 `loop_live_comp_probe.out` records direct HOL EVAL rows for
 `loop_live$comp` at `cakeml/pancake/loop_liveScript.sml:217`; the Lean replay
 is `Flapjack.Test.LoopLiveCompParity`. `loop_live_optimise_probe.out` records
