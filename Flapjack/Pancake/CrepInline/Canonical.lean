@@ -5,14 +5,14 @@ import Flapjack.Pancake.CrepInline.Pass
 
 FLAPJACK-SPECIFIC (not a tagged HOL port, so no `@[hol]` annotation): this
 module carries the recursive core of HOL `inline_prog`
-(`cakeml/pancake/crep_inlineScript.sml:203-257`) over the reviewed canonical
-finite-support carrier while the carrier review is still pending (bead
-`flapjack-e7w.2.1.13`, child of `flapjack-e7w.2.1`; blocks
-`flapjack-e7w.2.2` exact `compile_inl_prog`/`compile_inl_top` wrappers and
+(`cakeml/pancake/crep_inlineScript.sml:203-257`) over the canonical
+finite-support carrier while exact cross-language port review remains open
+(bead `flapjack-e7w.2.1.13`, child of `flapjack-e7w.2.1`; blocks
+`flapjack-e7w.2.2` candidate `compile_inl_prog`/`compile_inl_top` wrappers and
 `flapjack-4ac.2.20.2` `compile_prog_def`).
 
-This is the port of HOL `inline_prog`
-(`cakeml/pancake/crep_inlineScript.sml:203-257`) over the reviewed canonical
+This is a Flapjack-specific implementation of the HOL `inline_prog` equations
+(`cakeml/pancake/crep_inlineScript.sml:203-257`) over the canonical
 finite-support carrier
 `Flapjack.HolFiniteMapExact` (`Flapjack/Pancake/Semantics/CrepSem/HOLState.lean:34`)
 rather than the untagged unique-key list model `CrepInlineFmapHOL`
