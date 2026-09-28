@@ -4337,6 +4337,108 @@ private theorem evalListHOLFinite_eq_mapM {width : Nat} {σ : Type}
   rw [PanSemStateFiniteExact.evalListHOLFinite_eq_toExact]
   exact evalListHOLExact_eq_mapM state.toExact expressions
 
+/-! ## Binder-aligned Call induction hypotheses
+
+These Flapjack-specific abbreviations spell the two recursive predicates from
+the checked `evaluate_ind` Call conjunct over the finite-support carrier. The
+map-valued code result is nested like HOL's `(prog,(newlocals,return_sh))`,
+while `lookupCodeHOLFinite` stores the same components as a triple. The list
+premise is `List.mapM`, the Lean rendering of HOL `OPT_MMAP`. They stay untagged
+until the exact Call leaf consumes them; see the probe output beside the HOL
+oracle.
+-/
+
+private abbrev evaluateInvariantsAtHOLFinite {width : Nat} {σ : Type}
+    [NeZero width] (state : PanPropsEvalStateFiniteExact width σ)
+    (program : ProgHOL width) : Prop :=
+  ∀ (result : Option (PanSemResultExact width))
+    (post : PanPropsEvalStateFiniteExact width σ),
+    PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state program = (result, post) →
+    post.memaddrs = state.memaddrs ∧
+    post.shMemaddrs = state.shMemaddrs ∧
+    post.be = state.be ∧
+    post.eshapes = state.eshapes ∧
+    post.baseAddr = state.baseAddr ∧
+    post.structs = state.structs ∧
+    post.code = state.code ∧
+    post.ffi.oracle = state.ffi.oracle
+
+private abbrev evaluateInvariantsCallCalleeIH {width : Nat} {σ : Type}
+    [NeZero width] (function : MlS) (arguments : List (ExpHOL width))
+    (state : PanPropsEvalStateFiniteExact width σ) :
+    Prop :=
+  ∀ (args : List (ValueHOL width))
+    (v7 : ProgHOL width × (HolFiniteMapExact MlS (ValueHOL width) × ShapeHOL))
+    (prog : ProgHOL width)
+    (v12 : HolFiniteMapExact MlS (ValueHOL width) × ShapeHOL)
+    (newlocals : HolFiniteMapExact MlS (ValueHOL width))
+    (return_sh : ShapeHOL)
+    (eval_prog : Option (PanSemResultExact width) × PanSemStateFiniteExact width σ)
+    (v4 : Option (PanSemResultExact width))
+    (st : PanSemStateFiniteExact width σ),
+    arguments.mapM (fun expression =>
+      PanSemStateFiniteExact.evalHOLFinite state.toPanSemFinite
+        (h := fun address => Classical.propDecidable
+          (state.toPanSemFinite.memaddrs address)) expression) = some args →
+    PanSemStateFiniteExact.lookupCodeHOLFinite state.toPanSemFinite.code.lookup
+      function args = some (v7.1, v7.2.1, v7.2.2) →
+    v7 = (prog, v12) →
+    v12 = (newlocals, return_sh) →
+    state.toPanSemFinite.clock ≠ 0 →
+    eval_prog = PanSemStateFiniteExact.evaluateHOLFiniteState
+      (PanSemStateFiniteExact.callEntryStateHOLFinite state.toPanSemFinite newlocals) prog →
+    eval_prog = (v4, st) →
+    evaluateInvariantsAtHOLFinite
+      (PanPropsEvalStateFiniteExact.ofPanSemFinite
+        (PanSemStateFiniteExact.callEntryStateHOLFinite state.toPanSemFinite newlocals)) prog
+
+private abbrev evaluateInvariantsCallHandlerIH {width : Nat} {σ : Type}
+    [NeZero width] (info : Option (Option (VarKind × MlS) ×
+      Option (MlS × MlS × ProgHOL width))) (function : MlS)
+    (arguments : List (ExpHOL width)) (state : PanPropsEvalStateFiniteExact width σ) :
+    Prop :=
+  ∀ (args : List (ValueHOL width))
+    (v7 : ProgHOL width × (HolFiniteMapExact MlS (ValueHOL width) × ShapeHOL))
+    (prog : ProgHOL width)
+    (v12 : HolFiniteMapExact MlS (ValueHOL width) × ShapeHOL)
+    (newlocals : HolFiniteMapExact MlS (ValueHOL width))
+    (return_sh : ShapeHOL)
+    (eval_prog : Option (PanSemResultExact width) × PanSemStateFiniteExact width σ)
+    (v4 : Option (PanSemResultExact width))
+    (st : PanSemStateFiniteExact width σ)
+    (v8 : PanSemResultExact width) (eid : MlS) (exn : ValueHOL width)
+    (v : Option (VarKind × MlS) × Option (MlS × MlS × ProgHOL width))
+    (v1 : Option (VarKind × MlS)) (v2 : Option (MlS × MlS × ProgHOL width))
+    (v3 : MlS × MlS × ProgHOL width) (eid' : MlS)
+    (v5 : MlS × ProgHOL width) (evar : MlS) (p : ProgHOL width) (sh : ShapeHOL),
+    arguments.mapM (fun expression =>
+      PanSemStateFiniteExact.evalHOLFinite state.toPanSemFinite
+        (h := fun address => Classical.propDecidable
+          (state.toPanSemFinite.memaddrs address)) expression) = some args →
+    PanSemStateFiniteExact.lookupCodeHOLFinite state.toPanSemFinite.code.lookup
+      function args = some (v7.1, v7.2.1, v7.2.2) →
+    v7 = (prog, v12) →
+    v12 = (newlocals, return_sh) →
+    state.toPanSemFinite.clock ≠ 0 →
+    eval_prog = PanSemStateFiniteExact.evaluateHOLFiniteState
+      (PanSemStateFiniteExact.callEntryStateHOLFinite state.toPanSemFinite newlocals) prog →
+    eval_prog = (v4, st) →
+    v4 = some v8 →
+    v8 = .exception eid exn →
+    info = some v →
+    v = (v1, v2) →
+    v2 = some v3 →
+    v3 = (eid', v5) →
+    v5 = (evar, p) →
+    eid = eid' →
+    state.toPanSemFinite.eshapes.lookup eid = some sh →
+    shapeOfHOLExact exn = sh →
+    isValidValueHOLExact state.toPanSemFinite.toExact VarKind.local evar exn = true →
+    evaluateInvariantsAtHOLFinite
+      (PanPropsEvalStateFiniteExact.ofPanSemFinite
+        (PanSemStateFiniteExact.setVarHOLFinite evar exn
+          { st with locals := state.toPanSemFinite.locals })) p
+
 /-! # General Call invariant helper (not the exact HOL induction case)
 
 This useful helper assumes invariant preservation for any two programs run at
