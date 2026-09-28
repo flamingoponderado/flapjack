@@ -4321,21 +4321,21 @@ private theorem evaluateInvariantsCallBodyResultBranchesHOLFinite
     exact hfinish handlerRun.2 (by simpa [handlerRun] using congrArg Prod.snd hhandlerEval)
       hhandlerFields
 
-/-! # The `Call` case of HOL `evaluate_invariants`
+/-! # General Call invariant helper (not the exact HOL induction case)
 
-HOL `evaluate_def` has two recursive calls in the `Call` clause: the looked-up
-callee body and, only for a valid matching exception handler, the handler
-program. Both calls use a strictly lower-clock state; hence the two recursive
-IHs below are the exact body and handler slots used by the source induction
-case. Result branches are classified exhaustively from the exact evaluator
-result and call metadata. The theorem retains HOL's result-pair premise and all
-eight state-field conclusions, over the reviewed finite-support map and
-positive indexed-word carriers.
+This useful helper assumes invariant preservation for any two programs run at
+any states whose clocks are below the outer clock. It is intentionally
+untagged: the generated HOL `evaluate_ind` Call conjunct is narrower and has
+different binders. `scripts/hol-probes/pan_sem_evaluate_ind_probe.out` records
+the printed source conjunct. Its callee IH is guarded by the concrete argument
+evaluation, code lookup/decomposition, and equation
+`eval_prog = evaluate (prog, dec_clock s with locals := newlocals)`; its
+handler IH additionally carries the concrete returned-exception, matching
+handler id, shape, and validity premises. The broad arbitrary-program/state
+IHs below do not have that binder/premise shape. This helper is not a port of
+the HOL Call case; the faithful case remains open in bead `flapjack-4ac.4.61`.
 -/
-@[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_invariants" 1150
-  (fmap_as_finite_support := [locals, globals, code, eshapes])
-  (words_as_type_indexed_bitvec)]
-theorem evaluateInvariantsCallCaseHOLFinite {width : Nat} {σ : Type} [NeZero width] :
+theorem evaluateInvariantsCallCaseGeneralIH_Untagged {width : Nat} {σ : Type} [NeZero width] :
     ∀ (info : Option (Option (VarKind × MlS) × Option (MlS × MlS × ProgHOL width)))
       (function : MlS) (arguments : List (ExpHOL width))
       (state : PanPropsEvalStateFiniteExact width σ)
