@@ -144,4 +144,20 @@ def memStoreByteAuxExact {width : Nat} [NeZero width]
       else none
   | _ => none
 
+/-- Exact HOL `wordSem$write_bytearray_def` (`wordSemScript.sml:178-184`) over
+    the exact `word_loc` memory: the tail is written first, the head byte is
+    stored into that result with `mem_store_byte_aux`, and a failed store
+    returns the original memory `m`. -/
+@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "write_bytearray_def"
+  (words_as_type_indexed_bitvec)]
+def writeBytearrayExact {width : Nat} [NeZero width] (address : BitVec width) :
+    List (BitVec 8) → (BitVec width → WordLocW width) → (BitVec width → Bool) → Bool →
+      BitVec width → WordLocW width
+  | [], memory, _, _ => memory
+  | b :: bs, memory, domain, bigEndian =>
+      match memStoreByteAuxExact (writeBytearrayExact (address + 1) bs memory domain bigEndian)
+          domain bigEndian address b with
+      | some m => m
+      | none => memory
+
 end Flapjack
