@@ -33,6 +33,10 @@ an initial `PanSemDeclEntryRel` state. That relation requires
 `PanSemStateRelExec`, its ranged companion, and the canonical production
 memory-access and bytes-per-word settings. The result relates both failure
 and success; on success it preserves the corresponding entry-state relation.
+Its source-level consumer is `panSemRunEntryCake_agree`
+(`PanSem/EntryState.lean:492`), which composes declaration correspondence
+with exact/production entry-call agreement and additionally assumes the
+initial code and exception-shape maps are byte-ranged.
 The theorem is a correspondence proof, not textual routing of the production
 body through `evaluateDeclsHOLFinite`, and it does not establish an
 unconditional result for arbitrary `String` names, `Decl α`, or `InfoMap`
