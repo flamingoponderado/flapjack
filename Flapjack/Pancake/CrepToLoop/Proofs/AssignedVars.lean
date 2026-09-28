@@ -1,4 +1,5 @@
 import Flapjack.Pancake.Semantics.LoopProps.AssignedVars
+import Flapjack.Pancake.Semantics.LoopProps
 
 /-!
 Exact `crep_to_loopProofScript.sml` assigned-variable proof port, placed under
