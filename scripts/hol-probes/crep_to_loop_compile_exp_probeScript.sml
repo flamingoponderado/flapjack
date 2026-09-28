@@ -19,6 +19,7 @@ fun print_eval label q =
 val ct = ``context FEMPTY FEMPTY 0 RISC_V``;
 val live = ``insert 2 () (insert 1 () LN)``;
 
+val _ = print_eval "prog_if" ``prog_if Equal [] [] (Const (1w : 8 word)) (Const 0w) 6 7 ^live``;
 val _ = print_eval "base" ``compile_exp ^ct 5 ^live (BaseAddr : 8 word crepLang$exp)``;
 val _ = print_eval "var_hit" ``compile_exp (context (FEMPTY |+ (1, 7)) FEMPTY 0 RISC_V) 5 ^live (Var 1 : 8 word crepLang$exp)``;
 val _ = print_eval "load32" ``compile_exp ^ct 5 ^live (Load32 (Const (3w : 8 word)))``;
