@@ -2,22 +2,50 @@ import Flapjack.Compiler.Encoders.Asm
 import Flapjack.PanBst
 import Flapjack.Pancake.Semantics.CrepRuntimeTarget
 import Flapjack.Pancake.Semantics.PanSem
+import Flapjack.PanValueEvaluatorStability
 import Flapjack.RiscV.PanMemory
 
 /-!
-HOL-shaped expression evaluation inputs for a 64-bit Pancake state.
+HOL-shaped expression evaluation inputs for a Pancake state.
 
 The source `panSem$eval` reads locals, globals, structs, memory, `memaddrs`,
 `sh_memaddrs`, and `be` from its state.  The generic value evaluator takes
 those memory inputs as explicit arguments, so this module derives them from
-`PanSemState` and supplies the 64-bit word operations.  The result is an
-untagged evaluator boundary; the generic HOL theorem remains untagged until
-the full polymorphic `word` interface is represented in Lean.
+`PanSemState` and supplies a width-indexed word model. The existing production
+compiler remains the 64-bit instance. This generic definition exposes the
+state-derived boundary at arbitrary widths; it does not by itself establish
+HOL agreement for those other widths.
 -/
 
 namespace Flapjack
 
-/-- RISC-V 64-bit source word model with the full HOL `be` behavior. -/
+/-- RISC-V source word model with endian byte extraction for any positive
+    width. This remains an untagged production model: inherited RISC-V byte
+    alignment and `wordOfBytes32` are reviewed against HOL only at the current
+    64-bit production width, not for arbitrary widths. There is a concrete
+    alignment mismatch at width 24: `bytesInWord = 3`, and this model rounds
+    address 5 down to 3 while `scripts/hol-probes/byte_align_probe.out` records
+    HOL `byte_align 5 = 4`. -/
+def panSemWordModel {width : Nat} [NeZero width] : PanMemoryModel (RiscV.Word width) := by
+  let model := RiscV.panRiscVMemoryModel (width := width)
+  exact { model with
+    getByte := fun bytesInWord address value bigEndian =>
+      let byteIndex := RiscV.panRiscVByteIndex bytesInWord address
+      let byteIndex := if bigEndian then bytesInWord.toNat - byteIndex - 1
+        else byteIndex
+      BitVec.ofNat width ((value.toNat / 256 ^ byteIndex) % 256)
+    setByte := fun bytesInWord address byte value bigEndian =>
+      let byteIndex := RiscV.panRiscVByteIndex bytesInWord address
+      let byteIndex := if bigEndian then bytesInWord.toNat - byteIndex - 1
+        else byteIndex
+      let offset := 256 ^ byteIndex
+      let block := offset * 256
+      let low := value.toNat % offset
+      let high := value.toNat / block
+      BitVec.ofNat width (low + (byte.toNat % 256) * offset + high * block) }
+
+/-- Existing RISC-V 64-bit production model. Kept in its reviewed form while
+    the generic state-derived evaluator is proved to specialize to it. -/
 def panSemBitVec64WordModel : PanMemoryModel (RiscV.Word 64) := by
   let model := RiscV.panRiscVMemoryModel (width := 64)
   exact { model with
@@ -36,21 +64,85 @@ def panSemBitVec64WordModel : PanMemoryModel (RiscV.Word 64) := by
       let high := value.toNat / block
       BitVec.ofNat 64 (low + (byte.toNat % 256) * offset + high * block) }
 
-/-- Source word size for the fixed 64-bit specialization. -/
+/-- Source word size, represented at the same width as the source word. -/
+def panSemBytesInWord {width : Nat} [NeZero width] : RiscV.Word width :=
+  BitVec.ofNat width (width / 8)
+
+/-- Source word size for the production 64-bit specialization. -/
 def panSemBitVec64BytesInWord : RiscV.Word 64 := 8
+
+/-- At the production width, the generic byte count is the retained value 8. -/
+@[simp] theorem panSemBytesInWord_64 [NeZero 64] :
+    panSemBytesInWord (width := 64) = panSemBitVec64BytesInWord := by
+  rfl
 
 /-- Build the evaluator's ordinary/shared memory operations from the source
     state domains and endianness.  The source state owns these parameters; no
     independent domain or endian argument is accepted here. -/
+def panSemWordMemoryAccess {width : Nat} [NeZero width]
+    (state : PanSemState (RiscV.Word width) ffi) :
+    PanValueMemoryAccess (RiscV.Word width) :=
+  panValueMemoryAccessOfModel (panSemWordModel (width := width))
+    state.memaddrs state.sharedMemaddrs state.be
+
+/-- The 64-bit production specialization of the state-derived memory access. -/
 def panSemBitVec64MemoryAccess (state : PanSemState (RiscV.Word 64) ffi) :
     PanValueMemoryAccess (RiscV.Word 64) :=
   panValueMemoryAccessOfModel panSemBitVec64WordModel
     state.memaddrs state.sharedMemaddrs state.be
 
+/-- The generic state-derived access specializes to the retained production
+    64-bit access. -/
+@[simp] theorem panSemWordMemoryAccess_64 (state : PanSemState (RiscV.Word 64) ffi) :
+    panSemWordMemoryAccess state = panSemBitVec64MemoryAccess state := by
+  rfl
+
+/-- Width-indexed state-owned source code-map evaluator. Memory domains and
+    endianness come from the PanSem state. This uses the RISC-V word model, so
+    its HOL correspondence is only reviewed at the production width 64. -/
+def panSemEvaluateWordCodeState {width : Nat} [NeZero width]
+    [BEq (RiscV.Word width)] [OfNat (RiscV.Word width) 0]
+    [OfNat (RiscV.Word width) 1] [OfNat (RiscV.Word width) 2]
+    [OfNat (RiscV.Word width) 3] [Add (RiscV.Word width)]
+    [Mul (RiscV.Word width)] [Sub (RiscV.Word width)]
+    [AndOp (RiscV.Word width)] [OrOp (RiscV.Word width)]
+    [HXor (RiscV.Word width) (RiscV.Word width) (RiscV.Word width)]
+    [ShiftLeft (RiscV.Word width)] [ShiftRight (RiscV.Word width)]
+    [LT (RiscV.Word width)]
+    [DecidableRel (fun left right : RiscV.Word width => left < right)]
+    [PanCmp (RiscV.Word width)]
+    (context : PanValueFfiContext (RiscV.Word width))
+    (primitive : PanPrimitiveHandler (RiscV.Word width))
+    (handler : PanValueStatefulFfiHandler (RiscV.Word width) σ)
+    (state : PanSemState (RiscV.Word width) (FfiState σ)) (program : Prog (RiscV.Word width)) :
+    Option (PanValueFfiClockResult (RiscV.Word width) σ) :=
+  panSemEvaluateCodeStateWithMemoryModel context primitive handler
+    (panSemWordModel (width := width)) (panSemBytesInWord (width := width)) state program
+
+/-- Width-indexed code evaluation specializes to the previous production
+    implementation at width 64, including its state-derived memory access. -/
+@[simp] theorem panSemEvaluateWordCodeState_64_eq_previous [NeZero 64]
+    [BEq (RiscV.Word 64)] [OfNat (RiscV.Word 64) 0]
+    [OfNat (RiscV.Word 64) 1] [OfNat (RiscV.Word 64) 2]
+    [OfNat (RiscV.Word 64) 3] [Add (RiscV.Word 64)]
+    [Mul (RiscV.Word 64)] [Sub (RiscV.Word 64)]
+    [AndOp (RiscV.Word 64)] [OrOp (RiscV.Word 64)]
+    [HXor (RiscV.Word 64) (RiscV.Word 64) (RiscV.Word 64)]
+    [ShiftLeft (RiscV.Word 64)] [ShiftRight (RiscV.Word 64)]
+    [LT (RiscV.Word 64)]
+    [DecidableRel (fun left right : RiscV.Word 64 => left < right)]
+    [PanCmp (RiscV.Word 64)]
+    (context : PanValueFfiContext (RiscV.Word 64))
+    (primitive : PanPrimitiveHandler (RiscV.Word 64))
+    (handler : PanValueStatefulFfiHandler (RiscV.Word 64) σ)
+    (state : PanSemState (RiscV.Word 64) (FfiState σ)) (program : Prog (RiscV.Word 64)) :
+    panSemEvaluateWordCodeState (width := 64) context primitive handler state program =
+      panSemEvaluateCodeStateWithMemoryModel context primitive handler
+        panSemBitVec64WordModel panSemBitVec64BytesInWord state program := by
+  rfl
+
 /-- Full state-owned source code-map evaluator for the RISC-V 64-bit word
-    model. It derives the memory domains and endianness from the PanSem state
-    and fixes the source width from the word type, without consulting a Crep
-    runtime state. -/
+    model. It runs the width-indexed production evaluator at the target width. -/
 def panSemEvaluateRiscV64CodeState [NeZero 64]
     [BEq (RiscV.Word 64)] [OfNat (RiscV.Word 64) 0]
     [OfNat (RiscV.Word 64) 1] [OfNat (RiscV.Word 64) 2]
@@ -67,49 +159,153 @@ def panSemEvaluateRiscV64CodeState [NeZero 64]
     (handler : PanValueStatefulFfiHandler (RiscV.Word 64) σ)
     (state : PanSemState (RiscV.Word 64) (FfiState σ)) (program : Prog (RiscV.Word 64)) :
     Option (PanValueFfiClockResult (RiscV.Word 64) σ) :=
-  panSemEvaluateCodeStateWithMemoryModel context primitive handler
-    panSemBitVec64WordModel panSemBitVec64BytesInWord state program
+  panSemEvaluateWordCodeState context primitive handler state program
 
-/-- Evaluate one source expression using the word-memory inputs derived from
-    its `PanSemState`. -/
-def evalPanSemStateExp [NeZero 64]
-    [BEq (RiscV.Word 64)] [OfNat (RiscV.Word 64) 0] [OfNat (RiscV.Word 64) 1]
-    [OfNat (RiscV.Word 64) 2] [OfNat (RiscV.Word 64) 3]
-    [Add (RiscV.Word 64)] [Mul (RiscV.Word 64)] [Sub (RiscV.Word 64)]
-    [AndOp (RiscV.Word 64)] [OrOp (RiscV.Word 64)] [HXor (RiscV.Word 64) (RiscV.Word 64) (RiscV.Word 64)]
+/-- The production-width runner is extensionally unchanged by routing it
+    through the width-indexed model. This is equality of the full optional
+    clock result, including every source failure and post-state. -/
+@[simp] theorem panSemEvaluateRiscV64CodeState_eq_previous [NeZero 64]
+    [BEq (RiscV.Word 64)] [OfNat (RiscV.Word 64) 0]
+    [OfNat (RiscV.Word 64) 1] [OfNat (RiscV.Word 64) 2]
+    [OfNat (RiscV.Word 64) 3] [Add (RiscV.Word 64)]
+    [Mul (RiscV.Word 64)] [Sub (RiscV.Word 64)]
+    [AndOp (RiscV.Word 64)] [OrOp (RiscV.Word 64)]
+    [HXor (RiscV.Word 64) (RiscV.Word 64) (RiscV.Word 64)]
     [ShiftLeft (RiscV.Word 64)] [ShiftRight (RiscV.Word 64)]
-    [LT (RiscV.Word 64)] [DecidableRel (fun left right : RiscV.Word 64 => left < right)]
+    [LT (RiscV.Word 64)]
+    [DecidableRel (fun left right : RiscV.Word 64 => left < right)]
     [PanCmp (RiscV.Word 64)]
-    (state : PanSemState (RiscV.Word 64) ffi) (expression : Exp (RiscV.Word 64)) :
-    Option (PanValue (RiscV.Word 64)) :=
+    (context : PanValueFfiContext (RiscV.Word 64))
+    (primitive : PanPrimitiveHandler (RiscV.Word 64))
+    (handler : PanValueStatefulFfiHandler (RiscV.Word 64) σ)
+    (state : PanSemState (RiscV.Word 64) (FfiState σ)) (program : Prog (RiscV.Word 64)) :
+    panSemEvaluateRiscV64CodeState context primitive handler state program =
+      panSemEvaluateCodeStateWithMemoryModel context primitive handler
+        panSemBitVec64WordModel panSemBitVec64BytesInWord state program := by
+  rfl
+
+/-- Evaluate one source expression using the width-indexed word-memory inputs
+    derived from its `PanSemState`. This is production bridge infrastructure,
+    not a HOL tag: `Exp` and `PanValue` are the executable carriers, and the
+    generic RISC-V model has only been compared with HOL at width 64. -/
+def evalPanSemStateExp {width : Nat} [NeZero width]
+    [BEq (RiscV.Word width)] [OfNat (RiscV.Word width) 0] [OfNat (RiscV.Word width) 1]
+    [OfNat (RiscV.Word width) 2] [OfNat (RiscV.Word width) 3]
+    [Add (RiscV.Word width)] [Mul (RiscV.Word width)] [Sub (RiscV.Word width)]
+    [AndOp (RiscV.Word width)] [OrOp (RiscV.Word width)] [HXor (RiscV.Word width) (RiscV.Word width) (RiscV.Word width)]
+    [ShiftLeft (RiscV.Word width)] [ShiftRight (RiscV.Word width)]
+    [LT (RiscV.Word width)] [DecidableRel (fun left right : RiscV.Word width => left < right)]
+    [PanCmp (RiscV.Word width)]
+    (state : PanSemState (RiscV.Word width) ffi) (expression : Exp (RiscV.Word width)) :
+    Option (PanValue (RiscV.Word width)) :=
   evalPanValueExp state.structs state.locals state.globals state.memory
-    state.baseAddress state.topAddress panSemBitVec64BytesInWord expression
-    (memoryAccess := some (panSemBitVec64MemoryAccess state))
+    state.baseAddress state.topAddress (panSemBytesInWord (width := width)) expression
+    (memoryAccess := some (panSemWordMemoryAccess state))
+
+/-- A fresh local binding does not change width-indexed state evaluation when
+    the name is absent from the expression's local variables. This lifts the
+    constructor-complete evaluator stability proof to the state-derived
+    memory/domain/endian interface. -/
+theorem evalPanSemStateExp_update_local_not_mem {width : Nat} [NeZero width]
+    [BEq (RiscV.Word width)] [OfNat (RiscV.Word width) 0]
+    [OfNat (RiscV.Word width) 1] [OfNat (RiscV.Word width) 2]
+    [OfNat (RiscV.Word width) 3] [Add (RiscV.Word width)]
+    [Mul (RiscV.Word width)] [Sub (RiscV.Word width)]
+    [AndOp (RiscV.Word width)] [OrOp (RiscV.Word width)]
+    [HXor (RiscV.Word width) (RiscV.Word width) (RiscV.Word width)]
+    [ShiftLeft (RiscV.Word width)] [ShiftRight (RiscV.Word width)]
+    [LT (RiscV.Word width)]
+    [DecidableRel (fun left right : RiscV.Word width => left < right)]
+    [PanCmp (RiscV.Word width)] [BEq String] [LawfulBEq String]
+    (state : PanSemState (RiscV.Word width) ffi)
+    (expression : Exp (RiscV.Word width)) (name : VarName)
+    (replacement : PanValue (RiscV.Word width))
+    (hname : name ∉ expLocalVars expression) :
+    evalPanSemStateExp { state with
+      locals := updatePanValueMap state.locals name replacement } expression =
+    evalPanSemStateExp state expression := by
+  simpa [evalPanSemStateExp, panSemWordMemoryAccess] using
+    evalPanValueExp_update_local_not_mem
+      (structs := state.structs) (locals := state.locals) (globals := state.globals)
+      (memory := state.memory) (baseAddress := state.baseAddress)
+      (topAddress := state.topAddress) (bytesInWord := panSemBytesInWord (width := width))
+      (expression := expression)
+      (memoryAccess := some (panSemWordMemoryAccess state))
+      (name := name) (replacement := replacement) hname
 
 /-- HOL's `OPT_MMAP (eval s)` sequence boundary over the state-derived
     evaluator. -/
-def evalPanSemStateExps [NeZero 64]
-    [BEq (RiscV.Word 64)] [OfNat (RiscV.Word 64) 0] [OfNat (RiscV.Word 64) 1]
-    [OfNat (RiscV.Word 64) 2] [OfNat (RiscV.Word 64) 3]
-    [Add (RiscV.Word 64)] [Mul (RiscV.Word 64)] [Sub (RiscV.Word 64)]
-    [AndOp (RiscV.Word 64)] [OrOp (RiscV.Word 64)] [HXor (RiscV.Word 64) (RiscV.Word 64) (RiscV.Word 64)]
+def evalPanSemStateExps {width : Nat} [NeZero width]
+    [BEq (RiscV.Word width)] [OfNat (RiscV.Word width) 0] [OfNat (RiscV.Word width) 1]
+    [OfNat (RiscV.Word width) 2] [OfNat (RiscV.Word width) 3]
+    [Add (RiscV.Word width)] [Mul (RiscV.Word width)] [Sub (RiscV.Word width)]
+    [AndOp (RiscV.Word width)] [OrOp (RiscV.Word width)] [HXor (RiscV.Word width) (RiscV.Word width) (RiscV.Word width)]
+    [ShiftLeft (RiscV.Word width)] [ShiftRight (RiscV.Word width)]
+    [LT (RiscV.Word width)] [DecidableRel (fun left right : RiscV.Word width => left < right)]
+    [PanCmp (RiscV.Word width)]
+    (state : PanSemState (RiscV.Word width) ffi)
+    (expressions : List (Exp (RiscV.Word width))) :
+    Option (List (PanValue (RiscV.Word width))) :=
+  evalPanValueExps state.structs state.locals state.globals state.memory
+    state.baseAddress state.topAddress (panSemBytesInWord (width := width)) expressions
+    (memoryAccess := some (panSemWordMemoryAccess state))
+
+/-- The width-indexed evaluator reduces to the previous executable expression
+    path at the production width. This proves output equality, including all
+    result and failure branches, for every expression. -/
+theorem evalPanSemStateExp_64_eq_previous
+    [NeZero 64] [BEq (RiscV.Word 64)] [OfNat (RiscV.Word 64) 0]
+    [OfNat (RiscV.Word 64) 1] [OfNat (RiscV.Word 64) 2]
+    [OfNat (RiscV.Word 64) 3] [Add (RiscV.Word 64)]
+    [Mul (RiscV.Word 64)] [Sub (RiscV.Word 64)]
+    [AndOp (RiscV.Word 64)] [OrOp (RiscV.Word 64)]
+    [HXor (RiscV.Word 64) (RiscV.Word 64) (RiscV.Word 64)]
     [ShiftLeft (RiscV.Word 64)] [ShiftRight (RiscV.Word 64)]
-    [LT (RiscV.Word 64)] [DecidableRel (fun left right : RiscV.Word 64 => left < right)]
+    [LT (RiscV.Word 64)]
+    [DecidableRel (fun left right : RiscV.Word 64 => left < right)]
+    [PanCmp (RiscV.Word 64)]
+    (state : PanSemState (RiscV.Word 64) ffi) (expression : Exp (RiscV.Word 64)) :
+    evalPanSemStateExp state expression =
+      evalPanValueExp state.structs state.locals state.globals state.memory
+        state.baseAddress state.topAddress panSemBitVec64BytesInWord expression
+        (memoryAccess := some (panSemBitVec64MemoryAccess state)) := by
+  simp [evalPanSemStateExp, panSemBytesInWord, panSemBitVec64BytesInWord,
+    panSemWordMemoryAccess_64]
+
+/-- The width-indexed sequence evaluator reduces to the previous executable
+    list path at width 64, including `none` and every list result. -/
+theorem evalPanSemStateExps_64_eq_previous
+    [NeZero 64] [BEq (RiscV.Word 64)] [OfNat (RiscV.Word 64) 0]
+    [OfNat (RiscV.Word 64) 1] [OfNat (RiscV.Word 64) 2]
+    [OfNat (RiscV.Word 64) 3] [Add (RiscV.Word 64)]
+    [Mul (RiscV.Word 64)] [Sub (RiscV.Word 64)]
+    [AndOp (RiscV.Word 64)] [OrOp (RiscV.Word 64)]
+    [HXor (RiscV.Word 64) (RiscV.Word 64) (RiscV.Word 64)]
+    [ShiftLeft (RiscV.Word 64)] [ShiftRight (RiscV.Word 64)]
+    [LT (RiscV.Word 64)]
+    [DecidableRel (fun left right : RiscV.Word 64 => left < right)]
     [PanCmp (RiscV.Word 64)]
     (state : PanSemState (RiscV.Word 64) ffi)
     (expressions : List (Exp (RiscV.Word 64))) :
-    Option (List (PanValue (RiscV.Word 64))) :=
-  evalPanValueExps state.structs state.locals state.globals state.memory
-    state.baseAddress state.topAddress panSemBitVec64BytesInWord expressions
-    (memoryAccess := some (panSemBitVec64MemoryAccess state))
+    evalPanSemStateExps state expressions =
+      evalPanValueExps state.structs state.locals state.globals state.memory
+        state.baseAddress state.topAddress panSemBitVec64BytesInWord expressions
+        (memoryAccess := some (panSemBitVec64MemoryAccess state)) := by
+  simp [evalPanSemStateExps, panSemBytesInWord, panSemBitVec64BytesInWord,
+    panSemWordMemoryAccess_64]
 
 
-/-- The executed 64-bit source `.op` branch consults exactly the tagged
-`wordOpHOL` list fold. `panSemBitVec64MemoryAccess` is built from
-`RiscV.panRiscVMemoryModel`, whose `wordOp` is `panRiscVWordOp = wordOpHOL`;
-this is the arbitrary-operand-list delegation used by the exact-state path.
-The generic `memoryAccess := none` compatibility branch remains untagged and
-is tracked separately as a mismatch. -/
+/-- The width-indexed state access uses exactly the tagged `wordOpHOL` list
+fold. `RiscV.panRiscVMemoryModel` supplies `panRiscVWordOp = wordOpHOL`; the
+generic `memoryAccess := none` compatibility branch remains a separate
+Flapjack-only interface. -/
+theorem panSemWordMemoryAccess_wordOp {width : Nat} [NeZero width]
+    (state : PanSemState (RiscV.Word width) ffi) (operator : BinOp)
+    (values : List (RiscV.Word width)) :
+    (panSemWordMemoryAccess state).wordOp operator values =
+      wordOpHOL operator values := rfl
+
+/-- The 64-bit production instance of the width-indexed `.op` delegation. -/
 theorem panSemBitVec64MemoryAccess_wordOp
     (state : PanSemState (RiscV.Word 64) ffi) (operator : BinOp)
     (values : List (RiscV.Word 64)) :
@@ -120,15 +316,24 @@ theorem panSemBitVec64MemoryAccess_wordOp
 list it evaluates the arguments and then applies the tagged `wordOpHOL`
 fold. This pins the exact-state path to `wordOpHOL` without changing the
 generic compatibility branch. -/
-theorem evalPanSemStateExp_op
-    (state : PanSemState (RiscV.Word 64) ffi) (operator : BinOp)
-    (arguments : List (Exp (RiscV.Word 64))) :
+theorem evalPanSemStateExp_op {width : Nat} [NeZero width]
+    [BEq (RiscV.Word width)] [OfNat (RiscV.Word width) 0]
+    [OfNat (RiscV.Word width) 1] [OfNat (RiscV.Word width) 2]
+    [OfNat (RiscV.Word width) 3] [Add (RiscV.Word width)]
+    [Mul (RiscV.Word width)] [Sub (RiscV.Word width)]
+    [AndOp (RiscV.Word width)] [OrOp (RiscV.Word width)]
+    [HXor (RiscV.Word width) (RiscV.Word width) (RiscV.Word width)]
+    [ShiftLeft (RiscV.Word width)] [ShiftRight (RiscV.Word width)]
+    [LT (RiscV.Word width)]
+    [DecidableRel (fun left right : RiscV.Word width => left < right)]
+    [PanCmp (RiscV.Word width)]
+    (state : PanSemState (RiscV.Word width) ffi) (operator : BinOp)
+    (arguments : List (Exp (RiscV.Word width))) :
     evalPanSemStateExp state (.op operator arguments) =
       (evalPanSemStateExps state arguments).bind (fun values =>
         (values.mapM panValueWordProjection).bind (fun words =>
           (wordOpHOL operator words).map PanValue.word)) := by
-  simp only [evalPanSemStateExp, evalPanSemStateExps, evalPanValueExp.eq_def,
-    panSemBitVec64MemoryAccess_wordOp]
+  simp only [evalPanSemStateExp, evalPanSemStateExps, evalPanValueExp.eq_def]
   rfl
 
 /-- HOL `byte_align` (`cakeml/.../alignmentScript.sml`): clear the low
