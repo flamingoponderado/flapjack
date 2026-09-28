@@ -177,6 +177,7 @@ import Flapjack.Test.CrepToLoopSurvivesMapiParity
 import Flapjack.Test.CrepToLoopParity
 import Flapjack.Test.CrepToLoopDecLive
 import Flapjack.Test.CrepToLoopOcompileHOLParity
+import Flapjack.Test.CrepToLoopCodeRelParity
 import Flapjack.Test.CakeRegAlloc
 import Flapjack.Test.WordDeadCodeParity
 import Flapjack.Test.CrepeNestedSeqParity
@@ -926,6 +927,7 @@ def main : IO Unit := do
     Flapjack.Test.CrepToLoopParity.runChecks,
     Flapjack.Test.CrepToLoopDecLive.runChecks,
     Flapjack.Test.CrepToLoopOcompileHOLParity.runChecks,
+    Flapjack.Test.CrepToLoopCodeRelParity.runChecks,
     Flapjack.Test.CakeRegAlloc.runChecks,
     Flapjack.Test.CakeWordAllocParity.runChecks,
     Flapjack.Test.CrepeNestedSeqParity.runChecks,
