@@ -18418,6 +18418,16 @@
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "compile_prog_distinct_params",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
+    "lean_name": "crepToLoopCompileProgDistinctParamsHOLExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "hol_line": 3987,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.24) against compile_prog_distinct_params at crep_to_loopProofScript.sml:3987-4008. HOL's binders are prog then c and statement is EVERY (lambda (name,params,body). ALL_DISTINCT params) prog implies the same EVERY on compile_prog c prog. Lean retains binder order, input premise, and full output statement: EVERY is List.all with = true, ALL_DISTINCT is List.Nodup, and exact carriers are List (MlString × List Nat × CrepProgHOL width) to List (Nat × List Nat × HolLoopProg width), the source/result carriers of compileProgHOLExact. The output params are List.range params.length, exactly GENLIST I (LENGTH params), and List.nodup_range discharges output distinctness; retaining the HOL premise despite not needing it in the proof does not strengthen or weaken the statement. The only representation qualifier is the reviewed positive word-width translation (words_as_type_indexed_bitvec). This proof theorem is distinct from the same-named Pan-to-Crep theorem because its HOL path is crep_to_loopProofScript.sml. Direct kernel-checked instantiation over the compile_prog fixture is in Flapjack/Test/CrepToLoopCompileProgParity."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
     "hol_name": "all_distinct_ctxt_lookup_all_distinct",
     "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
     "lean_name": "allDistinctCtxtLookupAllDistinctExact",
