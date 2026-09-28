@@ -18311,6 +18311,15 @@
     "words_as_type_indexed_bitvec": true
   },
   {
+    "hol_path": "cakeml/pancake/semantics/loopPropsScript.sml",
+    "hol_name": "comp_syntax_ok_def",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopProps/CompSyntaxOk.lean",
+    "lean_name": "compSyntaxOkHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-b source comparison (2026-09-28, bead flapjack-pxn.18.5.6.38) against loopPropsScript.sml:57-73. The HOL input NumSet and HolLoopProg values are retained exactly; only the positive word dimension is translated to BitVec width. Skip/Assign/Arith/Break/LocValue/Load32/LoadByte are true; Loop preserves both l = lin and l = lout tests and recurses on lin; Seq checks p at l and q at cut_sets l p; If checks both branches at l and preserves the existential nl = FOLDL (λsp n. insert n () sp) l ns; all unmatched constructors are false. `sptListInsert` is the corresponding left fold over the exact Spt carrier. HOL EVAL reduces Loop/Seq rows to T/F and intentionally leaves both If existential rows residual, recorded in loop_props_comp_syntax_probe.out; Lean examples replay those same residual proposition embeddings through holPropBool. This declaration is proof-side only and makes no production routing claim.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
     "hol_name": "assigned_vars_MAPi_Assign",
     "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/AssignedVars.lean",

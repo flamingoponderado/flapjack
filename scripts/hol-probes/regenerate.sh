@@ -358,6 +358,12 @@ run_probe loop_props_cut_sets_probeScript.sml loop_props_cut_sets_probe.out \
   cut_sets_longmul cut_sets_div cut_sets_catch_all \
   "$cake_dir/pancake/semantics/loopPropsScript.sml" \
   "$cake_dir/pancake/semantics"
+run_probe loop_props_comp_syntax_probeScript.sml loop_props_comp_syntax_probe.out \
+  comp_syntax_loop_positive comp_syntax_loop_negative \
+  comp_syntax_seq_positive comp_syntax_seq_negative \
+  comp_syntax_if_positive comp_syntax_if_negative \
+  "$cake_dir/pancake/semantics/loopPropsScript.sml" \
+  "$cake_dir/pancake/semantics"
 run_probe crep_to_loop_context_defs_probeScript.sml crep_to_loop_context_defs_probe.out \
   find_var_hit find_lab_miss "$cake_dir/pancake/crep_to_loopScript.sml" \
   "$cake_dir/pancake/proofs"
