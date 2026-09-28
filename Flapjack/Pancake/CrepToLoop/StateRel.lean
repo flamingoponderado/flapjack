@@ -570,34 +570,6 @@ theorem crepToLoopLocalsRelExact_insert_gt_vmax {width : Nat} [NeZero width]
     rw [sptLookup_sptInsert_ne n n' w tLocals hne]
     exact hn'
 
-/-- Exact port of HOL `crep_to_loop$locals_rel_lookup_same`
-    (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:3313`): if the target
-    local maps agree at every key, replacing the second target map preserves
-    `locals_rel`. HOL's second premise is universally quantified lookup
-    equality; this Lean statement has precisely that premise over the exact
-    `Spt (WordLocW width)` lookup, with no extra well-formedness or fuel
-    assumption. The source finite map is the standalone `HolFiniteMapExact`
-    parameter `locs1`; the context's finite map is `CrepToLoopContextExact.vars`.
-    Both are named by the mixed relation qualifier. -/
-@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "locals_rel_lookup_same"
-  (fmap_as_finite_support_relation := [CrepToLoopContextExact.vars, locs1])
-  (words_as_type_indexed_bitvec)]
-theorem crepToLoopLocalsRelExact_lookup_same {width : Nat} [NeZero width]
-    (ctxt : CrepToLoopContextExact)
-    (l : NumSet)
-    (locs1 : HolFiniteMapExact Nat (HolWordLab width))
-    (locs2 locs3 : Spt (WordLocW width))
-    (hrel : crepToLoopLocalsRelExact ctxt l locs1 locs2)
-    (hagree : ∀ n, sptLookup n locs2 = sptLookup n locs3) :
-    crepToLoopLocalsRelExact ctxt l locs1 locs3 := by
-  refine ⟨hrel.1, hrel.2.1, ?_, ?_⟩
-  · intro n hn
-    obtain ⟨value, hlookup⟩ := (sptMem_iff_lookup n locs2).mp (hrel.2.2.1 n hn)
-    exact (sptMem_iff_lookup n locs3).mpr ⟨value, (hagree n).symm.trans hlookup⟩
-  · intro vname value hsource
-    obtain ⟨n, hvar, hmem, hlookup⟩ := hrel.2.2.2 vname value hsource
-    exact ⟨n, hvar, hmem, (hagree n).symm.trans hlookup⟩
-
 /-! ## `locals_rel` (untagged production analogue)
 
 HOL `locals_rel_def`
