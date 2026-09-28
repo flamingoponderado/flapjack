@@ -1818,4 +1818,10 @@ def markAllHOL {width : Nat} [NeZero width] : HolLoopProg width → HolLoopProg 
       (if marked then .mark program else program, marked)
   | program => (.mark program, true)
 
+/-- Exact HOL `loop_live$comp` (`cakeml/pancake/loop_liveScript.sml:217-219`):
+`comp prog = FST (mark_all (FST (shrink [] prog LN)))` over `HolLoopProg width`. -/
+@[hol "cakeml/pancake/loop_liveScript.sml" "comp_def" (words_as_type_indexed_bitvec)]
+def compHOL {width : Nat} [NeZero width] (prog : HolLoopProg width) : HolLoopProg width :=
+  (markAllHOL (shrinkHOL [] prog .ln).1).1
+
 end Flapjack
