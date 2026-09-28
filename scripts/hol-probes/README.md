@@ -54,6 +54,15 @@ are in `crep_to_loop_comp_func_probe.out`.
 `Flapjack.Test.LoopDecClockParity` probes `dec_clock_def` at lines 42--43 of
 the same source.
 `Flapjack.Test.LoopFixClockParity` probes `fix_clock_def` at lines 46--49.
+`crep_to_loop_survives_mapi_assign_probe.out` records direct HOL EVAL for
+`survives_MAPi_Assign` at `crep_to_loopProofScript.sml:368-379`: empty,
+singleton, three-expression, and zero-offset MAPi Assign lists all evaluate to
+`T`. The exact `HolLoopExp`/`HolLoopProg` theorem port is
+`Flapjack.Pancake.CrepToLoop.Proofs.holSurvivesMapiAssign`; replay fixtures are
+in `Flapjack.Test.CrepToLoopSurvivesMapiAssignParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=crep_to_loop_survives_mapi_assign_probeScript.sml
+bash scripts/hol-probes/regenerate.sh`.
 `loop_props_survives_probe.out` records direct HOL EVAL rows for every clause
 of `survives_def` in `cakeml/pancake/semantics/loopPropsScript.sml:25-38`:
 If/Loop/Call (both handler forms)/FFI domain membership, recursive Mark and

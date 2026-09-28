@@ -27,6 +27,9 @@ import Flapjack.Pancake.CrepToLoop
 import Flapjack.Pancake.CrepToLoop.ContextExact
 import Flapjack.Pancake.CrepToLoop.Optimise
 import Flapjack.Pancake.CrepToLoop.Proofs.AssignedVars
+import Flapjack.Pancake.CrepToLoop.Proofs.SurvivesMapiAssign
+import Flapjack.Pancake.CrepToLoop.Proofs.CompExpTmpBound
+import Flapjack.Pancake.CrepToLoop.Proofs.CompExpLeTmpDomain
 import Flapjack.Pancake.CrepToLoop.StateRel
 import Flapjack.Pancake.LoopLang.AssignedVars
 import Flapjack.Pancake.Semantics.LoopProps.AssignedVars
