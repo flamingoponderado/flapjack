@@ -41,3 +41,9 @@ val _ = print_eval "global_destination_handler_flag"
         (SOME (SOME (Global, strlit "g"),
           SOME (strlit "E", strlit "handler", panLang$Skip)))
         (strlit "f") [] : 8 word panLang$prog)``;
+val _ = print_eval "global_destination_handler_local_arg"
+  ``pan_globals$compile ^ctxt
+      (panLang$Call
+        (SOME (SOME (Global, strlit "g"),
+          SOME (strlit "E", strlit "handler", panLang$Skip)))
+        (strlit "f") [panLang$Var Local (strlit "")] : 8 word panLang$prog)``;

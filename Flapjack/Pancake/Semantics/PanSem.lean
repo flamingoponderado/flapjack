@@ -2901,13 +2901,16 @@ def panSemCompileTopAdmissible : Decl α → Bool
 -- `FunName`/`ExceptionId = String`. The clauses match but the key carrier
 -- differs, so this production definition has no HOL tag. The separate
 -- `PanSemStateFiniteExact.evaluateDeclsHOLFinite` proof-side definition carries
--- the exact finite-support `evaluate_decls_def` tag. The PanProps-side
--- `evaluateDeclsPanPropsCanonical` adapter routes tagged invariant statements
--- through that evaluator, but it is proof infrastructure and does not call
--- this production definition. Production routing or a checked bridge from
--- this String/InfoMap state to the exact evaluator is not established; tracked
--- by `flapjack-pxn.18.3.6.10` (depending on the exact production bridge in
--- `flapjack-pxn.18.3.5.8`).
+-- the exact finite-support `evaluate_decls_def` tag. The untagged theorem
+-- `PanSemEntryState.evaluateDecls_agree` proves a whole-list production/exact
+-- correspondence under byte-ranged declarations and `PanSemDeclEntryRel` on
+-- the initial states; it relates both failure and successful states. This is
+-- a conditional semantic bridge, not textual routing of this body through the
+-- exact evaluator or an unconditional equivalence for arbitrary String/InfoMap
+-- states. The PanProps-side `evaluateDeclsPanPropsCanonical` adapter remains
+-- separate proof infrastructure. The remaining production-route work is
+-- tracked by `flapjack-pxn.18.3.6.10` and its parent audit
+-- `flapjack-pxn.18.3.6`.
 def evaluateDecls
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
