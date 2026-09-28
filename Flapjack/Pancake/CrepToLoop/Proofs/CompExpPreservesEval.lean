@@ -667,4 +667,205 @@ theorem crepToLoop_comp_exp_preserves_eval_shift {width : Nat} [NeZero width] {�
           exact ⟨m, hm1, hm2⟩
     simp [LoopSemStateFiniteExact.eval, hlv, h2v, wlabWlocExact, hsh]
 
+private theorem sptMem_sptListInsert_cases (k : Nat) :
+    ∀ (keys : List Nat) (tree : NumSet), sptMem k (sptListInsert keys tree) →
+      k ∈ keys ∨ sptMem k tree
+  | [], _, h => Or.inr h
+  | key :: keys, tree, h => by
+      rcases sptMem_sptListInsert_cases k keys _ h with h | h
+      · exact Or.inl (List.mem_cons_of_mem _ h)
+      · rcases (sptMem_sptInsert k key () tree).mp h with rfl | h
+        · exact Or.inl List.mem_cons_self
+        · exact Or.inr h
+
+/-- Flapjack helper (no HOL declaration): `locals_rel` survives a change of
+    live set and target locals that keeps every slot `≤ vmax`, extends the live
+    set, and keeps the new live set inside the new target domain (the
+    `SUBSET_TRANS`/`lookup_insert` step of HOL's Crepop/Cmp cases). -/
+private theorem locals_rel_update {width : Nat} [NeZero width]
+    (ctxt : CrepToLoopContextExact) (o o' : NumSet)
+    (sl : HolFiniteMapExact Nat (HolWordLab width)) (tl tl' : Spt (WordLocW width))
+    (h : crepToLoopLocalsRelExact ctxt o sl tl)
+    (hdom : ∀ k, sptMem k o' → sptMem k tl') (hsub : ∀ k, sptMem k o → sptMem k o')
+    (hkeep : ∀ n, n ≤ ctxt.vmax → sptLookup n tl' = sptLookup n tl) :
+    crepToLoopLocalsRelExact ctxt o' sl tl' := by
+  refine ⟨h.1, h.2.1, hdom, fun vn val hval => ?_⟩
+  obtain ⟨n, h1, h2, h3⟩ := h.2.2.2 vn val hval
+  exact ⟨n, h1, hsub n h2, by rw [hkeep n (h.2.1 vn n h1)]; exact h3⟩
+
+private theorem eval_setVar_untouched {width : Nat} [NeZero width] {F : Type}
+    (st : LoopSemStateFiniteExact width F) (e : HolLoopExp width) (n : Nat)
+    (x : WordLocW width) (h : ∀ k, k ∈ holLoopLocalsTouched e → k < n) :
+    LoopSemStateFiniteExact.eval (LoopSemStateFiniteExact.setVar n x st) e =
+      LoopSemStateFiniteExact.eval st e := by
+  apply LoopSemStateFiniteExact.locals_touched_eq_eval_eq st e
+  refine ⟨rfl, rfl, rfl, rfl, rfl, fun k hk => ?_⟩
+  have := h k hk
+  simp only [LoopSemStateFiniteExact.setVar, sptLookup_sptInsert]
+  rw [if_neg (by omega)]
+
+/-- `comp_exp_preserves_eval`, case `Crepop bop es`
+    (`crep_to_loopProofScript.sml:772-786` statement; case proof at 889-972),
+    with the `eval_ind` hypotheses for every argument expression.
+
+    Deliberately untagged for now: like the other pieces it inherits the
+    HOL-absent `[DecidablePred s.memaddrs]` binder of the current
+    `evalCrepSemHOLExp` interface, and the coordinator holds new case tags until
+    bead `flapjack-pxn.18.5.6.33.15.9` removes it. The `@[hol
+    comp_exp_preserves_eval]` tag is added when the case is restated. -/
+theorem crepToLoop_comp_exp_preserves_eval_crepOp {width : Nat} [NeZero width] {σ : Type} :
+    ∀ (s : CrepSemHOLState width σ) [DecidablePred s.memaddrs] (bop : CrepOp)
+      (es : List (CrepExpHOL width)),
+      (∀ e ∈ es, crepToLoopCompExpPreservesEvalAt s e) →
+    ∀ (v : HolWordLab width) (t : LoopSemStateFiniteExact width σ)
+      (ctxt : CrepToLoopContextExact) (tmp : Nat) (l : NumSet)
+      (p : List (HolLoopProg width)) (le : HolLoopExp width) (ntmp : Nat) (nl : NumSet),
+      evalCrepSemHOLExp s (.crepOp bop es) = some v ∧
+        crepToLoopStateRelExact s t ∧
+        crepToLoopMemRelHOLExact s.memory t.memory s.memaddrs ∧
+        crepToLoopGlobalsRelHOLExact s.globals t.globals ∧
+        crepToLoopCodeRelExact ctxt s.code t.code ∧
+        crepToLoopLocalsRelExact ctxt l s.locals t.locals ∧
+        compileExpHOLExact ctxt tmp l (.crepOp bop es) = (p, le, ntmp, nl) ∧
+        ctxt.vmax < tmp →
+      ∃ (ck : Nat) (st : LoopSemStateFiniteExact width σ),
+        LoopSemStateFiniteExact.evaluate (loopNestedSeqHOL p)
+            { t with clock := t.clock + ck } = (none, st) ∧
+        LoopSemStateFiniteExact.eval st le = some (wlabWlocExact v) ∧
+        crepToLoopStateRelExact s st ∧
+        crepToLoopMemRelHOLExact s.memory st.memory s.memaddrs ∧
+        crepToLoopGlobalsRelHOLExact s.globals st.globals ∧
+        crepToLoopCodeRelExact ctxt s.code st.code ∧
+        crepToLoopLocalsRelExact ctxt nl s.locals st.locals := by
+  intro s _ bop es ih v t ctxt tmp l p le ntmp nl ⟨he, hs, hm, hg, hc, hl, hcomp, hv⟩
+  cases bop
+  -- only two-argument word lists reach `crep_op Mul`
+  obtain ⟨e1, e2, a, b, rfl, he1, he2, rfl⟩ : ∃ e1 e2 a b, es = [e1, e2] ∧
+      evalCrepSemHOLExp s e1 = some (.word a) ∧ evalCrepSemHOLExp s e2 = some (.word b) ∧
+      v = .word (a * b) := by
+    match es, he with
+    | [], he => simp [evalCrepSemHOLExp, crepOpCrepWord] at he
+    | [x], he =>
+      cases hx : evalCrepSemHOLExp s x with
+      | none => simp [evalCrepSemHOLExp, hx] at he
+      | some y => cases y; simp [evalCrepSemHOLExp, hx, crepOpCrepWord] at he
+    | [x, y], he =>
+      cases hx : evalCrepSemHOLExp s x with
+      | none => simp [evalCrepSemHOLExp, hx] at he
+      | some x' =>
+        cases hy : evalCrepSemHOLExp s y with
+        | none => simp [evalCrepSemHOLExp, hx, hy] at he
+        | some y' =>
+          cases x' with | word a' => cases y' with | word b' =>
+          simp [evalCrepSemHOLExp, hx, hy, crepOpCrepWord] at he
+          exact ⟨x, y, a', b', rfl, hx, hy, he.symm⟩
+    | x :: y :: z :: rest, he =>
+      cases hx : evalCrepSemHOLExp s x with
+      | none => simp [evalCrepSemHOLExp, hx] at he
+      | some x' =>
+        cases hy : evalCrepSemHOLExp s y with
+        | none => simp [evalCrepSemHOLExp, hx, hy] at he
+        | some y' =>
+          cases hz : evalCrepSemHOLExp s z with
+          | none => simp [evalCrepSemHOLExp, hx, hy, hz] at he
+          | some z' =>
+            cases hr : rest.mapM (evalCrepSemHOLExp s) with
+            | none => simp [evalCrepSemHOLExp, hx, hy, hz, hr] at he
+            | some rs => simp [evalCrepSemHOLExp, hx, hy, hz, hr, crepOpCrepWord] at he
+  have ih1 := ih e1 (by simp)
+  have ih2 := ih e2 (by simp)
+  rcases hA : compileExpHOLExact ctxt tmp l e1 with ⟨c1, v1, n1, l1⟩
+  rcases hB : compileExpHOLExact ctxt n1 l1 e2 with ⟨c2, v2, n2, l2⟩
+  have hexps : compileExpsHOLExact ctxt tmp l [e1, e2] = (c1 ++ (c2 ++ []), [v1, v2], n2, l2) := by
+    rw [compileExpsHOLExact, hA]
+    simp only
+    rw [compileExpsHOLExact, hB]
+    simp only
+    rw [compileExpsHOLExact]
+  obtain ⟨d, hd, hcopEq⟩ : ∃ d, (d = n2 + 2 ∨ d = n2 + 3) ∧ ∀ L : NumSet,
+      compileCrepopHOLExact (width := width) .mul ctxt.target n2 (n2 + 1) (n2 + 2) L =
+        ([.arith (.longMul (n2 + 2) d n2 (n2 + 1))], d) := by
+    by_cases ht : ctxt.target = .armv7
+    · exact ⟨n2 + 3, Or.inr rfl, fun L => by simp [compileCrepopHOLExact, ht]⟩
+    · exact ⟨n2 + 2, Or.inl rfl, fun L => by simp [compileCrepopHOLExact, ht]⟩
+  rw [compileExpHOLExact, hexps] at hcomp
+  simp only [List.length_cons, List.length_nil, Nat.zero_add,
+    show n2 + (1 + 1) = n2 + 2 from rfl, hcopEq, Prod.mk.injEq] at hcomp
+  obtain ⟨rfl, rfl, rfl, rfl⟩ := hcomp
+  obtain ⟨hokA, htA, hlA⟩ := compile_exp_out_rel ctxt tmp l e1 c1 v1 n1 l1 hA
+  obtain ⟨hokB, htB, hlB⟩ := compile_exp_out_rel ctxt n1 l1 e2 c2 v2 n2 l2 hB
+  obtain ⟨ck1, st1, h1, h1v, h1s, h1m, h1g, h1c, h1l⟩ :=
+    ih1 (.word a) t ctxt tmp l c1 v1 n1 l1 ⟨he1, hs, hm, hg, hc, hl, hA, hv⟩
+  obtain ⟨ck2, st2, h2, h2v, h2s, h2m, h2g, h2c, h2l⟩ :=
+    ih2 (.word b) st1 ctxt n1 l1 c2 v2 n2 l2
+      ⟨he2, h1s, h1m, h1g, h1c, h1l, hB, Nat.lt_of_lt_of_le hv htA⟩
+  have h1ck : LoopSemStateFiniteExact.evaluate (loopNestedSeqHOL c1)
+      { t with clock := t.clock + (ck1 + ck2) } =
+        (none, { st1 with clock := st1.clock + ck2 }) := by
+    have := LoopSemStateFiniteExact.evaluate_add_clock_eq _ _ _ _ ck2 h1 (by simp)
+    simpa [Nat.add_assoc] using this
+  have hv1 : LoopSemStateFiniteExact.eval st2 v1 = some (.word a) := by
+    refine LoopSemStateFiniteExact.nested_seq_pure_evaluation c1 c2 t st2 st1 l n1 v1
+      (.word a) ck1 ck2 ⟨by rw [Nat.add_comm]; exact h1, by rw [Nat.add_comm]; exact h2,
+        hokA, hlA ▸ hokB, ?_, ?_, ?_, by simpa [wlabWlocExact] using h1v⟩
+    · intro n hn
+      exact (comp_exp_assigned_vars_tmp_bound ctxt tmp l e1 c1 v1 n1 l1 n ⟨hA, hn⟩).2
+    · intro n hn
+      exact (comp_exp_assigned_vars_tmp_bound ctxt n1 l1 e2 c2 v2 n2 l2 n ⟨hB, hn⟩).1
+    · intro n hn
+      have := compile_exp_le_tmp_domain ctxt tmp l e1 c1 v1 n1 l1 n
+        ⟨hl.2.1, hA, hv, fun k hk => ?_, hn⟩
+      · exact ⟨this.1, hlA ▸ this.2⟩
+      · obtain ⟨w, hw⟩ := crepEval_some_var_cexp_local_lookup s e1 _ k ⟨he1, hk⟩
+        obtain ⟨m, hm1, hm2, _⟩ := hl.2.2.2 k w hw
+        exact ⟨m, hm1, hm2⟩
+  have hv2 : LoopSemStateFiniteExact.eval
+      (LoopSemStateFiniteExact.setVar n2 (.word a) st2) v2 = some (.word b) := by
+    rw [eval_setVar_untouched st2 v2 n2 _ ?_]
+    · simpa [wlabWlocExact] using h2v
+    · intro k hk
+      exact (compile_exp_le_tmp_domain ctxt n1 l1 e2 c2 v2 n2 l2 k
+        ⟨h1l.2.1, hB, Nat.lt_of_lt_of_le hv htA, fun x hx => by
+          obtain ⟨w, hw⟩ := crepEval_some_var_cexp_local_lookup s e2 _ x ⟨he2, hx⟩
+          obtain ⟨m, hm1, hm2, _⟩ := h1l.2.2.2 x w hw
+          exact ⟨m, hm1, hm2⟩, hk⟩).1
+  have hmul : BitVec.ofNat width (a.toNat * b.toNat) = a * b := by
+    apply BitVec.eq_of_toNat_eq; simp [BitVec.toNat_mul]
+  have hvm : ctxt.vmax < n2 := by omega
+  refine ⟨ck1 + ck2, LoopSemStateFiniteExact.setVar d
+      (.word (BitVec.ofNat width (a.toNat * b.toNat)))
+      (LoopSemStateFiniteExact.setVar (n2 + 2)
+        (.word (BitVec.ofNat width (a.toNat * b.toNat / 2 ^ width)))
+        (LoopSemStateFiniteExact.setVar (n2 + 1) (.word b)
+          (LoopSemStateFiniteExact.setVar n2 (.word a) st2))), ?_, ?_, h2s, h2m, h2g, h2c, ?_⟩
+  · simp only [List.append_assoc, List.append_nil, List.nil_append, List.zipWith,
+      List.range_succ, List.range_zero, List.nil_append, List.cons_append]
+    rw [LoopSemStateFiniteExact.evaluate_nested_seq_append_none c1 _ _ _ h1ck,
+      LoopSemStateFiniteExact.evaluate_nested_seq_append_none c2 _ _ _ h2]
+    simp only [loopNestedSeqHOL, LoopSemStateFiniteExact.evaluate_seq]
+    simp only [LoopSemStateFiniteExact.evaluate, hv1, Nat.add_zero, hv2]
+    simp only [LoopSemStateFiniteExact.loopArith, LoopSemStateFiniteExact.setVar,
+      sptLookup_sptInsert, if_true, show ¬ n2 = n2 + 1 by omega, if_false]
+  · simp [LoopSemStateFiniteExact.eval, LoopSemStateFiniteExact.setVar, sptLookup_sptInsert,
+      wlabWlocExact, hmul]
+  · refine locals_rel_update ctxt l2 _ s.locals st2.locals _ h2l ?_ ?_ ?_
+    · intro k hk
+      simp only [LoopSemStateFiniteExact.setVar, sptMem_sptInsert]
+      rcases (sptMem_sptInsert k d () _).mp hk with hk | hk
+      · exact Or.inl hk
+      · rcases sptMem_sptListInsert_cases k _ _ hk with hk | hk
+        · obtain ⟨j, hj, rfl⟩ := List.mem_map.mp hk
+          rw [List.mem_range] at hj
+          have : j = 0 ∨ j = 1 ∨ j = 2 := by omega
+          rcases this with rfl | rfl | rfl
+          · exact Or.inr (Or.inr (Or.inr (Or.inl rfl)))
+          · exact Or.inr (Or.inr (Or.inl rfl))
+          · exact Or.inr (Or.inl rfl)
+        · exact Or.inr (Or.inr (Or.inr (Or.inr (h2l.2.2.1 k hk))))
+    · intro k hk
+      exact (sptMem_sptInsert k d () _).mpr (Or.inr (sptMem_sptListInsert_of k _ _ hk))
+    · intro n hn
+      simp only [LoopSemStateFiniteExact.setVar, sptLookup_sptInsert]
+      rw [if_neg (by omega), if_neg (by omega), if_neg (by omega), if_neg (by omega)]
+
 end Flapjack
