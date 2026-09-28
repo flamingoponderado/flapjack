@@ -8,6 +8,8 @@ import Flapjack.LoopStateResult
 import Flapjack.Compiler.Encoders.Asm
 import Flapjack.Misc.Sptree
 import Flapjack.Pancake.PanLang.Shape
+import Flapjack.Pancake.Semantics.CrepProps.EvaluateAddClockIoEventsMono
+import Flapjack.Pancake.Semantics.LoopProps.EvaluateIoEventsExact
 
 /-!
 State relation analogue for the Crepe-to-Loop lowering, based on
@@ -421,6 +423,25 @@ theorem holFmapAsFiniteSupportRelationWitness_CrepToLoopContextExact
     CrepToLoopContextExact.ofBroad (CrepToLoopContextExact.toBroad context) = context :=
   CrepToLoopContextExact.holFmapAsFiniteSupportWitness context
 
+/-- Same-module canonical roundtrip witness for the exact Crep state carrier,
+    required by the multi-carrier `fmap_as_finite_support_relation` qualifier on
+    `evaluateIOMonoRephrases`. -/
+theorem holFmapAsFiniteSupportRelationWitness_CrepSemHOLState
+    {width : Nat} [NeZero width] {σ : Type} (state : CrepSemHOLState width σ) :
+    CrepSemBroadState.ofBroad state.toBroad state.toBroad_finiteSupport = state :=
+  CrepSemBroadState.ofBroad_toBroad state
+
+/-- Same-module canonical roundtrip witness for the exact Loop state carrier,
+    required by the multi-carrier `fmap_as_finite_support_relation` qualifier on
+    `evaluateIOMonoRephrases`. -/
+theorem holFmapAsFiniteSupportRelationWitness_LoopSemStateFiniteExact
+    {width : Nat} [NeZero width] {F : Type} :
+    (∀ (state : LoopSemStateBroad width F) (h : state.FiniteSupport),
+        (LoopSemStateBroad.ofBroad state h).toBroad = state) ∧
+    (∀ state : LoopSemStateFiniteExact width F,
+        LoopSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  Flapjack.LoopSemStateFiniteExact.holFmapAsFiniteSupportWitness
+
 end CrepToLoopLocalsRelWitnesses
 
 /-! ## Exact-carrier `locals_rel` (`crep_to_loopProofScript.sml:101-111`)
@@ -570,6 +591,34 @@ theorem crepToLoopLocalsRelExact_insert_gt_vmax {width : Nat} [NeZero width]
       omega
     rw [sptLookup_sptInsert_ne n n' w tLocals hne]
     exact hn'
+
+/-- Exact port of HOL `evaluate_io_mono_rephrases`
+    (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:4066-4070`): the
+    `LIST_CONJ` of `crepPropsTheory.evaluate_add_clock_io_events_mono` and
+    `loopPropsTheory.evaluate_add_clock_io_events_mono`, each specialized at
+    `(exs, s with clock := k)`.  Each conjunct keeps its own `!extra` binder
+    exactly as in the source conjunction (the `!extra` is not hoisted); the two
+    exact evaluator state carriers (`CrepSemHOLState` and
+    `LoopSemStateFiniteExact`) consume finite-map fields, so the tag carries the
+    multi-carrier relation qualifier together with the word qualifier. -/
+@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "evaluate_io_mono_rephrases"
+  (fmap_as_finite_support_relation := [CrepSemHOLState.locals, CrepSemHOLState.globals, CrepSemHOLState.code, LoopSemStateFiniteExact.globals])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateIOMonoRephrases {width : Nat} [NeZero width] {σ : Type}
+    (crepProg : CrepProgHOL width) (crepState : CrepSemHOLState width σ)
+    (loopProg : HolLoopProg width) (loopState : LoopSemStateFiniteExact width σ)
+    (k : Nat) :
+    (∀ extra : Nat,
+        (evalCrepSemHOLProgExact { crepState with clock := k } crepProg).2.ffi.ioEvents <+:
+          (evalCrepSemHOLProgExact { crepState with clock := k + extra } crepProg).2.ffi.ioEvents) ∧
+      (∀ extra : Nat,
+        (Flapjack.LoopSemStateFiniteExact.evaluate loopProg { loopState with clock := k }).2.ffi.ioEvents <+:
+          (Flapjack.LoopSemStateFiniteExact.evaluate loopProg { loopState with clock := k + extra }).2.ffi.ioEvents) := by
+  refine ⟨?_, ?_⟩
+  · intro extra
+    simpa using crepPropsEvaluateAddClockIoEventsMono crepProg { crepState with clock := k } extra
+  · intro extra
+    simpa using Flapjack.LoopSemStateFiniteExact.evaluate_add_clock_io_events_mono loopProg { loopState with clock := k } extra
 
 /-! ## `locals_rel` (untagged production analogue)
 
