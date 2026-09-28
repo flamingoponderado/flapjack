@@ -38,6 +38,21 @@ respectively
 additionally probes `pan_op_def` at lines 191--193.
 `Flapjack.Test.LoopSetVarParity` probes `set_var_def` at
 `cakeml/pancake/semantics/loopSemScript.sml:108-110`.
+`loop_live_comp_probe.out` records direct HOL EVAL rows for
+`loop_live$comp` at `cakeml/pancake/loop_liveScript.sml:217`; the Lean replay
+is `Flapjack.Test.LoopLiveCompParity`. `loop_live_optimise_probe.out` records
+`loop_live$optimise` plus a strict-growth fixedpoint iteration, a direct
+`fixedpoint` NONE result for a non-least initial approximation, and the
+enclosing Loop shrink result; its replay guards are in
+`Flapjack.Test.LoopLiveOptimiseParity`. The FFI optimizer row is also replayed
+there. `ocompile_probe.out` includes an ExtCall-to-FFI result from
+`crep_to_loop$ocompile`; `Flapjack.Test.OCompileParity` checks that row.
+Regenerate these with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=loop_live_optimise_probeScript.sml scripts/hol-probes/regenerate.sh`
+and `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=ocompile_probeScript.sml scripts/hol-probes/regenerate.sh` for
+the ocompile rows.
 `Flapjack.Test.LoopPropsCutSetsParity` guards the exact `cut_sets_def`
 clauses over `HolLoopProg`/`NumSet`; its direct HOL outputs for Skip,
 LocValue, Assign, Load32/LoadByte, Seq, If, each Arith variant, and the
