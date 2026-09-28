@@ -19963,5 +19963,27 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.21) against crep_to_loop_compile_prog_lab_min at crep_to_loopProofScript.sml:4398-4400. HOL `crep_to_loop$compile_prog c cprog = lprog ⇒ EVERY (λprog. 60 ≤ FST prog) lprog` with free variables c, cprog, lprog (implicitly universal); Lean quantifies them in order of occurrence (c as the AsmArchitecture carrier of the tagged compileProgHOLExact, cprog at its argument type, lprog at its result type), keeps the equation premise, and renders EVERY as ∀ prog ∈ lprog with FST as .1. Words qualifier for the width-indexed Crep/Loop program carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "code_rel2_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CodeRel2.lean",
+    "lean_name": "crepToLoopCodeRel2Exact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.funcs",
+      "s_code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.22) against code_rel2_def at crep_to_loopProofScript.sml:3842-3845. HOL `code_rel2 ctxt s_code t_code <=> code_rel ctxt (FMAP_MAP2 (\\(s, n, p). (n,crep_arith$simp_prog p)) s_code) t_code`. Lean keeps the three parameters with the carriers of the tagged exact code_rel (crepToLoopCodeRelExact): ctxt : CrepToLoopContextExact, s_code : HolFiniteMapExact MlString (num list # prog), t_code : Spt (sptree num_map). FMAP_MAP2 is HolFiniteMapExact.map2 (the reviewed exact FMAP_MAP2 encoding: key kept, value f (key, value)), the paired abstraction is a match on (s, n, p), simp_prog is the tagged crepSimpProgHOL. Qualifiers as for code_rel_def: relation over CrepToLoopContextExact.funcs and the standalone s_code map; width-indexed program carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "mk_ctxt_code_imp_code_rel2",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CodeRel2.lean",
+    "lean_name": "mk_ctxt_code_imp_code_rel2",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.22) against mk_ctxt_code_imp_code_rel2 at crep_to_loopProofScript.sml:3861-3866. HOL `!c crep_code start np. ALL_DISTINCT (MAP FST crep_code) /\\ ALOOKUP crep_code start = SOME ([],np) ==> code_rel2 (mk_ctxt c FEMPTY (make_funcs crep_code) 0) (alist_to_fmap crep_code) (fromAList (crep_to_loop$compile_prog c crep_code))`. Lean keeps the binders in order (c as the AsmArchitecture carrier of compile_prog, crep_code at compile_prog's argument type, start : MlString, np), both premises (ALL_DISTINCT as List.Nodup, ALOOKUP as holAlookup; the second premise is unused by HOL's proof too), and the conclusion over the tagged crepToLoopCodeRel2Exact, mkCtxtExact (mk_ctxt_def) with HolFiniteMapExact.empty as FEMPTY, crepToLoopMakeFuncsExactHOL (the exact-carrier make_funcs used by the tagged compileProgHOLExact; shown pointwise equal to the tagged polymorphic crepToLoopMakeFuncsHOL), alistToFmapCodeExact (HOL alist_to_fmap: first occurrence wins, via updateList of the reversed list), sptFromAList (fromAList) and compileProgHOLExact. All finite maps are values of those definitions, none a binder, so as for the tagged compile_prog_def only the words qualifier applies."
   }
 ]
