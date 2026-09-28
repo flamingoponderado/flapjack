@@ -17457,5 +17457,58 @@
     "hol_name": "evaluate_seq_stores_mem_state_rel",
     "lean_name": "evaluateSeqStoresMemStateRelHOL",
     "reviewer": "flapjack-opus source comparison (2026-09-28, bead flapjack-pxn.18.4.3.107.1; crepPropsScript.sml:498-515): HOL !es vs ad a s res t addr m. LENGTH es = LENGTH vs /\\ ~MEM ad es /\\ ALL_DISTINCT es /\\ mem_stores (addr+a) vs s.memaddrs s.memory = SOME m /\\ evaluate (nested_seq (stores (Var ad) (MAP Var es) a), s with locals := s.locals |++ ((ad,Word addr)::ZIP (es,vs))) = (res,t) ==> res = NONE /\\ t.memory = m /\\ t.memaddrs = s.memaddrs /\\ t.sh_memaddrs = s.sh_memaddrs /\\ (t.be <=> s.be) /\\ t.ffi = s.ffi /\\ t.code = s.code /\\ t.clock = s.clock /\\ t.base_addr = s.base_addr /\\ t.top_addr = s.top_addr. Lean keeps the binders in HOL order and the conjunctive premise and conclusion (<=> on bool is =). mem_stores is the tagged panMemStoresHOL (panSem mem_stores_def, used by crepSem) with the classical address decision, |++ is updateListEq, ALL_DISTINCT is Nodup, ~MEM is ∉, and the evaluator/syntax are the tagged exact ports. CrepSemHOLState locals/globals/code use the canonical finite-support carrier; 'a word is BitVec width with [NeZero width]."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Store.lean",
+    "lean_name": "pcCompileCorrectAt_store",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only curried form of the pc_compile_correct Store case against pcCompileCorrectAt (bead flapjack-pxn.18.4.3.107); the HOL-shaped statement is the tagged pcCompileCorrect_Store"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Store.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_Store; forwards the imported checked roundtrip; no HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Store.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_Store; forwards the imported checked roundtrip; no HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Store.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_Store; forwards the imported checked roundtrip; no HOL declaration"
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "pc_compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Store.lean",
+    "lean_name": "pcCompileCorrect_Store",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "PanToCrepContextExact.vars",
+      "PanToCrepContextExact.funcs",
+      "PanToCrepContextExact.eids"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-28, bead flapjack-pxn.18.4.3.107; pan_to_crepProofScript.sml:442-468, Store case resumed at :1726-1856; panSemScript.sml:777-778 rebound evaluate_ind). Store constructor piece of HOL pc_compile_correct (AGENTS splitting rule, same tag, suffixed name), in the reviewed shape of pcCompileCorrect_Call. HOL's printed evaluate_ind Store conjunct (hol run on panSemTheory.evaluate_ind) is !dst src s. P (Store dst src,s) (no IH); binders dst src s kept. Lean keeps the binders, IH binders/side conditions in HOL order, and P = pcCompileCorrectAtHOL (reviewed with the Call case). The conclusion is P (Store ..., s) unfolded: binders res s1 t ctxt, the conjunctive premise, and the existential target run with state_rel/code_rel/excp_rel and inline case res of. evaluate is the tagged total evaluateHOLFiniteState and evalCrepSemHOLProgExact; eval is the tagged exact expression evaluator with the classical address decision used by the tagged Pan arm; compile/relations/globals_lookup/flatten/shape_of/size_of_shape/localised_prog are the tagged exact ports; qualifiers and same-module witnesses as for the Call case. Proof via untagged pcCompileCorrectAt_store. No target-run or post-state premise."
   }
 ]
