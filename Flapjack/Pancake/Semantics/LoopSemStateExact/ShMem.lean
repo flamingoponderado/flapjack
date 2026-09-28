@@ -15,6 +15,21 @@ HOL `sh_mem_load_def`, `sh_mem_store_def` and `sh_mem_op_def`
 namespace Flapjack
 namespace LoopSemStateFiniteExact
 
+namespace LoopShMemFiniteSupport
+
+/-- Local same-module witness for the canonical finite-support
+`LoopSemStateFiniteExact` carrier used by the qualified shared-memory ports in
+this module. It re-exports the checked roundtrip witness from the owning
+carrier module. -/
+theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {F : Type} :
+    (∀ (state : LoopSemStateBroad width F) (h : state.FiniteSupport),
+        (LoopSemStateBroad.ofBroad state h).toBroad = state) ∧
+    (∀ state : LoopSemStateFiniteExact width F,
+        LoopSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  Flapjack.LoopSemStateFiniteExact.holFmapAsFiniteSupportWitness
+
+end LoopShMemFiniteSupport
+
 /-- Exact HOL `sh_mem_load_def` (`loopSemScript.sml:198-215`).  For `nb = 0` the
     address itself, otherwise its `byte_align`, must be in `sh_mdomain`; then
     `call_FFI s.ffi (SharedMem MappedRead) [n2w nb] (word_to_bytes addr F)`:
@@ -22,8 +37,11 @@ namespace LoopSemStateFiniteExact
     `Word (word_of_bytes F 0w new_bytes)` to `v` and installs the new FFI state.
     Outside the domain the result is `Error`.  The HOL standard-library byte
     helpers are the untagged renderings `panWordToBytesHOL`, `panWordOfBytesHOL`
-    and `riscvByteAlignHOL`. -/
-@[hol "cakeml/pancake/semantics/loopSemScript.sml" "sh_mem_load_def" (words_as_type_indexed_bitvec)]
+    and `riscvByteAlignHOL`. The full state carrier's sole `|->` field,
+    `globals`, is recorded by the finite-support qualifier and local canonical
+    witness. -/
+@[hol "cakeml/pancake/semantics/loopSemScript.sml" "sh_mem_load_def"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 def shMemLoad {width : Nat} [NeZero width] {F : Type}
     (v : Nat) (addr : BitVec width) (nb : Nat) (s : LoopSemStateFiniteExact width F) :
     Option (LoopResultExact width) × LoopSemStateFiniteExact width F :=
@@ -48,8 +66,11 @@ def shMemLoad {width : Nat} [NeZero width] {F : Type}
     `Word w`; the domain test is as for `sh_mem_load`; the payload is
     `word_to_bytes w F ++ word_to_bytes addr F` for `nb = 0` and
     `TAKE nb (word_to_bytes w F) ++ word_to_bytes addr F` otherwise, sent with
-    `SharedMem MappedWrite`; `FFI_return` installs only the new FFI state. -/
-@[hol "cakeml/pancake/semantics/loopSemScript.sml" "sh_mem_store_def" (words_as_type_indexed_bitvec)]
+    `SharedMem MappedWrite`; `FFI_return` installs only the new FFI state. The
+    full state carrier's `globals` `|->` field is recorded by the finite-support
+    qualifier and local canonical witness. -/
+@[hol "cakeml/pancake/semantics/loopSemScript.sml" "sh_mem_store_def"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 def shMemStore {width : Nat} [NeZero width] {F : Type}
     (v : Nat) (addr : BitVec width) (nb : Nat) (s : LoopSemStateFiniteExact width F) :
     Option (LoopResultExact width) × LoopSemStateFiniteExact width F :=
@@ -73,8 +94,10 @@ def shMemStore {width : Nat} [NeZero width] {F : Type}
 
 /-- Exact HOL `sh_mem_op_def` (`loopSemScript.sml:255-264`): `Load`/`Store` use
     byte count `0`, `Load8`/`Store8` `1`, `Load16`/`Store16` `2`,
-    `Load32`/`Store32` `4`. -/
-@[hol "cakeml/pancake/semantics/loopSemScript.sml" "sh_mem_op_def" (words_as_type_indexed_bitvec)]
+    `Load32`/`Store32` `4`. The full state carrier's `globals` `|->` field is
+    recorded by the finite-support qualifier and local canonical witness. -/
+@[hol "cakeml/pancake/semantics/loopSemScript.sml" "sh_mem_op_def"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 def shMemOp {width : Nat} [NeZero width] {F : Type} :
     CrepMemOp → Nat → BitVec width → LoopSemStateFiniteExact width F →
       Option (LoopResultExact width) × LoopSemStateFiniteExact width F
