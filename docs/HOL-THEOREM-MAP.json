@@ -17635,6 +17635,51 @@
     "reviewer": "flapjack-luna-a source comparison (2026-09-28, bead flapjack-pxn.18.4.3.112; pan_to_crepProofScript.sml:442-468, ShMemStore case resumed at :1960-1989; panSemScript.sml:611-614; pan_to_crepScript.sml:291-297; crepSemScript.sml:186-208). HOL's evaluate_ind ShMemStore conjunct is !op ad e s. P (ShMemStore op ad e,s), with no IH. The source evaluator evaluates ad as address, e as bytes, and calls sh_mem_store bytes addr. The compiler binds compiled e to a fresh local n+1 above all variables of compiled address ad, then emits ShMem (store_op op) (n+1) ad; the Crep evaluator reads that local as the stored word and ad as the address. Lean's constructor arity and all three exact definitions match those clauses. This declaration unfolds pcCompileCorrectAt as in pcCompileCorrect_Store and retains HOL's premises, existential target run, state/code/exception relations, and inline result cases. Qualifiers are identical to reviewed pcCompileCorrect_Store; this declaration's carrier owners and the same-module roundtrip witnesses are checked here. No target-run or post-state premise."
   },
   {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/ShMemLoad.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_ShMemLoad; forwards the imported checked roundtrip; no HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/ShMemLoad.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_ShMemLoad; forwards the imported checked roundtrip; no HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/ShMemLoad.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_ShMemLoad; forwards the imported checked roundtrip; no HOL declaration"
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "pc_compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/ShMemLoad.lean",
+    "lean_name": "pcCompileCorrect_ShMemLoad",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "PanToCrepContextExact.vars",
+      "PanToCrepContextExact.funcs",
+      "PanToCrepContextExact.eids"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Flapjack-only source comparison (2026-09-28, bead flapjack-pxn.18.4.3.111.2; pan_to_crepProofScript.sml:442-468, ShMemLoad case resumed at :1912-1958; panSemScript.sml:604-610; pan_to_crepScript.sml:... compile_prog ShMemLoad; crepSemScript.sml:168-185). HOL's evaluate_ind ShMemLoad conjunct is !op vk name e s. P (ShMemLoad op vk name e,s), with no IH. The source evaluator evaluates e as the address, requires lookup_kvar vk name s to be a word, and calls sh_mem_load via the FFI, decoding the returned bytes with word_of_bytes. The compiler writes the loaded word straight into the destination slot of name (no fresh temporary) and emits ShMem (load_op op) dst ce; the Crep evaluator reads dst as the loaded destination and dispatches to sh_mem_load. Lean's constructor arity and the exact definitions match those clauses. This declaration unfolds pcCompileCorrectAt and retains HOL's premises, existential target run, state/code/exception relations, and inline result cases. Qualifiers are identical to reviewed pcCompileCorrect_Store/pcCompileCorrect_ShMemStore; the carrier owners and same-module roundtrip witnesses are checked here. No target-run or post-state premise."
+  },
+  {
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
     "hol_name": "evaluate_ind",
     "hol_line": 777,

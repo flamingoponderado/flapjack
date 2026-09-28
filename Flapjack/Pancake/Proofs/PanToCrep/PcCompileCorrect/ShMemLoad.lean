@@ -10,8 +10,8 @@ The `ShMemLoad` constructor conjunct of HOL `pc_compile_correct`
 `:1912-1958`). The source and target shared-memory load primitives are related
 by the control/byte bridge in `ShMemBytesBridge` and the successful-return
 relation bridge `shMemLoadHOLFiniteExact_ret_corresponds`. Decoding the
-FFI-returned bytes uses the Pan/Crep decoded-word equality, which holds whenever
-the word has at least one whole byte (`8 ≤ width`; RISC-V 32/64). Unlike the
+FFI-returned bytes uses the (unconditional) Pan/Crep decoded-word equality.
+Unlike the
 store case the compiler writes the loaded word straight into the destination
 slot of `name`, so no fresh temporary is needed.
 -/
@@ -24,11 +24,9 @@ open Flapjack.PanSemStateFiniteExact
 /-- HOL `pc_compile_correct`, `ShMemLoad` constructor case
     (`pan_to_crepProofScript.sml:1912-1958`, under the `evaluate_ind` conjunct
     from `:442-468`). Its binders are `op vk name e`; there is no induction
-    hypothesis because the address uses `eval`, not recursive `evaluate`. The
-    side condition `8 ≤ width` is exactly HOL's implicit `8 ≤ dimindex`
-    requirement of `word_of_bytes` (automatic for RISC-V 32/64). -/
+    hypothesis because the address uses `eval`, not recursive `evaluate`. -/
 theorem pcCompileCorrectAt_shMemLoad {width : Nat} {σ : Type} [NeZero width]
-    (h8 : 8 ≤ width) (operator : OpSize) (kind : VarKind) (name : MlS)
+    (operator : OpSize) (kind : VarKind) (name : MlS)
     (address : ExpHOL width) (s : PanSemStateFiniteExact width σ) :
     pcCompileCorrectAt (.shMemLoad operator kind name address : ProgHOL width) s := by
   classical
@@ -238,7 +236,7 @@ theorem pcCompileCorrectAt_shMemLoad {width : Nat} {σ : Type} [NeZero width]
                                       shMemLoadHOLFiniteExact_ret_corresponds (source := s)
                                         (target := t) (ctxt := ctxt) (destination := destination)
                                         (name := name) (address := addr) (nb := nbOpHOL operator)
-                                        h8 hstate hlocals hvarDest hsource' htargetR
+                                        hstate hlocals hvarDest hsource' htargetR
                                     refine ⟨none, { CrepSemHOLState.setVar destination
                                         (.word (crepClockWordOfBytes
                                           (newBytes.map UInt8.ofBitVec))) t with
@@ -350,7 +348,7 @@ theorem pcCompileCorrectAt_shMemLoad {width : Nat} {σ : Type} [NeZero width]
                                       shMemLoadHOLFiniteExact_ret_corresponds (source := s)
                                         (target := t) (ctxt := ctxt) (destination := destination)
                                         (name := name) (address := addr) (nb := nbOpHOL operator)
-                                        h8 hstate hlocals hvarDest hsource' htargetR
+                                        hstate hlocals hvarDest hsource' htargetR
                                     refine ⟨none, { CrepSemHOLState.setVar destination
                                         (.word (crepClockWordOfBytes
                                           (newBytes.map UInt8.ofBitVec))) t with
@@ -375,5 +373,94 @@ theorem pcCompileCorrectAt_shMemLoad {width : Nat} {σ : Type} [NeZero width]
                                 exact absurd hsrc hres
   · -- `.global`
     simp [localisedProgHOL] at hloc
+
+namespace PcCompileCorrectShMemLoadWitnesses
+
+/-! Same-module canonical relation witnesses for the carriers qualified by the
+tagged ShMemLoad case. -/
+
+theorem holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact
+    {width : Nat} {σ : Type} [NeZero width] :
+    (∀ (state : PanSemStateExact width σ) (h : state.FiniteSupport),
+        (PanSemStateFiniteExact.ofExact state h).toExact = state) ∧
+    (∀ state : PanSemStateFiniteExact width σ,
+        PanSemStateFiniteExact.ofExact state.toExact state.toExact_finiteSupport = state) :=
+  CallPreservationFiniteMapWitnesses.holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact
+
+theorem holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact
+    {width : Nat} [NeZero width] (context : PanToCrepContextExact width) :
+    PanToCrepContextExact.ofBroad (PanToCrepContextExact.toBroad context) = context :=
+  CallPreservationFiniteMapWitnesses.holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact
+    context
+
+theorem holFmapAsFiniteSupportRelationWitness_CrepSemHOLState
+    {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) :
+    CrepSemBroadState.ofBroad state.toBroad state.toBroad_finiteSupport = state :=
+  CallPreservationFiniteMapWitnesses.holFmapAsFiniteSupportRelationWitness_CrepSemHOLState state
+
+end PcCompileCorrectShMemLoadWitnesses
+
+/-- Exact HOL `pc_compile_correct[ShMemLoad]` case, resumed at
+    `pan_to_crepProofScript.sml:1912-1958`. HOL's `ShMemLoad op vk name e`
+    evaluator evaluates `e` as the address, requires the loaded destination
+    variable to be a word, reads the shared memory through the FFI and decodes
+    the returned bytes with `word_of_bytes`; the compiler translates it to
+    `ShMem (load_op op) dst ce` where `dst` is the destination slot of `name`.
+    The carrier qualifiers are the same finite-map and positive-word
+    translations reviewed for the exact `ShMemStore` case, with local canonical
+    witnesses above. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "pc_compile_correct"
+  (fmap_as_finite_support_relation := [PanSemStateFiniteExact.locals,
+    PanSemStateFiniteExact.globals, PanSemStateFiniteExact.code,
+    PanSemStateFiniteExact.eshapes, CrepSemHOLState.locals, CrepSemHOLState.globals,
+    CrepSemHOLState.code, PanToCrepContextExact.vars, PanToCrepContextExact.funcs,
+    PanToCrepContextExact.eids])
+  (words_as_type_indexed_bitvec)]
+theorem pcCompileCorrect_ShMemLoad {width : Nat} {σ : Type} [NeZero width] :
+    ∀ (operator : OpSize) (kind : VarKind) (name : MlS) (address : ExpHOL width)
+      (s : PanSemStateFiniteExact width σ)
+      (res : Option (PanSemResultExact width))
+      (s1 : PanSemStateFiniteExact width σ) (t : CrepSemHOLState width σ)
+      (ctxt : PanToCrepContextExact width),
+      s.evaluateHOLFiniteState (.shMemLoad operator kind name address : ProgHOL width) = (res, s1) ∧
+        res ≠ some .error ∧ panToCrepStateRelFiniteExact s t ∧
+        codeRelExactHOLW ctxt s.code t.code ∧
+        panToCrepExcpRelFiniteExact ctxt.eids s.eshapes ∧
+        panToCrepLocalsRelFiniteExact ctxt s.locals t.locals ∧
+        localisedProgHOL (.shMemLoad operator kind name address : ProgHOL width) = true →
+      ∃ (res1 : Option (CrepResultHOLExact width)) (t1 : CrepSemHOLState width σ),
+        evalCrepSemHOLProgExact t
+            (compileProgExactHOLW ctxt (.shMemLoad operator kind name address : ProgHOL width)) =
+          (res1, t1) ∧
+        panToCrepStateRelFiniteExact s1 t1 ∧ codeRelExactHOLW ctxt s1.code t1.code ∧
+        panToCrepExcpRelFiniteExact ctxt.eids s1.eshapes ∧
+        match res with
+        | none => res1 = none ∧ panToCrepLocalsRelFiniteExact ctxt s1.locals t1.locals
+        | some .error => False
+        | some .timeOut => res1 = some .timeOut
+        | some .break =>
+            res1 = some (.break 0) ∧ panToCrepLocalsRelFiniteExact ctxt s1.locals t1.locals
+        | some .continue =>
+            res1 = some (.continue 0) ∧ panToCrepLocalsRelFiniteExact ctxt s1.locals t1.locals
+        | some (.returned rv) => res1 = some (.return (flattenHOL rv))
+        | some (.exception eid v') =>
+            (match ctxt.eids.lookup eid with
+             | none => False
+             | some n =>
+                 res1 = some (.exception n) ∧
+                 (1 ≤ sizeOfShapeHOL (shapeOfHOLExact v') →
+                   globalsLookupHOL t1 v' = some (flattenHOL v') ∧
+                     sizeOfShapeHOL (shapeOfHOLExact v') ≤ 32))
+        | some (.finalFfi f) => res1 = some (.finalFfi f) := by
+  intro operator kind name address s res s1 t ctxt
+    ⟨hrun, hres, hstate, hcode, hexcp, hlocals, hloc⟩
+  obtain ⟨res1, t1, h1, h2, h3, h4, h5⟩ :=
+    pcCompileCorrectAt_shMemLoad operator kind name address s res s1 t ctxt
+      hrun hres hstate hcode hexcp hlocals hloc
+  refine ⟨res1, t1, h1, h2, h3, h4, ?_⟩
+  rcases res with _ | r
+  · exact h5
+  · cases r <;> exact h5
 
 end Flapjack
