@@ -20353,5 +20353,105 @@
     "lean_name": "subspt_inter_apply",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack sptree helper (HOL subspt_lookup + lookup_inter_alt): apply subspt (inter a l) b at a key in both a and l; no separate CakeML declaration"
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "loopLive_compile_correct_store",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.7): case piece `Store` of loop_live compile_correct (statement loop_liveProofScript.sml:17-37; Resume compile_correct[Store] at 705-718). No sub-program, so no evaluate_ind hypothesis; HOL quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises and the full conclusion as in the other pieces, over exact evaluate/shrinkHOL. Proof: eval_lemma on the address with l := insert n () l0, the stored register from subspt, mem_store touches memory only; failure branches are excluded by res ≠ SOME Error."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "loopLive_compile_correct_store32",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.7): case piece `Store32` of loop_live compile_correct (statement loop_liveProofScript.sml:17-37; Resume compile_correct[Store32] at 720-727). No sub-program, so no evaluate_ind hypothesis; HOL quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises and the full conclusion as in the other pieces, over exact evaluate/shrinkHOL. Proof: both registers from subspt (insert a (insert w l0)); mem_store_32 touches memory only; failure branches are excluded by res ≠ SOME Error."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "loopLive_compile_correct_storeByte",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.7): case piece `StoreByte` of loop_live compile_correct (statement loop_liveProofScript.sml:17-37; Resume compile_correct[StoreByte] at 729-736). No sub-program, so no evaluate_ind hypothesis; HOL quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises and the full conclusion as in the other pieces, over exact evaluate/shrinkHOL. Proof: both registers from subspt; mem_store_byte_aux touches memory only; failure branches are excluded by res ≠ SOME Error."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "loopLive_compile_correct_load32",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.7): case piece `Load32` of loop_live compile_correct (statement loop_liveProofScript.sml:17-37; Resume compile_correct[Load32] at 738-745). No sub-program, so no evaluate_ind hypothesis; HOL quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises and the full conclusion as in the other pieces, over exact evaluate/shrinkHOL. Proof: address register from subspt; destination set on both sides; other live keys via delete y l0; failure branches are excluded by res ≠ SOME Error."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "loopLive_compile_correct_loadByte",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.7): case piece `LoadByte` of loop_live compile_correct (statement loop_liveProofScript.sml:17-37; Resume compile_correct[LoadByte] at 747-754). No sub-program, so no evaluate_ind hypothesis; HOL quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises and the full conclusion as in the other pieces, over exact evaluate/shrinkHOL. Proof: address register from subspt; destination set on both sides; other live keys via delete y l0; failure branches are excluded by res ≠ SOME Error."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "mem_insert_self'",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack sptree helper (HOL domain_insert): the inserted key is a member; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "mem_insert_of'",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack sptree helper (HOL domain_insert): insert preserves membership; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "lookup_of_subspt",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack sptree helper (HOL subspt_lookup + lookup_inter_alt): read a live, defined key through subspt (inter a l) b; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "post_none_same",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper for the loop_live compile_correct NONE postcondition when locals are unchanged and l0 ⊆ l1; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "post_setVar",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper for the loop_live compile_correct NONE postcondition after set_var y on both sides; no separate CakeML declaration"
   }
 ]

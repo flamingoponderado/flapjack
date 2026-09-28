@@ -945,4 +945,285 @@ theorem loopLive_compile_correct_locValue {width : Nat} [NeZero width] {F : Type
   · simp [evaluate, hc] at he
     exact absurd he.1.symm hne
 
+/-! ## Store / Load cases -/
+
+private theorem mem_insert_self' (k : Nat) (t : NumSet) : sptMem k (sptInsert k () t) :=
+  (sptMem_sptInsert k k () t).mpr (Or.inl rfl)
+
+private theorem mem_insert_of' {k : Nat} (x : Nat) {t : NumSet} (h : sptMem k t) :
+    sptMem k (sptInsert x () t) :=
+  (sptMem_sptInsert k x () t).mpr (Or.inr h)
+
+private theorem lookup_of_subspt {width : Nat} [NeZero width]
+    {a b : Spt (WordLocW width)} {l : NumSet} (h : sptSubspt (sptInter a l) b) {k : Nat}
+    (hl : sptMem k l) {w : WordLocW width} (ha : sptLookup k a = some w) : sptLookup k b = some w := by
+  rw [subspt_inter_apply h (by simp [sptMem, sptDomain, ha]) hl, ha]
+
+private theorem post_none_same {width : Nat} [NeZero width]
+    {a b : Spt (WordLocW width)} {l0 l1 : NumSet} (h : sptSubspt (sptInter a l1) b)
+    (hsub : ∀ k, sptMem k l0 → sptMem k l1) : sptSubspt (sptInter a l0) b :=
+  subspt_of_lookup fun k hk => by
+    obtain ⟨hka, hkl⟩ := (mem_inter_iff _ _ k).mp hk
+    rw [sptLookup_sptInter, if_pos (show (sptLookup k l0).isSome = true from hkl)]
+    exact subspt_inter_apply h hka (hsub k hkl)
+
+private theorem post_setVar {width : Nat} [NeZero width]
+    {a b : Spt (WordLocW width)} {l0 l1 : NumSet} (y : Nat) (val : WordLocW width)
+    (h : sptSubspt (sptInter a l1) b)
+    (hsub : ∀ k, k ≠ y → sptMem k l0 → sptMem k l1) :
+    sptSubspt (sptInter (sptInsert y val a) l0) (sptInsert y val b) :=
+  subspt_of_lookup fun k hk => by
+    obtain ⟨hka, hkl⟩ := (mem_inter_iff _ _ k).mp hk
+    rw [sptLookup_sptInter, if_pos (show (sptLookup k l0).isSome = true from hkl)]
+    by_cases hky : k = y
+    · subst hky; simp [sptLookup_sptInsert]
+    · have hka' : sptMem k a := by simpa [sptMem, sptDomain, sptLookup_sptInsert, hky] using hka
+      simp only [sptLookup_sptInsert, hky, if_false]
+      exact subspt_inter_apply h hka' (hsub k hky hkl)
+
+/-- `compile_correct`, case `Store` (`loop_liveProofScript.sml:17-37` statement;
+    `Resume compile_correct[Store]` at 705-718). -/
+@[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
+theorem loopLive_compile_correct_store {width : Nat} [NeZero width] {F : Type} :
+    ∀ (e : HolLoopExp width) (n : Nat) (v1 : LoopSemStateFiniteExact width F)
+      (res : Option (LoopResultExact width)) (s1 : LoopSemStateFiniteExact width F)
+      (lt : List (NumSet × NumSet)) (locals : Spt (WordLocW width)) (prog1 : HolLoopProg width)
+      (l1 l0 : NumSet),
+      evaluate (.store e n : HolLoopProg width) v1 = (res, s1) ∧ res ≠ some .error ∧ shrinkHOL lt (.store e n : HolLoopProg width) l0 = (prog1, l1) ∧
+        sptSubspt (sptInter v1.locals l1) locals →
+    ∃ new_locals, evaluate prog1 { v1 with locals := locals } = (res, { s1 with locals := new_locals }) ∧
+      match res with
+      | none => sptSubspt (sptInter s1.locals l0) new_locals
+      | some (.result _) => new_locals = s1.locals
+      | some (.exception _) => new_locals = s1.locals
+      | some (.break n) =>
+          (match sptOel n lt with
+           | some (_, brk) => sptSubspt (sptInter s1.locals brk) new_locals
+           | none => True)
+      | some (.continue n) =>
+          (match sptOel n lt with
+           | some (cont, _) => sptSubspt (sptInter s1.locals cont) new_locals
+           | none => True)
+      | some .timeOut => new_locals = s1.locals
+      | some (.finalFfi _) => new_locals = s1.locals
+      | some .error => new_locals = s1.locals := by
+  intro e n v1 res s1 lt locals prog1 l1 l0 ⟨he, hne, hs, hsub⟩
+  simp only [shrinkHOL, Prod.mk.injEq] at hs
+  obtain ⟨rfl, rfl⟩ := hs
+  cases hx : eval v1 e with
+  | none => simp [evaluate, hx] at he; exact absurd he.1.symm hne
+  | some a =>
+  cases a with
+  | loc _ _ => simp [evaluate, hx] at he; exact absurd he.1.symm hne
+  | word adr =>
+  cases hn : sptLookup n v1.locals with
+  | none => simp [evaluate, hx, hn] at he; exact absurd he.1.symm hne
+  | some w =>
+  by_cases hd : v1.mdomain adr = true
+  · simp only [evaluate, hx, hn, memStore, hd, if_true, Prod.mk.injEq] at he
+    obtain ⟨rfl, rfl⟩ := he
+    have hx' := eval_lemma v1 e (.word adr) (sptInsert n () l0) locals ⟨hx, hsub⟩
+    have hn' := lookup_of_subspt hsub
+      ((vars_of_exp_mono e _ n (mem_insert_self' n l0)).1) hn
+    refine ⟨locals, by simp [evaluate, hx', hn', memStore, hd], ?_⟩
+    exact post_none_same hsub fun k hk => (vars_of_exp_mono e _ k (mem_insert_of' n hk)).1
+  · simp [evaluate, hx, hn, memStore, hd] at he; exact absurd he.1.symm hne
+
+/-- `compile_correct`, case `Store32` (`loop_liveProofScript.sml:17-37` statement;
+    `Resume compile_correct[Store32]` at 720-727). -/
+@[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
+theorem loopLive_compile_correct_store32 {width : Nat} [NeZero width] {F : Type} :
+    ∀ (a w : Nat) (v1 : LoopSemStateFiniteExact width F)
+      (res : Option (LoopResultExact width)) (s1 : LoopSemStateFiniteExact width F)
+      (lt : List (NumSet × NumSet)) (locals : Spt (WordLocW width)) (prog1 : HolLoopProg width)
+      (l1 l0 : NumSet),
+      evaluate (.store32 a w : HolLoopProg width) v1 = (res, s1) ∧ res ≠ some .error ∧ shrinkHOL lt (.store32 a w : HolLoopProg width) l0 = (prog1, l1) ∧
+        sptSubspt (sptInter v1.locals l1) locals →
+    ∃ new_locals, evaluate prog1 { v1 with locals := locals } = (res, { s1 with locals := new_locals }) ∧
+      match res with
+      | none => sptSubspt (sptInter s1.locals l0) new_locals
+      | some (.result _) => new_locals = s1.locals
+      | some (.exception _) => new_locals = s1.locals
+      | some (.break n) =>
+          (match sptOel n lt with
+           | some (_, brk) => sptSubspt (sptInter s1.locals brk) new_locals
+           | none => True)
+      | some (.continue n) =>
+          (match sptOel n lt with
+           | some (cont, _) => sptSubspt (sptInter s1.locals cont) new_locals
+           | none => True)
+      | some .timeOut => new_locals = s1.locals
+      | some (.finalFfi _) => new_locals = s1.locals
+      | some .error => new_locals = s1.locals := by
+  intro a w v1 res s1 lt locals prog1 l1 l0 ⟨he, hne, hs, hsub⟩
+  simp only [shrinkHOL, Prod.mk.injEq] at hs
+  obtain ⟨rfl, rfl⟩ := hs
+  cases ha : sptLookup a v1.locals with
+  | none => simp [evaluate, ha] at he; exact absurd he.1.symm hne
+  | some av =>
+  cases hw : sptLookup w v1.locals with
+  | none => cases av <;> simp [evaluate, ha, hw] at he <;> exact absurd he.1.symm hne
+  | some wv =>
+  have ha' := lookup_of_subspt hsub (mem_insert_self' a _) ha
+  have hw' := lookup_of_subspt hsub (mem_insert_of' a (mem_insert_self' w l0)) hw
+  cases av with
+  | loc _ _ => simp [evaluate, ha, hw] at he; exact absurd he.1.symm hne
+  | word x =>
+  cases wv with
+  | loc _ _ => simp [evaluate, ha, hw] at he; exact absurd he.1.symm hne
+  | word y =>
+  cases hm : memStore32Exact v1.memory v1.mdomain v1.be x (y.setWidth 32) with
+  | none => simp [evaluate, ha, hw, hm] at he; exact absurd he.1.symm hne
+  | some m =>
+  simp only [evaluate, ha, hw, hm, Prod.mk.injEq] at he
+  obtain ⟨rfl, rfl⟩ := he
+  refine ⟨locals, by simp [evaluate, ha', hw', hm], ?_⟩
+  exact post_none_same hsub fun k hk => mem_insert_of' a (mem_insert_of' w hk)
+
+/-- `compile_correct`, case `StoreByte` (`loop_liveProofScript.sml:17-37` statement;
+    `Resume compile_correct[StoreByte]` at 729-736). -/
+@[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
+theorem loopLive_compile_correct_storeByte {width : Nat} [NeZero width] {F : Type} :
+    ∀ (a w : Nat) (v1 : LoopSemStateFiniteExact width F)
+      (res : Option (LoopResultExact width)) (s1 : LoopSemStateFiniteExact width F)
+      (lt : List (NumSet × NumSet)) (locals : Spt (WordLocW width)) (prog1 : HolLoopProg width)
+      (l1 l0 : NumSet),
+      evaluate (.storeByte a w : HolLoopProg width) v1 = (res, s1) ∧ res ≠ some .error ∧ shrinkHOL lt (.storeByte a w : HolLoopProg width) l0 = (prog1, l1) ∧
+        sptSubspt (sptInter v1.locals l1) locals →
+    ∃ new_locals, evaluate prog1 { v1 with locals := locals } = (res, { s1 with locals := new_locals }) ∧
+      match res with
+      | none => sptSubspt (sptInter s1.locals l0) new_locals
+      | some (.result _) => new_locals = s1.locals
+      | some (.exception _) => new_locals = s1.locals
+      | some (.break n) =>
+          (match sptOel n lt with
+           | some (_, brk) => sptSubspt (sptInter s1.locals brk) new_locals
+           | none => True)
+      | some (.continue n) =>
+          (match sptOel n lt with
+           | some (cont, _) => sptSubspt (sptInter s1.locals cont) new_locals
+           | none => True)
+      | some .timeOut => new_locals = s1.locals
+      | some (.finalFfi _) => new_locals = s1.locals
+      | some .error => new_locals = s1.locals := by
+  intro a w v1 res s1 lt locals prog1 l1 l0 ⟨he, hne, hs, hsub⟩
+  simp only [shrinkHOL, Prod.mk.injEq] at hs
+  obtain ⟨rfl, rfl⟩ := hs
+  cases ha : sptLookup a v1.locals with
+  | none => simp [evaluate, ha] at he; exact absurd he.1.symm hne
+  | some av =>
+  cases hw : sptLookup w v1.locals with
+  | none => cases av <;> simp [evaluate, ha, hw] at he <;> exact absurd he.1.symm hne
+  | some wv =>
+  have ha' := lookup_of_subspt hsub (mem_insert_self' a _) ha
+  have hw' := lookup_of_subspt hsub (mem_insert_of' a (mem_insert_self' w l0)) hw
+  cases av with
+  | loc _ _ => simp [evaluate, ha, hw] at he; exact absurd he.1.symm hne
+  | word x =>
+  cases wv with
+  | loc _ _ => simp [evaluate, ha, hw] at he; exact absurd he.1.symm hne
+  | word y =>
+  cases hm : memStoreByteAuxExact v1.memory v1.mdomain v1.be x (y.setWidth 8) with
+  | none => simp [evaluate, ha, hw, hm] at he; exact absurd he.1.symm hne
+  | some m =>
+  simp only [evaluate, ha, hw, hm, Prod.mk.injEq] at he
+  obtain ⟨rfl, rfl⟩ := he
+  refine ⟨locals, by simp [evaluate, ha', hw', hm], ?_⟩
+  exact post_none_same hsub fun k hk => mem_insert_of' a (mem_insert_of' w hk)
+
+/-- `compile_correct`, case `Load32` (`loop_liveProofScript.sml:17-37` statement;
+    `Resume compile_correct[Load32]` at 738-745). -/
+@[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
+theorem loopLive_compile_correct_load32 {width : Nat} [NeZero width] {F : Type} :
+    ∀ (a y : Nat) (v1 : LoopSemStateFiniteExact width F)
+      (res : Option (LoopResultExact width)) (s1 : LoopSemStateFiniteExact width F)
+      (lt : List (NumSet × NumSet)) (locals : Spt (WordLocW width)) (prog1 : HolLoopProg width)
+      (l1 l0 : NumSet),
+      evaluate (.load32 a y : HolLoopProg width) v1 = (res, s1) ∧ res ≠ some .error ∧ shrinkHOL lt (.load32 a y : HolLoopProg width) l0 = (prog1, l1) ∧
+        sptSubspt (sptInter v1.locals l1) locals →
+    ∃ new_locals, evaluate prog1 { v1 with locals := locals } = (res, { s1 with locals := new_locals }) ∧
+      match res with
+      | none => sptSubspt (sptInter s1.locals l0) new_locals
+      | some (.result _) => new_locals = s1.locals
+      | some (.exception _) => new_locals = s1.locals
+      | some (.break n) =>
+          (match sptOel n lt with
+           | some (_, brk) => sptSubspt (sptInter s1.locals brk) new_locals
+           | none => True)
+      | some (.continue n) =>
+          (match sptOel n lt with
+           | some (cont, _) => sptSubspt (sptInter s1.locals cont) new_locals
+           | none => True)
+      | some .timeOut => new_locals = s1.locals
+      | some (.finalFfi _) => new_locals = s1.locals
+      | some .error => new_locals = s1.locals := by
+  intro a y v1 res s1 lt locals prog1 l1 l0 ⟨he, hne, hs, hsub⟩
+  simp only [shrinkHOL, Prod.mk.injEq] at hs
+  obtain ⟨rfl, rfl⟩ := hs
+  cases ha : sptLookup a v1.locals with
+  | none => simp [evaluate, ha] at he; exact absurd he.1.symm hne
+  | some av =>
+  cases av with
+  | loc _ _ => simp [evaluate, ha] at he; exact absurd he.1.symm hne
+  | word x =>
+  have ha' := lookup_of_subspt hsub (mem_insert_self' a _) ha
+  cases hm : memLoad32Exact v1.memory v1.mdomain v1.be x with
+  | none => simp [evaluate, ha, hm] at he; exact absurd he.1.symm hne
+  | some b =>
+  simp only [evaluate, ha, hm, Prod.mk.injEq] at he
+  obtain ⟨rfl, rfl⟩ := he
+  refine ⟨sptInsert y (.word (b.setWidth width)) locals, by simp [evaluate, ha', hm, setVar], ?_⟩
+  refine post_setVar y _ hsub fun k hky hk => mem_insert_of' a ?_
+  simp only [sptMem, sptDomain, sptLookup_sptDelete', hky, if_false]; exact hk
+
+/-- `compile_correct`, case `LoadByte` (`loop_liveProofScript.sml:17-37` statement;
+    `Resume compile_correct[LoadByte]` at 747-754). -/
+@[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
+theorem loopLive_compile_correct_loadByte {width : Nat} [NeZero width] {F : Type} :
+    ∀ (a y : Nat) (v1 : LoopSemStateFiniteExact width F)
+      (res : Option (LoopResultExact width)) (s1 : LoopSemStateFiniteExact width F)
+      (lt : List (NumSet × NumSet)) (locals : Spt (WordLocW width)) (prog1 : HolLoopProg width)
+      (l1 l0 : NumSet),
+      evaluate (.loadByte a y : HolLoopProg width) v1 = (res, s1) ∧ res ≠ some .error ∧ shrinkHOL lt (.loadByte a y : HolLoopProg width) l0 = (prog1, l1) ∧
+        sptSubspt (sptInter v1.locals l1) locals →
+    ∃ new_locals, evaluate prog1 { v1 with locals := locals } = (res, { s1 with locals := new_locals }) ∧
+      match res with
+      | none => sptSubspt (sptInter s1.locals l0) new_locals
+      | some (.result _) => new_locals = s1.locals
+      | some (.exception _) => new_locals = s1.locals
+      | some (.break n) =>
+          (match sptOel n lt with
+           | some (_, brk) => sptSubspt (sptInter s1.locals brk) new_locals
+           | none => True)
+      | some (.continue n) =>
+          (match sptOel n lt with
+           | some (cont, _) => sptSubspt (sptInter s1.locals cont) new_locals
+           | none => True)
+      | some .timeOut => new_locals = s1.locals
+      | some (.finalFfi _) => new_locals = s1.locals
+      | some .error => new_locals = s1.locals := by
+  intro a y v1 res s1 lt locals prog1 l1 l0 ⟨he, hne, hs, hsub⟩
+  simp only [shrinkHOL, Prod.mk.injEq] at hs
+  obtain ⟨rfl, rfl⟩ := hs
+  cases ha : sptLookup a v1.locals with
+  | none => simp [evaluate, ha] at he; exact absurd he.1.symm hne
+  | some av =>
+  cases av with
+  | loc _ _ => simp [evaluate, ha] at he; exact absurd he.1.symm hne
+  | word x =>
+  have ha' := lookup_of_subspt hsub (mem_insert_self' a _) ha
+  cases hm : memLoadByteAuxExact v1.memory v1.mdomain v1.be x with
+  | none => simp [evaluate, ha, hm] at he; exact absurd he.1.symm hne
+  | some b =>
+  simp only [evaluate, ha, hm, Prod.mk.injEq] at he
+  obtain ⟨rfl, rfl⟩ := he
+  refine ⟨sptInsert y (.word (b.setWidth width)) locals, by simp [evaluate, ha', hm, setVar], ?_⟩
+  refine post_setVar y _ hsub fun k hky hk => mem_insert_of' a ?_
+  simp only [sptMem, sptDomain, sptLookup_sptDelete', hky, if_false]; exact hk
+
 end Flapjack
