@@ -10909,6 +10909,18 @@
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "locals_rel_lookup_same",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
+    "lean_name": "crepToLoopLocalsRelExact_lookup_same",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars"
+    ],
+    "reviewer": "ds10 (bead flapjack-pxn.18.5.6.33.5): exact port of HOL `locals_rel_lookup_same` (crep_to_loopProofScript.sml:3313, a [local] theorem) over the exact carriers. HOL: `locals_rel ctxt l locs1 locs2 ==> (! n. lookup n locs2 = lookup n locs3) ==> locals_rel ctxt l locs1 locs3`; Lean: `crepToLoopLocalsRelExact ctxt cset locs1 locs2 -> (forall n, sptLookup n locs2 = sptLookup n locs3) -> crepToLoopLocalsRelExact ctxt cset locs1 locs3`, with the num_set `l` rendered as `NumSet`, the source locals as `HolFiniteMapExact Nat (HolWordLab width)`, and the target locals as `Spt (WordLocW width)`; `lookup` is `sptLookup` and the pointwise-agreement premise is over all `n : Nat`. Only `ctxt.vars` is an exact finite-map field traversed, so `fmap_as_finite_support := [vars]`; the width-indexed `HolWordLab`/`WordLocW` carriers carry the words qualifier. The atomic `locals_rel` obligations are already pinned by the direct num-keyed oracle rows in scripts/hol-probes/crep_to_loop_locals_rel_probe.out; the lemma itself is a forall-implication whose agreement premise forces the two trees to have identical lookup functions, so there is no non-vacuous EVAL-decidable HOL instance; the Lean side carries a kernel-checked example in Flapjack/Test/CrepToLoopParity.lean (shadowed-insert target) plus a #guard over the pointwise lookups.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
     "hol_name": "state_rel_def",
     "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
     "lean_name": "crepToLoopStateRelExact",

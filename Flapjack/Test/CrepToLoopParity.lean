@@ -645,6 +645,31 @@ example
       localsRelOracleSource localsRelOracleInsertTarget :=
   crepToLoopLocalsRelExact_insert_gt_vmax _ _ _ _ _ _ h hgt
 
+/-- Shape check of the tagged `locals_rel_lookup_same`: a pointwise-equal target
+tree (here the same `sptInsert` shadowed twice) satisfies the relation. -/
+example
+    (h : crepToLoopLocalsRelExact localsRelOracleCtxt localsRelOracleSet
+      localsRelOracleSource localsRelOracleInsertTarget) :
+    crepToLoopLocalsRelExact localsRelOracleCtxt localsRelOracleSet
+      localsRelOracleSource (sptInsert 5 (WordLocW.word 3) localsRelOracleInsertTarget) :=
+  crepToLoopLocalsRelExact_lookup_same _ _ _ _ _ h
+    (by
+      intro n
+      by_cases hn : n = 5
+      · subst hn
+        simp only [sptLookup_sptInsert_same]
+      · rw [sptLookup_sptInsert_ne 5 n (WordLocW.word 3) localsRelOracleInsertTarget hn])
+
+def localsRelLookupSameGuard : Bool :=
+  decide ((sptLookup 0 localsRelOracleInsertTarget : Option (WordLocW 8)) =
+    sptLookup 0 (sptInsert 5 (WordLocW.word 3) localsRelOracleInsertTarget)) &&
+  decide ((sptLookup 3 localsRelOracleInsertTarget : Option (WordLocW 8)) =
+    sptLookup 3 (sptInsert 5 (WordLocW.word 3) localsRelOracleInsertTarget)) &&
+  decide ((sptLookup 5 localsRelOracleInsertTarget : Option (WordLocW 8)) =
+    sptLookup 5 (sptInsert 5 (WordLocW.word 3) localsRelOracleInsertTarget))
+
+#guard localsRelLookupSameGuard
+
 def runChecks : IO Bool := do
   let results := [declarationRenamingMatches,
     handlerlessCallCarriesRaiseHandler, handledCallCarriesRaiseHandler,
@@ -654,7 +679,8 @@ def runChecks : IO Bool := do
     comparisonKeepsIncomingLive,
     comparisonWithoutLiveDropsIt,
     stateRelExactGuard, ctxtFcExactGuard, localsRelExactGuard,
-    localsRelOracleGuard, localsRelCutsetGuard, localsRelInsertGuard]
+    localsRelOracleGuard, localsRelCutsetGuard, localsRelInsertGuard,
+    localsRelLookupSameGuard]
   let names := [
     "crep_to_loop declaration renaming and live seed",
     "crep_to_loop default call handler",
@@ -670,7 +696,8 @@ def runChecks : IO Bool := do
     "crep_to_loop exact locals_rel matches the HOL oracle rows",
     "crep_to_loop exact locals_rel direct oracle rows (true/domain-false/value-false)",
     "crep_to_loop exact locals_rel_cutset_prop oracle rows (subspt/second/after)",
-    "crep_to_loop exact locals_rel_insert_gt_vmax oracle rows (fresh-key/unchanged)"]
+    "crep_to_loop exact locals_rel_insert_gt_vmax oracle rows (fresh-key/unchanged)",
+    "crep_to_loop exact locals_rel_lookup_same oracle rows (pointwise agreement)"]
   let mut all := true
   for (name, result) in names.zip results do
     if result then IO.println s!"PASS {name}" else IO.println s!"FAIL {name}"

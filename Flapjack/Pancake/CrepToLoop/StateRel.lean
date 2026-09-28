@@ -563,6 +563,29 @@ theorem crepToLoopLocalsRelExact_insert_gt_vmax {width : Nat} [NeZero width]
     rw [sptLookup_sptInsert_ne n n' w tLocals hne]
     exact hn'
 
+/-- Exact port of HOL `locals_rel_lookup_same`
+    (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:3313`): the relation
+    depends on the target locals only through their `sptLookup` function, so any
+    pointwise-equal target tree satisfies it. -/
+@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "locals_rel_lookup_same"
+  (fmap_as_finite_support := [vars])
+  (words_as_type_indexed_bitvec)]
+theorem crepToLoopLocalsRelExact_lookup_same {width : Nat} [NeZero width]
+    (ctxt : CrepToLoopContextExact) (cset : NumSet)
+    (locs1 : HolFiniteMapExact Nat (HolWordLab width))
+    (locs2 locs3 : Spt (WordLocW width))
+    (h : crepToLoopLocalsRelExact ctxt cset locs1 locs2)
+    (hagree : ∀ n : Nat, sptLookup n locs2 = sptLookup n locs3) :
+    crepToLoopLocalsRelExact ctxt cset locs1 locs3 := by
+  refine ⟨h.1, h.2.1, ?_, ?_⟩
+  · intro n hn
+    have hmem : sptMem n locs2 := h.2.2.1 n hn
+    obtain ⟨v, hv⟩ := (sptMem_iff_lookup (α := WordLocW width) n locs2).mp hmem
+    exact (sptMem_iff_lookup (α := WordLocW width) n locs3).mpr ⟨v, by rw [← hagree n]; exact hv⟩
+  · intro vname value hv
+    obtain ⟨n, hvar, hmem, hn⟩ := h.2.2.2 vname value hv
+    exact ⟨n, hvar, hmem, by rw [← hagree n]; exact hn⟩
+
 /-! ## `locals_rel` (untagged production analogue)
 
 HOL `locals_rel_def`

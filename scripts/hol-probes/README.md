@@ -659,7 +659,7 @@ unaffected. The companion probe `crep_to_loop_locals_insert_probe.out`
 separately pins the raw `sptree$insert` behaviour (`insert_same`,
 `insert_other_unchanged`, `gt_vmax_bounded_survives`, `subset_preserved`). The
 exact-carrier counterpart is the tagged
-`Flapjack.CrepToLoop.crepToLoopLocalsRelExact_insert_gt_vmax` over the exact
+`Flapjack.CrepToLoop.crepToLoopLocalsRelExact_insert_gt_vmax` over the exact Derived from the same relation definition, `locals_rel_lookup_same` (`crep_to_loopProofScript.sml:3313`) is ported as `Flapjack.CrepToLoop.crepToLoopLocalsRelExact_lookup_same`: the relation depends on the target locals only through `sptLookup`, so any pointwise-equal target tree preserves it (no extra probe row is decidable because the agreement premise forces identical lookup functions; the atomic obligations are the rows above, and the Lean side carries a kernel-checked shadowed-insert example).
 `sptInsert`/`Spt`, whose support lemmas `sptLookup_sptInsert_ne` and
 `sptMem_sptInsert` live in `Flapjack/Misc/Sptree.lean`.
 
