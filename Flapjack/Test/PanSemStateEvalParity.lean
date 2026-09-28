@@ -120,6 +120,30 @@ private def observesReturnedWord
   sourceMemoryWord
 #guard isNoneResult (evalPanSemStateExp (sourceState false false true)
   (.load .one (.const 0)))
+
+/- This nested three-word Load is the direct `eval_def` row
+   `eval_nested_load_shape`: unlike the specialized one/two-word cases, its
+   value is reconstructed recursively from a non-flat shape. -/
+def nestedLoadState : PanSemState Word64 Unit :=
+  { littleEndianState with
+    memory := fun address =>
+      if address == 0 then some (.word (BitVec.ofNat 64 0x11))
+      else if address == 8 then some (.word (BitVec.ofNat 64 0x22))
+      else if address == 16 then some (.word (BitVec.ofNat 64 0x33))
+      else none
+    memaddrs := fun address => address == 0 || address == 8 || address == 16 }
+
+def nestedLoadShape : Shape := .comb [.one, .comb [.one, .one]]
+
+def nestedSourceLoadMatchesOracle : Bool :=
+  match evalPanSemStateExp nestedLoadState (.load nestedLoadShape (.const 0)) with
+  | some (.rStruct [.word first, .rStruct [.word second, .word third]]) =>
+      first == BitVec.ofNat 64 0x11 && second == BitVec.ofNat 64 0x22 &&
+        third == BitVec.ofNat 64 0x33
+  | _ => false
+
+#guard nestedSourceLoadMatchesOracle
+
 #guard isWordResult
   (evalPanSemStateExp littleEndianState (.loadByte (.const 0)))
   (BitVec.ofNat 64 0x88)

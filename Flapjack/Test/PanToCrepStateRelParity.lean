@@ -341,6 +341,51 @@ theorem memoryStateRel : stateRel sourceMemoryState targetMemoryState := by
   funext address
   simp [sourceMemoryState, targetMemoryState, stateRelMemory, panTheWord]
 
+/- The following non-flat three-word memory fixture exercises the source
+   evaluator and the compiled Crep load sequence at a nested shape under the
+   same HOL `state_rel` relation. The source result is also pinned by the
+   direct `eval_nested_load_shape` EVAL row. This is concrete regression
+   evidence; it does not prove the arbitrary-shape `compile_exp_val_rel` case. -/
+private def nestedStateRelMemoryWord (address : Word64) : Word64 :=
+  if address == 0 then BitVec.ofNat 64 0x11
+  else if address == 8 then BitVec.ofNat 64 0x22
+  else if address == 16 then BitVec.ofNat 64 0x33
+  else 0
+
+def nestedSourceMemoryState : PanSemState Word64 (FfiState Unit) :=
+  { sourceMemoryState with
+    memory := fun address => some (.word (nestedStateRelMemoryWord address))
+    memaddrs := fun address => address == 0 || address == 8 || address == 16 }
+
+def nestedTargetMemoryState : CrepRuntimeState Word64 Unit :=
+  { targetMemoryState with
+    memory := fun address => .word (nestedStateRelMemoryWord address)
+    memaddrs := fun address => address == 0 || address == 8 || address == 16 }
+
+theorem nestedMemoryStateRel : stateRel nestedSourceMemoryState nestedTargetMemoryState := by
+  refine ⟨?_, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+  funext address
+  simp [nestedSourceMemoryState, nestedTargetMemoryState,
+    nestedStateRelMemoryWord, panTheWord]
+
+private def nestedLoadShape : Shape := .comb [.one, .comb [.one, .one]]
+
+private def nestedLoadCompilerContext : PanToCrepProofContext Word64 :=
+  { vars := FEMPTY, funcs := FEMPTY, eids := FEMPTY, vmax := 0 }
+
+def stateRelNestedLoadSourceTargetCase : Bool :=
+  let expression : Exp Word64 := .load nestedLoadShape (.const 0)
+  let sourceResult := evalPanSemStateExp nestedSourceMemoryState expression
+  let targetExpressions :=
+    (compileExpHOL nestedLoadCompilerContext.toHOLContext expression).1
+  match sourceResult with
+  | some value =>
+      evalCrepRuntimeExps nestedTargetMemoryState targetExpressions ==
+        some (panValueFlatten value)
+  | none => false
+
+#guard stateRelNestedLoadSourceTargetCase
+
 def stateRelSourceByteOracleCase : Bool :=
   match evalPanSemStateExp sourceMemoryState (.loadByte (.const 0)) with
   | some (.word value) => value == BitVec.ofNat 64 136
@@ -405,7 +450,9 @@ def runChecks : IO Bool := do
     ("HOL state_rel source Load32 uses related nonempty memory",
       stateRelSourceWord32OracleCase),
     ("HOL state_rel source Load32 rejects misaligned addresses",
-      stateRelSourceWord32RejectedAlignmentCase)]
+      stateRelSourceWord32RejectedAlignmentCase),
+    ("HOL state_rel nested generic Load agrees with compiled Crep loads",
+      stateRelNestedLoadSourceTargetCase)]
   for (name, passed) in checks do
     IO.println s!"{if passed then "PASS" else "FAIL"} {name}"
   pure (checks.all Prod.snd)

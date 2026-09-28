@@ -57,14 +57,18 @@ HOL_PROBE_ONLY=pan_clock_program_route_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
 `pan_sem_state_eval_probe.out` records direct HOL EVAL of `eval_def` at
 `cakeml/pancake/semantics/panSemScript.sml:209-297` for in-domain and
-out-of-domain word loads, little- and big-endian byte loads, 32-bit loads, and
-list-valued `word_op_def` operators with accepted and rejected operand counts.
+out-of-domain word loads, a recursively nested three-word shape load,
+little- and big-endian byte loads, 32-bit loads, and list-valued `word_op_def`
+operators with accepted and rejected operand counts.
 The source-shaped generic definition is `Flapjack.Pancake.wordOpHOL`; its
 all-width equation to the production RISC-V target is in
 `Flapjack.Pancake.Semantics.CrepRuntimeTarget`. The state-derived Lean
 boundary and its matching cases live in
 `Flapjack.Pancake.Semantics.PanSemStateEval` and
-`Flapjack.Test.PanSemStateEvalParity`.
+`Flapjack.Test.PanSemStateEvalParity`. The nested three-word Load row is also
+compared with compiled Crep loads under a concrete `state_rel` fixture in
+`Flapjack.Test.PanToCrepStateRelParity`; this regression does not prove the
+general arbitrary-shape induction case.
 `pan_sem_mem_domain_probe.out` pins the ordinary-memory domain boundary used
 by the production/exact `PanSemState` bridge: an in-domain `Load One` hit, an
 out-of-domain miss even when the total HOL cell holds a word, a statement-level
