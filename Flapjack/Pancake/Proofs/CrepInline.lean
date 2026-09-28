@@ -882,26 +882,30 @@ theorem crepInlineRuntimeSkip
 
 /-! ## Width-indexed wrappers for the crep_inline state relations
 
-HOL `crepSem$state` is indexed by the word length, so the exact `state_rel`-family
-tags are carried by the `...W` declarations over `CrepHolState (BitVec width) σ`
-(with `[NeZero width]`); the generic-`α` relations above stay untagged. -/
+HOL `crepSem$state` is indexed by the word length.  These `...W` helpers use
+`CrepHolState (BitVec width) σ`, whose locals/globals/code are unrestricted
+lookup functions rather than HOL finite maps, so the helpers stay untagged.
+The exact finite-support relation ports required by the correctness path are
+tracked under `flapjack-2de.13`. -/
 
-@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "state_rel_def"]
+/-- FLAPJACK-SPECIFIC: raw-function state relation; this declaration has no
+    exact finite-support counterpart in this module yet. -/
 def crepInlineStateRelW {width : Nat} [NeZero width] {σ : Type}
     (s t : CrepHolState (BitVec width) σ) : Prop :=
   crepInlineStateRel s t
 
-@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "locals_rel_def"]
+/-- FLAPJACK-SPECIFIC: raw-function locals submap. -/
 def crepInlineLocalsRelW {width : Nat} [NeZero width] {σ : Type}
     (s t : CrepHolState (BitVec width) σ) : Prop :=
   crepInlineLocalsRel s t
 
-@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "locals_strong_rel_def"]
+/-- FLAPJACK-SPECIFIC: raw-function locals equality; exact finite-support
+    replacement is tracked under `flapjack-2de.13`. -/
 def crepInlineLocalsStrongRelW {width : Nat} [NeZero width] {σ : Type}
     (s t : CrepHolState (BitVec width) σ) : Prop :=
   crepInlineLocalsStrongRel s t
 
-@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "locals_rel_dec_clock"]
+/-- FLAPJACK-SPECIFIC: clock preservation over raw-function state carriers. -/
 theorem crepInlineLocalsRel_decClockW {width : Nat} [NeZero width] {σ : Type}
     (s t : CrepHolState (BitVec width) σ)
     (hlocals : crepInlineLocalsRelW s t) (hstate : crepInlineStateRelW s t) :
@@ -911,12 +915,13 @@ theorem crepInlineLocalsRel_decClockW {width : Nat} [NeZero width] {σ : Type}
   simpa only [crepInlineLocalsRelW, crepInlineStateRelW,
     decCrepHolClockW_eq_decCrepHolClock] using h
 
-@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "locals_ext_rel_def"]
+/-- FLAPJACK-SPECIFIC: locals extension relation over raw-function maps. -/
 def crepInlineLocalsExtRelW {width : Nat} [NeZero width] {σ : Type}
     (a b a' b' : CrepHolState (BitVec width) σ) : Prop :=
   crepInlineLocalsExtRel a b a' b'
 
-@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "state_rel_code_def"]
+/-- FLAPJACK-SPECIFIC: raw-function carrier relation; exact finite-support
+    replacement is tracked under `flapjack-2de.13`. -/
 def crepInlineStateRelCodeW {width : Nat} [NeZero width] {σ : Type}
     (s t : CrepHolState (BitVec width) σ) : Prop :=
   crepInlineStateRelCode s t
