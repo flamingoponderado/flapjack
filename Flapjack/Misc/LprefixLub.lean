@@ -373,6 +373,12 @@ theorem lnth_buildLprefixLub {ls : HolLList α → Prop} (hchain : lprefixChain 
   | none => simp [buildLprefixLubF, hk]
   | some x => simp [buildLprefixLubF, hk]
 
+/-- HOL `unique_lprefix_lub` (`lprefix_lubScript.sml:419-422`): two least upper
+    bounds of the same family are equal. -/
+theorem unique_lprefix_lub {ls : HolLList α → Prop} {ll1 ll2 : HolLList α}
+    (h1 : lprefixLub ls ll1) (h2 : lprefixLub ls ll2) : ll1 = ll2 :=
+  lprefix_antisym (h1.2 ll2 h2.1) (h2.2 ll1 h1.1)
+
 end HolLList
 
 end Flapjack
