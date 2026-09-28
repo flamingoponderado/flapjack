@@ -19833,5 +19833,20 @@
     "lean_name": "holFmapAsFiniteSupportWitness",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Lean-only canonical finite-support roundtrip witness required for the exact relation qualifiers; no CakeML HOL declaration."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "evaluate_io_mono_rephrases",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
+    "lean_name": "evaluateIOMonoRephrases",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "ds10 (bead flapjack-pxn.18.5.6.34.3): exact port of HOL evaluate_io_mono_rephrases[local] (crep_to_loopProofScript.sml:4066-4070), the LIST_CONJ of crepPropsTheory.evaluate_add_clock_io_events_mono and loopPropsTheory.evaluate_add_clock_io_events_mono each specialized at `s with clock := k` via the source SIMP_RULE (srw_ss()) []. Lean keeps the two exact state carriers separate (CrepSemHOLState and LoopSemStateFiniteExact); each conjunct keeps its own `!extra` (k bound once), matching the source LIST_CONJ binder shape. The exact evaluators consume finite-map fields, so the relation qualifier records CrepSemHOLState.locals/globals/code and LoopSemStateFiniteExact.globals, validated by the same-module witnesses holFmapAsFiniteSupportRelationWitness_CrepSemHOLState and holFmapAsFiniteSupportRelationWitness_LoopSemStateFiniteExact; words_as_type_indexed_bitvec records the two width-indexed carriers. Both conjuncts are the already-tagged one-carrier monotonicity theorems Flapjack.crepPropsEvaluateAddClockIoEventsMono and Flapjack.LoopSemStateFiniteExact.evaluate_add_clock_io_events_mono. No extra side conditions. Replayed by the evaluate_io_mono example and evaluateIOMonoGuard in Flapjack/Test/CrepToLoopParity.lean."
   }
 ]
