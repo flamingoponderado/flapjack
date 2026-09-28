@@ -18529,5 +18529,23 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.8): HOL fix_clock_evaluate (loopSemScript.sml:488-490) `fix_clock s (evaluate (c1,s)) = evaluate (c1,s)`; Lean states the same equation over the tagged fixClock and exact evaluate, free variables c1 and s."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopPropsScript.sml",
+    "hol_name": "eval_upd_clock_eq",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopProps/EvaluateClockExact.lean",
+    "lean_name": "eval_upd_clock_eq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.9): HOL eval_upd_clock_eq (loopPropsScript.sml:946-947) `!t e ck. eval (t with clock := ck) e = eval t e`; Lean quantifies t, e, ck in that order over the tagged exact eval."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopPropsScript.sml",
+    "hol_name": "evaluate_add_clock_eq",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopProps/EvaluateClockExact.lean",
+    "lean_name": "evaluate_add_clock_eq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.9): HOL evaluate_add_clock_eq (loopPropsScript.sml:985-988) `!p t res st ck. evaluate (p,t) = (res,st) /\\ res <> SOME TimeOut ==> evaluate (p,t with clock := t.clock + ck) = (res,st with clock := st.clock + ck)`; Lean has the same five variables, the evaluation equation and the non-TimeOut premise as hypotheses, and the same conclusion, over the tagged exact evaluate. Proved for all 24 constructors (incl. Loop, Call with return/exception handlers, FFI) by well-founded induction on HOL's measure; no extra hypotheses."
   }
 ]
