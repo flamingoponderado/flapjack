@@ -13729,6 +13729,14 @@
     "reviewer": "Codex (source comparison with panPropsScript.sml:1818: HOL semantics_run_res has constructors RunError, CompleteResult 'a, Incomplete; Lean SemanticsRunResHOL α preserves constructor order, arity, and the arbitrary result payload α. Constructor namespace qualification is Lean naming only; no carrier qualifier is required.)"
   },
   {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "semantics_run_res",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/SemanticsWrapper.lean",
+    "lean_name": "CrepToLoopSemanticsRunRes",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex (source comparison with crep_to_loopProofScript.sml:4127-4130: HOL `Datatype: semantics_run_res = RunError | CompleteResult 'a | Incomplete` has constructors RunError (nullary), CompleteResult (one payload of the arbitrary type 'a) and Incomplete (nullary), in that order. Lean CrepToLoopSemanticsRunRes α reproduces the same three constructors, payload arity/type and order. This is the crep_to_loop theory's own type constant; it is textually identical to but a distinct HOL type from the panPropsScript.sml:1818 declaration ported separately as SemanticsRunResHOL, so a separate Lean inductive (not an alias) is used. Constructor names are Lean-qualified by this type only; no carrier qualifier is required.)"
+  },
+  {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
     "hol_name": "evaluate_nested_decs_load_globals",
     "lean_path": "Flapjack/Pancake/Semantics/CrepSem/TotalEval.lean",
@@ -18418,6 +18426,16 @@
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "compile_prog_distinct_params",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
+    "lean_name": "crepToLoopCompileProgDistinctParamsHOLExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "hol_line": 3987,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.24) against compile_prog_distinct_params at crep_to_loopProofScript.sml:3987-4008. HOL's binders are prog then c and statement is EVERY (lambda (name,params,body). ALL_DISTINCT params) prog implies the same EVERY on compile_prog c prog. Lean retains binder order, input premise, and full output statement: EVERY is List.all with = true, ALL_DISTINCT is List.Nodup, and exact carriers are List (MlString × List Nat × CrepProgHOL width) to List (Nat × List Nat × HolLoopProg width), the source/result carriers of compileProgHOLExact. The output params are List.range params.length, exactly GENLIST I (LENGTH params), and List.nodup_range discharges output distinctness; retaining the HOL premise despite not needing it in the proof does not strengthen or weaken the statement. The only representation qualifier is the reviewed positive word-width translation (words_as_type_indexed_bitvec). This proof theorem is distinct from the same-named Pan-to-Crep theorem because its HOL path is crep_to_loopProofScript.sml. Direct kernel-checked instantiation over the compile_prog fixture is in Flapjack/Test/CrepToLoopCompileProgParity."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
     "hol_name": "all_distinct_ctxt_lookup_all_distinct",
     "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
     "lean_name": "allDistinctCtxtLookupAllDistinctExact",
@@ -20001,14 +20019,6 @@
     "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.22) against mk_ctxt_code_imp_code_rel2 at crep_to_loopProofScript.sml:3861-3866. HOL `!c crep_code start np. ALL_DISTINCT (MAP FST crep_code) /\\ ALOOKUP crep_code start = SOME ([],np) ==> code_rel2 (mk_ctxt c FEMPTY (make_funcs crep_code) 0) (alist_to_fmap crep_code) (fromAList (crep_to_loop$compile_prog c crep_code))`. Lean keeps the binders in order (c as the AsmArchitecture carrier of compile_prog, crep_code at compile_prog's argument type, start : MlString, np), both premises (ALL_DISTINCT as List.Nodup, ALOOKUP as holAlookup; the second premise is unused by HOL's proof too), and the conclusion over the tagged crepToLoopCodeRel2Exact, mkCtxtExact (mk_ctxt_def) with HolFiniteMapExact.empty as FEMPTY, crepToLoopMakeFuncsExactHOL (the exact-carrier make_funcs used by the tagged compileProgHOLExact; shown pointwise equal to the tagged polymorphic crepToLoopMakeFuncsHOL), alistToFmapCodeExact (HOL alist_to_fmap: first occurrence wins, via updateList of the reversed list), sptFromAList (fromAList) and compileProgHOLExact. All finite maps are values of those definitions, none a binder, so as for the tagged compile_prog_def only the words qualifier applies."
   },
   {
-    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
-    "hol_name": "semantics_run_res",
-    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/SemanticsWrapper.lean",
-    "lean_name": "CrepToLoopSemanticsRunRes",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.6.34.4) against the Datatype semantics_run_res at crep_to_loopProofScript.sml:4127-4130: `semantics_run_res = RunError | CompleteResult 'a | Incomplete`. Lean CrepToLoopSemanticsRunRes α keeps the three constructors in HOL order with the same arities (CompleteResult carries the single 'a payload) and one type parameter. It is a separate Lean type from panProps' SemanticsRunResHOL because HOL declares a fresh datatype in crep_to_loopProof; constructor names are Lean-qualified by the type."
-  },
-  {
     "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
     "hol_name": "compile_correct",
     "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
@@ -20103,5 +20113,37 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.8.1.1): case piece `Raise` of loop_live compile_correct (loop_liveProofScript.sml:17-37 statement; Resume compile_correct[Raise] at 112-116; HOL proves the theorem by recInduct loopSemTheory.evaluate_ind with one Resume block per constructor). The piece keeps HOL's quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises (evaluate (v,v1) = (res,s1), res ≠ SOME Error, shrink lt v l0 = (prog1,l1), subspt (inter v1.locals l1) locals) and the full existential conclusion including the eight-way case split on res (oEL as sptOel, inter as sptInter, subspt as sptSubspt), over the exact LoopSemStateFiniteExact.evaluate (evaluate_def) and the tagged shrinkHOL (shrink_def). Proof: lookup v agrees via subspt (inter v1.locals (insert v () LN)) locals; call_env [] replaces locals. Qualifiers: loopSem state globals as canonical HolFiniteMapExact; width-indexed word carriers."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module re-export of the canonical loopSem$state finite-support witness required by the fmap_as_finite_support := [globals] qualifier on the compile_correct pieces; no HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "sptSubspt_inter_lookup",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack sptree helper (HOL subspt/lookup_inter reasoning inline in the loop_live compile_correct Return/Raise cases): a key of the live set present in a is present with the same value in b when subspt (inter a l) b; no separate HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "sptMem_sptListInsert_of_mem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack sptree helper (HOL domain_list_insert, HOL/src sptree library): members of the key list are in the domain of list_insert; no CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "getVars_locals_agree",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper for the loop_live compile_correct Return case (HOL proves it inline by induction on ns with get_vars_def): get_vars is unchanged by a locals map agreeing on the looked-up names; no separate HOL declaration"
   }
 ]
