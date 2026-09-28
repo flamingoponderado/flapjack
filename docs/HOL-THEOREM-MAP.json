@@ -20624,5 +20624,49 @@
     "lean_name": "loopLive_if_branch",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack helper: the branch-independent cut_res tail of HOL's Resume compile_correct[If]; no separate CakeML declaration"
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "loopLive_compile_correct_call",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.6): case piece `Call ret dest args handler` of loop_live compile_correct (statement loop_liveProofScript.sml:17-37; Resume compile_correct[Call] at 567-703). Extra antecedent: for a handler SOME (e, h, r, lo), the statement for the return continuation r and the exception handler h at every state with clock < v1.clock (via the untagged loopLiveCompileCorrectAt). This is the form of loopSem evaluate_ind's Call hypotheses that the lexicographic (clock, size) assembly supplies: every continuation state HOL's induction uses has clock < v1.clock, because the callee runs after dec_clock (or cut_res's dec_clock). The callee body needs no hypothesis because shrink does not touch it and it runs on an identical state (only caller locals differ). Otherwise HOL binders/premises/conclusion as in the other pieces. Proof follows HOL's case split (ret NONE/SOME, handler NONE/SOME, clock 0, callee result): arguments from subspt of union (fromAList args) l1', the shrunk cut_state succeeds (cutset ⊆ live ⊆ source locals and live in l1'), set_vars/set_var on both sides, and continuations via their hypotheses and the shared cut_res tail."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "loopLive_cutRes_tail",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper: shared cut_res step after a sub-program run in HOL's Resume compile_correct[If]/[Call]; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "loopLive_post_weaken",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper: the compile_correct postcondition for live set l0 implies it for inter l0 lo; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "cutRes_none_of_cut",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper: cut_res on a NONE result after a successful cut_state; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "sptMem_fromAList_args",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack sptree helper (HOL domain_fromAList): argument names are in the domain of fromAList (MAP (λx. (x,())) args); no separate CakeML declaration"
   }
 ]

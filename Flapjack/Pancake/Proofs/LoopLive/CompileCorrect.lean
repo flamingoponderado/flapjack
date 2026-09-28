@@ -1837,6 +1837,85 @@ private theorem loopLive_if_branch {width : Nat} [NeZero width] {F : Type}
     · simp [cutRes, cutState_eq_none_of_not_subset liveOut sc hS] at he
       exact absurd he.1.symm hne
 
+/-- Flapjack helper (no HOL declaration): the shared `cut_res` step of HOL's
+    `Resume compile_correct[If]`/`[Call]` cases.  After a sub-program run
+    `(rc, sc)` whose shrunk counterpart ends in `sc with locals := nl` satisfying
+    the postcondition for the shrunk cutset `inter l0 liveOut`, the two `cut_res`
+    calls agree up to locals. -/
+private theorem loopLive_cutRes_tail {width : Nat} [NeZero width] {F : Type}
+    (rc : Option (LoopResultExact width)) (sc : LoopSemStateFiniteExact width F)
+    (nl : Spt (WordLocW width)) (lt : List (NumSet × NumSet)) (l0 liveOut : NumSet)
+    (res : Option (LoopResultExact width)) (s1 : LoopSemStateFiniteExact width F)
+    (hp :
+      match rc with
+      | none => sptSubspt (sptInter sc.locals (sptInter l0 liveOut)) nl
+      | some (.result _) => nl = sc.locals
+      | some (.exception _) => nl = sc.locals
+      | some (.break n) =>
+          (match sptOel n lt with
+           | some (_, brk) => sptSubspt (sptInter sc.locals brk) nl
+           | none => True)
+      | some (.continue n) =>
+          (match sptOel n lt with
+           | some (cont, _) => sptSubspt (sptInter sc.locals cont) nl
+           | none => True)
+      | some .timeOut => nl = sc.locals
+      | some (.finalFfi _) => nl = sc.locals
+      | some .error => nl = sc.locals) :
+    cutRes liveOut (rc, sc) = (res, s1) → res ≠ some .error →
+    ∃ new_locals, cutRes (sptInter l0 liveOut) (rc, { sc with locals := nl }) =
+        (res, { s1 with locals := new_locals }) ∧
+      match res with
+      | none => sptSubspt (sptInter s1.locals l0) new_locals
+      | some (.result _) => new_locals = s1.locals
+      | some (.exception _) => new_locals = s1.locals
+      | some (.break n) =>
+          (match sptOel n lt with
+           | some (_, brk) => sptSubspt (sptInter s1.locals brk) new_locals
+           | none => True)
+      | some (.continue n) =>
+          (match sptOel n lt with
+           | some (cont, _) => sptSubspt (sptInter s1.locals cont) new_locals
+           | none => True)
+      | some .timeOut => new_locals = s1.locals
+      | some (.finalFfi _) => new_locals = s1.locals
+      | some .error => new_locals = s1.locals := by
+  intro he hne
+  cases rc with
+  | some r =>
+    simp only [cutRes, Prod.mk.injEq] at he
+    obtain ⟨rfl, rfl⟩ := he
+    refine ⟨nl, by simp [cutRes], ?_⟩
+    cases r <;> exact hp
+  | none =>
+    simp only at hp
+    by_cases hS : sptSubsetLive liveOut sc.locals
+    · have hS' : sptSubsetLive (sptInter l0 liveOut) nl := by
+        intro k hk
+        obtain ⟨hk0, hkl⟩ := (mem_inter_iff _ _ k).mp hk
+        have hks := hS k hkl
+        have := subspt_inter_apply hp hks hk
+        simp only [sptMem, sptDomain, this]; exact hks
+      simp only [cutRes, cutState_of_subset liveOut sc hS] at he
+      simp only [cutRes, cutState_of_subset (sptInter l0 liveOut) { sc with locals := nl } hS']
+      by_cases hz : sc.clock = 0
+      · simp only [hz, if_true, Prod.mk.injEq] at he ⊢
+        obtain ⟨rfl, rfl⟩ := he
+        exact ⟨.ln, by constructor <;> rfl, rfl⟩
+      · simp only [hz, if_false, Prod.mk.injEq] at he ⊢
+        obtain ⟨rfl, rfl⟩ := he
+        refine ⟨sptInter nl (sptInter l0 liveOut), by constructor <;> rfl, ?_⟩
+        refine subspt_of_lookup fun k hk => ?_
+        obtain ⟨hk1, hk0⟩ := (mem_inter_iff _ _ k).mp hk
+        obtain ⟨hks, hkl⟩ := (mem_inter_iff _ _ k).mp hk1
+        have hkL : sptMem k (sptInter l0 liveOut) := (mem_inter_iff _ _ k).mpr ⟨hk0, hkl⟩
+        have hk0' : (sptLookup k l0).isSome = true := hk0
+        have hkl' : (sptLookup k liveOut).isSome = true := hkl
+        simp only [decClock, sptLookup_sptInter, hk0', hkl', if_true]
+        exact subspt_inter_apply hp hks hkL
+    · simp [cutRes, cutState_eq_none_of_not_subset liveOut sc hS] at he
+      exact absurd he.1.symm hne
+
 /-- Flapjack helper (no HOL declaration): the `l3` live set of HOL `shrink`'s `If`
     clause, `case x3 of Reg r => insert r () LN | _ => LN`. -/
 def regImmLive {α : Type} : RegImm α → NumSet
@@ -1918,5 +1997,409 @@ theorem loopLive_compile_correct_if {width : Nat} [NeZero width] {F : Type} :
   · simp only [hb, if_false, Bool.false_eq_true] at he ih' ⊢
     exact loopLive_if_branch c2 p2' v1 lt l2' l0 liveOut locals res s1 ih' h2s
       (post_none_same hsub fun k hk => mem_insert_of' r1 (hmem (hmem hk _) _)) he hne
+
+private theorem loopLive_post_weaken {width : Nat} [NeZero width] {F : Type}
+    (rr : Option (LoopResultExact width)) (sr : LoopSemStateFiniteExact width F)
+    (nl : Spt (WordLocW width)) (lt : List (NumSet × NumSet)) (l0 lo : NumSet) :
+    (
+      match rr with
+      | none => sptSubspt (sptInter sr.locals l0) nl
+      | some (.result _) => nl = sr.locals
+      | some (.exception _) => nl = sr.locals
+      | some (.break n) =>
+          (match sptOel n lt with
+           | some (_, brk) => sptSubspt (sptInter sr.locals brk) nl
+           | none => True)
+      | some (.continue n) =>
+          (match sptOel n lt with
+           | some (cont, _) => sptSubspt (sptInter sr.locals cont) nl
+           | none => True)
+      | some .timeOut => nl = sr.locals
+      | some (.finalFfi _) => nl = sr.locals
+      | some .error => nl = sr.locals) →
+      match rr with
+      | none => sptSubspt (sptInter sr.locals (sptInter l0 lo)) nl
+      | some (.result _) => nl = sr.locals
+      | some (.exception _) => nl = sr.locals
+      | some (.break n) =>
+          (match sptOel n lt with
+           | some (_, brk) => sptSubspt (sptInter sr.locals brk) nl
+           | none => True)
+      | some (.continue n) =>
+          (match sptOel n lt with
+           | some (cont, _) => sptSubspt (sptInter sr.locals cont) nl
+           | none => True)
+      | some .timeOut => nl = sr.locals
+      | some (.finalFfi _) => nl = sr.locals
+      | some .error => nl = sr.locals := by
+  intro hp
+  cases rr with
+  | none =>
+    exact post_none_same hp fun k hk => ((mem_inter_iff _ _ k).mp hk).1
+  | some r => cases r <;> exact hp
+
+private theorem cutRes_none_of_cut {width : Nat} [NeZero width] {F : Type}
+    {K : NumSet} {X c : LoopSemStateFiniteExact width F} (h : cutState K X = some c) :
+    cutRes K (none, X) =
+      if c.clock = 0 then (some .timeOut, { c with locals := .ln }) else (none, decClock c) := by
+  simp [cutRes, h]
+
+private theorem sptMem_fromAList_args (k : Nat) :
+    ∀ (args : List Nat), k ∈ args → sptMem k (sptFromAList (args.map fun x => (x, ())))
+  | [], h => by simp at h
+  | a :: as, h => by
+      simp only [List.map_cons, sptFromAList]
+      rcases List.mem_cons.mp h with rfl | h
+      · exact mem_insert_self' k _
+      · exact mem_insert_of' a (sptMem_fromAList_args k as h)
+
+/-- `compile_correct`, case `Call ret dest args handler` (`loop_liveProofScript.sml:17-37`
+    statement; `Resume compile_correct[Call]` at 567-703), with the `evaluate_ind`
+    hypotheses for the handler's return continuation `r` and exception handler `h`
+    at every state with a smaller clock (the continuation states HOL's induction
+    supplies all have `clock < v1.clock`: the callee runs after `dec_clock`). The
+    callee body itself needs no hypothesis: `shrink` leaves it unchanged and it runs
+    on an identical state. -/
+@[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
+theorem loopLive_compile_correct_call {width : Nat} [NeZero width] {F : Type} :
+    ∀ (ret : Option (List Nat × NumSet)) (dest : Option Nat) (args : List Nat)
+      (handler : Option (Nat × HolLoopProg width × HolLoopProg width × NumSet))
+      (v1 : LoopSemStateFiniteExact width F),
+      (∀ e h r lo, handler = some (e, h, r, lo) → ∀ st : LoopSemStateFiniteExact width F,
+        st.clock < v1.clock → loopLiveCompileCorrectAt r st ∧ loopLiveCompileCorrectAt h st) →
+    ∀ (res : Option (LoopResultExact width)) (s1 : LoopSemStateFiniteExact width F)
+      (lt : List (NumSet × NumSet)) (locals : Spt (WordLocW width)) (prog1 : HolLoopProg width)
+      (l1 l0 : NumSet),
+      evaluate (.call ret dest args handler) v1 = (res, s1) ∧ res ≠ some .error ∧
+        shrinkHOL lt (.call ret dest args handler) l0 = (prog1, l1) ∧
+        sptSubspt (sptInter v1.locals l1) locals →
+    ∃ new_locals, evaluate prog1 { v1 with locals := locals } = (res, { s1 with locals := new_locals }) ∧
+      match res with
+      | none => sptSubspt (sptInter s1.locals l0) new_locals
+      | some (.result _) => new_locals = s1.locals
+      | some (.exception _) => new_locals = s1.locals
+      | some (.break n) =>
+          (match sptOel n lt with
+           | some (_, brk) => sptSubspt (sptInter s1.locals brk) new_locals
+           | none => True)
+      | some (.continue n) =>
+          (match sptOel n lt with
+           | some (cont, _) => sptSubspt (sptInter s1.locals cont) new_locals
+           | none => True)
+      | some .timeOut => new_locals = s1.locals
+      | some (.finalFfi _) => new_locals = s1.locals
+      | some .error => new_locals = s1.locals := by
+  intro ret dest args handler v1 ihh res s1 lt locals prog1 l1 l0 ⟨he, hne, hs, hsub⟩
+  have hA : ∀ {K : NumSet} {k : Nat}, k ∈ args →
+      sptMem k (sptUnion (sptFromAList (args.map fun x => (x, ()))) K) :=
+    fun h => (sptMem_sptUnion' _ _ _).mpr (Or.inl (sptMem_fromAList_args _ args h))
+  have hK : ∀ {K : NumSet} {k : Nat}, sptMem k K →
+      sptMem k (sptUnion (sptFromAList (args.map fun x => (x, ()))) K) :=
+    fun h => (sptMem_sptUnion' _ _ _).mpr (Or.inr h)
+  cases hg : LoopSemStateFiniteExact.getVars args v1 with
+  | none => simp [evaluate, hg] at he; exact absurd he.1.symm hne
+  | some argvals =>
+  cases hfc : LoopSemStateFiniteExact.findCode dest argvals v1.code with
+  | none => simp [evaluate, hg, hfc] at he; exact absurd he.1.symm hne
+  | some ep =>
+  obtain ⟨env, prog⟩ := ep
+  cases ret with
+  | none =>
+    cases handler with
+    | some hd => simp [evaluate, hg, hfc] at he; exact absurd he.1.symm hne
+    | none =>
+    simp only [shrinkHOL, Prod.mk.injEq] at hs
+    obtain ⟨rfl, rfl⟩ := hs
+    have hg' := getVars_locals_agree v1 locals args argvals (fun n hn _w hw =>
+      lookup_of_subspt hsub (hA hn) hw) hg
+    by_cases hz : v1.clock = 0
+    · simp [evaluate, hg, hfc, hz] at he
+      obtain ⟨rfl, rfl⟩ := he
+      refine ⟨.ln, ?_, rfl⟩
+      simp only [evaluate]
+      rw [hg']
+      simp [hfc, hz]
+    · simp only [evaluate, hg, hfc, hz, Option.isSome_none, Bool.false_eq_true, if_false,
+        dite_false] at he
+      rcases hc : evaluate prog { decClock v1 with locals := env } with ⟨rc, sc⟩
+      rw [hc] at he
+      have hc' : evaluate prog { decClock { v1 with locals := locals } with locals := env } =
+          (rc, sc) := hc
+      have hev : ∀ r : LoopResultExact width,
+          (∀ n, r ≠ .continue n) → (∀ n, r ≠ .break n) → rc = some r →
+          evaluate (.call none dest args none) { v1 with locals := locals } =
+            (some r, { sc with locals := sc.locals }) := by
+        intro r hc1 hb1 hr
+        subst hr
+        simp only [evaluate]
+        rw [hg']
+        simp only [hfc, hz, Option.isSome_none, Bool.false_eq_true, if_false, dite_false, hc']
+      rcases rc with _ | r
+      · simp at he; exact absurd he.1.symm hne
+      · cases r with
+        | «continue» n => simp at he; exact absurd he.1.symm hne
+        | «break» n => simp at he; exact absurd he.1.symm hne
+        | result vs =>
+          simp at he; obtain ⟨rfl, rfl⟩ := he
+          exact ⟨_, hev _ (by simp) (by simp) rfl, rfl⟩
+        | exception w =>
+          simp at he; obtain ⟨rfl, rfl⟩ := he
+          exact ⟨_, hev _ (by simp) (by simp) rfl, rfl⟩
+        | timeOut =>
+          simp at he; obtain ⟨rfl, rfl⟩ := he
+          exact ⟨_, hev _ (by simp) (by simp) rfl, rfl⟩
+        | finalFfi e =>
+          simp at he; obtain ⟨rfl, rfl⟩ := he
+          exact ⟨_, hev _ (by simp) (by simp) rfl, rfl⟩
+        | error => simp at he; exact absurd he.1.symm hne
+  | some rl =>
+    obtain ⟨ns, live⟩ := rl
+    by_cases hnd' : ¬ ns.Nodup
+    · simp [evaluate, hg, hfc, hnd'] at he; exact absurd he.1.symm hne
+    have hnd : ns.Nodup := Classical.not_not.mp hnd'
+    by_cases hnS : ¬ sptSubsetLive live v1.locals
+    · simp [evaluate, hg, hfc, hnd, cutRes, cutState_eq_none_of_not_subset live v1 hnS] at he
+      exact absurd he.1.symm hne
+    have hS : sptSubsetLive live v1.locals := Classical.not_not.mp hnS
+    have hcut := cutState_of_subset live v1 hS
+    have hcutK : ∀ K : NumSet, (∀ k, sptMem k K → sptMem k live) →
+        sptSubspt (sptInter v1.locals (sptUnion (sptFromAList (args.map fun x => (x, ()))) K))
+          locals →
+        cutState K { v1 with locals := locals } = some { v1 with locals := sptInter locals K } :=
+      fun K hKl hs => cutState_of_subset _ _ (fun k hk => by
+        have hkv := hS k (hKl k hk)
+        have := subspt_inter_apply hs hkv (hK hk)
+        simp only [sptMem, sptDomain, this]; exact hkv)
+    cases handler with
+    | none =>
+      simp only [shrinkHOL, Prod.mk.injEq] at hs
+      obtain ⟨rfl, rfl⟩ := hs
+      have hKl : ∀ k, sptMem k (sptListDelete ns (sptInter l0 live)) → sptMem k live := by
+        intro k hk
+        have hk' : sptMem k (sptInter l0 live) := by
+          by_cases hkn : k ∈ ns
+          · simp [sptMem, sptDomain, sptLookup_sptListDelete, hkn] at hk
+          · simpa [sptMem, sptDomain, sptLookup_sptListDelete, hkn] using hk
+        exact ((mem_inter_iff _ _ k).mp hk').2
+      have hg' := getVars_locals_agree v1 locals args argvals (fun n hn _w hw =>
+        lookup_of_subspt hsub (hA hn) hw) hg
+      have hcut' := hcutK _ hKl hsub
+      by_cases hz : v1.clock = 0
+      · simp [evaluate, hg, hfc, hnd, cutRes, hcut, hz] at he
+        obtain ⟨rfl, rfl⟩ := he
+        refine ⟨.ln, ?_, rfl⟩
+        simp only [evaluate]
+        rw [hg']
+        simp only [hfc, hnd, not_true_eq_false, if_false]
+        rw [cutRes_none_of_cut hcut']
+        simp [hz]
+      · have hc0 : cutRes live (none, v1) =
+            (none, decClock { v1 with locals := sptInter v1.locals live }) := by
+          rw [cutRes_none_of_cut hcut]; simp [hz]
+        generalize hKd : sptListDelete ns (sptInter l0 live) = K at hcut' hKl hsub ⊢
+        have hc0' : cutRes K (none, { v1 with locals := locals }) =
+            (none, decClock { v1 with locals := sptInter locals K }) := by
+          rw [cutRes_none_of_cut hcut']; simp [hz]
+        rcases hc : evaluate prog { decClock { v1 with locals := sptInter v1.locals live } with locals := env } with ⟨rc, st⟩
+        have hc' : evaluate prog { decClock { v1 with locals := sptInter locals K } with locals := env } = (rc, st) := hc
+        simp only [evaluate, hg, hfc, hnd, not_true_eq_false, if_false] at he
+        rw [hc0] at he
+        simp only at he
+        rw [fix_clock_evaluate, hc] at he
+        rcases rc with _ | r
+        · simp at he; exact absurd he.1.symm hne
+        cases r with
+        | «continue» n => simp at he; exact absurd he.1.symm hne
+        | «break» n => simp at he; exact absurd he.1.symm hne
+        | error => simp at he; exact absurd he.1.symm hne
+        | timeOut =>
+          simp only [Prod.mk.injEq] at he
+          obtain ⟨rfl, rfl⟩ := he
+          exact ⟨st.locals, by
+            simp only [evaluate]; rw [hg']; simp only [hfc, hnd, not_true_eq_false, if_false]; rw [hc0']; simp only; rw [fix_clock_evaluate, hc'], rfl⟩
+        | finalFfi e =>
+          simp only [Prod.mk.injEq] at he
+          obtain ⟨rfl, rfl⟩ := he
+          exact ⟨st.locals, by
+            simp only [evaluate]; rw [hg']; simp only [hfc, hnd, not_true_eq_false, if_false]; rw [hc0']; simp only; rw [fix_clock_evaluate, hc'], rfl⟩
+        | exception w =>
+          simp only [Prod.mk.injEq] at he
+          obtain ⟨rfl, rfl⟩ := he
+          exact ⟨.ln, by
+            simp only [evaluate]; rw [hg']; simp only [hfc, hnd, not_true_eq_false, if_false]; rw [hc0']; simp only; rw [fix_clock_evaluate, hc'], rfl⟩
+        | result retvs =>
+          by_cases hlen : retvs.length = ns.length
+          · simp only [hlen, ne_eq, not_true_eq_false, if_false, Prod.mk.injEq] at he
+            obtain ⟨rfl, rfl⟩ := he
+            refine ⟨sptAlistInsert ns retvs (sptInter locals K), ?_, ?_⟩
+            · simp only [evaluate]; rw [hg']; simp only [hfc, hnd, not_true_eq_false, if_false]; rw [hc0']; simp only; rw [fix_clock_evaluate, hc']
+              simp [hlen, setVars, decClock]
+            · refine subspt_of_lookup fun k hk => ?_
+              obtain ⟨hka, hkl⟩ := (mem_inter_iff _ _ k).mp hk
+              rw [sptLookup_sptInter, if_pos (show (sptLookup k l0).isSome = true from hkl)]
+              simp only [setVars, decClock]
+              rw [lookup_alist_insert_any, lookup_alist_insert_any]
+              cases hz2 : holAlookup (ns.zip retvs) k with
+              | some _ => rfl
+              | none =>
+                simp only
+                have hkn := holAlookup_zip_none ns retvs k hlen.symm hz2
+                have hka' : sptMem k (sptInter v1.locals live) := by
+                  simpa [setVars, decClock, sptMem, sptDomain, lookup_alist_insert_any, hz2] using hka
+                obtain ⟨hkv, hklv⟩ := (mem_inter_iff _ _ k).mp hka'
+                have hkK : sptMem k K := by
+                  rw [← hKd]
+                  simp only [sptMem, sptDomain, sptLookup_sptListDelete, hkn, if_false]
+                  exact (mem_inter_iff _ _ k).mpr ⟨hkl, hklv⟩
+                rw [sptLookup_sptInter, if_pos (show (sptLookup k K).isSome = true from hkK),
+                  sptLookup_sptInter, if_pos (show (sptLookup k live).isSome = true from hklv)]
+                exact subspt_inter_apply hsub hkv (hK hkK)
+          · simp only [hlen, ne_eq, not_false_eq_true, if_true, Prod.mk.injEq] at he
+            exact absurd he.1.symm hne
+    | some hd =>
+      obtain ⟨e, h, r, lo⟩ := hd
+      obtain ⟨ihr, ihh'⟩ : (∀ st : LoopSemStateFiniteExact width F, st.clock < v1.clock →
+          loopLiveCompileCorrectAt r st) ∧ (∀ st : LoopSemStateFiniteExact width F,
+          st.clock < v1.clock → loopLiveCompileCorrectAt h st) :=
+        ⟨fun st hst => (ihh e h r lo rfl st hst).1, fun st hst => (ihh e h r lo rfl st hst).2⟩
+      rcases hr2 : shrinkHOL lt r l0 with ⟨r', l2⟩
+      rcases hh3 : shrinkHOL lt h l0 with ⟨h', l3⟩
+      have hshr : shrinkHOL lt (.call (some (ns, live)) dest args (some (e, h, r, lo))) l0 =
+          (.call (some (ns, sptInter live (sptUnion (sptListDelete ns l2) (sptDelete e l3)))) dest args
+              (some (e, h', r', sptInter l0 lo)),
+            sptUnion (sptFromAList (args.map fun x => (x, ())))
+              (sptInter live (sptUnion (sptListDelete ns l2) (sptDelete e l3)))) := by
+        simp [shrinkHOL, hr2, hh3]
+      rw [hshr, Prod.mk.injEq] at hs
+      obtain ⟨rfl, rfl⟩ := hs
+      have hKl : ∀ k, sptMem k (sptInter live (sptUnion (sptListDelete ns l2) (sptDelete e l3))) →
+          sptMem k live := fun k hk => ((mem_inter_iff _ _ k).mp hk).1
+      have hg' := getVars_locals_agree v1 locals args argvals (fun n hn _w hw =>
+        lookup_of_subspt hsub (hA hn) hw) hg
+      have hcut' := hcutK _ hKl hsub
+      generalize hKd : sptInter live (sptUnion (sptListDelete ns l2) (sptDelete e l3)) = K at hcut' hKl hsub ⊢
+      by_cases hz : v1.clock = 0
+      · simp [evaluate, hg, hfc, hnd, cutRes, hcut, hz] at he
+        obtain ⟨rfl, rfl⟩ := he
+        refine ⟨.ln, ?_, rfl⟩
+        simp only [evaluate]
+        rw [hg']
+        simp only [hfc, hnd, not_true_eq_false, if_false]
+        rw [cutRes_none_of_cut hcut']
+        simp [hz]
+      have hc0 : cutRes live (none, v1) =
+          (none, decClock { v1 with locals := sptInter v1.locals live }) := by
+        rw [cutRes_none_of_cut hcut]; simp [hz]
+      have hc0' : cutRes K (none, { v1 with locals := locals }) =
+          (none, decClock { v1 with locals := sptInter locals K }) := by
+        rw [cutRes_none_of_cut hcut']; simp [hz]
+      rcases hc : evaluate prog { decClock { v1 with locals := sptInter v1.locals live } with locals := env } with ⟨rc, st⟩
+      have hc' : evaluate prog { decClock { v1 with locals := sptInter locals K } with locals := env } = (rc, st) := hc
+      have hstc : st.clock < v1.clock := by
+        have := evaluate_clock_snd prog { decClock { v1 with locals := sptInter v1.locals live } with locals := env }
+        rw [hc] at this
+        simp only [decClock] at this
+        omega
+      simp only [evaluate, hg, hfc, hnd, not_true_eq_false, if_false] at he
+      rw [hc0] at he
+      simp only at he
+      rw [fix_clock_evaluate, hc] at he
+      rcases rc with _ | rv
+      · simp at he; exact absurd he.1.symm hne
+      cases rv with
+      | «continue» n => simp at he; exact absurd he.1.symm hne
+      | «break» n => simp at he; exact absurd he.1.symm hne
+      | error => simp at he; exact absurd he.1.symm hne
+      | timeOut =>
+        simp only [Prod.mk.injEq] at he
+        obtain ⟨rfl, rfl⟩ := he
+        exact ⟨st.locals, by simp only [evaluate]; rw [hg']; simp only [hfc, hnd, not_true_eq_false, if_false]; rw [hc0']; simp only; rw [fix_clock_evaluate, hc'], rfl⟩
+      | finalFfi fe =>
+        simp only [Prod.mk.injEq] at he
+        obtain ⟨rfl, rfl⟩ := he
+        exact ⟨st.locals, by simp only [evaluate]; rw [hg']; simp only [hfc, hnd, not_true_eq_false, if_false]; rw [hc0']; simp only; rw [fix_clock_evaluate, hc'], rfl⟩
+      | exception w =>
+        simp only at he
+        rcases hY : evaluate h (setVar e w { st with locals := sptInter v1.locals live }) with ⟨rr, sr⟩
+        have hYe : cutRes lo (rr, sr) = (res, s1) := by
+          rw [← hY]; simpa [decClock] using he
+        have hrr : rr ≠ some .error := fun hr => by
+          subst hr; simp [cutRes] at hYe; exact hne hYe.1.symm
+        have hpre : sptSubspt (sptInter (setVar e w { st with locals := sptInter v1.locals live }).locals l3)
+            (sptInsert e w (sptInter locals K)) := by
+          refine subspt_of_lookup fun k hk => ?_
+          obtain ⟨hka, hkl3⟩ := (mem_inter_iff _ _ k).mp hk
+          rw [sptLookup_sptInter, if_pos (show (sptLookup k l3).isSome = true from hkl3)]
+          by_cases hke : k = e
+          · subst hke; simp [setVar, sptLookup_sptInsert]
+          · have hka' : sptMem k (sptInter v1.locals live) := by
+              simpa [setVar, sptMem, sptDomain, sptLookup_sptInsert, hke] using hka
+            obtain ⟨hkv, hklv⟩ := (mem_inter_iff _ _ k).mp hka'
+            have hkK : sptMem k K := by
+              rw [← hKd]
+              refine (mem_inter_iff _ _ k).mpr ⟨hklv, (sptMem_sptUnion' _ _ _).mpr (Or.inr ?_)⟩
+              simp only [sptMem, sptDomain, sptLookup_sptDelete', hke, if_false]; exact hkl3
+            simp only [setVar, sptLookup_sptInsert, hke, if_false]
+            rw [sptLookup_sptInter, if_pos (show (sptLookup k K).isSome = true from hkK),
+              sptLookup_sptInter, if_pos (show (sptLookup k live).isSome = true from hklv)]
+            exact subspt_inter_apply hsub hkv (hK hkK)
+        obtain ⟨nl, hn, hp⟩ := ihh' (setVar e w { st with locals := sptInter v1.locals live }) hstc
+          rr sr lt (sptInsert e w (sptInter locals K)) h' l3 l0
+          ⟨hY, hrr, hh3, hpre⟩
+        obtain ⟨nl2, hn2, hp2⟩ :=
+          loopLive_cutRes_tail rr sr nl lt l0 lo res s1 (loopLive_post_weaken rr sr nl lt l0 lo hp) hYe hne
+        refine ⟨nl2, ?_, hp2⟩
+        simp only [evaluate]; rw [hg']; simp only [hfc, hnd, not_true_eq_false, if_false]; rw [hc0']; simp only; rw [fix_clock_evaluate, hc']
+        simp only [decClock]
+        rw [show setVar e w { st with locals := sptInter locals K } =
+          { setVar e w { st with locals := sptInter v1.locals live } with locals := sptInsert e w (sptInter locals K) }
+          from rfl, hn]
+        exact hn2
+      | result retvs =>
+        by_cases hlen' : ¬ retvs.length = ns.length
+        · simp [hlen'] at he; exact absurd he.1.symm hne
+        have hlen : retvs.length = ns.length := Classical.not_not.mp hlen'
+        simp only [hlen, ne_eq, not_true_eq_false, if_false] at he
+        rcases hX : evaluate r (setVars ns retvs { st with locals := sptInter v1.locals live }) with ⟨rr, sr⟩
+        have hXe : cutRes lo (rr, sr) = (res, s1) := by
+          rw [← hX]; simpa [decClock] using he
+        have hrr : rr ≠ some .error := fun hr => by
+          subst hr; simp [cutRes] at hXe; exact hne hXe.1.symm
+        have hpre : sptSubspt (sptInter (setVars ns retvs { st with locals := sptInter v1.locals live }).locals l2)
+            (sptAlistInsert ns retvs (sptInter locals K)) := by
+          refine subspt_of_lookup fun k hk => ?_
+          obtain ⟨hka, hkl2⟩ := (mem_inter_iff _ _ k).mp hk
+          rw [sptLookup_sptInter, if_pos (show (sptLookup k l2).isSome = true from hkl2)]
+          simp only [setVars]
+          rw [lookup_alist_insert_any, lookup_alist_insert_any]
+          cases hz2 : holAlookup (ns.zip retvs) k with
+          | some _ => rfl
+          | none =>
+            simp only
+            have hkn := holAlookup_zip_none ns retvs k hlen.symm hz2
+            have hka' : sptMem k (sptInter v1.locals live) := by
+              simpa [setVars, sptMem, sptDomain, lookup_alist_insert_any, hz2] using hka
+            obtain ⟨hkv, hklv⟩ := (mem_inter_iff _ _ k).mp hka'
+            have hkK : sptMem k K := by
+              rw [← hKd]
+              refine (mem_inter_iff _ _ k).mpr ⟨hklv, (sptMem_sptUnion' _ _ _).mpr (Or.inl ?_)⟩
+              simp only [sptMem, sptDomain, sptLookup_sptListDelete, hkn, if_false]; exact hkl2
+            rw [sptLookup_sptInter, if_pos (show (sptLookup k K).isSome = true from hkK),
+              sptLookup_sptInter, if_pos (show (sptLookup k live).isSome = true from hklv)]
+            exact subspt_inter_apply hsub hkv (hK hkK)
+        obtain ⟨nl, hn, hp⟩ := ihr (setVars ns retvs { st with locals := sptInter v1.locals live }) hstc
+          rr sr lt (sptAlistInsert ns retvs (sptInter locals K)) r' l2 l0
+          ⟨hX, hrr, hr2, hpre⟩
+        obtain ⟨nl2, hn2, hp2⟩ :=
+          loopLive_cutRes_tail rr sr nl lt l0 lo res s1 (loopLive_post_weaken rr sr nl lt l0 lo hp) hXe hne
+        refine ⟨nl2, ?_, hp2⟩
+        simp only [evaluate]; rw [hg']; simp only [hfc, hnd, not_true_eq_false, if_false]; rw [hc0']; simp only; rw [fix_clock_evaluate, hc']
+        simp only [hlen, ne_eq, not_true_eq_false, if_false, decClock]
+        rw [show setVars ns retvs { st with locals := sptInter locals K } =
+          { setVars ns retvs { st with locals := sptInter v1.locals live } with
+              locals := sptAlistInsert ns retvs (sptInter locals K) }
+          from rfl, hn]
+        exact hn2
 
 end Flapjack
