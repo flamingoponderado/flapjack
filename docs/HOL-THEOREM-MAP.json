@@ -11099,8 +11099,9 @@
     "hol_name": "find_reg_imm_def",
     "lean_path": "Flapjack/Pancake/LoopToWord.lean",
     "lean_name": "findRegImmHOL",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds9 source comparison (2026-09-28, bead flapjack-pxn.18.5.9.2) against cakeml/pancake/loop_to_wordScript.sml:17-20. The HOL `num |-> num` spt context and `unit spt` num_set are represented by the repo's reviewed exact sptree carrier Spt (Flapjack/Misc/Sptree.lean, constructors LN/LS/BN/BS and sptree$lookup/insert/toAList), so no width-indexed BitVec carrier appears and no qualifier is used; Spt is a tree map, never an fmap_as_finite_support `|->` finite map. Direct HOL EVAL rows in scripts/hol-probes/loop_to_word_defs_probe.out are reproduced by kernel-checked guards in Flapjack/Test/LoopToWordExactParity.lean."
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-09-28, bead flapjack-pxn.18.5.9.2) against cakeml/pancake/loop_to_wordScript.sml:17-20. HOL `reg_imm` is `Imm 'a word | Reg num`, so the immediate payload is the type-indexed HOL word; the Lean port is therefore width-indexed `WordRegImm (BitVec width)` with `[NeZero width]` and carries the `(words_as_type_indexed_bitvec)` qualifier. The HOL `num |-> num` spt context is represented by the reviewed exact sptree carrier Spt (Flapjack/Misc/Sptree.lean), a tree map, never an fmap_as_finite_support `|->` finite map. Direct HOL EVAL rows in scripts/hol-probes/loop_to_word_defs_probe.out are reproduced by kernel-checked guards in Flapjack/Test/LoopToWordExactParity.lean."
   },
   {
     "hol_path": "cakeml/pancake/loop_to_wordScript.sml",

@@ -244,9 +244,13 @@ def loopToWordCompile [OfNat α 1]
 def findVarHOL (context : Spt Nat) (name : Nat) : Nat :=
   (sptLookup name context).getD 0
 
-/-- Exact HOL `find_reg_imm_def` (`cakeml/pancake/loop_to_wordScript.sml:17`). -/
-@[hol "cakeml/pancake/loop_to_wordScript.sml" "find_reg_imm_def"]
-def findRegImmHOL {α : Type} (context : Spt Nat) : WordRegImm α → WordRegImm α
+/-- Exact HOL `find_reg_imm_def` (`cakeml/pancake/loop_to_wordScript.sml:17`),
+over the fixed-width HOL `reg_imm` immediate carrier `'a word` (rendered as the
+positive-width `BitVec width`), matching HOL's type-indexed word. -/
+@[hol "cakeml/pancake/loop_to_wordScript.sml" "find_reg_imm_def"
+  (words_as_type_indexed_bitvec)]
+def findRegImmHOL {width : Nat} [NeZero width] (context : Spt Nat) :
+    WordRegImm (BitVec width) → WordRegImm (BitVec width)
   | .imm value => .imm value
   | .reg name => .reg (findVarHOL context name)
 

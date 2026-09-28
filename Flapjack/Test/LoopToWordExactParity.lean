@@ -36,8 +36,8 @@ def originalCutsetAbsent : Option Unit := none
 
 #guard findVarHOL probeContext 5 == originalFindHit
 #guard findVarHOL probeContext 4 == originalFindMiss
-#guard findRegImmHOL probeContext (.imm (5 : BitVec 64)) == originalFindImm
-#guard findRegImmHOL probeContext (.reg 5) == originalFindReg
+#guard findRegImmHOL (width := 64) probeContext (.imm (5 : BitVec 64)) == originalFindImm
+#guard findRegImmHOL (width := 64) probeContext (.reg 5) == originalFindReg
 #guard (sptLookup 0 (toNumSetHOL [1, 2, 3]) : Option Unit) == originalToNumSetZero
 #guard (sptLookup 2 (toNumSetHOL [1, 2, 3]) : Option Unit) == originalToNumSetTwo
 #guard (sptLookup 3 (toNumSetHOL [1, 2, 3]) : Option Unit) == originalToNumSetThree
@@ -57,9 +57,9 @@ def runChecks : IO Bool := do
       ("LoopToWord find_var miss returns 0",
         findVarHOL probeContext 4 == originalFindMiss),
       ("LoopToWord find_reg_imm leaves an immediate unchanged",
-        findRegImmHOL probeContext (.imm (5 : BitVec 64)) == originalFindImm),
+        findRegImmHOL (width := 64) probeContext (.imm (5 : BitVec 64)) == originalFindImm),
       ("LoopToWord find_reg_imm maps a register through find_var",
-        findRegImmHOL probeContext (.reg 5) == originalFindReg),
+        findRegImmHOL (width := 64) probeContext (.reg 5) == originalFindReg),
       ("LoopToWord toNumSet does not contain 0",
         (sptLookup 0 (toNumSetHOL [1, 2, 3]) : Option Unit) == originalToNumSetZero),
       ("LoopToWord toNumSet contains 2",

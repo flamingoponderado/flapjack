@@ -2043,7 +2043,6 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         ("Flapjack/Pancake/PanSimp.lean", "panSimpDeclsHOL"),
         ("Flapjack/Pancake/CrepToLoop/Proofs/Primop.lean", "crepPrimopLoopPrimopHOL"),
         ("Flapjack/Pancake/LoopToWord.lean", "findVarHOL"),
-        ("Flapjack/Pancake/LoopToWord.lean", "findRegImmHOL"),
         ("Flapjack/Pancake/LoopToWord.lean", "toNumSetHOL"),
         ("Flapjack/Pancake/LoopToWord.lean", "fromNumSetHOL"),
         ("Flapjack/Pancake/LoopToWord.lean", "mkNewCutsetHOL"),
