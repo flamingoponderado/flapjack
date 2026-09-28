@@ -10819,16 +10819,16 @@
     "hol_name": "globals_rel_def",
     "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
     "lean_name": "crepToLoopGlobalsRel",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Codex (definition compared against globals_rel_def at crep_to_loopProofScript.sml:54-58; both globals fields are BitVec 5-indexed option finite maps so HOL FLOOKUP is the field application; direct HOL-EVAL rows globals_lookup_match=T/globals_lookup_absent=T and negative globals_lookup_wrong=F reproduced by a Lean guard in Flapjack/Test/CrepToLoopParity.lean); carriers width-specialized to BitVec width because HOL states/word_lab are word-length indexed (agreed exact-shape rule) Carrier requires positive width ([NeZero width]) because HOL word types have positive dimindex."
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-luna-a source review (2026-09-28; bead flapjack-pxn.18.5.6.33.18): tag withdrawn. This production helper takes raw option-valued functions rather than HOL |-> finite maps and uses PanWordLab/LoopValue rather than HolWordLab/WordLocW, so it is not an exact port of globals_rel_def. Preserve it as executable bridge infrastructure. Exact-carrier port: crepToLoopGlobalsRelHOLExact in Flapjack/Pancake/CrepToLoop/Proofs/RelationsExact.lean."
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
     "hol_name": "globals_rel_intro",
     "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
     "lean_name": "crepToLoopGlobalsRel_intro",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Codex (statement compared against globals_rel_intro at crep_to_loopProofScript.sml:203-209, which is an implication from globals_rel to the universally quantified lookup agreement, NOT an iff; tagged Lean statement has the same implication shape and is proved by the relation's definition; untagged crepToLoopGlobalsRel_iff keeps the iff form; Lean guards in Flapjack/Test/CrepToLoopParity.lean); carriers width-specialized to BitVec width because HOL states/word_lab are word-length indexed (agreed exact-shape rule) Carrier requires positive width ([NeZero width]) because HOL word types have positive dimindex."
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-luna-a source review (2026-09-28; bead flapjack-pxn.18.5.6.33.18): tag withdrawn with its production relation because it inherits the raw option-function and PanWordLab/LoopValue carrier mismatch documented for crepToLoopGlobalsRel. Preserve this implication helper for the executable bridge. Exact-carrier port: crepToLoopGlobalsRelHOLExact_intro in Flapjack/Pancake/CrepToLoop/Proofs/RelationsExact.lean."
   },
   {
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
@@ -10859,16 +10859,16 @@
     "hol_name": "mem_rel_def",
     "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
     "lean_name": "crepToLoopMemRel",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Codex (exact HOL mem_rel_def crep_to_loopProofScript.sml:49-52 port: mem_rel smem tmem dom <=> !ad. ad IN dom ==> wlab_wloc (smem ad) = tmem ad. Stated over TOTAL memories because HOL loopSem$state.memory is total ('a word -> 'a word_loc) and crepSem$state.memory is already total; LoopMachineState.memory is Option-valued so production uses the total view loopMemoryTotal. ad IN dom is the set-as-predicate rendering dom ad = true. Direct HOL oracle scripts/hol-probes/crep_to_loop_mem_rel_probe.out rows mem_rel_match=T/mem_rel_wrong=F/mem_rel_out_of_domain=T/mem_rel_dom_present=T/mem_rel_dom_absent=F reproduced by Lean guards in Flapjack/Test/CrepToLoopParity.lean); carriers width-specialized to BitVec width because HOL states/word_lab are word-length indexed (agreed exact-shape rule) Carrier requires positive width ([NeZero width]) because HOL word types have positive dimindex."
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-luna-a source review (2026-09-28; bead flapjack-pxn.18.5.6.33.18): tag withdrawn. This production analogue uses PanWordLab/LoopValue rather than HolWordLab/WordLocW, and a Bool domain rather than HOL set membership (Prop); its bridge also adapts production Option-valued loop memory to a total view. These are representation/carrier differences, not authorized by an exact tag. Preserve the helper for production. Exact total-memory, Prop-domain port: crepToLoopMemRelHOLExact in Flapjack/Pancake/CrepToLoop/Proofs/RelationsExact.lean."
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
     "hol_name": "mem_rel_intro",
     "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
     "lean_name": "crepToLoopMemRel_intro",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Codex (exact HOL mem_rel_intro crep_to_loopProofScript.sml:203-209 port, which is an implication from mem_rel to the pointwise equation, NOT an iff; tagged Lean statement has the same implication shape and is proved by the relation's definition; untagged crepToLoopMemRel_iff keeps the iff form; Lean guard in Flapjack/Test/CrepToLoopParity.lean); carriers width-specialized to BitVec width because HOL states/word_lab are word-length indexed (agreed exact-shape rule) Carrier requires positive width ([NeZero width]) because HOL word types have positive dimindex."
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-luna-a source review (2026-09-28; bead flapjack-pxn.18.5.6.33.18): tag withdrawn with its production relation because it inherits the Bool-domain and PanWordLab/LoopValue carrier mismatch documented for crepToLoopMemRel. Preserve the implication helper for the executable bridge. Exact-carrier port: crepToLoopMemRelHOLExact_intro in Flapjack/Pancake/CrepToLoop/Proofs/RelationsExact.lean."
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
