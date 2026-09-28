@@ -15,7 +15,16 @@ proves both are reachable invariants of `panSemTotalEvaluate`:
   `PanSemStateRelExecRanged` state and a `PanPrimitiveHandlerByteRanged`
   primitive handler, where every code entry is `PanLangEntryByteRanged`, the
   result state is again ranged and the result payload is
-  `PanSemHOLResultRanged`.
+  `PanSemHOLResultRanged`;
+* `panSemTotalEvaluateCake_ranged` — the same for the canonical entrypoint, whose
+  handler premise is `panPrimopHOL_byteRanged`;
+* `panSemTotalEvaluate_call_agree_of_ranged` / `_decCall_agree_of_ranged` — the
+  `Call`/`DecCall` agreements with `hcode`/`hcallee` discharged (instantiate
+  `primitive := panPrimopHOL`, `hprim := panPrimopHOL_byteRanged` for the
+  canonical entrypoint).
+
+The remaining top-level obligation is `PanSemCodeRanged` of the compiled
+initial state.
 
 Everything here is untagged Flapjack-specific bridge infrastructure
 (`flapjack-pxn.18.4.3.77.2.15.4`).
@@ -979,6 +988,23 @@ theorem panSemTotalEvaluate_ranged (primitive : PanPrimitiveHandler (RiscV.Word 
     | shMemStore size address value =>
         rw [panSemTotalEvaluate]; exact panSemTotalShMemStoreClause_rangedOutput h size address value
   exact hmain (state, prog)
+
+/-- Reachable rangedness for the canonical entrypoint `panSemTotalEvaluateCake`:
+    the primitive-handler premise is discharged by `panPrimopHOL_byteRanged`. -/
+theorem panSemTotalEvaluateCake_ranged
+    (prog : Prog (RiscV.Word 64)) (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (hprog : ProgByteRanged prog) (hstate : PanSemStateRelExecRanged state)
+    (hcode : PanSemCodeRanged state) :
+    PanSemRangedOutput (panSemTotalEvaluateCake prog state) :=
+  panSemTotalEvaluate_ranged panPrimopHOL panPrimopHOL_byteRanged prog state hprog hstate hcode
+
+/-- The rangedness invariant is closed under runs of the canonical entrypoint,
+    including code-entry rangedness (`panSemTotalEvaluate_code`). -/
+theorem panSemTotalEvaluateCake_codeRanged
+    (prog : Prog (RiscV.Word 64)) (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (hcode : PanSemCodeRanged state) :
+    PanSemCodeRanged (panSemTotalEvaluateCake prog state).2 :=
+  hcode.of_code (panSemTotalEvaluate_code panPrimopHOL prog state)
 
 end Ranged
 
