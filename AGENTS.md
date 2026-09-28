@@ -2,6 +2,13 @@
 
 ## Lean/Lake cache artifacts
 
+For a one-off check of a Lean source file, prefer `lake lean path/to/File.lean`
+over `lake env lean path/to/File.lean`. `lake lean` builds the file's imports
+through Lake first, so it can reuse and restore cached build artifacts, and
+passes the root package's configured Lean arguments. `lake env lean` sets up
+the environment but does not build missing or stale imports. For a module's
+normal build, continue to use `lake build Module.Name`.
+
 Prefer a targeted repair over a global cache reset. When a build is blocked by
 one bad or hardlinked cache artifact, remove that individual local `.olean`
 (and its matching generated `.ilean`, `.ilean.hash`, or `.trace` metadata when

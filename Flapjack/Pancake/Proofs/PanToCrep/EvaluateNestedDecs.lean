@@ -510,26 +510,13 @@ private theorem loadGlobalsHOL_zero_eq_range {width : Nat} [NeZero width]
     rw [hload]
     simp
 
-/-- FLAPJACK-SPECIFIC provisional rendering (no `@[hol]` tag), withdrawn
-    2026-09-27 (bead flapjack-64k0, PR #1166 review item 2). The conclusion is
-    over `evalCrepSemHOLProgExact`, the no-decider classical wrapper around the
-    re-implemented evaluator `evalCrepSemHOLProg`. The concrete gaps cited at
-    withdrawal are now closed: the whole-program evaluator is source-reviewed
-    and tagged as `evalCrepSemHOLProgExact_eq_evaluate_def`
-    (`crepSemScript.sml:443`), so the arbitrary-continuation `body` premise no
-    longer rests on an open clause review; the `crepStampExactDomains`
-    reachability for the derived states is established by
-    `crepStampExactDomains_eq_self` / `evalCrepSemHOLProg_preserves_domains`
-    (bead `flapjack-4ac.5.16.5.32`); and the byte-store path uses the exact
-    `word8` helpers bridged by `crepExactMemStoreByte_eq_word8`
-    (`panMemStoreByteHOL_eq_word8`, bead `flapjack-4ac.5.16.5.18`). The
-    finite-map qualifier's owner/witness placement is resolved by the
-    same-module canonical witness
-    `EvalNestedDecsFiniteSupport.holFmapAsFiniteSupportWitness` above
-    (bead `flapjack-4ac.5.16.5.13.1`, closed). HOL
-    candidate: `evaluate_nested_decs_load_globals`
-    (`pan_to_crepProofScript.sml:4139-4176`). This Flapjack-shaped declaration
-    still carries no `@[hol]` tag; restoring a tag is a separate review. -/
+/-- FLAPJACK-SPECIFIC presentation of HOL candidate
+    `evaluate_nested_decs_load_globals` (`pan_to_crepProofScript.sml:4139-4176`).
+    Its evaluator now has a tagged, source-reviewed `evaluate_def` clause
+    theorem, and the finite-map qualifier witness is settled. This theorem
+    remains untagged pending a separate review of its own binders, conjunctive
+    premise, and pair-pattern conclusion against HOL; see
+    `flapjack-4ac.5.16.5`. -/
 theorem evaluateNestedDecsLoadGlobalsCrepHOL {width : Nat} [NeZero width]
     {σ : Type} (state : CrepSemHOLState width σ) (value : ValueHOL width)
     (values : List (HolWordLab width)) (names : List Nat)

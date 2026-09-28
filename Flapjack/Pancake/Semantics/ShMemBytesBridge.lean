@@ -176,8 +176,8 @@ The `shMemLoad` case of `pc_compile_correct` must also match the word that the
 FFI hands back.  The Crep primitive decodes `newBytes.map UInt8.ofBitVec` with
 `crepClockWordOfBytes`, while the Pan primitive decodes `newBytes` with
 `panWordOfBytesHOL false 0`.  Both are the recursive HOL `word_of_bytes` fold at
-little-endian byte slots, so they agree for **every** byte list whenever
-`8 ≤ width`; the final theorem is
+    little-endian byte slots, so they agree for **every** byte list at every
+    positive width; the final theorem is
 `panWordOfBytesHOL_eq_crepClockWordOfBytes` (with `crepClockWordOfBytesAux`
 mirroring `set_byte`/`panSetByteHOL` slot by slot).  This section also keeps the
 earlier byte-sum arithmetic (`leSumB` and the `panWacc` `toNat` characterization)
