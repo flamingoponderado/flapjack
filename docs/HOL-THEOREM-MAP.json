@@ -18565,5 +18565,21 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.10): HOL evaluate_add_clock_io_events_mono (loopPropsScript.sml:1217-1220) `∀exps s extra. (SND(evaluate(exps,s))).ffi.io_events ≼ (SND(evaluate(exps,s with clock := s.clock + extra))).ffi.io_events`; Lean states the same unconditional prefix (List.IsPrefix) between the two .2 projections over the tagged exact evaluate."
+  },
+  {
+    "hol_path": "cakeml/semantics/ffi/ffiScript.sml",
+    "hol_name": "outcome",
+    "lean_path": "Flapjack/FfiHOL.lean",
+    "lean_name": "HolOutcome",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.34.1.2): HOL Datatype outcome = Success | Resource_limit_hit | FFI_outcome final_event (ffiScript.sml:82-84); Lean HolOutcome.success | .resourceLimitHit | .ffiOutcome (event : HolFinalEvent) over the tagged final_event carrier; same constructors, order and argument; exact."
+  },
+  {
+    "hol_path": "cakeml/semantics/ffi/ffiScript.sml",
+    "hol_name": "behaviour",
+    "lean_path": "Flapjack/FfiHOL.lean",
+    "lean_name": "HolBehaviour",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.34.1.2): HOL Datatype behaviour = Diverge (io_event llist) | Terminate outcome (io_event list) | Fail (ffiScript.sml:89-101); Lean HolBehaviour.diverge (HolLList HolIoEvent) | .terminate (HolOutcome) (List HolIoEvent) | .fail, over the tagged io_event/outcome carriers. HOL's llist is rendered by Flapjack/Misc/LList.lean HolLList, which is HOL's own llist type definition (llistScript.sml:64: the subtype of num -> 'a option satisfying lrep_ok, stated via HOL's lrep_ok_alt characterisation), not a different representation; list is List. Same constructors, order and arguments; exact."
   }
 ]
