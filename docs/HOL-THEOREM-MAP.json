@@ -13539,8 +13539,14 @@
     "hol_name": "evaluate_nested_decs_load_globals",
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateNestedDecs.lean",
     "lean_name": "evaluateNestedDecsLoadGlobalsCrepHOL",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds10 (2026-09-27; bead flapjack-64k0, PR #1166 review item 2) withdrew the tag pending source and carrier review. Updated 2026-09-28: the Crep evaluator now has tagged, source-reviewed evaluate_def equations; the byte-store clause uses the word8 port, and the finite-map owner/witness placement is settled. This Flapjack-specific theorem remains untagged pending direct review of its own binders, conjunction and pair-pattern conclusion against HOL evaluate_nested_decs_load_globals (pan_to_crepProofScript.sml:4139-4176); tracked by flapjack-4ac.5.16.5."
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-09-28; bead flapjack-4ac.5.97): HOL evaluate_nested_decs_load_globals (pan_to_crepProofScript.sml:4139-4176) quantifies s rv rvs vs p in appearance order; Lean keeps that order as state value values names body. Premise globals_lookup s rv = SOME rvs /\\ size_of_shape (shape_of rv) <= 32 /\\ ALL_DISTINCT vs /\\ LENGTH vs = size_of_shape (shape_of rv) maps conjunct-for-conjunct to hLookup / _hSize / hDistinct / hLength. Conclusion evaluate (nested_decs vs (load_globals 0w (size_of_shape (shape_of rv))) p, s) = let (res,s') = evaluate (p, s with locals := s.locals |++ ZIP (vs, rvs)) in (res, s' with locals := FOLDL res_var s'.locals (ZIP (vs, MAP (FLOOKUP s.locals) vs))) is rendered with the tagged globalsLookupHOL/sizeOfShapeHOL/shapeOfHOLExact/nestedDecsHOL/loadGlobalsHOL and the tagged line-443 evalCrepSemHOLProgExact; |++ is updateListEq, FLOOKUP is .lookup, FOLDL res_var is the HolFiniteMapExact.resVarEq fold, and HOL's let (res,s') = ... in is the outer let on the result pair. The CrepSemHOLState locals/globals/code maps use the canonical HolFiniteMapExact carrier (same-module witness EvalNestedDecsFiniteSupport.holFmapAsFiniteSupportWitness), and 'a word / 'ffi use the BitVec width [NeZero width] / sigma : Type translation. The proof derives the statement from the tagged evalNestedDecsSeqResVarEqHOL; the direct HOL probe eval_nested_decs_load_globals_probe.out and the derived regression exactWordEquation in Test/CrepNestedDecsLoadGlobalsParity.lean cover it."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
