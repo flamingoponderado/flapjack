@@ -612,6 +612,19 @@ mapped return, and handler. Its exact-carrier Lean equations are in
 `Flapjack.Test.CrepToLoopCompileExactParity`. The compiler is still proof-side;
 the production `CrepProg`/`LoopProg` path does not yet use the exact carriers,
 and a separate production bridge remains required.
+`crep_to_loop_compile_prog_probe.out` records direct HOL EVAL rows for the
+top-level `compile_prog_def` at `cakeml/pancake/crep_to_loopScript.sml:257-265`:
+a one-entry program with `first_name`-offset function numbering (`cp_fnums`),
+its `(GENLIST I o LENGTH) params` slot list (`cp_params`), the
+`crep_arith$simp_prog` + `loop_live$optimise` compiled body (`cp_body`), the
+result length (`cp_length`), and a second one-entry program whose body calls
+`«f»` so that `make_funcs`'s `first_name = 64` label flows through `comp_func`'s
+`find_lab` (`cp_call_fnums`/`cp_call_params`/`cp_call_body`). The exact-carrier
+tagged port `Flapjack.compileProgHOLExact` (`@[hol ... "compile_prog_def"
+(words_as_type_indexed_bitvec)]`) and its replay in
+`Flapjack.Test.CrepToLoopCompileProgParity` use the exact
+`MlString`/`CrepProgHOL`/`HolLoopProg` carriers. Refresh with
+`HOL_PROBE_ONLY=crep_to_loop_compile_prog_probeScript.sml scripts/hol-probes/regenerate.sh`.
 The original Pancake source-level support boundary is also explicit in
 `cakeml/pancake/proofs/loop_to_wordProofScript.sml:2285-2291`: `LLongDiv` is
 accepted by `loop_inst_ok` only for `x86_64`. Consequently, RISC-V parity must

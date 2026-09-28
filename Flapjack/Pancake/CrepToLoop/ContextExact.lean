@@ -1,6 +1,8 @@
 import Flapjack.Pancake.CrepToLoop
 import Flapjack.Pancake.CrepLang.Exp
 import Flapjack.Pancake.Semantics.CrepSem.HOLState
+import Flapjack.Pancake.CrepArith
+import Flapjack.Pancake.LoopLive
 import Flapjack.Basis.Pure.MlString
 import Flapjack.Compiler.Encoders.Asm
 
@@ -410,5 +412,73 @@ def compFuncHOLExact {width : Nat} [NeZero width]
     (mkCtxtExact target (makeVmapExact params) fs (params.length - 1))
     (sptListInsert (List.range params.length) .ln)
     body
+
+/-! ## Exact `make_funcs_def` and `compile_prog_def` over the exact carriers -/
+
+/-- HOL `make_funcs` (`crep_to_loopScript.sml:247-255`) on the canonical
+finite-support carrier. HOL derives, for each program entry `(name, params,
+body)` at index `n`, the pair `(name, (n + first_name, LENGTH params))` and
+returns `alist_to_fmap` of that ordered association list. Here the source
+`MAP FST prog`, `GENLIST (λn. n + first_name) (LENGTH prog)` and
+`MAP (LENGTH o FST o SND) prog` are rendered as `entry.1.1`,
+`firstLoopName + entry.2` and `entry.1.2.1.length` over
+`(prog.zip (List.range prog.length))`; the value key is the HOL `mlstring`
+carrier `MlString`. HOL `alist_to_fmap` is `FOLDR FUPDATE FEMPTY`, so the
+first duplicate function name wins, while `FUPDATE_LIST_HOL` is a left fold
+whose last duplicate wins; reversing the association list restores HOL's
+first-wins order. `updateListEq` builds the map so the finite-support witness
+is discharged by the definition itself. Untagged helper for the exact
+`compile_prog_def` port, mirroring the untagged `makeVmapExact`; the tagged
+production rendering stays `crepToLoopMakeFuncsHOL` in `StateRel.lean`. -/
+def crepToLoopMakeFuncsExactHOL {width : Nat} [NeZero width]
+    (prog : List (MlString × List Nat × CrepProgHOL width)) :
+    HolFiniteMapExact MlString (Nat × Nat) :=
+  HolFiniteMapExact.updateListEq HolFiniteMapExact.empty
+    ((prog.zip (List.range prog.length)).map
+      (fun entry =>
+        (entry.1.1, (firstLoopName + entry.2, entry.1.2.1.length)))).reverse
+
+/-- Exact HOL `compile_prog_def` (`cakeml/pancake/crep_to_loopScript.sml:257-265`)
+over the exact `MlString`/`CrepProgHOL width`/`HolLoopProg width` carriers.
+Clause-by-clause source review against the HOL text:
+
+* binders `target prog` match (`target : AsmArchitecture`, `prog : List
+  (MlString × List Nat × CrepProgHOL width)`, the HOL
+  `(mlstring # num list # 'a crepLang$prog) list`);
+* `let fnums = GENLIST (λn. n + first_name) (LENGTH prog)` is
+  `(List.range prog.length).map (fun n => n + firstLoopName)`;
+* `comp = comp_func target (make_funcs prog)` is
+  `compFuncHOLExact target (crepToLoopMakeFuncsExactHOL prog)`, using the exact
+  tagged `comp_func_def` and the untagged `make_funcs_def` helper above;
+* `MAP2 (λn (name, params, body). (n, (GENLIST I o LENGTH) params,
+  loop_live$optimise (comp params (crep_arith$simp_prog body)))) fnums prog`
+  is `List.zipWith (fun n entry => (n, List.range entry.2.1.length,
+  optimiseHOL (comp entry.2.1 (crepSimpProgHOL entry.2.2)))) fnums prog`,
+  where `List.zipWith` and HOL `MAP2` both truncate to the shorter list (here
+  the two lists have equal length); the projections `entry.2.1`/`entry.2.2`
+  are the HOL `params`/`body`, `List.range params.length` is `GENLIST I (LENGTH
+  params)`, and the simplified body is compiled by the exact tagged
+  `simp_prog_def`, `optimise_def` and `comp_func_def` ports.
+
+The result is a list of `(num # num list # 'a loopLang$prog)` triples, so the
+declaration signature contains no finite map and only the words qualifier
+applies; the type-indexed `'a word` becomes `BitVec width` with `[NeZero
+width]`. No premise, side condition, or result case is added. Direct original
+HOL rows are in `scripts/hol-probes/crep_to_loop_compile_prog_probe.out` and
+replayed by `Flapjack.Test.CrepToLoopCompileProgParity`. Proof-side exact port:
+the executed `flapjack-compile` path still uses the production
+`CrepProg`/`LoopProg`/`String` lowering, not this declaration. -/
+@[hol "cakeml/pancake/crep_to_loopScript.sml" "compile_prog_def"
+  (words_as_type_indexed_bitvec)]
+def compileProgHOLExact {width : Nat} [NeZero width] (target : AsmArchitecture)
+    (prog : List (MlString × List Nat × CrepProgHOL width)) :
+    List (Nat × List Nat × HolLoopProg width) :=
+  let fnums := (List.range prog.length).map (fun n => n + firstLoopName)
+  let comp := compFuncHOLExact target (crepToLoopMakeFuncsExactHOL prog)
+  List.zipWith
+    (fun n entry =>
+      (n, List.range entry.2.1.length,
+        optimiseHOL (comp entry.2.1 (crepSimpProgHOL entry.2.2))))
+    fnums prog
 
 end Flapjack
