@@ -50,6 +50,10 @@ val t = ``(sptree$fromAList
 val tBad = ``(sptree$fromAList
                 [(0:num, Word (12w:8 word))]
                 : 8 word_loc sptree$num_map)``;
+val lBig = ``(sptree$fromAList [(0:num,());(1:num,())] : sptree$num_set)``;
+val tBig = ``(sptree$fromAList
+                [(0:num, Word (9w:8 word)); (1:num, Word (3w:8 word))]
+                : 8 word_loc sptree$num_map)``;
 
 val _ = print_eval "ctxt_vars_lookup" (``FLOOKUP ^vars (0:num) = SOME 0``);
 val _ = print_eval "distinct_component"
@@ -62,6 +66,10 @@ val _ = print_eval "set_domain_mem"
   (``sptree$lookup (0:num) ^l = SOME ()``);
 val _ = print_eval "map_lookup"
   (``sptree$lookup (0:num) ^t = SOME (Word (9w:8 word))``);
+val _ = print_eval "cutset_set_lookup"
+  (``sptree$lookup (1:num) ^lBig = SOME ()``);
+val _ = print_eval "cutset_target_lookup"
+  (``sptree$lookup (1:num) ^tBig = SOME (Word (3w:8 word))``);
 val _ = print_eval "subset_domain_component"
   (``sptree$lookup (0:num) ^l = SOME () ==>
       sptree$lookup (0:num) ^t <> NONE``);
@@ -89,3 +97,11 @@ val _ = print_relation "locals_rel_domain_false"
   (``~locals_rel ^ctxt ^l ^sl ^tEmpty``) "F";
 val _ = print_relation "locals_rel_value_false"
   (``~locals_rel ^ctxt ^l ^sl ^tBad``) "F";
+
+(* Direct relation rows for `locals_rel_cutset_prop` (crep_to_loopProofScript.sml:236-244):
+   the second relation instance (wider set/target) and the cut-set conclusion
+   instance (narrow set, wider target).  Both hold for this concrete data. *)
+val _ = print_relation "locals_rel_cutset_second_true"
+  (``locals_rel ^ctxt ^lBig ^sl ^tBig``) "T";
+val _ = print_relation "locals_rel_cutset_after_true"
+  (``locals_rel ^ctxt ^l ^sl ^tBig``) "T";
