@@ -14042,6 +14042,14 @@
     "reviewer": "Flapjack-specific bridge from the literal is_wf_shape_nil (shape_of v) conjunct in the exact local relation to value-level is_wf_shape_v. The proof uses the exact is_wf_shape_v_nil equivalence and supports, but is not itself, the tagged locals_rel_wf_shape port."
   },
   {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "panToCrepLocalsRelFiniteExact_setVarWord",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific relation support for the exact shared-memory write path (bead flapjack-pxn.18.4.3.111.1.1.1). HOL pc_compile_correct ShMemLoad/ShMemStore prove the locals_rel conjunct inline with locals_rel_lookup_ctxt/FLOOKUP_UPDATE and no_overlap; this theorem isolates that inline reasoning: writing a word to the Pan local (locals.update, HOL |+) and the matching singleton Crep slot (CrepSemHOLState.setVar = updateEq) preserves panToCrepLocalsRelFiniteExact given ctxt.vars.lookup name = some (.one, [crepName]). It is a specialization of panToCrepLocalsRelFiniteExact_setVar to the One-shaped word value and therefore not a standalone HOL declaration."
+  },
+  {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
     "hol_name": "locals_rel_wf_shape",
     "hol_line": 2345,
