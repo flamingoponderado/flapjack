@@ -3767,12 +3767,12 @@ private theorem evaluateInvariantsCallTimeoutHOLFinite
     And.intro hmem (And.intro hshared (And.intro hbe (And.intro heshapes
       (And.intro hbase (And.intro hstructs (And.intro hcode horacle))))))
 
-/-- Proof-support for the first recursive-result branches of HOL `Call`.
-    If the callee body returns no result, `Break`, or `Continue`, the source
-    evaluator reports `Error` and preserves the callee post-state. This helper
-    is restricted to those source branches; the tagged Call induction case
-    still needs the remaining result and handler branches. -/
-private theorem evaluateInvariantsCallBodyNoControlHOLFinite
+/-- Proof-support for the non-exception recursive-result branches of HOL
+    `Call`. The callee post-state invariant is preserved through errors,
+    timeouts, FFI completion, and normal return restoration/update branches.
+    This helper still has branch-selector hypotheses and is not the tagged Call
+    induction case; exception and handler branches remain for that case. -/
+private theorem evaluateInvariantsCallBodyNoExceptionHOLFinite
     {width : Nat} {σ : Type} [NeZero width]
     (state : PanPropsEvalStateFiniteExact width σ)
     (info : Option (Option (VarKind × MlS) × Option (MlS × MlS × ProgHOL width)))
@@ -3809,7 +3809,18 @@ private theorem evaluateInvariantsCallBodyNoControlHOLFinite
         (bodyResult, bodyPost))
     (hbodyKind : bodyResult = none ∨ bodyResult = some .break ∨
       bodyResult = some .continue ∨ bodyResult = some .error ∨
-      bodyResult = some .timeOut ∨ ∃ event, bodyResult = some (.finalFfi event))
+      bodyResult = some .timeOut ∨
+      (∃ event, bodyResult = some (.finalFfi event)) ∨
+      (∃ value, bodyResult = some (.returned value) ∧
+        shapeEqHOL (shapeOfHOLExact value) returnShape = false) ∨
+      (∃ value, bodyResult = some (.returned value) ∧
+        shapeEqHOL (shapeOfHOLExact value) returnShape = true ∧ info = none) ∨
+      (∃ value handler, bodyResult = some (.returned value) ∧
+        shapeEqHOL (shapeOfHOLExact value) returnShape = true ∧
+        info = some (none, handler)) ∨
+      (∃ value kind name handler, bodyResult = some (.returned value) ∧
+        shapeEqHOL (shapeOfHOLExact value) returnShape = true ∧
+        info = some (some (kind, name), handler)))
     (hRun : PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state
       (.call info function arguments : ProgHOL width) = (result, post)) :
     post.memaddrs = state.memaddrs ∧
@@ -3890,7 +3901,10 @@ private theorem evaluateInvariantsCallBodyNoControlHOLFinite
   simp only [evaluateHOLFiniteState_call, hargs, hlookup, if_neg hclock, hbody]
     at hcanonical
   rcases hbodyKind with hnone | hbreak | hcontinue
-      | herror | htimeout | ⟨event, hffi⟩
+      | herror | htimeout | ⟨event, hffi⟩ | ⟨value, hreturn, hshapeFalse⟩
+      | ⟨value, hreturn, hshapeTrue, hinfo⟩
+      | ⟨value, handler, hreturn, hshapeTrue, hinfo⟩
+      | ⟨value, kind, name, handler, hreturn, hshapeTrue, hinfo⟩
   · simp only [hnone] at hcanonical
     exact hfinish bodyPost (by simpa using congrArg Prod.snd hcanonical) hbodyFields
   · simp only [hbreak] at hcanonical
@@ -3942,6 +3956,67 @@ private theorem evaluateInvariantsCallBodyNoControlHOLFinite
     exact hfinish empty
       (by simpa [empty, PanSemStateFiniteExact.emptyLocalsHOLFinite] using
         congrArg Prod.snd hcanonical) hemptyFields
+  · simp only [hreturn, hshapeFalse] at hcanonical
+    exact hfinish bodyPost (by simpa using congrArg Prod.snd hcanonical) hbodyFields
+  · simp only [hreturn, hshapeTrue, hinfo] at hcanonical
+    let empty := PanSemStateFiniteExact.emptyLocalsHOLFinite bodyPost
+    have hemptyFields :
+        empty.memaddrs = state.toPanSemFinite.memaddrs ∧
+        empty.shMemaddrs = state.toPanSemFinite.shMemaddrs ∧
+        empty.be = state.toPanSemFinite.be ∧
+        empty.eshapes = state.toPanSemFinite.eshapes ∧
+        empty.baseAddr = state.toPanSemFinite.baseAddr ∧
+        empty.structs = state.toPanSemFinite.structs ∧
+        empty.code = state.toPanSemFinite.code ∧
+        empty.ffi.oracle = state.toPanSemFinite.ffi.oracle := by
+      simpa [empty, PanSemStateFiniteExact.emptyLocalsHOLFinite] using hbodyFields
+    exact hfinish empty
+      (by simpa [empty, PanSemStateFiniteExact.emptyLocalsHOLFinite] using
+        congrArg Prod.snd hcanonical) hemptyFields
+  · simp only [hreturn, hshapeTrue, hinfo] at hcanonical
+    let restored := { bodyPost with locals := state.toPanSemFinite.locals }
+    have hrestoredFields :
+        restored.memaddrs = state.toPanSemFinite.memaddrs ∧
+        restored.shMemaddrs = state.toPanSemFinite.shMemaddrs ∧
+        restored.be = state.toPanSemFinite.be ∧
+        restored.eshapes = state.toPanSemFinite.eshapes ∧
+        restored.baseAddr = state.toPanSemFinite.baseAddr ∧
+        restored.structs = state.toPanSemFinite.structs ∧
+        restored.code = state.toPanSemFinite.code ∧
+        restored.ffi.oracle = state.toPanSemFinite.ffi.oracle := by
+      simpa [restored] using hbodyFields
+    exact hfinish restored
+      (by simpa [restored] using congrArg Prod.snd hcanonical) hrestoredFields
+  · simp only [hreturn, hshapeTrue, hinfo] at hcanonical
+    by_cases hvalid : isValidValueHOLExact
+        state.toPanSemFinite.toExact kind name value = true
+    · simp only [hvalid] at hcanonical
+      let restored := { bodyPost with locals := state.toPanSemFinite.locals }
+      let output := PanSemStateFiniteExact.setKvarHOLFinite kind name value restored
+      have houtputFields :
+          output.memaddrs = state.toPanSemFinite.memaddrs ∧
+          output.shMemaddrs = state.toPanSemFinite.shMemaddrs ∧
+          output.be = state.toPanSemFinite.be ∧
+          output.eshapes = state.toPanSemFinite.eshapes ∧
+          output.baseAddr = state.toPanSemFinite.baseAddr ∧
+          output.structs = state.toPanSemFinite.structs ∧
+          output.code = state.toPanSemFinite.code ∧
+          output.ffi.oracle = state.toPanSemFinite.ffi.oracle := by
+        cases kind <;> simpa [output, PanSemStateFiniteExact.setKvarHOLFinite,
+          PanSemStateFiniteExact.setVarHOLFinite,
+          PanSemStateFiniteExact.setGlobalHOLFinite, restored] using hbodyFields
+      exact hfinish output
+        (by cases kind <;> simpa [output, PanSemStateFiniteExact.setKvarHOLFinite,
+          PanSemStateFiniteExact.setVarHOLFinite,
+          PanSemStateFiniteExact.setGlobalHOLFinite, restored] using
+          congrArg Prod.snd hcanonical) houtputFields
+    · have hinvalid : isValidValueHOLExact
+          state.toPanSemFinite.toExact kind name value = false := by
+        cases h : isValidValueHOLExact
+            state.toPanSemFinite.toExact kind name value <;> simp_all
+      simp only [hinvalid] at hcanonical
+      exact hfinish bodyPost
+        (by simpa using congrArg Prod.snd hcanonical) hbodyFields
 
 end Flapjack
 
