@@ -12111,6 +12111,16 @@
     "reviewer": "flapjack-ds5 (source comparison, 2026-09-28; bead flapjack-pxn.18.5.6.29.1.4.1): exact port of HOL loop_liveScript.sml:40-48 size_inter `size (inter l1 l2) <= size l1`; Lean `sptSize (sptInter l1 l2) <= sptSize l1` over the heterogeneous sptInter carrier matching HOL inter's `'a num_map -> 'b num_map -> 'a num_map`. No width or finite-map fields; no hypotheses beyond the carrier. This is the measure lemma fixedpoint termination uses."
   },
   {
+    "hol_path": "cakeml/pancake/loop_liveScript.sml",
+    "hol_name": "shrink_def",
+    "hol_line": 62,
+    "lean_path": "Flapjack/Pancake/LoopLive.lean",
+    "lean_name": "shrinkHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-28; bead flapjack-pxn.18.5.6.29.1.4): HOL declares shrink and fixedpoint in ONE mutual definition shrink_def (loop_liveScript.sml:62-160), with no separate fixedpoint_def; Lean reproduces the mutual block over the faithful HolLoopProg width / NumSet carrier (words_as_type_indexed_bitvec: HOL is polymorphic in the type-indexed word/label type, Lean fixes it to BitVec width under [NeZero width] via the reviewed HolLoopProg carrier). shrinkHOL is the tagged half and fixedpointHOL is the untagged mutual half, analogous to varsOfExpListHOL/vars_of_exp_list. Clause-for-clause match verified against the HOL equations (Seq shrinks p2 then p1; Loop/If recompute cut-sets via inter/union; Call handler uses l2 from shrinking r and l3 from h). Representative direct HOL observations are the committed original-HOL EVAL rows in scripts/hol-probes/shrink_leaf_probe.out (shrink) plus the indirect mark_all_probe.out / loop_live_comp_probe.out / loop_live_optimise_probe.out suites (mark_all/comp/optimise composed from shrink). Termination measure mirrors HOL (prog_size (K 0) body, 0/1, size live_in - size l1) with sizeOf and sptSize, using sptSize_inter_le for size_inter."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/backend_commonScript.sml",
     "hol_name": "list_delete_def",
     "lean_path": "Flapjack/Misc/Sptree.lean",
