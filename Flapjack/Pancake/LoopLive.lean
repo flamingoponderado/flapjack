@@ -408,6 +408,26 @@ def arithVars : LoopArith → List Nat → List Nat
       insertNatSorted dividend
         (insertNatSorted divisor (deleteNatSorted destination live))
 
+/-- Exact port of HOL `loop_live$arith_vars`
+    (`cakeml/pancake/loop_liveScript.sml:50-58`) over the faithful
+    `LoopArith`/`NumSet` carriers (`insert`/`delete` are the spt-tree
+    operations). The executable list-based `arithVars` above is the
+    `List Nat` rendering; this is the exact-set form used by `shrink`. -/
+@[hol "cakeml/pancake/loop_liveScript.sml" "arith_vars"]
+def arithVarsHOL : LoopArith → NumSet → NumSet
+  | .longMul destinationLeft destinationRight sourceLeft sourceRight, live =>
+      sptInsert sourceLeft ()
+        (sptInsert sourceRight ()
+          (sptDelete destinationLeft (sptDelete destinationRight live)))
+  | .longDiv destinationLeft destinationRight sourceLeft sourceRight quotient, live =>
+      sptInsert sourceLeft ()
+        (sptInsert sourceRight ()
+          (sptInsert quotient ()
+            (sptDelete destinationLeft (sptDelete destinationRight live))))
+  | .div destination dividend divisor, live =>
+      sptInsert dividend ()
+        (sptInsert divisor () (sptDelete destination live))
+
 def loopListDeleteSorted (names : List Nat) (live : List Nat) : List Nat :=
   names.foldl (fun current name => deleteNatSorted name current) live
 
