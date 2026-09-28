@@ -84,6 +84,14 @@ Seq, and the catch-all case. The exact width-indexed `HolLoopProg` port
 `survivesHOLExact` is in `Flapjack.Pancake.Semantics.LoopProps`; its replay
 guards are in `Flapjack.Test.LoopPropsSurvivesParity`. Refresh with
 `HOL_PROBE_ONLY=loop_props_survives_probeScript.sml scripts/hol-probes/regenerate.sh`.
+`loop_props_every_prog_probe.out` records direct HOL EVAL rows for every clause
+of `every_prog_def` in `cakeml/pancake/semantics/loopPropsScript.sml:10-24`
+under a predicate that fails exactly at `Loop` nodes: Seq, Loop, If, Mark, Call
+(both handler forms and both handler branches), and the catch-all case. The
+exact width-indexed `HolLoopProg` port `everyProgHOL` is in
+`Flapjack.Pancake.Semantics.LoopProps.EveryProg`; its replay guards are in
+`Flapjack.Test.LoopPropsEveryProgParity`. Refresh with
+`HOL_PROBE_ONLY=loop_props_every_prog_probeScript.sml scripts/hol-probes/regenerate.sh`.
 `Flapjack.Test.PanEvaluateDeclsParity` probes `evaluate_decls_def` at
 `cakeml/pancake/semantics/panSemScript.sml:814-835`, including each declaration
 constructor, ordered global updates, local clearing during initializer
