@@ -1,0 +1,13 @@
+if_hit=T
+if_miss=F
+loop_hit=T
+loop_miss_out=F
+call_hit=T
+call_miss=F
+call_handler_hit=T
+call_handler_miss_post=F
+ffi_hit=T
+ffi_miss=F
+mark_seq=T
+call_default=T
+assign_default=T
