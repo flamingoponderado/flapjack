@@ -4136,6 +4136,41 @@ theorem evalPanSemNonrecursiveHOLFinite_globalsShapes {width : Nat} {σ : Type} 
     rw [globalsShapes_eq_globalsShapesExact_toExact]
     exact evalPanSemNonrecursiveHOLExact_globalsShapesExact program state.toExact pair.1 pair.2 hres
 
+/-- Finite-carrier rendering of the executed ShMemStore route. There is no
+dedicated `shMemStoreHOLFiniteExact` step helper: the executable store clause is
+the finite wrapper `shMemStoreClauseHOLFiniteExact`, which is the broad
+`shMemStoreClauseHOLExact` applied at `state.toExact`. This theorem records the
+finite-carrier `globalsShapes` preservation for that actual route, with the
+finite `ofExact` corollary below. Untagged Flapjack infrastructure for HOL
+`panPropsScript.sml:1183` `evaluate_global_shape_invariant`. -/
+theorem globalsShapes_shMemStoreClauseHOLFiniteExact {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ)
+    (operator : OpSize) (address value : ExpHOL width) :
+    globalsShapesExact (shMemStoreClauseHOLFiniteExact state operator address value).2 =
+      globalsShapesExact state.toExact := by
+  unfold shMemStoreClauseHOLFiniteExact
+  letI : DecidablePred state.toExact.shMemaddrs :=
+    fun address => Classical.propDecidable (state.shMemaddrs address)
+  exact shMemStoreClauseHOLExact_globalsShapesExact state.toExact
+    operator address value
+    (fun (_ : PanSemStateExact width σ) (expression : ExpHOL width) =>
+      @evalHOLExact width σ _ state.toExact
+        (fun address => Classical.propDecidable (state.memaddrs address)) expression)
+
+/-- Finite-state corollary of `globalsShapes_shMemStoreClauseHOLFiniteExact`:
+packing the broad store-route result back through `ofExact` preserves
+`globalsShapes` on the finite carrier. Untagged Flapjack infrastructure. -/
+theorem globalsShapes_ofExact_shMemStoreClauseHOLFiniteExact {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateFiniteExact width σ)
+    (operator : OpSize) (address value : ExpHOL width)
+    (h : (shMemStoreClauseHOLFiniteExact state operator address value).2.FiniteSupport) :
+    globalsShapes
+        (ofExact (shMemStoreClauseHOLFiniteExact state operator address value).2 h) =
+      globalsShapes state := by
+  rw [globalsShapes_ofExact_eq_globalsShapesExact,
+    globalsShapes_eq_globalsShapesExact_toExact]
+  exact globalsShapes_shMemStoreClauseHOLFiniteExact state operator address value
+
 end PanSemStateFiniteExact
 
 end Flapjack
