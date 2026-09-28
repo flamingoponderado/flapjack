@@ -4847,6 +4847,82 @@ theorem globalsShapes_decCall_arm {width : Nat} {σ : Type} [NeZero width]
                     exact hEmpty (some (.finalFfi event) :
                       Option (PanSemResultExact width))
 
+section GlobalsShapesInvariant
+
+set_option maxHeartbeats 4000000
+set_option backward.isDefEq.respectTransparency false
+set_option linter.unusedSimpArgs false
+
+/-- HOL `panPropsScript.sml:1183` `evaluate_global_shape_invariant` lifted to the exact
+PanSem recursive evaluator: the full-program evaluation preserves the global shape map.
+Flapjack-specific infrastructure; see `globalsShapes` and the per-arm lemmas in
+`PanSem/GlobalsShapesExact.lean`. -/
+theorem evalPanSemRecursiveCallFiniteContext_globalsShapesInvariant {width : Nat} {σ : Type}
+    [NeZero width] (program : ProgHOL width) (sourceContext : FiniteEvalContext width σ) :
+    ∀ result output, evalPanSemRecursiveCallFiniteContext program sourceContext = some (result, output) →
+      globalsShapes output.state = globalsShapes sourceContext.state := by
+  fun_induction evalPanSemRecursiveCallFiniteContext program sourceContext
+  all_goals
+    intro result output heval
+    (try (simp only [Option.some.injEq, Prod.mk.injEq] at heval))
+    (try (rcases heval with ⟨rfl, rfl⟩))
+    (try (simp only [FiniteEvalContext.withState_state] at *))
+    (try (rename_i ihA; simp only [ihA _ _ (by assumption)] at *))
+    (try (rename_i ihB; simp only [ihB _ _ (by assumption)] at *))
+    (try (simp only [globalsShapes_setLocals, globalsShapes_fixClockHOLFinite,
+      globalsShapes_emptyLocalsHOLFinite, globalsShapes_callEntryStateHOLFinite,
+      globalsShapes_handlerStateHOLFinite, globalsShapes_callContinuationContextHOLFinite,
+      globalsShapes_decClockHOLFinite, globalsShapes_setVarHOLFinite] at *))
+    (try rfl)
+    (try assumption)
+    (try (dsimp (config := { zeta := true }) at *))
+    (try assumption)
+    (try (simp_all [globalsShapes_setLocals, globalsShapes_fixClockHOLFinite,
+      globalsShapes_emptyLocalsHOLFinite, globalsShapes_callEntryStateHOLFinite,
+      globalsShapes_handlerStateHOLFinite, globalsShapes_callContinuationContextHOLFinite,
+      globalsShapes_decClockHOLFinite, globalsShapes_setVarHOLFinite,
+      globalsShapes_ofExact_eq_globalsShapesExact, globalsShapes_eq_globalsShapesExact_toExact,
+      shMemLoadClauseHOLExact_globalsShapesExact, shMemStoreClauseHOLExact_globalsShapesExact,
+      globalsShapes_setKvarHOLFinite_of_globalsShapes, isValidValueHOLExact_global_shape_finite]))
+    (try (dsimp (config := { zeta := true }) at *))
+    (try assumption)
+
+  case case66 =>
+    rename_i inst context state other pair a14 a13 a12 a11 a10 a9 a8 a7 a6 a5 a4 a3 a2 a1 a0 hres
+    simpa only [globalsShapes_eq_globalsShapesExact_toExact] using
+      @evalPanSemNonrecursiveHOLFinite_globalsShapes width σ _ state context.memaddrsDecidable
+        context.shMemaddrsDecidable other pair.1 pair.2 hres
+  case case63 =>
+    rename_i inst context state size kind name address evalExpression output
+    change globalsShapesExact output.snd = globalsShapesExact context.state.toExact
+    exact @shMemLoadClauseHOLExact_globalsShapesExact width σ _ state.toExact
+      context.shMemaddrsDecidable size kind name address
+      (fun x expression => @evalHOLExact width σ _ state.toExact context.memaddrsDecidable expression)
+  case case64 =>
+    rename_i inst context state size address value evalExpression output
+    change globalsShapesExact output.snd = globalsShapesExact context.state.toExact
+    exact @shMemStoreClauseHOLExact_globalsShapesExact width σ _ state.toExact
+      context.shMemaddrsDecidable size address value
+      (fun x expression => @evalHOLExact width σ _ state.toExact context.memaddrsDecidable expression)
+  case case46 =>
+    rename_i inst context state resultName shape func arguments continuation values x3 body callee returnShape x2 hclock entry entryContext post1 value result post restored fixedContext continuationContext hshape x1 x ih2 ih1
+    exact ih1.trans ih2
+  case case28 =>
+    rename_i inst context state func arguments values x2 body callee returnShape x1 hclock entry entryContext postContext value hshape kind name snd hvalid x fixedContext ih1
+    cases kind
+    · change globalsShapesExact postContext.state.toExact = globalsShapesExact context.state.toExact
+      exact ih1
+    · funext key
+      by_cases hk : key = name
+      · have hshapeVal := isValidValueHOLExact_global_shape state.toExact name value hvalid
+        simp only [globalsShapesExact, setKvarHOLExact, if_true, hk, Option.map_some]
+        exact hshapeVal.symm
+      · have hkey := congrFun ih1 key
+        simp only [globalsShapesExact, setKvarHOLExact, if_neg hk]
+        exact hkey
+
+end GlobalsShapesInvariant
+
 end PanSemStateFiniteExact
 
 end Flapjack
