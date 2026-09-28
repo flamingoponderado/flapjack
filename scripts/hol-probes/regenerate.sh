@@ -1302,6 +1302,9 @@ run_probe crep_to_loop_comp_func_probeScript.sml crep_to_loop_comp_func_probe.ou
   comp_func_pair_parameter_return comp_func_duplicate_parameters \
   comp_func_if_cutset \
   "$cake_dir/pancake/crep_to_loopScript.sml"
+run_probe crep_to_loop_ocompile_probeScript.sml crep_to_loop_ocompile_probe.out \
+  ocompile_skip ocompile_call \
+  "$cake_dir/pancake/crep_to_loopScript.sml"
 run_probe compile_crepop_probeScript.sml compile_crepop_probe.out \
   compile_crepop_mul_riscv compile_crepop_mul_armv7 \
   "$cake_dir/pancake/crep_to_loopScript.sml"
