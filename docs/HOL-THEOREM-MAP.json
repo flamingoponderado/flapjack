@@ -19561,5 +19561,29 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.31.3): HOL globals_rel_intro (crep_to_loopProofScript.sml:211-214) `globals_rel sglobals tglobals ==> !ad v. FLOOKUP sglobals ad = SOME v ==> FLOOKUP tglobals ad = SOME (wlab_wloc v)`; same statement over crepToLoopGlobalsRelHOLExact. fmap_as_finite_support_relation [sglobals, tglobals]: both parameters are standalone HOL |-> finite maps (5 word |-> 'a word_lab / 'a word_loc) bound at the canonical HolFiniteMapExact translation, FLOOKUP as .lookup. Exact-carrier port alongside the production-carrier StateRel rendering (PanWordLab/LoopValue), so exact CrepSemHOLState/LoopSemStateFiniteExact fields can be related. (words_as_type_indexed_bitvec): HOL 'a word as BitVec width with [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "locals_rel_lookup_same",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/LocalsRelHelpers.lean",
+    "lean_name": "crepToLoopLocalsRelExact_lookup_same",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars"
+    ],
+    "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.13) against locals_rel_lookup_same at crep_to_loopProofScript.sml:3313-3320 ([local]). HOL states `locals_rel ctxt l locs1 locs2 ==> (!n. lookup n locs2 = lookup n locs3) ==> locals_rel ctxt l locs1 locs3`. Lean keeps the same two premises and conclusion over the exact carriers: CrepToLoopContextExact, l : NumSet (sptree$num_set), locs1 : HolFiniteMapExact Nat (HolWordLab width), locs2/locs3 : Spt (WordLocW width), with the tagged crepToLoopLocalsRelExact (locals_rel_def) and sptLookup (sptree lookup). No extra hypotheses. Qualifiers: only ctxt.vars is traversed as an exact finite-map field; HolWordLab/WordLocW are the reviewed width-indexed `'a word` carriers.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "locals_rel_inter_helper",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/LocalsRelHelpers.lean",
+    "lean_name": "crepToLoopLocalsRelExact_inter_helper",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars"
+    ],
+    "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.13) against locals_rel_inter_helper at crep_to_loopProofScript.sml:3322-3343 ([local]). HOL states `locals_rel ctxt l locs1 locs2 ==> EVERY (\\i. lookup i l = NONE) xs ==> LENGTH xs = LENGTH ys ==> locals_rel ctxt l locs1 (inter (alist_insert xs ys locs2) l)`. Lean keeps the three premises (EVERY rendered as `∀ i ∈ xs, sptLookup i l = none`; LENGTH premise retained as `xs.length = ys.length` although the Lean proof does not need it) and the conclusion with sptInter (sptree inter, heterogeneous as in HOL) and LoopSemStateFiniteExact.sptAlistInsert (sptree alist_insert) over the exact carriers CrepToLoopContextExact, NumSet, HolFiniteMapExact Nat (HolWordLab width), Spt (WordLocW width), ys : List (WordLocW width). Qualifiers: only ctxt.vars is an exact finite-map field; HolWordLab/WordLocW are the reviewed width-indexed `'a word` carriers.",
+    "words_as_type_indexed_bitvec": true
   }
 ]
