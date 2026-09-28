@@ -3,6 +3,7 @@ import Flapjack.Pancake.Semantics.LoopSemStateExact.Evaluate
 import Flapjack.Pancake.Semantics.LoopProps.EvalExact
 import Flapjack.Pancake.Semantics.LoopProps.UnassignedVarsExact
 import Flapjack.Pancake.Semantics.LoopProps.CompSyntaxOkLemmas
+import Flapjack.Pancake.Semantics.LoopProps.NestedSeqExact
 
 /-!
 # loop_live `compile_correct`, split by HOL's `Resume` cases
@@ -389,5 +390,62 @@ theorem loopLive_compile_correct_raise {width : Nat} [NeZero width] {F : Type} :
     obtain ⟨rfl, rfl⟩ := he
     have hx' := sptSubspt_inter_lookup hsub ((sptMem_sptInsert x x () _).mpr (Or.inl rfl)) w hx
     exact ⟨(LoopSemStateFiniteExact.callEnv [] v1).locals, by simp [evaluate, hx', LoopSemStateFiniteExact.callEnv], rfl⟩
+
+/-- `compile_correct`, case `Seq c1 c2` (`loop_liveProofScript.sml:17-37` statement;
+    `Resume compile_correct[Seq]` at 118-129), with the `evaluate_ind` hypotheses:
+    the statement for `c1` at `v1`, and for `c2` at every `s1` with
+    `fix_clock v1 (evaluate (c1,v1)) = (NONE, s1)`. -/
+@[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
+theorem loopLive_compile_correct_seq {width : Nat} [NeZero width] {F : Type} :
+    ∀ (c1 c2 : HolLoopProg width) (v1 : LoopSemStateFiniteExact width F),
+      loopLiveCompileCorrectAt c1 v1 →
+      (∀ s1', fixClock v1 (evaluate c1 v1) = (none, s1') → loopLiveCompileCorrectAt c2 s1') →
+    ∀ (res : Option (LoopResultExact width)) (s1 : LoopSemStateFiniteExact width F)
+      (lt : List (NumSet × NumSet)) (locals : Spt (WordLocW width)) (prog1 : HolLoopProg width)
+      (l1 l0 : NumSet),
+      evaluate (.seq c1 c2) v1 = (res, s1) ∧ res ≠ some .error ∧
+        shrinkHOL lt (.seq c1 c2) l0 = (prog1, l1) ∧ sptSubspt (sptInter v1.locals l1) locals →
+    ∃ new_locals, evaluate prog1 { v1 with locals := locals } = (res, { s1 with locals := new_locals }) ∧
+      match res with
+      | none => sptSubspt (sptInter s1.locals l0) new_locals
+      | some (.result _) => new_locals = s1.locals
+      | some (.exception _) => new_locals = s1.locals
+      | some (.break n) =>
+          (match sptOel n lt with
+           | some (_, brk) => sptSubspt (sptInter s1.locals brk) new_locals
+           | none => True)
+      | some (.continue n) =>
+          (match sptOel n lt with
+           | some (cont, _) => sptSubspt (sptInter s1.locals cont) new_locals
+           | none => True)
+      | some .timeOut => new_locals = s1.locals
+      | some (.finalFfi _) => new_locals = s1.locals
+      | some .error => new_locals = s1.locals := by
+  intro c1 c2 v1 ih1 ih2 res s1 lt locals prog1 l1 l0 ⟨he, hne, hs, hsub⟩
+  rcases h2s : shrinkHOL lt c2 l0 with ⟨p2', lm⟩
+  rcases h1s : shrinkHOL lt c1 lm with ⟨p1', l1'⟩
+  rw [shrinkHOL, h2s] at hs
+  simp only [h1s, Prod.mk.injEq] at hs
+  obtain ⟨rfl, rfl⟩ := hs
+  rw [evaluate_seq] at he
+  rcases hc1 : evaluate c1 v1 with ⟨r1, sm⟩
+  rw [hc1] at he
+  cases r1 with
+  | none =>
+    simp only at he
+    obtain ⟨nl1, hn1, hp1⟩ := ih1 none sm lt locals p1' l1' lm ⟨hc1, by simp, h1s, hsub⟩
+    have hfix : fixClock v1 (evaluate c1 v1) = (none, sm) := by rw [fix_clock_evaluate, hc1]
+    obtain ⟨nl2, hn2, hp2⟩ := ih2 sm hfix res s1 lt nl1 p2' lm l0 ⟨he, hne, h2s, hp1⟩
+    refine ⟨nl2, ?_, hp2⟩
+    rw [evaluate_seq, hn1]
+    exact hn2
+  | some r =>
+    simp only [Prod.mk.injEq] at he
+    obtain ⟨rfl, rfl⟩ := he
+    obtain ⟨nl1, hn1, hp1⟩ := ih1 (some r) sm lt locals p1' l1' lm ⟨hc1, hne, h1s, hsub⟩
+    refine ⟨nl1, ?_, ?_⟩
+    · rw [evaluate_seq, hn1]
+    · cases r <;> exact hp1
 
 end Flapjack

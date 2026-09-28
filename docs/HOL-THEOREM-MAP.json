@@ -20145,5 +20145,17 @@
     "lean_name": "getVars_locals_agree",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack helper for the loop_live compile_correct Return case (HOL proves it inline by induction on ns with get_vars_def): get_vars is unchanged by a locals map agreeing on the looked-up names; no separate HOL declaration"
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "loopLive_compile_correct_seq",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.8.1.2): case piece `Seq c1 c2` of loop_live compile_correct (loop_liveProofScript.sml:17-37 statement; Resume compile_correct[Seq] at 118-129). Extra antecedents are exactly loopSem evaluate_ind's Seq hypotheses: the statement for (c1, v1) and, for every s1' with fix_clock v1 (evaluate (c1,v1)) = (NONE, s1'), the statement for (c2, s1'); both via the untagged loopLiveCompileCorrectAt, which unfolds to the HOL statement at that (program, state). Otherwise identical binders/premises/conclusion to the other pieces with v := Seq c1 c2. Proof follows HOL: shrink c2 then c1, IH on c1 then c2 (fix_clock_evaluate), early-exit results carry the c1 conclusion (independent of l0). Qualifiers as for the other pieces."
   }
 ]
