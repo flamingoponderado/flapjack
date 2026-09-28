@@ -18331,6 +18331,19 @@
   },
   {
     "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
+    "hol_name": "ocompile_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/ContextExact.lean",
+    "lean_name": "ocompileHOLExact",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-28; bead flapjack-pxn.18.5.6.29): HOL ocompile_def (crep_to_loopScript.sml:216-219) is the composition loop_live$optimise o compile; this Lean definition composes the reviewed exact compileHOLExact (crep_to_loopScript.sml compile_def) with the reviewed exact optimiseHOL (loop_liveScript.sml optimise_def) over CrepToLoopContextExact/NumSet/CrepProgHOL width/HolLoopProg width with [NeZero width]; no fresh EVAL row is generated because crep_to_loopTheory is not loadable in this worktree, so the composition inherits the direct oracle rows of its two tagged components. fmap_as_finite_support records the context vars/funcs canonical finite-map translation.",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs"
+    ],
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
     "hol_name": "compile_exp_def",
     "lean_path": "Flapjack/Pancake/CrepToLoop/ContextExact.lean",
     "lean_name": "compileExpHOLExact",

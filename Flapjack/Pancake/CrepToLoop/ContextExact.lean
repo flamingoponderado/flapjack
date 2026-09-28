@@ -3,6 +3,7 @@ import Flapjack.Pancake.CrepLang.Exp
 import Flapjack.Pancake.Semantics.CrepSem.HOLState
 import Flapjack.Basis.Pure.MlString
 import Flapjack.Compiler.Encoders.Asm
+import Flapjack.Pancake.LoopLive
 
 /-!
 Exact finite-map carrier and context helpers for `crep_to_loopScript.sml`.
@@ -373,5 +374,19 @@ decreasing_by
     | (simp_all only [CrepProgHOL.dec.sizeOf_spec, CrepProgHOL.seq.sizeOf_spec,
         CrepProgHOL.ite.sizeOf_spec, CrepProgHOL.while.sizeOf_spec,
         CrepProgHOL.call.sizeOf_spec]; omega)
+
+/-- Exact HOL `ocompile_def` (`crep_to_loopScript.sml:216-219`):
+`ocompile ctxt l p = (loop_live$optimise o compile ctxt l) p`.  Composes the
+reviewed exact `compileHOLExact` (`compile_def`) with the reviewed exact
+`optimiseHOL` (`loop_liveScript.sml` `optimise_def`).  Exact-carrier
+infrastructure; no fresh HOL EVAL row is generated here because
+`crep_to_loopTheory` is not loadable in this worktree, so the composition
+inherits the direct oracle rows of its two tagged components. -/
+@[hol "cakeml/pancake/crep_to_loopScript.sml" "ocompile_def"
+  (fmap_as_finite_support := [vars, funcs]) (words_as_type_indexed_bitvec)]
+def ocompileHOLExact {width : Nat} [NeZero width]
+    (context : CrepToLoopContextExact) (live : NumSet)
+    (prog : CrepProgHOL width) : HolLoopProg width :=
+  optimiseHOL (compileHOLExact context live prog)
 
 end Flapjack
