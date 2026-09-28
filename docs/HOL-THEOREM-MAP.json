@@ -20668,5 +20668,14 @@
     "lean_name": "sptMem_fromAList_args",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack sptree helper (HOL domain_fromAList): argument names are in the domain of fromAList (MAP (λx. (x,())) args); no separate CakeML declaration"
+  },
+  {
+    "hol_path": "cakeml/pancake/loop_liveScript.sml",
+    "hol_name": "fixedpoint_thm",
+    "lean_path": "Flapjack/Pancake/LoopLive/Fixedpoint.lean",
+    "lean_name": "fixedpoint_thm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.10) against fixedpoint_thm at loop_liveScript.sml:167-170: `∀lt live_in l1 l2 (body:'a loopLang$prog) l0 b. fixedpoint lt live_in l1 l2 body = SOME (b, l0) ⇒ shrink ((inter live_in l0, l2)::lt) body l2 = (b, l0)`. Lean keeps the binders in order and the implication over the tagged shrinkHOL (shrink_def) and its untagged mutual half fixedpointHOL (HOL declares fixedpoint inside shrink_def); inter is sptInter. The proof follows fixedpoint's recursion (measure size live_in - size l1); the fixed-point branch needs inter live_in (inter live_in l0) = inter live_in l0 structurally (HOL: inter_assoc and lookup_inter_alt inline), proved by the private sptInter_idem_left."
   }
 ]
