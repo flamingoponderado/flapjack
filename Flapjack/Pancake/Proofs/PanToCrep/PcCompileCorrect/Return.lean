@@ -139,7 +139,7 @@ end PcCompileCorrectReturnWitnesses
     PanToCrepContextExact.eids])
   (words_as_type_indexed_bitvec)]
 theorem pcCompileCorrect_Return {width : Nat} {σ : Type} [NeZero width] :
-    ∀ (s : PanSemStateFiniteExact width σ) (expression : ExpHOL width)
+    ∀ (expression : ExpHOL width) (s : PanSemStateFiniteExact width σ)
       (res : Option (PanSemResultExact width))
       (s1 : PanSemStateFiniteExact width σ) (t : CrepSemHOLState width σ)
       (ctxt : PanToCrepContextExact width),
@@ -173,7 +173,7 @@ theorem pcCompileCorrect_Return {width : Nat} {σ : Type} [NeZero width] :
                    globalsLookupHOL t1 v' = some (flattenHOL v') ∧
                      sizeOfShapeHOL (shapeOfHOLExact v') ≤ 32))
         | some (.finalFfi f) => res1 = some (.finalFfi f) := by
-  intro s expression res s1 t ctxt ⟨hrun, hres, hstate, hcode, hexcp, hlocals, hloc⟩
+  intro expression s res s1 t ctxt ⟨hrun, hres, hstate, hcode, hexcp, hlocals, hloc⟩
   obtain ⟨res1, t1, h1, h2, h3, h4, h5⟩ :=
     pcCompileCorrectAt_return s expression res s1 t ctxt hrun hres hstate hcode hexcp
       hlocals hloc

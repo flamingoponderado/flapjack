@@ -178,7 +178,7 @@ is the local lookup list, `distinct_lists ns (FLAT (MAP var_cexp es))` is
 to `(NONE, t with locals := t.locals |++ ZIP (ns, ev))`, matching
 `crepNestedSeqHOL`, `CrepProgHOL.assign`, and the exact `|++` rendering
 `HolFiniteMapExact.updateListEq`. Tag restored 2026-09-28 (bead
-`flapjack-pxn.18.4.3.113.1`) after the previously cited gaps were closed:
+`flapjack-pxn.18.4.3.114`) after the previously cited gaps were closed:
 crepStampExactDomains domain inertness (`flapjack-4ac.5.16.5.32`), the exact
 `UInt8`/word8 byte bridges (`flapjack-4ac.5.16.5.18`), the reviewed 19-arm
 crepSem `evaluate_def` tag, and the imported-owner plus evaluator-local witness
@@ -187,8 +187,8 @@ rule (`flapjack-4ac.5.16.5.21`). -/
   (fmap_as_finite_support := [locals])
   (words_as_type_indexed_bitvec)]
 theorem evalNestedAssignDistinctEqCrepHOL {width : Nat} [NeZero width]
-    {σ : Type} (state : CrepSemHOLState width σ)
-    (expressions : List (CrepExpHOL width)) (names : List Nat)
+    {σ : Type} (expressions : List (CrepExpHOL width)) (names : List Nat)
+    (state : CrepSemHOLState width σ)
     (values oldValues : List (HolWordLab width))
     (hEval : expressions.map (evalCrepSemHOLExpDefault state) = values.map some)
     (hLocals : names.mapM state.locals.lookup = some oldValues)
