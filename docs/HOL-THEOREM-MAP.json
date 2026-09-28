@@ -19217,5 +19217,70 @@
       "vars",
       "funcs"
     ]
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "member_cutset_survives_comp_exp_cases",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpSurvives.lean",
+    "lean_name": "member_cutset_survives_comp_exp_cases",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.33.6): HOL member_cutset_survives_comp_exp_cases (crep_to_loopProofScript.sml:1321-1329) is the conjunction over compile_exp/compile_exps of `n ∈ domain l /\\ compile_exp ct tmp l e = (p,le,ntmp,nl) ==> survives n (nested_seq p)`; Lean states both conjuncts with the same nine variables in HOL order. Over the tagged exact compileExpHOLExact/compileExpsHOLExact, survivesHOLExact (HOL bool as = true) and holLoopNestedSeq; n ∈ domain l as (sptLookup n l).isSome. fmap_as_finite_support [vars, funcs]: quantifies over the exact context whose HOL |-> vars/funcs are canonical HolFiniteMapExact carriers; same-module re-exported canonical witness. (words_as_type_indexed_bitvec): width-indexed Crep/Loop carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "member_cutset_survives_comp_exp",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpSurvives.lean",
+    "lean_name": "member_cutset_survives_comp_exp",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.33.6): HOL member_cutset_survives_comp_exp (crep_to_loopProofScript.sml:1426) is `member_cutset_survives_comp_exp_cases |> CONJUNCT1`; Lean is that conjunct. Over the tagged exact compileExpHOLExact/compileExpsHOLExact, survivesHOLExact (HOL bool as = true) and holLoopNestedSeq; n ∈ domain l as (sptLookup n l).isSome. fmap_as_finite_support [vars, funcs]: quantifies over the exact context whose HOL |-> vars/funcs are canonical HolFiniteMapExact carriers; same-module re-exported canonical witness. (words_as_type_indexed_bitvec): width-indexed Crep/Loop carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "member_cutset_survives_comp_exps",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpSurvives.lean",
+    "lean_name": "member_cutset_survives_comp_exps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.33.6): HOL member_cutset_survives_comp_exps (crep_to_loopProofScript.sml:1428) is `member_cutset_survives_comp_exp_cases |> CONJUNCT2`; Lean is that conjunct. Over the tagged exact compileExpHOLExact/compileExpsHOLExact, survivesHOLExact (HOL bool as = true) and holLoopNestedSeq; n ∈ domain l as (sptLookup n l).isSome. fmap_as_finite_support [vars, funcs]: quantifies over the exact context whose HOL |-> vars/funcs are canonical HolFiniteMapExact carriers; same-module re-exported canonical witness. (words_as_type_indexed_bitvec): width-indexed Crep/Loop carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "member_cutset_survives_comp_exp_flip",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpSurvives.lean",
+    "lean_name": "member_cutset_survives_comp_exp_flip",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.33.6): HOL member_cutset_survives_comp_exp_flip (crep_to_loopProofScript.sml:1432-1433) is `member_cutset_survives_comp_exp |> ONCE_REWRITE_RULE [CONJ_COMM]` ([local]): the same theorem with the two premise conjuncts swapped; Lean states exactly that swapped premise. Over the tagged exact compileExpHOLExact/compileExpsHOLExact, survivesHOLExact (HOL bool as = true) and holLoopNestedSeq; n ∈ domain l as (sptLookup n l).isSome. fmap_as_finite_support [vars, funcs]: quantifies over the exact context whose HOL |-> vars/funcs are canonical HolFiniteMapExact carriers; same-module re-exported canonical witness. (words_as_type_indexed_bitvec): width-indexed Crep/Loop carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "member_cutset_survives_comp_exps_flip",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpSurvives.lean",
+    "lean_name": "member_cutset_survives_comp_exps_flip",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.33.6): HOL member_cutset_survives_comp_exps_flip (crep_to_loopProofScript.sml:1434-1435) is `member_cutset_survives_comp_exps |> ONCE_REWRITE_RULE [CONJ_COMM]` ([local]); Lean states the swapped premise. Over the tagged exact compileExpHOLExact/compileExpsHOLExact, survivesHOLExact (HOL bool as = true) and holLoopNestedSeq; n ∈ domain l as (sptLookup n l).isSome. fmap_as_finite_support [vars, funcs]: quantifies over the exact context whose HOL |-> vars/funcs are canonical HolFiniteMapExact carriers; same-module re-exported canonical witness. (words_as_type_indexed_bitvec): width-indexed Crep/Loop carriers."
   }
 ]
