@@ -371,6 +371,22 @@ def sptOel {α : Type} : Nat → List α → Option α
   | 0, value :: _ => some value
   | n + 1, _ :: rest => sptOel n rest
 
+/-- HOL `sptree$size` (`HOL/src/finite_maps/sptreeScript.sml:117-122`): the
+number of stored values.  Untagged Flapjack infrastructure (source outside
+`cakeml/`). -/
+def sptSize {α : Type} : Spt α → Nat
+  | .ln => 0
+  | .ls _ => 1
+  | .bn left right => sptSize left + sptSize right
+  | .bs left _ right => sptSize left + sptSize right + 1
+
+@[simp] theorem sptSize_ln {α : Type} : sptSize (.ln : Spt α) = 0 := rfl
+@[simp] theorem sptSize_ls {α : Type} (value : α) : sptSize (.ls value) = 1 := rfl
+@[simp] theorem sptSize_bn {α : Type} (left right : Spt α) :
+    sptSize (.bn left right) = sptSize left + sptSize right := rfl
+@[simp] theorem sptSize_bs {α : Type} (left : Spt α) (value : α) (right : Spt α) :
+    sptSize (.bs left value right) = sptSize left + sptSize right + 1 := rfl
+
 /-- Rebuild an spt tree with the root value replaced by `v` (keying at index
 `sptInsert 0`). This is the key-`0` insertion pattern of HOL sptree `insert`:
 inserting key `0` writes at the root of whatever tree it is given. Flapjack
