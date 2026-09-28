@@ -17955,5 +17955,13 @@
     "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect; forwards the imported checked roundtrip; no HOL declaration"
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/backend_commonScript.sml",
+    "hol_name": "list_delete_def",
+    "lean_path": "Flapjack/Misc/Sptree.lean",
+    "lean_name": "sptListDelete",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.29.1.2): HOL `list_delete [] s = s /\\ list_delete (v::vs) s = list_delete vs (delete v s)` (backend_commonScript.sml:180-183) over num list and 'a spt is Lean sptListDelete : List Nat -> Spt α -> Spt α with the same two clauses, using sptDelete, the clause-for-clause rendering of HOL sptree$delete (HOL-library, untagged). HOL EVAL row list_delete_keys in scripts/hol-probes/sptree_set_ops_probe.out is checked by Flapjack.Test.SptreeSetOpsParity. No extra hypotheses."
   }
 ]

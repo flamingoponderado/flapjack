@@ -369,4 +369,94 @@ def sptFromAList {α : Type} : List (Nat × α) → Spt α
   | [] => .ln
   | (key, value) :: entries => sptInsert key value (sptFromAList entries)
 
+/-! ### Set operations used by `loop_live`
+
+Exact renderings of HOL `sptree$mk_BN`, `mk_BS`, `union`, `inter` and `delete`
+(`HOL/src/finite_maps/sptreeScript.sml`), clause for clause, and of CakeML
+`backend_common$list_delete` and HOL `list$oEL`.  The `sptree`/`list`
+definitions live outside the CakeML submodule and carry no `@[hol]` tag (as for
+`sptLookup`/`sptInsert` above); `list_delete` is a CakeML definition and is
+tagged.  Direct HOL `EVAL` rows: `scripts/hol-probes/sptree_set_ops_probe.out`,
+checked by `Flapjack.Test.SptreeSetOpsParity` (`flapjack-pxn.18.5.6.29.1.2`). -/
+
+/-- HOL `sptree$mk_BN`: `mk_BN LN LN = LN`, otherwise `BN t1 t2`. -/
+def sptMkBN {α : Type} : Spt α → Spt α → Spt α
+  | .ln, .ln => .ln
+  | left, right => .bn left right
+
+/-- HOL `sptree$mk_BS`: `mk_BS LN x LN = LS x`, otherwise `BS t1 x t2`. -/
+def sptMkBS {α : Type} : Spt α → α → Spt α → Spt α
+  | .ln, value, .ln => .ls value
+  | left, value, right => .bs left value right
+
+/-- HOL `sptree$union`; values of the left tree take precedence. -/
+def sptUnion {α : Type} : Spt α → Spt α → Spt α
+  | .ln, t => t
+  | .ls a, t =>
+      match t with
+      | .ln => .ls a
+      | .ls _ => .ls a
+      | .bn t1 t2 => .bs t1 a t2
+      | .bs t1 _ t2 => .bs t1 a t2
+  | .bn t1 t2, t =>
+      match t with
+      | .ln => .bn t1 t2
+      | .ls a => .bs t1 a t2
+      | .bn t1' t2' => .bn (sptUnion t1 t1') (sptUnion t2 t2')
+      | .bs t1' a t2' => .bs (sptUnion t1 t1') a (sptUnion t2 t2')
+  | .bs t1 a t2, t =>
+      match t with
+      | .ln => .bs t1 a t2
+      | .ls _ => .bs t1 a t2
+      | .bn t1' t2' => .bs (sptUnion t1 t1') a (sptUnion t2 t2')
+      | .bs t1' _ t2' => .bs (sptUnion t1 t1') a (sptUnion t2 t2')
+
+/-- HOL `sptree$inter`; values of the left tree are kept. -/
+def sptInter {α β : Type} : Spt α → Spt β → Spt α
+  | .ln, _ => .ln
+  | .ls a, t =>
+      match t with
+      | .ln => .ln
+      | .ls _ => .ls a
+      | .bn _ _ => .ln
+      | .bs _ _ _ => .ls a
+  | .bn t1 t2, t =>
+      match t with
+      | .ln => .ln
+      | .ls _ => .ln
+      | .bn t1' t2' => sptMkBN (sptInter t1 t1') (sptInter t2 t2')
+      | .bs t1' _ t2' => sptMkBN (sptInter t1 t1') (sptInter t2 t2')
+  | .bs t1 a t2, t =>
+      match t with
+      | .ln => .ln
+      | .ls _ => .ls a
+      | .bn t1' t2' => sptMkBN (sptInter t1 t1') (sptInter t2 t2')
+      | .bs t1' _ t2' => sptMkBS (sptInter t1 t1') a (sptInter t2 t2')
+
+/-- HOL `sptree$delete`, with `EVEN k` rendered as `k % 2 = 0`. -/
+def sptDelete {α : Type} (key : Nat) : Spt α → Spt α
+  | .ln => .ln
+  | .ls a => if key = 0 then .ln else .ls a
+  | .bn t1 t2 =>
+      if key = 0 then .bn t1 t2
+      else if key % 2 = 0 then sptMkBN (sptDelete ((key - 1) / 2) t1) t2
+      else sptMkBN t1 (sptDelete ((key - 1) / 2) t2)
+  | .bs t1 a t2 =>
+      if key = 0 then .bn t1 t2
+      else if key % 2 = 0 then sptMkBS (sptDelete ((key - 1) / 2) t1) a t2
+      else sptMkBS t1 a (sptDelete ((key - 1) / 2) t2)
+
+/-- CakeML `backend_common$list_delete`:
+    `list_delete [] s = s`, `list_delete (v::vs) s = list_delete vs (delete v s)`. -/
+@[hol "cakeml/compiler/backend/backend_commonScript.sml" "list_delete_def"]
+def sptListDelete {α : Type} : List Nat → Spt α → Spt α
+  | [], s => s
+  | v :: vs, s => sptListDelete vs (sptDelete v s)
+
+/-- HOL `list$oEL`: `oEL n [] = NONE`,
+    `oEL n (x::xs) = if n = 0 then SOME x else oEL (n - 1) xs`. -/
+def listOEL {α : Type} : Nat → List α → Option α
+  | _, [] => none
+  | n, x :: xs => if n = 0 then some x else listOEL (n - 1) xs
+
 end Flapjack
