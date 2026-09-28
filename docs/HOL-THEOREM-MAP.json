@@ -17653,10 +17653,26 @@
   {
     "hol_path": null,
     "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/ExtCall.lean",
+    "lean_name": "compileExpWord",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only extraction of a single compiled/evaluated word expression from compile_exp_val_rel for ExtCall. HOL reasons inline; no standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
     "lean_name": "panToCrepStateRelFiniteExact_ffi",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "ds10 (bead flapjack-pxn.18.4.3.111.1): untagged relation update lemma used by the exact Pan/Crep shared-memory load/store bridge; the exact finite-support state relation is insensitive to the source locals, and updating both FFI states with the same HolFfiState preserves it. No HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/ExtCall.lean",
+    "lean_name": "extCall_foldl_max_ge",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only Nat fold maximum lower-bound helper for fresh ExtCall temporaries. HOL proves the analogous MAX_LIST arithmetic inline; no standalone HOL declaration."
   },
   {
     "hol_path": null,
@@ -17681,5 +17697,66 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-4ac.4.61.5) against panPropsScript.sml:1150-1158. This is the assembled HOL theorem evaluate_invariants: ∀p t res st. evaluate (p,t) = (res,st) ⇒ st.memaddrs = t.memaddrs ∧ st.sh_memaddrs = t.sh_memaddrs ∧ st.be = t.be ∧ st.eshapes = t.eshapes ∧ st.base_addr = t.base_addr ∧ st.structs = t.structs ∧ st.code = t.code ∧ st.ffi.oracle = t.ffi.oracle. Lean keeps the binders p t res st, the single run premise, and the eight conclusions in HOL order over the PanProps carrier; evaluate is evaluateHOLFinitePair (the tagged total evaluateHOLFiniteState through the field-for-field codec). As in HOL (recInduct evaluate_ind), the proof applies the tagged evaluateIndHOL (panSemScript.sml:777) to P (p,u) := evaluateInvariantsAtHOLFinite (ofPanSemFinite u) p and discharges all 21 conjuncts with the tagged constructor leaves (the recursive Seq/If/Dec/While/Call/DecCall leaves take exactly HOL's evaluate_ind IHs), translating each HOL IH through the codec roundtrip (toPanSemFinite ∘ ofPanSemFinite = id), OPT_MMAP = List.mapM (evalListHOLFinite_eq_mapM), and shape_of equality vs shapeEqHOL. No extra premise, no sorry. PanPropsEvalStateFiniteExact uses HolFiniteMapExact for locals/globals/code/eshapes via its checked same-module roundtrip witness; [NeZero width] is the indexed-word translation."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/ExtCall.lean",
+    "lean_name": "extCall_foldl_max_mono",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only Nat fold maximum monotonicity helper for fresh ExtCall temporaries. HOL proves the analogous MAX_LIST arithmetic inline; no standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/ExtCall.lean",
+    "lean_name": "extCall_mem_le_foldl_max",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only list-member bound helper for fresh ExtCall temporaries. HOL proves the analogous MAX_LIST_NOT_MEM fact inline; no standalone HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/ExtCall.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module canonical finite-support relation witness required by the pcCompileCorrect_ExtCall qualifier; delegates to the checked roundtrip; no HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/ExtCall.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module canonical finite-support relation witness required by the pcCompileCorrect_ExtCall qualifier; delegates to the checked roundtrip; no HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/ExtCall.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module canonical finite-support relation witness required by the pcCompileCorrect_ExtCall qualifier; delegates to the checked roundtrip; no HOL declaration."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "pc_compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/ExtCall.lean",
+    "lean_name": "pcCompileCorrect_ExtCall",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "PanToCrepContextExact.vars",
+      "PanToCrepContextExact.funcs",
+      "PanToCrepContextExact.eids"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-28, bead flapjack-pxn.18.4.3.110; pan_to_crepProofScript.sml:442-468, ExtCall case resumed at :4485-4545; panSemScript.sml:777-778 rebound evaluate_ind). The HOL ExtCall conjunct has binders ffi_index ptr1 len1 ptr2 len2 s and no recursive IH; Lean instantiates the same P as pcCompileCorrectAt with function : MlS, four ExpHOL width operands, and source : PanSemStateFiniteExact. The premise/conclusion are exactly pcCompileCorrectAt: source evaluate equation, res != SOME Error, pre-state state_rel/code_rel/excp_rel/locals_rel and localised_prog, followed by existential target result/state, target evaluation, post-state relations, and HOL result case. No target run, result, or post-state relation is assumed. Compared HOL panSem evaluate_def ExtCall and Lean evaluateHOLFiniteState_extCall_source: four operands evaluate in source order; both bytearray reads use identical memory/domain/endian; FinalFFI clears source locals; Ret writes returned bytes and FFI while preserving source locals. Compared HOL compile_def and Lean compileExtCallExactHOLW: both stage four operands in fresh Dec temporaries. Target evalCrepSemHOLProgExact ExtCall read, call, write, FinalFFI, and Ret outcomes match. Ret uses panToCrepStateRelFiniteExact_writeBytearray, whose extensional write congruence accounts for separate DecidablePred instances. Named maps use canonical HolFiniteMapExact with same-module roundtrip witnesses; words use positive-width BitVec. No changed evaluator, extra premise, side condition, comparison, or conclusion."
   }
 ]
