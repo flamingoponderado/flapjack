@@ -1975,6 +1975,7 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         ("Flapjack/Pancake/PanSimp.lean", "retToTailHOL"),
         ("Flapjack/Pancake/PanSimp.lean", "panSimpCompileHOL"),
         ("Flapjack/Pancake/PanSimp.lean", "panSimpDeclsHOL"),
+        ("Flapjack/Pancake/CrepToLoop/Proofs/Primop.lean", "crepPrimopLoopPrimopHOL"),
     }
     for key in reviewed_exact:
         # A source comparison cannot claim an exact HOL port after its tag is

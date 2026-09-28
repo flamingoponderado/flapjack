@@ -1,0 +1,13 @@
+crep_valid=SOME [Word 8w; Word 0w]
+loop_valid_mapped=SOME [Word 8w; Word 0w]
+preserve_valid=T
+crep_overflow=SOME [Word 256w; Word 1w]
+loop_overflow_mapped=SOME [Word 256w; Word 1w]
+preserve_overflow=T
+crep_nonzero_carry=SOME [Word 256w; Word 1w]
+loop_nonzero_carry_mapped=SOME [Word 256w; Word 1w]
+preserve_nonzero_carry=T
+crep_invalid_two=NONE
+preserve_invalid_two=T
+crep_invalid_four=NONE
+preserve_invalid_four=T
