@@ -153,6 +153,7 @@ import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Raise
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Assign
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Primitive
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Store
+import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.ShMemStore
 import Flapjack.Pancake.Proofs.PanToCrep.NotMemContextAssignedMemGt
 import Flapjack.Pancake.Proofs.PanToWord
 import Flapjack.Pipeline
@@ -180,6 +181,7 @@ import Flapjack.Pancake.CrepLang.Prog
 import Flapjack.Pancake.Semantics.CrepProps
 import Flapjack.Pancake.Semantics.CrepProps.MemLoadFlatRel
 import Flapjack.Pancake.Semantics.CrepProps.EvaluateAddClock
+import Flapjack.Pancake.Semantics.CrepProps.EvaluateAddClockIoEventsMono
 import Flapjack.Pancake.WordConvs
 import Flapjack.Pancake.PanToCrep
 import Flapjack.CrepeCompileExpVariables

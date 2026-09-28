@@ -1,4 +1,5 @@
 import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
+import Flapjack.Pancake.Semantics.CrepProps.EvaluateAddClockIoEventsMono
 import Flapjack.PanObservationalSemantics
 import Flapjack.FfiHOL
 
@@ -19,14 +20,16 @@ clock-indexed entry evaluation over the already-ported exact clocked evaluator
 -- FLAPJACK-SPECIFIC (deviation to document, not an exact `@[hol]` port of
 -- `crepSem$semantics_def`): the exact evaluator `evalCrepSemHOLProg` takes the
 -- two domain-membership decision procedures as explicit arguments, and the
--- shared prefix-LUB construction requires a caller-supplied proof that the
--- clock-indexed event family is an `lprefix_chain`.  HOL's `semantics_def`
--- instead calls its total `evaluate` with no instance argument and its
--- `build_lprefix_lub` is total (no chain hypothesis).  Consequently the
--- definitions below carry `memDec`/`shMemDec` and a `divergenceChain` argument.
--- The faithful total-LUB / evaluator-derived chain proof is tracked by the
--- prerequisite bead `flapjack-pxn.18.4.8.2` (to be created), blocked by this
--- module.  No `@[hol]` tag is attached until that gap is closed.
+-- shared prefix-LUB construction `buildPanLprefixLub` carries an
+-- `lprefix_chain` witness of the clock-indexed event family.  The
+-- evaluator-derived chain is now supplied internally
+-- (`crepEvaluateClock_ioEvents_lprefixChain`, from the exact add-clock
+-- event-prefix property `crepPropsScript.sml:1020`), so `crepSemantics` no
+-- longer takes a caller-supplied `divergenceChain` (the earlier deviation,
+-- bead `flapjack-pxn.18.4.8.2`).  The remaining difference from HOL is the
+-- explicit `memDec`/`shMemDec` arguments and the `LoopLprefixLub` witness
+-- carrier versus HOL's total `build_lprefix_lub`.  No `@[hol]` tag is attached
+-- pending coordinator review of those two representations.
 -/
 
 namespace Flapjack
@@ -137,27 +140,13 @@ noncomputable def crepSemanticsWithLub {width : Nat} [NeZero width] {σ : Type}
   else
     .diverge _ divergenceLub
 
-/-- HOL `crepSem$semantics_def` with the shared prefix-LUB construction; the
-caller supplies the `lprefix_chain` proof of the clock-indexed event family
-(the documented deviation from HOL's total `build_lprefix_lub`). -/
-noncomputable def crepSemantics {width : Nat} [NeZero width] {σ : Type}
-    (state : CrepSemHOLState width σ) (start : MlString)
-    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
-    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
-    (divergenceChain : panLprefixChain
-      (fun clock => crepResultEvents (crepEvaluateClock state start memDec shMemDec clock))) :
-    CrepBehaviour :=
-  crepSemanticsWithLub state start memDec shMemDec
-    (buildPanLprefixLub _ divergenceChain)
-
 /-! ## Clock-indexed event traces form a lprefix chain (bead flapjack-pxn.18.4.8.2.6)
 
 Given the HOL-shaped add-clock FFI-event prefix property (the
 `crepPropsScript.sml:1020 evaluate_add_clock_io_events_mono` analogue), the
 clock-indexed trace family of `crepSemantics` is a `panLprefixChain`.  This
 packages the chain obligation so that `crepSemantics` no longer needs it as an
-independent assumption once the prefix property itself is proved.
-Flapjack-specific infrastructure; no `@[hol]` tag. -/
+independent assumption.  Flapjack-specific infrastructure; no `@[hol]` tag. -/
 
 /-- The clock-indexed FFI event traces of the exact crepSem entry evaluation
 form a pairwise prefix chain, given the add-clock event-prefix property. -/
@@ -179,6 +168,55 @@ theorem crepEvaluateClock_ioEvents_lprefixChain_of_addClock_prefix
   · right
     have hprefix := hmono right (left - right)
     rwa [Nat.add_sub_cancel' hle] at hprefix
+
+/-- The clock-indexed FFI event traces of the exact crepSem entry evaluation
+form a pairwise prefix chain, derived from the exact evaluator's add-clock
+event-prefix property (`crepPropsScript.sml:1020`).  Flapjack-specific
+infrastructure; no `@[hol]` tag. -/
+theorem crepEvaluateClock_ioEvents_lprefixChain {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) (start : MlString)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a)) :
+    panLprefixChain (fun clock =>
+      crepResultEvents (crepEvaluateClock state start memDec shMemDec clock)) := by
+  apply crepEvaluateClock_ioEvents_lprefixChain_of_addClock_prefix state start memDec shMemDec
+  intro clock extra
+  have hmono :
+      (evalCrepSemHOLProgExact ({ state with clock := clock } : CrepSemHOLState width σ)
+          (crepEntryProgram start)).2.ffi.ioEvents <+:
+        (evalCrepSemHOLProgExact ({ state with clock := clock + extra } : CrepSemHOLState width σ)
+          (crepEntryProgram start)).2.ffi.ioEvents := by
+    simpa only [crepStateAddClock] using
+      (evalCrepSemHOLProgExact_addClockCombined (crepEntryProgram start)
+        ({ state with clock := clock } : CrepSemHOLState width σ) extra).1
+  simp only [evalCrepSemHOLProgExact_eq_core] at hmono
+  simpa only [crepEvaluateClock, crepResultEvents] using hmono
+
+/-- HOL `crepSem$semantics_def` with the shared prefix-LUB construction.  The
+clock-indexed event family's `lprefix_chain` obligation is discharged from the
+exact evaluator's add-clock event-prefix property
+(`crepEvaluateClock_ioEvents_lprefixChain`), so no caller-supplied chain
+argument is needed. -/
+noncomputable def crepSemantics {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) (start : MlString)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a)) :
+    CrepBehaviour :=
+  crepSemanticsWithLub state start memDec shMemDec
+    (buildPanLprefixLub _
+      (crepEvaluateClock_ioEvents_lprefixChain state start memDec shMemDec))
+
+/-- The caller-supplied-chain variant of `crepSemantics`, retained for callers
+that already hold an independently proved `panLprefixChain`. -/
+noncomputable def crepSemanticsWithChain {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) (start : MlString)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (divergenceChain : panLprefixChain
+      (fun clock => crepResultEvents (crepEvaluateClock state start memDec shMemDec clock))) :
+    CrepBehaviour :=
+  crepSemanticsWithLub state start memDec shMemDec
+    (buildPanLprefixLub _ divergenceChain)
 
 /-- HOL `crepSem$semantics_def` total variant: the divergence LUB is built from
 the chain derived from the add-clock event-prefix property, so the only
