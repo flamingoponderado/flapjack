@@ -1,0 +1,11 @@
+cut_sets_skip=⦕ 8 ⦖
+cut_sets_locvalue=⦕ 3; 8 ⦖
+cut_sets_assign=⦕ 4; 8 ⦖
+cut_sets_load32=⦕ 6; 8 ⦖
+cut_sets_loadbyte=⦕ 8; 9 ⦖
+cut_sets_seq=⦕ 1; 2; 8 ⦖
+cut_sets_if=⦕ 9 ⦖
+cut_sets_longdiv=⦕ 1; 2; 8 ⦖
+cut_sets_longmul=⦕ 3; 4; 8 ⦖
+cut_sets_div=⦕ 7; 8 ⦖
+cut_sets_catch_all=⦕ 8 ⦖
