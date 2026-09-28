@@ -48,6 +48,14 @@ exact `code` map is the representation obligation needed to turn the function
 carrier back into the production `InfoMap` association list
 (`panSemStateOfExact`); HOL `code` is a finite map, so every real exact state
 satisfies it.
+
+The `ffi` field is *not* a carrier mismatch: HOL `panSem$state` stores
+`'ffi ffi_state` (`panSemScript.sml:56`), the exact carrier uses
+`HolFfiState σ` (`StateExact.lean:80`), and the production state used at this
+boundary is instantiated with the same `HolFfiState σ`.  `PanSemStateRel`
+therefore includes the field equality `exact.ffi = production.ffi`, so the
+relation is strong enough to determine FFI effects (the oracle, host state and
+event log are compared exactly); no bridge beyond equality is needed.
 -/
 
 import Flapjack.Pancake.Semantics.PanSem.StateExactFinite
@@ -407,8 +415,10 @@ theorem panSemMemoryRel_update {width : Nat} [NeZero width]
     `memaddrs`/`sharedMemaddrs` relate production Booleans to HOL propositions;
     `memory` uses `PanSemMemoryRel` keyed by the production `memaddrs` domain
     (word-valued on the domain and matching the exact total memory there, with
-    no constraint off the domain); and the scalar/FFI fields agree by
-    equality. -/
+    no constraint off the domain); the scalar fields (`clock`/`be`/`baseAddr`/
+    `topAddr`) agree by equality; and the FFI field agrees by equality
+    (`exact.ffi = production.ffi`), since both carriers are the exact
+    `HolFfiState σ` here. -/
 def PanSemStateRel {width : Nat} [NeZero width] {σ : Type}
     (production : PanSemState (RiscV.Word width) (HolFfiState σ))
     (exact : PanSemStateExact width σ) : Prop :=
@@ -427,6 +437,7 @@ def PanSemStateRel {width : Nat} [NeZero width] {σ : Type}
   (∀ address, production.sharedMemaddrs address = true ↔ exact.shMemaddrs address) ∧
   exact.clock = production.clock ∧
   exact.be = production.be ∧
+  exact.ffi = production.ffi ∧
   exact.baseAddr = production.baseAddress ∧
   exact.topAddr = production.topAddress
 
@@ -461,7 +472,7 @@ theorem panSemStateRel_toExact {width : Nat} [NeZero width] {σ : Type}
     (exactMemory : RiscV.Word width → HolWordLab width)
     (hmem : PanSemMemoryRel production.memaddrs production.memory exactMemory) :
     PanSemStateRel production (panSemStateToExact production exactMemory hmem) := by
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · intro name hname
     simp only [panSemStateToExact, toStringOfBytes_ofString_of_bytes name hname]
   · intro name hname
@@ -476,6 +487,7 @@ theorem panSemStateRel_toExact {width : Nat} [NeZero width] {σ : Type}
     simp only [panSemStateToExact]
   · intro address
     simp only [panSemStateToExact]
+  · simp only [panSemStateToExact]
   · simp only [panSemStateToExact]
   · simp only [panSemStateToExact]
   · simp only [panSemStateToExact]
@@ -521,7 +533,7 @@ theorem panSemStateRel_ofExact {width : Nat} [NeZero width] {σ : Type}
     [DecidablePred exact.memaddrs] [DecidablePred exact.shMemaddrs]
     (codeSupport : ∃ keys : List MlS, ∀ key, exact.code key ≠ none → key ∈ keys) :
     PanSemStateRel (panSemStateOfExact exact codeSupport) exact := by
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · intro name _
     cases hloc : exact.locals (ofString name) with
     | none => simp only [panSemStateOfExact, hloc, Option.map_none]
@@ -558,6 +570,7 @@ theorem panSemStateRel_ofExact {width : Nat} [NeZero width] {σ : Type}
     simp only [panSemStateOfExact, decide_eq_true_eq]
   · intro address
     simp only [panSemStateOfExact, decide_eq_true_eq]
+  · simp only [panSemStateOfExact]
   · simp only [panSemStateOfExact]
   · simp only [panSemStateOfExact]
   · simp only [panSemStateOfExact]

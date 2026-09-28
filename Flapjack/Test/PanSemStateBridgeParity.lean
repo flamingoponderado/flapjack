@@ -113,6 +113,37 @@ example :
       exactState :=
   panSemStateToExact_ofExact exactState emptyCodeSupport
 
+/-! ## Negative regression: the `ffi` conjunct is load-bearing
+
+`PanSemStateRel` compares the FFI carrier by equality.  These examples build an
+exact state that agrees with `exactState` on every field except the FFI event
+log, and show that the relation then cannot hold, so the `exact.ffi =
+production.ffi` conjunct actually constrains FFI effects. -/
+
+/-- `exactState`, but with one FFI event appended to the event log. -/
+def exactStateDiffFfi : PanSemStateExact 64 Unit :=
+  { exactState with
+    ffi := { exactState.ffi with
+      ioEvents := [{ name := .extCall
+                        (Flapjack.Basis.Pure.MlString.MlString.implode []),
+                     configuration := [], bytes := [] }] } }
+
+/-- The two FFI carriers differ (the event logs are `[event]` versus `[]`). -/
+theorem exactStateDiffFfi_ffi_ne : exactStateDiffFfi.ffi ≠ exactState.ffi := by
+  intro h
+  have hio := congrArg HolFfiState.ioEvents h
+  simp [exactStateDiffFfi, exactState] at hio
+
+/-- The relation fails when the exact state's FFI field is changed while the
+    production side keeps the original FFI carrier: the missing conjunct would
+    not have detected this, so the added `ffi` equality is load-bearing. -/
+theorem bridgeRel_ffi_negative :
+    ¬ PanSemStateRel (panSemStateOfExact exactState emptyCodeSupport)
+        exactStateDiffFfi := by
+  intro hrel
+  obtain ⟨_, _, _, _, _, _, _, _, _, _, hffi, _, _⟩ := hrel
+  exact exactStateDiffFfi_ffi_ne (by simpa [panSemStateOfExact] using hffi)
+
 /-! ## Partial production memory: revised `PanSemMemoryRel` witnesses
 
 The production memory is partial; these regressions build the relation from an
