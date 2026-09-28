@@ -947,6 +947,40 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {σ : Type} :
         CrepSemBroadState.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
   CrepSemHOLState.holFmapAsFiniteSupportWitness
 
+/-- Exact finite-support carrier port of CakeML's `state_rel` relation
+(`crep_inlineProofScript.sml:12-24`). The ten compared fields are globals,
+code, memory, both memory domains, clock, endianness, FFI state, and base/top
+addresses; locals are intentionally excluded as in the HOL definition. The
+quantified states use `CrepSemHOLState`, whose three finite maps are the
+reviewed canonical translation of HOL's `|->` fields. -/
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "state_rel_def"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
+def crepInlineStateRelExact {width : Nat} [NeZero width] {σ : Type}
+    (s t : CrepSemHOLState width σ) : Prop :=
+  s.globals = t.globals ∧
+  s.code = t.code ∧
+  s.memory = t.memory ∧
+  s.memaddrs = t.memaddrs ∧
+  s.shMemaddrs = t.shMemaddrs ∧
+  s.clock = t.clock ∧
+  s.be = t.be ∧
+  s.ffi = t.ffi ∧
+  s.baseAddr = t.baseAddr ∧
+  s.topAddr = t.topAddr
+
+/-- Exact finite-support carrier port of CakeML's `locals_rel` relation
+(`crep_inlineProofScript.sml:26-29`). This is HOL finite-map `SUBMAP`: every
+binding in `s.locals` is present with the same value in `t.locals`. The
+statement uses lookup on the finite-support map carrier and adds no key
+decidability or `BEq` hypothesis. -/
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "locals_rel_def"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
+def crepInlineLocalsRelExact {width : Nat} [NeZero width] {σ : Type}
+    (s t : CrepSemHOLState width σ) : Prop :=
+  ∀ key value, s.locals.lookup key = some value → t.locals.lookup key = some value
+
 /-- Exact finite-support carrier port of CakeML's `state_rel_code` relation:
 globals, memory, memory domains, clock, endianness, FFI state, and base/top
 addresses agree; locals and code are intentionally omitted as in HOL. -/

@@ -450,6 +450,207 @@ theorem unique_lprefix_lub {ls : HolLList α → Prop} {ll1 ll2 : HolLList α}
     (h1 : lprefixLub ls ll1) (h2 : lprefixLub ls ll2) : ll1 = ll2 :=
   lprefix_antisym (h1.2 ll2 h2.1) (h2.2 ll1 h1.1)
 
+/-- A cons peels its head. -/
+theorem lhd_lcons (h : α) (t : HolLList α) : lhd (lcons h t) = some h := by
+  simp [lhd, lcons]
+
+/-- The tail of a cons is the original tail. -/
+theorem ltl_lcons (h : α) (t : HolLList α) : ltl (lcons h t) = some t := by
+  have hrep : (⟨fun n => (lcons h t).rep (n + 1),
+      fun n hk => (lcons h t).ok (n + 1) hk⟩ : HolLList α) = t :=
+    ext_of_rep (fun n => by simp [lcons])
+  simp only [ltl, lhd_lcons, Option.some.injEq]
+  exact hrep
+
+/-- A finite lazy list has a `some` prefix of any length up to its length. -/
+theorem ltake_of_LLengthRel {ll : HolLList α} {n : Nat} (h : LLengthRel ll n) :
+    ∃ xs : List α, ltake n ll = some xs := by
+  induction h with
+  | lnil => exact ⟨[], rfl⟩
+  | lcons hd k t _ ih =>
+      obtain ⟨xs, hxs⟩ := ih
+      exact ⟨hd :: xs, by simp [ltake, lhd_lcons, ltl_lcons, hxs]⟩
+
+/-- A finite lazy list has a finite `toList`. -/
+theorem toList_of_LFinite {ll : HolLList α} (h : LFinite ll) :
+    ∃ xs : List α, toList ll = some xs := by
+  obtain ⟨n, hnlen, hnrel⟩ := llength_spec h
+  obtain ⟨xs, hxs⟩ := ltake_of_LLengthRel hnrel
+  refine ⟨xs, ?_⟩
+  unfold toList
+  rw [if_pos h, hnlen]
+  simp only [Option.getD_some]
+  exact hxs
+
+/-- A finite lazy list is never the `none` of `toList`. -/
+theorem toList_ne_none_of_LFinite {ll : HolLList α} (h : LFinite ll) :
+    toList ll ≠ none := by
+  obtain ⟨xs, hxs⟩ := toList_of_LFinite h
+  rw [hxs]
+  exact Option.some_ne_none xs
+
+/-- If `toList` is `none` the list is infinite and defined at every index. -/
+theorem rep_some_of_toList_none {ll : HolLList α} (h : toList ll = none) :
+    ∀ n, ∃ x, ll.rep n = some x := by
+  intro n
+  by_cases hn : ll.rep n = none
+  · exact absurd h (toList_ne_none_of_LFinite (LFinite_of_rep_none hn))
+  · exact Option.ne_none_iff_exists'.mp hn
+
+/-- Converse of `lprefix_rep`: if `b` is defined wherever `a` is, then `a` is
+    an `lprefix` of `b`. -/
+theorem lprefix_of_rep_agree {a b : HolLList α}
+    (h : ∀ n x, a.rep n = some x → b.rep n = some x) : lprefix a b := by
+  unfold lprefix
+  cases ha : toList a with
+  | none =>
+      dsimp only
+      apply ext_of_rep
+      intro n
+      obtain ⟨x, hx⟩ := rep_some_of_toList_none ha n
+      rw [hx, h n x hx]
+  | some xs =>
+      dsimp only
+      cases hb : toList b with
+      | none =>
+          dsimp only
+          apply ltake_of_rep
+          intro i hi
+          have hai : a.rep i = some xs[i] := by
+            rw [toList_eq_some_rep ha i, dif_pos hi]
+          exact h i xs[i] hai
+      | some ys =>
+          dsimp only
+          have hlt : xs.length ≤ ys.length := Nat.le_of_not_lt fun hys => by
+            have hai : a.rep ys.length = some xs[ys.length] := by
+              rw [toList_eq_some_rep ha ys.length, dif_pos hys]
+            have hbi : b.rep ys.length = some xs[ys.length] := h _ _ hai
+            have hby : b.rep ys.length = none := by
+              rw [toList_eq_some_rep hb ys.length, dif_neg (Nat.lt_irrefl ys.length)]
+            rw [hby] at hbi
+            cases hbi
+          rw [List.prefix_iff_eq_take]
+          apply List.ext_getElem
+          · simp [List.length_take, Nat.min_eq_left hlt]
+          · intro j hj1 hj2
+            rw [List.getElem_take]
+            have haj : a.rep j = some xs[j] := by
+              rw [toList_eq_some_rep ha j, dif_pos hj1]
+            have hbj : b.rep j = some xs[j] := h j _ haj
+            have hby : b.rep j = some ys[j] := by
+              rw [toList_eq_some_rep hb j, dif_pos (Nat.lt_of_lt_of_le hj1 hlt)]
+            rw [hby] at hbj
+            exact (Option.some.inj hbj).symm
+
+/-- Exact full form of HOL `build_lprefix_lub_lem`
+    (`lprefix_lubScript.sml:440-445`): on a chain, the `m`-th `LUNFOLD` step
+    carries the `(m+n)`-th chain value.  This is the general `m` companion of
+    `lnth_buildLprefixLub` (the `m = 0` case). -/
+theorem buildLprefixLubF_step {ls : HolLList α → Prop} (hchain : lprefixChain ls) :
+    ∀ m n : Nat, lunfoldStep (buildLprefixLubF ls) m n =
+      (lprefixChainNth (m + n) ls).map (fun x => (m + n + 1, x)) := by
+  intro m n
+  induction n generalizing m with
+  | zero => simp [lunfoldStep, buildLprefixLubF]
+  | succ n ih =>
+      rw [lunfoldStep, ih]
+      cases hk : lprefixChainNth (m + n) ls with
+      | none =>
+          have hk1 : lprefixChainNth (m + n + 1) ls = none :=
+            lprefixChainNth_none_mono hchain (Nat.le_succ (m + n)) hk
+          have harith : m + (n + 1) = m + n + 1 := rfl
+          rw [harith, hk1]
+          rfl
+      | some x =>
+          have harith : m + (n + 1) = m + n + 1 := rfl
+          rw [harith]
+          rfl
+
+/-- HOL `build_lprefix_lub_lem` (`lprefix_lubScript.sml:440-445`) in full:
+    `∀ m n, lnth n (lunfold (buildLprefixLubF ls) m) = lprefixChainNth (m+n) ls`
+    on a chain. -/
+theorem lnth_buildLprefixLub_full {ls : HolLList α → Prop} (hchain : lprefixChain ls)
+    (m n : Nat) :
+    lnth n (lunfold (buildLprefixLubF ls) m) = lprefixChainNth (m + n) ls := by
+  rw [lnth_eq_rep]
+  change (lunfoldStep (buildLprefixLubF ls) m n).map Prod.snd =
+    lprefixChainNth (m + n) ls
+  rw [buildLprefixLubF_step hchain m n]
+  cases lprefixChainNth (m + n) ls with
+  | none => rfl
+  | some x => rfl
+
+/-- Upper-bound half of `buildLprefixLub_thm`: every chain member is an
+    `lprefix` of `buildLprefixLub ls`. -/
+theorem buildLprefixLub_upper {ls : HolLList α → Prop} (hchain : lprefixChain ls) :
+    ∀ ll, ls ll → lprefix ll (buildLprefixLub ls) := by
+  intro ll hl
+  apply lprefix_of_rep_agree
+  intro n x hx
+  rw [← lnth_eq_rep] at hx
+  have hcn : lprefixChainNth n ls = some x :=
+    exists_lprefixChainNth hchain ⟨ll, hl, hx⟩
+  rw [← lnth_eq_rep]
+  rw [lnth_buildLprefixLub hchain n]
+  exact hcn
+
+/-- Least-upper-bound half of `buildLprefixLub_thm`: `buildLprefixLub ls` is
+    below every upper bound of the chain. -/
+theorem buildLprefixLub_least {ls : HolLList α → Prop} (hchain : lprefixChain ls) :
+    ∀ ub, (∀ ll, ls ll → lprefix ll ub) → lprefix (buildLprefixLub ls) ub := by
+  intro ub hub
+  apply lprefix_of_rep_agree
+  intro n x hx
+  rw [← lnth_eq_rep] at hx
+  rw [lnth_buildLprefixLub hchain n] at hx
+  obtain ⟨l, hl, hln⟩ := holOptionSome_some hx
+  rw [← lnth_eq_rep]
+  exact lprefix_lnth (hub l hl) hln
+
+/-- HOL `build_lprefix_lub_thm` (`lprefix_lubScript.sml:451-454`). -/
+theorem buildLprefixLub_thm {ls : HolLList α → Prop} (hchain : lprefixChain ls) :
+    lprefixLub ls (buildLprefixLub ls) :=
+  ⟨buildLprefixLub_upper hchain, buildLprefixLub_least hchain⟩
+
+/-- HOL `lprefix_lub_nth` (`lprefix_lubScript.sml:319-322`). -/
+theorem lprefix_lub_nth {ls : HolLList α → Prop} (hchain : lprefixChain ls)
+    {lub : HolLList α} :
+    (lprefixLub ls lub ↔ ∀ n, lnth n lub = lprefixChainNth n ls) := by
+  constructor
+  · intro hlub n
+    rw [unique_lprefix_lub hlub (buildLprefixLub_thm hchain)]
+    exact lnth_buildLprefixLub hchain n
+  · intro hnth
+    constructor
+    · intro ll hl
+      apply lprefix_of_rep_agree
+      intro n x hx
+      rw [← lnth_eq_rep] at hx
+      have hcn : lprefixChainNth n ls = some x :=
+        exists_lprefixChainNth hchain ⟨ll, hl, hx⟩
+      rw [← lnth_eq_rep]
+      rw [hnth n]
+      exact hcn
+    · intro ub hub
+      apply lprefix_of_rep_agree
+      intro n x hx
+      rw [← lnth_eq_rep] at hx
+      rw [hnth n] at hx
+      obtain ⟨l, hl, hln⟩ := holOptionSome_some hx
+      rw [← lnth_eq_rep]
+      exact lprefix_lnth (hub l hl) hln
+
+/-- HOL `build_prefix_lub_intro` (`lprefix_lubScript.sml:515-517`). -/
+theorem build_prefix_lub_intro {ls : HolLList α → Prop} (hchain : lprefixChain ls)
+    {lub : HolLList α} :
+    (lprefixLub ls lub ↔ lub = buildLprefixLub ls) := by
+  constructor
+  · intro hlub
+    exact unique_lprefix_lub hlub (buildLprefixLub_thm hchain)
+  · intro h
+    rw [h]
+    exact buildLprefixLub_thm hchain
+
 end HolLList
 
 end Flapjack

@@ -854,6 +854,14 @@ the LUB when the input is an `lprefix_chain`. The matching source review is besi
 with `HOL_PROBE_ONLY=loop_sem_lprefix_lub_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
 
+`crep_inline_relations_probe.out` records direct HOL simplification/evaluation
+of `state_rel_def` and `locals_rel_def` at
+`crep_inlineProofScript.sml:12-29`: a nonempty locals map is a submap of an
+extension, missing and conflicting bindings fail, `state_rel` ignores locals,
+and a code-field difference fails. The exact finite-support Lean replays are
+in `Flapjack.Test.CrepInlineRelationsExactParity`. Regenerate with
+`HOL_PROBE_ONLY=crep_inline_relations_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `crep_inline_alist_map_probe.out` records direct HOL EVAL of the inline-map
 input carrier at `crep_inlineScript.sml:259-269`: `alist_to_fmap` keeps the
 first duplicate association-list binding, lookups for another row are
