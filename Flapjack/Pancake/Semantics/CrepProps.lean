@@ -6,6 +6,7 @@ import Flapjack.Pancake.CrepLang.Prog
 import Flapjack.Pancake.Semantics.CrepSem
 import Flapjack.Pancake.Semantics.CrepSem.HOLState
 import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
+import Flapjack.Pancake.Semantics.CrepSem.EventsMono
 import Flapjack.Pancake.PanCommon
 import Flapjack.Pancake.Semantics.PanCommonProps
 
@@ -1399,6 +1400,42 @@ theorem evalCrepSemHOLExps_upd_clock_eq {width : Nat} [NeZero width] {σ : Type}
       expressions.mapM (fun e => evalCrepSemHOLExp state e) :=
   Flapjack.list_mapM_congr _ _ expressions
     (fun e _ => evalCrepSemHOLExp_upd_clock_eq state e (clock + state.clock))
+
+/-! ## FFI event-prefix monotonicity (HOL `crepPropsScript.sml:957`) -/
+
+/-- Exact port of HOL `Theorem evaluate_io_events_mono`
+(`cakeml/pancake/semantics/crepPropsScript.sml:957`):
+`!exps s1 res s2. evaluate (exps,s1) = (res,s2) ==> s1.ffi.io_events ≼
+s2.ffi.io_events`, where `evaluate` is the exact `crepSem$evaluate` port
+`evalCrepSemHOLProgExact`, `exps : CrepProgHOL width` is the source program,
+`res : CrepResultHOLExact width option` is HOL's `result option` (unused in the
+conclusion but fixed by HOL type inference to carry the same word dimension),
+`s2 : CrepSemHOLState width σ` is the result state, and HOL's `IS_PREFIX` (`≼`)
+is Lean `List.IsPrefix` (`<+:`). The conclusion is HOL's list prefix on the two
+states' `ffi.io_events`; `res` is only present so the hypothesis has HOL's exact
+shape.
+
+The `locals`/`globals`/`code` `|->` fields of `CrepSemHOLState` are the reviewed
+canonical `HolFiniteMapExact` translation (same-module witness
+`CrepPropsFiniteSupport.holFmapAsFiniteSupportWitness`), HOL's type-indexed
+`'a word` is `BitVec width` under `[NeZero width]`, and `'ffi` is `σ : Type`;
+hence the combined `fmap_as_finite_support`/words qualifiers. The proof mirrors
+HOL's `recInduct evaluate_ind` + `IS_PREFIX_TRANS`: the shared-memory and
+external-call leaves call `call_FFI`, whose returned/final forms keep or extend
+the log, every other clause preserves `ffi`, and the recursive clauses compose
+the sub-runs through `evalCrepSemHOLProgExact_ioEvents_prefix`. -/
+@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "evaluate_io_events_mono"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
+theorem crepPropsEvaluateIoEventsMono {width : Nat} [NeZero width] {σ : Type}
+    (program : CrepProgHOL width) (state : CrepSemHOLState width σ)
+    (result : Option (CrepResultHOLExact width)) (finalState : CrepSemHOLState width σ)
+    (heval : evalCrepSemHOLProgExact state program = (result, finalState)) :
+    state.ffi.ioEvents <+: finalState.ffi.ioEvents := by
+  classical
+  have h := evalCrepSemHOLProgExact_ioEvents_prefix state program
+  rw [heval] at h
+  exact h
 
 
 private theorem holFiniteMapExact_ext_resVar {α β : Type} {left right : HolFiniteMapExact α β}
