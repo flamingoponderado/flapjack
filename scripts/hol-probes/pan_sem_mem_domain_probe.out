@@ -1,0 +1,6 @@
+domain_load_hit=SOME (ValWord 0x1122334455667788w)
+domain_load_miss_present=NONE
+domain_store_then_load_hit=SOME (Return (ValWord 153w))
+domain_store_miss=SOME Error
+domain_mem_stores_load_roundtrip=SOME (ValWord 153w)
+pan_sem_mem_domain_done=0
