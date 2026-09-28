@@ -19747,5 +19747,41 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.14) against opt_mmap_lhss_locals_rel at crep_to_loopProofScript.sml:2300-2320 ([local]). HOL `∀lhss (s:('a,'b) crepSem$state) (t:('a,'c) loopSem$state) ctxt l. EVERY (λv. IS_SOME (FLOOKUP s.locals v)) lhss ∧ ALL_DISTINCT lhss ∧ locals_rel ctxt l s.locals t.locals ⇒ ∃nlhss. OPT_MMAP (FLOOKUP ctxt.vars) lhss = SOME nlhss ∧ LENGTH nlhss = LENGTH lhss ∧ EVERY (λn. n ∈ domain l) nlhss ∧ ALL_DISTINCT nlhss`. Lean keeps binders in order over CrepSemHOLState width σ, LoopSemStateFiniteExact width F, CrepToLoopContextExact, NumSet; the same three-conjunct premise (EVERY as ∀ v ∈ lhss, IS_SOME as Option.isSome, ALL_DISTINCT as List.Nodup) and four-conjunct existential conclusion (OPT_MMAP as List.mapM, domain as sptMem). The relation qualifier lists the traversed HOL |-> maps ctxt.vars and s.locals; HolWordLab/WordLocW are the reviewed width-indexed `'a word` carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "state_rel_code_def",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "crepInlineStateRelCodeExact",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-2de.13) against crep_inlineProofScript.sml:1442-1453. Lean compares exactly globals, memory, memaddrs, sh_memaddrs, clock, be, ffi, base_addr and top_addr; locals and code are intentionally omitted as in HOL. Carrier is CrepSemHOLState with canonical HolFiniteMapExact locals/globals/code fields and same-module holFmapAsFiniteSupportWitness. words_as_type_indexed_bitvec records the positive-width BitVec representation. No extra hypotheses or changed relation clauses."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "locals_strong_rel_def",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "crepInlineLocalsStrongRelExact",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-2de.13) against crep_inlineProofScript.sml:31-33. Lean compares exactly the finite-support locals maps. The state carrier remains the full CrepSemHOLState with canonical HolFiniteMapExact locals/globals/code fields and same-module holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec records the positive-width BitVec representation. No extra hypotheses or changed relation clauses."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only canonical finite-support roundtrip witness required for the exact relation qualifiers; no CakeML HOL declaration."
   }
 ]

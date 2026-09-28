@@ -1655,6 +1655,11 @@ DOCUMENTED_MISMATCHES = {
 # Proofs/ and are inventoried automatically; counterpart-side witnesses and
 # induction helpers belong beside their semantic definitions instead.
 INFRASTRUCTURE_THEOREMS = {
+    ("Flapjack/Pancake/Proofs/CrepInline.lean", "holFmapAsFiniteSupportWitness"): (
+        "Same-module canonical finite-support roundtrip witness for the exact "
+        "CrepInline relation qualifiers. It reuses CrepSemHOLState's reviewed "
+        "toBroad/ofBroad witness and has no standalone HOL declaration."
+    ),
     ("Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean", "panWriteBytearrayWord8HOL_domainCongr"): (
         "Flapjack-specific support for the ExtCall returned-byte state relation. "
         "This congruence handles distinct DecidablePred instances after equality "
