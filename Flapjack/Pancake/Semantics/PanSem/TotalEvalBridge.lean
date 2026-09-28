@@ -876,4 +876,86 @@ theorem panSemStateRelExec_store32 {σ : Type}
       panSemBitVec64WordModel, panSemWordModel, RiscV.panRiscVMemoryModel,
       RiscV.aligned, panMemStore32HOL, hal]
 
+/-- Explicit next use of `panSemStateRelExec_store32`: when production and exact
+    expression evaluation agree on the two word operands, the actual production
+    `Store32` clause agrees with the exact finite-state HOL `Store32` clause,
+    including its error result and unchanged state on misalignment or an
+    out-of-domain address. The expression premises are kept explicit because
+    the general production/exact expression-evaluation bridge is a separate
+    open prerequisite. This is Flapjack-only constructor bridge infrastructure,
+    not an HOL theorem port. -/
+theorem panSemTotalStore32Clause_agree {σ : Type}
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ)
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (address source : Exp (RiscV.Word 64)) (addr value : RiscV.Word 64)
+    (hprodAddr : evalPanSemStateExp production address = some (.word addr))
+    (hprodValue : evalPanSemStateExp production source = some (.word value))
+    (hexactAddr : @evalHOLExact 64 σ _ exact.toExact
+        (fun a => Classical.propDecidable (exact.toExact.memaddrs a))
+        (expToHOL address) = some (.val (.word addr)))
+    (hexactValue : @evalHOLExact 64 σ _ exact.toExact
+        (fun a => Classical.propDecidable (exact.toExact.memaddrs a))
+        (expToHOL source) = some (.val (.word value))) :
+    PanSemHOLResultOptionRel
+        (panSemTotalStore32Clause production address source).1
+        (evaluateHOLFiniteState exact (.store32 (expToHOL address) (expToHOL source))).1 ∧
+      PanSemStateRelExec
+        (panSemTotalStore32Clause production address source).2
+        (evaluateHOLFiniteState exact
+          (.store32 (expToHOL address) (expToHOL source))).2.toExact := by
+  classical
+  let productionStore := (panSemBitVec64MemoryAccess production).store32
+    (panSemBitVec64MemoryAccess production).domain production.memory
+    panSemBitVec64BytesInWord addr value
+  let exactStore := @panMemStore32HOL 64 _ exact.toExact.memory exact.toExact.memaddrs
+    (fun a => Classical.propDecidable (exact.toExact.memaddrs a)) exact.toExact.be addr
+    (BitVec.ofNat 32 value.toNat)
+  have hstores := panSemStateRelExec_store32 production exact.toExact hrel addr value
+  have hwidth : BitVec.ofNat 32 value.toNat = BitVec.setWidth 32 value := by simp
+  rw [hwidth] at hstores
+  dsimp only [productionStore, exactStore] at hstores
+  cases hprod : (panSemBitVec64MemoryAccess production).store32
+      (panSemBitVec64MemoryAccess production).domain production.memory
+      panSemBitVec64BytesInWord addr value with
+  | none =>
+      cases hexact : @panMemStore32HOL 64 _ exact.toExact.memory exact.toExact.memaddrs
+          (fun a => Classical.propDecidable (exact.toExact.memaddrs a)) exact.toExact.be addr
+          (BitVec.setWidth 32 value) with
+      | none =>
+          have hproduction : panSemTotalStore32Clause production address source =
+              (some .error, production) := by
+            simp [panSemTotalStore32Clause, panSemTotalExprStep,
+              hprodAddr, hprodValue, hprod]
+          have hexactRun : evaluateHOLFiniteState exact
+              (.store32 (expToHOL address) (expToHOL source)) = (some .error, exact) := by
+            rw [evaluateHOLFiniteState_store32]
+            simp [hexactAddr, hexactValue, hexact]
+          rw [hproduction, hexactRun]
+          exact ⟨trivial, hrel⟩
+      | some memory =>
+          simp [hprod, hexact] at hstores
+  | some memory =>
+      cases hexact : @panMemStore32HOL 64 _ exact.toExact.memory exact.toExact.memaddrs
+          (fun a => Classical.propDecidable (exact.toExact.memaddrs a)) exact.toExact.be addr
+          (BitVec.setWidth 32 value) with
+      | none =>
+          simp [hprod, hexact] at hstores
+      | some exactMemory =>
+          have hproduction : panSemTotalStore32Clause production address source =
+              (none, { production with memory := memory }) :=
+            panSemTotalStore32Clause_ok production address source addr value memory
+              hprodAddr hprodValue hprod
+          have hexactRun : evaluateHOLFiniteState exact
+              (.store32 (expToHOL address) (expToHOL source)) =
+                (none, { exact with memory := exactMemory }) := by
+            rw [evaluateHOLFiniteState_store32]
+            simp [hexactAddr, hexactValue, hexact]
+          have hpost : PanSemStateRelExec
+              { production with memory := memory }
+              { exact.toExact with memory := exactMemory } := by
+            simpa [hprod, hexact] using hstores
+          rw [hproduction, hexactRun]
+          exact ⟨trivial, by simpa using hpost⟩
+
 end Flapjack
