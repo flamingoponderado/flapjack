@@ -97,10 +97,6 @@ theorem pcCompileCorrect_all {width : Nat} {σ : Type} [NeZero width] :
     | exact pcCompileCorrect_Return
     | exact pcCompileCorrect_Tick
     | exact pcCompileCorrect_Annot
-    | (intro function configuration configurationLength array arrayLength source
-       exact (pcCompileCorrectAt_iff_HOL _ source).mp
-         (pcCompileCorrect_ExtCall function configuration configurationLength array arrayLength
-           source))
 
 /-- HOL `pc_compile_correct` (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:442-468`).
     The statement is HOL's: binders `v v1 res s1 t ctxt`, the conjunctive

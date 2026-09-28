@@ -115,6 +115,342 @@ theorem sptLookup_sptInsert_zero_overwrite {α : Type} (first second : α) (tree
     sptLookup 0 (sptInsert 0 second (sptInsert 0 first tree)) = some second := by
   cases tree <;> simp [sptInsert, sptLookup]
 
+/-! ## HOL `domain` membership
+
+HOL `sptree$domain` (`HOL/src/finite_maps/sptreeScript.sml:473`) and its
+membership characterisation `domain_lookup` (`:620`,
+`k IN domain t <=> ?v. lookup k t = SOME v`) live in the HOL standard library
+outside the `cakeml/` submodule, so the rendering below is untagged Flapjack
+infrastructure.  HOL sets are rendered as predicates, matching the
+`memaddrs`/`sh_memaddrs` rendering: `sptDomain t` is the predicate
+`fun key => (lookup key t).isSome`, so `k IN domain t` is `sptMem k t` and
+`domain t1 SUBSET domain t2` is `forall k, sptMem k t1 -> sptMem k t2`. -/
+
+/-- Predicate rendering of HOL `domain` on the exact spt carrier. -/
+def sptDomain {α : Type} (tree : Spt α) : Nat → Prop :=
+  fun key => (sptLookup key tree).isSome
+
+/-- HOL `k IN domain t`, i.e. `sptDomain t k`. -/
+def sptMem {α : Type} (key : Nat) (tree : Spt α) : Prop :=
+  sptDomain tree key
+
+/-- Exact port of HOL sptree `domain_lookup`
+(`HOL/src/finite_maps/sptreeScript.sml:620`): `k IN domain t` holds iff
+`lookup k t` returns some value.  The proof is constructor-independent
+(`Option.isSome` decomposes as an existential for every tree), so it covers all
+four spt constructors.  Untagged Flapjack infrastructure (source outside
+`cakeml/`). -/
+theorem sptMem_iff_lookup {α : Type} (key : Nat) (tree : Spt α) :
+    sptMem key tree ↔ ∃ v, sptLookup key tree = some v := by
+  unfold sptMem sptDomain
+  exact Option.isSome_iff_exists
+
+/-- No key is a member of the empty tree. -/
+@[simp] theorem sptMem_ln {α : Type} (key : Nat) :
+    ¬ sptMem key (.ln : Spt α) := by
+  unfold sptMem sptDomain
+  simp [sptLookup]
+
+/-- The single-leaf tree has exactly key `0` in its domain. -/
+@[simp] theorem sptMem_ls {α : Type} (key : Nat) (value : α) :
+    sptMem key (.ls value : Spt α) ↔ key = 0 := by
+  unfold sptMem sptDomain
+  by_cases h : key = 0
+  · simp [sptLookup, h]
+  · simp [sptLookup, h]
+
+/-- `domain_def` clause for `BN`
+(`HOL/src/finite_maps/sptreeScript.sml:473`):
+`domain (BN t1 t2) = IMAGE (fun n => 2 * n + 2) (domain t1) UNION
+IMAGE (fun n => 2 * n + 1) (domain t2)`, rendered as membership.  Untagged
+Flapjack infrastructure (source outside `cakeml/`). -/
+theorem sptMem_bn {α : Type} (left right : Spt α) (key : Nat) :
+    sptMem key (.bn left right) ↔
+      (∃ m, sptMem m left ∧ key = 2 * m + 2) ∨
+        (∃ m, sptMem m right ∧ key = 2 * m + 1) := by
+  unfold sptMem sptDomain
+  by_cases h0 : key = 0
+  · subst h0
+    simp only [sptLookup]
+    simp
+  · by_cases h2 : key % 2 = 0
+    · simp only [sptLookup, if_neg h0, if_pos h2]
+      constructor
+      · intro h
+        left
+        exact ⟨(key - 1) / 2, by simpa using h, by omega⟩
+      · rintro (⟨m, hm, hmk⟩ | ⟨m, hm, hmk⟩)
+        · have : m = (key - 1) / 2 := by omega
+          subst this; simpa using hm
+        · omega
+    · simp only [sptLookup, if_neg h0, if_neg h2]
+      constructor
+      · intro h
+        right
+        exact ⟨(key - 1) / 2, by simpa using h, by omega⟩
+      · rintro (⟨m, hm, hmk⟩ | ⟨m, hm, hmk⟩)
+        · omega
+        · have : m = (key - 1) / 2 := by omega
+          subst this; simpa using hm
+
+/-- `domain_def` clause for `BS`
+(`HOL/src/finite_maps/sptreeScript.sml:473`):
+`domain (BS t1 _ t2) = {0} UNION IMAGE (fun n => 2 * n + 2) (domain t1) UNION
+IMAGE (fun n => 2 * n + 1) (domain t2)`, rendered as membership.  Untagged
+Flapjack infrastructure (source outside `cakeml/`). -/
+theorem sptMem_bs {α : Type} (left : Spt α) (value : α) (right : Spt α) (key : Nat) :
+    sptMem key (.bs left value right) ↔
+      key = 0 ∨ (∃ m, sptMem m left ∧ key = 2 * m + 2) ∨
+        (∃ m, sptMem m right ∧ key = 2 * m + 1) := by
+  unfold sptMem sptDomain
+  by_cases h0 : key = 0
+  · subst h0
+    simp only [sptLookup]
+    simp
+  · by_cases h2 : key % 2 = 0
+    · simp only [sptLookup, if_neg h0, if_pos h2]
+      constructor
+      · intro h
+        right; left
+        exact ⟨(key - 1) / 2, by simpa using h, by omega⟩
+      · rintro (h | ⟨m, hm, hmk⟩ | ⟨m, hm, hmk⟩)
+        · omega
+        · have : m = (key - 1) / 2 := by omega
+          subst this; simpa using hm
+        · omega
+    · simp only [sptLookup, if_neg h0, if_neg h2]
+      constructor
+      · intro h
+        right; right
+        exact ⟨(key - 1) / 2, by simpa using h, by omega⟩
+      · rintro (h | ⟨m, hm, hmk⟩ | ⟨m, hm, hmk⟩)
+        · omega
+        · omega
+        · have : m = (key - 1) / 2 := by omega
+          subst this; simpa using hm
+
+/-- Predicate rendering of HOL sptree `subspt`
+(`HOL/src/finite_maps/sptreeScript.sml:1737-1741`,
+`subspt sp1 sp2 <=> !k. k IN domain sp1 ==> k IN domain sp2 /\
+lookup k sp2 = lookup k sp1`). The HOL source lives in the HOL installation's
+`src/finite_maps`, outside `cakeml/`, so this rendering is untagged Flapjack
+infrastructure; it reuses the `sptMem` rendering of `domain`/`IN`. -/
+def sptSubspt {α : Type} (sp1 sp2 : Spt α) : Prop :=
+  ∀ k, sptMem k sp1 → sptMem k sp2 ∧ sptLookup k sp2 = sptLookup k sp1
+
+/-- Same-key lookup after insertion, proved by strong induction on the HOL
+binary-tree key recursion. -/
+theorem sptLookup_sptInsert_same {α : Type} :
+    ∀ (key : Nat) (value : α) (tree : Spt α),
+      sptLookup key (sptInsert key value tree) = some value := by
+  intro key
+  induction key using Nat.strongRecOn with
+  | ind key ih =>
+      intro value tree
+      by_cases hzero : key = 0
+      · subst key
+        exact sptLookup_sptInsert_zero value tree
+      · have hpositive : 0 < key := Nat.pos_of_ne_zero hzero
+        have hdecrease : (key - 1) / 2 < key := by
+          have hdiv : (key - 1) / 2 ≤ key - 1 := Nat.div_le_self _ _
+          have hlt : key - 1 < key := Nat.sub_lt hpositive (by decide)
+          omega
+        by_cases heven : key % 2 = 0
+        · cases tree with
+          | ln =>
+              conv => lhs; rw [sptInsert.eq_1, if_neg hzero, if_pos heven]
+              conv => lhs; rw [sptLookup.eq_3, if_neg hzero, if_pos heven]
+              exact ih ((key - 1) / 2) hdecrease value .ln
+          | ls existing =>
+              conv => lhs; rw [sptInsert.eq_2, if_neg hzero, if_pos heven]
+              conv => lhs; rw [sptLookup.eq_4, if_neg hzero, if_pos heven]
+              exact ih ((key - 1) / 2) hdecrease value .ln
+          | bn left right =>
+              conv => lhs; rw [sptInsert.eq_3, if_neg hzero, if_pos heven]
+              conv => lhs; rw [sptLookup.eq_3, if_neg hzero, if_pos heven]
+              exact ih ((key - 1) / 2) hdecrease value left
+          | bs left existing right =>
+              conv => lhs; rw [sptInsert.eq_4, if_neg hzero, if_pos heven]
+              conv => lhs; rw [sptLookup.eq_4, if_neg hzero, if_pos heven]
+              exact ih ((key - 1) / 2) hdecrease value left
+        · cases tree with
+          | ln =>
+              conv => lhs; rw [sptInsert.eq_1, if_neg hzero, if_neg heven]
+              conv => lhs; rw [sptLookup.eq_3, if_neg hzero, if_neg heven]
+              exact ih ((key - 1) / 2) hdecrease value .ln
+          | ls existing =>
+              conv => lhs; rw [sptInsert.eq_2, if_neg hzero, if_neg heven]
+              conv => lhs; rw [sptLookup.eq_4, if_neg hzero, if_neg heven]
+              exact ih ((key - 1) / 2) hdecrease value .ln
+          | bn left right =>
+              conv => lhs; rw [sptInsert.eq_3, if_neg hzero, if_neg heven]
+              conv => lhs; rw [sptLookup.eq_3, if_neg hzero, if_neg heven]
+              exact ih ((key - 1) / 2) hdecrease value right
+          | bs left existing right =>
+              conv => lhs; rw [sptInsert.eq_4, if_neg hzero, if_neg heven]
+              conv => lhs; rw [sptLookup.eq_4, if_neg hzero, if_neg heven]
+              exact ih ((key - 1) / 2) hdecrease value right
+
+private theorem div2_pred_ne {a b : Nat} (ha : 0 < a) (hb : 0 < b)
+    (hm : a % 2 = b % 2) (hne : a ≠ b) : (a - 1) / 2 ≠ (b - 1) / 2 := by
+  intro h
+  exact hne (by omega)
+
+theorem sptLookup_sptInsert_ne {α : Type} :
+    ∀ (other : Nat) (key : Nat) (value : α) (tree : Spt α),
+      key ≠ other → sptLookup key (sptInsert other value tree) = sptLookup key tree := by
+  intro other
+  induction other using Nat.strongRecOn with
+  | ind other ih =>
+    intro key value tree hne
+    by_cases h0 : other = 0
+    · subst h0
+      cases tree <;> simp [sptInsert, sptLookup, hne]
+    · have hpos : 0 < other := Nat.pos_of_ne_zero h0
+      have hdec : (other - 1) / 2 < other := by
+        have h1 : (other - 1) / 2 ≤ other - 1 := Nat.div_le_self _ _
+        have h2 : other - 1 < other := Nat.sub_lt hpos (by decide)
+        omega
+      by_cases h2 : other % 2 = 0
+      · cases tree with
+        | ln =>
+          conv => lhs; rw [sptInsert.eq_1, if_neg h0, if_pos h2]
+          conv => rhs; rw [sptLookup.eq_1]
+          by_cases hk : key = 0
+          · conv => lhs; rw [sptLookup.eq_3, if_pos hk]
+          · conv => lhs; rw [sptLookup.eq_3, if_neg hk]
+            by_cases hkk : key % 2 = 0
+            · conv => lhs; rw [if_pos hkk]
+              rw [ih ((other - 1) / 2) hdec ((key - 1) / 2) value (.ln : Spt α)
+                (div2_pred_ne (by omega) hpos (by omega) hne)]
+              simp only [sptLookup.eq_1]
+            · conv => lhs; rw [if_neg hkk]
+              simp only [sptLookup.eq_1]
+        | ls e =>
+          conv => lhs; rw [sptInsert.eq_2, if_neg h0, if_pos h2]
+          by_cases hk : key = 0
+          · conv => lhs; rw [sptLookup.eq_4, if_pos hk]
+            conv => rhs; rw [sptLookup.eq_2, if_pos hk]
+          · conv => lhs; rw [sptLookup.eq_4, if_neg hk]
+            conv => rhs; rw [sptLookup.eq_2, if_neg hk]
+            by_cases hkk : key % 2 = 0
+            · conv => lhs; rw [if_pos hkk]
+              rw [ih ((other - 1) / 2) hdec ((key - 1) / 2) value (.ln : Spt α)
+                (div2_pred_ne (by omega) hpos (by omega) hne)]
+              simp only [sptLookup.eq_1]
+            · conv => lhs; rw [if_neg hkk]
+              simp only [sptLookup.eq_1]
+        | bn l r =>
+          conv => lhs; rw [sptInsert.eq_3, if_neg h0, if_pos h2]
+          by_cases hk : key = 0
+          · conv => lhs; rw [sptLookup.eq_3, if_pos hk]
+            conv => rhs; rw [sptLookup.eq_3, if_pos hk]
+          · conv => lhs; rw [sptLookup.eq_3, if_neg hk]
+            conv => rhs; rw [sptLookup.eq_3, if_neg hk]
+            by_cases hkk : key % 2 = 0
+            · conv => lhs; rw [if_pos hkk]
+              conv => rhs; rw [if_pos hkk]
+              rw [ih ((other - 1) / 2) hdec ((key - 1) / 2) value l
+                (div2_pred_ne (by omega) hpos (by omega) hne)]
+            · conv => lhs; rw [if_neg hkk]
+              conv => rhs; rw [if_neg hkk]
+        | bs l e r =>
+          conv => lhs; rw [sptInsert.eq_4, if_neg h0, if_pos h2]
+          by_cases hk : key = 0
+          · conv => lhs; rw [sptLookup.eq_4, if_pos hk]
+            conv => rhs; rw [sptLookup.eq_4, if_pos hk]
+          · conv => lhs; rw [sptLookup.eq_4, if_neg hk]
+            conv => rhs; rw [sptLookup.eq_4, if_neg hk]
+            by_cases hkk : key % 2 = 0
+            · conv => lhs; rw [if_pos hkk]
+              conv => rhs; rw [if_pos hkk]
+              rw [ih ((other - 1) / 2) hdec ((key - 1) / 2) value l
+                (div2_pred_ne (by omega) hpos (by omega) hne)]
+            · conv => lhs; rw [if_neg hkk]
+              conv => rhs; rw [if_neg hkk]
+      · cases tree with
+        | ln =>
+          conv => lhs; rw [sptInsert.eq_1, if_neg h0, if_neg h2]
+          conv => rhs; rw [sptLookup.eq_1]
+          by_cases hk : key = 0
+          · conv => lhs; rw [sptLookup.eq_3, if_pos hk]
+          · conv => lhs; rw [sptLookup.eq_3, if_neg hk]
+            by_cases hkk : key % 2 = 0
+            · conv => lhs; rw [if_pos hkk]
+              simp only [sptLookup.eq_1]
+            · conv => lhs; rw [if_neg hkk]
+              rw [ih ((other - 1) / 2) hdec ((key - 1) / 2) value (.ln : Spt α)
+                (div2_pred_ne (by omega) hpos (by omega) hne)]
+              simp only [sptLookup.eq_1]
+        | ls e =>
+          conv => lhs; rw [sptInsert.eq_2, if_neg h0, if_neg h2]
+          by_cases hk : key = 0
+          · conv => lhs; rw [sptLookup.eq_4, if_pos hk]
+            conv => rhs; rw [sptLookup.eq_2, if_pos hk]
+          · conv => lhs; rw [sptLookup.eq_4, if_neg hk]
+            conv => rhs; rw [sptLookup.eq_2, if_neg hk]
+            by_cases hkk : key % 2 = 0
+            · conv => lhs; rw [if_pos hkk]
+              simp only [sptLookup.eq_1]
+            · conv => lhs; rw [if_neg hkk]
+              rw [ih ((other - 1) / 2) hdec ((key - 1) / 2) value (.ln : Spt α)
+                (div2_pred_ne (by omega) hpos (by omega) hne)]
+              simp only [sptLookup.eq_1]
+        | bn l r =>
+          conv => lhs; rw [sptInsert.eq_3, if_neg h0, if_neg h2]
+          by_cases hk : key = 0
+          · conv => lhs; rw [sptLookup.eq_3, if_pos hk]
+            conv => rhs; rw [sptLookup.eq_3, if_pos hk]
+          · conv => lhs; rw [sptLookup.eq_3, if_neg hk]
+            conv => rhs; rw [sptLookup.eq_3, if_neg hk]
+            by_cases hkk : key % 2 = 0
+            · conv => lhs; rw [if_pos hkk]
+              conv => rhs; rw [if_pos hkk]
+            · conv => lhs; rw [if_neg hkk]
+              conv => rhs; rw [if_neg hkk]
+              rw [ih ((other - 1) / 2) hdec ((key - 1) / 2) value r
+                (div2_pred_ne (by omega) hpos (by omega) hne)]
+        | bs l e r =>
+          conv => lhs; rw [sptInsert.eq_4, if_neg h0, if_neg h2]
+          by_cases hk : key = 0
+          · conv => lhs; rw [sptLookup.eq_4, if_pos hk]
+            conv => rhs; rw [sptLookup.eq_4, if_pos hk]
+          · conv => lhs; rw [sptLookup.eq_4, if_neg hk]
+            conv => rhs; rw [sptLookup.eq_4, if_neg hk]
+            by_cases hkk : key % 2 = 0
+            · conv => lhs; rw [if_pos hkk]
+              conv => rhs; rw [if_pos hkk]
+            · conv => lhs; rw [if_neg hkk]
+              conv => rhs; rw [if_neg hkk]
+              rw [ih ((other - 1) / 2) hdec ((key - 1) / 2) value r
+                (div2_pred_ne (by omega) hpos (by omega) hne)]
+
+
+/-- Membership after insertion: the inserted key joins the tree, all others are
+unchanged.  Exact `sptree$lookup`/`sptree$` domain content behind the HOL
+`lookup_insert` fact used by `locals_rel_insert_gt_vmax`. -/
+theorem sptMem_sptInsert {α : Type} (key other : Nat) (value : α) (tree : Spt α) :
+    sptMem key (sptInsert other value tree) ↔ key = other ∨ sptMem key tree := by
+  constructor
+  · intro h
+    rw [sptMem_iff_lookup] at h
+    obtain ⟨found, hfound⟩ := h
+    by_cases hk : key = other
+    · exact Or.inl hk
+    · exact Or.inr (by
+        rw [sptMem_iff_lookup]
+        exact ⟨found, by rw [sptLookup_sptInsert_ne other key value tree hk] at hfound; exact hfound⟩)
+  · intro h
+    rw [sptMem_iff_lookup]
+    rcases h with hk | hmem
+    · subst hk
+      exact ⟨value, sptLookup_sptInsert_same key value tree⟩
+    · rw [sptMem_iff_lookup] at hmem
+      obtain ⟨found, hfound⟩ := hmem
+      by_cases hk : key = other
+      · exact ⟨value, by rw [hk]; exact sptLookup_sptInsert_same other value tree⟩
+      · exact ⟨found, by rw [sptLookup_sptInsert_ne other key value tree hk]; exact hfound⟩
+
 /-- HOL `lrnext`: the increment used when placing subtrees in the spt index
 space (`HOL/src/finite_maps/sptreeScript.sml:421-422`). -/
 def lrNext : Nat → Nat
@@ -152,6 +488,130 @@ def sptToAList {α : Type} (tree : Spt α) : List (Nat × α) :=
 def sptListInsert : List Nat → NumSet → NumSet
   | [], tree => tree
   | key :: keys, tree => sptListInsert keys (sptInsert key () tree)
+
+/-- HOL `sptree$mk_BN` (`HOL/src/finite_maps/sptreeScript.sml:88-92`): collapse
+two empty children back to `LN`.  The HOL source lives in the HOL
+installation's `src/finite_maps`, outside `cakeml/`, so this rendering is
+Flapjack infrastructure and carries no `@[hol]` tag. -/
+def sptMkBN {α : Type} (left right : Spt α) : Spt α :=
+  match left, right with
+  | .ln, .ln => .ln
+  | _, _ => .bn left right
+
+/-- HOL `sptree$mk_BS` (`HOL/src/finite_maps/sptreeScript.sml:94-98`): collapse
+the two empty children around a value to `LS`.  Untagged Flapjack
+infrastructure, as for `sptMkBN`. -/
+def sptMkBS {α : Type} (left : Spt α) (value : α) (right : Spt α) : Spt α :=
+  match left, right with
+  | .ln, .ln => .ls value
+  | _, _ => .bs left value right
+
+/-- HOL `sptree$delete` (`HOL/src/finite_maps/sptreeScript.sml:99-113`) with the
+recursive key arithmetic `(k - 1) DIV 2` and the `mk_BN`/`mk_BS` collapsing.
+Untagged Flapjack infrastructure (source outside `cakeml/`). -/
+def sptDelete {α : Type} (key : Nat) : Spt α → Spt α
+  | .ln => .ln
+  | .ls value => if key = 0 then .ln else .ls value
+  | .bn left right =>
+      if key = 0 then .bn left right
+      else if key % 2 = 0 then sptMkBN (sptDelete ((key - 1) / 2) left) right
+      else sptMkBN left (sptDelete ((key - 1) / 2) right)
+  | .bs left value right =>
+      if key = 0 then .bn left right
+      else if key % 2 = 0 then
+        sptMkBS (sptDelete ((key - 1) / 2) left) value right
+      else sptMkBS left value (sptDelete ((key - 1) / 2) right)
+
+/-- HOL `sptree$union` (`HOL/src/finite_maps/sptreeScript.sml:219-244`).  The
+left operand's value wins on shared keys, matching HOL's clause order.
+Untagged Flapjack infrastructure (source outside `cakeml/`). -/
+def sptUnion {α : Type} : Spt α → Spt α → Spt α
+  | .ln, right => right
+  | .ls value, right =>
+      match right with
+      | .ln => .ls value
+      | .ls _ => .ls value
+      | .bn first second => .bs first value second
+      | .bs first _ second => .bs first value second
+  | .bn first second, right =>
+      match right with
+      | .ln => .bn first second
+      | .ls value => .bs first value second
+      | .bn first' second' => .bn (sptUnion first first') (sptUnion second second')
+      | .bs first' value second' =>
+          .bs (sptUnion first first') value (sptUnion second second')
+  | .bs first value second, right =>
+      match right with
+      | .ln => .bs first value second
+      | .ls _ => .bs first value second
+      | .bn first' second' =>
+          .bs (sptUnion first first') value (sptUnion second second')
+      | .bs first' _ second' =>
+          .bs (sptUnion first first') value (sptUnion second second')
+termination_by left _ => sizeOf left
+
+/-- HOL `sptree$inter` (`HOL/src/finite_maps/sptreeScript.sml:272-291`): keep
+only keys present in both trees, with the left operand's value.  HOL's declared
+type is heterogeneous (`'a num_map -> 'b num_map -> 'a num_map`; the second
+tree's values are never read), so this rendering is generic in both value
+types.  Untagged Flapjack infrastructure (source outside `cakeml/`). -/
+def sptInter {α β : Type} : Spt α → Spt β → Spt α
+  | .ln, _ => .ln
+  | .ls value, right =>
+      match right with
+      | .ln => .ln
+      | .ls _ => .ls value
+      | .bn _ _ => .ln
+      | .bs _ _ _ => .ls value
+  | .bn first second, right =>
+      match right with
+      | .ln => .ln
+      | .ls _ => .ln
+      | .bn first' second' => sptMkBN (sptInter first first') (sptInter second second')
+      | .bs first' _ second' =>
+          sptMkBN (sptInter first first') (sptInter second second')
+  | .bs first value second, right =>
+      match right with
+      | .ln => .ln
+      | .ls _ => .ls value
+      | .bn first' second' =>
+          sptMkBN (sptInter first first') (sptInter second second')
+      | .bs first' _ second' =>
+          sptMkBS (sptInter first first') value (sptInter second second')
+termination_by left _ => sizeOf left
+
+/-- HOL `list_delete` (`cakeml/compiler/backend/backend_commonScript.sml:180-182`):
+delete each key (with unit value) from the tree, left to right.  HOL's declared
+type is generic in the map's value type (`num list -> 'a num_map -> 'a num_map`),
+so this rendering is generic too. -/
+@[hol "cakeml/compiler/backend/backend_commonScript.sml" "list_delete_def"]
+def sptListDelete {α : Type} : List Nat → Spt α → Spt α
+  | [], tree => tree
+  | key :: keys, tree => sptListDelete keys (sptDelete key tree)
+
+/-- HOL `oEL` (`HOL/src/list/src/listScript.sml:5482-5484`): the `n`-th list
+element as an option.  Untagged Flapjack infrastructure (source outside
+`cakeml/`). -/
+def sptOel {α : Type} : Nat → List α → Option α
+  | _, [] => none
+  | 0, value :: _ => some value
+  | n + 1, _ :: rest => sptOel n rest
+
+/-- HOL `sptree$size` (`HOL/src/finite_maps/sptreeScript.sml:117-122`): the
+number of stored values.  Untagged Flapjack infrastructure (source outside
+`cakeml/`). -/
+def sptSize {α : Type} : Spt α → Nat
+  | .ln => 0
+  | .ls _ => 1
+  | .bn left right => sptSize left + sptSize right
+  | .bs left _ right => sptSize left + sptSize right + 1
+
+@[simp] theorem sptSize_ln {α : Type} : sptSize (.ln : Spt α) = 0 := rfl
+@[simp] theorem sptSize_ls {α : Type} (value : α) : sptSize (.ls value) = 1 := rfl
+@[simp] theorem sptSize_bn {α : Type} (left right : Spt α) :
+    sptSize (.bn left right) = sptSize left + sptSize right := rfl
+@[simp] theorem sptSize_bs {α : Type} (left : Spt α) (value : α) (right : Spt α) :
+    sptSize (.bs left value right) = sptSize left + sptSize right + 1 := rfl
 
 /-- Rebuild an spt tree with the root value replaced by `v` (keying at index
 `sptInsert 0`). This is the key-`0` insertion pattern of HOL sptree `insert`:

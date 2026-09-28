@@ -38,9 +38,29 @@ respectively
 additionally probes `pan_op_def` at lines 191--193.
 `Flapjack.Test.LoopSetVarParity` probes `set_var_def` at
 `cakeml/pancake/semantics/loopSemScript.sml:108-110`.
+`Flapjack.Test.LoopPropsCutSetsParity` guards the exact `cut_sets_def`
+clauses over `HolLoopProg`/`NumSet`; its direct HOL outputs for Skip,
+LocValue, Assign, Load32/LoadByte, Seq, If, each Arith variant, and the
+catch-all are in `scripts/hol-probes/loop_props_cut_sets_probe.out`.
 `Flapjack.Test.LoopDecClockParity` probes `dec_clock_def` at lines 42--43 of
 the same source.
 `Flapjack.Test.LoopFixClockParity` probes `fix_clock_def` at lines 46--49.
+`crep_to_loop_survives_mapi_assign_probe.out` records direct HOL EVAL for
+`survives_MAPi_Assign` at `crep_to_loopProofScript.sml:368-379`: empty,
+singleton, three-expression, and zero-offset MAPi Assign lists all evaluate to
+`T`. The exact `HolLoopExp`/`HolLoopProg` theorem port is
+`Flapjack.Pancake.CrepToLoop.Proofs.holSurvivesMapiAssign`; replay fixtures are
+in `Flapjack.Test.CrepToLoopSurvivesMapiAssignParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=crep_to_loop_survives_mapi_assign_probeScript.sml
+bash scripts/hol-probes/regenerate.sh`.
+`loop_props_survives_probe.out` records direct HOL EVAL rows for every clause
+of `survives_def` in `cakeml/pancake/semantics/loopPropsScript.sml:25-38`:
+If/Loop/Call (both handler forms)/FFI domain membership, recursive Mark and
+Seq, and the catch-all case. The exact width-indexed `HolLoopProg` port
+`survivesHOLExact` is in `Flapjack.Pancake.Semantics.LoopProps`; its replay
+guards are in `Flapjack.Test.LoopPropsSurvivesParity`. Refresh with
+`HOL_PROBE_ONLY=loop_props_survives_probeScript.sml scripts/hol-probes/regenerate.sh`.
 `Flapjack.Test.PanEvaluateDeclsParity` probes `evaluate_decls_def` at
 `cakeml/pancake/semantics/panSemScript.sml:814-835`, including each declaration
 constructor, ordered global updates, local clearing during initializer
@@ -210,6 +230,15 @@ CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=pan_mem_load_probeScr
 CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=crep_load_shape_probeScript.sml scripts/hol-probes/regenerate.sh
 CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=crep_eval_load_rv64_probeScript.sml scripts/hol-probes/regenerate.sh
 ```
+The same direct `mem_load_def` probe also records the recursive rows
+`recursive_mem_loads_two_words`, `recursive_comb_two_words`, and
+`recursive_named_two_fields`. They use a two-cell 64-bit memory with addresses
+0 and 8, so the fixture pins `bytes_in_word * size_of_sh_with_ctxt` as well as
+the list, `RStruct`, and two-field `NStruct` result shapes. Matching exact
+production-to-HOL kernel guards are in
+`Flapjack.Test.DeclBridgeParity`; regenerate them with the command above for
+`pan_mem_load_probeScript.sml`.
+
 `excp_rel_probe.out` and `ctxt_fc_probe.out` are direct EVALs from
 `pan_to_crepProofTheory`, paired with `Flapjack.Test.PanToCrepRelationsParity`.
 The `functions_projection` row in `ctxt_fc_probe.out` directly checks the
@@ -571,13 +600,102 @@ RISC-V target's deliberate LongDiv encoding rejection.
 The `prog_if_probe.out` fixture probes the comparison-materialization helper
 `prog_if_def` at `cakeml/pancake/crep_to_loopScript.sml:34`, including its
 canonical live-set insertion order.
-The `compile_crepop_probe.out` fixture probes the RISC-V `Mul` case of
-`compile_crepop_def` at line 42 of the same source.
+The `compile_crepop_probe.out` fixture probes both RISC-V and ARMv7 `Mul`
+branches of `compile_crepop_def` at line 42 of the same source.
+`crep_to_loop_compile_exp_probe.out` starts with a direct `prog_if_def` row on
+exactly the arguments used by the `cmp` expression row, then records direct HOL
+EVAL rows for `compile_exp_def` and its local mutual list helper `compile_exps`,
+including variable lookup, Load32 temporary allocation, n-ary Op mapping, Mul
+lowering, comparison temporaries/live-set insertion, Shift, and list
+compilation. The
+exact-carrier Lean equations are in
+`Flapjack.Test.CrepToLoopCompileExpExactParity`. The tagged definitions use the
+source `context` and Loop carriers; the generic production compiler is not
+claimed to route through them yet. Exact `compile_def` is now ported over the
+HOL carriers in `Flapjack.Test.CrepToLoopCompileExactParity`; production
+routing through it is tracked by bead `flapjack-pxn.18.5.6.28.1`, while the
+dependent `comp_func_def` port remains separate work.
+`crep_to_loop_compile_probe.out` records direct HOL EVAL results for all 19
+constructors in `compile_def`, including a function call with a mapped label,
+mapped return, and handler. Its exact-carrier Lean equations are in
+`Flapjack.Test.CrepToLoopCompileExactParity`. The compiler is still proof-side;
+the production `CrepProg`/`LoopProg` path does not yet use the exact carriers,
+and a separate production bridge remains required.
+`crep_to_loop_compile_prog_probe.out` records direct HOL EVAL rows for the
+top-level `compile_prog_def` at `cakeml/pancake/crep_to_loopScript.sml:257-265`:
+a one-entry program with `first_name`-offset function numbering (`cp_fnums`),
+its `(GENLIST I o LENGTH) params` slot list (`cp_params`), the
+`crep_arith$simp_prog` + `loop_live$optimise` compiled body (`cp_body`), the
+result length (`cp_length`), and a second one-entry program whose body calls
+`«f»` so that `make_funcs`'s `first_name = 64` label flows through `comp_func`'s
+`find_lab` (`cp_call_fnums`/`cp_call_params`/`cp_call_body`). The exact-carrier
+tagged port `Flapjack.compileProgHOLExact` (`@[hol ... "compile_prog_def"
+(words_as_type_indexed_bitvec)]`) and its replay in
+`Flapjack.Test.CrepToLoopCompileProgParity` use the exact
+`MlString`/`CrepProgHOL`/`HolLoopProg` carriers. Refresh with
+`HOL_PROBE_ONLY=crep_to_loop_compile_prog_probeScript.sml scripts/hol-probes/regenerate.sh`.
+`crep_to_loop_list_to_num_set_probe.out` records direct HOL EVAL rows for HOL's
+`sptree$list_to_num_set_def` (`HOL/src/finite_maps/sptreeScript.sml:2026-2028`),
+the live-set builder used by `comp_func_def` at
+`cakeml/pancake/crep_to_loopScript.sml:239`. The rows observe membership on
+`[]`, `[0]`, `[0;1;2]` and the unsorted `[2;0;3]` via `lookup`, and the final
+`ltns_cons_shape` row exposes the right-recursive equation
+`list_to_num_set (n::ns) = insert n () (list_to_num_set ns)` with `LN` as the
+base case. The untagged Lean helper `Flapjack.listToNumSetHOLExact` in
+`Flapjack/Pancake/CrepToLoop/ContextExact.lean` reproduces the same right
+recursion, and `Flapjack.Test.CrepToLoopCompFuncParity` replays every row.
+Refresh with
+`HOL_PROBE_ONLY=crep_to_loop_list_to_num_set_probeScript.sml scripts/hol-probes/regenerate.sh`.
+`crep_to_loop_ocompile_probe.out` records direct HOL EVAL rows for
+`ocompile_def` at `cakeml/pancake/crep_to_loopScript.sml:216-219`, which
+composes `compile` and `loop_live$optimise`. The six rows cover `Skip`, `Tick`,
+`Assign`, `Primitive`, `Return`, and a `Call` with a mapped label, mapped
+return, and exception handler. The exact width-indexed Lean port
+`ocompileHOLExact` in `Flapjack.Pancake.CrepToLoop.ContextExact` is replayed
+against those rows by `Flapjack.Test.CrepToLoopOcompileHOLParity`. Refresh with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=crep_to_loop_ocompile_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
 The original Pancake source-level support boundary is also explicit in
 `cakeml/pancake/proofs/loop_to_wordProofScript.sml:2285-2291`: `LLongDiv` is
 accepted by `loop_inst_ok` only for `x86_64`. Consequently, RISC-V parity must
 port the `data_to_word` helper path rather than add a direct RISC-V lowering
 for source `LLongDiv`.
+`crep_to_loop_locals_rel_probe.out` records direct observations for
+`locals_rel_def` at `cakeml/pancake/proofs/crep_to_loopProofScript.sml:101-111`.
+HOL `crepLang$varname = num` (`crepLangScript.sml:19`), so the context's `vars`
+is a `num |-> num` finite map; the fixture uses a `num`-keyed `vars`
+(`0 |-> 0`, with `vmax = 0`), a two-member `num_set`, and a nonempty `num_map`. Besides atomic
+component rows, it decides the whole relation on a concrete context/locals
+pair by kernel-checked proof (`prove` with a `rw`/`fs`/`EVAL_TAC` tactic) since
+the relation is universally quantified over `num`: `locals_rel_true=T` is
+proved, and `locals_rel_domain_false=F` / `locals_rel_value_false=F` report the
+relation's truth value only after the kernel proof of its negation succeeds.
+The exact-carrier Lean counterparts are `Flapjack.CrepToLoop.crepToLoopLocalsRelExact`
+(tagged `locals_rel_def`) with the kernel-checked examples in
+`Flapjack.Test.CrepToLoopParity`.
+
+The same probe also records cut-set rows for
+`crep_to_loopProofScript.sml:236-244` `locals_rel_cutset_prop`: `lBig` / `tBig`
+extend the fixture set / target map with an extra member (`cutset_set_lookup`,
+`cutset_target_lookup`), and the direct kernel-decided rows
+`locals_rel_cutset_second_true=T` (the strengthened second relation) and
+`locals_rel_cutset_after_true=T` (the relation restricted to the smaller
+cut-set) pin the HOL conclusion shape. The exact-carrier counterpart is the
+tagged `Flapjack.CrepToLoop.crepToLoopLocalsRelExact_cutset_prop`, whose
+`subspt` premise is rendered by `Flapjack.sptSubspt` (see
+`Flapjack/Misc/Sptree.lean`).
+
+The same probe records insert rows for
+`crep_to_loopProofScript.sml:226-234` `locals_rel_insert_gt_vmax`:
+`locals_rel_insert_after_true=T` decides `locals_rel` after inserting the fresh
+key `5` (above `ctxt.vmax = 0`) into the target `num_map`, and
+`insert_gt_vmax_lookup_unchanged=T` shows the earlier lookup (key `0`) is
+unaffected. The companion probe `crep_to_loop_locals_insert_probe.out`
+separately pins the raw `sptree$insert` behaviour (`insert_same`,
+`insert_other_unchanged`, `gt_vmax_bounded_survives`, `subset_preserved`). The
+exact-carrier counterpart is the tagged
+`Flapjack.CrepToLoop.crepToLoopLocalsRelExact_insert_gt_vmax` over the exact
+`sptInsert`/`Spt`, whose support lemmas `sptLookup_sptInsert_ne` and
+`sptMem_sptInsert` live in `Flapjack/Misc/Sptree.lean`.
 
 `pan_globals_mem_functions_probe.out` records direct HOL EVAL of the
 `panLang$functions` projection and the membership instance characterized by the
@@ -755,3 +873,18 @@ instances (`panWordOfBytesHOL false 0 bs = crepClockWordOfBytes
 `fupdate_list_append_commutes_probe`), so no CakeML build is needed.  Refresh
 with `HOL_PROBE_ONLY=pan_word_of_bytes_overlong_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
+
+`sptree_set_ops_probe` evaluates the sptree set operations used by `loop_live`
+(`sptree$union`/`inter`/`delete`, `backend_common$list_delete`, `list$oEL`) on
+small `fromAList` trees and records their `toAList` key order, emptiness and
+`oEL` results.  `Flapjack.Test.SptreeSetOpsParity` checks the Lean renderings
+in `Flapjack/Misc/Sptree.lean` against every row.  Refresh with
+`HOL_PROBE_ONLY=sptree_set_ops_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`sptree_inter_mixed_probe` evaluates the HETEROGENEOUS `sptree$inter`
+(`'a num_map -> 'b num_map -> 'a num_map`) on mixed-payload `fromAList` trees and
+records that the result keeps the LEFT operand's values on keys present in both
+trees; it loads only `bossLib`/`sptreeTheory` (no CakeML `preamble`), so it runs
+in a bare HOL session.  `Flapjack.Test.SptreeSetOpsParity.sptreeInterMixedGuard`
+checks the Lean `sptInter` against every row.  Refresh with
+`HOL_PROBE_ONLY=sptree_inter_mixed_probeScript.sml scripts/hol-probes/regenerate.sh`.

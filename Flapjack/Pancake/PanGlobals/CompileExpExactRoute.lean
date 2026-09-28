@@ -1,4 +1,5 @@
 import Flapjack.Pancake.PanGlobals.CompileExpExact
+import Flapjack.Pancake.PanLang.Exp
 
 /-!
 Finite-support routing infrastructure between the executed PanGlobals
@@ -47,7 +48,7 @@ namespace Flapjack
 
 open Flapjack.Basis.Pure.MlString
 open Flapjack.Pancake.PanLang
-  (MlS ShapeHOL ExpHOL expToHOL expOfHOL ExpByteRanged ListExpByteRanged NameRanged
+  (MlS ShapeHOL ExpHOL expToHOL expOfHOL varExpHOL ExpByteRanged ListExpByteRanged NameRanged
     shapeToHOL shapeOfHOL ShapeByteRanged ProgByteRanged DeclByteRanged FunDeclByteRanged)
 
 /-- `lookupInfo` returns `some` only for a key that occurs in the association
@@ -301,6 +302,50 @@ def compileExpRouteCake [BEq String] [LawfulBEq String] {width : Nat} [NeZero wi
     Exp (BitVec width) :=
   expOfHOL (compileExpExactHOL (ofPass context) (expToHOL expression))
 
+/-- Use the tagged HOL `var_exp` for the parser-backed exact compiler's
+    generated-name scan whenever the names it returns can be represented by
+    HOL `mlstring`. The Boolean guard is deliberately over the emitted local
+    names only: `varExpHOL_expToHOL_decode` needs precisely that domain, and
+    other source names are not observable in this result. On arbitrary
+    production strings outside that domain, retain the original collector.
+    The theorem below proves this adapter always returns the production list. -/
+def expLocalVarsViaHOLWhenByteRanged {width : Nat} [NeZero width]
+    (expression : Exp (BitVec width)) : List String :=
+  let names := Flapjack.expLocalVars expression
+  if names.all (fun name => name.toList.all (fun c => decide (c.toNat < 256))) then
+    (varExpHOL (expToHOL expression)).map toStringOfBytes
+  else
+    names
+
+/-- The exact routed collector preserves the production list for every input:
+    on byte-ranged emitted names this is `varExpHOL` decoded through the
+    reviewed `String`/`MlString` bridge; otherwise it takes the unchanged
+    production fallback. -/
+@[simp] theorem expLocalVarsViaHOLWhenByteRanged_eq {width : Nat} [NeZero width]
+    (expression : Exp (BitVec width)) :
+    expLocalVarsViaHOLWhenByteRanged expression = Flapjack.expLocalVars expression := by
+  unfold expLocalVarsViaHOLWhenByteRanged
+  dsimp only
+  by_cases hnames : (Flapjack.expLocalVars expression).all
+      (fun name => name.toList.all (fun c => decide (c.toNat < 256))) = true
+  · simp only [hnames, if_pos]
+    apply Flapjack.Pancake.PanLang.varExpHOL_expToHOL_decode
+    intro name hmem c hc
+    have hname := List.all_eq_true.mp hnames name hmem
+    have hchar := List.all_eq_true.mp hname c hc
+    simpa only [decide_eq_true_eq] using hchar
+  · simp [hnames]
+
+/-- List form of the preceding pointwise equality, used by the generated-name
+    calculation in the routed handled-call clause. -/
+@[simp] theorem expLocalVarsViaHOLWhenByteRanged_flatMap_eq {width : Nat} [NeZero width]
+    (expressions : List (Exp (BitVec width))) :
+    expressions.flatMap expLocalVarsViaHOLWhenByteRanged =
+      expressions.flatMap Flapjack.expLocalVars := by
+  induction expressions with
+  | nil => rfl
+  | cons expression rest ih => simp [ih]
+
 /-- `MAP (compile_exp ctxt)` for the routed expression compiler.  Flapjack
     routing infrastructure (untagged). -/
 def compileExpRouteCakeArgs [BEq String] [LawfulBEq String] {width : Nat} [NeZero width]
@@ -398,7 +443,7 @@ def compileProgCakeOfExact [LawfulBEq String] {width : Nat} [NeZero width]
             | some (shape, address) =>
                 let compiledHandlerProgram := compileProgCakeOfExact context handler
                 let names := handlerVar :: freeVarIds compiledHandlerProgram ++
-                  compiledArguments.flatMap expLocalVars
+                  compiledArguments.flatMap expLocalVarsViaHOLWhenByteRanged
                 let resultName := freshNameHOL "" names
                 let flagName := freshNameHOL "vn'" (resultName :: names)
                 let handlerBody :=

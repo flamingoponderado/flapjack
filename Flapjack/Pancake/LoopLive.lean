@@ -22,6 +22,37 @@ def loopVarsOfExp : LoopExp α → List Nat
   | .baseAddr => []
   | .topAddr => []
 
+mutual
+  /-- Exact port of HOL `loop_live$vars_of_exp_def`
+      (`cakeml/pancake/loop_liveScript.sml:10-21`) over the faithful
+      width-indexed `HolLoopExp` carrier and the exact `num_set`
+      (`NumSet = Spt Unit`, `sptInsert`).  HOL declares `vars_of_exp` and
+      `vars_of_exp_list` as one mutual definition; the second half is
+      `varsOfExpListHOL` below. -/
+  @[hol "cakeml/pancake/loop_liveScript.sml" "vars_of_exp_def"
+    (words_as_type_indexed_bitvec)]
+  def varsOfExpHOL {width : Nat} [NeZero width] :
+      HolLoopExp width → NumSet → NumSet
+    | .var name, live => sptInsert name () live
+    | .const _, live => live
+    | .lookup _, live => live
+    | .load address, live => varsOfExpHOL address live
+    | .op _ arguments, live => varsOfExpListHOL arguments live
+    | .shift _ left right, live => varsOfExpHOL left (varsOfExpHOL right live)
+    | .baseAddr, live => live
+    | .topAddr, live => live
+
+  /-- The `vars_of_exp_list` half of HOL's mutual `vars_of_exp_def`
+      (`cakeml/pancake/loop_liveScript.sml:19-21`).  Untagged because HOL
+      declares it inside the single `vars_of_exp_def` definition rather than
+      as a separate declaration; its `@[hol]` reference is
+      `varsOfExpHOL` above. -/
+  def varsOfExpListHOL {width : Nat} [NeZero width] :
+      List (HolLoopExp width) → NumSet → NumSet
+    | [], live => live
+    | expression :: rest, live => varsOfExpHOL expression (varsOfExpListHOL rest live)
+end
+
 /-! Source-shaped port of `loop_live$vars_of_exp`
     (`cakeml/pancake/loop_liveScript.sml:11`).  HOL carries the live names as
     a canonical `num_set`; the Lean syntax layer keeps lists, so fold the
@@ -376,6 +407,26 @@ def arithVars : LoopArith → List Nat → List Nat
   | .div destination dividend divisor, live =>
       insertNatSorted dividend
         (insertNatSorted divisor (deleteNatSorted destination live))
+
+/-- Exact port of HOL `loop_live$arith_vars`
+    (`cakeml/pancake/loop_liveScript.sml:50-58`) over the faithful
+    `LoopArith`/`NumSet` carriers (`insert`/`delete` are the spt-tree
+    operations). The executable list-based `arithVars` above is the
+    `List Nat` rendering; this is the exact-set form used by `shrink`. -/
+@[hol "cakeml/pancake/loop_liveScript.sml" "arith_vars"]
+def arithVarsHOL : LoopArith → NumSet → NumSet
+  | .longMul destinationLeft destinationRight sourceLeft sourceRight, live =>
+      sptInsert sourceLeft ()
+        (sptInsert sourceRight ()
+          (sptDelete destinationLeft (sptDelete destinationRight live)))
+  | .longDiv destinationLeft destinationRight sourceLeft sourceRight quotient, live =>
+      sptInsert sourceLeft ()
+        (sptInsert sourceRight ()
+          (sptInsert quotient ()
+            (sptDelete destinationLeft (sptDelete destinationRight live))))
+  | .div destination dividend divisor, live =>
+      sptInsert dividend ()
+        (sptInsert divisor () (sptDelete destination live))
 
 def loopListDeleteSorted (names : List Nat) (live : List Nat) : List Nat :=
   names.foldl (fun current name => deleteNatSorted name current) live
@@ -1559,5 +1610,228 @@ theorem loopEveryProg_call (predicate : LoopProg α → Prop)
   | some h =>
       obtain ⟨n, first, second, l⟩ := h
       simp [loopEveryProg]
+
+/-! ## Exact `loop_live` shrink/fixedpoint over the faithful carrier
+
+Source-shaped port of the single HOL declaration `loop_live$shrink_def`
+(`cakeml/pancake/loop_liveScript.sml:62-160`), over the faithful
+`HolLoopProg`/`NumSet` carrier.  HOL declares BOTH `shrink` and `fixedpoint`
+inside that one mutual block (there is no separate `fixedpoint_def`), with the
+lexicographic termination measure `(prog_size (K 0) body, 0/1,
+size live_in - size l1)`; the Lean definitions keep that mutual shape and
+measure (`sizeOf` in place of `prog_size`, and `sptSize_inter_le` in place of
+`size_inter`).  `shrinkHOL` is the tagged half carrying
+`@[hol ... "shrink_def"]`, while `fixedpointHOL` is the untagged mutual half,
+analogous to `varsOfExpListHOL`/`vars_of_exp_list`. -/
+
+/-- Exact port of HOL `loop_liveScript.sml:28-31 size_mk_BN`. -/
+@[hol "cakeml/pancake/loop_liveScript.sml" "size_mk_BN"]
+theorem sptSize_mkBN {α : Type} (t1 t2 : Spt α) :
+    sptSize (sptMkBN t1 t2) = sptSize (.bn t1 t2) := by
+  cases t1 <;> cases t2 <;> simp [sptMkBN, sptSize]
+
+/-- Exact port of HOL `loop_liveScript.sml:34-36 size_mk_BS`:
+    `size (mk_BS t1 x t2) = size (BS t1 x t2)`. -/
+@[hol "cakeml/pancake/loop_liveScript.sml" "size_mk_BS"]
+theorem sptSize_mkBS {α : Type} (t1 t2 : Spt α) (x : α) :
+    sptSize (sptMkBS t1 x t2) = sptSize (.bs t1 x t2) := by
+  cases t1 <;> cases t2 <;> simp [sptMkBS, sptSize]
+
+/-- Exact port of HOL `loop_liveScript.sml:40-48 size_inter`. -/
+@[hol "cakeml/pancake/loop_liveScript.sml" "size_inter"]
+theorem sptSize_inter_le {α β : Type} (l1 : Spt α) (l2 : Spt β) :
+    sptSize (sptInter l1 l2) <= sptSize l1 := by
+  induction l1 generalizing l2 with
+  | ln => simp [sptInter]
+  | ls value => cases l2 <;> simp [sptInter]
+  | bn first second ihFirst ihSecond =>
+      cases l2 with
+      | ln => simp [sptInter]
+      | ls value => simp [sptInter]
+      | bn f s =>
+          simp only [sptInter, sptSize_bn, sptSize_mkBN]
+          have h1 := ihFirst f
+          have h2 := ihSecond s
+          omega
+      | bs f value s =>
+          simp only [sptInter, sptSize_bn, sptSize_mkBN]
+          have h1 := ihFirst f
+          have h2 := ihSecond s
+          omega
+  | bs first value second ihFirst ihSecond =>
+      cases l2 with
+      | ln => simp [sptInter]
+      | ls v => simp [sptInter]
+      | bn f s =>
+          simp only [sptInter, sptSize_bs, sptSize_bn, sptSize_mkBN]
+          have h1 := ihFirst f
+          have h2 := ihSecond s
+          omega
+      | bs f v s =>
+          simp only [sptInter, sptSize_bs, sptSize_mkBS]
+          have h1 := ihFirst f
+          have h2 := ihSecond s
+          omega
+mutual
+  /-- The `fixedpoint` half of HOL's single `loop_live$shrink_def` mutual block
+      (`cakeml/pancake/loop_liveScript.sml:142-150`): iterate `shrink` on the
+      loop body until `inter live_in l0` stabilizes, returning the shrunk body
+      and its live set, or `none` when no progress can be made.  This is the
+      untagged mutual half of the tagged `shrinkHOL` (analogous to
+      `varsOfExpListHOL`), since HOL has no separate `fixedpoint_def`. -/
+  def fixedpointHOL {width : Nat} [NeZero width] :
+      List (NumSet × NumSet) → NumSet → NumSet → NumSet → HolLoopProg width →
+        Option (HolLoopProg width × NumSet)
+    | lt, liveIn, l1, l2, body =>
+        let (b, l0) := shrinkHOL ((sptInter liveIn l1, l2) :: lt) body l2
+        if sptInter liveIn l0 = l1 then
+          some (b, l0)
+        else if h1 : sptSize (sptInter liveIn l0) ≤ sptSize l1 then
+          none
+        else
+          have _hb : sptSize (sptInter liveIn l0) ≤ sptSize liveIn :=
+            sptSize_inter_le liveIn l0
+          have _hlt : sptSize l1 < sptSize (sptInter liveIn l0) :=
+            Nat.lt_of_not_le h1
+          fixedpointHOL lt liveIn (sptInter liveIn l0) l2 body
+  termination_by _lt liveIn l1 _l2 body =>
+    (sizeOf body, 1, sptSize liveIn - sptSize l1)
+  decreasing_by
+    all_goals simp_wf
+    all_goals simp only [Prod.lex_def]
+    all_goals simp
+    all_goals omega
+
+  /-- Exact port of HOL's single `loop_live$shrink_def`
+      (`cakeml/pancake/loop_liveScript.sml:62-160`): shrink every cutset of
+      `prog` and delete assignments to dead variables, returning the rewritten
+      program and the resulting live set.  `lt` is the `break`/`continue`
+      context, outermost first.  HOL declares `shrink` and `fixedpoint` in that
+      one mutual block; `fixedpointHOL` above is the untagged mutual half. -/
+  @[hol "cakeml/pancake/loop_liveScript.sml" "shrink_def" (words_as_type_indexed_bitvec)]
+  def shrinkHOL {width : Nat} [NeZero width]
+      (lt : List (NumSet × NumSet)) :
+      HolLoopProg width → NumSet → HolLoopProg width × NumSet
+    | .seq p1 p2, l =>
+        let (p2', l) := shrinkHOL lt p2 l
+        let (p1', l) := shrinkHOL lt p1 l
+        (.seq p1' p2', l)
+    | .loop liveIn body liveOut, l =>
+        let l2 := sptInter liveOut l
+        let bex := sptUnion liveIn l2
+        match fixedpointHOL lt liveIn .ln bex body with
+        | some (body', l0) =>
+            let l' := sptInter liveIn l0
+            (.loop l' body' l2, l')
+        | none =>
+            let (b, _) := shrinkHOL ((liveIn, l2) :: lt) body bex
+            (.loop liveIn b l2, liveIn)
+    | .ite x1 x2 x3 p1 p2 l1, l =>
+        let l' := sptInter l l1
+        let (p1', l1') := shrinkHOL lt p1 l'
+        let (p2', l2') := shrinkHOL lt p2 l'
+        let l3 := match x3 with | .reg r => sptInsert r () .ln | _ => .ln
+        (.ite x1 x2 x3 p1' p2' l', sptInsert x2 () (sptUnion l3 (sptUnion l1' l2')))
+    | .mark p1, l => shrinkHOL lt p1 l
+    | .break n, _ =>
+        (.break n, match sptOel n lt with | some (_, brk) => brk | none => .ln)
+    | .continue n, _ =>
+        (.continue n, match sptOel n lt with | some (cont, _) => cont | none => .ln)
+    | .fail, _ => (.fail, .ln)
+    | .skip, l => (.skip, l)
+    | .return vs, _ => (.return vs, sptListInsert vs .ln)
+    | .raise v, _ => (.raise v, sptInsert v () .ln)
+    | .arith a, l => (.arith a, arithVarsHOL a l)
+    | .primitive lhss pop rhss, l =>
+        (.primitive lhss pop rhss, sptListInsert rhss (sptListDelete lhss l))
+    | .locValue n m, l =>
+        match sptLookup n l with
+        | none => (.skip, l)
+        | some _ => (.locValue n m, sptDelete n l)
+    | .assign n x, l =>
+        match sptLookup n l with
+        | none => (.skip, l)
+        | some _ => (.assign n x, varsOfExpHOL x (sptDelete n l))
+    | .shMem op r ad, l => (.shMem op r ad, varsOfExpHOL ad (sptInsert r () l))
+    | .store e n, l => (.store e n, varsOfExpHOL e (sptInsert n () l))
+    | .setGlobal name e, l => (.setGlobal name e, varsOfExpHOL e l)
+    | .call ret dest args handler, l =>
+        let a := sptFromAList (args.map fun x => (x, ()))
+        match ret with
+        | none => (.call none dest args none, sptUnion a l)
+        | some (ns, l1) =>
+            match handler with
+            | none =>
+                let l3 := sptListDelete ns (sptInter l l1)
+                (.call (some (ns, l3)) dest args none, sptUnion a l3)
+            | some (e, h, r, liveOut) =>
+                let (r', l2) := shrinkHOL lt r l
+                let (h', l3) := shrinkHOL lt h l
+                let l1' := sptInter l1 (sptUnion (sptListDelete ns l2) (sptDelete e l3))
+                (.call (some (ns, l1')) dest args (some (e, h', r', sptInter l liveOut)),
+                  sptUnion a l1')
+    | .ffi n r1 r2 r3 r4 l1, l =>
+        (.ffi n r1 r2 r3 r4 (sptInter l1 l),
+          sptInsert r1 () (sptInsert r2 () (sptInsert r3 () (sptInsert r4 () (sptInter l1 l)))))
+    | .load32 x y, l => (.load32 x y, sptInsert x () (sptDelete y l))
+    | .loadByte x y, l => (.loadByte x y, sptInsert x () (sptDelete y l))
+    | .store32 x y, l => (.store32 x y, sptInsert x () (sptInsert y () l))
+    | .storeByte x y, l => (.storeByte x y, sptInsert x () (sptInsert y () l))
+    | .tick, l => (.tick, l)
+  termination_by prog _l => (sizeOf prog, 0, 0)
+  decreasing_by
+    all_goals simp_wf
+    all_goals simp only [Prod.lex_def]
+    all_goals simp
+    all_goals omega
+end
+
+/-- Exact HOL `loop_live$mark_all` (`cakeml/pancake/loop_liveScript.sml:189-215`)
+over `HolLoopProg width`.  Runs after `shrinkHOL`; returns the rewritten program
+and a Boolean flag recording whether the program is a `Mark`-able compound.  The
+final catch-all clause mirrors HOL's `mark_all prog = (Mark prog, T)`. -/
+@[hol "cakeml/pancake/loop_liveScript.sml" "mark_all_def" (words_as_type_indexed_bitvec)]
+def markAllHOL {width : Nat} [NeZero width] : HolLoopProg width → HolLoopProg width × Bool
+  | .seq first second =>
+      let (first', firstMarked) := markAllHOL first
+      let (second', secondMarked) := markAllHOL second
+      let marked := firstMarked && secondMarked
+      (if marked then .mark (.seq first' second') else .seq first' second', marked)
+  | .loop liveIn body liveOut =>
+      let (body', _) := markAllHOL body
+      (.loop liveIn body' liveOut, false)
+  | .ite operator condition right thenBranch elseBranch live =>
+      let (then', thenMarked) := markAllHOL thenBranch
+      let (else', elseMarked) := markAllHOL elseBranch
+      let marked := thenMarked && elseMarked
+      let program := .ite operator condition right then' else' live
+      (if marked then .mark program else program, marked)
+  | .mark body => markAllHOL body
+  | .call returns target arguments none =>
+      (.mark (.call returns target arguments none), true)
+  | .call returns target arguments (some (exception, handler, normal, liveOut)) =>
+      let (handler', handlerMarked) := markAllHOL handler
+      let (normal', normalMarked) := markAllHOL normal
+      let marked := handlerMarked && normalMarked
+      let program :=
+        .call returns target arguments (some (exception, handler', normal', liveOut))
+      (if marked then .mark program else program, marked)
+  | program => (.mark program, true)
+
+/-- Exact HOL `loop_live$comp` (`cakeml/pancake/loop_liveScript.sml:217-219`):
+`comp prog = FST (mark_all (FST (shrink [] prog LN)))` over `HolLoopProg width`. -/
+@[hol "cakeml/pancake/loop_liveScript.sml" "comp_def" (words_as_type_indexed_bitvec)]
+def compHOL {width : Nat} [NeZero width] (prog : HolLoopProg width) : HolLoopProg width :=
+  (markAllHOL (shrinkHOL [] prog .ln).1).1
+
+/-! ## `optimise` (composes `loop_live$comp` with `loop_call$comp`) -/
+
+/-- Exact port of HOL `loop_live$optimise` (`cakeml/pancake/loop_liveScript.sml:221-223`):
+`optimise prog = (comp o FST o loop_call$comp LN) prog`.  Here `comp` is the
+loop_live `comp` (already ported as `compHOL`), and the `loop_call$comp` map is
+the empty `num |-> num` (`Spt Nat`). -/
+@[hol "cakeml/pancake/loop_liveScript.sml" "optimise_def" (words_as_type_indexed_bitvec)]
+def optimiseHOL {width : Nat} [NeZero width] (prog : HolLoopProg width) : HolLoopProg width :=
+  compHOL (loopCallCompHOL (.ln : Spt Nat) prog).1
 
 end Flapjack

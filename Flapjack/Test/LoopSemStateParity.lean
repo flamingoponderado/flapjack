@@ -156,12 +156,14 @@ private def finiteMachineState : LoopMachineState (BitVec 8) Unit :=
     production state (empty code makes the code conjunct vacuous). -/
 theorem finiteBridgeSample : exactFiniteState.prodRel finiteMachineState := by
   unfold LoopSemStateFiniteExact.prodRel
-  refine ⟨?_, ?_, ?_, rfl, rfl, rfl, rfl, ?_, rfl, rfl, ?_⟩
+  refine ⟨?_, ?_, ?_, rfl, rfl, rfl, rfl, ?_, rfl, rfl, ?_, ?_⟩
   · intro name; rfl
   · intro global; rfl
   · intro address; rfl
   · simpa [finiteMachineState, exactFiniteState] using trivialFfiStateRel
   · intro entry hmem; simp [finiteMachineState] at hmem
+  · intro label parameters program hlookup
+    simp [exactFiniteState] at hlookup
 
 /-- Sample finite-support carrier with a NON-EMPTY code table: entry `0` maps to
     `([], .skip)`, matching the production code table below. This exercises the
@@ -181,7 +183,7 @@ private def finiteMachineStateCode : LoopMachineState (BitVec 8) Unit :=
 theorem finiteBridgeSampleCode :
     exactFiniteStateCode.prodRel finiteMachineStateCode := by
   unfold LoopSemStateFiniteExact.prodRel
-  refine ⟨?_, ?_, ?_, rfl, rfl, rfl, rfl, ?_, rfl, rfl, ?_⟩
+  refine ⟨?_, ?_, ?_, rfl, rfl, rfl, rfl, ?_, rfl, rfl, ?_, ?_⟩
   · intro name; rfl
   · intro global; rfl
   · intro address; rfl
@@ -193,6 +195,16 @@ theorem finiteBridgeSampleCode :
     refine ⟨HolLoopProg.skip, ?_, ?_⟩
     · simp [exactFiniteStateCode, sptLookup]
     · first | rfl | simp [loopProgExecRel]
+  · intro label parameters program hlookup
+    by_cases h0 : label = 0
+    · subst h0
+      have hpair : ([], HolLoopProg.skip) = (parameters, program) := by
+        simpa [exactFiniteStateCode, exactFiniteState, sptLookup, sptInsert] using hlookup
+      have hfst : ([] : List Nat) = parameters := congrArg Prod.fst hpair
+      have hsnd : HolLoopProg.skip = program := congrArg Prod.snd hpair
+      exact ⟨(0, [], LoopProg.skip), by simp [finiteMachineStateCode],
+        rfl, hfst, by rw [← hsnd]; exact loopProgExecRel_skip⟩
+    · simp [exactFiniteStateCode, exactFiniteState, sptLookup, h0] at hlookup
 
 /-- Sample finite-support carrier whose code table has a recursive-constructor
     entry, so the `prodRel` code conjunct is exercised through a non-`skip`
@@ -200,8 +212,8 @@ theorem finiteBridgeSampleCode :
     base `skip` entry. -/
 private def exactFiniteStateSeq : LoopSemStateFiniteExact 8 Unit :=
   { exactFiniteStateCode with
-    code := sptInsert 1 ([], HolLoopProg.seq HolLoopProg.skip HolLoopProg.tick)
-      exactFiniteStateCode.code }
+    code := Spt.bs Spt.ln ([], HolLoopProg.skip)
+      (Spt.ls ([], HolLoopProg.seq HolLoopProg.skip HolLoopProg.tick)) }
 
 /-- Production state with the matching two-entry code table. -/
 private def finiteMachineStateSeq : LoopMachineState (BitVec 8) Unit :=
@@ -213,7 +225,7 @@ private def finiteMachineStateSeq : LoopMachineState (BitVec 8) Unit :=
 theorem finiteBridgeSampleSeq :
     exactFiniteStateSeq.prodRel finiteMachineStateSeq := by
   unfold LoopSemStateFiniteExact.prodRel
-  refine ⟨?_, ?_, ?_, rfl, rfl, rfl, rfl, ?_, rfl, rfl, ?_⟩
+  refine ⟨?_, ?_, ?_, rfl, rfl, rfl, rfl, ?_, rfl, rfl, ?_, ?_⟩
   · intro name; rfl
   · intro global; rfl
   · intro address; rfl
@@ -223,11 +235,42 @@ theorem finiteBridgeSampleSeq :
     simp only [finiteMachineStateSeq, List.mem_cons, List.mem_nil_iff, or_false] at hmem
     rcases hmem with rfl | rfl
     · refine ⟨HolLoopProg.skip, ?_, ?_⟩
-      · simp [exactFiniteStateSeq, exactFiniteStateCode, sptInsert, sptLookup]
+      · simp [exactFiniteStateSeq, exactFiniteStateCode, exactFiniteState, sptLookup]
       · exact loopProgExecRel_skip
     · refine ⟨HolLoopProg.seq HolLoopProg.skip HolLoopProg.tick, ?_, ?_⟩
-      · simp [exactFiniteStateSeq, exactFiniteStateCode, sptInsert, sptLookup]
+      · simp [exactFiniteStateSeq, exactFiniteStateCode, exactFiniteState, sptLookup]
       · exact loopProgExecRel_seq loopProgExecRel_skip loopProgExecRel_tick
+  · intro label parameters program hlookup
+    by_cases h0 : label = 0
+    · subst h0
+      have hlookup0 : sptLookup 0 exactFiniteStateSeq.code =
+          some ([], HolLoopProg.skip) := rfl
+      rw [hlookup0] at hlookup
+      have hpair : ([], HolLoopProg.skip) = (parameters, program) := Option.some.inj hlookup
+      have hfst : ([] : List Nat) = parameters := congrArg Prod.fst hpair
+      have hsnd : HolLoopProg.skip = program := congrArg Prod.snd hpair
+      exact ⟨(0, [], LoopProg.skip), by simp [finiteMachineStateSeq],
+        rfl, hfst, by rw [← hsnd]; exact loopProgExecRel_skip⟩
+    · by_cases h1 : label = 1
+      · subst h1
+        have hlookup1 : sptLookup 1 exactFiniteStateSeq.code =
+            some ([], HolLoopProg.seq HolLoopProg.skip HolLoopProg.tick) := rfl
+        rw [hlookup1] at hlookup
+        have hpair : ([], HolLoopProg.seq HolLoopProg.skip HolLoopProg.tick) =
+            (parameters, program) := Option.some.inj hlookup
+        have hfst : ([] : List Nat) = parameters := congrArg Prod.fst hpair
+        have hsnd : HolLoopProg.seq HolLoopProg.skip HolLoopProg.tick = program :=
+          congrArg Prod.snd hpair
+        exact ⟨(1, [], LoopProg.seq LoopProg.skip LoopProg.tick),
+          by simp [finiteMachineStateSeq],
+          rfl, hfst, by
+            rw [← hsnd]
+            exact loopProgExecRel_seq loopProgExecRel_skip loopProgExecRel_tick⟩
+      · have hnone : sptLookup label exactFiniteStateSeq.code = none := by
+          simp only [exactFiniteStateSeq, exactFiniteStateCode, exactFiniteState, sptLookup]
+          split <;> simp_all <;> omega
+        rw [hnone] at hlookup
+        exact absurd hlookup (by simp)
 
 /-- Register read on the exact carrier transports to the production read. -/
 example : Flapjack.getVarImm finiteMachineState (.reg 0) =

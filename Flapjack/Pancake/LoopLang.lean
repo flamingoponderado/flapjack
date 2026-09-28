@@ -73,7 +73,12 @@ carrier is instantiated at `BitVec width`, `num_set` fields use the exact
 `spt`-backed `NumSet` (`miscScript.sml:787`, `unit spt`), `shMem` uses
 `CrepMemOp`, whose eight constructors (`load/load8/load16/load32/store/store8/
 store16/store32`) match `asm$memop` (`asmScript.sml:125-128`) name for name, and
-the FFI name is the exact `MlString` carrier rather than the executable
+the `ite` fields use the eight `Cmp` constructors and `RegImm (BitVec width)`;
+the latter maps HOL `asm$reg_imm`'s `Reg` to Lean `.reg` and `Imm` to `.imm`,
+with matching `Nat`/word payload types. Lean's `CrepMemOp` is a separate
+datatype from HOL `asm$memop`, but its eight nullary constructors match in
+order; both `HolLoopProg` and executable `LoopProg` use that same Lean carrier.
+The FFI name is the exact `MlString` carrier rather than the executable
 `FunName = String`. The executable `LoopProg` is a one-parameter superset
 (`LoopExp` adds `crepOp`/`cmp`; FFI names are `String`), so the
 executable/faithful bridge is tracked by bead `flapjack-pxn.18.5.17.1.1`. -/
@@ -144,6 +149,34 @@ def loopNestedSeq : List (LoopProg α) → LoopProg α
   | [] => .skip
   | statement :: statements => .seq statement (loopNestedSeq statements)
 
+/-- Exact HOL `nested_seq_def` from `loopLangScript.sml:72` over the
+width-indexed HOL `prog` carrier. This has no extra behavior: the empty list
+becomes `Skip`, and a nonempty list becomes a left-associated-by-head `Seq`
+chain with the recursive tail on the right. -/
+@[hol "cakeml/pancake/loopLangScript.sml" "nested_seq_def"
+  (words_as_type_indexed_bitvec)]
+def loopNestedSeqHOL {width : Nat} [NeZero width] :
+    List (HolLoopProg width) → HolLoopProg width
+  | [] => .skip
+  | statement :: statements => .seq statement (loopNestedSeqHOL statements)
+
+/-- Exact HOL `locals_touched_def` (`loopLangScript.sml:77-85`) over the
+width-indexed HOL `exp` carrier: the local variables read by an expression.
+`FLAT (MAP locals_touched wexps)` is rendered through `List.attach` so the
+recursion is well-founded; `List.attach_map_val` identifies it with the plain
+`map`. -/
+@[hol "cakeml/pancake/loopLangScript.sml" "locals_touched_def"
+  (words_as_type_indexed_bitvec)]
+def holLoopLocalsTouched {width : Nat} [NeZero width] : HolLoopExp width → List Nat
+  | .const _ => []
+  | .var v => [v]
+  | .lookup _ => []
+  | .load addr => holLoopLocalsTouched addr
+  | .op _ wexps => (wexps.attach.map fun ⟨e, _⟩ => holLoopLocalsTouched e).flatten
+  | .shift _ wexp1 wexp2 => holLoopLocalsTouched wexp1 ++ holLoopLocalsTouched wexp2
+  | .baseAddr => []
+  | .topAddr => []
+
 /-! Faithful port of Cake `loop_seqs_def` from
     `cakeml/pancake/pan_passesScript.sml:532`: flatten only `Seq` nodes,
     preserving the left-to-right order of every other Loop statement. -/
@@ -160,13 +193,116 @@ Flapjack-specific bridge between the exact HOL `loopLang$prog` carrier
 (`HolLoopProg`, tagged over `MlString`/`NumSet`) and the executable `LoopProg`.
 It is untagged Flapjack infrastructure: it relates the two representations so
 the exact `loopSem$state` carrier can be bridged to production.  The `num_set`
-live sets are related by `numSetListRel`, the FFI name by the `MlString` codec,
-and every expression subterm by `holLoopExpToExecutable`. -/
+live sets are related by `numSetListRel`; the FFI name uses the partial
+`MlString.ofString` image, so no total projection of arbitrary HOL byte strings
+to Lean `String` is claimed; every expression subterm is related by
+`holLoopExpToExecutable`. -/
 
 /-- Executable/faithful relation for HOL `num_set`: exactly the listed keys are
     present in the `spt`-backed set. -/
 def numSetListRel (keys : List Nat) (tree : NumSet) : Prop :=
   keys.Nodup ∧ ∀ key, sptLookup key tree = some () ↔ key ∈ keys
+
+/-- A deterministic list projection of the finite HOL `num_set` carrier.
+The tree encoding sends left-child keys to `2*k+2`, right-child keys to
+`2*k+1`, and a `BS` root to zero. This order is chosen for a simple checked
+membership theorem; live-set consumers use it as a set, and uniqueness is
+proved separately below. -/
+def numSetKeys : NumSet → List Nat
+  | .ln => []
+  | .ls _ => [0]
+  | .bn left right =>
+      (numSetKeys left).map (fun key => 2 * key + 2) ++
+        (numSetKeys right).map (fun key => 2 * key + 1)
+  | .bs left _ right =>
+      0 :: ((numSetKeys left).map (fun key => 2 * key + 2) ++
+        (numSetKeys right).map (fun key => 2 * key + 1))
+
+private theorem numSetKeys_mem (key : Nat) (tree : NumSet) :
+    key ∈ numSetKeys tree ↔ sptMem key tree := by
+  induction tree generalizing key with
+  | ln => simp [numSetKeys, sptMem_ln]
+  | ls value => simp [numSetKeys, sptMem_ls]
+  | bn left right ihLeft ihRight =>
+      simp [numSetKeys, List.mem_append, List.mem_map, sptMem_bn,
+        ihLeft, ihRight, eq_comm]
+  | bs left value right ihLeft ihRight =>
+      simp [numSetKeys, List.mem_append, List.mem_map, sptMem_bs,
+        ihLeft, ihRight, eq_comm]
+
+private theorem nodupMapInjective {α β : Type} (f : α → β)
+    (hf : Function.Injective f) : ∀ xs : List α, xs.Nodup → (xs.map f).Nodup
+  | [], _ => by simp
+  | head :: tail, h => by
+      have hcons := List.nodup_cons.mp h
+      simp only [List.map_cons, List.nodup_cons]
+      constructor
+      · intro hmem
+        rcases List.mem_map.mp hmem with ⟨other, hother, heq⟩
+        have hsame : head = other := hf heq.symm
+        cases hsame
+        exact hcons.1 hother
+      · exact nodupMapInjective f hf tail hcons.2
+
+private theorem numSetKeysMappedNodup (left right : List Nat)
+    (hLeft : left.Nodup) (hRight : right.Nodup) :
+    ((left.map (fun key => 2 * key + 2)) ++
+      (right.map (fun key => 2 * key + 1))).Nodup := by
+  apply List.nodup_append.mpr
+  refine ⟨?_, ?_, ?_⟩
+  · apply nodupMapInjective (fun key : Nat => 2 * key + 2) ?_ left hLeft
+    intro a b h
+    change 2 * a + 2 = 2 * b + 2 at h
+    omega
+  · apply nodupMapInjective (fun key : Nat => 2 * key + 1) ?_ right hRight
+    intro a b h
+    change 2 * a + 1 = 2 * b + 1 at h
+    omega
+  · intro a ha b hb hab
+    simp only [List.mem_map] at ha hb
+    obtain ⟨ka, _, rfl⟩ := ha
+    obtain ⟨kb, _, hkb⟩ := hb
+    omega
+
+private theorem numSetKeysMapped_ne_zero (keys : List Nat) :
+    0 ∉ keys.map (fun key => 2 * key + 2) ∧
+    0 ∉ keys.map (fun key => 2 * key + 1) := by
+  constructor <;> intro hmem <;> simp only [List.mem_map] at hmem
+  · obtain ⟨key, _, hkey⟩ := hmem
+    omega
+  · obtain ⟨key, _, hkey⟩ := hmem
+    omega
+
+private theorem numSetKeys_nodup (tree : NumSet) : (numSetKeys tree).Nodup := by
+  induction tree with
+  | ln => simp [numSetKeys]
+  | ls value => simp [numSetKeys]
+  | bn left right ihLeft ihRight =>
+      exact numSetKeysMappedNodup _ _ ihLeft ihRight
+  | bs left value right ihLeft ihRight =>
+      apply List.nodup_cons.mpr
+      constructor
+      · intro hzero
+        simp only [List.mem_append] at hzero
+        rcases hzero with hleft | hright
+        · exact (numSetKeysMapped_ne_zero (numSetKeys left)).1 hleft
+        · exact (numSetKeysMapped_ne_zero (numSetKeys right)).2 hright
+      · exact numSetKeysMappedNodup _ _ ihLeft ihRight
+
+/-- The structural key list is a faithful finite-list view of a HOL
+`num_set`: it has no duplicates and has exactly the `sptLookup` domain. -/
+theorem numSetKeysListRel (tree : NumSet) : numSetListRel (numSetKeys tree) tree := by
+  refine ⟨numSetKeys_nodup tree, ?_⟩
+  intro key
+  have hLookup : sptLookup key tree = some () ↔ sptMem key tree := by
+    constructor
+    · intro h
+      exact (sptMem_iff_lookup key tree).2 ⟨(), h⟩
+    · intro h
+      obtain ⟨value, hvalue⟩ := (sptMem_iff_lookup key tree).1 h
+      cases value
+      exact hvalue
+  rw [hLookup, ← numSetKeys_mem]
 
 /-- Executable/faithful relation for `loopLang$exp`: the executable expression
     is the projection of the faithful one. -/
@@ -277,6 +413,125 @@ def loopProgExecRel {width : Nat} [NeZero width] :
 termination_by _ faithful => sizeOf faithful
 decreasing_by
   all_goals decreasing_trivial
+
+/-! The exact compiler's output carrier contains `NumSet` fields while the
+   executable Loop IR stores those fields as lists. `numSetKeys` now provides a
+   checked deterministic projection and `numSetKeysListRel` proves its
+   membership relation. The program-level theorem below covers nested call
+   handlers. Decoding an exact `MlString` to production
+   `String` and re-encoding it is total. The reverse production-name bridge
+   remains premise-bound by `CrepProgNameRanged`. -/
+
+/-- Project all exact HOL Loop constructors to the executable Loop carrier.
+`projectLive` is supplied by the caller together with a proof that it
+represents each `NumSet`. -/
+def holLoopProgToExecutable {width : Nat} [NeZero width]
+    (projectLive : NumSet → List Nat) : HolLoopProg width → LoopProg (BitVec width)
+  | .skip => .skip
+  | .assign name value => .assign name (holLoopExpToExecutable value)
+  | .primitive destinations operator arguments => .primitive destinations operator arguments
+  | .arith operation => .arith operation
+  | .store address value => .store (holLoopExpToExecutable address) value
+  | .setGlobal address value => .setGlobal address (holLoopExpToExecutable value)
+  | .load32 address destination => .load32 address destination
+  | .loadByte address destination => .loadByte address destination
+  | .store32 address value => .store32 address value
+  | .storeByte address value => .storeByte address value
+  | .seq first second =>
+      .seq (holLoopProgToExecutable projectLive first)
+        (holLoopProgToExecutable projectLive second)
+  | .ite operator condition right thenBranch elseBranch live =>
+      .ite operator condition right (holLoopProgToExecutable projectLive thenBranch)
+        (holLoopProgToExecutable projectLive elseBranch) (projectLive live)
+  | .loop liveIn body liveOut =>
+      .loop (projectLive liveIn) (holLoopProgToExecutable projectLive body)
+        (projectLive liveOut)
+  | .break label => .break label
+  | .continue label => .continue label
+  | .raise exception => .raise exception
+  | .return values => .return values
+  | .shMem operator name address =>
+      .shMem operator name (holLoopExpToExecutable address)
+  | .tick => .tick
+  | .mark body => .mark (holLoopProgToExecutable projectLive body)
+  | .fail => .fail
+  | .locValue destination source => .locValue destination source
+  | .call returns target arguments handler =>
+      let executableReturns := returns.map (fun entry => (entry.1, projectLive entry.2))
+      let executableHandler :=
+        match handler with
+        | none => none
+        | some (exception, first, second, live) =>
+            some (exception, holLoopProgToExecutable projectLive first,
+              holLoopProgToExecutable projectLive second, projectLive live)
+      .call executableReturns target arguments executableHandler
+  | .ffi function configuration configurationLength array arrayLength live =>
+      .ffi (Flapjack.Basis.Pure.MlString.toStringOfBytes function)
+        configuration configurationLength array arrayLength (projectLive live)
+termination_by program => sizeOf program
+decreasing_by
+  simp_wf
+  all_goals first
+    | decreasing_trivial
+    | (simp_all only [HolLoopProg.call.sizeOf_spec]; omega)
+
+/-- Structural projection using the checked deterministic Spt-key list. -/
+def holLoopProgToExecutableCanonical {width : Nat} [NeZero width]
+    (program : HolLoopProg width) : LoopProg (BitVec width) :=
+  holLoopProgToExecutable numSetKeys program
+
+/-- The structural exact-to-executable projection preserves the complete
+faithful Loop relation whenever each supplied live-set list is exact. This is
+Flapjack bridge infrastructure, not a separate HOL port. -/
+theorem holLoopProgToExecutable_rel {width : Nat} [NeZero width]
+    (projectLive : NumSet → List Nat)
+    (hLive : ∀ live, numSetListRel (projectLive live) live)
+    (program : HolLoopProg width) :
+    loopProgExecRel (holLoopProgToExecutable projectLive program) program := by
+  let mProg : HolLoopProg width → Prop :=
+    fun p => loopProgExecRel (holLoopProgToExecutable projectLive p) p
+  let mPair : HolLoopProg width × NumSet → Prop :=
+    fun p => mProg p.1 ∧ numSetListRel (projectLive p.2) p.2
+  let mTriple : HolLoopProg width × HolLoopProg width × NumSet → Prop :=
+    fun p => mProg p.1 ∧ mProg p.2.1 ∧ numSetListRel (projectLive p.2.2) p.2.2
+  let mQuad : Nat × HolLoopProg width × HolLoopProg width × NumSet → Prop :=
+    fun p => mTriple p.2
+  let mHandler : Option (Nat × HolLoopProg width × HolLoopProg width × NumSet) → Prop
+    | none => True
+    | some entry => mQuad entry
+  change mProg program
+  refine HolLoopProg.rec
+      (motive_1 := mProg) (motive_2 := mHandler) (motive_3 := mQuad)
+      (motive_4 := mTriple) (motive_5 := mPair)
+      ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_
+      ?_ ?_ ?_ ?_ ?_ ?_ ?_ program <;>
+    simp_all [mProg, mPair, mTriple, mQuad, mHandler,
+      holLoopProgToExecutable, loopProgExecRel, loopExpExecRel,
+      Flapjack.Basis.Pure.MlString.ofString_toStringOfBytes]
+  case refine_23 =>
+    intro returns target arguments handler hHandler
+    cases returns with
+    | none =>
+        cases handler with
+        | none => simp [holLoopProgToExecutable, loopProgExecRel]
+        | some value =>
+            rcases value with ⟨exception, first, second, live⟩
+            simp [holLoopProgToExecutable, loopProgExecRel, hLive, hHandler]
+    | some value =>
+        rcases value with ⟨returnNames, returnLive⟩
+        cases handler with
+        | none => simp [holLoopProgToExecutable, loopProgExecRel, hLive]
+        | some value =>
+            rcases value with ⟨exception, first, second, live⟩
+            simp [holLoopProgToExecutable, loopProgExecRel, hLive, hHandler]
+
+/-- The canonical Spt-backed projection is related to every exact Loop
+constructor by `numSetKeysListRel`. -/
+theorem holLoopProgToExecutableCanonical_rel {width : Nat} [NeZero width]
+    (program : HolLoopProg width) :
+    loopProgExecRel (holLoopProgToExecutableCanonical program) program := by
+  simpa [holLoopProgToExecutableCanonical] using
+    holLoopProgToExecutable_rel numSetKeys numSetKeysListRel program
 
 /-! ### Introduction lemmas for `loopProgExecRel`
 

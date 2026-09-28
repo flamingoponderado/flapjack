@@ -107,9 +107,13 @@ theorem holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:45-58`). `source.globals`
     is the only finite-map field of an exact state carrier that the relation
     traverses, and HOL asserts it is `FEMPTY`; the qualifier records exactly
-    that field. The Crep target contributes no traversed finite-map field. -/
+    that field. The Crep target contributes no traversed finite-map field.
+    Source/target words use `BitVec width` with `[NeZero width]`, and the FFI
+    host is `σ : Type`; `words_as_type_indexed_bitvec` records only that
+    carrier translation. -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "state_rel_def"
-  (fmap_as_finite_support_relation := [PanSemStateFiniteExact.globals])]
+  (fmap_as_finite_support_relation := [PanSemStateFiniteExact.globals])
+  (words_as_type_indexed_bitvec)]
 def panToCrepStateRelFiniteExact {width : Nat} {σ : Type} [NeZero width]
     (source : PanSemStateFiniteExact width σ)
     (target : CrepSemHOLState width σ) : Prop :=
@@ -226,10 +230,13 @@ theorem panToCrepCallStateRelFiniteExactLocalUpdate
     `PanToCrepContextExact` field) and the two standalone exact-map parameters
     `sourceLocals`/`targetLocals`, which the qualifier records as bare entries.
     The remaining HOL side conditions (`no_overlap`, `ctxt_max`, `shape_of`,
-    `OPT_MMAP`, `flatten`, `is_wf_shape_nil`) are rendered clause-for-clause. -/
+    `OPT_MMAP`, `flatten`, `is_wf_shape_nil`) are rendered clause-for-clause.
+    `ValueHOL width` and `HolWordLab width` use the positive `BitVec width`
+    model of HOL's type-indexed words, recorded by the word qualifier. -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "locals_rel_def"
   (fmap_as_finite_support_relation :=
-    [PanToCrepContextExact.vars, sourceLocals, targetLocals])]
+    [PanToCrepContextExact.vars, sourceLocals, targetLocals])
+  (words_as_type_indexed_bitvec)]
 def panToCrepLocalsRelFiniteExact {width : Nat} [NeZero width]
     (context : PanToCrepContextExact width)
     (sourceLocals : HolFiniteMapExact MlS (ValueHOL width))
@@ -552,11 +559,13 @@ theorem panToCrepLocalsRelFiniteExact_valueShapeProjection {width : Nat} [NeZero
 /-- Exact port of HOL `locals_rel_wf_shape` at
     `pan_to_crepProofScript.sml:2345`: the same `locals_rel` and present-local
     lookup premises imply `is_wf_shape_v_nil` for that value. The result is the
-    exact value-level predicate; its only representation translation is the
-    three named finite-map carriers. -/
+    exact value-level predicate; its finite-map translations are the three
+    named carriers, and its word values use positive `BitVec width` as recorded
+    by the word qualifier. -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "locals_rel_wf_shape" 2345
   (fmap_as_finite_support_relation :=
-    [PanToCrepContextExact.vars, sourceLocals, targetLocals])]
+    [PanToCrepContextExact.vars, sourceLocals, targetLocals])
+  (words_as_type_indexed_bitvec)]
 theorem panToCrepLocalsRelWfShapeFiniteExact {width : Nat} [NeZero width]
     (context : PanToCrepContextExact width)
     (sourceLocals : HolFiniteMapExact MlS (ValueHOL width))
@@ -810,9 +819,12 @@ theorem ctxtMaxElLeqFiniteExact {width : Nat} [NeZero width]
     structural-context projection of `state_rel_def`. The relation qualifier
     records the same `PanSemStateFiniteExact.globals` translation as the parent
     relation (this projection does not read that field, but the tagged
-    declaration is stated over the reviewed exact relation). -/
+    declaration is stated over the reviewed exact relation). The related source
+    and target state carriers use positive `BitVec width` with `[NeZero width]`.
+-/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "state_rel_structs"
-  (fmap_as_finite_support_relation := [PanSemStateFiniteExact.globals])]
+  (fmap_as_finite_support_relation := [PanSemStateFiniteExact.globals])
+  (words_as_type_indexed_bitvec)]
 theorem panToCrepStateRelFiniteExact_structs {width : Nat} {σ : Type}
     [NeZero width] (source : PanSemStateFiniteExact width σ)
     (target : CrepSemHOLState width σ)
@@ -825,9 +837,11 @@ theorem panToCrepStateRelFiniteExact_structs {width : Nat} {σ : Type}
     canonical `HolFiniteMapExact` translation renders `FEMPTY` pointwise as
     `lookup = fun _ => none`, exactly as in the tagged parent relation. The
     relation qualifier records the traversed `PanSemStateFiniteExact.globals`
-    field. -/
+    field. Its source and target state carriers use positive `BitVec width`
+    with `[NeZero width]`. -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "state_rel_globals"
-  (fmap_as_finite_support_relation := [PanSemStateFiniteExact.globals])]
+  (fmap_as_finite_support_relation := [PanSemStateFiniteExact.globals])
+  (words_as_type_indexed_bitvec)]
 theorem panToCrepStateRelFiniteExact_globals {width : Nat} {σ : Type}
     [NeZero width] (source : PanSemStateFiniteExact width σ)
     (target : CrepSemHOLState width σ)
@@ -984,12 +998,15 @@ theorem optMmapEvalIsWfShapeVHOL {width : Nat} {σ : Type} [NeZero width]
     result conclusion. `MlS`, `ValueHOL`, `ShapeHOL`, `ProgHOL`, and the exact
     finite-support PanSem/context maps were compared with the HOL carriers.
     The classical expression-evaluation wrapper hides only Lean's membership
-    decider plumbing. -/
+    decider plumbing. HOL's type-indexed words and FFI host use the positive
+    `BitVec width` and universe-0 `σ : Type` carriers, recorded solely by
+    `words_as_type_indexed_bitvec`. -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "evaluate_shape_invariant_ret_inst2"
   (fmap_as_finite_support_relation := [PanSemStateFiniteExact.locals,
     PanSemStateFiniteExact.globals, PanSemStateFiniteExact.code,
     PanSemStateFiniteExact.eshapes, PanToCrepContextExact.vars,
-    targetLocals, newlocals])]
+    targetLocals, newlocals])
+  (words_as_type_indexed_bitvec)]
 theorem panToCrepFiniteEvaluateShapeInvariantRetInst2 {width : Nat} {σ : Type}
     [NeZero width]
     (arguments : List (ExpHOL width))
@@ -1249,12 +1266,14 @@ theorem holFmapAsFiniteSupportRelationWitness_CrepSemHOLState
     the corresponding reviewed exact clause helper and reconstructs the
     finite-support post-state. The theorem tag therefore rests on the reviewed
     successful-evaluation semantics and the explicit finite-map translations;
-    it does not tag the evaluator definition itself. -/
+    it does not tag the evaluator definition itself. Its word/FFI carrier
+    translation uses `BitVec width` with `[NeZero width]` and `σ : Type`. -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "evaluate_shape_invariant_ret_inst"
   (fmap_as_finite_support_relation := [PanSemStateFiniteExact.locals,
     PanSemStateFiniteExact.globals, PanSemStateFiniteExact.code,
     PanSemStateFiniteExact.eshapes, PanToCrepContextExact.vars,
-    PanToCrepTargetLocalsExact.targetLocals])]
+    PanToCrepTargetLocalsExact.targetLocals])
+  (words_as_type_indexed_bitvec)]
 theorem panToCrepFiniteEvaluateShapeInvariantRetInst {width : Nat} {σ : Type}
     [NeZero width] (program : ProgHOL width)
     (source : PanSemStateFiniteExact width σ)

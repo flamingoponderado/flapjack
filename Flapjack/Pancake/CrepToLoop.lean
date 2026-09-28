@@ -215,9 +215,13 @@ theorem loopListInsert_insertNatSorted_comm (x : Nat) (names : List Nat)
             from rfl]
       rw [insertNatSorted_comm name x]
 
-/-! Source-named port of `crep_to_loop$prog_if` (`prog_if_def`,
-    `crep_to_loopScript.sml:34`).  The result is a statement list; the caller
-    applies `nested_seq` exactly as the original compiler does. -/
+/-! Production-carrier helper matching the shape of
+    `crep_to_loop$prog_if` (`crep_to_loopScript.sml:34`). This is not tagged as
+    the HOL definition: it returns production `LoopProg`, whose FFI constructor
+    stores `String`, while HOL returns the distinct exact `HolLoopProg` carrier.
+    The production compiler inlines this statement sequence; the exact
+    `compile_exp_def` port spells the comparison case directly over
+    `HolLoopProg`. -/
 def progIf [OfNat α 0] [OfNat α 1]
     (operator : Cmp) (first second : List (LoopProg α))
     (left right : LoopExp α) (condition rightRegister : Nat) (live : List Nat) :

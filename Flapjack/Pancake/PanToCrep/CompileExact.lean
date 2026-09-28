@@ -883,4 +883,54 @@ def compileProgDeclsHOLW {width : Nat} [NeZero width]
   let to_crep := compileToCrepExactHOLW prog
   CrepInlineCanonical.compileInlTopHOLExact inl_fs_names to_crep
 
+/-- Exact port of HALF of HOL `compile_prog_distinct_params`
+    (`pan_to_crepProofScript.sml:4684-4691`): every parameter list produced by
+    the exact `compile_to_crep` is `Nodup`.  HOL derives this from
+    `crep_vars_def` (`GENLIST I (size_of_shape (Comb (MAP SND params)))`) and
+    `ALL_DISTINCT_GENLIST`; on the exact carriers `crepVarsHOL params` is
+    `List.range (sizeOfShapeHOL (.comb (params.map Prod.snd)))`, which is
+    `Nodup`.  Untagged Flapjack infrastructure (bead
+    `flapjack-4ac.2.20.1.1`). -/
+theorem compileToCrepExactHOLW_params_nodup {width : Nat} [NeZero width]
+    (declarations : List (DeclHOL width)) :
+    (compileToCrepExactHOLW declarations).all
+      (fun triple => triple.2.1.Nodup) = true := by
+  unfold compileToCrepExactHOLW
+  simp only [List.all_map]
+  apply List.all_eq_true.mpr
+  intro entry _
+  simp only [crepVarsHOL]
+  exact decide_eq_true List.nodup_range
+
+/-- The canonical inline pass `compileInlProgHOLExactWithSupport` preserves the
+    parameter component of every triple (definitionally, by the `MAP` over
+    triples), so it preserves parameter distinctness.  This is the second half
+    of HOL `compile_prog_distinct_params`. -/
+theorem compileInlProgHOLExactWithSupport_params_nodup {width : Nat} [NeZero width]
+    [BEq CrepInlineMapHOLName] [LawfulBEq CrepInlineMapHOLName]
+    (inl_fs : HolFiniteMapExact CrepInlineMapHOLName (List Nat × CrepProgHOL width))
+    (supportKeys : List CrepInlineMapHOLName)
+    (support_spec : ∀ key, inl_fs.lookup key ≠ none → key ∈ supportKeys)
+    (prog : List (CrepInlineMapHOLName × List Nat × CrepProgHOL width)) :
+    (CrepInlineCanonical.compileInlProgHOLExactWithSupport inl_fs supportKeys
+        support_spec prog).all (fun triple => triple.2.1.Nodup) =
+      prog.all (fun triple => triple.2.1.Nodup) := by
+  unfold CrepInlineCanonical.compileInlProgHOLExactWithSupport
+  simp only [List.all_map]
+  rfl
+
+/-- Exact port of HOL `compile_prog_distinct_params`
+    (`pan_to_crepProofScript.sml:4684-4691`): every parameter list in the
+    `compile_prog` output is `Nodup`.  Follows from the `compile_to_crep` half
+    (`compileToCrepExactHOLW_params_nodup`) and definitional parameter
+    preservation by the inline pass.  Untagged until the recursive inline core
+    `flapjack-e7w.2.1.13` is reviewed. -/
+theorem compileProgDeclsHOLW_params_nodup {width : Nat} [NeZero width]
+    (prog : List (DeclHOL width)) :
+    (compileProgDeclsHOLW prog).all (fun triple => triple.2.1.Nodup) = true := by
+  unfold compileProgDeclsHOLW
+  simp only [CrepInlineCanonical.compileInlTopHOLExact,
+    CrepInlineCanonical.compileInlProgHOLExactWithSupport, List.all_map]
+  exact compileToCrepExactHOLW_params_nodup prog
+
 end Flapjack

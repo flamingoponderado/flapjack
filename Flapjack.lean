@@ -1,6 +1,7 @@
 import Flapjack.HolRef
 import Flapjack.AstHOL
 import Flapjack.Compiler.Backend.BackendCommon
+import Flapjack.Compiler.Backend.Semantics.WordSem
 import Flapjack.Pancake.PanLang
 import Flapjack.Pancake.PanLang.Shape
 import Flapjack.Pancake.PanLang.Exp
@@ -64,6 +65,7 @@ import Flapjack.Pancake.Semantics.PanSem.TotalEvalCallBridge
 import Flapjack.Pancake.Semantics.PanSem.TotalEvalRanged
 import Flapjack.Pancake.Semantics.PanSem.TotalEvalExtCallBridge
 import Flapjack.Pancake.Semantics.PanSem.TotalEvalAgree
+import Flapjack.Pancake.Semantics.PanSem.EntryState
 import Flapjack.Pancake.Semantics.PanSem.EvaluateFinite
 import Flapjack.Pancake.Semantics.PanSem.AddClock
 import Flapjack.Pancake.Semantics.PanSem.PanObservationalSemantics
@@ -109,7 +111,17 @@ import Flapjack.Pancake.Semantics.PanProps.ResVar
 import Flapjack.Pancake.Semantics.ByteAlignBridge
 import Flapjack.Pancake.Semantics.ShMemBytesBridge
 import Flapjack.Pancake.Semantics.LoopProps
+import Flapjack.Pancake.Semantics.LoopProps.CutSets
 import Flapjack.Pancake.Semantics.LoopSemStateExact
+import Flapjack.Pancake.Semantics.LoopSemStateExact.ShMem
+import Flapjack.Pancake.Semantics.LoopSemStateExact.Evaluate
+import Flapjack.Pancake.Semantics.LoopSemStateExact.Semantics
+import Flapjack.Pancake.Semantics.LoopProps.EvaluateClockExact
+import Flapjack.Pancake.Semantics.LoopProps.EvaluateIoEventsExact
+import Flapjack.Pancake.Semantics.LoopProps.EvalExact
+import Flapjack.Pancake.Semantics.LoopProps.NestedSeqExact
+import Flapjack.Pancake.Semantics.LoopProps.UnassignedVarsExact
+import Flapjack.Pancake.Semantics.LoopProps.NestedSeqSyntaxExact
 import Flapjack.PanObservationalSemantics
 import Flapjack.PanHHandleCallRet
 import Flapjack.PanMrec
@@ -303,9 +315,22 @@ import Flapjack.WordSemantics
 import Flapjack.Pancake.LoopLang
 import Flapjack.NatDedup
 import Flapjack.Pancake.CrepToLoop
+import Flapjack.Pancake.CrepToLoop.ContextExact
+import Flapjack.Pancake.CrepToLoop.Proofs.AssignedVars
+import Flapjack.Pancake.CrepToLoop.Proofs.SurvivesMapiAssign
+import Flapjack.Pancake.CrepToLoop.Proofs.CompExpTmpBound
+import Flapjack.Pancake.CrepToLoop.Proofs.CompExpLeTmpDomain
 import Flapjack.Pancake.CrepToLoop.Optimise
 import Flapjack.Pancake.CrepToLoop.StateRel
+import Flapjack.Test.CrepToLoopCompileExpExactParity
+import Flapjack.Test.CrepToLoopCompileExactParity
+import Flapjack.Test.CrepFindLabParity
 import Flapjack.Pancake.LoopLive
+import Flapjack.Pancake.LoopLang.AssignedVars
+import Flapjack.Pancake.Semantics.LoopProps.AssignedVars
+import Flapjack.Test.LoopExactAssignedVarsParity
+import Flapjack.Test.LoopPropsCutSetsParity
+import Flapjack.Test.CrepToLoopSurvivesMapiAssignParity
 /- The context-aware Crep-to-Loop correctness file is being updated alongside
    the faithful `findLoopVar` lowering and is intentionally not in this
    umbrella until its old identity-map assumptions are repaired. -/
@@ -321,6 +346,8 @@ import Flapjack.Compiler.Backend.StackProps
 import Flapjack.Compiler.Backend.RegAlloc
 import Flapjack.Misc.AppList
 import Flapjack.Misc.Sptree
+import Flapjack.Misc.LList
+import Flapjack.Misc.LprefixLub
 import Flapjack.Misc.FlatReplicate
 import Flapjack.Misc.FoldrMaxList
 import Flapjack.Misc.Uncurry

@@ -44,3 +44,16 @@ val _ = print_eval "named_suffix_blocked"
       [(strlit "Later", <| fields := []; size := 1 |>);
        (strlit "Outer", <| fields := [(strlit "later", Named (strlit "Later"))];
                              size := 1 |>)]``
+(* Recursive rows used by the production-vs-exact flat-load bridge. The
+   second word begins at bytes_in_word * size_of_sh_with_ctxt [] One = 8. *)
+val _ = print_eval "recursive_mem_loads_two_words"
+  ``mem_loads [One; One] (0w : 64 word) {0w; 8w}
+      (\a : 64 word. if a = 0w then Word 17w else Word 34w) []``
+val _ = print_eval "recursive_comb_two_words"
+  ``mem_load (Comb [One; One]) (0w : 64 word) {0w; 8w}
+      (\a : 64 word. if a = 0w then Word 17w else Word 34w) []``
+val _ = print_eval "recursive_named_two_fields"
+  ``mem_load (Named (strlit "S")) (0w : 64 word) {0w; 8w}
+      (\a : 64 word. if a = 0w then Word 17w else Word 34w)
+      [(strlit "S", <| fields := [(strlit "f", One); (strlit "g", One)];
+                       size := 2 |>)]``

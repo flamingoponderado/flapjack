@@ -285,6 +285,366 @@ def comparisonWithoutLiveDropsIt : Bool :=
 #guard comparisonKeepsIncomingLive
 #guard comparisonWithoutLiveDropsIt
 
+/-! ## Exact-carrier `state_rel` (`crep_to_loopProofScript.sml:31-41`)
+
+Fixtures over the exact `crepSem$state`/`loopSem$state` ports
+(`CrepSemHOLState`/`LoopSemStateFiniteExact`), pinning the direct HOL-EVAL rows
+in `scripts/hol-probes/crep_to_loop_state_rel_probe.out`
+(`memaddrs_mdomain_mem`, `sh_memaddrs_sh_mdomain_mem`, `clock_eq`, `be_eq`,
+`base_eq`, `top_eq`). -/
+
+def stateRelExactFfi : HolFfiState Unit :=
+  { oracle := fun _ _ _ _ => .final .failed, ffiState := (), ioEvents := [] }
+
+def stateRelExactCrep : CrepSemHOLState 64 Unit :=
+  { locals := HolFiniteMapExact.empty
+    globals := HolFiniteMapExact.empty
+    code := HolFiniteMapExact.empty
+    memory := fun _ => .word 0
+    memaddrs := fun _ => False
+    shMemaddrs := fun _ => False
+    clock := 5
+    be := false
+    ffi := stateRelExactFfi
+    baseAddr := 0
+    topAddr := 0 }
+
+def stateRelExactLoop : LoopSemStateFiniteExact 64 Unit :=
+  { locals := Spt.ln
+    globals := HolFiniteMapExact.empty
+    memory := fun _ => .word 0
+    mdomain := fun _ => false
+    shMdomain := fun _ => false
+    clock := 5
+    code := Spt.ln
+    be := false
+    ffi := stateRelExactFfi
+    baseAddr := 0
+    topAddr := 0 }
+
+/-- The exact-carrier relation holds for the matching fixtures (the HOL oracle
+    rows above are all `T`). -/
+example : crepToLoopStateRelExact stateRelExactCrep stateRelExactLoop := by
+  rw [crepToLoopStateRelExact]
+  refine ⟨?_, ?_, rfl, rfl, rfl, rfl, rfl⟩
+  · funext address
+    exact propext (iff_of_false (by simp [stateRelExactCrep])
+      (by simp [stateRelExactLoop]))
+  · funext address
+    exact propext (iff_of_false (by simp [stateRelExactCrep])
+      (by simp [stateRelExactLoop]))
+
+/-- Field-level guard reproducing the oracle rows at address `7`. -/
+def stateRelExactGuard : Bool :=
+  letI : Decidable (stateRelExactCrep.memaddrs 7) :=
+    isFalse (by simp [stateRelExactCrep])
+  letI : Decidable (stateRelExactCrep.shMemaddrs 7) :=
+    isFalse (by simp [stateRelExactCrep])
+  decide (stateRelExactCrep.memaddrs 7 ↔ stateRelExactLoop.mdomain 7 = true) &&
+    decide (stateRelExactCrep.shMemaddrs 7 ↔ stateRelExactLoop.shMdomain 7 = true) &&
+    (stateRelExactCrep.clock == stateRelExactLoop.clock) &&
+    (stateRelExactCrep.be == stateRelExactLoop.be) &&
+    (stateRelExactCrep.baseAddr == stateRelExactLoop.baseAddr) &&
+    (stateRelExactCrep.topAddr == stateRelExactLoop.topAddr)
+
+#guard stateRelExactGuard
+
+/-- HOL `state_rel_clock_add_zero` (`crep_to_loopProofScript.sml:219-223`) over
+    the exact carriers: advancing the target clock preserves the relation. -/
+example (h : crepToLoopStateRelExact stateRelExactCrep stateRelExactLoop) :
+    ∃ ck, crepToLoopStateRelExact stateRelExactCrep
+      { stateRelExactLoop with clock := ck + stateRelExactLoop.clock } :=
+  crepToLoopStateRelExact_clock_add_zero stateRelExactCrep stateRelExactLoop h
+
+/-- Exact-carrier `ctxt_fc` reproduces the direct HOL-EVAL rows in
+    `scripts/hol-probes/crep_to_loop_ctxt_fc_probe.out` (`vars_zip`,
+    `vars_zip_truncates`, `funcs_projection`, `vmax_nonempty_list`,
+    `vmax_empty_list`, `target_kept`). -/
+example :
+    (ctxtFcExact Compiler.Encoders.Asm.AsmArchitecture.armv7
+        (HolFiniteMapExact.empty.update
+          (Flapjack.Basis.Pure.MlString.ofString "f", (3, 2)))
+        [1, 2] [10, 20]).vmax = 20 := rfl
+
+/-- Field-level guard reproducing the `ctxt_fc` oracle rows. -/
+def ctxtFcExactGuard : Bool :=
+  let cvs : HolFiniteMapExact Flapjack.Pancake.PanLang.MlS (Nat × Nat) :=
+    HolFiniteMapExact.empty.update
+      (Flapjack.Basis.Pure.MlString.ofString "f", (3, 2))
+  let ctx := ctxtFcExact Compiler.Encoders.Asm.AsmArchitecture.armv7 cvs [1, 2] [10, 20]
+  decide
+      (ctx.vars.lookup 1 = some 10 ∧ ctx.vars.lookup 2 = some 20 ∧
+        ctx.funcs.lookup (Flapjack.Basis.Pure.MlString.ofString "f") = some (3, 2) ∧
+        ctx.target = Compiler.Encoders.Asm.AsmArchitecture.armv7) &&
+    decide ((ctxtFcExact Compiler.Encoders.Asm.AsmArchitecture.armv7
+        HolFiniteMapExact.empty [] []).vmax = 0) &&
+    decide ((ctxtFcExact Compiler.Encoders.Asm.AsmArchitecture.armv7
+        HolFiniteMapExact.empty [1, 2, 3] [10]).vars.lookup 3 = none)
+
+#guard ctxtFcExactGuard
+
+/-- Exact-carrier fixtures for `crepToLoopLocalsRelExact`, reproducing the
+    direct HOL-EVAL rows in `scripts/hol-probes/crep_to_loop_locals_rel_probe.out`
+    (`ctxt_vars_lookup`, `distinct_component`, `ctxt_max_component`,
+    `set_domain_mem`, `map_lookup`, `subset_domain_component`). `vars` is keyed
+    by the exact `varname = num`, `funcs` by `mlstring`, `l` is the exact
+    `sptree$num_set`, and `tLocals` the exact `word_loc` `num_map`. -/
+def localsRelExactCtxt : CrepToLoopContextExact where
+  vars := (HolFiniteMapExact.empty.update (0, 2)).update (1, 4)
+  funcs := HolFiniteMapExact.empty
+  vmax := 4
+  target := Compiler.Encoders.Asm.AsmArchitecture.armv7
+
+/-- Exact `sptree$num_set` with members 1 and 2 (cf. probe `set_domain_mem`). -/
+def localsRelExactSet : NumSet := sptFromAList [(1, ()), (2, ())]
+
+/-- Exact `sptree$num_map` over `word_loc` with entries 1, 2 and 4 (cf. probe
+    `map_lookup` and the `domain l ⊆ domain t_locals` row). -/
+def localsRelExactTarget : Spt (WordLocW 8) :=
+  sptFromAList
+    [(1, WordLocW.word 0), (2, WordLocW.word 9), (4, WordLocW.word 7)]
+
+/-- Exact source `num |-> 'a word_lab` local map with vars 0 and 1. -/
+def localsRelExactSource : HolFiniteMapExact Nat (HolWordLab 8) :=
+  (HolFiniteMapExact.empty.update (0, HolWordLab.word 9)).update
+    (1, HolWordLab.word 7)
+
+/-- Field-level guard reproducing the `locals_rel` oracle rows on the exact
+    carriers. -/
+def localsRelExactGuard : Bool :=
+  decide (localsRelExactCtxt.vars.lookup 0 = some 2) &&
+    decide (localsRelExactCtxt.vars.lookup 1 = some 4) &&
+    decide (localsRelExactCtxt.vmax = 4) &&
+    (sptLookup 1 localsRelExactSet).isSome &&
+    (sptLookup 2 localsRelExactSet).isSome &&
+    decide ((sptLookup 2 localsRelExactTarget : Option (WordLocW 8)) =
+      some (WordLocW.word 9)) &&
+    decide ((sptLookup 4 localsRelExactTarget : Option (WordLocW 8)) =
+      some (WordLocW.word 7)) &&
+    decide ((wlabWlocHOL (HolWordLab.word 9) : WordLocW 8) = WordLocW.word 9)
+
+#guard localsRelExactGuard
+
+/-- The exact `locals_rel` unfolds to the HOL clause structure, over the exact
+    carriers (`crepToLoopLocalsRelExact_iff`). -/
+example :
+    crepToLoopLocalsRelExact localsRelExactCtxt localsRelExactSet
+        localsRelExactSource localsRelExactTarget ↔
+      crepToLoopDistinctVars localsRelExactCtxt.vars.lookup ∧
+        crepToLoopCtxtMax localsRelExactCtxt.vmax localsRelExactCtxt.vars.lookup ∧
+        (∀ n, sptMem n localsRelExactSet → sptMem n localsRelExactTarget) ∧
+        ∀ vname value, localsRelExactSource.lookup vname = some value →
+          ∃ n, localsRelExactCtxt.vars.lookup vname = some n ∧
+            sptMem n localsRelExactSet ∧
+            sptLookup n localsRelExactTarget = some (wlabWlocHOL value) :=
+  crepToLoopLocalsRelExact_iff _ _ _ _
+
+/-- The tagged introduction lemma unpacks the same four HOL conjuncts as
+    `crepToLoopLocalsRelExact_iff` (`crepToLoopLocalsRelExact_intro`, the port
+    of HOL `locals_rel_intro`). -/
+example (h : crepToLoopLocalsRelExact localsRelExactCtxt localsRelExactSet
+    localsRelExactSource localsRelExactTarget) :
+    crepToLoopDistinctVars localsRelExactCtxt.vars.lookup ∧
+      crepToLoopCtxtMax localsRelExactCtxt.vmax localsRelExactCtxt.vars.lookup ∧
+      (∀ n, sptMem n localsRelExactSet → sptMem n localsRelExactTarget) ∧
+      ∀ vname value, localsRelExactSource.lookup vname = some value →
+        ∃ n, localsRelExactCtxt.vars.lookup vname = some n ∧
+          sptMem n localsRelExactSet ∧
+          sptLookup n localsRelExactTarget = some (wlabWlocHOL value) :=
+  crepToLoopLocalsRelExact_intro _ _ _ _ h
+
+/-! ## Direct `locals_rel` oracle rows
+
+The direct rows in `scripts/hol-probes/crep_to_loop_locals_rel_probe.out`
+(`locals_rel_true`, `locals_rel_domain_false`, `locals_rel_value_false`) decide
+the whole HOL `locals_rel` on a concrete num-keyed carrier instance by kernel
+proof: `EVAL` alone cannot decide the universally quantified relation. The Lean
+counterparts below are kernel-checked `example`s on the same instance -- a proof
+plus two refutations -- so the tagged `crepToLoopLocalsRelExact` is exercised on
+a concrete context rather than only through its components. -/
+
+/-- Oracle context: `vars` keyed by the exact `varname = num` with `0 |-> 0`,
+    `vmax = 0`, empty `funcs`. -/
+abbrev localsRelOracleCtxt : CrepToLoopContextExact where
+  vars := HolFiniteMapExact.empty.update (0, 0)
+  funcs := HolFiniteMapExact.empty
+  vmax := 0
+  target := Compiler.Encoders.Asm.AsmArchitecture.armv7
+
+/-- Exact `sptree$num_set` with member `0` (probe `set_domain_mem`). -/
+abbrev localsRelOracleSet : NumSet := Spt.ls ()
+
+/-- Exact source `num |-> 'a word_lab` with `0 |-> Word 9`. -/
+abbrev localsRelOracleSource : HolFiniteMapExact Nat (HolWordLab 8) :=
+  HolFiniteMapExact.empty.update (0, HolWordLab.word 9)
+
+/-- Target `num_map` with `0 |-> Word 9` (probe `locals_rel_true`). -/
+abbrev localsRelOracleTarget : Spt (WordLocW 8) := Spt.ls (WordLocW.word 9)
+
+/-- Empty target `num_map` (probe `locals_rel_domain_false`). -/
+abbrev localsRelOracleTargetEmpty : Spt (WordLocW 8) := Spt.ln
+
+/-- Target `num_map` with `0 |-> Word 12` (probe `locals_rel_value_false`). -/
+abbrev localsRelOracleTargetBad : Spt (WordLocW 8) := Spt.ls (WordLocW.word 12)
+
+/-- Kernel-checked true row (HOL `locals_rel_true`). -/
+example :
+    crepToLoopLocalsRelExact localsRelOracleCtxt localsRelOracleSet
+      localsRelOracleSource localsRelOracleTarget := by
+  rw [crepToLoopLocalsRelExact]
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · intro x y n m hx hy _
+    simp only [FLOOKUP, HolFiniteMapExact.lookup_update, HolFiniteMapExact.lookup_empty,
+      FUPDATE, beq_iff_eq] at hx hy
+    split at hx
+    · split at hy
+      · simp only [Option.some.injEq] at hx hy
+        omega
+      · simp at hy
+    · simp at hx
+  · intro v m hv
+    simp only [FLOOKUP, HolFiniteMapExact.lookup_update, HolFiniteMapExact.lookup_empty,
+      FUPDATE, beq_iff_eq] at hv
+    split at hv
+    · simp only [Option.some.injEq] at hv
+      omega
+    · simp at hv
+  · intro n hn
+    rw [sptMem_iff_lookup] at hn ⊢
+    obtain ⟨v, hv⟩ := hn
+    simp only [sptLookup] at hv ⊢
+    split at hv
+    · rename_i hn0
+      exact ⟨WordLocW.word 9, by rw [if_pos hn0]⟩
+    · simp at hv
+  · intro vname value hv
+    simp only [HolFiniteMapExact.lookup_update, HolFiniteMapExact.lookup_empty,
+      FUPDATE, beq_iff_eq] at hv
+    split at hv
+    · rename_i hv0
+      simp only [Option.some.injEq] at hv
+      subst hv
+      refine ⟨0, ?_, ?_, ?_⟩
+      · rw [← hv0]
+        decide
+      · rw [sptMem_iff_lookup]
+        exact ⟨(), by simp [sptLookup]⟩
+      · simp [sptLookup, wlabWlocHOL]
+    · simp at hv
+
+/-- Kernel-checked domain-false row: `0` is in the source set but absent from
+    the target map (HOL `locals_rel_domain_false`). -/
+example :
+    ¬ crepToLoopLocalsRelExact localsRelOracleCtxt localsRelOracleSet
+      localsRelOracleSource localsRelOracleTargetEmpty := by
+  intro h
+  rw [crepToLoopLocalsRelExact] at h
+  obtain ⟨_, _, hsub, _⟩ := h
+  have hmem : sptMem 0 localsRelOracleSet := by
+    rw [sptMem_iff_lookup]
+    exact ⟨(), by simp [sptLookup]⟩
+  have hbad := hsub 0 hmem
+  simp [sptMem, sptDomain, sptLookup] at hbad
+
+/-- Kernel-checked value-false row: the target maps `0` to the wrong word
+    (HOL `locals_rel_value_false`). -/
+example :
+    ¬ crepToLoopLocalsRelExact localsRelOracleCtxt localsRelOracleSet
+      localsRelOracleSource localsRelOracleTargetBad := by
+  intro h
+  rw [crepToLoopLocalsRelExact] at h
+  obtain ⟨_, _, _, hpoint⟩ := h
+  obtain ⟨n, _, hmem, hn⟩ := hpoint 0 (HolWordLab.word 9) (by decide)
+  have hn0 : n = 0 := by
+    rw [sptMem_iff_lookup] at hmem
+    obtain ⟨u, hu⟩ := hmem
+    simp only [sptLookup] at hu
+    split at hu
+    · assumption
+    · simp at hu
+  subst hn0
+  simp only [sptLookup, wlabWlocHOL] at hn
+  exact absurd hn (by decide)
+
+/-- Field-level guard for the decidable parts of the direct oracle rows. -/
+def localsRelOracleGuard : Bool :=
+  decide (localsRelOracleCtxt.vars.lookup 0 = some 0) &&
+    (sptLookup 0 localsRelOracleSet).isSome &&
+    decide ((sptLookup 0 localsRelOracleTarget : Option (WordLocW 8)) =
+      some (WordLocW.word 9)) &&
+    !(sptLookup 0 localsRelOracleTargetEmpty).isSome &&
+    decide ((sptLookup 0 localsRelOracleTargetBad : Option (WordLocW 8)) =
+      some (WordLocW.word 12))
+
+#guard localsRelOracleGuard
+
+/-! Direct cut-set oracle rows for HOL `locals_rel_cutset_prop`
+(`crep_to_loopProofScript.sml:236-244`), matching
+`locals_rel_cutset_second_true` / `locals_rel_cutset_after_true` and
+`cutset_set_lookup` / `cutset_target_lookup` in
+`scripts/hol-probes/crep_to_loop_locals_rel_probe.out`. -/
+
+abbrev localsRelOracleSetBig : NumSet := sptInsert 1 () localsRelOracleSet
+
+abbrev localsRelOracleCutsetTarget : Spt (WordLocW 8) :=
+  sptInsert 1 (WordLocW.word 3) localsRelOracleTarget
+
+/-- The rendered HOL `subspt` holds for the concrete sets of the cut-set rows. -/
+example : sptSubspt localsRelOracleSet localsRelOracleSetBig := by
+  intro k hk
+  have hk' : sptMem k (Spt.ls ()) := by simpa only [localsRelOracleSet] using hk
+  have hk0 : k = 0 := (sptMem_ls k ()).mp hk'
+  subst hk0
+  constructor
+  · rw [sptMem_iff_lookup]
+    exact ⟨(), by simp [localsRelOracleSetBig, sptInsert, sptLookup]⟩
+  · simp [localsRelOracleSetBig, localsRelOracleSet, sptInsert, sptLookup]
+
+def localsRelCutsetGuard : Bool :=
+  (sptLookup 1 localsRelOracleSetBig).isSome &&
+    decide ((sptLookup 1 localsRelOracleCutsetTarget : Option (WordLocW 8)) =
+      some (WordLocW.word 3)) &&
+    decide ((sptLookup 0 localsRelOracleCutsetTarget : Option (WordLocW 8)) =
+      some (WordLocW.word 9))
+
+#guard localsRelCutsetGuard
+
+/-- Shape check of the tagged `locals_rel_cutset_prop` against the HOL statement. -/
+example
+    (h1 : crepToLoopLocalsRelExact localsRelOracleCtxt localsRelOracleSet
+      localsRelOracleSource localsRelOracleTarget)
+    (h2 : crepToLoopLocalsRelExact localsRelOracleCtxt localsRelOracleSetBig
+      localsRelOracleSource localsRelOracleCutsetTarget)
+    (hsub : sptSubspt localsRelOracleSet localsRelOracleSetBig) :
+    crepToLoopLocalsRelExact localsRelOracleCtxt localsRelOracleSet
+      localsRelOracleSource localsRelOracleCutsetTarget :=
+  crepToLoopLocalsRelExact_cutset_prop _ _ _ _ _ _ h1 h2 hsub
+
+/-- `n = 5 > ctxt.vmax = 0`, so inserting a fresh wloc leaves the relation intact.
+    Matches `locals_rel_insert_after_true` / `insert_gt_vmax_lookup_unchanged` in
+    `scripts/hol-probes/crep_to_loop_locals_rel_probe.out` and the insert rows in
+    `scripts/hol-probes/crep_to_loop_locals_insert_probe.out`. -/
+
+abbrev localsRelOracleInsertTarget : Spt (WordLocW 8) :=
+  sptInsert 5 (WordLocW.word 3) localsRelOracleTarget
+
+def localsRelInsertGuard : Bool :=
+  decide ((sptLookup 5 localsRelOracleInsertTarget : Option (WordLocW 8)) =
+    some (WordLocW.word 3)) &&
+  decide ((sptLookup 0 localsRelOracleInsertTarget : Option (WordLocW 8)) =
+    some (WordLocW.word 9))
+
+#guard localsRelInsertGuard
+
+/-- Shape check of the tagged `locals_rel_insert_gt_vmax` against the HOL statement. -/
+example
+    (h : crepToLoopLocalsRelExact localsRelOracleCtxt localsRelOracleSet
+      localsRelOracleSource localsRelOracleTarget)
+    (hgt : localsRelOracleCtxt.vmax < 5) :
+    crepToLoopLocalsRelExact localsRelOracleCtxt localsRelOracleSet
+      localsRelOracleSource localsRelOracleInsertTarget :=
+  crepToLoopLocalsRelExact_insert_gt_vmax _ _ _ _ _ _ h hgt
+
 def runChecks : IO Bool := do
   let results := [declarationRenamingMatches,
     handlerlessCallCarriesRaiseHandler, handledCallCarriesRaiseHandler,
@@ -292,7 +652,9 @@ def runChecks : IO Bool := do
     callReturnSourceVariableMaps,
     shMemDestinationMappingMatches, assignDestinationMappingMatches,
     comparisonKeepsIncomingLive,
-    comparisonWithoutLiveDropsIt]
+    comparisonWithoutLiveDropsIt,
+    stateRelExactGuard, ctxtFcExactGuard, localsRelExactGuard,
+    localsRelOracleGuard, localsRelCutsetGuard, localsRelInsertGuard]
   let names := [
     "crep_to_loop declaration renaming and live seed",
     "crep_to_loop default call handler",
@@ -302,7 +664,13 @@ def runChecks : IO Bool := do
     "crep_to_loop shared-memory destination mapping",
     "crep_to_loop assignment destination mapping",
     "crep_to_loop comparison keeps the incoming live set",
-    "crep_to_loop comparison without live does not invent one"]
+    "crep_to_loop comparison without live does not invent one",
+    "crep_to_loop exact-carrier state_rel matches the HOL oracle rows",
+    "crep_to_loop exact ctxt_fc matches the HOL oracle rows",
+    "crep_to_loop exact locals_rel matches the HOL oracle rows",
+    "crep_to_loop exact locals_rel direct oracle rows (true/domain-false/value-false)",
+    "crep_to_loop exact locals_rel_cutset_prop oracle rows (subspt/second/after)",
+    "crep_to_loop exact locals_rel_insert_gt_vmax oracle rows (fresh-key/unchanged)"]
   let mut all := true
   for (name, result) in names.zip results do
     if result then IO.println s!"PASS {name}" else IO.println s!"FAIL {name}"

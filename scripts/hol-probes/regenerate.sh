@@ -208,7 +208,8 @@ run_probe get_stack_only_probeScript.sml get_stack_only_probe.out \
   skip assign_leaf "$cake_dir/compiler/backend/word_allocScript.sml" \
   "$cake_dir/compiler/backend"
 run_probe pan_mem_load_probeScript.sml pan_mem_load_probe.out \
-  one_hit named_suffix_blocked "$cake_dir/pancake/semantics/panSemScript.sml"
+  one_hit recursive_mem_loads_two_words recursive_comb_two_words \
+  recursive_named_two_fields "$cake_dir/pancake/semantics/panSemScript.sml"
 run_probe pan_sem_state_eval_probeScript.sml pan_sem_state_eval_probe.out \
   word_load_hit eval_nested_load_shape pan_sem_state_eval_done \
   "$cake_dir/pancake/semantics/panSemScript.sml"
@@ -293,6 +294,9 @@ run_probe crep_dec_clock_simp_probeScript.sml crep_dec_clock_simp_probe.out \
 run_probe crep_to_loop_state_rel_probeScript.sml crep_to_loop_state_rel_probe.out \
   memaddrs_mdomain_mem clock_mismatch "$cake_dir/pancake/proofs/crep_to_loopProofScript.sml" \
   "$cake_dir/pancake/proofs"
+run_probe crep_to_loop_ctxt_fc_probeScript.sml crep_to_loop_ctxt_fc_probe.out \
+  vars_zip done "$cake_dir/pancake/proofs/crep_to_loopProofScript.sml" \
+  "$cake_dir/pancake/proofs"
 run_probe crep_to_loop_globals_rel_probeScript.sml crep_to_loop_globals_rel_probe.out \
   wlab_wloc_word globals_lookup_absent "$cake_dir/pancake/proofs/crep_to_loopProofScript.sml" \
   "$cake_dir/pancake/proofs"
@@ -309,7 +313,12 @@ run_probe crep_to_loop_ctxt_max_probeScript.sml crep_to_loop_ctxt_max_probe.out 
   ctxt_max_within ctxt_max_absent "$cake_dir/pancake/proofs/crep_to_loopProofScript.sml" \
   "$cake_dir/pancake/proofs"
 run_probe crep_to_loop_locals_rel_probeScript.sml crep_to_loop_locals_rel_probe.out \
-  ctxt_vars_lookup subset_domain_component \
+  ctxt_vars_lookup ctxt_max_component set_domain_mem map_lookup \
+  subset_domain_component cutset_set_lookup cutset_target_lookup \
+  locals_rel_true locals_rel_domain_false \
+  locals_rel_value_false locals_rel_cutset_second_true \
+  locals_rel_cutset_after_true locals_rel_insert_after_true \
+  insert_gt_vmax_lookup_unchanged \
   "$cake_dir/pancake/proofs/crep_to_loopProofScript.sml" \
   "$cake_dir/pancake/proofs"
 run_probe crep_to_loop_locals_insert_probeScript.sml crep_to_loop_locals_insert_probe.out \
@@ -340,8 +349,20 @@ run_probe crep_to_loop_assigned_vars_mapidx_probeScript.sml crep_to_loop_assigne
   avma_nil avma_offset_zero \
   "$cake_dir/pancake/proofs/crep_to_loopProofScript.sml" \
   "$cake_dir/pancake/proofs"
+run_probe crep_to_loop_survives_mapi_assign_probeScript.sml \
+  crep_to_loop_survives_mapi_assign_probe.out \
+  survives_mapi_assign_nil survives_mapi_assign_one \
+  survives_mapi_assign_three survives_mapi_assign_zero_offset \
+  "$cake_dir/pancake/proofs/crep_to_loopProofScript.sml" \
+  "$cake_dir/pancake/proofs"
 run_probe loop_props_assigned_vars_probeScript.sml loop_props_assigned_vars_probe.out \
   avs_seq_split avs_nested_assign_three \
+  "$cake_dir/pancake/semantics/loopPropsScript.sml" \
+  "$cake_dir/pancake/semantics"
+run_probe loop_props_cut_sets_probeScript.sml loop_props_cut_sets_probe.out \
+  cut_sets_skip cut_sets_locvalue cut_sets_assign cut_sets_load32 \
+  cut_sets_loadbyte cut_sets_seq cut_sets_if cut_sets_longdiv \
+  cut_sets_longmul cut_sets_div cut_sets_catch_all \
   "$cake_dir/pancake/semantics/loopPropsScript.sml" \
   "$cake_dir/pancake/semantics"
 run_probe crep_to_loop_context_defs_probeScript.sml crep_to_loop_context_defs_probe.out \
@@ -1093,6 +1114,11 @@ run_probe globals_lookup_probeScript.sml globals_lookup_probe.out \
   lookup_success lookup_missing lookup_struct \
   "$cake_dir/pancake/proofs/pan_to_crepProofScript.sml" \
   "$cake_dir/pancake/proofs"
+run_probe pan_globals_compile_probeScript.sml pan_globals_compile_probe.out \
+  local_assign global_destination_handler_flag global_destination_handler_local_arg \
+  "$cake_dir/pancake/pan_globalsScript.sml" \
+  "$cake_dir/pancake"
+
 run_probe pan_globals_compile_top_probeScript.sml pan_globals_compile_top_probe.out \
   missing_start global_present present_start "$cake_dir/pancake/pan_globalsScript.sml"
 run_probe pan_globals_compile_decs_probeScript.sml pan_globals_compile_decs_probe.out \
@@ -1270,10 +1296,28 @@ run_probe crep_eval_crepop_mul_rv64_probeScript.sml crep_eval_crepop_mul_rv64_pr
   "$cake_dir/pancake/semantics/crepSemScript.sml" \
   "$cake_dir/pancake/semantics"
 run_probe prog_if_probeScript.sml prog_if_probe.out \
-  prog_if_basic prog_if_basic \
+  prog_if_basic prog_if_basic prog_if_wrong_result prog_if_wrong_result \
+  "$cake_dir/pancake/crep_to_loopScript.sml"
+run_probe crep_to_loop_compile_exp_probeScript.sml crep_to_loop_compile_exp_probe.out \
+  prog_if base var_hit load32 op_nary crepop_mul cmp shift compile_exps \
+  "$cake_dir/pancake/crep_to_loopScript.sml"
+run_probe crep_to_loop_comp_func_probeScript.sml crep_to_loop_comp_func_probe.out \
+  comp_func_skip comp_func_return_var comp_func_two_params done \
+  "$cake_dir/pancake/crep_to_loopScript.sml"
+run_probe crep_to_loop_list_to_num_set_probeScript.sml crep_to_loop_list_to_num_set_probe.out \
+  ltns_nil_0 ltns_cons_shape done \
+  "$cake_dir/pancake/crep_to_loopScript.sml"
+run_probe crep_to_loop_compile_probeScript.sml crep_to_loop_compile_probe.out \
+  loop_nested_seq_empty compile_ext_call \
+  "$cake_dir/pancake/crep_to_loopScript.sml"
+run_probe crep_to_loop_compile_prog_probeScript.sml crep_to_loop_compile_prog_probe.out \
+  cp_fnums cp_params cp_body cp_length cp_call_fnums cp_call_params cp_call_body done \
+  "$cake_dir/pancake/crep_to_loopScript.sml"
+run_probe crep_to_loop_ocompile_probeScript.sml crep_to_loop_ocompile_probe.out \
+  ocompile_skip ocompile_call \
   "$cake_dir/pancake/crep_to_loopScript.sml"
 run_probe compile_crepop_probeScript.sml compile_crepop_probe.out \
-  compile_crepop_mul_riscv compile_crepop_mul_riscv \
+  compile_crepop_mul_riscv compile_crepop_mul_armv7 \
   "$cake_dir/pancake/crep_to_loopScript.sml"
 run_probe pan_empty_locals_probeScript.sml pan_empty_locals_probe.out \
   empty_locals empty_locals_clock \
@@ -1298,6 +1342,13 @@ run_probe loop_sem_get_var_imm_probeScript.sml \
 run_probe loop_props_get_vars_probeScript.sml \
   loop_props_get_vars_probe.out \
   get_vars_two get_var_imm_add_clk_eq \
+  "$cake_dir/pancake/semantics/loopPropsScript.sml" \
+  "$cake_dir/pancake/semantics"
+run_probe loop_props_survives_probeScript.sml \
+  loop_props_survives_probe.out \
+  if_hit if_miss loop_hit loop_miss_out call_hit call_miss \
+  call_handler_hit call_handler_miss_post ffi_hit ffi_miss mark_seq \
+  call_default assign_default \
   "$cake_dir/pancake/semantics/loopPropsScript.sml" \
   "$cake_dir/pancake/semantics"
 run_probe loop_sem_call_env_probeScript.sml \
@@ -1360,6 +1411,12 @@ run_probe loop_sem_eval_probeScript.sml loop_sem_eval_probe.out \
   const top_addr "$cake_dir/pancake/semantics/loopSemScript.sml"
 run_probe loop_sem_evaluate_probeScript.sml loop_sem_evaluate_probe.out \
   skip tick_timeout "$cake_dir/pancake/semantics/loopSemScript.sml"
+run_probe loop_sem_evaluate_control_probeScript.sml loop_sem_evaluate_control_probe.out \
+  if_true if_false if_cut_error loop_break0 loop_return loop_timeout \
+  loop_continue0_timeout loop_break_outer call_return call_return_handler \
+  call_exception_handler call_exception_no_handler call_arity_error \
+  tail_call_return raise primitive_add_carry loc_value loc_value_missing \
+  ffi_empty_name "$cake_dir/pancake/semantics/loopSemScript.sml"
 run_probe loop_semantics_probeScript.sml loop_semantics_probe.out \
   return_clock_zero return_clock_one "$cake_dir/pancake/semantics/loopSemScript.sml"
 run_probe loop_sem_lprefix_lub_probeScript.sml loop_sem_lprefix_lub_probe.out \
@@ -1372,6 +1429,10 @@ run_probe loop_sem_cut_state_probeScript.sml loop_sem_cut_state_probe.out \
   hit_first loc_preserved "$cake_dir/pancake/semantics/loopSemScript.sml"
 run_probe loop_sem_cut_res_probeScript.sml loop_sem_cut_res_probe.out \
   result_short_circuit clock_decrement_and_cut \
+  "$cake_dir/pancake/semantics/loopSemScript.sml"
+run_probe loop_sem_cut_zero_probeScript.sml loop_sem_cut_zero_probe.out \
+  cut0_success_lookup cut0_missing cut0_empty_live cut0_res_short_circuit \
+  cut0_res_missing_error cut0_res_timeout cut0_res_decrement \
   "$cake_dir/pancake/semantics/loopSemScript.sml"
 run_probe loop_sem_sh_mem_load_probeScript.sml loop_sem_sh_mem_load_probe.out \
   return_zero_width aligned_domain_original_payload \
@@ -1664,6 +1725,16 @@ run_probe loop_lang_prog_probeScript.sml loop_lang_prog_probe.out \
 run_probe pan_lang_exp_probeScript.sml pan_lang_exp_probe.out \
   ex_const ex_bytesinword \
   "$cake_dir/pancake/panLangScript.sml" \
+  "$cake_dir/pancake"
+run_probe sptree_set_ops_probeScript.sml sptree_set_ops_probe.out \
+  union_keys oel_miss \
+  "$cake_dir/compiler/backend/backend_commonScript.sml" \
+  "$cake_dir/compiler/backend"
+# Mixed-payload oracle for the heterogeneous HOL sptree$inter used by loopSem
+# cut_state (flapjack-pxgp.2.1): the result keeps the left operand's values.
+run_probe sptree_inter_mixed_probeScript.sml sptree_inter_mixed_probe.out \
+  inter_mixed_keys inter_mixed_disjoint \
+  "$cake_dir/pancake/loop_liveScript.sml" \
   "$cake_dir/pancake"
 # The num_set/spt probe observes the exact HOL sptree lookup/insert/wf/isEmpty
 # behaviour for the unit-spt carrier used as num_set.

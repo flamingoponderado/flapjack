@@ -61,10 +61,13 @@ call the exact ports with `crepShMemByteWidth operator`.
   payload is exactly HOL's `('a word_lab) list` via `HolWordLab`; the production
   `CrepResultHOL` (whose `return` carries `List (PanWordLab (BitVec width))`)
   is reachable only through the checked bridge `CrepResultHOLExact.toProd`.
-  The evaluator's whole-program statement remains untagged pending the
-  fixed-width/FFI/agreement audit tracked separately; `CrepResultHOLExact` is
-  the exact carrier for tagged result-level definitions such as
-  `exit_loop_def`.
+  The evaluator's whole-program statement is the tagged line-443 equation
+   `evalCrepSemHOLProgExact_eq_evaluate_def`, whose qualifiers carry the
+   fixed-width/FFI carrier translation; the individual constructor equations
+   are exposed as the `evalCrepSemHOLProgExact_*` lemmas and their
+   `_holShape`/no-decider restatements. `CrepResultHOLExact` is
+   the exact carrier for tagged result-level definitions such as
+   `exit_loop_def`.
 * `CrepSemHOLState` is the finite-support `HolFiniteMapExact` translation of
   HOL's `|->` fields; the state helpers `setVar`/`setGlobals`/`updLocals`/
   `emptyLocals`/`resVarEq` implement the HOL updates with HOL `=` equality.
@@ -633,8 +636,10 @@ theorem crepShMemStoreHOL_ioEvents_prefix {width : Nat} [NeZero width] {σ : Typ
 Declaration-local record (bead `flapjack-4ac.5.16.5.16`) of how each
 `crepSem$state` / `result` component of HOL
 `cakeml/pancake/semantics/crepSemScript.sml:19-43` is translated and of the
-exact residual mismatches that keep `evalCrepSemHOLProg` and its no-decider
-twin `evalCrepSemHOLProgExact` untagged.
+exact residual carrier mismatches. The whole-program tag is on
+`evalCrepSemHOLProgExact_eq_evaluate_def`; the function definitions
+`evalCrepSemHOLProg` and its no-decider twin `evalCrepSemHOLProgExact` remain
+untagged.
 
 Component table (`HOL component` -> `Lean component`):
 
@@ -716,9 +721,11 @@ Target: the rebound `evaluate_def` (`crepSemScript.sml:443-444`,
 Seq/While/Call conjuncts have no `fix_clock`. Compared with
 `evalCrepSemHOLProgExact`, its clause equations in this module, and the helpers
 they call. Verdict: **no semantic divergence was found in any of the 19
-clauses**, but the declaration is **not tagged**. Several clause equations do not
-yet have HOL's statement shape, and no assembled theorem states all conjuncts.
-Neither `evalCrepSemHOLProg` nor `evalCrepSemHOLProgExact` can itself carry the
+clauses**. This review predates the assembly; every clause it flagged below has
+since been restated with HOL's statement shape and the assembled line-443 tag
+`evalCrepSemHOLProgExact_eq_evaluate_def` (bead `.37`, status note below) now
+states all 19 conjuncts. Neither `evalCrepSemHOLProg` nor
+`evalCrepSemHOLProgExact` can itself carry the
 tag. The core takes the `memDec`/`shMemDec` arguments and stamps domains with
 `crepStampExactDomains`. The wrapper's body is a classical instantiation of the
 core. The tag belongs on clause equations over `evalCrepSemHOLProgExact`, as for
@@ -732,7 +739,8 @@ finite-map/word carriers): `Skip` (`evalCrepSemHOLProgExact_skip`), `Break`,
 `write_bytearray` on the exact `word8` helpers, and the `FFI_final`/`FFI_return`
 split all match `:367-379`).
 
-Clauses that are semantically faithful but still need a HOL-shaped statement:
+Clauses that were semantically faithful but initially needed a HOL-shaped
+statement (all since restated, see the status note below):
 
 * `Dec` (`:242-247`): no `evalCrepSemHOLProgExact` equation exists yet; only the
   core `evalCrepSemHOLProg_dec`. The `setVar`/`resVarEq` updates are HOL's
@@ -1087,13 +1095,11 @@ theorem evalCrepSemHOLProgExact_eq_core {width : Nat} [NeZero width] {σ : Type}
     rewritten `evaluate_def` (`cakeml/pancake/semantics/crepSemScript.sml:443`,
     originating at line 241): `evaluate (Skip, s) = (NONE, s)`. Over the
     Flapjack total evaluator `evalCrepSemHOLProgExact`, evaluating `Skip`
-    returns the state unchanged. This declaration is deliberately untagged:
-    its local constructor equation is checked, but no source-reviewed theorem
-    yet establishes that `evalCrepSemHOLProgExact` agrees with HOL `evaluate`
-    across every constructor, including the FFI cases. The map and word
-    qualifiers describe its carrier translations; they do not supply that
-    evaluator-agreement result. Keep this useful local equation as
-    Flapjack-specific infrastructure until that full evaluator gap is closed. -/
+    returns the state unchanged. This is the `Skip` arm of the tagged
+    whole-program equation `evalCrepSemHOLProgExact_eq_evaluate_def`
+    (`crepSemScript.sml:443`), which establishes agreement with HOL `evaluate`
+    across every constructor, including the FFI cases. The declaration itself
+    is untagged Flapjack-specific local infrastructure. -/
 theorem evalCrepSemHOLProgExact_skip {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ) :
     evalCrepSemHOLProgExact state (.skip : CrepProgHOL width) = (none, state) := by
@@ -1140,8 +1146,9 @@ attached. -/
     body's result and other post-state fields are forwarded. Direct HOL rows
     `dec_new_local_eval`, `dec_shadow_eval`, and `dec_error_eval` are tracked
     in `CrepSemTotalEvaluateHOLParity`. This is a local Dec-clause review; the
-    enclosing evaluator remains untagged pending other clauses and whole-
-    statement/carrier review. -/
+    clause is restated over the no-decider entry point by
+    `evalCrepSemHOLProgExact_dec_holShape` as an arm of the tagged
+    `evalCrepSemHOLProgExact_eq_evaluate_def` (`crepSemScript.sml:443`). -/
 @[simp] theorem evalCrepSemHOLProg_dec {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ)
     (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
@@ -1168,9 +1175,10 @@ attached. -/
     an absent local returns `Error` and leaves state unchanged. `name : Nat`
     matches HOL `varname = num`, values use the one-constructor `HolWordLab`
     `word_lab` carrier, and the state maps use the reviewed finite-support
-    translation. This supports an exact Assign-clause disposition only; the
-    enclosing evaluator remains untagged pending all other cases and whole-
-    statement review. -/
+    translation. This supports an exact Assign-clause disposition; the clause
+    is restated over the no-decider entry point by
+    `evalCrepSemHOLProgExact_assign_holShape` as an arm of the tagged
+    `evalCrepSemHOLProgExact_eq_evaluate_def` (`crepSemScript.sml:443`). -/
 @[simp] theorem evalCrepSemHOLProg_assign {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ)
     (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
@@ -1198,9 +1206,10 @@ attached. -/
     only `Word word`, represented by `HolWordLab`; this clause calls the exact
     `crepPrimopHOLExact` directly with no carrier conversion, and the
     `BitVec width`/`[NeZero width]` carrier supplies the positive-width word
-    parameter. This review covers only the Primitive equation. The enclosing
-    evaluator remains untagged pending the other clauses and whole-statement
-    review. -/
+    parameter. This review covers the Primitive equation; the clause is
+    restated over the no-decider entry point by
+    `evalCrepSemHOLProgExact_primitive_holShape` as an arm of the tagged
+    `evalCrepSemHOLProgExact_eq_evaluate_def` (`crepSemScript.sml:443`). -/
 @[simp] theorem evalCrepSemHOLProg_primitive {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ)
     (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
@@ -1234,8 +1243,10 @@ attached. -/
     update from `mem_store_def` (`panSemScript.sml:373-378`), also implemented
     by the tagged `panMemStoreHOL` helper in `PanSemStateEval.lean`. The state
     uses the reviewed positive-width `BitVec` / `HolWordLab` carriers. This
-    establishes a local Store-clause disposition only; the enclosing evaluator
-    remains untagged pending the other cases and whole-statement review. -/
+    establishes a local Store-clause disposition; the clause is restated over
+    the no-decider entry point by `evalCrepSemHOLProgExact_store_holShape` as
+    an arm of the tagged `evalCrepSemHOLProgExact_eq_evaluate_def`
+    (`crepSemScript.sml:443`). -/
 @[simp] theorem evalCrepSemHOLProg_store {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ)
     (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
@@ -1263,9 +1274,10 @@ attached. -/
     alignment, aligned-cell lookup, domain membership at `byte_align`, and the
     four endian-aware byte replacements match. On success only memory changes
     and the result is `NONE`; failed operands or store conditions return
-    `Error` with the original state. This is only a local Store32-clause
-    disposition; the enclosing evaluator remains untagged pending other cases
-    and whole-statement/carrier review. -/
+    `Error` with the original state. This is a local Store32-clause
+    disposition; the clause is restated over the no-decider entry point by
+    `evalCrepSemHOLProgExact_store32_holShape` as an arm of the tagged
+    `evalCrepSemHOLProgExact_eq_evaluate_def` (`crepSemScript.sml:443`). -/
 @[simp] theorem evalCrepSemHOLProg_store32 {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ)
     (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
@@ -1294,8 +1306,10 @@ attached. -/
     aligned cell, require that aligned address in the domain, then replace that
     cell with the endian-aware `set_byte` result. Success changes only memory
     and returns `NONE`; expression/store failure yields `Error` with the
-    original state. This is a local StoreByte disposition only; the enclosing
-    evaluator remains untagged pending other cases and whole-statement review. -/
+    original state. This is a local StoreByte disposition; the clause is
+    restated over the no-decider entry point by
+    `evalCrepSemHOLProgExact_storeByte_holShape` as an arm of the tagged
+    `evalCrepSemHOLProgExact_eq_evaluate_def` (`crepSemScript.sml:443`). -/
 @[simp] theorem evalCrepSemHOLProg_storeByte {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ)
     (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
@@ -1322,8 +1336,10 @@ attached. -/
     destination is `BitVec 5`, matching HOL's fixed `5 word` global key, and
     values use `HolWordLab`. A failed expression returns `Error` and the
     original state; success changes only globals and returns `NONE`. This is
-    a local StoreGlob disposition only; the enclosing evaluator remains
-    untagged pending other cases and whole-statement review. -/
+    a local StoreGlob disposition; the clause is restated over the no-decider
+    entry point by `evalCrepSemHOLProgExact_storeGlob_holShape` as an arm of
+    the tagged `evalCrepSemHOLProgExact_eq_evaluate_def`
+    (`crepSemScript.sml:443`). -/
 @[simp] theorem evalCrepSemHOLProg_storeGlob {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ)
     (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
@@ -1519,8 +1535,9 @@ theorem evalCrepSemHOLProg_while_timeout {width : Nat} [NeZero width] {σ : Type
     `sh_mem_store_def` helpers. Outer address/local failures return `Error`
     with the original state; helper results and post-states are forwarded,
     including FFI final/return effects. This is a local ShMem-clause review;
-    the enclosing evaluator remains untagged pending all other cases and
-    whole-statement/carrier review. -/
+    the clause is restated over the no-decider entry point by
+    `evalCrepSemHOLProgExact_shMem_holShape` as an arm of the tagged
+    `evalCrepSemHOLProgExact_eq_evaluate_def` (`crepSemScript.sml:443`). -/
 @[simp] theorem evalCrepSemHOLProg_shMem {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ)
     (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
@@ -1546,11 +1563,13 @@ theorem evalCrepSemHOLProg_while_timeout {width : Nat} [NeZero width] {σ : Type
     `(len1,ptr1,len2,ptr2)` lookup order, dispatch `call_FFI (ExtCall ffi_index)`,
     preserve the input state on final/error, and on return write the returned
     bytes at `ptr2` and install the new FFI state. The branch uses exact
-    `BitVec 8` byte helpers matching HOL `word8`. It remains untagged because
-    this core evaluator exposes explicit domain-decision arguments and the
-    whole evaluator clause/carrier audit is tracked by
-    `flapjack-4ac.5.16.5.2`. The public no-extra-argument wrapper and its core
-    equality are `evalCrepSemHOLProgExact` and `evalCrepSemHOLProgExact_eq_core`
+    `BitVec 8` byte helpers matching HOL `word8`. This core equation stays
+    untagged because it exposes explicit domain-decision arguments; the clause
+    is restated over the no-decider entry point by
+    `evalCrepSemHOLProgExact_extCall_holShape` as an arm of the tagged
+    `evalCrepSemHOLProgExact_eq_evaluate_def` (`crepSemScript.sml:443`). The
+    public no-extra-argument wrapper and its core equality are
+    `evalCrepSemHOLProgExact` and `evalCrepSemHOLProgExact_eq_core`
     (`flapjack-4ac.5.16.5.2`). -/
 @[simp] theorem evalCrepSemHOLProg_extCall {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ)
@@ -3521,12 +3540,14 @@ Declaration-local status note for beads `flapjack-4ac.5.16.5`, `flapjack-4ac.5.1
   coordinator review). It accepts a literal `BitVec <width>` signature, or a
   reviewed width-indexed carrier (local or imported) whose own header carries
   `[NeZero <width>]` and which mentions `BitVec <width>`.
-* **Evaluator tag.** `evalCrepSemHOLProg` / `evalCrepSemHOLProgExact` and the named
-  clause equations remain **untagged** pending source review of the clause set and
-  carriers. The eventual tag cites
+* **Evaluator tag.** `evalCrepSemHOLProg` / `evalCrepSemHOLProgExact` cannot
+  themselves carry the tag, and the named
+  clause equations over the core remain untagged because they expose explicit
+  domain deciders. The whole-program tag is applied to
+  `evalCrepSemHOLProgExact_eq_evaluate_def`, citing
   `cakeml/pancake/semantics/crepSemScript.sml:240` (the rewritten equation is
   rebound at `:443`) with `(fmap_as_finite_support := [locals, globals, code])`
-  and, once approved, `(words_as_type_indexed_bitvec)` under the combined manifest
+  and `(words_as_type_indexed_bitvec)` under the combined manifest
   status `reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec`. The clause
   signatures name `CrepSemHOLState`/`CrepProgHOL` rather than a literal `BitVec`;
   the carrier route above is what admits the word translation for them.
@@ -3539,8 +3560,8 @@ The finite evaluator core internally restates domain deciders with
 `crepStampExactDomains`, but `evalCrepSemHOLProg_preserves_domains` and
 `crepStampExactDomains_eq_self` show that stamp is identity on the recursive
 state, so it is absent from this theorem's statement. This theorem remains
-untagged: its Lean carrier uses the finite-support map representation and its
-qualifier/tag eligibility is still under review. -/
+untagged: it keeps the intermediate `fix_clock`, whereas the tagged line-443
+arm is its fix-clock-free `evalCrepSemHOLProgExact_seq_holShape` counterpart. -/
 theorem evalCrepSemHOLProgExact_seq {width : Nat} [NeZero width]
     {σ : Type} (state : CrepSemHOLState width σ)
     (first second : CrepProgHOL width) :
@@ -3610,8 +3631,9 @@ condition, `Continue 0`/normal loop re-entry, `Break 0`, and `exit_loop`
 branches. The evaluator core stamps recursive loop states so it can reuse
 explicit domain decisions; body domain preservation and `fix_clock` projection
 show that stamp is identity here, so the public equation has no stamp and no
-domain-preservation premise. It remains untagged while the finite-map carrier
-qualifier policy is reviewed. -/
+domain-preservation premise. It remains a Flapjack-specific unstamped variant
+(tagged line-443 arm: `evalCrepSemHOLProgExact_while_holShape`); it carries no
+`@[hol]` tag. -/
 theorem evalCrepSemHOLProgExact_while_unstamped {width : Nat} [NeZero width]
     {σ : Type} (state : CrepSemHOLState width σ) (condition : CrepExpHOL width)
     (body : CrepProgHOL width) :
@@ -3724,8 +3746,9 @@ theorem evalCrepSemHOLProgExact_while_unstamped {width : Nat} [NeZero width]
 /-- Flapjack-specific unstamped no-decider restatement of HOL `If` at
 `crepSemScript.sml:304-308`. No separate HOL declaration exists for this
 public evaluator equation. It preserves the zero/nonzero word branch choice
-and the Error result for a non-word condition. It remains untagged while the
-finite-support carrier qualifier policy is reviewed. -/
+and the Error result for a non-word condition. It remains a Flapjack-specific
+unstamped variant (tagged line-443 arm: `evalCrepSemHOLProgExact_ite_holShape`);
+it carries no `@[hol]` tag. -/
 theorem evalCrepSemHOLProgExact_ite_unstamped {width : Nat} [NeZero width]
     {σ : Type} (state : CrepSemHOLState width σ) (condition : CrepExpHOL width)
     (thenBranch elseBranch : CrepProgHOL width) :
@@ -4733,8 +4756,8 @@ theorem evalCrepSemHOLProg_clock_le {width : Nat} [NeZero width] {σ : Type}
 exact no-decider evaluator: `fixClockCrepSemHOL` is the identity on any result of
 `evalCrepSemHOLProgExact`, because the run never raises the clock
 (`evalCrepSemHOLProg_clock_le`, HOL `evaluate_clock`, crepSemScript.sml:420-430). This is the
-Flapjack-side statement behind HOL `fix_clock_evaluate`; it is deliberately untagged pending the
-full exact-evaluator clause/carrier review. -/
+Flapjack-side statement behind HOL `fix_clock_evaluate`; it carries no `@[hol]` tag (the
+exact-evaluator line-443 tag is the assembled `evalCrepSemHOLProgExact_eq_evaluate_def`). -/
 theorem fixClockCrepSemHOL_evalCrepSemHOLProgExact {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ) (program : CrepProgHOL width) :
     fixClockCrepSemHOL state (evalCrepSemHOLProgExact state program) =
