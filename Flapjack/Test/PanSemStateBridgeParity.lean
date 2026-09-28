@@ -1,4 +1,5 @@
 import Flapjack.Pancake.Semantics.PanSem.StateBridge
+import Flapjack.Pancake.Semantics.PanSem.TotalEvalBridge
 import Flapjack.Pancake.Semantics.PanSemStateEval
 
 /-!
@@ -261,6 +262,236 @@ example :
       = some (0x99 : W) := by
   simp [panSemBitVec64MemoryAccess, panValueMemoryAccessOfModel, bridgeState,
     partialMemaddrs]
+
+/-! ## Executed-carrier agreement regressions (`TotalEvalBridge.lean`)
+
+Kernel-checked fixtures for the untagged production/exact agreement interface:
+a concrete `PanSemStateRelExec` state pair, the result/option relations, the
+`Skip`/`Break`/`Continue`/`Tick`/`Annot` agreement theorems applied to it, and
+negative checks that the `ffi` and result-payload conjuncts are load-bearing. -/
+
+/-- Production FFI state whose oracle finalises with `failed` (no returned
+    case), so the persistent oracle relation is vacuous. -/
+def bridgeProdOracle : FfiOracle Unit := fun _ _ _ _ => .final .failed
+
+/-- Exact FFI state oracle with the matching final outcome. -/
+def bridgeHolOracle : HolOracle Unit := fun _ _ _ _ => .final .failed
+
+/-- Production FFI carrier of the fixture. -/
+def bridgeProdFfi : FfiState Unit :=
+  { oracle := bridgeProdOracle, state := (), ioEvents := [] }
+
+/-- Exact FFI carrier of the fixture. -/
+def bridgeHolFfi : HolFfiState Unit :=
+  { oracle := bridgeHolOracle, ffiState := (), ioEvents := [] }
+
+/-- The two FFI carriers are related. -/
+theorem bridgeFfiStateRel : FfiStateRel bridgeProdFfi bridgeHolFfi := by
+  refine ⟨rfl, trivial, ?_⟩
+  intro _name _holName _hname _state _configuration _holConfiguration
+    _bytes _holBytes _hconf _hbytes
+  simp [bridgeProdFfi, bridgeHolFfi, bridgeProdOracle, bridgeHolOracle,
+    OracleResultRel, OutcomeRel]
+
+/-- Complete production RV64 source state with empty maps, no memory, clock 5. -/
+def bridgeExecProdState : PanSemState (RiscV.Word 64) (FfiState Unit) :=
+  { locals := fun _ => none
+    globals := fun _ => none
+    structs := []
+    code := []
+    exceptionShapes := fun _ => none
+    memory := fun _ => none
+    memaddrs := fun _ => false
+    sharedMemaddrs := fun _ => false
+    clock := 5
+    be := false
+    ffi := bridgeProdFfi
+    baseAddress := 0
+    topAddress := 100 }
+
+/-- Exact finite-map counterpart with the same scalar fields and empty maps. -/
+def bridgeExecExactState : PanSemStateFiniteExact 64 Unit :=
+  { locals := HolFiniteMapExact.empty
+    globals := HolFiniteMapExact.empty
+    structs := []
+    code := HolFiniteMapExact.empty
+    eshapes := HolFiniteMapExact.empty
+    memory := fun _ => .word 0
+    memaddrs := fun _ => False
+    shMemaddrs := fun _ => False
+    clock := 5
+    be := false
+    ffi := bridgeHolFfi
+    baseAddr := 0
+    topAddr := 100 }
+
+/-- The concrete fixture satisfies the executed-carrier state relation. -/
+theorem bridgeStateRelExec :
+    PanSemStateRelExec bridgeExecProdState bridgeExecExactState.toExact := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · intro name _; rfl
+  · intro name _; rfl
+  · rfl
+  · intro name _; rfl
+  · intro name _; rfl
+  · intro address hmem
+    simp [bridgeExecProdState] at hmem
+  · intro address
+    simp [bridgeExecProdState, bridgeExecExactState]
+  · intro address
+    simp [bridgeExecProdState, bridgeExecExactState]
+  · rfl
+  · rfl
+  · exact bridgeFfiStateRel
+  · rfl
+  · rfl
+
+/-- Positive result correspondence: the encoded production word equals the exact
+    word payload. -/
+example :
+    PanSemHOLResultRel (.returned (.word (7 : W)))
+      (.returned (.val (.word (7 : W)))) := by
+  simp [PanSemHOLResultRel, panValueToHOL_word]
+
+/-- Negative result correspondence: mismatched word payloads are not related. -/
+example :
+    ¬ PanSemHOLResultRel (.returned (.word (7 : W)))
+      (.returned (.val (.word (8 : W)))) := by
+  simp [PanSemHOLResultRel]
+
+/-- The `Skip` agreement holds on the concrete fixture: normal completion on
+    both sides with the state relation preserved. -/
+example :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluate (fun _ _ => none) (.skip : Prog (RiscV.Word 64))
+          bridgeExecProdState).1
+        (PanSemStateFiniteExact.evaluateHOLFiniteState bridgeExecExactState
+          (.skip : ProgHOL 64)).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluate (fun _ _ => none) (.skip : Prog (RiscV.Word 64))
+          bridgeExecProdState).2
+        (PanSemStateFiniteExact.evaluateHOLFiniteState bridgeExecExactState
+          (.skip : ProgHOL 64)).2.toExact :=
+  panSemTotalEvaluate_skip_agree (fun _ _ => none) bridgeExecProdState
+    bridgeExecExactState bridgeStateRelExec
+
+/-- The `Break` agreement holds on the concrete fixture. -/
+example :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluate (fun _ _ => none) (.break : Prog (RiscV.Word 64))
+          bridgeExecProdState).1
+        (PanSemStateFiniteExact.evaluateHOLFiniteState bridgeExecExactState
+          (.break : ProgHOL 64)).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluate (fun _ _ => none) (.break : Prog (RiscV.Word 64))
+          bridgeExecProdState).2
+        (PanSemStateFiniteExact.evaluateHOLFiniteState bridgeExecExactState
+          (.break : ProgHOL 64)).2.toExact :=
+  panSemTotalEvaluate_break_agree (fun _ _ => none) bridgeExecProdState
+    bridgeExecExactState bridgeStateRelExec
+
+/-- The `Continue` agreement holds on the concrete fixture. -/
+example :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluate (fun _ _ => none) (.continue : Prog (RiscV.Word 64))
+          bridgeExecProdState).1
+        (PanSemStateFiniteExact.evaluateHOLFiniteState bridgeExecExactState
+          (.continue : ProgHOL 64)).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluate (fun _ _ => none) (.continue : Prog (RiscV.Word 64))
+          bridgeExecProdState).2
+        (PanSemStateFiniteExact.evaluateHOLFiniteState bridgeExecExactState
+          (.continue : ProgHOL 64)).2.toExact :=
+  panSemTotalEvaluate_continue_agree (fun _ _ => none) bridgeExecProdState
+    bridgeExecExactState bridgeStateRelExec
+
+/-- The `Tick` agreement holds on the concrete fixture (clock 5, so the
+    decrement branch). -/
+example :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluate (fun _ _ => none) (.tick : Prog (RiscV.Word 64))
+          bridgeExecProdState).1
+        (PanSemStateFiniteExact.evaluateHOLFiniteState bridgeExecExactState
+          (.tick : ProgHOL 64)).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluate (fun _ _ => none) (.tick : Prog (RiscV.Word 64))
+          bridgeExecProdState).2
+        (PanSemStateFiniteExact.evaluateHOLFiniteState bridgeExecExactState
+          (.tick : ProgHOL 64)).2.toExact :=
+  panSemTotalEvaluate_tick_agree (fun _ _ => none) bridgeExecProdState
+    bridgeExecExactState bridgeStateRelExec
+
+/-- The `Annot` agreement holds on the concrete fixture. -/
+example :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluate (fun _ _ => none)
+          (.annot "tag" "text" : Prog (RiscV.Word 64)) bridgeExecProdState).1
+        (PanSemStateFiniteExact.evaluateHOLFiniteState bridgeExecExactState
+          (.annot (Flapjack.Basis.Pure.MlString.ofString "tag")
+            (Flapjack.Basis.Pure.MlString.ofString "text") : ProgHOL 64)).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluate (fun _ _ => none)
+          (.annot "tag" "text" : Prog (RiscV.Word 64)) bridgeExecProdState).2
+        (PanSemStateFiniteExact.evaluateHOLFiniteState bridgeExecExactState
+          (.annot (Flapjack.Basis.Pure.MlString.ofString "tag")
+            (Flapjack.Basis.Pure.MlString.ofString "text") : ProgHOL 64)).2.toExact :=
+  panSemTotalEvaluate_annot_agree (fun _ _ => none) bridgeExecProdState
+    bridgeExecExactState bridgeStateRelExec
+    (Flapjack.Basis.Pure.MlString.ofString "tag")
+    (Flapjack.Basis.Pure.MlString.ofString "text")
+
+/-- The `Tick` timeout branch also agrees: clock zero clears the locals on both
+    sides. -/
+example :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluate (fun _ _ => none) (.tick : Prog (RiscV.Word 64))
+          { bridgeExecProdState with clock := 0 }).1
+        (PanSemStateFiniteExact.evaluateHOLFiniteState
+          { bridgeExecExactState with clock := 0 } (.tick : ProgHOL 64)).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluate (fun _ _ => none) (.tick : Prog (RiscV.Word 64))
+          { bridgeExecProdState with clock := 0 }).2
+        (PanSemStateFiniteExact.evaluateHOLFiniteState
+          { bridgeExecExactState with clock := 0 } (.tick : ProgHOL 64)).2.toExact := by
+  have hrel : PanSemStateRelExec
+      { bridgeExecProdState with clock := 0 }
+      ({ bridgeExecExactState with clock := 0 }).toExact := by
+    refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+    · intro name _; rfl
+    · intro name _; rfl
+    · rfl
+    · intro name _; rfl
+    · intro name _; rfl
+    · intro address hmem
+      simp [bridgeExecProdState] at hmem
+    · intro address
+      simp [bridgeExecProdState, bridgeExecExactState]
+    · intro address
+      simp [bridgeExecProdState, bridgeExecExactState]
+    · rfl
+    · rfl
+    · exact bridgeFfiStateRel
+    · rfl
+    · rfl
+  exact panSemTotalEvaluate_tick_agree (fun _ _ => none) _ _ hrel
+
+/-- Negative check: the `ffi` conjunct is load-bearing.  Appending an FFI event
+    to the exact side breaks `FfiStateRel`, hence `PanSemStateRelExec`. -/
+def bridgeExecExactStateDiffFfi : PanSemStateFiniteExact 64 Unit :=
+  { bridgeExecExactState with
+    ffi := { bridgeHolFfi with
+      ioEvents := [{ name := HolFfiName.extCall
+                        (Flapjack.Basis.Pure.MlString.MlString.implode []),
+                     configuration := [], bytes := [] }] } }
+
+/-- The relation fails when the exact FFI field carries an event the production
+    side does not, so the `FfiStateRel` conjunct matters. -/
+theorem bridgeStateRelExec_ffi_negative :
+    ¬ PanSemStateRelExec bridgeExecProdState bridgeExecExactStateDiffFfi.toExact := by
+  intro hrel
+  obtain ⟨_, _, _, _, _, _, _, _, _, _, hffi, _, _⟩ := hrel
+  simpa [bridgeExecProdState, bridgeExecExactStateDiffFfi, bridgeExecExactState,
+    bridgeProdFfi, FfiEventListRel] using hffi.2.1
 
 def runChecks : IO Bool := do
   IO.println "PASS production/exact PanSemState codec bridge (value/entry/struct/state)"
