@@ -1,4 +1,5 @@
 import Flapjack.Pancake.LoopLive
+import Flapjack.Pancake.LoopLive.Fixedpoint
 import Flapjack.Pancake.Semantics.LoopSemStateExact.Evaluate
 import Flapjack.Pancake.Semantics.LoopProps.EvalExact
 import Flapjack.Pancake.Semantics.LoopProps.UnassignedVarsExact
@@ -2401,5 +2402,416 @@ theorem loopLive_compile_correct_call {width : Nat} [NeZero width] {F : Type} :
               locals := sptAlistInsert ns retvs (sptInter locals K) }
           from rfl, hn]
         exact hn2
+
+/-! ## Loop case -/
+
+/-- Exact HOL `subspt_IMP_domain` (`loop_liveProofScript.sml:131-132`, `[local]`):
+    `subspt l1 l2 ⇒ domain l1 SUBSET domain l2`. -/
+@[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "subspt_IMP_domain"]
+theorem subspt_IMP_domain {α : Type} (l1 l2 : Spt α) :
+    sptSubspt l1 l2 → ∀ k, sptMem k l1 → sptMem k l2 :=
+  fun h k hk => (h k hk).1
+
+/-- Exact HOL `subspt_inter_domain_cut` (`loop_liveProofScript.sml:137-140`, `[local]`):
+    `∀X m1 m2. domain X ⊆ domain m1 ∧ subspt (inter m1 X) m2 ⇒ domain X ⊆ domain m2`. -/
+@[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "subspt_inter_domain_cut"]
+theorem subspt_inter_domain_cut {α β : Type} :
+    ∀ (X : Spt β) (m1 m2 : Spt α),
+      (∀ k, sptMem k X → sptMem k m1) ∧ sptSubspt (sptInter m1 X) m2 →
+      ∀ k, sptMem k X → sptMem k m2 := by
+  intro X m1 m2 ⟨h1, h2⟩ k hk
+  exact (h2 k ((mem_inter_iff _ _ k).mpr ⟨h1 k hk, hk⟩)).1
+
+/-- Exact HOL `subspt_inter_union_R` (`loop_liveProofScript.sml:148-150`, `[local]`):
+    `∀A B C D. subspt (inter A (union B C)) D ⇒ subspt (inter A C) D`. -/
+@[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "subspt_inter_union_R"]
+theorem subspt_inter_union_R {α β : Type} :
+    ∀ (A : Spt α) (B C : Spt β) (D : Spt α),
+      sptSubspt (sptInter A (sptUnion B C)) D → sptSubspt (sptInter A C) D := by
+  intro A B C D h k hk
+  obtain ⟨hka, hkc⟩ := (mem_inter_iff _ _ k).mp hk
+  have hku : sptMem k (sptUnion B C) := (sptMem_sptUnion' _ _ _).mpr (Or.inr hkc)
+  have := h k ((mem_inter_iff _ _ k).mpr ⟨hka, hku⟩)
+  refine ⟨this.1, ?_⟩
+  rw [this.2, sptLookup_sptInter, sptLookup_sptInter,
+    if_pos (show (sptLookup k (sptUnion B C)).isSome = true from hku),
+    if_pos (show (sptLookup k C).isSome = true from hkc)]
+
+/-- Flapjack helper (no HOL declaration): the `Break 0` exit of HOL's
+    `Resume compile_correct[Loop]` — `cut_res live_out` on the source against the
+    shrunk loop's `cut_res (inter live_out l0)`. -/
+private theorem loopLive_break_tail {width : Nat} [NeZero width] {F : Type}
+    (sb : LoopSemStateFiniteExact width F) (nl : Spt (WordLocW width))
+    (lt : List (NumSet × NumSet)) (l0 liveOut brk : NumSet)
+    (res : Option (LoopResultExact width)) (s1 : LoopSemStateFiniteExact width F)
+    (hsubB : sptSubspt (sptInter sb.locals brk) nl)
+    (hBRK : ∀ k, sptMem k (sptInter liveOut l0) → sptMem k brk) :
+    cutRes liveOut (none, sb) = (res, s1) → res ≠ some .error →
+    ∃ new_locals, cutRes (sptInter liveOut l0) (none, { sb with locals := nl }) =
+        (res, { s1 with locals := new_locals }) ∧
+      match res with
+      | none => sptSubspt (sptInter s1.locals l0) new_locals
+      | some (.result _) => new_locals = s1.locals
+      | some (.exception _) => new_locals = s1.locals
+      | some (.break n) =>
+          (match sptOel n lt with
+           | some (_, brk) => sptSubspt (sptInter s1.locals brk) new_locals
+           | none => True)
+      | some (.continue n) =>
+          (match sptOel n lt with
+           | some (cont, _) => sptSubspt (sptInter s1.locals cont) new_locals
+           | none => True)
+      | some .timeOut => new_locals = s1.locals
+      | some (.finalFfi _) => new_locals = s1.locals
+      | some .error => new_locals = s1.locals := by
+  intro he hne
+  by_cases hS : sptSubsetLive liveOut sb.locals
+  · have hS' : sptSubsetLive (sptInter liveOut l0) nl := by
+      intro k hk
+      obtain ⟨hkl, _⟩ := (mem_inter_iff _ _ k).mp hk
+      have hks := hS k hkl
+      exact (hsubB k ((mem_inter_iff _ _ k).mpr ⟨hks, hBRK k hk⟩)).1
+    simp only [cutRes, cutState_of_subset liveOut sb hS] at he
+    simp only [cutRes, cutState_of_subset (sptInter liveOut l0) { sb with locals := nl } hS']
+    by_cases hz : sb.clock = 0
+    · simp only [hz, if_true, Prod.mk.injEq] at he ⊢
+      obtain ⟨rfl, rfl⟩ := he
+      exact ⟨.ln, by constructor <;> rfl, rfl⟩
+    · simp only [hz, if_false, Prod.mk.injEq] at he ⊢
+      obtain ⟨rfl, rfl⟩ := he
+      refine ⟨sptInter nl (sptInter liveOut l0), by constructor <;> rfl, ?_⟩
+      refine subspt_of_lookup fun k hk => ?_
+      obtain ⟨hk1, hk0⟩ := (mem_inter_iff _ _ k).mp hk
+      obtain ⟨hks, hkl⟩ := (mem_inter_iff _ _ k).mp hk1
+      have hkL : sptMem k (sptInter liveOut l0) := (mem_inter_iff _ _ k).mpr ⟨hkl, hk0⟩
+      have hk0' : (sptLookup k l0).isSome = true := hk0
+      have hkl' : (sptLookup k liveOut).isSome = true := hkl
+      simp only [decClock, sptLookup_sptInter, hk0', hkl', if_true]
+      rw [(hsubB k ((mem_inter_iff _ _ k).mpr ⟨hks, hBRK k hkL⟩)).2, sptLookup_sptInter,
+        if_pos (show (sptLookup k brk).isSome = true from hBRK k hkL)]
+  · simp [cutRes, cutState_eq_none_of_not_subset liveOut sb hS] at he
+    exact absurd he.1.symm hne
+
+/-- Flapjack helper (no HOL declaration): the body of HOL's
+    `Resume compile_correct[Loop]`, stated for the shrunk loop `Loop L' B l2` with
+    the live-set facts shared by `shrink`'s fixed-point and no-fixed-point
+    branches. -/
+private theorem loopLive_loop_core {width : Nat} [NeZero width] {F : Type}
+    (liveIn liveOut : NumSet) (body : HolLoopProg width) (v1 : LoopSemStateFiniteExact width F)
+    (lt : List (NumSet × NumSet)) (locals : Spt (WordLocW width)) (l0 L' lB BRK : NumSet)
+    (B : HolLoopProg width) (res : Option (LoopResultExact width))
+    (s1 : LoopSemStateFiniteExact width F)
+    (ihb : ∀ st : LoopSemStateFiniteExact width F, st.clock < v1.clock →
+      loopLiveCompileCorrectAt body st)
+    (ihl : ∀ st : LoopSemStateFiniteExact width F, st.clock < v1.clock →
+      loopLiveCompileCorrectAt (.loop liveIn body liveOut) st)
+    (hs : shrinkHOL lt (.loop liveIn body liveOut) l0 = (.loop L' B (sptInter liveOut l0), L'))
+    (hB : shrinkHOL ((L', BRK) :: lt) body (sptUnion liveIn (sptInter liveOut l0)) = (B, lB))
+    (hL'in : ∀ k, sptMem k L' → sptMem k liveIn)
+    (hlB : ∀ k, sptMem k lB → sptMem k liveIn → sptMem k L')
+    (hBRK : ∀ k, sptMem k (sptInter liveOut l0) → sptMem k BRK)
+    (hsub : sptSubspt (sptInter v1.locals L') locals) :
+    evaluate (.loop liveIn body liveOut) v1 = (res, s1) → res ≠ some .error →
+    ∃ new_locals, evaluate (.loop L' B (sptInter liveOut l0)) { v1 with locals := locals } =
+        (res, { s1 with locals := new_locals }) ∧
+      match res with
+      | none => sptSubspt (sptInter s1.locals l0) new_locals
+      | some (.result _) => new_locals = s1.locals
+      | some (.exception _) => new_locals = s1.locals
+      | some (.break n) =>
+          (match sptOel n lt with
+           | some (_, brk) => sptSubspt (sptInter s1.locals brk) new_locals
+           | none => True)
+      | some (.continue n) =>
+          (match sptOel n lt with
+           | some (cont, _) => sptSubspt (sptInter s1.locals cont) new_locals
+           | none => True)
+      | some .timeOut => new_locals = s1.locals
+      | some (.finalFfi _) => new_locals = s1.locals
+      | some .error => new_locals = s1.locals := by
+  intro he hne
+  by_cases hnS : ¬ sptSubsetLive liveIn v1.locals
+  · rw [evaluate] at he
+    simp [cutRes, cutState_eq_none_of_not_subset liveIn v1 hnS] at he
+    exact absurd he.1.symm hne
+  have hS : sptSubsetLive liveIn v1.locals := Classical.not_not.mp hnS
+  have hcut := cutState_of_subset liveIn v1 hS
+  have hS' : sptSubsetLive L' locals := by
+    intro k hk
+    have hkv := hS k (hL'in k hk)
+    exact (hsub k ((mem_inter_iff _ _ k).mpr ⟨hkv, hk⟩)).1
+  have hcut' := cutState_of_subset L' { v1 with locals := locals } hS'
+  by_cases hz : v1.clock = 0
+  · rw [evaluate, cutRes_none_of_cut hcut] at he
+    simp [hz] at he
+    obtain ⟨rfl, rfl⟩ := he
+    refine ⟨.ln, ?_, rfl⟩
+    rw [evaluate, cutRes_none_of_cut hcut']
+    simp [hz]
+  have hc0 : cutRes liveIn (none, v1) =
+      (none, decClock { v1 with locals := sptInter v1.locals liveIn }) := by
+    rw [cutRes_none_of_cut hcut]; simp [hz]
+  have hc0' : cutRes L' (none, { v1 with locals := locals }) =
+      (none, decClock { v1 with locals := sptInter locals L' }) := by
+    rw [cutRes_none_of_cut hcut']; simp [hz]
+  rw [evaluate, hc0] at he
+  simp only at he
+  rw [fix_clock_evaluate] at he
+  rcases hbe : evaluate body (decClock { v1 with locals := sptInter v1.locals liveIn }) with ⟨rb, sb⟩
+  rw [hbe] at he
+  have hs1c : (decClock { v1 with locals := sptInter v1.locals liveIn }).clock < v1.clock := by
+    simp only [decClock]; omega
+  have hsbc : sb.clock < v1.clock := by
+    have := evaluate_clock_snd body (decClock { v1 with locals := sptInter v1.locals liveIn })
+    rw [hbe] at this
+    exact Nat.lt_of_le_of_lt this hs1c
+  have hrb : rb ≠ some .error := fun e => by
+    subst e; simp [LoopSemStateFiniteExact.exitLoop] at he; exact hne he.1.symm
+  have hpre : sptSubspt (sptInter (decClock { v1 with locals := sptInter v1.locals liveIn }).locals lB)
+      (sptInter locals L') := by
+    refine subspt_of_lookup fun k hk => ?_
+    obtain ⟨hka, hkb⟩ := (mem_inter_iff _ _ k).mp hk
+    simp only [decClock] at hka
+    obtain ⟨hkv, hki⟩ := (mem_inter_iff _ _ k).mp hka
+    have hkL := hlB k hkb hki
+    have hkb' : (sptLookup k lB).isSome = true := hkb
+    have hkL' : (sptLookup k L').isSome = true := hkL
+    have hki' : (sptLookup k liveIn).isSome = true := hki
+    simp only [decClock, sptLookup_sptInter, hkb', hkL', hki', if_true]
+    exact subspt_inter_apply hsub hkv hkL
+  obtain ⟨nl, hn, hp⟩ := ihb _ hs1c rb sb ((L', BRK) :: lt) (sptInter locals L') B lB
+    (sptUnion liveIn (sptInter liveOut l0)) ⟨hbe, hrb, hB, hpre⟩
+  have hn' : evaluate B (decClock { v1 with locals := sptInter locals L' }) =
+      (rb, { sb with locals := nl }) := hn
+  have hshr : ∀ G, evaluate (.loop L' B (sptInter liveOut l0)) { v1 with locals := locals } = G ↔
+      (match (rb, { sb with locals := nl }) with
+       | (none, s2) => evaluate (.loop L' B (sptInter liveOut l0)) s2
+       | (some (.continue 0), s2) => evaluate (.loop L' B (sptInter liveOut l0)) s2
+       | (some (.break 0), s2) => cutRes (sptInter liveOut l0) (none, s2)
+       | (res, s2) => (LoopSemStateFiniteExact.exitLoop res, s2)) = G := by
+    intro G
+    rw [evaluate, hc0']
+    simp only
+    rw [fix_clock_evaluate, hn']
+    rcases rb with _ | r
+    · exact Iff.rfl
+    · cases r with
+      | «continue» n => cases n <;> exact Iff.rfl
+      | «break» n => cases n <;> exact Iff.rfl
+      | _ => exact Iff.rfl
+  have hL'bex : ∀ k, sptMem k L' → sptMem k (sptUnion liveIn (sptInter liveOut l0)) :=
+    fun k hk => (sptMem_sptUnion' _ _ _).mpr (Or.inl (hL'in k hk))
+  rcases rb with _ | r
+  · simp only at he hp
+    obtain ⟨nl2, hn2, hp2⟩ := ihl sb hsbc res s1 lt nl _ L' l0
+      ⟨he, hne, hs, post_none_same hp hL'bex⟩
+    exact ⟨nl2, (hshr _).mpr hn2, hp2⟩
+  cases r with
+  | «continue» n =>
+    cases n with
+    | zero =>
+      simp only at he hp
+      simp only [sptOel] at hp
+      obtain ⟨nl2, hn2, hp2⟩ := ihl sb hsbc res s1 lt nl _ L' l0 ⟨he, hne, hs, hp⟩
+      exact ⟨nl2, (hshr _).mpr hn2, hp2⟩
+    | succ n =>
+      simp only [LoopSemStateFiniteExact.exitLoop, Prod.mk.injEq] at he
+      obtain ⟨rfl, rfl⟩ := he
+      refine ⟨nl, (hshr _).mpr (by simp [LoopSemStateFiniteExact.exitLoop]), ?_⟩
+      simp only [sptOel] at hp; exact hp
+  | «break» n =>
+    cases n with
+    | zero =>
+      simp only at he hp
+      simp only [sptOel] at hp
+      obtain ⟨nl2, hn2, hp2⟩ := loopLive_break_tail sb nl lt l0 liveOut BRK res s1 hp hBRK he hne
+      exact ⟨nl2, (hshr _).mpr hn2, hp2⟩
+    | succ n =>
+      simp only [LoopSemStateFiniteExact.exitLoop, Prod.mk.injEq] at he
+      obtain ⟨rfl, rfl⟩ := he
+      refine ⟨nl, (hshr _).mpr (by simp [LoopSemStateFiniteExact.exitLoop]), ?_⟩
+      simp only [sptOel] at hp; exact hp
+  | result vs =>
+    simp only [LoopSemStateFiniteExact.exitLoop, Prod.mk.injEq] at he
+    obtain ⟨rfl, rfl⟩ := he
+    exact ⟨nl, (hshr _).mpr (by simp [LoopSemStateFiniteExact.exitLoop]), hp⟩
+  | exception w =>
+    simp only [LoopSemStateFiniteExact.exitLoop, Prod.mk.injEq] at he
+    obtain ⟨rfl, rfl⟩ := he
+    exact ⟨nl, (hshr _).mpr (by simp [LoopSemStateFiniteExact.exitLoop]), hp⟩
+  | timeOut =>
+    simp only [LoopSemStateFiniteExact.exitLoop, Prod.mk.injEq] at he
+    obtain ⟨rfl, rfl⟩ := he
+    exact ⟨nl, (hshr _).mpr (by simp [LoopSemStateFiniteExact.exitLoop]), hp⟩
+  | finalFfi e =>
+    simp only [LoopSemStateFiniteExact.exitLoop, Prod.mk.injEq] at he
+    obtain ⟨rfl, rfl⟩ := he
+    exact ⟨nl, (hshr _).mpr (by simp [LoopSemStateFiniteExact.exitLoop]), hp⟩
+  | error => exact absurd rfl hrb
+
+/-- `compile_correct`, case `Loop live_in body live_out` (`loop_liveProofScript.sml:17-37`
+    statement; `Resume compile_correct[Loop]` at 157-337), with the `evaluate_ind`
+    hypotheses for the body and for the loop itself, at every state with a smaller
+    clock (the body runs after `cut_res`'s `dec_clock`, and the loop re-enters
+    only after the body). -/
+@[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
+theorem loopLive_compile_correct_loop {width : Nat} [NeZero width] {F : Type} :
+    ∀ (liveIn : NumSet) (body : HolLoopProg width) (liveOut : NumSet)
+      (v1 : LoopSemStateFiniteExact width F),
+      (∀ st : LoopSemStateFiniteExact width F, st.clock < v1.clock →
+        loopLiveCompileCorrectAt body st ∧
+          loopLiveCompileCorrectAt (.loop liveIn body liveOut) st) →
+    ∀ (res : Option (LoopResultExact width)) (s1 : LoopSemStateFiniteExact width F)
+      (lt : List (NumSet × NumSet)) (locals : Spt (WordLocW width)) (prog1 : HolLoopProg width)
+      (l1 l0 : NumSet),
+      evaluate (.loop liveIn body liveOut) v1 = (res, s1) ∧ res ≠ some .error ∧
+        shrinkHOL lt (.loop liveIn body liveOut) l0 = (prog1, l1) ∧
+        sptSubspt (sptInter v1.locals l1) locals →
+    ∃ new_locals, evaluate prog1 { v1 with locals := locals } = (res, { s1 with locals := new_locals }) ∧
+      match res with
+      | none => sptSubspt (sptInter s1.locals l0) new_locals
+      | some (.result _) => new_locals = s1.locals
+      | some (.exception _) => new_locals = s1.locals
+      | some (.break n) =>
+          (match sptOel n lt with
+           | some (_, brk) => sptSubspt (sptInter s1.locals brk) new_locals
+           | none => True)
+      | some (.continue n) =>
+          (match sptOel n lt with
+           | some (cont, _) => sptSubspt (sptInter s1.locals cont) new_locals
+           | none => True)
+      | some .timeOut => new_locals = s1.locals
+      | some (.finalFfi _) => new_locals = s1.locals
+      | some .error => new_locals = s1.locals := by
+  intro liveIn body liveOut v1 ih res s1 lt locals prog1 l1 l0 ⟨he, hne, hs, hsub⟩
+  have ihb := fun st hst => (ih st hst).1
+  have ihl := fun st hst => (ih st hst).2
+  have hbex : ∀ k, sptMem k (sptInter liveOut l0) →
+      sptMem k (sptUnion liveIn (sptInter liveOut l0)) :=
+    fun k hk => (sptMem_sptUnion' _ _ _).mpr (Or.inr hk)
+  cases hfp : fixedpointHOL lt liveIn .ln (sptUnion liveIn (sptInter liveOut l0)) body with
+  | some bl =>
+    obtain ⟨b', l0'⟩ := bl
+    have hsh : shrinkHOL lt (.loop liveIn body liveOut) l0 =
+        (.loop (sptInter liveIn l0') b' (sptInter liveOut l0), sptInter liveIn l0') := by
+      rw [shrinkHOL]; simp [hfp]
+    rw [hsh, Prod.mk.injEq] at hs
+    obtain ⟨rfl, rfl⟩ := hs
+    exact loopLive_loop_core liveIn liveOut body v1 lt locals l0 (sptInter liveIn l0') l0'
+      (sptUnion liveIn (sptInter liveOut l0)) b' res s1 ihb ihl hsh
+      (fixedpoint_thm lt liveIn .ln _ body l0' b' hfp)
+      (fun k hk => ((mem_inter_iff _ _ k).mp hk).1)
+      (fun k hk hki => (mem_inter_iff _ _ k).mpr ⟨hki, hk⟩) hbex hsub he hne
+  | none =>
+    rcases hb : shrinkHOL ((liveIn, sptInter liveOut l0) :: lt) body
+      (sptUnion liveIn (sptInter liveOut l0)) with ⟨b, lb⟩
+    have hsh : shrinkHOL lt (.loop liveIn body liveOut) l0 =
+        (.loop liveIn b (sptInter liveOut l0), liveIn) := by
+      rw [shrinkHOL]; simp [hfp, hb]
+    rw [hsh, Prod.mk.injEq] at hs
+    obtain ⟨rfl, rfl⟩ := hs
+    exact loopLive_loop_core liveIn liveOut body v1 lt locals l0 liveIn lb
+      (sptInter liveOut l0) b res s1 ihb ihl hsh hb (fun _ hk => hk) (fun _ _ hki => hki)
+      (fun _ hk => hk) hsub he hne
+
+/-! ## Assembly -/
+
+private theorem loopLive_compile_correct_at {width : Nat} [NeZero width] {F : Type} :
+    ∀ (v : HolLoopProg width) (v1 : LoopSemStateFiniteExact width F),
+      loopLiveCompileCorrectAt v v1 := by
+  have key : ∀ (x : Nat × Nat) (v : HolLoopProg width) (v1 : LoopSemStateFiniteExact width F),
+      (v1.clock, sizeOf v) = x → loopLiveCompileCorrectAt v v1 := by
+    intro x
+    induction x using (Prod.lex Nat.lt_wfRel Nat.lt_wfRel).wf.induction with
+    | h x ih0 =>
+      intro v v1 hx
+      have ih : ∀ (p' : HolLoopProg width) (t' : LoopSemStateFiniteExact width F),
+          Prod.Lex (· < ·) (· < ·) (t'.clock, sizeOf p') (v1.clock, sizeOf v) →
+          loopLiveCompileCorrectAt p' t' :=
+        fun p' t' hlt => ih0 _ (hx ▸ hlt) p' t' rfl
+      clear ih0 hx
+      have ihc : ∀ (p' : HolLoopProg width) (t' : LoopSemStateFiniteExact width F),
+          t'.clock < v1.clock → loopLiveCompileCorrectAt p' t' :=
+        fun p' t' h => ih p' t' (Prod.Lex.left _ _ h)
+      have ihs : ∀ (p' : HolLoopProg width), sizeOf p' < sizeOf v →
+          loopLiveCompileCorrectAt p' v1 :=
+        fun p' h => ih p' v1 (Prod.Lex.right _ h)
+      cases v with
+      | skip => exact loopLive_compile_correct_skip v1
+      | fail => exact loopLive_compile_correct_fail v1
+      | tick => exact loopLive_compile_correct_tick v1
+      | «continue» k => exact loopLive_compile_correct_continue k v1
+      | «break» k => exact loopLive_compile_correct_break k v1
+      | «return» ns => exact loopLive_compile_correct_return ns v1
+      | raise x => exact loopLive_compile_correct_raise x v1
+      | mark p => exact loopLive_compile_correct_mark p v1 (ihs p (by simp <;> omega))
+      | seq c1 c2 =>
+        refine loopLive_compile_correct_seq c1 c2 v1 (ihs c1 (by simp <;> omega)) fun s1' hs1' => ?_
+        have hle : s1'.clock ≤ v1.clock := by
+          have := evaluate_clock_snd c1 v1
+          rw [fix_clock_evaluate] at hs1'
+          rw [hs1'] at this; exact this
+        rcases Nat.lt_or_eq_of_le hle with hlt | heq
+        · exact ihc c2 s1' hlt
+        · exact ih c2 s1' (by rw [heq]; exact Prod.Lex.right _ (by simp <;> omega))
+      | loop liveIn body liveOut =>
+        exact loopLive_compile_correct_loop liveIn body liveOut v1
+          fun st hst => ⟨ihc body st hst, ihc _ st hst⟩
+      | assign n x => exact loopLive_compile_correct_assign n x v1
+      | setGlobal g x => exact loopLive_compile_correct_setGlobal g x v1
+      | locValue r m => exact loopLive_compile_correct_locValue r m v1
+      | store e n => exact loopLive_compile_correct_store e n v1
+      | store32 a w => exact loopLive_compile_correct_store32 a w v1
+      | storeByte a w => exact loopLive_compile_correct_storeByte a w v1
+      | load32 a y => exact loopLive_compile_correct_load32 a y v1
+      | loadByte a y => exact loopLive_compile_correct_loadByte a y v1
+      | arith a => exact loopLive_compile_correct_arith a v1
+      | primitive lhss pop rhss => exact loopLive_compile_correct_primitive lhss pop rhss v1
+      | shMem op r ad => exact loopLive_compile_correct_shMem op r ad v1
+      | ffi idx p1 n1 p2 n2 cs => exact loopLive_compile_correct_ffi idx p1 n1 p2 n2 cs v1
+      | ite cmp r1 ri c1 c2 liveOut =>
+        refine loopLive_compile_correct_if cmp r1 ri c1 c2 liveOut v1 fun x y _ _ => ?_
+        by_cases hb : Compiler.Encoders.Asm.wordCmpHOL cmp x y = true
+        · simp only [hb, if_true]; exact ihs c1 (by simp <;> omega)
+        · simp only [hb, if_false, Bool.false_eq_true]; exact ihs c2 (by simp <;> omega)
+      | call ret dest args handler =>
+        exact loopLive_compile_correct_call ret dest args handler v1
+          fun e h r lo _ st hst => ⟨ihc r st hst, ihc h st hst⟩
+  exact fun v v1 => key _ v v1 rfl
+
+/-- Exact HOL `compile_correct` (`loop_liveProofScript.sml:17-37`), assembled from
+    the case pieces above by the lexicographic `(clock, program size)` induction
+    that mirrors `loopSemTheory.evaluate_ind`:
+    `∀v v1 res s1 lt locals prog1 l1 l0. evaluate (v,v1) = (res,s1) ∧ res ≠ SOME Error ∧
+      shrink lt v l0 = (prog1,l1) ∧ subspt (inter v1.locals l1) locals ⇒
+      ∃new_locals. evaluate (prog1,v1 with locals := locals) =
+        (res,s1 with locals := new_locals) ∧ case res of ...`. -/
+@[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
+theorem loopLive_compile_correct {width : Nat} [NeZero width] {F : Type} :
+    ∀ (v : HolLoopProg width) (v1 : LoopSemStateFiniteExact width F)
+      (res : Option (LoopResultExact width)) (s1 : LoopSemStateFiniteExact width F)
+      (lt : List (NumSet × NumSet)) (locals : Spt (WordLocW width)) (prog1 : HolLoopProg width)
+      (l1 l0 : NumSet),
+      evaluate v v1 = (res, s1) ∧ res ≠ some .error ∧ shrinkHOL lt v l0 = (prog1, l1) ∧
+        sptSubspt (sptInter v1.locals l1) locals →
+    ∃ new_locals, evaluate prog1 { v1 with locals := locals } = (res, { s1 with locals := new_locals }) ∧
+      match res with
+      | none => sptSubspt (sptInter s1.locals l0) new_locals
+      | some (.result _) => new_locals = s1.locals
+      | some (.exception _) => new_locals = s1.locals
+      | some (.break n) =>
+          (match sptOel n lt with
+           | some (_, brk) => sptSubspt (sptInter s1.locals brk) new_locals
+           | none => True)
+      | some (.continue n) =>
+          (match sptOel n lt with
+           | some (cont, _) => sptSubspt (sptInter s1.locals cont) new_locals
+           | none => True)
+      | some .timeOut => new_locals = s1.locals
+      | some (.finalFfi _) => new_locals = s1.locals
+      | some .error => new_locals = s1.locals :=
+  fun v v1 => loopLive_compile_correct_at v v1
 
 end Flapjack

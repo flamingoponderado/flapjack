@@ -20495,5 +20495,86 @@
     "lean_name": "sptMem_fromAList_args",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack sptree helper (HOL domain_fromAList): argument names are in the domain of fromAList (MAP (λx. (x,())) args); no separate CakeML declaration"
+  },
+  {
+    "hol_path": "cakeml/pancake/loop_liveScript.sml",
+    "hol_name": "fixedpoint_thm",
+    "lean_path": "Flapjack/Pancake/LoopLive/Fixedpoint.lean",
+    "lean_name": "fixedpoint_thm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.10) against fixedpoint_thm at loop_liveScript.sml:167-170: `∀lt live_in l1 l2 (body:'a loopLang$prog) l0 b. fixedpoint lt live_in l1 l2 body = SOME (b, l0) ⇒ shrink ((inter live_in l0, l2)::lt) body l2 = (b, l0)`. Lean keeps the binders in order and the implication over the tagged shrinkHOL (shrink_def) and its untagged mutual half fixedpointHOL (HOL declares fixedpoint inside shrink_def); inter is sptInter. The proof follows fixedpoint's recursion (measure size live_in - size l1); the fixed-point branch needs inter live_in (inter live_in l0) = inter live_in l0 structurally (HOL: inter_assoc and lookup_inter_alt inline), proved by the private sptInter_idem_left."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
+    "hol_name": "subspt_IMP_domain",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "subspt_IMP_domain",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.3) against subspt_IMP_domain at loop_liveProofScript.sml:131-132 ([local]): `subspt l1 l2 ⇒ domain l1 SUBSET domain l2`; polymorphic value type, SUBSET of domains as pointwise sptMem implication, subspt as sptSubspt."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
+    "hol_name": "subspt_inter_domain_cut",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "subspt_inter_domain_cut",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.3) against subspt_inter_domain_cut at loop_liveProofScript.sml:137-140 ([local]): `∀X m1 m2. domain X ⊆ domain m1 ∧ subspt (inter m1 X) m2 ⇒ domain X ⊆ domain m2`; binders in order, polymorphic values (X heterogeneous as HOL inter), domain inclusion pointwise."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
+    "hol_name": "subspt_inter_union_R",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "subspt_inter_union_R",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.3) against subspt_inter_union_R at loop_liveProofScript.sml:148-150 ([local]): `∀A B C D. subspt (inter A (union B C)) D ⇒ subspt (inter A C) D`; binders in order, union as sptUnion, polymorphic values."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "loopLive_compile_correct_loop",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.3) against case piece `Loop live_in body live_out` of loop_live compile_correct (statement loop_liveProofScript.sml:17-37; Resume compile_correct[Loop] at 157-337). Extra antecedent: the statement for the body and for the Loop itself at every state with clock < v1.clock (via the untagged loopLiveCompileCorrectAt): exactly the evaluate_ind recursive calls, all at states after cut_res's dec_clock. Otherwise HOL binders/premises/conclusion as in the other pieces. Proof follows HOL: shrink's fixed-point branch (via the tagged fixedpoint_thm) and no-fixed-point branch both reduce to the private loopLive_loop_core (cut with the shrunk live_in, body IH, then loop IH on NONE/Continue 0, cut_res live_out vs inter live_out l0 on Break 0, exit_loop otherwise).",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "loopLive_compile_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.9) against compile_correct at loop_liveProofScript.sml:17-37 (Theorem ... Finalise compile_correct at 858). HOL `∀v v1 res s1 lt locals prog1 l1 l0. evaluate (v,v1) = (res,s1) ∧ res ≠ SOME Error ∧ shrink lt v l0 = (prog1,l1) ∧ subspt (inter v1.locals l1) locals ⇒ ∃new_locals. evaluate (prog1,v1 with locals := locals) = (res,s1 with locals := new_locals) ∧ case res of NONE => subspt (inter s1.locals l0) new_locals | SOME (Result _) => new_locals = s1.locals | SOME (Exception _) => ... | SOME (Break n) => (case oEL n lt of SOME (_,brk) => subspt (inter s1.locals brk) new_locals | NONE => T) | SOME (Continue n) => (case oEL n lt of SOME (cont,_) => ... | NONE => T) | SOME TimeOut => ... | SOME (FinalFFI _) => ... | SOME Error => new_locals = s1.locals`. Lean keeps the nine binders in order, the four premises and the full existential conclusion with the eight-way case split (oEL as sptOel, inter/subspt as sptInter/sptSubspt) over the exact LoopSemStateFiniteExact.evaluate (evaluate_def) and tagged shrinkHOL (shrink_def). No extra hypothesis. Proof: lexicographic (clock, program size) well-founded induction mirroring loopSemTheory.evaluate_ind, dispatching to the 24 tagged case pieces (one per Resume block).",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "loopLive_break_tail",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper: the Break 0 exit of HOL's Resume compile_correct[Loop] (cut_res live_out vs the shrunk inter live_out l0); no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "loopLive_loop_core",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper: the body of HOL's Resume compile_correct[Loop] for the shrunk loop, shared by shrink's fixed-point and no-fixed-point branches; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "loopLive_compile_correct_at",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper: the lexicographic (clock, size) induction assembling the compile_correct case pieces (mirrors loopSemTheory.evaluate_ind); no separate CakeML declaration"
   }
 ]
