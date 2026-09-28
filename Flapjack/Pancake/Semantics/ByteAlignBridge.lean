@@ -233,8 +233,9 @@ theorem riscvSetByteHOL_eq_holFiniteWordSetByteBitVec {width : Nat} [NeZero widt
 
 /-- The source `panSetByteHOL` and the target `riscvSetByteHOL` write the same
     byte (the byte-write half of HOL `write_bytearray_mem_rel`; the byte-read
-    half is `panGetByteHOL_eq_riscvGetByteHOL`). Requires `width` a whole number
-    of bytes, matching the word widths the compiler produces. -/
+    half is `panGetByteHOL_eq_riscvGetByteHOL`). Requires only `8 ≤ width` (at
+    least one byte per word), so it applies to every generic positive-width word
+    dimension of the exact semantics, not just widths divisible by eight. -/
 theorem panSetByteHOL_eq_riscvSetByteHOL {width : Nat} [NeZero width] (h8 : 8 ≤ width)
     (address value : RiscV.Word width) (byte : UInt8) (bigEndian : Bool) :
     panSetByteHOL address (BitVec.ofNat width byte.toNat) value bigEndian =
