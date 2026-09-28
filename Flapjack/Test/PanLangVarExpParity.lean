@@ -104,13 +104,9 @@ example : varExpHOL (expToHOL nestedProd) = (expLocalVars nestedProd).map ofStri
 local-variable list through the domain-qualified tagged-HOL bridge. -/
 example : (varExpHOL (expToHOL nestedProd)).map toStringOfBytes =
     expLocalVars nestedProd := by
-  apply varExpHOL_expToHOL_decode
-  intro name hname
-  have hvars : expLocalVars nestedProd = ["x", "y"] := by
-    simp [nestedProd, expLocalVars, expLocalVars.expLocalVarsList,
-      expLocalVars.expLocalVarsFieldList]
-  rw [hvars] at hname
-  simp at hname
-  rcases hname with rfl | rfl <;> decide
+  have hnested : ExpByteRanged nestedProd := by
+    simp [nestedProd, ExpByteRanged, ListExpByteRanged, ListFieldByteRanged,
+      ShapeByteRanged]
+  exact varExpHOL_expToHOL_decode_of_expByteRanged nestedProd hnested
 
 end Flapjack.Test.PanLangVarExpParity
