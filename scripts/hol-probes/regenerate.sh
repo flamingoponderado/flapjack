@@ -1371,6 +1371,14 @@ run_probe loop_props_every_prog_probeScript.sml \
   ep_call_handler_snd \
   "$cake_dir/pancake/semantics/loopPropsScript.sml" \
   "$cake_dir/pancake/semantics"
+run_probe loop_props_set_vars_lookup_probeScript.sml \
+  loop_props_set_vars_lookup_probe.out \
+  set_vars_lookup_hit set_vars_lookup_hit2 set_vars_lookup_base \
+  set_vars_lookup_other set_vars_lookup_miss set_vars_lookup_dup \
+  set_vars_lookup_zip_short lookup_set_vars_not_mem_eq \
+  lookup_set_vars_match_eq \
+  "$cake_dir/pancake/semantics/loopPropsScript.sml" \
+  "$cake_dir/pancake/semantics"
 run_probe loop_sem_call_env_probeScript.sml \
   loop_sem_call_env_probe.out \
   arg_zero arg_missing "$cake_dir/pancake/semantics/loopSemScript.sml"

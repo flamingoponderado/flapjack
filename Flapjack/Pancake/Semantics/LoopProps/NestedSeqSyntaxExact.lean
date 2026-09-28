@@ -6,8 +6,10 @@ import Flapjack.Pancake.Semantics.LoopProps.CutSets
 
 Counterparts of `cakeml/pancake/semantics/loopPropsScript.sml`'s
 `survives_nested_seq_intro` (719), `nested_assigns_survives` (729),
-`cut_sets_nested_seq` (767), `lookup_alist_insert_any` (321) and
-`evaluate_tail_calls_eqs` (74) over the exact carriers (bead `flapjack-pxgp.15`).
+`cut_sets_nested_seq` (767), `lookup_alist_insert_any` (321),
+`lookup_set_vars` (297), `lookup_set_vars_not_MEM` (310) and
+`evaluate_tail_calls_eqs` (74) over the exact carriers (beads `flapjack-pxgp.15`,
+`flapjack-pxn.18.5.18`).
 -/
 
 namespace Flapjack
@@ -116,6 +118,41 @@ theorem evaluate_tail_calls_eqs (f : Nat) (t : LoopSemStateFiniteExact width F)
   | mk env prog =>
     simp only [h]
     rfl
+
+/-- Exact HOL `lookup_set_vars` (`loopPropsScript.sml:297-308`):
+    `lookup n (set_vars xs ys s).locals =
+      case ALOOKUP (ZIP (xs,ys)) n of NONE => lookup n s.locals | SOME v => SOME v`. -/
+@[hol "cakeml/pancake/semantics/loopPropsScript.sml" "lookup_set_vars"
+  (words_as_type_indexed_bitvec)]
+theorem lookup_set_vars :
+    ∀ (n : Nat) (xs : List Nat) (ys : List (WordLocW width))
+      (s : LoopSemStateFiniteExact width F),
+      sptLookup n (setVars xs ys s).locals =
+        match holAlookup (xs.zip ys) n with
+        | none => sptLookup n s.locals
+        | some v => some v
+  | n, [], _, s => by
+      simp [setVars, LoopSemStateFiniteExact.sptAlistInsert, holAlookup]
+  | n, _ :: _, [], s => by
+      simp [setVars, LoopSemStateFiniteExact.sptAlistInsert, holAlookup]
+  | n, x :: xs, y :: ys, s => by
+      simp only [setVars, LoopSemStateFiniteExact.sptAlistInsert, List.zip_cons_cons,
+        holAlookup]
+      rw [sptLookup_sptInsert]
+      by_cases h : n = x
+      · subst h; simp
+      · rw [if_neg h, if_neg (Ne.symm h)]
+        exact lookup_set_vars n xs ys s
+
+/-- Exact HOL `lookup_set_vars_not_MEM` (`loopPropsScript.sml:310-313`):
+    `~MEM n xs ==> lookup n (set_vars xs ys s).locals = lookup n s.locals`. -/
+@[hol "cakeml/pancake/semantics/loopPropsScript.sml" "lookup_set_vars_not_MEM"
+  (words_as_type_indexed_bitvec)]
+theorem lookup_set_vars_not_MEM (n : Nat) (xs : List Nat) (ys : List (WordLocW width))
+    (s : LoopSemStateFiniteExact width F) (h : n ∉ xs) :
+    sptLookup n (setVars xs ys s).locals = sptLookup n s.locals := by
+  simp only [setVars]
+  exact sptLookup_sptAlistInsert_not_mem n xs ys s.locals h
 
 end LoopSemStateFiniteExact
 

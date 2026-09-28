@@ -77,6 +77,16 @@ exact width-indexed `HolLoopProg` port `everyProgHOL` is in
 `Flapjack.Pancake.Semantics.LoopProps.EveryProg`; its replay guards are in
 `Flapjack.Test.LoopPropsEveryProgParity`. Refresh with
 `HOL_PROBE_ONLY=loop_props_every_prog_probeScript.sml scripts/hol-probes/regenerate.sh`.
+`loop_props_set_vars_lookup_probe.out` records direct HOL EVAL rows for
+`lookup_set_vars` and `lookup_set_vars_not_MEM`
+(`cakeml/pancake/semantics/loopPropsScript.sml:297-313`) over `loopSem$set_vars`
+with a concrete base locals tree: hit/hit2, base-key survival, other-key
+survival, miss, duplicate-key first-wins, short-`ZIP` truncation, and two
+equality rows instantiating the two theorems. The exact width-indexed ports
+`LoopSemStateFiniteExact.lookup_set_vars` / `lookup_set_vars_not_MEM` are in
+`Flapjack.Pancake.Semantics.LoopProps.NestedSeqSyntaxExact`; replay guards are
+in `Flapjack.Test.LoopPropsSetVarsLookupParity`. Refresh with
+`HOL_PROBE_ONLY=loop_props_set_vars_lookup_probeScript.sml scripts/hol-probes/regenerate.sh`.
 `Flapjack.Test.PanEvaluateDeclsParity` probes `evaluate_decls_def` at
 `cakeml/pancake/semantics/panSemScript.sml:814-835`, including each declaration
 constructor, ordered global updates, local clearing during initializer

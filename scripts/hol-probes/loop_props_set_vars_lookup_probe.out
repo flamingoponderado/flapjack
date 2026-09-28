@@ -1,0 +1,9 @@
+set_vars_lookup_hit=SOME (Word 7w)
+set_vars_lookup_hit2=SOME (Word 8w)
+set_vars_lookup_base=SOME (Word 1w)
+set_vars_lookup_other=SOME (Word 2w)
+set_vars_lookup_miss=NONE
+set_vars_lookup_dup=SOME (Word 7w)
+set_vars_lookup_zip_short=NONE
+lookup_set_vars_not_mem_eq=T
+lookup_set_vars_match_eq=T

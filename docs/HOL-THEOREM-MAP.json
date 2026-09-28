@@ -18978,6 +18978,24 @@
   },
   {
     "hol_path": "cakeml/pancake/semantics/loopPropsScript.sml",
+    "hol_name": "lookup_set_vars",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopProps/NestedSeqSyntaxExact.lean",
+    "lean_name": "lookup_set_vars",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (bead flapjack-pxn.18.5.18): HOL lookup_set_vars (loopPropsScript.sml:297-308) `lookup n (set_vars xs ys s).locals = case ALOOKUP (ZIP (xs,ys)) n of NONE => lookup n s.locals | SOME v => SOME v`; Lean binds the same n, xs, ys, s in appearance order and concludes the same equation over the exact setVars, sptLookup (the exact sptree num_map lookup), HOL ZIP as List.zip and ALOOKUP as the untagged holAlookup rendering; no premise, as in HOL. Direct HOL-EVAL rows in scripts/hol-probes/loop_props_set_vars_lookup_probe.out. (words_as_type_indexed_bitvec): 'a word_loc as WordLocW width over the LoopSemStateFiniteExact carrier with [NeZero width]; locals is an Spt tree map (not a |-> finite map), so no fmap qualifier."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopPropsScript.sml",
+    "hol_name": "lookup_set_vars_not_MEM",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopProps/NestedSeqSyntaxExact.lean",
+    "lean_name": "lookup_set_vars_not_MEM",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (bead flapjack-pxn.18.5.18): HOL lookup_set_vars_not_MEM (loopPropsScript.sml:310-313) `~MEM n xs ==> lookup n (set_vars xs ys s).locals = lookup n s.locals`; Lean keeps the same n, xs, ys, s binders and the n-not-in-xs hypothesis, concluding the same sptLookup equation over the exact setVars. HOL's ALOOKUP/MEM_ZIP proof is replaced by the checked sptLookup_sptAlistInsert_not_mem; no extra hypothesis. Direct HOL-EVAL equality row in scripts/hol-probes/loop_props_set_vars_lookup_probe.out. (words_as_type_indexed_bitvec): 'a word_loc as WordLocW width over LoopSemStateFiniteExact with [NeZero width]; locals is an Spt tree map, no fmap qualifier."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopPropsScript.sml",
     "hol_name": "evaluate_tail_calls_eqs",
     "lean_path": "Flapjack/Pancake/Semantics/LoopProps/NestedSeqSyntaxExact.lean",
     "lean_name": "evaluate_tail_calls_eqs",
