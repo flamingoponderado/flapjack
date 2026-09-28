@@ -462,4 +462,67 @@ theorem panSemEntryStateOfDecls_codeRanged_exnRanged {σ : Type}
     obtain ⟨k, hk⟩ := lookupInfo_mem_of_some out.eshapes eid shape hlookup
     exact heOut (k, shape) hk
 
+/-- The production clock-indexed program entry of HOL `semantics_decls`: run the
+    declarations with production `evaluateDecls`, build the entry state, and
+    evaluate `Call NONE start []` with the canonical `panSemTotalEvaluateCake` at
+    the absolute clock.  `none` is declaration failure (HOL `Fail`). -/
+def panSemRunEntryCake {σ : Type}
+    (machine : PanSemState (RiscV.Word 64) (FfiState σ))
+    (decl : PanSemDeclarationState (RiscV.Word 64) σ)
+    (declarations : List (Decl (RiscV.Word 64))) (start : String) (clock : Nat) :
+    Option (Option (PanSemHOLResult (RiscV.Word 64)) × PanSemState (RiscV.Word 64) (FfiState σ)) :=
+  (evaluateDecls decl declarations).map fun out =>
+    panSemTotalEvaluateCake (.call none start [])
+      { panSemEntryStateOfDecls machine out with clock := clock }
+
+/-- The exact counterpart: `evaluate_decls` then `evaluate (Call NONE start [],
+    s' with clock := k)`. -/
+noncomputable def panSemRunEntryExact {σ : Type}
+    (exact : PanSemStateFiniteExact 64 σ) (declarations : List (DeclHOL 64)) (start : MlS)
+    (clock : Nat) : Option (Option (PanSemResultExact 64) × PanSemStateFiniteExact 64 σ) :=
+  (@evaluateDeclsHOLFinite 64 σ _ exact (fun a => Classical.propDecidable (exact.memaddrs a))
+      declarations).map fun out =>
+    evaluateHOLFiniteState { out with clock := clock } (.call none start [])
+
+/-- **Declarations-to-entry agreement.**  For byte-ranged production
+    declarations, a related initial declaration state with byte-ranged code and
+    exception shapes, and every clock, the production and exact program entries
+    either both fail at declaration evaluation, or both run the entry call with
+    related results and `PanSemStateRelExec`-related final states. -/
+theorem panSemRunEntryCake_agree {σ : Type}
+    (machine : PanSemState (RiscV.Word 64) (FfiState σ))
+    (decl : PanSemDeclarationState (RiscV.Word 64) σ) (exact : PanSemStateFiniteExact 64 σ)
+    (declarations : List (Decl (RiscV.Word 64))) (start : MlS) (clock : Nat)
+    (hranged : ∀ d ∈ declarations, DeclByteRanged d)
+    (hrel : PanSemDeclEntryRel machine decl exact)
+    (hcode : ∀ entry ∈ decl.code,
+      PanLangEntryByteRanged (entry.2.params, entry.2.body, entry.2.returnShape))
+    (hexn : ∀ entry ∈ decl.eshapes, ShapeByteRanged entry.2) :
+    match panSemRunEntryCake machine decl declarations (toStringOfBytes start) clock,
+      panSemRunEntryExact exact (declarations.map declToHOL) start clock with
+    | none, none => True
+    | some production, some exactRun =>
+        PanSemHOLResultOptionRel production.1 exactRun.1 ∧
+          PanSemStateRelExec production.2 exactRun.2.toExact
+    | _, _ => False := by
+  have hagree := evaluateDecls_agree machine declarations decl exact hranged hrel
+  unfold panSemRunEntryCake panSemRunEntryExact
+  revert hagree
+  cases hp : evaluateDecls decl declarations <;>
+    cases he : @evaluateDeclsHOLFinite 64 σ _ exact
+      (fun a => Classical.propDecidable (exact.memaddrs a)) (declarations.map declToHOL) <;>
+    intro hagree <;> simp only [PanSemDeclOutcomeRel] at hagree
+  all_goals first
+    | trivial
+    | exact hagree.elim
+    | skip
+  rename_i out exactOut
+  obtain ⟨hrelOut, hrgOut, _, _⟩ := hagree
+  obtain ⟨hcodeOut, hexnOut⟩ :=
+    panSemEntryStateOfDecls_codeRanged_exnRanged machine declarations decl out hranged hcode
+      hexn hp
+  simp only [Option.map_some]
+  exact panSemTotalEvaluateCake_agree_entry start (panSemEntryStateOfDecls machine out) exactOut
+    hrelOut hrgOut hcodeOut hexnOut clock
+
 end Flapjack
