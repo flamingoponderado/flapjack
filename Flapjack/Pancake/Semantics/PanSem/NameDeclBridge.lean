@@ -2,6 +2,7 @@ import Flapjack.Pancake.Semantics.PanSem
 import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
 import Flapjack.Pancake.Semantics.PanSem.EvalFinite
 import Flapjack.Pancake.PanLang.Decl
+import Flapjack.Pancake.Semantics.PanSem.TotalEvalExpBridge
 
 /-!
 This module records constructor-level production/exact congruence for the HOL
@@ -52,7 +53,194 @@ namespace Flapjack
 open Flapjack.Pancake.PanLang
   (DeclHOL declOfHOL declToHOL DeclByteRanged NameRanged ShapeByteRanged MlS
     ShapeHOL isWfShapeExactHOL shapeToHOL FunDeclOf funDeclToHOL paramToHOL
-    progToHOL ProgHOL ExpHOL expToHOL)
+    progToHOL ProgHOL ExpHOL expToHOL StructContextByteRanged
+    StructInfoByteRanged structContextToHOL sizeOfShapeWithContextHOL
+    ParamByteRanged ListParamByteRanged)
+
+/-! ### Recursive load bridges to the exact `mem_load` carrier -/
+
+/-- The byte-range invariant used by `mem_load` holds on the context projected
+    from a `CtxBR` production context. -/
+private theorem structContextHOLByteRanged_of_CtxBR
+    (context : StructContext) (hctx : CtxBR context) :
+    StructContextByteRanged context.toHOL := by
+  intro entry hentry
+  rcases entry with ⟨name, info⟩
+  simp only [StructContext.toHOL, List.mem_map] at hentry
+  rcases hentry with ⟨⟨sourceName, sourceInfo⟩, hsource, hprojected⟩
+  cases hprojected
+  obtain ⟨hname, hfields⟩ := hctx (sourceName, sourceInfo) hsource
+  exact ⟨hname, by simpa [StructInfoByteRanged] using hfields⟩
+
+/-- The mutually recursive production `panMemLoadsHOL` and exact
+    `memLoadsHOLExact` agree after the value codec. This exposes the list
+    induction that is used inside the single-shape `mem_load` bridge. -/
+theorem panMemLoadsHOL_map_holValueToHOL_exact {width : Nat} [NeZero width]
+    (domain : RiscV.Word width → Prop) [DecidablePred domain]
+    (memory : RiscV.Word width → HolWordLab width)
+    (domainE : RiscV.Word width → Prop) [DecidablePred domainE]
+    (memoryE : RiscV.Word width → HolWordLab width)
+    (hdom : ∀ a, domain a ↔ domainE a)
+    (hmem : ∀ a, domainE a → memory a = memoryE a) :
+    ∀ (shapes : List Shape) (address : RiscV.Word width) (ctx : StructContextHOL),
+      (∀ p ∈ ctx, NameRanged p.1) →
+      (∀ p ∈ ctx, StructInfoByteRanged p.2) →
+      (∀ shape ∈ shapes, ShapeByteRanged shape) →
+      ((panMemLoadsHOL shapes address domain memory ctx).map
+          (List.map (holValueToHOL (width := width))) : Option (List (ValueHOL width))) =
+        memLoadsHOLExact (shapes.map shapeToHOL) address domainE memoryE
+          (structContextToHOL ctx) := by
+  intro shapes
+  induction shapes with
+  | nil =>
+      intro address ctx hnames hinfos hshapes
+      simp [panMemLoadsHOL, memLoadsHOLExact]
+  | cons shape rest ih =>
+      intro address ctx hnames hinfos hshapes
+      have hshape : ShapeByteRanged shape := hshapes shape (by simp)
+      have hrest : ∀ s ∈ rest, ShapeByteRanged s :=
+        fun s hs => hshapes s (by simp [hs])
+      have hhead := panMemLoadHOL_map_holValueToHOL domain memory domainE memoryE
+        hdom hmem shape address ctx hnames hinfos hshape
+      let productionNext := address + panBytesInWord width *
+        BitVec.ofNat width (sizeOfShWithCtxt ctx shape)
+      let exactNext := address + bytesInWordHOL width *
+        BitVec.ofNat width (sizeOfShapeWithContextHOL
+          (structContextToHOL ctx) (shapeToHOL shape))
+      have hstride : productionNext = exactNext := by
+        dsimp [productionNext, exactNext]
+        rw [show panBytesInWord width = bytesInWordHOL width from rfl,
+          sizeOfShWithCtxt_eq_sizeOfShapeWithContextHOL ctx hnames shape hshape]
+      have htailAtProduction :
+          ((panMemLoadsHOL rest productionNext domain memory ctx).map
+            (List.map (holValueToHOL (width := width))) : Option (List (ValueHOL width))) =
+            memLoadsHOLExact (rest.map shapeToHOL) exactNext domainE memoryE
+              (structContextToHOL ctx) := by
+        rw [hstride]
+        exact ih exactNext ctx hnames hinfos hrest
+      cases hproductionHead : panMemLoadHOL shape address domain memory ctx with
+      | none =>
+          have hexactHead :
+              memLoadHOLExact (shapeToHOL shape) address domainE memoryE
+                (structContextToHOL ctx) = none := by
+            simpa [hproductionHead] using hhead.symm
+          simp [panMemLoadsHOL, memLoadsHOLExact, hproductionHead, hexactHead]
+      | some value =>
+          have hexactHead :
+              memLoadHOLExact (shapeToHOL shape) address domainE memoryE
+                (structContextToHOL ctx) = some (holValueToHOL value) := by
+            simpa [hproductionHead] using hhead.symm
+          cases hproductionTail : panMemLoadsHOL rest productionNext domain memory ctx with
+          | none =>
+              have hexactTail :
+                  memLoadsHOLExact (rest.map shapeToHOL) exactNext domainE memoryE
+                    (structContextToHOL ctx) = none := by
+                simpa [hproductionTail] using htailAtProduction.symm
+              dsimp [productionNext, exactNext] at hproductionTail hexactTail
+              simp [panMemLoadsHOL, memLoadsHOLExact, hproductionHead,
+                hproductionTail, hexactHead, hexactTail]
+          | some values =>
+              have hexactTail :
+                  memLoadsHOLExact (rest.map shapeToHOL) exactNext domainE memoryE
+                    (structContextToHOL ctx) = some (values.map holValueToHOL) := by
+                simpa [hproductionTail] using htailAtProduction.symm
+              dsimp [productionNext, exactNext] at hproductionTail hexactTail
+              simp [panMemLoadsHOL, memLoadsHOLExact, hproductionHead,
+                hproductionTail, hexactHead, hexactTail]
+
+/-- The mutually recursive production `panMemLoadFldsHOL` and exact
+    `memLoadFldsHOLExact` agree after encoding field names and values. -/
+theorem panMemLoadFldsHOL_map_holValueToHOL_exact {width : Nat} [NeZero width]
+    (domain : RiscV.Word width → Prop) [DecidablePred domain]
+    (memory : RiscV.Word width → HolWordLab width)
+    (domainE : RiscV.Word width → Prop) [DecidablePred domainE]
+    (memoryE : RiscV.Word width → HolWordLab width)
+    (hdom : ∀ a, domain a ↔ domainE a)
+    (hmem : ∀ a, domainE a → memory a = memoryE a) :
+    ∀ (fields : List (FieldName × Shape)) (address : RiscV.Word width)
+      (ctx : StructContextHOL),
+      (∀ p ∈ ctx, NameRanged p.1) →
+      (∀ p ∈ ctx, StructInfoByteRanged p.2) →
+      ListParamByteRanged fields →
+      ((panMemLoadFldsHOL fields address domain memory ctx).map
+          (List.map (fun p => (Flapjack.Basis.Pure.MlString.ofString p.1,
+            holValueToHOL (width := width) p.2))) :
+        Option (List (MlS × ValueHOL width))) =
+        memLoadFldsHOLExact (fields.map paramToHOL) address domainE memoryE
+          (structContextToHOL ctx) := by
+  intro fields
+  induction fields with
+  | nil =>
+      intro address ctx hnames hinfos hfields
+      simp [panMemLoadFldsHOL, memLoadFldsHOLExact]
+  | cons field rest ih =>
+      obtain ⟨fieldName, shape⟩ := field
+      intro address ctx hnames hinfos hfields
+      have hfield : ParamByteRanged (fieldName, shape) := by
+        simpa only [ListParamByteRanged] using hfields (fieldName, shape) (by simp)
+      obtain ⟨hfieldName, hshape⟩ := hfield
+      have hrest : ListParamByteRanged rest := fun p hp => hfields p (by simp [hp])
+      have hhead := panMemLoadHOL_map_holValueToHOL domain memory domainE memoryE
+        hdom hmem shape address ctx hnames hinfos hshape
+      let productionNext := address + panBytesInWord width *
+        BitVec.ofNat width (sizeOfShWithCtxt ctx shape)
+      let exactNext := address + bytesInWordHOL width *
+        BitVec.ofNat width (sizeOfShapeWithContextHOL
+          (structContextToHOL ctx) (shapeToHOL shape))
+      have hstride : productionNext = exactNext := by
+        dsimp [productionNext, exactNext]
+        rw [show panBytesInWord width = bytesInWordHOL width from rfl,
+          sizeOfShWithCtxt_eq_sizeOfShapeWithContextHOL ctx hnames shape hshape]
+      have htailAtProduction :
+          ((panMemLoadFldsHOL rest productionNext domain memory ctx).map
+            (List.map (fun p => (Flapjack.Basis.Pure.MlString.ofString p.1,
+              holValueToHOL (width := width) p.2))) :
+            Option (List (MlS × ValueHOL width))) =
+            memLoadFldsHOLExact (rest.map paramToHOL) exactNext domainE memoryE
+              (structContextToHOL ctx) := by
+        rw [hstride]
+        exact ih exactNext ctx hnames hinfos hrest
+      cases hproductionHead : panMemLoadHOL shape address domain memory ctx with
+      | none =>
+          have hexactHead :
+              memLoadHOLExact (shapeToHOL shape) address domainE memoryE
+                (structContextToHOL ctx) = none := by
+            simpa [hproductionHead] using hhead.symm
+          simp [panMemLoadFldsHOL, memLoadFldsHOLExact, paramToHOL,
+            hproductionHead, hexactHead]
+      | some value =>
+          have hexactHead :
+              memLoadHOLExact (shapeToHOL shape) address domainE memoryE
+                (structContextToHOL ctx) = some (holValueToHOL value) := by
+            simpa [hproductionHead] using hhead.symm
+          cases hproductionTail : panMemLoadFldsHOL rest productionNext domain memory ctx with
+          | none =>
+              have hexactTail :
+                  memLoadFldsHOLExact (rest.map paramToHOL) exactNext domainE memoryE
+                    (structContextToHOL ctx) = none := by
+                simpa [hproductionTail] using htailAtProduction.symm
+              dsimp [productionNext, exactNext] at hproductionTail hexactTail
+              simp [panMemLoadFldsHOL, memLoadFldsHOLExact, paramToHOL,
+                hproductionHead, hproductionTail, hexactHead, hexactTail]
+          | some values =>
+              have hexactTail :
+                  memLoadFldsHOLExact (rest.map paramToHOL) exactNext domainE memoryE
+                    (structContextToHOL ctx) = some
+                      (values.map (fun p => (Flapjack.Basis.Pure.MlString.ofString p.1,
+                        holValueToHOL (width := width) p.2))) := by
+                simpa [hproductionTail] using htailAtProduction.symm
+              dsimp [productionNext, exactNext] at hproductionTail hexactTail
+              simp [panMemLoadFldsHOL, memLoadFldsHOLExact, paramToHOL,
+                hproductionHead, hproductionTail, hexactHead, hexactTail]
+
+/-- A byte-ranged production struct context projects to the ranged
+    String-keyed HOL-shaped context required by the exact load codecs. -/
+private theorem structContextHOLNameAndInfoRanged_of_CtxBR
+    (context : StructContext) (hctx : CtxBR context) :
+    (∀ p ∈ context.toHOL, NameRanged p.1) ∧
+    (∀ p ∈ context.toHOL, StructInfoByteRanged p.2) := by
+  have hfull := structContextHOLByteRanged_of_CtxBR context hctx
+  exact ⟨fun p hp => (hfull p hp).1, fun p hp => (hfull p hp).2⟩
 
 /-- Relate evaluator results by relating successful states and requiring both
     evaluators to agree on failure. -/
@@ -1694,6 +1882,174 @@ theorem panValueWordDefined_eq_of_memCodecRel
     simp only [panValueWordDefined, h, hdom, decide_true]
   · rw [if_neg hdom] at h
     simp only [panValueWordDefined, h, hdom, decide_false]
+
+/-! ### Flat recursive loads over the exact finite memory carrier -/
+
+/-- A production fuel-indexed flat load corresponds to exact `mem_load`, after
+    relating the partial Pan memory to the finite state memory and restricting
+    context/shape names to the lossless byte range. This is the shape case used
+    by the list and field congruences below. -/
+theorem panValueFlatLoadFuel_memLoadHOLExact {ffi : Type}
+    (productionState : PanSemState (RiscV.Word 64) ffi)
+    (exactState : PanSemStateFiniteExact 64 Unit)
+    [_hmem : DecidablePred exactState.memaddrs]
+    (structs : StructContext)
+    (memory : RiscV.Word 64 → Option (PanValue (RiscV.Word 64)))
+    (shape : Shape) (address : RiscV.Word 64) (fuel : Nat)
+    (hMemory : PanValueMemoryCodecRel memory exactState)
+    (hDomain : ∀ a, productionState.memaddrs a = decide (exactState.memaddrs a))
+    (hctx : CtxBR structs) (hshape : ShapeByteRanged shape)
+    (hfuel : panValueFlatContextFuel structs + panValueFlatShapeFuel shape ≤ fuel) :
+    (panValueFlatLoadFuel structs
+        (panValueFlatMachineReadWord productionState memory)
+        panSemBitVec64BytesInWord fuel shape address).map panValueToHOL =
+      memLoadHOLExact (shapeToHOL shape) address exactState.memaddrs
+        exactState.memory (structContextToHOL structs.toHOL) := by
+  let domain := panValueFlatMachineDomain productionState memory
+  let wordMemory := panValueWordHOL memory
+  have hdom : ∀ a, domain a ↔ exactState.memaddrs a := by
+    intro a
+    change (productionState.memaddrs a && panValueWordDefined memory a = true) ↔
+      exactState.memaddrs a
+    rw [hDomain a,
+      panValueWordDefined_eq_of_memCodecRel productionState exactState memory hMemory a]
+    simp
+  have hword : ∀ a, exactState.memaddrs a → wordMemory a = exactState.memory a := by
+    intro a ha
+    exact panValueWordHOL_eq_of_memCodecRel productionState exactState memory hMemory a ha
+  obtain ⟨hnames, hinfos⟩ := structContextHOLNameAndInfoRanged_of_CtxBR structs hctx
+  have hflat := (panValueFlatLoadFuel_eq_panMemLoadHOL productionState memory fuel).1
+    structs shape address hfuel
+  have hexact := panMemLoadHOL_map_holValueToHOL domain wordMemory
+    exactState.memaddrs exactState.memory hdom hword shape address structs.toHOL
+    hnames hinfos hshape
+  calc
+    (panValueFlatLoadFuel structs
+        (panValueFlatMachineReadWord productionState memory)
+        panSemBitVec64BytesInWord fuel shape address).map panValueToHOL =
+        (panMemLoadHOL shape address domain wordMemory structs.toHOL).map holValueToHOL := by
+      rw [hflat]
+      simp only [Option.map_map]
+      congr 1
+      funext value
+      exact panValueToHOL_toPanValue value
+    _ = memLoadHOLExact (shapeToHOL shape) address exactState.memaddrs
+        exactState.memory (structContextToHOL structs.toHOL) := hexact
+
+/-- Production flat list loads correspond to the exact finite-support HOL
+    `mem_loads` recursion. The premise is the memory codec consumed by the
+    executed Pan word read, with the production Boolean domain representing the
+    proposition-valued finite `memaddrs` field. Shape/context names are
+    restricted to their lossless byte range; this is untagged bridge
+    infrastructure, not a new HOL port. -/
+theorem panValueFlatLoadListFuel_memLoadsHOLExact {ffi : Type}
+    (productionState : PanSemState (RiscV.Word 64) ffi)
+    (exactState : PanSemStateFiniteExact 64 Unit)
+    [_hmem : DecidablePred exactState.memaddrs]
+    (structs : StructContext)
+    (memory : RiscV.Word 64 → Option (PanValue (RiscV.Word 64)))
+    (shapes : List Shape) (address : RiscV.Word 64) (fuel : Nat)
+    (hMemory : PanValueMemoryCodecRel memory exactState)
+    (hDomain : ∀ a, productionState.memaddrs a = decide (exactState.memaddrs a))
+    (hctx : CtxBR structs)
+    (hshapes : ∀ shape ∈ shapes, ShapeByteRanged shape)
+    (hfuel : panValueFlatContextFuel structs +
+        panValueFlatShapeFuel.panValueFlatShapeListFuel shapes ≤ fuel) :
+    ((panValueFlatLoadListFuel structs
+        (panValueFlatMachineReadWord productionState memory)
+        panSemBitVec64BytesInWord fuel shapes address).map
+          (List.map panValueToHOL) : Option (List (ValueHOL 64))) =
+      memLoadsHOLExact (shapes.map shapeToHOL) address exactState.memaddrs
+        exactState.memory (structContextToHOL structs.toHOL) := by
+  let domain := panValueFlatMachineDomain productionState memory
+  let wordMemory := panValueWordHOL memory
+  have hdom : ∀ a, domain a ↔ exactState.memaddrs a := by
+    intro a
+    change (productionState.memaddrs a && panValueWordDefined memory a = true) ↔
+      exactState.memaddrs a
+    rw [hDomain a,
+      panValueWordDefined_eq_of_memCodecRel productionState exactState memory hMemory a]
+    simp
+  have hword : ∀ a, exactState.memaddrs a → wordMemory a = exactState.memory a := by
+    intro a ha
+    exact panValueWordHOL_eq_of_memCodecRel productionState exactState memory hMemory a ha
+  obtain ⟨hnames, hinfos⟩ := structContextHOLNameAndInfoRanged_of_CtxBR structs hctx
+  have hflat := (panValueFlatLoadFuel_eq_panMemLoadHOL productionState memory fuel).2.1
+    structs shapes address hfuel
+  have hexact := panMemLoadsHOL_map_holValueToHOL_exact domain wordMemory
+    exactState.memaddrs exactState.memory hdom hword shapes address structs.toHOL
+    hnames hinfos hshapes
+  calc
+    ((panValueFlatLoadListFuel structs
+        (panValueFlatMachineReadWord productionState memory)
+        panSemBitVec64BytesInWord fuel shapes address).map
+          (List.map panValueToHOL) : Option (List (ValueHOL 64))) =
+        (panMemLoadsHOL shapes address domain wordMemory structs.toHOL).map
+          (List.map holValueToHOL) := by
+      rw [hflat]
+      simp only [Option.map_map]
+      congr 1
+      funext values
+      simp [List.map_map, panValueToHOL_toPanValue]
+    _ = memLoadsHOLExact (shapes.map shapeToHOL) address exactState.memaddrs
+        exactState.memory (structContextToHOL structs.toHOL) := hexact
+
+/-- Production flat field loads correspond to the exact finite-support HOL
+    `mem_load_flds` recursion under the same byte-ranged context and memory
+    codec. The field list premise is discharged by the selected named struct's
+    `CtxBR` entry in the `.named` application. -/
+theorem panValueFlatLoadFieldsFuel_memLoadFldsHOLExact {ffi : Type}
+    (productionState : PanSemState (RiscV.Word 64) ffi)
+    (exactState : PanSemStateFiniteExact 64 Unit)
+    [_hmem : DecidablePred exactState.memaddrs]
+    (structs : StructContext)
+    (memory : RiscV.Word 64 → Option (PanValue (RiscV.Word 64)))
+    (fields : List (FieldName × Shape)) (address : RiscV.Word 64) (fuel : Nat)
+    (hMemory : PanValueMemoryCodecRel memory exactState)
+    (hDomain : ∀ a, productionState.memaddrs a = decide (exactState.memaddrs a))
+    (hctx : CtxBR structs) (hfields : ListParamByteRanged fields)
+    (hfuel : panValueFlatContextFuel structs + panValueFlatFieldsFuel fields ≤ fuel) :
+    ((panValueFlatLoadFieldsFuel structs
+        (panValueFlatMachineReadWord productionState memory)
+        panSemBitVec64BytesInWord fuel fields address).map
+          (List.map (fun p => (Flapjack.Basis.Pure.MlString.ofString p.1,
+            panValueToHOL p.2))) : Option (List (MlS × ValueHOL 64))) =
+      memLoadFldsHOLExact (fields.map paramToHOL) address exactState.memaddrs
+        exactState.memory (structContextToHOL structs.toHOL) := by
+  let domain := panValueFlatMachineDomain productionState memory
+  let wordMemory := panValueWordHOL memory
+  have hdom : ∀ a, domain a ↔ exactState.memaddrs a := by
+    intro a
+    change (productionState.memaddrs a && panValueWordDefined memory a = true) ↔
+      exactState.memaddrs a
+    rw [hDomain a,
+      panValueWordDefined_eq_of_memCodecRel productionState exactState memory hMemory a]
+    simp
+  have hword : ∀ a, exactState.memaddrs a → wordMemory a = exactState.memory a := by
+    intro a ha
+    exact panValueWordHOL_eq_of_memCodecRel productionState exactState memory hMemory a ha
+  obtain ⟨hnames, hinfos⟩ := structContextHOLNameAndInfoRanged_of_CtxBR structs hctx
+  have hflat := (panValueFlatLoadFuel_eq_panMemLoadHOL productionState memory fuel).2.2
+    structs fields address hfuel
+  have hexact := panMemLoadFldsHOL_map_holValueToHOL_exact domain wordMemory
+    exactState.memaddrs exactState.memory hdom hword fields address structs.toHOL
+    hnames hinfos hfields
+  calc
+    ((panValueFlatLoadFieldsFuel structs
+        (panValueFlatMachineReadWord productionState memory)
+        panSemBitVec64BytesInWord fuel fields address).map
+          (List.map (fun p => (Flapjack.Basis.Pure.MlString.ofString p.1,
+            panValueToHOL p.2))) : Option (List (MlS × ValueHOL 64))) =
+        (panMemLoadFldsHOL fields address domain wordMemory structs.toHOL).map
+          (List.map (fun p => (Flapjack.Basis.Pure.MlString.ofString p.1,
+            holValueToHOL p.2))) := by
+      rw [hflat]
+      simp only [Option.map_map]
+      congr 1
+      funext values
+      simp [List.map_map, panValueToHOL_toPanValue]
+    _ = memLoadFldsHOLExact (fields.map paramToHOL) address exactState.memaddrs
+        exactState.memory (structContextToHOL structs.toHOL) := hexact
 
 /-- The executed (code-map evaluator) `mem_load_byte` agrees with the finite
     `panMemLoadByteHOL` on the same address under the memory codec and equal

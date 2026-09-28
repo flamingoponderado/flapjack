@@ -431,6 +431,7 @@ import Flapjack.Test.PanSemMemStoreHOLParity
 import Flapjack.Test.PanSemShMemHOLParity
 import Flapjack.Test.PanSemDecsStcnamesHOLParity
 import Flapjack.Test.PanSemMemLoadExactParity
+import Flapjack.Test.PanSemMemLoadBridgeParity
 import Flapjack.Test.PanSemEvaluateDeclsFiniteParity
 import Flapjack.Test.PanToCrepMakeVmapParity
 import Flapjack.Test.PanLangGeneratedSizeParity
@@ -1124,6 +1125,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.PanSemShMemHOLParity.runChecks,
     Flapjack.Test.PanSemDecsStcnamesHOLParity.runChecks,
     Flapjack.Test.PanSemMemLoadExactParity.runChecks,
+    Flapjack.Test.PanSemMemLoadBridgeParity.runChecks,
     Flapjack.Test.PanSemEvaluateDeclsFiniteParity.runChecks,
     Flapjack.Test.PanToCrepMakeVmapParity.runChecks,
     Flapjack.Test.PanLangGeneratedSizeParity.runChecks,
