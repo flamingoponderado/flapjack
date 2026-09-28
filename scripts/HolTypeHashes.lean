@@ -18,6 +18,7 @@ import Flapjack.Misc.FoldrMaxList
 import Flapjack.Misc.Uncurry
 import Flapjack.Misc.OptMmapCong
 import Flapjack.Pancake.CrepInline.Pass
+import Flapjack.Pancake.CrepInline.Canonical
 import Flapjack.Pancake.CrepLang
 import Flapjack.Pancake.CrepLang.Exp
 import Flapjack.Pancake.CrepLang.Prog
