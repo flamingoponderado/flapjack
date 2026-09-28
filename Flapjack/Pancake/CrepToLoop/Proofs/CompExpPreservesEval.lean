@@ -596,14 +596,15 @@ private theorem evaluate_progIfTail {width : Nat} [NeZero width] {σ : Type}
       hfields.2.2.2.1, hfields.2.2.2.2.1, hfields.2.2.2.2.2.1,
       hfields.2.2.2.2.2.2.1, hfields.2.2.2.2.2.2.2.1, hfields.2.2.2.2.2.2.2.2, hpres, hdom⟩
 
-/-- `comp_exp_preserves_eval`, case `Cmp operator left right`
-    (`crep_to_loopProofScript.sml:772-786` statement; case proof at 1128-1239),
-    with the `eval_ind` hypotheses for the two operand sub-expressions. -/
-@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "comp_exp_preserves_eval"
-  (fmap_as_finite_support_relation := [CrepToLoopContextExact.vars,
-    CrepToLoopContextExact.funcs, CrepSemHOLState.locals, CrepSemHOLState.globals,
-    CrepSemHOLState.code, LoopSemStateFiniteExact.globals])
-  (words_as_type_indexed_bitvec)]
+/-- Flapjack-specific untagged case lemma for `comp_exp_preserves_eval`,
+    case `Cmp operator left right` (`crep_to_loopProofScript.sml:772-786` statement;
+    case proof at 1128-1239), with the `eval_ind` hypotheses for the two operand
+    sub-expressions.
+
+    The `@[hol]` tag is WITHDRAWN pending `flapjack-pxn.18.5.6.33.15.9`: HOL has no
+    `DecidablePred s.memaddrs` premise, so this statement is not exact while the
+    `CrepSemHOLState.memaddrs : BitVec width → Prop` carrier requires the
+    decidability instance. Re-tag once that interface is corrected. -/
 theorem crepToLoop_comp_exp_preserves_eval_cmp {width : Nat} [NeZero width] {σ : Type} :
     ∀ (s : CrepSemHOLState width σ) [DecidablePred s.memaddrs] (operator : Cmp)
       (left right : CrepExpHOL width),
