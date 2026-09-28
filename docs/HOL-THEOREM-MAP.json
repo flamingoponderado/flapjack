@@ -11454,6 +11454,38 @@
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Call.lean",
+    "lean_name": "codeRelExactHOLW_ctxtFc",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.4.3.94.6): code_rel under ctxt_fc ctxt.funcs ctxt.eids ... equals code_rel under ctxt (part of HOL's rels_empty_tac; ctxt_fc_def keeps funcs/eids); there is no standalone HOL declaration. Untagged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Call.lean",
+    "lean_name": "panToCrepStateRelFiniteExact_emptyLocals",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.4.3.94.6): state_rel is preserved by empty_locals on both sides (part of HOL's rels_empty_tac); there is no standalone HOL declaration. Untagged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Call.lean",
+    "lean_name": "pcCompileCorrectAt_callTail",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.4.3.94.6): HOL pc_compile_correct[Call_TailCall] (pan_to_crepProofScript.sml:3182-3230): the caltyp = NONE, positive-clock sub-case of the Call case against pcCompileCorrectAt. Its hypotheses are the rebound evaluate_ind Call IHs (pcCompileCorrectCallIH) and HOL's cases_on s.clock split. It has an existential target run and no target premise. Untagged: one sub-case; the Call assembly is flapjack-pxn.18.4.3.94. Untagged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Call.lean",
+    "lean_name": "pcCompileCorrectCallNoReturnTarget",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.4.3.94.6): Target run of compile ctxt (Call NONE f args) under the tagged line-443 Crep Call clause, given the target argument evaluation, lookup_code, and a positive clock. HOL proves this inline (fs [evaluate_def]) in Call_TailCall. Untagged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Call.lean",
     "lean_name": "lookupCodeHOLFinite_some_inv",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "flapjack-opus (bead flapjack-pxn.18.4.3.94.4): Inversion of the exact source lookup_code (panSemScript.sml:458-467) as used inside HOL pc_compile_correct[Call] (fs [panSemTheory.lookup_code_def]): code entry, ALL_DISTINCT parameter names, LIST_REL shape match, and callee locals = slc vshapes args. HOL proves this inline, so there is no standalone HOL declaration. Untagged."
