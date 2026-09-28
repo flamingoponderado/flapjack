@@ -227,10 +227,13 @@ def panValueMemoryAccessOfModel [BEq α] [Add α] [OfNat α 0] [OfNat α 1]
               if sharedDomain alignedAddress then do
                 let cell ← memory alignedAddress
                 let .word cell := cell | none
+                -- Byte `i` of the stored value in the target endianness is its
+                -- little-endian byte `i` (LE) or `1 - i` (BE), as HOL's
+                -- `get_byte` on the narrow value (mirrors `store16`).
                 let cell0 := model.setByte bytesInWord address
-                  (model.getByte bytesInWord 0 value bigEndian) cell bigEndian
+                  (model.getByte bytesInWord (if bigEndian then 1 else 0) value false) cell bigEndian
                 let cell1 := model.setByte bytesInWord (address + 1)
-                  (model.getByte bytesInWord 1 value bigEndian) cell0 bigEndian
+                  (model.getByte bytesInWord (if bigEndian then 0 else 1) value false) cell0 bigEndian
                 pure (fun current =>
                   if current == alignedAddress then some (.word cell1) else memory current)
               else none
@@ -239,14 +242,16 @@ def panValueMemoryAccessOfModel [BEq α] [Add α] [OfNat α 0] [OfNat α 1]
               if sharedDomain alignedAddress then do
                 let cell ← memory alignedAddress
                 let .word cell := cell | none
+                -- As for `store32`: the value's little-endian byte `i` (LE) or
+                -- `3 - i` (BE), as HOL's `get_byte` on the narrow value.
                 let cell0 := model.setByte bytesInWord address
-                  (model.getByte bytesInWord 0 value bigEndian) cell bigEndian
+                  (model.getByte bytesInWord (if bigEndian then 3 else 0) value false) cell bigEndian
                 let cell1 := model.setByte bytesInWord (address + 1)
-                  (model.getByte bytesInWord 1 value bigEndian) cell0 bigEndian
+                  (model.getByte bytesInWord (if bigEndian then 2 else 1) value false) cell0 bigEndian
                 let cell2 := model.setByte bytesInWord (address + 2)
-                  (model.getByte bytesInWord 2 value bigEndian) cell1 bigEndian
+                  (model.getByte bytesInWord (if bigEndian then 1 else 2) value false) cell1 bigEndian
                 let cell3 := model.setByte bytesInWord (address + 3)
-                  (model.getByte bytesInWord 3 value bigEndian) cell2 bigEndian
+                  (model.getByte bytesInWord (if bigEndian then 0 else 3) value false) cell2 bigEndian
                 pure (fun current =>
                   if current == alignedAddress then some (.word cell3) else memory current)
               else none

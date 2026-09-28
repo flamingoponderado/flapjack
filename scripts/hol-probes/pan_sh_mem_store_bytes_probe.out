@@ -1,0 +1,8 @@
+store_w_payload=[136w; 119w; 102w; 85w; 68w; 51w; 34w; 17w; 0w; 0w; 0w; 0w; 0w; 0w; 0w; 0w]
+store_8_payload=[136w; 0w; 0w; 0w; 0w; 0w; 0w; 0w; 0w]
+store_16_payload=[136w; 119w; 0w; 0w; 0w; 0w; 0w; 0w; 0w; 0w]
+store_32_payload=[136w; 119w; 102w; 85w; 0w; 0w; 0w; 0w; 0w; 0w; 0w; 0w]
+store_16_result=NONE
+store_16_miss=SOME Error
+store_16_final_unchanged=(0,FFI_failed)
+done
