@@ -607,6 +607,91 @@ example : PanValueByteRanged (PanValue.word (7 : W)) :=
   | some (.word value) => value == (7 : W)
   | _ => false
 
+/-! ## Rangedness preservation and the `PanSemStateRelExec`/rangedness boundary
+
+Kernel-checked witnesses for the preservation lemmas and the boundary
+characterization added to `TotalEvalExpBridge.lean` (bead
+`flapjack-pxn.18.4.3.77.2.15.1`): a ranged local update preserves
+`PanSemStateRelExecRanged`, while a state whose local holds a non-byte-ranged
+value is related by `PanSemStateRelExec` but not `PanSemStateRelExecRanged`, so
+the rangedness premise is not implied by the state relation and must be closed
+separately for runtime FFI/global values. -/
+
+/-- The fixture with a byte-ranged record assigned into local `"x"` stays ranged. -/
+example : PanSemStateRelExecRanged
+    { bridgeExecProdState with
+      locals := updatePanValueMap bridgeExecProdState.locals "x" recordValue } :=
+  bridgeExecProdState_ranged.updateLocals "x" recordValue (by
+    simp [PanValueByteRanged, recordValue, NameRanged])
+
+/-- The expression-driven local assignment class preserves rangedness on the
+    fixture: `x := 7`.  The value's rangedness comes from
+    `evalPanValueExp_byteRanged`, not from a separate assumption. -/
+example : PanSemStateRelExecRanged
+    { bridgeExecProdState with
+      locals := updatePanValueMap bridgeExecProdState.locals "x" (.word (7 : W)) } :=
+  PanSemStateRelExecRanged.evalLocalUpdate bridgeExecProdState
+    bridgeExecProdState_ranged (.const (7 : W)) trivial "x" (.word (7 : W))
+    (by simp [evalPanValueExp])
+
+/-- The out-of-range production value of the boundary witness. -/
+def witnessNonRangedValue : PanValue W := nonByteRangedValue
+
+/-- Production state: the empty fixture with the out-of-range value in local `"x"`. -/
+def witnessProd : PanSemState W (FfiState Unit) :=
+  { bridgeExecProdState with
+    locals := updatePanValueMap bridgeExecProdState.locals "x" witnessNonRangedValue }
+
+/-- Exact counterpart: the encoding of the out-of-range value at local
+    `ofString "x"`. -/
+def witnessExact : PanSemStateExact 64 Unit :=
+  { bridgeExecExactState.toExact with
+    locals := fun key =>
+      if key = Flapjack.Basis.Pure.MlString.ofString "x"
+      then some (panValueToHOL witnessNonRangedValue)
+      else bridgeExecExactState.toExact.locals key }
+
+/-- `PanSemStateRelExec` is preserved by a ranged-key local update on both sides;
+    the exact side is updated at the `ofString` image of the key.  This is the
+    local helper needed to exhibit the boundary witness. -/
+private theorem PanSemStateRelExec.updateLocalsAt {σ : Type}
+    {production : PanSemState (RiscV.Word 64) (FfiState σ)}
+    {exact : PanSemStateExact 64 σ}
+    (h : PanSemStateRelExec production exact)
+    (name : VarName) (hname : NameRanged name) (value : PanValue (RiscV.Word 64)) :
+    PanSemStateRelExec
+      { production with locals := updatePanValueMap production.locals name value }
+      { exact with locals := fun key =>
+          if key = Flapjack.Basis.Pure.MlString.ofString name
+          then some (panValueToHOL value) else exact.locals key } := by
+  obtain ⟨hl, hg, hs, hc, he, hm, hmd, hsm, hck, hbe, hffi, hb, ht⟩ := h
+  refine ⟨?_, hg, hs, hc, he, hm, hmd, hsm, hck, hbe, hffi, hb, ht⟩
+  intro key hkey
+  by_cases hk : key == name
+  · have hkeq : key = name := beq_iff_eq.mp hk
+    subst hkeq
+    simp [updatePanValueMap]
+  · have hne : key ≠ name := fun hh => hk (beq_iff_eq.mpr hh)
+    have hofne : Flapjack.Basis.Pure.MlString.ofString key ≠
+        Flapjack.Basis.Pure.MlString.ofString name :=
+      fun hh => hne (ofString_injective_of_ranged hkey hname hh)
+    simp only [updatePanValueMap, if_neg hk, if_neg hofne]
+    exact hl key hkey
+
+/-- The boundary witness is related by `PanSemStateRelExec`. -/
+theorem witnessStateRelExec : PanSemStateRelExec witnessProd witnessExact := by
+  simpa only [witnessProd, witnessExact] using
+    PanSemStateRelExec.updateLocalsAt bridgeStateRelExec "x" (by decide)
+      witnessNonRangedValue
+
+/-- The boundary witness production state fails `PanSemStateRelExecRanged`: this
+    is the gap the range premise closes.  A `PanSemStateRelExec`-related state can
+    still carry a non-byte-ranged runtime value. -/
+theorem witnessProd_not_ranged : ¬ PanSemStateRelExecRanged witnessProd := by
+  apply not_ranged_of_local_nonRanged witnessProd "x" witnessNonRangedValue
+  · simp [witnessProd, updatePanValueMap]
+  · exact nonByteRangedValue_not_ranged
+
 def runChecks : IO Bool := do
   IO.println "PASS production/exact PanSemState codec bridge (value/entry/struct/state)"
   pure true
