@@ -1029,7 +1029,7 @@ theorem panSemCodeRanged_of_entries (state : PanSemState (RiscV.Word 64) (FfiSta
 /-- The declaration-derived code entries of `DeclByteRanged` declarations are
     byte-ranged: a `function` declaration contributes its `FunDeclByteRanged`
     parameters, body and return shape. -/
-theorem functionEntries_byteRanged (declarations : List (Decl (RiscV.Word 64)))
+theorem functionEntries_panLangEntryByteRanged (declarations : List (Decl (RiscV.Word 64)))
     (hranged : ∀ d ∈ declarations, DeclByteRanged d) :
     ∀ entry ∈ functionEntries declarations, PanLangEntryByteRanged entry.2 := by
   induction declarations with
@@ -1055,7 +1055,7 @@ theorem panSemCodeRanged_of_functionEntries (state : PanSemState (RiscV.Word 64)
     (declarations : List (Decl (RiscV.Word 64)))
     (hranged : ∀ d ∈ declarations, DeclByteRanged d) :
     PanSemCodeRanged { state with code := functionEntries declarations } :=
-  panSemCodeRanged_of_entries _ (functionEntries_byteRanged declarations hranged)
+  panSemCodeRanged_of_entries _ (functionEntries_panLangEntryByteRanged declarations hranged)
 
 /-- The `pan_structs` code conversion (`panStructConvertCode`, rendered inline)
     preserves `PanSemCodeRanged` for a byte-ranged structure context, via
