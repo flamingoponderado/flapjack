@@ -3193,10 +3193,15 @@ theorem panSemTotalEvaluate_primitive_agree_of_progByteRanged {σ : Type}
     name hname operator arguments harguments hprim hprimRanged
 
 /-- Canonical total source-semantics entrypoint for the production `panSem$`
-    evaluator on the executable compiler path: `panSemTotalEvaluate` specialised
-    to the production primitive handler `panPrimopHOL`.  The general evaluator is
-    handler-parametric, so this names the concrete handler that the source
-    semantics is intended to run.  Not a HOL declaration; untagged. -/
+    evaluator, naming the concrete primitive handler that the source semantics
+    is intended to run: `panSemTotalEvaluate` specialised to the production
+    primitive handler `panPrimopHOL`.  The general evaluator is
+    handler-parametric; no in-tree consumer instantiates a handler yet (the
+    executable compiler path currently only supplies the fallback tree handlers
+    `PanHProgDefaultHandlers`), so this does NOT claim that the executed path
+    already uses it — the relation to the tagged exact HOL evaluator is proved
+    against this canonical handler.  Not a HOL declaration; untagged.
+    Executed-path wiring is tracked by `flapjack-yn3i`. -/
 abbrev panSemTotalEvaluateCake {σ : Type} :
     Prog (RiscV.Word 64) → PanSemState (RiscV.Word 64) (FfiState σ) →
       Option (PanSemHOLResult (RiscV.Word 64)) ×

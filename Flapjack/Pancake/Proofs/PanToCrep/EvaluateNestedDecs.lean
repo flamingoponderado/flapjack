@@ -520,8 +520,10 @@ private theorem loadGlobalsHOL_zero_eq_range {width : Nat} [NeZero width]
     full clause review. Concrete gaps: the recursive clauses thread the
     base-state decisions through `crepStampExactDomains`, whose reachability
     for the derived states is unreviewed; the byte-store clause still routes
-    through the legacy `UInt8` helpers; and the finite-map qualifier's
-    owner/witness placement is unresolved (`flapjack-4ac.5.16.5.13.1`). HOL
+    through the legacy `UInt8` helpers. The finite-map qualifier's
+    owner/witness placement is now resolved by the same-module canonical
+    witness `EvalNestedDecsFiniteSupport.holFmapAsFiniteSupportWitness` above
+    (bead `flapjack-4ac.5.16.5.13.1`, closed). HOL
     candidate: `evaluate_nested_decs_load_globals`
     (`pan_to_crepProofScript.sml:4139-4176`). Faithful port tracked by
     `flapjack-4ac.5.16.5`. -/
