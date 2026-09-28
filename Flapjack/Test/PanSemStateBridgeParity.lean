@@ -1,5 +1,6 @@
 import Flapjack.Pancake.Semantics.PanSem.StateBridge
 import Flapjack.Pancake.Semantics.PanSem.TotalEvalBridge
+import Flapjack.Pancake.Semantics.PanSem.TotalEvalExpBridge
 import Flapjack.Pancake.Semantics.PanSemStateEval
 
 /-!
@@ -492,6 +493,119 @@ theorem bridgeStateRelExec_ffi_negative :
   obtain ⟨_, _, _, _, _, _, _, _, _, _, hffi, _, _⟩ := hrel
   simpa [bridgeExecProdState, bridgeExecExactStateDiffFfi, bridgeExecExactState,
     bridgeProdFfi, FfiEventListRel] using hffi.2.1
+
+/-! ## Expression-evaluation agreement infrastructure
+
+Kernel-checked concrete guards for the production/exact expression agreement in
+`Flapjack/Pancake/Semantics/PanSem/TotalEvalExpBridge.lean`. -/
+
+/-- The word projection of the encoding of a production word value. -/
+example : panValueWordProjection (PanValue.word (7 : W)) = some 7 := by
+  simp
+
+/-- For a structured value the projection is `none` on both the production value
+    and the encoded exact value. -/
+example : panValueWordProjection (PanValue.rStruct ([] : List (PanValue W))) = none ∧
+    valueIsWord (panValueToHOL (PanValue.rStruct ([] : List (PanValue W)))) = false := by
+  simp [panValueToHOL_rStruct, valueIsWord]
+
+/-- The exact shape of an encoded named structure is the encoded shape. -/
+example : shapeOfHOLExact (panValueToHOL (PanValue.nStruct "P" ([] : List (String × PanValue W)))) =
+    ShapeHOL.named (Flapjack.Basis.Pure.MlString.ofString "P") := by
+  simpa [panValueShape, shapeToHOL] using
+    shapeOfHOLExact_panValueToHOL ([] : StructContext)
+      (PanValue.nStruct "P" ([] : List (String × PanValue W)))
+
+/-- `ofString` is injective on byte-ranged names. -/
+example : Flapjack.Basis.Pure.MlString.ofString "S" =
+    Flapjack.Basis.Pure.MlString.ofString "T" → ("S" : String) = "T" :=
+  ofString_injective_of_ranged (by decide) (by decide)
+
+/-! ## Structured-constructor bridge guards
+
+Kernel-checked guards for the `nStruct`/`nField`/`load` carrier bridges in
+`TotalEvalExpBridge.lean`: the `HolValue` codec, the cache-augmented
+`struct_info` encoding, named-field lookup commutation, and the folded
+`nStruct` field-shape check. -/
+
+/-- The `HolValue` codec encodes a named structure with `ofString` names. -/
+example : holValueToHOL (HolValue.nStruct "P" [(("x" : String), HolValue.val (PanWordLab.word (3 : W)))]) =
+    ValueHOL.nStruct (Flapjack.Basis.Pure.MlString.ofString "P")
+      [(Flapjack.Basis.Pure.MlString.ofString "x", ValueHOL.val (HolWordLab.word (3 : W)))] := by
+  simp [holValueToHOL]
+
+/-- The cache-augmented `struct_info` encoding maps field shapes with `shapeToHOL`. -/
+example : (structInfoCacheToHOL { fields := [("x", Shape.one)], size := 1 } : StructInfoHOLExact).fields =
+    [(Flapjack.Basis.Pure.MlString.ofString "x", ShapeHOL.one)] := by
+  simp [structInfoCacheToHOL, shapeToHOL]
+
+/-- Named-field lookup commutes with the value codec. -/
+example : Option.map panValueToHOL
+      (lookupPanValueField "y"
+        [("x", PanValue.word (1 : W)), ("y", PanValue.word (2 : W))]) =
+    lookupFieldHOL (Flapjack.Basis.Pure.MlString.ofString "y")
+      [(Flapjack.Basis.Pure.MlString.ofString "x", ValueHOL.val (HolWordLab.word (1 : W))),
+       (Flapjack.Basis.Pure.MlString.ofString "y", ValueHOL.val (HolWordLab.word (2 : W)))] := by
+  simpa using lookupPanValueField_map "y"
+    [("x", PanValue.word (1 : W)), ("y", PanValue.word (2 : W))]
+    (by decide) (by decide)
+
+/-- The folded `nStruct` check equals the encoded-shape check on matching names. -/
+example : panValueFieldsExactHOL ([] : StructContext)
+      [("x", Shape.one)]
+      [("x", PanValue.word (4 : W))] = true := by
+  simp [panValueFieldsExactHOL, panShapeMatches, panValueShape]
+
+/-! ## Assembled all-constructor agreement guards
+
+Kernel-checked guards for the assembled `evalPanValueExp_agree` and
+`evalPanValueExp_byteRanged` (`TotalEvalExpBridge.lean`) on the concrete
+executed-carrier fixture. -/
+
+/-- The empty-maps fixture satisfies the byte-ranged execution premise. -/
+theorem bridgeExecProdState_ranged : PanSemStateRelExecRanged bridgeExecProdState := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro name value h; simp [bridgeExecProdState] at h
+  · intro name value h; simp [bridgeExecProdState] at h
+  · intro p hp; simp [bridgeExecProdState, StructContext.toHOL] at hp
+
+/-- The fixture's `memaddrs` is everywhere false. -/
+instance decidableBridgeExecExactMemaddrs : DecidablePred bridgeExecExactState.memaddrs :=
+  fun _ => isFalse (by simp [bridgeExecExactState])
+
+/-- The assembled agreement holds for a constant expression on the fixture. -/
+example :
+    Option.map panValueToHOL (evalPanSemStateExp bridgeExecProdState (.const (7 : W))) =
+      bridgeExecExactState.evalHOLFinite (expToHOL (.const (7 : W))) :=
+  evalPanSemStateExp_agree bridgeExecProdState bridgeExecExactState bridgeStateRelExec
+    bridgeExecProdState_ranged (.const (7 : W)) trivial
+
+/-- The assembled agreement holds for a structured expression through the
+    explicit state-owned memory access. -/
+example :
+    Option.map panValueToHOL
+        (evalPanValueExp bridgeExecProdState.structs bridgeExecProdState.locals
+          bridgeExecProdState.globals bridgeExecProdState.memory
+          bridgeExecProdState.baseAddress bridgeExecProdState.topAddress
+          panSemBitVec64BytesInWord (.rStruct [.const (3 : W), .const (4 : W)])
+          (memoryAccess := some (panSemBitVec64MemoryAccess bridgeExecProdState))) =
+      bridgeExecExactState.evalHOLFinite
+        (expToHOL (.rStruct [.const (3 : W), .const (4 : W)])) :=
+  evalPanValueExp_agree bridgeExecProdState bridgeExecExactState bridgeStateRelExec
+    bridgeExecProdState_ranged (.rStruct [.const (3 : W), .const (4 : W)])
+    (by simp [ExpByteRanged, ListExpByteRanged])
+
+/-- The rangedness companion holds on a ranged constant. -/
+example : PanValueByteRanged (PanValue.word (7 : W)) :=
+  evalPanValueExp_byteRanged bridgeExecProdState bridgeExecProdState_ranged
+    (some (panSemBitVec64MemoryAccess bridgeExecProdState)) (.const (7 : W)) trivial
+    (.word (7 : W)) (by simp [evalPanValueExp])
+
+-- The executed path computes the constant.
+#guard
+  match evalPanSemStateExp bridgeExecProdState (.const (7 : W)) with
+  | some (.word value) => value == (7 : W)
+  | _ => false
 
 def runChecks : IO Bool := do
   IO.println "PASS production/exact PanSemState codec bridge (value/entry/struct/state)"
