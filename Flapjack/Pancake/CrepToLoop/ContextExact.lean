@@ -5,6 +5,7 @@ import Flapjack.Pancake.CrepArith
 import Flapjack.Pancake.LoopLive
 import Flapjack.Basis.Pure.MlString
 import Flapjack.Compiler.Encoders.Asm
+import Flapjack.Pancake.LoopLive
 
 /-!
 Exact finite-map carrier and context helpers for `crep_to_loopScript.sml`.
@@ -498,5 +499,19 @@ def compileProgHOLExact {width : Nat} [NeZero width] (target : AsmArchitecture)
       (n, List.range entry.2.1.length,
         optimiseHOL (comp entry.2.1 (crepSimpProgHOL entry.2.2))))
     fnums prog
+/-- Exact HOL `ocompile_def` (`crep_to_loopScript.sml:216-219`):
+`ocompile ctxt l p = (loop_live$optimise o compile ctxt l) p`.  Composes the
+reviewed exact `compileHOLExact` (`compile_def`) with the reviewed exact
+`optimiseHOL` (`loop_liveScript.sml` `optimise_def`).  Exact-carrier
+infrastructure, validated by the direct original-HOL EVAL rows in
+`scripts/hol-probes/crep_to_loop_ocompile_probe.out` (6 rows:
+skip/tick/assign/primitive/return/call) replayed by
+`Flapjack/Test/CrepToLoopOcompileHOLParity.lean`. -/
+@[hol "cakeml/pancake/crep_to_loopScript.sml" "ocompile_def"
+  (fmap_as_finite_support := [vars, funcs]) (words_as_type_indexed_bitvec)]
+def ocompileHOLExact {width : Nat} [NeZero width]
+    (context : CrepToLoopContextExact) (live : NumSet)
+    (prog : CrepProgHOL width) : HolLoopProg width :=
+  optimiseHOL (compileHOLExact context live prog)
 
 end Flapjack
