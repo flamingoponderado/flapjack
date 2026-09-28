@@ -7,6 +7,7 @@ import Flapjack.Pancake.Semantics.CrepSem
 import Flapjack.Pancake.Semantics.CrepSem.HOLState
 import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
 import Flapjack.Pancake.Semantics.CrepSem.EventsMono
+import Flapjack.Pancake.Semantics.CrepSem.AddClock
 import Flapjack.Pancake.PanCommon
 import Flapjack.Pancake.Semantics.PanCommonProps
 
