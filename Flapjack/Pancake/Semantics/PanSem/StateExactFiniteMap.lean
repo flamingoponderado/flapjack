@@ -4171,6 +4171,58 @@ theorem globalsShapes_ofExact_shMemStoreClauseHOLFiniteExact {width : Nat} {σ :
     globalsShapes_eq_globalsShapesExact_toExact]
   exact globalsShapes_shMemStoreClauseHOLFiniteExact state operator address value
 
+/-! ### Recursive-arm global-shape helpers (flapjack-4ac.4.62.2.3)
+
+Context and step lemmas used by the recursive exact evaluator arms of
+`evalPanSemRecursiveCallFiniteContext`.  Each is untagged Flapjack
+infrastructure for HOL `panPropsScript.sml:1183
+evaluate_global_shape_invariant`; the assembly is `flapjack-4ac.4.62.2.4`. -/
+
+theorem isValidValueHOLExact_global_shape_finite {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (name : MlS) (value : ValueHOL width)
+    (h : isValidValueHOLExact state.toExact .global name value = true) :
+    (state.globals.lookup name).map shapeOfHOLExact = some (shapeOfHOLExact value) := by
+  have hb := isValidValueHOLExact_global_shape state.toExact name value h
+  simpa only [PanSemStateFiniteExact.toExact] using hb
+
+theorem globalsShapes_fixClockHOLFinite {width : Nat} {σ : Type} [NeZero width]
+    {β : Type} (state : PanSemStateFiniteExact width σ)
+    (step : β × PanSemStateFiniteExact width σ) :
+    globalsShapes (fixClockHOLFinite state step).2 = globalsShapes step.2 := rfl
+
+theorem globalsShapes_callEntryStateHOLFinite {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ)
+    (callee : HolFiniteMapExact MlS (ValueHOL width)) :
+    globalsShapes (callEntryStateHOLFinite state callee) = globalsShapes state := rfl
+
+theorem globalsShapes_handlerStateHOLFinite {width : Nat} {σ : Type} [NeZero width]
+    (context fixedContext : FiniteEvalContext width σ) (name : MlS) (value : ValueHOL width) :
+    globalsShapes (handlerStateHOLFinite context fixedContext name value) =
+      globalsShapes fixedContext.state := rfl
+
+theorem globalsShapes_callContinuationContextHOLFinite {width : Nat} {σ : Type} [NeZero width]
+    (context fixedContext : FiniteEvalContext width σ) (resultName : MlS) (value : ValueHOL width) :
+    globalsShapes (callContinuationContextHOLFinite context fixedContext resultName value).state =
+      globalsShapes fixedContext.state := rfl
+
+/-- A validity-gated `set_kvar` write preserves the global shape map whenever the
+    written-into state already has the source state's shape map.  This is the
+    `Call`/`DecCall` return-value write condition. -/
+theorem globalsShapes_setKvarHOLFinite_of_globalsShapes {width : Nat} {σ : Type} [NeZero width]
+    (source : PanSemStateFiniteExact width σ) (kind : VarKind) (name : MlS)
+    (value : ValueHOL width) (state : PanSemStateFiniteExact width σ)
+    (hm : globalsShapes state = globalsShapes source)
+    (hvalid : isValidValueHOLExact source.toExact kind name value = true) :
+    globalsShapes (setKvarHOLFinite kind name value state) = globalsShapes state := by
+  cases kind
+  · exact globalsShapes_setVarHOLFinite name value state
+  · apply globalsShapes_setKvarHOLFinite_of_shape
+    have hsrc := isValidValueHOLExact_global_shape_finite source name value hvalid
+    have hlook := congrFun hm name
+    simp only [globalsShapes] at hlook
+    rw [hsrc] at hlook
+    exact hlook
+
 end PanSemStateFiniteExact
 
 end Flapjack
