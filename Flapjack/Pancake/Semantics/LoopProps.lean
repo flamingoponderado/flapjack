@@ -23,6 +23,37 @@ generic proofs are already width/word-polymorphic.
 
 namespace Flapjack
 
+/-! ## `survives`
+
+The exact width-indexed port of HOL `survives_def` from
+`cakeml/pancake/semantics/loopPropsScript.sml:25-38`. Its HOL `bool` result is
+kept as `Bool`; each `n IN domain` check is the `isSome` bit of exact
+`Spt Unit` lookup. -/
+
+/-- Exact HOL `survives_def`: live-set domain checks apply to If/Loop/Call/FFI;
+    Mark and Seq recurse, and every other program constructor survives. -/
+@[hol "cakeml/pancake/semantics/loopPropsScript.sml" "survives_def"
+  (words_as_type_indexed_bitvec)]
+def survivesHOLExact {width : Nat} [NeZero width] (name : Nat) :
+    HolLoopProg width → Bool
+  | .ite _ _ _ thenBranch elseBranch live =>
+      survivesHOLExact name thenBranch && survivesHOLExact name elseBranch &&
+        (sptLookup name live).isSome
+  | .loop liveIn body liveOut =>
+      (sptLookup name liveIn).isSome && (sptLookup name liveOut).isSome &&
+        survivesHOLExact name body
+  | .call (some (_, returns)) _ _ none => (sptLookup name returns).isSome
+  | .call (some (_, returns)) _ _ (some (_, first, second, post)) =>
+      (sptLookup name returns).isSome && (sptLookup name post).isSome &&
+        survivesHOLExact name first && survivesHOLExact name second
+  | .ffi _ _ _ _ _ live => (sptLookup name live).isSome
+  | .mark body => survivesHOLExact name body
+  | .seq first second => survivesHOLExact name first && survivesHOLExact name second
+  | _ => true
+termination_by program => sizeOf program
+decreasing_by
+  all_goals decreasing_trivial
+
 /-! ## `get_vars`
 
 Faithful port of HOL `loopSem$get_vars` (`loopSemScript.sml:98-106`): read the
