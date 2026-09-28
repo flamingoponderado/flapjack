@@ -3275,8 +3275,9 @@ end Flapjack
 This genuine induction case keeps the source theorem's evaluator premise and
 all eight state-field conclusions.  HOL's `Skip` clause returns the original
 state, so this leaf is immediate over the reviewed finite-support carrier.
-The recursive `Dec`, `Seq`, `While`, `Call`, and `DecCall` cases remain open in
-bead `flapjack-4ac.4.61`. -/
+The `Dec`, `If`, and `Seq` cases now have separate exact tagged proofs. The
+`While`, `Call`, and `DecCall` cases and assembling theorem remain open in bead
+`flapjack-4ac.4.61`. -/
 
 open Flapjack.Pancake.PanLang (ProgHOL)
 
@@ -4232,6 +4233,336 @@ theorem evaluateInvariantsIfCaseHOLFinite {width : Nat} {σ : Type} [NeZero widt
           simp [heval] at hcanonical
           rcases hcanonical with ⟨_, hpost⟩
           exact hpreserved hpost.symm
+
+end Flapjack
+
+
+/-! # The `Dec` induction case of HOL `evaluate_invariants`
+
+The `Dec` leaf retains the body induction hypothesis. The initializer/shape
+failure clauses preserve the state; on success the body hypothesis applies to
+the bound state, and restoring the old local binding changes none of the eight
+invariant fields. -/
+
+open Flapjack.Pancake.PanLang (MlS ShapeHOL ExpHOL ProgHOL)
+
+namespace Flapjack
+
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_invariants" 1150
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateInvariantsDecCaseHOLFinite {width : Nat} {σ : Type} [NeZero width] :
+    ∀ (name : MlS) (shape : ShapeHOL) (initializer : ExpHOL width)
+      (body : ProgHOL width)
+      (state : PanPropsEvalStateFiniteExact width σ)
+      (result : Option (PanSemResultExact width))
+      (post : PanPropsEvalStateFiniteExact width σ),
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state
+          (.dec name shape initializer body : ProgHOL width) = (result, post) →
+      (∀ (bodyState : PanPropsEvalStateFiniteExact width σ)
+        (bodyResult : Option (PanSemResultExact width))
+        (bodyPost : PanPropsEvalStateFiniteExact width σ),
+        PanPropsEvalStateFiniteExact.evaluateHOLFinitePair bodyState body =
+          (bodyResult, bodyPost) →
+        bodyPost.memaddrs = bodyState.memaddrs ∧
+        bodyPost.shMemaddrs = bodyState.shMemaddrs ∧
+        bodyPost.be = bodyState.be ∧
+        bodyPost.eshapes = bodyState.eshapes ∧
+        bodyPost.baseAddr = bodyState.baseAddr ∧
+        bodyPost.structs = bodyState.structs ∧
+        bodyPost.code = bodyState.code ∧
+        bodyPost.ffi.oracle = bodyState.ffi.oracle) →
+      post.memaddrs = state.memaddrs ∧
+      post.shMemaddrs = state.shMemaddrs ∧
+      post.be = state.be ∧
+      post.eshapes = state.eshapes ∧
+      post.baseAddr = state.baseAddr ∧
+      post.structs = state.structs ∧
+      post.code = state.code ∧
+      post.ffi.oracle = state.ffi.oracle := by
+  classical
+  intro name shape initializer body state result post hRun ihBody
+  have hcanonical :
+      PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite
+          (.dec name shape initializer body : ProgHOL width) =
+        (result, post.toPanSemFinite) := by
+    have hpair := congrArg
+      (fun output => (output.1, PanPropsEvalStateFiniteExact.toPanSemFinite output.2)) hRun
+    have hpair' :
+        (PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite
+          (.dec name shape initializer body : ProgHOL width)).1 = result ∧
+        (PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite
+          (.dec name shape initializer body : ProgHOL width)).2 = post.toPanSemFinite := by
+      simpa [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair] using hpair
+    exact Prod.ext hpair'.1 hpair'.2
+  rw [PanSemStateFiniteExact.evaluateHOLFiniteState_dec_total] at hcanonical
+  let hmem : DecidablePred state.toPanSemFinite.memaddrs :=
+    fun address => Classical.propDecidable (state.toPanSemFinite.memaddrs address)
+  cases hinit : @evalHOLExact width σ _ state.toPanSemFinite.toExact hmem initializer with
+  | none =>
+      simp [hinit, hmem] at hcanonical
+      rcases hcanonical with ⟨_, hpost⟩
+      have hstate : post = state := by
+        simpa using congrArg PanPropsEvalStateFiniteExact.ofPanSemFinite hpost.symm
+      subst post
+      simp
+  | some value =>
+      by_cases hshape : shapeEqHOL shape (shapeOfHOLExact value) = true
+      · let bodyState := PanSemStateFiniteExact.setVarHOLFinite name value state.toPanSemFinite
+        let bodyStateProps := PanPropsEvalStateFiniteExact.ofPanSemFinite bodyState
+        let bodyOutput := PanSemStateFiniteExact.evaluateHOLFiniteState bodyState body
+        let bodyPostProps := PanPropsEvalStateFiniteExact.ofPanSemFinite bodyOutput.2
+        have hbodyRun :
+            PanPropsEvalStateFiniteExact.evaluateHOLFinitePair bodyStateProps body =
+              (bodyOutput.1, bodyPostProps) := by
+          simp [bodyStateProps, bodyPostProps, bodyOutput,
+            PanPropsEvalStateFiniteExact.evaluateHOLFinitePair]
+        have hbody := ihBody bodyStateProps bodyOutput.1 bodyPostProps hbodyRun
+        have hbody' :
+            bodyOutput.2.memaddrs = state.toPanSemFinite.memaddrs ∧
+            bodyOutput.2.shMemaddrs = state.toPanSemFinite.shMemaddrs ∧
+            bodyOutput.2.be = state.toPanSemFinite.be ∧
+            bodyOutput.2.eshapes = state.toPanSemFinite.eshapes ∧
+            bodyOutput.2.baseAddr = state.toPanSemFinite.baseAddr ∧
+            bodyOutput.2.structs = state.toPanSemFinite.structs ∧
+            bodyOutput.2.code = state.toPanSemFinite.code ∧
+            bodyOutput.2.ffi.oracle = state.toPanSemFinite.ffi.oracle := by
+          simpa [bodyStateProps, bodyPostProps, bodyState,
+            PanPropsEvalStateFiniteExact.ofPanSemFinite,
+            PanSemStateFiniteExact.setVarHOLFinite] using hbody
+        let restored : PanSemStateFiniteExact width σ :=
+          { bodyOutput.2 with locals :=
+              (HolFiniteMapExact.resVarEq bodyOutput.2.locals
+                (name, state.toPanSemFinite.locals.lookup name)) }
+        have hpostRaw := congrArg Prod.snd hcanonical
+        simp only [hinit, if_pos hshape] at hpostRaw
+        have hpost : post.toPanSemFinite = restored := by
+          simpa [restored, bodyState, bodyOutput,
+            PanSemStateFiniteExact.setVarHOLFinite] using hpostRaw.symm
+        rcases hbody' with ⟨hmem', hshared', hbe', heshapes', hbase', hstructs', hcode', horacle'⟩
+        constructor
+        · change post.toPanSemFinite.memaddrs = state.toPanSemFinite.memaddrs
+          rw [hpost]
+          simpa [restored] using hmem'
+        constructor
+        · change post.toPanSemFinite.shMemaddrs = state.toPanSemFinite.shMemaddrs
+          rw [hpost]
+          simpa [restored] using hshared'
+        constructor
+        · change post.toPanSemFinite.be = state.toPanSemFinite.be
+          rw [hpost]
+          simpa [restored] using hbe'
+        constructor
+        · change post.toPanSemFinite.eshapes = state.toPanSemFinite.eshapes
+          rw [hpost]
+          simpa [restored] using heshapes'
+        constructor
+        · change post.toPanSemFinite.baseAddr = state.toPanSemFinite.baseAddr
+          rw [hpost]
+          simpa [restored] using hbase'
+        constructor
+        · change post.toPanSemFinite.structs = state.toPanSemFinite.structs
+          rw [hpost]
+          simpa [restored] using hstructs'
+        constructor
+        · change post.toPanSemFinite.code = state.toPanSemFinite.code
+          rw [hpost]
+          simpa [restored] using hcode'
+        · change post.toPanSemFinite.ffi.oracle = state.toPanSemFinite.ffi.oracle
+          rw [hpost]
+          simpa [restored] using horacle'
+      · have hpostRaw := congrArg Prod.snd hcanonical
+        simp only [hinit, if_neg hshape] at hpostRaw
+        have hstate : post = state := by
+          simpa using congrArg PanPropsEvalStateFiniteExact.ofPanSemFinite hpostRaw.symm
+        subst post
+        simp
+
+end Flapjack
+
+
+/-! # The `Seq` induction case of HOL `evaluate_invariants`
+
+The two induction hypotheses cover the first and second command. `fix_clock`
+changes only the clock: if the first command returns `NONE`, apply the second
+IH at the fixed state; otherwise the first IH already gives the result. -/
+
+namespace Flapjack
+
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_invariants" 1150
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateInvariantsSeqCaseHOLFinite {width : Nat} {σ : Type} [NeZero width] :
+    ∀ (first second : ProgHOL width)
+      (state : PanPropsEvalStateFiniteExact width σ)
+      (result : Option (PanSemResultExact width))
+      (post : PanPropsEvalStateFiniteExact width σ),
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state
+          (.seq first second : ProgHOL width) = (result, post) →
+      (∀ (firstState : PanPropsEvalStateFiniteExact width σ)
+        (firstResult : Option (PanSemResultExact width))
+        (firstPost : PanPropsEvalStateFiniteExact width σ),
+        PanPropsEvalStateFiniteExact.evaluateHOLFinitePair firstState first =
+          (firstResult, firstPost) →
+        firstPost.memaddrs = firstState.memaddrs ∧
+        firstPost.shMemaddrs = firstState.shMemaddrs ∧
+        firstPost.be = firstState.be ∧
+        firstPost.eshapes = firstState.eshapes ∧
+        firstPost.baseAddr = firstState.baseAddr ∧
+        firstPost.structs = firstState.structs ∧
+        firstPost.code = firstState.code ∧
+        firstPost.ffi.oracle = firstState.ffi.oracle) →
+      (∀ (secondState : PanPropsEvalStateFiniteExact width σ)
+        (secondResult : Option (PanSemResultExact width))
+        (secondPost : PanPropsEvalStateFiniteExact width σ),
+        PanPropsEvalStateFiniteExact.evaluateHOLFinitePair secondState second =
+          (secondResult, secondPost) →
+        secondPost.memaddrs = secondState.memaddrs ∧
+        secondPost.shMemaddrs = secondState.shMemaddrs ∧
+        secondPost.be = secondState.be ∧
+        secondPost.eshapes = secondState.eshapes ∧
+        secondPost.baseAddr = secondState.baseAddr ∧
+        secondPost.structs = secondState.structs ∧
+        secondPost.code = secondState.code ∧
+        secondPost.ffi.oracle = secondState.ffi.oracle) →
+      post.memaddrs = state.memaddrs ∧
+      post.shMemaddrs = state.shMemaddrs ∧
+      post.be = state.be ∧
+      post.eshapes = state.eshapes ∧
+      post.baseAddr = state.baseAddr ∧
+      post.structs = state.structs ∧
+      post.code = state.code ∧
+      post.ffi.oracle = state.ffi.oracle := by
+  classical
+  intro first second state result post hRun ihFirst ihSecond
+  have hcanonical :
+      PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite
+          (.seq first second : ProgHOL width) = (result, post.toPanSemFinite) := by
+    have hpair := congrArg
+      (fun output => (output.1, PanPropsEvalStateFiniteExact.toPanSemFinite output.2)) hRun
+    have hpair' :
+        (PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite
+          (.seq first second : ProgHOL width)).1 = result ∧
+        (PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite
+          (.seq first second : ProgHOL width)).2 = post.toPanSemFinite := by
+      simpa [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair] using hpair
+    exact Prod.ext hpair'.1 hpair'.2
+  rw [PanSemStateFiniteExact.evaluateHOLFiniteState_seq] at hcanonical
+  let firstOutput := PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite first
+  let fixed := PanSemStateFiniteExact.fixClockHOLFinite state.toPanSemFinite firstOutput
+  have hfirstRun :
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state first =
+        (firstOutput.1, PanPropsEvalStateFiniteExact.ofPanSemFinite firstOutput.2) := by
+    simp [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair, firstOutput]
+  have hfirst := ihFirst state firstOutput.1
+    (PanPropsEvalStateFiniteExact.ofPanSemFinite firstOutput.2) hfirstRun
+  have hfirstFields :
+      firstOutput.2.memaddrs = state.toPanSemFinite.memaddrs ∧
+      firstOutput.2.shMemaddrs = state.toPanSemFinite.shMemaddrs ∧
+      firstOutput.2.be = state.toPanSemFinite.be ∧
+      firstOutput.2.eshapes = state.toPanSemFinite.eshapes ∧
+      firstOutput.2.baseAddr = state.toPanSemFinite.baseAddr ∧
+      firstOutput.2.structs = state.toPanSemFinite.structs ∧
+      firstOutput.2.code = state.toPanSemFinite.code ∧
+      firstOutput.2.ffi.oracle = state.toPanSemFinite.ffi.oracle := by
+    simpa [PanPropsEvalStateFiniteExact.ofPanSemFinite,
+      PanPropsEvalStateFiniteExact.toPanSemFinite] using hfirst
+  cases hfirstResult : firstOutput.1 with
+  | some result₁ =>
+      have hpostRaw := congrArg Prod.snd hcanonical
+      simp only [firstOutput, hfirstResult, PanSemStateFiniteExact.fixClockHOLFinite]
+        at hpostRaw
+      rcases hfirstFields with ⟨hmem, hshared, hbe, heshapes, hbase, hstructs, hcode, horacle⟩
+      have hpostMem := congrArg
+        (fun output : PanSemStateFiniteExact width σ => output.memaddrs) hpostRaw
+      have hpostShared := congrArg
+        (fun output : PanSemStateFiniteExact width σ => output.shMemaddrs) hpostRaw
+      have hpostBe := congrArg
+        (fun output : PanSemStateFiniteExact width σ => output.be) hpostRaw
+      have hpostShapes := congrArg
+        (fun output : PanSemStateFiniteExact width σ => output.eshapes) hpostRaw
+      have hpostBase := congrArg
+        (fun output : PanSemStateFiniteExact width σ => output.baseAddr) hpostRaw
+      have hpostStructs := congrArg
+        (fun output : PanSemStateFiniteExact width σ => output.structs) hpostRaw
+      have hpostCode := congrArg
+        (fun output : PanSemStateFiniteExact width σ => output.code) hpostRaw
+      have hpostOracle := congrArg
+        (fun output : PanSemStateFiniteExact width σ => output.ffi.oracle) hpostRaw
+      simp only [PanPropsEvalStateFiniteExact.toPanSemFinite] at hpostMem hpostShared hpostBe hpostShapes hpostBase hpostStructs hpostCode hpostOracle
+      constructor
+      · exact hpostMem.symm.trans hmem
+      constructor
+      · exact hpostShared.symm.trans hshared
+      constructor
+      · exact hpostBe.symm.trans hbe
+      constructor
+      · exact hpostShapes.symm.trans heshapes
+      constructor
+      · exact hpostBase.symm.trans hbase
+      constructor
+      · exact hpostStructs.symm.trans hstructs
+      constructor
+      · exact hpostCode.symm.trans hcode
+      · exact hpostOracle.symm.trans horacle
+  | none =>
+      let secondOutput := PanSemStateFiniteExact.evaluateHOLFiniteState fixed.2 second
+      have hsecondRun :
+          PanPropsEvalStateFiniteExact.evaluateHOLFinitePair
+              (PanPropsEvalStateFiniteExact.ofPanSemFinite fixed.2) second =
+            (secondOutput.1, PanPropsEvalStateFiniteExact.ofPanSemFinite secondOutput.2) := by
+        simp [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair, secondOutput]
+      have hsecond := ihSecond
+        (PanPropsEvalStateFiniteExact.ofPanSemFinite fixed.2) secondOutput.1
+        (PanPropsEvalStateFiniteExact.ofPanSemFinite secondOutput.2) hsecondRun
+      have hsecondFields :
+          secondOutput.2.memaddrs = fixed.2.memaddrs ∧
+          secondOutput.2.shMemaddrs = fixed.2.shMemaddrs ∧
+          secondOutput.2.be = fixed.2.be ∧
+          secondOutput.2.eshapes = fixed.2.eshapes ∧
+          secondOutput.2.baseAddr = fixed.2.baseAddr ∧
+          secondOutput.2.structs = fixed.2.structs ∧
+          secondOutput.2.code = fixed.2.code ∧
+          secondOutput.2.ffi.oracle = fixed.2.ffi.oracle := by
+        simpa [PanPropsEvalStateFiniteExact.ofPanSemFinite] using hsecond
+      have hpostRaw := congrArg Prod.snd hcanonical
+      simp only [firstOutput, hfirstResult, PanSemStateFiniteExact.fixClockHOLFinite]
+        at hpostRaw
+      rcases hfirstFields with ⟨hfirstMem, hfirstShared, hfirstBe, hfirstShapes,
+        hfirstBase, hfirstStructs, hfirstCode, hfirstOracle⟩
+      rcases hsecondFields with ⟨hmem, hshared, hbe, hshapes, hbase, hstructs, hcode, horacle⟩
+      have hpostMem := congrArg
+        (fun output : PanSemStateFiniteExact width σ => output.memaddrs) hpostRaw
+      have hpostShared := congrArg
+        (fun output : PanSemStateFiniteExact width σ => output.shMemaddrs) hpostRaw
+      have hpostBe := congrArg
+        (fun output : PanSemStateFiniteExact width σ => output.be) hpostRaw
+      have hpostShapes := congrArg
+        (fun output : PanSemStateFiniteExact width σ => output.eshapes) hpostRaw
+      have hpostBase := congrArg
+        (fun output : PanSemStateFiniteExact width σ => output.baseAddr) hpostRaw
+      have hpostStructs := congrArg
+        (fun output : PanSemStateFiniteExact width σ => output.structs) hpostRaw
+      have hpostCode := congrArg
+        (fun output : PanSemStateFiniteExact width σ => output.code) hpostRaw
+      have hpostOracle := congrArg
+        (fun output : PanSemStateFiniteExact width σ => output.ffi.oracle) hpostRaw
+      simp only [PanPropsEvalStateFiniteExact.toPanSemFinite] at hpostMem hpostShared hpostBe hpostShapes hpostBase hpostStructs hpostCode hpostOracle
+      constructor
+      · exact hpostMem.symm.trans (hmem.trans hfirstMem)
+      constructor
+      · exact hpostShared.symm.trans (hshared.trans hfirstShared)
+      constructor
+      · exact hpostBe.symm.trans (hbe.trans hfirstBe)
+      constructor
+      · exact hpostShapes.symm.trans (hshapes.trans hfirstShapes)
+      constructor
+      · exact hpostBase.symm.trans (hbase.trans hfirstBase)
+      constructor
+      · exact hpostStructs.symm.trans (hstructs.trans hfirstStructs)
+      constructor
+      · exact hpostCode.symm.trans (hcode.trans hfirstCode)
+      · exact hpostOracle.symm.trans (horacle.trans hfirstOracle)
 
 end Flapjack
 

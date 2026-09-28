@@ -212,6 +212,11 @@ run_probe pan_mem_load_probeScript.sml pan_mem_load_probe.out \
 run_probe pan_sem_state_eval_probeScript.sml pan_sem_state_eval_probe.out \
   word_load_hit pan_sem_state_eval_done \
   "$cake_dir/pancake/semantics/panSemScript.sml"
+run_probe pan_sem_mem_domain_probeScript.sml pan_sem_mem_domain_probe.out \
+  domain_load_hit domain_load_miss_present domain_store_then_load_hit \
+  domain_store_miss domain_mem_stores_load_roundtrip pan_sem_mem_domain_done \
+  "$cake_dir/pancake/semantics/panSemScript.sml" \
+  "$cake_dir/pancake/semantics"
 run_probe pan_shape_of_probeScript.sml pan_shape_of_probe.out \
   word nstruct "$cake_dir/pancake/semantics/panSemScript.sml"
 run_probe pan_evaluate_decls_probeScript.sml pan_evaluate_decls_probe.out \
