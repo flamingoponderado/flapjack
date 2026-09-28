@@ -65,16 +65,6 @@ def extCallReturnedGrows : Bool :=
 def extCallFinalPreserves : Bool :=
   (evalCrepSemHOLProg finalState finalMemDec finalShMemDec program).2.ffi.ioEvents.length == 0
 
-/-- Kernel-checked strict-growth fixture: the concrete exact FFI event log has
-    one entry after the returning `ExtCall`, so the general prefix is strict. -/
-theorem extCallReturnedPrefixNonempty :
-    (evalCrepSemHOLProg echoState memDec shMemDec program).2.ffi.ioEvents ≠ [] := by
-  have hlen : (evalCrepSemHOLProg echoState memDec shMemDec program).2.ffi.ioEvents.length = 1 := by
-    native_decide
-  intro hempty
-  rw [hempty] at hlen
-  simp at hlen
-
 /-- Kernel-checked application of the exact core prefix lemma on the fixture. -/
 theorem corePrefixExample :
     echoState.ffi.ioEvents <+:

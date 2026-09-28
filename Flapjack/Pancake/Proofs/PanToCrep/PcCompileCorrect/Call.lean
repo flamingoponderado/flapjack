@@ -927,7 +927,7 @@ where
           fupdateListHOL_zip_not_mem_local k xs ys _ hk.2]
         simp [FUPDATE_HOL, hk.1]
 
-private theorem updateListEq_overwrite {α β : Type} [DecidableEq α]
+theorem updateListEq_overwrite {α β : Type} [DecidableEq α]
     (m : HolFiniteMapExact α β) (xs : List α) (ys1 ys2 : List β)
     (_h1 : xs.length = ys1.length) (h2 : xs.length = ys2.length) :
     (m.updateListEq (xs.zip ys1)).updateListEq (xs.zip ys2) = m.updateListEq (xs.zip ys2) := by
@@ -941,7 +941,7 @@ private theorem updateListEq_overwrite {α β : Type} [DecidableEq α]
     simp only [HolFiniteMapExact.lookup_updateListEq]
     rw [fupdateListHOL_zip_mem_indep.fupdateListHOL_zip_not_mem_local k xs ys1 _ hk]
 
-private theorem mapM_lookup_updateListEq {α β : Type} [DecidableEq α]
+theorem mapM_lookup_updateListEq {α β : Type} [DecidableEq α]
     (m : HolFiniteMapExact α β) (xs : List α) (ys : List β)
     (hnodup : xs.Nodup) (hlen : xs.length = ys.length) :
     xs.mapM (m.updateListEq (xs.zip ys)).lookup = some ys := by
