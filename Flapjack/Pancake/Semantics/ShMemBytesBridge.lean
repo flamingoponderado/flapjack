@@ -477,4 +477,70 @@ theorem panWacc_panBytesFrom_eq_self {width : Nat} [NeZero width] (hwidth : 8 �
       rw [← h0, UInt8.toNat_toBitVec]
       exact panSetByteHOL_panGetByteHOL (BitVec.ofNat width a) C false hwidth
 
+
+/-! ## Byte-level word extensionality
+
+Two `RiscV.Word width` values with the same little-endian byte at every residue
+`r < width / 8` are equal, via base-256 digit injectivity.  This turns agreement
+of the `panGetByteHOL` projections into equality of the words. -/
+
+/-- Base-256 digit injectivity: two natural numbers below `256 ^ p` whose
+    base-256 digits agree at every position `< p` are equal. -/
+theorem nat_digits_inj (a b p : Nat)
+    (h : ∀ r, r < p → (a / 256^r) % 256 = (b / 256^r) % 256)
+    (ha : a < 256^p) (hb : b < 256^p) : a = b := by
+  induction p generalizing a b with
+  | zero => omega
+  | succ p ih =>
+      have h0 : a % 256 = b % 256 := by
+        have hh := h 0 (by omega)
+        simpa using hh
+      have hshift : ∀ r, r < p → ((a / 256) / 256^r) % 256 = ((b / 256) / 256^r) % 256 := by
+        intro r hr
+        have hh := h (r + 1) (by omega)
+        have hpow : 256 ^ (r + 1) = 256 * 256 ^ r := by rw [Nat.pow_succ, Nat.mul_comm]
+        rw [hpow] at hh
+        simpa only [Nat.div_div_eq_div_mul] using hh
+      have hpowp : 256 ^ (p + 1) = 256 ^ p * 256 := Nat.pow_succ 256 p
+      rw [hpowp] at ha hb
+      have ha' : a / 256 < 256 ^ p := (Nat.div_lt_iff_lt_mul (by decide : 0 < 256)).mpr ha
+      have hb' : b / 256 < 256 ^ p := (Nat.div_lt_iff_lt_mul (by decide : 0 < 256)).mpr hb
+      have heq : a / 256 = b / 256 := ih (a / 256) (b / 256) hshift ha' hb'
+      have ea : a % 256 + 256 * (a / 256) = a := Nat.mod_add_div a 256
+      have eb : b % 256 + 256 * (b / 256) = b := Nat.mod_add_div b 256
+      omega
+
+/-- `panGetByteHOL` at address `r` is the `r`-th little-endian base-256 digit. -/
+theorem panGetByteHOL_toNat_ofNat {width : Nat} [NeZero width] (r : Nat)
+    (hr : r < width / 8) (X : RiscV.Word width) :
+    (panGetByteHOL (BitVec.ofNat width r) X false).toNat = (X.toNat / 256^r) % 256 := by
+  have hkw : r < 2 ^ width :=
+    Nat.lt_of_le_of_lt (Nat.le_trans (Nat.le_of_lt hr) (Nat.div_le_self width 8))
+      Nat.lt_two_pow_self
+  have h256 : 0 < 256 ^ r := Nat.pow_pos (by decide)
+  simp only [panGetByteHOL, Bool.false_eq_true, if_false, BitVec.toNat_ofNat,
+    Nat.mod_eq_of_lt hkw, Nat.mod_eq_of_lt hr]
+  rw [UInt8.toNat_ofNat', show (2 : Nat) ^ 8 = 256 by decide]
+  exact Nat.mod_eq_of_lt (Nat.mod_lt _ (by decide : 0 < 256))
+
+/-- Word extensionality from bytes: two words whose little-endian bytes agree at
+    every residue `r < width / 8` are equal. -/
+theorem panWord_eq_of_getByte_eq {width : Nat} [NeZero width] (hdiv : width % 8 = 0)
+    {X Y : RiscV.Word width}
+    (h : ∀ r, r < width / 8 →
+      (panGetByteHOL (BitVec.ofNat width r) X false).toNat
+        = (panGetByteHOL (BitVec.ofNat width r) Y false).toNat) : X = Y := by
+  apply BitVec.eq_of_toNat_eq
+  have hw8 : 8 * (width / 8) = width := by
+    rw [Nat.mul_comm]; exact Nat.div_mul_cancel (Nat.dvd_of_mod_eq_zero hdiv)
+  have hpow : (2 : Nat) ^ width = 256 ^ (width / 8) :=
+    calc (2 : Nat) ^ width = 2 ^ (8 * (width / 8)) := congrArg (fun e => (2 : Nat) ^ e) hw8.symm
+      _ = 256 ^ (width / 8) := two_pow_eight_mul_eq_pow256 (width / 8)
+  refine nat_digits_inj X.toNat Y.toNat (width / 8) ?_ ?_ ?_
+  · intro r hr
+    rw [← panGetByteHOL_toNat_ofNat r hr X, ← panGetByteHOL_toNat_ofNat r hr Y]
+    exact h r hr
+  · exact Nat.lt_of_lt_of_eq X.isLt hpow
+  · exact Nat.lt_of_lt_of_eq Y.isLt hpow
+
 end Flapjack

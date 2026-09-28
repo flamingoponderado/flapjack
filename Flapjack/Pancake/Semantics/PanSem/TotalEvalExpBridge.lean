@@ -115,13 +115,6 @@ def PanSemStateRelExecRanged {σ : Type}
   funext w
   exact panValueToHOL_word w
 
-/-- `ofString` is injective on byte-ranged strings. -/
-theorem ofString_injective_of_ranged {a b : String} (ha : NameRanged a) (hb : NameRanged b)
-    (h : ofString a = ofString b) : a = b := by
-  have h' := congrArg toStringOfBytes h
-  rwa [toStringOfBytes_ofString_of_bytes a ha,
-    toStringOfBytes_ofString_of_bytes b hb] at h'
-
 /-- List-level agreement: if every element agrees, the executable list step
     agrees with the exact `OPT_MMAP` step under `panValueToHOL`. -/
 theorem evalPanValueExps_eq_evalListHOLExact_of {σ : Type}
@@ -2685,6 +2678,141 @@ theorem evalPanSemStateExp_agree {σ : Type}
       exact.evalHOLFinite (expToHOL e) := by
   rw [evalPanSemStateExp_64_eq_previous]
   exact evalPanValueExp_agree state exact hrel hranged e he
+
+/-- A byte-ranged expression evaluated under a ranged state yields a
+    byte-ranged value. -/
+theorem evalPanSemStateExp_byteRanged {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (hranged : PanSemStateRelExecRanged state)
+    (e : Exp (RiscV.Word 64)) (he : ExpByteRanged e) (value : PanValue (RiscV.Word 64))
+    (hvalue : evalPanSemStateExp state e = some value) : PanValueByteRanged value := by
+  rw [evalPanSemStateExp_64_eq_previous] at hvalue
+  exact evalPanValueExp_byteRanged state hranged
+    (some (panSemBitVec64MemoryAccess state)) e he value hvalue
+
+/-- The production assignment-validity test agrees with the exact
+    `is_valid_value` test on encoded values under `PanSemStateRelExec` and the
+    byte-range premise.  This is the validity half of the `Assign` clause
+    agreement: both sides look up the destination and compare the shape of the
+    incoming value with the stored one. -/
+theorem panValueAssignmentValid_eq_isValidValueHOLFinite {σ : Type}
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ)
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (hranged : PanSemStateRelExecRanged production)
+    (kind : VarKind) (name : VarName) (hname : NameRanged name)
+    (value : PanValue (RiscV.Word 64)) (hvalue : PanValueByteRanged value) :
+    panValueAssignmentValid production.structs production.locals production.globals
+        kind name value
+      = isValidValueHOLFinite exact kind (ofString name) (panValueToHOL value) := by
+  cases kind
+  · have hold := hrel.1 name hname
+    simp only [panValueAssignmentValid, isValidValueHOLFinite, lookupKvarHOLFinite]
+    rw [show exact.locals.lookup (ofString name) =
+        Option.map panValueToHOL (production.locals name) from hold.symm]
+    cases hl : production.locals name with
+    | none => rfl
+    | some old =>
+        have hbv : PanValueByteRanged old := hranged.1 name old hl
+        show panShapeMatches (panValueShape production.structs value)
+              (panValueShape production.structs old)
+          = shapeEqHOL (shapeOfHOLExact (panValueToHOL value))
+              (shapeOfHOLExact (panValueToHOL old))
+        rw [shapeOfHOLExact_panValueToHOL, shapeOfHOLExact_panValueToHOL]
+        exact panShapeMatches_eq_shapeEqHOL _ _
+          (panValueShape_byteRanged _ _ hvalue) (panValueShape_byteRanged _ _ hbv)
+  · have hold := hrel.2.1 name hname
+    simp only [panValueAssignmentValid, isValidValueHOLFinite, lookupKvarHOLFinite]
+    rw [show exact.globals.lookup (ofString name) =
+        Option.map panValueToHOL (production.globals name) from hold.symm]
+    cases hl : production.globals name with
+    | none => rfl
+    | some old =>
+        have hbv : PanValueByteRanged old := hranged.2.1 name old hl
+        show panShapeMatches (panValueShape production.structs value)
+              (panValueShape production.structs old)
+          = shapeEqHOL (shapeOfHOLExact (panValueToHOL value))
+              (shapeOfHOLExact (panValueToHOL old))
+        rw [shapeOfHOLExact_panValueToHOL, shapeOfHOLExact_panValueToHOL]
+        exact panShapeMatches_eq_shapeEqHOL _ _
+          (panValueShape_byteRanged _ _ hvalue) (panValueShape_byteRanged _ _ hbv)
+
+/-- The finite-support `evalHOLFinite` agrees with the `Classical`-instance
+    `evalHOLExact` call used by the clause reduction lemmas. -/
+theorem evalHOLFinite_eq_classical {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) [DecidablePred state.memaddrs]
+    (e : ExpHOL width) :
+    @evalHOLExact width σ _ state.toExact
+        (fun address => Classical.propDecidable (state.memaddrs address)) e
+      = state.evalHOLFinite e := by
+  unfold evalHOLFinite
+  rw [Subsingleton.elim (fun address => Classical.propDecidable (state.memaddrs address))
+    (inferInstance : DecidablePred state.memaddrs)]
+
+/-- Production/exact agreement for the `Assign` constructor, assembled from the
+    all-constructor expression agreement
+    (`evalPanSemStateExp_agree`/`evalPanSemStateExp_byteRanged`), the
+    assignment-validity parity, and the `TotalEvalBridge` preservation slice
+    `panSemTotalAssignClause_agree`. -/
+theorem panSemTotalEvaluate_assign_agree {σ : Type}
+    (primitive : PanPrimitiveHandler (RiscV.Word 64))
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (hranged : PanSemStateRelExecRanged production)
+    (kind : VarKind) (name : VarName) (hname : NameRanged name)
+    (e : Exp (RiscV.Word 64)) (he : ExpByteRanged e) :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluate primitive (.assign kind name e) production).1
+        (evaluateHOLFiniteState exact (.assign kind (ofString name) (expToHOL e))).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluate primitive (.assign kind name e) production).2
+        (evaluateHOLFiniteState exact (.assign kind (ofString name) (expToHOL e))).2.toExact := by
+  rw [panSemTotalEvaluate]
+  have hval := evalPanSemStateExp_agree production exact hrel hranged e he
+  have hclass := evalHOLFinite_eq_classical exact (expToHOL e)
+  cases hest : evalPanSemStateExp production e with
+  | none =>
+      have hexactEval : @evalHOLExact 64 σ _ exact.toExact
+          (fun address => Classical.propDecidable (exact.memaddrs address)) (expToHOL e)
+          = none := by
+        rw [hclass, ← hval, hest]
+        rfl
+      rw [panSemTotalAssignClause_none production kind name e hest]
+      rw [evaluateHOLFiniteState_assign, hexactEval]
+      exact ⟨trivial, hrel⟩
+  | some value =>
+      have hvalue : exact.evalHOLFinite (expToHOL e) = some (panValueToHOL value) := by
+        rw [← hval, hest]
+        rfl
+      have hexactEval : @evalHOLExact 64 σ _ exact.toExact
+          (fun address => Classical.propDecidable (exact.memaddrs address)) (expToHOL e)
+          = some (panValueToHOL value) := by
+        rw [hclass]
+        exact hvalue
+      have hbv := evalPanSemStateExp_byteRanged production hranged e he value hest
+      by_cases hprod : panValueAssignmentValid production.structs production.locals
+          production.globals kind name value = true
+      · have hparity := panValueAssignmentValid_eq_isValidValueHOLFinite production exact
+          hrel hranged kind name hname value hbv
+        have hexactValid : isValidValueHOLFinite exact kind (ofString name)
+            (panValueToHOL value) = true := by
+          rw [← hparity]
+          exact hprod
+        exact panSemTotalAssignClause_agree production exact hrel kind name hname e value
+          hest hexactEval hprod hexactValid
+      · have hprod' : panValueAssignmentValid production.structs production.locals
+            production.globals kind name value = false := Bool.eq_false_iff.mpr hprod
+        have hparity := panValueAssignmentValid_eq_isValidValueHOLFinite production exact
+          hrel hranged kind name hname value hbv
+        have hexactInvalid : isValidValueHOLFinite exact kind (ofString name)
+            (panValueToHOL value) = false := by
+          rw [← hparity]
+          exact hprod'
+        rw [panSemTotalAssignClause_invalid production kind name e value hest hprod']
+        rw [evaluateHOLFiniteState_assign, hexactEval]
+        simp only [hexactInvalid]
+        exact ⟨trivial, hrel⟩
 
 /-! ## Rangedness preservation and the `PanSemStateRelExec`/rangedness boundary
 
