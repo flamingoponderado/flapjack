@@ -18303,6 +18303,15 @@
   },
   {
     "hol_path": "cakeml/pancake/semantics/loopPropsScript.sml",
+    "hol_name": "comp_syntax_ok_def",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopProps/CompSyntax.lean",
+    "lean_name": "compSyntaxOkHOLExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-c source comparison (2026-09-28, bead flapjack-pxn.18.5.6.38) against loopPropsScript.sml:57-73. Clause review: Skip, Assign, Arith, Break, LocValue, Load32, and LoadByte return T; Loop requires the input num_set to equal both lin and lout and recurses at lin; Seq conjoins the first result with the second at cut_sets input first; If conjoins both recursive branch results at the input live set with the exact existential nl = FOLDL (\\sp n. insert n () sp) l ns; every other constructor returns F. Lean keeps the HOL bool result as Bool and reflects the logic-level equality/conjunction/existential through decide (classical for the unbounded List witness), without replacing the If condition by a weaker membership test. HolLoopProg uses the corresponding loopLang prog constructors, NumSet is exactly Spt Unit (miscScript.sml:787), and sptInsert follows the HOL sptree insert operation; the sole carrier qualifier is HOL positive word dimension to BitVec width. Direct original HOL EVAL rows, including Loop/Seq true and false and the residual If existential, are in scripts/hol-probes/loop_props_comp_syntax_ok_probe.out; exact-carrier Lean replay and a concrete [3] witness for the If condition are in Flapjack/Test/LoopPropsCompSyntaxParity.lean. The exact definition remains proof-side; the production list-backed loopCompSyntaxOk path is not claimed routed through it.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopPropsScript.sml",
     "hol_name": "cut_sets_def",
     "lean_path": "Flapjack/Pancake/Semantics/LoopProps/CutSets.lean",
     "lean_name": "cutSetsHOL",
