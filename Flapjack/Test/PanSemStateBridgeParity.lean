@@ -1191,6 +1191,59 @@ example : PanSemHOLResultOptionRel
     bridgeExecProdState_eshapesRanged
     (Flapjack.Basis.Pure.MlString.ofString "E") (.const (7 : W))
 
+/-- The `Raise` agreement no longer takes `hexnRanged` as a free premise: the
+    exception-shape rangedness is intrinsic to the fixture state. -/
+theorem bridgeRaiseProdState_exceptionShapesRanged :
+    PanSemExceptionShapesRanged bridgeRaiseProdState :=
+  bridgeRaiseProdState_eshapesRanged
+
+/-- `panSemTotalEvaluate` preserves `PanSemExceptionShapesRanged`: it never
+    writes `exceptionShapes`, so the `Raise` premise is intrinsic to reachable
+    production execution. -/
+example : PanSemExceptionShapesRanged
+    (panSemTotalEvaluate (fun _ _ => none)
+      (.raise (toStringOfBytes (Flapjack.Basis.Pure.MlString.ofString "E"))
+        (expOfHOL (.const (7 : W))) : Prog W) bridgeRaiseProdState).2 :=
+  panSemTotalEvaluate_exceptionShapesRanged (fun _ _ => none)
+    (.raise (toStringOfBytes (Flapjack.Basis.Pure.MlString.ofString "E"))
+      (expOfHOL (.const (7 : W))) : Prog W)
+    bridgeRaiseProdState bridgeRaiseProdState_exceptionShapesRanged
+
+/-- `Raise` agreement with `hexnRanged` discharged from the intrinsic
+    `PanSemExceptionShapesRanged` predicate. -/
+example : PanSemHOLResultOptionRel
+      (panSemTotalEvaluate (fun _ _ => none)
+        (.raise (toStringOfBytes (Flapjack.Basis.Pure.MlString.ofString "E"))
+          (expOfHOL (.const (7 : W))) : Prog W) bridgeRaiseProdState).1
+      (evaluateHOLFiniteState bridgeRaiseExactState
+        (.raise (Flapjack.Basis.Pure.MlString.ofString "E") (.const (7 : W)) :
+          ProgHOL 64)).1 ∧
+    PanSemStateRelExec
+      (panSemTotalEvaluate (fun _ _ => none)
+        (.raise (toStringOfBytes (Flapjack.Basis.Pure.MlString.ofString "E"))
+          (expOfHOL (.const (7 : W))) : Prog W) bridgeRaiseProdState).2
+      (evaluateHOLFiniteState bridgeRaiseExactState
+        (.raise (Flapjack.Basis.Pure.MlString.ofString "E") (.const (7 : W)) :
+          ProgHOL 64)).2.toExact :=
+  panSemTotalEvaluate_raise_agree_of_exceptionShapesRanged (fun _ _ => none)
+    bridgeRaiseProdState bridgeRaiseExactState bridgeRaiseStateRelExec
+    bridgeRaiseProdState_ranged bridgeRaiseProdState_exceptionShapesRanged
+    (Flapjack.Basis.Pure.MlString.ofString "E") (.const (7 : W))
+
+/-- A byte-ranged `exnDecl` list yields a ranged production exception map: the
+    initial-state obligation for compiled declarations. -/
+example : PanSemExceptionShapesRanged
+    { bridgeExecProdState with
+      exceptionShapes := fun name => panPropsALookupEq name
+        (exceptionEntries [Decl.exnDecl (α := W) "E" Shape.one]) } :=
+  panSemExceptionShapesRanged_of_exceptionEntries bridgeExecProdState
+    [Decl.exnDecl (α := W) "E" Shape.one]
+    (by
+      intro declaration hmem
+      simp only [List.mem_singleton] at hmem
+      subst hmem
+      exact ⟨by decide, by simp [ShapeByteRanged]⟩)
+
 def runChecks : IO Bool := do
   IO.println "PASS production/exact PanSemState codec bridge (value/entry/struct/state)"
   pure true
