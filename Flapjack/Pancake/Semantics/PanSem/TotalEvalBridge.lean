@@ -329,6 +329,82 @@ theorem panSemTotalAssignClause_agree {σ : Type}
     · exact PanSemStateRelExec.updateLocals hrel name hname value
     · exact PanSemStateRelExec.updateGlobals hrel name hname value
 
+/-- Production/exact agreement for the `Primitive` clause.  Under the state
+    relation, the evaluated argument-list correspondence, and the handler
+    correspondence — the production handler `primitive` maps, through
+    `panValueToHOL`, to the exact `panPrimopHOLExact` on the encoded argument
+    list, with the assignment-validity tests agreeing on the produced value — the
+    production `panSemTotalPrimitiveClause` and the exact
+    `evaluateHOLFiniteState` `Primitive` equation (`panSemScript.sml:573-582`,
+    `evaluateHOLFiniteState_primitive`) return corresponding results and related
+    post-states on the successful-valid, successful-invalid, and handler-`none`
+    branches.  Neither a target run, nor a target result, nor a post-state
+    relation is assumed: the handler correspondence and the validity parity are
+    the input side conditions, exactly as `panSemTotalAssignClause_agree` takes
+    the evaluated value and its validity parity.  Flapjack-only bridge; no HOL
+    declaration. -/
+theorem panSemTotalPrimitiveClause_agree {σ : Type}
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ)
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (name : VarName) (hname : NameRanged name) (operator : PrimOp)
+    (arguments : List (Exp (RiscV.Word 64)))
+    (primitive : PanPrimitiveHandler (RiscV.Word 64))
+    (values : List (PanValue (RiscV.Word 64)))
+    (heval : evalPanSemStateExps production arguments = some values)
+    (hexactEval : @evalListHOLExact 64 σ _ exact.toExact
+        (fun address => Classical.propDecidable (exact.memaddrs address))
+        (arguments.map expToHOL)
+      = some (values.map panValueToHOL))
+    (hprim : Option.map panValueToHOL (primitive operator values)
+      = panPrimopHOLExact operator (values.map panValueToHOL))
+    (hvalid : ∀ value, primitive operator values = some value →
+      panValueAssignmentValid production.structs production.locals production.globals
+          .local name value
+        = isValidValueHOLFinite exact .local (ofString name) (panValueToHOL value)) :
+    PanSemHOLResultOptionRel
+        (panSemTotalPrimitiveClause production name operator arguments primitive).1
+        (evaluateHOLFiniteState exact
+          (.primitive (ofString name) operator (arguments.map expToHOL))).1 ∧
+      PanSemStateRelExec
+        (panSemTotalPrimitiveClause production name operator arguments primitive).2
+        (evaluateHOLFiniteState exact
+          (.primitive (ofString name) operator (arguments.map expToHOL))).2.toExact := by
+  simp only [evaluateHOLFiniteState_primitive, hexactEval]
+  cases hprimOpt : primitive operator values with
+  | none =>
+      have hexactNone : panPrimopHOLExact operator (values.map panValueToHOL) = none := by
+        rw [← hprim, hprimOpt]
+        rfl
+      rw [panSemTotalPrimitiveClause_primNone production name operator arguments primitive
+        values heval hprimOpt, hexactNone]
+      exact ⟨trivial, hrel⟩
+  | some value =>
+      have hexactSome : panPrimopHOLExact operator (values.map panValueToHOL)
+          = some (panValueToHOL value) := by
+        rw [← hprim, hprimOpt]
+        rfl
+      simp only [hexactSome]
+      have hv := hvalid value hprimOpt
+      by_cases hvalidProd : panValueAssignmentValid production.structs production.locals
+          production.globals .local name value = true
+      · have hvalidExact : isValidValueHOLFinite exact .local (ofString name)
+            (panValueToHOL value) = true := by
+          rw [← hv]
+          exact hvalidProd
+        rw [panSemTotalPrimitiveClause_ok production name operator arguments primitive
+          values value heval hprimOpt hvalidProd, hvalidExact]
+        exact ⟨trivial, PanSemStateRelExec.updateLocals hrel name hname value⟩
+      · have hvalidProdFalse : panValueAssignmentValid production.structs production.locals
+            production.globals .local name value = false := Bool.eq_false_iff.mpr hvalidProd
+        have hvalidExactFalse : isValidValueHOLFinite exact .local (ofString name)
+            (panValueToHOL value) = false := by
+          rw [← hv]
+          exact hvalidProdFalse
+        rw [panSemTotalPrimitiveClause_invalid production name operator arguments primitive
+          values value heval hprimOpt hvalidProdFalse, hvalidExactFalse]
+        exact ⟨trivial, hrel⟩
+
 /-- Production/exact agreement for the `Skip` clause: both sides return normal
     completion and carry the state unchanged. -/
 theorem panSemTotalEvaluate_skip_agree {σ : Type}
