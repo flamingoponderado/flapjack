@@ -237,6 +237,47 @@ theorem ltake_of_rep (xs : List α) (ll : HolLList α)
           simp only [ltake, lhd, h0, htl]
           rw [ih _ h']
 
+/-- Two lazy lists with pointwise-equal representations are equal. -/
+theorem ext_of_rep {a b : HolLList α} (h : ∀ n, a.rep n = b.rep n) : a = b := by
+  have hrep : a.rep = b.rep := funext h
+  obtain ⟨ra, oka⟩ := a
+  obtain ⟨rb, okb⟩ := b
+  simp only at hrep
+  subst hrep
+  exact congrArg (fun o => (⟨ra, o⟩ : HolLList α)) (Subsingleton.elim oka okb)
+
+/-- The empty lazy list is the only one whose representation is everywhere `none`. -/
+theorem eq_lnil_of_rep_none {ll : HolLList α} (h : ∀ n, ll.rep n = none) : ll = lnil :=
+  ext_of_rep (fun n => by rw [h n]; rfl)
+
+/-- A lazy list that has a `none` in its representation is finite. -/
+theorem LFinite_of_rep_none {ll : HolLList α} {n : Nat} (h : ll.rep n = none) :
+    LFinite ll := by
+  induction n generalizing ll with
+  | zero =>
+      have hr : ∀ k, ll.rep k = none := fun k => rep_none_of_le ll h (Nat.zero_le k)
+      rw [eq_lnil_of_rep_none hr]
+      exact LFinite.lnil
+  | succ n ih =>
+      cases h0 : ll.rep 0 with
+      | none =>
+          have hr : ∀ k, ll.rep k = none := fun k => rep_none_of_le ll h0 (Nat.zero_le k)
+          rw [eq_lnil_of_rep_none hr]
+          exact LFinite.lnil
+      | some hd =>
+          have htail : (⟨fun k => ll.rep (k + 1),
+              fun k hk => ll.ok (k + 1) hk⟩ : HolLList α).rep n = none := h
+          have ihf : LFinite ⟨fun k => ll.rep (k + 1), fun k hk => ll.ok (k + 1) hk⟩ :=
+            ih htail
+          have heq : ll = lcons hd ⟨fun k => ll.rep (k + 1), fun k hk => ll.ok (k + 1) hk⟩ := by
+            apply ext_of_rep
+            intro k
+            cases k with
+            | zero => rw [h0]; rfl
+            | succ k => rfl
+          rw [heq]
+          exact LFinite.lcons hd _ ihf
+
 /-- A finite lazy list has a length relation witness. -/
 theorem exists_LLengthRel_of_LFinite {ll : HolLList α} (h : LFinite ll) :
     ∃ n, LLengthRel ll n :=
