@@ -1294,4 +1294,45 @@ theorem crepToLoopCodeRelExact_intro {width : Nat} [NeZero width]
   rw [crepToLoopCodeRelExact] at h
   exact h
 
+/-- Exact port of HOL `compile_prog_distinct_params`
+    (`crep_to_loopProofScript.sml:3987-4008`). HOL's `EVERY` becomes `List.all`
+    and `ALL_DISTINCT params` becomes `params.Nodup`; both the input and result
+    use the exact `mlstring`/CrepProgHOL and num/LoopProg carriers of
+    `compileProgHOLExact`. The premise and result retain HOL's `prog, c` binder
+    order and full `EVERY` shape. The generated argument list is `GENLIST I
+    (LENGTH params)`, whose distinctness supplies the result. -/
+@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "compile_prog_distinct_params"
+  (words_as_type_indexed_bitvec)]
+theorem crepToLoopCompileProgDistinctParamsHOLExact {width : Nat} [NeZero width]
+    (prog : List (MlS × List Nat × CrepProgHOL width))
+    (target : Compiler.Encoders.Asm.AsmArchitecture) :
+    (prog.all (fun triple => triple.2.1.Nodup)) = true →
+      ((compileProgHOLExact target prog).all (fun triple => triple.2.1.Nodup)) = true := by
+  intro _
+  unfold compileProgHOLExact
+  let fnums := (List.range prog.length).map (fun n => n + firstLoopName)
+  let comp := compFuncHOLExact (width := width) target (crepToLoopMakeFuncsExactHOL prog)
+  have hzip : ∀ (ns : List Nat) (entries : List (MlS × List Nat × CrepProgHOL width)),
+      (List.zipWith
+        (fun n entry =>
+          (n, List.range entry.2.1.length,
+            optimiseHOL (comp entry.2.1 (crepSimpProgHOL entry.2.2))))
+        ns entries).all (fun triple => triple.2.1.Nodup) = true := by
+    intro ns
+    induction ns with
+    | nil => intro; simp
+    | cons n ns ih =>
+        intro entries
+        cases entries with
+        | nil => simp
+        | cons entry entries =>
+            simp only [List.zipWith, List.all_cons]
+            have hheadNodup : (List.range entry.2.1.length).Nodup :=
+              List.nodup_range
+            have hhead : decide (List.range entry.2.1.length).Nodup = true :=
+              decide_eq_true hheadNodup
+            rw [hhead]
+            exact ih entries
+  exact hzip fnums prog
+
 end Flapjack

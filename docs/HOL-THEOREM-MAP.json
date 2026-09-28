@@ -13729,6 +13729,14 @@
     "reviewer": "Codex (source comparison with panPropsScript.sml:1818: HOL semantics_run_res has constructors RunError, CompleteResult 'a, Incomplete; Lean SemanticsRunResHOL α preserves constructor order, arity, and the arbitrary result payload α. Constructor namespace qualification is Lean naming only; no carrier qualifier is required.)"
   },
   {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "semantics_run_res",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/SemanticsWrapper.lean",
+    "lean_name": "CrepToLoopSemanticsRunRes",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex (source comparison with crep_to_loopProofScript.sml:4127-4130: HOL `Datatype: semantics_run_res = RunError | CompleteResult 'a | Incomplete` has constructors RunError (nullary), CompleteResult (one payload of the arbitrary type 'a) and Incomplete (nullary), in that order. Lean CrepToLoopSemanticsRunRes α reproduces the same three constructors, payload arity/type and order. This is the crep_to_loop theory's own type constant; it is textually identical to but a distinct HOL type from the panPropsScript.sml:1818 declaration ported separately as SemanticsRunResHOL, so a separate Lean inductive (not an alias) is used. Constructor names are Lean-qualified by this type only; no carrier qualifier is required.)"
+  },
+  {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
     "hol_name": "evaluate_nested_decs_load_globals",
     "lean_path": "Flapjack/Pancake/Semantics/CrepSem/TotalEval.lean",
@@ -18415,6 +18423,16 @@
     "words_as_type_indexed_bitvec": true,
     "hol_line": 187,
     "reviewer": "flapjack-luna-a source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.16) against code_rel_intro at crep_to_loopProofScript.sml:187-200. HOL assumes code_rel ctxt s_code t_code and concludes distinct_funcs ctxt.funcs plus the universally quantified per-source-function implication whose existential witnesses loc/len, with target lookup, length equality, GENLIST I len arguments, ctxt_fc and ocompile. Lean keeps that premise, binder order, and conclusion exactly over the existing exact carriers; crepToLoopCodeRelExact unfolds to precisely that conclusion, so the proof only eliminates the relation. The relation qualifier records the traversed CrepToLoopContextExact.funcs field and standalone s_code HolFiniteMapExact parameter; the former uses holFmapAsFiniteSupportRelationWitness_CrepToLoopContextExact and the latter is checked at its binder. HolLoopProg/CrepProgHOL retain their reviewed positive width-indexed BitVec representation. A direct kernel-checked instance of the intro theorem over the positive original-HOL code_rel probe is in Flapjack/Test/CrepToLoopCodeRelParity."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "compile_prog_distinct_params",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
+    "lean_name": "crepToLoopCompileProgDistinctParamsHOLExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "hol_line": 3987,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.24) against compile_prog_distinct_params at crep_to_loopProofScript.sml:3987-4008. HOL's binders are prog then c and statement is EVERY (lambda (name,params,body). ALL_DISTINCT params) prog implies the same EVERY on compile_prog c prog. Lean retains binder order, input premise, and full output statement: EVERY is List.all with = true, ALL_DISTINCT is List.Nodup, and exact carriers are List (MlString × List Nat × CrepProgHOL width) to List (Nat × List Nat × HolLoopProg width), the source/result carriers of compileProgHOLExact. The output params are List.range params.length, exactly GENLIST I (LENGTH params), and List.nodup_range discharges output distinctness; retaining the HOL premise despite not needing it in the proof does not strengthen or weaken the statement. The only representation qualifier is the reviewed positive word-width translation (words_as_type_indexed_bitvec). This proof theorem is distinct from the same-named Pan-to-Crep theorem because its HOL path is crep_to_loopProofScript.sml. Direct kernel-checked instantiation over the compile_prog fixture is in Flapjack/Test/CrepToLoopCompileProgParity."
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
