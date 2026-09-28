@@ -1006,6 +1006,81 @@ theorem panSemTotalEvaluateCake_codeRanged
     PanSemCodeRanged (panSemTotalEvaluateCake prog state).2 :=
   hcode.of_code (panSemTotalEvaluate_code panPrimopHOL prog state)
 
+
+/-! ### Initial-state code rangedness
+
+The code map of a production state is an association list looked up by
+`lookupInfo`; `panSemCodeLookup_mem_binding` backs every successful lookup by a
+stored entry.  A code map whose stored entries are all byte-ranged therefore
+satisfies `PanSemCodeRanged`.  The declaration-derived code map
+(`functionEntries`, HOL `panLang$functions`) has byte-ranged entries when every
+declaration is `DeclByteRanged`, and the `pan_structs` code conversion (the
+`panStructConvertCode` map of `PanStructs/CompileCorrect.lean`) preserves them.
+This mirrors DS9's `exceptionEntries` lemmas for `PanSemExceptionShapesRanged`
+(`flapjack-pxn.18.4.3.77.2.15.5`). -/
+
+/-- A state whose stored code entries are all byte-ranged is `PanSemCodeRanged`. -/
+theorem panSemCodeRanged_of_entries (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (hentries : ∀ entry ∈ state.code, PanLangEntryByteRanged entry.2) :
+    PanSemCodeRanged state := by
+  intro name entry hlookup
+  exact hentries (name, entry) (panSemCodeLookup_mem_binding state.code name entry hlookup)
+
+/-- The declaration-derived code entries of `DeclByteRanged` declarations are
+    byte-ranged: a `function` declaration contributes its `FunDeclByteRanged`
+    parameters, body and return shape. -/
+theorem functionEntries_byteRanged (declarations : List (Decl (RiscV.Word 64)))
+    (hranged : ∀ d ∈ declarations, DeclByteRanged d) :
+    ∀ entry ∈ functionEntries declarations, PanLangEntryByteRanged entry.2 := by
+  induction declarations with
+  | nil => intro entry hentry; simp [functionEntries] at hentry
+  | cons declaration declarations ih =>
+      have htail := ih (fun d hd => hranged d (by simp [hd]))
+      cases declaration with
+      | function fd =>
+          intro entry hentry
+          simp only [functionEntries, List.mem_cons] at hentry
+          rcases hentry with rfl | hentry
+          · obtain ⟨_, hparams, hbody, hret⟩ := (hranged (.function fd) (by simp) :
+              FunDeclByteRanged fd)
+            exact ⟨hparams, hbody, hret⟩
+          · exact htail entry hentry
+      | decl _ _ _ => simpa only [functionEntries] using htail
+      | exnDecl _ _ => simpa only [functionEntries] using htail
+      | name _ _ => simpa only [functionEntries] using htail
+
+/-- The compiled initial code map `functionEntries declarations` satisfies
+    `PanSemCodeRanged` whenever every declaration is `DeclByteRanged`. -/
+theorem panSemCodeRanged_of_functionEntries (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (declarations : List (Decl (RiscV.Word 64)))
+    (hranged : ∀ d ∈ declarations, DeclByteRanged d) :
+    PanSemCodeRanged { state with code := functionEntries declarations } :=
+  panSemCodeRanged_of_entries _ (functionEntries_byteRanged declarations hranged)
+
+/-- The `pan_structs` code conversion (`panStructConvertCode`, rendered inline)
+    preserves `PanSemCodeRanged` for a byte-ranged structure context, via
+    `structCompileShape_byteRanged` and `structCompileProg_byteRanged`. -/
+theorem PanSemCodeRanged.map_structCompile [BEq String]
+    {state : PanSemState (RiscV.Word 64) (FfiState σ)}
+    (hentries : ∀ entry ∈ state.code, PanLangEntryByteRanged entry.2)
+    (context : StructPassContext) (hc : CtxBR context.structs) :
+    PanSemCodeRanged { state with code := state.code.map fun (name, (parameters, body, returnShape)) =>
+      (name,
+        (parameters.map fun (parameter, shape) =>
+            (parameter, structCompileShape context.structs shape),
+          structCompileProg { context with locals := parameters } body,
+          structCompileShape context.structs returnShape)) } := by
+  apply panSemCodeRanged_of_entries
+  intro converted hconverted
+  obtain ⟨⟨name, parameters, body, returnShape⟩, horiginal, rfl⟩ := List.mem_map.mp hconverted
+  obtain ⟨hparams, hbody, hret⟩ := hentries _ horiginal
+  refine ⟨?_, structCompileProg_byteRanged { context with locals := parameters } hc body hbody,
+    structCompileShape_byteRanged context.structs returnShape hc hret⟩
+  intro parameter hparameter
+  obtain ⟨⟨parameterName, shape⟩, hmem, rfl⟩ := List.mem_map.mp hparameter
+  obtain ⟨hname, hshape⟩ := hparams _ hmem
+  exact ⟨hname, structCompileShape_byteRanged context.structs shape hc hshape⟩
+
 end Ranged
 
 section Agreement
