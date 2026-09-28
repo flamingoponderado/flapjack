@@ -1,0 +1,6 @@
+comp_syntax_loop_positive=T
+comp_syntax_loop_negative=F
+comp_syntax_seq_positive=T
+comp_syntax_seq_negative=F
+comp_syntax_if_positive=∃ns. ⦕ 0 ⦖ = FOLDL (λsp n. insert n () sp) ⦕ 0 ⦖ ns
+comp_syntax_if_negative=∃ns. LN = FOLDL (λsp n. insert n () sp) ⦕ 0 ⦖ ns
