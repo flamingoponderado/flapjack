@@ -296,6 +296,66 @@ termination_by _ faithful => sizeOf faithful
 decreasing_by
   all_goals decreasing_trivial
 
+/-! The exact compiler's output carrier contains `NumSet` fields while the
+   executable Loop IR stores those fields as lists. Keep the projection
+   parameterized by the live-set conversion until its Spt enumeration theorem
+   is available. Decoding an exact `MlString` to production `String` and
+   re-encoding it is total; the input direction still requires the
+   `CrepProgNameRanged` premise. -/
+
+/-- Project all exact HOL Loop constructors to the executable Loop carrier.
+`projectLive` is supplied by the caller together with a proof that it
+represents each `NumSet`. -/
+def holLoopProgToExecutable {width : Nat} [NeZero width]
+    (projectLive : NumSet → List Nat) : HolLoopProg width → LoopProg (BitVec width)
+  | .skip => .skip
+  | .assign name value => .assign name (holLoopExpToExecutable value)
+  | .primitive destinations operator arguments => .primitive destinations operator arguments
+  | .arith operation => .arith operation
+  | .store address value => .store (holLoopExpToExecutable address) value
+  | .setGlobal address value => .setGlobal address (holLoopExpToExecutable value)
+  | .load32 address destination => .load32 address destination
+  | .loadByte address destination => .loadByte address destination
+  | .store32 address value => .store32 address value
+  | .storeByte address value => .storeByte address value
+  | .seq first second =>
+      .seq (holLoopProgToExecutable projectLive first)
+        (holLoopProgToExecutable projectLive second)
+  | .ite operator condition right thenBranch elseBranch live =>
+      .ite operator condition right (holLoopProgToExecutable projectLive thenBranch)
+        (holLoopProgToExecutable projectLive elseBranch) (projectLive live)
+  | .loop liveIn body liveOut =>
+      .loop (projectLive liveIn) (holLoopProgToExecutable projectLive body)
+        (projectLive liveOut)
+  | .break label => .break label
+  | .continue label => .continue label
+  | .raise exception => .raise exception
+  | .return values => .return values
+  | .shMem operator name address =>
+      .shMem operator name (holLoopExpToExecutable address)
+  | .tick => .tick
+  | .mark body => .mark (holLoopProgToExecutable projectLive body)
+  | .fail => .fail
+  | .locValue destination source => .locValue destination source
+  | .call returns target arguments handler =>
+      let executableReturns := returns.map (fun entry => (entry.1, projectLive entry.2))
+      let executableHandler :=
+        match handler with
+        | none => none
+        | some (exception, first, second, live) =>
+            some (exception, holLoopProgToExecutable projectLive first,
+              holLoopProgToExecutable projectLive second, projectLive live)
+      .call executableReturns target arguments executableHandler
+  | .ffi function configuration configurationLength array arrayLength live =>
+      .ffi (Flapjack.Basis.Pure.MlString.toStringOfBytes function)
+        configuration configurationLength array arrayLength (projectLive live)
+termination_by program => sizeOf program
+decreasing_by
+  simp_wf
+  all_goals first
+    | decreasing_trivial
+    | (simp_all only [HolLoopProg.call.sizeOf_spec]; omega)
+
 /-! ### Introduction lemmas for `loopProgExecRel`
 
 Flapjack bridge infrastructure (no `@[hol]` tag): introduction/closure rules for
