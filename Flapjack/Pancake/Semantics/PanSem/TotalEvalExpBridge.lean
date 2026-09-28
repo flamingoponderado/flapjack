@@ -4414,4 +4414,103 @@ theorem panSemTotalEvaluate_dec_agree {σ : Type}
     · simp only [hm]
       exact ⟨trivial, hrel⟩
 
+/-- Production/exact agreement for the `While` constructor from the body's
+    agreement at every related, ranged state and the loop's agreement at every
+    related, ranged state with a strictly smaller production clock (the
+    well-founded hypothesis of the eventual total agreement).  It covers a
+    failed or non-word condition, a zero condition, the clock-0 `TimeOut` with
+    `empty_locals`, and every body result through `dec_clock`/`fix_clock`.
+    `hbodyRanged` is the same open rangedness gap as in
+    `panSemTotalEvaluate_seq_agree` (`flapjack-pxn.18.4.3.77.2.15`). -/
+theorem panSemTotalEvaluate_while_agree {σ : Type}
+    (primitive : PanPrimitiveHandler (RiscV.Word 64))
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ)
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (hranged : PanSemStateRelExecRanged production)
+    (condition : ExpHOL 64) (body : ProgHOL 64)
+    (ihBody : ∀ (production' : PanSemState (RiscV.Word 64) (FfiState σ))
+        (exact' : PanSemStateFiniteExact 64 σ),
+        PanSemStateRelExec production' exact'.toExact →
+        PanSemStateRelExecRanged production' →
+        PanSemHOLResultOptionRel
+            (panSemTotalEvaluate primitive (progOfHOL body) production').1
+            (evaluateHOLFiniteState exact' body).1 ∧
+          PanSemStateRelExec
+            (panSemTotalEvaluate primitive (progOfHOL body) production').2
+            (evaluateHOLFiniteState exact' body).2.toExact)
+    (hbodyRanged : PanSemStateRelExecRanged
+        (panSemTotalEvaluate primitive (progOfHOL body)
+          { production with clock := production.clock - 1 }).2)
+    (ihLoop : ∀ (production' : PanSemState (RiscV.Word 64) (FfiState σ))
+        (exact' : PanSemStateFiniteExact 64 σ),
+        PanSemStateRelExec production' exact'.toExact →
+        PanSemStateRelExecRanged production' →
+        production'.clock < production.clock →
+        PanSemHOLResultOptionRel
+            (panSemTotalEvaluate primitive (progOfHOL (.while condition body)) production').1
+            (evaluateHOLFiniteState exact' (.while condition body)).1 ∧
+          PanSemStateRelExec
+            (panSemTotalEvaluate primitive (progOfHOL (.while condition body)) production').2
+            (evaluateHOLFiniteState exact' (.while condition body)).2.toExact) :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluate primitive (progOfHOL (.while condition body)) production).1
+        (evaluateHOLFiniteState exact (.while condition body)).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluate primitive (progOfHOL (.while condition body)) production).2
+        (evaluateHOLFiniteState exact (.while condition body)).2.toExact := by
+  letI : DecidablePred exact.memaddrs := fun a => Classical.propDecidable _
+  have hc := evalPanSemStateExp_agree production exact hrel hranged
+    (expOfHOL condition) (expOfHOL_byteRanged_bridge condition)
+  simp only [expToHOL_expOfHOL] at hc
+  have hck : exact.clock = production.clock := hrel.2.2.2.2.2.2.2.2.1
+  simp only [progOfHOL] at ihLoop ⊢
+  rw [panSemTotalEvaluate, evaluateHOLFiniteState_while_total, ← hc]
+  cases hev : evalPanSemStateExp production (expOfHOL condition) with
+  | none => exact ⟨trivial, hrel⟩
+  | some cv =>
+    cases cv with
+    | rStruct _ => simp only [Option.map_some, panValueToHOL.eq_2]; exact ⟨trivial, hrel⟩
+    | nStruct _ _ => simp only [Option.map_some, panValueToHOL.eq_3]; exact ⟨trivial, hrel⟩
+    | word a =>
+      simp only [Option.map_some, panValueToHOL_word]
+      by_cases ha : a = 0
+      · simp only [ha, if_true, ne_eq, not_true_eq_false, if_false]
+        exact ⟨trivial, hrel⟩
+      · simp only [ha, if_false, ne_eq, not_false_eq_true, if_true, hck]
+        by_cases hz : production.clock = 0
+        · simp only [hz, if_true]
+          exact ⟨trivial, by
+            simpa only [panEmptyLocals, toExact_emptyLocalsHOLFinite] using
+              PanSemStateRelExec.emptyLocals hrel⟩
+        · simp only [hz, if_false]
+          have hdecRel : PanSemStateRelExec { production with clock := production.clock - 1 }
+              (decClockHOLFinite exact).toExact := by
+            simpa only [toExact_decClockHOLFinite] using PanSemStateRelExec.decClock hrel
+          obtain ⟨hres, hstate⟩ := ihBody _ _ hdecRel (hranged.setClock _)
+          have hfix := PanSemStateRelExec.fixClockHOLFinite (decClockHOLFinite exact)
+            (evaluateHOLFiniteState (decClockHOLFinite exact) body) hstate
+          have hdc : (decClockHOLFinite exact).clock = production.clock - 1 := by
+            simp [decClockHOLFinite, hck]
+          rw [hdc] at hfix
+          have hlt : ∀ s : PanSemState (RiscV.Word 64) (FfiState σ),
+              (panSemFixClock (production.clock - 1) s).clock < production.clock := by
+            intro s
+            have := panSemFixClock_clock_le (production.clock - 1) s
+            omega
+          revert hres hfix hbodyRanged
+          generalize panSemTotalEvaluate primitive (progOfHOL body)
+            { production with clock := production.clock - 1 } = P
+          generalize evaluateHOLFiniteState (decClockHOLFinite exact) body = E
+          intro hranged' hres hfix
+          rcases P with ⟨_ | r, p⟩ <;> rcases E with ⟨_ | e, q⟩
+          · exact ihLoop _ _ hfix (hranged'.setClock _) (hlt p)
+          · exact hres.elim
+          · exact hres.elim
+          · cases r <;> cases e <;> simp only [PanSemHOLResultOptionRel, PanSemHOLResultRel] at hres <;>
+              first
+              | exact ihLoop _ _ hfix (hranged'.setClock _) (hlt p)
+              | exact ⟨trivial, hfix⟩
+              | exact ⟨hres, hfix⟩
+
 end Flapjack
