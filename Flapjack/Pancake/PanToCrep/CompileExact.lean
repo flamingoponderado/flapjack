@@ -861,10 +861,10 @@ theorem loadShapeBytesW_map_crepExpToHOL {width : Nat} [NeZero width]
       loadShapeBytesHOLW address count (crepExpToHOL value) :=
   loadShapeBytes_map_crepExpToHOL address count value
 
-/-- Exact port of HOL `compile_prog_def` (`pan_to_crepScript.sml:393-397`):
+/-- Flapjack-specific analogue of HOL `compile_prog_def` (`pan_to_crepScript.sml:393-397`):
 `compile_prog prog = compile_inl_top (MAP FST (functions (FILTER inlinable prog)))
 (compile_to_crep prog)`. The declaration-only `compile_to_crep` half is the tagged
-`compileToCrepExactHOLW`; the inline half is the exact `compileInlTopHOLExact` over
+`compileToCrepExactHOLW`; the inline half uses `compileInlTopHOLExact` over
 `MlS` names and `CrepProgHOL`. Both are over the exact carriers
 (`DeclHOL width`, `ShapeHOL`/`ExpHOL` values, `MlS` identifiers), with the only
 outer translation being HOL's positive type-indexed word to `BitVec width`
@@ -873,9 +873,9 @@ are local intermediates and do not occur in this declaration's input or output
 type). No extra hypotheses.  The definition is computable: the inline map's
 finite support is derived from the filtered alist's keys
 (`supportKeys_alistToFmapHOLExact`), so it never invokes `Classical.choose` and
-the executable compiler can run it. -/
-@[hol "cakeml/pancake/pan_to_crepScript.sml" "compile_prog_def" 393
-  (words_as_type_indexed_bitvec)]
+the executable compiler can run it. This declaration remains untagged because
+the recursive inline core underlying `compileInlTopHOLExact` has not yet been
+reviewed as equivalent to HOL `inline_prog` (`flapjack-e7w.2.1.13`). -/
 def compileProgDeclsHOLW {width : Nat} [NeZero width]
     (prog : List (DeclHOL width)) :
     List (MlS × List Nat × CrepProgHOL width) :=

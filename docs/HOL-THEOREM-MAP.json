@@ -2282,41 +2282,6 @@
   },
   {
     "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
-    "hol_name": "compile_prog_def",
-    "lean_path": "Flapjack/Pancake/PanToCrep/CompileExact.lean",
-    "lean_name": "compileProgDeclsHOLW",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds5 (source comparison, 2026-09-27; bead flapjack-4ac.2.20.2; pan_to_crepScript.sml:393-397): HOL compile_prog_def is compile_prog prog = let inl_fs_names = MAP FST (functions (FILTER inlinable prog)); to_crep = compile_to_crep prog in compile_inl_top inl_fs_names to_crep, with input 'a prog and result (mlstring # num list # 'a crepLang$prog) list and no hypotheses. The Lean definition reproduces that let structure and operand order clause-for-clause: inlinableHOL/functionsHOL map the FILTER/functions half (MlS names), the declaration-only half is the tagged compileToCrepExactHOLW, and the inline half is the exact compileInlTopHOLExact over MlS names and CrepProgHOL triples (unsorted-inline-map carrier reviewed under flapjack-e7w.1; exact compile_inl_prog/compile_inl_top wrappers landed untagged pending carrier review, flapjack-e7w.2.2). Carriers are DeclHOL width/ShapeHOL/ExpHOL/MlS and CrepProgHOL width with [NeZero width]; the only outer translation is HOL's positive type-indexed word to BitVec width (words_as_type_indexed_bitvec). The finite maps used inside are local intermediates and do not occur in the declaration's input or output type, so no finite-map carrier qualifier applies here; their own declaration tags record their result translations. Update 2026-09-28 (bead flapjack-e7w.2.2): the inline half is now itself a reviewed tagged port - compileInlTopHOLExact carries @[hol compile_inl_top_def (words_as_type_indexed_bitvec)] and its HOL-shaped support-independent wrapper compileInlProgHOLExact carries @[hol compile_inl_prog_def (fmap_as_finite_support_relation := [inl_fs]) (words_as_type_indexed_bitvec)]. No hypothesis, side condition, success branch, or conclusion is added or weakened."
-  },
-  {
-    "hol_path": "cakeml/pancake/crep_inlineScript.sml",
-    "hol_name": "compile_inl_prog_def",
-    "hol_line": 259,
-    "lean_path": "Flapjack/Pancake/CrepInline/Canonical.lean",
-    "lean_name": "compileInlProgHOLExact",
-    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
-      "fmap_as_finite_support_relation": [
-      "inl_fs"
-    ],
-
-      "words_as_type_indexed_bitvec": true,
-
-    "reviewer": "flapjack-ds5 (source comparison, 2026-09-28; bead flapjack-e7w.2.2; crep_inlineScript.sml:259-261): HOL compile_inl_prog_def is compile_inl_prog inl_fs prog = MAP (lambda (name,params,body). (name, params, inline_prog (inl_fs \\ name) body)) prog, with an fmap inl_fs and no hypotheses; ORDER of the triple list is preserved and DOMSUB inl_fs \\ name erases the function's own name before recursing. The Lean wrapper compileInlProgHOLExact has exactly HOL's two binders (inl_fs : the canonical HolFiniteMapExact translation of the HOL |-> fmap, listed as a standalone exact parameter; and the triple list over MlS names / List Nat params / CrepProgHOL width bodies), preserves list order, and calls inlineProgHOLExact on inl_fs.erase name. It is support-independent (no certificate parameter); the map's existential support is discharged internally by inlineProgHOLExact, so the statement has no extra hypothesis. Since HolFiniteMapExact is the reviewed canonical finite-support translation of HOL |-> with an existential support and no canonical cardinality, the definition is noncomputable like HOL's own logical definition; the executable variant with an explicit certificate is compileInlProgHOLExactWithSupport (untagged). HOL's type-indexed word is represented by BitVec width with [NeZero width] (words_as_type_indexed_bitvec). The recursive core's cross-system correspondence to HOL inline_prog remains tracked by flapjack-e7w.2.1.13."
-  },
-  {
-    "hol_path": "cakeml/pancake/crep_inlineScript.sml",
-    "hol_name": "compile_inl_top_def",
-    "hol_line": 264,
-    "lean_path": "Flapjack/Pancake/CrepInline/Canonical.lean",
-    "lean_name": "compileInlTopHOLExact",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-      "words_as_type_indexed_bitvec": true,
-
-    "reviewer": "flapjack-ds5 (source comparison, 2026-09-28; bead flapjack-e7w.2.2; crep_inlineScript.sml:264-269): HOL compile_inl_top_def is compile_inl_top inl_fname prog = let inl_fs_alist = FILTER (lambda (x,y). MEM x inl_fname) prog; inl_fs = alist_to_fmap inl_fs_alist in compile_inl_prog inl_fs prog, with no hypotheses. The Lean wrapper compileInlTopHOLExact has exactly HOL's two binders (List MlS inl_fname and the triple list) and reproduces the let structure and order: prog.filter (fun t => inl_fname.contains t.1), alistToFmapHOLExact (first-occurrence-wins alist_to_fmap), then the inline pass. The inline map is a local intermediate and does not occur in the signature, so no finite-map carrier qualifier applies; the definition is executable (its finite support is derived from the filtered alist's keys by supportKeys_alistToFmapHOLExact, no Classical.choose), via the untagged helper compileInlProgHOLExactWithSupport. HOL's type-indexed word is represented by BitVec width with [NeZero width] (words_as_type_indexed_bitvec). Direct HOL EVAL rows (crep_inline_alist_map_probe.out) are replayed by alist_duplicate_first/alist_other_row/domsub_selected_f/domsub_preserves_g. The recursive core's cross-system correspondence to HOL inline_prog remains tracked by flapjack-e7w.2.1.13."
-  },
-  {
-    "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
     "hol_name": "comp_func_def",
     "lean_path": "Flapjack/Pancake/PanToCrep/CompileExact.lean",
     "lean_name": "compFuncExactHOLW",
@@ -17552,5 +17517,21 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-4ac.4.61.3) against panPropsScript.sml:1150-1158 (the >~[ShMemLoad] branch) and panSemScript.sml ShMemLoad/sh_mem_load_def. This is the genuine p = ShMemLoad op v ad leaf of recInduct evaluate_ind: the HOL evaluate_ind conjunct (scripts/hol-probes/pan_sem_evaluate_ind_probe.out:10) is ∀op vk v ad s. P (ShMemLoad op vk v ad,s) with no recursive induction hypothesis and no premise; the Lean statement quantifies operator/kind/name/address/state (= op vk v ad s) plus the source result/post pair and only the source run equation, and concludes exactly the eight source fields in source order, in the same shape as the reviewed ExtCall/Store sibling cases. evaluate_def evaluates the address, requires a word address and an existing word destination (lookup_kvar), then calls sh_mem_load with nb_op op; sh_mem_load checks the shared domain (byte-aligned for nb <> 0), calls call_FFI (SharedMem MappedRead), and on FFI_final returns (SOME (FinalFFI e), empty_locals s) while on FFI_return writes the loaded word with set_kvar and installs the new ffi state; every other pattern returns (SOME Error, s). These change only locals/globals and ffi, and the returned ffi keeps the oracle (Flapjack-only callFFIHOL_ret_oracle), so none of the eight fields changes. The step lemma shMemLoadStepFieldsHOLFinite is untagged infrastructure over the tagged evaluateHOLFiniteState_shMemLoad_source clause. The same-module PanPropsEvalStateFiniteExact carrier uses HolFiniteMapExact for locals/globals/code/eshapes via its checked roundtrip witness and [NeZero width] is the indexed-word translation. Recursive cases, ShMemStore, and the assembly remain open."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "evaluate_invariants",
+    "hol_line": 1150,
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
+    "lean_name": "evaluateInvariantsShMemStoreCaseHOLFinite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-4ac.4.61.4) against panPropsScript.sml:1150-1158 (the >~[ShMemStore] branch) and panSemScript.sml ShMemStore/sh_mem_store_def. This is the genuine p = ShMemStore op ad e leaf of recInduct evaluate_ind: the HOL evaluate_ind conjunct (scripts/hol-probes/pan_sem_evaluate_ind_probe.out:11) is ∀op ad e s. P (ShMemStore op ad e,s) with no recursive induction hypothesis and no premise. The Lean statement keeps the HOL binders op ad e s, adds the result/post pair res st of HOL's P (∀res st. evaluate (p,s) = (res,st) ⇒ ...), takes only the source run equation, and concludes exactly the eight source fields in source order (same shape/qualifiers as the reviewed ExtCall/ShMemLoad siblings). evaluate_def evaluates both expressions, requires two word values, and calls sh_mem_store with nb_op op; sh_mem_store checks the shared domain (byte-aligned for nb <> 0), calls call_FFI (SharedMem MappedWrite), and returns (SOME (FinalFFI e), s) on FFI_final or (NONE, s with ffi := new_ffi) on FFI_return; every other pattern returns (SOME Error, s). Only ffi can change, and the returned ffi keeps the oracle (Flapjack-only callFFIHOL_ret_oracle), so none of the eight fields changes. The helpers shMemStoreHOLExact_shape/shMemStoreStepFieldsHOLFinite are untagged infrastructure over the tagged evaluateHOLFiniteState_shMemStore_total clause. PanPropsEvalStateFiniteExact uses HolFiniteMapExact for locals/globals/code/eshapes via its checked roundtrip witness; [NeZero width] is the indexed-word translation. Recursive-case assembly remains open."
   }
 ]
