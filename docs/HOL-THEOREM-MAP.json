@@ -19724,6 +19724,23 @@
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
     "hol_name": "comp_exp_preserves_eval",
     "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpPreservesEval.lean",
+    "lean_name": "crepToLoop_comp_exp_preserves_eval_cmp",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.15.5): case piece `Cmp operator left right` of comp_exp_preserves_eval (crep_to_loopProofScript.sml:772-786 statement; case proof at 1128-1239, marked >~ [`Cmp']). HOL proves the theorem by ho_match_mp_tac crepSemTheory.eval_ind. The piece keeps HOL's quantifier order with the constructor payload in place of e and the two eval_ind hypotheses for the operand sub-expressions left/right (the Flapjack-only crepToLoopCompExpPreservesEvalAt abbreviation). All eight HOL premises (eval s e = SOME v, state_rel, mem_rel, globals_rel, code_rel, locals_rel, compile_exp, ctxt.vmax < tmp) and the full existential conclusion are kept over the exact carriers. HOL Cmp case: eval of Cmp decomposes into both operands evaluating to Word w1/Word w2 and v = Word (word_cmp cmp w1 w2); compile_exp gives prog_if cmp tmp1 l e e' ... = (first ++ second ++ [Assign (tmp2+1) le1; Assign (tmp2+2) le2; If cmp (tmp2+1) (Reg (tmp2+2)) ...]) with the .var (rightNext+1) result expression, the rightNext+3 counter and list_insert [rightNext+1,rightNext+2] live. The clock witness is ck + ck' + 1 (HOL line 1157); the +1 offsets cut_res dec_clock in the If arm so the final state clock again equals the target clock and state_rel holds. Lean transfers eval stR le1 = eval stL le1 across the second operand evaluation with loopProps nested_seq_pure_evaluation (using comp_exp_assigned_vars_tmp_bound and compile_exp_le_tmp_domain with the exact eval_some_var_cexp_local_lookup counterpart evalCrepSemHOLExp_exists_locals_of_mem_vars), evaluates the prog_if tail with evaluate_progIfTail and combines lc ++ rc ++ tail via evaluate_none_nested_seq_append. The relation qualifier lists the HOL |-> maps traversed by the statement relations and evaluators; HolWordLab/WordLocW/BitVec are the reviewed width-indexed word carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "comp_exp_preserves_eval",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpPreservesEval.lean",
     "lean_name": "crepToLoop_comp_exp_preserves_eval_const",
     "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
     "fmap_as_finite_support_relation": [
