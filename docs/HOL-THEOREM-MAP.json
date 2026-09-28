@@ -16016,6 +16016,21 @@
     "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
     "hol_name": "evaluate_clock_sub",
     "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
+    "lean_name": "evaluateClockSubAssignCaseHOLFinite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-09-28; bead flapjack-4ac.4.60.1.1.10): HOL panPropsScript.sml:724 quantifies p,t,res,st,ck with the high-run equation evaluate (p,t) = (res, st with clock := st.clock + ck), the non-timeout premise res <> SOME TimeOut, and the low-clock conclusion evaluate (p,t with clock := t.clock - ck) = (res,st). This is the genuine nonrecursive Assign case produced by recInduct evaluate_ind, adding no IH or other premise. HOL evaluate_def at panSemScript.sml:566-572 evaluates the source expression, returning (SOME Error,s) with the unchanged state when eval fails or is_valid_value is false, and (NONE,set_kvar vk v value s) otherwise. Lean uses the exact evalHOLExact evaluator (clock-independent via eval_upd_clock_eq), the exact finite isValidValueHOLFinite and setKvarHOLFinite, and preserves both branches: equality of the low/high expression evaluation, the locals/globals-only validation, and set_kvar copying its input clock give the clock-subtracted run the same result and post-state. Carrier qualifiers record the same-module PanPropsEvalStateFiniteExact owner for locals/globals/code/eshapes via HolFiniteMapExact and the indexed-word translation. The full evaluate_clock_sub theorem remains open."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "evaluate_clock_sub",
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
     "lean_name": "evaluateClockSubTickCaseHOLFinite",
     "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
     "fmap_as_finite_support": [
