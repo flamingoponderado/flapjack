@@ -175,15 +175,44 @@ def mkCtxtExactHOL {width : Nat} [NeZero width]
   eids := es
   vmax := m
 
+/- `LENGTH (MAP FST (exceptions decls))` in HOL's `get_eids_from_decls_def`
+    is `size_of_eids decls`: each projects the same top-level exception
+    declarations. This bridge lets the executed exact context builder use the
+    reviewed `sizeOfEidsHOL` definition to size its target-word list. -/
+theorem exceptionsHOL_length_eq_sizeOfEidsHOL {width : Nat} [NeZero width]
+    (decls : List (DeclHOL width)) :
+    (Flapjack.Pancake.PanLang.exceptionsHOL decls).length =
+      Flapjack.Pancake.PanLang.sizeOfEidsHOL decls := by
+  induction decls with
+  | nil => rfl
+  | cons declaration decls ih =>
+      cases declaration <;>
+        simp [Flapjack.Pancake.PanLang.exceptionsHOL,
+          Flapjack.Pancake.PanLang.sizeOfEidsHOL,
+          Flapjack.Pancake.PanLang.isExnDeclHOL, List.filter_cons, ih]
+
 /-- HOL `pan_to_crep$get_eids_from_decls`' association list
     (`pan_to_crepScript.sml:356-364`): the exception names of a declaration list
-    paired with their `GENLIST`-indexed word codes (`MAP FST (exceptions decls)`
-    zipped with `GENLIST (n2w x) (LENGTH eids)`). Flapjack-only infrastructure
-    naming that list; not a separate HOL declaration. -/
+    paired with their `GENLIST`-indexed word codes. Its `GENLIST` length calls
+    the reviewed PanLang `sizeOfEidsHOL`; `exceptionsHOL_length_eq_sizeOfEidsHOL`
+    proves this equals the exception-name list length used by the prior body. -/
 def getEidsEntriesHOL {width : Nat} [NeZero width] (decls : List (DeclHOL width)) :
     List (MlS × BitVec width) :=
   let eids := (Flapjack.Pancake.PanLang.exceptionsHOL decls).map Prod.fst
-  eids.zip ((List.range eids.length).map (BitVec.ofNat width))
+  eids.zip ((List.range (Flapjack.Pancake.PanLang.sizeOfEidsHOL decls)).map
+    (BitVec.ofNat width))
+
+/-- Replacing the prior `LENGTH eids` with the reviewed HOL
+    `sizeOfEidsHOL` definition preserves the exact exception/code association
+    list used by `get_eids_from_decls_def`. -/
+theorem getEidsEntriesHOL_eq_lengthBased {width : Nat} [NeZero width]
+    (decls : List (DeclHOL width)) :
+    getEidsEntriesHOL decls =
+      let eids := (Flapjack.Pancake.PanLang.exceptionsHOL decls).map Prod.fst
+      eids.zip ((List.range eids.length).map (BitVec.ofNat width)) := by
+  unfold getEidsEntriesHOL
+  rw [← exceptionsHOL_length_eq_sizeOfEidsHOL]
+  simp
 
 /-- Exact port of HOL `pan_to_crep$get_eids_from_decls`
     (`cakeml/pancake/pan_to_crepScript.sml:356-364`):
