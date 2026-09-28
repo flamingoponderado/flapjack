@@ -350,7 +350,7 @@ theorem shMemLoadHOLFiniteExact_ret_corresponds {width : Nat} [NeZero width] {σ
     (source : PanSemStateFiniteExact width σ) [hsrc : DecidablePred source.shMemaddrs]
     (target : CrepSemHOLState width σ) [htgt : DecidablePred target.shMemaddrs]
     (ctxt : PanToCrepContextExact width) (destination : Nat) (name : MlS)
-    (address : RiscV.Word width) (nb : Nat) (h8 : 8 ≤ width)
+    (address : RiscV.Word width) (nb : Nat)
     (hstate : panToCrepStateRelFiniteExact source target)
     (hlocals : panToCrepLocalsRelFiniteExact ctxt source.locals target.locals)
     (hvar : ctxt.vars.lookup name = some (ShapeHOL.one, [destination]))
@@ -371,7 +371,7 @@ theorem shMemLoadHOLFiniteExact_ret_corresponds {width : Nat} [NeZero width] {σ
       panToCrepStateRelFiniteExact sourcePost targetPost ∧
         panToCrepLocalsRelFiniteExact ctxt sourcePost.locals targetPost.locals := by
     intro newFfi newBytes hs1 ht1
-    have hdec := panWordOfBytesHOL_eq_crepClockWordOfBytes (width := width) h8 newBytes
+    have hdec := panWordOfBytesHOL_eq_crepClockWordOfBytes (width := width) newBytes
     refine ⟨?_, ?_⟩
     · rw [hs1, ht1]
       refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
