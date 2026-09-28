@@ -293,6 +293,9 @@ run_probe crep_dec_clock_simp_probeScript.sml crep_dec_clock_simp_probe.out \
 run_probe crep_to_loop_state_rel_probeScript.sml crep_to_loop_state_rel_probe.out \
   memaddrs_mdomain_mem clock_mismatch "$cake_dir/pancake/proofs/crep_to_loopProofScript.sml" \
   "$cake_dir/pancake/proofs"
+run_probe crep_to_loop_ctxt_fc_probeScript.sml crep_to_loop_ctxt_fc_probe.out \
+  vars_zip done "$cake_dir/pancake/proofs/crep_to_loopProofScript.sml" \
+  "$cake_dir/pancake/proofs"
 run_probe crep_to_loop_globals_rel_probeScript.sml crep_to_loop_globals_rel_probe.out \
   wlab_wloc_word globals_lookup_absent "$cake_dir/pancake/proofs/crep_to_loopProofScript.sml" \
   "$cake_dir/pancake/proofs"
@@ -1668,6 +1671,10 @@ run_probe pan_lang_exp_probeScript.sml pan_lang_exp_probe.out \
   ex_const ex_bytesinword \
   "$cake_dir/pancake/panLangScript.sml" \
   "$cake_dir/pancake"
+run_probe sptree_set_ops_probeScript.sml sptree_set_ops_probe.out \
+  union_keys oel_miss \
+  "$cake_dir/compiler/backend/backend_commonScript.sml" \
+  "$cake_dir/compiler/backend"
 # The num_set/spt probe observes the exact HOL sptree lookup/insert/wf/isEmpty
 # behaviour for the unit-spt carrier used as num_set.
 run_probe num_set_spt_probeScript.sml num_set_spt_probe.out \

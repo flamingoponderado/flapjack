@@ -764,3 +764,10 @@ instances (`panWordOfBytesHOL false 0 bs = crepClockWordOfBytes
 `fupdate_list_append_commutes_probe`), so no CakeML build is needed.  Refresh
 with `HOL_PROBE_ONLY=pan_word_of_bytes_overlong_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
+
+`sptree_set_ops_probe` evaluates the sptree set operations used by `loop_live`
+(`sptree$union`/`inter`/`delete`, `backend_common$list_delete`, `list$oEL`) on
+small `fromAList` trees and records their `toAList` key order, emptiness and
+`oEL` results.  `Flapjack.Test.SptreeSetOpsParity` checks the Lean renderings
+in `Flapjack/Misc/Sptree.lean` against every row.  Refresh with
+`HOL_PROBE_ONLY=sptree_set_ops_probeScript.sml scripts/hol-probes/regenerate.sh`.

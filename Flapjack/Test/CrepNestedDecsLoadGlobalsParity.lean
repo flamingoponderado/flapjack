@@ -77,10 +77,9 @@ theorem exactWordEquation :
       List.range, List.range.loop, HolFiniteMapExact.update,
       HolFiniteMapExact.empty, Flapjack.FUPDATE]
   have hEquation := evaluateNestedDecsLoadGlobalsCrepHOL wordState wordValue
-    wordValues wordNames wordBody hLookup
-    (by simp [wordValue, word64, shapeOfHOLExact])
-    (by decide)
-    (by simp [wordNames, wordValue, word64, shapeOfHOLExact])
+    wordValues wordNames wordBody
+    ⟨hLookup, (by simp [wordValue, word64, shapeOfHOLExact]), by decide,
+      (by simp [wordNames, wordValue, word64, shapeOfHOLExact])⟩
   simpa [wordProgram, wordValue, wordValues, wordNames, word64,
     shapeOfHOLExact] using hEquation
 
@@ -113,10 +112,9 @@ theorem exactStructEquation :
       List.range, List.range.loop, HolFiniteMapExact.update,
       HolFiniteMapExact.empty, Flapjack.FUPDATE]
   have hEquation := evaluateNestedDecsLoadGlobalsCrepHOL structState structValue
-    structValues structNames structBody hLookup
-    (by simp [structValue, word64, shapeOfHOLExact])
-    (by decide)
-    (by simp [structNames, structValue, word64, shapeOfHOLExact])
+    structValues structNames structBody
+    ⟨hLookup, (by simp [structValue, word64, shapeOfHOLExact]), by decide,
+      (by simp [structNames, structValue, word64, shapeOfHOLExact])⟩
   simpa [structProgram, structValue, structValues, structNames, word64,
     shapeOfHOLExact] using hEquation
 

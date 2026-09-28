@@ -1,0 +1,10 @@
+union_keys=[1; 9; 0; 4; 6]
+union_ln=T
+inter_keys=[9; 4]
+inter_disjoint_empty=T
+delete_keys=[9; 0; 6]
+delete_last_empty=T
+delete_absent_keys=[0; 4]
+list_delete_keys=[0; 6]
+oel_hit=SOME 20
+oel_miss=NONE

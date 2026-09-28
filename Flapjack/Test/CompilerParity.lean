@@ -362,6 +362,7 @@ import Flapjack.Test.LoopShMemLoadParity
 import Flapjack.Test.LoopShMemStoreParity
 import Flapjack.Test.LoopShMemOpParity
 import Flapjack.Test.LoopGetVarImmParity
+import Flapjack.Test.LoopSemCodeTableParity
 import Flapjack.Test.LoopCallEnvParity
 import Flapjack.Test.InstructionTransfer
 import Flapjack.Test.ArtifactFormat
@@ -406,6 +407,7 @@ import Flapjack.Test.RiscVAbiParity
 import Flapjack.Test.RiscVAbiAdapterParity
 import Flapjack.Test.LoopToWordBoundaryParity
 import Flapjack.Test.SptreeOrderParity
+import Flapjack.Test.SptreeSetOpsParity
 import Flapjack.Test.WordSimpSeqAssocParity
 import Flapjack.Test.RiscVFarTransferParity
 import Flapjack.Test.FfiHOLParity
@@ -1053,6 +1055,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.LoopShMemStoreParity.runChecks,
     Flapjack.Test.LoopShMemOpParity.runChecks,
     Flapjack.Test.LoopGetVarImmParity.runChecks,
+    Flapjack.Test.LoopSemCodeTableParity.runChecks,
     Flapjack.Test.LoopCallEnvParity.runChecks,
     Flapjack.Test.CakeStackReseatParity.runChecks,
     Flapjack.Test.RiscVMemOpParity.runChecks,
@@ -1088,6 +1091,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.RiscVAbiAdapterParity.runChecks,
     Flapjack.Test.LoopToWordBoundaryParity.runChecks,
     Flapjack.Test.SptreeOrderParity.runChecks,
+    Flapjack.Test.SptreeSetOpsParity.runChecks,
     Flapjack.Test.CrepLocalsWordLabParity.runChecks,
     Flapjack.Test.CrepMemoryRelParity.runChecks,
     Flapjack.Test.CrepSemStateExactParity.runChecks,
