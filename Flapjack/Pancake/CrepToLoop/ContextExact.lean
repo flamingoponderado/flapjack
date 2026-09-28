@@ -379,9 +379,10 @@ decreasing_by
 `ocompile ctxt l p = (loop_live$optimise o compile ctxt l) p`.  Composes the
 reviewed exact `compileHOLExact` (`compile_def`) with the reviewed exact
 `optimiseHOL` (`loop_liveScript.sml` `optimise_def`).  Exact-carrier
-infrastructure; no fresh HOL EVAL row is generated here because
-`crep_to_loopTheory` is not loadable in this worktree, so the composition
-inherits the direct oracle rows of its two tagged components. -/
+infrastructure, validated by the direct original-HOL EVAL rows in
+`scripts/hol-probes/crep_to_loop_ocompile_probe.out` (6 rows:
+skip/tick/assign/primitive/return/call) replayed by
+`Flapjack/Test/CrepToLoopOcompileHOLParity.lean`. -/
 @[hol "cakeml/pancake/crep_to_loopScript.sml" "ocompile_def"
   (fmap_as_finite_support := [vars, funcs]) (words_as_type_indexed_bitvec)]
 def ocompileHOLExact {width : Nat} [NeZero width]
