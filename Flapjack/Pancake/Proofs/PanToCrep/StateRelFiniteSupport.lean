@@ -478,6 +478,66 @@ noncomputable def evalListHOLFiniteClassical {width : Nat} {σ : Type}
   classical
   exact source.evalListHOLFinite arguments
 
+/-- Exact port of HOL `opt_mmap_eval_is_wf_shape_v`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:2328-2343`):
+    `OPT_MMAP (eval s) es = SOME vs /\ state_rel s t /\
+      locals_rel ctxt s.locals t_locs ==> EVERY is_wf_shape_v_nil vs`.
+    `OPT_MMAP (eval s)` is the exact list evaluator with the classical
+    address-set decision (`evalListHOLFiniteClassical`), `EVERY` is list
+    membership, and `is_wf_shape_v_nil` is `isWfShapeValueHOLExact []`. HOL's
+    free variables `es vs s t ctxt t_locs` are the explicit binders, and the
+    three premises keep HOL's conjunction order. The relation qualifier records
+    the finite maps that `state_rel`/`locals_rel` traverse: the source
+    `globals`, the context `vars`, the source locals, and the standalone target
+    locals `tLocs`. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "opt_mmap_eval_is_wf_shape_v"
+  (fmap_as_finite_support_relation := [PanSemStateFiniteExact.globals,
+    PanSemStateFiniteExact.locals, PanToCrepContextExact.vars, tLocs])]
+theorem optMmapEvalIsWfShapeVHOL {width : Nat} {σ : Type} [NeZero width]
+    (es : List (ExpHOL width)) (vs : List (ValueHOL width))
+    (s : PanSemStateFiniteExact width σ) (t : CrepSemHOLState width σ)
+    (ctxt : PanToCrepContextExact width)
+    (tLocs : HolFiniteMapExact Nat (HolWordLab width))
+    (h : evalListHOLFiniteClassical s es = some vs ∧
+      panToCrepStateRelFiniteExact s t ∧
+      panToCrepLocalsRelFiniteExact ctxt s.locals tLocs) :
+    ∀ v, v ∈ vs → isWfShapeValueHOLExact [] v = true := by
+  classical
+  obtain ⟨heval, hstate, hlocals⟩ := h
+  obtain ⟨hl, hg⟩ := panToCrepExactInitialShapeInvariant s t tLocs ctxt hstate hlocals
+  have hstructs := panToCrepStateRelFiniteExact_structs s t hstate
+  have hExact := evalHOLExact_isWfShapeValueHOLExact s.toExact
+    (by simpa [PanSemStateFiniteExact.toExact] using hl)
+    (by simpa [PanSemStateFiniteExact.toExact] using hg)
+  have hlist : ∀ (es : List (ExpHOL width)) (vs : List (ValueHOL width)),
+      evalListHOLExact s.toExact es = some vs →
+      ∀ v, v ∈ vs → isWfShapeValueHOLExact s.structs v = true := by
+    intro es
+    induction es with
+    | nil =>
+        intro vs hvs v hv
+        simp [evalListHOLExact] at hvs
+        subst vs
+        simp at hv
+    | cons e rest ih =>
+        intro vs hvs v hv
+        cases hhead : evalHOLExact s.toExact e with
+        | none => simp [evalListHOLExact, hhead] at hvs
+        | some head =>
+            cases htail : evalListHOLExact s.toExact rest with
+            | none => simp [evalListHOLExact, hhead, htail] at hvs
+            | some tail =>
+                have hvs' : vs = head :: tail := by
+                  simpa [evalListHOLExact, hhead, htail] using hvs.symm
+                subst vs
+                rcases List.mem_cons.mp hv with rfl | hmem
+                · simpa [PanSemStateFiniteExact.toExact] using hExact e v hhead
+                · exact ih tail htail v hmem
+  intro v hv
+  have := hlist es vs (by simpa [evalListHOLFiniteClassical,
+    PanSemStateFiniteExact.evalListHOLFinite] using heval) v hv
+  simpa [hstructs] using this
+
 /-- Exact-carrier assembly of HOL `evaluate_shape_invariant_ret_inst2`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:3031-3044`). The binders
     preserve HOL's argument evaluation, successful `lookup_code`, body

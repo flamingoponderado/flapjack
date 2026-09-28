@@ -13431,6 +13431,20 @@
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "opt_mmap_eval_is_wf_shape_v",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "optMmapEvalIsWfShapeVHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.locals",
+      "PanToCrepContextExact.vars",
+      "tLocs"
+    ],
+    "reviewer": "flapjack-opus source comparison (2026-09-28, flapjack-pxn.18.4.3.1; pan_to_crepProofScript.sml:2328-2343): HOL opt_mmap_eval_is_wf_shape_v has the conjunctive premise OPT_MMAP (eval s) es = SOME vs /\\ state_rel s t /\\ locals_rel ctxt s.locals t_locs, and concludes EVERY is_wf_shape_v_nil vs. Lean keeps the same conjunction in the same order: evalListHOLFiniteClassical s es = some vs is the exact finite OPT_MMAP (eval s) (the list step of the tagged Pan evaluator, with the classical address-set decision internal), and panToCrepStateRelFiniteExact and panToCrepLocalsRelFiniteExact are the tagged relations. The conclusion is ∀ v ∈ vs, isWfShapeValueHOLExact [] v = true (EVERY is membership; is_wf_shape_v_nil is is_wf_shape_v []). Free HOL variables es vs s t ctxt t_locs are the explicit binders; there are no extra premises. The traversed finite maps are PanSemStateFiniteExact.globals (state_rel's FEMPTY), PanSemStateFiniteExact.locals, PanToCrepContextExact.vars, and the standalone t_locs; same-module canonical witnesses cover both carriers. This supersedes the documented-mismatch analogue evalPanSemStateExpsWfShapeOfStateRel."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
     "hol_name": "locals_rel_lookup_ctxt",
     "hol_line": 527,
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
