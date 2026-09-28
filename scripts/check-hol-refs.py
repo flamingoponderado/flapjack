@@ -1352,6 +1352,12 @@ def fmap_as_finite_support_parameters_errors(
             )
             continue
         statement = match.group("statement")
+        applied = (
+            re.search(r"ofBroad\s*[\(.A-Za-z_]", statement) is not None
+            and re.search(r"toBroad\s*(?:lookup)?\s*[\(.A-Za-z_]", statement) is not None
+            and re.search(r"lookup\s*[\(.A-Za-z_]", statement) is not None
+            and re.search(r"\.finiteSupport\b|finiteSupport\s*[\),]", statement) is not None
+        )
         if (
             not identifier_token_occurs(statement, parameter)
             or "HolFiniteMapExact" not in statement
@@ -1359,6 +1365,7 @@ def fmap_as_finite_support_parameters_errors(
             or "finiteSupport" not in statement
             or "toBroad" not in statement
             or "ofBroad" not in statement
+            or not applied
             or re.search(r"=\s*" + re.escape(parameter) + r"\b", statement) is None
         ):
             errors.append(
@@ -1846,12 +1853,19 @@ def word_dimension_errors(text: str) -> list[str]:
                 f"`{spelling}` lacks its own `[NeZero {width}]` discharge; "
                 "every word dimension in scope must be constrained"
             )
-    if re.search(r"\[\s*NeZero\s+\(?\s*([0-9]+)\s*\)?\s*\]", text) is not None:
-        zero = re.search(r"\[\s*NeZero\s+\(?\s*([0-9]+)\s*\)?\s*\]", text)
-        if int(zero.group(1)) == 0:
+    for neZero in re.finditer(r"\[\s*NeZero\s+([^\]]*?)\s*\]", text):
+        argument = neZero.group(1).strip()
+        if re.fullmatch(r"\(?\s*[A-Za-z_][A-Za-z0-9_']*\s*\)?", argument):
+            continue
+        if re.fullmatch(r"\(?\s*0+\s*\)?", argument):
             errors.append(
                 "`[NeZero 0]` is not a valid positivity discharge; the dimension must "
                 "be a positive width identifier"
+            )
+        else:
+            errors.append(
+                f"`[NeZero {argument}]` must discharge a width identifier; a literal "
+                "or compound dimension is not a valid positivity discharge"
             )
     return errors
 

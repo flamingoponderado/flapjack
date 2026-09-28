@@ -131,6 +131,21 @@ class HolAttributeSitesTest(unittest.TestCase):
         )
         self.assertTrue(any("must be an input parameter typed HolFiniteMapExact" in e for e in errors))
 
+    def test_fmap_as_finite_support_parameters_rejects_vacuous_witness(self):
+        lines = [
+            "theorem holFmapAsFiniteSupportParamWitness_eval_fm",
+            "    (fm : HolFiniteMapExact Nat Nat) :",
+            "    ¬ (ofBroad = toBroad ∧ lookup = finiteSupport ∧ fm = fm) := by",
+            "  intro h; exact absurd h (by decide)",
+        ]
+        declaration = "theorem eval (fm : HolFiniteMapExact Nat Nat) : Prop"
+        errors = CHECKER["fmap_as_finite_support_parameters_errors"](
+            lines, "Example.lean", declaration, "eval", ("fm",)
+        )
+        self.assertTrue(
+            any("canonical lookup/finiteSupport" in e for e in errors)
+        )
+
     def test_fmap_as_finite_support_relation_qualifier(self):
         self.assertEqual(
             list(SITES([
@@ -1447,6 +1462,24 @@ class WordsAsTypeIndexedBitvecQualifierTest(unittest.TestCase):
             self.ERRORS(text, "evalProg"),
         )
 
+    def test_rejects_literal_nezero_argument(self):
+        text = "\n".join(self.GOOD).replace(
+            "[NeZero width]", "[NeZero width] [NeZero 5]",
+        )
+        self.assertTrue(
+            any("NeZero 5" in e for e in self.ERRORS(text, "evalProg")),
+            self.ERRORS(text, "evalProg"),
+        )
+
+    def test_rejects_compound_nezero_argument(self):
+        text = "\n".join(self.GOOD).replace(
+            "[NeZero width]", "[NeZero width] [NeZero (width - width)]",
+        )
+        self.assertTrue(
+            any("NeZero (width - width)" in e for e in self.ERRORS(text, "evalProg")),
+            self.ERRORS(text, "evalProg"),
+        )
+
     def test_accepts_parenthesized_identifier_dimension(self):
         text = "\n".join(self.GOOD).replace("BitVec width", "BitVec (width)")
         self.assertEqual(self.ERRORS(text, "evalProg"), [])
@@ -1534,7 +1567,13 @@ class RealCombinedQualifierFixtureTest(unittest.TestCase):
                 )
                 self.assertIsNotNone(start, f"{name} not found")
                 preceding = lines[max(0, start - 4):start - 1]
-                self.assertEqual(any("@[hol" in line for line in preceding), expected_tag)
+                self.assertEqual(
+                    any(
+                        line.lstrip().startswith("@[hol")
+                        for line in preceding
+                    ),
+                    expected_tag,
+                )
                 region = []
                 for line in lines[start - 1:]:
                     region.append(line)
