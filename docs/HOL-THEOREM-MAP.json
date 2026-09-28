@@ -19715,5 +19715,14 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.14) against opt_mmap_lhss_locals_rel at crep_to_loopProofScript.sml:2300-2320 ([local]). HOL `∀lhss (s:('a,'b) crepSem$state) (t:('a,'c) loopSem$state) ctxt l. EVERY (λv. IS_SOME (FLOOKUP s.locals v)) lhss ∧ ALL_DISTINCT lhss ∧ locals_rel ctxt l s.locals t.locals ⇒ ∃nlhss. OPT_MMAP (FLOOKUP ctxt.vars) lhss = SOME nlhss ∧ LENGTH nlhss = LENGTH lhss ∧ EVERY (λn. n ∈ domain l) nlhss ∧ ALL_DISTINCT nlhss`. Lean keeps binders in order over CrepSemHOLState width σ, LoopSemStateFiniteExact width F, CrepToLoopContextExact, NumSet; the same three-conjunct premise (EVERY as ∀ v ∈ lhss, IS_SOME as Option.isSome, ALL_DISTINCT as List.Nodup) and four-conjunct existential conclusion (OPT_MMAP as List.mapM, domain as sptMem). The relation qualifier lists the traversed HOL |-> maps ctxt.vars and s.locals; HolWordLab/WordLocW are the reviewed width-indexed `'a word` carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "compile_prog_distinct_params",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompileProgDistinctParams.lean",
+    "lean_name": "crepToLoopCompileProgDistinctParamsExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.24) against crep_to_loopProofScript.sml:3987-4008. HOL quantifies `prog` then architecture `c`, keeps the premise EVERY (λ(name,params,body). ALL_DISTINCT params) prog, and concludes the same EVERY over compile_prog c prog. Lean preserves prog/c binder order and the premise/conclusion as membership-quantified Nodup propositions over the exact `MlString × List Nat × CrepProgHOL width` input and `compileProgHOLExact c prog` output triples. The output’s second field is exactly `List.range params.length`, matching HOL `(GENLIST I o LENGTH) params`; its Nodup proof does not drop or strengthen the source premise. `compileProgHOLExact` is the separately reviewed `compile_prog_def`; only the reviewed positive type-indexed word-to-BitVec translation applies. No finite-map or String-name qualifier is needed, and no executable production path is claimed."
   }
 ]
