@@ -18811,5 +18811,17 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.12): HOL loop_eval_nested_assign_distinct_eq (loopPropsScript.sml:190-197) `!es ns t ev. MAP (eval t) es = MAP SOME ev /\\ distinct_lists ns (FLAT (MAP locals_touched es)) /\\ ALL_DISTINCT ns /\\ LENGTH ns = LENGTH es ==> evaluate (nested_seq (MAP2 Assign ns es),t) = (NONE, t with locals := (alist_insert ns ev t.locals))`; Lean has the same variables and four-conjunct premise (distinct_lists as the tagged distinctListsHol = true, FLAT/MAP as List.flatten/map, locals_touched as holLoopLocalsTouched, ALL_DISTINCT as Nodup, MAP2 Assign as List.zipWith .assign) and the same conclusion with alist_insert as the exact sptAlistInsert. The proof needs structural commutation of sptree insert on distinct keys (sptInsert_comm), not an extra hypothesis. fmap_as_finite_support [globals]: the statement quantifies over LoopSemStateFiniteExact, whose HOL |-> globals field is the canonical HolFiniteMapExact carrier used by eval/set_globals inside evaluate; locals/code are sptree num_maps (Spt) and are not named; same-module re-exported canonical witness holFmapAsFiniteSupportWitness."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopPropsScript.sml",
+    "hol_name": "unassigned_vars_evaluate_same",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopProps/UnassignedVarsExact.lean",
+    "lean_name": "unassigned_vars_evaluate_same",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.14): HOL unassigned_vars_evaluate_same (loopPropsScript.sml:332-338) `!p s res t n v. evaluate (p,s) = (res,t) /\\ (res = NONE ∨ (∃n. res = SOME (Continue n)) ∨ (∃n. res = SOME (Break n))) /\\ lookup n s.locals = SOME v /\\ ~MEM n (assigned_vars p) /\\ survives n p ==> lookup n t.locals = lookup n s.locals`; Lean binds the same six variables in HOL order with the same five-conjunct premise, where the result disjunction is the definitional abbreviation UnassignedGoodRes res (unfolds to exactly that disjunction), assigned_vars is the tagged holLoopAssignedVars, and the HOL bool survives n p is the tagged survivesHOLExact n p = true; same conclusion over the tagged exact evaluate. No extra hypotheses. fmap_as_finite_support [globals]: quantifies over LoopSemStateFiniteExact whose HOL |-> globals field is the canonical HolFiniteMapExact carrier; locals/code are Spt num_maps and not named; same-module re-exported canonical witness."
   }
 ]
