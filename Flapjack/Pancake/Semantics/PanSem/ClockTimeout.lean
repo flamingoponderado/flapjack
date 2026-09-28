@@ -202,4 +202,62 @@ theorem evaluateHOLFiniteState_add_clock_or_timeout {width : Nat} {σ : Type} [N
         exact (Nat.add_eq_zero_iff.mp h0).2
       omega
 
+/-! ## Clock-increase FFI-event prefix
+
+HOL `panPropsScript.sml:881` `evaluate_add_clock_io_events_mono`: at a larger
+clock, evaluation can only append FFI I/O events.  The state-level theorem
+below is stated over `evaluateHOLFiniteState` with no mathematical premises.
+It is Flapjack-specific infrastructure (no `@[hol]` tag) pending the reviewed
+exact `evaluate_def` acceptance (bead `flapjack-4ac.4.50.1`). -/
+
+/-- Flapjack-specific bridge: a successful finite-context run projects to the
+    broad exact evaluator applied to `toExact`, so the FFI event trace of the
+    finite post-state is the broad run's trace. -/
+private theorem evalPanSemRecursiveCallContextHOLExact_map_toExact_some
+    {width : Nat} {σ : Type} [NeZero width]
+    (program : ProgHOL width) (context : FiniteEvalContext width σ)
+    (pair : Option (PanSemResultExact width) × FiniteEvalContext width σ)
+    (h : evalPanSemRecursiveCallFiniteContext program context = some pair) :
+    evalPanSemRecursiveCallContextHOLExact program context.toExact =
+      some (pair.1, pair.2.toExact) := by
+  have hproj := evalPanSemRecursiveCallFiniteContext_projection program context
+  rw [h] at hproj
+  simpa using hproj.symm
+
+/-- State-level clock-increase FFI-event prefix for the finite-support carrier
+    evaluator: running `evaluateHOLFiniteState` at a larger clock can only add
+    FFI I/O events (HOL `evaluate_add_clock_io_events_mono`,
+    `panPropsScript.sml:881`).  The two `DecidablePred` witnesses are supplied
+    internally by `evaluateHOLFiniteState`'s classical choice, so this
+    statement has no mathematical premises. -/
+theorem evaluateHOLFiniteState_add_clock_ioEvents_prefix {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateFiniteExact width σ) (program : ProgHOL width)
+    (extra : Nat) :
+    (evaluateHOLFiniteState state program).2.ffi.ioEvents <+:
+      (evaluateHOLFiniteState { state with clock := state.clock + extra } program).2.ffi.ioEvents := by
+  classical
+  let s1 : PanSemStateFiniteExact width σ := { state with clock := state.clock + extra }
+  let c0 : FiniteEvalContext width σ :=
+    ⟨state, fun address => Classical.propDecidable (state.memaddrs address),
+      fun address => Classical.propDecidable (state.shMemaddrs address)⟩
+  let c1 : FiniteEvalContext width σ :=
+    ⟨s1, fun address => Classical.propDecidable (s1.memaddrs address),
+      fun address => Classical.propDecidable (s1.shMemaddrs address)⟩
+  obtain ⟨pair0, hpair0⟩ := evalPanSemRecursiveCallFiniteContext_total program c0
+  obtain ⟨pair1, hpair1⟩ := evalPanSemRecursiveCallFiniteContext_total program c1
+  have hev0 : evaluateHOLFiniteState state program = (pair0.1, pair0.2.state) :=
+    evaluateHOLFiniteState_eq_of_recursiveContext state program c0 rfl pair0 hpair0
+  have hev1 : evaluateHOLFiniteState s1 program = (pair1.1, pair1.2.state) :=
+    evaluateHOLFiniteState_eq_of_recursiveContext s1 program c1 rfl pair1 hpair1
+  have hctx1 : c1.toExact = ctxAddClock c0.toExact extra := by
+    apply PanSemExactEvalContext.ext
+    rfl
+  have hproj0 := evalPanSemRecursiveCallContextHOLExact_map_toExact_some program c0 pair0 hpair0
+  have hproj1 := evalPanSemRecursiveCallContextHOLExact_map_toExact_some program c1 pair1 hpair1
+  have hpre := evalPanSemRecursiveCallContextHOLExact_add_clock_ioEvents_prefix_getD
+    program c0.toExact extra
+  rw [hproj0, ← hctx1, hproj1] at hpre
+  rw [hev0, hev1]
+  simpa [FiniteEvalContext.toExact, PanSemStateFiniteExact.toExact] using hpre
+
 end Flapjack
