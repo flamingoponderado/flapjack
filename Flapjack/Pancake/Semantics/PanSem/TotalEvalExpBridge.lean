@@ -2686,4 +2686,256 @@ theorem evalPanSemStateExp_agree {σ : Type}
   simpa only [evalPanSemStateExp] using
     evalPanValueExp_agree state exact hrel hranged e he
 
+/-! ## Rangedness preservation and the `PanSemStateRelExec`/rangedness boundary
+
+`PanSemStateRelExecRanged` (`:94`) is the byte-range premise of the all-16
+expression agreement.  This section records which production state updates
+preserve it and, equally important, the precise boundary where it can fail.
+
+The premise constrains only the three identifier-carrying components of the
+production state: the stored local values, the stored global values, and the
+structure context.  Consequently
+
+* a local/global assignment whose new value is `PanValueByteRanged` preserves the
+  premise, and by `evalPanValueExp_byteRanged` so does assigning the result of a
+  byte-ranged expression evaluated under an already-ranged state;
+* every update that leaves those three fields untouched (clock, FFI, memory,
+  memory domains, code, exception shapes, base/top address, endianness)
+  preserves the premise definitionally, and replacing `structs` by a
+  `StructContextByteRanged` context does too;
+* the premise is **not** implied by `PanSemStateRelExec`: the state relation maps
+  production values through the total `panValueToHOL`, which encodes
+  out-of-range identifiers through `ofString`, so a production local/global can
+  hold a non-byte-ranged `nStruct` while the relation still holds.  The
+  kernel-checked witness below (`nonByteRangedValue`, `not_ranged_of_local_nonRanged`)
+  exhibits exactly that gap, and the registered regression
+  `Flapjack.Test.PanSemStateBridgeParity` builds a state pair that is related by
+  `PanSemStateRelExec` but fails `PanSemStateRelExecRanged`.
+
+That gap is the reason the runtime FFI/global values need a separate range
+obligation: parser origin constrains program syntax and identifier bytes but says
+nothing about values returned by `extCall` or loaded from globals, so the byte
+range cannot be discharged from the parser alone.  Everything here is untagged
+Flapjack-specific bridge infrastructure; no `@[hol]` tag is attached. -/
+
+/-- `PanValueByteRanged` is closed under `updatePanValueMap` with a byte-ranged
+    value: the updated function is pointwise byte-ranged whenever the original
+    is.  This is the value-map update class used by local/global assignment. -/
+theorem updatePanValueMap_byteRanged {width : Nat} {γ : Type} [BEq γ]
+    (values : γ → Option (PanValue (BitVec width)))
+    (name : γ) (value : PanValue (BitVec width))
+    (hvalues : ∀ key v, values key = some v → PanValueByteRanged v)
+    (hvalue : PanValueByteRanged value) :
+    ∀ key v, updatePanValueMap values name value key = some v → PanValueByteRanged v := by
+  intro key v h
+  unfold updatePanValueMap at h
+  by_cases hc : key == name
+  · rw [if_pos hc] at h
+    rw [Option.some.injEq] at h
+    exact h ▸ hvalue
+  · rw [if_neg hc] at h
+    exact hvalues key v h
+
+/-- A local assignment of a byte-ranged value preserves
+    `PanSemStateRelExecRanged`.  The assigned key need not be byte-ranged: the
+    premise constrains the stored values, not the map keys. -/
+theorem PanSemStateRelExecRanged.updateLocals {σ : Type}
+    {state : PanSemState (RiscV.Word 64) (FfiState σ)}
+    (h : PanSemStateRelExecRanged state) (name : VarName)
+    (value : PanValue (RiscV.Word 64)) (hvalue : PanValueByteRanged value) :
+    PanSemStateRelExecRanged
+      { state with locals := updatePanValueMap state.locals name value } := by
+  refine ⟨?_, h.2.1, h.2.2⟩
+  intro key v hkey
+  exact updatePanValueMap_byteRanged state.locals name value h.1 hvalue key v hkey
+
+/-- A global assignment of a byte-ranged value preserves
+    `PanSemStateRelExecRanged`. -/
+theorem PanSemStateRelExecRanged.updateGlobals {σ : Type}
+    {state : PanSemState (RiscV.Word 64) (FfiState σ)}
+    (h : PanSemStateRelExecRanged state) (name : VarName)
+    (value : PanValue (RiscV.Word 64)) (hvalue : PanValueByteRanged value) :
+    PanSemStateRelExecRanged
+      { state with globals := updatePanValueMap state.globals name value } := by
+  refine ⟨h.1, ?_, h.2.2⟩
+  intro key v hkey
+  exact updatePanValueMap_byteRanged state.globals name value h.2.1 hvalue key v hkey
+
+/-- Any production state update that leaves `locals`, `globals`, and `structs`
+    unchanged preserves `PanSemStateRelExecRanged`. -/
+theorem PanSemStateRelExecRanged.of_fields {σ : Type}
+    {state other : PanSemState (RiscV.Word 64) (FfiState σ)}
+    (h : PanSemStateRelExecRanged state)
+    (hlocals : other.locals = state.locals) (hglobals : other.globals = state.globals)
+    (hstructs : other.structs = state.structs) :
+    PanSemStateRelExecRanged other := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro name value hv
+    rw [hlocals] at hv
+    exact h.1 name value hv
+  · intro name value hv
+    rw [hglobals] at hv
+    exact h.2.1 name value hv
+  · rw [hstructs]
+    exact h.2.2
+
+/-- The clock update preserves `PanSemStateRelExecRanged`. -/
+theorem PanSemStateRelExecRanged.setClock {σ : Type}
+    {state : PanSemState (RiscV.Word 64) (FfiState σ)}
+    (h : PanSemStateRelExecRanged state) (clock : Nat) :
+    PanSemStateRelExecRanged { state with clock := clock } :=
+  h.of_fields rfl rfl rfl
+
+/-- The FFI update preserves `PanSemStateRelExecRanged` (the premise constrains no
+    FFI field). -/
+theorem PanSemStateRelExecRanged.setFfi {σ : Type}
+    {state : PanSemState (RiscV.Word 64) (FfiState σ)}
+    (h : PanSemStateRelExecRanged state) (ffi : FfiState σ) :
+    PanSemStateRelExecRanged { state with ffi := ffi } :=
+  h.of_fields rfl rfl rfl
+
+/-- The memory update preserves `PanSemStateRelExecRanged` because the premise
+    does not constrain the memory map. This does not establish rangedness of
+    values read from memory. -/
+theorem PanSemStateRelExecRanged.setMemory {σ : Type}
+    {state : PanSemState (RiscV.Word 64) (FfiState σ)}
+    (h : PanSemStateRelExecRanged state)
+    (memory : RiscV.Word 64 → Option (PanValue (RiscV.Word 64))) :
+    PanSemStateRelExecRanged { state with memory := memory } :=
+  h.of_fields rfl rfl rfl
+
+/-- The `memaddrs` update preserves `PanSemStateRelExecRanged`. -/
+theorem PanSemStateRelExecRanged.setMemaddrs {σ : Type}
+    {state : PanSemState (RiscV.Word 64) (FfiState σ)}
+    (h : PanSemStateRelExecRanged state) (memaddrs : RiscV.Word 64 → Bool) :
+    PanSemStateRelExecRanged { state with memaddrs := memaddrs } :=
+  h.of_fields rfl rfl rfl
+
+/-- The `sharedMemaddrs` update preserves `PanSemStateRelExecRanged`. -/
+theorem PanSemStateRelExecRanged.setSharedMemaddrs {σ : Type}
+    {state : PanSemState (RiscV.Word 64) (FfiState σ)}
+    (h : PanSemStateRelExecRanged state) (sharedMemaddrs : RiscV.Word 64 → Bool) :
+    PanSemStateRelExecRanged { state with sharedMemaddrs := sharedMemaddrs } :=
+  h.of_fields rfl rfl rfl
+
+/-- The code-map update preserves `PanSemStateRelExecRanged`. -/
+theorem PanSemStateRelExecRanged.setCode {σ : Type}
+    {state : PanSemState (RiscV.Word 64) (FfiState σ)}
+    (h : PanSemStateRelExecRanged state) (code : PanSemCodeMap (RiscV.Word 64)) :
+    PanSemStateRelExecRanged { state with code := code } :=
+  h.of_fields rfl rfl rfl
+
+/-- The exception-shape update preserves `PanSemStateRelExecRanged`. -/
+theorem PanSemStateRelExecRanged.setExceptionShapes {σ : Type}
+    {state : PanSemState (RiscV.Word 64) (FfiState σ)}
+    (h : PanSemStateRelExecRanged state)
+    (exceptionShapes : ExceptionId → Option Shape) :
+    PanSemStateRelExecRanged { state with exceptionShapes := exceptionShapes } :=
+  h.of_fields rfl rfl rfl
+
+/-- The base-address update preserves `PanSemStateRelExecRanged`. -/
+theorem PanSemStateRelExecRanged.setBaseAddress {σ : Type}
+    {state : PanSemState (RiscV.Word 64) (FfiState σ)}
+    (h : PanSemStateRelExecRanged state) (baseAddress : RiscV.Word 64) :
+    PanSemStateRelExecRanged { state with baseAddress := baseAddress } :=
+  h.of_fields rfl rfl rfl
+
+/-- The top-address update preserves `PanSemStateRelExecRanged`. -/
+theorem PanSemStateRelExecRanged.setTopAddress {σ : Type}
+    {state : PanSemState (RiscV.Word 64) (FfiState σ)}
+    (h : PanSemStateRelExecRanged state) (topAddress : RiscV.Word 64) :
+    PanSemStateRelExecRanged { state with topAddress := topAddress } :=
+  h.of_fields rfl rfl rfl
+
+/-- The endianness update preserves `PanSemStateRelExecRanged`. -/
+theorem PanSemStateRelExecRanged.setBe {σ : Type}
+    {state : PanSemState (RiscV.Word 64) (FfiState σ)}
+    (h : PanSemStateRelExecRanged state) (be : Bool) :
+    PanSemStateRelExecRanged { state with be := be } :=
+  h.of_fields rfl rfl rfl
+
+/-- Replacing the structure context by a byte-ranged context preserves
+    `PanSemStateRelExecRanged`. -/
+theorem PanSemStateRelExecRanged.setStructs {σ : Type}
+    {state : PanSemState (RiscV.Word 64) (FfiState σ)}
+    (h : PanSemStateRelExecRanged state) (structs : StructContext)
+    (hstructs : StructContextByteRanged structs.toHOL) :
+    PanSemStateRelExecRanged { state with structs := structs } := by
+  refine ⟨h.1, h.2.1, ?_⟩
+  exact hstructs
+
+/-- The expression-driven local assignment class: assigning the byte-ranged result
+    of a byte-ranged expression evaluated under a ranged state preserves
+    `PanSemStateRelExecRanged`.  The value's rangedness is supplied by
+    `evalPanValueExp_byteRanged`; no separate rangedness assumption on the value
+    is needed. -/
+theorem PanSemStateRelExecRanged.evalLocalUpdate {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (hranged : PanSemStateRelExecRanged state)
+    (e : Exp (RiscV.Word 64)) (he : ExpByteRanged e)
+    (name : VarName) (value : PanValue (RiscV.Word 64))
+    (hvalue : evalPanValueExp state.structs state.locals state.globals state.memory
+        state.baseAddress state.topAddress panSemBitVec64BytesInWord e
+        (memoryAccess := some (panSemBitVec64MemoryAccess state)) = some value) :
+    PanSemStateRelExecRanged
+      { state with locals := updatePanValueMap state.locals name value } := by
+  have hv := evalPanValueExp_byteRanged state hranged
+    (some (panSemBitVec64MemoryAccess state)) e he value hvalue
+  exact PanSemStateRelExecRanged.updateLocals hranged name value hv
+
+/-- The expression-driven global assignment class, mirroring
+    `PanSemStateRelExecRanged.evalLocalUpdate`. -/
+theorem PanSemStateRelExecRanged.evalGlobalUpdate {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (hranged : PanSemStateRelExecRanged state)
+    (e : Exp (RiscV.Word 64)) (he : ExpByteRanged e)
+    (name : VarName) (value : PanValue (RiscV.Word 64))
+    (hvalue : evalPanValueExp state.structs state.locals state.globals state.memory
+        state.baseAddress state.topAddress panSemBitVec64BytesInWord e
+        (memoryAccess := some (panSemBitVec64MemoryAccess state)) = some value) :
+    PanSemStateRelExecRanged
+      { state with globals := updatePanValueMap state.globals name value } := by
+  have hv := evalPanValueExp_byteRanged state hranged
+    (some (panSemBitVec64MemoryAccess state)) e he value hvalue
+  exact PanSemStateRelExecRanged.updateGlobals hranged name value hv
+
+/-! ### The boundary where rangedness can fail
+
+A production value whose `nStruct` identifier has a character code at least 256
+is not `PanValueByteRanged`, because it is not exactly representable as a HOL
+`mlstring`.  Such a value can still sit in a production local or global, and the
+executed state relation `PanSemStateRelExec` does not exclude it: `panValueToHOL`
+totalizes the offending identifier through `ofString`.  This is the precise gap
+the range premise must close; runtime FFI/global values are exactly where such a
+value can enter. -/
+
+/-- A concrete production value with an out-of-range identifier (`€`, code
+    point 8364). -/
+def nonByteRangedValue : PanValue (RiscV.Word 64) :=
+  .nStruct "\u20ac" []
+
+/-- The concrete out-of-range value is not `PanValueByteRanged`. -/
+theorem nonByteRangedValue_not_ranged : ¬ PanValueByteRanged nonByteRangedValue := by
+  intro h
+  simp only [nonByteRangedValue, PanValueByteRanged, NameRanged, String.toList] at h
+  exact absurd h.1 (by decide)
+
+/-- A state whose local map holds a non-byte-ranged value fails
+    `PanSemStateRelExecRanged`. -/
+theorem not_ranged_of_local_nonRanged {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ)) (name : VarName)
+    (value : PanValue (RiscV.Word 64)) (h : state.locals name = some value)
+    (hv : ¬ PanValueByteRanged value) : ¬ PanSemStateRelExecRanged state := by
+  intro hr
+  exact hv (hr.1 name value h)
+
+/-- A state whose global map holds a non-byte-ranged value fails
+    `PanSemStateRelExecRanged`. -/
+theorem not_ranged_of_global_nonRanged {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ)) (name : VarName)
+    (value : PanValue (RiscV.Word 64)) (h : state.globals name = some value)
+    (hv : ¬ PanValueByteRanged value) : ¬ PanSemStateRelExecRanged state := by
+  intro hr
+  exact hv (hr.2.1 name value h)
+
 end Flapjack
