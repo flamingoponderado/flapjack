@@ -18320,6 +18320,15 @@
     "words_as_type_indexed_bitvec": true
   },
   {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "survives_MAPi_Assign",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/AssignedVars.lean",
+    "lean_name": "holSurvivesMapiAssign",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-ds5 source comparison (2026-09-28, bead flapjack-pxn.18.5.6.40) against crep_to_loopProofScript.sml:368-379. HOL binders n, les, offset are preserved in that order and there is no hypothesis; HOL bool result T is kept as = true. survives is the exact tagged survivesHOLExact (loopPropsScript.sml:25-38), nested_seq is the exact tagged loopNestedSeqHOL (loopLangScript.sml:72), List.mapIdx mirrors indexedLists MAPi, and List.zipWith/map renders MAP2/Assign. Only the type-indexed word dimension is translated. Direct original-HOL rows in scripts/hol-probes/crep_to_loop_survives_mapi_probe.out are replayed by Flapjack/Test/CrepToLoopSurvivesMapiParity.lean.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
     "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
     "hol_name": "prog_if_def",
     "lean_path": "Flapjack/Pancake/CrepToLoop/ContextExact.lean",

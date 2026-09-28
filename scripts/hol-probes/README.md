@@ -650,6 +650,19 @@ tagged `Flapjack.CrepToLoop.crepToLoopLocalsRelExact_cutset_prop`, whose
 `subspt` premise is rendered by `Flapjack.sptSubspt` (see
 `Flapjack/Misc/Sptree.lean`).
 
+`crep_to_loop_survives_mapi_probe.out` records direct HOL EVAL rows for
+`crep_to_loopProofScript.sml:368-379` `survives_MAPi_Assign`
+(`loopProps$survives n (loopLang$nested_seq (MAPi (\n. Assign (n + offset)) les))`);
+the empty, one, two, and three element rows all evaluate to `T`. The exact
+word-indexed counterpart is the tagged `Flapjack.holSurvivesMapiAssign` in
+`Flapjack/Pancake/CrepToLoop/Proofs/AssignedVars.lean` (over `HolLoopProg` /
+`survivesHOLExact` / `loopNestedSeqHOL`), replayed by
+`Flapjack.Test.CrepToLoopSurvivesMapiParity`:
+
+```
+CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=crep_to_loop_survives_mapi_probeScript.sml bash scripts/hol-probes/regenerate.sh
+```
+
 `pan_globals_mem_functions_probe.out` records direct HOL EVAL of the
 `panLang$functions` projection and the membership instance characterized by the
 local theorem `MEM_functions` at
