@@ -10886,6 +10886,15 @@
     "words_as_type_indexed_bitvec": true
   },
   {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "ctxt_fc_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
+    "lean_name": "ctxtFcExact",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": ["cvs"],
+    "reviewer": "flapjack-ds10 source comparison (2026-09-28; bead flapjack-pxn.18.5.6.31.2) against ctxt_fc_def at crep_to_loopProofScript.sml:73-81. HOL: ctxt_fc c cvs ns args = <| vars := FEMPTY |++ ZIP (ns,args); funcs := cvs; vmax := MAX_LIST args; target := c |>. The Lean definition builds the separately reviewed exact CrepToLoopContextExact carrier: vars from HolFiniteMapExact.updateList HolFiniteMapExact.empty (ns.zip args) (HOL FUPDATE_LIST), funcs passed through unchanged, vmax as args.foldr max 0 (HOL MAX_LIST), and target unchanged. The qualifier is for the cvs finite-map parameter, supported by the same-module holFmapAsFiniteSupportParamWitness_ctxtFcExact_cvs. Direct HOL probe rows for ctxt_fc are in scripts/hol-probes/crep_to_loop_ctxt_fc_probe.out and guarded in Flapjack/Test/CrepToLoopParity.lean; no clause, quantifier or side condition differs from HOL."
+  },
+  {
     "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
     "lean_path": "Flapjack/Pancake/CrepToLoop.lean",
     "statement_status": "reviewed_exact",
