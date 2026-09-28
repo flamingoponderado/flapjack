@@ -8,9 +8,9 @@ Assembles the per-constructor agreements of `TotalEvalBridge.lean`,
 `TotalEvalExtCallBridge.lean` into one theorem relating the production total
 evaluator `panSemTotalEvaluate` on `progOfHOL p` to the tagged exact
 `evaluateHOLFiniteState` on `p`, for every exact program `p`
-(`flapjack-pxn.18.4.3.77.2.14.19`, toward `.77.2.14`).  The rangedness
-premises are the reachable invariants of `TotalEvalRanged.lean`.  The
-`ShMemStore` case is an explicit premise until its constructor agreement lands.
+(`flapjack-pxn.18.4.3.77.2.14.19`, `.77.2.14`).  The rangedness
+premises are the reachable invariants of `TotalEvalRanged.lean`.  The theorem
+is a Flapjack bridge, not the tagged HOL `pc_compile_correct` or `evaluate_ind`.
 Untagged Flapjack-specific bridge infrastructure.
 -/
 
@@ -129,9 +129,9 @@ theorem prodLex_of_le_of_lt {a a' b b' : Nat} (ha : a' ≤ a) (hb : b' < b) :
     Call/DecCall callee rangedness premises are discharged by
     `panSemTotalEvaluate_ranged`.
 
-    Open gap: `hshMemStore` is the `ShMemStore` constructor agreement, kept as an
-    explicit premise until `flapjack-pxn.18.4.3.77.2.14.17` lands; every other
-    constructor is proved.  Untagged: the statement relates the production
+    Every constructor is proved, including `ShMemStore`
+    (`panSemTotalEvaluate_shMemStore_agree`, `flapjack-pxn.18.4.3.77.2.14.17`).
+    Untagged: the statement relates the production
     evaluator to the tagged exact one and is not a HOL declaration. -/
 theorem panSemTotalEvaluate_agree {σ : Type}
     (primitive : PanPrimitiveHandler (RiscV.Word 64))
@@ -139,13 +139,6 @@ theorem panSemTotalEvaluate_agree {σ : Type}
       Option.map panValueToHOL (primitive operator values)
         = panPrimopHOLExact operator (values.map panValueToHOL))
     (hprimRanged : PanPrimitiveHandlerByteRanged primitive)
-    (hshMemStore : ∀ (size : OpSize) (address value : ExpHOL 64)
-        (production : PanSemState (RiscV.Word 64) (FfiState σ))
-        (exact : PanSemStateFiniteExact 64 σ),
-        PanSemStateRelExec production exact.toExact →
-        PanSemStateRelExecRanged production →
-        PanSemTotalAgreeAt primitive (progOfHOL (.shMemStore size address value))
-          (.shMemStore size address value) production exact)
     (p : ProgHOL 64) (production : PanSemState (RiscV.Word 64) (FfiState σ))
     (exact : PanSemStateFiniteExact 64 σ)
     (hrel : PanSemStateRelExec production exact.toExact)
@@ -201,40 +194,43 @@ theorem panSemTotalEvaluate_agree {σ : Type}
       rw [progOfHOL]
       exact panSemTotalEvaluate_shMemLoad_agree primitive production exact hrel hranged size kind
         name address
-  | .shMemStore size address value => exact hshMemStore size address value production exact hrel hranged
+  | .shMemStore size address value =>
+      rw [progOfHOL]
+      exact panSemTotalEvaluate_shMemStore_agree primitive production exact hrel hranged size
+        address value
   | .ite condition thenBranch elseBranch =>
       exact panSemTotalEvaluate_ite_agree primitive production exact hrel hranged condition
         thenBranch elseBranch
-        (panSemTotalEvaluate_agree primitive hprimBridge hprimRanged hshMemStore thenBranch
+        (panSemTotalEvaluate_agree primitive hprimBridge hprimRanged thenBranch
           production exact hrel hranged hcode hexn)
-        (panSemTotalEvaluate_agree primitive hprimBridge hprimRanged hshMemStore elseBranch
+        (panSemTotalEvaluate_agree primitive hprimBridge hprimRanged elseBranch
           production exact hrel hranged hcode hexn)
   | .seq first second =>
       exact panSemTotalEvaluate_seq_agree primitive production exact hrel first second
-        (panSemTotalEvaluate_agree primitive hprimBridge hprimRanged hshMemStore first
+        (panSemTotalEvaluate_agree primitive hprimBridge hprimRanged first
           production exact hrel hranged hcode hexn)
         (panSemTotalEvaluate_ranged primitive hprimRanged (progOfHOL first) production
           (progOfHOL_byteRanged_bridge first) hranged hcode).1
         (fun production' exact' hrel' hranged' hframe =>
-          panSemTotalEvaluate_agree primitive hprimBridge hprimRanged hshMemStore second
+          panSemTotalEvaluate_agree primitive hprimBridge hprimRanged second
             production' exact' hrel' hranged' (hcode.of_code hframe.1) (hexn.of_eq hframe.2.1))
   | .dec name shape value body =>
       exact panSemTotalEvaluate_dec_agree primitive production exact hrel hranged name shape
         value body
         (fun production' exact' hrel' hranged' hframe =>
-          panSemTotalEvaluate_agree primitive hprimBridge hprimRanged hshMemStore body
+          panSemTotalEvaluate_agree primitive hprimBridge hprimRanged body
             production' exact' hrel' hranged' (hcode.of_code hframe.1) (hexn.of_eq hframe.2.1))
   | .while condition body =>
       exact panSemTotalEvaluate_while_agree primitive production exact hrel hranged condition body
         (fun production' exact' hrel' hranged' hframe =>
-          panSemTotalEvaluate_agree primitive hprimBridge hprimRanged hshMemStore body
+          panSemTotalEvaluate_agree primitive hprimBridge hprimRanged body
             production' exact' hrel' hranged' (hcode.of_code hframe.1) (hexn.of_eq hframe.2.1))
         (panSemTotalEvaluate_ranged primitive hprimRanged (progOfHOL body)
           { production with clock := production.clock - 1 }
           (progOfHOL_byteRanged_bridge body) (hranged.setClock (production.clock - 1))
           (hcode.of_code rfl)).1
         (fun production' exact' hrel' hranged' hframe hlt =>
-          panSemTotalEvaluate_agree primitive hprimBridge hprimRanged hshMemStore
+          panSemTotalEvaluate_agree primitive hprimBridge hprimRanged
             (.while condition body) production' exact' hrel' hranged' (hcode.of_code hframe.1)
             (hexn.of_eq hframe.2.1))
   | .call info function arguments =>
@@ -243,10 +239,10 @@ theorem panSemTotalEvaluate_agree {σ : Type}
         (hprim := hprimRanged) (hcodeRanged := hcode) (info := info) (function := function)
         (arguments := arguments) (hexceptionShapes := hexn)
         (ihCallee := fun program production' exact' hrel' hranged' hframe hlt =>
-          panSemTotalEvaluate_agree primitive hprimBridge hprimRanged hshMemStore program
+          panSemTotalEvaluate_agree primitive hprimBridge hprimRanged program
             production' exact' hrel' hranged' (hcode.of_code hframe.1) (hexn.of_eq hframe.2.1))
         (ihHandler := fun kind eid var handler hinfo production' exact' hrel' hranged' hframe =>
-          panSemTotalEvaluate_agree primitive hprimBridge hprimRanged hshMemStore handler
+          panSemTotalEvaluate_agree primitive hprimBridge hprimRanged handler
             production' exact' hrel' hranged' (hcode.of_code hframe.1) (hexn.of_eq hframe.2.1))
   | .decCall resultName shape function arguments continuation =>
       exact panSemTotalEvaluate_decCall_agree_of_ranged (primitive := primitive)
@@ -254,10 +250,10 @@ theorem panSemTotalEvaluate_agree {σ : Type}
         (hprim := hprimRanged) (hcodeRanged := hcode) (resultName := resultName) (shape := shape)
         (function := function) (arguments := arguments) (continuation := continuation)
         (ihCallee := fun program production' exact' hrel' hranged' hframe hlt =>
-          panSemTotalEvaluate_agree primitive hprimBridge hprimRanged hshMemStore program
+          panSemTotalEvaluate_agree primitive hprimBridge hprimRanged program
             production' exact' hrel' hranged' (hcode.of_code hframe.1) (hexn.of_eq hframe.2.1))
         (ihContinuation := fun production' exact' hrel' hranged' hframe =>
-          panSemTotalEvaluate_agree primitive hprimBridge hprimRanged hshMemStore continuation
+          panSemTotalEvaluate_agree primitive hprimBridge hprimRanged continuation
             production' exact' hrel' hranged' (hcode.of_code hframe.1) (hexn.of_eq hframe.2.1))
 termination_by (production.clock, sizeOf p)
 decreasing_by
@@ -271,16 +267,8 @@ decreasing_by
 
 /-- The total agreement for the canonical entrypoint `panSemTotalEvaluateCake`:
     the handler premises are discharged by `panPrimopHOL_bridge` and
-    `panPrimopHOL_byteRanged`.  `hshMemStore` remains the open `ShMemStore`
-    case (`flapjack-pxn.18.4.3.77.2.14.17`). -/
+    `panPrimopHOL_byteRanged`. -/
 theorem panSemTotalEvaluateCake_agree {σ : Type}
-    (hshMemStore : ∀ (size : OpSize) (address value : ExpHOL 64)
-        (production : PanSemState (RiscV.Word 64) (FfiState σ))
-        (exact : PanSemStateFiniteExact 64 σ),
-        PanSemStateRelExec production exact.toExact →
-        PanSemStateRelExecRanged production →
-        PanSemTotalAgreeAt panPrimopHOL (progOfHOL (.shMemStore size address value))
-          (.shMemStore size address value) production exact)
     (p : ProgHOL 64) (production : PanSemState (RiscV.Word 64) (FfiState σ))
     (exact : PanSemStateFiniteExact 64 σ)
     (hrel : PanSemStateRelExec production exact.toExact)
@@ -288,7 +276,7 @@ theorem panSemTotalEvaluateCake_agree {σ : Type}
     (hcode : PanSemCodeRanged production)
     (hexn : PanSemExceptionShapesRanged production) :
     PanSemTotalAgreeAt panPrimopHOL (progOfHOL p) p production exact :=
-  panSemTotalEvaluate_agree panPrimopHOL panPrimopHOL_bridge panPrimopHOL_byteRanged hshMemStore
+  panSemTotalEvaluate_agree panPrimopHOL panPrimopHOL_bridge panPrimopHOL_byteRanged
     p production exact hrel hranged hcode hexn
 
 end Flapjack
