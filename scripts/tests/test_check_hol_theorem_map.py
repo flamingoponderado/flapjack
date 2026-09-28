@@ -361,6 +361,26 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
         self.assertEqual(props["fmap_as_finite_support_parameters"], ["fm", "fm2"])
         self.assertEqual(tagged[props_key][-1], ("fm", "fm2"))
 
+    def test_locals_rel_records_field_and_parameter_finite_map_carriers(self):
+        manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
+        by_name = {record["lean_name"]: record for record in manifest}
+        expected = {
+            "crepToLoopLocalsRelExact": "sLocals",
+            "crepToLoopLocalsRelExact_intro": "sLocals",
+            "crepToLoopLocalsRelExact_cutset_prop": "lcl",
+            "crepToLoopLocalsRelExact_insert_gt_vmax": "lcl",
+        }
+        for lean_name, parameter in expected.items():
+            record = by_name[lean_name]
+            self.assertEqual(
+                record["statement_status"],
+                "reviewed_fmap_as_finite_support_fields_and_parameters_words_as_type_indexed_bitvec",
+            )
+            self.assertEqual(record["fmap_as_finite_support"], ["vars"])
+            self.assertEqual(
+                record["fmap_as_finite_support_parameters"], [parameter]
+            )
+
     def test_crep_assigned_vars_nested_seq_carrier_mismatch_is_documented(self):
         key = (
             "Flapjack/Pancake/Semantics/CrepProps.lean",

@@ -1570,6 +1570,7 @@ VALID_STATUSES = {
     "reviewed_fmap_as_finite_support_result",
     "reviewed_fmap_as_finite_support_parameters",
     "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
+    "reviewed_fmap_as_finite_support_fields_and_parameters_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_relation",
     "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_equalities",
@@ -2095,7 +2096,16 @@ def validate_inventory(
         combined_parameter_words_status = (
             "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec"
         )
-        if words_bitvec and fmap_fields and status != combined_words_status:
+        combined_fields_parameters_words_status = (
+            "reviewed_fmap_as_finite_support_fields_and_parameters_words_as_type_indexed_bitvec"
+        )
+        if words_bitvec and fmap_fields and fmap_parameters and status != combined_fields_parameters_words_status:
+            errors.append(
+                f"{key[0]}:{key[1]}: field and parameter finite-map qualifiers combined "
+                "with words_as_type_indexed_bitvec require the combined review status "
+                "reviewed_fmap_as_finite_support_fields_and_parameters_words_as_type_indexed_bitvec"
+            )
+        if words_bitvec and fmap_fields and not fmap_parameters and status != combined_words_status:
             errors.append(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support combined with "
                 "words_as_type_indexed_bitvec requires the combined review status "
@@ -2107,13 +2117,15 @@ def validate_inventory(
                 "words_as_type_indexed_bitvec requires the combined review status "
                 "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec"
             )
-        if words_bitvec and fmap_parameters and status != combined_parameter_words_status:
+        if words_bitvec and fmap_parameters and not fmap_fields and status != combined_parameter_words_status:
             errors.append(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support_parameters combined with "
                 "words_as_type_indexed_bitvec requires the combined review status "
                 "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec"
             )
-        if status == combined_words_status and not (words_bitvec and fmap_fields):
+        if status == combined_words_status and not (
+            words_bitvec and fmap_fields and not fmap_parameters
+        ):
             errors.append(
                 f"{key[0]}:{key[1]}: "
                 "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec needs "
@@ -2134,7 +2146,7 @@ def validate_inventory(
                 "both the fmap_as_finite_support_relation and words_as_type_indexed_bitvec @[hol] qualifiers"
             )
         if status == combined_parameter_words_status and not (
-            words_bitvec and fmap_parameters
+            words_bitvec and fmap_parameters and not fmap_fields
         ):
             errors.append(
                 f"{key[0]}:{key[1]}: "
@@ -2151,6 +2163,7 @@ def validate_inventory(
             combined_words_status,
             combined_relation_words_status,
             combined_parameter_words_status,
+            combined_fields_parameters_words_status,
         }:
             errors.append(
                 f"{key[0]}:{key[1]}: words_as_type_indexed_bitvec @[hol] tag needs a reviewed "
@@ -2167,9 +2180,9 @@ def validate_inventory(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support_relation (multi-carrier) is mutually "
                 "exclusive with fmap_as_finite_support, fmap_as_finite_support_result, and fmap_as_finite_support_parameters"
             )
-        if fmap_parameters and (fmap_fields or fmap_result or fmap_relation or fmap_equalities):
+        if fmap_parameters and (fmap_result or fmap_relation or fmap_equalities):
             errors.append(
-                f"{key[0]}:{key[1]}: fmap_as_finite_support_parameters is mutually exclusive with other finite-map qualifiers"
+                f"{key[0]}:{key[1]}: fmap_as_finite_support_parameters is mutually exclusive with result/relation/equality finite-map qualifiers"
             )
         if fmap_parameters and status == "reviewed_exact":
             errors.append(
@@ -2178,6 +2191,7 @@ def validate_inventory(
         if fmap_parameters and status not in {
             "reviewed_fmap_as_finite_support_parameters",
             combined_parameter_words_status,
+            combined_fields_parameters_words_status,
         }:
             errors.append(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support_parameters needs reviewed_fmap_as_finite_support_parameters status"
@@ -2185,6 +2199,7 @@ def validate_inventory(
         if not fmap_parameters and status in {
             "reviewed_fmap_as_finite_support_parameters",
             combined_parameter_words_status,
+            combined_fields_parameters_words_status,
         }:
             errors.append(
                 f"{key[0]}:{key[1]}: reviewed_fmap_as_finite_support_parameters needs the matching @[hol] qualifier"
@@ -2310,7 +2325,12 @@ def validate_inventory(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support @[hol] tag cannot have reviewed_exact "
                 "status; use reviewed_fmap_as_finite_support after source comparison"
             )
-        if fmap_fields and status != "reviewed_fmap_as_finite_support" and status != combined_words_status and status != combined_relation_words_status:
+        if fmap_fields and status not in {
+            "reviewed_fmap_as_finite_support",
+            combined_words_status,
+            combined_relation_words_status,
+            combined_fields_parameters_words_status,
+        }:
             errors.append(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support @[hol] tag needs a reviewed "
                 "source classification (reviewed_fmap_as_finite_support, or the combined "

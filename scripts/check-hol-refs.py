@@ -2298,10 +2298,16 @@ def main(argv: list[str]) -> int:
                     )
                 )
             if fmap_parameters:
-                if fmap_fields or fmap_result or fmap_relation or fmap_equalities:
+                # Named carrier fields and standalone exact-map parameters
+                # describe independent parts of one declaration's signature,
+                # so a theorem may need both qualifiers.  Result/relation/
+                # equality qualifiers describe other map roles and remain
+                # mutually exclusive with the parameter qualifier.
+                if fmap_result or fmap_relation or fmap_equalities:
                     errors.append(
                         f"{where}: fmap_as_finite_support_parameters is "
-                        "mutually exclusive with other finite-map qualifiers"
+                        "mutually exclusive with result/relation/equality "
+                        "finite-map qualifiers"
                     )
                 errors.extend(
                     f"{where}: {error}"

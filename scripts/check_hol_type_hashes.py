@@ -134,6 +134,7 @@ def lock_records(
             "reviewed_fmap_as_finite_support_result",
             "reviewed_fmap_as_finite_support_parameters",
             "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
+            "reviewed_fmap_as_finite_support_fields_and_parameters_words_as_type_indexed_bitvec",
             "reviewed_fmap_as_finite_support_relation",
             "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
             "reviewed_fmap_as_finite_support_equalities",
