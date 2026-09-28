@@ -4940,6 +4940,420 @@ theorem panSemTotalEvaluate_raise_agree_of_exceptionShapesRanged {σ : Type}
         (evaluateHOLFiniteState exact (.raise exceptionId expression : ProgHOL 64)).2.toExact :=
   panSemTotalEvaluate_raise_agree primitive production exact hrel hranged hexn exceptionId expression
 
+section CodeFrame
+
+/-! Code frame: the production total evaluator never writes `code`.  Moved here
+from `TotalEvalRanged.lean` so the constructor agreements below can use it. -/
+
+variable {σ : Type}
+
+/-- The clock-leaf clauses leave `code` unchanged. -/
+theorem panSemEvaluateClockLeaf_code
+    (leaf : PanSemClockLeaf) (state : PanSemState (RiscV.Word 64) (FfiState σ)) :
+    (panSemEvaluateClockLeaf leaf state).2.code = state.code := by
+  cases leaf <;> simp only [panSemEvaluateClockLeaf] <;> repeat' (first | rfl | split)
+
+/-- The `Assign` clause leaves `code` unchanged. -/
+theorem panSemTotalAssignClause_code
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (kind : VarKind) (name : VarName) (value : Exp (RiscV.Word 64)) :
+    (panSemTotalAssignClause state kind name value).2.code = state.code := by
+  simp only [panSemTotalAssignClause, panSemTotalExprStep]
+  repeat' (first | rfl | split)
+
+/-- The `Raise` clause leaves `code` unchanged (it only reads them). -/
+theorem panSemTotalRaiseClause_code
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exceptionId : ExceptionId) (expression : Exp (RiscV.Word 64)) :
+    (panSemTotalRaiseClause state exceptionId expression).2.code = state.code := by
+  simp only [panSemTotalRaiseClause, panSemTotalExprStep, panEmptyLocals]
+  repeat' (first | rfl | split)
+
+/-- The `Return` clause leaves `code` unchanged. -/
+theorem panSemTotalReturnClause_code
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (expression : Exp (RiscV.Word 64)) :
+    (panSemTotalReturnClause state expression).2.code = state.code := by
+  simp only [panSemTotalReturnClause, panSemTotalExprStep, panEmptyLocals]
+  repeat' (first | rfl | split)
+
+/-- The `Primitive` clause leaves `code` unchanged. -/
+theorem panSemTotalPrimitiveClause_code
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (name : VarName) (operator : PrimOp) (arguments : List (Exp (RiscV.Word 64)))
+    (primitive : PanPrimitiveHandler (RiscV.Word 64)) :
+    (panSemTotalPrimitiveClause state name operator arguments primitive).2.code = state.code := by
+  simp only [panSemTotalPrimitiveClause, panSemTotalExprListStep]
+  repeat' (first | rfl | split)
+
+/-- The `Store` clause leaves `code` unchanged. -/
+theorem panSemTotalStoreClause_code
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (address value : Exp (RiscV.Word 64)) :
+    (panSemTotalStoreClause state address value).2.code = state.code := by
+  simp only [panSemTotalStoreClause, panSemTotalExprStep]
+  repeat' (first | rfl | split)
+
+/-- The `Store32` clause leaves `code` unchanged. -/
+theorem panSemTotalStore32Clause_code
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (address value : Exp (RiscV.Word 64)) :
+    (panSemTotalStore32Clause state address value).2.code = state.code := by
+  simp only [panSemTotalStore32Clause, panSemTotalExprStep]
+  repeat' (first | rfl | split)
+
+/-- The `StoreByte` clause leaves `code` unchanged. -/
+theorem panSemTotalStoreByteClause_code
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (address value : Exp (RiscV.Word 64)) :
+    (panSemTotalStoreByteClause state address value).2.code = state.code := by
+  simp only [panSemTotalStoreByteClause, panSemTotalExprStep]
+  repeat' (first | rfl | split)
+
+/-- The `ExtCall` clause leaves `code` unchanged. -/
+theorem panSemTotalExtCallClause_code
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (function : FunName) (configuration configurationLength array arrayLength : Exp (RiscV.Word 64)) :
+    (panSemTotalExtCallClause state function configuration configurationLength array arrayLength).2.code = state.code := by
+  simp only [panSemTotalExtCallClause, panSemTotalExprStep, panSemTotalExtCallStep,
+    panSemTotalMachineReadBytes, panSemTotalMachineWriteBytes, panEmptyLocals]
+  repeat' (first | rfl | split)
+
+/-- The `ShMemLoad` clause leaves `code` unchanged. -/
+theorem panSemTotalShMemLoadClause_code
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (size : OpSize) (kind : VarKind) (name : VarName) (address : Exp (RiscV.Word 64)) :
+    (panSemTotalShMemLoadClause state size kind name address).2.code = state.code := by
+  simp only [panSemTotalShMemLoadClause, panSemTotalExprStep, panSemTotalShMemState,
+    panSemTotalShMemStateBack, panSemTotalShMemLoadResult]
+  repeat' (first | rfl | split)
+
+/-- The `ShMemStore` clause leaves `code` unchanged. -/
+theorem panSemTotalShMemStoreClause_code
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (size : OpSize) (address value : Exp (RiscV.Word 64)) :
+    (panSemTotalShMemStoreClause state size address value).2.code = state.code := by
+  simp only [panSemTotalShMemStoreClause, panSemTotalExprStep, panSemTotalShMemState,
+    panSemTotalShMemStateBack, panSemTotalShMemStoreResult]
+  repeat' (first | rfl | split)
+
+theorem panSemTotalDecBind_code [BEq String]
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (name : VarName) (value : PanValue (RiscV.Word 64)) :
+    (panSemTotalDecBind state name value).code = state.code := by
+  simp [panSemTotalDecBind]
+
+theorem panSemFixClock_code (entryClock : Nat)
+    (state : PanSemState (RiscV.Word 64) (FfiState σ)) :
+    (panSemFixClock entryClock state).code = state.code := rfl
+
+/-- `panEmptyLocals` only clears locals, so it leaves `code` unchanged. -/
+theorem panEmptyLocals_code
+    (state : PanSemState (RiscV.Word 64) (FfiState σ)) :
+    (panEmptyLocals state).code = state.code := rfl
+
+/-- **Frame lemma.** The production total evaluator never writes
+    `code`: its result state stores exactly the entry state's
+    code map.  Proved by well-founded induction over `panSemEvalMeasure`,
+    using the per-clause frame lemmas above for the non-recursive clauses and
+    the induction hypothesis for the recursive `Dec`/`Seq`/`If`/`While`/`Call`/
+    `DecCall` clauses. -/
+theorem panSemTotalEvaluate_code {σ : Type}
+    (primitive : PanPrimitiveHandler (RiscV.Word 64)) :
+    ∀ (prog : Prog (RiscV.Word 64)) (state : PanSemState (RiscV.Word 64) (FfiState σ)),
+      (panSemTotalEvaluate primitive prog state).2.code = state.code := by
+  intro prog state
+  have hwf : WellFounded (@panSemEvalMeasureRel (RiscV.Word 64) (FfiState σ)) :=
+    panSemEvalMeasureRel_wf
+  let motive : PanSemState (RiscV.Word 64) (FfiState σ) × Prog (RiscV.Word 64) → Prop :=
+    fun p => (panSemTotalEvaluate primitive p.2 p.1).2.code = p.1.code
+  have hmain : ∀ p, motive p := by
+    intro p
+    refine WellFounded.induction hwf p ?_
+    intro p ih
+    obtain ⟨state, prog⟩ := p
+    change (panSemTotalEvaluate primitive prog state).2.code = state.code
+    cases prog with
+    | skip => rw [panSemTotalEvaluate]; exact panSemEvaluateClockLeaf_code .skip state
+    | «break» => rw [panSemTotalEvaluate]; exact panSemEvaluateClockLeaf_code .break state
+    | «continue» => rw [panSemTotalEvaluate]; exact panSemEvaluateClockLeaf_code .continue state
+    | tick => rw [panSemTotalEvaluate]; exact panSemEvaluateClockLeaf_code .tick state
+    | assign kind name value => rw [panSemTotalEvaluate]; exact panSemTotalAssignClause_code state kind name value
+    | primitive name operator arguments => rw [panSemTotalEvaluate]; exact panSemTotalPrimitiveClause_code state name operator arguments primitive
+    | store address value => rw [panSemTotalEvaluate]; exact panSemTotalStoreClause_code state address value
+    | store32 address value => rw [panSemTotalEvaluate]; exact panSemTotalStore32Clause_code state address value
+    | storeByte address value => rw [panSemTotalEvaluate]; exact panSemTotalStoreByteClause_code state address value
+    | raise exceptionId expression => rw [panSemTotalEvaluate]; exact panSemTotalRaiseClause_code state exceptionId expression
+    | «return» expression => rw [panSemTotalEvaluate]; exact panSemTotalReturnClause_code state expression
+    | annot tag text => rw [panSemTotalEvaluate]
+    | dec name shape value body =>
+        rw [panSemTotalEvaluate]
+        try dsimp only
+        cases heval : evalPanSemStateExp state value with
+        | none => rfl
+        | some evaluated =>
+            simp only []
+            cases hmatch : panShapeMatches shape (panSemShapeOf evaluated) with
+            | false => rfl
+            | true =>
+                simp only [if_true]
+                try dsimp only
+                rw [ih (panSemTotalDecBind state name evaluated, body)
+                  (panSemEvalMeasureRel_decBody state name shape value body)]
+                rw [panSemTotalDecBind_code]
+    | seq first second =>
+        rw [panSemTotalEvaluate]
+        try dsimp only
+        cases hres : (panSemTotalEvaluate primitive first state).1 with
+        | none =>
+            have ih1 := ih (state, first)
+              (panSemEvalMeasureRel_seq_branch state state first second first (Nat.le_refl _) (Or.inl rfl))
+            have hclk : (panSemFixClock state.clock (panSemTotalEvaluate primitive first state).2).clock ≤ state.clock :=
+              panSemFixClock_clock_le _ _
+            have ih2 := ih (panSemFixClock state.clock (panSemTotalEvaluate primitive first state).2, second)
+              (panSemEvalMeasureRel_seq_branch _ state first second second hclk (Or.inr rfl))
+            rw [ih2, panSemFixClock_code, ih1]
+        | some result =>
+            have ih1 := ih (state, first)
+              (panSemEvalMeasureRel_seq_branch state state first second first (Nat.le_refl _) (Or.inl rfl))
+            rw [panSemFixClock_code, ih1]
+    | ite condition thenBranch elseBranch =>
+        rw [panSemTotalEvaluate]
+        try dsimp only
+        cases hcond : evalPanSemStateExp state condition with
+        | none => rfl
+        | some v =>
+            cases v with
+            | word w =>
+                try dsimp only
+                split
+                · exact ih (state, elseBranch)
+                    (panSemEvalMeasureRel_ite_branch state condition thenBranch elseBranch elseBranch (Or.inr rfl))
+                · exact ih (state, thenBranch)
+                    (panSemEvalMeasureRel_ite_branch state condition thenBranch elseBranch thenBranch (Or.inl rfl))
+            | rStruct fs => rfl
+            | nStruct nm flds => rfl
+    | «while» condition body =>
+        rw [panSemTotalEvaluate]
+        try dsimp only
+        cases hcond : evalPanSemStateExp state condition with
+        | none => rfl
+        | some v =>
+            cases v with
+            | word w =>
+                try dsimp only
+                split
+                · rfl
+                · split
+                  · exact panEmptyLocals_code state
+                  · rename_i hw hclk
+                    try dsimp only
+                    have hdecClock : state.clock - 1 < state.clock := by omega
+                    have ihBody := ih ({ state with clock := state.clock - 1 }, body)
+                      (panSemEvalMeasureRel_of_clock_lt hdecClock)
+                    have hfixLt : (panSemFixClock (state.clock - 1)
+                        (panSemTotalEvaluate primitive body { state with clock := state.clock - 1 }).2).clock < state.clock := by
+                      have := panSemFixClock_clock_le (state.clock - 1)
+                        (panSemTotalEvaluate primitive body { state with clock := state.clock - 1 }).2
+                      omega
+                    have ihLoop := ih ((panSemFixClock (state.clock - 1)
+                        (panSemTotalEvaluate primitive body { state with clock := state.clock - 1 }).2),
+                        .while condition body)
+                      (panSemEvalMeasureRel_of_clock_lt hfixLt)
+                    cases hbody : (panSemTotalEvaluate primitive body { state with clock := state.clock - 1 }).1 with
+                    | none => rw [ihLoop, panSemFixClock_code, ihBody]
+                    | some r =>
+                        cases r with
+                        | «continue» => rw [ihLoop, panSemFixClock_code, ihBody]
+                        | «break» => rw [panSemFixClock_code, ihBody]
+                        | error => rw [panSemFixClock_code, ihBody]
+                        | timeOut => rw [panSemFixClock_code, ihBody]
+                        | returned val => rw [panSemFixClock_code, ihBody]
+                        | exception eid val => rw [panSemFixClock_code, ihBody]
+                        | finalFfi ev => rw [panSemFixClock_code, ihBody]
+            | rStruct fs => rfl
+            | nStruct nm flds => rfl
+    | call info function arguments =>
+        rw [panSemTotalEvaluate]
+        try dsimp only
+        cases hexps : evalPanSemStateExps state arguments with
+        | none => rfl
+        | some values =>
+            simp only []
+            cases hlookup : panSemTotalCodeLookup state function values with
+            | none => rfl
+            | some triple =>
+                obtain ⟨callee, newLocals, returnShape⟩ := triple
+                simp only []
+                split
+                · exact panEmptyLocals_code state
+                · rename_i hclk
+                  have hdecClock : state.clock - 1 < state.clock := by omega
+                  have ihBody := ih ({ state with clock := state.clock - 1, locals := newLocals }, callee)
+                    (panSemEvalMeasureRel_of_clock_lt hdecClock)
+                  have hbodyExc : (panSemTotalEvaluate primitive callee
+                      ({ state with clock := state.clock - 1, locals := newLocals })).2.code =
+                      state.code := by
+                    rw [ihBody]
+                  have hfixedExc : (panSemFixClock (state.clock - 1)
+                      (panSemTotalEvaluate primitive callee
+                        ({ state with clock := state.clock - 1, locals := newLocals })).2).code =
+                      state.code := by
+                    rw [panSemFixClock_code, hbodyExc]
+                  have hfixedClock : (panSemFixClock (state.clock - 1)
+                      (panSemTotalEvaluate primitive callee
+                        ({ state with clock := state.clock - 1, locals := newLocals })).2).clock <
+                      state.clock := by
+                    have hle := panSemFixClock_clock_le (state.clock - 1)
+                      (panSemTotalEvaluate primitive callee
+                        ({ state with clock := state.clock - 1, locals := newLocals })).2
+                    omega
+                  cases hcall : (panSemTotalEvaluate primitive callee
+                      ({ state with clock := state.clock - 1, locals := newLocals })).1 with
+                  | none => try dsimp only; exact hfixedExc
+                  | some r =>
+                      cases r with
+                      | error => try dsimp only; rw [panEmptyLocals_code]; exact hfixedExc
+                      | timeOut => try dsimp only; rw [panEmptyLocals_code]; exact hfixedExc
+                      | finalFfi ev => try dsimp only; rw [panEmptyLocals_code]; exact hfixedExc
+                      | «break» => try dsimp only; exact hfixedExc
+                      | «continue» => try dsimp only; exact hfixedExc
+                      | returned value =>
+                          try dsimp only
+                          split
+                          · try dsimp only
+                            split
+                            · rw [panEmptyLocals_code]; exact hfixedExc
+                            · try dsimp only; exact hfixedExc
+                            · try dsimp only
+                              split
+                              · split
+                                · try dsimp only; exact hfixedExc
+                                · try dsimp only; exact hfixedExc
+                              · try dsimp only; exact hfixedExc
+                          · try dsimp only; exact hfixedExc
+                      | exception exceptionId value =>
+                          try dsimp only
+                          split
+                          · rw [panEmptyLocals_code]; exact hfixedExc
+                          · try dsimp only; exact hfixedExc
+                          · try dsimp only
+                            rename_i handlerId handlerVar handlerProg
+                            split
+                            · split
+                              · split
+                                · try dsimp only
+                                  have ihHandler := ih
+                                    ({ panSemFixClock (state.clock - 1)
+                                        (panSemTotalEvaluate primitive callee
+                                          ({ state with clock := state.clock - 1, locals := newLocals })).2 with
+                                      locals := updatePanValueMap state.locals handlerVar value }, handlerProg)
+                                    (panSemEvalMeasureRel_of_clock_lt (by
+                                      have hle := panSemFixClock_clock_le (state.clock - 1)
+                                        (panSemTotalEvaluate primitive callee
+                                          ({ state with clock := state.clock - 1, locals := newLocals })).2
+                                      omega))
+                                  rw [ihHandler, hfixedExc]
+                                · try dsimp only; exact hfixedExc
+                              · try dsimp only; exact hfixedExc
+                            · rw [panEmptyLocals_code]; exact hfixedExc
+    | decCall name shape function arguments continuation =>
+        rw [panSemTotalEvaluate]
+        try dsimp only
+        cases hexps : evalPanSemStateExps state arguments with
+        | none => rfl
+        | some values =>
+            simp only []
+            cases hlookup : panSemTotalCodeLookup state function values with
+            | none => rfl
+            | some triple =>
+                obtain ⟨callee, newLocals, returnShape⟩ := triple
+                simp only []
+                split
+                · exact panEmptyLocals_code state
+                · rename_i hclk
+                  have hdecClock : state.clock - 1 < state.clock := by omega
+                  have ihBody := ih ({ state with clock := state.clock - 1, locals := newLocals }, callee)
+                    (panSemEvalMeasureRel_of_clock_lt hdecClock)
+                  have hbodyExc : (panSemTotalEvaluate primitive callee
+                      ({ state with clock := state.clock - 1, locals := newLocals })).2.code =
+                      state.code := by
+                    rw [ihBody]
+                  have hfixedExc : (panSemFixClock (state.clock - 1)
+                      (panSemTotalEvaluate primitive callee
+                        ({ state with clock := state.clock - 1, locals := newLocals })).2).code =
+                      state.code := by
+                    rw [panSemFixClock_code, hbodyExc]
+                  have hfixedClock : (panSemFixClock (state.clock - 1)
+                      (panSemTotalEvaluate primitive callee
+                        ({ state with clock := state.clock - 1, locals := newLocals })).2).clock <
+                      state.clock := by
+                    have hle := panSemFixClock_clock_le (state.clock - 1)
+                      (panSemTotalEvaluate primitive callee
+                        ({ state with clock := state.clock - 1, locals := newLocals })).2
+                    omega
+                  cases hcall : (panSemTotalEvaluate primitive callee
+                      ({ state with clock := state.clock - 1, locals := newLocals })).1 with
+                  | none => try dsimp only; exact hfixedExc
+                  | some r =>
+                      cases r with
+                      | error => try dsimp only; rw [panEmptyLocals_code]; exact hfixedExc
+                      | timeOut => try dsimp only; rw [panEmptyLocals_code]; exact hfixedExc
+                      | finalFfi ev => try dsimp only; rw [panEmptyLocals_code]; exact hfixedExc
+                      | «break» => try dsimp only; exact hfixedExc
+                      | «continue» => try dsimp only; exact hfixedExc
+                      | returned value =>
+                          try dsimp only
+                          split
+                          · try dsimp only
+                            have ihCont := ih
+                              ({ panSemFixClock (state.clock - 1)
+                                  (panSemTotalEvaluate primitive callee
+                                    ({ state with clock := state.clock - 1, locals := newLocals })).2 with
+                                locals := updatePanValueMap state.locals name value }, continuation)
+                              (panSemEvalMeasureRel_of_clock_lt (by
+                                have hle := panSemFixClock_clock_le (state.clock - 1)
+                                  (panSemTotalEvaluate primitive callee
+                                    ({ state with clock := state.clock - 1, locals := newLocals })).2
+                                omega))
+                            have hcontExc : (panSemTotalEvaluate primitive continuation
+                                ({ panSemFixClock (state.clock - 1)
+                                    (panSemTotalEvaluate primitive callee
+                                      ({ state with clock := state.clock - 1, locals := newLocals })).2 with
+                                  locals := updatePanValueMap state.locals name value })).2.code =
+                                state.code := by
+                              rw [ihCont]
+                              exact hfixedExc
+                            try dsimp only
+                            rw [hcontExc]
+                          · try dsimp only; exact hfixedExc
+                      | exception eid val =>
+                          try dsimp only; rw [panEmptyLocals_code]; exact hfixedExc
+    | extCall function configuration configurationLength array arrayLength =>
+        rw [panSemTotalEvaluate]
+        exact panSemTotalExtCallClause_code state function configuration configurationLength array arrayLength
+    | shMemLoad size kind name address =>
+        rw [panSemTotalEvaluate]
+        exact panSemTotalShMemLoadClause_code state size kind name address
+    | shMemStore size address value =>
+        rw [panSemTotalEvaluate]
+        exact panSemTotalShMemStoreClause_code state size address value
+  exact hmain (state, prog)
+
+
+end CodeFrame
+
+/-- The frame condition of the sub-program hypotheses of the recursive
+    constructor agreements: the sub-program runs from a state with the entry
+    state's code and exception shapes (the evaluator never writes either, see
+    `panSemTotalEvaluate_code`/`_exceptionShapes`) and a clock no larger than the
+    entry clock.  This is exactly what the well-founded induction of the total
+    agreement can supply. -/
+abbrev PanSemStateFrameAt {σ : Type} (entry state : PanSemState (RiscV.Word 64) (FfiState σ)) :
+    Prop :=
+  state.code = entry.code ∧ state.exceptionShapes = entry.exceptionShapes ∧
+    state.clock ≤ entry.clock
+
 /-- Production/exact agreement for the `If` constructor, given the agreement
     of each branch at the same related state: both evaluators branch on a
     zero/non-zero word condition, and a failed or non-word condition yields
@@ -5035,6 +5449,7 @@ theorem panSemTotalEvaluate_seq_agree {σ : Type}
         (exact' : PanSemStateFiniteExact 64 σ),
         PanSemStateRelExec production' exact'.toExact →
         PanSemStateRelExecRanged production' →
+        PanSemStateFrameAt production production' →
         PanSemHOLResultOptionRel
             (panSemTotalEvaluate primitive (progOfHOL second) production').1
             (evaluateHOLFiniteState exact' second).1 ∧
@@ -5052,15 +5467,20 @@ theorem panSemTotalEvaluate_seq_agree {σ : Type}
     (evaluateHOLFiniteState exact first) hstate
   have hclock : exact.clock = production.clock :=
     hrel.2.2.2.2.2.2.2.2.1
+  have hcodeP := panSemTotalEvaluate_code primitive (progOfHOL first) production
+  have hexnP := panSemTotalEvaluate_exceptionShapes primitive (progOfHOL first) production
   rw [progOfHOL, panSemTotalEvaluate, evaluateHOLFiniteState_seq]
   simp only
-  revert hres hfix hfirstRanged
+  revert hres hfix hfirstRanged hcodeP hexnP
   rw [← hclock]
   generalize panSemTotalEvaluate primitive (progOfHOL first) production = P
   generalize evaluateHOLFiniteState exact first = E
-  intro hranged hres hfix
+  intro hranged hres hfix hcodeP hexnP
   rcases P with ⟨_ | r, p⟩ <;> rcases E with ⟨_ | e, q⟩
-  · exact ihSecond _ _ hfix (hranged.setClock _)
+  · exact ihSecond _ _ hfix (hranged.setClock _) ⟨hcodeP, hexnP, by
+      have := panSemFixClock_clock_le exact.clock p
+      show (panSemFixClock exact.clock p).clock ≤ production.clock
+      omega⟩
   · exact hres.elim
   · exact hres.elim
   · exact ⟨hres, hfix⟩
@@ -5081,6 +5501,7 @@ theorem panSemTotalEvaluate_dec_agree {σ : Type}
         (exact' : PanSemStateFiniteExact 64 σ),
         PanSemStateRelExec production' exact'.toExact →
         PanSemStateRelExecRanged production' →
+        PanSemStateFrameAt production production' →
         PanSemHOLResultOptionRel
             (panSemTotalEvaluate primitive (progOfHOL body) production').1
             (evaluateHOLFiniteState exact' body).1 ∧
@@ -5126,7 +5547,7 @@ theorem panSemTotalEvaluate_dec_agree {σ : Type}
       rw [ofString_toStringOfBytes] at hbodyRel
       have hbodyRanged := PanSemStateRelExecRanged.updateLocals hranged
         (toStringOfBytes name) v hbv
-      obtain ⟨hres, hstate⟩ := ihBody _ _ hbodyRel hbodyRanged
+      obtain ⟨hres, hstate⟩ := ihBody _ _ hbodyRel hbodyRanged ⟨rfl, rfl, Nat.le_refl _⟩
       refine ⟨hres, ?_⟩
       have hold : Option.map panValueToHOL (production.locals (toStringOfBytes name)) =
           exact.locals.lookup name := by
@@ -5159,6 +5580,7 @@ theorem panSemTotalEvaluate_while_agree {σ : Type}
         (exact' : PanSemStateFiniteExact 64 σ),
         PanSemStateRelExec production' exact'.toExact →
         PanSemStateRelExecRanged production' →
+        PanSemStateFrameAt production production' →
         PanSemHOLResultOptionRel
             (panSemTotalEvaluate primitive (progOfHOL body) production').1
             (evaluateHOLFiniteState exact' body).1 ∧
@@ -5172,6 +5594,7 @@ theorem panSemTotalEvaluate_while_agree {σ : Type}
         (exact' : PanSemStateFiniteExact 64 σ),
         PanSemStateRelExec production' exact'.toExact →
         PanSemStateRelExecRanged production' →
+        PanSemStateFrameAt production production' →
         production'.clock < production.clock →
         PanSemHOLResultOptionRel
             (panSemTotalEvaluate primitive (progOfHOL (.while condition body)) production').1
@@ -5213,7 +5636,7 @@ theorem panSemTotalEvaluate_while_agree {σ : Type}
           have hdecRel : PanSemStateRelExec { production with clock := production.clock - 1 }
               (decClockHOLFinite exact).toExact := by
             simpa only [toExact_decClockHOLFinite] using PanSemStateRelExec.decClock hrel
-          obtain ⟨hres, hstate⟩ := ihBody _ _ hdecRel (hranged.setClock _)
+          obtain ⟨hres, hstate⟩ := ihBody _ _ hdecRel (hranged.setClock _) ⟨rfl, rfl, Nat.sub_le _ _⟩
           have hfix := PanSemStateRelExec.fixClockHOLFinite (decClockHOLFinite exact)
             (evaluateHOLFiniteState (decClockHOLFinite exact) body) hstate
           have hdc : (decClockHOLFinite exact).clock = production.clock - 1 := by
@@ -5224,18 +5647,24 @@ theorem panSemTotalEvaluate_while_agree {σ : Type}
             intro s
             have := panSemFixClock_clock_le (production.clock - 1) s
             omega
-          revert hres hfix hbodyRanged
+          have hcodeP := panSemTotalEvaluate_code primitive (progOfHOL body)
+            { production with clock := production.clock - 1 }
+          have hexnP := panSemTotalEvaluate_exceptionShapes primitive (progOfHOL body)
+            { production with clock := production.clock - 1 }
+          revert hres hfix hbodyRanged hcodeP hexnP
           generalize panSemTotalEvaluate primitive (progOfHOL body)
             { production with clock := production.clock - 1 } = P
           generalize evaluateHOLFiniteState (decClockHOLFinite exact) body = E
-          intro hranged' hres hfix
+          intro hranged' hres hfix hcodeP hexnP
           rcases P with ⟨_ | r, p⟩ <;> rcases E with ⟨_ | e, q⟩
-          · exact ihLoop _ _ hfix (hranged'.setClock _) (hlt p)
+          · exact ihLoop _ _ hfix (hranged'.setClock _)
+              ⟨hcodeP, hexnP, Nat.le_of_lt (hlt p)⟩ (hlt p)
           · exact hres.elim
           · exact hres.elim
           · cases r <;> cases e <;> simp only [PanSemHOLResultOptionRel, PanSemHOLResultRel] at hres <;>
               first
-              | exact ihLoop _ _ hfix (hranged'.setClock _) (hlt p)
+              | exact ihLoop _ _ hfix (hranged'.setClock _)
+                  ⟨hcodeP, hexnP, Nat.le_of_lt (hlt p)⟩ (hlt p)
               | exact ⟨trivial, hfix⟩
               | exact ⟨hres, hfix⟩
 
