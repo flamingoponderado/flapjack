@@ -30,6 +30,7 @@ import Flapjack.Pancake.CrepToLoop.Proofs.SurvivesMapiAssign
 import Flapjack.Pancake.CrepToLoop.Proofs.CompExpTmpBound
 import Flapjack.Pancake.CrepToLoop.Proofs.CompExpLeTmpDomain
 import Flapjack.Pancake.CrepToLoop.Proofs.LoopEvaluateHelpers
+import Flapjack.Pancake.CrepToLoop.Proofs.CompExpSyntaxHelpers
 import Flapjack.Pancake.CrepToLoop.StateRel
 import Flapjack.Pancake.LoopLang.AssignedVars
 import Flapjack.Pancake.Semantics.LoopProps.AssignedVars
