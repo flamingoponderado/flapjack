@@ -19487,5 +19487,17 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.17): HOL comp_syn_ok_lookup_locals_eq (loopPropsScript.sml:907-912) `!p s res t l n. evaluate (p,s) = (res,t) /\\ res <> SOME TimeOut /\\ comp_syntax_ok l p /\\ n ∈ domain l /\\ ~MEM n (assigned_vars p) ==> lookup n t.locals = lookup n s.locals`; same variables, five-conjunct premise and conclusion. Over the tagged exact evaluate, compSyntaxOkHOL (HOL bool as = true) and holLoopAssignedVars; n ∈ domain l as sptMem. fmap_as_finite_support [globals]: quantifies over LoopSemStateFiniteExact whose HOL |-> globals is the canonical HolFiniteMapExact carrier; same-module re-exported canonical witness."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopPropsScript.sml",
+    "hol_name": "nested_seq_pure_evaluation",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopProps/CompSyntaxOkEvalExact.lean",
+    "lean_name": "nested_seq_pure_evaluation",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.18): HOL nested_seq_pure_evaluation (loopPropsScript.sml:1103-1113) `!p q t r st l m e v ck ck'. evaluate (nested_seq p,t with clock := ck + t.clock) = (NONE,st) /\\ evaluate (nested_seq q,st with clock := ck' + st.clock) = (NONE,r) /\\ comp_syntax_ok l (nested_seq p) /\\ comp_syntax_ok (cut_sets l (nested_seq p)) (nested_seq q) /\\ (!n. MEM n (assigned_vars (nested_seq p)) ==> n < m) /\\ (!n. MEM n (assigned_vars (nested_seq q)) ==> m <= n) /\\ (!n. MEM n (locals_touched e) ==> n < m /\\ n ∈ domain (cut_sets l (nested_seq p))) /\\ eval st e = SOME v ==> eval r e = SOME v`; Lean binds the same eleven variables in HOL order with the same eight-conjunct premise and conclusion over the tagged exact evaluate/eval, loopNestedSeqHOL, compSyntaxOkHOL (= true), cutSetsHOL, holLoopAssignedVars, holLoopLocalsTouched, sptMem. Proof follows HOL: comp_syn_ok_upd_local_clock + comp_syn_ok_lookup_locals_eq + locals_touched_eq_eval_eq. fmap_as_finite_support [globals]: LoopSemStateFiniteExact carrier; same-module re-exported canonical witness."
   }
 ]
