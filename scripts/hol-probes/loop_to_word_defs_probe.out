@@ -1,0 +1,11 @@
+lt_find_var_hit=9
+lt_find_var_miss=0
+lt_find_reg_imm_imm=Imm 5w
+lt_find_reg_imm_reg=Reg 9
+lt_to_num_set_lookup0=NONE
+lt_to_num_set_lookup2=SOME ()
+lt_to_num_set_lookup3=SOME ()
+lt_from_num_set=[3; 1]
+lt_mk_new_cutset_lookup0=SOME ()
+lt_mk_new_cutset_lookup5=NONE
+lt_mk_new_cutset_absent=NONE

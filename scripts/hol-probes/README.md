@@ -38,6 +38,11 @@ respectively
 additionally probes `pan_op_def` at lines 191--193.
 `Flapjack.Test.LoopSetVarParity` probes `set_var_def` at
 `cakeml/pancake/semantics/loopSemScript.sml:108-110`.
+`loop_to_word_defs_probe.out` records direct HOL EVAL rows for the exact
+`spt`-carrier loop_to_word context definitions `find_var_def`,
+`find_reg_imm_def`, `toNumSet_def`, `fromNumSet_def`, and
+`mk_new_cutset_def` at `cakeml/pancake/loop_to_wordScript.sml:10-53`; the
+kernel-checked Lean replay is `Flapjack.Test.LoopToWordExactParity`.
 `loop_live_comp_probe.out` records direct HOL EVAL rows for
 `loop_live$comp` at `cakeml/pancake/loop_liveScript.sml:217`; the Lean replay
 is `Flapjack.Test.LoopLiveCompParity`. `loop_live_optimise_probe.out` records

@@ -202,6 +202,11 @@ run_probe pan_structs_dropwhile_afindi_probeScript.sml pan_structs_dropwhile_afi
   "$cake_dir/pancake/proofs"
 run_probe loop_to_word_probeScript.sml loop_to_word_probe.out \
   find_var_empty find_reg_imm_ctxt "$cake_dir/pancake/loop_to_wordScript.sml"
+run_probe loop_to_word_defs_probeScript.sml loop_to_word_defs_probe.out \
+  lt_find_var_hit lt_find_var_miss lt_find_reg_imm_imm lt_find_reg_imm_reg \
+  lt_to_num_set_lookup0 lt_to_num_set_lookup2 lt_to_num_set_lookup3 \
+  lt_from_num_set lt_mk_new_cutset_lookup0 lt_mk_new_cutset_lookup5 \
+  lt_mk_new_cutset_absent "$cake_dir/pancake/loop_to_wordScript.sml"
 # The get_stack_only probe observes the allocator driver's stack-only
 # analysis over wordLang programs (backend word_alloc).
 run_probe get_stack_only_probeScript.sml get_stack_only_probe.out \
