@@ -231,4 +231,125 @@ theorem panSemTotalEvaluate_annot_agree {σ : Type}
   simp only [evaluateHOLFiniteState_annot]
   exact ⟨trivial, hrel⟩
 
+/-! ## Clock and FFI post-state preservation
+
+The agreement proofs for the recursive clauses need `PanSemStateRelExec` to
+survive the production state updates they perform.  `fixClock` covers the
+`panSemFixClock` clamp applied after a recursive call, and the `ffi`-field
+lemmas cover the `ExtCall`/shared-memory FFI branches: `setFfi` is the generic
+`ffi` replacement, `ffiReturned` consumes a `FfiResultRel` whose production side
+is `FfiResult.returned` and exact side is `HolFfiResult.ret` (the shape every
+`Flapjack/FfiBridge.lean` `..._success_bridge`/`..._oracleFinal`/`..._lengthFailure`
+bridge and the identity `callFfi_empty_extCall_bridge` produce), and `ffiFinal`
+records that a finalising result installs no new FFI state.  All are untagged
+Flapjack-specific bridge infrastructure. -/
+
+/-- `PanSemStateRelExec` is preserved by the production fix-clock
+    `panSemFixClock` (`Total.lean:453`), which clamps the returned clock with
+    `min`, and by clamping the exact clock by the same `min`.  Only the clock
+    conjunct changes; every other field is carried over unchanged. -/
+theorem PanSemStateRelExec.fixClock {σ : Type}
+    {production : PanSemState (RiscV.Word 64) (FfiState σ)}
+    {exact : PanSemStateExact 64 σ}
+    (entryClock : Nat) (h : PanSemStateRelExec production exact) :
+    PanSemStateRelExec (panSemFixClock entryClock production)
+      { exact with clock := min entryClock exact.clock } := by
+  obtain ⟨hl, hg, hs, hc, he, hm, hmd, hsm, hck, hbe, hffi, hb, ht⟩ := h
+  refine ⟨hl, hg, hs, hc, he, hm, hmd, hsm, ?_, hbe, hffi, hb, ht⟩
+  simp only [panSemFixClock]
+  show min entryClock exact.clock = min entryClock production.clock
+  rw [hck]
+
+/-- Installing new FFI states on both sides preserves `PanSemStateRelExec`
+    whenever they are related by `FfiStateRel`.  Every non-`ffi` field of the
+    premise is carried over, so only the `ffi` conjunct is re-established. -/
+theorem PanSemStateRelExec.setFfi {σ : Type}
+    {production : PanSemState (RiscV.Word 64) (FfiState σ)}
+    {exact : PanSemStateExact 64 σ}
+    (h : PanSemStateRelExec production exact)
+    {newProduction : FfiState σ} {newExact : HolFfiState σ}
+    (hffi : FfiStateRel newProduction newExact) :
+    PanSemStateRelExec { production with ffi := newProduction }
+      { exact with ffi := newExact } := by
+  obtain ⟨hl, hg, hs, hc, he, hm, hmd, hsm, hck, hbe, _, hb, ht⟩ := h
+  exact ⟨hl, hg, hs, hc, he, hm, hmd, hsm, hck, hbe, hffi, hb, ht⟩
+
+/-- The returned/`ret` FFI branch.  Whenever a production `FfiResult.returned`
+    is related to an exact `HolFfiResult.ret` by `FfiResultRel`, the production
+    state installs the returned production FFI state, the exact state installs
+    the returned exact FFI state, and `PanSemStateRelExec` is preserved.  The
+    `FfiStateRel` of the returned states is the first component of the
+    `FfiResultRel`, so this covers the external-call, shared-memory and
+    empty-extCall successes without re-proving any byte or event equality. -/
+theorem PanSemStateRelExec.ffiReturned {σ : Type}
+    {production : PanSemState (RiscV.Word 64) (FfiState σ)}
+    {exact : PanSemStateExact 64 σ}
+    (h : PanSemStateRelExec production exact)
+    {prodResult : FfiResult σ} {exactResult : HolFfiResult σ}
+    (hbridge : FfiResultRel prodResult exactResult)
+    {newProduction : FfiState σ} {newExact : HolFfiState σ}
+    {prodBytes : List UInt8} {exactBytes : List (BitVec 8)}
+    (hprod : prodResult = .returned newProduction prodBytes)
+    (hexact : exactResult = .ret newExact exactBytes) :
+    PanSemStateRelExec { production with ffi := newProduction }
+      { exact with ffi := newExact } := by
+  rw [hprod, hexact] at hbridge
+  exact PanSemStateRelExec.setFfi h hbridge.1
+
+/-- The returned/`ret` branch specialised to the executed `callFfi` against the
+    exact `callFFIHOL`, so a `Flapjack/FfiBridge.lean` bridge
+    (`callFfi_extCall_success_bridge`, `callFfi_sharedMem_success_bridge`,
+    `callFfi_empty_extCall_bridge`, …) plugs in directly as `hbridge`. -/
+theorem PanSemStateRelExec.callFfiReturned {σ : Type}
+    {production : PanSemState (RiscV.Word 64) (FfiState σ)}
+    {exact : PanSemStateExact 64 σ}
+    (h : PanSemStateRelExec production exact)
+    (name : FfiName) (holName : HolFfiName)
+    (configuration bytes : List UInt8)
+    (holConfiguration holBytes : List (BitVec 8))
+    {newProduction : FfiState σ} {newExact : HolFfiState σ}
+    {prodBytes : List UInt8} {exactBytes : List (BitVec 8)}
+    (hbridge : FfiResultRel
+      (callFfi production.ffi name configuration bytes)
+      (callFFIHOL exact.ffi holName holConfiguration holBytes))
+    (hprod : callFfi production.ffi name configuration bytes =
+      .returned newProduction prodBytes)
+    (hexact : callFFIHOL exact.ffi holName holConfiguration holBytes =
+      .ret newExact exactBytes) :
+    PanSemStateRelExec { production with ffi := newProduction }
+      { exact with ffi := newExact } :=
+  PanSemStateRelExec.ffiReturned h hbridge hprod hexact
+
+/-- The finalising FFI branch (oracle finalisation or returned-length failure).
+    A finalising `callFfi`/`callFFIHOL` installs no new FFI state, so both `ffi`
+    fields stay as they were and `PanSemStateRelExec` is preserved.  The
+    `FfiResultRel` `.final`/`.final` port is exactly the `FfiFinalEventRel` of
+    the emitted final event and constrains no state. -/
+theorem PanSemStateRelExec.ffiFinal {σ : Type}
+    {production : PanSemState (RiscV.Word 64) (FfiState σ)}
+    {exact : PanSemStateExact 64 σ}
+    {event : FfiFinalEvent} {holEvent : HolFinalEvent}
+    (h : PanSemStateRelExec production exact)
+    (hbridge : FfiResultRel (.final event : FfiResult σ)
+      (.final holEvent : HolFfiResult σ)) :
+    FfiFinalEventRel event holEvent ∧ PanSemStateRelExec production exact :=
+  ⟨hbridge, h⟩
+
+/-- The identity empty-`extCall` branch of
+    `callFfi_empty_extCall_bridge`: `callFfi` and `callFFIHOL` both return their
+    FFI state unchanged, so the post-state relation is the pre-state relation.
+    This is the branch where the appended event list is empty on both sides. -/
+theorem PanSemStateRelExec.callFfi_empty_extCall {σ : Type}
+    {production : PanSemState (RiscV.Word 64) (FfiState σ)}
+    {exact : PanSemStateExact 64 σ}
+    (h : PanSemStateRelExec production exact)
+    (configuration bytes : List UInt8) :
+    FfiResultRel (callFfi production.ffi (.extCall "") configuration bytes)
+      (callFFIHOL exact.ffi (.extCall (.implode []))
+        (configuration.map byteToBits) (bytes.map byteToBits)) ∧
+      PanSemStateRelExec production exact := by
+  obtain ⟨hl, hg, hs, hc, he, hm, hmd, hsm, hck, hbe, hffi, hb, ht⟩ := h
+  exact ⟨callFfi_empty_extCall_bridge production.ffi exact.ffi hffi configuration bytes,
+    ⟨hl, hg, hs, hc, he, hm, hmd, hsm, hck, hbe, hffi, hb, ht⟩⟩
+
 end Flapjack
