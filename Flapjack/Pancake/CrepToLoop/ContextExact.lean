@@ -5,7 +5,6 @@ import Flapjack.Pancake.CrepArith
 import Flapjack.Pancake.LoopLive
 import Flapjack.Basis.Pure.MlString
 import Flapjack.Compiler.Encoders.Asm
-import Flapjack.Pancake.LoopLive
 
 /-!
 Exact finite-map carrier and context helpers for `crep_to_loopScript.sml`.
@@ -67,6 +66,67 @@ theorem holFmapAsFiniteSupportWitness (context : CrepToLoopContextExact) :
 
 end CrepToLoopContextExact
 
+private theorem lookupNatInfo_support_of_ne_none {name : Nat}
+    (entries : NatInfoMap Nat) (hlookup : lookupNatInfo name entries ≠ none) :
+    name ∈ entries.map Prod.fst := by
+  induction entries with
+  | nil => simp [lookupNatInfo] at hlookup
+  | cons entry rest ih =>
+      rcases entry with ⟨candidate, value⟩
+      simp only [lookupNatInfo] at hlookup
+      by_cases heq : candidate == name
+      · have hname : candidate = name := beq_iff_eq.mp heq
+        simp [hname]
+      · simp only [if_neg heq] at hlookup
+        have hmem := ih hlookup
+        simp [hmem]
+
+private theorem lookupInfo_support_of_ne_none {κ β : Type} [BEq κ]
+    [LawfulBEq κ] (name : κ) (entries : List (κ × β))
+    (hlookup : lookupInfo name entries ≠ none) :
+    name ∈ entries.map Prod.fst := by
+  induction entries with
+  | nil => simp [lookupInfo] at hlookup
+  | cons entry rest ih =>
+      rcases entry with ⟨candidate, value⟩
+      simp only [lookupInfo] at hlookup
+      by_cases heq : candidate == name
+      · have hname : candidate = name := beq_iff_eq.mp heq
+        simp [hname]
+      · simp only [if_neg heq] at hlookup
+        have hmem := ih hlookup
+        simp [hmem]
+
+/-- Bridge the executed RISC-V `LoopContext` maps into the exact finite-support
+HOL context. The lookups preserve the production first-match behavior. Function
+keys are decoded from exact `MlString` names only at the lookup boundary; the
+inverse production-name direction remains restricted to `CrepNameRanged` on
+the program's names. -/
+def productionLoopContextToExact (context : LoopContext α) :
+    CrepToLoopContextExact where
+  vars := {
+    lookup := fun name => lookupNatInfo name context.vars
+    finiteSupport := by
+      refine ⟨context.vars.map Prod.fst, ?_⟩
+      intro name hlookup
+      exact lookupNatInfo_support_of_ne_none context.vars hlookup
+  }
+  funcs := {
+    lookup := fun name => lookupInfo (toStringOfBytes name) context.functions
+    finiteSupport := by
+      refine ⟨context.functions.map (fun entry => ofString entry.1), ?_⟩
+      intro name hlookup
+      have hdecoded := lookupInfo_support_of_ne_none (toStringOfBytes name)
+        context.functions hlookup
+      rcases List.mem_map.mp hdecoded with ⟨entry, hentry, hentryName⟩
+      apply List.mem_map.mpr
+      refine ⟨entry, hentry, ?_⟩
+      rw [hentryName]
+      exact ofString_toStringOfBytes name
+  }
+  vmax := context.maxVar
+  target := .riscv
+
 private def CrepToLoopFiniteMap.toBroadlookup (map : HolFiniteMapExact α β) :
     α → Option β := map.lookup
 
@@ -107,6 +167,19 @@ def findLabExact (context : CrepToLoopContextExact) (function : MlString) : Nat 
   match context.funcs.lookup function with
   | some (label, _) => label
   | none => 0
+
+/-- Function-label lookup is preserved for production names in HOL's byte
+range. No claim is made for arbitrary Lean `String` names, because
+`MlString.ofString` truncates code points outside that range. -/
+theorem findLabExact_productionLoopContextToExact
+    (context : LoopContext α) (name : FunName)
+    (hname : CrepNameRanged name) :
+    findLabExact (productionLoopContextToExact context) (ofString name) =
+      (match lookupInfo name context.functions with
+       | some (label, _) => label
+       | none => 0) := by
+  simp only [findLabExact, productionLoopContextToExact]
+  rw [toStringOfBytes_ofString_of_bytes name hname]
 
 /-- Exact HOL `compile_crepop_def`, including the ARMv7 two-result case. -/
 @[hol "cakeml/pancake/crep_to_loopScript.sml" "compile_crepop_def"
