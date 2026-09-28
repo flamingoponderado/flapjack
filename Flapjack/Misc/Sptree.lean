@@ -277,6 +277,56 @@ def sptSize {α : Type} : Spt α → Nat
 @[simp] theorem sptSize_bs {α : Type} (left : Spt α) (value : α) (right : Spt α) :
     sptSize (.bs left value right) = sptSize left + sptSize right + 1 := rfl
 
+/-- HOL `loop_liveScript.sml:27-33 size_mk_BN`: collapsing via `mk_BN` preserves
+the sptree size.  Untagged Flapjack infrastructure (HOL source outside
+`cakeml/`). -/
+@[simp] theorem sptSize_mkBN {α : Type} (left right : Spt α) :
+    sptSize (sptMkBN left right) = sptSize left + sptSize right := by
+  cases left <;> cases right <;> simp [sptMkBN, sptSize]
+
+/-- HOL `loop_liveScript.sml:34-38 size_mk_BS`: collapsing via `mk_BS` preserves
+the sptree size.  Untagged Flapjack infrastructure. -/
+@[simp] theorem sptSize_mkBS {α : Type} (left : Spt α) (value : α) (right : Spt α) :
+    sptSize (sptMkBS left value right) = sptSize left + sptSize right + 1 := by
+  cases left <;> cases right <;> simp [sptMkBS, sptSize]
+
+/-- HOL `loop_liveScript.sml:40-49 size_inter`: the intersection is no larger
+than its left operand.  This is the measure lemma `fixedpoint` termination
+needs.  Untagged Flapjack infrastructure. -/
+theorem sptSize_inter_le {α β : Type} (left : Spt α) (right : Spt β) :
+    sptSize (sptInter left right) <= sptSize left := by
+  induction left generalizing right with
+  | ln => simp [sptInter]
+  | ls value => cases right <;> simp [sptInter]
+  | bn first second ihFirst ihSecond =>
+      cases right with
+      | ln => simp [sptInter]
+      | ls value => simp [sptInter]
+      | bn f s =>
+          simp only [sptInter, sptSize_bn, sptSize_mkBN]
+          have h1 := ihFirst f
+          have h2 := ihSecond s
+          omega
+      | bs f value s =>
+          simp only [sptInter, sptSize_bn, sptSize_mkBN]
+          have h1 := ihFirst f
+          have h2 := ihSecond s
+          omega
+  | bs first value second ihFirst ihSecond =>
+      cases right with
+      | ln => simp [sptInter]
+      | ls v => simp [sptInter]
+      | bn f s =>
+          simp only [sptInter, sptSize_bs, sptSize_mkBN]
+          have h1 := ihFirst f
+          have h2 := ihSecond s
+          omega
+      | bs f v s =>
+          simp only [sptInter, sptSize_bs, sptSize_mkBS]
+          have h1 := ihFirst f
+          have h2 := ihSecond s
+          omega
+
 /-- Rebuild an spt tree with the root value replaced by `v` (keying at index
 `sptInsert 0`). This is the key-`0` insertion pattern of HOL sptree `insert`:
 inserting key `0` writes at the root of whatever tree it is given. Flapjack
