@@ -180,6 +180,7 @@ import Flapjack.Pancake.CrepLang.Prog
 import Flapjack.Pancake.Semantics.CrepProps
 import Flapjack.Pancake.Semantics.CrepProps.MemLoadFlatRel
 import Flapjack.Pancake.Semantics.CrepProps.EvaluateAddClock
+import Flapjack.Pancake.Semantics.CrepProps.EvaluateAddClockIoEventsMono
 import Flapjack.Pancake.WordConvs
 import Flapjack.Pancake.PanToCrep
 import Flapjack.CrepeCompileExpVariables

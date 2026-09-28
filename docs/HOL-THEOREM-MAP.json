@@ -15728,6 +15728,21 @@
     "reviewer": "flapjack-ds5 (source comparison, 2026-09-28; bead flapjack-2de.2; cakeml/pancake/semantics/crepPropsScript.sml:886 evaluate_add_clock_eq): HOL `!p t res st ck. evaluate (p,t) = (res,st) /\\ res <> SOME TimeOut ==> evaluate (p,t with clock := t.clock + ck) = (res,st with clock := st.clock + ck)` is ported verbatim over the exact carrier: hypothesis `h : evalCrepSemHOLProgExact t p = (res, st)`, side condition `hnt : res ≠ some CrepResultHOLExact.timeOut`, conclusion `evalCrepSemHOLProgExact { t with clock := t.clock + ck } p = (res, { st with clock := st.clock + ck })`. No extra premise, no weakened conclusion. Proved by the tagged 19-clause induction principle evalCrepSemHOLProgExact_induct (crepSemScript.sml:440) mirroring HOL's `recInduct evaluate_ind`, with clock-commutation lemmas for the clause steps and the expression evaluator. Representation recorded by the qualifiers: CrepSemHOLState locals/globals/code are the canonical HolFiniteMapExact translation (same-module witness CrepPropsEvaluateAddClockFiniteSupport.holFmapAsFiniteSupportWitness), HOL's type-indexed word is BitVec width with [NeZero width], and 'ffi is a host σ : Type."
   },
   {
+    "lean_path": "Flapjack/Pancake/Semantics/CrepProps/EvaluateAddClockIoEventsMono.lean",
+    "lean_name": "crepPropsEvaluateAddClockIoEventsMono",
+    "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
+    "hol_name": "evaluate_add_clock_io_events_mono",
+    "hol_line": 1020,
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-28; bead flapjack-2de.3; cakeml/pancake/semantics/crepPropsScript.sml:1020 evaluate_add_clock_io_events_mono): HOL `!exps s extra. (SND(evaluate (exps,s))).ffi.io_events \u227c (SND(evaluate (exps,s with clock := s.clock + extra))).ffi.io_events` is ported verbatim over the exact evaluator: `(evalCrepSemHOLProgExact state program).2.ffi.ioEvents <+: (evalCrepSemHOLProgExact (crepStateAddClock state extra) program).2.ffi.ioEvents`, with HOL IS_PREFIX rendered as List.IsPrefix and `s with clock := s.clock + extra` as `crepStateAddClock state extra`. No extra premise, no weakened conclusion. Proved from the untagged combined induction `evalCrepSemHOLProgExact_addClock_mono_aux` in the same module (whose second conjunct is exactly `evalCrepSemHOLProgExact_add_clock_eq` from the sibling module CrepProps/EvaluateAddClock.lean); non-timeout clauses use the clock-shift equality, timeout clauses compose the IH prefix with the single-run prefix `evalCrepSemHOLProgExact_ioEvents_prefix` (crepPropsScript.sml:957) via List.IsPrefix.trans. Representation recorded by the qualifiers: CrepSemHOLState locals/globals/code are the canonical HolFiniteMapExact translation (same-module witness CrepPropsEvaluateAddClockIoEventsMonoFiniteSupport.holFmapAsFiniteSupportWitness), HOL's type-indexed word is BitVec width with [NeZero width], and 'ffi is a host \u03c3 : Type."
+  },
+  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Semantics/CrepProps/MemLoadFlatRel.lean",
