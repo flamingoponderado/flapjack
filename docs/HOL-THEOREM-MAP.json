@@ -15347,6 +15347,17 @@
     "hol_name": "evaluate_invariants",
     "hol_line": 1150,
     "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
+    "lean_name": "evaluateInvariantsIfCaseHOLFinite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-28; bead flapjack-4ac.4.61) against panPropsScript.sml:1150-1158 and panSemScript.sml:621-626. This is the genuine If condition/then/else case from recInduct evaluate_ind. It keeps the evaluator pair premise, both recursive branch induction hypotheses, and all eight conclusions, with no other preconditions. evaluate_def evaluates the condition once; a word selects then for nonzero and else for zero; all other values return Error with the input state. The Lean case uses the canonical exact finite-state evaluator on PanPropsEvalStateFiniteExact's checked finite-support carrier and indexed words. Other recursive cases and assembly remain open."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "evaluate_invariants",
+    "hol_line": 1150,
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
     "lean_name": "evaluateInvariantsStore32CaseHOLFinite",
     "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
     "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
