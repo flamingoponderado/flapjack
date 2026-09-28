@@ -19463,5 +19463,29 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.32.3): HOL compile_exps_out_rel (crep_to_loopProofScript.sml:590) is `compile_exp_out_rel_cases |> CONJUNCT2`; Lean is that conjunct. Over the tagged exact compileExpHOLExact/compileExpsHOLExact, compSyntaxOkHOL (HOL bool as = true), cutSetsHOL and loopNestedSeqHOL; nl = cut_sets l (nested_seq p) is the structural NumSet equality (proved with sptree insert idempotence/commutation). fmap_as_finite_support [vars, funcs]: exact context carrier; same-module re-exported canonical witness. (words_as_type_indexed_bitvec): width-indexed Crep/Loop carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopPropsScript.sml",
+    "hol_name": "comp_syn_ok_upd_local_clock",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopProps/CompSyntaxOkEvalExact.lean",
+    "lean_name": "comp_syn_ok_upd_local_clock",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.17): HOL comp_syn_ok_upd_local_clock (loopPropsScript.sml:851-855) `!p s res t l. evaluate (p,s) = (res,t) /\\ comp_syntax_ok l p ==> t = s with <|locals := t.locals; clock := t.clock|>`; same variables, premise and conclusion (structure update on the exact state). Proved by well-founded induction on HOL's (clock, prog size) measure; non-comp_syntax_ok constructors are refuted by the premise. Over the tagged exact evaluate, compSyntaxOkHOL (HOL bool as = true) and holLoopAssignedVars; n ∈ domain l as sptMem. fmap_as_finite_support [globals]: quantifies over LoopSemStateFiniteExact whose HOL |-> globals is the canonical HolFiniteMapExact carrier; same-module re-exported canonical witness."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopPropsScript.sml",
+    "hol_name": "comp_syn_ok_lookup_locals_eq",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopProps/CompSyntaxOkEvalExact.lean",
+    "lean_name": "comp_syn_ok_lookup_locals_eq",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.17): HOL comp_syn_ok_lookup_locals_eq (loopPropsScript.sml:907-912) `!p s res t l n. evaluate (p,s) = (res,t) /\\ res <> SOME TimeOut /\\ comp_syntax_ok l p /\\ n ∈ domain l /\\ ~MEM n (assigned_vars p) ==> lookup n t.locals = lookup n s.locals`; same variables, five-conjunct premise and conclusion. Over the tagged exact evaluate, compSyntaxOkHOL (HOL bool as = true) and holLoopAssignedVars; n ∈ domain l as sptMem. fmap_as_finite_support [globals]: quantifies over LoopSemStateFiniteExact whose HOL |-> globals is the canonical HolFiniteMapExact carrier; same-module re-exported canonical witness."
   }
 ]
