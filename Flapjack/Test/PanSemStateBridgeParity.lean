@@ -15,6 +15,7 @@ namespace Flapjack.Test.PanSemStateBridgeParity
 
 open Flapjack
 open Flapjack.Pancake.PanLang
+open Flapjack.PanSemStateFiniteExact
 
 abbrev W := BitVec 64
 
@@ -797,6 +798,130 @@ example : ¬ PanSemStateRelExecRanged
   extCallClause_not_ranged_of_global_nonRanged badGlobalState ""
     (.const (0 : W)) (.const (0 : W)) (.const (0 : W)) (.const (0 : W))
     "g" badFieldValue (by simp [badGlobalState]) badFieldValue_not_ranged
+
+/-! ## Local/global value-map and result-variable update preservation (bead
+    `flapjack-pxn.18.4.3.77.2.13.1`)
+
+Kernel-checked guards for the untagged preservation lemmas added to
+`TotalEvalBridge.lean`: a production local/global `updatePanValueMap` write and a
+`resVar` restore are paired with the exact `setVarHOLFinite`/`setGlobalHOLFinite`
+and `HolFiniteMapExact.resVarEq` updates, with the lookup at the written key
+receiving the related value and other keys unchanged. -/
+
+/-- The local already exists on the exact fixture, so the assignment-validity
+    case is realizable. -/
+def bridgeAssignExactState : PanSemStateFiniteExact 64 Unit :=
+  { bridgeExecExactState with
+    locals := (HolFiniteMapExact.empty.update
+      (Flapjack.Basis.Pure.MlString.ofString "x", panValueToHOL (.word (7 : W)))) }
+
+/-- Production fixture whose local `"x"` holds the word `7`. -/
+def bridgeAssignProdState : PanSemState W (FfiState Unit) :=
+  { bridgeExecProdState with
+    locals := updatePanValueMap bridgeExecProdState.locals "x" (.word (7 : W)) }
+
+/-- The assignment fixture satisfies the executed-carrier relation. -/
+theorem bridgeAssignStateRelExec :
+    PanSemStateRelExec bridgeAssignProdState bridgeAssignExactState.toExact :=
+  PanSemStateRelExec.updateLocals bridgeStateRelExec "x" (by decide) (.word (7 : W))
+
+/-- Pointwise local agreement at the written key: the exact lookup is the encoded
+    written value. -/
+example :
+    Option.map panValueToHOL
+        (updatePanValueMap bridgeExecProdState.locals "x" recordValue "x") =
+      (bridgeExecExactState.locals.update
+        (Flapjack.Basis.Pure.MlString.ofString "x",
+          panValueToHOL recordValue)).lookup
+        (Flapjack.Basis.Pure.MlString.ofString "x") :=
+  updatePanValueMap_agree bridgeExecProdState.locals bridgeExecExactState.locals
+    bridgeStateRelExec.1 "x" (by decide) recordValue "x" (by decide)
+
+/-- Pointwise local agreement at an unrelated key keeps the old related value. -/
+example :
+    Option.map panValueToHOL
+        (updatePanValueMap bridgeExecProdState.locals "x" recordValue "y") =
+      (bridgeExecExactState.locals.update
+        (Flapjack.Basis.Pure.MlString.ofString "x",
+          panValueToHOL recordValue)).lookup
+        (Flapjack.Basis.Pure.MlString.ofString "y") :=
+  updatePanValueMap_agree bridgeExecProdState.locals bridgeExecExactState.locals
+    bridgeStateRelExec.1 "x" (by decide) recordValue "y" (by decide)
+
+/-- A local assignment preserves the executed-carrier relation on the fixture. -/
+example : PanSemStateRelExec
+    { bridgeExecProdState with
+      locals := updatePanValueMap bridgeExecProdState.locals "x" recordValue }
+    (setVarHOLFinite (Flapjack.Basis.Pure.MlString.ofString "x")
+      (panValueToHOL recordValue) bridgeExecExactState).toExact :=
+  PanSemStateRelExec.updateLocals bridgeStateRelExec "x" (by decide) recordValue
+
+/-- A global assignment preserves the executed-carrier relation on the fixture. -/
+example : PanSemStateRelExec
+    { bridgeExecProdState with
+      globals := updatePanValueMap bridgeExecProdState.globals "g" recordValue }
+    (setGlobalHOLFinite (Flapjack.Basis.Pure.MlString.ofString "g")
+      (panValueToHOL recordValue) bridgeExecExactState).toExact :=
+  PanSemStateRelExec.updateGlobals bridgeStateRelExec "g" (by decide) recordValue
+
+/-- A `resVar` overwrite restore preserves the relation (the `some` branch). -/
+example : PanSemStateRelExec
+    { bridgeExecProdState with
+      locals := resVar bridgeExecProdState.locals ("x", some recordValue) }
+    ({ bridgeExecExactState with
+       locals := HolFiniteMapExact.resVarEq bridgeExecExactState.locals
+         (Flapjack.Basis.Pure.MlString.ofString "x",
+           some (panValueToHOL recordValue)) }).toExact :=
+  PanSemStateRelExec.resVarLocals bridgeStateRelExec "x" (by decide) (some recordValue)
+
+/-- A `resVar` delete restore preserves the relation (the `none` branch). -/
+example : PanSemStateRelExec
+    { bridgeExecProdState with
+      locals := resVar bridgeExecProdState.locals ("x", none) }
+    ({ bridgeExecExactState with
+       locals := HolFiniteMapExact.resVarEq bridgeExecExactState.locals
+         (Flapjack.Basis.Pure.MlString.ofString "x", none) }).toExact :=
+  PanSemStateRelExec.resVarLocals bridgeStateRelExec "x" (by decide) none
+
+/-- The assignment fixture is byte-ranged (it stores only the word `7`). -/
+theorem bridgeAssignProdState_ranged :
+    PanSemStateRelExecRanged bridgeAssignProdState := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro name value h
+    simp only [bridgeAssignProdState, bridgeExecProdState, updatePanValueMap] at h
+    split at h
+    · rename_i hname
+      rw [Option.some.injEq] at h
+      subst h
+      simp [PanValueByteRanged]
+    · exact absurd h (by simp)
+  · intro name value h
+    simp only [bridgeAssignProdState, bridgeExecProdState] at h
+    exact absurd h (by simp)
+  · simpa only [bridgeAssignProdState, bridgeExecProdState] using
+      bridgeExecProdState_ranged.2.2
+
+instance decidableBridgeAssignExactMemaddrs : DecidablePred bridgeAssignExactState.memaddrs :=
+  fun _ => isFalse (by simp [bridgeAssignExactState, bridgeExecExactState])
+
+/-- The fully-assembled `Assign` constructor agreement (production value
+    evaluation, validity parity, local update preservation) holds on the
+    fixture for `x := 7`. -/
+example : PanSemHOLResultOptionRel
+      (panSemTotalEvaluate (fun _ _ => none) (.assign .local "x" (.const (7 : W)))
+        bridgeAssignProdState).1
+      (evaluateHOLFiniteState bridgeAssignExactState
+        (.assign .local (Flapjack.Basis.Pure.MlString.ofString "x")
+          (expToHOL (.const (7 : W))))).1 ∧
+    PanSemStateRelExec
+      (panSemTotalEvaluate (fun _ _ => none) (.assign .local "x" (.const (7 : W)))
+        bridgeAssignProdState).2
+      (evaluateHOLFiniteState bridgeAssignExactState
+        (.assign .local (Flapjack.Basis.Pure.MlString.ofString "x")
+          (expToHOL (.const (7 : W))))).2.toExact :=
+  panSemTotalEvaluate_assign_agree (fun _ _ => none) bridgeAssignProdState
+    bridgeAssignExactState bridgeAssignStateRelExec bridgeAssignProdState_ranged
+    .local "x" (by decide) (.const (7 : W)) trivial
 
 def runChecks : IO Bool := do
   IO.println "PASS production/exact PanSemState codec bridge (value/entry/struct/state)"

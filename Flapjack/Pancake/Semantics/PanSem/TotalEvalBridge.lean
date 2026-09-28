@@ -132,6 +132,203 @@ theorem PanSemStateRelExec.decClock {σ : Type}
   show exact.clock - 1 = production.clock - 1
   rw [hck]
 
+/-! ## Local/global value-map update preservation
+
+The production evaluator writes `locals`/`globals` through the Boolean-keyed
+`updatePanValueMap`/`resVar`, while the exact evaluator writes the same fields
+through the canonical finite-map updates `setVarHOLFinite`/`setGlobalHOLFinite`
+and `HolFiniteMapExact.resVarEq`.  This section proves that `PanSemStateRelExec`
+is preserved by each write, comparing the lookup at the written key (the
+related value is installed) and at every other key (the old related value is
+kept).
+
+The comparison needs the `Bool` key tests to agree: on byte-ranged identifiers,
+the production `==` on `String` and the exact `==`/`=` on `MlS` agree through
+`ofString`.  The side conditions are exactly `NameRanged name` for the written
+key and `NameRanged query` for a queried key; the post-state relation is never
+assumed.  Everything here is untagged Flapjack-specific bridge infrastructure. -/
+
+/-- `ofString` is injective on byte-ranged strings. -/
+theorem ofString_injective_of_ranged {a b : String} (ha : NameRanged a) (hb : NameRanged b)
+    (h : ofString a = ofString b) : a = b := by
+  have h' := congrArg toStringOfBytes h
+  rwa [toStringOfBytes_ofString_of_bytes a ha,
+    toStringOfBytes_ofString_of_bytes b hb] at h'
+
+/-- On byte-ranged identifiers, the exact `MlS` key test of `HolFiniteMapExact`
+    agrees with the production `String` key test under `ofString`. -/
+theorem ofString_beq_eq_beq {a b : String} (ha : NameRanged a) (hb : NameRanged b) :
+    (ofString a == ofString b) = (a == b) := by
+  apply Bool.eq_iff_iff.mpr
+  constructor
+  · intro h
+    exact beq_iff_eq.mpr (ofString_injective_of_ranged ha hb (beq_iff_eq.mp h))
+  · intro h
+    exact beq_iff_eq.mpr (by rw [beq_iff_eq.mp h])
+
+/-- Pointwise agreement of the production `updatePanValueMap` and the exact
+    `HolFiniteMapExact.update` under the value-map conjunct of
+    `PanSemStateRelExec`: the written key receives the related value and every
+    other key keeps its related value.  This is the lookup-level heart of
+    `PanSemStateRelExec.updateLocals`/`.updateGlobals`. -/
+theorem updatePanValueMap_agree (values : VarName → Option (PanValue (RiscV.Word 64)))
+    (exactMap : HolFiniteMapExact MlS (ValueHOL 64))
+    (hmap : ∀ query, NameRanged query →
+      Option.map panValueToHOL (values query) = exactMap.lookup (ofString query))
+    (name : VarName) (hname : NameRanged name) (value : PanValue (RiscV.Word 64)) :
+    ∀ query, NameRanged query →
+      Option.map panValueToHOL (updatePanValueMap values name value query)
+        = (exactMap.update (ofString name, panValueToHOL value)).lookup (ofString query) := by
+  intro query hquery
+  have hold := hmap query hquery
+  rw [updatePanValueMap, HolFiniteMapExact.lookup_update]
+  simp only [FUPDATE]
+  by_cases hq : (query == name) = true
+  · have hof : (ofString name == ofString query) = true := by
+      apply beq_iff_eq.mpr
+      rw [beq_iff_eq.mp hq]
+    simp only [hq, hof, if_true, Option.map_some]
+  · have hq' : (query == name) = false := Bool.eq_false_iff.mpr hq
+    have hne : query ≠ name := fun hh => hq (beq_iff_eq.mpr hh)
+    have hof : (ofString name == ofString query) = false := by
+      apply beq_eq_false_iff_ne.mpr
+      intro hh
+      exact hne (ofString_injective_of_ranged hname hquery hh).symm
+    simp only [hq', hof]
+    exact hold
+
+/-- Pointwise agreement of the production `resVar` and the exact
+    `HolFiniteMapExact.resVarEq` under the value-map conjunct of
+    `PanSemStateRelExec`.  Both the delete (`none`) and overwrite (`some`)
+    branches are covered, at the written key and at every other key. -/
+theorem resVar_agree (values : VarName → Option (PanValue (RiscV.Word 64)))
+    (exactMap : HolFiniteMapExact MlS (ValueHOL 64))
+    (hmap : ∀ query, NameRanged query →
+      Option.map panValueToHOL (values query) = exactMap.lookup (ofString query))
+    (name : VarName) (hname : NameRanged name)
+    (oldValue : Option (PanValue (RiscV.Word 64))) :
+    ∀ query, NameRanged query →
+      Option.map panValueToHOL (resVar values (name, oldValue) query)
+        = (HolFiniteMapExact.resVarEq exactMap
+            (ofString name, Option.map panValueToHOL oldValue)).lookup (ofString query) := by
+  intro query hquery
+  have hold := hmap query hquery
+  cases oldValue with
+  | none =>
+      simp only [Option.map_none, resVar, HolFiniteMapExact.lookup_resVarEq_none,
+        FDOMSUB, FDOMSUB_HOL]
+      by_cases hq : (name == query) = true
+      · have hof : (ofString query = ofString name) := by
+          rw [beq_iff_eq.mp hq]
+        simp only [hq, hof, if_true, Option.map_none]
+      · have hq' : (name == query) = false := Bool.eq_false_iff.mpr hq
+        have hne : name ≠ query := fun hh => hq (beq_iff_eq.mpr hh)
+        have hof : ¬ (ofString query = ofString name) :=
+          fun hh => hne (ofString_injective_of_ranged hquery hname hh).symm
+        simp only [hq', hof, if_false]
+        exact hold
+  | some v =>
+      simp only [Option.map_some]
+      rw [resVar, HolFiniteMapExact.lookup_resVarEq_some]
+      simp only [FUPDATE, FUPDATE_HOL]
+      by_cases hq : (name == query) = true
+      · have hof : (ofString query = ofString name) := by
+          rw [beq_iff_eq.mp hq]
+        simp only [hq, hof, if_true, Option.map_some]
+      · have hq' : (name == query) = false := Bool.eq_false_iff.mpr hq
+        have hne : name ≠ query := fun hh => hq (beq_iff_eq.mpr hh)
+        have hof : ¬ (ofString query = ofString name) :=
+          fun hh => hne (ofString_injective_of_ranged hquery hname hh).symm
+        simp only [hq', hof]
+        exact hold
+
+/-- `PanSemStateRelExec` is preserved by a production local assignment: the
+    production `updatePanValueMap` on `locals` is paired with the exact
+    `setVarHOLFinite` at the `ofString` image of the written name. -/
+theorem PanSemStateRelExec.updateLocals {σ : Type}
+    {production : PanSemState (RiscV.Word 64) (FfiState σ)}
+    {exact : PanSemStateFiniteExact 64 σ}
+    (h : PanSemStateRelExec production exact.toExact)
+    (name : VarName) (hname : NameRanged name) (value : PanValue (RiscV.Word 64)) :
+    PanSemStateRelExec
+      { production with locals := updatePanValueMap production.locals name value }
+      (setVarHOLFinite (ofString name) (panValueToHOL value) exact).toExact := by
+  obtain ⟨hl, hg, hs, hc, he, hm, hmd, hsm, hck, hbe, hffi, hb, ht⟩ := h
+  refine ⟨?_, hg, hs, hc, he, hm, hmd, hsm, hck, hbe, hffi, hb, ht⟩
+  intro query hquery
+  exact updatePanValueMap_agree production.locals exact.locals hl name hname value query hquery
+
+/-- `PanSemStateRelExec` is preserved by a production global assignment, paired
+    with the exact `setGlobalHOLFinite`. -/
+theorem PanSemStateRelExec.updateGlobals {σ : Type}
+    {production : PanSemState (RiscV.Word 64) (FfiState σ)}
+    {exact : PanSemStateFiniteExact 64 σ}
+    (h : PanSemStateRelExec production exact.toExact)
+    (name : VarName) (hname : NameRanged name) (value : PanValue (RiscV.Word 64)) :
+    PanSemStateRelExec
+      { production with globals := updatePanValueMap production.globals name value }
+      (setGlobalHOLFinite (ofString name) (panValueToHOL value) exact).toExact := by
+  obtain ⟨hl, hg, hs, hc, he, hm, hmd, hsm, hck, hbe, hffi, hb, ht⟩ := h
+  refine ⟨hl, ?_, hs, hc, he, hm, hmd, hsm, hck, hbe, hffi, hb, ht⟩
+  intro query hquery
+  exact updatePanValueMap_agree production.globals exact.globals hg name hname value query hquery
+
+/-- `PanSemStateRelExec` is preserved by a production `resVar` restore on
+    `locals`, paired with the exact `HolFiniteMapExact.resVarEq`.  The saved
+    value is compared through `panValueToHOL`, covering both the delete and
+    overwrite branches. -/
+theorem PanSemStateRelExec.resVarLocals {σ : Type}
+    {production : PanSemState (RiscV.Word 64) (FfiState σ)}
+    {exact : PanSemStateFiniteExact 64 σ}
+    (h : PanSemStateRelExec production exact.toExact)
+    (name : VarName) (hname : NameRanged name)
+    (oldValue : Option (PanValue (RiscV.Word 64))) :
+    PanSemStateRelExec
+      { production with locals := resVar production.locals (name, oldValue) }
+      ({ exact with
+        locals := HolFiniteMapExact.resVarEq exact.locals
+          (ofString name, Option.map panValueToHOL oldValue) }).toExact := by
+  obtain ⟨hl, hg, hs, hc, he, hm, hmd, hsm, hck, hbe, hffi, hb, ht⟩ := h
+  refine ⟨?_, hg, hs, hc, he, hm, hmd, hsm, hck, hbe, hffi, hb, ht⟩
+  intro query hquery
+  exact resVar_agree production.locals exact.locals hl name hname oldValue query hquery
+
+/-- Production/exact agreement for the `Assign` constructor's state path: given
+    the evaluated value correspondence and the validity correspondence supplied
+    by `TotalEvalExpBridge` (the expression agreement and the production/exact
+    validity parity), the production `Assign` clause and the exact
+    `evaluateHOLFiniteState` `Assign` equation return corresponding results and
+    related post-states.  The local and global preservation lemmas are the only
+    state-update ingredients. -/
+theorem panSemTotalAssignClause_agree {σ : Type}
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ)
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (kind : VarKind) (name : VarName) (hname : NameRanged name)
+    (e : Exp (RiscV.Word 64)) (value : PanValue (RiscV.Word 64))
+    (heval : evalPanSemStateExp production e = some value)
+    (hexactEval : @evalHOLExact 64 σ _ exact.toExact
+        (fun address => Classical.propDecidable (exact.memaddrs address)) (expToHOL e)
+      = some (panValueToHOL value))
+    (hvalid : panValueAssignmentValid production.structs production.locals
+      production.globals kind name value = true)
+    (hexactValid : isValidValueHOLFinite exact kind (ofString name)
+      (panValueToHOL value) = true) :
+    PanSemHOLResultOptionRel
+        (panSemTotalAssignClause production kind name e).1
+        (evaluateHOLFiniteState exact (.assign kind (ofString name) (expToHOL e))).1 ∧
+      PanSemStateRelExec
+        (panSemTotalAssignClause production kind name e).2
+        (evaluateHOLFiniteState exact (.assign kind (ofString name) (expToHOL e))).2.toExact := by
+  rw [panSemTotalAssignClause_normal production kind name e value heval hvalid]
+  rw [evaluateHOLFiniteState_assign, hexactEval]
+  simp only [hexactValid, if_true]
+  constructor
+  · trivial
+  · cases kind
+    · exact PanSemStateRelExec.updateLocals hrel name hname value
+    · exact PanSemStateRelExec.updateGlobals hrel name hname value
+
 /-- Production/exact agreement for the `Skip` clause: both sides return normal
     completion and carry the state unchanged. -/
 theorem panSemTotalEvaluate_skip_agree {σ : Type}
