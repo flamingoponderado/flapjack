@@ -417,8 +417,8 @@ decreasing_by
 /-! The exact compiler's output carrier contains `NumSet` fields while the
    executable Loop IR stores those fields as lists. `numSetKeys` now provides a
    checked deterministic projection and `numSetKeysListRel` proves its
-   membership relation; the program-level projection theorem still needs to
-   cover nested call handlers. Decoding an exact `MlString` to production
+   membership relation. The program-level theorem below covers nested call
+   handlers. Decoding an exact `MlString` to production
    `String` and re-encoding it is total. The reverse production-name bridge
    remains premise-bound by `CrepProgNameRanged`. -/
 
