@@ -793,9 +793,10 @@ private theorem lookupFieldHOL_isWfShapeValuesHOLExact {width : Nat} [NeZero wid
     pair-shaped finite-map evaluator `PanSemStateFiniteExact.evaluateHOLFiniteState`
     is now available and its tagged `evaluate_def` line-780 equation records the
     finite-map and positive-word translations, so the carrier/evaluator gap
-    described in older bead notes is resolved. The remaining work for
-    `evaluate_invariants` is its source-shaped field-preservation proof; bead
-    `flapjack-4ac.4.61` is open for that theorem.
+    described in older bead notes is resolved. The assembled theorem is the
+    tagged `evaluateInvariantsHOLFinite` in `PanProps/EvalInvariant.lean`, proved
+    from the tagged `evaluateIndHOL` and the per-constructor leaves (bead
+    `flapjack-4ac.4.61.5`).
 
     HOL `evaluate_global_shape_invariant` (`panPropsScript.sml:1183`) quantifies
     `p`, input state `s`, result `res`, post-state `st`, global name `n`, and
