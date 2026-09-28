@@ -1522,6 +1522,16 @@ DOCUMENTED_MISMATCHES = {
 # Proofs/ and are inventoried automatically; counterpart-side witnesses and
 # induction helpers belong beside their semantic definitions instead.
 INFRASTRUCTURE_THEOREMS = {
+    ("Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean", "panWriteBytearrayWord8HOL_domainCongr"): (
+        "Flapjack-specific support for the ExtCall returned-byte state relation. "
+        "This congruence handles distinct DecidablePred instances after equality "
+        "of their domains; it has no standalone HOL declaration and is not a port."
+    ),
+    ("Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean", "panToCrepStateRelFiniteExact_writeBytearray"): (
+        "Flapjack-specific support for the ExtCall returned-byte state relation. "
+        "This helper preserves the exact state relation across equal bytearray writes; "
+        "it has no standalone HOL declaration and is not a port."
+    ),
     ("Flapjack/Pancake/Semantics/CrepProps/MemLoadFlatRel.lean", "holFmapAsFiniteSupportWitness"): (
         "Same-module canonical finite-support witness required by the qualified "
         "mem_load_flat_rel port. This witness restates the CrepSemHOLState / "
