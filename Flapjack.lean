@@ -336,6 +336,7 @@ import Flapjack.Compiler.Backend.RegAlloc
 import Flapjack.Misc.AppList
 import Flapjack.Misc.Sptree
 import Flapjack.Misc.LList
+import Flapjack.Misc.LprefixLub
 import Flapjack.Misc.FlatReplicate
 import Flapjack.Misc.FoldrMaxList
 import Flapjack.Misc.Uncurry
