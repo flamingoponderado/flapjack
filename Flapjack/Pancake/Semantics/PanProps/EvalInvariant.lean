@@ -4908,6 +4908,149 @@ theorem evaluateInvariantsPrimitiveCaseHOLFinite {width : Nat} {σ : Type} [NeZe
 end Flapjack
 
 
+/-! # The `ExtCall` case of HOL `evaluate_invariants`
+
+HOL `evaluate_def`'s `ExtCall` clause (`panSemScript.sml:711-726`) evaluates its
+four argument expressions in order, reads the two byte arrays, dispatches
+`call_FFI`, and either returns `FinalFFI` with the locals cleared or writes the
+returned bytes back into memory and installs the new FFI state. This genuine
+induction leaf has no recursive sub-evaluation, so HOL `evaluate_ind` gives it
+no induction hypothesis and no premise beyond the evaluator run itself. This
+theorem keeps that exact run premise and all eight state-field conclusions.
+
+Source review: HOL's only state updates are `empty_locals s` (which rewrites
+`locals` alone) on the `FFI_final` branch and
+`<| memory := nmem; ffi := new_ffi |>` on the `FFI_return` branch. The cleared
+locals branch leaves all eight fields untouched; the returned branch changes
+only `memory` and `ffi`, and a returned `call_FFI` state carries the original
+`oracle` field, so `ffi.oracle` is preserved. Consequently none of `memaddrs`,
+`shMemaddrs`, `be`, `eshapes`, `baseAddr`, `structs`, `code`, or `ffi.oracle`
+changes. The `fmap_as_finite_support` qualifier records the reviewed
+`HolFiniteMapExact` carrier for the four map fields and
+`words_as_type_indexed_bitvec` records the positive indexed-`BitVec` word
+translation; no evaluator shortcut, extra hypothesis, or changed conclusion is
+introduced. -/
+
+open Flapjack.Pancake.PanLang (MlS ExpHOL ProgHOL)
+
+namespace Flapjack
+
+/-- Flapjack-only helper: a finite `callFFIHOL` returned result preserves the
+    FFI `oracle`. HOL has no standalone declaration for this projection; it is
+    the FFI-state field read used by the `ExtCall` invariant leaf. Untagged
+    infrastructure. -/
+theorem callFFIHOL_ret_oracle {σ : Type} (state : HolFfiState σ)
+    (name : HolFfiName) (configuration bytes : List (BitVec 8))
+    (nextState : HolFfiState σ) (nextBytes : List (BitVec 8))
+    (h : callFFIHOL state name configuration bytes = .ret nextState nextBytes) :
+    nextState.oracle = state.oracle := by
+  unfold callFFIHOL at h
+  split at h
+  · simp only [HolFfiResult.ret.injEq] at h
+    rw [← h.1]
+  · split at h
+    · split at h
+      · simp only [HolFfiResult.ret.injEq] at h
+        rw [← h.1]
+      · simp at h
+    · simp at h
+
+/-- Flapjack-only helper: the eight `evaluate_invariants` state fields are
+    preserved by the canonical finite-support `ExtCall` clause. This is the
+    field-level core of the tagged `ExtCall` case; it is stated on the canonical
+    carrier so the tagged theorem can transport it through the PanProps codec.
+    Untagged infrastructure. -/
+theorem extCallStepFieldsHOLFinite {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) (function : MlS)
+    (configuration configurationLength array arrayLength : ExpHOL width) :
+    (PanSemStateFiniteExact.evaluateHOLFiniteState state
+        (.extCall function configuration configurationLength array arrayLength : ProgHOL width)).2.memaddrs =
+      state.memaddrs ∧
+    (PanSemStateFiniteExact.evaluateHOLFiniteState state
+        (.extCall function configuration configurationLength array arrayLength : ProgHOL width)).2.shMemaddrs =
+      state.shMemaddrs ∧
+    (PanSemStateFiniteExact.evaluateHOLFiniteState state
+        (.extCall function configuration configurationLength array arrayLength : ProgHOL width)).2.be =
+      state.be ∧
+    (PanSemStateFiniteExact.evaluateHOLFiniteState state
+        (.extCall function configuration configurationLength array arrayLength : ProgHOL width)).2.eshapes =
+      state.eshapes ∧
+    (PanSemStateFiniteExact.evaluateHOLFiniteState state
+        (.extCall function configuration configurationLength array arrayLength : ProgHOL width)).2.baseAddr =
+      state.baseAddr ∧
+    (PanSemStateFiniteExact.evaluateHOLFiniteState state
+        (.extCall function configuration configurationLength array arrayLength : ProgHOL width)).2.structs =
+      state.structs ∧
+    (PanSemStateFiniteExact.evaluateHOLFiniteState state
+        (.extCall function configuration configurationLength array arrayLength : ProgHOL width)).2.code =
+      state.code ∧
+    (PanSemStateFiniteExact.evaluateHOLFiniteState state
+        (.extCall function configuration configurationLength array arrayLength : ProgHOL width)).2.ffi.oracle =
+      state.ffi.oracle := by
+  classical
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;>
+    rw [PanSemStateFiniteExact.evaluateHOLFiniteState_extCall_source]
+  all_goals
+    split
+    · split
+      · rename_i bytes1 bytes2 hread1 hread2
+        cases hcall : callFFIHOL state.ffi (.extCall function) bytes1 bytes2 with
+        | final event => simp [PanSemStateFiniteExact.emptyLocalsHOLFinite]
+        | ret newFfi newBytes =>
+            have horacle := callFFIHOL_ret_oracle state.ffi (.extCall function)
+              bytes1 bytes2 newFfi newBytes hcall
+            simp [PanSemStateFiniteExact.ofExact, horacle]
+      · simp
+    · simp
+
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_invariants" 1150
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateInvariantsExtCallCaseHOLFinite {width : Nat} {σ : Type} [NeZero width] :
+    ∀ (function : MlS) (configuration configurationLength array arrayLength : ExpHOL width)
+      (state : PanPropsEvalStateFiniteExact width σ)
+      (result : Option (PanSemResultExact width))
+      (post : PanPropsEvalStateFiniteExact width σ),
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state
+          (.extCall function configuration configurationLength array arrayLength : ProgHOL width) =
+        (result, post) →
+      post.memaddrs = state.memaddrs ∧
+      post.shMemaddrs = state.shMemaddrs ∧
+      post.be = state.be ∧
+      post.eshapes = state.eshapes ∧
+      post.baseAddr = state.baseAddr ∧
+      post.structs = state.structs ∧
+      post.code = state.code ∧
+      post.ffi.oracle = state.ffi.oracle := by
+  classical
+  intro function configuration configurationLength array arrayLength state result post hRun
+  have hcanonical :
+      PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite
+          (.extCall function configuration configurationLength array arrayLength : ProgHOL width) =
+        (result, post.toPanSemFinite) := by
+    have hpair := congrArg
+      (fun output => (output.1, PanPropsEvalStateFiniteExact.toPanSemFinite output.2)) hRun
+    have hpair' :
+        (PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite
+          (.extCall function configuration configurationLength array arrayLength : ProgHOL width)).1 =
+            result ∧
+        (PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite
+          (.extCall function configuration configurationLength array arrayLength : ProgHOL width)).2 =
+            post.toPanSemFinite := by
+      simpa [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair] using hpair
+    exact Prod.ext hpair'.1 hpair'.2
+  have hpost : post.toPanSemFinite =
+      (PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite
+        (.extCall function configuration configurationLength array arrayLength : ProgHOL width)).2 :=
+    (Prod.mk.inj hcanonical).2.symm
+  have hfields := extCallStepFieldsHOLFinite state.toPanSemFinite function
+    configuration configurationLength array arrayLength
+  rw [← hpost] at hfields
+  simpa [PanPropsEvalStateFiniteExact.toPanSemFinite] using hfields
+
+end Flapjack
+
+
 /-! # The `Raise` induction case of HOL `evaluate_invariants`
 
 HOL `Raise` either returns Error with the input state or clears only locals

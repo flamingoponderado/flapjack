@@ -16200,6 +16200,17 @@
     "hol_name": "evaluate_invariants",
     "hol_line": 1150,
     "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
+    "lean_name": "evaluateInvariantsExtCallCaseHOLFinite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-09-28; bead flapjack-4ac.4.61.2) against panPropsScript.sml:1150-1158 and panSemScript.sml:711-726. This is the genuine p = ExtCall ffi_index ptr1 len1 ptr2 len2 leaf of recInduct evaluate_ind. The HOL probe conjunct (scripts/hol-probes/pan_sem_evaluate_ind_probe.out:71) has binders ffi_index ptr1 len1 ptr2 len2 s with NO recursive induction hypothesis and NO premise; the Lean statement quantifies function/configuration/configurationLength/array/arrayLength/state plus the source result/post pair and only the source run equation, then concludes exactly the eight source fields in source order. evaluate_def evaluates the four arguments left-to-right, requires all four to be word values, reads two byte arrays with mem_load_byte, dispatches call_FFI, and on FFI_final returns (SOME (FinalFFI outcome), empty_locals s) while on FFI_return writes the returned bytes with write_bytearray and installs the new ffi state; every other pattern returns (SOME Error, s). The cleared-locals branch changes only locals, and the returned branch changes only memory and ffi, whose returned oracle is preserved (Flapjack-only helper callFFIHOL_ret_oracle), so none of the eight fields changes. The same-module PanPropsEvalStateFiniteExact carrier uses HolFiniteMapExact for locals/globals/code/eshapes via its checked roundtrip witness and [NeZero width] is the indexed-word translation. Direct FFI final/return executable coverage is registered in Flapjack/Test/PanSemExtCallExactParity.lean against HOL rows extcall_clause_final/extcall_clause_returned; recursive cases and assembly remain open."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "evaluate_invariants",
+    "hol_line": 1150,
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
     "lean_name": "evaluateInvariantsDecCaseHOLFinite",
     "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
     "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
