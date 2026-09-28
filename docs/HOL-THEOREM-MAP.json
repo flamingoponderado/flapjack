@@ -19865,5 +19865,22 @@
     "hol_name": "opt_mmap_eval_some_var_cexp_local_lookup",
     "lean_name": "crepOptMmapEval_some_var_cexp_local_lookup",
     "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.15.10) against opt_mmap_eval_some_var_cexp_local_lookup at crepPropsScript.sml:847-850. HOL `∀s es vs n. OPT_MMAP (eval s) es = SOME vs ∧ MEM n (FLAT (MAP var_cexp es)) ⇒ ∃w. FLOOKUP s.locals n = SOME w`. Lean keeps the binders in order (s with [DecidablePred s.memaddrs], es, vs, n), OPT_MMAP as List.mapM in Option (as for the tagged OPT_MMAP_APPEND), FLAT (MAP var_cexp es) as (es.map crepExpVarsHOL).flatten, and the same existential conclusion. Qualifiers as for eval_some_var_cexp_local_lookup."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "comp_exp_preserves_eval",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpPreservesEval.lean",
+    "lean_name": "crepToLoop_comp_exp_preserves_eval_shift",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.15.4): case piece `Shift sh e1 e2` of comp_exp_preserves_eval (crep_to_loopProofScript.sml:772-786 statement, case proof at 1084-1127; HOL proves the theorem by ho_match_mp_tac crepSemTheory.eval_ind with >~ case markers). The piece's only extra antecedents are the eval_ind induction hypotheses for the two operands e1, e2, stated by the untagged crepToLoopCompExpPreservesEvalAt s e1 / s e2, each unfolding to exactly the HOL statement at (s, e_i). After them the piece keeps HOL's quantifier order ∀v t ctxt tmp l p le ntmp nl, all eight HOL premises with e := Shift sh e1 e2 (sh : Shift, crepLang$shift carrier) and the full HOL existential conclusion over the same exact carriers and tagged relations as the other pieces. Proof follows HOL: IH on e1 then on e2 (tmp' > vmax by compile_exp_out_rel), evaluate_add_clock_eq to lift the first evaluation, evaluate_nested_seq_append_none, and nested_seq_pure_evaluation (side conditions from compile_exp_out_rel, comp_exp_assigned_vars_tmp_bound, compile_exp_le_tmp_domain and eval_some_var_cexp_local_lookup) to keep eval of the left operand. Qualifiers as for the other comp_exp_preserves_eval pieces."
   }
 ]

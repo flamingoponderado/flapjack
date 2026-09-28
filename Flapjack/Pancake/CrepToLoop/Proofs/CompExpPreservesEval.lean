@@ -4,6 +4,11 @@ import Flapjack.Pancake.Semantics.LoopProps.EvalExact
 import Flapjack.Pancake.Semantics.LoopProps.NestedSeqExact
 import Flapjack.Pancake.Semantics.ByteAlignBridge
 import Flapjack.Pancake.Semantics.PanSem.MemLoad32Alt
+import Flapjack.Pancake.Semantics.LoopProps.EvaluateClockExact
+import Flapjack.Pancake.Semantics.LoopProps.CompSyntaxOkEvalExact
+import Flapjack.Pancake.Semantics.CrepProps.EvalSomeVarCexp
+import Flapjack.Pancake.CrepToLoop.Proofs.CompExpTmpBound
+import Flapjack.Pancake.CrepToLoop.Proofs.CompExpLeTmpDomain
 import Flapjack.Pancake.CrepToLoop.Proofs.CompExpOutRel
 
 /-!
@@ -575,5 +580,91 @@ theorem crepToLoop_comp_exp_preserves_eval_load32 {width : Nat} [NeZero width] {
               (crepToLoopLocalsRelExact_insert_gt_vmax ctxt o s.locals _ m _ h7 hvm) hvm) ?_
           simp [sptMem, sptDomain, LoopSemStateFiniteExact.setVar,
             sptLookup_sptInsert]
+
+/-- `comp_exp_preserves_eval`, case `Shift sh e1 e2`
+    (`crep_to_loopProofScript.sml:772-786` statement; case proof at 1084-1127),
+    with the `eval_ind` hypotheses for both operands. -/
+@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "comp_exp_preserves_eval"
+  (fmap_as_finite_support_relation := [CrepToLoopContextExact.vars,
+    CrepToLoopContextExact.funcs, CrepSemHOLState.locals, CrepSemHOLState.globals,
+    CrepSemHOLState.code, LoopSemStateFiniteExact.globals])
+  (words_as_type_indexed_bitvec)]
+theorem crepToLoop_comp_exp_preserves_eval_shift {width : Nat} [NeZero width] {σ : Type} :
+    ∀ (s : CrepSemHOLState width σ) [DecidablePred s.memaddrs] (sh : Shift)
+      (e1 e2 : CrepExpHOL width),
+      crepToLoopCompExpPreservesEvalAt s e1 → crepToLoopCompExpPreservesEvalAt s e2 →
+    ∀ (v : HolWordLab width) (t : LoopSemStateFiniteExact width σ)
+      (ctxt : CrepToLoopContextExact) (tmp : Nat) (l : NumSet)
+      (p : List (HolLoopProg width)) (le : HolLoopExp width) (ntmp : Nat) (nl : NumSet),
+      evalCrepSemHOLExp s (.shift sh e1 e2) = some v ∧
+        crepToLoopStateRelExact s t ∧
+        crepToLoopMemRelHOLExact s.memory t.memory s.memaddrs ∧
+        crepToLoopGlobalsRelHOLExact s.globals t.globals ∧
+        crepToLoopCodeRelExact ctxt s.code t.code ∧
+        crepToLoopLocalsRelExact ctxt l s.locals t.locals ∧
+        compileExpHOLExact ctxt tmp l (.shift sh e1 e2) = (p, le, ntmp, nl) ∧
+        ctxt.vmax < tmp →
+      ∃ (ck : Nat) (st : LoopSemStateFiniteExact width σ),
+        LoopSemStateFiniteExact.evaluate (loopNestedSeqHOL p)
+            { t with clock := t.clock + ck } = (none, st) ∧
+        LoopSemStateFiniteExact.eval st le = some (wlabWlocExact v) ∧
+        crepToLoopStateRelExact s st ∧
+        crepToLoopMemRelHOLExact s.memory st.memory s.memaddrs ∧
+        crepToLoopGlobalsRelHOLExact s.globals st.globals ∧
+        crepToLoopCodeRelExact ctxt s.code st.code ∧
+        crepToLoopLocalsRelExact ctxt nl s.locals st.locals := by
+  intro s _ sh e1 e2 ih1 ih2 v t ctxt tmp l p le ntmp nl ⟨he, hs, hm, hg, hc, hl, hcomp, hv⟩
+  cases he1 : evalCrepSemHOLExp s e1 with
+  | none => simp [evalCrepSemHOLExp, he1] at he
+  | some a1 =>
+  cases a1 with
+  | word w1 =>
+  cases he2 : evalCrepSemHOLExp s e2 with
+  | none => simp [evalCrepSemHOLExp, he1, he2] at he
+  | some a2 =>
+  cases a2 with
+  | word w2 =>
+  cases hsh : wordShiftHOL sh w1 w2.toNat with
+  | none => simp [evalCrepSemHOLExp, he1, he2, hsh] at he
+  | some x =>
+  have hvx : v = .word x := by
+    simp [evalCrepSemHOLExp, he1, he2, hsh] at he; exact he.symm
+  subst hvx
+  rcases hA : compileExpHOLExact ctxt tmp l e1 with ⟨c1, lv, n1, l1⟩
+  rcases hB : compileExpHOLExact ctxt n1 l1 e2 with ⟨c2, rv, n2, l2⟩
+  rw [compileExpHOLExact, hA] at hcomp
+  simp only [hB, Prod.mk.injEq] at hcomp
+  obtain ⟨rfl, rfl, rfl, rfl⟩ := hcomp
+  obtain ⟨hokA, htA, hlA⟩ := compile_exp_out_rel ctxt tmp l e1 c1 lv n1 l1 hA
+  obtain ⟨hokB, htB, hlB⟩ := compile_exp_out_rel ctxt n1 l1 e2 c2 rv n2 l2 hB
+  obtain ⟨ck1, st1, h1, h1v, h1s, h1m, h1g, h1c, h1l⟩ :=
+    ih1 (.word w1) t ctxt tmp l c1 lv n1 l1 ⟨he1, hs, hm, hg, hc, hl, hA, hv⟩
+  obtain ⟨ck2, st2, h2, h2v, h2s, h2m, h2g, h2c, h2l⟩ :=
+    ih2 (.word w2) st1 ctxt n1 l1 c2 rv n2 l2
+      ⟨he2, h1s, h1m, h1g, h1c, h1l, hB, Nat.lt_of_lt_of_le hv htA⟩
+  have h1ck : LoopSemStateFiniteExact.evaluate (loopNestedSeqHOL c1)
+      { t with clock := t.clock + (ck1 + ck2) } =
+        (none, { st1 with clock := st1.clock + ck2 }) := by
+    have := LoopSemStateFiniteExact.evaluate_add_clock_eq _ _ _ _ ck2 h1 (by simp)
+    simpa [Nat.add_assoc] using this
+  refine ⟨ck1 + ck2, st2, ?_, ?_, h2s, h2m, h2g, h2c, h2l⟩
+  · rw [LoopSemStateFiniteExact.evaluate_nested_seq_append_none c1 _ _ c2 h1ck]
+    exact h2
+  · have hlv : LoopSemStateFiniteExact.eval st2 lv = some (.word w1) := by
+      refine LoopSemStateFiniteExact.nested_seq_pure_evaluation c1 c2 t st2 st1 l n1 lv
+        (.word w1) ck1 ck2 ⟨by rw [Nat.add_comm]; exact h1, by rw [Nat.add_comm]; exact h2,
+          hokA, hlA ▸ hokB, ?_, ?_, ?_, by simpa [wlabWlocExact] using h1v⟩
+      · intro n hn
+        exact (comp_exp_assigned_vars_tmp_bound ctxt tmp l e1 c1 lv n1 l1 n ⟨hA, hn⟩).2
+      · intro n hn
+        exact (comp_exp_assigned_vars_tmp_bound ctxt n1 l1 e2 c2 rv n2 l2 n ⟨hB, hn⟩).1
+      · intro n hn
+        have := compile_exp_le_tmp_domain ctxt tmp l e1 c1 lv n1 l1 n
+          ⟨hl.2.1, hA, hv, fun k hk => ?_, hn⟩
+        · exact ⟨this.1, hlA ▸ this.2⟩
+        · obtain ⟨w, hw⟩ := crepEval_some_var_cexp_local_lookup s e1 _ k ⟨he1, hk⟩
+          obtain ⟨m, hm1, hm2, _⟩ := hl.2.2.2 k w hw
+          exact ⟨m, hm1, hm2⟩
+    simp [LoopSemStateFiniteExact.eval, hlv, h2v, wlabWlocExact, hsh]
 
 end Flapjack
