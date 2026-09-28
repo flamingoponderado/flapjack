@@ -313,7 +313,9 @@ run_probe crep_to_loop_ctxt_max_probeScript.sml crep_to_loop_ctxt_max_probe.out 
   ctxt_max_within ctxt_max_absent "$cake_dir/pancake/proofs/crep_to_loopProofScript.sml" \
   "$cake_dir/pancake/proofs"
 run_probe crep_to_loop_locals_rel_probeScript.sml crep_to_loop_locals_rel_probe.out \
-  ctxt_vars_lookup subset_domain_component \
+  ctxt_vars_lookup ctxt_max_component set_domain_mem map_lookup \
+  subset_domain_component locals_rel_true locals_rel_domain_false \
+  locals_rel_value_false \
   "$cake_dir/pancake/proofs/crep_to_loopProofScript.sml" \
   "$cake_dir/pancake/proofs"
 run_probe crep_to_loop_locals_insert_probeScript.sml crep_to_loop_locals_insert_probe.out \
@@ -1313,6 +1315,13 @@ run_probe loop_sem_get_var_imm_probeScript.sml \
 run_probe loop_props_get_vars_probeScript.sml \
   loop_props_get_vars_probe.out \
   get_vars_two get_var_imm_add_clk_eq \
+  "$cake_dir/pancake/semantics/loopPropsScript.sml" \
+  "$cake_dir/pancake/semantics"
+run_probe loop_props_survives_probeScript.sml \
+  loop_props_survives_probe.out \
+  if_hit if_miss loop_hit loop_miss_out call_hit call_miss \
+  call_handler_hit call_handler_miss_post ffi_hit ffi_miss mark_seq \
+  call_default assign_default \
   "$cake_dir/pancake/semantics/loopPropsScript.sml" \
   "$cake_dir/pancake/semantics"
 run_probe loop_sem_call_env_probeScript.sml \
