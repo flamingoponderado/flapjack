@@ -1204,4 +1204,592 @@ theorem pcCompileCorrectAt_callRetReturn {width : Nat} {σ : Type} [NeZero width
               simpa [PanSemStateFiniteExact.setKvarHOLFinite, PanSemStateFiniteExact.setVarHOLFinite,
                 hupd] using hlr
 
+/-- The Crep evaluation of `nested_seq (MAP2 Assign ns (load_globals a (LENGTH ns)))`
+    (the body of `exp_hdl`) with distinct present destinations and loaded globals
+    `ws`: normal completion with `ns` bound to `ws`. HOL uses the crepProps
+    theorem `evaluate_seq_assign_load_globals` inline; this form takes the loaded
+    values from a successful `OPT_MMAP` over the addresses instead of `THE`, so it
+    is untagged. -/
+theorem crepEvalAssignLoadGlobals {width : Nat} [NeZero width] {σ : Type} :
+    ∀ (ns : List Nat) (t : CrepSemHOLState width σ) (a : BitVec 5) (ws : List (HolWordLab width)),
+      ns.Nodup →
+      (∀ n, n ∈ ns → t.locals.lookup n ≠ none) →
+      ((List.range ns.length).map (fun i => a + BitVec.ofNat 5 i)).mapM t.globals.lookup = some ws →
+      evalCrepSemHOLProgExact t
+          (crepNestedSeqHOL (panMap2 (fun destination source => .assign destination source)
+            ns (loadGlobalsHOL a ns.length))) =
+        (none, { t with locals := t.locals.updateListEq (ns.zip ws) })
+  | [], t, a, ws, _, _, hws => by
+      simp at hws; subst hws
+      simp only [panMap2, crepNestedSeqHOL]
+      rw [evalCrepSemHOLProgExact_skip]
+      congr 1
+  | n :: ns, t, a, ws, hnd, hloc, hws => by
+      classical
+      have haddr : (List.range (n :: ns).length).map (fun i => a + BitVec.ofNat 5 i) =
+          a :: (List.range ns.length).map (fun i => (a + 1) + BitVec.ofNat 5 i) := by
+        rw [List.length_cons, List.range_succ_eq_map, List.map_cons, List.map_map]
+        congr 1
+        · simp
+        · congr 1
+          funext i
+          simp only [Function.comp, Nat.succ_eq_add_one]
+          apply BitVec.eq_of_toNat_eq
+          simp [BitVec.toNat_add, BitVec.toNat_ofNat]
+          omega
+      rw [haddr, List.mapM_cons] at hws
+      cases hw : t.globals.lookup a with
+      | none => rw [hw] at hws; simp at hws
+      | some w =>
+          cases hrest : ((List.range ns.length).map (fun i => (a + 1) + BitVec.ofNat 5 i)).mapM
+              t.globals.lookup with
+          | none => rw [hw, hrest] at hws; simp at hws
+          | some ws' =>
+              have hwsEq : ws = w :: ws' := by
+                rw [hw, hrest] at hws
+                simp only [bind, pure, Option.bind, Option.some.injEq] at hws
+                exact hws.symm
+              subst hwsEq
+              obtain ⟨hnn, hndTail⟩ := List.nodup_cons.mp hnd
+              obtain ⟨old, hold⟩ := Option.ne_none_iff_exists'.mp (hloc n (by simp))
+              simp only [List.length_cons, loadGlobalsHOL, panMap2, crepNestedSeqHOL]
+              rw [evalCrepSemHOLProgExact_seq_holShape, evalCrepSemHOLProgExact_assign_holShape]
+              simp only [evalCrepSemHOLExp, hw, hold]
+              try simp only [if_true]
+              let t1 : CrepSemHOLState width σ := { t with locals := t.locals.updateEq (n, w) }
+              have hloc1 : ∀ m, m ∈ ns → t1.locals.lookup m ≠ none := by
+                intro m hm
+                have hmn : m ≠ n := fun h => hnn (h ▸ hm)
+                simpa [t1, HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL, hmn] using
+                  hloc m (by simp [hm])
+              have ih := crepEvalAssignLoadGlobals ns t1 (a + 1) ws' hndTail hloc1 hrest
+              rw [ih]
+              congr 1
+
+/-- The handler component that `compile_def` gives a Ret call for `hdl`
+    (`pan_to_crepScript.sml:224-261`): `SOME (neid, Seq (exp_hdl ctxt.vars evar)
+    (compile ctxt p))` when the handler's eid has a code in `ctxt.eids`, otherwise
+    none. -/
+def compileCallHdlC {width : Nat} [NeZero width] (ctxt : PanToCrepContextExact width) :
+    Option (MlS × MlS × ProgHOL width) → Option (BitVec width × CrepProgHOL width)
+  | none => none
+  | some (eid, evar, p) => (ctxt.eids.lookup eid).map
+      (fun code => (code, CrepProgHOL.seq (expHdlExact ctxt.vars evar) (compileProgExactHOLW ctxt p)))
+
+/-- The compiled Ret call carries exactly the handler `compileCallHdlC ctxt hdl`.
+    It is either the standalone `nested_decs` arm, a plain `Call NONE` (only when
+    there is no compiled handler), or a plain call with distinct return names. -/
+theorem compileCallSomeShapeHdl {width : Nat} [NeZero width] (ctxt : PanToCrepContextExact width)
+    (dest : Option (VarKind × MlS)) (hdl : Option (MlS × MlS × ProgHOL width))
+    (f : MlS) (args : List (ExpHOL width))
+    (vshapes : List (MlS × ShapeHOL)) (rsh : ShapeHOL)
+    (hno : noOverlapFiniteExact ctxt.vars)
+    (hfuncs : ctxt.funcs.lookup f = some (vshapes, rsh)) :
+    let cargs := (compileExpExactHOLWList ctxt args).flatMap Prod.fst
+    let rts := (List.range (sizeOfShapeHOL rsh)).map (fun i => ctxt.vmax + i + 1)
+    compileProgExactHOLW ctxt (.call (some (dest, hdl)) f args) =
+        nestedDecsHOL rts (List.replicate rts.length (.const (0 : BitVec width)))
+          (.call (some (rts, compileCallHdlC ctxt hdl)) f cargs) ∨
+      (compileProgExactHOLW ctxt (.call (some (dest, hdl)) f args) = .call none f cargs ∧
+        compileCallHdlC ctxt hdl = none) ∨
+      ∃ rts0 : List Nat, rts0.Nodup ∧
+        compileProgExactHOLW ctxt (.call (some (dest, hdl)) f args) =
+          .call (some (rts0, compileCallHdlC ctxt hdl)) f cargs := by
+  intro cargs rts
+  rcases dest with _ | ⟨kind, name⟩ <;> rcases hdl with _ | ⟨eid, evar, p⟩ <;>
+    simp only [compileProgExactHOLW]
+  · exact Or.inl (by simp [compileCallResultNoHandlerExactHOLW, hfuncs, cargs, rts, compileCallHdlC])
+  · split
+    · rename_i hE
+      exact Or.inl (by simp [compileCallHandlerMissingEidExactHOLW,
+        compileCallResultNoHandlerExactHOLW, hfuncs, cargs, rts, compileCallHdlC, hE])
+    · rename_i code hE
+      exact Or.inl (by simp [compileCallHandlerPresentEidExactHOLW, hfuncs, cargs, rts,
+        compileCallHdlC, hE])
+  · split
+    · exact Or.inr (Or.inl ⟨by simp [compileCallWrappedResultFallbackNoHandlerExactHOLW, cargs],
+        rfl⟩)
+    · rename_i sh ns hwrap
+      refine Or.inr (Or.inr ⟨ns, noOverlapWrapRtSomeAllDistinctFiniteExact ctxt.vars name sh ns
+        hno hwrap, by simp [compileCallWrappedResultNoHandlerExactHOLW, cargs, compileCallHdlC]⟩)
+  · split
+    · split
+      · rename_i hE
+        exact Or.inr (Or.inl ⟨by simp [compileCallWrappedResultFallbackHandlerMissingEidExactHOLW,
+            compileCallWrappedResultFallbackNoHandlerExactHOLW, cargs],
+          by simp [compileCallHdlC, hE]⟩)
+      · rename_i code hE
+        refine Or.inr (Or.inr ⟨[], List.nodup_nil, ?_⟩)
+        simp [compileCallWrappedResultFallbackHandlerPresentEidExactHOLW, cargs, compileCallHdlC, hE]
+    · rename_i sh ns hwrap
+      have hns := noOverlapWrapRtSomeAllDistinctFiniteExact ctxt.vars name sh ns hno hwrap
+      split
+      · rename_i hE
+        refine Or.inr (Or.inr ⟨ns, hns, ?_⟩)
+        simp [compileCallWrappedResultHandlerMissingEidExactHOLW,
+          compileCallWrappedResultNoHandlerExactHOLW, cargs, compileCallHdlC, hE]
+      · rename_i code hE
+        refine Or.inr (Or.inr ⟨ns, hns, ?_⟩)
+        simp [compileCallWrappedResultHandlerPresentEidExactHOLW, cargs, compileCallHdlC, hE]
+
+/-- `locals_rel` depends on target locals only at slots `≤ ctxt.vmax` (by `ctxt_max`),
+    generalising the tagged `local_rel_gt_vmax_preserved`. -/
+theorem panToCrepLocalsRelFiniteExact_agreeBelowVmax {width : Nat} [NeZero width]
+    (ctxt : PanToCrepContextExact width)
+    (sl : HolFiniteMapExact MlS (ValueHOL width))
+    (tl tl' : HolFiniteMapExact Nat (HolWordLab width))
+    (hrel : panToCrepLocalsRelFiniteExact ctxt sl tl)
+    (hagree : ∀ k, k ≤ ctxt.vmax → tl'.lookup k = tl.lookup k) :
+    panToCrepLocalsRelFiniteExact ctxt sl tl' := by
+  refine ⟨hrel.1, hrel.2.1, ?_⟩
+  intro name value hlookup
+  obtain ⟨slots, words, hcontext, hmap, hflatten, hwf⟩ := hrel.2.2 name value hlookup
+  refine ⟨slots, words, hcontext, ?_, hflatten, hwf⟩
+  have hle : ∀ k, k ∈ slots → k ≤ ctxt.vmax := hrel.2.1.2 name _ slots hcontext
+  have key : ∀ l : List Nat, (∀ k, k ∈ l → k ≤ ctxt.vmax) → l.mapM tl'.lookup = l.mapM tl.lookup := by
+    intro l
+    induction l with
+    | nil => intro _; rfl
+    | cons k ks ih =>
+        intro hl
+        simp only [List.mapM_cons]
+        rw [hagree k (hl k (by simp)), ih (fun j hj => hl j (by simp [hj]))]
+  rw [← hmap, key slots hle]
+
+/-- Target run of a Ret call whose callee raises `n` and whose compiled handler
+    does not fire: every arm propagates `Exception n` in a state equal to the
+    callee's up to locals. -/
+theorem pcCompileCorrectCallExcPropagateTarget {width : Nat} [NeZero width] {σ : Type}
+    (t : CrepSemHOLState width σ) (ctxt : PanToCrepContextExact width)
+    (dest : Option (VarKind × MlS)) (hdl : Option (MlS × MlS × ProgHOL width))
+    (f : MlS) (args : List (ExpHOL width)) (vshapes : List (MlS × ShapeHOL)) (rsh : ShapeHOL)
+    (flat : List (HolWordLab width)) (body : CrepProgHOL width)
+    (locals : HolFiniteMapExact Nat (HolWordLab width))
+    (n : BitVec width) (t1 : CrepSemHOLState width σ)
+    (hno : noOverlapFiniteExact ctxt.vars) (hmax : ctxtMaxFiniteExact ctxt.vmax ctxt.vars)
+    (hfuncs : ctxt.funcs.lookup f = some (vshapes, rsh))
+    (hargs : ((compileExpExactHOLWList ctxt args).flatMap Prod.fst).mapM
+          (@evalCrepSemHOLExp width _ σ t
+            (fun address => Classical.propDecidable (t.memaddrs address))) = some flat)
+    (hlookup : lookupCodeFiniteHOL t.code f flat flat.length = some (body, locals))
+    (hclock : t.clock ≠ 0)
+    (hcallee : evalCrepSemHOLProgExact { decClockCrepSemHOL t with locals := locals } body =
+      (some (.exception n), t1))
+    (hnofire : ∀ code h, compileCallHdlC ctxt hdl = some (code, h) → n ≠ code) :
+    ∃ t2, evalCrepSemHOLProgExact t
+        (compileProgExactHOLW ctxt (.call (some (dest, hdl)) f args)) =
+          (some (.exception n), t2) ∧ { t2 with locals := t1.locals } = t1 := by
+  classical
+  have hafter : ∀ (tt : CrepSemHOLState width σ) (rts0 : List Nat),
+      crepCallAfterBody tt (some (rts0, compileCallHdlC ctxt hdl)) (some (.exception n), t1) =
+        (some (.exception n), CrepSemHOLState.emptyLocals t1) := by
+    intro tt rts0
+    cases hH : compileCallHdlC ctxt hdl with
+    | none => rfl
+    | some ch =>
+        obtain ⟨code, h⟩ := ch
+        simp only [crepCallAfterBody]
+        rw [if_neg (hnofire code h hH)]
+  rcases compileCallSomeShapeHdl ctxt dest hdl f args vshapes rsh hno hfuncs with
+    hc | ⟨hc, _⟩ | ⟨rts0, hnd0, hc⟩
+  · have hnodup : ((List.range (sizeOfShapeHOL rsh)).map (fun i => ctxt.vmax + i + 1)).Nodup :=
+      List.pairwise_map.mpr (List.nodup_range.imp (fun h e => h (by omega)))
+    have hdist := pcCompileCorrectCallRetSlotsDistinct ctxt args (sizeOfShapeHOL rsh) hmax
+    rw [hc, crepNestedCallTarget t _ f _ flat body locals _ hargs hlookup
+      (by intro r h heq; simp only [Option.some.injEq, Prod.mk.injEq] at heq; rw [← heq.1]
+          exact hnodup) hclock hnodup hdist, hcallee, hafter]
+    exact ⟨_, rfl, rfl⟩
+  · rw [hc, crepCallTarget t none f _ flat body locals hargs hlookup (by simp) hclock, hcallee]
+    exact ⟨_, rfl, rfl⟩
+  · rw [hc, crepCallTarget t _ f _ flat body locals hargs hlookup
+      (by intro r h heq; simp only [Option.some.injEq, Prod.mk.injEq] at heq; rw [← heq.1]
+          exact hnd0) hclock, hcallee, hafter]
+    exact ⟨_, rfl, rfl⟩
+
+/-- Target run of a Ret call whose callee raises `n` and whose compiled handler has
+    code `n`. The target runs the handler program on the callee's state with the
+    caller's locals (plain arms), or with the slot-extended caller locals and then
+    the slot restoration (standalone arm, slots above `vmax`). -/
+theorem pcCompileCorrectCallExcCaughtTarget {width : Nat} [NeZero width] {σ : Type}
+    (t : CrepSemHOLState width σ) (ctxt : PanToCrepContextExact width)
+    (dest : Option (VarKind × MlS)) (hdl : Option (MlS × MlS × ProgHOL width))
+    (f : MlS) (args : List (ExpHOL width)) (vshapes : List (MlS × ShapeHOL)) (rsh : ShapeHOL)
+    (flat : List (HolWordLab width)) (body : CrepProgHOL width)
+    (locals : HolFiniteMapExact Nat (HolWordLab width))
+    (n : BitVec width) (t1 : CrepSemHOLState width σ) (H : CrepProgHOL width)
+    (hno : noOverlapFiniteExact ctxt.vars) (hmax : ctxtMaxFiniteExact ctxt.vmax ctxt.vars)
+    (hfuncs : ctxt.funcs.lookup f = some (vshapes, rsh))
+    (hargs : ((compileExpExactHOLWList ctxt args).flatMap Prod.fst).mapM
+          (@evalCrepSemHOLExp width _ σ t
+            (fun address => Classical.propDecidable (t.memaddrs address))) = some flat)
+    (hlookup : lookupCodeFiniteHOL t.code f flat flat.length = some (body, locals))
+    (hclock : t.clock ≠ 0)
+    (hcallee : evalCrepSemHOLProgExact { decClockCrepSemHOL t with locals := locals } body =
+      (some (.exception n), t1))
+    (hfire : compileCallHdlC ctxt hdl = some (n, H)) :
+    evalCrepSemHOLProgExact t (compileProgExactHOLW ctxt (.call (some (dest, hdl)) f args)) =
+        evalCrepSemHOLProgExact { t1 with locals := t.locals } H ∨
+      ∃ rts : List Nat, (∀ k, k ∈ rts → ctxt.vmax < k) ∧ rts.Nodup ∧
+        evalCrepSemHOLProgExact t (compileProgExactHOLW ctxt (.call (some (dest, hdl)) f args)) =
+          match evalCrepSemHOLProgExact
+              { t1 with locals := (t.locals.updateListEq
+                (rts.zip (List.replicate rts.length (HolWordLab.word (0 : BitVec width))))) } H with
+          | (q, r) => (q, { r with locals :=
+              ((rts.zip (rts.map t.locals.lookup)).foldl
+                (fun current entry => HolFiniteMapExact.resVarEq current entry) r.locals) }) := by
+  classical
+  rcases compileCallSomeShapeHdl ctxt dest hdl f args vshapes rsh hno hfuncs with
+    hc | ⟨_, hnone⟩ | ⟨rts0, hnd0, hc⟩
+  · right
+    have hnodup : ((List.range (sizeOfShapeHOL rsh)).map (fun i => ctxt.vmax + i + 1)).Nodup :=
+      List.pairwise_map.mpr (List.nodup_range.imp (fun h e => h (by omega)))
+    have hdist := pcCompileCorrectCallRetSlotsDistinct ctxt args (sizeOfShapeHOL rsh) hmax
+    refine ⟨_, ?_, hnodup, ?_⟩
+    · intro k hk
+      simp only [List.mem_map, List.mem_range] at hk
+      obtain ⟨i, _, rfl⟩ := hk
+      omega
+    · rw [hc, crepNestedCallTarget t _ f _ flat body locals _ hargs hlookup
+        (by intro r h heq; simp only [Option.some.injEq, Prod.mk.injEq] at heq; rw [← heq.1]
+            exact hnodup) hclock hnodup hdist, hcallee, hfire]
+      simp only [crepCallAfterBody, if_true]
+  · rw [hfire] at hnone; exact absurd hnone (by simp)
+  · left
+    rw [hc, crepCallTarget t _ f _ flat body locals hargs hlookup
+      (by intro r h heq; simp only [Option.some.injEq, Prod.mk.injEq] at heq; rw [← heq.1]
+          exact hnd0) hclock, hcallee, hfire]
+    simp only [crepCallAfterBody, if_true]
+
+private theorem fupdListHOLZipNotMem {α β : Type} [DecidableEq α] (k : α) :
+    ∀ (xs : List α) (ys : List β) (f : FiniteMap α β), k ∉ xs →
+      FUPDATE_LIST_HOL f (xs.zip ys) k = f k
+  | [], _, f, _ => by simp [FUPDATE_LIST_HOL]
+  | _ :: _, [], f, _ => by simp [FUPDATE_LIST_HOL]
+  | x :: xs, y :: ys, f, hk => by
+      simp only [List.mem_cons, not_or] at hk
+      rw [List.zip_cons_cons, FUPDATE_LIST_HOL_cons, fupdListHOLZipNotMem k xs ys _ hk.2]
+      simp [FUPDATE_HOL, hk.1]
+
+/-- The `pc_compile_correct` result relation survives replacing target locals by
+    ones that agree at slots `≤ vmax`. -/
+theorem pcCompileCorrectResultRel_agreeBelowVmax {width : Nat} {σ : Type} [NeZero width]
+    (ctxt : PanToCrepContextExact width) (s1 : PanSemStateFiniteExact width σ)
+    (t2 : CrepSemHOLState width σ) (L : HolFiniteMapExact Nat (HolWordLab width))
+    (r : Option (PanSemResultExact width)) (r1 : Option (CrepResultHOLExact width))
+    (hagree : ∀ k, k ≤ ctxt.vmax → L.lookup k = t2.locals.lookup k)
+    (h : pcCompileCorrectResultRel ctxt s1 t2 r r1) :
+    pcCompileCorrectResultRel ctxt s1 { t2 with locals := L } r r1 := by
+  rcases r with _ | r
+  · exact ⟨h.1, panToCrepLocalsRelFiniteExact_agreeBelowVmax ctxt _ _ _ h.2 hagree⟩
+  · cases r with
+    | error => exact h.elim
+    | timeOut => exact h
+    | «break» => exact ⟨h.1, panToCrepLocalsRelFiniteExact_agreeBelowVmax ctxt _ _ _ h.2 hagree⟩
+    | «continue» => exact ⟨h.1, panToCrepLocalsRelFiniteExact_agreeBelowVmax ctxt _ _ _ h.2 hagree⟩
+    | returned v => exact h
+    | exception eid v =>
+        simp only [pcCompileCorrectResultRel] at h ⊢
+        split at h
+        · exact h.elim
+        · exact ⟨h.1, fun hsize => by simpa [globalsLookupHOL] using h.2 hsize⟩
+    | finalFfi f => exact h
+
+/-- HOL `pc_compile_correct[Call_Ret_Exception]` (`pan_to_crepProofScript.sml:3599-3916`)
+    against `pcCompileCorrectAt`: `caltyp = SOME (dest, hdl)` with a positive clock,
+    where the callee's source run raises `Exception eid exn`. These are the
+    sub-case hypotheses of HOL's case split.
+    * Without a handler, or with a different eid, the exception propagates. In
+      the target, the handler cannot fire, by `excp_rel` injectivity.
+    * With a matching handler, a valid shape and a valid local, `exp_hdl` loads
+      the payload from globals: the callee IH gives `globals_lookup`. The
+      handler body then satisfies the handler IH of the rebound `evaluate_ind`,
+      at `set_var evar exn (st with locals := s.locals)` and the loaded target.
+      The standalone arm's slot restoration touches only slots above `vmax`.
+    No target run is assumed. Untagged (bead `flapjack-pxn.18.4.3.94.9`). -/
+theorem pcCompileCorrectAt_callRetException {width : Nat} {σ : Type} [NeZero width]
+    (dest : Option (VarKind × MlS)) (hdl : Option (MlS × MlS × ProgHOL width))
+    (fname : MlS) (argexps : List (ExpHOL width)) (source : PanSemStateFiniteExact width σ)
+    (ih : pcCompileCorrectCallIH (some (dest, hdl)) fname argexps source)
+    (hclock : source.clock ≠ 0)
+    (values : List (ValueHOL width)) (prog : ProgHOL width)
+    (newlocals : HolFiniteMapExact MlS (ValueHOL width)) (rsh : ShapeHOL)
+    (st : PanSemStateFiniteExact width σ) (eid : MlS) (exn : ValueHOL width)
+    (hargs : source.evalListHOLFinite
+        (h := fun address => Classical.propDecidable (source.memaddrs address))
+        argexps = some values)
+    (hlk : PanSemStateFiniteExact.lookupCodeHOLFinite source.code.lookup fname values =
+      some (prog, newlocals, rsh))
+    (hbody : (PanSemStateFiniteExact.callEntryStateHOLFinite source newlocals
+      ).evaluateHOLFiniteState prog = (some (.exception eid exn), st)) :
+    pcCompileCorrectAt (.call (some (dest, hdl)) fname argexps : ProgHOL width) source := by
+  classical
+  intro res s1 t ctxt hrun hres hstate hcode hexcp hlocals hloc
+  have hlocArgs : everyExpListHOL localisedExpHOL argexps = true := by
+    rcases dest with _ | ⟨k, n⟩ <;> rcases hdl with _ | ⟨a, b, c⟩ <;> (try rcases k) <;>
+      simp_all [localisedProgHOL]
+  rw [evaluateHOLFiniteState_call, hargs] at hrun
+  dsimp only at hrun
+  rw [hlk] at hrun
+  dsimp only at hrun
+  rw [if_neg hclock, hbody] at hrun
+  dsimp only at hrun
+  obtain ⟨vshapes, _hsrc, hprogLoc, hfuncs, _hlen, htargs, htlookup, hst', hcode',
+    hexcp', hloc'⟩ :=
+    pcCompileCorrectCallPrelude source t ctxt fname argexps values prog newlocals rsh
+      hargs hlk hstate hcode hexcp hlocals hlocArgs
+  have htclock : t.clock ≠ 0 := by rw [← hstate.2.2.2.2.2.1]; exact hclock
+  obtain ⟨res1, t1, hrun1, hs, hc, he, hr⟩ :=
+    ih.2 values prog newlocals rsh hargs hlk hclock (some (.exception eid exn)) st _ _ hbody
+      (by simp) hst' hcode' hexcp' hloc' hprogLoc
+  simp only [pcCompileCorrectResultRel, ctxtFcExactHOL] at hr
+  cases hn : ctxt.eids.lookup eid with
+  | none => rw [hn] at hr; exact hr.elim
+  | some n =>
+    rw [hn] at hr
+    obtain ⟨rfl, hglob⟩ := hr
+    have prop : res = some (.exception eid exn) →
+        s1 = PanSemStateFiniteExact.emptyLocalsHOLFinite st →
+        (∀ code h, compileCallHdlC ctxt hdl = some (code, h) → n ≠ code) →
+        ∃ res1 t1', evalCrepSemHOLProgExact t
+            (compileProgExactHOLW ctxt (.call (some (dest, hdl)) fname argexps)) = (res1, t1') ∧
+          panToCrepStateRelFiniteExact s1 t1' ∧ codeRelExactHOLW ctxt s1.code t1'.code ∧
+          panToCrepExcpRelFiniteExact ctxt.eids s1.eshapes ∧
+          pcCompileCorrectResultRel ctxt s1 t1' res res1 := by
+      rintro rfl rfl hnf
+      obtain ⟨t2, hrun2, hsame⟩ := pcCompileCorrectCallExcPropagateTarget t ctxt dest hdl fname argexps vshapes rsh
+        _ _ _ n t1 hlocals.1 hlocals.2.1 hfuncs htargs htlookup htclock hrun1 hnf
+      refine ⟨_, t2, hrun2,
+        panToCrepStateRelFiniteExact_emptyLocals_of_sameExceptLocals st t1 t2 hsame hs, ?_, he, ?_⟩
+      · have hcode2 : t2.code = t1.code := by rw [← hsame]
+        rw [hcode2]; exact codeRelExactHOLW_ctxtFc ctxt _ _ _ _ _ hc
+      · simp only [pcCompileCorrectResultRel, hn]
+        refine ⟨trivial, fun hsize => ?_⟩
+        have hg2 : t2.globals = t1.globals := by rw [← hsame]
+        simpa [globalsLookupHOL, hg2] using hglob hsize
+    rcases hdl with _ | ⟨hid, hv, hp⟩
+    · obtain ⟨rfl, rfl⟩ := Prod.mk.inj hrun
+      exact prop rfl rfl (by simp [compileCallHdlC])
+    · dsimp only at hrun
+      by_cases heq : eid = hid
+      case neg =>
+        rw [if_neg heq] at hrun
+        obtain ⟨rfl, rfl⟩ := Prod.mk.inj hrun
+        apply prop rfl rfl
+        intro code h hH hnc
+        simp only [compileCallHdlC, Option.map_eq_some_iff] at hH
+        obtain ⟨code', hcode', hpair⟩ := hH
+        simp only [Prod.mk.injEq] at hpair
+        exact heq (hexcp.2 eid hid n code hn (hpair.1 ▸ hcode') hnc)
+      subst heq
+      rw [if_pos rfl] at hrun
+      cases hsh : source.eshapes.lookup eid with
+      | none =>
+          rw [hsh] at hrun
+          exact absurd (Prod.mk.inj hrun).1.symm hres
+      | some sh =>
+        rw [hsh] at hrun
+        dsimp only at hrun
+        by_cases hok : (shapeEqHOL (shapeOfHOLExact exn) sh &&
+            isValidValueHOLExact source.toExact .local hv exn) = true
+        case neg =>
+          rw [if_neg hok] at hrun
+          exact absurd (Prod.mk.inj hrun).1.symm hres
+        rw [if_pos hok] at hrun
+        obtain ⟨hshb, hvalid⟩ := Bool.and_eq_true_iff.mp hok
+        have hshape : shapeOfHOLExact exn = sh := (shapeEqHOL_eq_true _ _).mp hshb
+        cases hold : source.locals.lookup hv with
+        | none => simp [isValidValueHOLExact, lookupKvarHOLExact, hold] at hvalid
+        | some old =>
+          have hse : shapeOfHOLExact exn = shapeOfHOLExact old := by
+            have : shapeEqHOL (shapeOfHOLExact exn) (shapeOfHOLExact old) = true := by
+              simpa [isValidValueHOLExact, lookupKvarHOLExact, hold] using hvalid
+            exact (shapeEqHOL_eq_true _ _).mp this
+          obtain ⟨nsE, words, hvar, hmm, hfl, hwfo⟩ := hlocals.2.2 hv old hold
+          have hwfvE : isWfShapeValueHOLExact [] exn = true := by
+            have := panToCrepFiniteEvaluateShapeInvariantRetInst2 argexps source fname values prog
+              newlocals rsh prog (.exception eid exn) st t ctxt t.locals
+              (by simpa [evalListHOLFiniteClassical] using hargs)
+              (PanSemStateFiniteExact.lookupCodeHOLFinite_eq_some _ _ _ _ _ _ hlk) hbody hstate hlocals
+            simpa using this
+          have hwfE : isWfShapeExactHOL ([] : StructContextExact) (shapeOfHOLExact exn) = true := by
+            rw [isWfShapeExactHOL_shapeOfHOLExact_eq_isWfShapeValueHOLExact_nil [] rfl exn]
+            exact hwfvE
+          have hflenE := flattenHOL_length_eq_sizeOfShapeHOL exn hwfE
+          have hflo := flattenHOL_length_eq_sizeOfShapeHOL old hwfo
+          have hnsE : nsE.length = (flattenHOL exn).length := by
+            rw [opt_mmap_length_eq _ _ _ hmm, ← hfl, hflo, hflenE, hse]
+          have hglobE : ((List.range nsE.length).map (fun i => (0 : BitVec 5) + BitVec.ofNat 5 i)).mapM
+              t1.globals.lookup = some (flattenHOL exn) := by
+            by_cases hz : sizeOfShapeHOL (shapeOfHOLExact exn) = 0
+            · have h0 : nsE.length = 0 := by rw [hnsE, hflenE, hz]
+              have hf0 : flattenHOL exn = [] := List.eq_nil_of_length_eq_zero (by rw [hflenE, hz])
+              rw [h0, hf0]; rfl
+            · have hg := (hglob (by omega)).1
+              rw [hnsE, hflenE]
+              simpa [globalsLookupHOL] using hg
+          have hndE : nsE.Nodup := hlocals.1.1 hv _ nsE hvar
+          have ihH := ih.1 values prog newlocals rsh st eid exn dest hv hp sh hargs hlk hclock
+            hbody rfl hsh hshape hvalid
+          have hlocP : localisedProgHOL hp = true := by
+            rcases dest with _ | ⟨k, nm⟩ <;> (try rcases k) <;> simp_all [localisedProgHOL]
+          have hfire : compileCallHdlC ctxt (some (eid, hv, hp)) =
+              some (n, CrepProgHOL.seq (expHdlExact ctxt.vars hv) (compileProgExactHOLW ctxt hp)) := by
+            simp [compileCallHdlC, hn]
+          have hrunH : ∀ TT : HolFiniteMapExact Nat (HolWordLab width),
+              (∀ k, k ≤ ctxt.vmax → TT.lookup k = t.locals.lookup k) →
+              ∃ res2 t2, evalCrepSemHOLProgExact { t1 with locals := TT }
+                  (CrepProgHOL.seq (expHdlExact ctxt.vars hv) (compileProgExactHOLW ctxt hp)) =
+                    (res2, t2) ∧
+                panToCrepStateRelFiniteExact s1 t2 ∧ codeRelExactHOLW ctxt s1.code t2.code ∧
+                panToCrepExcpRelFiniteExact ctxt.eids s1.eshapes ∧
+                pcCompileCorrectResultRel ctxt s1 t2 res res2 := by
+            intro TT hagree
+            have hlocTT := panToCrepLocalsRelFiniteExact_agreeBelowVmax ctxt source.locals t.locals TT hlocals hagree
+            obtain ⟨nsE', words', hvar', hmm', _, _⟩ := hlocTT.2.2 hv old hold
+            rw [hvar] at hvar'
+            simp only [Option.some.injEq, Prod.mk.injEq] at hvar'
+            obtain ⟨_, rfl⟩ := hvar'
+            have hpresent : ∀ m, m ∈ nsE → TT.lookup m ≠ none := by
+              intro m hm
+              have key : ∀ l : List Nat, ∀ ws, l.mapM TT.lookup = some ws → ∀ m, m ∈ l →
+                  TT.lookup m ≠ none := by
+                intro l
+                induction l with
+                | nil => intro _ _ m hm; simp at hm
+                | cons x xs ih =>
+                    intro ws hws m hm
+                    rw [List.mapM_cons] at hws
+                    cases hx : TT.lookup x with
+                    | none => rw [hx] at hws; simp at hws
+                    | some wx =>
+                        cases hxs : xs.mapM TT.lookup with
+                        | none => rw [hx, hxs] at hws; simp at hws
+                        | some wxs =>
+                            rcases List.mem_cons.mp hm with rfl | hm'
+                            · rw [hx]; simp
+                            · exact ih wxs hxs m hm'
+              exact key nsE words' hmm' m hm
+            have hexp : (expHdlExact ctxt.vars hv : CrepProgHOL width) =
+                crepNestedSeqHOL (panMap2 (fun destination source => .assign destination source)
+                  nsE (loadGlobalsHOL 0 nsE.length)) := by
+              simp [expHdlExact, hvar]
+            rw [evalCrepSemHOLProgExact_seq_holShape, hexp,
+              crepEvalAssignLoadGlobals nsE { t1 with locals := TT } 0 (flattenHOL exn) hndE hpresent
+                hglobE]
+            simp only [if_true]
+            have hsetE : panToCrepLocalsRelFiniteExact ctxt
+                (PanSemStateFiniteExact.setVarHOLFinite hv exn
+                  { st with locals := source.locals }).locals
+                (TT.updateListEq (nsE.zip (flattenHOL exn))) := by
+              have hvarE : ctxt.vars.lookup hv = some (shapeOfHOLExact exn, nsE) := by
+                rw [hvar, hse]
+              have hlr := panToCrepLocalsRelFiniteExact_setVar ctxt source.locals TT hv exn nsE
+                hlocTT hvarE hnsE hwfE
+              have hupd : source.locals.update (hv, exn) = source.locals.updateEq (hv, exn) := by
+                apply HolFiniteMapExact.ext
+                funext k
+                simp [HolFiniteMapExact.lookup_update, HolFiniteMapExact.lookup_updateEq,
+                  FUPDATE_HOL_eq_FUPDATE]
+              simpa [PanSemStateFiniteExact.setVarHOLFinite, hupd] using hlr
+            exact ihH res s1 _ ctxt hrun hres
+              (by simpa [panToCrepStateRelFiniteExact, PanSemStateFiniteExact.setVarHOLFinite]
+                using hs)
+              (codeRelExactHOLW_ctxtFc ctxt _ _ _ _ _ hc) he hsetE hlocP
+          rcases pcCompileCorrectCallExcCaughtTarget t ctxt dest (some (eid, hv, hp)) fname argexps vshapes rsh _ _ _ n t1
+              _ hlocals.1 hlocals.2.1 hfuncs htargs htlookup htclock hrun1 hfire with
+            htgt | ⟨rts, hgt, _hnd, htgt⟩
+          · obtain ⟨res2, t2, h2, hs2, hc2, he2, hr2⟩ := hrunH t.locals (fun _ _ => rfl)
+            exact ⟨res2, t2, htgt.trans h2, hs2, hc2, he2, hr2⟩
+          · have hbelow : ∀ k, k ≤ ctxt.vmax → k ∉ rts := fun k hk hm => by
+              have := hgt k hm; omega
+            obtain ⟨res2, t2, h2, hs2, hc2, he2, hr2⟩ := hrunH
+              (t.locals.updateListEq
+                (rts.zip (List.replicate rts.length (HolWordLab.word (0 : BitVec width)))))
+              (fun k hk => by
+                simp only [HolFiniteMapExact.lookup_updateListEq]
+                exact fupdListHOLZipNotMem k rts _ _ (hbelow k hk))
+            rw [h2] at htgt
+            refine ⟨res2, _, htgt, ?_, hc2, he2, ?_⟩
+            · simpa [panToCrepStateRelFiniteExact] using hs2
+            · apply pcCompileCorrectResultRel_agreeBelowVmax ctxt s1 t2 _ res res2 _ hr2
+              intro k hk
+              exact flookupResVarDistinctZipEqHOL rts _ t2.locals k ⟨by simp, hbelow k hk⟩
+
+/-- The `Call` case of HOL `pc_compile_correct` (`pan_to_crepProofScript.sml:3107-4231`)
+    against `pcCompileCorrectAt`. Its only hypotheses are the two Call IHs of
+    HOL's rebound `panSem$evaluate_ind` (`pcCompileCorrectCallIH`). It assembles
+    HOL's own case split:
+    * zero clock: `pcCompileCorrectAt_callZeroClock`;
+    * `caltyp = NONE`: `Call_TailCall`;
+    * otherwise, by the callee's source outcome: `Call_Ret_TimeOut`/`FinalFFI`,
+      `Call_Ret_Return`, `Call_Ret_Exception`.
+    Failed argument evaluation, failed `lookup_code`, and the callee outcomes
+    NONE/Break/Continue/Error are source Errors, excluded by `res ≠ SOME Error`.
+    There is no target-run or post-state premise. Untagged: it is the Call
+    constructor case of the theorem, and the assembled `pc_compile_correct` is not
+    yet proved (bead `flapjack-pxn.18.4.3.94`). -/
+theorem pcCompileCorrectAt_call {width : Nat} {σ : Type} [NeZero width]
+    (info : Option (Option (VarKind × MlS) × Option (MlS × MlS × ProgHOL width)))
+    (fname : MlS) (argexps : List (ExpHOL width)) (source : PanSemStateFiniteExact width σ)
+    (ih : pcCompileCorrectCallIH info fname argexps source) :
+    pcCompileCorrectAt (.call info fname argexps : ProgHOL width) source := by
+  classical
+  by_cases hclock : source.clock = 0
+  · exact pcCompileCorrectAt_callZeroClock info fname argexps source hclock
+  rcases info with _ | ⟨dest, hdl⟩
+  · exact pcCompileCorrectAt_callTail fname argexps source ih hclock
+  cases hargs : source.evalListHOLFinite
+      (h := fun address => Classical.propDecidable (source.memaddrs address)) argexps with
+  | none =>
+      intro res s1 t ctxt hrun hres
+      rw [evaluateHOLFiniteState_call, hargs] at hrun
+      exact absurd (Prod.mk.inj hrun).1.symm hres
+  | some values =>
+      cases hlk : PanSemStateFiniteExact.lookupCodeHOLFinite source.code.lookup fname values with
+      | none =>
+          intro res s1 t ctxt hrun hres
+          rw [evaluateHOLFiniteState_call, hargs] at hrun
+          dsimp only at hrun
+          rw [hlk] at hrun
+          exact absurd (Prod.mk.inj hrun).1.symm hres
+      | some triple =>
+          obtain ⟨prog, newlocals, rsh⟩ := triple
+          have herr : ∀ st, (PanSemStateFiniteExact.callEntryStateHOLFinite source newlocals
+                ).evaluateHOLFiniteState prog = (none, st) ∨
+              (PanSemStateFiniteExact.callEntryStateHOLFinite source newlocals
+                ).evaluateHOLFiniteState prog = (some .break, st) ∨
+              (PanSemStateFiniteExact.callEntryStateHOLFinite source newlocals
+                ).evaluateHOLFiniteState prog = (some .continue, st) ∨
+              (PanSemStateFiniteExact.callEntryStateHOLFinite source newlocals
+                ).evaluateHOLFiniteState prog = (some .error, st) →
+              pcCompileCorrectAt (.call (some (dest, hdl)) fname argexps : ProgHOL width) source := by
+            intro st hb res s1 t ctxt hrun hres
+            rw [evaluateHOLFiniteState_call, hargs] at hrun
+            dsimp only at hrun
+            rw [hlk] at hrun
+            dsimp only at hrun
+            rw [if_neg hclock] at hrun
+            rcases hb with hb | hb | hb | hb <;> rw [hb] at hrun <;>
+              exact absurd (Prod.mk.inj hrun).1.symm hres
+          rcases hbody : (PanSemStateFiniteExact.callEntryStateHOLFinite source newlocals
+              ).evaluateHOLFiniteState prog with ⟨bres, st⟩
+          rcases bres with _ | r
+          · exact herr st (Or.inl hbody)
+          · cases r with
+            | error => exact herr st (Or.inr (Or.inr (Or.inr hbody)))
+            | «break» => exact herr st (Or.inr (Or.inl hbody))
+            | «continue» => exact herr st (Or.inr (Or.inr (Or.inl hbody)))
+            | timeOut =>
+                exact pcCompileCorrectAt_callRetTerminal dest hdl fname argexps source ih hclock
+                  values prog newlocals rsh st _ hargs hlk hbody (Or.inl rfl)
+            | finalFfi ev =>
+                exact pcCompileCorrectAt_callRetTerminal dest hdl fname argexps source ih hclock
+                  values prog newlocals rsh st _ hargs hlk hbody (Or.inr ⟨ev, rfl⟩)
+            | returned v =>
+                exact pcCompileCorrectAt_callRetReturn dest hdl fname argexps source ih hclock
+                  values prog newlocals rsh st v hargs hlk hbody
+            | exception eid exn =>
+                exact pcCompileCorrectAt_callRetException dest hdl fname argexps source ih hclock
+                  values prog newlocals rsh st eid exn hargs hlk hbody
+
 end Flapjack

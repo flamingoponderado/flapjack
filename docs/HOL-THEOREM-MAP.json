@@ -11516,6 +11516,78 @@
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Call.lean",
+    "lean_name": "crepEvalAssignLoadGlobals",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus: Crep evaluation of exp_hdl's nested_seq of Assign/LoadGlob (the shape of crepProps evaluate_seq_assign_load_globals, with the loaded values given as a successful OPT_MMAP rather than THE), used inline by HOL Call_Ret_Exception. Untagged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Call.lean",
+    "lean_name": "pcCompileCorrectCallExcCaughtTarget",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus: Target run of a Ret call whose compiled handler catches the callee's exception. Untagged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Call.lean",
+    "lean_name": "panToCrepLocalsRelFiniteExact_agreeBelowVmax",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus: locals_rel depends only on target slots ≤ vmax (generalises the tagged local_rel_gt_vmax_preserved). Untagged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Call.lean",
+    "lean_name": "pcCompileCorrectAt_call",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus: The Call constructor case of HOL pc_compile_correct (pan_to_crepProofScript.sml:3107-4231) against pcCompileCorrectAt, with only the two rebound evaluate_ind Call IHs as hypotheses. It assembles HOL's split into zero-clock, Call_TailCall, and Call_Ret_TimeOut/FinalFFI/Return/Exception; there is no target-run or post-state premise. Untagged until the full pc_compile_correct assembly (bead flapjack-pxn.18.4.3.94). Untagged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Call.lean",
+    "lean_name": "pcCompileCorrectCallExcPropagateTarget",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus: Target run of a Ret call whose callee raises and whose handler does not fire. Untagged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Call.lean",
+    "lean_name": "pcCompileCorrectResultRel_agreeBelowVmax",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus: The pc_compile_correct result relation is preserved by target-local changes above vmax. Untagged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Call.lean",
+    "lean_name": "compileCallSomeShapeHdl",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus: Handler-exact shape of the compiled Ret Call arms (HOL compile_def case split inline). Untagged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Call.lean",
+    "lean_name": "fupdListHOLZipNotMem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus: Flapjack-only finite-map helper for the exact pc_compile_correct Call_Ret_Exception sub-case. Untagged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Call.lean",
+    "lean_name": "pcCompileCorrectAt_callRetException",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus: HOL pc_compile_correct[Call_Ret_Exception] (pan_to_crepProofScript.sml:3599-3916): the caltyp = SOME _, positive-clock sub-case with the callee's source Exception as the case-split hypothesis, using both rebound evaluate_ind Call IHs, with no target premise. Untagged sub-case (bead flapjack-pxn.18.4.3.94.9). Untagged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Call.lean",
     "lean_name": "fupdateListHOL_zip_mem_indep",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "flapjack-opus: Flapjack-only finite-map/list helper for the exact pc_compile_correct Call_Ret_Return sub-case. Untagged."
@@ -14783,6 +14855,17 @@
       "lc"
     ],
     "reviewer": "flapjack-opus source comparison (2026-09-28, bead flapjack-pxn.18.4.3.94.8 support; crepPropsScript.sml:612-633): HOL !xs ys lc. ALL_DISTINCT xs /\\ LENGTH xs = LENGTH ys ==> FOLDL res_var (lc |++ ZIP (xs,ys)) (ZIP (xs,MAP (FLOOKUP lc) xs)) = lc. Lean keeps the binders xs ys lc and the conjunctive premise (Nodup, length). FOLDL is List.foldl, res_var is the tagged HolFiniteMapExact.resVarEq, |++ ZIP is updateListEq (zip), FLOOKUP lc is lc.lookup, and HOL = on keys is DecidableEq. The standalone finite map lc is the bare relation-qualifier entry, as in the tagged no_overlap_wrap_rt_some_all_distinct. The proof is lookup-level and uses neither premise (they are kept for shape)."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
+    "hol_name": "flookup_res_var_distinct_zip_eq",
+    "lean_path": "Flapjack/Pancake/Semantics/CrepProps.lean",
+    "lean_name": "flookupResVarDistinctZipEqHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "fm"
+    ],
+    "reviewer": "flapjack-opus source comparison (2026-09-28, bead flapjack-pxn.18.4.3.94.9 support; crepPropsScript.sml:777-794): HOL LENGTH xs = LENGTH ys /\\ ~MEM x xs ==> FLOOKUP (FOLDL res_var fm (ZIP (xs,ys))) x = FLOOKUP fm x, with free variables xs ys fm x. Lean binds xs ys fm x explicitly, with ys : List (Option β) as HOL res_var's value-option list, and keeps the conjunctive premise. FOLDL res_var is List.foldl over the tagged HolFiniteMapExact.resVarEq, FLOOKUP is .lookup, and ~MEM is ∉. The standalone map fm is the bare relation-qualifier entry, as in the tagged res_var_lookup_original_eq."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
