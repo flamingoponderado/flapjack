@@ -1053,8 +1053,9 @@ decreasing_by
     the Lean recursive core; the proof-side behavior is independent of which
     decision procedures are chosen, as `evalCrepSemHOLProgExact_eq_core`
     records. This removes the explicit `memDec`/`shMemDec` arguments from the
-    evaluator interface, but is not tagged as HOL `evaluate_def`: the full
-    clause/carrier audit remains incomplete. -/
+    evaluator interface. This wrapper is not itself tagged: the full
+    HOL-shaped clause statement is the tagged theorem
+    `evalCrepSemHOLProgExact_eq_evaluate_def` below. -/
 noncomputable def evalCrepSemHOLProgExact {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ) (program : CrepProgHOL width) :
     Option (CrepResultHOLExact width) × CrepSemHOLState width σ := by
