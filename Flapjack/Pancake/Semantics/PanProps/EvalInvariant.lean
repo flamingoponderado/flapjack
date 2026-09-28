@@ -3939,10 +3939,7 @@ private abbrev evaluateInvariantsCallCalleeIH {width : Nat} {σ : Type}
     (prog : ProgHOL width)
     (v12 : HolFiniteMapExact MlS (ValueHOL width) × ShapeHOL)
     (newlocals : HolFiniteMapExact MlS (ValueHOL width))
-    (return_sh : ShapeHOL)
-    (eval_prog : Option (PanSemResultExact width) × PanSemStateFiniteExact width σ)
-    (v4 : Option (PanSemResultExact width))
-    (st : PanSemStateFiniteExact width σ),
+    (return_sh : ShapeHOL),
     arguments.mapM (fun expression =>
       PanSemStateFiniteExact.evalHOLFinite state.toPanSemFinite
         (h := fun address => Classical.propDecidable
@@ -3952,9 +3949,6 @@ private abbrev evaluateInvariantsCallCalleeIH {width : Nat} {σ : Type}
     v7 = (prog, v12) →
     v12 = (newlocals, return_sh) →
     state.toPanSemFinite.clock ≠ 0 →
-    eval_prog = PanSemStateFiniteExact.evaluateHOLFiniteState
-      (PanSemStateFiniteExact.callEntryStateHOLFinite state.toPanSemFinite newlocals) prog →
-    eval_prog = (v4, st) →
     evaluateInvariantsAtHOLFinite
       (PanPropsEvalStateFiniteExact.ofPanSemFinite
         (PanSemStateFiniteExact.callEntryStateHOLFinite state.toPanSemFinite newlocals)) prog
@@ -4123,8 +4117,8 @@ private theorem evaluateInvariantsCallBodyResultBranchesHOLFinite
       evalListHOLExact_eq_mapM] at hargsExact
     simpa only [PanSemStateFiniteExact.evalHOLFinite_eq_toExact] using hargsExact
   have hbodyInvAt := ihBody values (body, (callee, returnShape)) body
-    (callee, returnShape) callee returnShape (bodyResult, bodyPost) bodyResult bodyPost
-    hargsMapM hlookup rfl rfl hclock hbody.symm rfl
+    (callee, returnShape) callee returnShape
+    hargsMapM hlookup rfl rfl hclock
   have hbodyInv := hbodyInvAt bodyResult bodyPostProps hbodyPair
   have hbodyFields :
       bodyPost.memaddrs = state.toPanSemFinite.memaddrs ∧
@@ -4426,11 +4420,14 @@ private theorem evaluateInvariantsCallBodyResultBranchesHOLFinite
 This is the exact `Call` conjunct printed by the checked `evaluate_ind` probe
 at `scripts/hol-probes/pan_sem_evaluate_ind_probe.out`: its handler IH comes
 first and is guarded by the concrete callee result, nested `caltyp` shape,
-matched exception, source shape equality, and value validity; its callee IH has
-the concrete `OPT_MMAP`, lookup/decomposition, clock, and recursive evaluation
-equations. The theorem keeps the source result/post equation and all eight
-state-field conclusions. The same-module state uses the reviewed
-finite-support maps and indexed-word carrier qualifiers.
+matched exception, source shape equality, and value validity; its callee IH is
+the separate, smaller conjunct and carries only the concrete `OPT_MMAP`,
+lookup/decomposition, and nonzero-clock premises. The recursive evaluation
+equations `eval_prog = evaluate ...` and `eval_prog = (v4, st)` belong to the
+handler IH alone and are absent from the callee IH. The theorem keeps the
+source result/post equation and all eight state-field conclusions. The
+same-module state uses the reviewed finite-support maps and indexed-word
+carrier qualifiers.
 -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_invariants" 1150
   (fmap_as_finite_support := [locals, globals, code, eshapes])
