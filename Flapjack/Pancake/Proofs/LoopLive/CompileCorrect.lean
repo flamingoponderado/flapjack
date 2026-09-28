@@ -1768,4 +1768,155 @@ theorem loopLive_compile_correct_ffi {width : Nat} [NeZero width] {F : Type} :
         sptLookup_sptInter, if_pos (show (sptLookup k cs).isSome = true from hkc)]
       exact subspt_inter_apply hsub hkv (hin hkcl)
 
+/-- Flapjack helper (no HOL declaration): the branch-independent tail of HOL's
+    `Resume compile_correct[If]` — the `cut_res` step after the chosen branch. -/
+private theorem loopLive_if_branch {width : Nat} [NeZero width] {F : Type}
+    (c p' : HolLoopProg width) (v1 : LoopSemStateFiniteExact width F) (lt : List (NumSet × NumSet))
+    (lx l0 liveOut : NumSet) (locals : Spt (WordLocW width))
+    (res : Option (LoopResultExact width)) (s1 : LoopSemStateFiniteExact width F)
+    (ih : loopLiveCompileCorrectAt c v1)
+    (hshr : shrinkHOL lt c (sptInter l0 liveOut) = (p', lx))
+    (hsub : sptSubspt (sptInter v1.locals lx) locals) :
+    cutRes liveOut (evaluate c v1) = (res, s1) → res ≠ some .error →
+    ∃ new_locals, cutRes (sptInter l0 liveOut) (evaluate p' { v1 with locals := locals }) =
+        (res, { s1 with locals := new_locals }) ∧
+      match res with
+      | none => sptSubspt (sptInter s1.locals l0) new_locals
+      | some (.result _) => new_locals = s1.locals
+      | some (.exception _) => new_locals = s1.locals
+      | some (.break n) =>
+          (match sptOel n lt with
+           | some (_, brk) => sptSubspt (sptInter s1.locals brk) new_locals
+           | none => True)
+      | some (.continue n) =>
+          (match sptOel n lt with
+           | some (cont, _) => sptSubspt (sptInter s1.locals cont) new_locals
+           | none => True)
+      | some .timeOut => new_locals = s1.locals
+      | some (.finalFfi _) => new_locals = s1.locals
+      | some .error => new_locals = s1.locals := by
+  intro he hne
+  rcases hc : evaluate c v1 with ⟨rc, sc⟩
+  rw [hc] at he
+  have hrc : rc ≠ some .error := fun e => by
+    subst e; simp [cutRes] at he; exact hne he.1.symm
+  obtain ⟨nl, hn, hp⟩ := ih rc sc lt locals p' lx (sptInter l0 liveOut) ⟨hc, hrc, hshr, hsub⟩
+  rw [hn]
+  cases rc with
+  | some r =>
+    simp only [cutRes, Prod.mk.injEq] at he
+    obtain ⟨rfl, rfl⟩ := he
+    refine ⟨nl, by simp [cutRes], ?_⟩
+    cases r <;> exact hp
+  | none =>
+    simp only at hp
+    by_cases hS : sptSubsetLive liveOut sc.locals
+    · have hS' : sptSubsetLive (sptInter l0 liveOut) nl := by
+        intro k hk
+        obtain ⟨hk0, hkl⟩ := (mem_inter_iff _ _ k).mp hk
+        have hks := hS k hkl
+        have := subspt_inter_apply hp hks hk
+        simp only [sptMem, sptDomain, this]; exact hks
+      simp only [cutRes, cutState_of_subset liveOut sc hS] at he
+      simp only [cutRes, cutState_of_subset (sptInter l0 liveOut) { sc with locals := nl } hS']
+      by_cases hz : sc.clock = 0
+      · simp only [hz, if_true, Prod.mk.injEq] at he ⊢
+        obtain ⟨rfl, rfl⟩ := he
+        exact ⟨.ln, by constructor <;> rfl, rfl⟩
+      · simp only [hz, if_false, Prod.mk.injEq] at he ⊢
+        obtain ⟨rfl, rfl⟩ := he
+        refine ⟨sptInter nl (sptInter l0 liveOut), by constructor <;> rfl, ?_⟩
+        refine subspt_of_lookup fun k hk => ?_
+        obtain ⟨hk1, hk0⟩ := (mem_inter_iff _ _ k).mp hk
+        obtain ⟨hks, hkl⟩ := (mem_inter_iff _ _ k).mp hk1
+        have hkL : sptMem k (sptInter l0 liveOut) := (mem_inter_iff _ _ k).mpr ⟨hk0, hkl⟩
+        have hk0' : (sptLookup k l0).isSome = true := hk0
+        have hkl' : (sptLookup k liveOut).isSome = true := hkl
+        simp only [decClock, sptLookup_sptInter, hk0', hkl', if_true]
+        exact subspt_inter_apply hp hks hkL
+    · simp [cutRes, cutState_eq_none_of_not_subset liveOut sc hS] at he
+      exact absurd he.1.symm hne
+
+/-- Flapjack helper (no HOL declaration): the `l3` live set of HOL `shrink`'s `If`
+    clause, `case x3 of Reg r => insert r () LN | _ => LN`. -/
+def regImmLive {α : Type} : RegImm α → NumSet
+  | .reg r => sptInsert r () .ln
+  | .imm _ => .ln
+
+/-- `compile_correct`, case `If cmp r1 ri c1 c2 live_out` (`loop_liveProofScript.sml:17-37`
+    statement; `Resume compile_correct[If]` at 534-559), with the `evaluate_ind`
+    hypothesis for the branch `if word_cmp cmp x y then c1 else c2` selected by the
+    register values. -/
+@[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
+theorem loopLive_compile_correct_if {width : Nat} [NeZero width] {F : Type} :
+    ∀ (cmp : Cmp) (r1 : Nat) (ri : RegImm (BitVec width)) (c1 c2 : HolLoopProg width)
+      (liveOut : NumSet) (v1 : LoopSemStateFiniteExact width F),
+      (∀ x y, sptLookup r1 v1.locals = some (.word x) → LoopSemStateFiniteExact.getVarImm ri v1 = some (.word y) →
+        loopLiveCompileCorrectAt (if Compiler.Encoders.Asm.wordCmpHOL cmp x y then c1 else c2) v1) →
+    ∀ (res : Option (LoopResultExact width)) (s1 : LoopSemStateFiniteExact width F)
+      (lt : List (NumSet × NumSet)) (locals : Spt (WordLocW width)) (prog1 : HolLoopProg width)
+      (l1 l0 : NumSet),
+      evaluate (.ite cmp r1 ri c1 c2 liveOut) v1 = (res, s1) ∧ res ≠ some .error ∧
+        shrinkHOL lt (.ite cmp r1 ri c1 c2 liveOut) l0 = (prog1, l1) ∧
+        sptSubspt (sptInter v1.locals l1) locals →
+    ∃ new_locals, evaluate prog1 { v1 with locals := locals } = (res, { s1 with locals := new_locals }) ∧
+      match res with
+      | none => sptSubspt (sptInter s1.locals l0) new_locals
+      | some (.result _) => new_locals = s1.locals
+      | some (.exception _) => new_locals = s1.locals
+      | some (.break n) =>
+          (match sptOel n lt with
+           | some (_, brk) => sptSubspt (sptInter s1.locals brk) new_locals
+           | none => True)
+      | some (.continue n) =>
+          (match sptOel n lt with
+           | some (cont, _) => sptSubspt (sptInter s1.locals cont) new_locals
+           | none => True)
+      | some .timeOut => new_locals = s1.locals
+      | some (.finalFfi _) => new_locals = s1.locals
+      | some .error => new_locals = s1.locals := by
+  intro cmp r1 ri c1 c2 liveOut v1 ih res s1 lt locals prog1 l1 l0 ⟨he, hne, hs, hsub⟩
+  rcases h1s : shrinkHOL lt c1 (sptInter l0 liveOut) with ⟨p1', l1'⟩
+  rcases h2s : shrinkHOL lt c2 (sptInter l0 liveOut) with ⟨p2', l2'⟩
+  have hshr : shrinkHOL lt (.ite cmp r1 ri c1 c2 liveOut) l0 =
+      (.ite cmp r1 ri p1' p2' (sptInter l0 liveOut),
+        sptInsert r1 () (sptUnion (regImmLive ri) (sptUnion l1' l2'))) := by
+    cases ri <;> simp [shrinkHOL, h1s, h2s, regImmLive]
+  rw [hshr, Prod.mk.injEq] at hs
+  obtain ⟨rfl, rfl⟩ := hs
+  cases hx : sptLookup r1 v1.locals with
+  | none => simp [evaluate, hx] at he; exact absurd he.1.symm hne
+  | some a =>
+  cases a with
+  | loc _ _ => simp [evaluate, hx] at he; exact absurd he.1.symm hne
+  | word x =>
+  cases hy : LoopSemStateFiniteExact.getVarImm ri v1 with
+  | none => simp [evaluate, hx, hy] at he; exact absurd he.1.symm hne
+  | some b =>
+  cases b with
+  | loc _ _ => simp [evaluate, hx, hy] at he; exact absurd he.1.symm hne
+  | word y =>
+  have hmem : ∀ {k : Nat} {t : NumSet}, sptMem k t → ∀ u : NumSet, sptMem k (sptUnion u t) :=
+    fun h u => (sptMem_sptUnion' u _ _).mpr (Or.inr h)
+  have hmeml : ∀ {k : Nat} {t : NumSet}, sptMem k t → ∀ u : NumSet, sptMem k (sptUnion t u) :=
+    fun h u => (sptMem_sptUnion' _ u _).mpr (Or.inl h)
+  have hx' := lookup_of_subspt hsub (mem_insert_self' r1 _) hx
+  have hy' : LoopSemStateFiniteExact.getVarImm ri { v1 with locals := locals } = some (.word y) := by
+    cases ri with
+    | imm w => simpa [LoopSemStateFiniteExact.getVarImm] using hy
+    | reg r =>
+      simp only [LoopSemStateFiniteExact.getVarImm, regImmLive] at hy hsub ⊢
+      exact lookup_of_subspt hsub (mem_insert_of' r1 (hmeml (mem_insert_self' r .ln) _)) hy
+  have ih' := ih x y hx hy
+  simp only [evaluate, hx, hy] at he
+  simp only [evaluate, hx', hy']
+  by_cases hb : Compiler.Encoders.Asm.wordCmpHOL cmp x y = true
+  · simp only [hb, if_true] at he ih' ⊢
+    exact loopLive_if_branch c1 p1' v1 lt l1' l0 liveOut locals res s1 ih' h1s
+      (post_none_same hsub fun k hk => mem_insert_of' r1 (hmem (hmeml hk _) _)) he hne
+  · simp only [hb, if_false, Bool.false_eq_true] at he ih' ⊢
+    exact loopLive_if_branch c2 p2' v1 lt l2' l0 liveOut locals res s1 ih' h2s
+      (post_none_same hsub fun k hk => mem_insert_of' r1 (hmem (hmem hk _) _)) he hne
+
 end Flapjack

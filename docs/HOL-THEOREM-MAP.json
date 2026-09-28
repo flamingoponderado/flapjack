@@ -20554,5 +20554,25 @@
     "lean_name": "shMemStore_frame",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack helper: loopSem sh_mem_store behaves identically up to locals when the stored register agrees; no separate CakeML declaration"
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "loopLive_compile_correct_if",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.5): case piece `If cmp r1 ri c1 c2 live_out` of loop_live compile_correct (statement loop_liveProofScript.sml:17-37; Resume compile_correct[If] at 534-559). Extra antecedent is exactly loopSem evaluate_ind's If hypothesis: for the register values x, y (lookup r1 = SOME (Word x), get_var_imm ri = SOME (Word y)), the statement for (if word_cmp cmp x y then c1 else c2, v1), via the untagged loopLiveCompileCorrectAt. Otherwise HOL binders/premises/conclusion as in the other pieces. Proof follows HOL: both operands are live in insert r1 () (union l3 (union l1 l2)), the chosen branch's IH at live set inter l0 live_out, then cut_res with the shrunk cutset inter l0 live_out succeeds because of the IH's NONE postcondition (subspt_IMP_domain reasoning inline)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "loopLive_if_branch",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper: the branch-independent cut_res tail of HOL's Resume compile_correct[If]; no separate CakeML declaration"
   }
 ]
