@@ -293,6 +293,9 @@ run_probe crep_dec_clock_simp_probeScript.sml crep_dec_clock_simp_probe.out \
 run_probe crep_to_loop_state_rel_probeScript.sml crep_to_loop_state_rel_probe.out \
   memaddrs_mdomain_mem clock_mismatch "$cake_dir/pancake/proofs/crep_to_loopProofScript.sml" \
   "$cake_dir/pancake/proofs"
+run_probe crep_to_loop_ctxt_fc_probeScript.sml crep_to_loop_ctxt_fc_probe.out \
+  vars_zip done "$cake_dir/pancake/proofs/crep_to_loopProofScript.sml" \
+  "$cake_dir/pancake/proofs"
 run_probe crep_to_loop_globals_rel_probeScript.sml crep_to_loop_globals_rel_probe.out \
   wlab_wloc_word globals_lookup_absent "$cake_dir/pancake/proofs/crep_to_loopProofScript.sml" \
   "$cake_dir/pancake/proofs"
@@ -1093,6 +1096,11 @@ run_probe globals_lookup_probeScript.sml globals_lookup_probe.out \
   lookup_success lookup_missing lookup_struct \
   "$cake_dir/pancake/proofs/pan_to_crepProofScript.sml" \
   "$cake_dir/pancake/proofs"
+run_probe pan_globals_compile_probeScript.sml pan_globals_compile_probe.out \
+  local_assign global_destination_handler_flag global_destination_handler_local_arg \
+  "$cake_dir/pancake/pan_globalsScript.sml" \
+  "$cake_dir/pancake"
+
 run_probe pan_globals_compile_top_probeScript.sml pan_globals_compile_top_probe.out \
   missing_start global_present present_start "$cake_dir/pancake/pan_globalsScript.sml"
 run_probe pan_globals_compile_decs_probeScript.sml pan_globals_compile_decs_probe.out \
@@ -1270,10 +1278,13 @@ run_probe crep_eval_crepop_mul_rv64_probeScript.sml crep_eval_crepop_mul_rv64_pr
   "$cake_dir/pancake/semantics/crepSemScript.sml" \
   "$cake_dir/pancake/semantics"
 run_probe prog_if_probeScript.sml prog_if_probe.out \
-  prog_if_basic prog_if_basic \
+  prog_if_basic prog_if_basic prog_if_wrong_result prog_if_wrong_result \
+  "$cake_dir/pancake/crep_to_loopScript.sml"
+run_probe crep_to_loop_compile_exp_probeScript.sml crep_to_loop_compile_exp_probe.out \
+  base compile_exps \
   "$cake_dir/pancake/crep_to_loopScript.sml"
 run_probe compile_crepop_probeScript.sml compile_crepop_probe.out \
-  compile_crepop_mul_riscv compile_crepop_mul_riscv \
+  compile_crepop_mul_riscv compile_crepop_mul_armv7 \
   "$cake_dir/pancake/crep_to_loopScript.sml"
 run_probe pan_empty_locals_probeScript.sml pan_empty_locals_probe.out \
   empty_locals empty_locals_clock \

@@ -1,0 +1,7 @@
+vars_zip=T
+vars_zip_truncates=T
+funcs_projection=T
+vmax_nonempty_list=T
+vmax_empty_list=T
+target_kept=T
+done=T

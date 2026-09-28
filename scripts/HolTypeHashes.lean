@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.BackendCommon
+import Flapjack.Compiler.Backend.Semantics.WordSem
 import Flapjack.Compiler.Backend.RegAlloc
 import Flapjack.AstHOL
 import Flapjack.Compiler.Backend.StackLang
@@ -24,7 +25,10 @@ import Flapjack.Pancake.CrepLang.Exp
 import Flapjack.Pancake.CrepLang.Prog
 import Flapjack.Pancake.CrepToLoop
 import Flapjack.Pancake.CrepToLoop.ContextExact
+import Flapjack.Pancake.CrepToLoop.Proofs.AssignedVars
 import Flapjack.Pancake.CrepToLoop.StateRel
+import Flapjack.Pancake.LoopLang.AssignedVars
+import Flapjack.Pancake.Semantics.LoopProps.AssignedVars
 import Flapjack.Pancake.PanCommon
 import Flapjack.Pancake.PanGlobals
 import Flapjack.Pancake.PanGlobals.CompileExpExact
@@ -96,6 +100,7 @@ import Flapjack.Pancake.LoopLive
 import Flapjack.Pancake.Semantics.LoopProps
 import Flapjack.Pancake.Semantics.LoopSem
 import Flapjack.Pancake.Semantics.LoopSemStateExact
+import Flapjack.Pancake.Semantics.LoopSemStateExact.ShMem
 import Flapjack.Pancake.Semantics.PanCommonProps
 import Flapjack.Pancake.Semantics.PanProps
 import Flapjack.Pancake.Semantics.PanProps.EvalInvariant

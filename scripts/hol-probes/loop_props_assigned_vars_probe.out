@@ -1,6 +1,8 @@
 avs_seq_split=T
+avs_seq_split_negative=F
 avs_nested_seq_split_two=T
 avs_nested_seq_split_nil=T
+avs_nested_seq_split_negative=F
 avs_nested_assign_nil=T
 avs_nested_assign_one=T
 avs_nested_assign_three=T
