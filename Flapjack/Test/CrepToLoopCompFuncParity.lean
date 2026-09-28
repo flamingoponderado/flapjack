@@ -1,4 +1,5 @@
 import Flapjack.Pancake.CrepToLoop.ContextExact
+import Flapjack.Pancake.CrepToLoop.Optimise
 
 /-!
 # Direct HOL oracle parity for exact `crep_to_loop$comp_func_def`
@@ -23,6 +24,22 @@ open Flapjack.Pancake
 open Flapjack.Compiler.Encoders.Asm
 
 private abbrev fs : HolFiniteMapExact MlString (Nat × Nat) := HolFiniteMapExact.empty
+
+/-- A byte-ranged source `skip` reaches the checked exact ocompile route and
+projects to the same executable skip result as the direct HOL `comp_func`
+row followed by `ocompile_def`. -/
+example : loopProgExecRel
+    (crepCompFuncThroughHOLExact (width := 8) .rv32i [] []
+    (CrepProg.skip : CrepProg (BitVec 8))
+    (by simp [CrepProgNameRanged])
+    (by intro entry h; simp at h))
+    (ocompileHOLExact (productionLoopContextToExact
+      (crepMkCtxt (α := BitVec 8) .rv32i [] [] 0))
+      (listToNumSetHOLExact []) (CrepProgHOL.skip : CrepProgHOL 8)) := by
+  simpa [crepMakeVmap, crepProgToHOL] using
+    (crepCompFuncThroughHOLExact_rel (width := 8) .rv32i [] []
+    (CrepProg.skip : CrepProg (BitVec 8))
+    (by simp [CrepProgNameRanged]) (by simp))
 
 /-- `comp_func_skip` HOL row. -/
 theorem compFunc_skip :
