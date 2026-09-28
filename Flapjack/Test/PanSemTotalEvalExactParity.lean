@@ -706,6 +706,18 @@ def nestedDecCallBadShapeOracleRow : Bool :=
         (post.locals (ml "x")).isNone
   | _ => false
 
+/-- Direct replay of `nested_deccall_code_map_clock_8` from
+    `scripts/hol-probes/pan_sem_e2e_probe.out`: a nested callee returns
+    `ValWord 7` and the caller clock is restored to 8. -/
+def nestedDecCallSuccessOracleRow : Bool :=
+  let result := recursiveExact
+    (.decCall (ml "answer") .one (ml "f") []
+      (.return (.var .local (ml "answer")))) (nestedDecCallCodeState 10)
+  match result with
+  | some (some (.returned (.val (.word value))), post) =>
+      value.toNat == 7 && post.clock == 8
+  | _ => false
+
 def stateOwnedTimeoutRows : Bool :=
   let call := recursiveExact (.call none (ml "loop") [])
     (recursiveCallCodeState 2)
@@ -859,6 +871,7 @@ def recursiveDecRows : Bool :=
 #guard stateOwnedDecCallRows
 #guard stateOwnedDecCallNegativeRows
 #guard nestedDecCallBadShapeOracleRow
+#guard nestedDecCallSuccessOracleRow
 #guard stateOwnedDecCallExceptionRows
 #guard stateOwnedDecCallControlNegativeRows
 #guard stateOwnedTimeoutRows
@@ -925,6 +938,9 @@ def runChecks : IO Bool := do
   if nestedDecCallBadShapeOracleRow then
     IO.println "PASS exact-state nested DecCall bad-shape rows match pan_sem_deccall_error_probe.out (Error, clock 8, p = ValWord 42w)"
   else IO.println "FAIL exact-state nested DecCall bad-shape rows match pan_sem_deccall_error_probe.out (Error, clock 8, p = ValWord 42w)"
+  if nestedDecCallSuccessOracleRow then
+    IO.println "PASS exact-state nested DecCall success matches pan_sem_e2e_probe.out (Return 7w, clock 8)"
+  else IO.println "FAIL exact-state nested DecCall success matches pan_sem_e2e_probe.out (Return 7w, clock 8)"
   if stateOwnedDecCallExceptionRows then
     IO.println "PASS exact-state recursive DecCall propagates callee exceptions and clears locals"
   else IO.println "FAIL exact-state recursive DecCall propagates callee exceptions and clears locals"
