@@ -38,6 +38,15 @@ respectively
 additionally probes `pan_op_def` at lines 191--193.
 `Flapjack.Test.LoopSetVarParity` probes `set_var_def` at
 `cakeml/pancake/semantics/loopSemScript.sml:108-110`.
+`loop_to_word_defs_probe.out` records direct HOL EVAL rows for the exact
+`spt`-carrier loop_to_word context definitions `find_var_def`,
+`find_reg_imm_def`, `toNumSet_def`, `fromNumSet_def`, and
+`mk_new_cutset_def` at `cakeml/pancake/loop_to_wordScript.sml:10-53`; the
+kernel-checked Lean replay is `Flapjack.Test.LoopToWordExactParity`.
+`loop_to_word_comp_exp_probe.out` records direct HOL EVAL rows for the exact
+loopLang-to-wordLang expression compiler `comp_exp_def` at
+`cakeml/pancake/loop_to_wordScript.sml:22-40`; its kernel-checked Lean replay
+is also `Flapjack.Test.LoopToWordExactParity`.
 `loop_live_comp_probe.out` records direct HOL EVAL rows for
 `loop_live$comp` at `cakeml/pancake/loop_liveScript.sml:217`; the Lean replay
 is `Flapjack.Test.LoopLiveCompParity`. `loop_live_optimise_probe.out` records
@@ -709,6 +718,14 @@ Lean port `crepToLoopCodeRelExact` in `Flapjack.Pancake.CrepToLoop.StateRel` is
 replayed against those rows by `Flapjack.Test.CrepToLoopCodeRelParity`. Refresh
 with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=crep_to_loop_code_rel_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
+`crep_to_loop_evaluate_io_mono_type_probe.out` prints the exact source
+construction of the local `evaluate_io_mono_rephrases` helper
+(`crep_to_loopProofScript.sml:4066-4070`), including both `Q.SPECL`
+specializations, the `map (SIMP_RULE (srw_ss()) [])`, and `LIST_CONJ`, because
+the `[local]` helper is not exported by the theory. It records the two
+conjunct-local `!extra` binders and free-variable types, including the Crep and
+Loop state carriers. Refresh with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=crep_to_loop_evaluate_io_mono_type_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
 `crep_to_loop_locals_rel_probe.out` records direct observations for
 `locals_rel_def` at `cakeml/pancake/proofs/crep_to_loopProofScript.sml:101-111`.
 HOL `crepLang$varname = num` (`crepLangScript.sml:19`), so the context's `vars`
@@ -831,6 +848,14 @@ the LUB when the input is an `lprefix_chain`. The matching source review is besi
 `SemanticsRunResHOL` in `Flapjack/Pancake/Semantics/PanProps.lean`. Refresh it
 with `HOL_PROBE_ONLY=loop_sem_lprefix_lub_probeScript.sml
 scripts/hol-probes/regenerate.sh`.
+
+`crep_inline_relations_probe.out` records direct HOL simplification/evaluation
+of `state_rel_def` and `locals_rel_def` at
+`crep_inlineProofScript.sml:12-29`: a nonempty locals map is a submap of an
+extension, missing and conflicting bindings fail, `state_rel` ignores locals,
+and a code-field difference fails. The exact finite-support Lean replays are
+in `Flapjack.Test.CrepInlineRelationsExactParity`. Regenerate with
+`HOL_PROBE_ONLY=crep_inline_relations_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
 `crep_inline_alist_map_probe.out` records direct HOL EVAL of the inline-map
 input carrier at `crep_inlineScript.sml:259-269`: `alist_to_fmap` keeps the

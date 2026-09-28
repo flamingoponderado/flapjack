@@ -202,6 +202,15 @@ run_probe pan_structs_dropwhile_afindi_probeScript.sml pan_structs_dropwhile_afi
   "$cake_dir/pancake/proofs"
 run_probe loop_to_word_probeScript.sml loop_to_word_probe.out \
   find_var_empty find_reg_imm_ctxt "$cake_dir/pancake/loop_to_wordScript.sml"
+run_probe loop_to_word_defs_probeScript.sml loop_to_word_defs_probe.out \
+  lt_find_var_hit lt_find_var_miss lt_find_reg_imm_imm lt_find_reg_imm_reg \
+  lt_to_num_set_lookup0 lt_to_num_set_lookup2 lt_to_num_set_lookup3 \
+  lt_from_num_set lt_mk_new_cutset_lookup0 lt_mk_new_cutset_lookup5 \
+  lt_mk_new_cutset_absent "$cake_dir/pancake/loop_to_wordScript.sml"
+run_probe loop_to_word_comp_exp_probeScript.sml loop_to_word_comp_exp_probe.out \
+  comp_exp_const comp_exp_var comp_exp_var_miss comp_exp_lookup \
+  comp_exp_base_addr comp_exp_top_addr comp_exp_load comp_exp_shift \
+  comp_exp_op "$cake_dir/pancake/loop_to_wordScript.sml"
 # The get_stack_only probe observes the allocator driver's stack-only
 # analysis over wordLang programs (backend word_alloc).
 run_probe get_stack_only_probeScript.sml get_stack_only_probe.out \
@@ -488,6 +497,10 @@ run_probe crep_inline_cont_res_probeScript.sml crep_inline_cont_res_probe.out \
 run_probe crep_inline_eval_probeScript.sml crep_inline_eval_probe.out \
   src_main_is_call continue_eval "$cake_dir/pancake/semantics/crepSemScript.sml" \
   "$cake_dir/pancake/semantics"
+run_probe crep_inline_relations_probeScript.sml crep_inline_relations_probe.out \
+  locals_rel_extension state_rel_dec_clock \
+  "$cake_dir/pancake/proofs/crep_inlineProofScript.sml" \
+  "$cake_dir/pancake/proofs"
 run_probe pan_flat_store_probeScript.sml pan_flat_store_probe.out \
   store_hit stores_blocked "$cake_dir/pancake/semantics/panSemScript.sml"
 run_probe pan_flatten_probeScript.sml pan_flatten_probe.out \
@@ -1328,6 +1341,9 @@ run_probe crep_to_loop_ocompile_probeScript.sml crep_to_loop_ocompile_probe.out 
   "$cake_dir/pancake/crep_to_loopScript.sml"
 run_probe crep_to_loop_code_rel_probeScript.sml crep_to_loop_code_rel_probe.out \
   code_rel_funcs_lookup code_rel_lookup_pair \
+  "$cake_dir/pancake/proofs/crep_to_loopProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe crep_to_loop_evaluate_io_mono_type_probeScript.sml \
+  crep_to_loop_evaluate_io_mono_type_probe.out \
   "$cake_dir/pancake/proofs/crep_to_loopProofScript.sml" "$cake_dir/pancake/proofs"
 run_probe compile_crepop_probeScript.sml compile_crepop_probe.out \
   compile_crepop_mul_riscv compile_crepop_mul_armv7 \

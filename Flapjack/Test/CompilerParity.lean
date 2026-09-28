@@ -34,6 +34,7 @@ import Flapjack.Test.PanLangDeclHOLParity
 import Flapjack.Test.PanWithShapeParity
 import Flapjack.Test.CrepInlineGenlistParity
 import Flapjack.Test.CrepInlineRelParity
+import Flapjack.Test.CrepInlineRelationsExactParity
 import Flapjack.Test.CrepSemTotalClockLeavesParity
 import Flapjack.Test.CrepSemTotalEvaluateHOLParity
 import Flapjack.Test.CrepSemEvaluateDefArmsParity
@@ -102,6 +103,7 @@ import Flapjack.Test.CakeStackReseatParity
 import Flapjack.Test.LoopSetGlobalsParity
 import Flapjack.Test.LoopSetVarsParity
 import Flapjack.Test.LoopSetVarParity
+import Flapjack.Test.LoopToWordExactParity
 import Flapjack.Test.LoopDecClockParity
 import Flapjack.Test.LoopFixClockParity
 import Flapjack.Test.LoopPropsSurvivesParity
@@ -830,6 +832,7 @@ def main : IO Unit := do
     Flapjack.Test.LoopSetGlobalsParity.runChecks,
     Flapjack.Test.LoopSetVarsParity.runChecks,
     Flapjack.Test.LoopSetVarParity.runChecks,
+    Flapjack.Test.LoopToWordExactParity.runChecks,
     Flapjack.Test.LoopDecClockParity.runChecks,
     Flapjack.Test.LoopFixClockParity.runChecks,
     Flapjack.Test.LoopPropsSurvivesParity.runChecks,
@@ -856,6 +859,7 @@ def main : IO Unit := do
     Flapjack.Test.CrepInlineNontailParity.runChecks,
     Flapjack.Test.CrepInlineHasReturnParity.runChecks,
     Flapjack.Test.CrepInlineRelParity.runChecks,
+    Flapjack.Test.CrepInlineRelationsExactParity.runChecks,
     Flapjack.Test.CrepSemTotalEvaluateHOLParity.runChecks,
     Flapjack.Test.CrepSemEvaluateDefArmsParity.runChecks,
     Flapjack.Test.PanStore32EndianParity.runChecks,

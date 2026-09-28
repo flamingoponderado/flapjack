@@ -396,6 +396,55 @@ DEFINITION_RE = re.compile(
     r"(?:def|abbrev|opaque|theorem|lemma)\s+([^\s:({\[]+)"
 )
 DOCUMENTED_MISMATCHES = {
+    ("Flapjack/Pancake/Proofs/CrepInline.lean", "crepInlineStateRelW"): (
+        "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+        "state_rel_def",
+        "flapjack-luna-a source review (2026-09-29; bead flapjack-2de.13): tag withdrawn. "
+        "CrepHolState has raw lookup functions for locals/globals/code and admits "
+        "infinite-support states HOL finite maps cannot represent; words_as_type_indexed_bitvec "
+        "does not authorize this map-carrier difference. The helper remains useful Flapjack "
+        "infrastructure; the exact state_rel finite-support port is still open."
+    ),
+    ("Flapjack/Pancake/Proofs/CrepInline.lean", "crepInlineLocalsRelW"): (
+        "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+        "locals_rel_def",
+        "flapjack-luna-a source review (2026-09-29; bead flapjack-2de.13): tag withdrawn. "
+        "CrepHolState locals are a raw lookup function admitting infinite support, unlike HOL "
+        "finite maps. This helper remains Flapjack infrastructure; an exact finite-support "
+        "locals_rel port is still open."
+    ),
+    ("Flapjack/Pancake/Proofs/CrepInline.lean", "crepInlineLocalsStrongRelW"): (
+        "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+        "locals_strong_rel_def",
+        "flapjack-luna-a source review (2026-09-29; bead flapjack-2de.13): tag withdrawn. "
+        "CrepHolState locals are a raw lookup function admitting infinite support, unlike HOL "
+        "finite maps. Exact finite-support counterpart crepInlineLocalsStrongRelExact is "
+        "tagged in this file."
+    ),
+    ("Flapjack/Pancake/Proofs/CrepInline.lean", "crepInlineLocalsRel_decClockW"): (
+        "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+        "locals_rel_dec_clock",
+        "flapjack-luna-a source review (2026-09-29; bead flapjack-2de.13): tag withdrawn "
+        "because this theorem quantifies over CrepHolState raw-function maps, not HOL "
+        "finite-support maps. The helper remains useful Flapjack infrastructure."
+    ),
+    ("Flapjack/Pancake/Proofs/CrepInline.lean", "crepInlineLocalsExtRelW"): (
+        "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+        "locals_ext_rel_def",
+        "flapjack-luna-a source review (2026-09-29; bead flapjack-2de.13): tag withdrawn. "
+        "CrepHolState locals are raw lookup functions admitting infinite support, unlike HOL "
+        "finite maps. This helper remains Flapjack infrastructure; an exact finite-support "
+        "locals_ext_rel port is still open."
+    ),
+    ("Flapjack/Pancake/Proofs/CrepInline.lean", "crepInlineStateRelCodeW"): (
+        "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+        "state_rel_code_def",
+        "flapjack-luna-a source review (2026-09-29; bead flapjack-2de.13): tag withdrawn. "
+        "CrepHolState has raw lookup functions for locals/globals/code and admits "
+        "infinite-support states HOL finite maps cannot represent; words_as_type_indexed_bitvec "
+        "does not authorize this map-carrier difference. Exact finite-support counterpart "
+        "crepInlineStateRelCodeExact is tagged in this file."
+    ),
     ("Flapjack/Pancake/CrepToLoop/StateRel.lean", "crepToLoopGlobalsRel_intro"): (
         "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
         "globals_rel_intro",
@@ -1606,6 +1655,11 @@ DOCUMENTED_MISMATCHES = {
 # Proofs/ and are inventoried automatically; counterpart-side witnesses and
 # induction helpers belong beside their semantic definitions instead.
 INFRASTRUCTURE_THEOREMS = {
+    ("Flapjack/Pancake/Proofs/CrepInline.lean", "holFmapAsFiniteSupportWitness"): (
+        "Same-module canonical finite-support roundtrip witness for the exact "
+        "CrepInline relation qualifiers. It reuses CrepSemHOLState's reviewed "
+        "toBroad/ofBroad witness and has no standalone HOL declaration."
+    ),
     ("Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean", "panWriteBytearrayWord8HOL_domainCongr"): (
         "Flapjack-specific support for the ExtCall returned-byte state relation. "
         "This congruence handles distinct DecidablePred instances after equality "
@@ -2042,6 +2096,10 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         ("Flapjack/Pancake/PanSimp.lean", "panSimpCompileHOL"),
         ("Flapjack/Pancake/PanSimp.lean", "panSimpDeclsHOL"),
         ("Flapjack/Pancake/CrepToLoop/Proofs/Primop.lean", "crepPrimopLoopPrimopHOL"),
+        ("Flapjack/Pancake/LoopToWord.lean", "findVarHOL"),
+        ("Flapjack/Pancake/LoopToWord.lean", "toNumSetHOL"),
+        ("Flapjack/Pancake/LoopToWord.lean", "fromNumSetHOL"),
+        ("Flapjack/Pancake/LoopToWord.lean", "mkNewCutsetHOL"),
     }
     for key in reviewed_exact:
         # A source comparison cannot claim an exact HOL port after its tag is
