@@ -207,6 +207,36 @@ theorem ltake_spec (k : Nat) (ll : HolLList α) (xs : List α)
                       rw [← ltl_rep h1 j]
                       simpa using hrep j hj
 
+/-- Converse of `ltake_spec`: if the representation agrees with `xs` on its
+    indices, `ltake` returns `xs`. -/
+theorem ltake_of_rep (xs : List α) (ll : HolLList α)
+    (h : ∀ i (hi : i < xs.length), ll.rep i = some xs[i]) :
+    ltake xs.length ll = some xs := by
+  induction xs generalizing ll with
+  | nil => simp [ltake]
+  | cons x xs ih =>
+      rw [List.length_cons]
+      cases h0 : ll.rep 0 with
+      | none => exact absurd (h 0 (by simp)) (by simp [h0])
+      | some hd =>
+          have hhd : hd = x := by
+            have := h 0 (by simp)
+            rw [h0] at this
+            exact Option.some.inj this
+          subst hhd
+          have htl : ll.ltl =
+              some ⟨fun n => ll.rep (n + 1), fun n hk => ll.ok (n + 1) hk⟩ := by
+            simp [ltl, lhd, h0]
+          have h' : ∀ i (hi : i < xs.length),
+              (⟨fun n => ll.rep (n + 1), fun n hk => ll.ok (n + 1) hk⟩ : HolLList α).rep i =
+                some xs[i] := by
+            intro i hi
+            have hhi := h (i + 1) (by simp [hi])
+            rw [List.getElem_cons_succ] at hhi
+            exact hhi
+          simp only [ltake, lhd, h0, htl]
+          rw [ih _ h']
+
 /-- A finite lazy list has a length relation witness. -/
 theorem exists_LLengthRel_of_LFinite {ll : HolLList α} (h : LFinite ll) :
     ∃ n, LLengthRel ll n :=
