@@ -12084,6 +12084,33 @@
     "reviewer": "flapjack-ds5 (source comparison, 2026-09-28; bead flapjack-pxn.18.5.6.29.1.3): exact port of HOL arith_vars (loop_liveScript.sml:50-58) over LoopArith/NumSet; insert/delete are the exact spt-tree operations (sptInsert/sptDelete); clause order longMul/longDiv/div and register roles match HOL name-for-name; direct oracle rows replay arith_vars_probe.out (long_mul=3;4;6, div=2;3;5, long_div=3;4;5;8) in Test/LoopArithVarsParity.lean."
   },
   {
+    "hol_path": "cakeml/pancake/loop_liveScript.sml",
+    "hol_name": "size_mk_BN",
+    "hol_line": 28,
+    "lean_path": "Flapjack/Pancake/LoopLive.lean",
+    "lean_name": "sptSize_mkBN",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-28; bead flapjack-pxn.18.5.6.29.1.4.1): exact port of HOL loop_liveScript.sml:28-31 size_mk_BN `size (mk_BN t1 t2) = size (BN t1 t2)`; Lean `sptSize (sptMkBN t1 t2) = sptSize t1 + sptSize t2` equals HOL because `size (BN t1 t2)` reduces to `size t1 + size t2`. No width or finite-map fields; no hypotheses."
+  },
+  {
+    "hol_path": "cakeml/pancake/loop_liveScript.sml",
+    "hol_name": "size_mk_BS",
+    "hol_line": 34,
+    "lean_path": "Flapjack/Pancake/LoopLive.lean",
+    "lean_name": "sptSize_mkBS",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-28; bead flapjack-pxn.18.5.6.29.1.4.1): exact port of HOL loop_liveScript.sml:34-36 size_mk_BS `size (mk_BS t1 x t2) = size (BS t1 x t2)`; Lean `sptSize (sptMkBS t1 x t2) = sptSize t1 + sptSize t2 + 1` equals HOL because `size (BS t1 x t2)` reduces to `size t1 + size t2 + 1`. No width or finite-map fields; no hypotheses."
+  },
+  {
+    "hol_path": "cakeml/pancake/loop_liveScript.sml",
+    "hol_name": "size_inter",
+    "hol_line": 40,
+    "lean_path": "Flapjack/Pancake/LoopLive.lean",
+    "lean_name": "sptSize_inter_le",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-28; bead flapjack-pxn.18.5.6.29.1.4.1): exact port of HOL loop_liveScript.sml:40-48 size_inter `size (inter l1 l2) <= size l1`; Lean `sptSize (sptInter l1 l2) <= sptSize l1` over the heterogeneous sptInter carrier matching HOL inter's `'a num_map -> 'b num_map -> 'a num_map`. No width or finite-map fields; no hypotheses beyond the carrier. This is the measure lemma fixedpoint termination uses."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/backend_commonScript.sml",
     "hol_name": "list_delete_def",
     "lean_path": "Flapjack/Misc/Sptree.lean",
