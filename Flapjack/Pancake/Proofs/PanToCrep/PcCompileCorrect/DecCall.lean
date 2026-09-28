@@ -213,7 +213,7 @@ theorem decCallLocalsRestore {width : Nat} [NeZero width]
     intro x hx
     exact hfold x (hlocals.2.1.2 k _ slots hv x hx)
 
-private theorem fupdateListHOL_zip_not_mem' {β : Type} (k : Nat) :
+theorem fupdateListHOL_zip_not_mem' {β : Type} (k : Nat) :
     ∀ (xs : List Nat) (ys : List β) (f : FiniteMap Nat β), k ∉ xs →
       FUPDATE_LIST_HOL f (xs.zip ys) k = f k
   | [], _, f, _ => by simp [FUPDATE_LIST_HOL]
@@ -223,7 +223,7 @@ private theorem fupdateListHOL_zip_not_mem' {β : Type} (k : Nat) :
       rw [List.zip_cons_cons, FUPDATE_LIST_HOL_cons, fupdateListHOL_zip_not_mem' k xs ys _ hk.2]
       simp [FUPDATE_HOL, hk.1]
 
-private theorem lookup_updateListEq_zip_not_mem {β : Type}
+theorem lookup_updateListEq_zip_not_mem {β : Type}
     (m : HolFiniteMapExact Nat β) (xs : List Nat) (ys : List β) (k : Nat) (hk : k ∉ xs) :
     (m.updateListEq (xs.zip ys)).lookup k = m.lookup k := by
   rw [HolFiniteMapExact.lookup_updateListEq]

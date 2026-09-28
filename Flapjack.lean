@@ -58,6 +58,7 @@ import Flapjack.Pancake.Semantics.PanSem.ValueHOL
 import Flapjack.Pancake.Semantics.PanSem.StateExact
 import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
 import Flapjack.Pancake.Semantics.PanSem.TotalEvalBridge
+import Flapjack.Pancake.Semantics.PanSem.TotalEvalExpBridge
 import Flapjack.Pancake.Semantics.PanSem.EvaluateFinite
 import Flapjack.Pancake.Semantics.PanSem.AddClock
 import Flapjack.Pancake.Semantics.PanSem.PanObservationalSemantics
@@ -136,7 +137,11 @@ import Flapjack.Pancake.Proofs.PanToCrep.EvalDistinctLists
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Call
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.DecCall
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Skip
+import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Break
+import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Continue
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Seq
+import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.If
+import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Dec
 import Flapjack.Pancake.Proofs.PanToCrep.NotMemContextAssignedMemGt
 import Flapjack.Pancake.Proofs.PanToWord
 import Flapjack.Pipeline
