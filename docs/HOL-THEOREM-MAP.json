@@ -18404,6 +18404,20 @@
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "code_rel_intro",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
+    "lean_name": "crepToLoopCodeRelExact_intro",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.funcs",
+      "s_code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "hol_line": 187,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.16) against code_rel_intro at crep_to_loopProofScript.sml:187-200. HOL assumes code_rel ctxt s_code t_code and concludes distinct_funcs ctxt.funcs plus the universally quantified per-source-function implication whose existential witnesses loc/len, with target lookup, length equality, GENLIST I len arguments, ctxt_fc and ocompile. Lean keeps that premise, binder order, and conclusion exactly over the existing exact carriers; crepToLoopCodeRelExact unfolds to precisely that conclusion, so the proof only eliminates the relation. The relation qualifier records the traversed CrepToLoopContextExact.funcs field and standalone s_code HolFiniteMapExact parameter; the former uses holFmapAsFiniteSupportRelationWitness_CrepToLoopContextExact and the latter is checked at its binder. HolLoopProg/CrepProgHOL retain their reviewed positive width-indexed BitVec representation. A direct kernel-checked instance of the intro theorem over the positive original-HOL code_rel probe is in Flapjack/Test/CrepToLoopCodeRelParity."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
     "hol_name": "all_distinct_ctxt_lookup_all_distinct",
     "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
     "lean_name": "allDistinctCtxtLookupAllDistinctExact",
