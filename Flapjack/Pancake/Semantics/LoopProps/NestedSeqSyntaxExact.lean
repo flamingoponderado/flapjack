@@ -123,7 +123,7 @@ theorem evaluate_tail_calls_eqs (f : Nat) (t : LoopSemStateFiniteExact width F)
     `lookup n (set_vars xs ys s).locals =
       case ALOOKUP (ZIP (xs,ys)) n of NONE => lookup n s.locals | SOME v => SOME v`. -/
 @[hol "cakeml/pancake/semantics/loopPropsScript.sml" "lookup_set_vars"
-  (words_as_type_indexed_bitvec)]
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 theorem lookup_set_vars :
     ∀ (n : Nat) (xs : List Nat) (ys : List (WordLocW width))
       (s : LoopSemStateFiniteExact width F),
@@ -147,7 +147,7 @@ theorem lookup_set_vars :
 /-- Exact HOL `lookup_set_vars_not_MEM` (`loopPropsScript.sml:310-313`):
     `~MEM n xs ==> lookup n (set_vars xs ys s).locals = lookup n s.locals`. -/
 @[hol "cakeml/pancake/semantics/loopPropsScript.sml" "lookup_set_vars_not_MEM"
-  (words_as_type_indexed_bitvec)]
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 theorem lookup_set_vars_not_MEM (n : Nat) (xs : List Nat) (ys : List (WordLocW width))
     (s : LoopSemStateFiniteExact width F) (h : n ∉ xs) :
     sptLookup n (setVars xs ys s).locals = sptLookup n s.locals := by
