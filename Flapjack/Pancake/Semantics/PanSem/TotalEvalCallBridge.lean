@@ -423,6 +423,7 @@ theorem panSemTotalEvaluate_call_agree {σ : Type}
         (exact' : PanSemStateFiniteExact 64 σ),
         PanSemStateRelExec production' exact'.toExact →
         PanSemStateRelExecRanged production' →
+        PanSemStateFrameAt production production' →
         production'.clock < production.clock →
         PanSemTotalAgreeAt primitive (progOfHOL program) program production' exact')
     (ihHandler : ∀ kind eid var handler,
@@ -431,6 +432,7 @@ theorem panSemTotalEvaluate_call_agree {σ : Type}
           (exact' : PanSemStateFiniteExact 64 σ),
           PanSemStateRelExec production' exact'.toExact →
           PanSemStateRelExecRanged production' →
+          PanSemStateFrameAt production production' →
           PanSemTotalAgreeAt primitive (progOfHOL handler) handler production' exact') :
     PanSemTotalAgreeAt primitive (progOfHOL (.call info function arguments))
       (.call info function arguments) production exact := by
@@ -492,7 +494,8 @@ theorem panSemTotalEvaluate_call_agree {σ : Type}
         have hentryR : PanSemStateRelExecRanged
             { production with clock := production.clock - 1, locals := newLocals } :=
           ⟨hlocalsR, hranged.2.1, hranged.2.2⟩
-        have hih := ihCallee (progToHOL callee) _ _ hentryRel hentryR (by simp; omega)
+        have hih := ihCallee (progToHOL callee) _ _ hentryRel hentryR ⟨rfl, rfl, Nat.sub_le _ _⟩
+          (by simp; omega)
         rw [progOfHOL_progToHOL callee hbodyR] at hih
         obtain ⟨hres, hst⟩ := hih
         have hle := evaluateHOLFiniteState_clock_le (callEntryStateHOLFinite exact calleeLocals)
@@ -515,9 +518,13 @@ theorem panSemTotalEvaluate_call_agree {σ : Type}
           simpa only [toExact, hc] using h
         have hfixR := hpostR.setClock (min (production.clock - 1) (panSemTotalEvaluate primitive
           callee { production with clock := production.clock - 1, locals := newLocals }).2.clock)
+        have hcodeP := panSemTotalEvaluate_code primitive callee
+          { production with clock := production.clock - 1, locals := newLocals }
+        have hexnP := panSemTotalEvaluate_exceptionShapes primitive callee
+          { production with clock := production.clock - 1, locals := newLocals }
         generalize panSemTotalEvaluate primitive callee
           { production with clock := production.clock - 1, locals := newLocals } = P
-          at hres hfix hfixR hresR ⊢
+          at hres hfix hfixR hresR hcodeP hexnP ⊢
         generalize evaluateHOLFiniteState (callEntryStateHOLFinite exact calleeLocals)
           (progToHOL callee) = E at hres hfix ⊢
         have hempty : PanSemStateRelExec (panEmptyLocals (panSemFixClock (production.clock - 1) P.2))
@@ -635,6 +642,7 @@ theorem panSemTotalEvaluate_call_agree {σ : Type}
                         (PanSemStateRelExecRanged.restoreLocals hfixR hranged)
                         (toStringOfBytes hvar) v hvR
                       exact ihHandler kopt (ofString eid0) hvar handler rfl _ _ hstate hstateR
+                        ⟨hcodeP, hexnP, Nat.le_trans (panSemFixClock_clock_le _ _) (Nat.sub_le _ _)⟩
                     · simp only [hok]
                       exact ⟨trivial, hfix⟩
               · have hb : (eid0 == toStringOfBytes hid) = false := by
@@ -678,12 +686,14 @@ theorem panSemTotalEvaluate_decCall_agree {σ : Type}
         (exact' : PanSemStateFiniteExact 64 σ),
         PanSemStateRelExec production' exact'.toExact →
         PanSemStateRelExecRanged production' →
+        PanSemStateFrameAt production production' →
         production'.clock < production.clock →
         PanSemTotalAgreeAt primitive (progOfHOL program) program production' exact')
     (ihContinuation : ∀ (production' : PanSemState (RiscV.Word 64) (FfiState σ))
         (exact' : PanSemStateFiniteExact 64 σ),
         PanSemStateRelExec production' exact'.toExact →
         PanSemStateRelExecRanged production' →
+        PanSemStateFrameAt production production' →
         PanSemTotalAgreeAt primitive (progOfHOL continuation) continuation production' exact') :
     PanSemTotalAgreeAt primitive
       (progOfHOL (.decCall resultName shape function arguments continuation))
@@ -746,7 +756,8 @@ theorem panSemTotalEvaluate_decCall_agree {σ : Type}
         have hentryR : PanSemStateRelExecRanged
             { production with clock := production.clock - 1, locals := newLocals } :=
           ⟨hlocalsR, hranged.2.1, hranged.2.2⟩
-        have hih := ihCallee (progToHOL callee) _ _ hentryRel hentryR (by simp; omega)
+        have hih := ihCallee (progToHOL callee) _ _ hentryRel hentryR ⟨rfl, rfl, Nat.sub_le _ _⟩
+          (by simp; omega)
         rw [progOfHOL_progToHOL callee hbodyR] at hih
         obtain ⟨hres, hst⟩ := hih
         have hle := evaluateHOLFiniteState_clock_le (callEntryStateHOLFinite exact calleeLocals)
@@ -769,9 +780,13 @@ theorem panSemTotalEvaluate_decCall_agree {σ : Type}
           simpa only [toExact, hc] using h
         have hfixR := hpostR.setClock (min (production.clock - 1) (panSemTotalEvaluate primitive
           callee { production with clock := production.clock - 1, locals := newLocals }).2.clock)
+        have hcodeP := panSemTotalEvaluate_code primitive callee
+          { production with clock := production.clock - 1, locals := newLocals }
+        have hexnP := panSemTotalEvaluate_exceptionShapes primitive callee
+          { production with clock := production.clock - 1, locals := newLocals }
         generalize panSemTotalEvaluate primitive callee
           { production with clock := production.clock - 1, locals := newLocals } = P
-          at hres hfix hfixR hresR ⊢
+          at hres hfix hfixR hresR hcodeP hexnP ⊢
         generalize evaluateHOLFiniteState (callEntryStateHOLFinite exact calleeLocals)
           (progToHOL callee) = E at hres hfix ⊢
         have hempty : PanSemStateRelExec (panEmptyLocals (panSemFixClock (production.clock - 1) P.2))
@@ -829,6 +844,7 @@ theorem panSemTotalEvaluate_decCall_agree {σ : Type}
             have hstateR := PanSemStateRelExecRanged.updateLocals
               (PanSemStateRelExecRanged.restoreLocals hfixR hranged) (toStringOfBytes resultName) v hvR
             obtain ⟨hcres, hcst⟩ := ihContinuation _ _ hstate hstateR
+              ⟨hcodeP, hexnP, Nat.le_trans (panSemFixClock_clock_le _ _) (Nat.sub_le _ _)⟩
             refine ⟨hcres, ?_⟩
             have hold : Option.map panValueToHOL (production.locals (toStringOfBytes resultName)) =
                 exact.locals.lookup resultName := by
