@@ -898,3 +898,13 @@ trees; it loads only `bossLib`/`sptreeTheory` (no CakeML `preamble`), so it runs
 in a bare HOL session.  `Flapjack.Test.SptreeSetOpsParity.sptreeInterMixedGuard`
 checks the Lean `sptInter` against every row.  Refresh with
 `HOL_PROBE_ONLY=sptree_inter_mixed_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`evaluate_io_mono_rephrases` (`crep_to_loopProofScript.sml:4066-4070`) conjoins the
+`evaluate_add_clock_io_events_mono` rephrasings of `crepPropsScript.sml:1020` and
+`loopPropsScript.sml` at `s with clock := k` versus `s with clock := k + extra`. It is
+ported as `Flapjack.evaluateIOMonoRephrases` in `Flapjack/Pancake/CrepToLoop/StateRel.lean`,
+over both exact carriers (`CrepSemHOLState` and `LoopSemStateFiniteExact`), each conjunct
+reusing the corresponding already-tagged one-carrier mono theorem. Both source mono
+theorems are separately probed, and the conjunction is universally quantified over states
+and clocks, so it adds no probe row of its own; the kernel-checked example and
+`evaluateIOMonoGuard` in `Flapjack.Test.CrepToLoopParity` exercise it instead.

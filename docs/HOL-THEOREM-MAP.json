@@ -10948,6 +10948,15 @@
     "words_as_type_indexed_bitvec": true
   },
   {
+      "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+      "hol_name": "evaluate_io_mono_rephrases",
+      "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
+      "lean_name": "evaluateIOMonoRephrases",
+      "statement_status": "reviewed_words_as_type_indexed_bitvec",
+      "words_as_type_indexed_bitvec": true,
+      "reviewer": "ds10 (bead flapjack-pxn.18.5.6.34.3): exact port of HOL `evaluate_io_mono_rephrases[local]` (crep_to_loopProofScript.sml:4066-4070), the LIST_CONJ of `crepPropsTheory.evaluate_add_clock_io_events_mono` and `loopPropsTheory.evaluate_add_clock_io_events_mono`, each instantiated at `s with clock := k` (the `s.clock + extra` of the source theorems collapses because `(s with clock := k).clock = k`). In Lean the two state carriers stay separate (CrepSemHOLState and LoopSemStateFiniteExact) and each conjunct is the matching already-tagged mono theorem (`Flapjack.crepPropsEvaluateAddClockIoEventsMono`, CrepProps/EvaluateAddClockIoEventsMono.lean:538, and `Flapjack.LoopSemStateFiniteExact.evaluate_add_clock_io_events_mono`, LoopProps/EvaluateIoEventsExact.lean:494) instantiated at `{s with clock := k}`; no extra side conditions. Only `ffi.ioEvents` is traversed and `ffi` is not a `HolFiniteMapExact` field, so a `fmap_as_finite_support_relation` qualifier would be false here; the words qualifier covers the two width-indexed carriers. Checked by a kernel `example` and `evaluateIOMonoGuard` in Flapjack/Test/CrepToLoopParity.lean (both HOL source mono theorems already carry their own probe rows, so no new probe row is decidable for this universally quantified conjunction)."
+    },
+  {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
     "hol_name": "state_rel_def",
     "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",

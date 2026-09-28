@@ -670,6 +670,21 @@ def localsRelLookupSameGuard : Bool :=
 
 #guard localsRelLookupSameGuard
 
+-- `evaluate_io_mono_rephrases` (`crep_to_loopProofScript.sml:4066`): the two
+-- `evaluate_add_clock_io_events_mono` rephrasings at `clock := k` vs
+-- `clock := k + extra`, over the exact Crep and loopSem evaluators.
+example :
+    ((evalCrepSemHOLProgExact { stateRelExactCrep with clock := 2 } (CrepProgHOL.skip)).2.ffi.ioEvents <+:
+        (evalCrepSemHOLProgExact { stateRelExactCrep with clock := 2 + 3 } (CrepProgHOL.skip)).2.ffi.ioEvents) ∧
+      ((LoopSemStateFiniteExact.evaluate (HolLoopProg.skip) { stateRelExactLoop with clock := 2 }).2.ffi.ioEvents <+:
+        (LoopSemStateFiniteExact.evaluate (HolLoopProg.skip) { stateRelExactLoop with clock := 2 + 3 }).2.ffi.ioEvents) :=
+  evaluateIOMonoRephrases (CrepProgHOL.skip) stateRelExactCrep (HolLoopProg.skip) stateRelExactLoop 2 3
+
+def evaluateIOMonoGuard : Bool :=
+  decide ((LoopSemStateFiniteExact.evaluate (HolLoopProg.skip) { stateRelExactLoop with clock := 2 }).2.ffi.ioEvents.length = 0)
+
+#guard evaluateIOMonoGuard
+
 def runChecks : IO Bool := do
   let results := [declarationRenamingMatches,
     handlerlessCallCarriesRaiseHandler, handledCallCarriesRaiseHandler,
@@ -680,7 +695,7 @@ def runChecks : IO Bool := do
     comparisonWithoutLiveDropsIt,
     stateRelExactGuard, ctxtFcExactGuard, localsRelExactGuard,
     localsRelOracleGuard, localsRelCutsetGuard, localsRelInsertGuard,
-    localsRelLookupSameGuard]
+    localsRelLookupSameGuard, evaluateIOMonoGuard]
   let names := [
     "crep_to_loop declaration renaming and live seed",
     "crep_to_loop default call handler",
@@ -697,7 +712,8 @@ def runChecks : IO Bool := do
     "crep_to_loop exact locals_rel direct oracle rows (true/domain-false/value-false)",
     "crep_to_loop exact locals_rel_cutset_prop oracle rows (subspt/second/after)",
     "crep_to_loop exact locals_rel_insert_gt_vmax oracle rows (fresh-key/unchanged)",
-    "crep_to_loop exact locals_rel_lookup_same oracle rows (pointwise agreement)"]
+    "crep_to_loop exact locals_rel_lookup_same oracle rows (pointwise agreement)",
+    "crep_to_loop exact evaluate_io_mono_rephrases (Crep+loop confluence) oracle rows"]
   let mut all := true
   for (name, result) in names.zip results do
     if result then IO.println s!"PASS {name}" else IO.println s!"FAIL {name}"

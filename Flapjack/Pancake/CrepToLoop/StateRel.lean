@@ -8,6 +8,8 @@ import Flapjack.LoopStateResult
 import Flapjack.Compiler.Encoders.Asm
 import Flapjack.Misc.Sptree
 import Flapjack.Pancake.PanLang.Shape
+import Flapjack.Pancake.Semantics.CrepProps.EvaluateAddClockIoEventsMono
+import Flapjack.Pancake.Semantics.LoopProps.EvaluateIoEventsExact
 
 /-!
 State relation analogue for the Crepe-to-Loop lowering, based on
@@ -585,6 +587,29 @@ theorem crepToLoopLocalsRelExact_lookup_same {width : Nat} [NeZero width]
   · intro vname value hv
     obtain ⟨n, hvar, hmem, hn⟩ := h.2.2.2 vname value hv
     exact ⟨n, hvar, hmem, by rw [← hagree n]; exact hn⟩
+
+/-- Exact port of HOL `evaluate_io_mono_rephrases`
+    (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:4066-4070`) for the
+    Crep-to-Loop call-correctness proof: the two conjuncts are the
+    `evaluate_add_clock_io_events_mono` rephrasings at `s with clock := k`
+    versus `s with clock := k + extra`, one over the exact Crep evaluator and
+    one over the exact loopSem evaluator.  Only `ffi.ioEvents` is traversed
+    (no finite-map field is named or required), so the tag carries
+    `(words_as_type_indexed_bitvec)` for the two width-indexed carriers and no
+    `fmap_as_finite_support_relation` qualifier. -/
+@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "evaluate_io_mono_rephrases"
+  (words_as_type_indexed_bitvec)]
+theorem evaluateIOMonoRephrases {width : Nat} [NeZero width] {σ : Type}
+    (crepProg : CrepProgHOL width) (crepState : CrepSemHOLState width σ)
+    (loopProg : HolLoopProg width) (loopState : LoopSemStateFiniteExact width σ)
+    (k extra : Nat) :
+    ((evalCrepSemHOLProgExact { crepState with clock := k } crepProg).2.ffi.ioEvents <+:
+        (evalCrepSemHOLProgExact { crepState with clock := k + extra } crepProg).2.ffi.ioEvents) ∧
+      ((Flapjack.LoopSemStateFiniteExact.evaluate loopProg { loopState with clock := k }).2.ffi.ioEvents <+:
+        (Flapjack.LoopSemStateFiniteExact.evaluate loopProg { loopState with clock := k + extra }).2.ffi.ioEvents) := by
+  refine ⟨?_, ?_⟩
+  · simpa using crepPropsEvaluateAddClockIoEventsMono crepProg { crepState with clock := k } extra
+  · simpa using Flapjack.LoopSemStateFiniteExact.evaluate_add_clock_io_events_mono loopProg { loopState with clock := k } extra
 
 /-! ## `locals_rel` (untagged production analogue)
 
