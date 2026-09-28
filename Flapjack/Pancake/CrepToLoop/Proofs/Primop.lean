@@ -37,7 +37,8 @@ namespace Flapjack
     `HolWordLab` (`word_lab`) to `WordLocW` (`word_loc`); `loopPrimopHOL` is the
     separate Flapjack `LoopValue`-valued rendering and does not have the exact
     HOL `word_loc` codomain. -/
-@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "crep_primop_loop_primop"]
+@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "crep_primop_loop_primop"
+  (words_as_type_indexed_bitvec)]
 theorem crepPrimopLoopPrimopHOL {width : Nat} [NeZero width]
     (pop : PrimOp) (ws resWs : List (HolWordLab width))
     (h : crepPrimopHOLExact pop ws = some resWs) :
