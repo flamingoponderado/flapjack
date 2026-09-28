@@ -70,7 +70,9 @@ import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Annot
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Return
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.While
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.StoreByte
+import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Store32
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Raise
+import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Assign
 import Flapjack.Pancake.Proofs.PanToCrep.NotMemContextAssignedMemGt
 import Flapjack.Pancake.Semantics.CrepProps
 import Flapjack.Pancake.Semantics.CrepProps.MemLoadFlatRel
