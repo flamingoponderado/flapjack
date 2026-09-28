@@ -18547,5 +18547,23 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.9): HOL evaluate_add_clock_eq (loopPropsScript.sml:985-988) `!p t res st ck. evaluate (p,t) = (res,st) /\\ res <> SOME TimeOut ==> evaluate (p,t with clock := t.clock + ck) = (res,st with clock := st.clock + ck)`; Lean has the same five variables, the evaluation equation and the non-TimeOut premise as hypotheses, and the same conclusion, over the tagged exact evaluate. Proved for all 24 constructors (incl. Loop, Call with return/exception handlers, FFI) by well-founded induction on HOL's measure; no extra hypotheses."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopPropsScript.sml",
+    "hol_name": "evaluate_io_events_mono",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopProps/EvaluateIoEventsExact.lean",
+    "lean_name": "evaluate_io_events_mono",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.10): HOL evaluate_io_events_mono (loopPropsScript.sml:1135-1139) `!exps s1 res s2. evaluate (exps,s1) = (res, s2) ==> s1.ffi.io_events ≼ s2.ffi.io_events`; Lean has the same variables and premise, with ≼ (isPREFIX) as List.IsPrefix, over the tagged exact evaluate."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopPropsScript.sml",
+    "hol_name": "evaluate_add_clock_io_events_mono",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopProps/EvaluateIoEventsExact.lean",
+    "lean_name": "evaluate_add_clock_io_events_mono",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.10): HOL evaluate_add_clock_io_events_mono (loopPropsScript.sml:1217-1220) `∀exps s extra. (SND(evaluate(exps,s))).ffi.io_events ≼ (SND(evaluate(exps,s with clock := s.clock + extra))).ffi.io_events`; Lean states the same unconditional prefix (List.IsPrefix) between the two .2 projections over the tagged exact evaluate."
   }
 ]
