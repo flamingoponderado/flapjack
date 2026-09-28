@@ -17256,5 +17256,98 @@
     "lean_name": "globalAddrs_nodup",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Lean-only private helper for the pc_compile_correct Raise case (bead flapjack-pxn.18.4.3.104): distinctness of GENLIST n2w addresses below 32; HOL proves it inline (ALL_DISTINCT_GENLIST)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Assign.lean",
+    "lean_name": "pcCompileCorrectAt_assign",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only curried form of the pc_compile_correct Assign case against pcCompileCorrectAt (bead flapjack-pxn.18.4.3.105); the HOL-shaped statement is the tagged pcCompileCorrect_Assign"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Assign.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_Assign; forwards the imported checked roundtrip; no HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Assign.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_Assign; forwards the imported checked roundtrip; no HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Assign.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_Assign; forwards the imported checked roundtrip; no HOL declaration"
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "pc_compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Assign.lean",
+    "lean_name": "pcCompileCorrect_Assign",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "PanToCrepContextExact.vars",
+      "PanToCrepContextExact.funcs",
+      "PanToCrepContextExact.eids"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-28, bead flapjack-pxn.18.4.3.105; pan_to_crepProofScript.sml:442-468, Assign case resumed at :880-1068; panSemScript.sml:777-778 rebound evaluate_ind). Assign constructor piece of HOL pc_compile_correct (AGENTS splitting rule, same tag, suffixed name), in the reviewed shape of pcCompileCorrect_Call. HOL's printed evaluate_ind Assign conjunct (hol run on panSemTheory.evaluate_ind) is !vk v src s. P (Assign vk v src,s) (no IH); binders vk v src s kept. Lean keeps the binders, IH binders/side conditions in HOL order, and P = pcCompileCorrectAtHOL (reviewed with the Call case). The conclusion is P (Assign ..., s) unfolded: binders res s1 t ctxt, the conjunctive premise, and the existential target run with state_rel/code_rel/excp_rel and inline case res of. evaluate is the tagged total evaluateHOLFiniteState and evalCrepSemHOLProgExact; eval is the tagged exact expression evaluator with the classical address decision used by the tagged Pan arm; compile/relations/globals_lookup/flatten/shape_of/size_of_shape/localised_prog are the tagged exact ports; qualifiers and same-module witnesses as for the Call case. Proof via untagged pcCompileCorrectAt_assign. No target-run or post-state premise."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Assign.lean",
+    "lean_name": "fupdListZipMemIndep",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only helper for the pc_compile_correct Assign case (bead flapjack-pxn.18.4.3.105); HOL proves this reasoning inline in the Assign Resume block (eval_nested_assign_distinct_eq, eval_nested_decs_seq_res_var_eq, FUPDATE_LIST_APPEND_COMMUTES), so there is no separate CakeML HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Assign.lean",
+    "lean_name": "updateListEq_zip_comm",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only helper for the pc_compile_correct Assign case (bead flapjack-pxn.18.4.3.105); HOL proves this reasoning inline in the Assign Resume block (eval_nested_assign_distinct_eq, eval_nested_decs_seq_res_var_eq, FUPDATE_LIST_APPEND_COMMUTES), so there is no separate CakeML HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Assign.lean",
+    "lean_name": "map_eq_of_mapM_eq_some",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only helper for the pc_compile_correct Assign case (bead flapjack-pxn.18.4.3.105); HOL proves this reasoning inline in the Assign Resume block (eval_nested_assign_distinct_eq, eval_nested_decs_seq_res_var_eq, FUPDATE_LIST_APPEND_COMMUTES), so there is no separate CakeML HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Assign.lean",
+    "lean_name": "mapM_congr_mem''",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only helper for the pc_compile_correct Assign case (bead flapjack-pxn.18.4.3.105); HOL proves this reasoning inline in the Assign Resume block (eval_nested_assign_distinct_eq, eval_nested_decs_seq_res_var_eq, FUPDATE_LIST_APPEND_COMMUTES), so there is no separate CakeML HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Assign.lean",
+    "lean_name": "compileLocalAssignTarget",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only helper for the pc_compile_correct Assign case (bead flapjack-pxn.18.4.3.105); HOL proves this reasoning inline in the Assign Resume block (eval_nested_assign_distinct_eq, eval_nested_decs_seq_res_var_eq, FUPDATE_LIST_APPEND_COMMUTES), so there is no separate CakeML HOL declaration"
   }
 ]

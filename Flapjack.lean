@@ -150,6 +150,7 @@ import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.While
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.StoreByte
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Store32
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Raise
+import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Assign
 import Flapjack.Pancake.Proofs.PanToCrep.NotMemContextAssignedMemGt
 import Flapjack.Pancake.Proofs.PanToWord
 import Flapjack.Pipeline
