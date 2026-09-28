@@ -768,4 +768,112 @@ theorem PanSemStateRelExec.callFfi_empty_extCall {σ : Type}
   exact ⟨callFfi_empty_extCall_bridge production.ffi exact.ffi hffi configuration bytes,
     ⟨hl, hg, hs, hc, he, hm, hmd, hsm, hck, hbe, hffi, hb, ht⟩⟩
 
+private theorem panSetByteHOL_congr' {width : Nat} {a a' b b' c c' : RiscV.Word width}
+    (be : Bool) (ha : a = a') (hb : b.toNat % 256 = b'.toNat % 256) (hc : c = c') :
+    panSetByteHOL a b c be = panSetByteHOL a' b' c' be := by
+  subst ha; subst hc
+  unfold panSetByteHOL
+  rw [hb]
+
+/-- Byte `k` of the executed store (little-endian byte `k` of the 64-bit value)
+    is HOL's `get_byte i (w2w w) be` byte, modulo 256, for the endianness-mapped
+    index. -/
+private theorem store32_byte_eq (w : RiscV.Word 64) (be : Bool) (i : Nat) (hi : i < 4) :
+    (BitVec.ofNat 64
+        (panGetByteWord8HOL (BitVec.ofNat 64 (if be then 3 - i else i)) w false).toNat).toNat
+        % 256 =
+      (BitVec.ofNat 64
+        (panGetByteHOL (width := 32) (BitVec.ofNat 32 i) (BitVec.ofNat 32 w.toNat) be).toNat).toNat
+        % 256 := by
+  unfold panGetByteWord8HOL panGetByteHOL
+  have hw := w.isLt
+  rcases (by omega : i = 0 ∨ i = 1 ∨ i = 2 ∨ i = 3) with rfl | rfl | rfl | rfl <;>
+    cases be <;>
+    simp [BitVec.toNat_ofNat, UInt8.toNat_ofNat'] <;> omega
+
+private theorem memRel_update_eq {width : Nat} [NeZero width]
+    (memaddrs : RiscV.Word width → Bool)
+    (memory : RiscV.Word width → Option (PanValue (BitVec width)))
+    (exactMemory : RiscV.Word width → HolWordLab width)
+    (hrel : PanSemMemoryRel memaddrs memory exactMemory)
+    (address : RiscV.Word width) (v v' : BitVec width) (hv : v = v') :
+    PanSemMemoryRel memaddrs
+      (fun current => if current == address then some (.word v) else memory current)
+      (fun current => if current = address then .word v' else exactMemory current) := by
+  subst hv
+  exact panSemMemoryRel_update memaddrs memory exactMemory hrel address v
+
+/-- `PanSemStateRelExec` through the production `Store32` memory update (the
+    state-derived `store32` used by `panSemTotalStore32Clause`) and the exact
+    HOL `mem_store_32 s.memory s.memaddrs s.be adr (w2w w)`
+    (`panSemScript.sml`, the tagged `panMemStore32HOL`) used by the exact
+    `Store32` clause: both fail on a misaligned address or an out-of-domain
+    aligned cell, or both succeed and the relation holds with the memories
+    updated. The four production byte writes agree with HOL's
+    `get_byte i (w2w w) be` modulo 256 in both endiannesses
+    (bead `flapjack-pxn.18.4.3.77.2.13.2.3`, after the executed Store32 fix
+    `.2.3.1`). Flapjack-only bridge; no HOL declaration. -/
+theorem panSemStateRelExec_store32 {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ)) (exact : PanSemStateExact 64 σ)
+    (h : PanSemStateRelExec state exact) (addr w : RiscV.Word 64) :
+    match (panSemBitVec64MemoryAccess state).store32 (panSemBitVec64MemoryAccess state).domain
+        state.memory panSemBitVec64BytesInWord addr w,
+      @panMemStore32HOL 64 _ exact.memory exact.memaddrs
+        (fun a => Classical.propDecidable (exact.memaddrs a)) exact.be addr
+        (BitVec.ofNat 32 w.toNat) with
+    | some m, some m' =>
+        PanSemStateRelExec { state with memory := m } { exact with memory := m' }
+    | none, none => True
+    | _, _ => False := by
+  classical
+  obtain ⟨hl, hg, hs, hc, he, hm, hmd, hsm, hck, hbe, hffi, hb, ht⟩ := h
+  by_cases hal : addr.toNat % 4 = 0
+  · by_cases hd : state.memaddrs (panByteAlignHOL addr) = true
+    · have hD : exact.memaddrs (panByteAlignHOL addr) := (hmd _).mp hd
+      have hcell := hm _ hd
+      cases hex : exact.memory (panByteAlignHOL addr) with
+      | word bits =>
+          rw [hex] at hcell
+          simp only [holWordLabBits_word] at hcell
+          simp only [panSemBitVec64MemoryAccess, panValueMemoryAccessOfModel,
+            panSemBitVec64WordModel, panSemWordModel, RiscV.panRiscVMemoryModel,
+            RiscV.aligned, panMemStore32HOL, hex, hd, hD, hal, hcell, if_true,
+            decide_true]
+          rw [hbe]
+          have key : ∀ be : Bool, ∀ i, i < 4 →
+              (BitVec.ofNat 64 (panGetByteWord8HOL
+                (BitVec.ofNat 64 (if be then 3 - i else i)) w false).toNat).toNat % 256 =
+              (BitVec.ofNat 64 (panGetByteHOL (width := 32) (BitVec.ofNat 32 i)
+                (BitVec.ofNat 32 w.toNat) be).toNat).toNat % 256 :=
+            fun be i hi => store32_byte_eq w be i hi
+          by_cases hB : state.be = true
+          · simp only [hB, if_true]
+            refine ⟨hl, hg, hs, hc, he, memRel_update_eq _ _ _ hm _ _ _ ?_, hmd, hsm, hck,
+              ?_, hffi, hb, ht⟩
+            rotate_left
+            · simp
+            refine panSetByteHOL_congr' _ rfl (key true 3 (by omega)) ?_
+            refine panSetByteHOL_congr' _ rfl (key true 2 (by omega)) ?_
+            refine panSetByteHOL_congr' _ rfl (key true 1 (by omega)) ?_
+            exact panSetByteHOL_congr' _ (by simp) (key true 0 (by omega)) rfl
+          · have hF : state.be = false := by simpa using hB
+            simp only [hF, Bool.false_eq_true, if_false]
+            refine ⟨hl, hg, hs, hc, he, memRel_update_eq _ _ _ hm _ _ _ ?_, hmd, hsm, hck,
+              ?_, hffi, hb, ht⟩
+            rotate_left
+            · simp
+            refine panSetByteHOL_congr' _ rfl (key false 3 (by omega)) ?_
+            refine panSetByteHOL_congr' _ rfl (key false 2 (by omega)) ?_
+            refine panSetByteHOL_congr' _ rfl (key false 1 (by omega)) ?_
+            exact panSetByteHOL_congr' _ (by simp) (key false 0 (by omega)) rfl
+    · have hD : ¬ exact.memaddrs (panByteAlignHOL addr) := fun h => hd ((hmd _).mpr h)
+      cases hex : exact.memory (panByteAlignHOL addr) with
+      | word bits =>
+          simp [panSemBitVec64MemoryAccess, panValueMemoryAccessOfModel,
+            panSemBitVec64WordModel, panSemWordModel, RiscV.panRiscVMemoryModel,
+            RiscV.aligned, panMemStore32HOL, hd, hD, hal]
+  · simp [panSemBitVec64MemoryAccess, panValueMemoryAccessOfModel,
+      panSemBitVec64WordModel, panSemWordModel, RiscV.panRiscVMemoryModel,
+      RiscV.aligned, panMemStore32HOL, hal]
+
 end Flapjack
