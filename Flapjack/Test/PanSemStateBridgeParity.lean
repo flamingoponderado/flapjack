@@ -15,6 +15,8 @@ namespace Flapjack.Test.PanSemStateBridgeParity
 
 open Flapjack
 open Flapjack.Pancake.PanLang
+open Flapjack.PanSemStateFiniteExact
+open Flapjack.Basis.Pure.MlString
 
 abbrev W := BitVec 64
 
@@ -798,6 +800,501 @@ example : ¬ PanSemStateRelExecRanged
     (.const (0 : W)) (.const (0 : W)) (.const (0 : W)) (.const (0 : W))
     "g" badFieldValue (by simp [badGlobalState]) badFieldValue_not_ranged
 
+/-! ## Local/global value-map and result-variable update preservation (bead
+    `flapjack-pxn.18.4.3.77.2.13.1`)
+
+Kernel-checked guards for the untagged preservation lemmas added to
+`TotalEvalBridge.lean`: a production local/global `updatePanValueMap` write and a
+`resVar` restore are paired with the exact `setVarHOLFinite`/`setGlobalHOLFinite`
+and `HolFiniteMapExact.resVarEq` updates, with the lookup at the written key
+receiving the related value and other keys unchanged. -/
+
+/-- The local already exists on the exact fixture, so the assignment-validity
+    case is realizable. -/
+def bridgeAssignExactState : PanSemStateFiniteExact 64 Unit :=
+  { bridgeExecExactState with
+    locals := (HolFiniteMapExact.empty.update
+      (Flapjack.Basis.Pure.MlString.ofString "x", panValueToHOL (.word (7 : W)))) }
+
+/-- Production fixture whose local `"x"` holds the word `7`. -/
+def bridgeAssignProdState : PanSemState W (FfiState Unit) :=
+  { bridgeExecProdState with
+    locals := updatePanValueMap bridgeExecProdState.locals "x" (.word (7 : W)) }
+
+/-- The assignment fixture satisfies the executed-carrier relation. -/
+theorem bridgeAssignStateRelExec :
+    PanSemStateRelExec bridgeAssignProdState bridgeAssignExactState.toExact :=
+  PanSemStateRelExec.updateLocals bridgeStateRelExec "x" (by decide) (.word (7 : W))
+
+/-- Pointwise local agreement at the written key: the exact lookup is the encoded
+    written value. -/
+example :
+    Option.map panValueToHOL
+        (updatePanValueMap bridgeExecProdState.locals "x" recordValue "x") =
+      (bridgeExecExactState.locals.update
+        (Flapjack.Basis.Pure.MlString.ofString "x",
+          panValueToHOL recordValue)).lookup
+        (Flapjack.Basis.Pure.MlString.ofString "x") :=
+  updatePanValueMap_agree bridgeExecProdState.locals bridgeExecExactState.locals
+    bridgeStateRelExec.1 "x" (by decide) recordValue "x" (by decide)
+
+/-- Pointwise local agreement at an unrelated key keeps the old related value. -/
+example :
+    Option.map panValueToHOL
+        (updatePanValueMap bridgeExecProdState.locals "x" recordValue "y") =
+      (bridgeExecExactState.locals.update
+        (Flapjack.Basis.Pure.MlString.ofString "x",
+          panValueToHOL recordValue)).lookup
+        (Flapjack.Basis.Pure.MlString.ofString "y") :=
+  updatePanValueMap_agree bridgeExecProdState.locals bridgeExecExactState.locals
+    bridgeStateRelExec.1 "x" (by decide) recordValue "y" (by decide)
+
+/-- A local assignment preserves the executed-carrier relation on the fixture. -/
+example : PanSemStateRelExec
+    { bridgeExecProdState with
+      locals := updatePanValueMap bridgeExecProdState.locals "x" recordValue }
+    (setVarHOLFinite (Flapjack.Basis.Pure.MlString.ofString "x")
+      (panValueToHOL recordValue) bridgeExecExactState).toExact :=
+  PanSemStateRelExec.updateLocals bridgeStateRelExec "x" (by decide) recordValue
+
+/-- A global assignment preserves the executed-carrier relation on the fixture. -/
+example : PanSemStateRelExec
+    { bridgeExecProdState with
+      globals := updatePanValueMap bridgeExecProdState.globals "g" recordValue }
+    (setGlobalHOLFinite (Flapjack.Basis.Pure.MlString.ofString "g")
+      (panValueToHOL recordValue) bridgeExecExactState).toExact :=
+  PanSemStateRelExec.updateGlobals bridgeStateRelExec "g" (by decide) recordValue
+
+/-- A `resVar` overwrite restore preserves the relation (the `some` branch). -/
+example : PanSemStateRelExec
+    { bridgeExecProdState with
+      locals := resVar bridgeExecProdState.locals ("x", some recordValue) }
+    ({ bridgeExecExactState with
+       locals := HolFiniteMapExact.resVarEq bridgeExecExactState.locals
+         (Flapjack.Basis.Pure.MlString.ofString "x",
+           some (panValueToHOL recordValue)) }).toExact :=
+  PanSemStateRelExec.resVarLocals bridgeStateRelExec "x" (by decide) (some recordValue)
+
+/-- A `resVar` delete restore preserves the relation (the `none` branch). -/
+example : PanSemStateRelExec
+    { bridgeExecProdState with
+      locals := resVar bridgeExecProdState.locals ("x", none) }
+    ({ bridgeExecExactState with
+       locals := HolFiniteMapExact.resVarEq bridgeExecExactState.locals
+         (Flapjack.Basis.Pure.MlString.ofString "x", none) }).toExact :=
+  PanSemStateRelExec.resVarLocals bridgeStateRelExec "x" (by decide) none
+
+/-- The assignment fixture is byte-ranged (it stores only the word `7`). -/
+theorem bridgeAssignProdState_ranged :
+    PanSemStateRelExecRanged bridgeAssignProdState := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro name value h
+    simp only [bridgeAssignProdState, bridgeExecProdState, updatePanValueMap] at h
+    split at h
+    · rename_i hname
+      rw [Option.some.injEq] at h
+      subst h
+      simp [PanValueByteRanged]
+    · exact absurd h (by simp)
+  · intro name value h
+    simp only [bridgeAssignProdState, bridgeExecProdState] at h
+    exact absurd h (by simp)
+  · simpa only [bridgeAssignProdState, bridgeExecProdState] using
+      bridgeExecProdState_ranged.2.2
+
+instance decidableBridgeAssignExactMemaddrs : DecidablePred bridgeAssignExactState.memaddrs :=
+  fun _ => isFalse (by simp [bridgeAssignExactState, bridgeExecExactState])
+
+/-- The fully-assembled `Assign` constructor agreement (production value
+    evaluation, validity parity, local update preservation) holds on the
+    fixture for `x := 7`. -/
+example : PanSemHOLResultOptionRel
+      (panSemTotalEvaluate (fun _ _ => none) (.assign .local "x" (.const (7 : W)))
+        bridgeAssignProdState).1
+      (evaluateHOLFiniteState bridgeAssignExactState
+        (.assign .local (Flapjack.Basis.Pure.MlString.ofString "x")
+          (expToHOL (.const (7 : W))))).1 ∧
+    PanSemStateRelExec
+      (panSemTotalEvaluate (fun _ _ => none) (.assign .local "x" (.const (7 : W)))
+        bridgeAssignProdState).2
+      (evaluateHOLFiniteState bridgeAssignExactState
+        (.assign .local (Flapjack.Basis.Pure.MlString.ofString "x")
+          (expToHOL (.const (7 : W))))).2.toExact :=
+  panSemTotalEvaluate_assign_agree (fun _ _ => none) bridgeAssignProdState
+    bridgeAssignExactState bridgeAssignStateRelExec bridgeAssignProdState_ranged
+    .local "x" (by decide) (.const (7 : W)) trivial
+
+/-! ## Program rangedness projects to the bridge expression premise (bead
+    `flapjack-pxn.18.4.3.77.2.15`)
+
+`expsOf_byteRanged` (`Flapjack/Pancake/PanLang/Prog.lean`) turns the executed
+`ProgByteRanged` program hypothesis into the `ExpByteRanged` premise of the
+expression bridge, and `panSemTotalEvaluate_assign_agree_of_progByteRanged`
+discharges the `NameRanged`/`ExpByteRanged` premises of the assembled `Assign`
+slice.  The fixtures below are kernel-checked guards for both. -/
+
+/-- A byte-ranged single-assignment program. -/
+def bridgeAssignProgram : Prog W := .assign .local "x" (.const (7 : W))
+
+/-- The fixture program is `ProgByteRanged`. -/
+theorem bridgeAssignProgram_byteRanged : ProgByteRanged bridgeAssignProgram := by
+  simp [bridgeAssignProgram, ProgByteRanged, ExpByteRanged, NameRanged]
+
+/-- Its evaluated expression is byte-ranged by projection from the program. -/
+example : ExpByteRanged (.const (7 : W)) :=
+  expsOf_byteRanged bridgeAssignProgram bridgeAssignProgram_byteRanged
+    (.const (7 : W)) (by simp [bridgeAssignProgram, expsOf])
+
+/-- The agreement with the expression premise discharged from `ProgByteRanged`. -/
+example :
+    Option.map panValueToHOL (evalPanSemStateExp bridgeExecProdState (.const (7 : W))) =
+      bridgeExecExactState.evalHOLFinite (expToHOL (.const (7 : W))) :=
+  evalPanSemStateExp_agree_of_mem_expsOf bridgeExecProdState bridgeExecExactState
+    bridgeStateRelExec bridgeExecProdState_ranged bridgeAssignProgram
+    bridgeAssignProgram_byteRanged (.const (7 : W))
+    (by simp [bridgeAssignProgram, expsOf])
+
+/-- The assembled `Assign` slice with both expression premises discharged from
+    the production program node's `ProgByteRanged` hypothesis. -/
+example : PanSemHOLResultOptionRel
+      (panSemTotalEvaluate (fun _ _ => none) bridgeAssignProgram bridgeAssignProdState).1
+      (evaluateHOLFiniteState bridgeAssignExactState
+        (.assign .local (Flapjack.Basis.Pure.MlString.ofString "x")
+          (expToHOL (.const (7 : W))))).1 ∧
+    PanSemStateRelExec
+      (panSemTotalEvaluate (fun _ _ => none) bridgeAssignProgram bridgeAssignProdState).2
+      (evaluateHOLFiniteState bridgeAssignExactState
+        (.assign .local (Flapjack.Basis.Pure.MlString.ofString "x")
+          (expToHOL (.const (7 : W))))).2.toExact :=
+  panSemTotalEvaluate_assign_agree_of_progByteRanged (fun _ _ => none)
+    bridgeAssignProdState bridgeAssignExactState bridgeAssignStateRelExec
+    bridgeAssignProdState_ranged .local "x" (.const (7 : W))
+    bridgeAssignProgram_byteRanged
+
+/-! ## Production/exact `Return`/`Raise` agreement guards (bead
+    `flapjack-pxn.18.4.3.77.2.14.1`)
+
+Kernel-checked examples for `panSemTotalEvaluate_return_agree` and
+`panSemTotalEvaluate_raise_agree` on concrete related state pairs, covering the
+expression-failure, oversized-value, absent-exception-shape and
+mismatched-exception-shape branches. -/
+
+/-- A production context whose `"Big"` struct has 100 words, so its `named`
+    shape exceeds the `≤ 32` size bound. -/
+def bridgeBigStructProdState : PanSemState W (FfiState Unit) :=
+  { bridgeExecProdState with
+    structs := [("Big", { fields := [], size := 100 })] }
+
+/-- The exact counterpart of `bridgeBigStructProdState`. -/
+def bridgeBigStructExactState : PanSemStateFiniteExact 64 Unit :=
+  { bridgeExecExactState with
+    structs := panStructContextToHOL [("Big", { fields := [], size := 100 })] }
+
+/-- The oversized-shape fixture satisfies the executed-carrier relation. -/
+theorem bridgeBigStructStateRelExec :
+    PanSemStateRelExec bridgeBigStructProdState bridgeBigStructExactState.toExact := by
+  obtain ⟨hl, hg, _, hc, he, hm, hmd, hsm, hck, hbe, hffi, hb, ht⟩ := bridgeStateRelExec
+  exact ⟨hl, hg, rfl, hc, he, hm, hmd, hsm, hck, hbe, hffi, hb, ht⟩
+
+/-- The oversized-shape fixture is byte-ranged. -/
+theorem bridgeBigStructStateRanged :
+    PanSemStateRelExecRanged bridgeBigStructProdState := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro name value h; simp [bridgeBigStructProdState, bridgeExecProdState] at h
+  · intro name value h; simp [bridgeBigStructProdState, bridgeExecProdState] at h
+  · intro p hp
+    simp only [bridgeBigStructProdState, StructContext.toHOL, List.map_cons,
+      List.map_nil] at hp
+    obtain rfl := List.mem_singleton.mp hp
+    simp [NameRanged, StructInfoByteRanged, ListParamByteRanged]
+
+instance decidableBridgeBigStructExactMemaddrs :
+    DecidablePred bridgeBigStructExactState.memaddrs :=
+  fun _ => isFalse (by simp [bridgeBigStructExactState, bridgeExecExactState])
+
+/-- `Return` success: a byte-ranged word within the size bound. -/
+example : PanSemHOLResultOptionRel
+      (panSemTotalEvaluate (fun _ _ => none)
+        (.return (expOfHOL (.const (7 : W))) : Prog W) bridgeExecProdState).1
+      (evaluateHOLFiniteState bridgeExecExactState
+        (.return (.const (7 : W)) : ProgHOL 64)).1 ∧
+    PanSemStateRelExec
+      (panSemTotalEvaluate (fun _ _ => none)
+        (.return (expOfHOL (.const (7 : W))) : Prog W) bridgeExecProdState).2
+      (evaluateHOLFiniteState bridgeExecExactState
+        (.return (.const (7 : W)) : ProgHOL 64)).2.toExact :=
+  panSemTotalEvaluate_return_agree (fun _ _ => none) bridgeExecProdState
+    bridgeExecExactState bridgeStateRelExec bridgeExecProdState_ranged (.const (7 : W))
+
+/-- `Return` expression failure: the source evaluates to `none`. -/
+example : PanSemHOLResultOptionRel
+      (panSemTotalEvaluate (fun _ _ => none)
+        (.return (expOfHOL (.var .local
+          (Flapjack.Basis.Pure.MlString.ofString "missing"))) : Prog W)
+        bridgeExecProdState).1
+      (evaluateHOLFiniteState bridgeExecExactState
+        (.return (.var .local (Flapjack.Basis.Pure.MlString.ofString "missing")) :
+          ProgHOL 64)).1 ∧
+    PanSemStateRelExec
+      (panSemTotalEvaluate (fun _ _ => none)
+        (.return (expOfHOL (.var .local
+          (Flapjack.Basis.Pure.MlString.ofString "missing"))) : Prog W)
+        bridgeExecProdState).2
+      (evaluateHOLFiniteState bridgeExecExactState
+        (.return (.var .local (Flapjack.Basis.Pure.MlString.ofString "missing")) :
+          ProgHOL 64)).2.toExact :=
+  panSemTotalEvaluate_return_agree (fun _ _ => none) bridgeExecProdState
+    bridgeExecExactState bridgeStateRelExec bridgeExecProdState_ranged
+    (.var .local (Flapjack.Basis.Pure.MlString.ofString "missing"))
+
+/-- `Return` size failure: the value shape exceeds 32 words. -/
+example : PanSemHOLResultOptionRel
+      (panSemTotalEvaluate (fun _ _ => none)
+        (.return (expOfHOL (.nstruct (Flapjack.Basis.Pure.MlString.ofString "Big") [])) :
+          Prog W) bridgeBigStructProdState).1
+      (evaluateHOLFiniteState bridgeBigStructExactState
+        (.return (.nstruct (Flapjack.Basis.Pure.MlString.ofString "Big") []) :
+          ProgHOL 64)).1 ∧
+    PanSemStateRelExec
+      (panSemTotalEvaluate (fun _ _ => none)
+        (.return (expOfHOL (.nstruct (Flapjack.Basis.Pure.MlString.ofString "Big") [])) :
+          Prog W) bridgeBigStructProdState).2
+      (evaluateHOLFiniteState bridgeBigStructExactState
+        (.return (.nstruct (Flapjack.Basis.Pure.MlString.ofString "Big") []) :
+          ProgHOL 64)).2.toExact :=
+  panSemTotalEvaluate_return_agree (fun _ _ => none) bridgeBigStructProdState
+    bridgeBigStructExactState bridgeBigStructStateRelExec bridgeBigStructStateRanged
+    (.nstruct (Flapjack.Basis.Pure.MlString.ofString "Big") [])
+
+/-- Production fixture with the declared exception shape `"E" ↦ one`. -/
+def bridgeRaiseProdState : PanSemState W (FfiState Unit) :=
+  { bridgeExecProdState with
+    exceptionShapes := fun name => if name == "E" then some Shape.one else none }
+
+/-- Exact counterpart of `bridgeRaiseProdState`. -/
+def bridgeRaiseExactState : PanSemStateFiniteExact 64 Unit :=
+  { bridgeExecExactState with
+    eshapes := HolFiniteMapExact.empty.update
+      (Flapjack.Basis.Pure.MlString.ofString "E", ShapeHOL.one) }
+
+/-- The exception-shape fixture satisfies the executed-carrier relation. -/
+theorem bridgeRaiseStateRelExec :
+    PanSemStateRelExec bridgeRaiseProdState bridgeRaiseExactState.toExact := by
+  obtain ⟨hl, hg, hs, hc, _, hm, hmd, hsm, hck, hbe, hffi, hb, ht⟩ := bridgeStateRelExec
+  refine ⟨hl, hg, hs, hc, ?_, hm, hmd, hsm, hck, hbe, hffi, hb, ht⟩
+  intro name hname
+  by_cases hE : (name == "E") = true
+  · have hnameEq : name = "E" := beq_iff_eq.mp hE
+    subst hnameEq
+    simp [bridgeRaiseProdState, bridgeRaiseExactState,
+      HolFiniteMapExact.lookup_update, FUPDATE, shapeToHOL]
+  · have hof : (Flapjack.Basis.Pure.MlString.ofString "E" ==
+        Flapjack.Basis.Pure.MlString.ofString name) = false := by
+      rw [beq_eq_false_iff_ne]
+      intro hh
+      exact hE (beq_iff_eq.mpr (ofString_injective_of_ranged
+        (by decide : NameRanged "E") hname hh).symm)
+    have hne : ¬ name = "E" := fun h => hE (beq_iff_eq.mpr h)
+    simp [bridgeRaiseProdState, bridgeRaiseExactState,
+      HolFiniteMapExact.lookup_update, FUPDATE, hof, hne]
+
+/-- The exception fixture is byte-ranged. -/
+theorem bridgeRaiseProdState_ranged : PanSemStateRelExecRanged bridgeRaiseProdState := by
+  obtain ⟨hl, hg, hs⟩ := bridgeExecProdState_ranged
+  exact ⟨hl, hg, hs⟩
+
+instance decidableBridgeRaiseExactMemaddrs :
+    DecidablePred bridgeRaiseExactState.memaddrs :=
+  fun _ => isFalse (by simp [bridgeRaiseExactState, bridgeExecExactState])
+
+/-- The declared exception shape of the fixture is byte-ranged. -/
+theorem bridgeRaiseProdState_eshapesRanged :
+    ∀ eid shape, bridgeRaiseProdState.exceptionShapes eid = some shape →
+      ShapeByteRanged shape := by
+  intro eid shape h
+  simp only [bridgeRaiseProdState] at h
+  split at h
+  · rw [Option.some.injEq] at h
+    subst h
+    simp [ShapeByteRanged]
+  · exact absurd h (by simp)
+
+/-- The empty fixture has no declared exception shapes. -/
+theorem bridgeExecProdState_eshapesRanged :
+    ∀ eid shape, bridgeExecProdState.exceptionShapes eid = some shape →
+      ShapeByteRanged shape := by
+  intro eid shape h
+  simp [bridgeExecProdState] at h
+
+/-- `Raise` success: the declared `"E" ↦ one` shape matches the word value. -/
+example : PanSemHOLResultOptionRel
+      (panSemTotalEvaluate (fun _ _ => none)
+        (.raise (toStringOfBytes (Flapjack.Basis.Pure.MlString.ofString "E"))
+          (expOfHOL (.const (7 : W))) : Prog W) bridgeRaiseProdState).1
+      (evaluateHOLFiniteState bridgeRaiseExactState
+        (.raise (Flapjack.Basis.Pure.MlString.ofString "E") (.const (7 : W)) :
+          ProgHOL 64)).1 ∧
+    PanSemStateRelExec
+      (panSemTotalEvaluate (fun _ _ => none)
+        (.raise (toStringOfBytes (Flapjack.Basis.Pure.MlString.ofString "E"))
+          (expOfHOL (.const (7 : W))) : Prog W) bridgeRaiseProdState).2
+      (evaluateHOLFiniteState bridgeRaiseExactState
+        (.raise (Flapjack.Basis.Pure.MlString.ofString "E") (.const (7 : W)) :
+          ProgHOL 64)).2.toExact :=
+  panSemTotalEvaluate_raise_agree (fun _ _ => none) bridgeRaiseProdState
+    bridgeRaiseExactState bridgeRaiseStateRelExec bridgeRaiseProdState_ranged
+    bridgeRaiseProdState_eshapesRanged
+    (Flapjack.Basis.Pure.MlString.ofString "E") (.const (7 : W))
+
+/-- `Raise` shape mismatch: `one` does not match the `"X"` struct shape. -/
+example : PanSemHOLResultOptionRel
+      (panSemTotalEvaluate (fun _ _ => none)
+        (.raise (toStringOfBytes (Flapjack.Basis.Pure.MlString.ofString "E"))
+          (expOfHOL (.nstruct (Flapjack.Basis.Pure.MlString.ofString "X") [])) :
+          Prog W) bridgeRaiseProdState).1
+      (evaluateHOLFiniteState bridgeRaiseExactState
+        (.raise (Flapjack.Basis.Pure.MlString.ofString "E")
+          (.nstruct (Flapjack.Basis.Pure.MlString.ofString "X") []) :
+          ProgHOL 64)).1 ∧
+    PanSemStateRelExec
+      (panSemTotalEvaluate (fun _ _ => none)
+        (.raise (toStringOfBytes (Flapjack.Basis.Pure.MlString.ofString "E"))
+          (expOfHOL (.nstruct (Flapjack.Basis.Pure.MlString.ofString "X") [])) :
+          Prog W) bridgeRaiseProdState).2
+      (evaluateHOLFiniteState bridgeRaiseExactState
+        (.raise (Flapjack.Basis.Pure.MlString.ofString "E")
+          (.nstruct (Flapjack.Basis.Pure.MlString.ofString "X") []) :
+          ProgHOL 64)).2.toExact :=
+  panSemTotalEvaluate_raise_agree (fun _ _ => none) bridgeRaiseProdState
+    bridgeRaiseExactState bridgeRaiseStateRelExec bridgeRaiseProdState_ranged
+    bridgeRaiseProdState_eshapesRanged
+    (Flapjack.Basis.Pure.MlString.ofString "E")
+    (.nstruct (Flapjack.Basis.Pure.MlString.ofString "X") [])
+
+/-- `Raise` absent shape: no declared shape for `"E"`. -/
+example : PanSemHOLResultOptionRel
+      (panSemTotalEvaluate (fun _ _ => none)
+        (.raise (toStringOfBytes (Flapjack.Basis.Pure.MlString.ofString "E"))
+          (expOfHOL (.const (7 : W))) : Prog W) bridgeExecProdState).1
+      (evaluateHOLFiniteState bridgeExecExactState
+        (.raise (Flapjack.Basis.Pure.MlString.ofString "E") (.const (7 : W)) :
+          ProgHOL 64)).1 ∧
+    PanSemStateRelExec
+      (panSemTotalEvaluate (fun _ _ => none)
+        (.raise (toStringOfBytes (Flapjack.Basis.Pure.MlString.ofString "E"))
+          (expOfHOL (.const (7 : W))) : Prog W) bridgeExecProdState).2
+      (evaluateHOLFiniteState bridgeExecExactState
+        (.raise (Flapjack.Basis.Pure.MlString.ofString "E") (.const (7 : W)) :
+          ProgHOL 64)).2.toExact :=
+  panSemTotalEvaluate_raise_agree (fun _ _ => none) bridgeExecProdState
+    bridgeExecExactState bridgeStateRelExec bridgeExecProdState_ranged
+    bridgeExecProdState_eshapesRanged
+    (Flapjack.Basis.Pure.MlString.ofString "E") (.const (7 : W))
+
+/-- The `Raise` agreement no longer takes `hexnRanged` as a free premise: the
+    exception-shape rangedness is intrinsic to the fixture state. -/
+theorem bridgeRaiseProdState_exceptionShapesRanged :
+    PanSemExceptionShapesRanged bridgeRaiseProdState :=
+  bridgeRaiseProdState_eshapesRanged
+
+/-- `panSemTotalEvaluate` preserves `PanSemExceptionShapesRanged`: it never
+    writes `exceptionShapes`, so the `Raise` premise is intrinsic to reachable
+    production execution. -/
+example : PanSemExceptionShapesRanged
+    (panSemTotalEvaluate (fun _ _ => none)
+      (.raise (toStringOfBytes (Flapjack.Basis.Pure.MlString.ofString "E"))
+        (expOfHOL (.const (7 : W))) : Prog W) bridgeRaiseProdState).2 :=
+  panSemTotalEvaluate_exceptionShapesRanged (fun _ _ => none)
+    (.raise (toStringOfBytes (Flapjack.Basis.Pure.MlString.ofString "E"))
+      (expOfHOL (.const (7 : W))) : Prog W)
+    bridgeRaiseProdState bridgeRaiseProdState_exceptionShapesRanged
+
+/-- `Raise` agreement with `hexnRanged` discharged from the intrinsic
+    `PanSemExceptionShapesRanged` predicate. -/
+example : PanSemHOLResultOptionRel
+      (panSemTotalEvaluate (fun _ _ => none)
+        (.raise (toStringOfBytes (Flapjack.Basis.Pure.MlString.ofString "E"))
+          (expOfHOL (.const (7 : W))) : Prog W) bridgeRaiseProdState).1
+      (evaluateHOLFiniteState bridgeRaiseExactState
+        (.raise (Flapjack.Basis.Pure.MlString.ofString "E") (.const (7 : W)) :
+          ProgHOL 64)).1 ∧
+    PanSemStateRelExec
+      (panSemTotalEvaluate (fun _ _ => none)
+        (.raise (toStringOfBytes (Flapjack.Basis.Pure.MlString.ofString "E"))
+          (expOfHOL (.const (7 : W))) : Prog W) bridgeRaiseProdState).2
+      (evaluateHOLFiniteState bridgeRaiseExactState
+        (.raise (Flapjack.Basis.Pure.MlString.ofString "E") (.const (7 : W)) :
+          ProgHOL 64)).2.toExact :=
+  panSemTotalEvaluate_raise_agree_of_exceptionShapesRanged (fun _ _ => none)
+    bridgeRaiseProdState bridgeRaiseExactState bridgeRaiseStateRelExec
+    bridgeRaiseProdState_ranged bridgeRaiseProdState_exceptionShapesRanged
+    (Flapjack.Basis.Pure.MlString.ofString "E") (.const (7 : W))
+
+/-- A byte-ranged `exnDecl` list yields a ranged production exception map: the
+    initial-state obligation for compiled declarations. -/
+example : PanSemExceptionShapesRanged
+    { bridgeExecProdState with
+      exceptionShapes := fun name => panPropsALookupEq name
+        (exceptionEntries [Decl.exnDecl (α := W) "E" Shape.one]) } :=
+  panSemExceptionShapesRanged_of_exceptionEntries bridgeExecProdState
+    [Decl.exnDecl (α := W) "E" Shape.one]
+    (by
+      intro declaration hmem
+      simp only [List.mem_singleton] at hmem
+      subst hmem
+      exact ⟨by decide, by simp [ShapeByteRanged]⟩)
+
+/-- The canonical `panSemTotalEvaluateCake` entrypoint (the executable
+    production `panSemTotalEvaluate` specialized to the canonical `panPrimopHOL`
+    handler) exercises the proved Primitive-clause agreement on the
+    executed-carrier fixture, so the `.77.2.14` assembly has an explicit
+    reviewable use-site. -/
+example :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluateCake
+          (.primitive "x" .addCarry ([.const (7 : W)] : List (Exp W)))
+          bridgeExecProdState).1
+        (evaluateHOLFiniteState bridgeExecExactState
+          (.primitive (ofString "x") .addCarry
+            (([.const (7 : W)] : List (Exp W)).map expToHOL))).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluateCake
+          (.primitive "x" .addCarry ([.const (7 : W)] : List (Exp W)))
+          bridgeExecProdState).2
+        (evaluateHOLFiniteState bridgeExecExactState
+          (.primitive (ofString "x") .addCarry
+            (([.const (7 : W)] : List (Exp W)).map expToHOL))).2.toExact :=
+  panSemTotalEvaluateCake_primitive_agree_of_progByteRanged bridgeExecProdState
+    bridgeExecExactState bridgeStateRelExec bridgeExecProdState_ranged "x" .addCarry
+    ([.const (7 : W)] : List (Exp W))
+    (by
+      simp only [ProgByteRanged, NameRanged]
+      exact ⟨by decide, fun e he => by
+        simp only [List.mem_singleton] at he
+        subst he
+        trivial⟩)
+/-- Kernel-checked regression for the `ShMemLoad` production/exact agreement
+    (`flapjack-pxn.18.4.3.77.2.14.12`) on the bridge fixture: the theorem is
+    instantiated with a constant address expression, a local destination and a
+    byte-ranged primitive handler. -/
+example :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluate byteRangedPrimitive
+          (.shMemLoad .opW .local (toStringOfBytes (ofString "x"))
+            (expOfHOL (ExpHOL.const (0 : W))) : Prog W) bridgeExecProdState).1
+        (evaluateHOLFiniteState bridgeExecExactState
+          (.shMemLoad .opW .local (ofString "x")
+            (ExpHOL.const (0 : W)) : ProgHOL 64)).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluate byteRangedPrimitive
+          (.shMemLoad .opW .local (toStringOfBytes (ofString "x"))
+            (expOfHOL (ExpHOL.const (0 : W))) : Prog W) bridgeExecProdState).2
+        (evaluateHOLFiniteState bridgeExecExactState
+          (.shMemLoad .opW .local (ofString "x")
+            (ExpHOL.const (0 : W)) : ProgHOL 64)).2.toExact :=
+  panSemTotalEvaluate_shMemLoad_agree byteRangedPrimitive bridgeExecProdState
+    bridgeExecExactState bridgeStateRelExec bridgeExecProdState_ranged .opW .local
+    (ofString "x") (ExpHOL.const (0 : W))
 def runChecks : IO Bool := do
   IO.println "PASS production/exact PanSemState codec bridge (value/entry/struct/state)"
   pure true

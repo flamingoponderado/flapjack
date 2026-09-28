@@ -1,0 +1,16 @@
+source_def=(∀be a. word_of_bytes be a [] = 0w) ∧
+∀be a b bs.
+  word_of_bytes be a (b::bs) = set_byte a b (word_of_bytes be (a + 1w) bs) be
+w8_overlong_three=1w
+w8_overlong_take_one=T
+w16_overlong_three=513w
+w16_overlong_sum=T
+w16_overlong_take_two=T
+w64_overlong_ten=0x807060504030201w
+w64_overlong_take_eight=T
+w64_discarded_bytes_irrelevant=T
+w9_overlong_two=1w
+w9_overlong_three=1w
+w9_overlong_take_one=T
+w12_overlong_four=7w
+done=ok

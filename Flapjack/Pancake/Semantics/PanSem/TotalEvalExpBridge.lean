@@ -2,7 +2,9 @@ import Flapjack.Pancake.Semantics.PanSem.TotalEvalBridge
 import Flapjack.Pancake.Semantics.PanSem.EvalFinite
 import Flapjack.Pancake.Semantics.PanSem.MemLoadHOL
 import Flapjack.Pancake.Semantics.PanSem.StateExactFinite
+import Flapjack.Pancake.Semantics.PanSem.Primop
 import Flapjack.Pancake.PanStructsByteRanged
+import Flapjack.Pancake.Semantics.PanProps
 
 /-!
 # Production/exact expression-evaluation agreement for the total `panSem` bridge
@@ -39,7 +41,7 @@ below).
 `mlstring`-keyed state only at byte-ranged names, and its `structs`/`memory`
 comparison does not constrain the production `String` names or value field names
 to the byte range that HOL `char`/`mlstring` represents.  Two representation
-premises are therefore needed and recorded explicitly rather than assumed away:
+premises are therefore relevant:
 
 * `ExpByteRanged e` / `ShapeByteRanged shape` -- every identifier and shape name
   occurring in the expression is byte-ranged, so its `expToHOL` image (through the
@@ -48,17 +50,39 @@ premises are therefore needed and recorded explicitly rather than assumed away:
   structure context are byte-ranged, so a stored record's field-name lookups and
   a context shape comparison agree with their `mlstring` images.
 
-These are **unproved preservation obligations**, not facts that follow from
-parser origin: parsing constrains the program syntax and identifier bytes, but it
-does not constrain runtime FFI return values, initial globals, or stored record
-structures to the byte range that HOL `char`/`mlstring` represents, and it says
-nothing about the production state updates.  Consequently every agreement
-theorem in this module (`evalPanValueExp_agree`, `evalPanSemStateExp_agree`, and
-`evalPanValueExp_byteRanged`) carries these premises as explicit hypotheses; the
-result is *not* unconditional for arbitrary production states.  Discharging or
-precisely narrowing this obligation is tracked by the blocker bead
-`flapjack-pxn.18.4.3.77.2.15`, which blocks the full total-evaluate assembly
-bead `flapjack-pxn.18.4.3.77.2.14`.  Everything in this module is untagged
+The **expression** half is discharged from the executed compiler path: the
+parser-backed entrypoints (`Pipeline.lean:634-671`) thread `DeclByteRanged` for
+their declarations, a function body carries `ProgByteRanged`
+(`FunDeclByteRanged`), and `expsOf_byteRanged`
+(`Flapjack/Pancake/PanLang/Prog.lean`) proves that every expression occurring
+directly in a `ProgByteRanged` program is `ExpByteRanged` (a loaded shape is
+covered because `ExpByteRanged (.load shape _)` requires `ShapeByteRanged
+shape`, and the declaration-level shapes are the other `DeclByteRanged`
+conjuncts).  Accordingly the wrappers `evalPanValueExp_agree_of_mem_expsOf`,
+`evalPanSemStateExp_agree_of_mem_expsOf`,
+`evalPanValueExp_agree_of_funDeclByteRanged`, and
+`panSemTotalEvaluate_assign_agree_of_progByteRanged` replace the explicit
+`ExpByteRanged`/`NameRanged` premises by a `ProgByteRanged`/`FunDeclByteRanged`
+hypothesis.  Parser origin itself does not prove `ProgByteRanged`; it is the
+premise the executed path carries, and the projection above is the bridge from
+that premise.
+
+The **state** premise `PanSemStateRelExecRanged` remains explicit and is *not*
+a consequence of parser origin: parsing constrains program syntax and identifier
+bytes, but does not constrain runtime FFI return values, initial/stored globals,
+or stored record structures to the byte range that HOL `char`/`mlstring`
+represents.  The precise residual boundary is recorded in the "Rangedness
+preservation and the `PanSemStateRelExec`/rangedness boundary" section below: the
+value-map updates preserve the premise (`updatePanValueMap_byteRanged`,
+`PanSemStateRelExecRanged.updateLocals`/`.updateGlobals`), the production
+`ExtCall` clause preserves it unconditionally, the production `Primitive` clause
+preserves it under `PanPrimitiveHandlerByteRanged`, and a non-byte-ranged
+initial/stored global crosses the boundary (`extCallClause_not_ranged_of_global_nonRanged`).
+Consequently the agreement theorems still carry the state premise as an explicit
+hypothesis and are *not* unconditional for arbitrary production states; the
+remaining runtime/initial-global obligation is tracked by the blocker bead
+`flapjack-pxn.18.4.3.77.2.15`, which blocks the full total-evaluate assembly bead
+`flapjack-pxn.18.4.3.77.2.14`.  Everything in this module is untagged
 Flapjack-specific bridge infrastructure; no `@[hol]` tag is attached.
 -/
 
@@ -97,6 +121,17 @@ def PanSemStateRelExecRanged {σ : Type}
   (∀ name value, state.globals name = some value → PanValueByteRanged value) ∧
   StructContextByteRanged state.structs.toHOL
 
+/-- Representation premise on the executable state: every production exception
+    shape stored in `exceptionShapes` is byte-ranged.  `PanSemStateRelExec`
+    compares exception shapes only through the lossy `shapeToHOL`, so this
+    premise is what makes the production `panShapeMatches` test agree with the
+    exact `shapeEqHOL`; it is intrinsic to the compiled initial state and
+    preserved by every production state update (see
+    `panSemTotalEvaluate_exceptionShapes` below). -/
+def PanSemExceptionShapesRanged {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ)) : Prop :=
+  ∀ exceptionId shape, state.exceptionShapes exceptionId = some shape → ShapeByteRanged shape
+
 @[simp] theorem panValueToHOL_rStruct {width : Nat} [NeZero width]
     (fields : List (PanValue (BitVec width))) :
     panValueToHOL (.rStruct fields) = .rStruct (fields.map panValueToHOL) := by
@@ -114,13 +149,6 @@ def PanSemStateRelExecRanged {σ : Type}
       (fun w : BitVec width => (ValueHOL.val (HolWordLab.word w) : ValueHOL width)) := by
   funext w
   exact panValueToHOL_word w
-
-/-- `ofString` is injective on byte-ranged strings. -/
-theorem ofString_injective_of_ranged {a b : String} (ha : NameRanged a) (hb : NameRanged b)
-    (h : ofString a = ofString b) : a = b := by
-  have h' := congrArg toStringOfBytes h
-  rwa [toStringOfBytes_ofString_of_bytes a ha,
-    toStringOfBytes_ofString_of_bytes b hb] at h'
 
 /-- List-level agreement: if every element agrees, the executable list step
     agrees with the exact `OPT_MMAP` step under `panValueToHOL`. -/
@@ -2686,7 +2714,1198 @@ theorem evalPanSemStateExp_agree {σ : Type}
   rw [evalPanSemStateExp_64_eq_previous]
   exact evalPanValueExp_agree state exact hrel hranged e he
 
+/-- A byte-ranged expression evaluated under a ranged state yields a
+    byte-ranged value. -/
+theorem evalPanSemStateExp_byteRanged {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (hranged : PanSemStateRelExecRanged state)
+    (e : Exp (RiscV.Word 64)) (he : ExpByteRanged e) (value : PanValue (RiscV.Word 64))
+    (hvalue : evalPanSemStateExp state e = some value) : PanValueByteRanged value := by
+  rw [evalPanSemStateExp_64_eq_previous] at hvalue
+  exact evalPanValueExp_byteRanged state hranged
+    (some (panSemBitVec64MemoryAccess state)) e he value hvalue
+
+/-! ## Discharging the expression byte-range premise from the executed program
+
+The all-16 agreement `evalPanValueExp_agree` (`:2494`) and its state wrapper
+`evalPanSemStateExp_agree` (`:2671`) take the encoded expression's identifier
+bytes as an explicit `ExpByteRanged` premise.  That premise is **not** an extra
+assumption beyond the executed compiler path: the parser-backed entrypoints
+(`Pipeline.lean:634-671`, e.g. `compileFlapjackEntryCake`'s
+`some (.isTrue targetByteRanged)` branch) thread `DeclByteRanged` for their
+declarations, and `expsOf_byteRanged`
+(`Flapjack/Pancake/PanLang/Prog.lean`) proves the program-level predicate
+`ProgByteRanged` already implies `ExpByteRanged` for every expression occurring
+directly in the program (`Flapjack.expsOf`).  The wrappers below therefore
+discharge the expression premise from that executed byte-range hypothesis.
+
+The **state** premise `PanSemStateRelExecRanged` remains explicit: as recorded
+below and in `flapjack-pxn.18.4.3.77.2.15`, parser origin constrains program
+syntax but not runtime FFI values, initial/stored globals, or stored record
+structures, so it cannot be discharged here. -/
+
+/-- The all-16 expression agreement with its `ExpByteRanged` premise discharged
+    from a `ProgByteRanged` program: any expression occurring directly in a
+    byte-ranged program is byte-ranged (`expsOf_byteRanged`).  Only the state
+    rangedness premise remains explicit. -/
+theorem evalPanValueExp_agree_of_mem_expsOf {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec state exact.toExact)
+    (hranged : PanSemStateRelExecRanged state)
+    (program : Prog (RiscV.Word 64)) (hprogram : ProgByteRanged program)
+    (e : Exp (RiscV.Word 64)) (he : e ∈ expsOf program) :
+    Option.map panValueToHOL
+        (evalPanValueExp state.structs state.locals state.globals state.memory
+          state.baseAddress state.topAddress panSemBitVec64BytesInWord e
+          (memoryAccess := some (panSemBitVec64MemoryAccess state)))
+      = exact.evalHOLFinite (expToHOL e) :=
+  evalPanValueExp_agree state exact hrel hranged e
+    (expsOf_byteRanged program hprogram e he)
+
+/-- State-owned wrapper of `evalPanValueExp_agree_of_mem_expsOf`, through
+    `evalPanSemStateExp`. -/
+theorem evalPanSemStateExp_agree_of_mem_expsOf {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec state exact.toExact)
+    (hranged : PanSemStateRelExecRanged state)
+    (program : Prog (RiscV.Word 64)) (hprogram : ProgByteRanged program)
+    (e : Exp (RiscV.Word 64)) (he : e ∈ expsOf program) :
+    Option.map panValueToHOL (evalPanSemStateExp state e) =
+      exact.evalHOLFinite (expToHOL e) :=
+  evalPanSemStateExp_agree state exact hrel hranged e
+    (expsOf_byteRanged program hprogram e he)
+
+/-- `FunDeclByteRanged`-level form: the parser/pass `DeclByteRanged` hypothesis
+    reaches a function body as `FunDeclByteRanged`, whose `ProgByteRanged`
+    conjunct (`hd.2.2.1`) discharges the expression premise for any expression
+    in the body. -/
+theorem evalPanValueExp_agree_of_funDeclByteRanged {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec state exact.toExact)
+    (hranged : PanSemStateRelExecRanged state)
+    (d : FunDeclOf 64) (hd : FunDeclByteRanged d)
+    (e : Exp (RiscV.Word 64)) (he : e ∈ expsOf d.body) :
+    Option.map panValueToHOL
+        (evalPanValueExp state.structs state.locals state.globals state.memory
+          state.baseAddress state.topAddress panSemBitVec64BytesInWord e
+          (memoryAccess := some (panSemBitVec64MemoryAccess state)))
+      = exact.evalHOLFinite (expToHOL e) :=
+  evalPanValueExp_agree_of_mem_expsOf state exact hrel hranged d.body hd.2.2.1 e he
+
+/-- The production assignment-validity test agrees with the exact
+    `is_valid_value` test on encoded values under `PanSemStateRelExec` and the
+    byte-range premise.  This is the validity half of the `Assign` clause
+    agreement: both sides look up the destination and compare the shape of the
+    incoming value with the stored one. -/
+theorem panValueAssignmentValid_eq_isValidValueHOLFinite {σ : Type}
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ)
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (hranged : PanSemStateRelExecRanged production)
+    (kind : VarKind) (name : VarName) (hname : NameRanged name)
+    (value : PanValue (RiscV.Word 64)) (hvalue : PanValueByteRanged value) :
+    panValueAssignmentValid production.structs production.locals production.globals
+        kind name value
+      = isValidValueHOLFinite exact kind (ofString name) (panValueToHOL value) := by
+  cases kind
+  · have hold := hrel.1 name hname
+    simp only [panValueAssignmentValid, isValidValueHOLFinite, lookupKvarHOLFinite]
+    rw [show exact.locals.lookup (ofString name) =
+        Option.map panValueToHOL (production.locals name) from hold.symm]
+    cases hl : production.locals name with
+    | none => rfl
+    | some old =>
+        have hbv : PanValueByteRanged old := hranged.1 name old hl
+        show panShapeMatches (panValueShape production.structs value)
+              (panValueShape production.structs old)
+          = shapeEqHOL (shapeOfHOLExact (panValueToHOL value))
+              (shapeOfHOLExact (panValueToHOL old))
+        rw [shapeOfHOLExact_panValueToHOL, shapeOfHOLExact_panValueToHOL]
+        exact panShapeMatches_eq_shapeEqHOL _ _
+          (panValueShape_byteRanged _ _ hvalue) (panValueShape_byteRanged _ _ hbv)
+  · have hold := hrel.2.1 name hname
+    simp only [panValueAssignmentValid, isValidValueHOLFinite, lookupKvarHOLFinite]
+    rw [show exact.globals.lookup (ofString name) =
+        Option.map panValueToHOL (production.globals name) from hold.symm]
+    cases hl : production.globals name with
+    | none => rfl
+    | some old =>
+        have hbv : PanValueByteRanged old := hranged.2.1 name old hl
+        show panShapeMatches (panValueShape production.structs value)
+              (panValueShape production.structs old)
+          = shapeEqHOL (shapeOfHOLExact (panValueToHOL value))
+              (shapeOfHOLExact (panValueToHOL old))
+        rw [shapeOfHOLExact_panValueToHOL, shapeOfHOLExact_panValueToHOL]
+        exact panShapeMatches_eq_shapeEqHOL _ _
+          (panValueShape_byteRanged _ _ hvalue) (panValueShape_byteRanged _ _ hbv)
+
+/-- The finite-support `evalHOLFinite` agrees with the `Classical`-instance
+    `evalHOLExact` call used by the clause reduction lemmas. -/
+theorem evalHOLFinite_eq_classical {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) [DecidablePred state.memaddrs]
+    (e : ExpHOL width) :
+    @evalHOLExact width σ _ state.toExact
+        (fun address => Classical.propDecidable (state.memaddrs address)) e
+      = state.evalHOLFinite e := by
+  unfold evalHOLFinite
+  rw [Subsingleton.elim (fun address => Classical.propDecidable (state.memaddrs address))
+    (inferInstance : DecidablePred state.memaddrs)]
+
+/-- Production/exact agreement for the `Assign` constructor, assembled from the
+    all-constructor expression agreement
+    (`evalPanSemStateExp_agree`/`evalPanSemStateExp_byteRanged`), the
+    assignment-validity parity, and the `TotalEvalBridge` preservation slice
+    `panSemTotalAssignClause_agree`. -/
+theorem panSemTotalEvaluate_assign_agree {σ : Type}
+    (primitive : PanPrimitiveHandler (RiscV.Word 64))
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (hranged : PanSemStateRelExecRanged production)
+    (kind : VarKind) (name : VarName) (hname : NameRanged name)
+    (e : Exp (RiscV.Word 64)) (he : ExpByteRanged e) :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluate primitive (.assign kind name e) production).1
+        (evaluateHOLFiniteState exact (.assign kind (ofString name) (expToHOL e))).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluate primitive (.assign kind name e) production).2
+        (evaluateHOLFiniteState exact (.assign kind (ofString name) (expToHOL e))).2.toExact := by
+  rw [panSemTotalEvaluate]
+  have hval := evalPanSemStateExp_agree production exact hrel hranged e he
+  have hclass := evalHOLFinite_eq_classical exact (expToHOL e)
+  cases hest : evalPanSemStateExp production e with
+  | none =>
+      have hexactEval : @evalHOLExact 64 σ _ exact.toExact
+          (fun address => Classical.propDecidable (exact.memaddrs address)) (expToHOL e)
+          = none := by
+        rw [hclass, ← hval, hest]
+        rfl
+      rw [panSemTotalAssignClause_none production kind name e hest]
+      rw [evaluateHOLFiniteState_assign, hexactEval]
+      exact ⟨trivial, hrel⟩
+  | some value =>
+      have hvalue : exact.evalHOLFinite (expToHOL e) = some (panValueToHOL value) := by
+        rw [← hval, hest]
+        rfl
+      have hexactEval : @evalHOLExact 64 σ _ exact.toExact
+          (fun address => Classical.propDecidable (exact.memaddrs address)) (expToHOL e)
+          = some (panValueToHOL value) := by
+        rw [hclass]
+        exact hvalue
+      have hbv := evalPanSemStateExp_byteRanged production hranged e he value hest
+      by_cases hprod : panValueAssignmentValid production.structs production.locals
+          production.globals kind name value = true
+      · have hparity := panValueAssignmentValid_eq_isValidValueHOLFinite production exact
+          hrel hranged kind name hname value hbv
+        have hexactValid : isValidValueHOLFinite exact kind (ofString name)
+            (panValueToHOL value) = true := by
+          rw [← hparity]
+          exact hprod
+        exact panSemTotalAssignClause_agree production exact hrel kind name hname e value
+          hest hexactEval hprod hexactValid
+      · have hprod' : panValueAssignmentValid production.structs production.locals
+            production.globals kind name value = false := Bool.eq_false_iff.mpr hprod
+        have hparity := panValueAssignmentValid_eq_isValidValueHOLFinite production exact
+          hrel hranged kind name hname value hbv
+        have hexactInvalid : isValidValueHOLFinite exact kind (ofString name)
+            (panValueToHOL value) = false := by
+          rw [← hparity]
+          exact hprod'
+        rw [panSemTotalAssignClause_invalid production kind name e value hest hprod']
+        rw [evaluateHOLFiniteState_assign, hexactEval]
+        simp only [hexactInvalid]
+        exact ⟨trivial, hrel⟩
+
+/-- The fully assembled production/exact `Assign`-clause agreement with both
+    expression premises (`NameRanged name`, `ExpByteRanged e`) discharged from
+    the executed program node's `ProgByteRanged` hypothesis.  This is the
+    non-trivial connection of a parity slice to the parser/pass byte-range
+    evidence: the assignment node that the executed evaluator sees is exactly
+    the node whose rangedness the parser path supplies. -/
+theorem panSemTotalEvaluate_assign_agree_of_progByteRanged {σ : Type}
+    (primitive : PanPrimitiveHandler (RiscV.Word 64))
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (hranged : PanSemStateRelExecRanged production)
+    (kind : VarKind) (name : VarName) (e : Exp (RiscV.Word 64))
+    (hprogram : ProgByteRanged (.assign kind name e)) :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluate primitive (.assign kind name e) production).1
+        (evaluateHOLFiniteState exact (.assign kind (ofString name) (expToHOL e))).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluate primitive (.assign kind name e) production).2
+        (evaluateHOLFiniteState exact (.assign kind (ofString name) (expToHOL e))).2.toExact := by
+  obtain ⟨hname, he⟩ := hprogram
+  exact panSemTotalEvaluate_assign_agree primitive production exact hrel hranged
+    kind name hname e he
+
+/-- Production/exact agreement for the `Store` constructor, assembled from the
+    all-constructor expression agreement
+    (`evalPanSemStateExp_agree`/`evalHOLFinite_eq_classical`) and the
+    `TotalEvalBridge` clause slice `panSemTotalStoreClause_agree`.  Both the
+    destination and the source evaluation agreement are discharged from their
+    `ExpByteRanged` hypotheses; the success, invalid-address (non-word
+    destination), and failed-expression branches are all covered without any
+    target run, result, or post-state premise. -/
+theorem panSemTotalEvaluate_store_agree {σ : Type}
+    (primitive : PanPrimitiveHandler (RiscV.Word 64))
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (hranged : PanSemStateRelExecRanged production)
+    (address value : Exp (RiscV.Word 64))
+    (haddress : ExpByteRanged address) (hvalue : ExpByteRanged value) :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluate primitive (.store address value) production).1
+        (evaluateHOLFiniteState exact (.store (expToHOL address) (expToHOL value))).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluate primitive (.store address value) production).2
+        (evaluateHOLFiniteState exact (.store (expToHOL address) (expToHOL value))).2.toExact := by
+  rw [panSemTotalEvaluate]
+  have haddr := evalPanSemStateExp_agree production exact hrel hranged address haddress
+  have hclassAddr := evalHOLFinite_eq_classical exact (expToHOL address)
+  cases hAddr : evalPanSemStateExp production address with
+  | none =>
+      have hexactAddr : @evalHOLExact 64 σ _ exact.toExact
+          (fun a => Classical.propDecidable (exact.memaddrs a)) (expToHOL address) = none := by
+        rw [hclassAddr, ← haddr, hAddr]
+        rfl
+      rw [panSemTotalStoreClause_none production address value hAddr]
+      simp only [evaluateHOLFiniteState_store, hexactAddr]
+      exact ⟨trivial, hrel⟩
+  | some addrValue =>
+      have hexactAddr : @evalHOLExact 64 σ _ exact.toExact
+          (fun a => Classical.propDecidable (exact.memaddrs a)) (expToHOL address)
+          = some (panValueToHOL addrValue) := by
+        rw [hclassAddr, ← haddr, hAddr]
+        rfl
+      cases addrValue with
+      | word addr =>
+          have hval := evalPanSemStateExp_agree production exact hrel hranged value hvalue
+          have hclassVal := evalHOLFinite_eq_classical exact (expToHOL value)
+          cases hValue : evalPanSemStateExp production value with
+          | none =>
+              have hexactValue : @evalHOLExact 64 σ _ exact.toExact
+                  (fun a => Classical.propDecidable (exact.memaddrs a)) (expToHOL value) = none := by
+                rw [hclassVal, ← hval, hValue]
+                rfl
+              have hclause : panSemTotalStoreClause production address value = (some .error, production) := by
+                simp [panSemTotalStoreClause, panSemTotalExprStep, hAddr, hValue]
+              rw [hclause]
+              simp only [evaluateHOLFiniteState_store, hexactAddr, panValueToHOL_word, hexactValue]
+              exact ⟨trivial, hrel⟩
+          | some storedValue =>
+              have hexactAddr' : @evalHOLExact 64 σ _ exact.toExact
+                  (fun a => Classical.propDecidable (exact.memaddrs a)) (expToHOL address)
+                  = some (.val (.word addr)) := by
+                simpa only [panValueToHOL_word] using hexactAddr
+              have hexactValue : @evalHOLExact 64 σ _ exact.toExact
+                  (fun a => Classical.propDecidable (exact.memaddrs a)) (expToHOL value)
+                  = some (panValueToHOL storedValue) := by
+                rw [hclassVal, ← hval, hValue]
+                rfl
+              exact panSemTotalStoreClause_agree production exact hrel address value addr storedValue
+                hAddr hValue hexactAddr' hexactValue
+      | rStruct fields =>
+          have hclause : panSemTotalStoreClause production address value = (some .error, production) := by
+            simp [panSemTotalStoreClause, panSemTotalExprStep, hAddr]
+          rw [hclause]
+          simp only [evaluateHOLFiniteState_store, hexactAddr, panValueToHOL]
+          exact ⟨trivial, hrel⟩
+      | nStruct name fields =>
+          have hclause : panSemTotalStoreClause production address value = (some .error, production) := by
+            simp [panSemTotalStoreClause, panSemTotalExprStep, hAddr]
+          rw [hclause]
+          simp only [evaluateHOLFiniteState_store, hexactAddr, panValueToHOL]
+          exact ⟨trivial, hrel⟩
+
+/-- The fully assembled production/exact `Store`-clause agreement with both
+    expression premises (`ExpByteRanged address`, `ExpByteRanged value`)
+    discharged from the executed program node's `ProgByteRanged` hypothesis
+    (mirroring `panSemTotalEvaluate_assign_agree_of_progByteRanged`). -/
+theorem panSemTotalEvaluate_store_agree_of_progByteRanged {σ : Type}
+    (primitive : PanPrimitiveHandler (RiscV.Word 64))
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (hranged : PanSemStateRelExecRanged production)
+    (address value : Exp (RiscV.Word 64))
+    (hprogram : ProgByteRanged (.store address value)) :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluate primitive (.store address value) production).1
+        (evaluateHOLFiniteState exact (.store (expToHOL address) (expToHOL value))).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluate primitive (.store address value) production).2
+        (evaluateHOLFiniteState exact (.store (expToHOL address) (expToHOL value))).2.toExact := by
+  obtain ⟨haddress, hvalue⟩ := hprogram
+  exact panSemTotalEvaluate_store_agree primitive production exact hrel hranged
+    address value haddress hvalue
+
+/-! ## Production/exact agreement for the `Primitive` constructor
+
+`panSemTotalPrimitiveClause` (`TotalSteps.lean:367`) evaluates the argument
+expressions, runs the production handler `primitive`, and installs a valid
+result into `locals`; its exact counterpart is the tagged
+`evaluateHOLFiniteState_primitive` (`StateExactFiniteMap.lean:2809`), which
+replaces the handler by the built-in `panPrimopHOLExact` and the validity test
+by `isValidValueHOLFinite`.
+
+Unlike `Assign`/`Store`, the handler is live and there is no production/exact
+bridge between the arbitrarily supplied `primitive` and the built-in
+`panPrimopHOLExact` (the latter is a fixed function of the operator and encoded
+argument list, while `primitive` is an unconstrained `PanPrimitiveHandler`
+parameter of `panSemTotalEvaluate`).  The agreement therefore takes the handler
+correspondence as an input side condition — the value/result relationship that
+mirrors the evaluated-destination/value hypotheses of the `Store` slice — plus
+the runtime range predicate `PanPrimitiveHandlerByteRanged` used to derive the
+assignment-validity parity through
+`panValueAssignmentValid_eq_isValidValueHOLFinite`.  Only the argument-list
+agreement and the produced-value validity are discharged from the executed
+program's `ProgByteRanged` evidence; no target run, result, or post-state
+relation is assumed.  Untagged Flapjack-specific bridge infrastructure. -/
+
+/-- Runtime predicate on a primitive handler: every value it returns is
+    byte-ranged.  Unlike the FFI, the production `Primitive` clause installs this
+    value directly into `locals`, so this is the exact premise needed to preserve
+    `PanSemStateRelExecRanged` across the constructor. -/
+def PanPrimitiveHandlerByteRanged (primitive : PanPrimitiveHandler (RiscV.Word 64)) : Prop :=
+  ∀ (operator : PrimOp) (values : List (PanValue (RiscV.Word 64)))
+    (value : PanValue (RiscV.Word 64)),
+    primitive operator values = some value → PanValueByteRanged value
+
+/-- Argument-list expression agreement: for a byte-ranged argument list, the
+    production `evalPanSemStateExps` and the exact `evalListHOLExact` return
+    corresponding lists under `panValueToHOL`.  Assembled from the per-expression
+    agreement `evalPanValueExp_agree` through
+    `evalPanValueExps_eq_evalListHOLExact_of`; the finite-support rendering and
+    the `Classical`-instance call are identified by the decidable-predicate
+    subsingleton. -/
+private theorem evalPanSemStateExps_agree {σ : Type}
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (hranged : PanSemStateRelExecRanged production)
+    (arguments : List (Exp (RiscV.Word 64)))
+    (harguments : ∀ e ∈ arguments, ExpByteRanged e) :
+    Option.map (List.map panValueToHOL) (evalPanSemStateExps production arguments)
+      = @evalListHOLExact 64 σ _ exact.toExact
+          (fun address => Classical.propDecidable (exact.memaddrs address))
+          (arguments.map expToHOL) := by
+  rw [evalPanSemStateExps_64_eq_previous]
+  have hclass : @evalListHOLExact 64 σ _ exact.toExact
+      (fun address => Classical.propDecidable (exact.memaddrs address))
+      (arguments.map expToHOL) = exact.evalListHOLFinite (arguments.map expToHOL) := by
+    unfold PanSemStateFiniteExact.evalListHOLFinite
+    rw [Subsingleton.elim (fun address => Classical.propDecidable (exact.memaddrs address))
+      (inferInstance : DecidablePred exact.memaddrs)]
+  rw [hclass]
+  exact evalPanValueExps_eq_evalListHOLExact_of production.structs production.locals
+    production.globals production.memory production.baseAddress production.topAddress
+    panSemBitVec64BytesInWord (some (panSemBitVec64MemoryAccess production)) exact arguments
+    (fun e he => evalPanValueExp_agree production exact hrel hranged e (harguments e he))
+
+/-- Production/exact agreement for the `Primitive` constructor, assembled from the
+    argument-list agreement `evalPanSemStateExps_agree`, the assignment-validity
+    parity `panValueAssignmentValid_eq_isValidValueHOLFinite`, and the
+    `TotalEvalBridge` clause slice `panSemTotalPrimitiveClause_agree`.  The
+    handler correspondence `hprim` relates the arbitrary production handler to
+    the built-in `panPrimopHOLExact` on encoded argument lists; the runtime range
+    predicate `hprimRanged` supplies the byte range of the produced value for the
+    validity parity.  The failed-argument-list, handler-`none`, valid-assignment,
+    and invalid-assignment branches are all covered without any target run,
+    result, or post-state premise. -/
+theorem panSemTotalEvaluate_primitive_agree {σ : Type}
+    (primitive : PanPrimitiveHandler (RiscV.Word 64))
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (hranged : PanSemStateRelExecRanged production)
+    (name : VarName) (hname : NameRanged name) (operator : PrimOp)
+    (arguments : List (Exp (RiscV.Word 64)))
+    (harguments : ∀ e ∈ arguments, ExpByteRanged e)
+    (hprim : ∀ (values : List (PanValue (RiscV.Word 64))),
+      Option.map panValueToHOL (primitive operator values)
+        = panPrimopHOLExact operator (values.map panValueToHOL))
+    (hprimRanged : PanPrimitiveHandlerByteRanged primitive) :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluate primitive (.primitive name operator arguments) production).1
+        (evaluateHOLFiniteState exact
+          (.primitive (ofString name) operator (arguments.map expToHOL))).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluate primitive (.primitive name operator arguments) production).2
+        (evaluateHOLFiniteState exact
+          (.primitive (ofString name) operator (arguments.map expToHOL))).2.toExact := by
+  rw [panSemTotalEvaluate]
+  have hlist := evalPanSemStateExps_agree production exact hrel hranged arguments harguments
+  cases hargs : evalPanSemStateExps production arguments with
+  | none =>
+      have hexactNone : @evalListHOLExact 64 σ _ exact.toExact
+          (fun address => Classical.propDecidable (exact.memaddrs address))
+          (arguments.map expToHOL) = none := by
+        rw [← hlist, hargs]
+        rfl
+      rw [panSemTotalPrimitiveClause_none production name operator arguments primitive hargs]
+      simp only [evaluateHOLFiniteState_primitive, hexactNone]
+      exact ⟨trivial, hrel⟩
+  | some values =>
+      have hexactSome : @evalListHOLExact 64 σ _ exact.toExact
+          (fun address => Classical.propDecidable (exact.memaddrs address))
+          (arguments.map expToHOL) = some (values.map panValueToHOL) := by
+        rw [← hlist, hargs]
+        rfl
+      exact panSemTotalPrimitiveClause_agree production exact hrel name hname operator
+        arguments primitive values hargs hexactSome (hprim values)
+        (fun value hprimValue =>
+          panValueAssignmentValid_eq_isValidValueHOLFinite production exact hrel hranged
+            .local name hname value (hprimRanged operator values value hprimValue))
+
+/-- The fully assembled production/exact `Primitive`-clause agreement with the
+    identifier and argument byte-range premises discharged from the executed
+    program node's `ProgByteRanged` hypothesis (mirroring
+    `panSemTotalEvaluate_store_agree_of_progByteRanged`).  The handler
+    correspondence and its runtime range predicate remain explicit. -/
+theorem panSemTotalEvaluate_primitive_agree_of_progByteRanged {σ : Type}
+    (primitive : PanPrimitiveHandler (RiscV.Word 64))
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (hranged : PanSemStateRelExecRanged production)
+    (name : VarName) (operator : PrimOp) (arguments : List (Exp (RiscV.Word 64)))
+    (hprogram : ProgByteRanged (.primitive name operator arguments))
+    (hprim : ∀ (values : List (PanValue (RiscV.Word 64))),
+      Option.map panValueToHOL (primitive operator values)
+        = panPrimopHOLExact operator (values.map panValueToHOL))
+    (hprimRanged : PanPrimitiveHandlerByteRanged primitive) :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluate primitive (.primitive name operator arguments) production).1
+        (evaluateHOLFiniteState exact
+          (.primitive (ofString name) operator (arguments.map expToHOL))).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluate primitive (.primitive name operator arguments) production).2
+        (evaluateHOLFiniteState exact
+          (.primitive (ofString name) operator (arguments.map expToHOL))).2.toExact := by
+  obtain ⟨hname, harguments⟩ := hprogram
+  exact panSemTotalEvaluate_primitive_agree primitive production exact hrel hranged
+    name hname operator arguments harguments hprim hprimRanged
+
+/-- Canonical total source-semantics entrypoint for the production `panSem$`
+    evaluator on the executable compiler path: `panSemTotalEvaluate` specialised
+    to the production primitive handler `panPrimopHOL`.  The general evaluator is
+    handler-parametric, so this names the concrete handler that the source
+    semantics is intended to run.  Not a HOL declaration; untagged. -/
+abbrev panSemTotalEvaluateCake {σ : Type} :
+    Prog (RiscV.Word 64) → PanSemState (RiscV.Word 64) (FfiState σ) →
+      Option (PanSemHOLResult (RiscV.Word 64)) ×
+        PanSemState (RiscV.Word 64) (FfiState σ) :=
+  panSemTotalEvaluate (primitive := panPrimopHOL)
+
+@[simp] theorem panSemTotalEvaluateCake_eq {σ : Type}
+    (program : Prog (RiscV.Word 64))
+    (state : PanSemState (RiscV.Word 64) (FfiState σ)) :
+    panSemTotalEvaluateCake program state = panSemTotalEvaluate panPrimopHOL program state :=
+  rfl
+
+/-! ### The canonical handler `panPrimopHOL`
+
+The handler side conditions of `panSemTotalEvaluate_primitive_agree` are not an
+extra assumption for the canonical production handler `panPrimopHOL`: they are
+theorems.  `panPrimopHOL_bridge` establishes the value-level correspondence to
+the exact `panPrimopHOLExact`, and `panPrimopHOL_byteRanged` establishes that
+every value it produces is byte-ranged.  Instantiating the general theorem with
+these two lemmas makes the `Primitive` constructor agreement premise-free for the
+canonical handler.  Untagged Flapjack-specific bridge infrastructure. -/
+
+/-- Value-level correspondence of the canonical production handler
+    `panPrimopHOL` with the exact `panPrimopHOLExact` under the codec
+    `panValueToHOL`.  Both sides return `none` except for `addCarry` applied to
+    exactly three word values, where both return the same `rStruct` of the two
+    carry words. -/
+theorem panPrimopHOL_bridge :
+    ∀ (operator : PrimOp) (values : List (PanValue (RiscV.Word 64))),
+      Option.map panValueToHOL (panPrimopHOL operator values) =
+        panPrimopHOLExact operator (values.map panValueToHOL) := by
+  intro operator values
+  cases operator
+  cases values with
+  | nil => simp [panPrimopHOL, panPrimopHOLExact]
+  | cons first rest =>
+      cases rest with
+      | nil => cases first <;> simp [panPrimopHOL, panPrimopHOLExact]
+      | cons second rest =>
+          cases rest with
+          | nil =>
+              cases first <;> cases second <;>
+                simp [panPrimopHOL, panPrimopHOLExact]
+          | cons third rest =>
+              cases rest with
+              | nil =>
+                  cases first <;> cases second <;> cases third <;>
+                    simp [panPrimopHOL, panPrimopHOLExact]
+              | cons fourth rest =>
+                  simp [panPrimopHOL, panPrimopHOLExact]
+
+/-- The canonical production handler `panPrimopHOL` is byte-ranged: the only
+    successful case returns an `rStruct` of two word values, both of which are
+    byte-ranged. -/
+theorem panPrimopHOL_byteRanged : PanPrimitiveHandlerByteRanged panPrimopHOL := by
+  intro operator values value hprim
+  cases operator
+  cases values with
+  | nil => simp [panPrimopHOL] at hprim
+  | cons first rest =>
+      cases rest with
+      | nil => simp [panPrimopHOL] at hprim
+      | cons second rest =>
+          cases rest with
+          | nil => simp [panPrimopHOL] at hprim
+          | cons third rest =>
+              cases rest with
+              | cons _ _ => simp [panPrimopHOL] at hprim
+              | nil =>
+                  cases first <;> cases second <;> cases third <;>
+                    simp [panPrimopHOL] at hprim
+                  rw [← hprim]
+                  simp [PanValueByteRanged]
+
+/-- Premise-free `Primitive`-clause agreement for the canonical production
+    handler `panPrimopHOL`: the two handler side conditions of
+    `panSemTotalEvaluate_primitive_agree` are discharged by
+    `panPrimopHOL_bridge` and `panPrimopHOL_byteRanged`. -/
+theorem panSemTotalEvaluate_primitive_agree_panPrimopHOL {σ : Type}
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (hranged : PanSemStateRelExecRanged production)
+    (name : VarName) (hname : NameRanged name) (operator : PrimOp)
+    (arguments : List (Exp (RiscV.Word 64)))
+    (harguments : ∀ e ∈ arguments, ExpByteRanged e) :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluate panPrimopHOL (.primitive name operator arguments)
+          production).1
+        (evaluateHOLFiniteState exact
+          (.primitive (ofString name) operator (arguments.map expToHOL))).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluate panPrimopHOL (.primitive name operator arguments)
+          production).2
+        (evaluateHOLFiniteState exact
+          (.primitive (ofString name) operator (arguments.map expToHOL))).2.toExact :=
+  panSemTotalEvaluate_primitive_agree panPrimopHOL production exact hrel hranged
+    name hname operator arguments harguments
+    (fun values => panPrimopHOL_bridge operator values) panPrimopHOL_byteRanged
+
+/-- Premise-free `Primitive`-clause agreement for the canonical production
+    handler `panPrimopHOL`, with the identifier and argument byte-range premises
+    discharged from the executed program node's `ProgByteRanged` hypothesis
+    (mirroring `panSemTotalEvaluate_primitive_agree_of_progByteRanged`). -/
+theorem panSemTotalEvaluate_primitive_agree_panPrimopHOL_of_progByteRanged {σ : Type}
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (hranged : PanSemStateRelExecRanged production)
+    (name : VarName) (operator : PrimOp) (arguments : List (Exp (RiscV.Word 64)))
+    (hprogram : ProgByteRanged (.primitive name operator arguments)) :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluate panPrimopHOL (.primitive name operator arguments)
+          production).1
+        (evaluateHOLFiniteState exact
+          (.primitive (ofString name) operator (arguments.map expToHOL))).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluate panPrimopHOL (.primitive name operator arguments)
+          production).2
+        (evaluateHOLFiniteState exact
+          (.primitive (ofString name) operator (arguments.map expToHOL))).2.toExact := by
+  obtain ⟨hname, harguments⟩ := hprogram
+  exact panSemTotalEvaluate_primitive_agree_panPrimopHOL production exact hrel
+    hranged name hname operator arguments harguments
+
+/-- `Primitive`-clause agreement for the named canonical entrypoint
+    `panSemTotalEvaluateCake` (definitionally `panSemTotalEvaluate panPrimopHOL`)
+    against the tagged exact HOL evaluator, via the canonical
+    `panPrimopHOL_bridge`. -/
+theorem panSemTotalEvaluateCake_primitive_agree {σ : Type}
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (hranged : PanSemStateRelExecRanged production)
+    (name : VarName) (hname : NameRanged name) (operator : PrimOp)
+    (arguments : List (Exp (RiscV.Word 64)))
+    (harguments : ∀ e ∈ arguments, ExpByteRanged e) :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluateCake (.primitive name operator arguments) production).1
+        (evaluateHOLFiniteState exact
+          (.primitive (ofString name) operator (arguments.map expToHOL))).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluateCake (.primitive name operator arguments) production).2
+        (evaluateHOLFiniteState exact
+          (.primitive (ofString name) operator (arguments.map expToHOL))).2.toExact :=
+  panSemTotalEvaluate_primitive_agree_panPrimopHOL production exact hrel hranged
+    name hname operator arguments harguments
+
+/-- `ProgByteRanged`-premise form of `panSemTotalEvaluateCake_primitive_agree`. -/
+theorem panSemTotalEvaluateCake_primitive_agree_of_progByteRanged {σ : Type}
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (hranged : PanSemStateRelExecRanged production)
+    (name : VarName) (operator : PrimOp) (arguments : List (Exp (RiscV.Word 64)))
+    (hprogram : ProgByteRanged (.primitive name operator arguments)) :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluateCake (.primitive name operator arguments) production).1
+        (evaluateHOLFiniteState exact
+          (.primitive (ofString name) operator (arguments.map expToHOL))).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluateCake (.primitive name operator arguments) production).2
+        (evaluateHOLFiniteState exact
+          (.primitive (ofString name) operator (arguments.map expToHOL))).2.toExact :=
+  panSemTotalEvaluate_primitive_agree_panPrimopHOL_of_progByteRanged production exact
+    hrel hranged name operator arguments hprogram
+
+/-! ## Production/exact agreement for the `Return` and `Raise` constructors
+
+`panSemTotalReturnClause` (`TotalSteps.lean:177`) and `panSemTotalRaiseClause`
+(`TotalSteps.lean:236`) are the production leaf clauses, and their exact
+counterparts are the tagged `evaluateHOLFiniteState_return`/`_raise`
+(`StateExactFiniteMap.lean:2318`/`:2353`).  The agreement below is assembled
+from the all-constructor expression agreement (`evalPanSemStateExp_agree`), the
+shape/size parity bridges (`shapeOfHOLExact_panValueToHOL`,
+`panValueShape_eq_panSemShapeOf_tagged`,
+`sizeOfShWithCtxt_eq_sizeOfShapeWithContextHOL`, `panShapeMatches_eq_shapeEqHOL`)
+and the `empty_locals`/state relation preservation.  Every branch is
+represented: a failed expression evaluation, an oversized value, an absent
+exception shape, and a mismatched exception shape all return `SOME Error` with
+the state unchanged, while a byte-ranged value within the size bound (and with
+the declared exception shape for `Raise`) returns the corresponding result and
+clears the locals.  No target result and no post-state relation are assumed.
+Untagged Flapjack-specific bridge infrastructure; no `@[hol]` tag. -/
+
+/-- The `toStringOfBytes` image of an `MlString` is `NameRanged`: decoding bytes
+    to characters yields codes below 256. -/
+theorem nameRanged_toStringOfBytes_bridge (m : MlS) :
+    NameRanged (toStringOfBytes m) := by
+  intro character hmem
+  simp only [toStringOfBytes, String.toList_ofList, List.mem_map] at hmem
+  obtain ⟨byte, _hbyte, rfl⟩ := hmem
+  have hb : byte.toNat < 256 := by simpa using byte.isLt
+  rw [ofNat_toNat_char byte]
+  exact hb
+
+/-- Decoding a `ShapeHOL` to a production shape is byte-ranged. -/
+theorem shapeOfHOL_byteRanged_bridge :
+    (shape : ShapeHOL) → ShapeByteRanged (shapeOfHOL shape)
+  | .one => by simp [ShapeByteRanged, shapeOfHOL]
+  | .named name => by
+      simpa [ShapeByteRanged, shapeOfHOL] using nameRanged_toStringOfBytes_bridge name
+  | .comb fields => by
+      simp only [shapeOfHOL, ShapeByteRanged]
+      intro shape hshape
+      obtain ⟨source, _hsource, rfl⟩ := List.mem_map.mp hshape
+      exact shapeOfHOL_byteRanged_bridge source
+
+/-- A decoded exact expression is byte-ranged, so the production
+    `ExpByteRanged` premise of the expression agreement is always available for
+    `expOfHOL`. -/
+theorem expOfHOL_byteRanged_bridge {width : Nat} [NeZero width] :
+    (expression : ExpHOL width) → ExpByteRanged (expOfHOL expression) :=
+  ExpHOL.rec
+    (motive_1 := fun expression => ExpByteRanged (expOfHOL expression))
+    (motive_2 := fun expressions =>
+      ListExpByteRanged (expressions.map expOfHOL))
+    (motive_3 := fun fields =>
+      ListFieldByteRanged (fields.map
+        (fun p => (toStringOfBytes p.1, expOfHOL p.2))))
+    (motive_4 := fun field =>
+      (∀ c ∈ toStringOfBytes field.1 |>.toList, c.toNat < 256) ∧
+        ExpByteRanged (expOfHOL field.2))
+    (by simp [expOfHOL, ExpByteRanged])
+    (fun _kind name => by
+      simpa [expOfHOL, ExpByteRanged] using nameRanged_toStringOfBytes_bridge name)
+    (fun _fields ih => by simpa [expOfHOL, ExpByteRanged, ListExpByteRanged] using ih)
+    (fun _index _value ih => by simpa [expOfHOL, ExpByteRanged] using ih)
+    (fun name _fields ih => by
+      simpa [expOfHOL, ExpByteRanged, ListFieldByteRanged] using
+        And.intro (nameRanged_toStringOfBytes_bridge name) ih)
+    (fun name _value ih => by
+      simpa [expOfHOL, ExpByteRanged] using
+        And.intro (nameRanged_toStringOfBytes_bridge name) ih)
+    (fun shape _address ih => by
+      simpa [expOfHOL, ExpByteRanged] using
+        And.intro (shapeOfHOL_byteRanged_bridge shape) ih)
+    (fun _address ih => by simpa [expOfHOL, ExpByteRanged] using ih)
+    (fun _address ih => by simpa [expOfHOL, ExpByteRanged] using ih)
+    (fun _operator _args ih => by simpa [expOfHOL, ExpByteRanged] using ih)
+    (fun _operator _args ih => by simpa [expOfHOL, ExpByteRanged] using ih)
+    (fun _operator _left _right ihl ihr => by
+      simpa [expOfHOL, ExpByteRanged] using And.intro ihl ihr)
+    (fun _operator _left _right ihl ihr => by
+      simpa [expOfHOL, ExpByteRanged] using And.intro ihl ihr)
+    (by simp [expOfHOL, ExpByteRanged])
+    (by simp [expOfHOL, ExpByteRanged])
+    (by simp [expOfHOL, ExpByteRanged])
+    (by simp [ListExpByteRanged])
+    (fun _head _tail ihHead ihTail => by
+      simpa [ListExpByteRanged, List.map] using And.intro ihHead ihTail)
+    (by simp [ListFieldByteRanged])
+    (fun _head _tail ihHead ihTail => by
+      simpa [ListFieldByteRanged, List.map] using
+        And.intro ihHead.1 (And.intro ihHead.2 ihTail))
+    (fun fst snd ih => by
+      exact ⟨nameRanged_toStringOfBytes_bridge fst, ih⟩)
+
+/-- Production/exact agreement for the `Return` constructor. -/
+theorem panSemTotalEvaluate_return_agree {σ : Type}
+    (primitive : PanPrimitiveHandler (RiscV.Word 64))
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (hranged : PanSemStateRelExecRanged production)
+    (expression : ExpHOL 64) :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluate primitive
+          (.return (expOfHOL expression) : Prog (RiscV.Word 64)) production).1
+        (evaluateHOLFiniteState exact (.return expression : ProgHOL 64)).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluate primitive
+          (.return (expOfHOL expression) : Prog (RiscV.Word 64)) production).2
+        (evaluateHOLFiniteState exact (.return expression : ProgHOL 64)).2.toExact := by
+  have hexp := expOfHOL_byteRanged_bridge expression
+  have hval := evalPanSemStateExp_agree production exact hrel hranged
+    (expOfHOL expression) hexp
+  simp only [expToHOL_expOfHOL] at hval
+  have hclass := evalHOLFinite_eq_classical exact expression
+  rw [panSemTotalEvaluate]
+  cases hest : evalPanSemStateExp production (expOfHOL expression) with
+  | none =>
+      have hexactEval : @evalHOLExact 64 σ _ exact.toExact
+          (fun address => Classical.propDecidable (exact.memaddrs address)) expression
+          = none := by
+        rw [hclass, ← hval, hest]
+        rfl
+      rw [panSemTotalReturnClause_none production (expOfHOL expression) hest]
+      rw [evaluateHOLFiniteState_return, hexactEval]
+      exact ⟨trivial, hrel⟩
+  | some value =>
+      have hvalue : exact.evalHOLFinite expression = some (panValueToHOL value) := by
+        rw [← hval, hest]
+        rfl
+      have hexactEval : @evalHOLExact 64 σ _ exact.toExact
+          (fun address => Classical.propDecidable (exact.memaddrs address)) expression
+          = some (panValueToHOL value) := by
+        rw [hclass]
+        exact hvalue
+      have hbv := evalPanSemStateExp_byteRanged production hranged
+        (expOfHOL expression) hexp value hest
+      have hshapeRanged : ShapeByteRanged (panSemShapeOf value) := by
+        have h := panValueShape_byteRanged production.structs value hbv
+        rwa [panValueShape_eq_panSemShapeOf_tagged production.structs value] at h
+      have hshapeExact : shapeOfHOLExact (panValueToHOL value) =
+          shapeToHOL (panSemShapeOf value) := by
+        rw [shapeOfHOLExact_panValueToHOL production.structs value,
+          panValueShape_eq_panSemShapeOf_tagged production.structs value]
+      have hstructs : structContextToHOL production.structs.toHOL = exact.structs :=
+        hrel.2.2.1
+      have hsizeEq : sizeOfShWithCtxt production.structs.toHOL (panSemShapeOf value) =
+          sizeOfShapeWithContextHOL exact.structs
+            (shapeOfHOLExact (panValueToHOL value)) := by
+        rw [hshapeExact, ← hstructs]
+        exact sizeOfShWithCtxt_eq_sizeOfShapeWithContextHOL production.structs.toHOL
+          (fun p hp => (hranged.2.2 p hp).1) (panSemShapeOf value) hshapeRanged
+      by_cases hsize : sizeOfShWithCtxt production.structs.toHOL (panSemShapeOf value) ≤ 32
+      · have hsizeExact : sizeOfShapeWithContextHOL exact.structs
+            (shapeOfHOLExact (panValueToHOL value)) ≤ 32 := by
+          rw [← hsizeEq]
+          exact hsize
+        rw [panSemTotalReturnClause_some production (expOfHOL expression) value hest hsize]
+        rw [evaluateHOLFiniteState_return, hexactEval]
+        simp only [hsizeExact, if_true]
+        exact ⟨rfl, by
+          simpa only [panEmptyLocals, toExact_emptyLocalsHOLFinite] using
+            PanSemStateRelExec.emptyLocals hrel⟩
+      · have hsizeExact : ¬ sizeOfShapeWithContextHOL exact.structs
+            (shapeOfHOLExact (panValueToHOL value)) ≤ 32 := by
+          rw [← hsizeEq]
+          exact hsize
+        rw [show panSemTotalReturnClause production (expOfHOL expression) =
+            (some .error, production) from by
+          simp [panSemTotalReturnClause, panSemTotalExprStep, hest, hsize]]
+        rw [evaluateHOLFiniteState_return, hexactEval]
+        simp only [hsizeExact, if_false]
+        exact ⟨trivial, hrel⟩
+
+/-- Production/exact agreement for the `Raise` constructor.  The extra premise
+    `hexnRanged` records that the production exception shapes are byte-ranged:
+    `PanSemStateRelExec` compares exception shapes only through the lossy
+    `shapeToHOL`, so without it a decoded exact shape could match while the
+    production `panShapeMatches` test fails on an out-of-range exception name. -/
+theorem panSemTotalEvaluate_raise_agree {σ : Type}
+    (primitive : PanPrimitiveHandler (RiscV.Word 64))
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (hranged : PanSemStateRelExecRanged production)
+    (hexnRanged : ∀ eid shape, production.exceptionShapes eid = some shape →
+      ShapeByteRanged shape)
+    (exceptionId : MlS) (expression : ExpHOL 64) :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluate primitive
+          (.raise (toStringOfBytes exceptionId) (expOfHOL expression) :
+            Prog (RiscV.Word 64)) production).1
+        (evaluateHOLFiniteState exact (.raise exceptionId expression : ProgHOL 64)).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluate primitive
+          (.raise (toStringOfBytes exceptionId) (expOfHOL expression) :
+            Prog (RiscV.Word 64)) production).2
+        (evaluateHOLFiniteState exact (.raise exceptionId expression : ProgHOL 64)).2.toExact := by
+  have hexp := expOfHOL_byteRanged_bridge expression
+  have hval := evalPanSemStateExp_agree production exact hrel hranged
+    (expOfHOL expression) hexp
+  simp only [expToHOL_expOfHOL] at hval
+  have hclass := evalHOLFinite_eq_classical exact expression
+  have heid : NameRanged (toStringOfBytes exceptionId) :=
+    nameRanged_toStringOfBytes_bridge exceptionId
+  have hshapeRel := hrel.2.2.2.2.1 (toStringOfBytes exceptionId) heid
+  rw [ofString_toStringOfBytes] at hshapeRel
+  rw [panSemTotalEvaluate]
+  cases hest : evalPanSemStateExp production (expOfHOL expression) with
+  | none =>
+      have hexactEval : @evalHOLExact 64 σ _ exact.toExact
+          (fun address => Classical.propDecidable (exact.memaddrs address)) expression
+          = none := by
+        rw [hclass, ← hval, hest]
+        rfl
+      have hexactRaise : evaluateHOLFiniteState exact
+          (.raise exceptionId expression : ProgHOL 64) = (some .error, exact) := by
+        rw [evaluateHOLFiniteState_raise, hexactEval]
+        cases h : exact.eshapes.lookup exceptionId <;> rfl
+      rw [panSemTotalRaiseClause_none production (toStringOfBytes exceptionId)
+        (expOfHOL expression) hest, hexactRaise]
+      exact ⟨trivial, hrel⟩
+  | some value =>
+      have hvalue : exact.evalHOLFinite expression = some (panValueToHOL value) := by
+        rw [← hval, hest]
+        rfl
+      have hexactEval : @evalHOLExact 64 σ _ exact.toExact
+          (fun address => Classical.propDecidable (exact.memaddrs address)) expression
+          = some (panValueToHOL value) := by
+        rw [hclass]
+        exact hvalue
+      have hbv := evalPanSemStateExp_byteRanged production hranged
+        (expOfHOL expression) hexp value hest
+      have hshapeRanged : ShapeByteRanged (panSemShapeOf value) := by
+        have h := panValueShape_byteRanged production.structs value hbv
+        rwa [panValueShape_eq_panSemShapeOf_tagged production.structs value] at h
+      have hshapeExact : shapeOfHOLExact (panValueToHOL value) =
+          shapeToHOL (panSemShapeOf value) := by
+        rw [shapeOfHOLExact_panValueToHOL production.structs value,
+          panValueShape_eq_panSemShapeOf_tagged production.structs value]
+      have hstructs : structContextToHOL production.structs.toHOL = exact.structs :=
+        hrel.2.2.1
+      have hsizeEq : sizeOfShWithCtxt production.structs.toHOL (panSemShapeOf value) =
+          sizeOfShapeWithContextHOL exact.structs
+            (shapeOfHOLExact (panValueToHOL value)) := by
+        rw [hshapeExact, ← hstructs]
+        exact sizeOfShWithCtxt_eq_sizeOfShapeWithContextHOL production.structs.toHOL
+          (fun p hp => (hranged.2.2 p hp).1) (panSemShapeOf value) hshapeRanged
+      cases hsh : production.exceptionShapes (toStringOfBytes exceptionId) with
+      | none =>
+          have hlookup : exact.eshapes.lookup exceptionId = none := by
+            change exact.toExact.eshapes exceptionId = none
+            rw [← hshapeRel, hsh]
+            rfl
+          have hexactRaise : evaluateHOLFiniteState exact
+              (.raise exceptionId expression : ProgHOL 64) = (some .error, exact) := by
+            rw [evaluateHOLFiniteState_raise, hlookup, hexactEval]
+          rw [show panSemTotalRaiseClause production (toStringOfBytes exceptionId)
+              (expOfHOL expression) = (some .error, production) from by
+            simp [panSemTotalRaiseClause, panSemTotalExprStep, hest, hsh], hexactRaise]
+          exact ⟨trivial, hrel⟩
+      | some shape =>
+          have hshapeLookup : exact.eshapes.lookup exceptionId =
+              some (shapeToHOL shape) := by
+            change exact.toExact.eshapes exceptionId = some (shapeToHOL shape)
+            rw [← hshapeRel, hsh]
+            rfl
+          have hshapeByte : ShapeByteRanged shape :=
+            hexnRanged (toStringOfBytes exceptionId) shape hsh
+          have hmatch : panShapeMatches shape (panSemShapeOf value) =
+              shapeEqHOL (shapeToHOL shape) (shapeOfHOLExact (panValueToHOL value)) := by
+            rw [panShapeMatches_eq_shapeEqHOL shape (panSemShapeOf value)
+              hshapeByte hshapeRanged, ← hshapeExact]
+          have hcondBool :
+              (shapeOfHOLExact (panValueToHOL value) = shapeToHOL shape ∧
+                sizeOfShapeWithContextHOL exact.structs
+                  (shapeOfHOLExact (panValueToHOL value)) ≤ 32)
+              ↔ (panShapeMatches shape (panSemShapeOf value) &&
+                  decide (sizeOfShWithCtxt production.structs.toHOL
+                    (panSemShapeOf value) ≤ 32)) = true := by
+            rw [Bool.and_eq_true, decide_eq_true_iff, ← hsizeEq]
+            constructor
+            · rintro ⟨heq, hsz⟩
+              refine ⟨?_, hsz⟩
+              rw [hmatch]
+              exact (shapeEqHOL_eq_true _ _).mpr heq.symm
+            · rintro ⟨hm, hsz⟩
+              refine ⟨?_, hsz⟩
+              have hse : shapeEqHOL (shapeToHOL shape)
+                  (shapeOfHOLExact (panValueToHOL value)) = true := by
+                rw [← hmatch]
+                exact hm
+              exact ((shapeEqHOL_eq_true _ _).mp hse).symm
+          by_cases hcond : (panShapeMatches shape (panSemShapeOf value) &&
+              decide (sizeOfShWithCtxt production.structs.toHOL
+                (panSemShapeOf value) ≤ 32)) = true
+          · have hcond' : panShapeMatches shape (panSemShapeOf value) = true ∧
+                decide (sizeOfShWithCtxt production.structs.toHOL
+                  (panSemShapeOf value) ≤ 32) = true := by
+              simpa only [Bool.and_eq_true] using hcond
+            obtain ⟨hmatchTrue, hsizeDecide⟩ := hcond'
+            have hsizeTrue : sizeOfShWithCtxt production.structs.toHOL
+                (panSemShapeOf value) ≤ 32 := decide_eq_true_iff.mp hsizeDecide
+            rw [panSemTotalRaiseClause_some production (toStringOfBytes exceptionId)
+              (expOfHOL expression) value shape hest hsh hmatchTrue hsizeTrue]
+            rw [evaluateHOLFiniteState_raise, hshapeLookup, hexactEval]
+            dsimp only
+            rw [if_pos (hcondBool.mpr hcond)]
+            exact ⟨⟨ofString_toStringOfBytes exceptionId, rfl⟩, by
+              simpa only [panEmptyLocals, toExact_emptyLocalsHOLFinite] using
+                PanSemStateRelExec.emptyLocals hrel⟩
+          · have hcondFalse : (panShapeMatches shape (panSemShapeOf value) &&
+                decide (sizeOfShWithCtxt production.structs.toHOL
+                  (panSemShapeOf value) ≤ 32)) = false := Bool.eq_false_iff.mpr hcond
+            rw [show panSemTotalRaiseClause production (toStringOfBytes exceptionId)
+                (expOfHOL expression) = (some .error, production) from by
+              simp [panSemTotalRaiseClause, panSemTotalExprStep, hest, hsh, hcondFalse]]
+            rw [evaluateHOLFiniteState_raise, hshapeLookup, hexactEval]
+            dsimp only
+            rw [if_neg (fun h => hcond (hcondBool.mp h))]
+            exact ⟨trivial, hrel⟩
+
+/-- Production/exact agreement for the `StoreByte` constructor: both evaluators
+    evaluate the destination and the source to words, then store the low byte;
+    evaluation failure, a non-word operand, or a failed store yields `Error` with
+    the state unchanged.  The memory step is `panSemStateRelExec_storeByte`. -/
+theorem panSemTotalEvaluate_storeByte_agree {σ : Type}
+    (primitive : PanPrimitiveHandler (RiscV.Word 64))
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (hranged : PanSemStateRelExecRanged production)
+    (destination source : ExpHOL 64) :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluate primitive
+          (.storeByte (expOfHOL destination) (expOfHOL source) : Prog (RiscV.Word 64))
+          production).1
+        (evaluateHOLFiniteState exact (.storeByte destination source : ProgHOL 64)).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluate primitive
+          (.storeByte (expOfHOL destination) (expOfHOL source) : Prog (RiscV.Word 64))
+          production).2
+        (evaluateHOLFiniteState exact (.storeByte destination source : ProgHOL 64)).2.toExact := by
+  have hd := evalPanSemStateExp_agree production exact hrel hranged
+    (expOfHOL destination) (expOfHOL_byteRanged_bridge destination)
+  have hs := evalPanSemStateExp_agree production exact hrel hranged
+    (expOfHOL source) (expOfHOL_byteRanged_bridge source)
+  simp only [expToHOL_expOfHOL, ← evalHOLFinite_eq_classical] at hd hs
+  rw [panSemTotalEvaluate, evaluateHOLFiniteState_storeByte, ← hd]
+  unfold panSemTotalStoreByteClause panSemTotalExprStep
+  cases hed : evalPanSemStateExp production (expOfHOL destination) with
+  | none => exact ⟨trivial, hrel⟩
+  | some dv =>
+    cases dv with
+    | rStruct _ => simp only [Option.map_some, panValueToHOL.eq_2]; exact ⟨trivial, hrel⟩
+    | nStruct _ _ => simp only [Option.map_some, panValueToHOL.eq_3]; exact ⟨trivial, hrel⟩
+    | word a =>
+      simp only [Option.map_some, panValueToHOL_word]
+      rw [← hs]
+      cases hes : evalPanSemStateExp production (expOfHOL source) with
+      | none => exact ⟨trivial, hrel⟩
+      | some sv =>
+        cases sv with
+        | rStruct _ => simp only [Option.map_some, panValueToHOL.eq_2]; exact ⟨trivial, hrel⟩
+        | nStruct _ _ => simp only [Option.map_some, panValueToHOL.eq_3]; exact ⟨trivial, hrel⟩
+        | word w =>
+          simp only [Option.map_some, panValueToHOL_word]
+          have hb := panSemStateRelExec_storeByte production exact.toExact hrel a w
+          revert hb
+          cases (panSemBitVec64MemoryAccess production).storeByte
+              (panSemBitVec64MemoryAccess production).domain
+              production.memory panSemBitVec64BytesInWord a w <;>
+            cases @panMemStoreByteWord8HOL 64 _ exact.memory exact.memaddrs
+              (fun a => Classical.propDecidable (exact.memaddrs a)) exact.be a
+              (BitVec.ofNat 8 w.toNat) <;>
+            intro hb <;> first | exact hb.elim | exact ⟨trivial, hrel⟩ | exact ⟨trivial, hb⟩
+
+/-- Production/exact agreement for the `Store32` constructor, analogous to
+    `panSemTotalEvaluate_storeByte_agree`; the memory step (alignment, domain,
+    and the big/little-endian byte order) is `panSemStateRelExec_store32`. -/
+theorem panSemTotalEvaluate_store32_agree {σ : Type}
+    (primitive : PanPrimitiveHandler (RiscV.Word 64))
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (hranged : PanSemStateRelExecRanged production)
+    (destination source : ExpHOL 64) :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluate primitive
+          (.store32 (expOfHOL destination) (expOfHOL source) : Prog (RiscV.Word 64))
+          production).1
+        (evaluateHOLFiniteState exact (.store32 destination source : ProgHOL 64)).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluate primitive
+          (.store32 (expOfHOL destination) (expOfHOL source) : Prog (RiscV.Word 64))
+          production).2
+        (evaluateHOLFiniteState exact (.store32 destination source : ProgHOL 64)).2.toExact := by
+  have hd := evalPanSemStateExp_agree production exact hrel hranged
+    (expOfHOL destination) (expOfHOL_byteRanged_bridge destination)
+  have hs := evalPanSemStateExp_agree production exact hrel hranged
+    (expOfHOL source) (expOfHOL_byteRanged_bridge source)
+  simp only [expToHOL_expOfHOL, ← evalHOLFinite_eq_classical] at hd hs
+  rw [panSemTotalEvaluate, evaluateHOLFiniteState_store32, ← hd]
+  unfold panSemTotalStore32Clause panSemTotalExprStep
+  cases hed : evalPanSemStateExp production (expOfHOL destination) with
+  | none => exact ⟨trivial, hrel⟩
+  | some dv =>
+    cases dv with
+    | rStruct _ => simp only [Option.map_some, panValueToHOL.eq_2]; exact ⟨trivial, hrel⟩
+    | nStruct _ _ => simp only [Option.map_some, panValueToHOL.eq_3]; exact ⟨trivial, hrel⟩
+    | word a =>
+      simp only [Option.map_some, panValueToHOL_word]
+      rw [← hs]
+      cases hes : evalPanSemStateExp production (expOfHOL source) with
+      | none => exact ⟨trivial, hrel⟩
+      | some sv =>
+        cases sv with
+        | rStruct _ => simp only [Option.map_some, panValueToHOL.eq_2]; exact ⟨trivial, hrel⟩
+        | nStruct _ _ => simp only [Option.map_some, panValueToHOL.eq_3]; exact ⟨trivial, hrel⟩
+        | word w =>
+          simp only [Option.map_some, panValueToHOL_word]
+          have hb := panSemStateRelExec_store32 production exact.toExact hrel a w
+          revert hb
+          cases (panSemBitVec64MemoryAccess production).store32
+              (panSemBitVec64MemoryAccess production).domain
+              production.memory panSemBitVec64BytesInWord a w <;>
+            cases @panMemStore32HOL 64 _ exact.memory exact.memaddrs
+              (fun a => Classical.propDecidable (exact.memaddrs a)) exact.be a
+              (BitVec.ofNat 32 w.toNat) <;>
+            intro hb <;> first | exact hb.elim | exact ⟨trivial, hrel⟩ | exact ⟨trivial, hb⟩
+
+
+/-- Production/exact agreement for the `ShMemLoad` constructor.  The address is
+    evaluated on both sides; a non-word address, a missing or non-word
+    destination binding, or a shared-memory domain miss returns `Error` with the
+    state unchanged, while a successful read delegates to the executed/exact
+    shared-memory load agreement `panShMemLoad_agree` (canonical RISC-V 64 FFI
+    byte codec and `callFfi`/`callFFIHOL` correspondence).  No target-run,
+    result, or post-state premise is assumed. -/
+theorem panSemTotalEvaluate_shMemLoad_agree {σ : Type}
+    (primitive : PanPrimitiveHandler (RiscV.Word 64))
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (hranged : PanSemStateRelExecRanged production)
+    (size : OpSize) (kind : VarKind) (name : MlS) (address : ExpHOL 64) :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluate primitive
+          (.shMemLoad size kind (toStringOfBytes name) (expOfHOL address) :
+            Prog (RiscV.Word 64)) production).1
+        (evaluateHOLFiniteState exact (.shMemLoad size kind name address : ProgHOL 64)).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluate primitive
+          (.shMemLoad size kind (toStringOfBytes name) (expOfHOL address) :
+            Prog (RiscV.Word 64)) production).2
+        (evaluateHOLFiniteState exact (.shMemLoad size kind name address : ProgHOL 64)).2.toExact := by
+  have hname : NameRanged (toStringOfBytes name) := nameRanged_toStringOfBytes_bridge name
+  have hval := evalPanSemStateExp_agree production exact hrel hranged
+    (expOfHOL address) (expOfHOL_byteRanged_bridge address)
+  simp only [expToHOL_expOfHOL] at hval
+  have hclass := evalHOLFinite_eq_classical exact address
+  have hrelRaw := hrel
+  obtain ⟨hlocals, hglobals, hstructs, hcode, heshapes, hmem, hmemaddrs, hshared,
+    hclock, hbe, hffiRel, hbase, htop⟩ := hrelRaw
+  have hrel : PanSemStateRelExec production exact.toExact :=
+    ⟨hlocals, hglobals, hstructs, hcode, heshapes, hmem, hmemaddrs, hshared, hclock,
+      hbe, hffiRel, hbase, htop⟩
+  rw [panSemTotalEvaluate, evaluateHOLFiniteState_shMemLoad_source]
+  unfold panSemTotalShMemLoadClause panSemTotalExprStep
+  rw [show @evalHOLFinite 64 σ _ exact
+      (fun current => Classical.propDecidable (exact.memaddrs current)) address
+      = exact.evalHOLFinite address from hclass]
+  cases hest : evalPanSemStateExp production (expOfHOL address) with
+  | none =>
+      have hexactEval : exact.evalHOLFinite address = none := by
+        rw [← hval, hest]; rfl
+      rw [hexactEval]
+      exact ⟨trivial, hrel⟩
+  | some value =>
+      have hvalue : exact.evalHOLFinite address = some (panValueToHOL value) := by
+        rw [← hval, hest]; rfl
+      rw [hvalue]
+      cases value with
+      | word addr =>
+          simp only [panValueToHOL_word]
+          cases kind
+          · have hx_of (v : Option (PanValue (RiscV.Word 64)))
+                (h : production.locals (toStringOfBytes name) = v) :
+                lookupKvarHOLFinite .local name exact = Option.map panValueToHOL v := by
+              have hh := hlocals (toStringOfBytes name) hname
+              rw [h, ofString_toStringOfBytes] at hh
+              show exact.locals.lookup name = Option.map panValueToHOL v
+              exact hh.symm
+            cases hp : production.locals (toStringOfBytes name) with
+            | none =>
+                rw [hx_of none hp]
+                exact ⟨trivial, hrel⟩
+            | some v =>
+                cases v with
+                | word w =>
+                    rw [hx_of (some (.word w)) hp]
+                    simp only [Option.map_some, panValueToHOL_word]
+                    exact panShMemLoad_agree production exact hrel .local name hname size addr
+                | rStruct fields =>
+                    rw [hx_of (some (.rStruct fields)) hp]
+                    simp only [Option.map_some, panValueToHOL]
+                    exact ⟨trivial, hrel⟩
+                | nStruct nm fields =>
+                    rw [hx_of (some (.nStruct nm fields)) hp]
+                    simp only [Option.map_some, panValueToHOL]
+                    exact ⟨trivial, hrel⟩
+          · have hx_of (v : Option (PanValue (RiscV.Word 64)))
+                (h : production.globals (toStringOfBytes name) = v) :
+                lookupKvarHOLFinite .global name exact = Option.map panValueToHOL v := by
+              have hh := hglobals (toStringOfBytes name) hname
+              rw [h, ofString_toStringOfBytes] at hh
+              show exact.globals.lookup name = Option.map panValueToHOL v
+              exact hh.symm
+            cases hp : production.globals (toStringOfBytes name) with
+            | none =>
+                rw [hx_of none hp]
+                exact ⟨trivial, hrel⟩
+            | some v =>
+                cases v with
+                | word w =>
+                    rw [hx_of (some (.word w)) hp]
+                    simp only [Option.map_some, panValueToHOL_word]
+                    exact panShMemLoad_agree production exact hrel .global name hname size addr
+                | rStruct fields =>
+                    rw [hx_of (some (.rStruct fields)) hp]
+                    simp only [Option.map_some, panValueToHOL]
+                    exact ⟨trivial, hrel⟩
+                | nStruct nm fields =>
+                    rw [hx_of (some (.nStruct nm fields)) hp]
+                    simp only [Option.map_some, panValueToHOL]
+                    exact ⟨trivial, hrel⟩
+      | rStruct fields =>
+          simp only [panValueToHOL]
+          exact ⟨trivial, hrel⟩
+      | nStruct nm fields =>
+          simp only [panValueToHOL]
+          exact ⟨trivial, hrel⟩
+
 /-! ## Rangedness preservation and the `PanSemStateRelExec`/rangedness boundary
+
 
 `PanSemStateRelExecRanged` (`:94`) is the byte-range premise of the all-16
 expression agreement.  This section records which production state updates
@@ -3010,15 +4229,6 @@ theorem ffiResultByteRanged_of_callFfi_returned {σ : Type} (state : FfiState σ
     FfiResultByteRanged (.returned nextFfi nextBytes) :=
   bytesByteRanged nextBytes
 
-/-- Runtime predicate on a primitive handler: every value it returns is
-    byte-ranged.  Unlike the FFI, the production `Primitive` clause installs this
-    value directly into `locals`, so this is the exact premise needed to preserve
-    `PanSemStateRelExecRanged` across the constructor. -/
-def PanPrimitiveHandlerByteRanged (primitive : PanPrimitiveHandler (RiscV.Word 64)) : Prop :=
-  ∀ (operator : PrimOp) (values : List (PanValue (RiscV.Word 64)))
-    (value : PanValue (RiscV.Word 64)),
-    primitive operator values = some value → PanValueByteRanged value
-
 /-- `panEmptyLocals` preserves `PanSemStateRelExecRanged`: only the local map is
     replaced, by the everywhere-`none` map. -/
 theorem PanSemStateRelExecRanged.panEmptyLocals {σ : Type}
@@ -3187,5 +4397,846 @@ theorem extCallClause_not_ranged_of_global_nonRanged {σ : Type}
     (panSemTotalExtCallClause state function configuration configurationLength
       array arrayLength).2 name value
     (by rw [panSemTotalExtCallClause_globals]; exact h) hv hr
+
+/-! ## Exception-shape rangedness: frame and preservation
+
+`PanSemStateRelExec` compares exception shapes only through the lossy
+`shapeToHOL`, so the production/exact `Raise` agreement
+(`panSemTotalEvaluate_raise_agree`) needs the intrinsic premise
+`PanSemExceptionShapesRanged` (`:116`).  This section discharges that premise:
+every state-update helper of the total evaluator leaves `exceptionShapes`
+unchanged, and the total evaluator's `exceptionShapes` frame lemma below makes
+the predicate invariant under all reachable production execution.  The
+initial-state obligation is covered by the `panPropsALookupEq` / declaration
+`exceptionEntries` rangedness lemmas.  Everything here is untagged
+Flapjack-specific bridge infrastructure; no `@[hol]` tag is attached. -/
+
+/-- The clock-leaf clauses leave `exceptionShapes` unchanged. -/
+theorem panSemEvaluateClockLeaf_exceptionShapes
+    (leaf : PanSemClockLeaf) (state : PanSemState (RiscV.Word 64) (FfiState σ)) :
+    (panSemEvaluateClockLeaf leaf state).2.exceptionShapes = state.exceptionShapes := by
+  cases leaf <;> simp only [panSemEvaluateClockLeaf] <;> repeat' (first | rfl | split)
+
+/-- The `Assign` clause leaves `exceptionShapes` unchanged. -/
+theorem panSemTotalAssignClause_exceptionShapes
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (kind : VarKind) (name : VarName) (value : Exp (RiscV.Word 64)) :
+    (panSemTotalAssignClause state kind name value).2.exceptionShapes = state.exceptionShapes := by
+  simp only [panSemTotalAssignClause, panSemTotalExprStep]
+  repeat' (first | rfl | split)
+
+/-- The `Raise` clause leaves `exceptionShapes` unchanged (it only reads them). -/
+theorem panSemTotalRaiseClause_exceptionShapes
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exceptionId : ExceptionId) (expression : Exp (RiscV.Word 64)) :
+    (panSemTotalRaiseClause state exceptionId expression).2.exceptionShapes = state.exceptionShapes := by
+  simp only [panSemTotalRaiseClause, panSemTotalExprStep, panEmptyLocals]
+  repeat' (first | rfl | split)
+
+/-- The `Return` clause leaves `exceptionShapes` unchanged. -/
+theorem panSemTotalReturnClause_exceptionShapes
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (expression : Exp (RiscV.Word 64)) :
+    (panSemTotalReturnClause state expression).2.exceptionShapes = state.exceptionShapes := by
+  simp only [panSemTotalReturnClause, panSemTotalExprStep, panEmptyLocals]
+  repeat' (first | rfl | split)
+
+/-- The `Primitive` clause leaves `exceptionShapes` unchanged. -/
+theorem panSemTotalPrimitiveClause_exceptionShapes
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (name : VarName) (operator : PrimOp) (arguments : List (Exp (RiscV.Word 64)))
+    (primitive : PanPrimitiveHandler (RiscV.Word 64)) :
+    (panSemTotalPrimitiveClause state name operator arguments primitive).2.exceptionShapes = state.exceptionShapes := by
+  simp only [panSemTotalPrimitiveClause, panSemTotalExprListStep]
+  repeat' (first | rfl | split)
+
+/-- The `Store` clause leaves `exceptionShapes` unchanged. -/
+theorem panSemTotalStoreClause_exceptionShapes
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (address value : Exp (RiscV.Word 64)) :
+    (panSemTotalStoreClause state address value).2.exceptionShapes = state.exceptionShapes := by
+  simp only [panSemTotalStoreClause, panSemTotalExprStep]
+  repeat' (first | rfl | split)
+
+/-- The `Store32` clause leaves `exceptionShapes` unchanged. -/
+theorem panSemTotalStore32Clause_exceptionShapes
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (address value : Exp (RiscV.Word 64)) :
+    (panSemTotalStore32Clause state address value).2.exceptionShapes = state.exceptionShapes := by
+  simp only [panSemTotalStore32Clause, panSemTotalExprStep]
+  repeat' (first | rfl | split)
+
+/-- The `StoreByte` clause leaves `exceptionShapes` unchanged. -/
+theorem panSemTotalStoreByteClause_exceptionShapes
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (address value : Exp (RiscV.Word 64)) :
+    (panSemTotalStoreByteClause state address value).2.exceptionShapes = state.exceptionShapes := by
+  simp only [panSemTotalStoreByteClause, panSemTotalExprStep]
+  repeat' (first | rfl | split)
+
+/-- The `ExtCall` clause leaves `exceptionShapes` unchanged. -/
+theorem panSemTotalExtCallClause_exceptionShapes
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (function : FunName) (configuration configurationLength array arrayLength : Exp (RiscV.Word 64)) :
+    (panSemTotalExtCallClause state function configuration configurationLength array arrayLength).2.exceptionShapes = state.exceptionShapes := by
+  simp only [panSemTotalExtCallClause, panSemTotalExprStep, panSemTotalExtCallStep,
+    panSemTotalMachineReadBytes, panSemTotalMachineWriteBytes, panEmptyLocals]
+  repeat' (first | rfl | split)
+
+/-- The `ShMemLoad` clause leaves `exceptionShapes` unchanged. -/
+theorem panSemTotalShMemLoadClause_exceptionShapes
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (size : OpSize) (kind : VarKind) (name : VarName) (address : Exp (RiscV.Word 64)) :
+    (panSemTotalShMemLoadClause state size kind name address).2.exceptionShapes = state.exceptionShapes := by
+  simp only [panSemTotalShMemLoadClause, panSemTotalExprStep, panSemTotalShMemState,
+    panSemTotalShMemStateBack, panSemTotalShMemLoadResult]
+  repeat' (first | rfl | split)
+
+/-- The `ShMemStore` clause leaves `exceptionShapes` unchanged. -/
+theorem panSemTotalShMemStoreClause_exceptionShapes
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (size : OpSize) (address value : Exp (RiscV.Word 64)) :
+    (panSemTotalShMemStoreClause state size address value).2.exceptionShapes = state.exceptionShapes := by
+  simp only [panSemTotalShMemStoreClause, panSemTotalExprStep, panSemTotalShMemState,
+    panSemTotalShMemStateBack, panSemTotalShMemStoreResult]
+  repeat' (first | rfl | split)
+
+theorem panSemTotalDecBind_exceptionShapes [BEq String]
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (name : VarName) (value : PanValue (RiscV.Word 64)) :
+    (panSemTotalDecBind state name value).exceptionShapes = state.exceptionShapes := by
+  simp [panSemTotalDecBind]
+
+theorem panSemFixClock_exceptionShapes (entryClock : Nat)
+    (state : PanSemState (RiscV.Word 64) (FfiState σ)) :
+    (panSemFixClock entryClock state).exceptionShapes = state.exceptionShapes := rfl
+
+/-- `panEmptyLocals` only clears locals, so it leaves `exceptionShapes` unchanged. -/
+theorem panEmptyLocals_exceptionShapes
+    (state : PanSemState (RiscV.Word 64) (FfiState σ)) :
+    (panEmptyLocals state).exceptionShapes = state.exceptionShapes := rfl
+
+/-- **Frame lemma.** The production total evaluator never writes
+    `exceptionShapes`: its result state stores exactly the entry state's
+    exception map.  Proved by well-founded induction over `panSemEvalMeasure`,
+    using the per-clause frame lemmas above for the non-recursive clauses and
+    the induction hypothesis for the recursive `Dec`/`Seq`/`If`/`While`/`Call`/
+    `DecCall` clauses. -/
+theorem panSemTotalEvaluate_exceptionShapes {σ : Type}
+    (primitive : PanPrimitiveHandler (RiscV.Word 64)) :
+    ∀ (prog : Prog (RiscV.Word 64)) (state : PanSemState (RiscV.Word 64) (FfiState σ)),
+      (panSemTotalEvaluate primitive prog state).2.exceptionShapes = state.exceptionShapes := by
+  intro prog state
+  have hwf : WellFounded (@panSemEvalMeasureRel (RiscV.Word 64) (FfiState σ)) :=
+    panSemEvalMeasureRel_wf
+  let motive : PanSemState (RiscV.Word 64) (FfiState σ) × Prog (RiscV.Word 64) → Prop :=
+    fun p => (panSemTotalEvaluate primitive p.2 p.1).2.exceptionShapes = p.1.exceptionShapes
+  have hmain : ∀ p, motive p := by
+    intro p
+    refine WellFounded.induction hwf p ?_
+    intro p ih
+    obtain ⟨state, prog⟩ := p
+    change (panSemTotalEvaluate primitive prog state).2.exceptionShapes = state.exceptionShapes
+    cases prog with
+    | skip => rw [panSemTotalEvaluate]; exact panSemEvaluateClockLeaf_exceptionShapes .skip state
+    | «break» => rw [panSemTotalEvaluate]; exact panSemEvaluateClockLeaf_exceptionShapes .break state
+    | «continue» => rw [panSemTotalEvaluate]; exact panSemEvaluateClockLeaf_exceptionShapes .continue state
+    | tick => rw [panSemTotalEvaluate]; exact panSemEvaluateClockLeaf_exceptionShapes .tick state
+    | assign kind name value => rw [panSemTotalEvaluate]; exact panSemTotalAssignClause_exceptionShapes state kind name value
+    | primitive name operator arguments => rw [panSemTotalEvaluate]; exact panSemTotalPrimitiveClause_exceptionShapes state name operator arguments primitive
+    | store address value => rw [panSemTotalEvaluate]; exact panSemTotalStoreClause_exceptionShapes state address value
+    | store32 address value => rw [panSemTotalEvaluate]; exact panSemTotalStore32Clause_exceptionShapes state address value
+    | storeByte address value => rw [panSemTotalEvaluate]; exact panSemTotalStoreByteClause_exceptionShapes state address value
+    | raise exceptionId expression => rw [panSemTotalEvaluate]; exact panSemTotalRaiseClause_exceptionShapes state exceptionId expression
+    | «return» expression => rw [panSemTotalEvaluate]; exact panSemTotalReturnClause_exceptionShapes state expression
+    | annot tag text => rw [panSemTotalEvaluate]
+    | dec name shape value body =>
+        rw [panSemTotalEvaluate]
+        try dsimp only
+        cases heval : evalPanSemStateExp state value with
+        | none => rfl
+        | some evaluated =>
+            simp only []
+            cases hmatch : panShapeMatches shape (panSemShapeOf evaluated) with
+            | false => rfl
+            | true =>
+                simp only [if_true]
+                try dsimp only
+                rw [ih (panSemTotalDecBind state name evaluated, body)
+                  (panSemEvalMeasureRel_decBody state name shape value body)]
+                rw [panSemTotalDecBind_exceptionShapes]
+    | seq first second =>
+        rw [panSemTotalEvaluate]
+        try dsimp only
+        cases hres : (panSemTotalEvaluate primitive first state).1 with
+        | none =>
+            have ih1 := ih (state, first)
+              (panSemEvalMeasureRel_seq_branch state state first second first (Nat.le_refl _) (Or.inl rfl))
+            have hclk : (panSemFixClock state.clock (panSemTotalEvaluate primitive first state).2).clock ≤ state.clock :=
+              panSemFixClock_clock_le _ _
+            have ih2 := ih (panSemFixClock state.clock (panSemTotalEvaluate primitive first state).2, second)
+              (panSemEvalMeasureRel_seq_branch _ state first second second hclk (Or.inr rfl))
+            rw [ih2, panSemFixClock_exceptionShapes, ih1]
+        | some result =>
+            have ih1 := ih (state, first)
+              (panSemEvalMeasureRel_seq_branch state state first second first (Nat.le_refl _) (Or.inl rfl))
+            rw [panSemFixClock_exceptionShapes, ih1]
+    | ite condition thenBranch elseBranch =>
+        rw [panSemTotalEvaluate]
+        try dsimp only
+        cases hcond : evalPanSemStateExp state condition with
+        | none => rfl
+        | some v =>
+            cases v with
+            | word w =>
+                try dsimp only
+                split
+                · exact ih (state, elseBranch)
+                    (panSemEvalMeasureRel_ite_branch state condition thenBranch elseBranch elseBranch (Or.inr rfl))
+                · exact ih (state, thenBranch)
+                    (panSemEvalMeasureRel_ite_branch state condition thenBranch elseBranch thenBranch (Or.inl rfl))
+            | rStruct fs => rfl
+            | nStruct nm flds => rfl
+    | «while» condition body =>
+        rw [panSemTotalEvaluate]
+        try dsimp only
+        cases hcond : evalPanSemStateExp state condition with
+        | none => rfl
+        | some v =>
+            cases v with
+            | word w =>
+                try dsimp only
+                split
+                · rfl
+                · split
+                  · exact panEmptyLocals_exceptionShapes state
+                  · rename_i hw hclk
+                    try dsimp only
+                    have hdecClock : state.clock - 1 < state.clock := by omega
+                    have ihBody := ih ({ state with clock := state.clock - 1 }, body)
+                      (panSemEvalMeasureRel_of_clock_lt hdecClock)
+                    have hfixLt : (panSemFixClock (state.clock - 1)
+                        (panSemTotalEvaluate primitive body { state with clock := state.clock - 1 }).2).clock < state.clock := by
+                      have := panSemFixClock_clock_le (state.clock - 1)
+                        (panSemTotalEvaluate primitive body { state with clock := state.clock - 1 }).2
+                      omega
+                    have ihLoop := ih ((panSemFixClock (state.clock - 1)
+                        (panSemTotalEvaluate primitive body { state with clock := state.clock - 1 }).2),
+                        .while condition body)
+                      (panSemEvalMeasureRel_of_clock_lt hfixLt)
+                    cases hbody : (panSemTotalEvaluate primitive body { state with clock := state.clock - 1 }).1 with
+                    | none => rw [ihLoop, panSemFixClock_exceptionShapes, ihBody]
+                    | some r =>
+                        cases r with
+                        | «continue» => rw [ihLoop, panSemFixClock_exceptionShapes, ihBody]
+                        | «break» => rw [panSemFixClock_exceptionShapes, ihBody]
+                        | error => rw [panSemFixClock_exceptionShapes, ihBody]
+                        | timeOut => rw [panSemFixClock_exceptionShapes, ihBody]
+                        | returned val => rw [panSemFixClock_exceptionShapes, ihBody]
+                        | exception eid val => rw [panSemFixClock_exceptionShapes, ihBody]
+                        | finalFfi ev => rw [panSemFixClock_exceptionShapes, ihBody]
+            | rStruct fs => rfl
+            | nStruct nm flds => rfl
+    | call info function arguments =>
+        rw [panSemTotalEvaluate]
+        try dsimp only
+        cases hexps : evalPanSemStateExps state arguments with
+        | none => rfl
+        | some values =>
+            simp only []
+            cases hlookup : panSemTotalCodeLookup state function values with
+            | none => rfl
+            | some triple =>
+                obtain ⟨callee, newLocals, returnShape⟩ := triple
+                simp only []
+                split
+                · exact panEmptyLocals_exceptionShapes state
+                · rename_i hclk
+                  have hdecClock : state.clock - 1 < state.clock := by omega
+                  have ihBody := ih ({ state with clock := state.clock - 1, locals := newLocals }, callee)
+                    (panSemEvalMeasureRel_of_clock_lt hdecClock)
+                  have hbodyExc : (panSemTotalEvaluate primitive callee
+                      ({ state with clock := state.clock - 1, locals := newLocals })).2.exceptionShapes =
+                      state.exceptionShapes := by
+                    rw [ihBody]
+                  have hfixedExc : (panSemFixClock (state.clock - 1)
+                      (panSemTotalEvaluate primitive callee
+                        ({ state with clock := state.clock - 1, locals := newLocals })).2).exceptionShapes =
+                      state.exceptionShapes := by
+                    rw [panSemFixClock_exceptionShapes, hbodyExc]
+                  have hfixedClock : (panSemFixClock (state.clock - 1)
+                      (panSemTotalEvaluate primitive callee
+                        ({ state with clock := state.clock - 1, locals := newLocals })).2).clock <
+                      state.clock := by
+                    have hle := panSemFixClock_clock_le (state.clock - 1)
+                      (panSemTotalEvaluate primitive callee
+                        ({ state with clock := state.clock - 1, locals := newLocals })).2
+                    omega
+                  cases hcall : (panSemTotalEvaluate primitive callee
+                      ({ state with clock := state.clock - 1, locals := newLocals })).1 with
+                  | none => try dsimp only; exact hfixedExc
+                  | some r =>
+                      cases r with
+                      | error => try dsimp only; rw [panEmptyLocals_exceptionShapes]; exact hfixedExc
+                      | timeOut => try dsimp only; rw [panEmptyLocals_exceptionShapes]; exact hfixedExc
+                      | finalFfi ev => try dsimp only; rw [panEmptyLocals_exceptionShapes]; exact hfixedExc
+                      | «break» => try dsimp only; exact hfixedExc
+                      | «continue» => try dsimp only; exact hfixedExc
+                      | returned value =>
+                          try dsimp only
+                          split
+                          · try dsimp only
+                            split
+                            · rw [panEmptyLocals_exceptionShapes]; exact hfixedExc
+                            · try dsimp only; exact hfixedExc
+                            · try dsimp only
+                              split
+                              · split
+                                · try dsimp only; exact hfixedExc
+                                · try dsimp only; exact hfixedExc
+                              · try dsimp only; exact hfixedExc
+                          · try dsimp only; exact hfixedExc
+                      | exception exceptionId value =>
+                          try dsimp only
+                          split
+                          · rw [panEmptyLocals_exceptionShapes]; exact hfixedExc
+                          · try dsimp only; exact hfixedExc
+                          · try dsimp only
+                            rename_i handlerId handlerVar handlerProg
+                            split
+                            · split
+                              · split
+                                · try dsimp only
+                                  have ihHandler := ih
+                                    ({ panSemFixClock (state.clock - 1)
+                                        (panSemTotalEvaluate primitive callee
+                                          ({ state with clock := state.clock - 1, locals := newLocals })).2 with
+                                      locals := updatePanValueMap state.locals handlerVar value }, handlerProg)
+                                    (panSemEvalMeasureRel_of_clock_lt (by
+                                      have hle := panSemFixClock_clock_le (state.clock - 1)
+                                        (panSemTotalEvaluate primitive callee
+                                          ({ state with clock := state.clock - 1, locals := newLocals })).2
+                                      omega))
+                                  rw [ihHandler, hfixedExc]
+                                · try dsimp only; exact hfixedExc
+                              · try dsimp only; exact hfixedExc
+                            · rw [panEmptyLocals_exceptionShapes]; exact hfixedExc
+    | decCall name shape function arguments continuation =>
+        rw [panSemTotalEvaluate]
+        try dsimp only
+        cases hexps : evalPanSemStateExps state arguments with
+        | none => rfl
+        | some values =>
+            simp only []
+            cases hlookup : panSemTotalCodeLookup state function values with
+            | none => rfl
+            | some triple =>
+                obtain ⟨callee, newLocals, returnShape⟩ := triple
+                simp only []
+                split
+                · exact panEmptyLocals_exceptionShapes state
+                · rename_i hclk
+                  have hdecClock : state.clock - 1 < state.clock := by omega
+                  have ihBody := ih ({ state with clock := state.clock - 1, locals := newLocals }, callee)
+                    (panSemEvalMeasureRel_of_clock_lt hdecClock)
+                  have hbodyExc : (panSemTotalEvaluate primitive callee
+                      ({ state with clock := state.clock - 1, locals := newLocals })).2.exceptionShapes =
+                      state.exceptionShapes := by
+                    rw [ihBody]
+                  have hfixedExc : (panSemFixClock (state.clock - 1)
+                      (panSemTotalEvaluate primitive callee
+                        ({ state with clock := state.clock - 1, locals := newLocals })).2).exceptionShapes =
+                      state.exceptionShapes := by
+                    rw [panSemFixClock_exceptionShapes, hbodyExc]
+                  have hfixedClock : (panSemFixClock (state.clock - 1)
+                      (panSemTotalEvaluate primitive callee
+                        ({ state with clock := state.clock - 1, locals := newLocals })).2).clock <
+                      state.clock := by
+                    have hle := panSemFixClock_clock_le (state.clock - 1)
+                      (panSemTotalEvaluate primitive callee
+                        ({ state with clock := state.clock - 1, locals := newLocals })).2
+                    omega
+                  cases hcall : (panSemTotalEvaluate primitive callee
+                      ({ state with clock := state.clock - 1, locals := newLocals })).1 with
+                  | none => try dsimp only; exact hfixedExc
+                  | some r =>
+                      cases r with
+                      | error => try dsimp only; rw [panEmptyLocals_exceptionShapes]; exact hfixedExc
+                      | timeOut => try dsimp only; rw [panEmptyLocals_exceptionShapes]; exact hfixedExc
+                      | finalFfi ev => try dsimp only; rw [panEmptyLocals_exceptionShapes]; exact hfixedExc
+                      | «break» => try dsimp only; exact hfixedExc
+                      | «continue» => try dsimp only; exact hfixedExc
+                      | returned value =>
+                          try dsimp only
+                          split
+                          · try dsimp only
+                            have ihCont := ih
+                              ({ panSemFixClock (state.clock - 1)
+                                  (panSemTotalEvaluate primitive callee
+                                    ({ state with clock := state.clock - 1, locals := newLocals })).2 with
+                                locals := updatePanValueMap state.locals name value }, continuation)
+                              (panSemEvalMeasureRel_of_clock_lt (by
+                                have hle := panSemFixClock_clock_le (state.clock - 1)
+                                  (panSemTotalEvaluate primitive callee
+                                    ({ state with clock := state.clock - 1, locals := newLocals })).2
+                                omega))
+                            have hcontExc : (panSemTotalEvaluate primitive continuation
+                                ({ panSemFixClock (state.clock - 1)
+                                    (panSemTotalEvaluate primitive callee
+                                      ({ state with clock := state.clock - 1, locals := newLocals })).2 with
+                                  locals := updatePanValueMap state.locals name value })).2.exceptionShapes =
+                                state.exceptionShapes := by
+                              rw [ihCont]
+                              exact hfixedExc
+                            try dsimp only
+                            rw [hcontExc]
+                          · try dsimp only; exact hfixedExc
+                      | exception eid val =>
+                          try dsimp only; rw [panEmptyLocals_exceptionShapes]; exact hfixedExc
+    | extCall function configuration configurationLength array arrayLength =>
+        rw [panSemTotalEvaluate]
+        exact panSemTotalExtCallClause_exceptionShapes state function configuration configurationLength array arrayLength
+    | shMemLoad size kind name address =>
+        rw [panSemTotalEvaluate]
+        exact panSemTotalShMemLoadClause_exceptionShapes state size kind name address
+    | shMemStore size address value =>
+        rw [panSemTotalEvaluate]
+        exact panSemTotalShMemStoreClause_exceptionShapes state size address value
+  exact hmain (state, prog)
+
+/-- The declaration-derived exception table (`exceptionEntries`, HOL
+    `panLang$exceptions`) stores only byte-ranged shapes when every declaration
+    is `DeclByteRanged`; an `exnDecl` contributes its `ShapeByteRanged` conjunct. -/
+theorem exceptionEntries_shapeByteRanged {width : Nat}
+    (declarations : List (Decl (BitVec width)))
+    (hranged : ∀ d ∈ declarations, DeclByteRanged d) :
+    ∀ p ∈ exceptionEntries declarations, ShapeByteRanged p.2 := by
+  induction declarations with
+  | nil => intro p hp; simp [exceptionEntries] at hp
+  | cons declaration declarations ih =>
+      cases declaration with
+      | function fd =>
+          simp only [exceptionEntries]
+          exact ih (fun d hd => hranged d (by simp [hd]))
+      | decl shp name value =>
+          simp only [exceptionEntries]
+          exact ih (fun d hd => hranged d (by simp [hd]))
+      | exnDecl eid shp =>
+          simp only [exceptionEntries]
+          intro p hp
+          rcases List.mem_cons.mp hp with hhead | htail
+          · subst hhead
+            exact (hranged (.exnDecl eid shp) (by simp)).2
+          · exact ih (fun d hd => hranged d (by simp [hd])) p htail
+      | name struct fields =>
+          simp only [exceptionEntries]
+          exact ih (fun d hd => hranged d (by simp [hd]))
+
+/-- A production state whose `exceptionShapes` is the equality-based `panPropsALookupEq`
+    of a byte-ranged association list satisfies `PanSemExceptionShapesRanged`:
+    the lookup returns only values stored in the list. -/
+theorem panSemExceptionShapesRanged_of_ALookupEq [DecidableEq String]
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (entries : List (String × Shape))
+    (hranged : ∀ entry ∈ entries, ShapeByteRanged entry.2) :
+    PanSemExceptionShapesRanged
+      { state with exceptionShapes := fun name => panPropsALookupEq name entries } := by
+  intro exceptionId shape hlookup
+  induction entries with
+  | nil => simp [panPropsALookupEq] at hlookup
+  | cons entry entries ih =>
+      rcases entry with ⟨candidate, value⟩
+      by_cases hc : candidate = exceptionId
+      · subst hc
+        simp only [panPropsALookupEq, decide_true, if_true] at hlookup
+        rw [Option.some.injEq] at hlookup
+        subst hlookup
+        exact hranged (candidate, value) (by simp)
+      · simp only [panPropsALookupEq, decide_eq_false_iff_not.mpr hc] at hlookup
+        exact ih (fun e he => hranged e (by simp [he])) hlookup
+
+/-- Variant of `panSemExceptionShapesRanged_of_ALookupEq` for an association list whose
+    values are transformed by a `ShapeByteRanged`-preserving `convert` (the
+    `structCompileShape` shape of the `pan_structs` pass). -/
+theorem panSemExceptionShapesRanged_of_ALookupEq_map [DecidableEq String]
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (entries : List (String × Shape)) (convert : Shape → Shape)
+    (hconvert : ∀ shape, ShapeByteRanged shape → ShapeByteRanged (convert shape))
+    (hranged : ∀ entry ∈ entries, ShapeByteRanged entry.2) :
+    PanSemExceptionShapesRanged
+      { state with exceptionShapes := fun name =>
+          panPropsALookupEq name (entries.map fun p => (p.1, convert p.2)) } := by
+  apply panSemExceptionShapesRanged_of_ALookupEq state
+    (entries.map fun p => (p.1, convert p.2))
+  intro entry hentry
+  rcases List.mem_map.mp hentry with ⟨original, horiginal, rfl⟩
+  exact hconvert original.2 (hranged original horiginal)
+
+/-- `PanSemExceptionShapesRanged` is preserved by the `pan_structs` pass, which maps
+    each stored shape through `structCompileShape context`: the existing
+    `structCompileShape_byteRanged` carries byte-rangedness across the rewrite. -/
+theorem PanSemExceptionShapesRanged.map_structCompileShape
+    {state : PanSemState (RiscV.Word 64) (FfiState σ)}
+    (h : PanSemExceptionShapesRanged state) (context : StructContext)
+    (hc : CtxBR context) :
+    PanSemExceptionShapesRanged
+      { state with exceptionShapes := fun name =>
+          Option.map (structCompileShape context) (state.exceptionShapes name) } := by
+  intro exceptionId shape hlookup
+  cases hstate : state.exceptionShapes exceptionId with
+  | none => simp only [hstate, Option.map_none] at hlookup; exact absurd hlookup (by simp)
+  | some stored =>
+      simp only [hstate, Option.map_some] at hlookup
+      rw [Option.some.injEq] at hlookup
+      rw [← hlookup]
+      exact structCompileShape_byteRanged context stored hc (h exceptionId stored hstate)
+
+/-- The compiled initial exception map (a total `panPropsALookupEq` lookup of
+    `exceptionEntries declarations`) satisfies `PanSemExceptionShapesRanged`
+    whenever `declarations` is `DeclByteRanged`. -/
+theorem panSemExceptionShapesRanged_of_exceptionEntries
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (declarations : List (Decl (RiscV.Word 64)))
+    (hranged : ∀ d ∈ declarations, DeclByteRanged d) :
+    PanSemExceptionShapesRanged
+      { state with exceptionShapes :=
+          fun name => panPropsALookupEq name (exceptionEntries declarations) } :=
+  panSemExceptionShapesRanged_of_ALookupEq state (exceptionEntries declarations)
+    (exceptionEntries_shapeByteRanged declarations hranged)
+
+/-- **Update preservation.** `PanSemExceptionShapesRanged` is invariant under every
+    production execution step: `panSemTotalEvaluate` never writes
+    `exceptionShapes`, so the `Raise` premise holds for all reachable states. -/
+theorem panSemTotalEvaluate_exceptionShapesRanged {σ : Type}
+    (primitive : PanPrimitiveHandler (RiscV.Word 64))
+    (prog : Prog (RiscV.Word 64))
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (h : PanSemExceptionShapesRanged state) :
+    PanSemExceptionShapesRanged (panSemTotalEvaluate primitive prog state).2 := by
+  intro exceptionId shape hlookup
+  rw [panSemTotalEvaluate_exceptionShapes primitive prog state] at hlookup
+  exact h exceptionId shape hlookup
+
+/-- **Connection to the `Raise` agreement.** `panSemTotalEvaluate_raise_agree` with
+    the free `hexnRanged` premise discharged from the intrinsic
+    `PanSemExceptionShapesRanged production`. -/
+theorem panSemTotalEvaluate_raise_agree_of_exceptionShapesRanged {σ : Type}
+    (primitive : PanPrimitiveHandler (RiscV.Word 64))
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (hranged : PanSemStateRelExecRanged production)
+    (hexn : PanSemExceptionShapesRanged production)
+    (exceptionId : MlS) (expression : ExpHOL 64) :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluate primitive
+          (.raise (toStringOfBytes exceptionId) (expOfHOL expression) :
+            Prog (RiscV.Word 64)) production).1
+        (evaluateHOLFiniteState exact (.raise exceptionId expression : ProgHOL 64)).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluate primitive
+          (.raise (toStringOfBytes exceptionId) (expOfHOL expression) :
+            Prog (RiscV.Word 64)) production).2
+        (evaluateHOLFiniteState exact (.raise exceptionId expression : ProgHOL 64)).2.toExact :=
+  panSemTotalEvaluate_raise_agree primitive production exact hrel hranged hexn exceptionId expression
+
+/-- Production/exact agreement for the `If` constructor, given the agreement
+    of each branch at the same related state: both evaluators branch on a
+    zero/non-zero word condition, and a failed or non-word condition yields
+    `Error` with the state unchanged.  The branch hypotheses are the structural
+    induction hypotheses of the eventual total agreement. -/
+theorem panSemTotalEvaluate_ite_agree {σ : Type}
+    (primitive : PanPrimitiveHandler (RiscV.Word 64))
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (hranged : PanSemStateRelExecRanged production)
+    (condition : ExpHOL 64) (thenBranch elseBranch : ProgHOL 64)
+    (ihThen : PanSemHOLResultOptionRel
+        (panSemTotalEvaluate primitive (progOfHOL thenBranch) production).1
+        (evaluateHOLFiniteState exact thenBranch).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluate primitive (progOfHOL thenBranch) production).2
+        (evaluateHOLFiniteState exact thenBranch).2.toExact)
+    (ihElse : PanSemHOLResultOptionRel
+        (panSemTotalEvaluate primitive (progOfHOL elseBranch) production).1
+        (evaluateHOLFiniteState exact elseBranch).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluate primitive (progOfHOL elseBranch) production).2
+        (evaluateHOLFiniteState exact elseBranch).2.toExact) :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluate primitive
+          (progOfHOL (.ite condition thenBranch elseBranch)) production).1
+        (evaluateHOLFiniteState exact (.ite condition thenBranch elseBranch)).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluate primitive
+          (progOfHOL (.ite condition thenBranch elseBranch)) production).2
+        (evaluateHOLFiniteState exact
+          (.ite condition thenBranch elseBranch)).2.toExact := by
+  have hc := evalPanSemStateExp_agree production exact hrel hranged
+    (expOfHOL condition) (expOfHOL_byteRanged_bridge condition)
+  simp only [expToHOL_expOfHOL, ← evalHOLFinite_eq_classical] at hc
+  rw [progOfHOL, panSemTotalEvaluate, evaluateHOLFiniteState_ite, ← hc]
+  cases hec : evalPanSemStateExp production (expOfHOL condition) with
+  | none => exact ⟨trivial, hrel⟩
+  | some cv =>
+    cases cv with
+    | rStruct _ => simp only [Option.map_some, panValueToHOL.eq_2]; exact ⟨trivial, hrel⟩
+    | nStruct _ _ => simp only [Option.map_some, panValueToHOL.eq_3]; exact ⟨trivial, hrel⟩
+    | word a =>
+      simp only [Option.map_some, panValueToHOL_word]
+      by_cases ha : a = 0
+      · simp only [ha, if_true]; exact ihElse
+      · simp only [ha, if_false]; exact ihThen
+
+/-- `PanSemStateRelExec` carries over the production `panSemFixClock` and the
+    exact `fixClockHOLFinite` (HOL `fix_clock`, whose `if … < …` clamp equals
+    `min`). -/
+theorem PanSemStateRelExec.fixClockHOLFinite {σ : Type} {β : Type}
+    {production : PanSemState (RiscV.Word 64) (FfiState σ)}
+    (oldState : PanSemStateFiniteExact 64 σ)
+    (step : β × PanSemStateFiniteExact 64 σ)
+    (h : PanSemStateRelExec production step.2.toExact) :
+    PanSemStateRelExec (panSemFixClock oldState.clock production)
+      (PanSemStateFiniteExact.fixClockHOLFinite oldState step).2.toExact := by
+  have hfix := PanSemStateRelExec.fixClock oldState.clock h
+  have hclock : (if oldState.clock < step.2.clock then oldState.clock else step.2.clock) =
+      min oldState.clock step.2.clock := by
+    rw [Nat.min_def]
+    by_cases hlt : oldState.clock < step.2.clock
+    · simp [hlt, Nat.le_of_lt hlt]
+    · by_cases hle : oldState.clock ≤ step.2.clock
+      · simp [hlt, hle]; omega
+      · simp [hlt, hle]
+  simp only [PanSemStateFiniteExact.fixClockHOLFinite, hclock]
+  exact hfix
+
+/-- Production/exact agreement for the `Seq` constructor from the first
+    sub-program's agreement and the second's agreement at every related, ranged
+    state (it runs after `fix_clock`).  `hfirstRanged` is an explicit open gap:
+    `PanSemStateRelExecRanged` is not preserved by every production step (see
+    `extCallClause_not_ranged_of_global_nonRanged`), and discharging it is
+    tracked by the rangedness bead `flapjack-pxn.18.4.3.77.2.15`. -/
+theorem panSemTotalEvaluate_seq_agree {σ : Type}
+    (primitive : PanPrimitiveHandler (RiscV.Word 64))
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ)
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (first second : ProgHOL 64)
+    (ihFirst : PanSemHOLResultOptionRel
+        (panSemTotalEvaluate primitive (progOfHOL first) production).1
+        (evaluateHOLFiniteState exact first).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluate primitive (progOfHOL first) production).2
+        (evaluateHOLFiniteState exact first).2.toExact)
+    (hfirstRanged : PanSemStateRelExecRanged
+        (panSemTotalEvaluate primitive (progOfHOL first) production).2)
+    (ihSecond : ∀ (production' : PanSemState (RiscV.Word 64) (FfiState σ))
+        (exact' : PanSemStateFiniteExact 64 σ),
+        PanSemStateRelExec production' exact'.toExact →
+        PanSemStateRelExecRanged production' →
+        PanSemHOLResultOptionRel
+            (panSemTotalEvaluate primitive (progOfHOL second) production').1
+            (evaluateHOLFiniteState exact' second).1 ∧
+          PanSemStateRelExec
+            (panSemTotalEvaluate primitive (progOfHOL second) production').2
+            (evaluateHOLFiniteState exact' second).2.toExact) :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluate primitive (progOfHOL (.seq first second)) production).1
+        (evaluateHOLFiniteState exact (.seq first second)).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluate primitive (progOfHOL (.seq first second)) production).2
+        (evaluateHOLFiniteState exact (.seq first second)).2.toExact := by
+  obtain ⟨hres, hstate⟩ := ihFirst
+  have hfix := PanSemStateRelExec.fixClockHOLFinite exact
+    (evaluateHOLFiniteState exact first) hstate
+  have hclock : exact.clock = production.clock :=
+    hrel.2.2.2.2.2.2.2.2.1
+  rw [progOfHOL, panSemTotalEvaluate, evaluateHOLFiniteState_seq]
+  simp only
+  revert hres hfix hfirstRanged
+  rw [← hclock]
+  generalize panSemTotalEvaluate primitive (progOfHOL first) production = P
+  generalize evaluateHOLFiniteState exact first = E
+  intro hranged hres hfix
+  rcases P with ⟨_ | r, p⟩ <;> rcases E with ⟨_ | e, q⟩
+  · exact ihSecond _ _ hfix (hranged.setClock _)
+  · exact hres.elim
+  · exact hres.elim
+  · exact ⟨hres, hfix⟩
+
+/-- Production/exact agreement for the `Dec` constructor from the body's
+    agreement at every related, ranged state: the initializer agreement, the
+    shape-match correspondence `panShapeMatches_eq_shapeEqHOL`, the local bind
+    (`PanSemStateRelExec.updateLocals`), and the `res_var` restore of the old
+    binding (`PanSemStateRelExec.resVarLocals`). -/
+theorem panSemTotalEvaluate_dec_agree {σ : Type}
+    (primitive : PanPrimitiveHandler (RiscV.Word 64))
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (hranged : PanSemStateRelExecRanged production)
+    (name : MlS) (shape : ShapeHOL) (initializer : ExpHOL 64) (body : ProgHOL 64)
+    (ihBody : ∀ (production' : PanSemState (RiscV.Word 64) (FfiState σ))
+        (exact' : PanSemStateFiniteExact 64 σ),
+        PanSemStateRelExec production' exact'.toExact →
+        PanSemStateRelExecRanged production' →
+        PanSemHOLResultOptionRel
+            (panSemTotalEvaluate primitive (progOfHOL body) production').1
+            (evaluateHOLFiniteState exact' body).1 ∧
+          PanSemStateRelExec
+            (panSemTotalEvaluate primitive (progOfHOL body) production').2
+            (evaluateHOLFiniteState exact' body).2.toExact) :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluate primitive
+          (progOfHOL (.dec name shape initializer body)) production).1
+        (evaluateHOLFiniteState exact (.dec name shape initializer body)).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluate primitive
+          (progOfHOL (.dec name shape initializer body)) production).2
+        (evaluateHOLFiniteState exact (.dec name shape initializer body)).2.toExact := by
+  have hi := evalPanSemStateExp_agree production exact hrel hranged
+    (expOfHOL initializer) (expOfHOL_byteRanged_bridge initializer)
+  simp only [expToHOL_expOfHOL, ← evalHOLFinite_eq_classical] at hi
+  have hn := nameRanged_toStringOfBytes_bridge name
+  rw [progOfHOL, panSemTotalEvaluate, evaluateHOLFiniteState_dec_total]
+  simp only
+  rw [← hi]
+  cases hev : evalPanSemStateExp production (expOfHOL initializer) with
+  | none => exact ⟨trivial, hrel⟩
+  | some v =>
+    simp only [Option.map_some]
+    have hbv := evalPanSemStateExp_byteRanged production hranged
+      (expOfHOL initializer) (expOfHOL_byteRanged_bridge initializer) v hev
+    have hshapeRanged : ShapeByteRanged (panSemShapeOf v) := by
+      have h := panValueShape_byteRanged production.structs v hbv
+      rwa [panValueShape_eq_panSemShapeOf_tagged production.structs v] at h
+    have hshapeExact : shapeOfHOLExact (panValueToHOL v) =
+        shapeToHOL (panSemShapeOf v) := by
+      rw [shapeOfHOLExact_panValueToHOL production.structs v,
+        panValueShape_eq_panSemShapeOf_tagged production.structs v]
+    have hmatch : panShapeMatches (shapeOfHOL shape) (panSemShapeOf v) =
+        shapeEqHOL shape (shapeOfHOLExact (panValueToHOL v)) := by
+      rw [panShapeMatches_eq_shapeEqHOL _ _ (shapeOfHOL_byteRanged_bridge shape)
+        hshapeRanged, shapeToHOL_shapeOfHOL, hshapeExact]
+    rw [← hmatch]
+    by_cases hm : panShapeMatches (shapeOfHOL shape) (panSemShapeOf v) = true
+    · simp only [hm, if_true]
+      have hbodyRel := PanSemStateRelExec.updateLocals hrel (toStringOfBytes name) hn v
+      rw [ofString_toStringOfBytes] at hbodyRel
+      have hbodyRanged := PanSemStateRelExecRanged.updateLocals hranged
+        (toStringOfBytes name) v hbv
+      obtain ⟨hres, hstate⟩ := ihBody _ _ hbodyRel hbodyRanged
+      refine ⟨hres, ?_⟩
+      have hold : Option.map panValueToHOL (production.locals (toStringOfBytes name)) =
+          exact.locals.lookup name := by
+        have h := hrel.1 (toStringOfBytes name) hn
+        rw [ofString_toStringOfBytes] at h
+        exact h
+      have hrestore := PanSemStateRelExec.resVarLocals hstate (toStringOfBytes name) hn
+        (production.locals (toStringOfBytes name))
+      rw [ofString_toStringOfBytes, hold] at hrestore
+      exact hrestore
+    · simp only [hm]
+      exact ⟨trivial, hrel⟩
+
+/-- Production/exact agreement for the `While` constructor from the body's
+    agreement at every related, ranged state and the loop's agreement at every
+    related, ranged state with a strictly smaller production clock (the
+    well-founded hypothesis of the eventual total agreement).  It covers a
+    failed or non-word condition, a zero condition, the clock-0 `TimeOut` with
+    `empty_locals`, and every body result through `dec_clock`/`fix_clock`.
+    `hbodyRanged` is the same open rangedness gap as in
+    `panSemTotalEvaluate_seq_agree` (`flapjack-pxn.18.4.3.77.2.15`). -/
+theorem panSemTotalEvaluate_while_agree {σ : Type}
+    (primitive : PanPrimitiveHandler (RiscV.Word 64))
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ)
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (hranged : PanSemStateRelExecRanged production)
+    (condition : ExpHOL 64) (body : ProgHOL 64)
+    (ihBody : ∀ (production' : PanSemState (RiscV.Word 64) (FfiState σ))
+        (exact' : PanSemStateFiniteExact 64 σ),
+        PanSemStateRelExec production' exact'.toExact →
+        PanSemStateRelExecRanged production' →
+        PanSemHOLResultOptionRel
+            (panSemTotalEvaluate primitive (progOfHOL body) production').1
+            (evaluateHOLFiniteState exact' body).1 ∧
+          PanSemStateRelExec
+            (panSemTotalEvaluate primitive (progOfHOL body) production').2
+            (evaluateHOLFiniteState exact' body).2.toExact)
+    (hbodyRanged : PanSemStateRelExecRanged
+        (panSemTotalEvaluate primitive (progOfHOL body)
+          { production with clock := production.clock - 1 }).2)
+    (ihLoop : ∀ (production' : PanSemState (RiscV.Word 64) (FfiState σ))
+        (exact' : PanSemStateFiniteExact 64 σ),
+        PanSemStateRelExec production' exact'.toExact →
+        PanSemStateRelExecRanged production' →
+        production'.clock < production.clock →
+        PanSemHOLResultOptionRel
+            (panSemTotalEvaluate primitive (progOfHOL (.while condition body)) production').1
+            (evaluateHOLFiniteState exact' (.while condition body)).1 ∧
+          PanSemStateRelExec
+            (panSemTotalEvaluate primitive (progOfHOL (.while condition body)) production').2
+            (evaluateHOLFiniteState exact' (.while condition body)).2.toExact) :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluate primitive (progOfHOL (.while condition body)) production).1
+        (evaluateHOLFiniteState exact (.while condition body)).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluate primitive (progOfHOL (.while condition body)) production).2
+        (evaluateHOLFiniteState exact (.while condition body)).2.toExact := by
+  letI : DecidablePred exact.memaddrs := fun a => Classical.propDecidable _
+  have hc := evalPanSemStateExp_agree production exact hrel hranged
+    (expOfHOL condition) (expOfHOL_byteRanged_bridge condition)
+  simp only [expToHOL_expOfHOL] at hc
+  have hck : exact.clock = production.clock := hrel.2.2.2.2.2.2.2.2.1
+  simp only [progOfHOL] at ihLoop ⊢
+  rw [panSemTotalEvaluate, evaluateHOLFiniteState_while_total, ← hc]
+  cases hev : evalPanSemStateExp production (expOfHOL condition) with
+  | none => exact ⟨trivial, hrel⟩
+  | some cv =>
+    cases cv with
+    | rStruct _ => simp only [Option.map_some, panValueToHOL.eq_2]; exact ⟨trivial, hrel⟩
+    | nStruct _ _ => simp only [Option.map_some, panValueToHOL.eq_3]; exact ⟨trivial, hrel⟩
+    | word a =>
+      simp only [Option.map_some, panValueToHOL_word]
+      by_cases ha : a = 0
+      · simp only [ha, if_true, ne_eq, not_true_eq_false, if_false]
+        exact ⟨trivial, hrel⟩
+      · simp only [ha, if_false, ne_eq, not_false_eq_true, if_true, hck]
+        by_cases hz : production.clock = 0
+        · simp only [hz, if_true]
+          exact ⟨trivial, by
+            simpa only [panEmptyLocals, toExact_emptyLocalsHOLFinite] using
+              PanSemStateRelExec.emptyLocals hrel⟩
+        · simp only [hz, if_false]
+          have hdecRel : PanSemStateRelExec { production with clock := production.clock - 1 }
+              (decClockHOLFinite exact).toExact := by
+            simpa only [toExact_decClockHOLFinite] using PanSemStateRelExec.decClock hrel
+          obtain ⟨hres, hstate⟩ := ihBody _ _ hdecRel (hranged.setClock _)
+          have hfix := PanSemStateRelExec.fixClockHOLFinite (decClockHOLFinite exact)
+            (evaluateHOLFiniteState (decClockHOLFinite exact) body) hstate
+          have hdc : (decClockHOLFinite exact).clock = production.clock - 1 := by
+            simp [decClockHOLFinite, hck]
+          rw [hdc] at hfix
+          have hlt : ∀ s : PanSemState (RiscV.Word 64) (FfiState σ),
+              (panSemFixClock (production.clock - 1) s).clock < production.clock := by
+            intro s
+            have := panSemFixClock_clock_le (production.clock - 1) s
+            omega
+          revert hres hfix hbodyRanged
+          generalize panSemTotalEvaluate primitive (progOfHOL body)
+            { production with clock := production.clock - 1 } = P
+          generalize evaluateHOLFiniteState (decClockHOLFinite exact) body = E
+          intro hranged' hres hfix
+          rcases P with ⟨_ | r, p⟩ <;> rcases E with ⟨_ | e, q⟩
+          · exact ihLoop _ _ hfix (hranged'.setClock _) (hlt p)
+          · exact hres.elim
+          · exact hres.elim
+          · cases r <;> cases e <;> simp only [PanSemHOLResultOptionRel, PanSemHOLResultRel] at hres <;>
+              first
+              | exact ihLoop _ _ hfix (hranged'.setClock _) (hlt p)
+              | exact ⟨trivial, hfix⟩
+              | exact ⟨hres, hfix⟩
 
 end Flapjack

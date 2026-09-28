@@ -4,6 +4,7 @@ import Flapjack.Pancake.PanToCrep.ContextExact
 import Flapjack.Pancake.Semantics.PanProps
 import Flapjack.Pancake.Semantics.PanProps.EvaluateResultInvariant
 import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+import Flapjack.Pancake.Semantics.ShMemBytesBridge
 
 /-!
 Finite-support Pan-to-Crep relation infrastructure for the shape-invariant
@@ -22,6 +23,8 @@ coordinator review of this completed theorem path.
 -/
 
 namespace Flapjack
+
+open Flapjack.PanSemStateFiniteExact
 
 open Flapjack.Pancake.PanLang
   (MlS ShapeHOL ExpHOL ProgHOL StructContextExact isWfShapeExactHOL)
@@ -120,6 +123,75 @@ def panToCrepStateRelFiniteExact {width : Nat} {σ : Type} [NeZero width]
     source.ffi = target.ffi ∧
     source.baseAddr = target.baseAddr ∧
     source.topAddr = target.topAddr
+
+/-- Flapjack-specific congruence support for the returned-byte ExtCall case of
+    `pc_compile_correct`: `state_rel_def` gives equality of the source and
+    target memory domains, so `write_bytearray_def` should produce equal memory
+    functions after the same address/bytes/endian update. The two evaluators
+    may carry separately synthesized `DecidablePred` instances for those
+    equal domains. This lemma makes that proof-irrelevant decision argument
+    explicit and proves that it cannot change the write result. It has no
+    standalone HOL declaration; it is support for the `ExtCall` constructor
+    proof, not a separately tagged port. -/
+theorem panWriteBytearrayWord8HOL_domainCongr
+    {width : Nat} [NeZero width]
+    (address : RiscV.Word width) (bytes : List (BitVec 8))
+    (memory : RiscV.Word width → HolWordLab width)
+    (domainSource domainTarget : RiscV.Word width → Prop)
+    (domainSourceDecidable : DecidablePred domainSource)
+    (domainTargetDecidable : DecidablePred domainTarget)
+    (bigEndian : Bool)
+    (hdomain : domainSource = domainTarget) :
+    @panWriteBytearrayWord8HOL width _ address bytes memory domainSource
+        domainSourceDecidable bigEndian =
+      @panWriteBytearrayWord8HOL width _ address bytes memory domainTarget
+        domainTargetDecidable bigEndian := by
+  subst domainTarget
+  have hdec : domainSourceDecidable = domainTargetDecidable := by
+    funext current
+    exact Subsingleton.elim _ _
+  subst domainTargetDecidable
+  rfl
+
+/-- Flapjack-specific preservation of the `state_rel_def` projection used by
+    the ExtCall returned-byte proof. HOL `write_bytearray_def` updates the same
+    memory in both states, while the Pan and Crep carriers may carry distinct
+    decision procedures for equal memory domains. The domain-congruence lemma
+    above aligns those writes; all other `state_rel_def` fields are unchanged,
+    except that both FFI fields become `newFfi`. This is a proof helper for the
+    ExtCall constructor case and has no standalone HOL declaration. -/
+theorem panToCrepStateRelFiniteExact_writeBytearray
+    {width : Nat} {σ : Type} [NeZero width]
+    (source : PanSemStateFiniteExact width σ)
+    (target : CrepSemHOLState width σ)
+    (address : RiscV.Word width) (bytes : List (BitVec 8))
+    (sourceDecidable : DecidablePred source.memaddrs)
+    (targetDecidable : DecidablePred target.memaddrs)
+    (newFfi : HolFfiState σ)
+    (hstate : panToCrepStateRelFiniteExact source target) :
+    panToCrepStateRelFiniteExact
+      (PanSemStateFiniteExact.ofExact
+        {source.toExact with
+          memory := @panWriteBytearrayWord8HOL width _ address bytes source.memory
+            source.memaddrs sourceDecidable source.be
+          ffi := newFfi}
+        (by simpa [PanSemStateExact.FiniteSupport] using source.toExact_finiteSupport))
+      {target with
+        memory := @panWriteBytearrayWord8HOL width _ address bytes target.memory
+          target.memaddrs targetDecidable target.be
+        ffi := newFfi} := by
+  rcases hstate with ⟨hmemory, hmemaddrs, hshMemaddrs, hstructs, hglobals,
+    hclock, hbe, _hffi, hbaseAddr, htopAddr⟩
+  have hwriteDomain :
+      @panWriteBytearrayWord8HOL width _ address bytes target.memory source.memaddrs
+        sourceDecidable target.be =
+      @panWriteBytearrayWord8HOL width _ address bytes target.memory target.memaddrs
+        targetDecidable target.be :=
+    panWriteBytearrayWord8HOL_domainCongr address bytes target.memory
+      source.memaddrs target.memaddrs sourceDecidable targetDecidable target.be hmemaddrs
+  simp [panToCrepStateRelFiniteExact, PanSemStateFiniteExact.ofExact,
+    hwriteDomain, hmemory, hmemaddrs, hshMemaddrs, hstructs, hglobals,
+    hclock, hbe, hbaseAddr, htopAddr]
 
 /-- The `state_rel` conjunct of HOL `call_preserve_state_code_locals_rel`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:2355`) is preserved by
@@ -237,6 +309,129 @@ theorem panToCrepLocalsRelFiniteExact_setVarWord {width : Nat} [NeZero width]
       rfl
     rw [hmap]
     exact hmm
+
+/-- The exact finite-support state relation is insensitive to the source
+    locals: it mentions only memory, the address domains, structs, the globals
+    lookup, the clock, endianness, the FFI state and the base/top addresses. -/
+theorem panToCrepStateRelFiniteExact_setLocals {width : Nat} {σ : Type} [NeZero width]
+    (source : PanSemStateFiniteExact width σ) (target : CrepSemHOLState width σ)
+    (locals : HolFiniteMapExact MlS (ValueHOL width))
+    (h : panToCrepStateRelFiniteExact source target) :
+    panToCrepStateRelFiniteExact { source with locals := locals } target := by
+  simpa only [panToCrepStateRelFiniteExact] using h
+
+/-- Updating both the source and the target FFI state with the same
+    `HolFfiState` preserves the exact finite-support state relation. This is the
+    `.ret`-branch bookkeeping of the shared-memory loads/stores. -/
+theorem panToCrepStateRelFiniteExact_ffi {width : Nat} {σ : Type} [NeZero width]
+    (source : PanSemStateFiniteExact width σ) (target : CrepSemHOLState width σ)
+    (ffi : HolFfiState σ)
+    (h : panToCrepStateRelFiniteExact source target) :
+    panToCrepStateRelFiniteExact { source with ffi := ffi } { target with ffi := ffi } := by
+  obtain ⟨hmem, hmema, hshmema, hstructs, hglob, hclock, hbe, _hffi, hbase, htop⟩ := h
+  exact ⟨hmem, hmema, hshmema, hstructs, hglob, hclock, hbe, rfl, hbase, htop⟩
+
+/-- Combined form used by the shared-memory shared-variable write: update the
+    source locals and both FFI states, leave the target locals to the caller. -/
+theorem panToCrepStateRelFiniteExact_setLocals_ffi {width : Nat} {σ : Type}
+    [NeZero width] (source : PanSemStateFiniteExact width σ)
+    (target : CrepSemHOLState width σ) (locals : HolFiniteMapExact MlS (ValueHOL width))
+    (ffi : HolFfiState σ) (h : panToCrepStateRelFiniteExact source target) :
+    panToCrepStateRelFiniteExact { source with locals := locals, ffi := ffi }
+      { target with ffi := ffi } := by
+  obtain ⟨hmem, hmema, hshmema, hstructs, hglob, hclock, hbe, _hffi, hbase, htop⟩ := h
+  exact ⟨hmem, hmema, hshmema, hstructs, hglob, hclock, hbe, rfl, hbase, htop⟩
+
+/-- Flapjack-specific bridge used by the `pc_compile_correct` `ShMemLoad`
+    case: the exact Pan and Crep shared-memory load returns keep the Pan/Crep
+    state and locals relations. Untagged relation support with no standalone
+    HOL declaration (the HOL proof reasons inline). -/
+theorem shMemLoadHOLFiniteExact_ret_corresponds {width : Nat} [NeZero width] {σ : Type}
+    (source : PanSemStateFiniteExact width σ) [hsrc : DecidablePred source.shMemaddrs]
+    (target : CrepSemHOLState width σ) [htgt : DecidablePred target.shMemaddrs]
+    (ctxt : PanToCrepContextExact width) (destination : Nat) (name : MlS)
+    (address : RiscV.Word width) (nb : Nat) (h8 : 8 ≤ width)
+    (hstate : panToCrepStateRelFiniteExact source target)
+    (hlocals : panToCrepLocalsRelFiniteExact ctxt source.locals target.locals)
+    (hvar : ctxt.vars.lookup name = some (ShapeHOL.one, [destination]))
+    {sourcePost : PanSemStateFiniteExact width σ} {targetPost : CrepSemHOLState width σ}
+    (hsource : shMemLoadHOLFiniteExact source .local name address nb = (none, sourcePost))
+    (htarget : crepShMemLoadExactHOL destination address nb target = (none, targetPost)) :
+    panToCrepStateRelFiniteExact sourcePost targetPost ∧
+      panToCrepLocalsRelFiniteExact ctxt sourcePost.locals targetPost.locals := by
+  obtain ⟨hmem, hmema, hshmema, hstructs, hglob, hclock, hbe, hffi, hbase, htop⟩ := hstate
+  unfold shMemLoadHOLFiniteExact at hsource
+  unfold crepShMemLoadExactHOL at htarget
+  have finish : ∀ (newFfi : HolFfiState σ) (newBytes : List (BitVec 8)),
+      sourcePost = setKvarFfiHOLFinite VarKind.local name
+        (.val (.word (panWordOfBytesHOL false 0 newBytes))) source newFfi →
+      targetPost = { CrepSemHOLState.setVar destination
+          (.word (crepClockWordOfBytes (newBytes.map UInt8.ofBitVec))) target with
+          ffi := newFfi } →
+      panToCrepStateRelFiniteExact sourcePost targetPost ∧
+        panToCrepLocalsRelFiniteExact ctxt sourcePost.locals targetPost.locals := by
+    intro newFfi newBytes hs1 ht1
+    have hdec := panWordOfBytesHOL_eq_crepClockWordOfBytes (width := width) h8 newBytes
+    refine ⟨?_, ?_⟩
+    · rw [hs1, ht1]
+      refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+      · simpa only [setKvarFfiHOLFinite, setKvarHOLFinite, setVarHOLFinite, CrepSemHOLState.setVar] using hmem
+      · simpa only [setKvarFfiHOLFinite, setKvarHOLFinite, setVarHOLFinite, CrepSemHOLState.setVar] using hmema
+      · simpa only [setKvarFfiHOLFinite, setKvarHOLFinite, setVarHOLFinite, CrepSemHOLState.setVar] using hshmema
+      · simpa only [setKvarFfiHOLFinite, setKvarHOLFinite, setVarHOLFinite, CrepSemHOLState.setVar] using hstructs
+      · simpa only [setKvarFfiHOLFinite, setKvarHOLFinite, setVarHOLFinite, CrepSemHOLState.setVar] using hglob
+      · simpa only [setKvarFfiHOLFinite, setKvarHOLFinite, setVarHOLFinite,
+          CrepSemHOLState.setVar] using hclock
+      · simpa only [setKvarFfiHOLFinite, setKvarHOLFinite, setVarHOLFinite,
+          CrepSemHOLState.setVar] using hbe
+      · rfl
+      · simpa only [setKvarFfiHOLFinite, setKvarHOLFinite, setVarHOLFinite,
+          CrepSemHOLState.setVar] using hbase
+      · simpa only [setKvarFfiHOLFinite, setKvarHOLFinite, setVarHOLFinite,
+          CrepSemHOLState.setVar] using htop
+    · rw [hs1, ht1]
+      simp only [setKvarFfiHOLFinite, setKvarHOLFinite, setVarHOLFinite,
+        CrepSemHOLState.setVar]
+      rw [← hdec]
+      exact panToCrepLocalsRelFiniteExact_setVarWord ctxt source.locals target.locals
+        name destination (.word (panWordOfBytesHOL false 0 newBytes)) hlocals hvar
+  by_cases hnb : nb = 0
+  · rw [if_pos hnb] at hsource
+    by_cases hdom : source.shMemaddrs address
+    · rw [if_pos hdom] at hsource
+      have hdomT : target.shMemaddrs address := by
+        rw [← congrFun hshmema address]; exact hdom
+      rw [if_pos hnb, if_pos hdomT] at htarget
+      cases hcallS : callFFIHOL source.ffi (.sharedMem .mappedRead) [BitVec.ofNat 8 nb]
+          (panWordToBytesHOL address false) with
+      | final event => simp [hcallS] at hsource
+      | ret newFfi newBytes =>
+          simp only [hcallS] at hsource
+          rw [show callFFIHOL target.ffi (.sharedMem .mappedRead) [BitVec.ofNat 8 nb]
+              ((crepClockWordToBytes address).map UInt8.toBitVec) = .ret newFfi newBytes from by
+            rw [← hffi, ← panWordToBytesHOL_eq_map_crepClockWordToBytes address]
+            exact hcallS] at htarget
+          simp only [] at htarget
+          exact finish newFfi newBytes (Prod.mk.inj hsource).2.symm (Prod.mk.inj htarget).2.symm
+    · rw [if_neg hdom] at hsource; simp at hsource
+  · rw [if_neg hnb] at hsource
+    by_cases hdom : source.shMemaddrs (panByteAlignHOL address)
+    · rw [if_pos hdom] at hsource
+      have hdomT : target.shMemaddrs (panByteAlignHOL address) := by
+        rw [← congrFun hshmema (panByteAlignHOL address)]; exact hdom
+      rw [if_neg hnb, if_pos hdomT] at htarget
+      cases hcallS : callFFIHOL source.ffi (.sharedMem .mappedRead) [BitVec.ofNat 8 nb]
+          (panWordToBytesHOL address false) with
+      | final event => simp [hcallS] at hsource
+      | ret newFfi newBytes =>
+          simp only [hcallS] at hsource
+          rw [show callFFIHOL target.ffi (.sharedMem .mappedRead) [BitVec.ofNat 8 nb]
+              ((crepClockWordToBytes address).map UInt8.toBitVec) = .ret newFfi newBytes from by
+            rw [← hffi, ← panWordToBytesHOL_eq_map_crepClockWordToBytes address]
+            exact hcallS] at htarget
+          simp only [] at htarget
+          exact finish newFfi newBytes (Prod.mk.inj hsource).2.symm (Prod.mk.inj htarget).2.symm
+    · rw [if_neg hdom] at hsource; simp at hsource
 
 /-- Exact port of HOL `excp_rel_def`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:16-23`). Both maps are

@@ -100,4 +100,13 @@ def nestedProd : Exp (BitVec 8) :=
 example : varExpHOL (expToHOL nestedProd) = (expLocalVars nestedProd).map ofString :=
   varExpHOL_expToHOL nestedProd
 
+/-- Parser-representable names decode back to the production compiler's exact
+local-variable list through the domain-qualified tagged-HOL bridge. -/
+example : (varExpHOL (expToHOL nestedProd)).map toStringOfBytes =
+    expLocalVars nestedProd := by
+  have hnested : ExpByteRanged nestedProd := by
+    simp [nestedProd, ExpByteRanged, ListExpByteRanged, ListFieldByteRanged,
+      ShapeByteRanged]
+  exact varExpHOL_expToHOL_decode_of_expByteRanged nestedProd hnested
+
 end Flapjack.Test.PanLangVarExpParity

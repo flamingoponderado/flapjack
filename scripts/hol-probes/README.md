@@ -23,7 +23,9 @@ The probes currently cover the small `loop_to_word` slice used by
 `Flapjack.Test.PanFixedLoadParity`, and the `panSem$shape_of` boundary used by
 `Flapjack.Test.PanShapeParity`, plus the `panSem` word/value helpers used by
 `Flapjack.Test.PanWordParity`. The fixed-width store boundary is covered by
-`Flapjack.Test.PanFixedStoreParity`, and the word-store boundary by
+`Flapjack.Test.PanFixedStoreParity` (little-endian) and, in both endiannesses
+for the executed state-derived `store32` and the exact `panMemStore32HOL`, by
+`Flapjack.Test.PanStore32EndianParity` (`pan_store32_endian_probe.out`), and the word-store boundary by
 `Flapjack.Test.PanFlatStoreParity`. Value flattening is covered by
 `Flapjack.Test.PanFlattenParity`; scoped local restoration (`res_var_def`) is
 covered by `Flapjack.Test.PanResVarParity`. Their source references are
@@ -731,3 +733,19 @@ the 32-word limit, distinct target locals, and the exact generated
 `load_globals` expression count, then evaluates the theorem's full result and
 post-state equation. Refresh with
 `HOL_PROBE_ONLY=eval_nested_decs_load_globals_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`pan_word_of_bytes_overlong_probe.out` records direct HOL evaluation of
+`byteTheory.word_of_bytes` (`/home/zksecurity/HOL/src/n-bit/byteScript.sml:197`),
+the decoder installed by the exact shared-memory loads
+(`cakeml/pancake/semantics/panSemScript.sml:517,524` and `crepSemScript.sml` as
+`word_of_bytes F 0w new_bytes`) for FFI-returned lists longer than one word.  The
+rows show that the first byte of each residue wins, so overlong lists keep
+exactly the first `dimindex DIV 8` bytes and the trailing bytes are discarded
+(`w8_overlong_three=1w`, `w16_overlong_three=513w`, `w64_overlong_ten=
+0x807060504030201w`).  This is the source oracle for the untagged Lean bridge
+`Flapjack.Pancake.Semantics.ShMemBytesBridge` and its `decide` regression
+instances (`panWordOfBytesHOL false 0 bs = crepClockWordOfBytes
+(bs.map UInt8.ofBitVec)`).  It is rooted at the separate HOL checkout (like
+`fupdate_list_append_commutes_probe`), so no CakeML build is needed.  Refresh
+with `HOL_PROBE_ONLY=pan_word_of_bytes_overlong_probeScript.sml
+scripts/hol-probes/regenerate.sh`.

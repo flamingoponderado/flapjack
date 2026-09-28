@@ -236,6 +236,9 @@ run_probe pan_fixed_load_probeScript.sml pan_fixed_load_probe.out \
   "$cake_dir/pancake/semantics"
 run_probe pan_fixed_store_probeScript.sml pan_fixed_store_probe.out \
   byte_store_hit store32_unaligned "$cake_dir/pancake/semantics/panSemScript.sml"
+run_probe pan_store32_endian_probeScript.sml pan_store32_endian_probe.out \
+  store32_le_low store32_le_high store32_be_low store32_be_high store32_be_w2w \
+  store32_be_unaligned store32_be_outside "$cake_dir/pancake/semantics/panSemScript.sml"
 run_probe crep_runtime_word_boundary_probeScript.sml crep_runtime_word_boundary_probe.out \
   bytes64 store32_outside "$cake_dir/pancake/semantics/panSemScript.sml" \
   "$cake_dir/pancake/semantics"
@@ -1979,3 +1982,18 @@ run_probe crep_sem_evaluate_ind_probeScript.sml crep_sem_evaluate_ind_probe.out 
 run_probe pan_sem_evaluate_ind_probeScript.sml pan_sem_evaluate_ind_probe.out \
   evaluate_ind "$cake_dir/pancake/semantics/panSemScript.sml" \
   "$cake_dir/pancake/semantics"
+
+# HOL's byte decoder `word_of_bytes` (HOL/src/n-bit/byteScript.sml:197) is the
+# function installed by the exact shared-memory loads (panSemScript.sml:517/524,
+# crepSemScript.sml) as `word_of_bytes F 0w new_bytes`, with no length premise
+# on the FFI-returned `new_bytes`.  Because the first list byte is written
+# outermost at address 0, only the first `dimindex DIV 8` bytes survive and the
+# trailing bytes are discarded.  Like fupdate_list_append_commutes_probe, this
+# is rooted at the separate HOL checkout; byteTheory is a standard HOL theory.
+run_probe pan_word_of_bytes_overlong_probeScript.sml pan_word_of_bytes_overlong_probe.out \
+  source_def w8_overlong_three w8_overlong_take_one w16_overlong_three \
+  w16_overlong_sum w16_overlong_take_two w64_overlong_ten \
+  w64_overlong_take_eight w64_discarded_bytes_irrelevant \
+  w9_overlong_two w9_overlong_three w9_overlong_take_one w12_overlong_four done \
+  "$hol_dir/src/n-bit/byteScript.sml" \
+  "$hol_dir/src/n-bit"

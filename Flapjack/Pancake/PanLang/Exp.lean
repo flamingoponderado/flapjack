@@ -362,12 +362,13 @@ with `expToHOL` and running the tagged `varExpHOL` yields exactly the production
 
 `ofString` is the total byte-string injection; the reverse decoding
 `toStringOfBytes` is exact precisely on byte-ranged names (`ExpByteRanged`), so a
-byte-ranged corollary `expLocalVarsHOL e = expLocalVars e` holds, but is not
-needed here.  The executable compiler's only `expLocalVars` call sites
+decoded production equality is stated by `varExpHOL_expToHOL_decode`, with the
+precise premise that each emitted local name is byte-ranged. The executable
+compiler's only `expLocalVars` call sites
 (`globalCompileExp`/`globalCompileProg`) are generic in the word type `α` with no
 `width`, so the width-indexed `expToHOL` codec cannot be threaded there without a
-refactor; this bridge is the reviewed correspondence and the routing follow-up is
-tracked on the bead. -/
+refactor. The relation is kept as a checked bridge rather than claimed as direct
+production routing. -/
 theorem varExpHOL_expToHOL {width : Nat} [NeZero width] :
     (e : Flapjack.Exp (BitVec width)) →
       varExpHOL (expToHOL e) = (Flapjack.expLocalVars e).map ofString :=
@@ -424,6 +425,126 @@ theorem varExpHOL_expToHOL {width : Nat} [NeZero width] :
           = List.map ofString (Flapjack.expLocalVars.expLocalVarsFieldList _tail)
         from by simpa only [Function.comp_def] using ih2])
     (fun _fst _snd ih => ih)
+
+/-- On the byte-range domain for every emitted local name, decoding the tagged
+HOL `var_exp` result returns exactly the production `expLocalVars` list. This
+is the statement usable at parser-backed call sites: it records the precise
+`String`/`mlstring` boundary instead of assuming that arbitrary Lean strings
+round-trip through HOL characters. -/
+theorem varExpHOL_expToHOL_decode {width : Nat} [NeZero width]
+    (expression : Flapjack.Exp (BitVec width))
+    (hnames : ∀ name ∈ Flapjack.expLocalVars expression,
+      ∀ c ∈ name.toList, c.toNat < 256) :
+    (varExpHOL (expToHOL expression)).map toStringOfBytes =
+      Flapjack.expLocalVars expression := by
+  rw [varExpHOL_expToHOL, List.map_map]
+  have hmap : List.map (toStringOfBytes ∘ ofString)
+      (Flapjack.expLocalVars expression) =
+        List.map id (Flapjack.expLocalVars expression) := by
+    apply List.map_congr_left (l := Flapjack.expLocalVars expression) (g := id)
+    intro name hname
+    exact Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes name
+      (hnames name hname)
+  simpa only [List.map_id] using hmap
+
+/-- Every local identifier emitted by production `expLocalVars` is byte-ranged
+    when its expression is. This discharges the String/`mlstring` decode premise
+    of `varExpHOL_expToHOL_decode` from the syntax-domain invariant, instead of
+    requiring a separate premise on the extracted list. -/
+theorem expLocalVars_byteRanged {width : Nat} :
+    (expression : Flapjack.Exp (BitVec width)) → ExpByteRanged expression →
+      ∀ name ∈ Flapjack.expLocalVars expression,
+        ∀ c ∈ name.toList, c.toNat < 256 :=
+  Exp.rec
+    (motive_1 := fun expression => ExpByteRanged expression →
+      ∀ name ∈ Flapjack.expLocalVars expression,
+        ∀ c ∈ name.toList, c.toNat < 256)
+    (motive_2 := fun expressions => ListExpByteRanged expressions →
+      ∀ name ∈ Flapjack.expLocalVars.expLocalVarsList expressions,
+        ∀ c ∈ name.toList, c.toNat < 256)
+    (motive_3 := fun fields => ListFieldByteRanged fields →
+      ∀ name ∈ Flapjack.expLocalVars.expLocalVarsFieldList fields,
+        ∀ c ∈ name.toList, c.toNat < 256)
+    (motive_4 := fun pair => ExpByteRanged pair.2 →
+      ∀ name ∈ Flapjack.expLocalVars pair.2,
+        ∀ c ∈ name.toList, c.toNat < 256)
+    (fun _value => by simp [ExpByteRanged, Flapjack.expLocalVars])
+    (fun kind name => by
+      intro h localName hmem c hc
+      cases kind
+      · simp only [ExpByteRanged] at h
+        simp only [Flapjack.expLocalVars] at hmem
+        rcases List.mem_singleton.mp hmem with rfl
+        exact h c hc
+      · simp [Flapjack.expLocalVars] at hmem)
+    (fun _fields ih => by
+      intro h name hmem c hc
+      exact ih h name (by simpa [Flapjack.expLocalVars] using hmem) c hc)
+    (fun _index _value ih => by
+      intro h name hmem c hc
+      exact ih h name (by simpa [Flapjack.expLocalVars] using hmem) c hc)
+    (fun _name _fields ih => by
+      intro h name hmem c hc
+      exact ih h.2 name (by simpa [Flapjack.expLocalVars] using hmem) c hc)
+    (fun _name _value ih => by
+      intro h name hmem c hc
+      exact ih h.2 name (by simpa [Flapjack.expLocalVars] using hmem) c hc)
+    (fun _shape _address ih => by
+      intro h name hmem c hc
+      exact ih h.2 name (by simpa [Flapjack.expLocalVars] using hmem) c hc)
+    (fun _address ih => by
+      intro h name hmem c hc
+      exact ih h name (by simpa [Flapjack.expLocalVars] using hmem) c hc)
+    (fun _address ih => by
+      intro h name hmem c hc
+      exact ih h name (by simpa [Flapjack.expLocalVars] using hmem) c hc)
+    (fun _operator _args ih => by
+      intro h name hmem c hc
+      exact ih h name (by simpa [Flapjack.expLocalVars] using hmem) c hc)
+    (fun _operator _args ih => by
+      intro h name hmem c hc
+      exact ih h name (by simpa [Flapjack.expLocalVars] using hmem) c hc)
+    (fun _operator _left _right ihLeft ihRight => by
+      intro h name hmem c hc
+      simp only [Flapjack.expLocalVars, List.mem_append] at hmem
+      rcases hmem with hmem | hmem
+      · exact ihLeft h.1 name hmem c hc
+      · exact ihRight h.2 name hmem c hc)
+    (fun _operator _left _right ihLeft ihRight => by
+      intro h name hmem c hc
+      simp only [Flapjack.expLocalVars, List.mem_append] at hmem
+      rcases hmem with hmem | hmem
+      · exact ihLeft h.1 name hmem c hc
+      · exact ihRight h.2 name hmem c hc)
+    (by simp [ExpByteRanged, Flapjack.expLocalVars])
+    (by simp [ExpByteRanged, Flapjack.expLocalVars])
+    (by simp [ExpByteRanged, Flapjack.expLocalVars])
+    (by simp [Flapjack.expLocalVars.expLocalVarsList])
+    (fun _head _tail ihHead ihTail => by
+      intro h name hmem c hc
+      simp only [ListExpByteRanged, Flapjack.expLocalVars.expLocalVarsList.eq_2,
+        List.mem_append] at h hmem
+      rcases hmem with hmem | hmem
+      · exact ihHead h.1 name hmem c hc
+      · exact ihTail h.2 name hmem c hc)
+    (by simp [Flapjack.expLocalVars.expLocalVarsFieldList])
+    (fun _head _tail ihHead ihTail => by
+      intro h name hmem c hc
+      simp only [ListFieldByteRanged] at h
+      rw [Flapjack.expLocalVars.expLocalVarsFieldList.eq_2] at hmem
+      simp only [List.mem_append] at hmem
+      rcases hmem with hmem | hmem
+      · exact ihHead h.2.1 name hmem c hc
+      · exact ihTail h.2.2 name hmem c hc)
+    (fun _fst _snd ih => ih)
+
+/-- The decoded `var_exp` bridge with its String/MlString premise discharged by
+    the expression's syntax-domain invariant. -/
+theorem varExpHOL_expToHOL_decode_of_expByteRanged {width : Nat} [NeZero width]
+    (expression : Flapjack.Exp (BitVec width)) (hranged : ExpByteRanged expression) :
+    (varExpHOL (expToHOL expression)).map toStringOfBytes =
+      Flapjack.expLocalVars expression :=
+  varExpHOL_expToHOL_decode expression (expLocalVars_byteRanged expression hranged)
 
 /-! ### `panLang$global_var_exp` (partial; specified clauses tagged) -/
 

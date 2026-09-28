@@ -47,6 +47,24 @@ WITHDRAWN_HOL_DECLARATIONS = {
         "validated for an inductive carrier, so the @[hol] tag was withdrawn pending a checker "
         "extension for reviewed width-indexed inductive carriers."
     ),
+    ("Flapjack/Pancake/PanLang.lean", "Exp"): (
+        "cakeml/pancake/panLangScript.sml",
+        "exp",
+        "flapjack-luna-b (bead flapjack-p0l9, 2026-09-28): HOL exp at "
+        "panLangScript.sml:53-69 indexes Const by the target word type, but "
+        "production Exp (alpha : Type u) stores an arbitrary alpha. The "
+        "executed compiler specializes it to Exp (BitVec width), which does "
+        "not make this generic declaration width-indexed. The exact "
+        "constructor-for-constructor port is ExpHOL width in "
+        "PanLang/Exp.lean (reviewed_exact); expToHOL_expOfHOL is unconditional "
+        "and expOfHOL_expToHOL is proved for ExpByteRanged production values. "
+        "This checked codec is the representation refinement for the width "
+        "specialization; the reverse direction's String/MlString and "
+        "Shape/ShapeHOL bounds remain explicit, not silently identified. "
+        "Keep production Exp untagged. Exact compiler routing and other "
+        "String-backed syntax fields remain tracked by "
+        "flapjack-pxn.18.3.5.8."
+    ),
     ("Flapjack/Compiler/Encoders/Asm.lean", "asmRegOk"): (
         "cakeml/compiler/encoders/asm/asmScript.sml",
         "reg_ok_def",
@@ -1522,6 +1540,16 @@ DOCUMENTED_MISMATCHES = {
 # Proofs/ and are inventoried automatically; counterpart-side witnesses and
 # induction helpers belong beside their semantic definitions instead.
 INFRASTRUCTURE_THEOREMS = {
+    ("Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean", "panWriteBytearrayWord8HOL_domainCongr"): (
+        "Flapjack-specific support for the ExtCall returned-byte state relation. "
+        "This congruence handles distinct DecidablePred instances after equality "
+        "of their domains; it has no standalone HOL declaration and is not a port."
+    ),
+    ("Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean", "panToCrepStateRelFiniteExact_writeBytearray"): (
+        "Flapjack-specific support for the ExtCall returned-byte state relation. "
+        "This helper preserves the exact state relation across equal bytearray writes; "
+        "it has no standalone HOL declaration and is not a port."
+    ),
     ("Flapjack/Pancake/Semantics/CrepProps/MemLoadFlatRel.lean", "holFmapAsFiniteSupportWitness"): (
         "Same-module canonical finite-support witness required by the qualified "
         "mem_load_flat_rel port. This witness restates the CrepSemHOLState / "

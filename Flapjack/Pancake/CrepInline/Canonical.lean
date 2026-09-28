@@ -270,6 +270,220 @@ theorem inlineProgHOLCoreExact_call_handler [BEq CrepInlineMapHOLName]
         name arguments := by
   simp only [inlineProgHOLCoreExact]
 
+theorem inlineProgHOLCoreExact_call_none [BEq CrepInlineMapHOLName]
+    [LawfulBEq CrepInlineMapHOLName]
+    (inlineable : HolFiniteMapExact CrepInlineMapHOLName
+      (List Nat × CrepProgHOL width))
+    (supportKeys : List CrepInlineMapHOLName)
+    (support_spec : ∀ key, inlineable.lookup key ≠ none → key ∈ supportKeys)
+    (name : CrepInlineMapHOLName) (arguments : List (CrepExpHOL width)) :
+    inlineProgHOLCoreExact inlineable supportKeys support_spec
+        (.call none name arguments) =
+      match _hlookup : inlineable.lookup name with
+      | none => .call none name arguments
+      | some (argumentNames, body) =>
+          let inlinedCallee :=
+            (unreachElimHOLExact
+              (inlineProgHOLCoreExact (inlineable.erase name)
+                (supportKeys.filter (fun k => k != name))
+                (HolFiniteMapExact.erase_support inlineable supportKeys support_spec name)
+                body)).1
+          let maxArguments := (arguments.flatMap crepExpVarsHOL).foldl max 0
+          let maxArgumentNames := argumentNames.foldl max 0
+          let temporaryNames :=
+            genlistSuccAddHOLExact (max maxArguments maxArgumentNames)
+              argumentNames.length
+          inlineTailHOLExact
+            (argLoadHOLExact temporaryNames arguments argumentNames inlinedCallee) := by
+  simp only [inlineProgHOLCoreExact]
+
+theorem inlineProgHOLCoreExact_call_returns [BEq CrepInlineMapHOLName]
+    [LawfulBEq CrepInlineMapHOLName]
+    (inlineable : HolFiniteMapExact CrepInlineMapHOLName
+      (List Nat × CrepProgHOL width))
+    (supportKeys : List CrepInlineMapHOLName)
+    (support_spec : ∀ key, inlineable.lookup key ≠ none → key ∈ supportKeys)
+    (returnNames : List Nat) (name : CrepInlineMapHOLName)
+    (arguments : List (CrepExpHOL width)) :
+    inlineProgHOLCoreExact inlineable supportKeys support_spec
+        (.call (some (returnNames, none)) name arguments) =
+      if !crepAllDistinct returnNames then
+        .call (some (returnNames, none)) name arguments
+      else
+        match _hlookup : inlineable.lookup name with
+        | none => .call (some (returnNames, none)) name arguments
+        | some (argumentNames, body) =>
+            let inlinedCallee :=
+              (unreachElimHOLExact
+                (inlineProgHOLCoreExact (inlineable.erase name)
+                  (supportKeys.filter (fun k => k != name))
+                  (HolFiniteMapExact.erase_support inlineable supportKeys support_spec name)
+                  body)).1
+            let maxArguments := (arguments.flatMap crepExpVarsHOL).foldl max 0
+            let maxArgumentNames := argumentNames.foldl max 0
+            let temporaryNames :=
+              genlistSuccAddHOLExact (max maxArguments maxArgumentNames)
+                argumentNames.length
+            let maxReturnNames := returnNames.foldl max 0
+            let maxInlinedCallee := crepVmaxProgHOLExact inlinedCallee
+            let maxTemporaryNames := temporaryNames.foldl max 0
+            let temporaryReturns :=
+              genlistSuccAddHOLExact
+                (max maxReturnNames (max maxInlinedCallee maxTemporaryNames))
+                returnNames.length
+            let transformedCallee :=
+              if notBranchRetHOLExact inlinedCallee then
+                .seq .tick (transformEocHOLExact temporaryReturns inlinedCallee)
+              else
+                .while (.const 1)
+                  (transformBranchHOLExact 0 temporaryReturns inlinedCallee)
+            inlineNontailHOLExact transformedCallee returnNames
+              temporaryReturns temporaryNames arguments argumentNames := by
+  simp only [inlineProgHOLCoreExact]
+
+theorem inlineProgHOLCoreExact_assign [BEq CrepInlineMapHOLName]
+    [LawfulBEq CrepInlineMapHOLName]
+    (inlineable : HolFiniteMapExact CrepInlineMapHOLName
+      (List Nat × CrepProgHOL width))
+    (supportKeys : List CrepInlineMapHOLName)
+    (support_spec : ∀ key, inlineable.lookup key ≠ none → key ∈ supportKeys)
+    (name : Nat) (value : CrepExpHOL width) :
+    inlineProgHOLCoreExact inlineable supportKeys support_spec (.assign name value) =
+      .assign name value := by
+  simp only [inlineProgHOLCoreExact]
+
+theorem inlineProgHOLCoreExact_primitive [BEq CrepInlineMapHOLName]
+    [LawfulBEq CrepInlineMapHOLName]
+    (inlineable : HolFiniteMapExact CrepInlineMapHOLName
+      (List Nat × CrepProgHOL width))
+    (supportKeys : List CrepInlineMapHOLName)
+    (support_spec : ∀ key, inlineable.lookup key ≠ none → key ∈ supportKeys)
+    (names : List Nat) (operator : PrimOp) (args : List Nat) :
+    inlineProgHOLCoreExact inlineable supportKeys support_spec
+        (.primitive names operator args) =
+      .primitive names operator args := by
+  simp only [inlineProgHOLCoreExact]
+
+theorem inlineProgHOLCoreExact_store [BEq CrepInlineMapHOLName]
+    [LawfulBEq CrepInlineMapHOLName]
+    (inlineable : HolFiniteMapExact CrepInlineMapHOLName
+      (List Nat × CrepProgHOL width))
+    (supportKeys : List CrepInlineMapHOLName)
+    (support_spec : ∀ key, inlineable.lookup key ≠ none → key ∈ supportKeys)
+    (address value : CrepExpHOL width) :
+    inlineProgHOLCoreExact inlineable supportKeys support_spec (.store address value) =
+      .store address value := by
+  simp only [inlineProgHOLCoreExact]
+
+theorem inlineProgHOLCoreExact_store32 [BEq CrepInlineMapHOLName]
+    [LawfulBEq CrepInlineMapHOLName]
+    (inlineable : HolFiniteMapExact CrepInlineMapHOLName
+      (List Nat × CrepProgHOL width))
+    (supportKeys : List CrepInlineMapHOLName)
+    (support_spec : ∀ key, inlineable.lookup key ≠ none → key ∈ supportKeys)
+    (address value : CrepExpHOL width) :
+    inlineProgHOLCoreExact inlineable supportKeys support_spec (.store32 address value) =
+      .store32 address value := by
+  simp only [inlineProgHOLCoreExact]
+
+theorem inlineProgHOLCoreExact_storeByte [BEq CrepInlineMapHOLName]
+    [LawfulBEq CrepInlineMapHOLName]
+    (inlineable : HolFiniteMapExact CrepInlineMapHOLName
+      (List Nat × CrepProgHOL width))
+    (supportKeys : List CrepInlineMapHOLName)
+    (support_spec : ∀ key, inlineable.lookup key ≠ none → key ∈ supportKeys)
+    (address value : CrepExpHOL width) :
+    inlineProgHOLCoreExact inlineable supportKeys support_spec (.storeByte address value) =
+      .storeByte address value := by
+  simp only [inlineProgHOLCoreExact]
+
+theorem inlineProgHOLCoreExact_storeGlob [BEq CrepInlineMapHOLName]
+    [LawfulBEq CrepInlineMapHOLName]
+    (inlineable : HolFiniteMapExact CrepInlineMapHOLName
+      (List Nat × CrepProgHOL width))
+    (supportKeys : List CrepInlineMapHOLName)
+    (support_spec : ∀ key, inlineable.lookup key ≠ none → key ∈ supportKeys)
+    (address : BitVec 5) (value : CrepExpHOL width) :
+    inlineProgHOLCoreExact inlineable supportKeys support_spec (.storeGlob address value) =
+      .storeGlob address value := by
+  simp only [inlineProgHOLCoreExact]
+
+theorem inlineProgHOLCoreExact_break [BEq CrepInlineMapHOLName]
+    [LawfulBEq CrepInlineMapHOLName]
+    (inlineable : HolFiniteMapExact CrepInlineMapHOLName
+      (List Nat × CrepProgHOL width))
+    (supportKeys : List CrepInlineMapHOLName)
+    (support_spec : ∀ key, inlineable.lookup key ≠ none → key ∈ supportKeys)
+    (label : Nat) :
+    inlineProgHOLCoreExact inlineable supportKeys support_spec (.break label) =
+      .break label := by
+  simp only [inlineProgHOLCoreExact]
+
+theorem inlineProgHOLCoreExact_continue [BEq CrepInlineMapHOLName]
+    [LawfulBEq CrepInlineMapHOLName]
+    (inlineable : HolFiniteMapExact CrepInlineMapHOLName
+      (List Nat × CrepProgHOL width))
+    (supportKeys : List CrepInlineMapHOLName)
+    (support_spec : ∀ key, inlineable.lookup key ≠ none → key ∈ supportKeys)
+    (label : Nat) :
+    inlineProgHOLCoreExact inlineable supportKeys support_spec (.continue label) =
+      .continue label := by
+  simp only [inlineProgHOLCoreExact]
+
+theorem inlineProgHOLCoreExact_extCall [BEq CrepInlineMapHOLName]
+    [LawfulBEq CrepInlineMapHOLName]
+    (inlineable : HolFiniteMapExact CrepInlineMapHOLName
+      (List Nat × CrepProgHOL width))
+    (supportKeys : List CrepInlineMapHOLName)
+    (support_spec : ∀ key, inlineable.lookup key ≠ none → key ∈ supportKeys)
+    (function : MlString) (configuration configurationLength array arrayLength : Nat) :
+    inlineProgHOLCoreExact inlineable supportKeys support_spec
+        (.extCall function configuration configurationLength array arrayLength) =
+      .extCall function configuration configurationLength array arrayLength := by
+  simp only [inlineProgHOLCoreExact]
+
+theorem inlineProgHOLCoreExact_raise [BEq CrepInlineMapHOLName]
+    [LawfulBEq CrepInlineMapHOLName]
+    (inlineable : HolFiniteMapExact CrepInlineMapHOLName
+      (List Nat × CrepProgHOL width))
+    (supportKeys : List CrepInlineMapHOLName)
+    (support_spec : ∀ key, inlineable.lookup key ≠ none → key ∈ supportKeys)
+    (exception : BitVec width) :
+    inlineProgHOLCoreExact inlineable supportKeys support_spec (.raise exception) =
+      .raise exception := by
+  simp only [inlineProgHOLCoreExact]
+
+theorem inlineProgHOLCoreExact_return [BEq CrepInlineMapHOLName]
+    [LawfulBEq CrepInlineMapHOLName]
+    (inlineable : HolFiniteMapExact CrepInlineMapHOLName
+      (List Nat × CrepProgHOL width))
+    (supportKeys : List CrepInlineMapHOLName)
+    (support_spec : ∀ key, inlineable.lookup key ≠ none → key ∈ supportKeys)
+    (values : List (CrepExpHOL width)) :
+    inlineProgHOLCoreExact inlineable supportKeys support_spec (.return values) =
+      .return values := by
+  simp only [inlineProgHOLCoreExact]
+
+theorem inlineProgHOLCoreExact_shMem [BEq CrepInlineMapHOLName]
+    [LawfulBEq CrepInlineMapHOLName]
+    (inlineable : HolFiniteMapExact CrepInlineMapHOLName
+      (List Nat × CrepProgHOL width))
+    (supportKeys : List CrepInlineMapHOLName)
+    (support_spec : ∀ key, inlineable.lookup key ≠ none → key ∈ supportKeys)
+    (operator : CrepMemOp) (name : Nat) (address : CrepExpHOL width) :
+    inlineProgHOLCoreExact inlineable supportKeys support_spec (.shMem operator name address) =
+      .shMem operator name address := by
+  simp only [inlineProgHOLCoreExact]
+
+theorem inlineProgHOLCoreExact_tick [BEq CrepInlineMapHOLName]
+    [LawfulBEq CrepInlineMapHOLName]
+    (inlineable : HolFiniteMapExact CrepInlineMapHOLName
+      (List Nat × CrepProgHOL width))
+    (supportKeys : List CrepInlineMapHOLName)
+    (support_spec : ∀ key, inlineable.lookup key ≠ none → key ∈ supportKeys) :
+    inlineProgHOLCoreExact inlineable supportKeys support_spec .tick = .tick := by
+  simp only [inlineProgHOLCoreExact]
+
 /-- The `fs`-only entry point: the same recursive core with its finite-support
     certificate discharged from `HolFiniteMapExact.finiteSupport`.  This is
     noncomputable because the support witness is extracted classically; the
@@ -508,6 +722,78 @@ private def inlTopProbeOracle : Bool :=
   | _ => false
 
 #guard inlTopProbeOracle
+
+/-! ### Direct canonical-core replay of the `inline_prog` HOL probe rows
+
+Every row of `scripts/hol-probes/crep_inline_code_inl_probe.out` is replayed
+through `inlineProgHOLCoreExact` on the canonical `HolFiniteMapExact` carrier
+view: hit (`inlined_call`), miss (`no_match_call`), DOMSUB self-call
+(`inline_nested_call`), argument loading with generated temporary names
+(`inline_arg_call`), duplicate overwrite (`lookup_dup_f`/`inline_dup_call`) and
+handler call (`handler_call_untouched`). Untagged, bead `flapjack-e7w.2.1.13`. -/
+
+private def canonicalOracleBodyA : CrepProgHOL 8 := .dec 1 (.const 1) .skip
+
+private def canonicalOracleBodyB : CrepProgHOL 8 := .dec 9 (.const 3) .skip
+
+private def canonicalOracleCore (fs : CrepInlineFmapHOL 8) (program : CrepProgHOL 8) :
+    CrepProgHOL 8 :=
+  inlineProgHOLCoreExact fs.toHolFiniteMapExact fs.domainKeys (domainKeys_spec fs) program
+
+private def canonicalOracleGuard : Bool :=
+  let key := ofString "f"
+  let absent := ofString "g"
+  let base := CrepInlineFmapHOL.insert key ([7], canonicalOracleBodyA) CrepInlineFmapHOL.empty
+  -- HOL `flookup_f` / `inlined_call`: `Seq Tick Skip`.
+  let hit := match canonicalOracleCore base (.call none key []) with
+    | .seq .tick .skip => true
+    | _ => false
+  -- HOL `no_match_call`: a missed name is left untouched.
+  let miss := match canonicalOracleCore base (.call none absent []) with
+    | .call none name [] => name == absent
+    | _ => false
+  -- HOL `inline_nested_call`: `\\` (DOMSUB) before recursing leaves the self-call.
+  let nestedBase := CrepInlineFmapHOL.insert key ([], .call none key []) CrepInlineFmapHOL.empty
+  let nested := match canonicalOracleCore nestedBase (.call none key []) with
+    | .seq .tick (.call none name []) => name == key
+    | _ => false
+  -- HOL `inline_arg_call`: `arg_load`/`GENLIST` generated temporary names.
+  let args := match canonicalOracleCore base (.call none key [.const 5]) with
+    | .seq .tick (.dec 8 (.const 5) (.dec 7 (.var 8) (.dec 1 (.const 1) .skip))) => true
+    | _ => false
+  -- HOL `lookup_dup_f`: `|+` overwrites, so the later binding is selected. This
+  -- direct lookup assertion is the primary evidence for overwrite semantics.
+  let dupBase := CrepInlineFmapHOL.insert key ([9], canonicalOracleBodyB) base
+  let dupLookup : Bool :=
+    match dupBase.lookup key with
+    | some value =>
+        (value.1 == [9]) &&
+          (match value.2 with | .dec 9 (.const 3) .skip => true | _ => false)
+    | none => false
+  -- HOL `inline_dup_call`: with the original argument names the empty argument
+  -- list makes `arg_load` discard the body (`Seq Tick Skip`), reproducing the
+  -- probe row.
+  let dup := match canonicalOracleCore dupBase (.call none key []) with
+    | .seq .tick .skip => true
+    | _ => false
+  -- Distinguishing shadowing fixture: with empty argument names `arg_load`
+  -- preserves the body, so the inlined program is observable. Choosing the
+  -- stale `bodyA` binding would yield `Seq Tick (Dec 1 (Const 1) Skip)` and
+  -- fail this check, which the `dup` row above cannot detect.
+  let obsDupBase := CrepInlineFmapHOL.insert key ([], canonicalOracleBodyB) base
+  let dupInlinesNew : Bool :=
+    match canonicalOracleCore obsDupBase (.call none key []) with
+    | .seq .tick p =>
+        (match p with | .dec 9 (.const 3) .skip => true | _ => false)
+    | _ => false
+  -- HOL `handler_call_untouched`: the handler is inlined, the call is unchanged.
+  let handler := match canonicalOracleCore base
+      (.call (some ([1], some (2, (.skip : CrepProgHOL 8)))) key []) with
+    | .call (some ([1], some (2, .skip))) name [] => name == key
+    | _ => false
+  hit && miss && nested && args && dup && dupLookup && dupInlinesNew && handler
+
+#guard canonicalOracleGuard
 
 /-! ## Support-independence of the inline core
 
