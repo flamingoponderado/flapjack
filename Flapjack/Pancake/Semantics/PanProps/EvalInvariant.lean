@@ -6183,6 +6183,21 @@ private theorem evaluateClockSubWhileBodyRunAlignment {width : Nat} {σ : Type}
     rw [hLowEntry]
     exact hFixClockSub
 
+/-- Flapjack-specific state projection used by clock-sub induction: when a
+    canonical PanSem post-state is the PanProps post-state with `ck` added to
+    its clock, subtracting `ck` from that canonical state recovers the exact
+    PanProps carrier image. This is representation bookkeeping, not a HOL
+    declaration. -/
+private theorem panSemFinite_subClock_eq_toPanProps
+    {width : Nat} {σ : Type} [NeZero width]
+    (state : PanPropsEvalStateFiniteExact width σ)
+    (post : PanSemStateFiniteExact width σ) (ck : Nat)
+    (hPost : post = { state.toPanSemFinite with clock := state.clock + ck }) :
+    { post with clock := post.clock - ck } = state.toPanSemFinite := by
+  subst post
+  cases state
+  simp [PanPropsEvalStateFiniteExact.toPanSemFinite] <;> omega
+
 /-- Flapjack-specific assembled Break-body branch for the While clock-sub
     proof. The condition and body equations are explicit constructor-split
     data extracted from an enclosing high run; they are not premises of HOL's
@@ -6272,9 +6287,8 @@ private theorem evaluateClockSubWhileBreakBodyProjection {width : Nat} {σ : Typ
   have hFixedLow : fixedLow.2 = st.toPanSemFinite := by
     have h := hAlignment.2
     change fixedLow.2 = { fixedHigh.2 with clock := fixedHigh.2.clock - ck } at h
-    rw [hFixedHigh] at h
-    simpa [fixedLow, fixedHigh, lowState, bodyPostLow,
-      PanPropsEvalStateFiniteExact.toPanSemFinite] using h
+    rw [panSemFinite_subClock_eq_toPanProps st fixedHigh.2 ck hFixedHigh] at h
+    exact h
   have hLowBody : PanPropsEvalStateFiniteExact.evaluateHOLFinitePair
       { { state with clock := state.clock - ck } with
           clock := (state.clock - ck) - 1 } body = (some .break, bodyPostLow) := by
