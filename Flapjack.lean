@@ -311,6 +311,7 @@ import Flapjack.Pancake.CrepToLoop.Proofs.AssignedVars
 import Flapjack.Pancake.CrepToLoop.Optimise
 import Flapjack.Pancake.CrepToLoop.StateRel
 import Flapjack.Test.CrepToLoopCompileExpExactParity
+import Flapjack.Test.CrepToLoopCompileExactParity
 import Flapjack.Test.CrepFindLabParity
 import Flapjack.Pancake.LoopLive
 import Flapjack.Pancake.LoopLang.AssignedVars

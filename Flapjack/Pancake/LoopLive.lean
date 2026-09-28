@@ -1613,16 +1613,16 @@ theorem loopEveryProg_call (predicate : LoopProg α → Prop)
 
 /-! ## Exact `loop_live` shrink/fixedpoint over the faithful carrier
 
-Source-shaped Flapjack infrastructure for the mutual HOL definition
-`loop_live$shrink_def`/`fixedpoint_def`
-(`cakeml/pancake/loop_liveScript.sml:62-160`) over the faithful
-`HolLoopProg`/`NumSet` carrier.  HOL declares `shrink` and `fixedpoint` in a
-single mutual block whose termination measure is the lexicographic triple
-`(prog_size (K 0) body, 0/1, size live_in - size l1)`; the Lean definitions
-keep that mutual shape and measure (`sizeOf` in place of `prog_size`, and
-`sptSize_inter_le` in place of `size_inter`).  These declarations are
-deliberately left untagged: the exact HOL statement and side conditions are to
-be   reviewed before an `@[hol]` reference is attached. -/
+Source-shaped port of the single HOL declaration `loop_live$shrink_def`
+(`cakeml/pancake/loop_liveScript.sml:62-160`), over the faithful
+`HolLoopProg`/`NumSet` carrier.  HOL declares BOTH `shrink` and `fixedpoint`
+inside that one mutual block (there is no separate `fixedpoint_def`), with the
+lexicographic termination measure `(prog_size (K 0) body, 0/1,
+size live_in - size l1)`; the Lean definitions keep that mutual shape and
+measure (`sizeOf` in place of `prog_size`, and `sptSize_inter_le` in place of
+`size_inter`).  `shrinkHOL` is the tagged half carrying
+`@[hol ... "shrink_def"]`, while `fixedpointHOL` is the untagged mutual half,
+analogous to `varsOfExpListHOL`/`vars_of_exp_list`. -/
 
 /-- Exact port of HOL `loop_liveScript.sml:28-31 size_mk_BN`. -/
 @[hol "cakeml/pancake/loop_liveScript.sml" "size_mk_BN"]
@@ -1673,10 +1673,12 @@ theorem sptSize_inter_le {α β : Type} (l1 : Spt α) (l2 : Spt β) :
           have h2 := ihSecond s
           omega
 mutual
-  /-- Exact stand-in for HOL `loop_live$fixedpoint_def`
-      (`cakeml/pancake/loop_liveScript.sml:143-148`): iterate `shrink` on the
+  /-- The `fixedpoint` half of HOL's single `loop_live$shrink_def` mutual block
+      (`cakeml/pancake/loop_liveScript.sml:142-150`): iterate `shrink` on the
       loop body until `inter live_in l0` stabilizes, returning the shrunk body
-      and its live set, or `none` when no progress can be made. -/
+      and its live set, or `none` when no progress can be made.  This is the
+      untagged mutual half of the tagged `shrinkHOL` (analogous to
+      `varsOfExpListHOL`), since HOL has no separate `fixedpoint_def`. -/
   def fixedpointHOL {width : Nat} [NeZero width] :
       List (NumSet × NumSet) → NumSet → NumSet → NumSet → HolLoopProg width →
         Option (HolLoopProg width × NumSet)
@@ -1700,11 +1702,13 @@ mutual
     all_goals simp
     all_goals omega
 
-  /-- Source-shaped stand-in for HOL `loop_live$shrink_def`
-      (`cakeml/pancake/loop_liveScript.sml:63-141`): shrink every cutset of
+  /-- Exact port of HOL's single `loop_live$shrink_def`
+      (`cakeml/pancake/loop_liveScript.sml:62-160`): shrink every cutset of
       `prog` and delete assignments to dead variables, returning the rewritten
       program and the resulting live set.  `lt` is the `break`/`continue`
-      context, outermost first. -/
+      context, outermost first.  HOL declares `shrink` and `fixedpoint` in that
+      one mutual block; `fixedpointHOL` above is the untagged mutual half. -/
+  @[hol "cakeml/pancake/loop_liveScript.sml" "shrink_def" (words_as_type_indexed_bitvec)]
   def shrinkHOL {width : Nat} [NeZero width]
       (lt : List (NumSet × NumSet)) :
       HolLoopProg width → NumSet → HolLoopProg width × NumSet
