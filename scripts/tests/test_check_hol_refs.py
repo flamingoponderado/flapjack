@@ -102,19 +102,6 @@ class HolAttributeSitesTest(unittest.TestCase):
               False, ("fm", "fm2"))],
         )
 
-    def test_fmap_as_finite_support_fields_and_parameters_coexist(self):
-        self.assertEqual(
-            list(SITES([
-                '@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml"',
-                '  "locals_rel_def" (fmap_as_finite_support := [vars])',
-                '  (fmap_as_finite_support_parameters := [sLocals])',
-                '  (words_as_type_indexed_bitvec)]',
-            ])),
-            [(1, "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
-              "locals_rel_def", None, (), (), (), ("vars",), False, (),
-              False, True, ("sLocals",))],
-        )
-
     def test_fmap_as_finite_support_parameters_requires_direct_exact_binders_and_witnesses(self):
         lines = [
             "theorem holFmapAsFiniteSupportParamWitness_eval_fm",

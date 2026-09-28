@@ -413,53 +413,12 @@ theorem holFmapAsFiniteSupportWitness (context : CrepToLoopContextExact) :
     CrepToLoopContextExact.ofBroad (CrepToLoopContextExact.toBroad context) = context :=
   CrepToLoopContextExact.holFmapAsFiniteSupportWitness context
 
-private def LocalsRelExactParam.toBroadlookup (map : HolFiniteMapExact α β) :
-    α → Option β := map.lookup
-
-private def LocalsRelExactParam.ofBroad (lookup : α → Option β)
-    (support : ∃ keys : List α, ∀ key, lookup key ≠ none → key ∈ keys) :
-    HolFiniteMapExact α β := ⟨lookup, support⟩
-
-/-- Checked finite-map parameter translation for `locals_rel_def.s_locals`.
-    The HOL `num |-> 'a word_lab` input is carried by `HolFiniteMapExact`;
-    this witness records its canonical lookup/support roundtrip. -/
-theorem holFmapAsFiniteSupportParamWitness_crepToLoopLocalsRelExact_sLocals
-    {width : Nat} [NeZero width]
-    (sLocals : HolFiniteMapExact Nat (HolWordLab width)) :
-    LocalsRelExactParam.ofBroad (LocalsRelExactParam.toBroadlookup sLocals)
-      sLocals.finiteSupport = sLocals := by
-  cases sLocals
-  rfl
-
-/-- Checked finite-map parameter translation for `locals_rel_intro.s_locals`.
-    This is the same canonical lookup/support roundtrip for the theorem input. -/
-theorem holFmapAsFiniteSupportParamWitness_crepToLoopLocalsRelExact_intro_sLocals
-    {width : Nat} [NeZero width]
-    (sLocals : HolFiniteMapExact Nat (HolWordLab width)) :
-    LocalsRelExactParam.ofBroad (LocalsRelExactParam.toBroadlookup sLocals)
-      sLocals.finiteSupport = sLocals := by
-  cases sLocals
-  rfl
-
-/-- Checked finite-map parameter translation for
-    `locals_rel_cutset_prop.lcl`. -/
-theorem holFmapAsFiniteSupportParamWitness_crepToLoopLocalsRelExact_cutset_prop_lcl
-    {width : Nat} [NeZero width]
-    (lcl : HolFiniteMapExact Nat (HolWordLab width)) :
-    LocalsRelExactParam.ofBroad (LocalsRelExactParam.toBroadlookup lcl)
-      lcl.finiteSupport = lcl := by
-  cases lcl
-  rfl
-
-/-- Checked finite-map parameter translation for
-    `locals_rel_insert_gt_vmax.lcl`. -/
-theorem holFmapAsFiniteSupportParamWitness_crepToLoopLocalsRelExact_insert_gt_vmax_lcl
-    {width : Nat} [NeZero width]
-    (lcl : HolFiniteMapExact Nat (HolWordLab width)) :
-    LocalsRelExactParam.ofBroad (LocalsRelExactParam.toBroadlookup lcl)
-      lcl.finiteSupport = lcl := by
-  cases lcl
-  rfl
+/-- Same-module canonical roundtrip required by the mixed-carrier qualifier
+    below. The standalone map parameters need no owner witness. -/
+theorem holFmapAsFiniteSupportRelationWitness_CrepToLoopContextExact
+    (context : CrepToLoopContextExact) :
+    CrepToLoopContextExact.ofBroad (CrepToLoopContextExact.toBroad context) = context :=
+  CrepToLoopContextExact.holFmapAsFiniteSupportWitness context
 
 end CrepToLoopLocalsRelWitnesses
 
@@ -495,8 +454,7 @@ num-keyed instance; the matching kernel-checked Lean rows are in
 `locals_rel_insert_after_true`, `insert_gt_vmax_lookup_unchanged`, plus the
 fresh-key/unchanged rows of `crep_to_loop_locals_insert_probe.out`). -/
 @[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "locals_rel_def"
-  (fmap_as_finite_support := [vars])
-  (fmap_as_finite_support_parameters := [sLocals])
+  (fmap_as_finite_support_relation := [CrepToLoopContextExact.vars, sLocals])
   (words_as_type_indexed_bitvec)]
 def crepToLoopLocalsRelExact {width : Nat} [NeZero width]
     (ctxt : CrepToLoopContextExact)
@@ -533,8 +491,7 @@ theorem crepToLoopLocalsRelExact_iff {width : Nat} [NeZero width]
     and the `num_set`-domain / per-name lookup conjuncts use `sptMem` and the
     `wlabWlocHOL` value bridge. -/
 @[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "locals_rel_intro"
-  (fmap_as_finite_support := [vars])
-  (fmap_as_finite_support_parameters := [sLocals])
+  (fmap_as_finite_support_relation := [CrepToLoopContextExact.vars, sLocals])
   (words_as_type_indexed_bitvec)]
 theorem crepToLoopLocalsRelExact_intro {width : Nat} [NeZero width]
     (ctxt : CrepToLoopContextExact)
@@ -560,8 +517,7 @@ theorem crepToLoopLocalsRelExact_intro {width : Nat} [NeZero width]
     relation, and the per-name lookup conjunct from the second relation plus the
     uniqueness of `FLOOKUP ct.vars vname`. -/
 @[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "locals_rel_cutset_prop"
-  (fmap_as_finite_support := [vars])
-  (fmap_as_finite_support_parameters := [lcl])
+  (fmap_as_finite_support_relation := [CrepToLoopContextExact.vars, lcl])
   (words_as_type_indexed_bitvec)]
 theorem crepToLoopLocalsRelExact_cutset_prop {width : Nat} [NeZero width]
     (ctxt : CrepToLoopContextExact)
@@ -591,8 +547,7 @@ theorem crepToLoopLocalsRelExact_cutset_prop {width : Nat} [NeZero width]
     `sptLookup_sptInsert_ne` because `ctxt_max` forces every matched index
     `n' ≤ ctxt.vmax < n`, so the inserted key cannot shadow it. -/
 @[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "locals_rel_insert_gt_vmax"
-  (fmap_as_finite_support := [vars])
-  (fmap_as_finite_support_parameters := [lcl])
+  (fmap_as_finite_support_relation := [CrepToLoopContextExact.vars, lcl])
   (words_as_type_indexed_bitvec)]
 theorem crepToLoopLocalsRelExact_insert_gt_vmax {width : Nat} [NeZero width]
     (ctxt : CrepToLoopContextExact)
