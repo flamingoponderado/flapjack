@@ -10948,6 +10948,19 @@
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "locals_rel_lookup_same",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
+    "lean_name": "crepToLoopLocalsRelExact_lookup_same",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.7) against locals_rel_lookup_same[local] at crep_to_loopProofScript.sml:3313. HOL states `locals_rel ctxt l locs1 locs2 ==> (!n. lookup n locs2 = lookup n locs3) ==> locals_rel ctxt l locs1 locs3`. Lean preserves both implications and the pointwise lookup premise exactly over crepToLoopLocalsRelExact, with locs1 : HolFiniteMapExact Nat (HolWordLab width) and locs2/locs3 : Spt (WordLocW width). The proof carries distinct_vars/ctxt_max from the first relation; transfers domain l SUBSET domain locs2 to locs3 via lookup agreement and sptMem_iff_lookup; and composes the per-name lookup equation with the same agreement. The only representation translations are the reviewed context vars plus standalone locs1 finite-support maps, named by fmap_as_finite_support_relation, and the width-indexed word_lab/word_loc translation. No extra semantic premise is added; [NeZero width] is the existing positive HOL word-dimension requirement. The local universally quantified HOL theorem is source-reviewed rather than presented as an EVAL Boolean row. Its kernel-checked example in Flapjack/Test/CrepToLoopParity.lean applies it to the direct locals_rel_true oracle relation using two structurally distinct target Spt trees with pointwise-equal lookup; the pointwise fact follows from the exact sptInsert lookup equations.",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "locs1"
+    ]
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
     "hol_name": "state_rel_def",
     "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
     "lean_name": "crepToLoopStateRelExact",

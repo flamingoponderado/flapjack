@@ -481,6 +481,12 @@ abbrev localsRelOracleSource : HolFiniteMapExact Nat (HolWordLab 8) :=
 /-- Target `num_map` with `0 |-> Word 9` (probe `locals_rel_true`). -/
 abbrev localsRelOracleTarget : Spt (WordLocW 8) := Spt.ls (WordLocW.word 9)
 
+/-- Same lookup function as the oracle target, with a redundant overwrite at
+    its existing key. This gives a distinct Spt representation for testing
+    `locals_rel_lookup_same`. -/
+abbrev localsRelOracleTargetSameLookup : Spt (WordLocW 8) :=
+  sptInsert 0 (WordLocW.word 9) localsRelOracleTarget
+
 /-- Empty target `num_map` (probe `locals_rel_domain_false`). -/
 abbrev localsRelOracleTargetEmpty : Spt (WordLocW 8) := Spt.ln
 
@@ -488,7 +494,7 @@ abbrev localsRelOracleTargetEmpty : Spt (WordLocW 8) := Spt.ln
 abbrev localsRelOracleTargetBad : Spt (WordLocW 8) := Spt.ls (WordLocW.word 12)
 
 /-- Kernel-checked true row (HOL `locals_rel_true`). -/
-example :
+theorem localsRelOracleTargetRel :
     crepToLoopLocalsRelExact localsRelOracleCtxt localsRelOracleSet
       localsRelOracleSource localsRelOracleTarget := by
   rw [crepToLoopLocalsRelExact]
@@ -531,6 +537,29 @@ example :
         exact ⟨(), by simp [sptLookup]⟩
       · simp [sptLookup, wlabWlocHOL]
     · simp at hv
+
+/-- The two Spt trees are pointwise lookup-equal although the second contains a
+    redundant insertion. -/
+theorem localsRelOracleTargetsAgree :
+    ∀ n, sptLookup n localsRelOracleTarget =
+      sptLookup n localsRelOracleTargetSameLookup := by
+  intro n
+  by_cases hn : n = 0
+  · subst n
+    rw [sptLookup_sptInsert_same]
+    rfl
+  · exact (sptLookup_sptInsert_ne 0 n (WordLocW.word 9)
+      localsRelOracleTarget hn).symm
+
+/-- Kernel-checked instance of the tagged `locals_rel_lookup_same` port using
+    the direct HOL `locals_rel_true` row and a distinct but lookup-equivalent
+    target tree. The theorem itself is universally quantified, so its proof is
+    checked by Lean rather than represented as an EVAL Boolean oracle row. -/
+example :
+    crepToLoopLocalsRelExact localsRelOracleCtxt localsRelOracleSet
+      localsRelOracleSource localsRelOracleTargetSameLookup := by
+  exact crepToLoopLocalsRelExact_lookup_same _ _ _ _ _
+    localsRelOracleTargetRel localsRelOracleTargetsAgree
 
 /-- Kernel-checked domain-false row: `0` is in the source set but absent from
     the target map (HOL `locals_rel_domain_false`). -/
@@ -577,6 +606,16 @@ def localsRelOracleGuard : Bool :=
       some (WordLocW.word 12))
 
 #guard localsRelOracleGuard
+
+/-- The direct HOL relation row's target and the redundant-insert target have
+    equal lookups at the populated key and an absent key. -/
+def localsRelLookupSameGuard : Bool :=
+  (sptLookup 0 localsRelOracleTarget ==
+      sptLookup 0 localsRelOracleTargetSameLookup) &&
+    (sptLookup 1 localsRelOracleTarget ==
+      sptLookup 1 localsRelOracleTargetSameLookup)
+
+#guard localsRelLookupSameGuard
 
 /-! Direct cut-set oracle rows for HOL `locals_rel_cutset_prop`
 (`crep_to_loopProofScript.sml:236-244`), matching
@@ -654,7 +693,8 @@ def runChecks : IO Bool := do
     comparisonKeepsIncomingLive,
     comparisonWithoutLiveDropsIt,
     stateRelExactGuard, ctxtFcExactGuard, localsRelExactGuard,
-    localsRelOracleGuard, localsRelCutsetGuard, localsRelInsertGuard]
+    localsRelOracleGuard, localsRelLookupSameGuard,
+    localsRelCutsetGuard, localsRelInsertGuard]
   let names := [
     "crep_to_loop declaration renaming and live seed",
     "crep_to_loop default call handler",
@@ -669,6 +709,7 @@ def runChecks : IO Bool := do
     "crep_to_loop exact ctxt_fc matches the HOL oracle rows",
     "crep_to_loop exact locals_rel matches the HOL oracle rows",
     "crep_to_loop exact locals_rel direct oracle rows (true/domain-false/value-false)",
+    "crep_to_loop exact locals_rel_lookup_same kernel example and lookup guard",
     "crep_to_loop exact locals_rel_cutset_prop oracle rows (subspt/second/after)",
     "crep_to_loop exact locals_rel_insert_gt_vmax oracle rows (fresh-key/unchanged)"]
   let mut all := true
