@@ -1,4 +1,5 @@
 import Flapjack.Word
+import Flapjack.Misc.Sptree
 
 /-!
 # Loop-to-word context lookup
@@ -234,5 +235,41 @@ def loopToWordCompile [OfNat α 1]
     (program : List (Nat × List Nat × LoopProg α)) :
     List (Nat × Nat × WordProg α) :=
   loopToWordCompileProg program
+
+/-! ### Exact `spt`-carrier ports of the HOL loop_to_word context functions -/
+
+/-- Exact HOL `find_var_def` over the `num |-> num` spt context
+(`cakeml/pancake/loop_to_wordScript.sml:10`). -/
+@[hol "cakeml/pancake/loop_to_wordScript.sml" "find_var_def"]
+def findVarHOL (context : Spt Nat) (name : Nat) : Nat :=
+  (sptLookup name context).getD 0
+
+/-- Exact HOL `find_reg_imm_def` (`cakeml/pancake/loop_to_wordScript.sml:17`),
+over the fixed-width HOL `reg_imm` immediate carrier `'a word` (rendered as the
+positive-width `BitVec width`), matching HOL's type-indexed word. -/
+@[hol "cakeml/pancake/loop_to_wordScript.sml" "find_reg_imm_def"
+  (words_as_type_indexed_bitvec)]
+def findRegImmHOL {width : Nat} [NeZero width] (context : Spt Nat) :
+    WordRegImm (BitVec width) → WordRegImm (BitVec width)
+  | .imm value => .imm value
+  | .reg name => .reg (findVarHOL context name)
+
+/-- Exact HOL `toNumSet_def` (`cakeml/pancake/loop_to_wordScript.sml:42`),
+right-recursive like HOL. -/
+@[hol "cakeml/pancake/loop_to_wordScript.sml" "toNumSet_def"]
+def toNumSetHOL : List Nat → Spt Unit
+  | [] => .ln
+  | n :: ns => sptInsert n () (toNumSetHOL ns)
+
+/-- Exact HOL `fromNumSet_def` (`cakeml/pancake/loop_to_wordScript.sml:47`),
+polymorphic in the spt value type like HOL. -/
+@[hol "cakeml/pancake/loop_to_wordScript.sml" "fromNumSet_def"]
+def fromNumSetHOL {α : Type} (tree : Spt α) : List Nat :=
+  (sptToAList tree).map Prod.fst
+
+/-- Exact HOL `mk_new_cutset_def` (`cakeml/pancake/loop_to_wordScript.sml:51`). -/
+@[hol "cakeml/pancake/loop_to_wordScript.sml" "mk_new_cutset_def"]
+def mkNewCutsetHOL (context : Spt Nat) (live : Spt Unit) : Spt Unit :=
+  sptInsert 0 () (toNumSetHOL ((fromNumSetHOL live).map (findVarHOL context)))
 
 end Flapjack.LoopToWord
