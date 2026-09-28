@@ -19,7 +19,9 @@ byte order `be` are not carried by the declaration state; they come from the
 machine state.  Untagged Flapjack-specific bridge infrastructure
 (`flapjack-pxn.18.4.3.77.2.17.1`).  `evaluateDecls_agree` relates production
 `evaluateDecls` to the exact `evaluateDeclsHOLFinite` over whole declaration
-lists (`flapjack-pxn.18.4.3.77.2.17.2`).
+lists (`flapjack-pxn.18.4.3.77.2.17.2`), and
+`panSemEntryStateOfDecls_codeRanged_exnRanged` gives the entry state's code and
+exception-shape rangedness (`flapjack-pxn.18.4.3.77.2.17.3`).
 -/
 
 namespace Flapjack
@@ -357,5 +359,107 @@ theorem evaluateDecls_agree {σ : Type}
                 simp [hw]
               rw [if_neg hw, if_neg hcond]
               trivial
+
+/-- Membership in a declaration map update. -/
+theorem mem_panSemDeclUpdateInfo {β : Type} {entries : InfoMap β} {name : String} {value : β}
+    {x : String × β} (h : x ∈ panSemDeclUpdateInfo entries name value) :
+    x = (name, value) ∨ x ∈ entries := by
+  simp only [panSemDeclUpdateInfo, List.mem_cons, List.mem_filter] at h
+  rcases h with h | ⟨h, _⟩
+  · exact Or.inl h
+  · exact Or.inr h
+
+/-- A successful `lookupInfo` returns a stored value. -/
+theorem lookupInfo_mem_of_some {β : Type} :
+    ∀ (entries : List (String × β)) (key : String) (value : β),
+      lookupInfo key entries = some value → ∃ k, (k, value) ∈ entries
+  | [], _, _, h => by simp [lookupInfo] at h
+  | (candidate, stored) :: rest, key, value, h => by
+      simp only [lookupInfo] at h
+      split at h
+      · cases h
+        exact ⟨candidate, by simp⟩
+      · obtain ⟨k, hk⟩ := lookupInfo_mem_of_some rest key value h
+        exact ⟨k, by simp [hk]⟩
+
+/-- Successful production declaration evaluation keeps the stored code entries
+    and exception shapes byte-ranged, for byte-ranged declarations. -/
+theorem evaluateDecls_entries_ranged {σ : Type} :
+    ∀ (declarations : List (Decl (RiscV.Word 64)))
+      (decl out : PanSemDeclarationState (RiscV.Word 64) σ),
+      (∀ d ∈ declarations, DeclByteRanged d) →
+      evaluateDecls decl declarations = some out →
+      (∀ entry ∈ decl.code,
+        PanLangEntryByteRanged (entry.2.params, entry.2.body, entry.2.returnShape)) →
+      (∀ entry ∈ decl.eshapes, ShapeByteRanged entry.2) →
+      (∀ entry ∈ out.code,
+        PanLangEntryByteRanged (entry.2.params, entry.2.body, entry.2.returnShape)) ∧
+        (∀ entry ∈ out.eshapes, ShapeByteRanged entry.2) := by
+  intro declarations
+  induction declarations with
+  | nil =>
+      intro decl out _ h hc he
+      simp only [evaluateDecls, Option.some.injEq] at h
+      subst h
+      exact ⟨hc, he⟩
+  | cons declaration declarations ih =>
+      intro decl out hranged h hc he
+      have htail : ∀ d ∈ declarations, DeclByteRanged d := fun d hd => hranged d (by simp [hd])
+      have hhead := hranged declaration (by simp)
+      cases declaration with
+      | name _ _ =>
+          simp only [evaluateDecls] at h
+          exact ih decl out htail h hc he
+      | decl shape name expression =>
+          simp only [evaluateDecls] at h
+          split at h
+          · cases h
+          · split at h
+            · exact ih _ out htail h hc he
+            · cases h
+      | function fd =>
+          obtain ⟨_, hparams, hbody, hret⟩ : FunDeclByteRanged fd := hhead
+          simp only [evaluateDecls] at h
+          split at h
+          · refine ih _ out htail h ?_ he
+            intro entry hentry
+            rcases mem_panSemDeclUpdateInfo hentry with rfl | hentry
+            · exact ⟨hparams, hbody, hret⟩
+            · exact hc entry hentry
+          · cases h
+      | exnDecl eid shape =>
+          obtain ⟨_, hshape⟩ : NameRanged eid ∧ ShapeByteRanged shape := hhead
+          simp only [evaluateDecls] at h
+          split at h
+          · cases h
+          · split at h
+            · refine ih _ out htail h hc ?_
+              intro entry hentry
+              rcases mem_panSemDeclUpdateInfo hentry with rfl | hentry
+              · exact hshape
+              · exact he entry hentry
+            · cases h
+
+/-- The entry state of a successful byte-ranged declaration evaluation has
+    byte-ranged code and exception shapes. -/
+theorem panSemEntryStateOfDecls_codeRanged_exnRanged {σ : Type}
+    (machine : PanSemState (RiscV.Word 64) (FfiState σ))
+    (declarations : List (Decl (RiscV.Word 64)))
+    (decl out : PanSemDeclarationState (RiscV.Word 64) σ)
+    (hranged : ∀ d ∈ declarations, DeclByteRanged d)
+    (hc : ∀ entry ∈ decl.code,
+      PanLangEntryByteRanged (entry.2.params, entry.2.body, entry.2.returnShape))
+    (he : ∀ entry ∈ decl.eshapes, ShapeByteRanged entry.2)
+    (h : evaluateDecls decl declarations = some out) :
+    PanSemCodeRanged (panSemEntryStateOfDecls machine out) ∧
+      PanSemExceptionShapesRanged (panSemEntryStateOfDecls machine out) := by
+  obtain ⟨hcOut, heOut⟩ := evaluateDecls_entries_ranged declarations decl out hranged h hc he
+  refine ⟨panSemCodeRanged_of_entries _ ?_, ?_⟩
+  · intro entry hentry
+    obtain ⟨e, he', rfl⟩ := List.mem_map.mp hentry
+    exact hcOut e he'
+  · intro eid shape hlookup
+    obtain ⟨k, hk⟩ := lookupInfo_mem_of_some out.eshapes eid shape hlookup
+    exact heOut (k, shape) hk
 
 end Flapjack
