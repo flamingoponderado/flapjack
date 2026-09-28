@@ -71,20 +71,22 @@ theorem oCompileThroughHOLExact_rel {width : Nat} [NeZero width]
         (listToNumSetHOLExact live) (crepProgToHOL program)) := by
   exact holLoopProgToExecutableCanonical_rel _
 
-/-- Exact-carrier counterpart of the production `crepCompFunc`, retaining
-the byte-range obligations required at the `String`/HOL `mlstring` boundary.
-This is the explicit handoff for the source pipeline's future routing; the
-generic helper above remains for callers without that evidence. -/
+/-- Exact-carrier route for the production `crepCompFunc`, retaining the
+byte-range obligations required at the `String`/HOL `mlstring` boundary. It
+executes the reviewed `comp_func_def` and then the reviewed `optimise_def`.
+Callers without the name evidence continue through the generic helper above. -/
 def crepCompFuncThroughHOLExact {width : Nat} [NeZero width]
     (target : RiscV.Architecture) (functions : InfoMap (Nat × Nat))
     (params : List Nat) (body : CrepProg (BitVec width))
-    (hProgramNames : CrepProgNameRanged body)
-    (hFunctionNames : ∀ entry ∈ functions, CrepNameRanged entry.1) :
+    (_hProgramNames : CrepProgNameRanged body)
+    (_hFunctionNames : ∀ entry ∈ functions, CrepNameRanged entry.1) :
     LoopProg (BitVec width) :=
   let context : LoopContext (BitVec width) :=
     crepMkCtxt target (crepMakeVmap params) functions (params.length - 1)
-  oCompileThroughHOLExact context (List.range params.length) body
-    hProgramNames hFunctionNames
+  let exactContext := productionLoopContextToExact context
+  holLoopProgToExecutableCanonical
+    (optimiseHOL
+      (compFuncHOLExact exactContext.target exactContext.funcs params (crepProgToHOL body)))
 
 /-- Structural relation for the exact-carrier `comp_func` route. -/
 theorem crepCompFuncThroughHOLExact_rel {width : Nat} [NeZero width]
@@ -95,15 +97,16 @@ theorem crepCompFuncThroughHOLExact_rel {width : Nat} [NeZero width]
     loopProgExecRel
       (crepCompFuncThroughHOLExact target functions params body
         hProgramNames hFunctionNames)
-      (ocompileHOLExact
-        (productionLoopContextToExact (α := BitVec width)
-          (crepMkCtxt (α := BitVec width) target (crepMakeVmap params)
-            functions (params.length - 1)))
-        (listToNumSetHOLExact (List.range params.length)) (crepProgToHOL body)) := by
-  simpa [crepCompFuncThroughHOLExact, crepMkCtxt] using
-    (oCompileThroughHOLExact_rel
-      (crepMkCtxt target (crepMakeVmap params) functions (params.length - 1))
-      (List.range params.length) body hProgramNames hFunctionNames)
+      (optimiseHOL
+        (compFuncHOLExact
+          (productionLoopContextToExact (α := BitVec width)
+            (crepMkCtxt (α := BitVec width) target (crepMakeVmap params)
+              functions (params.length - 1))).target
+          (productionLoopContextToExact (α := BitVec width)
+            (crepMkCtxt (α := BitVec width) target (crepMakeVmap params)
+              functions (params.length - 1))).funcs
+          params (crepProgToHOL body))) := by
+  exact holLoopProgToExecutableCanonical_rel _
 
 theorem oCompile_skip [OfNat α 0] [OfNat α 1]
     (context : LoopContext α) (live : List Nat) :

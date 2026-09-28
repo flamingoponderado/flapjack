@@ -36,12 +36,4 @@ def holLoopAssignedVars {width : Nat} [NeZero width] :
       returns ++ exception :: holLoopAssignedVars handler ++ holLoopAssignedVars normal
   | _ => []
 
-/-- HOL `loopLang$nested_seq` over the exact program carrier. -/
-@[hol "cakeml/pancake/loopLangScript.sml" "nested_seq_def"
-  (words_as_type_indexed_bitvec)]
-def holLoopNestedSeq {width : Nat} [NeZero width] :
-    List (HolLoopProg width) → HolLoopProg width
-  | [] => .skip
-  | statement :: statements => .seq statement (holLoopNestedSeq statements)
-
 end Flapjack

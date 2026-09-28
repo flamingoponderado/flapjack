@@ -7,7 +7,7 @@ import Flapjack.Pancake.Semantics.LoopProps.NestedSeqSyntaxExact
 Counterpart of `cakeml/pancake/proofs/crep_to_loopProofScript.sml`'s
 `member_cutset_survives_comp_exp_cases` (1321), its projections (1426/1428) and
 `[local]` flips (1432/1434) over the exact `compileExpHOLExact`/
-`compileExpsHOLExact`, `survivesHOLExact` and `holLoopNestedSeq`
+`compileExpsHOLExact`, `survivesHOLExact` and `loopNestedSeqHOL`
 (bead `flapjack-pxn.18.5.6.33.6`).
 -/
 
@@ -16,17 +16,17 @@ namespace Flapjack
 variable {width : Nat} [NeZero width]
 
 theorem survives_nested_seq_append (n : Nat) (p q : List (HolLoopProg width))
-    (hp : survivesHOLExact n (holLoopNestedSeq p) = true)
-    (hq : survivesHOLExact n (holLoopNestedSeq q) = true) :
-    survivesHOLExact n (holLoopNestedSeq (p ++ q)) = true :=
+    (hp : survivesHOLExact n (loopNestedSeqHOL p) = true)
+    (hq : survivesHOLExact n (loopNestedSeqHOL q) = true) :
+    survivesHOLExact n (loopNestedSeqHOL (p ++ q)) = true :=
   survives_nested_seq_intro p q n ⟨hp, hq⟩
 
 mutual
 theorem compileExpHOLExact_survives (ct : CrepToLoopContextExact) (tmp : Nat) (l : NumSet) :
     ∀ (e : CrepExpHOL width) (n : Nat), (sptLookup n l).isSome = true →
-      survivesHOLExact n (holLoopNestedSeq (compileExpHOLExact ct tmp l e).1) = true
+      survivesHOLExact n (loopNestedSeqHOL (compileExpHOLExact ct tmp l e).1) = true
   | .baseAddr, n, _ | .topAddr, n, _ | .const _, n, _ | .var _, n, _ | .loadGlob _, n, _ => by
-      simp [compileExpHOLExact, holLoopNestedSeq, survivesHOLExact]
+      simp [compileExpHOLExact, loopNestedSeqHOL, survivesHOLExact]
   | .load a, n, h => by
       have ih := compileExpHOLExact_survives ct tmp l a n h
       rcases hA : compileExpHOLExact ct tmp l a with ⟨c, v, m, o⟩
@@ -35,7 +35,7 @@ theorem compileExpHOLExact_survives (ct : CrepToLoopContextExact) (tmp : Nat) (l
       have ih := compileExpHOLExact_survives ct tmp l a n h
       rcases hA : compileExpHOLExact ct tmp l a with ⟨c, v, m, o⟩
       rw [hA] at ih; simp only at ih; simp only [compileExpHOLExact, hA]
-      exact survives_nested_seq_append n _ _ ih (by simp [holLoopNestedSeq, survivesHOLExact])
+      exact survives_nested_seq_append n _ _ ih (by simp [loopNestedSeqHOL, survivesHOLExact])
   | .op o es, n, h => by
       have ih := compileExpsHOLExact_survives ct tmp l es n h
       rcases hA : compileExpsHOLExact ct tmp l es with ⟨c, vs, m, ol⟩
@@ -49,17 +49,17 @@ theorem compileExpHOLExact_survives (ct : CrepToLoopContextExact) (tmp : Nat) (l
         (sptListInsert ((List.range vs.length).map (fun offset => m + offset)) ol) with ⟨oc, d⟩
       simp only
       have hassign : ∀ (is : List Nat) (xs : List (HolLoopExp width)),
-          survivesHOLExact n (holLoopNestedSeq
+          survivesHOLExact n (loopNestedSeqHOL
             (List.zipWith (fun i v => HolLoopProg.assign (m + i) v) is xs)) = true := by
         intro is xs
         induction is generalizing xs with
-        | nil => simp [holLoopNestedSeq, survivesHOLExact]
-        | cons i is ihi => cases xs <;> simp [holLoopNestedSeq, survivesHOLExact, ihi]
-      have hoc : survivesHOLExact n (holLoopNestedSeq oc) = true := by
+        | nil => simp [loopNestedSeqHOL, survivesHOLExact]
+        | cons i is ihi => cases xs <;> simp [loopNestedSeqHOL, survivesHOLExact, ihi]
+      have hoc : survivesHOLExact n (loopNestedSeqHOL oc) = true := by
         cases o
         simp only [compileCrepopHOLExact] at hB
         split at hB <;> (simp only [Prod.mk.injEq] at hB; obtain ⟨rfl, rfl⟩ := hB) <;>
-          simp [holLoopNestedSeq, survivesHOLExact]
+          simp [loopNestedSeqHOL, survivesHOLExact]
       exact survives_nested_seq_append n _ _ (survives_nested_seq_append n _ _ ih (hassign _ _)) hoc
   | .cmp o a b, n, h => by
       have iha := compileExpHOLExact_survives ct tmp l a n h
@@ -72,7 +72,7 @@ theorem compileExpHOLExact_survives (ct : CrepToLoopContextExact) (tmp : Nat) (l
       rw [hB] at ihb hdom2; simp only at ihb hdom2
       simp only [compileExpHOLExact, hA, hB, progIfHOLExact]
       refine survives_nested_seq_append n _ _ (survives_nested_seq_append n _ _ iha ihb) ?_
-      simp only [holLoopNestedSeq, survivesHOLExact, Bool.true_and, Bool.and_true]
+      simp only [loopNestedSeqHOL, survivesHOLExact, Bool.true_and, Bool.and_true]
       exact sptListInsert_mono n _ _ hdom2
   | .shift o a b, n, h => by
       have iha := compileExpHOLExact_survives ct tmp l a n h
@@ -88,8 +88,8 @@ termination_by e => sizeOf e
 
 theorem compileExpsHOLExact_survives (ct : CrepToLoopContextExact) (tmp : Nat) (l : NumSet) :
     ∀ (es : List (CrepExpHOL width)) (n : Nat), (sptLookup n l).isSome = true →
-      survivesHOLExact n (holLoopNestedSeq (compileExpsHOLExact ct tmp l es).1) = true
-  | [], n, _ => by simp [compileExpsHOLExact, holLoopNestedSeq, survivesHOLExact]
+      survivesHOLExact n (loopNestedSeqHOL (compileExpsHOLExact ct tmp l es).1) = true
+  | [], n, _ => by simp [compileExpsHOLExact, loopNestedSeqHOL, survivesHOLExact]
   | e :: es, n, h => by
       have iha := compileExpHOLExact_survives ct tmp l e n h
       have hdom := compileExpHOLExact_domain_mono ct tmp l e n h
@@ -121,11 +121,11 @@ end CrepToLoopCompExpSurvivesWitnesses
 theorem member_cutset_survives_comp_exp_cases :
     (∀ (ct : CrepToLoopContextExact) (tmp : Nat) (l : NumSet) (e : CrepExpHOL width)
       (p : List (HolLoopProg width)) (le : HolLoopExp width) (ntmp : Nat) (nl : NumSet) (n : Nat),
-      (sptLookup n l).isSome = true ∧ compileExpHOLExact ct tmp l e = (p, le, ntmp, nl) → survivesHOLExact n (holLoopNestedSeq p) = true) ∧
+      (sptLookup n l).isSome = true ∧ compileExpHOLExact ct tmp l e = (p, le, ntmp, nl) → survivesHOLExact n (loopNestedSeqHOL p) = true) ∧
     (∀ (ct : CrepToLoopContextExact) (tmp : Nat) (l : NumSet) (e : List (CrepExpHOL width))
       (p : List (HolLoopProg width)) (le : List (HolLoopExp width)) (ntmp : Nat) (nl : NumSet)
       (n : Nat),
-      (sptLookup n l).isSome = true ∧ compileExpsHOLExact ct tmp l e = (p, le, ntmp, nl) → survivesHOLExact n (holLoopNestedSeq p) = true) :=
+      (sptLookup n l).isSome = true ∧ compileExpsHOLExact ct tmp l e = (p, le, ntmp, nl) → survivesHOLExact n (loopNestedSeqHOL p) = true) :=
   ⟨fun ct tmp l e p le ntmp nl n ⟨hn, h⟩ => by
       have := compileExpHOLExact_survives ct tmp l e n hn; rw [h] at this; exact this,
    fun ct tmp l e p le ntmp nl n ⟨hn, h⟩ => by
@@ -137,7 +137,7 @@ theorem member_cutset_survives_comp_exp_cases :
 theorem member_cutset_survives_comp_exp :
     ∀ (ct : CrepToLoopContextExact) (tmp : Nat) (l : NumSet) (e : CrepExpHOL width)
       (p : List (HolLoopProg width)) (le : HolLoopExp width) (ntmp : Nat) (nl : NumSet) (n : Nat),
-      (sptLookup n l).isSome = true ∧ compileExpHOLExact ct tmp l e = (p, le, ntmp, nl) → survivesHOLExact n (holLoopNestedSeq p) = true :=
+      (sptLookup n l).isSome = true ∧ compileExpHOLExact ct tmp l e = (p, le, ntmp, nl) → survivesHOLExact n (loopNestedSeqHOL p) = true :=
   member_cutset_survives_comp_exp_cases.1
 
 /-- Exact HOL `member_cutset_survives_comp_exps` (`crep_to_loopProofScript.sml:1428`, `CONJUNCT2`). -/
@@ -147,7 +147,7 @@ theorem member_cutset_survives_comp_exps :
     ∀ (ct : CrepToLoopContextExact) (tmp : Nat) (l : NumSet) (e : List (CrepExpHOL width))
       (p : List (HolLoopProg width)) (le : List (HolLoopExp width)) (ntmp : Nat) (nl : NumSet)
       (n : Nat),
-      (sptLookup n l).isSome = true ∧ compileExpsHOLExact ct tmp l e = (p, le, ntmp, nl) → survivesHOLExact n (holLoopNestedSeq p) = true :=
+      (sptLookup n l).isSome = true ∧ compileExpsHOLExact ct tmp l e = (p, le, ntmp, nl) → survivesHOLExact n (loopNestedSeqHOL p) = true :=
   member_cutset_survives_comp_exp_cases.2
 
 /-- Exact HOL `member_cutset_survives_comp_exp_flip` (`crep_to_loopProofScript.sml:1432-1433`,
@@ -157,7 +157,7 @@ theorem member_cutset_survives_comp_exps :
 theorem member_cutset_survives_comp_exp_flip :
     ∀ (ct : CrepToLoopContextExact) (tmp : Nat) (l : NumSet) (e : CrepExpHOL width)
       (p : List (HolLoopProg width)) (le : HolLoopExp width) (ntmp : Nat) (nl : NumSet) (n : Nat),
-      compileExpHOLExact ct tmp l e = (p, le, ntmp, nl) ∧ (sptLookup n l).isSome = true → survivesHOLExact n (holLoopNestedSeq p) = true :=
+      compileExpHOLExact ct tmp l e = (p, le, ntmp, nl) ∧ (sptLookup n l).isSome = true → survivesHOLExact n (loopNestedSeqHOL p) = true :=
   fun ct tmp l e p le ntmp nl n ⟨h, hn⟩ => member_cutset_survives_comp_exp ct tmp l e p le ntmp nl n ⟨hn, h⟩
 
 /-- Exact HOL `member_cutset_survives_comp_exps_flip` (`crep_to_loopProofScript.sml:1434-1435`,
@@ -168,16 +168,16 @@ theorem member_cutset_survives_comp_exps_flip :
     ∀ (ct : CrepToLoopContextExact) (tmp : Nat) (l : NumSet) (e : List (CrepExpHOL width))
       (p : List (HolLoopProg width)) (le : List (HolLoopExp width)) (ntmp : Nat) (nl : NumSet)
       (n : Nat),
-      compileExpsHOLExact ct tmp l e = (p, le, ntmp, nl) ∧ (sptLookup n l).isSome = true → survivesHOLExact n (holLoopNestedSeq p) = true :=
+      compileExpsHOLExact ct tmp l e = (p, le, ntmp, nl) ∧ (sptLookup n l).isSome = true → survivesHOLExact n (loopNestedSeqHOL p) = true :=
   fun ct tmp l e p le ntmp nl n ⟨h, hn⟩ => member_cutset_survives_comp_exps ct tmp l e p le ntmp nl n ⟨hn, h⟩
 
 theorem survives_zipWith_assign (n : Nat) :
     ∀ (names : List Nat) (values : List (HolLoopExp width)),
-      survivesHOLExact n (holLoopNestedSeq (List.zipWith HolLoopProg.assign names values)) = true
-  | [], _ => by simp [holLoopNestedSeq, survivesHOLExact]
-  | _ :: _, [] => by simp [holLoopNestedSeq, survivesHOLExact]
+      survivesHOLExact n (loopNestedSeqHOL (List.zipWith HolLoopProg.assign names values)) = true
+  | [], _ => by simp [loopNestedSeqHOL, survivesHOLExact]
+  | _ :: _, [] => by simp [loopNestedSeqHOL, survivesHOLExact]
   | x :: xs, v :: vs => by
-      simp only [List.zipWith_cons_cons, holLoopNestedSeq, survivesHOLExact, Bool.true_and]
+      simp only [List.zipWith_cons_cons, loopNestedSeqHOL, survivesHOLExact, Bool.true_and]
       exact survives_zipWith_assign n xs vs
 
 theorem compileHOLExact_survives :
@@ -194,9 +194,9 @@ theorem compileHOLExact_survives :
       have hc := compileExpsHOLExact_survives ctxt (ctxt.vmax + 1) l es n h
       rcases hA : compileExpsHOLExact ctxt (ctxt.vmax + 1) l es with ⟨c, vs, t, o⟩
       rw [hA] at hc; simp only at hc
-      simp only [compileHOLExact, hA, loopNestedSeqHOL_eq_holLoopNestedSeq]
+      simp only [compileHOLExact, hA]
       exact survives_nested_seq_append n _ _ (survives_nested_seq_append n _ _ hc
-        (survives_zipWith_assign n _ _)) (by simp [holLoopNestedSeq, survivesHOLExact])
+        (survives_zipWith_assign n _ _)) (by simp [loopNestedSeqHOL, survivesHOLExact])
   | ctxt, l, .shMem o nm a, n, h => by
       simp only [compileHOLExact]
       split
@@ -204,8 +204,7 @@ theorem compileHOLExact_survives :
       · have hc := compileExpHOLExact_survives ctxt (ctxt.vmax + 1) l a n h
         rcases hA : compileExpHOLExact ctxt (ctxt.vmax + 1) l a with ⟨c, v, t, o⟩
         rw [hA] at hc; simp only at hc
-        simp only [loopNestedSeqHOL_eq_holLoopNestedSeq]
-        exact survives_nested_seq_append n _ _ hc (by simp [holLoopNestedSeq, survivesHOLExact])
+        exact survives_nested_seq_append n _ _ hc (by simp [loopNestedSeqHOL, survivesHOLExact])
   | ctxt, l, .store d v, n, h | ctxt, l, .store32 d v, n, h | ctxt, l, .storeByte d v, n, h => by
       have hc := compileExpHOLExact_survives ctxt (ctxt.vmax + 1) l d n h
       have hdom := compileExpHOLExact_domain_mono ctxt (ctxt.vmax + 1) l d n h
@@ -214,15 +213,15 @@ theorem compileHOLExact_survives :
       have hc2 := compileExpHOLExact_survives ctxt t o v n hdom
       rcases hB : compileExpHOLExact ctxt t o v with ⟨c', v', t', o'⟩
       rw [hB] at hc2; simp only at hc2
-      simp only [compileHOLExact, hA, hB, loopNestedSeqHOL_eq_holLoopNestedSeq]
+      simp only [compileHOLExact, hA, hB]
       exact survives_nested_seq_append n _ _ (survives_nested_seq_append n _ _ hc hc2)
-        (by simp [holLoopNestedSeq, survivesHOLExact])
+        (by simp [loopNestedSeqHOL, survivesHOLExact])
   | ctxt, l, .storeGlob g v, n, h => by
       have hc := compileExpHOLExact_survives ctxt (ctxt.vmax + 1) l v n h
       rcases hA : compileExpHOLExact ctxt (ctxt.vmax + 1) l v with ⟨c, v', t, o⟩
       rw [hA] at hc; simp only at hc
-      simp only [compileHOLExact, hA, loopNestedSeqHOL_eq_holLoopNestedSeq]
-      exact survives_nested_seq_append n _ _ hc (by simp [holLoopNestedSeq, survivesHOLExact])
+      simp only [compileHOLExact, hA]
+      exact survives_nested_seq_append n _ _ hc (by simp [loopNestedSeqHOL, survivesHOLExact])
   | ctxt, l, .assign nm v, n, h => by
       simp only [compileHOLExact]
       split
@@ -230,8 +229,7 @@ theorem compileHOLExact_survives :
       · have hc := compileExpHOLExact_survives ctxt (ctxt.vmax + 1) l v n h
         rcases hA : compileExpHOLExact ctxt (ctxt.vmax + 1) l v with ⟨c, v', t, o⟩
         rw [hA] at hc; simp only at hc
-        simp only [loopNestedSeqHOL_eq_holLoopNestedSeq]
-        exact survives_nested_seq_append n _ _ hc (by simp [holLoopNestedSeq, survivesHOLExact])
+        exact survives_nested_seq_append n _ _ hc (by simp [loopNestedSeqHOL, survivesHOLExact])
   | ctxt, l, .seq p1 p2, n, h => by
       simp only [compileHOLExact, survivesHOLExact, Bool.and_eq_true]
       exact ⟨compileHOLExact_survives ctxt l p1 n h, compileHOLExact_survives ctxt l p2 n h⟩
@@ -239,46 +237,45 @@ theorem compileHOLExact_survives :
       have hc := compileExpHOLExact_survives ctxt (ctxt.vmax + 1) l v n h
       rcases hA : compileExpHOLExact ctxt (ctxt.vmax + 1) l v with ⟨c, v', t, o⟩
       rw [hA] at hc; simp only at hc
-      simp only [compileHOLExact, hA, survivesHOLExact, Bool.and_eq_true, Bool.true_and,
-        loopNestedSeqHOL_eq_holLoopNestedSeq]
+      simp only [compileHOLExact, hA, survivesHOLExact, Bool.and_eq_true, Bool.true_and]
       refine ⟨hc, compileHOLExact_survives _ _ body n ?_⟩
       rw [sptLookup_sptInsert]; split <;> simp_all
   | ctxt, l, .ite c p1 p2, n, h => by
       have hc := compileExpHOLExact_survives ctxt (ctxt.vmax + 1) l c n h
       rcases hA : compileExpHOLExact ctxt (ctxt.vmax + 1) l c with ⟨cc, v', t, o⟩
       rw [hA] at hc; simp only at hc
-      simp only [compileHOLExact, hA, loopNestedSeqHOL_eq_holLoopNestedSeq]
+      simp only [compileHOLExact, hA]
       refine survives_nested_seq_append n _ _ hc ?_
-      simp only [holLoopNestedSeq, survivesHOLExact, Bool.true_and, Bool.and_true,
+      simp only [loopNestedSeqHOL, survivesHOLExact, Bool.true_and, Bool.and_true,
         Bool.and_eq_true]
       exact ⟨⟨compileHOLExact_survives ctxt l p1 n h, compileHOLExact_survives ctxt l p2 n h⟩, h⟩
   | ctxt, l, .while c body, n, h => by
       have hc := compileExpHOLExact_survives ctxt (ctxt.vmax + 1) l c n h
       rcases hA : compileExpHOLExact ctxt (ctxt.vmax + 1) l c with ⟨cc, v', t, o⟩
       rw [hA] at hc; simp only at hc
-      simp only [compileHOLExact, hA, loopNestedSeqHOL_eq_holLoopNestedSeq, survivesHOLExact,
+      simp only [compileHOLExact, hA, survivesHOLExact,
         Bool.and_eq_true]
       have hb := compileHOLExact_survives ctxt l body n h
       refine ⟨⟨h, h⟩, survives_nested_seq_append n _ _ hc ?_⟩
-      simp_all [holLoopNestedSeq, survivesHOLExact]
+      simp_all [loopNestedSeqHOL, survivesHOLExact]
   | ctxt, l, .call ri nm args, n, h => by
       have hc := compileExpsHOLExact_survives ctxt (ctxt.vmax + 1) l args n h
       rcases hA : compileExpsHOLExact ctxt (ctxt.vmax + 1) l args with ⟨cc, vs, t, o⟩
       rw [hA] at hc; simp only at hc
       rw [compileHOLExact.eq_def]
-      simp only [hA, loopNestedSeqHOL_eq_holLoopNestedSeq]
+      simp only [hA]
       refine survives_nested_seq_append n _ _
         (survives_nested_seq_append n _ _ hc (survives_zipWith_assign n _ _)) ?_
       cases ri with
-      | none => simp [holLoopNestedSeq, survivesHOLExact]
+      | none => simp [loopNestedSeqHOL, survivesHOLExact]
       | some rh =>
         obtain ⟨rv, mh⟩ := rh
         cases mh with
-        | none => simp [holLoopNestedSeq, survivesHOLExact, h]
+        | none => simp [loopNestedSeqHOL, survivesHOLExact, h]
         | some eh =>
           obtain ⟨ex, hp⟩ := eh
           have hh := compileHOLExact_survives ctxt l hp n h
-          simp_all [holLoopNestedSeq, survivesHOLExact]
+          simp_all [loopNestedSeqHOL, survivesHOLExact]
 termination_by _ _ p => sizeOf p
 decreasing_by
   all_goals simp_wf

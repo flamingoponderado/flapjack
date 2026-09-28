@@ -1,6 +1,5 @@
 import Flapjack.Pancake.Semantics.LoopProps.NestedSeqExact
 import Flapjack.Pancake.Semantics.LoopProps.CutSets
-import Flapjack.Pancake.LoopLang.AssignedVars
 
 /-!
 # loopProps `survives`/`cut_sets` `nested_seq` lemmas and friends
@@ -12,16 +11,6 @@ Counterparts of `cakeml/pancake/semantics/loopPropsScript.sml`'s
 -/
 
 namespace Flapjack
-
-/-- The two exact renderings of HOL `nested_seq_def` (`loopNestedSeqHOL` in
-    `LoopLang.lean` and `holLoopNestedSeq` in `LoopLang/AssignedVars.lean`) are the
-    same function, so lemmas stated over either compose. -/
-theorem loopNestedSeqHOL_eq_holLoopNestedSeq {width : Nat} [NeZero width] :
-    (loopNestedSeqHOL : List (HolLoopProg width) → HolLoopProg width) = holLoopNestedSeq := by
-  funext p
-  induction p with
-  | nil => rfl
-  | cons c p ih => simp [loopNestedSeqHOL, holLoopNestedSeq, ih]
 
 /-- HOL `alist$ALOOKUP` (`ALOOKUP [] q = NONE`,
     `ALOOKUP ((x,y)::t) q = if x = q then SOME y else ALOOKUP t q`).  HOL library,
@@ -37,12 +26,12 @@ variable {width : Nat} [NeZero width]
   (words_as_type_indexed_bitvec)]
 theorem survives_nested_seq_intro :
     ∀ (p q : List (HolLoopProg width)) (n : Nat),
-      survivesHOLExact n (holLoopNestedSeq p) = true ∧
-      survivesHOLExact n (holLoopNestedSeq q) = true →
-      survivesHOLExact n (holLoopNestedSeq (p ++ q)) = true
+      survivesHOLExact n (loopNestedSeqHOL p) = true ∧
+      survivesHOLExact n (loopNestedSeqHOL q) = true →
+      survivesHOLExact n (loopNestedSeqHOL (p ++ q)) = true
   | [], q, n, ⟨_, hq⟩ => hq
   | c :: p, q, n, ⟨hp, hq⟩ => by
-      simp only [List.cons_append, holLoopNestedSeq, survivesHOLExact, Bool.and_eq_true] at hp ⊢
+      simp only [List.cons_append, loopNestedSeqHOL, survivesHOLExact, Bool.and_eq_true] at hp ⊢
       exact ⟨hp.1, survives_nested_seq_intro p q n ⟨hp.2, hq⟩⟩
 
 /-- Exact HOL `nested_assigns_survives` (`loopPropsScript.sml:729-732`). -/
@@ -51,12 +40,12 @@ theorem survives_nested_seq_intro :
 theorem nested_assigns_survives :
     ∀ (xs : List Nat) (ys : List (HolLoopExp width)) (n : Nat),
       xs.length = ys.length →
-      survivesHOLExact n (holLoopNestedSeq (List.zipWith HolLoopProg.assign xs ys)) = true
-  | [], [], _, _ => by simp [holLoopNestedSeq, survivesHOLExact]
+      survivesHOLExact n (loopNestedSeqHOL (List.zipWith HolLoopProg.assign xs ys)) = true
+  | [], [], _, _ => by simp [loopNestedSeqHOL, survivesHOLExact]
   | [], _ :: _, _, h => by simp at h
   | _ :: _, [], _, h => by simp at h
   | x :: xs, y :: ys, n, h => by
-      simp only [List.zipWith_cons_cons, holLoopNestedSeq, survivesHOLExact, Bool.true_and]
+      simp only [List.zipWith_cons_cons, loopNestedSeqHOL, survivesHOLExact, Bool.true_and]
       exact nested_assigns_survives xs ys n (by simpa using h)
 
 /-- Exact HOL `cut_sets_nested_seq` (`loopPropsScript.sml:767-769`). -/
@@ -64,11 +53,11 @@ theorem nested_assigns_survives :
   (words_as_type_indexed_bitvec)]
 theorem cut_sets_nested_seq :
     ∀ (p q : List (HolLoopProg width)) (l : NumSet),
-      cutSetsHOL l (holLoopNestedSeq (p ++ q)) =
-        cutSetsHOL (cutSetsHOL l (holLoopNestedSeq p)) (holLoopNestedSeq q)
-  | [], q, l => by simp [holLoopNestedSeq, cutSetsHOL]
+      cutSetsHOL l (loopNestedSeqHOL (p ++ q)) =
+        cutSetsHOL (cutSetsHOL l (loopNestedSeqHOL p)) (loopNestedSeqHOL q)
+  | [], q, l => by simp [loopNestedSeqHOL, cutSetsHOL]
   | c :: p, q, l => by
-      simp only [List.cons_append, holLoopNestedSeq, cutSetsHOL]
+      simp only [List.cons_append, loopNestedSeqHOL, cutSetsHOL]
       exact cut_sets_nested_seq p q (cutSetsHOL l c)
 
 /-- Exact HOL `lookup_alist_insert_any` (`loopPropsScript.sml:321-325`):
