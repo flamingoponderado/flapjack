@@ -41,15 +41,19 @@ open Flapjack.Pancake.PanLang
     compiler path uses this exact carrier. That executable-path replacement
     remains tracked on the parent correctness bead.
 
-    No separate `(words_as_type_indexed_bitvec)` qualifier is attached: that
-    flag cannot be combined with `fmap_as_finite_support_relation` under the
-    current manifest schema (no reviewed status carries both), and the traced
-    finite maps are already named above. The schema question is tracked by
-    flapjack-ikjm.4.
+    The combined `(fmap_as_finite_support_relation := [...])` +
+    `(words_as_type_indexed_bitvec)` qualifiers are attached: the relation
+    traverses the finite-map fields named above, and HOL's type-indexed
+    `'a word` (context exception codes, `ProgHOL width`) is rendered by the
+    positive-width `BitVec width` carrier of the named structures, so the
+    combined reviewed status
+    `reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec`
+    records the whole representation translation (bead flapjack-ikjm.4).
 -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "code_rel_def"
   (fmap_as_finite_support_relation := [sourceCode, targetCode,
-    PanToCrepContextExact.funcs, PanToCrepContextExact.eids])]
+    PanToCrepContextExact.funcs, PanToCrepContextExact.eids])
+  (words_as_type_indexed_bitvec)]
 def codeRelExactHOLW {width : Nat} [NeZero width]
     (context : PanToCrepContextExact width)
     (sourceCode : HolFiniteMapExact MlS
@@ -92,11 +96,13 @@ def codeRelExactHOLW {width : Nat} [NeZero width]
     context carrier. This tags only the exact proof-side relation, not the
     production `codeRel`/`codeRelW`, which remain on the parent bead.
 
-    No separate `(words_as_type_indexed_bitvec)` qualifier is attached; see the
-    schema note on `codeRelExactHOLW` above (tracked by flapjack-ikjm.4). -/
+    The combined `(fmap_as_finite_support_relation := [...])` +
+    `(words_as_type_indexed_bitvec)` qualifiers are attached, matching the
+    imported `code_rel_def` tag (bead flapjack-ikjm.4). -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "code_rel_imp"
   (fmap_as_finite_support_relation := [sourceCode, targetCode,
-    PanToCrepContextExact.funcs, PanToCrepContextExact.eids])]
+    PanToCrepContextExact.funcs, PanToCrepContextExact.eids])
+  (words_as_type_indexed_bitvec)]
 theorem codeRelExactHOLW_imp {width : Nat} [NeZero width]
     (context : PanToCrepContextExact width)
     (sourceCode : HolFiniteMapExact MlS
@@ -170,11 +176,13 @@ theorem holFmapAsFiniteSupportRelationWitness_CrepSemHOLState
     metis_tac[]`. This tags only the exact proof-side theorem, not the
     production `codeRel`/`codeRelW` carriers.
 
-    No separate `(words_as_type_indexed_bitvec)` qualifier is attached; see the
-    schema note on `codeRelExactHOLW` above (tracked by flapjack-ikjm.4). -/
+    The combined `(fmap_as_finite_support_relation := [...])` +
+    `(words_as_type_indexed_bitvec)` qualifiers are attached; see the schema
+    note on `codeRelExactHOLW` above (bead flapjack-ikjm.4). -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "code_rel_empty_locals"
   (fmap_as_finite_support_relation :=
-    [PanSemStateFiniteExact.code, CrepSemHOLState.code])]
+    [PanSemStateFiniteExact.code, CrepSemHOLState.code])
+  (words_as_type_indexed_bitvec)]
 theorem codeRelExactHOLW_emptyLocals {width : Nat} [NeZero width] {σ : Type}
     (context : PanToCrepContextExact width)
     (source : PanSemStateFiniteExact width σ)
