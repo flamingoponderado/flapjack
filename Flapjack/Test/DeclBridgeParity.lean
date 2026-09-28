@@ -193,6 +193,174 @@ private theorem loadMissDom (address : RiscV.Word 64) :
     loadMissProductionState.memaddrs address = loadMissState.memaddrs address := by
   simp
 
+/-! ## Concrete flat-load recursion bridge to exact `mem_load` -/
+
+private def recursiveLoadStructs : StructContext :=
+  [("S", { fields := [("f", Shape.one)], size := 3 })]
+
+private def recursiveLoadMemory : BitVec 64 → Option (PanValue (BitVec 64)) := fun address =>
+  if address = 0 then some (.word (BitVec.ofNat 64 0x11))
+  else if address = 8 then some (.word (BitVec.ofNat 64 0x22)) else none
+
+private def recursiveLoadExactState : PanSemStateFiniteExact 64 Unit :=
+  { loadHitState 0x11 with
+    memory := fun address => if address = 0 then .word (BitVec.ofNat 64 0x11)
+      else if address = 8 then .word (BitVec.ofNat 64 0x22) else .word 0
+    memaddrs := fun address => address = 0 ∨ address = 8 }
+
+private instance : DecidablePred recursiveLoadExactState.memaddrs := fun address => by
+  change Decidable (address = 0 ∨ address = 8)
+  infer_instance
+
+private def recursiveLoadProductionState : PanSemState (RiscV.Word 64) Unit :=
+  { loadHitProductionState with memaddrs := fun address => address = 0 || address = 8 }
+
+private theorem recursiveLoadMemoryCodec :
+    PanValueMemoryCodecRel recursiveLoadMemory recursiveLoadExactState := by
+  intro address
+  by_cases h0 : address = 0
+  · subst address
+    simp [recursiveLoadMemory, recursiveLoadExactState]
+  · by_cases h8 : address = 8
+    · subst address
+      simp [recursiveLoadMemory, recursiveLoadExactState]
+    · change (if address = 0 then some (PanValue.word (BitVec.ofNat 64 0x11))
+          else if address = 8 then some (PanValue.word (BitVec.ofNat 64 0x22)) else none) = _
+      rw [if_neg h0, if_neg h8]
+      have hdomain : ¬ recursiveLoadExactState.memaddrs address := by
+        change ¬ (address = 0 ∨ address = 8)
+        exact not_or.mpr ⟨h0, h8⟩
+      rw [if_neg hdomain]
+
+private theorem recursiveLoadDomain (address : BitVec 64) :
+    recursiveLoadProductionState.memaddrs address =
+      decide (recursiveLoadExactState.memaddrs address) := by
+  simp [recursiveLoadProductionState, recursiveLoadExactState]
+
+private theorem recursiveLoadCtxBR : CtxBR recursiveLoadStructs := by
+  intro p hp
+  rcases p with ⟨name, info⟩
+  simp [recursiveLoadStructs] at hp
+  rcases hp with ⟨rfl, rfl⟩
+  simp [NameRanged, ListParamByteRanged, ParamByteRanged, ShapeByteRanged]
+
+/-- Concrete flat list recursion reads the second word at address 8 and agrees
+    with the exact `mem_loads` result under the finite memory codec. -/
+example :
+    ((panValueFlatLoadListFuel recursiveLoadStructs
+        (panValueFlatMachineReadWord recursiveLoadProductionState recursiveLoadMemory)
+        panSemBitVec64BytesInWord
+        (panValueFlatContextFuel recursiveLoadStructs +
+          panValueFlatShapeFuel.panValueFlatShapeListFuel [.one, .one])
+        [.one, .one] 0).map (List.map panValueToHOL) : Option (List (ValueHOL 64))) =
+      some [.val (.word (BitVec.ofNat 64 0x11)), .val (.word (BitVec.ofNat 64 0x22))] := by
+  calc
+    _ = memLoadsHOLExact [ShapeHOL.one, ShapeHOL.one] 0
+        recursiveLoadExactState.memaddrs recursiveLoadExactState.memory
+        (structContextToHOL recursiveLoadStructs.toHOL) := by
+      simpa [shapeToHOL] using panValueFlatLoadListFuel_memLoadsHOLExact recursiveLoadProductionState
+        recursiveLoadExactState recursiveLoadStructs recursiveLoadMemory [.one, .one] 0
+        (panValueFlatContextFuel recursiveLoadStructs +
+          panValueFlatShapeFuel.panValueFlatShapeListFuel [.one, .one])
+        recursiveLoadMemoryCodec recursiveLoadDomain recursiveLoadCtxBR
+        (by
+          intro shape hshape
+          rcases List.mem_cons.mp hshape with hshape | hshape
+          · cases hshape; simp [ShapeByteRanged]
+          · rcases List.mem_cons.mp hshape with hshape | hshape
+            · cases hshape; simp [ShapeByteRanged]
+            · simp at hshape) (Nat.le_refl _)
+    _ = some [.val (.word (BitVec.ofNat 64 0x11)), .val (.word (BitVec.ofNat 64 0x22))] := by
+      simp [memLoadsHOLExact, memLoadHOLExact, recursiveLoadExactState,
+        bytesInWordHOL, recursiveLoadStructs, structContextToHOL, StructContext.toHOL]
+
+/-- The same recursive list is also assembled by the production `.comb` shape
+    into the exact HOL `RStruct` result. -/
+example :
+    (panValueFlatLoadFuel recursiveLoadStructs
+        (panValueFlatMachineReadWord recursiveLoadProductionState recursiveLoadMemory)
+        panSemBitVec64BytesInWord
+        (panValueFlatContextFuel recursiveLoadStructs +
+          panValueFlatShapeFuel (.comb [.one, .one]))
+        (.comb [.one, .one]) 0).map panValueToHOL =
+      some (.rStruct
+        [.val (.word (BitVec.ofNat 64 0x11)), .val (.word (BitVec.ofNat 64 0x22))]) := by
+  calc
+    _ = memLoadHOLExact (shapeToHOL (.comb [.one, .one])) 0
+        recursiveLoadExactState.memaddrs recursiveLoadExactState.memory
+        (structContextToHOL recursiveLoadStructs.toHOL) :=
+      panValueFlatLoadFuel_memLoadHOLExact recursiveLoadProductionState
+        recursiveLoadExactState recursiveLoadStructs recursiveLoadMemory
+        (.comb [.one, .one]) 0
+        (panValueFlatContextFuel recursiveLoadStructs +
+          panValueFlatShapeFuel (.comb [.one, .one]))
+        recursiveLoadMemoryCodec recursiveLoadDomain recursiveLoadCtxBR
+        (by simp [ShapeByteRanged]) (Nat.le_refl _)
+    _ = some (.rStruct
+        [.val (.word (BitVec.ofNat 64 0x11)), .val (.word (BitVec.ofNat 64 0x22))]) := by
+      simp [shapeToHOL, memLoadHOLExact, memLoadsHOLExact, bytesInWordHOL,
+        recursiveLoadExactState, recursiveLoadStructs, structContextToHOL,
+        StructContext.toHOL]
+
+/-- Concrete named shape follows its context entry and the one-field recursion
+    while encoding both structure and field names into `MlString`. -/
+example :
+    (panValueFlatLoadFuel recursiveLoadStructs
+        (panValueFlatMachineReadWord recursiveLoadProductionState recursiveLoadMemory)
+        panSemBitVec64BytesInWord
+        (panValueFlatContextFuel recursiveLoadStructs +
+          panValueFlatShapeFuel (.named "S"))
+        (.named "S") 0).map panValueToHOL =
+      some (.nStruct (Flapjack.Basis.Pure.MlString.ofString "S")
+        [(Flapjack.Basis.Pure.MlString.ofString "f",
+          .val (.word (BitVec.ofNat 64 0x11)))]) := by
+  calc
+    _ = memLoadHOLExact (shapeToHOL (.named "S")) 0 recursiveLoadExactState.memaddrs
+        recursiveLoadExactState.memory (structContextToHOL recursiveLoadStructs.toHOL) :=
+      panValueFlatLoadFuel_memLoadHOLExact recursiveLoadProductionState
+        recursiveLoadExactState recursiveLoadStructs recursiveLoadMemory (.named "S") 0
+        (panValueFlatContextFuel recursiveLoadStructs +
+          panValueFlatShapeFuel (.named "S"))
+        recursiveLoadMemoryCodec recursiveLoadDomain recursiveLoadCtxBR
+        (by simp [ShapeByteRanged]) (Nat.le_refl _)
+    _ = some (.nStruct (Flapjack.Basis.Pure.MlString.ofString "S")
+        [(Flapjack.Basis.Pure.MlString.ofString "f",
+          .val (.word (BitVec.ofNat 64 0x11)))]) := by
+      simp [memLoadHOLExact, memLoadFldsHOLExact, paramToHOL,
+        recursiveLoadExactState, recursiveLoadStructs, bytesInWordHOL,
+        shapeToHOL, structContextToHOL, StructContext.toHOL, structInfoToHOL,
+        sizeOfShapeWithContextHOL]
+
+/-- The field-list subrecursion is also available directly, including its
+    byte-name codec and the same eight-byte word stride. -/
+example :
+    ((panValueFlatLoadFieldsFuel recursiveLoadStructs
+        (panValueFlatMachineReadWord recursiveLoadProductionState recursiveLoadMemory)
+        panSemBitVec64BytesInWord
+        (panValueFlatContextFuel recursiveLoadStructs +
+          panValueFlatFieldsFuel [("f", Shape.one)])
+        [("f", Shape.one)] 0).map (List.map (fun p =>
+          (Flapjack.Basis.Pure.MlString.ofString p.1, panValueToHOL p.2))) :
+          Option (List (MlS × ValueHOL 64))) =
+      some [(Flapjack.Basis.Pure.MlString.ofString "f",
+        .val (.word (BitVec.ofNat 64 0x11)))] := by
+  calc
+    _ = memLoadFldsHOLExact ([(Flapjack.Basis.Pure.MlString.ofString "f",
+          ShapeHOL.one)]) 0 recursiveLoadExactState.memaddrs recursiveLoadExactState.memory
+        (structContextToHOL recursiveLoadStructs.toHOL) := by
+      simpa [paramToHOL, shapeToHOL] using panValueFlatLoadFieldsFuel_memLoadFldsHOLExact
+        recursiveLoadProductionState recursiveLoadExactState recursiveLoadStructs recursiveLoadMemory
+        [("f", Shape.one)] 0
+        (panValueFlatContextFuel recursiveLoadStructs +
+          panValueFlatFieldsFuel [("f", Shape.one)]) recursiveLoadMemoryCodec recursiveLoadDomain
+        recursiveLoadCtxBR
+        (by simp [ListParamByteRanged, ParamByteRanged, NameRanged, ShapeByteRanged])
+        (Nat.le_refl _)
+    _ = some [(Flapjack.Basis.Pure.MlString.ofString "f",
+        .val (.word (BitVec.ofNat 64 0x11)))] := by
+      simp [memLoadFldsHOLExact, memLoadHOLExact, recursiveLoadExactState,
+        bytesInWordHOL]
+
 private theorem addressConstExecCorrespondence {σ : Type} (state : PanSemStateFiniteExact 64 Unit)
     [DecidablePred state.memaddrs] (productionState : PanSemState (RiscV.Word 64) σ)
     (memory : BitVec 64 → Option (PanValue (BitVec 64)))
