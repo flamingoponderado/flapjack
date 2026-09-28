@@ -14,10 +14,11 @@ decider-free well-founded induction principle
 non-increase property (`evaluate_clock` in HOL), which is what justifies
 `fix_clock_evaluate`; here it is `evalCrepSemHOLProgExact_clock_le`.
 
-FLAPJACK-SPECIFIC (currently untagged; tag decision with the coordinator,
-beads `flapjack-2de.1` / `flapjack-2de.1.1`).  The two previously open
-translation deltas are now closed inside this module, with no extra theorem
-premise and no qualifier:
+The clause-for-clause induction principle `evalCrepSemHOLProgExact_induct` below is
+a TAGGED exact HOL port of `crepSemScript.sml:440 evaluate_ind`, carrying the
+qualifiers `(fmap_as_finite_support := [locals, globals, code])` and
+`(words_as_type_indexed_bitvec)` (bead `flapjack-2de.1.1`).  The two translation
+deltas are closed inside this module, with no extra theorem premise:
 
 * expression guards are written in the classical spelling
   `crepExactEvalExpClassical`, and `crepExactEvalExpClassical_eq` proves this is
@@ -36,7 +37,12 @@ premise and no qualifier:
   The helper `fupdateList_fempty_finiteSupport` and
   `lookupCodeHOL_calleeLocals_finiteSupport` supply the finite-support witness
   for the zipped callee locals.  These declarations are Flapjack-internal
-  infrastructure: no `@[hol]` tag and no qualifier.
+  infrastructure and remain UNTAGGED (no `@[hol]` tag, no qualifier):
+  `lookupCodeHOLFinite`, `lookupCodeHOLFinite_eq_some`,
+  `lookupCodeHOLFinite_eq_some_iff`, `fupdateList_fempty_finiteSupport`,
+  `lookupCodeHOL_calleeLocals_finiteSupport`, `holFiniteMapExact_eq_of_lookup_eq`,
+  and the well-founded principle `evalCrepSemHOLProgExact_inductLex` / its
+  general form `evalCrepSemHOLProg.inductHOL_general`.
 
 The `fix_clock` wrapper is rewritten away as in the HOL line-440 `rewrite`.
 
