@@ -509,6 +509,78 @@ private def inlTopProbeOracle : Bool :=
 
 #guard inlTopProbeOracle
 
+/-! ### Direct canonical-core replay of the `inline_prog` HOL probe rows
+
+Every row of `scripts/hol-probes/crep_inline_code_inl_probe.out` is replayed
+through `inlineProgHOLCoreExact` on the canonical `HolFiniteMapExact` carrier
+view: hit (`inlined_call`), miss (`no_match_call`), DOMSUB self-call
+(`inline_nested_call`), argument loading with generated temporary names
+(`inline_arg_call`), duplicate overwrite (`lookup_dup_f`/`inline_dup_call`) and
+handler call (`handler_call_untouched`). Untagged, bead `flapjack-e7w.2.1.13`. -/
+
+private def canonicalOracleBodyA : CrepProgHOL 8 := .dec 1 (.const 1) .skip
+
+private def canonicalOracleBodyB : CrepProgHOL 8 := .dec 9 (.const 3) .skip
+
+private def canonicalOracleCore (fs : CrepInlineFmapHOL 8) (program : CrepProgHOL 8) :
+    CrepProgHOL 8 :=
+  inlineProgHOLCoreExact fs.toHolFiniteMapExact fs.domainKeys (domainKeys_spec fs) program
+
+private def canonicalOracleGuard : Bool :=
+  let key := ofString "f"
+  let absent := ofString "g"
+  let base := CrepInlineFmapHOL.insert key ([7], canonicalOracleBodyA) CrepInlineFmapHOL.empty
+  -- HOL `flookup_f` / `inlined_call`: `Seq Tick Skip`.
+  let hit := match canonicalOracleCore base (.call none key []) with
+    | .seq .tick .skip => true
+    | _ => false
+  -- HOL `no_match_call`: a missed name is left untouched.
+  let miss := match canonicalOracleCore base (.call none absent []) with
+    | .call none name [] => name == absent
+    | _ => false
+  -- HOL `inline_nested_call`: `\\` (DOMSUB) before recursing leaves the self-call.
+  let nestedBase := CrepInlineFmapHOL.insert key ([], .call none key []) CrepInlineFmapHOL.empty
+  let nested := match canonicalOracleCore nestedBase (.call none key []) with
+    | .seq .tick (.call none name []) => name == key
+    | _ => false
+  -- HOL `inline_arg_call`: `arg_load`/`GENLIST` generated temporary names.
+  let args := match canonicalOracleCore base (.call none key [.const 5]) with
+    | .seq .tick (.dec 8 (.const 5) (.dec 7 (.var 8) (.dec 1 (.const 1) .skip))) => true
+    | _ => false
+  -- HOL `lookup_dup_f`: `|+` overwrites, so the later binding is selected. This
+  -- direct lookup assertion is the primary evidence for overwrite semantics.
+  let dupBase := CrepInlineFmapHOL.insert key ([9], canonicalOracleBodyB) base
+  let dupLookup : Bool :=
+    match dupBase.lookup key with
+    | some value =>
+        (value.1 == [9]) &&
+          (match value.2 with | .dec 9 (.const 3) .skip => true | _ => false)
+    | none => false
+  -- HOL `inline_dup_call`: with the original argument names the empty argument
+  -- list makes `arg_load` discard the body (`Seq Tick Skip`), reproducing the
+  -- probe row.
+  let dup := match canonicalOracleCore dupBase (.call none key []) with
+    | .seq .tick .skip => true
+    | _ => false
+  -- Distinguishing shadowing fixture: with empty argument names `arg_load`
+  -- preserves the body, so the inlined program is observable. Choosing the
+  -- stale `bodyA` binding would yield `Seq Tick (Dec 1 (Const 1) Skip)` and
+  -- fail this check, which the `dup` row above cannot detect.
+  let obsDupBase := CrepInlineFmapHOL.insert key ([], canonicalOracleBodyB) base
+  let dupInlinesNew : Bool :=
+    match canonicalOracleCore obsDupBase (.call none key []) with
+    | .seq .tick p =>
+        (match p with | .dec 9 (.const 3) .skip => true | _ => false)
+    | _ => false
+  -- HOL `handler_call_untouched`: the handler is inlined, the call is unchanged.
+  let handler := match canonicalOracleCore base
+      (.call (some ([1], some (2, (.skip : CrepProgHOL 8)))) key []) with
+    | .call (some ([1], some (2, .skip))) name [] => name == key
+    | _ => false
+  hit && miss && nested && args && dup && dupLookup && dupInlinesNew && handler
+
+#guard canonicalOracleGuard
+
 /-! ## Support-independence of the inline core
 
 These facts justify the executable HOL-shaped wrappers above: the recursive
