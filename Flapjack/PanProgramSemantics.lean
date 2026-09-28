@@ -1,4 +1,5 @@
 import Flapjack.PanMemory
+import Flapjack.PanBst
 
 /-!
 Top-level structured Pancake semantics.
@@ -24,6 +25,41 @@ structure PanValueProgramState (α : Type u) where
   baseAddress : α
   topAddress : α
   bytesInWord : α
+
+/-- Retain the first (newest) source function for each name. This private list
+    normalization has no independent HOL declaration; it implements the
+    shadowing needed by the finite code-map adapter below. -/
+private def panValueProgramVisibleFunctions [BEq String]
+    (functions : List (FunName × List VarName × Prog α)) :
+    List (FunName × List VarName × Prog α) := Id.run do
+  let mut seen : List FunName := []
+  let mut visible : List (FunName × List VarName × Prog α) := []
+  for function in functions do
+    if !seen.contains function.1 then
+      seen := function.1 :: seen
+      visible := function :: visible
+  return visible.reverse
+
+/-- Build the source-owned finite code map represented by an evaluated
+    declaration state. `evalPanValueDeclarationsWithStructs` prepends each
+    function, so `state.functions` is newest-first. HOL `FUPDATE` exposes only
+    the newest binding for a duplicate function name. Drop shadowed entries
+    before reading parameter/return metadata: an older declaration may have
+    different formals or a different return shape, and must not make
+    conversion of the visible code map fail. This Flapjack adapter has no direct
+    HOL declaration; it connects the existing declaration carrier to
+    `state.code`. It returns `none` only for an inconsistent visible hand-built
+    entry whose metadata is missing or disagrees with its parameter-name table. -/
+def panValueProgramStateCodeMap [BEq String]
+    (state : PanValueProgramState α) : Option (PanSemCodeMap α) :=
+  (panValueProgramVisibleFunctions state.functions).mapM
+    fun (name, parameterNames, body) => do
+    let parameters ← lookupInfo name state.parameterShapes
+    let returnShape ← lookupInfo name state.returnShapes
+    if parameters.map Prod.fst == parameterNames then
+      some (name, (parameters, body, returnShape))
+    else
+      none
 
 def panValueDeclStructInfo (context : StructContext)
     (fields : List (FieldName × Shape)) : StructInfo :=
