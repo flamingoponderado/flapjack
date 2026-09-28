@@ -29,6 +29,14 @@ val _ = print_eval "word_load_hit"
 val _ = print_eval "word_load_miss"
   ``eval (^little with memaddrs := {})
       (panLang$Load One (panLang$Const 0w))``;
+val nested_load_state = ``(^little with <|
+  memory := (\a:64 word. if a = 0w then Word (0x11w:64 word)
+    else if a = 8w then Word (0x22w:64 word)
+    else if a = 16w then Word (0x33w:64 word) else ARB);
+  memaddrs := {0w; 8w; 16w} |>)``;
+val _ = print_eval "eval_nested_load_shape"
+  ``eval ^nested_load_state
+      (panLang$Load (Comb [One; Comb [One; One]]) (panLang$Const 0w))``;
 val _ = print_eval "byte_little_first"
   ``eval ^little (panLang$LoadByte (panLang$Const 0w))``;
 val _ = print_eval "state_rel_source_byte_little"

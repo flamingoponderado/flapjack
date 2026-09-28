@@ -337,6 +337,112 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width]
 
 end CtxtMaxElLeqExact
 
+/-- Exact port of HOL `locals_rel_extend_new_var`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:4179-4225`):
+    `!ct s t v x ns. locals_rel ct s t /\ is_wf_shape_nil (shape_of v) /\
+      ALL_DISTINCT ns /\ (!x. MEM x ns ==> ct.vmax < x /\
+        x <= ct.vmax + size_of_shape (shape_of v)) /\
+      LENGTH ns = size_of_shape (shape_of v) ==>
+      locals_rel (ct with <|vars := ct.vars |+ (x,(shape_of v,ns));
+                            vmax := ct.vmax + size_of_shape (shape_of v)|>)
+        (s |+ (x,v)) (t |++ ZIP (ns, flatten v))`.
+    `|+` on the context and source maps is `update`, the `FUPDATE` port used by
+    the exact compiler's DecCall context and by the Pan evaluator's `set_var`.
+    `|++ ZIP` on the target is `updateListEq`, as in the Crep evaluator. The other
+    helpers are the tagged exact ports. The relation qualifier names the context
+    `vars` field and the standalone source/target locals. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "locals_rel_extend_new_var"
+  (fmap_as_finite_support_relation := [PanToCrepContextExact.vars, s, t])
+  (words_as_type_indexed_bitvec)]
+theorem localsRelExtendNewVarHOL {width : Nat} [NeZero width] :
+    ∀ (ct : PanToCrepContextExact width) (s : HolFiniteMapExact MlS (ValueHOL width))
+      (t : HolFiniteMapExact Nat (HolWordLab width)) (v : ValueHOL width) (x : MlS)
+      (ns : List Nat),
+      panToCrepLocalsRelFiniteExact ct s t ∧
+        isWfShapeExactHOL ([] : StructContextExact) (shapeOfHOLExact v) = true ∧
+        ns.Nodup ∧
+        (∀ y, y ∈ ns → ct.vmax < y ∧ y ≤ ct.vmax + Flapjack.Pancake.PanLang.sizeOfShapeHOL (shapeOfHOLExact v)) ∧
+        ns.length = Flapjack.Pancake.PanLang.sizeOfShapeHOL (shapeOfHOLExact v) →
+      panToCrepLocalsRelFiniteExact
+        { ct with vars := ct.vars.update (x, (shapeOfHOLExact v, ns)),
+                  vmax := ct.vmax + Flapjack.Pancake.PanLang.sizeOfShapeHOL (shapeOfHOLExact v) }
+        (s.update (x, v)) (t.updateListEq (ns.zip (flattenHOL v))) := by
+  intro ct s t v x ns ⟨hrel, hwf, hnd, hrange, hlen⟩
+  obtain ⟨hno, hmax, hlk⟩ := hrel
+  have hflen := flattenHOL_length_eq_sizeOfShapeHOL v hwf
+  have hfun : (t.updateListEq (ns.zip (flattenHOL v))).lookup =
+      fun key => FLOOKUP (FUPDATE_LIST t.lookup (ns.zip (flattenHOL v))) key := by
+    funext key
+    simp only [HolFiniteMapExact.lookup_updateListEq, FUPDATE_LIST_HOL_eq_FUPDATE_LIST, FLOOKUP]
+  have hvars : ∀ k, (ct.vars.update (x, (shapeOfHOLExact v, ns))).lookup k =
+      if k = x then some (shapeOfHOLExact v, ns) else ct.vars.lookup k := by
+    intro k
+    by_cases hk : k = x
+    · simp [HolFiniteMapExact.lookup_update, FUPDATE, hk]
+    · have hk2 : ¬ x = k := fun h => hk h.symm
+      simp [HolFiniteMapExact.lookup_update, FUPDATE, hk, hk2]
+  have hsrc : ∀ k, (s.update (x, v)).lookup k = if k = x then some v else s.lookup k := by
+    intro k
+    by_cases hk : k = x
+    · simp [HolFiniteMapExact.lookup_update, FUPDATE, hk]
+    · have hk2 : ¬ x = k := fun h => hk h.symm
+      simp [HolFiniteMapExact.lookup_update, FUPDATE, hk, hk2]
+  refine ⟨?_, ?_, ?_⟩
+  · refine ⟨?_, ?_⟩
+    · intro key shape slots h
+      rw [hvars] at h
+      split at h
+      · simp only [Option.some.injEq, Prod.mk.injEq] at h; rw [← h.2]; exact hnd
+      · exact hno.1 key shape slots h
+    · intro key key' shape shape' slots slots' h h' ⟨slot, hs, hs'⟩
+      rw [hvars] at h h'
+      by_cases hk : key = x <;> by_cases hk' : key' = x
+      · rw [hk, hk']
+      · rw [if_pos hk] at h; rw [if_neg hk'] at h'
+        simp only [Option.some.injEq, Prod.mk.injEq] at h
+        rw [← h.2] at hs
+        have := hmax.2 key' shape' slots' h' slot hs'
+        have := (hrange slot hs).1
+        omega
+      · rw [if_neg hk] at h; rw [if_pos hk'] at h'
+        simp only [Option.some.injEq, Prod.mk.injEq] at h'
+        rw [← h'.2] at hs'
+        have := hmax.2 key shape slots h slot hs
+        have := (hrange slot hs').1
+        omega
+      · rw [if_neg hk] at h; rw [if_neg hk'] at h'
+        exact hno.2 key key' shape shape' slots slots' h h' ⟨slot, hs, hs'⟩
+  · refine ⟨Nat.zero_le _, ?_⟩
+    intro key shape slots h slot hslot
+    simp only at h ⊢
+    rw [hvars] at h
+    split at h
+    · simp only [Option.some.injEq, Prod.mk.injEq] at h
+      rw [← h.2] at hslot
+      exact (hrange slot hslot).2
+    · have := hmax.2 key shape slots h slot hslot
+      omega
+  · intro name value hl
+    simp only
+    rw [hsrc] at hl
+    by_cases hk : name = x
+    · rw [if_pos hk] at hl
+      simp only [Option.some.injEq] at hl
+      subst hl; subst hk
+      refine ⟨ns, flattenHOL v, by rw [hvars, if_pos rfl], ?_, rfl, hwf⟩
+      rw [hfun]
+      exact optMmapSomeEqZipFlookup ns t.lookup (flattenHOL v) hnd (by rw [hlen, hflen])
+    · rw [if_neg hk] at hl
+      obtain ⟨slots, words, hv, hmm, hfl, hwfk⟩ := hlk name value hl
+      refine ⟨slots, words, by rw [hvars, if_neg hk]; exact hv, ?_, hfl, hwfk⟩
+      have hdisj : ListDisjoint ns slots := by
+        intro y hy hy'
+        have := hmax.2 name _ slots hv y hy'
+        have := (hrange y hy).1
+        omega
+      rw [hfun, optMmapDisjZipFlookup ns t.lookup slots (flattenHOL v) hdisj (by rw [hlen, hflen])]
+      simpa [FLOOKUP] using hmm
+
 /-- Exact port of HOL `ctxt_max_el_leq`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:1493-1503`):
     `ctxt_max ctxt.vmax ctxt.vars /\
