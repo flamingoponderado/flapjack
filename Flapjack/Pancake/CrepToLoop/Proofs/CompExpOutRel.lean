@@ -7,7 +7,7 @@ import Flapjack.Pancake.Semantics.LoopProps.CompSyntaxOkLemmas
 Counterpart of `cakeml/pancake/proofs/crep_to_loopProofScript.sml`'s
 `compile_exp_out_rel_cases` (420) and its projections (589/590) over the exact
 `compileExpHOLExact`/`compileExpsHOLExact`, `compSyntaxOkHOL`, `cutSetsHOL` and
-`holLoopNestedSeq` (bead `flapjack-pxn.18.5.6.32.3`).
+`loopNestedSeqHOL` (bead `flapjack-pxn.18.5.6.32.3`).
 -/
 
 namespace Flapjack
@@ -30,25 +30,25 @@ variable {width : Nat} [NeZero width]
 
 theorem cutSets_zipWith_assign (m : Nat) (cs : NumSet) :
     ∀ (is : List Nat) (vs : List (HolLoopExp width)), is.length = vs.length →
-      cutSetsHOL cs (holLoopNestedSeq
+      cutSetsHOL cs (loopNestedSeqHOL
         (List.zipWith (fun i v => HolLoopProg.assign (m + i) v) is vs)) =
       sptListInsert (is.map (m + ·)) cs
-  | [], [], _ => by simp [holLoopNestedSeq, cutSetsHOL, sptListInsert]
+  | [], [], _ => by simp [loopNestedSeqHOL, cutSetsHOL, sptListInsert]
   | [], _ :: _, h => by simp at h
   | _ :: _, [], h => by simp at h
   | i :: is, v :: vs, h => by
-      simp only [List.zipWith_cons_cons, holLoopNestedSeq, cutSetsHOL, List.map_cons,
+      simp only [List.zipWith_cons_cons, loopNestedSeqHOL, cutSetsHOL, List.map_cons,
         sptListInsert]
       exact cutSets_zipWith_assign m (sptInsert (m + i) () cs) is vs (by simpa using h)
 
 theorem compSyntaxOk_zipWith_assign (m : Nat) :
     ∀ (cs : NumSet) (is : List Nat) (vs : List (HolLoopExp width)),
-      compSyntaxOkHOL cs (holLoopNestedSeq
+      compSyntaxOkHOL cs (loopNestedSeqHOL
         (List.zipWith (fun i v => HolLoopProg.assign (m + i) v) is vs)) = true
-  | cs, [], _ => by simp [holLoopNestedSeq, compSyntaxOkHOL]
-  | cs, _ :: _, [] => by simp [holLoopNestedSeq, compSyntaxOkHOL]
+  | cs, [], _ => by simp [loopNestedSeqHOL, compSyntaxOkHOL]
+  | cs, _ :: _, [] => by simp [loopNestedSeqHOL, compSyntaxOkHOL]
   | cs, i :: is, v :: vs => by
-      simp only [List.zipWith_cons_cons, holLoopNestedSeq]
+      simp only [List.zipWith_cons_cons, loopNestedSeqHOL]
       rw [compSyntaxOkHOL, Bool.and_eq_true]
       exact ⟨by simp [compSyntaxOkHOL], compSyntaxOk_zipWith_assign m _ is vs⟩
 
@@ -59,20 +59,20 @@ theorem sptListInsert_append_seq (xs ys : List Nat) (t : NumSet) :
   | cons x xs ih => simp only [List.cons_append, sptListInsert]; exact ih _
 
 theorem compSyntaxOk_append (l : NumSet) (p q : List (HolLoopProg width))
-    (hp : compSyntaxOkHOL l (holLoopNestedSeq p) = true)
-    (hq : compSyntaxOkHOL (cutSetsHOL l (holLoopNestedSeq p)) (holLoopNestedSeq q) = true) :
-    compSyntaxOkHOL l (holLoopNestedSeq (p ++ q)) = true :=
+    (hp : compSyntaxOkHOL l (loopNestedSeqHOL p) = true)
+    (hq : compSyntaxOkHOL (cutSetsHOL l (loopNestedSeqHOL p)) (loopNestedSeqHOL q) = true) :
+    compSyntaxOkHOL l (loopNestedSeqHOL (p ++ q)) = true :=
   comp_syn_ok_nested_seq p q l ⟨hp, hq⟩
 
 mutual
 theorem compileExpHOLExact_out_rel (ct : CrepToLoopContextExact) (tmp : Nat) (l : NumSet) :
     ∀ e : CrepExpHOL width,
-      compSyntaxOkHOL l (holLoopNestedSeq (compileExpHOLExact ct tmp l e).1) = true ∧
+      compSyntaxOkHOL l (loopNestedSeqHOL (compileExpHOLExact ct tmp l e).1) = true ∧
       tmp ≤ (compileExpHOLExact ct tmp l e).2.2.1 ∧
       (compileExpHOLExact ct tmp l e).2.2.2 =
-        cutSetsHOL l (holLoopNestedSeq (compileExpHOLExact ct tmp l e).1)
+        cutSetsHOL l (loopNestedSeqHOL (compileExpHOLExact ct tmp l e).1)
   | .baseAddr | .topAddr | .const _ | .var _ | .loadGlob _ => by
-      simp [compileExpHOLExact, holLoopNestedSeq, compSyntaxOkHOL, cutSetsHOL]
+      simp [compileExpHOLExact, loopNestedSeqHOL, compSyntaxOkHOL, cutSetsHOL]
   | .load a => by
       have ih := compileExpHOLExact_out_rel ct tmp l a
       rcases hA : compileExpHOLExact ct tmp l a with ⟨c, v, m, o⟩
@@ -83,10 +83,10 @@ theorem compileExpHOLExact_out_rel (ct : CrepToLoopContextExact) (tmp : Nat) (l 
       rw [hA] at ih; simp only at ih
       obtain ⟨h1, h2, h3⟩ := ih
       simp only [compileExpHOLExact, hA]
-      refine ⟨compSyntaxOk_append l _ _ h1 (by simp [holLoopNestedSeq, compSyntaxOkHOL]),
+      refine ⟨compSyntaxOk_append l _ _ h1 (by simp [loopNestedSeqHOL, compSyntaxOkHOL]),
         by omega, ?_⟩
       rw [cut_sets_nested_seq, ← h3]
-      simp only [holLoopNestedSeq, cutSetsHOL, sptInsert_idem]
+      simp only [loopNestedSeqHOL, cutSetsHOL, sptInsert_idem]
   | .op o es => by
       have ih := compileExpsHOLExact_out_rel ct tmp l es
       rcases hA : compileExpsHOLExact ct tmp l es with ⟨c, vs, m, ol⟩
@@ -106,18 +106,18 @@ theorem compileExpHOLExact_out_rel (ct : CrepToLoopContextExact) (tmp : Nat) (l 
       · -- ARMv7: two-result long multiplication
         simp only
         refine ⟨compSyntaxOk_append l _ _ (compSyntaxOk_append l _ _ h1 (h3 ▸ hzc)) ?_, by omega, ?_⟩
-        · simp [holLoopNestedSeq, compSyntaxOkHOL]
+        · simp [loopNestedSeqHOL, compSyntaxOkHOL]
         · rw [cut_sets_nested_seq, cut_sets_nested_seq, ← h3, hz]
-          simp only [holLoopNestedSeq, cutSetsHOL]
+          simp only [loopNestedSeqHOL, cutSetsHOL]
           rw [show m + vs.length + 1 - m = vs.length + 1 by omega, List.range_succ, List.map_append,
             sptListInsert_append_seq]
           simp only [List.map_cons, List.map_nil, sptListInsert]
           exact (sptInsert_comm _ _ _ _ _ (by omega)).symm
       · simp only
         refine ⟨compSyntaxOk_append l _ _ (compSyntaxOk_append l _ _ h1 (h3 ▸ hzc)) ?_, by omega, ?_⟩
-        · simp [holLoopNestedSeq, compSyntaxOkHOL]
+        · simp [loopNestedSeqHOL, compSyntaxOkHOL]
         · rw [cut_sets_nested_seq, cut_sets_nested_seq, ← h3, hz]
-          simp only [holLoopNestedSeq, cutSetsHOL, sptInsert_idem]
+          simp only [loopNestedSeqHOL, cutSetsHOL, sptInsert_idem]
           rw [show m + vs.length - m = vs.length by omega]
   | .cmp o a b => by
       have iha := compileExpHOLExact_out_rel ct tmp l a
@@ -131,11 +131,11 @@ theorem compileExpHOLExact_out_rel (ct : CrepToLoopContextExact) (tmp : Nat) (l 
       simp only [compileExpHOLExact, hA, hB, progIfHOLExact]
       refine ⟨compSyntaxOk_append l _ _ (compSyntaxOk_append l _ _ ha1 (ha3 ▸ hb1)) ?_, by omega, ?_⟩
       · rw [cut_sets_nested_seq, ← ha3, ← hb3]
-        simp only [holLoopNestedSeq, compSyntaxOkHOL, cutSetsHOL, Bool.and_true, Bool.true_and,
+        simp only [loopNestedSeqHOL, compSyntaxOkHOL, cutSetsHOL, Bool.and_true, Bool.true_and,
           holPropBool_eq_true]
         exact ⟨[], rfl⟩
       · rw [cut_sets_nested_seq, cut_sets_nested_seq, ← ha3, ← hb3]
-        simp [holLoopNestedSeq, cutSetsHOL]
+        simp [loopNestedSeqHOL, cutSetsHOL]
   | .shift o a b => by
       have iha := compileExpHOLExact_out_rel ct tmp l a
       rcases hA : compileExpHOLExact ct tmp l a with ⟨c, v, m, ol⟩
@@ -152,12 +152,12 @@ termination_by e => sizeOf e
 
 theorem compileExpsHOLExact_out_rel (ct : CrepToLoopContextExact) (tmp : Nat) (l : NumSet) :
     ∀ es : List (CrepExpHOL width),
-      compSyntaxOkHOL l (holLoopNestedSeq (compileExpsHOLExact ct tmp l es).1) = true ∧
+      compSyntaxOkHOL l (loopNestedSeqHOL (compileExpsHOLExact ct tmp l es).1) = true ∧
       tmp ≤ (compileExpsHOLExact ct tmp l es).2.2.1 ∧
       (compileExpsHOLExact ct tmp l es).2.2.2 =
-        cutSetsHOL l (holLoopNestedSeq (compileExpsHOLExact ct tmp l es).1) ∧
+        cutSetsHOL l (loopNestedSeqHOL (compileExpsHOLExact ct tmp l es).1) ∧
       (compileExpsHOLExact ct tmp l es).2.1.length = es.length
-  | [] => by simp [compileExpsHOLExact, holLoopNestedSeq, compSyntaxOkHOL, cutSetsHOL]
+  | [] => by simp [compileExpsHOLExact, loopNestedSeqHOL, compSyntaxOkHOL, cutSetsHOL]
   | e :: es => by
       have iha := compileExpHOLExact_out_rel ct tmp l e
       rcases hA : compileExpHOLExact ct tmp l e with ⟨c, v, m, ol⟩
@@ -191,13 +191,13 @@ theorem compile_exp_out_rel_cases :
     (∀ (ct : CrepToLoopContextExact) (tmp : Nat) (l : NumSet) (e : CrepExpHOL width)
       (p : List (HolLoopProg width)) (le : HolLoopExp width) (ntmp : Nat) (nl : NumSet),
       compileExpHOLExact ct tmp l e = (p, le, ntmp, nl) →
-      compSyntaxOkHOL l (holLoopNestedSeq p) = true ∧ tmp ≤ ntmp ∧
-        nl = cutSetsHOL l (holLoopNestedSeq p)) ∧
+      compSyntaxOkHOL l (loopNestedSeqHOL p) = true ∧ tmp ≤ ntmp ∧
+        nl = cutSetsHOL l (loopNestedSeqHOL p)) ∧
     (∀ (ct : CrepToLoopContextExact) (tmp : Nat) (l : NumSet) (e : List (CrepExpHOL width))
       (p : List (HolLoopProg width)) (le : List (HolLoopExp width)) (ntmp : Nat) (nl : NumSet),
       compileExpsHOLExact ct tmp l e = (p, le, ntmp, nl) →
-      compSyntaxOkHOL l (holLoopNestedSeq p) = true ∧ tmp ≤ ntmp ∧
-        nl = cutSetsHOL l (holLoopNestedSeq p) ∧ le.length = e.length) :=
+      compSyntaxOkHOL l (loopNestedSeqHOL p) = true ∧ tmp ≤ ntmp ∧
+        nl = cutSetsHOL l (loopNestedSeqHOL p) ∧ le.length = e.length) :=
   ⟨fun ct tmp l e p le ntmp nl h => by
       have := compileExpHOLExact_out_rel ct tmp l e; rw [h] at this; exact this,
    fun ct tmp l e p le ntmp nl h => by
@@ -210,8 +210,8 @@ theorem compile_exp_out_rel :
     ∀ (ct : CrepToLoopContextExact) (tmp : Nat) (l : NumSet) (e : CrepExpHOL width)
       (p : List (HolLoopProg width)) (le : HolLoopExp width) (ntmp : Nat) (nl : NumSet),
       compileExpHOLExact ct tmp l e = (p, le, ntmp, nl) →
-      compSyntaxOkHOL l (holLoopNestedSeq p) = true ∧ tmp ≤ ntmp ∧
-        nl = cutSetsHOL l (holLoopNestedSeq p) :=
+      compSyntaxOkHOL l (loopNestedSeqHOL p) = true ∧ tmp ≤ ntmp ∧
+        nl = cutSetsHOL l (loopNestedSeqHOL p) :=
   compile_exp_out_rel_cases.1
 
 /-- Exact HOL `compile_exps_out_rel` (`crep_to_loopProofScript.sml:590`, `CONJUNCT2`). -/
@@ -221,8 +221,8 @@ theorem compile_exps_out_rel :
     ∀ (ct : CrepToLoopContextExact) (tmp : Nat) (l : NumSet) (e : List (CrepExpHOL width))
       (p : List (HolLoopProg width)) (le : List (HolLoopExp width)) (ntmp : Nat) (nl : NumSet),
       compileExpsHOLExact ct tmp l e = (p, le, ntmp, nl) →
-      compSyntaxOkHOL l (holLoopNestedSeq p) = true ∧ tmp ≤ ntmp ∧
-        nl = cutSetsHOL l (holLoopNestedSeq p) ∧ le.length = e.length :=
+      compSyntaxOkHOL l (loopNestedSeqHOL p) = true ∧ tmp ≤ ntmp ∧
+        nl = cutSetsHOL l (loopNestedSeqHOL p) ∧ le.length = e.length :=
   compile_exp_out_rel_cases.2
 
 end Flapjack

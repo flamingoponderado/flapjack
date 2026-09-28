@@ -10,7 +10,7 @@ Counterparts of `cakeml/pancake/semantics/loopPropsScript.sml`'s
 `comp_syn_ok_nested_seq2` (757), `cut_sets_union_domain_subset` (810),
 `cut_sets_union_domain_union` (820), `comp_syn_impl_cut_sets_subspt` (831) and
 `comp_syn_cut_sets_mem_domain` (841) over the exact `compSyntaxOkHOL`,
-`cutSetsHOL` and `holLoopNestedSeq` (bead `flapjack-pxgp.16`).  HOL's `bool`
+`cutSetsHOL` and `loopNestedSeqHOL` (bead `flapjack-pxgp.16`).  HOL's `bool`
 `comp_syntax_ok` is `compSyntaxOkHOL … = true`; `domain` is `sptDomain`/`sptMem`.
 -/
 
@@ -44,35 +44,35 @@ theorem comp_syn_ok_seq2 :
   (words_as_type_indexed_bitvec)]
 theorem comp_syn_ok_nested_seq :
     ∀ (p q : List (HolLoopProg width)) (l : NumSet),
-      compSyntaxOkHOL l (holLoopNestedSeq p) = true ∧
-      compSyntaxOkHOL (cutSetsHOL l (holLoopNestedSeq p)) (holLoopNestedSeq q) = true →
-      compSyntaxOkHOL l (holLoopNestedSeq (p ++ q)) = true
-  | [], q, l, ⟨_, hq⟩ => by simpa [holLoopNestedSeq, cutSetsHOL] using hq
+      compSyntaxOkHOL l (loopNestedSeqHOL p) = true ∧
+      compSyntaxOkHOL (cutSetsHOL l (loopNestedSeqHOL p)) (loopNestedSeqHOL q) = true →
+      compSyntaxOkHOL l (loopNestedSeqHOL (p ++ q)) = true
+  | [], q, l, ⟨_, hq⟩ => by simpa [loopNestedSeqHOL, cutSetsHOL] using hq
   | c :: p, q, l, ⟨hp, hq⟩ => by
-      simp only [List.cons_append, holLoopNestedSeq]
-      rw [holLoopNestedSeq] at hp
+      simp only [List.cons_append, loopNestedSeqHOL]
+      rw [loopNestedSeqHOL] at hp
       rw [compSyntaxOkHOL, Bool.and_eq_true] at hp ⊢
       refine ⟨hp.1, comp_syn_ok_nested_seq p q (cutSetsHOL l c) ⟨hp.2, ?_⟩⟩
-      simpa [holLoopNestedSeq, cutSetsHOL] using hq
+      simpa [loopNestedSeqHOL, cutSetsHOL] using hq
 
 /-- Exact HOL `comp_syn_ok_nested_seq2` (`loopPropsScript.sml:757-760`). -/
 @[hol "cakeml/pancake/semantics/loopPropsScript.sml" "comp_syn_ok_nested_seq2"
   (words_as_type_indexed_bitvec)]
 theorem comp_syn_ok_nested_seq2 :
     ∀ (p q : List (HolLoopProg width)) (l : NumSet),
-      compSyntaxOkHOL l (holLoopNestedSeq (p ++ q)) = true →
-      compSyntaxOkHOL l (holLoopNestedSeq p) = true ∧
-      compSyntaxOkHOL (cutSetsHOL l (holLoopNestedSeq p)) (holLoopNestedSeq q) = true
+      compSyntaxOkHOL l (loopNestedSeqHOL (p ++ q)) = true →
+      compSyntaxOkHOL l (loopNestedSeqHOL p) = true ∧
+      compSyntaxOkHOL (cutSetsHOL l (loopNestedSeqHOL p)) (loopNestedSeqHOL q) = true
   | [], q, l, h => by
-      refine ⟨by simp [holLoopNestedSeq, compSyntaxOkHOL], ?_⟩
-      simpa [holLoopNestedSeq, cutSetsHOL] using h
+      refine ⟨by simp [loopNestedSeqHOL, compSyntaxOkHOL], ?_⟩
+      simpa [loopNestedSeqHOL, cutSetsHOL] using h
   | c :: p, q, l, h => by
-      simp only [List.cons_append, holLoopNestedSeq] at h
+      simp only [List.cons_append, loopNestedSeqHOL] at h
       rw [compSyntaxOkHOL, Bool.and_eq_true] at h
       obtain ⟨h1, h2⟩ := comp_syn_ok_nested_seq2 p q (cutSetsHOL l c) h.2
       refine ⟨?_, ?_⟩
-      · rw [holLoopNestedSeq, compSyntaxOkHOL, Bool.and_eq_true]; exact ⟨h.1, h1⟩
-      · simpa [holLoopNestedSeq, cutSetsHOL] using h2
+      · rw [loopNestedSeqHOL, compSyntaxOkHOL, Bool.and_eq_true]; exact ⟨h.1, h1⟩
+      · simpa [loopNestedSeqHOL, cutSetsHOL] using h2
 
 theorem compSyntaxOk_cut_sets_mono :
     ∀ (p : HolLoopProg width) (l : NumSet), compSyntaxOkHOL l p = true →
