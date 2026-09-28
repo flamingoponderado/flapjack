@@ -207,6 +207,120 @@ theorem ltake_spec (k : Nat) (ll : HolLList α) (xs : List α)
                       rw [← ltl_rep h1 j]
                       simpa using hrep j hj
 
+/-- A finite lazy list has a length relation witness. -/
+theorem exists_LLengthRel_of_LFinite {ll : HolLList α} (h : LFinite ll) :
+    ∃ n, LLengthRel ll n :=
+  LFinite.rec (motive := fun ll _ => ∃ n, LLengthRel ll n)
+    ⟨0, LLengthRel.lnil⟩
+    (fun hd t _ ih => by obtain ⟨n, hn⟩ := ih; exact ⟨n + 1, LLengthRel.lcons hd n t hn⟩)
+    h
+
+/-- For a finite lazy list, `llength` returns a length relation witness. -/
+theorem llength_spec {ll : HolLList α} (h : LFinite ll) :
+    ∃ n, llength ll = some n ∧ LLengthRel ll n := by
+  have hex : ∃ n, LLengthRel ll n := exists_LLengthRel_of_LFinite h
+  refine ⟨Classical.epsilon (fun n => LLengthRel ll n), ?_, Classical.epsilon_spec hex⟩
+  unfold llength
+  rw [if_pos h]
+
+/-- Beyond a length relation bound the representation is `none`. -/
+theorem rep_none_of_LLengthRel {ll : HolLList α} {n : Nat} (h : LLengthRel ll n) :
+    ∀ i, n ≤ i → ll.rep i = none :=
+  LLengthRel.rec (motive := fun ll n _ => ∀ i, n ≤ i → ll.rep i = none)
+    (fun i _ => rfl)
+    (fun hd k t _ ih i hi => by
+      cases i with
+      | zero => exact absurd hi (Nat.not_succ_le_zero k)
+      | succ j =>
+          have hj : k ≤ j := Nat.le_of_succ_le_succ hi
+          have hshift : (lcons hd t).rep (j + 1) = t.rep j := by simp [lcons]
+          rw [hshift]
+          exact ih j hj)
+    h
+
+/-- `toList ll = some xs` exposes the representation as `xs` with `none` beyond. -/
+theorem toList_eq_some_rep {ll : HolLList α} {xs : List α} (h : toList ll = some xs) :
+    ∀ i, ll.rep i = if hi : i < xs.length then some xs[i] else none := by
+  unfold toList at h
+  split at h
+  · rename_i hfin
+    obtain ⟨n, hnlen, hnrel⟩ := llength_spec hfin
+    rw [hnlen] at h
+    simp only [Option.getD_some] at h
+    obtain ⟨hlen, hrep⟩ := ltake_spec n ll xs h
+    intro i
+    by_cases hi : i < xs.length
+    · rw [dif_pos hi]; simpa using hrep i hi
+    · rw [dif_neg hi]
+      have hnrel' : LLengthRel ll xs.length := by rw [hlen]; exact hnrel
+      exact rep_none_of_LLengthRel hnrel' i (Nat.le_of_not_lt hi)
+  · simp at h
+
+/-- Membership is inherited along `lprefix` at the representation level: an
+    `lprefix`-smaller list is `some` at `n` only where the larger one is. -/
+theorem lprefix_rep {a b : HolLList α} (h : lprefix a b) {n : Nat} {x : α}
+    (ha : a.rep n = some x) : b.rep n = some x := by
+  unfold lprefix at h
+  cases hta : toList a with
+  | none =>
+      rw [hta] at h
+      subst h
+      exact ha
+  | some xs =>
+      rw [hta] at h
+      have hra := toList_eq_some_rep hta n
+      rw [hra] at ha
+      by_cases hn : n < xs.length
+      · rw [dif_pos hn] at ha
+        injection ha with hx
+        cases htb : toList b with
+        | none =>
+            rw [htb] at h
+            obtain ⟨_, hrep⟩ := ltake_spec xs.length b xs h
+            rw [hrep n hn, hx]
+        | some ys =>
+            rw [htb] at h
+            have hrb := toList_eq_some_rep htb n
+            rw [hrb]
+            have hnys : n < ys.length := Nat.lt_of_lt_of_le hn h.length_le
+            rw [dif_pos hnys]
+            obtain ⟨zs, rfl⟩ := h
+            rw [List.getElem_append_left hn, hx]
+      · rw [dif_neg hn] at ha
+        exact absurd ha (by simp)
+
+/-- `lprefix` is reflexive. -/
+theorem lprefix_refl (ll : HolLList α) : lprefix ll ll := by
+  unfold lprefix
+  cases toList ll with
+  | none => rfl
+  | some xs => exact ⟨[], by simp⟩
+
+/-- HOL `LPREFIX_NTH`-direction: an `lprefix`-smaller list agrees at every
+    index where it is defined. -/
+theorem lprefix_lnth {a b : HolLList α} (h : lprefix a b) {n : Nat} {x : α}
+    (ha : lnth n a = some x) : lnth n b = some x := by
+  rw [lnth_eq_rep] at ha ⊢
+  exact lprefix_rep h ha
+
+/-- HOL `LPREFIX_ANTISYM`: two lists that prefix each other are equal. -/
+theorem lprefix_antisym {a b : HolLList α} (hab : lprefix a b) (hba : lprefix b a) :
+    a = b := by
+  have hrep : a.rep = b.rep := funext fun n => by
+    cases ha : a.rep n with
+    | none =>
+        cases hb : b.rep n with
+        | none => rfl
+        | some y =>
+            have := lprefix_rep hba hb
+            rw [ha] at this
+            exact absurd this (by simp)
+    | some x => exact (lprefix_rep hab ha).symm
+  obtain ⟨ra, oka⟩ := a
+  obtain ⟨rb, okb⟩ := b
+  subst hrep
+  exact congrArg (fun o => (⟨ra, o⟩ : HolLList α)) (Subsingleton.elim oka okb)
+
 end HolLList
 
 end Flapjack
