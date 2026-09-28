@@ -1820,14 +1820,14 @@ def words_as_type_indexed_bitvec_errors(
     A signature need not spell out ``BitVec`` when it is stated over a
     width-indexed carrier: the qualifier is also accepted when the signature
     names a structure or inductive family (declared locally or reached through
-    imports) whose own header carries ``[NeZero <width>]`` for a width parameter
-    and a field or constructor payload of the SAME owner mentions ``BitVec
-    <width>`` with that same width identifier.
-    The carrier is resolved from its declaration, never from its name alone: the
-    ``[NeZero <width>]`` and the ``BitVec <width>`` field/payload must belong
-    to the SAME owning declaration and the same width identifier, every word dimension of
-    the owner must be constrained, and a name with several owners (a local
-    duplicate shadowing an imported owner) is rejected as ambiguous.
+    imports) whose own header carries ``[NeZero <width>]`` and whose fields or
+    constructor payloads reach a direct ``BitVec <width>`` field through
+    uniquely resolved, HOL-tagged width-indexed carriers. Every owner in that
+    chain must retain the same width and its own positivity instance. Resolution
+    follows typed payload references, not names alone; a same-named local
+    duplicate shadowing an imported owner is rejected as ambiguous. Existing
+    special handling for HOL ``ValueHOL``/``HolWordLab`` additionally checks
+    their exact one-constructor wrapper shape.
     """
     errors: list[str] = []
     if not declaration_text.strip():
@@ -1876,17 +1876,19 @@ def words_as_type_indexed_bitvec_errors(
         }
         for name, owners in imported_inductive_owners(module, root).items():
             imported_owners.setdefault(name, []).extend(owners)
-        owners_by_name: dict[str, list[tuple[str, str, dict[str, str]]]] = {}
+        all_owners_by_name: dict[str, list[tuple[str, str, dict[str, str]]]] = {}
         for name in set(local_types) | set(imported_owners):
-            if not identifier_token_occurs(signature, name):
-                continue
             owners: list[tuple[str, str, dict[str, str]]] = []
             if name in local_types:
                 owners.append(
                     (module, local_headers.get(name, ""), local_types[name])
                 )
             owners.extend(imported_owners.get(name, []))
-            owners_by_name[name] = owners
+            all_owners_by_name[name] = owners
+        owners_by_name = {
+            name: owners for name, owners in all_owners_by_name.items()
+            if identifier_token_occurs(signature, name)
+        }
         ambiguous = [
             name for name, owners in owners_by_name.items() if len(owners) != 1
         ]
@@ -1901,6 +1903,89 @@ def words_as_type_indexed_bitvec_errors(
             )
         else:
             candidate_errors: list[str] = []
+            def has_hol_tag(owner_module: str, owner_name: str) -> bool:
+                path = module_source_file(owner_module, Path(root))
+                if not path.is_file():
+                    return False
+                source_lines = strip_lean_comments(
+                    path.read_text(encoding="utf-8")
+                ).splitlines()
+                declaration_line = next(
+                    (
+                        index for index, line in enumerate(source_lines)
+                        if re.match(
+                            rf"^\s*inductive\s+{re.escape(owner_name)}(?:\s|\()",
+                            line,
+                        )
+                    ),
+                    None,
+                )
+                if declaration_line is None:
+                    return False
+                # Allow a multiline @[hol] attribute, but do not borrow one
+                # from an earlier declaration in the same module.
+                prefix: list[str] = []
+                declaration_re = re.compile(
+                    r"^\s*(?:def|theorem|lemma|abbrev|instance|structure|inductive)\s"
+                )
+                for line in reversed(source_lines[:declaration_line]):
+                    if declaration_re.match(line):
+                        break
+                    prefix.append(line)
+                return any("@[hol" in line for line in prefix)
+
+            def owner_has_width(
+                owner: tuple[str, str, dict[str, str]], width: str
+            ) -> bool:
+                _owner_module, header, _payloads = owner
+                return (
+                    re.search(
+                        r"[\{\(]\s*" + re.escape(width) + r"\s*:\s*Nat\s*[\}\)]",
+                        header,
+                    ) is not None
+                    and re.search(
+                        r"\[\s*NeZero\s+" + re.escape(width) + r"\s*\]",
+                        header,
+                    ) is not None
+                )
+
+            def reaches_bitvec(owner_name: str, width: str, seen: set[str]) -> bool:
+                if owner_name in seen:
+                    return False
+                owners = all_owners_by_name.get(owner_name, [])
+                if len(owners) != 1:
+                    return False
+                owner_module, header, payloads = owners[0]
+                if not owner_has_width(owners[0], width):
+                    return False
+                # This recursive path is for exact syntax families only. It
+                # must not accept an unrelated aggregate that merely contains
+                # a word-bearing field.
+                if not has_hol_tag(owner_module, owner_name):
+                    return False
+                owner_text = header + "\n" + "\n".join(payloads.values())
+                dimension_ids = set(word_dimension_identifier_atoms(owner_text))
+                if word_dimension_errors(owner_text):
+                    return False
+                if dimension_ids:
+                    return width in dimension_ids and dimension_ids <= {width}
+                next_seen = seen | {owner_name}
+                payload_text = "\n".join(payloads.values())
+                for nested_name, nested_owners in all_owners_by_name.items():
+                    if len(nested_owners) != 1 or nested_name in next_seen:
+                        continue
+                    if not has_hol_tag(nested_owners[0][0], nested_name):
+                        continue
+                    if not owner_has_width(nested_owners[0], width):
+                        continue
+                    if re.search(
+                        rf"(?<![A-Za-z0-9_']){re.escape(nested_name)}\s+"
+                        rf"\(?{re.escape(width)}\)?(?![A-Za-z0-9_'])",
+                        payload_text,
+                    ) and reaches_bitvec(nested_name, width, next_seen):
+                        return True
+                return False
+
             def exact_hol_word_lab_carrier() -> bool:
                 # ValueHOL stores word values through the exact HOL `word_lab`
                 # wrapper. Do not bless HolWordLab by its name: resolve its
@@ -1967,6 +2052,23 @@ def words_as_type_indexed_bitvec_errors(
                         and value_ids
                         and all(identifier in value_widths for identifier in value_ids)
                         and exact_hol_word_lab_carrier()
+                    ):
+                        carrier_ok = True
+                        break
+                # Some exact HOL syntax is several datatypes away from words
+                # at the theorem boundary (DeclHOL -> FunDeclHOL -> ProgHOL ->
+                # ExpHOL -> BitVec). Follow only typed payload references
+                # through unique, tagged owners, preserving the same width.
+                owner_widths = {
+                    match.group(1)
+                    for match in NAT_WIDTH_BINDER_RE.finditer(header)
+                }
+                if len(owner_widths) == 1:
+                    width = next(iter(owner_widths))
+                    if (
+                        owner_has_width(owners[0], width)
+                        and has_hol_tag(_owner_module, owner_name)
+                        and reaches_bitvec(owner_name, width, set())
                     ):
                         carrier_ok = True
                         break

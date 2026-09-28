@@ -1745,6 +1745,42 @@ class WordsCarrierResolutionTest(unittest.TestCase):
         ])
         self.assertEqual(self._run(owner, consumer), [])
 
+    def test_accepts_hol_ast_carrier_reaching_nested_bitvec_payload(self):
+        owner = "\n".join([
+            '@[hol "cakeml/pancake/panLangScript.sml" "decl"]',
+            "inductive DeclHOL (width : Nat) [NeZero width] where",
+            "  | decl (value : ExpHOL width)",
+            '@[hol "cakeml/pancake/panLangScript.sml" "exp"]',
+            "inductive ExpHOL (width : Nat) [NeZero width] where",
+            "  | const (value : BitVec width)",
+        ])
+        consumer = "\n".join([
+            "import Flapjack.PanToCrep.ContextExact",
+            '@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "compile_def"',
+            "  (words_as_type_indexed_bitvec)]",
+            "def compileExact {width : Nat} [NeZero width]",
+            "    (declarations : List (DeclHOL width)) : Nat := width",
+        ])
+        self.assertEqual(self._run(owner, consumer), [])
+
+    def test_rejects_untagged_intermediate_ast_carrier(self):
+        owner = "\n".join([
+            '@[hol "cakeml/pancake/panLangScript.sml" "decl"]',
+            "inductive DeclHOL (width : Nat) [NeZero width] where",
+            "  | decl (value : ExpHOL width)",
+            "inductive ExpHOL (width : Nat) [NeZero width] where",
+            "  | const (value : BitVec width)",
+        ])
+        consumer = "\n".join([
+            "import Flapjack.PanToCrep.ContextExact",
+            '@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "compile_def"',
+            "  (words_as_type_indexed_bitvec)]",
+            "def compileExact {width : Nat} [NeZero width]",
+            "    (declarations : List (DeclHOL width)) : Nat := width",
+        ])
+        errors = self._run(owner, consumer)
+        self.assertTrue(any("BitVec" in error for error in errors), errors)
+
     VALUE_HOL_OWNER = "\n".join([
         "inductive HolWordLab (width : Nat) [NeZero width] where",
         "  | word (value : BitVec width)",

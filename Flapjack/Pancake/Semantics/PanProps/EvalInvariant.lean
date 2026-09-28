@@ -3918,6 +3918,21 @@ private theorem evaluateInvariantsCallBodyResultBranchesHOLFinite
       bodyPost.structs = bodyState.structs ∧
       bodyPost.code = bodyState.code ∧
       bodyPost.ffi.oracle = bodyState.ffi.oracle)
+    (ihHandler : ∀ (handlerProgram : ProgHOL width)
+      (handlerState : PanPropsEvalStateFiniteExact width σ)
+      (handlerResult : Option (PanSemResultExact width))
+      (handlerPost : PanPropsEvalStateFiniteExact width σ),
+      handlerState.clock < state.clock →
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair handlerState handlerProgram =
+        (handlerResult, handlerPost) →
+      handlerPost.memaddrs = handlerState.memaddrs ∧
+      handlerPost.shMemaddrs = handlerState.shMemaddrs ∧
+      handlerPost.be = handlerState.be ∧
+      handlerPost.eshapes = handlerState.eshapes ∧
+      handlerPost.baseAddr = handlerState.baseAddr ∧
+      handlerPost.structs = handlerState.structs ∧
+      handlerPost.code = handlerState.code ∧
+      handlerPost.ffi.oracle = handlerState.ffi.oracle)
     (hargs : PanSemStateFiniteExact.evalListHOLFinite state.toPanSemFinite
       (h := fun address => Classical.propDecidable
         (state.toPanSemFinite.memaddrs address)) arguments = some values)
@@ -4260,7 +4275,7 @@ private theorem evaluateInvariantsCallBodyResultBranchesHOLFinite
         PanPropsEvalStateFiniteExact.evaluateHOLFinitePair,
         PanPropsEvalStateFiniteExact.ofPanSemFinite,
         PanPropsEvalStateFiniteExact.toPanSemFinite]
-    have hhandlerInv := ihBody handlerProgram handlerStateProps handlerRun.1
+    have hhandlerInv := ihHandler handlerProgram handlerStateProps handlerRun.1
       handlerPostProps hhandlerClock hhandlerPair
     have hhandlerFields :
         handlerRun.2.memaddrs = state.toPanSemFinite.memaddrs ∧
@@ -4306,11 +4321,21 @@ private theorem evaluateInvariantsCallBodyResultBranchesHOLFinite
     exact hfinish handlerRun.2 (by simpa [handlerRun] using congrArg Prod.snd hhandlerEval)
       hhandlerFields
 
-/-- Flapjack-specific assembly of the finite-carrier `Call` equation and its
-    result branches. This is kept untagged until the evaluator's generated
-    recursive induction hypotheses are compared with this lower-clock IH
-    interface; it is not asserted as HOL's `evaluate_invariants` case. -/
-theorem evaluateInvariantsCallCaseHOLFinite {width : Nat} {σ : Type} [NeZero width] :
+/-! # General Call invariant helper (not the exact HOL induction case)
+
+This useful helper assumes invariant preservation for any two programs run at
+any states whose clocks are below the outer clock. It is intentionally
+untagged: the generated HOL `evaluate_ind` Call conjunct is narrower and has
+different binders. `scripts/hol-probes/pan_sem_evaluate_ind_probe.out` records
+the printed source conjunct. Its callee IH is guarded by the concrete argument
+evaluation, code lookup/decomposition, and equation
+`eval_prog = evaluate (prog, dec_clock s with locals := newlocals)`; its
+handler IH additionally carries the concrete returned-exception, matching
+handler id, shape, and validity premises. The broad arbitrary-program/state
+IHs below do not have that binder/premise shape. This helper is not a port of
+the HOL Call case; the faithful case remains open in bead `flapjack-4ac.4.61`.
+-/
+theorem evaluateInvariantsCallCaseGeneralIH_Untagged {width : Nat} {σ : Type} [NeZero width] :
     ∀ (info : Option (Option (VarKind × MlS) × Option (MlS × MlS × ProgHOL width)))
       (function : MlS) (arguments : List (ExpHOL width))
       (state : PanPropsEvalStateFiniteExact width σ)
@@ -4333,6 +4358,21 @@ theorem evaluateInvariantsCallCaseHOLFinite {width : Nat} {σ : Type} [NeZero wi
         bodyPost.structs = bodyState.structs ∧
         bodyPost.code = bodyState.code ∧
         bodyPost.ffi.oracle = bodyState.ffi.oracle) →
+      (∀ (handlerProgram : ProgHOL width)
+        (handlerState : PanPropsEvalStateFiniteExact width σ)
+        (handlerResult : Option (PanSemResultExact width))
+        (handlerPost : PanPropsEvalStateFiniteExact width σ),
+        handlerState.clock < state.clock →
+        PanPropsEvalStateFiniteExact.evaluateHOLFinitePair handlerState handlerProgram =
+          (handlerResult, handlerPost) →
+        handlerPost.memaddrs = handlerState.memaddrs ∧
+        handlerPost.shMemaddrs = handlerState.shMemaddrs ∧
+        handlerPost.be = handlerState.be ∧
+        handlerPost.eshapes = handlerState.eshapes ∧
+        handlerPost.baseAddr = handlerState.baseAddr ∧
+        handlerPost.structs = handlerState.structs ∧
+        handlerPost.code = handlerState.code ∧
+        handlerPost.ffi.oracle = handlerState.ffi.oracle) →
       post.memaddrs = state.memaddrs ∧
       post.shMemaddrs = state.shMemaddrs ∧
       post.be = state.be ∧
@@ -4342,7 +4382,7 @@ theorem evaluateInvariantsCallCaseHOLFinite {width : Nat} {σ : Type} [NeZero wi
       post.code = state.code ∧
       post.ffi.oracle = state.ffi.oracle := by
   classical
-  intro info function arguments state result post hRun ihBody
+  intro info function arguments state result post hRun ihBody ihHandler
   let memaddrsDec : DecidablePred state.toPanSemFinite.memaddrs :=
     fun address => Classical.propDecidable (state.toPanSemFinite.memaddrs address)
   cases hargs : PanSemStateFiniteExact.evalListHOLFinite state.toPanSemFinite
@@ -4414,7 +4454,7 @@ theorem evaluateInvariantsCallCaseHOLFinite {width : Nat} {σ : Type} [NeZero wi
                   simpa [evaluateInvariantsCallBodyClassification] using hbodyKind
                 exact evaluateInvariantsCallBodyResultBranchesHOLFinite state info function
                   arguments values body callee returnShape bodyResult bodyPost result post
-                  ihBody hargs hlookup hclock hbody hbodyKind' hRun
+                  ihBody ihHandler hargs hlookup hclock hbody hbodyKind' hRun
 
 end Flapjack
 
