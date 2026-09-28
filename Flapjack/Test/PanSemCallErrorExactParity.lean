@@ -350,6 +350,12 @@ private def badReturnParamCode : PanSemCodeMap Word64 :=
 private def goodReturnCode : PanSemCodeMap Word64 :=
   [("goodret", ([], .return (.const (BitVec.ofNat 64 7)), .one))]
 
+/-- Source code entry matching `scripts/hol-probes/pan_sem_call_return_invalid_probe.out`:
+    callee `f` binds one `One` parameter `p`, returns `0`, and declares the
+    mismatching return shape `Named "Other"`. -/
+private def invalidReturnCode : PanSemCodeMap Word64 :=
+  [("f", ([("p", .one)], .return (.const (BitVec.ofNat 64 0)), .named "Other"))]
+
 private def codeEvaluate (state : PanSemState Word64 (FfiState Unit))
     (program : Prog Word64) : Option (PanValueFfiClockResult Word64 Unit) :=
   panSemEvaluateRiscV64CodeState statefulTestContext statefulTestPrimitive
@@ -385,6 +391,24 @@ private def callGoodReturnShapeGuard : Bool :=
   | some (.control (.returned _ _ _ _ [.word value]), n) =>
       n == 4 && value == BitVec.ofNat 64 7
   | _ => false
+
+/-- Oracle-row matcher for `scripts/hol-probes/pan_sem_call_return_invalid_probe.out`:
+    `SOME Error` at the decremented clock 4 with the callee parameter `p` and the
+    caller local `caller` both absent. -/
+private def isReturnInvalidError (clock : Nat)
+    (result : Option (PanValueFfiClockResult Word64 Unit)) : Bool :=
+  match result with
+  | some (.control control, n) =>
+      match control with
+      | .error locals _ _ _ =>
+          n == clock && (locals "p").isNone && (locals "caller").isNone
+      | _ => false
+  | _ => false
+
+private def callInvalidReturnShapeGuard : Bool :=
+  isReturnInvalidError 4
+    (codeEvaluate (badReturnShapeState invalidReturnCode)
+      (.call none "f" [.const (BitVec.ofNat 64 1)]))
 
 /-- Kernel-checked code-map Call invalid-return-shape equation for the probe
     `badret` entry. -/
@@ -440,9 +464,63 @@ theorem decCallBadReturnShape_eq :
     panSemBitVec64MemoryAccess, decPanClock,
     badReturnShapeState] using h
 
+/-- Kernel-checked code-map Call invalid-return-shape equation for the
+    `scripts/hol-probes/pan_sem_call_return_invalid_probe.out` entry.  The
+    returned `.word 0` mismatches the declared `Named "Other"` shape, so the call
+    rejects with `SOME Error` at the decremented clock 4, with the callee
+    parameter `p` and the caller local `caller` both absent.  It is proved from
+    the generic callee-run-hypothesis equation
+    `panSemEvaluateCodeState_call_error_of_callee_returnShapeMismatch`. -/
+theorem callInvalidReturnShape_eq :
+    codeEvaluate (badReturnShapeState invalidReturnCode)
+      (.call none "f" [.const (BitVec.ofNat 64 1)]) =
+      some (.control (.error (fun _ => none) (fun _ => none)
+        (fun _ => some (.word 0)) statefulTestFfiState), 4) := by
+  have h := panSemEvaluateCodeState_call_error_of_callee_returnShapeMismatch
+    statefulTestContext statefulTestPrimitive statefulTestHandler (BitVec.ofNat 64 8)
+    (badReturnShapeState invalidReturnCode) none "f"
+    [.const (BitVec.ofNat 64 1)] [.word (BitVec.ofNat 64 1)]
+    (.return (.const (BitVec.ofNat 64 0))) (.named "Other")
+    (fun key => if key == "p" then some (.word (BitVec.ofNat 64 1)) else none)
+    (fun _ => none) (fun _ => none) (fun _ => some (.word 0)) statefulTestFfiState
+    (.word (BitVec.ofNat 64 0)) 4
+    (panSemCodeEvaluateFuel (badReturnShapeState invalidReturnCode)
+      (.call none "f" [.const (BitVec.ofNat 64 1)]) - 2)
+    (memoryAccess := some (panSemBitVec64MemoryAccess (badReturnShapeState invalidReturnCode)))
+    (contracts := none) (memoryHandler := none)
+    (by simp [badReturnShapeState, invalidReturnCode, evalPanValueExps,
+      evalPanValueExp.evalPanValueExps, evalPanValueExp, panSemBitVec64MemoryAccess])
+    (by
+      unfold lookupPanSemCodeCall
+      simp [badReturnShapeState, invalidReturnCode, panSemCodeLookup, lookupInfo,
+        panSemCodeArgumentsMatch, bindPanValueParameters, panValueShape,
+        panShapeMatches]
+      funext key
+      simp [updatePanValueMap, beq_iff_eq])
+    (by decide)
+    (by
+      have hval : panSemCodeEvaluateFuel (badReturnShapeState invalidReturnCode)
+          (.call none "f" [.const (BitVec.ofNat 64 1)]) = 19 := by
+        simp [panSemCodeEvaluateFuel, panSemProgFuel, panSemCodeBodyFuel,
+          panSemExpListFuel, panSemExpFuel, panSemCallInfoFuel, badReturnShapeState,
+          invalidReturnCode]
+      omega)
+    (by simp [badReturnShapeState, invalidReturnCode, evalPanValueFfiClockCodeProg,
+      evalPanValueFfiClockLeaf, evalPanValueFfiProgSteps, panValueReturnResult,
+      evalPanValueExpCounted, evalPanValueExp, panValuePayloadWithinLimit,
+      panValuePayloadSizeFuel, panValueExpStepCost, decPanClock,
+      panSemCodeEvaluateFuel, panSemProgFuel, panSemCodeBodyFuel,
+      panSemExpListFuel, panSemExpFuel, panSemCallInfoFuel])
+    (by simp [badReturnShapeState, invalidReturnCode, panValueShape, panShapeMatches])
+  simpa [codeEvaluate, panSemEvaluateRiscV64CodeState,
+    panSemEvaluateCodeStateWithMemoryModel, panSemBitVec64BytesInWord,
+    panSemBitVec64MemoryAccess, decPanClock,
+    badReturnShapeState] using h
+
 private def stateCodeGuard : Bool :=
   callBadReturnShapeGuard && callBadReturnShapeParamGuard &&
-    decCallBadReturnShapeGuard && callGoodReturnShapeGuard
+    decCallBadReturnShapeGuard && callGoodReturnShapeGuard &&
+    callInvalidReturnShapeGuard
 
 #guard stateCodeGuard
 
@@ -495,6 +573,9 @@ def runChecks : IO Bool := do
   if callGoodReturnShapeGuard then
     IO.println "PASS code-map Call valid return shape returns its value"
   else IO.println "FAIL code-map Call valid return shape returns its value"
+  if callInvalidReturnShapeGuard then
+    IO.println "PASS code-map Call Named-Other invalid return shape rejects with Error (clock 4)"
+  else IO.println "FAIL code-map Call Named-Other invalid return shape rejects with Error (clock 4)"
   pure (callGuard && stateCodeGuard)
 
 end Flapjack.Test.PanSemCallErrorExactParity
