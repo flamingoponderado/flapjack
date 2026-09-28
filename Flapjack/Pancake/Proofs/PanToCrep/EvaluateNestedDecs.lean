@@ -510,20 +510,12 @@ private theorem loadGlobalsHOL_zero_eq_range {width : Nat} [NeZero width]
     rw [hload]
     simp
 
-/-- FLAPJACK-SPECIFIC provisional rendering (no `@[hol]` tag), withdrawn
-    2026-09-27 (bead flapjack-64k0, PR #1166 review item 2). The conclusion is
-    over `evalCrepSemHOLProgExact`, the no-decider classical wrapper around the
-    re-implemented evaluator `evalCrepSemHOLProg` whose full clause set is not
-    yet source-reviewed against `evaluate_def`. As with the general
-    nested-declaration equation it depends on, the theorem quantifies over an
-    arbitrary continuation `body`, so its exactness depends on that still-open
-    full clause review. Concrete gaps: the recursive clauses thread the
-    base-state decisions through `crepStampExactDomains`, whose reachability
-    for the derived states is unreviewed; the byte-store clause still routes
-    through the legacy `UInt8` helpers; and the finite-map qualifier's
-    owner/witness placement is unresolved (`flapjack-4ac.5.16.5.13.1`). HOL
-    candidate: `evaluate_nested_decs_load_globals`
-    (`pan_to_crepProofScript.sml:4139-4176`). Faithful port tracked by
+/-- FLAPJACK-SPECIFIC presentation of HOL candidate
+    `evaluate_nested_decs_load_globals` (`pan_to_crepProofScript.sml:4139-4176`).
+    Its evaluator now has a tagged, source-reviewed `evaluate_def` clause
+    theorem, and the finite-map qualifier witness is settled. This theorem
+    remains untagged pending a separate review of its own binders, conjunctive
+    premise, and pair-pattern conclusion against HOL; see
     `flapjack-4ac.5.16.5`. -/
 theorem evaluateNestedDecsLoadGlobalsCrepHOL {width : Nat} [NeZero width]
     {σ : Type} (state : CrepSemHOLState width σ) (value : ValueHOL width)

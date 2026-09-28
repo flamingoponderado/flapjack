@@ -350,7 +350,7 @@ theorem shMemLoadHOLFiniteExact_ret_corresponds {width : Nat} [NeZero width] {σ
     (source : PanSemStateFiniteExact width σ) [hsrc : DecidablePred source.shMemaddrs]
     (target : CrepSemHOLState width σ) [htgt : DecidablePred target.shMemaddrs]
     (ctxt : PanToCrepContextExact width) (destination : Nat) (name : MlS)
-    (address : RiscV.Word width) (nb : Nat) (h8 : 8 ≤ width)
+    (address : RiscV.Word width) (nb : Nat)
     (hstate : panToCrepStateRelFiniteExact source target)
     (hlocals : panToCrepLocalsRelFiniteExact ctxt source.locals target.locals)
     (hvar : ctxt.vars.lookup name = some (ShapeHOL.one, [destination]))
@@ -371,7 +371,7 @@ theorem shMemLoadHOLFiniteExact_ret_corresponds {width : Nat} [NeZero width] {σ
       panToCrepStateRelFiniteExact sourcePost targetPost ∧
         panToCrepLocalsRelFiniteExact ctxt sourcePost.locals targetPost.locals := by
     intro newFfi newBytes hs1 ht1
-    have hdec := panWordOfBytesHOL_eq_crepClockWordOfBytes (width := width) h8 newBytes
+    have hdec := panWordOfBytesHOL_eq_crepClockWordOfBytes (width := width) newBytes
     refine ⟨?_, ?_⟩
     · rw [hs1, ht1]
       refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
@@ -432,6 +432,70 @@ theorem shMemLoadHOLFiniteExact_ret_corresponds {width : Nat} [NeZero width] {σ
           simp only [] at htarget
           exact finish newFfi newBytes (Prod.mk.inj hsource).2.symm (Prod.mk.inj htarget).2.symm
     · rw [if_neg hdom] at hsource; simp at hsource
+
+/-- The exact Pan and Crep shared-memory load helpers agree on every
+    observable control outcome under the `state_rel` projection.  A final FFI
+    event and an address/domain error are shared by both helpers.  On an FFI
+    return, the state and `locals_rel` updates are related by
+    `shMemLoadHOLFiniteExact_ret_corresponds`, including the decoded word and
+    the context-selected destination slot. This assembles the control and
+    successful-return pieces used by the `pc_compile_correct` ShMemLoad case;
+    it is Flapjack-specific proof infrastructure, not a separate HOL theorem. -/
+theorem shMemLoadHOLFiniteExact_outcome_corresponds {width : Nat} [NeZero width] {σ : Type}
+    (source : PanSemStateFiniteExact width σ) [hsrc : DecidablePred source.shMemaddrs]
+    (target : CrepSemHOLState width σ) [htgt : DecidablePred target.shMemaddrs]
+    (ctxt : PanToCrepContextExact width) (destination : Nat) (name : MlS)
+    (address : RiscV.Word width) (nb : Nat)
+    (hstate : panToCrepStateRelFiniteExact source target)
+    (hlocals : panToCrepLocalsRelFiniteExact ctxt source.locals target.locals)
+    (hvar : ctxt.vars.lookup name = some (ShapeHOL.one, [destination])) :
+    (∃ event : HolFinalEvent,
+      (shMemLoadHOLFiniteExact source .local name address nb).1 = some (.finalFfi event) ∧
+      (crepShMemLoadExactHOL destination address nb target).1 = some (.finalFfi event)) ∨
+    ((shMemLoadHOLFiniteExact source .local name address nb).1 = some .error ∧
+      (crepShMemLoadExactHOL destination address nb target).1 = some .error ∧
+      panToCrepStateRelFiniteExact source target ∧
+      panToCrepLocalsRelFiniteExact ctxt source.locals target.locals) ∨
+    ((shMemLoadHOLFiniteExact source .local name address nb).1 = none ∧
+      (crepShMemLoadExactHOL destination address nb target).1 = none ∧
+      panToCrepStateRelFiniteExact
+        (shMemLoadHOLFiniteExact source .local name address nb).2
+        (crepShMemLoadExactHOL destination address nb target).2 ∧
+      panToCrepLocalsRelFiniteExact ctxt
+        (shMemLoadHOLFiniteExact source .local name address nb).2.locals
+        (crepShMemLoadExactHOL destination address nb target).2.locals) := by
+  have hffi : source.toExact.ffi = target.ffi := hstate.2.2.2.2.2.2.2.1
+  have hdom : ∀ a, source.toExact.shMemaddrs a = target.shMemaddrs a := by
+    intro a
+    exact congrFun hstate.2.2.1 a
+  have hprojection := shMemLoadHOLFiniteExact_toExact source .local name address nb
+  have hprojectionResult :
+      (shMemLoadHOLFiniteExact source .local name address nb).1 =
+        (shMemLoadHOLExact source.toExact .local name address nb).1 :=
+    congrArg Prod.fst hprojection
+  have hcontrol := shMemLoadHOLExact_control_corresponds source.toExact target
+    .local name destination address nb hffi hdom
+  rw [← hprojectionResult] at hcontrol
+  rcases hcontrol with ⟨event, hsourceResult, htargetResult⟩ |
+      ⟨hsourceResult, htargetResult⟩ | ⟨hsourceResult, htargetResult⟩
+  · exact Or.inl ⟨event, hsourceResult, htargetResult⟩
+  · exact Or.inr (Or.inl ⟨hsourceResult, htargetResult, hstate, hlocals⟩)
+  · let sourcePost := (shMemLoadHOLFiniteExact source .local name address nb).2
+    let targetPost := (crepShMemLoadExactHOL destination address nb target).2
+    have hsource : shMemLoadHOLFiniteExact source .local name address nb =
+        (none, sourcePost) := by
+      dsimp [sourcePost]
+      cases hout : shMemLoadHOLFiniteExact source .local name address nb with
+      | mk result state => simp_all
+    have htarget : crepShMemLoadExactHOL destination address nb target =
+        (none, targetPost) := by
+      dsimp [targetPost]
+      cases hout : crepShMemLoadExactHOL destination address nb target with
+      | mk result state => simp_all
+    obtain ⟨hpostState, hpostLocals⟩ :=
+      shMemLoadHOLFiniteExact_ret_corresponds source target ctxt destination name
+        address nb hstate hlocals hvar hsource htarget
+    exact Or.inr (Or.inr ⟨hsourceResult, htargetResult, hpostState, hpostLocals⟩)
 
 /-- Exact port of HOL `excp_rel_def`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:16-23`). Both maps are

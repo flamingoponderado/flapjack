@@ -69,6 +69,7 @@ import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Tick
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Annot
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Return
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.While
+import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Assembly
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.StoreByte
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Store32
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Raise
@@ -76,6 +77,7 @@ import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Assign
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Primitive
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Store
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.ShMemStore
+import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.ShMemLoad
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.ExtCall
 import Flapjack.Pancake.Proofs.PanToCrep.NotMemContextAssignedMemGt
 import Flapjack.Pancake.Semantics.CrepProps

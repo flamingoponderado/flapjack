@@ -7,7 +7,7 @@ import Flapjack.Pancake.Semantics.ShMemBytesBridge
 
 The `ShMemStore` constructor conjunct of HOL `pc_compile_correct`
 (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:442-468`, resumed at
-`:1912-1949`). The source and target shared-memory primitives are related by
+`:1960-2011`). The source and target shared-memory primitives are related by
 the byte-list/control bridge in `ShMemBytesBridge`; the compiler's temporary
 is greater than every variable in the address expression, as in HOL's
 `compile_def` at `pan_to_crepScript.sml:291-297`.
@@ -29,7 +29,7 @@ private theorem mem_lt_succ_foldr_max (xs : List Nat) (x : Nat) (h : x ∈ xs) :
         exact Nat.lt_of_lt_of_le ht (Nat.add_le_add_right (Nat.le_max_right _ _) 1)
 
 /-- HOL `pc_compile_correct`, `ShMemStore` constructor case
-    (`pan_to_crepProofScript.sml:1912-1949`, under the `evaluate_ind`
+    (`pan_to_crepProofScript.sml:1960-2011`, under the `evaluate_ind`
     conjunct from `:442-468`). Its binders are `op ad e s`; there is no
     induction hypothesis because the two operands use `eval`, not recursive
     `evaluate`. The source evaluator's explicit total branches, exact compiler,
@@ -446,7 +446,7 @@ theorem holFmapAsFiniteSupportRelationWitness_CrepSemHOLState
 end PcCompileCorrectShMemStoreWitnesses
 
 /-- Exact HOL `pc_compile_correct[ShMemStore]` case, resumed at
-    `pan_to_crepProofScript.sml:1960-1989`. HOL's `ShMemStore op ad e`
+    `pan_to_crepProofScript.sml:1960-2011`. HOL's `ShMemStore op ad e`
     evaluator evaluates `ad` as the address and `e` as the stored word; the
     compiler stores the compiled `e` in a fresh local above every variable in
     the compiled `ad`, then executes `ShMem (store_op op) temp ad`. The exact
@@ -461,7 +461,7 @@ end PcCompileCorrectShMemStoreWitnesses
     CrepSemHOLState.code, PanToCrepContextExact.vars, PanToCrepContextExact.funcs,
     PanToCrepContextExact.eids])
   (words_as_type_indexed_bitvec)]
-theorem pcCompileCorrect_ShmStore {width : Nat} {σ : Type} [NeZero width] :
+theorem pcCompileCorrect_ShMemStore {width : Nat} {σ : Type} [NeZero width] :
     ∀ (operator : OpSize) (address value : ExpHOL width)
       (s : PanSemStateFiniteExact width σ)
       (res : Option (PanSemResultExact width))
