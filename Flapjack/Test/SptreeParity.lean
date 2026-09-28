@@ -91,6 +91,31 @@ private def sptreeGuard : Bool :=
 example (value : Unit) (tree : NumSet) : sptLookup 0 (sptInsert 0 value tree) = some value :=
   sptLookup_sptInsert_zero value tree
 
+/-- `domain_lookup` (HOL sptree `:620`) turns any lookup witness into a
+    membership witness. -/
+example (v : Unit) (h : sptLookup 2 threeInserted = some v) : sptMem 2 threeInserted :=
+  (sptMem_iff_lookup 2 threeInserted).mpr ⟨v, h⟩
+
+/-- Inserting key `0` makes it a domain member (`domain_lookup` in the other
+    direction). -/
+example (value : Unit) : sptMem 0 (sptInsert 0 value (Spt.ln : NumSet)) :=
+  (sptMem_iff_lookup 0 _).mpr ⟨value, sptLookup_sptInsert_zero value .ln⟩
+
+/-- The empty tree has empty domain. -/
+example : ¬ sptMem 7 (Spt.ln : NumSet) := sptMem_ln 7
+
+/-- The `BN` `domain_def` clause on the exact carrier. -/
+example : sptMem 1 (.bn (.ls () : NumSet) .ln) ↔
+    (∃ m, sptMem m (.ls () : NumSet) ∧ 1 = 2 * m + 2) ∨
+      (∃ m, sptMem m (.ln : NumSet) ∧ 1 = 2 * m + 1) :=
+  sptMem_bn (.ls () : NumSet) .ln 1
+
+/-- The `BS` `domain_def` clause on the exact carrier. -/
+example : sptMem 0 (.bs .ln () (.ln : NumSet)) ↔
+    0 = 0 ∨ (∃ m, sptMem m (.ln : NumSet) ∧ 0 = 2 * m + 2) ∨
+      (∃ m, sptMem m (.ln : NumSet) ∧ 0 = 2 * m + 1) :=
+  sptMem_bs .ln () .ln 0
+
 def runChecks : IO Bool := do
   IO.println "PASS exact spt/num_set carrier lookup/insert/wf and toAList enumeration order match the 17 oracle rows"
   pure sptreeGuard
