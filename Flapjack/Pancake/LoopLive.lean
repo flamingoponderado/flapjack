@@ -1627,13 +1627,14 @@ be   reviewed before an `@[hol]` reference is attached. -/
 /-- Exact port of HOL `loop_liveScript.sml:28-31 size_mk_BN`. -/
 @[hol "cakeml/pancake/loop_liveScript.sml" "size_mk_BN"]
 theorem sptSize_mkBN {α : Type} (t1 t2 : Spt α) :
-    sptSize (sptMkBN t1 t2) = sptSize t1 + sptSize t2 := by
+    sptSize (sptMkBN t1 t2) = sptSize (.bn t1 t2) := by
   cases t1 <;> cases t2 <;> simp [sptMkBN, sptSize]
 
-/-- Exact port of HOL `loop_liveScript.sml:34-36 size_mk_BS`. -/
+/-- Exact port of HOL `loop_liveScript.sml:34-36 size_mk_BS`:
+    `size (mk_BS t1 x t2) = size (BS t1 x t2)`. -/
 @[hol "cakeml/pancake/loop_liveScript.sml" "size_mk_BS"]
 theorem sptSize_mkBS {α : Type} (t1 t2 : Spt α) (x : α) :
-    sptSize (sptMkBS t1 x t2) = sptSize t1 + sptSize t2 + 1 := by
+    sptSize (sptMkBS t1 x t2) = sptSize (.bs t1 x t2) := by
   cases t1 <;> cases t2 <;> simp [sptMkBS, sptSize]
 
 /-- Exact port of HOL `loop_liveScript.sml:40-48 size_inter`. -/
@@ -1662,7 +1663,7 @@ theorem sptSize_inter_le {α β : Type} (l1 : Spt α) (l2 : Spt β) :
       | ln => simp [sptInter]
       | ls v => simp [sptInter]
       | bn f s =>
-          simp only [sptInter, sptSize_bs, sptSize_mkBN]
+          simp only [sptInter, sptSize_bs, sptSize_bn, sptSize_mkBN]
           have h1 := ihFirst f
           have h2 := ihSecond s
           omega
