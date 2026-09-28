@@ -3598,6 +3598,175 @@ theorem evaluateInvariantsDecCallCaseHOLFinite {width : Nat} {σ : Type}
                           PanSemStateFiniteExact.fixClockHOLFinite] using hpostRaw
                       exact hfinish fixed.2 hpost hfixedFields
 
+/-- A small proof-support lemma for the `Call` induction case. It isolates
+    the HOL `Call` subcase where argument evaluation fails, in which
+    `evaluate_def` returns the source state unchanged. This helper has an
+    extra branch premise and so is Flapjack proof infrastructure, not a
+    separate port of a HOL declaration. -/
+private theorem evaluateInvariantsCallArgsFailureHOLFinite
+    {width : Nat} {σ : Type} [NeZero width]
+    (state : PanPropsEvalStateFiniteExact width σ)
+    (info : Option (Option (VarKind × MlS) × Option (MlS × MlS × ProgHOL width)))
+    (function : MlS) (arguments : List (ExpHOL width))
+    (result : Option (PanSemResultExact width))
+    (post : PanPropsEvalStateFiniteExact width σ)
+    (hargs : PanSemStateFiniteExact.evalListHOLFinite state.toPanSemFinite
+      (h := fun address => Classical.propDecidable
+        (state.toPanSemFinite.memaddrs address)) arguments = none)
+    (hRun : PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state
+      (.call info function arguments : ProgHOL width) = (result, post)) :
+    post.memaddrs = state.memaddrs ∧
+    post.shMemaddrs = state.shMemaddrs ∧
+    post.be = state.be ∧
+    post.eshapes = state.eshapes ∧
+    post.baseAddr = state.baseAddr ∧
+    post.structs = state.structs ∧
+    post.code = state.code ∧
+    post.ffi.oracle = state.ffi.oracle := by
+  classical
+  have hcanonical :
+      PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite
+          (.call info function arguments : ProgHOL width) =
+        (result, post.toPanSemFinite) := by
+    have hpair := congrArg
+      (fun output => (output.1, PanPropsEvalStateFiniteExact.toPanSemFinite output.2)) hRun
+    have hpair' :
+        (PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite
+          (.call info function arguments : ProgHOL width)).1 = result ∧
+        (PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite
+          (.call info function arguments : ProgHOL width)).2 = post.toPanSemFinite := by
+      simpa [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair] using hpair
+    exact Prod.ext hpair'.1 hpair'.2
+  rw [evaluateHOLFiniteState_call, hargs] at hcanonical
+  have hpost := congrArg Prod.snd hcanonical
+  have hsame : post.toPanSemFinite = state.toPanSemFinite := by
+    simpa using hpost.symm
+  have hmem := congrArg (fun s : PanSemStateFiniteExact width σ => s.memaddrs) hsame
+  have hshared := congrArg (fun s : PanSemStateFiniteExact width σ => s.shMemaddrs) hsame
+  have hbe := congrArg (fun s : PanSemStateFiniteExact width σ => s.be) hsame
+  have heshapes := congrArg (fun s : PanSemStateFiniteExact width σ => s.eshapes) hsame
+  have hbase := congrArg (fun s : PanSemStateFiniteExact width σ => s.baseAddr) hsame
+  have hstructs := congrArg (fun s : PanSemStateFiniteExact width σ => s.structs) hsame
+  have hcode := congrArg (fun s : PanSemStateFiniteExact width σ => s.code) hsame
+  have horacle := congrArg (fun s : PanSemStateFiniteExact width σ => s.ffi.oracle) hsame
+  simpa [PanPropsEvalStateFiniteExact.toPanSemFinite] using
+    And.intro hmem (And.intro hshared (And.intro hbe (And.intro heshapes
+      (And.intro hbase (And.intro hstructs (And.intro hcode horacle))))))
+
+/-- Proof-support for the next HOL `Call` early exit: a successfully evaluated
+    argument list whose code lookup fails leaves the state unchanged. This
+    branch-specific helper is not itself a HOL theorem port. -/
+private theorem evaluateInvariantsCallLookupFailureHOLFinite
+    {width : Nat} {σ : Type} [NeZero width]
+    (state : PanPropsEvalStateFiniteExact width σ)
+    (info : Option (Option (VarKind × MlS) × Option (MlS × MlS × ProgHOL width)))
+    (function : MlS) (arguments : List (ExpHOL width)) (values : List (ValueHOL width))
+    (result : Option (PanSemResultExact width))
+    (post : PanPropsEvalStateFiniteExact width σ)
+    (hargs : PanSemStateFiniteExact.evalListHOLFinite state.toPanSemFinite
+      (h := fun address => Classical.propDecidable
+        (state.toPanSemFinite.memaddrs address)) arguments = some values)
+    (hlookup : PanSemStateFiniteExact.lookupCodeHOLFinite
+      state.toPanSemFinite.code.lookup function values = none)
+    (hRun : PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state
+      (.call info function arguments : ProgHOL width) = (result, post)) :
+    post.memaddrs = state.memaddrs ∧
+    post.shMemaddrs = state.shMemaddrs ∧
+    post.be = state.be ∧
+    post.eshapes = state.eshapes ∧
+    post.baseAddr = state.baseAddr ∧
+    post.structs = state.structs ∧
+    post.code = state.code ∧
+    post.ffi.oracle = state.ffi.oracle := by
+  classical
+  have hcanonical :
+      PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite
+          (.call info function arguments : ProgHOL width) =
+        (result, post.toPanSemFinite) := by
+    have hpair := congrArg
+      (fun output => (output.1, PanPropsEvalStateFiniteExact.toPanSemFinite output.2)) hRun
+    have hpair' :
+        (PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite
+          (.call info function arguments : ProgHOL width)).1 = result ∧
+        (PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite
+          (.call info function arguments : ProgHOL width)).2 = post.toPanSemFinite := by
+      simpa [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair] using hpair
+    exact Prod.ext hpair'.1 hpair'.2
+  simp only [evaluateHOLFiniteState_call, hargs, hlookup] at hcanonical
+  have hpost := congrArg Prod.snd hcanonical
+  have hsame : post.toPanSemFinite = state.toPanSemFinite := by
+    simpa using hpost.symm
+  have hmem := congrArg (fun s : PanSemStateFiniteExact width σ => s.memaddrs) hsame
+  have hshared := congrArg (fun s : PanSemStateFiniteExact width σ => s.shMemaddrs) hsame
+  have hbe := congrArg (fun s : PanSemStateFiniteExact width σ => s.be) hsame
+  have heshapes := congrArg (fun s : PanSemStateFiniteExact width σ => s.eshapes) hsame
+  have hbase := congrArg (fun s : PanSemStateFiniteExact width σ => s.baseAddr) hsame
+  have hstructs := congrArg (fun s : PanSemStateFiniteExact width σ => s.structs) hsame
+  have hcode := congrArg (fun s : PanSemStateFiniteExact width σ => s.code) hsame
+  have horacle := congrArg (fun s : PanSemStateFiniteExact width σ => s.ffi.oracle) hsame
+  simpa [PanPropsEvalStateFiniteExact.toPanSemFinite] using
+    And.intro hmem (And.intro hshared (And.intro hbe (And.intro heshapes
+      (And.intro hbase (And.intro hstructs (And.intro hcode horacle))))))
+
+/-- Proof-support for the HOL `Call` timeout branch: the source evaluator
+    returns the original state with only `locals` cleared. This helper has an
+    extra source-branch premise and is not itself a HOL theorem port. -/
+private theorem evaluateInvariantsCallTimeoutHOLFinite
+    {width : Nat} {σ : Type} [NeZero width]
+    (state : PanPropsEvalStateFiniteExact width σ)
+    (info : Option (Option (VarKind × MlS) × Option (MlS × MlS × ProgHOL width)))
+    (function : MlS) (arguments : List (ExpHOL width)) (values : List (ValueHOL width))
+    (body : ProgHOL width) (callee : HolFiniteMapExact MlS (ValueHOL width))
+    (returnShape : ShapeHOL) (result : Option (PanSemResultExact width))
+    (post : PanPropsEvalStateFiniteExact width σ)
+    (hargs : PanSemStateFiniteExact.evalListHOLFinite state.toPanSemFinite
+      (h := fun address => Classical.propDecidable
+        (state.toPanSemFinite.memaddrs address)) arguments = some values)
+    (hlookup : PanSemStateFiniteExact.lookupCodeHOLFinite
+      state.toPanSemFinite.code.lookup function values = some (body, callee, returnShape))
+    (hclock : state.toPanSemFinite.clock = 0)
+    (hRun : PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state
+      (.call info function arguments : ProgHOL width) = (result, post)) :
+    post.memaddrs = state.memaddrs ∧
+    post.shMemaddrs = state.shMemaddrs ∧
+    post.be = state.be ∧
+    post.eshapes = state.eshapes ∧
+    post.baseAddr = state.baseAddr ∧
+    post.structs = state.structs ∧
+    post.code = state.code ∧
+    post.ffi.oracle = state.ffi.oracle := by
+  classical
+  have hcanonical :
+      PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite
+          (.call info function arguments : ProgHOL width) =
+        (result, post.toPanSemFinite) := by
+    have hpair := congrArg
+      (fun output => (output.1, PanPropsEvalStateFiniteExact.toPanSemFinite output.2)) hRun
+    have hpair' :
+        (PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite
+          (.call info function arguments : ProgHOL width)).1 = result ∧
+        (PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite
+          (.call info function arguments : ProgHOL width)).2 = post.toPanSemFinite := by
+      simpa [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair] using hpair
+    exact Prod.ext hpair'.1 hpair'.2
+  simp only [evaluateHOLFiniteState_call, hargs, hlookup, if_pos hclock] at hcanonical
+  have hpost := congrArg Prod.snd hcanonical
+  have hsame : post.toPanSemFinite =
+      PanSemStateFiniteExact.emptyLocalsHOLFinite state.toPanSemFinite := by
+    simpa using hpost.symm
+  have hmem := congrArg (fun s : PanSemStateFiniteExact width σ => s.memaddrs) hsame
+  have hshared := congrArg (fun s : PanSemStateFiniteExact width σ => s.shMemaddrs) hsame
+  have hbe := congrArg (fun s : PanSemStateFiniteExact width σ => s.be) hsame
+  have heshapes := congrArg (fun s : PanSemStateFiniteExact width σ => s.eshapes) hsame
+  have hbase := congrArg (fun s : PanSemStateFiniteExact width σ => s.baseAddr) hsame
+  have hstructs := congrArg (fun s : PanSemStateFiniteExact width σ => s.structs) hsame
+  have hcode := congrArg (fun s : PanSemStateFiniteExact width σ => s.code) hsame
+  have horacle := congrArg (fun s : PanSemStateFiniteExact width σ => s.ffi.oracle) hsame
+  simpa [PanSemStateFiniteExact.emptyLocalsHOLFinite,
+    PanPropsEvalStateFiniteExact.toPanSemFinite] using
+    And.intro hmem (And.intro hshared (And.intro hbe (And.intro heshapes
+      (And.intro hbase (And.intro hstructs (And.intro hcode horacle))))))
+
 end Flapjack
 
 /-! # The `Skip` case of HOL `evaluate_invariants`
