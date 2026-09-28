@@ -5640,14 +5640,38 @@ end Flapjack
 
 /-! # The `Dec` induction case of HOL `evaluate_invariants`
 
-The `Dec` leaf retains the body induction hypothesis. The initializer/shape
-failure clauses preserve the state; on success the body hypothesis applies to
-the bound state, and restoring the old local binding changes none of the eight
-invariant fields. -/
+HOL's generated `evaluate_ind` Dec conjunct supplies exactly one recursive
+hypothesis: for every `value` with `eval s e = SOME value` and
+`sh = shape_of value`, the body at `s with locals := s.locals⟨v ↦ value⟩`
+preserves the state fields. This leaf takes precisely that guarded
+value/shape hypothesis (the `evaluateInvariantsAtHOLFinite` predicate applied
+to the `setVar`-bound state) and does not assume any stronger
+arbitrary-state or clock-indexed IH. The initializer/shape failure clauses
+preserve the state; on success the body hypothesis applies to the bound state,
+and restoring the old local binding changes none of the eight invariant
+fields. -/
 
 open Flapjack.Pancake.PanLang (MlS ShapeHOL ExpHOL ProgHOL)
 
 namespace Flapjack
+
+/-- Flapjack-specific alias spelling the single guarded recursive hypothesis of
+HOL `evaluate_ind`'s Dec conjunct: for every `value` with `eval s e = SOME value`
+and `sh = shape_of value`, the body preserves the state fields at the
+`setVar`-bound state. Keeping this as an abbreviation means the tagged Dec leaf
+names only the owning `PanPropsEvalStateFiniteExact` carrier. -/
+private abbrev evaluateInvariantsDecBodyIH {width : Nat} {σ : Type} [NeZero width]
+    (name : MlS) (shape : ShapeHOL) (initializer : ExpHOL width)
+    (state : PanPropsEvalStateFiniteExact width σ) (body : ProgHOL width) : Prop :=
+  ∀ (value : ValueHOL width),
+    @Flapjack.evalHOLExact width σ _ state.toPanSemFinite.toExact
+        (fun address => Classical.propDecidable (state.toPanSemFinite.memaddrs address))
+        initializer = some value →
+    shapeEqHOL shape (shapeOfHOLExact value) = true →
+    evaluateInvariantsAtHOLFinite
+      (PanPropsEvalStateFiniteExact.ofPanSemFinite
+        (PanSemStateFiniteExact.setVarHOLFinite name value state.toPanSemFinite))
+      body
 
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_invariants" 1150
   (fmap_as_finite_support := [locals, globals, code, eshapes])
@@ -5660,19 +5684,7 @@ theorem evaluateInvariantsDecCaseHOLFinite {width : Nat} {σ : Type} [NeZero wid
       (post : PanPropsEvalStateFiniteExact width σ),
       PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state
           (.dec name shape initializer body : ProgHOL width) = (result, post) →
-      (∀ (bodyState : PanPropsEvalStateFiniteExact width σ)
-        (bodyResult : Option (PanSemResultExact width))
-        (bodyPost : PanPropsEvalStateFiniteExact width σ),
-        PanPropsEvalStateFiniteExact.evaluateHOLFinitePair bodyState body =
-          (bodyResult, bodyPost) →
-        bodyPost.memaddrs = bodyState.memaddrs ∧
-        bodyPost.shMemaddrs = bodyState.shMemaddrs ∧
-        bodyPost.be = bodyState.be ∧
-        bodyPost.eshapes = bodyState.eshapes ∧
-        bodyPost.baseAddr = bodyState.baseAddr ∧
-        bodyPost.structs = bodyState.structs ∧
-        bodyPost.code = bodyState.code ∧
-        bodyPost.ffi.oracle = bodyState.ffi.oracle) →
+      evaluateInvariantsDecBodyIH name shape initializer state body →
       post.memaddrs = state.memaddrs ∧
       post.shMemaddrs = state.shMemaddrs ∧
       post.be = state.be ∧
@@ -5718,7 +5730,8 @@ theorem evaluateInvariantsDecCaseHOLFinite {width : Nat} {σ : Type} [NeZero wid
               (bodyOutput.1, bodyPostProps) := by
           simp [bodyStateProps, bodyPostProps, bodyOutput,
             PanPropsEvalStateFiniteExact.evaluateHOLFinitePair]
-        have hbody := ihBody bodyStateProps bodyOutput.1 bodyPostProps hbodyRun
+        have hbodyIH := ihBody value hinit hshape
+        have hbody := hbodyIH bodyOutput.1 bodyPostProps hbodyRun
         have hbody' :
             bodyOutput.2.memaddrs = state.toPanSemFinite.memaddrs ∧
             bodyOutput.2.shMemaddrs = state.toPanSemFinite.shMemaddrs ∧
