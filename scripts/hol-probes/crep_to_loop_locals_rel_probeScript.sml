@@ -105,3 +105,15 @@ val _ = print_relation "locals_rel_cutset_second_true"
   (``locals_rel ^ctxt ^lBig ^sl ^tBig``) "T";
 val _ = print_relation "locals_rel_cutset_after_true"
   (``locals_rel ^ctxt ^l ^sl ^tBig``) "T";
+
+(* Direct relation row for `locals_rel_insert_gt_vmax`
+   (crep_to_loopProofScript.sml:226-234): inserting a value at the fresh key 5,
+   which is above `ct.vmax = 0`, preserves the relation, and the existing key 0
+   lookup is unchanged by the insert. *)
+val _ = print_relation "locals_rel_insert_after_true"
+  (``locals_rel ^ctxt ^l ^sl
+       (sptree$insert (5:num) (Word (3w:8 word)) ^t)``) "T";
+val _ = print_eval "insert_gt_vmax_lookup_unchanged"
+  (``sptree$lookup (0:num)
+       (sptree$insert (5:num) (Word (3w:8 word)) ^t) =
+      SOME (Word (9w:8 word))``);

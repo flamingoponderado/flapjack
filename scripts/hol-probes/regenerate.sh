@@ -317,7 +317,8 @@ run_probe crep_to_loop_locals_rel_probeScript.sml crep_to_loop_locals_rel_probe.
   subset_domain_component cutset_set_lookup cutset_target_lookup \
   locals_rel_true locals_rel_domain_false \
   locals_rel_value_false locals_rel_cutset_second_true \
-  locals_rel_cutset_after_true \
+  locals_rel_cutset_after_true locals_rel_insert_after_true \
+  insert_gt_vmax_lookup_unchanged \
   "$cake_dir/pancake/proofs/crep_to_loopProofScript.sml" \
   "$cake_dir/pancake/proofs"
 run_probe crep_to_loop_locals_insert_probeScript.sml crep_to_loop_locals_insert_probe.out \
@@ -326,10 +327,6 @@ run_probe crep_to_loop_locals_insert_probeScript.sml crep_to_loop_locals_insert_
   "$cake_dir/pancake/proofs"
 run_probe crep_to_loop_locals_cutset_probeScript.sml crep_to_loop_locals_cutset_probe.out \
   cutset_sub_0 cutset_domain_trans \
-  "$cake_dir/pancake/proofs/crep_to_loopProofScript.sml" \
-  "$cake_dir/pancake/proofs"
-run_probe crep_to_loop_survives_mapi_probeScript.sml crep_to_loop_survives_mapi_probe.out \
-  survives_mapi_empty survives_mapi_three \
   "$cake_dir/pancake/proofs/crep_to_loopProofScript.sml" \
   "$cake_dir/pancake/proofs"
 run_probe crep_to_loop_mem_lookup_probeScript.sml crep_to_loop_mem_lookup_probe.out \
@@ -350,6 +347,12 @@ run_probe crep_to_loop_list_insert2_probeScript.sml crep_to_loop_list_insert2_pr
   "$cake_dir/pancake/proofs"
 run_probe crep_to_loop_assigned_vars_mapidx_probeScript.sml crep_to_loop_assigned_vars_mapidx_probe.out \
   avma_nil avma_offset_zero \
+  "$cake_dir/pancake/proofs/crep_to_loopProofScript.sml" \
+  "$cake_dir/pancake/proofs"
+run_probe crep_to_loop_survives_mapi_assign_probeScript.sml \
+  crep_to_loop_survives_mapi_assign_probe.out \
+  survives_mapi_assign_nil survives_mapi_assign_one \
+  survives_mapi_assign_three survives_mapi_assign_zero_offset \
   "$cake_dir/pancake/proofs/crep_to_loopProofScript.sml" \
   "$cake_dir/pancake/proofs"
 run_probe loop_props_assigned_vars_probeScript.sml loop_props_assigned_vars_probe.out \
@@ -1301,6 +1304,10 @@ run_probe crep_to_loop_compile_exp_probeScript.sml crep_to_loop_compile_exp_prob
 run_probe crep_to_loop_comp_func_probeScript.sml crep_to_loop_comp_func_probe.out \
   comp_func_skip comp_func_return_var comp_func_two_params done \
   "$cake_dir/pancake/crep_to_loopScript.sml"
+run_probe loop_props_comp_syntax_probeScript.sml loop_props_comp_syntax_probe.out \
+  comp_syntax_loop_positive comp_syntax_if_negative \
+  "$cake_dir/pancake/semantics/loopPropsScript.sml" \
+  "$cake_dir/pancake/semantics"
 run_probe crep_to_loop_list_to_num_set_probeScript.sml crep_to_loop_list_to_num_set_probe.out \
   ltns_nil_0 ltns_cons_shape done \
   "$cake_dir/pancake/crep_to_loopScript.sml"

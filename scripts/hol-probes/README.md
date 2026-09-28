@@ -42,9 +42,26 @@ additionally probes `pan_op_def` at lines 191--193.
 clauses over `HolLoopProg`/`NumSet`; its direct HOL outputs for Skip,
 LocValue, Assign, Load32/LoadByte, Seq, If, each Arith variant, and the
 catch-all are in `scripts/hol-probes/loop_props_cut_sets_probe.out`.
+`Flapjack.Test.LoopPropsCompSyntaxOkParity` guards the exact
+`comp_syntax_ok_def` over those carriers; direct HOL EVAL rows for positive
+and negative Loop/Seq cases and both residual If existential cases are in
+`loop_props_comp_syntax_probe.out`.
+`Flapjack.Test.CrepToLoopCompFuncParity` replays the canonical direct
+`crep_to_loop$comp_func_def` output rows and the right-recursive
+`list_to_num_set` rows in `crep_to_loop_comp_func_probe.out` and
+`crep_to_loop_list_to_num_set_probe.out`.
 `Flapjack.Test.LoopDecClockParity` probes `dec_clock_def` at lines 42--43 of
 the same source.
 `Flapjack.Test.LoopFixClockParity` probes `fix_clock_def` at lines 46--49.
+`crep_to_loop_survives_mapi_assign_probe.out` records direct HOL EVAL for
+`survives_MAPi_Assign` at `crep_to_loopProofScript.sml:368-379`: empty,
+singleton, three-expression, and zero-offset MAPi Assign lists all evaluate to
+`T`. The exact `HolLoopExp`/`HolLoopProg` theorem port is
+`Flapjack.Pancake.CrepToLoop.Proofs.holSurvivesMapiAssign`; replay fixtures are
+in `Flapjack.Test.CrepToLoopSurvivesMapiAssignParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=crep_to_loop_survives_mapi_assign_probeScript.sml
+bash scripts/hol-probes/regenerate.sh`.
 `loop_props_survives_probe.out` records direct HOL EVAL rows for every clause
 of `survives_def` in `cakeml/pancake/semantics/loopPropsScript.sml:25-38`:
 If/Loop/Call (both handler forms)/FFI domain membership, recursive Mark and
@@ -634,7 +651,9 @@ the live-set builder used by `comp_func_def` at
 `list_to_num_set (n::ns) = insert n () (list_to_num_set ns)` with `LN` as the
 base case. The untagged Lean helper `Flapjack.listToNumSetHOLExact` in
 `Flapjack/Pancake/CrepToLoop/ContextExact.lean` reproduces the same right
-recursion, and `Flapjack.Test.CrepToLoopCompFuncParity` replays every row.
+recursion. `Flapjack.Test.CrepToLoopCompFuncParity` checks the exact
+`comp_func_def` output rows, including the projected initial live set, and
+the direct `list_to_num_set` EVAL rows.
 Refresh with
 `HOL_PROBE_ONLY=crep_to_loop_list_to_num_set_probeScript.sml scripts/hol-probes/regenerate.sh`.
 `crep_to_loop_ocompile_probe.out` records direct HOL EVAL rows for
@@ -671,7 +690,7 @@ with
 `locals_rel_def` at `cakeml/pancake/proofs/crep_to_loopProofScript.sml:101-111`.
 HOL `crepLang$varname = num` (`crepLangScript.sml:19`), so the context's `vars`
 is a `num |-> num` finite map; the fixture uses a `num`-keyed `vars`
-(`0 |-> 2`), a two-member `num_set`, and a nonempty `num_map`. Besides atomic
+(`0 |-> 0`, with `vmax = 0`), a two-member `num_set`, and a nonempty `num_map`. Besides atomic
 component rows, it decides the whole relation on a concrete context/locals
 pair by kernel-checked proof (`prove` with a `rw`/`fs`/`EVAL_TAC` tactic) since
 the relation is universally quantified over `num`: `locals_rel_true=T` is
@@ -692,18 +711,18 @@ tagged `Flapjack.CrepToLoop.crepToLoopLocalsRelExact_cutset_prop`, whose
 `subspt` premise is rendered by `Flapjack.sptSubspt` (see
 `Flapjack/Misc/Sptree.lean`).
 
-`crep_to_loop_survives_mapi_probe.out` records direct HOL EVAL rows for
-`crep_to_loopProofScript.sml:368-379` `survives_MAPi_Assign`
-(`loopProps$survives n (loopLang$nested_seq (MAPi (\n. Assign (n + offset)) les))`);
-the empty, one, two, and three element rows all evaluate to `T`. The exact
-word-indexed counterpart is the tagged `Flapjack.holSurvivesMapiAssign` in
-`Flapjack/Pancake/CrepToLoop/Proofs/AssignedVars.lean` (over `HolLoopProg` /
-`survivesHOLExact` / `loopNestedSeqHOL`), replayed by
-`Flapjack.Test.CrepToLoopSurvivesMapiParity`:
-
-```
-CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=crep_to_loop_survives_mapi_probeScript.sml bash scripts/hol-probes/regenerate.sh
-```
+The same probe records insert rows for
+`crep_to_loopProofScript.sml:226-234` `locals_rel_insert_gt_vmax`:
+`locals_rel_insert_after_true=T` decides `locals_rel` after inserting the fresh
+key `5` (above `ctxt.vmax = 0`) into the target `num_map`, and
+`insert_gt_vmax_lookup_unchanged=T` shows the earlier lookup (key `0`) is
+unaffected. The companion probe `crep_to_loop_locals_insert_probe.out`
+separately pins the raw `sptree$insert` behaviour (`insert_same`,
+`insert_other_unchanged`, `gt_vmax_bounded_survives`, `subset_preserved`). The
+exact-carrier counterpart is the tagged
+`Flapjack.CrepToLoop.crepToLoopLocalsRelExact_insert_gt_vmax` over the exact
+`sptInsert`/`Spt`, whose support lemmas `sptLookup_sptInsert_ne` and
+`sptMem_sptInsert` live in `Flapjack/Misc/Sptree.lean`.
 
 `pan_globals_mem_functions_probe.out` records direct HOL EVAL of the
 `panLang$functions` projection and the membership instance characterized by the
