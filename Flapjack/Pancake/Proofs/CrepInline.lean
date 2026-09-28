@@ -2,6 +2,7 @@ import Flapjack.HolRef
 import Flapjack.PanToCrepMaxList
 import Flapjack.Pancake.Semantics.CrepSem
 import Flapjack.Pancake.Semantics.CrepSem.Eval
+import Flapjack.Pancake.Semantics.CrepSem.HOLState
 import Flapjack.Pancake.CrepInline.Pass
 
 /-! Exact theorem counterpart for CakeML's `crep_inlineProofScript.sml`.
@@ -882,26 +883,30 @@ theorem crepInlineRuntimeSkip
 
 /-! ## Width-indexed wrappers for the crep_inline state relations
 
-HOL `crepSem$state` is indexed by the word length, so the exact `state_rel`-family
-tags are carried by the `...W` declarations over `CrepHolState (BitVec width) σ`
-(with `[NeZero width]`); the generic-`α` relations above stay untagged. -/
+HOL `crepSem$state` is indexed by the word length.  These `...W` helpers use
+`CrepHolState (BitVec width) σ`, whose locals/globals/code are unrestricted
+lookup functions rather than HOL finite maps, so the helpers stay untagged.
+The exact finite-support relation ports required by the correctness path are
+tracked under `flapjack-2de.13`. -/
 
-@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "state_rel_def"]
+/-- FLAPJACK-SPECIFIC: raw-function state relation; this declaration has no
+    exact finite-support counterpart in this module yet. -/
 def crepInlineStateRelW {width : Nat} [NeZero width] {σ : Type}
     (s t : CrepHolState (BitVec width) σ) : Prop :=
   crepInlineStateRel s t
 
-@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "locals_rel_def"]
+/-- FLAPJACK-SPECIFIC: raw-function locals submap. -/
 def crepInlineLocalsRelW {width : Nat} [NeZero width] {σ : Type}
     (s t : CrepHolState (BitVec width) σ) : Prop :=
   crepInlineLocalsRel s t
 
-@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "locals_strong_rel_def"]
+/-- FLAPJACK-SPECIFIC: raw-function locals equality; exact finite-support
+    replacement is tracked under `flapjack-2de.13`. -/
 def crepInlineLocalsStrongRelW {width : Nat} [NeZero width] {σ : Type}
     (s t : CrepHolState (BitVec width) σ) : Prop :=
   crepInlineLocalsStrongRel s t
 
-@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "locals_rel_dec_clock"]
+/-- FLAPJACK-SPECIFIC: clock preservation over raw-function state carriers. -/
 theorem crepInlineLocalsRel_decClockW {width : Nat} [NeZero width] {σ : Type}
     (s t : CrepHolState (BitVec width) σ)
     (hlocals : crepInlineLocalsRelW s t) (hstate : crepInlineStateRelW s t) :
@@ -911,14 +916,65 @@ theorem crepInlineLocalsRel_decClockW {width : Nat} [NeZero width] {σ : Type}
   simpa only [crepInlineLocalsRelW, crepInlineStateRelW,
     decCrepHolClockW_eq_decCrepHolClock] using h
 
-@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "locals_ext_rel_def"]
+/-- FLAPJACK-SPECIFIC: locals extension relation over raw-function maps. -/
 def crepInlineLocalsExtRelW {width : Nat} [NeZero width] {σ : Type}
     (a b a' b' : CrepHolState (BitVec width) σ) : Prop :=
   crepInlineLocalsExtRel a b a' b'
 
-@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "state_rel_code_def"]
+/-- FLAPJACK-SPECIFIC: raw-function carrier relation; exact finite-support
+    replacement is tracked under `flapjack-2de.13`. -/
 def crepInlineStateRelCodeW {width : Nat} [NeZero width] {σ : Type}
     (s t : CrepHolState (BitVec width) σ) : Prop :=
   crepInlineStateRelCode s t
+
+/-! ## Exact finite-support inlining relations
+
+The generic relations above are useful Flapjack infrastructure, but their
+`CrepHolState` carrier has raw lookup functions for `locals`, `globals`, and
+`code`, so it admits infinite-support states HOL cannot represent. These
+relation ports instead use `CrepSemHOLState`; the finite-map qualifier is
+backed by the local roundtrip witness below, and the word qualifier records
+the reviewed positive-width `BitVec` carrier.
+-/
+namespace CrepInlineExact
+
+/-- Same-module canonical witness for the finite-map qualifier on exact
+CrepInline relations. -/
+theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {σ : Type} :
+    (∀ (state : CrepSemBroadState width σ) (h : state.FiniteSupport),
+        (CrepSemBroadState.ofBroad state h).toBroad = state) ∧
+    (∀ state : CrepSemHOLState width σ,
+        CrepSemBroadState.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  CrepSemHOLState.holFmapAsFiniteSupportWitness
+
+/-- Exact finite-support carrier port of CakeML's `state_rel_code` relation:
+globals, memory, memory domains, clock, endianness, FFI state, and base/top
+addresses agree; locals and code are intentionally omitted as in HOL. -/
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "state_rel_code_def"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
+def crepInlineStateRelCodeExact {width : Nat} [NeZero width] {σ : Type}
+    (s t : CrepSemHOLState width σ) : Prop :=
+  s.globals = t.globals ∧
+  s.memory = t.memory ∧
+  s.memaddrs = t.memaddrs ∧
+  s.shMemaddrs = t.shMemaddrs ∧
+  s.clock = t.clock ∧
+  s.be = t.be ∧
+  s.ffi = t.ffi ∧
+  s.baseAddr = t.baseAddr ∧
+  s.topAddr = t.topAddr
+
+/-- Exact finite-support carrier port of CakeML's `locals_strong_rel`: the
+local finite maps are equal, without admitting arbitrary infinite-support
+lookup functions. -/
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "locals_strong_rel_def"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
+def crepInlineLocalsStrongRelExact {width : Nat} [NeZero width] {σ : Type}
+    (s t : CrepSemHOLState width σ) : Prop :=
+  s.locals = t.locals
+
+end CrepInlineExact
 
 end Flapjack
