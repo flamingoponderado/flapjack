@@ -1,0 +1,4 @@
+survives_mapi_assign_nil=T
+survives_mapi_assign_one=T
+survives_mapi_assign_three=T
+survives_mapi_assign_zero_offset=T

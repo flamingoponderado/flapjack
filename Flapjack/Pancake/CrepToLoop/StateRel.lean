@@ -40,59 +40,6 @@ counterpart, while the generic `sptFromAList` rendering stays with the Spt
 carrier in `Flapjack.Misc.Sptree`. The helpers below are local proof support
 for this theorem. -/
 
-/-- Same-key lookup after insertion, proved by strong induction on the HOL
-binary-tree key recursion. -/
-private theorem sptLookup_sptInsert_same {α : Type} :
-    ∀ (key : Nat) (value : α) (tree : Spt α),
-      sptLookup key (sptInsert key value tree) = some value := by
-  intro key
-  induction key using Nat.strongRecOn with
-  | ind key ih =>
-      intro value tree
-      by_cases hzero : key = 0
-      · subst key
-        exact sptLookup_sptInsert_zero value tree
-      · have hpositive : 0 < key := Nat.pos_of_ne_zero hzero
-        have hdecrease : (key - 1) / 2 < key := by
-          have hdiv : (key - 1) / 2 ≤ key - 1 := Nat.div_le_self _ _
-          have hlt : key - 1 < key := Nat.sub_lt hpositive (by decide)
-          omega
-        by_cases heven : key % 2 = 0
-        · cases tree with
-          | ln =>
-              conv => lhs; rw [sptInsert.eq_1, if_neg hzero, if_pos heven]
-              conv => lhs; rw [sptLookup.eq_3, if_neg hzero, if_pos heven]
-              exact ih ((key - 1) / 2) hdecrease value .ln
-          | ls existing =>
-              conv => lhs; rw [sptInsert.eq_2, if_neg hzero, if_pos heven]
-              conv => lhs; rw [sptLookup.eq_4, if_neg hzero, if_pos heven]
-              exact ih ((key - 1) / 2) hdecrease value .ln
-          | bn left right =>
-              conv => lhs; rw [sptInsert.eq_3, if_neg hzero, if_pos heven]
-              conv => lhs; rw [sptLookup.eq_3, if_neg hzero, if_pos heven]
-              exact ih ((key - 1) / 2) hdecrease value left
-          | bs left existing right =>
-              conv => lhs; rw [sptInsert.eq_4, if_neg hzero, if_pos heven]
-              conv => lhs; rw [sptLookup.eq_4, if_neg hzero, if_pos heven]
-              exact ih ((key - 1) / 2) hdecrease value left
-        · cases tree with
-          | ln =>
-              conv => lhs; rw [sptInsert.eq_1, if_neg hzero, if_neg heven]
-              conv => lhs; rw [sptLookup.eq_3, if_neg hzero, if_neg heven]
-              exact ih ((key - 1) / 2) hdecrease value .ln
-          | ls existing =>
-              conv => lhs; rw [sptInsert.eq_2, if_neg hzero, if_neg heven]
-              conv => lhs; rw [sptLookup.eq_4, if_neg hzero, if_neg heven]
-              exact ih ((key - 1) / 2) hdecrease value .ln
-          | bn left right =>
-              conv => lhs; rw [sptInsert.eq_3, if_neg hzero, if_neg heven]
-              conv => lhs; rw [sptLookup.eq_3, if_neg hzero, if_neg heven]
-              exact ih ((key - 1) / 2) hdecrease value right
-          | bs left existing right =>
-              conv => lhs; rw [sptInsert.eq_4, if_neg hzero, if_neg heven]
-              conv => lhs; rw [sptLookup.eq_4, if_neg hzero, if_neg heven]
-              exact ih ((key - 1) / 2) hdecrease value right
-
 private theorem sptFromAList_mem_insert {α : Type}
     {entries : List (Nat × α)} {key : Nat} {value : α}
     (hnodup : (entries.map Prod.fst).Nodup)
@@ -480,18 +427,25 @@ HOL states
           lookup n t_locals = SOME (wlab_wloc v)
 
 The port below uses the reviewed exact renderings of all four carriers: the
-`mlstring`-keyed `CrepToLoopContextExact` context (tagged `context`); the exact
-`sptree$num_set` `NumSet` with `sptMem` as `domain` membership; the exact
-`sptree$num_map` `Spt` for `t_locals`; and the tagged exact `HolWordLab` /
-`WordLocW` value carriers bridged by `wlabWlocHOL`. The `distinct_vars` /
-`ctxt_max` conjuncts are the parametric tagged renderings. Direct HOL oracle
-rows are in `scripts/hol-probes/crep_to_loop_locals_rel_probe.out`
+exact `CrepToLoopContextExact` context (tagged `context`; `vars` is `Nat`-keyed
+because HOL `crepLang$varname = num`, while `funcs` is `MlString`-keyed because
+HOL `crepLang$funname = mlstring`); the exact `sptree$num_set` `NumSet` with
+`sptMem` as `domain` membership; the exact `sptree$num_map` `Spt` for
+`t_locals`; and the tagged exact `HolWordLab` / `WordLocW` value carriers
+bridged by `wlabWlocHOL`. The `distinct_vars` / `ctxt_max` conjuncts are the
+parametric tagged renderings. Direct HOL oracle rows are in
+`scripts/hol-probes/crep_to_loop_locals_rel_probe.out`
 (`ctxt_vars_lookup`, `distinct_component`, `ctxt_max_component`,
 `set_domain_mem`, `map_lookup`, `subset_domain_component`), together with direct
 relation rows (`locals_rel_true`, `locals_rel_domain_false`,
 `locals_rel_value_false`) that decide the whole relation on a concrete
 num-keyed instance; the matching kernel-checked Lean rows are in
-`Flapjack.Test.CrepToLoopParity`. -/
+`Flapjack.Test.CrepToLoopParity`. Preservation lemmas derived from it:
+`crepToLoopLocalsRelExact_cutset_prop` (rows `locals_rel_cutset_second_true`,
+`locals_rel_cutset_after_true`) and
+`crepToLoopLocalsRelExact_insert_gt_vmax` (rows
+`locals_rel_insert_after_true`, `insert_gt_vmax_lookup_unchanged`, plus the
+fresh-key/unchanged rows of `crep_to_loop_locals_insert_probe.out`). -/
 @[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "locals_rel_def"
   (fmap_as_finite_support := [vars, funcs])
   (words_as_type_indexed_bitvec)]
@@ -576,6 +530,38 @@ theorem crepToLoopLocalsRelExact_cutset_prop {width : Nat} [NeZero width]
     have hnn : n = n' := Option.some.inj (hvar.symm.trans hvar')
     subst hnn
     exact ⟨n, hvar', hmem, hn'⟩
+
+/-- Exact port of HOL `crep_to_loop$locals_rel_insert_gt_vmax`
+    (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:226-234`):
+    `locals_rel ct cset lcl lcl' /\ ct.vmax < n ==>
+    locals_rel ct cset lcl (insert n w lcl')`. The `sptree$insert` is the
+    exact `sptInsert` on the `Spt` carrier (`NumSet` for the set and
+    `WordLocW` for the target locals); the pointwise conjunct uses
+    `sptLookup_sptInsert_ne` because `ctxt_max` forces every matched index
+    `n' ≤ ctxt.vmax < n`, so the inserted key cannot shadow it. -/
+@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "locals_rel_insert_gt_vmax"
+  (fmap_as_finite_support := [vars])
+  (words_as_type_indexed_bitvec)]
+theorem crepToLoopLocalsRelExact_insert_gt_vmax {width : Nat} [NeZero width]
+    (ctxt : CrepToLoopContextExact)
+    (cset : NumSet)
+    (lcl : HolFiniteMapExact Nat (HolWordLab width))
+    (tLocals : Spt (WordLocW width))
+    (n : Nat) (w : WordLocW width)
+    (h : crepToLoopLocalsRelExact ctxt cset lcl tLocals)
+    (hgt : ctxt.vmax < n) :
+    crepToLoopLocalsRelExact ctxt cset lcl (sptInsert n w tLocals) := by
+  refine ⟨h.1, h.2.1, ?_, ?_⟩
+  · intro k hk
+    exact (sptMem_sptInsert k n w tLocals).mpr (Or.inr (h.2.2.1 k hk))
+  · intro vname value hv
+    obtain ⟨n', hvar', hmem', hn'⟩ := h.2.2.2 vname value hv
+    refine ⟨n', hvar', hmem', ?_⟩
+    have hne : n' ≠ n := by
+      have hle : n' ≤ ctxt.vmax := h.2.1 vname n' hvar'
+      omega
+    rw [sptLookup_sptInsert_ne n n' w tLocals hne]
+    exact hn'
 
 /-! ## `locals_rel` (untagged production analogue)
 
