@@ -7916,6 +7916,22 @@
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panSemExceptionShapesRanged_panStructConvertState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack plumbing: instantiates the untagged PanSemExceptionShapesRanged predicate at panStructConvertState, discharging the Raise agreement's hexnRanged premise from the source predicate and CtxBR context.structs. No HOL declaration; not a port claim."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panSemExceptionShapesRanged_panStructFiniteStateFromMaps",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack plumbing: instantiates the untagged PanSemExceptionShapesRanged predicate at panStructFiniteStateFromMaps' panPropsALookupEq runtime view from a byte-ranged exception-shape InfoMap. No HOL declaration; not a port claim."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
     "lean_name": "lookupInfo_mapValues",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Finite-map lookup adapter lemma used to connect HOL FMAP_MAP2 results with explicit InfoMap entries; support for the open convert_s/compile_correct port."
