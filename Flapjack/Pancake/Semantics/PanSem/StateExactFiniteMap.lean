@@ -2231,7 +2231,8 @@ theorem projectFiniteEvalResult_if {width : Nat} {σ : Type} [NeZero width]
 
 /-- HOL `evaluate_def`'s `Skip` equation (the first conjunct of the theorem at
     `panSemScript.sml:780`, whose definition clause is at line 557). This is one
-    constructor case of the theorem; the full 21-equation theorem remains open.
+    constructor case of the theorem; the full 21-arm assembly is
+    `evaluateHOLFiniteState_eq_evaluate_def` (`PanSem/EvaluateClock.lean`).
     The finite-map qualifier records the four state maps' reviewed canonical
     finite-support representation. -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
@@ -2246,8 +2247,8 @@ theorem evaluateHOLFiniteState_skip {width : Nat} {σ : Type} [NeZero width]
 attribute [simp] evaluateHOLFiniteState_skip
 
 /-! HOL `evaluate_def`'s `Break` equation (the conjunct for the source clause at
-`panSemScript.sml:623` in the theorem at line 780). The full 21-equation theorem
-remains open. -/
+`panSemScript.sml:623` in the theorem at line 780). The full 21-arm assembly is
+`evaluateHOLFiniteState_eq_evaluate_def` (`PanSem/EvaluateClock.lean`). -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
   (fmap_as_finite_support := [locals, globals, code, eshapes])
   (words_as_type_indexed_bitvec)]
@@ -2260,8 +2261,9 @@ theorem evaluateHOLFiniteState_break {width : Nat} {σ : Type} [NeZero width]
 attribute [simp] evaluateHOLFiniteState_break
 
 /-! HOL `evaluate_def`'s `Continue` equation (the conjunct for the source clause
-at `panSemScript.sml:624` in the theorem at line 780). The full 21-equation
-theorem remains open. -/
+at `panSemScript.sml:624` in the theorem at line 780). The full 21-arm
+assembly is `evaluateHOLFiniteState_eq_evaluate_def`
+(`PanSem/EvaluateClock.lean`). -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 780
   (fmap_as_finite_support := [locals, globals, code, eshapes])
   (words_as_type_indexed_bitvec)]
@@ -2938,7 +2940,8 @@ theorem shMemStoreClauseHOLFiniteExact_finiteSupport {width : Nat} {σ : Type}
 /-- Flapjack-specific equation for the finite-carrier ShMemLoad evaluator.
     This is not tagged as HOL `evaluate_def`: its right-hand side hides the
     explicit source branches behind `shMemLoadClauseHOLFiniteExact`. The
-    faithful case-shaped theorem remains open in `flapjack-qj5.1`. -/
+    HOL-shaped case is restated and tagged as
+    `evaluateHOLFiniteState_shMemLoad_source` below. -/
 theorem evaluateHOLFiniteState_shMemLoad {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) (operator : OpSize) (kind : VarKind)
     (name : MlS) (address : ExpHOL width) :
@@ -3075,7 +3078,8 @@ theorem evaluateHOLFiniteState_extCall_source {width : Nat} {σ : Type}
 /-- Flapjack-specific equation for the finite-carrier ShMemStore evaluator.
     This is not tagged as HOL `evaluate_def`: its right-hand side hides the
     explicit source branches behind `shMemStoreClauseHOLFiniteExact`. The
-    faithful case-shaped theorem remains open in `flapjack-qj5.2`. -/
+    HOL-shaped case is restated and tagged as
+    `evaluateHOLFiniteState_shMemStore_total` below. -/
 theorem evaluateHOLFiniteState_shMemStore {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) (operator : OpSize)
     (address value : ExpHOL width) :
@@ -3195,8 +3199,9 @@ noncomputable def evaluateDecClauseHOLFiniteExact {width : Nat} {σ : Type} [NeZ
 /-! Flapjack-specific finite-carrier `Dec` equation. This declaration is not
 tagged as HOL `evaluate_def`: the internal optional assembly-marker result of
 `evalPanSemRecursiveCallFiniteContext` leaves an extra unreachable `none`
-branch in its statement. The faithful total pair-shaped theorem remains open
-under `flapjack-qj5`; keep `evaluateDecClauseHOLFiniteExact` as infrastructure. -/
+branch in its statement. The HOL-shaped total pair case is restated and
+tagged as `evaluateHOLFiniteState_dec_total` below; keep
+`evaluateDecClauseHOLFiniteExact` as infrastructure. -/
 theorem evaluateHOLFiniteState_dec {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) (name : MlS) (shape : ShapeHOL)
     (initializer : ExpHOL width) (body : ProgHOL width) :
@@ -3732,8 +3737,9 @@ theorem evaluateHOLFiniteState_decCall_total {width : Nat} {σ : Type}
     from the source `Definition evaluate_def` at line 556. That definition
     explicitly applies `fix_clock` to the first evaluation pair; the theorem
     restatement at line 780 rewrites that call away using `fix_clock_evaluate`,
-    so this case is tagged to line 556. The full 21-clause assembly remains
-    open under `flapjack-qj5.9`. It fixes the first pair's clock,
+    so this case is tagged to line 556. The full 21-clause assembly is
+    `evaluateHOLFiniteState_eq_evaluate_def` (`PanSem/EvaluateClock.lean`).
+    It fixes the first pair's clock,
     evaluates the second program only when the first result is `NONE`, and
     otherwise returns the fixed pair. Both recursive calls use the total
     pair-shaped evaluator; the internal assembly marker is absent from the
@@ -3857,8 +3863,9 @@ theorem evaluateHOLFiniteResult_eq_iff {width : Nat} {σ : Type} [NeZero width]
 /-- Source-reviewed HOL `evaluate_def` While conjunct (`panSemScript.sml:630`)
     from the source `Definition evaluate_def` at line 556. The Definition
     explicitly fixes the body result's clock before branching; line 780 is the
-    separate rewrite-restated theorem. This is a staged case equation, while
-    the full 21-clause assembly remains open under `flapjack-qj5.9`. -/
+    separate rewrite-restated theorem. This is a staged case equation; the
+    full 21-clause assembly is `evaluateHOLFiniteState_eq_evaluate_def`
+    (`PanSem/EvaluateClock.lean`). -/
 @[hol "cakeml/pancake/semantics/panSemScript.sml" "evaluate_def" 556
   (fmap_as_finite_support := [locals, globals, code, eshapes])
   (words_as_type_indexed_bitvec)]
