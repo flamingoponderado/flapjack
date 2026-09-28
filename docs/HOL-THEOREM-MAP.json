@@ -13729,6 +13729,14 @@
     "reviewer": "Codex (source comparison with panPropsScript.sml:1818: HOL semantics_run_res has constructors RunError, CompleteResult 'a, Incomplete; Lean SemanticsRunResHOL α preserves constructor order, arity, and the arbitrary result payload α. Constructor namespace qualification is Lean naming only; no carrier qualifier is required.)"
   },
   {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "semantics_run_res",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/SemanticsWrapper.lean",
+    "lean_name": "CrepToLoopSemanticsRunRes",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Codex (source comparison with crep_to_loopProofScript.sml:4127-4130: HOL `Datatype: semantics_run_res = RunError | CompleteResult 'a | Incomplete` has constructors RunError (nullary), CompleteResult (one payload of the arbitrary type 'a) and Incomplete (nullary), in that order. Lean CrepToLoopSemanticsRunRes α reproduces the same three constructors, payload arity/type and order. This is the crep_to_loop theory's own type constant; it is textually identical to but a distinct HOL type from the panPropsScript.sml:1818 declaration ported separately as SemanticsRunResHOL, so a separate Lean inductive (not an alias) is used. Constructor names are Lean-qualified by this type only; no carrier qualifier is required.)"
+  },
+  {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
     "hol_name": "evaluate_nested_decs_load_globals",
     "lean_path": "Flapjack/Pancake/Semantics/CrepSem/TotalEval.lean",
