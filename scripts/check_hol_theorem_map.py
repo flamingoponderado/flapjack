@@ -38,6 +38,16 @@ DATA_DECLARATION_RE = re.compile(
 # inventory small and source-reviewed; a mismatch row is not generated merely
 # because an arbitrary Lean def happens to mention a HOL name.
 WITHDRAWN_HOL_DECLARATIONS = {
+    ("Flapjack/Pancake/Semantics/LoopSem.lean", "loopPrimopHOL"): (
+        "cakeml/pancake/semantics/loopSemScript.sml",
+        "loop_primop_def",
+        "flapjack-ds9 (bead flapjack-ptzz): the @[hol] tag is withdrawn. HOL loop_primop "
+        "returns a word_loc option, but this declaration is valued in LoopValue "
+        "(Flapjack/LoopFindCode.lean), a Flapjack executable/faithful loop value, not the exact "
+        "word_loc carrier WordLocW (Flapjack/Pancake/WordLang.lean). The canonical exact port is "
+        "LoopSemStateFiniteExact.loopPrimop (Flapjack/Pancake/Semantics/LoopSemStateExact.lean), "
+        "tagged loop_primop_def with (words_as_type_indexed_bitvec)."
+    ),
     ("Flapjack/Pancake/Proofs/PanGlobals.lean", "goodResHOL"): (
         "cakeml/pancake/proofs/pan_globalsProofScript.sml",
         "good_res_def",
