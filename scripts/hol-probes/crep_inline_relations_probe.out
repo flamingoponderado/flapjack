@@ -1,0 +1,5 @@
+locals_rel_extension=T
+locals_rel_missing_key=F
+locals_rel_conflicting_value=F
+state_rel_ignores_locals=T
+state_rel_checks_code=F
