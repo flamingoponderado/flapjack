@@ -161,7 +161,8 @@ theorem prodEidsEntries_eq_map {width : Nat} [NeZero width]
     prodEidsEntries ds =
       (getEidsEntriesHOL (ds.map declToHOL)).map
         (fun e => (toStringOfBytes e.1, e.2)) := by
-  unfold prodEidsEntries getEidsEntriesHOL
+  unfold prodEidsEntries
+  rw [getEidsEntriesHOL_eq_lengthBased]
   have hnames :
       ((exceptionsHOL (ds.map declToHOL)).map Prod.fst).map toStringOfBytes =
         (exceptionEntries ds).map Prod.fst := by
