@@ -16,9 +16,10 @@ namespace Flapjack
 namespace CrepToLoopLocalsRelHelpersWitnesses
 
 /-- Same-module re-export of the canonical finite-support witness for the
-    `crep_to_loop$context` carrier, required by the `fmap_as_finite_support`
-    qualifier on the helpers below. -/
-theorem holFmapAsFiniteSupportWitness (context : CrepToLoopContextExact) :
+    `crep_to_loop$context` carrier, required by the
+    `fmap_as_finite_support_relation` qualifier on the helpers below. -/
+theorem holFmapAsFiniteSupportRelationWitness_CrepToLoopContextExact
+    (context : CrepToLoopContextExact) :
     CrepToLoopContextExact.ofBroad (CrepToLoopContextExact.toBroad context) = context :=
   CrepToLoopContextExact.holFmapAsFiniteSupportWitness context
 
@@ -28,7 +29,7 @@ end CrepToLoopLocalsRelHelpersWitnesses
     `locals_rel ctxt l locs1 locs2 ==> (!n. lookup n locs2 = lookup n locs3) ==>
       locals_rel ctxt l locs1 locs3`. -/
 @[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "locals_rel_lookup_same"
-  (fmap_as_finite_support := [vars])
+  (fmap_as_finite_support_relation := [CrepToLoopContextExact.vars, locs1])
   (words_as_type_indexed_bitvec)]
 theorem crepToLoopLocalsRelExact_lookup_same {width : Nat} [NeZero width]
     (ctxt : CrepToLoopContextExact) (l : NumSet)
@@ -51,7 +52,7 @@ theorem crepToLoopLocalsRelExact_lookup_same {width : Nat} [NeZero width]
       locals_rel ctxt l locs1 (inter (alist_insert xs ys locs2) l)`.
     HOL `EVERY P xs` is rendered as `∀ i ∈ xs, P i`. -/
 @[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "locals_rel_inter_helper"
-  (fmap_as_finite_support := [vars])
+  (fmap_as_finite_support_relation := [CrepToLoopContextExact.vars, locs1])
   (words_as_type_indexed_bitvec)]
 theorem crepToLoopLocalsRelExact_inter_helper {width : Nat} [NeZero width]
     (ctxt : CrepToLoopContextExact) (l : NumSet)
