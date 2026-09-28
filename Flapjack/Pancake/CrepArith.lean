@@ -1,6 +1,7 @@
 import Flapjack.HolRef
 import Flapjack.Pancake.PanToCrep.Compile
 import Flapjack.Pancake.CrepLang.Exp
+import Flapjack.Pancake.CrepLang.Prog
 import Flapjack.RiscV.Model
 
 /-!
@@ -206,6 +207,105 @@ def crepSimpFunctions [BEq α] [OfNat α 0] [OfNat α 1] [Mul α] [AndOp α]
   | function :: functions =>
       { function with body := crepSimpProg fromNat function.body } ::
         crepSimpFunctions fromNat functions
+
+/-! ## Exact-carrier ports of the `crep_arith` definitions
+
+The definitions below are the source-shaped ports of `dest_2exp`, `mul_const`,
+`simp_exp` and `simp_prog` over the exact width-indexed `CrepExpHOL` /
+`CrepProgHOL` carriers.  They are separate from the generic executable
+`crepSimpExp` / `crepSimpProg` above, which stay untagged because they accept
+an arbitrary value carrier. -/
+
+/-- Exact port of CakeML's `crep_arith$dest_2exp`
+    (`crep_arithScript.sml:15-19`).  Recursion is well-founded on the word's
+    value; each step is HOL `word_lsr w 1`. -/
+@[hol "cakeml/pancake/crep_arithScript.sml" "dest_2exp_def" (words_as_type_indexed_bitvec)]
+def crepDest2ExpHOL {width : Nat} [NeZero width] (exponent : Nat)
+    (word : BitVec width) : Option Nat :=
+  if word = 0 then none
+  else if word = 1 then some exponent
+  else if word &&& 1 ≠ 0 then none
+  else crepDest2ExpHOL (exponent + 1) (BitVec.ushiftRight word 1)
+termination_by word.toNat
+decreasing_by
+  simp_wf
+  have hword : word.toNat ≠ 0 := by
+    intro hzero
+    have hEq : word = 0 := BitVec.eq_of_toNat_eq (by simpa using hzero)
+    simp [hEq] at *
+  change (BitVec.ushiftRight word 1).toNat < word.toNat
+  rw [BitVec.ushiftRight_eq, BitVec.toNat_ushiftRight]
+  exact Nat.div_lt_self (Nat.pos_of_ne_zero hword) (by decide)
+
+/-- Exact port of CakeML's `crep_arith$mul_const`
+    (`crep_arithScript.sml:50-57`). -/
+@[hol "cakeml/pancake/crep_arithScript.sml" "mul_const_def" (words_as_type_indexed_bitvec)]
+def crepMulConstHOL {width : Nat} [NeZero width] (exp : CrepExpHOL width)
+    (constant : BitVec width) : CrepExpHOL width :=
+  if constant = 0 then .const 0
+  else if constant = 1 then exp
+  else match crepDest2ExpHOL 0 constant with
+    | none => .crepOp .mul [exp, .const constant]
+    | some exponent => .shift .lsl exp (.const (BitVec.ofNat width exponent))
+
+/-- Exact port of CakeML's `crep_arith$simp_exp`
+    (`crep_arithScript.sml:59-81`).  The expression tree is simplified
+    bottom-up; only binary multiplication receives arithmetic-specific
+    treatment, matching the HOL `dest_const` dispatch. -/
+@[hol "cakeml/pancake/crep_arithScript.sml" "simp_exp_def" (words_as_type_indexed_bitvec)]
+def crepSimpExpHOL {width : Nat} [NeZero width] : CrepExpHOL width → CrepExpHOL width
+  | .crepOp operator expressions =>
+      let expressions := expressions.map crepSimpExpHOL
+      match operator, expressions with
+      | .mul, [first, second] =>
+          match crepDestConstHOL first, crepDestConstHOL second with
+          | some left, some right => .const (left * right)
+          | some constant, none => crepMulConstHOL second constant
+          | none, some constant => crepMulConstHOL first constant
+          | none, none => .crepOp operator expressions
+      | _, _ => .crepOp operator expressions
+  | .load address => .load (crepSimpExpHOL address)
+  | .load32 address => .load32 (crepSimpExpHOL address)
+  | .loadByte address => .loadByte (crepSimpExpHOL address)
+  | .op operator expressions => .op operator (expressions.map crepSimpExpHOL)
+  | .cmp operator left right => .cmp operator (crepSimpExpHOL left) (crepSimpExpHOL right)
+  | .shift operator left right =>
+      .shift operator (crepSimpExpHOL left) (crepSimpExpHOL right)
+  | expression => expression
+termination_by expression => sizeOf expression
+decreasing_by
+  all_goals first | sizeOf_list_dec | decreasing_trivial | simp_wf
+
+/-- Exact port of CakeML's `crep_arith$simp_prog`
+    (`crep_arithScript.sml:83-105`).  Every embedded expression is simplified,
+    including call handlers; the control structure is preserved. -/
+@[hol "cakeml/pancake/crep_arithScript.sml" "simp_prog_def" (words_as_type_indexed_bitvec)]
+def crepSimpProgHOL {width : Nat} [NeZero width] : CrepProgHOL width → CrepProgHOL width
+  | .dec name value body => .dec name (crepSimpExpHOL value) (crepSimpProgHOL body)
+  | .assign name value => .assign name (crepSimpExpHOL value)
+  | .store address value => .store (crepSimpExpHOL address) (crepSimpExpHOL value)
+  | .store32 address value => .store32 (crepSimpExpHOL address) (crepSimpExpHOL value)
+  | .storeByte address value => .storeByte (crepSimpExpHOL address) (crepSimpExpHOL value)
+  | .storeGlob address value => .storeGlob address (crepSimpExpHOL value)
+  | .seq first second => .seq (crepSimpProgHOL first) (crepSimpProgHOL second)
+  | .ite condition thenBranch elseBranch =>
+      .ite (crepSimpExpHOL condition) (crepSimpProgHOL thenBranch)
+        (crepSimpProgHOL elseBranch)
+  | .while condition body => .while (crepSimpExpHOL condition) (crepSimpProgHOL body)
+  | .call returnInfo name arguments =>
+      let returnInfo :=
+        match returnInfo with
+        | none => none
+        | some (returns, none) => some (returns, none)
+        | some (returns, some (handler, body)) =>
+            some (returns, some (handler, crepSimpProgHOL body))
+      .call returnInfo name (arguments.map crepSimpExpHOL)
+  | .return values => .return (values.map crepSimpExpHOL)
+  | .shMem operator name address => .shMem operator name (crepSimpExpHOL address)
+  | program => program
+termination_by program => sizeOf program
+decreasing_by
+  all_goals first | sizeOf_list_dec | decreasing_trivial | simp_wf
 
 def crepArithExp [Mul α] : CrepExp α → CrepExp α
   | .load address => .load (crepArithExp address)

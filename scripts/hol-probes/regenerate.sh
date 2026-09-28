@@ -349,6 +349,12 @@ run_probe crep_to_loop_assigned_vars_mapidx_probeScript.sml crep_to_loop_assigne
   avma_nil avma_offset_zero \
   "$cake_dir/pancake/proofs/crep_to_loopProofScript.sml" \
   "$cake_dir/pancake/proofs"
+run_probe crep_to_loop_survives_mapi_assign_probeScript.sml \
+  crep_to_loop_survives_mapi_assign_probe.out \
+  survives_mapi_assign_nil survives_mapi_assign_one \
+  survives_mapi_assign_three survives_mapi_assign_zero_offset \
+  "$cake_dir/pancake/proofs/crep_to_loopProofScript.sml" \
+  "$cake_dir/pancake/proofs"
 run_probe loop_props_assigned_vars_probeScript.sml loop_props_assigned_vars_probe.out \
   avs_seq_split avs_nested_assign_three \
   "$cake_dir/pancake/semantics/loopPropsScript.sml" \
@@ -1295,8 +1301,17 @@ run_probe prog_if_probeScript.sml prog_if_probe.out \
 run_probe crep_to_loop_compile_exp_probeScript.sml crep_to_loop_compile_exp_probe.out \
   prog_if base var_hit load32 op_nary crepop_mul cmp shift compile_exps \
   "$cake_dir/pancake/crep_to_loopScript.sml"
+run_probe crep_to_loop_comp_func_probeScript.sml crep_to_loop_comp_func_probe.out \
+  comp_func_skip comp_func_return_var comp_func_two_params done \
+  "$cake_dir/pancake/crep_to_loopScript.sml"
+run_probe crep_to_loop_list_to_num_set_probeScript.sml crep_to_loop_list_to_num_set_probe.out \
+  ltns_nil_0 ltns_cons_shape done \
+  "$cake_dir/pancake/crep_to_loopScript.sml"
 run_probe crep_to_loop_compile_probeScript.sml crep_to_loop_compile_probe.out \
   loop_nested_seq_empty compile_ext_call \
+  "$cake_dir/pancake/crep_to_loopScript.sml"
+run_probe crep_to_loop_compile_prog_probeScript.sml crep_to_loop_compile_prog_probe.out \
+  cp_fnums cp_params cp_body cp_length cp_call_fnums cp_call_params cp_call_body done \
   "$cake_dir/pancake/crep_to_loopScript.sml"
 run_probe crep_to_loop_ocompile_probeScript.sml crep_to_loop_ocompile_probe.out \
   ocompile_skip ocompile_call \

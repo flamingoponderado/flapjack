@@ -1,5 +1,8 @@
 import Flapjack.Pancake.CrepToLoop
 import Flapjack.Pancake.LoopLive
+import Flapjack.Pancake.CrepToLoop.ContextExact
+import Flapjack.Pancake.CrepLang.Prog
+import Flapjack.Pancake.LoopLang
 
 namespace Flapjack
 
@@ -24,6 +27,83 @@ def crepCompFunc [OfNat α 0] [OfNat α 1]
   let context : LoopContext α := crepMkCtxt target (crepMakeVmap params)
     functions (params.length - 1)
   oCompile context (List.range params.length) body
+
+/-! ## Exact-carrier executable bridge
+
+The executed source compiler still uses its generic implementation. This
+width-specialized boundary provides the exact route for callers that can prove
+the byte-range premises. It is usable only when the program and every
+function-map key satisfy the checked
+`CrepNameRanged` codec premise. Without those premises, `MlString.ofString`
+can truncate a non-byte Lean `String`, so callers must keep using the generic
+implementation. The returned program is the canonical executable projection
+of the exact HOL-shaped output; this bridge does not assert equality with the
+generic compiler for arbitrary inputs.
+-/
+
+/-- Execute the exact `ocompile_def` port for a production RISC-V context on
+the codec-supported name fragment. `hProgramNames` and `hFunctionNames` are
+deliberate boundary obligations: `crepProgToHOL` and
+`productionLoopContextToExact` preserve names only under these byte-range
+facts. This declaration is Flapjack bridge infrastructure, not a HOL port. -/
+def oCompileThroughHOLExact {width : Nat} [NeZero width]
+    (context : LoopContext (BitVec width)) (live : List Nat)
+    (program : CrepProg (BitVec width))
+    (_hProgramNames : CrepProgNameRanged program)
+    (_hFunctionNames : ∀ entry ∈ context.functions, CrepNameRanged entry.1) :
+    LoopProg (BitVec width) :=
+  holLoopProgToExecutableCanonical
+    (ocompileHOLExact (productionLoopContextToExact context)
+      (listToNumSetHOLExact live) (crepProgToHOL program))
+
+/-- The exact-route result is related to the reviewed HOL-shaped
+`ocompileHOLExact` result by the checked structural projection. The name
+premises are retained in the public statement so callers cannot mistake this
+bridge for a total `String`/`mlstring` conversion. -/
+theorem oCompileThroughHOLExact_rel {width : Nat} [NeZero width]
+    (context : LoopContext (BitVec width)) (live : List Nat)
+    (program : CrepProg (BitVec width))
+    (hProgramNames : CrepProgNameRanged program)
+    (hFunctionNames : ∀ entry ∈ context.functions, CrepNameRanged entry.1) :
+    loopProgExecRel
+      (oCompileThroughHOLExact context live program hProgramNames hFunctionNames)
+      (ocompileHOLExact (productionLoopContextToExact context)
+        (listToNumSetHOLExact live) (crepProgToHOL program)) := by
+  exact holLoopProgToExecutableCanonical_rel _
+
+/-- Exact-carrier counterpart of the production `crepCompFunc`, retaining
+the byte-range obligations required at the `String`/HOL `mlstring` boundary.
+This is the explicit handoff for the source pipeline's future routing; the
+generic helper above remains for callers without that evidence. -/
+def crepCompFuncThroughHOLExact {width : Nat} [NeZero width]
+    (target : RiscV.Architecture) (functions : InfoMap (Nat × Nat))
+    (params : List Nat) (body : CrepProg (BitVec width))
+    (hProgramNames : CrepProgNameRanged body)
+    (hFunctionNames : ∀ entry ∈ functions, CrepNameRanged entry.1) :
+    LoopProg (BitVec width) :=
+  let context : LoopContext (BitVec width) :=
+    crepMkCtxt target (crepMakeVmap params) functions (params.length - 1)
+  oCompileThroughHOLExact context (List.range params.length) body
+    hProgramNames hFunctionNames
+
+/-- Structural relation for the exact-carrier `comp_func` route. -/
+theorem crepCompFuncThroughHOLExact_rel {width : Nat} [NeZero width]
+    (target : RiscV.Architecture) (functions : InfoMap (Nat × Nat))
+    (params : List Nat) (body : CrepProg (BitVec width))
+    (hProgramNames : CrepProgNameRanged body)
+    (hFunctionNames : ∀ entry ∈ functions, CrepNameRanged entry.1) :
+    loopProgExecRel
+      (crepCompFuncThroughHOLExact target functions params body
+        hProgramNames hFunctionNames)
+      (ocompileHOLExact
+        (productionLoopContextToExact (α := BitVec width)
+          (crepMkCtxt (α := BitVec width) target (crepMakeVmap params)
+            functions (params.length - 1)))
+        (listToNumSetHOLExact (List.range params.length)) (crepProgToHOL body)) := by
+  simpa [crepCompFuncThroughHOLExact, crepMkCtxt] using
+    (oCompileThroughHOLExact_rel
+      (crepMkCtxt target (crepMakeVmap params) functions (params.length - 1))
+      (List.range params.length) body hProgramNames hFunctionNames)
 
 theorem oCompile_skip [OfNat α 0] [OfNat α 1]
     (context : LoopContext α) (live : List Nat) :

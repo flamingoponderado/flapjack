@@ -1,0 +1,10 @@
+cp_fnums=[64]
+cp_params=[[0; 1]]
+cp_body=[Mark (Seq (Mark Skip) (Mark Skip))]
+cp_length=1
+cp_call_fnums=[64]
+cp_call_params=[[]]
+cp_call_body=[Mark
+   (Seq (Mark (Assign 1 (Const 7w)))
+      (Mark (Seq (Mark (Call NONE (SOME 64) [1] NONE)) (Mark Skip))))]
+done=T
