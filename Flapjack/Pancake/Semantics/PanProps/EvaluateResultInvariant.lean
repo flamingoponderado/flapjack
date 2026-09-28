@@ -184,8 +184,7 @@ private theorem valuesHOLWf_resVarEq {width : Nat} [NeZero width]
       simpa [predicate] using h1 key value hvalue
     · intro key value hvalue
       simpa [predicate] using h2 key value hvalue
-  have hresult := feveryResVarFlookupHOL predicate
-    ⟨map1, map2⟩ name hmaps
+  have hresult := feveryResVarFlookupHOL predicate map1 map2 name hmaps
   intro key value hvalue
   exact hresult key value hvalue
 

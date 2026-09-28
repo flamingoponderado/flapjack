@@ -43,6 +43,14 @@ does not authorize changed quantifiers, hypotheses, conclusions, `BEq` side
 conditions, or word-model differences.
 It does not authorize any other carrier, statement, or behavior difference.
 Qualified declarations remain subject to the checker and reviewed manifest.
+The `fmap_as_finite_support_parameters` qualifier records explicitly named
+standalone HOL `|->` input binders represented directly as
+`HolFiniteMapExact`, for declarations whose result is not a finite map. Each
+listed identifier must be an actual input binder of that type and must have a
+same-module checked `holFmapAsFiniteSupportParamWitness_<declaration>_<binder>`
+roundtrip through lookup and finite-support evidence. This is distinct from
+both field-owned carriers and the result-map qualifier; source review must
+still preserve HOL binder order, hypotheses, and conclusions.
 The `fmap_as_finite_support_relation` qualifier is the multi-owner form for a
 HOL relation whose finite maps come from several carrier structures. It lists
 `Owner.field` entries, requires each field to use `HolFiniteMapExact` and each
@@ -145,6 +153,13 @@ structure HolRef where
       finite-map operation/result. This is a representation statement only; it
       does not authorize changed hypotheses, results, or word-model differences. -/
   fmapAsFiniteSupportResult : Bool := false
+  /-- Named standalone input binders represented by HolFiniteMapExact. Each
+      parameter must be explicitly bound at that carrier and have a same-module
+      `holFmapAsFiniteSupportParamWitness_<declaration>_<parameter>` roundtrip
+      through its lookup function and finite-support proof. This qualifier is
+      for consumed map inputs whose declaration result is not a map; it is
+      distinct from the map-valued result qualifier. -/
+  fmapAsFiniteSupportParameters : Array String := #[]
   /-- Multi-carrier finite-map relation entries, each written `Carrier.field`
       or, for a standalone map parameter with no owning carrier, a bare
       parameter name. Used when a relation spans more than one carrier
@@ -192,6 +207,7 @@ syntax "(" "names_as_string" ":=" "[" ident,+ "]" ")" : holQualifier
 syntax "(" "names_as_string_boundary" ":=" "[" ident,+ "]" ")" : holQualifier
 syntax "(" "fmap_as_finite_support" ":=" "[" ident,+ "]" ")" : holQualifier
 syntax "(" "fmap_as_finite_support_result" ")" : holQualifier
+syntax "(" "fmap_as_finite_support_parameters" ":=" "[" ident,+ "]" ")" : holQualifier
 syntax "(" "fmap_as_finite_support_relation" ":=" "[" ident,* "]" ")" : holQualifier
 syntax "(" "fmap_as_finite_support_equalities" ")" : holQualifier
 syntax "(" "words_as_type_indexed_bitvec" ")" : holQualifier
@@ -200,6 +216,7 @@ syntax (name := hol) "hol " str str (num)? holQualifier* : attr
 private def checkedHolRef (path name : String) (line? : Option Nat := none)
     (listAsArray namesAsString namesAsStringBoundary fmapAsFiniteSupport : Array String := #[])
     (fmapAsFiniteSupportResult : Bool := false)
+    (fmapAsFiniteSupportParameters : Array String := #[])
     (fmapAsFiniteSupportRelation : Array (String × String) := #[])
     (fmapAsFiniteSupportEqualities : Bool := false)
     (wordsAsTypeIndexedBitvec : Bool := false) : CoreM HolRef := do
@@ -217,9 +234,11 @@ private def checkedHolRef (path name : String) (line? : Option Nat := none)
     throwError "@[hol]: names_as_string_boundary identifiers must also appear in names_as_string"
   if fmapAsFiniteSupport.toList.eraseDups.length != fmapAsFiniteSupport.size then
     throwError "@[hol]: fmap_as_finite_support fields must be distinct"
+  if fmapAsFiniteSupportParameters.toList.eraseDups.length != fmapAsFiniteSupportParameters.size then
+    throwError "@[hol]: fmap_as_finite_support_parameters binders must be distinct"
   if fmapAsFiniteSupportRelation.toList.eraseDups.length != fmapAsFiniteSupportRelation.size then
     throwError "@[hol]: fmap_as_finite_support_relation entries must be distinct"
-  pure { path, name, line?, listAsArray, namesAsString, namesAsStringBoundary, fmapAsFiniteSupport, fmapAsFiniteSupportResult, fmapAsFiniteSupportRelation, fmapAsFiniteSupportEqualities, wordsAsTypeIndexedBitvec }
+  pure { path, name, line?, listAsArray, namesAsString, namesAsStringBoundary, fmapAsFiniteSupport, fmapAsFiniteSupportResult, fmapAsFiniteSupportParameters, fmapAsFiniteSupportRelation, fmapAsFiniteSupportEqualities, wordsAsTypeIndexedBitvec }
 
 private def parseHolQualifier (stx : Syntax) : CoreM (String × Array String × Bool × Array (String × String)) := do
   match stx with
@@ -233,6 +252,9 @@ private def parseHolQualifier (stx : Syntax) : CoreM (String × Array String × 
       pure ("fmap_as_finite_support", fields.getElems.map (fun field => field.getId.eraseMacroScopes.toString), false, #[])
   | `(holQualifier| (fmap_as_finite_support_result)) =>
       pure ("fmap_as_finite_support_result", #[], true, #[])
+  | `(holQualifier| (fmap_as_finite_support_parameters := [$parameters:ident,*])) =>
+      pure ("fmap_as_finite_support_parameters", parameters.getElems.map
+        (fun parameter => parameter.getId.eraseMacroScopes.toString), false, #[])
   | `(holQualifier| (fmap_as_finite_support_relation := [$entries:ident,*])) =>
       let pairs : Array (String × String) := entries.getElems.map fun entry =>
         let text := entry.getId.eraseMacroScopes.toString
@@ -256,6 +278,7 @@ private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
     let mut namesAsStringBoundary : Array String := #[]
     let mut fmapAsFiniteSupport : Array String := #[]
     let mut fmapAsFiniteSupportResult : Bool := false
+    let mut fmapAsFiniteSupportParameters : Array String := #[]
     let mut fmapAsFiniteSupportRelation : Array (String × String) := #[]
     let mut fmapAsFiniteSupportEqualities : Bool := false
     let mut wordsAsTypeIndexedBitvec : Bool := false
@@ -265,11 +288,12 @@ private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
       else if kind == "names_as_string" then namesAsString := namesAsString ++ fields
       else if kind == "names_as_string_boundary" then namesAsStringBoundary := namesAsStringBoundary ++ fields
       else if kind == "fmap_as_finite_support_result" then fmapAsFiniteSupportResult := isResult
+      else if kind == "fmap_as_finite_support_parameters" then fmapAsFiniteSupportParameters := fmapAsFiniteSupportParameters ++ fields
       else if kind == "fmap_as_finite_support_relation" then fmapAsFiniteSupportRelation := fmapAsFiniteSupportRelation ++ pairs
       else if kind == "fmap_as_finite_support_equalities" then fmapAsFiniteSupportEqualities := isResult
       else if kind == "words_as_type_indexed_bitvec" then wordsAsTypeIndexedBitvec := isResult
       else fmapAsFiniteSupport := fmapAsFiniteSupport ++ fields
-    checkedHolRef path name line? listAsArray namesAsString namesAsStringBoundary fmapAsFiniteSupport fmapAsFiniteSupportResult fmapAsFiniteSupportRelation fmapAsFiniteSupportEqualities wordsAsTypeIndexedBitvec
+    checkedHolRef path name line? listAsArray namesAsString namesAsStringBoundary fmapAsFiniteSupport fmapAsFiniteSupportResult fmapAsFiniteSupportParameters fmapAsFiniteSupportRelation fmapAsFiniteSupportEqualities wordsAsTypeIndexedBitvec
   match stx with
   | `(attr| hol $path:str $name:str $line:num $qualifiers:holQualifier*) =>
       parse path.getString name.getString (some line.getNat) qualifiers
@@ -386,13 +410,15 @@ private def HolRef.qualifierSuffix (ref : HolRef) : String :=
     s!" (fmap_as_finite_support := [{String.intercalate ", " ref.fmapAsFiniteSupport.toList}])"
   let fmapAsFiniteSupportResult := if ref.fmapAsFiniteSupportResult then
     " (fmap_as_finite_support_result)" else ""
+  let fmapAsFiniteSupportParameters := if ref.fmapAsFiniteSupportParameters.isEmpty then "" else
+    s!" (fmap_as_finite_support_parameters := [{String.intercalate ", " ref.fmapAsFiniteSupportParameters.toList}])"
   let fmapAsFiniteSupportRelation := if ref.fmapAsFiniteSupportRelation.isEmpty then "" else
     s!" (fmap_as_finite_support_relation := [{String.intercalate ", " (ref.fmapAsFiniteSupportRelation.toList.map (fun entry => if entry.1.isEmpty then entry.2 else s!"{entry.1}.{entry.2}"))}])"
   let fmapAsFiniteSupportEqualities := if ref.fmapAsFiniteSupportEqualities then
     " (fmap_as_finite_support_equalities)" else ""
   let wordsAsTypeIndexedBitvec := if ref.wordsAsTypeIndexedBitvec then
     " (words_as_type_indexed_bitvec)" else ""
-  listAsArray ++ namesAsString ++ namesAsStringBoundary ++ fmapAsFiniteSupport ++ fmapAsFiniteSupportResult ++ fmapAsFiniteSupportRelation ++ fmapAsFiniteSupportEqualities ++ wordsAsTypeIndexedBitvec
+  listAsArray ++ namesAsString ++ namesAsStringBoundary ++ fmapAsFiniteSupport ++ fmapAsFiniteSupportResult ++ fmapAsFiniteSupportParameters ++ fmapAsFiniteSupportRelation ++ fmapAsFiniteSupportEqualities ++ wordsAsTypeIndexedBitvec
 
 /-! Parser regressions for the original syntax, each qualifier alone, and both
 qualifiers together. These elaborate temporary syntax values only; they do not
@@ -455,6 +481,14 @@ run_cmd do
       HolRef.qualifierSuffix fmapRef ==
         " (fmap_as_finite_support := [locals, globals])" do
     throwError "@[hol] fmap_as_finite_support syntax regression"
+  let fmapParametersSyntax ← `(attr| hol "cakeml/pancake/semantics/panSemScript.sml" "set_var_def"
+    (fmap_as_finite_support_parameters := [fm, fm2]))
+  let fmapParametersRef ← Lean.Elab.Command.liftCoreM
+    (parseHolRefAttribute fmapParametersSyntax)
+  unless fmapParametersRef.fmapAsFiniteSupportParameters == #["fm", "fm2"] &&
+      HolRef.qualifierSuffix fmapParametersRef ==
+        " (fmap_as_finite_support_parameters := [fm, fm2])" do
+    throwError "@[hol] fmap_as_finite_support_parameters syntax regression"
   let fmapDuplicateSyntax ← `(attr| hol "cakeml/pancake/semantics/panSemScript.sml" "set_var_def"
     (fmap_as_finite_support := [locals, locals]))
   let fmapDuplicateRejected ← Lean.Elab.Command.liftCoreM do
