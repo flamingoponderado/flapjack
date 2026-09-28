@@ -407,6 +407,22 @@ def loopArith {width : Nat} [NeZero width] {F : Type} (state : LoopSemStateFinit
           else none
       | _, _, _ => none
 
+/-- Exact HOL `exit_loop_def` (`loopSemScript.sml:272-276`):
+
+    ```
+    exit_loop (SOME (Break n)) = SOME (Break (n - 1)) ∧
+    exit_loop (SOME (Continue n)) = SOME (Continue (n - 1)) ∧
+    exit_loop res = res
+    ```
+-/
+@[hol "cakeml/pancake/semantics/loopSemScript.sml" "exit_loop_def"
+  (words_as_type_indexed_bitvec)]
+def exitLoop {width : Nat} [NeZero width] :
+    Option (LoopResultExact width) → Option (LoopResultExact width)
+  | some (.break n) => some (.break (n - 1))
+  | some (.continue n) => some (.continue (n - 1))
+  | res => res
+
 end LoopSemStateFiniteExact
 
 /-- Reverse/coverage direction of the exact/production code-table relation:
