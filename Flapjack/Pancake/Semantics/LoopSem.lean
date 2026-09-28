@@ -312,12 +312,19 @@ mutual
 
 end
 
-/-- HOL `loopSem$loop_primop` (`cakeml/pancake/semantics/loopSemScript.sml:242-252`).
+/-- FLAPJACK-SPECIFIC production analogue of HOL `loopSem$loop_primop`
+    (`cakeml/pancake/semantics/loopSemScript.sml:242-252`) over the production
+    `LoopValue (BitVec width)` carrier, used as the `LoopEvaluateHooks.primitive`
+    boundary.  The canonical exact port of HOL `loop_primop_def` — stated over
+    the reviewed `word_loc` carrier `WordLocW width` and carrying the
+    `words_as_type_indexed_bitvec` qualifier — is
+    `Flapjack.LoopSemStateFiniteExact.loopPrimop` in
+    `Flapjack/Pancake/Semantics/LoopSemStateExact.lean`; because `LoopValue` is
+    not a reviewed width-indexed word carrier this declaration is intentionally
+    untagged, and this file does not claim HOL-behaviour equality for it.
     The only Loop primitive is `AddCarry`: it accepts exactly three word cells
     and returns the low word followed by the carry word; a malformed arity or
-    any non-word cell yields `none`.  This is the `LoopEvaluateHooks.primitive`
-    boundary over word-location cells. -/
-@[hol "cakeml/pancake/semantics/loopSemScript.sml" "loop_primop_def"]
+    any non-word cell yields `none`. -/
 def loopPrimopHOL {width : Nat} [NeZero width] :
     PrimOp → List (LoopValue (BitVec width)) →
       Option (List (LoopValue (BitVec width)))

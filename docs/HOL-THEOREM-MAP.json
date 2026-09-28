@@ -271,14 +271,6 @@
     "reviewer": "Codex (source comparison; HOL Datatype primop = AddCarry vs Lean PrimOp.addCarry: single nullary constructor matches)"
   },
   {
-    "hol_path": "cakeml/pancake/semantics/loopSemScript.sml",
-    "hol_name": "loop_primop_def",
-    "lean_path": "Flapjack/Pancake/Semantics/LoopSem.lean",
-    "lean_name": "loopPrimopHOL",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Codex (constructor-by-constructor source comparison)"
-  },
-  {
     "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
     "hol_name": "mem_load_32_def",
     "lean_path": "Flapjack/Pancake/Semantics/LoopSem.lean",
