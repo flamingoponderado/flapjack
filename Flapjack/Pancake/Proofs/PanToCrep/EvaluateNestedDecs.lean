@@ -375,21 +375,10 @@ private theorem nestedDecsUpdatedInput_eq_updateListEq
 recursive update state used by the induction helper is linked to the explicit
 `FUPDATE_LIST` ZIP input by `nestedDecsUpdatedInput_eq_updateListEq`. -/
 
-/-- FLAPJACK-SPECIFIC provisional rendering (no `@[hol]` tag), withdrawn
-2026-09-27 (bead flapjack-64k0, PR #1166 review item 2). The conclusion is over
-`evalCrepSemHOLProgExact`, the no-decider classical wrapper around the
-re-implemented evaluator `evalCrepSemHOLProg` whose full clause set is not yet
-source-reviewed against `evaluate_def`. Because the theorem quantifies over an
-arbitrary continuation `body`, its exactness depends on that full evaluator
-clause review, which is still open (see the module notes of
-`CrepSem/EvaluateHOL.lean`). Concrete gaps: the recursive clauses thread the
-base-state decisions through `crepStampExactDomains`, whose reachability for
-the derived states is unreviewed; the byte-store clause still routes through
-the legacy `UInt8` helpers; and the finite-map qualifier's owner/witness
-placement is unresolved (`flapjack-4ac.5.16.5.13.1`). HOL candidate:
-`eval_nested_decs_seq_res_var_eq`
-(`pan_to_crepProofScript.sml:596-620`). Faithful port tracked by
-`flapjack-4ac.5.16.5`. -/
+/-- Flapjack-shaped form of HOL `eval_nested_decs_seq_res_var_eq`
+    (`pan_to_crepProofScript.sml:596-620`), with separate premises and the
+    target run named by `let`. The tagged HOL-shaped statement is
+    `evalNestedDecsSeqResVarEqHOL` below; this form stays untagged. -/
 theorem evalNestedDecsSeqResVarEqCrepHOL {width : Nat} [NeZero width]
     {σ : Type} (state : CrepSemHOLState width σ)
     (expressions : List (CrepExpHOL width)) (names : List Nat)
@@ -426,6 +415,42 @@ theorem evalNestedDecsSeqResVarEqCrepHOL {width : Nat} [NeZero width]
     exact evalCrepSemHOLProgExact_eq_core _ _ _ _
   rw [hBodyExact]
   simpa only [evalCrepSemHOLProgExact_eq_core, restoreNestedDecsLocals] using hported
+
+/-- Exact port of HOL `eval_nested_decs_seq_res_var_eq`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:596-620`):
+    `!es ns t ev p. MAP (eval t) es = MAP SOME ev /\ LENGTH ns = LENGTH es /\
+      distinct_lists ns (FLAT (MAP var_cexp es)) /\ ALL_DISTINCT ns ==>
+      let (q,r) = evaluate (p, t with locals := t.locals |++ ZIP (ns, ev)) in
+      evaluate (nested_decs ns es p, t) =
+      (q, r with locals := FOLDL res_var r.locals (ZIP (ns, MAP (FLOOKUP t.locals) ns)))`.
+    `evaluate` is the tagged line-443 Crep evaluator `evalCrepSemHOLProgExact`
+    (`evalCrepSemHOLProgExact_eq_evaluate_def`), and `eval` is the tagged
+    `evalCrepSemHOLExp` with the classical address-set decision. The helpers are
+    the tagged `nested_decs`, `var_cexp`, `distinct_lists`, `res_var`, and `|++`
+    (`updateListEq`). HOL's `let (q,r) = ... in` is the outer `match`.
+    Binders and premise conjunction follow HOL. The `CrepSemHOLState` finite
+    maps and word width use the reviewed qualifiers. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "eval_nested_decs_seq_res_var_eq"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
+theorem evalNestedDecsSeqResVarEqHOL {width : Nat} [NeZero width] {σ : Type} :
+    ∀ (es : List (CrepExpHOL width)) (ns : List Nat) (t : CrepSemHOLState width σ)
+      (ev : List (HolWordLab width)) (p : CrepProgHOL width),
+      es.map (@evalCrepSemHOLExp width _ σ t
+          (fun address => Classical.propDecidable (t.memaddrs address))) = ev.map some ∧
+        ns.length = es.length ∧
+        distinctListsHol ns (es.flatMap crepExpVarsHOL) = true ∧
+        ns.Nodup →
+      match evalCrepSemHOLProgExact
+          { t with locals := t.locals.updateListEq (ns.zip ev) } p with
+      | (q, r) =>
+          evalCrepSemHOLProgExact t (nestedDecsHOL ns es p) =
+            (q, { r with locals :=
+              ((ns.zip (ns.map t.locals.lookup)).foldl
+                (fun current entry => HolFiniteMapExact.resVarEq current entry) r.locals) }) := by
+  intro es ns t ev p ⟨hEval, hLength, hDistinct, hNodup⟩
+  have h := evalNestedDecsSeqResVarEqCrepHOL t es ns ev p hEval hLength hDistinct hNodup
+  rw [h]
 
 /-- Exact port of HOL `globals_lookup` (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:435-438`):
 `globals_lookup t v = OPT_MMAP (FLOOKUP t.globals) (GENLIST (fun x => n2w x) (size_of_shape (shape_of v)))`.

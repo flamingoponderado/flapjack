@@ -96,6 +96,7 @@ import Flapjack.Pancake.Semantics.PanProps.EvalInvariant
 import Flapjack.Pancake.Semantics.PanProps.EvaluateResultInvariant
 import Flapjack.Pancake.Semantics.PanProps.LocalisedExpSimps
 import Flapjack.Pancake.Semantics.PanProps.NamelessExpSimps
+import Flapjack.Pancake.Semantics.PanProps.ListRelFlatten
 import Flapjack.Pancake.Semantics.ByteAlignBridge
 import Flapjack.Pancake.Semantics.LoopProps
 import Flapjack.Pancake.Semantics.LoopSemStateExact
@@ -129,6 +130,8 @@ import Flapjack.Pancake.Proofs.PanToCrep.CompileExpValRel
 import Flapjack.Pancake.Proofs.PanToCrep.Primop
 import Flapjack.Pancake.Proofs.PanToCrep.CompileProgParams
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect
+import Flapjack.Pancake.Proofs.PanToCrep.EvalDistinctLists
+import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Call
 import Flapjack.Pancake.Proofs.PanToWord
 import Flapjack.Pipeline
 import Flapjack.RiscV.PipelineDiagnostics
@@ -178,6 +181,7 @@ import Flapjack.CrepeGlobalAddress
 import Flapjack.Pancake.Semantics.CrepSem
 import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
 import Flapjack.Pancake.Semantics.CrepSem.EvaluateInd
+import Flapjack.Pancake.Semantics.CrepSem.EventsMono
 import Flapjack.Pancake.Semantics.CrepSem.LookupCode
 import Flapjack.Pancake.Semantics.CrepSem.StateExact
 import Flapjack.Pancake.Semantics.CrepSem.ExecutedWordLabBridge
