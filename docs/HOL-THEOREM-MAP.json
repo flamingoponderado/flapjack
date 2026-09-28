@@ -15268,6 +15268,20 @@
     "reviewer": "flapjack-ds8 (bead flapjack-4ac.4.49.1): exact port of HOL panPropsScript.sml:856 evaluate_io_events_mono (!exps s1 res s2. evaluate (exps,s1) = (res,s2) ==> s1.ffi.io_events IS_PREFIX s2.ffi.io_events) over the faithful finite-map evaluator evaluateHOLFiniteState on PanSemStateFiniteExact. IS_PREFIX is rendered as List.IsPrefix (<+:); the premise is the source equality of the evaluate result pair. Proof projects evalPanSemRecursiveCallFiniteContext through evalPanSemRecursiveCallFiniteContext_projection to the exact recursive evaluator and applies the untagged exact prefix lemma evalPanSemRecursiveCallContextHOLExact_ioEvents_prefix (FiniteSupportStep.lean:1784). No extra hypothesis; fmap qualifier names the state locals/globals/code/eshapes and the same-module canonical witness PanSem.EvaluateClockWitness.holFmapAsFiniteSupportWitness."
   },
   {
+    "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
+    "hol_name": "evaluate_io_events_mono",
+    "lean_path": "Flapjack/Pancake/Semantics/CrepProps.lean",
+    "lean_name": "crepPropsEvaluateIoEventsMono",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 (bead flapjack-2de.7): exact port of HOL crepPropsScript.sml:957 evaluate_io_events_mono (!exps s1 res s2. evaluate (exps,s1) = (res,s2) ==> s1.ffi.io_events IS_PREFIX s2.ffi.io_events) over the tagged exact evaluator evalCrepSemHOLProgExact on CrepSemHOLState. HOL's exps is the CrepProgHOL width program; res : result option is Option (CrepResultHOLExact width), concretely typed by the word-indexed source result (unused in the conclusion); IS_PREFIX is rendered as List.IsPrefix (<+:); the premise is the equality of the evaluate result pair. No extra hypothesis or evaluator premise is added. Proof mirrors HOL's recInduct evaluate_ind + IS_PREFIX_TRANS via evalCrepSemHOLProgExact_ioEvents_prefix (EventsMono.lean), whose clause structure mirrors the source: only sh_mem_load/sh_mem_store and ExtCall extend ffi.ioEvents through call_FFI, all other clauses preserve ffi, and Seq/While/Call compose the sub-runs by transitivity. The fmap qualifier names the CrepSemHOLState locals/globals/code HolFiniteMapExact fields and the same-module canonical witness CrepPropsFiniteSupport.holFmapAsFiniteSupportWitness; the word qualifier records BitVec width under [NeZero width] and sigma : Type for the ffi host state."
+  },
+  {
     "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
     "hol_name": "evaluate_clock_sub",
     "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
