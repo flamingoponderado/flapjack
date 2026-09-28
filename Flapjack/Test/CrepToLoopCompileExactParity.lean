@@ -142,4 +142,26 @@ example : compileHOLExact context live
   simp [compileHOLExact, context, HolFiniteMapExact.empty,
     HolFiniteMapExact.updateEq, FUPDATE_HOL, live]
 
+/-- The checked projection covers the exact compiler's nested call, return-live,
+handler-live, and `MlString` outputs in the source-level parity fixture above. -/
+example : loopProgExecRel
+    (holLoopProgToExecutableCanonical
+      (compileHOLExact context live
+        (.call (some ([1], some ((3 : BitVec 8), .break 7))) (ofString "f")
+          [.const (16 : BitVec 8)] : CrepProgHOL 8)))
+    (compileHOLExact context live
+      (.call (some ([1], some ((3 : BitVec 8), .break 7))) (ofString "f")
+        [.const (16 : BitVec 8)] : CrepProgHOL 8)) :=
+  holLoopProgToExecutableCanonical_rel _
+
+/-- The FFI exact compiler fixture is related through the checked total
+`MlString` decoding/re-encoding law. -/
+example : loopProgExecRel
+    (holLoopProgToExecutableCanonical
+      (compileHOLExact context live
+        (.extCall (ofString "ffi") 1 2 3 4 : CrepProgHOL 8)))
+    (compileHOLExact context live
+      (.extCall (ofString "ffi") 1 2 3 4 : CrepProgHOL 8)) :=
+  holLoopProgToExecutableCanonical_rel _
+
 end Flapjack.Test.CrepToLoopCompileExactParity
