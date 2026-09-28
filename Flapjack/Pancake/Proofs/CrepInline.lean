@@ -530,6 +530,78 @@ theorem foldl_res_var_zip_lookup_hol {α : Type} {β : Type} [DecidableEq α]
   rw [OPT_MMAP_ALL_EQ (FLOOKUP l1) (FLOOKUP l) xs hpt]
   exact h
 
+/-! ## Exact finite-support (`HolFiniteMapExact`) forms of the `SUBMAP` cluster
+
+The `_hol` statements above still quantify Lean's raw function carrier
+`FiniteMap α β := α → Option β`, which admits infinite-support inhabitants that
+HOL `α |-> β` cannot represent.  The declarations below state the same HOL
+clauses (`crep_inlineProofScript.sml:117/127/135`) over the canonical
+finite-support carrier `HolFiniteMapExact`
+(`Flapjack/Pancake/Semantics/CrepSem/HOLState.lean`) with its HOL-equality
+(`DecidableEq`) `updateEq`/`eraseEq`, so they carry the exact HOL statements
+with no `BEq`/`LawfulBEq` side conditions.  `submap` is untagged
+infrastructure: HOL's `SUBMAP` is a finite-map operation defined in
+`fmapScript`, not a declaration of `crep_inlineProofScript.sml`. -/
+
+namespace HolFiniteMapExact
+
+/-- HOL finite-map `SUBMAP` on the canonical finite-support carrier: every
+    binding of `f` is also a binding of `g` with the same value, i.e. `FLOOKUP f`
+    and `FLOOKUP g` agree on `FDOM f`. -/
+def submap (f g : HolFiniteMapExact α β) : Prop :=
+  ∀ key value, f.lookup key = some value → g.lookup key = some value
+
+end HolFiniteMapExact
+
+/-- Finite-map `SUBMAP_IMP_FUPDATE_SUBMAP`
+    (`crep_inlineProofScript.sml:117`) over the exact finite-support carrier. -/
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "SUBMAP_IMP_FUPDATE_SUBMAP"
+  (fmap_as_finite_support_relation := [f, g])]
+theorem submap_imp_fupdate_submap_exact {κ : Type} {β : Type} [DecidableEq κ]
+    (f : HolFiniteMapExact κ β) (g : HolFiniteMapExact κ β) (x : κ) (y : β) (h : f.submap g) :
+    (f.updateEq (x, y)).submap (g.updateEq (x, y)) := by
+  intro n v hn
+  rw [HolFiniteMapExact.lookup_updateEq] at hn ⊢
+  simp only [FUPDATE_HOL] at hn ⊢
+  by_cases hxn : n = x
+  · rw [if_pos hxn] at hn ⊢
+    exact hn
+  · rw [if_neg hxn] at hn ⊢
+    exact h n v hn
+
+/-- Finite-map `SUBMAP_IMP_DOMSUB_SUBMAP`
+    (`crep_inlineProofScript.sml:127`) over the exact finite-support carrier. -/
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "SUBMAP_IMP_DOMSUB_SUBMAP"
+  (fmap_as_finite_support_relation := [f, g])]
+theorem submap_imp_domsub_submap_exact {κ : Type} {β : Type} [DecidableEq κ]
+    (f : HolFiniteMapExact κ β) (g : HolFiniteMapExact κ β) (x : κ) (h : f.submap g) :
+    (f.eraseEq x).submap (g.eraseEq x) := by
+  intro n v hn
+  rw [HolFiniteMapExact.lookup_eraseEq] at hn ⊢
+  simp only [FDOMSUB_HOL] at hn ⊢
+  by_cases hnx : n = x
+  · rw [if_pos hnx] at hn ⊢
+    exact hn
+  · rw [if_neg hnx] at hn ⊢
+    exact h n v hn
+
+/-- Finite-map `SUBMAP_IMP_DOMSUB_FUPDATE`
+    (`crep_inlineProofScript.sml:135`) over the exact finite-support carrier. -/
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "SUBMAP_IMP_DOMSUB_FUPDATE"
+  (fmap_as_finite_support_relation := [f, g])]
+theorem submap_imp_domsub_fupdate_exact {κ : Type} {β : Type} [DecidableEq κ]
+    (f : HolFiniteMapExact κ β) (g : HolFiniteMapExact κ β) (x : κ) (y : β) (h : f.submap g) :
+    (f.eraseEq x).submap (g.updateEq (x, y)) := by
+  intro n v hn
+  rw [HolFiniteMapExact.lookup_eraseEq] at hn
+  rw [HolFiniteMapExact.lookup_updateEq]
+  simp only [FDOMSUB_HOL, FUPDATE_HOL] at hn ⊢
+  by_cases hnx : n = x
+  · rw [if_pos hnx] at hn ⊢
+    exact absurd hn (by simp)
+  · rw [if_neg hnx] at hn ⊢
+    exact h n v hn
+
 /-- CakeML's `locals_rel` (`crep_inlineProofScript.sml:26`):
     `s.locals SUBMAP t.locals`. -/
 -- FLAPJACK-SPECIFIC (not an exact HOL port): generic over the word element type, while HOL
