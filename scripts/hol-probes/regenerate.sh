@@ -1372,8 +1372,10 @@ run_probe mark_all_probeScript.sml mark_all_probe.out \
   seq_mark call_handler "$cake_dir/pancake/loop_liveScript.sml"
 run_probe loop_live_comp_probeScript.sml loop_live_comp_probe.out \
   skip return "$cake_dir/pancake/loop_liveScript.sml"
+run_probe loop_live_optimise_probeScript.sml loop_live_optimise_probe.out \
+  skip shrink_loop_fixedpoint "$cake_dir/pancake/loop_liveScript.sml"
 run_probe ocompile_probeScript.sml ocompile_probe.out \
-  skip post_return_skip "$cake_dir/pancake/crep_to_loopScript.sml"
+  skip ffi "$cake_dir/pancake/crep_to_loopScript.sml"
 run_probe loop_lang_assigned_vars_probeScript.sml \
   loop_lang_assigned_vars_probe.out \
   skip load_byte "$cake_dir/pancake/loopLangScript.sml"
