@@ -54,13 +54,12 @@ def byteBitIndex {width : Nat} (address : RiscV.Word width) (bigEndian : Bool) :
   else 8 * (address.toNat % (width / 8))
 
 private theorem byteBitIndex_add_eight_le {width : Nat} [NeZero width]
-    (hdiv : width % 8 = 0) (address : RiscV.Word width) (bigEndian : Bool) :
+    (h8 : 8 ≤ width) (address : RiscV.Word width) (bigEndian : Bool) :
     byteBitIndex address bigEndian + 8 ≤ width := by
-  have hw : 8 * (width / 8) = width := by
-    rw [Nat.mul_comm, Nat.div_mul_cancel (Nat.dvd_of_mod_eq_zero hdiv)]
-  have hpos : 0 < width := Nat.pos_of_ne_zero (NeZero.ne width)
   have hd : 0 < width / 8 := by omega
   have hlt : address.toNat % (width / 8) < width / 8 := Nat.mod_lt _ hd
+  have hle : 8 * (width / 8) ≤ width := by
+    rw [Nat.mul_comm]; exact Nat.div_mul_le_self width 8
   cases bigEndian <;>
     simp only [byteBitIndex, Bool.false_eq_true, if_true, if_false] <;>
     omega
@@ -104,26 +103,22 @@ set_option linter.unusedSimpArgs false in
     preserved low slice, the inserted byte, and the preserved high slice occupy
     the disjoint bit ranges below, at, and above `byteBitIndex`. Flapjack proof
     infrastructure for the width-multiple case; no separate HOL declaration. -/
-theorem panSetByteHOL_toNat {width : Nat} [NeZero width] (hdiv : width % 8 = 0)
+theorem panSetByteHOL_toNat {width : Nat} [NeZero width] (h8 : 8 ≤ width)
     (address value : RiscV.Word width) (byte : UInt8) (bigEndian : Bool) :
     (panSetByteHOL address (BitVec.ofNat width byte.toNat) value bigEndian).toNat =
       (value.toNat / 2 ^ (byteBitIndex address bigEndian + 8)) *
           2 ^ (byteBitIndex address bigEndian + 8) +
         byte.toNat * 2 ^ byteBitIndex address bigEndian +
         value.toNat % 2 ^ byteBitIndex address bigEndian := by
-  have hw : 8 * (width / 8) = width := by
-    rw [Nat.mul_comm, Nat.div_mul_cancel (Nat.dvd_of_mod_eq_zero hdiv)]
-  have hw8 : 8 ≤ width := by
-    have := Nat.pos_of_ne_zero (NeZero.ne width); omega
   have hb8 : byte.toNat < 2 ^ 8 := by
     have := byte.toNat_lt_size; simpa [UInt8.size] using this
   have hbyte : byte.toNat % 2 ^ width % 256 = byte.toNat := by
-    rw [Nat.mod_eq_of_lt (Nat.lt_of_lt_of_le hb8 (Nat.pow_le_pow_right (by decide) hw8)),
+    rw [Nat.mod_eq_of_lt (Nat.lt_of_lt_of_le hb8 (Nat.pow_le_pow_right (by decide) h8)),
       show (256 : Nat) = 2 ^ 8 from by decide]
     exact Nat.mod_eq_of_lt hb8
   cases bigEndian
   · have hK8 : byteBitIndex address false + 8 ≤ width :=
-      byteBitIndex_add_eight_le hdiv address false
+      byteBitIndex_add_eight_le h8 address false
     have hoff : (256 : Nat) ^ (address.toNat % (width / 8)) = 2 ^ byteBitIndex address false := by
       rw [pow256_eq_two_pow_mul]
       simp only [byteBitIndex, Bool.false_eq_true, if_false]
@@ -137,7 +132,7 @@ theorem panSetByteHOL_toNat {width : Nat} [NeZero width] (hdiv : width % 8 = 0)
     rw [Nat.mod_eq_of_lt hmod]
     omega
   · have hK8 : byteBitIndex address true + 8 ≤ width :=
-      byteBitIndex_add_eight_le hdiv address true
+      byteBitIndex_add_eight_le h8 address true
     have hoff : (256 : Nat) ^ (width / 8 - address.toNat % (width / 8) - 1) =
         2 ^ byteBitIndex address true := by
       rw [pow256_eq_two_pow_mul]
@@ -240,25 +235,21 @@ theorem riscvSetByteHOL_eq_holFiniteWordSetByteBitVec {width : Nat} [NeZero widt
     byte (the byte-write half of HOL `write_bytearray_mem_rel`; the byte-read
     half is `panGetByteHOL_eq_riscvGetByteHOL`). Requires `width` a whole number
     of bytes, matching the word widths the compiler produces. -/
-theorem panSetByteHOL_eq_riscvSetByteHOL {width : Nat} [NeZero width] (hdiv : width % 8 = 0)
+theorem panSetByteHOL_eq_riscvSetByteHOL {width : Nat} [NeZero width] (h8 : 8 ≤ width)
     (address value : RiscV.Word width) (byte : UInt8) (bigEndian : Bool) :
     panSetByteHOL address (BitVec.ofNat width byte.toNat) value bigEndian =
       riscvSetByteHOL bigEndian address value byte := by
   apply BitVec.eq_of_toNat_eq
-  rw [panSetByteHOL_toNat hdiv address value byte bigEndian,
+  rw [panSetByteHOL_toNat h8 address value byte bigEndian,
     riscvSetByteHOL_eq_holFiniteWordSetByteBitVec address value byte bigEndian]
-  have hw8 : 8 ≤ width := by
-    have hw : 8 * (width / 8) = width := by
-      rw [Nat.mul_comm, Nat.div_mul_cancel (Nat.dvd_of_mod_eq_zero hdiv)]
-    have := Nat.pos_of_ne_zero (NeZero.ne width); omega
   have hb8 : byte.toNat < 2 ^ 8 := by
     have := byte.toNat_lt_size; simpa [UInt8.size] using this
   have hbyte2 : (BitVec.ofNat width byte.toNat).toNat % 2 ^ 8 = byte.toNat := by
     have h1 : byte.toNat % 2 ^ width = byte.toNat :=
-      Nat.mod_eq_of_lt (Nat.lt_of_lt_of_le hb8 (Nat.pow_le_pow_right (by decide) hw8))
+      Nat.mod_eq_of_lt (Nat.lt_of_lt_of_le hb8 (Nat.pow_le_pow_right (by decide) h8))
     rw [BitVec.toNat_ofNat, h1]
     exact Nat.mod_eq_of_lt hb8
   rw [holFiniteWordSetByteBitVec_toNat _ _ _ _
-    (byteBitIndex_add_eight_le hdiv address bigEndian), hbyte2]
+    (byteBitIndex_add_eight_le h8 address bigEndian), hbyte2]
 
 end Flapjack
