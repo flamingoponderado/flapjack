@@ -14,7 +14,10 @@ the two views and domains agree on every in-domain address, so
 
 * the reads are equal up to the `UInt8`/`word8` projection
   (`panSemTotalMachineReadBytes_eq`), and
-* the writes stay `PanSemStateRelExec`-related (`PanSemStateRelExec.machineWriteBytes`).
+* the writes stay `PanSemStateRelExec`-related (`PanSemStateRelExec.machineWriteBytes`),
+
+and with the FFI result bridge `callFfi_extCall_bridge` this gives the `ExtCall`
+constructor agreement `panSemTotalEvaluate_extCall_agree`.
 
 Untagged Flapjack-specific bridge infrastructure
 (`flapjack-pxn.18.4.3.77.2.14.15`).
@@ -24,6 +27,7 @@ namespace Flapjack
 
 open Flapjack.Pancake.PanLang
 open Flapjack.Basis.Pure.MlString
+open PanSemStateFiniteExact
 
 variable {σ : Type}
 
@@ -170,5 +174,113 @@ theorem PanSemStateRelExec.machineWriteBytes
   cases panWriteBytearrayWord8HOL address (bytes.map UInt8.toBitVec) exact.memory
     exact.memaddrs production.be c
   rfl
+
+/-- The production `callFfi` of an `ExtCall` on any byte-ranged name agrees with
+    HOL `call_FFI` on the encoded name and byte lists, assembling the per-outcome
+    bridges of `FfiBridge.lean` (empty name, oracle final, length failure,
+    success). -/
+theorem callFfi_extCall_bridge (state : FfiState σ) (holState : HolFfiState σ)
+    (hrel : FfiStateRel state holState) (name : String) (hname : NameRanged name)
+    (configuration bytes : List UInt8) :
+    FfiResultRel (callFfi state (.extCall name) configuration bytes)
+      (callFFIHOL holState (.extCall (ofString name))
+        (configuration.map byteToBits) (bytes.map byteToBits)) := by
+  by_cases hne : name = ""
+  · subst hne
+    have hempty : ofString ("" : String) = MlString.implode [] := by
+      simp only [ofString]; rfl
+    rw [hempty]
+    exact callFfi_empty_extCall_bridge state holState hrel configuration bytes
+  · cases ho : state.oracle (.extCall name) state.state configuration bytes with
+    | final outcome =>
+        exact callFfi_extCall_oracleFinal_bridge state holState hrel name hname hne
+          configuration bytes outcome ho
+    | returned nextState nextBytes =>
+        by_cases hlen : nextBytes.length = bytes.length
+        · exact callFfi_extCall_success_bridge state holState hrel name hname hne
+            configuration bytes nextState nextBytes ho hlen
+        · exact callFfi_extCall_lengthFailure_bridge state holState hrel name hname hne
+            configuration bytes nextState nextBytes ho hlen
+
+theorem bytesRel_eq_map_byteToBits : ∀ (bytes : List UInt8) (holBytes : List (BitVec 8)),
+    BytesRel bytes holBytes → holBytes = bytes.map byteToBits
+  | [], [], _ => rfl
+  | [], _ :: _, h => by simp [BytesRel] at h
+  | _ :: _, [], h => by simp [BytesRel] at h
+  | byte :: bytes, holByte :: holBytes, h => by
+      simp only [BytesRel, List.map_cons, List.cons.injEq] at h
+      obtain ⟨hhead, htail⟩ := h
+      rw [List.map_cons, bytesRel_eq_map_byteToBits bytes holBytes htail]
+      congr 1
+      apply BitVec.eq_of_toNat_eq
+      rw [byteToBits_toNat, hhead]
+
+/-- Production/exact agreement for the `ExtCall` constructor
+    (`evaluateHOLFiniteState_extCall_source`, HOL `evaluate_def` `ExtCall`): the
+    four operand agreements, non-word failures, the byte-array read
+    (`panSemTotalMachineReadBytes_eq`) with both reads failing together, the FFI
+    result bridge (`callFfi_extCall_bridge`), `FinalFFI` with `empty_locals`, and
+    the returned memory/FFI update (`PanSemStateRelExec.machineWriteBytes`).  No
+    premise beyond `PanSemStateRelExec`/`PanSemStateRelExecRanged`. -/
+theorem panSemTotalEvaluate_extCall_agree
+    (primitive : PanPrimitiveHandler (RiscV.Word 64))
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ)
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (hranged : PanSemStateRelExecRanged production)
+    (function : MlS) (configuration configurationLength array arrayLength : ExpHOL 64) :
+    PanSemTotalAgreeAt primitive
+      (progOfHOL (.extCall function configuration configurationLength array arrayLength))
+      (.extCall function configuration configurationLength array arrayLength)
+      production exact := by
+  letI : DecidablePred exact.memaddrs := fun a => Classical.propDecidable _
+  have agree := fun (e : ExpHOL 64) => by
+    have h := evalPanSemStateExp_agree production exact hrel hranged (expOfHOL e)
+      (expOfHOL_byteRanged_bridge e)
+    simp only [expToHOL_expOfHOL] at h
+    exact h
+  simp only [PanSemTotalAgreeAt]
+  rw [progOfHOL, panSemTotalEvaluate, evaluateHOLFiniteState_extCall_source]
+  unfold panSemTotalExtCallClause
+  simp only [panSemTotalExprStep]
+  rw [← agree configuration, ← agree configurationLength, ← agree array, ← agree arrayLength]
+  rcases h1 : evalPanSemStateExp production (expOfHOL configuration) with _ | (a1 | _ | _) <;>
+    rcases h2 : evalPanSemStateExp production (expOfHOL configurationLength) with
+      _ | (l1 | _ | _) <;>
+    rcases h3 : evalPanSemStateExp production (expOfHOL array) with _ | (a2 | _ | _) <;>
+    rcases h4 : evalPanSemStateExp production (expOfHOL arrayLength) with _ | (l2 | _ | _) <;>
+    simp only [Option.map_some, Option.map_none, panValueToHOL_word, panValueToHOL.eq_2,
+      panValueToHOL.eq_3, panSemTotalExtCallStep]
+  all_goals first
+    | exact ⟨trivial, hrel⟩
+    | skip
+  rw [panSemTotalMachineReadBytes_eq hrel a1 l1, panSemTotalMachineReadBytes_eq hrel a2 l2]
+  rcases hr1 : readBytearrayWordHOL (byteWidth := 8) a1 l1.toNat
+      (panMemLoadByteWord8HOL exact.memory exact.memaddrs exact.be) with _ | b1 <;>
+    rcases hr2 : readBytearrayWordHOL (byteWidth := 8) a2 l2.toNat
+      (panMemLoadByteWord8HOL exact.memory exact.memaddrs exact.be) with _ | b2 <;>
+    simp only [Option.map_some, Option.map_none]
+  all_goals first
+    | exact ⟨trivial, hrel⟩
+    | skip
+  have hb := callFfi_extCall_bridge production.ffi exact.ffi hrel.2.2.2.2.2.2.2.2.2.2.1
+    (toStringOfBytes function) (nameRanged_toStringOfBytes_bridge function)
+    (b1.map UInt8.ofBitVec) (b2.map UInt8.ofBitVec)
+  simp only [ofString_toStringOfBytes, List.map_map, byteToBits_eq_toBitVec, Function.comp_def,
+    List.map_id'] at hb
+  revert hb
+  cases callFfi production.ffi (FfiName.extCall (toStringOfBytes function))
+      (b1.map UInt8.ofBitVec) (b2.map UInt8.ofBitVec) <;>
+    cases callFFIHOL exact.ffi (HolFfiName.extCall function) b1 b2 <;>
+    intro hb <;> simp only [FfiResultRel] at hb
+  · rename_i newFfi newBytes holFfi holBytes
+    obtain ⟨hf, hby⟩ := hb
+    dsimp only
+    rw [bytesRel_eq_map_byteToBits newBytes holBytes hby]
+    exact ⟨trivial, (PanSemStateRelExec.machineWriteBytes hrel a2 newBytes).setFfi hf⟩
+  · dsimp only
+    exact ⟨hb, by
+      simpa only [panEmptyLocals, toExact_emptyLocalsHOLFinite] using
+        PanSemStateRelExec.emptyLocals hrel⟩
 
 end Flapjack
