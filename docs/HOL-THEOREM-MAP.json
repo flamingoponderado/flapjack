@@ -296,6 +296,42 @@
   },
   {
     "hol_path": "cakeml/pancake/crep_arithScript.sml",
+    "hol_name": "dest_2exp_def",
+    "lean_name": "crepDest2ExpHOL",
+    "reviewer": "flapjack-ds9 (source comparison; bead flapjack-pxn.18.5.6.30.2): HOL dest_2exp_def (crep_arithScript.sml:15-19) is the four-step recursion dest_2exp n w = if w = 0w then NONE else if w = 1w then SOME n else if (w && 1w) <> 0w then NONE else dest_2exp (n + 1n) (word_lsr w 1n). The Lean declaration matches clause-for-clause over the exact width-indexed word carrier: BitVec width for 'a word with [NeZero width], Prop equality = for =, BitVec.and &&& for &&, BitVec.ushiftRight for word_lsr; recursion is well-founded on word.toNat. The tag carries (words_as_type_indexed_bitvec).",
+    "lean_path": "Flapjack/Pancake/CrepArith.lean",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_arithScript.sml",
+    "hol_name": "mul_const_def",
+    "lean_name": "crepMulConstHOL",
+    "reviewer": "flapjack-ds9 (source comparison; bead flapjack-pxn.18.5.6.30.2): HOL mul_const_def (crep_arithScript.sml:50-57) is mul_const exp c = if c = 0w then Const 0w else if c = 1w then exp else case dest_2exp 0n c of NONE => Crepop Mul [exp; Const c] | SOME i => Shift Lsl exp (Const (n2w i)). The Lean declaration matches clause-for-clause over CrepExpHOL/BitVec width (crepDestConstHOL for dest_const is the tagged dest_const_def). n2w i is rendered as BitVec.ofNat width i. The tag carries words_as_type_indexed_bitvec.",
+    "lean_path": "Flapjack/Pancake/CrepArith.lean",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_arithScript.sml",
+    "hol_name": "simp_exp_def",
+    "lean_name": "crepSimpExpHOL",
+    "reviewer": "flapjack-ds9 (source comparison; bead flapjack-pxn.18.5.6.30.2): HOL simp_exp_def (crep_arithScript.sml:59-81) simplifies bottom-up: the Crepop clause maps simp_exp over the args and, for Mul with two args, dispatches on dest_const of the simplified args (both const -> Const (c*c2); one const -> mul_const of the other; otherwise rebuild); Load32/LoadByte/Load map over the address; Op maps over args; Cmp/Shift recurse; all other constructors are the identity. The Lean declaration matches clause-for-clause over exact CrepExpHOL width (crepOp/op/cmp/shift/load/load32/loadByte carriers; .crepOp .mul for Crepop Mul; .shift .lsl for Shift Lsl) and is well-founded on sizeOf. Tag: words_as_type_indexed_bitvec.",
+    "lean_path": "Flapjack/Pancake/CrepArith.lean",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_arithScript.sml",
+    "hol_name": "simp_prog_def",
+    "lean_name": "crepSimpProgHOL",
+    "reviewer": "flapjack-ds9 (source comparison; bead flapjack-pxn.18.5.6.30.2): HOL simp_prog_def (crep_arithScript.sml:83-105) recurses through Dec/Seq/If/While/Call(nested handler)/Return and simplifies each embedded expression (Assign/Store*/StoreGlob/ShMem), leaving every other constructor unchanged. The Lean declaration matches clause-for-clause over exact CrepProgHOL width, with the nested Call handler body recursively simplified exactly as in HOL. Tag: words_as_type_indexed_bitvec.",
+    "lean_path": "Flapjack/Pancake/CrepArith.lean",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_arithScript.sml",
     "hol_name": "dest_const_def",
     "lean_path": "Flapjack/Pancake/CrepArith.lean",
     "lean_name": "crepDestConstHOL",
@@ -10897,6 +10933,18 @@
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "locals_rel_insert_gt_vmax",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
+    "lean_name": "crepToLoopLocalsRelExact_insert_gt_vmax",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "ds10 (bead flapjack-pxn.18.5.6.33.3): exact port of HOL locals_rel_insert_gt_vmax (crep_to_loopProofScript.sml:226-234). HOL inserts an arbitrary word_loc at a fresh index n above ct.vmax; the Lean statement inserts a WordLocW at n : Nat into the Spt (WordLocW width) target locals and keeps cset/lcl/ctxt fixed, with the same ct.vmax < n premise and no extra hypothesis. The sptree$insert is rendered by the exact sptInsert on Spt (new untagged support sptLookup_sptInsert_ne / sptMem_sptInsert in Flapjack/Misc/Sptree.lean); the domain conjunct uses sptMem_sptInsert and the per-name conjunct uses sptLookup_sptInsert_ne with n' < n forced by ctxt_max (n' <= ctxt.vmax < n). Direct HOL oracle rows: scripts/hol-probes/crep_to_loop_locals_insert_probe.out (insert_same, insert_other_unchanged, gt_vmax_bounded_survives, subset_preserved) and crep_to_loop_locals_rel_probe.out (locals_rel_insert_after_true, insert_gt_vmax_lookup_unchanged); matching Lean checks in Flapjack/Test/CrepToLoopParity.lean."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
     "hol_name": "state_rel_def",
     "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
     "lean_name": "crepToLoopStateRelExact",
@@ -11412,6 +11460,15 @@
     "lean_name": "crepToLoopMakeFuncsHOL",
     "statement_status": "reviewed_exact",
     "reviewer": "Codex (statement compared against make_funcs_def at crep_to_loopScript.sml:247; HOL fnames=MAP FST prog, fnums=GENLIST (n. n + first_name) (LENGTH prog), lens=MAP (LENGTH o FST o SND) prog, fs=MAP2 pairs, alist_to_fmap rendered as FUPDATE_LIST FEMPTY entries.reverse with first-inserted-binding-wins; carriers alpha/beta/gamma kept polymorphic as in HOL; first_name is the tagged firstLoopName; direct HOL-EVAL rows mkf_f/mkf_g/mkf_absent/mkf_dup_first=T reproduced by Lean guards in Flapjack/Test/CrepToLoopParity.lean)"
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
+    "hol_name": "compile_prog_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/ContextExact.lean",
+    "lean_name": "compileProgHOLExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-09-28, bead flapjack-pxn.18.5.6.30.1; crep_to_loopScript.sml:257-265): the HOL definition has two curried binders target and prog with no premises. Let fnums = GENLIST (n. n + first_name) (LENGTH prog); comp = comp_func target (make_funcs prog) in MAP2 (n (name,params,body). (n, (GENLIST I o LENGTH) params, loop_live$optimise (comp params (crep_arith$simp_prog body)))) fnums prog. compileProgHOLExact has the same binders/order and body, using the tagged compFuncHOLExact, crepSimpProgHOL, optimiseHOL and firstLoopName plus the untagged exact helper crepToLoopMakeFuncsExactHOL. The input carrier is List (MlString x List Nat x CrepProgHOL width), matching HOL (mlstring # num list # 'a crepLang$prog) list; the result is List (Nat x List Nat x HolLoopProg width), matching HOL (num # num list # 'a loopLang$prog) list. List.zipWith models HOL MAP2 (both truncate to the shorter list; here the two lists have equal length). List.range n models GENLIST I n. The finite maps built by make_funcs and comp_func are local intermediates that do not occur in this declaration's signature, so no finite-map qualifier applies; crepToLoopMakeFuncsExactHOL is untagged, mirroring makeVmapExact, and HOL alist_to_fmap first-inserted-wins is restored by reversing before updateListEq. The only outer type translation is HOL's positive type-indexed 'a word to BitVec width with [NeZero width], recorded by words_as_type_indexed_bitvec. No premise, success condition, or output case is added. Direct original HOL EVAL rows cp_fnums/cp_params/cp_body/cp_length/cp_call_fnums/cp_call_params/cp_call_body are in scripts/hol-probes/crep_to_loop_compile_prog_probe.out and replayed by Flapjack.Test.CrepToLoopCompileProgParity. This is a tagged proof-side declaration only; production routing of the executed compiler through the exact carriers remains tracked separately."
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/labSemScript.sml",
@@ -12190,7 +12247,7 @@
     "hol_path": "cakeml/pancake/loop_callScript.sml",
     "hol_name": "comp_def",
     "hol_line": 18,
-    "lean_path": "Flapjack/Pancake/LoopLive.lean",
+    "lean_path": "Flapjack/Pancake/LoopCall.lean",
     "lean_name": "loopCallCompHOL",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
@@ -18339,18 +18396,6 @@
   },
   {
     "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
-    "hol_name": "comp_func_def",
-    "lean_path": "Flapjack/Pancake/CrepToLoop/Optimise.lean",
-    "lean_name": "compFuncHOLExact",
-    "statement_status": "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support_parameters": [
-      "fs"
-    ],
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-b source comparison (2026-09-28, bead flapjack-pxn.18.5.6.35) against crep_to_loopScript.sml:235-240 and HOL sptreeScript.sml:2026-2030. HOL has binders target, fs, params, body and no premises; it constructs make_vmap params = FEMPTY |++ ZIP (params, GENLIST I (LENGTH params)), vmax = LENGTH params - 1, and initial live list_to_num_set (GENLIST I (LENGTH params)), then calls compile (mk_ctxt target vmap fs vmax) live body. compFuncHOLExact preserves the four binders and result shape over AsmArchitecture, HolFiniteMapExact MlString maps, CrepProgHOL width, and HolLoopProg width, using updateList, List.range, the right-recursive sptListToNumSet, mkCtxtExact, and compileHOLExact. This is deliberately distinct from sptListInsert, which implements left-to-right list_insert. The standalone fs map parameter is the only finite-map qualifier; the positive width-indexed word translation is recorded separately. It adds no hypothesis, branch, or success condition. Original direct EVAL rows for Skip, one/two params, duplicate parameter names, and a conditional that exposes the initial live set are in scripts/hol-probes/crep_to_loop_comp_func_probe.out and replayed by Flapjack.Test.CrepToLoopCompFuncExactParity. Production crepCompFunc remains String/list-backed and continues to be tracked by the linked production bridge flapjack-pxn.18.5.6.28.1."
-  },
-  {
-    "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
     "hol_name": "compile_crepop_def",
     "lean_path": "Flapjack/Pancake/CrepToLoop/ContextExact.lean",
     "lean_name": "compileCrepopHOLExact",
@@ -18370,6 +18415,18 @@
       "funcs"
     ],
     "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
+    "hol_name": "comp_func_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/ContextExact.lean",
+    "lean_name": "compFuncHOLExact",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_parameters": [
+      "fs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-09-28, bead flapjack-pxn.18.5.6.30) against crep_to_loopScript.sml:235-241: comp_func target fs params body = let vmap = make_vmap params; vmax = LENGTH params - 1; l = list_to_num_set (GENLIST I (LENGTH params)) in compile (mk_ctxt target vmap fs vmax) l body. Lean keeps HOL's target/fs/params/body binder order and the same let order: make_vmap is the exact-carrier makeVmapExact (FEMPTY |++ ZIP (params, GENLIST I (LENGTH params)) rendered as HolFiniteMapExact.updateListEq empty (params.zip (List.range params.length)), so a later duplicate parameter shadows an earlier one), vmax is params.length - 1, the live set list_to_num_set (GENLIST I (LENGTH params)) is built by the untagged source-shaped right-recursive helper listToNumSetHOLExact (List.range params.length) (listToNumSetHOLExact [] = LN and listToNumSetHOLExact (k :: ks) = sptInsert k () (listToNumSetHOLExact ks), matching HOL sptree$list_to_num_set_def rather than a left fold; the earlier sptListInsert left-fold rendering was repaired on 2026-09-28 under bead flapjack-pxn.18.5.6.30.2), and compile is the tagged compileHOLExact with the tagged mkCtxtExact. The standalone fs finite-map parameter is a same-module HolFiniteMapExact binder with checked parameter witness holFmapAsFiniteSupportParamWitness_compFuncHOLExact_fs; the words qualifier records the indexed CrepProgHOL/HolLoopProg word translation. This is proof-side exact infrastructure; production compileCrepToLoop does not route through it (tracked separately). No executable behavior or performance exception is claimed."
   },
   {
     "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
@@ -18845,5 +18902,64 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.12): HOL loop_eval_nested_assign_distinct_eq (loopPropsScript.sml:190-197) `!es ns t ev. MAP (eval t) es = MAP SOME ev /\\ distinct_lists ns (FLAT (MAP locals_touched es)) /\\ ALL_DISTINCT ns /\\ LENGTH ns = LENGTH es ==> evaluate (nested_seq (MAP2 Assign ns es),t) = (NONE, t with locals := (alist_insert ns ev t.locals))`; Lean has the same variables and four-conjunct premise (distinct_lists as the tagged distinctListsHol = true, FLAT/MAP as List.flatten/map, locals_touched as holLoopLocalsTouched, ALL_DISTINCT as Nodup, MAP2 Assign as List.zipWith .assign) and the same conclusion with alist_insert as the exact sptAlistInsert. The proof needs structural commutation of sptree insert on distinct keys (sptInsert_comm), not an extra hypothesis. fmap_as_finite_support [globals]: the statement quantifies over LoopSemStateFiniteExact, whose HOL |-> globals field is the canonical HolFiniteMapExact carrier used by eval/set_globals inside evaluate; locals/code are sptree num_maps (Spt) and are not named; same-module re-exported canonical witness holFmapAsFiniteSupportWitness."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopPropsScript.sml",
+    "hol_name": "unassigned_vars_evaluate_same",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopProps/UnassignedVarsExact.lean",
+    "lean_name": "unassigned_vars_evaluate_same",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.14): HOL unassigned_vars_evaluate_same (loopPropsScript.sml:332-338) `!p s res t n v. evaluate (p,s) = (res,t) /\\ (res = NONE ∨ (∃n. res = SOME (Continue n)) ∨ (∃n. res = SOME (Break n))) /\\ lookup n s.locals = SOME v /\\ ~MEM n (assigned_vars p) /\\ survives n p ==> lookup n t.locals = lookup n s.locals`; Lean binds the same six variables in HOL order with the same five-conjunct premise, where the result disjunction is the definitional abbreviation UnassignedGoodRes res (unfolds to exactly that disjunction), assigned_vars is the tagged holLoopAssignedVars, and the HOL bool survives n p is the tagged survivesHOLExact n p = true; same conclusion over the tagged exact evaluate. No extra hypotheses. fmap_as_finite_support [globals]: quantifies over LoopSemStateFiniteExact whose HOL |-> globals field is the canonical HolFiniteMapExact carrier; locals/code are Spt num_maps and not named; same-module re-exported canonical witness."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopPropsScript.sml",
+    "hol_name": "survives_nested_seq_intro",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopProps/NestedSeqSyntaxExact.lean",
+    "lean_name": "survives_nested_seq_intro",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.15): HOL survives_nested_seq_intro (loopPropsScript.sml:719-723) `!p q n. survives n (nested_seq p) /\\ survives n (nested_seq q) ==> survives n (nested_seq (p ++ q))`; same variables, premise and conclusion over the tagged survivesHOLExact (HOL bool as = true) and the tagged nested_seq port holLoopNestedSeq (the one used by the tagged assigned_vars lemmas; proved equal to loopNestedSeqHOL by loopNestedSeqHOL_eq_holLoopNestedSeq). (words_as_type_indexed_bitvec): 'a prog as HolLoopProg width with [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopPropsScript.sml",
+    "hol_name": "nested_assigns_survives",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopProps/NestedSeqSyntaxExact.lean",
+    "lean_name": "nested_assigns_survives",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.15): HOL nested_assigns_survives (loopPropsScript.sml:729-732) `!xs ys n. LENGTH xs = LENGTH ys ==> survives n (nested_seq (MAP2 Assign xs ys))`; same variables and premise, MAP2 Assign as List.zipWith .assign, over survivesHOLExact/holLoopNestedSeq. (words_as_type_indexed_bitvec): 'a prog as HolLoopProg width with [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopPropsScript.sml",
+    "hol_name": "cut_sets_nested_seq",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopProps/NestedSeqSyntaxExact.lean",
+    "lean_name": "cut_sets_nested_seq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.15): HOL cut_sets_nested_seq (loopPropsScript.sml:767-769) `!p q l. cut_sets l (nested_seq (p ++ q)) = cut_sets (cut_sets l (nested_seq p)) (nested_seq q)`; same variables and equation over the tagged cutSetsHOL and holLoopNestedSeq. (words_as_type_indexed_bitvec): 'a prog as HolLoopProg width with [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopPropsScript.sml",
+    "hol_name": "lookup_alist_insert_any",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopProps/NestedSeqSyntaxExact.lean",
+    "lean_name": "lookup_alist_insert_any",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.15): HOL lookup_alist_insert_any (loopPropsScript.sml:321-325) `lookup n (alist_insert xs ys t) = case ALOOKUP (ZIP (xs,ys)) n of NONE => lookup n t | SOME v => SOME v` with free n, xs, ys, t over a generic value type 'a; Lean quantifies the same variables over generic α with sptLookup/sptAlistInsert (the exact sptree lookup and alist_insert), HOL ZIP as List.zip (HOL listScript ZIP_def truncates exactly like List.zip) and ALOOKUP as the literal untagged rendering holAlookup; same case split. No length premise, as in HOL."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopPropsScript.sml",
+    "hol_name": "evaluate_tail_calls_eqs",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopProps/NestedSeqSyntaxExact.lean",
+    "lean_name": "evaluate_tail_calls_eqs",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.15): HOL evaluate_tail_calls_eqs (loopPropsScript.sml:74-78) `!f t lc x. find_code (SOME f) ([]:'a word_loc list) t.code = SOME x ==> evaluate ((Call NONE (SOME f) [] NONE), t) = evaluate (Call NONE (SOME f) [] NONE, t with locals := lc)`; same variables, find_code premise and equation over the tagged findCode and exact evaluate. fmap_as_finite_support [globals]: quantifies over LoopSemStateFiniteExact whose HOL |-> globals is the canonical HolFiniteMapExact carrier; locals/code are Spt num_maps and not named; same-module re-exported canonical witness."
   }
 ]

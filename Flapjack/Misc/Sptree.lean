@@ -238,6 +238,219 @@ infrastructure; it reuses the `sptMem` rendering of `domain`/`IN`. -/
 def sptSubspt {α : Type} (sp1 sp2 : Spt α) : Prop :=
   ∀ k, sptMem k sp1 → sptMem k sp2 ∧ sptLookup k sp2 = sptLookup k sp1
 
+/-- Same-key lookup after insertion, proved by strong induction on the HOL
+binary-tree key recursion. -/
+theorem sptLookup_sptInsert_same {α : Type} :
+    ∀ (key : Nat) (value : α) (tree : Spt α),
+      sptLookup key (sptInsert key value tree) = some value := by
+  intro key
+  induction key using Nat.strongRecOn with
+  | ind key ih =>
+      intro value tree
+      by_cases hzero : key = 0
+      · subst key
+        exact sptLookup_sptInsert_zero value tree
+      · have hpositive : 0 < key := Nat.pos_of_ne_zero hzero
+        have hdecrease : (key - 1) / 2 < key := by
+          have hdiv : (key - 1) / 2 ≤ key - 1 := Nat.div_le_self _ _
+          have hlt : key - 1 < key := Nat.sub_lt hpositive (by decide)
+          omega
+        by_cases heven : key % 2 = 0
+        · cases tree with
+          | ln =>
+              conv => lhs; rw [sptInsert.eq_1, if_neg hzero, if_pos heven]
+              conv => lhs; rw [sptLookup.eq_3, if_neg hzero, if_pos heven]
+              exact ih ((key - 1) / 2) hdecrease value .ln
+          | ls existing =>
+              conv => lhs; rw [sptInsert.eq_2, if_neg hzero, if_pos heven]
+              conv => lhs; rw [sptLookup.eq_4, if_neg hzero, if_pos heven]
+              exact ih ((key - 1) / 2) hdecrease value .ln
+          | bn left right =>
+              conv => lhs; rw [sptInsert.eq_3, if_neg hzero, if_pos heven]
+              conv => lhs; rw [sptLookup.eq_3, if_neg hzero, if_pos heven]
+              exact ih ((key - 1) / 2) hdecrease value left
+          | bs left existing right =>
+              conv => lhs; rw [sptInsert.eq_4, if_neg hzero, if_pos heven]
+              conv => lhs; rw [sptLookup.eq_4, if_neg hzero, if_pos heven]
+              exact ih ((key - 1) / 2) hdecrease value left
+        · cases tree with
+          | ln =>
+              conv => lhs; rw [sptInsert.eq_1, if_neg hzero, if_neg heven]
+              conv => lhs; rw [sptLookup.eq_3, if_neg hzero, if_neg heven]
+              exact ih ((key - 1) / 2) hdecrease value .ln
+          | ls existing =>
+              conv => lhs; rw [sptInsert.eq_2, if_neg hzero, if_neg heven]
+              conv => lhs; rw [sptLookup.eq_4, if_neg hzero, if_neg heven]
+              exact ih ((key - 1) / 2) hdecrease value .ln
+          | bn left right =>
+              conv => lhs; rw [sptInsert.eq_3, if_neg hzero, if_neg heven]
+              conv => lhs; rw [sptLookup.eq_3, if_neg hzero, if_neg heven]
+              exact ih ((key - 1) / 2) hdecrease value right
+          | bs left existing right =>
+              conv => lhs; rw [sptInsert.eq_4, if_neg hzero, if_neg heven]
+              conv => lhs; rw [sptLookup.eq_4, if_neg hzero, if_neg heven]
+              exact ih ((key - 1) / 2) hdecrease value right
+
+private theorem div2_pred_ne {a b : Nat} (ha : 0 < a) (hb : 0 < b)
+    (hm : a % 2 = b % 2) (hne : a ≠ b) : (a - 1) / 2 ≠ (b - 1) / 2 := by
+  intro h
+  exact hne (by omega)
+
+theorem sptLookup_sptInsert_ne {α : Type} :
+    ∀ (other : Nat) (key : Nat) (value : α) (tree : Spt α),
+      key ≠ other → sptLookup key (sptInsert other value tree) = sptLookup key tree := by
+  intro other
+  induction other using Nat.strongRecOn with
+  | ind other ih =>
+    intro key value tree hne
+    by_cases h0 : other = 0
+    · subst h0
+      cases tree <;> simp [sptInsert, sptLookup, hne]
+    · have hpos : 0 < other := Nat.pos_of_ne_zero h0
+      have hdec : (other - 1) / 2 < other := by
+        have h1 : (other - 1) / 2 ≤ other - 1 := Nat.div_le_self _ _
+        have h2 : other - 1 < other := Nat.sub_lt hpos (by decide)
+        omega
+      by_cases h2 : other % 2 = 0
+      · cases tree with
+        | ln =>
+          conv => lhs; rw [sptInsert.eq_1, if_neg h0, if_pos h2]
+          conv => rhs; rw [sptLookup.eq_1]
+          by_cases hk : key = 0
+          · conv => lhs; rw [sptLookup.eq_3, if_pos hk]
+          · conv => lhs; rw [sptLookup.eq_3, if_neg hk]
+            by_cases hkk : key % 2 = 0
+            · conv => lhs; rw [if_pos hkk]
+              rw [ih ((other - 1) / 2) hdec ((key - 1) / 2) value (.ln : Spt α)
+                (div2_pred_ne (by omega) hpos (by omega) hne)]
+              simp only [sptLookup.eq_1]
+            · conv => lhs; rw [if_neg hkk]
+              simp only [sptLookup.eq_1]
+        | ls e =>
+          conv => lhs; rw [sptInsert.eq_2, if_neg h0, if_pos h2]
+          by_cases hk : key = 0
+          · conv => lhs; rw [sptLookup.eq_4, if_pos hk]
+            conv => rhs; rw [sptLookup.eq_2, if_pos hk]
+          · conv => lhs; rw [sptLookup.eq_4, if_neg hk]
+            conv => rhs; rw [sptLookup.eq_2, if_neg hk]
+            by_cases hkk : key % 2 = 0
+            · conv => lhs; rw [if_pos hkk]
+              rw [ih ((other - 1) / 2) hdec ((key - 1) / 2) value (.ln : Spt α)
+                (div2_pred_ne (by omega) hpos (by omega) hne)]
+              simp only [sptLookup.eq_1]
+            · conv => lhs; rw [if_neg hkk]
+              simp only [sptLookup.eq_1]
+        | bn l r =>
+          conv => lhs; rw [sptInsert.eq_3, if_neg h0, if_pos h2]
+          by_cases hk : key = 0
+          · conv => lhs; rw [sptLookup.eq_3, if_pos hk]
+            conv => rhs; rw [sptLookup.eq_3, if_pos hk]
+          · conv => lhs; rw [sptLookup.eq_3, if_neg hk]
+            conv => rhs; rw [sptLookup.eq_3, if_neg hk]
+            by_cases hkk : key % 2 = 0
+            · conv => lhs; rw [if_pos hkk]
+              conv => rhs; rw [if_pos hkk]
+              rw [ih ((other - 1) / 2) hdec ((key - 1) / 2) value l
+                (div2_pred_ne (by omega) hpos (by omega) hne)]
+            · conv => lhs; rw [if_neg hkk]
+              conv => rhs; rw [if_neg hkk]
+        | bs l e r =>
+          conv => lhs; rw [sptInsert.eq_4, if_neg h0, if_pos h2]
+          by_cases hk : key = 0
+          · conv => lhs; rw [sptLookup.eq_4, if_pos hk]
+            conv => rhs; rw [sptLookup.eq_4, if_pos hk]
+          · conv => lhs; rw [sptLookup.eq_4, if_neg hk]
+            conv => rhs; rw [sptLookup.eq_4, if_neg hk]
+            by_cases hkk : key % 2 = 0
+            · conv => lhs; rw [if_pos hkk]
+              conv => rhs; rw [if_pos hkk]
+              rw [ih ((other - 1) / 2) hdec ((key - 1) / 2) value l
+                (div2_pred_ne (by omega) hpos (by omega) hne)]
+            · conv => lhs; rw [if_neg hkk]
+              conv => rhs; rw [if_neg hkk]
+      · cases tree with
+        | ln =>
+          conv => lhs; rw [sptInsert.eq_1, if_neg h0, if_neg h2]
+          conv => rhs; rw [sptLookup.eq_1]
+          by_cases hk : key = 0
+          · conv => lhs; rw [sptLookup.eq_3, if_pos hk]
+          · conv => lhs; rw [sptLookup.eq_3, if_neg hk]
+            by_cases hkk : key % 2 = 0
+            · conv => lhs; rw [if_pos hkk]
+              simp only [sptLookup.eq_1]
+            · conv => lhs; rw [if_neg hkk]
+              rw [ih ((other - 1) / 2) hdec ((key - 1) / 2) value (.ln : Spt α)
+                (div2_pred_ne (by omega) hpos (by omega) hne)]
+              simp only [sptLookup.eq_1]
+        | ls e =>
+          conv => lhs; rw [sptInsert.eq_2, if_neg h0, if_neg h2]
+          by_cases hk : key = 0
+          · conv => lhs; rw [sptLookup.eq_4, if_pos hk]
+            conv => rhs; rw [sptLookup.eq_2, if_pos hk]
+          · conv => lhs; rw [sptLookup.eq_4, if_neg hk]
+            conv => rhs; rw [sptLookup.eq_2, if_neg hk]
+            by_cases hkk : key % 2 = 0
+            · conv => lhs; rw [if_pos hkk]
+              simp only [sptLookup.eq_1]
+            · conv => lhs; rw [if_neg hkk]
+              rw [ih ((other - 1) / 2) hdec ((key - 1) / 2) value (.ln : Spt α)
+                (div2_pred_ne (by omega) hpos (by omega) hne)]
+              simp only [sptLookup.eq_1]
+        | bn l r =>
+          conv => lhs; rw [sptInsert.eq_3, if_neg h0, if_neg h2]
+          by_cases hk : key = 0
+          · conv => lhs; rw [sptLookup.eq_3, if_pos hk]
+            conv => rhs; rw [sptLookup.eq_3, if_pos hk]
+          · conv => lhs; rw [sptLookup.eq_3, if_neg hk]
+            conv => rhs; rw [sptLookup.eq_3, if_neg hk]
+            by_cases hkk : key % 2 = 0
+            · conv => lhs; rw [if_pos hkk]
+              conv => rhs; rw [if_pos hkk]
+            · conv => lhs; rw [if_neg hkk]
+              conv => rhs; rw [if_neg hkk]
+              rw [ih ((other - 1) / 2) hdec ((key - 1) / 2) value r
+                (div2_pred_ne (by omega) hpos (by omega) hne)]
+        | bs l e r =>
+          conv => lhs; rw [sptInsert.eq_4, if_neg h0, if_neg h2]
+          by_cases hk : key = 0
+          · conv => lhs; rw [sptLookup.eq_4, if_pos hk]
+            conv => rhs; rw [sptLookup.eq_4, if_pos hk]
+          · conv => lhs; rw [sptLookup.eq_4, if_neg hk]
+            conv => rhs; rw [sptLookup.eq_4, if_neg hk]
+            by_cases hkk : key % 2 = 0
+            · conv => lhs; rw [if_pos hkk]
+              conv => rhs; rw [if_pos hkk]
+            · conv => lhs; rw [if_neg hkk]
+              conv => rhs; rw [if_neg hkk]
+              rw [ih ((other - 1) / 2) hdec ((key - 1) / 2) value r
+                (div2_pred_ne (by omega) hpos (by omega) hne)]
+
+
+/-- Membership after insertion: the inserted key joins the tree, all others are
+unchanged.  Exact `sptree$lookup`/`sptree$` domain content behind the HOL
+`lookup_insert` fact used by `locals_rel_insert_gt_vmax`. -/
+theorem sptMem_sptInsert {α : Type} (key other : Nat) (value : α) (tree : Spt α) :
+    sptMem key (sptInsert other value tree) ↔ key = other ∨ sptMem key tree := by
+  constructor
+  · intro h
+    rw [sptMem_iff_lookup] at h
+    obtain ⟨found, hfound⟩ := h
+    by_cases hk : key = other
+    · exact Or.inl hk
+    · exact Or.inr (by
+        rw [sptMem_iff_lookup]
+        exact ⟨found, by rw [sptLookup_sptInsert_ne other key value tree hk] at hfound; exact hfound⟩)
+  · intro h
+    rw [sptMem_iff_lookup]
+    rcases h with hk | hmem
+    · subst hk
+      exact ⟨value, sptLookup_sptInsert_same key value tree⟩
+    · rw [sptMem_iff_lookup] at hmem
+      obtain ⟨found, hfound⟩ := hmem
+      by_cases hk : key = other
+      · exact ⟨value, by rw [hk]; exact sptLookup_sptInsert_same other value tree⟩
+      · exact ⟨found, by rw [sptLookup_sptInsert_ne other key value tree hk]; exact hfound⟩
+
 /-- HOL `lrnext`: the increment used when placing subtrees in the spt index
 space (`HOL/src/finite_maps/sptreeScript.sml:421-422`). -/
 def lrNext : Nat → Nat

@@ -621,6 +621,32 @@ mapped return, and handler. Its exact-carrier Lean equations are in
 `Flapjack.Test.CrepToLoopCompileExactParity`. The compiler is still proof-side;
 the production `CrepProg`/`LoopProg` path does not yet use the exact carriers,
 and a separate production bridge remains required.
+`crep_to_loop_compile_prog_probe.out` records direct HOL EVAL rows for the
+top-level `compile_prog_def` at `cakeml/pancake/crep_to_loopScript.sml:257-265`:
+a one-entry program with `first_name`-offset function numbering (`cp_fnums`),
+its `(GENLIST I o LENGTH) params` slot list (`cp_params`), the
+`crep_arith$simp_prog` + `loop_live$optimise` compiled body (`cp_body`), the
+result length (`cp_length`), and a second one-entry program whose body calls
+`«f»` so that `make_funcs`'s `first_name = 64` label flows through `comp_func`'s
+`find_lab` (`cp_call_fnums`/`cp_call_params`/`cp_call_body`). The exact-carrier
+tagged port `Flapjack.compileProgHOLExact` (`@[hol ... "compile_prog_def"
+(words_as_type_indexed_bitvec)]`) and its replay in
+`Flapjack.Test.CrepToLoopCompileProgParity` use the exact
+`MlString`/`CrepProgHOL`/`HolLoopProg` carriers. Refresh with
+`HOL_PROBE_ONLY=crep_to_loop_compile_prog_probeScript.sml scripts/hol-probes/regenerate.sh`.
+`crep_to_loop_list_to_num_set_probe.out` records direct HOL EVAL rows for HOL's
+`sptree$list_to_num_set_def` (`HOL/src/finite_maps/sptreeScript.sml:2026-2028`),
+the live-set builder used by `comp_func_def` at
+`cakeml/pancake/crep_to_loopScript.sml:239`. The rows observe membership on
+`[]`, `[0]`, `[0;1;2]` and the unsorted `[2;0;3]` via `lookup`, and the final
+`ltns_cons_shape` row exposes the right-recursive equation
+`list_to_num_set (n::ns) = insert n () (list_to_num_set ns)` with `LN` as the
+base case. The untagged Lean helper `Flapjack.listToNumSetHOLExact` in
+`Flapjack/Pancake/CrepToLoop/ContextExact.lean` reproduces the same right
+recursion. `Flapjack.Test.CrepToLoopCompFuncExactParity` checks the exact
+`comp_func_def` output rows, including the projected initial live set.
+Refresh with
+`HOL_PROBE_ONLY=crep_to_loop_list_to_num_set_probeScript.sml scripts/hol-probes/regenerate.sh`.
 `crep_to_loop_ocompile_probe.out` records direct HOL EVAL rows for
 `ocompile_def` at `cakeml/pancake/crep_to_loopScript.sml:216-219`, which
 composes `compile` and `loop_live$optimise`. The six rows cover `Skip`, `Tick`,
@@ -638,7 +664,7 @@ for source `LLongDiv`.
 `locals_rel_def` at `cakeml/pancake/proofs/crep_to_loopProofScript.sml:101-111`.
 HOL `crepLang$varname = num` (`crepLangScript.sml:19`), so the context's `vars`
 is a `num |-> num` finite map; the fixture uses a `num`-keyed `vars`
-(`0 |-> 2`), a two-member `num_set`, and a nonempty `num_map`. Besides atomic
+(`0 |-> 0`, with `vmax = 0`), a two-member `num_set`, and a nonempty `num_map`. Besides atomic
 component rows, it decides the whole relation on a concrete context/locals
 pair by kernel-checked proof (`prove` with a `rw`/`fs`/`EVAL_TAC` tactic) since
 the relation is universally quantified over `num`: `locals_rel_true=T` is
@@ -658,6 +684,19 @@ cut-set) pin the HOL conclusion shape. The exact-carrier counterpart is the
 tagged `Flapjack.CrepToLoop.crepToLoopLocalsRelExact_cutset_prop`, whose
 `subspt` premise is rendered by `Flapjack.sptSubspt` (see
 `Flapjack/Misc/Sptree.lean`).
+
+The same probe records insert rows for
+`crep_to_loopProofScript.sml:226-234` `locals_rel_insert_gt_vmax`:
+`locals_rel_insert_after_true=T` decides `locals_rel` after inserting the fresh
+key `5` (above `ctxt.vmax = 0`) into the target `num_map`, and
+`insert_gt_vmax_lookup_unchanged=T` shows the earlier lookup (key `0`) is
+unaffected. The companion probe `crep_to_loop_locals_insert_probe.out`
+separately pins the raw `sptree$insert` behaviour (`insert_same`,
+`insert_other_unchanged`, `gt_vmax_bounded_survives`, `subset_preserved`). The
+exact-carrier counterpart is the tagged
+`Flapjack.CrepToLoop.crepToLoopLocalsRelExact_insert_gt_vmax` over the exact
+`sptInsert`/`Spt`, whose support lemmas `sptLookup_sptInsert_ne` and
+`sptMem_sptInsert` live in `Flapjack/Misc/Sptree.lean`.
 
 `pan_globals_mem_functions_probe.out` records direct HOL EVAL of the
 `panLang$functions` projection and the membership instance characterized by the

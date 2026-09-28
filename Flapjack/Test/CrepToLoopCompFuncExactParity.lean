@@ -1,4 +1,5 @@
-import Flapjack.Pancake.CrepToLoop.Optimise
+import Flapjack.Pancake.CrepToLoop.ContextExact
+import Flapjack.Compiler.Encoders.Asm
 
 /-! Exact-carrier regressions for original HOL `crep_to_loop$comp_func_def`
 rows in `scripts/hol-probes/crep_to_loop_comp_func_probe.out`. -/

@@ -620,6 +620,31 @@ example
       localsRelOracleSource localsRelOracleCutsetTarget :=
   crepToLoopLocalsRelExact_cutset_prop _ _ _ _ _ _ h1 h2 hsub
 
+/-- `n = 5 > ctxt.vmax = 0`, so inserting a fresh wloc leaves the relation intact.
+    Matches `locals_rel_insert_after_true` / `insert_gt_vmax_lookup_unchanged` in
+    `scripts/hol-probes/crep_to_loop_locals_rel_probe.out` and the insert rows in
+    `scripts/hol-probes/crep_to_loop_locals_insert_probe.out`. -/
+
+abbrev localsRelOracleInsertTarget : Spt (WordLocW 8) :=
+  sptInsert 5 (WordLocW.word 3) localsRelOracleTarget
+
+def localsRelInsertGuard : Bool :=
+  decide ((sptLookup 5 localsRelOracleInsertTarget : Option (WordLocW 8)) =
+    some (WordLocW.word 3)) &&
+  decide ((sptLookup 0 localsRelOracleInsertTarget : Option (WordLocW 8)) =
+    some (WordLocW.word 9))
+
+#guard localsRelInsertGuard
+
+/-- Shape check of the tagged `locals_rel_insert_gt_vmax` against the HOL statement. -/
+example
+    (h : crepToLoopLocalsRelExact localsRelOracleCtxt localsRelOracleSet
+      localsRelOracleSource localsRelOracleTarget)
+    (hgt : localsRelOracleCtxt.vmax < 5) :
+    crepToLoopLocalsRelExact localsRelOracleCtxt localsRelOracleSet
+      localsRelOracleSource localsRelOracleInsertTarget :=
+  crepToLoopLocalsRelExact_insert_gt_vmax _ _ _ _ _ _ h hgt
+
 def runChecks : IO Bool := do
   let results := [declarationRenamingMatches,
     handlerlessCallCarriesRaiseHandler, handledCallCarriesRaiseHandler,
@@ -629,7 +654,7 @@ def runChecks : IO Bool := do
     comparisonKeepsIncomingLive,
     comparisonWithoutLiveDropsIt,
     stateRelExactGuard, ctxtFcExactGuard, localsRelExactGuard,
-    localsRelOracleGuard, localsRelCutsetGuard]
+    localsRelOracleGuard, localsRelCutsetGuard, localsRelInsertGuard]
   let names := [
     "crep_to_loop declaration renaming and live seed",
     "crep_to_loop default call handler",
@@ -644,7 +669,8 @@ def runChecks : IO Bool := do
     "crep_to_loop exact ctxt_fc matches the HOL oracle rows",
     "crep_to_loop exact locals_rel matches the HOL oracle rows",
     "crep_to_loop exact locals_rel direct oracle rows (true/domain-false/value-false)",
-    "crep_to_loop exact locals_rel_cutset_prop oracle rows (subspt/second/after)"]
+    "crep_to_loop exact locals_rel_cutset_prop oracle rows (subspt/second/after)",
+    "crep_to_loop exact locals_rel_insert_gt_vmax oracle rows (fresh-key/unchanged)"]
   let mut all := true
   for (name, result) in names.zip results do
     if result then IO.println s!"PASS {name}" else IO.println s!"FAIL {name}"

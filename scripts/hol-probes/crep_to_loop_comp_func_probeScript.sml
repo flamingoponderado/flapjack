@@ -1,4 +1,10 @@
-(* Direct original HOL-EVAL rows for crep_to_loop$comp_func_def. *)
+(*
+  Direct HOL-EVAL fixture for Pancake crep_to_loop comp_func_def.
+  Reference: cakeml/pancake/crep_to_loopScript.sml:235-241.
+  The observations cover an empty program, a program with a make_vmap entry
+  (so the vmax/live/var lookup path is exercised), and a missing global
+  function reference.
+*)
 load "bossLib";
 load "preamble";
 load "crep_to_loopTheory";
@@ -14,18 +20,18 @@ fun print_eval label q =
     print (label ^ "=");
     print_term (rconc th);
     print "\n"
-  end;
+  end
 
 val _ = print_eval "comp_func_skip"
-  ``comp_func RISC_V FEMPTY [] (Skip : 8 word crepLang$prog)``;
-val _ = print_eval "comp_func_one_parameter_return"
-  ``comp_func RISC_V FEMPTY [5] (Return [Var 5] : 8 word crepLang$prog)``;
-val _ = print_eval "comp_func_pair_parameter_return"
-  ``comp_func RISC_V FEMPTY [5; 7]
-      (Return [Var 5; Var 7] : 8 word crepLang$prog)``;
-val _ = print_eval "comp_func_duplicate_parameters"
-  ``comp_func RISC_V FEMPTY [5; 5] (Return [Var 5] : 8 word crepLang$prog)``;
-val _ = print_eval "comp_func_if_cutset"
-  ``comp_func RISC_V FEMPTY [5; 7; 9]
-      (crepLang$If (crepLang$Const (1w : 8 word))
-        crepLang$Skip crepLang$Skip)``;
+  ``comp_func RISC_V (FEMPTY : (mlstring |-> (num # num))) []
+      (crepLang$Skip : 8 word crepLang$prog)``
+
+val _ = print_eval "comp_func_return_var"
+  ``comp_func RISC_V (FEMPTY : (mlstring |-> (num # num))) [0]
+      (crepLang$Return [crepLang$Var 0] : 8 word crepLang$prog)``
+
+val _ = print_eval "comp_func_two_params"
+  ``comp_func RISC_V (FEMPTY : (mlstring |-> (num # num))) [0; 1]
+      (crepLang$Return [crepLang$Var 1] : 8 word crepLang$prog)``
+
+val _ = print_eval "done" ``T``

@@ -369,6 +369,8 @@ import Flapjack.Test.LoopShMemOpParity
 import Flapjack.Test.LoopGetVarImmParity
 import Flapjack.Test.LoopSemCodeTableParity
 import Flapjack.Test.LoopSemCutParity
+import Flapjack.Test.CrepArithExactParity
+import Flapjack.Test.CrepToLoopCompileProgParity
 import Flapjack.Test.LoopCallEnvParity
 import Flapjack.Test.InstructionTransfer
 import Flapjack.Test.ArtifactFormat
@@ -1076,6 +1078,8 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.LoopGetVarImmParity.runChecks,
     Flapjack.Test.LoopSemCodeTableParity.runChecks,
     Flapjack.Test.LoopSemCutParity.runChecks,
+    Flapjack.Test.CrepArithExactParity.runChecks,
+    Flapjack.Test.CrepToLoopCompileProgParity.runChecks,
     Flapjack.Test.LoopCallEnvParity.runChecks,
     Flapjack.Test.CakeStackReseatParity.runChecks,
     Flapjack.Test.RiscVMemOpParity.runChecks,

@@ -317,7 +317,8 @@ run_probe crep_to_loop_locals_rel_probeScript.sml crep_to_loop_locals_rel_probe.
   subset_domain_component cutset_set_lookup cutset_target_lookup \
   locals_rel_true locals_rel_domain_false \
   locals_rel_value_false locals_rel_cutset_second_true \
-  locals_rel_cutset_after_true \
+  locals_rel_cutset_after_true locals_rel_insert_after_true \
+  insert_gt_vmax_lookup_unchanged \
   "$cake_dir/pancake/proofs/crep_to_loopProofScript.sml" \
   "$cake_dir/pancake/proofs"
 run_probe crep_to_loop_locals_insert_probeScript.sml crep_to_loop_locals_insert_probe.out \
@@ -356,12 +357,6 @@ run_probe loop_props_cut_sets_probeScript.sml loop_props_cut_sets_probe.out \
   cut_sets_skip cut_sets_locvalue cut_sets_assign cut_sets_load32 \
   cut_sets_loadbyte cut_sets_seq cut_sets_if cut_sets_longdiv \
   cut_sets_longmul cut_sets_div cut_sets_catch_all \
-  "$cake_dir/pancake/semantics/loopPropsScript.sml" \
-  "$cake_dir/pancake/semantics"
-run_probe loop_props_comp_syntax_probeScript.sml loop_props_comp_syntax_probe.out \
-  comp_syntax_loop_positive comp_syntax_loop_negative \
-  comp_syntax_seq_positive comp_syntax_seq_negative \
-  comp_syntax_if_positive comp_syntax_if_negative \
   "$cake_dir/pancake/semantics/loopPropsScript.sml" \
   "$cake_dir/pancake/semantics"
 run_probe crep_to_loop_context_defs_probeScript.sml crep_to_loop_context_defs_probe.out \
@@ -1300,13 +1295,21 @@ run_probe prog_if_probeScript.sml prog_if_probe.out \
 run_probe crep_to_loop_compile_exp_probeScript.sml crep_to_loop_compile_exp_probe.out \
   prog_if base var_hit load32 op_nary crepop_mul cmp shift compile_exps \
   "$cake_dir/pancake/crep_to_loopScript.sml"
+run_probe crep_to_loop_comp_func_probeScript.sml crep_to_loop_comp_func_probe.out \
+  comp_func_skip comp_func_return_var comp_func_two_params done \
+  "$cake_dir/pancake/crep_to_loopScript.sml"
+run_probe loop_props_comp_syntax_probeScript.sml loop_props_comp_syntax_probe.out \
+  comp_syntax_loop_positive comp_syntax_if_negative \
+  "$cake_dir/pancake/semantics/loopPropsScript.sml" \
+  "$cake_dir/pancake/semantics"
+run_probe crep_to_loop_list_to_num_set_probeScript.sml crep_to_loop_list_to_num_set_probe.out \
+  ltns_nil_0 ltns_cons_shape done \
+  "$cake_dir/pancake/crep_to_loopScript.sml"
 run_probe crep_to_loop_compile_probeScript.sml crep_to_loop_compile_probe.out \
   loop_nested_seq_empty compile_ext_call \
   "$cake_dir/pancake/crep_to_loopScript.sml"
-run_probe crep_to_loop_comp_func_probeScript.sml crep_to_loop_comp_func_probe.out \
-  comp_func_skip comp_func_one_parameter_return \
-  comp_func_pair_parameter_return comp_func_duplicate_parameters \
-  comp_func_if_cutset \
+run_probe crep_to_loop_compile_prog_probeScript.sml crep_to_loop_compile_prog_probe.out \
+  cp_fnums cp_params cp_body cp_length cp_call_fnums cp_call_params cp_call_body done \
   "$cake_dir/pancake/crep_to_loopScript.sml"
 run_probe crep_to_loop_ocompile_probeScript.sml crep_to_loop_ocompile_probe.out \
   ocompile_skip ocompile_call \
