@@ -10858,6 +10858,19 @@
     "statement_status": "reviewed_exact",
     "reviewer": "Codex (statement compared against ctxt_max_def at crep_to_loopProofScript.sml:90; HOL's un-annotated Definition infers 'a |-> num because m <= n, so the port is polymorphic in the key and fixed at Nat for values; direct HOL-EVAL rows ctxt_max_within/exceeds/absent reproduced by Lean guards in Flapjack/Test/CrepToLoopParity.lean)"
   },
+{
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "locals_rel_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
+    "lean_name": "crepToLoopLocalsRelExact",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs"
+    ],
+    "reviewer": "flapjack-ds10 source comparison (2026-09-28; bead flapjack-pxn.18.5.6.31.2) against locals_rel_def at crep_to_loopProofScript.sml:101-111. The four carriers are the reviewed exact renderings: the mlstring-keyed CrepToLoopContextExact context (tagged context); l : NumSet (exact sptree$num_set) with sptMem for `domain l`/`n IN domain l` (HOL sptree domain_lookup); tLocals : Spt (WordLocW width) for the sptree$num_map `lookup`; and sLocals : HolFiniteMapExact Nat (HolWordLab width) for `num |-> 'a word_lab`, with the exact word_lab/word_loc bridge wlabWlocHOL. distinct_vars/ctxt_max are the tagged parametric renderings crepToLoopDistinctVars/crepToLoopCtxtMax applied to ctxt.vars.lookup. Clause-for-clause: distinct_vars ctxt.vars / ctxt_max ctxt.vmax ctxt.vars / domain l SUBSET domain t_locals / the per-name FLOOKUP obligation with n IN domain l and lookup n t_locals = SOME (wlab_wloc v). Direct HOL oracle rows in scripts/hol-probes/crep_to_loop_locals_rel_probe.out (ctxt_vars_lookup, distinct_component, ctxt_max_component, set_domain_mem, map_lookup, subset_domain_component); exercised by Flapjack/Test/CrepToLoopParity.lean exact-carrier fixtures. The earlier String/Boolean/Option renderings remain untagged in the same module. code_rel_def (which also needs exact ocompile) is tracked separately.",
+    "words_as_type_indexed_bitvec": true
+  },
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
     "hol_name": "state_rel_def",

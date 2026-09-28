@@ -448,6 +448,76 @@ theorem crepToLoopCtxtMax_iff {κ : Type} (n : Nat) (fm : FiniteMap κ Nat) :
     crepToLoopCtxtMax n fm ↔ ∀ (v : κ) (m : Nat), FLOOKUP fm v = some m → m ≤ n :=
   Iff.rfl
 
+/-- Flapjack-specific exact bridge for HOL `wlab_wloc`
+    (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:45-47`, `wlab_wloc_def`):
+    `wlab_wloc (panSem$Word w) = wordLang$Word w`. The HOL tag `wlab_wloc_def`
+    lives on the production-carrier `wlabWloc` above; the exact relation ports
+    below use this version so their source and target value carriers are the
+    tagged `HolWordLab` (HOL `word_lab`) and `WordLocW` (HOL `word_loc`). -/
+def wlabWlocHOL {width : Nat} [NeZero width] : HolWordLab width → WordLocW width
+  | .word value => .word value
+
+namespace CrepToLoopLocalsRelWitnesses
+
+/-- Same-module re-export of the canonical finite-support witness for the
+    `crep_to_loop$context` carrier, required by the `fmap_as_finite_support`
+    qualifier on `crepToLoopLocalsRelExact`. -/
+theorem holFmapAsFiniteSupportWitness (context : CrepToLoopContextExact) :
+    CrepToLoopContextExact.ofBroad (CrepToLoopContextExact.toBroad context) = context :=
+  CrepToLoopContextExact.holFmapAsFiniteSupportWitness context
+
+end CrepToLoopLocalsRelWitnesses
+
+/-! ## Exact-carrier `locals_rel` (`crep_to_loopProofScript.sml:101-111`)
+
+HOL states
+
+    locals_rel ctxt (l:sptree$num_set) (s_locals:num |-> 'a word_lab) t_locals <=>
+    distinct_vars ctxt.vars /\ ctxt_max ctxt.vmax ctxt.vars /\
+    domain l ⊆ domain t_locals /\
+    !vname v. FLOOKUP s_locals vname = SOME v ==>
+      ?n. FLOOKUP ctxt.vars vname = SOME n /\ n ∈ domain l /\
+          lookup n t_locals = SOME (wlab_wloc v)
+
+The port below uses the reviewed exact renderings of all four carriers: the
+`mlstring`-keyed `CrepToLoopContextExact` context (tagged `context`); the exact
+`sptree$num_set` `NumSet` with `sptMem` as `domain` membership; the exact
+`sptree$num_map` `Spt` for `t_locals`; and the tagged exact `HolWordLab` /
+`WordLocW` value carriers bridged by `wlabWlocHOL`. The `distinct_vars` /
+`ctxt_max` conjuncts are the parametric tagged renderings. Direct HOL oracle
+rows are in `scripts/hol-probes/crep_to_loop_locals_rel_probe.out`
+(`ctxt_vars_lookup`, `distinct_component`, `ctxt_max_component`,
+`set_domain_mem`, `map_lookup`, `subset_domain_component`). -/
+@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "locals_rel_def"
+  (fmap_as_finite_support := [vars, funcs])
+  (words_as_type_indexed_bitvec)]
+def crepToLoopLocalsRelExact {width : Nat} [NeZero width]
+    (ctxt : CrepToLoopContextExact)
+    (l : NumSet)
+    (sLocals : HolFiniteMapExact Nat (HolWordLab width))
+    (tLocals : Spt (WordLocW width)) : Prop :=
+  crepToLoopDistinctVars ctxt.vars.lookup ∧
+  crepToLoopCtxtMax ctxt.vmax ctxt.vars.lookup ∧
+  (∀ n, sptMem n l → sptMem n tLocals) ∧
+  ∀ vname value, sLocals.lookup vname = some value →
+    ∃ n, ctxt.vars.lookup vname = some n ∧ sptMem n l ∧
+      sptLookup n tLocals = some (wlabWlocHOL value)
+
+/-- Untagged iff form of `crepToLoopLocalsRelExact`, kept for rewriting. -/
+theorem crepToLoopLocalsRelExact_iff {width : Nat} [NeZero width]
+    (ctxt : CrepToLoopContextExact)
+    (l : NumSet)
+    (sLocals : HolFiniteMapExact Nat (HolWordLab width))
+    (tLocals : Spt (WordLocW width)) :
+    crepToLoopLocalsRelExact ctxt l sLocals tLocals ↔
+      crepToLoopDistinctVars ctxt.vars.lookup ∧
+      crepToLoopCtxtMax ctxt.vmax ctxt.vars.lookup ∧
+      (∀ n, sptMem n l → sptMem n tLocals) ∧
+      ∀ vname value, sLocals.lookup vname = some value →
+        ∃ n, ctxt.vars.lookup vname = some n ∧ sptMem n l ∧
+          sptLookup n tLocals = some (wlabWlocHOL value) :=
+  Iff.rfl
+
 /-! ## `locals_rel` (untagged production analogue)
 
 HOL `locals_rel_def`
