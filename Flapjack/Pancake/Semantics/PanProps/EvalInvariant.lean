@@ -3767,12 +3767,13 @@ private theorem evaluateInvariantsCallTimeoutHOLFinite
     And.intro hmem (And.intro hshared (And.intro hbe (And.intro heshapes
       (And.intro hbase (And.intro hstructs (And.intro hcode horacle))))))
 
-/-- Proof-support for the non-exception recursive-result branches of HOL
-    `Call`. The callee post-state invariant is preserved through errors,
-    timeouts, FFI completion, and normal return restoration/update branches.
-    This helper still has branch-selector hypotheses and is not the tagged Call
-    induction case; exception and handler branches remain for that case. -/
-private theorem evaluateInvariantsCallBodyNoExceptionHOLFinite
+/-- Proof-support for HOL `Call` branches that do not recursively run an
+    exception handler. The callee post-state invariant is preserved through
+    errors, timeouts, FFI completion, normal returns, and unhandled/error
+    exception paths. This helper has branch-selector hypotheses and is not the
+    tagged Call induction case; a valid matched handler still needs its nested
+    induction hypothesis. -/
+private theorem evaluateInvariantsCallBodyNoHandlerRecursionHOLFinite
     {width : Nat} {σ : Type} [NeZero width]
     (state : PanPropsEvalStateFiniteExact width σ)
     (info : Option (Option (VarKind × MlS) × Option (MlS × MlS × ProgHOL width)))
@@ -3820,7 +3821,28 @@ private theorem evaluateInvariantsCallBodyNoExceptionHOLFinite
         info = some (none, handler)) ∨
       (∃ value kind name handler, bodyResult = some (.returned value) ∧
         shapeEqHOL (shapeOfHOLExact value) returnShape = true ∧
-        info = some (some (kind, name), handler)))
+        info = some (some (kind, name), handler)) ∨
+      (∃ exceptionId value, bodyResult = some (.exception exceptionId value) ∧
+        info = none) ∨
+      (∃ exceptionId value returnInfo,
+        bodyResult = some (.exception exceptionId value) ∧
+        info = some (returnInfo, none)) ∨
+      (∃ exceptionId value returnInfo handlerId handlerVar handlerProgram,
+        bodyResult = some (.exception exceptionId value) ∧
+        info = some (returnInfo, some (handlerId, handlerVar, handlerProgram)) ∧
+        exceptionId ≠ handlerId) ∨
+      (∃ exceptionId value returnInfo handlerId handlerVar handlerProgram,
+        bodyResult = some (.exception exceptionId value) ∧
+        info = some (returnInfo, some (handlerId, handlerVar, handlerProgram)) ∧
+        exceptionId = handlerId ∧
+        state.toPanSemFinite.eshapes.lookup exceptionId = none) ∨
+      (∃ exceptionId value returnInfo handlerId handlerVar handlerProgram declaredShape,
+        bodyResult = some (.exception exceptionId value) ∧
+        info = some (returnInfo, some (handlerId, handlerVar, handlerProgram)) ∧
+        exceptionId = handlerId ∧
+        state.toPanSemFinite.eshapes.lookup exceptionId = some declaredShape ∧
+        (shapeEqHOL (shapeOfHOLExact value) declaredShape &&
+          isValidValueHOLExact state.toPanSemFinite.toExact VarKind.local handlerVar value) = false))
     (hRun : PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state
       (.call info function arguments : ProgHOL width) = (result, post)) :
     post.memaddrs = state.memaddrs ∧
@@ -3905,6 +3927,14 @@ private theorem evaluateInvariantsCallBodyNoExceptionHOLFinite
       | ⟨value, hreturn, hshapeTrue, hinfo⟩
       | ⟨value, handler, hreturn, hshapeTrue, hinfo⟩
       | ⟨value, kind, name, handler, hreturn, hshapeTrue, hinfo⟩
+      | ⟨exceptionId, value, hexception, hinfo⟩
+      | ⟨exceptionId, value, returnInfo, hexception, hinfo⟩
+      | ⟨exceptionId, value, returnInfo, handlerId, handlerVar, handlerProgram,
+          hexception, hinfo, hne⟩
+      | ⟨exceptionId, value, returnInfo, handlerId, handlerVar, handlerProgram,
+          hexception, hinfo, heq, hshapeNone⟩
+      | ⟨exceptionId, value, returnInfo, handlerId, handlerVar, handlerProgram,
+          declaredShape, hexception, hinfo, heq, hshapeSome, hcondFalse⟩
   · simp only [hnone] at hcanonical
     exact hfinish bodyPost (by simpa using congrArg Prod.snd hcanonical) hbodyFields
   · simp only [hbreak] at hcanonical
@@ -4017,6 +4047,55 @@ private theorem evaluateInvariantsCallBodyNoExceptionHOLFinite
       simp only [hinvalid] at hcanonical
       exact hfinish bodyPost
         (by simpa using congrArg Prod.snd hcanonical) hbodyFields
+  · simp only [hexception, hinfo] at hcanonical
+    let empty := PanSemStateFiniteExact.emptyLocalsHOLFinite bodyPost
+    have hemptyFields :
+        empty.memaddrs = state.toPanSemFinite.memaddrs ∧
+        empty.shMemaddrs = state.toPanSemFinite.shMemaddrs ∧
+        empty.be = state.toPanSemFinite.be ∧
+        empty.eshapes = state.toPanSemFinite.eshapes ∧
+        empty.baseAddr = state.toPanSemFinite.baseAddr ∧
+        empty.structs = state.toPanSemFinite.structs ∧
+        empty.code = state.toPanSemFinite.code ∧
+        empty.ffi.oracle = state.toPanSemFinite.ffi.oracle := by
+      simpa [empty, PanSemStateFiniteExact.emptyLocalsHOLFinite] using hbodyFields
+    exact hfinish empty
+      (by simpa [empty, PanSemStateFiniteExact.emptyLocalsHOLFinite] using
+        congrArg Prod.snd hcanonical) hemptyFields
+  · simp only [hexception, hinfo] at hcanonical
+    let empty := PanSemStateFiniteExact.emptyLocalsHOLFinite bodyPost
+    have hemptyFields :
+        empty.memaddrs = state.toPanSemFinite.memaddrs ∧
+        empty.shMemaddrs = state.toPanSemFinite.shMemaddrs ∧
+        empty.be = state.toPanSemFinite.be ∧
+        empty.eshapes = state.toPanSemFinite.eshapes ∧
+        empty.baseAddr = state.toPanSemFinite.baseAddr ∧
+        empty.structs = state.toPanSemFinite.structs ∧
+        empty.code = state.toPanSemFinite.code ∧
+        empty.ffi.oracle = state.toPanSemFinite.ffi.oracle := by
+      simpa [empty, PanSemStateFiniteExact.emptyLocalsHOLFinite] using hbodyFields
+    exact hfinish empty
+      (by simpa [empty, PanSemStateFiniteExact.emptyLocalsHOLFinite] using
+        congrArg Prod.snd hcanonical) hemptyFields
+  · simp only [hexception, hinfo, if_neg hne] at hcanonical
+    let empty := PanSemStateFiniteExact.emptyLocalsHOLFinite bodyPost
+    have hemptyFields :
+        empty.memaddrs = state.toPanSemFinite.memaddrs ∧
+        empty.shMemaddrs = state.toPanSemFinite.shMemaddrs ∧
+        empty.be = state.toPanSemFinite.be ∧
+        empty.eshapes = state.toPanSemFinite.eshapes ∧
+        empty.baseAddr = state.toPanSemFinite.baseAddr ∧
+        empty.structs = state.toPanSemFinite.structs ∧
+        empty.code = state.toPanSemFinite.code ∧
+        empty.ffi.oracle = state.toPanSemFinite.ffi.oracle := by
+      simpa [empty, PanSemStateFiniteExact.emptyLocalsHOLFinite] using hbodyFields
+    exact hfinish empty
+      (by simpa [empty, PanSemStateFiniteExact.emptyLocalsHOLFinite] using
+        congrArg Prod.snd hcanonical) hemptyFields
+  · simp only [hexception, hinfo, if_pos heq, hshapeNone] at hcanonical
+    exact hfinish bodyPost (by simpa using congrArg Prod.snd hcanonical) hbodyFields
+  · simp only [hexception, hinfo, if_pos heq, hshapeSome, hcondFalse] at hcanonical
+    exact hfinish bodyPost (by simpa using congrArg Prod.snd hcanonical) hbodyFields
 
 end Flapjack
 
