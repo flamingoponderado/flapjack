@@ -1,1 +1,2 @@
 compile_crepop_mul_riscv=([Arith (LLongMul 4 4 2 3)],4)
+compile_crepop_mul_armv7=([Arith (LLongMul 4 5 2 3)],5)

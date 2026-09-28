@@ -18040,5 +18040,36 @@
     "fmap_as_finite_support": [
       "funcs"
     ]
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
+    "hol_name": "prog_if_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/ContextExact.lean",
+    "lean_name": "progIfHOLExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-c source comparison (2026-09-28, bead flapjack-pxn.18.5.6.27) against crep_to_loopScript.sml:34-40. Exact HolLoopProg/HolLoopExp carriers, same input order, concatenates p then q, emits Assign n e/Assign m e', uses If cmp n (Reg m) (Assign n (Const 1w)) (Assign n (Const 0w)), and inserts [n;m] into the source NumSet. The word qualifier records HOL's indexed word to BitVec width translation. Direct source row prog_if_basic is in scripts/hol-probes/prog_if_probe.out and its exact-carrier case is checked in Flapjack.Test.CrepToLoopCompileExpExactParity; no production routing is claimed.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
+    "hol_name": "compile_crepop_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/ContextExact.lean",
+    "lean_name": "compileCrepopHOLExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-c source comparison (2026-09-28, bead flapjack-pxn.18.5.6.27) against crep_to_loopScript.sml:42-48. The sole CrepOp constructor Mul follows both source architecture branches: ARMv7 returns LLongMul tmp (tmp+1) x y and tmp+1; every other exact asm architecture returns LLongMul tmp tmp x y and tmp. The live-set parameter is unused in HOL and Lean. The indexed HolLoopProg result is the exact program carrier; word qualification records the standard indexed word translation. The RISC-V direct original row is scripts/hol-probes/compile_crepop_probe.out; the exact RISC-V case is covered through the compile_exp crepop_mul row in Flapjack.Test.CrepToLoopCompileExpExactParity. No production route is claimed.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
+    "hol_name": "compile_exp_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/ContextExact.lean",
+    "lean_name": "compileExpHOLExact",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-c source comparison (2026-09-28, bead flapjack-pxn.18.5.6.27) against crep_to_loopScript.sml:50-95. Compared BaseAddr/TopAddr/Const, vars FLOOKUP with 0 fallback, recursive Load/Load32/LoadByte, LoadGlob to Lookup, mapped Op, Crepop temporary assignments and target-specific long multiply, Cmp's two recursive calls and prog_if temporaries, and Shift's ordered recursive calls. The exact carriers are CrepExpHOL width, HolLoopExp/HolLoopProg, and CrepToLoopContextExact; vars/funcs use its checked finite-support witness and the word qualifier records the positive indexed BitVec translation. Direct EVAL rows base, var_hit, load32, op_nary, crepop_mul, cmp, shift, compile_exps are captured in scripts/hol-probes/crep_to_loop_compile_exp_probe.out and checked by Flapjack.Test.CrepToLoopCompileExpExactParity. `compile_exps` is a local source helper with no separate HOL declaration. This is proof-side exact infrastructure: generic production loopCompileExp does not route through it; the production carrier/target bridge and exact compile_def/comp_func_def remain open under flapjack-pxn.18.5.6.28.",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs"
+    ],
+    "words_as_type_indexed_bitvec": true
   }
 ]
