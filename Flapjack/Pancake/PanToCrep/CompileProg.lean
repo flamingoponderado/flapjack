@@ -145,10 +145,47 @@ def compileProgTopHOL [BEq FunName] [LawfulBEq FunName]
       fun (name, _, _, _) => name
   compileInlTopHOL inlineNames (compileToCrepHOL declarations)
 
-/-- Executed parser-backed body path: each extracted function context is
-    exactified with its producer evidence and its body is sent through the
-    reviewed HOL-shaped `compileProgExactHOLW`, then decoded at the existing
-    source-shaped Crep boundary. -/
+/-! The parser-backed route consumes the exact, word-indexed HOL function
+    projection because its input already carries the byte-range evidence needed
+    by declToHOL. This Flapjack-only adapter has no HOL original: it decodes
+    `functionsHOL` only at the existing production function tuple boundary. Its
+    equality below records that no output change is made. -/
+
+/-- Byte-ranged production declarations round-trip through the exact carrier. -/
+theorem map_declOfHOL_declToHOL {width : Nat} [NeZero width]
+    (declarations : List (Flapjack.Decl (BitVec width)))
+    (h : ∀ d ∈ declarations, DeclByteRanged d) :
+    (declarations.map declToHOL).map declOfHOL = declarations := by
+  induction declarations with
+  | nil => rfl
+  | cons d ds ih =>
+      simp only [List.map_cons]
+      rw [declOfHOL_declToHOL d (h d (by simp)),
+        ih (fun e he => h e (by simp [he]))]
+
+/-- Function entries extracted by the tagged HOL functions definition and
+    decoded to the current production interface. -/
+def functionEntriesOfHOLExact {width : Nat} [NeZero width]
+    (declarations : List (Decl (BitVec width)))
+    (_h : ∀ d ∈ declarations, DeclByteRanged d) :
+    List (FunName × List (VarName × Shape) × Prog (BitVec width) × Shape) :=
+  (functionsHOL (declarations.map declToHOL)).map funEntryOfHOL
+
+/-- Flapjack-only bridge theorem (no HOL original): exact functions extraction
+    decoded to production entries equals `functionEntries`. The tagged
+    `functionsHOL` equation applies after `declToHOL`, and the byte-range
+    premise closes the reverse carrier round-trip. -/
+theorem functionEntriesOfHOLExact_eq {width : Nat} [NeZero width]
+    (declarations : List (Decl (BitVec width)))
+    (h : ∀ d ∈ declarations, DeclByteRanged d) :
+    functionEntriesOfHOLExact declarations h = functionEntries declarations := by
+  unfold functionEntriesOfHOLExact
+  rw [functionsHOL_map_funEntryOfHOL, map_declOfHOL_declToHOL declarations h]
+
+/-- Executed parser-backed path: `functionsHOL` supplies the entries; each
+    extracted function context is exactified with its producer evidence and its
+    body is sent through the reviewed HOL-shaped `compileProgExactHOLW`, then
+    decoded at the existing source-shaped Crep boundary. -/
 def compileProgTopHOLProductionExact {width : Nat} [NeZero width]
     [BEq FunName] [LawfulBEq FunName]
     [LawfulHashable FunName] [OfNat (BitVec width) 0]
@@ -156,7 +193,7 @@ def compileProgTopHOLProductionExact {width : Nat} [NeZero width]
     (declarations : List (Decl (BitVec width)))
     (hdecls : ∀ declaration ∈ declarations, DeclByteRanged declaration) :
     List (FunName × List Nat × CrepProg (BitVec width)) :=
-  let functions := functionEntries declarations
+  let functions := functionEntriesOfHOLExact declarations hdecls
   let functionMap := functionInfosHOL declarations
   let exceptionMap := panToCrepGetEidsFromDeclsOfExactHOL declarations hdecls
   let inlineNames :=
@@ -172,10 +209,13 @@ def compileProgTopHOLProductionExact {width : Nat} [NeZero width]
     have hmap : exceptionMap = panToCrepGetEidsFromDeclsHOL declarations := by
       dsimp [exceptionMap]
       exact panToCrepGetEidsFromDeclsOfExactHOL_eq declarations hdecls
+    have hentry : entry ∈ functionEntries declarations := by
+      rw [← functionEntriesOfHOLExact_eq declarations hdecls]
+      exact entryWithProof.property
     let evidence := by
       simpa [productionContext, hmap] using
         panToCrepFunctionContextProductionEvidence declarations entry
-          hdecls entryWithProof.property
+          hdecls hentry
     let exactContext := panToCrepContextExactOfProduction productionContext evidence
     let exactParams := entry.2.1.map fun (name, shape) =>
       (Flapjack.Basis.Pure.MlString.ofString name,
@@ -5091,10 +5131,11 @@ theorem compileProgTopHOLProductionExact_eq {width : Nat} [NeZero width]
     [OfNat (BitVec width) 1]
     (declarations : List (Decl (BitVec width)))
     (hdecls : ∀ declaration ∈ declarations, DeclByteRanged declaration) :
-    compileProgTopHOLProductionExact declarations hdecls =
+  compileProgTopHOLProductionExact declarations hdecls =
       compileProgTopHOL declarations := by
-  unfold compileProgTopHOLProductionExact compileProgTopHOL
-  let functions := functionEntries declarations
+  unfold compileProgTopHOLProductionExact
+  unfold compileProgTopHOL
+  let functions := functionEntriesOfHOLExact declarations hdecls
   let functionMap := functionInfosHOL declarations
   let exceptionMap := panToCrepGetEidsFromDeclsOfExactHOL declarations hdecls
   have hmap : exceptionMap = panToCrepGetEidsFromDeclsHOL declarations := by
@@ -5112,9 +5153,12 @@ theorem compileProgTopHOLProductionExact_eq {width : Nat} [NeZero width]
             (Shape.shapeSize (.comb (entry.2.1.map Prod.snd)) - 1)
             exceptionMap
         let evidence := by
+          have hentry : entry ∈ functionEntries declarations := by
+            rw [← functionEntriesOfHOLExact_eq declarations hdecls]
+            exact entryWithProof.property
           simpa [productionContext, hmap] using
             panToCrepFunctionContextProductionEvidence declarations entry
-              hdecls entryWithProof.property
+              hdecls hentry
         let exactContext := panToCrepContextExactOfProduction productionContext evidence
         let exactParams := entry.2.1.map fun (name, shape) =>
           (Flapjack.Basis.Pure.MlString.ofString name,
@@ -5128,10 +5172,13 @@ theorem compileProgTopHOLProductionExact_eq {width : Nat} [NeZero width]
             entryWithProof.val.2.2.1)) := by
     apply List.map_congr_left
     intro entryWithProof _hmem
+    have hentry : entryWithProof.val ∈ functionEntries declarations := by
+      rw [← functionEntriesOfHOLExact_eq declarations hdecls]
+      exact entryWithProof.property
     simpa [functionMap, exceptionMap,
       panToCrepGetEidsFromDeclsOfExactHOL_eq declarations hdecls] using
       compileFunctionExactHOLWProductionBridge declarations entryWithProof.val
-        hdecls entryWithProof.property
+        hdecls hentry
   have hcompiled :
       functions.attach.map (fun entryWithProof =>
         (entryWithProof.val.1, panToCrepVars entryWithProof.val.2.1,
@@ -5151,10 +5198,12 @@ theorem compileProgTopHOLProductionExact_eq {width : Nat} [NeZero width]
     have hproductionMap :
         functions.map (fun entry =>
           (entry.1, panToCrepVars entry.2.1,
-            compFuncHOL functionMap exceptionMap entry.2.1 entry.2.2.1)) =
+          compFuncHOL functionMap exceptionMap entry.2.1 entry.2.2.1)) =
           compileToCrepHOL declarations := by
+      change (functionEntriesOfHOLExact declarations hdecls).map _ = _
+      rw [functionEntriesOfHOLExact_eq declarations hdecls]
       rw [hmap]
-      simp [compileToCrepHOL, functions, functionMap,
+      simp [compileToCrepHOL, functionMap,
         functionInfosHOL_eq_makeFuncsHOL]
     exact hattach.trans hproductionMap
   change compileInlTopHOL inlineNames
@@ -5165,11 +5214,14 @@ theorem compileProgTopHOLProductionExact_eq {width : Nat} [NeZero width]
             functionMap
             (Shape.shapeSize (.comb (entry.2.1.map Prod.snd)) - 1)
             exceptionMap
-        have hmapLocal := hmap
-        let evidence := by
-          simpa [productionContext, hmapLocal] using
-            panToCrepFunctionContextProductionEvidence declarations entry
-              hdecls entryWithProof.property
+          have hmapLocal := hmap
+          let evidence := by
+            have hentry : entry ∈ functionEntries declarations := by
+              rw [← functionEntriesOfHOLExact_eq declarations hdecls]
+              exact entryWithProof.property
+            simpa [productionContext, hmapLocal] using
+              panToCrepFunctionContextProductionEvidence declarations entry
+                hdecls hentry
         let exactContext := panToCrepContextExactOfProduction productionContext evidence
         let exactParams := entry.2.1.map fun (name, shape) =>
           (Flapjack.Basis.Pure.MlString.ofString name,
@@ -5194,18 +5246,6 @@ def compileProgTopHOLWithMetadataOfExact {width : Nat} [NeZero width]
   (compileToCrepHOLWithMetadata declarations).zipWith
     (fun original (_, _, body) => { original with body })
     (compileProgTopHOLProductionExact declarations h)
-
-/-- Byte-ranged production declarations round-trip through the exact carrier. -/
-theorem map_declOfHOL_declToHOL {width : Nat} [NeZero width]
-    (declarations : List (Flapjack.Decl (BitVec width)))
-    (h : ∀ d ∈ declarations, DeclByteRanged d) :
-    (declarations.map declToHOL).map declOfHOL = declarations := by
-  induction declarations with
-  | nil => rfl
-  | cons d ds ih =>
-      simp only [List.map_cons]
-      rw [declOfHOL_declToHOL d (h d (by simp)),
-        ih (fun e he => h e (by simp [he]))]
 
 /-- The exact-carrier `compile_prog` boundary agrees with the production
     compiler on every byte-ranged declaration list. -/
