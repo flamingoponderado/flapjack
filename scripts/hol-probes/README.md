@@ -23,7 +23,9 @@ The probes currently cover the small `loop_to_word` slice used by
 `Flapjack.Test.PanFixedLoadParity`, and the `panSem$shape_of` boundary used by
 `Flapjack.Test.PanShapeParity`, plus the `panSem` word/value helpers used by
 `Flapjack.Test.PanWordParity`. The fixed-width store boundary is covered by
-`Flapjack.Test.PanFixedStoreParity`, and the word-store boundary by
+`Flapjack.Test.PanFixedStoreParity` (little-endian) and, in both endiannesses
+for the executed state-derived `store32` and the exact `panMemStore32HOL`, by
+`Flapjack.Test.PanStore32EndianParity` (`pan_store32_endian_probe.out`), and the word-store boundary by
 `Flapjack.Test.PanFlatStoreParity`. Value flattening is covered by
 `Flapjack.Test.PanFlattenParity`; scoped local restoration (`res_var_def`) is
 covered by `Flapjack.Test.PanResVarParity`. Their source references are
