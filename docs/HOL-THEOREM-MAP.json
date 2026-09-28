@@ -16238,6 +16238,17 @@
     "reviewer": "flapjack-luna-a source comparison (2026-09-28; bead flapjack-4ac.4.61) against panPropsScript.sml:1150-1158 and panSemScript.sml:693-718, 729-737. This is the genuine DecCall induction case. It retains the source evaluator result/post pair equation, the dynamic callee-body IH and continuation IH only at lower-clock states, and exactly the eight HOL field conclusions. The HOL clause evaluates the body at dec_clock s with looked-up locals, applies fix_clock, runs the continuation only after a Return value matches both requested and declared shapes, then restores the caller's result binding. NONE/Break/Continue and mismatched shapes return Error with the fixed state; other results clear locals. The lower-clock premises follow from the decrement and fix_clock bound. Lean uses evaluateHOLFiniteState_decCall_total over the checked finite-support PanProps carrier and indexed-word model; no branch selector or simplified evaluator premise is added. Call and the assembling theorem remain open."
   },
   {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "evaluate_invariants",
+    "hol_line": 1150,
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
+    "lean_name": "evaluateInvariantsCallCaseHOLFinite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-28; bead flapjack-4ac.4.61) against panPropsScript.sml:1150-1158 and panSemScript.sml:656-692, 729-737. This is the genuine Call induction case: it keeps the source evaluate result/post pair equation, one lower-clock IH for the looked-up callee body and a distinct lower-clock IH for the optional matched exception-handler program, then concludes exactly the eight source state-field equalities. The HOL Call clause evaluates the callee at dec_clock s with looked-up locals and applies fix_clock; ordinary return, error, timeout, final FFI and unmatched/invalid exception branches preserve these fields through the returned/fixed/empty-locals states. Only a returned exception with matching handler id and valid declared shape recurses on the handler, whose state clock is below the initial clock by evaluate_clock and the callee clock decrement. Lean's exhaustive result classification is derived from the evaluator result and call metadata, not an extra theorem premise; no target result, state relation, branch selector, or simplified evaluator is assumed. The finite-support fields use the same-module checked PanProps carrier roundtrip, and [NeZero width] is the reviewed positive indexed-word translation. The assembling evaluate_invariants theorem remains open."
+  },
+  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/NotMemContextAssignedMemGt.lean",
