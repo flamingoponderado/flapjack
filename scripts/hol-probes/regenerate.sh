@@ -1323,6 +1323,13 @@ run_probe loop_props_get_vars_probeScript.sml \
   get_vars_two get_var_imm_add_clk_eq \
   "$cake_dir/pancake/semantics/loopPropsScript.sml" \
   "$cake_dir/pancake/semantics"
+run_probe loop_props_survives_probeScript.sml \
+  loop_props_survives_probe.out \
+  if_hit if_miss loop_hit loop_miss_out call_hit call_miss \
+  call_handler_hit call_handler_miss_post ffi_hit ffi_miss mark_seq \
+  call_default assign_default \
+  "$cake_dir/pancake/semantics/loopPropsScript.sml" \
+  "$cake_dir/pancake/semantics"
 run_probe loop_sem_call_env_probeScript.sml \
   loop_sem_call_env_probe.out \
   arg_zero arg_missing "$cake_dir/pancake/semantics/loopSemScript.sml"

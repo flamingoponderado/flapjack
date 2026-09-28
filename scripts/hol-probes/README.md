@@ -45,6 +45,13 @@ catch-all are in `scripts/hol-probes/loop_props_cut_sets_probe.out`.
 `Flapjack.Test.LoopDecClockParity` probes `dec_clock_def` at lines 42--43 of
 the same source.
 `Flapjack.Test.LoopFixClockParity` probes `fix_clock_def` at lines 46--49.
+`loop_props_survives_probe.out` records direct HOL EVAL rows for every clause
+of `survives_def` in `cakeml/pancake/semantics/loopPropsScript.sml:25-38`:
+If/Loop/Call (both handler forms)/FFI domain membership, recursive Mark and
+Seq, and the catch-all case. The exact width-indexed `HolLoopProg` port
+`survivesHOLExact` is in `Flapjack.Pancake.Semantics.LoopProps`; its replay
+guards are in `Flapjack.Test.LoopPropsSurvivesParity`. Refresh with
+`HOL_PROBE_ONLY=loop_props_survives_probeScript.sml scripts/hol-probes/regenerate.sh`.
 `Flapjack.Test.PanEvaluateDeclsParity` probes `evaluate_decls_def` at
 `cakeml/pancake/semantics/panSemScript.sml:814-835`, including each declaration
 constructor, ordered global updates, local clearing during initializer
