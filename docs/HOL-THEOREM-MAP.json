@@ -17758,5 +17758,13 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-b source comparison (2026-09-28, bead flapjack-pxn.18.4.3.110; pan_to_crepProofScript.sml:442-468, ExtCall case resumed at :4485-4545; panSemScript.sml:777-778 rebound evaluate_ind). The HOL ExtCall conjunct has binders ffi_index ptr1 len1 ptr2 len2 s and no recursive IH; Lean instantiates the same P as pcCompileCorrectAt with function : MlS, four ExpHOL width operands, and source : PanSemStateFiniteExact. The premise/conclusion are exactly pcCompileCorrectAt: source evaluate equation, res != SOME Error, pre-state state_rel/code_rel/excp_rel/locals_rel and localised_prog, followed by existential target result/state, target evaluation, post-state relations, and HOL result case. No target run, result, or post-state relation is assumed. Compared HOL panSem evaluate_def ExtCall and Lean evaluateHOLFiniteState_extCall_source: four operands evaluate in source order; both bytearray reads use identical memory/domain/endian; FinalFFI clears source locals; Ret writes returned bytes and FFI while preserving source locals. Compared HOL compile_def and Lean compileExtCallExactHOLW: both stage four operands in fresh Dec temporaries. Target evalCrepSemHOLProgExact ExtCall read, call, write, FinalFFI, and Ret outcomes match. Ret uses panToCrepStateRelFiniteExact_writeBytearray, whose extensional write congruence accounts for separate DecidablePred instances. Named maps use canonical HolFiniteMapExact with same-module roundtrip witnesses; words use positive-width BitVec. No changed evaluator, extra premise, side condition, comparison, or conclusion."
+  },
+  {
+    "hol_path": "cakeml/pancake/panLangScript.sml",
+    "hol_name": "exp",
+    "lean_path": "Flapjack/Pancake/PanLang.lean",
+    "lean_name": "Exp",
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-luna-b (bead flapjack-p0l9, 2026-09-28): HOL exp at panLangScript.sml:53-69 indexes Const by the target word type, but production Exp (alpha : Type u) stores an arbitrary alpha. The executed compiler specializes it to Exp (BitVec width), which does not make this generic declaration width-indexed. The exact constructor-for-constructor port is ExpHOL width in PanLang/Exp.lean (reviewed_exact); expToHOL_expOfHOL is unconditional and expOfHOL_expToHOL is proved for ExpByteRanged production values. This checked codec is the representation refinement for the width specialization; the reverse direction\u2019s String/MlString and Shape/ShapeHOL bounds remain explicit, not silently identified. Keep production Exp untagged. Exact compiler routing and other String-backed syntax fields remain tracked by flapjack-pxn.18.3.5.8."
   }
 ]
