@@ -10899,49 +10899,52 @@
     "hol_name": "locals_rel_def",
     "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
     "lean_name": "crepToLoopLocalsRelExact",
-    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support": [
-      "vars",
-      "funcs"
-    ],
-    "reviewer": "flapjack-ds10 source comparison (2026-09-28; bead flapjack-pxn.18.5.6.31.2) against locals_rel_def at crep_to_loopProofScript.sml:101-111. The four carriers are the reviewed exact renderings: the mlstring-keyed CrepToLoopContextExact context (tagged context); l : NumSet (exact sptree$num_set) with sptMem for `domain l`/`n IN domain l` (HOL sptree domain_lookup); tLocals : Spt (WordLocW width) for the sptree$num_map `lookup`; and sLocals : HolFiniteMapExact Nat (HolWordLab width) for `num |-> 'a word_lab`, with the exact word_lab/word_loc bridge wlabWlocHOL. distinct_vars/ctxt_max are the tagged parametric renderings crepToLoopDistinctVars/crepToLoopCtxtMax applied to ctxt.vars.lookup. Clause-for-clause: distinct_vars ctxt.vars / ctxt_max ctxt.vmax ctxt.vars / domain l SUBSET domain t_locals / the per-name FLOOKUP obligation with n IN domain l and lookup n t_locals = SOME (wlab_wloc v). Direct HOL oracle rows in scripts/hol-probes/crep_to_loop_locals_rel_probe.out (ctxt_vars_lookup, distinct_component, ctxt_max_component, set_domain_mem, map_lookup, subset_domain_component); exercised by Flapjack/Test/CrepToLoopParity.lean exact-carrier fixtures. The earlier String/Boolean/Option renderings remain untagged in the same module. code_rel_def (which also needs exact ocompile) is tracked separately.",
-    "words_as_type_indexed_bitvec": true
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-ds10 source comparison (2026-09-28; bead flapjack-pxn.18.5.6.31.2) against locals_rel_def at crep_to_loopProofScript.sml:101-108. The four carriers are the reviewed exact renderings: the mlstring-keyed CrepToLoopContextExact context (tagged context); l : NumSet (exact sptree$num_set) with sptMem for `domain l`/`n IN domain l` (HOL sptree domain_lookup); tLocals : Spt (WordLocW width) for the sptree$num_map `lookup`; and sLocals : HolFiniteMapExact Nat (HolWordLab width) for `num |-> 'a word_lab`, with the exact word_lab/word_loc bridge wlabWlocHOL. distinct_vars/ctxt_max are the tagged parametric renderings crepToLoopDistinctVars/crepToLoopCtxtMax applied to ctxt.vars.lookup. Clause-for-clause: distinct_vars ctxt.vars / ctxt_max ctxt.vmax ctxt.vars / domain l SUBSET domain t_locals / the per-name FLOOKUP obligation with n IN domain l and lookup n t_locals = SOME (wlab_wloc v). Direct HOL oracle rows in scripts/hol-probes/crep_to_loop_locals_rel_probe.out (ctxt_vars_lookup, distinct_component, ctxt_max_component, set_domain_mem, map_lookup, subset_domain_component); exercised by Flapjack/Test/CrepToLoopParity.lean exact-carrier fixtures. The earlier String/Boolean/Option renderings remain untagged in the same module. code_rel_def (which also needs exact ocompile) is tracked separately. The mixed relation qualifier names the exact context field `CrepToLoopContextExact.vars` plus standalone parameter `sLocals` (whose binder is `HolFiniteMapExact`). The same-module context roundtrip witness covers the owned field; the bare parameter needs no owner witness. `funcs` is omitted because this definition does not observe it.",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "sLocals"
+    ]
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
     "hol_name": "locals_rel_intro",
     "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
     "lean_name": "crepToLoopLocalsRelExact_intro",
-    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support": [
-      "vars"
-    ],
-    "reviewer": "flapjack-ds10 source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.1) against locals_rel_intro at crep_to_loopProofScript.sml:176-186. HOL states `locals_rel ctxt l s_locals t_locals ==> distinct_vars ctxt.vars /\\ ctxt_max ctxt.vmax ctxt.vars /\\ domain l SUBSET domain t_locals /\\ per-name FLOOKUP obligation`; the Lean source comparison keeps the same implication shape (not an iff) over the exact carriers: CrepToLoopContextExact (tags context), l : NumSet (exact sptree$num_set) with sptMem for domain membership, sLocals : HolFiniteMapExact Nat (HolWordLab width) for `num |-> 'a word_lab`, and tLocals : Spt (WordLocW width) for the sptree$num_map `lookup`, with the exact wlabWlocHOL word_lab/word_loc bridge. The four conjuncts match clause-for-clause and are mediated by the tagged crepToLoopLocalsRelExact definition. Qualifiers: only ctxt.vars is an exact finite-map field traversed by this statement, and the width-indexed word carriers HolWordLab/WordLocW are the reviewed `'a word` translation. Direct HOL oracle rows appear in scripts/hol-probes/crep_to_loop_locals_rel_probe.out and the lemma is exercised by Flapjack/Test/CrepToLoopParity.lean. code_rel_intro is tracked separately because it needs exact ocompile.",
-    "words_as_type_indexed_bitvec": true
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-ds10 source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.1) against locals_rel_intro at crep_to_loopProofScript.sml:176-185. HOL states `locals_rel ctxt l s_locals t_locals ==> distinct_vars ctxt.vars /\\ ctxt_max ctxt.vmax ctxt.vars /\\ domain l SUBSET domain t_locals /\\ per-name FLOOKUP obligation`; the Lean source comparison keeps the same implication shape (not an iff) over the exact carriers: CrepToLoopContextExact (tags context), l : NumSet (exact sptree$num_set) with sptMem for domain membership, sLocals : HolFiniteMapExact Nat (HolWordLab width) for `num |-> 'a word_lab`, and tLocals : Spt (WordLocW width) for the sptree$num_map `lookup`, with the exact wlabWlocHOL word_lab/word_loc bridge. The four conjuncts match clause-for-clause and are mediated by the tagged crepToLoopLocalsRelExact definition. Qualifiers: only ctxt.vars is an exact finite-map field traversed by this statement, and the width-indexed word carriers HolWordLab/WordLocW are the reviewed `'a word` translation. Direct HOL oracle rows appear in scripts/hol-probes/crep_to_loop_locals_rel_probe.out and the lemma is exercised by Flapjack/Test/CrepToLoopParity.lean. code_rel_intro is tracked separately because it needs exact ocompile. The mixed relation qualifier names `CrepToLoopContextExact.vars` and the standalone `sLocals` parameter (`HolFiniteMapExact`). The same-module roundtrip witnesses the owned field; the bare parameter needs no owner witness. `funcs` is unused.",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "sLocals"
+    ]
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
     "hol_name": "locals_rel_cutset_prop",
     "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
     "lean_name": "crepToLoopLocalsRelExact_cutset_prop",
-    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support": [
-      "vars"
-    ],
-    "reviewer": "flapjack-ds10 source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.2) against locals_rel_cutset_prop at crep_to_loopProofScript.sml:236-244. HOL states `locals_rel ct cset lcl lcl' /\\ locals_rel ct cset' lcl lcl'' /\\ subspt cset cset' ==> locals_rel ct cset lcl lcl''` (proved via rw [locals_rel_def], subspt_domain, SUBSET_TRANS, and res_tac on the per-name obligation). The Lean source comparison keeps the same three-premise implication over the exact carriers: CrepToLoopContextExact (tags context), cset/cset' : NumSet, lcl : HolFiniteMapExact Nat (HolWordLab width), lcl'/lcl'' : Spt (WordLocW width); the HOL `subspt` premise is rendered by the untagged sptSubspt (HOL subspt_def, HOL/src/finite_maps/sptreeScript.sml:1737-1741, with sptMem for `k IN domain`). distinct_vars/ctxt_max are inherited from the first relation, the num_set-domain conjunct follows from sptSubspt and the second relation, and the per-name lookup conjunct from the second relation plus uniqueness of FLOOKUP ct.vars vname. Direct HOL oracle rows appear in scripts/hol-probes/crep_to_loop_locals_rel_probe.out and the lemma is exercised by Flapjack/Test/CrepToLoopParity.lean. Qualifiers: only ctxt.vars is an exact finite-map field and HolWordLab/WordLocW are the reviewed width-indexed `'a word` carriers.",
-    "words_as_type_indexed_bitvec": true
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-ds10 source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.2) against locals_rel_cutset_prop at crep_to_loopProofScript.sml:239-249. HOL states `locals_rel ct cset lcl lcl' /\\ locals_rel ct cset' lcl lcl'' /\\ subspt cset cset' ==> locals_rel ct cset lcl lcl''` (proved via rw [locals_rel_def], subspt_domain, SUBSET_TRANS, and res_tac on the per-name obligation). The Lean source comparison keeps the same three-premise implication over the exact carriers: CrepToLoopContextExact (tags context), cset/cset' : NumSet, lcl : HolFiniteMapExact Nat (HolWordLab width), lcl'/lcl'' : Spt (WordLocW width); the HOL `subspt` premise is rendered by the untagged sptSubspt (HOL subspt_def, HOL/src/finite_maps/sptreeScript.sml:1737-1741, with sptMem for `k IN domain`). distinct_vars/ctxt_max are inherited from the first relation, the num_set-domain conjunct follows from sptSubspt and the second relation, and the per-name lookup conjunct from the second relation plus uniqueness of FLOOKUP ct.vars vname. Direct HOL oracle rows appear in scripts/hol-probes/crep_to_loop_locals_rel_probe.out and the lemma is exercised by Flapjack/Test/CrepToLoopParity.lean. Qualifiers: only ctxt.vars is an exact finite-map field and HolWordLab/WordLocW are the reviewed width-indexed `'a word` carriers. The shared standalone HOL input map is explicitly qualified as parameter `lcl`, with a same-module canonical lookup/finiteSupport roundtrip witness. The field qualifier retains only `ctxt.vars`; `funcs` is unused. The mixed relation qualifier names `CrepToLoopContextExact.vars` and the shared standalone parameter `lcl` (`HolFiniteMapExact`). The same-module roundtrip witnesses the context field, while the bare parameter needs no owner witness; `funcs` is unused.",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "lcl"
+    ]
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
     "hol_name": "locals_rel_insert_gt_vmax",
     "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
     "lean_name": "crepToLoopLocalsRelExact_insert_gt_vmax",
-    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support": [
-      "vars"
-    ],
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "ds10 (bead flapjack-pxn.18.5.6.33.3): exact port of HOL locals_rel_insert_gt_vmax (crep_to_loopProofScript.sml:226-234). HOL inserts an arbitrary word_loc at a fresh index n above ct.vmax; the Lean statement inserts a WordLocW at n : Nat into the Spt (WordLocW width) target locals and keeps cset/lcl/ctxt fixed, with the same ct.vmax < n premise and no extra hypothesis. The sptree$insert is rendered by the exact sptInsert on Spt (new untagged support sptLookup_sptInsert_ne / sptMem_sptInsert in Flapjack/Misc/Sptree.lean); the domain conjunct uses sptMem_sptInsert and the per-name conjunct uses sptLookup_sptInsert_ne with n' < n forced by ctxt_max (n' <= ctxt.vmax < n). Direct HOL oracle rows: scripts/hol-probes/crep_to_loop_locals_insert_probe.out (insert_same, insert_other_unchanged, gt_vmax_bounded_survives, subset_preserved) and crep_to_loop_locals_rel_probe.out (locals_rel_insert_after_true, insert_gt_vmax_lookup_unchanged); matching Lean checks in Flapjack/Test/CrepToLoopParity.lean."
+    "reviewer": "flapjack-luna-c source comparison (2026-09-28; bead flapjack-58bb), exact port of HOL locals_rel_insert_gt_vmax (crep_to_loopProofScript.sml:228-237). HOL inserts an arbitrary word_loc at a fresh index n above ct.vmax; the Lean statement inserts a WordLocW at n : Nat into the Spt (WordLocW width) target locals and keeps cset/lcl/ctxt fixed, with the same ct.vmax < n premise and no extra hypothesis. The sptree$insert is rendered by the exact sptInsert on Spt (new untagged support sptLookup_sptInsert_ne / sptMem_sptInsert in Flapjack/Misc/Sptree.lean); the domain conjunct uses sptMem_sptInsert and the per-name conjunct uses sptLookup_sptInsert_ne with n' < n forced by ctxt_max (n' <= ctxt.vmax < n). Direct HOL oracle rows: scripts/hol-probes/crep_to_loop_locals_insert_probe.out (insert_same, insert_other_unchanged, gt_vmax_bounded_survives, subset_preserved) and crep_to_loop_locals_rel_probe.out (locals_rel_insert_after_true, insert_gt_vmax_lookup_unchanged); matching Lean checks in Flapjack/Test/CrepToLoopParity.lean. The mixed relation qualifier names `CrepToLoopContextExact.vars` and standalone parameter `lcl` (`HolFiniteMapExact`). The context roundtrip witness covers the owned field; the bare parameter needs no owner witness. `funcs` is unused.",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "lcl"
+    ]
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",

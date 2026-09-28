@@ -413,6 +413,13 @@ theorem holFmapAsFiniteSupportWitness (context : CrepToLoopContextExact) :
     CrepToLoopContextExact.ofBroad (CrepToLoopContextExact.toBroad context) = context :=
   CrepToLoopContextExact.holFmapAsFiniteSupportWitness context
 
+/-- Same-module canonical roundtrip required by the mixed-carrier qualifier
+    below. The standalone map parameters need no owner witness. -/
+theorem holFmapAsFiniteSupportRelationWitness_CrepToLoopContextExact
+    (context : CrepToLoopContextExact) :
+    CrepToLoopContextExact.ofBroad (CrepToLoopContextExact.toBroad context) = context :=
+  CrepToLoopContextExact.holFmapAsFiniteSupportWitness context
+
 end CrepToLoopLocalsRelWitnesses
 
 /-! ## Exact-carrier `locals_rel` (`crep_to_loopProofScript.sml:101-111`)
@@ -447,7 +454,7 @@ num-keyed instance; the matching kernel-checked Lean rows are in
 `locals_rel_insert_after_true`, `insert_gt_vmax_lookup_unchanged`, plus the
 fresh-key/unchanged rows of `crep_to_loop_locals_insert_probe.out`). -/
 @[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "locals_rel_def"
-  (fmap_as_finite_support := [vars, funcs])
+  (fmap_as_finite_support_relation := [CrepToLoopContextExact.vars, sLocals])
   (words_as_type_indexed_bitvec)]
 def crepToLoopLocalsRelExact {width : Nat} [NeZero width]
     (ctxt : CrepToLoopContextExact)
@@ -484,7 +491,7 @@ theorem crepToLoopLocalsRelExact_iff {width : Nat} [NeZero width]
     and the `num_set`-domain / per-name lookup conjuncts use `sptMem` and the
     `wlabWlocHOL` value bridge. -/
 @[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "locals_rel_intro"
-  (fmap_as_finite_support := [vars])
+  (fmap_as_finite_support_relation := [CrepToLoopContextExact.vars, sLocals])
   (words_as_type_indexed_bitvec)]
 theorem crepToLoopLocalsRelExact_intro {width : Nat} [NeZero width]
     (ctxt : CrepToLoopContextExact)
@@ -501,7 +508,7 @@ theorem crepToLoopLocalsRelExact_intro {width : Nat} [NeZero width]
   (crepToLoopLocalsRelExact_iff ctxt l sLocals tLocals).mp h
 
 /-- Exact port of HOL `crep_to_loop$locals_rel_cutset_prop`
-    (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:236-244`):
+    (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:239-249`):
     `locals_rel ct cset lcl lcl' /\ locals_rel ct cset' lcl lcl'' /\
     subspt cset cset' ==> locals_rel ct cset lcl lcl''`. The HOL `subspt`
     premise is rendered by the untagged `sptSubspt` (HOL `subspt_def`); the
@@ -510,7 +517,7 @@ theorem crepToLoopLocalsRelExact_intro {width : Nat} [NeZero width]
     relation, and the per-name lookup conjunct from the second relation plus the
     uniqueness of `FLOOKUP ct.vars vname`. -/
 @[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "locals_rel_cutset_prop"
-  (fmap_as_finite_support := [vars])
+  (fmap_as_finite_support_relation := [CrepToLoopContextExact.vars, lcl])
   (words_as_type_indexed_bitvec)]
 theorem crepToLoopLocalsRelExact_cutset_prop {width : Nat} [NeZero width]
     (ctxt : CrepToLoopContextExact)
@@ -532,7 +539,7 @@ theorem crepToLoopLocalsRelExact_cutset_prop {width : Nat} [NeZero width]
     exact ⟨n, hvar', hmem, hn'⟩
 
 /-- Exact port of HOL `crep_to_loop$locals_rel_insert_gt_vmax`
-    (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:226-234`):
+    (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:228-237`):
     `locals_rel ct cset lcl lcl' /\ ct.vmax < n ==>
     locals_rel ct cset lcl (insert n w lcl')`. The `sptree$insert` is the
     exact `sptInsert` on the `Spt` carrier (`NumSet` for the set and
@@ -540,7 +547,7 @@ theorem crepToLoopLocalsRelExact_cutset_prop {width : Nat} [NeZero width]
     `sptLookup_sptInsert_ne` because `ctxt_max` forces every matched index
     `n' ≤ ctxt.vmax < n`, so the inserted key cannot shadow it. -/
 @[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "locals_rel_insert_gt_vmax"
-  (fmap_as_finite_support := [vars])
+  (fmap_as_finite_support_relation := [CrepToLoopContextExact.vars, lcl])
   (words_as_type_indexed_bitvec)]
 theorem crepToLoopLocalsRelExact_insert_gt_vmax {width : Nat} [NeZero width]
     (ctxt : CrepToLoopContextExact)
