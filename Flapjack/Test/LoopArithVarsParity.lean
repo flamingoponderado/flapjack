@@ -12,4 +12,19 @@ def parityGuard : Bool :=
 #eval parityGuard
 #guard parityGuard
 
+/-! Direct parity for the exact `arithVarsHOL` over the faithful `NumSet`
+carrier, replaying the three rows of `scripts/hol-probes/arith_vars_probe.out`
+(`long_mul=⦕ 3; 4; 6 ⦖`, `div=⦕ 2; 3; 5 ⦖`, `long_div=⦕ 3; 4; 5; 8 ⦖`). -/
+def numSetOf (keys : List Nat) : NumSet := sptListInsert keys .ln
+
+def numSetHas (tree : NumSet) (keys : List Nat) : Bool :=
+  keys.all (fun key => (sptLookup key tree).isSome) && sptSize tree == keys.length
+
+def exactArithVarsGuard : Bool :=
+  numSetHas (arithVarsHOL (.longMul 1 2 3 4) (numSetOf [1, 2, 6])) [3, 4, 6] &&
+  numSetHas (arithVarsHOL (.div 1 2 3) (numSetOf [1, 5])) [2, 3, 5] &&
+  numSetHas (arithVarsHOL (.longDiv 1 2 3 4 5) (numSetOf [1, 2, 8])) [3, 4, 5, 8]
+
+#guard exactArithVarsGuard
+
 end Flapjack.Test.LoopArithVarsParity
