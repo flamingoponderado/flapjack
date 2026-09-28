@@ -312,12 +312,18 @@ mutual
 
 end
 
-/-- HOL `loopSem$loop_primop` (`cakeml/pancake/semantics/loopSemScript.sml:242-252`).
-    The only Loop primitive is `AddCarry`: it accepts exactly three word cells
-    and returns the low word followed by the carry word; a malformed arity or
-    any non-word cell yields `none`.  This is the `LoopEvaluateHooks.primitive`
-    boundary over word-location cells. -/
-@[hol "cakeml/pancake/semantics/loopSemScript.sml" "loop_primop_def"]
+/-- Flapjack-specific rendering of HOL `loopSem$loop_primop`
+    (`cakeml/pancake/semantics/loopSemScript.sml:242-252`) over the executable
+    `LoopValue` carrier.  The only Loop primitive is `AddCarry`: it accepts
+    exactly three word cells and returns the low word followed by the carry
+    word; a malformed arity or any non-word cell yields `none`.  This is the
+    `LoopEvaluateHooks.primitive` boundary over word-location cells.
+
+    The `@[hol]` tag is withdrawn: `LoopValue` is not the exact HOL `word_loc`
+    carrier, so this is not a source-exact port.  The canonical exact port is
+    `LoopSemStateFiniteExact.loopPrimop` (`Flapjack/Pancake/Semantics/LoopSemStateExact.lean`,
+    tagged `loop_primop_def` with `(words_as_type_indexed_bitvec)`), valued in
+    the exact `WordLocW` carrier. -/
 def loopPrimopHOL {width : Nat} [NeZero width] :
     PrimOp → List (LoopValue (BitVec width)) →
       Option (List (LoopValue (BitVec width)))

@@ -707,6 +707,23 @@ exact-carrier counterpart is the tagged
 `sptInsert`/`Spt`, whose support lemmas `sptLookup_sptInsert_ne` and
 `sptMem_sptInsert` live in `Flapjack/Misc/Sptree.lean`.
 
+`crep_primop_loop_primop_probe.out` records direct HOL EVAL of the local
+preservation theorem `crep_primop_loop_primop`
+(`cakeml/pancake/proofs/crep_to_loopProofScript.sml:2337-2355`) on concrete
+8-bit `word_lab` payloads: the source `crepSem$crep_primop`, the target
+`loopSem$loop_primop` after `MAP crep_to_loopProof$wlab_wloc`, and the resulting
+preservation equation for the valid, overflow, nonzero-carry, short-arity, and
+long-arity cases (`crep_valid`, `loop_valid_mapped`, `preserve_valid`, ...,
+`preserve_invalid_four`). The exact Lean port is the tagged
+`Flapjack.crepPrimopLoopPrimopHOL` in the `crep_to_loopProofScript.sml`
+counterpart `Flapjack/Pancake/CrepToLoop/Proofs/Primop.lean`, over the exact
+`HolWordLab`(`word_lab`)/`WordLocW`(`word_loc`) carriers and the
+`wlabWlocHOL` bridge; the kernel replay guards and `example`s are in
+`Flapjack.Test.CrepPrimopLoopPrimopParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=crep_primop_loop_primop_probeScript.sml
+bash scripts/hol-probes/regenerate.sh`.
+
 `pan_globals_mem_functions_probe.out` records direct HOL EVAL of the
 `panLang$functions` projection and the membership instance characterized by the
 local theorem `MEM_functions` at
