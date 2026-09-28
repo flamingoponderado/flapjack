@@ -1940,4 +1940,104 @@ theorem crepUnassignedFreeVarsEvaluateSameHOL {width : Nat} [NeZero width] {σ :
   intro p s res t n k ⟨h, hres, hn⟩
   exact crepUnassignedFreeVarsEvaluateSameInduct (p, s) res t n k h hres hn
 
+private theorem updateListEq_cons' {α β : Type} [DecidableEq α]
+    (m : HolFiniteMapExact α β) (e : α × β) (l : List (α × β)) :
+    m.updateListEq (e :: l) = (m.updateEq e).updateListEq l := by
+  apply HolFiniteMapExact.ext
+  funext k
+  rfl
+
+private theorem updateListEq_nil' {α β : Type} [DecidableEq α] (m : HolFiniteMapExact α β) :
+    m.updateListEq [] = m := by
+  apply HolFiniteMapExact.ext
+  funext k
+  rfl
+
+private theorem genlistAddrs_succ (a : BitVec 5) (n : Nat) :
+    (List.range (n + 1)).map (fun x => a + BitVec.ofNat 5 x) =
+      a :: (List.range n).map (fun x => (a + 1) + BitVec.ofNat 5 x) := by
+  rw [List.range_succ_eq_map, List.map_cons, List.map_map]
+  congr 1
+  · simp
+  · apply List.map_congr_left
+    intro x _
+    simp only [Function.comp]
+    rw [BitVec.add_assoc]
+    congr 1
+    apply BitVec.eq_of_toNat_eq
+    simp [BitVec.toNat_add, BitVec.toNat_ofNat]
+    omega
+
+/-- Exact port of HOL `crepProps$evaluate_seq_store_globals_res`
+    (`crepPropsScript.sml:566-572`): `!vars vs t a. ALL_DISTINCT vars /\
+    LENGTH vars = LENGTH vs /\ w2n a + LENGTH vs <= 32 ==>
+    evaluate (nested_seq (store_globals a (MAP Var vars)),
+      t with locals := t.locals |++ ZIP (vars,vs)) =
+    (NONE, t with <|locals := t.locals |++ ZIP (vars,vs);
+      globals := t.globals |++ ZIP (GENLIST (λx. a + n2w x) (LENGTH vs), vs)|>)`.
+    `evaluate` is the tagged `evalCrepSemHOLProgExact`, `nested_seq`/`store_globals`
+    are the tagged `crepNestedSeqHOL`/`storeGlobalsHOL`, `|++` is `updateListEq`,
+    `ALL_DISTINCT` is `Nodup`, `w2n` is `toNat`, and `GENLIST f n` is
+    `(List.range n).map f` with `n2w` the `BitVec.ofNat 5` cast. -/
+@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "evaluate_seq_store_globals_res"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateSeqStoreGlobalsResHOL {width : Nat} [NeZero width] {σ : Type} :
+    ∀ (vars : List Nat) (vs : List (HolWordLab width)) (t : CrepSemHOLState width σ)
+      (a : BitVec 5),
+      vars.Nodup ∧ vars.length = vs.length ∧ a.toNat + vs.length ≤ 32 →
+      evalCrepSemHOLProgExact { t with locals := t.locals.updateListEq (vars.zip vs) }
+          (crepNestedSeqHOL (storeGlobalsHOL a (vars.map CrepExpHOL.var))) =
+        (none, { t with
+          locals := t.locals.updateListEq (vars.zip vs)
+          globals := t.globals.updateListEq
+            (((List.range vs.length).map (fun x => a + BitVec.ofNat 5 x)).zip vs) }) := by
+  intro vars
+  induction vars with
+  | nil =>
+      intro vs t a ⟨_, hlen, _⟩
+      cases vs with
+      | cons _ _ => simp at hlen
+      | nil =>
+          simp only [List.map_nil, storeGlobalsHOL, crepNestedSeqHOL, List.zip_nil_right,
+            List.length_nil, List.range_zero, updateListEq_nil']
+          exact evalCrepSemHOLProgExact_skip _
+  | cons h vars ih =>
+      intro vs t a ⟨hnd, hlen, hbound⟩
+      cases vs with
+      | nil => simp at hlen
+      | cons v vs =>
+          simp only [List.nodup_cons] at hnd
+          simp only [List.length_cons, Nat.add_right_cancel_iff] at hlen
+          simp only [List.length_cons] at hbound
+          simp only [List.map_cons, storeGlobalsHOL, crepNestedSeqHOL]
+          rw [evalCrepSemHOLProgExact_seq_holShape, evalCrepSemHOLProgExact_storeGlob]
+          have hlk : ({ t with locals := t.locals.updateListEq ((h :: vars).zip (v :: vs)) } :
+              CrepSemHOLState width σ).locals.lookup h = some v := by
+            simp only [List.zip_cons_cons, HolFiniteMapExact.lookup_updateListEq,
+              FUPDATE_LIST_HOL_cons]
+            rw [fupdListHOLZipNotMemU h vars vs _ hnd.1]
+            simp [FUPDATE_HOL]
+          rw [show crepExactEvalExp
+              ({ t with locals := t.locals.updateListEq ((h :: vars).zip (v :: vs)) } :
+                CrepSemHOLState width σ) (fun a => Classical.propDecidable _)
+              (CrepExpHOL.var h) = some v from by
+                unfold crepExactEvalExp; simp only [evalCrepSemHOLExp]; exact hlk]
+          dsimp only
+          rw [if_pos rfl]
+          let t'' : CrepSemHOLState width σ :=
+            { t with locals := t.locals.updateEq (h, v), globals := t.globals.updateEq (a, v) }
+          have hst : CrepSemHOLState.setGlobals a v
+              ({ t with locals := t.locals.updateListEq ((h :: vars).zip (v :: vs)) } :
+                CrepSemHOLState width σ) =
+              { t'' with locals := t''.locals.updateListEq (vars.zip vs) } := by
+            simp only [CrepSemHOLState.setGlobals, List.zip_cons_cons, updateListEq_cons', t'']
+          have hb : (a + 1).toNat + vs.length ≤ 32 := by
+            have h1 : (1 : BitVec 5).toNat = 1 := rfl
+            rw [BitVec.toNat_add, h1]
+            omega
+          rw [hst, ih vs t'' (a + 1) ⟨hnd.2, hlen, hb⟩, List.length_cons, genlistAddrs_succ,
+            List.zip_cons_cons,
+            updateListEq_cons', List.zip_cons_cons, updateListEq_cons']
+
 end Flapjack
