@@ -20832,5 +20832,37 @@
     "lean_name": "loopLive_compile_correct_at",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack helper: the lexicographic (clock, size) induction assembling the compile_correct case pieces (mirrors loopSemTheory.evaluate_ind); no separate CakeML declaration"
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
+    "hol_name": "mark_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/Optimise.lean",
+    "lean_name": "mark_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.2.1) against mark_correct at loop_liveProofScript.sml:860-862: `∀prog s res s1. evaluate (prog,s) = (res,s1) ⇒ evaluate (FST (mark_all prog),s) = (res,s1)`. Lean keeps the four binders in order and the implication over the exact LoopSemStateFiniteExact.evaluate and the tagged markAllHOL (mark_all_def), FST as .1. Proof: the private equational markAll_evaluate_eq by the lexicographic (clock, size) induction mirroring HOL's recInduct evaluate_ind with its Seq/If/Loop/Call resumes."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
+    "hol_name": "comp_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/Optimise.lean",
+    "lean_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.2.2) against comp_correct at loop_liveProofScript.sml:931-937: `evaluate (prog,s) = (res,s1) ∧ res ≠ SOME Error ∧ (∀n. res ≠ SOME (Break n)) ∧ (∀n. res ≠ SOME (Continue n)) ∧ res ≠ NONE ⇒ evaluate (comp prog,s) = (res,s1)`; the free variables prog, s, res, s1 are quantified in order of occurrence, the five premise conjuncts and conclusion kept, comp as the tagged compHOL (comp_def). Proof follows HOL: the tagged loopLive_compile_correct with lt = [], l0 = LN and locals = s.locals, then mark_correct."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/Optimise.lean",
+    "lean_name": "markAll_evaluate_eq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper: equational form of HOL mark_correct (evaluate (FST (mark_all prog)) s = evaluate prog s), proved by the evaluate_ind-shaped lexicographic induction; no separate CakeML declaration"
   }
 ]

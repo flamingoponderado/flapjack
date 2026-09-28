@@ -343,6 +343,7 @@ import Flapjack.Pancake.CrepToLoop.Proofs.CodeRel2
 import Flapjack.Pancake.CrepToLoop.Proofs.SemanticsWrapper
 import Flapjack.Pancake.LoopLive.Fixedpoint
 import Flapjack.Pancake.Proofs.LoopLive.CompileCorrect
+import Flapjack.Pancake.Proofs.LoopLive.Optimise
 import Flapjack.Pancake.CrepToLoop.Optimise
 import Flapjack.Pancake.CrepToLoop.StateRel
 import Flapjack.Test.CrepToLoopCompileExpExactParity
