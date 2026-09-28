@@ -30,7 +30,7 @@ private theorem fupdListZipMemIndep {β : Type} (k : Nat) :
         simp [FUPDATE_HOL, hkx]
 
 /-- Updates at disjoint key lists commute. -/
-private theorem updateListEq_zip_comm {β : Type} (m : HolFiniteMapExact Nat β)
+theorem updateListEq_zip_comm {β : Type} (m : HolFiniteMapExact Nat β)
     (as bs : List Nat) (xs ys : List β) (hx : as.length = xs.length) (hy : bs.length = ys.length)
     (hdisj : ∀ k, k ∈ as → k ∉ bs) :
     (m.updateListEq (as.zip xs)).updateListEq (bs.zip ys) =
@@ -48,7 +48,7 @@ private theorem updateListEq_zip_comm {β : Type} (m : HolFiniteMapExact Nat β)
     · simp only [HolFiniteMapExact.lookup_updateListEq, fupdateListHOL_zip_not_mem' k as xs _ ha,
         fupdateListHOL_zip_not_mem' k bs ys _ hb]
 
-private theorem map_eq_of_mapM_eq_some {α β : Type} (f : α → Option β) :
+theorem map_eq_of_mapM_eq_some {α β : Type} (f : α → Option β) :
     ∀ (xs : List α) (ys : List β), xs.mapM f = some ys → xs.map f = ys.map some
   | [], ys, h => by simp at h; subst h; rfl
   | x :: xs, ys, h => by
@@ -63,7 +63,7 @@ private theorem map_eq_of_mapM_eq_some {α β : Type} (f : α → Option β) :
               subst h
               simp [hx, map_eq_of_mapM_eq_some f xs zs hxs]
 
-private theorem mapM_congr_mem'' {α β : Type} (f g : α → Option β) :
+theorem mapM_congr_mem'' {α β : Type} (f g : α → Option β) :
     ∀ (xs : List α), (∀ x, x ∈ xs → f x = g x) → xs.mapM f = xs.mapM g
   | [], _ => rfl
   | x :: xs, h => by
