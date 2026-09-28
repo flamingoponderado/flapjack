@@ -1116,8 +1116,9 @@ post-state components except that the clock is zero.  Its proof depends on
 premise.  There is deliberately no `@[hol]` theorem for this result yet:
 `evaluateHOLFiniteViaExact` is the total pair-shaped adapter, but it delegates
 through the unrestricted-map `PanSemStateExact` evaluator, while the direct
-finite evaluator's projection is proved and its tagged `evaluate_def` remains
-in progress (`flapjack-qj5`). The faithful finite-state theorem
+finite evaluator's projection is proved and the tagged panSem `evaluate_def`
+assembly is `evaluateHOLFiniteState_eq_evaluate_def`
+(`PanSem/EvaluateClock.lean`). The faithful finite-state theorem
 is tracked by `flapjack-4ac.4.47.1`.
 -/
 
