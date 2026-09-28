@@ -331,4 +331,32 @@ theorem panSemTotalEvaluateCake_agree_entry {σ : Type}
   panSemTotalEvaluate_agree_entry panPrimopHOL panPrimopHOL_bridge panPrimopHOL_byteRanged start
     production exact hrel hranged hcode hexn clock
 
+/-- **Observation-level entry agreement.**  At every clock `k`, the production
+    and exact runs of the `semantics_def` entry program have related results and
+    related FFI event traces (`FfiEventListRel` on `ffi.io_events`), which are
+    the observations HOL `semantics_def` inspects. -/
+theorem panSemTotalEvaluate_entry_observations {σ : Type}
+    (primitive : PanPrimitiveHandler (RiscV.Word 64))
+    (hprimBridge : ∀ (operator : PrimOp) (values : List (PanValue (RiscV.Word 64))),
+      Option.map panValueToHOL (primitive operator values)
+        = panPrimopHOLExact operator (values.map panValueToHOL))
+    (hprimRanged : PanPrimitiveHandlerByteRanged primitive)
+    (start : MlS) (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ)
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (hranged : PanSemStateRelExecRanged production)
+    (hcode : PanSemCodeRanged production)
+    (hexn : PanSemExceptionShapesRanged production) (clock : Nat) :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluate primitive (.call none (toStringOfBytes start) [])
+          { production with clock := clock }).1
+        (evaluateHOLFiniteState { exact with clock := clock } (.call none start [])).1 ∧
+      FfiEventListRel
+        (panSemTotalEvaluate primitive (.call none (toStringOfBytes start) [])
+          { production with clock := clock }).2.ffi.ioEvents
+        (evaluateHOLFiniteState { exact with clock := clock } (.call none start [])).2.ffi.ioEvents := by
+  obtain ⟨hres, hstate⟩ := panSemTotalEvaluate_agree_entry primitive hprimBridge hprimRanged start
+    production exact hrel hranged hcode hexn clock
+  exact ⟨hres, hstate.2.2.2.2.2.2.2.2.2.2.1.2.1⟩
+
 end Flapjack
