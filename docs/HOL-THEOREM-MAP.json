@@ -12028,6 +12028,15 @@
     "reviewer": "flapjack-deepseek-two (independent HOL/Lean comparison: all 24 prog constructors and field types match loopLangScript.sml:30-60; word width fixed at BitVec width; num_set fields use the exact Spt Unit carrier; shMem uses CrepMemOp whose eight constructors match asm$memop; FFI name is the exact MlString carrier)"
   },
   {
+    "hol_path": "cakeml/pancake/loop_liveScript.sml",
+    "hol_name": "vars_of_exp_def",
+    "lean_path": "Flapjack/Pancake/LoopLive.lean",
+    "lean_name": "varsOfExpHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-28; bead flapjack-pxn.18.5.6.29.1.1): exact port of HOL loop_liveScript.sml:10-21 vars_of_exp_def (the mutual vars_of_exp / vars_of_exp_list) over the faithful width-indexed HolLoopExp carrier and the exact NumSet = Spt Unit with sptInsert for HOL insert. Clause-for-clause: Var = sptInsert name () live; Const/Lookup/BaseAddr/TopAddr leave live unchanged; Load recurses; Op dispatches to the vars_of_exp_list half (varsOfExpListHOL, untagged because HOL declares it inside the single vars_of_exp_def); Shift recurses right-then-left. The only carrier difference is HOL's type-indexed 'a word rendered as BitVec width with [NeZero width] (words qualifier); no finite-map fields. Direct oracle: scripts/hol-probes/vars_of_exp_probe.out (5 rows) replayed by Flapjack/Test/LoopVarsOfExpParity.lean holVarsGuard. The executable LoopProg/List Nat analogue varsOfExp stays untagged; the executable/faithful carrier bridge is tracked by flapjack-pxn.18.5.17.1.1."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/stackLangScript.sml",
     "hol_name": "left_shift_inst",
     "lean_path": "Flapjack/Compiler/Backend/StackRemove.lean",
