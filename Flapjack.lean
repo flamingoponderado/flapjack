@@ -337,6 +337,8 @@ import Flapjack.Pancake.CrepToLoop.Proofs.LocalsRelOptMmap
 import Flapjack.Pancake.CrepToLoop.Proofs.CompExpPreservesEvalShift
 import Flapjack.Pancake.CrepToLoop.Proofs.CompExpPreservesEvalLoadByte32
 import Flapjack.Pancake.CrepToLoop.Proofs.SemanticsWrapper
+import Flapjack.Pancake.CrepToLoop.Proofs.MakeFuncsLemmas
+import Flapjack.Pancake.CrepToLoop.Proofs.NotMemContextAssigned
 import Flapjack.Pancake.CrepToLoop.Optimise
 import Flapjack.Pancake.CrepToLoop.StateRel
 import Flapjack.Test.CrepToLoopCompileExpExactParity

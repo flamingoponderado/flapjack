@@ -530,6 +530,186 @@ theorem foldl_res_var_zip_lookup_hol {α : Type} {β : Type} [DecidableEq α]
   rw [OPT_MMAP_ALL_EQ (FLOOKUP l1) (FLOOKUP l) xs hpt]
   exact h
 
+/-! ## Exact finite-support (`HolFiniteMapExact`) forms of the `SUBMAP` cluster
+
+The `_hol` statements above still quantify Lean's raw function carrier
+`FiniteMap α β := α → Option β`, which admits infinite-support inhabitants that
+HOL `α |-> β` cannot represent.  The declarations below state the same HOL
+clauses (`crep_inlineProofScript.sml:117/127/135`) over the canonical
+finite-support carrier `HolFiniteMapExact`
+(`Flapjack/Pancake/Semantics/CrepSem/HOLState.lean`) with its HOL-equality
+(`DecidableEq`) `updateEq`/`eraseEq`, so they carry the exact HOL statements
+with no `BEq`/`LawfulBEq` side conditions.  `submap` is untagged
+infrastructure: HOL's `SUBMAP` is a finite-map operation defined in
+`fmapScript`, not a declaration of `crep_inlineProofScript.sml`. -/
+
+namespace HolFiniteMapExact
+
+/-- HOL finite-map `SUBMAP` on the canonical finite-support carrier: every
+    binding of `f` is also a binding of `g` with the same value, i.e. `FLOOKUP f`
+    and `FLOOKUP g` agree on `FDOM f`. -/
+def submap (f g : HolFiniteMapExact α β) : Prop :=
+  ∀ key value, f.lookup key = some value → g.lookup key = some value
+
+end HolFiniteMapExact
+
+/-- Finite-map `SUBMAP_IMP_FUPDATE_SUBMAP`
+    (`crep_inlineProofScript.sml:117`) over the exact finite-support carrier. -/
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "SUBMAP_IMP_FUPDATE_SUBMAP"
+  (fmap_as_finite_support_relation := [f, g])]
+theorem submap_imp_fupdate_submap_exact {κ : Type} {β : Type} [DecidableEq κ]
+    (f : HolFiniteMapExact κ β) (g : HolFiniteMapExact κ β) (x : κ) (y : β) (h : f.submap g) :
+    (f.updateEq (x, y)).submap (g.updateEq (x, y)) := by
+  intro n v hn
+  rw [HolFiniteMapExact.lookup_updateEq] at hn ⊢
+  simp only [FUPDATE_HOL] at hn ⊢
+  by_cases hxn : n = x
+  · rw [if_pos hxn] at hn ⊢
+    exact hn
+  · rw [if_neg hxn] at hn ⊢
+    exact h n v hn
+
+/-- Finite-map `SUBMAP_IMP_DOMSUB_SUBMAP`
+    (`crep_inlineProofScript.sml:127`) over the exact finite-support carrier. -/
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "SUBMAP_IMP_DOMSUB_SUBMAP"
+  (fmap_as_finite_support_relation := [f, g])]
+theorem submap_imp_domsub_submap_exact {κ : Type} {β : Type} [DecidableEq κ]
+    (f : HolFiniteMapExact κ β) (g : HolFiniteMapExact κ β) (x : κ) (h : f.submap g) :
+    (f.eraseEq x).submap (g.eraseEq x) := by
+  intro n v hn
+  rw [HolFiniteMapExact.lookup_eraseEq] at hn ⊢
+  simp only [FDOMSUB_HOL] at hn ⊢
+  by_cases hnx : n = x
+  · rw [if_pos hnx] at hn ⊢
+    exact hn
+  · rw [if_neg hnx] at hn ⊢
+    exact h n v hn
+
+/-- Finite-map `SUBMAP_IMP_DOMSUB_FUPDATE`
+    (`crep_inlineProofScript.sml:135`) over the exact finite-support carrier. -/
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "SUBMAP_IMP_DOMSUB_FUPDATE"
+  (fmap_as_finite_support_relation := [f, g])]
+theorem submap_imp_domsub_fupdate_exact {κ : Type} {β : Type} [DecidableEq κ]
+    (f : HolFiniteMapExact κ β) (g : HolFiniteMapExact κ β) (x : κ) (y : β) (h : f.submap g) :
+    (f.eraseEq x).submap (g.updateEq (x, y)) := by
+  intro n v hn
+  rw [HolFiniteMapExact.lookup_eraseEq] at hn
+  rw [HolFiniteMapExact.lookup_updateEq]
+  simp only [FDOMSUB_HOL, FUPDATE_HOL] at hn ⊢
+  by_cases hnx : n = x
+  · rw [if_pos hnx] at hn ⊢
+    exact absurd hn (by simp)
+  · rw [if_neg hnx] at hn ⊢
+    exact h n v hn
+
+/-! ## Exact finite-support (`HolFiniteMapExact`) forms of the `res_var` cluster
+
+The `_hol` statements above still quantify Lean's raw function carrier
+`FiniteMap α β := α → Option β`, which admits infinite-support inhabitants that
+HOL `α |-> β` cannot represent.  The declarations below state the same HOL
+clauses (`crep_inlineProofScript.sml:699/706/802/2661/2675`) over the canonical
+finite-support carrier `HolFiniteMapExact` with its HOL-equality
+(`DecidableEq`) `resVarEq`, so they carry the exact HOL statements with no
+`BEq`/`LawfulBEq` side conditions.  The two bridges `resVarEq_lookup` and
+`foldl_resVarEq_lookup` are untagged Flapjack infrastructure: they only relate
+the exact carrier's lookup to HOL's raw `res_var` map operation. -/
+
+open HolFiniteMapExact
+
+/-- Flapjack-only bridge: the lookup of the exact `resVarEq` is HOL's raw-map
+    `res_var` applied to the underlying lookup function. -/
+theorem resVarEq_lookup [DecidableEq α] (map : HolFiniteMapExact α β)
+    (entry : α × Option β) : (resVarEq map entry).lookup = resVarHOL map.lookup entry := by
+  obtain ⟨key, value⟩ := entry
+  cases value <;> rfl
+
+/-- Flapjack-only bridge: folding the exact `resVarEq` over a list of entries is
+    folding HOL's raw-map `res_var` over the underlying lookup function. -/
+theorem foldl_resVarEq_lookup [DecidableEq α] (entries : List (α × Option β))
+    (f : HolFiniteMapExact α β) :
+    (entries.foldl resVarEq f).lookup = entries.foldl resVarHOL f.lookup := by
+  induction entries generalizing f with
+  | nil => rfl
+  | cons e rest ih =>
+      simp only [List.foldl_cons]
+      rw [ih, resVarEq_lookup]
+
+/-- HOL `res_var_commutes_strong` (`crep_inlineProofScript.sml:699`) over the
+    exact finite-support carrier. -/
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "res_var_commutes_strong"
+  (fmap_as_finite_support_relation := [lc, lc'])]
+theorem res_var_commutes_strong_exact {α : Type} {β : Type} [DecidableEq α]
+    (lc : HolFiniteMapExact α β) (lc' : HolFiniteMapExact α β) (n h : α) :
+    resVarEq (resVarEq lc (h, lc'.lookup h)) (n, lc'.lookup n) =
+      resVarEq (resVarEq lc (n, lc'.lookup n)) (h, lc'.lookup h) := by
+  by_cases hne : n = h
+  · subst hne
+    rfl
+  · apply HolFiniteMapExact.ext
+    simp only [resVarEq_lookup]
+    exact resVarHOL_commutes lc.lookup lc'.lookup n h hne
+
+/-- HOL `res_var_foldl_commutes_strong` (`crep_inlineProofScript.sml:706`) over
+    the exact finite-support carrier. -/
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "res_var_foldl_commutes_strong"
+  (fmap_as_finite_support_relation := [lc1, lc2])]
+theorem res_var_foldl_commutes_strong_exact {α : Type} {β : Type} [DecidableEq α]
+    (h : α) (vs : List α) (lc1 : HolFiniteMapExact α β) (lc2 : HolFiniteMapExact α β) :
+    resVarEq ((vs.zip (vs.map (fun x => lc2.lookup x))).foldl resVarEq lc1)
+        (h, lc2.lookup h) =
+      (vs.zip (vs.map (fun x => lc2.lookup x))).foldl resVarEq
+        (resVarEq lc1 (h, lc2.lookup h)) := by
+  induction vs generalizing lc1 with
+  | nil => simp
+  | cons v vs ih =>
+      simp only [List.map_cons, List.zip_cons_cons, List.foldl_cons]
+      rw [ih (resVarEq lc1 (v, lc2.lookup v)),
+        res_var_commutes_strong_exact lc1 lc2 v h]
+
+/-- HOL `flookup_res_var_is_mem_zip_eq` (`crep_inlineProofScript.sml:802`) over
+    the exact finite-support carrier. -/
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "flookup_res_var_is_mem_zip_eq"
+  (fmap_as_finite_support_relation := [lc1, lc2])]
+theorem flookup_res_var_is_mem_zip_eq_exact {α : Type} {β : Type} [DecidableEq α]
+    (xs : List α) (x : α) (lc1 : HolFiniteMapExact α β) (lc2 : HolFiniteMapExact α β)
+    (hx : x ∈ xs) :
+    ((xs.zip (xs.map (fun y => lc2.lookup y))).foldl resVarEq lc1).lookup x = lc2.lookup x := by
+  rw [foldl_resVarEq_lookup]
+  exact flookup_res_var_is_mem_zip_eq_hol xs x lc1.lookup lc2.lookup hx
+
+/-- HOL `FOLDL_res_var_ZIP_lookup_var` (`crep_inlineProofScript.sml:2661`) over
+    the exact finite-support carrier. -/
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "FOLDL_res_var_ZIP_lookup_var"
+  (fmap_as_finite_support_relation := [l, l', l1])]
+theorem foldl_res_var_zip_lookup_var_exact {α : Type} {β : Type} [DecidableEq α]
+    (l : HolFiniteMapExact α β) (l' : HolFiniteMapExact α β) (l1 : HolFiniteMapExact α β)
+    (ns : List α) (x : α) (v : β)
+    (hsub : ((ns.zip (ns.map (fun y => l'.lookup y))).foldl resVarEq l).submap l1)
+    (hv : l.lookup x = some v) (hx : x ∉ ns) :
+    l1.lookup x = some v := by
+  exact foldl_res_var_zip_lookup_var_hol l.lookup l'.lookup l1.lookup ns x v
+    (fun n w hw => hsub n w (by rwa [foldl_resVarEq_lookup])) hv hx
+
+/-- HOL `FOLDL_res_var_ZIP_lookup` (`crep_inlineProofScript.sml:2675`) over the
+    exact finite-support carrier. -/
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "FOLDL_res_var_ZIP_lookup"
+  (fmap_as_finite_support_relation := [l, l', l1])]
+theorem foldl_res_var_zip_lookup_exact {α : Type} {β : Type} [DecidableEq α]
+    (l : HolFiniteMapExact α β) (l' : HolFiniteMapExact α β) (l1 : HolFiniteMapExact α β)
+    (ns xs : List α) (vs : List β)
+    (hsub : ((ns.zip (ns.map (fun y => l'.lookup y))).foldl resVarEq l).submap l1)
+    (h : xs.mapM (fun x => l.lookup x) = some vs)
+    (hx : ∀ x, x ∈ xs → x ∉ ns) :
+    xs.mapM (fun x => l1.lookup x) = some vs := by
+  have hpt : ∀ x, x ∈ xs → l1.lookup x = l.lookup x := by
+    intro x hxmem
+    obtain ⟨y, hy⟩ := (OPT_MMAP_SOME_ALL (fun x => l.lookup x) xs).mp ⟨vs, h⟩ x hxmem
+    have hfl : l1.lookup x = some y :=
+      foldl_res_var_zip_lookup_var_exact l l' l1 ns x y hsub hy (hx x hxmem)
+    rw [hfl, hy]
+  rw [OPT_MMAP_ALL_EQ (fun x => l1.lookup x) (fun x => l.lookup x) xs hpt]
+  exact h
+
 /-- CakeML's `locals_rel` (`crep_inlineProofScript.sml:26`):
     `s.locals SUBMAP t.locals`. -/
 -- FLAPJACK-SPECIFIC (not an exact HOL port): generic over the word element type, while HOL
@@ -980,6 +1160,40 @@ decidability or `BEq` hypothesis. -/
 def crepInlineLocalsRelExact {width : Nat} [NeZero width] {σ : Type}
     (s t : CrepSemHOLState width σ) : Prop :=
   ∀ key value, s.locals.lookup key = some value → t.locals.lookup key = some value
+
+/-- Exact finite-support carrier port of CakeML's `locals_ext_rel`
+(`crep_inlineProofScript.sml:162-165`): the locals added when running from
+`a` to `a'` equal those added from `b` to `b'`, i.e.
+`FDIFF a'.locals (FDOM a.locals) = FDIFF b'.locals (FDOM b.locals)`.
+`crepHolFdiff`/`crepHolFdom` render HOL's `FDIFF`/`FDOM` extensionally over
+`CrepSemHOLState`'s finite-support `locals` field. -/
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "locals_ext_rel_def"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
+def crepInlineLocalsExtRelExact {width : Nat} [NeZero width] {σ : Type}
+    (a b a' b' : CrepSemHOLState width σ) : Prop :=
+  crepHolFdiff a'.locals.lookup (crepHolFdom a.locals.lookup) =
+    crepHolFdiff b'.locals.lookup (crepHolFdom b.locals.lookup)
+
+/-- Exact finite-support carrier port of CakeML's `locals_rel_dec_clock`
+(`crep_inlineProofScript.sml:167-173`): both relations are preserved by
+`dec_clock`, since only `clock` changes. The conclusion is the source
+conjunction of `locals_rel` and `state_rel` at the decremented clocks. -/
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "locals_rel_dec_clock"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
+theorem crepInlineLocalsRel_decClockExact {width : Nat} [NeZero width] {σ : Type}
+    (s t : CrepSemHOLState width σ)
+    (h : crepInlineLocalsRelExact s t ∧ crepInlineStateRelExact s t) :
+    crepInlineLocalsRelExact (decClockCrepSemHOL s) (decClockCrepSemHOL t) ∧
+    crepInlineStateRelExact (decClockCrepSemHOL s) (decClockCrepSemHOL t) := by
+  obtain ⟨hlocals, hstate⟩ := h
+  obtain ⟨hg, hc, hm, hma, hsm, hcl, hbe, hf, hba, hta⟩ := hstate
+  refine ⟨?_, ?_⟩
+  · intro key value hlookup
+    simpa only [decClockCrepSemHOL] using hlocals key value hlookup
+  · simp only [crepInlineStateRelExact, decClockCrepSemHOL]
+    exact ⟨hg, hc, hm, hma, hsm, by rw [hcl], hbe, hf, hba, hta⟩
 
 /-- Exact finite-support carrier port of CakeML's `state_rel_code` relation:
 globals, memory, memory domains, clock, endianness, FFI state, and base/top
