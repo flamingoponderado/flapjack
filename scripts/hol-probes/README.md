@@ -43,6 +43,10 @@ additionally probes `pan_op_def` at lines 191--193.
 `find_reg_imm_def`, `toNumSet_def`, `fromNumSet_def`, and
 `mk_new_cutset_def` at `cakeml/pancake/loop_to_wordScript.sml:10-53`; the
 kernel-checked Lean replay is `Flapjack.Test.LoopToWordExactParity`.
+`loop_to_word_comp_exp_probe.out` records direct HOL EVAL rows for the exact
+loopLang-to-wordLang expression compiler `comp_exp_def` at
+`cakeml/pancake/loop_to_wordScript.sml:22-40`; its kernel-checked Lean replay
+is also `Flapjack.Test.LoopToWordExactParity`.
 `loop_live_comp_probe.out` records direct HOL EVAL rows for
 `loop_live$comp` at `cakeml/pancake/loop_liveScript.sml:217`; the Lean replay
 is `Flapjack.Test.LoopLiveCompParity`. `loop_live_optimise_probe.out` records
@@ -714,6 +718,14 @@ Lean port `crepToLoopCodeRelExact` in `Flapjack.Pancake.CrepToLoop.StateRel` is
 replayed against those rows by `Flapjack.Test.CrepToLoopCodeRelParity`. Refresh
 with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=crep_to_loop_code_rel_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
+`crep_to_loop_evaluate_io_mono_type_probe.out` prints the exact source
+construction of the local `evaluate_io_mono_rephrases` helper
+(`crep_to_loopProofScript.sml:4066-4070`), including both `Q.SPECL`
+specializations, the `map (SIMP_RULE (srw_ss()) [])`, and `LIST_CONJ`, because
+the `[local]` helper is not exported by the theory. It records the two
+conjunct-local `!extra` binders and free-variable types, including the Crep and
+Loop state carriers. Refresh with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=crep_to_loop_evaluate_io_mono_type_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
 `crep_to_loop_locals_rel_probe.out` records direct observations for
 `locals_rel_def` at `cakeml/pancake/proofs/crep_to_loopProofScript.sml:101-111`.
 HOL `crepLang$varname = num` (`crepLangScript.sml:19`), so the context's `vars`

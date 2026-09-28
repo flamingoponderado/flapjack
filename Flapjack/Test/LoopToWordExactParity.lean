@@ -50,6 +50,97 @@ def originalCutsetAbsent : Option Unit := none
 #guard (sptLookup 2 (mkNewCutsetHOL probeContext probeLive) : Option Unit) ==
   originalCutsetAbsent
 
+/-! ## Original-domain parity for exact `comp_exp_def`
+
+`comp_exp_def` at `cakeml/pancake/loop_to_wordScript.sml:22-40` is the exact
+loopLang-to-wordLang expression compiler. The expected observations are the
+direct HOL-EVAL results from
+`scripts/hol-probes/loop_to_word_comp_exp_probeScript.sml`, checked in at
+`scripts/hol-probes/loop_to_word_comp_exp_probe.out`. The kernel-checked
+`example`s below replay every probe row; `WordLangExpHOL` derives only `Repr`,
+so the rows are proved by `simp`/`rfl` rather than `decide`. -/
+
+/-- Probe context `insert 3 9 (LN : num num_map)` over `num |-> num` spt. -/
+def compProbeContext : Spt Nat := sptInsert 3 9 .ln
+
+example : compExpHOL (width := 8) compProbeContext (.const (7 : BitVec 8)) =
+    .const (7 : BitVec 8) := by
+  simp [compExpHOL]
+
+example : compExpHOL (width := 8) compProbeContext (.var 3) =
+    .var 9 := by
+  simp [compExpHOL, findVarHOL, compProbeContext, sptLookup_sptInsert_same]
+
+example : compExpHOL (width := 8) compProbeContext (.var 8) =
+    .var 0 := by
+  simp [compExpHOL, findVarHOL, compProbeContext, sptLookup_sptInsert_ne, sptLookup_ln]
+
+example : compExpHOL (width := 8) compProbeContext (.lookup (5 : BitVec 5)) =
+    .lookup (.temp (5 : BitVec 5)) := by
+  simp [compExpHOL]
+
+example : compExpHOL (width := 8) compProbeContext .baseAddr =
+    .lookup .currHeap := by
+  simp [compExpHOL]
+
+example : compExpHOL (width := 8) compProbeContext .topAddr =
+    .op .add [.lookup .currHeap,
+      .shift .lsl (.lookup .heapLength) (.const (1 : BitVec 8))] := by
+  simp [compExpHOL]
+
+example : compExpHOL (width := 8) compProbeContext (.load (.var 3)) =
+    .load (.var 9) := by
+  simp [compExpHOL, findVarHOL, compProbeContext, sptLookup_sptInsert_same]
+
+example :
+    compExpHOL (width := 8) compProbeContext
+      (.shift .lsl (.var 3) (.const (1 : BitVec 8))) =
+    .shift .lsl (.var 9) (.const (1 : BitVec 8)) := by
+  simp [compExpHOL, findVarHOL, compProbeContext, sptLookup_sptInsert_same]
+
+example :
+    compExpHOL (width := 8) compProbeContext
+      (.op .add [.var 3, .const (1 : BitVec 8)]) =
+    .op .add [.var 9, .const (1 : BitVec 8)] := by
+  simp [compExpHOL, findVarHOL, compProbeContext, sptLookup_sptInsert_same]
+
+/-- Decidable replay of every `compExp_def` probe row, used by `runChecks`.
+`WordLangExpHOL` has no `DecidableEq`, so each row destructures the result. -/
+def compExpProbeChecks : List Bool :=
+  [ (match compExpHOL (width := 8) compProbeContext (.const (7 : BitVec 8)) with
+     | .const value => value == (7 : BitVec 8)
+     | _ => false),
+    (match compExpHOL (width := 8) compProbeContext (.var 3) with
+     | .var name => name == 9
+     | _ => false),
+    (match compExpHOL (width := 8) compProbeContext (.var 8) with
+     | .var name => name == 0
+     | _ => false),
+    (match compExpHOL (width := 8) compProbeContext (.lookup (5 : BitVec 5)) with
+     | .lookup (.temp address) => address == (5 : BitVec 5)
+     | _ => false),
+    (match compExpHOL (width := 8) compProbeContext .baseAddr with
+     | .lookup .currHeap => true
+     | _ => false),
+    (match compExpHOL (width := 8) compProbeContext .topAddr with
+     | .op .add [.lookup .currHeap,
+         .shift .lsl (.lookup .heapLength) (.const one)] =>
+         one == (1 : BitVec 8)
+     | _ => false),
+    (match compExpHOL (width := 8) compProbeContext (.load (.var 3)) with
+     | .load (.var name) => name == 9
+     | _ => false),
+    (match compExpHOL (width := 8) compProbeContext
+        (.shift .lsl (.var 3) (.const (1 : BitVec 8))) with
+     | .shift .lsl (.var left) (.const right) =>
+         left == 9 && right == (1 : BitVec 8)
+     | _ => false),
+    (match compExpHOL (width := 8) compProbeContext
+        (.op .add [.var 3, .const (1 : BitVec 8)]) with
+     | .op .add [.var left, .const right] =>
+         left == 9 && right == (1 : BitVec 8)
+     | _ => false) ]
+
 def runChecks : IO Bool := do
   let checks :=
     [ ("LoopToWord find_var hit returns the stored register",
@@ -77,7 +168,8 @@ def runChecks : IO Bool := do
           originalCutsetFive),
       ("LoopToWord mk_new_cutset leaves an unmapped key absent",
         (sptLookup 2 (mkNewCutsetHOL probeContext probeLive) : Option Unit) ==
-          originalCutsetAbsent) ]
+          originalCutsetAbsent),
+      ("LoopToWord comp_exp_def exact HOL rows", compExpProbeChecks.all id) ]
   let results ← checks.mapM fun (name, ok) => do
     if ok then
       IO.println s!"PASS {name}"
