@@ -794,53 +794,28 @@ theorem evalListHOLExact_updLocals_not_mem {width : Nat} {σ : Type} [NeZero wid
       have hheadEq := evalHOLExact_updLocals_not_mem state name word head hhead
       simp only [evalListHOLExact, hheadEq, ihTail]
 
-/-- Two independent HOL finite-map arguments packaged as fields so the
-    canonical `fmap_as_finite_support` qualifier can name each translation. -/
-structure PanPropsResVarMapsExact (α β : Type) where
-  fm : HolFiniteMapExact α β
-  fm2 : HolFiniteMapExact α β
+/-- Broad lookup for a standalone HOL finite-map parameter. -/
+private def resVarMaptoBroadlookup {α β : Type}
+    (fm : HolFiniteMapExact α β) : α → Option β := fm.lookup
 
-/-- Broad function-map counterpart for the two generic `res_var` inputs. -/
-structure PanPropsResVarMapsBroad (α β : Type) where
-  fm : FiniteMap α β
-  fm2 : FiniteMap α β
+/-- Reconstruct the canonical map carrier from its broad function plus support. -/
+private def resVarMapofBroad {α β : Type} (fm : α → Option β)
+    (support : ∃ keys : List α, ∀ key, fm key ≠ none → key ∈ keys) :
+    HolFiniteMapExact α β := ⟨fm, support⟩
 
-namespace PanPropsResVarMapsExact
-
-def toBroad {α β : Type} (maps : PanPropsResVarMapsExact α β) :
-    PanPropsResVarMapsBroad α β :=
-  ⟨maps.fm.lookup, maps.fm2.lookup⟩
-
-def ofBroad {α β : Type} (maps : PanPropsResVarMapsBroad α β)
-    (support : (∃ keys : List α, ∀ key, maps.fm key ≠ none → key ∈ keys) ∧
-      ∃ keys : List α, ∀ key, maps.fm2 key ≠ none → key ∈ keys) :
-    PanPropsResVarMapsExact α β :=
-  ⟨⟨maps.fm, support.1⟩, ⟨maps.fm2, support.2⟩⟩
-
-theorem toBroad_ofBroad {α β : Type} (maps : PanPropsResVarMapsBroad α β)
-    (support : (∃ keys : List α, ∀ key, maps.fm key ≠ none → key ∈ keys) ∧
-      ∃ keys : List α, ∀ key, maps.fm2 key ≠ none → key ∈ keys) :
-    (ofBroad maps support).toBroad = maps := by
-  cases maps
+/-- Roundtrip witness for the first direct finite-map parameter. -/
+theorem holFmapAsFiniteSupportParamWitness_feveryResVarFlookupHOL_fm
+    {α β : Type} (fm : HolFiniteMapExact α β) :
+    resVarMapofBroad (resVarMaptoBroadlookup fm) fm.finiteSupport = fm := by
+  cases fm
   rfl
 
-theorem ofBroad_toBroad {α β : Type} (maps : PanPropsResVarMapsExact α β) :
-    ofBroad maps.toBroad ⟨maps.fm.finiteSupport, maps.fm2.finiteSupport⟩ = maps := by
-  cases maps with
-  | mk fm fm2 =>
-      cases fm
-      cases fm2
-      simp [ofBroad, toBroad]
-
-/-- Canonical finite-map witness for the two generic HOL `fmap` arguments. -/
-theorem holFmapAsFiniteSupportWitness {α β : Type} :
-    (∀ (maps : PanPropsResVarMapsBroad α β) support,
-        (ofBroad maps support).toBroad = maps) ∧
-    (∀ maps : PanPropsResVarMapsExact α β,
-        ofBroad maps.toBroad ⟨maps.fm.finiteSupport, maps.fm2.finiteSupport⟩ = maps) :=
-  ⟨fun maps support => toBroad_ofBroad maps support, fun maps => ofBroad_toBroad maps⟩
-
-end PanPropsResVarMapsExact
+/-- Roundtrip witness for the second independent direct finite-map parameter. -/
+theorem holFmapAsFiniteSupportParamWitness_feveryResVarFlookupHOL_fm2
+    {α β : Type} (fm2 : HolFiniteMapExact α β) :
+    resVarMapofBroad (resVarMaptoBroadlookup fm2) fm2.finiteSupport = fm2 := by
+  cases fm2
+  rfl
 
 /-- `FEVERY P fm` on the finite-support carrier. This pointwise definition
     follows HOL's `FEVERY`/`FLOOKUP` view without adding a membership premise. -/
@@ -848,27 +823,26 @@ def feveryHOL {α β : Type} (P : α × β → Bool) (fm : HolFiniteMapExact α 
   ∀ key value, fm.lookup key = some value → P (key, value) = true
 
 /-- Exact finite-map port of HOL `FEVERY_res_var_FLOOKUP`
-    (`panPropsScript.sml:1222`). The two independent HOL map parameters are
-    bundled as the product fields `fm` and `fm2`: the broad counterpart stores
-    both function maps independently, and the witness roundtrips them without
-    relating their contents. Their finite-support proofs are intrinsic to the
-    HOL fmap carrier. The qualifier records only this canonical representation. -/
+    (`panPropsScript.sml:1222`). The two independent HOL map binders remain
+    separate and in source order; each is translated directly to
+    `HolFiniteMapExact` with a checked lookup/support roundtrip. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "FEVERY_res_var_FLOOKUP"
-  (fmap_as_finite_support := [fm, fm2])]
+  (fmap_as_finite_support_parameters := [fm, fm2])]
 theorem feveryResVarFlookupHOL {α β : Type} [DecidableEq α]
-    (P : α × β → Bool) (maps : PanPropsResVarMapsExact α β) (name : α) :
-    (feveryHOL P maps.fm ∧ feveryHOL P maps.fm2) →
-      feveryHOL P (maps.fm.resVarEq (name, maps.fm2.lookup name)) := by
+    (P : α × β → Bool) (fm : HolFiniteMapExact α β)
+    (fm2 : HolFiniteMapExact α β) (name : α) :
+    (feveryHOL P fm ∧ feveryHOL P fm2) →
+      feveryHOL P (fm.resVarEq (name, fm2.lookup name)) := by
   intro h
   rcases h with ⟨hfm, hfm2⟩
   intro key value hresult
-  cases hlookup : maps.fm2.lookup name with
+  cases hlookup : fm2.lookup name with
   | none =>
       by_cases hkey : key = name
       · subst key
         simp [HolFiniteMapExact.resVarEq, HolFiniteMapExact.eraseEq,
           FDOMSUB_HOL, hlookup] at hresult
-      · have hsource : maps.fm.lookup key = some value := by
+      · have hsource : fm.lookup key = some value := by
           simpa [HolFiniteMapExact.resVarEq, HolFiniteMapExact.eraseEq,
             FDOMSUB_HOL, hlookup, hkey] using hresult
         exact hfm key value hsource
@@ -880,7 +854,7 @@ theorem feveryResVarFlookupHOL {α β : Type} [DecidableEq α]
             FUPDATE_HOL, hlookup] using hresult
         subst value
         exact hfm2 name newValue hlookup
-      · have hsource : maps.fm.lookup key = some value := by
+      · have hsource : fm.lookup key = some value := by
           simpa [HolFiniteMapExact.resVarEq, HolFiniteMapExact.updateEq,
             FUPDATE_HOL, hlookup, hkey] using hresult
         exact hfm key value hsource
@@ -3299,13 +3273,340 @@ end PanPropsEvalStateFiniteExact
 
 end Flapjack
 
+
+/-! # The `DecCall` case of HOL `evaluate_invariants`
+
+This source case has two recursive command calls: the looked-up callee body,
+then the continuation only when the body returns a value of both declared
+shapes. Since these commands are dynamically selected, both induction
+hypotheses range over the recursive program argument at a lower state clock;
+the exact evaluator equation supplies all lookup, result, and shape branches.
+Source review: HOL `evaluate_def` at panSemScript.sml:693-718 evaluates the
+body at `dec_clock s` with the looked-up locals and applies `fix_clock`; only a
+returned value passing both exact shape checks runs the continuation, then
+restores the caller's result binding. Other body results use the source Error
+or empty-locals branches. The lower-clock IH premises follow from this
+decrement and `fix_clock`'s clock bound. The theorem keeps the exact result
+pair premise and all eight `evaluate_invariants` fields; its only added
+hypotheses are those two recursive IHs. It uses the reviewed finite-support
+map carrier and positive indexed-word translation; no evaluator shortcut is
+introduced.
+-/
+
+namespace Flapjack
+
+open Flapjack.Pancake.PanLang (MlS ShapeHOL ExpHOL ProgHOL)
+
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_invariants" 1150
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateInvariantsDecCallCaseHOLFinite {width : Nat} {σ : Type}
+    [NeZero width] :
+    ∀ (resultName : MlS) (shape : ShapeHOL) (function : MlS)
+      (arguments : List (ExpHOL width)) (continuation : ProgHOL width)
+      (state : PanPropsEvalStateFiniteExact width σ)
+      (result : Option (PanSemResultExact width))
+      (post : PanPropsEvalStateFiniteExact width σ),
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state
+          (.decCall resultName shape function arguments continuation : ProgHOL width) =
+        (result, post) →
+      (∀ (body : ProgHOL width)
+        (bodyState : PanPropsEvalStateFiniteExact width σ)
+        (bodyResult : Option (PanSemResultExact width))
+        (bodyPost : PanPropsEvalStateFiniteExact width σ),
+        bodyState.clock < state.clock →
+        PanPropsEvalStateFiniteExact.evaluateHOLFinitePair bodyState body =
+          (bodyResult, bodyPost) →
+        bodyPost.memaddrs = bodyState.memaddrs ∧
+        bodyPost.shMemaddrs = bodyState.shMemaddrs ∧
+        bodyPost.be = bodyState.be ∧
+        bodyPost.eshapes = bodyState.eshapes ∧
+        bodyPost.baseAddr = bodyState.baseAddr ∧
+        bodyPost.structs = bodyState.structs ∧
+        bodyPost.code = bodyState.code ∧
+        bodyPost.ffi.oracle = bodyState.ffi.oracle) →
+      (∀ (continuationState : PanPropsEvalStateFiniteExact width σ)
+        (continuationProgram : ProgHOL width)
+        (continuationResult : Option (PanSemResultExact width))
+        (continuationPost : PanPropsEvalStateFiniteExact width σ),
+        continuationState.clock < state.clock →
+        PanPropsEvalStateFiniteExact.evaluateHOLFinitePair continuationState continuationProgram =
+          (continuationResult, continuationPost) →
+        continuationPost.memaddrs = continuationState.memaddrs ∧
+        continuationPost.shMemaddrs = continuationState.shMemaddrs ∧
+        continuationPost.be = continuationState.be ∧
+        continuationPost.eshapes = continuationState.eshapes ∧
+        continuationPost.baseAddr = continuationState.baseAddr ∧
+        continuationPost.structs = continuationState.structs ∧
+        continuationPost.code = continuationState.code ∧
+        continuationPost.ffi.oracle = continuationState.ffi.oracle) →
+      post.memaddrs = state.memaddrs ∧
+      post.shMemaddrs = state.shMemaddrs ∧
+      post.be = state.be ∧
+      post.eshapes = state.eshapes ∧
+      post.baseAddr = state.baseAddr ∧
+      post.structs = state.structs ∧
+      post.code = state.code ∧
+      post.ffi.oracle = state.ffi.oracle := by
+  classical
+  intro resultName shape function arguments continuation state result post hRun ihBody ihContinuation
+  have hcanonical :
+      PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite
+          (.decCall resultName shape function arguments continuation : ProgHOL width) =
+        (result, post.toPanSemFinite) := by
+    have hpair := congrArg
+      (fun output => (output.1, PanPropsEvalStateFiniteExact.toPanSemFinite output.2)) hRun
+    have hpair' :
+        (PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite
+          (.decCall resultName shape function arguments continuation : ProgHOL width)).1 = result ∧
+        (PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite
+          (.decCall resultName shape function arguments continuation : ProgHOL width)).2 =
+            post.toPanSemFinite := by
+      simpa [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair] using hpair
+    exact Prod.ext hpair'.1 hpair'.2
+  rw [PanSemStateFiniteExact.evaluateHOLFiniteState_decCall_total] at hcanonical
+  have hfinish (output : PanSemStateFiniteExact width σ)
+      (houtput : output = post.toPanSemFinite)
+      (hfields :
+        output.memaddrs = state.toPanSemFinite.memaddrs ∧
+        output.shMemaddrs = state.toPanSemFinite.shMemaddrs ∧
+        output.be = state.toPanSemFinite.be ∧
+        output.eshapes = state.toPanSemFinite.eshapes ∧
+        output.baseAddr = state.toPanSemFinite.baseAddr ∧
+        output.structs = state.toPanSemFinite.structs ∧
+        output.code = state.toPanSemFinite.code ∧
+        output.ffi.oracle = state.toPanSemFinite.ffi.oracle) :
+      post.memaddrs = state.memaddrs ∧
+      post.shMemaddrs = state.shMemaddrs ∧
+      post.be = state.be ∧
+      post.eshapes = state.eshapes ∧
+      post.baseAddr = state.baseAddr ∧
+      post.structs = state.structs ∧
+      post.code = state.code ∧
+      post.ffi.oracle = state.ffi.oracle := by
+    have hpost : post = PanPropsEvalStateFiniteExact.ofPanSemFinite output := by
+      have h := congrArg PanPropsEvalStateFiniteExact.ofPanSemFinite houtput.symm
+      simpa using h
+    subst post
+    change output.memaddrs = state.toPanSemFinite.memaddrs ∧
+      output.shMemaddrs = state.toPanSemFinite.shMemaddrs ∧
+      output.be = state.toPanSemFinite.be ∧
+      output.eshapes = state.toPanSemFinite.eshapes ∧
+      output.baseAddr = state.toPanSemFinite.baseAddr ∧
+      output.structs = state.toPanSemFinite.structs ∧
+      output.code = state.toPanSemFinite.code ∧
+      output.ffi.oracle = state.toPanSemFinite.ffi.oracle
+    exact hfields
+  cases hargs : PanSemStateFiniteExact.evalListHOLFinite state.toPanSemFinite
+      (h := fun address => Classical.propDecidable
+        (state.toPanSemFinite.memaddrs address)) arguments with
+  | none =>
+      rw [hargs] at hcanonical
+      simp only [] at hcanonical
+      have hpost := congrArg Prod.snd hcanonical
+      exact hfinish state.toPanSemFinite (by simpa using hpost) (by simp)
+  | some values =>
+      cases hlookup : PanSemStateFiniteExact.lookupCodeHOLFinite
+          state.toPanSemFinite.code.lookup function values with
+      | none =>
+          rw [hargs] at hcanonical
+          simp only [hlookup] at hcanonical
+          have hpost := congrArg Prod.snd hcanonical
+          exact hfinish state.toPanSemFinite (by simpa using hpost) (by simp)
+      | some entryData =>
+          rw [hargs] at hcanonical
+          simp only [hlookup] at hcanonical
+          obtain ⟨body, callee, returnShape⟩ := entryData
+          by_cases hclock : state.toPanSemFinite.clock = 0
+          · simp only [if_pos hclock] at hcanonical
+            have hpost := congrArg Prod.snd hcanonical
+            exact hfinish (PanSemStateFiniteExact.emptyLocalsHOLFinite
+              state.toPanSemFinite) (by simpa using hpost)
+              (by simp [PanSemStateFiniteExact.emptyLocalsHOLFinite])
+          · let entry := PanSemStateFiniteExact.callEntryStateHOLFinite
+              state.toPanSemFinite callee
+            simp only [if_neg hclock] at hcanonical
+            let bodyOutput := PanSemStateFiniteExact.evaluateHOLFiniteState entry body
+            let hentryProps := PanPropsEvalStateFiniteExact.ofPanSemFinite entry
+            let hbodyPostProps := PanPropsEvalStateFiniteExact.ofPanSemFinite bodyOutput.2
+            have hbodyRun :
+                PanPropsEvalStateFiniteExact.evaluateHOLFinitePair hentryProps body =
+                  (bodyOutput.1, hbodyPostProps) := by
+              constructor <;> rfl
+            have hentryClock : hentryProps.clock < state.clock := by
+              have hfinite : entry.clock < state.toPanSemFinite.clock := by
+                simp [entry, PanSemStateFiniteExact.callEntryStateHOLFinite]
+                omega
+              simpa [hentryProps, PanPropsEvalStateFiniteExact.ofPanSemFinite,
+                PanPropsEvalStateFiniteExact.toPanSemFinite] using hfinite
+            have hbody := ihBody body hentryProps bodyOutput.1 hbodyPostProps
+              hentryClock hbodyRun
+            have hbodyFields :
+                bodyOutput.2.memaddrs = state.toPanSemFinite.memaddrs ∧
+                bodyOutput.2.shMemaddrs = state.toPanSemFinite.shMemaddrs ∧
+                bodyOutput.2.be = state.toPanSemFinite.be ∧
+                bodyOutput.2.eshapes = state.toPanSemFinite.eshapes ∧
+                bodyOutput.2.baseAddr = state.toPanSemFinite.baseAddr ∧
+                bodyOutput.2.structs = state.toPanSemFinite.structs ∧
+                bodyOutput.2.code = state.toPanSemFinite.code ∧
+                bodyOutput.2.ffi.oracle = state.toPanSemFinite.ffi.oracle := by
+              simpa [hentryProps, hbodyPostProps,
+                entry, PanSemStateFiniteExact.callEntryStateHOLFinite,
+                PanPropsEvalStateFiniteExact.ofPanSemFinite,
+                PanPropsEvalStateFiniteExact.toPanSemFinite] using hbody
+            let fixed := PanSemStateFiniteExact.fixClockHOLFinite entry bodyOutput
+            have hfixedFields :
+                fixed.2.memaddrs = state.toPanSemFinite.memaddrs ∧
+                fixed.2.shMemaddrs = state.toPanSemFinite.shMemaddrs ∧
+                fixed.2.be = state.toPanSemFinite.be ∧
+                fixed.2.eshapes = state.toPanSemFinite.eshapes ∧
+                fixed.2.baseAddr = state.toPanSemFinite.baseAddr ∧
+                fixed.2.structs = state.toPanSemFinite.structs ∧
+                fixed.2.code = state.toPanSemFinite.code ∧
+                fixed.2.ffi.oracle = state.toPanSemFinite.ffi.oracle := by
+              simpa [fixed, PanSemStateFiniteExact.fixClockHOLFinite, entry,
+                PanSemStateFiniteExact.callEntryStateHOLFinite] using hbodyFields
+            have hpostRaw := congrArg Prod.snd hcanonical
+            cases hbodyResult : bodyOutput.1 with
+            | none =>
+                have hpost : fixed.2 = post.toPanSemFinite := by
+                  simpa [fixed, entry, bodyOutput, hbodyResult,
+                    PanSemStateFiniteExact.fixClockHOLFinite] using hpostRaw
+                exact hfinish fixed.2 hpost hfixedFields
+            | some bodyResult =>
+                cases bodyResult with
+                | «break» | «continue» =>
+                    have hpost : fixed.2 = post.toPanSemFinite := by
+                      simpa [fixed, entry, bodyOutput, hbodyResult,
+                        PanSemStateFiniteExact.fixClockHOLFinite] using hpostRaw
+                    exact hfinish fixed.2 hpost hfixedFields
+                | error | timeOut | exception _ _ | finalFfi _ =>
+                    let empty := PanSemStateFiniteExact.emptyLocalsHOLFinite fixed.2
+                    have hemptyFields :
+                        empty.memaddrs = state.toPanSemFinite.memaddrs ∧
+                        empty.shMemaddrs = state.toPanSemFinite.shMemaddrs ∧
+                        empty.be = state.toPanSemFinite.be ∧
+                        empty.eshapes = state.toPanSemFinite.eshapes ∧
+                        empty.baseAddr = state.toPanSemFinite.baseAddr ∧
+                        empty.structs = state.toPanSemFinite.structs ∧
+                        empty.code = state.toPanSemFinite.code ∧
+                        empty.ffi.oracle = state.toPanSemFinite.ffi.oracle := by
+                      simpa [empty, PanSemStateFiniteExact.emptyLocalsHOLFinite] using hfixedFields
+                    have hpost : empty = post.toPanSemFinite := by
+                      simpa [empty, fixed, entry, bodyOutput, hbodyResult,
+                        PanSemStateFiniteExact.fixClockHOLFinite,
+                        PanSemStateFiniteExact.emptyLocalsHOLFinite] using hpostRaw
+                    exact hfinish empty hpost hemptyFields
+                | returned value =>
+                    by_cases hshape : shapeEqHOL (shapeOfHOLExact value) shape = true
+                    · by_cases hreturnShape :
+                        shapeEqHOL (shapeOfHOLExact value) returnShape = true
+                      · let continuationState :=
+                        PanSemStateFiniteExact.setVarHOLFinite resultName value
+                          { fixed.2 with locals := state.toPanSemFinite.locals }
+                        let continuationProps :=
+                          PanPropsEvalStateFiniteExact.ofPanSemFinite continuationState
+                        let continuationOutput :=
+                          PanSemStateFiniteExact.evaluateHOLFiniteState continuationState continuation
+                        have hcontinuationRun :
+                            PanPropsEvalStateFiniteExact.evaluateHOLFinitePair
+                              continuationProps continuation =
+                              (continuationOutput.1,
+                                PanPropsEvalStateFiniteExact.ofPanSemFinite continuationOutput.2) := by
+                          simp [continuationProps, continuationOutput,
+                            PanPropsEvalStateFiniteExact.evaluateHOLFinitePair]
+                        have hfixedClock : fixed.2.clock ≤ entry.clock := by
+                          simpa [fixed] using
+                            PanSemStateFiniteExact.fixClockHOLFinite_clock_le entry bodyOutput
+                        have hcontClockFin : continuationState.clock < state.toPanSemFinite.clock := by
+                          have hentry : entry.clock < state.toPanSemFinite.clock := by
+                            simp [entry, PanSemStateFiniteExact.callEntryStateHOLFinite]
+                            omega
+                          simp [continuationState, PanSemStateFiniteExact.setVarHOLFinite]
+                          exact Nat.lt_of_le_of_lt hfixedClock hentry
+                        have hcontClock : continuationProps.clock < state.clock := by
+                          simpa [continuationProps, PanPropsEvalStateFiniteExact.ofPanSemFinite,
+                            PanPropsEvalStateFiniteExact.toPanSemFinite] using hcontClockFin
+                        have hcont := ihContinuation continuationProps continuation
+                          continuationOutput.1
+                          (PanPropsEvalStateFiniteExact.ofPanSemFinite continuationOutput.2)
+                          hcontClock hcontinuationRun
+                        have hcontFields :
+                            continuationOutput.2.memaddrs = state.toPanSemFinite.memaddrs ∧
+                            continuationOutput.2.shMemaddrs = state.toPanSemFinite.shMemaddrs ∧
+                            continuationOutput.2.be = state.toPanSemFinite.be ∧
+                            continuationOutput.2.eshapes = state.toPanSemFinite.eshapes ∧
+                            continuationOutput.2.baseAddr = state.toPanSemFinite.baseAddr ∧
+                            continuationOutput.2.structs = state.toPanSemFinite.structs ∧
+                            continuationOutput.2.code = state.toPanSemFinite.code ∧
+                            continuationOutput.2.ffi.oracle = state.toPanSemFinite.ffi.oracle := by
+                          rcases hcont with ⟨a, b, c, d, e, f, g, h⟩
+                          rcases hfixedFields with ⟨i, j, k, l, m, n, o, p⟩
+                          refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;>
+                            first | exact a.trans i | exact b.trans j | exact c.trans k |
+                              exact d.trans l | exact e.trans m | exact f.trans n |
+                              exact g.trans o | exact h.trans p
+                        have hpostFields :
+                            post.memaddrs = continuationOutput.2.memaddrs ∧
+                            post.shMemaddrs = continuationOutput.2.shMemaddrs ∧
+                            post.be = continuationOutput.2.be ∧
+                            post.eshapes = continuationOutput.2.eshapes ∧
+                            post.baseAddr = continuationOutput.2.baseAddr ∧
+                            post.structs = continuationOutput.2.structs ∧
+                            post.code = continuationOutput.2.code ∧
+                            post.ffi.oracle = continuationOutput.2.ffi.oracle := by
+                          have hmem := congrArg (fun output : PanSemStateFiniteExact width σ =>
+                            output.memaddrs) hpostRaw
+                          have hshared := congrArg (fun output : PanSemStateFiniteExact width σ =>
+                            output.shMemaddrs) hpostRaw
+                          have hbe := congrArg (fun output : PanSemStateFiniteExact width σ =>
+                            output.be) hpostRaw
+                          have heshapes := congrArg (fun output : PanSemStateFiniteExact width σ =>
+                            output.eshapes) hpostRaw
+                          have hbase := congrArg (fun output : PanSemStateFiniteExact width σ =>
+                            output.baseAddr) hpostRaw
+                          have hstructs := congrArg (fun output : PanSemStateFiniteExact width σ =>
+                            output.structs) hpostRaw
+                          have hcode := congrArg (fun output : PanSemStateFiniteExact width σ =>
+                            output.code) hpostRaw
+                          have horacle := congrArg (fun output : PanSemStateFiniteExact width σ =>
+                            output.ffi.oracle) hpostRaw
+                          simp only [hbodyResult, hshape, hreturnShape, entry,
+                            bodyOutput,
+                            PanSemStateFiniteExact.fixClockHOLFinite]
+                            at hmem hshared hbe heshapes hbase hstructs hcode horacle
+                          change continuationOutput.2.memaddrs = post.memaddrs at hmem
+                          change continuationOutput.2.shMemaddrs = post.shMemaddrs at hshared
+                          change continuationOutput.2.be = post.be at hbe
+                          change continuationOutput.2.eshapes = post.eshapes at heshapes
+                          change continuationOutput.2.baseAddr = post.baseAddr at hbase
+                          change continuationOutput.2.structs = post.structs at hstructs
+                          change continuationOutput.2.code = post.code at hcode
+                          change continuationOutput.2.ffi.oracle = post.ffi.oracle at horacle
+                          exact ⟨hmem.symm, hshared.symm, hbe.symm, heshapes.symm,
+                            hbase.symm, hstructs.symm, hcode.symm, horacle.symm⟩
+                        rcases hpostFields with ⟨a, b, c, d, e, f, g, h⟩
+                        rcases hcontFields with ⟨i, j, k, l, m, n, o, p⟩
+                        exact ⟨a.trans i, b.trans j, c.trans k, d.trans l,
+                          e.trans m, f.trans n, g.trans o, h.trans p⟩
+                      · have hpost : fixed.2 = post.toPanSemFinite := by
+                          simpa [fixed, entry, bodyOutput, hbodyResult, hshape,
+                            hreturnShape, PanSemStateFiniteExact.fixClockHOLFinite] using hpostRaw
+                        exact hfinish fixed.2 hpost hfixedFields
+                    · have hpost : fixed.2 = post.toPanSemFinite := by
+                        simpa [fixed, entry, bodyOutput, hbodyResult, hshape,
+                          PanSemStateFiniteExact.fixClockHOLFinite] using hpostRaw
+                      exact hfinish fixed.2 hpost hfixedFields
+
+end Flapjack
+
 /-! # The `Skip` case of HOL `evaluate_invariants`
 
 This genuine induction case keeps the source theorem's evaluator premise and
 all eight state-field conclusions.  HOL's `Skip` clause returns the original
 state, so this leaf is immediate over the reviewed finite-support carrier.
-The `Dec`, `If`, and `Seq` cases now have separate exact tagged proofs. The
-`While`, `Call`, and `DecCall` cases and assembling theorem remain open in bead
+The `Dec`, `If`, `Seq`, `While`, and `DecCall` cases now have separate exact
+tagged proofs. The `Call` case and assembling theorem remain open in bead
 `flapjack-4ac.4.61`. -/
 
 open Flapjack.Pancake.PanLang (ProgHOL)
@@ -4593,6 +4894,253 @@ theorem evaluateInvariantsSeqCaseHOLFinite {width : Nat} {σ : Type} [NeZero wid
       · exact hpostCode.symm.trans (hcode.trans hfirstCode)
       · exact hpostOracle.symm.trans (horacle.trans hfirstOracle)
 
+/-! # The `While` case of HOL `evaluate_invariants`
+
+The source `evaluate_ind` has a body IH for the smaller body program and a
+recursive While IH only when the recursive state's clock is smaller. The
+`evaluate_def` While branches are at panSemScript.sml:630. The evaluator's
+termination measure is lexicographic on `(clock, prog_size)`, so the body IH is
+unconditional while self-recursion uses the lower-clock premise. -/
+
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_invariants" 1150
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateInvariantsWhileCaseHOLFinite {width : Nat} {σ : Type} [NeZero width]
+    (condition : ExpHOL width) (body : ProgHOL width) :
+    ∀ (state : PanPropsEvalStateFiniteExact width σ)
+      (result : Option (PanSemResultExact width))
+      (post : PanPropsEvalStateFiniteExact width σ),
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state
+          (.while condition body : ProgHOL width) = (result, post) →
+      (∀ (bodyState : PanPropsEvalStateFiniteExact width σ)
+        (bodyResult : Option (PanSemResultExact width))
+        (bodyPost : PanPropsEvalStateFiniteExact width σ),
+        PanPropsEvalStateFiniteExact.evaluateHOLFinitePair bodyState body =
+          (bodyResult, bodyPost) →
+        bodyPost.memaddrs = bodyState.memaddrs ∧
+        bodyPost.shMemaddrs = bodyState.shMemaddrs ∧
+        bodyPost.be = bodyState.be ∧
+        bodyPost.eshapes = bodyState.eshapes ∧
+        bodyPost.baseAddr = bodyState.baseAddr ∧
+        bodyPost.structs = bodyState.structs ∧
+        bodyPost.code = bodyState.code ∧
+        bodyPost.ffi.oracle = bodyState.ffi.oracle) →
+      (∀ (loopState : PanPropsEvalStateFiniteExact width σ)
+        (loopResult : Option (PanSemResultExact width))
+        (loopPost : PanPropsEvalStateFiniteExact width σ),
+        loopState.clock < state.clock →
+        PanPropsEvalStateFiniteExact.evaluateHOLFinitePair loopState
+            (.while condition body : ProgHOL width) = (loopResult, loopPost) →
+        loopPost.memaddrs = loopState.memaddrs ∧
+        loopPost.shMemaddrs = loopState.shMemaddrs ∧
+        loopPost.be = loopState.be ∧
+        loopPost.eshapes = loopState.eshapes ∧
+        loopPost.baseAddr = loopState.baseAddr ∧
+        loopPost.structs = loopState.structs ∧
+        loopPost.code = loopState.code ∧
+        loopPost.ffi.oracle = loopState.ffi.oracle) →
+      post.memaddrs = state.memaddrs ∧
+      post.shMemaddrs = state.shMemaddrs ∧
+      post.be = state.be ∧
+      post.eshapes = state.eshapes ∧
+      post.baseAddr = state.baseAddr ∧
+      post.structs = state.structs ∧
+      post.code = state.code ∧
+      post.ffi.oracle = state.ffi.oracle := by
+  classical
+  intro state result post hRun ihBody ihLoop
+  have hcanonical :
+      PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite
+          (.while condition body : ProgHOL width) = (result, post.toPanSemFinite) := by
+    have hpair := congrArg
+      (fun output => (output.1, PanPropsEvalStateFiniteExact.toPanSemFinite output.2)) hRun
+    have hpair' :
+        (PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite
+          (.while condition body : ProgHOL width)).1 = result ∧
+        (PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite
+          (.while condition body : ProgHOL width)).2 = post.toPanSemFinite := by
+      simpa [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair] using hpair
+    exact Prod.ext hpair'.1 hpair'.2
+  have finish (output : PanSemStateFiniteExact width σ)
+      (houtput : output = post.toPanSemFinite)
+      (hfields :
+        output.memaddrs = state.toPanSemFinite.memaddrs ∧
+        output.shMemaddrs = state.toPanSemFinite.shMemaddrs ∧
+        output.be = state.toPanSemFinite.be ∧
+        output.eshapes = state.toPanSemFinite.eshapes ∧
+        output.baseAddr = state.toPanSemFinite.baseAddr ∧
+        output.structs = state.toPanSemFinite.structs ∧
+        output.code = state.toPanSemFinite.code ∧
+        output.ffi.oracle = state.toPanSemFinite.ffi.oracle) :
+      post.memaddrs = state.memaddrs ∧
+      post.shMemaddrs = state.shMemaddrs ∧
+      post.be = state.be ∧
+      post.eshapes = state.eshapes ∧
+      post.baseAddr = state.baseAddr ∧
+      post.structs = state.structs ∧
+      post.code = state.code ∧
+      post.ffi.oracle = state.ffi.oracle := by
+    have hpost : post = PanPropsEvalStateFiniteExact.ofPanSemFinite output := by
+      have h := congrArg PanPropsEvalStateFiniteExact.ofPanSemFinite houtput.symm
+      simpa using h
+    subst post
+    change output.memaddrs = state.toPanSemFinite.memaddrs ∧
+      output.shMemaddrs = state.toPanSemFinite.shMemaddrs ∧
+      output.be = state.toPanSemFinite.be ∧
+      output.eshapes = state.toPanSemFinite.eshapes ∧
+      output.baseAddr = state.toPanSemFinite.baseAddr ∧
+      output.structs = state.toPanSemFinite.structs ∧
+      output.code = state.toPanSemFinite.code ∧
+      output.ffi.oracle = state.toPanSemFinite.ffi.oracle
+    exact hfields
+  letI : DecidablePred state.toPanSemFinite.memaddrs :=
+    fun address => Classical.propDecidable (state.toPanSemFinite.memaddrs address)
+  cases hcondition : @PanSemStateFiniteExact.evalHOLFinite width σ _ state.toPanSemFinite
+      (fun address => Classical.propDecidable (state.toPanSemFinite.memaddrs address))
+      condition with
+  | none =>
+      rw [PanSemStateFiniteExact.evaluateHOLFiniteState_while_total] at hcanonical
+      rw [hcondition] at hcanonical
+      simp only [] at hcanonical
+      have hpost := congrArg Prod.snd hcanonical
+      exact finish state.toPanSemFinite (by simpa using hpost) (by simp)
+  | some value =>
+      cases value with
+      | rStruct fields =>
+          rw [PanSemStateFiniteExact.evaluateHOLFiniteState_while_total] at hcanonical
+          rw [hcondition] at hcanonical
+          simp only [] at hcanonical
+          have hpost := congrArg Prod.snd hcanonical
+          exact finish state.toPanSemFinite (by simpa using hpost) (by simp)
+      | nStruct name fields =>
+          rw [PanSemStateFiniteExact.evaluateHOLFiniteState_while_total] at hcanonical
+          rw [hcondition] at hcanonical
+          simp only [] at hcanonical
+          have hpost := congrArg Prod.snd hcanonical
+          exact finish state.toPanSemFinite (by simpa using hpost) (by simp)
+      | val wordValue =>
+          cases wordValue with
+          | word word =>
+              rw [PanSemStateFiniteExact.evaluateHOLFiniteState_while_total] at hcanonical
+              rw [hcondition] at hcanonical
+              simp only [] at hcanonical
+              have hpost := congrArg Prod.snd hcanonical
+              by_cases hzero : word = 0
+              · have hnot : ¬word ≠ 0 := by simp [hzero]
+                rw [if_neg hnot] at hpost
+                exact finish state.toPanSemFinite (by simpa using hpost) (by simp)
+              · by_cases hclock : state.toPanSemFinite.clock = 0
+                · rw [if_pos hzero] at hpost
+                  rw [if_pos hclock] at hpost
+                  exact finish (PanSemStateFiniteExact.emptyLocalsHOLFinite
+                      state.toPanSemFinite) (by simpa using hpost)
+                    (by simp [PanSemStateFiniteExact.emptyLocalsHOLFinite])
+                · rw [if_pos hzero] at hpost
+                  rw [if_neg hclock] at hpost
+                  let entry := PanSemStateFiniteExact.decClockHOLFinite
+                    state.toPanSemFinite
+                  let bodyOutput := PanSemStateFiniteExact.evaluateHOLFiniteState entry body
+                  let fixed := PanSemStateFiniteExact.fixClockHOLFinite entry bodyOutput
+                  have hbodyRun :
+                      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair
+                          (PanPropsEvalStateFiniteExact.ofPanSemFinite entry) body =
+                        (bodyOutput.1,
+                          PanPropsEvalStateFiniteExact.ofPanSemFinite bodyOutput.2) := by
+                    simp [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair, bodyOutput]
+                  have hbody := ihBody
+                      (PanPropsEvalStateFiniteExact.ofPanSemFinite entry) bodyOutput.1
+                      (PanPropsEvalStateFiniteExact.ofPanSemFinite bodyOutput.2) hbodyRun
+                  have hbodyFields :
+                      bodyOutput.2.memaddrs = entry.memaddrs ∧
+                      bodyOutput.2.shMemaddrs = entry.shMemaddrs ∧
+                      bodyOutput.2.be = entry.be ∧
+                      bodyOutput.2.eshapes = entry.eshapes ∧
+                      bodyOutput.2.baseAddr = entry.baseAddr ∧
+                      bodyOutput.2.structs = entry.structs ∧
+                      bodyOutput.2.code = entry.code ∧
+                      bodyOutput.2.ffi.oracle = entry.ffi.oracle := by
+                    simpa [PanPropsEvalStateFiniteExact.ofPanSemFinite] using hbody
+                  have hfixedFields :
+                      fixed.2.memaddrs = state.toPanSemFinite.memaddrs ∧
+                      fixed.2.shMemaddrs = state.toPanSemFinite.shMemaddrs ∧
+                      fixed.2.be = state.toPanSemFinite.be ∧
+                      fixed.2.eshapes = state.toPanSemFinite.eshapes ∧
+                      fixed.2.baseAddr = state.toPanSemFinite.baseAddr ∧
+                      fixed.2.structs = state.toPanSemFinite.structs ∧
+                      fixed.2.code = state.toPanSemFinite.code ∧
+                      fixed.2.ffi.oracle = state.toPanSemFinite.ffi.oracle := by
+                    simpa [fixed, PanSemStateFiniteExact.fixClockHOLFinite, entry,
+                      PanSemStateFiniteExact.decClockHOLFinite] using hbodyFields
+                  let loopOutput := PanSemStateFiniteExact.evaluateHOLFiniteState
+                    fixed.2 (.while condition body : ProgHOL width)
+                  have hloopRun :
+                      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair
+                          (PanPropsEvalStateFiniteExact.ofPanSemFinite fixed.2)
+                          (.while condition body : ProgHOL width) =
+                        (loopOutput.1,
+                          PanPropsEvalStateFiniteExact.ofPanSemFinite loopOutput.2) := by
+                    simp [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair, loopOutput]
+                  have hfixedClock : fixed.2.clock ≤ entry.clock :=
+                    by simpa [fixed] using
+                      PanSemStateFiniteExact.fixClockHOLFinite_clock_le entry bodyOutput
+                  have hstateClock : state.toPanSemFinite.clock = state.clock := rfl
+                  have hentryClockFin : entry.clock < state.toPanSemFinite.clock := by
+                    simp [entry, PanSemStateFiniteExact.decClockHOLFinite]
+                    omega
+                  have hentryClock : entry.clock < state.clock := by
+                    simpa [hstateClock] using hentryClockFin
+                  have hloopClockFin : fixed.2.clock < state.toPanSemFinite.clock :=
+                    Nat.lt_of_le_of_lt hfixedClock hentryClockFin
+                  have hloopClock :
+                      (PanPropsEvalStateFiniteExact.ofPanSemFinite fixed.2).clock < state.clock := by
+                    change fixed.2.clock < state.clock
+                    simpa [hstateClock] using hloopClockFin
+                  have hloop := ihLoop
+                      (PanPropsEvalStateFiniteExact.ofPanSemFinite fixed.2) loopOutput.1
+                      (PanPropsEvalStateFiniteExact.ofPanSemFinite loopOutput.2)
+                      hloopClock hloopRun
+                  have hloopFields :
+                      loopOutput.2.memaddrs = fixed.2.memaddrs ∧
+                      loopOutput.2.shMemaddrs = fixed.2.shMemaddrs ∧
+                      loopOutput.2.be = fixed.2.be ∧
+                      loopOutput.2.eshapes = fixed.2.eshapes ∧
+                      loopOutput.2.baseAddr = fixed.2.baseAddr ∧
+                      loopOutput.2.structs = fixed.2.structs ∧
+                      loopOutput.2.code = fixed.2.code ∧
+                      loopOutput.2.ffi.oracle = fixed.2.ffi.oracle := by
+                    simpa [PanPropsEvalStateFiniteExact.ofPanSemFinite] using hloop
+                  cases hbodyResult : bodyOutput.1 with
+                  | none =>
+                      have hpostLoop : loopOutput.2 = post.toPanSemFinite := by
+                        simpa [entry, bodyOutput, fixed, hbodyResult,
+                          loopOutput, PanSemStateFiniteExact.fixClockHOLFinite] using hpost
+                      rcases hloopFields with ⟨a, b, c, d, e, f, g, h⟩
+                      rcases hfixedFields with ⟨i, j, k, l, m, n, o, p⟩
+                      exact finish loopOutput.2 hpostLoop
+                        ⟨a.trans i, b.trans j, c.trans k, d.trans l,
+                          e.trans m, f.trans n, g.trans o, h.trans p⟩
+                  | some bodyResult =>
+                      cases bodyResult with
+                      | «continue» =>
+                          have hpostLoop : loopOutput.2 = post.toPanSemFinite := by
+                            simpa [entry, bodyOutput, fixed, hbodyResult,
+                              loopOutput, PanSemStateFiniteExact.fixClockHOLFinite] using hpost
+                          rcases hloopFields with ⟨a, b, c, d, e, f, g, h⟩
+                          rcases hfixedFields with ⟨i, j, k, l, m, n, o, p⟩
+                          exact finish loopOutput.2 hpostLoop
+                            ⟨a.trans i, b.trans j, c.trans k, d.trans l,
+                              e.trans m, f.trans n, g.trans o, h.trans p⟩
+                      | «break» =>
+                          have hpostFixed : fixed.2 = post.toPanSemFinite := by
+                            simpa [entry, bodyOutput, fixed, hbodyResult,
+                              PanSemStateFiniteExact.fixClockHOLFinite] using hpost
+                          exact finish fixed.2 hpostFixed hfixedFields
+                      | error | timeOut | returned _ | exception _ _ | finalFfi _ =>
+                          have hpostFixed : fixed.2 = post.toPanSemFinite := by
+                            simpa [entry, bodyOutput, fixed, hbodyResult,
+                              PanSemStateFiniteExact.fixClockHOLFinite] using hpost
+                          exact finish fixed.2 hpostFixed hfixedFields
+
 end Flapjack
 
 
@@ -5219,6 +5767,82 @@ theorem evaluateClockSubReturnCaseHOLFinite {width : Nat} {σ : Type} [NeZero wi
           rw [hLowCanonical]
           exact PanPropsEvalStateFiniteExact.ofPanSemFinite_toPanSemFinite lowState
 
+/-! ## Unchanged event logs determine the complete FFI state
+
+HOL `io_events_eq_imp_ffi_eq` (`panPropsScript.sml:974-1019`) quantifies in
+order over program, initial state, result, and final state. Its premises are a
+successful evaluation equation and equality of the initial/final FFI event
+lists; it concludes equality of the complete FFI records. The local state
+carrier below exists so the four `|->` fields and their roundtrip witness are
+owned by this PanProps module, as required by its representation qualifier.
+`evaluatePanPropsHOLFiniteState` is only the field-for-field codec around the
+canonical finite PanSem evaluator. The proof transports its successful result
+to the exact broad recursive dispatcher, applies the kernel-checked recursive
+event/FFI invariant, and translates the unchanged FFI field back. -/
+
+/-- PanProps-side representation adapter: execute the canonical finite PanSem
+    evaluator and convert its output state through the field-for-field local
+    carrier codec. It adds no evaluator behavior. -/
+noncomputable def evaluatePanPropsHOLFiniteState {width : Nat} {σ : Type}
+    [NeZero width] (state : PanPropsEvalStateFiniteExact width σ)
+    (program : ProgHOL width) :
+    Option (PanSemResultExact width) × PanPropsEvalStateFiniteExact width σ :=
+  let output := PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite program
+  (output.1, PanPropsEvalStateFiniteExact.ofPanSemFinite output.2)
+
+/-- HOL `io_events_eq_imp_ffi_eq` (`panPropsScript.sml:974`): for the exact
+    finite-map Pan state, successful evaluation and equal endpoint `io_events`
+    imply equality of the complete FFI state, including the oracle and
+    host-state fields. The state quantifiers use this module's canonical
+    `HolFiniteMapExact` translation and roundtrip witness; the word index uses
+    the standard positive-width `BitVec` translation. -/
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "io_events_eq_imp_ffi_eq" 974
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem ioEventsEqImpFfiEqHOLFinite {width : Nat} {σ : Type} [NeZero width] :
+    ∀ (program : ProgHOL width)
+      (state : PanPropsEvalStateFiniteExact width σ)
+      (result : Option (PanSemResultExact width))
+      (post : PanPropsEvalStateFiniteExact width σ),
+      evaluatePanPropsHOLFiniteState state program = (result, post) →
+      state.ffi.ioEvents = post.ffi.ioEvents → post.ffi = state.ffi := by
+  classical
+  intro program state result post heval hevents
+  have hcanonical :
+      PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite program =
+        (result, post.toPanSemFinite) := by
+    apply Prod.ext
+    · simpa [evaluatePanPropsHOLFiniteState] using congrArg Prod.fst heval
+    · simpa [evaluatePanPropsHOLFiniteState] using
+        congrArg PanPropsEvalStateFiniteExact.toPanSemFinite (congrArg Prod.snd heval)
+  let context : PanSemStateFiniteExact.FiniteEvalContext width σ :=
+    ⟨state.toPanSemFinite,
+      fun address => Classical.propDecidable (state.memaddrs address),
+      fun address => Classical.propDecidable (state.shMemaddrs address)⟩
+  obtain ⟨postContext, hrecursive, hpost⟩ :=
+    PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext_of_evaluateHOLFiniteState
+      state.toPanSemFinite program context rfl (result, post.toPanSemFinite) hcanonical
+  have hprojection :=
+    PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext_projection program context
+  rw [hrecursive] at hprojection
+  simp only [Option.map_some] at hprojection
+  have hbroad :
+      evalPanSemRecursiveCallContextHOLExact program context.toExact =
+        some (result, postContext.toExact) := by
+    simpa using hprojection.symm
+  have heventsBroad :
+      context.toExact.state.ffi.ioEvents =
+        postContext.toExact.state.ffi.ioEvents := by
+    simpa [context, PanPropsEvalStateFiniteExact.toPanSemFinite,
+      PanSemStateFiniteExact.toExact, PanPropsEvalStateFiniteExact.toExact,
+      PanSemStateFiniteExact.FiniteEvalContext.toExact, hpost] using hevents
+  have hffiBroad := evalPanSemRecursiveCallContextHOLExact_ffi_eq_of_ioEvents_eq
+    program context.toExact (result, postContext.toExact) hbroad heventsBroad
+  have hffi : state.ffi = post.ffi := by
+    simpa [context, PanPropsEvalStateFiniteExact.toPanSemFinite,
+      PanSemStateFiniteExact.toExact, PanPropsEvalStateFiniteExact.toExact,
+      PanSemStateFiniteExact.FiniteEvalContext.toExact, hpost] using hffiBroad
+  exact hffi.symm
 /-- Genuine nonrecursive `Raise` case of HOL `evaluate_clock_sub`. The exact
     expression evaluator and the exception-shape lookup are unchanged by the
     clock update; the successful branch clears locals and the error branches
@@ -5458,81 +6082,4 @@ theorem evaluateClockSubRaiseCaseHOLFinite {width : Nat} {σ : Type} [NeZero wid
                   (.raise exceptionId expression)).2 = lowState
               rw [hLowCanonical]
               exact PanPropsEvalStateFiniteExact.ofPanSemFinite_toPanSemFinite lowState
-/-! ## Unchanged event logs determine the complete FFI state
-
-HOL `io_events_eq_imp_ffi_eq` (`panPropsScript.sml:974-1019`) quantifies in
-order over program, initial state, result, and final state. Its premises are a
-successful evaluation equation and equality of the initial/final FFI event
-lists; it concludes equality of the complete FFI records. The local state
-carrier below exists so the four `|->` fields and their roundtrip witness are
-owned by this PanProps module, as required by its representation qualifier.
-`evaluatePanPropsHOLFiniteState` is only the field-for-field codec around the
-canonical finite PanSem evaluator. The proof transports its successful result
-to the exact broad recursive dispatcher, applies the kernel-checked recursive
-event/FFI invariant, and translates the unchanged FFI field back. -/
-
-/-- PanProps-side representation adapter: execute the canonical finite PanSem
-    evaluator and convert its output state through the field-for-field local
-    carrier codec. It adds no evaluator behavior. -/
-noncomputable def evaluatePanPropsHOLFiniteState {width : Nat} {σ : Type}
-    [NeZero width] (state : PanPropsEvalStateFiniteExact width σ)
-    (program : ProgHOL width) :
-    Option (PanSemResultExact width) × PanPropsEvalStateFiniteExact width σ :=
-  let output := PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite program
-  (output.1, PanPropsEvalStateFiniteExact.ofPanSemFinite output.2)
-
-/-- HOL `io_events_eq_imp_ffi_eq` (`panPropsScript.sml:974`): for the exact
-    finite-map Pan state, successful evaluation and equal endpoint `io_events`
-    imply equality of the complete FFI state, including the oracle and
-    host-state fields. The state quantifiers use this module's canonical
-    `HolFiniteMapExact` translation and roundtrip witness; the word index uses
-    the standard positive-width `BitVec` translation. -/
-@[hol "cakeml/pancake/semantics/panPropsScript.sml" "io_events_eq_imp_ffi_eq" 974
-  (fmap_as_finite_support := [locals, globals, code, eshapes])
-  (words_as_type_indexed_bitvec)]
-theorem ioEventsEqImpFfiEqHOLFinite {width : Nat} {σ : Type} [NeZero width] :
-    ∀ (program : ProgHOL width)
-      (state : PanPropsEvalStateFiniteExact width σ)
-      (result : Option (PanSemResultExact width))
-      (post : PanPropsEvalStateFiniteExact width σ),
-      evaluatePanPropsHOLFiniteState state program = (result, post) →
-      state.ffi.ioEvents = post.ffi.ioEvents → post.ffi = state.ffi := by
-  classical
-  intro program state result post heval hevents
-  have hcanonical :
-      PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite program =
-        (result, post.toPanSemFinite) := by
-    apply Prod.ext
-    · simpa [evaluatePanPropsHOLFiniteState] using congrArg Prod.fst heval
-    · simpa [evaluatePanPropsHOLFiniteState] using
-        congrArg PanPropsEvalStateFiniteExact.toPanSemFinite (congrArg Prod.snd heval)
-  let context : PanSemStateFiniteExact.FiniteEvalContext width σ :=
-    ⟨state.toPanSemFinite,
-      fun address => Classical.propDecidable (state.memaddrs address),
-      fun address => Classical.propDecidable (state.shMemaddrs address)⟩
-  obtain ⟨postContext, hrecursive, hpost⟩ :=
-    PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext_of_evaluateHOLFiniteState
-      state.toPanSemFinite program context rfl (result, post.toPanSemFinite) hcanonical
-  have hprojection :=
-    PanSemStateFiniteExact.evalPanSemRecursiveCallFiniteContext_projection program context
-  rw [hrecursive] at hprojection
-  simp only [Option.map_some] at hprojection
-  have hbroad :
-      evalPanSemRecursiveCallContextHOLExact program context.toExact =
-        some (result, postContext.toExact) := by
-    simpa using hprojection.symm
-  have heventsBroad :
-      context.toExact.state.ffi.ioEvents =
-        postContext.toExact.state.ffi.ioEvents := by
-    simpa [context, PanPropsEvalStateFiniteExact.toPanSemFinite,
-      PanSemStateFiniteExact.toExact, PanPropsEvalStateFiniteExact.toExact,
-      PanSemStateFiniteExact.FiniteEvalContext.toExact, hpost] using hevents
-  have hffiBroad := evalPanSemRecursiveCallContextHOLExact_ffi_eq_of_ioEvents_eq
-    program context.toExact (result, postContext.toExact) hbroad heventsBroad
-  have hffi : state.ffi = post.ffi := by
-    simpa [context, PanPropsEvalStateFiniteExact.toPanSemFinite,
-      PanSemStateFiniteExact.toExact, PanPropsEvalStateFiniteExact.toExact,
-      PanSemStateFiniteExact.FiniteEvalContext.toExact, hpost] using hffiBroad
-  exact hffi.symm
-
 end Flapjack

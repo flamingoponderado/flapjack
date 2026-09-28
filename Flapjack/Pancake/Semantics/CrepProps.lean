@@ -6,6 +6,7 @@ import Flapjack.Pancake.CrepLang.Prog
 import Flapjack.Pancake.Semantics.CrepSem
 import Flapjack.Pancake.Semantics.CrepSem.HOLState
 import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
+import Flapjack.Pancake.Semantics.CrepSem.EventsMono
 import Flapjack.Pancake.PanCommon
 import Flapjack.Pancake.Semantics.PanCommonProps
 
@@ -1400,5 +1401,109 @@ theorem evalCrepSemHOLExps_upd_clock_eq {width : Nat} [NeZero width] {σ : Type}
   Flapjack.list_mapM_congr _ _ expressions
     (fun e _ => evalCrepSemHOLExp_upd_clock_eq state e (clock + state.clock))
 
+/-! ## FFI event-prefix monotonicity (HOL `crepPropsScript.sml:957`) -/
+
+/-- Exact port of HOL `Theorem evaluate_io_events_mono`
+(`cakeml/pancake/semantics/crepPropsScript.sml:957`):
+`!exps s1 res s2. evaluate (exps,s1) = (res,s2) ==> s1.ffi.io_events ≼
+s2.ffi.io_events`, where `evaluate` is the exact `crepSem$evaluate` port
+`evalCrepSemHOLProgExact`, `exps : CrepProgHOL width` is the source program,
+`res : CrepResultHOLExact width option` is HOL's `result option` (unused in the
+conclusion but fixed by HOL type inference to carry the same word dimension),
+`s2 : CrepSemHOLState width σ` is the result state, and HOL's `IS_PREFIX` (`≼`)
+is Lean `List.IsPrefix` (`<+:`). The conclusion is HOL's list prefix on the two
+states' `ffi.io_events`; `res` is only present so the hypothesis has HOL's exact
+shape.
+
+The `locals`/`globals`/`code` `|->` fields of `CrepSemHOLState` are the reviewed
+canonical `HolFiniteMapExact` translation (same-module witness
+`CrepPropsFiniteSupport.holFmapAsFiniteSupportWitness`), HOL's type-indexed
+`'a word` is `BitVec width` under `[NeZero width]`, and `'ffi` is `σ : Type`;
+hence the combined `fmap_as_finite_support`/words qualifiers. The proof mirrors
+HOL's `recInduct evaluate_ind` + `IS_PREFIX_TRANS`: the shared-memory and
+external-call leaves call `call_FFI`, whose returned/final forms keep or extend
+the log, every other clause preserves `ffi`, and the recursive clauses compose
+the sub-runs through `evalCrepSemHOLProgExact_ioEvents_prefix`. -/
+@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "evaluate_io_events_mono"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
+theorem crepPropsEvaluateIoEventsMono {width : Nat} [NeZero width] {σ : Type}
+    (program : CrepProgHOL width) (state : CrepSemHOLState width σ)
+    (result : Option (CrepResultHOLExact width)) (finalState : CrepSemHOLState width σ)
+    (heval : evalCrepSemHOLProgExact state program = (result, finalState)) :
+    state.ffi.ioEvents <+: finalState.ffi.ioEvents := by
+  classical
+  have h := evalCrepSemHOLProgExact_ioEvents_prefix state program
+  rw [heval] at h
+  exact h
+
+
+private theorem holFiniteMapExact_ext_resVar {α β : Type} {left right : HolFiniteMapExact α β}
+    (h : ∀ k, left.lookup k = right.lookup k) : left = right := by
+  obtain ⟨l, pl⟩ := left
+  obtain ⟨r, pr⟩ := right
+  have : l = r := funext h
+  subst this
+  rfl
+
+private theorem foldl_resVarEq_restore_lookup {α β : Type} [DecidableEq α]
+    (lc : HolFiniteMapExact α β) :
+    ∀ (keys : List α) (m : HolFiniteMapExact α β) (k : α),
+      ((keys.zip (keys.map lc.lookup)).foldl
+          (fun current entry => HolFiniteMapExact.resVarEq current entry) m).lookup k =
+        if k ∈ keys then lc.lookup k else m.lookup k
+  | [], m, k => by simp
+  | x :: keys, m, k => by
+      simp only [List.map_cons, List.zip_cons_cons, List.foldl_cons]
+      rw [foldl_resVarEq_restore_lookup lc keys]
+      by_cases hk : k ∈ keys
+      · simp [hk]
+      · have hres : (HolFiniteMapExact.resVarEq m (x, lc.lookup x)).lookup k =
+            if k = x then lc.lookup x else m.lookup k := by
+          cases hx : lc.lookup x <;>
+            simp [HolFiniteMapExact.resVarEq, HolFiniteMapExact.lookup_eraseEq,
+              HolFiniteMapExact.lookup_updateEq, FDOMSUB_HOL, FUPDATE_HOL] <;>
+            split <;> simp_all
+        rw [hres]
+        by_cases hkx : k = x
+        · subst hkx; simp [hk]
+        · simp [hk, hkx]
+
+private theorem fupdateListHOL_zip_not_mem {α β : Type} [DecidableEq α] (k : α) :
+    ∀ (xs : List α) (ys : List β) (f : FiniteMap α β), k ∉ xs →
+      FUPDATE_LIST_HOL f (xs.zip ys) k = f k
+  | [], _, f, _ => by simp [FUPDATE_LIST_HOL]
+  | _ :: _, [], f, _ => by simp [FUPDATE_LIST_HOL]
+  | x :: xs, y :: ys, f, hk => by
+      simp only [List.mem_cons, not_or] at hk
+      rw [List.zip_cons_cons, FUPDATE_LIST_HOL_cons,
+        fupdateListHOL_zip_not_mem k xs ys _ hk.2]
+      simp [FUPDATE_HOL, hk.1]
+
+/-- Exact port of HOL `crepProps$res_var_lookup_original_eq`
+    (`cakeml/pancake/semantics/crepPropsScript.sml:612-633`):
+    `!xs ys lc. ALL_DISTINCT xs /\ LENGTH xs = LENGTH ys ==>
+      FOLDL res_var (lc |++ ZIP (xs,ys)) (ZIP (xs,MAP (FLOOKUP lc) xs)) = lc`.
+    `res_var` is the tagged `HolFiniteMapExact.resVarEq`, `|++` is `updateListEq`,
+    and `FLOOKUP lc` is `lc.lookup`. HOL's polymorphic key/value types are the
+    type parameters, with `DecidableEq` for HOL `=`. The standalone map `lc` is
+    recorded as a bare relation-qualifier entry. -/
+@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "res_var_lookup_original_eq"
+  (fmap_as_finite_support_relation := [lc])]
+theorem resVarLookupOriginalEqHOL {α β : Type} [DecidableEq α] :
+    ∀ (xs : List α) (ys : List β) (lc : HolFiniteMapExact α β),
+      xs.Nodup ∧ xs.length = ys.length →
+      (xs.zip (xs.map lc.lookup)).foldl
+          (fun current entry => HolFiniteMapExact.resVarEq current entry)
+          (lc.updateListEq (xs.zip ys)) = lc := by
+  intro xs ys lc ⟨_, hlen⟩
+  apply holFiniteMapExact_ext_resVar
+  intro k
+  rw [foldl_resVarEq_restore_lookup lc xs]
+  split
+  · rfl
+  · rename_i hk
+    simp only [HolFiniteMapExact.lookup_updateListEq]
+    exact fupdateListHOL_zip_not_mem k xs ys lc.lookup hk
 
 end Flapjack

@@ -46,6 +46,7 @@ import Flapjack.Test.CrepSemTotalAssignParity
 import Flapjack.Test.CrepSemTotalStoreParity
 import Flapjack.Test.CrepSemTotalShMemParity
 import Flapjack.Test.CrepSemTotalExtCallParity
+import Flapjack.Test.CrepSemIoEventsMonoParity
 import Flapjack.Test.CrepInlineFmapParity
 import Flapjack.Test.CrepInlineStructuralHOLParity
 import Flapjack.Test.CrepInlineTransformEocParity
@@ -64,6 +65,7 @@ import Flapjack.Test.PanGlobalsFpermParity
 import Flapjack.Test.PanGlobalsFpermDecsParity
 import Flapjack.Test.PanGlobalsNewMainNameParity
 import Flapjack.Test.PanGlobalsNewMainNameExactParity
+import Flapjack.Test.PanGlobalsTransformsExactParity
 import Flapjack.Test.PanGlobalsNameByteRangedParity
 import Flapjack.Test.PanGlobalsDecShapesParity
 import Flapjack.Test.PanGlobalsExpIdsParity
@@ -842,6 +844,7 @@ def main : IO Unit := do
     Flapjack.Test.PanGlobalsFpermDecsParity.runChecks,
     Flapjack.Test.PanGlobalsResortDeclsParity.runChecks,
     Flapjack.Test.PanGlobalsNewMainNameExactParity.runChecks,
+    Flapjack.Test.PanGlobalsTransformsExactParity.runChecks,
     Flapjack.Test.PanGlobalsCompileExpExactParity.runChecks,
     Flapjack.Test.PanGlobalsDecShapesParity.runChecks,
     Flapjack.Test.PanGlobalsFpermClusterParity.runChecks,
@@ -1107,7 +1110,8 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.PanToCrepMakeVmapParity.runChecks,
     Flapjack.Test.PanLangGeneratedSizeParity.runChecks,
     Flapjack.Test.PanSimpProgBridgeParity.runChecks,
-    Flapjack.Test.CrepSemTotalExtCallParity.runChecks
+    Flapjack.Test.CrepSemTotalExtCallParity.runChecks,
+    Flapjack.Test.CrepSemIoEventsMonoParity.runChecks
     ].mapM id
   unless results.all id do
     IO.Process.exit 1
