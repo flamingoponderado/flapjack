@@ -12064,6 +12064,15 @@
     "reviewer": "flapjack-luna-a (direct comparison with loopLangScript.sml:30-60 and imported carriers: all 24 constructors and fields match; words are fixed BitVec width and literal BitVec 5; num_set is exact Spt Unit; BinOp/Cmp have the same asm constructors; RegImm maps HOL Reg/Imm to Lean .reg/.imm with matching Nat/word payloads; CrepMemOp is a separate Lean datatype whose eight nullary constructors match asm$memop in order; PrimOp, LoopArith and Shift are exact tagged carriers; FFI uses exact MlString. This is a datatype shape review, not a claim that arbitrary MlString names roundtrip to String; the executable bridge is partial on that codec boundary.)"
   },
   {
+    "hol_path": "cakeml/pancake/loopLangScript.sml",
+    "hol_name": "nested_seq_def",
+    "lean_path": "Flapjack/Pancake/LoopLang.lean",
+    "lean_name": "loopNestedSeqHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison (2026-09-28, bead flapjack-pxn.18.5.6.28) against loopLangScript.sml:72-74. HOL nested_seq [] = Skip and nested_seq (e::es) = Seq e (nested_seq es); loopNestedSeqHOL has exactly those clauses over List (HolLoopProg width), with HOL's polymorphic word dimension represented by positive BitVec width. Direct EVAL rows loop_nested_seq_empty/one/two are in scripts/hol-probes/crep_to_loop_compile_probe.out and checked by examples in Flapjack.Test.CrepToLoopCompileExactParity."
+  },
+  {
     "hol_path": "cakeml/pancake/loop_liveScript.sml",
     "hol_name": "vars_of_exp_def",
     "lean_path": "Flapjack/Pancake/LoopLive.lean",
@@ -18052,11 +18061,24 @@
   },
   {
     "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
+    "hol_name": "compile_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/ContextExact.lean",
+    "lean_name": "compileHOLExact",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-c source comparison (2026-09-28, bead flapjack-pxn.18.5.6.28) against crep_to_loopScript.sml:120-213. Compared all 19 source equations: Skip/Break/Continue/Tick; Return's compile_exps, fresh destinations, MAP2 assignments and nested_seq; Raise's vmax+1 assignment; ShMem's mapped-name guard; Store/Store32/StoreByte temporary sequencing; StoreGlob; recursive Seq; mapped Assign and Primitive with skip on missing vars; Dec's FUPDATE of vars/vmax and insert into the incoming live set; If's two recursive branches and original live set; While's Loop and Continue/Break structure; Call's find_lab, argument temps, rt_vars sentinel, return set, exception/handler branch; and ExtCall's four-name guard. The carriers are CrepProgHOL width/HolLoopProg width and CrepToLoopContextExact; vars/funcs are the checked same-module HolFiniteMapExact fields and the two qualifiers record exactly that finite-map translation and the positive indexed BitVec word translation. Direct HOL rows for all 19 constructors plus nested_seq empty/one/two are in scripts/hol-probes/crep_to_loop_compile_probe.out; exact Lean equations are checked in Flapjack.Test.CrepToLoopCompileExactParity. This is proof-side infrastructure only: production compileCrepToLoop still consumes generic CrepProg/LoopProg (String names and list live sets) and does not route through this definition. The production bridge is tracked by a linked bead; no executable behavior or performance exception is claimed.",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs"
+    ],
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
     "hol_name": "compile_exp_def",
     "lean_path": "Flapjack/Pancake/CrepToLoop/ContextExact.lean",
     "lean_name": "compileExpHOLExact",
     "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
-    "reviewer": "flapjack-luna-c source comparison (2026-09-28, bead flapjack-pxn.18.5.6.27) against crep_to_loopScript.sml:50-95. Compared BaseAddr/TopAddr/Const, vars FLOOKUP with 0 fallback, recursive Load/Load32/LoadByte, LoadGlob to Lookup, mapped Op, Crepop temporary assignments and target-specific long multiply, Cmp's two recursive calls and prog_if temporaries, and Shift's ordered recursive calls. The exact carriers are CrepExpHOL width, HolLoopExp/HolLoopProg, and CrepToLoopContextExact; vars/funcs use its checked finite-support witness and the word qualifier records the positive indexed BitVec translation. Direct EVAL rows base, var_hit, load32, op_nary, crepop_mul, cmp, shift, compile_exps are captured in scripts/hol-probes/crep_to_loop_compile_exp_probe.out and checked by Flapjack.Test.CrepToLoopCompileExpExactParity. `compile_exps` is a local source helper with no separate HOL declaration. This is proof-side exact infrastructure: generic production loopCompileExp does not route through it; the production carrier/target bridge and exact compile_def/comp_func_def remain open under flapjack-pxn.18.5.6.28.",
+    "reviewer": "flapjack-luna-c source comparison (2026-09-28, bead flapjack-pxn.18.5.6.27) against crep_to_loopScript.sml:50-95. Compared BaseAddr/TopAddr/Const, vars FLOOKUP with 0 fallback, recursive Load/Load32/LoadByte, LoadGlob to Lookup, mapped Op, Crepop temporary assignments and target-specific long multiply, Cmp's two recursive calls and prog_if temporaries, and Shift's ordered recursive calls. The exact carriers are CrepExpHOL width, HolLoopExp/HolLoopProg, and CrepToLoopContextExact; vars/funcs use its checked finite-support witness and the word qualifier records the positive indexed BitVec translation. Direct EVAL rows base, var_hit, load32, op_nary, crepop_mul, cmp, shift, compile_exps are captured in scripts/hol-probes/crep_to_loop_compile_exp_probe.out and checked by Flapjack.Test.CrepToLoopCompileExpExactParity. `compile_exps` is a local source helper with no separate HOL declaration. This is proof-side exact infrastructure: generic production loopCompileExp does not route through it. The exact `compile_def` port is now `compileHOLExact`; routing production through it is tracked by flapjack-pxn.18.5.6.28.1, and the dependent exact `comp_func_def` port remains tracked by flapjack-pxn.18.5.6.35.",
     "fmap_as_finite_support": [
       "vars",
       "funcs"

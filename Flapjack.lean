@@ -310,6 +310,7 @@ import Flapjack.Pancake.CrepToLoop.ContextExact
 import Flapjack.Pancake.CrepToLoop.Optimise
 import Flapjack.Pancake.CrepToLoop.StateRel
 import Flapjack.Test.CrepToLoopCompileExpExactParity
+import Flapjack.Test.CrepToLoopCompileExactParity
 import Flapjack.Test.CrepFindLabParity
 import Flapjack.Pancake.LoopLive
 /- The context-aware Crep-to-Loop correctness file is being updated alongside
