@@ -734,14 +734,14 @@ example :
         (fun next => panSemTotalEvaluatePartial (fun _ _ => none) next .skip) =
       (some .error, stepsState) := rfl
 
-/-- Kernel-checked regressions for the concrete dispatcher outputs, backed by the
-    direct HOL oracle rows `if_true_result`, `if_false_result`,
-    `exact_if_nonword_result`, and `exact_if_failed_result`. -/
-example : partialIteTrueGuard = true := by native_decide
-example : partialIteFalseGuard = true := by native_decide
-example : partialIteNonwordGuard = true := by native_decide
-example : partialIteFailedGuard = true := by native_decide
-example : partialIteRecursionGuard = true := by native_decide
+-- Executable regressions for the concrete dispatcher outputs, backed by the
+-- direct HOL oracle rows `if_true_result`, `if_false_result`,
+-- `exact_if_nonword_result`, and `exact_if_failed_result`.
+#guard partialIteTrueGuard
+#guard partialIteFalseGuard
+#guard partialIteNonwordGuard
+#guard partialIteFailedGuard
+#guard partialIteRecursionGuard
 
 def runChecks : IO Bool := do
   if stepsGuard then
