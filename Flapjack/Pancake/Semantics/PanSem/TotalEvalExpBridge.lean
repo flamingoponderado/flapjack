@@ -2930,6 +2930,108 @@ theorem panSemTotalEvaluate_assign_agree_of_progByteRanged {σ : Type}
   exact panSemTotalEvaluate_assign_agree primitive production exact hrel hranged
     kind name hname e he
 
+/-- Production/exact agreement for the `Store` constructor, assembled from the
+    all-constructor expression agreement
+    (`evalPanSemStateExp_agree`/`evalHOLFinite_eq_classical`) and the
+    `TotalEvalBridge` clause slice `panSemTotalStoreClause_agree`.  Both the
+    destination and the source evaluation agreement are discharged from their
+    `ExpByteRanged` hypotheses; the success, invalid-address (non-word
+    destination), and failed-expression branches are all covered without any
+    target run, result, or post-state premise. -/
+theorem panSemTotalEvaluate_store_agree {σ : Type}
+    (primitive : PanPrimitiveHandler (RiscV.Word 64))
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (hranged : PanSemStateRelExecRanged production)
+    (address value : Exp (RiscV.Word 64))
+    (haddress : ExpByteRanged address) (hvalue : ExpByteRanged value) :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluate primitive (.store address value) production).1
+        (evaluateHOLFiniteState exact (.store (expToHOL address) (expToHOL value))).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluate primitive (.store address value) production).2
+        (evaluateHOLFiniteState exact (.store (expToHOL address) (expToHOL value))).2.toExact := by
+  rw [panSemTotalEvaluate]
+  have haddr := evalPanSemStateExp_agree production exact hrel hranged address haddress
+  have hclassAddr := evalHOLFinite_eq_classical exact (expToHOL address)
+  cases hAddr : evalPanSemStateExp production address with
+  | none =>
+      have hexactAddr : @evalHOLExact 64 σ _ exact.toExact
+          (fun a => Classical.propDecidable (exact.memaddrs a)) (expToHOL address) = none := by
+        rw [hclassAddr, ← haddr, hAddr]
+        rfl
+      rw [panSemTotalStoreClause_none production address value hAddr]
+      simp only [evaluateHOLFiniteState_store, hexactAddr]
+      exact ⟨trivial, hrel⟩
+  | some addrValue =>
+      have hexactAddr : @evalHOLExact 64 σ _ exact.toExact
+          (fun a => Classical.propDecidable (exact.memaddrs a)) (expToHOL address)
+          = some (panValueToHOL addrValue) := by
+        rw [hclassAddr, ← haddr, hAddr]
+        rfl
+      cases addrValue with
+      | word addr =>
+          have hval := evalPanSemStateExp_agree production exact hrel hranged value hvalue
+          have hclassVal := evalHOLFinite_eq_classical exact (expToHOL value)
+          cases hValue : evalPanSemStateExp production value with
+          | none =>
+              have hexactValue : @evalHOLExact 64 σ _ exact.toExact
+                  (fun a => Classical.propDecidable (exact.memaddrs a)) (expToHOL value) = none := by
+                rw [hclassVal, ← hval, hValue]
+                rfl
+              have hclause : panSemTotalStoreClause production address value = (some .error, production) := by
+                simp [panSemTotalStoreClause, panSemTotalExprStep, hAddr, hValue]
+              rw [hclause]
+              simp only [evaluateHOLFiniteState_store, hexactAddr, panValueToHOL_word, hexactValue]
+              exact ⟨trivial, hrel⟩
+          | some storedValue =>
+              have hexactAddr' : @evalHOLExact 64 σ _ exact.toExact
+                  (fun a => Classical.propDecidable (exact.memaddrs a)) (expToHOL address)
+                  = some (.val (.word addr)) := by
+                simpa only [panValueToHOL_word] using hexactAddr
+              have hexactValue : @evalHOLExact 64 σ _ exact.toExact
+                  (fun a => Classical.propDecidable (exact.memaddrs a)) (expToHOL value)
+                  = some (panValueToHOL storedValue) := by
+                rw [hclassVal, ← hval, hValue]
+                rfl
+              exact panSemTotalStoreClause_agree production exact hrel address value addr storedValue
+                hAddr hValue hexactAddr' hexactValue
+      | rStruct fields =>
+          have hclause : panSemTotalStoreClause production address value = (some .error, production) := by
+            simp [panSemTotalStoreClause, panSemTotalExprStep, hAddr]
+          rw [hclause]
+          simp only [evaluateHOLFiniteState_store, hexactAddr, panValueToHOL]
+          exact ⟨trivial, hrel⟩
+      | nStruct name fields =>
+          have hclause : panSemTotalStoreClause production address value = (some .error, production) := by
+            simp [panSemTotalStoreClause, panSemTotalExprStep, hAddr]
+          rw [hclause]
+          simp only [evaluateHOLFiniteState_store, hexactAddr, panValueToHOL]
+          exact ⟨trivial, hrel⟩
+
+/-- The fully assembled production/exact `Store`-clause agreement with both
+    expression premises (`ExpByteRanged address`, `ExpByteRanged value`)
+    discharged from the executed program node's `ProgByteRanged` hypothesis
+    (mirroring `panSemTotalEvaluate_assign_agree_of_progByteRanged`). -/
+theorem panSemTotalEvaluate_store_agree_of_progByteRanged {σ : Type}
+    (primitive : PanPrimitiveHandler (RiscV.Word 64))
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (hranged : PanSemStateRelExecRanged production)
+    (address value : Exp (RiscV.Word 64))
+    (hprogram : ProgByteRanged (.store address value)) :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluate primitive (.store address value) production).1
+        (evaluateHOLFiniteState exact (.store (expToHOL address) (expToHOL value))).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluate primitive (.store address value) production).2
+        (evaluateHOLFiniteState exact (.store (expToHOL address) (expToHOL value))).2.toExact := by
+  obtain ⟨haddress, hvalue⟩ := hprogram
+  exact panSemTotalEvaluate_store_agree primitive production exact hrel hranged
+    address value haddress hvalue
+
 /-! ## Rangedness preservation and the `PanSemStateRelExec`/rangedness boundary
 
 `PanSemStateRelExecRanged` (`:94`) is the byte-range premise of the all-16
