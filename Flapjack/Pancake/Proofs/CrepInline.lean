@@ -981,6 +981,40 @@ def crepInlineLocalsRelExact {width : Nat} [NeZero width] {σ : Type}
     (s t : CrepSemHOLState width σ) : Prop :=
   ∀ key value, s.locals.lookup key = some value → t.locals.lookup key = some value
 
+/-- Exact finite-support carrier port of CakeML's `locals_ext_rel`
+(`crep_inlineProofScript.sml:162-165`): the locals added when running from
+`a` to `a'` equal those added from `b` to `b'`, i.e.
+`FDIFF a'.locals (FDOM a.locals) = FDIFF b'.locals (FDOM b.locals)`.
+`crepHolFdiff`/`crepHolFdom` render HOL's `FDIFF`/`FDOM` extensionally over
+`CrepSemHOLState`'s finite-support `locals` field. -/
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "locals_ext_rel_def"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
+def crepInlineLocalsExtRelExact {width : Nat} [NeZero width] {σ : Type}
+    (a b a' b' : CrepSemHOLState width σ) : Prop :=
+  crepHolFdiff a'.locals.lookup (crepHolFdom a.locals.lookup) =
+    crepHolFdiff b'.locals.lookup (crepHolFdom b.locals.lookup)
+
+/-- Exact finite-support carrier port of CakeML's `locals_rel_dec_clock`
+(`crep_inlineProofScript.sml:167-173`): both relations are preserved by
+`dec_clock`, since only `clock` changes. The conclusion is the source
+conjunction of `locals_rel` and `state_rel` at the decremented clocks. -/
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "locals_rel_dec_clock"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
+theorem crepInlineLocalsRel_decClockExact {width : Nat} [NeZero width] {σ : Type}
+    (s t : CrepSemHOLState width σ)
+    (h : crepInlineLocalsRelExact s t ∧ crepInlineStateRelExact s t) :
+    crepInlineLocalsRelExact (decClockCrepSemHOL s) (decClockCrepSemHOL t) ∧
+    crepInlineStateRelExact (decClockCrepSemHOL s) (decClockCrepSemHOL t) := by
+  obtain ⟨hlocals, hstate⟩ := h
+  obtain ⟨hg, hc, hm, hma, hsm, hcl, hbe, hf, hba, hta⟩ := hstate
+  refine ⟨?_, ?_⟩
+  · intro key value hlookup
+    simpa only [decClockCrepSemHOL] using hlocals key value hlookup
+  · simp only [crepInlineStateRelExact, decClockCrepSemHOL]
+    exact ⟨hg, hc, hm, hma, hsm, by rw [hcl], hbe, hf, hba, hta⟩
+
 /-- Exact finite-support carrier port of CakeML's `state_rel_code` relation:
 globals, memory, memory domains, clock, endianness, FFI state, and base/top
 addresses agree; locals and code are intentionally omitted as in HOL. -/

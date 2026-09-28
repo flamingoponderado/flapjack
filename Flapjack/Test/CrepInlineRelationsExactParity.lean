@@ -95,6 +95,45 @@ private theorem stateRelationChecksClock :
   have hclock := h.2.2.2.2.2.1
   exact (by decide : ¬ (5 : Nat) = 6) hclock
 
+-- HOL `locals_ext_rel_self` row: both sides drop their own full `FDOM`.
+private theorem localsExtRelSelf :
+    CrepInlineExact.crepInlineLocalsExtRelExact
+      (state leftLocals) (state extendedLocals)
+      (state leftLocals) (state extendedLocals) := by
+  simp only [CrepInlineExact.crepInlineLocalsExtRelExact, state,
+    crepHolFdiff_fdom_self]
+
+-- HOL `locals_ext_rel_same_extension` row: identical added locals compare equal.
+private theorem localsExtRelSameExtension :
+    CrepInlineExact.crepInlineLocalsExtRelExact
+      (state leftLocals) (state leftLocals)
+      (state extendedLocals) (state extendedLocals) := by
+  simp only [CrepInlineExact.crepInlineLocalsExtRelExact, state]
+
+-- HOL `locals_ext_rel_unequal_witness` row: the two `FDIFF`/`FDOM` maps differ
+-- at key `2` (the shared extension), so the relation is non-vacuous.
+private theorem localsExtRelUnequalWitness :
+    crepHolFdiff extendedLocals.lookup (crepHolFdom leftLocals.lookup) 2 ≠
+      crepHolFdiff extendedLocals.lookup (crepHolFdom extendedLocals.lookup) 2 := by
+  simp [crepHolFdiff, crepHolFdom, leftLocals, extendedLocals,
+    HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL]
+
+-- HOL `locals_rel_dec_clock` / `state_rel_dec_clock` rows.
+private theorem localsRelDecClock :
+    CrepInlineExact.crepInlineLocalsRelExact
+        (decClockCrepSemHOL (state leftLocals))
+        (decClockCrepSemHOL (state extendedLocals)) ∧
+      CrepInlineExact.crepInlineStateRelExact
+        (decClockCrepSemHOL (state leftLocals))
+        (decClockCrepSemHOL (state extendedLocals)) :=
+  CrepInlineExact.crepInlineLocalsRel_decClockExact
+    (state leftLocals) (state extendedLocals)
+    ⟨localsExtension, stateRelationIgnoresLocals⟩
+
+private def decClockRowsMatchOracle : Bool :=
+  (decClockCrepSemHOL (state leftLocals)).clock == 4 &&
+    (decClockCrepSemHOL (state extendedLocals)).clock == 4
+
 private def finiteMapRowsMatchOracle : Bool :=
   leftLocals.lookup 1 == some (.word (word8 7)) &&
     extendedLocals.lookup 1 == some (.word (word8 7)) &&
@@ -102,6 +141,6 @@ private def finiteMapRowsMatchOracle : Bool :=
     missingLocals.lookup 1 == none &&
     conflictingLocals.lookup 1 == some (.word (word8 8))
 
-def runChecks : IO Bool := pure finiteMapRowsMatchOracle
+def runChecks : IO Bool := pure (finiteMapRowsMatchOracle && decClockRowsMatchOracle)
 
 end Flapjack.Test.CrepInlineRelationsExactParity
