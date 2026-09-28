@@ -11,7 +11,7 @@ records the broad (`PanSemStateExact`) shape preservation used by the faithful
 port of that HOL theorem.  No `@[hol]` tag: this is carrier/bookkeeping
 infrastructure, not a standalone HOL declaration.
 -/
-import Flapjack.Pancake.Semantics.PanSem.TickShMemExact
+import Flapjack.Pancake.Semantics.PanSem.TotalEvalExact
 
 open Flapjack.Pancake.PanLang
 
@@ -160,5 +160,119 @@ theorem shMemStoreClauseHOLExact_globalsShapesExact {width : Nat} {σ : Type} [N
       globalsShapesExact state := by
   unfold shMemStoreClauseHOLExact shMemStoreHOLExact
   repeat (first | split | rfl)
+
+/-! ## Preservation for the remaining exact nonrecursive steps and dispatcher -/
+
+/-- Flapjack-specific untagged infrastructure for HOL
+`evaluate_global_shape_invariant`: the remaining nonrecursive clause steps never
+write a global binding, so they preserve `globalsShapesExact`. -/
+theorem primitiveStepHOLExact_globalsShapesExact {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateExact width σ) (name : MlS) (operator : PrimOp)
+    (arguments : List (ExpHOL width))
+    (evalExpressions : PanSemStateExact width σ → List (ExpHOL width) →
+      Option (List (ValueHOL width))) :
+    globalsShapesExact
+        (primitiveStepHOLExact state name operator arguments evalExpressions).2 =
+      globalsShapesExact state := by
+  unfold primitiveStepHOLExact
+  repeat (first | split | rfl)
+  all_goals simp only [globalsShapesExact_emptyLocalsHOLExact]
+
+theorem storeStepHOLExact_globalsShapesExact {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateExact width σ) [DecidablePred state.memaddrs]
+    (destination source : ExpHOL width)
+    (evalExpression : PanSemStateExact width σ → ExpHOL width → Option (ValueHOL width)) :
+    globalsShapesExact
+        (storeStepHOLExact state destination source evalExpression).2 =
+      globalsShapesExact state := by
+  unfold storeStepHOLExact
+  repeat (first | split | rfl)
+  all_goals simp only [globalsShapesExact_emptyLocalsHOLExact]
+
+theorem store32StepHOLExact_globalsShapesExact {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateExact width σ) [DecidablePred state.memaddrs]
+    (address value : ExpHOL width)
+    (evalExpression : PanSemStateExact width σ → ExpHOL width → Option (ValueHOL width)) :
+    globalsShapesExact
+        (store32StepHOLExact state address value evalExpression).2 =
+      globalsShapesExact state := by
+  unfold store32StepHOLExact
+  repeat (first | split | rfl)
+  all_goals simp only [globalsShapesExact_emptyLocalsHOLExact]
+
+theorem storeByteStepHOLExact_globalsShapesExact {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateExact width σ) [DecidablePred state.memaddrs]
+    (address value : ExpHOL width)
+    (evalExpression : PanSemStateExact width σ → ExpHOL width → Option (ValueHOL width)) :
+    globalsShapesExact
+        (storeByteStepHOLExact state address value evalExpression).2 =
+      globalsShapesExact state := by
+  unfold storeByteStepHOLExact
+  repeat (first | split | rfl)
+  all_goals simp only [globalsShapesExact_emptyLocalsHOLExact]
+
+theorem extCallStepHOLExact_globalsShapesExact {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateExact width σ) [DecidablePred state.memaddrs]
+    (evalExpression : PanSemStateExact width σ → ExpHOL width → Option (ValueHOL width))
+    (function : MlS) (ptr1 len1 ptr2 len2 : ExpHOL width) :
+    globalsShapesExact
+        (extCallStepHOLExact state evalExpression function ptr1 len1 ptr2 len2).2 =
+      globalsShapesExact state := by
+  unfold extCallStepHOLExact
+  repeat (first | split | rfl)
+  all_goals simp only [globalsShapesExact_emptyLocalsHOLExact]
+
+theorem returnStepHOLExact_globalsShapesExact {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateExact width σ) (expression : ExpHOL width)
+    (evalExpression : PanSemStateExact width σ → ExpHOL width → Option (ValueHOL width)) :
+    globalsShapesExact (returnStepHOLExact state expression evalExpression).2 =
+      globalsShapesExact state := by
+  unfold returnStepHOLExact
+  repeat (first | split | rfl)
+  all_goals simp only [globalsShapesExact_emptyLocalsHOLExact]
+
+theorem raiseStepHOLExact_globalsShapesExact {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateExact width σ) (exceptionId : MlS) (expression : ExpHOL width)
+    (evalExpression : PanSemStateExact width σ → ExpHOL width → Option (ValueHOL width)) :
+    globalsShapesExact (raiseStepHOLExact state exceptionId expression evalExpression).2 =
+      globalsShapesExact state := by
+  unfold raiseStepHOLExact
+  repeat (first | split | rfl)
+  all_goals simp only [globalsShapesExact_emptyLocalsHOLExact]
+
+theorem tickStepHOLExact_globalsShapesExact {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateExact width σ) :
+    globalsShapesExact (tickStepHOLExact state).2 = globalsShapesExact state := by
+  unfold tickStepHOLExact
+  repeat (first | split | rfl)
+  all_goals simp only [globalsShapesExact_emptyLocalsHOLExact]
+
+/-- Exact nonrecursive dispatcher preserves `globalsShapesExact`. -/
+theorem evalPanSemNonrecursiveHOLExact_globalsShapesExact {width : Nat} {σ : Type}
+    [NeZero width] (program : ProgHOL width) (state : PanSemStateExact width σ)
+    [DecidablePred state.memaddrs] [DecidablePred state.shMemaddrs]
+    (result : Option (PanSemResultExact width)) (output : PanSemStateExact width σ)
+    (heval : evalPanSemNonrecursiveHOLExact program state = some (result, output)) :
+    globalsShapesExact output = globalsShapesExact state := by
+  have hmap :
+      (evalPanSemNonrecursiveHOLExact program state).map
+          (fun pair : Option (PanSemResultExact width) × PanSemStateExact width σ =>
+            globalsShapesExact pair.2) =
+        (evalPanSemNonrecursiveHOLExact program state).map
+          (fun _ : Option (PanSemResultExact width) × PanSemStateExact width σ =>
+            globalsShapesExact state) := by
+    cases program <;>
+      simp [evalPanSemNonrecursiveHOLExact, primitiveStepHOLExact_globalsShapesExact,
+        storeStepHOLExact_globalsShapesExact, store32StepHOLExact_globalsShapesExact,
+        storeByteStepHOLExact_globalsShapesExact, extCallStepHOLExact_globalsShapesExact,
+        returnStepHOLExact_globalsShapesExact, raiseStepHOLExact_globalsShapesExact,
+        tickStepHOLExact_globalsShapesExact, shMemLoadClauseHOLExact_globalsShapesExact,
+        shMemStoreClauseHOLExact_globalsShapesExact, assignStepHOLExact_globalsShapesExact]
+  have hproj := congrArg
+    (Option.map fun pair : Option (PanSemResultExact width) × PanSemStateExact width σ =>
+      globalsShapesExact pair.2) heval
+  rw [hmap, heval] at hproj
+  simp only [Option.map_some] at hproj
+  exact (Option.some.inj hproj).symm
 
 end Flapjack
