@@ -175,7 +175,9 @@ FFI hands back.  The Crep primitive decodes `newBytes.map UInt8.ofBitVec` with
 `panWordOfBytesHOL false 0`.  This section develops the byte-sum arithmetic
 shared by both decoders: both equal the little-endian integer sum
 `∑ b_i * 256 ^ i` reduced modulo `2 ^ width`, so the two decoders agree for
-every byte list when `8 ∣ width`.  The sum is packaged by `leSumB`; the
+every byte list when `8 ∣ width` (the convention of the existing byte carriers:
+`panWordToBytesHOL`/`panSetByteHOL` already index `width / 8` byte slots, and
+the RISC-V targets have width 32/64).  The sum is packaged by `leSumB`; the
 remaining step (the `panSetByteHOL` reassembly identity `panSetByteHOL_ofNat_eq`
 and the Pan-side induction) is tracked by `flapjack-pxn.18.4.3.111.1.1.2`.
 -/
@@ -238,13 +240,22 @@ theorem leSumB_lt (bs : List (BitVec 8)) (k : Nat) :
   have hpos : 0 < 256 ^ k := Nat.pow_pos (by decide)
   omega
 
-/-- Kernel-checked regression instances of the eventual decode equality
+/-- Kernel-checked regression instances of the decode equality
     `panWordOfBytesHOL false 0 bs = crepClockWordOfBytes (bs.map UInt8.ofBitVec)`
-    at widths 8 and 16 with byte lists longer than one word. -/
+    at widths 8, 16 and the RISC-V width 64, with byte lists longer than one
+    word (the FFI-returned `new_bytes` is not length-bounded by the source, so
+    the overlong case is the relevant one). -/
 example : panWordOfBytesHOL (width := 8) false (0 : RiscV.Word 8) [1, 2, 3]
     = crepClockWordOfBytes ([1, 2, 3].map UInt8.ofBitVec) := by decide
 
 example : panWordOfBytesHOL (width := 16) false (0 : RiscV.Word 16) [1, 2, 3, 4, 5]
     = crepClockWordOfBytes ([1, 2, 3, 4, 5].map UInt8.ofBitVec) := by decide
+
+example : panWordOfBytesHOL (width := 64) false (0 : RiscV.Word 64)
+    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    = crepClockWordOfBytes ([1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map UInt8.ofBitVec) := by decide
+
+example : panWordOfBytesHOL (width := 64) false (0 : RiscV.Word 64) [255, 1]
+    = crepClockWordOfBytes ([255, 1].map UInt8.ofBitVec) := by decide
 
 end Flapjack
