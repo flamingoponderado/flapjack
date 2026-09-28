@@ -1096,6 +1096,11 @@ run_probe globals_lookup_probeScript.sml globals_lookup_probe.out \
   lookup_success lookup_missing lookup_struct \
   "$cake_dir/pancake/proofs/pan_to_crepProofScript.sml" \
   "$cake_dir/pancake/proofs"
+run_probe pan_globals_compile_probeScript.sml pan_globals_compile_probe.out \
+  local_assign global_destination_handler_flag global_destination_handler_local_arg \
+  "$cake_dir/pancake/pan_globalsScript.sml" \
+  "$cake_dir/pancake"
+
 run_probe pan_globals_compile_top_probeScript.sml pan_globals_compile_top_probe.out \
   missing_start global_present present_start "$cake_dir/pancake/pan_globalsScript.sml"
 run_probe pan_globals_compile_decs_probeScript.sml pan_globals_compile_decs_probe.out \
