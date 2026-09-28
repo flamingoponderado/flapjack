@@ -1308,6 +1308,9 @@ run_probe crep_to_loop_compile_exp_probeScript.sml crep_to_loop_compile_exp_prob
 run_probe crep_to_loop_compile_probeScript.sml crep_to_loop_compile_probe.out \
   loop_nested_seq_empty compile_ext_call \
   "$cake_dir/pancake/crep_to_loopScript.sml"
+run_probe crep_to_loop_ocompile_probeScript.sml crep_to_loop_ocompile_probe.out \
+  ocompile_skip ocompile_call \
+  "$cake_dir/pancake/crep_to_loopScript.sml"
 run_probe compile_crepop_probeScript.sml compile_crepop_probe.out \
   compile_crepop_mul_riscv compile_crepop_mul_armv7 \
   "$cake_dir/pancake/crep_to_loopScript.sml"
