@@ -1219,44 +1219,6 @@ theorem evalHOL_upd_eshapes_eq {width : Nat} {σ : Type} [NeZero width]
   simp only [evalHOL]
   exact evalHOLExact_upd_eshapes_eq state.toExact expression eshapes.lookup
 
-/-- Exact finite-support port of HOL `panProps$update_locals_not_vars_eval_eq_eq`
-    (`cakeml/pancake/semantics/panPropsScript.sml:1042`):
-    `!s e v n w. ~MEM n (var_exp e) ==>
-       eval (s with locals := s.locals |+ (n,w)) e = eval s e`.
-    Updating `locals` at a name absent from `var_exp e` leaves evaluation
-    unchanged; the HOL `|+` update is `HolFiniteMapExact.update` on the reviewed
-    carrier. As in the sibling `eval_upd_clock_eq`/`_code_eq`/`_eshapes_eq`
-    ports, the state is the PanProps counterpart carrier
-    `PanPropsEvalStateFiniteExact` whose four `|->` fields are the reviewed
-    canonical `HolFiniteMapExact` translation (canonical witness
-    `holFmapAsFiniteSupportWitness` in this module), and `evalHOL` delegates to
-    the exact broad evaluator through `toExact`; the field-for-field codec
-    connects the carrier to the canonical tagged PanSem state. The statement
-    follows from the broad untagged analogue `evalHOLExact_updLocals_not_mem`
-    over `PanSemStateExact`, bridged through `toExact` and the HOL-equality/`BEq`
-    `FUPDATE` agreement `FUPDATE_HOL_eq_FUPDATE`. HOL quantifies an unused
-    polymorphic `v` (`!s e v n w`); it occurs nowhere in the conclusion, so HOL
-    infers a fresh type variable for it, restored here as the vacuous binder
-    `{ν : Type} (_v : ν)` (spelled `_v` only to satisfy the unused-variable
-    linter; the quantified binder is present). `[NeZero width]`
-    records HOL's positive word dimension. The carrier is width-indexed
-    (`[NeZero width]` with `RiscV.Word width`/`BitVec width` fields), so HOL's
-    type-indexed `'a word` translation is recorded by the
-    `(words_as_type_indexed_bitvec)` qualifier alongside the finite-support field
-    qualifier, matching the sibling `opt_mmap_eval_upd_clock_eq` tag. -/
-@[hol "cakeml/pancake/semantics/panPropsScript.sml" "update_locals_not_vars_eval_eq_eq"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])
-  (words_as_type_indexed_bitvec)]
-theorem evalHOL_updLocals_not_mem {width : Nat} {σ : Type} [NeZero width]
-    (state : PanPropsEvalStateFiniteExact width σ) [h : DecidablePred state.memaddrs]
-    (expression : ExpHOL width) {ν : Type} (_v : ν) (name : MlS) (word : ValueHOL width)
-    (hnot : name ∉ varExpHOL expression) :
-    @evalHOL width σ _ { state with locals := state.locals.update (name, word) } h expression =
-      @evalHOL width σ _ state h expression := by
-  simpa only [evalHOL, PanPropsEvalStateFiniteExact.toExact, HolFiniteMapExact.update,
-    FUPDATE_HOL_eq_FUPDATE] using
-    evalHOLExact_updLocals_not_mem state.toExact name word expression hnot
-
 /-- Exact port of HOL `panProps$opt_mmap_eval_upd_clock_eq`
     (`cakeml/pancake/semantics/panPropsScript.sml:674-680`):
     `!es s ck. OPT_MMAP (eval (s with clock := ck + s.clock)) es =
