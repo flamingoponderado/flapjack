@@ -151,6 +151,7 @@ import Flapjack.Test.PanToCrepRetInst2Parity
 import Flapjack.Test.PanToCrepUtilitiesParity
 import Flapjack.Test.BackendCommonCarryParity
 import Flapjack.Test.PanCrepPrimopParity
+import Flapjack.Test.CrepPrimopLoopPrimopParity
 import Flapjack.Test.CompileProgParamsParity
 import Flapjack.Test.PanToCrepCodeRelParity
 import Flapjack.Test.PanToCrepStateRelParity
@@ -1124,6 +1125,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.LoopSemShMemExactParity.runChecks,
     Flapjack.Test.LoopSemWordMemExactParity.runChecks,
     Flapjack.Test.LoopSemPrimopBytesExactParity.runChecks,
+    Flapjack.Test.CrepPrimopLoopPrimopParity.runChecks,
     Flapjack.Test.LoopSemEvaluateExactParity.runChecks,
     Flapjack.Test.HolLListParity.runChecks,
     Flapjack.Test.LoopSemSemanticsExactParity.runChecks,

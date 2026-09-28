@@ -275,8 +275,8 @@
     "hol_name": "loop_primop_def",
     "lean_path": "Flapjack/Pancake/Semantics/LoopSem.lean",
     "lean_name": "loopPrimopHOL",
-    "statement_status": "reviewed_exact",
-    "reviewer": "Codex (constructor-by-constructor source comparison)"
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-ds9 (bead flapjack-ptzz): the `@[hol]` tag is WITHDRAWN. This declaration is valued in `LoopValue` (`Flapjack/LoopFindCode.lean`), a Flapjack executable/faithful loop value, not the exact HOL `word_loc` carrier `WordLocW` (`Flapjack/Pancake/WordLang.lean`), so the unqualified `reviewed_exact` claim was a carrier mismatch. The canonical source-exact port is `LoopSemStateFiniteExact.loopPrimop` (`Flapjack/Pancake/Semantics/LoopSemStateExact.lean`), valued in `WordLocW` and tagged `loop_primop_def` with `(words_as_type_indexed_bitvec)`."
   },
   {
     "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
@@ -19231,6 +19231,15 @@
       "vars",
       "funcs"
     ]
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "crep_primop_loop_primop",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/Primop.lean",
+    "lean_name": "crepPrimopLoopPrimopHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "deepseek source comparison (bead flapjack-pxn.18.5.6.33.8) against crep_primop_loop_primop at crep_to_loopProofScript.sml:2337-2355. HOL quantifies pop over panLang$primop, ws : 'a word_lab list, res_ws : 'a word_lab list with the single premise crep_primop pop ws = SOME res_ws, concluding loop_primop pop (MAP wlab_wloc ws) = SOME (MAP wlab_wloc res_ws). Clause case review: pop is the single AddCarry constructor; crep_primop and loop_primop share the identical LENGTH args = 3 /\\ EVERY isWord guard and the same word_add_carry payload computation, so the only content is the word_lab -> word_loc constructor correspondence: wlab_wloc (panSem$Word w) = wordLang$Word w. Lean uses the exact reviewed crepPrimopHOLExact (HolWordLab, tagged crep_primop_def) and the exact WordLocW-valued loop_primop port LoopSemStateFiniteExact.loopPrimop (tagged loop_primop_def), bridged by the exact wlabWlocHOL (HolWordLab.word v -> WordLocW.word v). The exact word_loc carrier requires the WordLocW-valued loop_primop; the Flapjack LoopValue-valued loopPrimopHOL is a different carrier and is deliberately not used. The words_as_type_indexed_bitvec qualifier records the type-indexed BitVec rendering of HOL polymorphic word_lab and word_loc carriers; HolWordLab and WordLocW are otherwise reviewed exact carriers. Direct HOL EVAL rows crep_valid/loop_valid_mapped/preserve_valid/crep_overflow/loop_overflow_mapped/preserve_overflow/crep_nonzero_carry/loop_nonzero_carry_mapped/preserve_nonzero_carry/crep_invalid_two/preserve_invalid_two/crep_invalid_four/preserve_invalid_four in scripts/hol-probes/crep_primop_loop_primop_probe.out are replayed by Flapjack.Test.CrepPrimopLoopPrimopParity (#guards plus kernel-checked examples applying crepPrimopLoopPrimopHOL)."
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
