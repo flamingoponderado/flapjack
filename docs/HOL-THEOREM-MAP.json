@@ -686,7 +686,7 @@
     "lean_path": "Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean",
     "lean_name": "evalCrepSemHOLProgExact_seq_fixClockFree",
     "statement_status": "documented_mismatch",
-    "reviewer": "Untagged Flapjack-specific Seq analogue of HOL evaluate_def at crepSemScript.sml:443. Its evaluator is evalCrepSemHOLProgExact; whole-evaluator agreement with HOL evaluate has not yet been reviewed across Call, domain stamping, and FFI. The equation remains useful infrastructure but cannot claim an exact HOL port."
+    "reviewer": "Untagged Flapjack-specific Seq analogue of HOL evaluate_def at crepSemScript.sml:443. Its evaluator is evalCrepSemHOLProgExact; whole-evaluator agreement with HOL evaluate has not yet been reviewed across Call, domain stamping, and FFI. The equation remains useful infrastructure but cannot claim an exact HOL port. Superseded as the evaluator-agreement gap by the tagged assembly evalCrepSemHOLProgExact_eq_evaluate_def (bead flapjack-4ac.5.16.5.37); this clause lemma stays untagged."
   },
   {
     "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
@@ -694,7 +694,7 @@
     "lean_path": "Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean",
     "lean_name": "evalCrepSemHOLProgExact_while_fixClockFree",
     "statement_status": "documented_mismatch",
-    "reviewer": "Untagged Flapjack-specific While analogue of HOL evaluate_def at crepSemScript.sml:443. Its evaluator is evalCrepSemHOLProgExact; whole-evaluator agreement with HOL evaluate has not yet been reviewed across Call, domain stamping, and FFI. The equation remains useful infrastructure but cannot claim an exact HOL port."
+    "reviewer": "Untagged Flapjack-specific While analogue of HOL evaluate_def at crepSemScript.sml:443. Its evaluator is evalCrepSemHOLProgExact; whole-evaluator agreement with HOL evaluate has not yet been reviewed across Call, domain stamping, and FFI. The equation remains useful infrastructure but cannot claim an exact HOL port. Superseded as the evaluator-agreement gap by the tagged assembly evalCrepSemHOLProgExact_eq_evaluate_def (bead flapjack-4ac.5.16.5.37); this clause lemma stays untagged."
   },
   {
     "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
@@ -14963,7 +14963,22 @@
     "lean_path": "Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean",
     "lean_name": "evalCrepSemHOLProgExact_skip",
     "statement_status": "documented_mismatch",
-    "reviewer": "Coordinator review HOLD flapjack-l60u (2026-09-27): HOL crepSemScript.sml:443 rewrites evaluate_def; its Skip conjunct originates at line 241 and is the unconditional equation evaluate (Skip,s)=(NONE,s). The local evalCrepSemHOLProgExact_skip equation matches that constructor clause, but it only checks the Skip behavior of Flapjack's evalCrepSemHOLProgExact. No source-reviewed theorem establishes agreement of this total evaluator with HOL evaluate across all constructors, including FFI cases, so this constructor equation alone is not tagged as a port of evaluate_def. The tag and reviewed-type lock were withdrawn; the useful local Skip equation remains untagged infrastructure. Faithful evaluator port remains open under flapjack-4ac.5.16.5 and flapjack-4ac.5.16.5.25."
+    "reviewer": "Coordinator review HOLD flapjack-l60u (2026-09-27): HOL crepSemScript.sml:443 rewrites evaluate_def; its Skip conjunct originates at line 241 and is the unconditional equation evaluate (Skip,s)=(NONE,s). The local evalCrepSemHOLProgExact_skip equation matches that constructor clause, but it only checks the Skip behavior of Flapjack's evalCrepSemHOLProgExact. No source-reviewed theorem establishes agreement of this total evaluator with HOL evaluate across all constructors, including FFI cases, so this constructor equation alone is not tagged as a port of evaluate_def. The tag and reviewed-type lock were withdrawn; the useful local Skip equation remains untagged infrastructure. Faithful evaluator port remains open under flapjack-4ac.5.16.5 and flapjack-4ac.5.16.5.25. Superseded as the evaluator-agreement gap by the tagged assembly evalCrepSemHOLProgExact_eq_evaluate_def (bead flapjack-4ac.5.16.5.37); this clause lemma stays untagged."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 443,
+    "lean_path": "Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean",
+    "lean_name": "evalCrepSemHOLProgExact_eq_evaluate_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-28; beads flapjack-4ac.5.16.5.33/.34/.35/.36/.37): compared all 19 conjuncts of the line-443 rebound evaluate_def (REWRITE_RULE [fix_clock_evaluate] of crepSemScript.sml:240-379) with the 19 arms of this one match-program equation over evalCrepSemHOLProgExact. Skip/Break/Continue/Raise/Tick are identical. Dec evaluates the body on s with locals |+ (v,value) (updateEq) and restores with res_var (resVarEq) of FLOOKUP s.locals v. Primitive uses OPT_MMAP (FLOOKUP s.locals), crep_primop, and the Prop guard LENGTH/EVERY IS_SOME/ALL_DISTINCT with |++ ZIP. Assign/StoreGlob/Return use the tagged eval_def (evalCrepSemHOLExp), |+, set_globals, and empty_locals. Store/Store32/StoreByte use the tagged mem_store/mem_store_32/word8 mem_store_byte, with w2w = BitVec.ofNat. ShMem uses is_load (crepIsLoadMemOp, clause-for-clause asm is_load_def on CrepMemOp, the prog-reviewed memop carrier) and the tagged sh_mem_op port. Seq/While/Call have no fix_clock (line 443) and use plain matches with no domain stamping; Seq is if res = NONE; While matches res as Continue 0/NONE/Break 0/exit_loop. Call has OPT_MMAP eval args, lookup_code via lookupCodeFiniteHOL (lookup_code_def on the finite-support carrier, proved equal on lookups to the tagged lookupCodeHOL), the caltyp ALL_DISTINCT guard before the clock test, and callee state (dec_clock s) with locals := newlocals. Its Return/Exception/fall-through branches match HOL, and the handler runs on st with locals := s.locals. ExtCall uses the tagged read_bytearray/mem_load_byte/call_FFI/write_bytearray with HOL's ptr/len order. There is no premise, no result hypothesis, and no extra quantifier. HOL word sets are Prop predicates, decided classically (open Classical; choice invisible by evalCrepSemHOLProgExact_eq_core). The locals/globals/code |-> fields use the canonical HolFiniteMapExact carrier (same-module CrepSemShMemExact.holFmapAsFiniteSupportWitness), and 'a word/'ffi use the BitVec width [NeZero width]/σ : Type translation, hence the combined status. Each arm is proved by an untagged clause lemma; the tag is only on this assembly. Original-HOL oracle rows cover every arm; crep_evaluate_def_arms_probe.out (Flapjack.Test.CrepSemEvaluateDefArmsParity) adds Primitive and the Call handler catch/mismatch/absent/duplicate-rts cases."
   },
   {
     "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
