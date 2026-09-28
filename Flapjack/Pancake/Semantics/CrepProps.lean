@@ -7,6 +7,7 @@ import Flapjack.Pancake.Semantics.CrepSem
 import Flapjack.Pancake.Semantics.CrepSem.HOLState
 import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
 import Flapjack.Pancake.Semantics.CrepSem.EventsMono
+import Flapjack.Pancake.Semantics.CrepSem.AddClock
 import Flapjack.Pancake.PanCommon
 import Flapjack.Pancake.Semantics.PanCommonProps
 
@@ -1505,5 +1506,30 @@ theorem resVarLookupOriginalEqHOL {α β : Type} [DecidableEq α] :
   · rename_i hk
     simp only [HolFiniteMapExact.lookup_updateListEq]
     exact fupdateListHOL_zip_not_mem k xs ys lc.lookup hk
+
+/-- Exact port of HOL `crepProps$flookup_res_var_distinct_zip_eq`
+    (`cakeml/pancake/semantics/crepPropsScript.sml:777-794`):
+    `LENGTH xs = LENGTH ys /\ ~MEM x xs ==>
+      FLOOKUP (FOLDL res_var fm (ZIP (xs,ys))) x = FLOOKUP fm x`.
+    `res_var` is the tagged `HolFiniteMapExact.resVarEq` over HOL's `(key, value
+    option)` pairs, and `FLOOKUP` is `.lookup`. HOL's free variables become
+    the explicit binders, and HOL `=` on keys is `DecidableEq`. The standalone map
+    `fm` is recorded as a bare relation-qualifier entry. -/
+@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "flookup_res_var_distinct_zip_eq"
+  (fmap_as_finite_support_relation := [fm])]
+theorem flookupResVarDistinctZipEqHOL {α β : Type} [DecidableEq α] :
+    ∀ (xs : List α) (ys : List (Option β)) (fm : HolFiniteMapExact α β) (x : α),
+      xs.length = ys.length ∧ x ∉ xs →
+      ((xs.zip ys).foldl (fun current entry => HolFiniteMapExact.resVarEq current entry) fm).lookup x =
+        fm.lookup x
+  | [], _, fm, x, _ => rfl
+  | _ :: _, [], fm, x, ⟨hlen, _⟩ => by simp at hlen
+  | k :: xs, y :: ys, fm, x, ⟨hlen, hx⟩ => by
+      simp only [List.mem_cons, not_or] at hx
+      simp only [List.zip_cons_cons, List.foldl_cons]
+      rw [flookupResVarDistinctZipEqHOL xs ys _ x ⟨by simpa using hlen, hx.2⟩]
+      have hxk : x ≠ k := hx.1
+      cases y <;> simp [HolFiniteMapExact.resVarEq, HolFiniteMapExact.lookup_eraseEq,
+        HolFiniteMapExact.lookup_updateEq, FDOMSUB_HOL, FUPDATE_HOL, hxk]
 
 end Flapjack

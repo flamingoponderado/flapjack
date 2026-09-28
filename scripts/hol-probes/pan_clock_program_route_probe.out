@@ -1,0 +1,3 @@
+duplicate_function_front_update=SOME (Return (ValWord 2w))
+duplicate_function_front_update_changed_metadata=SOME (Return (RStruct []))
+nested_callee_return_shape_rejected=SOME Error
