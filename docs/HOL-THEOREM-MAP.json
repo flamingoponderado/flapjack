@@ -17020,6 +17020,20 @@
     "reviewer": "flapjack-opus source comparison (2026-09-28, bead flapjack-pxn.18.4.3.102; pan_to_crepProofScript.sml:442-468, While case resumed at :2188-2242; panSemScript.sml:777-778 rebound evaluate_ind). While constructor piece of HOL pc_compile_correct (AGENTS splitting rule, same tag, suffixed name), in the reviewed shape of pcCompileCorrect_Call. HOL's printed evaluate_ind While conjunct (hol run on panSemTheory.evaluate_ind) is !e c s. (!v2 v11 w res s1 v1. eval s e = SOME v2 /\\ v2 = Val v11 /\\ v11 = Word w /\\ w <> 0w /\\ s.clock <> 0 /\\ (res,s1) = evaluate (c,dec_clock s) /\\ res = SOME v1 /\\ v1 = Continue ==> P (While e c,s1)) /\\ (!v2 v11 w res s1. ... /\\ res = NONE ==> P (While e c,s1)) /\\ (!v2 v11 w. ... ==> P (c,dec_clock s)) ==> P (While e c,s); dec_clock is the tagged decClockHOLFinite. Lean keeps the binders, IH binders/side conditions in HOL order, and P = pcCompileCorrectAtHOL (reviewed with the Call case). The conclusion is P (While ..., s) unfolded: binders res s1 t ctxt, the conjunctive premise, and the existential target run with state_rel/code_rel/excp_rel and inline case res of. evaluate is the tagged total evaluateHOLFiniteState and evalCrepSemHOLProgExact; eval is the tagged exact expression evaluator with the classical address decision used by the tagged Pan arm; compile/relations/globals_lookup/flatten/shape_of/size_of_shape/localised_prog are the tagged exact ports; qualifiers and same-module witnesses as for the Call case. Proof via untagged pcCompileCorrectAt_while. No target-run or post-state premise."
   },
   {
+    "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
+    "hol_name": "evaluate_seq_store_globals_res",
+    "lean_path": "Flapjack/Pancake/Semantics/CrepProps.lean",
+    "lean_name": "evaluateSeqStoreGlobalsResHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-28, bead flapjack-pxn.18.4.3.104.1; crepPropsScript.sml:566-572): HOL !vars vs t a. ALL_DISTINCT vars /\\ LENGTH vars = LENGTH vs /\\ w2n a + LENGTH vs <= 32 ==> evaluate (nested_seq (store_globals a (MAP Var vars)), t with locals := t.locals |++ ZIP (vars,vs)) = (NONE, t with <|locals := t.locals |++ ZIP (vars,vs); globals := t.globals |++ ZIP (GENLIST (λx. a + n2w x) (LENGTH vs), vs)|>). Lean keeps the binders vars vs t a and the conjunctive premise (ALL_DISTINCT is Nodup, LENGTH is length, w2n is toNat on the word5 carrier BitVec 5). evaluate is the tagged line-443 evalCrepSemHOLProgExact, nested_seq/store_globals/Var are the tagged crepNestedSeqHOL/storeGlobalsHOL/CrepExpHOL.var, |++ ZIP is updateListEq (zip) on both locals and globals, GENLIST f n is (List.range n).map f with n2w the BitVec.ofNat 5 cast, and the record update is Lean's structure update. CrepSemHOLState locals/globals/code use the canonical finite-support carrier (same-module witness), and 'a word is BitVec width with [NeZero width]."
+  },
+  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/StoreByte.lean",
