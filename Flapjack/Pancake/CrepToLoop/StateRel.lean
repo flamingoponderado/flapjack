@@ -1,5 +1,6 @@
 import Flapjack.HolRef
 import Flapjack.Pancake.CrepToLoop
+import Flapjack.Pancake.CrepToLoop.ContextExact
 import Flapjack.Pancake.Semantics.CrepSem
 import Flapjack.Pancake.Semantics.CrepSem.HOLState
 import Flapjack.Pancake.Semantics.LoopSemStateExact
@@ -1004,67 +1005,29 @@ theorem sptListInsert_append (xs ys : List Nat) (tree : NumSet) :
     simp only [List.cons_append, sptListInsert]
     rw [ih (sptInsert x () tree), sptListInsert_insert x ys tree]
 
-/-! ## Exact `crep_to_loop` context carrier
+/-! ## Exact `ctxt_fc_def` over the exact context carrier
 
-HOL `crep_to_loop$context` (`cakeml/pancake/crep_to_loopScript.sml:11-18`) stores
-`vars : varname |-> num` (with `varname = num`), `funcs : funname |-> num # num`
-(with `funname = mlstring`), `vmax : num` and `target : architecture`. The exact
-carrier below renders both HOL finite maps with the reviewed canonical
-`HolFiniteMapExact` translation (numeric variable keys, `mlstring` function keys)
-and keeps `AsmArchitecture` for the HOL `architecture` datatype. The earlier
-`CrepToLoopFiniteMapContext` is the production/representational analogue with
-`String`-keyed `funcs` and stays untagged. -/
+The HOL `crep_to_loop$context` datatype and its exact finite-map carrier live in
+`Flapjack.Pancake.CrepToLoop.ContextExact` (`CrepToLoopContextExact`, tagged
+`context`). This section ports the proof-side constructor `ctxt_fc_def`, whose
+`funcs` argument is a standalone `HolFiniteMapExact` parameter. -/
 
 open Flapjack.Pancake.PanLang (MlS)
 
-/-- Broad function-backed representation of the exact `crep_to_loop` context,
-    used only to state the finite-support representation roundtrip. -/
-structure CrepToLoopContextBroad where
-  varsLookup : Nat → Option Nat
-  varsFiniteSupport : ∃ keys : List Nat, ∀ key, varsLookup key ≠ none → key ∈ keys
-  funcsLookup : MlS → Option (Nat × Nat)
-  funcsFiniteSupport : ∃ keys : List MlS, ∀ key, funcsLookup key ≠ none → key ∈ keys
-  vmax : Nat
-  target : Compiler.Encoders.Asm.AsmArchitecture
+private def CtxtFcExactParam.toBroadlookup (map : HolFiniteMapExact α β) : α → Option β :=
+  map.lookup
 
-/-- Exact HOL `crep_to_loop$context` record (`crep_to_loopScript.sml:11-18`).
-    Its `vars`/`funcs` fields use the reviewed `HolFiniteMapExact` translation of
-    the HOL finite maps; the key carriers are the exact `Nat` (`varname = num`)
-    and `MlS` (`funname = mlstring`). -/
-@[hol "cakeml/pancake/crep_to_loopScript.sml" "context"
-  (fmap_as_finite_support := [vars, funcs])]
-structure CrepToLoopContextExact where
-  vars : HolFiniteMapExact Nat Nat
-  funcs : HolFiniteMapExact MlS (Nat × Nat)
-  vmax : Nat
-  target : Compiler.Encoders.Asm.AsmArchitecture
+private def CtxtFcExactParam.ofBroad (lookup : α → Option β)
+    (support : ∃ keys : List α, ∀ key, lookup key ≠ none → key ∈ keys) :
+    HolFiniteMapExact α β :=
+  ⟨lookup, support⟩
 
-namespace CrepToLoopContextExact
-
-/-- Forget the finite-map wrappers while retaining their finite-support
-    witnesses. -/
-def toBroad (context : CrepToLoopContextExact) : CrepToLoopContextBroad where
-  varsLookup := context.vars.lookup
-  varsFiniteSupport := context.vars.finiteSupport
-  funcsLookup := context.funcs.lookup
-  funcsFiniteSupport := context.funcs.finiteSupport
-  vmax := context.vmax
-  target := context.target
-
-/-- Reconstruct the canonical finite-support carrier from its broad record. -/
-def ofBroad (context : CrepToLoopContextBroad) : CrepToLoopContextExact where
-  vars := ⟨context.varsLookup, context.varsFiniteSupport⟩
-  funcs := ⟨context.funcsLookup, context.funcsFiniteSupport⟩
-  vmax := context.vmax
-  target := context.target
-
-/-- Canonical finite-support witness required by the `context` qualifier. -/
-theorem holFmapAsFiniteSupportWitness (context : CrepToLoopContextExact) :
-    ofBroad (toBroad context) = context := by
-  cases context
+/-- Checked finite-map parameter translation for `ctxt_fc_def.funcs`. -/
+theorem holFmapAsFiniteSupportParamWitness_ctxtFcExact_cvs
+    (cvs : HolFiniteMapExact MlS (Nat × Nat)) :
+    CtxtFcExactParam.ofBroad (CtxtFcExactParam.toBroadlookup cvs) cvs.finiteSupport = cvs := by
+  cases cvs
   rfl
-
-end CrepToLoopContextExact
 
 /-- Exact port of HOL `ctxt_fc_def`
     (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:73-81`). Cake's
@@ -1072,7 +1035,7 @@ end CrepToLoopContextExact
     exact map, and `MAX_LIST args` is `args.foldr max 0`. The `funcs` map is
     passed through unchanged. -/
 @[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "ctxt_fc_def"
-  (fmap_as_finite_support := [vars, funcs])]
+  (fmap_as_finite_support_parameters := [cvs])]
 def ctxtFcExact (target : Compiler.Encoders.Asm.AsmArchitecture)
     (cvs : HolFiniteMapExact MlS (Nat × Nat)) (ns args : List Nat) :
     CrepToLoopContextExact where

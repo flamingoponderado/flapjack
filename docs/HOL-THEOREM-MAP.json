@@ -10886,27 +10886,12 @@
     "words_as_type_indexed_bitvec": true
   },
   {
-    "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
-    "hol_name": "context",
-    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
-    "lean_name": "CrepToLoopContextExact",
-    "statement_status": "reviewed_fmap_as_finite_support",
-    "fmap_as_finite_support": [
-      "vars",
-      "funcs"
-    ],
-    "reviewer": "flapjack-ds10 source comparison (2026-09-28; bead flapjack-pxn.18.5.6.31.2) against the HOL context datatype at crep_to_loopScript.sml:11-18. HOL fields: vars : varname |-> num with varname = num; funcs : funname |-> num # num with funname = mlstring (crepLangScript.sml:19,21); vmax : num; target : architecture (asmScript.sml:149-151). The Lean carrier renders vars/funcs with the reviewed canonical HolFiniteMapExact translation over the exact Nat and MlS keys (MlS = Basis.Pure.MlString.MlString), keeps Nat vmax, and uses Compiler.Encoders.Asm.AsmArchitecture for the HOL architecture datatype. Only representation difference is the two HOL finite maps, recorded by the field qualifier; the same-module witness holFmapAsFiniteSupportWitness (namespace CrepToLoopContextExact) establishes the finite-support roundtrip with the broad counterpart CrepToLoopContextBroad. No extra premise, hypothesis or conclusion changes. The String-keyed production analogue CrepToLoopFiniteMapContext stays untagged."
-  },
-  {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
     "hol_name": "ctxt_fc_def",
     "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
     "lean_name": "ctxtFcExact",
-    "statement_status": "reviewed_fmap_as_finite_support",
-    "fmap_as_finite_support": [
-      "vars",
-      "funcs"
-    ],
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "fmap_as_finite_support_parameters": ["cvs"],
     "reviewer": "flapjack-ds10 source comparison (2026-09-28; bead flapjack-pxn.18.5.6.31.2) against ctxt_fc_def at crep_to_loopProofScript.sml:73-81. HOL: ctxt_fc c cvs ns args = <| vars := FEMPTY |++ ZIP (ns,args); funcs := cvs; vmax := MAX_LIST args; target := c |>. The Lean definition builds the exact carrier over HolFiniteMapExact: vars from HolFiniteMapExact.updateList HolFiniteMapExact.empty (ns.zip args) (HOL FUPDATE_LIST), funcs passed through unchanged, vmax as args.foldr max 0 (HOL MAX_LIST), and target unchanged. Field qualifier justified by the same-module witness holFmapAsFiniteSupportWitness on CrepToLoopContextExact; the carrier/field mapping is identical to that structure row and no clause, quantifier or side condition differs from the HOL definition. Direct HOL probe rows for the context projection fields are in scripts/hol-probes/crep_to_loop_state_rel_probe.out and the locals_rel probe; the exact-carrier fixture path is under flapjack-pxn.18.5.6.31.2."
   },
   {
