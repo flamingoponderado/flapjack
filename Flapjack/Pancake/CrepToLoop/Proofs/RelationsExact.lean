@@ -82,10 +82,12 @@ end CrepToLoopCodeRelIntroFiniteMapWitnesses
     `HolFiniteMapExact.lookup`, `sptLookup`, `List.range`, `ctxtFcExact`,
     `list_to_num_set` = `listToNumSetHOLExact`, `ocompile` = `ocompileHOLExact`).
     No simplified relation or target-result premise is added; the proof is the
-    definitional unfolding, as in HOL (`rw [code_rel_def]`). -/
-@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "code_rel_intro"
-  (fmap_as_finite_support_relation := [CrepToLoopContextExact.funcs, s_code])
-  (words_as_type_indexed_bitvec)]
+    definitional unfolding, as in HOL (`rw [code_rel_def]`).
+
+    The `@[hol]` tag is WITHDRAWN: the canonical integrated exact port of HOL
+    `code_rel_intro` is `crepToLoopCodeRelExact_intro` in
+    `Flapjack/Pancake/CrepToLoop/StateRel.lean`; this lemma is kept as untagged
+    Flapjack infrastructure for comparison only. -/
 theorem crepToLoopCodeRelIntro {width : Nat} [NeZero width]
     (ctxt : CrepToLoopContextExact)
     (s_code : HolFiniteMapExact Flapjack.Pancake.PanLang.MlS (List Nat × CrepProgHOL width))
