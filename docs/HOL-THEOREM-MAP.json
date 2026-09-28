@@ -6890,6 +6890,35 @@
     "reviewer": "flapjack-luna-b source review (flapjack-pxn.18.4.3.73): HOL code_rel_def at pan_to_crepProofScript.sml:32-43 is code_rel ctxt s_code t_code with inner universal binders f, vshs, prog, rsh; the Lean codeRelExactHOLW keeps that order and all three clauses: source lookup implies localised_prog, ctxt.funcs lookup returns (vshs,rsh), and target lookup returns (GENLIST I (size_of_shape (Comb (MAP SND vshs))), compile (ctxt_fc ctxt.funcs ctxt.eids (MAP FST vshs) (MAP SND vshs) ns) prog). Exact carriers match: MlS=mlstring, ShapeHOL=shape, ProgHOL=prog, CrepProgHOL=crepLang$prog, positive-width BitVec=HOL word. The source/target HOL finite-map parameters are kept as separate Lean binders and use HolFiniteMapExact; the two traversed context map fields funcs/eids are likewise HolFiniteMapExact on PanToCrepContextExact. Relation qualifier records those two parameters and exact owner fields; a same-module witness forwards the context ofBroad/toBroad roundtrip. This tags only the exact proof-side definition, not production codeRel/codeRelW or pc_compile_correct; production path still uses String-backed maps and remains open on the parent bead. The combined words_as_type_indexed_bitvec qualifier records the type-indexed 'a word -> BitVec width translation (bead flapjack-ikjm.4)."
   },
   {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "mk_ctxt_code_imp_code_rel",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CodeRelExact.lean",
+    "lean_name": "mkCtxtCodeImpCodeRelExactHOLW",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanToCrepContextExact.funcs",
+      "PanToCrepContextExact.eids"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source review (flapjack-pxn.18.4.3.73.4): compared HOL mk_ctxt_code_imp_code_rel at pan_to_crepProofScript.sml:4604-4616 clause-by-clause. Both statements quantify the declaration program, require distinct function names and localization of every body, then establish code_rel under mk_ctxt FEMPTY (make_funcs (functions pan_code)) 0 (get_eids_from_decls pan_code) between alist_to_fmap (functions pan_code) and alist_to_fmap (compile_to_crep pan_code). Lean uses exact DeclHOL/MlS/ShapeHOL/ProgHOL/CrepProgHOL carriers; source/target alist_to_fmap values are represented by HolFiniteMapExact.updateList of reversed lists, preserving first-occurrence lookup, and compilation is through tagged compileToCrepExactHOLW/compileProgExactHOLW. The code_rel relation uses exact context funcs/eids fields, recorded with the canonical finite-support relation qualifier and its same-module context roundtrip witness; positive-width BitVec is resolved through the tagged DeclHOL -> FunDeclHOL/ProgHOL -> ExpHOL carrier chain and records HOL's type-indexed word. No additional premises or arbitrary-context narrowing were introduced. The direct code_rel_generated_initial EVAL expansion and theorem discharge rows are in scripts/hol-probes/code_rel_probe.out; the matching exact-carrier kernel regression is in Flapjack.Test.PanToCrepCodeRelParity."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CodeRelExact.lean",
+    "lean_name": "flookup_alistToFmap_eq_lookup",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific private helper proving the finite-map representation of HOL alist_to_fmap has first-occurrence lookup; no separate HOL declaration is claimed."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CodeRelExact.lean",
+    "lean_name": "compFuncExactHOLW_ctxtFcExactHOL",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific private bridge between the tagged comp_func body and the per-entry ctxt_fc context; no separate HOL declaration is claimed."
+  },
+  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CodeRelExact.lean",
@@ -16645,101 +16674,7 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "ds10 source comparison (2026-09-28, bead flapjack-pxn.18.4.3.97; pan_to_crepProofScript.sml:442-468, continue case resumed at :509-513; panSemScript.sml:777-778 rebound evaluate_ind). Continue constructor piece of HOL pc_compile_correct (AGENTS splitting rule, same tag, suffixed name), in the reviewed shape of pcCompileCorrect_Skip. HOL's printed evaluate_ind continue conjunct has no IH. The statement is P (continue, s) with P unfolded exactly as pcCompileCorrectAtHOL: binders res s1 t ctxt, the single conjunctive premise (evaluate = (res,s1), res <> SOME Error, state_rel, code_rel, excp_rel, locals_rel, localised_prog continue) and the existential target run with state_rel/code_rel/excp_rel and the inline case res of. evaluate is the tagged total evaluateHOLFiniteState and evalCrepSemHOLProgExact; compile/relations/globals_lookup/flatten/shape_of/size_of_shape/localised_prog are the tagged exact ports; qualifiers and same-module witnesses as for the Skip case. Proof via the untagged pcCompileCorrectAt_continue case. No target-run or post-state premise."
   },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Annot.lean",
-    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_Annot; forwards the imported checked roundtrip; no HOL declaration."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Annot.lean",
-    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_Annot; forwards the imported checked roundtrip; no HOL declaration."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Annot.lean",
-    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_Annot; forwards the imported checked roundtrip; no HOL declaration."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
-    "hol_name": "pc_compile_correct",
-    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Annot.lean",
-    "lean_name": "pcCompileCorrect_Annot",
-    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support_relation": [
-      "PanSemStateFiniteExact.locals",
-      "PanSemStateFiniteExact.globals",
-      "PanSemStateFiniteExact.code",
-      "PanSemStateFiniteExact.eshapes",
-      "CrepSemHOLState.locals",
-      "CrepSemHOLState.globals",
-      "CrepSemHOLState.code",
-      "PanToCrepContextExact.vars",
-      "PanToCrepContextExact.funcs",
-      "PanToCrepContextExact.eids"
-    ],
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "ds10 (bead flapjack-pxn.18.4.3.101): the Annot case of HOL pc_compile_correct (pan_to_crepProofScript.sml:442-468, case resumed at :511-515), stated against pcCompileCorrectAt over the tagged total evaluateHOLFiniteState / evalCrepSemHOLProgExact, the tagged compileProgExactHOLW, and the tagged exact state_rel/code_rel/excp_rel/locals_rel/globals_lookup/localised_prog. Source Annot tag text evaluates to (NONE, s) (panSemScript.sml:656); compile_exp erases it to Skip (pan_to_crepScript.sml:307); target Skip gives (NONE, t) (crepSemScript.sml:241). It has all HOL hypotheses and conclusion conjuncts, an existential target run, and no target-run or post-state premise. Proof via the untagged pcCompileCorrectAt_annot case. Word dimension dimindex (:a) -> BitVec width with [NeZero width]; 'ffi -> universe-0 host. Assembled pc_compile_correct remains open."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Annot.lean",
-    "lean_name": "pcCompileCorrectAt_annot",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "ds10 (bead flapjack-pxn.18.4.3.101): untagged Annot case helper against pcCompileCorrectAt, delegating from the tagged pcCompileCorrect_Annot; one constructor case, the assembled pc_compile_correct remains open."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Return.lean",
-    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_Return; forwards the imported checked roundtrip; no HOL declaration."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Return.lean",
-    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_Return; forwards the imported checked roundtrip; no HOL declaration."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Return.lean",
-    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_Return; forwards the imported checked roundtrip; no HOL declaration."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
-    "hol_name": "pc_compile_correct",
-    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Return.lean",
-    "lean_name": "pcCompileCorrect_Return",
-    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support_relation": ["PanSemStateFiniteExact.locals", "PanSemStateFiniteExact.globals", "PanSemStateFiniteExact.code", "PanSemStateFiniteExact.eshapes", "CrepSemHOLState.locals", "CrepSemHOLState.globals", "CrepSemHOLState.code", "PanToCrepContextExact.vars", "PanToCrepContextExact.funcs", "PanToCrepContextExact.eids"],
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "ds10 (bead flapjack-pxn.18.4.3.103): the Return case of HOL pc_compile_correct (pan_to_crepProofScript.sml:442-468, case resumed at :2056-2071), stated against pcCompileCorrectAt over the tagged total evaluateHOLFiniteState / evalCrepSemHOLProgExact, the tagged compileProgExactHOLW/compileReturnExactHOLW, and the tagged exact state_rel/code_rel/excp_rel/locals_rel/globals_lookup/localised_prog. Source Return evaluates the expression, giving (SOME (Return v), empty_locals s); compile_def emits Return [] when size_of_shape sh = 0 and Return ces otherwise; the target Return equation returns (SOME (Return ws), empty_locals t) with ws the compiled expression values. HOL's proof uses compile_exp_val_rel and GSYM opt_mmap_eq_some; the Lean proof uses the tagged compileExpValRelHOL and optMmapEqSome. It has all HOL hypotheses and conclusion conjuncts, an existential target run, and no target-run or post-state premise. Proof via the untagged pcCompileCorrectAt_return case. Assembled pc_compile_correct remains open."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Return.lean",
-    "lean_name": "pcCompileCorrectAt_return",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "ds10 (bead flapjack-pxn.18.4.3.103): untagged Return case helper against pcCompileCorrectAt, delegating from the tagged pcCompileCorrect_Return; one constructor case, the assembled pc_compile_correct remains open."
-  },
+
   {
     "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
     "hol_name": "evaluate_global_shape_invariant",
@@ -16977,5 +16912,164 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-28, bead flapjack-pxn.18.4.3.100; pan_to_crepProofScript.sml:442-468, Tick case resumed at :517-523; panSemScript.sml:777-778 rebound evaluate_ind). Tick constructor piece of HOL pc_compile_correct (AGENTS splitting rule, same tag, suffixed name), in the reviewed shape of pcCompileCorrect_Call. HOL's printed evaluate_ind Tick conjunct (hol run on panSemTheory.evaluate_ind) is !s. P (Tick,s) (no IH). Lean keeps the binders, IH binders/side conditions in HOL order, and P = pcCompileCorrectAtHOL (reviewed with the Call case). The conclusion is P (Tick ..., s) unfolded: binders res s1 t ctxt, the conjunctive premise, and the existential target run with state_rel/code_rel/excp_rel and inline case res of. evaluate is the tagged total evaluateHOLFiniteState and evalCrepSemHOLProgExact; eval is the tagged exact expression evaluator with the classical address decision used by the tagged Pan arm; compile/relations/globals_lookup/flatten/shape_of/size_of_shape/localised_prog are the tagged exact ports; qualifiers and same-module witnesses as for the Call case. Proof via untagged pcCompileCorrectAt_tick. No target-run or post-state premise."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Annot.lean",
+    "lean_name": "pcCompileCorrectAt_annot",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only curried form of the pc_compile_correct Annot case against pcCompileCorrectAt (bead flapjack-pxn.18.4.3.100); the HOL-shaped statement is the tagged pcCompileCorrect_Annot"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Return.lean",
+    "lean_name": "pcCompileCorrectAt_return",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "ds10 (bead flapjack-pxn.18.4.3.103): untagged Return case helper against pcCompileCorrectAt over the tagged exact evaluators; the HOL-shaped statement is the tagged pcCompileCorrect_Return"
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "pc_compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Return.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_Return; forwards the imported checked roundtrip; no HOL declaration"
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "pc_compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Return.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_Return; forwards the imported checked roundtrip; no HOL declaration"
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "pc_compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Return.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_Return; forwards the imported checked roundtrip; no HOL declaration"
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "pc_compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Return.lean",
+    "lean_name": "pcCompileCorrect_Return",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "PanToCrepContextExact.vars",
+      "PanToCrepContextExact.funcs",
+      "PanToCrepContextExact.eids"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "ds10 source comparison (2026-09-28; bead flapjack-pxn.18.4.3.103) against pan_to_crepProofScript.sml:442-468, Return case resumed at :2056-2071. Return constructor piece of HOL pc_compile_correct (AGENTS splitting rule, same tag, suffixed name). HOL's Return conjunct has no IH and evaluates the returned expression; compile_exp_val_rel plus opt_mmap_eq_some are used to match the target eval list; the size_of_shape sh = 0 branch maps to (SOME (Return []), empty_locals t) and the non-zero branch to (SOME (Return (flatten v)), empty_locals t). Lean keeps the binders and premise/conclusion shape over the tagged exact evaluators; state_rel/code_rel/excp_rel and locals_rel are the tagged exact ports; qualifiers and same-module witnesses as for the Call case. Proof via the untagged pcCompileCorrectAt_return. No target-run or post-state premise."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Annot.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_Annot; forwards the imported checked roundtrip; no HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Annot.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_Annot; forwards the imported checked roundtrip; no HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Annot.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_Annot; forwards the imported checked roundtrip; no HOL declaration"
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "pc_compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Annot.lean",
+    "lean_name": "pcCompileCorrect_Annot",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "PanToCrepContextExact.vars",
+      "PanToCrepContextExact.funcs",
+      "PanToCrepContextExact.eids"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-28, bead flapjack-pxn.18.4.3.100; pan_to_crepProofScript.sml:442-468, Annot case resumed at :511-515; panSemScript.sml:777-778 rebound evaluate_ind). Annot constructor piece of HOL pc_compile_correct (AGENTS splitting rule, same tag, suffixed name), in the reviewed shape of pcCompileCorrect_Call. HOL's printed evaluate_ind Annot conjunct (hol run on panSemTheory.evaluate_ind) is !v0 v1 s. P (Annot v0 v1,s) (no IH); Lean binders v0 v1 s. Lean keeps the binders, IH binders/side conditions in HOL order, and P = pcCompileCorrectAtHOL (reviewed with the Call case). The conclusion is P (Annot ..., s) unfolded: binders res s1 t ctxt, the conjunctive premise, and the existential target run with state_rel/code_rel/excp_rel and inline case res of. evaluate is the tagged total evaluateHOLFiniteState and evalCrepSemHOLProgExact; eval is the tagged exact expression evaluator with the classical address decision used by the tagged Pan arm; compile/relations/globals_lookup/flatten/shape_of/size_of_shape/localised_prog are the tagged exact ports; qualifiers and same-module witnesses as for the Call case. Proof via untagged pcCompileCorrectAt_annot. No target-run or post-state premise."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/While.lean",
+    "lean_name": "pcCompileCorrectAt_while",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lean-only curried form of the pc_compile_correct While case against pcCompileCorrectAt (bead flapjack-pxn.18.4.3.102); the HOL-shaped statement is the tagged pcCompileCorrect_While"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/While.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_While; forwards the imported checked roundtrip; no HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/While.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_While; forwards the imported checked roundtrip; no HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/While.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_While; forwards the imported checked roundtrip; no HOL declaration"
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "pc_compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/While.lean",
+    "lean_name": "pcCompileCorrect_While",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "PanToCrepContextExact.vars",
+      "PanToCrepContextExact.funcs",
+      "PanToCrepContextExact.eids"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-28, bead flapjack-pxn.18.4.3.102; pan_to_crepProofScript.sml:442-468, While case resumed at :2188-2242; panSemScript.sml:777-778 rebound evaluate_ind). While constructor piece of HOL pc_compile_correct (AGENTS splitting rule, same tag, suffixed name), in the reviewed shape of pcCompileCorrect_Call. HOL's printed evaluate_ind While conjunct (hol run on panSemTheory.evaluate_ind) is !e c s. (!v2 v11 w res s1 v1. eval s e = SOME v2 /\\ v2 = Val v11 /\\ v11 = Word w /\\ w <> 0w /\\ s.clock <> 0 /\\ (res,s1) = evaluate (c,dec_clock s) /\\ res = SOME v1 /\\ v1 = Continue ==> P (While e c,s1)) /\\ (!v2 v11 w res s1. ... /\\ res = NONE ==> P (While e c,s1)) /\\ (!v2 v11 w. ... ==> P (c,dec_clock s)) ==> P (While e c,s); dec_clock is the tagged decClockHOLFinite. Lean keeps the binders, IH binders/side conditions in HOL order, and P = pcCompileCorrectAtHOL (reviewed with the Call case). The conclusion is P (While ..., s) unfolded: binders res s1 t ctxt, the conjunctive premise, and the existential target run with state_rel/code_rel/excp_rel and inline case res of. evaluate is the tagged total evaluateHOLFiniteState and evalCrepSemHOLProgExact; eval is the tagged exact expression evaluator with the classical address decision used by the tagged Pan arm; compile/relations/globals_lookup/flatten/shape_of/size_of_shape/localised_prog are the tagged exact ports; qualifiers and same-module witnesses as for the Call case. Proof via untagged pcCompileCorrectAt_while. No target-run or post-state premise."
   }
 ]
