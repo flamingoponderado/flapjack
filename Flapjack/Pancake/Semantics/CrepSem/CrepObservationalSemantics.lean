@@ -1,5 +1,6 @@
 import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
 import Flapjack.Pancake.Semantics.CrepProps.EvaluateAddClockIoEventsMono
+import Flapjack.Misc.LprefixLub
 import Flapjack.PanObservationalSemantics
 import Flapjack.FfiHOL
 
@@ -13,45 +14,29 @@ clock-indexed states `s with clock := k`, fails when some clock yields a
 `FinalFFI` witness, and otherwise returns the `build_lprefix_lub` of the
 clock-indexed FFI-event prefixes.
 
-This module provides the exact observational behaviour carrier and the
-clock-indexed entry evaluation over the already-ported exact clocked evaluator
-`evalCrepSemHOLProg` and the exact finite-support state `CrepSemHOLState`.
-
--- FLAPJACK-SPECIFIC (deviation to document, not an exact `@[hol]` port of
--- `crepSem$semantics_def`): the exact evaluator `evalCrepSemHOLProg` takes the
--- two domain-membership decision procedures as explicit arguments, and the
--- shared prefix-LUB construction `buildPanLprefixLub` carries an
--- `lprefix_chain` witness of the clock-indexed event family.  The
--- evaluator-derived chain is now supplied internally
--- (`crepEvaluateClock_ioEvents_lprefixChain`, from the exact add-clock
--- event-prefix property `crepPropsScript.sml:1020`), so `crepSemantics` no
--- longer takes a caller-supplied `divergenceChain` (the earlier deviation,
--- bead `flapjack-pxn.18.4.8.2`).  The remaining difference from HOL is the
--- explicit `memDec`/`shMemDec` arguments and the `PanLprefixLub` witness
--- carrier versus HOL's total `build_lprefix_lub`.  No `@[hol]` tag is attached
--- pending coordinator review of those two representations.
+This module gives the exact observational semantics over the exact
+finite-support state `CrepSemHOLState`.  The entry evaluation uses the
+no-decider evaluator `evalCrepSemHOLProgExact`; divergence uses HOL's total
+`HolLList.buildLprefixLub` directly, with no caller-supplied chain or LUB.
 -/
 
 namespace Flapjack
 
 open Flapjack.Basis.Pure.MlString
 
-/-- Outcome of a successful crepSem run, mirroring HOL `semantics`'s two
-successful result cases: a `Return` gives `Success`, a `FinalFFI` gives the
-`FFI_outcome` of its `final_event`. -/
-inductive CrepSemanticOutcome where
-  | success
-  | ffi (outcome : HolFfiOutcome)
-  deriving DecidableEq, Repr
+namespace CrepObservationalSemantics
 
-/-- Observational behaviour of a crepSem program, mirroring the HOL `semantics`
-result constructors (`Fail`/`Terminate`/`Diverge`).  The divergence case carries
-the event family and its least upper bound, exactly as in HOL's
-`build_lprefix_lub` construction. -/
-inductive CrepBehaviour where
-  | diverge (family : Nat → List HolIoEvent) (trace : PanLprefixLub family)
-  | terminate (outcome : CrepSemanticOutcome) (events : List HolIoEvent)
-  | fail
+/-- Same-module canonical finite-support witness required by the qualified
+`semantics_def` port below.  It re-exports the reviewed `CrepSemHOLState`
+roundtrip from the exact evaluator module. -/
+theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {σ : Type} :
+    (∀ (state : CrepSemBroadState width σ) (h : state.FiniteSupport),
+        (CrepSemBroadState.ofBroad state h).toBroad = state) ∧
+    (∀ state : CrepSemHOLState width σ,
+        CrepSemBroadState.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  CrepSemShMemExact.holFmapAsFiniteSupportWitness
+
+end CrepObservationalSemantics
 
 /-- HOL `semantics_def`'s entry program `Call NONE start []`. -/
 def crepEntryProgram {width : Nat} [NeZero width] (start : MlString) :
@@ -60,12 +45,10 @@ def crepEntryProgram {width : Nat} [NeZero width] (start : MlString) :
 
 /-- Clock-indexed entry evaluation `evaluate (Call NONE start [], s with clock := k)`,
 returning the exact `(result option, state)` pair of HOL `evaluate`. -/
-def crepEvaluateClock {width : Nat} [NeZero width] {σ : Type}
+noncomputable def crepEvaluateClock {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ) (start : MlString)
-    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
-    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
     (clock : Nat) : Option (CrepResultHOLExact width) × CrepSemHOLState width σ :=
-  evalCrepSemHOLProg { state with clock := clock } memDec shMemDec (crepEntryProgram start)
+  evalCrepSemHOLProgExact { state with clock := clock } (crepEntryProgram start)
 
 /-- The FFI event list of a clock-indexed evaluation result, i.e.
 `(SND (evaluate (prog, s with clock := k))).ffi.io_events`. -/
@@ -77,9 +60,9 @@ def crepResultEvents {width : Nat} [NeZero width] {σ : Type}
 /-- HOL `semantics_def`'s successful-result outcome mapping:
 `SOME (Return _) => Success`, `SOME (FinalFFI e) => FFI_outcome e`, else none. -/
 def crepResultOutcome {width : Nat} [NeZero width] :
-    Option (CrepResultHOLExact width) → Option CrepSemanticOutcome
+    Option (CrepResultHOLExact width) → Option HolOutcome
   | some (.return _) => some .success
-  | some (.finalFfi event) => some (.ffi event.outcome)
+  | some (.finalFfi event) => some (.ffiOutcome event)
   | _ => none
 
 /-- HOL `semantics_def`'s forbidden-result predicate: `False` for
@@ -93,52 +76,61 @@ def crepForbiddenResult {width : Nat} [NeZero width] :
 
 /-- `∃k.` the clock-`k` entry evaluation yields a forbidden result. -/
 def crepHasForbiddenRun {width : Nat} [NeZero width] {σ : Type}
-    (state : CrepSemHOLState width σ) (start : MlString)
-    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
-    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a)) : Prop :=
-  ∃ clock, crepForbiddenResult (crepEvaluateClock state start memDec shMemDec clock).1
+    (state : CrepSemHOLState width σ) (start : MlString) : Prop :=
+  ∃ clock, crepForbiddenResult (crepEvaluateClock state start clock).1
 
 /-- `∃k t r outcome.` the clock-`k` entry evaluation yields a successful
 `Return`/`FinalFFI` observation. -/
 def crepHasSuccessfulRun {width : Nat} [NeZero width] {σ : Type}
-    (state : CrepSemHOLState width σ) (start : MlString)
-    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
-    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a)) : Prop :=
+    (state : CrepSemHOLState width σ) (start : MlString) : Prop :=
   ∃ (clock : Nat) (result : Option (CrepResultHOLExact width))
     (final : CrepSemHOLState width σ),
-    crepEvaluateClock state start memDec shMemDec clock = (result, final) ∧
+    crepEvaluateClock state start clock = (result, final) ∧
       (crepResultOutcome result).isSome = true
 
 /-- HOL `semantics_def`'s `some res` witness selection: pick a successful run
 and return `Terminate outcome (event list)`. -/
 noncomputable def crepChooseTermination {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ) (start : MlString)
-    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
-    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
-    (witness : crepHasSuccessfulRun state start memDec shMemDec) : CrepBehaviour :=
+    (witness : crepHasSuccessfulRun state start) : HolBehaviour :=
   let clock := Classical.choose witness
   let hrest := Classical.choose_spec witness
   let hrest2 := Classical.choose_spec hrest
   let hsome := (Classical.choose_spec hrest2).2
   .terminate (Classical.choose (Option.isSome_iff_exists.mp hsome))
-    (crepResultEvents (crepEvaluateClock state start memDec shMemDec clock))
+    (crepResultEvents (crepEvaluateClock state start clock))
 
-/-- HOL `semantics_def` with an explicit divergence LUB (the LUB is
-`build_lprefix_lub (IMAGE (fromList ∘ SND ∘ evaluate) UNIV)` in HOL). -/
-noncomputable def crepSemanticsWithLub {width : Nat} [NeZero width] {σ : Type}
-    (state : CrepSemHOLState width σ) (start : MlString)
-    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
-    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
-    (divergenceLub : PanLprefixLub
-      (fun clock => crepResultEvents (crepEvaluateClock state start memDec shMemDec clock))) :
-    CrepBehaviour := by
+/-- Exact port of HOL `crepSem$semantics_def` (`crepSemScript.sml:448-471`).
+The finite-support fields of `CrepSemHOLState` implement HOL's finite maps;
+the positive-width bitvectors and FFI host type are the reviewed conventional
+carriers. The result and divergence constructors are the shared HOL carriers
+`HolBehaviour`/`HolOutcome`, and the divergence branch applies total HOL
+`build_lprefix_lub` directly to the `IMAGE` family. -/
+@[hol "cakeml/pancake/semantics/crepSemScript.sml" "semantics_def"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
+noncomputable def crepSemantics {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) (start : MlString) : HolBehaviour := by
   classical
-  exact if forbidden : crepHasForbiddenRun state start memDec shMemDec then
+  let prog : CrepProgHOL width := crepEntryProgram start
+  exact if ∃ k, (match (evalCrepSemHOLProgExact { state with clock := k } prog).1 with
+      | some .timeOut => False
+      | some (.finalFfi _) => False
+      | some (.return _) => False
+      | _ => True) then
     .fail
-  else if successful : crepHasSuccessfulRun state start memDec shMemDec then
-    crepChooseTermination state start memDec shMemDec successful
   else
-    .diverge _ divergenceLub
+    match holOptionSome (fun res => ∃ k t r outcome,
+        evalCrepSemHOLProgExact { state with clock := k } prog = (r, t) ∧
+        (match r with
+         | some (.finalFfi event) => outcome = HolOutcome.ffiOutcome event
+         | some (.return _) => outcome = HolOutcome.success
+         | _ => False) ∧
+        res = HolBehaviour.terminate outcome t.ffi.ioEvents) with
+    | some res => res
+    | none => .diverge (HolLList.buildLprefixLub (fun l => ∃ k,
+        l = HolLList.fromList
+          (evalCrepSemHOLProgExact { state with clock := k } prog).2.ffi.ioEvents))
 
 /-! ## Clock-indexed event traces form a lprefix chain (bead flapjack-pxn.18.4.8.2.6)
 
@@ -153,13 +145,11 @@ form a pairwise prefix chain, given the add-clock event-prefix property. -/
 theorem crepEvaluateClock_ioEvents_lprefixChain_of_addClock_prefix
     {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ) (start : MlString)
-    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
-    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
     (hmono : ∀ clock extra : Nat,
-      crepResultEvents (crepEvaluateClock state start memDec shMemDec clock) <+:
-      crepResultEvents (crepEvaluateClock state start memDec shMemDec (clock + extra))) :
+      crepResultEvents (crepEvaluateClock state start clock) <+:
+      crepResultEvents (crepEvaluateClock state start (clock + extra))) :
     panLprefixChain (fun clock =>
-      crepResultEvents (crepEvaluateClock state start memDec shMemDec clock)) := by
+      crepResultEvents (crepEvaluateClock state start clock)) := by
   intro left right
   rcases Nat.le_total left right with hle | hle
   · left
@@ -174,12 +164,10 @@ form a pairwise prefix chain, derived from the exact evaluator's add-clock
 event-prefix property (`crepPropsScript.sml:1020`).  Flapjack-specific
 infrastructure; no `@[hol]` tag. -/
 theorem crepEvaluateClock_ioEvents_lprefixChain {width : Nat} [NeZero width] {σ : Type}
-    (state : CrepSemHOLState width σ) (start : MlString)
-    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
-    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a)) :
+    (state : CrepSemHOLState width σ) (start : MlString) :
     panLprefixChain (fun clock =>
-      crepResultEvents (crepEvaluateClock state start memDec shMemDec clock)) := by
-  apply crepEvaluateClock_ioEvents_lprefixChain_of_addClock_prefix state start memDec shMemDec
+      crepResultEvents (crepEvaluateClock state start clock)) := by
+  apply crepEvaluateClock_ioEvents_lprefixChain_of_addClock_prefix state start
   intro clock extra
   have hmono :
       (evalCrepSemHOLProgExact ({ state with clock := clock } : CrepSemHOLState width σ)
@@ -189,48 +177,6 @@ theorem crepEvaluateClock_ioEvents_lprefixChain {width : Nat} [NeZero width] {σ
     simpa only [crepStateAddClock] using
       (evalCrepSemHOLProgExact_addClockCombined (crepEntryProgram start)
         ({ state with clock := clock } : CrepSemHOLState width σ) extra).1
-  simp only [evalCrepSemHOLProgExact_eq_core] at hmono
   simpa only [crepEvaluateClock, crepResultEvents] using hmono
-
-/-- HOL `crepSem$semantics_def` with the shared prefix-LUB construction.  The
-clock-indexed event family's `lprefix_chain` obligation is discharged from the
-exact evaluator's add-clock event-prefix property
-(`crepEvaluateClock_ioEvents_lprefixChain`), so no caller-supplied chain
-argument is needed. -/
-noncomputable def crepSemantics {width : Nat} [NeZero width] {σ : Type}
-    (state : CrepSemHOLState width σ) (start : MlString)
-    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
-    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a)) :
-    CrepBehaviour :=
-  crepSemanticsWithLub state start memDec shMemDec
-    (buildPanLprefixLub _
-      (crepEvaluateClock_ioEvents_lprefixChain state start memDec shMemDec))
-
-/-- The caller-supplied-chain variant of `crepSemantics`, retained for callers
-that already hold an independently proved `panLprefixChain`. -/
-noncomputable def crepSemanticsWithChain {width : Nat} [NeZero width] {σ : Type}
-    (state : CrepSemHOLState width σ) (start : MlString)
-    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
-    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
-    (divergenceChain : panLprefixChain
-      (fun clock => crepResultEvents (crepEvaluateClock state start memDec shMemDec clock))) :
-    CrepBehaviour :=
-  crepSemanticsWithLub state start memDec shMemDec
-    (buildPanLprefixLub _ divergenceChain)
-
-/-- HOL `crepSem$semantics_def` total variant: the divergence LUB is built from
-the chain derived from the add-clock event-prefix property, so the only
-remaining obligation is that property itself. -/
-noncomputable def crepSemanticsOfAddClockPrefix {width : Nat} [NeZero width] {σ : Type}
-    (state : CrepSemHOLState width σ) (start : MlString)
-    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
-    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
-    (hmono : ∀ clock extra : Nat,
-      crepResultEvents (crepEvaluateClock state start memDec shMemDec clock) <+:
-      crepResultEvents (crepEvaluateClock state start memDec shMemDec (clock + extra))) :
-    CrepBehaviour :=
-  crepSemanticsWithLub state start memDec shMemDec
-    (buildPanLprefixLub _
-      (crepEvaluateClock_ioEvents_lprefixChain_of_addClock_prefix state start memDec shMemDec hmono))
 
 end Flapjack
