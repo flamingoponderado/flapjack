@@ -18172,5 +18172,32 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.3): HOL loop_arith_def (loopSemScript.sml:118-146): LDiv r1 r2 r3 sets r1 := w2 / q (q from r3, nonzero); LLongMul r1 r2 r3 r4 sets r1 := n2w (r DIV dimword) then r2 := n2w r for r = w2n w3 * w2n w4; LLongDiv r1 r2 r3 r4 r5 with n = w2n w3 * dimword + w2n w4, d = w2n w5, q = n DIV d requires d <> 0 and q < dimword and sets r2 := n2w (n MOD d) then r1 := n2w q. Lean's LoopArith div/longMul/longDiv constructors carry the same operand order; unsigned BitVec division, BitVec.ofNat for n2w and 2 ^ width for dimword; set_var nesting order as in HOL. All HOL rows of loop_sem_loop_arith_probe.out checked by Flapjack.Test.LoopSemEvalExactParity. The only carrier translation is HOL's type-indexed 'a word (WordLocW width / BitVec width) to positive BitVec width, so the tag carries (words_as_type_indexed_bitvec); no extra hypotheses beyond [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopSemScript.sml",
+    "hol_name": "sh_mem_load_def",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopSemStateExact/ShMem.lean",
+    "lean_name": "shMemLoad",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.4): HOL sh_mem_load v addr nb s (loopSemScript.sml:198-215), clause for clause over LoopSemStateFiniteExact: nb = 0 tests addr IN s.sh_mdomain, otherwise byte_align addr IN s.sh_mdomain (riscvByteAlignHOL); both call call_FFI s.ffi (SharedMem MappedRead) [n2w nb] (word_to_bytes addr F) via tagged callFFIHOL with panWordToBytesHOL; FFI_final outcome => (SOME (FinalFFI outcome), call_env [] s); FFI_return new_ffi new_bytes => (NONE, (set_var v (Word (word_of_bytes F 0w new_bytes)) s) with ffi := new_ffi) using panWordOfBytesHOL; outside the domain (SOME Error, s). HOL's extra `| _ => (SOME Error, s)` arm in the nb <> 0 branch is unreachable (ffi_result has exactly FFI_return/FFI_final) and Lean's exhaustive match omits it. The byte codecs are the same untagged HOL standard-library renderings reviewers accepted for crepSem sh_mem_load_def. HOL rows of loop_sem_sh_mem_load_probe.out, loop_sem_sh_mem_store_probe.out and loop_sem_sh_mem_op_probe.out are checked by Flapjack.Test.LoopSemShMemExactParity. The (words_as_type_indexed_bitvec) qualifier records 'a word as BitVec width with [NeZero width] and 'ffi as {F : Type}."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopSemScript.sml",
+    "hol_name": "sh_mem_store_def",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopSemStateExact/ShMem.lean",
+    "lean_name": "shMemStore",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.4): HOL sh_mem_store v addr nb s (loopSemScript.sml:217-240): case lookup v s.locals (sptLookup) of SOME (Word w) => domain test as in sh_mem_load; payload word_to_bytes w F ++ word_to_bytes addr F for nb = 0 and TAKE nb (word_to_bytes w F) ++ word_to_bytes addr F otherwise, sent with call_FFI s.ffi (SharedMem MappedWrite) [n2w nb]; FFI_final => (SOME (FinalFFI outcome), call_env [] s); FFI_return new_ffi _ => (NONE, s with ffi := new_ffi); domain failure and any non-Word lookup give (SOME Error, s). HOL rows of loop_sem_sh_mem_load_probe.out, loop_sem_sh_mem_store_probe.out and loop_sem_sh_mem_op_probe.out are checked by Flapjack.Test.LoopSemShMemExactParity. (words_as_type_indexed_bitvec) as for shMemLoad."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopSemScript.sml",
+    "hol_name": "sh_mem_op_def",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopSemStateExact/ShMem.lean",
+    "lean_name": "shMemOp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.4): HOL sh_mem_op (loopSemScript.sml:255-264) dispatches the eight memop constructors (CrepMemOp, the reviewed crepLang memop carrier) to sh_mem_load/sh_mem_store with byte counts Load/Store 0, Load8/Store8 1, Load16/Store16 2, Load32/Store32 4; Lean has the same eight equations; rows of loop_sem_sh_mem_op_probe.out are checked by Flapjack.Test.LoopSemShMemExactParity. (words_as_type_indexed_bitvec) as for shMemLoad."
   }
 ]
