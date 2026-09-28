@@ -5784,9 +5784,11 @@ end Flapjack
 
 /-! # The `Seq` induction case of HOL `evaluate_invariants`
 
-The two induction hypotheses cover the first and second command. `fix_clock`
-changes only the clock: if the first command returns `NONE`, apply the second
-IH at the fixed state; otherwise the first IH already gives the result. -/
+This case uses the exact generated `evaluate_ind` Seq conjunct: its first IH
+is `P (first, state)`, and its second IH is available only for a run of
+`first` returning `NONE`, at that run's post-state. The line-780 evaluator
+rewrites `fix_clock_evaluate`, so the second command runs at that same
+post-state. -/
 
 namespace Flapjack
 
@@ -5800,32 +5802,35 @@ theorem evaluateInvariantsSeqCaseHOLFinite {width : Nat} {σ : Type} [NeZero wid
       (post : PanPropsEvalStateFiniteExact width σ),
       PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state
           (.seq first second : ProgHOL width) = (result, post) →
-      (∀ (firstState : PanPropsEvalStateFiniteExact width σ)
-        (firstResult : Option (PanSemResultExact width))
+      (∀ (firstResult : Option (PanSemResultExact width))
         (firstPost : PanPropsEvalStateFiniteExact width σ),
-        PanPropsEvalStateFiniteExact.evaluateHOLFinitePair firstState first =
-          (firstResult, firstPost) →
-        firstPost.memaddrs = firstState.memaddrs ∧
-        firstPost.shMemaddrs = firstState.shMemaddrs ∧
-        firstPost.be = firstState.be ∧
-        firstPost.eshapes = firstState.eshapes ∧
-        firstPost.baseAddr = firstState.baseAddr ∧
-        firstPost.structs = firstState.structs ∧
-        firstPost.code = firstState.code ∧
-        firstPost.ffi.oracle = firstState.ffi.oracle) →
-      (∀ (secondState : PanPropsEvalStateFiniteExact width σ)
-        (secondResult : Option (PanSemResultExact width))
-        (secondPost : PanPropsEvalStateFiniteExact width σ),
-        PanPropsEvalStateFiniteExact.evaluateHOLFinitePair secondState second =
-          (secondResult, secondPost) →
-        secondPost.memaddrs = secondState.memaddrs ∧
-        secondPost.shMemaddrs = secondState.shMemaddrs ∧
-        secondPost.be = secondState.be ∧
-        secondPost.eshapes = secondState.eshapes ∧
-        secondPost.baseAddr = secondState.baseAddr ∧
-        secondPost.structs = secondState.structs ∧
-        secondPost.code = secondState.code ∧
-        secondPost.ffi.oracle = secondState.ffi.oracle) →
+        (firstResult, firstPost) =
+          PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state first ∧
+        firstResult = none →
+        ∀ (secondResult : Option (PanSemResultExact width))
+          (secondPost : PanPropsEvalStateFiniteExact width σ),
+          PanPropsEvalStateFiniteExact.evaluateHOLFinitePair firstPost second =
+            (secondResult, secondPost) →
+          secondPost.memaddrs = firstPost.memaddrs ∧
+          secondPost.shMemaddrs = firstPost.shMemaddrs ∧
+          secondPost.be = firstPost.be ∧
+          secondPost.eshapes = firstPost.eshapes ∧
+          secondPost.baseAddr = firstPost.baseAddr ∧
+          secondPost.structs = firstPost.structs ∧
+          secondPost.code = firstPost.code ∧
+          secondPost.ffi.oracle = firstPost.ffi.oracle) →
+      (∀ (firstResult : Option (PanSemResultExact width))
+        (firstPost : PanPropsEvalStateFiniteExact width σ),
+        (firstResult, firstPost) =
+          PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state first →
+        firstPost.memaddrs = state.memaddrs ∧
+        firstPost.shMemaddrs = state.shMemaddrs ∧
+        firstPost.be = state.be ∧
+        firstPost.eshapes = state.eshapes ∧
+        firstPost.baseAddr = state.baseAddr ∧
+        firstPost.structs = state.structs ∧
+        firstPost.code = state.code ∧
+        firstPost.ffi.oracle = state.ffi.oracle) →
       post.memaddrs = state.memaddrs ∧
       post.shMemaddrs = state.shMemaddrs ∧
       post.be = state.be ∧
@@ -5835,7 +5840,7 @@ theorem evaluateInvariantsSeqCaseHOLFinite {width : Nat} {σ : Type} [NeZero wid
       post.code = state.code ∧
       post.ffi.oracle = state.ffi.oracle := by
   classical
-  intro first second state result post hRun ihFirst ihSecond
+  intro first second state result post hRun ihSecond ihFirst
   have hcanonical :
       PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite
           (.seq first second : ProgHOL width) = (result, post.toPanSemFinite) := by
@@ -5848,15 +5853,14 @@ theorem evaluateInvariantsSeqCaseHOLFinite {width : Nat} {σ : Type} [NeZero wid
           (.seq first second : ProgHOL width)).2 = post.toPanSemFinite := by
       simpa [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair] using hpair
     exact Prod.ext hpair'.1 hpair'.2
-  rw [PanSemStateFiniteExact.evaluateHOLFiniteState_seq] at hcanonical
+  rw [evaluateHOLFiniteState_seq_line780] at hcanonical
   let firstOutput := PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite first
-  let fixed := PanSemStateFiniteExact.fixClockHOLFinite state.toPanSemFinite firstOutput
   have hfirstRun :
       PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state first =
         (firstOutput.1, PanPropsEvalStateFiniteExact.ofPanSemFinite firstOutput.2) := by
     simp [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair, firstOutput]
-  have hfirst := ihFirst state firstOutput.1
-    (PanPropsEvalStateFiniteExact.ofPanSemFinite firstOutput.2) hfirstRun
+  have hfirst := ihFirst firstOutput.1
+    (PanPropsEvalStateFiniteExact.ofPanSemFinite firstOutput.2) hfirstRun.symm
   have hfirstFields :
       firstOutput.2.memaddrs = state.toPanSemFinite.memaddrs ∧
       firstOutput.2.shMemaddrs = state.toPanSemFinite.shMemaddrs ∧
@@ -5871,8 +5875,7 @@ theorem evaluateInvariantsSeqCaseHOLFinite {width : Nat} {σ : Type} [NeZero wid
   cases hfirstResult : firstOutput.1 with
   | some result₁ =>
       have hpostRaw := congrArg Prod.snd hcanonical
-      simp only [firstOutput, hfirstResult, PanSemStateFiniteExact.fixClockHOLFinite]
-        at hpostRaw
+      simp only [firstOutput, hfirstResult] at hpostRaw
       rcases hfirstFields with ⟨hmem, hshared, hbe, heshapes, hbase, hstructs, hcode, horacle⟩
       have hpostMem := congrArg
         (fun output : PanSemStateFiniteExact width σ => output.memaddrs) hpostRaw
@@ -5907,28 +5910,29 @@ theorem evaluateInvariantsSeqCaseHOLFinite {width : Nat} {σ : Type} [NeZero wid
       · exact hpostCode.symm.trans hcode
       · exact hpostOracle.symm.trans horacle
   | none =>
-      let secondOutput := PanSemStateFiniteExact.evaluateHOLFiniteState fixed.2 second
+      let secondOutput := PanSemStateFiniteExact.evaluateHOLFiniteState firstOutput.2 second
       have hsecondRun :
           PanPropsEvalStateFiniteExact.evaluateHOLFinitePair
-              (PanPropsEvalStateFiniteExact.ofPanSemFinite fixed.2) second =
+              (PanPropsEvalStateFiniteExact.ofPanSemFinite firstOutput.2) second =
             (secondOutput.1, PanPropsEvalStateFiniteExact.ofPanSemFinite secondOutput.2) := by
         simp [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair, secondOutput]
-      have hsecond := ihSecond
-        (PanPropsEvalStateFiniteExact.ofPanSemFinite fixed.2) secondOutput.1
+      have hsecondIH := ihSecond firstOutput.1
+        (PanPropsEvalStateFiniteExact.ofPanSemFinite firstOutput.2)
+        ⟨hfirstRun.symm, hfirstResult⟩
+      have hsecond := hsecondIH secondOutput.1
         (PanPropsEvalStateFiniteExact.ofPanSemFinite secondOutput.2) hsecondRun
       have hsecondFields :
-          secondOutput.2.memaddrs = fixed.2.memaddrs ∧
-          secondOutput.2.shMemaddrs = fixed.2.shMemaddrs ∧
-          secondOutput.2.be = fixed.2.be ∧
-          secondOutput.2.eshapes = fixed.2.eshapes ∧
-          secondOutput.2.baseAddr = fixed.2.baseAddr ∧
-          secondOutput.2.structs = fixed.2.structs ∧
-          secondOutput.2.code = fixed.2.code ∧
-          secondOutput.2.ffi.oracle = fixed.2.ffi.oracle := by
+          secondOutput.2.memaddrs = firstOutput.2.memaddrs ∧
+          secondOutput.2.shMemaddrs = firstOutput.2.shMemaddrs ∧
+          secondOutput.2.be = firstOutput.2.be ∧
+          secondOutput.2.eshapes = firstOutput.2.eshapes ∧
+          secondOutput.2.baseAddr = firstOutput.2.baseAddr ∧
+          secondOutput.2.structs = firstOutput.2.structs ∧
+          secondOutput.2.code = firstOutput.2.code ∧
+          secondOutput.2.ffi.oracle = firstOutput.2.ffi.oracle := by
         simpa [PanPropsEvalStateFiniteExact.ofPanSemFinite] using hsecond
       have hpostRaw := congrArg Prod.snd hcanonical
-      simp only [firstOutput, hfirstResult, PanSemStateFiniteExact.fixClockHOLFinite]
-        at hpostRaw
+      simp only [firstOutput, hfirstResult] at hpostRaw
       rcases hfirstFields with ⟨hfirstMem, hfirstShared, hfirstBe, hfirstShapes,
         hfirstBase, hfirstStructs, hfirstCode, hfirstOracle⟩
       rcases hsecondFields with ⟨hmem, hshared, hbe, hshapes, hbase, hstructs, hcode, horacle⟩
