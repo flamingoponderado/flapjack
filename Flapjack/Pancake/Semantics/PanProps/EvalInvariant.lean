@@ -1141,57 +1141,54 @@ theorem evalHOL_emptyLocalsForStructsSimps {width : Nat} {σ : Type} [NeZero wid
     (`cakeml/pancake/semantics/panPropsScript.sml:644-652`):
     `!t e ck. eval (t with clock := ck) e = eval t e`. The quantifier order
     (state, expression, clock) follows the source and the expression evaluator
-    does not read `clock`. The state is the PanProps counterpart carrier whose
-    four `|->` fields are the reviewed canonical `HolFiniteMapExact`
-    translation (canonical witness `holFmapAsFiniteSupportWitness` in this
-    module); `evalHOL` delegates to the exact broad evaluator through `toExact`,
-    while the field-for-field `toPanSemFinite` codec connects this carrier to
-    the canonical tagged PanSem state. `[NeZero width]`
+    does not read `clock`. The state is the canonical `PanSemStateFiniteExact`
+    carrier, whose four `|->` fields use the reviewed `HolFiniteMapExact`
+    translation and canonical roundtrip witness in the PanSem counterpart.
+    This module's local witness forwards that imported roundtrip. The statement
+    uses PanSem's tagged `evalHOLFinite`, which delegates to `evalHOLExact`
+    through `toExact`. `[NeZero width]`
     models HOL's positive word dimension and `DecidablePred state.memaddrs` is
     computation evidence for the HOL word-set guard. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "eval_upd_clock_eq"
   (fmap_as_finite_support := [locals, globals, code, eshapes])
   (words_as_type_indexed_bitvec)]
 theorem evalHOL_upd_clock_eq {width : Nat} {σ : Type} [NeZero width]
-    (state : PanPropsEvalStateFiniteExact width σ) [h : DecidablePred state.memaddrs]
+    (state : PanSemStateFiniteExact width σ) [h : DecidablePred state.memaddrs]
     (expression : ExpHOL width) (clock : Nat) :
-    @evalHOL width σ _ { state with clock := clock } h expression =
-      @evalHOL width σ _ state h expression := by
-  simp only [evalHOL]
-  exact evalHOLExact_upd_clock_eq state.toExact expression clock
+    @PanSemStateFiniteExact.evalHOLFinite width σ _ { state with clock := clock } h expression =
+      @PanSemStateFiniteExact.evalHOLFinite width σ _ state h expression :=
+  @PanSemStateFiniteExact.evalHOLFinite_upd_clock_eq width σ _ state h clock expression
 
 /-- Exact finite-support port of HOL `panProps$eval_upd_code_eq`
     (`cakeml/pancake/semantics/panPropsScript.sml:654-662`):
-    `!t e code. eval (t with code := code) e = eval t e`. Same reviewed carrier
-    and codec justification as `evalHOL_upd_clock_eq`; the expression evaluator
-    does not read `code`. -/
+    `!t e code. eval (t with code := code) e = eval t e`. Same canonical carrier,
+    evaluator, and finite-map witness review as `evalHOL_upd_clock_eq`; the
+    expression evaluator does not read `code`. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "eval_upd_code_eq"
   (fmap_as_finite_support := [locals, globals, code, eshapes])
   (words_as_type_indexed_bitvec)]
 theorem evalHOL_upd_code_eq {width : Nat} {σ : Type} [NeZero width]
-    (state : PanPropsEvalStateFiniteExact width σ) [h : DecidablePred state.memaddrs]
+    (state : PanSemStateFiniteExact width σ) [h : DecidablePred state.memaddrs]
     (expression : ExpHOL width)
     (code : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ProgHOL width × ShapeHOL)) :
-    @evalHOL width σ _ { state with code := code } h expression =
-      @evalHOL width σ _ state h expression := by
-  simp only [evalHOL]
-  exact evalHOLExact_upd_code_eq state.toExact expression code.lookup
+    @PanSemStateFiniteExact.evalHOLFinite width σ _ { state with code := code } h expression =
+      @PanSemStateFiniteExact.evalHOLFinite width σ _ state h expression :=
+  @PanSemStateFiniteExact.evalHOLFinite_upd_code_eq width σ _ state h code expression
 
 /-- Exact finite-support port of HOL `panProps$eval_upd_eshapes_eq`
     (`cakeml/pancake/semantics/panPropsScript.sml:664-672`):
-    `!t e esh. eval (t with eshapes := esh) e = eval t e`. Same reviewed carrier
-    and codec justification as `evalHOL_upd_clock_eq`; the expression evaluator
-    does not read `eshapes`. -/
+    `!t e esh. eval (t with eshapes := esh) e = eval t e`. Same canonical
+    carrier, evaluator, and finite-map witness review as
+    `evalHOL_upd_clock_eq`; the expression evaluator does not read `eshapes`. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "eval_upd_eshapes_eq"
   (fmap_as_finite_support := [locals, globals, code, eshapes])
   (words_as_type_indexed_bitvec)]
 theorem evalHOL_upd_eshapes_eq {width : Nat} {σ : Type} [NeZero width]
-    (state : PanPropsEvalStateFiniteExact width σ) [h : DecidablePred state.memaddrs]
+    (state : PanSemStateFiniteExact width σ) [h : DecidablePred state.memaddrs]
     (expression : ExpHOL width) (eshapes : HolFiniteMapExact MlS ShapeHOL) :
-    @evalHOL width σ _ { state with eshapes := eshapes } h expression =
-      @evalHOL width σ _ state h expression := by
-  simp only [evalHOL]
-  exact evalHOLExact_upd_eshapes_eq state.toExact expression eshapes.lookup
+    @PanSemStateFiniteExact.evalHOLFinite width σ _ { state with eshapes := eshapes } h expression =
+      @PanSemStateFiniteExact.evalHOLFinite width σ _ state h expression :=
+  @PanSemStateFiniteExact.evalHOLFinite_upd_eshapes_eq width σ _ state h eshapes expression
 
 /-- Exact port of HOL `panProps$opt_mmap_eval_upd_clock_eq`
     (`cakeml/pancake/semantics/panPropsScript.sml:674-680`):
@@ -1199,11 +1196,11 @@ theorem evalHOL_upd_eshapes_eq {width : Nat} {σ : Type} [NeZero width]
        OPT_MMAP (eval s) es`. HOL binds `es`, `s`, `ck` and advances the clock by
     `ck + s.clock`, matching the `{ state with clock := clock + state.clock }`
     update below; HOL's `OPT_MMAP` is Lean's `List.mapM`. The state is the
-    PanProps counterpart carrier `PanPropsEvalStateFiniteExact`, which owns the
-    four `HolFiniteMapExact` fields (locals/globals/code/eshapes) and the
-    same-module canonical `holFmapAsFiniteSupportWitness`, so the
-    `fmap_as_finite_support` qualifier is checker-valid; `evalHOL` delegates to
-    the exact broad expression evaluator through `toExact`. The carrier is
+    canonical PanSem counterpart carrier `PanSemStateFiniteExact`, whose four
+    `HolFiniteMapExact` fields (locals/globals/code/eshapes) and canonical
+    `holFmapAsFiniteSupportWitness` establish the `fmap_as_finite_support`
+    representation. This module's local witness forwards that roundtrip; the
+    statement uses the tagged `evalHOLFinite` evaluator. The carrier is
     width-indexed (`[NeZero width]` with `RiscV.Word width` fields), so HOL's
     type-indexed `'a word` translation is recorded by the
     `(words_as_type_indexed_bitvec)` qualifier alongside the finite-support field
@@ -1215,12 +1212,14 @@ theorem evalHOL_upd_eshapes_eq {width : Nat} {σ : Type} [NeZero width]
   (fmap_as_finite_support := [locals, globals, code, eshapes])
   (words_as_type_indexed_bitvec)]
 theorem optMmapEvalHOL_upd_clock_eq {width : Nat} {σ : Type} [NeZero width]
-    (state : PanPropsEvalStateFiniteExact width σ) [h : DecidablePred state.memaddrs]
+    (state : PanSemStateFiniteExact width σ) [h : DecidablePred state.memaddrs]
     (expressions : List (ExpHOL width)) (clock : Nat) :
     expressions.mapM
         (fun e =>
-          @evalHOL width σ _ { state with clock := clock + state.clock } h e) =
-      expressions.mapM (fun e => @evalHOL width σ _ state h e) := by
+          @PanSemStateFiniteExact.evalHOLFinite width σ _
+            { state with clock := clock + state.clock } h e) =
+      expressions.mapM (fun e =>
+        @PanSemStateFiniteExact.evalHOLFinite width σ _ state h e) := by
   induction expressions with
   | nil => rfl
   | cons e es ih =>
@@ -1238,10 +1237,10 @@ theorem optMmapEvalHOL_upd_clock_eq {width : Nat} {σ : Type} [NeZero width]
 
     The Lean statement keeps HOL's quantifier order (`f`, `st`, `es`), the same
     pointwise-evaluation premise and the same `OPT_MMAP`/`List.mapM` equality.
-    `eval` is the PanProps finite carrier's `evalHOL`, whose four `|->` fields
-    are the reviewed canonical `HolFiniteMapExact` translation (canonical
-    witness `holFmapAsFiniteSupportWitness` in this module) and which delegates
-    to the exact broad evaluator through `toExact`. The two `DecidablePred`
+    `eval` is the canonical `PanSemStateFiniteExact.evalHOLFinite`, whose four
+    `|->` fields are the reviewed `HolFiniteMapExact` translation and whose
+    canonical witness is forwarded by this module's local checker witness. The
+    two `DecidablePred`
     binders are Lean computation evidence for HOL's word-set membership guard
     on each of the two states `f st` and `st`; HOL's total `eval` needs no such
     evidence. -/
@@ -1249,11 +1248,11 @@ theorem optMmapEvalHOL_upd_clock_eq {width : Nat} {σ : Type} [NeZero width]
   (fmap_as_finite_support := [locals, globals, code, eshapes])
   (words_as_type_indexed_bitvec)]
 theorem optMmapHelperThm {width : Nat} {σ : Type} [NeZero width]
-    (f : PanPropsEvalStateFiniteExact width σ → PanPropsEvalStateFiniteExact width σ)
-    (st : PanPropsEvalStateFiniteExact width σ) [hst : DecidablePred st.memaddrs]
+    (f : PanSemStateFiniteExact width σ → PanSemStateFiniteExact width σ)
+    (st : PanSemStateFiniteExact width σ) [hst : DecidablePred st.memaddrs]
     [hfst : DecidablePred (f st).memaddrs] (es : List (ExpHOL width)) :
-    (∀ x, x ∈ es → (f st).evalHOL x = st.evalHOL x) →
-      es.mapM (f st).evalHOL = es.mapM st.evalHOL := by
+    (∀ x, x ∈ es → (f st).evalHOLFinite x = st.evalHOLFinite x) →
+      es.mapM (f st).evalHOLFinite = es.mapM st.evalHOLFinite := by
   intro h
   induction es with
   | nil => rfl
@@ -1266,27 +1265,30 @@ theorem optMmapHelperThm {width : Nat} {σ : Type} [NeZero width]
     `!s e v. eval (s with locals := FEMPTY) e = SOME v ==> eval s e = SOME v`.
     The quantifier order (state, expression, value) and the
     empty-locals premise/same-value conclusion follow the source. The state is
-    the reviewed PanProps finite-map carrier: `emptyLocalsForStructsSimps` clears
-    `locals` exactly like HOL `FEMPTY`, and `evalHOL` delegates to the exact
-    broad evaluator through `toExact`. The four `|->` fields
-    (`locals`, `globals`, `code`, `eshapes`) are the reviewed canonical
+    the canonical PanSem finite-map carrier, and `emptyLocalsHOLFinite` clears
+    `locals` exactly like HOL `FEMPTY`; `evalHOLFinite` is the tagged finite
+    projection of the exact broad evaluator. The four `|->` fields
+    (`locals`, `globals`, `code`, `eshapes`) use the reviewed canonical
     `HolFiniteMapExact` translation recorded by the `fmap_as_finite_support`
-    qualifier (canonical witness `holFmapAsFiniteSupportWitness` in this
-    module); `[NeZero width]` models HOL's nonempty word index and
+    qualifier and its PanSem roundtrip witness (forwarded locally for checker
+    validation); `[NeZero width]` models HOL's nonempty word index and
     `DecidablePred state.memaddrs` is computation evidence for the HOL word-set
     guard. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "eval_empty_locals_IMP"
   (fmap_as_finite_support := [locals, globals, code, eshapes])
   (words_as_type_indexed_bitvec)]
 theorem evalEmptyLocalsHOLFinite {width : Nat} {σ : Type} [NeZero width] :
-    ∀ (state : PanPropsEvalStateFiniteExact width σ)
-      [DecidablePred state.memaddrs]
+    ∀ (state : PanSemStateFiniteExact width σ)
+      [hdec : DecidablePred state.memaddrs]
       (expression : ExpHOL width) (value : ValueHOL width),
-      (emptyLocalsForStructsSimps state).evalHOL expression = some value →
-        state.evalHOL expression = some value := by
+      @PanSemStateFiniteExact.evalHOLFinite width σ _
+          (PanSemStateFiniteExact.emptyLocalsHOLFinite state) hdec expression = some value →
+        @PanSemStateFiniteExact.evalHOLFinite width σ _ state hdec expression = some value := by
   intro state hdec expression value h
-  rw [evalHOL_emptyLocalsForStructsSimps state expression] at h
-  exact evalHOLExact_emptyLocalsHOLExact state.toExact expression value h
+  change evalHOLExact (emptyLocalsHOLExact state.toExact) expression = some value at h
+  have hResult := evalHOLExact_emptyLocalsHOLExact state.toExact expression value h
+  change evalHOLExact state.toExact expression = some value
+  exact hResult
 
 /-- Flapjack-specific representation adapter for PanProps theorems that need
     the local same-module finite-map witness. Evaluation itself is performed
@@ -3270,6 +3272,21 @@ noncomputable def evaluateHOLFinitePair {width : Nat} {σ : Type} [NeZero width]
   exact (output.1, ofPanSemFinite output.2)
 
 end PanPropsEvalStateFiniteExact
+
+namespace PanPropsCanonicalCarrierWitness
+
+/-- Same-module checker witness for PanProps tags stated directly over the
+    imported `PanSemStateFiniteExact` carrier. It forwards the canonical
+    finite-support roundtrip while the compatibility carrier and its separate
+    witness remain in use by older PanProps theorem statements. -/
+theorem holFmapAsFiniteSupportWitness {width : Nat} {σ : Type} [NeZero width] :
+    (∀ (state : PanSemStateExact width σ) (h : state.FiniteSupport),
+        (PanSemStateFiniteExact.ofExact state h).toExact = state) ∧
+    (∀ state : PanSemStateFiniteExact width σ,
+        PanSemStateFiniteExact.ofExact state.toExact state.toExact_finiteSupport = state) :=
+  @PanSemStateFiniteExact.holFmapAsFiniteSupportWitness width σ _
+
+end PanPropsCanonicalCarrierWitness
 
 end Flapjack
 
