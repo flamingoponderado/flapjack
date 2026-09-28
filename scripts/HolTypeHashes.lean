@@ -108,6 +108,8 @@ import Flapjack.Pancake.Semantics.LoopProps.EvaluateClockExact
 import Flapjack.Pancake.Semantics.LoopProps.EvaluateIoEventsExact
 import Flapjack.Pancake.Semantics.LoopProps.EvalExact
 import Flapjack.Pancake.Semantics.LoopProps.NestedSeqExact
+import Flapjack.Pancake.Semantics.LoopProps.UnassignedVarsExact
+import Flapjack.Pancake.Semantics.LoopProps.NestedSeqSyntaxExact
 import Flapjack.Pancake.Semantics.PanCommonProps
 import Flapjack.Pancake.Semantics.PanProps
 import Flapjack.Pancake.Semantics.PanProps.EvalInvariant
