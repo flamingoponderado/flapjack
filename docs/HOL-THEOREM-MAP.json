@@ -11516,6 +11516,131 @@
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Call.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus: Same-module canonical relation witness (delegating to the checked CallPreservationFiniteMapWitnesses) for the tagged pcCompileCorrect_Call qualifier. Untagged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Call.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus: Same-module canonical relation witness (delegating to the checked CallPreservationFiniteMapWitnesses) for the tagged pcCompileCorrect_Call qualifier. Untagged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Call.lean",
+    "lean_name": "pcCompileCorrectAt_iff_HOL",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus: pcCompileCorrectAt (curried, named result relation) is equivalent to pcCompileCorrectAtHOL (HOL's conjunctive premise and inline case). Untagged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Call.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus: Same-module canonical relation witness (delegating to the checked CallPreservationFiniteMapWitnesses) for the tagged pcCompileCorrect_Call qualifier. Untagged."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "pc_compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Call.lean",
+    "lean_name": "pcCompileCorrect_Call",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "PanToCrepContextExact.vars",
+      "PanToCrepContextExact.funcs",
+      "PanToCrepContextExact.eids"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-28, bead flapjack-pxn.18.4.3.94; pan_to_crepProofScript.sml:442-468, Call case resumed at :3107; panSemScript.sml:777-778 rebound evaluate_ind). This is the Call constructor piece of HOL pc_compile_correct (AGENTS splitting rule: HOL's own case structure, same tag, suffixed name). The statement is the Call conjunct of the rebound evaluate_ind instantiated at HOL's induction predicate P. Binders caltyp fname argexps s are as in the evaluate_ind Call conjunct. The two IHs are transcribed binder-for-binder from HOL's printed conjunct (captured with hol run on panSemTheory.evaluate_ind), in HOL order, including the TFL equation binders v7 v12 eval_prog v4 v8 v v1 v2 v3 eid' v5 and every side condition (OPT_MMAP (eval s) argexps = SOME args, lookup_code s.code fname args = SOME v7, s.clock <> 0, eval_prog = evaluate (prog, dec_clock s with locals := newlocals), eid = eid', FLOOKUP s.eshapes eid = SOME sh, shape_of exn = sh, is_valid_value s Local evar exn). Each IH concludes P at HOL's argument: P (p, set_var evar exn (st with locals := s.locals)) and P (prog, dec_clock s with locals := newlocals). P is pcCompileCorrectAtHOL, whose body is literally the unfolded conclusion: the ∀res s1 t ctxt binders, the single conjunctive premise (evaluate = (res,s1) ∧ res ≠ SOME Error ∧ state_rel ∧ code_rel ∧ excp_rel ∧ locals_rel ∧ localised_prog), and ∃res1 t1 with evaluate (compile ctxt v, t), state_rel, code_rel, excp_rel, and the inline case res of (NONE/Error/TimeOut/Break/Continue/Return/Exception with FLOOKUP ctxt.eids and globals_lookup/size_of_shape <= 32/FinalFFI). The conclusion is P (Call caltyp fname argexps, s), unfolded. Translation: evaluate is the tagged total evaluateHOLFiniteState (line-780 evaluate_def assembly) and the tagged evalCrepSemHOLProgExact (line-443 evaluate_def assembly). OPT_MMAP (eval s), lookup_code, and is_valid_value are the same helpers the tagged Pan evaluate_def Call arm uses (evalListHOLFinite with the classical address decision, lookupCodeHOLFinite, isValidValueHOLExact s.toExact). dec_clock and set_var are the tagged decClockHOLFinite/setVarHOLFinite, and compile/state_rel/code_rel/excp_rel/locals_rel/globals_lookup/flatten/shape_of/size_of_shape/localised_prog are the tagged exact ports. The relation qualifier lists the finite maps the statement traverses on its three carriers (same-module witnesses in PcCompileCorrectCallWitnesses); 'a word/'ffi use the BitVec width [NeZero width]/σ : Type translation. The proof reduces to the untagged pcCompileCorrectAt_call via pcCompileCorrectAt_iff_HOL. Note: the type-hash lock pins this statement, but not the bodies of the untagged pcCompileCorrectAtHOL (reviewed here) or the untagged helpers."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Call.lean",
+    "lean_name": "crepEvalAssignLoadGlobals",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus: Crep evaluation of exp_hdl's nested_seq of Assign/LoadGlob (the shape of crepProps evaluate_seq_assign_load_globals, with the loaded values given as a successful OPT_MMAP rather than THE), used inline by HOL Call_Ret_Exception. Untagged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Call.lean",
+    "lean_name": "pcCompileCorrectCallExcCaughtTarget",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus: Target run of a Ret call whose compiled handler catches the callee's exception. Untagged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Call.lean",
+    "lean_name": "panToCrepLocalsRelFiniteExact_agreeBelowVmax",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus: locals_rel depends only on target slots ≤ vmax (generalises the tagged local_rel_gt_vmax_preserved). Untagged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Call.lean",
+    "lean_name": "pcCompileCorrectAt_call",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus: The Call constructor case of HOL pc_compile_correct (pan_to_crepProofScript.sml:3107-4231) against pcCompileCorrectAt, with only the two rebound evaluate_ind Call IHs as hypotheses. It assembles HOL's split into zero-clock, Call_TailCall, and Call_Ret_TimeOut/FinalFFI/Return/Exception; there is no target-run or post-state premise. Untagged until the full pc_compile_correct assembly (bead flapjack-pxn.18.4.3.94). Untagged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Call.lean",
+    "lean_name": "pcCompileCorrectCallExcPropagateTarget",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus: Target run of a Ret call whose callee raises and whose handler does not fire. Untagged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Call.lean",
+    "lean_name": "pcCompileCorrectResultRel_agreeBelowVmax",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus: The pc_compile_correct result relation is preserved by target-local changes above vmax. Untagged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Call.lean",
+    "lean_name": "compileCallSomeShapeHdl",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus: Handler-exact shape of the compiled Ret Call arms (HOL compile_def case split inline). Untagged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Call.lean",
+    "lean_name": "fupdListHOLZipNotMem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus: Flapjack-only finite-map helper for the exact pc_compile_correct Call_Ret_Exception sub-case. Untagged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Call.lean",
+    "lean_name": "pcCompileCorrectAt_callRetException",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus: HOL pc_compile_correct[Call_Ret_Exception] (pan_to_crepProofScript.sml:3599-3916): the caltyp = SOME _, positive-clock sub-case with the callee's source Exception as the case-split hypothesis, using both rebound evaluate_ind Call IHs, with no target premise. Untagged sub-case (bead flapjack-pxn.18.4.3.94.9). Untagged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Call.lean",
     "lean_name": "fupdateListHOL_zip_mem_indep",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "flapjack-opus: Flapjack-only finite-map/list helper for the exact pc_compile_correct Call_Ret_Return sub-case. Untagged."
@@ -14783,6 +14908,17 @@
       "lc"
     ],
     "reviewer": "flapjack-opus source comparison (2026-09-28, bead flapjack-pxn.18.4.3.94.8 support; crepPropsScript.sml:612-633): HOL !xs ys lc. ALL_DISTINCT xs /\\ LENGTH xs = LENGTH ys ==> FOLDL res_var (lc |++ ZIP (xs,ys)) (ZIP (xs,MAP (FLOOKUP lc) xs)) = lc. Lean keeps the binders xs ys lc and the conjunctive premise (Nodup, length). FOLDL is List.foldl, res_var is the tagged HolFiniteMapExact.resVarEq, |++ ZIP is updateListEq (zip), FLOOKUP lc is lc.lookup, and HOL = on keys is DecidableEq. The standalone finite map lc is the bare relation-qualifier entry, as in the tagged no_overlap_wrap_rt_some_all_distinct. The proof is lookup-level and uses neither premise (they are kept for shape)."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
+    "hol_name": "flookup_res_var_distinct_zip_eq",
+    "lean_path": "Flapjack/Pancake/Semantics/CrepProps.lean",
+    "lean_name": "flookupResVarDistinctZipEqHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "fm"
+    ],
+    "reviewer": "flapjack-opus source comparison (2026-09-28, bead flapjack-pxn.18.4.3.94.9 support; crepPropsScript.sml:777-794): HOL LENGTH xs = LENGTH ys /\\ ~MEM x xs ==> FLOOKUP (FOLDL res_var fm (ZIP (xs,ys))) x = FLOOKUP fm x, with free variables xs ys fm x. Lean binds xs ys fm x explicitly, with ys : List (Option β) as HOL res_var's value-option list, and keeps the conjunctive premise. FOLDL res_var is List.foldl over the tagged HolFiniteMapExact.resVarEq, FLOOKUP is .lookup, and ~MEM is ∉. The standalone map fm is the bare relation-qualifier entry, as in the tagged res_var_lookup_original_eq."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",

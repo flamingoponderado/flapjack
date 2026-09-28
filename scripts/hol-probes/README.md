@@ -44,6 +44,17 @@ shape/duplicate failure cases.
 `Flapjack.Test.PanSemEvaluateDeclsFiniteParity` separately guards the exact
 finite-map evaluator against every named row in `pan_evaluate_decls_probe.out`,
 including an in-domain byte load in a declaration initializer.
+`pan_clock_program_route_probe.out` records direct HOL `evaluate` observations
+for duplicate function front-update order (`SOME (Return (ValWord 2w))`), a
+duplicate whose shadowed binding has different formal names and return shape
+(`SOME (Return (RStruct []))`), and rejection of a nested callee return whose
+actual value violates its declared return shape (`SOME Error`). The matching
+declaration-level clocked wrapper regressions are in
+`Flapjack.Test.PanValueFfiClockMemoryFfi`; they exercise production routing
+through the source-owned finite code map. Refresh
+with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=pan_clock_program_route_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
 `pan_sem_state_eval_probe.out` records direct HOL EVAL of `eval_def` at
 `cakeml/pancake/semantics/panSemScript.sml:209-297` for in-domain and
 out-of-domain word loads, little- and big-endian byte loads, 32-bit loads, and

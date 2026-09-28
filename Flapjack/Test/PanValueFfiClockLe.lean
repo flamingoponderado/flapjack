@@ -29,11 +29,8 @@ example
     (outcome : PanValueFfiClockOutcome Nat Unit) (nextClock : Nat)
     (hdeclarations : evalPanValueDeclarations initial.source declarations = some state)
     (hentry : lookupInfo entry state.returnShapes = none)
-    (hcall : evalPanValueFfiClockCall context primitive handler state.structs
-      state.functions state.baseAddress state.topAddress state.bytesInWord fuel
-      (fun _ => none) state.globals state.memory initial.ffi clock none entry arguments
-      (contracts := some (PanValueCallContracts.mk state.returnShapes
-        state.exceptions state.parameterShapes)) = some (outcome, nextClock)) :
+    (hcall : evalPanValueFfiClockProgramCodeCall context primitive handler state fuel
+      state.globals state.memory initial.ffi clock entry arguments = some (outcome, nextClock)) :
     evalPanValueFfiClockProgram context initial clock primitive handler fuel
       declarations entry arguments = some (outcome, nextClock) :=
   evalPanValueFfiClockProgram_of_declarations_and_call context initial clock primitive
