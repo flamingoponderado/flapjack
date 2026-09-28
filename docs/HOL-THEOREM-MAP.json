@@ -14008,6 +14008,31 @@
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "locals_rel_extend_new_var",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "localsRelExtendNewVarHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanToCrepContextExact.vars",
+      "s",
+      "t"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-28, bead flapjack-pxn.18.4.3.95.1; pan_to_crepProofScript.sml:4179-4225): HOL !ct s t v x ns. locals_rel ct s t /\\ is_wf_shape_nil (shape_of v) /\\ ALL_DISTINCT ns /\\ (!x. MEM x ns ==> ct.vmax < x /\\ x <= ct.vmax + size_of_shape (shape_of v)) /\\ LENGTH ns = size_of_shape (shape_of v) ==> locals_rel (ct with <|vars := ct.vars |+ (x,(shape_of v,ns)); vmax := ct.vmax + size_of_shape (shape_of v)|>) (s |+ (x,v)) (t |++ ZIP(ns, flatten v)). Lean keeps the binders ct s t v x ns and the single conjunctive premise; the inner bound x is y (MEM is ∈, ALL_DISTINCT is Nodup, LENGTH is length). locals_rel/is_wf_shape_nil/shape_of/size_of_shape/flatten are the tagged exact ports. |+ on ct.vars and s is HolFiniteMapExact.update, the FUPDATE port used by the exact compiler's DecCall context and the Pan set_var; |++ ZIP on t is updateListEq (zip); the record update is Lean's structure update. The relation qualifier names PanToCrepContextExact.vars and the standalone locals s t. 'a word is BitVec width with [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "FLOOKUP_pan_res_var_thm",
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/ResVar.lean",
+    "lean_name": "flookupPanResVarThmHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "l"
+    ],
+    "reviewer": "flapjack-opus source comparison (2026-09-28, bead flapjack-pxn.18.4.3.95.2; panPropsScript.sml:236-242): HOL FLOOKUP (panSem$res_var l (m,v)) n = if n = m then v else FLOOKUP l n, with free variables l m v n. panSem$res_var_def (panSemScript.sml:505-508: res_var lc (n,NONE) = lc \\\\ n; res_var lc (n,SOME v) = lc |+ (n,v)) has the same clauses as the tagged generic HolFiniteMapExact.resVarEq, which the exact Pan evaluator uses for Dec/DecCall restoration. FLOOKUP is .lookup and HOL = is DecidableEq; l is the bare relation-qualifier entry."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
     "hol_name": "opt_mmap_eval_is_wf_shape_v",
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
     "lean_name": "optMmapEvalIsWfShapeVHOL",
@@ -14919,6 +14944,20 @@
       "fm"
     ],
     "reviewer": "flapjack-opus source comparison (2026-09-28, bead flapjack-pxn.18.4.3.94.9 support; crepPropsScript.sml:777-794): HOL LENGTH xs = LENGTH ys /\\ ~MEM x xs ==> FLOOKUP (FOLDL res_var fm (ZIP (xs,ys))) x = FLOOKUP fm x, with free variables xs ys fm x. Lean binds xs ys fm x explicitly, with ys : List (Option β) as HOL res_var's value-option list, and keeps the conjunctive premise. FOLDL res_var is List.foldl over the tagged HolFiniteMapExact.resVarEq, FLOOKUP is .lookup, and ~MEM is ∉. The standalone map fm is the bare relation-qualifier entry, as in the tagged res_var_lookup_original_eq."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
+    "hol_name": "unassigned_free_vars_evaluate_same",
+    "lean_path": "Flapjack/Pancake/Semantics/CrepProps.lean",
+    "lean_name": "crepUnassignedFreeVarsEvaluateSameHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-28, bead flapjack-pxn.18.4.3.95.3; crepPropsScript.sml:330-374): HOL !p s res t n k. evaluate (p,s) = (res,t) /\\ (res = NONE \\/ res = SOME (Continue k) \\/ res = SOME (Break k)) /\\ ~MEM n (assigned_free_vars p) ==> FLOOKUP t.locals n = FLOOKUP s.locals n. Lean keeps the binders p s res t n k and the conjunctive premise. evaluate is the tagged line-443 Crep evaluator evalCrepSemHOLProgExact (evaluate (p,s) is evalCrepSemHOLProgExact s p), assigned_free_vars is the tagged crepAssignedFreeVarsHOL, ~MEM is ∉, and FLOOKUP is .lookup. The proof, like HOL's recInduct evaluate_ind, uses the tagged evalCrepSemHOLProgExact_induct and the tagged evaluate_def clause equations. CrepSemHOLState locals/globals/code use the canonical finite-support carrier (same-module witness), and 'a word is BitVec width with [NeZero width]."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",

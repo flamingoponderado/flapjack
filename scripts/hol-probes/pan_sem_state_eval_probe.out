@@ -1,5 +1,6 @@
 word_load_hit=SOME (ValWord 0x1122334455667788w)
 word_load_miss=NONE
+eval_nested_load_shape=SOME (RStruct [ValWord 17w; RStruct [ValWord 34w; ValWord 51w]])
 byte_little_first=SOME (ValWord 136w)
 state_rel_source_byte_little=SOME (ValWord 136w)
 state_rel_source_byte_domain_failure=NONE
