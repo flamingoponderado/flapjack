@@ -1,5 +1,6 @@
 import Flapjack.Pancake.CrepToLoop
 import Flapjack.Pancake.CrepToLoop.StateRel
+import Flapjack.Pancake.CrepToLoop.Proofs.LocalsRelHelpers
 import Flapjack.Misc.Sptree
 
 /-!
@@ -678,7 +679,8 @@ example :
         (evalCrepSemHOLProgExact { stateRelExactCrep with clock := 2 + 3 } (CrepProgHOL.skip)).2.ffi.ioEvents) ∧
       ((LoopSemStateFiniteExact.evaluate (HolLoopProg.skip) { stateRelExactLoop with clock := 2 }).2.ffi.ioEvents <+:
         (LoopSemStateFiniteExact.evaluate (HolLoopProg.skip) { stateRelExactLoop with clock := 2 + 3 }).2.ffi.ioEvents) :=
-  evaluateIOMonoRephrases (CrepProgHOL.skip) stateRelExactCrep (HolLoopProg.skip) stateRelExactLoop 2 3
+  ⟨(evaluateIOMonoRephrases (CrepProgHOL.skip) stateRelExactCrep (HolLoopProg.skip) stateRelExactLoop 2).1 3,
+    (evaluateIOMonoRephrases (CrepProgHOL.skip) stateRelExactCrep (HolLoopProg.skip) stateRelExactLoop 2).2 3⟩
 
 def evaluateIOMonoGuard : Bool :=
   decide ((LoopSemStateFiniteExact.evaluate (HolLoopProg.skip) { stateRelExactLoop with clock := 2 }).2.ffi.ioEvents.length = 0)
