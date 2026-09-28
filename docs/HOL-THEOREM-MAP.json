@@ -18320,6 +18320,15 @@
     "words_as_type_indexed_bitvec": true
   },
   {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "survives_MAPi_Assign",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/SurvivesMapiAssign.lean",
+    "lean_name": "holSurvivesMapiAssign",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-c source comparison (2026-09-28, bead flapjack-pxn.18.5.6.40) against crep_to_loopProofScript.sml:368-379. Binder order n, les, offset is preserved; les is exactly the HOL list of loopLang exp values and the Lean carrier is List (HolLoopExp width). The MAPi lambda assigns each expression to variable index+offset; List.mapIdx uses the same zero-based element index, and holLoopNestedSeq matches nested_seq. Both statements conclude the HOL Boolean T/Lean true with no hypotheses or extra premises. The only translation is the reviewed positive indexed word representation from HOL 'a word to BitVec width; the expression, program, Bool, Nat, and list carriers preserve their constructors/types. Direct HOL EVAL rows for empty, singleton, three-expression, and zero-offset lists are in scripts/hol-probes/crep_to_loop_survives_mapi_assign_probe.out, with matching exact-carrier Lean fixtures in Flapjack/Test/CrepToLoopSurvivesMapiAssignParity. This is a proof-side theorem port, not a production-routing claim.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
     "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
     "hol_name": "prog_if_def",
     "lean_path": "Flapjack/Pancake/CrepToLoop/ContextExact.lean",
