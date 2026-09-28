@@ -514,10 +514,12 @@ private theorem loadGlobalsHOL_zero_eq_range {width : Nat} [NeZero width]
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:4139-4176`).
 
     HOL's implicitly universally quantified variables `s rv rvs vs p` appear
-    in that order and map to the binders `state value values names body`; the
+    in that order and map to the binders `state value values names body`; its
     single conjunctive premise `globals_lookup s rv = SOME rvs /\ size_of_shape
     (shape_of rv) <= 32 /\ ALL_DISTINCT vs /\ LENGTH vs = size_of_shape
-    (shape_of rv)` maps to `hLookup`, `_hSize`, `hDistinct`, `hLength`.
+    (shape_of rv)` is kept as one conjunctive premise binder `h`, destructured
+    inside the proof into `hLookup`/`_hSize`/`hDistinct`/`hLength` (matching
+    the HOL shape rather than four curried binders).
     `globals_lookup`, `size_of_shape`, `shape_of`, `nested_decs`,
     `load_globals`, and the Crep `evaluate` are the tagged
     `globalsLookupHOL`, `sizeOfShapeHOL`, `shapeOfHOLExact`, `nestedDecsHOL`,
@@ -535,11 +537,10 @@ theorem evaluateNestedDecsLoadGlobalsCrepHOL {width : Nat} [NeZero width]
     {σ : Type} (state : CrepSemHOLState width σ) (value : ValueHOL width)
     (values : List (HolWordLab width)) (names : List Nat)
     (body : CrepProgHOL width)
-    (hLookup : globalsLookupHOL state value = some values)
-    (_hSize : Flapjack.Pancake.PanLang.sizeOfShapeHOL (shapeOfHOLExact value) ≤ 32)
-    (hDistinct : names.Nodup)
-    (hLength : names.length =
-      Flapjack.Pancake.PanLang.sizeOfShapeHOL (shapeOfHOLExact value)) :
+    (h : globalsLookupHOL state value = some values ∧
+      Flapjack.Pancake.PanLang.sizeOfShapeHOL (shapeOfHOLExact value) ≤ 32 ∧
+      names.Nodup ∧
+      names.length = Flapjack.Pancake.PanLang.sizeOfShapeHOL (shapeOfHOLExact value)) :
     evalCrepSemHOLProgExact state
         (nestedDecsHOL names
           (loadGlobalsHOL (width := width) 0
@@ -549,6 +550,7 @@ theorem evaluateNestedDecsLoadGlobalsCrepHOL {width : Nat} [NeZero width]
       (result.1, { result.2 with locals :=
         ((List.zip names (names.map state.locals.lookup)).foldl
           (fun current entry => HolFiniteMapExact.resVarEq current entry) result.2.locals) }) := by
+  obtain ⟨hLookup, _hSize, hDistinct, hLength⟩ := h
   let count := Flapjack.Pancake.PanLang.sizeOfShapeHOL (shapeOfHOLExact value)
   let expressions := loadGlobalsHOL (width := width) 0 count
   have hLookupMapM :
