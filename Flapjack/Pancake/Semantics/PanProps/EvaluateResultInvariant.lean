@@ -184,8 +184,7 @@ private theorem valuesHOLWf_resVarEq {width : Nat} [NeZero width]
       simpa [predicate] using h1 key value hvalue
     · intro key value hvalue
       simpa [predicate] using h2 key value hvalue
-  have hresult := feveryResVarFlookupHOL predicate
-    ⟨map1, map2⟩ name hmaps
+  have hresult := feveryResVarFlookupHOL predicate map1 map2 name hmaps
   intro key value hvalue
   exact hresult key value hvalue
 
@@ -4032,7 +4031,8 @@ theorem evaluateStructsInvariantFiniteExact {width : Nat} {σ : Type}
     HOL `FEVERY`; the result match is HOL's Return/Exception conclusion. Only
     the four named finite-map fields use the canonical representation. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_is_wf_shape_invariant"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem evaluateIsWfShapeInvariantFiniteExact {width : Nat} {σ : Type}
     [NeZero width]
     (program : ProgHOL width)

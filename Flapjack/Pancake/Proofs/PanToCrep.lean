@@ -2249,8 +2249,8 @@ theorem evalPanSemStateExpsWfShapeOfStateRel
       source.globals source.memory source.baseAddress source.topAddress
       panSemBitVec64BytesInWord expressions
       (memoryAccess := some (panSemBitVec64MemoryAccess source)) = some values := by
-    simpa [evalPanSemStateExps, evalPanSemStateExp, evalPanValueExps,
-      panSemBitVec64BytesInWord, hstructs] using heval
+    rw [evalPanSemStateExps_64_eq_previous] at heval
+    simpa [evalPanValueExps, panSemBitVec64BytesInWord, hstructs] using heval
   exact evalPanValueExps_isWfShape ([] : StructContext) source.locals
     source.globals source.memory source.baseAddress source.topAddress
     panSemBitVec64BytesInWord hlocalsWf hglobalsWf expressions

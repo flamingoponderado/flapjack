@@ -41,15 +41,19 @@ open Flapjack.Pancake.PanLang
     compiler path uses this exact carrier. That executable-path replacement
     remains tracked on the parent correctness bead.
 
-    No separate `(words_as_type_indexed_bitvec)` qualifier is attached: that
-    flag cannot be combined with `fmap_as_finite_support_relation` under the
-    current manifest schema (no reviewed status carries both), and the traced
-    finite maps are already named above. The schema question is tracked by
-    flapjack-ikjm.4.
+    The combined `(fmap_as_finite_support_relation := [...])` +
+    `(words_as_type_indexed_bitvec)` qualifiers are attached: the relation
+    traverses the finite-map fields named above, and HOL's type-indexed
+    `'a word` (context exception codes, `ProgHOL width`) is rendered by the
+    positive-width `BitVec width` carrier of the named structures, so the
+    combined reviewed status
+    `reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec`
+    records the whole representation translation (bead flapjack-ikjm.4).
 -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "code_rel_def"
   (fmap_as_finite_support_relation := [sourceCode, targetCode,
-    PanToCrepContextExact.funcs, PanToCrepContextExact.eids])]
+    PanToCrepContextExact.funcs, PanToCrepContextExact.eids])
+  (words_as_type_indexed_bitvec)]
 def codeRelExactHOLW {width : Nat} [NeZero width]
     (context : PanToCrepContextExact width)
     (sourceCode : HolFiniteMapExact MlS
@@ -65,6 +69,138 @@ def codeRelExactHOLW {width : Nat} [NeZero width]
       let nextContext := ctxtFcExactHOL context.funcs context.eids variables shapes names
       targetCode.lookup function = some
         (names, compileProgExactHOLW nextContext program)
+
+/-- Flapjack finite-map bridge (no HOL declaration): `alistToFmap` is the
+    right-fold form of HOL `alist_to_fmap`, so lookup observes the first source
+    occurrence just like `List.lookup`. -/
+private theorem flookup_alistToFmap_eq_lookup {α β : Type}
+    [BEq α] [LawfulBEq α] (entries : List (α × β)) (key : α) :
+    Flapjack.FLOOKUP (Flapjack.alistToFmap entries) key = List.lookup key entries := by
+  induction entries with
+  | nil => rfl
+  | cons entry entries ih =>
+      obtain ⟨entryKey, entryValue⟩ := entry
+      by_cases h : entryKey = key
+      · subst entryKey
+        simp [Flapjack.alistToFmap, List.lookup, Flapjack.FLOOKUP_update]
+      · have h₁ : (entryKey == key) = false := beq_eq_false_iff_ne.mpr h
+        have h₂ : (key == entryKey) = false :=
+          beq_eq_false_iff_ne.mpr (fun he => h he.symm)
+        change Flapjack.FLOOKUP
+          (Flapjack.FUPDATE (Flapjack.alistToFmap entries)
+            (entryKey, entryValue)) key = _
+        rw [Flapjack.FLOOKUP_update]
+        simp only [h₁, Bool.false_eq_true, ↓reduceIte, List.lookup_cons, h₂]
+        simpa [Flapjack.alistToFmap] using ih
+
+/-- Exact body-compiler bridge for the per-entry context built by HOL
+    `ctxt_fc`. The exact `make_vmap` and `crep_vars` definitions construct the
+    same map, and `MAX_LIST (GENLIST I n) = n - 1`. Flapjack bridge theorem; it
+    has no separate HOL declaration. -/
+private theorem compFuncExactHOLW_ctxtFcExactHOL {width : Nat} [NeZero width]
+    (fs : HolFiniteMapExact MlS (List (MlS × ShapeHOL) × ShapeHOL))
+    (eids : HolFiniteMapExact MlS (BitVec width))
+    (params : List (MlS × ShapeHOL)) (program : ProgHOL width) :
+    compFuncExactHOLW fs eids params program =
+      compileProgExactHOLW
+        (ctxtFcExactHOL fs eids (params.map Prod.fst) (params.map Prod.snd)
+          (crepVarsHOL params)) program := by
+  have hcontext :
+      mkCtxtExactHOL (panToCrepMakeVmapHOLExact params) fs
+          (sizeOfShapeHOL (.comb (params.map Prod.snd)) - 1) eids =
+        ctxtFcExactHOL fs eids (params.map Prod.fst) (params.map Prod.snd)
+          (crepVarsHOL params) := by
+    simp [mkCtxtExactHOL, ctxtFcExactHOL, panToCrepMakeVmapHOLExact,
+      crepVarsHOL, maxList_range, List.zip]
+  change compileProgExactHOLW
+      (mkCtxtExactHOL (panToCrepMakeVmapHOLExact params) fs
+        (sizeOfShapeHOL (.comb (params.map Prod.snd)) - 1) eids) program = _
+  rw [hcontext]
+
+/-- Exact-carrier HOL `mk_ctxt_code_imp_code_rel`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:4604-4616`).  The
+    declaration list is projected by exact `functionsHOL`; source and target
+    code tables are the HOL `alist_to_fmap` construction represented by
+    `HolFiniteMapExact.updateList` over the reversed function/compiled lists.
+    The exact initial compiler context uses the tagged `make_funcs`,
+    `get_eids_from_decls`, `compile_to_crep`, and `compile` definitions.  The
+    two HOL premises remain all-distinct function names and localization of
+    every function body. The context's traversed `funcs`/`eids` fields use the
+    canonical `HolFiniteMapExact` carrier with the same-module context
+    roundtrip witness; the constructed source/target code maps preserve HOL
+    `alist_to_fmap` first-occurrence lookup by reversing before `updateList`.
+    `MlS`, `ShapeHOL`, `ProgHOL`, and `CrepProgHOL` match HOL's `mlstring`,
+    `shape`, `panLang$prog`, and `crepLang$prog`; positive-width `BitVec`
+    records HOL's type-indexed word. These are the exact map/word
+    representation qualifications below, with no extra premises or carrier
+    narrowing. The direct `code_rel_generated_initial` EVAL expansion and its
+    original HOL theorem discharge `code_rel_generated_initial_proved` are in
+    `scripts/hol-probes/code_rel_probe.out`; the corresponding exact-carrier
+    regression is in `Flapjack.Test.PanToCrepCodeRelParity`. This theorem uses
+    the tagged exact `compileToCrepExactHOLW`/`compileProgExactHOLW` definitions
+    and the same per-entry `compile` body as HOL `compile_def`. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml"
+  "mk_ctxt_code_imp_code_rel" 4604
+  (fmap_as_finite_support_relation :=
+    [PanToCrepContextExact.funcs, PanToCrepContextExact.eids])
+  (words_as_type_indexed_bitvec)]
+theorem mkCtxtCodeImpCodeRelExactHOLW {width : Nat} [NeZero width]
+    (declarations : List (DeclHOL width))
+    (_hdistinct : (functionsHOL declarations).map Prod.fst |>.Nodup)
+    (hlocalised : ∀ entry ∈ functionsHOL declarations,
+      localisedProgHOL entry.2.2.1 = true) :
+    codeRelExactHOLW
+      (mkCtxtExactHOL HolFiniteMapExact.empty
+        (makeFuncsExactHOL (functionsHOL declarations)) 0
+        (getEidsFromDeclsHOL declarations))
+      (HolFiniteMapExact.empty.updateList (functionsHOL declarations).reverse)
+      (HolFiniteMapExact.empty.updateList
+        (compileToCrepExactHOLW declarations).reverse) := by
+  intro function variableShapes program returnShape hsource
+  change Flapjack.FLOOKUP
+      (Flapjack.FUPDATE_LIST Flapjack.FEMPTY
+        (functionsHOL declarations).reverse) function =
+    some (variableShapes, program, returnShape) at hsource
+  rw [Flapjack.FLOOKUP_FUPDATE_LIST_reverse_eq_lookup] at hsource
+  have hmem : (function, (variableShapes, (program, returnShape))) ∈
+      functionsHOL declarations := by
+    obtain ⟨before, after, hsplit, _hfirst⟩ :=
+      List.lookup_eq_some_iff.mp hsource
+    rw [hsplit]
+    simp
+  have hbody : localisedProgHOL program = true := hlocalised _ hmem
+  refine ⟨hbody, ?_, ?_⟩
+  · change Flapjack.FLOOKUP
+      (Flapjack.alistToFmap (makeFuncsEntriesHOL (functionsHOL declarations)))
+      function = some (variableShapes, returnShape)
+    change Flapjack.FLOOKUP
+      (Flapjack.alistToFmap
+        ((functionsHOL declarations).map fun entry =>
+          (entry.1, (entry.2.1, entry.2.2.2)))) function = _
+    rw [flookup_alistToFmap_eq_lookup,
+      lookup_map_preserveFst
+        (project := fun value : List (MlS × ShapeHOL) ×
+          (Flapjack.Pancake.PanLang.ProgHOL width × ShapeHOL) =>
+            (value.1, value.2.2))]
+    rw [hsource]
+    rfl
+  · simp only [HolFiniteMapExact.lookup_updateList]
+    change Flapjack.FLOOKUP
+      (Flapjack.FUPDATE_LIST Flapjack.FEMPTY
+        (compileToCrepExactHOLW declarations).reverse) function = _
+    rw [Flapjack.FLOOKUP_FUPDATE_LIST_reverse_eq_lookup]
+    simp only [compileToCrepExactHOLW]
+    rw [lookup_map_preserveFst
+      (functions := functionsHOL declarations)
+      (project := fun entry : List (MlS × ShapeHOL) ×
+        (ProgHOL width × ShapeHOL) =>
+          (crepVarsHOL entry.1,
+            compFuncExactHOLW (makeFuncsExactHOL (functionsHOL declarations))
+              (getEidsFromDeclsHOL declarations) entry.1 entry.2.1))]
+    rw [hsource]
+    simp only [Option.map_some]
+    rw [compFuncExactHOLW_ctxtFcExactHOL]
+    rfl
 
 /-- Exact port of HOL `code_rel_imp`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:81-91`):
@@ -92,11 +228,13 @@ def codeRelExactHOLW {width : Nat} [NeZero width]
     context carrier. This tags only the exact proof-side relation, not the
     production `codeRel`/`codeRelW`, which remain on the parent bead.
 
-    No separate `(words_as_type_indexed_bitvec)` qualifier is attached; see the
-    schema note on `codeRelExactHOLW` above (tracked by flapjack-ikjm.4). -/
+    The combined `(fmap_as_finite_support_relation := [...])` +
+    `(words_as_type_indexed_bitvec)` qualifiers are attached, matching the
+    imported `code_rel_def` tag (bead flapjack-ikjm.4). -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "code_rel_imp"
   (fmap_as_finite_support_relation := [sourceCode, targetCode,
-    PanToCrepContextExact.funcs, PanToCrepContextExact.eids])]
+    PanToCrepContextExact.funcs, PanToCrepContextExact.eids])
+  (words_as_type_indexed_bitvec)]
 theorem codeRelExactHOLW_imp {width : Nat} [NeZero width]
     (context : PanToCrepContextExact width)
     (sourceCode : HolFiniteMapExact MlS
@@ -170,11 +308,13 @@ theorem holFmapAsFiniteSupportRelationWitness_CrepSemHOLState
     metis_tac[]`. This tags only the exact proof-side theorem, not the
     production `codeRel`/`codeRelW` carriers.
 
-    No separate `(words_as_type_indexed_bitvec)` qualifier is attached; see the
-    schema note on `codeRelExactHOLW` above (tracked by flapjack-ikjm.4). -/
+    The combined `(fmap_as_finite_support_relation := [...])` +
+    `(words_as_type_indexed_bitvec)` qualifiers are attached; see the schema
+    note on `codeRelExactHOLW` above (bead flapjack-ikjm.4). -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "code_rel_empty_locals"
   (fmap_as_finite_support_relation :=
-    [PanSemStateFiniteExact.code, CrepSemHOLState.code])]
+    [PanSemStateFiniteExact.code, CrepSemHOLState.code])
+  (words_as_type_indexed_bitvec)]
 theorem codeRelExactHOLW_emptyLocals {width : Nat} [NeZero width] {σ : Type}
     (context : PanToCrepContextExact width)
     (source : PanSemStateFiniteExact width σ)

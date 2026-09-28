@@ -1,3 +1,4 @@
+import Flapjack.Pancake.CrepInline.Canonical
 import Flapjack.Pancake.PanToCrep.Compile
 import Flapjack.Pancake.PanToCrep.ContextExact
 import Flapjack.Pancake.PanToCrep.MakeVmapHOL
@@ -433,7 +434,7 @@ def compileCallWrappedResultHandlerPresentEidExactHOLW {width : Nat} [NeZero wid
   let compiledArguments := compileExpExactHOLWList context arguments
   let flattenedArguments := compiledArguments.flatMap Prod.fst
   let handler := CrepProgHOL.seq
-    (expHdlExact ⟨context.vars⟩ exceptionVariable)
+    (expHdlExact context.vars exceptionVariable)
     (compileHandlerBody context)
   .call (some (resultNames, some (exceptionCode, handler))) function flattenedArguments
 
@@ -453,7 +454,7 @@ def compileCallWrappedResultFallbackHandlerPresentEidExactHOLW
   let compiledArguments := compileExpExactHOLWList context arguments
   let flattenedArguments := compiledArguments.flatMap Prod.fst
   let handler := CrepProgHOL.seq
-    (expHdlExact ⟨context.vars⟩ exceptionVariable)
+    (expHdlExact context.vars exceptionVariable)
     (compileHandlerBody context)
   .call (some ([], some (exceptionCode, handler))) function flattenedArguments
 
@@ -527,7 +528,7 @@ def compileCallHandlerPresentEidExactHOLW {width : Nat} [NeZero width]
     | some shape => (List.range (Flapjack.Pancake.PanLang.sizeOfShapeHOL shape)).map
         (fun index => context.vmax + index + 1)
   let handler := CrepProgHOL.seq
-    (expHdlExact ⟨context.vars⟩ exceptionVariable)
+    (expHdlExact context.vars exceptionVariable)
     (compileHandlerBody context)
   let call := CrepProgHOL.call
     (some (returnNames, some (exceptionCode, handler))) function flattenedArguments
@@ -859,5 +860,27 @@ theorem loadShapeBytesW_map_crepExpToHOL {width : Nat} [NeZero width]
     (loadShapeBytesW address count value).map crepExpToHOL =
       loadShapeBytesHOLW address count (crepExpToHOL value) :=
   loadShapeBytes_map_crepExpToHOL address count value
+
+/-- Flapjack-specific analogue of HOL `compile_prog_def` (`pan_to_crepScript.sml:393-397`):
+`compile_prog prog = compile_inl_top (MAP FST (functions (FILTER inlinable prog)))
+(compile_to_crep prog)`. The declaration-only `compile_to_crep` half is the tagged
+`compileToCrepExactHOLW`; the inline half uses `compileInlTopHOLExact` over
+`MlS` names and `CrepProgHOL`. Both are over the exact carriers
+(`DeclHOL width`, `ShapeHOL`/`ExpHOL` values, `MlS` identifiers), with the only
+outer translation being HOL's positive type-indexed word to `BitVec width`
+(hence the `words_as_type_indexed_bitvec` qualifier; the finite maps used inside
+are local intermediates and do not occur in this declaration's input or output
+type). No extra hypotheses.  The definition is computable: the inline map's
+finite support is derived from the filtered alist's keys
+(`supportKeys_alistToFmapHOLExact`), so it never invokes `Classical.choose` and
+the executable compiler can run it. This declaration remains untagged because
+the recursive inline core underlying `compileInlTopHOLExact` has not yet been
+reviewed as equivalent to HOL `inline_prog` (`flapjack-e7w.2.1.13`). -/
+def compileProgDeclsHOLW {width : Nat} [NeZero width]
+    (prog : List (DeclHOL width)) :
+    List (MlS × List Nat × CrepProgHOL width) :=
+  let inl_fs_names := (functionsHOL (prog.filter inlinableHOL)).map Prod.fst
+  let to_crep := compileToCrepExactHOLW prog
+  CrepInlineCanonical.compileInlTopHOLExact inl_fs_names to_crep
 
 end Flapjack

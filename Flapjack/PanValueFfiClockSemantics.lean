@@ -706,6 +706,36 @@ theorem evalPanValueFfiClockCodeCall_catchesRaisedBody
   simp [evalPanValueFfiClockCodeCall, Option.elim_some, panValueCallArgumentsValue, harguments, hcallee, hclock,
     hcalleeBody, hshape, hshapeMatch, hhandlerAssignment, hhandlerBody, decPanClock]
 
+/-! This declaration-boundary adapter exposes the executed source-owned call
+    after declaration evaluation. It shares the exact code-map conversion,
+    exception-shape lookup, and return-contract path used by the public
+    program evaluator, so correctness lemmas do not assume a separate legacy
+    functions-list call result. The adapter itself is Flapjack infrastructure
+    with no single HOL declaration. -/
+def evalPanValueFfiClockProgramCodeCall
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (context : PanValueFfiContext α)
+    (primitive : PanPrimitiveHandler α)
+    (handler : PanValueStatefulFfiHandler α σ)
+    (state : PanValueProgramState α)
+    (fuel : Nat) (globals : VarName → Option (PanValue α))
+    (memory : α → Option (PanValue α)) (ffi : FfiState σ)
+    (clock : Nat) (entry : FunName) (arguments : List (Exp α))
+    (memoryAccess : Option (PanValueMemoryAccess α) := none)
+    (memoryHandler : Option (PanValueMemoryFfiHandler α σ) := none) :
+    Option (PanValueFfiClockResult α σ) := do
+  let code ← panValueProgramStateCodeMap state
+  let contracts := some (PanValueCallContracts.mk state.returnShapes state.exceptions
+    state.parameterShapes)
+  evalPanValueFfiClockCodeCall context primitive handler state.structs code
+    (fun exception => lookupInfo exception state.exceptions)
+    state.baseAddress state.topAddress state.bytesInWord fuel (fun _ => none)
+    globals memory ffi clock none entry arguments
+    (memoryAccess := memoryAccess) (contracts := contracts)
+    (memoryHandler := memoryHandler)
+
 def evalPanValueFfiClockProgram
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
@@ -722,13 +752,9 @@ def evalPanValueFfiClockProgram
     Option (PanValueFfiClockResult α σ) := do
   let state ← evalPanValueDeclarations initial.source declarations
     (memoryAccess := memoryAccess)
-  let contracts := some (PanValueCallContracts.mk state.returnShapes state.exceptions
-    state.parameterShapes)
-  let (outcome, nextClock) ← evalPanValueFfiClockCall context primitive handler state.structs
-    state.functions state.baseAddress state.topAddress state.bytesInWord fuel
-    (fun _ => none) state.globals state.memory initial.ffi clock none entry arguments
-    (memoryAccess := memoryAccess) (contracts := contracts)
-    (memoryHandler := memoryHandler)
+  let (outcome, nextClock) ← evalPanValueFfiClockProgramCodeCall context primitive
+    handler state fuel state.globals state.memory initial.ffi clock entry arguments
+    (memoryAccess := memoryAccess) (memoryHandler := memoryHandler)
   match lookupInfo entry state.returnShapes, outcome with
   | some shape, .control (.returned locals globals memory ffi [value]) =>
       if panShapeMatches (panValueShape state.structs value) shape then

@@ -18,6 +18,7 @@ import Flapjack.Misc.FoldrMaxList
 import Flapjack.Misc.Uncurry
 import Flapjack.Misc.OptMmapCong
 import Flapjack.Pancake.CrepInline.Pass
+import Flapjack.Pancake.CrepInline.Canonical
 import Flapjack.Pancake.CrepLang
 import Flapjack.Pancake.CrepLang.Exp
 import Flapjack.Pancake.CrepLang.Prog
@@ -55,10 +56,32 @@ import Flapjack.Pancake.Proofs.PanToCrep.StateRelFiniteSupport
 import Flapjack.Pancake.Proofs.PanToCrep.TotalEvaluateCases
 import Flapjack.Pancake.Proofs.PanToCrep.EvaluateNestedAssign
 import Flapjack.Pancake.Proofs.PanToCrep.EvaluateNestedDecs
+import Flapjack.Pancake.Proofs.PanToCrep.EvalDistinctLists
+import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Call
+import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.DecCall
+import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Skip
+import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Break
+import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Continue
+import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Seq
+import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.If
+import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Dec
+import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Tick
+import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Annot
+import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Return
+import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.While
+import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.StoreByte
+import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Store32
+import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Raise
+import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Assign
+import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Primitive
+import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Store
+import Flapjack.Pancake.Proofs.PanToCrep.NotMemContextAssignedMemGt
 import Flapjack.Pancake.Semantics.CrepProps
 import Flapjack.Pancake.Semantics.CrepProps.MemLoadFlatRel
+import Flapjack.Pancake.Semantics.CrepProps.EvaluateAddClock
 import Flapjack.Pancake.Semantics.CrepSem
 import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
+import Flapjack.Pancake.Semantics.CrepSem.EvaluateInd
 import Flapjack.Pancake.Semantics.CrepSem.LookupCode
 import Flapjack.Pancake.Semantics.CrepSem.StateExact
 import Flapjack.Pancake.Semantics.CrepSem.Primop
@@ -69,6 +92,8 @@ import Flapjack.Pancake.Semantics.LoopSemStateExact
 import Flapjack.Pancake.Semantics.PanCommonProps
 import Flapjack.Pancake.Semantics.PanProps
 import Flapjack.Pancake.Semantics.PanProps.EvalInvariant
+import Flapjack.Pancake.Semantics.PanProps.ListRelFlatten
+import Flapjack.Pancake.Semantics.PanProps.ResVar
 import Flapjack.Pancake.Semantics.PanProps.EvaluateResultInvariant
 import Flapjack.Pancake.Semantics.PanProps.MemByteArray
 import Flapjack.Pancake.Semantics.PanProps.LocalisedExpSimps
@@ -154,6 +179,7 @@ elab "#emit_hol_type_hashes" : command => do
             ("names_as_string_boundary", toJson ref.namesAsStringBoundary),
             ("fmap_as_finite_support", toJson ref.fmapAsFiniteSupport),
             ("fmap_as_finite_support_result", toJson ref.fmapAsFiniteSupportResult),
+            ("fmap_as_finite_support_parameters", toJson ref.fmapAsFiniteSupportParameters),
             ("fmap_as_finite_support_relation",
               toJson (ref.fmapAsFiniteSupportRelation.map (fun entry => if entry.1.isEmpty then entry.2 else s!"{entry.1}.{entry.2}"))),
             ("fmap_as_finite_support_equalities", toJson ref.fmapAsFiniteSupportEqualities),

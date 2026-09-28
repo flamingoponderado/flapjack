@@ -44,16 +44,37 @@ shape/duplicate failure cases.
 `Flapjack.Test.PanSemEvaluateDeclsFiniteParity` separately guards the exact
 finite-map evaluator against every named row in `pan_evaluate_decls_probe.out`,
 including an in-domain byte load in a declaration initializer.
+`pan_clock_program_route_probe.out` records direct HOL `evaluate` observations
+for duplicate function front-update order (`SOME (Return (ValWord 2w))`), a
+duplicate whose shadowed binding has different formal names and return shape
+(`SOME (Return (RStruct []))`), and rejection of a nested callee return whose
+actual value violates its declared return shape (`SOME Error`). The matching
+declaration-level clocked wrapper regressions are in
+`Flapjack.Test.PanValueFfiClockMemoryFfi`; they exercise production routing
+through the source-owned finite code map. Refresh
+with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=pan_clock_program_route_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
 `pan_sem_state_eval_probe.out` records direct HOL EVAL of `eval_def` at
 `cakeml/pancake/semantics/panSemScript.sml:209-297` for in-domain and
-out-of-domain word loads, little- and big-endian byte loads, 32-bit loads, and
-list-valued `word_op_def` operators with accepted and rejected operand counts.
+out-of-domain word loads, a recursively nested three-word shape load,
+little- and big-endian byte loads, 32-bit loads, and list-valued `word_op_def`
+operators with accepted and rejected operand counts.
 The source-shaped generic definition is `Flapjack.Pancake.wordOpHOL`; its
 all-width equation to the production RISC-V target is in
 `Flapjack.Pancake.Semantics.CrepRuntimeTarget`. The state-derived Lean
 boundary and its matching cases live in
 `Flapjack.Pancake.Semantics.PanSemStateEval` and
-`Flapjack.Test.PanSemStateEvalParity`.
+`Flapjack.Test.PanSemStateEvalParity`. The nested three-word Load row is also
+compared with compiled Crep loads under a concrete `state_rel` fixture in
+`Flapjack.Test.PanToCrepStateRelParity`; this regression does not prove the
+general arbitrary-shape induction case.
+`pan_sem_mem_domain_probe.out` pins the ordinary-memory domain boundary used
+by the production/exact `PanSemState` bridge: an in-domain `Load One` hit, an
+out-of-domain miss even when the total HOL cell holds a word, a statement-level
+`Store`/`Load` roundtrip, an out-of-domain `Store` failure, and a raw
+`mem_stores`/`mem_load` roundtrip. Its Lean regressions live in
+`Flapjack.Test.PanSemStateBridgeParity`.
 `pan_sem_e2e_probe.out` records direct HOL evaluation cases for nonempty
 state-owned code maps, including recursive Call, DecCall, nested Call/DecCall,
 and clock timeout. `pan_sem_call_return_shape_probe.out` adds Call and DecCall
@@ -67,6 +88,17 @@ byte-array reads, expression failure, nonword arguments, and `FFI_final`;
 these are checked by `Flapjack.Test.PanSemExtCallExactParity`. The finite-
 carrier source equation is tagged in
 `Flapjack.Pancake.Semantics.PanSem.ExtCallCase`.
+`pan_sem_ite_e2e_probe.out` records direct HOL `evaluate` rows for the `If`
+equation at `cakeml/pancake/semantics/panSemScript.sml:618-622`: a nonzero word
+condition selects the then-branch, `0w` selects the else-branch, and a condition
+that evaluates to the non-word value `RStruct []` (or fails to evaluate) returns
+`SOME Error` while retaining the state. The matching Lean guards for the
+measure-driven fragment and the expression-conditioned fragment live in
+`Flapjack.Test.PanSemTotalParity`. `pan_sem_total_fragment_stmt_probe.out` adds
+`If` selection over the exact `Assign` clause, including the non-word
+`RStruct []` condition row `total_if_assign_nonword_result` / `_local`; the
+production partial dispatcher's matching `If` guards and kernel-checked
+regressions are in `Flapjack.Test.PanSemTotalStepsParity`.
 `compile_to_crep_probe.out` records direct HOL EVAL rows for the full
 declaration-only `compile_to_crep_def`, including `raise_const`, `handled_pair`,
 duplicate exception IDs, and `duplicate_function_names`. The latter confirms

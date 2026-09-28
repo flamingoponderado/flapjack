@@ -318,8 +318,9 @@ end
 mutual
 /-- Exact HOL `wordLang$every_var_exp` (`wordLangScript.sml:85-91`): every
 register occurring in an exact expression satisfies `P`. -/
-@[hol "cakeml/compiler/backend/wordLangScript.sml" "every_var_exp_def"]
-def everyVarExpHOL {width : Nat} (P : Nat → Bool) :
+@[hol "cakeml/compiler/backend/wordLangScript.sml" "every_var_exp_def"
+  (words_as_type_indexed_bitvec)]
+def everyVarExpHOL {width : Nat} [NeZero width] (P : Nat → Bool) :
     WordLangExpHOL (BitVec width) → Bool
   | .var num => P num
   | .load exp => everyVarExpHOL P exp
@@ -329,7 +330,7 @@ def everyVarExpHOL {width : Nat} (P : Nat → Bool) :
 
 /-- Flapjack helper for the HOL `EVERY (every_var_exp P)` traversal on exact
 expressions. -/
-def everyVarExpsHOL {width : Nat} (P : Nat → Bool) :
+def everyVarExpsHOL {width : Nat} [NeZero width] (P : Nat → Bool) :
     List (WordLangExpHOL (BitVec width)) → Bool
   | [] => true
   | expression :: expressions =>
@@ -358,6 +359,49 @@ def everyVarInst {width : Nat} (P : Nat -> Bool) :
   | .const reg _ => P reg
   | .arith (.binop _ r1 r2 right) => P r1 && P r2 && everyVarImm P right
   | .arith (.shift _ r1 r2 right) => P r1 && P r2 && everyVarImm P right
+  | .arith (.div r1 r2 r3) => P r1 && P r2 && P r3
+  | .arith (.addCarry r1 r2 r3 r4) => P r1 && P r2 && P r3 && P r4
+  | .arith (.addOverflow r1 r2 r3 r4) => P r1 && P r2 && P r3 && P r4
+  | .arith (.subOverflow r1 r2 r3 r4) => P r1 && P r2 && P r3 && P r4
+  | .arith (.longMul r1 r2 r3 r4) => P r1 && P r2 && P r3 && P r4
+  | .arith (.longDiv r1 r2 r3 r4 r5) => P r1 && P r2 && P r3 && P r4 && P r5
+  | .mem .load reg (.addr base _) => P reg && P base
+  | .mem .store reg (.addr base _) => P reg && P base
+  | .mem .load32 reg (.addr base _) => P reg && P base
+  | .mem .store32 reg (.addr base _) => P reg && P base
+  | .mem .load8 reg (.addr base _) => P reg && P base
+  | .mem .store8 reg (.addr base _) => P reg && P base
+  | .fp (.fpLess reg _ _) => P reg
+  | .fp (.fpLessEqual reg _ _) => P reg
+  | .fp (.fpEqual reg _ _) => P reg
+  | .fp (.fpMovToReg r1 r2 _) => if width = 64 then P r1 else (P r1 && P r2)
+  | .fp (.fpMovFromReg _ r1 r2) => if width = 64 then P r1 else (P r1 && P r2)
+  | _ => true
+
+/-- Exact HOL `wordLang$every_var_imm` (`wordLangScript.sml:93-96`): the only
+`Reg r` clause is `P r` and every other immediate is `T`.  `[NeZero width]`
+models HOL's positive word dimension (`dimindex (:α) ≥ 1`); unlike the
+production `everyVarImm`, no `BitVec 0` instance is admitted, so the statement
+matches the HOL carrier and the declaration is tagged. -/
+@[hol "cakeml/compiler/backend/wordLangScript.sml" "every_var_imm_def"
+  (words_as_type_indexed_bitvec)]
+def everyVarImmHOL {width : Nat} [NeZero width] (P : Nat → Bool) :
+    WordRegImm (BitVec width) → Bool
+  | .reg num => P num
+  | _ => true
+
+/-- Exact HOL `wordLang$every_var_inst` (`wordLangScript.sml:98-133`) over the
+exact instruction carrier, with the two HOL FP-move `dimindex (:α) = 64` tests
+rendered as `width = 64`.  `[NeZero width]` models HOL's positive word
+dimension; the production `everyVarInst` omits that binder and stays
+`documented_mismatch`. -/
+@[hol "cakeml/compiler/backend/wordLangScript.sml" "every_var_inst_def"
+  (words_as_type_indexed_bitvec)]
+def everyVarInstHOL {width : Nat} [NeZero width] (P : Nat → Bool) :
+    WordLangInst (BitVec width) → Bool
+  | .const reg _ => P reg
+  | .arith (.binop _ r1 r2 right) => P r1 && P r2 && everyVarImmHOL P right
+  | .arith (.shift _ r1 r2 right) => P r1 && P r2 && everyVarImmHOL P right
   | .arith (.div r1 r2 r3) => P r1 && P r2 && P r3
   | .arith (.addCarry r1 r2 r3 r4) => P r1 && P r2 && P r3 && P r4
   | .arith (.addOverflow r1 r2 r3 r4) => P r1 && P r2 && P r3 && P r4

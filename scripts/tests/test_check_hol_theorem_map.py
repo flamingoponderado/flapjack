@@ -238,6 +238,32 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
                 self.assertIn("globalFreshName", record["reviewer"])
                 self.assertNotIn(key, tagged)
 
+    def test_crep_evaluate_ind_exact_tag(self):
+        tagged = MAP["tagged_declarations"]()
+        manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
+        manifest_by_key = {
+            (record["lean_path"], record["lean_name"]): record
+            for record in manifest
+        }
+        key = (
+            "Flapjack/Pancake/Semantics/CrepSem/EvaluateInd.lean",
+            "evalCrepSemHOLProgExact_induct",
+        )
+        record = manifest_by_key[key]
+        self.assertEqual(
+            (record["hol_path"], record["hol_name"]),
+            ("cakeml/pancake/semantics/crepSemScript.sml", "evaluate_ind"),
+        )
+        self.assertEqual(
+            record["statement_status"],
+            "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+        )
+        self.assertEqual(record["fmap_as_finite_support"], ["locals", "globals", "code"])
+        self.assertTrue(record["words_as_type_indexed_bitvec"])
+        self.assertIn("flapjack-2de.1.1", record["reviewer"])
+        self.assertIn(key, tagged)
+        self.assertNotIn(key, MAP["DOCUMENTED_MISMATCHES"])
+
     def test_crep_sem_state_exact_helpers_have_combined_carrier_qualifiers(self):
         tagged = MAP["tagged_declarations"]()
         manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
@@ -310,6 +336,30 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
         )
         self.assertTrue(res_var_record["fmap_as_finite_support_result"])
         self.assertIn(res_var_key, tagged)
+
+    def test_standalone_map_parameter_qualifiers_preserve_named_binders(self):
+        tagged = MAP["tagged_declarations"]()
+        manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
+        by_key = {(r["lean_path"], r["lean_name"]): r for r in manifest}
+        exact_key = ("Flapjack/Pancake/PanToCrep/ExpHdlExact.lean", "expHdlExact")
+        props_key = (
+            "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
+            "feveryResVarFlookupHOL",
+        )
+        exact = by_key[exact_key]
+        self.assertEqual(
+            exact["statement_status"],
+            "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
+        )
+        self.assertEqual(exact["fmap_as_finite_support_parameters"], ["fm"])
+        self.assertIs(exact["words_as_type_indexed_bitvec"], True)
+        self.assertEqual(tagged[exact_key][-1], ("fm",))
+        props = by_key[props_key]
+        self.assertEqual(
+            props["statement_status"], "reviewed_fmap_as_finite_support_parameters"
+        )
+        self.assertEqual(props["fmap_as_finite_support_parameters"], ["fm", "fm2"])
+        self.assertEqual(tagged[props_key][-1], ("fm", "fm2"))
 
     def test_crep_assigned_vars_nested_seq_carrier_mismatch_is_documented(self):
         key = (

@@ -1,0 +1,9 @@
+primitive_add_carry=T
+primitive_duplicate_lhs=T
+primitive_missing_lhs=T
+primitive_wrong_arity=T
+primitive_missing_rhs=T
+call_handler_catch=T
+call_handler_mismatch=T
+call_handler_absent=T
+call_handler_duplicate_rts=T

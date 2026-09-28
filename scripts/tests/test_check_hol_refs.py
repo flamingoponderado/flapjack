@@ -18,7 +18,7 @@ class HolAttributeSitesTest(unittest.TestCase):
     def test_single_line(self):
         self.assertEqual(
             list(SITES(['@[hol "cakeml/pancake/pan_globalsScript.sml" "compile_top_def"]'])),
-            [(1, "cakeml/pancake/pan_globalsScript.sml", "compile_top_def", None, (), (), (), (), False, (), False, False)],
+            [(1, "cakeml/pancake/pan_globalsScript.sml", "compile_top_def", None, (), (), (), (), False, (), False, False, ())],
         )
 
     def test_multiline(self):
@@ -29,7 +29,7 @@ class HolAttributeSitesTest(unittest.TestCase):
                 'theorem compileTopShapeWf : True := trivial',
             ])),
             [(1, "cakeml/pancake/proofs/pan_globalsProofScript.sml",
-              "compile_top_shape_wf", None, (), (), (), (), False, (), False, False)],
+              "compile_top_shape_wf", None, (), (), (), (), False, (), False, False, ())],
         )
 
     def test_comments_do_not_count(self):
@@ -39,7 +39,7 @@ class HolAttributeSitesTest(unittest.TestCase):
                 '-- @[hol "cakeml/pancake/pan_globalsScript.sml" "bad"]',
                 '@[hol "cakeml/pancake/pan_globalsScript.sml" "compile_top_def"]',
             ])),
-            [(3, "cakeml/pancake/pan_globalsScript.sml", "compile_top_def", None, (), (), (), (), False, (), False, False)],
+            [(3, "cakeml/pancake/pan_globalsScript.sml", "compile_top_def", None, (), (), (), (), False, (), False, False, ())],
         )
 
     def test_source_line(self):
@@ -47,7 +47,7 @@ class HolAttributeSitesTest(unittest.TestCase):
             list(SITES(['@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml"',
                         '  "locals_rel_wf_shape" 2345]'])),
             [(1, "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
-              "locals_rel_wf_shape", 2345, (), (), (), (), False, (), False, False)],
+              "locals_rel_wf_shape", 2345, (), (), (), (), False, (), False, False, ())],
         )
 
     def test_list_as_array_fields(self):
@@ -57,7 +57,7 @@ class HolAttributeSitesTest(unittest.TestCase):
                 '  "dec_deg_def" (list_as_array := [degrees, moves])]'
             ])),
             [(1, "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
-              "dec_deg_def", None, ("degrees", "moves"), (), (), (), False, (), False, False)],
+              "dec_deg_def", None, ("degrees", "moves"), (), (), (), False, (), False, False, ())],
         )
 
     def test_names_as_string_and_boundary_qualifiers(self):
@@ -68,7 +68,7 @@ class HolAttributeSitesTest(unittest.TestCase):
                 '  (names_as_string_boundary := [generated])]',
             ])),
             [(1, "cakeml/pancake/panLangScript.sml", "varname", None,
-              (), ("name", "generated"), ("generated",), (), False, (), False, False)],
+              (), ("name", "generated"), ("generated",), (), False, (), False, False, ())],
         )
 
     def test_fmap_as_finite_support_fields(self):
@@ -78,7 +78,7 @@ class HolAttributeSitesTest(unittest.TestCase):
                 '  (fmap_as_finite_support := [locals, globals])]'
             ])),
             [(1, "cakeml/pancake/semantics/panSemScript.sml",
-              "set_var_def", None, (), (), (), ("locals", "globals"), False, (), False, False)],
+              "set_var_def", None, (), (), (), ("locals", "globals"), False, (), False, False, ())],
         )
 
     def test_fmap_as_finite_support_result_qualifier(self):
@@ -88,8 +88,48 @@ class HolAttributeSitesTest(unittest.TestCase):
                 '  (fmap_as_finite_support_result)]'
             ])),
             [(1, "cakeml/pancake/pan_to_crepScript.sml",
-              "get_eids_from_decls_def", None, (), (), (), (), True, (), False, False)],
+              "get_eids_from_decls_def", None, (), (), (), (), True, (), False, False, ())],
         )
+
+    def test_fmap_as_finite_support_parameters_qualifier(self):
+        self.assertEqual(
+            list(SITES([
+                '@[hol "cakeml/pancake/semantics/panPropsScript.sml" "FEVERY_res_var_FLOOKUP"',
+                '  (fmap_as_finite_support_parameters := [fm, fm2])]',
+            ])),
+            [(1, "cakeml/pancake/semantics/panPropsScript.sml",
+              "FEVERY_res_var_FLOOKUP", None, (), (), (), (), False, (), False,
+              False, ("fm", "fm2"))],
+        )
+
+    def test_fmap_as_finite_support_parameters_requires_direct_exact_binders_and_witnesses(self):
+        lines = [
+            "theorem holFmapAsFiniteSupportParamWitness_eval_fm",
+            "    (fm : HolFiniteMapExact Nat Nat) :",
+            "    mapofBroad (maptoBroadlookup fm) fm.finiteSupport = fm := by",
+            "  cases fm; rfl",
+            "theorem holFmapAsFiniteSupportParamWitness_eval_fm2",
+            "    (fm2 : HolFiniteMapExact Nat Nat) :",
+            "    mapofBroad (maptoBroadlookup fm2) fm2.finiteSupport = fm2 := by",
+            "  cases fm2; rfl",
+        ]
+        declaration = (
+            "theorem eval (fm : HolFiniteMapExact Nat Nat) "
+            "(fm2 : HolFiniteMapExact Nat Nat) : Prop"
+        )
+        self.assertEqual(
+            CHECKER["fmap_as_finite_support_parameters_errors"](
+                lines, "Example.lean", declaration, "eval", ("fm", "fm2")
+            ),
+            [],
+        )
+
+    def test_fmap_as_finite_support_parameters_rejects_raw_or_missing_binder(self):
+        errors = CHECKER["fmap_as_finite_support_parameters_errors"](
+            [], "Example.lean", "theorem eval (fm : Nat → Option Nat) : Prop",
+            "eval", ("fm",),
+        )
+        self.assertTrue(any("must be an input parameter typed HolFiniteMapExact" in e for e in errors))
 
     def test_fmap_as_finite_support_relation_qualifier(self):
         self.assertEqual(
@@ -99,7 +139,7 @@ class HolAttributeSitesTest(unittest.TestCase):
             ])),
             [(1, "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
               "state_rel_def", None, (), (), (), (), False,
-              (("PanSemStateFiniteExact", "globals"), ("CrepSemHOLState", "locals")), False, False)],
+              (("PanSemStateFiniteExact", "globals"), ("CrepSemHOLState", "locals")), False, False, ())],
         )
 
     def test_fmap_as_finite_support_relation_accepts_two_carriers(self):
@@ -225,7 +265,7 @@ class HolAttributeSitesTest(unittest.TestCase):
                 '  (fmap_as_finite_support_equalities)]'
             ])),
             [(1, "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
-              "slc_tlc_rw", None, (), (), (), (), False, (), True, False)],
+              "slc_tlc_rw", None, (), (), (), (), False, (), True, False, ())],
         )
 
     def test_fmap_as_finite_support_equalities_accepts_two_witnesses(self):
@@ -1258,7 +1298,7 @@ class WordsAsTypeIndexedBitvecQualifierTest(unittest.TestCase):
                 '  (words_as_type_indexed_bitvec)]',
             ])),
             [(1, "cakeml/pancake/semantics/crepSemScript.sml", "evaluate_def", 240,
-              (), (), (), (), False, (), False, True)],
+              (), (), (), (), False, (), False, True, ())],
         )
 
     def test_accepts_dimindex_and_universe(self):
@@ -1369,6 +1409,47 @@ class WordsAsTypeIndexedBitvecQualifierTest(unittest.TestCase):
         self.assertTrue(
             any("NeZero 0" in e or "positive" in e for e in self.ERRORS(text, "evalProg"))
         )
+
+    def test_rejects_parenthesized_zero_dimension(self):
+        text = "\n".join(self.GOOD).replace(
+            "(addr : BitVec width)", "(addr : BitVec width) (leak : BitVec (0))",
+        )
+        self.assertTrue(
+            any("positive width" in e for e in self.ERRORS(text, "evalProg")),
+            self.ERRORS(text, "evalProg"),
+        )
+
+    def test_rejects_leading_zero_dimension(self):
+        text = "\n".join(self.GOOD).replace(
+            "(addr : BitVec width)", "(addr : BitVec width) (leak : BitVec 00)",
+        )
+        self.assertTrue(
+            any("positive width" in e for e in self.ERRORS(text, "evalProg")),
+            self.ERRORS(text, "evalProg"),
+        )
+
+    def test_rejects_arithmetic_dimension(self):
+        text = "\n".join(self.GOOD).replace(
+            "(addr : BitVec width)",
+            "(addr : BitVec width) (leak : BitVec (width - width))",
+        )
+        self.assertTrue(
+            any("positive width identifier" in e for e in self.ERRORS(text, "evalProg")),
+            self.ERRORS(text, "evalProg"),
+        )
+
+    def test_rejects_nezero_leading_zero(self):
+        text = "\n".join(self.GOOD).replace(
+            "[NeZero width]", "[NeZero width] [NeZero 00]",
+        )
+        self.assertTrue(
+            any("positive" in e for e in self.ERRORS(text, "evalProg")),
+            self.ERRORS(text, "evalProg"),
+        )
+
+    def test_accepts_parenthesized_identifier_dimension(self):
+        text = "\n".join(self.GOOD).replace("BitVec width", "BitVec (width)")
+        self.assertEqual(self.ERRORS(text, "evalProg"), [])
 
     def test_rejects_ffi_host_at_type_one(self):
         text = "\n".join(self.GOOD).replace("{σ : Type}", "{σ : Type 1}")
@@ -1664,37 +1745,89 @@ class WordsCarrierResolutionTest(unittest.TestCase):
         ])
         self.assertEqual(self._run(owner, consumer), [])
 
-    def test_rejects_inductive_carrier_without_same_owner_word_payload(self):
+    def test_accepts_hol_ast_carrier_reaching_nested_bitvec_payload(self):
         owner = "\n".join([
-            "inductive CrepProgExact (width : Nat) [NeZero width] where",
-            "  | skip",
-            "  | clock (value : Nat)",
+            '@[hol "cakeml/pancake/panLangScript.sml" "decl"]',
+            "inductive DeclHOL (width : Nat) [NeZero width] where",
+            "  | decl (value : ExpHOL width)",
+            '@[hol "cakeml/pancake/panLangScript.sml" "exp"]',
+            "inductive ExpHOL (width : Nat) [NeZero width] where",
+            "  | const (value : BitVec width)",
         ])
         consumer = "\n".join([
             "import Flapjack.PanToCrep.ContextExact",
-            '@[hol "cakeml/pancake/crep_inlineScript.sml" "unreach_elim_def"',
+            '@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "compile_def"',
             "  (words_as_type_indexed_bitvec)]",
-            "def unreachExact {width : Nat} [NeZero width]",
-            "    (program : CrepProgExact width) : Nat := width",
-        ])
-        errors = self._run(owner, consumer)
-        self.assertTrue(any("BitVec" in error for error in errors), errors)
-
-    def test_accepts_imported_inductive_carrier_with_bitvec_payload(self):
-        owner = "\n".join([
-            "inductive CrepProgExact (width : Nat) [NeZero width] where",
-            "  | skip",
-            "  | raise (value : BitVec width)",
-        ])
-        consumer = "\n".join([
-            "import Flapjack.PanToCrep.ContextExact",
-            '@[hol "cakeml/pancake/crep_inlineScript.sml" "unreach_elim_def"',
-            "  (words_as_type_indexed_bitvec)]",
-            "def unreachExact {width : Nat} [NeZero width]",
-            "    (program : CrepProgExact width) : Nat := width",
+            "def compileExact {width : Nat} [NeZero width]",
+            "    (declarations : List (DeclHOL width)) : Nat := width",
         ])
         self.assertEqual(self._run(owner, consumer), [])
 
+    def test_rejects_untagged_intermediate_ast_carrier(self):
+        owner = "\n".join([
+            '@[hol "cakeml/pancake/panLangScript.sml" "decl"]',
+            "inductive DeclHOL (width : Nat) [NeZero width] where",
+            "  | decl (value : ExpHOL width)",
+            "inductive ExpHOL (width : Nat) [NeZero width] where",
+            "  | const (value : BitVec width)",
+        ])
+        consumer = "\n".join([
+            "import Flapjack.PanToCrep.ContextExact",
+            '@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "compile_def"',
+            "  (words_as_type_indexed_bitvec)]",
+            "def compileExact {width : Nat} [NeZero width]",
+            "    (declarations : List (DeclHOL width)) : Nat := width",
+        ])
+        errors = self._run(owner, consumer)
+        self.assertTrue(any("BitVec" in error for error in errors), errors)
+
+    VALUE_HOL_OWNER = "\n".join([
+        "inductive HolWordLab (width : Nat) [NeZero width] where",
+        "  | word (value : BitVec width)",
+        "inductive ValueHOL (width : Nat) [NeZero width] where",
+        "  | val (value : HolWordLab width)",
+        "  | rStruct (fields : List (ValueHOL width))",
+        "  | nStruct (name : MlS) (fields : List (MlS × ValueHOL width))",
+    ])
+
+    VALUE_HOL_CONSUMER = "\n".join([
+        "import Flapjack.PanToCrep.ContextExact",
+        '@[hol "cakeml/pancake/semantics/panSemScript.sml" "flatten_def"',
+        "  (words_as_type_indexed_bitvec)]",
+        "def flattenExact {width : Nat} [NeZero width]",
+        "    (value : ValueHOL width) : Nat := width",
+    ])
+
+    def test_accepts_value_hol_only_through_resolved_word_lab_payload(self):
+        self.assertEqual(
+            self._run(self.VALUE_HOL_OWNER, self.VALUE_HOL_CONSUMER), []
+        )
+
+    def test_rejects_value_hol_without_width_indexed_word_payload(self):
+        owner = self.VALUE_HOL_OWNER.replace(
+            "  | val (value : HolWordLab width)",
+            "  | val (value : Nat)",
+        )
+        errors = self._run(owner, self.VALUE_HOL_CONSUMER)
+        self.assertTrue(any("BitVec" in error for error in errors), errors)
+
+    def test_rejects_value_hol_if_word_lab_payload_is_not_positive_bitvec(self):
+        owner = self.VALUE_HOL_OWNER.replace(
+            "inductive HolWordLab (width : Nat) [NeZero width] where",
+            "inductive HolWordLab (width : Nat) where",
+        )
+        errors = self._run(owner, self.VALUE_HOL_CONSUMER)
+        self.assertTrue(
+            any("positive width" in error or "NeZero" in error for error in errors),
+            errors,
+        )
+
+    def test_rejects_unrelated_aggregate_with_word_lab_field(self):
+        owner = self.VALUE_HOL_OWNER.replace("ValueHOL", "OtherValue")
+        consumer = self.VALUE_HOL_CONSUMER.replace("ValueHOL", "OtherValue")
+        errors = self._run(owner, consumer)
+        self.assertTrue(any("BitVec" in error for error in errors), errors)
+
     def test_rejects_inductive_carrier_without_same_owner_word_payload(self):
         owner = "\n".join([
             "inductive CrepProgExact (width : Nat) [NeZero width] where",
@@ -1710,6 +1843,7 @@ class WordsCarrierResolutionTest(unittest.TestCase):
         ])
         errors = self._run(owner, consumer)
         self.assertTrue(any("BitVec" in error for error in errors), errors)
+
 
     def test_rejects_fake_carrier_without_bitvec_field(self):
         owner = "\n".join([

@@ -171,6 +171,73 @@ def panToCrepLocalsRelFiniteExact {width : Nat} [NeZero width]
         flattenHOL value = words ∧
         isWfShapeExactHOL ([] : StructContextExact) (shapeOfHOLExact value) = true
 
+/-- Flapjack-specific relation support for the exact shared-memory load/store
+    write path (HOL `pc_compile_correct` ShMemLoad/ShMemStore use
+    `locals_rel_lookup_ctxt` and `FLOOKUP_UPDATE`). Writing a word to a source
+    local (`set_kvar Local` = `locals |+ (name, Val w)`) and to the matching
+    single target Crep slot (`set_var` = `updateEq (crepName, w)`) preserves
+    `panToCrepLocalsRelFiniteExact`, given that the context maps the Pan
+    variable to exactly the singleton slot list `[crepName]`. It is a
+    specialization of `panToCrepLocalsRelFiniteExact_setVar`
+    (`PcCompileCorrect/Call.lean`) to the `One`-shaped word value written by
+    the shared-memory primitives; it has no standalone HOL declaration because
+    HOL proves this conjunction inline in the two cases. -/
+theorem panToCrepLocalsRelFiniteExact_setVarWord {width : Nat} [NeZero width]
+    (context : PanToCrepContextExact width)
+    (sourceLocals : HolFiniteMapExact MlS (ValueHOL width))
+    (targetLocals : HolFiniteMapExact Nat (HolWordLab width))
+    (name : MlS) (crepName : Nat) (word : HolWordLab width)
+    (hrel : panToCrepLocalsRelFiniteExact context sourceLocals targetLocals)
+    (hvar : context.vars.lookup name = some (ShapeHOL.one, [crepName])) :
+    panToCrepLocalsRelFiniteExact context (sourceLocals.update (name, .val word))
+      (targetLocals.updateEq (crepName, word)) := by
+  obtain ⟨hno, hmax, hlk⟩ := hrel
+  refine ⟨hno, hmax, ?_⟩
+  intro k w hk
+  by_cases hkn : k = name
+  · subst hkn
+    have hwk : w = .val word := by
+      have hsome : some (.val word) = some w := by
+        simpa only [HolFiniteMapExact.lookup_update, FUPDATE,
+          beq_self_eq_true, if_true] using hk
+      exact (Option.some.inj hsome).symm
+    subst hwk
+    refine ⟨[crepName], [word], ?_, ?_, ?_, ?_⟩
+    · simpa only [shapeOfHOLExact] using hvar
+    · simp only [List.mapM_cons, List.mapM_nil]
+      have hkey : FUPDATE_HOL targetLocals.lookup (crepName, word) crepName = some word := by
+        rw [show FUPDATE_HOL targetLocals.lookup (crepName, word) crepName =
+            FLOOKUP (FUPDATE_HOL targetLocals.lookup (crepName, word)) crepName from rfl,
+          FLOOKUP_FUPDATE_HOL, if_pos rfl]
+      rw [HolFiniteMapExact.lookup_updateEq, hkey]
+      rfl
+    · simp only [flattenHOL]
+    · simpa only [shapeOfHOLExact] using
+        Flapjack.Pancake.PanLang.isWfShapeExactHOL_one ([] : StructContextExact)
+  · have hk' : sourceLocals.lookup k = some w := by
+      have hne : (name == k) = false := by
+        rw [beq_eq_false_iff_ne]
+        exact fun h => hkn h.symm
+      simpa only [HolFiniteMapExact.lookup_update, FUPDATE, hne, Bool.false_eq_true,
+        if_false] using hk
+    obtain ⟨slots, words, hvk, hmm, hfl, hwfk⟩ := hlk k w hk'
+    refine ⟨slots, words, hvk, ?_, hfl, hwfk⟩
+    have hdisj : ∀ s ∈ slots, s ≠ crepName := by
+      intro s hs hscrep
+      exact hkn (hno.2 k name (shapeOfHOLExact w) ShapeHOL.one slots [crepName] hvk hvar
+        ⟨s, hs, by simp [hscrep]⟩)
+    have hmap : slots.mapM (targetLocals.updateEq (crepName, word)).lookup =
+        slots.mapM targetLocals.lookup := by
+      apply Flapjack.list_mapM_congr
+      intro s hs
+      rw [HolFiniteMapExact.lookup_updateEq]
+      rw [show FUPDATE_HOL targetLocals.lookup (crepName, word) s =
+        FLOOKUP (FUPDATE_HOL targetLocals.lookup (crepName, word)) s from rfl]
+      rw [FLOOKUP_FUPDATE_HOL, if_neg (hdisj s hs)]
+      rfl
+    rw [hmap]
+    exact hmm
+
 /-- Exact port of HOL `excp_rel_def`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:16-23`). Both maps are
     standalone exact finite-map parameters, so the qualifier records them as
@@ -337,6 +404,112 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width]
 
 end CtxtMaxElLeqExact
 
+/-- Exact port of HOL `locals_rel_extend_new_var`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:4179-4225`):
+    `!ct s t v x ns. locals_rel ct s t /\ is_wf_shape_nil (shape_of v) /\
+      ALL_DISTINCT ns /\ (!x. MEM x ns ==> ct.vmax < x /\
+        x <= ct.vmax + size_of_shape (shape_of v)) /\
+      LENGTH ns = size_of_shape (shape_of v) ==>
+      locals_rel (ct with <|vars := ct.vars |+ (x,(shape_of v,ns));
+                            vmax := ct.vmax + size_of_shape (shape_of v)|>)
+        (s |+ (x,v)) (t |++ ZIP (ns, flatten v))`.
+    `|+` on the context and source maps is `update`, the `FUPDATE` port used by
+    the exact compiler's DecCall context and by the Pan evaluator's `set_var`.
+    `|++ ZIP` on the target is `updateListEq`, as in the Crep evaluator. The other
+    helpers are the tagged exact ports. The relation qualifier names the context
+    `vars` field and the standalone source/target locals. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "locals_rel_extend_new_var"
+  (fmap_as_finite_support_relation := [PanToCrepContextExact.vars, s, t])
+  (words_as_type_indexed_bitvec)]
+theorem localsRelExtendNewVarHOL {width : Nat} [NeZero width] :
+    ∀ (ct : PanToCrepContextExact width) (s : HolFiniteMapExact MlS (ValueHOL width))
+      (t : HolFiniteMapExact Nat (HolWordLab width)) (v : ValueHOL width) (x : MlS)
+      (ns : List Nat),
+      panToCrepLocalsRelFiniteExact ct s t ∧
+        isWfShapeExactHOL ([] : StructContextExact) (shapeOfHOLExact v) = true ∧
+        ns.Nodup ∧
+        (∀ y, y ∈ ns → ct.vmax < y ∧ y ≤ ct.vmax + Flapjack.Pancake.PanLang.sizeOfShapeHOL (shapeOfHOLExact v)) ∧
+        ns.length = Flapjack.Pancake.PanLang.sizeOfShapeHOL (shapeOfHOLExact v) →
+      panToCrepLocalsRelFiniteExact
+        { ct with vars := ct.vars.update (x, (shapeOfHOLExact v, ns)),
+                  vmax := ct.vmax + Flapjack.Pancake.PanLang.sizeOfShapeHOL (shapeOfHOLExact v) }
+        (s.update (x, v)) (t.updateListEq (ns.zip (flattenHOL v))) := by
+  intro ct s t v x ns ⟨hrel, hwf, hnd, hrange, hlen⟩
+  obtain ⟨hno, hmax, hlk⟩ := hrel
+  have hflen := flattenHOL_length_eq_sizeOfShapeHOL v hwf
+  have hfun : (t.updateListEq (ns.zip (flattenHOL v))).lookup =
+      fun key => FLOOKUP (FUPDATE_LIST t.lookup (ns.zip (flattenHOL v))) key := by
+    funext key
+    simp only [HolFiniteMapExact.lookup_updateListEq, FUPDATE_LIST_HOL_eq_FUPDATE_LIST, FLOOKUP]
+  have hvars : ∀ k, (ct.vars.update (x, (shapeOfHOLExact v, ns))).lookup k =
+      if k = x then some (shapeOfHOLExact v, ns) else ct.vars.lookup k := by
+    intro k
+    by_cases hk : k = x
+    · simp [HolFiniteMapExact.lookup_update, FUPDATE, hk]
+    · have hk2 : ¬ x = k := fun h => hk h.symm
+      simp [HolFiniteMapExact.lookup_update, FUPDATE, hk, hk2]
+  have hsrc : ∀ k, (s.update (x, v)).lookup k = if k = x then some v else s.lookup k := by
+    intro k
+    by_cases hk : k = x
+    · simp [HolFiniteMapExact.lookup_update, FUPDATE, hk]
+    · have hk2 : ¬ x = k := fun h => hk h.symm
+      simp [HolFiniteMapExact.lookup_update, FUPDATE, hk, hk2]
+  refine ⟨?_, ?_, ?_⟩
+  · refine ⟨?_, ?_⟩
+    · intro key shape slots h
+      rw [hvars] at h
+      split at h
+      · simp only [Option.some.injEq, Prod.mk.injEq] at h; rw [← h.2]; exact hnd
+      · exact hno.1 key shape slots h
+    · intro key key' shape shape' slots slots' h h' ⟨slot, hs, hs'⟩
+      rw [hvars] at h h'
+      by_cases hk : key = x <;> by_cases hk' : key' = x
+      · rw [hk, hk']
+      · rw [if_pos hk] at h; rw [if_neg hk'] at h'
+        simp only [Option.some.injEq, Prod.mk.injEq] at h
+        rw [← h.2] at hs
+        have := hmax.2 key' shape' slots' h' slot hs'
+        have := (hrange slot hs).1
+        omega
+      · rw [if_neg hk] at h; rw [if_pos hk'] at h'
+        simp only [Option.some.injEq, Prod.mk.injEq] at h'
+        rw [← h'.2] at hs'
+        have := hmax.2 key shape slots h slot hs
+        have := (hrange slot hs').1
+        omega
+      · rw [if_neg hk] at h; rw [if_neg hk'] at h'
+        exact hno.2 key key' shape shape' slots slots' h h' ⟨slot, hs, hs'⟩
+  · refine ⟨Nat.zero_le _, ?_⟩
+    intro key shape slots h slot hslot
+    simp only at h ⊢
+    rw [hvars] at h
+    split at h
+    · simp only [Option.some.injEq, Prod.mk.injEq] at h
+      rw [← h.2] at hslot
+      exact (hrange slot hslot).2
+    · have := hmax.2 key shape slots h slot hslot
+      omega
+  · intro name value hl
+    simp only
+    rw [hsrc] at hl
+    by_cases hk : name = x
+    · rw [if_pos hk] at hl
+      simp only [Option.some.injEq] at hl
+      subst hl; subst hk
+      refine ⟨ns, flattenHOL v, by rw [hvars, if_pos rfl], ?_, rfl, hwf⟩
+      rw [hfun]
+      exact optMmapSomeEqZipFlookup ns t.lookup (flattenHOL v) hnd (by rw [hlen, hflen])
+    · rw [if_neg hk] at hl
+      obtain ⟨slots, words, hv, hmm, hfl, hwfk⟩ := hlk name value hl
+      refine ⟨slots, words, by rw [hvars, if_neg hk]; exact hv, ?_, hfl, hwfk⟩
+      have hdisj : ListDisjoint ns slots := by
+        intro y hy hy'
+        have := hmax.2 name _ slots hv y hy'
+        have := (hrange y hy).1
+        omega
+      rw [hfun, optMmapDisjZipFlookup ns t.lookup slots (flattenHOL v) hdisj (by rw [hlen, hflen])]
+      simpa [FLOOKUP] using hmm
+
 /-- Exact port of HOL `ctxt_max_el_leq`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:1493-1503`):
     `ctxt_max ctxt.vmax ctxt.vars /\
@@ -477,6 +650,68 @@ noncomputable def evalListHOLFiniteClassical {width : Nat} {σ : Type}
     (arguments : List (ExpHOL width)) : Option (List (ValueHOL width)) := by
   classical
   exact source.evalListHOLFinite arguments
+
+/-- Exact port of HOL `opt_mmap_eval_is_wf_shape_v`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:2328-2343`):
+    `OPT_MMAP (eval s) es = SOME vs /\ state_rel s t /\
+      locals_rel ctxt s.locals t_locs ==> EVERY is_wf_shape_v_nil vs`.
+    `OPT_MMAP (eval s)` is the exact list evaluator with the classical
+    address-set decision (`evalListHOLFiniteClassical`), `EVERY` is list
+    membership, and `is_wf_shape_v_nil` is `isWfShapeValueHOLExact []`. HOL's
+    free variables `es vs s t ctxt t_locs` are the explicit binders, and the
+    three premises keep HOL's conjunction order. The relation qualifier records
+    the finite maps that `state_rel`/`locals_rel` traverse: the source
+    `globals`, the context `vars`, the source locals, and the standalone target
+    locals `tLocs`. HOL's `'a word`/`'ffi` are the positive-width `BitVec width`
+    and `σ : Type` carriers (`words_as_type_indexed_bitvec`). -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "opt_mmap_eval_is_wf_shape_v"
+  (fmap_as_finite_support_relation := [PanSemStateFiniteExact.globals,
+    PanSemStateFiniteExact.locals, PanToCrepContextExact.vars, tLocs])
+  (words_as_type_indexed_bitvec)]
+theorem optMmapEvalIsWfShapeVHOL {width : Nat} {σ : Type} [NeZero width]
+    (es : List (ExpHOL width)) (vs : List (ValueHOL width))
+    (s : PanSemStateFiniteExact width σ) (t : CrepSemHOLState width σ)
+    (ctxt : PanToCrepContextExact width)
+    (tLocs : HolFiniteMapExact Nat (HolWordLab width))
+    (h : evalListHOLFiniteClassical s es = some vs ∧
+      panToCrepStateRelFiniteExact s t ∧
+      panToCrepLocalsRelFiniteExact ctxt s.locals tLocs) :
+    ∀ v, v ∈ vs → isWfShapeValueHOLExact [] v = true := by
+  classical
+  obtain ⟨heval, hstate, hlocals⟩ := h
+  obtain ⟨hl, hg⟩ := panToCrepExactInitialShapeInvariant s t tLocs ctxt hstate hlocals
+  have hstructs := panToCrepStateRelFiniteExact_structs s t hstate
+  have hExact := evalHOLExact_isWfShapeValueHOLExact s.toExact
+    (by simpa [PanSemStateFiniteExact.toExact] using hl)
+    (by simpa [PanSemStateFiniteExact.toExact] using hg)
+  have hlist : ∀ (es : List (ExpHOL width)) (vs : List (ValueHOL width)),
+      evalListHOLExact s.toExact es = some vs →
+      ∀ v, v ∈ vs → isWfShapeValueHOLExact s.structs v = true := by
+    intro es
+    induction es with
+    | nil =>
+        intro vs hvs v hv
+        simp [evalListHOLExact] at hvs
+        subst vs
+        simp at hv
+    | cons e rest ih =>
+        intro vs hvs v hv
+        cases hhead : evalHOLExact s.toExact e with
+        | none => simp [evalListHOLExact, hhead] at hvs
+        | some head =>
+            cases htail : evalListHOLExact s.toExact rest with
+            | none => simp [evalListHOLExact, hhead, htail] at hvs
+            | some tail =>
+                have hvs' : vs = head :: tail := by
+                  simpa [evalListHOLExact, hhead, htail] using hvs.symm
+                subst vs
+                rcases List.mem_cons.mp hv with rfl | hmem
+                · simpa [PanSemStateFiniteExact.toExact] using hExact e v hhead
+                · exact ih tail htail v hmem
+  intro v hv
+  have := hlist es vs (by simpa [evalListHOLFiniteClassical,
+    PanSemStateFiniteExact.evalListHOLFinite] using heval) v hv
+  simpa [hstructs] using this
 
 /-- Exact-carrier assembly of HOL `evaluate_shape_invariant_ret_inst2`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:3031-3044`). The binders

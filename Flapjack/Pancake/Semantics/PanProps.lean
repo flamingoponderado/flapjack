@@ -7,6 +7,7 @@ import Flapjack.Pancake.Semantics.PanSem.LocalUpdatesExact
 import Flapjack.Pancake.Semantics.PanSem.MemLoadHOL
 import Flapjack.Pancake.Semantics.PanSem.DeclContextExact
 import Flapjack.Pancake.Semantics.PanSem.EvalExact
+import Flapjack.Pancake.Semantics.PanProps.HasMain
 
 /-!
 HOL counterpart module for `cakeml/pancake/semantics/panPropsScript.sml`.
@@ -121,23 +122,23 @@ in `flapjack-4ac.4.105.1` and the exact PanSem semantics port
 (`panPropsScript.sml:974-1019`): its quantified variables are `p`, `s`, `res`,
 and `t`; the premises are `evaluate (p,s) = (res,t)` and equality of the
 initial and final `ffi.io_events` lists, and the conclusion is equality of the
-entire final and initial `ffi_state` records. The Lean `HolFfiState` carrier
-preserves HOL's oracle, host-state, and event-list fields, and
-`PanSemStateFiniteExact` contains that exact carrier. `evaluateHOLFinite`
-retains an outer `Option` assembly marker; `evaluateHOLFiniteState` exposes a
-pair-shaped result/state interface but is documented as Flapjack-specific and
-projects the same finite-context dispatcher. The pair shape alone does not
-establish that this dispatcher is the HOL `evaluate` relation. There is not
-yet a kernel-checked induction theorem over the current evaluator proving that
-equal event lists force equality of both the oracle and host-state fields
-through the recursive Call, DecCall, Seq, and While cases. The local helper
-`callFFIHOL_ret_ffi_eq_of_ioEvents_eq` proves this consequence for one
-successful FFI call, and matching `extCallStepHOLExact`, `shMemLoadHOLExact`,
-and `shMemStoreHOLExact` lemmas lift it across those individual transition
-steps. They do not establish the recursive evaluator result. No similar
-event-prefix lemma is tagged as this theorem. The faithful theorem port is
-tracked by `flapjack-4ac.4.51.1`; it must state the same successful-evaluation
-and event-equality premises and prove equality of the complete `HolFfiState`. -/
+entire final and initial `ffi_state` records. The exact theorem
+`ioEventsEqImpFfiEqHOLFinite` in `PanProps/EvalInvariant.lean` keeps this
+quantifier order, both premises, and the full FFI-state conclusion. Its
+`PanPropsEvalStateFiniteExact` carrier owns the four HOL finite-map fields and
+the same-module roundtrip witness; `HolFfiState` preserves the oracle,
+host-state, and event-list fields. Its `evaluatePanPropsHOLFiniteState` adapter
+only translates that carrier field-for-field to the canonical finite PanSem
+evaluator. The finite evaluator's successful pair is bridged to the exact broad
+recursive evaluator by the checked finite-to-broad projection, then the
+recursive induction `evalPanSemRecursiveCallContextHOLExact_ffi_eq_of_ioEvents_eq`
+proves complete FFI equality from the unchanged endpoint events. The tag
+records the four `HolFiniteMapExact` state fields and the positive-width
+`BitVec` translation; neither qualifier changes the theorem's logical shape.
+Source comparison checked the HOL cases ShMemLoad, ShMemStore, Call, DecCall,
+Seq, ExtCall, and While against the clause evaluator and recursive proof. The
+theorem is tracked by `flapjack-4ac.4.51.1`; its type lock and full gates must
+pass before closure. -/
 
 /-! Source review for HOL `evaluate_io_events_mono`
 (`panPropsScript.sml:856-876`): HOL quantifies `exps`, `s1`, `res`, `s2`, assumes
@@ -783,39 +784,34 @@ private theorem lookupFieldHOL_isWfShapeValuesHOLExact {width : Nat} [NeZero wid
           simpa only [lookupFieldHOL, if_neg hname] using hlookup
         exact ih htail hlookup'
 
-/-! **Unported HOL evaluator invariants** (`evaluate_invariants`,
-    `evaluate_is_wf_shape_invariant`,
-    `panPropsScript.sml:1250`). The source quantifies `p`, initial state `s`,
-    result `res`, and post-state `s'`; from `evaluate (p,s) = (res,s')` and
-    `FEVERY` well-formedness of both initial `locals` and `globals` under
-    `s.structs`, it concludes both post-state maps are well-formed under
-    `s'.structs`, and any returned/raised payload is well-formed under the
-    initial `s.structs`. No Lean declaration currently states that result.
-    `evaluate_invariants` (`panPropsScript.sml:1150`) additionally says a
-    successful whole-program evaluation preserves `memaddrs`, `sh_memaddrs`,
-    `be`, `eshapes`, `base_addr`, `structs`, `code`, and `ffi.oracle`; it has
-    no exact finite-map program-evaluator result carrier yet. The related
-    faithful inventory bead `.4.61` blocks on the finite-support evaluator
-    bead `.3.52.1`. The source theorem `evaluate_global_shape_invariant`
-    (`panPropsScript.sml:1183`) quantifies over `p`, initial state `s`, result
-    `res`, post-state `st`, global name `n`, and initial value `v`; from
-    `evaluate (p,s) = (res,st)` and `FLOOKUP s.globals n = SOME v`, it concludes
-    that some `v'` remains at `n` in `st.globals` with `shape_of v' =
-    shape_of v`. The Lean finite-map evaluator currently covers expressions
-    only (`evalHOLFinite`), with no exact whole-program result/post-state
-    evaluator to state this theorem over. The faithful inventory bead `.4.62`
-    therefore depends on `.3.52.1`; no HOL tag is claimed here.
-    The expression prerequisite `eval_is_wf_shape_v`
-    (`panPropsScript.sml:126`) is now tagged with the
-    reviewed finite-map carrier and exact HOL conjunction in
-    `PanProps/EvalInvariant.lean`. The untagged
-    `evalHOLExact_isWfShapeValueHOLExact` helper remains broad-carrier proof
-    support. The recursive finite-support evaluator and its state/local shape
-    invariant now exist, but the evaluator still exposes an assembly marker;
-    the final state-level theorem path remains tracked by the open
-    `flapjack-4ac.5.83`. Inventory bead `flapjack-4ac.4.67` is closed by
-    source-review; the faithful theorem bead `flapjack-4ac.5.83` remains
-    open. -/
+/-! **Open HOL evaluator invariants** (`evaluate_invariants`,
+    `evaluate_global_shape_invariant`, and `evaluate_is_wf_shape_invariant`).
+    HOL `evaluate_invariants` (`panPropsScript.sml:1150`) quantifies `p`, input
+    state `t`, result `res`, and post-state `st`; from `evaluate (p,t) =
+    (res,st)` it concludes that `memaddrs`, `sh_memaddrs`, `be`, `eshapes`,
+    `base_addr`, `structs`, `code`, and `ffi.oracle` are preserved. The
+    pair-shaped finite-map evaluator `PanSemStateFiniteExact.evaluateHOLFiniteState`
+    is now available and its tagged `evaluate_def` line-780 equation records the
+    finite-map and positive-word translations, so the carrier/evaluator gap
+    described in older bead notes is resolved. The remaining work for
+    `evaluate_invariants` is its source-shaped field-preservation proof; bead
+    `flapjack-4ac.4.61` is open for that theorem.
+
+    HOL `evaluate_global_shape_invariant` (`panPropsScript.sml:1183`) quantifies
+    `p`, input state `s`, result `res`, post-state `st`, global name `n`, and
+    initial value `v`; from the evaluator equation and `FLOOKUP s.globals n =
+    SOME v`, it concludes that a value remains at `n` in `st.globals` with the
+    same `shape_of`. It can now be stated over the same finite-map evaluator;
+    its proof remains open under `flapjack-4ac.4.62`.
+
+    HOL `evaluate_is_wf_shape_invariant` (`panPropsScript.sml:1250`) proves
+    post-state local/global and returned/raised payload shape facts. The
+    expression prerequisite `eval_is_wf_shape_v` (`panPropsScript.sml:126`) is
+    tagged with the reviewed finite-map carrier and exact HOL conjunction in
+    `PanProps/EvalInvariant.lean`; `evalHOLExact_isWfShapeValueHOLExact` remains
+    broad-carrier support. The remaining assembly and state-level proof work is
+    tracked by open bead `flapjack-4ac.5.83`. Inventory bead
+    `flapjack-4ac.4.67` is closed by source-review. -/
 
 /-- Untagged support: the exact value-level well-formedness predicate implies
     that the exact `shape_of` image is well-formed (`is_wf_shape_of_v`

@@ -210,12 +210,22 @@ run_probe get_stack_only_probeScript.sml get_stack_only_probe.out \
 run_probe pan_mem_load_probeScript.sml pan_mem_load_probe.out \
   one_hit named_suffix_blocked "$cake_dir/pancake/semantics/panSemScript.sml"
 run_probe pan_sem_state_eval_probeScript.sml pan_sem_state_eval_probe.out \
-  word_load_hit pan_sem_state_eval_done \
+  word_load_hit eval_nested_load_shape pan_sem_state_eval_done \
   "$cake_dir/pancake/semantics/panSemScript.sml"
+run_probe pan_sem_mem_domain_probeScript.sml pan_sem_mem_domain_probe.out \
+  domain_load_hit domain_load_miss_present domain_store_then_load_hit \
+  domain_store_miss domain_mem_stores_load_roundtrip pan_sem_mem_domain_done \
+  "$cake_dir/pancake/semantics/panSemScript.sml" \
+  "$cake_dir/pancake/semantics"
 run_probe pan_shape_of_probeScript.sml pan_shape_of_probe.out \
   word nstruct "$cake_dir/pancake/semantics/panSemScript.sml"
 run_probe pan_evaluate_decls_probeScript.sml pan_evaluate_decls_probe.out \
   empty exn_bad_shape_failure "$cake_dir/pancake/semantics/panSemScript.sml"
+run_probe pan_clock_program_route_probeScript.sml pan_clock_program_route_probe.out \
+  duplicate_function_front_update duplicate_function_front_update_changed_metadata \
+  nested_callee_return_shape_rejected \
+  "$cake_dir/pancake/semantics/panSemScript.sml" \
+  "$cake_dir/pancake/semantics"
 run_probe pan_word_helpers_probeScript.sml pan_word_helpers_probe.out \
   is_word the_val_word "$cake_dir/pancake/semantics/panSemScript.sml"
 run_probe pan_op_probeScript.sml pan_op_probe.out \
@@ -657,7 +667,8 @@ run_probe pan_sem_ite_e2e_probeScript.sml pan_sem_ite_e2e_probe.out \
   if_true_result exact_if_failed_local \
   "$cake_dir/pancake/semantics/panSemScript.sml"
 # The measure-driven total fragment probe observes Assign/Return/Raise result
-# and state branches, plus their interaction with If selection and Seq stopping.
+# and state branches, plus their interaction with If selection and Seq stopping,
+# including an If whose condition is the non-word value `RStruct []`.
 run_probe pan_sem_total_fragment_stmt_probeScript.sml pan_sem_total_fragment_stmt_probe.out \
   total_assign_ok_result total_assign_ok_local \
   total_assign_bad_result total_assign_bad_local \
@@ -670,7 +681,8 @@ run_probe pan_sem_total_fragment_stmt_probeScript.sml pan_sem_total_fragment_stm
   total_raise_missing_shape_result total_raise_oversize_result \
   total_raise_oversize_local total_if_assign_true_result \
   total_if_assign_true_local total_if_assign_false_result \
-  total_if_assign_false_local total_seq_assign_return_result \
+  total_if_assign_false_local total_if_assign_nonword_result \
+  total_if_assign_nonword_local total_seq_assign_return_result \
   total_seq_assign_return_local total_seq_raise_stop_result \
   total_seq_raise_stop_local \
   "$cake_dir/pancake/semantics/panSemScript.sml"
@@ -787,6 +799,11 @@ run_probe crep_total_call_eval_probeScript.sml crep_total_call_eval_probe.out \
   call_total_callee_break call_total_callee_continue call_total_callee_exception \
   call_total_return_arity_error call_total_duplicate_destinations \
   call_total_missing_destination \
+  "$cake_dir/pancake/semantics/crepSemScript.sml"
+run_probe crep_evaluate_def_arms_probeScript.sml crep_evaluate_def_arms_probe.out \
+  primitive_add_carry primitive_duplicate_lhs primitive_missing_lhs \
+  primitive_wrong_arity primitive_missing_rhs call_handler_catch \
+  call_handler_mismatch call_handler_absent call_handler_duplicate_rts \
   "$cake_dir/pancake/semantics/crepSemScript.sml"
 run_probe crep_assign_eval_probeScript.sml crep_assign_eval_probe.out \
   assign_overwrite_eval assign_missing_destination_eval assign_expression_error_eval \
@@ -1059,7 +1076,9 @@ run_probe ctxt_fc_probeScript.sml ctxt_fc_probe.out \
   "$cake_dir/pancake/proofs"
 run_probe code_rel_probeScript.sml code_rel_probe.out \
   code_rel_type compiled_return localised_return localised_global_assignment \
-  function_signature_lookup target_function_lookup code_rel_rejects_unlocalised_source \
+  function_signature_lookup target_function_lookup code_rel_generated_initial \
+  code_rel_generated_initial_proved \
+  code_rel_rejects_unlocalised_source \
   "$cake_dir/pancake/proofs/pan_to_crepProofScript.sml" \
   "$cake_dir/pancake/proofs"
 run_probe globals_lookup_probeScript.sml globals_lookup_probe.out \
@@ -1153,9 +1172,6 @@ run_probe pan_structs_compile_exp_probeScript.sml pan_structs_compile_exp_probe.
   rstruct old_shapes_map "$cake_dir/pancake/pan_structsScript.sml"
 run_probe crep_semantics_probeScript.sml crep_semantics_probe.out \
   semantics_timeout_is_nonterminal semantics_break_is_nonterminal \
-  "$cake_dir/pancake/semantics/crepSemScript.sml"
-run_probe crep_sem_evaluate_ind_probeScript.sml crep_sem_evaluate_ind_probe.out \
-  evaluate_ind \
   "$cake_dir/pancake/semantics/crepSemScript.sml"
 run_probe crep_res_var_probeScript.sml crep_res_var_probe.out \
   res_var_delete_hit res_var_update_hit \
@@ -1950,3 +1966,16 @@ run_probe fupdate_list_append_commutes_probeScript.sml fupdate_list_append_commu
   source_theorem overlap_lookup_equal \
   "$hol_dir/src/finite_maps/finite_mapScript.sml" \
   "$hol_dir/src/finite_maps"
+
+# The crepSem evaluate_ind statement is auto-generated by HOL's tdefn (not
+# textually present in crepSemScript.sml), so its exact shape is captured here
+# for the faithful Lean port (bead flapjack-2de.1.1 / flapjack-2de.1.1.1).
+run_probe crep_sem_evaluate_ind_probeScript.sml crep_sem_evaluate_ind_probe.out \
+  evaluate_ind "$cake_dir/pancake/semantics/crepSemScript.sml" \
+  "$cake_dir/pancake/semantics"
+
+# The PanSem evaluate_ind Call conjunct is generated by HOL's tdefn. Capture
+# its exact recursive IH binders and side conditions for source review.
+run_probe pan_sem_evaluate_ind_probeScript.sml pan_sem_evaluate_ind_probe.out \
+  evaluate_ind "$cake_dir/pancake/semantics/panSemScript.sml" \
+  "$cake_dir/pancake/semantics"

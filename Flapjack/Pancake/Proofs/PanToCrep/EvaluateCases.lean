@@ -1296,7 +1296,8 @@ theorem panSemEvaluateRiscV64CodeState_callAssignParameter_ofEntry
         some (updatePanValueMap state.locals name (.word value), state.globals) := by
     simp [assignPanValueCallResult, panValueAssignmentValid, hdestination,
       panValueShape, panShapeMatches]
-  unfold panSemEvaluateRiscV64CodeState panSemEvaluateCodeStateWithMemoryModel
+  rw [panSemEvaluateRiscV64CodeState_eq_previous]
+  unfold panSemEvaluateCodeStateWithMemoryModel
   unfold panSemEvaluateCodeState panSemEvaluateCodeStateWithFuel
   have hfuelConcrete : panSemCodeEvaluateFuel state program = tail + 5 := hfuel
   rw [hfuelConcrete]
@@ -1345,7 +1346,8 @@ theorem panSemEvaluateRiscV64CodeState_callRaiseOneWordException_ofEntry
     unfold lookupPanSemCodeCall
     rw [hentry]
     simp [panSemCodeArgumentsMatch, bindPanValueParameters]
-  unfold panSemEvaluateRiscV64CodeState panSemEvaluateCodeStateWithMemoryModel
+  rw [panSemEvaluateRiscV64CodeState_eq_previous]
+  unfold panSemEvaluateCodeStateWithMemoryModel
   unfold panSemEvaluateCodeState panSemEvaluateCodeStateWithFuel
   rw [show panSemCodeEvaluateFuel state program = tail + 5 from hfuel]
   simp [evalPanValueFfiClockCodeProg, evalPanValueFfiClockCodeCall, panValueCallArgumentsValue,
@@ -1403,7 +1405,8 @@ theorem panSemEvaluateRiscV64CodeState_callCatchRaiseOneWord_ofEntry
     unfold lookupPanSemCodeCall
     rw [hentry]
     simp [panSemCodeArgumentsMatch, bindPanValueParameters]
-  unfold panSemEvaluateRiscV64CodeState panSemEvaluateCodeStateWithMemoryModel
+  rw [panSemEvaluateRiscV64CodeState_eq_previous]
+  unfold panSemEvaluateCodeStateWithMemoryModel
   unfold panSemEvaluateCodeState panSemEvaluateCodeStateWithFuel
   rw [show panSemCodeEvaluateFuel state program = tail + 5 from hfuel]
   simp [evalPanValueFfiClockCodeProg, evalPanValueFfiClockCodeCall, panValueCallArgumentsValue,

@@ -49,6 +49,9 @@ FMAP_AS_FINITE_SUPPORT_RE = re.compile(
 FMAP_AS_FINITE_SUPPORT_RESULT_RE = re.compile(
     r'\(\s*fmap_as_finite_support_result\s*\)'
 )
+FMAP_AS_FINITE_SUPPORT_PARAMS_RE = re.compile(
+    r'\(\s*fmap_as_finite_support_parameters\s*:=\s*\[([^]]*)\]\s*\)'
+)
 FMAP_AS_FINITE_SUPPORT_RELATION_RE = re.compile(
     r'\(\s*fmap_as_finite_support_relation\s*:=\s*\[([^]]*)\]\s*\)'
 )
@@ -244,6 +247,7 @@ def hol_attribute_sites(lines: list[str]):
                     relation_fields_for(),
                     bool(FMAP_AS_FINITE_SUPPORT_EQUALITIES_RE.search(attribute)),
                     bool(WORDS_AS_TYPE_INDEXED_BITVEC_RE.search(attribute)),
+                    fields_for(FMAP_AS_FINITE_SUPPORT_PARAMS_RE),
                 )
         start = None
         chunks = []
@@ -1237,6 +1241,67 @@ def fmap_as_finite_support_result_errors(
     return errors
 
 
+def fmap_as_finite_support_parameters_errors(
+    lines: list[str], module: str, declaration_text: str, decl_name: str,
+    parameters: tuple[str, ...],
+) -> list[str]:
+    """Validate named standalone HolFiniteMapExact input binders.
+
+    This qualifier is for HOL finite-map parameters consumed by a declaration
+    whose result is not itself a map. Each named binder must be explicitly
+    typed by HolFiniteMapExact and have a same-module lookup/support roundtrip
+    witness. It is deliberately separate from the result qualifier, whose
+    lookup witness concerns a map-valued result.
+    """
+    errors: list[str] = []
+    if not parameters:
+        return ["fmap_as_finite_support_parameters requires at least one binder"]
+    if len(set(parameters)) != len(parameters):
+        errors.append("fmap_as_finite_support_parameters has duplicate binders")
+    for parameter in parameters:
+        binder = re.compile(
+            r"[({]\s*" + re.escape(parameter)
+            + r"\s*:\s*HolFiniteMapExact\b"
+        )
+        if binder.search(declaration_text) is None:
+            errors.append(
+                "fmap_as_finite_support_parameters binder "
+                f"`{parameter}` must be an input parameter typed HolFiniteMapExact"
+            )
+            continue
+        witness = f"holFmapAsFiniteSupportParamWitness_{decl_name}_{parameter}"
+        source = strip_lean_comments("\n".join(lines))
+        pattern = re.compile(
+            rf"^\s*(?:@\[[\s\S]*?\]\s*)?(?:private\s+|protected\s+)?"
+            rf"(?:theorem|lemma)\s+{re.escape(witness)}\b"
+            rf"(?P<statement>[\s\S]*?):=",
+            re.M,
+        )
+        match = pattern.search(source)
+        if match is None:
+            errors.append(
+                "fmap_as_finite_support_parameters requires same-module "
+                f"canonical witness `{witness}` for binder `{parameter}`"
+            )
+            continue
+        statement = match.group("statement")
+        if (
+            not identifier_token_occurs(statement, parameter)
+            or "HolFiniteMapExact" not in statement
+            or "lookup" not in statement
+            or "finiteSupport" not in statement
+            or "toBroad" not in statement
+            or "ofBroad" not in statement
+            or re.search(r"=\s*" + re.escape(parameter) + r"\b", statement) is None
+        ):
+            errors.append(
+                "fmap_as_finite_support_parameters witness "
+                f"`{witness}` must state the canonical lookup/finiteSupport "
+                f"toBroad/ofBroad roundtrip for `{parameter}`"
+            )
+    return errors
+
+
 def fmap_as_finite_support_equalities_witness_name(decl_name: str, index: int) -> str:
     return f"holFmapAsFiniteSupportEqualityWitness_{decl_name}_{index}"
 
@@ -1603,42 +1668,124 @@ def names_as_string_errors(
     return errors
 
 
+_DIMENSION_IDENT_RE = re.compile(r"[A-Za-z_][A-Za-z0-9_']*")
+_DIMENSION_DIGITS_RE = re.compile(r"[0-9]+")
+_DIMENSION_DIGITS_PAREN_RE = re.compile(r"[0-9]+")
+
+
+def word_dimension_atoms(text: str) -> list[tuple[str, bool]]:
+    """Structurally read the dimension argument of every word-carrier use.
+
+    Rather than a partial regex over bare ``BitVec <id>`` / ``BitVec <digits>``
+    spellings, this scans each word carrier (``BitVec`` or a reviewed
+    abbreviation) and consumes the actual following dimension atom, so parenthesised
+    and arithmetic forms are seen instead of silently skipped. Returns
+    ``(atom, parenthesised)`` pairs where ``atom`` is the unparenthesised text of
+    the dimension argument; a carrier with no readable argument is skipped.
+    """
+    atoms: list[tuple[str, bool]] = []
+    for match in WORD_CARRIER_TOKEN_RE.finditer(text):
+        pos = match.end()
+        while pos < len(text) and text[pos].isspace():
+            pos += 1
+        if pos >= len(text):
+            continue
+        char = text[pos]
+        if char == "(":
+            depth = 0
+            start = pos
+            while pos < len(text):
+                if text[pos] == "(":
+                    depth += 1
+                elif text[pos] == ")":
+                    depth -= 1
+                    if depth == 0:
+                        pos += 1
+                        break
+                pos += 1
+            atoms.append((text[start + 1:pos - 1].strip(), True))
+        elif char.isdigit():
+            start = pos
+            while pos < len(text) and text[pos].isdigit():
+                pos += 1
+            atoms.append((text[start:pos], False))
+        elif char.isalpha() or char == "_":
+            start = pos
+            while pos < len(text) and (text[pos].isalnum() or text[pos] in "_'"):
+                pos += 1
+            atoms.append((text[start:pos], False))
+    return atoms
+
+
+def word_dimension_identifier_atoms(text: str) -> list[str]:
+    """The identifier word dimensions in `text` (parenthesised or bare)."""
+    identifiers: list[str] = []
+    for atom, parenthesised in word_dimension_atoms(text):
+        if parenthesised:
+            if _DIMENSION_IDENT_RE.fullmatch(atom) and not atom[0].isdigit():
+                identifiers.append(atom)
+        elif _DIMENSION_IDENT_RE.fullmatch(atom):
+            identifiers.append(atom)
+    return identifiers
+
+
 def word_dimension_errors(text: str) -> list[str]:
     """Reject every nonpositive or unconstrained word dimension in `text`.
 
-    Inspects EVERY `BitVec` (or reviewed word-abbreviation) dimension in the
-    given scope, not just the first: each identifier dimension must be a bound
-    ``Nat`` parameter with its own ``[NeZero <width>]`` discharge, a literal
-    ``0`` dimension is rejected, and a ``[NeZero 0]`` instance is rejected.
+    Inspects every word dimension structurally: an identifier dimension must be a
+    bound ``Nat`` parameter with its own ``[NeZero <width>]`` discharge; a numeric
+    dimension (including leading-zero and parenthesised spellings such as ``00``,
+    ``(0)``) must be positive; and a parenthesised or arithmetic dimension that is
+    neither a plain identifier nor plain digits (``(width - width)``, ``(0 + 0)``)
+    is rejected rather than skipped.
     """
     errors: list[str] = []
-    for match in WORD_DIMENSION_ID_RE.finditer(text):
-        width = match.group(1)
+    for atom, parenthesised in word_dimension_atoms(text):
+        inner = atom
+        if parenthesised and _DIMENSION_DIGITS_RE.fullmatch(inner):
+            spelling = f"BitVec ({inner})"
+        elif _DIMENSION_DIGITS_RE.fullmatch(inner):
+            spelling = f"BitVec {inner}"
+        elif parenthesised and _DIMENSION_IDENT_RE.fullmatch(inner) and not inner[0].isdigit():
+            spelling = f"BitVec ({inner})"
+        elif not parenthesised and _DIMENSION_IDENT_RE.fullmatch(inner):
+            spelling = f"BitVec {inner}"
+        else:
+            errors.append(
+                f"`BitVec ({inner})` is not a positive width identifier; every word "
+                "dimension in scope must be an explicit `Nat` parameter with its own "
+                "`[NeZero <width>]` discharge"
+            )
+            continue
+        if _DIMENSION_DIGITS_RE.fullmatch(inner):
+            if int(inner) == 0:
+                errors.append(
+                    f"`{spelling}` is not a positive width; the qualifier records HOL's "
+                    "positive `dimindex (:α)` dimension"
+                )
+            continue
+        width = inner
         if NAT_WIDTH_BINDER_RE.search(text) is None or re.search(
             r"[\{\(]\s*" + re.escape(width) + r"\s*:\s*Nat\s*[\}\)]", text
         ) is None:
             errors.append(
-                f"`BitVec {width}` is not at a `Nat` width binder; every word "
+                f"`{spelling}` is not at a `Nat` width binder; every word "
                 "dimension in scope must be an explicit positive-width parameter"
             )
         elif re.search(
             r"\[\s*NeZero\s+" + re.escape(width) + r"\s*\]", text
         ) is None:
             errors.append(
-                f"`BitVec {width}` lacks its own `[NeZero {width}]` discharge; "
+                f"`{spelling}` lacks its own `[NeZero {width}]` discharge; "
                 "every word dimension in scope must be constrained"
             )
-    for match in WORD_DIMENSION_LITERAL_RE.finditer(text):
-        if match.group(1) == "0":
+    if re.search(r"\[\s*NeZero\s+\(?\s*([0-9]+)\s*\)?\s*\]", text) is not None:
+        zero = re.search(r"\[\s*NeZero\s+\(?\s*([0-9]+)\s*\)?\s*\]", text)
+        if int(zero.group(1)) == 0:
             errors.append(
-                "`BitVec 0` is not a positive width; the qualifier records HOL's "
-                "positive `dimindex (:α)` dimension"
+                "`[NeZero 0]` is not a valid positivity discharge; the dimension must "
+                "be a positive width identifier"
             )
-    if re.search(r"\[\s*NeZero\s+0\s*\]", text) is not None:
-        errors.append(
-            "`[NeZero 0]` is not a valid positivity discharge; the dimension must "
-            "be a positive width identifier"
-        )
     return errors
 
 
@@ -1673,14 +1820,14 @@ def words_as_type_indexed_bitvec_errors(
     A signature need not spell out ``BitVec`` when it is stated over a
     width-indexed carrier: the qualifier is also accepted when the signature
     names a structure or inductive family (declared locally or reached through
-    imports) whose own header carries ``[NeZero <width>]`` for a width parameter
-    and a field or constructor payload of the SAME owner mentions ``BitVec
-    <width>`` with that same width identifier.
-    The carrier is resolved from its declaration, never from its name alone: the
-    ``[NeZero <width>]`` and the ``BitVec <width>`` field/payload must belong
-    to the SAME owning declaration and the same width identifier, every word dimension of
-    the owner must be constrained, and a name with several owners (a local
-    duplicate shadowing an imported owner) is rejected as ambiguous.
+    imports) whose own header carries ``[NeZero <width>]`` and whose fields or
+    constructor payloads reach a direct ``BitVec <width>`` field through
+    uniquely resolved, HOL-tagged width-indexed carriers. Every owner in that
+    chain must retain the same width and its own positivity instance. Resolution
+    follows typed payload references, not names alone; a same-named local
+    duplicate shadowing an imported owner is rejected as ambiguous. Existing
+    special handling for HOL ``ValueHOL``/``HolWordLab`` additionally checks
+    their exact one-constructor wrapper shape.
     """
     errors: list[str] = []
     if not declaration_text.strip():
@@ -1699,9 +1846,7 @@ def words_as_type_indexed_bitvec_errors(
         signature = stripped
 
     errors.extend(word_dimension_errors(signature))
-    direct_ids = set(
-        match.group(1) for match in WORD_DIMENSION_ID_RE.finditer(signature)
-    )
+    direct_ids = set(word_dimension_identifier_atoms(signature))
     # A literal dimension such as `BitVec 5` (the `5 word` globals key type, say)
     # is not itself the `dimindex (:α)` translation; only an identifier dimension
     # takes the direct route. A literal-only signature still has to resolve a
@@ -1731,17 +1876,19 @@ def words_as_type_indexed_bitvec_errors(
         }
         for name, owners in imported_inductive_owners(module, root).items():
             imported_owners.setdefault(name, []).extend(owners)
-        owners_by_name: dict[str, list[tuple[str, str, dict[str, str]]]] = {}
+        all_owners_by_name: dict[str, list[tuple[str, str, dict[str, str]]]] = {}
         for name in set(local_types) | set(imported_owners):
-            if not identifier_token_occurs(signature, name):
-                continue
             owners: list[tuple[str, str, dict[str, str]]] = []
             if name in local_types:
                 owners.append(
                     (module, local_headers.get(name, ""), local_types[name])
                 )
             owners.extend(imported_owners.get(name, []))
-            owners_by_name[name] = owners
+            all_owners_by_name[name] = owners
+        owners_by_name = {
+            name: owners for name, owners in all_owners_by_name.items()
+            if identifier_token_occurs(signature, name)
+        }
         ambiguous = [
             name for name, owners in owners_by_name.items() if len(owners) != 1
         ]
@@ -1756,14 +1903,130 @@ def words_as_type_indexed_bitvec_errors(
             )
         else:
             candidate_errors: list[str] = []
-            for owners in owners_by_name.values():
+            def has_hol_tag(owner_module: str, owner_name: str) -> bool:
+                path = module_source_file(owner_module, Path(root))
+                if not path.is_file():
+                    return False
+                source_lines = strip_lean_comments(
+                    path.read_text(encoding="utf-8")
+                ).splitlines()
+                declaration_line = next(
+                    (
+                        index for index, line in enumerate(source_lines)
+                        if re.match(
+                            rf"^\s*inductive\s+{re.escape(owner_name)}(?:\s|\()",
+                            line,
+                        )
+                    ),
+                    None,
+                )
+                if declaration_line is None:
+                    return False
+                # Allow a multiline @[hol] attribute, but do not borrow one
+                # from an earlier declaration in the same module.
+                prefix: list[str] = []
+                declaration_re = re.compile(
+                    r"^\s*(?:def|theorem|lemma|abbrev|instance|structure|inductive)\s"
+                )
+                for line in reversed(source_lines[:declaration_line]):
+                    if declaration_re.match(line):
+                        break
+                    prefix.append(line)
+                return any("@[hol" in line for line in prefix)
+
+            def owner_has_width(
+                owner: tuple[str, str, dict[str, str]], width: str
+            ) -> bool:
+                _owner_module, header, _payloads = owner
+                return (
+                    re.search(
+                        r"[\{\(]\s*" + re.escape(width) + r"\s*:\s*Nat\s*[\}\)]",
+                        header,
+                    ) is not None
+                    and re.search(
+                        r"\[\s*NeZero\s+" + re.escape(width) + r"\s*\]",
+                        header,
+                    ) is not None
+                )
+
+            def reaches_bitvec(owner_name: str, width: str, seen: set[str]) -> bool:
+                if owner_name in seen:
+                    return False
+                owners = all_owners_by_name.get(owner_name, [])
+                if len(owners) != 1:
+                    return False
+                owner_module, header, payloads = owners[0]
+                if not owner_has_width(owners[0], width):
+                    return False
+                # This recursive path is for exact syntax families only. It
+                # must not accept an unrelated aggregate that merely contains
+                # a word-bearing field.
+                if not has_hol_tag(owner_module, owner_name):
+                    return False
+                owner_text = header + "\n" + "\n".join(payloads.values())
+                dimension_ids = set(word_dimension_identifier_atoms(owner_text))
+                if word_dimension_errors(owner_text):
+                    return False
+                if dimension_ids:
+                    return width in dimension_ids and dimension_ids <= {width}
+                next_seen = seen | {owner_name}
+                payload_text = "\n".join(payloads.values())
+                for nested_name, nested_owners in all_owners_by_name.items():
+                    if len(nested_owners) != 1 or nested_name in next_seen:
+                        continue
+                    if not has_hol_tag(nested_owners[0][0], nested_name):
+                        continue
+                    if not owner_has_width(nested_owners[0], width):
+                        continue
+                    if re.search(
+                        rf"(?<![A-Za-z0-9_']){re.escape(nested_name)}\s+"
+                        rf"\(?{re.escape(width)}\)?(?![A-Za-z0-9_'])",
+                        payload_text,
+                    ) and reaches_bitvec(nested_name, width, next_seen):
+                        return True
+                return False
+
+            def exact_hol_word_lab_carrier() -> bool:
+                # ValueHOL stores word values through the exact HOL `word_lab`
+                # wrapper. Do not bless HolWordLab by its name: resolve its
+                # unique declaration and check its positive width and sole
+                # BitVec payload before accepting the aggregate ValueHOL.
+                nested_owners: list[tuple[str, str, dict[str, str]]] = []
+                if "HolWordLab" in local_types:
+                    nested_owners.append((
+                        module, local_headers.get("HolWordLab", ""),
+                        local_types["HolWordLab"],
+                    ))
+                nested_owners.extend(imported_owners.get("HolWordLab", []))
+                if len(nested_owners) != 1:
+                    return False
+                _nested_module, nested_header, nested_payloads = nested_owners[0]
+                nested_text = nested_header + "\n" + "\n".join(
+                    nested_payloads.values()
+                )
+                nested_ids = word_dimension_identifier_atoms(nested_text)
+                nested_widths = {
+                    match.group(1) for match in NAT_WIDTH_BINDER_RE.finditer(nested_header)
+                }
+                if (
+                    word_dimension_errors(nested_text)
+                    or len(nested_ids) != 1
+                    or nested_ids[0] not in nested_widths
+                    or len(nested_payloads) != 1
+                ):
+                    return False
+                payload = next(iter(nested_payloads.values()))
+                fields = re.findall(
+                    r"\(\s*[A-Za-z_][A-Za-z0-9_']*\s*:\s*([^()]+?)\s*\)",
+                    payload,
+                )
+                return fields == [f"BitVec {nested_ids[0]}"]
+
+            for owner_name, owners in owners_by_name.items():
                 _owner_module, header, fields = owners[0]
                 owner_text = header + "\n" + "\n".join(fields.values())
                 owner_errors = word_dimension_errors(owner_text)
-                owner_ids = set(
-                    match.group(1)
-                    for match in WORD_DIMENSION_ID_RE.finditer(owner_text)
-                )
+                owner_ids = set(word_dimension_identifier_atoms(owner_text))
                 owner_widths = set(
                     match.group(1) for match in NAT_WIDTH_BINDER_RE.finditer(owner_text)
                 )
@@ -1773,6 +2036,42 @@ def words_as_type_indexed_bitvec_errors(
                 ):
                     carrier_ok = True
                     break
+                # Exact HOL `panSem$v` (`ValueHOL`) contains `HolWordLab width`
+                # in its Val constructor. Resolve both owners independently:
+                # ValueHOL must retain positive width, and HolWordLab must be
+                # its exact one-constructor BitVec wrapper at positive width.
+                if owner_name == "ValueHOL":
+                    value_text = owner_text.replace("HolWordLab", "BitVec")
+                    value_ids = word_dimension_identifier_atoms(value_text)
+                    value_widths = {
+                        match.group(1)
+                        for match in NAT_WIDTH_BINDER_RE.finditer(header)
+                    }
+                    if (
+                        not word_dimension_errors(value_text)
+                        and value_ids
+                        and all(identifier in value_widths for identifier in value_ids)
+                        and exact_hol_word_lab_carrier()
+                    ):
+                        carrier_ok = True
+                        break
+                # Some exact HOL syntax is several datatypes away from words
+                # at the theorem boundary (DeclHOL -> FunDeclHOL -> ProgHOL ->
+                # ExpHOL -> BitVec). Follow only typed payload references
+                # through unique, tagged owners, preserving the same width.
+                owner_widths = {
+                    match.group(1)
+                    for match in NAT_WIDTH_BINDER_RE.finditer(header)
+                }
+                if len(owner_widths) == 1:
+                    width = next(iter(owner_widths))
+                    if (
+                        owner_has_width(owners[0], width)
+                        and has_hol_tag(_owner_module, owner_name)
+                        and reaches_bitvec(owner_name, width, set())
+                    ):
+                        carrier_ok = True
+                        break
                 if owner_ids and not candidate_errors:
                     candidate_errors = owner_errors
             if not carrier_ok and candidate_errors:
@@ -1893,7 +2192,8 @@ def main(argv: list[str]) -> int:
         module_reported = False
         for (number, hol_path, hol_name, hol_line, list_fields,
              names_fields, boundary_fields, fmap_fields, fmap_result,
-             fmap_relation, fmap_equalities, words_bitvec) in hol_attribute_sites(lines):
+             fmap_relation, fmap_equalities, words_bitvec,
+             fmap_parameters) in hol_attribute_sites(lines):
             where = f"{rel}:{number}"
             lean_decl = find_lean_decl(lines, number - 1)
             if module not in reachable and not module_reported:
@@ -1913,6 +2213,19 @@ def main(argv: list[str]) -> int:
                     f"{where}: {error}"
                     for error in fmap_as_finite_support_errors(
                         lines, fmap_fields, rel, tagged_declaration_text(lines, number)
+                    )
+                )
+            if fmap_parameters:
+                if fmap_fields or fmap_result or fmap_relation or fmap_equalities:
+                    errors.append(
+                        f"{where}: fmap_as_finite_support_parameters is "
+                        "mutually exclusive with other finite-map qualifiers"
+                    )
+                errors.extend(
+                    f"{where}: {error}"
+                    for error in fmap_as_finite_support_parameters_errors(
+                        lines, rel, tagged_declaration_text(lines, number),
+                        lean_decl, fmap_parameters,
                     )
                 )
             if fmap_result:

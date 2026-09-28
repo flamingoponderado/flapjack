@@ -150,4 +150,49 @@ noncomputable def crepSemantics {width : Nat} [NeZero width] {σ : Type}
   crepSemanticsWithLub state start memDec shMemDec
     (buildPanLprefixLub _ divergenceChain)
 
+/-! ## Clock-indexed event traces form a lprefix chain (bead flapjack-pxn.18.4.8.2.6)
+
+Given the HOL-shaped add-clock FFI-event prefix property (the
+`crepPropsScript.sml:1020 evaluate_add_clock_io_events_mono` analogue), the
+clock-indexed trace family of `crepSemantics` is a `panLprefixChain`.  This
+packages the chain obligation so that `crepSemantics` no longer needs it as an
+independent assumption once the prefix property itself is proved.
+Flapjack-specific infrastructure; no `@[hol]` tag. -/
+
+/-- The clock-indexed FFI event traces of the exact crepSem entry evaluation
+form a pairwise prefix chain, given the add-clock event-prefix property. -/
+theorem crepEvaluateClock_ioEvents_lprefixChain_of_addClock_prefix
+    {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) (start : MlString)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (hmono : ∀ clock extra : Nat,
+      crepResultEvents (crepEvaluateClock state start memDec shMemDec clock) <+:
+      crepResultEvents (crepEvaluateClock state start memDec shMemDec (clock + extra))) :
+    panLprefixChain (fun clock =>
+      crepResultEvents (crepEvaluateClock state start memDec shMemDec clock)) := by
+  intro left right
+  rcases Nat.le_total left right with hle | hle
+  · left
+    have hprefix := hmono left (right - left)
+    rwa [Nat.add_sub_cancel' hle] at hprefix
+  · right
+    have hprefix := hmono right (left - right)
+    rwa [Nat.add_sub_cancel' hle] at hprefix
+
+/-- HOL `crepSem$semantics_def` total variant: the divergence LUB is built from
+the chain derived from the add-clock event-prefix property, so the only
+remaining obligation is that property itself. -/
+noncomputable def crepSemanticsOfAddClockPrefix {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) (start : MlString)
+    (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
+    (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
+    (hmono : ∀ clock extra : Nat,
+      crepResultEvents (crepEvaluateClock state start memDec shMemDec clock) <+:
+      crepResultEvents (crepEvaluateClock state start memDec shMemDec (clock + extra))) :
+    CrepBehaviour :=
+  crepSemanticsWithLub state start memDec shMemDec
+    (buildPanLprefixLub _
+      (crepEvaluateClock_ioEvents_lprefixChain_of_addClock_prefix state start memDec shMemDec hmono))
+
 end Flapjack
