@@ -182,6 +182,41 @@ theorem functionEntriesOfHOLExact_eq {width : Nat} [NeZero width]
   unfold functionEntriesOfHOLExact
   rw [functionsHOL_map_funEntryOfHOL, map_declOfHOL_declToHOL declarations h]
 
+/-- Flapjack-only bridge theorem (no HOL original): the inline-name list staged
+    by production `compileProgTopHOL` -- production `String` names from
+    `functionEntries` over the `inlinableThroughHOL` filter -- is the decode,
+    through the reviewed `MlS`/`String` name codec `toStringOfBytes`, of the
+    exact HOL-shaped staging used by `compileProgDeclsHOLW`,
+    `MAP FST (functionsHOL (FILTER inlinableHOL (declarations.map declToHOL)))`.
+    The byte-range premise closes the `declToHOL`/`declOfHOL` reverse carrier
+    round-trip and the `inlinable` filter alignment. -/
+theorem compileProgInlineNames_bridge {width : Nat} [NeZero width]
+    (declarations : List (Decl (BitVec width)))
+    (hdecls : ∀ d ∈ declarations, DeclByteRanged d) :
+    (functionEntries (declarations.filter inlinableThroughHOL)).map
+        (fun e => e.1) =
+      (functionsHOL
+        ((declarations.map declToHOL).filter inlinableHOL)).map
+        (fun e => Flapjack.Basis.Pure.MlString.toStringOfBytes e.1) := by
+  have h1 : (functionsHOL
+        ((declarations.map declToHOL).filter inlinableHOL)).map funEntryOfHOL =
+      functionEntries (declarations.filter inlinableThroughHOL) := by
+    rw [functionsHOL_map_funEntryOfHOL]
+    rw [← inlinable_map_declOfHOL (declarations.map declToHOL)]
+    rw [map_declOfHOL_declToHOL declarations hdecls]
+    rw [← filter_inlinableThroughHOL]
+  calc
+    (functionEntries (declarations.filter inlinableThroughHOL)).map
+        (fun e => e.1)
+        = ((functionsHOL
+            ((declarations.map declToHOL).filter inlinableHOL)).map
+            funEntryOfHOL).map (fun e => e.1) := by rw [h1]
+    _ = (functionsHOL
+            ((declarations.map declToHOL).filter inlinableHOL)).map
+            (fun e => Flapjack.Basis.Pure.MlString.toStringOfBytes e.1) := by
+          rw [List.map_map]
+          congr 1
+
 /-- Executed parser-backed path: `functionsHOL` supplies the entries; each
     extracted function context is exactified with its producer evidence and its
     body is sent through the reviewed HOL-shaped `compileProgExactHOLW`, then

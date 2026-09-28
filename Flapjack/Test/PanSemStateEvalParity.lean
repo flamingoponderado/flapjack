@@ -1,4 +1,5 @@
 import Flapjack.Pancake.Semantics.PanSemStateEval
+import Flapjack.Pancake.Semantics.PanSem.PrimitiveProductionBridge
 import Flapjack.Pancake.Semantics.PanSem.TotalSteps
 import Flapjack.Pancake.Semantics.ByteAlignBridge
 import Flapjack.Pancake.WordLang
@@ -137,6 +138,29 @@ def sourceFfiContext : PanValueFfiContext Word64 :=
 
 def sourceFfiHandler : PanValueStatefulFfiHandler Word64 Unit :=
   fun _ _ _ _ _ locals ffi => some (locals, ffi)
+
+/- The canonical state runner fixes its source primitive argument to
+   `panPrimopHOL`. This is the `prim_ok_*` case from
+   `scripts/hol-probes/pan_sem_primitive_e2e_probe.out`: original Pancake
+   evaluates to `NONE`, preserves clock 5, and stores `[3w, 0w]` in `x`. -/
+def productionPrimopState : PanSemState Word64 (FfiState Unit) :=
+  { sourceCodeState false true with
+    clock := 5
+    locals := fun name =>
+      if name == "dst" then some (.rStruct [.word 0, .word 0]) else none }
+
+def productionAddCarryObserved : Bool :=
+  match panSemEvaluateRiscV64CodeStateWithProductionPrimop sourceFfiContext
+      sourceFfiHandler productionPrimopState
+      (.primitive "dst" .addCarry [.const 1, .const 2, .const 0]) with
+  | some (.control (.normal locals _ _ _), clock) =>
+      match locals "dst" with
+      | some (.rStruct [.word result, .word carry]) =>
+          clock == 5 && result == (3 : Word64) && carry == (0 : Word64)
+      | _ => false
+  | _ => false
+
+#guard productionAddCarryObserved
 
 def sourcePrimitive : PanPrimitiveHandler Word64 := fun _ _ => none
 
