@@ -394,9 +394,10 @@ abbrev PanSemTotalAgreeAt {σ : Type} (primitive : PanPrimitiveHandler (RiscV.Wo
 
     The explicit premises `hcode`, `hexceptionShapes` and `hcallee` are the
     rangedness boundary of `flapjack-pxn.18.4.3.77.2.15`: code entries and
-    exception shapes are not covered by `PanSemStateRelExecRanged`, and
-    rangedness of the callee post-state and result payload is not preserved by
-    every production step. -/
+    exception shapes are not covered by `PanSemStateRelExecRanged`.  `hcode`
+    and `hcallee` (callee post-state and result payload rangedness, for
+    byte-ranged argument values) are discharged from reachable rangedness in
+    `TotalEvalRanged.lean` (`panSemTotalEvaluate_call_agree_of_ranged`). -/
 theorem panSemTotalEvaluate_call_agree {σ : Type}
     (primitive : PanPrimitiveHandler (RiscV.Word 64))
     (production : PanSemState (RiscV.Word 64) (FfiState σ))
@@ -409,7 +410,8 @@ theorem panSemTotalEvaluate_call_agree {σ : Type}
       some entry → PanLangEntryByteRanged entry)
     (hexceptionShapes : ∀ identifier shape,
       production.exceptionShapes identifier = some shape → ShapeByteRanged shape)
-    (hcallee : ∀ values callee newLocals returnShape,
+    (hcallee : ∀ values, (∀ value ∈ values, PanValueByteRanged value) →
+      ∀ callee newLocals returnShape,
       panSemTotalCodeLookup production (toStringOfBytes function) values =
         some (callee, newLocals, returnShape) →
       PanSemStateRelExecRanged (panSemTotalEvaluate primitive callee
@@ -466,7 +468,7 @@ theorem panSemTotalEvaluate_call_agree {σ : Type}
           obtain ⟨e', _, rfl⟩ := List.mem_map.mp he
           exact expOfHOL_byteRanged_bridge e') values hev
       have hlk := panSemTotalCodeLookup_agree production exact hrel function values hvals hcode
-      have hcal := hcallee values
+      have hcal := hcallee values hvals
       revert hlk hcal
       cases hp : panSemTotalCodeLookup production (toStringOfBytes function) values <;>
         cases he : lookupCodeHOLFinite exact.code.lookup function (values.map panValueToHOL) <;>
@@ -651,7 +653,8 @@ theorem panSemTotalEvaluate_call_agree {σ : Type}
     (production tests declared-vs-return, HOL value-vs-return; they agree once the
     first conjunct holds), the continuation runs under `ihContinuation`, and the
     old binding is restored with `res_var`.  Other results are handled as in
-    `Call`.  `hcode` and `hcallee` are the same `.77.2.15` rangedness premises. -/
+    `Call`.  `hcode` and `hcallee` are discharged in `TotalEvalRanged.lean`
+    (`panSemTotalEvaluate_decCall_agree_of_ranged`). -/
 theorem panSemTotalEvaluate_decCall_agree {σ : Type}
     (primitive : PanPrimitiveHandler (RiscV.Word 64))
     (production : PanSemState (RiscV.Word 64) (FfiState σ))
@@ -662,7 +665,8 @@ theorem panSemTotalEvaluate_decCall_agree {σ : Type}
     (continuation : ProgHOL 64)
     (hcode : ∀ entry, panSemCodeLookup production.code (toStringOfBytes function) =
       some entry → PanLangEntryByteRanged entry)
-    (hcallee : ∀ values callee newLocals returnShape,
+    (hcallee : ∀ values, (∀ value ∈ values, PanValueByteRanged value) →
+      ∀ callee newLocals returnShape,
       panSemTotalCodeLookup production (toStringOfBytes function) values =
         some (callee, newLocals, returnShape) →
       PanSemStateRelExecRanged (panSemTotalEvaluate primitive callee
@@ -718,7 +722,7 @@ theorem panSemTotalEvaluate_decCall_agree {σ : Type}
           obtain ⟨e', _, rfl⟩ := List.mem_map.mp he
           exact expOfHOL_byteRanged_bridge e') values hev
       have hlk := panSemTotalCodeLookup_agree production exact hrel function values hvals hcode
-      have hcal := hcallee values
+      have hcal := hcallee values hvals
       revert hlk hcal
       cases hp : panSemTotalCodeLookup production (toStringOfBytes function) values <;>
         cases he : lookupCodeHOLFinite exact.code.lookup function (values.map panValueToHOL) <;>
