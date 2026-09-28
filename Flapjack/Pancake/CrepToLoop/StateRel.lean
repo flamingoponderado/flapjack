@@ -1265,4 +1265,33 @@ def crepToLoopCodeRelExact {width : Nat} [NeZero width]
                sptLookup loc t_code =
                  some (args, ocompileHOLExact nctxt (listToNumSetHOLExact args) prog))
 
+/-- Exact port of HOL `code_rel_intro`
+    (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:187-200`): assuming
+    `code_rel`, expose its `distinct_funcs` conjunct and its universally
+    quantified per-source-function existential. The exact carriers and
+    `fmap_as_finite_support_relation`/word qualifiers are the same as
+    `crepToLoopCodeRelExact`; no target lookup result or extra context premise
+    is assumed. -/
+@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "code_rel_intro"
+  (fmap_as_finite_support_relation := [CrepToLoopContextExact.funcs, s_code])
+  (words_as_type_indexed_bitvec)]
+theorem crepToLoopCodeRelExact_intro {width : Nat} [NeZero width]
+    (ctxt : CrepToLoopContextExact)
+    (s_code : HolFiniteMapExact MlS (List Nat × CrepProgHOL width))
+    (t_code : Spt (List Nat × HolLoopProg width)) :
+    crepToLoopCodeRelExact ctxt s_code t_code →
+      crepToLoopDistinctFuncs ctxt.funcs.lookup ∧
+        ∀ (f : MlS) (ns : List Nat) (prog : CrepProgHOL width),
+          s_code.lookup f = some (ns, prog) →
+            ∃ loc len : Nat,
+              ctxt.funcs.lookup f = some (loc, len) ∧
+                ns.length = len ∧
+                  (let args := List.range len
+                   let nctxt := ctxtFcExact ctxt.target ctxt.funcs ns args
+                   sptLookup loc t_code =
+                     some (args, ocompileHOLExact nctxt (listToNumSetHOLExact args) prog)) := by
+  intro h
+  rw [crepToLoopCodeRelExact] at h
+  exact h
+
 end Flapjack

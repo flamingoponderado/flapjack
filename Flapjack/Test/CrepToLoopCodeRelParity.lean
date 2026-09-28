@@ -114,6 +114,11 @@ theorem codeRelIntroInstantiation :
                    some (args, ocompileHOLExact nctxt (listToNumSetHOLExact args) prog)) :=
   crepToLoopCodeRelIntro ctxt sCode tCode codeRelPositive
 
+/-- Directly instantiate the exact HOL `code_rel_intro` port on the positive
+probe relation, recovering its `distinct_funcs` clause. -/
+example : crepToLoopDistinctFuncs ctxt.funcs.lookup :=
+  (crepToLoopCodeRelExact_intro ctxt sCode tCode codeRelPositive).1
+
 /-- The HOL probe row `code_rel_missing_funcs = F`: with an empty function map
 the per-entry existential has no target label to return. -/
 theorem codeRelMissingFuncs :
