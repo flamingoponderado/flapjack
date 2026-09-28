@@ -285,6 +285,77 @@ def comparisonWithoutLiveDropsIt : Bool :=
 #guard comparisonKeepsIncomingLive
 #guard comparisonWithoutLiveDropsIt
 
+/-! ## Exact-carrier `state_rel` (`crep_to_loopProofScript.sml:31-41`)
+
+Fixtures over the exact `crepSem$state`/`loopSem$state` ports
+(`CrepSemHOLState`/`LoopSemStateFiniteExact`), pinning the direct HOL-EVAL rows
+in `scripts/hol-probes/crep_to_loop_state_rel_probe.out`
+(`memaddrs_mdomain_mem`, `sh_memaddrs_sh_mdomain_mem`, `clock_eq`, `be_eq`,
+`base_eq`, `top_eq`). -/
+
+def stateRelExactFfi : HolFfiState Unit :=
+  { oracle := fun _ _ _ _ => .final .failed, ffiState := (), ioEvents := [] }
+
+def stateRelExactCrep : CrepSemHOLState 64 Unit :=
+  { locals := HolFiniteMapExact.empty
+    globals := HolFiniteMapExact.empty
+    code := HolFiniteMapExact.empty
+    memory := fun _ => .word 0
+    memaddrs := fun _ => False
+    shMemaddrs := fun _ => False
+    clock := 5
+    be := false
+    ffi := stateRelExactFfi
+    baseAddr := 0
+    topAddr := 0 }
+
+def stateRelExactLoop : LoopSemStateFiniteExact 64 Unit :=
+  { locals := Spt.ln
+    globals := HolFiniteMapExact.empty
+    memory := fun _ => .word 0
+    mdomain := fun _ => false
+    shMdomain := fun _ => false
+    clock := 5
+    code := Spt.ln
+    be := false
+    ffi := stateRelExactFfi
+    baseAddr := 0
+    topAddr := 0 }
+
+/-- The exact-carrier relation holds for the matching fixtures (the HOL oracle
+    rows above are all `T`). -/
+example : crepToLoopStateRelExact stateRelExactCrep stateRelExactLoop := by
+  rw [crepToLoopStateRelExact]
+  refine ⟨?_, ?_, rfl, rfl, rfl, rfl, rfl⟩
+  · funext address
+    exact propext (iff_of_false (by simp [stateRelExactCrep])
+      (by simp [stateRelExactLoop]))
+  · funext address
+    exact propext (iff_of_false (by simp [stateRelExactCrep])
+      (by simp [stateRelExactLoop]))
+
+/-- Field-level guard reproducing the oracle rows at address `7`. -/
+def stateRelExactGuard : Bool :=
+  letI : Decidable (stateRelExactCrep.memaddrs 7) :=
+    isFalse (by simp [stateRelExactCrep])
+  letI : Decidable (stateRelExactCrep.shMemaddrs 7) :=
+    isFalse (by simp [stateRelExactCrep])
+  decide (stateRelExactCrep.memaddrs 7 ↔ stateRelExactLoop.mdomain 7 = true) &&
+    decide (stateRelExactCrep.shMemaddrs 7 ↔ stateRelExactLoop.shMdomain 7 = true) &&
+    (stateRelExactCrep.clock == stateRelExactLoop.clock) &&
+    (stateRelExactCrep.be == stateRelExactLoop.be) &&
+    (stateRelExactCrep.baseAddr == stateRelExactLoop.baseAddr) &&
+    (stateRelExactCrep.topAddr == stateRelExactLoop.topAddr)
+
+#guard stateRelExactGuard
+
+/-- HOL `state_rel_clock_add_zero` (`crep_to_loopProofScript.sml:219-223`) over
+    the exact carriers: advancing the target clock preserves the relation. -/
+example (h : crepToLoopStateRelExact stateRelExactCrep stateRelExactLoop) :
+    ∃ ck, crepToLoopStateRelExact stateRelExactCrep
+      { stateRelExactLoop with clock := ck + stateRelExactLoop.clock } :=
+  crepToLoopStateRelExact_clock_add_zero stateRelExactCrep stateRelExactLoop h
+
 def runChecks : IO Bool := do
   let results := [declarationRenamingMatches,
     handlerlessCallCarriesRaiseHandler, handledCallCarriesRaiseHandler,
@@ -292,7 +363,8 @@ def runChecks : IO Bool := do
     callReturnSourceVariableMaps,
     shMemDestinationMappingMatches, assignDestinationMappingMatches,
     comparisonKeepsIncomingLive,
-    comparisonWithoutLiveDropsIt]
+    comparisonWithoutLiveDropsIt,
+    stateRelExactGuard]
   let names := [
     "crep_to_loop declaration renaming and live seed",
     "crep_to_loop default call handler",
@@ -302,7 +374,8 @@ def runChecks : IO Bool := do
     "crep_to_loop shared-memory destination mapping",
     "crep_to_loop assignment destination mapping",
     "crep_to_loop comparison keeps the incoming live set",
-    "crep_to_loop comparison without live does not invent one"]
+    "crep_to_loop comparison without live does not invent one",
+    "crep_to_loop exact-carrier state_rel matches the HOL oracle rows"]
   let mut all := true
   for (name, result) in names.zip results do
     if result then IO.println s!"PASS {name}" else IO.println s!"FAIL {name}"
