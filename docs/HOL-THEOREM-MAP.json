@@ -18405,7 +18405,7 @@
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
     "hol_name": "code_rel_intro",
-    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/RelationsExact.lean",
     "lean_name": "crepToLoopCodeRelExact_intro",
     "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
     "fmap_as_finite_support_relation": [

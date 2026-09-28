@@ -5,7 +5,8 @@ import Flapjack.Pancake.CrepToLoop.StateRel
 
 Exact ports of `cakeml/pancake/proofs/crep_to_loopProofScript.sml`'s
 `wlab_wloc_def` (45), `mem_rel_def` (49), `globals_rel_def` (54),
-`mem_rel_intro` (203) and `globals_rel_intro` (211) over the exact Crep/Loop
+`mem_rel_intro` (203), `globals_rel_intro` (211), and `code_rel_intro` (187)
+over the exact Crep/Loop
 carriers `HolWordLab`/`WordLocW`, `CrepSemHOLState`/`LoopSemStateFiniteExact`
 memories and `HolFiniteMapExact` globals (bead `flapjack-pxn.18.5.6.31.3`).  The
 production-carrier renderings in `StateRel.lean` (`wlabWloc`,
@@ -59,4 +60,49 @@ theorem crepToLoopGlobalsRelHOLExact_intro {width : Nat} [NeZero width]
       ∀ ad v, sglobals.lookup ad = some v → tglobals.lookup ad = some (wlabWlocExact v) :=
   fun h => h
 
+/-- Exact port of HOL `code_rel_intro`
+    (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:187-200`): assuming
+    `code_rel`, expose its `distinct_funcs` conjunct and its universally
+    quantified per-source-function existential. The exact carriers and
+    `fmap_as_finite_support_relation`/word qualifiers are the same as
+    `crepToLoopCodeRelExact` from the imported `StateRel` module; no target
+    lookup result or extra context premise is assumed. -/
+@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "code_rel_intro"
+  (fmap_as_finite_support_relation := [CrepToLoopContextExact.funcs, s_code])
+  (words_as_type_indexed_bitvec)]
+theorem crepToLoopCodeRelExact_intro {width : Nat} [NeZero width]
+    (ctxt : CrepToLoopContextExact)
+    (s_code : HolFiniteMapExact Pancake.PanLang.MlS (List Nat × CrepProgHOL width))
+    (t_code : Spt (List Nat × HolLoopProg width)) :
+    crepToLoopCodeRelExact ctxt s_code t_code →
+      crepToLoopDistinctFuncs ctxt.funcs.lookup ∧
+        ∀ (f : Pancake.PanLang.MlS) (ns : List Nat) (prog : CrepProgHOL width),
+          s_code.lookup f = some (ns, prog) →
+            ∃ loc len : Nat,
+              ctxt.funcs.lookup f = some (loc, len) ∧
+                ns.length = len ∧
+                  (let args := List.range len
+                   let nctxt := ctxtFcExact ctxt.target ctxt.funcs ns args
+                   sptLookup loc t_code =
+                     some (args, ocompileHOLExact nctxt (listToNumSetHOLExact args) prog)) := by
+  intro h
+  rw [crepToLoopCodeRelExact] at h
+  exact h
+
 end Flapjack
+
+namespace Flapjack.Pancake.CrepToLoop.Proofs.RelationsExact
+
+/-! The finite-map relation tag in this proof module needs its own local,
+kernel-checked witness naming the imported carrier. This repeats the carrier's
+canonical roundtrip theorem without changing or restating the carrier. -/
+
+/-- Same-module finite-map relation witness for `CrepToLoopContextExact`.
+    The imported carrier's canonical `toBroad`/`ofBroad` roundtrip is reused. -/
+theorem holFmapAsFiniteSupportRelationWitness_CrepToLoopContextExact
+    (context : Flapjack.CrepToLoopContextExact) :
+    Flapjack.CrepToLoopContextExact.ofBroad
+        (Flapjack.CrepToLoopContextExact.toBroad context) = context :=
+  Flapjack.CrepToLoopContextExact.holFmapAsFiniteSupportWitness context
+
+end Flapjack.Pancake.CrepToLoop.Proofs.RelationsExact
