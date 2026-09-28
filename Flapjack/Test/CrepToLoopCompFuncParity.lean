@@ -39,8 +39,7 @@ theorem compFunc_return_var :
           (HolLoopProg.seq (HolLoopProg.return [1]) HolLoopProg.skip) : HolLoopProg 8) := by
   simp [compFuncHOLExact, compileHOLExact, compileExpsHOLExact, compileExpHOLExact,
     makeVmapExact, mkCtxtExact, HolFiniteMapExact.empty, genTemps, loopNestedSeqHOL,
-    List.range, List.range.loop, List.zipWith, List.map, FUPDATE_LIST_HOL, FUPDATE_HOL,
-    sptListInsert, genTemps]
+    List.range, List.range.loop, List.zipWith, List.map, FUPDATE_LIST_HOL, FUPDATE_HOL, genTemps]
 
 /-- `comp_func_two_params` HOL row. -/
 theorem compFunc_two_params :
@@ -50,12 +49,41 @@ theorem compFunc_two_params :
           (HolLoopProg.seq (HolLoopProg.return [2]) HolLoopProg.skip) : HolLoopProg 8) := by
   simp [compFuncHOLExact, compileHOLExact, compileExpsHOLExact, compileExpHOLExact,
     makeVmapExact, mkCtxtExact, HolFiniteMapExact.empty, genTemps, loopNestedSeqHOL,
-    List.range, List.range.loop, List.zipWith, List.map, FUPDATE_LIST_HOL, FUPDATE_HOL,
-    sptListInsert, genTemps]
+    List.range, List.range.loop, List.zipWith, List.map, FUPDATE_LIST_HOL, FUPDATE_HOL, genTemps]
+
+/-- `ltns_nil_0` HOL row: `list_to_num_set []` has no member `0`. -/
+theorem listToNumSetHOLExact_nil_miss :
+    sptLookup 0 (listToNumSetHOLExact ([] : List Nat)) = none := by decide +kernel
+
+/-- `ltns_single_0` HOL row: `list_to_num_set [0]` contains `0`. -/
+theorem listToNumSetHOLExact_single_hit :
+    sptLookup 0 (listToNumSetHOLExact [0]) = some () := by decide +kernel
+
+/-- `ltns_three_*` HOL rows: `list_to_num_set [0;1;2]` contains `0` and `2`,
+    not `3`. -/
+theorem listToNumSetHOLExact_three_hits :
+    sptLookup 0 (listToNumSetHOLExact [0, 1, 2]) = some () ∧
+      sptLookup 2 (listToNumSetHOLExact [0, 1, 2]) = some () ∧
+      sptLookup 3 (listToNumSetHOLExact [0, 1, 2]) = none := by decide +kernel
+
+/-- `ltns_unsorted_*` HOL rows: the unsorted `list_to_num_set [2;0;3]` contains
+    `2`, `0` and `3`, not `4`. -/
+theorem listToNumSetHOLExact_unsorted_hits :
+    sptLookup 2 (listToNumSetHOLExact [2, 0, 3]) = some () ∧
+      sptLookup 0 (listToNumSetHOLExact [2, 0, 3]) = some () ∧
+      sptLookup 3 (listToNumSetHOLExact [2, 0, 3]) = some () ∧
+      sptLookup 4 (listToNumSetHOLExact [2, 0, 3]) = none := by decide +kernel
+
+/-- `ltns_cons_shape` HOL row: the right-recursive equation
+    `list_to_num_set (n::ns) = insert n () (list_to_num_set ns)`. -/
+theorem listToNumSetHOLExact_cons_shape :
+    listToNumSetHOLExact (2 :: [0, 3]) =
+      sptInsert 2 () (listToNumSetHOLExact [0, 3]) := rfl
 
 def runChecks : IO Bool := do
   let ok := true
   IO.println "PASS crep_to_loop comp_func_def exact port matches direct HOL rows (skip / one param / two params)"
+  IO.println "PASS listToNumSetHOLExact matches the direct HOL sptree$list_to_num_set_def rows (nil / single / [0;1;2] / [2;0;3] / cons-shape)"
   return ok
 
 end Flapjack.Test.CrepToLoopCompFuncParity

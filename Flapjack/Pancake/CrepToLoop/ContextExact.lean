@@ -396,11 +396,29 @@ theorem holFmapAsFiniteSupportParamWitness_compFuncHOLExact_fs
   cases fs
   rfl
 
+/-- HOL `sptree$list_to_num_set` (`sptreeScript.sml:2026-2028`): the
+source-shaped right-recursive set builder `list_to_num_set [] = LN` and
+`list_to_num_set (n :: ns) = insert n () (list_to_num_set ns)`.  Untagged
+because the HOL declaration lives in HOL's `sptree` theory rather than a
+`crep_to_loopScript.sml` declaration; it is the live-set builder used by
+`compFuncHOLExact` (HOL builds the `comp_func` live set with
+`list_to_num_set (GENLIST I (LENGTH params))`). -/
+def listToNumSetHOLExact : List Nat → NumSet
+  | [] => .ln
+  | key :: keys => sptInsert key () (listToNumSetHOLExact keys)
+
+@[simp] theorem listToNumSetHOLExact_nil : listToNumSetHOLExact [] = .ln := rfl
+
+@[simp] theorem listToNumSetHOLExact_cons (key : Nat) (keys : List Nat) :
+    listToNumSetHOLExact (key :: keys) =
+      sptInsert key () (listToNumSetHOLExact keys) :=
+  rfl
+
 /-- Exact HOL `comp_func_def` (`crep_to_loopScript.sml:235-241`). Binders and
 order match HOL (`target fs params body`); `make_vmap`, `LENGTH params - 1` and
 `list_to_num_set (GENLIST I (LENGTH params))` are rendered as `makeVmapExact`,
-`params.length - 1` and `sptListInsert (List.range params.length) .ln`, and the
-body is compiled by the tagged `compileHOLExact`. The standalone `fs`
+`params.length - 1` and `listToNumSetHOLExact (List.range params.length)`, and
+the body is compiled by the tagged `compileHOLExact`. The standalone `fs`
 finite-map parameter carries the parameters qualifier; the word-indexed program
 carriers carry the words qualifier. -/
 @[hol "cakeml/pancake/crep_to_loopScript.sml" "comp_func_def"
@@ -410,7 +428,7 @@ def compFuncHOLExact {width : Nat} [NeZero width]
     (params : List Nat) (body : CrepProgHOL width) : HolLoopProg width :=
   compileHOLExact
     (mkCtxtExact target (makeVmapExact params) fs (params.length - 1))
-    (sptListInsert (List.range params.length) .ln)
+    (listToNumSetHOLExact (List.range params.length))
     body
 
 /-! ## Exact `make_funcs_def` and `compile_prog_def` over the exact carriers -/

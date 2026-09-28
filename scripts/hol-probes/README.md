@@ -625,6 +625,18 @@ tagged port `Flapjack.compileProgHOLExact` (`@[hol ... "compile_prog_def"
 `Flapjack.Test.CrepToLoopCompileProgParity` use the exact
 `MlString`/`CrepProgHOL`/`HolLoopProg` carriers. Refresh with
 `HOL_PROBE_ONLY=crep_to_loop_compile_prog_probeScript.sml scripts/hol-probes/regenerate.sh`.
+`crep_to_loop_list_to_num_set_probe.out` records direct HOL EVAL rows for HOL's
+`sptree$list_to_num_set_def` (`HOL/src/finite_maps/sptreeScript.sml:2026-2028`),
+the live-set builder used by `comp_func_def` at
+`cakeml/pancake/crep_to_loopScript.sml:239`. The rows observe membership on
+`[]`, `[0]`, `[0;1;2]` and the unsorted `[2;0;3]` via `lookup`, and the final
+`ltns_cons_shape` row exposes the right-recursive equation
+`list_to_num_set (n::ns) = insert n () (list_to_num_set ns)` with `LN` as the
+base case. The untagged Lean helper `Flapjack.listToNumSetHOLExact` in
+`Flapjack/Pancake/CrepToLoop/ContextExact.lean` reproduces the same right
+recursion, and `Flapjack.Test.CrepToLoopCompFuncParity` replays every row.
+Refresh with
+`HOL_PROBE_ONLY=crep_to_loop_list_to_num_set_probeScript.sml scripts/hol-probes/regenerate.sh`.
 The original Pancake source-level support boundary is also explicit in
 `cakeml/pancake/proofs/loop_to_wordProofScript.sml:2285-2291`: `LLongDiv` is
 accepted by `loop_inst_ok` only for `x86_64`. Consequently, RISC-V parity must
