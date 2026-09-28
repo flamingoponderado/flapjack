@@ -215,9 +215,11 @@ def sptUnion {α : Type} : Spt α → Spt α → Spt α
 termination_by left _ => sizeOf left
 
 /-- HOL `sptree$inter` (`HOL/src/finite_maps/sptreeScript.sml:272-291`): keep
-only keys present in both trees, with the left operand's value.
-Untagged Flapjack infrastructure (source outside `cakeml/`). -/
-def sptInter {α : Type} : Spt α → Spt α → Spt α
+only keys present in both trees, with the left operand's value.  HOL's declared
+type is heterogeneous (`'a num_map -> 'b num_map -> 'a num_map`; the second
+tree's values are never read), so this rendering is generic in both value
+types.  Untagged Flapjack infrastructure (source outside `cakeml/`). -/
+def sptInter {α β : Type} : Spt α → Spt β → Spt α
   | .ln, _ => .ln
   | .ls value, right =>
       match right with
@@ -243,9 +245,11 @@ def sptInter {α : Type} : Spt α → Spt α → Spt α
 termination_by left _ => sizeOf left
 
 /-- HOL `list_delete` (`cakeml/compiler/backend/backend_commonScript.sml:180-182`):
-delete each key (with unit value) from the tree, left to right. -/
+delete each key (with unit value) from the tree, left to right.  HOL's declared
+type is generic in the map's value type (`num list -> 'a num_map -> 'a num_map`),
+so this rendering is generic too. -/
 @[hol "cakeml/compiler/backend/backend_commonScript.sml" "list_delete_def"]
-def sptListDelete : List Nat → NumSet → NumSet
+def sptListDelete {α : Type} : List Nat → Spt α → Spt α
   | [], tree => tree
   | key :: keys, tree => sptListDelete keys (sptDelete key tree)
 
