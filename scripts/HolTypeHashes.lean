@@ -60,6 +60,8 @@ import Flapjack.Pancake.Proofs.PanToCrep.EvalDistinctLists
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Call
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.DecCall
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Skip
+import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Break
+import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Continue
 import Flapjack.Pancake.Proofs.PanToCrep.NotMemContextAssignedMemGt
 import Flapjack.Pancake.Semantics.CrepProps
 import Flapjack.Pancake.Semantics.CrepProps.MemLoadFlatRel

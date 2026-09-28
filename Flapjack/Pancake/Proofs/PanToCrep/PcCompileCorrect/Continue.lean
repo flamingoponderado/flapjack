@@ -1,28 +1,49 @@
-import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect
+import Flapjack.HolRef
+import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Call
 
 /-!
 # `pc_compile_correct` Continue case over the exact carriers
 
-The `Continue` conjunct of HOL `pc_compile_correct`
-(`cakeml/pancake/proofs/pan_to_crepProofScript.sml:442`, case proved at
-`pan_to_crepProofScript.sml:509-513` by
-`fs [panSemTheory.evaluate_def, evaluate_def, compile_def, localised_prog_def]
->> rveq >> fs []`). Source `Continue` returns `(SOME Continue, s)`, `compile`
-maps `Continue` to `Continue`, and the target `Continue 0` returns
-`(SOME (Continue 0), t)`, so the predicate is discharged from the tagged clause
-equations alone.
-
-The theorem is untagged: it is a single case of the theorem, whose assembled
-form (`pcCompileCorrectAt` for every program) is not yet proved. Tracked by
-`flapjack-pxn.18.4.3.97`.
+The `Continue` case of HOL `pc_compile_correct`
+(`cakeml/pancake/proofs/pan_to_crepProofScript.sml:442-468`, resumed at
+`:509-513`) in HOL's own shape, from the untagged `pcCompileCorrectAt_continue`
+(bead `flapjack-pxn.18.4.3.97`).
 -/
 
 namespace Flapjack
 
-open Flapjack.Pancake.PanLang (ProgHOL)
+open Flapjack.Pancake.PanLang (MlS ShapeHOL ProgHOL ExpHOL sizeOfShapeHOL)
 
-/-- The `Continue` case of HOL `pc_compile_correct` against
-    `pcCompileCorrectAt`, mirroring `pcCompileCorrectAt_break`. -/
+namespace PcCompileCorrectContinueWitnesses
+
+/-! Same-module canonical relation witnesses for the three carriers named by the
+tagged Continue case below (delegating to the imported checked witnesses). -/
+
+theorem holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact
+    {width : Nat} {σ : Type} [NeZero width] :
+    (∀ (state : PanSemStateExact width σ) (h : state.FiniteSupport),
+        (PanSemStateFiniteExact.ofExact state h).toExact = state) ∧
+    (∀ state : PanSemStateFiniteExact width σ,
+        PanSemStateFiniteExact.ofExact state.toExact state.toExact_finiteSupport = state) :=
+  CallPreservationFiniteMapWitnesses.holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact
+
+theorem holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact
+    {width : Nat} [NeZero width] (context : PanToCrepContextExact width) :
+    PanToCrepContextExact.ofBroad (PanToCrepContextExact.toBroad context) = context :=
+  CallPreservationFiniteMapWitnesses.holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact
+    context
+
+theorem holFmapAsFiniteSupportRelationWitness_CrepSemHOLState
+    {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) :
+    CrepSemBroadState.ofBroad state.toBroad state.toBroad_finiteSupport = state :=
+  CallPreservationFiniteMapWitnesses.holFmapAsFiniteSupportRelationWitness_CrepSemHOLState state
+
+end PcCompileCorrectContinueWitnesses
+
+/-- The untagged `Continue` case prerequisite against `pcCompileCorrectAt`
+    (bead `flapjack-pxn.18.4.3.97`); the tagged HOL-shaped conjunct is
+    `pcCompileCorrect_Continue` below. -/
 theorem pcCompileCorrectAt_continue {width : Nat} {σ : Type} [NeZero width]
     (source : PanSemStateFiniteExact width σ) :
     pcCompileCorrectAt (.continue : ProgHOL width) source := by
@@ -32,5 +53,61 @@ theorem pcCompileCorrectAt_continue {width : Nat} {σ : Type} [NeZero width]
   refine ⟨some (.continue 0), t, ?_, hstate, hcode, hexcp, ?_⟩
   · simpa [compileProgExactHOLW] using evalCrepSemHOLProgExact_continue t 0
   · exact ⟨rfl, hlocals⟩
+
+/-- HOL `pc_compile_correct`, `Continue` constructor case
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:442-468`, proved by
+    `recInduct panSemTheory.evaluate_ind` with the case resumed at `:509`).
+    HOL's printed `evaluate_ind` Continue conjunct is `!s. P (Continue,s)`, with
+    no IH. `P` is HOL's induction predicate, unfolded as in
+    `pcCompileCorrectAtHOL`; the translation is the one reviewed for
+    `pcCompileCorrect_Call`. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "pc_compile_correct"
+  (fmap_as_finite_support_relation := [PanSemStateFiniteExact.locals,
+    PanSemStateFiniteExact.globals, PanSemStateFiniteExact.code,
+    PanSemStateFiniteExact.eshapes, CrepSemHOLState.locals, CrepSemHOLState.globals,
+    CrepSemHOLState.code, PanToCrepContextExact.vars, PanToCrepContextExact.funcs,
+    PanToCrepContextExact.eids])
+  (words_as_type_indexed_bitvec)]
+theorem pcCompileCorrect_Continue {width : Nat} {σ : Type} [NeZero width] :
+    ∀ (s : PanSemStateFiniteExact width σ) (res : Option (PanSemResultExact width))
+      (s1 : PanSemStateFiniteExact width σ) (t : CrepSemHOLState width σ)
+      (ctxt : PanToCrepContextExact width),
+      s.evaluateHOLFiniteState (.continue : ProgHOL width) = (res, s1) ∧
+        res ≠ some .error ∧ panToCrepStateRelFiniteExact s t ∧
+        codeRelExactHOLW ctxt s.code t.code ∧
+        panToCrepExcpRelFiniteExact ctxt.eids s.eshapes ∧
+        panToCrepLocalsRelFiniteExact ctxt s.locals t.locals ∧
+        localisedProgHOL (.continue : ProgHOL width) = true →
+      ∃ (res1 : Option (CrepResultHOLExact width)) (t1 : CrepSemHOLState width σ),
+        evalCrepSemHOLProgExact t
+            (compileProgExactHOLW ctxt (.continue : ProgHOL width)) =
+          (res1, t1) ∧
+        panToCrepStateRelFiniteExact s1 t1 ∧ codeRelExactHOLW ctxt s1.code t1.code ∧
+        panToCrepExcpRelFiniteExact ctxt.eids s1.eshapes ∧
+        match res with
+        | none => res1 = none ∧ panToCrepLocalsRelFiniteExact ctxt s1.locals t1.locals
+        | some .error => False
+        | some .timeOut => res1 = some .timeOut
+        | some .break =>
+            res1 = some (.break 0) ∧ panToCrepLocalsRelFiniteExact ctxt s1.locals t1.locals
+        | some .continue =>
+            res1 = some (.continue 0) ∧ panToCrepLocalsRelFiniteExact ctxt s1.locals t1.locals
+        | some (.returned rv) => res1 = some (.return (flattenHOL rv))
+        | some (.exception eid v') =>
+            (match ctxt.eids.lookup eid with
+             | none => False
+             | some n =>
+                 res1 = some (.exception n) ∧
+                 (1 ≤ sizeOfShapeHOL (shapeOfHOLExact v') →
+                   globalsLookupHOL t1 v' = some (flattenHOL v') ∧
+                     sizeOfShapeHOL (shapeOfHOLExact v') ≤ 32))
+        | some (.finalFfi f) => res1 = some (.finalFfi f) := by
+  intro s res s1 t ctxt ⟨hrun, hres, hstate, hcode, hexcp, hlocals, hloc⟩
+  obtain ⟨res1, t1, h1, h2, h3, h4, h5⟩ :=
+    pcCompileCorrectAt_continue s res s1 t ctxt hrun hres hstate hcode hexcp hlocals hloc
+  refine ⟨res1, t1, h1, h2, h3, h4, ?_⟩
+  rcases res with _ | r
+  · exact h5
+  · cases r <;> exact h5
 
 end Flapjack
