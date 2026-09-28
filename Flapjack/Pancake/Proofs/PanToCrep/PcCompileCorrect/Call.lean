@@ -714,4 +714,138 @@ theorem pcCompileCorrectAt_callRetTerminal {width : Nat} {σ : Type} [NeZero wid
     rw [hcode2]
     exact codeRelExactHOLW_ctxtFc ctxt _ _ _ _ _ hc
 
+/-- A Crep call with a zero clock (after successful argument evaluation,
+    `lookup_code`, and a valid return-name guard) times out with empty locals
+    (tagged line-443 Crep Call clause). -/
+theorem crepCallTimeout {width : Nat} [NeZero width] {σ : Type}
+    (t : CrepSemHOLState width σ)
+    (returnInfo : Option (List Nat × Option (BitVec width × CrepProgHOL width)))
+    (fname : MlS) (cargs : List (CrepExpHOL width)) (flat : List (HolWordLab width))
+    (body : CrepProgHOL width) (locals : HolFiniteMapExact Nat (HolWordLab width))
+    (hargs : cargs.mapM (@evalCrepSemHOLExp width _ σ t
+            (fun address => Classical.propDecidable (t.memaddrs address))) = some flat)
+    (hlookup : lookupCodeFiniteHOL t.code fname flat flat.length = some (body, locals))
+    (hguard : ∀ rts h, returnInfo = some (rts, h) → rts.Nodup)
+    (hclock : t.clock = 0) :
+    evalCrepSemHOLProgExact t (.call returnInfo fname cargs) =
+      (some .timeOut, CrepSemHOLState.emptyLocals t) := by
+  classical
+  rw [evalCrepSemHOLProgExact_call_holShape]
+  change (match cargs.mapM (@evalCrepSemHOLExp width _ σ t
+            (fun address => Classical.propDecidable (t.memaddrs address))) with
+    | some args => _ | none => _ : Option (CrepResultHOLExact width) × CrepSemHOLState width σ) = _
+  rw [hargs]
+  dsimp only
+  rw [hlookup]
+  dsimp only
+  rw [if_neg (by
+    rcases returnInfo with _ | ⟨rts, h⟩
+    · simp
+    · simpa using hguard rts h rfl), if_pos hclock]
+
+/-- The zero-clock target run of a call wrapped in zero-initialised return slots:
+    it times out, in a state that differs from the caller's only in locals. -/
+theorem crepNestedCallTimeout {width : Nat} [NeZero width] {σ : Type}
+    (t : CrepSemHOLState width σ)
+    (returnInfo : Option (List Nat × Option (BitVec width × CrepProgHOL width)))
+    (fname : MlS) (cargs : List (CrepExpHOL width)) (flat : List (HolWordLab width))
+    (body : CrepProgHOL width) (locals : HolFiniteMapExact Nat (HolWordLab width))
+    (rts : List Nat)
+    (hargs : cargs.mapM (@evalCrepSemHOLExp width _ σ t
+            (fun address => Classical.propDecidable (t.memaddrs address))) = some flat)
+    (hlookup : lookupCodeFiniteHOL t.code fname flat flat.length = some (body, locals))
+    (hguard : ∀ rts' h, returnInfo = some (rts', h) → rts'.Nodup)
+    (hclock : t.clock = 0)
+    (hnodup : rts.Nodup)
+    (hdist : distinctListsHol rts (cargs.flatMap crepExpVarsHOL) = true) :
+    ∃ t2, evalCrepSemHOLProgExact t
+        (nestedDecsHOL rts (List.replicate rts.length (.const (0 : BitVec width)))
+          (.call returnInfo fname cargs)) = (some .timeOut, t2) ∧
+      { t2 with locals := t.locals } = t := by
+  classical
+  let zeros := List.replicate rts.length (HolWordLab.word (0 : BitVec width))
+  let t' : CrepSemHOLState width σ := { t with locals := t.locals.updateListEq (rts.zip zeros) }
+  have hnd := evalNestedDecsSeqResVarEqHOL
+    (List.replicate rts.length (.const (0 : BitVec width))) rts t zeros
+    (.call returnInfo fname cargs)
+    ⟨by simp [zeros, evalCrepSemHOLExp], by simp, by
+      simp [distinctListsHol, crepExpVarsHOL], hnodup⟩
+  have hargs' : cargs.mapM (@evalCrepSemHOLExp width _ σ t'
+      (fun address => Classical.propDecidable (t'.memaddrs address))) = some flat :=
+    optMmapEvalDistinctListsNotAffectHOL cargs t flat rts zeros
+      ⟨hargs, by simp [zeros], hdist⟩
+  have hcall := crepCallTimeout t' returnInfo fname cargs flat body locals hargs'
+    hlookup hguard hclock
+  rw [hcall] at hnd
+  exact ⟨_, hnd, rfl⟩
+/-- The zero-clock branch of HOL `pc_compile_correct[Call]`
+    (`pan_to_crepProofScript.sml:3113-3165`, `cases_on s.clock = 0`) against
+    `pcCompileCorrectAt`, for every `caltyp`. The source run times out with
+    `empty_locals`. Every compiled arm (tail, `wrap_rt`, and standalone
+    `nested_decs` return slots) times out in the target, and the
+    state/code/excp relations transfer. HOL needs no IH for this branch, and none
+    is taken; no target run is assumed. Untagged (bead
+    `flapjack-pxn.18.4.3.94.5`). -/
+theorem pcCompileCorrectAt_callZeroClock {width : Nat} {σ : Type} [NeZero width]
+    (info : Option (Option (VarKind × MlS) × Option (MlS × MlS × ProgHOL width)))
+    (fname : MlS) (argexps : List (ExpHOL width)) (source : PanSemStateFiniteExact width σ)
+    (hclock : source.clock = 0) :
+    pcCompileCorrectAt (.call info fname argexps : ProgHOL width) source := by
+  classical
+  intro res s1 t ctxt hrun hres hstate hcode hexcp hlocals hloc
+  have hlocArgs : everyExpListHOL localisedExpHOL argexps = true := by
+    rcases info with _ | ⟨dest, hdl⟩
+    · simpa [localisedProgHOL] using hloc
+    · rcases dest with _ | ⟨k, n⟩ <;> rcases hdl with _ | ⟨a, b, c⟩ <;> (try rcases k) <;>
+        simp_all [localisedProgHOL]
+  rw [evaluateHOLFiniteState_call] at hrun
+  cases hargs : source.evalListHOLFinite
+      (h := fun address => Classical.propDecidable (source.memaddrs address)) argexps with
+  | none =>
+      rw [hargs] at hrun
+      exact absurd (Prod.mk.inj hrun).1.symm hres
+  | some values =>
+      rw [hargs] at hrun
+      dsimp only at hrun
+      cases hlk : PanSemStateFiniteExact.lookupCodeHOLFinite source.code.lookup fname values with
+      | none =>
+          rw [hlk] at hrun
+          exact absurd (Prod.mk.inj hrun).1.symm hres
+      | some triple =>
+          obtain ⟨prog, newlocals, rsh⟩ := triple
+          rw [hlk] at hrun
+          dsimp only at hrun
+          rw [if_pos hclock] at hrun
+          obtain ⟨rfl, rfl⟩ := Prod.mk.inj hrun
+          obtain ⟨vshapes, _hsrc, _hprogLoc, hfuncs, _hlen, htargs, htlookup, _⟩ :=
+            pcCompileCorrectCallPrelude source t ctxt fname argexps values prog newlocals rsh
+              hargs hlk hstate hcode hexcp hlocals hlocArgs
+          have htclock : t.clock = 0 := by rw [← hstate.2.2.2.2.2.1]; exact hclock
+          have hstEmpty := panToCrepStateRelFiniteExact_emptyLocals source t hstate
+          suffices h : ∃ t2, evalCrepSemHOLProgExact t (compileProgExactHOLW ctxt
+              (.call info fname argexps)) = (some .timeOut, t2) ∧
+              { t2 with locals := t.locals } = t by
+            obtain ⟨t2, hrun2, hsame⟩ := h
+            refine ⟨_, t2, hrun2, ?_, ?_, hexcp, rfl⟩
+            · exact panToCrepStateRelFiniteExact_emptyLocals_of_sameExceptLocals source t t2
+                hsame hstate
+            · have hcode2 : t2.code = t.code := by rw [← hsame]
+              rw [hcode2]; exact hcode
+          rcases info with _ | ⟨dest, hdl⟩
+          · refine ⟨CrepSemHOLState.emptyLocals t, ?_, rfl⟩
+            simp only [compileProgExactHOLW, compileCallNoReturnExactHOLW]
+            exact crepCallTimeout t none fname _ _ _ _ htargs htlookup (by simp) htclock
+          · obtain ⟨ri, hg, hshape⟩ := compileCallSomeShape ctxt dest hdl fname argexps vshapes rsh
+              hlocals.1 hfuncs
+            rcases hshape with h | ⟨rts, h', hri, hrtsEq, h⟩
+            · rw [h]
+              exact ⟨_, crepCallTimeout t ri fname _ _ _ _ htargs htlookup hg htclock, rfl⟩
+            · have hnodup : rts.Nodup := hg rts h' hri
+              have hdist := pcCompileCorrectCallRetSlotsDistinct ctxt argexps (sizeOfShapeHOL rsh)
+                hlocals.2.1
+              rw [← hrtsEq] at hdist
+              rw [h]
+              exact crepNestedCallTimeout t ri fname _ _ _ _ rts htargs htlookup hg htclock
+                hnodup hdist
+
 end Flapjack
