@@ -93,13 +93,17 @@ theorem erase_support_length_lt [BEq α] [LawfulBEq α]
 
 /-! ## The recursive core -/
 
-/-- Recursive core of HOL `inline_prog` over the canonical
-    `HolFiniteMapExact` inline map.  `inlineable` is the map, `supportKeys`
-    together with `support_spec` is the finite-support cardinality certificate
-    used only for termination.  Every clause mirrors `inlineProgHOLCore`
-    (`Pass.lean:827`) and the HOL equations at
-    `crep_inlineScript.sml:203-257`, with `fs.lookup` for `FLOOKUP` and
-    `fs.erase name` for `inlineable_fs \\ e`. -/
+/-- FLAPJACK-SPECIFIC computable implementation of the HOL `inline_prog`
+    equations (`crep_inlineScript.sml:203-257`) over the canonical
+    `HolFiniteMapExact` inline map.  It is NOT presented as an exact `@[hol]`
+    port: relative to HOL it takes two extra inputs, `supportKeys` together with
+    `support_spec`, an explicit finite-support cardinality certificate used only
+    for termination (HOL's `CARD (FDOM fs)` measure is unavailable because
+    `HolFiniteMapExact` stores its support existentially).  Every clause mirrors
+    `inlineProgHOLCore` (`Pass.lean:827`) and the HOL equations, with `fs.lookup`
+    for `FLOOKUP` and `fs.erase name` for `inlineable_fs \\ e`.  Tag withheld
+    pending coordinator carrier review; the support-independent wrapper/port
+    remains tracked by `flapjack-e7w.2.1.13`. -/
 def inlineProgHOLCoreExact [BEq CrepInlineMapHOLName] [LawfulBEq CrepInlineMapHOLName]
     (inlineable : HolFiniteMapExact CrepInlineMapHOLName
       (List Nat × CrepProgHOL width))
@@ -365,9 +369,15 @@ theorem supportKeys_alistToFmapHOLExact [BEq CrepInlineMapHOLName]
       rfl
     exact hkey (by rw [lookup_alistToFmapHOLExact]; exact hnone)
 
-/-- Exact port of HOL `compile_inl_prog_def`: for every triple, inline the body
-    under the map with that function's own name erased.  The finite support of
-    the inline map is threaded explicitly so this stays computable. -/
+/-- FLAPJACK-SPECIFIC computable implementation of the HOL
+    `compile_inl_prog_def` equation (`crep_inlineScript.sml:259`): for every
+    triple, inline the body under the map with that function's own name erased.
+    This is NOT an exact `@[hol]` port: it carries extra `supportKeys` /
+    `support_spec` parameters (the finite support of the inline map is threaded
+    explicitly so the definition stays computable).  The extra argument is a
+    computability device only, not a statement difference; a support-independent
+    wrapper is tracked by `flapjack-e7w.2.2` and tag decision is pending
+    coordinator carrier review. -/
 def compileInlProgHOLExact [BEq CrepInlineMapHOLName] [LawfulBEq CrepInlineMapHOLName]
     (inl_fs : HolFiniteMapExact CrepInlineMapHOLName (List Nat × CrepProgHOL width))
     (supportKeys : List CrepInlineMapHOLName)
@@ -381,10 +391,14 @@ def compileInlProgHOLExact [BEq CrepInlineMapHOLName] [LawfulBEq CrepInlineMapHO
         (HolFiniteMapExact.erase_support inl_fs supportKeys support_spec triple.1)
         triple.2.2)
 
-/-- Exact port of HOL `compile_inl_top_def`: build the inline alist by filtering
-    the program to the named functions (HOL `FILTER (fun (x, y) => MEM x
-    inl_fname) prog`), then run `compile_inl_prog`.  The support certificate is
-    computed from the filtered alist's keys, so the definition is executable. -/
+/-- FLAPJACK-SPECIFIC computable implementation of the HOL
+    `compile_inl_top_def` equation (`crep_inlineScript.sml:264`): build the
+    inline alist by filtering the program to the named functions (HOL
+    `FILTER (fun (x, y) => MEM x inl_fname) prog`), then run
+    `compileInlProgHOLExact`.  The support certificate is computed from the
+    filtered alist's keys, so the definition is executable.  NOT presented as an
+    exact `@[hol]` port (it delegates to the certified core); tag withheld
+    pending coordinator carrier review (`flapjack-e7w.2.2`). -/
 def compileInlTopHOLExact [BEq CrepInlineMapHOLName] [LawfulBEq CrepInlineMapHOLName]
     (inl_fname : List CrepInlineMapHOLName)
     (prog : List (CrepInlineMapHOLName × List Nat × CrepProgHOL width)) :
