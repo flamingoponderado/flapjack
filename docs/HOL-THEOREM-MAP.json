@@ -16698,6 +16698,49 @@
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "ds10 (bead flapjack-pxn.18.4.3.101): untagged Annot case helper against pcCompileCorrectAt, delegating from the tagged pcCompileCorrect_Annot; one constructor case, the assembled pc_compile_correct remains open."
   },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Return.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_Return; forwards the imported checked roundtrip; no HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Return.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_Return; forwards the imported checked roundtrip; no HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Return.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_Return; forwards the imported checked roundtrip; no HOL declaration."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "pc_compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Return.lean",
+    "lean_name": "pcCompileCorrect_Return",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": ["PanSemStateFiniteExact.locals", "PanSemStateFiniteExact.globals", "PanSemStateFiniteExact.code", "PanSemStateFiniteExact.eshapes", "CrepSemHOLState.locals", "CrepSemHOLState.globals", "CrepSemHOLState.code", "PanToCrepContextExact.vars", "PanToCrepContextExact.funcs", "PanToCrepContextExact.eids"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "ds10 (bead flapjack-pxn.18.4.3.103): the Return case of HOL pc_compile_correct (pan_to_crepProofScript.sml:442-468, case resumed at :2056-2071), stated against pcCompileCorrectAt over the tagged total evaluateHOLFiniteState / evalCrepSemHOLProgExact, the tagged compileProgExactHOLW/compileReturnExactHOLW, and the tagged exact state_rel/code_rel/excp_rel/locals_rel/globals_lookup/localised_prog. Source Return evaluates the expression, giving (SOME (Return v), empty_locals s); compile_def emits Return [] when size_of_shape sh = 0 and Return ces otherwise; the target Return equation returns (SOME (Return ws), empty_locals t) with ws the compiled expression values. HOL's proof uses compile_exp_val_rel and GSYM opt_mmap_eq_some; the Lean proof uses the tagged compileExpValRelHOL and optMmapEqSome. It has all HOL hypotheses and conclusion conjuncts, an existential target run, and no target-run or post-state premise. Proof via the untagged pcCompileCorrectAt_return case. Assembled pc_compile_correct remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Return.lean",
+    "lean_name": "pcCompileCorrectAt_return",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "ds10 (bead flapjack-pxn.18.4.3.103): untagged Return case helper against pcCompileCorrectAt, delegating from the tagged pcCompileCorrect_Return; one constructor case, the assembled pc_compile_correct remains open."
+  },
+
 
   {
     "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
