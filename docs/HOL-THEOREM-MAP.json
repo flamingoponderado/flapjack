@@ -18573,18 +18573,24 @@
     "hol_name": "mem_store_def",
     "lean_path": "Flapjack/Pancake/Semantics/LoopSemStateExact.lean",
     "lean_name": "memStore",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.3): HOL mem_store addr w s = if addr IN s.mdomain then SOME (s with memory := (addr =+ w) s.memory) else NONE (loopSemScript.sml:57-62); Lean tests the Bool mdomain predicate and updates memory pointwise. HOL rows of loop_sem_mem_store_probe.out checked by Flapjack.Test.LoopSemEvalExactParity. The only carrier translation is HOL's type-indexed 'a word (WordLocW width / BitVec width) to positive BitVec width, so the tag carries (words_as_type_indexed_bitvec); no extra hypotheses beyond [NeZero width]."
+    "reviewer": "flapjack-luna-b source comparison (2026-09-28; bead flapjack-up10.3): HOL mem_store addr w s tests addr IN s.mdomain, then returns SOME with memory updated by the single-address function update; otherwise NONE (loopSemScript.sml:57-62). Lean uses the same membership branch and pointwise address-equality update. memory is a total function, not a finite map; the full state carrier's separate globals |-> field is HolFiniteMapExact with the same-module canonical witness. Direct HOL rows remain checked by LoopSemEvalExactParity. The qualifier records only the globals carrier translation; words_as_type_indexed_bitvec separately records the positive BitVec width. No statement or runtime behavior changed."
   },
   {
     "hol_path": "cakeml/pancake/semantics/loopSemScript.sml",
     "hol_name": "mem_load_def",
     "lean_path": "Flapjack/Pancake/Semantics/LoopSemStateExact.lean",
     "lean_name": "memLoad",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.3): HOL mem_load addr s = if addr IN s.mdomain then SOME (s.memory addr) else NONE (loopSemScript.sml:64-69); Lean is identical over the exact carrier. HOL rows of loop_sem_mem_load_probe.out checked by Flapjack.Test.LoopSemEvalExactParity. The only carrier translation is HOL's type-indexed 'a word (WordLocW width / BitVec width) to positive BitVec width, so the tag carries (words_as_type_indexed_bitvec); no extra hypotheses beyond [NeZero width]."
+    "reviewer": "flapjack-luna-b source comparison (2026-09-28; bead flapjack-up10.3): HOL mem_load addr s returns SOME (s.memory addr) exactly when addr IN s.mdomain, otherwise NONE (loopSemScript.sml:64-69); Lean has the same guard and total-memory read. memory is not a finite map; the full state carrier's distinct globals |-> field is HolFiniteMapExact with the same-module canonical witness. Direct HOL rows remain checked by LoopSemEvalExactParity. The qualifier records only this carrier translation; words_as_type_indexed_bitvec separately records positive BitVec width. No statement or runtime behavior changed."
   },
   {
     "hol_path": "cakeml/pancake/semantics/loopSemScript.sml",

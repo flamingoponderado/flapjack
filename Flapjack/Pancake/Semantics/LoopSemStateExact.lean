@@ -351,8 +351,12 @@ def findCode {width : Nat} [NeZero width] :
       | _ => none
 
 /-- Exact HOL `mem_store_def` (`loopSemScript.sml:57-62`): store `w` at `addr`
-    (`(addr =+ w) s.memory`) when `addr IN s.mdomain`, else `NONE`. -/
-@[hol "cakeml/pancake/semantics/loopSemScript.sml" "mem_store_def" (words_as_type_indexed_bitvec)]
+    (`(addr =+ w) s.memory`) when `addr IN s.mdomain`, else `NONE`. `memory`
+    is a total function, not a finite map; the full state carrier's distinct
+    `globals` `|->` field is recorded by the finite-support qualifier and
+    same-module canonical witness. -/
+@[hol "cakeml/pancake/semantics/loopSemScript.sml" "mem_store_def"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 def memStore {width : Nat} [NeZero width] {F : Type}
     (address : BitVec width) (value : WordLocW width) (state : LoopSemStateFiniteExact width F) :
     Option (LoopSemStateFiniteExact width F) :=
@@ -361,8 +365,11 @@ def memStore {width : Nat} [NeZero width] {F : Type}
   else none
 
 /-- Exact HOL `mem_load_def` (`loopSemScript.sml:64-69`): `SOME (s.memory addr)`
-    when `addr IN s.mdomain`, else `NONE`. -/
-@[hol "cakeml/pancake/semantics/loopSemScript.sml" "mem_load_def" (words_as_type_indexed_bitvec)]
+    when `addr IN s.mdomain`, else `NONE`. `memory` is total; the state
+    carrier's separate `globals` `|->` field is recorded by the finite-support
+    qualifier and same-module canonical witness. -/
+@[hol "cakeml/pancake/semantics/loopSemScript.sml" "mem_load_def"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 def memLoad {width : Nat} [NeZero width] {F : Type}
     (address : BitVec width) (state : LoopSemStateFiniteExact width F) : Option (WordLocW width) :=
   if state.mdomain address then some (state.memory address) else none
