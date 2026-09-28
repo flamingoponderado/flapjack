@@ -26,6 +26,16 @@ Do not copy `.olean` files between worktrees or overwrite one with a copied
 artifact: a copied OLean can be newer than its source and hide subsequent
 source changes. Cache cleanup is local-only; do not stage `.lake` outputs.
 
+When the local `.olean` files of a target are absent but the Lake artifact cache
+has them, `scripts/lake-restore-oleans.sh [TARGET ...]` (which runs
+`LAKE_RESTORE_ARTIFACTS=true lake build`) is the sanctioned restore route: Lake
+re-checks each cached output against the current sources and re-materializes the
+missing `.olean` files, rebuilding anything whose inputs changed. A restored
+`.olean` is a hardlink into the content-addressed cache, so never edit a
+restored hardlinked `.olean` in place: that mutates the shared cache entry.
+Treat restored outputs as read-only and rebuild the affected module from source
+instead.
+
 ## Fleet workflow
 
 This section coordinates internal fleet agents. External contributors may open

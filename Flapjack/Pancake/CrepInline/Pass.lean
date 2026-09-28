@@ -1408,4 +1408,40 @@ def crepInlineTop [BEq FunName] [OfNat α 0] [OfNat α 1]
         (function.name, (function.params, function.body)))
   crepInlineFunctions inlineable functions
 
+/-- Flapjack-only infrastructure: the production record-based traversal
+    `panToCrepCompileInlTop` computes exactly the same function list as the
+    HOL-shaped adapter `compileInlTopHOLWithMetadata`, which runs
+    `compileInlTopHOL` on triples and then reattaches the source record
+    metadata.  This has no HOL original: HOL keeps triples and has no separate
+    metadata-reattaching wrapper, so the statement only records that the two
+    Flapjack representations of the same pass agree. -/
+theorem panToCrepCompileInlTop_eq_compileInlTopHOLWithMetadata
+    [BEq FunName] [LawfulBEq FunName] [LawfulHashable FunName] [OfNat α 0] [OfNat α 1]
+    (inlineNames : List FunName) (functions : List (CompiledFunction α)) :
+    panToCrepCompileInlTop inlineNames functions =
+      compileInlTopHOLWithMetadata inlineNames functions := by
+  have hrec : ∀ (I : List (CrepInlineEntry α)) (active : Std.HashSet FunName)
+      (fs : List (CompiledFunction α)),
+      crepInlineFunctionsRecursive I active fs = fs.map (fun f => { f with body := crepInlineProgRecursive I (active.erase f.name) f.body }) := by
+    intro I active fs
+    induction fs with
+    | nil => rfl
+    | cons function functions ih =>
+        simp only [crepInlineFunctionsRecursive, List.map_cons, ih]
+  have hI :
+      List.map (fun x => (x.fst, x.2.fst, x.2.snd))
+        (List.filter (fun f => inlineNames.contains f.fst)
+          (List.map (fun f => (f.name, f.params, f.body)) functions))
+      = List.map (fun f => (f.name, f.params, f.body))
+        (List.filter (fun f => inlineNames.contains f.name) functions) := by
+    simp only [List.filter_map, List.map_map, Function.comp_def]
+  simp only [panToCrepCompileInlTop, crepInlineTopRecursiveByNames,
+    crepInlineTopRecursive, compileInlTopHOLWithMetadata, compileInlTopHOL]
+  rw [hI]
+  rw [hrec]
+  rw [List.map_map, List.zipWith_map_right, List.zipWith_self]
+  apply List.map_congr_left
+  intro f hf
+  simp only [Function.comp_def]
+
 end Flapjack

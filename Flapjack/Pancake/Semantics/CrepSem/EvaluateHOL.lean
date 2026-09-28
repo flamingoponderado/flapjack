@@ -73,8 +73,13 @@ call the exact ports with `crepShMemByteWidth operator`.
   `readBytearrayWordHOL`/`panMemLoadByteWord8HOL`/
   `panWriteBytearrayWord8HOL`. Legacy `UInt8` helpers remain untagged for the
   other word-load and production-adapter paths; their byte-carrier bridge is
-  not claimed as a HOL port. `crepClockWordToBytes`/`crepClockWordOfBytes` are
-  likewise not cited here as exact HOL ports.
+  not claimed as a HOL port. The `UInt8`-surface clock word codecs
+  `crepClockWordToBytes`/`crepClockWordOfBytes` remain untagged (they are the
+  FFI interface carrier, not the HOL source carrier), but for every positive
+  width they are now unconditionally connected to the exact HOL-shaped
+  `panWordToBytesHOL`/`panWordOfBytesHOL` by
+  `panWordToBytesHOL_eq_map_crepClockWordToBytes` and
+  `panWordOfBytesHOL_eq_crepClockWordOfBytes` (`ShMemBytesBridge.lean`).
 * `Skip` is fully faithful: `evalCrepSemHOLProg state .skip = (none, state)`,
   matching HOL `evaluate (Skip, s) = (NONE, s)`. The direct oracle row is
   `skip_eval=T` in `scripts/hol-probes/crep_inline_eval_probe.out`.
@@ -691,7 +696,11 @@ Residual mismatches (not carrier-field differences):
    / `panWriteBytearrayHOL_eq_word8_projection`, `PanSem/ExtCallExact.lean`),
    so the only residual deviation is the surface byte carrier
    (`UInt8` vs `BitVec 8`), not semantics. (`crepClockWordToBytes` /
-   `crepClockWordOfBytes` remain untagged.)
+   `crepClockWordOfBytes` remain untagged for the `UInt8` FFI surface, but are
+   unconditionally bridged to the exact `panWordToBytesHOL`/`panWordOfBytesHOL`
+   at every positive width via
+   `panWordToBytesHOL_eq_map_crepClockWordToBytes` /
+   `panWordOfBytesHOL_eq_crepClockWordOfBytes`.)
 4. **`Call` clause restatement** over the no-decider entry point is landed
    (`evalCrepSemHOLProgExact_call`, bead `flapjack-4ac.5.16.5.17`).
 
