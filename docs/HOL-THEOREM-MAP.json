@@ -19846,6 +19846,34 @@
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "state_rel_def",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "crepInlineStateRelExact",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-2de.15) against crep_inlineProofScript.sml:12-24 and crepSemScript.sml:19-32. The HOL state_rel conjunction compares exactly globals, code, memory, memaddrs, sh_memaddrs, clock, be, ffi, base_addr and top_addr; Lean has those ten conjuncts in the same order over CrepSemHOLState. locals is intentionally excluded as in HOL. The carrier's locals/globals/code fields use canonical HolFiniteMapExact, with same-module holFmapAsFiniteSupportWitness; positive-width BitVec records HOL's type-indexed words. Direct HOL rows verify that local-map extension is ignored and a code difference fails; Lean proofs verify that local-map extension is ignored and a clock difference fails. No extra assumptions or clauses."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "locals_rel_def",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "crepInlineLocalsRelExact",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-2de.15) against crep_inlineProofScript.sml:26-29. HOL defines locals_rel as finite-map SUBMAP; Lean states the equivalent lookup implication for every key/value, using CrepSemHOLState.locals : HolFiniteMapExact and no BEq/DecidableEq side condition. Equivalence is HOL SUBMAP_FLOOKUP_EQN. The carrier's other finite-map fields are also named for the same-module canonical witness; positive-width BitVec records the word translation. Direct HOL rows and Lean replay cover an extension, a missing binding, and a conflicting value. No extra assumptions."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
     "hol_name": "locals_strong_rel_def",
     "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
     "lean_name": "crepInlineLocalsStrongRelExact",
