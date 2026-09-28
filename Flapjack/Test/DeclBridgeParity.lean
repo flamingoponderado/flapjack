@@ -13,13 +13,28 @@ discharged from a literal state.
 The expected values are recorded by direct HOL EVAL of the source evaluator in
 `scripts/hol-probes/pan_sem_state_eval_probe.out`: the Load rows
 `word_load_hit=SOME (ValWord 0x1122334455667788w)` and `word_load_miss=NONE`
-(success and memory-domain rejection).  The concrete broad-carrier Lean oracle
-guards for those same HOL rows live in `Flapjack/Test/PanSemStateEvalParity.lean`. -/
+(success and memory-domain rejection). The recursive finite-carrier fixtures
+below are matched to the direct `mem_load`/`mem_loads` rows
+`recursive_mem_loads_two_words`, `recursive_comb_two_words`, and
+`recursive_named_two_fields` in `scripts/hol-probes/pan_mem_load_probe.out`.
+The concrete broad-carrier Lean oracle guards for the source-evaluator rows live
+in `Flapjack/Test/PanSemStateEvalParity.lean`. -/
 
 namespace Flapjack.Test.DeclBridgeParity
 
 open Flapjack
 open Flapjack.Pancake.PanLang
+
+private def recursiveLoadProbeSource : String :=
+  "cakeml/pancake/semantics/panSemScript.sml:137-166 (mem_load_def)"
+
+private def recursiveLoadProbeCommand : String :=
+  "CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=pan_mem_load_probeScript.sml scripts/hol-probes/regenerate.sh"
+
+#guard recursiveLoadProbeSource ==
+  "cakeml/pancake/semantics/panSemScript.sml:137-166 (mem_load_def)"
+#guard recursiveLoadProbeCommand ==
+  "CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=pan_mem_load_probeScript.sml scripts/hol-probes/regenerate.sh"
 
 private abbrev Word64 := RiscV.Word 64
 private abbrev emptyValues : HolFiniteMapExact MlS (ValueHOL 64) := HolFiniteMapExact.empty
@@ -196,7 +211,7 @@ private theorem loadMissDom (address : RiscV.Word 64) :
 /-! ## Concrete flat-load recursion bridge to exact `mem_load` -/
 
 private def recursiveLoadStructs : StructContext :=
-  [("S", { fields := [("f", Shape.one)], size := 3 })]
+  [("S", { fields := [("f", Shape.one), ("g", Shape.one)], size := 2 })]
 
 private def recursiveLoadMemory : BitVec 64 → Option (PanValue (BitVec 64)) := fun address =>
   if address = 0 then some (.word (BitVec.ofNat 64 0x11))
@@ -244,8 +259,8 @@ private theorem recursiveLoadCtxBR : CtxBR recursiveLoadStructs := by
   rcases hp with ⟨rfl, rfl⟩
   simp [NameRanged, ListParamByteRanged, ParamByteRanged, ShapeByteRanged]
 
-/-- Concrete flat list recursion reads the second word at address 8 and agrees
-    with the exact `mem_loads` result under the finite memory codec. -/
+/-- Direct HOL row `recursive_mem_loads_two_words`: flat-list recursion reads
+    the second word at address 8 and agrees with exact `mem_loads`. -/
 example :
     ((panValueFlatLoadListFuel recursiveLoadStructs
         (panValueFlatMachineReadWord recursiveLoadProductionState recursiveLoadMemory)
@@ -274,8 +289,8 @@ example :
       simp [memLoadsHOLExact, memLoadHOLExact, recursiveLoadExactState,
         bytesInWordHOL, recursiveLoadStructs, structContextToHOL, StructContext.toHOL]
 
-/-- The same recursive list is also assembled by the production `.comb` shape
-    into the exact HOL `RStruct` result. -/
+/-- Direct HOL row `recursive_comb_two_words`: the same recursive list is
+    assembled by production `.comb` into the exact HOL `RStruct` result. -/
 example :
     (panValueFlatLoadFuel recursiveLoadStructs
         (panValueFlatMachineReadWord recursiveLoadProductionState recursiveLoadMemory)
@@ -302,8 +317,8 @@ example :
         recursiveLoadExactState, recursiveLoadStructs, structContextToHOL,
         StructContext.toHOL]
 
-/-- Concrete named shape follows its context entry and the one-field recursion
-    while encoding both structure and field names into `MlString`. -/
+/-- Direct HOL row `recursive_named_two_fields`: named field recursion reads
+    both cells while encoding structure and field names into `MlString`. -/
 example :
     (panValueFlatLoadFuel recursiveLoadStructs
         (panValueFlatMachineReadWord recursiveLoadProductionState recursiveLoadMemory)
@@ -313,7 +328,9 @@ example :
         (.named "S") 0).map panValueToHOL =
       some (.nStruct (Flapjack.Basis.Pure.MlString.ofString "S")
         [(Flapjack.Basis.Pure.MlString.ofString "f",
-          .val (.word (BitVec.ofNat 64 0x11)))]) := by
+          .val (.word (BitVec.ofNat 64 0x11))),
+         (Flapjack.Basis.Pure.MlString.ofString "g",
+          .val (.word (BitVec.ofNat 64 0x22)))]) := by
   calc
     _ = memLoadHOLExact (shapeToHOL (.named "S")) 0 recursiveLoadExactState.memaddrs
         recursiveLoadExactState.memory (structContextToHOL recursiveLoadStructs.toHOL) :=
@@ -325,7 +342,9 @@ example :
         (by simp [ShapeByteRanged]) (Nat.le_refl _)
     _ = some (.nStruct (Flapjack.Basis.Pure.MlString.ofString "S")
         [(Flapjack.Basis.Pure.MlString.ofString "f",
-          .val (.word (BitVec.ofNat 64 0x11)))]) := by
+          .val (.word (BitVec.ofNat 64 0x11))),
+         (Flapjack.Basis.Pure.MlString.ofString "g",
+          .val (.word (BitVec.ofNat 64 0x22)))]) := by
       simp [memLoadHOLExact, memLoadFldsHOLExact, paramToHOL,
         recursiveLoadExactState, recursiveLoadStructs, bytesInWordHOL,
         shapeToHOL, structContextToHOL, StructContext.toHOL, structInfoToHOL,

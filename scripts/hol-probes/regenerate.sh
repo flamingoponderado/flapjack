@@ -208,7 +208,8 @@ run_probe get_stack_only_probeScript.sml get_stack_only_probe.out \
   skip assign_leaf "$cake_dir/compiler/backend/word_allocScript.sml" \
   "$cake_dir/compiler/backend"
 run_probe pan_mem_load_probeScript.sml pan_mem_load_probe.out \
-  one_hit named_suffix_blocked "$cake_dir/pancake/semantics/panSemScript.sml"
+  one_hit recursive_mem_loads_two_words recursive_comb_two_words \
+  recursive_named_two_fields "$cake_dir/pancake/semantics/panSemScript.sml"
 run_probe pan_sem_state_eval_probeScript.sml pan_sem_state_eval_probe.out \
   word_load_hit eval_nested_load_shape pan_sem_state_eval_done \
   "$cake_dir/pancake/semantics/panSemScript.sml"
