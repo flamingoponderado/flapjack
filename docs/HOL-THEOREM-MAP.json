@@ -11114,6 +11114,15 @@
   },
   {
     "hol_path": "cakeml/pancake/loop_to_wordScript.sml",
+    "hol_name": "comp_def",
+    "lean_path": "Flapjack/Pancake/LoopToWord.lean",
+    "lean_name": "compHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-09-29, bead flapjack-pxn.18.5.9.6) against cakeml/pancake/loop_to_wordScript.sml:56-149. `comp ctxt prog l = (wordLang$prog, num # num)` is ported clause-for-clause: Skip; Assign n e -> .assign (findVarHOL ctxt n) (compExpHOL ctxt e); Primitive lhss AddCarry rhss -> the length-2/3 guard then Seq(Assign scratch_ci (Var (find_var ci)), Seq(Inst(Arith(AddCarry scratch_res li ri scratch_ci)), Seq(Assign (find_var co) (Var scratch_ci), Assign (find_var res) (Var scratch_res)))) with scratch_ci=1/scratch_res=3, else Skip (HOL EL k becomes List.getD k 0 under the guard); Arith LLongMul/LLongDiv/LDiv -> Inst(Arith(LongMul/LongDiv/Div (find_var ...))); Store e v; SetGlobal a e -> Set (Temp a) (comp_exp ctxt e); Load32/LoadByte/Store32/StoreByte -> Inst(Mem Load32/Load8/Store32/Store8 (find_var v) (Addr (find_var a) 0w)); Seq threads labels; If c n ri p q -> Seq (If c (find_var n) (find_reg_imm ctxt ri) wp wq) Tick; Loop l1 body l2 -> Seq Tick (Seq (Loop (mk_new_cutset ctxt l1) wbody (mk_new_cutset ctxt l2)) Tick); Break/Continue; Raise; Return vs -> Return 0 (MAP (find_var ctxt) vs); Tick; Mark -> recurse; Fail -> Skip; LocValue; Call with the NONE/0::args tail case and the SOME ret (vs, live, handler) cases threading (FST l, SND l+1), mk_new_cutset, and the handler/normal-return labels; FFI -> FFI with (mk_new_cutset ctxt live, LN); ShMem memop n e -> ShareInst memop (find_var n) (comp_exp e). The HOL type-indexed 'a word is rendered as BitVec width under [NeZero width], hence (words_as_type_indexed_bitvec); the num |-> num context is the exact Spt Nat tree map (not a |-> finite map). Two untagged identity representation bridges connect duplicate Lean carriers of shared HOL datatypes: loopRegImmToWordRegImm (asm$reg_imm: LoopLang RegImm to Word WordRegImm) and crepMemOpToWordMemOp (asm$memop: CrepMemOp to WordMemOp/HolMemop), both constructor-identical to the HOL value. Direct HOL EVAL rows in scripts/hol-probes/loop_to_word_comp_probe.out are reproduced by kernel-checked examples in Flapjack/Test/LoopToWordExactParity.lean. Proof-side port only; routing the executed production loopToWord path through it is tracked separately by bead flapjack-pxn.18.5.9.5."
+  },
+  {
+    "hol_path": "cakeml/pancake/loop_to_wordScript.sml",
     "hol_name": "find_var_def",
     "lean_path": "Flapjack/Pancake/LoopToWord.lean",
     "lean_name": "findVarHOL",

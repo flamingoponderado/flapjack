@@ -211,6 +211,10 @@ run_probe loop_to_word_comp_exp_probeScript.sml loop_to_word_comp_exp_probe.out 
   comp_exp_const comp_exp_var comp_exp_var_miss comp_exp_lookup \
   comp_exp_base_addr comp_exp_top_addr comp_exp_load comp_exp_shift \
   comp_exp_op "$cake_dir/pancake/loop_to_wordScript.sml"
+run_probe loop_to_word_comp_probeScript.sml loop_to_word_comp_probe.out \
+  comp_skip comp_assign comp_seq comp_return comp_break comp_continue \
+  comp_if comp_loop comp_call_tail comp_load32 \
+  "$cake_dir/pancake/loop_to_wordScript.sml"
 # The get_stack_only probe observes the allocator driver's stack-only
 # analysis over wordLang programs (backend word_alloc).
 run_probe get_stack_only_probeScript.sml get_stack_only_probe.out \

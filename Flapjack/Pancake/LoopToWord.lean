@@ -297,4 +297,150 @@ def compExpHOL {width : Nat} [NeZero width] (context : Spt Nat) :
   termination_by expression => sizeOf expression
   decreasing_by all_goals first | sizeOf_list_dec | decreasing_trivial | simp_wf
 
+/-- Representation bridge between the two reviewed Lean representations of HOL
+`asm$memop` (`cakeml/compiler/encoders/asm/asmScript.sml:125-128`):
+`CrepMemOp` is the carrier of the exact `HolLoopProg` `ShMem` field, and
+`WordMemOp` (tagged `asm$memop`, aliased `HolMemop`) is the carrier of the exact
+`WordLangProgHOL` `ShareInst` field.  The two datatypes have the same eight
+nullary constructors in the same order, so this map is the identity on the HOL
+value.  It is the total form of the partial production `Flapjack.wordMemOp`; it
+is untagged Flapjack infrastructure (HOL has a single shared `memop` type and no
+such conversion declaration). -/
+def crepMemOpToWordMemOp : CrepMemOp → WordMemOp
+  | .load => .load
+  | .load8 => .load8
+  | .load16 => .load16
+  | .load32 => .load32
+  | .store => .store
+  | .store8 => .store8
+  | .store16 => .store16
+  | .store32 => .store32
+
+/-- Representation bridge between the two reviewed Lean representations of HOL
+`asm$reg_imm` (`cakeml/compiler/encoders/asm/asmScript.sml`):
+`RegImm` is the carrier of the exact `HolLoopProg` `If` field, and
+`WordRegImm` is the carrier of the exact `WordLangProgHOL` `If` field.  The two
+datatypes have the same `imm`/`reg` constructors with the same payload types, so
+this map is the identity on the HOL value.  It is untagged Flapjack
+infrastructure (HOL has a single shared `reg_imm` type and no such conversion
+declaration); it lets the `If` clause reuse the tagged `findRegImmHOL`. -/
+def loopRegImmToWordRegImm : RegImm α → WordRegImm α
+  | .imm value => .imm value
+  | .reg name => .reg name
+
+/-- Exact HOL `comp_def` (`cakeml/pancake/loop_to_wordScript.sml:56-149`): the
+state-threaded loopLang-to-wordLang compiler.  `comp ctxt prog l` returns the
+compiled `wordLang$prog` together with the updated `(function label, fresh local
+label)` pair.  The HOL `num |-> num` context is the reviewed exact `Spt Nat`
+tree map, and the type-indexed `'a word` is rendered as `BitVec width` under
+`[NeZero width]`.  Every clause is translated source-exactly, reusing
+`compExpHOL`, `findRegImmHOL`, and `mkNewCutsetHOL`; the only representation
+bridges are `loopRegImmToWordRegImm` (for the shared HOL `asm$reg_imm` carried by
+`If`) and `crepMemOpToWordMemOp` (for the shared HOL `asm$memop` carried by
+`ShMem`/`ShareInst`).  This is the proof-side exact port; routing the executed
+production `loopToWord` path through it is tracked separately by bead
+`flapjack-pxn.18.5.9.5`. -/
+@[hol "cakeml/pancake/loop_to_wordScript.sml" "comp_def" (words_as_type_indexed_bitvec)]
+def compHOL {width : Nat} [NeZero width] (context : Spt Nat) :
+    HolLoopProg width → Nat × Nat → WordLangProgHOL (BitVec width) × Nat × Nat
+  | .skip, labels => (.skip, labels)
+  | .assign name value, labels =>
+      (.assign (findVarHOL context name) (compExpHOL context value), labels)
+  | .primitive destinations operator arguments, labels =>
+      match operator with
+      | .addCarry =>
+          if destinations.length = 2 ∧ arguments.length = 3 then
+            let result := destinations.getD 0 0
+            let carryOut := destinations.getD 1 0
+            let left := arguments.getD 0 0
+            let right := arguments.getD 1 0
+            let carryIn := arguments.getD 2 0
+            let scratchCarry := 1
+            let scratchResult := 3
+            (.seq (.assign scratchCarry (.var (findVarHOL context carryIn)))
+              (.seq (.inst (.arith (.addCarry scratchResult (findVarHOL context left)
+                          (findVarHOL context right) scratchCarry)))
+                (.seq (.assign (findVarHOL context carryOut) (.var scratchCarry))
+                  (.assign (findVarHOL context result) (.var scratchResult)))), labels)
+          else (.skip, labels)
+  | .arith operation, labels =>
+      match operation with
+      | .longMul r1 r2 r3 r4 =>
+          (.inst (.arith (.longMul (findVarHOL context r1) (findVarHOL context r2)
+              (findVarHOL context r3) (findVarHOL context r4))), labels)
+      | .longDiv r1 r2 r3 r4 r5 =>
+          (.inst (.arith (.longDiv (findVarHOL context r1) (findVarHOL context r2)
+              (findVarHOL context r3) (findVarHOL context r4)
+              (findVarHOL context r5))), labels)
+      | .div r1 r2 r3 =>
+          (.inst (.arith (.div (findVarHOL context r1) (findVarHOL context r2)
+              (findVarHOL context r3))), labels)
+  | .store address value, labels =>
+      (.store (compExpHOL context address) (findVarHOL context value), labels)
+  | .setGlobal address value, labels =>
+      (.set (.temp address) (compExpHOL context value), labels)
+  | .load32 address destination, labels =>
+      (.inst (.mem .load32 (findVarHOL context destination)
+        (.addr (findVarHOL context address) (0 : BitVec width))), labels)
+  | .loadByte address destination, labels =>
+      (.inst (.mem .load8 (findVarHOL context destination)
+        (.addr (findVarHOL context address) (0 : BitVec width))), labels)
+  | .store32 address value, labels =>
+      (.inst (.mem .store32 (findVarHOL context value)
+        (.addr (findVarHOL context address) (0 : BitVec width))), labels)
+  | .storeByte address value, labels =>
+      (.inst (.mem .store8 (findVarHOL context value)
+        (.addr (findVarHOL context address) (0 : BitVec width))), labels)
+  | .seq first second, labels =>
+      let (wp, labels) := compHOL context first labels
+      let (wq, labels) := compHOL context second labels
+      (.seq wp wq, labels)
+  | .ite operator condition right thenBranch elseBranch _, labels =>
+      let (wp, labels) := compHOL context thenBranch labels
+      let (wq, labels) := compHOL context elseBranch labels
+      (.seq (.ite operator (findVarHOL context condition)
+        (findRegImmHOL context (loopRegImmToWordRegImm right))
+        wp wq) .tick, labels)
+  | .loop liveIn body liveOut, labels =>
+      let (wbody, labels) := compHOL context body labels
+      (.seq .tick (.seq (.loop (mkNewCutsetHOL context liveIn) wbody
+        (mkNewCutsetHOL context liveOut)) .tick), labels)
+  | .break label, labels => (.break label, labels)
+  | .continue label, labels => (.continue label, labels)
+  | .raise exception, labels => (.raise (findVarHOL context exception), labels)
+  | .return values, labels => (.return 0 (values.map (findVarHOL context)), labels)
+  | .tick, labels => (.tick, labels)
+  | .mark body, labels => compHOL context body labels
+  | .fail, labels => (.skip, labels)
+  | .locValue destination source, labels =>
+      (.locValue (findVarHOL context destination) source, labels)
+  | .call returns target arguments handler, labels =>
+      let arguments := arguments.map (findVarHOL context)
+      match returns with
+      | none => (.call none target (0 :: arguments) none, labels)
+      | some (values, live) =>
+          let values := values.map (findVarHOL context)
+          let live := mkNewCutsetHOL context live
+          let newLabels := (labels.1, labels.2 + 1)
+          match handler with
+          | none =>
+              (.call (some (values, (live, .ln), .skip, labels)) target arguments none,
+                newLabels)
+          | some (exception, handlerBody, returnBody, _) =>
+              let (handlerBody, labels₁) := compHOL context handlerBody newLabels
+              let (returnBody, labels₁) := compHOL context returnBody labels₁
+              let newLabels := (labels₁.1, labels₁.2 + 1)
+              (.seq (.call (some (values, (live, .ln), returnBody, labels)) target
+                  arguments (some (findVarHOL context exception, handlerBody, labels₁)))
+                .tick, newLabels)
+  | .ffi function configuration configurationLength array arrayLength live, labels =>
+      (.ffi function (findVarHOL context configuration)
+        (findVarHOL context configurationLength) (findVarHOL context array)
+        (findVarHOL context arrayLength) (mkNewCutsetHOL context live, .ln), labels)
+  | .shMem operator name address, labels =>
+      (.shareInst (crepMemOpToWordMemOp operator) (findVarHOL context name)
+        (compExpHOL context address), labels)
+  termination_by program _ => sizeOf program
+  decreasing_by all_goals first | sizeOf_list_dec | decreasing_trivial | simp_wf
+
 end Flapjack.LoopToWord

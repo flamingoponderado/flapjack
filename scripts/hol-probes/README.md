@@ -47,6 +47,11 @@ kernel-checked Lean replay is `Flapjack.Test.LoopToWordExactParity`.
 loopLang-to-wordLang expression compiler `comp_exp_def` at
 `cakeml/pancake/loop_to_wordScript.sml:22-40`; its kernel-checked Lean replay
 is also `Flapjack.Test.LoopToWordExactParity`.
+`loop_to_word_comp_probe.out` records direct HOL EVAL rows for the exact
+loopLang-to-wordLang program compiler `comp_def` at
+`cakeml/pancake/loop_to_wordScript.sml:56-149` (Skip, Assign, Seq, Return,
+Break, Continue, If, Loop, tail Call, Load32); its kernel-checked Lean replay is
+also `Flapjack.Test.LoopToWordExactParity`.
 `loop_live_comp_probe.out` records direct HOL EVAL rows for
 `loop_live$comp` at `cakeml/pancake/loop_liveScript.sml:217`; the Lean replay
 is `Flapjack.Test.LoopLiveCompParity`. `loop_live_optimise_probe.out` records

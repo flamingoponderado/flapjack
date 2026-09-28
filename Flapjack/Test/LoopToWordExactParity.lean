@@ -141,6 +141,109 @@ def compExpProbeChecks : List Bool :=
          left == 9 && right == (1 : BitVec 8)
      | _ => false) ]
 
+/-! ## Original-domain parity for exact `comp_def`
+
+`comp_def` at `cakeml/pancake/loop_to_wordScript.sml:56-149` is the exact
+loopLang-to-wordLang program compiler. The expected observations are the direct
+HOL-EVAL results from `scripts/hol-probes/loop_to_word_comp_probeScript.sml`,
+checked in at `scripts/hol-probes/loop_to_word_comp_probe.out`. `WordLangProgHOL`
+derives only `Repr`, so the kernel-checked `example`s below prove each row by
+`simp`, and `compProbeChecks` replays them by destructuring for `runChecks`. -/
+
+example : Flapjack.LoopToWord.compHOL (width := 8) compProbeContext .skip (0, 0) =
+    (.skip, (0, 0)) := by
+  simp [Flapjack.LoopToWord.compHOL]
+
+example : Flapjack.LoopToWord.compHOL (width := 8) compProbeContext
+    (.assign 3 (.const (7 : BitVec 8))) (0, 0) =
+    (.assign 9 (.const (7 : BitVec 8)), (0, 0)) := by
+  simp [Flapjack.LoopToWord.compHOL, findVarHOL, compExpHOL, compProbeContext, sptLookup_sptInsert_same]
+
+example : Flapjack.LoopToWord.compHOL (width := 8) compProbeContext
+    (.seq (.assign 3 (.const (1 : BitVec 8))) (.assign 3 (.var 3))) (0, 0) =
+    (.seq (.assign 9 (.const (1 : BitVec 8))) (.assign 9 (.var 9)), (0, 0)) := by
+  simp [Flapjack.LoopToWord.compHOL, findVarHOL, compExpHOL, compProbeContext, sptLookup_sptInsert_same]
+
+example : Flapjack.LoopToWord.compHOL (width := 8) compProbeContext (.return [3, 5]) (0, 0) =
+    (.return 0 [9, 0], (0, 0)) := by
+  simp [Flapjack.LoopToWord.compHOL, findVarHOL, compProbeContext, sptLookup_sptInsert_same,
+    sptLookup_sptInsert_ne, sptLookup_ln]
+
+example : Flapjack.LoopToWord.compHOL (width := 8) compProbeContext (.break 2) (0, 0) =
+    (.break 2, (0, 0)) := by
+  simp [Flapjack.LoopToWord.compHOL]
+
+example : Flapjack.LoopToWord.compHOL (width := 8) compProbeContext (.continue 1) (0, 0) =
+    (.continue 1, (0, 0)) := by
+  simp [Flapjack.LoopToWord.compHOL]
+
+example : Flapjack.LoopToWord.compHOL (width := 8) compProbeContext
+    (.ite .equal 3 (.reg 3) .skip .skip (.ln : Spt Unit)) (0, 0) =
+    (.seq (.ite .equal 9 (.reg 9) .skip .skip) .tick, (0, 0)) := by
+  simp [Flapjack.LoopToWord.compHOL, findVarHOL, findRegImmHOL, loopRegImmToWordRegImm,
+    compProbeContext, sptLookup_sptInsert_same]
+
+example : Flapjack.LoopToWord.compHOL (width := 8) compProbeContext
+    (.loop (.ln : Spt Unit) .skip (.ln : Spt Unit)) (0, 0) =
+    (.seq .tick (.seq (.loop (mkNewCutsetHOL compProbeContext (.ln : Spt Unit)) .skip
+      (mkNewCutsetHOL compProbeContext (.ln : Spt Unit))) .tick), (0, 0)) := by
+  simp [Flapjack.LoopToWord.compHOL]
+
+example : Flapjack.LoopToWord.compHOL (width := 8) compProbeContext
+    (.call none none ([] : List Nat) none) (0, 0) =
+    (.call none none [0] none, (0, 0)) := by
+  simp [Flapjack.LoopToWord.compHOL]
+
+example : Flapjack.LoopToWord.compHOL (width := 8) compProbeContext (.load32 3 5) (0, 0) =
+    (.inst (.mem .load32 0 (.addr 9 (0 : BitVec 8))), (0, 0)) := by
+  simp [Flapjack.LoopToWord.compHOL, findVarHOL, compProbeContext, sptLookup_sptInsert_same,
+    sptLookup_sptInsert_ne, sptLookup_ln]
+
+/-- Decidable replay of every `comp_def` probe row, used by `runChecks`.
+`WordLangProgHOL` has no `DecidableEq`, so each row destructures the compiled
+program and checks the threaded label pair `(0, 0)`. -/
+def compProbeChecks : List Bool :=
+  [ (match Flapjack.LoopToWord.compHOL (width := 8) compProbeContext .skip (0, 0) with
+     | (.skip, labels) => labels == (0, 0)
+     | _ => false),
+    (match Flapjack.LoopToWord.compHOL (width := 8) compProbeContext
+        (.assign 3 (.const (7 : BitVec 8))) (0, 0) with
+     | (.assign name (.const value), labels) => name == 9 && value == (7 : BitVec 8) && labels == (0, 0)
+     | _ => false),
+    (match Flapjack.LoopToWord.compHOL (width := 8) compProbeContext
+        (.seq (.assign 3 (.const (1 : BitVec 8))) (.assign 3 (.var 3))) (0, 0) with
+     | (.seq (.assign name₁ (.const value)) (.assign name₂ (.var source)), labels) =>
+         name₁ == 9 && value == (1 : BitVec 8) && name₂ == 9 && source == 9 && labels == (0, 0)
+     | _ => false),
+    (match Flapjack.LoopToWord.compHOL (width := 8) compProbeContext (.return [3, 5]) (0, 0) with
+     | (.return label values, labels) => label == 0 && values == [9, 0] && labels == (0, 0)
+     | _ => false),
+    (match Flapjack.LoopToWord.compHOL (width := 8) compProbeContext (.break 2) (0, 0) with
+     | (.break label, labels) => label == 2 && labels == (0, 0)
+     | _ => false),
+    (match Flapjack.LoopToWord.compHOL (width := 8) compProbeContext (.continue 1) (0, 0) with
+     | (.continue label, labels) => label == 1 && labels == (0, 0)
+     | _ => false),
+    (match Flapjack.LoopToWord.compHOL (width := 8) compProbeContext
+        (.ite .equal 3 (.reg 3) .skip .skip (.ln : Spt Unit)) (0, 0) with
+     | (.seq (.ite .equal condition (.reg right) .skip .skip) .tick, labels) =>
+         condition == 9 && right == 9 && labels == (0, 0)
+     | _ => false),
+    (match Flapjack.LoopToWord.compHOL (width := 8) compProbeContext
+        (.loop (.ln : Spt Unit) .skip (.ln : Spt Unit)) (0, 0) with
+     | (.seq .tick (.seq (.loop liveIn .skip liveOut) .tick), labels) =>
+         (sptLookup 0 liveIn : Option Unit) == some () &&
+           (sptLookup 0 liveOut : Option Unit) == some () && labels == (0, 0)
+     | _ => false),
+    (match Flapjack.LoopToWord.compHOL (width := 8) compProbeContext
+        (.call none none ([] : List Nat) none) (0, 0) with
+     | (.call none none arguments none, labels) => arguments == [0] && labels == (0, 0)
+     | _ => false),
+    (match Flapjack.LoopToWord.compHOL (width := 8) compProbeContext (.load32 3 5) (0, 0) with
+     | (.inst (.mem .load32 destination (.addr base offset)), labels) =>
+         destination == 0 && base == 9 && offset == (0 : BitVec 8) && labels == (0, 0)
+     | _ => false) ]
+
 def runChecks : IO Bool := do
   let checks :=
     [ ("LoopToWord find_var hit returns the stored register",
@@ -169,7 +272,8 @@ def runChecks : IO Bool := do
       ("LoopToWord mk_new_cutset leaves an unmapped key absent",
         (sptLookup 2 (mkNewCutsetHOL probeContext probeLive) : Option Unit) ==
           originalCutsetAbsent),
-      ("LoopToWord comp_exp_def exact HOL rows", compExpProbeChecks.all id) ]
+      ("LoopToWord comp_exp_def exact HOL rows", compExpProbeChecks.all id),
+      ("LoopToWord comp_def exact HOL rows", compProbeChecks.all id) ]
   let results ← checks.mapM fun (name, ok) => do
     if ok then
       IO.println s!"PASS {name}"
