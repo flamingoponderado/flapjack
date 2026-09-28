@@ -38,9 +38,20 @@ respectively
 additionally probes `pan_op_def` at lines 191--193.
 `Flapjack.Test.LoopSetVarParity` probes `set_var_def` at
 `cakeml/pancake/semantics/loopSemScript.sml:108-110`.
+`Flapjack.Test.LoopPropsCutSetsParity` guards the exact `cut_sets_def`
+clauses over `HolLoopProg`/`NumSet`; its direct HOL outputs for Skip,
+LocValue, Assign, Load32/LoadByte, Seq, If, each Arith variant, and the
+catch-all are in `scripts/hol-probes/loop_props_cut_sets_probe.out`.
 `Flapjack.Test.LoopDecClockParity` probes `dec_clock_def` at lines 42--43 of
 the same source.
 `Flapjack.Test.LoopFixClockParity` probes `fix_clock_def` at lines 46--49.
+`loop_props_survives_probe.out` records direct HOL EVAL rows for every clause
+of `survives_def` in `cakeml/pancake/semantics/loopPropsScript.sml:25-38`:
+If/Loop/Call (both handler forms)/FFI domain membership, recursive Mark and
+Seq, and the catch-all case. The exact width-indexed `HolLoopProg` port
+`survivesHOLExact` is in `Flapjack.Pancake.Semantics.LoopProps`; its replay
+guards are in `Flapjack.Test.LoopPropsSurvivesParity`. Refresh with
+`HOL_PROBE_ONLY=loop_props_survives_probeScript.sml scripts/hol-probes/regenerate.sh`.
 `Flapjack.Test.PanEvaluateDeclsParity` probes `evaluate_decls_def` at
 `cakeml/pancake/semantics/panSemScript.sml:814-835`, including each declaration
 constructor, ordered global updates, local clearing during initializer
@@ -606,6 +617,19 @@ The original Pancake source-level support boundary is also explicit in
 accepted by `loop_inst_ok` only for `x86_64`. Consequently, RISC-V parity must
 port the `data_to_word` helper path rather than add a direct RISC-V lowering
 for source `LLongDiv`.
+`crep_to_loop_locals_rel_probe.out` records direct observations for
+`locals_rel_def` at `cakeml/pancake/proofs/crep_to_loopProofScript.sml:101-111`.
+HOL `crepLang$varname = num` (`crepLangScript.sml:19`), so the context's `vars`
+is a `num |-> num` finite map; the fixture uses a `num`-keyed `vars`
+(`0 |-> 2`), a two-member `num_set`, and a nonempty `num_map`. Besides atomic
+component rows, it decides the whole relation on a concrete context/locals
+pair by kernel-checked proof (`prove` with a `rw`/`fs`/`EVAL_TAC` tactic) since
+the relation is universally quantified over `num`: `locals_rel_true=T` is
+proved, and `locals_rel_domain_false=F` / `locals_rel_value_false=F` report the
+relation's truth value only after the kernel proof of its negation succeeds.
+The exact-carrier Lean counterparts are `Flapjack.CrepToLoop.crepToLoopLocalsRelExact`
+(tagged `locals_rel_def`) with the kernel-checked examples in
+`Flapjack.Test.CrepToLoopParity`.
 
 `pan_globals_mem_functions_probe.out` records direct HOL EVAL of the
 `panLang$functions` projection and the membership instance characterized by the

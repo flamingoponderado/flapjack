@@ -104,6 +104,7 @@ import Flapjack.Test.LoopSetVarsParity
 import Flapjack.Test.LoopSetVarParity
 import Flapjack.Test.LoopDecClockParity
 import Flapjack.Test.LoopFixClockParity
+import Flapjack.Test.LoopPropsSurvivesParity
 import Flapjack.Test.LoopFindCodeParity
 import Flapjack.Test.LoopArithParity
 import Flapjack.Test.LoopMemStoreParity
@@ -117,6 +118,7 @@ import Flapjack.Test.LoopArithVarsParity
 import Flapjack.Test.LoopShrinkParity
 import Flapjack.Test.LoopMarkAllParity
 import Flapjack.Test.LoopMarkAllHOLParity
+import Flapjack.Test.LoopCallCompHOLParity
 import Flapjack.Test.LoopLiveCompParity
 import Flapjack.Test.LoopLiveOptimiseParity
 import Flapjack.Test.OCompileParity
@@ -416,6 +418,9 @@ import Flapjack.Test.LoopSemEvalExactParity
 import Flapjack.Test.LoopSemShMemExactParity
 import Flapjack.Test.LoopSemWordMemExactParity
 import Flapjack.Test.LoopSemPrimopBytesExactParity
+import Flapjack.Test.LoopSemEvaluateExactParity
+import Flapjack.Test.HolLListParity
+import Flapjack.Test.LoopSemSemanticsExactParity
 import Flapjack.Test.SptreeSetOpsParity
 import Flapjack.Test.WordSimpSeqAssocParity
 import Flapjack.Test.RiscVFarTransferParity
@@ -820,6 +825,7 @@ def main : IO Unit := do
     Flapjack.Test.LoopSetVarParity.runChecks,
     Flapjack.Test.LoopDecClockParity.runChecks,
     Flapjack.Test.LoopFixClockParity.runChecks,
+    Flapjack.Test.LoopPropsSurvivesParity.runChecks,
     Flapjack.Test.LoopFindCodeParity.runChecks,
     Flapjack.Test.LoopArithParity.runChecks,
     Flapjack.Test.PanSetVarParity.runChecks,
@@ -1109,8 +1115,12 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.LoopSemShMemExactParity.runChecks,
     Flapjack.Test.LoopSemWordMemExactParity.runChecks,
     Flapjack.Test.LoopSemPrimopBytesExactParity.runChecks,
+    Flapjack.Test.LoopSemEvaluateExactParity.runChecks,
+    Flapjack.Test.HolLListParity.runChecks,
+    Flapjack.Test.LoopSemSemanticsExactParity.runChecks,
     Flapjack.Test.SptreeSetOpsParity.runChecks,
     Flapjack.Test.LoopMarkAllHOLParity.runChecks,
+    Flapjack.Test.LoopCallCompHOLParity.runChecks,
     Flapjack.Test.CrepLocalsWordLabParity.runChecks,
     Flapjack.Test.CrepMemoryRelParity.runChecks,
     Flapjack.Test.CrepSemStateExactParity.runChecks,
