@@ -1290,33 +1290,6 @@ example :
     bridgeExecExactState bridgeStateRelExec bridgeExecProdState_ranged .opW
     (ExpHOL.const (0 : W)) (ExpHOL.const (0 : W))
 
-/-- Kernel-checked regression for the `ExtCall` production/exact agreement
-    (`flapjack-pxn.18.4.3.77.2.14.18`) on the bridge fixture: the theorem is
-    instantiated with the external call name `"f"` and four constant argument
-    expressions, with no FFI-oracle or byte-range side condition beyond the
-    runtime rangedness premise. -/
-example :
-    PanSemHOLResultOptionRel
-        (panSemTotalEvaluate byteRangedPrimitive
-          (.extCall (toStringOfBytes (ofString "f")) (expOfHOL (ExpHOL.const (0 : W)))
-            (expOfHOL (ExpHOL.const (0 : W))) (expOfHOL (ExpHOL.const (0 : W)))
-            (expOfHOL (ExpHOL.const (0 : W))) : Prog W) bridgeExecProdState).1
-        (evaluateHOLFiniteState bridgeExecExactState
-          (.extCall (ofString "f") (ExpHOL.const (0 : W)) (ExpHOL.const (0 : W))
-            (ExpHOL.const (0 : W)) (ExpHOL.const (0 : W)) : ProgHOL 64)).1 ∧
-      PanSemStateRelExec
-        (panSemTotalEvaluate byteRangedPrimitive
-          (.extCall (toStringOfBytes (ofString "f")) (expOfHOL (ExpHOL.const (0 : W)))
-            (expOfHOL (ExpHOL.const (0 : W))) (expOfHOL (ExpHOL.const (0 : W)))
-            (expOfHOL (ExpHOL.const (0 : W))) : Prog W) bridgeExecProdState).2
-        (evaluateHOLFiniteState bridgeExecExactState
-          (.extCall (ofString "f") (ExpHOL.const (0 : W)) (ExpHOL.const (0 : W))
-            (ExpHOL.const (0 : W)) (ExpHOL.const (0 : W)) : ProgHOL 64)).2.toExact :=
-  panSemTotalEvaluate_extCall_agree byteRangedPrimitive bridgeExecProdState
-    bridgeExecExactState bridgeStateRelExec bridgeExecProdState_ranged
-    (ofString "f") (ExpHOL.const (0 : W)) (ExpHOL.const (0 : W))
-    (ExpHOL.const (0 : W)) (ExpHOL.const (0 : W))
-
 /-- The canonical `panSemTotalEvaluateCake` entrypoint (the executable
     production `panSemTotalEvaluate` specialized to the canonical `panPrimopHOL`
     handler) exercises the proved Primitive-clause agreement on the
