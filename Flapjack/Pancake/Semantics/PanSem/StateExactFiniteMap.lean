@@ -4475,6 +4475,222 @@ theorem globalsShapes_while_arm {width : Nat} {σ : Type} [NeZero width]
                 rcases heval with ⟨_, rfl⟩
                 rfl
 
+
+/-- Flapjack-specific infrastructure for HOL `panPropsScript.sml:1183`
+`evaluate_global_shape_invariant`: the `Call` arm of the recursive exact evaluator
+preserves `globalsShapes`, given the invariants for the callee-body recursion and the
+exception-handler recursion. Untagged. -/
+theorem globalsShapes_call_arm {width : Nat} {σ : Type} [NeZero width]
+    (info : Option (Option (VarKind × MlS) × Option (MlS × MlS × ProgHOL width)))
+    (function : MlS) (arguments : List (ExpHOL width))
+    (context : FiniteEvalContext width σ)
+    (values : List (ValueHOL width))
+    (hargs : evalListHOLFinite context.state (h := context.memaddrsDecidable) arguments = some values)
+    (hbodyInv : ∀ (body : ProgHOL width) (callee : HolFiniteMapExact MlS (ValueHOL width))
+        (returnShape : ShapeHOL) (bodyResult : Option (PanSemResultExact width))
+        (bodyContext : FiniteEvalContext width σ),
+        lookupCodeHOLFinite context.state.code.lookup function values =
+          some (body, callee, returnShape) →
+        evalPanSemRecursiveCallFiniteContext body
+          (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl) =
+            some (bodyResult, bodyContext) →
+        globalsShapes bodyContext.state = globalsShapes context.state)
+    (hhandlerInv : ∀ (handlerVar : MlS) (value : ValueHOL width) (handlerProgram : ProgHOL width)
+        (fixedContext : FiniteEvalContext width σ)
+        (result : Option (PanSemResultExact width)) (output : FiniteEvalContext width σ),
+        evalPanSemRecursiveCallFiniteContext handlerProgram
+          (fixedContext.withState (handlerStateHOLFinite context fixedContext handlerVar value)
+            rfl rfl) = some (result, output) →
+        globalsShapes output.state = globalsShapes context.state) :
+    ∀ result output,
+      evalPanSemRecursiveCallFiniteContext (.call info function arguments) context =
+        some (result, output) →
+      globalsShapes output.state = globalsShapes context.state := by
+  intro result output heval
+  rw [evalPanSemRecursiveCallFiniteContext.eq_def] at heval
+  dsimp only at heval
+  rw [hargs] at heval
+  try simp only [] at heval
+  cases hcode : lookupCodeHOLFinite context.state.code.lookup function values with
+  | none =>
+      rw [hcode] at heval
+      try simp only [] at heval
+      simp only [Option.some.injEq, Prod.mk.injEq] at heval
+      rcases heval with ⟨_, rfl⟩
+      rfl
+  | some triple =>
+      obtain ⟨body, callee, returnShape⟩ := triple
+      rw [hcode] at heval
+      try simp only [] at heval
+      by_cases hclock : context.state.clock = 0
+      · rw [if_pos hclock] at heval
+        try simp only [] at heval
+        simp only [Option.some.injEq, Prod.mk.injEq] at heval
+        rcases heval with ⟨_, rfl⟩
+        show globalsShapes (emptyLocalsHOLFinite context.state) = globalsShapes context.state
+        exact globalsShapes_emptyLocalsHOLFinite context.state
+      · rw [if_neg hclock] at heval
+        try simp only [] at heval
+        cases hbody : evalPanSemRecursiveCallFiniteContext body
+            (context.withState (callEntryStateHOLFinite context.state callee) rfl rfl) with
+        | none =>
+            rw [hbody] at heval
+            simp at heval
+        | some p =>
+            obtain ⟨bodyResult, bodyContext⟩ := p
+            rw [hbody] at heval
+            try simp only [] at heval
+            have hbodyGlob := hbodyInv body callee returnShape bodyResult bodyContext hcode hbody
+            have hfixedGlob : ∀ br : Option (PanSemResultExact width),
+                globalsShapes (fixClockHOLFinite (callEntryStateHOLFinite context.state callee)
+                  (br, bodyContext.state)).2 = globalsShapes context.state := by
+              intro br
+              rw [globalsShapes_fixClockHOLFinite]
+              exact hbodyGlob
+            have hEmpty : ∀ br : Option (PanSemResultExact width),
+                globalsShapes (emptyLocalsHOLFinite
+                  (fixClockHOLFinite (callEntryStateHOLFinite context.state callee)
+                    (br, bodyContext.state)).2) = globalsShapes context.state := by
+              intro br
+              rw [globalsShapes_emptyLocalsHOLFinite]
+              exact hfixedGlob br
+            have hLocals : ∀ br : Option (PanSemResultExact width),
+                globalsShapes
+                  { (fixClockHOLFinite (callEntryStateHOLFinite context.state callee)
+                      (br, bodyContext.state)).2 with locals := context.state.locals } =
+                  globalsShapes context.state := by
+              intro br
+              rw [globalsShapes_setLocals]
+              exact hfixedGlob br
+            cases bodyResult with
+            | none =>
+                try simp only [] at heval
+                simp only [Option.some.injEq, Prod.mk.injEq] at heval
+                rcases heval with ⟨_, rfl⟩
+                exact hfixedGlob none
+            | some r =>
+                try simp only [] at heval
+                cases r with
+                | error =>
+                    try simp only [] at heval
+                    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+                    rcases heval with ⟨_, rfl⟩
+                    exact hfixedGlob (some .error)
+                | timeOut =>
+                    try simp only [] at heval
+                    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+                    rcases heval with ⟨_, rfl⟩
+                    exact hEmpty (some .timeOut)
+                | «break» =>
+                    try simp only [] at heval
+                    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+                    rcases heval with ⟨_, rfl⟩
+                    exact hfixedGlob (some .break)
+                | «continue» =>
+                    try simp only [] at heval
+                    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+                    rcases heval with ⟨_, rfl⟩
+                    exact hfixedGlob (some .continue)
+                | returned value =>
+                    try simp only [] at heval
+                    by_cases hshape : shapeEqHOL (shapeOfHOLExact value) returnShape = true
+                    · rw [if_pos hshape] at heval
+                      try simp only [] at heval
+                      cases info with
+                      | none =>
+                          try simp only [] at heval
+                          simp only [Option.some.injEq, Prod.mk.injEq] at heval
+                          rcases heval with ⟨_, rfl⟩
+                          exact hEmpty (some (.returned value))
+                      | some pair =>
+                          obtain ⟨varOpt, _rest⟩ := pair
+                          cases varOpt with
+                          | none =>
+                              try simp only [] at heval
+                              simp only [Option.some.injEq, Prod.mk.injEq] at heval
+                              rcases heval with ⟨_, rfl⟩
+                              exact hLocals (some (.returned value))
+                          | some kv =>
+                              obtain ⟨kind, name⟩ := kv
+                              try simp only [] at heval
+                              by_cases hvalid : isValidValueHOLExact context.state.toExact kind name value = true
+                              · rw [if_pos hvalid] at heval
+                                try simp only [] at heval
+                                simp only [Option.some.injEq, Prod.mk.injEq] at heval
+                                rcases heval with ⟨_, rfl⟩
+                                have hm := hLocals (some (.returned value))
+                                exact (globalsShapes_setKvarHOLFinite_of_globalsShapes
+                                  (source := context.state) kind name value _ hm hvalid).trans hm
+                              · rw [if_neg hvalid] at heval
+                                try simp only [] at heval
+                                simp only [Option.some.injEq, Prod.mk.injEq] at heval
+                                rcases heval with ⟨_, rfl⟩
+                                exact hfixedGlob (some (.returned value))
+                    · rw [if_neg hshape] at heval
+                      try simp only [] at heval
+                      simp only [Option.some.injEq, Prod.mk.injEq] at heval
+                      rcases heval with ⟨_, rfl⟩
+                      exact hfixedGlob (some (.returned value))
+                | exception exceptionId value =>
+                    try simp only [] at heval
+                    cases info with
+                    | none =>
+                        try simp only [] at heval
+                        simp only [Option.some.injEq, Prod.mk.injEq] at heval
+                        rcases heval with ⟨_, rfl⟩
+                        exact hEmpty (some (.exception exceptionId value))
+                    | some pair =>
+                        obtain ⟨_varOpt, hopt⟩ := pair
+                        cases hopt with
+                        | none =>
+                            try simp only [] at heval
+                            simp only [Option.some.injEq, Prod.mk.injEq] at heval
+                            rcases heval with ⟨_, rfl⟩
+                            exact hEmpty (some (.exception exceptionId value))
+                        | some triple =>
+                            obtain ⟨handlerId, handlerVar, handlerProgram⟩ := triple
+                            try simp only [] at heval
+                            by_cases heq : exceptionId = handlerId
+                            · rw [if_pos heq] at heval
+                              try simp only [] at heval
+                              cases hlookup : context.state.eshapes.lookup exceptionId with
+                              | none =>
+                                  rw [hlookup] at heval
+                                  try simp only [] at heval
+                                  try simp only [Option.some.injEq, Prod.mk.injEq] at heval
+                                  rcases heval with ⟨_, rfl⟩
+                                  exact hfixedGlob (some (.exception exceptionId value))
+                              | some shape =>
+                                  rw [hlookup] at heval
+                                  try simp only [] at heval
+                                  by_cases hguard :
+                                      (shapeEqHOL (shapeOfHOLExact value) shape &&
+                                        isValidValueHOLExact context.state.toExact .local handlerVar value) = true
+                                  · rw [if_pos hguard] at heval
+                                    try simp only [] at heval
+                                    exact hhandlerInv handlerVar value handlerProgram
+                                      (bodyContext.withState
+                                        (fixClockHOLFinite (callEntryStateHOLFinite context.state callee)
+                                          ((some (.exception exceptionId value) :
+                                            Option (PanSemResultExact width)), bodyContext.state)).2
+                                        rfl rfl)
+                                      result output heval
+                                  · rw [if_neg hguard] at heval
+                                    try simp only [] at heval
+                                    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+                                    rcases heval with ⟨_, rfl⟩
+                                    exact hfixedGlob (some (.exception exceptionId value))
+                            · rw [if_neg heq] at heval
+                              try simp only [] at heval
+                              simp only [Option.some.injEq, Prod.mk.injEq] at heval
+                              rcases heval with ⟨_, rfl⟩
+                              exact hEmpty (some (.exception exceptionId value))
+                | finalFfi event =>
+                    try simp only [] at heval
+                    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+                    rcases heval with ⟨_, rfl⟩
+                    exact hEmpty (some (.finalFfi event))
+
 end PanSemStateFiniteExact
 
 end Flapjack
