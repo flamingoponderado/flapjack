@@ -1,5 +1,6 @@
 import Flapjack.Pipeline
 import Flapjack.Pancake.PanToCrep.Compile
+import Flapjack.Pancake.PanToCrep.CompileExact
 
 namespace Flapjack.Test.CompileProgParity
 
@@ -385,6 +386,89 @@ def compileProgUnreachableInlineGuard : Bool :=
   | _ => false
 
 #guard compileProgUnreachableInlineGuard
+
+/-! ### Direct HOL `compile_prog_probe.out` oracle rows for the exact decl-level port
+
+These replay the committed HOL rows (`empty`, `inline_call`, `duplicate_first`,
+`nested_inline`; `scripts/hol-probes/compile_prog_probe.out`) through the exact
+tagged declaration-level `compileProgDeclsHOLW` (bead `flapjack-4ac.2.20.2.1`).
+`CrepProgHOL` has no `DecidableEq`, so the bodies are checked with small
+structural matchers for the row shapes rather than equality. -/
+
+open Flapjack.Basis.Pure.MlString
+
+def exactDeclIsReturnConst (n : Nat) : CrepProgHOL 8 → Bool
+  | .return [.const m] => m == BitVec.ofNat 8 n
+  | _ => false
+
+def exactDeclIsSeqTickReturnConst (n : Nat) : CrepProgHOL 8 → Bool
+  | .seq .tick rest => exactDeclIsReturnConst n rest
+  | _ => false
+
+def exactDeclIsSeqTickSeqTickReturnConst (n : Nat) : CrepProgHOL 8 → Bool
+  | .seq .tick rest => exactDeclIsSeqTickReturnConst n rest
+  | _ => false
+
+def exactDeclTriple (name : String) (params : List Nat)
+    (body : Bool) (t : MlS × List Nat × CrepProgHOL 8) : Bool :=
+  (t.1 == ofString name) && (t.2.1 == params) && body
+
+def exactDeclInlineLeaf (n : Nat) : DeclHOL 8 :=
+  .function ⟨ofString "leaf", true, false, [], .return (.const (BitVec.ofNat 8 n)), .one⟩
+
+def exactDeclInlineMid : DeclHOL 8 :=
+  .function ⟨ofString "mid", true, false, [], .call none (ofString "leaf") [], .one⟩
+
+def exactDeclInlineMain : DeclHOL 8 :=
+  .function ⟨ofString "main", false, true, [], .call none (ofString "mid") [], .one⟩
+
+def exactDeclInlineCallDecls : List (DeclHOL 8) :=
+  [.function ⟨ofString "id", true, false, [], .return (.const (BitVec.ofNat 8 7)), .one⟩,
+   .function ⟨ofString "main", false, true, [], .call none (ofString "id") [], .one⟩]
+
+def exactDeclNestedDecls : List (DeclHOL 8) :=
+  [exactDeclInlineLeaf 7, exactDeclInlineMid, exactDeclInlineMain]
+
+/-- HOL `empty=[]`. -/
+theorem exactDeclCompileProg_empty :
+    Flapjack.compileProgDeclsHOLW ([] : List (DeclHOL 8)) = [] := rfl
+
+/-- HOL `inline_call=[(«id»,[],Return [Const 7w]); («main»,[],Seq Tick (Return [Const 7w]))]`. -/
+def exactDeclCompileProgInlineCall : Bool :=
+  match Flapjack.compileProgDeclsHOLW exactDeclInlineCallDecls with
+  | [t1, t2] =>
+      exactDeclTriple "id" [] (exactDeclIsReturnConst 7 t1.2.2) t1 &&
+      exactDeclTriple "main" [] (exactDeclIsSeqTickReturnConst 7 t2.2.2) t2
+  | _ => false
+
+#guard exactDeclCompileProgInlineCall
+
+/-- HOL `duplicate_first`: the first `«id»` body wins, so `main` inlines `Return [Const 7w]`. -/
+def exactDeclDuplicateDecls : List (DeclHOL 8) :=
+  [.function ⟨ofString "id", true, false, [], .return (.const (BitVec.ofNat 8 7)), .one⟩,
+   .function ⟨ofString "id", true, false, [], .return (.const (BitVec.ofNat 8 9)), .one⟩,
+   .function ⟨ofString "main", false, true, [], .call none (ofString "id") [], .one⟩]
+
+def exactDeclCompileProgDuplicateFirst : Bool :=
+  match Flapjack.compileProgDeclsHOLW exactDeclDuplicateDecls with
+  | [t1, t2, t3] =>
+      exactDeclTriple "id" [] (exactDeclIsReturnConst 7 t1.2.2) t1 &&
+      exactDeclTriple "id" [] (exactDeclIsReturnConst 9 t2.2.2) t2 &&
+      exactDeclTriple "main" [] (exactDeclIsSeqTickReturnConst 7 t3.2.2) t3
+  | _ => false
+
+#guard exactDeclCompileProgDuplicateFirst
+
+/-- HOL `nested_inline=[(«leaf»,…); («mid»,Seq Tick (Return 7)); («main»,Seq Tick (Seq Tick (Return 7)))]`. -/
+def exactDeclCompileProgNestedInline : Bool :=
+  match Flapjack.compileProgDeclsHOLW exactDeclNestedDecls with
+  | [t1, t2, t3] =>
+      exactDeclTriple "leaf" [] (exactDeclIsReturnConst 7 t1.2.2) t1 &&
+      exactDeclTriple "mid" [] (exactDeclIsSeqTickReturnConst 7 t2.2.2) t2 &&
+      exactDeclTriple "main" [] (exactDeclIsSeqTickSeqTickReturnConst 7 t3.2.2) t3
+  | _ => false
+
+#guard exactDeclCompileProgNestedInline
 
 def runChecks : IO Bool := do
   if parityGuard then
