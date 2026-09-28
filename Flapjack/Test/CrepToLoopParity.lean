@@ -439,6 +439,20 @@ example :
             sptLookup n localsRelExactTarget = some (wlabWlocHOL value) :=
   crepToLoopLocalsRelExact_iff _ _ _ _
 
+/-- The tagged introduction lemma unpacks the same four HOL conjuncts as
+    `crepToLoopLocalsRelExact_iff` (`crepToLoopLocalsRelExact_intro`, the port
+    of HOL `locals_rel_intro`). -/
+example (h : crepToLoopLocalsRelExact localsRelExactCtxt localsRelExactSet
+    localsRelExactSource localsRelExactTarget) :
+    crepToLoopDistinctVars localsRelExactCtxt.vars.lookup ∧
+      crepToLoopCtxtMax localsRelExactCtxt.vmax localsRelExactCtxt.vars.lookup ∧
+      (∀ n, sptMem n localsRelExactSet → sptMem n localsRelExactTarget) ∧
+      ∀ vname value, localsRelExactSource.lookup vname = some value →
+        ∃ n, localsRelExactCtxt.vars.lookup vname = some n ∧
+          sptMem n localsRelExactSet ∧
+          sptLookup n localsRelExactTarget = some (wlabWlocHOL value) :=
+  crepToLoopLocalsRelExact_intro _ _ _ _ h
+
 def runChecks : IO Bool := do
   let results := [declarationRenamingMatches,
     handlerlessCallCarriesRaiseHandler, handledCallCarriesRaiseHandler,

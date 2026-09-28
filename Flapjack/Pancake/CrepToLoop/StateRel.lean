@@ -518,6 +518,30 @@ theorem crepToLoopLocalsRelExact_iff {width : Nat} [NeZero width]
           sptLookup n tLocals = some (wlabWlocHOL value) :=
   Iff.rfl
 
+/-- Exact port of HOL `crep_to_loop$locals_rel_intro`
+    (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:176-186`): unpack the
+    exact `locals_rel` relation into its four conjunctions. HOL states this as
+    an implication (`==>`), so the Lean rendering does too. The
+    `distinct_vars`/`ctxt_max` conjuncts are the parametric tagged renderings,
+    and the `num_set`-domain / per-name lookup conjuncts use `sptMem` and the
+    `wlabWlocHOL` value bridge. -/
+@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "locals_rel_intro"
+  (fmap_as_finite_support := [vars])
+  (words_as_type_indexed_bitvec)]
+theorem crepToLoopLocalsRelExact_intro {width : Nat} [NeZero width]
+    (ctxt : CrepToLoopContextExact)
+    (l : NumSet)
+    (sLocals : HolFiniteMapExact Nat (HolWordLab width))
+    (tLocals : Spt (WordLocW width))
+    (h : crepToLoopLocalsRelExact ctxt l sLocals tLocals) :
+    crepToLoopDistinctVars ctxt.vars.lookup ∧
+    crepToLoopCtxtMax ctxt.vmax ctxt.vars.lookup ∧
+    (∀ n, sptMem n l → sptMem n tLocals) ∧
+    ∀ vname value, sLocals.lookup vname = some value →
+      ∃ n, ctxt.vars.lookup vname = some n ∧ sptMem n l ∧
+        sptLookup n tLocals = some (wlabWlocHOL value) :=
+  (crepToLoopLocalsRelExact_iff ctxt l sLocals tLocals).mp h
+
 /-! ## `locals_rel` (untagged production analogue)
 
 HOL `locals_rel_def`
