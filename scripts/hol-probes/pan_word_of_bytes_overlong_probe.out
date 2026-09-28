@@ -13,4 +13,7 @@ w9_overlong_two=1w
 w9_overlong_three=1w
 w9_overlong_take_one=T
 w12_overlong_four=7w
+w1_overlong_three=1w
+w7_overlong_three=127w
+w7_first_byte_truncates=T
 done=ok

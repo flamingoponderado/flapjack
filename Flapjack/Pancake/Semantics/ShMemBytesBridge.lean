@@ -324,6 +324,15 @@ example : panWordOfBytesHOL (width := 9) false (0 : RiscV.Word 9) [255, 1]
 example : panWordOfBytesHOL (width := 12) false (0 : RiscV.Word 12) [7, 9, 11, 13]
     = crepClockWordOfBytes ([7, 9, 11, 13].map UInt8.ofBitVec) := by decide
 
+/-- For dimensions smaller than one byte, HOL's `set_byte` at address zero
+    retains the first byte's available low bits; the high slice and following
+    writes are truncated. -/
+example : panWordOfBytesHOL (width := 1) false (0 : RiscV.Word 1) [1, 3, 5]
+    = crepClockWordOfBytes ([1, 3, 5].map UInt8.ofBitVec) := by decide
+
+example : panWordOfBytesHOL (width := 7) false (0 : RiscV.Word 7) [255, 3, 5]
+    = crepClockWordOfBytes ([255, 3, 5].map UInt8.ofBitVec) := by decide
+
 /-! ## Address-parameterised decoder and its concatenation law
 
 `panWacc a bs C` is `panWordOfBytesHOL false (ofNat width a) bs` with the
@@ -640,13 +649,16 @@ theorem panWacc_toNat_formula {width : Nat} [NeZero width] (h8w : 8 ≤ width)
 
 This is the final step of the shared-memory byte bridge: the exact Pan decoder
 `panWordOfBytesHOL false 0` and the Crep `crepClockWordOfBytes` agree on every
-byte list for positive widths divisible by 8 (the FFI-returned byte list is not
-length-bounded, so the overlong case matters; see the HOL probe
-`scripts/hol-probes/pan_word_of_bytes_overlong_probe.out`).  The key facts are the
-`toNat` characterization `panWacc_toNat_formula`, cell-independence
-`panWacc_indep_len` for lists of length `width / 8`, the address-parameterised
-bypass `panWordOfBytesHOL_eq_panWacc_unbounded`, and the truncation
-`ofNat_leSumB_take`. -/
+byte list and positive width (the FFI-returned byte list is not length-bounded,
+so the overlong case matters; see the HOL probe
+`scripts/hol-probes/pan_word_of_bytes_overlong_probe.out`). For widths at least
+8, the key facts are the `toNat` characterization `panWacc_toNat_formula`,
+cell-independence `panWacc_indep_len` for lists of length `width / 8`, the
+address-parameterised bypass `panWordOfBytesHOL_eq_panWacc_unbounded`, and the
+truncation `ofNat_leSumB_take`. For widths below 8, `width / 8 = 0`: HOL's
+address-zero outer `set_byte` installs the first byte in the available low
+bits, and the remaining high slice is truncated; the Crep accumulator gives
+the same low-bit result. -/
 
 theorem panWordOfBytesHOL_eq_panWacc_unbounded {width : Nat} [NeZero width]
     (bs : List (BitVec 8)) (a : Nat) :
@@ -786,13 +798,66 @@ theorem crepClockWordOfBytesAux_eq_panWacc {width : Nat} [NeZero width] (h8 : 8 
       rw [BitVec.toNat_ofNat, Nat.mod_eq_of_lt hbodylt, ← hb, ← ih (a + 1), hstep]
       rfl
 
+private theorem ofNat_add_mul_256_eq_of_width_le_eight {width : Nat}
+    (hwidth : width ≤ 8) (n q : Nat) :
+    BitVec.ofNat width (n + q * 256) = BitVec.ofNat width n := by
+  apply BitVec.eq_of_toNat_eq
+  simp only [BitVec.toNat_ofNat]
+  have hdiv : 2 ^ width ∣ 256 := by
+    refine ⟨2 ^ (8 - width), ?_⟩
+    rw [show (256 : Nat) = 2 ^ 8 by decide, ← Nat.pow_add]
+    congr 1
+    omega
+  rw [Nat.add_mod, Nat.mul_mod, Nat.mod_eq_zero_of_dvd hdiv]
+  simp
+
+private theorem panWordOfBytesHOL_cons_of_width_lt_eight {width : Nat}
+    [NeZero width] (hwidth : width < 8) (byte : BitVec 8) (rest : List (BitVec 8)) :
+    panWordOfBytesHOL (width := width) false 0 (byte :: rest) =
+      BitVec.ofNat width byte.toNat := by
+  have hdiv0 : width / 8 = 0 := Nat.div_eq_of_lt hwidth
+  have hpow : 2 ^ width ≤ 256 := Nat.pow_le_pow_right (by decide) (Nat.le_of_lt hwidth)
+  have hbyteBound : byte.toNat % 2 ^ width < 256 :=
+    Nat.lt_of_lt_of_le (Nat.mod_lt _ (Nat.two_pow_pos _)) hpow
+  have hbyte : byte.toNat % 2 ^ width % 256 = byte.toNat % 2 ^ width :=
+    Nat.mod_eq_of_lt hbyteBound
+  unfold panWordOfBytesHOL
+  unfold panSetByteHOL
+  have haddr0 : (0 : RiscV.Word width).toNat = 0 := rfl
+  rw [haddr0]
+  simp only [BitVec.toNat_ofNat, Bool.false_eq_true, if_false, hdiv0,
+    Nat.mod_zero, Nat.pow_zero, Nat.mod_one, Nat.one_mul, Nat.mul_one,
+    Nat.zero_add]
+  rw [hbyte]
+  rw [ofNat_add_mul_256_eq_of_width_le_eight (Nat.le_of_lt hwidth)]
+  apply BitVec.eq_of_toNat_eq
+  simp
+
+private theorem crepClockWordOfBytes_cons_of_width_lt_eight {width : Nat}
+    (hwidth : width < 8) (byte : BitVec 8) (rest : List (BitVec 8)) :
+    crepClockWordOfBytes (width := width) ((byte :: rest).map UInt8.ofBitVec) =
+      BitVec.ofNat width byte.toNat := by
+  have hdiv0 : width / 8 = 0 := Nat.div_eq_of_lt hwidth
+  unfold crepClockWordOfBytes
+  simp only [crepClockWordOfBytesAux, List.map_cons, UInt8.toNat_ofBitVec,
+    BitVec.toNat_ofNat, hdiv0, Nat.zero_mod, Nat.mod_zero, Nat.mod_one,
+    Nat.pow_zero, Nat.one_mul, Nat.mul_one, Nat.zero_add]
+  exact ofNat_add_mul_256_eq_of_width_le_eight (Nat.le_of_lt hwidth) _ _
+
 theorem panWordOfBytesHOL_eq_crepClockWordOfBytes {width : Nat} [NeZero width]
-    (h8 : 8 ≤ width) (bs : List (BitVec 8)) :
+    (bs : List (BitVec 8)) :
     panWordOfBytesHOL (width := width) false 0 bs
       = crepClockWordOfBytes (bs.map UInt8.ofBitVec) := by
-  rw [crepClockWordOfBytes,
-    show (0 : RiscV.Word width) = BitVec.ofNat width 0 from rfl,
-    panWordOfBytesHOL_eq_panWacc_unbounded]
-  exact (crepClockWordOfBytesAux_eq_panWacc (width := width) h8 bs 0).symm
+  by_cases h8 : 8 ≤ width
+  · rw [crepClockWordOfBytes,
+      show (0 : RiscV.Word width) = BitVec.ofNat width 0 from rfl,
+      panWordOfBytesHOL_eq_panWacc_unbounded]
+    exact (crepClockWordOfBytesAux_eq_panWacc (width := width) h8 bs 0).symm
+  · have hwidth : width < 8 := by omega
+    cases bs with
+    | nil => simp [panWordOfBytesHOL, crepClockWordOfBytes, crepClockWordOfBytesAux]
+    | cons byte rest =>
+        rw [panWordOfBytesHOL_cons_of_width_lt_eight hwidth byte rest,
+          crepClockWordOfBytes_cons_of_width_lt_eight hwidth byte rest]
 
 end Flapjack
