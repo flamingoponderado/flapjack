@@ -910,7 +910,8 @@ theorem evalPanValueFfiClockCodeProg_ite_fuel_mono
 
 /-- Flapjack-specific fuel plumbing for the source-program `Seq` constructor.
     The recursive calls preserve the exact `fixPanClock`-adjusted first result
-    and then use monotonicity for the second program. -/
+    and then use monotonicity for the second program. HOL's semantics has no
+    meta-level fuel parameter, so this helper has no direct HOL declaration. -/
 theorem evalPanValueFfiClockCodeProg_seq_fuel_mono
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
@@ -977,7 +978,8 @@ theorem evalPanValueFfiClockCodeProg_seq_fuel_mono
 
 /-- Flapjack-specific fuel plumbing for source `While`: preserve the body
     result, apply `fixPanClock`, and use the recursive-program hypothesis for
-    the next loop iteration. -/
+    the next loop iteration. HOL's semantics has no meta-level fuel parameter,
+    so this helper has no direct HOL declaration. -/
 theorem evalPanValueFfiClockCodeProg_while_fuel_mono
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
@@ -1071,7 +1073,9 @@ theorem evalPanValueFfiClockCodeProg_while_fuel_mono
                         hbody, hbody', fixPanClock] using h
 
 /-- Flapjack-specific fuel plumbing for source `Dec`: the accepted value and
-    local update are fuel-independent, leaving the recursive body IH. -/
+    local update are fuel-independent, leaving the recursive body IH. HOL's
+    semantics has no meta-level fuel parameter, so this helper has no direct
+    HOL declaration. -/
 theorem evalPanValueFfiClockCodeProg_dec_fuel_mono
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
@@ -1116,8 +1120,10 @@ theorem evalPanValueFfiClockCodeProg_dec_fuel_mono
             memoryHandler hbody
           simpa [evalPanValueFfiClockCodeProg, hvalue, hbody, hbody'] using h
 
-/-- The source-program `DecCall` constructor delegates to the state-owned
-    DecCall evaluator, whose continuation case is covered by its helper theorem. -/
+/-- Flapjack-specific fuel plumbing: the source-program `DecCall` constructor
+    delegates to the state-owned DecCall evaluator, whose continuation case is
+    covered by its helper theorem. HOL's semantics has no meta-level fuel
+    parameter, so this helper has no direct HOL declaration. -/
 theorem evalPanValueFfiClockCodeProg_decCall_fuel_mono
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
@@ -1153,7 +1159,9 @@ theorem evalPanValueFfiClockCodeProg_decCall_fuel_mono
   exact ihDecCall k result hfk locals globals memory ffi clock name shape function arguments
     body ma contracts memoryHandler h
 
-/-- The source-program `raise` equation does not recurse on the fuel. -/
+/-- Flapjack-specific fuel plumbing for the source-program `raise` equation,
+    which does not recurse on the fuel. HOL's semantics has no meta-level fuel
+    parameter, so this helper has no direct HOL declaration. -/
 theorem evalPanValueFfiClockCodeProg_raise_fuel_mono
     [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
