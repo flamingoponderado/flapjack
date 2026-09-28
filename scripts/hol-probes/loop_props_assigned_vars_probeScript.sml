@@ -16,6 +16,8 @@ fun print_eval label q = let val th = EVAL q in (print (label ^ "="); print_term
 val _ = print_eval "avs_seq_split"
   ``loopLang$assigned_vars (loopLang$Seq (loopLang$Assign 1 (Var 0)) (loopLang$Assign 2 (Var 1))) =
     loopLang$assigned_vars (loopLang$Assign 1 (Var 0)) ++ loopLang$assigned_vars (loopLang$Assign 2 (Var 1))``;
+val _ = print_eval "avs_seq_split_negative"
+  ``loopLang$assigned_vars (loopLang$Seq (loopLang$Assign 1 (Var 0)) (loopLang$Assign 2 (Var 1))) = [1]``;
 
 (* assigned_vars_nested_seq_split (:880):
    assigned_vars (nested_seq (p ++ q)) =
@@ -28,6 +30,10 @@ val _ = print_eval "avs_nested_seq_split_nil"
   ``loopLang$assigned_vars (loopLang$nested_seq (([] : 64 word prog list) ++ [loopLang$Assign 4 (Var 0)])) =
     loopLang$assigned_vars (loopLang$nested_seq ([] : 64 word prog list)) ++
     loopLang$assigned_vars (loopLang$nested_seq [loopLang$Assign 4 (Var 0)])``;
+val _ = print_eval "avs_nested_seq_split_negative"
+  ``loopLang$assigned_vars (loopLang$nested_seq ([loopLang$Assign 1 (Var 0); loopLang$Assign 2 (Var 1)] ++ [loopLang$Assign 3 (Var 2)])) =
+    loopLang$assigned_vars (loopLang$nested_seq [loopLang$Assign 1 (Var 0); loopLang$Assign 2 (Var 1)]) ++
+    loopLang$assigned_vars (loopLang$nested_seq [loopLang$Assign 8 (Var 2)])``;
 
 (* assigned_vars_nested_assign (:897):
    LENGTH xs = LENGTH ys ==> assigned_vars (nested_seq (MAP2 Assign xs ys)) = xs. *)
@@ -40,3 +46,6 @@ val _ = print_eval "avs_nested_assign_one"
 val _ = print_eval "avs_nested_assign_three"
   ``loopLang$assigned_vars (loopLang$nested_seq (MAP2 loopLang$Assign [3; 4; 5] ([Var 0; Var 1; Var 2] : 64 word exp list))) =
     [3; 4; 5]``;
+val _ = print_eval "avs_nested_assign_negative"
+  ``loopLang$assigned_vars (loopLang$nested_seq (MAP2 loopLang$Assign [3; 4; 5] ([Var 0; Var 1; Var 2] : 64 word exp list))) =
+    [3; 4; 8]``;

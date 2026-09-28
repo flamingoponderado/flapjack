@@ -1,6 +1,7 @@
 import Flapjack.HolRef
 import Flapjack.AstHOL
 import Flapjack.Compiler.Backend.BackendCommon
+import Flapjack.Compiler.Backend.Semantics.WordSem
 import Flapjack.Pancake.PanLang
 import Flapjack.Pancake.PanLang.Shape
 import Flapjack.Pancake.PanLang.Exp
@@ -111,6 +112,7 @@ import Flapjack.Pancake.Semantics.ByteAlignBridge
 import Flapjack.Pancake.Semantics.ShMemBytesBridge
 import Flapjack.Pancake.Semantics.LoopProps
 import Flapjack.Pancake.Semantics.LoopSemStateExact
+import Flapjack.Pancake.Semantics.LoopSemStateExact.ShMem
 import Flapjack.PanObservationalSemantics
 import Flapjack.PanHHandleCallRet
 import Flapjack.PanMrec
@@ -305,11 +307,15 @@ import Flapjack.Pancake.LoopLang
 import Flapjack.NatDedup
 import Flapjack.Pancake.CrepToLoop
 import Flapjack.Pancake.CrepToLoop.ContextExact
+import Flapjack.Pancake.CrepToLoop.Proofs.AssignedVars
 import Flapjack.Pancake.CrepToLoop.Optimise
 import Flapjack.Pancake.CrepToLoop.StateRel
 import Flapjack.Test.CrepToLoopCompileExpExactParity
 import Flapjack.Test.CrepFindLabParity
 import Flapjack.Pancake.LoopLive
+import Flapjack.Pancake.LoopLang.AssignedVars
+import Flapjack.Pancake.Semantics.LoopProps.AssignedVars
+import Flapjack.Test.LoopExactAssignedVarsParity
 /- The context-aware Crep-to-Loop correctness file is being updated alongside
    the faithful `findLoopVar` lowering and is intentionally not in this
    umbrella until its old identity-map assumptions are repaired. -/

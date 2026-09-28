@@ -282,7 +282,7 @@ theorem routed_prog_global_miss :
       (by simp [ExpByteRanged])]
   have hmiss : ("g" == "missing") = false := by decide
   simp only [compileExpCake, cakeContextOfPass, productionPassContext, lookupInfo,
-    FLOOKUP, hmiss, Bool.false_eq_true, if_false, Option.map_none, List.map_nil]
+    FLOOKUP, hmiss, Bool.false_eq_true, if_false]
   rfl
 
 /-- The `top_addr` probe row through the executed routed program compiler. -/
@@ -310,11 +310,11 @@ theorem routed_nested :
     compileExpExactHOL.eq_3, compileExpExactHOL.eq_16]
   simp only [PanGlobalsContextExact.ofPass_globals_lookup]
   rw [Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes "g" (by decide)]
-  simp only [productionPassContext, lookupInfo, List.map_cons, List.map_nil,
+  simp only [productionPassContext, lookupInfo,
     beq_self_eq_true, if_true, Option.map_some]
   simp only [expOfHOL, List.map_cons, List.map_nil]
   rw [Flapjack.Pancake.PanLang.shapeOfHOL_shapeToHOL Shape.one (by simp [ShapeByteRanged])]
-  simp only [PanGlobalsContextExact.ofPass, productionPassContext, List.map_cons, List.map_nil]
+  simp only [PanGlobalsContextExact.ofPass]
 
 /-- The `nested` probe row through the executed routed program compiler. -/
 theorem routed_prog_nested :
@@ -379,6 +379,30 @@ def routedProgramGuard : Bool :=
        first == (8 : BitVec 8) && second == (16 : BitVec 8)
    | _ => false)
 
+/-! The exact parser-backed route uses tagged `var_exp` when collecting names
+    for a generated global-call result slot. The empty local argument collides
+    with the empty fresh-name seed, so the original HOL result is apostrophe;
+    this row comes from `global_destination_handler_local_arg` in
+    `pan_globals_compile_probe.out`. -/
+def routedGlobalHandlerLocalArgGuard : Bool :=
+  match compileProgCakeOfExact productionPassContext
+      (.call (some (some (.global, "g"), some ("E", "handler", .skip))) "f"
+        [.var .local ""] : Prog (BitVec 8)) with
+  | .dec "'" .one (.const 0)
+      (.dec "vn'" .one (.const 0)
+        (.seq
+          (.call
+            (some (some (.local, "'"), some ("E", "handler",
+              (.seq .skip (.assign .local "vn'" (.const 1))))))
+            "f" [.var .local ""])
+          (.ite (.var .local "vn'") .skip
+            (.store (.op .sub [.topAddr, .const (8 : BitVec 8)])
+              (.var .local "'"))))) => true
+  | _ => false
+
+#eval routedGlobalHandlerLocalArgGuard
+#guard routedGlobalHandlerLocalArgGuard
+
 #eval routedProgramGuard
 #guard routedProgramGuard
 
@@ -387,6 +411,7 @@ def runChecks : IO Bool := do
   let productionResult := productionGuard
   let routedResult := routedProductionGuard
   let routedProgramResult := routedProgramGuard
+  let routedHandlerResult := routedGlobalHandlerLocalArgGuard
   IO.println (if exactResult then
     "PASS pan_globals compile_exp_def exact-carrier parity (5 HOL rows)"
     else "FAIL pan_globals compile_exp_def exact-carrier parity (5 HOL rows)")
@@ -399,6 +424,9 @@ def runChecks : IO Bool := do
   IO.println (if routedProgramResult then
     "PASS pan_globals routed decl/prog compiler parity (5 HOL rows)"
     else "FAIL pan_globals routed decl/prog compiler parity (5 HOL rows)")
-  pure (exactResult && productionResult && routedResult && routedProgramResult)
+  IO.println (if routedHandlerResult then
+    "PASS pan_globals parser-backed exact var_exp fresh-name route (HOL collision row)"
+    else "FAIL pan_globals parser-backed exact var_exp fresh-name route (HOL collision row)")
+  pure (exactResult && productionResult && routedResult && routedProgramResult && routedHandlerResult)
 
 end Flapjack.Test.PanGlobalsCompileExpExactParity
