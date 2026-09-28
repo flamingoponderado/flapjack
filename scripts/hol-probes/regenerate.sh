@@ -1304,6 +1304,10 @@ run_probe crep_to_loop_compile_exp_probeScript.sml crep_to_loop_compile_exp_prob
 run_probe crep_to_loop_comp_func_probeScript.sml crep_to_loop_comp_func_probe.out \
   comp_func_skip comp_func_return_var comp_func_two_params done \
   "$cake_dir/pancake/crep_to_loopScript.sml"
+run_probe loop_props_comp_syntax_probeScript.sml loop_props_comp_syntax_probe.out \
+  comp_syntax_loop_positive comp_syntax_if_negative \
+  "$cake_dir/pancake/semantics/loopPropsScript.sml" \
+  "$cake_dir/pancake/semantics"
 run_probe crep_to_loop_list_to_num_set_probeScript.sml crep_to_loop_list_to_num_set_probe.out \
   ltns_nil_0 ltns_cons_shape done \
   "$cake_dir/pancake/crep_to_loopScript.sml"
