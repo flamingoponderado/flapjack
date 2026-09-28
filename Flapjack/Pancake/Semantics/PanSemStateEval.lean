@@ -19,50 +19,82 @@ HOL agreement for those other widths.
 
 namespace Flapjack
 
+/-- HOL standard-library `byte_align` from
+    `HOL/src/n-bit/alignmentScript.sml`: clear the low
+    `LOG2 (dimindex DIV 8)` bits. This is a Flapjack-specific BitVec rendering
+    because the cited script is outside the CakeML submodule; the direct
+    non-power-of-two oracle is recorded in
+    `scripts/hol-probes/byte_align_probe.out`. -/
+def panByteAlignHOL {width : Nat} (address : RiscV.Word width) : RiscV.Word width :=
+  let alignment := 2 ^ Nat.log2 (width / 8)
+  BitVec.ofNat width ((address.toNat / alignment) * alignment)
+
+/-- HOL standard-library `get_byte` (`HOL/src/n-bit/byteScript.sml`), lifted
+    from the source `word8` result to the carrier word as `w2w` does in PanSem. -/
+def panGetByteWord8HOL {width : Nat} (address value : RiscV.Word width)
+    (bigEndian : Bool) : BitVec 8 :=
+  let bytesPerWord := width / 8
+  let byteIndex := if bigEndian then
+      bytesPerWord - 1 - (address.toNat % bytesPerWord)
+    else address.toNat % bytesPerWord
+  BitVec.ofNat 8 ((value.toNat / 256 ^ byteIndex) % 256)
+
+/-- HOL standard-library `set_byte` (`HOL/src/n-bit/byteScript.sml`) rendered
+    at the source word width. -/
+def panSetByteHOL {width : Nat} (address byteValue cell : RiscV.Word width)
+    (bigEndian : Bool) : RiscV.Word width :=
+  let bytesPerWord := width / 8
+  let byteIndex := address.toNat % bytesPerWord
+  let byteIndex := if bigEndian then bytesPerWord - byteIndex - 1 else byteIndex
+  let offset := 256 ^ byteIndex
+  let block := offset * 256
+  let low := cell.toNat % offset
+  let high := cell.toNat / block
+  BitVec.ofNat width (low + (byteValue.toNat % 256) * offset + high * block)
+
 /-- RISC-V source word model with endian byte extraction for any positive
-    width. This remains an untagged production model: inherited RISC-V byte
-    alignment and `wordOfBytes32` are reviewed against HOL only at the current
-    64-bit production width, not for arbitrary widths. There is a concrete
-    alignment mismatch at width 24: `bytesInWord = 3`, and this model rounds
-    address 5 down to 3 while `scripts/hol-probes/byte_align_probe.out` records
-    HOL `byte_align 5 = 4`. -/
+    width. Its byte alignment, byte extraction, and byte replacement follow the
+    source-shaped HOL standard-library definitions below; the remaining
+    bundled RISC-V operations are Flapjack infrastructure, so this model stays
+    untagged and does not claim full arbitrary-width HOL evaluator agreement. -/
 def panSemWordModel {width : Nat} [NeZero width] : PanMemoryModel (RiscV.Word width) := by
   let model := RiscV.panRiscVMemoryModel (width := width)
   exact { model with
-    getByte := fun bytesInWord address value bigEndian =>
-      let byteIndex := RiscV.panRiscVByteIndex bytesInWord address
-      let byteIndex := if bigEndian then bytesInWord.toNat - byteIndex - 1
-        else byteIndex
-      BitVec.ofNat width ((value.toNat / 256 ^ byteIndex) % 256)
-    setByte := fun bytesInWord address byte value bigEndian =>
-      let byteIndex := RiscV.panRiscVByteIndex bytesInWord address
-      let byteIndex := if bigEndian then bytesInWord.toNat - byteIndex - 1
-        else byteIndex
-      let offset := 256 ^ byteIndex
-      let block := offset * 256
-      let low := value.toNat % offset
-      let high := value.toNat / block
-      BitVec.ofNat width (low + (byte.toNat % 256) * offset + high * block) }
+    byteAlign := fun _ address => panByteAlignHOL address
+    getByte := fun _ address value bigEndian =>
+      BitVec.ofNat width (panGetByteWord8HOL address value bigEndian).toNat
+    setByte := fun _ address byte value bigEndian =>
+      panSetByteHOL address byte value bigEndian }
 
-/-- Existing RISC-V 64-bit production model. Kept in its reviewed form while
-    the generic state-derived evaluator is proved to specialize to it. -/
-def panSemBitVec64WordModel : PanMemoryModel (RiscV.Word 64) := by
-  let model := RiscV.panRiscVMemoryModel (width := 64)
-  exact { model with
-    getByte := fun bytesInWord address value bigEndian =>
-      let byteIndex := RiscV.panRiscVByteIndex bytesInWord address
-      let byteIndex := if bigEndian then bytesInWord.toNat - byteIndex - 1
-        else byteIndex
-      BitVec.ofNat 64 ((value.toNat / 256 ^ byteIndex) % 256)
-    setByte := fun bytesInWord address byte value bigEndian =>
-      let byteIndex := RiscV.panRiscVByteIndex bytesInWord address
-      let byteIndex := if bigEndian then bytesInWord.toNat - byteIndex - 1
-        else byteIndex
-      let offset := 256 ^ byteIndex
-      let block := offset * 256
-      let low := value.toNat % offset
-      let high := value.toNat / block
-      BitVec.ofNat 64 (low + (byte.toNat % 256) * offset + high * block) }
+/-- The generic PanSem adapter uses HOL `byte_align` at every word width;
+    alignment is determined by the word carrier, not by a runtime byte-count
+    parameter. -/
+theorem panSemWordModel_byteAlign_isHOL {width : Nat} [NeZero width]
+    (bytesInWord address : RiscV.Word width) :
+    (panSemWordModel (width := width)).byteAlign bytesInWord address =
+      panByteAlignHOL address := by
+  rfl
+
+/-- Generic PanSem byte reads widen the HOL standard-library `word8` result in
+    the same way as the source evaluator's `w2w`. -/
+theorem panSemWordModel_getByte_isHOL {width : Nat} [NeZero width]
+    (bytesInWord address value : RiscV.Word width) (bigEndian : Bool) :
+    (panSemWordModel (width := width)).getByte bytesInWord address value bigEndian =
+      BitVec.ofNat width (panGetByteWord8HOL address value bigEndian).toNat := by
+  rfl
+
+/-- Generic PanSem byte writes use the HOL standard-library `set_byte`
+    equation at every word width. -/
+theorem panSemWordModel_setByte_isHOL {width : Nat} [NeZero width]
+    (bytesInWord address byte value : RiscV.Word width) (bigEndian : Bool) :
+    (panSemWordModel (width := width)).setByte bytesInWord address byte value bigEndian =
+      panSetByteHOL address byte value bigEndian := by
+  rfl
+
+/-- Production RISC-V 64-bit instance of the generic PanSem source memory
+    model. -/
+def panSemBitVec64WordModel : PanMemoryModel (RiscV.Word 64) :=
+  panSemWordModel (width := 64)
 
 /-- Source word size, represented at the same width as the source word. -/
 def panSemBytesInWord {width : Nat} [NeZero width] : RiscV.Word width :=
@@ -98,8 +130,10 @@ def panSemBitVec64MemoryAccess (state : PanSemState (RiscV.Word 64) ffi) :
   rfl
 
 /-- Width-indexed state-owned source code-map evaluator. Memory domains and
-    endianness come from the PanSem state. This uses the RISC-V word model, so
-    its HOL correspondence is only reviewed at the production width 64. -/
+    endianness come from the PanSem state. Its state-derived byte-memory
+    operations use the source-shaped HOL alignment and byte codec, while the
+    complete evaluator remains untagged pending a constructor-complete
+    production/exact evaluator relation. -/
 def panSemEvaluateWordCodeState {width : Nat} [NeZero width]
     [BEq (RiscV.Word width)] [OfNat (RiscV.Word width) 0]
     [OfNat (RiscV.Word width) 1] [OfNat (RiscV.Word width) 2]
@@ -336,17 +370,6 @@ theorem evalPanSemStateExp_op {width : Nat} [NeZero width]
   simp only [evalPanSemStateExp, evalPanSemStateExps, evalPanValueExp.eq_def]
   rfl
 
-/-- HOL `byte_align` (`cakeml/.../alignmentScript.sml`): clear the low
-    `LOG2 (dimindex DIV 8)` bits.  This is NOT division by `width / 8`; they agree
-    only when `width / 8` is a power of two (e.g. width 64), so the byte and
-    word-load source equations use this alignment. `mem_load_32_def` is tagged;
-    the UInt8-backed byte helper is untagged pending `.5.16.5.4`. HOL's
-    alignment lives in the standard library, outside the CakeML submodule, so
-    this helper is untagged. -/
-def panByteAlignHOL {width : Nat} (address : RiscV.Word width) : RiscV.Word width :=
-  let alignment := 2 ^ Nat.log2 (width / 8)
-  BitVec.ofNat width ((address.toNat / alignment) * alignment)
-
 /-- Flapjack-specific BitVec rendering of HOL4 standard-library
 `byte$get_byte_def` and `byte_index_def` from
 `HOL/src/n-bit/byteScript.sml:15-23`. This dependency is outside the CakeML
@@ -360,17 +383,6 @@ def panGetByteHOL {width : Nat} (address value : RiscV.Word width)
       bytesPerWord - 1 - (address.toNat % bytesPerWord)
     else address.toNat % bytesPerWord
   UInt8.ofNat ((value.toNat / 256 ^ byteIndex) % 256)
-
-/-- Source-shaped `word8` result for HOL's standard-library `get_byte` used by
-    `mem_load_byte_def`. This keeps the output directly in `BitVec 8`; the
-    UInt8 helper above remains a separate executable adapter. -/
-def panGetByteWord8HOL {width : Nat} (address value : RiscV.Word width)
-    (bigEndian : Bool) : BitVec 8 :=
-  let bytesPerWord := width / 8
-  let byteIndex := if bigEndian then
-      bytesPerWord - 1 - (address.toNat % bytesPerWord)
-    else address.toNat % bytesPerWord
-  BitVec.ofNat 8 ((value.toNat / 256 ^ byteIndex) % 256)
 
 /-- Flapjack byte-load helper following HOL `mem_load_byte_def` and
     `byte$get_byte_def`. In particular, little-endian `w2n address MOD 0`
@@ -443,22 +455,6 @@ def panMemLoad32HOL {width : Nat} [NeZero width]
         else none
   else none
 
-
-/-- Flapjack-specific BitVec rendering of HOL4 standard-library
-`byte$set_byte_def` (`HOL/src/n-bit/byteScript.sml`), the inverse of
-`panGetByteHOL`: replace the byte at the endian-adjusted byte index by
-`byteValue`.  As with `panGetByteHOL` this dependency is outside the CakeML
-repository, so the helper intentionally has no repository `@[hol]` tag. -/
-def panSetByteHOL {width : Nat} (address byteValue cell : RiscV.Word width)
-    (bigEndian : Bool) : RiscV.Word width :=
-  let bytesPerWord := width / 8
-  let byteIndex := address.toNat % bytesPerWord
-  let byteIndex := if bigEndian then bytesPerWord - byteIndex - 1 else byteIndex
-  let offset := 256 ^ byteIndex
-  let block := offset * 256
-  let low := cell.toNat % offset
-  let high := cell.toNat / block
-  BitVec.ofNat width (low + (byteValue.toNat % 256) * offset + high * block)
 
 /-- Flapjack helper following HOL `panSem$mem_store_byte`
     (`cakeml/pancake/semantics/panSemScript.sml:300-307`):
@@ -807,30 +803,29 @@ theorem panSemBitVec64ByteAlign_eq_panByteAlignHOL (address : RiscV.Word 64) :
       panByteAlignHOL (width := 64) address := by
   rfl
 
-/-- The model's `getByte` at width 64 equals the exact HOL `get_byte` codec
-    `panRiscVGetByteEndian`, as a width-64 word. -/
-theorem panSemBitVec64GetByte_eq_panRiscVGetByteEndian (address value : RiscV.Word 64)
-    (bigEndian : Bool) :
+/-- At the production width, the source-shaped PanSem alignment equals the
+    RISC-V target alignment used by the executed Crep evaluator. -/
+theorem panSemBitVec64ByteAlign_eq_panRiscV (address : RiscV.Word 64) :
+    panSemBitVec64WordModel.byteAlign (8 : RiscV.Word 64) address =
+      RiscV.panRiscVByteAlign (8 : RiscV.Word 64) address := by
+  rw [panSemBitVec64ByteAlign_eq_panByteAlignHOL]
+  have hlog : Nat.log2 8 = 3 := by decide
+  simp [panByteAlignHOL, RiscV.panRiscVByteAlign, hlog]
+
+/-- Production read helpers pass the named PanSem byte-count constant. This
+    variant keeps that exact source expression visible for congruence proofs. -/
+theorem panSemBitVec64ByteAlign_runtime_eq_panRiscV (address : RiscV.Word 64) :
+    panSemBitVec64WordModel.byteAlign panSemBitVec64BytesInWord address =
+      RiscV.panRiscVByteAlign (BitVec.ofNat 64 (64 / 8)) address := by
+  simpa [panSemBitVec64BytesInWord] using panSemBitVec64ByteAlign_eq_panRiscV address
+
+/-- The model's width-64 `getByte` is the source `word8` codec widened exactly
+    as PanSem's `w2w` does. -/
+theorem panSemBitVec64GetByte_eq_panGetByteWord8HOL
+    (address value : RiscV.Word 64) (bigEndian : Bool) :
     panSemBitVec64WordModel.getByte (8 : RiscV.Word 64) address value bigEndian =
-      BitVec.ofNat 64
-        (RiscV.panRiscVGetByteEndian (8 : RiscV.Word 64) address value bigEndian).toNat := by
-  have h8 : BitVec.toNat (8 : RiscV.Word 64) = 8 := by decide
-  have hidx : 8 - BitVec.toNat address % 8 - 1 =
-      8 - 1 - BitVec.toNat address % 8 := by
-    have := Nat.mod_lt (BitVec.toNat address) (by decide : 0 < 8)
-    omega
-  cases bigEndian
-  · simp only [panSemBitVec64WordModel, RiscV.panRiscVGetByteEndian,
-      RiscV.panRiscVByteIndex, h8]
-    simp only [if_neg (by decide : ¬ (8 = 0)), if_neg (by decide : ¬ (false = true))]
-    apply BitVec.eq_of_toNat_eq
-    simp only [BitVec.toNat_ofNat, Nat.mod_mod]
-  · simp only [panSemBitVec64WordModel, RiscV.panRiscVGetByteEndian,
-      RiscV.panRiscVByteIndex, h8]
-    simp only [if_neg (by decide : ¬ (8 = 0))]
-    rw [hidx]
-    apply BitVec.eq_of_toNat_eq
-    simp only [BitVec.toNat_ofNat, Nat.mod_mod]
+      BitVec.ofNat 64 (panGetByteWord8HOL address value bigEndian).toNat := by
+  rfl
 
 /-- `panRiscVGetByteEndian` produces a byte (`< 256`). -/
 theorem panRiscVGetByteEndian_toNat_lt_256 (address value : RiscV.Word 64)
@@ -856,6 +851,62 @@ theorem panGetByteHOL_eq_panRiscVGetByteEndian (address value : RiscV.Word 64)
          else address.toNat % 8)) % 256 < 2 ^ 64 := by
     exact Nat.lt_trans (Nat.mod_lt _ (by decide)) (by decide)
   rw [Nat.mod_eq_of_lt hsmall]
+
+/-- The width-64 source `word8` byte codec and RISC-V byte helper have the same
+    widened value. -/
+theorem panSemBitVec64GetByte_eq_panRiscVGetByteEndian (address value : RiscV.Word 64)
+    (bigEndian : Bool) :
+    panSemBitVec64WordModel.getByte (8 : RiscV.Word 64) address value bigEndian =
+      BitVec.ofNat 64
+        (RiscV.panRiscVGetByteEndian (8 : RiscV.Word 64) address value bigEndian).toNat := by
+  calc
+    _ = BitVec.ofNat 64 (panGetByteWord8HOL address value bigEndian).toNat :=
+      panSemBitVec64GetByte_eq_panGetByteWord8HOL address value bigEndian
+    _ = BitVec.ofNat 64
+        (RiscV.panRiscVGetByteEndian (8 : RiscV.Word 64) address value bigEndian).toNat := by
+      congr 1
+      have hbyte := panGetByteHOL_eq_panRiscVGetByteEndian address value bigEndian
+      have hword8 : (panGetByteWord8HOL address value bigEndian).toNat =
+          (panGetByteHOL address value bigEndian).toNat := by
+        simp [panGetByteWord8HOL, panGetByteHOL]
+      have hnat := congrArg UInt8.toNat hbyte
+      have hnat' : (panGetByteHOL address value bigEndian).toNat =
+          (RiscV.panRiscVGetByteEndian (8 : RiscV.Word 64)
+            address value bigEndian).toNat % 256 := by
+        simpa using hnat
+      rw [Nat.mod_eq_of_lt (panRiscVGetByteEndian_toNat_lt_256 address value bigEndian)] at hnat'
+      exact hword8.trans hnat'
+
+/-- The source-shaped PanSem byte operation equals the byte operation in the
+    endian-specialized RISC-V target memory model at width 64. -/
+theorem panSemBitVec64GetByte_eq_riscvModel (address value : RiscV.Word 64)
+    (bigEndian : Bool) :
+    panSemBitVec64WordModel.getByte (8 : RiscV.Word 64) address value bigEndian =
+      (RiscV.panRiscVMemoryModelForEndian bigEndian).getByte
+        (8 : RiscV.Word 64) address value bigEndian := by
+  simpa [RiscV.panRiscVMemoryModelForEndian] using
+    panSemBitVec64GetByte_eq_panRiscVGetByteEndian address value bigEndian
+
+/-- Runtime-parameter form of the production byte extraction bridge. -/
+theorem panSemBitVec64GetByte_runtime_eq_riscvModel
+    (address value : RiscV.Word 64) (bigEndian : Bool) :
+    panSemBitVec64WordModel.getByte panSemBitVec64BytesInWord address value bigEndian =
+      RiscV.panRiscVGetByteEndian (BitVec.ofNat 64 (64 / 8)) address value bigEndian := by
+  simpa [panSemBitVec64BytesInWord] using
+    panSemBitVec64GetByte_eq_panRiscVGetByteEndian address value bigEndian
+
+/-- Non-byte-codec operations in the generic PanSem and RISC-V models are
+    shared definitionally at width 64. -/
+theorem panSemBitVec64Aligned_eq_riscvModel (alignment : Nat) (address : RiscV.Word 64) :
+    panSemBitVec64WordModel.aligned alignment address =
+      (RiscV.panRiscVMemoryModelForEndian false).aligned alignment address := by
+  rfl
+
+theorem panSemBitVec64WordOfBytes32_eq_riscvModel (bigEndian : Bool)
+    (bytes : List (RiscV.Word 64)) :
+    panSemBitVec64WordModel.wordOfBytes32 bigEndian bytes =
+      (RiscV.panRiscVMemoryModelForEndian bigEndian).wordOfBytes32 bigEndian bytes := by
+  rfl
 
 /-- Executed `readByte` at BitVec 64 agrees with the UInt8-backed source-equation
     helper `panMemLoadByteHOL` (then widened with `BitVec.ofNat 64`). -/

@@ -181,6 +181,39 @@ def riscvWidth24ByteLoad : Option (Word 24) :=
   panModelReadByte (RiscV.panRiscVMemoryModelForEndian false)
     width24Domain width24Memory (BitVec.ofNat 24 3) (BitVec.ofNat 24 5) false
 
+/-! The state-derived PanSem model uses HOL's `byte_align` rather than the
+    RISC-V target's divide-by-three alignment. These rows compare the generic
+    production expression memory adapter with the exact source-shaped
+    `mem_load_byte` and `mem_load_32` definitions at width 24. -/
+def panSemWidth24ByteLoad : Option (Word 24) :=
+  panModelReadByte (panSemWordModel (width := 24))
+    width24Domain width24Memory (BitVec.ofNat 24 3) (BitVec.ofNat 24 5) false
+def panSemWidth24ByteLoadBE : Option (Word 24) :=
+  panModelReadByte (panSemWordModel (width := 24))
+    width24Domain width24Memory (BitVec.ofNat 24 3) (BitVec.ofNat 24 5) true
+def panSemWidth24Load32 : Option (Word 24) :=
+  panModelRead32 (panSemWordModel (width := 24))
+    width24Domain width24Memory (BitVec.ofNat 24 3) (BitVec.ofNat 24 4) false
+def panSemWidth24Load32BE : Option (Word 24) :=
+  panModelRead32 (panSemWordModel (width := 24))
+    width24Domain width24Memory (BitVec.ofNat 24 3) (BitVec.ofNat 24 4) true
+def width24HolWordMemory : Word 24 → HolWordLab 24 :=
+  fun _ => .word (BitVec.ofNat 24 0x332211)
+def width24HolDomain : Word 24 → Prop :=
+  fun address => address = BitVec.ofNat 24 4
+instance width24HolDomainDecidable : DecidablePred width24HolDomain := by
+  intro address
+  change Decidable (address = BitVec.ofNat 24 4)
+  infer_instance
+def holWidth24ByteLoadWord8 : Option (BitVec 8) :=
+  panMemLoadByteWord8HOL width24HolWordMemory width24HolDomain false (BitVec.ofNat 24 5)
+def holWidth24Load32 : Option (Word 24) :=
+  (panMemLoad32HOL width24HolWordMemory width24HolDomain false (BitVec.ofNat 24 4)).map
+    (fun value => BitVec.ofNat 24 value.toNat)
+def holWidth24Load32BE : Option (Word 24) :=
+  (panMemLoad32HOL width24HolWordMemory width24HolDomain true (BitVec.ofNat 24 4)).map
+    (fun value => BitVec.ofNat 24 value.toNat)
+
 /-! The finite-word source adapter makes the HOL byte_align operation explicit
     after the generic carrier/BitVec transport. This exercises the same
     non-power-of-two width through the model that an arbitrary-carrier
@@ -338,6 +371,14 @@ example :
 #guard holByteAlignWidth24Address5 != riscvByteAlignWidth24Address5
 #guard holWidth24ByteLoad == some (BitVec.ofNat 24 0x33)
 #guard riscvWidth24ByteLoad == none
+#guard panSemWidth24ByteLoad == holWidth24ByteLoad
+#guard panSemWidth24ByteLoadBE == some (BitVec.ofNat 24 0x11)
+#guard (panSemWidth24ByteLoad.map (fun byte => BitVec.ofNat 8 byte.toNat)) ==
+  holWidth24ByteLoadWord8
+#guard holWidth24ByteLoadWord8 == some (BitVec.ofNat 8 0x33)
+#guard panSemWidth24Load32 == holWidth24Load32
+#guard panSemWidth24Load32BE == holWidth24Load32BE
+#guard panSemWidth24Load32 == some (BitVec.ofNat 24 0x113322)
 #guard holWordToBitVec dimension24 finiteWord24ByteAlign == BitVec.ofNat 24 4
 #guard (finiteWord24ByteLoad.map (holWordToBitVec dimension24)) ==
   some (BitVec.ofNat 24 0x33)
