@@ -20,11 +20,11 @@ the same `.error`, or the same successful `none` (the `.ret` FFI-return case).
 
 This is Flapjack-specific bridge infrastructure for the `pc_compile_correct`
 ShMemLoad/ShMemStore cases; it has no standalone HOL declaration and therefore
-no `@[hol]` tag.  The decoded `word_of_bytes` equality (the value installed on a
-`.ret`) is proved below for every positive width in the unconditional
-exact Pan/Crep byte-decoder equality section; the remaining obligation of the
-bridge, the `locals_rel` slot maintenance of the written variable, is still
-tracked by `flapjack-pxn.18.4.3.111.1`.
+no `@[hol]` tag. The decoded `word_of_bytes` equality (the value installed on a
+`.ret`) is proved below for every positive width. The successful-return
+state and `locals_rel` slot-maintenance obligations are discharged by
+`shMemLoadHOLFiniteExact_ret_corresponds` and used in the tagged
+`pcCompileCorrect_ShMemLoad` case.
 -/
 
 namespace Flapjack
