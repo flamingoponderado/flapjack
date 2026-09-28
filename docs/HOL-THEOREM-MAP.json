@@ -13124,6 +13124,86 @@
     "reviewer": "flapjack-opus source comparison (2026-09-28, bead flapjack-pxn.18.4.3.94.3; pan_to_crepProofScript.sml:596-620): HOL !es ns t ev p. MAP (eval t) es = MAP SOME ev /\\ LENGTH ns = LENGTH es /\\ distinct_lists ns (FLAT (MAP var_cexp es)) /\\ ALL_DISTINCT ns ==> let (q,r) = evaluate (p, t with locals := t.locals |++ ZIP (ns,ev)) in evaluate (nested_decs ns es p, t) = (q, r with locals := FOLDL res_var r.locals (ZIP (ns, MAP (FLOOKUP t.locals) ns))). Lean keeps the binder order es ns t ev p and the single conjunctive premise. eval is the tagged evalCrepSemHOLExp with the classical address-set decision (as in the tagged Crep evaluate_def arms), and evaluate is the tagged evalCrepSemHOLProgExact (line-443 evaluate_def assembly). MAP/LENGTH/FLAT/ALL_DISTINCT are List.map/length/flatMap/Nodup, and var_cexp/distinct_lists/nested_decs/res_var are the tagged crepExpVarsHOL/distinctListsHol/nestedDecsHOL/HolFiniteMapExact.resVarEq. |++ ZIP is updateListEq (zip), FLOOKUP t.locals is t.locals.lookup, and HOL's let (q,r) = ... in is an outer match on the pair. The CrepSemHOLState locals/globals/code maps use the canonical HolFiniteMapExact carrier (same-module witness), and 'a word/'ffi use the BitVec width [NeZero width]/σ : Type translation. The proof delegates to the untagged evalNestedDecsSeqResVarEqCrepHOL."
   },
   {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "eval_distinct_lists_not_affect",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvalDistinctLists.lean",
+    "lean_name": "evalDistinctListsNotAffectHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-28; pan_to_crepProofScript.sml:4111-4124: !vs s e w nvals. LENGTH vs = LENGTH nvals /\\ distinct_lists vs (var_cexp e) ==> eval (s with locals := s.locals |++ ZIP (vs, nvals)) e = eval s e. HOL binds an unused w; Lean keeps it as _w.) Lean keeps HOL's binder order and conjunctive premise. eval is the tagged evalCrepSemHOLExp, with the address-set decision as an instance argument as in the tagged crepProps update_locals_not_vars_eval_eq. var_cexp is crepExpVarsHOL, distinct_lists is distinctListsHol, s with locals := s.locals |++ ZIP (vs,nvals) is the record update with updateListEq (vs.zip nvals), LENGTH is List.length, FLAT (MAP var_cexp es) is es.flatMap crepExpVarsHOL, and OPT_MMAP (eval s) is List.mapM (evalCrepSemHOLExp s). The CrepSemHOLState locals/globals/code maps use the canonical HolFiniteMapExact carrier (same-module witness), and 'a word/'ffi use the BitVec width [NeZero width]/σ : Type translation. Bead flapjack-pxn.18.4.3.94.2."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "eval_distinct_lists_not_affect'",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvalDistinctLists.lean",
+    "lean_name": "evalDistinctListsNotAffectPrimeHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-28; pan_to_crepProofScript.sml:3057-3075: !vs s e w nvals. eval s e = SOME w /\\ LENGTH vs = LENGTH nvals /\\ distinct_lists vs (var_cexp e) ==> eval (s with locals := s.locals |++ ZIP (vs, nvals)) e = SOME w.) Lean keeps HOL's binder order and conjunctive premise. eval is the tagged evalCrepSemHOLExp, with the address-set decision as an instance argument as in the tagged crepProps update_locals_not_vars_eval_eq. var_cexp is crepExpVarsHOL, distinct_lists is distinctListsHol, s with locals := s.locals |++ ZIP (vs,nvals) is the record update with updateListEq (vs.zip nvals), LENGTH is List.length, FLAT (MAP var_cexp es) is es.flatMap crepExpVarsHOL, and OPT_MMAP (eval s) is List.mapM (evalCrepSemHOLExp s). The CrepSemHOLState locals/globals/code maps use the canonical HolFiniteMapExact carrier (same-module witness), and 'a word/'ffi use the BitVec width [NeZero width]/σ : Type translation. Bead flapjack-pxn.18.4.3.94.2."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "opt_mmap_eval_distinct_lists_not_affect'",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvalDistinctLists.lean",
+    "lean_name": "optMmapEvalDistinctListsNotAffectPrimeHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-28; pan_to_crepProofScript.sml:4126-4137: !es s ws vs nvals. LENGTH vs = LENGTH nvals /\\ distinct_lists vs (FLAT (MAP var_cexp es)) ==> OPT_MMAP (eval (s with locals := s.locals |++ ZIP (vs, nvals))) es = OPT_MMAP (eval s) es. HOL binds an unused ws; Lean keeps it as _ws.) Lean keeps HOL's binder order and conjunctive premise. eval is the tagged evalCrepSemHOLExp, with the address-set decision as an instance argument as in the tagged crepProps update_locals_not_vars_eval_eq. var_cexp is crepExpVarsHOL, distinct_lists is distinctListsHol, s with locals := s.locals |++ ZIP (vs,nvals) is the record update with updateListEq (vs.zip nvals), LENGTH is List.length, FLAT (MAP var_cexp es) is es.flatMap crepExpVarsHOL, and OPT_MMAP (eval s) is List.mapM (evalCrepSemHOLExp s). The CrepSemHOLState locals/globals/code maps use the canonical HolFiniteMapExact carrier (same-module witness), and 'a word/'ffi use the BitVec width [NeZero width]/σ : Type translation. Bead flapjack-pxn.18.4.3.94.2."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "opt_mmap_eval_distinct_lists_not_affect",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvalDistinctLists.lean",
+    "lean_name": "optMmapEvalDistinctListsNotAffectHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-28; pan_to_crepProofScript.sml:3077-3093: !es s ws vs nvals. OPT_MMAP (eval s) es = SOME ws /\\ LENGTH vs = LENGTH nvals /\\ distinct_lists vs (FLAT (MAP var_cexp es)) ==> OPT_MMAP (eval (s with locals := s.locals |++ ZIP (vs, nvals))) es = SOME ws.) Lean keeps HOL's binder order and conjunctive premise. eval is the tagged evalCrepSemHOLExp, with the address-set decision as an instance argument as in the tagged crepProps update_locals_not_vars_eval_eq. var_cexp is crepExpVarsHOL, distinct_lists is distinctListsHol, s with locals := s.locals |++ ZIP (vs,nvals) is the record update with updateListEq (vs.zip nvals), LENGTH is List.length, FLAT (MAP var_cexp es) is es.flatMap crepExpVarsHOL, and OPT_MMAP (eval s) is List.mapM (evalCrepSemHOLExp s). The CrepSemHOLState locals/globals/code maps use the canonical HolFiniteMapExact carrier (same-module witness), and 'a word/'ffi use the BitVec width [NeZero width]/σ : Type translation. Bead flapjack-pxn.18.4.3.94.2."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvalDistinctLists.lean",
+    "lean_name": "updateListEq_zip_cons",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.4.3.94.2): Flapjack-only helper (finite-map ZIP cons update, OPT_MMAP congruence, or the same-module canonical carrier witness) for the tagged distinct_lists eval ports; HOL uses FUPDATE_LIST_THM/OPT_MMAP_CONG inline. Untagged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvalDistinctLists.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.4.3.94.2): Flapjack-only helper (finite-map ZIP cons update, OPT_MMAP congruence, or the same-module canonical carrier witness) for the tagged distinct_lists eval ports; HOL uses FUPDATE_LIST_THM/OPT_MMAP_CONG inline. Untagged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvalDistinctLists.lean",
+    "lean_name": "mapM_congr_mem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus (bead flapjack-pxn.18.4.3.94.2): Flapjack-only helper (finite-map ZIP cons update, OPT_MMAP congruence, or the same-module canonical carrier witness) for the tagged distinct_lists eval ports; HOL uses FUPDATE_LIST_THM/OPT_MMAP_CONG inline. Untagged."
+  },
+  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateNestedDecs.lean",

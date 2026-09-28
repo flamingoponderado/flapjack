@@ -55,6 +55,7 @@ import Flapjack.Pancake.Proofs.PanToCrep.StateRelFiniteSupport
 import Flapjack.Pancake.Proofs.PanToCrep.TotalEvaluateCases
 import Flapjack.Pancake.Proofs.PanToCrep.EvaluateNestedAssign
 import Flapjack.Pancake.Proofs.PanToCrep.EvaluateNestedDecs
+import Flapjack.Pancake.Proofs.PanToCrep.EvalDistinctLists
 import Flapjack.Pancake.Semantics.CrepProps
 import Flapjack.Pancake.Semantics.CrepProps.MemLoadFlatRel
 import Flapjack.Pancake.Semantics.CrepSem
