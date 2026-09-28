@@ -14031,6 +14031,14 @@
     "reviewer": "Flapjack-specific relation support for the exact shared-memory write path (bead flapjack-pxn.18.4.3.111.1.1.1). HOL pc_compile_correct ShMemLoad/ShMemStore prove the locals_rel conjunct inline with locals_rel_lookup_ctxt/FLOOKUP_UPDATE and no_overlap; this theorem isolates that inline reasoning: writing a word to the Pan local (locals.update, HOL |+) and the matching singleton Crep slot (CrepSemHOLState.setVar = updateEq) preserves panToCrepLocalsRelFiniteExact given ctxt.vars.lookup name = some (.one, [crepName]). It is a specialization of panToCrepLocalsRelFiniteExact_setVar to the One-shaped word value and therefore not a standalone HOL declaration."
   },
   {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "shMemLoadHOLFiniteExact_outcome_corresponds",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific assembly support for bead flapjack-pxn.18.4.3.111.1. It combines the exact Pan/Crep shMemLoad control-outcome bridge (same final FFI event, error, or FFI-return case) with shMemLoadHOLFiniteExact_ret_corresponds. In the successful-return branch it establishes the exact post-state and locals_rel relations, using the unconditional Pan/HOL word_of_bytes equality and singleton destination-slot relation. It has no standalone HOL declaration; HOL pc_compile_correct proves these facts inline."
+  },
+  {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
     "hol_name": "locals_rel_wf_shape",
     "hol_line": 2345,
