@@ -40,6 +40,7 @@ import Flapjack.Pancake.CrepToLoop.Proofs.CompExpOutRel
 import Flapjack.Pancake.CrepToLoop.Proofs.RelationsExact
 import Flapjack.Pancake.CrepToLoop.Proofs.LocalsRelHelpers
 import Flapjack.Pancake.CrepToLoop.Proofs.LocalsRelOptMmap
+import Flapjack.Pancake.CrepToLoop.Proofs.CompExpPreservesEval
 import Flapjack.Pancake.CrepToLoop.StateRel
 import Flapjack.Pancake.LoopLang.AssignedVars
 import Flapjack.Pancake.Semantics.LoopProps.AssignedVars
