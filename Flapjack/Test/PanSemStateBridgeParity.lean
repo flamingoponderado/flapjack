@@ -1267,6 +1267,29 @@ example :
     bridgeExecExactState bridgeStateRelExec bridgeExecProdState_ranged .opW .local
     (ofString "x") (ExpHOL.const (0 : W))
 
+/-- Kernel-checked regression for the `ShMemStore` production/exact agreement
+    (`flapjack-pxn.18.4.3.77.2.14.17`) on the bridge fixture: the theorem is
+    instantiated with constant address/value expressions and a byte-ranged
+    primitive handler. -/
+example :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluate byteRangedPrimitive
+          (.shMemStore .opW (expOfHOL (ExpHOL.const (0 : W)))
+            (expOfHOL (ExpHOL.const (0 : W))) : Prog W) bridgeExecProdState).1
+        (evaluateHOLFiniteState bridgeExecExactState
+          (.shMemStore .opW (ExpHOL.const (0 : W))
+            (ExpHOL.const (0 : W)) : ProgHOL 64)).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluate byteRangedPrimitive
+          (.shMemStore .opW (expOfHOL (ExpHOL.const (0 : W)))
+            (expOfHOL (ExpHOL.const (0 : W))) : Prog W) bridgeExecProdState).2
+        (evaluateHOLFiniteState bridgeExecExactState
+          (.shMemStore .opW (ExpHOL.const (0 : W))
+            (ExpHOL.const (0 : W)) : ProgHOL 64)).2.toExact :=
+  panSemTotalEvaluate_shMemStore_agree byteRangedPrimitive bridgeExecProdState
+    bridgeExecExactState bridgeStateRelExec bridgeExecProdState_ranged .opW
+    (ExpHOL.const (0 : W)) (ExpHOL.const (0 : W))
+
 /-- The canonical `panSemTotalEvaluateCake` entrypoint (the executable
     production `panSemTotalEvaluate` specialized to the canonical `panPrimopHOL`
     handler) exercises the proved Primitive-clause agreement on the

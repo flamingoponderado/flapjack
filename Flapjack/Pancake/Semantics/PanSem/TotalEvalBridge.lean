@@ -1132,6 +1132,19 @@ theorem riscv64PanValueFfiContext_wordToBytes_bytesRel
   simp only [BitVec.toNat_ofNat, UInt8.toNat_ofNat', Nat.mod_mod,
     show (2 ^ 8 : Nat) = 256 by decide]
 
+/-- `BytesRel` is preserved by list concatenation. -/
+theorem BytesRel_append {prod₁ prod₂ : List UInt8} {hol₁ hol₂ : List (BitVec 8)}
+    (h₁ : BytesRel prod₁ hol₁) (h₂ : BytesRel prod₂ hol₂) :
+    BytesRel (prod₁ ++ prod₂) (hol₁ ++ hol₂) := by
+  unfold BytesRel at h₁ h₂ ⊢
+  rw [List.map_append, List.map_append, h₁, h₂]
+
+/-- `BytesRel` is preserved by truncating both lists to a common prefix. -/
+theorem BytesRel_take {prod : List UInt8} {hol : List (BitVec 8)}
+    (h : BytesRel prod hol) (n : Nat) : BytesRel (prod.take n) (hol.take n) := by
+  unfold BytesRel at h ⊢
+  rw [List.map_take, List.map_take, h]
+
 /-- Extraction-side `RiscV.panRiscVSetByte` at byte count 8 is the exact HOL
     `panSetByteHOL` little-endian write. -/
 theorem panRiscVSetByte_eq_panSetByteHOL (address byte value : RiscV.Word 64) :
@@ -1518,6 +1531,160 @@ theorem panShMemLoad_agree {σ : Type}
               · simp only [toExact_emptyLocalsHOLFinite]
                 exact PanSemStateRelExec.emptyLocals hrelRaw
 
+    · have hp : production.sharedMemaddrs (panByteAlignHOL addr) = false := by
+        cases hb : production.sharedMemaddrs (panByteAlignHOL addr) with
+        | false => rfl
+        | true => exact absurd ((hshared (panByteAlignHOL addr)).mp hb) hs
+      simp only [hp, Bool.not_false, if_true, hs, if_false] at *
+      exact ⟨trivial, hrelRaw⟩
+
+/-- Production/exact agreement for the executed shared-memory store body
+    (`panShMemStore` against the exact `shMemStoreHOLExact`), including the
+    installed FFI state.  The domain test, the `callFfi`/`callFFIHOL` result
+    correspondence (via `ffiResultRel_callFfi_sharedMem`) and the request-byte
+    `BytesRel` correspondence (value and address words, with the word-width
+    `take`) are all established here; no oracle run is assumed. -/
+theorem panShMemStore_agree {σ : Type}
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (size : OpSize) (addr bytes : RiscV.Word 64) :
+    PanSemHOLResultOptionRel
+        (panSemTotalShMemStoreResult production
+          (panShMemStore (panSemTotalShMemContext production)
+            (panSemTotalShMemState production) bytes addr size)).1
+        (@shMemStoreHOLExact 64 σ _ exact.toExact
+          (fun current => Classical.propDecidable (exact.shMemaddrs current))
+          bytes addr (nbOpHOL size)).1 ∧
+      PanSemStateRelExec
+        (panSemTotalShMemStoreResult production
+          (panShMemStore (panSemTotalShMemContext production)
+            (panSemTotalShMemState production) bytes addr size)).2
+        (@shMemStoreHOLExact 64 σ _ exact.toExact
+          (fun current => Classical.propDecidable (exact.shMemaddrs current))
+          bytes addr (nbOpHOL size)).2 := by
+  obtain ⟨hlocals, hglobals, hstructs, hcode, heshapes, hmem, hmemaddrs, hshared,
+    hclock, hbe, hffiRel, hbase, htop⟩ := hrel
+  have hrelRaw : PanSemStateRelExec production exact.toExact :=
+    ⟨hlocals, hglobals, hstructs, hcode, heshapes, hmem, hmemaddrs, hshared,
+      hclock, hbe, hffiRel, hbase, htop⟩
+  have hcfgRel0 : BytesRel [UInt8.ofNat 0] [BitVec.ofNat 8 0] := by
+    simp [BytesRel, show (2 ^ 8 : Nat) = 256 by decide]
+  have hcfgRelN : BytesRel [UInt8.ofNat (nbOpHOL size)] [BitVec.ofNat 8 (nbOpHOL size)] := by
+    simp [BytesRel, UInt8.toNat_ofNat', show (2 ^ 8 : Nat) = 256 by decide]
+  have hbytesValRel0 : BytesRel
+      (List.map (fun index => riscv64GetByte index bytes) (List.range 8))
+      (panWordToBytesHOL (width := 64) bytes false) := by
+    simpa [riscv64PanValueFfiContext] using
+      riscv64PanValueFfiContext_wordToBytes_bytesRel production.sharedMemaddrs bytes
+  have hbytesAddrRel0 : BytesRel
+      (List.map (fun index => riscv64GetByte index addr) (List.range 8))
+      (panWordToBytesHOL (width := 64) addr false) := by
+    simpa [riscv64PanValueFfiContext] using
+      riscv64PanValueFfiContext_wordToBytes_bytesRel production.sharedMemaddrs addr
+  simp only [panShMemStore, panSemTotalShMemStoreResult, shMemStoreHOLExact,
+    panValueFfiWidth_eq_nbOpHOL, panSemTotalShMemContext, panSemTotalShMemState,
+    panSemTotalShMemStateBack, riscv64PanValueFfiContext]
+  by_cases h0 : nbOpHOL size = 0
+  · simp only [h0, if_true] at *
+    have hFFIw : FfiResultRel
+        (callFfi production.ffi (.sharedMem .mappedWrite) [UInt8.ofNat 0]
+          (List.map (fun index => riscv64GetByte index bytes) (List.range 8)
+            ++ List.map (fun index => riscv64GetByte index addr) (List.range 8)))
+        (callFFIHOL exact.ffi (.sharedMem .mappedWrite) [BitVec.ofNat 8 0]
+          (panWordToBytesHOL (width := 64) bytes false
+            ++ panWordToBytesHOL (width := 64) addr false)) :=
+      ffiResultRel_callFfi_sharedMem production.ffi exact.ffi hffiRel
+        .mappedWrite .mappedWrite (Or.inr ⟨rfl, rfl⟩) _ _ _ _
+        hcfgRel0 (BytesRel_append hbytesValRel0 hbytesAddrRel0)
+    by_cases hs : exact.shMemaddrs addr
+    · have hp : production.sharedMemaddrs addr = true := (hshared addr).mpr hs
+      simp only [hp, Bool.not_true, Bool.false_eq_true, if_false, hs, if_true] at *
+      cases hcall : callFfi production.ffi (.sharedMem .mappedWrite) [UInt8.ofNat 0]
+          (List.map (fun index => riscv64GetByte index bytes) (List.range 8)
+            ++ List.map (fun index => riscv64GetByte index addr) (List.range 8)) with
+      | returned nextFfi _ =>
+          rw [hcall] at hFFIw
+          cases hcallH : callFFIHOL exact.ffi (.sharedMem .mappedWrite)
+              [BitVec.ofNat 8 0]
+              (panWordToBytesHOL (width := 64) bytes false
+                ++ panWordToBytesHOL (width := 64) addr false) with
+          | ret newFfi _ =>
+              rw [hcallH] at hFFIw
+              obtain ⟨hffiNew, _⟩ := hFFIw
+              constructor
+              · simp only [PanSemHOLResultOptionRel]
+              · exact PanSemStateRelExec.setFfi (exact := exact.toExact) hrelRaw hffiNew
+          | final exactEvent =>
+              rw [hcallH] at hFFIw
+              exact False.elim hFFIw
+      | final event =>
+          rw [hcall] at hFFIw
+          cases hcallH : callFFIHOL exact.ffi (.sharedMem .mappedWrite)
+              [BitVec.ofNat 8 0]
+              (panWordToBytesHOL (width := 64) bytes false
+                ++ panWordToBytesHOL (width := 64) addr false) with
+          | ret newFfi _ =>
+              rw [hcallH] at hFFIw
+              exact False.elim hFFIw
+          | final exactEvent =>
+              rw [hcallH] at hFFIw
+              exact ⟨hFFIw, hrelRaw⟩
+    · have hp : production.sharedMemaddrs addr = false := by
+        cases hb : production.sharedMemaddrs addr with
+        | false => rfl
+        | true => exact absurd ((hshared addr).mp hb) hs
+      simp only [hp, Bool.not_false, if_true, hs, if_false] at *
+      exact ⟨trivial, hrelRaw⟩
+  · simp only [if_neg h0] at *
+    rw [panRiscVByteAlign_eight_eq_panByteAlignHOL] at *
+    have hFFIw : FfiResultRel
+        (callFfi production.ffi (.sharedMem .mappedWrite) [UInt8.ofNat (nbOpHOL size)]
+          (List.take (nbOpHOL size)
+              (List.map (fun index => riscv64GetByte index bytes) (List.range 8))
+            ++ List.map (fun index => riscv64GetByte index addr) (List.range 8)))
+        (callFFIHOL exact.ffi (.sharedMem .mappedWrite) [BitVec.ofNat 8 (nbOpHOL size)]
+          ((panWordToBytesHOL (width := 64) bytes false).take (nbOpHOL size)
+            ++ panWordToBytesHOL (width := 64) addr false)) :=
+      ffiResultRel_callFfi_sharedMem production.ffi exact.ffi hffiRel
+        .mappedWrite .mappedWrite (Or.inr ⟨rfl, rfl⟩) _ _ _ _
+        hcfgRelN
+        (BytesRel_append (BytesRel_take hbytesValRel0 (nbOpHOL size)) hbytesAddrRel0)
+    by_cases hs : exact.shMemaddrs (panByteAlignHOL addr)
+    · have hp : production.sharedMemaddrs (panByteAlignHOL addr) = true :=
+        (hshared (panByteAlignHOL addr)).mpr hs
+      simp only [hp, Bool.not_true, Bool.false_eq_true, if_false, hs, if_true] at *
+      cases hcall : callFfi production.ffi (.sharedMem .mappedWrite) [UInt8.ofNat (nbOpHOL size)]
+          (List.take (nbOpHOL size)
+              (List.map (fun index => riscv64GetByte index bytes) (List.range 8))
+            ++ List.map (fun index => riscv64GetByte index addr) (List.range 8)) with
+      | returned nextFfi _ =>
+          rw [hcall] at hFFIw
+          cases hcallH : callFFIHOL exact.ffi (.sharedMem .mappedWrite)
+              [BitVec.ofNat 8 (nbOpHOL size)]
+              ((panWordToBytesHOL (width := 64) bytes false).take (nbOpHOL size)
+                ++ panWordToBytesHOL (width := 64) addr false) with
+          | ret newFfi _ =>
+              rw [hcallH] at hFFIw
+              obtain ⟨hffiNew, _⟩ := hFFIw
+              constructor
+              · simp only [PanSemHOLResultOptionRel]
+              · exact PanSemStateRelExec.setFfi (exact := exact.toExact) hrelRaw hffiNew
+          | final exactEvent =>
+              rw [hcallH] at hFFIw
+              exact False.elim hFFIw
+      | final event =>
+          rw [hcall] at hFFIw
+          cases hcallH : callFFIHOL exact.ffi (.sharedMem .mappedWrite)
+              [BitVec.ofNat 8 (nbOpHOL size)]
+              ((panWordToBytesHOL (width := 64) bytes false).take (nbOpHOL size)
+                ++ panWordToBytesHOL (width := 64) addr false) with
+          | ret newFfi _ =>
+              rw [hcallH] at hFFIw
+              exact False.elim hFFIw
+          | final exactEvent =>
+              rw [hcallH] at hFFIw
+              exact ⟨hFFIw, hrelRaw⟩
     · have hp : production.sharedMemaddrs (panByteAlignHOL addr) = false := by
         cases hb : production.sharedMemaddrs (panByteAlignHOL addr) with
         | false => rfl
