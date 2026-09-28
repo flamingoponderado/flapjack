@@ -58,6 +58,7 @@ import Flapjack.Pancake.Semantics.PanSem.StateExactFinite
 import Flapjack.Pancake.Semantics.PanSem.EvalExact
 import Flapjack.Pancake.Semantics.PanSem.FiniteSupportStep
 import Flapjack.Pancake.Semantics.PanSem.ExtCallExact
+import Flapjack.Pancake.Semantics.PanSem.GlobalsShapesExact
 
 namespace Flapjack
 
@@ -4069,6 +4070,51 @@ theorem globalsShapes_exists_shape {width : Nat} {σ : Type} [NeZero width]
       have h'' : some (shapeOfHOLExact value') = some (shapeOfHOLExact value) := by
         simpa only [hlook, Option.map_some] using h'
       exact Option.some.inj h''
+
+/-- Broad/finite transport: the finite-carrier `globalsShapes` is the broad shape
+projection along `toExact`. -/
+theorem globalsShapes_eq_globalsShapesExact_toExact {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) :
+    globalsShapes state = globalsShapesExact state.toExact := rfl
+
+/-- Broad/finite transport: `globalsShapes` on the broad state underlying the finite carrier
+is `globalsShapesExact`. -/
+theorem globalsShapes_ofExact_eq_globalsShapesExact {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateExact width σ) (h : state.FiniteSupport) :
+    globalsShapes (ofExact state h) = globalsShapesExact state := rfl
+
+/-- Finite-carrier form of the shMemLoad globals-shape preservation: a
+successful load installs the loaded word into a variable of the requested kind
+and leaves `ffi`/`clock`/memory untouched, so under the same guard as the broad
+step function the global shape map is unchanged. -/
+theorem globalsShapes_shMemLoadHOLFiniteExact {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) [DecidablePred state.shMemaddrs]
+    (kind : VarKind) (name : MlS) (address : RiscV.Word width) (nb : Nat)
+    (word : RiscV.Word width)
+    (hlocal : lookupKvarHOLFinite kind name state = some (.val (.word word))) :
+    globalsShapes (shMemLoadHOLFiniteExact state kind name address nb).2 =
+      globalsShapes state := by
+  have hb : ∀ (k : VarKind),
+      lookupKvarHOLFinite k name state = lookupKvarHOLExact k name state.toExact := by
+    intro k
+    unfold lookupKvarHOLFinite lookupKvarHOLExact
+    cases k <;> rfl
+  have hguard : lookupKvarHOLExact kind name state.toExact = some (.val (.word word)) := by
+    rw [← hb kind]; exact hlocal
+  let loaded := shMemLoadHOLFiniteExact state kind name address nb
+  have hto : loaded.2.toExact =
+      (shMemLoadHOLExact state.toExact kind name address nb).2 :=
+    congrArg Prod.snd
+      (shMemLoadHOLFiniteExact_toExact state kind name address nb)
+  calc globalsShapes loaded.2
+      = globalsShapesExact loaded.2.toExact :=
+        globalsShapes_eq_globalsShapesExact_toExact loaded.2
+    _ = globalsShapesExact (shMemLoadHOLExact state.toExact kind name address nb).2 := by
+        rw [hto]
+    _ = globalsShapesExact state.toExact :=
+        shMemLoadHOLExact_globalsShapesExact state.toExact kind name address nb word hguard
+    _ = globalsShapes state :=
+        (globalsShapes_eq_globalsShapesExact_toExact state).symm
 
 end PanSemStateFiniteExact
 

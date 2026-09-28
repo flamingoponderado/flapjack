@@ -1083,7 +1083,8 @@ instance emptyLocalsForStructsSimpsDecidablePred {width : Nat} {σ : Type} [NeZe
     are definitionally the same field updates as the canonical ports and are not
     meant to introduce a second HOL definition. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "structs_simps"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem structsSimpsHOLFinite {width : Nat} {σ : Type} [NeZero width]
     (state : PanPropsEvalStateFiniteExact width σ) :
     (decClockForStructsSimps state).structs = state.structs ∧
@@ -1149,7 +1150,8 @@ theorem evalHOL_emptyLocalsForStructsSimps {width : Nat} {σ : Type} [NeZero wid
     models HOL's positive word dimension and `DecidablePred state.memaddrs` is
     computation evidence for the HOL word-set guard. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "eval_upd_clock_eq"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem evalHOL_upd_clock_eq {width : Nat} {σ : Type} [NeZero width]
     (state : PanPropsEvalStateFiniteExact width σ) [h : DecidablePred state.memaddrs]
     (expression : ExpHOL width) (clock : Nat) :
@@ -1164,7 +1166,8 @@ theorem evalHOL_upd_clock_eq {width : Nat} {σ : Type} [NeZero width]
     and codec justification as `evalHOL_upd_clock_eq`; the expression evaluator
     does not read `code`. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "eval_upd_code_eq"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem evalHOL_upd_code_eq {width : Nat} {σ : Type} [NeZero width]
     (state : PanPropsEvalStateFiniteExact width σ) [h : DecidablePred state.memaddrs]
     (expression : ExpHOL width)
@@ -1180,7 +1183,8 @@ theorem evalHOL_upd_code_eq {width : Nat} {σ : Type} [NeZero width]
     and codec justification as `evalHOL_upd_clock_eq`; the expression evaluator
     does not read `eshapes`. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "eval_upd_eshapes_eq"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem evalHOL_upd_eshapes_eq {width : Nat} {σ : Type} [NeZero width]
     (state : PanPropsEvalStateFiniteExact width σ) [h : DecidablePred state.memaddrs]
     (expression : ExpHOL width) (eshapes : HolFiniteMapExact MlS ShapeHOL) :
@@ -1242,7 +1246,8 @@ theorem optMmapEvalHOL_upd_clock_eq {width : Nat} {σ : Type} [NeZero width]
     on each of the two states `f st` and `st`; HOL's total `eval` needs no such
     evidence. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "opt_mmap_helper_thm"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem optMmapHelperThm {width : Nat} {σ : Type} [NeZero width]
     (f : PanPropsEvalStateFiniteExact width σ → PanPropsEvalStateFiniteExact width σ)
     (st : PanPropsEvalStateFiniteExact width σ) [hst : DecidablePred st.memaddrs]
@@ -1271,7 +1276,8 @@ theorem optMmapHelperThm {width : Nat} {σ : Type} [NeZero width]
     `DecidablePred state.memaddrs` is computation evidence for the HOL word-set
     guard. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "eval_empty_locals_IMP"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem evalEmptyLocalsHOLFinite {width : Nat} {σ : Type} [NeZero width] :
     ∀ (state : PanPropsEvalStateFiniteExact width σ)
       [DecidablePred state.memaddrs]
@@ -1374,7 +1380,8 @@ private theorem evalHOLExactMemaddrsMono {width : Nat} {σ : Type} [NeZero width
     finite-support carrier and the qualifier records precisely its four HOL
     finite-map fields. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "eval_swap_memaddrs"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem evalSwapMemaddrsHOLFinite {width : Nat} {σ : Type} [NeZero width] :
     ∀ (state : PanPropsEvalStateFiniteExact width σ)
       [DecidablePred state.memaddrs]
@@ -1483,7 +1490,8 @@ private theorem evalHOLExactSwapMemory {width : Nat} {σ : Type}
     and pointwise memory-agreement premise, replacing only the state's memory.
     The local carrier owns the four finite-map fields named by the qualifier. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "eval_swap_memory"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem evalSwapMemoryHOLFinite {width : Nat} {σ : Type} [NeZero width] :
     ∀ (state : PanPropsEvalStateFiniteExact width σ)
       [DecidablePred state.memaddrs] (expression : ExpHOL width)
@@ -1606,7 +1614,8 @@ private theorem evaluateDeclsHOLFiniteMemaddrsMono {width : Nat} {σ : Type}
     models HOL's positive word dimension, and `DecidablePred` supplies Lean
     decisions for HOL word-set membership. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_decls_memaddrs_mono"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem evaluateDeclsMemaddrsMonoHOLFinite {width : Nat} {σ : Type}
     [NeZero width] :
     ∀ (state : PanPropsEvalStateFiniteExact width σ)
@@ -1675,7 +1684,8 @@ theorem evaluateDeclsMemaddrsMonoHOLFinite {width : Nat} {σ : Type}
     `[DecidablePred memaddrs]` supplies Lean computation evidence for the
     replacement HOL set. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_decls_swap_memaddrs"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem evaluateDeclsSwapMemaddrsHOLFinite {width : Nat} {σ : Type}
     [NeZero width] :
     ∀ (state : PanPropsEvalStateFiniteExact width σ)
@@ -1865,7 +1875,8 @@ private theorem evaluateDeclsHOLFiniteSwapLocals {width : Nat} {σ : Type}
     declaration initializer clause clears locals before evaluating, while the
     other clauses preserve the field. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_decls_swap_locals"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem evaluateDeclsSwapLocalsHOLFinite {width : Nat} {σ : Type}
     [NeZero width] :
     ∀ (state : PanPropsEvalStateFiniteExact width σ)
@@ -1922,7 +1933,8 @@ theorem evaluateDeclsSwapLocalsHOLFinite {width : Nat} {σ : Type}
     to PanSem's established evaluator; the finite-map qualifier records only
     its four HOL `|->` fields. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_decls_swap_memory"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem evaluateDeclsSwapMemoryHOLFinite {width : Nat} {σ : Type}
     [NeZero width] :
     ∀ (state : PanPropsEvalStateFiniteExact width σ)
@@ -1991,7 +2003,8 @@ def lookupCodeHOLFinite {width : Nat} {σ : Type} [NeZero width]
     hypothesis order. Finite-map fields use the reviewed canonical
     `HolFiniteMapExact` translation. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "eval_is_wf_shape_v"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem evalIsWfShapeValueHOL {width : Nat} {σ : Type} [NeZero width] :
     ∀ (state : PanPropsEvalStateFiniteExact width σ)
       [DecidablePred state.memaddrs]
@@ -2072,7 +2085,8 @@ private theorem evalListHOLExact_mem_isWf {width : Nat} {σ : Type} [NeZero widt
     arguments are well-formed, so every value installed into the callee's
     finite locals map is well-formed. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "lookup_code_wf_shape_invariant_step"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem lookupCodeWfShapeInvariantStep {width : Nat} {σ : Type} [NeZero width] :
     ∀ (state : PanPropsEvalStateFiniteExact width σ)
       [DecidablePred state.memaddrs]
@@ -2199,7 +2213,8 @@ instance updateLocalsForVarsSimpsDecidablePred {width : Nat} {σ : Type} [NeZero
     `fmap_as_finite_support` qualifier (canonical witness
     `holFmapAsFiniteSupportWitness` in this module). -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "update_locals_not_vars_eval_eq_eq"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem updateLocalsNotVarsEvalEqEqHOLFinite {width : Nat} {σ : Type} [NeZero width] :
     ∀ (state : PanPropsEvalStateFiniteExact width σ) [DecidablePred state.memaddrs]
       (expression : ExpHOL width) {β : Type} (_value : β) (name : MlS)
@@ -2216,7 +2231,8 @@ theorem updateLocalsNotVarsEvalEqEqHOLFinite {width : Nat} {σ : Type} [NeZero w
     `s e v n w`; the fresh-name premise and the `SOME`-success hypothesis are
     conjoined as in the source. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "update_locals_not_vars_eval_eq"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem updateLocalsNotVarsEvalEqHOLFinite {width : Nat} {σ : Type} [NeZero width] :
     ∀ (state : PanPropsEvalStateFiniteExact width σ) [DecidablePred state.memaddrs]
       (expression : ExpHOL width) (value : ValueHOL width) (name : MlS)
@@ -2232,7 +2248,8 @@ theorem updateLocalsNotVarsEvalEqHOLFinite {width : Nat} {σ : Type} [NeZero wid
     the source, the dead `v` gets a fresh independent HOL type variable and is
     bound fully polymorphically as `{β : Type} (_value : β)`. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "update_locals_not_vars_eval_eq_NONE"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem updateLocalsNotVarsEvalEqNoneHOLFinite {width : Nat} {σ : Type} [NeZero width] :
     ∀ (state : PanPropsEvalStateFiniteExact width σ) [DecidablePred state.memaddrs]
       (expression : ExpHOL width) {β : Type} (_value : β) (name : MlS)
@@ -2248,7 +2265,8 @@ theorem updateLocalsNotVarsEvalEqNoneHOLFinite {width : Nat} {σ : Type} [NeZero
     `updateLocalsNotVarsEvalEqEqHOLFinite` with HOL's dead `v` dropped, matching
     the source's `s e n w` quantifier list. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "eval_fresh_var"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem evalFreshVarHOLFinite {width : Nat} {σ : Type} [NeZero width] :
     ∀ (state : PanPropsEvalStateFiniteExact width σ) [DecidablePred state.memaddrs]
       (expression : ExpHOL width) (name : MlS) (word : ValueHOL width),
@@ -2265,7 +2283,8 @@ theorem evalFreshVarHOLFinite {width : Nat} {σ : Type} [NeZero width] :
     `evalListHOL` is the repository's exact `OPT_MMAP` rendering over the
     finite-support carrier. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "OPT_MMAP_update_locals_not_vars_eval_eq"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem optMmapUpdateLocalsNotVarsEvalEqHOLFinite {width : Nat} {σ : Type} [NeZero width] :
     ∀ (state : PanPropsEvalStateFiniteExact width σ) [DecidablePred state.memaddrs]
       (expressions : List (ExpHOL width)) (values : List (ValueHOL width)) (name : MlS)
@@ -2324,7 +2343,8 @@ private theorem updateList_nil {α β : Type} [BEq α] [LawfulBEq α]
     `fmap_as_finite_support` qualifier; the canonical witness
     `holFmapAsFiniteSupportWitness` is in this module. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_decls_functions"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem evaluateDeclsFunctionsHOLFinite {width : Nat} {σ : Type} [NeZero width] :
     ∀ (state : PanPropsEvalStateFiniteExact width σ) [DecidablePred state.memaddrs]
       (program : List (DeclHOL width)) (result : PanPropsEvalStateFiniteExact width σ),
@@ -2430,7 +2450,8 @@ private theorem evaluateDeclsHOLFinite_eshapes {width : Nat} {σ : Type}
     `fmap_as_finite_support` qualifier; the canonical witness
     `holFmapAsFiniteSupportWitness` is in this module. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_decls_eshapes"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem evaluateDeclsEshapesHOLFinite {width : Nat} {σ : Type} [NeZero width] :
     ∀ (state : PanPropsEvalStateFiniteExact width σ) [DecidablePred state.memaddrs]
       (program : List (DeclHOL width)) (result : PanPropsEvalStateFiniteExact width σ),
@@ -2517,7 +2538,8 @@ private theorem evaluateDeclsHOLFinite_onlyFunctions {width : Nat} {σ : Type}
     `fmap_as_finite_support` qualifier; the canonical witness
     `holFmapAsFiniteSupportWitness` is in this module. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_decls_only_functions"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem evaluateDeclsOnlyFunctionsHOLFinite {width : Nat} {σ : Type} [NeZero width] :
     ∀ (state : PanPropsEvalStateFiniteExact width σ) [DecidablePred state.memaddrs]
       (program : List (DeclHOL width)) (result : PanPropsEvalStateFiniteExact width σ),
@@ -2633,7 +2655,8 @@ private theorem evaluateDeclsHOLFinite_append {width : Nat} {σ : Type}
     `fmap_as_finite_support` qualifier; the canonical witness
     `holFmapAsFiniteSupportWitness` is in this module. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_decls_append"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem evaluateDeclsAppendHOLFinite {width : Nat} {σ : Type} [NeZero width] :
     ∀ (state : PanPropsEvalStateFiniteExact width σ) (ds1 ds2 : List (DeclHOL width)),
       evaluateDeclsPanPropsCanonical state (ds1 ++ ds2) =
@@ -2795,7 +2818,8 @@ private theorem evaluateDeclsHOLFinite_onlyExnDecls {width : Nat} {σ : Type}
     `fmap_as_finite_support` qualifier; the canonical witness
     `holFmapAsFiniteSupportWitness` is in this module. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_decls_only_exn_decls"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem evaluateDeclsOnlyExnDeclsHOLFinite {width : Nat} {σ : Type} [NeZero width] :
     ∀ (state : PanPropsEvalStateFiniteExact width σ) [DecidablePred state.memaddrs]
       (program : List (DeclHOL width)) (result : PanPropsEvalStateFiniteExact width σ),
@@ -2929,7 +2953,8 @@ private theorem evaluateDeclsHOLFinite_exnsWf {width : Nat} {σ : Type}
     `fmap_as_finite_support` qualifier; the canonical witness
     `holFmapAsFiniteSupportWitness` is in this module. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_decls_exns_wf"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem evaluateDeclsExnsWfHOLFinite {width : Nat} {σ : Type} [NeZero width] :
     ∀ (state : PanPropsEvalStateFiniteExact width σ) [DecidablePred state.memaddrs]
       (program : List (DeclHOL width)) (result : PanPropsEvalStateFiniteExact width σ),
@@ -3030,7 +3055,8 @@ private theorem evaluateDeclsHOLFinite_exnsWfEvaluateDecls {width : Nat} {σ : T
     `fmap_as_finite_support` qualifier; the canonical witness
     `holFmapAsFiniteSupportWitness` is in this module. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "exns_wf_evaluate_decls"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem exnsWfEvaluateDeclsHOLFinite {width : Nat} {σ : Type} [NeZero width] :
     ∀ (state : PanPropsEvalStateFiniteExact width σ) [DecidablePred state.memaddrs]
       (program : List (DeclHOL width)) {γ : Type} (_result : γ),
@@ -3139,7 +3165,8 @@ private theorem evaluateDeclsHOLFinite_onlyFunsAndExnDecls {width : Nat} {σ : T
           exact absurd hall (by simp [List.all_cons, isFunctionHOL, isExnDeclHOL])
 
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_decls_only_funs_and_exn_decls"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem evaluateDeclsOnlyFunsAndExnDeclsHOLFinite {width : Nat} {σ : Type} [NeZero width] :
     ∀ (state : PanPropsEvalStateFiniteExact width σ) [DecidablePred state.memaddrs]
       (program : List (DeclHOL width)) (result : PanPropsEvalStateFiniteExact width σ),
@@ -3188,7 +3215,8 @@ set_option linter.unusedSimpArgs false in
     `DecidablePred state.memaddrs` is computation evidence for the HOL word-set
     guard. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_decls_names"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem evaluateDeclsNamesHOLFinite {width : Nat} {σ : Type} [NeZero width]
     (state : PanPropsEvalStateFiniteExact width σ) [DecidablePred state.memaddrs]
     (decs : List (DeclHOL width)) :
@@ -3216,7 +3244,8 @@ theorem evaluateDeclsNamesHOLFinite {width : Nat} {σ : Type} [NeZero width]
     HOL's positive word dimension and `DecidablePred state.memaddrs` is
     computation evidence for the HOL word-set guard. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_decl_commute"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem evaluateDeclsDeclCommuteHOLFinite {width : Nat} {σ : Type} [NeZero width]
     (state : PanPropsEvalStateFiniteExact width σ) [h : DecidablePred state.memaddrs]
     (fi : FunDeclHOL width) (sh : ShapeHOL) (v' : MlS) (e : ExpHOL width)
