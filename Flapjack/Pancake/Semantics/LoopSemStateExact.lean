@@ -174,14 +174,16 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {F : Type} :
     Exact HOL port: the Lean statement is operand-first as in HOL and reads the
     `locals` `sptree$num_map` through the exact `Spt` carrier
     (`sptLookup`, the tagged `Flapjack/Misc/Sptree.lean` rendering of
-    `sptree$lookup`).  It returns the exact `WordLocW` carrier (tagged
-    `word_loc`) with no extra hypotheses beyond `[NeZero width]`.  No
-    `fmap_as_finite_support` qualifier applies: `locals` is a `num_map`, not a
-    `|->` field.  The only carrier translation is HOL's type-indexed `'a word`
-    (the `RegImm`, `WordLocW` and `BitVec width` dimensions) to the positive
-    `BitVec width`, so the tag carries `(words_as_type_indexed_bitvec)`. -/
+    `sptree$lookup`). It returns the exact `WordLocW` carrier (tagged
+    `word_loc`) with no extra hypotheses beyond `[NeZero width]`. The lookup is
+    over `locals`, a `num_map` rather than a `|->` field, but the full state
+    carrier also contains `globals : 5 word |-> word_loc`; therefore the tag
+    records the carrier's `fmap_as_finite_support := [globals]` translation.
+    The same-module `holFmapAsFiniteSupportWitness` checks the canonical
+    roundtrip. HOL's type-indexed `'a word` is translated to positive
+    `BitVec width`, recorded by `(words_as_type_indexed_bitvec)`. -/
 @[hol "cakeml/pancake/semantics/loopSemScript.sml" "get_var_imm_def"
-  (words_as_type_indexed_bitvec)]
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 def getVarImm {width : Nat} [NeZero width] {F : Type}
     (operand : RegImm (BitVec width)) (state : LoopSemStateFiniteExact width F) :
     Option (WordLocW width) :=
@@ -200,8 +202,10 @@ def getVarImm {width : Nat} [NeZero width] {F : Type}
 /-- Exact HOL `get_vars_def` (`loopSemScript.sml:98-107`), state second as in
     HOL: `get_vars [] s = SOME []`; `get_vars (v::vs) s` looks `v` up in the
     `locals` `num_map` and conses it onto `get_vars vs s`, failing if either
-    fails. -/
-@[hol "cakeml/pancake/semantics/loopSemScript.sml" "get_vars_def" (words_as_type_indexed_bitvec)]
+    fails. The state carrier's `globals` `|->` representation is recorded by
+    the finite-support qualifier and same-module canonical witness. -/
+@[hol "cakeml/pancake/semantics/loopSemScript.sml" "get_vars_def"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 def getVars {width : Nat} [NeZero width] {F : Type} :
     List Nat → LoopSemStateFiniteExact width F → Option (List (WordLocW width))
   | [], _ => some []
@@ -269,8 +273,11 @@ def setGlobals {width : Nat} [NeZero width] {F : Type}
   { state with globals := state.globals.update (global, value) }
 
 /-- Exact HOL `set_var_def` (`loopSemScript.sml:108-111`):
-    `set_var v x s = s with locals := insert v x s.locals`. -/
-@[hol "cakeml/pancake/semantics/loopSemScript.sml" "set_var_def" (words_as_type_indexed_bitvec)]
+    `set_var v x s = s with locals := insert v x s.locals`. `locals` is the
+    exact `num_map`; the full state carrier's sole `|->` field, `globals`, is
+    recorded by the finite-support qualifier and canonical witness. -/
+@[hol "cakeml/pancake/semantics/loopSemScript.sml" "set_var_def"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 def setVar {width : Nat} [NeZero width] {F : Type}
     (name : Nat) (value : WordLocW width) (state : LoopSemStateFiniteExact width F) :
     LoopSemStateFiniteExact width F :=
@@ -286,8 +293,12 @@ def sptAlistInsert {α : Type} : List Nat → List α → Spt α → Spt α
   | v :: vs, x :: xs, t => sptInsert v x (sptAlistInsert vs xs t)
 
 /-- Exact HOL `set_vars_def` (`loopSemScript.sml:113-116`):
-    `set_vars vs xs s = s with locals := alist_insert vs xs s.locals`. -/
-@[hol "cakeml/pancake/semantics/loopSemScript.sml" "set_vars_def" (words_as_type_indexed_bitvec)]
+    `set_vars vs xs s = s with locals := alist_insert vs xs s.locals`. The
+    `locals` map remains the exact `num_map`; the full state carrier's only
+    `|->` field `globals` is recorded by the finite-support qualifier and
+    canonical witness. -/
+@[hol "cakeml/pancake/semantics/loopSemScript.sml" "set_vars_def"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 def setVars {width : Nat} [NeZero width] {F : Type}
     (names : List Nat) (values : List (WordLocW width)) (state : LoopSemStateFiniteExact width F) :
     LoopSemStateFiniteExact width F :=
@@ -301,8 +312,12 @@ def sptFromList {α : Type} (values : List α) : Spt α :=
     (0, .ln)).2
 
 /-- Exact HOL `call_env_def` (`loopSemScript.sml:177-180`):
-    `call_env args s = s with locals := fromList args`. -/
-@[hol "cakeml/pancake/semantics/loopSemScript.sml" "call_env_def" (words_as_type_indexed_bitvec)]
+    `call_env args s = s with locals := fromList args`. The replacement is
+    the exact `num_map` `fromList` rendering; the full state carrier's sole
+    `|->` field `globals` is recorded by the finite-support qualifier and
+    canonical witness. -/
+@[hol "cakeml/pancake/semantics/loopSemScript.sml" "call_env_def"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 def callEnv {width : Nat} [NeZero width] {F : Type}
     (arguments : List (WordLocW width)) (state : LoopSemStateFiniteExact width F) :
     LoopSemStateFiniteExact width F :=
