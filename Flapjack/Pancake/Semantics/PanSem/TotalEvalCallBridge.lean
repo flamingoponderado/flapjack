@@ -644,4 +644,198 @@ theorem panSemTotalEvaluate_call_agree {σ : Type}
                 simp only [hb, heq]
                 exact ⟨⟨rfl, rfl⟩, hempty⟩
 
+/-- Production/exact agreement for the `DecCall` constructor, sharing the
+    argument, lookup, clock and call-entry steps of
+    `panSemTotalEvaluate_call_agree`.  A `Return` value is bound to the declared
+    name when its shape matches both the declared and the callee's return shape
+    (production tests declared-vs-return, HOL value-vs-return; they agree once the
+    first conjunct holds), the continuation runs under `ihContinuation`, and the
+    old binding is restored with `res_var`.  Other results are handled as in
+    `Call`.  `hcode` and `hcallee` are the same `.77.2.15` rangedness premises. -/
+theorem panSemTotalEvaluate_decCall_agree {σ : Type}
+    (primitive : PanPrimitiveHandler (RiscV.Word 64))
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ)
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (hranged : PanSemStateRelExecRanged production)
+    (resultName : MlS) (shape : ShapeHOL) (function : MlS) (arguments : List (ExpHOL 64))
+    (continuation : ProgHOL 64)
+    (hcode : ∀ entry, panSemCodeLookup production.code (toStringOfBytes function) =
+      some entry → PanLangEntryByteRanged entry)
+    (hcallee : ∀ values callee newLocals returnShape,
+      panSemTotalCodeLookup production (toStringOfBytes function) values =
+        some (callee, newLocals, returnShape) →
+      PanSemStateRelExecRanged (panSemTotalEvaluate primitive callee
+          { production with clock := production.clock - 1, locals := newLocals }).2 ∧
+        PanSemHOLResultRanged (panSemTotalEvaluate primitive callee
+          { production with clock := production.clock - 1, locals := newLocals }).1)
+    (ihCallee : ∀ (program : ProgHOL 64)
+        (production' : PanSemState (RiscV.Word 64) (FfiState σ))
+        (exact' : PanSemStateFiniteExact 64 σ),
+        PanSemStateRelExec production' exact'.toExact →
+        PanSemStateRelExecRanged production' →
+        production'.clock < production.clock →
+        PanSemTotalAgreeAt primitive (progOfHOL program) program production' exact')
+    (ihContinuation : ∀ (production' : PanSemState (RiscV.Word 64) (FfiState σ))
+        (exact' : PanSemStateFiniteExact 64 σ),
+        PanSemStateRelExec production' exact'.toExact →
+        PanSemStateRelExecRanged production' →
+        PanSemTotalAgreeAt primitive (progOfHOL continuation) continuation production' exact') :
+    PanSemTotalAgreeAt primitive
+      (progOfHOL (.decCall resultName shape function arguments continuation))
+      (.decCall resultName shape function arguments continuation) production exact := by
+  letI : DecidablePred exact.memaddrs := fun a => Classical.propDecidable _
+  have hargs : Option.map (List.map panValueToHOL)
+      (evalPanSemStateExps production (arguments.map expOfHOL)) =
+      exact.evalListHOLFinite arguments := by
+    rw [evalPanSemStateExps_64_eq_previous]
+    unfold evalPanValueExps
+    have h := evalPanValueExps_eq_evalListHOLExact_of production.structs production.locals
+      production.globals production.memory production.baseAddress production.topAddress
+      panSemBitVec64BytesInWord (some (panSemBitVec64MemoryAccess production)) exact
+      (arguments.map expOfHOL) (fun e he => by
+        obtain ⟨e', _, rfl⟩ := List.mem_map.mp he
+        exact evalPanValueExp_agree production exact hrel hranged _
+          (expOfHOL_byteRanged_bridge e'))
+    simpa [List.map_map, Function.comp_def, expToHOL_expOfHOL] using h
+  have hck : exact.clock = production.clock := hrel.2.2.2.2.2.2.2.2.1
+  have hfnRanged := nameRanged_toStringOfBytes_bridge function
+  simp only [PanSemTotalAgreeAt]
+  rw [progOfHOL, panSemTotalEvaluate, evaluateHOLFiniteState_decCall_fixClockRewrite]
+  cases hev : evalPanSemStateExps production (arguments.map expOfHOL) with
+  | none =>
+      rw [hev] at hargs
+      simp only [Option.map_none] at hargs
+      rw [← hargs]
+      exact ⟨trivial, hrel⟩
+  | some values =>
+      rw [hev] at hargs
+      simp only [Option.map_some] at hargs
+      rw [← hargs]
+      dsimp only
+      have hvals := evalPanSemStateExps_byteRanged production hranged _
+        (fun e he => by
+          obtain ⟨e', _, rfl⟩ := List.mem_map.mp he
+          exact expOfHOL_byteRanged_bridge e') values hev
+      have hlk := panSemTotalCodeLookup_agree production exact hrel function values hvals hcode
+      have hcal := hcallee values
+      revert hlk hcal
+      cases hp : panSemTotalCodeLookup production (toStringOfBytes function) values <;>
+        cases he : lookupCodeHOLFinite exact.code.lookup function (values.map panValueToHOL) <;>
+        intro hlk hcal
+      · exact ⟨trivial, hrel⟩
+      · exact hlk.elim
+      · exact hlk.elim
+      · rename_i pentry eentry
+        obtain ⟨callee, newLocals, returnShape⟩ := pentry
+        obtain ⟨body, calleeLocals, exactShape⟩ := eentry
+        obtain ⟨rfl, rfl, hbodyR, hrsR, hlocals, hlocalsR⟩ := hlk
+        obtain ⟨hpostR, hresR⟩ := hcal callee newLocals returnShape rfl
+        simp only [hck]
+        by_cases hz : production.clock = 0
+        · simp only [hz, if_true]
+          exact ⟨trivial, by
+            simpa only [panEmptyLocals, toExact_emptyLocalsHOLFinite] using
+              PanSemStateRelExec.emptyLocals hrel⟩
+        simp only [hz, if_false]
+        have hentryRel := PanSemStateRelExec.callEntry hrel newLocals calleeLocals hlocals
+        have hentryR : PanSemStateRelExecRanged
+            { production with clock := production.clock - 1, locals := newLocals } :=
+          ⟨hlocalsR, hranged.2.1, hranged.2.2⟩
+        have hih := ihCallee (progToHOL callee) _ _ hentryRel hentryR (by simp; omega)
+        rw [progOfHOL_progToHOL callee hbodyR] at hih
+        obtain ⟨hres, hst⟩ := hih
+        have hle := evaluateHOLFiniteState_clock_le (callEntryStateHOLFinite exact calleeLocals)
+          (progToHOL callee)
+        have hfix : PanSemStateRelExec
+            (panSemFixClock (production.clock - 1) (panSemTotalEvaluate primitive callee
+              { production with clock := production.clock - 1, locals := newLocals }).2)
+            (evaluateHOLFiniteState (callEntryStateHOLFinite exact calleeLocals)
+              (progToHOL callee)).2.toExact := by
+          have h := PanSemStateRelExec.fixClock (production.clock - 1) hst
+          have hc : min (production.clock - 1) (evaluateHOLFiniteState
+              (callEntryStateHOLFinite exact calleeLocals) (progToHOL callee)).2.clock =
+              (evaluateHOLFiniteState (callEntryStateHOLFinite exact calleeLocals)
+                (progToHOL callee)).2.clock := by
+            have hce : (callEntryStateHOLFinite exact calleeLocals).clock =
+                production.clock - 1 := by
+              simp [callEntryStateHOLFinite, hck]
+            rw [hce] at hle
+            omega
+          simpa only [toExact, hc] using h
+        have hfixR := hpostR.setClock (min (production.clock - 1) (panSemTotalEvaluate primitive
+          callee { production with clock := production.clock - 1, locals := newLocals }).2.clock)
+        generalize panSemTotalEvaluate primitive callee
+          { production with clock := production.clock - 1, locals := newLocals } = P
+          at hres hfix hfixR hresR ⊢
+        generalize evaluateHOLFiniteState (callEntryStateHOLFinite exact calleeLocals)
+          (progToHOL callee) = E at hres hfix ⊢
+        have hempty : PanSemStateRelExec (panEmptyLocals (panSemFixClock (production.clock - 1) P.2))
+            (emptyLocalsHOLFinite E.2).toExact := by
+          simpa only [panEmptyLocals, toExact_emptyLocalsHOLFinite] using
+            PanSemStateRelExec.emptyLocals hfix
+        rcases P with ⟨_ | r, p⟩ <;> rcases E with ⟨_ | e, q⟩
+        · exact ⟨trivial, hfix⟩
+        · exact hres.elim
+        · exact hres.elim
+        · cases r <;> cases e <;> simp only [PanSemHOLResultOptionRel, PanSemHOLResultRel] at hres <;>
+            dsimp only
+          all_goals first
+            | exact ⟨trivial, hfix⟩
+            | exact ⟨trivial, hempty⟩
+            | exact ⟨hres, hempty⟩
+            | skip
+          -- `Return`
+          rename_i v v'
+          subst hres
+          have hvR : PanValueByteRanged v := hresR
+          have hshapeExact : shapeOfHOLExact (panValueToHOL v) =
+              shapeToHOL (panSemShapeOf v) := by
+            rw [shapeOfHOLExact_panValueToHOL production.structs v,
+              panValueShape_eq_panSemShapeOf_tagged production.structs v]
+          have hshR : ShapeByteRanged (panSemShapeOf v) := by
+            have h := panValueShape_byteRanged production.structs v hvR
+            rwa [panValueShape_eq_panSemShapeOf_tagged production.structs v] at h
+          have hdeclR := shapeOfHOL_byteRanged_bridge shape
+          have hm1 : panShapeMatches (shapeOfHOL shape) (panSemShapeOf v) =
+              shapeEqHOL (shapeOfHOLExact (panValueToHOL v)) shape := by
+            rw [panShapeMatches_comm, hshapeExact,
+              panShapeMatches_eq_shapeEqHOL _ _ hshR hdeclR, shapeToHOL_shapeOfHOL]
+          have hm2 : panShapeMatches (panSemShapeOf v) returnShape =
+              shapeEqHOL (shapeOfHOLExact (panValueToHOL v)) (shapeToHOL returnShape) := by
+            rw [hshapeExact]
+            exact panShapeMatches_eq_shapeEqHOL _ _ hshR hrsR
+          have hcond : (panShapeMatches (shapeOfHOL shape) (panSemShapeOf v) &&
+              panShapeMatches (shapeOfHOL shape) returnShape) =
+              (shapeEqHOL (shapeOfHOLExact (panValueToHOL v)) shape &&
+                shapeEqHOL (shapeOfHOLExact (panValueToHOL v)) (shapeToHOL returnShape)) := by
+            rw [← hm1, ← hm2]
+            cases h1 : panShapeMatches (shapeOfHOL shape) (panSemShapeOf v)
+            · rfl
+            · have heq : shapeOfHOL shape = panSemShapeOf v := (panShapeMatches_eq_true _ _).mp h1
+              simp only [Bool.true_and, heq]
+          rw [← hcond]
+          by_cases hok : (panShapeMatches (shapeOfHOL shape) (panSemShapeOf v) &&
+              panShapeMatches (shapeOfHOL shape) returnShape) = true
+          · simp only [hok, if_true]
+            have hn := nameRanged_toStringOfBytes_bridge resultName
+            have hstate := PanSemStateRelExec.updateLocals
+              (PanSemStateRelExec.restoreLocals hfix hrel) (toStringOfBytes resultName) hn v
+            rw [ofString_toStringOfBytes] at hstate
+            have hstateR := PanSemStateRelExecRanged.updateLocals
+              (PanSemStateRelExecRanged.restoreLocals hfixR hranged) (toStringOfBytes resultName) v hvR
+            obtain ⟨hcres, hcst⟩ := ihContinuation _ _ hstate hstateR
+            refine ⟨hcres, ?_⟩
+            have hold : Option.map panValueToHOL (production.locals (toStringOfBytes resultName)) =
+                exact.locals.lookup resultName := by
+              have h := hrel.1 (toStringOfBytes resultName) hn
+              rw [ofString_toStringOfBytes] at h
+              exact h
+            have hrestore := PanSemStateRelExec.resVarLocals hcst (toStringOfBytes resultName) hn
+              (production.locals (toStringOfBytes resultName))
+            rw [ofString_toStringOfBytes, hold] at hrestore
+            exact hrestore
+          · simp only [hok]
+            exact ⟨trivial, hfix⟩
+
 end Flapjack
