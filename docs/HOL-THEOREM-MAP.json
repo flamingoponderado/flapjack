@@ -15059,18 +15059,24 @@
     "hol_name": "cut_state_def",
     "lean_path": "Flapjack/Pancake/Semantics/LoopSemStateExact.lean",
     "lean_name": "cutState",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 (source comparison; bead flapjack-pxgp.2): HOL cut_state_def (loopSemScript.sml:182-187) is cut_state live s = if domain live SUBSET domain s.locals then SOME (s with locals := inter s.locals live) else NONE. The Lean declaration is the exact rendering over LoopSemStateFiniteExact: the live set is the exact Spt num_set carrier NumSet, `inter` is the heterogeneous sptInter (left operand's values win, left type retained), and `domain live SUBSET domain s.locals` is rendered as the pointwise sptMem implication sptSubsetLive (the project's predicate rendering of HOL sets, cf. sptDomain/sptMem). No extra hypotheses beyond [NeZero width]; the guard is a finite-set inclusion so the definition is the classical (noncomputable) rendering; the production executable counterpart is Flapjack.cutLoopState. The tag carries (words_as_type_indexed_bitvec): the only carrier difference from HOL is the type-indexed 'a word in LoopSemStateFiniteExact/WordLocW, rendered as the positive BitVec width with [NeZero width]. sptree$num_map is not a |-> finite map, so no finite-map qualifier applies."
+    "reviewer": "flapjack-luna-b source comparison (2026-09-28; bead flapjack-up10.4): HOL cut_state_def (loopSemScript.sml:182-187) accepts when domain live SUBSET domain s.locals, then returns SOME with locals := inter s.locals live, else NONE. Lean uses the exact Spt NumSet, heterogeneous sptInter, and predicate rendering sptSubsetLive for that domain inclusion; the same HOL set/num_set handling is retained. The production executable counterpart remains Flapjack.cutLoopState. Although locals is an sptree num_map, the full state carrier has globals as its sole |-> field, represented by HolFiniteMapExact with same-module canonical witness. The finite-map qualifier records only that field; words_as_type_indexed_bitvec records the separate width translation. No statement change."
   },
   {
     "hol_path": "cakeml/pancake/semantics/loopSemScript.sml",
     "hol_name": "cut_res_def",
     "lean_path": "Flapjack/Pancake/Semantics/LoopSemStateExact.lean",
     "lean_name": "cutRes",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds9 (source comparison; bead flapjack-pxgp.2): HOL cut_res_def (loopSemScript.sml:189-197) is cut_res live (res,s) = if res <> NONE then (res,s) else case cut_state live s of NONE => (SOME Error,s) | SOME s => if s.clock = 0 then (SOME TimeOut, s with locals := LN) else (res, dec_clock s). The Lean declaration matches clause-for-clause over the exact LoopResultExact result carrier and LoopSemStateFiniteExact state, with cutState and decClock (tagged dec_clock_def); the SOME branch rebinds s to the cut state and res is NONE there, so the final branch returns (none, decClock cut). No extra hypotheses beyond [NeZero width]; the classical rendering is inherited from cutState. The tag carries (words_as_type_indexed_bitvec) for the same type-indexed 'a word translation."
+    "reviewer": "flapjack-luna-b source comparison (2026-09-28; bead flapjack-up10.4): HOL cut_res_def (loopSemScript.sml:189-197) preserves a non-NONE result/state pair; on NONE it reports Error if cut_state fails, TimeOut and empty locals when the cut state clock is zero, otherwise NONE with dec_clock of the cut state. Lean has the same branches over LoopResultExact/LoopSemStateFiniteExact, with the same cutState and decClock definitions and no added hypotheses. The full state carrier's globals |-> field is HolFiniteMapExact with same-module canonical witness; the qualifier records only that representation, while words_as_type_indexed_bitvec records the separate width translation. No statement change."
   },
   {
     "hol_path": "cakeml/pancake/semantics/loopSemScript.sml",

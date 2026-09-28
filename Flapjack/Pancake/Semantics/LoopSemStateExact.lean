@@ -553,9 +553,11 @@ instance sptSubsetLiveDecidable {α β : Type} (left : Spt α) (right : Spt β) 
     restricted local map uses the heterogeneous `sptInter`.  The guard is a
     finite-set inclusion decided by the computable `sptSubsetAux` enumeration
     (`sptSubsetLiveDecidable`), so the definition is executable; the production
-    executable counterpart is `Flapjack.cutLoopState`. -/
+    executable counterpart is `Flapjack.cutLoopState`. The full state carrier's
+    sole `|->` field `globals` is recorded by the finite-support qualifier and
+    same-module canonical witness. -/
 @[hol "cakeml/pancake/semantics/loopSemScript.sml" "cut_state_def"
-  (words_as_type_indexed_bitvec)]
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 def cutState {width : Nat} [NeZero width] {F : Type} (live : NumSet)
     (state : LoopSemStateFiniteExact width F) :
     Option (LoopSemStateFiniteExact width F) :=
@@ -617,9 +619,10 @@ theorem cutState_some_frame {width : Nat} [NeZero width] {F : Type}
     | SOME s => if s.clock = 0 then (SOME TimeOut, s with locals := LN)
                 else (res, dec_clock s)`.  The `SOME` branch rebinds `s` to the
     cut state and `res` is `NONE`, so the final branch returns
-    `(NONE, dec_clock cut)`. -/
+    `(NONE, dec_clock cut)`. The state carrier's `globals` `|->` field is
+    recorded by the finite-support qualifier and same-module canonical witness. -/
 @[hol "cakeml/pancake/semantics/loopSemScript.sml" "cut_res_def"
-  (words_as_type_indexed_bitvec)]
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 def cutRes {width : Nat} [NeZero width] {F : Type} (live : NumSet)
     (step : Option (LoopResultExact width) × LoopSemStateFiniteExact width F) :
     Option (LoopResultExact width) × LoopSemStateFiniteExact width F :=
