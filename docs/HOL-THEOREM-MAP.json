@@ -18397,8 +18397,6 @@
   },
   {
     "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
-  {
-    "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
     "hol_name": "comp_func_def",
     "lean_path": "Flapjack/Pancake/CrepToLoop/ContextExact.lean",
     "lean_name": "compFuncHOLExact",
@@ -18421,7 +18419,7 @@
       "funcs"
     ],
     "words_as_type_indexed_bitvec": true
-  }  },
+  },
   {
     "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
     "hol_name": "compile_exp_def",
