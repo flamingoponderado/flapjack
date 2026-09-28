@@ -4851,7 +4851,6 @@ section GlobalsShapesInvariant
 
 set_option maxHeartbeats 4000000
 set_option backward.isDefEq.respectTransparency false
-set_option linter.unusedSimpArgs false
 
 /-- HOL `panPropsScript.sml:1183` `evaluate_global_shape_invariant` lifted to the exact
 PanSem recursive evaluator: the full-program evaluation preserves the global shape map.
@@ -4869,21 +4868,13 @@ theorem evalPanSemRecursiveCallFiniteContext_globalsShapesInvariant {width : Nat
     (try (simp only [FiniteEvalContext.withState_state] at *))
     (try (rename_i ihA; simp only [ihA _ _ (by assumption)] at *))
     (try (rename_i ihB; simp only [ihB _ _ (by assumption)] at *))
-    (try (simp only [globalsShapes_setLocals, globalsShapes_fixClockHOLFinite,
-      globalsShapes_emptyLocalsHOLFinite, globalsShapes_callEntryStateHOLFinite,
-      globalsShapes_handlerStateHOLFinite, globalsShapes_callContinuationContextHOLFinite,
-      globalsShapes_decClockHOLFinite, globalsShapes_setVarHOLFinite] at *))
+    (try (simp only [globalsShapes_setLocals, globalsShapes_emptyLocalsHOLFinite,
+      globalsShapes_decClockHOLFinite] at *))
     (try rfl)
     (try assumption)
     (try (dsimp (config := { zeta := true }) at *))
     (try assumption)
-    (try (simp_all [globalsShapes_setLocals, globalsShapes_fixClockHOLFinite,
-      globalsShapes_emptyLocalsHOLFinite, globalsShapes_callEntryStateHOLFinite,
-      globalsShapes_handlerStateHOLFinite, globalsShapes_callContinuationContextHOLFinite,
-      globalsShapes_decClockHOLFinite, globalsShapes_setVarHOLFinite,
-      globalsShapes_ofExact_eq_globalsShapesExact, globalsShapes_eq_globalsShapesExact_toExact,
-      shMemLoadClauseHOLExact_globalsShapesExact, shMemStoreClauseHOLExact_globalsShapesExact,
-      globalsShapes_setKvarHOLFinite_of_globalsShapes, isValidValueHOLExact_global_shape_finite]))
+    (try (simp_all [globalsShapes_eq_globalsShapesExact_toExact]))
     (try (dsimp (config := { zeta := true }) at *))
     (try assumption)
 
@@ -4929,6 +4920,9 @@ this is that statement (curried, `FLOOKUP` as `lookup`, `shape_of` as `shapeOfHO
 type-indexed `'a word` / `'ffi` translation, obtained by lifting the delivered recursive
 `evalPanSemRecursiveCallFiniteContext_globalsShapesInvariant` through
 `evalPanSemRecursiveCallFiniteContext_of_evaluateHOLFiniteState`. -/
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_global_shape_invariant"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem evaluateHOLFiniteState_global_shape_invariant {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) (program : ProgHOL width)
     (res : Option (PanSemResultExact width)) (st : PanSemStateFiniteExact width σ)

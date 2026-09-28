@@ -16223,4 +16223,15 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-a source comparison (2026-09-28; bead flapjack-4ac.4.61) against panPropsScript.sml:1150-1158 and panSemScript.sml:693-718, 729-737. This is the genuine DecCall induction case. It retains the source evaluator result/post pair equation, the dynamic callee-body IH and continuation IH only at lower-clock states, and exactly the eight HOL field conclusions. The HOL clause evaluates the body at dec_clock s with looked-up locals, applies fix_clock, runs the continuation only after a Return value matches both requested and declared shapes, then restores the caller's result binding. NONE/Break/Continue and mismatched shapes return Error with the fixed state; other results clear locals. The lower-clock premises follow from the decrement and fix_clock bound. Lean uses evaluateHOLFiniteState_decCall_total over the checked finite-support PanProps carrier and indexed-word model; no branch selector or simplified evaluator premise is added. Call and the assembling theorem remain open."
   }
+,
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "evaluate_global_shape_invariant",
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/StateExactFiniteMap.lean",
+    "lean_name": "evaluateHOLFiniteState_global_shape_invariant",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code", "eshapes"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "ds10 source comparison (2026-09-28; bead flapjack-4ac.4.62.3) against panPropsScript.sml:1183-1204. HOL evaluate_global_shape_invariant states evaluate (p,s) = (res,st) && FLOOKUP s.globals n = SOME v ==> ?v'. FLOOKUP st.globals n = SOME v' && shape_of v' = shape_of v. The Lean statement is that shape with FLOOKUP as HolFiniteMapExact.lookup (state.globals.lookup), shape_of as shapeOfHOLExact, and the top-level finite evaluator evaluateHOLFiniteState in place of HOL evaluate; it is obtained by lifting the reviewed recursive evalPanSemRecursiveCallFiniteContext_globalsShapesInvariant through evalPanSemRecursiveCallFiniteContext_of_evaluateHOLFiniteState. Finite maps locals/globals/code/eshapes use the canonical HolFiniteMapExact translation (same-module owner PanSemStateFiniteExact with holFmapAsFiniteSupportWitness); the type-indexed 'a word is BitVec width (RiscV.Word width fields under [NeZero width]) and 'ffi is a universe-0 Type. The top-level exact evaluate_def port remains open under flapjack-qj5."
+  }
 ]
