@@ -25,6 +25,7 @@ import Flapjack.Pancake.CrepLang.Exp
 import Flapjack.Pancake.CrepLang.Prog
 import Flapjack.Pancake.CrepToLoop
 import Flapjack.Pancake.CrepToLoop.ContextExact
+import Flapjack.Pancake.CrepToLoop.Optimise
 import Flapjack.Pancake.CrepToLoop.Proofs.AssignedVars
 import Flapjack.Pancake.CrepToLoop.Proofs.SurvivesMapiAssign
 import Flapjack.Pancake.CrepToLoop.Proofs.CompExpTmpBound
@@ -38,6 +39,7 @@ import Flapjack.Pancake.CrepToLoop.StateRel
 import Flapjack.Pancake.LoopLang.AssignedVars
 import Flapjack.Pancake.Semantics.LoopProps.AssignedVars
 import Flapjack.Pancake.Semantics.LoopProps.CutSets
+import Flapjack.Pancake.Semantics.LoopProps.CompSyntaxOk
 import Flapjack.Pancake.PanCommon
 import Flapjack.Pancake.PanGlobals
 import Flapjack.Pancake.PanGlobals.CompileExpExact
