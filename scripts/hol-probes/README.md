@@ -38,9 +38,20 @@ respectively
 additionally probes `pan_op_def` at lines 191--193.
 `Flapjack.Test.LoopSetVarParity` probes `set_var_def` at
 `cakeml/pancake/semantics/loopSemScript.sml:108-110`.
+`Flapjack.Test.LoopPropsCutSetsParity` guards the exact `cut_sets_def`
+clauses over `HolLoopProg`/`NumSet`; its direct HOL outputs for Skip,
+LocValue, Assign, Load32/LoadByte, Seq, If, each Arith variant, and the
+catch-all are in `scripts/hol-probes/loop_props_cut_sets_probe.out`.
 `Flapjack.Test.LoopDecClockParity` probes `dec_clock_def` at lines 42--43 of
 the same source.
 `Flapjack.Test.LoopFixClockParity` probes `fix_clock_def` at lines 46--49.
+`loop_props_survives_probe.out` records direct HOL EVAL rows for every clause
+of `survives_def` in `cakeml/pancake/semantics/loopPropsScript.sml:25-38`:
+If/Loop/Call (both handler forms)/FFI domain membership, recursive Mark and
+Seq, and the catch-all case. The exact width-indexed `HolLoopProg` port
+`survivesHOLExact` is in `Flapjack.Pancake.Semantics.LoopProps`; its replay
+guards are in `Flapjack.Test.LoopPropsSurvivesParity`. Refresh with
+`HOL_PROBE_ONLY=loop_props_survives_probeScript.sml scripts/hol-probes/regenerate.sh`.
 `Flapjack.Test.PanEvaluateDeclsParity` probes `evaluate_decls_def` at
 `cakeml/pancake/semantics/panSemScript.sml:814-835`, including each declaration
 constructor, ordered global updates, local clearing during initializer
@@ -601,11 +612,43 @@ mapped return, and handler. Its exact-carrier Lean equations are in
 `Flapjack.Test.CrepToLoopCompileExactParity`. The compiler is still proof-side;
 the production `CrepProg`/`LoopProg` path does not yet use the exact carriers,
 and a separate production bridge remains required.
+`crep_to_loop_ocompile_probe.out` records direct HOL EVAL rows for
+`ocompile_def` at `cakeml/pancake/crep_to_loopScript.sml:216-219`, which
+composes `compile` and `loop_live$optimise`. The six rows cover `Skip`, `Tick`,
+`Assign`, `Primitive`, `Return`, and a `Call` with a mapped label, mapped
+return, and exception handler. The exact width-indexed Lean port
+`ocompileHOLExact` in `Flapjack.Pancake.CrepToLoop.ContextExact` is replayed
+against those rows by `Flapjack.Test.CrepToLoopOcompileHOLParity`. Refresh with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=crep_to_loop_ocompile_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
 The original Pancake source-level support boundary is also explicit in
 `cakeml/pancake/proofs/loop_to_wordProofScript.sml:2285-2291`: `LLongDiv` is
 accepted by `loop_inst_ok` only for `x86_64`. Consequently, RISC-V parity must
 port the `data_to_word` helper path rather than add a direct RISC-V lowering
 for source `LLongDiv`.
+`crep_to_loop_locals_rel_probe.out` records direct observations for
+`locals_rel_def` at `cakeml/pancake/proofs/crep_to_loopProofScript.sml:101-111`.
+HOL `crepLang$varname = num` (`crepLangScript.sml:19`), so the context's `vars`
+is a `num |-> num` finite map; the fixture uses a `num`-keyed `vars`
+(`0 |-> 2`), a two-member `num_set`, and a nonempty `num_map`. Besides atomic
+component rows, it decides the whole relation on a concrete context/locals
+pair by kernel-checked proof (`prove` with a `rw`/`fs`/`EVAL_TAC` tactic) since
+the relation is universally quantified over `num`: `locals_rel_true=T` is
+proved, and `locals_rel_domain_false=F` / `locals_rel_value_false=F` report the
+relation's truth value only after the kernel proof of its negation succeeds.
+The exact-carrier Lean counterparts are `Flapjack.CrepToLoop.crepToLoopLocalsRelExact`
+(tagged `locals_rel_def`) with the kernel-checked examples in
+`Flapjack.Test.CrepToLoopParity`.
+
+The same probe also records cut-set rows for
+`crep_to_loopProofScript.sml:236-244` `locals_rel_cutset_prop`: `lBig` / `tBig`
+extend the fixture set / target map with an extra member (`cutset_set_lookup`,
+`cutset_target_lookup`), and the direct kernel-decided rows
+`locals_rel_cutset_second_true=T` (the strengthened second relation) and
+`locals_rel_cutset_after_true=T` (the relation restricted to the smaller
+cut-set) pin the HOL conclusion shape. The exact-carrier counterpart is the
+tagged `Flapjack.CrepToLoop.crepToLoopLocalsRelExact_cutset_prop`, whose
+`subspt` premise is rendered by `Flapjack.sptSubspt` (see
+`Flapjack/Misc/Sptree.lean`).
 
 `pan_globals_mem_functions_probe.out` records direct HOL EVAL of the
 `panLang$functions` projection and the membership instance characterized by the

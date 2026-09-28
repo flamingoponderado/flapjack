@@ -1786,4 +1786,142 @@ mutual
     all_goals omega
 end
 
+/-- Exact HOL `loop_live$mark_all` (`cakeml/pancake/loop_liveScript.sml:189-215`)
+over `HolLoopProg width`.  Runs after `shrinkHOL`; returns the rewritten program
+and a Boolean flag recording whether the program is a `Mark`-able compound.  The
+final catch-all clause mirrors HOL's `mark_all prog = (Mark prog, T)`. -/
+@[hol "cakeml/pancake/loop_liveScript.sml" "mark_all_def" (words_as_type_indexed_bitvec)]
+def markAllHOL {width : Nat} [NeZero width] : HolLoopProg width → HolLoopProg width × Bool
+  | .seq first second =>
+      let (first', firstMarked) := markAllHOL first
+      let (second', secondMarked) := markAllHOL second
+      let marked := firstMarked && secondMarked
+      (if marked then .mark (.seq first' second') else .seq first' second', marked)
+  | .loop liveIn body liveOut =>
+      let (body', _) := markAllHOL body
+      (.loop liveIn body' liveOut, false)
+  | .ite operator condition right thenBranch elseBranch live =>
+      let (then', thenMarked) := markAllHOL thenBranch
+      let (else', elseMarked) := markAllHOL elseBranch
+      let marked := thenMarked && elseMarked
+      let program := .ite operator condition right then' else' live
+      (if marked then .mark program else program, marked)
+  | .mark body => markAllHOL body
+  | .call returns target arguments none =>
+      (.mark (.call returns target arguments none), true)
+  | .call returns target arguments (some (exception, handler, normal, liveOut)) =>
+      let (handler', handlerMarked) := markAllHOL handler
+      let (normal', normalMarked) := markAllHOL normal
+      let marked := handlerMarked && normalMarked
+      let program :=
+        .call returns target arguments (some (exception, handler', normal', liveOut))
+      (if marked then .mark program else program, marked)
+  | program => (.mark program, true)
+
+/-- Exact HOL `loop_live$comp` (`cakeml/pancake/loop_liveScript.sml:217-219`):
+`comp prog = FST (mark_all (FST (shrink [] prog LN)))` over `HolLoopProg width`. -/
+@[hol "cakeml/pancake/loop_liveScript.sml" "comp_def" (words_as_type_indexed_bitvec)]
+def compHOL {width : Nat} [NeZero width] (prog : HolLoopProg width) : HolLoopProg width :=
+  (markAllHOL (shrinkHOL [] prog .ln).1).1
+
+/-! ## Call optimisation (`loop_call$comp`) and `optimise` -/
+
+/-- Exact port of HOL `loop_call$comp` (`cakeml/pancake/loop_callScript.sml:18-98`).
+The live map is `num |-> num` (a `Spt Nat`), matching HOL: `LocValue` inserts a
+number value, so the map value type is `num` (HOL `num_set = unit spt` is a
+different, unrelated map).  Untagged? No: the HOL declaration is `comp_def` in
+`cakeml/pancake/loop_callScript.sml`. -/
+@[hol "cakeml/pancake/loop_callScript.sml" "comp_def" (words_as_type_indexed_bitvec)]
+def loopCallCompHOL {width : Nat} [NeZero width] (l : Spt Nat) :
+    HolLoopProg width → HolLoopProg width × Spt Nat
+  | .skip => (.skip, l)
+  | .call returns target arguments handler =>
+      let compiled :=
+        match target with
+        | some _ => .call returns target arguments handler
+        | none =>
+            match arguments.getLast? with
+            | none => .skip
+            | some last =>
+                match sptLookup last l with
+                | none => .call returns none arguments handler
+                | some n => .call returns (some n) arguments.dropLast handler
+      (compiled, .ln)
+  | .locValue destination source =>
+      (.locValue destination source, sptInsert destination source l)
+  | .assign name (.var m) =>
+      (.assign name (.var m),
+        match sptLookup name l, sptLookup m l with
+        | none, none => l
+        | some _, none => sptDelete name l
+        | _, some loc => sptInsert name loc l)
+  | .assign name value =>
+      (.assign name value,
+        match sptLookup name l with
+        | none => l
+        | some _ => sptDelete name l)
+  | .shMem operator name address => (.shMem operator name address, .ln)
+  | .load32 address destination =>
+      (.load32 address destination,
+        match sptLookup destination l with
+        | none => l
+        | some _ => sptDelete destination l)
+  | .loadByte address destination =>
+      (.loadByte address destination,
+        match sptLookup destination l with
+        | none => l
+        | some _ => sptDelete destination l)
+  | .seq first second =>
+      let (np, nl) := loopCallCompHOL l first
+      let (nq, _) := loopCallCompHOL nl second
+      (.seq np nq, .ln)
+  | .ite operator condition right thenBranch elseBranch live =>
+      let (np, _) := loopCallCompHOL l thenBranch
+      let (nq, _) := loopCallCompHOL l elseBranch
+      (.ite operator condition right np nq live, .ln)
+  | .loop liveIn body liveOut =>
+      let (np, _) := loopCallCompHOL .ln body
+      (.loop liveIn np liveOut, .ln)
+  | .mark body =>
+      let (np, nl) := loopCallCompHOL l body
+      (.mark np, nl)
+  | .ffi function configuration configurationLength array arrayLength live =>
+      (.ffi function configuration configurationLength array arrayLength live, .ln)
+  | .tick => (.tick, .ln)
+  | .raise exception => (.raise exception, .ln)
+  | .return values => (.return values, .ln)
+  | .primitive destinations operator arguments =>
+      (.primitive destinations operator arguments, sptListDelete destinations l)
+  | .arith operation =>
+      (.arith operation,
+        match operation with
+        | .longMul destinationLeft destinationRight _ _ =>
+            match sptLookup destinationLeft l, sptLookup destinationRight l with
+            | none, none => l
+            | some _, none => sptDelete destinationLeft l
+            | none, some _ => sptDelete destinationRight l
+            | _, _ => sptDelete destinationLeft (sptDelete destinationRight l)
+        | .longDiv destinationLeft destinationRight _ _ _ =>
+            match sptLookup destinationLeft l, sptLookup destinationRight l with
+            | none, none => l
+            | some _, none => sptDelete destinationLeft l
+            | none, some _ => sptDelete destinationRight l
+            | _, _ => sptDelete destinationLeft (sptDelete destinationRight l)
+        | .div destination _ _ =>
+            match sptLookup destination l with
+            | none => l
+            | some _ => sptDelete destination l)
+  | program => (program, l)
+termination_by prog => sizeOf prog
+decreasing_by
+  all_goals decreasing_trivial
+
+/-- Exact port of HOL `loop_live$optimise` (`cakeml/pancake/loop_liveScript.sml:221-223`):
+`optimise prog = (comp o FST o loop_call$comp LN) prog`.  Here `comp` is the
+loop_live `comp` (already ported as `compHOL`), and the `loop_call$comp` map is
+the empty `num |-> num` (`Spt Nat`). -/
+@[hol "cakeml/pancake/loop_liveScript.sml" "optimise_def" (words_as_type_indexed_bitvec)]
+def optimiseHOL {width : Nat} [NeZero width] (prog : HolLoopProg width) : HolLoopProg width :=
+  compHOL (loopCallCompHOL (.ln : Spt Nat) prog).1
+
 end Flapjack

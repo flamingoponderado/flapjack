@@ -313,7 +313,11 @@ run_probe crep_to_loop_ctxt_max_probeScript.sml crep_to_loop_ctxt_max_probe.out 
   ctxt_max_within ctxt_max_absent "$cake_dir/pancake/proofs/crep_to_loopProofScript.sml" \
   "$cake_dir/pancake/proofs"
 run_probe crep_to_loop_locals_rel_probeScript.sml crep_to_loop_locals_rel_probe.out \
-  ctxt_vars_lookup subset_domain_component \
+  ctxt_vars_lookup ctxt_max_component set_domain_mem map_lookup \
+  subset_domain_component cutset_set_lookup cutset_target_lookup \
+  locals_rel_true locals_rel_domain_false \
+  locals_rel_value_false locals_rel_cutset_second_true \
+  locals_rel_cutset_after_true \
   "$cake_dir/pancake/proofs/crep_to_loopProofScript.sml" \
   "$cake_dir/pancake/proofs"
 run_probe crep_to_loop_locals_insert_probeScript.sml crep_to_loop_locals_insert_probe.out \
@@ -346,6 +350,12 @@ run_probe crep_to_loop_assigned_vars_mapidx_probeScript.sml crep_to_loop_assigne
   "$cake_dir/pancake/proofs"
 run_probe loop_props_assigned_vars_probeScript.sml loop_props_assigned_vars_probe.out \
   avs_seq_split avs_nested_assign_three \
+  "$cake_dir/pancake/semantics/loopPropsScript.sml" \
+  "$cake_dir/pancake/semantics"
+run_probe loop_props_cut_sets_probeScript.sml loop_props_cut_sets_probe.out \
+  cut_sets_skip cut_sets_locvalue cut_sets_assign cut_sets_load32 \
+  cut_sets_loadbyte cut_sets_seq cut_sets_if cut_sets_longdiv \
+  cut_sets_longmul cut_sets_div cut_sets_catch_all \
   "$cake_dir/pancake/semantics/loopPropsScript.sml" \
   "$cake_dir/pancake/semantics"
 run_probe crep_to_loop_context_defs_probeScript.sml crep_to_loop_context_defs_probe.out \
@@ -1287,6 +1297,9 @@ run_probe crep_to_loop_compile_exp_probeScript.sml crep_to_loop_compile_exp_prob
 run_probe crep_to_loop_compile_probeScript.sml crep_to_loop_compile_probe.out \
   loop_nested_seq_empty compile_ext_call \
   "$cake_dir/pancake/crep_to_loopScript.sml"
+run_probe crep_to_loop_ocompile_probeScript.sml crep_to_loop_ocompile_probe.out \
+  ocompile_skip ocompile_call \
+  "$cake_dir/pancake/crep_to_loopScript.sml"
 run_probe compile_crepop_probeScript.sml compile_crepop_probe.out \
   compile_crepop_mul_riscv compile_crepop_mul_armv7 \
   "$cake_dir/pancake/crep_to_loopScript.sml"
@@ -1313,6 +1326,13 @@ run_probe loop_sem_get_var_imm_probeScript.sml \
 run_probe loop_props_get_vars_probeScript.sml \
   loop_props_get_vars_probe.out \
   get_vars_two get_var_imm_add_clk_eq \
+  "$cake_dir/pancake/semantics/loopPropsScript.sml" \
+  "$cake_dir/pancake/semantics"
+run_probe loop_props_survives_probeScript.sml \
+  loop_props_survives_probe.out \
+  if_hit if_miss loop_hit loop_miss_out call_hit call_miss \
+  call_handler_hit call_handler_miss_post ffi_hit ffi_miss mark_seq \
+  call_default assign_default \
   "$cake_dir/pancake/semantics/loopPropsScript.sml" \
   "$cake_dir/pancake/semantics"
 run_probe loop_sem_call_env_probeScript.sml \
