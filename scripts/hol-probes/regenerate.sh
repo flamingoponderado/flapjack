@@ -498,7 +498,7 @@ run_probe crep_inline_eval_probeScript.sml crep_inline_eval_probe.out \
   src_main_is_call continue_eval "$cake_dir/pancake/semantics/crepSemScript.sml" \
   "$cake_dir/pancake/semantics"
 run_probe crep_inline_relations_probeScript.sml crep_inline_relations_probe.out \
-  locals_rel_extension state_rel_checks_code \
+  locals_rel_extension state_rel_dec_clock \
   "$cake_dir/pancake/proofs/crep_inlineProofScript.sml" \
   "$cake_dir/pancake/proofs"
 run_probe pan_flat_store_probeScript.sml pan_flat_store_probe.out \
