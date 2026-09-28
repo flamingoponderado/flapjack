@@ -1611,4 +1611,127 @@ theorem loopEveryProg_call (predicate : LoopProg α → Prop)
       obtain ⟨n, first, second, l⟩ := h
       simp [loopEveryProg]
 
+/-! ## Exact `loop_live` shrink/fixedpoint over the faithful carrier
+
+Source-shaped Flapjack infrastructure for the mutual HOL definition
+`loop_live$shrink_def`/`fixedpoint_def`
+(`cakeml/pancake/loop_liveScript.sml:62-160`) over the faithful
+`HolLoopProg`/`NumSet` carrier.  HOL declares `shrink` and `fixedpoint` in a
+single mutual block whose termination measure is the lexicographic triple
+`(prog_size (K 0) body, 0/1, size live_in - size l1)`; the Lean definitions
+keep that mutual shape and measure (`sizeOf` in place of `prog_size`, and
+`sptSize_inter_le` in place of `size_inter`).  These declarations are
+deliberately left untagged: the exact HOL statement and side conditions are to
+be reviewed before an `@[hol]` reference is attached. -/
+
+mutual
+  /-- Exact stand-in for HOL `loop_live$fixedpoint_def`
+      (`cakeml/pancake/loop_liveScript.sml:143-148`): iterate `shrink` on the
+      loop body until `inter live_in l0` stabilizes, returning the shrunk body
+      and its live set, or `none` when no progress can be made. -/
+  def fixedpointHOL {width : Nat} [NeZero width] :
+      List (NumSet × NumSet) → NumSet → NumSet → NumSet → HolLoopProg width →
+        Option (HolLoopProg width × NumSet)
+    | lt, liveIn, l1, l2, body =>
+        let (b, l0) := shrinkHOL ((sptInter liveIn l1, l2) :: lt) body l2
+        if sptInter liveIn l0 = l1 then
+          some (b, l0)
+        else if h1 : sptSize (sptInter liveIn l0) ≤ sptSize l1 then
+          none
+        else
+          have _hb : sptSize (sptInter liveIn l0) ≤ sptSize liveIn :=
+            sptSize_inter_le liveIn l0
+          have _hlt : sptSize l1 < sptSize (sptInter liveIn l0) :=
+            Nat.lt_of_not_le h1
+          fixedpointHOL lt liveIn (sptInter liveIn l0) l2 body
+  termination_by _lt liveIn l1 _l2 body =>
+    (sizeOf body, 1, sptSize liveIn - sptSize l1)
+  decreasing_by
+    all_goals simp_wf
+    all_goals simp only [Prod.lex_def]
+    all_goals simp
+    all_goals omega
+
+  /-- Source-shaped stand-in for HOL `loop_live$shrink_def`
+      (`cakeml/pancake/loop_liveScript.sml:63-141`): shrink every cutset of
+      `prog` and delete assignments to dead variables, returning the rewritten
+      program and the resulting live set.  `lt` is the `break`/`continue`
+      context, outermost first. -/
+  def shrinkHOL {width : Nat} [NeZero width]
+      (lt : List (NumSet × NumSet)) :
+      HolLoopProg width → NumSet → HolLoopProg width × NumSet
+    | .seq p1 p2, l =>
+        let (p2', l) := shrinkHOL lt p2 l
+        let (p1', l) := shrinkHOL lt p1 l
+        (.seq p1' p2', l)
+    | .loop liveIn body liveOut, l =>
+        let l2 := sptInter liveOut l
+        let bex := sptUnion liveIn l2
+        match fixedpointHOL lt liveIn .ln bex body with
+        | some (body', l0) =>
+            let l' := sptInter liveIn l0
+            (.loop l' body' l2, l')
+        | none =>
+            let (b, _) := shrinkHOL ((liveIn, l2) :: lt) body bex
+            (.loop liveIn b l2, liveIn)
+    | .ite x1 x2 x3 p1 p2 l1, l =>
+        let l' := sptInter l l1
+        let (p1', l1') := shrinkHOL lt p1 l'
+        let (p2', l2') := shrinkHOL lt p2 l'
+        let l3 := match x3 with | .reg r => sptInsert r () .ln | _ => .ln
+        (.ite x1 x2 x3 p1' p2' l', sptInsert x2 () (sptUnion l3 (sptUnion l1' l2')))
+    | .mark p1, l => shrinkHOL lt p1 l
+    | .break n, _ =>
+        (.break n, match sptOel n lt with | some (_, brk) => brk | none => .ln)
+    | .continue n, _ =>
+        (.continue n, match sptOel n lt with | some (cont, _) => cont | none => .ln)
+    | .fail, _ => (.fail, .ln)
+    | .skip, l => (.skip, l)
+    | .return vs, _ => (.return vs, sptListInsert vs .ln)
+    | .raise v, _ => (.raise v, sptInsert v () .ln)
+    | .arith a, l => (.arith a, arithVarsHOL a l)
+    | .primitive lhss pop rhss, l =>
+        (.primitive lhss pop rhss, sptListInsert rhss (sptListDelete lhss l))
+    | .locValue n m, l =>
+        match sptLookup n l with
+        | none => (.skip, l)
+        | some _ => (.locValue n m, sptDelete n l)
+    | .assign n x, l =>
+        match sptLookup n l with
+        | none => (.skip, l)
+        | some _ => (.assign n x, varsOfExpHOL x (sptDelete n l))
+    | .shMem op r ad, l => (.shMem op r ad, varsOfExpHOL ad (sptInsert r () l))
+    | .store e n, l => (.store e n, varsOfExpHOL e (sptInsert n () l))
+    | .setGlobal name e, l => (.setGlobal name e, varsOfExpHOL e l)
+    | .call ret dest args handler, l =>
+        let a := sptFromAList (args.map fun x => (x, ()))
+        match ret with
+        | none => (.call none dest args none, sptUnion a l)
+        | some (ns, l1) =>
+            match handler with
+            | none =>
+                let l3 := sptListDelete ns (sptInter l l1)
+                (.call (some (ns, l3)) dest args none, sptUnion a l3)
+            | some (e, h, r, liveOut) =>
+                let (r', l2) := shrinkHOL lt r l
+                let (h', l3) := shrinkHOL lt h l
+                let l1' := sptInter l1 (sptUnion (sptListDelete ns l2) (sptDelete e l3))
+                (.call (some (ns, l1')) dest args (some (e, h', r', sptInter l liveOut)),
+                  sptUnion a l1')
+    | .ffi n r1 r2 r3 r4 l1, l =>
+        (.ffi n r1 r2 r3 r4 (sptInter l1 l),
+          sptInsert r1 () (sptInsert r2 () (sptInsert r3 () (sptInsert r4 () (sptInter l1 l)))))
+    | .load32 x y, l => (.load32 x y, sptInsert x () (sptDelete y l))
+    | .loadByte x y, l => (.loadByte x y, sptInsert x () (sptDelete y l))
+    | .store32 x y, l => (.store32 x y, sptInsert x () (sptInsert y () l))
+    | .storeByte x y, l => (.storeByte x y, sptInsert x () (sptInsert y () l))
+    | .tick, l => (.tick, l)
+  termination_by prog _l => (sizeOf prog, 0, 0)
+  decreasing_by
+    all_goals simp_wf
+    all_goals simp only [Prod.lex_def]
+    all_goals simp
+    all_goals omega
+end
+
 end Flapjack
