@@ -12167,6 +12167,46 @@
     "reviewer": "flapjack-ds5 (source comparison, 2026-09-28; bead flapjack-pxn.18.5.6.29.1.4): HOL declares shrink and fixedpoint in ONE mutual definition shrink_def (loop_liveScript.sml:62-160), with no separate fixedpoint_def; Lean reproduces the mutual block over the faithful HolLoopProg width / NumSet carrier (words_as_type_indexed_bitvec: HOL is polymorphic in the type-indexed word/label type, Lean fixes it to BitVec width under [NeZero width] via the reviewed HolLoopProg carrier). shrinkHOL is the tagged half and fixedpointHOL is the untagged mutual half, analogous to varsOfExpListHOL/vars_of_exp_list. Clause-for-clause match verified against the HOL equations (Seq shrinks p2 then p1; Loop/If recompute cut-sets via inter/union; Call handler uses l2 from shrinking r and l3 from h). Representative direct HOL observations are the committed original-HOL EVAL rows in scripts/hol-probes/shrink_leaf_probe.out (shrink) plus the indirect mark_all_probe.out / loop_live_comp_probe.out / loop_live_optimise_probe.out suites (mark_all/comp/optimise composed from shrink). Termination measure mirrors HOL (prog_size (K 0) body, 0/1, size live_in - size l1) with sizeOf and sptSize, using sptSize_inter_le for size_inter."
   },
   {
+    "hol_path": "cakeml/pancake/loop_liveScript.sml",
+    "hol_name": "mark_all_def",
+    "hol_line": 189,
+    "lean_path": "Flapjack/Pancake/LoopLive.lean",
+    "lean_name": "markAllHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-28; bead flapjack-pxn.18.5.6.29.1.5): exact port of HOL mark_all_def (loop_liveScript.sml:189-215) over HolLoopProg width. Clause-for-clause: Seq/If recurse both children and wrap in Mark iff both children are marked; Loop recurses the body and returns false; Mark unwraps; Call with no handler becomes Mark of itself with true, and with a handler recurses handler/normal then wraps iff both marked; catch-all wraps in Mark with true. words_as_type_indexed_bitvec because HOL is polymorphic in the type-indexed word/label type while Lean fixes BitVec width under [NeZero width] via the reviewed HolLoopProg carrier; no other differences. Representative direct original-HOL rows in scripts/hol-probes/mark_all_probe.out, plus the loop_live_comp/loop_live_optimise probe suites that compose shrink+mark_all."
+  },
+  {
+    "hol_path": "cakeml/pancake/loop_liveScript.sml",
+    "hol_name": "comp_def",
+    "hol_line": 217,
+    "lean_path": "Flapjack/Pancake/LoopLive.lean",
+    "lean_name": "compHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-28; bead flapjack-pxn.18.5.6.29.1.7): exact port of HOL comp_def (loop_liveScript.sml:217-219) `comp prog = FST (mark_all (FST (shrink [] prog LN)))` over HolLoopProg width: compHOL prog = (markAllHOL (shrinkHOL [] prog .ln).1).1, composing the tagged shrinkHOL (shrink_def) and markAllHOL (mark_all_def). words_as_type_indexed_bitvec because HOL is polymorphic in the type-indexed word/label type while Lean fixes BitVec width under [NeZero width] via the reviewed HolLoopProg carrier; no other differences, no extra hypotheses. Representative direct original-HOL rows are the committed loop_live_comp_probe.out suite (comp composed from shrink+mark_all)."
+  },
+  {
+    "hol_path": "cakeml/pancake/loop_callScript.sml",
+    "hol_name": "comp_def",
+    "hol_line": 18,
+    "lean_path": "Flapjack/Pancake/LoopLive.lean",
+    "lean_name": "loopCallCompHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-28; bead flapjack-pxn.18.5.6.29.1.7): exact port of HOL loop_call$comp (loop_callScript.sml:18-98) `comp l prog` returning `(prog, num |-> num)` over HolLoopProg width, with the live map carried as `Spt Nat` (HOL LocValue inserts a number value, so the map value type is num, not the unrelated unit spt num_set). Clause-for-clause: Skip; Call (SOME target kept; NONE with [] -> Skip; NONE nonempty -> lookup LAST, keeping full args or replacing with SOME n and BUTLAST); LocValue inserts destination->source; Assign(Var m) four-way lookup case; general Assign delete; ShMem clears to LN; Load32/LoadByte delete destination; Seq threads the map then returns LN; If/Loop clear to LN; Mark keeps; FFI/Tick/Raise/Return clear; Primitive list_deletes destinations; Arith LLongMul/LLongDiv delete r1/r2 per the four-way lookup and LDiv deletes r1; catch-all keeps. words_as_type_indexed_bitvec because HOL is polymorphic in the type-indexed word/label type while Lean fixes BitVec width under [NeZero width] via the reviewed HolLoopProg carrier; no other differences, no extra hypotheses. All 21 direct original-HOL rows in scripts/hol-probes/loop_call_comp_probe.out are replayed by Flapjack/Test/LoopCallCompHOLParity.lean."
+  },
+  {
+    "hol_path": "cakeml/pancake/loop_liveScript.sml",
+    "hol_name": "optimise_def",
+    "hol_line": 221,
+    "lean_path": "Flapjack/Pancake/LoopLive.lean",
+    "lean_name": "optimiseHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-28; bead flapjack-pxn.18.5.6.29.1.7): exact port of HOL optimise_def (loop_liveScript.sml:221-223) `optimise prog = (comp o FST o loop_call$comp LN) prog` over HolLoopProg width: optimiseHOL prog = compHOL (loopCallCompHOL (.ln : Spt Nat) prog).1, composing the tagged compHOL (loop_live comp_def) and loopCallCompHOL (loop_call comp_def). words_as_type_indexed_bitvec because HOL is polymorphic in the type-indexed word/label type while Lean fixes BitVec width under [NeZero width] via the reviewed HolLoopProg carrier; no other differences, no extra hypotheses. All 4 direct original-HOL rows in scripts/hol-probes/loop_live_optimise_probe.out are replayed by Flapjack/Test/LoopCallCompHOLParity.lean."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/backend_commonScript.sml",
     "hol_name": "list_delete_def",
     "lean_path": "Flapjack/Misc/Sptree.lean",
@@ -18262,6 +18302,15 @@
     "words_as_type_indexed_bitvec": true
   },
   {
+    "hol_path": "cakeml/pancake/semantics/loopPropsScript.sml",
+    "hol_name": "cut_sets_def",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopProps/CutSets.lean",
+    "lean_name": "cutSetsHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-b source comparison (2026-09-28, bead flapjack-pxn.18.5.6.36) against loopPropsScript.sml:40-55. Every defining clause is retained over HolLoopProg and NumSet: Skip returns the input set; LocValue/Assign insert the destination; Load32/LoadByte insert the second variable; Seq applies cut_sets to its first then second program; If returns its stored num_set; LLongDiv and LLongMul insert the two destinations in HOL's nested order; LDiv inserts its destination; all other constructors return the input. HolLoopProg's prog and loop_arith constructors/fields match loopLangScript.sml, NumSet is exactly Spt Unit (`num_set` at miscScript.sml:787), and sptInsert follows HOL sptree insert; no list-backed production analogue is used. The sole qualifier is HOL positive word dimension to BitVec width. Direct source EVAL rows for all these clauses are in scripts/hol-probes/loop_props_cut_sets_probe.out and each row is replayed by an exact-carrier Lean guard in Flapjack/Test/LoopPropsCutSetsParity.lean. This tagged helper does not claim production LoopLive routing.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
     "hol_name": "assigned_vars_MAPi_Assign",
     "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/AssignedVars.lean",
@@ -18535,5 +18584,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.7): HOL write_bytearray a bs m dm be (wordSemScript.sml:178-184): [] gives m; b::bs gives case mem_store_byte_aux (write_bytearray (a+1w) bs m dm be) dm be a b of SOME m => m | NONE => m, where the NONE branch returns the ORIGINAL outer m; Lean is identical over BitVec width -> WordLocW width memory with dm as a Bool predicate and mem_store_byte_aux as the tagged memStoreByteAuxExact. HOL rows write_empty/write_hit/write_miss of pan_sem_write_bytearray_probe.out (panSem write_bytearray has the same text) are checked by Flapjack.Test.LoopSemPrimopBytesExactParity. (words_as_type_indexed_bitvec) as for loopPrimop."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopPropsScript.sml",
+    "hol_name": "survives_def",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopProps.lean",
+    "lean_name": "survivesHOLExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-c source comparison (2026-09-28; bead flapjack-pxn.18.5.6.37) against loopPropsScript.sml:25-38. Clause review: If recurses into p/q and tests n in domain cs; Loop tests liveIn/liveOut and recurses into its body; Call with return metadata and no handler tests the returns set; Call with handler additionally tests post and recurses into both handler programs; FFI tests its live set; Mark recurses; Seq conjoins both recursive results; all remaining constructors return true. HOL returns bool and Lean keeps Bool. HolLoopProg uses the exact width-indexed loopLang$prog carrier, and each live-set is NumSet = Spt Unit; each HOL n IN domain tree check is represented by (sptLookup n tree).isSome. Unused Call m/target/arguments/handler label, If fields, and FFI payloads are ignored exactly as the HOL clauses do; FFI name is exact MlString. Direct HOL rows for every listed case are loop_props_survives_probe.out and their replay guards are in Flapjack/Test/LoopPropsSurvivesParity. Only HOL word width to BitVec width is translated; no production List Nat loopSurvives route is claimed.",
+    "words_as_type_indexed_bitvec": true
   }
 ]

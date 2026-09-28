@@ -104,6 +104,7 @@ import Flapjack.Test.LoopSetVarsParity
 import Flapjack.Test.LoopSetVarParity
 import Flapjack.Test.LoopDecClockParity
 import Flapjack.Test.LoopFixClockParity
+import Flapjack.Test.LoopPropsSurvivesParity
 import Flapjack.Test.LoopFindCodeParity
 import Flapjack.Test.LoopArithParity
 import Flapjack.Test.LoopMemStoreParity
@@ -116,6 +117,8 @@ import Flapjack.Test.LoopVarsOfExpParity
 import Flapjack.Test.LoopArithVarsParity
 import Flapjack.Test.LoopShrinkParity
 import Flapjack.Test.LoopMarkAllParity
+import Flapjack.Test.LoopMarkAllHOLParity
+import Flapjack.Test.LoopCallCompHOLParity
 import Flapjack.Test.LoopLiveCompParity
 import Flapjack.Test.LoopLiveOptimiseParity
 import Flapjack.Test.OCompileParity
@@ -817,6 +820,7 @@ def main : IO Unit := do
     Flapjack.Test.LoopSetVarParity.runChecks,
     Flapjack.Test.LoopDecClockParity.runChecks,
     Flapjack.Test.LoopFixClockParity.runChecks,
+    Flapjack.Test.LoopPropsSurvivesParity.runChecks,
     Flapjack.Test.LoopFindCodeParity.runChecks,
     Flapjack.Test.LoopArithParity.runChecks,
     Flapjack.Test.PanSetVarParity.runChecks,
@@ -1105,6 +1109,8 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.LoopSemWordMemExactParity.runChecks,
     Flapjack.Test.LoopSemPrimopBytesExactParity.runChecks,
     Flapjack.Test.SptreeSetOpsParity.runChecks,
+    Flapjack.Test.LoopMarkAllHOLParity.runChecks,
+    Flapjack.Test.LoopCallCompHOLParity.runChecks,
     Flapjack.Test.CrepLocalsWordLabParity.runChecks,
     Flapjack.Test.CrepMemoryRelParity.runChecks,
     Flapjack.Test.CrepSemStateExactParity.runChecks,

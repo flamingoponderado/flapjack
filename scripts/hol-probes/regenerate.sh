@@ -352,6 +352,12 @@ run_probe loop_props_assigned_vars_probeScript.sml loop_props_assigned_vars_prob
   avs_seq_split avs_nested_assign_three \
   "$cake_dir/pancake/semantics/loopPropsScript.sml" \
   "$cake_dir/pancake/semantics"
+run_probe loop_props_cut_sets_probeScript.sml loop_props_cut_sets_probe.out \
+  cut_sets_skip cut_sets_locvalue cut_sets_assign cut_sets_load32 \
+  cut_sets_loadbyte cut_sets_seq cut_sets_if cut_sets_longdiv \
+  cut_sets_longmul cut_sets_div cut_sets_catch_all \
+  "$cake_dir/pancake/semantics/loopPropsScript.sml" \
+  "$cake_dir/pancake/semantics"
 run_probe crep_to_loop_context_defs_probeScript.sml crep_to_loop_context_defs_probe.out \
   find_var_hit find_lab_miss "$cake_dir/pancake/crep_to_loopScript.sml" \
   "$cake_dir/pancake/proofs"
@@ -1317,6 +1323,13 @@ run_probe loop_sem_get_var_imm_probeScript.sml \
 run_probe loop_props_get_vars_probeScript.sml \
   loop_props_get_vars_probe.out \
   get_vars_two get_var_imm_add_clk_eq \
+  "$cake_dir/pancake/semantics/loopPropsScript.sml" \
+  "$cake_dir/pancake/semantics"
+run_probe loop_props_survives_probeScript.sml \
+  loop_props_survives_probe.out \
+  if_hit if_miss loop_hit loop_miss_out call_hit call_miss \
+  call_handler_hit call_handler_miss_post ffi_hit ffi_miss mark_seq \
+  call_default assign_default \
   "$cake_dir/pancake/semantics/loopPropsScript.sml" \
   "$cake_dir/pancake/semantics"
 run_probe loop_sem_call_env_probeScript.sml \
