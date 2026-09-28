@@ -1,3 +1,4 @@
+import Flapjack.HolRef
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect
 import Flapjack.Pancake.Proofs.PanToCrep.CompileExpValRel
 import Flapjack.Pancake.Proofs.PanToCrep.TotalEvaluateCases
@@ -1791,5 +1792,215 @@ theorem pcCompileCorrectAt_call {width : Nat} {σ : Type} [NeZero width]
             | exception eid exn =>
                 exact pcCompileCorrectAt_callRetException dest hdl fname argexps source ih hclock
                   values prog newlocals rsh st eid exn hargs hlk hbody
+
+/-- HOL `pc_compile_correct`'s induction predicate `P (v, v1)` in HOL's own
+    presentation: the single conjunctive premise and the inline `case res of`
+    (`pan_to_crepProofScript.sml:442-468`). It is `pcCompileCorrectAt`
+    (`pcCompileCorrectAt_iff_HOL`) with HOL's layout, and the tagged Call case
+    uses it for its IHs. -/
+def pcCompileCorrectAtHOL {width : Nat} {σ : Type} [NeZero width]
+    (program : ProgHOL width) (source : PanSemStateFiniteExact width σ) : Prop :=
+  ∀ (res : Option (PanSemResultExact width)) (s1 : PanSemStateFiniteExact width σ)
+    (t : CrepSemHOLState width σ) (ctxt : PanToCrepContextExact width),
+    source.evaluateHOLFiniteState program = (res, s1) ∧
+      res ≠ some .error ∧ panToCrepStateRelFiniteExact source t ∧
+      codeRelExactHOLW ctxt source.code t.code ∧
+      panToCrepExcpRelFiniteExact ctxt.eids source.eshapes ∧
+      panToCrepLocalsRelFiniteExact ctxt source.locals t.locals ∧
+      localisedProgHOL program = true →
+    ∃ (res1 : Option (CrepResultHOLExact width)) (t1 : CrepSemHOLState width σ),
+      evalCrepSemHOLProgExact t (compileProgExactHOLW ctxt program) =
+        (res1, t1) ∧
+      panToCrepStateRelFiniteExact s1 t1 ∧ codeRelExactHOLW ctxt s1.code t1.code ∧
+      panToCrepExcpRelFiniteExact ctxt.eids s1.eshapes ∧
+      match res with
+      | none => res1 = none ∧ panToCrepLocalsRelFiniteExact ctxt s1.locals t1.locals
+      | some .error => False
+      | some .timeOut => res1 = some .timeOut
+      | some .break =>
+          res1 = some (.break 0) ∧ panToCrepLocalsRelFiniteExact ctxt s1.locals t1.locals
+      | some .continue =>
+          res1 = some (.continue 0) ∧ panToCrepLocalsRelFiniteExact ctxt s1.locals t1.locals
+      | some (.returned rv) => res1 = some (.return (flattenHOL rv))
+      | some (.exception eid v') =>
+          (match ctxt.eids.lookup eid with
+           | none => False
+           | some n =>
+               res1 = some (.exception n) ∧
+               (1 ≤ sizeOfShapeHOL (shapeOfHOLExact v') →
+                 globalsLookupHOL t1 v' = some (flattenHOL v') ∧
+                   sizeOfShapeHOL (shapeOfHOLExact v') ≤ 32))
+      | some (.finalFfi f) => res1 = some (.finalFfi f)
+
+theorem pcCompileCorrectAt_iff_HOL {width : Nat} {σ : Type} [NeZero width]
+    (program : ProgHOL width) (source : PanSemStateFiniteExact width σ) :
+    pcCompileCorrectAt program source ↔ pcCompileCorrectAtHOL program source := by
+  constructor
+  · intro h res s1 t ctxt ⟨hrun, hres, hstate, hcode, hexcp, hlocals, hloc⟩
+    obtain ⟨res1, t1, h1, h2, h3, h4, h5⟩ := h res s1 t ctxt hrun hres hstate hcode hexcp
+      hlocals hloc
+    refine ⟨res1, t1, h1, h2, h3, h4, ?_⟩
+    rcases res with _ | r
+    · exact h5
+    · cases r <;> exact h5
+  · intro h res s1 t ctxt hrun hres hstate hcode hexcp hlocals hloc
+    obtain ⟨res1, t1, h1, h2, h3, h4, h5⟩ := h res s1 t ctxt
+      ⟨hrun, hres, hstate, hcode, hexcp, hlocals, hloc⟩
+    refine ⟨res1, t1, h1, h2, h3, h4, ?_⟩
+    rcases res with _ | r
+    · exact h5
+    · cases r <;> exact h5
+
+namespace PcCompileCorrectCallWitnesses
+
+/-! Same-module canonical relation witnesses for the three carriers named by the
+tagged Call case below (delegating to the imported checked witnesses). -/
+
+theorem holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact
+    {width : Nat} {σ : Type} [NeZero width] :
+    (∀ (state : PanSemStateExact width σ) (h : state.FiniteSupport),
+        (PanSemStateFiniteExact.ofExact state h).toExact = state) ∧
+    (∀ state : PanSemStateFiniteExact width σ,
+        PanSemStateFiniteExact.ofExact state.toExact state.toExact_finiteSupport = state) :=
+  CallPreservationFiniteMapWitnesses.holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact
+
+theorem holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact
+    {width : Nat} [NeZero width] (context : PanToCrepContextExact width) :
+    PanToCrepContextExact.ofBroad (PanToCrepContextExact.toBroad context) = context :=
+  CallPreservationFiniteMapWitnesses.holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact
+    context
+
+theorem holFmapAsFiniteSupportRelationWitness_CrepSemHOLState
+    {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) :
+    CrepSemBroadState.ofBroad state.toBroad state.toBroad_finiteSupport = state :=
+  CallPreservationFiniteMapWitnesses.holFmapAsFiniteSupportRelationWitness_CrepSemHOLState state
+
+end PcCompileCorrectCallWitnesses
+
+/-- HOL `pc_compile_correct`, `Call` constructor case
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:442-468`, proved by
+    `recInduct panSemTheory.evaluate_ind` with the case resumed at `:3107`).
+    This is the `Call caltyp fname argexps` conjunct of the rebound
+    `evaluate_ind` (`panSemScript.sml:777-778`) instantiated at HOL's
+    induction predicate
+    `P (v, v1) = ∀res s1 t ctxt. evaluate (v,v1) = (res,s1) ∧ res ≠ SOME Error ∧
+      state_rel v1 t ∧ code_rel ctxt v1.code t.code ∧ excp_rel ctxt.eids v1.eshapes ∧
+      locals_rel ctxt v1.locals t.locals ∧ localised_prog v ⇒ ∃res1 t1. ...`.
+
+    The two IHs are transcribed binder for binder from HOL's printed
+    `evaluate_ind` Call conjunct, including the TFL equation binders
+    `v7 v12 eval_prog v4 v8 v v1 v2 v3 eid' v5` and the side conditions, in HOL
+    order. Each is stated at `P` itself (`pcCompileCorrectAtHOL`, whose body is
+    exactly the unfolded conclusion below). The conclusion is
+    `P (Call caltyp fname argexps, s)` written out with HOL's conjunctive premise
+    and inline `case res of`.
+
+    Translation: `evaluate` is the tagged total `evaluateHOLFiniteState`
+    (line-780 `evaluate_def`) or `evalCrepSemHOLProgExact` (line-443
+    `evaluate_def`). `OPT_MMAP (eval s)` is the evaluator's classical-decision
+    list step, and `lookup_code`/`is_valid_value`/`set_var`/`dec_clock` are the
+    helpers the tagged Pan Call arm uses. `compile`/`state_rel`/`code_rel`/
+    `excp_rel`/`locals_rel`/`globals_lookup`/`flatten`/`size_of_shape`/
+    `shape_of`/`localised_prog` are the tagged exact ports. The finite-map fields
+    are the canonical `HolFiniteMapExact` translation of the listed carriers, and
+    `'a word` is `BitVec width`. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "pc_compile_correct"
+  (fmap_as_finite_support_relation := [PanSemStateFiniteExact.locals,
+    PanSemStateFiniteExact.globals, PanSemStateFiniteExact.code,
+    PanSemStateFiniteExact.eshapes, CrepSemHOLState.locals, CrepSemHOLState.globals,
+    CrepSemHOLState.code, PanToCrepContextExact.vars, PanToCrepContextExact.funcs,
+    PanToCrepContextExact.eids])
+  (words_as_type_indexed_bitvec)]
+theorem pcCompileCorrect_Call {width : Nat} {σ : Type} [NeZero width] :
+    ∀ (caltyp : Option (Option (VarKind × MlS) × Option (MlS × MlS × ProgHOL width)))
+      (fname : MlS) (argexps : List (ExpHOL width)) (s : PanSemStateFiniteExact width σ),
+      (∀ (args : List (ValueHOL width))
+          (v7 : ProgHOL width × HolFiniteMapExact MlS (ValueHOL width) × ShapeHOL)
+          (prog : ProgHOL width) (v12 : HolFiniteMapExact MlS (ValueHOL width) × ShapeHOL)
+          (newlocals : HolFiniteMapExact MlS (ValueHOL width)) (return_sh : ShapeHOL)
+          (eval_prog : Option (PanSemResultExact width) × PanSemStateFiniteExact width σ)
+          (v4 : Option (PanSemResultExact width)) (st : PanSemStateFiniteExact width σ)
+          (v8 : PanSemResultExact width) (eid : MlS) (exn : ValueHOL width)
+          (v : Option (VarKind × MlS) × Option (MlS × MlS × ProgHOL width))
+          (v1 : Option (VarKind × MlS)) (v2 : Option (MlS × MlS × ProgHOL width))
+          (v3 : MlS × MlS × ProgHOL width) (eid' : MlS) (v5 : MlS × ProgHOL width)
+          (evar : MlS) (p : ProgHOL width) (sh : ShapeHOL),
+          s.evalListHOLFinite
+              (h := fun address => Classical.propDecidable (s.memaddrs address))
+              argexps = some args ∧
+            PanSemStateFiniteExact.lookupCodeHOLFinite s.code.lookup fname args = some v7 ∧
+            v7 = (prog, v12) ∧ v12 = (newlocals, return_sh) ∧ s.clock ≠ 0 ∧
+            eval_prog = PanSemStateFiniteExact.evaluateHOLFiniteState
+              { s.decClockHOLFinite with locals := newlocals } prog ∧
+            eval_prog = (v4, st) ∧ v4 = some v8 ∧ v8 = .exception eid exn ∧
+            caltyp = some v ∧ v = (v1, v2) ∧ v2 = some v3 ∧ v3 = (eid', v5) ∧
+            v5 = (evar, p) ∧ eid = eid' ∧ s.eshapes.lookup eid = some sh ∧
+            shapeOfHOLExact exn = sh ∧ isValidValueHOLExact s.toExact .local evar exn = true →
+          pcCompileCorrectAtHOL p
+            (PanSemStateFiniteExact.setVarHOLFinite evar exn { st with locals := s.locals })) ∧
+      (∀ (args : List (ValueHOL width))
+          (v7 : ProgHOL width × HolFiniteMapExact MlS (ValueHOL width) × ShapeHOL)
+          (prog : ProgHOL width) (v12 : HolFiniteMapExact MlS (ValueHOL width) × ShapeHOL)
+          (newlocals : HolFiniteMapExact MlS (ValueHOL width)) (return_sh : ShapeHOL),
+          s.evalListHOLFinite
+              (h := fun address => Classical.propDecidable (s.memaddrs address))
+              argexps = some args ∧
+            PanSemStateFiniteExact.lookupCodeHOLFinite s.code.lookup fname args = some v7 ∧
+            v7 = (prog, v12) ∧ v12 = (newlocals, return_sh) ∧ s.clock ≠ 0 →
+          pcCompileCorrectAtHOL prog { s.decClockHOLFinite with locals := newlocals }) →
+      ∀ (res : Option (PanSemResultExact width)) (s1 : PanSemStateFiniteExact width σ)
+        (t : CrepSemHOLState width σ) (ctxt : PanToCrepContextExact width),
+        s.evaluateHOLFiniteState (.call caltyp fname argexps) = (res, s1) ∧
+          res ≠ some .error ∧ panToCrepStateRelFiniteExact s t ∧
+          codeRelExactHOLW ctxt s.code t.code ∧
+          panToCrepExcpRelFiniteExact ctxt.eids s.eshapes ∧
+          panToCrepLocalsRelFiniteExact ctxt s.locals t.locals ∧
+          localisedProgHOL (.call caltyp fname argexps) = true →
+        ∃ (res1 : Option (CrepResultHOLExact width)) (t1 : CrepSemHOLState width σ),
+          evalCrepSemHOLProgExact t (compileProgExactHOLW ctxt (.call caltyp fname argexps)) =
+            (res1, t1) ∧
+          panToCrepStateRelFiniteExact s1 t1 ∧ codeRelExactHOLW ctxt s1.code t1.code ∧
+          panToCrepExcpRelFiniteExact ctxt.eids s1.eshapes ∧
+          match res with
+          | none => res1 = none ∧ panToCrepLocalsRelFiniteExact ctxt s1.locals t1.locals
+          | some .error => False
+          | some .timeOut => res1 = some .timeOut
+          | some .break =>
+              res1 = some (.break 0) ∧ panToCrepLocalsRelFiniteExact ctxt s1.locals t1.locals
+          | some .continue =>
+              res1 = some (.continue 0) ∧ panToCrepLocalsRelFiniteExact ctxt s1.locals t1.locals
+          | some (.returned rv) => res1 = some (.return (flattenHOL rv))
+          | some (.exception eid v') =>
+              (match ctxt.eids.lookup eid with
+               | none => False
+               | some n =>
+                   res1 = some (.exception n) ∧
+                   (1 ≤ sizeOfShapeHOL (shapeOfHOLExact v') →
+                     globalsLookupHOL t1 v' = some (flattenHOL v') ∧
+                       sizeOfShapeHOL (shapeOfHOLExact v') ≤ 32))
+          | some (.finalFfi f) => res1 = some (.finalFfi f) := by
+  intro caltyp fname argexps s ⟨ihHandler, ihBody⟩ res s1 t ctxt
+    ⟨hrun, hres, hstate, hcode, hexcp, hlocals, hloc⟩
+  have ih : pcCompileCorrectCallIH caltyp fname argexps s := by
+    refine ⟨?_, ?_⟩
+    · intro values prog newlocals returnShape st eid exn v1 evar p sh hargs hlk hclock hbody
+        hinfo heshape hshape hvalid
+      exact (pcCompileCorrectAt_iff_HOL _ _).mpr <| ihHandler values (prog, newlocals, returnShape) prog (newlocals, returnShape)
+        newlocals returnShape (some (.exception eid exn), st) (some (.exception eid exn)) st
+        (.exception eid exn) eid exn (v1, some (eid, evar, p)) v1 (some (eid, evar, p))
+        (eid, evar, p) eid (evar, p) evar p sh
+        ⟨hargs, hlk, rfl, rfl, hclock, hbody.symm, rfl, rfl, rfl, hinfo, rfl, rfl, rfl, rfl, rfl,
+          heshape, hshape, hvalid⟩
+    · intro values prog newlocals returnShape hargs hlk hclock
+      exact (pcCompileCorrectAt_iff_HOL _ _).mpr <| ihBody values (prog, newlocals, returnShape) prog (newlocals, returnShape)
+        newlocals returnShape ⟨hargs, hlk, rfl, rfl, hclock⟩
+  obtain ⟨res1, t1, h1, h2, h3, h4, h5⟩ :=
+    pcCompileCorrectAt_call caltyp fname argexps s ih res s1 t ctxt hrun hres hstate hcode
+      hexcp hlocals hloc
+  refine ⟨res1, t1, h1, h2, h3, h4, ?_⟩
+  rcases res with _ | r
+  · exact h5
+  · cases r <;> exact h5
 
 end Flapjack
