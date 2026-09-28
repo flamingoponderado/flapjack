@@ -158,6 +158,55 @@ theorem lprefixChainNth_none_mono {m n : Nat} {ls : HolLList α → Prop}
       | none => exact absurd hmn hmne
       | some y => exact absurd ⟨l, hl, hmn⟩ ((holOptionSome_none hm) y)
 
+/-- The tail of a cons exposes the shifted representation. Untagged Flapjack
+    infrastructure used to relate `lprefix` (defined via `toList`/`ltake`) to the
+    representation `rep`/`lnth`; HOL's `llist` library is outside the cakeml
+    submodule, so there is no taggable HOL original. -/
+theorem ltl_rep {ll tl : HolLList α} (h : ll.ltl = some tl) (j : Nat) :
+    tl.rep j = ll.rep (j + 1) := by
+  cases h0 : ll.rep 0 with
+  | none => simp [ltl, lhd, h0] at h
+  | some hd =>
+      simp only [ltl, lhd, h0] at h
+      injection h with h'
+      subst h'
+      rfl
+
+/-- `ltake` reads the representation: if `ltake k ll = some xs` then `xs` has
+    length `k` and `ll.rep i = some (xs[i])` for every in-range `i`.  Untagged
+    Flapjack infrastructure (no taggable HOL original). -/
+theorem ltake_spec (k : Nat) (ll : HolLList α) (xs : List α)
+    (h : ltake k ll = some xs) :
+    xs.length = k ∧ ∀ i (hi : i < xs.length), ll.rep i = some xs[i] := by
+  induction k generalizing ll xs with
+  | zero =>
+      simp only [ltake] at h
+      injection h with hxs
+      subst hxs
+      exact ⟨rfl, fun i hi => absurd hi (by simp)⟩
+  | succ k ih =>
+      cases h0 : ll.rep 0 with
+      | none => simp [ltake, lhd, h0] at h
+      | some hd =>
+          cases h1 : ll.ltl with
+          | none => simp [ltake, lhd, h0, h1] at h
+          | some tl =>
+              cases hrest : ltake k tl with
+              | none => simp [ltake, lhd, h0, h1, hrest] at h
+              | some rest =>
+                  simp only [ltake, lhd, h0, h1, hrest] at h
+                  injection h with hxs
+                  subst hxs
+                  obtain ⟨hlen, hrep⟩ := ih tl rest hrest
+                  refine ⟨by simp [hlen], ?_⟩
+                  intro i hi
+                  cases i with
+                  | zero => simp [h0]
+                  | succ j =>
+                      have hj : j < rest.length := by simpa [hlen] using hi
+                      rw [← ltl_rep h1 j]
+                      simpa using hrep j hj
+
 end HolLList
 
 end Flapjack
