@@ -11983,8 +11983,12 @@
     "hol_name": "eval_nested_assign_distinct_eq",
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/EvaluateNestedAssign.lean",
     "lean_name": "evalNestedAssignDistinctEqCrepHOL",
-    "statement_status": "documented_mismatch",
-    "reviewer": "flapjack-ds10 (2026-09-27; bead flapjack-64k0, PR #1166 review item 2): @[hol] tag WITHDRAWN on concrete source-shape/carrier gaps. The statement is over evalCrepSemHOLProgExact, the no-decider classical wrapper around the re-implemented evaluator evalCrepSemHOLProg whose full clause set is not yet source-reviewed against evaluate_def. Gaps: the recursive clauses thread base-state decisions through crepStampExactDomains, whose reachability for the derived states is unreviewed; the byte-store clause still routes through the legacy UInt8 helpers; and the finite-map qualifier's owner/witness placement is unresolved (flapjack-4ac.5.16.5.13.1). HOL candidate eval_nested_assign_distinct_eq (pan_to_crepProofScript.sml:540-575); faithful port tracked by flapjack-4ac.5.16.5."
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-09-28; bead flapjack-pxn.18.4.3.113.1) against pan_to_crepProofScript.sml:540-581. Five premises clause-for-clause (MAP (eval t) es = MAP SOME ev; OPT_MMAP (FLOOKUP t.locals) ns = SOME vs; distinct_lists ns (FLAT (MAP var_cexp es)); ALL_DISTINCT ns; LENGTH ns = LENGTH es) and the conclusion (evaluate (nested_seq (MAP2 Assign ns es),t) = (NONE, t with locals := t.locals |++ ZIP (ns,ev))), over the reviewed exact crepSem evaluator, crepNestedSeqHOL, CrepProgHOL.assign, distinctListsHol, crepExpVarsHOL, and HolFiniteMapExact.updateListEq (the exact |++ rendering). Only the locals finite map is traversed (fmap_as_finite_support [locals], imported owner CrepSemHOLState with the same-module witness); the type-indexed word/FFI translation is the standard one (words_as_type_indexed_bitvec). Tag restored after crepStampExactDomains inertness, the UInt8/word8 bridges, the reviewed 19-arm evaluate_def tag, and the imported-owner/local-witness rule closed the earlier gaps."
   },
   {
     "hol_path": null,
@@ -16930,24 +16934,24 @@
     "reviewer": "ds10 (bead flapjack-pxn.18.4.3.103): untagged Return case helper against pcCompileCorrectAt over the tagged exact evaluators; the HOL-shaped statement is the tagged pcCompileCorrect_Return"
   },
   {
-    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
-    "hol_name": "pc_compile_correct",
+    "hol_path": null,
+    "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Return.lean",
     "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_Return; forwards the imported checked roundtrip; no HOL declaration"
   },
   {
-    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
-    "hol_name": "pc_compile_correct",
+    "hol_path": null,
+    "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Return.lean",
     "lean_name": "holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_Return; forwards the imported checked roundtrip; no HOL declaration"
   },
   {
-    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
-    "hol_name": "pc_compile_correct",
+    "hol_path": null,
+    "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Return.lean",
     "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
     "statement_status": "no_hol_reference_pending_classification",
