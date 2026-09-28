@@ -1099,7 +1099,7 @@ theorem evalCrepSemHOLProgExact_eq_core {width : Nat} [NeZero width] {σ : Type}
     whole-program equation `evalCrepSemHOLProgExact_eq_evaluate_def`
     (`crepSemScript.sml:443`), which establishes agreement with HOL `evaluate`
     across every constructor, including the FFI cases. The declaration itself
-    carries no `@[hol]` tag: it is Flapjack-specific local infrastructure. -/
+    is untagged Flapjack-specific local infrastructure. -/
 theorem evalCrepSemHOLProgExact_skip {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ) :
     evalCrepSemHOLProgExact state (.skip : CrepProgHOL width) = (none, state) := by
