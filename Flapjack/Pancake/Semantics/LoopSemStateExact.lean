@@ -4,6 +4,7 @@ import Flapjack.Pancake.LoopLang
 import Flapjack.Pancake.Semantics.CrepSem.HOLState
 import Flapjack.Misc.Sptree
 import Flapjack.FfiBridge
+import Flapjack.Compiler.Backend.Semantics.WordSem
 
 /-!
 # Exact finite-support HOL `loopSem$state` carrier
@@ -331,6 +332,80 @@ def findCode {width : Nat} [NeZero width] :
                 some (sptFromAList (parameters.zip (argument :: rest).dropLast), body)
               else none
       | _ => none
+
+/-- Exact HOL `mem_store_def` (`loopSemScript.sml:57-62`): store `w` at `addr`
+    (`(addr =+ w) s.memory`) when `addr IN s.mdomain`, else `NONE`. -/
+@[hol "cakeml/pancake/semantics/loopSemScript.sml" "mem_store_def" (words_as_type_indexed_bitvec)]
+def memStore {width : Nat} [NeZero width] {F : Type}
+    (address : BitVec width) (value : WordLocW width) (state : LoopSemStateFiniteExact width F) :
+    Option (LoopSemStateFiniteExact width F) :=
+  if state.mdomain address then
+    some { state with memory := fun a => if a = address then value else state.memory a }
+  else none
+
+/-- Exact HOL `mem_load_def` (`loopSemScript.sml:64-69`): `SOME (s.memory addr)`
+    when `addr IN s.mdomain`, else `NONE`. -/
+@[hol "cakeml/pancake/semantics/loopSemScript.sml" "mem_load_def" (words_as_type_indexed_bitvec)]
+def memLoad {width : Nat} [NeZero width] {F : Type}
+    (address : BitVec width) (state : LoopSemStateFiniteExact width F) : Option (WordLocW width) :=
+  if state.mdomain address then some (state.memory address) else none
+
+/-- Exact HOL `eval_def` (`loopSemScript.sml:71-96`) for loopLang expressions:
+    `Const`, `Var` (`lookup` in the `locals` num_map), `Lookup` (`FLOOKUP
+    s.globals`), `Load` (through `mem_load`), `Op` (`the_words (MAP (eval s)
+    ...)` then `word_op`), `Shift` (`word_sh sh w1 (w2n w2)`), `BaseAddr`,
+    `TopAddr`. -/
+@[hol "cakeml/pancake/semantics/loopSemScript.sml" "eval_def" (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
+def eval {width : Nat} [NeZero width] {F : Type} (state : LoopSemStateFiniteExact width F) :
+    HolLoopExp width → Option (WordLocW width)
+  | .const w => some (.word w)
+  | .var v => sptLookup v state.locals
+  | .lookup name => state.globals.lookup name
+  | .load address =>
+      match eval state address with
+      | some (.word w) => memLoad w state
+      | _ => none
+  | .op operator args =>
+      match theWords (args.attach.map fun ⟨e, _⟩ => eval state e) with
+      | some ws => (wordOpHOL operator ws).map WordLocW.word
+      | none => none
+  | .shift sh e1 e2 =>
+      match eval state e1, eval state e2 with
+      | some (.word w1), some (.word w2) => (wordShiftHOL sh w1 w2.toNat).map WordLocW.word
+      | _, _ => none
+  | .baseAddr => some (.word state.baseAddr)
+  | .topAddr => some (.word state.topAddr)
+
+/-- Exact HOL `loop_arith_def` (`loopSemScript.sml:118-146`): `LDiv` (unsigned
+    word division, failing on a zero divisor), `LLongMul` (low and high halves of
+    the natural product, `dimword` = `2 ^ width`) and `LLongDiv` (quotient and
+    remainder of the two-word numerator, failing on a zero divisor or a quotient
+    `>= dimword`), all through `set_var`. -/
+@[hol "cakeml/pancake/semantics/loopSemScript.sml" "loop_arith_def" (words_as_type_indexed_bitvec)]
+def loopArith {width : Nat} [NeZero width] {F : Type} (state : LoopSemStateFiniteExact width F) :
+    LoopArith → Option (LoopSemStateFiniteExact width F)
+  | .div r1 r2 r3 =>
+      match sptLookup r3 state.locals, sptLookup r2 state.locals with
+      | some (.word q), some (.word w2) =>
+          if q ≠ 0 then some (setVar r1 (.word (w2 / q)) state) else none
+      | _, _ => none
+  | .longMul r1 r2 r3 r4 =>
+      match sptLookup r3 state.locals, sptLookup r4 state.locals with
+      | some (.word w3), some (.word w4) =>
+          let r := w3.toNat * w4.toNat
+          some (setVar r2 (.word (BitVec.ofNat width r))
+            (setVar r1 (.word (BitVec.ofNat width (r / 2 ^ width))) state))
+      | _, _ => none
+  | .longDiv r1 r2 r3 r4 r5 =>
+      match sptLookup r3 state.locals, sptLookup r4 state.locals, sptLookup r5 state.locals with
+      | some (.word w3), some (.word w4), some (.word w5) =>
+          let n := w3.toNat * 2 ^ width + w4.toNat
+          let d := w5.toNat
+          let q := n / d
+          if d ≠ 0 ∧ q < 2 ^ width then
+            some (setVar r1 (.word (BitVec.ofNat width q)) (setVar r2 (.word (BitVec.ofNat width (n % d))) state))
+          else none
+      | _, _, _ => none
 
 end LoopSemStateFiniteExact
 

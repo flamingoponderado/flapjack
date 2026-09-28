@@ -18100,5 +18100,53 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.1): HOL set_globals gv w s = s with globals := s.globals |+ (gv,w) (loopSemScript.sml:52-55); Lean updates the globals HolFiniteMapExact (the reviewed canonical |-> carrier of LoopSemStateFiniteExact, witness holFmapAsFiniteSupportWitness in this module) with update (FUPDATE). The only carrier translation is HOL's type-indexed 'a word (in WordLocW width / BitVec width) to positive BitVec width, so the tag carries (words_as_type_indexed_bitvec); no extra hypotheses beyond [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "the_words_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem.lean",
+    "lean_name": "theWords",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.3): HOL the_words [] = SOME [] / the_words (w::ws) = case (w, the_words ws) of (SOME (Word x), SOME xs) => SOME (x::xs) | _ => NONE (wordSemScript.sml:297-302); Lean has the same two clauses over List (Option (WordLocW width)) returning Option (List (BitVec width)). The only carrier translation is HOL's type-indexed 'a word (WordLocW width / BitVec width) to positive BitVec width, so the tag carries (words_as_type_indexed_bitvec); no extra hypotheses beyond [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopSemScript.sml",
+    "hol_name": "mem_store_def",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopSemStateExact.lean",
+    "lean_name": "memStore",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.3): HOL mem_store addr w s = if addr IN s.mdomain then SOME (s with memory := (addr =+ w) s.memory) else NONE (loopSemScript.sml:57-62); Lean tests the Bool mdomain predicate and updates memory pointwise. HOL rows of loop_sem_mem_store_probe.out checked by Flapjack.Test.LoopSemEvalExactParity. The only carrier translation is HOL's type-indexed 'a word (WordLocW width / BitVec width) to positive BitVec width, so the tag carries (words_as_type_indexed_bitvec); no extra hypotheses beyond [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopSemScript.sml",
+    "hol_name": "mem_load_def",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopSemStateExact.lean",
+    "lean_name": "memLoad",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.3): HOL mem_load addr s = if addr IN s.mdomain then SOME (s.memory addr) else NONE (loopSemScript.sml:64-69); Lean is identical over the exact carrier. HOL rows of loop_sem_mem_load_probe.out checked by Flapjack.Test.LoopSemEvalExactParity. The only carrier translation is HOL's type-indexed 'a word (WordLocW width / BitVec width) to positive BitVec width, so the tag carries (words_as_type_indexed_bitvec); no extra hypotheses beyond [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopSemScript.sml",
+    "hol_name": "eval_def",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopSemStateExact.lean",
+    "lean_name": "eval",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.3): HOL eval_def (loopSemScript.sml:71-96): Const w = SOME (Word w); Var v = lookup v s.locals; Lookup name = FLOOKUP s.globals name; Load addr via mem_load on a Word address; Op op wexps = OPTION_MAP Word (word_op op ws) after the_words (MAP (eval s) wexps); Shift sh e1 e2 = OPTION_MAP Word (word_sh sh w1 (w2n w2)) on two Words; BaseAddr/TopAddr. Lean mirrors every clause over HolLoopExp using sptLookup, the globals HolFiniteMapExact lookup (reviewed canonical carrier, witness in this module), memLoad, theWords, the tagged wordOpHOL/wordShiftHOL. All HOL rows of loop_sem_eval_probe.out checked by Flapjack.Test.LoopSemEvalExactParity. The only carrier translation is HOL's type-indexed 'a word (WordLocW width / BitVec width) to positive BitVec width, so the tag carries (words_as_type_indexed_bitvec); no extra hypotheses beyond [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopSemScript.sml",
+    "hol_name": "loop_arith_def",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopSemStateExact.lean",
+    "lean_name": "loopArith",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.3): HOL loop_arith_def (loopSemScript.sml:118-146): LDiv r1 r2 r3 sets r1 := w2 / q (q from r3, nonzero); LLongMul r1 r2 r3 r4 sets r1 := n2w (r DIV dimword) then r2 := n2w r for r = w2n w3 * w2n w4; LLongDiv r1 r2 r3 r4 r5 with n = w2n w3 * dimword + w2n w4, d = w2n w5, q = n DIV d requires d <> 0 and q < dimword and sets r2 := n2w (n MOD d) then r1 := n2w q. Lean's LoopArith div/longMul/longDiv constructors carry the same operand order; unsigned BitVec division, BitVec.ofNat for n2w and 2 ^ width for dimword; set_var nesting order as in HOL. All HOL rows of loop_sem_loop_arith_probe.out checked by Flapjack.Test.LoopSemEvalExactParity. The only carrier translation is HOL's type-indexed 'a word (WordLocW width / BitVec width) to positive BitVec width, so the tag carries (words_as_type_indexed_bitvec); no extra hypotheses beyond [NeZero width]."
   }
 ]
