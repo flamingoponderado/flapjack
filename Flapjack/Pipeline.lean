@@ -520,6 +520,82 @@ def pipelineLoopFunctionsSource [OfNat α 0] [OfNat α 1]
   pipelineLoopFunctionsSourceAux architecture (pipelineFunctionInfos firstLabel functions)
     firstLabel functions
 
+private theorem pipelineFunctionInfos_byteRanged {width : Nat}
+    (firstLabel : Nat) (functions : List (CompiledFunction (BitVec width)))
+    (hnames : ∀ function ∈ functions, CrepNameRanged function.name) :
+    ∀ entry ∈ pipelineFunctionInfos firstLabel functions,
+      CrepNameRanged entry.1 := by
+  induction functions generalizing firstLabel with
+  | nil => simp [pipelineFunctionInfos, crepMakeFuncsAt]
+  | cons function functions ih =>
+      intro entry hentry
+      change entry ∈
+        (function.name, (firstLabel, function.params.length)) ::
+          crepMakeFuncsAt (firstLabel + 1) functions at hentry
+      simp only [List.mem_cons] at hentry
+      rcases hentry with hhead | htail
+      · cases hhead
+        exact hnames function (by simp)
+      · exact ih (firstLabel + 1)
+          (fun next hnext => hnames next (by simp [hnext])) entry htail
+
+private def pipelineLoopFunctionsSourceExactAux {width : Nat} [NeZero width]
+    (architecture : RiscV.Architecture) (functionInfos : InfoMap (Nat × Nat))
+    (hFunctionNames : ∀ entry ∈ functionInfos, CrepNameRanged entry.1) :
+    Nat → (programs : List (CompiledFunction (BitVec width))) →
+      (∀ function ∈ programs, CrepProgNameRanged function.body) →
+      List (Nat × List Nat × LoopProg (BitVec width))
+  | _, [], _ => []
+  | label, function :: programs, hBodies =>
+      let hBody := hBodies function (by simp)
+      let hTail : ∀ next ∈ programs, CrepProgNameRanged next.body := by
+        intro next hnext
+        exact hBodies next (by simp [hnext])
+      (label, List.range function.params.length,
+        crepCompFuncThroughHOLExact architecture functionInfos function.params
+          function.body hBody hFunctionNames) ::
+        pipelineLoopFunctionsSourceExactAux architecture functionInfos hFunctionNames
+          (label + 1) programs hTail
+termination_by _ programs _ => programs.length
+
+/-- Source-pipeline route through exact `compile_def`/`ocompile_def` whenever
+all compiled-body names and sibling function keys lie in HOL `mlstring`'s byte
+range. The range check is executable and covers the whole list before any
+function is lowered. If a Lean `String` contains a code point outside that
+range, keep the existing generic implementation; no truncating conversion is
+used on that path. -/
+def pipelineLoopFunctionsSourceRouted {width : Nat} [NeZero width]
+    (architecture : RiscV.Architecture) (firstLabel : Nat)
+    (functions : List (CompiledFunction (BitVec width))) :
+    List (Nat × List Nat × LoopProg (BitVec width)) :=
+  let functionInfos := pipelineFunctionInfos firstLabel functions
+  let byteRanged := functions.all (fun function =>
+    CrepNameRangedBool function.name && CrepProgNameRangedBool function.body)
+  if hRanged : byteRanged = true then
+    have hEach : ∀ function ∈ functions,
+        CrepNameRangedBool function.name && CrepProgNameRangedBool function.body := by
+      change functions.all (fun function =>
+        CrepNameRangedBool function.name && CrepProgNameRangedBool function.body) = true
+        at hRanged
+      simpa only [List.all_eq_true] using hRanged
+    have hNames : ∀ function ∈ functions, CrepNameRanged function.name := by
+      intro function hfunction
+      have h := hEach function hfunction
+      have ⟨hname, _⟩ : CrepNameRangedBool function.name = true ∧
+          CrepProgNameRangedBool function.body = true := by simpa using h
+      exact crepNameRangedBool_eq_true_iff function.name |>.mp hname
+    have hBodies : ∀ function ∈ functions, CrepProgNameRanged function.body := by
+      intro function hfunction
+      have h := hEach function hfunction
+      have ⟨_, hbody⟩ : CrepNameRangedBool function.name = true ∧
+          CrepProgNameRangedBool function.body = true := by simpa using h
+      exact (crepProgNameRangedBool_eq_true_iff function.body).mp hbody
+    pipelineLoopFunctionsSourceExactAux architecture functionInfos
+      (pipelineFunctionInfos_byteRanged firstLabel functions hNames)
+      firstLabel functions hBodies
+  else
+    pipelineLoopFunctionsSourceAux architecture functionInfos firstLabel functions
+
 /-! Source-facing port of `loop_to_word$compile_prog`.  CakeML rebuilds a
     dense even-register context from
     `params ++ fromNumSet (difference (acc_vars body) params)`.  Use that
@@ -666,7 +742,7 @@ def compileFlapjackEntryCake {width : Nat} [NeZero width]
       let metadata := globalCompileTop bytesInWord fromNat prepared
       let globals := { metadata with declarations := cakeDeclarations }
       let crepe := crepSimpFunctions fromNat compiled.2
-      let loop := pipelineLoopFunctionsSource architecture 1 crepe
+      let loop := pipelineLoopFunctionsSourceRouted architecture 1 crepe
       let word := pipelineWordFunctionsSource loop
       some (FlapjackPipelineResult.mk simplified structured globals crepe loop word)
 
