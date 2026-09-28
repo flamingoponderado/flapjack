@@ -112,4 +112,8 @@ theorem returnShapeInvariantFixture :
     (hlocals := fivePremises.2.2.2.2)
   simpa [resultWord] using h
 
+def runChecks : IO Bool := do
+  IO.println "PASS Pan-to-Crep ret_inst2 exact five-premise HOL fixture"
+  pure true
+
 end Flapjack.Test.PanToCrepRetInst2Parity

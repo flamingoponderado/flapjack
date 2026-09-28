@@ -1,0 +1,19 @@
+ocompile_skip=Mark Skip
+ocompile_tick=Mark Tick
+ocompile_assign=Mark (Seq (Mark Skip) (Mark Skip))
+ocompile_primitive=Mark (Primitive [7] AddCarry [8])
+ocompile_return=Mark
+  (Seq (Mark (Assign 5 (Const 5w)))
+     (Mark (Seq (Mark (Return [5])) (Mark Skip))))
+ocompile_call=Mark
+  (Seq (Mark (Assign 5 (Const 16w)))
+     (Mark
+        (Seq
+           (Mark
+              (Call (SOME ([7],LN)) (SOME 42) [5]
+                 (SOME
+                    (5,
+                     Mark
+                       (If NotEqual 5 (Imm 3w) (Mark (Raise 5))
+                          (Mark (Seq (Mark Tick) (Mark (Break 7)))) LN),
+                     Mark Skip,LN)))) (Mark Skip))))
