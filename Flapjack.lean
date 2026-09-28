@@ -61,6 +61,7 @@ import Flapjack.Pancake.Semantics.PanSem.TotalEvalBridge
 import Flapjack.Pancake.Semantics.PanSem.TotalEvalExpBridge
 import Flapjack.Pancake.Semantics.PanSem.TotalEvalCallBridge
 import Flapjack.Pancake.Semantics.PanSem.TotalEvalRanged
+import Flapjack.Pancake.Semantics.PanSem.TotalEvalExtCallBridge
 import Flapjack.Pancake.Semantics.PanSem.EvaluateFinite
 import Flapjack.Pancake.Semantics.PanSem.AddClock
 import Flapjack.Pancake.Semantics.PanSem.PanObservationalSemantics
