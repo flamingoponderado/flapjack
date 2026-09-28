@@ -14,10 +14,25 @@ namespace LoopSemStateFiniteExact
 
 variable {width : Nat} [NeZero width] {F : Type}
 
+namespace LoopPropsClockFiniteSupport
+
+/-- Local same-module witness for the canonical finite-support
+`LoopSemStateFiniteExact` carrier used by the `fmap_as_finite_support := [globals]`
+qualified ports in this module (re-exports the checked witness of
+`Flapjack/Pancake/Semantics/LoopSemStateExact.lean`). -/
+theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {F : Type} :
+    (∀ (state : LoopSemStateBroad width F) (h : state.FiniteSupport),
+        (LoopSemStateBroad.ofBroad state h).toBroad = state) ∧
+    (∀ state : LoopSemStateFiniteExact width F,
+        LoopSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  Flapjack.LoopSemStateFiniteExact.holFmapAsFiniteSupportWitness
+
+end LoopPropsClockFiniteSupport
+
 /-- Exact HOL `eval_upd_clock_eq` (`loopPropsScript.sml:946-957`):
     `!t e ck. eval (t with clock := ck) e = eval t e`. -/
 @[hol "cakeml/pancake/semantics/loopPropsScript.sml" "eval_upd_clock_eq"
-  (words_as_type_indexed_bitvec)]
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 theorem eval_upd_clock_eq (t : LoopSemStateFiniteExact width F) :
     ∀ (e : HolLoopExp width) (ck : Nat), eval { t with clock := ck } e = eval t e
   | .const _, _ => by simp only [eval]
@@ -90,7 +105,7 @@ theorem cutRes_add_clock (live : NumSet) (r : Option (LoopResultExact width))
     `!p t res st ck. evaluate (p,t) = (res,st) /\ res <> SOME TimeOut ==>
       evaluate (p,t with clock := t.clock + ck) = (res,st with clock := st.clock + ck)`. -/
 @[hol "cakeml/pancake/semantics/loopPropsScript.sml" "evaluate_add_clock_eq"
-  (words_as_type_indexed_bitvec)]
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 theorem evaluate_add_clock_eq (p : HolLoopProg width) (t : LoopSemStateFiniteExact width F)
     (res : Option (LoopResultExact width)) (st : LoopSemStateFiniteExact width F) (ck : Nat)
     (h : evaluate p t = (res, st)) (hne : res ≠ some .timeOut) :

@@ -4,6 +4,21 @@ import Flapjack.Misc.LprefixLub
 namespace Flapjack
 namespace LoopSemStateFiniteExact
 
+namespace LoopSemanticsFiniteSupport
+
+/-- Local same-module witness for the canonical finite-support
+`LoopSemStateFiniteExact` carrier used by the `fmap_as_finite_support := [globals]`
+qualified ports in this module (re-exports the checked witness of
+`Flapjack/Pancake/Semantics/LoopSemStateExact.lean`). -/
+theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {F : Type} :
+    (∀ (state : LoopSemStateBroad width F) (h : state.FiniteSupport),
+        (LoopSemStateBroad.ofBroad state h).toBroad = state) ∧
+    (∀ state : LoopSemStateFiniteExact width F,
+        LoopSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  Flapjack.LoopSemStateFiniteExact.holFmapAsFiniteSupportWitness
+
+end LoopSemanticsFiniteSupport
+
 /-- Exact HOL `loopSem$semantics_def` (`loopSemScript.sml:508-533`):
 
     ```
@@ -31,7 +46,7 @@ namespace LoopSemStateFiniteExact
     `IMAGE f UNIV` is the predicate `fun l => ∃ k, l = f k`.  Noncomputable,
     exactly as HOL's classical definition. -/
 @[hol "cakeml/pancake/semantics/loopSemScript.sml" "semantics_def"
-  (words_as_type_indexed_bitvec)]
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 noncomputable def semantics {width : Nat} [NeZero width] {F : Type}
     (s : LoopSemStateFiniteExact width F) (start : Nat) : HolBehaviour :=
   let prog : HolLoopProg width := .call none (some start) [] none

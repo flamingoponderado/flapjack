@@ -340,7 +340,7 @@ theorem evaluate_clock_snd {width : Nat} [NeZero width] {F : Type}
 /-- Exact HOL `evaluate_clock` (`loopSemScript.sml:458-486`):
     `!xs s1 vs s2. (evaluate (xs,s1) = (vs,s2)) ==> s2.clock <= s1.clock`. -/
 @[hol "cakeml/pancake/semantics/loopSemScript.sml" "evaluate_clock"
-  (words_as_type_indexed_bitvec)]
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 theorem evaluate_clock {width : Nat} [NeZero width] {F : Type}
     (xs : HolLoopProg width) (s1 : LoopSemStateFiniteExact width F)
     (vs : Option (LoopResultExact width)) (s2 : LoopSemStateFiniteExact width F)
@@ -350,7 +350,7 @@ theorem evaluate_clock {width : Nat} [NeZero width] {F : Type}
 /-- Exact HOL `fix_clock_evaluate` (`loopSemScript.sml:488-493`):
     `fix_clock s (evaluate (c1,s)) = evaluate (c1,s)`. -/
 @[hol "cakeml/pancake/semantics/loopSemScript.sml" "fix_clock_evaluate"
-  (words_as_type_indexed_bitvec)]
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 theorem fix_clock_evaluate {width : Nat} [NeZero width] {F : Type}
     (c1 : HolLoopProg width) (s : LoopSemStateFiniteExact width F) :
     fixClock s (evaluate c1 s) = evaluate c1 s := by

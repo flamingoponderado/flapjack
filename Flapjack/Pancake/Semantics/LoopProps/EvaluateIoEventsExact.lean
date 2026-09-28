@@ -213,11 +213,26 @@ theorem evaluate_io_events_mono_snd (p : HolLoopProg width) (s : LoopSemStateFin
       all_goals (try (exact shMemOp_ioEvents _ _ _ _))
   exact key _ p s rfl
 
+namespace LoopPropsIoEventsFiniteSupport
+
+/-- Local same-module witness for the canonical finite-support
+`LoopSemStateFiniteExact` carrier used by the `fmap_as_finite_support := [globals]`
+qualified ports in this module (re-exports the checked witness of
+`Flapjack/Pancake/Semantics/LoopSemStateExact.lean`). -/
+theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {F : Type} :
+    (∀ (state : LoopSemStateBroad width F) (h : state.FiniteSupport),
+        (LoopSemStateBroad.ofBroad state h).toBroad = state) ∧
+    (∀ state : LoopSemStateFiniteExact width F,
+        LoopSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  Flapjack.LoopSemStateFiniteExact.holFmapAsFiniteSupportWitness
+
+end LoopPropsIoEventsFiniteSupport
+
 /-- Exact HOL `evaluate_io_events_mono` (`loopPropsScript.sml:1135-1139`):
     `!exps s1 res s2. evaluate (exps,s1) = (res, s2) ⇒
       s1.ffi.io_events ≼ s2.ffi.io_events`. -/
 @[hol "cakeml/pancake/semantics/loopPropsScript.sml" "evaluate_io_events_mono"
-  (words_as_type_indexed_bitvec)]
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 theorem evaluate_io_events_mono (exps : HolLoopProg width) (s1 : LoopSemStateFiniteExact width F)
     (res : Option (LoopResultExact width)) (s2 : LoopSemStateFiniteExact width F)
     (h : evaluate exps s1 = (res, s2)) : s1.ffi.ioEvents <+: s2.ffi.ioEvents := by
@@ -477,7 +492,7 @@ theorem evaluate_add_clock_io_events_mono_snd (p : HolLoopProg width)
     `∀exps s extra. (SND(evaluate(exps,s))).ffi.io_events ≼
       (SND(evaluate(exps,s with clock := s.clock + extra))).ffi.io_events`. -/
 @[hol "cakeml/pancake/semantics/loopPropsScript.sml" "evaluate_add_clock_io_events_mono"
-  (words_as_type_indexed_bitvec)]
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 theorem evaluate_add_clock_io_events_mono (exps : HolLoopProg width)
     (s : LoopSemStateFiniteExact width F) (extra : Nat) :
     (evaluate exps s).2.ffi.ioEvents <+:
