@@ -3384,7 +3384,7 @@ Untagged Flapjack-specific bridge infrastructure; no `@[hol]` tag. -/
 
 /-- The `toStringOfBytes` image of an `MlString` is `NameRanged`: decoding bytes
     to characters yields codes below 256. -/
-private theorem nameRanged_toStringOfBytes_bridge (m : MlS) :
+theorem nameRanged_toStringOfBytes_bridge (m : MlS) :
     NameRanged (toStringOfBytes m) := by
   intro character hmem
   simp only [toStringOfBytes, String.toList_ofList, List.mem_map] at hmem
@@ -3394,7 +3394,7 @@ private theorem nameRanged_toStringOfBytes_bridge (m : MlS) :
   exact hb
 
 /-- Decoding a `ShapeHOL` to a production shape is byte-ranged. -/
-private theorem shapeOfHOL_byteRanged_bridge :
+theorem shapeOfHOL_byteRanged_bridge :
     (shape : ShapeHOL) → ShapeByteRanged (shapeOfHOL shape)
   | .one => by simp [ShapeByteRanged, shapeOfHOL]
   | .named name => by
@@ -3408,7 +3408,7 @@ private theorem shapeOfHOL_byteRanged_bridge :
 /-- A decoded exact expression is byte-ranged, so the production
     `ExpByteRanged` premise of the expression agreement is always available for
     `expOfHOL`. -/
-private theorem expOfHOL_byteRanged_bridge {width : Nat} [NeZero width] :
+theorem expOfHOL_byteRanged_bridge {width : Nat} [NeZero width] :
     (expression : ExpHOL width) → ExpByteRanged (expOfHOL expression) :=
   ExpHOL.rec
     (motive_1 := fun expression => ExpByteRanged (expOfHOL expression))
