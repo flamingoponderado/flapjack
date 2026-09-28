@@ -114,6 +114,10 @@ import Flapjack.Pancake.Semantics.LoopProps
 import Flapjack.Pancake.Semantics.LoopProps.CutSets
 import Flapjack.Pancake.Semantics.LoopSemStateExact
 import Flapjack.Pancake.Semantics.LoopSemStateExact.ShMem
+import Flapjack.Pancake.Semantics.LoopSemStateExact.Evaluate
+import Flapjack.Pancake.Semantics.LoopSemStateExact.Semantics
+import Flapjack.Pancake.Semantics.LoopProps.EvaluateClockExact
+import Flapjack.Pancake.Semantics.LoopProps.EvaluateIoEventsExact
 import Flapjack.PanObservationalSemantics
 import Flapjack.PanHHandleCallRet
 import Flapjack.PanMrec
@@ -335,6 +339,8 @@ import Flapjack.Compiler.Backend.StackProps
 import Flapjack.Compiler.Backend.RegAlloc
 import Flapjack.Misc.AppList
 import Flapjack.Misc.Sptree
+import Flapjack.Misc.LList
+import Flapjack.Misc.LprefixLub
 import Flapjack.Misc.FlatReplicate
 import Flapjack.Misc.FoldrMaxList
 import Flapjack.Misc.Uncurry

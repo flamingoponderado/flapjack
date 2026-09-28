@@ -578,6 +578,48 @@ def localsRelOracleGuard : Bool :=
 
 #guard localsRelOracleGuard
 
+/-! Direct cut-set oracle rows for HOL `locals_rel_cutset_prop`
+(`crep_to_loopProofScript.sml:236-244`), matching
+`locals_rel_cutset_second_true` / `locals_rel_cutset_after_true` and
+`cutset_set_lookup` / `cutset_target_lookup` in
+`scripts/hol-probes/crep_to_loop_locals_rel_probe.out`. -/
+
+abbrev localsRelOracleSetBig : NumSet := sptInsert 1 () localsRelOracleSet
+
+abbrev localsRelOracleCutsetTarget : Spt (WordLocW 8) :=
+  sptInsert 1 (WordLocW.word 3) localsRelOracleTarget
+
+/-- The rendered HOL `subspt` holds for the concrete sets of the cut-set rows. -/
+example : sptSubspt localsRelOracleSet localsRelOracleSetBig := by
+  intro k hk
+  have hk' : sptMem k (Spt.ls ()) := by simpa only [localsRelOracleSet] using hk
+  have hk0 : k = 0 := (sptMem_ls k ()).mp hk'
+  subst hk0
+  constructor
+  · rw [sptMem_iff_lookup]
+    exact ⟨(), by simp [localsRelOracleSetBig, sptInsert, sptLookup]⟩
+  · simp [localsRelOracleSetBig, localsRelOracleSet, sptInsert, sptLookup]
+
+def localsRelCutsetGuard : Bool :=
+  (sptLookup 1 localsRelOracleSetBig).isSome &&
+    decide ((sptLookup 1 localsRelOracleCutsetTarget : Option (WordLocW 8)) =
+      some (WordLocW.word 3)) &&
+    decide ((sptLookup 0 localsRelOracleCutsetTarget : Option (WordLocW 8)) =
+      some (WordLocW.word 9))
+
+#guard localsRelCutsetGuard
+
+/-- Shape check of the tagged `locals_rel_cutset_prop` against the HOL statement. -/
+example
+    (h1 : crepToLoopLocalsRelExact localsRelOracleCtxt localsRelOracleSet
+      localsRelOracleSource localsRelOracleTarget)
+    (h2 : crepToLoopLocalsRelExact localsRelOracleCtxt localsRelOracleSetBig
+      localsRelOracleSource localsRelOracleCutsetTarget)
+    (hsub : sptSubspt localsRelOracleSet localsRelOracleSetBig) :
+    crepToLoopLocalsRelExact localsRelOracleCtxt localsRelOracleSet
+      localsRelOracleSource localsRelOracleCutsetTarget :=
+  crepToLoopLocalsRelExact_cutset_prop _ _ _ _ _ _ h1 h2 hsub
+
 def runChecks : IO Bool := do
   let results := [declarationRenamingMatches,
     handlerlessCallCarriesRaiseHandler, handledCallCarriesRaiseHandler,
@@ -587,7 +629,7 @@ def runChecks : IO Bool := do
     comparisonKeepsIncomingLive,
     comparisonWithoutLiveDropsIt,
     stateRelExactGuard, ctxtFcExactGuard, localsRelExactGuard,
-    localsRelOracleGuard]
+    localsRelOracleGuard, localsRelCutsetGuard]
   let names := [
     "crep_to_loop declaration renaming and live seed",
     "crep_to_loop default call handler",
@@ -601,7 +643,8 @@ def runChecks : IO Bool := do
     "crep_to_loop exact-carrier state_rel matches the HOL oracle rows",
     "crep_to_loop exact ctxt_fc matches the HOL oracle rows",
     "crep_to_loop exact locals_rel matches the HOL oracle rows",
-    "crep_to_loop exact locals_rel direct oracle rows (true/domain-false/value-false)"]
+    "crep_to_loop exact locals_rel direct oracle rows (true/domain-false/value-false)",
+    "crep_to_loop exact locals_rel_cutset_prop oracle rows (subspt/second/after)"]
   let mut all := true
   for (name, result) in names.zip results do
     if result then IO.println s!"PASS {name}" else IO.println s!"FAIL {name}"
