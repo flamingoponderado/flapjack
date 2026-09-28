@@ -22,6 +22,37 @@ def loopVarsOfExp : LoopExp α → List Nat
   | .baseAddr => []
   | .topAddr => []
 
+mutual
+  /-- Exact port of HOL `loop_live$vars_of_exp_def`
+      (`cakeml/pancake/loop_liveScript.sml:10-21`) over the faithful
+      width-indexed `HolLoopExp` carrier and the exact `num_set`
+      (`NumSet = Spt Unit`, `sptInsert`).  HOL declares `vars_of_exp` and
+      `vars_of_exp_list` as one mutual definition; the second half is
+      `varsOfExpListHOL` below. -/
+  @[hol "cakeml/pancake/loop_liveScript.sml" "vars_of_exp_def"
+    (words_as_type_indexed_bitvec)]
+  def varsOfExpHOL {width : Nat} [NeZero width] :
+      HolLoopExp width → NumSet → NumSet
+    | .var name, live => sptInsert name () live
+    | .const _, live => live
+    | .lookup _, live => live
+    | .load address, live => varsOfExpHOL address live
+    | .op _ arguments, live => varsOfExpListHOL arguments live
+    | .shift _ left right, live => varsOfExpHOL left (varsOfExpHOL right live)
+    | .baseAddr, live => live
+    | .topAddr, live => live
+
+  /-- The `vars_of_exp_list` half of HOL's mutual `vars_of_exp_def`
+      (`cakeml/pancake/loop_liveScript.sml:19-21`).  Untagged because HOL
+      declares it inside the single `vars_of_exp_def` definition rather than
+      as a separate declaration; its `@[hol]` reference is
+      `varsOfExpHOL` above. -/
+  def varsOfExpListHOL {width : Nat} [NeZero width] :
+      List (HolLoopExp width) → NumSet → NumSet
+    | [], live => live
+    | expression :: rest, live => varsOfExpHOL expression (varsOfExpListHOL rest live)
+end
+
 /-! Source-shaped port of `loop_live$vars_of_exp`
     (`cakeml/pancake/loop_liveScript.sml:11`).  HOL carries the live names as
     a canonical `num_set`; the Lean syntax layer keeps lists, so fold the
