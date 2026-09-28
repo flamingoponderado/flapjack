@@ -706,6 +706,72 @@ theorem evalPanValueFfiClockCodeCall_catchesRaisedBody
   simp [evalPanValueFfiClockCodeCall, Option.elim_some, panValueCallArgumentsValue, harguments, hcallee, hclock,
     hcalleeBody, hshape, hshapeMatch, hhandlerAssignment, hhandlerBody, decPanClock]
 
+/-- State-owned code-map Call step for a callee whose single returned value has a
+    shape that disagrees with the source code entry's declared `returnShape`.
+    Cake's `evaluate (Call ...)` compares `shape_of retv` with `return_sh`
+    (`panSemScript.sml:668-670`) and returns `(SOME Error, st)` over the callee
+    post-call state.  This mirrors the fallthrough/break/continue/error call
+    steps above for the code-map evaluator: the callee body result is an
+    abstract hypothesis, so the equation is the generic return-shape rejection
+    rather than a fully unfolded concrete entry.  The clock is HOL's `fix_clock`
+    clamp `min (decPanClock clock) calleeClock`, and the `Error` carries the
+    callee's returned locals when `preserveReturnLocals` is set (as `DecCall`
+    does) and cleared locals otherwise.  Untagged because the result is the
+    reduced structured pair, not HOL's literal `result option × state` pair. -/
+theorem evalPanValueFfiClockCodeCall_callee_returnedShapeMismatch_error
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (context : PanValueFfiContext α)
+    (primitive : PanPrimitiveHandler α)
+    (handler : PanValueStatefulFfiHandler α σ)
+    (structs : StructContext) (code : PanSemCodeMap α)
+    (exceptionShapes : ExceptionId → Option Shape)
+    (baseAddress topAddress bytesInWord : α)
+    (fuel : Nat)
+    (locals globals : VarName → Option (PanValue α))
+    (memory : α → Option (PanValue α)) (ffi : FfiState σ)
+    (clock : Nat)
+    (info : Option (Option (VarKind × VarName) ×
+      Option (ExceptionId × VarName × Prog α)))
+    (function : FunName) (arguments : List (Exp α))
+    (values : List (PanValue α)) (body : Prog α) (returnShape : Shape)
+    (calleeLocals : VarName → Option (PanValue α))
+    (bodyLocals finalGlobals : VarName → Option (PanValue α))
+    (finalMemory : α → Option (PanValue α)) (finalFfi : FfiState σ)
+    (returnedValue : PanValue α)
+    (calleeClock : Nat)
+    (memoryAccess : Option (PanValueMemoryAccess α) := none)
+    (contracts : Option PanValueCallContracts := none)
+    (memoryHandler : Option (PanValueMemoryFfiHandler α σ) := none)
+    (preserveReturnLocals : Bool := false)
+    (harguments : evalPanValueExps structs locals globals memory
+      baseAddress topAddress bytesInWord arguments
+      (memoryAccess := memoryAccess) = some values)
+    (hlookup : lookupPanSemCodeCall structs code function values =
+      some (body, returnShape, calleeLocals))
+    (hclock : clock ≠ 0)
+    (hbody : evalPanValueFfiClockCodeProg context primitive handler
+      structs code exceptionShapes baseAddress topAddress bytesInWord fuel
+      calleeLocals globals memory ffi (decPanClock clock) body
+      (memoryAccess := memoryAccess) (contracts := contracts)
+      (memoryHandler := memoryHandler) =
+        some (.control (.returned bodyLocals finalGlobals finalMemory finalFfi
+          [returnedValue]), calleeClock))
+    (hmismatch : panShapeMatches (panValueShape structs returnedValue)
+      returnShape = false) :
+    evalPanValueFfiClockCodeCall context primitive handler structs code
+      exceptionShapes baseAddress topAddress bytesInWord (fuel + 1) locals globals
+      memory ffi clock info function arguments (memoryAccess := memoryAccess)
+      (contracts := contracts) (memoryHandler := memoryHandler)
+      (preserveReturnLocals := preserveReturnLocals) =
+        some (.control (.error
+          (if preserveReturnLocals then bodyLocals else fun _ => none)
+          finalGlobals finalMemory finalFfi),
+          min (decPanClock clock) calleeClock) := by
+  simp [evalPanValueFfiClockCodeCall, panValueCallArgumentsValue, Option.elim_some,
+    harguments, hlookup, hclock, hbody, hmismatch, decPanClock]
+
 /-! This declaration-boundary adapter exposes the executed source-owned call
     after declaration evaluation. It shares the exact code-map conversion,
     exception-shape lookup, and return-contract path used by the public

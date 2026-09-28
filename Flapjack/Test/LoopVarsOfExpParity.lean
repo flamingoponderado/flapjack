@@ -118,4 +118,26 @@ def evalExtendGuard : Bool :=
 #eval evalExtendGuard
 #guard evalExtendGuard
 
+/-! Direct parity for the exact `HolLoopExp`/`NumSet` port `varsOfExpHOL`
+    (`Flapjack/Pancake/LoopLive.lean`, tagged `vars_of_exp_def`).  The
+    expected `num_set` trees are the printed `vars_of_exp_probe.out` results
+    (`⦕ 3 ⦖`, `⦕ 9 ⦖`, `⦕ 4; 9 ⦖`, `⦕ 2; 3 ⦖`, `⦕ 1; 6; 8 ⦖`), reproduced
+    structure-for-structure at width 8. -/
+def holVarsGuard : Bool :=
+  varsOfExpHOL (.var 3 : HolLoopExp 8) Spt.ln ==
+      sptInsert 3 () Spt.ln &&
+    varsOfExpHOL (.const 7 : HolLoopExp 8) (sptInsert 9 () Spt.ln) ==
+      sptInsert 9 () Spt.ln &&
+    varsOfExpHOL (.load (.var 4) : HolLoopExp 8) (sptInsert 9 () Spt.ln) ==
+      sptInsert 4 () (sptInsert 9 () Spt.ln) &&
+    varsOfExpHOL
+        (.op .add [.var 3, .const 1, .var 2] : HolLoopExp 8) Spt.ln ==
+      sptInsert 3 () (sptInsert 2 () Spt.ln) &&
+    varsOfExpHOL (.shift .lsl (.var 6) (.load (.var 1)) : HolLoopExp 8)
+        (sptInsert 8 () Spt.ln) ==
+      sptInsert 6 () (sptInsert 1 () (sptInsert 8 () Spt.ln))
+
+#eval holVarsGuard
+#guard holVarsGuard
+
 end Flapjack.Test.LoopVarsOfExpParity

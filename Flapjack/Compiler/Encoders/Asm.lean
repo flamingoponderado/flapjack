@@ -70,8 +70,9 @@ def wordCmpResultHOL [NeZero width] (operator : Cmp)
     (left right : BitVec width) : BitVec width :=
   if wordCmpHOL operator left right then 1 else 0
 
-/-- HOL `architecture` (`asmScript.sml:149-151`).  Distinct from the RISC-V
+/-- Exact HOL `architecture` (`asmScript.sml:149-151`).  Distinct from the RISC-V
 state-model `Flapjack.RiscV.Architecture`. -/
+@[hol "cakeml/compiler/encoders/asm/asmScript.sml" "architecture"]
 inductive AsmArchitecture where
   | armv7
   | armv8

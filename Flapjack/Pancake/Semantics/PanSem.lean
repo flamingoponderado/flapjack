@@ -2169,6 +2169,71 @@ theorem panSemEvaluateCodeState_call_error_of_returnShapeMismatch_param
                     evalPanValueExpCounted, evalPanValueExp, hargs, hlookupCall, hclock,
                     panValueShape, panShapeMatches, decPanClock]
 
+/-- HOL `Call` invalid-return-shape rejection with the callee body result left as
+    an abstract hypothesis, mirroring the exact-state callee-error equations.
+    When the source code entry declares `returnShape` and the callee finishes
+    with a single value whose `panValueShape` does not match it, HOL
+    `shape_of retv ≠ return_sh` (`panSemScript.sml:668-670`) makes the call
+    return `SOME Error` over the callee post-call state; this states that
+    rejection over the state-owned code-map evaluator with HOL's `fix_clock`
+    clamp.  The caller-visible locals are cleared.  Untagged: the executed
+    result is the reduced structured pair, not HOL's literal `result option #
+    state` pairing.  The functions-list `PanSemExactState` compatibility carrier
+    has no source `returnShape`, so this rejection is only available on the
+    state-owned code-map path. -/
+theorem panSemEvaluateCodeState_call_error_of_callee_returnShapeMismatch
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (context : PanValueFfiContext α)
+    (primitive : PanPrimitiveHandler α)
+    (handler : PanValueStatefulFfiHandler α σ)
+    (bytesInWord : α) (state : PanSemState α (FfiState σ))
+    (info : Option (Option (VarKind × VarName) ×
+      Option (ExceptionId × VarName × Prog α)))
+    (function : FunName) (arguments : List (Exp α))
+    (values : List (PanValue α)) (body : Prog α) (returnShape : Shape)
+    (calleeLocals bodyLocals finalGlobals : VarName → Option (PanValue α))
+    (finalMemory : α → Option (PanValue α)) (finalFfi : FfiState σ)
+    (returnedValue : PanValue α) (calleeClock fuel : Nat)
+    (memoryAccess : Option (PanValueMemoryAccess α) := none)
+    (contracts : Option PanValueCallContracts := none)
+    (memoryHandler : Option (PanValueMemoryFfiHandler α σ) := none)
+    (harguments : evalPanValueExps state.structs state.locals state.globals
+      state.memory state.baseAddress state.topAddress bytesInWord arguments
+      (memoryAccess := memoryAccess) = some values)
+    (hlookup : lookupPanSemCodeCall state.structs state.code function values =
+      some (body, returnShape, calleeLocals))
+    (hclock : state.clock ≠ 0)
+    (hfuel : panSemCodeEvaluateFuel state (.call info function arguments) =
+      fuel + 2)
+    (hbody : evalPanValueFfiClockCodeProg context primitive handler
+      state.structs state.code state.exceptionShapes state.baseAddress
+      state.topAddress bytesInWord fuel calleeLocals state.globals state.memory
+      state.ffi (decPanClock state.clock) body
+      (memoryAccess := memoryAccess) (contracts := contracts)
+      (memoryHandler := memoryHandler) =
+        some (.control (.returned bodyLocals finalGlobals finalMemory finalFfi
+          [returnedValue]), calleeClock))
+    (hmismatch : panShapeMatches (panValueShape state.structs returnedValue)
+      returnShape = false) :
+    panSemEvaluateCodeState context primitive handler bytesInWord state
+      (.call info function arguments) (memoryAccess := memoryAccess)
+      (contracts := contracts) (memoryHandler := memoryHandler) =
+        some (.control (.error (fun _ => none) finalGlobals finalMemory
+          finalFfi), min (decPanClock state.clock) calleeClock) := by
+  unfold panSemEvaluateCodeState panSemEvaluateCodeStateWithFuel
+  rw [hfuel]
+  simp only [evalPanValueFfiClockCodeProg]
+  exact evalPanValueFfiClockCodeCall_callee_returnedShapeMismatch_error
+    context primitive handler state.structs state.code state.exceptionShapes
+    state.baseAddress state.topAddress bytesInWord fuel state.locals state.globals
+    state.memory state.ffi state.clock info function arguments values body
+    returnShape calleeLocals bodyLocals finalGlobals finalMemory finalFfi
+    returnedValue calleeClock (memoryAccess := memoryAccess)
+    (contracts := contracts) (memoryHandler := memoryHandler)
+    (preserveReturnLocals := false) harguments hlookup hclock hbody hmismatch
+
 /-- HOL `DecCall` invalid-return-shape rejection: the state-owned call helper
     already rejects the mismatched callee return shape, and the `DecCall`
     wrapper propagates that `Error` without running the continuation.  Untagged,
