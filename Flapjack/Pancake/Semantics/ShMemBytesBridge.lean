@@ -174,14 +174,13 @@ theorem shMemStoreHOLExact_control_corresponds {width : Nat} [NeZero width] {σ 
 The `shMemLoad` case of `pc_compile_correct` must also match the word that the
 FFI hands back.  The Crep primitive decodes `newBytes.map UInt8.ofBitVec` with
 `crepClockWordOfBytes`, while the Pan primitive decodes `newBytes` with
-`panWordOfBytesHOL false 0`.  This section develops the byte-sum arithmetic
-shared by both decoders: both equal the little-endian integer sum
-`∑ b_i * 256 ^ i` reduced modulo `2 ^ width`, so the two decoders agree for
-every byte list when `8 ∣ width` (the convention of the existing byte carriers:
-`panWordToBytesHOL`/`panSetByteHOL` already index `width / 8` byte slots, and
-the RISC-V targets have width 32/64).  The sum is packaged by `leSumB`; the
-remaining step (the `panSetByteHOL` reassembly identity `panSetByteHOL_ofNat_eq`
-and the Pan-side induction) is tracked by `flapjack-pxn.18.4.3.111.1.1.2`.
+`panWordOfBytesHOL false 0`.  Both are the recursive HOL `word_of_bytes` fold at
+little-endian byte slots, so they agree for **every** byte list whenever
+`8 ≤ width`; the final theorem is
+`panWordOfBytesHOL_eq_crepClockWordOfBytes` (with `crepClockWordOfBytesAux`
+mirroring `set_byte`/`panSetByteHOL` slot by slot).  This section also keeps the
+earlier byte-sum arithmetic (`leSumB` and the `panWacc` `toNat` characterization)
+used by the shared-memory store/load case work.
 -/
 
 /-- Little-endian integer sum of the bytes with absolute index starting at `k`. -/
@@ -204,14 +203,8 @@ theorem leSumB_cons (k : Nat) (b : BitVec 8) (rest : List (BitVec 8)) :
   rw [leSumB_foldl_add_eq]
   omega
 
-/-- The Crep decoder of the mapped byte list is the little-endian integer sum. -/
-theorem crepClockWordOfBytes_eq_leSumB {width : Nat} (bs : List (BitVec 8)) :
-    crepClockWordOfBytes (bs.map UInt8.ofBitVec)
-      = BitVec.ofNat width (leSumB 0 bs) := by
-  simp only [crepClockWordOfBytes, leSumB, List.zipIdx_map, List.foldl_map, Prod.map,
-    UInt8.toNat_ofBitVec]
-  rfl
-
+/-- One `panSetByteHOL` step expressed at the natural-number level, matching the
+recursive `crepClockWordOfBytesAux` accumulator. -/
 theorem leSumB_dvd (bs : List (BitVec 8)) (k : Nat) : 256 ^ k ∣ leSumB k bs := by
   induction bs generalizing k with
   | nil => simp [leSumB]
@@ -318,6 +311,18 @@ example : panWordOfBytesHOL (width := 64) false (0 : RiscV.Word 64)
 
 example : panWordOfBytesHOL (width := 64) false (0 : RiscV.Word 64) [255, 1]
     = crepClockWordOfBytes ([255, 1].map UInt8.ofBitVec) := by decide
+
+/-- Kernel-checked regression instances at widths that are **not** multiples of
+    eight, where the earlier fold-left Crep decoder disagreed.  The repaired
+    recursive decoder must still track `panWordOfBytesHOL`. -/
+example : panWordOfBytesHOL (width := 9) false (0 : RiscV.Word 9) [1, 3, 5]
+    = crepClockWordOfBytes ([1, 3, 5].map UInt8.ofBitVec) := by decide
+
+example : panWordOfBytesHOL (width := 9) false (0 : RiscV.Word 9) [255, 1]
+    = crepClockWordOfBytes ([255, 1].map UInt8.ofBitVec) := by decide
+
+example : panWordOfBytesHOL (width := 12) false (0 : RiscV.Word 12) [7, 9, 11, 13]
+    = crepClockWordOfBytes ([7, 9, 11, 13].map UInt8.ofBitVec) := by decide
 
 /-! ## Address-parameterised decoder and its concatenation law
 
@@ -713,30 +718,81 @@ theorem ofNat_leSumB_take {width : Nat} [NeZero width] (hdiv : width % 8 = 0)
     rw [hk, hp]
     rw [Nat.add_mul_mod_self_left]
 
+theorem panSetByteHOL_toNat_foldr {width : Nat} [NeZero width] (h8 : 8 ≤ width)
+    (a : Nat) (byte : UInt8) (V : Nat) (hV : V < 2 ^ width) :
+    (panSetByteHOL (BitVec.ofNat width a) (BitVec.ofNat width byte.toNat)
+        (BitVec.ofNat width V) false).toNat
+      = V % (256 ^ ((BitVec.ofNat width a).toNat % (width / 8)))
+        + byte.toNat * 256 ^ ((BitVec.ofNat width a).toNat % (width / 8))
+        + V / (256 ^ ((BitVec.ofNat width a).toNat % (width / 8)) * 256)
+          * (256 ^ ((BitVec.ofNat width a).toNat % (width / 8)) * 256) := by
+  have hbbi : byteBitIndex (BitVec.ofNat width a) false
+      = 8 * ((BitVec.ofNat width a).toNat % (width / 8)) := by
+    simp only [byteBitIndex, Bool.false_eq_true, if_false]
+  have h := panSetByteHOL_toNat (width := width) h8 (BitVec.ofNat width a)
+    (BitVec.ofNat width V) byte false
+  rw [hbbi, two_pow_eight_mul_succ_eq_pow256, two_pow_eight_mul_eq_pow256,
+    BitVec.toNat_ofNat, Nat.mod_eq_of_lt hV] at h
+  rw [Nat.pow_add_one] at h
+  omega
+
+/-- Every intermediate accumulator of the recursive decoder stays below
+`2 ^ width`. -/
+theorem crepClockWordOfBytesAux_lt {width : Nat} [NeZero width] (h8 : 8 ≤ width) :
+    ∀ (bytes : List UInt8) (a : Nat),
+      crepClockWordOfBytesAux (width := width) a bytes < 2 ^ width := by
+  intro bytes
+  induction bytes with
+  | nil =>
+      intro a
+      simp only [crepClockWordOfBytesAux]
+      exact Nat.two_pow_pos width
+  | cons byte rest ih =>
+      intro a
+      have hV : crepClockWordOfBytesAux (width := width) (a + 1) rest < 2 ^ width :=
+        ih (a + 1)
+      have hstep := panSetByteHOL_toNat_foldr (width := width) h8 a byte
+        (crepClockWordOfBytesAux (width := width) (a + 1) rest) hV
+      rw [crepClockWordOfBytesAux, ← hstep]
+      exact BitVec.isLt _
+
+/-- The recursive Crep decoder accumulator is exactly the address-parameterised
+Pan decoder `panWacc` started from the zero cell. -/
+theorem crepClockWordOfBytesAux_eq_panWacc {width : Nat} [NeZero width] (h8 : 8 ≤ width) :
+    ∀ (bs : List (BitVec 8)) (a : Nat),
+      BitVec.ofNat width
+          (crepClockWordOfBytesAux (width := width) a (bs.map UInt8.ofBitVec))
+        = panWacc a bs 0 := by
+  intro bs
+  induction bs with
+  | nil =>
+      intro a
+      simp only [List.map_nil, crepClockWordOfBytesAux, panWacc]
+      rfl
+  | cons b rest ih =>
+      intro a
+      rw [List.map_cons]
+      have hW : crepClockWordOfBytesAux (width := width) (a + 1)
+          (rest.map UInt8.ofBitVec) < 2 ^ width :=
+        crepClockWordOfBytesAux_lt (width := width) h8 (rest.map UInt8.ofBitVec) (a + 1)
+      have hstep := panSetByteHOL_toNat_foldr (width := width) h8 a (UInt8.ofBitVec b)
+        (crepClockWordOfBytesAux (width := width) (a + 1) (rest.map UInt8.ofBitVec)) hW
+      have hbodylt : crepClockWordOfBytesAux (width := width) a
+          (UInt8.ofBitVec b :: rest.map UInt8.ofBitVec) < 2 ^ width :=
+        crepClockWordOfBytesAux_lt (width := width) h8 _ a
+      have hb : (UInt8.ofBitVec b).toNat = b.toNat := UInt8.toNat_ofBitVec
+      rw [panWacc]
+      apply BitVec.eq_of_toNat_eq
+      rw [BitVec.toNat_ofNat, Nat.mod_eq_of_lt hbodylt, ← hb, ← ih (a + 1), hstep]
+      rfl
+
 theorem panWordOfBytesHOL_eq_crepClockWordOfBytes {width : Nat} [NeZero width]
-    (hdiv : width % 8 = 0) (bs : List (BitVec 8)) :
+    (h8 : 8 ≤ width) (bs : List (BitVec 8)) :
     panWordOfBytesHOL (width := width) false 0 bs
       = crepClockWordOfBytes (bs.map UInt8.ofBitVec) := by
-  by_cases hle : bs.length ≤ width / 8
-  · rw [show (0 : RiscV.Word width) = BitVec.ofNat width 0 from rfl]
-    rw [panWordOfBytesHOL_eq_ofNat_le 0 bs (by omega)]
-    exact (crepClockWordOfBytes_eq_leSumB bs).symm
-  · have hlt : width / 8 < bs.length := Nat.lt_of_not_le hle
-    have hlen : (bs.take (width / 8)).length = width / 8 := by
-      rw [List.length_take]; exact Nat.min_eq_left (Nat.le_of_lt hlt)
-    calc panWordOfBytesHOL (width := width) false 0 bs
-        = panWacc 0 bs 0 := panWordOfBytesHOL_eq_panWacc_unbounded bs 0
-      _ = panWacc 0 (bs.take (width / 8)) (panWacc (width / 8) (bs.drop (width / 8)) 0) := by
-          have h1 : panWacc 0 bs 0
-              = panWacc 0 (bs.take (width / 8) ++ bs.drop (width / 8)) 0 :=
-            congrArg (fun l : List (BitVec 8) => panWacc (width := width) 0 l 0)
-              (List.take_append_drop (width / 8) bs).symm
-          rw [h1, panWacc_append, hlen, Nat.zero_add]
-      _ = BitVec.ofNat width (leSumB 0 (bs.take (width / 8))) :=
-          panWacc_indep_len (width := width) hdiv (bs.take (width / 8)) hlen
-            (panWacc (width / 8) (bs.drop (width / 8)) 0)
-      _ = BitVec.ofNat width (leSumB 0 bs) := ofNat_leSumB_take hdiv bs
-      _ = crepClockWordOfBytes (bs.map UInt8.ofBitVec) :=
-          (crepClockWordOfBytes_eq_leSumB bs).symm
+  rw [crepClockWordOfBytes,
+    show (0 : RiscV.Word width) = BitVec.ofNat width 0 from rfl,
+    panWordOfBytesHOL_eq_panWacc_unbounded]
+  exact (crepClockWordOfBytesAux_eq_panWacc (width := width) h8 bs 0).symm
 
 end Flapjack

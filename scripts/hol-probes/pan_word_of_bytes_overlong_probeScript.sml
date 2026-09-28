@@ -93,4 +93,20 @@ val _ = print_eval "w64_discarded_bytes_irrelevant"
      word_of_bytes F (0w : 64 word)
         [1w; 2w; 3w; 4w; 5w; 6w; 7w; 8w]``);
 
+(* Width 9: `dimindex DIV 8 = 1`, so only the first byte survives (the low
+   eight bits).  This is the non-multiple-of-eight case where a naive
+   last-write-wins fold would keep the wrapped second byte and give
+   `1 + 3 * 256 mod 512 = 257w` instead of `1w`. *)
+val _ = print_eval "w9_overlong_two"
+  (``word_of_bytes F (0w : 9 word) [1w; 3w] : 9 word``);
+val _ = print_eval "w9_overlong_three"
+  (``word_of_bytes F (0w : 9 word) [1w; 3w; 5w] : 9 word``);
+val _ = print_eval "w9_overlong_take_one"
+  (``word_of_bytes F (0w : 9 word) [1w; 3w; 5w] =
+     word_of_bytes F (0w : 9 word) (TAKE 1 [1w; 3w; 5w])``);
+
+(* Width 12: `dimindex DIV 8 = 1`, same one-byte-per-word behaviour. *)
+val _ = print_eval "w12_overlong_four"
+  (``word_of_bytes F (0w : 12 word) [7w; 9w; 11w; 13w] : 12 word``);
+
 val _ = print ("done=ok\n");

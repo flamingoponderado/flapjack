@@ -1993,6 +1993,7 @@ run_probe pan_sem_evaluate_ind_probeScript.sml pan_sem_evaluate_ind_probe.out \
 run_probe pan_word_of_bytes_overlong_probeScript.sml pan_word_of_bytes_overlong_probe.out \
   source_def w8_overlong_three w8_overlong_take_one w16_overlong_three \
   w16_overlong_sum w16_overlong_take_two w64_overlong_ten \
-  w64_overlong_take_eight w64_discarded_bytes_irrelevant done \
+  w64_overlong_take_eight w64_discarded_bytes_irrelevant \
+  w9_overlong_two w9_overlong_three w9_overlong_take_one w12_overlong_four done \
   "$hol_dir/src/n-bit/byteScript.sml" \
   "$hol_dir/src/n-bit"
