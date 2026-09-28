@@ -4223,6 +4223,146 @@ theorem globalsShapes_setKvarHOLFinite_of_globalsShapes {width : Nat} {σ : Type
     rw [hsrc] at hlook
     exact hlook
 
+theorem globalsShapes_dec_arm {width : Nat} {σ : Type} [NeZero width]
+    (name : MlS) (shape : ShapeHOL) (initializer : ExpHOL width) (body : ProgHOL width)
+    (context : FiniteEvalContext width σ) (value : ValueHOL width)
+    (hinit : evalHOLFinite context.state (h := context.memaddrsDecidable) initializer =
+      some value)
+    (hshape : shapeEqHOL shape (shapeOfHOLExact value) = true)
+    (hbodyInv : ∀ (result : Option (PanSemResultExact width)) (output : FiniteEvalContext width σ),
+      evalPanSemRecursiveCallFiniteContext body
+        (context.withState (setVarHOLFinite name value context.state) rfl rfl) =
+          some (result, output) →
+      globalsShapes output.state =
+        globalsShapes (context.withState (setVarHOLFinite name value context.state) rfl rfl).state) :
+    ∀ (result : Option (PanSemResultExact width)) (output : FiniteEvalContext width σ),
+      evalPanSemRecursiveCallFiniteContext (.dec name shape initializer body) context =
+        some (result, output) →
+      globalsShapes output.state = globalsShapes context.state := by
+  intro result output heval
+  rw [evalPanSemRecursiveCallFiniteContext.eq_def] at heval
+  dsimp only at heval
+  rw [hinit] at heval
+  dsimp only at heval
+  rw [if_pos hshape] at heval
+  cases hb : evalPanSemRecursiveCallFiniteContext body
+      (context.withState (setVarHOLFinite name value context.state) rfl rfl) with
+  | none => rw [hb] at heval; dsimp only at heval; simp at heval
+  | some p =>
+      obtain ⟨res, post⟩ := p
+      rw [hb] at heval
+      dsimp only at heval
+      simp only [Option.some.injEq, Prod.mk.injEq] at heval
+      rcases heval with ⟨rfl, rfl⟩
+      show globalsShapes post.state = globalsShapes context.state
+      rw [hbodyInv res post hb]
+      show globalsShapes (setVarHOLFinite name value context.state) = globalsShapes context.state
+      exact globalsShapes_setVarHOLFinite name value context.state
+
+theorem globalsShapes_seq_none_arm {width : Nat} {σ : Type} [NeZero width]
+    (first second : ProgHOL width) (context : FiniteEvalContext width σ)
+    (hfirst : evalPanSemRecursiveCallFiniteContext first context = none) :
+    ∀ (result : Option (PanSemResultExact width)) (output : FiniteEvalContext width σ),
+      evalPanSemRecursiveCallFiniteContext (.seq first second) context = some (result, output) →
+      globalsShapes output.state = globalsShapes context.state := by
+  intro result output heval
+  rw [evalPanSemRecursiveCallFiniteContext.eq_def] at heval
+  dsimp only at heval
+  rw [hfirst] at heval
+  dsimp only at heval
+  simp at heval
+
+theorem globalsShapes_seq_some_none_arm {width : Nat} {σ : Type} [NeZero width]
+    (first second : ProgHOL width) (context firstContext : FiniteEvalContext width σ)
+    (hfirst : evalPanSemRecursiveCallFiniteContext first context = some (none, firstContext))
+    (hfirstInv : globalsShapes firstContext.state = globalsShapes context.state)
+    (hsecondInv : ∀ (result : Option (PanSemResultExact width)) (output : FiniteEvalContext width σ),
+      evalPanSemRecursiveCallFiniteContext second
+        (firstContext.withState
+          (fixClockHOLFinite context.state
+            ((none : Option (PanSemResultExact width)), firstContext.state)).2 rfl rfl) =
+          some (result, output) →
+      globalsShapes output.state =
+        globalsShapes (firstContext.withState
+          (fixClockHOLFinite context.state
+            ((none : Option (PanSemResultExact width)), firstContext.state)).2 rfl rfl).state) :
+    ∀ (result : Option (PanSemResultExact width)) (output : FiniteEvalContext width σ),
+      evalPanSemRecursiveCallFiniteContext (.seq first second) context = some (result, output) →
+      globalsShapes output.state = globalsShapes context.state := by
+  intro result output heval
+  rw [evalPanSemRecursiveCallFiniteContext.eq_def] at heval
+  dsimp only at heval
+  rw [hfirst] at heval
+  dsimp only at heval
+  rw [hsecondInv result output heval]
+  show globalsShapes (fixClockHOLFinite context.state (none, firstContext.state)).2 =
+    globalsShapes context.state
+  rw [globalsShapes_fixClockHOLFinite]
+  exact hfirstInv
+
+theorem globalsShapes_seq_some_some_arm {width : Nat} {σ : Type} [NeZero width]
+    (first second : ProgHOL width) (context firstContext : FiniteEvalContext width σ)
+    (firstResult : PanSemResultExact width)
+    (hfirst : evalPanSemRecursiveCallFiniteContext first context =
+      some (some firstResult, firstContext))
+    (hfirstInv : globalsShapes firstContext.state = globalsShapes context.state) :
+    ∀ (result : Option (PanSemResultExact width)) (output : FiniteEvalContext width σ),
+      evalPanSemRecursiveCallFiniteContext (.seq first second) context = some (result, output) →
+      globalsShapes output.state = globalsShapes context.state := by
+  intro result output heval
+  rw [evalPanSemRecursiveCallFiniteContext.eq_def] at heval
+  dsimp only at heval
+  rw [hfirst] at heval
+  dsimp only at heval
+  simp only [Option.some.injEq, Prod.mk.injEq] at heval
+  rcases heval with ⟨rfl, rfl⟩
+  show globalsShapes (fixClockHOLFinite context.state (some firstResult, firstContext.state)).2 =
+    globalsShapes context.state
+  rw [globalsShapes_fixClockHOLFinite]
+  exact hfirstInv
+
+theorem globalsShapes_ite_then_arm {width : Nat} {σ : Type} [NeZero width]
+    (condition : ExpHOL width) (thenBranch elseBranch : ProgHOL width)
+    (context : FiniteEvalContext width σ) (value : BitVec width)
+    (hcond : evalHOLFinite context.state (h := context.memaddrsDecidable) condition =
+      some (ValueHOL.val (HolWordLab.word value)))
+    (hne : (value != 0) = true)
+    (hsubInv : ∀ (result : Option (PanSemResultExact width)) (output : FiniteEvalContext width σ),
+      evalPanSemRecursiveCallFiniteContext thenBranch context = some (result, output) →
+      globalsShapes output.state = globalsShapes context.state) :
+    ∀ (result : Option (PanSemResultExact width)) (output : FiniteEvalContext width σ),
+      evalPanSemRecursiveCallFiniteContext (.ite condition thenBranch elseBranch) context =
+        some (result, output) →
+      globalsShapes output.state = globalsShapes context.state := by
+  intro result output heval
+  rw [evalPanSemRecursiveCallFiniteContext.eq_def] at heval
+  dsimp only at heval
+  rw [hcond] at heval
+  dsimp only at heval
+  rw [if_pos hne] at heval
+  exact hsubInv result output heval
+
+theorem globalsShapes_ite_else_arm {width : Nat} {σ : Type} [NeZero width]
+    (condition : ExpHOL width) (thenBranch elseBranch : ProgHOL width)
+    (context : FiniteEvalContext width σ) (value : BitVec width)
+    (hcond : evalHOLFinite context.state (h := context.memaddrsDecidable) condition =
+      some (ValueHOL.val (HolWordLab.word value)))
+    (hz : (value != 0) = false)
+    (hsubInv : ∀ (result : Option (PanSemResultExact width)) (output : FiniteEvalContext width σ),
+      evalPanSemRecursiveCallFiniteContext elseBranch context = some (result, output) →
+      globalsShapes output.state = globalsShapes context.state) :
+    ∀ (result : Option (PanSemResultExact width)) (output : FiniteEvalContext width σ),
+      evalPanSemRecursiveCallFiniteContext (.ite condition thenBranch elseBranch) context =
+        some (result, output) →
+      globalsShapes output.state = globalsShapes context.state := by
+  intro result output heval
+  rw [evalPanSemRecursiveCallFiniteContext.eq_def] at heval
+  dsimp only at heval
+  rw [hcond] at heval
+  dsimp only at heval
+  rw [if_neg (by rw [hz]; decide)] at heval
+  exact hsubInv result output heval
+
 end PanSemStateFiniteExact
 
 end Flapjack
