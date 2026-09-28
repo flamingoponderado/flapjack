@@ -7916,6 +7916,22 @@
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panSemExceptionShapesRanged_panStructConvertState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack plumbing: instantiates the untagged PanSemExceptionShapesRanged predicate at panStructConvertState, discharging the Raise agreement's hexnRanged premise from the source predicate and CtxBR context.structs. No HOL declaration; not a port claim."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
+    "lean_name": "panSemExceptionShapesRanged_panStructFiniteStateFromMaps",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack plumbing: instantiates the untagged PanSemExceptionShapesRanged predicate at panStructFiniteStateFromMaps' panPropsALookupEq runtime view from a byte-ranged exception-shape InfoMap. No HOL declaration; not a port claim."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrect.lean",
     "lean_name": "lookupInfo_mapValues",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Finite-map lookup adapter lemma used to connect HOL FMAP_MAP2 results with explicit InfoMap entries; support for the open convert_s/compile_correct port."
@@ -17681,6 +17697,14 @@
     "lean_name": "panToCrepStateRelFiniteExact_setLocals_ffi",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "ds10 (bead flapjack-pxn.18.4.3.111.1): untagged relation update lemma used by the exact Pan/Crep shared-memory load/store bridge; the exact finite-support state relation is insensitive to the source locals, and updating both FFI states with the same HolFfiState preserves it. No HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "shMemLoadHOLFiniteExact_ret_corresponds",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "ds10 (bead flapjack-pxn.18.4.3.111.1): untagged Flapjack-specific bridge for the exact pc_compile_correct ShMemLoad case. It shows the exact shared-memory load returns keep panToCrepStateRelFiniteExact and panToCrepLocalsRelFiniteExact, using the committed decoder equality panWordOfBytesHOL_eq_crepClockWordOfBytes and panToCrepLocalsRelFiniteExact_setVarWord. HOL reasons inline in the pc_compile_correct ShMemLoad case; no standalone HOL declaration."
   },
   {
     "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
