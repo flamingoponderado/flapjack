@@ -923,6 +923,53 @@ example : PanSemHOLResultOptionRel
     bridgeAssignExactState bridgeAssignStateRelExec bridgeAssignProdState_ranged
     .local "x" (by decide) (.const (7 : W)) trivial
 
+/-! ## Program rangedness projects to the bridge expression premise (bead
+    `flapjack-pxn.18.4.3.77.2.15`)
+
+`expsOf_byteRanged` (`Flapjack/Pancake/PanLang/Prog.lean`) turns the executed
+`ProgByteRanged` program hypothesis into the `ExpByteRanged` premise of the
+expression bridge, and `panSemTotalEvaluate_assign_agree_of_progByteRanged`
+discharges the `NameRanged`/`ExpByteRanged` premises of the assembled `Assign`
+slice.  The fixtures below are kernel-checked guards for both. -/
+
+/-- A byte-ranged single-assignment program. -/
+def bridgeAssignProgram : Prog W := .assign .local "x" (.const (7 : W))
+
+/-- The fixture program is `ProgByteRanged`. -/
+theorem bridgeAssignProgram_byteRanged : ProgByteRanged bridgeAssignProgram := by
+  simp [bridgeAssignProgram, ProgByteRanged, ExpByteRanged, NameRanged]
+
+/-- Its evaluated expression is byte-ranged by projection from the program. -/
+example : ExpByteRanged (.const (7 : W)) :=
+  expsOf_byteRanged bridgeAssignProgram bridgeAssignProgram_byteRanged
+    (.const (7 : W)) (by simp [bridgeAssignProgram, expsOf])
+
+/-- The agreement with the expression premise discharged from `ProgByteRanged`. -/
+example :
+    Option.map panValueToHOL (evalPanSemStateExp bridgeExecProdState (.const (7 : W))) =
+      bridgeExecExactState.evalHOLFinite (expToHOL (.const (7 : W))) :=
+  evalPanSemStateExp_agree_of_mem_expsOf bridgeExecProdState bridgeExecExactState
+    bridgeStateRelExec bridgeExecProdState_ranged bridgeAssignProgram
+    bridgeAssignProgram_byteRanged (.const (7 : W))
+    (by simp [bridgeAssignProgram, expsOf])
+
+/-- The assembled `Assign` slice with both expression premises discharged from
+    the production program node's `ProgByteRanged` hypothesis. -/
+example : PanSemHOLResultOptionRel
+      (panSemTotalEvaluate (fun _ _ => none) bridgeAssignProgram bridgeAssignProdState).1
+      (evaluateHOLFiniteState bridgeAssignExactState
+        (.assign .local (Flapjack.Basis.Pure.MlString.ofString "x")
+          (expToHOL (.const (7 : W))))).1 ∧
+    PanSemStateRelExec
+      (panSemTotalEvaluate (fun _ _ => none) bridgeAssignProgram bridgeAssignProdState).2
+      (evaluateHOLFiniteState bridgeAssignExactState
+        (.assign .local (Flapjack.Basis.Pure.MlString.ofString "x")
+          (expToHOL (.const (7 : W))))).2.toExact :=
+  panSemTotalEvaluate_assign_agree_of_progByteRanged (fun _ _ => none)
+    bridgeAssignProdState bridgeAssignExactState bridgeAssignStateRelExec
+    bridgeAssignProdState_ranged .local "x" (.const (7 : W))
+    bridgeAssignProgram_byteRanged
+
 def runChecks : IO Bool := do
   IO.println "PASS production/exact PanSemState codec bridge (value/entry/struct/state)"
   pure true

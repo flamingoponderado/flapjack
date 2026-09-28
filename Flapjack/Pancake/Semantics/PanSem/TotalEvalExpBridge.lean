@@ -39,7 +39,7 @@ below).
 `mlstring`-keyed state only at byte-ranged names, and its `structs`/`memory`
 comparison does not constrain the production `String` names or value field names
 to the byte range that HOL `char`/`mlstring` represents.  Two representation
-premises are therefore needed and recorded explicitly rather than assumed away:
+premises are therefore relevant:
 
 * `ExpByteRanged e` / `ShapeByteRanged shape` -- every identifier and shape name
   occurring in the expression is byte-ranged, so its `expToHOL` image (through the
@@ -48,17 +48,39 @@ premises are therefore needed and recorded explicitly rather than assumed away:
   structure context are byte-ranged, so a stored record's field-name lookups and
   a context shape comparison agree with their `mlstring` images.
 
-These are **unproved preservation obligations**, not facts that follow from
-parser origin: parsing constrains the program syntax and identifier bytes, but it
-does not constrain runtime FFI return values, initial globals, or stored record
-structures to the byte range that HOL `char`/`mlstring` represents, and it says
-nothing about the production state updates.  Consequently every agreement
-theorem in this module (`evalPanValueExp_agree`, `evalPanSemStateExp_agree`, and
-`evalPanValueExp_byteRanged`) carries these premises as explicit hypotheses; the
-result is *not* unconditional for arbitrary production states.  Discharging or
-precisely narrowing this obligation is tracked by the blocker bead
-`flapjack-pxn.18.4.3.77.2.15`, which blocks the full total-evaluate assembly
-bead `flapjack-pxn.18.4.3.77.2.14`.  Everything in this module is untagged
+The **expression** half is discharged from the executed compiler path: the
+parser-backed entrypoints (`Pipeline.lean:634-671`) thread `DeclByteRanged` for
+their declarations, a function body carries `ProgByteRanged`
+(`FunDeclByteRanged`), and `expsOf_byteRanged`
+(`Flapjack/Pancake/PanLang/Prog.lean`) proves that every expression occurring
+directly in a `ProgByteRanged` program is `ExpByteRanged` (a loaded shape is
+covered because `ExpByteRanged (.load shape _)` requires `ShapeByteRanged
+shape`, and the declaration-level shapes are the other `DeclByteRanged`
+conjuncts).  Accordingly the wrappers `evalPanValueExp_agree_of_mem_expsOf`,
+`evalPanSemStateExp_agree_of_mem_expsOf`,
+`evalPanValueExp_agree_of_funDeclByteRanged`, and
+`panSemTotalEvaluate_assign_agree_of_progByteRanged` replace the explicit
+`ExpByteRanged`/`NameRanged` premises by a `ProgByteRanged`/`FunDeclByteRanged`
+hypothesis.  Parser origin itself does not prove `ProgByteRanged`; it is the
+premise the executed path carries, and the projection above is the bridge from
+that premise.
+
+The **state** premise `PanSemStateRelExecRanged` remains explicit and is *not*
+a consequence of parser origin: parsing constrains program syntax and identifier
+bytes, but does not constrain runtime FFI return values, initial/stored globals,
+or stored record structures to the byte range that HOL `char`/`mlstring`
+represents.  The precise residual boundary is recorded in the "Rangedness
+preservation and the `PanSemStateRelExec`/rangedness boundary" section below: the
+value-map updates preserve the premise (`updatePanValueMap_byteRanged`,
+`PanSemStateRelExecRanged.updateLocals`/`.updateGlobals`), the production
+`ExtCall` clause preserves it unconditionally, the production `Primitive` clause
+preserves it under `PanPrimitiveHandlerByteRanged`, and a non-byte-ranged
+initial/stored global crosses the boundary (`extCallClause_not_ranged_of_global_nonRanged`).
+Consequently the agreement theorems still carry the state premise as an explicit
+hypothesis and are *not* unconditional for arbitrary production states; the
+remaining runtime/initial-global obligation is tracked by the blocker bead
+`flapjack-pxn.18.4.3.77.2.15`, which blocks the full total-evaluate assembly bead
+`flapjack-pxn.18.4.3.77.2.14`.  Everything in this module is untagged
 Flapjack-specific bridge infrastructure; no `@[hol]` tag is attached.
 -/
 
@@ -2690,6 +2712,76 @@ theorem evalPanSemStateExp_byteRanged {σ : Type}
   exact evalPanValueExp_byteRanged state hranged
     (some (panSemBitVec64MemoryAccess state)) e he value hvalue
 
+/-! ## Discharging the expression byte-range premise from the executed program
+
+The all-16 agreement `evalPanValueExp_agree` (`:2494`) and its state wrapper
+`evalPanSemStateExp_agree` (`:2671`) take the encoded expression's identifier
+bytes as an explicit `ExpByteRanged` premise.  That premise is **not** an extra
+assumption beyond the executed compiler path: the parser-backed entrypoints
+(`Pipeline.lean:634-671`, e.g. `compileFlapjackEntryCake`'s
+`some (.isTrue targetByteRanged)` branch) thread `DeclByteRanged` for their
+declarations, and `expsOf_byteRanged`
+(`Flapjack/Pancake/PanLang/Prog.lean`) proves the program-level predicate
+`ProgByteRanged` already implies `ExpByteRanged` for every expression occurring
+directly in the program (`Flapjack.expsOf`).  The wrappers below therefore
+discharge the expression premise from that executed byte-range hypothesis.
+
+The **state** premise `PanSemStateRelExecRanged` remains explicit: as recorded
+below and in `flapjack-pxn.18.4.3.77.2.15`, parser origin constrains program
+syntax but not runtime FFI values, initial/stored globals, or stored record
+structures, so it cannot be discharged here. -/
+
+/-- The all-16 expression agreement with its `ExpByteRanged` premise discharged
+    from a `ProgByteRanged` program: any expression occurring directly in a
+    byte-ranged program is byte-ranged (`expsOf_byteRanged`).  Only the state
+    rangedness premise remains explicit. -/
+theorem evalPanValueExp_agree_of_mem_expsOf {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec state exact.toExact)
+    (hranged : PanSemStateRelExecRanged state)
+    (program : Prog (RiscV.Word 64)) (hprogram : ProgByteRanged program)
+    (e : Exp (RiscV.Word 64)) (he : e ∈ expsOf program) :
+    Option.map panValueToHOL
+        (evalPanValueExp state.structs state.locals state.globals state.memory
+          state.baseAddress state.topAddress panSemBitVec64BytesInWord e
+          (memoryAccess := some (panSemBitVec64MemoryAccess state)))
+      = exact.evalHOLFinite (expToHOL e) :=
+  evalPanValueExp_agree state exact hrel hranged e
+    (expsOf_byteRanged program hprogram e he)
+
+/-- State-owned wrapper of `evalPanValueExp_agree_of_mem_expsOf`, through
+    `evalPanSemStateExp`. -/
+theorem evalPanSemStateExp_agree_of_mem_expsOf {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec state exact.toExact)
+    (hranged : PanSemStateRelExecRanged state)
+    (program : Prog (RiscV.Word 64)) (hprogram : ProgByteRanged program)
+    (e : Exp (RiscV.Word 64)) (he : e ∈ expsOf program) :
+    Option.map panValueToHOL (evalPanSemStateExp state e) =
+      exact.evalHOLFinite (expToHOL e) :=
+  evalPanSemStateExp_agree state exact hrel hranged e
+    (expsOf_byteRanged program hprogram e he)
+
+/-- `FunDeclByteRanged`-level form: the parser/pass `DeclByteRanged` hypothesis
+    reaches a function body as `FunDeclByteRanged`, whose `ProgByteRanged`
+    conjunct (`hd.2.2.1`) discharges the expression premise for any expression
+    in the body. -/
+theorem evalPanValueExp_agree_of_funDeclByteRanged {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec state exact.toExact)
+    (hranged : PanSemStateRelExecRanged state)
+    (d : FunDeclOf 64) (hd : FunDeclByteRanged d)
+    (e : Exp (RiscV.Word 64)) (he : e ∈ expsOf d.body) :
+    Option.map panValueToHOL
+        (evalPanValueExp state.structs state.locals state.globals state.memory
+          state.baseAddress state.topAddress panSemBitVec64BytesInWord e
+          (memoryAccess := some (panSemBitVec64MemoryAccess state)))
+      = exact.evalHOLFinite (expToHOL e) :=
+  evalPanValueExp_agree_of_mem_expsOf state exact hrel hranged d.body hd.2.2.1 e he
+
 /-- The production assignment-validity test agrees with the exact
     `is_valid_value` test on encoded values under `PanSemStateRelExec` and the
     byte-range premise.  This is the validity half of the `Assign` clause
@@ -2813,6 +2905,30 @@ theorem panSemTotalEvaluate_assign_agree {σ : Type}
         rw [evaluateHOLFiniteState_assign, hexactEval]
         simp only [hexactInvalid]
         exact ⟨trivial, hrel⟩
+
+/-- The fully assembled production/exact `Assign`-clause agreement with both
+    expression premises (`NameRanged name`, `ExpByteRanged e`) discharged from
+    the executed program node's `ProgByteRanged` hypothesis.  This is the
+    non-trivial connection of a parity slice to the parser/pass byte-range
+    evidence: the assignment node that the executed evaluator sees is exactly
+    the node whose rangedness the parser path supplies. -/
+theorem panSemTotalEvaluate_assign_agree_of_progByteRanged {σ : Type}
+    (primitive : PanPrimitiveHandler (RiscV.Word 64))
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (hranged : PanSemStateRelExecRanged production)
+    (kind : VarKind) (name : VarName) (e : Exp (RiscV.Word 64))
+    (hprogram : ProgByteRanged (.assign kind name e)) :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluate primitive (.assign kind name e) production).1
+        (evaluateHOLFiniteState exact (.assign kind (ofString name) (expToHOL e))).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluate primitive (.assign kind name e) production).2
+        (evaluateHOLFiniteState exact (.assign kind (ofString name) (expToHOL e))).2.toExact := by
+  obtain ⟨hname, he⟩ := hprogram
+  exact panSemTotalEvaluate_assign_agree primitive production exact hrel hranged
+    kind name hname e he
 
 /-! ## Rangedness preservation and the `PanSemStateRelExec`/rangedness boundary
 
