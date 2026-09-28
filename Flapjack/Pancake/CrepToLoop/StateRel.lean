@@ -1,11 +1,13 @@
 import Flapjack.HolRef
 import Flapjack.Pancake.CrepToLoop
+import Flapjack.Pancake.CrepToLoop.ContextExact
 import Flapjack.Pancake.Semantics.CrepSem
 import Flapjack.Pancake.Semantics.CrepSem.HOLState
 import Flapjack.Pancake.Semantics.LoopSemStateExact
 import Flapjack.LoopStateResult
 import Flapjack.Compiler.Encoders.Asm
 import Flapjack.Misc.Sptree
+import Flapjack.Pancake.PanLang.Shape
 
 /-!
 State relation analogue for the Crepe-to-Loop lowering, based on
@@ -1002,5 +1004,44 @@ theorem sptListInsert_append (xs ys : List Nat) (tree : NumSet) :
   | cons x xs ih =>
     simp only [List.cons_append, sptListInsert]
     rw [ih (sptInsert x () tree), sptListInsert_insert x ys tree]
+
+/-! ## Exact `ctxt_fc_def` over the exact context carrier
+
+The HOL `crep_to_loop$context` datatype and its exact finite-map carrier live in
+`Flapjack.Pancake.CrepToLoop.ContextExact` (`CrepToLoopContextExact`, tagged
+`context`). This section ports the proof-side constructor `ctxt_fc_def`, whose
+`funcs` argument is a standalone `HolFiniteMapExact` parameter. -/
+
+open Flapjack.Pancake.PanLang (MlS)
+
+private def CtxtFcExactParam.toBroadlookup (map : HolFiniteMapExact α β) : α → Option β :=
+  map.lookup
+
+private def CtxtFcExactParam.ofBroad (lookup : α → Option β)
+    (support : ∃ keys : List α, ∀ key, lookup key ≠ none → key ∈ keys) :
+    HolFiniteMapExact α β :=
+  ⟨lookup, support⟩
+
+/-- Checked finite-map parameter translation for `ctxt_fc_def.funcs`. -/
+theorem holFmapAsFiniteSupportParamWitness_ctxtFcExact_cvs
+    (cvs : HolFiniteMapExact MlS (Nat × Nat)) :
+    CtxtFcExactParam.ofBroad (CtxtFcExactParam.toBroadlookup cvs) cvs.finiteSupport = cvs := by
+  cases cvs
+  rfl
+
+/-- Exact port of HOL `ctxt_fc_def`
+    (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:73-81`). Cake's
+    `FEMPTY |++ ZIP (ns, args)` is `HolFiniteMapExact.updateList` from the empty
+    exact map, and `MAX_LIST args` is `args.foldr max 0`. The `funcs` map is
+    passed through unchanged. -/
+@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "ctxt_fc_def"
+  (fmap_as_finite_support_parameters := [cvs])]
+def ctxtFcExact (target : Compiler.Encoders.Asm.AsmArchitecture)
+    (cvs : HolFiniteMapExact MlS (Nat × Nat)) (ns args : List Nat) :
+    CrepToLoopContextExact where
+  vars := HolFiniteMapExact.updateList HolFiniteMapExact.empty (ns.zip args)
+  funcs := cvs
+  vmax := args.foldr max 0
+  target := target
 
 end Flapjack

@@ -356,6 +356,33 @@ example (h : crepToLoopStateRelExact stateRelExactCrep stateRelExactLoop) :
       { stateRelExactLoop with clock := ck + stateRelExactLoop.clock } :=
   crepToLoopStateRelExact_clock_add_zero stateRelExactCrep stateRelExactLoop h
 
+/-- Exact-carrier `ctxt_fc` reproduces the direct HOL-EVAL rows in
+    `scripts/hol-probes/crep_to_loop_ctxt_fc_probe.out` (`vars_zip`,
+    `vars_zip_truncates`, `funcs_projection`, `vmax_nonempty_list`,
+    `vmax_empty_list`, `target_kept`). -/
+example :
+    (ctxtFcExact Compiler.Encoders.Asm.AsmArchitecture.armv7
+        (HolFiniteMapExact.empty.update
+          (Flapjack.Basis.Pure.MlString.ofString "f", (3, 2)))
+        [1, 2] [10, 20]).vmax = 20 := rfl
+
+/-- Field-level guard reproducing the `ctxt_fc` oracle rows. -/
+def ctxtFcExactGuard : Bool :=
+  let cvs : HolFiniteMapExact Flapjack.Pancake.PanLang.MlS (Nat × Nat) :=
+    HolFiniteMapExact.empty.update
+      (Flapjack.Basis.Pure.MlString.ofString "f", (3, 2))
+  let ctx := ctxtFcExact Compiler.Encoders.Asm.AsmArchitecture.armv7 cvs [1, 2] [10, 20]
+  decide
+      (ctx.vars.lookup 1 = some 10 ∧ ctx.vars.lookup 2 = some 20 ∧
+        ctx.funcs.lookup (Flapjack.Basis.Pure.MlString.ofString "f") = some (3, 2) ∧
+        ctx.target = Compiler.Encoders.Asm.AsmArchitecture.armv7) &&
+    decide ((ctxtFcExact Compiler.Encoders.Asm.AsmArchitecture.armv7
+        HolFiniteMapExact.empty [] []).vmax = 0) &&
+    decide ((ctxtFcExact Compiler.Encoders.Asm.AsmArchitecture.armv7
+        HolFiniteMapExact.empty [1, 2, 3] [10]).vars.lookup 3 = none)
+
+#guard ctxtFcExactGuard
+
 def runChecks : IO Bool := do
   let results := [declarationRenamingMatches,
     handlerlessCallCarriesRaiseHandler, handledCallCarriesRaiseHandler,
@@ -364,7 +391,7 @@ def runChecks : IO Bool := do
     shMemDestinationMappingMatches, assignDestinationMappingMatches,
     comparisonKeepsIncomingLive,
     comparisonWithoutLiveDropsIt,
-    stateRelExactGuard]
+    stateRelExactGuard, ctxtFcExactGuard]
   let names := [
     "crep_to_loop declaration renaming and live seed",
     "crep_to_loop default call handler",
@@ -375,7 +402,8 @@ def runChecks : IO Bool := do
     "crep_to_loop assignment destination mapping",
     "crep_to_loop comparison keeps the incoming live set",
     "crep_to_loop comparison without live does not invent one",
-    "crep_to_loop exact-carrier state_rel matches the HOL oracle rows"]
+    "crep_to_loop exact-carrier state_rel matches the HOL oracle rows",
+    "crep_to_loop exact ctxt_fc matches the HOL oracle rows"]
   let mut all := true
   for (name, result) in names.zip results do
     if result then IO.println s!"PASS {name}" else IO.println s!"FAIL {name}"
