@@ -94,6 +94,7 @@ import Flapjack.Pancake.Semantics.CrepSem.LookupCode
 import Flapjack.Pancake.Semantics.CrepSem.StateExact
 import Flapjack.Pancake.Semantics.CrepSem.Primop
 import Flapjack.Pancake.LoopLang
+import Flapjack.Pancake.LoopLive
 import Flapjack.Pancake.Semantics.LoopProps
 import Flapjack.Pancake.Semantics.LoopSem
 import Flapjack.Pancake.Semantics.LoopSemStateExact
