@@ -1257,7 +1257,7 @@ theorem riscv64PutBytes_eq_panWordOfBytesHOL (bytes : List UInt8)
   rw [riscv64PutBytes_eq_ofNat_leSumB 0 bytes 0 (by omega) (by decide)]
   have hp : panWordOfBytesHOL (width := 64) false (0 : RiscV.Word 64) holBytes
       = BitVec.ofNat 64 (leSumB 0 holBytes) := by
-    have h' := panWordOfBytesHOL_eq_ofNat_le (width := 64) (by decide) 0 holBytes (by omega)
+    have h' := panWordOfBytesHOL_eq_ofNat_le (width := 64) 0 holBytes (by rw [hlenH']; decide)
     simpa using h'
   rw [hp, show (BitVec.toNat (0 : RiscV.Word 64)) = 0 by decide, Nat.zero_add, hsum]
 
