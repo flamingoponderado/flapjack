@@ -18043,15 +18043,6 @@
   },
   {
     "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
-    "hol_name": "prog_if_def",
-    "lean_path": "Flapjack/Pancake/CrepToLoop/ContextExact.lean",
-    "lean_name": "progIfHOLExact",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "reviewer": "flapjack-luna-c source comparison (2026-09-28, bead flapjack-pxn.18.5.6.27) against crep_to_loopScript.sml:34-40. Exact HolLoopProg/HolLoopExp carriers, same input order, concatenates p then q, emits Assign n e/Assign m e', uses If cmp n (Reg m) (Assign n (Const 1w)) (Assign n (Const 0w)), and inserts [n;m] into the source NumSet. The word qualifier records HOL's indexed word to BitVec width translation. Direct source row prog_if_basic is in scripts/hol-probes/prog_if_probe.out and its exact-carrier case is checked in Flapjack.Test.CrepToLoopCompileExpExactParity; no production routing is claimed.",
-    "words_as_type_indexed_bitvec": true
-  },
-  {
-    "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
     "hol_name": "compile_crepop_def",
     "lean_path": "Flapjack/Pancake/CrepToLoop/ContextExact.lean",
     "lean_name": "compileCrepopHOLExact",
