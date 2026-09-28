@@ -19909,6 +19909,71 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "ds10 (bead flapjack-pxn.18.5.6.34.3): exact port of HOL evaluate_io_mono_rephrases[local] (crep_to_loopProofScript.sml:4066-4070), the LIST_CONJ of crepPropsTheory.evaluate_add_clock_io_events_mono and loopPropsTheory.evaluate_add_clock_io_events_mono each specialized at `s with clock := k` via the source SIMP_RULE (srw_ss()) []. Lean keeps the two exact state carriers separate (CrepSemHOLState and LoopSemStateFiniteExact); each conjunct keeps its own `!extra` (k bound once), matching the source LIST_CONJ binder shape. The exact evaluators consume finite-map fields, so the relation qualifier records CrepSemHOLState.locals/globals/code and LoopSemStateFiniteExact.globals, validated by the same-module witnesses holFmapAsFiniteSupportRelationWitness_CrepSemHOLState and holFmapAsFiniteSupportRelationWitness_LoopSemStateFiniteExact; words_as_type_indexed_bitvec records the two width-indexed carriers. Both conjuncts are the already-tagged one-carrier monotonicity theorems Flapjack.crepPropsEvaluateAddClockIoEventsMono and Flapjack.LoopSemStateFiniteExact.evaluate_add_clock_io_events_mono. No extra side conditions. Replayed by the evaluate_io_mono example and evaluateIOMonoGuard in Flapjack/Test/CrepToLoopParity.lean."
   },
+{
+  "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+  "hol_name": "locals_ext_rel_def",
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+  "lean_name": "crepInlineLocalsExtRelExact",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds10 source comparison (2026-09-29; bead flapjack-2de.16) against crep_inlineProofScript.sml:162-165. HOL defines locals_ext_rel a b a' b' as FDIFF a'.locals (FDOM a.locals) = FDIFF b'.locals (FDOM b.locals); Lean states the same equality over CrepSemHOLState, rendering FDIFF/FDOM extensionally on the canonical HolFiniteMapExact locals field via crepHolFdiff/crepHolFdom, with the same four state parameters and no extra hypotheses. The carrier's locals/globals/code fields use canonical HolFiniteMapExact with the same-module holFmapAsFiniteSupportWitness, and positive-width BitVec records HOL's type-indexed words. Direct HOL rows locals_ext_rel_self, locals_ext_rel_same_extension and locals_ext_rel_unequal_witness in crep_inline_relations_probe.out; Lean replay in Flapjack/Test/CrepInlineRelationsExactParity.lean."
+},
+{
+  "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+  "hol_name": "locals_rel_dec_clock",
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+  "lean_name": "crepInlineLocalsRel_decClockExact",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds10 source comparison (2026-09-29; bead flapjack-2de.16) against crep_inlineProofScript.sml:167-173. HOL: forall s t, locals_rel s t /\\ state_rel s t ==> locals_rel (dec_clock s) (dec_clock t) /\\ state_rel (dec_clock s) (dec_clock t). Lean uses the exact finite-support crepInlineLocalsRelExact and crepInlineStateRelExact with decClockCrepSemHOL, keeping the source conjunction antecedent and conjunctive conclusion and adding no extra premises. The carrier's locals/globals/code fields use canonical HolFiniteMapExact with the same-module holFmapAsFiniteSupportWitness, and positive-width BitVec records HOL's type-indexed words. Direct HOL rows locals_rel_dec_clock and state_rel_dec_clock in crep_inline_relations_probe.out; Lean replay in Flapjack/Test/CrepInlineRelationsExactParity.lean."
+}
+,
+{
+  "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+  "hol_name": "SUBMAP_IMP_FUPDATE_SUBMAP",
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+  "lean_name": "submap_imp_fupdate_submap_exact",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": [
+    "f",
+    "g"
+  ],
+  "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.5.19.1; crep_inlineProofScript.sml:117): HOL SUBMAP_IMP_FUPDATE_SUBMAP is forall f g x y, f SUBMAP g ==> f |+ (x,y) SUBMAP g |+ (x,y). HOL alpha |-> beta is finite-support, so the Lean statement quantifies the canonical finite-support carrier HolFiniteMapExact kappa beta and uses the DecidableEq (HOL =) updateEq, with no BEq/LawfulBEq side condition. Both f and g are standalone finite-map parameters bound at HolFiniteMapExact (bare qualifier entries, no owning carrier)."
+},
+{
+  "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+  "hol_name": "SUBMAP_IMP_DOMSUB_SUBMAP",
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+  "lean_name": "submap_imp_domsub_submap_exact",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": [
+    "f",
+    "g"
+  ],
+  "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.5.19.1; crep_inlineProofScript.sml:127): HOL SUBMAP_IMP_DOMSUB_SUBMAP is forall f g x, f SUBMAP g ==> f \\\\ x SUBMAP g \\\\ x. HOL alpha |-> beta is finite-support, so the Lean statement quantifies the canonical finite-support carrier HolFiniteMapExact kappa beta and uses the DecidableEq (HOL =) eraseEq, with no BEq/LawfulBEq side condition. Both f and g are standalone finite-map parameters bound at HolFiniteMapExact (bare qualifier entries, no owning carrier)."
+},
+{
+  "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+  "hol_name": "SUBMAP_IMP_DOMSUB_FUPDATE",
+  "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+  "lean_name": "submap_imp_domsub_fupdate_exact",
+  "statement_status": "reviewed_fmap_as_finite_support_relation",
+  "fmap_as_finite_support_relation": [
+    "f",
+    "g"
+  ],
+  "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.5.19.1; crep_inlineProofScript.sml:135): HOL SUBMAP_IMP_DOMSUB_FUPDATE is forall f g x y, f SUBMAP g ==> f \\\\ x SUBMAP g |+ (x,y). HOL alpha |-> beta is finite-support, so the Lean statement quantifies the canonical finite-support carrier HolFiniteMapExact kappa beta and uses the DecidableEq (HOL =) eraseEq and updateEq, with no BEq/LawfulBEq side condition. Both f and g are standalone finite-map parameters bound at HolFiniteMapExact (bare qualifier entries, no owning carrier)."
+},
   {
     "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
     "hol_name": "compile_correct",
