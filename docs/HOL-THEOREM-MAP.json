@@ -20157,5 +20157,187 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.8.1.2): case piece `Seq c1 c2` of loop_live compile_correct (loop_liveProofScript.sml:17-37 statement; Resume compile_correct[Seq] at 118-129). Extra antecedents are exactly loopSem evaluate_ind's Seq hypotheses: the statement for (c1, v1) and, for every s1' with fix_clock v1 (evaluate (c1,v1)) = (NONE, s1'), the statement for (c2, s1'); both via the untagged loopLiveCompileCorrectAt, which unfolds to the HOL statement at that (program, state). Otherwise identical binders/premises/conclusion to the other pieces with v := Seq c1 c2. Proof follows HOL: shrink c2 then c1, IH on c1 then c2 (fix_clock_evaluate), early-exit results carry the c1 conclusion (independent of l0). Qualifiers as for the other pieces."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
+    "hol_name": "vars_of_exp_acc",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "vars_of_exp_acc",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.8.1.4) against vars_of_exp_acc at loop_liveProofScript.sml:339-342: `∀(exp:'a loopLang$exp) l. domain (vars_of_exp exp l) = domain (union (vars_of_exp exp LN) l)`. Lean keeps both binders and the equation of domains, with domain as the predicate sptDomain (key ↦ isSome of lookup), union as sptUnion (HOL sptree union: left value wins) and vars_of_exp as the tagged varsOfExpHOL (vars_of_exp_def). The mutual list conjunct HOL proves internally (qsuff_tac) is the private varsOfExpList_mem_iff.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
+    "hol_name": "vars_of_exp_mono",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "vars_of_exp_mono",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.8.1.4) against vars_of_exp_mono at loop_liveProofScript.sml:400-401: `∀exp l. subspt l (vars_of_exp exp l)`; subspt is sptSubspt (HOL subspt_def: domain inclusion plus equal lookups), vars_of_exp the tagged varsOfExpHOL.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
+    "hol_name": "eval_lemma'",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "eval_lemma'",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.8.1.4) against eval_lemma' at loop_liveProofScript.sml:416-420: `∀s exp w l. eval s exp = SOME w ∧ subspt s.locals locals ⇒ eval (s with locals := locals) exp = SOME w`. The bound l is unused in HOL, so HOL infers it at a free type variable; Lean binds it at an arbitrary {β : Type}. The HOL free variable locals is quantified after the HOL binders. eval is the exact LoopSemStateFiniteExact.eval (loopSem eval_def), record update as structure update.",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support": [
+      "globals"
+    ]
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
+    "hol_name": "eval_lemma",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "eval_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.8.1.4) against eval_lemma at loop_liveProofScript.sml:443-447: `∀s exp w l. eval s exp = SOME w ∧ subspt (inter s.locals (vars_of_exp exp l)) locals ⇒ eval (s with locals := locals) exp = SOME w`; binders in order, l : num_set, the free HOL variable locals quantified last; inter as sptInter, vars_of_exp the tagged varsOfExpHOL.",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support": [
+      "globals"
+    ]
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "loopLive_compile_correct_assign",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.8.1.4) against case piece `Assign` of loop_live compile_correct (statement loop_liveProofScript.sml:17-37; Resume compile_correct[Assign] at 490-509). No sub-program, so no evaluate_ind hypothesis; HOL quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises and the full conclusion as in the other pieces. Proof: both shrink branches (dead target becomes Skip; live target keeps Assign with l1 = vars_of_exp x (delete n l0)) via eval_lemma and vars_of_exp_mono.",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support": [
+      "globals"
+    ]
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "loopLive_compile_correct_setGlobal",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.8.1.4) against case piece `SetGlobal` of loop_live compile_correct (statement loop_liveProofScript.sml:17-37; Resume compile_correct[SetGlobal] at 511-519). No sub-program, so no evaluate_ind hypothesis; HOL quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises and the full conclusion as in the other pieces. Proof: eval_lemma with l := l0 and vars_of_exp_mono.",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support": [
+      "globals"
+    ]
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "loopLive_compile_correct_locValue",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.8.1.4) against case piece `LocValue` of loop_live compile_correct (statement loop_liveProofScript.sml:17-37; Resume compile_correct[LocValue] at 521-532). No sub-program, so no evaluate_ind hypothesis; HOL quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises and the full conclusion as in the other pieces. Proof: both shrink branches (dead target becomes Skip; live target keeps LocValue with l1 = delete r l0); the error branch is excluded by res ≠ SOME Error.",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support": [
+      "globals"
+    ]
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "sptLookup_sptUnion'",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack sptree helper (HOL lookup_union, HOL/src sptree library): lookup in union is the left lookup, else the right one; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "sptMem_sptUnion'",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack sptree helper (HOL domain_union): domain of union is the union of domains; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "sptLookup_sptDelete'",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack sptree helper (HOL lookup_delete): lookup after delete; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "varsOfExp_mem_iff",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper: membership form of the tagged vars_of_exp_acc, the expression half of HOL's internal mutual qsuff_tac statement; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "varsOfExpList_mem_iff",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper: list half of HOL vars_of_exp_acc's internal mutual statement (Resume vars_of_exp_acc[list_case]); no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "numSet_lookup_of_mem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack sptree helper: a num_set member looks up to SOME (); no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "theWords_some_mem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper: the_words succeeding means every entry is SOME (Word _); no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "eval_some_touched_defined",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper for eval_lemma/eval_lemma' (HOL proves them by eval_ind directly): a successful loopSem eval reads only defined locals; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "mem_varsOfExpList_of_mem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper: a variable of one list element is in vars_of_exp_list; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "touched_mem_varsOfExp",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper for eval_lemma: every touched local is in the domain of vars_of_exp; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "subspt_of_lookup",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack sptree helper: subspt from pointwise lookup agreement on the left domain (HOL subspt_lookup direction); no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "mem_inter_iff",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack sptree helper (HOL domain_inter): membership in inter; no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "subspt_inter_apply",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack sptree helper (HOL subspt_lookup + lookup_inter_alt): apply subspt (inter a l) b at a key in both a and l; no separate CakeML declaration"
   }
 ]
