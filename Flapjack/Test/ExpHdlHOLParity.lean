@@ -51,7 +51,8 @@ private theorem knownSupport :
 
 /-- The exact finite-map carrier driving the tagged `expHdlExact`, built from
     the same lookup function as the raw `knownFM` with an explicit support. -/
-private def knownExact : PanToCrepVarsExact := ⟨⟨knownFM, knownSupport⟩⟩
+private def knownExact : HolFiniteMapExact MlS (ShapeHOL × List Nat) :=
+  ⟨knownFM, knownSupport⟩
 
 private def exactMissingRow : Bool :=
   match expHdlExact (width := 64) knownExact (nm "missing") with
@@ -100,7 +101,7 @@ def parityGuard : Bool :=
 example :
     expHdlExact (width := 64) knownExact keyX
       = expHdlHOL (width := 64) knownFM keyX :=
-  expHdlExact_eq_expHdlHOL knownFM knownSupport keyX
+  expHdlExact_eq_expHdlHOL knownExact keyX
 
 /-- The kernel bridge reproduces the exact carrier on a duplicate-bearing
     production map, so the executed `expHdlFiniteMap` and the untagged

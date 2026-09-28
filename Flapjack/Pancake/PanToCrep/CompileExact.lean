@@ -434,7 +434,7 @@ def compileCallWrappedResultHandlerPresentEidExactHOLW {width : Nat} [NeZero wid
   let compiledArguments := compileExpExactHOLWList context arguments
   let flattenedArguments := compiledArguments.flatMap Prod.fst
   let handler := CrepProgHOL.seq
-    (expHdlExact ⟨context.vars⟩ exceptionVariable)
+    (expHdlExact context.vars exceptionVariable)
     (compileHandlerBody context)
   .call (some (resultNames, some (exceptionCode, handler))) function flattenedArguments
 
@@ -454,7 +454,7 @@ def compileCallWrappedResultFallbackHandlerPresentEidExactHOLW
   let compiledArguments := compileExpExactHOLWList context arguments
   let flattenedArguments := compiledArguments.flatMap Prod.fst
   let handler := CrepProgHOL.seq
-    (expHdlExact ⟨context.vars⟩ exceptionVariable)
+    (expHdlExact context.vars exceptionVariable)
     (compileHandlerBody context)
   .call (some ([], some (exceptionCode, handler))) function flattenedArguments
 
@@ -528,7 +528,7 @@ def compileCallHandlerPresentEidExactHOLW {width : Nat} [NeZero width]
     | some shape => (List.range (Flapjack.Pancake.PanLang.sizeOfShapeHOL shape)).map
         (fun index => context.vmax + index + 1)
   let handler := CrepProgHOL.seq
-    (expHdlExact ⟨context.vars⟩ exceptionVariable)
+    (expHdlExact context.vars exceptionVariable)
     (compileHandlerBody context)
   let call := CrepProgHOL.call
     (some (returnNames, some (exceptionCode, handler))) function flattenedArguments
