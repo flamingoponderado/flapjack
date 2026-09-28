@@ -1540,6 +1540,8 @@ VALID_STATUSES = {
     "reviewed_list_as_array_names_as_string",
     "reviewed_fmap_as_finite_support",
     "reviewed_fmap_as_finite_support_result",
+    "reviewed_fmap_as_finite_support_parameters",
+    "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_relation",
     "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_equalities",
@@ -1689,7 +1691,8 @@ def tagged_declarations(
         lines = path.read_text(encoding="utf-8").splitlines()
         for (line, hol_path, hol_name, _hol_line, list_fields,
              names_fields, boundary_fields, fmap_fields, fmap_result,
-             fmap_relation, fmap_equalities, words_bitvec) in HOL_ATTRIBUTE_SITES(lines):
+             fmap_relation, fmap_equalities, words_bitvec,
+             fmap_parameters) in HOL_ATTRIBUTE_SITES(lines):
             lean_name = FIND_LEAN_DECL(lines, line - 1)
             key = (rel, lean_name)
             # Source-line disambiguation is checked against the HOL script by
@@ -1697,7 +1700,7 @@ def tagged_declarations(
             # stable HOL file/name pair, not by an editable source line.
             value = (hol_path, hol_name, list_fields, names_fields,
                      boundary_fields, fmap_fields, fmap_result, fmap_relation,
-                     fmap_equalities, words_bitvec)
+                     fmap_equalities, words_bitvec, fmap_parameters)
             if key in tagged and tagged[key] != value:
                 raise ValueError(f"conflicting @[hol] references for {rel}:{lean_name}")
             tagged[key] = value
@@ -1710,7 +1713,7 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
     inventory: dict[tuple[str, str], dict[str, Any]] = {}
     for (lean_path, lean_name), (
         hol_path, hol_name, list_fields, names_fields, boundary_fields, fmap_fields,
-        fmap_result, fmap_relation, fmap_equalities, words_bitvec,
+        fmap_result, fmap_relation, fmap_equalities, words_bitvec, fmap_parameters,
     ) in tagged.items():
         entry = {
             "hol_path": hol_path,
@@ -1730,6 +1733,8 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
             entry["fmap_as_finite_support"] = list(fmap_fields)
         if fmap_result:
             entry["fmap_as_finite_support_result"] = True
+        if fmap_parameters:
+            entry["fmap_as_finite_support_parameters"] = list(fmap_parameters)
         if fmap_relation:
             entry["fmap_as_finite_support_relation"] = [
                 f"{carrier}.{field}" if field else carrier
@@ -2003,11 +2008,13 @@ def validate_inventory(
         fmap_relation = tag[7] if tag is not None else ()
         fmap_equalities = bool(tag[8]) if tag is not None and len(tag) > 8 else False
         words_bitvec = bool(tag[9]) if tag is not None and len(tag) > 9 else False
+        fmap_parameters = tag[10] if tag is not None and len(tag) > 10 else ()
         manifest_list_fields = tuple(record.get("list_as_array", ()))
         manifest_names_fields = tuple(record.get("names_as_string", ()))
         manifest_boundary_fields = tuple(record.get("names_as_string_boundary", ()))
         manifest_fmap_fields = tuple(record.get("fmap_as_finite_support", ()))
         manifest_fmap_result = bool(record.get("fmap_as_finite_support_result", False))
+        manifest_fmap_parameters = tuple(record.get("fmap_as_finite_support_parameters", ()))
         manifest_fmap_relation = tuple(record.get("fmap_as_finite_support_relation", ()))
         manifest_fmap_equalities = bool(record.get("fmap_as_finite_support_equalities", False))
         tag_fmap_relation = tuple(
@@ -2034,6 +2041,10 @@ def validate_inventory(
             errors.append(
                 f"{key[0]}:{key[1]}: manifest fmap_as_finite_support_result does not match its @[hol] tag"
             )
+        if manifest_fmap_parameters != fmap_parameters:
+            errors.append(
+                f"{key[0]}:{key[1]}: manifest fmap_as_finite_support_parameters do not match its @[hol] tag"
+            )
         if manifest_fmap_relation != tag_fmap_relation:
             errors.append(
                 f"{key[0]}:{key[1]}: manifest fmap_as_finite_support_relation entries do not match its @[hol] tag"
@@ -2053,6 +2064,9 @@ def validate_inventory(
         combined_relation_words_status = (
             "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec"
         )
+        combined_parameter_words_status = (
+            "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec"
+        )
         if words_bitvec and fmap_fields and status != combined_words_status:
             errors.append(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support combined with "
@@ -2064,6 +2078,12 @@ def validate_inventory(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support_relation combined with "
                 "words_as_type_indexed_bitvec requires the combined review status "
                 "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec"
+            )
+        if words_bitvec and fmap_parameters and status != combined_parameter_words_status:
+            errors.append(
+                f"{key[0]}:{key[1]}: fmap_as_finite_support_parameters combined with "
+                "words_as_type_indexed_bitvec requires the combined review status "
+                "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec"
             )
         if status == combined_words_status and not (words_bitvec and fmap_fields):
             errors.append(
@@ -2085,6 +2105,14 @@ def validate_inventory(
                 "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec needs "
                 "both the fmap_as_finite_support_relation and words_as_type_indexed_bitvec @[hol] qualifiers"
             )
+        if status == combined_parameter_words_status and not (
+            words_bitvec and fmap_parameters
+        ):
+            errors.append(
+                f"{key[0]}:{key[1]}: "
+                "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec needs "
+                "both the fmap_as_finite_support_parameters and words_as_type_indexed_bitvec qualifiers"
+            )
         if words_bitvec and status == "reviewed_exact":
             errors.append(
                 f"{key[0]}:{key[1]}: words_as_type_indexed_bitvec @[hol] tag cannot have "
@@ -2094,6 +2122,7 @@ def validate_inventory(
             "reviewed_words_as_type_indexed_bitvec",
             combined_words_status,
             combined_relation_words_status,
+            combined_parameter_words_status,
         }:
             errors.append(
                 f"{key[0]}:{key[1]}: words_as_type_indexed_bitvec @[hol] tag needs a reviewed "
@@ -2105,11 +2134,39 @@ def validate_inventory(
                 f"{key[0]}:{key[1]}: reviewed_words_as_type_indexed_bitvec needs a "
                 "words_as_type_indexed_bitvec @[hol] tag"
             )
-        if fmap_relation and (fmap_fields or fmap_result):
+        if fmap_relation and (fmap_fields or fmap_result or fmap_parameters):
             errors.append(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support_relation (multi-carrier) is mutually "
-                "exclusive with fmap_as_finite_support and fmap_as_finite_support_result"
+                "exclusive with fmap_as_finite_support, fmap_as_finite_support_result, and fmap_as_finite_support_parameters"
             )
+        if fmap_parameters and (fmap_fields or fmap_result or fmap_relation or fmap_equalities):
+            errors.append(
+                f"{key[0]}:{key[1]}: fmap_as_finite_support_parameters is mutually exclusive with other finite-map qualifiers"
+            )
+        if fmap_parameters and status == "reviewed_exact":
+            errors.append(
+                f"{key[0]}:{key[1]}: fmap_as_finite_support_parameters @[hol] tag cannot have reviewed_exact status"
+            )
+        if fmap_parameters and status not in {
+            "reviewed_fmap_as_finite_support_parameters",
+            combined_parameter_words_status,
+        }:
+            errors.append(
+                f"{key[0]}:{key[1]}: fmap_as_finite_support_parameters needs reviewed_fmap_as_finite_support_parameters status"
+            )
+        if not fmap_parameters and status in {
+            "reviewed_fmap_as_finite_support_parameters",
+            combined_parameter_words_status,
+        }:
+            errors.append(
+                f"{key[0]}:{key[1]}: reviewed_fmap_as_finite_support_parameters needs the matching @[hol] qualifier"
+            )
+        if fmap_parameters:
+            reviewer_text = reviewer.lower() if isinstance(reviewer, str) else ""
+            if "source" not in reviewer_text:
+                errors.append(
+                    f"{key[0]}:{key[1]}: reviewed_fmap_as_finite_support_parameters requires a source-comparison note"
+                )
         if fmap_relation and status == "reviewed_exact":
             errors.append(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support_relation @[hol] tag cannot have "
@@ -2136,7 +2193,7 @@ def validate_inventory(
                     f"{key[0]}:{key[1]}: reviewed_fmap_as_finite_support_relation requires a "
                     "source-comparison note in the reviewer field"
                 )
-        if fmap_result and fmap_fields:
+        if fmap_result and (fmap_fields or fmap_parameters):
             errors.append(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support_result (standalone carrier) and "
                 "fmap_as_finite_support (structure fields) are mutually exclusive"
@@ -2163,7 +2220,7 @@ def validate_inventory(
                     f"{key[0]}:{key[1]}: reviewed_fmap_as_finite_support_result requires a "
                     "source-comparison note in the reviewer field"
                 )
-        if fmap_equalities and (fmap_fields or fmap_result or fmap_relation):
+        if fmap_equalities and (fmap_fields or fmap_result or fmap_relation or fmap_parameters):
             errors.append(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support_equalities (theorem-level map "
                 "equalities) is mutually exclusive with the field/result/relation qualifiers"
