@@ -1,0 +1,7 @@
+store32_le_low=SOME (Word 0x807060511223344w)
+store32_le_high=SOME (Word 0x1122334404030201w)
+store32_be_low=SOME (Word 0x1122334404030201w)
+store32_be_high=SOME (Word 0x807060511223344w)
+store32_be_w2w=SOME (Word 0x1122334404030201w)
+store32_be_unaligned=NONE
+store32_be_outside=NONE
