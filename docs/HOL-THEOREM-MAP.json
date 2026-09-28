@@ -19895,5 +19895,55 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.19) against not_mem_context_assigned_mem_gt at crep_to_loopProofScript.sml:1570-1575. HOL `!ctxt l p n. ctxt_max ctxt.vmax ctxt.vars /\\ (!v m. FLOOKUP ctxt.vars v = SOME m ==> n <> m) ∧ n <= ctxt.vmax ==> ~MEM n (assigned_vars (compile ctxt l p))`. Lean keeps the binders in order (ctxt : CrepToLoopContextExact, l : NumSet, p : CrepProgHOL width, n : Nat), the same three-conjunct premise (tagged crepToLoopCtxtMax over ctxt.vars.lookup, FLOOKUP as HolFiniteMapExact.lookup) and conclusion over the tagged compileHOLExact (compile_def) and holLoopAssignedVars (assigned_vars_def). No Crep evaluator occurs, so no DecidablePred binder. Proof: well-founded recursion on the source program mirroring compile_ind, using the tagged not_mem_assigned_mem_gt_comp_exp(s), compile_exp(s)_out_rel, assigned_vars_nested_seq_split and assigned_vars_nested_seq_assign. Qualifiers: ctxt's HOL |-> vars/funcs as canonical HolFiniteMapExact; width-indexed Crep/Loop program carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "distinct_make_funcs",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/MakeFuncsLemmas.lean",
+    "lean_name": "distinct_make_funcs",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.20) against distinct_make_funcs at crep_to_loopProofScript.sml:3757-3758. HOL `!crep_code. distinct_funcs (make_funcs crep_code)` is fully polymorphic (crep_code : ('a # 'b list # 'c) list); Lean quantifies the same polymorphic list (HOL equality on 'a as [BEq α] [LawfulBEq α], as in the tagged make_funcs_def port crepToLoopMakeFuncsHOL) and concludes the tagged crepToLoopDistinctFuncs (distinct_funcs_def) of crepToLoopMakeFuncsHOL. No premise."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "map_map2_fst",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/MakeFuncsLemmas.lean",
+    "lean_name": "map_map2_fst",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.20) against map_map2_fst at crep_to_loopProofScript.sml:3799-3803. HOL `!xs ys h. LENGTH xs = LENGTH ys ==> MAP FST (MAP2 (λx (n,p,b). (x,GENLIST I (LENGTH p),h p b)) xs ys) = xs`; Lean keeps the three polymorphic binders in order, the length premise, MAP2 as List.zipWith with the paired abstraction as a match on (n, p, b), GENLIST I (LENGTH p) as List.range p.length, MAP FST as map Prod.fst."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "first_compile_prog_all_distinct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/MakeFuncsLemmas.lean",
+    "lean_name": "first_compile_prog_all_distinct",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.20) against first_compile_prog_all_distinct at crep_to_loopProofScript.sml:3832-3834 (the crep_to_loop theorem, distinct from pan_to_crep's same-named theorem tracked on flapjack-wur.1). HOL `!c crep_code. ALL_DISTINCT (MAP FST (compile_prog c crep_code))`; Lean keeps both binders (c as the AsmArchitecture carrier of the tagged compileProgHOLExact, crep_code at compile_prog's argument type (mlstring # num list # 'a crepLang$prog) list) and the conclusion with ALL_DISTINCT as List.Nodup. Words qualifier for the width-indexed CrepProgHOL carrier.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "make_funcs_domain_compile_prog",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/MakeFuncsLemmas.lean",
+    "lean_name": "make_funcs_domain_compile_prog",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.20) against make_funcs_domain_compile_prog at crep_to_loopProofScript.sml:3908-3910. HOL `!start lc crep_code c. FLOOKUP (make_funcs crep_code) start = SOME (lc,0) ==> lc ∈ domain (fromAList (compile_prog c crep_code))`; Lean keeps the binders in order with crep_code at compile_prog's argument type, make_funcs as the tagged crepToLoopMakeFuncsHOL (HOL's polymorphic make_funcs at that type, via FLOOKUP), compile_prog as the tagged compileProgHOLExact, fromAList as sptFromAList (HOL sptree library) and domain membership as sptMem. Words qualifier for the width-indexed CrepProgHOL carrier.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "alookup_el_pair_eq_el",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/MakeFuncsLemmas.lean",
+    "lean_name": "alookup_el_pair_eq_el",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.20) against alookup_el_pair_eq_el at crep_to_loopProofScript.sml:3921-3925. HOL `!prog start cp n. EL n prog = (start, [], SND(SND(EL n prog))) /\\ ALL_DISTINCT (MAP FST prog) /\\ n < LENGTH prog /\\ ALOOKUP prog start = SOME ([],cp) ==> EL n prog = (start, [], cp)` (polymorphic prog). Lean keeps the binders in order; HOL's n < LENGTH prog conjunct is the bound hn of the bounds-checked prog[n] (the reviewed EL rendering of the tagged ALOOKUP_EQ_EL), the remaining three conjuncts keep their order, ALOOKUP is holAlookup (with DecidableEq for HOL equality), ALL_DISTINCT is List.Nodup."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "initial_prog_make_funcs_el",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/MakeFuncsLemmas.lean",
+    "lean_name": "initial_prog_make_funcs_el",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.20) against initial_prog_make_funcs_el at crep_to_loopProofScript.sml:3942-3945. HOL `!prog start n. FLOOKUP (make_funcs prog) start = SOME (n + first_name,0) ==> (start, [], (SND o SND) (EL n prog)) = EL n prog /\\ n < LENGTH prog` (polymorphic prog). Lean keeps the binders and premise (tagged crepToLoopMakeFuncsHOL, first_name as the tagged firstLoopName) and renders the conclusion as `∃ hn : n < prog.length, (start, [], (prog[n]'hn).2.2) = prog[n]'hn`: HOL's second conjunct is the witness of the bound under which the first conjunct's EL is the bounds-checked prog[n]; since that conjunct pins n in range the two conclusions are equivalent. Reviewer should confirm this EL rendering is acceptable."
   }
 ]
