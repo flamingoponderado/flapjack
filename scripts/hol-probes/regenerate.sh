@@ -1364,6 +1364,13 @@ run_probe loop_props_survives_probeScript.sml \
   call_default assign_default \
   "$cake_dir/pancake/semantics/loopPropsScript.sml" \
   "$cake_dir/pancake/semantics"
+run_probe loop_props_every_prog_probeScript.sml \
+  loop_props_every_prog_probe.out \
+  ep_skip ep_assign ep_seq ep_seq_loop ep_loop ep_if ep_if_loop \
+  ep_mark ep_mark_loop ep_call_none ep_call_handler ep_call_handler_fst \
+  ep_call_handler_snd \
+  "$cake_dir/pancake/semantics/loopPropsScript.sml" \
+  "$cake_dir/pancake/semantics"
 run_probe loop_sem_call_env_probeScript.sml \
   loop_sem_call_env_probe.out \
   arg_zero arg_missing "$cake_dir/pancake/semantics/loopSemScript.sml"

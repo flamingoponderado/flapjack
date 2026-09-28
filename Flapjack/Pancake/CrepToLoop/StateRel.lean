@@ -1051,6 +1051,37 @@ theorem allDistinctCtxtLookupAllDistinct (ctxt : CrepToLoopFiniteMapContext)
         exact Option.some.inj hfab
       exact hinj a b ka kb hka hkb hk
 
+/-- Exact port of HOL `all_distinct_ctxt_lookup_all_distinct`
+    (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:3345-3349`) over the
+    exact carrier. HOL reads `ALL_DISTINCT rts` and `distinct_vars ctxt.vars`
+    (with `ctxt.vars : num |-> num`) and concludes `ALL_DISTINCT (rt_vars
+    ctxt.vars rts n)`. The Lean statement uses the exact `CrepToLoopContextExact`
+    whose `vars` field is the canonical `HolFiniteMapExact Nat Nat` translation
+    (matching HOL's `num |-> num`), `rtVars` (`rt_vars_def`) applied to
+    `ctxt.vars.lookup`, `crepToLoopDistinctVars` (`distinct_vars_def`), and
+    `List.Nodup` for `ALL_DISTINCT`. The traversed finite-map carrier field
+    `CrepToLoopContextExact.vars` is recorded by the relation qualifier, with the
+    same-module `holFmapAsFiniteSupportRelationWitness_CrepToLoopContextExact`
+    validating the carrier. -/
+@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "all_distinct_ctxt_lookup_all_distinct"
+  (fmap_as_finite_support_relation := [CrepToLoopContextExact.vars])]
+theorem allDistinctCtxtLookupAllDistinctExact (ctxt : CrepToLoopContextExact)
+    (rts : List Nat) (n : Nat)
+    (hrts : rts.Nodup) (hinj : crepToLoopDistinctVars ctxt.vars.lookup) :
+    (rtVars ctxt.vars.lookup rts n).Nodup := by
+  unfold rtVars
+  cases hmap : rts.mapM (fun v => FLOOKUP ctxt.vars.lookup v) with
+  | none => simp
+  | some m =>
+      simp only
+      refine nodup_of_mapM_of_inj _ rts m hmap hrts (fun a ha b hb hfab => ?_)
+      obtain ⟨ka, hka⟩ := forall_some_of_mapM_some rts m hmap a ha
+      obtain ⟨kb, hkb⟩ := forall_some_of_mapM_some rts m hmap b hb
+      have hk : ka = kb := by
+        rw [hka, hkb] at hfab
+        exact Option.some.inj hfab
+      exact hinj a b ka kb hka hkb hk
+
 /-- Exact port of HOL `list_insert_SNOC`
     (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:386`): inserting the
     snoc'd key list is the same as inserting the tail first and then the final
