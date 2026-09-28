@@ -824,6 +824,90 @@ theorem evalPanValueFfiClockCodeDecCall_fuel_mono_succ
                             simpa [hbody, hbody'] using h
                       · simpa [evalPanValueFfiClockCodeDecCall, hcall, hcall', hshape] using h
 
+/-- The source-program `Call` constructor preserves fuel monotonicity by the
+    state-owned CodeCall evaluator. This is Flapjack-specific fuel plumbing;
+    HOL `evaluate_def` has no meta-level fuel parameter. -/
+theorem evalPanValueFfiClockCodeProg_call_fuel_mono
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (context : PanValueFfiContext α) (primitive : PanPrimitiveHandler α)
+    (handler : PanValueStatefulFfiHandler α σ) (structs : StructContext)
+    (code : PanSemCodeMap α) (exceptionShapes : ExceptionId → Option Shape)
+    (baseAddress topAddress bytesInWord : α) (fuel : Nat)
+    (ihCall : PanValueFfiClockCodeCallFuelMono context primitive handler structs code
+      exceptionShapes baseAddress topAddress bytesInWord fuel) :
+    ∀ fuel' result, fuel + 1 ≤ fuel' →
+      ∀ (locals globals : VarName → Option (PanValue α))
+        (memory : α → Option (PanValue α)) (ffi : FfiState σ) (clock : Nat)
+        (info : Option (Option (VarKind × VarName) ×
+          Option (ExceptionId × VarName × Prog α)))
+        (function : FunName) (arguments : List (Exp α))
+        (ma : Option (PanValueMemoryAccess α))
+        (contracts : Option PanValueCallContracts)
+        (memoryHandler : Option (PanValueMemoryFfiHandler α σ)),
+      evalPanValueFfiClockCodeProg context primitive handler structs code
+        exceptionShapes baseAddress topAddress bytesInWord (fuel + 1) locals globals
+        memory ffi clock (.call info function arguments) ma contracts memoryHandler = some result →
+      evalPanValueFfiClockCodeProg context primitive handler structs code
+        exceptionShapes baseAddress topAddress bytesInWord fuel' locals globals
+        memory ffi clock (.call info function arguments) ma contracts memoryHandler = some result := by
+  intro fuel' result hle locals globals memory ffi clock info function arguments ma contracts
+    memoryHandler h
+  obtain ⟨k, rfl⟩ : ∃ k, fuel' = k + 1 := ⟨fuel' - 1, by omega⟩
+  have hfk : fuel ≤ k := by omega
+  rw [evalPanValueFfiClockCodeProg] at h
+  rw [evalPanValueFfiClockCodeProg]
+  exact ihCall k result hfk locals globals memory ffi clock info function arguments ma
+    contracts memoryHandler false h
+
+/-- Flapjack-specific fuel plumbing for the source-program `If` constructor:
+    monotonicity follows through the selected state-owned recursive branch.
+    HOL's semantics has no meta-level fuel parameter, so this helper has no
+    direct HOL declaration. -/
+theorem evalPanValueFfiClockCodeProg_ite_fuel_mono
+    [BEq α] [OfNat α 0] [OfNat α 1] [Add α] [Mul α]
+    [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α] [ShiftRight α]
+    [LT α] [DecidableRel (fun left right : α => left < right)] [PanCmp α]
+    (context : PanValueFfiContext α) (primitive : PanPrimitiveHandler α)
+    (handler : PanValueStatefulFfiHandler α σ) (structs : StructContext)
+    (code : PanSemCodeMap α) (exceptionShapes : ExceptionId → Option Shape)
+    (baseAddress topAddress bytesInWord : α) (fuel : Nat)
+    (ihProg : PanValueFfiClockCodeProgFuelMono context primitive handler structs code
+      exceptionShapes baseAddress topAddress bytesInWord fuel) :
+    ∀ fuel' result, fuel + 1 ≤ fuel' →
+      ∀ (locals globals : VarName → Option (PanValue α))
+        (memory : α → Option (PanValue α)) (ffi : FfiState σ) (clock : Nat)
+        (condition : Exp α) (thenBranch elseBranch : Prog α)
+        (ma : Option (PanValueMemoryAccess α))
+        (contracts : Option PanValueCallContracts)
+        (memoryHandler : Option (PanValueMemoryFfiHandler α σ)),
+      evalPanValueFfiClockCodeProg context primitive handler structs code
+        exceptionShapes baseAddress topAddress bytesInWord (fuel + 1) locals globals
+        memory ffi clock (.ite condition thenBranch elseBranch) ma contracts memoryHandler =
+          some result →
+      evalPanValueFfiClockCodeProg context primitive handler structs code
+        exceptionShapes baseAddress topAddress bytesInWord fuel' locals globals
+        memory ffi clock (.ite condition thenBranch elseBranch) ma contracts memoryHandler =
+          some result := by
+  intro fuel' result hle locals globals memory ffi clock condition thenBranch elseBranch ma
+    contracts memoryHandler h
+  obtain ⟨k, rfl⟩ : ∃ k, fuel' = k + 1 := ⟨fuel' - 1, by omega⟩
+  have hfk : fuel ≤ k := by omega
+  rw [evalPanValueFfiClockCodeProg] at h
+  rw [evalPanValueFfiClockCodeProg]
+  cases hcondition : panValueIteConditionValue structs baseAddress topAddress bytesInWord
+      locals globals memory condition ma with
+  | none => simp [hcondition] at h ⊢; exact h
+  | some conditionValue =>
+      by_cases hnonzero : conditionValue != 0
+      · simp [hcondition, hnonzero] at h ⊢
+        exact ihProg k result hfk locals globals memory ffi clock thenBranch ma contracts
+          memoryHandler h
+      · simp [hcondition, hnonzero] at h ⊢
+        exact ihProg k result hfk locals globals memory ffi clock elseBranch ma contracts
+          memoryHandler h
+
 /-- **Fuel monotonicity for the public clocked evaluator.** As with the stepped
 entry point, the clock is preserved exactly; only the fuel is relaxed. -/
 theorem evalPanValueFfiClockProgram_fuel_mono

@@ -70,6 +70,38 @@ example : everyVarInst even vMove8Bad = false := by decide
 example : everyVarInst even vMove64Ok = true := by decide
 example : everyVarInst even vSkip = true := by decide
 
+/-! ## Exact-carrier HOL variants (`flapjack-yuc3`)
+
+`everyVarImmHOL` / `everyVarInstHOL` are the tagged exact ports of HOL
+`wordLang$every_var_imm` / `every_var_inst`.  They must agree with the
+production helpers on every fixture (same clause set) and admit the positive
+width binder required by HOL's `dimindex (:α) ≥ 1`; the 64-bit FP-move fixture
+exercises HOL's `dimindex (:α) = 64` branch. -/
+
+example : everyVarImmHOL (width := 8) even iRegOk = true := by decide
+example : everyVarImmHOL (width := 8) even iRegBad = false := by decide
+example : everyVarImmHOL (width := 8) even iImm = true := by decide
+
+private def guardsHOL : List Bool :=
+  [ everyVarImmHOL (width := 8) even iRegOk, everyVarImmHOL (width := 8) even iRegBad,
+    everyVarImmHOL (width := 8) even iImm,
+    everyVarInstHOL (width := 8) even vConstOk, everyVarInstHOL (width := 8) even vBinopOk,
+    everyVarInstHOL (width := 8) even vBinopBad, everyVarInstHOL (width := 8) even vShiftOk,
+    everyVarInstHOL (width := 8) even vDivOk, everyVarInstHOL (width := 8) even vAddCarryBad,
+    everyVarInstHOL (width := 8) even vLongDivOk, everyVarInstHOL (width := 8) even vMemLoadOk,
+    everyVarInstHOL (width := 8) even vMemLoadBad, everyVarInstHOL (width := 8) even vMemLoad8Ok,
+    everyVarInstHOL (width := 8) even vMemLoad16, everyVarInstHOL (width := 8) even vFpLessOk,
+    everyVarInstHOL (width := 8) even vFpLessBad, everyVarInstHOL (width := 8) even vMove8Ok,
+    everyVarInstHOL (width := 8) even vMove8Bad, everyVarInstHOL (width := 64) even vMove64Ok,
+    everyVarInstHOL (width := 8) even vSkip ]
+
+private def expectedHOL : List Bool :=
+  [ true, false, true,
+    true, true, false, true, true, false, true, true, false, true, true, true, false, true, false,
+    true, true ]
+
+#guard guardsHOL == expectedHOL
+
 private def guards : List Bool :=
   [ everyVarExp even eVar, everyVarExp even eVarOdd, everyVarExp even eConst,
     everyVarExp even eLoad, everyVarExp even eOpOk, everyVarExp even eOpBad,
@@ -91,10 +123,11 @@ private def expected : List Bool :=
 #guard guards == expected
 
 def runChecks : IO Bool := do
-  if guards == expected then
+  if guards == expected && guardsHOL == expectedHOL then
     IO.println "PASS wordLang every_var_exp/every_var_imm/every_var_inst match all 28 oracle rows"
+    IO.println "PASS wordLang exact everyVarImmHOL/everyVarInstHOL match all 20 oracle rows"
   else
     IO.println "FAIL wordLang every_var family oracle rows"
-  pure (guards == expected)
+  pure (guards == expected && guardsHOL == expectedHOL)
 
 end Flapjack.Test.WordLangEveryVarParity
