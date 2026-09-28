@@ -3192,11 +3192,13 @@ theorem panSemTotalEvaluate_primitive_agree_of_progByteRanged {σ : Type}
   exact panSemTotalEvaluate_primitive_agree primitive production exact hrel hranged
     name hname operator arguments harguments hprim hprimRanged
 
-/-- Canonical total source-semantics entrypoint for the production `panSem$`
-    evaluator on the executable compiler path: `panSemTotalEvaluate` specialised
-    to the production primitive handler `panPrimopHOL`.  The general evaluator is
-    handler-parametric, so this names the concrete handler that the source
-    semantics is intended to run.  Not a HOL declaration; untagged. -/
+/-- Canonical total source-semantics entrypoint: `panSemTotalEvaluate`
+    specialised to the production primitive handler `panPrimopHOL`.  The
+    evaluator is executable Lean code, but this definition alone does not wire
+    it into the compiler/runtime pipeline; current uses are its bridge and test
+    fixtures.  Generic compiler inputs still need the reviewed ranged-name,
+    ranged-expression, and exact-state bridges before such routing is justified.
+    This is Flapjack-specific infrastructure, not a HOL declaration. -/
 abbrev panSemTotalEvaluateCake {σ : Type} :
     Prog (RiscV.Word 64) → PanSemState (RiscV.Word 64) (FfiState σ) →
       Option (PanSemHOLResult (RiscV.Word 64)) ×

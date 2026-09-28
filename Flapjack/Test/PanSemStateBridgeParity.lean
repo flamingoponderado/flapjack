@@ -1244,11 +1244,11 @@ example : PanSemExceptionShapesRanged
       subst hmem
       exact ⟨by decide, by simp [ShapeByteRanged]⟩)
 
-/-- The canonical `panSemTotalEvaluateCake` entrypoint (the executable
-    production `panSemTotalEvaluate` specialized to the canonical `panPrimopHOL`
-    handler) exercises the proved Primitive-clause agreement on the
-    executed-carrier fixture, so the `.77.2.14` assembly has an explicit
-    reviewable use-site. -/
+/-- A kernel-checked use-site fixture for the canonical
+    `panSemTotalEvaluateCake` specialization exercises the proved
+    Primitive-clause agreement on related production/exact carriers.  It is a
+    proof/test fixture, not evidence that the compiler/runtime pipeline calls
+    this evaluator; the production-routing bridge remains open. -/
 example :
     PanSemHOLResultOptionRel
         (panSemTotalEvaluateCake
