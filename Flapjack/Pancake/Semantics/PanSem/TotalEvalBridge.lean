@@ -399,4 +399,56 @@ theorem panSemStateRelExec_storeWithAccess {σ : Type}
   intro hrel
   exact ⟨hl, hg, hs, hc, he, hrel, hmd, hsm, hck, hbe, hffi, hb, ht⟩
 
+/-- `PanSemStateRelExec` through the production `StoreByte` memory update (the
+    state-derived `storeByte` used by `panSemTotalStoreByteClause`) and the exact
+    HOL `mem_store_byte s.memory s.memaddrs s.be adr (w2w w)`
+    (`panSemScript.sml:300-307`, the tagged `panMemStoreByteWord8HOL`) used by
+    the exact `StoreByte` clause: either both fail, or both succeed and the
+    relation holds with the memories updated. The production store writes the
+    full word into `set_byte`, which uses only its low byte, so it agrees with
+    HOL's `w2w` truncation. Flapjack-only bridge; no HOL declaration. -/
+theorem panSemStateRelExec_storeByte {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ)) (exact : PanSemStateExact 64 σ)
+    (h : PanSemStateRelExec state exact) (addr w : RiscV.Word 64) :
+    match (panSemBitVec64MemoryAccess state).storeByte (panSemBitVec64MemoryAccess state).domain
+        state.memory panSemBitVec64BytesInWord addr w,
+      @panMemStoreByteWord8HOL 64 _ exact.memory exact.memaddrs
+        (fun a => Classical.propDecidable (exact.memaddrs a)) exact.be addr
+        (BitVec.ofNat 8 w.toNat) with
+    | some m, some m' =>
+        PanSemStateRelExec { state with memory := m } { exact with memory := m' }
+    | none, none => True
+    | _, _ => False := by
+  classical
+  obtain ⟨hl, hg, hs, hc, he, hm, hmd, hsm, hck, hbe, hffi, hb, ht⟩ := h
+  have hbyte : panSetByteHOL addr w (holWordLabBits (exact.memory (panByteAlignHOL addr)))
+      state.be =
+      panSetByteHOL addr (BitVec.ofNat 64 (BitVec.ofNat 8 w.toNat).toNat)
+        (holWordLabBits (exact.memory (panByteAlignHOL addr))) exact.be := by
+    rw [hbe]
+    unfold panSetByteHOL
+    congr 3
+    simp [BitVec.toNat_ofNat]
+  by_cases hd : state.memaddrs (panByteAlignHOL addr) = true
+  · have hD : exact.memaddrs (panByteAlignHOL addr) := (hmd _).mp hd
+    have hcell := hm _ hd
+    have hupd := panSemMemoryRel_update state.memaddrs state.memory exact.memory hm
+      (panByteAlignHOL addr)
+      (panSetByteHOL addr w (holWordLabBits (exact.memory (panByteAlignHOL addr))) state.be)
+    cases hex : exact.memory (panByteAlignHOL addr) with
+    | word bits =>
+        rw [hex] at hcell hbyte hupd
+        simp only [holWordLabBits_word] at hcell hbyte hupd
+        simp only [panSemBitVec64MemoryAccess, panValueMemoryAccessOfModel,
+          panSemBitVec64WordModel, panSemWordModel, panMemStoreByteWord8HOL, hex, hd, hD,
+          if_true, hcell]
+        refine ⟨hl, hg, hs, hc, he, ?_, hmd, hsm, hck, hbe, hffi, hb, ht⟩
+        rw [← hbyte]
+        exact hupd
+  · have hD : ¬ exact.memaddrs (panByteAlignHOL addr) := fun h => hd ((hmd _).mpr h)
+    cases hex : exact.memory (panByteAlignHOL addr) with
+    | word bits =>
+        simp [panSemBitVec64MemoryAccess, panValueMemoryAccessOfModel,
+          panSemBitVec64WordModel, panSemWordModel, panMemStoreByteWord8HOL, hd, hD]
+
 end Flapjack
