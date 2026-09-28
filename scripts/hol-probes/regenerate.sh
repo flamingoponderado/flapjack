@@ -212,6 +212,11 @@ run_probe pan_mem_load_probeScript.sml pan_mem_load_probe.out \
 run_probe pan_sem_state_eval_probeScript.sml pan_sem_state_eval_probe.out \
   word_load_hit pan_sem_state_eval_done \
   "$cake_dir/pancake/semantics/panSemScript.sml"
+run_probe pan_sem_mem_domain_probeScript.sml pan_sem_mem_domain_probe.out \
+  domain_load_hit domain_load_miss_present domain_store_then_load_hit \
+  domain_store_miss domain_mem_stores_load_roundtrip pan_sem_mem_domain_done \
+  "$cake_dir/pancake/semantics/panSemScript.sml" \
+  "$cake_dir/pancake/semantics"
 run_probe pan_shape_of_probeScript.sml pan_shape_of_probe.out \
   word nstruct "$cake_dir/pancake/semantics/panSemScript.sml"
 run_probe pan_evaluate_decls_probeScript.sml pan_evaluate_decls_probe.out \
@@ -789,6 +794,11 @@ run_probe crep_total_call_eval_probeScript.sml crep_total_call_eval_probe.out \
   call_total_callee_break call_total_callee_continue call_total_callee_exception \
   call_total_return_arity_error call_total_duplicate_destinations \
   call_total_missing_destination \
+  "$cake_dir/pancake/semantics/crepSemScript.sml"
+run_probe crep_evaluate_def_arms_probeScript.sml crep_evaluate_def_arms_probe.out \
+  primitive_add_carry primitive_duplicate_lhs primitive_missing_lhs \
+  primitive_wrong_arity primitive_missing_rhs call_handler_catch \
+  call_handler_mismatch call_handler_absent call_handler_duplicate_rts \
   "$cake_dir/pancake/semantics/crepSemScript.sml"
 run_probe crep_assign_eval_probeScript.sml crep_assign_eval_probe.out \
   assign_overwrite_eval assign_missing_destination_eval assign_expression_error_eval \
