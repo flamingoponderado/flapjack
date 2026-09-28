@@ -46,6 +46,7 @@ import Flapjack.Test.CrepSemTotalAssignParity
 import Flapjack.Test.CrepSemTotalStoreParity
 import Flapjack.Test.CrepSemTotalShMemParity
 import Flapjack.Test.CrepSemTotalExtCallParity
+import Flapjack.Test.CrepSemIoEventsMonoParity
 import Flapjack.Test.CrepInlineFmapParity
 import Flapjack.Test.CrepInlineStructuralHOLParity
 import Flapjack.Test.CrepInlineTransformEocParity
@@ -1107,7 +1108,8 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.PanToCrepMakeVmapParity.runChecks,
     Flapjack.Test.PanLangGeneratedSizeParity.runChecks,
     Flapjack.Test.PanSimpProgBridgeParity.runChecks,
-    Flapjack.Test.CrepSemTotalExtCallParity.runChecks
+    Flapjack.Test.CrepSemTotalExtCallParity.runChecks,
+    Flapjack.Test.CrepSemIoEventsMonoParity.runChecks
     ].mapM id
   unless results.all id do
     IO.Process.exit 1
