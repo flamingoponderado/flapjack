@@ -530,6 +530,78 @@ theorem foldl_res_var_zip_lookup_hol {α : Type} {β : Type} [DecidableEq α]
   rw [OPT_MMAP_ALL_EQ (FLOOKUP l1) (FLOOKUP l) xs hpt]
   exact h
 
+/-! ## Exact finite-support (`HolFiniteMapExact`) forms of the `SUBMAP` cluster
+
+The `_hol` statements above still quantify Lean's raw function carrier
+`FiniteMap α β := α → Option β`, which admits infinite-support inhabitants that
+HOL `α |-> β` cannot represent.  The declarations below state the same HOL
+clauses (`crep_inlineProofScript.sml:117/127/135`) over the canonical
+finite-support carrier `HolFiniteMapExact`
+(`Flapjack/Pancake/Semantics/CrepSem/HOLState.lean`) with its HOL-equality
+(`DecidableEq`) `updateEq`/`eraseEq`, so they carry the exact HOL statements
+with no `BEq`/`LawfulBEq` side conditions.  `submap` is untagged
+infrastructure: HOL's `SUBMAP` is a finite-map operation defined in
+`fmapScript`, not a declaration of `crep_inlineProofScript.sml`. -/
+
+namespace HolFiniteMapExact
+
+/-- HOL finite-map `SUBMAP` on the canonical finite-support carrier: every
+    binding of `f` is also a binding of `g` with the same value, i.e. `FLOOKUP f`
+    and `FLOOKUP g` agree on `FDOM f`. -/
+def submap (f g : HolFiniteMapExact α β) : Prop :=
+  ∀ key value, f.lookup key = some value → g.lookup key = some value
+
+end HolFiniteMapExact
+
+/-- Finite-map `SUBMAP_IMP_FUPDATE_SUBMAP`
+    (`crep_inlineProofScript.sml:117`) over the exact finite-support carrier. -/
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "SUBMAP_IMP_FUPDATE_SUBMAP"
+  (fmap_as_finite_support_relation := [f, g])]
+theorem submap_imp_fupdate_submap_exact {κ : Type} {β : Type} [DecidableEq κ]
+    (f : HolFiniteMapExact κ β) (g : HolFiniteMapExact κ β) (x : κ) (y : β) (h : f.submap g) :
+    (f.updateEq (x, y)).submap (g.updateEq (x, y)) := by
+  intro n v hn
+  rw [HolFiniteMapExact.lookup_updateEq] at hn ⊢
+  simp only [FUPDATE_HOL] at hn ⊢
+  by_cases hxn : n = x
+  · rw [if_pos hxn] at hn ⊢
+    exact hn
+  · rw [if_neg hxn] at hn ⊢
+    exact h n v hn
+
+/-- Finite-map `SUBMAP_IMP_DOMSUB_SUBMAP`
+    (`crep_inlineProofScript.sml:127`) over the exact finite-support carrier. -/
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "SUBMAP_IMP_DOMSUB_SUBMAP"
+  (fmap_as_finite_support_relation := [f, g])]
+theorem submap_imp_domsub_submap_exact {κ : Type} {β : Type} [DecidableEq κ]
+    (f : HolFiniteMapExact κ β) (g : HolFiniteMapExact κ β) (x : κ) (h : f.submap g) :
+    (f.eraseEq x).submap (g.eraseEq x) := by
+  intro n v hn
+  rw [HolFiniteMapExact.lookup_eraseEq] at hn ⊢
+  simp only [FDOMSUB_HOL] at hn ⊢
+  by_cases hnx : n = x
+  · rw [if_pos hnx] at hn ⊢
+    exact hn
+  · rw [if_neg hnx] at hn ⊢
+    exact h n v hn
+
+/-- Finite-map `SUBMAP_IMP_DOMSUB_FUPDATE`
+    (`crep_inlineProofScript.sml:135`) over the exact finite-support carrier. -/
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "SUBMAP_IMP_DOMSUB_FUPDATE"
+  (fmap_as_finite_support_relation := [f, g])]
+theorem submap_imp_domsub_fupdate_exact {κ : Type} {β : Type} [DecidableEq κ]
+    (f : HolFiniteMapExact κ β) (g : HolFiniteMapExact κ β) (x : κ) (y : β) (h : f.submap g) :
+    (f.eraseEq x).submap (g.updateEq (x, y)) := by
+  intro n v hn
+  rw [HolFiniteMapExact.lookup_eraseEq] at hn
+  rw [HolFiniteMapExact.lookup_updateEq]
+  simp only [FDOMSUB_HOL, FUPDATE_HOL] at hn ⊢
+  by_cases hnx : n = x
+  · rw [if_pos hnx] at hn ⊢
+    exact absurd hn (by simp)
+  · rw [if_neg hnx] at hn ⊢
+    exact h n v hn
+
 /-- CakeML's `locals_rel` (`crep_inlineProofScript.sml:26`):
     `s.locals SUBMAP t.locals`. -/
 -- FLAPJACK-SPECIFIC (not an exact HOL port): generic over the word element type, while HOL
@@ -946,6 +1018,74 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {σ : Type} :
     (∀ state : CrepSemHOLState width σ,
         CrepSemBroadState.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
   CrepSemHOLState.holFmapAsFiniteSupportWitness
+
+/-- Exact finite-support carrier port of CakeML's `state_rel` relation
+(`crep_inlineProofScript.sml:12-24`). The ten compared fields are globals,
+code, memory, both memory domains, clock, endianness, FFI state, and base/top
+addresses; locals are intentionally excluded as in the HOL definition. The
+quantified states use `CrepSemHOLState`, whose three finite maps are the
+reviewed canonical translation of HOL's `|->` fields. -/
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "state_rel_def"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
+def crepInlineStateRelExact {width : Nat} [NeZero width] {σ : Type}
+    (s t : CrepSemHOLState width σ) : Prop :=
+  s.globals = t.globals ∧
+  s.code = t.code ∧
+  s.memory = t.memory ∧
+  s.memaddrs = t.memaddrs ∧
+  s.shMemaddrs = t.shMemaddrs ∧
+  s.clock = t.clock ∧
+  s.be = t.be ∧
+  s.ffi = t.ffi ∧
+  s.baseAddr = t.baseAddr ∧
+  s.topAddr = t.topAddr
+
+/-- Exact finite-support carrier port of CakeML's `locals_rel` relation
+(`crep_inlineProofScript.sml:26-29`). This is HOL finite-map `SUBMAP`: every
+binding in `s.locals` is present with the same value in `t.locals`. The
+statement uses lookup on the finite-support map carrier and adds no key
+decidability or `BEq` hypothesis. -/
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "locals_rel_def"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
+def crepInlineLocalsRelExact {width : Nat} [NeZero width] {σ : Type}
+    (s t : CrepSemHOLState width σ) : Prop :=
+  ∀ key value, s.locals.lookup key = some value → t.locals.lookup key = some value
+
+/-- Exact finite-support carrier port of CakeML's `locals_ext_rel`
+(`crep_inlineProofScript.sml:162-165`): the locals added when running from
+`a` to `a'` equal those added from `b` to `b'`, i.e.
+`FDIFF a'.locals (FDOM a.locals) = FDIFF b'.locals (FDOM b.locals)`.
+`crepHolFdiff`/`crepHolFdom` render HOL's `FDIFF`/`FDOM` extensionally over
+`CrepSemHOLState`'s finite-support `locals` field. -/
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "locals_ext_rel_def"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
+def crepInlineLocalsExtRelExact {width : Nat} [NeZero width] {σ : Type}
+    (a b a' b' : CrepSemHOLState width σ) : Prop :=
+  crepHolFdiff a'.locals.lookup (crepHolFdom a.locals.lookup) =
+    crepHolFdiff b'.locals.lookup (crepHolFdom b.locals.lookup)
+
+/-- Exact finite-support carrier port of CakeML's `locals_rel_dec_clock`
+(`crep_inlineProofScript.sml:167-173`): both relations are preserved by
+`dec_clock`, since only `clock` changes. The conclusion is the source
+conjunction of `locals_rel` and `state_rel` at the decremented clocks. -/
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "locals_rel_dec_clock"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
+theorem crepInlineLocalsRel_decClockExact {width : Nat} [NeZero width] {σ : Type}
+    (s t : CrepSemHOLState width σ)
+    (h : crepInlineLocalsRelExact s t ∧ crepInlineStateRelExact s t) :
+    crepInlineLocalsRelExact (decClockCrepSemHOL s) (decClockCrepSemHOL t) ∧
+    crepInlineStateRelExact (decClockCrepSemHOL s) (decClockCrepSemHOL t) := by
+  obtain ⟨hlocals, hstate⟩ := h
+  obtain ⟨hg, hc, hm, hma, hsm, hcl, hbe, hf, hba, hta⟩ := hstate
+  refine ⟨?_, ?_⟩
+  · intro key value hlookup
+    simpa only [decClockCrepSemHOL] using hlocals key value hlookup
+  · simp only [crepInlineStateRelExact, decClockCrepSemHOL]
+    exact ⟨hg, hc, hm, hma, hsm, by rw [hcl], hbe, hf, hba, hta⟩
 
 /-- Exact finite-support carrier port of CakeML's `state_rel_code` relation:
 globals, memory, memory domains, clock, endianness, FFI state, and base/top

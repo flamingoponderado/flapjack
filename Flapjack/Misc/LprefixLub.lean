@@ -542,6 +542,44 @@ theorem lprefix_of_rep_agree {a b : HolLList α}
             rw [hby] at hbj
             exact (Option.some.inj hbj).symm
 
+/-- Exact full form of HOL `build_lprefix_lub_lem`
+    (`lprefix_lubScript.sml:440-445`): on a chain, the `m`-th `LUNFOLD` step
+    carries the `(m+n)`-th chain value.  This is the general `m` companion of
+    `lnth_buildLprefixLub` (the `m = 0` case). -/
+theorem buildLprefixLubF_step {ls : HolLList α → Prop} (hchain : lprefixChain ls) :
+    ∀ m n : Nat, lunfoldStep (buildLprefixLubF ls) m n =
+      (lprefixChainNth (m + n) ls).map (fun x => (m + n + 1, x)) := by
+  intro m n
+  induction n generalizing m with
+  | zero => simp [lunfoldStep, buildLprefixLubF]
+  | succ n ih =>
+      rw [lunfoldStep, ih]
+      cases hk : lprefixChainNth (m + n) ls with
+      | none =>
+          have hk1 : lprefixChainNth (m + n + 1) ls = none :=
+            lprefixChainNth_none_mono hchain (Nat.le_succ (m + n)) hk
+          have harith : m + (n + 1) = m + n + 1 := rfl
+          rw [harith, hk1]
+          rfl
+      | some x =>
+          have harith : m + (n + 1) = m + n + 1 := rfl
+          rw [harith]
+          rfl
+
+/-- HOL `build_lprefix_lub_lem` (`lprefix_lubScript.sml:440-445`) in full:
+    `∀ m n, lnth n (lunfold (buildLprefixLubF ls) m) = lprefixChainNth (m+n) ls`
+    on a chain. -/
+theorem lnth_buildLprefixLub_full {ls : HolLList α → Prop} (hchain : lprefixChain ls)
+    (m n : Nat) :
+    lnth n (lunfold (buildLprefixLubF ls) m) = lprefixChainNth (m + n) ls := by
+  rw [lnth_eq_rep]
+  change (lunfoldStep (buildLprefixLubF ls) m n).map Prod.snd =
+    lprefixChainNth (m + n) ls
+  rw [buildLprefixLubF_step hchain m n]
+  cases lprefixChainNth (m + n) ls with
+  | none => rfl
+  | some x => rfl
+
 /-- Upper-bound half of `buildLprefixLub_thm`: every chain member is an
     `lprefix` of `buildLprefixLub ls`. -/
 theorem buildLprefixLub_upper {ls : HolLList α → Prop} (hchain : lprefixChain ls) :

@@ -497,6 +497,10 @@ run_probe crep_inline_cont_res_probeScript.sml crep_inline_cont_res_probe.out \
 run_probe crep_inline_eval_probeScript.sml crep_inline_eval_probe.out \
   src_main_is_call continue_eval "$cake_dir/pancake/semantics/crepSemScript.sml" \
   "$cake_dir/pancake/semantics"
+run_probe crep_inline_relations_probeScript.sml crep_inline_relations_probe.out \
+  locals_rel_extension state_rel_dec_clock \
+  "$cake_dir/pancake/proofs/crep_inlineProofScript.sml" \
+  "$cake_dir/pancake/proofs"
 run_probe pan_flat_store_probeScript.sml pan_flat_store_probe.out \
   store_hit stores_blocked "$cake_dir/pancake/semantics/panSemScript.sml"
 run_probe pan_flatten_probeScript.sml pan_flatten_probe.out \

@@ -14,6 +14,19 @@ namespace Flapjack
 
 open LoopSemStateFiniteExact
 
+namespace LoopLiveOptimiseWitnesses
+
+/-- Same-module re-export of the canonical `loopSem$state` witness for the
+    `fmap_as_finite_support := [globals]` qualifier. -/
+theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {F : Type} :
+    (∀ (state : LoopSemStateBroad width F) (h : state.FiniteSupport),
+        (LoopSemStateBroad.ofBroad state h).toBroad = state) ∧
+    (∀ state : LoopSemStateFiniteExact width F,
+        LoopSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  LoopSemStateFiniteExact.LoopEvaluateFiniteSupport.holFmapAsFiniteSupportWitness
+
+end LoopLiveOptimiseWitnesses
+
 /-- Flapjack helper (no HOL declaration): the equational form of HOL's
     `mark_correct`, proved by the lexicographic `(clock, program size)` induction
     mirroring `loopSemTheory.evaluate_ind` (HOL's `recInduct evaluate_ind` with its
