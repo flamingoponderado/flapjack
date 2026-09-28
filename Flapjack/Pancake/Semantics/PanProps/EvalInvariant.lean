@@ -5902,6 +5902,37 @@ theorem evaluateHOLFinitePair_while {width : Nat} {σ : Type} [NeZero width]
   rw [PanSemStateFiniteExact.evaluateHOLFiniteState_while_total]
   rfl
 
+/-- Flapjack-specific clock-subtraction identity for `dec_clock`: this is a
+    finite-state arithmetic helper, not a separate HOL declaration. It
+    records the `ck < clock` side condition needed to commute a lower-clock
+    run's While body entry with HOL's one-tick decrement. -/
+private theorem decClockHOLFinite_sub_clock {width : Nat} {σ : Type}
+    [NeZero width] (state : PanSemStateFiniteExact width σ) (ck : Nat)
+    (hck : ck < state.clock) :
+    PanSemStateFiniteExact.decClockHOLFinite
+        { state with clock := state.clock - ck } =
+      { PanSemStateFiniteExact.decClockHOLFinite state with
+        clock := (PanSemStateFiniteExact.decClockHOLFinite state).clock - ck } := by
+  simp only [PanSemStateFiniteExact.decClockHOLFinite]
+  congr 1
+  omega
+
+/-- Flapjack-specific clock-subtraction identity for `fix_clock`: when the
+    body result clock is bounded by its entry clock, clamping after subtracting
+    `ck` agrees with subtracting `ck` after the original clamp. This helper is
+    derived from HOL `fix_clock_def`; HOL has no standalone subtraction lemma. -/
+private theorem fixClockHOLFinite_sub_clock {width : Nat} {σ : Type} {β : Type}
+    [NeZero width] (entry post : PanSemStateFiniteExact width σ)
+    (result : β) (ck : Nat) (hpost : post.clock ≤ entry.clock) :
+    (PanSemStateFiniteExact.fixClockHOLFinite
+        { entry with clock := entry.clock - ck }
+        (result, { post with clock := post.clock - ck })).2 =
+      { (PanSemStateFiniteExact.fixClockHOLFinite entry (result, post)).2 with
+        clock := (PanSemStateFiniteExact.fixClockHOLFinite entry (result, post)).2.clock - ck } := by
+  have hhigh : ¬ entry.clock < post.clock := by omega
+  have hlow : ¬ entry.clock - ck < post.clock - ck := by omega
+  simp only [PanSemStateFiniteExact.fixClockHOLFinite, if_neg hhigh, if_neg hlow]
+
 /-- Genuine recursive-induction `Seq` case of HOL `evaluate_clock_sub`. The
     hypotheses are exactly the generated `evaluate_ind` IHs after instantiating
     its motive with the clock-subtraction property: the first-program IH is
