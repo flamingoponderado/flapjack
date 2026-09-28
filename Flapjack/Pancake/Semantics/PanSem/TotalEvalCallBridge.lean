@@ -362,7 +362,7 @@ def callInfoOfHOL :
         some (toStringOfBytes eid, toStringOfBytes var, progOfHOL handler))
 
 /-- `progOfHOL` on a `Call` node, with its info decoded by `callInfoOfHOL`. -/
-theorem progOfHOL_call
+theorem progOfHOL_call_callInfo
     (info : Option (Option (VarKind × MlS) × Option (MlS × MlS × ProgHOL 64)))
     (function : MlS) (arguments : List (ExpHOL 64)) :
     progOfHOL (.call info function arguments : ProgHOL 64) =
@@ -449,7 +449,7 @@ theorem panSemTotalEvaluate_call_agree {σ : Type}
   have hck : exact.clock = production.clock := hrel.2.2.2.2.2.2.2.2.1
   have hfnRanged := nameRanged_toStringOfBytes_bridge function
   simp only [PanSemTotalAgreeAt]
-  rw [progOfHOL_call, panSemTotalEvaluate, evaluateHOLFiniteState_call]
+  rw [progOfHOL_call_callInfo, panSemTotalEvaluate, evaluateHOLFiniteState_call]
   cases hev : evalPanSemStateExps production (arguments.map expOfHOL) with
   | none =>
       rw [hev] at hargs
