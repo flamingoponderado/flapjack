@@ -18417,6 +18417,20 @@
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "code_rel2_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
+    "lean_name": "crepToLoopCodeRel2Exact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.funcs",
+      "s_code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "hol_line": 3842,
+    "reviewer": "flapjack-ds9 source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.23) against code_rel2_def at crep_to_loopProofScript.sml:3842-3844. HOL defines `code_rel2 ctxt s_code t_code <=> code_rel ctxt (FMAP_MAP2 (\\(s, n, p). (n, crep_arith$simp_prog p)) s_code) t_code`. The Lean statement keeps the exact code_rel body of crepToLoopCodeRelExact and changes only the source map, exactly as HOL: FMAP_MAP2 is the reviewed canonical HolFiniteMapExact.map2 (lookup_map2: (map.map2 f).lookup k = (map.lookup k).map (fun v => f (k, v)); keys preserved, the stored callback result is the value), the HOL lambda receives the callback pair (key, (n, p)), binds the key to the discarded first component, and returns (n, simp_prog p), rendered as (entry.2.1, crepSimpProgHOL entry.2.2) with the tagged exact crepSimpProgHOL (simp_prog_def). No hypothesis, side condition, or relation clause is added or changed. The relation qualifier records the same two traversed finite-map carriers as code_rel_def: the owned CrepToLoopContextExact.funcs field (same-module witness holFmapAsFiniteSupportRelationWitness_CrepToLoopContextExact) and the standalone s_code HolFiniteMapExact parameter validated directly at its binder. words_as_type_indexed_bitvec: the CrepProgHOL/HolLoopProg width carriers keep the HOL 'a word positive-dimension translation. Direct original-HOL EVAL rows are in scripts/hol-probes/crep_to_loop_code_rel2_probe.out (code_rel2_skip_map2 = SOME ([1; 2],Skip); code_rel2_mul_map2 = SOME ([1; 2],Assign 1 (Shift Lsl (Var 2) (Const 1w))) shows the stored body is the simp_prog result; code_rel2_key_absent = NONE) and the definitional unfold is replayed in Flapjack/Test/CrepToLoopCodeRelParity.lean."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
     "hol_name": "code_rel_intro",
     "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
     "lean_name": "crepToLoopCodeRelExact_intro",

@@ -1329,6 +1329,9 @@ run_probe crep_to_loop_ocompile_probeScript.sml crep_to_loop_ocompile_probe.out 
 run_probe crep_to_loop_code_rel_probeScript.sml crep_to_loop_code_rel_probe.out \
   code_rel_funcs_lookup code_rel_lookup_pair \
   "$cake_dir/pancake/proofs/crep_to_loopProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe crep_to_loop_code_rel2_probeScript.sml crep_to_loop_code_rel2_probe.out \
+  code_rel2_skip_map2 code_rel2_mul_map2 code_rel2_key_absent \
+  "$cake_dir/pancake/proofs/crep_to_loopProofScript.sml" "$cake_dir/pancake/proofs"
 run_probe compile_crepop_probeScript.sml compile_crepop_probe.out \
   compile_crepop_mul_riscv compile_crepop_mul_armv7 \
   "$cake_dir/pancake/crep_to_loopScript.sml"

@@ -719,6 +719,24 @@ Lean port `crepToLoopCodeRelExact` in `Flapjack.Pancake.CrepToLoop.StateRel` is
 replayed against those rows by `Flapjack.Test.CrepToLoopCodeRelParity`. Refresh
 with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=crep_to_loop_code_rel_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
+`crep_to_loop_code_rel2_probe.out` records direct HOL EVAL rows for
+`code_rel2_def` at `cakeml/pancake/proofs/crep_to_loopProofScript.sml:3842-3844`,
+which wraps `code_rel` with the source-map transform
+`FMAP_MAP2 (\(s,n,p). (n, crep_arith$simp_prog p))`. The fixture uses
+`s_code = FEMPTY |+ (5, ([1;2], Skip))` and the representation-altering
+`s_code = FEMPTY |+ (5, ([1;2], Assign 1 (Crepop Mul [Var 2; Const 2w])))`.
+HOL `EVAL` does not reduce `FLOOKUP` over `FMAP_MAP2` directly, so the probe
+rewrites with the library theorem `FLOOKUP_FMAP_MAP2`
+(`finite_mapScript.sml:2344`, `FLOOKUP (FMAP_MAP2 f m) k =
+OPTION_MAP (\v. f (k,v)) (FLOOKUP m k)`) and then EVALs the residual lookup.
+`code_rel2_skip_map2 = SOME ([1; 2],Skip)` shows the key is preserved and the
+body is unchanged; `code_rel2_mul_map2 =
+SOME ([1; 2],Assign 1 (Shift Lsl (Var 2) (Const 1w)))` shows the stored body
+is the callback result after `simp_prog`; `code_rel2_key_absent = NONE` shows
+absent keys stay absent. The exact Lean port `crepToLoopCodeRel2Exact` in
+`Flapjack.Pancake.CrepToLoop.StateRel` and its definitional replay live in
+`Flapjack.Test.CrepToLoopCodeRelParity`. Refresh with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=crep_to_loop_code_rel2_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
 `crep_to_loop_locals_rel_probe.out` records direct observations for
 `locals_rel_def` at `cakeml/pancake/proofs/crep_to_loopProofScript.sml:101-111`.
 HOL `crepLang$varname = num` (`crepLangScript.sml:19`), so the context's `vars`
