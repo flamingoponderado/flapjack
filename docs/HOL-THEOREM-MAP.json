@@ -11487,6 +11487,78 @@
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Call.lean",
+    "lean_name": "fupdateListHOL_zip_mem_indep",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus: Flapjack-only finite-map/list helper for the exact pc_compile_correct Call_Ret_Return sub-case. Untagged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Call.lean",
+    "lean_name": "pcCompileCorrectAt_callRetReturn",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus: HOL pc_compile_correct[Call_Ret_Return] (pan_to_crepProofScript.sml:3312-3597): the caltyp = SOME _, positive-clock sub-case against pcCompileCorrectAt, with the callee's source Return as the case-split hypothesis, the rebound evaluate_ind Call IHs, and no target premise. Untagged sub-case (bead flapjack-pxn.18.4.3.94.8). Untagged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Call.lean",
+    "lean_name": "panToCrepLocalsRelFiniteExact_setVar",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus: locals_rel preserved by a same-shaped local write and the matching slot update (the relation part of HOL ret_call_shape_retv_*_tac, :2571-2780). Untagged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Call.lean",
+    "lean_name": "updateListEq_overwrite",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus: Flapjack-only finite-map/list helper for the exact pc_compile_correct Call_Ret_Return sub-case. Untagged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Call.lean",
+    "lean_name": "pcCompileCorrectCallRetReturnTargetNested",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus: Target run of the standalone Ret arm for a returning callee: install into the fresh slots, then restore the caller's locals (tagged res_var_lookup_original_eq). Untagged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Call.lean",
+    "lean_name": "compileCallDestSomeShape",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus: The exact compile_def Call (SOME (SOME (rk,rt), hdl)) arm with wrap_rt = SOME (sh, ns) is a plain call with return names ns (HOL compile_def inline). Untagged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Call.lean",
+    "lean_name": "mapM_lookup_updateListEq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus: Flapjack-only finite-map/list helper for the exact pc_compile_correct Call_Ret_Return sub-case. Untagged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Call.lean",
+    "lean_name": "pcCompileCorrectCallRetReturnTargetWrap",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus: Target run of a wrap_rt destination arm for a returning callee: normal completion with the destination slots updated. Untagged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Call.lean",
+    "lean_name": "compileCallDestNoneShape",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus: The exact compile_def Call (SOME (NONE, hdl)) arm is the standalone nested_decs return-slot call (HOL compile_def inline). Untagged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Call.lean",
     "lean_name": "crepNestedCallTimeout",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "flapjack-opus: Zero-clock target run of the nested_decs-wrapped call via the tagged eval_nested_decs_seq_res_var_eq and opt_mmap_eval_distinct_lists_not_affect (HOL :3139-3165 inline). Untagged."
