@@ -119,6 +119,7 @@ import Flapjack.Pancake.Semantics.LoopSemStateExact.Semantics
 import Flapjack.Pancake.Semantics.LoopProps.EvaluateClockExact
 import Flapjack.Pancake.Semantics.LoopProps.EvaluateIoEventsExact
 import Flapjack.Pancake.Semantics.LoopProps.EvalExact
+import Flapjack.Pancake.Semantics.LoopProps.NestedSeqExact
 import Flapjack.PanObservationalSemantics
 import Flapjack.PanHHandleCallRet
 import Flapjack.PanMrec

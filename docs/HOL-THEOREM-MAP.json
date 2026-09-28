@@ -18763,5 +18763,41 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.11): HOL eval_upd_locals_clock_eq (loopPropsScript.sml:959-960) `!t e l ck. eval (t with <|locals := l; clock := ck|>) e = eval (t with locals := l) e`; same variables and equation over the tagged exact eval. fmap_as_finite_support [globals]: the statement quantifies over LoopSemStateFiniteExact, whose HOL |-> globals field is the canonical HolFiniteMapExact carrier (read by eval); locals/code are sptree num_maps (Spt) and are not named; same-module re-exported canonical witness holFmapAsFiniteSupportWitness."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopPropsScript.sml",
+    "hol_name": "evaluate_nested_seq_cases",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopProps/NestedSeqExact.lean",
+    "lean_name": "evaluate_nested_seq_cases",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.12): HOL evaluate_nested_seq_cases (loopPropsScript.sml:696-707) is the conjunction of (1) `!p q s st t. evaluate (nested_seq (p ++ q), s) = (NONE, t) /\\ evaluate (nested_seq p,s) = (NONE,st) ==> evaluate (nested_seq q,st) = (NONE,t)`, (2) `!p s st q. evaluate (nested_seq p, s) = (NONE, st) ==> evaluate (nested_seq (p ++ q), s) = evaluate (nested_seq q, st)` and (3) `!p s res st q. evaluate (nested_seq p, s) = (res, st) /\\ res <> NONE ==> evaluate (nested_seq (p ++ q), s) = evaluate (nested_seq p, s)`; Lean states the same three conjuncts with the same quantifier orders and premises over the tagged exact evaluate and the tagged nested_seq port loopNestedSeqHOL. fmap_as_finite_support [globals]: the statement quantifies over LoopSemStateFiniteExact, whose HOL |-> globals field is the canonical HolFiniteMapExact carrier used by eval/set_globals inside evaluate; locals/code are sptree num_maps (Spt) and are not named; same-module re-exported canonical witness holFmapAsFiniteSupportWitness."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopPropsScript.sml",
+    "hol_name": "evaluate_nested_seq_comb_seq",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopProps/NestedSeqExact.lean",
+    "lean_name": "evaluate_nested_seq_comb_seq",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.12): HOL evaluate_nested_seq_comb_seq (loopPropsScript.sml:1089-1092) `!p q t. evaluate (Seq (nested_seq p) (nested_seq q), t) = evaluate (nested_seq (p ++ q), t)`; same variables and equation over the tagged exact evaluate and loopNestedSeqHOL. fmap_as_finite_support [globals]: the statement quantifies over LoopSemStateFiniteExact, whose HOL |-> globals field is the canonical HolFiniteMapExact carrier used by eval/set_globals inside evaluate; locals/code are sptree num_maps (Spt) and are not named; same-module re-exported canonical witness holFmapAsFiniteSupportWitness."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopPropsScript.sml",
+    "hol_name": "loop_eval_nested_assign_distinct_eq",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopProps/NestedSeqExact.lean",
+    "lean_name": "loop_eval_nested_assign_distinct_eq",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.12): HOL loop_eval_nested_assign_distinct_eq (loopPropsScript.sml:190-197) `!es ns t ev. MAP (eval t) es = MAP SOME ev /\\ distinct_lists ns (FLAT (MAP locals_touched es)) /\\ ALL_DISTINCT ns /\\ LENGTH ns = LENGTH es ==> evaluate (nested_seq (MAP2 Assign ns es),t) = (NONE, t with locals := (alist_insert ns ev t.locals))`; Lean has the same variables and four-conjunct premise (distinct_lists as the tagged distinctListsHol = true, FLAT/MAP as List.flatten/map, locals_touched as holLoopLocalsTouched, ALL_DISTINCT as Nodup, MAP2 Assign as List.zipWith .assign) and the same conclusion with alist_insert as the exact sptAlistInsert. The proof needs structural commutation of sptree insert on distinct keys (sptInsert_comm), not an extra hypothesis. fmap_as_finite_support [globals]: the statement quantifies over LoopSemStateFiniteExact, whose HOL |-> globals field is the canonical HolFiniteMapExact carrier used by eval/set_globals inside evaluate; locals/code are sptree num_maps (Spt) and are not named; same-module re-exported canonical witness holFmapAsFiniteSupportWitness."
   }
 ]
