@@ -17641,5 +17641,45 @@
     "lean_name": "panToCrepStateRelFiniteExact_writeBytearray",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific support for the ExtCall returned-byte state relation. This helper preserves the exact state relation across equal bytearray writes; it has no standalone HOL declaration and is not a port."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "panToCrepStateRelFiniteExact_setLocals",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "ds10 (bead flapjack-pxn.18.4.3.111.1): untagged relation update lemma used by the exact Pan/Crep shared-memory load/store bridge; the exact finite-support state relation is insensitive to the source locals, and updating both FFI states with the same HolFfiState preserves it. No HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "panToCrepStateRelFiniteExact_ffi",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "ds10 (bead flapjack-pxn.18.4.3.111.1): untagged relation update lemma used by the exact Pan/Crep shared-memory load/store bridge; the exact finite-support state relation is insensitive to the source locals, and updating both FFI states with the same HolFfiState preserves it. No HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
+    "lean_name": "panToCrepStateRelFiniteExact_setLocals_ffi",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "ds10 (bead flapjack-pxn.18.4.3.111.1): untagged relation update lemma used by the exact Pan/Crep shared-memory load/store bridge; the exact finite-support state relation is insensitive to the source locals, and updating both FFI states with the same HolFfiState preserves it. No HOL declaration."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "evaluate_invariants",
+    "hol_line": 1150,
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/EvalInvariant.lean",
+    "lean_name": "evaluateInvariantsHOLFinite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-4ac.4.61.5) against panPropsScript.sml:1150-1158. This is the assembled HOL theorem evaluate_invariants: ∀p t res st. evaluate (p,t) = (res,st) ⇒ st.memaddrs = t.memaddrs ∧ st.sh_memaddrs = t.sh_memaddrs ∧ st.be = t.be ∧ st.eshapes = t.eshapes ∧ st.base_addr = t.base_addr ∧ st.structs = t.structs ∧ st.code = t.code ∧ st.ffi.oracle = t.ffi.oracle. Lean keeps the binders p t res st, the single run premise, and the eight conclusions in HOL order over the PanProps carrier; evaluate is evaluateHOLFinitePair (the tagged total evaluateHOLFiniteState through the field-for-field codec). As in HOL (recInduct evaluate_ind), the proof applies the tagged evaluateIndHOL (panSemScript.sml:777) to P (p,u) := evaluateInvariantsAtHOLFinite (ofPanSemFinite u) p and discharges all 21 conjuncts with the tagged constructor leaves (the recursive Seq/If/Dec/While/Call/DecCall leaves take exactly HOL's evaluate_ind IHs), translating each HOL IH through the codec roundtrip (toPanSemFinite ∘ ofPanSemFinite = id), OPT_MMAP = List.mapM (evalListHOLFinite_eq_mapM), and shape_of equality vs shapeEqHOL. No extra premise, no sorry. PanPropsEvalStateFiniteExact uses HolFiniteMapExact for locals/globals/code/eshapes via its checked same-module roundtrip witness; [NeZero width] is the indexed-word translation."
   }
 ]

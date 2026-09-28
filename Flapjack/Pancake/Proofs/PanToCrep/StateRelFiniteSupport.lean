@@ -307,6 +307,38 @@ theorem panToCrepLocalsRelFiniteExact_setVarWord {width : Nat} [NeZero width]
     rw [hmap]
     exact hmm
 
+/-- The exact finite-support state relation is insensitive to the source
+    locals: it mentions only memory, the address domains, structs, the globals
+    lookup, the clock, endianness, the FFI state and the base/top addresses. -/
+theorem panToCrepStateRelFiniteExact_setLocals {width : Nat} {σ : Type} [NeZero width]
+    (source : PanSemStateFiniteExact width σ) (target : CrepSemHOLState width σ)
+    (locals : HolFiniteMapExact MlS (ValueHOL width))
+    (h : panToCrepStateRelFiniteExact source target) :
+    panToCrepStateRelFiniteExact { source with locals := locals } target := by
+  simpa only [panToCrepStateRelFiniteExact] using h
+
+/-- Updating both the source and the target FFI state with the same
+    `HolFfiState` preserves the exact finite-support state relation. This is the
+    `.ret`-branch bookkeeping of the shared-memory loads/stores. -/
+theorem panToCrepStateRelFiniteExact_ffi {width : Nat} {σ : Type} [NeZero width]
+    (source : PanSemStateFiniteExact width σ) (target : CrepSemHOLState width σ)
+    (ffi : HolFfiState σ)
+    (h : panToCrepStateRelFiniteExact source target) :
+    panToCrepStateRelFiniteExact { source with ffi := ffi } { target with ffi := ffi } := by
+  obtain ⟨hmem, hmema, hshmema, hstructs, hglob, hclock, hbe, _hffi, hbase, htop⟩ := h
+  exact ⟨hmem, hmema, hshmema, hstructs, hglob, hclock, hbe, rfl, hbase, htop⟩
+
+/-- Combined form used by the shared-memory shared-variable write: update the
+    source locals and both FFI states, leave the target locals to the caller. -/
+theorem panToCrepStateRelFiniteExact_setLocals_ffi {width : Nat} {σ : Type}
+    [NeZero width] (source : PanSemStateFiniteExact width σ)
+    (target : CrepSemHOLState width σ) (locals : HolFiniteMapExact MlS (ValueHOL width))
+    (ffi : HolFfiState σ) (h : panToCrepStateRelFiniteExact source target) :
+    panToCrepStateRelFiniteExact { source with locals := locals, ffi := ffi }
+      { target with ffi := ffi } := by
+  obtain ⟨hmem, hmema, hshmema, hstructs, hglob, hclock, hbe, _hffi, hbase, htop⟩ := h
+  exact ⟨hmem, hmema, hshmema, hstructs, hglob, hclock, hbe, rfl, hbase, htop⟩
+
 /-- Exact port of HOL `excp_rel_def`
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:16-23`). Both maps are
     standalone exact finite-map parameters, so the qualifier records them as
