@@ -73,7 +73,12 @@ carrier is instantiated at `BitVec width`, `num_set` fields use the exact
 `spt`-backed `NumSet` (`miscScript.sml:787`, `unit spt`), `shMem` uses
 `CrepMemOp`, whose eight constructors (`load/load8/load16/load32/store/store8/
 store16/store32`) match `asm$memop` (`asmScript.sml:125-128`) name for name, and
-the FFI name is the exact `MlString` carrier rather than the executable
+the `ite` fields use the eight `Cmp` constructors and `RegImm (BitVec width)`;
+the latter maps HOL `asm$reg_imm`'s `Reg` to Lean `.reg` and `Imm` to `.imm`,
+with matching `Nat`/word payload types. Lean's `CrepMemOp` is a separate
+datatype from HOL `asm$memop`, but its eight nullary constructors match in
+order; both `HolLoopProg` and executable `LoopProg` use that same Lean carrier.
+The FFI name is the exact `MlString` carrier rather than the executable
 `FunName = String`. The executable `LoopProg` is a one-parameter superset
 (`LoopExp` adds `crepOp`/`cmp`; FFI names are `String`), so the
 executable/faithful bridge is tracked by bead `flapjack-pxn.18.5.17.1.1`. -/
@@ -160,8 +165,10 @@ Flapjack-specific bridge between the exact HOL `loopLang$prog` carrier
 (`HolLoopProg`, tagged over `MlString`/`NumSet`) and the executable `LoopProg`.
 It is untagged Flapjack infrastructure: it relates the two representations so
 the exact `loopSem$state` carrier can be bridged to production.  The `num_set`
-live sets are related by `numSetListRel`, the FFI name by the `MlString` codec,
-and every expression subterm by `holLoopExpToExecutable`. -/
+live sets are related by `numSetListRel`; the FFI name uses the partial
+`MlString.ofString` image, so no total projection of arbitrary HOL byte strings
+to Lean `String` is claimed; every expression subterm is related by
+`holLoopExpToExecutable`. -/
 
 /-- Executable/faithful relation for HOL `num_set`: exactly the listed keys are
     present in the `spt`-backed set. -/

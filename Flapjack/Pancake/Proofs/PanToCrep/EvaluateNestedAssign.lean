@@ -182,7 +182,11 @@ to `(NONE, t with locals := t.locals |++ ZIP (ns, ev))`, matching
 crepStampExactDomains domain inertness (`flapjack-4ac.5.16.5.32`), the exact
 `UInt8`/word8 byte bridges (`flapjack-4ac.5.16.5.18`), the reviewed 19-arm
 crepSem `evaluate_def` tag, and the imported-owner plus evaluator-local witness
-rule (`flapjack-4ac.5.16.5.21`). -/
+rule (`flapjack-4ac.5.16.5.21`). The `(fmap_as_finite_support := [locals])`
+qualifier names only `locals` because this statement's hypotheses and
+conclusion access only `CrepSemHOLState.locals`
+(`state.locals.lookup`/`state.locals.updateListEq`); unlike the sibling
+nested-declaration theorems it does not traverse `globals` or `code`. -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "eval_nested_assign_distinct_eq"
   (fmap_as_finite_support := [locals])
   (words_as_type_indexed_bitvec)]
