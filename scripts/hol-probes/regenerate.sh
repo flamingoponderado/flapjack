@@ -300,6 +300,12 @@ run_probe crep_to_loop_ctxt_fc_probeScript.sml crep_to_loop_ctxt_fc_probe.out \
 run_probe crep_to_loop_globals_rel_probeScript.sml crep_to_loop_globals_rel_probe.out \
   wlab_wloc_word globals_lookup_absent "$cake_dir/pancake/proofs/crep_to_loopProofScript.sml" \
   "$cake_dir/pancake/proofs"
+run_probe crep_primop_loop_primop_probeScript.sml crep_primop_loop_primop_probe.out \
+  crep_valid loop_valid_mapped preserve_valid crep_overflow loop_overflow_mapped \
+  preserve_overflow crep_nonzero_carry loop_nonzero_carry_mapped \
+  preserve_nonzero_carry crep_invalid_two preserve_invalid_two crep_invalid_four \
+  preserve_invalid_four "$cake_dir/pancake/proofs/crep_to_loopProofScript.sml" \
+  "$cake_dir/pancake/proofs"
 run_probe crep_to_loop_mem_rel_probeScript.sml crep_to_loop_mem_rel_probe.out \
   mem_rel_match mem_rel_dom_absent "$cake_dir/pancake/proofs/crep_to_loopProofScript.sml" \
   "$cake_dir/pancake/proofs"
