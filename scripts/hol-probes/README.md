@@ -771,3 +771,11 @@ small `fromAList` trees and records their `toAList` key order, emptiness and
 `oEL` results.  `Flapjack.Test.SptreeSetOpsParity` checks the Lean renderings
 in `Flapjack/Misc/Sptree.lean` against every row.  Refresh with
 `HOL_PROBE_ONLY=sptree_set_ops_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`sptree_inter_mixed_probe` evaluates the HETEROGENEOUS `sptree$inter`
+(`'a num_map -> 'b num_map -> 'a num_map`) on mixed-payload `fromAList` trees and
+records that the result keeps the LEFT operand's values on keys present in both
+trees; it loads only `bossLib`/`sptreeTheory` (no CakeML `preamble`), so it runs
+in a bare HOL session.  `Flapjack.Test.SptreeSetOpsParity.sptreeInterMixedGuard`
+checks the Lean `sptInter` against every row.  Refresh with
+`HOL_PROBE_ONLY=sptree_inter_mixed_probeScript.sml scripts/hol-probes/regenerate.sh`.
