@@ -1,0 +1,4 @@
+comp_func_skip=Skip
+comp_func_return_var=Seq (Assign 1 (Var 0)) (Seq (Return [1]) Skip)
+comp_func_two_params=Seq (Assign 2 (Var 1)) (Seq (Return [2]) Skip)
+done=T
