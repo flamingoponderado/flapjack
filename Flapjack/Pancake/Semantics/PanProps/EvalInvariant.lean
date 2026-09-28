@@ -3767,7 +3767,127 @@ private theorem evaluateInvariantsCallTimeoutHOLFinite
     And.intro hmem (And.intro hshared (And.intro hbe (And.intro heshapes
       (And.intro hbase (And.intro hstructs (And.intro hcode horacle))))))
 
-/-- Proof-support for the recursive result branches of HOL `Call`. It carries
+private def evaluateInvariantsCallBodyClassification
+    {width : Nat} {σ : Type} [NeZero width]
+    (state : PanPropsEvalStateFiniteExact width σ)
+    (info : Option (Option (VarKind × MlS) × Option (MlS × MlS × ProgHOL width)))
+    (returnShape : ShapeHOL) (bodyResult : Option (PanSemResultExact width)) : Prop :=
+    bodyResult = none ∨ bodyResult = some .break ∨
+    bodyResult = some .continue ∨ bodyResult = some .error ∨
+    bodyResult = some .timeOut ∨ (∃ event, bodyResult = some (.finalFfi event)) ∨
+    (∃ value, bodyResult = some (.returned value) ∧
+      shapeEqHOL (shapeOfHOLExact value) returnShape = false) ∨
+    (∃ value, bodyResult = some (.returned value) ∧
+      shapeEqHOL (shapeOfHOLExact value) returnShape = true ∧ info = none) ∨
+    (∃ value handler, bodyResult = some (.returned value) ∧
+      shapeEqHOL (shapeOfHOLExact value) returnShape = true ∧ info = some (none, handler)) ∨
+    (∃ value kind name handler, bodyResult = some (.returned value) ∧
+      shapeEqHOL (shapeOfHOLExact value) returnShape = true ∧
+      info = some (some (kind, name), handler)) ∨
+    (∃ exceptionId value, bodyResult = some (.exception exceptionId value) ∧ info = none) ∨
+    (∃ exceptionId value returnInfo,
+      bodyResult = some (.exception exceptionId value) ∧ info = some (returnInfo, none)) ∨
+    (∃ exceptionId value returnInfo handlerId handlerVar handlerProgram,
+      bodyResult = some (.exception exceptionId value) ∧
+      info = some (returnInfo, some (handlerId, handlerVar, handlerProgram)) ∧
+      exceptionId ≠ handlerId) ∨
+    (∃ exceptionId value returnInfo handlerId handlerVar handlerProgram,
+      bodyResult = some (.exception exceptionId value) ∧
+      info = some (returnInfo, some (handlerId, handlerVar, handlerProgram)) ∧
+      exceptionId = handlerId ∧ state.toPanSemFinite.eshapes.lookup exceptionId = none) ∨
+    (∃ exceptionId value returnInfo handlerId handlerVar handlerProgram declaredShape,
+      bodyResult = some (.exception exceptionId value) ∧
+      info = some (returnInfo, some (handlerId, handlerVar, handlerProgram)) ∧
+      exceptionId = handlerId ∧ state.toPanSemFinite.eshapes.lookup exceptionId = some declaredShape ∧
+      (shapeEqHOL (shapeOfHOLExact value) declaredShape &&
+        isValidValueHOLExact state.toPanSemFinite.toExact VarKind.local handlerVar value) = false) ∨
+    (∃ exceptionId value returnInfo handlerId handlerVar handlerProgram declaredShape,
+      bodyResult = some (.exception exceptionId value) ∧
+      info = some (returnInfo, some (handlerId, handlerVar, handlerProgram)) ∧
+      exceptionId = handlerId ∧ state.toPanSemFinite.eshapes.lookup exceptionId = some declaredShape ∧
+      (shapeEqHOL (shapeOfHOLExact value) declaredShape &&
+        isValidValueHOLExact state.toPanSemFinite.toExact VarKind.local handlerVar value) = true)
+
+private theorem evaluateInvariantsCallBodyClassification_complete
+    {width : Nat} {σ : Type} [NeZero width]
+    (state : PanPropsEvalStateFiniteExact width σ)
+    (info : Option (Option (VarKind × MlS) × Option (MlS × MlS × ProgHOL width)))
+    (returnShape : ShapeHOL) (bodyResult : Option (PanSemResultExact width)) :
+    evaluateInvariantsCallBodyClassification state info returnShape bodyResult := by
+  cases bodyResult with
+  | none => simp [evaluateInvariantsCallBodyClassification]
+  | some result =>
+      cases result with
+      | error => simp [evaluateInvariantsCallBodyClassification]
+      | timeOut => simp [evaluateInvariantsCallBodyClassification]
+      | «break» => simp [evaluateInvariantsCallBodyClassification]
+      | «continue» => simp [evaluateInvariantsCallBodyClassification]
+      | finalFfi event => simp [evaluateInvariantsCallBodyClassification]
+      | returned value =>
+          by_cases hshape : shapeEqHOL (shapeOfHOLExact value) returnShape = true
+          · cases info with
+            | none => simp [evaluateInvariantsCallBodyClassification, hshape]
+            | some info' =>
+                cases info' with
+                | mk returnInfo handler =>
+                    cases returnInfo with
+                    | none => simp [evaluateInvariantsCallBodyClassification, hshape]
+                    | some target =>
+                        cases target with
+                        | mk kind name => simp [evaluateInvariantsCallBodyClassification, hshape]
+          · have hshapeFalse : shapeEqHOL (shapeOfHOLExact value) returnShape = false := by
+              cases h : shapeEqHOL (shapeOfHOLExact value) returnShape <;> simp_all
+            simp [evaluateInvariantsCallBodyClassification, hshapeFalse]
+      | exception exceptionId value =>
+          cases info with
+          | none => simp [evaluateInvariantsCallBodyClassification]
+          | some info' =>
+              cases info' with
+              | mk returnInfo handler =>
+                  cases handler with
+                  | none => simp [evaluateInvariantsCallBodyClassification]
+                  | some handlerInfo =>
+                      cases handlerInfo with
+                      | mk handlerId handlerRest =>
+                          cases handlerRest with
+                          | mk handlerVar handlerProgram =>
+                              by_cases heq : exceptionId = handlerId
+                              · cases hshape : state.toPanSemFinite.eshapes.lookup exceptionId with
+                                | none =>
+                                    unfold evaluateInvariantsCallBodyClassification
+                                    right; right; right; right; right; right; right; right; right; right
+                                    right; right; right; left
+                                    exact ⟨exceptionId, value, returnInfo, handlerId,
+                                      handlerVar, handlerProgram, rfl, rfl, heq, hshape⟩
+                                | some declaredShape =>
+                                    by_cases hcond : (shapeEqHOL (shapeOfHOLExact value) declaredShape &&
+                                      isValidValueHOLExact state.toPanSemFinite.toExact
+                                        VarKind.local handlerVar value) = true
+                                    · unfold evaluateInvariantsCallBodyClassification
+                                      right; right; right; right; right; right; right; right; right; right
+                                      right; right; right; right; right
+                                      exact ⟨exceptionId, value, returnInfo, handlerId,
+                                        handlerVar, handlerProgram, declaredShape,
+                                        rfl, rfl, heq, hshape, hcond⟩
+                                    · have hcondFalse : (shapeEqHOL (shapeOfHOLExact value) declaredShape &&
+                                          isValidValueHOLExact state.toPanSemFinite.toExact
+                                            VarKind.local handlerVar value) = false := by
+                                        cases h : (shapeEqHOL (shapeOfHOLExact value) declaredShape &&
+                                          isValidValueHOLExact state.toPanSemFinite.toExact
+                                            VarKind.local handlerVar value) <;> simp_all
+                                      unfold evaluateInvariantsCallBodyClassification
+                                      right; right; right; right; right; right; right; right; right; right
+                                      right; right; right; right; left
+                                      exact ⟨exceptionId, value, returnInfo, handlerId,
+                                        handlerVar, handlerProgram, declaredShape,
+                                        rfl, rfl, heq, hshape, hcondFalse⟩
+                              · unfold evaluateInvariantsCallBodyClassification
+                                right; right; right; right; right; right; right; right; right; right
+                                right; right; left
+                                exact ⟨exceptionId, value, returnInfo, handlerId,
+                                  handlerVar, handlerProgram, rfl, rfl, heq⟩
+
+/- Proof-support for the recursive result branches of HOL `Call`. It carries
     the callee body invariant through errors, timeouts, FFI completion, normal
     returns, unhandled/error exceptions, and a valid matched handler using the
     nested program IH. Its explicit result-classification premise means this is
@@ -4185,6 +4305,116 @@ private theorem evaluateInvariantsCallBodyResultBranchesHOLFinite
       simpa [handlerRun, handlerState, PanSemStateFiniteExact.setVarHOLFinite] using hcanonical
     exact hfinish handlerRun.2 (by simpa [handlerRun] using congrArg Prod.snd hhandlerEval)
       hhandlerFields
+
+/-- Flapjack-specific assembly of the finite-carrier `Call` equation and its
+    result branches. This is kept untagged until the evaluator's generated
+    recursive induction hypotheses are compared with this lower-clock IH
+    interface; it is not asserted as HOL's `evaluate_invariants` case. -/
+theorem evaluateInvariantsCallCaseHOLFinite {width : Nat} {σ : Type} [NeZero width] :
+    ∀ (info : Option (Option (VarKind × MlS) × Option (MlS × MlS × ProgHOL width)))
+      (function : MlS) (arguments : List (ExpHOL width))
+      (state : PanPropsEvalStateFiniteExact width σ)
+      (result : Option (PanSemResultExact width))
+      (post : PanPropsEvalStateFiniteExact width σ),
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state
+          (.call info function arguments : ProgHOL width) = (result, post) →
+      (∀ (body : ProgHOL width)
+        (bodyState : PanPropsEvalStateFiniteExact width σ)
+        (bodyResult : Option (PanSemResultExact width))
+        (bodyPost : PanPropsEvalStateFiniteExact width σ),
+        bodyState.clock < state.clock →
+        PanPropsEvalStateFiniteExact.evaluateHOLFinitePair bodyState body =
+          (bodyResult, bodyPost) →
+        bodyPost.memaddrs = bodyState.memaddrs ∧
+        bodyPost.shMemaddrs = bodyState.shMemaddrs ∧
+        bodyPost.be = bodyState.be ∧
+        bodyPost.eshapes = bodyState.eshapes ∧
+        bodyPost.baseAddr = bodyState.baseAddr ∧
+        bodyPost.structs = bodyState.structs ∧
+        bodyPost.code = bodyState.code ∧
+        bodyPost.ffi.oracle = bodyState.ffi.oracle) →
+      post.memaddrs = state.memaddrs ∧
+      post.shMemaddrs = state.shMemaddrs ∧
+      post.be = state.be ∧
+      post.eshapes = state.eshapes ∧
+      post.baseAddr = state.baseAddr ∧
+      post.structs = state.structs ∧
+      post.code = state.code ∧
+      post.ffi.oracle = state.ffi.oracle := by
+  classical
+  intro info function arguments state result post hRun ihBody
+  let memaddrsDec : DecidablePred state.toPanSemFinite.memaddrs :=
+    fun address => Classical.propDecidable (state.toPanSemFinite.memaddrs address)
+  cases hargs : PanSemStateFiniteExact.evalListHOLFinite state.toPanSemFinite
+      (h := memaddrsDec) arguments with
+  | none =>
+      exact evaluateInvariantsCallArgsFailureHOLFinite state info function arguments
+        result post hargs hRun
+  | some values =>
+      cases hlookup : PanSemStateFiniteExact.lookupCodeHOLFinite
+          state.toPanSemFinite.code.lookup function values with
+      | none =>
+          exact evaluateInvariantsCallLookupFailureHOLFinite state info function arguments
+            values result post hargs hlookup hRun
+      | some found =>
+          rcases found with ⟨body, callee, returnShape⟩
+          by_cases hclockZero : state.toPanSemFinite.clock = 0
+          · exact evaluateInvariantsCallTimeoutHOLFinite state info function arguments values
+              body callee returnShape result post hargs hlookup hclockZero hRun
+          · have hclock : state.toPanSemFinite.clock ≠ 0 := hclockZero
+            cases hbody : PanSemStateFiniteExact.evaluateHOLFiniteState
+                (PanSemStateFiniteExact.callEntryStateHOLFinite state.toPanSemFinite callee) body with
+            | mk bodyResult bodyPost =>
+                have hbodyKind := evaluateInvariantsCallBodyClassification_complete
+                  state info returnShape bodyResult
+                have hbodyKind' : bodyResult = none ∨ bodyResult = some .break ∨
+                    bodyResult = some .continue ∨ bodyResult = some .error ∨
+                    bodyResult = some .timeOut ∨
+                    (∃ event, bodyResult = some (.finalFfi event)) ∨
+                    (∃ value, bodyResult = some (.returned value) ∧
+                      shapeEqHOL (shapeOfHOLExact value) returnShape = false) ∨
+                    (∃ value, bodyResult = some (.returned value) ∧
+                      shapeEqHOL (shapeOfHOLExact value) returnShape = true ∧ info = none) ∨
+                    (∃ value handler, bodyResult = some (.returned value) ∧
+                      shapeEqHOL (shapeOfHOLExact value) returnShape = true ∧
+                      info = some (none, handler)) ∨
+                    (∃ value kind name handler, bodyResult = some (.returned value) ∧
+                      shapeEqHOL (shapeOfHOLExact value) returnShape = true ∧
+                      info = some (some (kind, name), handler)) ∨
+                    (∃ exceptionId value, bodyResult = some (.exception exceptionId value) ∧
+                      info = none) ∨
+                    (∃ exceptionId value returnInfo,
+                      bodyResult = some (.exception exceptionId value) ∧
+                      info = some (returnInfo, none)) ∨
+                    (∃ exceptionId value returnInfo handlerId handlerVar handlerProgram,
+                      bodyResult = some (.exception exceptionId value) ∧
+                      info = some (returnInfo, some (handlerId, handlerVar, handlerProgram)) ∧
+                      exceptionId ≠ handlerId) ∨
+                    (∃ exceptionId value returnInfo handlerId handlerVar handlerProgram,
+                      bodyResult = some (.exception exceptionId value) ∧
+                      info = some (returnInfo, some (handlerId, handlerVar, handlerProgram)) ∧
+                      exceptionId = handlerId ∧
+                      state.toPanSemFinite.eshapes.lookup exceptionId = none) ∨
+                    (∃ exceptionId value returnInfo handlerId handlerVar handlerProgram declaredShape,
+                      bodyResult = some (.exception exceptionId value) ∧
+                      info = some (returnInfo, some (handlerId, handlerVar, handlerProgram)) ∧
+                      exceptionId = handlerId ∧
+                      state.toPanSemFinite.eshapes.lookup exceptionId = some declaredShape ∧
+                      (shapeEqHOL (shapeOfHOLExact value) declaredShape &&
+                        isValidValueHOLExact state.toPanSemFinite.toExact VarKind.local
+                          handlerVar value) = false) ∨
+                    (∃ exceptionId value returnInfo handlerId handlerVar handlerProgram declaredShape,
+                      bodyResult = some (.exception exceptionId value) ∧
+                      info = some (returnInfo, some (handlerId, handlerVar, handlerProgram)) ∧
+                      exceptionId = handlerId ∧
+                      state.toPanSemFinite.eshapes.lookup exceptionId = some declaredShape ∧
+                      (shapeEqHOL (shapeOfHOLExact value) declaredShape &&
+                        isValidValueHOLExact state.toPanSemFinite.toExact VarKind.local
+                          handlerVar value) = true) := by
+                  simpa [evaluateInvariantsCallBodyClassification] using hbodyKind
+                exact evaluateInvariantsCallBodyResultBranchesHOLFinite state info function
+                  arguments values body callee returnShape bodyResult bodyPost result post
+                  ihBody hargs hlookup hclock hbody hbodyKind' hRun
 
 end Flapjack
 
