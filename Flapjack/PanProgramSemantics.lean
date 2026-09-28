@@ -1,4 +1,5 @@
 import Flapjack.PanMemory
+import Flapjack.PanBst
 
 /-!
 Top-level structured Pancake semantics.
@@ -24,6 +25,23 @@ structure PanValueProgramState (α : Type u) where
   baseAddress : α
   topAddress : α
   bytesInWord : α
+
+/-- Build the source-owned finite code map represented by an evaluated
+    declaration state. `evalPanValueDeclarationsWithStructs` prepends each
+    function, so `state.functions` is newest-first; mapping in that order
+    preserves HOL `FUPDATE` shadowing. This Flapjack adapter has no direct HOL
+    declaration; it connects the existing declaration carrier to `state.code`.
+    It returns `none` only for an inconsistent hand-built state whose function
+    metadata is missing or disagrees with its parameter-name table. -/
+def panValueProgramStateCodeMap [BEq String]
+    (state : PanValueProgramState α) : Option (PanSemCodeMap α) :=
+  state.functions.mapM fun (name, parameterNames, body) => do
+    let parameters ← lookupInfo name state.parameterShapes
+    let returnShape ← lookupInfo name state.returnShapes
+    if parameters.map Prod.fst == parameterNames then
+      some (name, (parameters, body, returnShape))
+    else
+      none
 
 def panValueDeclStructInfo (context : StructContext)
     (fields : List (FieldName × Shape)) : StructInfo :=

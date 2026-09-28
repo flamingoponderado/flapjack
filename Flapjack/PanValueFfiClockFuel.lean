@@ -1353,26 +1353,32 @@ theorem evalPanValueFfiClockProgram_fuel_mono
       declarations entry arguments (memoryAccess := ma) (memoryHandler := mh) = some result) :
     evalPanValueFfiClockProgram context initial clock primitive handler fuel'
       declarations entry arguments (memoryAccess := ma) (memoryHandler := mh) = some result := by
-  unfold evalPanValueFfiClockProgram at hrun ⊢
+  unfold evalPanValueFfiClockProgram evalPanValueFfiClockProgramCodeCall at hrun ⊢
   cases hstate : evalPanValueDeclarations initial.source declarations (memoryAccess := ma) with
   | none => rw [hstate] at hrun; simp at hrun
   | some state =>
-    rw [hstate] at hrun
-    simp only [Option.bind_eq_bind, Option.bind_some] at hrun ⊢
-    cases hcall : evalPanValueFfiClockCall context primitive handler state.structs
-        state.functions state.baseAddress state.topAddress state.bytesInWord fuel
-        (fun _ => none) state.globals state.memory initial.ffi clock none entry arguments
-        ma (some (PanValueCallContracts.mk state.returnShapes state.exceptions
-          state.parameterShapes)) mh with
-    | none => rw [hcall] at hrun; simp at hrun
-    | some callResult =>
-      rw [hcall] at hrun
-      rw [evalPanValueFfiClockCall_fuel_mono' context primitive handler state.structs
-        state.functions state.baseAddress state.topAddress state.bytesInWord fuel
-        (fun _ => none) state.globals state.memory initial.ffi clock none entry arguments
-        ma (some (PanValueCallContracts.mk state.returnShapes state.exceptions
-          state.parameterShapes)) mh _ _ hfuel hcall]
-      exact hrun
+      rw [hstate] at hrun
+      simp only [Option.bind_eq_bind, Option.bind_some] at hrun ⊢
+      cases hcode : panValueProgramStateCodeMap state with
+      | none => rw [hcode] at hrun; simp at hrun
+      | some code =>
+        simp only [hcode, Option.bind_some] at hrun ⊢
+        let contracts := some (PanValueCallContracts.mk state.returnShapes state.exceptions
+          state.parameterShapes)
+        cases hcall : evalPanValueFfiClockCodeCall context primitive handler state.structs code
+            (fun exception => lookupInfo exception state.exceptions) state.baseAddress
+            state.topAddress state.bytesInWord fuel (fun _ => none) state.globals state.memory
+            initial.ffi clock none entry arguments ma contracts mh with
+        | none => rw [hcall] at hrun; simp at hrun
+        | some callResult =>
+          rw [hcall] at hrun
+          have hcall' := ((evalPanValueFfiClockCode_fuel_mono_mutual context primitive handler
+            state.structs code (fun exception => lookupInfo exception state.exceptions)
+            state.baseAddress state.topAddress state.bytesInWord fuel).2.1)
+            fuel' callResult hfuel (fun _ => none) state.globals state.memory initial.ffi clock
+            none entry arguments ma contracts mh false hcall
+          rw [hcall'] at ⊢
+          exact hrun
 
 
 end Flapjack

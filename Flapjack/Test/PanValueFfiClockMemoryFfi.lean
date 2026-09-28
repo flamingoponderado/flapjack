@@ -108,4 +108,54 @@ def clockedReturnedProgramAccepted : Bool :=
 
 #guard clockedReturnedProgramAccepted
 
+/-- Direct HOL `evaluate` observations are captured in
+    `scripts/hol-probes/pan_clock_program_route_probe.out`. Duplicate function
+    declarations use front-update order: the later helper body is selected and
+    returns word 2 through the declaration-level clocked wrapper. -/
+def clockedDuplicateFunctionDeclarations : List (Decl Nat) :=
+  [.function
+      { name := "helper", inline := false, exported := false, params := [],
+        body := .return (.const 1), returnShape := .one },
+   .function
+      { name := "helper", inline := false, exported := false, params := [],
+        body := .return (.const 2), returnShape := .one },
+   .function
+      { name := "main", inline := false, exported := true, params := [],
+        body := .call none "helper" [], returnShape := .one }]
+
+def clockedDuplicateFunctionRouteResult :=
+  evalPanValueFfiClockProgram memoryFfiTestContext memoryFfiInitial 20
+    (fun _ _ => none) memoryFfiTestHandler 20
+    clockedDuplicateFunctionDeclarations "main" []
+
+def clockedDuplicateFunctionRouteMatchesHol : Bool :=
+  match clockedDuplicateFunctionRouteResult with
+  | some (.control (.returned _ _ _ _ [.word value]), _) => value == 2
+  | _ => false
+
+#guard clockedDuplicateFunctionRouteMatchesHol
+
+/-- The original `evaluate` oracle rejects a nested callee whose returned
+    value violates that function's declared return shape, even when the entry
+    function's return shape would accept the value. -/
+def clockedNestedCalleeReturnShapeDeclarations : List (Decl Nat) :=
+  [.function
+      { name := "helper", inline := false, exported := false, params := [],
+        body := .return (.rStruct []), returnShape := .one },
+   .function
+      { name := "main", inline := false, exported := true, params := [],
+        body := .call none "helper" [], returnShape := .comb [] }]
+
+def clockedNestedCalleeReturnShapeResult :=
+  evalPanValueFfiClockProgram memoryFfiTestContext memoryFfiInitial 20
+    (fun _ _ => none) memoryFfiTestHandler 20
+    clockedNestedCalleeReturnShapeDeclarations "main" []
+
+def clockedNestedCalleeReturnShapeMatchesHol : Bool :=
+  match clockedNestedCalleeReturnShapeResult with
+  | some (.control (.error _ _ _ _), _) => true
+  | _ => false
+
+#guard clockedNestedCalleeReturnShapeMatchesHol
+
 end Flapjack

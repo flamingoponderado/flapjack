@@ -1,0 +1,2 @@
+duplicate_function_front_update=SOME (Return (ValWord 2w))
+nested_callee_return_shape_rejected=SOME Error
