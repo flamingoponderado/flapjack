@@ -1438,4 +1438,72 @@ theorem crepPropsEvaluateIoEventsMono {width : Nat} [NeZero width] {σ : Type}
   exact h
 
 
+private theorem holFiniteMapExact_ext_resVar {α β : Type} {left right : HolFiniteMapExact α β}
+    (h : ∀ k, left.lookup k = right.lookup k) : left = right := by
+  obtain ⟨l, pl⟩ := left
+  obtain ⟨r, pr⟩ := right
+  have : l = r := funext h
+  subst this
+  rfl
+
+private theorem foldl_resVarEq_restore_lookup {α β : Type} [DecidableEq α]
+    (lc : HolFiniteMapExact α β) :
+    ∀ (keys : List α) (m : HolFiniteMapExact α β) (k : α),
+      ((keys.zip (keys.map lc.lookup)).foldl
+          (fun current entry => HolFiniteMapExact.resVarEq current entry) m).lookup k =
+        if k ∈ keys then lc.lookup k else m.lookup k
+  | [], m, k => by simp
+  | x :: keys, m, k => by
+      simp only [List.map_cons, List.zip_cons_cons, List.foldl_cons]
+      rw [foldl_resVarEq_restore_lookup lc keys]
+      by_cases hk : k ∈ keys
+      · simp [hk]
+      · have hres : (HolFiniteMapExact.resVarEq m (x, lc.lookup x)).lookup k =
+            if k = x then lc.lookup x else m.lookup k := by
+          cases hx : lc.lookup x <;>
+            simp [HolFiniteMapExact.resVarEq, HolFiniteMapExact.lookup_eraseEq,
+              HolFiniteMapExact.lookup_updateEq, FDOMSUB_HOL, FUPDATE_HOL] <;>
+            split <;> simp_all
+        rw [hres]
+        by_cases hkx : k = x
+        · subst hkx; simp [hk]
+        · simp [hk, hkx]
+
+private theorem fupdateListHOL_zip_not_mem {α β : Type} [DecidableEq α] (k : α) :
+    ∀ (xs : List α) (ys : List β) (f : FiniteMap α β), k ∉ xs →
+      FUPDATE_LIST_HOL f (xs.zip ys) k = f k
+  | [], _, f, _ => by simp [FUPDATE_LIST_HOL]
+  | _ :: _, [], f, _ => by simp [FUPDATE_LIST_HOL]
+  | x :: xs, y :: ys, f, hk => by
+      simp only [List.mem_cons, not_or] at hk
+      rw [List.zip_cons_cons, FUPDATE_LIST_HOL_cons,
+        fupdateListHOL_zip_not_mem k xs ys _ hk.2]
+      simp [FUPDATE_HOL, hk.1]
+
+/-- Exact port of HOL `crepProps$res_var_lookup_original_eq`
+    (`cakeml/pancake/semantics/crepPropsScript.sml:612-633`):
+    `!xs ys lc. ALL_DISTINCT xs /\ LENGTH xs = LENGTH ys ==>
+      FOLDL res_var (lc |++ ZIP (xs,ys)) (ZIP (xs,MAP (FLOOKUP lc) xs)) = lc`.
+    `res_var` is the tagged `HolFiniteMapExact.resVarEq`, `|++` is `updateListEq`,
+    and `FLOOKUP lc` is `lc.lookup`. HOL's polymorphic key/value types are the
+    type parameters, with `DecidableEq` for HOL `=`. The standalone map `lc` is
+    recorded as a bare relation-qualifier entry. -/
+@[hol "cakeml/pancake/semantics/crepPropsScript.sml" "res_var_lookup_original_eq"
+  (fmap_as_finite_support_relation := [lc])]
+theorem resVarLookupOriginalEqHOL {α β : Type} [DecidableEq α] :
+    ∀ (xs : List α) (ys : List β) (lc : HolFiniteMapExact α β),
+      xs.Nodup ∧ xs.length = ys.length →
+      (xs.zip (xs.map lc.lookup)).foldl
+          (fun current entry => HolFiniteMapExact.resVarEq current entry)
+          (lc.updateListEq (xs.zip ys)) = lc := by
+  intro xs ys lc ⟨_, hlen⟩
+  apply holFiniteMapExact_ext_resVar
+  intro k
+  rw [foldl_resVarEq_restore_lookup lc xs]
+  split
+  · rfl
+  · rename_i hk
+    simp only [HolFiniteMapExact.lookup_updateListEq]
+    exact fupdateListHOL_zip_not_mem k xs ys lc.lookup hk
+
 end Flapjack
