@@ -105,6 +105,19 @@ def findLabExact (context : CrepToLoopContextExact) (function : MlString) : Nat 
   | some (label, _) => label
   | none => 0
 
+/-- Exact HOL `compile_crepop_def`, including the ARMv7 two-result case. -/
+@[hol "cakeml/pancake/crep_to_loopScript.sml" "compile_crepop_def"
+  (words_as_type_indexed_bitvec)]
+def compileCrepopHOLExact {width : Nat} [NeZero width]
+    (operator : CrepOp) (target : AsmArchitecture)
+    (left right tmp : Nat) (_live : NumSet) : List (HolLoopProg width) × Nat :=
+  match operator with
+  | .mul =>
+      if target = .armv7 then
+        ([.arith (.longMul tmp (tmp + 1) left right)], tmp + 1)
+      else
+        ([.arith (.longMul tmp tmp left right)], tmp)
+
 /-- Exact HOL `prog_if_def`: materialize both expressions, branch on the
 comparison, and insert both temporaries into the HOL `num_set`. -/
 @[hol "cakeml/pancake/crep_to_loopScript.sml" "prog_if_def"
@@ -120,19 +133,6 @@ def progIfHOLExact {width : Nat} [NeZero width]
        (.assign condition (.const 1))
        (.assign condition (.const 0))
        (sptListInsert [condition, rightRegister] live)]
-
-/-- Exact HOL `compile_crepop_def`, including the ARMv7 two-result case. -/
-@[hol "cakeml/pancake/crep_to_loopScript.sml" "compile_crepop_def"
-  (words_as_type_indexed_bitvec)]
-def compileCrepopHOLExact {width : Nat} [NeZero width]
-    (operator : CrepOp) (target : AsmArchitecture)
-    (left right tmp : Nat) (_live : NumSet) : List (HolLoopProg width) × Nat :=
-  match operator with
-  | .mul =>
-      if target = .armv7 then
-        ([.arith (.longMul tmp (tmp + 1) left right)], tmp + 1)
-      else
-        ([.arith (.longMul tmp tmp left right)], tmp)
 
 mutual
   /-- Exact HOL `compile_exp_def` over the source Crep and Loop carriers. This
@@ -223,5 +223,155 @@ mutual
   decreasing_by
     all_goals first | sizeOf_list_dec | decreasing_trivial
 end
+
+/-- Exact HOL `compile_def` (`crep_to_loopScript.sml:120-213`) over the
+width-indexed `CrepProgHOL` and `HolLoopProg` carriers. The context's two map
+fields use the reviewed canonical finite-support translation, and word fields
+use positive-width `BitVec`. This is proof-side exact infrastructure: the
+executed compiler still uses `CrepProg`/`LoopProg` with generic words, String
+names and list-backed live sets. No executable routing or performance
+exception is claimed; the production bridge is tracked separately. -/
+@[hol "cakeml/pancake/crep_to_loopScript.sml" "compile_def"
+  (fmap_as_finite_support := [vars, funcs]) (words_as_type_indexed_bitvec)]
+def compileHOLExact {width : Nat} [NeZero width]
+    (context : CrepToLoopContextExact) (live : NumSet) :
+    CrepProgHOL width → HolLoopProg width
+  | .skip => .skip
+  | .break label => .break label
+  | .continue label => .continue label
+  | .tick => .tick
+  | .return expressions =>
+      let (code, values, nextTemporary, _) :=
+        compileExpsHOLExact context (context.vmax + 1) live expressions
+      let destinations := genTemps nextTemporary values.length
+      loopNestedSeqHOL
+        (code ++ destinations.zipWith HolLoopProg.assign values ++ [.return destinations])
+  | .raise exception =>
+      .seq (.assign (context.vmax + 1) (.const exception)) (.raise (context.vmax + 1))
+  | .shMem operator name address =>
+      match context.vars.lookup name with
+      | none => .skip
+      | some mappedName =>
+          let (code, compiledAddress, _, _) :=
+            compileExpHOLExact context (context.vmax + 1) live address
+          loopNestedSeqHOL (code ++ [.shMem operator mappedName compiledAddress])
+  | .store destination source =>
+      let (destinationCode, address, nextTemporary, nextLive) :=
+        compileExpHOLExact context (context.vmax + 1) live destination
+      let (sourceCode, value, finalTemporary, _) :=
+        compileExpHOLExact context nextTemporary nextLive source
+      loopNestedSeqHOL
+        (destinationCode ++ sourceCode ++
+          [.assign finalTemporary value, .store address finalTemporary])
+  | .store32 destination source =>
+      let (destinationCode, address, nextTemporary, nextLive) :=
+        compileExpHOLExact context (context.vmax + 1) live destination
+      let (sourceCode, value, finalTemporary, _) :=
+        compileExpHOLExact context nextTemporary nextLive source
+      loopNestedSeqHOL
+        (destinationCode ++ sourceCode ++
+          [.assign finalTemporary address,
+           .assign (finalTemporary + 1) value,
+           .store32 finalTemporary (finalTemporary + 1)])
+  | .storeByte destination source =>
+      let (destinationCode, address, nextTemporary, nextLive) :=
+        compileExpHOLExact context (context.vmax + 1) live destination
+      let (sourceCode, value, finalTemporary, _) :=
+        compileExpHOLExact context nextTemporary nextLive source
+      loopNestedSeqHOL
+        (destinationCode ++ sourceCode ++
+          [.assign finalTemporary address,
+           .assign (finalTemporary + 1) value,
+           .storeByte finalTemporary (finalTemporary + 1)])
+  | .storeGlob address value =>
+      let (code, compiledValue, _, _) :=
+        compileExpHOLExact context (context.vmax + 1) live value
+      loopNestedSeqHOL (code ++ [.setGlobal address compiledValue])
+  | .seq first second =>
+      .seq (compileHOLExact context live first) (compileHOLExact context live second)
+  | .assign name value =>
+      match context.vars.lookup name with
+      | none => .skip
+      | some mappedName =>
+          let (code, compiledValue, _, _) :=
+            compileExpHOLExact context (context.vmax + 1) live value
+          loopNestedSeqHOL (code ++ [.assign mappedName compiledValue])
+  | .primitive destinations operator arguments =>
+      match destinations.mapM context.vars.lookup, arguments.mapM context.vars.lookup with
+      | some mappedDestinations, some mappedArguments =>
+          .primitive mappedDestinations operator mappedArguments
+      | _, _ => .skip
+  | .dec name value body =>
+      let (code, compiledValue, temporary, _) :=
+        compileExpHOLExact context (context.vmax + 1) live value
+      let bodyContext :=
+        { context with vars := context.vars.updateEq (name, temporary), vmax := temporary }
+      let bodyLive := sptInsert temporary () live
+      .seq (loopNestedSeqHOL code)
+        (.seq (.assign temporary compiledValue) (compileHOLExact bodyContext bodyLive body))
+  | .ite condition thenBranch elseBranch =>
+      let (code, compiledCondition, temporary, _) :=
+        compileExpHOLExact context (context.vmax + 1) live condition
+      let compiledThen := compileHOLExact context live thenBranch
+      let compiledElse := compileHOLExact context live elseBranch
+      loopNestedSeqHOL
+        (code ++
+          [.assign temporary compiledCondition,
+           .ite .notEqual temporary (.imm (0 : BitVec width))
+             compiledThen compiledElse live])
+  | .while condition body =>
+      let (code, compiledCondition, temporary, _) :=
+        compileExpHOLExact context (context.vmax + 1) live condition
+      let compiledBody := compileHOLExact context live body
+      .loop live
+        (loopNestedSeqHOL
+          (code ++
+            [.assign temporary compiledCondition,
+             .ite .notEqual temporary (.imm (0 : BitVec width))
+               (.seq compiledBody (.continue 0)) (.break 0) live]))
+        live
+  | .call returnInfo name arguments =>
+      let label := findLabExact context name
+      let (code, compiledArguments, nextTemporary, _) :=
+        compileExpsHOLExact context (context.vmax + 1) live arguments
+      let argumentNames := genTemps nextTemporary compiledArguments.length
+      let (returns, handler) :=
+        match returnInfo with
+        | none => (none, none)
+        | some (returnVariables, maybeHandler) =>
+            let returnNames :=
+              match returnVariables.mapM context.vars.lookup with
+              | none => [context.vmax + 2]
+              | some names => names
+            let exceptionName := context.vmax + 1
+            let handlerBody : HolLoopProg width :=
+              match maybeHandler with
+              | none => .raise exceptionName
+              | some (exception, handlerProgram) =>
+                  let compiledHandler := compileHOLExact context live handlerProgram
+                  .ite .notEqual exceptionName (.imm exception)
+                    (.raise exceptionName) (.seq .tick compiledHandler) live
+            (some (returnNames, live),
+              some (exceptionName, handlerBody, .skip, live))
+      loopNestedSeqHOL
+        (code ++ argumentNames.zipWith HolLoopProg.assign compiledArguments ++
+          [HolLoopProg.call returns (some label) argumentNames handler])
+  | .extCall function configuration configurationLength array arrayLength =>
+      match context.vars.lookup configuration,
+        context.vars.lookup configurationLength, context.vars.lookup array,
+        context.vars.lookup arrayLength with
+      | some mappedConfiguration, some mappedConfigurationLength,
+          some mappedArray, some mappedArrayLength =>
+          .ffi function mappedConfiguration mappedConfigurationLength mappedArray
+            mappedArrayLength live
+      | _, _, _, _ => .skip
+termination_by program => sizeOf program
+decreasing_by
+  simp_wf
+  all_goals first
+    | decreasing_trivial
+    | (simp_all only [CrepProgHOL.dec.sizeOf_spec, CrepProgHOL.seq.sizeOf_spec,
+        CrepProgHOL.ite.sizeOf_spec, CrepProgHOL.while.sizeOf_spec,
+        CrepProgHOL.call.sizeOf_spec]; omega)
 
 end Flapjack
