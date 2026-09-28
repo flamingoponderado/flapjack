@@ -2290,6 +2290,32 @@
     "reviewer": "flapjack-ds5 (source comparison, 2026-09-27; bead flapjack-4ac.2.20.2; pan_to_crepScript.sml:393-397): HOL compile_prog_def is compile_prog prog = let inl_fs_names = MAP FST (functions (FILTER inlinable prog)); to_crep = compile_to_crep prog in compile_inl_top inl_fs_names to_crep, with input 'a prog and result (mlstring # num list # 'a crepLang$prog) list and no hypotheses. The Lean definition reproduces that let structure and operand order clause-for-clause: inlinableHOL/functionsHOL map the FILTER/functions half (MlS names), the declaration-only half is the tagged compileToCrepExactHOLW, and the inline half is the exact compileInlTopHOLExact over MlS names and CrepProgHOL triples (unsorted-inline-map carrier reviewed under flapjack-e7w.1; exact compile_inl_prog/compile_inl_top wrappers landed untagged pending carrier review, flapjack-e7w.2.2). Carriers are DeclHOL width/ShapeHOL/ExpHOL/MlS and CrepProgHOL width with [NeZero width]; the only outer translation is HOL's positive type-indexed word to BitVec width (words_as_type_indexed_bitvec). The finite maps used inside are local intermediates and do not occur in the declaration's input or output type, so no finite-map carrier qualifier applies here; their own declaration tags record their result translations. No hypothesis, side condition, success branch, or conclusion is added or weakened."
   },
   {
+    "hol_path": "cakeml/pancake/crep_inlineScript.sml",
+    "hol_name": "compile_inl_prog_def",
+    "hol_line": 259,
+    "lean_path": "Flapjack/Pancake/CrepInline/Canonical.lean",
+    "lean_name": "compileInlProgHOLExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+      "fmap_as_finite_support_relation": [
+      "inl_fs"
+    ],
+
+      "words_as_type_indexed_bitvec": true,
+
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-28; bead flapjack-e7w.2.2; crep_inlineScript.sml:259-261): HOL compile_inl_prog_def is compile_inl_prog inl_fs prog = MAP (lambda (name,params,body). (name, params, inline_prog (inl_fs \\ name) body)) prog, with an fmap inl_fs and no hypotheses; ORDER of the triple list is preserved and DOMSUB inl_fs \\ name erases the function's own name before recursing. The Lean wrapper compileInlProgHOLExact has exactly HOL's two binders (inl_fs : the canonical HolFiniteMapExact translation of the HOL |-> fmap, listed as a standalone exact parameter; and the triple list over MlS names / List Nat params / CrepProgHOL width bodies), preserves list order, and calls inlineProgHOLExact on inl_fs.erase name. It is support-independent (no certificate parameter); the map's existential support is discharged internally by inlineProgHOLExact, so the statement has no extra hypothesis. Since HolFiniteMapExact is the reviewed canonical finite-support translation of HOL |-> with an existential support and no canonical cardinality, the definition is noncomputable like HOL's own logical definition; the executable variant with an explicit certificate is compileInlProgHOLExactWithSupport (untagged). HOL's type-indexed word is represented by BitVec width with [NeZero width] (words_as_type_indexed_bitvec). The recursive core's cross-system correspondence to HOL inline_prog remains tracked by flapjack-e7w.2.1.13."
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_inlineScript.sml",
+    "hol_name": "compile_inl_top_def",
+    "hol_line": 264,
+    "lean_path": "Flapjack/Pancake/CrepInline/Canonical.lean",
+    "lean_name": "compileInlTopHOLExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+      "words_as_type_indexed_bitvec": true,
+
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-28; bead flapjack-e7w.2.2; crep_inlineScript.sml:264-269): HOL compile_inl_top_def is compile_inl_top inl_fname prog = let inl_fs_alist = FILTER (lambda (x,y). MEM x inl_fname) prog; inl_fs = alist_to_fmap inl_fs_alist in compile_inl_prog inl_fs prog, with no hypotheses. The Lean wrapper compileInlTopHOLExact has exactly HOL's two binders (List MlS inl_fname and the triple list) and reproduces the let structure and order: prog.filter (fun t => inl_fname.contains t.1), alistToFmapHOLExact (first-occurrence-wins alist_to_fmap), then the inline pass. The inline map is a local intermediate and does not occur in the signature, so no finite-map carrier qualifier applies; the definition is executable (its finite support is derived from the filtered alist's keys by supportKeys_alistToFmapHOLExact, no Classical.choose), via the untagged helper compileInlProgHOLExactWithSupport. HOL's type-indexed word is represented by BitVec width with [NeZero width] (words_as_type_indexed_bitvec). Direct HOL EVAL rows (crep_inline_alist_map_probe.out) are replayed by alist_duplicate_first/alist_other_row/domsub_selected_f/domsub_preserves_g. The recursive core's cross-system correspondence to HOL inline_prog remains tracked by flapjack-e7w.2.1.13."
+  },
+  {
     "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
     "hol_name": "comp_func_def",
     "lean_path": "Flapjack/Pancake/PanToCrep/CompileExact.lean",
