@@ -445,7 +445,61 @@ def loopPrimop {width : Nat} [NeZero width] :
       some [.word res, .word co]
   | _, _ => none
 
-open Classical
+/-- Computable subset test on the exact spt carrier: enumerate the keys of
+    `left` through an absolute-key map `g` and check each is present in
+    `right`.  Untagged Flapjack infrastructure. -/
+def sptSubsetAux {α β : Type} (right : Spt β) (g : Nat → Nat) : Spt α → Bool
+  | .ln => true
+  | .ls _ => (sptLookup (g 0) right).isSome
+  | .bn first second =>
+      sptSubsetAux right (fun m => g (2 * m + 2)) first &&
+        sptSubsetAux right (fun m => g (2 * m + 1)) second
+  | .bs first _ second =>
+      (sptLookup (g 0) right).isSome &&
+        (sptSubsetAux right (fun m => g (2 * m + 2)) first &&
+          sptSubsetAux right (fun m => g (2 * m + 1)) second)
+
+/-- Correctness of `sptSubsetAux`: the Boolean test accepts exactly when every
+    key of `left`, mapped by `g`, lies in `right`. -/
+theorem sptSubsetAux_eq_true {α β : Type} (right : Spt β) :
+    ∀ (g : Nat → Nat) (left : Spt α),
+      sptSubsetAux right g left = true ↔ ∀ key, sptMem key left → sptMem (g key) right := by
+  intro g left
+  induction left generalizing g with
+  | ln => simp [sptSubsetAux]
+  | ls value =>
+      simp only [sptSubsetAux]
+      constructor
+      · intro h key hk
+        have hk0 : key = 0 := (sptMem_ls key value).mp hk
+        subst hk0
+        exact (sptMem_iff_lookup _ _).mpr (Option.isSome_iff_exists.mp h)
+      · intro h
+        exact Option.isSome_iff_exists.mpr
+          ((sptMem_iff_lookup _ _).mp (h 0 ((sptMem_ls 0 value).mpr rfl)))
+  | bn first second ihl ihr =>
+      simp only [sptSubsetAux, Bool.and_eq_true, sptMem_bn]
+      rw [ihl (fun m => g (2 * m + 2)), ihr (fun m => g (2 * m + 1))]
+      constructor
+      · rintro ⟨hl, hr⟩ key (⟨m, hm, hk⟩ | ⟨m, hm, hk⟩)
+        · subst hk; exact hl m hm
+        · subst hk; exact hr m hm
+      · intro h
+        exact ⟨fun m hm => h (2 * m + 2) (Or.inl ⟨m, hm, rfl⟩),
+          fun m hm => h (2 * m + 1) (Or.inr ⟨m, hm, rfl⟩)⟩
+  | bs first value second ihl ihr =>
+      simp only [sptSubsetAux, Bool.and_eq_true, sptMem_bs]
+      rw [ihl (fun m => g (2 * m + 2)), ihr (fun m => g (2 * m + 1))]
+      constructor
+      · rintro ⟨h0, hl, hr⟩ key (h0' | ⟨m, hm, hk⟩ | ⟨m, hm, hk⟩)
+        · subst h0'
+          exact (sptMem_iff_lookup _ _).mpr (Option.isSome_iff_exists.mp h0)
+        · subst hk; exact hl m hm
+        · subst hk; exact hr m hm
+      · intro h
+        exact ⟨Option.isSome_iff_exists.mpr ((sptMem_iff_lookup _ _).mp (h 0 (Or.inl rfl))),
+          fun m hm => h (2 * m + 2) (Or.inr (Or.inl ⟨m, hm, rfl⟩)),
+          fun m hm => h (2 * m + 1) (Or.inr (Or.inr ⟨m, hm, rfl⟩))⟩
 
 /-- Predicate rendering of HOL set inclusion on `sptree$num_set`
     (`domain live SUBSET domain s.locals`, `loopSemScript.sml:186`): HOL sets are
@@ -456,17 +510,29 @@ open Classical
 def sptSubsetLive {α β : Type} (left : Spt α) (right : Spt β) : Prop :=
   ∀ key, sptMem key left → sptMem key right
 
+/-- The computable subset test decides `sptSubsetLive`. -/
+theorem sptSubsetAux_id_eq_true {α β : Type} (left : Spt α) (right : Spt β) :
+    sptSubsetAux right id left = true ↔ sptSubsetLive left right :=
+  sptSubsetAux_eq_true right id left
+
+/-- Decision procedure for the `cut_state` guard: enumerate the finite live set
+    and look each key up in the local map. -/
+instance sptSubsetLiveDecidable {α β : Type} (left : Spt α) (right : Spt β) :
+    Decidable (sptSubsetLive left right) :=
+  decidable_of_iff (sptSubsetAux right id left = true) (sptSubsetAux_id_eq_true left right)
+
 /-- Exact HOL `cut_state_def`
     (`cakeml/pancake/semantics/loopSemScript.sml:182-187`):
     `cut_state live s = if domain live SUBSET domain s.locals then
     SOME (s with locals := inter s.locals live) else NONE`.  The set inclusion
     `domain live SUBSET domain s.locals` is rendered as `sptSubsetLive`, and the
     restricted local map uses the heterogeneous `sptInter`.  The guard is a
-    finite-set inclusion, so this is the classical (noncomputable) rendering;
-    the production executable counterpart is `Flapjack.cutLoopState`. -/
+    finite-set inclusion decided by the computable `sptSubsetAux` enumeration
+    (`sptSubsetLiveDecidable`), so the definition is executable; the production
+    executable counterpart is `Flapjack.cutLoopState`. -/
 @[hol "cakeml/pancake/semantics/loopSemScript.sml" "cut_state_def"
   (words_as_type_indexed_bitvec)]
-noncomputable def cutState {width : Nat} [NeZero width] {F : Type} (live : NumSet)
+def cutState {width : Nat} [NeZero width] {F : Type} (live : NumSet)
     (state : LoopSemStateFiniteExact width F) :
     Option (LoopSemStateFiniteExact width F) :=
   if sptSubsetLive live state.locals then
@@ -530,7 +596,7 @@ theorem cutState_some_frame {width : Nat} [NeZero width] {F : Type}
     `(NONE, dec_clock cut)`. -/
 @[hol "cakeml/pancake/semantics/loopSemScript.sml" "cut_res_def"
   (words_as_type_indexed_bitvec)]
-noncomputable def cutRes {width : Nat} [NeZero width] {F : Type} (live : NumSet)
+def cutRes {width : Nat} [NeZero width] {F : Type} (live : NumSet)
     (step : Option (LoopResultExact width) × LoopSemStateFiniteExact width F) :
     Option (LoopResultExact width) × LoopSemStateFiniteExact width F :=
   match step.1 with

@@ -167,6 +167,14 @@ example : (match cutRes live0 (none, baseState locals5 5) with
   rw [inter_ls_ls]
   rfl
 
+-- The exact guard is computable: `cutState` evaluates on concrete inputs.
+#guard (match cutState live0 (baseState locals5 7) with
+    | some s' => (sptLookup 0 s'.locals).isSome
+    | none => false) = true
+
+-- A missing live key is rejected executably.
+#guard (cutState live0 (baseState .ln 7)).isNone
+
 def runChecks : IO Bool := do
   let checks : List (String × Bool) :=
     [ ("LoopSem cut_state direct HOL rows (success / missing / empty live)", true),
