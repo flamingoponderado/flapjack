@@ -12235,7 +12235,7 @@
     "hol_path": "cakeml/pancake/loop_callScript.sml",
     "hol_name": "comp_def",
     "hol_line": 18,
-    "lean_path": "Flapjack/Pancake/LoopLive.lean",
+    "lean_path": "Flapjack/Pancake/LoopCall.lean",
     "lean_name": "loopCallCompHOL",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
