@@ -78,6 +78,7 @@ import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Store
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.ShMemStore
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.ShMemLoad
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.ExtCall
+import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Complete
 import Flapjack.Pancake.Proofs.PanToCrep.NotMemContextAssignedMemGt
 import Flapjack.Pancake.Semantics.CrepProps
 import Flapjack.Pancake.Semantics.CrepProps.MemLoadFlatRel
