@@ -14,11 +14,11 @@ open loopPropsTheory;
 open crep_to_loopProofTheory;
 
 val evaluate_io_mono_rephrases_probe =
-  LIST_CONJ [
+  LIST_CONJ (map (SIMP_RULE (srw_ss()) []) [
     Q.SPECL [`exs`, `s with clock := k`]
       crepPropsTheory.evaluate_add_clock_io_events_mono,
     Q.SPECL [`exs`, `s with clock := k`]
-      loopPropsTheory.evaluate_add_clock_io_events_mono];
+      loopPropsTheory.evaluate_add_clock_io_events_mono]);
 
 fun print_free_types label theorem =
   let

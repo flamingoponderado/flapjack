@@ -1,17 +1,9 @@
 evaluate_io_mono_rephrases_type=(∀extra.
    (SND (evaluate (exs,s with clock := k))).ffi.io_events ≼
-   (SND
-      (evaluate
-         (exs,
-          s with <|clock := (s with clock := k).clock + extra; clock := k|>))).
-   ffi.io_events) ∧
+   (SND (evaluate (exs,s with clock := k + extra))).ffi.io_events) ∧
 ∀extra.
   (SND (evaluate (exs,s with clock := k))).ffi.io_events ≼
-  (SND
-     (evaluate
-        (exs,
-         s with <|clock := (s with clock := k).clock + extra; clock := k|>))).
-  ffi.io_events
+  (SND (evaluate (exs,s with clock := k + extra))).ffi.io_events
 
 free_variable=s
 ::(α, β) crepSem$state
