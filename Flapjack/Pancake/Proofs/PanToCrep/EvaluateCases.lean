@@ -5598,18 +5598,17 @@ private theorem evalPanSemStateExp_loadByte_const_riscvTarget
     rw [← hdomain, ← hmemoryView, ← hbe]
     cases source.be with
     | false =>
-        simp [panModelReadByte, panSemBitVec64WordModel,
-          RiscV.panRiscVMemoryModelForEndian, RiscV.panRiscVMemoryModel,
-          RiscV.panRiscVGetByteEndian, RiscV.panRiscVGetByte,
-          panSemBitVec64BytesInWord]
+        simp only [panModelReadByte,
+          RiscV.panRiscVMemoryModelForEndian,
+          panSemBitVec64ByteAlign_runtime_eq_panRiscV,
+          panSemBitVec64GetByte_runtime_eq_riscvModel]
+        rfl
     | true =>
-        have hindex : ∀ index : Nat, 8 - index - 1 = 7 - index := by
-          intro index
-          omega
-        simp [panModelReadByte, panSemBitVec64WordModel,
-          RiscV.panRiscVMemoryModelForEndian, RiscV.panRiscVMemoryModel,
-          RiscV.panRiscVGetByteEndian, RiscV.panRiscVGetByte,
-          panSemBitVec64BytesInWord, hindex]
+        simp only [panModelReadByte,
+          RiscV.panRiscVMemoryModelForEndian,
+          panSemBitVec64ByteAlign_runtime_eq_panRiscV,
+          panSemBitVec64GetByte_runtime_eq_riscvModel]
+        rfl
   calc
     evalPanSemStateExp source (.loadByte (.const address)) =
         (panModelReadByte panSemBitVec64WordModel source.memaddrs
@@ -5648,18 +5647,21 @@ private theorem evalPanSemStateExp_load32_const_riscvTarget
     rw [← hdomain, ← hmemoryView, ← hbe]
     cases source.be with
     | false =>
-        simp [panModelRead32, panSemBitVec64WordModel,
-          panSemBitVec64BytesInWord, RiscV.panRiscVMemoryModelForEndian,
-          RiscV.panRiscVMemoryModel, RiscV.panRiscVGetByteEndian,
-          RiscV.panRiscVGetByte, RiscV.panRiscVByteIndex]
+        simp only [panModelRead32,
+          RiscV.panRiscVMemoryModelForEndian,
+          panSemBitVec64ByteAlign_runtime_eq_panRiscV,
+          panSemBitVec64Aligned_eq_riscvModel,
+          panSemBitVec64GetByte_runtime_eq_riscvModel,
+          panSemBitVec64WordOfBytes32_eq_riscvModel]
+        rfl
     | true =>
-        have hindex : ∀ index : Nat, 8 - index - 1 = 7 - index := by
-          intro index
-          omega
-        simp [panModelRead32, panSemBitVec64WordModel,
-        panSemBitVec64BytesInWord, RiscV.panRiscVMemoryModelForEndian,
-        RiscV.panRiscVMemoryModel, RiscV.panRiscVGetByteEndian,
-        RiscV.panRiscVGetByte, RiscV.panRiscVByteIndex, hindex]
+        simp only [panModelRead32,
+          RiscV.panRiscVMemoryModelForEndian,
+          panSemBitVec64ByteAlign_runtime_eq_panRiscV,
+          panSemBitVec64Aligned_eq_riscvModel,
+          panSemBitVec64GetByte_runtime_eq_riscvModel,
+          panSemBitVec64WordOfBytes32_eq_riscvModel]
+        rfl
   calc
     evalPanSemStateExp source (.load32 (.const address)) =
         (panModelRead32 panSemBitVec64WordModel source.memaddrs
