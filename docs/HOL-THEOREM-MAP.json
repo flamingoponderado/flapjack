@@ -19361,5 +19361,68 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.33.10): HOL find_code_collapse_cases (crep_to_loopProofScript.sml:3264-3272, [local]) `(dest <> NONE ==> dest = SOME loc) ==> find_code dest (args1 ++ TAKE (case dest of NONE => 1 | SOME _ => 0) [Loc loc 0]) st.code = (case lookup loc st.code of NONE => NONE | SOME (params,exp) => if LENGTH args1 = LENGTH params then SOME (fromAList (ZIP (params,args1)),exp) else NONE)` (free dest loc args1 st); Lean states the same premise and equation over the tagged findCode, sptLookup, sptFromAList and List.zip/take. fmap_as_finite_support [globals]: quantifies over LoopSemStateFiniteExact; same-module re-exported canonical witness."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopPropsScript.sml",
+    "hol_name": "comp_syn_ok_seq2",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopProps/CompSyntaxOkLemmas.lean",
+    "lean_name": "comp_syn_ok_seq2",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.16): HOL comp_syn_ok_seq2 (loopPropsScript.sml:739-741) `!l p q. comp_syntax_ok l p /\\ comp_syntax_ok (cut_sets l p) q ==> comp_syntax_ok l (Seq p q)`; same variables, premise and conclusion. Over the tagged compSyntaxOkHOL (HOL bool as = true), cutSetsHOL and holLoopNestedSeq; HOL domain as sptDomain/sptMem. (words_as_type_indexed_bitvec): width-indexed Loop carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopPropsScript.sml",
+    "hol_name": "comp_syn_ok_nested_seq",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopProps/CompSyntaxOkLemmas.lean",
+    "lean_name": "comp_syn_ok_nested_seq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.16): HOL comp_syn_ok_nested_seq (loopPropsScript.sml:748-751) `!p q l. comp_syntax_ok l (nested_seq p) ∧ comp_syntax_ok (cut_sets l (nested_seq p)) (nested_seq q) ==> comp_syntax_ok l (nested_seq (p ++ q))`; same statement. Over the tagged compSyntaxOkHOL (HOL bool as = true), cutSetsHOL and holLoopNestedSeq; HOL domain as sptDomain/sptMem. (words_as_type_indexed_bitvec): width-indexed Loop carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopPropsScript.sml",
+    "hol_name": "comp_syn_ok_nested_seq2",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopProps/CompSyntaxOkLemmas.lean",
+    "lean_name": "comp_syn_ok_nested_seq2",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.16): HOL comp_syn_ok_nested_seq2 (loopPropsScript.sml:757-760) `!p q l. comp_syntax_ok l (nested_seq (p ++ q)) ==> comp_syntax_ok l (nested_seq p) ∧ comp_syntax_ok (cut_sets l (nested_seq p)) (nested_seq q)`; same statement. Over the tagged compSyntaxOkHOL (HOL bool as = true), cutSetsHOL and holLoopNestedSeq; HOL domain as sptDomain/sptMem. (words_as_type_indexed_bitvec): width-indexed Loop carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopPropsScript.sml",
+    "hol_name": "cut_sets_union_domain_subset",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopProps/CompSyntaxOkLemmas.lean",
+    "lean_name": "cut_sets_union_domain_subset",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.16): HOL cut_sets_union_domain_subset (loopPropsScript.sml:810-812) `!p l. comp_syntax_ok l p ==> domain l ⊆ domain (cut_sets l p)`; ⊆ as pointwise implication of the sptDomain predicates. Over the tagged compSyntaxOkHOL (HOL bool as = true), cutSetsHOL and holLoopNestedSeq; HOL domain as sptDomain/sptMem. (words_as_type_indexed_bitvec): width-indexed Loop carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopPropsScript.sml",
+    "hol_name": "cut_sets_union_domain_union",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopProps/CompSyntaxOkLemmas.lean",
+    "lean_name": "cut_sets_union_domain_union",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.16): HOL cut_sets_union_domain_union (loopPropsScript.sml:820-822) `!p l. comp_syntax_ok l p ==> ?(l' :num_set). domain (cut_sets l p) = domain l ∪ domain l'`; the set equation as an equality of sptDomain predicates with ∪ as pointwise disjunction. Over the tagged compSyntaxOkHOL (HOL bool as = true), cutSetsHOL and holLoopNestedSeq; HOL domain as sptDomain/sptMem. (words_as_type_indexed_bitvec): width-indexed Loop carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopPropsScript.sml",
+    "hol_name": "comp_syn_impl_cut_sets_subspt",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopProps/CompSyntaxOkLemmas.lean",
+    "lean_name": "comp_syn_impl_cut_sets_subspt",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.16): HOL comp_syn_impl_cut_sets_subspt (loopPropsScript.sml:831-833) `!p l. comp_syntax_ok l p ==> subspt l (cut_sets l p)`; subspt as the reviewed sptSubspt. Over the tagged compSyntaxOkHOL (HOL bool as = true), cutSetsHOL and holLoopNestedSeq; HOL domain as sptDomain/sptMem. (words_as_type_indexed_bitvec): width-indexed Loop carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopPropsScript.sml",
+    "hol_name": "comp_syn_cut_sets_mem_domain",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopProps/CompSyntaxOkLemmas.lean",
+    "lean_name": "comp_syn_cut_sets_mem_domain",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.16): HOL comp_syn_cut_sets_mem_domain (loopPropsScript.sml:841-844) `!p l n. comp_syntax_ok l p /\\ n ∈ domain l ==> n ∈ domain (cut_sets l p)`; n ∈ domain as sptMem. Over the tagged compSyntaxOkHOL (HOL bool as = true), cutSetsHOL and holLoopNestedSeq; HOL domain as sptDomain/sptMem. (words_as_type_indexed_bitvec): width-indexed Loop carriers."
   }
 ]

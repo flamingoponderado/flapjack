@@ -123,6 +123,7 @@ import Flapjack.Pancake.Semantics.LoopProps.EvalExact
 import Flapjack.Pancake.Semantics.LoopProps.NestedSeqExact
 import Flapjack.Pancake.Semantics.LoopProps.UnassignedVarsExact
 import Flapjack.Pancake.Semantics.LoopProps.NestedSeqSyntaxExact
+import Flapjack.Pancake.Semantics.LoopProps.CompSyntaxOkLemmas
 import Flapjack.PanObservationalSemantics
 import Flapjack.PanHHandleCallRet
 import Flapjack.PanMrec
