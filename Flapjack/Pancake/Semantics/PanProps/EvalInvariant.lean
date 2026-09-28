@@ -5784,9 +5784,11 @@ end Flapjack
 
 /-! # The `Seq` induction case of HOL `evaluate_invariants`
 
-The two induction hypotheses cover the first and second command. `fix_clock`
-changes only the clock: if the first command returns `NONE`, apply the second
-IH at the fixed state; otherwise the first IH already gives the result. -/
+This case uses the exact generated `evaluate_ind` Seq conjunct: its first IH
+is `P (first, state)`, and its second IH is available only for a run of
+`first` returning `NONE`, at that run's post-state. The line-780 evaluator
+rewrites `fix_clock_evaluate`, so the second command runs at that same
+post-state. -/
 
 namespace Flapjack
 
@@ -5800,32 +5802,35 @@ theorem evaluateInvariantsSeqCaseHOLFinite {width : Nat} {σ : Type} [NeZero wid
       (post : PanPropsEvalStateFiniteExact width σ),
       PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state
           (.seq first second : ProgHOL width) = (result, post) →
-      (∀ (firstState : PanPropsEvalStateFiniteExact width σ)
-        (firstResult : Option (PanSemResultExact width))
+      (∀ (firstResult : Option (PanSemResultExact width))
         (firstPost : PanPropsEvalStateFiniteExact width σ),
-        PanPropsEvalStateFiniteExact.evaluateHOLFinitePair firstState first =
-          (firstResult, firstPost) →
-        firstPost.memaddrs = firstState.memaddrs ∧
-        firstPost.shMemaddrs = firstState.shMemaddrs ∧
-        firstPost.be = firstState.be ∧
-        firstPost.eshapes = firstState.eshapes ∧
-        firstPost.baseAddr = firstState.baseAddr ∧
-        firstPost.structs = firstState.structs ∧
-        firstPost.code = firstState.code ∧
-        firstPost.ffi.oracle = firstState.ffi.oracle) →
-      (∀ (secondState : PanPropsEvalStateFiniteExact width σ)
-        (secondResult : Option (PanSemResultExact width))
-        (secondPost : PanPropsEvalStateFiniteExact width σ),
-        PanPropsEvalStateFiniteExact.evaluateHOLFinitePair secondState second =
-          (secondResult, secondPost) →
-        secondPost.memaddrs = secondState.memaddrs ∧
-        secondPost.shMemaddrs = secondState.shMemaddrs ∧
-        secondPost.be = secondState.be ∧
-        secondPost.eshapes = secondState.eshapes ∧
-        secondPost.baseAddr = secondState.baseAddr ∧
-        secondPost.structs = secondState.structs ∧
-        secondPost.code = secondState.code ∧
-        secondPost.ffi.oracle = secondState.ffi.oracle) →
+        (firstResult, firstPost) =
+          PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state first ∧
+        firstResult = none →
+        ∀ (secondResult : Option (PanSemResultExact width))
+          (secondPost : PanPropsEvalStateFiniteExact width σ),
+          PanPropsEvalStateFiniteExact.evaluateHOLFinitePair firstPost second =
+            (secondResult, secondPost) →
+          secondPost.memaddrs = firstPost.memaddrs ∧
+          secondPost.shMemaddrs = firstPost.shMemaddrs ∧
+          secondPost.be = firstPost.be ∧
+          secondPost.eshapes = firstPost.eshapes ∧
+          secondPost.baseAddr = firstPost.baseAddr ∧
+          secondPost.structs = firstPost.structs ∧
+          secondPost.code = firstPost.code ∧
+          secondPost.ffi.oracle = firstPost.ffi.oracle) →
+      (∀ (firstResult : Option (PanSemResultExact width))
+        (firstPost : PanPropsEvalStateFiniteExact width σ),
+        (firstResult, firstPost) =
+          PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state first →
+        firstPost.memaddrs = state.memaddrs ∧
+        firstPost.shMemaddrs = state.shMemaddrs ∧
+        firstPost.be = state.be ∧
+        firstPost.eshapes = state.eshapes ∧
+        firstPost.baseAddr = state.baseAddr ∧
+        firstPost.structs = state.structs ∧
+        firstPost.code = state.code ∧
+        firstPost.ffi.oracle = state.ffi.oracle) →
       post.memaddrs = state.memaddrs ∧
       post.shMemaddrs = state.shMemaddrs ∧
       post.be = state.be ∧
@@ -5835,7 +5840,7 @@ theorem evaluateInvariantsSeqCaseHOLFinite {width : Nat} {σ : Type} [NeZero wid
       post.code = state.code ∧
       post.ffi.oracle = state.ffi.oracle := by
   classical
-  intro first second state result post hRun ihFirst ihSecond
+  intro first second state result post hRun ihSecond ihFirst
   have hcanonical :
       PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite
           (.seq first second : ProgHOL width) = (result, post.toPanSemFinite) := by
@@ -5848,15 +5853,14 @@ theorem evaluateInvariantsSeqCaseHOLFinite {width : Nat} {σ : Type} [NeZero wid
           (.seq first second : ProgHOL width)).2 = post.toPanSemFinite := by
       simpa [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair] using hpair
     exact Prod.ext hpair'.1 hpair'.2
-  rw [PanSemStateFiniteExact.evaluateHOLFiniteState_seq] at hcanonical
+  rw [evaluateHOLFiniteState_seq_line780] at hcanonical
   let firstOutput := PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite first
-  let fixed := PanSemStateFiniteExact.fixClockHOLFinite state.toPanSemFinite firstOutput
   have hfirstRun :
       PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state first =
         (firstOutput.1, PanPropsEvalStateFiniteExact.ofPanSemFinite firstOutput.2) := by
     simp [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair, firstOutput]
-  have hfirst := ihFirst state firstOutput.1
-    (PanPropsEvalStateFiniteExact.ofPanSemFinite firstOutput.2) hfirstRun
+  have hfirst := ihFirst firstOutput.1
+    (PanPropsEvalStateFiniteExact.ofPanSemFinite firstOutput.2) hfirstRun.symm
   have hfirstFields :
       firstOutput.2.memaddrs = state.toPanSemFinite.memaddrs ∧
       firstOutput.2.shMemaddrs = state.toPanSemFinite.shMemaddrs ∧
@@ -5871,8 +5875,7 @@ theorem evaluateInvariantsSeqCaseHOLFinite {width : Nat} {σ : Type} [NeZero wid
   cases hfirstResult : firstOutput.1 with
   | some result₁ =>
       have hpostRaw := congrArg Prod.snd hcanonical
-      simp only [firstOutput, hfirstResult, PanSemStateFiniteExact.fixClockHOLFinite]
-        at hpostRaw
+      simp only [firstOutput, hfirstResult] at hpostRaw
       rcases hfirstFields with ⟨hmem, hshared, hbe, heshapes, hbase, hstructs, hcode, horacle⟩
       have hpostMem := congrArg
         (fun output : PanSemStateFiniteExact width σ => output.memaddrs) hpostRaw
@@ -5907,28 +5910,29 @@ theorem evaluateInvariantsSeqCaseHOLFinite {width : Nat} {σ : Type} [NeZero wid
       · exact hpostCode.symm.trans hcode
       · exact hpostOracle.symm.trans horacle
   | none =>
-      let secondOutput := PanSemStateFiniteExact.evaluateHOLFiniteState fixed.2 second
+      let secondOutput := PanSemStateFiniteExact.evaluateHOLFiniteState firstOutput.2 second
       have hsecondRun :
           PanPropsEvalStateFiniteExact.evaluateHOLFinitePair
-              (PanPropsEvalStateFiniteExact.ofPanSemFinite fixed.2) second =
+              (PanPropsEvalStateFiniteExact.ofPanSemFinite firstOutput.2) second =
             (secondOutput.1, PanPropsEvalStateFiniteExact.ofPanSemFinite secondOutput.2) := by
         simp [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair, secondOutput]
-      have hsecond := ihSecond
-        (PanPropsEvalStateFiniteExact.ofPanSemFinite fixed.2) secondOutput.1
+      have hsecondIH := ihSecond firstOutput.1
+        (PanPropsEvalStateFiniteExact.ofPanSemFinite firstOutput.2)
+        ⟨hfirstRun.symm, hfirstResult⟩
+      have hsecond := hsecondIH secondOutput.1
         (PanPropsEvalStateFiniteExact.ofPanSemFinite secondOutput.2) hsecondRun
       have hsecondFields :
-          secondOutput.2.memaddrs = fixed.2.memaddrs ∧
-          secondOutput.2.shMemaddrs = fixed.2.shMemaddrs ∧
-          secondOutput.2.be = fixed.2.be ∧
-          secondOutput.2.eshapes = fixed.2.eshapes ∧
-          secondOutput.2.baseAddr = fixed.2.baseAddr ∧
-          secondOutput.2.structs = fixed.2.structs ∧
-          secondOutput.2.code = fixed.2.code ∧
-          secondOutput.2.ffi.oracle = fixed.2.ffi.oracle := by
+          secondOutput.2.memaddrs = firstOutput.2.memaddrs ∧
+          secondOutput.2.shMemaddrs = firstOutput.2.shMemaddrs ∧
+          secondOutput.2.be = firstOutput.2.be ∧
+          secondOutput.2.eshapes = firstOutput.2.eshapes ∧
+          secondOutput.2.baseAddr = firstOutput.2.baseAddr ∧
+          secondOutput.2.structs = firstOutput.2.structs ∧
+          secondOutput.2.code = firstOutput.2.code ∧
+          secondOutput.2.ffi.oracle = firstOutput.2.ffi.oracle := by
         simpa [PanPropsEvalStateFiniteExact.ofPanSemFinite] using hsecond
       have hpostRaw := congrArg Prod.snd hcanonical
-      simp only [firstOutput, hfirstResult, PanSemStateFiniteExact.fixClockHOLFinite]
-        at hpostRaw
+      simp only [firstOutput, hfirstResult] at hpostRaw
       rcases hfirstFields with ⟨hfirstMem, hfirstShared, hfirstBe, hfirstShapes,
         hfirstBase, hfirstStructs, hfirstCode, hfirstOracle⟩
       rcases hsecondFields with ⟨hmem, hshared, hbe, hshapes, hbase, hstructs, hcode, horacle⟩
@@ -5967,250 +5971,161 @@ theorem evaluateInvariantsSeqCaseHOLFinite {width : Nat} {σ : Type} [NeZero wid
 
 /-! # The `While` case of HOL `evaluate_invariants`
 
-The source `evaluate_ind` has a body IH for the smaller body program and a
-recursive While IH only when the recursive state's clock is smaller. The
-`evaluate_def` While branches are at panSemScript.sml:630. The evaluator's
-termination measure is lexicographic on `(clock, prog_size)`, so the body IH is
-unconditional while self-recursion uses the lower-clock premise. -/
+The HOL `evaluate_ind` While conjunct
+(`scripts/hol-probes/pan_sem_evaluate_ind_probe.out`) has three IHs, each under
+the guards `eval s e = SOME v2 ∧ v2 = Val v11 ∧ v11 = Word w ∧ w ≠ 0w ∧
+s.clock ≠ 0`: `P (While e c, s1)` after the body at `dec_clock s` returns
+`Continue`, `P (While e c, s1)` after it returns `NONE`, and `P (c, dec_clock s)`.
+The case is stated with exactly those IHs at `P = evaluate_invariants`'s
+conclusion. The While clause is `evaluate_def` at panSemScript.sml:630, used
+through the tagged `fix_clock`-free rewrite. -/
 
+/-- The eight `evaluate_invariants` fields of `post` against `pre`. -/
+private def whileInvFields {width : Nat} {σ : Type} [NeZero width]
+    (post pre : PanPropsEvalStateFiniteExact width σ) : Prop :=
+  post.memaddrs = pre.memaddrs ∧ post.shMemaddrs = pre.shMemaddrs ∧ post.be = pre.be ∧
+    post.eshapes = pre.eshapes ∧ post.baseAddr = pre.baseAddr ∧ post.structs = pre.structs ∧
+    post.code = pre.code ∧ post.ffi.oracle = pre.ffi.oracle
+
+private theorem whileInvFields_trans {width : Nat} {σ : Type} [NeZero width]
+    {a b c : PanPropsEvalStateFiniteExact width σ} (h1 : whileInvFields a b)
+    (h2 : whileInvFields b c) :
+    whileInvFields a c := by
+  obtain ⟨a1, a2, a3, a4, a5, a6, a7, a8⟩ := h1
+  obtain ⟨b1, b2, b3, b4, b5, b6, b7, b8⟩ := h2
+  exact ⟨a1.trans b1, a2.trans b2, a3.trans b3, a4.trans b4, a5.trans b5, a6.trans b6,
+    a7.trans b7, a8.trans b8⟩
+
+/-- The `While` leaf of HOL `evaluate_invariants` (`panPropsScript.sml:1150`) with
+    the exact `evaluate_ind` While IHs. `eval s e` is the exact evaluator on
+    `s.toPanSemFinite` with the classical address decision; `dec_clock s` is the
+    record update `s with clock := s.clock - 1`, and `evaluate` is the pair
+    evaluator `evaluateHOLFinitePair` over this carrier. Each IH and the
+    conclusion are `P` unfolded: `∀res st. evaluate (p, t) = (res, st) ⇒` the
+    eight invariant fields of `st` against `t`. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_invariants" 1150
   (fmap_as_finite_support := [locals, globals, code, eshapes])
   (words_as_type_indexed_bitvec)]
-theorem evaluateInvariantsWhileCaseHOLFinite {width : Nat} {σ : Type} [NeZero width]
-    (condition : ExpHOL width) (body : ProgHOL width) :
-    ∀ (state : PanPropsEvalStateFiniteExact width σ)
-      (result : Option (PanSemResultExact width))
-      (post : PanPropsEvalStateFiniteExact width σ),
-      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state
-          (.while condition body : ProgHOL width) = (result, post) →
-      (∀ (bodyState : PanPropsEvalStateFiniteExact width σ)
-        (bodyResult : Option (PanSemResultExact width))
-        (bodyPost : PanPropsEvalStateFiniteExact width σ),
-        PanPropsEvalStateFiniteExact.evaluateHOLFinitePair bodyState body =
-          (bodyResult, bodyPost) →
-        bodyPost.memaddrs = bodyState.memaddrs ∧
-        bodyPost.shMemaddrs = bodyState.shMemaddrs ∧
-        bodyPost.be = bodyState.be ∧
-        bodyPost.eshapes = bodyState.eshapes ∧
-        bodyPost.baseAddr = bodyState.baseAddr ∧
-        bodyPost.structs = bodyState.structs ∧
-        bodyPost.code = bodyState.code ∧
-        bodyPost.ffi.oracle = bodyState.ffi.oracle) →
-      (∀ (loopState : PanPropsEvalStateFiniteExact width σ)
-        (loopResult : Option (PanSemResultExact width))
-        (loopPost : PanPropsEvalStateFiniteExact width σ),
-        loopState.clock < state.clock →
-        PanPropsEvalStateFiniteExact.evaluateHOLFinitePair loopState
-            (.while condition body : ProgHOL width) = (loopResult, loopPost) →
-        loopPost.memaddrs = loopState.memaddrs ∧
-        loopPost.shMemaddrs = loopState.shMemaddrs ∧
-        loopPost.be = loopState.be ∧
-        loopPost.eshapes = loopState.eshapes ∧
-        loopPost.baseAddr = loopState.baseAddr ∧
-        loopPost.structs = loopState.structs ∧
-        loopPost.code = loopState.code ∧
-        loopPost.ffi.oracle = loopState.ffi.oracle) →
-      post.memaddrs = state.memaddrs ∧
-      post.shMemaddrs = state.shMemaddrs ∧
-      post.be = state.be ∧
-      post.eshapes = state.eshapes ∧
-      post.baseAddr = state.baseAddr ∧
-      post.structs = state.structs ∧
-      post.code = state.code ∧
-      post.ffi.oracle = state.ffi.oracle := by
+theorem evaluateInvariantsWhileCaseHOLFinite {width : Nat} {σ : Type} [NeZero width] :
+    ∀ (e : ExpHOL width) (c : ProgHOL width) (s : PanPropsEvalStateFiniteExact width σ),
+      (∀ (v2 : ValueHOL width) (v11 : HolWordLab width) (w : BitVec width)
+          (res : Option (PanSemResultExact width)) (s1 : PanPropsEvalStateFiniteExact width σ)
+          (v1 : PanSemResultExact width),
+          @evalHOLExact width σ _ s.toPanSemFinite.toExact
+              (fun address => Classical.propDecidable (s.memaddrs address)) e = some v2 ∧
+            v2 = .val v11 ∧ v11 = .word w ∧ w ≠ 0 ∧ s.clock ≠ 0 ∧
+            (res, s1) = PanPropsEvalStateFiniteExact.evaluateHOLFinitePair
+              { s with clock := s.clock - 1 } c ∧
+            res = some v1 ∧ v1 = .continue →
+          ∀ (res' : Option (PanSemResultExact width)) (st : PanPropsEvalStateFiniteExact width σ),
+            PanPropsEvalStateFiniteExact.evaluateHOLFinitePair s1 (.while e c) = (res', st) →
+            st.memaddrs = s1.memaddrs ∧ st.shMemaddrs = s1.shMemaddrs ∧ st.be = s1.be ∧
+            st.eshapes = s1.eshapes ∧ st.baseAddr = s1.baseAddr ∧ st.structs = s1.structs ∧
+            st.code = s1.code ∧ st.ffi.oracle = s1.ffi.oracle) ∧
+      (∀ (v2 : ValueHOL width) (v11 : HolWordLab width) (w : BitVec width)
+          (res : Option (PanSemResultExact width)) (s1 : PanPropsEvalStateFiniteExact width σ),
+          @evalHOLExact width σ _ s.toPanSemFinite.toExact
+              (fun address => Classical.propDecidable (s.memaddrs address)) e = some v2 ∧
+            v2 = .val v11 ∧ v11 = .word w ∧ w ≠ 0 ∧ s.clock ≠ 0 ∧
+            (res, s1) = PanPropsEvalStateFiniteExact.evaluateHOLFinitePair
+              { s with clock := s.clock - 1 } c ∧
+            res = none →
+          ∀ (res' : Option (PanSemResultExact width)) (st : PanPropsEvalStateFiniteExact width σ),
+            PanPropsEvalStateFiniteExact.evaluateHOLFinitePair s1 (.while e c) = (res', st) →
+            st.memaddrs = s1.memaddrs ∧ st.shMemaddrs = s1.shMemaddrs ∧ st.be = s1.be ∧
+            st.eshapes = s1.eshapes ∧ st.baseAddr = s1.baseAddr ∧ st.structs = s1.structs ∧
+            st.code = s1.code ∧ st.ffi.oracle = s1.ffi.oracle) ∧
+      (∀ (v2 : ValueHOL width) (v11 : HolWordLab width) (w : BitVec width),
+          @evalHOLExact width σ _ s.toPanSemFinite.toExact
+              (fun address => Classical.propDecidable (s.memaddrs address)) e = some v2 ∧
+            v2 = .val v11 ∧ v11 = .word w ∧ w ≠ 0 ∧ s.clock ≠ 0 →
+          ∀ (res' : Option (PanSemResultExact width)) (st : PanPropsEvalStateFiniteExact width σ),
+            PanPropsEvalStateFiniteExact.evaluateHOLFinitePair { s with clock := s.clock - 1 } c =
+              (res', st) →
+            st.memaddrs = s.memaddrs ∧ st.shMemaddrs = s.shMemaddrs ∧ st.be = s.be ∧
+            st.eshapes = s.eshapes ∧ st.baseAddr = s.baseAddr ∧ st.structs = s.structs ∧
+            st.code = s.code ∧ st.ffi.oracle = s.ffi.oracle) →
+      ∀ (res : Option (PanSemResultExact width)) (st : PanPropsEvalStateFiniteExact width σ),
+        PanPropsEvalStateFiniteExact.evaluateHOLFinitePair s (.while e c) = (res, st) →
+        st.memaddrs = s.memaddrs ∧ st.shMemaddrs = s.shMemaddrs ∧ st.be = s.be ∧
+        st.eshapes = s.eshapes ∧ st.baseAddr = s.baseAddr ∧ st.structs = s.structs ∧
+        st.code = s.code ∧ st.ffi.oracle = s.ffi.oracle := by
   classical
-  intro state result post hRun ihBody ihLoop
-  have hcanonical :
-      PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite
-          (.while condition body : ProgHOL width) = (result, post.toPanSemFinite) := by
-    have hpair := congrArg
-      (fun output => (output.1, PanPropsEvalStateFiniteExact.toPanSemFinite output.2)) hRun
-    have hpair' :
-        (PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite
-          (.while condition body : ProgHOL width)).1 = result ∧
-        (PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite
-          (.while condition body : ProgHOL width)).2 = post.toPanSemFinite := by
-      simpa [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair] using hpair
-    exact Prod.ext hpair'.1 hpair'.2
-  have finish (output : PanSemStateFiniteExact width σ)
-      (houtput : output = post.toPanSemFinite)
-      (hfields :
-        output.memaddrs = state.toPanSemFinite.memaddrs ∧
-        output.shMemaddrs = state.toPanSemFinite.shMemaddrs ∧
-        output.be = state.toPanSemFinite.be ∧
-        output.eshapes = state.toPanSemFinite.eshapes ∧
-        output.baseAddr = state.toPanSemFinite.baseAddr ∧
-        output.structs = state.toPanSemFinite.structs ∧
-        output.code = state.toPanSemFinite.code ∧
-        output.ffi.oracle = state.toPanSemFinite.ffi.oracle) :
-      post.memaddrs = state.memaddrs ∧
-      post.shMemaddrs = state.shMemaddrs ∧
-      post.be = state.be ∧
-      post.eshapes = state.eshapes ∧
-      post.baseAddr = state.baseAddr ∧
-      post.structs = state.structs ∧
-      post.code = state.code ∧
-      post.ffi.oracle = state.ffi.oracle := by
-    have hpost : post = PanPropsEvalStateFiniteExact.ofPanSemFinite output := by
-      have h := congrArg PanPropsEvalStateFiniteExact.ofPanSemFinite houtput.symm
-      simpa using h
-    subst post
-    change output.memaddrs = state.toPanSemFinite.memaddrs ∧
-      output.shMemaddrs = state.toPanSemFinite.shMemaddrs ∧
-      output.be = state.toPanSemFinite.be ∧
-      output.eshapes = state.toPanSemFinite.eshapes ∧
-      output.baseAddr = state.toPanSemFinite.baseAddr ∧
-      output.structs = state.toPanSemFinite.structs ∧
-      output.code = state.toPanSemFinite.code ∧
-      output.ffi.oracle = state.toPanSemFinite.ffi.oracle
-    exact hfields
-  letI : DecidablePred state.toPanSemFinite.memaddrs :=
-    fun address => Classical.propDecidable (state.toPanSemFinite.memaddrs address)
-  cases hcondition : @PanSemStateFiniteExact.evalHOLFinite width σ _ state.toPanSemFinite
-      (fun address => Classical.propDecidable (state.toPanSemFinite.memaddrs address))
-      condition with
-  | none =>
-      rw [PanSemStateFiniteExact.evaluateHOLFiniteState_while_total] at hcanonical
-      rw [hcondition] at hcanonical
-      simp only [] at hcanonical
-      have hpost := congrArg Prod.snd hcanonical
-      exact finish state.toPanSemFinite (by simpa using hpost) (by simp)
-  | some value =>
-      cases value with
-      | rStruct fields =>
-          rw [PanSemStateFiniteExact.evaluateHOLFiniteState_while_total] at hcanonical
-          rw [hcondition] at hcanonical
-          simp only [] at hcanonical
-          have hpost := congrArg Prod.snd hcanonical
-          exact finish state.toPanSemFinite (by simpa using hpost) (by simp)
-      | nStruct name fields =>
-          rw [PanSemStateFiniteExact.evaluateHOLFiniteState_while_total] at hcanonical
-          rw [hcondition] at hcanonical
-          simp only [] at hcanonical
-          have hpost := congrArg Prod.snd hcanonical
-          exact finish state.toPanSemFinite (by simpa using hpost) (by simp)
-      | val wordValue =>
-          cases wordValue with
-          | word word =>
-              rw [PanSemStateFiniteExact.evaluateHOLFiniteState_while_total] at hcanonical
-              rw [hcondition] at hcanonical
-              simp only [] at hcanonical
-              have hpost := congrArg Prod.snd hcanonical
-              by_cases hzero : word = 0
-              · have hnot : ¬word ≠ 0 := by simp [hzero]
-                rw [if_neg hnot] at hpost
-                exact finish state.toPanSemFinite (by simpa using hpost) (by simp)
-              · by_cases hclock : state.toPanSemFinite.clock = 0
-                · rw [if_pos hzero] at hpost
-                  rw [if_pos hclock] at hpost
-                  exact finish (PanSemStateFiniteExact.emptyLocalsHOLFinite
-                      state.toPanSemFinite) (by simpa using hpost)
-                    (by simp [PanSemStateFiniteExact.emptyLocalsHOLFinite])
-                · rw [if_pos hzero] at hpost
-                  rw [if_neg hclock] at hpost
-                  let entry := PanSemStateFiniteExact.decClockHOLFinite
-                    state.toPanSemFinite
-                  let bodyOutput := PanSemStateFiniteExact.evaluateHOLFiniteState entry body
-                  let fixed := PanSemStateFiniteExact.fixClockHOLFinite entry bodyOutput
-                  have hbodyRun :
-                      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair
-                          (PanPropsEvalStateFiniteExact.ofPanSemFinite entry) body =
-                        (bodyOutput.1,
-                          PanPropsEvalStateFiniteExact.ofPanSemFinite bodyOutput.2) := by
-                    simp [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair, bodyOutput]
-                  have hbody := ihBody
-                      (PanPropsEvalStateFiniteExact.ofPanSemFinite entry) bodyOutput.1
-                      (PanPropsEvalStateFiniteExact.ofPanSemFinite bodyOutput.2) hbodyRun
-                  have hbodyFields :
-                      bodyOutput.2.memaddrs = entry.memaddrs ∧
-                      bodyOutput.2.shMemaddrs = entry.shMemaddrs ∧
-                      bodyOutput.2.be = entry.be ∧
-                      bodyOutput.2.eshapes = entry.eshapes ∧
-                      bodyOutput.2.baseAddr = entry.baseAddr ∧
-                      bodyOutput.2.structs = entry.structs ∧
-                      bodyOutput.2.code = entry.code ∧
-                      bodyOutput.2.ffi.oracle = entry.ffi.oracle := by
-                    simpa [PanPropsEvalStateFiniteExact.ofPanSemFinite] using hbody
-                  have hfixedFields :
-                      fixed.2.memaddrs = state.toPanSemFinite.memaddrs ∧
-                      fixed.2.shMemaddrs = state.toPanSemFinite.shMemaddrs ∧
-                      fixed.2.be = state.toPanSemFinite.be ∧
-                      fixed.2.eshapes = state.toPanSemFinite.eshapes ∧
-                      fixed.2.baseAddr = state.toPanSemFinite.baseAddr ∧
-                      fixed.2.structs = state.toPanSemFinite.structs ∧
-                      fixed.2.code = state.toPanSemFinite.code ∧
-                      fixed.2.ffi.oracle = state.toPanSemFinite.ffi.oracle := by
-                    simpa [fixed, PanSemStateFiniteExact.fixClockHOLFinite, entry,
-                      PanSemStateFiniteExact.decClockHOLFinite] using hbodyFields
-                  let loopOutput := PanSemStateFiniteExact.evaluateHOLFiniteState
-                    fixed.2 (.while condition body : ProgHOL width)
-                  have hloopRun :
-                      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair
-                          (PanPropsEvalStateFiniteExact.ofPanSemFinite fixed.2)
-                          (.while condition body : ProgHOL width) =
-                        (loopOutput.1,
-                          PanPropsEvalStateFiniteExact.ofPanSemFinite loopOutput.2) := by
-                    simp [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair, loopOutput]
-                  have hfixedClock : fixed.2.clock ≤ entry.clock :=
-                    by simpa [fixed] using
-                      PanSemStateFiniteExact.fixClockHOLFinite_clock_le entry bodyOutput
-                  have hstateClock : state.toPanSemFinite.clock = state.clock := rfl
-                  have hentryClockFin : entry.clock < state.toPanSemFinite.clock := by
-                    simp [entry, PanSemStateFiniteExact.decClockHOLFinite]
-                    omega
-                  have hentryClock : entry.clock < state.clock := by
-                    simpa [hstateClock] using hentryClockFin
-                  have hloopClockFin : fixed.2.clock < state.toPanSemFinite.clock :=
-                    Nat.lt_of_le_of_lt hfixedClock hentryClockFin
-                  have hloopClock :
-                      (PanPropsEvalStateFiniteExact.ofPanSemFinite fixed.2).clock < state.clock := by
-                    change fixed.2.clock < state.clock
-                    simpa [hstateClock] using hloopClockFin
-                  have hloop := ihLoop
-                      (PanPropsEvalStateFiniteExact.ofPanSemFinite fixed.2) loopOutput.1
-                      (PanPropsEvalStateFiniteExact.ofPanSemFinite loopOutput.2)
-                      hloopClock hloopRun
-                  have hloopFields :
-                      loopOutput.2.memaddrs = fixed.2.memaddrs ∧
-                      loopOutput.2.shMemaddrs = fixed.2.shMemaddrs ∧
-                      loopOutput.2.be = fixed.2.be ∧
-                      loopOutput.2.eshapes = fixed.2.eshapes ∧
-                      loopOutput.2.baseAddr = fixed.2.baseAddr ∧
-                      loopOutput.2.structs = fixed.2.structs ∧
-                      loopOutput.2.code = fixed.2.code ∧
-                      loopOutput.2.ffi.oracle = fixed.2.ffi.oracle := by
-                    simpa [PanPropsEvalStateFiniteExact.ofPanSemFinite] using hloop
-                  cases hbodyResult : bodyOutput.1 with
-                  | none =>
-                      have hpostLoop : loopOutput.2 = post.toPanSemFinite := by
-                        simpa [entry, bodyOutput, fixed, hbodyResult,
-                          loopOutput, PanSemStateFiniteExact.fixClockHOLFinite] using hpost
-                      rcases hloopFields with ⟨a, b, c, d, e, f, g, h⟩
-                      rcases hfixedFields with ⟨i, j, k, l, m, n, o, p⟩
-                      exact finish loopOutput.2 hpostLoop
-                        ⟨a.trans i, b.trans j, c.trans k, d.trans l,
-                          e.trans m, f.trans n, g.trans o, h.trans p⟩
-                  | some bodyResult =>
-                      cases bodyResult with
-                      | «continue» =>
-                          have hpostLoop : loopOutput.2 = post.toPanSemFinite := by
-                            simpa [entry, bodyOutput, fixed, hbodyResult,
-                              loopOutput, PanSemStateFiniteExact.fixClockHOLFinite] using hpost
-                          rcases hloopFields with ⟨a, b, c, d, e, f, g, h⟩
-                          rcases hfixedFields with ⟨i, j, k, l, m, n, o, p⟩
-                          exact finish loopOutput.2 hpostLoop
-                            ⟨a.trans i, b.trans j, c.trans k, d.trans l,
-                              e.trans m, f.trans n, g.trans o, h.trans p⟩
-                      | «break» =>
-                          have hpostFixed : fixed.2 = post.toPanSemFinite := by
-                            simpa [entry, bodyOutput, fixed, hbodyResult,
-                              PanSemStateFiniteExact.fixClockHOLFinite] using hpost
-                          exact finish fixed.2 hpostFixed hfixedFields
-                      | error | timeOut | returned _ | exception _ _ | finalFfi _ =>
-                          have hpostFixed : fixed.2 = post.toPanSemFinite := by
-                            simpa [entry, bodyOutput, fixed, hbodyResult,
-                              PanSemStateFiniteExact.fixClockHOLFinite] using hpost
-                          exact finish fixed.2 hpostFixed hfixedFields
+  intro e c s ⟨ihCont, ihNone, ihBody⟩ res st hRun
+  change whileInvFields st s
+  -- the pair evaluator is the canonical evaluator through the codec
+  have hpair : ∀ (t : PanPropsEvalStateFiniteExact width σ) (p : ProgHOL width),
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair t p =
+        ((PanSemStateFiniteExact.evaluateHOLFiniteState t.toPanSemFinite p).1,
+          PanPropsEvalStateFiniteExact.ofPanSemFinite
+            (PanSemStateFiniteExact.evaluateHOLFiniteState t.toPanSemFinite p).2) := by
+    intro t p; rfl
+  have hdec :
+      ({ s with clock := s.clock - 1 } : PanPropsEvalStateFiniteExact width σ).toPanSemFinite =
+      PanSemStateFiniteExact.decClockHOLFinite s.toPanSemFinite := rfl
+  have hsame : ∀ (t : PanSemStateFiniteExact width σ),
+      t = s.toPanSemFinite → whileInvFields (PanPropsEvalStateFiniteExact.ofPanSemFinite t) s := by
+    rintro t rfl
+    simp [whileInvFields]
+  rw [hpair] at hRun
+  have hst := (Prod.mk.inj hRun).2.symm
+  rcases hW : PanSemStateFiniteExact.evaluateHOLFiniteState s.toPanSemFinite (.while e c) with
+    ⟨r, t⟩
+  rw [hW] at hst
+  subst hst
+  have hdecFields :
+    whileInvFields ({ s with clock := s.clock - 1 } : PanPropsEvalStateFiniteExact width σ) s := by
+    simp [whileInvFields]
+  rw [PanSemStateFiniteExact.evaluateHOLFiniteState_while_fixClockRewrite] at hW
+  split at hW
+  · rename_i w heval
+    split at hW
+    · rename_i hw
+      split at hW
+      · obtain ⟨_, rfl⟩ := Prod.mk.inj hW
+        simp [whileInvFields, PanPropsEvalStateFiniteExact.ofPanSemFinite,
+          PanPropsEvalStateFiniteExact.toPanSemFinite, PanSemStateFiniteExact.emptyLocalsHOLFinite]
+      · rename_i hclk
+        dsimp only at hW
+        rcases hb : PanSemStateFiniteExact.evaluateHOLFiniteState
+            (PanSemStateFiniteExact.decClockHOLFinite s.toPanSemFinite) c with ⟨br, bt⟩
+        rw [hb] at hW
+        have hbodyRun : PanPropsEvalStateFiniteExact.evaluateHOLFinitePair
+            { s with clock := s.clock - 1 } c =
+              (br, PanPropsEvalStateFiniteExact.ofPanSemFinite bt) := by
+          rw [hpair, hdec, hb]
+        have hbody : whileInvFields (PanPropsEvalStateFiniteExact.ofPanSemFinite bt) s :=
+          whileInvFields_trans (ihBody _ _ w ⟨heval, rfl, rfl, hw, hclk⟩ br _ hbodyRun) hdecFields
+        dsimp only at hW
+        rcases br with _ | br
+        · have hW' : PanSemStateFiniteExact.evaluateHOLFiniteState bt (.while e c) = (r, t) := hW
+          have hloopRun : PanPropsEvalStateFiniteExact.evaluateHOLFinitePair
+              (PanPropsEvalStateFiniteExact.ofPanSemFinite bt) (.while e c) =
+              (r, PanPropsEvalStateFiniteExact.ofPanSemFinite t) := by
+            rw [hpair, PanPropsEvalStateFiniteExact.toPanSemFinite_ofPanSemFinite, hW']
+          exact whileInvFields_trans
+            (ihNone _ _ w none _ ⟨heval, rfl, rfl, hw, hclk, hbodyRun.symm, rfl⟩
+            r _ hloopRun) hbody
+        · cases br with
+          | «continue» =>
+              have hW' :
+                PanSemStateFiniteExact.evaluateHOLFiniteState bt (.while e c) = (r, t) := hW
+              have hloopRun : PanPropsEvalStateFiniteExact.evaluateHOLFinitePair
+                  (PanPropsEvalStateFiniteExact.ofPanSemFinite bt) (.while e c) =
+                  (r, PanPropsEvalStateFiniteExact.ofPanSemFinite t) := by
+                rw [hpair, PanPropsEvalStateFiniteExact.toPanSemFinite_ofPanSemFinite, hW']
+              exact whileInvFields_trans (ihCont _ _ w _ _ .continue
+                ⟨heval, rfl, rfl, hw, hclk, hbodyRun.symm, rfl, rfl⟩ r _ hloopRun) hbody
+          | «break» =>
+              obtain ⟨_, rfl⟩ := Prod.mk.inj hW
+              exact hbody
+          | error | timeOut | returned _ | exception _ _ | finalFfi _ =>
+              obtain ⟨_, rfl⟩ := Prod.mk.inj hW
+              exact hbody
+    · obtain ⟨_, rfl⟩ := Prod.mk.inj hW
+      exact hsame _ rfl
+  · obtain ⟨_, rfl⟩ := Prod.mk.inj hW
+    exact hsame _ rfl
 
 end Flapjack
 
