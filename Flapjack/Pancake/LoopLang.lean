@@ -149,6 +149,17 @@ def loopNestedSeq : List (LoopProg α) → LoopProg α
   | [] => .skip
   | statement :: statements => .seq statement (loopNestedSeq statements)
 
+/-- Exact HOL `nested_seq_def` from `loopLangScript.sml:72` over the
+width-indexed HOL `prog` carrier. This has no extra behavior: the empty list
+becomes `Skip`, and a nonempty list becomes a left-associated-by-head `Seq`
+chain with the recursive tail on the right. -/
+@[hol "cakeml/pancake/loopLangScript.sml" "nested_seq_def"
+  (words_as_type_indexed_bitvec)]
+def loopNestedSeqHOL {width : Nat} [NeZero width] :
+    List (HolLoopProg width) → HolLoopProg width
+  | [] => .skip
+  | statement :: statements => .seq statement (loopNestedSeqHOL statements)
+
 /-! Faithful port of Cake `loop_seqs_def` from
     `cakeml/pancake/pan_passesScript.sml:532`: flatten only `Seq` nodes,
     preserving the left-to-right order of every other Loop statement. -/

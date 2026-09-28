@@ -1283,6 +1283,9 @@ run_probe prog_if_probeScript.sml prog_if_probe.out \
 run_probe crep_to_loop_compile_exp_probeScript.sml crep_to_loop_compile_exp_probe.out \
   base compile_exps \
   "$cake_dir/pancake/crep_to_loopScript.sml"
+run_probe crep_to_loop_compile_probeScript.sml crep_to_loop_compile_probe.out \
+  loop_nested_seq_empty compile_ext_call \
+  "$cake_dir/pancake/crep_to_loopScript.sml"
 run_probe compile_crepop_probeScript.sml compile_crepop_probe.out \
   compile_crepop_mul_riscv compile_crepop_mul_armv7 \
   "$cake_dir/pancake/crep_to_loopScript.sml"
@@ -1686,6 +1689,12 @@ run_probe sptree_set_ops_probeScript.sml sptree_set_ops_probe.out \
   union_keys oel_miss \
   "$cake_dir/compiler/backend/backend_commonScript.sml" \
   "$cake_dir/compiler/backend"
+# Mixed-payload oracle for the heterogeneous HOL sptree$inter used by loopSem
+# cut_state (flapjack-pxgp.2.1): the result keeps the left operand's values.
+run_probe sptree_inter_mixed_probeScript.sml sptree_inter_mixed_probe.out \
+  inter_mixed_keys inter_mixed_disjoint \
+  "$cake_dir/pancake/loop_liveScript.sml" \
+  "$cake_dir/pancake"
 # The num_set/spt probe observes the exact HOL sptree lookup/insert/wf/isEmpty
 # behaviour for the unit-spt carrier used as num_set.
 run_probe num_set_spt_probeScript.sml num_set_spt_probe.out \
