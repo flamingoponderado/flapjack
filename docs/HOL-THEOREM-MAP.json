@@ -12090,7 +12090,7 @@
     "lean_path": "Flapjack/Pancake/LoopLive.lean",
     "lean_name": "sptSize_mkBN",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds5 (source comparison, 2026-09-28; bead flapjack-pxn.18.5.6.29.1.4.1): exact port of HOL loop_liveScript.sml:28-31 size_mk_BN `size (mk_BN t1 t2) = size (BN t1 t2)`; Lean `sptSize (sptMkBN t1 t2) = sptSize t1 + sptSize t2` equals HOL because `size (BN t1 t2)` reduces to `size t1 + size t2`. No width or finite-map fields; no hypotheses."
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-28; bead flapjack-pxn.18.5.6.29.1.4.1): exact port of HOL loop_liveScript.sml:28-31 size_mk_BN `size (mk_BN t1 t2) = size (BN t1 t2)`; Lean `sptSize (sptMkBN t1 t2) = sptSize (.bn t1 t2)` preserves HOL's constructor right-hand side `size (BN t1 t2)` verbatim (the expanded arithmetic form `size t1 + size t2` is only an untagged simp corollary, deliberately not the tagged statement). No width or finite-map fields; no hypotheses."
   },
   {
     "hol_path": "cakeml/pancake/loop_liveScript.sml",
@@ -12099,7 +12099,7 @@
     "lean_path": "Flapjack/Pancake/LoopLive.lean",
     "lean_name": "sptSize_mkBS",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds5 (source comparison, 2026-09-28; bead flapjack-pxn.18.5.6.29.1.4.1): exact port of HOL loop_liveScript.sml:34-36 size_mk_BS `size (mk_BS t1 x t2) = size (BS t1 x t2)`; Lean `sptSize (sptMkBS t1 x t2) = sptSize t1 + sptSize t2 + 1` equals HOL because `size (BS t1 x t2)` reduces to `size t1 + size t2 + 1`. No width or finite-map fields; no hypotheses."
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-28; bead flapjack-pxn.18.5.6.29.1.4.1): exact port of HOL loop_liveScript.sml:34-36 size_mk_BS `size (mk_BS t1 x t2) = size (BS t1 x t2)`; Lean `sptSize (sptMkBS t1 x t2) = sptSize (.bs t1 x t2)` preserves HOL's constructor right-hand side `size (BS t1 x t2)` verbatim (the expanded arithmetic form `size t1 + size t2 + 1` is only an untagged simp corollary, deliberately not the tagged statement). No width or finite-map fields; no hypotheses."
   },
   {
     "hol_path": "cakeml/pancake/loop_liveScript.sml",
@@ -12116,7 +12116,7 @@
     "lean_path": "Flapjack/Misc/Sptree.lean",
     "lean_name": "sptListDelete",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds5 (source comparison, 2026-09-28; bead flapjack-pxn.18.5.6.29.1.2): exact port of HOL backend_commonScript.sml:180-182 list_delete_def: `list_delete [] s = s` and `list_delete (v::vs) s = list_delete vs (delete v s)`, over the exact Spt Unit carrier with sptDelete for the sptree delete step. No word dimension and no finite-map fields, so no qualifier applies; no extra hypotheses. Executable/faithful carrier bridge tracked by flapjack-pxn.18.5.17.1.1."
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-28; bead flapjack-pxn.18.5.6.29.1.2): exact port of HOL backend_commonScript.sml:180-182 list_delete_def: `list_delete [] s = s` and `list_delete (v::vs) s = list_delete vs (delete v s)`, over the reviewed generic carrier `sptListDelete {α : Type} : List Nat → Spt α → Spt α`, matching HOL list_delete's polymorphic `'a num_map` carrier (the `Spt Unit`/NumSet instance is the loop_live use), with sptDelete for the sptree delete step. No word dimension and no finite-map fields, so no qualifier applies; no extra hypotheses. Executable/faithful carrier bridge tracked by flapjack-pxn.18.5.17.1.1."
   },
   {
     "hol_path": "cakeml/compiler/backend/stackLangScript.sml",
