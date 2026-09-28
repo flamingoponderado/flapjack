@@ -303,8 +303,10 @@ import Flapjack.WordSemantics
 import Flapjack.Pancake.LoopLang
 import Flapjack.NatDedup
 import Flapjack.Pancake.CrepToLoop
+import Flapjack.Pancake.CrepToLoop.ContextExact
 import Flapjack.Pancake.CrepToLoop.Optimise
 import Flapjack.Pancake.CrepToLoop.StateRel
+import Flapjack.Test.CrepFindLabParity
 import Flapjack.Pancake.LoopLive
 /- The context-aware Crep-to-Loop correctness file is being updated alongside
    the faithful `findLoopVar` lowering and is intentionally not in this

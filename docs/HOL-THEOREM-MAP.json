@@ -17928,5 +17928,48 @@
     "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect; forwards the imported checked roundtrip; no HOL declaration"
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/asm/asmScript.sml",
+    "hol_name": "architecture",
+    "lean_path": "Flapjack/Compiler/Encoders/Asm.lean",
+    "lean_name": "AsmArchitecture",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-b source comparison (2026-09-28, bead flapjack-pxn.18.5.6.27.1) against asmScript.sml:150-151. Lean has the same six nullary constructors ARMv7, ARMv8, MIPS, RISC_V, Ag32, and x86_64, with only Lean casing changes."
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
+    "hol_name": "context",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/ContextExact.lean",
+    "lean_name": "CrepToLoopContextExact",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "reviewer": "flapjack-luna-b source comparison (2026-09-28, bead flapjack-pxn.18.5.6.27.1) against crep_to_loopScript.sml:11-18 and crepLangScript.sml:19-21. The record preserves field order and types: vars num |-> num; funcs mlstring |-> num # num; vmax num; target asm$architecture. Lean uses HolFiniteMapExact for both finite maps, MlString for the HOL funname key, Nat for num, and the exact AsmArchitecture carrier. The canonical same-module toBroad/ofBroad roundtrip witness is kernel checked. Production LoopContext remains a separate list/String representation.",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs"
+    ]
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
+    "hol_name": "mk_ctxt_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/ContextExact.lean",
+    "lean_name": "mkCtxtExact",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters",
+    "reviewer": "flapjack-luna-b source comparison (2026-09-28, bead flapjack-pxn.18.5.6.27.1) against crep_to_loopScript.sml:221-228. Binder order target, vmap, fs, vmax is preserved; the body assigns vars=vmap, funcs=fs, vmax=vmax, target=target with no extra premise. vmap and fs use HolFiniteMapExact with same-module lookup/finiteSupport toBroad/ofBroad witnesses. Result is the separately reviewed exact context carrier. This does not claim the String/list-backed production context is definitionally identical.",
+    "fmap_as_finite_support_parameters": [
+      "vmap",
+      "fs"
+    ]
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
+    "hol_name": "find_lab_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/ContextExact.lean",
+    "lean_name": "findLabExact",
+    "statement_status": "reviewed_fmap_as_finite_support",
+    "reviewer": "flapjack-luna-b source comparison (2026-09-28, bead flapjack-pxn.18.5.6.27.1) against crep_to_loopScript.sml:27-32. The function looks up the MlString key in context.funcs, returns the first tuple component on SOME, and 0 on NONE, matching HOL find_lab. The direct original HOL rows find_lab_hit=T and find_lab_miss=T are in scripts/hol-probes/crep_to_loop_context_defs_probe.out and are guarded for both production and exact-carrier paths in Flapjack/Test/CrepFindLabParity.lean. This exact helper does not claim production String-key routing.",
+    "fmap_as_finite_support": [
+      "funcs"
+    ]
   }
 ]
