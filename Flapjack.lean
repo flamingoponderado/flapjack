@@ -113,6 +113,7 @@ import Flapjack.Pancake.Semantics.ShMemBytesBridge
 import Flapjack.Pancake.Semantics.LoopProps
 import Flapjack.Pancake.Semantics.LoopSemStateExact
 import Flapjack.Pancake.Semantics.LoopSemStateExact.ShMem
+import Flapjack.Pancake.Semantics.LoopSemStateExact.Evaluate
 import Flapjack.PanObservationalSemantics
 import Flapjack.PanHHandleCallRet
 import Flapjack.PanMrec

@@ -18498,5 +18498,36 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.7): HOL write_bytearray a bs m dm be (wordSemScript.sml:178-184): [] gives m; b::bs gives case mem_store_byte_aux (write_bytearray (a+1w) bs m dm be) dm be a b of SOME m => m | NONE => m, where the NONE branch returns the ORIGINAL outer m; Lean is identical over BitVec width -> WordLocW width memory with dm as a Bool predicate and mem_store_byte_aux as the tagged memStoreByteAuxExact. HOL rows write_empty/write_hit/write_miss of pan_sem_write_bytearray_probe.out (panSem write_bytearray has the same text) are checked by Flapjack.Test.LoopSemPrimopBytesExactParity. (words_as_type_indexed_bitvec) as for loopPrimop."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 278,
+    "lean_path": "Flapjack/Pancake/Semantics/LoopSemStateExact/Evaluate.lean",
+    "lean_name": "evaluate",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.5): HOL loopSem evaluate_def at loopSemScript.sml:278-440 (the fix_clock form; the name is rebound at line 498 to the fix_clock-free REWRITE_RULE, which is not this entry), clause for clause over HolLoopProg and LoopSemStateFiniteExact: Skip, Fail, Assign (eval/set_var), Primitive (get_vars, loop_primop, LENGTH check, set_vars), Arith (loop_arith), Store (eval Word address, lookup, mem_store), SetGlobal (set_globals), Load32/LoadByte (mem_load_32/mem_load_byte_aux, w2w as BitVec.setWidth, set_var), Store32/StoreByte (mem_store_32/mem_store_byte_aux with w2w), Seq (fix_clock, continue on NONE), If (word_cmp over lookup/get_var_imm, cut_res live_out), Mark, Break, Continue, Loop (cut_res live_in, fix_clock body, NONE/Continue 0 re-enter, Break 0 cut_res live_out, otherwise exit_loop), Raise/Return (call_env []), ShMem (eval Word address, is_load then lookup SOME _ else lookup SOME (Word _), sh_mem_op), Tick (clock 0 TimeOut with locals LN, else dec_clock), LocValue (l1 IN domain s.code as isSome lookup, Loc l1 0), Call (get_vars, find_code; tail call: handler<>NONE Error, clock 0 TimeOut, callee on dec_clock with env, NONE/Continue/Break mapped to Error; non-tail: ALL_DISTINCT, cut_res live, fix_clock callee, Result length check and handler/ set_vars on st with s.locals of the CUT state, Exception handler set_var + cut_res live_out, Continue/Break/NONE Error, otherwise res), FFI (lookups of len1/ptr1/len2/ptr2 as Word, cut_state cutset, read_bytearray with mem_load_byte_aux on the cut state, call_FFI (ExtCall ffi_index), FFI_final -> FinalFFI with call_env [], FFI_return -> write_bytearray and new ffi; inner failure returns the cut state, outer failure the original). Presentational differences only: If is written if b then cut_res l (evaluate c1) else cut_res l (evaluate c2) (= apply_ite of HOL's cut_res l (evaluate (if b then c1 else c2, s))); res = NONE / res <> NONE tests are Option patterns; is_load over the memop carrier is crepIsLoadMemOp. Termination uses HOL's own measure, termination_by (s.clock, sizeOf prog) lexicographic. cut_state/cut_res are DS9's tagged exact ports (flapjack-pxgp.2). Direct HOL EVAL rows of loop_sem_evaluate_control_probe.out (19) and loop_sem_evaluate_probe.out (6) are checked by Flapjack.Test.LoopSemEvaluateExactParity. fmap_as_finite_support [globals]: globals is the only |-> field (read by eval via lookup, updated by set_globals); words qualifier as for the other exact loopSem ports."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopSemScript.sml",
+    "hol_name": "evaluate_clock",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopSemStateExact/Evaluate.lean",
+    "lean_name": "evaluate_clock",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.8): HOL evaluate_clock (loopSemScript.sml:458-460) `!xs s1 vs s2. (evaluate (xs,s1) = (vs,s2)) ==> s2.clock <= s1.clock`; Lean binds the same four variables with the equation as the premise and the same conclusion over the tagged exact evaluate. Proved by well-founded induction on HOL's (clock, prog size) measure."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopSemScript.sml",
+    "hol_name": "fix_clock_evaluate",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopSemStateExact/Evaluate.lean",
+    "lean_name": "fix_clock_evaluate",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.8): HOL fix_clock_evaluate (loopSemScript.sml:488-490) `fix_clock s (evaluate (c1,s)) = evaluate (c1,s)`; Lean states the same equation over the tagged fixClock and exact evaluate, free variables c1 and s."
   }
 ]
