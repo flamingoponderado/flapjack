@@ -11487,6 +11487,62 @@
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Call.lean",
+    "lean_name": "crepNestedCallTarget",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus: Target run of nested_decs rts (zeros) (Call ...) via the tagged eval_nested_decs_seq_res_var_eq and opt_mmap_eval_distinct_lists_not_affect, as used inline in the standalone Ret arms of HOL pc_compile_correct[Call]. Untagged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Call.lean",
+    "lean_name": "panToCrepStateRelFiniteExact_emptyLocals_of_sameExceptLocals",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus: state_rel transfers to a target state differing only in locals (part of HOL rels_empty reasoning). Untagged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Call.lean",
+    "lean_name": "pcCompileCorrectCallRetTerminalTarget",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus: For Call (SOME _) and a terminal callee target outcome (TimeOut/FinalFFI), every compiled arm propagates it, with a post-state equal to the callee's up to locals. Untagged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Call.lean",
+    "lean_name": "pcCompileCorrectCallRetSlotsDistinct",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus: The standalone return slots vmax+SUC x are disjoint from compiled argument variables (HOL mem_genlist_add_suc_val/MEM_compile_exp_vmax inline). Untagged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Call.lean",
+    "lean_name": "pcCompileCorrectAt_callRetTerminal",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus: HOL pc_compile_correct[Call_Ret_TimeOut]/[Call_Ret_FinalFFI] (pan_to_crepProofScript.sml:3232-3310, 3918-4231): the caltyp = SOME _, positive-clock sub-case against pcCompileCorrectAt, with the callee's source outcome TimeOut or FinalFFI as the case-split hypothesis, the rebound evaluate_ind Call IHs, and no target premise. Untagged sub-case (beads flapjack-pxn.18.4.3.94.7/.94.10). Untagged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Call.lean",
+    "lean_name": "compileCallSomeShape",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus: Shape of the exact compile_def output for Call (SOME (dest, hdl)): plain Call ri or nested_decs-wrapped Call, with distinct return names. HOL obtains this by TOP_CASE_TAC over compile_def inline. Untagged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Call.lean",
+    "lean_name": "crepCallTarget",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-opus: Target run of a Crep Call from the tagged line-443 Crep Call clause, as crepCallAfterBody of the dec-clocked callee run (HOL fs [evaluate_def] inline in each Call sub-case). Untagged."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Call.lean",
     "lean_name": "codeRelExactHOLW_ctxtFc",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "flapjack-opus (bead flapjack-pxn.18.4.3.94.6): code_rel under ctxt_fc ctxt.funcs ctxt.eids ... equals code_rel under ctxt (part of HOL's rels_empty_tac; ctxt_fc_def keeps funcs/eids); there is no standalone HOL declaration. Untagged."
