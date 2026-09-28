@@ -513,20 +513,23 @@ private theorem loadGlobalsHOL_zero_eq_range {width : Nat} [NeZero width]
 /-- FLAPJACK-SPECIFIC provisional rendering (no `@[hol]` tag), withdrawn
     2026-09-27 (bead flapjack-64k0, PR #1166 review item 2). The conclusion is
     over `evalCrepSemHOLProgExact`, the no-decider classical wrapper around the
-    re-implemented evaluator `evalCrepSemHOLProg` whose full clause set is not
-    yet source-reviewed against `evaluate_def`. As with the general
-    nested-declaration equation it depends on, the theorem quantifies over an
-    arbitrary continuation `body`, so its exactness depends on that still-open
-    full clause review. Concrete gaps: the recursive clauses thread the
-    base-state decisions through `crepStampExactDomains`, whose reachability
-    for the derived states is unreviewed; the byte-store clause still routes
-    through the legacy `UInt8` helpers. The finite-map qualifier's
-    owner/witness placement is now resolved by the same-module canonical
-    witness `EvalNestedDecsFiniteSupport.holFmapAsFiniteSupportWitness` above
+    re-implemented evaluator `evalCrepSemHOLProg`. The concrete gaps cited at
+    withdrawal are now closed: the whole-program evaluator is source-reviewed
+    and tagged as `evalCrepSemHOLProgExact_eq_evaluate_def`
+    (`crepSemScript.sml:443`), so the arbitrary-continuation `body` premise no
+    longer rests on an open clause review; the `crepStampExactDomains`
+    reachability for the derived states is established by
+    `crepStampExactDomains_eq_self` / `evalCrepSemHOLProg_preserves_domains`
+    (bead `flapjack-4ac.5.16.5.32`); and the byte-store path uses the exact
+    `word8` helpers bridged by `crepExactMemStoreByte_eq_word8`
+    (`panMemStoreByteHOL_eq_word8`, bead `flapjack-4ac.5.16.5.18`). The
+    finite-map qualifier's owner/witness placement is resolved by the
+    same-module canonical witness
+    `EvalNestedDecsFiniteSupport.holFmapAsFiniteSupportWitness` above
     (bead `flapjack-4ac.5.16.5.13.1`, closed). HOL
     candidate: `evaluate_nested_decs_load_globals`
-    (`pan_to_crepProofScript.sml:4139-4176`). Faithful port tracked by
-    `flapjack-4ac.5.16.5`. -/
+    (`pan_to_crepProofScript.sml:4139-4176`). This Flapjack-shaped declaration
+    still carries no `@[hol]` tag; restoring a tag is a separate review. -/
 theorem evaluateNestedDecsLoadGlobalsCrepHOL {width : Nat} [NeZero width]
     {σ : Type} (state : CrepSemHOLState width σ) (value : ValueHOL width)
     (values : List (HolWordLab width)) (names : List Nat)

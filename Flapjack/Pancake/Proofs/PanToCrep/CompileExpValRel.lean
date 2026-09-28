@@ -483,7 +483,8 @@ theorem compileExpValRelHOL_rstruct {width : Nat} {σ : Type} [NeZero width]
     the HOL theorem's `localised_exp`, `code_rel` and `locals_rel` hypotheses
     are unnecessary in this leaf proof (only `state_rel` is used, to equate the
     base addresses), so the statement keeps just `state_rel`; the full
-    `compile_exp_val_rel` theorem remains open (bead flapjack-4ac.5.81). -/
+    `compile_exp_val_rel` theorem is tagged as
+    `compileExpValRelHOL` (bead `flapjack-4ac.5.81.14`). -/
 theorem compileExpValRelHOL_baseAddr {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) [_hs : DecidablePred state.memaddrs]
     (context : PanToCrepContextExact width)
@@ -520,8 +521,8 @@ theorem compileExpValRelHOL_baseAddr {width : Nat} {σ : Type} [NeZero width]
     `compileExpValRelHOL_baseAddr`. It is not a standalone HOL declaration: the
     HOL theorem's `localised_exp`, `code_rel` and `locals_rel` hypotheses are
     unnecessary in this leaf proof (only `state_rel` is used, to equate the top
-    addresses); the full `compile_exp_val_rel` theorem remains open (bead
-    flapjack-4ac.5.81). -/
+    addresses); the full `compile_exp_val_rel` theorem is tagged as
+    `compileExpValRelHOL` (bead `flapjack-4ac.5.81.14`). -/
 theorem compileExpValRelHOL_topAddr {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) [_hs : DecidablePred state.memaddrs]
     (context : PanToCrepContextExact width)
@@ -559,7 +560,8 @@ theorem compileExpValRelHOL_topAddr {width : Nat} {σ : Type} [NeZero width]
     declaration: the HOL theorem's `localised_exp`, `code_rel`, `locals_rel`
     (and even `state_rel`) hypotheses are unnecessary here because the witness
     is the constant `bytesInWord` on both sides; the full
-    `compile_exp_val_rel` theorem remains open (bead flapjack-4ac.5.81). -/
+    `compile_exp_val_rel` theorem is tagged as
+    `compileExpValRelHOL` (bead `flapjack-4ac.5.81.14`). -/
 theorem compileExpValRelHOL_bytesInWord {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) [_hs : DecidablePred state.memaddrs]
     (context : PanToCrepContextExact width)
@@ -728,8 +730,8 @@ private theorem compFieldHOL_slice
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:187-214`). It is not a
     standalone HOL declaration: it consumes the induction hypothesis `hsub` for
     the sub-expression (the relation at the sub-expression only) and otherwise
-    proves the leaf directly; the full `compile_exp_val_rel` theorem remains
-    open (bead flapjack-4ac.5.81). -/
+    proves the leaf directly; the full `compile_exp_val_rel` theorem is tagged
+    as `compileExpValRelHOL` (bead `flapjack-4ac.5.81.14`). -/
 theorem compileExpValRelHOL_rfield {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) [_hs : DecidablePred state.memaddrs]
     (context : PanToCrepContextExact width)
@@ -810,7 +812,8 @@ theorem compileExpValRelHOL_rfield {width : Nat} {σ : Type} [NeZero width]
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml`). This is a
     Flapjack-specific staged constructor lemma: it consumes the induction
     hypothesis `hsub` for the sub-expression and proves the leaf directly; the
-    full `compile_exp_val_rel` theorem remains open (bead flapjack-4ac.5.81). -/
+    full `compile_exp_val_rel` theorem is tagged as
+    `compileExpValRelHOL` (bead `flapjack-4ac.5.81.14`). -/
 theorem compileExpValRelHOL_load32 {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) [_hs : DecidablePred state.memaddrs]
     (context : PanToCrepContextExact width)
@@ -920,7 +923,8 @@ theorem compileExpValRelHOL_load32 {width : Nat} {σ : Type} [NeZero width]
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml`). This is a
     Flapjack-specific staged constructor lemma: it consumes the induction
     hypothesis `hsub` for the sub-expression and proves the leaf directly; the
-    full `compile_exp_val_rel` theorem remains open (bead flapjack-4ac.5.81). -/
+    full `compile_exp_val_rel` theorem is tagged as
+    `compileExpValRelHOL` (bead `flapjack-4ac.5.81.14`). -/
 theorem compileExpValRelHOL_loadByte {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) [_hs : DecidablePred state.memaddrs]
     (context : PanToCrepContextExact width)
@@ -1208,8 +1212,8 @@ theorem compileExpValRelHOL_load {width : Nat} {σ : Type} [NeZero width]
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml`). This is a
     Flapjack-specific staged constructor lemma: it consumes the induction
     hypotheses `hleft`/`hright` for the two sub-expressions and proves the leaf
-    directly; the full `compile_exp_val_rel` theorem remains open (bead
-    flapjack-4ac.5.81). -/
+    directly; the full `compile_exp_val_rel` theorem is tagged as
+    `compileExpValRelHOL` (bead `flapjack-4ac.5.81.14`). -/
 theorem compileExpValRelHOL_cmp {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) [_hs : DecidablePred state.memaddrs]
     (context : PanToCrepContextExact width)
@@ -1363,8 +1367,8 @@ theorem compileExpValRelHOL_cmp {width : Nat} {σ : Type} [NeZero width]
     (`cakeml/pancake/proofs/pan_to_crepProofScript.sml`). This is a
     Flapjack-specific staged constructor lemma: it consumes the induction
     hypotheses `hleft`/`hright` for the two sub-expressions and proves the leaf
-    directly; the full `compile_exp_val_rel` theorem remains open (bead
-    flapjack-4ac.5.81). -/
+    directly; the full `compile_exp_val_rel` theorem is tagged as
+    `compileExpValRelHOL` (bead `flapjack-4ac.5.81.14`). -/
 theorem compileExpValRelHOL_shift {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) [_hs : DecidablePred state.memaddrs]
     (context : PanToCrepContextExact width)
