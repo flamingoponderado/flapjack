@@ -19,7 +19,10 @@ open Classical
 
 variable {width : Nat} [NeZero width] {ffiState : Type}
 
-/-- Flapjack-only projection of the exact Crep `eval_def` Op clause. -/
+/-- Flapjack-only projection of the exact Crep `eval_def` Op clause. The
+    namespace-local classical instance supplies `DecidablePred state.memaddrs`
+    when elaborating the evaluator call; it is not a proposition premise in
+    this theorem's interface and changes neither the evaluator nor production. -/
 theorem evalCrepSemHOLExp_op_clause (state : CrepSemHOLState width ffiState)
     (operator : BinOp)
     (expressions : List (CrepExpHOL width)) (values : List (BitVec width))

@@ -325,7 +325,14 @@ expression evaluation reads `locals` and `globals`, while `code` remains
 present in the quantified HOL state even though this definition does not read
 it.  The positive-width `BitVec` model represents HOL's
 nonempty finite word dimension.  `HolWordLab` has only `Word`, so HOL's
-`EVERY isWord` guard is always true for values produced here. -/
+`EVERY isWord` guard is always true for values produced here. Since
+`memaddrs` is a Lean `Prop`-valued set, direct computation of this definition
+uses the implicit `DecidablePred` dictionary; HOL has no such premise. Exact
+proof interfaces should supply `Classical.propDecidable` locally, as
+`CrepToLoop.Proofs.CompExpPreservesEval.evalCrepSemHOLExp_op_clause` does,
+rather than expose the dictionary as an assumption. This exact evaluator is
+proof-side infrastructure; no production routing or executable parity claim
+follows from it. -/
 @[hol "cakeml/pancake/semantics/crepSemScript.sml" "eval_def"
   (fmap_as_finite_support := [locals, globals, code])
   (words_as_type_indexed_bitvec)]
