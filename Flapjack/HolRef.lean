@@ -199,7 +199,7 @@ structure HolRef where
   wordsAsTypeIndexedBitvec : Bool := false
   deriving Inhabited, Repr, BEq
 
-open Lean
+open Lean Meta
 
 declare_syntax_cat holQualifier
 syntax "(" "list_as_array" ":=" "[" ident,+ "]" ")" : holQualifier
@@ -319,70 +319,107 @@ private partial def natValue? (e : Expr) : Option Nat :=
         | none => none
     | _ => none
 
-private def neZeroRef? (e : Expr) : Option Expr :=
+private def neZeroArg? (e : Expr) : Option Expr :=
   match e.getAppFn with
   | .const ``NeZero _ => e.getAppArgs.back?
   | _ => none
-
-private partial def telescope (e : Expr) (acc : Array Expr) : Array Expr × Expr :=
-  match e with
-  | .forallE _ dom body _ => telescope body (acc.push dom)
-  | body => (acc, body)
 
 private def stripMdata : Expr → Expr
   | .mdata _ b => stripMdata b
   | e => e
 
-private partial def wordDims (e : Expr) (depth : Nat) (acc : Array (Expr × Nat)) : Array (Expr × Nat) :=
+private def isNatBinder (e : Expr) : Bool :=
+  stripMdata e == (.const ``Nat [])
+
+/-- Every `NeZero` instance must discharge a local width variable; a literal or
+    a compound expression is not a valid positivity discharge. -/
+private def neZeroProblem (arg : Expr) : Option String :=
+  match stripMdata arg with
+  | .bvar _ => none
+  | _ =>
+      some "NeZero must discharge a local width variable, not a literal or \
+        compound dimension"
+
+/-- Problems with one word dimension. `ctx` is the current local binder context,
+    innermost last, so a `.bvar k` refers to `ctx[ctx.size - 1 - k]`. A `NeZero`
+    binder at `ctx[i]` with argument `.bvar j` refers to `ctx[i - 1 - j]`; the
+    width binder and its discharge are matched in that same de Bruijn context. -/
+private def dimensionProblem (dim : Expr) (ctx : Array Expr) :
+    MetaM (Option String) := do
+  let dim ← if dim.hasLooseBVars then pure dim
+    else withTransparency .reducible (whnf dim)
+  match natValue? dim with
+  | some 0 => return some "word dimension is the literal 0"
+  | some _ => return none
+  | none =>
+    match dim with
+    | .bvar k =>
+        if k < ctx.size then
+          let idx := ctx.size - 1 - k
+          if isNatBinder ctx[idx]! then
+            let hasNeZero := (List.range ctx.size).any (fun i =>
+              match neZeroArg? ctx[i]! with
+              | some (.bvar j) => j < i && i - 1 - j == idx
+              | _ => false)
+            if hasNeZero then return none
+            else return some s!"word dimension bvar {k} has no NeZero binder"
+          else
+            return some s!"word dimension bvar {k} is not bound at Nat"
+        else
+          return some s!"word dimension bvar {k} is out of range"
+    | _ =>
+        return some "word dimension is neither a nonzero literal nor a local \
+          width identifier"
+
+private partial def widthProblemsGo (e : Expr) (ctx : Array Expr)
+    (acc : Array String) : MetaM (Array String) := do
   match e with
-  | .app fn arg =>
-      let acc := wordDims fn depth acc
-      let acc := wordDims arg depth acc
-      match fn.getAppFn with
-      | .const ``BitVec _ => acc.push (arg, depth)
-      | _ => acc
+  | .mdata _ b => widthProblemsGo b ctx acc
   | .forallE _ dom body _ =>
-      wordDims body (depth + 1) (wordDims dom depth acc)
+      let acc ← widthProblemsGo dom ctx acc
+      widthProblemsGo body (ctx.push dom) acc
   | .lam _ dom body _ =>
-      wordDims body (depth + 1) (wordDims dom depth acc)
+      let acc ← widthProblemsGo dom ctx acc
+      widthProblemsGo body (ctx.push dom) acc
   | .letE _ ty val body _ =>
-      wordDims body (depth + 1) (wordDims val depth (wordDims ty depth acc))
-  | .mdata _ b => wordDims b depth acc
-  | .proj _ _ b => wordDims b depth acc
-  | _ => acc
+      let acc ← widthProblemsGo ty ctx acc
+      let acc ← widthProblemsGo val ctx acc
+      widthProblemsGo body (ctx.push ty) acc
+  | .app _ _ =>
+      match e.getAppFn with
+      | .const ``BitVec _ =>
+          let dim := e.getAppArgs.back!
+          let acc := match ← dimensionProblem dim ctx with
+            | some msg => acc.push msg
+            | none => acc
+          let mut acc := acc
+          for arg in e.getAppArgs do acc ← widthProblemsGo arg ctx acc
+          return acc
+      | .const ``NeZero _ =>
+          let acc := match neZeroProblem e.getAppArgs.back! with
+            | some msg => acc.push msg
+            | none => acc
+          let mut acc := acc
+          for arg in e.getAppArgs do acc ← widthProblemsGo arg ctx acc
+          return acc
+      | _ =>
+          if e.hasLooseBVars then
+            let mut acc := acc
+            for arg in e.getAppArgs do acc ← widthProblemsGo arg ctx acc
+            return acc
+          else
+            let unfolded ← withTransparency .reducible (whnf e)
+            if unfolded != e then
+              widthProblemsGo unfolded ctx acc
+            else
+              let mut acc := acc
+              for arg in e.getAppArgs do acc ← widthProblemsGo arg ctx acc
+              return acc
+  | _ => return acc
 
 /-- Problems with the width dimensions of an elaborated declaration type. -/
-private def widthProblems (type : Expr) : Array String := Id.run do
-  let (doms, _) := telescope type #[]
-  let mut out : Array String := #[]
-  for (w, d) in wordDims type 0 #[] do
-    match natValue? w with
-    | some 0 => out := out.push "word dimension is the literal 0"
-    | some _ => pure ()
-    | none =>
-      match w with
-      | .bvar k =>
-          if k < d then
-            let level := d - 1 - k
-            match doms[level]? with
-            | none => out := out.push s!"word dimension bvar {k} is out of telescope range"
-            | some dom =>
-                if stripMdata dom == (.const ``Nat []) then
-                  let hasNeZero := (List.range doms.size).any (fun i =>
-                    match doms[i]? with
-                    | none => false
-                    | some di =>
-                        match neZeroRef? di with
-                        | some (.bvar k2) => k2 < i && i - 1 - k2 == level
-                        | _ => false)
-                  if !hasNeZero then
-                    out := out.push s!"word dimension bvar {k} has no NeZero binder"
-                else
-                  out := out.push s!"word dimension bvar {k} is not bound at Nat"
-          else
-            out := out.push s!"word dimension bvar {k} is out of range"
-      | _ => out := out.push "word dimension is neither a nonzero literal nor a local width identifier"
-  return out
+private def widthProblems (type : Expr) : MetaM (Array String) :=
+  widthProblemsGo type #[] #[]
 
 initialize holRefAttribute : ParametricAttribute HolRef ←
   registerParametricAttribute {
@@ -394,7 +431,8 @@ initialize holRefAttribute : ParametricAttribute HolRef ←
         let env ← getEnv
         match env.find? decl with
         | some info =>
-            for problem in widthProblems info.type do
+            let problems ← (widthProblems info.type).run'
+            for problem in problems do
               logError m!"{decl}: (words_as_type_indexed_bitvec) {problem}"
         | none => pure ()
   }
@@ -529,6 +567,25 @@ run_cmd do
       HolRef.qualifierSuffix fmapRelationParameterRef ==
         " (fmap_as_finite_support_relation := [PanToCrepContextExact.vars, sourceLocals, targetLocals])" do
     throwError "@[hol] fmap_as_finite_support_relation bare-parameter syntax regression"
+  let widthProblemsOf (stx : Syntax) : Lean.Elab.Command.CommandElabM (Array String) := do
+    let type ← Lean.Elab.Command.liftTermElabM (Lean.Elab.Term.elabType stx)
+    Lean.Elab.Command.liftCoreM (widthProblems type).run'
+  let hasNeZero (message : String) : Bool := (message.splitOn "NeZero").length > 1
+  let validWidth ← widthProblemsOf (← `(∀ {w : Nat} [NeZero w], BitVec w → True))
+  unless validWidth.isEmpty do
+    throwError "valid width binder was rejected: {validWidth}"
+  let nestedWidth ← widthProblemsOf (← `((∀ {w : Nat} [NeZero w], BitVec w) → True))
+  unless nestedWidth.isEmpty do
+    throwError "nested width binder was rejected: {nestedWidth}"
+  let literalWidth ← widthProblemsOf (← `(∀ [NeZero 5], BitVec 5 → True))
+  unless literalWidth.any hasNeZero do
+    throwError "literal NeZero argument was accepted: {literalWidth}"
+  let compoundWidth ← widthProblemsOf (← `(∀ {w : Nat} [NeZero (w - w)], BitVec w → True))
+  unless compoundWidth.any hasNeZero do
+    throwError "compound NeZero argument was accepted: {compoundWidth}"
+  let missingWidth ← widthProblemsOf (← `((u : Unit) → (m : Nat) → BitVec m → True))
+  unless missingWidth.any hasNeZero do
+    throwError "undischarged nested width was accepted: {missingWidth}"
 
 /-- The HOL cross-reference attached to `declName`, if any. -/
 def HolRef.get? (env : Environment) (declName : Name) : Option HolRef :=
