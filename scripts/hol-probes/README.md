@@ -739,10 +739,13 @@ post-state equation. Refresh with
 the decoder installed by the exact shared-memory loads
 (`cakeml/pancake/semantics/panSemScript.sml:517,524` and `crepSemScript.sml` as
 `word_of_bytes F 0w new_bytes`) for FFI-returned lists longer than one word.  The
-rows show that the first byte of each residue wins, so overlong lists keep
-exactly the first `dimindex DIV 8` bytes and the trailing bytes are discarded
+rows show that the first byte of each residue wins, so at widths at least 8
+overlong lists keep exactly the first `dimindex DIV 8` bytes and discard the
+trailing bytes
 (`w8_overlong_three=1w`, `w16_overlong_three=513w`, `w64_overlong_ten=
-0x807060504030201w`).  This is the source oracle for the untagged Lean bridge
+0x807060504030201w`). The `w1`/`w7` rows also pin the sub-byte edge where
+`dimindex DIV 8 = 0`: the initial address-zero write retains the available low
+bits of the first byte. This is the source oracle for the untagged Lean bridge
 `Flapjack.Pancake.Semantics.ShMemBytesBridge` and its `decide` regression
 instances (`panWordOfBytesHOL false 0 bs = crepClockWordOfBytes
 (bs.map UInt8.ofBitVec)`).  It is rooted at the separate HOL checkout (like
