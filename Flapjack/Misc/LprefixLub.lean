@@ -321,6 +321,58 @@ theorem lprefix_antisym {a b : HolLList α} (hab : lprefix a b) (hba : lprefix b
   subst hrep
   exact congrArg (fun o => (⟨ra, o⟩ : HolLList α)) (Subsingleton.elim oka okb)
 
+/-- HOL `lprefix_chain_LNTHs_agree` (`lprefix_lubScript.sml:182-187`): on a chain,
+    any two members defined at `n` carry the same value there. -/
+theorem lprefixChain_LNTHs_agree {ls : HolLList α → Prop} (hchain : lprefixChain ls)
+    {l1 l2 : HolLList α} (h1 : ls l1) (h2 : ls l2) {n : Nat} {x1 x2 : α}
+    (hx1 : lnth n l1 = some x1) (hx2 : lnth n l2 = some x2) : x1 = x2 := by
+  rcases hchain l1 l2 h1 h2 with h | h
+  · rw [lprefix_lnth h hx1] at hx2
+    exact Option.some.inj hx2
+  · rw [lprefix_lnth h hx2] at hx1
+    exact (Option.some.inj hx1).symm
+
+/-- HOL `exists_lprefix_chain_nth` (`lprefix_lubScript.sml:205-208`): on a chain,
+    if a member has value `x` at `n`, `lprefixChainNth` returns `x`. -/
+theorem exists_lprefixChainNth {ls : HolLList α → Prop} (hchain : lprefixChain ls)
+    {n : Nat} {x : α} (hx : ∃ l, ls l ∧ lnth n l = some x) :
+    lprefixChainNth n ls = some x := by
+  obtain ⟨l0, hl0, hl0n⟩ := hx
+  apply holOptionSome_eq_some
+  · exact ⟨l0, hl0, hl0n⟩
+  · intro y hy
+    obtain ⟨l, hl, hln⟩ := hy
+    exact lprefixChain_LNTHs_agree hchain hl hl0 hln hl0n
+
+/-- On a chain the `lunfold` index underlying `build_lprefix_lub` advances by
+    exactly one, so its step stays at `buildLprefixLubF`. -/
+theorem lunfoldStep_buildLprefixLubF {ls : HolLList α → Prop} (hchain : lprefixChain ls) :
+    ∀ k : Nat, lunfoldStep (buildLprefixLubF ls) 0 k = buildLprefixLubF ls k := by
+  intro k
+  induction k with
+  | zero => rfl
+  | succ k ih =>
+      simp only [lunfoldStep]
+      rw [ih]
+      cases hk : lprefixChainNth k ls with
+      | none =>
+          have hk1 : lprefixChainNth (k + 1) ls = none :=
+            lprefixChainNth_none_mono hchain (Nat.le_succ k) hk
+          simp [buildLprefixLubF, hk, hk1]
+      | some x =>
+          simp [buildLprefixLubF, hk]
+
+/-- HOL `build_lprefix_lub_lem` (`lprefix_lubScript.sml:440-445`): on a chain,
+    `buildLprefixLub` reads back exactly `lprefixChainNth` at every index. -/
+theorem lnth_buildLprefixLub {ls : HolLList α → Prop} (hchain : lprefixChain ls) (k : Nat) :
+    lnth k (buildLprefixLub ls) = lprefixChainNth k ls := by
+  rw [lnth_eq_rep, buildLprefixLub]
+  change (lunfoldStep (buildLprefixLubF ls) 0 k).map Prod.snd = lprefixChainNth k ls
+  rw [lunfoldStep_buildLprefixLubF hchain k]
+  cases hk : lprefixChainNth k ls with
+  | none => simp [buildLprefixLubF, hk]
+  | some x => simp [buildLprefixLubF, hk]
+
 end HolLList
 
 end Flapjack
