@@ -12084,6 +12084,22 @@
     "reviewer": "Codex (source comparison; HOL panPropsScript.sml:171 states !v. is_wf_shape_nil (shape_of v) ==> LENGTH (flatten v) = size_of_shape (shape_of v). Lean renders is_wf_shape_nil as isWfShapeExactHOL [] over the exact ShapeHOL/StructContextExact carriers, flatten as flattenHOL, shape_of as shapeOfHOLExact and size_of_shape as sizeOfShapeHOL; oracle rows lfs_val/lfs_two/lfs_nested/lfs_val_len/lfs_nested_len/lfs_wf_nested in scripts/hol-probes/pan_props_length_flatten_probe.out, reproduced by Flapjack/Test/PanPropsShapeResVarParity.lean)."
   },
   {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "list_rel_length_shape_of_flatten_better",
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/ListRelFlatten.lean",
+    "lean_name": "listRelLengthShapeOfFlattenBetterHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (2026-09-28; panPropsScript.sml:244-253, [local]): HOL !vshs args. LIST_REL (λvsh arg. vsh = shape_of arg) vshs args /\\ EVERY is_wf_shape_v_nil args ==> size_of_shape (Comb vshs) = LENGTH (FLAT (MAP flatten args)). LIST_REL is the exact inductive ListRel, EVERY is_wf_shape_v_nil is membership over isWfShapeValueHOLExact [], and shape_of/flatten/size_of_shape/Comb are the tagged shapeOfHOLExact/flattenHOL/sizeOfShapeHOL/ShapeHOL.comb over ValueHOL width ([NeZero width] as in the sibling length_flatten_eq_size_of_shape). The single conjunctive premise and the ∀-binder order vshs args follow HOL; there are no extra premises. Bead flapjack-pxn.18.4.3.94.1."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "list_rel_length_shape_of_flatten",
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/ListRelFlatten.lean",
+    "lean_name": "listRelLengthShapeOfFlattenHOL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (2026-09-28; panPropsScript.sml:256-262): HOL !vshs args. LIST_REL (λvsh arg. SND vsh = shape_of arg) vshs args /\\ EVERY is_wf_shape_v_nil args ==> size_of_shape (Comb (MAP SND vshs)) = LENGTH (FLAT (MAP flatten args)); SND is Prod.snd and MAP SND is List.map Prod.snd. LIST_REL is the exact inductive ListRel, EVERY is_wf_shape_v_nil is membership over isWfShapeValueHOLExact [], and shape_of/flatten/size_of_shape/Comb are the tagged shapeOfHOLExact/flattenHOL/sizeOfShapeHOL/ShapeHOL.comb over ValueHOL width ([NeZero width] as in the sibling length_flatten_eq_size_of_shape). The single conjunctive premise and the ∀-binder order vshs args follow HOL; there are no extra premises. Bead flapjack-pxn.18.4.3.94.1."
+  },
+  {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
     "hol_name": "is_wf_shape_nil_length_flatten",
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep.lean",
