@@ -639,6 +639,17 @@ The exact-carrier Lean counterparts are `Flapjack.CrepToLoop.crepToLoopLocalsRel
 (tagged `locals_rel_def`) with the kernel-checked examples in
 `Flapjack.Test.CrepToLoopParity`.
 
+The same probe also records cut-set rows for
+`crep_to_loopProofScript.sml:236-244` `locals_rel_cutset_prop`: `lBig` / `tBig`
+extend the fixture set / target map with an extra member (`cutset_set_lookup`,
+`cutset_target_lookup`), and the direct kernel-decided rows
+`locals_rel_cutset_second_true=T` (the strengthened second relation) and
+`locals_rel_cutset_after_true=T` (the relation restricted to the smaller
+cut-set) pin the HOL conclusion shape. The exact-carrier counterpart is the
+tagged `Flapjack.CrepToLoop.crepToLoopLocalsRelExact_cutset_prop`, whose
+`subspt` premise is rendered by `Flapjack.sptSubspt` (see
+`Flapjack/Misc/Sptree.lean`).
+
 `pan_globals_mem_functions_probe.out` records direct HOL EVAL of the
 `panLang$functions` projection and the membership instance characterized by the
 local theorem `MEM_functions` at

@@ -160,6 +160,23 @@ def loopNestedSeqHOL {width : Nat} [NeZero width] :
   | [] => .skip
   | statement :: statements => .seq statement (loopNestedSeqHOL statements)
 
+/-- Exact HOL `locals_touched_def` (`loopLangScript.sml:77-85`) over the
+width-indexed HOL `exp` carrier: the local variables read by an expression.
+`FLAT (MAP locals_touched wexps)` is rendered through `List.attach` so the
+recursion is well-founded; `List.attach_map_val` identifies it with the plain
+`map`. -/
+@[hol "cakeml/pancake/loopLangScript.sml" "locals_touched_def"
+  (words_as_type_indexed_bitvec)]
+def holLoopLocalsTouched {width : Nat} [NeZero width] : HolLoopExp width → List Nat
+  | .const _ => []
+  | .var v => [v]
+  | .lookup _ => []
+  | .load addr => holLoopLocalsTouched addr
+  | .op _ wexps => (wexps.attach.map fun ⟨e, _⟩ => holLoopLocalsTouched e).flatten
+  | .shift _ wexp1 wexp2 => holLoopLocalsTouched wexp1 ++ holLoopLocalsTouched wexp2
+  | .baseAddr => []
+  | .topAddr => []
+
 /-! Faithful port of Cake `loop_seqs_def` from
     `cakeml/pancake/pan_passesScript.sml:532`: flatten only `Seq` nodes,
     preserving the left-to-right order of every other Loop statement. -/

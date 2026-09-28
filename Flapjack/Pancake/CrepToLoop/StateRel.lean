@@ -546,6 +546,37 @@ theorem crepToLoopLocalsRelExact_intro {width : Nat} [NeZero width]
         sptLookup n tLocals = some (wlabWlocHOL value) :=
   (crepToLoopLocalsRelExact_iff ctxt l sLocals tLocals).mp h
 
+/-- Exact port of HOL `crep_to_loop$locals_rel_cutset_prop`
+    (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:236-244`):
+    `locals_rel ct cset lcl lcl' /\ locals_rel ct cset' lcl lcl'' /\
+    subspt cset cset' ==> locals_rel ct cset lcl lcl''`. The HOL `subspt`
+    premise is rendered by the untagged `sptSubspt` (HOL `subspt_def`); the
+    `distinct_vars`/`ctxt_max` conjuncts are inherited from the first relation,
+    the `num_set`-domain conjunct follows from `sptSubspt` and the second
+    relation, and the per-name lookup conjunct from the second relation plus the
+    uniqueness of `FLOOKUP ct.vars vname`. -/
+@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "locals_rel_cutset_prop"
+  (fmap_as_finite_support := [vars])
+  (words_as_type_indexed_bitvec)]
+theorem crepToLoopLocalsRelExact_cutset_prop {width : Nat} [NeZero width]
+    (ctxt : CrepToLoopContextExact)
+    (cset cset' : NumSet)
+    (lcl : HolFiniteMapExact Nat (HolWordLab width))
+    (lcl' lcl'' : Spt (WordLocW width))
+    (h1 : crepToLoopLocalsRelExact ctxt cset lcl lcl')
+    (h2 : crepToLoopLocalsRelExact ctxt cset' lcl lcl'')
+    (hsub : sptSubspt cset cset') :
+    crepToLoopLocalsRelExact ctxt cset lcl lcl'' := by
+  refine ⟨h1.1, h1.2.1, ?_, ?_⟩
+  · intro n hn
+    exact h2.2.2.1 n (hsub n hn).1
+  · intro vname value hv
+    obtain ⟨n', hvar', hmem', hn'⟩ := h2.2.2.2 vname value hv
+    obtain ⟨n, hvar, hmem, _⟩ := h1.2.2.2 vname value hv
+    have hnn : n = n' := Option.some.inj (hvar.symm.trans hvar')
+    subst hnn
+    exact ⟨n, hvar', hmem, hn'⟩
+
 /-! ## `locals_rel` (untagged production analogue)
 
 HOL `locals_rel_def`
