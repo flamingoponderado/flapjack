@@ -27,7 +27,7 @@ clock-indexed entry evaluation over the already-ported exact clocked evaluator
 -- event-prefix property `crepPropsScript.sml:1020`), so `crepSemantics` no
 -- longer takes a caller-supplied `divergenceChain` (the earlier deviation,
 -- bead `flapjack-pxn.18.4.8.2`).  The remaining difference from HOL is the
--- explicit `memDec`/`shMemDec` arguments and the `LoopLprefixLub` witness
+-- explicit `memDec`/`shMemDec` arguments and the `PanLprefixLub` witness
 -- carrier versus HOL's total `build_lprefix_lub`.  No `@[hol]` tag is attached
 -- pending coordinator review of those two representations.
 -/
