@@ -1979,3 +1979,17 @@ run_probe crep_sem_evaluate_ind_probeScript.sml crep_sem_evaluate_ind_probe.out 
 run_probe pan_sem_evaluate_ind_probeScript.sml pan_sem_evaluate_ind_probe.out \
   evaluate_ind "$cake_dir/pancake/semantics/panSemScript.sml" \
   "$cake_dir/pancake/semantics"
+
+# HOL's byte decoder `word_of_bytes` (HOL/src/n-bit/byteScript.sml:197) is the
+# function installed by the exact shared-memory loads (panSemScript.sml:517/524,
+# crepSemScript.sml) as `word_of_bytes F 0w new_bytes`, with no length premise
+# on the FFI-returned `new_bytes`.  Because the first list byte is written
+# outermost at address 0, only the first `dimindex DIV 8` bytes survive and the
+# trailing bytes are discarded.  Like fupdate_list_append_commutes_probe, this
+# is rooted at the separate HOL checkout; byteTheory is a standard HOL theory.
+run_probe pan_word_of_bytes_overlong_probeScript.sml pan_word_of_bytes_overlong_probe.out \
+  source_def w8_overlong_three w8_overlong_take_one w16_overlong_three \
+  w16_overlong_sum w16_overlong_take_two w64_overlong_ten \
+  w64_overlong_take_eight w64_discarded_bytes_irrelevant done \
+  "$hol_dir/src/n-bit/byteScript.sml" \
+  "$hol_dir/src/n-bit"

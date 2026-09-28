@@ -12556,7 +12556,7 @@
     "lean_name": "listRelLengthShapeOfFlattenHOL",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (2026-09-28; panPropsScript.sml:256-262): HOL !vshs args. LIST_REL (λvsh arg. SND vsh = shape_of arg) vshs args /\\ EVERY is_wf_shape_v_nil args ==> size_of_shape (Comb (MAP SND vshs)) = LENGTH (FLAT (MAP flatten args)); SND is Prod.snd and MAP SND is List.map Prod.snd. LIST_REL is the exact inductive ListRel, EVERY is_wf_shape_v_nil is membership over isWfShapeValueHOLExact [], and shape_of/flatten/size_of_shape/Comb are the tagged shapeOfHOLExact/flattenHOL/sizeOfShapeHOL/ShapeHOL.comb over ValueHOL width ([NeZero width] as in the sibling length_flatten_eq_size_of_shape). The single conjunctive premise and the ∀-binder order vshs args follow HOL; there are no extra premises. Bead flapjack-pxn.18.4.3.94.1. Word qualifier (2026-09-28): ValueHOL width is a reviewed width-indexed carrier under the updated checker (flapjack-pxn.18.4.3.94.1.1), so (words_as_type_indexed_bitvec) records HOL's 'a word translation."
+    "reviewer": "flapjack-opus source comparison (2026-09-28; panPropsScript.sml:256-262): HOL !vshs args. LIST_REL (λvsh arg. SND vsh = shape_of arg) vshs args /\\ EVERY is_wf_shape_v_nil args ==> size_of_shape (Comb (MAP SND vshs)) = LENGTH (FLAT (MAP flatten args)); SND is Prod.snd and MAP SND is List.map Prod.snd. LIST_REL is the exact inductive ListRel, EVERY is_wf_shape_v_nil is membership over isWfShapeValueHOLExact [], and shape_of/flatten/size_of_shape/Comb are the tagged shapeOfHOLExact/flattenHOL/sizeOfShapeHOL/ShapeHOL.comb over ValueHOL width ([NeZero width] as in the sibling length_flatten_eq_size_of_shape). The single conjunctive premise and the ∀-binder order vshs args follow HOL; there are no extra premises. Bead flapjack-pxn.18.4.3.94.1. Word qualifier (2026-09-28): ValueHOL width is a reviewed width-indexed carrier under the updated checker (flapjack-pxn.18.4.3.94.1.1), so (words_as_type_indexed_bitvec) records HOL's 'a word translation. Key generalization (flapjack-ds5, bead flapjack-45y8): HOL vshs is a list of pairs polymorphic in the never-inspected first component; the Lean statement now quantifies {β : Type} with vshs : List (β × ShapeHOL), matching HOL key polymorphism instead of the previous MlS specialization."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
@@ -15728,6 +15728,21 @@
     "reviewer": "flapjack-ds5 (source comparison, 2026-09-28; bead flapjack-2de.2; cakeml/pancake/semantics/crepPropsScript.sml:886 evaluate_add_clock_eq): HOL `!p t res st ck. evaluate (p,t) = (res,st) /\\ res <> SOME TimeOut ==> evaluate (p,t with clock := t.clock + ck) = (res,st with clock := st.clock + ck)` is ported verbatim over the exact carrier: hypothesis `h : evalCrepSemHOLProgExact t p = (res, st)`, side condition `hnt : res ≠ some CrepResultHOLExact.timeOut`, conclusion `evalCrepSemHOLProgExact { t with clock := t.clock + ck } p = (res, { st with clock := st.clock + ck })`. No extra premise, no weakened conclusion. Proved by the tagged 19-clause induction principle evalCrepSemHOLProgExact_induct (crepSemScript.sml:440) mirroring HOL's `recInduct evaluate_ind`, with clock-commutation lemmas for the clause steps and the expression evaluator. Representation recorded by the qualifiers: CrepSemHOLState locals/globals/code are the canonical HolFiniteMapExact translation (same-module witness CrepPropsEvaluateAddClockFiniteSupport.holFmapAsFiniteSupportWitness), HOL's type-indexed word is BitVec width with [NeZero width], and 'ffi is a host σ : Type."
   },
   {
+    "lean_path": "Flapjack/Pancake/Semantics/CrepProps/EvaluateAddClockIoEventsMono.lean",
+    "lean_name": "crepPropsEvaluateAddClockIoEventsMono",
+    "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
+    "hol_name": "evaluate_add_clock_io_events_mono",
+    "hol_line": 1020,
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-28; bead flapjack-2de.3; cakeml/pancake/semantics/crepPropsScript.sml:1020 evaluate_add_clock_io_events_mono): HOL `!exps s extra. (SND(evaluate (exps,s))).ffi.io_events \u227c (SND(evaluate (exps,s with clock := s.clock + extra))).ffi.io_events` is ported verbatim over the exact evaluator: `(evalCrepSemHOLProgExact state program).2.ffi.ioEvents <+: (evalCrepSemHOLProgExact (crepStateAddClock state extra) program).2.ffi.ioEvents`, with HOL IS_PREFIX rendered as List.IsPrefix and `s with clock := s.clock + extra` as `crepStateAddClock state extra`. No extra premise, no weakened conclusion. Proved from the untagged combined induction `evalCrepSemHOLProgExact_addClock_mono_aux` in the same module (whose second conjunct is exactly `evalCrepSemHOLProgExact_add_clock_eq` from the sibling module CrepProps/EvaluateAddClock.lean); non-timeout clauses use the clock-shift equality, timeout clauses compose the IH prefix with the single-run prefix `evalCrepSemHOLProgExact_ioEvents_prefix` (crepPropsScript.sml:957) via List.IsPrefix.trans. Representation recorded by the qualifiers: CrepSemHOLState locals/globals/code are the canonical HolFiniteMapExact translation (same-module witness CrepPropsEvaluateAddClockIoEventsMonoFiniteSupport.holFmapAsFiniteSupportWitness), HOL's type-indexed word is BitVec width with [NeZero width], and 'ffi is a host \u03c3 : Type."
+  },
+  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Semantics/CrepProps/MemLoadFlatRel.lean",
@@ -17533,5 +17548,82 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-4ac.4.61.4) against panPropsScript.sml:1150-1158 (the >~[ShMemStore] branch) and panSemScript.sml ShMemStore/sh_mem_store_def. This is the genuine p = ShMemStore op ad e leaf of recInduct evaluate_ind: the HOL evaluate_ind conjunct (scripts/hol-probes/pan_sem_evaluate_ind_probe.out:11) is ∀op ad e s. P (ShMemStore op ad e,s) with no recursive induction hypothesis and no premise. The Lean statement keeps the HOL binders op ad e s, adds the result/post pair res st of HOL's P (∀res st. evaluate (p,s) = (res,st) ⇒ ...), takes only the source run equation, and concludes exactly the eight source fields in source order (same shape/qualifiers as the reviewed ExtCall/ShMemLoad siblings). evaluate_def evaluates both expressions, requires two word values, and calls sh_mem_store with nb_op op; sh_mem_store checks the shared domain (byte-aligned for nb <> 0), calls call_FFI (SharedMem MappedWrite), and returns (SOME (FinalFFI e), s) on FFI_final or (NONE, s with ffi := new_ffi) on FFI_return; every other pattern returns (SOME Error, s). Only ffi can change, and the returned ffi keeps the oracle (Flapjack-only callFFIHOL_ret_oracle), so none of the eight fields changes. The helpers shMemStoreHOLExact_shape/shMemStoreStepFieldsHOLFinite are untagged infrastructure over the tagged evaluateHOLFiniteState_shMemStore_total clause. PanPropsEvalStateFiniteExact uses HolFiniteMapExact for locals/globals/code/eshapes via its checked roundtrip witness; [NeZero width] is the indexed-word translation. Recursive-case assembly remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/ShMemStore.lean",
+    "lean_name": "mem_lt_succ_foldr_max",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only arithmetic helper proving every member of a variable list is below its foldr-max successor; used to establish freshness of the HOL ShMemStore temporary; no standalone HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/ShMemStore.lean",
+    "lean_name": "pcCompileCorrectAt_shMemStore",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only proof of the HOL evaluate_ind ShMemStore conjunct against pcCompileCorrectAt; the exact HOL-shaped assembled case is the separately tagged pcCompileCorrect_ShmStore; this helper has no standalone HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/ShMemStore.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_ShmStore; forwards the imported checked roundtrip; no HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/ShMemStore.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_ShmStore; forwards the imported checked roundtrip; no HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/ShMemStore.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_ShmStore; forwards the imported checked roundtrip; no HOL declaration"
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "pc_compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/ShMemStore.lean",
+    "lean_name": "pcCompileCorrect_ShmStore",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "PanToCrepContextExact.vars",
+      "PanToCrepContextExact.funcs",
+      "PanToCrepContextExact.eids"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-28, bead flapjack-pxn.18.4.3.112; pan_to_crepProofScript.sml:442-468, ShMemStore case resumed at :1960-1989; panSemScript.sml:611-614; pan_to_crepScript.sml:291-297; crepSemScript.sml:186-208). HOL's evaluate_ind ShMemStore conjunct is !op ad e s. P (ShMemStore op ad e,s), with no IH. The source evaluator evaluates ad as address, e as bytes, and calls sh_mem_store bytes addr. The compiler binds compiled e to a fresh local n+1 above all variables of compiled address ad, then emits ShMem (store_op op) (n+1) ad; the Crep evaluator reads that local as the stored word and ad as the address. Lean's constructor arity and all three exact definitions match those clauses. This declaration unfolds pcCompileCorrectAt as in pcCompileCorrect_Store and retains HOL's premises, existential target run, state/code/exception relations, and inline result cases. Qualifiers are identical to reviewed pcCompileCorrect_Store; this declaration's carrier owners and the same-module roundtrip witnesses are checked here. No target-run or post-state premise."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
+    "hol_name": "evaluate_ind",
+    "hol_line": 777,
+    "lean_path": "Flapjack/Pancake/Semantics/PanSem/EvaluateInd.lean",
+    "lean_name": "evaluateIndHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-28, bead flapjack-4ac.3.50; panSemScript.sml:777-778 Theorem evaluate_ind[allow_rebind] = REWRITE_RULE [fix_clock_evaluate] evaluate_ind). The Lean statement is the HOL theorem ∀P. (21 conjuncts) ⇒ ∀v v1. P (v,v1) with P on (program, state) pairs, and each conjunct transcribed binder for binder and in HOL order from the checked HOL print scripts/hol-probes/pan_sem_evaluate_ind_probe.out: Skip; Dec with ∀value. eval s e = SOME value ∧ sh = shape_of value ⇒ P (prog, s with locals := s.locals⟨v ↦ value⟩); the IH-free Assign/Primitive/Store/Store32/StoreByte/ShMemLoad/ShMemStore; Seq with (∀res s1. (res,s1) = evaluate (c1,s) ∧ res = NONE ⇒ P (c2,s1)) ∧ P (c1,s); If with ∀v1 v6 w. eval s e = SOME v1 ∧ v1 = Val v6 ∧ v6 = Word w ⇒ P (if w ≠ 0w then c1 else c2, s); Break; Continue; While's three IHs (Continue re-entry, NONE re-entry, body at dec_clock s) with all side conditions; Return; Raise; Tick; Annot v0 v1; Call's handler and callee IHs with TFL binders args v7 prog v12 newlocals return_sh eval_prog v4 st v8 eid exn v v1 v2 v3 eid' v5 evar p sh; DecCall's continuation and callee IHs with binders args v2 prog v7 newlocals return_sh eval_prog v st v3 retv; ExtCall ffi_index ptr1 len1 ptr2 len2. These are the same IH transcriptions already reviewed for the tagged pc_compile_correct Call/DecCall/While/If/Seq/Dec cases. evaluate is the tagged total evaluateHOLFiniteState (line-780 evaluate_def); eval s and OPT_MMAP (eval s) are evalHOLExact s.toExact / evalListHOLFinite with the classical address decision of the tagged Pan clauses; lookup_code/dec_clock/set_var/is_valid_value/shape_of are lookupCodeHOLFinite/decClockHOLFinite/setVarHOLFinite/isValidValueHOLExact s.toExact/shapeOfHOLExact; ⟨v ↦ value⟩ is HolFiniteMapExact.update (FUPDATE); FLOOKUP is .lookup. The proof is well-founded recursion on (s.clock, sizeOf p), using the tagged evaluate_clock (evaluateHOLFiniteState_clock_le) and dec_clock; no evaluator case analysis and no extra premise. PanSemStateFiniteExact locals/globals/code/eshapes use the canonical finite-support carrier (same-module witness); 'a word is BitVec width with [NeZero width]."
   }
 ]
