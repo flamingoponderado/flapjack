@@ -252,6 +252,23 @@ def varKindToString : VarKind → String
   | .global => "global"
   | .local => "local"
 
+/-- FLAPJACK-SPECIFIC production syntax, not an exact port of HOL `panLang$exp`
+    (`cakeml/pancake/panLangScript.sml:53-69`).  HOL's `Const` field is
+    `('a word)`, so its expression datatype is indexed by the word type;
+    production `Exp (α : Type u)` instead accepts any payload type in `const`.
+    The compiler instantiates this as `Exp (BitVec width)` (for example,
+    `compileExpCake` in `PanGlobals.lean`), but that use-site specialization
+    does not make this declaration itself width-indexed.  Keep it untagged.
+
+    The exact tagged counterpart is `ExpHOL width` in `PanLang/Exp.lean`.  Its
+    checked `expToHOL`/`expOfHOL` codec relates it to production
+    `Exp (BitVec width)`: the exact-to-production-to-exact roundtrip is
+    unconditional, while the reverse roundtrip requires `ExpByteRanged` for
+    String-backed names/shapes.  This is a representation refinement, not a
+    claim that arbitrary generic `Exp` values are HOL expressions.  Production
+    compiler routing through the exact compiler remains tracked by
+    `flapjack-pxn.18.3.5.8`; the width-indexing decision is recorded in
+    `flapjack-p0l9`. -/
 inductive Exp (α : Type u) where
   | const (value : α)
   | var (kind : VarKind) (name : VarName)
