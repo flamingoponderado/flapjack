@@ -18266,5 +18266,23 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.6): HOL exit_loop (loopSemScript.sml:272-276): SOME (Break n) => SOME (Break (n - 1)); SOME (Continue n) => SOME (Continue (n - 1)); otherwise unchanged; Lean identical over the tagged exact result carrier LoopResultExact (num subtraction as truncated Nat subtraction). All six rows of loop_sem_exit_loop_probe.out are checked by Flapjack.Test.LoopSemWordMemExactParity. (words_as_type_indexed_bitvec): the 'a result carrier is width-indexed with [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopSemScript.sml",
+    "hol_name": "loop_primop_def",
+    "lean_path": "Flapjack/Pancake/Semantics/LoopSemStateExact.lean",
+    "lean_name": "loopPrimop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.7): HOL loop_primop AddCarry args (loopSemScript.sml:242-253) = if LENGTH args = 3 /\\ EVERY isWord args then let l, r, ci = theWord (EL 0/1/2 args); (res, co) = word_add_carry l r ci in SOME [Word res; Word co] else NONE, over the exact word_loc carrier List (WordLocW width); the length-three all-Word guard is exactly the list pattern [.word l, .word r, .word ci], every other argument list gives none, and word_add_carry is the tagged wordAddCarryHOL. AddCarry is the only primop constructor. Complements the pre-existing loopPrimopHOL over the Flapjack LoopValue carrier. HOL rows of loop_sem_primop_probe.out (valid_no_carry, valid_carry, invalid_arity, invalid_nonword) are checked by Flapjack.Test.LoopSemPrimopBytesExactParity. (words_as_type_indexed_bitvec): 'a word as BitVec width with [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "write_bytearray_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem.lean",
+    "lean_name": "writeBytearrayExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.7): HOL write_bytearray a bs m dm be (wordSemScript.sml:178-184): [] gives m; b::bs gives case mem_store_byte_aux (write_bytearray (a+1w) bs m dm be) dm be a b of SOME m => m | NONE => m, where the NONE branch returns the ORIGINAL outer m; Lean is identical over BitVec width -> WordLocW width memory with dm as a Bool predicate and mem_store_byte_aux as the tagged memStoreByteAuxExact. HOL rows write_empty/write_hit/write_miss of pan_sem_write_bytearray_probe.out (panSem write_bytearray has the same text) are checked by Flapjack.Test.LoopSemPrimopBytesExactParity. (words_as_type_indexed_bitvec) as for loopPrimop."
   }
 ]
