@@ -302,7 +302,9 @@ theorem panWordOfBytesHOL_eq_ofNat_le {width : Nat} [NeZero width]
     `panWordOfBytesHOL false 0 bs = crepClockWordOfBytes (bs.map UInt8.ofBitVec)`
     at widths 8, 16 and the RISC-V width 64, with byte lists longer than one
     word (the FFI-returned `new_bytes` is not length-bounded by the source, so
-    the overlong case is the relevant one). -/
+    the overlong case is the relevant one).  The matching direct HOL oracle for
+    the source decoder `word_of_bytes F 0w new_bytes` is captured in
+    `scripts/hol-probes/pan_word_of_bytes_overlong_probe.out`. -/
 example : panWordOfBytesHOL (width := 8) false (0 : RiscV.Word 8) [1, 2, 3]
     = crepClockWordOfBytes ([1, 2, 3].map UInt8.ofBitVec) := by decide
 
