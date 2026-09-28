@@ -38,10 +38,9 @@ decreases when the erased key is present.  The measure
 fs)` certificate.  `inlineProgHOLExact` discharges the certificate from the
 carrier's own `finiteSupport` via `Classical.choose`.
 
-Tags: the HOL-shaped wrappers `compileInlProgHOLExact`
-(`compile_inl_prog_def`) and `compileInlTopHOLExact` (`compile_inl_top_def`) at
-the end of the file carry qualified `@[hol]` tags.  Everything else is
-deliberately untagged infrastructure: the recursive cores
+The HOL-shaped wrappers `compileInlProgHOLExact` and `compileInlTopHOLExact`
+remain untagged until the recursive core's HOL correspondence is reviewed.
+The recursive cores
 `inlineProgHOLCoreExact` / `inlineProgHOLExact`, the cardinality certificate
 `HolFiniteMapExact.erase_support` / `erase_support_length_lt`, the computable
 helper `compileInlProgHOLExactWithSupport`, and the oracle/regression lemmas.
@@ -326,13 +325,13 @@ theorem inlineProgHOLCoreExact_structural_example [BEq CrepInlineMapHOLName]
 
 /-! ### Exact `compile_inl_prog` / `compile_inl_top` wrappers
 
-Ports of HOL `compile_inl_prog_def` and `compile_inl_top_def`
+Flapjack-specific analogues of HOL `compile_inl_prog_def` and `compile_inl_top_def`
 (`cakeml/pancake/crep_inlineScript.sml:259,264`) over the exact carriers:
 `mlstring` function names (`CrepInlineMapHOLName`), the canonical finite-support
 inline map (`HolFiniteMapExact`), and `CrepProgHOL` triple lists.  Both wrappers
-are HOL-shaped (no certificate parameters); `compileInlTopHOLExact` is
-executable and carries only the `words_as_type_indexed_bitvec` qualifier, while
-`compileInlProgHOLExact` carries the finite-support relation qualifier. -/
+are HOL-shaped (no certificate parameters), but remain untagged because the
+recursive inline core has not yet been reviewed against HOL
+(`flapjack-e7w.2.1.13`). `compileInlTopHOLExact` is executable. -/
 
 /-- Exact analogue of HOL `alist_to_fmap` (`alistScript.sml:21`), which is
     `FOLDR (fun (k,v) f => f |+ (k,v)) FEMPTY s`; equivalently `FUPDATE_LIST`
@@ -395,7 +394,7 @@ def compileInlProgHOLExactWithSupport [BEq CrepInlineMapHOLName]
         (HolFiniteMapExact.erase_support inl_fs supportKeys support_spec triple.1)
         triple.2.2)
 
-/-- HOL-shaped rendering of `compile_inl_prog_def` (`crep_inlineScript.sml:259`)
+/-- Flapjack-specific analogue of `compile_inl_prog_def` (`crep_inlineScript.sml:259`)
     over the canonical finite-support inline map: two arguments (the inline map
     and the triple list), and for every triple the body is inlined under the map
     with that function's own name erased (`inl_fs \\ name`), preserving order.
@@ -403,10 +402,9 @@ def compileInlProgHOLExactWithSupport [BEq CrepInlineMapHOLName]
     internally by `inlineProgHOLExact`, so no certificate appears in the
     statement.  Like HOL's `compile_inl_prog` this is noncomputable (it extracts
     the support); the executable variant used by `compileInlTopHOLExact` is
-    `compileInlProgHOLExactWithSupport`. -/
-@[hol "cakeml/pancake/crep_inlineScript.sml" "compile_inl_prog_def"
-  (fmap_as_finite_support_relation := [inl_fs])
-  (words_as_type_indexed_bitvec)]
+    `compileInlProgHOLExactWithSupport`. This remains untagged because the
+    recursive `inlineProgHOLExact` correspondence to HOL is open at
+    `flapjack-e7w.2.1.13`. -/
 noncomputable def compileInlProgHOLExact [BEq CrepInlineMapHOLName]
     [LawfulBEq CrepInlineMapHOLName]
     (inl_fs : HolFiniteMapExact CrepInlineMapHOLName (List Nat × CrepProgHOL width))
@@ -416,16 +414,16 @@ noncomputable def compileInlProgHOLExact [BEq CrepInlineMapHOLName]
     (triple.1, triple.2.1,
       inlineProgHOLExact (inl_fs.erase triple.1) triple.2.2)
 
-/-- HOL-shaped port of `compile_inl_top_def` (`crep_inlineScript.sml:264`):
+/-- Flapjack-specific analogue of `compile_inl_top_def` (`crep_inlineScript.sml:264`):
     build the inline alist by filtering the program to the named functions (HOL
     `FILTER (fun (x, y) => MEM x inl_fname) prog`), turn it into the canonical
     finite-support map via `alistToFmapHOLExact` (HOL `alist_to_fmap`,
     first-occurrence-wins), then run the inline pass.  Two arguments, matching
     HOL exactly (`inl_fname`, `prog`); the inline map is a local intermediate and
     does not occur in the signature, and the finite support is derived from the
-    filtered alist's keys, so the definition is executable. -/
-@[hol "cakeml/pancake/crep_inlineScript.sml" "compile_inl_top_def"
-  (words_as_type_indexed_bitvec)]
+    filtered alist's keys, so the definition is executable. This remains
+    untagged until the recursive inline core's HOL correspondence is reviewed
+    (`flapjack-e7w.2.1.13`). -/
 def compileInlTopHOLExact [BEq CrepInlineMapHOLName] [LawfulBEq CrepInlineMapHOLName]
     (inl_fname : List CrepInlineMapHOLName)
     (prog : List (CrepInlineMapHOLName × List Nat × CrepProgHOL width)) :
@@ -511,12 +509,84 @@ private def inlTopProbeOracle : Bool :=
 
 #guard inlTopProbeOracle
 
+/-! ### Direct canonical-core replay of the `inline_prog` HOL probe rows
+
+Every row of `scripts/hol-probes/crep_inline_code_inl_probe.out` is replayed
+through `inlineProgHOLCoreExact` on the canonical `HolFiniteMapExact` carrier
+view: hit (`inlined_call`), miss (`no_match_call`), DOMSUB self-call
+(`inline_nested_call`), argument loading with generated temporary names
+(`inline_arg_call`), duplicate overwrite (`lookup_dup_f`/`inline_dup_call`) and
+handler call (`handler_call_untouched`). Untagged, bead `flapjack-e7w.2.1.13`. -/
+
+private def canonicalOracleBodyA : CrepProgHOL 8 := .dec 1 (.const 1) .skip
+
+private def canonicalOracleBodyB : CrepProgHOL 8 := .dec 9 (.const 3) .skip
+
+private def canonicalOracleCore (fs : CrepInlineFmapHOL 8) (program : CrepProgHOL 8) :
+    CrepProgHOL 8 :=
+  inlineProgHOLCoreExact fs.toHolFiniteMapExact fs.domainKeys (domainKeys_spec fs) program
+
+private def canonicalOracleGuard : Bool :=
+  let key := ofString "f"
+  let absent := ofString "g"
+  let base := CrepInlineFmapHOL.insert key ([7], canonicalOracleBodyA) CrepInlineFmapHOL.empty
+  -- HOL `flookup_f` / `inlined_call`: `Seq Tick Skip`.
+  let hit := match canonicalOracleCore base (.call none key []) with
+    | .seq .tick .skip => true
+    | _ => false
+  -- HOL `no_match_call`: a missed name is left untouched.
+  let miss := match canonicalOracleCore base (.call none absent []) with
+    | .call none name [] => name == absent
+    | _ => false
+  -- HOL `inline_nested_call`: `\\` (DOMSUB) before recursing leaves the self-call.
+  let nestedBase := CrepInlineFmapHOL.insert key ([], .call none key []) CrepInlineFmapHOL.empty
+  let nested := match canonicalOracleCore nestedBase (.call none key []) with
+    | .seq .tick (.call none name []) => name == key
+    | _ => false
+  -- HOL `inline_arg_call`: `arg_load`/`GENLIST` generated temporary names.
+  let args := match canonicalOracleCore base (.call none key [.const 5]) with
+    | .seq .tick (.dec 8 (.const 5) (.dec 7 (.var 8) (.dec 1 (.const 1) .skip))) => true
+    | _ => false
+  -- HOL `lookup_dup_f`: `|+` overwrites, so the later binding is selected. This
+  -- direct lookup assertion is the primary evidence for overwrite semantics.
+  let dupBase := CrepInlineFmapHOL.insert key ([9], canonicalOracleBodyB) base
+  let dupLookup : Bool :=
+    match dupBase.lookup key with
+    | some value =>
+        (value.1 == [9]) &&
+          (match value.2 with | .dec 9 (.const 3) .skip => true | _ => false)
+    | none => false
+  -- HOL `inline_dup_call`: with the original argument names the empty argument
+  -- list makes `arg_load` discard the body (`Seq Tick Skip`), reproducing the
+  -- probe row.
+  let dup := match canonicalOracleCore dupBase (.call none key []) with
+    | .seq .tick .skip => true
+    | _ => false
+  -- Distinguishing shadowing fixture: with empty argument names `arg_load`
+  -- preserves the body, so the inlined program is observable. Choosing the
+  -- stale `bodyA` binding would yield `Seq Tick (Dec 1 (Const 1) Skip)` and
+  -- fail this check, which the `dup` row above cannot detect.
+  let obsDupBase := CrepInlineFmapHOL.insert key ([], canonicalOracleBodyB) base
+  let dupInlinesNew : Bool :=
+    match canonicalOracleCore obsDupBase (.call none key []) with
+    | .seq .tick p =>
+        (match p with | .dec 9 (.const 3) .skip => true | _ => false)
+    | _ => false
+  -- HOL `handler_call_untouched`: the handler is inlined, the call is unchanged.
+  let handler := match canonicalOracleCore base
+      (.call (some ([1], some (2, (.skip : CrepProgHOL 8)))) key []) with
+    | .call (some ([1], some (2, .skip))) name [] => name == key
+    | _ => false
+  hit && miss && nested && args && dup && dupLookup && dupInlinesNew && handler
+
+#guard canonicalOracleGuard
+
 /-! ## Support-independence of the inline core
 
 These facts justify the executable HOL-shaped wrappers above: the recursive
 `inlineProgHOLCoreExact` result does not depend on the certificate list/proof it
 is run with, so the certified executable `compileInlProgHOLExactWithSupport`
-(used by the tagged `compileInlTopHOLExact`) agrees with the HOL-shaped
+(used by the untagged `compileInlTopHOLExact`) agrees with the HOL-shaped
 `compileInlProgHOLExact`, which extracts the existential support classically.
 Untagged Flapjack-specific infrastructure (bead flapjack-e7w.2.2.1). -/
 

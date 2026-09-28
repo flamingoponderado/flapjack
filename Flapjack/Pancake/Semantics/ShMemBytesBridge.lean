@@ -167,4 +167,153 @@ theorem shMemStoreHOLExact_control_corresponds {width : Nat} [NeZero width] {σ 
       | ret newFfi newBytes => exact Or.inr (Or.inr ⟨rfl, rfl⟩)
     · exact Or.inr (Or.inl ⟨rfl, rfl⟩)
 
+/-! ## Decoded-word arithmetic for the shared-memory byte lists
+
+The `shMemLoad` case of `pc_compile_correct` must also match the word that the
+FFI hands back.  The Crep primitive decodes `newBytes.map UInt8.ofBitVec` with
+`crepClockWordOfBytes`, while the Pan primitive decodes `newBytes` with
+`panWordOfBytesHOL false 0`.  This section develops the byte-sum arithmetic
+shared by both decoders: both equal the little-endian integer sum
+`∑ b_i * 256 ^ i` reduced modulo `2 ^ width`, so the two decoders agree for
+every byte list when `8 ∣ width` (the convention of the existing byte carriers:
+`panWordToBytesHOL`/`panSetByteHOL` already index `width / 8` byte slots, and
+the RISC-V targets have width 32/64).  The sum is packaged by `leSumB`; the
+remaining step (the `panSetByteHOL` reassembly identity `panSetByteHOL_ofNat_eq`
+and the Pan-side induction) is tracked by `flapjack-pxn.18.4.3.111.1.1.2`.
+-/
+
+/-- Little-endian integer sum of the bytes with absolute index starting at `k`. -/
+def leSumB (k : Nat) (bs : List (BitVec 8)) : Nat :=
+  (bs.zipIdx k).foldl (fun (v : Nat) (p : BitVec 8 × Nat) => v + p.1.toNat * 256 ^ p.2) 0
+
+theorem leSumB_foldl_add_eq (l : List (BitVec 8 × Nat)) (acc : Nat) :
+    l.foldl (fun (v : Nat) (p : BitVec 8 × Nat) => v + p.1.toNat * 256 ^ p.2) acc
+      = acc + l.foldl (fun (v : Nat) (p : BitVec 8 × Nat) => v + p.1.toNat * 256 ^ p.2) 0 := by
+  induction l generalizing acc with
+  | nil => simp
+  | cons p t ih =>
+      simp only [List.foldl_cons]
+      rw [ih (acc + p.1.toNat * 256 ^ p.2), ih (0 + p.1.toNat * 256 ^ p.2)]
+      omega
+
+theorem leSumB_cons (k : Nat) (b : BitVec 8) (rest : List (BitVec 8)) :
+    leSumB k (b :: rest) = b.toNat * 256 ^ k + leSumB (k + 1) rest := by
+  simp only [leSumB, List.zipIdx_cons, List.foldl_cons]
+  rw [leSumB_foldl_add_eq]
+  omega
+
+/-- The Crep decoder of the mapped byte list is the little-endian integer sum. -/
+theorem crepClockWordOfBytes_eq_leSumB {width : Nat} (bs : List (BitVec 8)) :
+    crepClockWordOfBytes (bs.map UInt8.ofBitVec)
+      = BitVec.ofNat width (leSumB 0 bs) := by
+  simp only [crepClockWordOfBytes, leSumB, List.zipIdx_map, List.foldl_map, Prod.map,
+    UInt8.toNat_ofBitVec]
+  rfl
+
+theorem leSumB_dvd (bs : List (BitVec 8)) (k : Nat) : 256 ^ k ∣ leSumB k bs := by
+  induction bs generalizing k with
+  | nil => simp [leSumB]
+  | cons b rest ih =>
+      rw [leSumB_cons]
+      refine Nat.dvd_add ⟨b.toNat, by rw [Nat.mul_comm]⟩ ?_
+      refine Nat.dvd_trans ⟨256, by rw [Nat.pow_add_one]⟩ (ih (k + 1))
+
+theorem leSumB_add (bs : List (BitVec 8)) (k : Nat) :
+    leSumB k bs + 256 ^ k ≤ 256 ^ (k + bs.length) := by
+  induction bs generalizing k with
+  | nil => simp [leSumB]
+  | cons b rest ih =>
+      have hb : b.toNat + 1 ≤ 256 := by have := b.isLt; omega
+      have h1 : b.toNat * 256 ^ k + 256 ^ k ≤ 256 ^ (k + 1) := by
+        calc b.toNat * 256 ^ k + 256 ^ k
+            = (b.toNat + 1) * 256 ^ k := by rw [Nat.add_mul]; simp
+          _ ≤ 256 * 256 ^ k := Nat.mul_le_mul_right (256 ^ k) hb
+          _ = 256 ^ (k + 1) := by rw [Nat.pow_add_one, Nat.mul_comm]
+      have ih' := ih (k + 1)
+      rw [leSumB_cons, List.length_cons,
+        show k + (rest.length + 1) = (k + 1) + rest.length by omega]
+      omega
+
+theorem leSumB_lt (bs : List (BitVec 8)) (k : Nat) :
+    leSumB k bs < 256 ^ (k + bs.length) := by
+  have h := leSumB_add bs k
+  have hpos : 0 < 256 ^ k := Nat.pow_pos (by decide)
+  omega
+
+/-- Writing the byte `b` at the address `k` (below the byte count `width/8`,
+    little-endian) into a little-endian-reassembled cell `V` whose higher byte
+    is already clear (`256^(k+1) ∣ V`) yields the byte sum `b * 256^k + V`. -/
+theorem panSetByteHOL_ofNat_eq {width : Nat} [NeZero width]
+    (k : Nat) (hk : k < width / 8) (b : BitVec 8) (V : Nat)
+    (hdvd : 256 ^ (k + 1) ∣ V) (hVlt : V < 2 ^ width) :
+    panSetByteHOL (BitVec.ofNat width k) (BitVec.ofNat width b.toNat)
+      (BitVec.ofNat width V) false =
+      BitVec.ofNat width (b.toNat * 256 ^ k + V) := by
+  have hwpos : 0 < width := Nat.pos_of_ne_zero (NeZero.ne width)
+  have hkw : k < 2 ^ width :=
+    Nat.lt_of_le_of_lt (Nat.le_trans (Nat.le_of_lt hk) (Nat.div_le_self width 8))
+      Nat.lt_two_pow_self
+  have hb : b.toNat < 256 := b.isLt
+  have hbw : b.toNat < 2 ^ width := Nat.lt_of_lt_of_le hb (by
+    calc (256 : Nat) = 2 ^ 8 := by decide
+      _ ≤ 2 ^ width := Nat.pow_le_pow_right (by decide) (by omega))
+  have hlow : V % 256 ^ k = 0 :=
+    Nat.mod_eq_zero_of_dvd (Nat.dvd_trans ⟨256, by rw [Nat.pow_add_one]⟩ hdvd)
+  have hhigh : V / (256 ^ k * 256) * (256 ^ k * 256) = V := by
+    rw [← Nat.pow_add_one, Nat.div_mul_cancel hdvd]
+  simp only [panSetByteHOL, Bool.false_eq_true, if_false, BitVec.toNat_ofNat,
+    Nat.mod_eq_of_lt hkw, Nat.mod_eq_of_lt hk,
+    Nat.mod_eq_of_lt hVlt, Nat.mod_eq_of_lt hbw, Nat.mod_eq_of_lt hb,
+    hlow, hhigh, Nat.zero_add]
+
+/-- While the written addresses stay below the byte count `width/8`, the exact
+    Pan byte decoder reassembles the little-endian byte sum of the list. -/
+theorem panWordOfBytesHOL_eq_ofNat_le {width : Nat} [NeZero width]
+    (hdiv : width % 8 = 0) (k : Nat) (bs : List (BitVec 8))
+    (hk : k + bs.length ≤ width / 8) :
+    panWordOfBytesHOL (width := width) false (BitVec.ofNat width k) bs =
+      BitVec.ofNat width (leSumB k bs) := by
+  have hwpos : 0 < width := Nat.pos_of_ne_zero (NeZero.ne width)
+  induction bs generalizing k with
+  | nil => simp [panWordOfBytesHOL, leSumB]
+  | cons b rest ih =>
+      have hk1 : k + 1 + rest.length ≤ width / 8 := by
+        simp only [List.length_cons] at hk; omega
+      have hsucc : (BitVec.ofNat width k : RiscV.Word width) + 1 =
+          BitVec.ofNat width (k + 1) := by
+        simp [BitVec.ofNat_add]
+      rw [panWordOfBytesHOL, leSumB_cons, hsucc, ih (k + 1) hk1]
+      refine panSetByteHOL_ofNat_eq k (by omega) b (leSumB (k + 1) rest)
+        (leSumB_dvd rest (k + 1)) ?_
+      have h := leSumB_lt rest (k + 1)
+      have hw8 : 8 * (width / 8) = width := by
+        rw [Nat.mul_comm]; exact Nat.div_mul_cancel (Nat.dvd_of_mod_eq_zero hdiv)
+      have hle8 : 8 * (k + 1 + rest.length) ≤ width := by
+        have hm := Nat.mul_le_mul_left 8 hk1
+        rwa [hw8] at hm
+      have hpow : (256 : Nat) ^ (k + 1 + rest.length) ≤ 2 ^ width := by
+        calc (256 : Nat) ^ (k + 1 + rest.length)
+            = (2 ^ 8) ^ (k + 1 + rest.length) := by rw [show (256 : Nat) = 2 ^ 8 by decide]
+          _ = 2 ^ (8 * (k + 1 + rest.length)) := by rw [Nat.pow_mul]
+          _ ≤ 2 ^ width := Nat.pow_le_pow_right (by decide) hle8
+      omega
+
+/-- Kernel-checked regression instances of the decode equality
+    `panWordOfBytesHOL false 0 bs = crepClockWordOfBytes (bs.map UInt8.ofBitVec)`
+    at widths 8, 16 and the RISC-V width 64, with byte lists longer than one
+    word (the FFI-returned `new_bytes` is not length-bounded by the source, so
+    the overlong case is the relevant one). -/
+example : panWordOfBytesHOL (width := 8) false (0 : RiscV.Word 8) [1, 2, 3]
+    = crepClockWordOfBytes ([1, 2, 3].map UInt8.ofBitVec) := by decide
+
+example : panWordOfBytesHOL (width := 16) false (0 : RiscV.Word 16) [1, 2, 3, 4, 5]
+    = crepClockWordOfBytes ([1, 2, 3, 4, 5].map UInt8.ofBitVec) := by decide
+
+example : panWordOfBytesHOL (width := 64) false (0 : RiscV.Word 64)
+    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    = crepClockWordOfBytes ([1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map UInt8.ofBitVec) := by decide
+
+example : panWordOfBytesHOL (width := 64) false (0 : RiscV.Word 64) [255, 1]
+    = crepClockWordOfBytes ([255, 1].map UInt8.ofBitVec) := by decide
+
 end Flapjack

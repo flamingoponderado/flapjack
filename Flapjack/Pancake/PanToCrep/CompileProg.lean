@@ -195,7 +195,10 @@ def compileProgTopHOLProductionExact {width : Nat} [NeZero width]
     List (FunName × List Nat × CrepProg (BitVec width)) :=
   let functions := functionEntriesOfHOLExact declarations hdecls
   let functionMap := functionInfosHOL declarations
-  let exceptionMap := panToCrepGetEidsFromDeclsOfExactHOL declarations hdecls
+  -- The exact HOL-shaped lookup rebuilds the full exception map at every
+  -- lookup. Use the production map here: the equality theorem below proves
+  -- this is the same function for byte-ranged declarations.
+  let exceptionMap := panToCrepGetEidsFromDeclsHOL declarations
   let inlineNames :=
     (functionEntries (declarations.filter inlinableThroughHOL)).map
       fun (name, _, _, _) => name
@@ -206,9 +209,7 @@ def compileProgTopHOLProductionExact {width : Nat} [NeZero width]
         functionMap
         (Shape.shapeSize (.comb (entry.2.1.map Prod.snd)) - 1)
         exceptionMap
-    have hmap : exceptionMap = panToCrepGetEidsFromDeclsHOL declarations := by
-      dsimp [exceptionMap]
-      exact panToCrepGetEidsFromDeclsOfExactHOL_eq declarations hdecls
+    have hmap : exceptionMap = panToCrepGetEidsFromDeclsHOL declarations := rfl
     have hentry : entry ∈ functionEntries declarations := by
       rw [← functionEntriesOfHOLExact_eq declarations hdecls]
       exact entryWithProof.property
@@ -5137,10 +5138,8 @@ theorem compileProgTopHOLProductionExact_eq {width : Nat} [NeZero width]
   unfold compileProgTopHOL
   let functions := functionEntriesOfHOLExact declarations hdecls
   let functionMap := functionInfosHOL declarations
-  let exceptionMap := panToCrepGetEidsFromDeclsOfExactHOL declarations hdecls
-  have hmap : exceptionMap = panToCrepGetEidsFromDeclsHOL declarations := by
-    dsimp [exceptionMap]
-    exact panToCrepGetEidsFromDeclsOfExactHOL_eq declarations hdecls
+  let exceptionMap := panToCrepGetEidsFromDeclsHOL declarations
+  have hmap : exceptionMap = panToCrepGetEidsFromDeclsHOL declarations := rfl
   let inlineNames :=
     (functionEntries (declarations.filter inlinableThroughHOL)).map
       fun (name, _, _, _) => name
@@ -5214,12 +5213,12 @@ theorem compileProgTopHOLProductionExact_eq {width : Nat} [NeZero width]
             functionMap
             (Shape.shapeSize (.comb (entry.2.1.map Prod.snd)) - 1)
             exceptionMap
-          have hmapLocal := hmap
+          have hmap : exceptionMap = panToCrepGetEidsFromDeclsHOL declarations := rfl
           let evidence := by
             have hentry : entry ∈ functionEntries declarations := by
               rw [← functionEntriesOfHOLExact_eq declarations hdecls]
               exact entryWithProof.property
-            simpa [productionContext, hmapLocal] using
+            simpa [productionContext, hmap] using
               panToCrepFunctionContextProductionEvidence declarations entry
                 hdecls hentry
         let exactContext := panToCrepContextExactOfProduction productionContext evidence
