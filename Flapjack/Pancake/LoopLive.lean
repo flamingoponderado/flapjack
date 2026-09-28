@@ -1622,8 +1622,55 @@ single mutual block whose termination measure is the lexicographic triple
 keep that mutual shape and measure (`sizeOf` in place of `prog_size`, and
 `sptSize_inter_le` in place of `size_inter`).  These declarations are
 deliberately left untagged: the exact HOL statement and side conditions are to
-be reviewed before an `@[hol]` reference is attached. -/
+be   reviewed before an `@[hol]` reference is attached. -/
 
+/-- Exact port of HOL `loop_liveScript.sml:28-31 size_mk_BN`. -/
+@[hol "cakeml/pancake/loop_liveScript.sml" "size_mk_BN"]
+theorem sptSize_mkBN {α : Type} (t1 t2 : Spt α) :
+    sptSize (sptMkBN t1 t2) = sptSize t1 + sptSize t2 := by
+  cases t1 <;> cases t2 <;> simp [sptMkBN, sptSize]
+
+/-- Exact port of HOL `loop_liveScript.sml:34-36 size_mk_BS`. -/
+@[hol "cakeml/pancake/loop_liveScript.sml" "size_mk_BS"]
+theorem sptSize_mkBS {α : Type} (t1 t2 : Spt α) (x : α) :
+    sptSize (sptMkBS t1 x t2) = sptSize t1 + sptSize t2 + 1 := by
+  cases t1 <;> cases t2 <;> simp [sptMkBS, sptSize]
+
+/-- Exact port of HOL `loop_liveScript.sml:40-48 size_inter`. -/
+@[hol "cakeml/pancake/loop_liveScript.sml" "size_inter"]
+theorem sptSize_inter_le {α β : Type} (l1 : Spt α) (l2 : Spt β) :
+    sptSize (sptInter l1 l2) <= sptSize l1 := by
+  induction l1 generalizing l2 with
+  | ln => simp [sptInter]
+  | ls value => cases l2 <;> simp [sptInter]
+  | bn first second ihFirst ihSecond =>
+      cases l2 with
+      | ln => simp [sptInter]
+      | ls value => simp [sptInter]
+      | bn f s =>
+          simp only [sptInter, sptSize_bn, sptSize_mkBN]
+          have h1 := ihFirst f
+          have h2 := ihSecond s
+          omega
+      | bs f value s =>
+          simp only [sptInter, sptSize_bn, sptSize_mkBN]
+          have h1 := ihFirst f
+          have h2 := ihSecond s
+          omega
+  | bs first value second ihFirst ihSecond =>
+      cases l2 with
+      | ln => simp [sptInter]
+      | ls v => simp [sptInter]
+      | bn f s =>
+          simp only [sptInter, sptSize_bs, sptSize_mkBN]
+          have h1 := ihFirst f
+          have h2 := ihSecond s
+          omega
+      | bs f v s =>
+          simp only [sptInter, sptSize_bs, sptSize_mkBS]
+          have h1 := ihFirst f
+          have h2 := ihSecond s
+          omega
 mutual
   /-- Exact stand-in for HOL `loop_live$fixedpoint_def`
       (`cakeml/pancake/loop_liveScript.sml:143-148`): iterate `shrink` on the
