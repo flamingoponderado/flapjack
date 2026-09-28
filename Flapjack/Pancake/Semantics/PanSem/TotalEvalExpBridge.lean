@@ -3180,6 +3180,23 @@ theorem panSemTotalEvaluate_primitive_agree_of_progByteRanged {σ : Type}
   exact panSemTotalEvaluate_primitive_agree primitive production exact hrel hranged
     name hname operator arguments harguments hprim hprimRanged
 
+/-- Canonical total source-semantics entrypoint for the production `panSem$`
+    evaluator on the executable compiler path: `panSemTotalEvaluate` specialised
+    to the production primitive handler `panPrimopHOL`.  The general evaluator is
+    handler-parametric, so this names the concrete handler that the source
+    semantics is intended to run.  Not a HOL declaration; untagged. -/
+abbrev panSemTotalEvaluateCake {σ : Type} :
+    Prog (RiscV.Word 64) → PanSemState (RiscV.Word 64) (FfiState σ) →
+      Option (PanSemHOLResult (RiscV.Word 64)) ×
+        PanSemState (RiscV.Word 64) (FfiState σ) :=
+  panSemTotalEvaluate (primitive := panPrimopHOL)
+
+@[simp] theorem panSemTotalEvaluateCake_eq {σ : Type}
+    (program : Prog (RiscV.Word 64))
+    (state : PanSemState (RiscV.Word 64) (FfiState σ)) :
+    panSemTotalEvaluateCake program state = panSemTotalEvaluate panPrimopHOL program state :=
+  rfl
+
 /-! ### The canonical handler `panPrimopHOL`
 
 The handler side conditions of `panSemTotalEvaluate_primitive_agree` are not an
@@ -3292,6 +3309,48 @@ theorem panSemTotalEvaluate_primitive_agree_panPrimopHOL_of_progByteRanged {σ :
   obtain ⟨hname, harguments⟩ := hprogram
   exact panSemTotalEvaluate_primitive_agree_panPrimopHOL production exact hrel
     hranged name hname operator arguments harguments
+
+/-- `Primitive`-clause agreement for the named canonical entrypoint
+    `panSemTotalEvaluateCake` (definitionally `panSemTotalEvaluate panPrimopHOL`)
+    against the tagged exact HOL evaluator, via the canonical
+    `panPrimopHOL_bridge`. -/
+theorem panSemTotalEvaluateCake_primitive_agree {σ : Type}
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (hranged : PanSemStateRelExecRanged production)
+    (name : VarName) (hname : NameRanged name) (operator : PrimOp)
+    (arguments : List (Exp (RiscV.Word 64)))
+    (harguments : ∀ e ∈ arguments, ExpByteRanged e) :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluateCake (.primitive name operator arguments) production).1
+        (evaluateHOLFiniteState exact
+          (.primitive (ofString name) operator (arguments.map expToHOL))).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluateCake (.primitive name operator arguments) production).2
+        (evaluateHOLFiniteState exact
+          (.primitive (ofString name) operator (arguments.map expToHOL))).2.toExact :=
+  panSemTotalEvaluate_primitive_agree_panPrimopHOL production exact hrel hranged
+    name hname operator arguments harguments
+
+/-- `ProgByteRanged`-premise form of `panSemTotalEvaluateCake_primitive_agree`. -/
+theorem panSemTotalEvaluateCake_primitive_agree_of_progByteRanged {σ : Type}
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (hranged : PanSemStateRelExecRanged production)
+    (name : VarName) (operator : PrimOp) (arguments : List (Exp (RiscV.Word 64)))
+    (hprogram : ProgByteRanged (.primitive name operator arguments)) :
+    PanSemHOLResultOptionRel
+        (panSemTotalEvaluateCake (.primitive name operator arguments) production).1
+        (evaluateHOLFiniteState exact
+          (.primitive (ofString name) operator (arguments.map expToHOL))).1 ∧
+      PanSemStateRelExec
+        (panSemTotalEvaluateCake (.primitive name operator arguments) production).2
+        (evaluateHOLFiniteState exact
+          (.primitive (ofString name) operator (arguments.map expToHOL))).2.toExact :=
+  panSemTotalEvaluate_primitive_agree_panPrimopHOL_of_progByteRanged production exact
+    hrel hranged name operator arguments hprogram
 
 /-! ## Production/exact agreement for the `Return` and `Raise` constructors
 
