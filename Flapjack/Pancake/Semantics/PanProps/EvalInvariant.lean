@@ -5497,9 +5497,14 @@ end Flapjack
 
 /-! # The `If` induction case of HOL `evaluate_invariants`
 
-The `If` leaf has the two recursive branch induction hypotheses from
-`evaluate_ind`; the condition error preserves the input state, and a word
-condition executes exactly one branch. -/
+The `If` conjunct of HOL `evaluate_ind` has a single induction hypothesis,
+guarded by the condition evaluation, over the conditional program
+`if w ≠ 0 then c1 else c2` at the input state; it is not split into two branch
+hypotheses. The condition is evaluated once: a word selects the then branch for
+nonzero and the else branch for zero, and every other value yields `Error` and
+preserves the input state. The exact `evaluate_def` zero test is the swapped
+`word = 0` form, so the branch run is transferred to HOL's
+`if w ≠ 0 then c1 else c2`. -/
 
 namespace Flapjack
 
@@ -5513,32 +5518,24 @@ theorem evaluateInvariantsIfCaseHOLFinite {width : Nat} {σ : Type} [NeZero widt
       (post : PanPropsEvalStateFiniteExact width σ),
       PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state
           (.ite condition thenBranch elseBranch : ProgHOL width) = (result, post) →
-      (∀ (branchState : PanPropsEvalStateFiniteExact width σ)
-        (branchResult : Option (PanSemResultExact width))
-        (branchPost : PanPropsEvalStateFiniteExact width σ),
-        PanPropsEvalStateFiniteExact.evaluateHOLFinitePair branchState thenBranch =
-          (branchResult, branchPost) →
-        branchPost.memaddrs = branchState.memaddrs ∧
-        branchPost.shMemaddrs = branchState.shMemaddrs ∧
-        branchPost.be = branchState.be ∧
-        branchPost.eshapes = branchState.eshapes ∧
-        branchPost.baseAddr = branchState.baseAddr ∧
-        branchPost.structs = branchState.structs ∧
-        branchPost.code = branchState.code ∧
-        branchPost.ffi.oracle = branchState.ffi.oracle) →
-      (∀ (branchState : PanPropsEvalStateFiniteExact width σ)
-        (branchResult : Option (PanSemResultExact width))
-        (branchPost : PanPropsEvalStateFiniteExact width σ),
-        PanPropsEvalStateFiniteExact.evaluateHOLFinitePair branchState elseBranch =
-          (branchResult, branchPost) →
-        branchPost.memaddrs = branchState.memaddrs ∧
-        branchPost.shMemaddrs = branchState.shMemaddrs ∧
-        branchPost.be = branchState.be ∧
-        branchPost.eshapes = branchState.eshapes ∧
-        branchPost.baseAddr = branchState.baseAddr ∧
-        branchPost.structs = branchState.structs ∧
-        branchPost.code = branchState.code ∧
-        branchPost.ffi.oracle = branchState.ffi.oracle) →
+      (∀ (v1 : ValueHOL width) (v6 : HolWordLab width) (w : BitVec width),
+        @evalHOLExact width σ _ state.toPanSemFinite.toExact
+            (fun address => Classical.propDecidable (state.toPanSemFinite.memaddrs address))
+            condition = some v1 ∧
+          v1 = .val v6 ∧ v6 = .word w →
+        ∀ (branchResult : Option (PanSemResultExact width))
+          (branchPost : PanPropsEvalStateFiniteExact width σ),
+          PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state
+              (if w ≠ 0 then thenBranch else elseBranch : ProgHOL width) =
+            (branchResult, branchPost) →
+          branchPost.memaddrs = state.memaddrs ∧
+          branchPost.shMemaddrs = state.shMemaddrs ∧
+          branchPost.be = state.be ∧
+          branchPost.eshapes = state.eshapes ∧
+          branchPost.baseAddr = state.baseAddr ∧
+          branchPost.structs = state.structs ∧
+          branchPost.code = state.code ∧
+          branchPost.ffi.oracle = state.ffi.oracle) →
       post.memaddrs = state.memaddrs ∧
       post.shMemaddrs = state.shMemaddrs ∧
       post.be = state.be ∧
@@ -5548,7 +5545,7 @@ theorem evaluateInvariantsIfCaseHOLFinite {width : Nat} {σ : Type} [NeZero widt
       post.code = state.code ∧
       post.ffi.oracle = state.ffi.oracle := by
   classical
-  intro condition thenBranch elseBranch state result post hRun ihThen ihElse
+  intro condition thenBranch elseBranch state result post hRun ihIf
   have hcanonical :
       PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite
           (.ite condition thenBranch elseBranch : ProgHOL width) =
@@ -5607,29 +5604,31 @@ theorem evaluateInvariantsIfCaseHOLFinite {width : Nat} {σ : Type} [NeZero widt
       | val payload =>
           cases payload with
           | word word =>
-              by_cases hzero : word = 0
-              · simp only [heval] at hcanonical
-                rw [if_pos hzero] at hcanonical
+              have hbranchSem :
+                  PanSemStateFiniteExact.evaluateHOLFiniteState state.toPanSemFinite
+                      (if word ≠ 0 then thenBranch else elseBranch : ProgHOL width) =
+                    (result, post.toPanSemFinite) := by
+                by_cases hzero : word = 0
+                · have hne : ¬ (word ≠ 0) := by simp [hzero]
+                  simp only [heval] at hcanonical
+                  rw [if_pos hzero] at hcanonical
+                  rw [if_neg hne]
+                  exact hcanonical
+                · simp only [heval] at hcanonical
+                  rw [if_neg hzero] at hcanonical
+                  rw [if_pos hzero]
+                  exact hcanonical
+              have hbranchPair :
+                  PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state
+                      (if word ≠ 0 then thenBranch else elseBranch : ProgHOL width) =
+                    (result, post) := by
                 have hbranch := congrArg
                   (fun output =>
                     (output.1, PanPropsEvalStateFiniteExact.ofPanSemFinite output.2))
-                  hcanonical
-                have hrunElse :
-                    PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state elseBranch =
-                      (result, post) := by
-                  simpa [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair] using hbranch
-                exact ihElse state result post hrunElse
-              · simp only [heval] at hcanonical
-                rw [if_neg hzero] at hcanonical
-                have hbranch := congrArg
-                  (fun output =>
-                    (output.1, PanPropsEvalStateFiniteExact.ofPanSemFinite output.2))
-                  hcanonical
-                have hrunThen :
-                    PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state thenBranch =
-                      (result, post) := by
-                  simpa [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair] using hbranch
-                exact ihThen state result post hrunThen
+                  hbranchSem
+                simpa [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair] using hbranch
+              exact ihIf (.val (.word word)) (.word word) word ⟨heval, rfl, rfl⟩
+                result post hbranchPair
       | rStruct _ | nStruct _ _ =>
           simp [heval] at hcanonical
           rcases hcanonical with ⟨_, hpost⟩
@@ -5640,14 +5639,38 @@ end Flapjack
 
 /-! # The `Dec` induction case of HOL `evaluate_invariants`
 
-The `Dec` leaf retains the body induction hypothesis. The initializer/shape
-failure clauses preserve the state; on success the body hypothesis applies to
-the bound state, and restoring the old local binding changes none of the eight
-invariant fields. -/
+HOL's generated `evaluate_ind` Dec conjunct supplies exactly one recursive
+hypothesis: for every `value` with `eval s e = SOME value` and
+`sh = shape_of value`, the body at `s with locals := s.locals⟨v ↦ value⟩`
+preserves the state fields. This leaf takes precisely that guarded
+value/shape hypothesis (the `evaluateInvariantsAtHOLFinite` predicate applied
+to the `setVar`-bound state) and does not assume any stronger
+arbitrary-state or clock-indexed IH. The initializer/shape failure clauses
+preserve the state; on success the body hypothesis applies to the bound state,
+and restoring the old local binding changes none of the eight invariant
+fields. -/
 
 open Flapjack.Pancake.PanLang (MlS ShapeHOL ExpHOL ProgHOL)
 
 namespace Flapjack
+
+/-- Flapjack-specific alias spelling the single guarded recursive hypothesis of
+HOL `evaluate_ind`'s Dec conjunct: for every `value` with `eval s e = SOME value`
+and `sh = shape_of value`, the body preserves the state fields at the
+`setVar`-bound state. Keeping this as an abbreviation means the tagged Dec leaf
+names only the owning `PanPropsEvalStateFiniteExact` carrier. -/
+private abbrev evaluateInvariantsDecBodyIH {width : Nat} {σ : Type} [NeZero width]
+    (name : MlS) (shape : ShapeHOL) (initializer : ExpHOL width)
+    (state : PanPropsEvalStateFiniteExact width σ) (body : ProgHOL width) : Prop :=
+  ∀ (value : ValueHOL width),
+    @Flapjack.evalHOLExact width σ _ state.toPanSemFinite.toExact
+        (fun address => Classical.propDecidable (state.toPanSemFinite.memaddrs address))
+        initializer = some value →
+    shapeEqHOL shape (shapeOfHOLExact value) = true →
+    evaluateInvariantsAtHOLFinite
+      (PanPropsEvalStateFiniteExact.ofPanSemFinite
+        (PanSemStateFiniteExact.setVarHOLFinite name value state.toPanSemFinite))
+      body
 
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_invariants" 1150
   (fmap_as_finite_support := [locals, globals, code, eshapes])
@@ -5660,19 +5683,7 @@ theorem evaluateInvariantsDecCaseHOLFinite {width : Nat} {σ : Type} [NeZero wid
       (post : PanPropsEvalStateFiniteExact width σ),
       PanPropsEvalStateFiniteExact.evaluateHOLFinitePair state
           (.dec name shape initializer body : ProgHOL width) = (result, post) →
-      (∀ (bodyState : PanPropsEvalStateFiniteExact width σ)
-        (bodyResult : Option (PanSemResultExact width))
-        (bodyPost : PanPropsEvalStateFiniteExact width σ),
-        PanPropsEvalStateFiniteExact.evaluateHOLFinitePair bodyState body =
-          (bodyResult, bodyPost) →
-        bodyPost.memaddrs = bodyState.memaddrs ∧
-        bodyPost.shMemaddrs = bodyState.shMemaddrs ∧
-        bodyPost.be = bodyState.be ∧
-        bodyPost.eshapes = bodyState.eshapes ∧
-        bodyPost.baseAddr = bodyState.baseAddr ∧
-        bodyPost.structs = bodyState.structs ∧
-        bodyPost.code = bodyState.code ∧
-        bodyPost.ffi.oracle = bodyState.ffi.oracle) →
+      evaluateInvariantsDecBodyIH name shape initializer state body →
       post.memaddrs = state.memaddrs ∧
       post.shMemaddrs = state.shMemaddrs ∧
       post.be = state.be ∧
@@ -5718,7 +5729,8 @@ theorem evaluateInvariantsDecCaseHOLFinite {width : Nat} {σ : Type} [NeZero wid
               (bodyOutput.1, bodyPostProps) := by
           simp [bodyStateProps, bodyPostProps, bodyOutput,
             PanPropsEvalStateFiniteExact.evaluateHOLFinitePair]
-        have hbody := ihBody bodyStateProps bodyOutput.1 bodyPostProps hbodyRun
+        have hbodyIH := ihBody value hinit hshape
+        have hbody := hbodyIH bodyOutput.1 bodyPostProps hbodyRun
         have hbody' :
             bodyOutput.2.memaddrs = state.toPanSemFinite.memaddrs ∧
             bodyOutput.2.shMemaddrs = state.toPanSemFinite.shMemaddrs ∧
