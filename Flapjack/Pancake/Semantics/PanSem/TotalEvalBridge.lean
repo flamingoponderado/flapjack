@@ -595,6 +595,82 @@ theorem panSemStateRelExec_storeWithAccess {σ : Type}
   intro hrel
   exact ⟨hl, hg, hs, hc, he, hrel, hmd, hsm, hck, hbe, hffi, hb, ht⟩
 
+/-- Destructured form of `panSemStateRelExec_storeWithAccess`: the production
+    store and the exact HOL `mem_stores (flatten v)` either both fail
+    (`none`/`none`) or both succeed (`some m`/`some m'`) with the relation
+    preserved on the updated memories.  This is the case analysis the `Store`
+    clause agreement consumes.  Flapjack-only bridge; no HOL declaration. -/
+private theorem panStoreWithAccess_outcome {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ)
+    (h : PanSemStateRelExec state exact.toExact) (addr : RiscV.Word 64)
+    (v : PanValue (RiscV.Word 64)) :
+    (panValueStoreWithAccess state.memory panSemBitVec64BytesInWord addr v
+        (some (panSemBitVec64MemoryAccess state)) = none ∧
+      @panMemStoresHOL 64 _ addr (flattenHOL (panValueToHOL v)) exact.memaddrs
+        (fun a => Classical.propDecidable (exact.memaddrs a)) exact.memory = none) ∨
+    (∃ m m', panValueStoreWithAccess state.memory panSemBitVec64BytesInWord addr v
+        (some (panSemBitVec64MemoryAccess state)) = some m ∧
+      @panMemStoresHOL 64 _ addr (flattenHOL (panValueToHOL v)) exact.memaddrs
+        (fun a => Classical.propDecidable (exact.memaddrs a)) exact.memory = some m' ∧
+      PanSemStateRelExec { state with memory := m } { exact.toExact with memory := m' }) := by
+  have hb := panSemStateRelExec_storeWithAccess state exact.toExact h addr v
+  cases hs : panValueStoreWithAccess state.memory panSemBitVec64BytesInWord addr v
+      (some (panSemBitVec64MemoryAccess state)) with
+  | none =>
+      rw [hs] at hb
+      cases he : @panMemStoresHOL 64 _ addr (flattenHOL (panValueToHOL v)) exact.memaddrs
+          (fun a => Classical.propDecidable (exact.memaddrs a)) exact.memory with
+      | none => exact Or.inl ⟨rfl, rfl⟩
+      | some m' => rw [he] at hb; exact False.elim hb
+  | some m =>
+      rw [hs] at hb
+      cases he : @panMemStoresHOL 64 _ addr (flattenHOL (panValueToHOL v)) exact.memaddrs
+          (fun a => Classical.propDecidable (exact.memaddrs a)) exact.memory with
+      | none => rw [he] at hb; exact False.elim hb
+      | some m' => exact Or.inr ⟨m, m', rfl, rfl, by rw [he] at hb; exact hb⟩
+
+/-- Production/exact agreement for the `Store` clause.  Under the state
+    relation and the evaluated destination (a word `addr`) and source
+    (`storedValue`) correspondences — no target run, result, or post-state
+    premise — the production `panSemTotalStoreClause` and the exact
+    `evaluateHOLFiniteState` `Store` equation (`panSemScript.sml:583-589`,
+    `evaluateHOLFiniteState_store`) return corresponding results and related
+    post-states.  The success/failure split is exactly
+    `panSemStateRelExec_storeWithAccess`.  Flapjack-only bridge; no HOL
+    declaration. -/
+theorem panSemTotalStoreClause_agree {σ : Type}
+    (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ)
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (address value : Exp (RiscV.Word 64)) (addr : RiscV.Word 64)
+    (storedValue : PanValue (RiscV.Word 64))
+    (hevalAddr : evalPanSemStateExp production address = some (.word addr))
+    (hevalValue : evalPanSemStateExp production value = some storedValue)
+    (hexactAddr : @evalHOLExact 64 σ _ exact.toExact
+        (fun a => Classical.propDecidable (exact.memaddrs a)) (expToHOL address)
+      = some (.val (.word addr)))
+    (hexactValue : @evalHOLExact 64 σ _ exact.toExact
+        (fun a => Classical.propDecidable (exact.memaddrs a)) (expToHOL value)
+      = some (panValueToHOL storedValue)) :
+    PanSemHOLResultOptionRel
+        (panSemTotalStoreClause production address value).1
+        (evaluateHOLFiniteState exact (.store (expToHOL address) (expToHOL value))).1 ∧
+      PanSemStateRelExec
+        (panSemTotalStoreClause production address value).2
+        (evaluateHOLFiniteState exact (.store (expToHOL address) (expToHOL value))).2.toExact := by
+  simp only [evaluateHOLFiniteState_store, hexactAddr, hexactValue]
+  have hout := panStoreWithAccess_outcome production exact hrel addr storedValue
+  rcases hout with ⟨hs, he⟩ | ⟨m, m', hs, he, hrel'⟩
+  · have hclause : panSemTotalStoreClause production address value = (some .error, production) := by
+      simp [panSemTotalStoreClause, panSemTotalExprStep, hevalAddr, hevalValue, hs]
+    rw [hclause, he]
+    exact ⟨trivial, hrel⟩
+  · have hclause := panSemTotalStoreClause_ok production address value addr storedValue m
+        hevalAddr hevalValue hs
+    rw [hclause, he]
+    exact ⟨trivial, hrel'⟩
+
 /-- `PanSemStateRelExec` through the production `StoreByte` memory update (the
     state-derived `storeByte` used by `panSemTotalStoreByteClause`) and the exact
     HOL `mem_store_byte s.memory s.memaddrs s.be adr (w2w w)`
