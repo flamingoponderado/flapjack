@@ -4116,6 +4116,26 @@ theorem globalsShapes_shMemLoadHOLFiniteExact {width : Nat} {σ : Type} [NeZero 
     _ = globalsShapes state :=
         (globalsShapes_eq_globalsShapesExact_toExact state).symm
 
+/-- Finite-support rendering preserves `globalsShapes` in every nonrecursive
+clause (Flapjack-specific untagged infrastructure for HOL
+`panPropsScript.sml:1183` `evaluate_global_shape_invariant`). -/
+theorem evalPanSemNonrecursiveHOLFinite_globalsShapes {width : Nat} {σ : Type} [NeZero width]
+    (state : PanSemStateFiniteExact width σ) [DecidablePred state.memaddrs]
+    [DecidablePred state.shMemaddrs] (program : ProgHOL width)
+    (result : Option (PanSemResultExact width))
+    (output : PanSemStateFiniteExact width σ)
+    (heval : evalPanSemNonrecursiveHOLFinite state program = some (result, output)) :
+    globalsShapes output = globalsShapes state := by
+  unfold evalPanSemNonrecursiveHOLFinite at heval
+  split at heval
+  · simp at heval
+  · rename_i pair hres
+    simp only [Option.some.injEq, Prod.mk.injEq] at heval
+    rcases heval with ⟨rfl, rfl⟩
+    change globalsShapesExact pair.2 = globalsShapes state
+    rw [globalsShapes_eq_globalsShapesExact_toExact]
+    exact evalPanSemNonrecursiveHOLExact_globalsShapesExact program state.toExact pair.1 pair.2 hres
+
 end PanSemStateFiniteExact
 
 end Flapjack
