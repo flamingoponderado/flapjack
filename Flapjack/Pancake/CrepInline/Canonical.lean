@@ -340,26 +340,59 @@ def alistToFmapHOLExact [BEq CrepInlineMapHOLName] [LawfulBEq CrepInlineMapHOLNa
       FUPDATE_LIST (FEMPTY : FiniteMap CrepInlineMapHOLName
         (List Nat × CrepProgHOL width)) entries.reverse key := rfl
 
+/-- A computable finite support for the map built by `alistToFmapHOLExact`: the
+    key list is exactly the alist's keys, so the executable inline wrappers need
+    no `Classical.choose` and `HolFiniteMapExact`'s existential `finiteSupport`
+    is never inspected. Mirrors the `supportKeys` certificate used by
+    `inlineProgHOLCoreExact`. -/
+theorem supportKeys_alistToFmapHOLExact [BEq CrepInlineMapHOLName]
+    [LawfulBEq CrepInlineMapHOLName]
+    (entries : List (CrepInlineMapHOLName × (List Nat × CrepProgHOL width))) :
+    ∀ key, (alistToFmapHOLExact entries).lookup key ≠ none →
+      key ∈ entries.map Prod.fst := by
+  intro key hkey
+  by_cases hmem : key ∈ entries.map Prod.fst
+  · exact hmem
+  · exfalso
+    have hrev : key ∉ entries.reverse.map Prod.fst := by
+      intro hh
+      rw [List.mem_map] at hh
+      obtain ⟨entry, hentry, hfst⟩ := hh
+      exact hmem (List.mem_map.mpr ⟨entry, List.mem_reverse.mp hentry, hfst⟩)
+    have hnone : FLOOKUP (FUPDATE_LIST (FEMPTY : FiniteMap CrepInlineMapHOLName
+        (List Nat × CrepProgHOL width)) entries.reverse) key = none := by
+      rw [FLOOKUP_FUPDATE_LIST_not_mem _ _ _ hrev]
+      rfl
+    exact hkey (by rw [lookup_alistToFmapHOLExact]; exact hnone)
+
 /-- Exact port of HOL `compile_inl_prog_def`: for every triple, inline the body
-    under the map with that function's own name erased. -/
-noncomputable def compileInlProgHOLExact [BEq CrepInlineMapHOLName] [LawfulBEq CrepInlineMapHOLName]
+    under the map with that function's own name erased.  The finite support of
+    the inline map is threaded explicitly so this stays computable. -/
+def compileInlProgHOLExact [BEq CrepInlineMapHOLName] [LawfulBEq CrepInlineMapHOLName]
     (inl_fs : HolFiniteMapExact CrepInlineMapHOLName (List Nat × CrepProgHOL width))
+    (supportKeys : List CrepInlineMapHOLName)
+    (support_spec : ∀ key, inl_fs.lookup key ≠ none → key ∈ supportKeys)
     (prog : List (CrepInlineMapHOLName × List Nat × CrepProgHOL width)) :
     List (CrepInlineMapHOLName × List Nat × CrepProgHOL width) :=
   prog.map fun triple =>
-    (triple.1, triple.2.1, inlineProgHOLExact (inl_fs.erase triple.1) triple.2.2)
+    (triple.1, triple.2.1,
+      inlineProgHOLCoreExact (inl_fs.erase triple.1)
+        (supportKeys.filter (fun key => key != triple.1))
+        (HolFiniteMapExact.erase_support inl_fs supportKeys support_spec triple.1)
+        triple.2.2)
 
 /-- Exact port of HOL `compile_inl_top_def`: build the inline alist by filtering
     the program to the named functions (HOL `FILTER (fun (x, y) => MEM x
-    inl_fname) prog`), then run `compile_inl_prog`. -/
-noncomputable def compileInlTopHOLExact [BEq CrepInlineMapHOLName] [LawfulBEq CrepInlineMapHOLName]
+    inl_fname) prog`), then run `compile_inl_prog`.  The support certificate is
+    computed from the filtered alist's keys, so the definition is executable. -/
+def compileInlTopHOLExact [BEq CrepInlineMapHOLName] [LawfulBEq CrepInlineMapHOLName]
     (inl_fname : List CrepInlineMapHOLName)
     (prog : List (CrepInlineMapHOLName × List Nat × CrepProgHOL width)) :
     List (CrepInlineMapHOLName × List Nat × CrepProgHOL width) :=
-  let inl_fs :=
-    alistToFmapHOLExact
-      (prog.filter fun triple => inl_fname.contains triple.1)
-  compileInlProgHOLExact inl_fs prog
+  let entries := prog.filter fun triple => inl_fname.contains triple.1
+  let inl_fs := alistToFmapHOLExact entries
+  compileInlProgHOLExact inl_fs (entries.map Prod.fst)
+    (supportKeys_alistToFmapHOLExact entries) prog
 
 /-! ### Regression against the direct HOL `alist_to_fmap` / DOMSUB probe
 
@@ -411,6 +444,31 @@ theorem domsub_preserves_g :
   have hfg : (ofString "f" == ofString "g") = false := by decide
   simp only [HolFiniteMapExact.erase, FDOMSUB, hfg, Bool.false_eq_true, if_false,
     alist_other_row]
+
+/-! ### Executability regression for `compile_inl_top`
+
+The support certificate is derived from the filtered alist, not from
+`Classical.choose`, so `compileInlTopHOLExact` really evaluates. This mirrors the
+production `compileInlTopOracle` in `Flapjack/Test/CompileProgParity.lean`
+(inline `first` calling `second`, whose body is a constant return). -/
+
+private def inlTopProbeProg :
+    List (CrepInlineMapHOLName × List Nat × CrepProgHOL 8) :=
+  [(ofString "first", ([], (.call none (ofString "second") [] : CrepProgHOL 8))),
+   (ofString "second", ([], (.return [.const 9] : CrepProgHOL 8)))]
+
+private def inlTopProbeOracle : Bool :=
+  match compileInlTopHOLExact [ofString "first", ofString "second"] inlTopProbeProg with
+  | [first, second] =>
+      (match first.2.2 with
+       | .seq .tick (.return [.const 9]) => true
+       | _ => false) &&
+      (match second.2.2 with
+       | .return [.const 9] => true
+       | _ => false)
+  | _ => false
+
+#guard inlTopProbeOracle
 
 end CrepInlineCanonical
 

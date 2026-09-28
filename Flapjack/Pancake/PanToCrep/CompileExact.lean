@@ -870,10 +870,13 @@ theorem loadShapeBytesW_map_crepExpToHOL {width : Nat} [NeZero width]
 outer translation being HOL's positive type-indexed word to `BitVec width`
 (hence the `words_as_type_indexed_bitvec` qualifier; the finite maps used inside
 are local intermediates and do not occur in this declaration's input or output
-type). No extra hypotheses. -/
+type). No extra hypotheses.  The definition is computable: the inline map's
+finite support is derived from the filtered alist's keys
+(`supportKeys_alistToFmapHOLExact`), so it never invokes `Classical.choose` and
+the executable compiler can run it. -/
 @[hol "cakeml/pancake/pan_to_crepScript.sml" "compile_prog_def" 393
   (words_as_type_indexed_bitvec)]
-noncomputable def compileProgDeclsHOLW {width : Nat} [NeZero width]
+def compileProgDeclsHOLW {width : Nat} [NeZero width]
     (prog : List (DeclHOL width)) :
     List (MlS × List Nat × CrepProgHOL width) :=
   let inl_fs_names := (functionsHOL (prog.filter inlinableHOL)).map Prod.fst
