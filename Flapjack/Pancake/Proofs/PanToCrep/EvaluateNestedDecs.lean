@@ -510,13 +510,27 @@ private theorem loadGlobalsHOL_zero_eq_range {width : Nat} [NeZero width]
     rw [hload]
     simp
 
-/-- FLAPJACK-SPECIFIC presentation of HOL candidate
-    `evaluate_nested_decs_load_globals` (`pan_to_crepProofScript.sml:4139-4176`).
-    Its evaluator now has a tagged, source-reviewed `evaluate_def` clause
-    theorem, and the finite-map qualifier witness is settled. This theorem
-    remains untagged pending a separate review of its own binders, conjunctive
-    premise, and pair-pattern conclusion against HOL; see
-    `flapjack-4ac.5.16.5`. -/
+/-- Exact port of HOL `evaluate_nested_decs_load_globals`
+    (`cakeml/pancake/proofs/pan_to_crepProofScript.sml:4139-4176`).
+
+    HOL's implicitly universally quantified variables `s rv rvs vs p` appear
+    in that order and map to the binders `state value values names body`; the
+    single conjunctive premise `globals_lookup s rv = SOME rvs /\ size_of_shape
+    (shape_of rv) <= 32 /\ ALL_DISTINCT vs /\ LENGTH vs = size_of_shape
+    (shape_of rv)` maps to `hLookup`, `_hSize`, `hDistinct`, `hLength`.
+    `globals_lookup`, `size_of_shape`, `shape_of`, `nested_decs`,
+    `load_globals`, and the Crep `evaluate` are the tagged
+    `globalsLookupHOL`, `sizeOfShapeHOL`, `shapeOfHOLExact`, `nestedDecsHOL`,
+    `loadGlobalsHOL`, and `evalCrepSemHOLProgExact` (the line-443
+    `evaluate_def` assembly); `|++` is `updateListEq`, `FLOOKUP` is `.lookup`,
+    `FOLDL res_var` is the `HolFiniteMapExact.resVarEq` fold, and HOL's
+    `let (res,s') = ... in` is the outer `let` on the result pair. The
+    `CrepSemHOLState` finite maps use the reviewed `HolFiniteMapExact`
+    translation (same-module witness `EvalNestedDecsFiniteSupport.holFmapAsFiniteSupportWitness`)
+    and `'a word`/`'ffi` use the `BitVec width`/`σ : Type` translation. -/
+@[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "evaluate_nested_decs_load_globals"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
 theorem evaluateNestedDecsLoadGlobalsCrepHOL {width : Nat} [NeZero width]
     {σ : Type} (state : CrepSemHOLState width σ) (value : ValueHOL width)
     (values : List (HolWordLab width)) (names : List Nat)
