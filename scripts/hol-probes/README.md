@@ -677,6 +677,23 @@ The original Pancake source-level support boundary is also explicit in
 accepted by `loop_inst_ok` only for `x86_64`. Consequently, RISC-V parity must
 port the `data_to_word` helper path rather than add a direct RISC-V lowering
 for source `LLongDiv`.
+`crep_to_loop_code_rel_probe.out` records direct HOL EVAL rows for
+`code_rel_def` at `cakeml/pancake/proofs/crep_to_loopProofScript.sml:76-88`.
+The fixture uses the HOL context `context FEMPTY
+(FEMPTY |+ (strlit "f", (42,2))) 0 RISC_V` with `s_code` holding
+`([1;2], Skip)` and `t_code = insert 42 ([0;1], Mark Skip) LN`. Besides the
+component rows (`FLOOKUP` of the function table and of `s_code`, the generated
+argument list `GENLIST I 2 = [0; 1]`, the compiled `Skip`, and the target
+lookup), `code_rel_witness=T` evaluates the fully instantiated existential
+requirement with the witnesses `loc = 42`, `len = 2`, while
+`code_rel_missing_funcs=F` and `code_rel_len_mismatch=F` evaluate the same shape
+with the function-table lookup failing and with a length mismatch. HOL
+`crepSem$state.code` (and hence `s_code`) is `funname |-> _`, i.e. `mlstring`
+keyed; the Lean replay therefore uses the `MlS` key `ofString "f"`. The exact
+Lean port `crepToLoopCodeRelExact` in `Flapjack.Pancake.CrepToLoop.StateRel` is
+replayed against those rows by `Flapjack.Test.CrepToLoopCodeRelParity`. Refresh
+with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=crep_to_loop_code_rel_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
 `crep_to_loop_locals_rel_probe.out` records direct observations for
 `locals_rel_def` at `cakeml/pancake/proofs/crep_to_loopProofScript.sml:101-111`.
 HOL `crepLang$varname = num` (`crepLangScript.sml:19`), so the context's `vars`
