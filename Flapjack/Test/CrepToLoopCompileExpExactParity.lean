@@ -59,7 +59,7 @@ example : compileExpHOLExact context 5 live
           (sptListInsert [6, 7] live)],
        .var 6, 8, sptListInsert [6, 7] live) := by
   simp [compileExpHOLExact, context,
-    mkCtxtExact, HolFiniteMapExact.empty, live]
+    mkCtxtExact, HolFiniteMapExact.empty, progIfHOLExact, live]
 
 example : compileExpHOLExact context 5 live
     (.shift .lsl (.const (2 : BitVec 8)) (.const 1) : CrepExpHOL 8) =

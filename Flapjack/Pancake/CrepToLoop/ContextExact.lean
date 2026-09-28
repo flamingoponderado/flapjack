@@ -118,6 +118,22 @@ def compileCrepopHOLExact {width : Nat} [NeZero width]
       else
         ([.arith (.longMul tmp tmp left right)], tmp)
 
+/-- Exact HOL `prog_if_def`: materialize both expressions, branch on the
+comparison, and insert both temporaries into the HOL `num_set`. -/
+@[hol "cakeml/pancake/crep_to_loopScript.sml" "prog_if_def"
+  (words_as_type_indexed_bitvec)]
+def progIfHOLExact {width : Nat} [NeZero width]
+    (operator : Cmp) (first second : List (HolLoopProg width))
+    (left right : HolLoopExp width) (condition rightRegister : Nat)
+    (live : NumSet) : List (HolLoopProg width) :=
+  first ++ second ++
+    [.assign condition left,
+     .assign rightRegister right,
+     .ite operator condition (.reg rightRegister)
+       (.assign condition (.const 1))
+       (.assign condition (.const 0))
+       (sptListInsert [condition, rightRegister] live)]
+
 mutual
   /-- Exact HOL `compile_exp_def` over the source Crep and Loop carriers. This
   is proof-side exact infrastructure for now: production `loopCompileExp`
@@ -173,13 +189,8 @@ mutual
           compileExpHOLExact context leftNext leftLive right
         let condition := rightNext + 1
         let rightRegister := rightNext + 2
-        (leftCode ++ rightCode ++
-          [.assign condition leftValue,
-           .assign rightRegister rightValue,
-           .ite operator condition (.reg rightRegister)
-             (.assign condition (.const 1))
-             (.assign condition (.const 0))
-             (sptListInsert [condition, rightRegister] rightLive)],
+        (progIfHOLExact operator leftCode rightCode leftValue rightValue
+            condition rightRegister rightLive,
           .var condition, rightNext + 3,
           sptListInsert [condition, rightRegister] rightLive)
     | .shift operator left right =>
