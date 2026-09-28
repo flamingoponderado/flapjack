@@ -1235,9 +1235,14 @@ theorem evalHOL_upd_eshapes_eq {width : Nat} {σ : Type} [NeZero width]
     infers a fresh type variable for it, restored here as the vacuous binder
     `{ν : Type} (_v : ν)` (spelled `_v` only to satisfy the unused-variable
     linter; the quantified binder is present). `[NeZero width]`
-    records HOL's positive word dimension. -/
+    records HOL's positive word dimension. The carrier is width-indexed
+    (`[NeZero width]` with `RiscV.Word width`/`BitVec width` fields), so HOL's
+    type-indexed `'a word` translation is recorded by the
+    `(words_as_type_indexed_bitvec)` qualifier alongside the finite-support field
+    qualifier, matching the sibling `opt_mmap_eval_upd_clock_eq` tag. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "update_locals_not_vars_eval_eq_eq"
-  (fmap_as_finite_support := [locals, globals, code, eshapes])]
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
 theorem evalHOL_updLocals_not_mem {width : Nat} {σ : Type} [NeZero width]
     (state : PanPropsEvalStateFiniteExact width σ) [h : DecidablePred state.memaddrs]
     (expression : ExpHOL width) {ν : Type} (_v : ν) (name : MlS) (word : ValueHOL width)
