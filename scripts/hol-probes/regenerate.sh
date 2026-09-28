@@ -1283,6 +1283,9 @@ run_probe prog_if_probeScript.sml prog_if_probe.out \
 run_probe crep_to_loop_compile_exp_probeScript.sml crep_to_loop_compile_exp_probe.out \
   base compile_exps \
   "$cake_dir/pancake/crep_to_loopScript.sml"
+run_probe crep_to_loop_comp_func_probeScript.sml crep_to_loop_comp_func_probe.out \
+  comp_func_skip comp_func_return_var comp_func_two_params done \
+  "$cake_dir/pancake/crep_to_loopScript.sml"
 run_probe crep_to_loop_compile_probeScript.sml crep_to_loop_compile_probe.out \
   loop_nested_seq_empty compile_ext_call \
   "$cake_dir/pancake/crep_to_loopScript.sml"

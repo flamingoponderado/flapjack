@@ -18266,6 +18266,18 @@
   },
   {
     "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
+    "hol_name": "comp_func_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/ContextExact.lean",
+    "lean_name": "compFuncHOLExact",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_parameters": [
+      "fs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (2026-09-28, bead flapjack-pxn.18.5.6.30) against crep_to_loopScript.sml:235-241: comp_func target fs params body = let vmap = make_vmap params; vmax = LENGTH params - 1; l = list_to_num_set (GENLIST I (LENGTH params)) in compile (mk_ctxt target vmap fs vmax) l body. Lean keeps HOL's target/fs/params/body binder order and the same let order: make_vmap is the exact-carrier makeVmapExact (FEMPTY |++ ZIP (params, GENLIST I (LENGTH params)) rendered as HolFiniteMapExact.updateListEq empty (params.zip (List.range params.length)), so a later duplicate parameter shadows an earlier one), vmax is params.length - 1, the live set list_to_num_set (GENLIST I (LENGTH params)) is sptListInsert (List.range params.length) .ln, and compile is the tagged compileHOLExact with the tagged mkCtxtExact. The standalone fs finite-map parameter is a same-module HolFiniteMapExact binder with checked parameter witness holFmapAsFiniteSupportParamWitness_compFuncHOLExact_fs; the words qualifier records the indexed CrepProgHOL/HolLoopProg word translation. This is proof-side exact infrastructure; production compileCrepToLoop does not route through it (tracked separately). No executable behavior or performance exception is claimed."
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_to_loopScript.sml",
     "hol_name": "compile_exp_def",
     "lean_path": "Flapjack/Pancake/CrepToLoop/ContextExact.lean",
     "lean_name": "compileExpHOLExact",

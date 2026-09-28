@@ -374,4 +374,41 @@ decreasing_by
         CrepProgHOL.ite.sizeOf_spec, CrepProgHOL.while.sizeOf_spec,
         CrepProgHOL.call.sizeOf_spec]; omega)
 
+
+/-! ## Exact `comp_func_def` over the exact context carrier -/
+
+/-- HOL `make_vmap` (`crep_to_loopScript.sml:230-233`) on the canonical
+finite-support carrier: `FEMPTY |++ ZIP (params, GENLIST I (LENGTH params))`, so
+a later duplicate parameter shadows an earlier one. Untagged helper for the
+exact `comp_func_def` port; the tagged production rendering `makeVmapHOL` stays
+function-backed. -/
+def makeVmapExact (params : List Nat) : HolFiniteMapExact Nat Nat :=
+  HolFiniteMapExact.updateListEq HolFiniteMapExact.empty
+    (params.zip (List.range params.length))
+
+/-- Checked finite-map parameter translation for `comp_func_def.fs`. -/
+theorem holFmapAsFiniteSupportParamWitness_compFuncHOLExact_fs
+    (fs : HolFiniteMapExact MlString (Nat × Nat)) :
+    CrepToLoopFiniteMap.ofBroad (CrepToLoopFiniteMap.toBroadlookup fs)
+      fs.finiteSupport = fs := by
+  cases fs
+  rfl
+
+/-- Exact HOL `comp_func_def` (`crep_to_loopScript.sml:235-241`). Binders and
+order match HOL (`target fs params body`); `make_vmap`, `LENGTH params - 1` and
+`list_to_num_set (GENLIST I (LENGTH params))` are rendered as `makeVmapExact`,
+`params.length - 1` and `sptListInsert (List.range params.length) .ln`, and the
+body is compiled by the tagged `compileHOLExact`. The standalone `fs`
+finite-map parameter carries the parameters qualifier; the word-indexed program
+carriers carry the words qualifier. -/
+@[hol "cakeml/pancake/crep_to_loopScript.sml" "comp_func_def"
+  (fmap_as_finite_support_parameters := [fs]) (words_as_type_indexed_bitvec)]
+def compFuncHOLExact {width : Nat} [NeZero width]
+    (target : AsmArchitecture) (fs : HolFiniteMapExact MlString (Nat × Nat))
+    (params : List Nat) (body : CrepProgHOL width) : HolLoopProg width :=
+  compileHOLExact
+    (mkCtxtExact target (makeVmapExact params) fs (params.length - 1))
+    (sptListInsert (List.range params.length) .ln)
+    body
+
 end Flapjack
