@@ -47,8 +47,8 @@ theorem listRelLengthShapeOfFlattenBetterHOL {width : Nat} [NeZero width] :
     size_of_shape (Comb (MAP SND vshs)) = LENGTH (FLAT (MAP flatten args))`. -/
 @[hol "cakeml/pancake/semantics/panPropsScript.sml" "list_rel_length_shape_of_flatten"
   (words_as_type_indexed_bitvec)]
-theorem listRelLengthShapeOfFlattenHOL {width : Nat} [NeZero width] :
-    ∀ (vshs : List (MlS × ShapeHOL)) (args : List (ValueHOL width)),
+theorem listRelLengthShapeOfFlattenHOL {width : Nat} [NeZero width] {β : Type} :
+    ∀ (vshs : List (β × ShapeHOL)) (args : List (ValueHOL width)),
       ListRel (fun vsh arg => vsh.2 = shapeOfHOLExact arg) vshs args ∧
         (∀ arg, arg ∈ args → isWfShapeValueHOLExact [] arg = true) →
       sizeOfShapeHOL (.comb (vshs.map Prod.snd)) =
