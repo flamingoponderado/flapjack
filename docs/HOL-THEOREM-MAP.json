@@ -10858,6 +10858,31 @@
     "statement_status": "reviewed_exact",
     "reviewer": "Codex (statement compared against ctxt_max_def at crep_to_loopProofScript.sml:90; HOL's un-annotated Definition infers 'a |-> num because m <= n, so the port is polymorphic in the key and fixed at Nat for values; direct HOL-EVAL rows ctxt_max_within/exceeds/absent reproduced by Lean guards in Flapjack/Test/CrepToLoopParity.lean)"
   },
+{
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "locals_rel_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
+    "lean_name": "crepToLoopLocalsRelExact",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs"
+    ],
+    "reviewer": "flapjack-ds10 source comparison (2026-09-28; bead flapjack-pxn.18.5.6.31.2) against locals_rel_def at crep_to_loopProofScript.sml:101-111. The four carriers are the reviewed exact renderings: the mlstring-keyed CrepToLoopContextExact context (tagged context); l : NumSet (exact sptree$num_set) with sptMem for `domain l`/`n IN domain l` (HOL sptree domain_lookup); tLocals : Spt (WordLocW width) for the sptree$num_map `lookup`; and sLocals : HolFiniteMapExact Nat (HolWordLab width) for `num |-> 'a word_lab`, with the exact word_lab/word_loc bridge wlabWlocHOL. distinct_vars/ctxt_max are the tagged parametric renderings crepToLoopDistinctVars/crepToLoopCtxtMax applied to ctxt.vars.lookup. Clause-for-clause: distinct_vars ctxt.vars / ctxt_max ctxt.vmax ctxt.vars / domain l SUBSET domain t_locals / the per-name FLOOKUP obligation with n IN domain l and lookup n t_locals = SOME (wlab_wloc v). Direct HOL oracle rows in scripts/hol-probes/crep_to_loop_locals_rel_probe.out (ctxt_vars_lookup, distinct_component, ctxt_max_component, set_domain_mem, map_lookup, subset_domain_component); exercised by Flapjack/Test/CrepToLoopParity.lean exact-carrier fixtures. The earlier String/Boolean/Option renderings remain untagged in the same module. code_rel_def (which also needs exact ocompile) is tracked separately.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "locals_rel_intro",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
+    "lean_name": "crepToLoopLocalsRelExact_intro",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars"
+    ],
+    "reviewer": "flapjack-ds10 source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.1) against locals_rel_intro at crep_to_loopProofScript.sml:176-186. HOL states `locals_rel ctxt l s_locals t_locals ==> distinct_vars ctxt.vars /\\ ctxt_max ctxt.vmax ctxt.vars /\\ domain l SUBSET domain t_locals /\\ per-name FLOOKUP obligation`; the Lean source comparison keeps the same implication shape (not an iff) over the exact carriers: CrepToLoopContextExact (tags context), l : NumSet (exact sptree$num_set) with sptMem for domain membership, sLocals : HolFiniteMapExact Nat (HolWordLab width) for `num |-> 'a word_lab`, and tLocals : Spt (WordLocW width) for the sptree$num_map `lookup`, with the exact wlabWlocHOL word_lab/word_loc bridge. The four conjuncts match clause-for-clause and are mediated by the tagged crepToLoopLocalsRelExact definition. Qualifiers: only ctxt.vars is an exact finite-map field traversed by this statement, and the width-indexed word carriers HolWordLab/WordLocW are the reviewed `'a word` translation. Direct HOL oracle rows appear in scripts/hol-probes/crep_to_loop_locals_rel_probe.out and the lemma is exercised by Flapjack/Test/CrepToLoopParity.lean. code_rel_intro is tracked separately because it needs exact ocompile.",
+    "words_as_type_indexed_bitvec": true
+  },
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
     "hol_name": "state_rel_def",
@@ -12128,6 +12153,26 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-ds5 (source comparison, 2026-09-28; bead flapjack-pxn.18.5.6.29.1.4): HOL declares shrink and fixedpoint in ONE mutual definition shrink_def (loop_liveScript.sml:62-160), with no separate fixedpoint_def; Lean reproduces the mutual block over the faithful HolLoopProg width / NumSet carrier (words_as_type_indexed_bitvec: HOL is polymorphic in the type-indexed word/label type, Lean fixes it to BitVec width under [NeZero width] via the reviewed HolLoopProg carrier). shrinkHOL is the tagged half and fixedpointHOL is the untagged mutual half, analogous to varsOfExpListHOL/vars_of_exp_list. Clause-for-clause match verified against the HOL equations (Seq shrinks p2 then p1; Loop/If recompute cut-sets via inter/union; Call handler uses l2 from shrinking r and l3 from h). Representative direct HOL observations are the committed original-HOL EVAL rows in scripts/hol-probes/shrink_leaf_probe.out (shrink) plus the indirect mark_all_probe.out / loop_live_comp_probe.out / loop_live_optimise_probe.out suites (mark_all/comp/optimise composed from shrink). Termination measure mirrors HOL (prog_size (K 0) body, 0/1, size live_in - size l1) with sizeOf and sptSize, using sptSize_inter_le for size_inter."
+  },
+  {
+    "hol_path": "cakeml/pancake/loop_liveScript.sml",
+    "hol_name": "mark_all_def",
+    "hol_line": 189,
+    "lean_path": "Flapjack/Pancake/LoopLive.lean",
+    "lean_name": "markAllHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-28; bead flapjack-pxn.18.5.6.29.1.5): exact port of HOL mark_all_def (loop_liveScript.sml:189-215) over HolLoopProg width. Clause-for-clause: Seq/If recurse both children and wrap in Mark iff both children are marked; Loop recurses the body and returns false; Mark unwraps; Call with no handler becomes Mark of itself with true, and with a handler recurses handler/normal then wraps iff both marked; catch-all wraps in Mark with true. words_as_type_indexed_bitvec because HOL is polymorphic in the type-indexed word/label type while Lean fixes BitVec width under [NeZero width] via the reviewed HolLoopProg carrier; no other differences. Representative direct original-HOL rows in scripts/hol-probes/mark_all_probe.out, plus the loop_live_comp/loop_live_optimise probe suites that compose shrink+mark_all."
+  },
+  {
+    "hol_path": "cakeml/pancake/loop_liveScript.sml",
+    "hol_name": "comp_def",
+    "hol_line": 217,
+    "lean_path": "Flapjack/Pancake/LoopLive.lean",
+    "lean_name": "compHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-28; bead flapjack-pxn.18.5.6.29.1.7): exact port of HOL comp_def (loop_liveScript.sml:217-219) `comp prog = FST (mark_all (FST (shrink [] prog LN)))` over HolLoopProg width: compHOL prog = (markAllHOL (shrinkHOL [] prog .ln).1).1, composing the tagged shrinkHOL (shrink_def) and markAllHOL (mark_all_def). words_as_type_indexed_bitvec because HOL is polymorphic in the type-indexed word/label type while Lean fixes BitVec width under [NeZero width] via the reviewed HolLoopProg carrier; no other differences, no extra hypotheses. Representative direct original-HOL rows are the committed loop_live_comp_probe.out suite (comp composed from shrink+mark_all)."
   },
   {
     "hol_path": "cakeml/compiler/backend/backend_commonScript.sml",
