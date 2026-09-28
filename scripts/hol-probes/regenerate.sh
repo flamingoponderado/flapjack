@@ -1278,7 +1278,7 @@ run_probe crep_eval_crepop_mul_rv64_probeScript.sml crep_eval_crepop_mul_rv64_pr
   "$cake_dir/pancake/semantics/crepSemScript.sml" \
   "$cake_dir/pancake/semantics"
 run_probe prog_if_probeScript.sml prog_if_probe.out \
-  prog_if_basic prog_if_basic \
+  prog_if_basic prog_if_basic prog_if_wrong_result prog_if_wrong_result \
   "$cake_dir/pancake/crep_to_loopScript.sml"
 run_probe crep_to_loop_compile_exp_probeScript.sml crep_to_loop_compile_exp_probe.out \
   base compile_exps \

@@ -1,5 +1,6 @@
 avma_nil=T
 avma_one=T
 avma_two=T
+avma_two_negative=F
 avma_three=T
 avma_offset_zero=T
