@@ -335,6 +335,7 @@ import Flapjack.Pancake.CrepToLoop.Proofs.RelationsExact
 import Flapjack.Pancake.CrepToLoop.Proofs.LocalsRelHelpers
 import Flapjack.Pancake.CrepToLoop.Proofs.LocalsRelOptMmap
 import Flapjack.Pancake.CrepToLoop.Proofs.CompExpPreservesEvalShift
+import Flapjack.Pancake.CrepToLoop.Proofs.CompExpPreservesEvalLoadByte32
 import Flapjack.Pancake.CrepToLoop.Optimise
 import Flapjack.Pancake.CrepToLoop.StateRel
 import Flapjack.Test.CrepToLoopCompileExpExactParity
