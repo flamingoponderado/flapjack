@@ -153,6 +153,7 @@ import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Raise
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Assign
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Primitive
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Store
+import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.ShMemStore
 import Flapjack.Pancake.Proofs.PanToCrep.NotMemContextAssignedMemGt
 import Flapjack.Pancake.Proofs.PanToWord
 import Flapjack.Pipeline
