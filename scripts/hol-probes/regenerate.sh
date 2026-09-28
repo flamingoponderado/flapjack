@@ -1298,7 +1298,9 @@ run_probe crep_to_loop_compile_probeScript.sml crep_to_loop_compile_probe.out \
   loop_nested_seq_empty compile_ext_call \
   "$cake_dir/pancake/crep_to_loopScript.sml"
 run_probe crep_to_loop_comp_func_probeScript.sml crep_to_loop_comp_func_probe.out \
-  comp_func_skip comp_func_duplicate_parameters \
+  comp_func_skip comp_func_one_parameter_return \
+  comp_func_pair_parameter_return comp_func_duplicate_parameters \
+  comp_func_if_cutset \
   "$cake_dir/pancake/crep_to_loopScript.sml"
 run_probe compile_crepop_probeScript.sml compile_crepop_probe.out \
   compile_crepop_mul_riscv compile_crepop_mul_armv7 \

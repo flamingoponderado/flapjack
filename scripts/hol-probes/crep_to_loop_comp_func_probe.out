@@ -2,3 +2,5 @@ comp_func_skip=Skip
 comp_func_one_parameter_return=Seq (Assign 1 (Var 0)) (Seq (Return [1]) Skip)
 comp_func_pair_parameter_return=Seq (Assign 2 (Var 0)) (Seq (Assign 3 (Var 1)) (Seq (Return [2; 3]) Skip))
 comp_func_duplicate_parameters=Seq (Assign 2 (Var 1)) (Seq (Return [2]) Skip)
+comp_func_if_cutset=Seq (Assign 3 (Const 1w))
+  (Seq (If NotEqual 3 (Imm 0w) Skip Skip ⦕ 0; 1; 2 ⦖) Skip)

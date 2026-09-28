@@ -34,7 +34,8 @@ variable map with `FEMPTY |++ ZIP (params, GENLIST I (LENGTH params))`, its
 initial live set with `list_to_num_set (GENLIST I (LENGTH params))`, sets
 `vmax = LENGTH params - 1`, and calls the unoptimized `compile` definition.
 `updateList` renders the finite-map `|++`, `List.range` renders the indexed
-`GENLIST`, and `sptListInsert` renders `list_to_num_set`. The target, function
+`GENLIST`, and `sptListToNumSet` renders the right-recursive
+`list_to_num_set` (not the distinct left-to-right `list_insert`). The target, function
 map, word width, and program carriers are the reviewed HOL counterparts. This
 tag does not claim that the String/list-backed production `crepCompFunc` has
 been routed through this exact definition; that projection and routing remains
@@ -47,7 +48,7 @@ def compFuncHOLExact {width : Nat} [NeZero width]
     (params : List Nat) (body : CrepProgHOL width) : HolLoopProg width :=
   let vmap := HolFiniteMapExact.empty.updateList
     (params.zip (List.range params.length))
-  let live := sptListInsert (List.range params.length) (.ln : NumSet)
+  let live := sptListToNumSet (List.range params.length)
   compileHOLExact
     (mkCtxtExact target vmap fs (params.length - 1)) live body
 

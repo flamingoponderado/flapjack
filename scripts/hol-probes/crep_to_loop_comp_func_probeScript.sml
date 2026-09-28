@@ -25,3 +25,7 @@ val _ = print_eval "comp_func_pair_parameter_return"
       (Return [Var 5; Var 7] : 8 word crepLang$prog)``;
 val _ = print_eval "comp_func_duplicate_parameters"
   ``comp_func RISC_V FEMPTY [5; 5] (Return [Var 5] : 8 word crepLang$prog)``;
+val _ = print_eval "comp_func_if_cutset"
+  ``comp_func RISC_V FEMPTY [5; 7; 9]
+      (crepLang$If (crepLang$Const (1w : 8 word))
+        crepLang$Skip crepLang$Skip)``;

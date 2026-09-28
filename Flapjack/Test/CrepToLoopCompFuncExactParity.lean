@@ -33,6 +33,13 @@ def compFuncExactGuard : Bool :=
       (HolFiniteMapExact.empty : HolFiniteMapExact MlString (Nat × Nat))
       [5, 5] (.return [.var 5] : CrepProgHOL 8) with
    | .seq (.assign 2 (.var 1)) (.seq (.return [2]) .skip) => true
+   | _ => false) &&
+  (match compFuncHOLExact (width := 8) .riscv
+      (HolFiniteMapExact.empty : HolFiniteMapExact MlString (Nat × Nat))
+      [5, 7, 9] (.ite (.const 1) .skip .skip : CrepProgHOL 8) with
+   | .seq (.assign 3 (.const 1))
+       (.seq (.ite .notEqual 3 (.imm 0) .skip .skip live) .skip) =>
+       decide (live = sptListToNumSet [0, 1, 2])
    | _ => false)
 
 #guard compFuncExactGuard
