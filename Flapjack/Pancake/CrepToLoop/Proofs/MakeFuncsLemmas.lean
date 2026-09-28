@@ -7,8 +7,9 @@ import Flapjack.Pancake.CrepToLoop.Proofs.LocalListHelpers
 Exact ports of `cakeml/pancake/proofs/crep_to_loopProofScript.sml`'s
 `distinct_make_funcs` (3757), `map_map2_fst` (3799),
 `first_compile_prog_all_distinct` (3832), `make_funcs_domain_compile_prog`
-(3908), `alookup_el_pair_eq_el` (3921) and `initial_prog_make_funcs_el` (3942)
-(bead `flapjack-pxn.18.5.6.33.20`).
+(3908), `alookup_el_pair_eq_el` (3921), `initial_prog_make_funcs_el` (3942)
+(bead `flapjack-pxn.18.5.6.33.20`) and `crep_to_loop_compile_prog_lab_min` (4398)
+(bead `flapjack-pxn.18.5.6.33.21`).
 
 `make_funcs` is the tagged polymorphic `crepToLoopMakeFuncsHOL`
 (`make_funcs_def`, HOL equality as `[BEq α] [LawfulBEq α]`), `compile_prog` the
@@ -185,5 +186,27 @@ theorem initial_prog_make_funcs_el {α β γ : Type} [BEq α] [LawfulBEq α] :
   obtain ⟨a, b, c⟩ := e
   simp only at hnil ⊢
   rw [hnil]
+
+/-- Exact HOL `crep_to_loop_compile_prog_lab_min` (`crep_to_loopProofScript.sml:4398-4400`):
+    `crep_to_loop$compile_prog c cprog = lprog ⇒ EVERY (λprog. 60 ≤ FST prog) lprog`,
+    with its free variables universally quantified and `EVERY` as `∀ x ∈ lprog`. -/
+@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "crep_to_loop_compile_prog_lab_min"
+  (words_as_type_indexed_bitvec)]
+theorem crep_to_loop_compile_prog_lab_min {width : Nat} [NeZero width] :
+    ∀ (c : Compiler.Encoders.Asm.AsmArchitecture)
+      (cprog : List (Basis.Pure.MlString.MlString × List Nat × CrepProgHOL width))
+      (lprog : List (Nat × List Nat × HolLoopProg width)),
+      compileProgHOLExact c cprog = lprog → ∀ prog ∈ lprog, 60 ≤ prog.1 := by
+  intro c cprog lprog h prog hp
+  subst h
+  have hfst : prog.1 ∈ (compileProgHOLExact c cprog).map Prod.fst := List.mem_map_of_mem hp
+  have e : ((compileProgHOLExact c cprog).map Prod.fst) =
+      (List.range cprog.length).map (fun n => n + firstLoopName) := by
+    simp only [compileProgHOLExact]
+    exact map_fst_zipWith_pair _ _ _ (by simp)
+  rw [e, List.mem_map] at hfst
+  obtain ⟨n, _, hn⟩ := hfst
+  rw [← hn]
+  simp [firstLoopName]
 
 end Flapjack
