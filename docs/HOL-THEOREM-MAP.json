@@ -10831,6 +10831,19 @@
     "reviewer": "flapjack-luna-a source review (2026-09-28; bead flapjack-pxn.18.5.6.33.18): tag withdrawn with its production relation because it inherits the raw option-function and PanWordLab/LoopValue carrier mismatch documented for crepToLoopGlobalsRel. Preserve this implication helper for the executable bridge. Exact-carrier port: crepToLoopGlobalsRelHOLExact_intro in Flapjack/Pancake/CrepToLoop/Proofs/RelationsExact.lean."
   },
   {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "code_rel_intro",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/RelationsExact.lean",
+    "lean_name": "crepToLoopCodeRelIntro",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.funcs",
+      "s_code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds9 source comparison (bead flapjack-pxn.18.5.6.33.16): HOL code_rel_intro (crep_to_loopProofScript.sml:187-202) is the code_rel_def (76-88) unfolding: `code_rel ctxt s_code t_code ==> distinct_funcs ctxt.funcs and (!f ns prog. FLOOKUP s_code f = SOME (ns, prog) ==> ?loc len. FLOOKUP ctxt.funcs f = SOME (loc, len) and LENGTH ns = len and let args = GENLIST I len; nctxt = ctxt_fc ctxt.target ctxt.funcs ns args in lookup loc t_code = SOME (args, ocompile nctxt (list_to_num_set args) prog))`. The Lean statement preserves the HOL antecedent and the distinct_funcs plus universal-existential conclusion binder-for-binder over the exact carriers: FLOOKUP -> HolFiniteMapExact.lookup, lookup loc t_code -> sptLookup of the exact Spt target carrier, GENLIST I len -> List.range len, distinct_funcs -> crepToLoopDistinctFuncs (distinct_funcs_def), ctxt_fc/ocompile/list_to_num_set -> the tagged exact ctxtFcExact/ocompileHOLExact/listToNumSetHOLExact. The proof is the definitional unfolding (HOL rw [code_rel_def]). fmap_as_finite_support_relation [CrepToLoopContextExact.funcs, s_code]: the owned funcs field of CrepToLoopContextExact is the reviewed canonical HolFiniteMapExact MlString (Nat x Nat) translation, same-module witness holFmapAsFiniteSupportRelationWitness_CrepToLoopContextExact (namespace CrepToLoopCodeRelIntroFiniteMapWitnesses); s_code is a standalone unbounded HOL |-> finite-map parameter validated directly at its HolFiniteMapExact binder. words_as_type_indexed_bitvec: HOL positive word dimension to BitVec width across the CrepProgHOL/HolLoopProg width carriers. Direct Lean instantiation codeRelIntroInstantiation in Flapjack/Test/CrepToLoopCodeRelParity.lean recovers both conjuncts from the concrete probe relation codeRelPositive."
+  },
+  {
     "hol_path": "cakeml/pancake/semantics/panSemScript.sml",
     "hol_name": "isWord_def",
     "lean_path": "Flapjack/Pancake/Semantics/PanSemStateEval.lean",

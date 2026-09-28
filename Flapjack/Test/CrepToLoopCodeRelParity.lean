@@ -1,4 +1,5 @@
 import Flapjack.Pancake.CrepToLoop.StateRel
+import Flapjack.Pancake.CrepToLoop.Proofs.RelationsExact
 import Flapjack.Pancake.Semantics.LoopProps.EvalExact
 
 /-!
@@ -97,6 +98,22 @@ theorem codeRelPositive : crepToLoopCodeRelExact ctxt sCode tCode := by
     · rw [if_neg hf] at h
       simp at h
 
+/-- Direct Lean instantiation of the tagged HOL `code_rel_intro`: recover the
+`distinct_funcs` conjunct and the per-entry universal-existential conclusion
+from a `crepToLoopCodeRelExact` witness. -/
+theorem codeRelIntroInstantiation :
+    crepToLoopDistinctFuncs ctxt.funcs.lookup ∧
+      ∀ (f : MlS) (ns : List Nat) (prog : CrepProgHOL 8),
+        sCode.lookup f = some (ns, prog) →
+          ∃ loc len : Nat,
+            ctxt.funcs.lookup f = some (loc, len) ∧
+              ns.length = len ∧
+                (let args := List.range len
+                 let nctxt := ctxtFcExact ctxt.target ctxt.funcs ns args
+                 sptLookup loc tCode =
+                   some (args, ocompileHOLExact nctxt (listToNumSetHOLExact args) prog)) :=
+  crepToLoopCodeRelIntro ctxt sCode tCode codeRelPositive
+
 /-- The HOL probe row `code_rel_missing_funcs = F`: with an empty function map
 the per-entry existential has no target label to return. -/
 theorem codeRelMissingFuncs :
@@ -182,6 +199,7 @@ def runChecks : IO Bool := do
   IO.println "PASS crepToLoopCodeRelExact positive relation (kernel-checked)"
   IO.println "PASS crepToLoopCodeRelExact missing-funcs counterexample (kernel-checked)"
   IO.println "PASS crepToLoopCodeRelExact length-mismatch counterexample (kernel-checked)"
+  IO.println "PASS HOL code_rel_intro instantiation recovers both conjuncts (kernel-checked)"
   pure (checks.all Prod.snd)
 
 end Flapjack.Test.CrepToLoopCodeRelParity
