@@ -38,6 +38,54 @@ DATA_DECLARATION_RE = re.compile(
 # inventory small and source-reviewed; a mismatch row is not generated merely
 # because an arbitrary Lean def happens to mention a HOL name.
 WITHDRAWN_HOL_DECLARATIONS = {
+    ("Flapjack/Pancake/CrepToLoop/StateRel.lean", "crepToLoopGlobalsRel"): (
+        "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+        "globals_rel_def",
+        "flapjack-luna-a source review (2026-09-28; bead flapjack-pxn.18.5.6.33.18): tag withdrawn. "
+        "This production helper takes raw option-valued functions rather than HOL |-> finite maps "
+        "and uses PanWordLab/LoopValue rather than HolWordLab/WordLocW, so it is not an exact port "
+        "of globals_rel_def. Preserve it as executable bridge infrastructure. Exact-carrier port: "
+        "crepToLoopGlobalsRelHOLExact in Flapjack/Pancake/CrepToLoop/Proofs/RelationsExact.lean."
+    ),
+    ("Flapjack/Pancake/CrepToLoop/StateRel.lean", "crepToLoopGlobalsRel_intro"): (
+        "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+        "globals_rel_intro",
+        "flapjack-luna-a source review (2026-09-28; bead flapjack-pxn.18.5.6.33.18): tag withdrawn "
+        "with its production relation because it inherits the raw option-function and "
+        "PanWordLab/LoopValue carrier mismatch documented for crepToLoopGlobalsRel. Preserve this "
+        "implication helper for the executable bridge. Exact-carrier port: "
+        "crepToLoopGlobalsRelHOLExact_intro in Flapjack/Pancake/CrepToLoop/Proofs/RelationsExact.lean."
+    ),
+    ("Flapjack/Pancake/CrepToLoop/StateRel.lean", "crepToLoopMemRel"): (
+        "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+        "mem_rel_def",
+        "flapjack-luna-a source review (2026-09-28; bead flapjack-pxn.18.5.6.33.18): tag withdrawn. "
+        "This production analogue uses PanWordLab/LoopValue rather than HolWordLab/WordLocW, and "
+        "a Bool domain rather than HOL set membership (Prop); its bridge also adapts production "
+        "Option-valued loop memory to a total view. These are representation/carrier differences, "
+        "not authorized by an exact tag. Preserve the helper for production. Exact total-memory, "
+        "Prop-domain port: crepToLoopMemRelHOLExact in "
+        "Flapjack/Pancake/CrepToLoop/Proofs/RelationsExact.lean."
+    ),
+    ("Flapjack/Pancake/CrepToLoop/StateRel.lean", "crepToLoopMemRel_intro"): (
+        "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+        "mem_rel_intro",
+        "flapjack-luna-a source review (2026-09-28; bead flapjack-pxn.18.5.6.33.18): tag withdrawn "
+        "with its production relation because it inherits the Bool-domain and PanWordLab/LoopValue "
+        "carrier mismatch documented for crepToLoopMemRel. Preserve the implication helper for the "
+        "executable bridge. Exact-carrier port: crepToLoopMemRelHOLExact_intro in "
+        "Flapjack/Pancake/CrepToLoop/Proofs/RelationsExact.lean."
+    ),
+    ("Flapjack/Pancake/Semantics/LoopSem.lean", "loopPrimopHOL"): (
+        "cakeml/pancake/semantics/loopSemScript.sml",
+        "loop_primop_def",
+        "flapjack-ds9 (bead flapjack-ptzz): the @[hol] tag is withdrawn. HOL loop_primop "
+        "returns a word_loc option, but this declaration is valued in LoopValue "
+        "(Flapjack/LoopFindCode.lean), a Flapjack executable/faithful loop value, not the exact "
+        "word_loc carrier WordLocW (Flapjack/Pancake/WordLang.lean). The canonical exact port is "
+        "LoopSemStateFiniteExact.loopPrimop (Flapjack/Pancake/Semantics/LoopSemStateExact.lean), "
+        "tagged loop_primop_def with (words_as_type_indexed_bitvec)."
+    ),
     ("Flapjack/Pancake/Proofs/PanGlobals.lean", "goodResHOL"): (
         "cakeml/pancake/proofs/pan_globalsProofScript.sml",
         "good_res_def",
@@ -348,6 +396,24 @@ DEFINITION_RE = re.compile(
     r"(?:def|abbrev|opaque|theorem|lemma)\s+([^\s:({\[]+)"
 )
 DOCUMENTED_MISMATCHES = {
+    ("Flapjack/Pancake/CrepToLoop/StateRel.lean", "crepToLoopGlobalsRel_intro"): (
+        "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+        "globals_rel_intro",
+        "flapjack-luna-a source review (2026-09-28; bead flapjack-pxn.18.5.6.33.18): tag withdrawn "
+        "with its production relation because it inherits the raw option-function and "
+        "PanWordLab/LoopValue carrier mismatch documented for crepToLoopGlobalsRel. Preserve this "
+        "implication helper for the executable bridge. Exact-carrier port: "
+        "crepToLoopGlobalsRelHOLExact_intro in Flapjack/Pancake/CrepToLoop/Proofs/RelationsExact.lean.",
+    ),
+    ("Flapjack/Pancake/CrepToLoop/StateRel.lean", "crepToLoopMemRel_intro"): (
+        "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+        "mem_rel_intro",
+        "flapjack-luna-a source review (2026-09-28; bead flapjack-pxn.18.5.6.33.18): tag withdrawn "
+        "with its production relation because it inherits the Bool-domain and PanWordLab/LoopValue "
+        "carrier mismatch documented for crepToLoopMemRel. Preserve the implication helper for the "
+        "executable bridge. Exact-carrier port: crepToLoopMemRelHOLExact_intro in "
+        "Flapjack/Pancake/CrepToLoop/Proofs/RelationsExact.lean.",
+    ),
     ("Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean", "evalCrepSemHOLProgExact_seq_fixClockFree"): (
         "cakeml/pancake/semantics/crepSemScript.sml",
         "evaluate_def",
@@ -1975,6 +2041,7 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         ("Flapjack/Pancake/PanSimp.lean", "retToTailHOL"),
         ("Flapjack/Pancake/PanSimp.lean", "panSimpCompileHOL"),
         ("Flapjack/Pancake/PanSimp.lean", "panSimpDeclsHOL"),
+        ("Flapjack/Pancake/CrepToLoop/Proofs/Primop.lean", "crepPrimopLoopPrimopHOL"),
     }
     for key in reviewed_exact:
         # A source comparison cannot claim an exact HOL port after its tag is

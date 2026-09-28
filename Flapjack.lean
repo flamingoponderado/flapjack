@@ -120,6 +120,7 @@ import Flapjack.Pancake.Semantics.LoopSemStateExact.Semantics
 import Flapjack.Pancake.Semantics.LoopProps.EvaluateClockExact
 import Flapjack.Pancake.Semantics.LoopProps.EvaluateIoEventsExact
 import Flapjack.Pancake.Semantics.LoopProps.EvalExact
+import Flapjack.Pancake.Semantics.LoopProps.EveryProg
 import Flapjack.Pancake.Semantics.LoopProps.NestedSeqExact
 import Flapjack.Pancake.Semantics.LoopProps.UnassignedVarsExact
 import Flapjack.Pancake.Semantics.LoopProps.NestedSeqSyntaxExact
@@ -325,10 +326,15 @@ import Flapjack.Pancake.CrepToLoop.Proofs.CompExpTmpBound
 import Flapjack.Pancake.CrepToLoop.Proofs.CompExpLeTmpDomain
 import Flapjack.Pancake.CrepToLoop.Proofs.LoopEvaluateHelpers
 import Flapjack.Pancake.CrepToLoop.Proofs.CompExpSyntaxHelpers
+import Flapjack.Pancake.CrepToLoop.Proofs.Primop
 import Flapjack.Pancake.CrepToLoop.Proofs.CompExpSurvives
 import Flapjack.Pancake.CrepToLoop.Proofs.LocalListHelpers
 import Flapjack.Pancake.CrepToLoop.Proofs.CrepEvalHelpers
 import Flapjack.Pancake.CrepToLoop.Proofs.CompExpOutRel
+import Flapjack.Pancake.CrepToLoop.Proofs.RelationsExact
+import Flapjack.Pancake.CrepToLoop.Proofs.LocalsRelHelpers
+import Flapjack.Pancake.CrepToLoop.Proofs.LocalsRelOptMmap
+import Flapjack.Pancake.CrepToLoop.Proofs.SemanticsWrapper
 import Flapjack.Pancake.CrepToLoop.Optimise
 import Flapjack.Pancake.CrepToLoop.StateRel
 import Flapjack.Test.CrepToLoopCompileExpExactParity

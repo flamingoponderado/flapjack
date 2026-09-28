@@ -1,4 +1,5 @@
 import Flapjack.Pancake.CrepToLoop.ContextExact
+import Flapjack.Pancake.CrepToLoop.StateRel
 
 /-!
 # Exact-carrier parity for `crep_to_loop$compile_prog_def`
@@ -38,6 +39,14 @@ private def prog : List (MlString × List Nat × P) :=
 
 private def progCall : List (MlString × List Nat × P) :=
   [(ofString "f", [], .call none (ofString "f") [.const 7])]
+
+/-- Directly instantiate HOL `compile_prog_distinct_params` on the exact
+    `compile_prog` fixture, retaining its input premise and output shape. -/
+example :
+    (prog.all (fun triple => triple.2.1.Nodup)) = true →
+      ((compileProgHOLExact (width := 8) .riscv prog).all
+        (fun triple => triple.2.1.Nodup)) = true :=
+  crepToLoopCompileProgDistinctParamsHOLExact prog .riscv
 
 private def isMarkSeqMarkSkip : L → Bool
   | .mark (.seq (.mark .skip) (.mark .skip)) => true

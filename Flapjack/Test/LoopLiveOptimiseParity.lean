@@ -2,7 +2,8 @@ import Flapjack.Pancake.LoopLive
 
 namespace Flapjack.Test.LoopLiveOptimiseParity
 
-/-! Direct parity for `loop_live$optimise` (`loop_liveScript.sml:221`). -/
+/-! Direct parity for `loop_live$optimise` (`loop_liveScript.sml:221`), with
+the oracle rows in `scripts/hol-probes/loop_live_optimise_probe.out`. -/
 def parityGuard : Bool :=
   (match loopLiveOptimise (.skip : LoopProg Nat) with
   | .mark .skip => true
@@ -34,5 +35,26 @@ def parityGuard : Bool :=
 
 #eval parityGuard
 #guard parityGuard
+
+/-- HOL `fixedpoint` takes one strict-growth step for the Return body, then
+stabilizes at `{1}`. The enclosing Loop shrink observation is the final row of
+the same probe. -/
+def shrinkLoopFixedpointOracleGuard : Bool :=
+  match loopShrink [] (.loop [1] (.return [1]) [] : LoopProg Nat) [] with
+  | (.loop [1] (.return [1]) [], [1]) => true
+  | _ => false
+
+#guard shrinkLoopFixedpointOracleGuard
+
+/-- HOL's direct `fixedpoint` NONE case is the no-progress branch for a
+non-least initial approximation. This replays the matching explicit
+`loopShrinkFixed` fallback sentinel; production Loop shrinking starts at the
+least set and is checked above against the `shrink` oracle row. -/
+def fixedpointNoneFallbackOracleGuard : Bool :=
+  match loopShrinkFixed [] [1] (.skip : LoopProg Nat) [] [] 1 [1] with
+  | none => true
+  | _ => false
+
+#guard fixedpointNoneFallbackOracleGuard
 
 end Flapjack.Test.LoopLiveOptimiseParity

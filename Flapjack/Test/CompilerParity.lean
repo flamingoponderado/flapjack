@@ -105,6 +105,7 @@ import Flapjack.Test.LoopSetVarParity
 import Flapjack.Test.LoopDecClockParity
 import Flapjack.Test.LoopFixClockParity
 import Flapjack.Test.LoopPropsSurvivesParity
+import Flapjack.Test.LoopPropsEveryProgParity
 import Flapjack.Test.LoopFindCodeParity
 import Flapjack.Test.LoopArithParity
 import Flapjack.Test.LoopMemStoreParity
@@ -151,6 +152,7 @@ import Flapjack.Test.PanToCrepRetInst2Parity
 import Flapjack.Test.PanToCrepUtilitiesParity
 import Flapjack.Test.BackendCommonCarryParity
 import Flapjack.Test.PanCrepPrimopParity
+import Flapjack.Test.CrepPrimopLoopPrimopParity
 import Flapjack.Test.CompileProgParamsParity
 import Flapjack.Test.PanToCrepCodeRelParity
 import Flapjack.Test.PanToCrepStateRelParity
@@ -176,6 +178,7 @@ import Flapjack.Test.CrepToLoopCutsetParity
 import Flapjack.Test.CrepToLoopParity
 import Flapjack.Test.CrepToLoopDecLive
 import Flapjack.Test.CrepToLoopOcompileHOLParity
+import Flapjack.Test.CrepToLoopCodeRelParity
 import Flapjack.Test.CakeRegAlloc
 import Flapjack.Test.WordDeadCodeParity
 import Flapjack.Test.CrepeNestedSeqParity
@@ -830,6 +833,7 @@ def main : IO Unit := do
     Flapjack.Test.LoopDecClockParity.runChecks,
     Flapjack.Test.LoopFixClockParity.runChecks,
     Flapjack.Test.LoopPropsSurvivesParity.runChecks,
+    Flapjack.Test.LoopPropsEveryProgParity.runChecks,
     Flapjack.Test.LoopFindCodeParity.runChecks,
     Flapjack.Test.LoopArithParity.runChecks,
     Flapjack.Test.PanSetVarParity.runChecks,
@@ -924,6 +928,7 @@ def main : IO Unit := do
     Flapjack.Test.CrepToLoopParity.runChecks,
     Flapjack.Test.CrepToLoopDecLive.runChecks,
     Flapjack.Test.CrepToLoopOcompileHOLParity.runChecks,
+    Flapjack.Test.CrepToLoopCodeRelParity.runChecks,
     Flapjack.Test.CakeRegAlloc.runChecks,
     Flapjack.Test.CakeWordAllocParity.runChecks,
     Flapjack.Test.CrepeNestedSeqParity.runChecks,
@@ -1122,6 +1127,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.LoopSemShMemExactParity.runChecks,
     Flapjack.Test.LoopSemWordMemExactParity.runChecks,
     Flapjack.Test.LoopSemPrimopBytesExactParity.runChecks,
+    Flapjack.Test.CrepPrimopLoopPrimopParity.runChecks,
     Flapjack.Test.LoopSemEvaluateExactParity.runChecks,
     Flapjack.Test.HolLListParity.runChecks,
     Flapjack.Test.LoopSemSemanticsExactParity.runChecks,

@@ -1239,6 +1239,35 @@ example : (rtVars rtVarsCtxtFm [1, 2] 0).Nodup :=
 example : (rtVars rtVarsCtxtFm [1, 3] 0).Nodup :=
   allDistinctCtxtLookupAllDistinct rtVarsCtxt [1, 3] 0 (by decide) rtVarsCtxtFm_distinct
 
+/-- Exact-carrier replay of the same direct HOL rows (`acd_*` in
+    `scripts/hol-probes/crep_to_loop_rt_vars_distinct_probe.out`): the exact
+    `CrepToLoopContextExact` keeps `vars` as `HolFiniteMapExact Nat Nat`
+    (matching HOL `num |-> num`), so the tagged
+    `allDistinctCtxtLookupAllDistinctExact` applies to it directly. -/
+def exactRtVarsFm : HolFiniteMapExact Nat Nat :=
+  (HolFiniteMapExact.empty.updateEq (1, 10)).updateEq (2, 20)
+
+theorem exactRtVarsFm_flookup (k : Nat) :
+    FLOOKUP exactRtVarsFm.lookup k =
+      if k = 1 then some 10 else if k = 2 then some 20 else none := by
+  simp only [FLOOKUP, exactRtVarsFm, HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL,
+    HolFiniteMapExact.empty]
+  by_cases h1 : k = 1 <;> by_cases h2 : k = 2 <;> simp_all
+
+theorem exactRtVarsFm_distinct : crepToLoopDistinctVars exactRtVarsFm.lookup := by
+  intro x y n m hx hy h
+  rw [exactRtVarsFm_flookup] at hx hy
+  split at hx <;> split at hy <;> simp_all <;> omega
+
+def exactRtVarsCtxt : CrepToLoopContextExact :=
+  { vars := exactRtVarsFm, funcs := HolFiniteMapExact.empty, vmax := 5, target := .riscv }
+
+example : (rtVars exactRtVarsFm.lookup [1, 2] 0).Nodup :=
+  allDistinctCtxtLookupAllDistinctExact exactRtVarsCtxt [1, 2] 0 (by decide) exactRtVarsFm_distinct
+
+example : (rtVars exactRtVarsFm.lookup [1, 3] 0).Nodup :=
+  allDistinctCtxtLookupAllDistinctExact exactRtVarsCtxt [1, 3] 0 (by decide) exactRtVarsFm_distinct
+
 /-- HOL `list_insert_SNOC` oracle rows (`li_*` in
     `scripts/hol-probes/crep_to_loop_list_insert_probe.out`): `list_insert [3;4]`
     records 3 and 4 but not 5; appending 5 records it; and the SNOC form agrees

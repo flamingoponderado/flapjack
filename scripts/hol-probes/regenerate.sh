@@ -300,6 +300,12 @@ run_probe crep_to_loop_ctxt_fc_probeScript.sml crep_to_loop_ctxt_fc_probe.out \
 run_probe crep_to_loop_globals_rel_probeScript.sml crep_to_loop_globals_rel_probe.out \
   wlab_wloc_word globals_lookup_absent "$cake_dir/pancake/proofs/crep_to_loopProofScript.sml" \
   "$cake_dir/pancake/proofs"
+run_probe crep_primop_loop_primop_probeScript.sml crep_primop_loop_primop_probe.out \
+  crep_valid loop_valid_mapped preserve_valid crep_overflow loop_overflow_mapped \
+  preserve_overflow crep_nonzero_carry loop_nonzero_carry_mapped \
+  preserve_nonzero_carry crep_invalid_two preserve_invalid_two crep_invalid_four \
+  preserve_invalid_four "$cake_dir/pancake/proofs/crep_to_loopProofScript.sml" \
+  "$cake_dir/pancake/proofs"
 run_probe crep_to_loop_mem_rel_probeScript.sml crep_to_loop_mem_rel_probe.out \
   mem_rel_match mem_rel_dom_absent "$cake_dir/pancake/proofs/crep_to_loopProofScript.sml" \
   "$cake_dir/pancake/proofs"
@@ -1320,6 +1326,9 @@ run_probe crep_to_loop_compile_prog_probeScript.sml crep_to_loop_compile_prog_pr
 run_probe crep_to_loop_ocompile_probeScript.sml crep_to_loop_ocompile_probe.out \
   ocompile_skip ocompile_call \
   "$cake_dir/pancake/crep_to_loopScript.sml"
+run_probe crep_to_loop_code_rel_probeScript.sml crep_to_loop_code_rel_probe.out \
+  code_rel_funcs_lookup code_rel_lookup_pair \
+  "$cake_dir/pancake/proofs/crep_to_loopProofScript.sml" "$cake_dir/pancake/proofs"
 run_probe compile_crepop_probeScript.sml compile_crepop_probe.out \
   compile_crepop_mul_riscv compile_crepop_mul_armv7 \
   "$cake_dir/pancake/crep_to_loopScript.sml"
@@ -1355,6 +1364,13 @@ run_probe loop_props_survives_probeScript.sml \
   call_default assign_default \
   "$cake_dir/pancake/semantics/loopPropsScript.sml" \
   "$cake_dir/pancake/semantics"
+run_probe loop_props_every_prog_probeScript.sml \
+  loop_props_every_prog_probe.out \
+  ep_skip ep_assign ep_seq ep_seq_loop ep_loop ep_if ep_if_loop \
+  ep_mark ep_mark_loop ep_call_none ep_call_handler ep_call_handler_fst \
+  ep_call_handler_snd \
+  "$cake_dir/pancake/semantics/loopPropsScript.sml" \
+  "$cake_dir/pancake/semantics"
 run_probe loop_sem_call_env_probeScript.sml \
   loop_sem_call_env_probe.out \
   arg_zero arg_missing "$cake_dir/pancake/semantics/loopSemScript.sml"
@@ -1372,8 +1388,10 @@ run_probe mark_all_probeScript.sml mark_all_probe.out \
   seq_mark call_handler "$cake_dir/pancake/loop_liveScript.sml"
 run_probe loop_live_comp_probeScript.sml loop_live_comp_probe.out \
   skip return "$cake_dir/pancake/loop_liveScript.sml"
+run_probe loop_live_optimise_probeScript.sml loop_live_optimise_probe.out \
+  skip shrink_loop_fixedpoint "$cake_dir/pancake/loop_liveScript.sml"
 run_probe ocompile_probeScript.sml ocompile_probe.out \
-  skip post_return_skip "$cake_dir/pancake/crep_to_loopScript.sml"
+  skip ffi "$cake_dir/pancake/crep_to_loopScript.sml"
 run_probe loop_lang_assigned_vars_probeScript.sml \
   loop_lang_assigned_vars_probe.out \
   skip load_byte "$cake_dir/pancake/loopLangScript.sml"

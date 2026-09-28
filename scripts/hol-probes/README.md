@@ -38,6 +38,21 @@ respectively
 additionally probes `pan_op_def` at lines 191--193.
 `Flapjack.Test.LoopSetVarParity` probes `set_var_def` at
 `cakeml/pancake/semantics/loopSemScript.sml:108-110`.
+`loop_live_comp_probe.out` records direct HOL EVAL rows for
+`loop_live$comp` at `cakeml/pancake/loop_liveScript.sml:217`; the Lean replay
+is `Flapjack.Test.LoopLiveCompParity`. `loop_live_optimise_probe.out` records
+`loop_live$optimise` plus a strict-growth fixedpoint iteration, a direct
+`fixedpoint` NONE result for a non-least initial approximation, and the
+enclosing Loop shrink result; its replay guards are in
+`Flapjack.Test.LoopLiveOptimiseParity`. The FFI optimizer row is also replayed
+there. `ocompile_probe.out` includes an ExtCall-to-FFI result from
+`crep_to_loop$ocompile`; `Flapjack.Test.OCompileParity` checks that row.
+Regenerate these with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=loop_live_optimise_probeScript.sml scripts/hol-probes/regenerate.sh`
+and `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=ocompile_probeScript.sml scripts/hol-probes/regenerate.sh` for
+the ocompile rows.
 `Flapjack.Test.LoopPropsCutSetsParity` guards the exact `cut_sets_def`
 clauses over `HolLoopProg`/`NumSet`; its direct HOL outputs for Skip,
 LocValue, Assign, Load32/LoadByte, Seq, If, each Arith variant, and the
@@ -69,6 +84,14 @@ Seq, and the catch-all case. The exact width-indexed `HolLoopProg` port
 `survivesHOLExact` is in `Flapjack.Pancake.Semantics.LoopProps`; its replay
 guards are in `Flapjack.Test.LoopPropsSurvivesParity`. Refresh with
 `HOL_PROBE_ONLY=loop_props_survives_probeScript.sml scripts/hol-probes/regenerate.sh`.
+`loop_props_every_prog_probe.out` records direct HOL EVAL rows for every clause
+of `every_prog_def` in `cakeml/pancake/semantics/loopPropsScript.sml:10-24`
+under a predicate that fails exactly at `Loop` nodes: Seq, Loop, If, Mark, Call
+(both handler forms and both handler branches), and the catch-all case. The
+exact width-indexed `HolLoopProg` port `everyProgHOL` is in
+`Flapjack.Pancake.Semantics.LoopProps.EveryProg`; its replay guards are in
+`Flapjack.Test.LoopPropsEveryProgParity`. Refresh with
+`HOL_PROBE_ONLY=loop_props_every_prog_probeScript.sml scripts/hol-probes/regenerate.sh`.
 `Flapjack.Test.PanEvaluateDeclsParity` probes `evaluate_decls_def` at
 `cakeml/pancake/semantics/panSemScript.sml:814-835`, including each declaration
 constructor, ordered global updates, local clearing during initializer
@@ -669,6 +692,23 @@ The original Pancake source-level support boundary is also explicit in
 accepted by `loop_inst_ok` only for `x86_64`. Consequently, RISC-V parity must
 port the `data_to_word` helper path rather than add a direct RISC-V lowering
 for source `LLongDiv`.
+`crep_to_loop_code_rel_probe.out` records direct HOL EVAL rows for
+`code_rel_def` at `cakeml/pancake/proofs/crep_to_loopProofScript.sml:76-88`.
+The fixture uses the HOL context `context FEMPTY
+(FEMPTY |+ (strlit "f", (42,2))) 0 RISC_V` with `s_code` holding
+`([1;2], Skip)` and `t_code = insert 42 ([0;1], Mark Skip) LN`. Besides the
+component rows (`FLOOKUP` of the function table and of `s_code`, the generated
+argument list `GENLIST I 2 = [0; 1]`, the compiled `Skip`, and the target
+lookup), `code_rel_witness=T` evaluates the fully instantiated existential
+requirement with the witnesses `loc = 42`, `len = 2`, while
+`code_rel_missing_funcs=F` and `code_rel_len_mismatch=F` evaluate the same shape
+with the function-table lookup failing and with a length mismatch. HOL
+`crepSem$state.code` (and hence `s_code`) is `funname |-> _`, i.e. `mlstring`
+keyed; the Lean replay therefore uses the `MlS` key `ofString "f"`. The exact
+Lean port `crepToLoopCodeRelExact` in `Flapjack.Pancake.CrepToLoop.StateRel` is
+replayed against those rows by `Flapjack.Test.CrepToLoopCodeRelParity`. Refresh
+with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml HOL_PROBE_ONLY=crep_to_loop_code_rel_probeScript.sml bash scripts/hol-probes/regenerate.sh`.
 `crep_to_loop_locals_rel_probe.out` records direct observations for
 `locals_rel_def` at `cakeml/pancake/proofs/crep_to_loopProofScript.sml:101-111`.
 HOL `crepLang$varname = num` (`crepLangScript.sml:19`), so the context's `vars`
@@ -706,6 +746,23 @@ exact-carrier counterpart is the tagged
 `Flapjack.CrepToLoop.crepToLoopLocalsRelExact_insert_gt_vmax` over the exact Derived from the same relation definition, `locals_rel_lookup_same` (`crep_to_loopProofScript.sml:3313`) is ported as `Flapjack.CrepToLoop.crepToLoopLocalsRelExact_lookup_same`: the relation depends on the target locals only through `sptLookup`, so any pointwise-equal target tree preserves it (no extra probe row is decidable because the agreement premise forces identical lookup functions; the atomic obligations are the rows above, and the Lean side carries a kernel-checked shadowed-insert example).
 `sptInsert`/`Spt`, whose support lemmas `sptLookup_sptInsert_ne` and
 `sptMem_sptInsert` live in `Flapjack/Misc/Sptree.lean`.
+
+`crep_primop_loop_primop_probe.out` records direct HOL EVAL of the local
+preservation theorem `crep_primop_loop_primop`
+(`cakeml/pancake/proofs/crep_to_loopProofScript.sml:2337-2355`) on concrete
+8-bit `word_lab` payloads: the source `crepSem$crep_primop`, the target
+`loopSem$loop_primop` after `MAP crep_to_loopProof$wlab_wloc`, and the resulting
+preservation equation for the valid, overflow, nonzero-carry, short-arity, and
+long-arity cases (`crep_valid`, `loop_valid_mapped`, `preserve_valid`, ...,
+`preserve_invalid_four`). The exact Lean port is the tagged
+`Flapjack.crepPrimopLoopPrimopHOL` in the `crep_to_loopProofScript.sml`
+counterpart `Flapjack/Pancake/CrepToLoop/Proofs/Primop.lean`, over the exact
+`HolWordLab`(`word_lab`)/`WordLocW`(`word_loc`) carriers and the
+`wlabWlocHOL` bridge; the kernel replay guards and `example`s are in
+`Flapjack.Test.CrepPrimopLoopPrimopParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=crep_primop_loop_primop_probeScript.sml
+bash scripts/hol-probes/regenerate.sh`.
 
 `pan_globals_mem_functions_probe.out` records direct HOL EVAL of the
 `panLang$functions` projection and the membership instance characterized by the

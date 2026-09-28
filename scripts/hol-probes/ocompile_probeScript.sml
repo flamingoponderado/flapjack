@@ -20,6 +20,10 @@ val ctxt =
   ``<| vars := (FEMPTY |+ (1,5)); funcs := FEMPTY;
       vmax := 0; target := RISC_V |>``;
 
+val ffi_ctxt =
+  ``<| vars := (FEMPTY |+ (1,5) |+ (2,6) |+ (3,7) |+ (4,8));
+      funcs := FEMPTY; vmax := 4; target := RISC_V |>``;
+
 val _ = print_eval "skip"
   ``crep_to_loop$ocompile ^ctxt LN
       (crepLang$Skip : 8 word crepLang$prog)``;
@@ -34,3 +38,6 @@ val _ = print_eval "return_const"
 val _ = print_eval "post_return_skip"
   ``crep_to_loop$ocompile ^ctxt LN
       (crepLang$Skip : 8 word crepLang$prog)``;
+val _ = print_eval "ffi"
+  ``crep_to_loop$ocompile ^ffi_ctxt LN
+      (crepLang$ExtCall «f» 1 2 3 4 : 8 word crepLang$prog)``;
