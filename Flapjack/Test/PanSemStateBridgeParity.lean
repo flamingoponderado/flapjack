@@ -556,6 +556,57 @@ example : panValueFieldsExactHOL ([] : StructContext)
       [("x", PanValue.word (4 : W))] = true := by
   simp [panValueFieldsExactHOL, panShapeMatches, panValueShape]
 
+/-! ## Assembled all-constructor agreement guards
+
+Kernel-checked guards for the assembled `evalPanValueExp_agree` and
+`evalPanValueExp_byteRanged` (`TotalEvalExpBridge.lean`) on the concrete
+executed-carrier fixture. -/
+
+/-- The empty-maps fixture satisfies the byte-ranged execution premise. -/
+theorem bridgeExecProdState_ranged : PanSemStateRelExecRanged bridgeExecProdState := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro name value h; simp [bridgeExecProdState] at h
+  · intro name value h; simp [bridgeExecProdState] at h
+  · intro p hp; simp [bridgeExecProdState, StructContext.toHOL] at hp
+
+/-- The fixture's `memaddrs` is everywhere false. -/
+instance decidableBridgeExecExactMemaddrs : DecidablePred bridgeExecExactState.memaddrs :=
+  fun _ => isFalse (by simp [bridgeExecExactState])
+
+/-- The assembled agreement holds for a constant expression on the fixture. -/
+example :
+    Option.map panValueToHOL (evalPanSemStateExp bridgeExecProdState (.const (7 : W))) =
+      bridgeExecExactState.evalHOLFinite (expToHOL (.const (7 : W))) :=
+  evalPanSemStateExp_agree bridgeExecProdState bridgeExecExactState bridgeStateRelExec
+    bridgeExecProdState_ranged (.const (7 : W)) trivial
+
+/-- The assembled agreement holds for a structured expression through the
+    explicit state-owned memory access. -/
+example :
+    Option.map panValueToHOL
+        (evalPanValueExp bridgeExecProdState.structs bridgeExecProdState.locals
+          bridgeExecProdState.globals bridgeExecProdState.memory
+          bridgeExecProdState.baseAddress bridgeExecProdState.topAddress
+          panSemBitVec64BytesInWord (.rStruct [.const (3 : W), .const (4 : W)])
+          (memoryAccess := some (panSemBitVec64MemoryAccess bridgeExecProdState))) =
+      bridgeExecExactState.evalHOLFinite
+        (expToHOL (.rStruct [.const (3 : W), .const (4 : W)])) :=
+  evalPanValueExp_agree bridgeExecProdState bridgeExecExactState bridgeStateRelExec
+    bridgeExecProdState_ranged (.rStruct [.const (3 : W), .const (4 : W)])
+    (by simp [ExpByteRanged, ListExpByteRanged])
+
+/-- The rangedness companion holds on a ranged constant. -/
+example : PanValueByteRanged (PanValue.word (7 : W)) :=
+  evalPanValueExp_byteRanged bridgeExecProdState bridgeExecProdState_ranged
+    (some (panSemBitVec64MemoryAccess bridgeExecProdState)) (.const (7 : W)) trivial
+    (.word (7 : W)) (by simp [evalPanValueExp])
+
+-- The executed path computes the constant.
+#guard
+  match evalPanSemStateExp bridgeExecProdState (.const (7 : W)) with
+  | some (.word value) => value == (7 : W)
+  | _ => false
+
 def runChecks : IO Bool := do
   IO.println "PASS production/exact PanSemState codec bridge (value/entry/struct/state)"
   pure true

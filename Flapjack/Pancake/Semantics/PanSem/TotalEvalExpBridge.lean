@@ -2,6 +2,7 @@ import Flapjack.Pancake.Semantics.PanSem.TotalEvalBridge
 import Flapjack.Pancake.Semantics.PanSem.EvalFinite
 import Flapjack.Pancake.Semantics.PanSem.MemLoadHOL
 import Flapjack.Pancake.Semantics.PanSem.StateExactFinite
+import Flapjack.Pancake.PanStructsByteRanged
 
 /-!
 # Production/exact expression-evaluation agreement for the total `panSem` bridge
@@ -1755,5 +1756,918 @@ theorem evalPanValueExp_load_agree {σ : Type}
             rfl
       | rStruct fs => simp
       | nStruct nm fs => simp
+
+/-! ## Rangedness of production expression evaluation
+
+`PanValueByteRanged` restricts only the identifier payloads of a production
+value; word payloads are always representable.  The companion theorem
+`evalPanValueExp_byteRanged` shows that every value returned by the production
+expression evaluator under `PanSemStateRelExecRanged` and `ExpByteRanged` inputs
+is `PanValueByteRanged`.  The `.load` obligation is discharged by an induction
+over the fuel-indexed flat-load family.  Everything here is untagged
+Flapjack-specific bridge infrastructure. -/
+
+/-- Projecting a byte-ranged production context through `StructContext.toHOL`
+    preserves the range invariant used by the flat-load induction. -/
+theorem ctxBR_of_structContextByteRanged (c : StructContext)
+    (h : StructContextByteRanged c.toHOL) : CtxBR c := by
+  intro p hp
+  have hmem : (p.1, { fields := p.2.fields, size := p.2.size }) ∈ c.toHOL := by
+    simp only [StructContext.toHOL, List.mem_map]
+    exact ⟨p, hp, rfl⟩
+  have hrange := h _ hmem
+  exact ⟨hrange.1, hrange.2⟩
+
+/-- Every entry name of a production context whose projection is byte-ranged is
+    itself byte-ranged. -/
+theorem structContextByteRanged_names (c : StructContext)
+    (h : StructContextByteRanged c.toHOL) : ∀ p ∈ c, NameRanged p.1 := by
+  intro p hp
+  have hmem : (p.1, { fields := p.2.fields, size := p.2.size }) ∈ c.toHOL := by
+    simp only [StructContext.toHOL, List.mem_map]
+    exact ⟨p, hp, rfl⟩
+  exact (h _ hmem).1
+
+/-- A looked-up production `struct_info` has ranged field names and shapes when
+    the projected context is byte-ranged. -/
+theorem lookupInfo_byteRanged {name : String} {context : StructContext}
+    {info : StructInfo} (h : lookupInfo name context = some info)
+    (hrange : StructContextByteRanged context.toHOL) :
+    (∀ f ∈ info.fields, NameRanged f.1) ∧ (∀ f ∈ info.fields, ShapeByteRanged f.2) := by
+  induction context with
+  | nil => simp [lookupInfo] at h
+  | cons entry rest ih =>
+      obtain ⟨candidate, info'⟩ := entry
+      have hhead : (candidate, { fields := info'.fields, size := info'.size }) ∈
+          StructContext.toHOL ((candidate, info') :: rest) := by
+        simp [StructContext.toHOL]
+      have hheadRange := hrange _ hhead
+      simp only [lookupInfo] at h
+      by_cases hc : candidate == name
+      · rw [if_pos hc] at h
+        have hinj : info' = info := by simpa using h
+        subst hinj
+        exact ⟨fun f hf => (hheadRange.2 f hf).1, fun f hf => (hheadRange.2 f hf).2⟩
+      · rw [if_neg hc] at h
+        refine ih h ?_
+        intro p hp
+        apply hrange p
+        simp only [StructContext.toHOL, List.map_cons, List.mem_cons]
+        exact Or.inr (by simpa only [StructContext.toHOL] using hp)
+
+/-- The produced field names of a flat field load are byte-ranged when the input
+    field names are. -/
+theorem names_ranged_of_map_fst_eq {α β : Type}
+    {values : List (FieldName × PanValue α)} {fields : List (FieldName × β)}
+    (hnames : ∀ p ∈ fields, NameRanged p.1)
+    (heq : values.map Prod.fst = fields.map Prod.fst) :
+    ∀ p ∈ values, NameRanged p.1 := by
+  intro p hp
+  have hmem : p.1 ∈ values.map Prod.fst := List.mem_map.mpr ⟨p, hp, rfl⟩
+  rw [heq] at hmem
+  obtain ⟨q, hq, hqeq⟩ := List.mem_map.mp hmem
+  rw [← hqeq]
+  exact hnames q hq
+
+/-- A byte-ranged `rStruct` field selected by index is byte-ranged. -/
+theorem getElem?_byteRanged {width : Nat} {l : List (PanValue (BitVec width))} {index : Nat}
+    {value : PanValue (BitVec width)} (h : ∀ x ∈ l, PanValueByteRanged x)
+    (hget : l[index]? = some value) : PanValueByteRanged value := by
+  induction l generalizing index with
+  | nil => simp at hget
+  | cons head tail ih =>
+      cases index with
+      | zero =>
+          simp only [List.getElem?_cons_zero, Option.some.injEq] at hget
+          subst hget
+          exact h head (by simp)
+      | succ index =>
+          simp only [List.getElem?_cons_succ] at hget
+          exact ih (fun x hx => h x (by simp [hx])) hget
+
+/-- A byte-ranged named field selected by name is byte-ranged. -/
+theorem lookupPanValueField_byteRanged {width : Nat}
+    {fields : List (FieldName × PanValue (BitVec width))} {name : FieldName}
+    {value : PanValue (BitVec width)}
+    (hranged : ∀ p ∈ fields, PanValueByteRanged p.2)
+    (h : lookupPanValueField name fields = some value) : PanValueByteRanged value := by
+  induction fields with
+  | nil => simp [lookupPanValueField] at h
+  | cons pair rest ih =>
+      obtain ⟨candidate, fieldValue⟩ := pair
+      simp only [lookupPanValueField] at h
+      by_cases hc : candidate == name
+      · rw [if_pos hc] at h
+        have heq : fieldValue = value := by simpa using h
+        subst heq
+        exact hranged (candidate, fieldValue) (by simp)
+      · rw [if_neg hc] at h
+        exact ih (fun p hp => hranged p (by simp [hp])) h
+
+/-- Flat-load fuel rangedness: every value returned by the fuel-indexed flat load
+    (and its list/field helpers) is `PanValueByteRanged`, provided the context
+    and the loaded shapes are byte-ranged.  The recursive named-structure clause
+    follows the remaining context, so the range invariant is threaded through the
+    mutual induction. -/
+theorem panValueFlatLoadFuel_byteRanged {width : Nat}
+    (structs : StructContext) (readWord : BitVec width → Option (BitVec width))
+    (bytesInWord : BitVec width)
+    (hctx : CtxBR structs) :
+    ∀ (fuel : Nat) (shape : Shape) (address : BitVec width) (value : PanValue (BitVec width)),
+      ShapeByteRanged shape →
+      panValueFlatLoadFuel structs readWord bytesInWord fuel shape address = some value →
+        PanValueByteRanged value := by
+  have hmain := panValueFlatLoadFuel.induct (α := BitVec width) bytesInWord
+    (motive1 := fun structs fuel shape address =>
+      CtxBR structs → ShapeByteRanged shape →
+      ∀ value, panValueFlatLoadFuel structs readWord bytesInWord fuel shape address = some value →
+        PanValueByteRanged value)
+    (motive2 := fun structs fuel fields address =>
+      CtxBR structs → (∀ f ∈ fields, NameRanged f.1) →
+      (∀ f ∈ fields, ShapeByteRanged f.2) →
+      ∀ values, panValueFlatLoadFieldsFuel structs readWord bytesInWord fuel fields address = some values →
+        (∀ p ∈ values, NameRanged p.1) ∧ (∀ p ∈ values, PanValueByteRanged p.2))
+    (motive3 := fun structs fuel shapes address =>
+      CtxBR structs → (∀ s ∈ shapes, ShapeByteRanged s) →
+      ∀ values, panValueFlatLoadListFuel structs readWord bytesInWord fuel shapes address = some values →
+        ∀ v ∈ values, PanValueByteRanged v)
+    (by
+      intro structs x x_1 hctx hshape value h
+      simp [panValueFlatLoadFuel] at h)
+    (by
+      intro structs fuel address hctx hshape value h
+      obtain ⟨word, -, rfl⟩ := by simpa [panValueFlatLoadFuel] using h
+      simp only [PanValueByteRanged])
+    (by
+      intro structs fuel shapes address ih hctx hshape value h
+      obtain ⟨values, hvalues, rfl⟩ := by simpa [panValueFlatLoadFuel] using h
+      have hshapes : ∀ s ∈ shapes, ShapeByteRanged s := by
+        simpa only [ShapeByteRanged] using hshape
+      simpa only [PanValueByteRanged] using ih hctx hshapes values hvalues)
+    (by
+      intro structs fuel name address ih hctx hshape value h
+      cases hlookup : lookupInfoWithRest name structs with
+      | none => simp [panValueFlatLoadFuel, hlookup] at h
+      | some pair =>
+          obtain ⟨info, rest⟩ := pair
+          cases hfields : panValueFlatLoadFieldsFuel rest readWord bytesInWord fuel
+              info.fields address with
+          | none => simp [panValueFlatLoadFuel, hlookup, hfields] at h
+          | some values =>
+              simp [panValueFlatLoadFuel, hlookup, hfields] at h
+              have hname : NameRanged name := by simpa only [ShapeByteRanged] using hshape
+              obtain ⟨k, hk⟩ := lookupInfoWithRest_exists_mem hlookup
+              have hinfoFields : ∀ f ∈ info.fields, NameRanged f.1 ∧ ShapeByteRanged f.2 :=
+                hctx (k, info) hk |>.2
+              have hvals := ih info rest (lookupInfoWithRest_ctxBR hlookup hctx)
+                (fun f hf => (hinfoFields f hf).1)
+                (fun f hf => (hinfoFields f hf).2) values hfields
+              subst h
+              simp only [PanValueByteRanged]
+              exact ⟨hname, fun p hp => ⟨hvals.1 p hp, hvals.2 p hp⟩⟩)
+    (by
+      intro structs x x_1 hctx hnames hshapes values h
+      simp [panValueFlatLoadFieldsFuel] at h
+      subst h
+      exact ⟨by simp, by simp⟩)
+    (by
+      intro structs head tail x hctx hnames hshapes values h
+      simp [panValueFlatLoadFieldsFuel] at h)
+    (by
+      intro structs fuel field shape fields address ihHead ihTail hctx hnames hshapes values h
+      have hname : NameRanged field := hnames (field, shape) (by simp)
+      have hshape : ShapeByteRanged shape := hshapes (field, shape) (by simp)
+      have htailNames : ∀ f ∈ fields, NameRanged f.1 :=
+        fun f hf => hnames f (by simp [hf])
+      have htailShapes : ∀ f ∈ fields, ShapeByteRanged f.2 :=
+        fun f hf => hshapes f (by simp [hf])
+      cases hvalue : panValueFlatLoadFuel structs readWord bytesInWord fuel shape address with
+      | none => simp [panValueFlatLoadFieldsFuel, hvalue] at h
+      | some value =>
+          cases hvalues : panValueFlatLoadFieldsFuel structs readWord bytesInWord fuel fields
+              (panValueFlatOffset bytesInWord address (shapeSizeWithContext structs shape)) with
+          | none => simp [panValueFlatLoadFieldsFuel, hvalue, hvalues] at h
+          | some rest =>
+              simp [panValueFlatLoadFieldsFuel, hvalue, hvalues] at h
+              subst h
+              refine ⟨?_, ?_⟩
+              · intro p hp
+                rcases List.mem_cons.mp hp with rfl | hp
+                · exact hname
+                · exact (ihTail hctx htailNames htailShapes rest hvalues).1 p hp
+              · intro p hp
+                rcases List.mem_cons.mp hp with rfl | hp
+                · exact ihHead hctx hshape value hvalue
+                · exact (ihTail hctx htailNames htailShapes rest hvalues).2 p hp)
+    (by
+      intro structs x x_1 hctx hshapes values h
+      simp [panValueFlatLoadListFuel] at h
+      subst h
+      intro v hv
+      simp at hv)
+    (by
+      intro structs head tail x hctx hshapes values h
+      simp [panValueFlatLoadListFuel] at h)
+    (by
+      intro structs fuel shape shapes address ihHead ihTail hctx hshapes values h
+      have hshape : ShapeByteRanged shape := hshapes shape (by simp)
+      have htailShapes : ∀ s ∈ shapes, ShapeByteRanged s :=
+        fun s hs => hshapes s (by simp [hs])
+      cases hvalue : panValueFlatLoadFuel structs readWord bytesInWord fuel shape address with
+      | none => simp [panValueFlatLoadListFuel, hvalue] at h
+      | some loaded =>
+          cases hvalues : panValueFlatLoadListFuel structs readWord bytesInWord fuel shapes
+              (panValueFlatOffset bytesInWord address (shapeSizeWithContext structs shape)) with
+          | none => simp [panValueFlatLoadListFuel, hvalue, hvalues] at h
+          | some rest =>
+              simp [panValueFlatLoadListFuel, hvalue, hvalues] at h
+              subst h
+              intro v hv
+              rcases List.mem_cons.mp hv with rfl | hv
+              · exact ihHead hctx hshape v hvalue
+              · exact ihTail hctx htailShapes rest hvalues v hv)
+  intro fuel shape address value hshape h
+  exact hmain structs fuel shape address hctx hshape value h
+
+/-- Every value returned by a flat load of a byte-ranged shape from a byte-ranged
+    context is `PanValueByteRanged`. -/
+theorem panValueFlatLoad_byteRanged (structs : StructContext)
+    (memory : RiscV.Word 64 → Option (PanValue (RiscV.Word 64)))
+    (bytesInWord address : RiscV.Word 64) (shape : Shape)
+    (memoryAccess : Option (PanValueMemoryAccess (RiscV.Word 64)))
+    (value : PanValue (RiscV.Word 64))
+    (hctx : CtxBR structs) (hshape : ShapeByteRanged shape)
+    (h : panValueFlatLoad structs memory bytesInWord address shape memoryAccess = some value) :
+    PanValueByteRanged value := by
+  rw [panValueFlatLoad] at h
+  by_cases hwf : isWfShape structs shape = true
+  · rw [if_pos hwf] at h
+    exact panValueFlatLoadFuel_byteRanged structs
+      (panValueFlatReadWord memory bytesInWord memoryAccess) bytesInWord hctx
+      _ shape address value hshape h
+  · rw [if_neg hwf] at h
+    simp at h
+
+/-! ## Rangedness of production expression evaluation -/
+
+/-- Every value returned by the production expression evaluator under a
+    byte-ranged state and a byte-ranged expression is `PanValueByteRanged`.  The
+    `.load` obligation is discharged by `panValueFlatLoad_byteRanged`, and the
+    `.nStruct`/`.nField` obligations use the field-name range predicates. -/
+theorem evalPanValueExp_byteRanged {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (hranged : PanSemStateRelExecRanged state)
+    (access : Option (PanValueMemoryAccess (RiscV.Word 64)))
+    (e : Exp (RiscV.Word 64)) (he : ExpByteRanged e)
+    (v : PanValue (RiscV.Word 64))
+    (h : evalPanValueExp state.structs state.locals state.globals state.memory
+          state.baseAddress state.topAddress panSemBitVec64BytesInWord e
+          (memoryAccess := access) = some v) :
+    PanValueByteRanged v := by
+  have hmain := evalPanValueExp.induct
+    (motive1 := fun expressions memoryAccess =>
+      ListExpByteRanged expressions →
+      ∀ values, evalPanValueExp.evalPanValueExps state.structs state.locals state.globals
+          state.memory state.baseAddress state.topAddress panSemBitVec64BytesInWord
+          expressions (memoryAccess := memoryAccess) = some values →
+        ∀ v ∈ values, PanValueByteRanged v)
+    (motive2 := fun expression memoryAccess =>
+      ExpByteRanged expression →
+      ∀ v, evalPanValueExp state.structs state.locals state.globals state.memory
+          state.baseAddress state.topAddress panSemBitVec64BytesInWord expression
+          (memoryAccess := memoryAccess) = some v → PanValueByteRanged v)
+    (motive3 := fun fields memoryAccess =>
+      ListFieldByteRanged fields →
+      ∀ values, evalPanValueExp.evalPanValueFields state.structs state.locals state.globals
+          state.memory state.baseAddress state.topAddress panSemBitVec64BytesInWord
+          fields (memoryAccess := memoryAccess) = some values →
+        ∀ p ∈ values, PanValueByteRanged p.2)
+    (by
+      intro memoryAccess he values h
+      simp only [evalPanValueExp.evalPanValueExps, Option.some.injEq] at h
+      subst h
+      intro v hv
+      simp at hv)
+    (by
+      intro expression expressions memoryAccess ihHead ihTail he values h
+      simp only [ListExpByteRanged] at he
+      obtain ⟨heHead, heTail⟩ := he
+      simp only [evalPanValueExp.evalPanValueExps] at h
+      cases hvalue : evalPanValueExp state.structs state.locals state.globals state.memory
+          state.baseAddress state.topAddress panSemBitVec64BytesInWord expression
+          (memoryAccess := memoryAccess) with
+      | none => simp [hvalue] at h
+      | some head =>
+          cases hvalues : evalPanValueExp.evalPanValueExps state.structs state.locals
+              state.globals state.memory state.baseAddress state.topAddress
+              panSemBitVec64BytesInWord expressions (memoryAccess := memoryAccess) with
+          | none => simp [hvalue, hvalues] at h
+          | some tail =>
+              simp [hvalue, hvalues, Option.some.injEq] at h
+              subst h
+              intro v hv
+              rcases List.mem_cons.mp hv with rfl | hv
+              · exact ihHead heHead v hvalue
+              · exact ihTail heTail tail hvalues v hv)
+    (by
+      intro memoryAccess value he v h
+      simp only [evalPanValueExp, Option.some.injEq] at h
+      subst h
+      simp only [PanValueByteRanged])
+    (by
+      intro memoryAccess name he v h
+      simp only [evalPanValueExp] at h
+      exact hranged.1 name v h)
+    (by
+      intro memoryAccess name he v h
+      simp only [evalPanValueExp] at h
+      exact hranged.2.1 name v h)
+    (by
+      intro fields memoryAccess ih he v h
+      simp only [evalPanValueExp] at h
+      cases hfields : evalPanValueExp.evalPanValueExps state.structs state.locals
+          state.globals state.memory state.baseAddress state.topAddress
+          panSemBitVec64BytesInWord fields (memoryAccess := memoryAccess) with
+      | none => simp [hfields] at h
+      | some values =>
+          simp [hfields, Option.some.injEq] at h
+          subst h
+          simpa only [PanValueByteRanged] using ih he values hfields)
+    (by
+      intro index expression memoryAccess ih he v h
+      cases hexpr : evalPanValueExp state.structs state.locals state.globals state.memory
+          state.baseAddress state.topAddress panSemBitVec64BytesInWord expression
+          (memoryAccess := memoryAccess) with
+      | none => simp [evalPanValueExp, hexpr] at h
+      | some inner =>
+          cases inner with
+          | word w => simp [evalPanValueExp, hexpr] at h
+          | rStruct fs =>
+              cases hget : fs[index]? with
+              | none => simp [evalPanValueExp, hexpr, hget] at h
+              | some w =>
+                  simp [evalPanValueExp, hexpr, hget, Option.some.injEq] at h
+                  subst h
+                  have hfs : ∀ x ∈ fs, PanValueByteRanged x := by
+                    simpa only [PanValueByteRanged] using ih he (.rStruct fs) hexpr
+                  exact getElem?_byteRanged hfs hget
+          | nStruct nm fs => simp [evalPanValueExp, hexpr] at h)
+    (by
+      intro name fields memoryAccess ih he v h
+      simp only [ExpByteRanged] at he
+      obtain ⟨hname, hfieldsRanged⟩ := he
+      cases hinfo : lookupInfo name state.structs with
+      | none => simp [evalPanValueExp, hinfo] at h
+      | some info =>
+          cases hvals : evalPanValueExp.evalPanValueFields state.structs state.locals
+              state.globals state.memory state.baseAddress state.topAddress
+              panSemBitVec64BytesInWord fields (memoryAccess := memoryAccess) with
+          | none => simp [evalPanValueExp, hinfo, hvals] at h
+          | some values =>
+              by_cases hcheck : panValueFieldsExactHOL state.structs info.fields values = true
+              · simp [evalPanValueExp, hinfo, hvals, hcheck, Option.some.injEq] at h
+                subst h
+                simp only [PanValueByteRanged]
+                refine ⟨hname, ?_⟩
+                have hnames := evalPanValueFields_names state.structs state.locals
+                  state.globals state.memory state.baseAddress state.topAddress
+                  panSemBitVec64BytesInWord memoryAccess fields values hvals
+                have hfieldNames : ∀ p ∈ fields, NameRanged p.1 :=
+                  listFieldByteRanged_names hfieldsRanged
+                have hvalsNames := names_ranged_of_map_fst_eq hfieldNames hnames
+                intro p hp
+                exact ⟨hvalsNames p hp, ih hfieldsRanged values hvals p hp⟩
+              · simp [evalPanValueExp, hinfo, hvals, hcheck] at h)
+    (by
+      intro name expression memoryAccess ih he v h
+      simp only [ExpByteRanged] at he
+      obtain ⟨_, hexpRanged⟩ := he
+      cases hexpr : evalPanValueExp state.structs state.locals state.globals state.memory
+          state.baseAddress state.topAddress panSemBitVec64BytesInWord expression
+          (memoryAccess := memoryAccess) with
+      | none => simp [evalPanValueExp, hexpr] at h
+      | some inner =>
+          cases inner with
+          | word w => simp [evalPanValueExp, hexpr] at h
+          | rStruct fs => simp [evalPanValueExp, hexpr] at h
+          | nStruct structName fs =>
+              by_cases hsome : (lookupInfo structName state.structs).isSome = true
+              · cases hlook : lookupPanValueField name fs with
+                | none => simp [evalPanValueExp, hexpr, hsome, hlook] at h
+                | some w =>
+                    simp [evalPanValueExp, hexpr, hsome, hlook, Option.some.injEq] at h
+                    subst h
+                    have hinner : PanValueByteRanged (.nStruct structName fs) :=
+                      ih hexpRanged (.nStruct structName fs) hexpr
+                    have hfs : ∀ p : FieldName × PanValue (BitVec 64),
+                        p ∈ fs → PanValueByteRanged p.2 := by
+                      have h' := hinner
+                      simp only [PanValueByteRanged] at h'
+                      exact fun p hp => (h'.2 p hp).2
+                    exact lookupPanValueField_byteRanged hfs hlook
+              · simp [evalPanValueExp, hexpr, hsome] at h)
+    (by
+      intro shape address memoryAccess ih he v h
+      simp only [ExpByteRanged] at he
+      obtain ⟨hshape, _⟩ := he
+      cases haddr : evalPanValueExp state.structs state.locals state.globals state.memory
+          state.baseAddress state.topAddress panSemBitVec64BytesInWord address
+          (memoryAccess := memoryAccess) with
+      | none => simp [evalPanValueExp, haddr] at h
+      | some addrValue =>
+          cases addrValue with
+          | word addr =>
+              simp only [evalPanValueExp, haddr] at h
+              exact panValueFlatLoad_byteRanged state.structs state.memory
+                panSemBitVec64BytesInWord addr shape memoryAccess v
+                (ctxBR_of_structContextByteRanged state.structs hranged.2.2) hshape h
+          | rStruct fs => simp [evalPanValueExp, haddr] at h
+          | nStruct nm fs => simp [evalPanValueExp, haddr] at h)
+    (by
+      intro address memoryAccess ih he v h
+      cases haddr : evalPanValueExp state.structs state.locals state.globals state.memory
+          state.baseAddress state.topAddress panSemBitVec64BytesInWord address
+          (memoryAccess := memoryAccess) with
+      | none => simp [evalPanValueExp, haddr] at h
+      | some addrValue =>
+          cases addrValue with
+          | word addr =>
+              cases memoryAccess with
+              | none =>
+                  cases hread : state.memory addr with
+                  | none => simp [evalPanValueExp, haddr, hread] at h
+                  | some mv =>
+                      cases mv with
+                      | word w =>
+                          simp [evalPanValueExp, haddr, hread, Option.some.injEq] at h
+                          subst h
+                          simp only [PanValueByteRanged]
+                      | rStruct fs => simp [evalPanValueExp, haddr, hread] at h
+                      | nStruct nm fs => simp [evalPanValueExp, haddr, hread] at h
+              | some access =>
+                  cases hread : access.read32 access.domain state.memory
+                      panSemBitVec64BytesInWord addr with
+                  | none => simp [evalPanValueExp, haddr, hread] at h
+                  | some w =>
+                      simp [evalPanValueExp, haddr, hread, Option.some.injEq] at h
+                      subst h
+                      simp only [PanValueByteRanged]
+          | rStruct fs => simp [evalPanValueExp, haddr] at h
+          | nStruct nm fs => simp [evalPanValueExp, haddr] at h)
+    (by
+      intro address memoryAccess ih he v h
+      cases haddr : evalPanValueExp state.structs state.locals state.globals state.memory
+          state.baseAddress state.topAddress panSemBitVec64BytesInWord address
+          (memoryAccess := memoryAccess) with
+      | none => simp [evalPanValueExp, haddr] at h
+      | some addrValue =>
+          cases addrValue with
+          | word addr =>
+              cases memoryAccess with
+              | none =>
+                  cases hread : state.memory addr with
+                  | none => simp [evalPanValueExp, haddr, hread] at h
+                  | some mv =>
+                      cases mv with
+                      | word w =>
+                          simp [evalPanValueExp, haddr, hread, Option.some.injEq] at h
+                          subst h
+                          simp only [PanValueByteRanged]
+                      | rStruct fs => simp [evalPanValueExp, haddr, hread] at h
+                      | nStruct nm fs => simp [evalPanValueExp, haddr, hread] at h
+              | some access =>
+                  cases hread : access.readByte access.domain state.memory
+                      panSemBitVec64BytesInWord addr with
+                  | none => simp [evalPanValueExp, haddr, hread] at h
+                  | some w =>
+                      simp [evalPanValueExp, haddr, hread, Option.some.injEq] at h
+                      subst h
+                      simp only [PanValueByteRanged]
+          | rStruct fs => simp [evalPanValueExp, haddr] at h
+          | nStruct nm fs => simp [evalPanValueExp, haddr] at h)
+    (by
+      intro operator arguments memoryAccess ih he v h
+      cases hargs : evalPanValueExp.evalPanValueExps state.structs state.locals
+          state.globals state.memory state.baseAddress state.topAddress
+          panSemBitVec64BytesInWord arguments (memoryAccess := memoryAccess) with
+      | none => simp [evalPanValueExp, hargs] at h
+      | some values =>
+          cases memoryAccess with
+          | none =>
+              cases hmap : values.mapM panValueWordProjection with
+              | none => simp [evalPanValueExp, hargs, hmap] at h
+              | some words =>
+                  cases words with
+                  | nil => simp [evalPanValueExp, hargs, hmap] at h
+                  | cons a rest =>
+                      cases rest with
+                      | nil => simp [evalPanValueExp, hargs, hmap] at h
+                      | cons b rest2 =>
+                          cases rest2 with
+                          | nil =>
+                              simp [evalPanValueExp, hargs, hmap, Option.some.injEq] at h
+                              subst h
+                              simp only [PanValueByteRanged]
+                          | cons c rest3 => simp [evalPanValueExp, hargs, hmap] at h
+          | some access =>
+              cases hmap : values.mapM panValueWordProjection with
+              | none => simp [evalPanValueExp, hargs, hmap] at h
+              | some words =>
+                  cases hword : access.wordOp operator words with
+                  | none => simp [evalPanValueExp, hargs, hmap, hword] at h
+                  | some w =>
+                      simp [evalPanValueExp, hargs, hmap, hword, Option.some.injEq] at h
+                      subst h
+                      simp only [PanValueByteRanged])
+    (by
+      intro operator arguments memoryAccess ih he v h
+      cases hargs : evalPanValueExp.evalPanValueExps state.structs state.locals
+          state.globals state.memory state.baseAddress state.topAddress
+          panSemBitVec64BytesInWord arguments (memoryAccess := memoryAccess) with
+      | none => simp [evalPanValueExp, hargs] at h
+      | some values =>
+          cases values with
+          | nil => simp [evalPanValueExp, hargs] at h
+          | cons first rest =>
+              cases rest with
+              | nil => simp [evalPanValueExp, hargs] at h
+              | cons second rest2 =>
+                  cases rest2 with
+                  | nil =>
+                      cases first with
+                      | word left =>
+                          cases second with
+                          | word right =>
+                              cases hpan : evalPanOp operator [left, right] with
+                              | none => simp [evalPanValueExp, hargs, hpan] at h
+                              | some w =>
+                                  simp [evalPanValueExp, hargs, hpan, Option.some.injEq] at h
+                                  subst h
+                                  simp only [PanValueByteRanged]
+                          | rStruct fs => simp [evalPanValueExp, hargs] at h
+                          | nStruct nm fs => simp [evalPanValueExp, hargs] at h
+                      | rStruct fs => simp [evalPanValueExp, hargs] at h
+                      | nStruct nm fs => simp [evalPanValueExp, hargs] at h
+                  | cons third rest3 => simp [evalPanValueExp, hargs] at h)
+    (by
+      intro operator left right memoryAccess ihLeft ihRight he v h
+      simp only [ExpByteRanged] at he
+      obtain ⟨heLeft, heRight⟩ := he
+      cases memoryAccess with
+      | none =>
+          cases hleft : evalPanValueExp state.structs state.locals state.globals state.memory
+              state.baseAddress state.topAddress panSemBitVec64BytesInWord left
+              (memoryAccess := none) with
+          | none => simp [evalPanValueExp, hleft] at h
+          | some leftValue =>
+              cases hright : evalPanValueExp state.structs state.locals state.globals
+                  state.memory state.baseAddress state.topAddress
+                  panSemBitVec64BytesInWord right (memoryAccess := none) with
+              | none => simp [evalPanValueExp, hleft, hright] at h
+              | some rightValue =>
+                  cases leftValue with
+                  | word l =>
+                      cases rightValue with
+                      | word r =>
+                          simp [evalPanValueExp, hleft, hright, Option.some.injEq] at h
+                          subst h
+                          simp only [PanValueByteRanged]
+                      | rStruct fs => simp [evalPanValueExp, hleft, hright] at h
+                      | nStruct nm fs => simp [evalPanValueExp, hleft, hright] at h
+                  | rStruct fs => simp [evalPanValueExp, hleft, hright] at h
+                  | nStruct nm fs => simp [evalPanValueExp, hleft, hright] at h
+      | some access =>
+          cases hleft : evalPanValueExp state.structs state.locals state.globals state.memory
+              state.baseAddress state.topAddress panSemBitVec64BytesInWord left
+              (memoryAccess := some access) with
+          | none => simp [evalPanValueExp, hleft] at h
+          | some leftValue =>
+              cases hright : evalPanValueExp state.structs state.locals state.globals
+                  state.memory state.baseAddress state.topAddress
+                  panSemBitVec64BytesInWord right (memoryAccess := some access) with
+              | none => simp [evalPanValueExp, hleft, hright] at h
+              | some rightValue =>
+                  cases leftValue with
+                  | word l =>
+                      cases rightValue with
+                      | word r =>
+                          simp [evalPanValueExp, hleft, hright, Option.some.injEq] at h
+                          subst h
+                          simp only [PanValueByteRanged]
+                      | rStruct fs => simp [evalPanValueExp, hleft, hright] at h
+                      | nStruct nm fs => simp [evalPanValueExp, hleft, hright] at h
+                  | rStruct fs => simp [evalPanValueExp, hleft, hright] at h
+                  | nStruct nm fs => simp [evalPanValueExp, hleft, hright] at h)
+    (by
+      intro operator left right memoryAccess ihLeft ihRight he v h
+      simp only [ExpByteRanged] at he
+      obtain ⟨heLeft, heRight⟩ := he
+      cases memoryAccess with
+      | none =>
+          cases hleft : evalPanValueExp state.structs state.locals state.globals state.memory
+              state.baseAddress state.topAddress panSemBitVec64BytesInWord left
+              (memoryAccess := none) with
+          | none => simp [evalPanValueExp, hleft] at h
+          | some leftValue =>
+              cases hright : evalPanValueExp state.structs state.locals state.globals
+                  state.memory state.baseAddress state.topAddress
+                  panSemBitVec64BytesInWord right (memoryAccess := none) with
+              | none => simp [evalPanValueExp, hleft, hright] at h
+              | some rightValue =>
+                  cases leftValue with
+                  | word l =>
+                      cases rightValue with
+                      | word r =>
+                          cases hshift : evalPanShift operator l r with
+                          | none => simp [evalPanValueExp, hleft, hright, hshift] at h
+                          | some w =>
+                              simp [evalPanValueExp, hleft, hright, hshift,
+                                Option.some.injEq] at h
+                              subst h
+                              simp only [PanValueByteRanged]
+                      | rStruct fs => simp [evalPanValueExp, hleft, hright] at h
+                      | nStruct nm fs => simp [evalPanValueExp, hleft, hright] at h
+                  | rStruct fs => simp [evalPanValueExp, hleft, hright] at h
+                  | nStruct nm fs => simp [evalPanValueExp, hleft, hright] at h
+      | some access =>
+          cases hleft : evalPanValueExp state.structs state.locals state.globals state.memory
+              state.baseAddress state.topAddress panSemBitVec64BytesInWord left
+              (memoryAccess := some access) with
+          | none => simp [evalPanValueExp, hleft] at h
+          | some leftValue =>
+              cases hright : evalPanValueExp state.structs state.locals state.globals
+                  state.memory state.baseAddress state.topAddress
+                  panSemBitVec64BytesInWord right (memoryAccess := some access) with
+              | none => simp [evalPanValueExp, hleft, hright] at h
+              | some rightValue =>
+                  cases leftValue with
+                  | word l =>
+                      cases rightValue with
+                      | word r =>
+                          cases hshift : access.shift operator l r with
+                          | none => simp [evalPanValueExp, hleft, hright, hshift] at h
+                          | some w =>
+                              simp [evalPanValueExp, hleft, hright, hshift,
+                                Option.some.injEq] at h
+                              subst h
+                              simp only [PanValueByteRanged]
+                      | rStruct fs => simp [evalPanValueExp, hleft, hright] at h
+                      | nStruct nm fs => simp [evalPanValueExp, hleft, hright] at h
+                  | rStruct fs => simp [evalPanValueExp, hleft, hright] at h
+                  | nStruct nm fs => simp [evalPanValueExp, hleft, hright] at h)
+    (by
+      intro memoryAccess he v h
+      simp only [evalPanValueExp, Option.some.injEq] at h
+      subst h
+      simp only [PanValueByteRanged])
+    (by
+      intro memoryAccess he v h
+      simp only [evalPanValueExp, Option.some.injEq] at h
+      subst h
+      simp only [PanValueByteRanged])
+    (by
+      intro memoryAccess he v h
+      simp only [evalPanValueExp, Option.some.injEq] at h
+      subst h
+      simp only [PanValueByteRanged])
+    (by
+      intro memoryAccess he values h
+      simp only [evalPanValueExp.evalPanValueFields, Option.some.injEq] at h
+      subst h
+      intro p hp
+      simp at hp)
+    (by
+      intro name expression fields memoryAccess ihHead ihTail he values h
+      simp only [ListFieldByteRanged] at he
+      obtain ⟨_, heHead, heTail⟩ := he
+      simp only [evalPanValueExp.evalPanValueFields] at h
+      cases hvalue : evalPanValueExp state.structs state.locals state.globals state.memory
+          state.baseAddress state.topAddress panSemBitVec64BytesInWord expression
+          (memoryAccess := memoryAccess) with
+      | none => simp [hvalue] at h
+      | some head =>
+          cases hvalues : evalPanValueExp.evalPanValueFields state.structs state.locals
+              state.globals state.memory state.baseAddress state.topAddress
+              panSemBitVec64BytesInWord fields (memoryAccess := memoryAccess) with
+          | none => simp [hvalue, hvalues] at h
+          | some tail =>
+              simp [hvalue, hvalues, Option.some.injEq] at h
+              subst h
+              intro p hp
+              rcases List.mem_cons.mp hp with rfl | hp
+              · exact ihHead heHead head hvalue
+              · exact ihTail heTail tail hvalues p hp)
+  exact hmain e access he v h
+
+/-! ## Unconditional all-constructor agreement -/
+
+/-- Byte-ranged field lists have byte-ranged field expressions. -/
+theorem listFieldByteRanged_exp {width : Nat} :
+    ∀ {fields : List (FieldName × Exp (BitVec width))}, ListFieldByteRanged fields →
+      ∀ p ∈ fields, ExpByteRanged p.2 := by
+  intro fields
+  induction fields with
+  | nil => intro _ p hp; simp at hp
+  | cons f fs ih =>
+      intro h p hp
+      simp only [ListFieldByteRanged] at h
+      obtain ⟨_, hhead, htail⟩ := h
+      rcases List.mem_cons.mp hp with rfl | hp
+      · exact hhead
+      · exact ih htail p hp
+
+/-- Unconditional production/exact expression-evaluation agreement for all
+    sixteen `Exp` constructors.  Under `PanSemStateRelExec`, the byte-ranged
+    state premise `PanSemStateRelExecRanged`, and a byte-ranged expression, the
+    production evaluator run with the state-owned memory access encodes to the
+    exact `evalHOLFinite` result.  The `hresRanged` premises of the structured
+    `nStruct`/`nField` clauses are discharged by `evalPanValueExp_byteRanged`. -/
+theorem evalPanValueExp_agree {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec state exact.toExact)
+    (hranged : PanSemStateRelExecRanged state)
+    (e : Exp (RiscV.Word 64)) (he : ExpByteRanged e) :
+    Option.map panValueToHOL
+        (evalPanValueExp state.structs state.locals state.globals state.memory
+          state.baseAddress state.topAddress panSemBitVec64BytesInWord e
+          (memoryAccess := some (panSemBitVec64MemoryAccess state)))
+      = exact.evalHOLFinite (expToHOL e) := by
+  have hctxNames : ∀ p ∈ state.structs, NameRanged p.1 :=
+    structContextByteRanged_names state.structs hranged.2.2
+  have hmain := evalPanValueExp.induct
+    (motive1 := fun expressions memoryAccess =>
+      memoryAccess = some (panSemBitVec64MemoryAccess state) →
+      ListExpByteRanged expressions →
+      ∀ e ∈ expressions,
+        Option.map panValueToHOL
+            (evalPanValueExp state.structs state.locals state.globals state.memory
+              state.baseAddress state.topAddress panSemBitVec64BytesInWord e
+              (memoryAccess := memoryAccess))
+          = exact.evalHOLFinite (expToHOL e))
+    (motive2 := fun expression memoryAccess =>
+      memoryAccess = some (panSemBitVec64MemoryAccess state) →
+      ExpByteRanged expression →
+      Option.map panValueToHOL
+          (evalPanValueExp state.structs state.locals state.globals state.memory
+            state.baseAddress state.topAddress panSemBitVec64BytesInWord expression
+            (memoryAccess := memoryAccess))
+        = exact.evalHOLFinite (expToHOL expression))
+    (motive3 := fun fields memoryAccess =>
+      memoryAccess = some (panSemBitVec64MemoryAccess state) →
+      ListFieldByteRanged fields →
+      ∀ p ∈ fields,
+        Option.map panValueToHOL
+            (evalPanValueExp state.structs state.locals state.globals state.memory
+              state.baseAddress state.topAddress panSemBitVec64BytesInWord p.2
+              (memoryAccess := memoryAccess))
+          = exact.evalHOLFinite (expToHOL p.2))
+    (by
+      intro memoryAccess hmem he e heMem
+      simp at heMem)
+    (by
+      intro expression expressions memoryAccess ihHead ihTail hmem he e heMem
+      subst hmem
+      simp only [ListExpByteRanged] at he
+      obtain ⟨heHead, heTail⟩ := he
+      rcases List.mem_cons.mp heMem with rfl | heMem
+      · exact ihHead rfl heHead
+      · exact ihTail rfl heTail e heMem)
+    (by
+      intro memoryAccess value hmem he
+      subst hmem
+      simpa only [expToHOL] using evalPanValueExp_const_agree state exact
+        (some (panSemBitVec64MemoryAccess state)) value)
+    (by
+      intro memoryAccess name hmem he
+      subst hmem
+      simpa only [expToHOL] using evalPanValueExp_var_local_agree state exact hrel
+        (some (panSemBitVec64MemoryAccess state)) name he)
+    (by
+      intro memoryAccess name hmem he
+      subst hmem
+      simpa only [expToHOL] using evalPanValueExp_var_global_agree state exact hrel
+        (some (panSemBitVec64MemoryAccess state)) name he)
+    (by
+      intro fields memoryAccess ih hmem he
+      subst hmem
+      simp only [ExpByteRanged] at he
+      simpa only [expToHOL] using evalPanValueExp_rStruct_agree state exact
+        (some (panSemBitVec64MemoryAccess state)) fields (ih rfl he))
+    (by
+      intro index expression memoryAccess ih hmem he
+      subst hmem
+      simpa only [expToHOL] using evalPanValueExp_rField_agree state exact
+        (some (panSemBitVec64MemoryAccess state)) index expression (ih rfl he))
+    (by
+      intro name fields memoryAccess ih hmem he
+      subst hmem
+      simp only [ExpByteRanged] at he
+      obtain ⟨hname, hfieldsRanged⟩ := he
+      have hinfo : ∀ (info : StructInfo), lookupInfo name state.structs = some info →
+          (∀ f ∈ info.fields, NameRanged f.1) ∧ (∀ f ∈ info.fields, ShapeByteRanged f.2) :=
+        fun info h => lookupInfo_byteRanged h hranged.2.2
+      have hres : ∀ p ∈ fields, ∀ v,
+          evalPanValueExp state.structs state.locals state.globals state.memory
+            state.baseAddress state.topAddress panSemBitVec64BytesInWord p.2
+            (memoryAccess := some (panSemBitVec64MemoryAccess state)) = some v →
+          PanValueByteRanged v :=
+        fun p hp v hv => evalPanValueExp_byteRanged state hranged
+          (some (panSemBitVec64MemoryAccess state)) p.2
+          (listFieldByteRanged_exp hfieldsRanged p hp) v hv
+      simpa only [expToHOL] using evalPanValueExp_nStruct_agree state exact hrel
+        (some (panSemBitVec64MemoryAccess state)) name fields hname
+        (listFieldByteRanged_names hfieldsRanged) hctxNames hinfo (ih rfl hfieldsRanged) hres)
+    (by
+      intro name expression memoryAccess ih hmem he
+      subst hmem
+      simp only [ExpByteRanged] at he
+      obtain ⟨hname, hexpRanged⟩ := he
+      simpa only [expToHOL] using evalPanValueExp_nField_agree state exact hrel
+        (some (panSemBitVec64MemoryAccess state)) name expression hname hctxNames
+        (ih rfl hexpRanged)
+        (fun v hv => evalPanValueExp_byteRanged state hranged
+          (some (panSemBitVec64MemoryAccess state)) expression hexpRanged v hv))
+    (by
+      intro shape address memoryAccess ih hmem he
+      subst hmem
+      simp only [ExpByteRanged] at he
+      obtain ⟨hshape, haddrRanged⟩ := he
+      simpa only [expToHOL] using evalPanValueExp_load_agree state exact hrel hranged shape address hshape
+        (ih rfl haddrRanged))
+    (by
+      intro address memoryAccess ih hmem he
+      subst hmem
+      simpa only [expToHOL] using evalPanValueExp_load32_agree state exact hrel address (ih rfl he))
+    (by
+      intro address memoryAccess ih hmem he
+      subst hmem
+      simpa only [expToHOL] using evalPanValueExp_loadByte_agree state exact hrel address (ih rfl he))
+    (by
+      intro operator arguments memoryAccess ih hmem he
+      subst hmem
+      simpa only [expToHOL] using evalPanValueExp_op_agree state exact (panSemBitVec64MemoryAccess state)
+        operator arguments (ih rfl he) (panSemBitVec64MemoryAccess_wordOp state))
+    (by
+      intro operator arguments memoryAccess ih hmem he
+      subst hmem
+      simpa only [expToHOL] using evalPanValueExp_panOp_agree state exact
+        (some (panSemBitVec64MemoryAccess state)) operator arguments (ih rfl he))
+    (by
+      intro operator left right memoryAccess ihLeft ihRight hmem he
+      subst hmem
+      simp only [ExpByteRanged] at he
+      obtain ⟨heLeft, heRight⟩ := he
+      simpa only [expToHOL] using evalPanValueExp_cmp_agree state exact (panSemBitVec64MemoryAccess state)
+        operator left right (ihLeft rfl heLeft) (ihRight rfl heRight)
+        (fun op l r => panSemBitVec64MemoryAccess_compare state op l r))
+    (by
+      intro operator left right memoryAccess ihLeft ihRight hmem he
+      subst hmem
+      simp only [ExpByteRanged] at he
+      obtain ⟨heLeft, heRight⟩ := he
+      simpa only [expToHOL] using evalPanValueExp_shift_agree state exact (panSemBitVec64MemoryAccess state)
+        operator left right (ihLeft rfl heLeft) (ihRight rfl heRight)
+        (fun op l r => panSemBitVec64MemoryAccess_shift state op l r))
+    (by
+      intro memoryAccess hmem he
+      subst hmem
+      simpa only [expToHOL] using evalPanValueExp_baseAddr_agree state exact hrel
+        (some (panSemBitVec64MemoryAccess state)))
+    (by
+      intro memoryAccess hmem he
+      subst hmem
+      simpa only [expToHOL] using evalPanValueExp_topAddr_agree state exact hrel
+        (some (panSemBitVec64MemoryAccess state)))
+    (by
+      intro memoryAccess hmem he
+      subst hmem
+      simpa only [expToHOL] using evalPanValueExp_bytesInWord_agree state exact
+        (some (panSemBitVec64MemoryAccess state)))
+    (by
+      intro memoryAccess hmem he p hp
+      simp at hp)
+    (by
+      intro name expression fields memoryAccess ihHead ihTail hmem he p hp
+      subst hmem
+      simp only [ListFieldByteRanged] at he
+      obtain ⟨_, heHead, heTail⟩ := he
+      rcases List.mem_cons.mp hp with rfl | hp
+      · exact ihHead rfl heHead
+      · exact ihTail rfl heTail p hp)
+  exact hmain e (some (panSemBitVec64MemoryAccess state)) rfl he
+
+/-- State-owned expression-evaluation agreement wrapper: the same result through
+    `evalPanSemStateExp`. -/
+theorem evalPanSemStateExp_agree {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ) [DecidablePred exact.memaddrs]
+    (hrel : PanSemStateRelExec state exact.toExact)
+    (hranged : PanSemStateRelExecRanged state)
+    (e : Exp (RiscV.Word 64)) (he : ExpByteRanged e) :
+    Option.map panValueToHOL (evalPanSemStateExp state e) =
+      exact.evalHOLFinite (expToHOL e) := by
+  simpa only [evalPanSemStateExp] using
+    evalPanValueExp_agree state exact hrel hranged e he
 
 end Flapjack
