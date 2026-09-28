@@ -101,6 +101,7 @@ import Flapjack.Pancake.Semantics.PanProps.NamelessExpSimps
 import Flapjack.Pancake.Semantics.PanProps.ListRelFlatten
 import Flapjack.Pancake.Semantics.PanProps.ResVar
 import Flapjack.Pancake.Semantics.ByteAlignBridge
+import Flapjack.Pancake.Semantics.ShMemBytesBridge
 import Flapjack.Pancake.Semantics.LoopProps
 import Flapjack.Pancake.Semantics.LoopSemStateExact
 import Flapjack.PanObservationalSemantics
@@ -147,7 +148,9 @@ import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Annot
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Return
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.While
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.StoreByte
+import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Store32
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Raise
+import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Assign
 import Flapjack.Pancake.Proofs.PanToCrep.NotMemContextAssignedMemGt
 import Flapjack.Pancake.Proofs.PanToWord
 import Flapjack.Pipeline
