@@ -19433,5 +19433,44 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxgp.16): HOL comp_syn_cut_sets_mem_domain (loopPropsScript.sml:841-844) `!p l n. comp_syntax_ok l p /\\ n ∈ domain l ==> n ∈ domain (cut_sets l p)`; n ∈ domain as sptMem. Over the tagged compSyntaxOkHOL (HOL bool as = true), cutSetsHOL and holLoopNestedSeq; HOL domain as sptDomain/sptMem. (words_as_type_indexed_bitvec): width-indexed Loop carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "compile_exp_out_rel_cases",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpOutRel.lean",
+    "lean_name": "compile_exp_out_rel_cases",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.32.3): HOL compile_exp_out_rel_cases (crep_to_loopProofScript.sml:420-427) is `(!ct tmp l e p le ntmp nl. compile_exp ct tmp l e = (p,le,ntmp,nl) ==> comp_syntax_ok l (nested_seq p) /\\ tmp <= ntmp /\\ nl = cut_sets l (nested_seq p)) /\\ (!ct tmp l e p le ntmp nl. compile_exps ct tmp l e = (p,le,ntmp,nl) ==> comp_syntax_ok l (nested_seq p) /\\ tmp <= ntmp /\\ nl = cut_sets l (nested_seq p) /\\ LENGTH le = LENGTH e)`; Lean states both conjuncts with the same variables in HOL order, premises and conclusions. Over the tagged exact compileExpHOLExact/compileExpsHOLExact, compSyntaxOkHOL (HOL bool as = true), cutSetsHOL and holLoopNestedSeq; nl = cut_sets l (nested_seq p) is the structural NumSet equality (proved with sptree insert idempotence/commutation). fmap_as_finite_support [vars, funcs]: exact context carrier; same-module re-exported canonical witness. (words_as_type_indexed_bitvec): width-indexed Crep/Loop carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "compile_exp_out_rel",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpOutRel.lean",
+    "lean_name": "compile_exp_out_rel",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.32.3): HOL compile_exp_out_rel (crep_to_loopProofScript.sml:589) is `compile_exp_out_rel_cases |> CONJUNCT1`; Lean is that conjunct. Over the tagged exact compileExpHOLExact/compileExpsHOLExact, compSyntaxOkHOL (HOL bool as = true), cutSetsHOL and holLoopNestedSeq; nl = cut_sets l (nested_seq p) is the structural NumSet equality (proved with sptree insert idempotence/commutation). fmap_as_finite_support [vars, funcs]: exact context carrier; same-module re-exported canonical witness. (words_as_type_indexed_bitvec): width-indexed Crep/Loop carriers."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "compile_exps_out_rel",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpOutRel.lean",
+    "lean_name": "compile_exps_out_rel",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "vars",
+      "funcs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.32.3): HOL compile_exps_out_rel (crep_to_loopProofScript.sml:590) is `compile_exp_out_rel_cases |> CONJUNCT2`; Lean is that conjunct. Over the tagged exact compileExpHOLExact/compileExpsHOLExact, compSyntaxOkHOL (HOL bool as = true), cutSetsHOL and holLoopNestedSeq; nl = cut_sets l (nested_seq p) is the structural NumSet equality (proved with sptree insert idempotence/commutation). fmap_as_finite_support [vars, funcs]: exact context carrier; same-module re-exported canonical witness. (words_as_type_indexed_bitvec): width-indexed Crep/Loop carriers."
   }
 ]
