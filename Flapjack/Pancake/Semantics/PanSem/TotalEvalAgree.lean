@@ -279,4 +279,56 @@ theorem panSemTotalEvaluateCake_agree {σ : Type}
   panSemTotalEvaluate_agree panPrimopHOL panPrimopHOL_bridge panPrimopHOL_byteRanged
     p production exact hrel hranged hcode hexn
 
+/-- Replacing the clock on both sides by the same value preserves
+    `PanSemStateRelExec` (HOL `s with clock := k`). -/
+theorem PanSemStateRelExec.setClock {σ : Type}
+    {production : PanSemState (RiscV.Word 64) (FfiState σ)}
+    {exact : PanSemStateFiniteExact 64 σ}
+    (h : PanSemStateRelExec production exact.toExact) (clock : Nat) :
+    PanSemStateRelExec { production with clock := clock }
+      ({ exact with clock := clock } : PanSemStateFiniteExact 64 σ).toExact := by
+  obtain ⟨hl, hg, hs, hc, he, hm, hmd, hsm, _, hbe, hffi, hb, ht⟩ := h
+  exact ⟨hl, hg, hs, hc, he, hm, hmd, hsm, rfl, hbe, hffi, hb, ht⟩
+
+/-- **Semantics-entry form.**  HOL `semantics_def`
+    (`cakeml/pancake/semantics/panSemScript.sml:785-809`) runs the entry program
+    `Call NONE start []` (`panEntryProgram`) at every clock `k` from
+    `s with clock := k`.  For a related base state pair satisfying the reachable
+    invariants, the production run agrees with the exact run at every clock. -/
+theorem panSemTotalEvaluate_agree_entry {σ : Type}
+    (primitive : PanPrimitiveHandler (RiscV.Word 64))
+    (hprimBridge : ∀ (operator : PrimOp) (values : List (PanValue (RiscV.Word 64))),
+      Option.map panValueToHOL (primitive operator values)
+        = panPrimopHOLExact operator (values.map panValueToHOL))
+    (hprimRanged : PanPrimitiveHandlerByteRanged primitive)
+    (start : MlS) (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ)
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (hranged : PanSemStateRelExecRanged production)
+    (hcode : PanSemCodeRanged production)
+    (hexn : PanSemExceptionShapesRanged production) (clock : Nat) :
+    PanSemTotalAgreeAt primitive (.call none (toStringOfBytes start) [])
+      (.call none start [] : ProgHOL 64)
+      { production with clock := clock } { exact with clock := clock } := by
+  have h := panSemTotalEvaluate_agree primitive hprimBridge hprimRanged
+    (.call none start [] : ProgHOL 64) { production with clock := clock }
+    { exact with clock := clock } (hrel.setClock clock) (hranged.setClock clock)
+    (hcode.of_code rfl) (hexn.of_eq rfl)
+  rw [progOfHOL_call_callInfo] at h
+  exact h
+
+/-- The semantics-entry form for the canonical entrypoint `panSemTotalEvaluateCake`. -/
+theorem panSemTotalEvaluateCake_agree_entry {σ : Type}
+    (start : MlS) (production : PanSemState (RiscV.Word 64) (FfiState σ))
+    (exact : PanSemStateFiniteExact 64 σ)
+    (hrel : PanSemStateRelExec production exact.toExact)
+    (hranged : PanSemStateRelExecRanged production)
+    (hcode : PanSemCodeRanged production)
+    (hexn : PanSemExceptionShapesRanged production) (clock : Nat) :
+    PanSemTotalAgreeAt panPrimopHOL (.call none (toStringOfBytes start) [])
+      (.call none start [] : ProgHOL 64)
+      { production with clock := clock } { exact with clock := clock } :=
+  panSemTotalEvaluate_agree_entry panPrimopHOL panPrimopHOL_bridge panPrimopHOL_byteRanged start
+    production exact hrel hranged hcode hexn clock
+
 end Flapjack
