@@ -15,11 +15,13 @@ are Flapjack-only infrastructure and do not claim a separate HOL theorem.
 
 namespace Flapjack
 
+open Classical
+
 variable {width : Nat} [NeZero width] {ffiState : Type}
 
 /-- Flapjack-only projection of the exact Crep `eval_def` Op clause. -/
 theorem evalCrepSemHOLExp_op_clause (state : CrepSemHOLState width ffiState)
-    [DecidablePred state.memaddrs] (operator : BinOp)
+    (operator : BinOp)
     (expressions : List (CrepExpHOL width)) (values : List (BitVec width))
     (hvalues : expressions.mapM (evalCrepSemHOLExp state) =
       some (values.map HolWordLab.word)) :
