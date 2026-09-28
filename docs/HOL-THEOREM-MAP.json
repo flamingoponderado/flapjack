@@ -18404,6 +18404,15 @@
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "all_distinct_ctxt_lookup_all_distinct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
+    "lean_name": "allDistinctCtxtLookupAllDistinctExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": ["CrepToLoopContextExact.vars"],
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-28; bead flapjack-pxn.18.5.6.33.12): HOL all_distinct_ctxt_lookup_all_distinct (crep_to_loopProofScript.sml:3345-3349) concludes ALL_DISTINCT (rt_vars ctxt.vars rts n) from ALL_DISTINCT rts and distinct_vars ctxt.vars. The exact Lean statement keeps HOL quantifiers/hypotheses/conclusion over the exact Nat-keyed carrier (CrepToLoopContextExact.vars : HolFiniteMapExact Nat Nat, matching HOL num |-> num), with rtVars (rt_vars_def) applied to ctxt.vars.lookup, crepToLoopDistinctVars (distinct_vars_def), and List.Nodup for ALL_DISTINCT. The traversed finite-map carrier field CrepToLoopContextExact.vars is the single entry of the relation qualifier, validated by the same-module holFmapAsFiniteSupportRelationWitness_CrepToLoopContextExact. Direct original-HOL EVAL rows in scripts/hol-probes/crep_to_loop_rt_vars_distinct_probe.out (acd_distinct=T, acd_single=T, acd_missing=T) are replayed on the exact carrier in Flapjack/Test/CrepToLoopParity.lean. No word dimension occurs, so no words qualifier."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
     "hol_name": "survives_MAPi_Assign",
     "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/SurvivesMapiAssign.lean",
     "lean_name": "holSurvivesMapiAssign",
