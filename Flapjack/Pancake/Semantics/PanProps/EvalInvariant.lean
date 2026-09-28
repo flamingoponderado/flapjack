@@ -9,6 +9,7 @@ import Flapjack.Pancake.Semantics.PanSem.DecCallExact
 import Flapjack.Pancake.Semantics.PanSem.FiniteSupportStep
 import Flapjack.Pancake.Semantics.PanSem.EvaluateFinite
 import Flapjack.Pancake.Semantics.PanSem.EvaluateClock
+import Flapjack.Pancake.Semantics.PanSem.EvaluateInd
 
 /-!
 Finite-map carrier and expression invariant for the HOL `eval_is_wf_shape_v`
@@ -7401,5 +7402,170 @@ theorem evaluateInvariantsDecCallCaseHOLFinite {width : Nat} {σ : Type}
   | timeOut | exception _ _ | finalFfi _ =>
       obtain ⟨_, rfl⟩ := Prod.mk.inj hW
       simpa [decCallFields, PanSemStateFiniteExact.emptyLocalsHOLFinite] using hbody
+
+end Flapjack
+
+
+/-! # Assembled HOL `evaluate_invariants`
+
+`panPropsScript.sml:1150` proves `evaluate_invariants` by `recInduct
+evaluate_ind`. The assembly applies the tagged `evaluateIndHOL` (HOL
+`evaluate_ind`) to `P (p, u) := evaluateInvariantsAtHOLFinite (ofPanSemFinite u) p`
+and discharges each of its 21 conjuncts with the tagged constructor leaf above,
+translating each HOL IH to the leaf's premise through the field-for-field
+PanProps codec. -/
+
+namespace Flapjack
+
+open Flapjack.Pancake.PanLang (MlS ShapeHOL ExpHOL ProgHOL)
+
+/-- The predicate `P` of HOL's `recInduct evaluate_ind` for `evaluate_invariants`,
+    over the canonical carrier. -/
+private abbrev evaluateInvariantsIndP {width : Nat} {σ : Type} [NeZero width]
+    (pu : ProgHOL width × PanSemStateFiniteExact width σ) : Prop :=
+  evaluateInvariantsAtHOLFinite (PanPropsEvalStateFiniteExact.ofPanSemFinite pu.2) pu.1
+
+private theorem evaluateInvariantsIndP_all {width : Nat} {σ : Type} [NeZero width] :
+    ∀ (p : ProgHOL width) (u : PanSemStateFiniteExact width σ), evaluateInvariantsIndP (p, u) := by
+  classical
+  refine evaluateIndHOL (evaluateInvariantsIndP (width := width) (σ := σ))
+    ⟨?skip, ?dec, ?assign, ?prim, ?store, ?store32, ?storeByte, ?shLoad, ?shStore, ?seq, ?ite,
+      ?brk, ?cont, ?whl, ?ret, ?rai, ?tick, ?annot, ?call, ?decCall, ?ext⟩
+  case skip => exact fun s => evaluateInvariantsSkipCaseHOLFinite _
+  case assign => exact fun vk v src s => evaluateInvariantsAssignCaseHOLFinite vk v src _
+  case prim => exact fun v pop es s => evaluateInvariantsPrimitiveCaseHOLFinite v pop es _
+  case store => exact fun d src s => evaluateInvariantsStoreCaseHOLFinite d src _
+  case store32 => exact fun d src s => evaluateInvariantsStore32CaseHOLFinite d src _
+  case storeByte => exact fun d src s => evaluateInvariantsStoreByteCaseHOLFinite d src _
+  case shLoad => exact fun op vk v ad s => evaluateInvariantsShMemLoadCaseHOLFinite op vk v ad _
+  case shStore => exact fun op ad e s => evaluateInvariantsShMemStoreCaseHOLFinite op ad e _
+  case brk => exact fun s => evaluateInvariantsBreakCaseHOLFinite _
+  case cont => exact fun s => evaluateInvariantsContinueCaseHOLFinite _
+  case ret => exact fun e s => evaluateInvariantsReturnCaseHOLFinite e _
+  case rai => exact fun eid e s => evaluateInvariantsRaiseCaseHOLFinite eid e _
+  case tick => exact fun s => evaluateInvariantsTickCaseHOLFinite _
+  case annot => exact fun v0 v1 s => evaluateInvariantsAnnotCaseHOLFinite v0 v1 _
+  case ext => exact fun f a b c d s => evaluateInvariantsExtCallCaseHOLFinite f a b c d _
+  case seq =>
+    intro c1 c2 s ⟨ih2, ih1⟩ res post hRun
+    refine evaluateInvariantsSeqCaseHOLFinite c1 c2 _ res post hRun ?_ ?_
+    · intro fr fp ⟨hfp, hfr⟩
+      have hfp' : fp = PanPropsEvalStateFiniteExact.ofPanSemFinite
+          (PanSemStateFiniteExact.evaluateHOLFiniteState s c1).2 := by
+        have := congrArg Prod.snd hfp
+        simpa [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair] using this
+      have hfr' : fr = (PanSemStateFiniteExact.evaluateHOLFiniteState s c1).1 := by
+        have := congrArg Prod.fst hfp
+        simpa [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair] using this
+      subst hfp'
+      exact ih2 fr _ ⟨by rw [hfr'], hfr⟩
+    · intro fr fp hfp
+      exact ih1 fr fp hfp.symm
+  case ite =>
+    intro e c1 c2 s ih res post hRun
+    refine evaluateInvariantsIfCaseHOLFinite e c1 c2 _ res post hRun ?_
+    intro v1 v6 w hh
+    exact ih v1 v6 w (by simpa using hh)
+  case dec =>
+    intro v sh e prog s ih res post hRun
+    refine evaluateInvariantsDecCaseHOLFinite v sh e prog _ res post hRun ?_
+    intro value hv hsh
+    exact ih value ⟨by simpa using hv, (shapeEqHOL_eq_true _ _).mp hsh⟩
+  case whl =>
+    intro e c s ⟨ihc, ihn, ihb⟩ res post hRun
+    have hdecS : ({ PanPropsEvalStateFiniteExact.ofPanSemFinite s with
+        clock := (PanPropsEvalStateFiniteExact.ofPanSemFinite s).clock - 1 } :
+        PanPropsEvalStateFiniteExact width σ) =
+        PanPropsEvalStateFiniteExact.ofPanSemFinite s.decClockHOLFinite := rfl
+    have hpairDec : ∀ (r : Option (PanSemResultExact width))
+        (s1 : PanPropsEvalStateFiniteExact width σ),
+        (r, s1) = PanPropsEvalStateFiniteExact.evaluateHOLFinitePair
+          { PanPropsEvalStateFiniteExact.ofPanSemFinite s with
+            clock := (PanPropsEvalStateFiniteExact.ofPanSemFinite s).clock - 1 } c →
+        (r, (PanSemStateFiniteExact.evaluateHOLFiniteState s.decClockHOLFinite c).2) =
+            PanSemStateFiniteExact.evaluateHOLFiniteState s.decClockHOLFinite c ∧
+          s1 = PanPropsEvalStateFiniteExact.ofPanSemFinite
+            (PanSemStateFiniteExact.evaluateHOLFiniteState s.decClockHOLFinite c).2 := by
+      intro r s1 h
+      rw [hdecS] at h
+      simp only [PanPropsEvalStateFiniteExact.evaluateHOLFinitePair,
+        PanPropsEvalStateFiniteExact.toPanSemFinite_ofPanSemFinite, Prod.mk.injEq] at h
+      exact ⟨by rw [h.1], h.2⟩
+    refine evaluateInvariantsWhileCaseHOLFinite e c _ ⟨?_, ?_, ?_⟩ res post hRun
+    · intro v2 v11 w r s1 v1 ⟨he, h2, h3, hw, hck, hrun, hr, hv1⟩
+      obtain ⟨hrun', rfl⟩ := hpairDec r s1 hrun
+      exact ihc v2 v11 w r _ v1 ⟨by simpa using he, h2, h3, hw, hck, hrun', hr, hv1⟩
+    · intro v2 v11 w r s1 ⟨he, h2, h3, hw, hck, hrun, hr⟩
+      obtain ⟨hrun', rfl⟩ := hpairDec r s1 hrun
+      exact ihn v2 v11 w r _ ⟨by simpa using he, h2, h3, hw, hck, hrun', hr⟩
+    · intro v2 v11 w ⟨he, h2, h3, hw, hck⟩ r st hst
+      rw [hdecS] at hst
+      exact ihb v2 v11 w ⟨by simpa using he, h2, h3, hw, hck⟩ r st hst
+  case call =>
+    intro caltyp fname argexps s ⟨ihH, ihB⟩ res post hRun
+    refine evaluateInvariantsCallCaseHOLFinite caltyp fname argexps _ res post hRun ?_ ?_
+    · intro args v7 prog v12 newlocals return_sh eval_prog v4 st v8 eid exn v v1 v2 v3 eid' v5
+        evar p sh hmap hlk h7 h12 hck hev1 hev2 hv4 hv8 hct hv hv2 hv3 hv5 heid hsh hexn hvalid
+      have hargs : s.evalListHOLFinite
+          (h := fun address => Classical.propDecidable (s.memaddrs address)) argexps =
+          some args := by
+        rw [evalListHOLFinite_eq_mapM]; exact hmap
+      exact ihH args v7 prog v12 newlocals return_sh eval_prog v4 st v8 eid exn v v1 v2 v3 eid'
+        v5 evar p sh ⟨hargs, by simpa using hlk, h7, h12, hck, hev1, hev2, hv4, hv8, hct, hv,
+          hv2, hv3, hv5, heid, by simpa using hsh, hexn, by simpa using hvalid⟩
+    · intro args v7 prog v12 newlocals return_sh hmap hlk h7 h12 hck
+      have hargs : s.evalListHOLFinite
+          (h := fun address => Classical.propDecidable (s.memaddrs address)) argexps =
+          some args := by
+        rw [evalListHOLFinite_eq_mapM]; exact hmap
+      exact ihB args v7 prog v12 newlocals return_sh ⟨hargs, by simpa using hlk, h7, h12, hck⟩
+  case decCall =>
+    intro rt shape fname argexps prog1 s ⟨ihC, ihB⟩ res post hRun
+    refine evaluateInvariantsDecCallCaseHOLFinite rt shape fname argexps prog1 _ res post hRun
+      ?_ ?_
+    · intro args v2 prog v7 newlocals return_sh eval_prog v st v3 retv hmap hlk h2 h7 hck hev1
+        hev2 hv hv3 hs1 hs2
+      have hargs : s.evalListHOLFinite
+          (h := fun address => Classical.propDecidable (s.memaddrs address)) argexps =
+          some args := by
+        rw [evalListHOLFinite_eq_mapM]; exact hmap
+      exact ihC args v2 prog v7 newlocals return_sh eval_prog v st v3 retv
+        ⟨hargs, by simpa using hlk, h2, h7, hck, hev1, hev2, hv, hv3, hs1, hs2⟩
+    · intro args v2 prog v7 newlocals return_sh hmap hlk h2 h7 hck
+      have hargs : s.evalListHOLFinite
+          (h := fun address => Classical.propDecidable (s.memaddrs address)) argexps =
+          some args := by
+        rw [evalListHOLFinite_eq_mapM]; exact hmap
+      exact ihB args v2 prog v7 newlocals return_sh ⟨hargs, by simpa using hlk, h2, h7, hck⟩
+
+
+/-- Exact port of HOL `panProps$evaluate_invariants` (`panPropsScript.sml:1150-1158`):
+    `∀p t res st. evaluate (p,t) = (res,st) ⇒ st.memaddrs = t.memaddrs ∧
+    st.sh_memaddrs = t.sh_memaddrs ∧ st.be = t.be ∧ st.eshapes = t.eshapes ∧
+    st.base_addr = t.base_addr ∧ st.structs = t.structs ∧ st.code = t.code ∧
+    st.ffi.oracle = t.ffi.oracle`. `evaluate` is the pair evaluator
+    `evaluateHOLFinitePair` (the tagged total `evaluateHOLFiniteState` through the
+    field-for-field PanProps codec). The proof is HOL's `recInduct evaluate_ind`:
+    the tagged `evaluateIndHOL`, with each conjunct discharged by the tagged
+    constructor leaf above. -/
+@[hol "cakeml/pancake/semantics/panPropsScript.sml" "evaluate_invariants" 1150
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateInvariantsHOLFinite {width : Nat} {σ : Type} [NeZero width] :
+    ∀ (p : ProgHOL width) (t : PanPropsEvalStateFiniteExact width σ)
+      (res : Option (PanSemResultExact width)) (st : PanPropsEvalStateFiniteExact width σ),
+      PanPropsEvalStateFiniteExact.evaluateHOLFinitePair t p = (res, st) →
+      st.memaddrs = t.memaddrs ∧
+      st.shMemaddrs = t.shMemaddrs ∧
+      st.be = t.be ∧
+      st.eshapes = t.eshapes ∧
+      st.baseAddr = t.baseAddr ∧
+      st.structs = t.structs ∧
+      st.code = t.code ∧
+      st.ffi.oracle = t.ffi.oracle := by
+  intro p t res st h
+  have hall := evaluateInvariantsIndP_all p t.toPanSemFinite res st
+    (by simpa using h)
+  simpa using hall
 
 end Flapjack
