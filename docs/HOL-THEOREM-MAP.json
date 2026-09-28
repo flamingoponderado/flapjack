@@ -14670,6 +14670,17 @@
     "words_as_type_indexed_bitvec": true
   },
   {
+    "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
+    "hol_name": "res_var_lookup_original_eq",
+    "lean_path": "Flapjack/Pancake/Semantics/CrepProps.lean",
+    "lean_name": "resVarLookupOriginalEqHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "lc"
+    ],
+    "reviewer": "flapjack-opus source comparison (2026-09-28, bead flapjack-pxn.18.4.3.94.8 support; crepPropsScript.sml:612-633): HOL !xs ys lc. ALL_DISTINCT xs /\\ LENGTH xs = LENGTH ys ==> FOLDL res_var (lc |++ ZIP (xs,ys)) (ZIP (xs,MAP (FLOOKUP lc) xs)) = lc. Lean keeps the binders xs ys lc and the conjunctive premise (Nodup, length). FOLDL is List.foldl, res_var is the tagged HolFiniteMapExact.resVarEq, |++ ZIP is updateListEq (zip), FLOOKUP lc is lc.lookup, and HOL = on keys is DecidableEq. The standalone finite map lc is the bare relation-qualifier entry, as in the tagged no_overlap_wrap_rt_some_all_distinct. The proof is lookup-level and uses neither premise (they are kept for shape)."
+  },
+  {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
     "hol_name": "slc_def",
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean",
