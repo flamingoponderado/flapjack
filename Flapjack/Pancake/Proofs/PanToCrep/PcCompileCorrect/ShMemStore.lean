@@ -446,7 +446,7 @@ theorem holFmapAsFiniteSupportRelationWitness_CrepSemHOLState
 end PcCompileCorrectShMemStoreWitnesses
 
 /-- Exact HOL `pc_compile_correct[ShMemStore]` case, resumed at
-    `pan_to_crepProofScript.sml:1960-1989`. HOL's `ShMemStore op ad e`
+    `pan_to_crepProofScript.sml:1960-2011`. HOL's `ShMemStore op ad e`
     evaluator evaluates `ad` as the address and `e` as the stored word; the
     compiler stores the compiled `e` in a fresh local above every variable in
     the compiled `ad`, then executes `ShMem (store_op op) temp ad`. The exact
