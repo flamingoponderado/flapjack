@@ -127,6 +127,37 @@ theorem lprefixChainNth_eq_none {n : Nat} {ls : HolLList α → Prop}
     cases hlth
   · rfl
 
+/-- When `x` is the unique witness of `P`, `holOptionSome P` returns exactly
+    `some x` (HOL's `some` picks a fixed but unknown witness; uniqueness pins it). -/
+theorem holOptionSome_eq_some {P : α → Prop} {x : α} (hP : P x)
+    (huniq : ∀ y, P y → y = x) : holOptionSome P = some x := by
+  unfold holOptionSome
+  split
+  · rename_i h
+    rw [huniq _ (Classical.choose_spec h)]
+  · rename_i h
+    exact absurd ⟨x, hP⟩ h
+
+/-- HOL `lprefix_chain_nth_none_mono`
+    (`lprefix_lubScript.sml:225-228`): over a chain, if the family has no value at
+    `m` then it has none at any `n ≥ m`.  The chain binder is kept for HOL's
+    shape; the Lean proof does not need it. -/
+theorem lprefixChainNth_none_mono {m n : Nat} {ls : HolLList α → Prop}
+    (_hchain : lprefixChain ls) (hle : m ≤ n) (hm : lprefixChainNth m ls = none) :
+    lprefixChainNth n ls = none := by
+  apply lprefixChainNth_eq_none
+  intro l hl
+  cases hnn : lnth n l with
+  | none => rfl
+  | some x =>
+      have hmne : lnth m l ≠ none := by
+        intro hmn
+        rw [lnth_none_mono l hmn hle] at hnn
+        cases hnn
+      cases hmn : lnth m l with
+      | none => exact absurd hmn hmne
+      | some y => exact absurd ⟨l, hl, hmn⟩ ((holOptionSome_none hm) y)
+
 end HolLList
 
 end Flapjack
