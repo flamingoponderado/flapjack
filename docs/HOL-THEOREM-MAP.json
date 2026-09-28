@@ -16645,6 +16645,59 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "ds10 source comparison (2026-09-28, bead flapjack-pxn.18.4.3.97; pan_to_crepProofScript.sml:442-468, continue case resumed at :509-513; panSemScript.sml:777-778 rebound evaluate_ind). Continue constructor piece of HOL pc_compile_correct (AGENTS splitting rule, same tag, suffixed name), in the reviewed shape of pcCompileCorrect_Skip. HOL's printed evaluate_ind continue conjunct has no IH. The statement is P (continue, s) with P unfolded exactly as pcCompileCorrectAtHOL: binders res s1 t ctxt, the single conjunctive premise (evaluate = (res,s1), res <> SOME Error, state_rel, code_rel, excp_rel, locals_rel, localised_prog continue) and the existential target run with state_rel/code_rel/excp_rel and the inline case res of. evaluate is the tagged total evaluateHOLFiniteState and evalCrepSemHOLProgExact; compile/relations/globals_lookup/flatten/shape_of/size_of_shape/localised_prog are the tagged exact ports; qualifiers and same-module witnesses as for the Skip case. Proof via the untagged pcCompileCorrectAt_continue case. No target-run or post-state premise."
   },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Annot.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_Annot; forwards the imported checked roundtrip; no HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Annot.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_Annot; forwards the imported checked roundtrip; no HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Annot.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_Annot; forwards the imported checked roundtrip; no HOL declaration."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "pc_compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Annot.lean",
+    "lean_name": "pcCompileCorrect_Annot",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "PanToCrepContextExact.vars",
+      "PanToCrepContextExact.funcs",
+      "PanToCrepContextExact.eids"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "ds10 (bead flapjack-pxn.18.4.3.101): the Annot case of HOL pc_compile_correct (pan_to_crepProofScript.sml:442-468, case resumed at :511-515), stated against pcCompileCorrectAt over the tagged total evaluateHOLFiniteState / evalCrepSemHOLProgExact, the tagged compileProgExactHOLW, and the tagged exact state_rel/code_rel/excp_rel/locals_rel/globals_lookup/localised_prog. Source Annot tag text evaluates to (NONE, s) (panSemScript.sml:656); compile_exp erases it to Skip (pan_to_crepScript.sml:307); target Skip gives (NONE, t) (crepSemScript.sml:241). It has all HOL hypotheses and conclusion conjuncts, an existential target run, and no target-run or post-state premise. Proof via the untagged pcCompileCorrectAt_annot case. Word dimension dimindex (:a) -> BitVec width with [NeZero width]; 'ffi -> universe-0 host. Assembled pc_compile_correct remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Annot.lean",
+    "lean_name": "pcCompileCorrectAt_annot",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "ds10 (bead flapjack-pxn.18.4.3.101): untagged Annot case helper against pcCompileCorrectAt, delegating from the tagged pcCompileCorrect_Annot; one constructor case, the assembled pc_compile_correct remains open."
+  },
 
   {
     "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
