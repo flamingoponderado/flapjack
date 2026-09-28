@@ -277,8 +277,15 @@ def mkNewCutsetHOL (context : Spt Nat) (live : Spt Unit) : Spt Unit :=
 well-founded over the loopLang expression size.  HOL's type-indexed `'a word`
 is rendered as the positive-width `BitVec width`; the HOL stackLang
 `store_name` `Temp m` (a `5 word`) maps to Lean `WordStore.temp` (`BitVec 5`).
-This is the proof-side exact port; routing the production list-based
-`loopToWordExp` through it is tracked separately. -/
+This is the proof-side exact port.  Routing the production list-based
+`loopToWordExp`/`wordCompileExp` through it is blocked on carrier migration:
+production is polymorphic in `α` over `LoopExp`/`WordExp`, while this definition
+is fixed at `BitVec width` over `HolLoopExp`/`WordLangExpHOL`, and no total
+executable-to-HOL expression codec exists.  The exact mismatch and the required
+migration are recorded in the module docstring of
+`Flapjack/Pancake/LoopToWord/ContextBridge.lean` (bead `flapjack-pxn.18.5.9.5`),
+which also discharges the covering obligation for the executed `comp_func`
+context. -/
 @[hol "cakeml/pancake/loop_to_wordScript.sml" "comp_exp_def"
   (words_as_type_indexed_bitvec)]
 def compExpHOL {width : Nat} [NeZero width] (context : Spt Nat) :

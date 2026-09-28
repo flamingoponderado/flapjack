@@ -85,6 +85,29 @@ example : wordFindVar (pipelineWordContext [4, 7]) 7 =
 /-- Probe context `[(3, 7), (5, 9)]` used by the `runChecks` rows. -/
 def bridgeProbeMap : NatInfoMap Nat := [(3, 7), (5, 9)]
 
+/-! ## The production `comp_func` context is covered
+
+`loopToWordCompContext` is the context actually threaded through the executed
+`loop_to_word` stage (`Flapjack.LoopToWord.loopToWordCompFunc`).  Its seed
+fallback covers every referenced name, so the `WordContextCovers` obligation that
+`wordFindVar_eq_findVarHOL_of_covers` needs is discharged for that context. -/
+
+/-- The concrete `comp_func` body `3 := 5` references registers `3` and `5`. -/
+def coverProbeBody : LoopProg Nat := .assign 3 (.var 5)
+
+/-- The seed fallback retains every referenced name. -/
+example : WordContextCovers
+    { vars := loopToWordCompContext [1] coverProbeBody }
+    (loopReferencedVars coverProbeBody) :=
+  loopToWordCompContext_covers [1] coverProbeBody
+
+/-- On that context the production `wordFindVar` agrees with exact `findVarHOL`
+through the adapter, for the referenced register `5`. -/
+example : wordFindVar { vars := loopToWordCompContext [1] coverProbeBody } 5 =
+    findVarHOL (natInfoMapToSpt (loopToWordCompContext [1] coverProbeBody)) 5 :=
+  wordFindVar_eq_findVarHOL_loopToWordCompContext [1] coverProbeBody 5
+    (by simp [coverProbeBody, loopReferencedVars, loopVarsOfExp])
+
 /-- Probe pipeline slots for the `runChecks` rows. -/
 def bridgeProbeSlots : List Nat := [4, 7]
 
@@ -103,7 +126,12 @@ def runChecks : IO Bool := do
           some 9),
       ("LoopToWord exact findVarHOL matches production wordFindVar on a present key",
         wordFindVar (pipelineWordContext bridgeProbeSlots) 7 ==
-          findVarHOL (natInfoMapToSpt (pipelineWordContext bridgeProbeSlots).vars) 7) ]
+          findVarHOL (natInfoMapToSpt (pipelineWordContext bridgeProbeSlots).vars) 7),
+      ("LoopToWord comp_func context covers a referenced token at the fallback",
+        wordFindVar { vars := loopToWordCompContext [1] coverProbeBody } 5 == 0),
+      ("LoopToWord exact findVarHOL matches production wordFindVar on comp_func context",
+        wordFindVar { vars := loopToWordCompContext [1] coverProbeBody } 5 ==
+          findVarHOL (natInfoMapToSpt (loopToWordCompContext [1] coverProbeBody)) 5) ]
   let results ← checks.mapM fun (name, ok) => do
     if ok then
       IO.println s!"PASS {name}"
