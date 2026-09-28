@@ -1,4 +1,6 @@
 import Flapjack.Word
+import Flapjack.Misc.Sptree
+import Flapjack.Pancake.WordLang
 
 /-!
 # Loop-to-word context lookup
@@ -234,5 +236,65 @@ def loopToWordCompile [OfNat α 1]
     (program : List (Nat × List Nat × LoopProg α)) :
     List (Nat × Nat × WordProg α) :=
   loopToWordCompileProg program
+
+/-! ### Exact `spt`-carrier ports of the HOL loop_to_word context functions -/
+
+/-- Exact HOL `find_var_def` over the `num |-> num` spt context
+(`cakeml/pancake/loop_to_wordScript.sml:10`). -/
+@[hol "cakeml/pancake/loop_to_wordScript.sml" "find_var_def"]
+def findVarHOL (context : Spt Nat) (name : Nat) : Nat :=
+  (sptLookup name context).getD 0
+
+/-- Exact HOL `find_reg_imm_def` (`cakeml/pancake/loop_to_wordScript.sml:17`),
+over the fixed-width HOL `reg_imm` immediate carrier `'a word` (rendered as the
+positive-width `BitVec width`), matching HOL's type-indexed word. -/
+@[hol "cakeml/pancake/loop_to_wordScript.sml" "find_reg_imm_def"
+  (words_as_type_indexed_bitvec)]
+def findRegImmHOL {width : Nat} [NeZero width] (context : Spt Nat) :
+    WordRegImm (BitVec width) → WordRegImm (BitVec width)
+  | .imm value => .imm value
+  | .reg name => .reg (findVarHOL context name)
+
+/-- Exact HOL `toNumSet_def` (`cakeml/pancake/loop_to_wordScript.sml:42`),
+right-recursive like HOL. -/
+@[hol "cakeml/pancake/loop_to_wordScript.sml" "toNumSet_def"]
+def toNumSetHOL : List Nat → Spt Unit
+  | [] => .ln
+  | n :: ns => sptInsert n () (toNumSetHOL ns)
+
+/-- Exact HOL `fromNumSet_def` (`cakeml/pancake/loop_to_wordScript.sml:47`),
+polymorphic in the spt value type like HOL. -/
+@[hol "cakeml/pancake/loop_to_wordScript.sml" "fromNumSet_def"]
+def fromNumSetHOL {α : Type} (tree : Spt α) : List Nat :=
+  (sptToAList tree).map Prod.fst
+
+/-- Exact HOL `mk_new_cutset_def` (`cakeml/pancake/loop_to_wordScript.sml:51`). -/
+@[hol "cakeml/pancake/loop_to_wordScript.sml" "mk_new_cutset_def"]
+def mkNewCutsetHOL (context : Spt Nat) (live : Spt Unit) : Spt Unit :=
+  sptInsert 0 () (toNumSetHOL ((fromNumSetHOL live).map (findVarHOL context)))
+
+/-- Exact HOL `comp_exp_def` (`cakeml/pancake/loop_to_wordScript.sml:22-40`),
+well-founded over the loopLang expression size.  HOL's type-indexed `'a word`
+is rendered as the positive-width `BitVec width`; the HOL stackLang
+`store_name` `Temp m` (a `5 word`) maps to Lean `WordStore.temp` (`BitVec 5`).
+This is the proof-side exact port; routing the production list-based
+`loopToWordExp` through it is tracked separately. -/
+@[hol "cakeml/pancake/loop_to_wordScript.sml" "comp_exp_def"
+  (words_as_type_indexed_bitvec)]
+def compExpHOL {width : Nat} [NeZero width] (context : Spt Nat) :
+    HolLoopExp width → WordLangExpHOL (BitVec width)
+  | .const value => .const value
+  | .var name => .var (findVarHOL context name)
+  | .lookup address => .lookup (.temp address)
+  | .baseAddr => .lookup .currHeap
+  | .topAddr =>
+      .op .add [.lookup .currHeap,
+        .shift .lsl (.lookup .heapLength) (.const (BitVec.ofNat width 1))]
+  | .load address => .load (compExpHOL context address)
+  | .shift operator left right =>
+      .shift operator (compExpHOL context left) (compExpHOL context right)
+  | .op operator args => .op operator (args.map (compExpHOL context))
+  termination_by expression => sizeOf expression
+  decreasing_by all_goals first | sizeOf_list_dec | decreasing_trivial | simp_wf
 
 end Flapjack.LoopToWord
