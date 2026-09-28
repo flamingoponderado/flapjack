@@ -20514,5 +20514,45 @@
     "lean_name": "holAlookup_zip_none",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack helper (HOL ALOOKUP_NONE + MAP_ZIP): ALOOKUP of an equal-length ZIP is NONE only off the key list; no separate CakeML declaration"
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "loopLive_compile_correct_shMem",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.8) against case piece `ShMem` of loop_live compile_correct (statement loop_liveProofScript.sml:17-37; Resume compile_correct[ShMem] at 799-826). No sub-program; HOL quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the payload in place of v (FFI's name as the mlstring carrier), all four premises and full conclusion as in the other pieces. Proof: eval_lemma on the address with l := insert r () l0, the register from subspt; by cases on the eight memops, sh_mem_load/sh_mem_store behave identically up to locals (frame lemmas): load success sets r on both sides, store success leaves locals, final FFI uses call_env []; failure branches excluded by res ≠ SOME Error."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "loopLive_compile_correct_ffi",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.8) against case piece `FFI` of loop_live compile_correct (statement loop_liveProofScript.sml:17-37; Resume compile_correct[FFI] at 756-779). No sub-program; HOL quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the payload in place of v (FFI's name as the mlstring carrier), all four premises and full conclusion as in the other pieces. Proof: the four registers from subspt; cut_state (inter cutset l0) succeeds on the new locals because every cutset key is a source local and live; read_bytearray/call_FFI see identical memory/ffi; on return new_locals = inter locals (inter cutset l0) (HOL's qexists), on final FFI call_env []; failure branches excluded by res ≠ SOME Error."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "shMemLoad_frame",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper: loopSem sh_mem_load behaves identically up to locals when only locals differ (success sets the destination, final FFI uses call_env []); no separate CakeML declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+    "lean_name": "shMemStore_frame",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack helper: loopSem sh_mem_store behaves identically up to locals when the stored register agrees; no separate CakeML declaration"
   }
 ]
