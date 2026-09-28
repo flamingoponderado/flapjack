@@ -17548,5 +17548,66 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-4ac.4.61.4) against panPropsScript.sml:1150-1158 (the >~[ShMemStore] branch) and panSemScript.sml ShMemStore/sh_mem_store_def. This is the genuine p = ShMemStore op ad e leaf of recInduct evaluate_ind: the HOL evaluate_ind conjunct (scripts/hol-probes/pan_sem_evaluate_ind_probe.out:11) is ∀op ad e s. P (ShMemStore op ad e,s) with no recursive induction hypothesis and no premise. The Lean statement keeps the HOL binders op ad e s, adds the result/post pair res st of HOL's P (∀res st. evaluate (p,s) = (res,st) ⇒ ...), takes only the source run equation, and concludes exactly the eight source fields in source order (same shape/qualifiers as the reviewed ExtCall/ShMemLoad siblings). evaluate_def evaluates both expressions, requires two word values, and calls sh_mem_store with nb_op op; sh_mem_store checks the shared domain (byte-aligned for nb <> 0), calls call_FFI (SharedMem MappedWrite), and returns (SOME (FinalFFI e), s) on FFI_final or (NONE, s with ffi := new_ffi) on FFI_return; every other pattern returns (SOME Error, s). Only ffi can change, and the returned ffi keeps the oracle (Flapjack-only callFFIHOL_ret_oracle), so none of the eight fields changes. The helpers shMemStoreHOLExact_shape/shMemStoreStepFieldsHOLFinite are untagged infrastructure over the tagged evaluateHOLFiniteState_shMemStore_total clause. PanPropsEvalStateFiniteExact uses HolFiniteMapExact for locals/globals/code/eshapes via its checked roundtrip witness; [NeZero width] is the indexed-word translation. Recursive-case assembly remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/ShMemStore.lean",
+    "lean_name": "mem_lt_succ_foldr_max",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only arithmetic helper proving every member of a variable list is below its foldr-max successor; used to establish freshness of the HOL ShMemStore temporary; no standalone HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/ShMemStore.lean",
+    "lean_name": "pcCompileCorrectAt_shMemStore",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only proof of the HOL evaluate_ind ShMemStore conjunct against pcCompileCorrectAt; the exact HOL-shaped assembled case is the separately tagged pcCompileCorrect_ShmStore; this helper has no standalone HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/ShMemStore.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_ShmStore; forwards the imported checked roundtrip; no HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/ShMemStore.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanToCrepContextExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_ShmStore; forwards the imported checked roundtrip; no HOL declaration"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/ShMemStore.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module carrier witness required by the fmap_as_finite_support_relation qualifier on pcCompileCorrect_ShmStore; forwards the imported checked roundtrip; no HOL declaration"
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "pc_compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/ShMemStore.lean",
+    "lean_name": "pcCompileCorrect_ShmStore",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "PanToCrepContextExact.vars",
+      "PanToCrepContextExact.funcs",
+      "PanToCrepContextExact.eids"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-28, bead flapjack-pxn.18.4.3.112; pan_to_crepProofScript.sml:442-468, ShMemStore case resumed at :1960-1989; panSemScript.sml:611-614; pan_to_crepScript.sml:291-297; crepSemScript.sml:186-208). HOL's evaluate_ind ShMemStore conjunct is !op ad e s. P (ShMemStore op ad e,s), with no IH. The source evaluator evaluates ad as address, e as bytes, and calls sh_mem_store bytes addr. The compiler binds compiled e to a fresh local n+1 above all variables of compiled address ad, then emits ShMem (store_op op) (n+1) ad; the Crep evaluator reads that local as the stored word and ad as the address. Lean's constructor arity and all three exact definitions match those clauses. This declaration unfolds pcCompileCorrectAt as in pcCompileCorrect_Store and retains HOL's premises, existential target run, state/code/exception relations, and inline result cases. Qualifiers are identical to reviewed pcCompileCorrect_Store; this declaration's carrier owners and the same-module roundtrip witnesses are checked here. No target-run or post-state premise."
   }
 ]
