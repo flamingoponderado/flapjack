@@ -718,6 +718,20 @@
   },
   {
     "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
+    "hol_name": "semantics_def",
+    "lean_path": "Flapjack/Pancake/Semantics/CrepSem/CrepObservationalSemantics.lean",
+    "lean_name": "crepSemantics",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b (source comparison, 2026-09-28; bead flapjack-pxn.18.4.8.2): HOL crepSemScript.sml:448-471 semantics_def binds s then start, sets prog = Call NONE start [], fails iff some k evaluates to TimeOut/FinalFFI/Return, otherwise uses HOL some over witnesses k,t,r,outcome whose evaluate pair, outcome case, and Terminate equality are conjunctive, and defaults to Diverge (build_lprefix_lub (IMAGE (fromList ∘ SND ∘ evaluate) UNIV). Lean crepSemantics preserves that binder order, entry program, forbidden cases, successful witness predicate/conclusion, and divergence image family; it uses the source-reviewed no-decider evalCrepSemHOLProgExact and the total HolLList.buildLprefixLub, with no caller-supplied evaluator deciders, chain, LUB, or target-result premise. Unlike the prior rendering it returns shared HOL HolBehaviour/HolOutcome and retains the full HolFinalEvent in FFI_outcome. The qualifier fmap_as_finite_support [locals, globals, code] records the exact state's canonical HolFiniteMapExact representation with the same-module holFmapAsFiniteSupportWitness roundtrip; words_as_type_indexed_bitvec records HOL's positive type-indexed word and universe-0 FFI translations. start is already the exact MlString carrier, so no names_as_string qualifier is used. The evaluator-derived clock event-prefix chain remains separately proved by crepEvaluateClock_ioEvents_lprefixChain from crepPropsScript.sml:1020; HOL build_lprefix_lub is total and the semantics declaration does not require that proof as an argument."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
     "hol_name": "evaluate_def",
     "lean_path": "Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean",
     "lean_name": "evalCrepSemHOLProgExact_seq_fixClockFree",
