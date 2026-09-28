@@ -606,6 +606,19 @@ The original Pancake source-level support boundary is also explicit in
 accepted by `loop_inst_ok` only for `x86_64`. Consequently, RISC-V parity must
 port the `data_to_word` helper path rather than add a direct RISC-V lowering
 for source `LLongDiv`.
+`crep_to_loop_locals_rel_probe.out` records direct observations for
+`locals_rel_def` at `cakeml/pancake/proofs/crep_to_loopProofScript.sml:101-111`.
+HOL `crepLang$varname = num` (`crepLangScript.sml:19`), so the context's `vars`
+is a `num |-> num` finite map; the fixture uses a `num`-keyed `vars`
+(`0 |-> 2`), a two-member `num_set`, and a nonempty `num_map`. Besides atomic
+component rows, it decides the whole relation on a concrete context/locals
+pair by kernel-checked proof (`prove` with a `rw`/`fs`/`EVAL_TAC` tactic) since
+the relation is universally quantified over `num`: `locals_rel_true=T` is
+proved, and `locals_rel_domain_false=F` / `locals_rel_value_false=F` report the
+relation's truth value only after the kernel proof of its negation succeeds.
+The exact-carrier Lean counterparts are `Flapjack.CrepToLoop.crepToLoopLocalsRelExact`
+(tagged `locals_rel_def`) with the kernel-checked examples in
+`Flapjack.Test.CrepToLoopParity`.
 
 `pan_globals_mem_functions_probe.out` records direct HOL EVAL of the
 `panLang$functions` projection and the membership instance characterized by the
