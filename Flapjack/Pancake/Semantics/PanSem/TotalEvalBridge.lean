@@ -428,4 +428,172 @@ theorem panSemTotalEvaluate_annot_agree {σ : Type}
   simp only [evaluateHOLFiniteState_annot]
   exact ⟨trivial, hrel⟩
 
+
+/-! ## Production memory `Store` and HOL `mem_stores`
+
+The production `Store` clause (`panSemTotalStoreClause`) writes the flattened
+value with `panValueStoreWithAccess` and the state-derived word store; the exact
+`Store` clause writes `flatten v` with the tagged `panMemStoresHOL` (HOL
+`mem_stores`, `panSemScript.sml:379-386`). The lemmas below show the two agree
+on success/failure and preserve `PanSemStateRelExec` with the memories
+updated (bead `flapjack-pxn.18.4.3.77.2.13.2.1`); the next use is the `Store`
+constructor agreement once expression agreement is unconditional. Flapjack-only
+bridge infrastructure, no HOL declaration. -/
+
+private theorem panValueFlatWordsFuel_toHOL {width : Nat} [NeZero width] :
+    ∀ n : Nat,
+      (∀ v : PanValue (BitVec width), 2 * panValueFlatValueFuel v ≤ n + 1 →
+        (panValueFlatWordsFuel n v).map HolWordLab.word = flattenHOL (panValueToHOL v)) ∧
+      (∀ vs : List (PanValue (BitVec width)),
+        2 * panValueFlatValueFuel.panValueFlatValueListFuel vs ≤ n →
+        (panValueFlatWordsFuel.panValueFlatWordsListFuel n vs).map HolWordLab.word =
+          (vs.map (fun v => flattenHOL (panValueToHOL v))).flatten) ∧
+      (∀ fs : List (FieldName × PanValue (BitVec width)),
+        2 * panValueFlatValueFuel.panValueFlatValueFieldListFuel fs ≤ n →
+        (panValueFlatWordsFuel.panValueFlatWordsFieldListFuel n fs).map HolWordLab.word =
+          (fs.map (fun f => flattenHOL (panValueToHOL f.2))).flatten)
+  | 0 => by
+      refine ⟨?_, ?_, ?_⟩
+      · intro v hv
+        cases v <;> simp [panValueFlatValueFuel] at hv <;> omega
+      · intro vs hvs
+        cases vs with
+        | nil => simp [panValueFlatWordsFuel.panValueFlatWordsListFuel]
+        | cons v vs =>
+            have : 1 ≤ panValueFlatValueFuel v := by cases v <;> simp [panValueFlatValueFuel]
+            simp [panValueFlatValueFuel.panValueFlatValueListFuel] at hvs
+            omega
+      · intro fs hfs
+        cases fs with
+        | nil => simp [panValueFlatWordsFuel.panValueFlatWordsFieldListFuel]
+        | cons f fs =>
+            have : 1 ≤ panValueFlatValueFuel f.2 := by
+              cases f.2 <;> simp [panValueFlatValueFuel]
+            simp [panValueFlatValueFuel.panValueFlatValueFieldListFuel] at hfs
+            omega
+  | n + 1 => by
+      obtain ⟨ihv, ihl, ihf⟩ := panValueFlatWordsFuel_toHOL (width := width) n
+      refine ⟨?_, ?_, ?_⟩
+      · intro v hv
+        cases v with
+        | word w =>
+            unfold panValueToHOL flattenHOL
+            simp [panValueFlatWordsFuel]
+        | rStruct fields =>
+            simp only [panValueFlatValueFuel] at hv
+            rw [panValueFlatWordsFuel, ihl fields (by omega), panValueToHOL.eq_2, flattenHOL.eq_2]
+            simp [List.map_map, Function.comp_def]
+        | nStruct name fields =>
+            simp only [panValueFlatValueFuel] at hv
+            rw [panValueFlatWordsFuel, ihf fields (by omega), panValueToHOL.eq_3, flattenHOL.eq_3]
+            simp [List.map_map, Function.comp_def]
+      · intro vs hvs
+        cases vs with
+        | nil => simp [panValueFlatWordsFuel.panValueFlatWordsListFuel]
+        | cons v vs =>
+            have h1 : 1 ≤ panValueFlatValueFuel v := by cases v <;> simp [panValueFlatValueFuel]
+            simp only [panValueFlatValueFuel.panValueFlatValueListFuel] at hvs
+            rw [panValueFlatWordsFuel.panValueFlatWordsListFuel, List.map_append,
+              ihv v (by omega), ihl vs (by omega)]
+            simp
+      · intro fs hfs
+        cases fs with
+        | nil => simp [panValueFlatWordsFuel.panValueFlatWordsFieldListFuel]
+        | cons f fs =>
+            obtain ⟨name, v⟩ := f
+            have h1 : 1 ≤ panValueFlatValueFuel v := by cases v <;> simp [panValueFlatValueFuel]
+            simp only [panValueFlatValueFuel.panValueFlatValueFieldListFuel] at hfs
+            rw [panValueFlatWordsFuel.panValueFlatWordsFieldListFuel, List.map_append,
+              ihv v (by omega), ihf fs (by omega)]
+            simp
+
+/-- The production flattening `panValueFlatWords` is the exact HOL `flatten` of the
+    `panValueToHOL` image, word by word. -/
+theorem panValueFlatWords_map_word {width : Nat} [NeZero width] (v : PanValue (BitVec width)) :
+    (panValueFlatWords v).map HolWordLab.word = flattenHOL (panValueToHOL v) :=
+  (panValueFlatWordsFuel_toHOL (width := width) _).1 v (by omega)
+
+/-- Outcome agreement of a production memory update with an exact one: both
+    fail, or both succeed with related memories. -/
+private def panStoreOutcomeRel {width : Nat} [NeZero width]
+    (memaddrs : RiscV.Word width → Bool) :
+    Option (RiscV.Word width → Option (PanValue (BitVec width))) →
+      Option (RiscV.Word width → HolWordLab width) → Prop
+  | some m, some m' => PanSemMemoryRel memaddrs m m'
+  | none, none => True
+  | _, _ => False
+
+/-- Storing a word list through the production state-derived word store agrees
+    with HOL `mem_stores` (`panSemScript.sml:379-386`) at the related memory. -/
+private theorem panValueFlatStoreWords_rel {ffiState : Type}
+    (state : PanSemState (RiscV.Word 64) ffiState)
+    (D : RiscV.Word 64 → Prop) [DecidablePred D]
+    (hdom : ∀ a, state.memaddrs a = true ↔ D a) :
+    ∀ (ws : List (RiscV.Word 64)) (addr : RiscV.Word 64)
+      (mem : RiscV.Word 64 → Option (PanValue (RiscV.Word 64)))
+      (emem : RiscV.Word 64 → HolWordLab 64),
+      PanSemMemoryRel state.memaddrs mem emem →
+      panStoreOutcomeRel state.memaddrs
+        (panValueFlatStoreWords
+          (fun memory address value =>
+            (panSemBitVec64MemoryAccess state).storeWord
+              (panSemBitVec64MemoryAccess state).domain memory panSemBitVec64BytesInWord
+              address value)
+          panSemBitVec64BytesInWord mem addr ws)
+        (panMemStoresHOL addr (ws.map HolWordLab.word) D emem)
+  | [], addr, mem, emem, hrel => by
+      simp [panValueFlatStoreWords, panStoreOutcomeRel, hrel]
+  | w :: ws, addr, mem, emem, hrel => by
+      by_cases hd : state.memaddrs addr = true
+      · have hD : D addr := (hdom addr).mp hd
+        have hstep := panSemMemoryRel_update state.memaddrs mem emem hrel addr w
+        have ih := panValueFlatStoreWords_rel state D hdom ws (addr + panSemBitVec64BytesInWord)
+          _ _ hstep
+        have hb : panBytesInWord 64 = panSemBitVec64BytesInWord := rfl
+        simp only [panValueFlatStoreWords, List.map_cons, panMemStoresHOL,
+          panMemStoreHOL, if_pos hD, hb]
+        simpa [panSemBitVec64MemoryAccess, panValueMemoryAccessOfModel, hd,
+          panValueFlatOffset] using ih
+      · have hD : ¬ D addr := fun h => hd ((hdom addr).mpr h)
+        simp [panValueFlatStoreWords, panMemStoresHOL, panMemStoreHOL, hD,
+          panSemBitVec64MemoryAccess, panValueMemoryAccessOfModel, hd, panStoreOutcomeRel]
+
+/-- `PanSemStateRelExec` through the production `Store` memory update
+    (`panValueStoreWithAccess` with the state-derived word store, as used by
+    `panSemTotalStoreClause`) and the exact HOL `mem_stores (flatten v)`
+    (`panSemScript.sml:379-386`, the tagged `panMemStoresHOL`) used by the exact
+    `Store` clause: either both fail, or both succeed and the relation holds with
+    the two memories updated. Flapjack-only bridge; no HOL declaration. -/
+theorem panSemStateRelExec_storeWithAccess {σ : Type}
+    (state : PanSemState (RiscV.Word 64) (FfiState σ)) (exact : PanSemStateExact 64 σ)
+    (h : PanSemStateRelExec state exact) (addr : RiscV.Word 64)
+    (v : PanValue (RiscV.Word 64)) :
+    match panValueStoreWithAccess state.memory panSemBitVec64BytesInWord addr v
+        (some (panSemBitVec64MemoryAccess state)),
+      @panMemStoresHOL 64 _ addr (flattenHOL (panValueToHOL v)) exact.memaddrs
+        (fun a => Classical.propDecidable (exact.memaddrs a)) exact.memory with
+    | some m, some m' =>
+        PanSemStateRelExec { state with memory := m } { exact with memory := m' }
+    | none, none => True
+    | _, _ => False := by
+  classical
+  obtain ⟨hl, hg, hs, hc, he, hm, hmd, hsm, hck, hbe, hffi, hb, ht⟩ := h
+  have L := @panValueFlatStoreWords_rel _ state exact.memaddrs
+    (fun a => Classical.propDecidable (exact.memaddrs a)) hmd (panValueFlatWords v) addr
+    state.memory exact.memory hm
+  rw [panValueFlatWords_map_word] at L
+  simp only [panValueStoreWithAccess]
+  revert L
+  cases panValueFlatStoreWords
+      (fun memory address value =>
+        (panSemBitVec64MemoryAccess state).storeWord
+          (panSemBitVec64MemoryAccess state).domain memory panSemBitVec64BytesInWord
+          address value)
+      panSemBitVec64BytesInWord state.memory addr (panValueFlatWords v) <;>
+    cases @panMemStoresHOL 64 _ addr (flattenHOL (panValueToHOL v)) exact.memaddrs
+      (fun a => Classical.propDecidable (exact.memaddrs a)) exact.memory <;>
+    simp [panStoreOutcomeRel]
+  intro hrel
+  exact ⟨hl, hg, hs, hc, he, hrel, hmd, hsm, hck, hbe, hffi, hb, ht⟩
+
 end Flapjack
