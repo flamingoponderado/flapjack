@@ -28,6 +28,24 @@ private theorem map_fst_zipWith_pair {α β γ : Type} (g : α → β → γ) :
       simp only [List.zipWith_cons_cons, List.map_cons, List.cons.injEq, true_and]
       exact map_fst_zipWith_pair g xs ys (by simpa using h)
 
+/-- Exact HOL `map_map2_fst` (`crep_to_loopProofScript.sml:3799-3803`):
+    `!xs ys h. LENGTH xs = LENGTH ys ==> MAP FST (MAP2 (λx (n,p,b).
+    (x, GENLIST I (LENGTH p), h p b)) xs ys) = xs`. The right-associated
+    Lean triple is the HOL program triple, and `panMap2` preserves HOL `MAP2`
+    truncation behavior. The binders remain in HOL order; no representation
+    qualifier is needed. -/
+@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "map_map2_fst"]
+theorem mapMap2FstHOL {α β γ : Type} :
+    ∀ (xs : List α) (ys : List (Nat × List Nat × β))
+      (h : List Nat → β → γ),
+      xs.length = ys.length →
+        (panMap2
+          (fun x y => (x, List.range y.2.1.length, h y.2.1 y.2.2)) xs ys).map
+          Prod.fst = xs := by
+  intro xs ys h hlen
+  exact panMap2_fst_eq
+    (fun _ y => (List.range y.2.1.length, h y.2.1 y.2.2)) xs ys hlen
+
 /-- A successful lookup in the HOL equality fold over a reversed association
 list must come from an entry in the original list. This is local infrastructure
 for the exact `make_funcs` lemma below. -/
