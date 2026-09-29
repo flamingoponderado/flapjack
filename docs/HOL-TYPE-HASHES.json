@@ -1,6 +1,7 @@
 {
   "lean_toolchain": "leanprover/lean4:v4.33.1",
   "records": [
+    {"lean_path": "Flapjack/AstHOL.lean", "lean_name": "Opb", "lean_full_name": "Flapjack.Opb", "hol_path": "cakeml/semantics/astScript.sml", "hol_name": "opb", "sha256": "b4611575b2b62eb57ff8b514cf96bf01666158b035ac2fcc89065136260d1e05"},
     {"lean_path": "Flapjack/AstHOL.lean", "lean_name": "Shift", "lean_full_name": "Flapjack.Shift", "hol_path": "cakeml/semantics/astScript.sml", "hol_name": "shift", "sha256": "b4611575b2b62eb57ff8b514cf96bf01666158b035ac2fcc89065136260d1e05"},
     {"lean_path": "Flapjack/Basis/Pure/MlList.lean", "lean_name": "sort", "lean_full_name": "Flapjack.Basis.Pure.MlList.sort", "hol_path": "cakeml/basis/pure/mllistScript.sml", "hol_name": "sort_def", "sha256": "29d006b5c2d97ad351e78a1e4927e6984d6b5cecac91b29c30716381c5260cd8"},
     {"lean_path": "Flapjack/Basis/Pure/MlString.lean", "lean_name": "MlString", "lean_full_name": "Flapjack.Basis.Pure.MlString.MlString", "hol_path": "cakeml/basis/pure/mlstringScript.sml", "hol_name": "mlstring", "sha256": "b4611575b2b62eb57ff8b514cf96bf01666158b035ac2fcc89065136260d1e05"},
@@ -205,6 +206,7 @@
     {"lean_path": "Flapjack/FpSemHOL.lean", "lean_name": "FpTop", "lean_full_name": "Flapjack.FpTop", "hol_path": "cakeml/semantics/fpSemScript.sml", "hol_name": "fp_top", "sha256": "b4611575b2b62eb57ff8b514cf96bf01666158b035ac2fcc89065136260d1e05"},
     {"lean_path": "Flapjack/FpSemHOL.lean", "lean_name": "FpUop", "lean_full_name": "Flapjack.FpUop", "hol_path": "cakeml/semantics/fpSemScript.sml", "hol_name": "fp_uop", "sha256": "b4611575b2b62eb57ff8b514cf96bf01666158b035ac2fcc89065136260d1e05"},
     {"lean_path": "Flapjack/FpSemHOL.lean", "lean_name": "fpSemFpBopComp", "lean_full_name": "Flapjack.fpSemFpBopComp", "hol_path": "cakeml/semantics/fpSemScript.sml", "hol_name": "fp_bop_comp_def", "sha256": "e0811a48c1cef56f251606f75e243ad887283d1d07a47d0d7ccbda5893ba5272"},
+    {"lean_path": "Flapjack/FpSemHOL.lean", "lean_name": "fpSemFpCmp", "lean_full_name": "Flapjack.fpSemFpCmp", "hol_path": "cakeml/semantics/fpSemScript.sml", "hol_name": "fp_cmp_def", "sha256": "9541a68a9d56ee934cfbd4faa59b71f1595f95ddea19981795b5d7fb96a9b3af"},
     {"lean_path": "Flapjack/FpSemHOL.lean", "lean_name": "fpSemFpCmpComp", "lean_full_name": "Flapjack.fpSemFpCmpComp", "hol_path": "cakeml/semantics/fpSemScript.sml", "hol_name": "fp_cmp_comp_def", "sha256": "fd774838197c80f24223470a7f70d604278e16f344d3c644c3975fba1def231e"},
     {"lean_path": "Flapjack/FpSemHOL.lean", "lean_name": "fpSemFpTopComp", "lean_full_name": "Flapjack.fpSemFpTopComp", "hol_path": "cakeml/semantics/fpSemScript.sml", "hol_name": "fp_top_comp_def", "sha256": "04d95b257a0fdb5674d59972f617d28c8b96b0f27a5711ec793239e39733d01e"},
     {"lean_path": "Flapjack/FpSemHOL.lean", "lean_name": "fpSemFpUopComp", "lean_full_name": "Flapjack.fpSemFpUopComp", "hol_path": "cakeml/semantics/fpSemScript.sml", "hol_name": "fp_uop_comp_def", "sha256": "a5acf0e0530981ca576813cb68f0db47a05ebcbb0777c9eb5a709b185871f778"},
