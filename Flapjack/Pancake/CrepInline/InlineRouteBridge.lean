@@ -544,5 +544,186 @@ theorem crepProgToHOL_crepInlineNontail {width : Nat} [NeZero width]
       simp [crepProgToHOL, crepExpToHOL]
     rw [hfun]
 
+def crepEarlyExitToHOL : CrepEarlyExit → CrepEarlyExitHOL
+  | .exception => .exception
+  | .return => .return
+  | .loopExit => .loopExit
+
+/-- `crepMergeExit` agrees with the exact `crepMergeExitHOL` under
+    `crepEarlyExitToHOL`. -/
+theorem crepMergeExit_map (a b : Option CrepEarlyExit) :
+    (crepMergeExit a b).map crepEarlyExitToHOL =
+      crepMergeExitHOL (a.map crepEarlyExitToHOL) (b.map crepEarlyExitToHOL) := by
+  cases a with
+  | none => cases b with
+    | none => rfl
+    | some eb => cases eb <;> rfl
+  | some ea => cases ea with
+    | «return» => cases b with
+      | none => rfl
+      | some eb => cases eb <;> rfl
+    | «exception» => cases b with
+      | none => rfl
+      | some eb => cases eb <;> rfl
+    | «loopExit» => cases b with
+      | none => rfl
+      | some eb => cases eb <;> rfl
+
+/-- The executed unreachability pass `crepUnreachElim` (`CrepInline.lean:340`)
+    agrees with the exact tagged `unreachElimHOLExact`
+    (`CrepInline.lean:189`) under `crepProgToHOL`.  The stored early-exit is
+    related by `crepEarlyExitToHOL`.  Untagged Flapjack-specific infrastructure
+    (there is no HOL declaration of this cross-representation relation). -/
+theorem crepProgToHOL_crepUnreachElim {width : Nat} [NeZero width] (program : CrepProg (BitVec width)) :
+    (crepProgToHOL (crepUnreachElim program).1,
+        (crepUnreachElim program).2.map crepEarlyExitToHOL) =
+      unreachElimHOLExact (crepProgToHOL program) := by
+  apply crepUnreachElim.induct (motive := fun program =>
+    ∀ (q : CrepProg (BitVec width)) (r : Option CrepEarlyExit),
+      crepUnreachElim program = (q, r) →
+      (crepProgToHOL q, r.map crepEarlyExitToHOL) =
+        unreachElimHOLExact (crepProgToHOL program))
+  · intro values q r h
+    rw [crepUnreachElim.eq_def] at h
+    cases h
+    simp [crepProgToHOL, unreachElimHOLExact, crepEarlyExitToHOL]
+  · intro exception q r h
+    rw [crepUnreachElim.eq_def] at h
+    cases h
+    simp [crepProgToHOL, unreachElimHOLExact, crepEarlyExitToHOL]
+  · intro label q r h
+    rw [crepUnreachElim.eq_def] at h
+    cases h
+    simp [crepProgToHOL, unreachElimHOLExact, crepEarlyExitToHOL]
+  · intro label q r h
+    rw [crepUnreachElim.eq_def] at h
+    cases h
+    simp [crepProgToHOL, unreachElimHOLExact, crepEarlyExitToHOL]
+  · intro first second second' secondExit hfirst hsome ihFirst q r h
+    have hunf : crepUnreachElim (.seq first second) = (second', secondExit) := by
+      rw [crepUnreachElim.eq_def]
+      dsimp only
+      rw [hfirst]
+      simp [hsome]
+    rw [hunf] at h
+    cases h
+    simp only [crepProgToHOL, unreachElimHOLExact]
+    rw [← ihFirst second' secondExit hfirst]
+    simp only [Option.isSome_map, hsome, if_true]
+  · intro first second second' secondExit hfirst hnotsome second'' secondExit' hsecond ihFirst ihSecond q r h
+    have hunf : crepUnreachElim (.seq first second) = (.seq second' second'', secondExit') := by
+      rw [crepUnreachElim.eq_def]
+      dsimp only
+      rw [hfirst]
+      simp [hnotsome, hsecond]
+    rw [hunf] at h
+    cases h
+    simp only [crepProgToHOL, unreachElimHOLExact]
+    rw [← ihFirst second' secondExit hfirst, ← ihSecond second'' secondExit' hsecond]
+    simp only [Option.isSome_map, hnotsome, Bool.false_eq_true, if_false]
+  · intro name value body body' bodyExit hbody ih q r h
+    have hunf : crepUnreachElim (.dec name value body) = (.dec name value body', bodyExit) := by
+      rw [crepUnreachElim.eq_def]
+      dsimp only
+      rw [hbody]
+    rw [hunf] at h
+    cases h
+    simp only [crepProgToHOL, unreachElimHOLExact]
+    rw [← ih body' bodyExit hbody]
+  · intro condition thenBranch elseBranch then' thenExit hthen then'' elseExit helse ihThen ihElse q r h
+    have hunf : crepUnreachElim (.ite condition thenBranch elseBranch) =
+        (.ite condition then' then'', crepMergeExit thenExit elseExit) := by
+      rw [crepUnreachElim.eq_def]
+      dsimp only
+      rw [hthen]
+      dsimp only
+      rw [helse]
+    rw [hunf] at h
+    cases h
+    simp only [crepProgToHOL, unreachElimHOLExact]
+    rw [← ihThen then' thenExit hthen, ← ihElse then'' elseExit helse,
+      ← crepMergeExit_map thenExit elseExit]
+  · intro condition body body' bodyExit hbody ih q r h
+    have hunf : crepUnreachElim (.while condition body) = (.while condition body', none) := by
+      rw [crepUnreachElim.eq_def]
+      dsimp only
+      rw [hbody]
+    rw [hunf] at h
+    cases h
+    simp only [crepProgToHOL, unreachElimHOLExact]
+    rw [← ih body' bodyExit hbody]
+    simp only [Option.map_none]
+  · intro name arguments q r h
+    rw [crepUnreachElim.eq_def] at h
+    cases h
+    simp [crepProgToHOL, unreachElimHOLExact, crepEarlyExitToHOL]
+  · intro names name arguments q r h
+    rw [crepUnreachElim.eq_def] at h
+    cases h
+    simp [crepProgToHOL, unreachElimHOLExact]
+  · intro names handler body name arguments second' secondExit hbody ih q r h
+    have hunf : crepUnreachElim (.call (some (names, some (handler, body))) name arguments) =
+        (.call (some (names, some (handler, second'))) name arguments, none) := by
+      rw [crepUnreachElim.eq_def]
+      dsimp only
+      rw [hbody]
+    rw [hunf] at h
+    cases h
+    simp only [crepProgToHOL, unreachElimHOLExact]
+    rw [← ih second' secondExit hbody]
+    simp only [Option.map_none]
+  · intro program hret hraise hbreak hcontinue hseq hdec hite hwhile hcallnone hcallsomenone hcallsomesome q r h
+    cases program with
+    | skip =>
+        rw [crepUnreachElim.eq_def] at h; cases h
+        simp [crepProgToHOL, unreachElimHOLExact]
+    | assign name value =>
+        rw [crepUnreachElim.eq_def] at h; cases h
+        simp [crepProgToHOL, unreachElimHOLExact]
+    | primitive names operator args =>
+        rw [crepUnreachElim.eq_def] at h; cases h
+        simp [crepProgToHOL, unreachElimHOLExact]
+    | store address value =>
+        rw [crepUnreachElim.eq_def] at h; cases h
+        simp [crepProgToHOL, unreachElimHOLExact]
+    | store32 address value =>
+        rw [crepUnreachElim.eq_def] at h; cases h
+        simp [crepProgToHOL, unreachElimHOLExact]
+    | storeByte address value =>
+        rw [crepUnreachElim.eq_def] at h; cases h
+        simp [crepProgToHOL, unreachElimHOLExact]
+    | storeGlob address value =>
+        rw [crepUnreachElim.eq_def] at h; cases h
+        simp [crepProgToHOL, unreachElimHOLExact]
+    | extCall function configuration configurationLength array arrayLength =>
+        rw [crepUnreachElim.eq_def] at h; cases h
+        simp [crepProgToHOL, unreachElimHOLExact]
+    | shMem operator name address =>
+        rw [crepUnreachElim.eq_def] at h; cases h
+        simp [crepProgToHOL, unreachElimHOLExact]
+    | tick =>
+        rw [crepUnreachElim.eq_def] at h; cases h
+        simp [crepProgToHOL, unreachElimHOLExact]
+    | «return» values => exact absurd rfl (hret values)
+    | «raise» exception => exact absurd rfl (hraise exception)
+    | «break» label => exact absurd rfl (hbreak label)
+    | «continue» label => exact absurd rfl (hcontinue label)
+    | «seq» first second => exact absurd rfl (hseq first second)
+    | «dec» name value body => exact absurd rfl (hdec name value body)
+    | «ite» condition thenBranch elseBranch => exact absurd rfl (hite condition thenBranch elseBranch)
+    | «while» condition body => exact absurd rfl (hwhile condition body)
+    | «call» ret nm ar =>
+        cases ret with
+        | none => exact absurd rfl (hcallnone nm ar)
+        | some pair =>
+            obtain ⟨names, rest⟩ := pair
+            cases rest with
+            | none => exact absurd rfl (hcallsomenone names nm ar)
+            | some hr =>
+                obtain ⟨handler, body⟩ := hr
+                exact absurd rfl (hcallsomesome names handler body nm ar)
+  · obtain ⟨a, b⟩ := crepUnreachElim program
+    rfl
+
 end CrepInlineRoute
 end Flapjack
