@@ -46,6 +46,10 @@ val _ = print_eval "mul_vars"
   ``crep_arith$simp_exp (Crepop Mul [Var 2; Var 3])``;
 val _ = print_eval "fallback_var"
   ``crep_arith$simp_exp (Var 7)``;
+val _ = print_eval "simp_var"
+  ``crep_arith$simp_exp (Var 7)``;
+val _ = print_eval "simp_const"
+  ``crep_arith$simp_exp (Const (11w:64 word))``;
 
 (* HOL eval sees a local value 5 and multiplication by 8. simp_exp rewrites
    this to a left shift by 3; both original eval results are Word 40. *)
