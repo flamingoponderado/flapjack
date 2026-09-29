@@ -1118,6 +1118,13 @@ small `fromAList` trees and records their `toAList` key order, emptiness and
 in `Flapjack/Misc/Sptree.lean` against every row.  Refresh with
 `HOL_PROBE_ONLY=sptree_set_ops_probeScript.sml scripts/hol-probes/regenerate.sh`.
 
+`sptree_difference_probe` is a bare HOL session over the external
+`HOL/src/finite_maps/sptreeScript.sml`; it records direct constructor-level
+`EVAL` rows for every `sptree$difference` outer/inner clause, heterogeneous
+right payloads, and the `mk_BN`/`mk_BS` collapses. The Lean replay checks exact
+result trees and left payload preservation. Refresh with
+`HOL_PROBE_ONLY=sptree_difference_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
 `sptree_inter_mixed_probe` evaluates the HETEROGENEOUS `sptree$inter`
 (`'a num_map -> 'b num_map -> 'a num_map`) on mixed-payload `fromAList` trees and
 records that the result keeps the LEFT operand's values on keys present in both

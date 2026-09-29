@@ -1876,6 +1876,10 @@ run_probe sptree_set_ops_probeScript.sml sptree_set_ops_probe.out \
   union_keys oel_miss \
   "$cake_dir/compiler/backend/backend_commonScript.sml" \
   "$cake_dir/compiler/backend"
+run_probe sptree_difference_probeScript.sml sptree_difference_probe.out \
+  difference_ln_bs difference_bs_bs_collapse \
+  "$hol_dir/src/finite_maps/sptreeScript.sml" \
+  "$hol_dir/src/finite_maps"
 # Mixed-payload oracle for the heterogeneous HOL sptree$inter used by loopSem
 # cut_state (flapjack-pxgp.2.1): the result keeps the left operand's values.
 run_probe sptree_inter_mixed_probeScript.sml sptree_inter_mixed_probe.out \

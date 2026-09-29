@@ -163,6 +163,7 @@ import Flapjack.Pancake.Proofs.LoopToWord.LocalsRel
 import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelUpdates
 import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelLookups
 import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelAllDistinct
+import Flapjack.Pancake.Proofs.LoopToWord.FindVar
 import Flapjack.PanObservationalSemantics
 import Flapjack.PanMrec
 import Flapjack.PanHProgDec
