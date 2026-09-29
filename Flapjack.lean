@@ -335,6 +335,7 @@ import Flapjack.Pancake.CrepToLoop.Proofs.RelationsExact
 import Flapjack.Pancake.CrepToLoop.Proofs.LocalsRelHelpers
 import Flapjack.Pancake.CrepToLoop.Proofs.LocalsRelOptMmap
 import Flapjack.Pancake.CrepToLoop.Proofs.CompExpPreservesEval
+import Flapjack.Pancake.CrepToLoop.Proofs.CompExpPreservesEval.Leaf
 import Flapjack.Pancake.CrepToLoop.Proofs.SemanticsWrapper
 import Flapjack.Pancake.CrepToLoop.Proofs.MakeFuncsLemmas
 import Flapjack.Pancake.CrepToLoop.Proofs.NotMemContextAssigned

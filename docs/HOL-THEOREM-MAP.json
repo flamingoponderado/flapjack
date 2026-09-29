@@ -19241,6 +19241,23 @@
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "comp_exp_preserves_eval",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpPreservesEval/Leaf.lean",
+    "lean_name": "compExpPreservesEval_const_case",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison (2026-09-29; bead flapjack-pxn.18.5.6.33.15.1) against comp_exp_preserves_eval at crep_to_loopProofScript.sml:772-782, specializing e to Const w; exact HOL Const induction case at :973-976. Lean keeps the successful Crep eval, state_rel, mem_rel, globals_rel, code_rel, locals_rel, compile_exp equation, and ctxt.vmax < tmp premises, and the HOL existential target evaluation plus all post-relations; no extra premise or weakened result. The proof follows the HOL case by unfolding the source evaluator/compiler and target nested_seq/evaluate/eval and wlab_wloc clauses. fmap_as_finite_support_relation lists precisely the finite-map fields traversed by this statement in the exact Crep state, context, and Loop state carriers; same-module canonical witnesses establish their HolFiniteMapExact translation. words_as_type_indexed_bitvec records HOL's positive indexed word width as BitVec width."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
     "hol_name": "compile_exp_le_tmp_domain_cases",
     "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CompExpLeTmpDomain.lean",
     "lean_name": "compile_exp_le_tmp_domain_cases",
