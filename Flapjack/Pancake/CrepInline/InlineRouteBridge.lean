@@ -441,5 +441,71 @@ theorem crepProgToHOL_crepArgLoad {width : Nat} [NeZero width]
   simp only [crepArgLoad, argLoadHOLExact, crepProgToHOL_nestedDecs]
   rw [crepExpToHOL_var_map]
 
+/-- Executed inline-tail lifting: `crepInlineTail` agrees with the exact
+    `inlineTailHOLExact` under the `crepProgToHOL` codec. -/
+theorem crepProgToHOL_crepInlineTail {width : Nat} [NeZero width]
+    (program : CrepProg (BitVec width)) :
+    crepProgToHOL (crepInlineTail program) = inlineTailHOLExact (crepProgToHOL program) := by
+  simp [crepInlineTail, inlineTailHOLExact, crepProgToHOL]
+
+/-- Executed `crepTransformEoc` lifts to the exact `transformEocHOLExact` under
+    the `crepProgToHOL` codec. -/
+theorem crepProgToHOL_crepTransformEoc {width : Nat} [NeZero width]
+    (returnNames : List Nat) (program : CrepProg (BitVec width)) :
+    crepProgToHOL (crepTransformEoc returnNames program) =
+      transformEocHOLExact returnNames (crepProgToHOL program) := by
+  fun_induction crepTransformEoc returnNames program with
+  | case1 values =>
+      simp only [transformEocHOLExact, crepProgToHOL, crepProgToHOL_crepNestedSeqHOL]
+      rw [List.map_zipWith, List.zipWith_map_right]
+      simp only [crepProgToHOL]
+  | case2 name arguments => simp only [transformEocHOLExact, crepProgToHOL]
+  | case3 names name arguments => simp only [transformEocHOLExact, crepProgToHOL]
+  | case4 names handler body name arguments ih =>
+      simp only [transformEocHOLExact, crepProgToHOL, ih]
+  | case5 name value body ih => simp only [transformEocHOLExact, crepProgToHOL, ih]
+  | case6 condition body ih => simp only [transformEocHOLExact, crepProgToHOL, ih]
+  | case7 first second ih1 ih2 => simp only [transformEocHOLExact, crepProgToHOL, ih1, ih2]
+  | case8 condition thenBranch elseBranch ih1 ih2 =>
+      simp only [transformEocHOLExact, crepProgToHOL, ih1, ih2]
+  | case9 program =>
+      cases program with
+      | call ret nm ar =>
+          rename_i hr hc hcn hcs hdec hwhile hseq hite
+          rcases ret with _ | ⟨names, r⟩
+          · exact absurd rfl (hc nm ar)
+          · rcases r with _ | ⟨handler, body⟩
+            · exact absurd rfl (hcn names nm ar)
+            · exact absurd rfl (hcs names handler body nm ar)
+      | _ => simp_all [transformEocHOLExact, crepProgToHOL]
+
+/-- Executed `crepTransformBranch` lifts to the exact `transformBranchHOLExact`
+    under the `crepProgToHOL` codec. -/
+theorem crepProgToHOL_crepTransformBranch {width : Nat} [NeZero width] (loopDepth : Nat)
+    (returnNames : List Nat) (program : CrepProg (BitVec width)) :
+    crepProgToHOL (crepTransformBranch loopDepth returnNames program) =
+      transformBranchHOLExact loopDepth returnNames (crepProgToHOL program) := by
+  fun_induction crepTransformBranch loopDepth returnNames program with
+  | case1 =>
+      simp_all only [transformBranchHOLExact, crepProgToHOL,
+        crepProgToHOL_crepNestedSeqHOL, List.map_zipWith, List.zipWith_map_right]
+  | case2 => simp_all only [transformBranchHOLExact, crepProgToHOL]
+  | case3 => simp_all only [transformBranchHOLExact, crepProgToHOL]
+  | case4 => simp_all only [transformBranchHOLExact, crepProgToHOL]
+  | case5 => simp_all only [transformBranchHOLExact, crepProgToHOL]
+  | case6 => simp_all only [transformBranchHOLExact, crepProgToHOL]
+  | case7 => simp_all only [transformBranchHOLExact, crepProgToHOL]
+  | case8 => simp_all only [transformBranchHOLExact, crepProgToHOL]
+  | case9 lp program =>
+      cases program with
+      | call ret nm ar =>
+          rename_i hr hc hcn hcs hdec hwhile hseq hite
+          rcases ret with _ | ⟨names, r⟩
+          · exact absurd rfl (hc nm ar)
+          · rcases r with _ | ⟨handler, body⟩
+            · exact absurd rfl (hcn names nm ar)
+            · exact absurd rfl (hcs names handler body nm ar)
+      | _ => simp_all [transformBranchHOLExact, crepProgToHOL]
+
 end CrepInlineRoute
 end Flapjack
