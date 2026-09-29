@@ -928,21 +928,35 @@ theorem lookupNatInfo_crepMakeVmap_eq_flookup_makeVmapHOL (params : List Nat) (n
     lookupNatInfo_eq_flookup_natInfoMapToFiniteMap, natInfoMapToFiniteMap,
     List.reverse_reverse]
 
-/-- Exact port of HOL `make_funcs` (`cakeml/pancake/crep_to_loopScript.sml:247`).
-    HOL derives, for each program entry `(name, params, body)`,
-    `(name, (num, LENGTH params))` where `num = index + first_name`; the result
-    is `alist_to_fmap` of that association list. HOL is polymorphic in the
-    triple components, so this port keeps `α`, `β`, `γ` polymorphic too; the
-    `alist_to_fmap` first-inserted-binding-wins behaviour is rendered as
-    `FUPDATE_LIST FEMPTY entries.reverse` (matching the `functionInfosHOL`
-    precedent). -/
-@[hol "cakeml/pancake/crep_to_loopScript.sml" "make_funcs_def"]
+/-- Flapjack-specific raw-map rendering retained for production-carrier lemmas.
+    It applies the same calculation as HOL `make_funcs_def`
+    (`crep_to_loopScript.sml:247`) for any lawful-BEq key type, but its result
+    is `FiniteMap α β := α → Option β`, which permits infinite support and is
+    not an exact HOL fmap carrier. The exact finite-support port is
+    `crepToLoopMakeFuncsExactHOL` in `ContextExact.lean`; this declaration
+    deliberately carries no HOL tag. -/
 def crepToLoopMakeFuncsHOL [BEq α] [LawfulBEq α] {β γ : Type}
     (prog : List (α × List β × γ)) : FiniteMap α (Nat × Nat) :=
   FUPDATE_LIST FEMPTY
     ((prog.zip (List.range prog.length)).map
       (fun entry =>
         (entry.1.1, (firstLoopName + entry.2, entry.1.2.1.length)))).reverse
+
+/-- The raw Flapjack helper and the exact generic HOL port compute the same
+    lookup whenever the executable key equality is lawful. This connects the
+    production-friendly function carrier to the tagged finite-support result;
+    the helper itself stays untagged because its result carrier admits infinite
+    support. -/
+theorem crepToLoopMakeFuncsHOL_lookup_eq_exact
+    [BEq α] [LawfulBEq α] {β γ : Type}
+    (prog : List (α × List β × γ)) (key : α) :
+    FLOOKUP (crepToLoopMakeFuncsHOL prog) key =
+      (crepToLoopMakeFuncsExactHOL prog).lookup key := by
+  classical
+  simp [FLOOKUP, crepToLoopMakeFuncsHOL, crepToLoopMakeFuncsExactHOL,
+    HolFiniteMapExact.lookup_updateListEq,
+    FUPDATE_LIST_HOL_eq_FUPDATE_LIST, HolFiniteMapExact.empty]
+  rfl
 
 /-! ## Association-list lookup
 
@@ -1360,7 +1374,7 @@ theorem crepToLoopCompileProgDistinctParamsHOLExact {width : Nat} [NeZero width]
   intro _
   unfold compileProgHOLExact
   let fnums := (List.range prog.length).map (fun n => n + firstLoopName)
-  let comp := compFuncHOLExact (width := width) target (crepToLoopMakeFuncsExactHOL prog)
+  let comp := compFuncHOLExact (width := width) target (crepToLoopMakeFuncsExactExecutable prog)
   have hzip : ∀ (ns : List Nat) (entries : List (MlS × List Nat × CrepProgHOL width)),
       (List.zipWith
         (fun n entry =>
