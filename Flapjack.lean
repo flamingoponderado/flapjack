@@ -199,6 +199,9 @@ import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.ShMem
 import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call.Support
 import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call.TailCall
 import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call.NoHandler
+import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call.HandlerTail
+import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call.SomeHandler
+import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call
 import Flapjack.PanObservationalSemantics
 import Flapjack.PanMrec
 import Flapjack.PanHProgDec
