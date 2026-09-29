@@ -338,6 +338,8 @@ import Flapjack.Pancake.CrepToLoop.Proofs.SemanticsWrapper
 import Flapjack.Pancake.LoopLive.Fixedpoint
 import Flapjack.Pancake.Proofs.LoopLive.CompileCorrect
 import Flapjack.Pancake.Proofs.LoopLive.Optimise
+import Flapjack.Misc.SptreeLookup
+import Flapjack.Pancake.Proofs.LoopCall.CompileCorrect
 import Flapjack.Pancake.CrepToLoop.Proofs.MakeFuncsLemmas
 import Flapjack.Pancake.CrepToLoop.Proofs.NotMemContextAssigned
 import Flapjack.Pancake.CrepToLoop.Optimise
