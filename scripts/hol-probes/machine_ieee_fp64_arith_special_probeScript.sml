@@ -46,3 +46,8 @@ val _ = print_eval "div_one_nz" ``fp64_div roundTiesToEven ^one ^nz``;
 val _ = print_eval "fma_pinf_product" ``fpfma ^one ^pinf ^two``;
 val _ = print_eval "fma_ninf_addend" ``fpfma ^ninf ^one ^one``;
 val _ = print_eval "fma_neg_inf_product" ``fpfma ^one ^ninf ^two``;
+(* Distinguishes the argument order.  fpfma v1 v2 v3 = mul_add v2*v3 + v1.
+   fpfma one ninf pinf = (-inf)*pinf + one = -inf, while the swapped order
+   v1*v2 + v3 = one*(-inf) + pinf = qNaN, a different value.  This row stays in
+   the non-rounding branch, so EVAL computes it exactly. *)
+val _ = print_eval "fma_order_inf" ``fpfma ^one ^ninf ^pinf``;

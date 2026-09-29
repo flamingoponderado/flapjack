@@ -3,8 +3,9 @@
   loop_to_word compiler at cakeml/pancake/loop_to_wordScript.sml:56-108.
 
   This fixture observes the compiler's returned label pair as well as each
-  emitted Word program. The remaining comp_def constructors are intentionally
-  outside this probe and the corresponding Lean helper remains untagged.
+  emitted Word program. The remaining comp_def constructors are observed by the
+  recursive and call probes; the Lean replay of these rows goes through the
+  tagged total compHOL (Flapjack/Pancake/LoopToWord.lean).
 *)
 load "bossLib";
 load "preamble";
