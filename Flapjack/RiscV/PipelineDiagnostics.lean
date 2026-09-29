@@ -525,7 +525,8 @@ def compileFlapjackRiscVSourceBytesChecked [NeZero width]
               (some (.isTrue targetByteRanged)) with
           | none => .error .entryNotFound
           | some pipeline =>
-              let sourceLoop := pipelineLoopFunctionsSource architecture 1 pipeline.crepe
+              let sourceLoop :=
+                pipelineLoopFunctionsSourceCompileProgRouted architecture 1 pipeline.crepe
               let sourceWord := pipelineWordFunctionsSource sourceLoop
               /- Cake's backend scans the compiled section list from its
                  reverse function order before `export_riscv` reverses the
@@ -595,7 +596,8 @@ def compileFlapjackRiscVSourceImageChecked [NeZero width]
               (some (.isTrue targetByteRanged)) with
           | none => .error .entryNotFound
           | some pipeline =>
-              let sourceLoop := pipelineLoopFunctionsSource architecture 1 pipeline.crepe
+              let sourceLoop :=
+                pipelineLoopFunctionsSourceCompileProgRouted architecture 1 pipeline.crepe
               let sourceWord := pipelineWordFunctionsSource sourceLoop
               /- Keep FFI discovery in Cake's reverse section order; the
                  artifact exporter reverses this list once more. -/
@@ -647,8 +649,8 @@ def compileFlapjackRiscVSourceRuntimeImageChecked [NeZero width]
               (some (.isTrue targetByteRanged)) with
           | none => .error .entryNotFound
           | some pipeline =>
-              let loop := pipelineLoopFunctionsSource architecture stackFunctionFirstLabel
-                pipeline.crepe
+              let loop := pipelineLoopFunctionsSourceCompileProgRouted architecture
+                stackFunctionFirstLabel pipeline.crepe
               let sourceWords := panToWordCompileProg loop
               let discoveryWords :=
                 sourceWords.map
