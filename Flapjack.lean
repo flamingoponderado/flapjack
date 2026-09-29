@@ -119,6 +119,7 @@ import Flapjack.Pancake.Semantics.LoopSemStateExact.Evaluate
 import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateInd
 import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.StateRebinding
 import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.Raise
+import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.Return
 import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.Skip
 import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.Tick
 import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.Fail
