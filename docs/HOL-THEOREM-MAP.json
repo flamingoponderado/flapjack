@@ -24216,4 +24216,31 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.9.14.5) against loop_to_wordProofScript.sml:154-168. Exact HOL state_rel_intro projects state_rel to: memory, mdomain, clock, be, ffi equality; ALOOKUP (fmap_to_alist t.store) CurrHeap = SOME (Word s.base_addr); globals_rel s.globals t.store; code_rel s.code t.code (HOL drops sh_mdomain, HeapLength and the top-address equation). Lean derives exactly those from loopToWordStateRelHOLExact via the same field order, with the eligible finite-map fields globals/store named by the relation qualifier and same-module witnesses."
-  }]
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/RelationsExact.lean",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "LoopSemStateFiniteExact.globals",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "hol_name": "state_rel_IMP",
+    "lean_name": "loopToWordStateRelImpClockHOLExact",
+    "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.9.19) against loop_to_wordProofScript.sml:272-275 `state_rel s t ==> t.clock = s.clock`; Lean over loopToWordStateRelHOLExact projecting the clock conjunct. The tagged signature names the exact LoopSem/WordSem carriers and consumes the relation over their eligible finite-support fields globals/store."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/RelationsExact.lean",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "LoopSemStateFiniteExact.globals",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "hol_name": "state_rel_with_clock",
+    "lean_name": "loopToWordStateRelWithClockHOLExact",
+    "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.9.19) against loop_to_wordProofScript.sml:1497-1501 `state_rel s t ==> state_rel (s with clock := k) (t with clock := k)`; Lean over loopToWordStateRelHOLExact with both records updated at the same clock; all other conjuncts survive unchanged. Source comparison of the relation carrier and eligible finite-support fields globals/store recorded."
+  }
+]

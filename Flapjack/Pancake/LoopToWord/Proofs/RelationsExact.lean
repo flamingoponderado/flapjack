@@ -159,4 +159,34 @@ theorem loopToWordStateRelIntroHOLExact {width : Nat} [NeZero width] {C F : Type
   obtain ⟨_, hmem, hmdom, _, hclock, hbe, hffi, hcurr, _, _, hglob, hcode⟩ := h
   exact ⟨hmem, hmdom, hclock, hbe, hffi, hcurr, hglob, hcode⟩
 
+/-- Exact HOL `state_rel_IMP`
+(`cakeml/pancake/proofs/loop_to_wordProofScript.sml:272-275`): the two states of
+`state_rel` share their clock. -/
+@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "state_rel_IMP"
+  (fmap_as_finite_support_relation :=
+    [LoopSemStateFiniteExact.globals, WordSemStateFiniteExact.store])
+  (words_as_type_indexed_bitvec)]
+theorem loopToWordStateRelImpClockHOLExact {width : Nat} [NeZero width] {C F : Type}
+    (source : LoopSemStateFiniteExact width F)
+    (target : WordSemStateFiniteExact width C F)
+    (h : loopToWordStateRelHOLExact source target) :
+    target.clock = source.clock := by
+  obtain ⟨_, _, _, _, hclock, _, _, _, _, _, _, _⟩ := h
+  exact hclock
+
+/-- Exact HOL `state_rel_with_clock`
+(`cakeml/pancake/proofs/loop_to_wordProofScript.sml:1497-1501`): replacing both
+clocks by the same `k` preserves `state_rel`. -/
+@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "state_rel_with_clock"
+  (fmap_as_finite_support_relation :=
+    [LoopSemStateFiniteExact.globals, WordSemStateFiniteExact.store])
+  (words_as_type_indexed_bitvec)]
+theorem loopToWordStateRelWithClockHOLExact {width : Nat} [NeZero width] {C F : Type}
+    (source : LoopSemStateFiniteExact width F)
+    (target : WordSemStateFiniteExact width C F) (k : Nat)
+    (h : loopToWordStateRelHOLExact source target) :
+    loopToWordStateRelHOLExact { source with clock := k } { target with clock := k } := by
+  obtain ⟨len, hmem, hmdom, hshm, _, hbe, hffi, hcurr, hhlen, htop, hglob, hcode⟩ := h
+  exact ⟨len, hmem, hmdom, hshm, rfl, hbe, hffi, hcurr, hhlen, htop, hglob, hcode⟩
+
 end Flapjack
