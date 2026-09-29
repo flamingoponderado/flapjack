@@ -938,6 +938,10 @@ run_probe pan_sem_is_valid_value_probeScript.sml pan_sem_is_valid_value_probe.ou
 run_probe pan_sem_write_bytearray_probeScript.sml pan_sem_write_bytearray_probe.out \
   write_empty write_miss \
   "$cake_dir/pancake/semantics/panSemScript.sml"
+run_probe crep_to_loop_write_bytearray_mem_rel_probeScript.sml \
+  crep_to_loop_write_bytearray_mem_rel_probe.out \
+  le_full_8_pan le_part_8_word \
+  "$cake_dir/pancake/proofs/crep_to_loopProofScript.sml"
 run_probe pan_sem_mem_store_byte_probeScript.sml pan_sem_mem_store_byte_probe.out \
   store_byte_hit_some write_bytearray_out_of_domain \
   "$cake_dir/pancake/semantics/panSemScript.sml" "$cake_dir/pancake/semantics"

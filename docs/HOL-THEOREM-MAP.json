@@ -21582,12 +21582,102 @@
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "ncompile_correct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NCompileCorrect/Leaf.lean",
+    "lean_name": "ncompileCorrectSkipCase",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-29; bead flapjack-pxn.18.5.6.41) against ncompile_correct at crep_to_loopProofScript.sml:110-154 and Skip Resume case :1648-1653. This is the genuine Skip evaluate_ind case, retaining the source evaluation equation, non-Error premise, pre-state state_rel/mem_rel/globals_rel/code_rel/locals_rel, existential clock/result/target-state conclusion, target evaluation, all post relations, HOL result mapping, and result-indexed locals_rel. No target result, target evaluation, or post relation is assumed. Exact source/target evaluators, compiler, and relations are used. The source and target return the same leaf result and preserve their input states. The finite-map qualifier names the maps traversed by the state, context, and relation carriers; words_as_type_indexed_bitvec records the positive HOL word dimension as BitVec width."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "ncompile_correct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NCompileCorrect/Leaf.lean",
+    "lean_name": "ncompileCorrectBreakCase",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-29; bead flapjack-pxn.18.5.6.41) against ncompile_correct at crep_to_loopProofScript.sml:110-154 and Break Resume case :1655-1660. This is the genuine Break n evaluate_ind case, retaining the source evaluation equation, non-Error premise, pre-state state_rel/mem_rel/globals_rel/code_rel/locals_rel, existential clock/result/target-state conclusion, target evaluation, all post relations, HOL result mapping, and result-indexed locals_rel. No target result, target evaluation, or post relation is assumed. Exact source/target evaluators, compiler, and relations are used. The source and target return the same leaf result and preserve their input states. The finite-map qualifier names the maps traversed by the state, context, and relation carriers; words_as_type_indexed_bitvec records the positive HOL word dimension as BitVec width."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "ncompile_correct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NCompileCorrect/Leaf.lean",
+    "lean_name": "ncompileCorrectContinueCase",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-29; bead flapjack-pxn.18.5.6.41) against ncompile_correct at crep_to_loopProofScript.sml:110-154 and Continue Resume case :1662-1667. This is the genuine Continue n evaluate_ind case, retaining the source evaluation equation, non-Error premise, pre-state state_rel/mem_rel/globals_rel/code_rel/locals_rel, existential clock/result/target-state conclusion, target evaluation, all post relations, HOL result mapping, and result-indexed locals_rel. No target result, target evaluation, or post relation is assumed. Exact source/target evaluators, compiler, and relations are used. The source and target return the same leaf result and preserve their input states. The finite-map qualifier names the maps traversed by the state, context, and relation carriers; words_as_type_indexed_bitvec records the positive HOL word dimension as BitVec width."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "ncompile_correct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NCompileCorrect/Leaf.lean",
+    "lean_name": "ncompileCorrectTickCase",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-29; bead flapjack-pxn.18.5.6.41) against ncompile_correct at crep_to_loopProofScript.sml:110-154 and Tick Resume case :1669-1677. This is the genuine Tick evaluate_ind case, retaining the source evaluation equation, non-Error premise, pre-state state_rel/mem_rel/globals_rel/code_rel/locals_rel, existential clock/result/target-state conclusion, target evaluation, all post relations, HOL result mapping, and result-indexed locals_rel. No target result, target evaluation, or post relation is assumed. Exact source/target evaluators, compiler, and relations are used. The zero-clock branch clears locals on both sides and produces TimeOut; the positive branch decrements both clocks and preserves locals_rel. The finite-map qualifier names the maps traversed by the state, context, and relation carriers; words_as_type_indexed_bitvec records the positive HOL word dimension as BitVec width."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
     "hol_name": "write_bytearray_mem_rel",
     "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/WriteBytearrayMemRel.lean",
     "lean_name": "write_bytearray_mem_rel",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.6.17.1.3) against write_bytearray_mem_rel at crep_to_loopProofScript.sml:251-256. HOL `!nb sm tm w dm be. mem_rel sm tm dm ==> mem_rel (write_bytearray w nb sm dm be) (write_bytearray w nb tm dm be) dm` (panSem write_bytearray on the source, wordSem write_bytearray on the target). Lean keeps the binders in order (nb : List (BitVec 8) = word8 list, sm total HolWordLab memory, tm total WordLocW memory, w, dm, be), the single premise and the conclusion, over the tagged crepToLoopMemRelHOLExact (mem_rel_def), panWriteBytearrayWord8HOL (panSem write_bytearray_def) and writeBytearrayExact (wordSem write_bytearray_def). HOL's one address set dm is dm : BitVec width -> Bool, passed as-is to the Bool-domain wordSem port and as the Prop view (fun a => dm a = true) to the panSem port and mem_rel: the set-as-Bool rendering of the tagged exact state_rel. The panSem port's DecidablePred is the concrete instance of that view, not a hypothesis. There is NO width premise, unlike the withdrawn writeBytearrayMemRel (hdiv): the untagged panSetByteHOL_eq_setByteHOL8 bridge holds at every positive width (existing panSetByteHOL_eq_riscvSetByteHOL for 8 <= width, direct arithmetic for width < 8)."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "code_rel2_def",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CodeRel2.lean",
+    "lean_name": "crepToLoopCodeRel2Exact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.funcs",
+      "s_code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.6.33.22) against crep_to_loopProofScript.sml:3842-3845. HOL defines `code_rel2 ctxt s_code t_code` as `code_rel ctxt (FMAP_MAP2 (\\(s,n,p). (n,crep_arith$simp_prog p)) s_code)`. Lean keeps ctxt, s_code, and t_code in the same positions and uses crepToLoopCodeRelExact over the same mapped entries. The owned funcs field and standalone s_code binder are the two traversed finite maps, with the exact finite-support relation qualifier and same-module roundtrip witness; the width-indexed CrepProgHOL/LoopProg carriers use the approved words qualifier. No hypotheses or result cases are added."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "mk_ctxt_code_imp_code_rel2",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CodeRel2.lean",
+    "lean_name": "mkCtxtCodeImpCodeRel2Exact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.6.33.22) against crep_to_loopProofScript.sml:3861-3886. HOL states that distinct source function names and ALOOKUP crep_code start = SOME ([], np) imply code_rel2 (mk_ctxt c FEMPTY (make_funcs crep_code) 0) (alist_to_fmap crep_code) (fromAList (compile_prog c crep_code)). Lean preserves c, crep_code, start, and np as target/program/assumption binders, both premises, and the same conclusion through the tagged exact mkCtxtExact, make_funcs carrier, compileProgHOLExact, code_rel2 relation, and sptFromAList. Fmap values arise only from those exact definitions, not from this theorem's own map binders. The width-indexed word translation is the only qualifier. No target-success premise or extra context fact is assumed."
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
