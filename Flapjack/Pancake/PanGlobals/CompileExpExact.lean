@@ -1,6 +1,5 @@
 import Flapjack.Pancake.PanGlobals
 import Flapjack.Pancake.PanLang.Prog
-import Flapjack.Pancake.PanGlobals
 import Flapjack.Pancake.Semantics.CrepSem.HOLState
 
 /-!
