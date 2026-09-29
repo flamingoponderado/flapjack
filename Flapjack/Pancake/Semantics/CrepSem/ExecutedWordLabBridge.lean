@@ -561,7 +561,8 @@ At every positive width every expression arm is bridged
 (`evalCrepRuntimeExp_executed_allWidth`), so the executed production evaluator
 at the canonical BitVec evaluator state agrees with the tagged exact
 `evalCrepSemHOLExp` on all Crep expressions (no hypothesis); as HOL
-correspondence this holds for `width ≥ 8` (see `evalCrepRuntimeExp_executed_allWidth`).  This is a
+correspondence this holds for `width ≥ 8`, stated explicitly by
+`evalCrepRuntimeExp_executed_hol`.  This is a
 Flapjack-specific representation bridge: it carries no `@[hol]` tag (and, not
 being under `Proofs/`, needs no theorem-map entry). -/
 
@@ -570,6 +571,23 @@ agrees with the tagged exact `evalCrepSemHOLExp` for every expression, at every
 positive width. -/
 theorem evalCrepRuntimeExp_executed {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ)
+    [DecidablePred state.memaddrs] (e : CrepExp (BitVec width)) :
+    evalCrepRuntimeExp (executedCrepState state) e =
+      (evalCrepSemHOLExp state (crepExpToHOL e)).map holWordLabToWord :=
+  evalCrepRuntimeExp_executed_allWidth state e
+
+/-- HOL source-correspondence boundary for the executed Crep evaluator: for
+`width ≥ 8` (every HOL word type with at least one byte, where `byte_align`'s
+`LOG2 (dimindex DIV 8)` and `byte_index`'s `MOD (dimindex DIV 8)` are
+specified), the executed production evaluator at the canonical BitVec
+evaluator state returns the tagged exact `crepSem$eval_def` result
+(`evalCrepSemHOLExp`, `crepSemScript.sml:90-137`) for every expression.  The
+width premise marks where the equality is a claim about original HOL
+behaviour; the underlying all-width Lean equality is
+`evalCrepRuntimeExp_executed_allWidth`, which below width 8 compares chosen Lean
+completions only.  Flapjack-only, untagged. -/
+theorem evalCrepRuntimeExp_executed_hol {width : Nat} [NeZero width] {σ : Type}
+    (_hwidth : 8 ≤ width) (state : CrepSemHOLState width σ)
     [DecidablePred state.memaddrs] (e : CrepExp (BitVec width)) :
     evalCrepRuntimeExp (executedCrepState state) e =
       (evalCrepSemHOLExp state (crepExpToHOL e)).map holWordLabToWord :=
