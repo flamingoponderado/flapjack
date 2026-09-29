@@ -778,5 +778,49 @@ theorem crepInlineActiveNames_contains_eq [BEq FunName] [LawfulBEq FunName]
   rw [crepInlineActiveNames_contains_any inlineable name,
     ← crepInlineLookup_isSome_any name inlineable]
 
+/-- The executed `crepExpVars` family over a list of production expressions
+    agrees with the exact `crepExpVarsHOL` read through `crepExpToHOL`.
+    Untagged Flapjack-specific infrastructure. -/
+private theorem crepExpVars_flatMap_codec {width : Nat} [NeZero width]
+    (arguments : List (CrepExp (BitVec width))) :
+    arguments.flatMap crepExpVars =
+      (arguments.map crepExpToHOL).flatMap crepExpVarsHOL := by
+  induction arguments with
+  | nil => rfl
+  | cons a as ih =>
+      simp only [List.map_cons, List.flatMap_cons, ih]
+      exact congrArg (fun x => x ++ (as.map crepExpToHOL).flatMap crepExpVarsHOL)
+        (crepExpVarsW_eq_crepExpVarsHOL_crepExpToHOL (width := width) a)
+
+/-- The executed temporary-name generator `crepInlineTmpNames` equals the exact
+    `genlistSuccAddHOLExact` at the folded maxima of the argument variables.
+    Untagged Flapjack-specific infrastructure. -/
+theorem crepInlineTmpNames_codec {width : Nat} [NeZero width]
+    (arguments : List (CrepExp (BitVec width))) (argumentNames : List Nat) :
+    crepInlineTmpNames (arguments.flatMap crepExpVars) argumentNames =
+      genlistSuccAddHOLExact
+        (max (((arguments.map crepExpToHOL).flatMap crepExpVarsHOL).foldl max 0)
+          (argumentNames.foldl max 0))
+        argumentNames.length := by
+  unfold crepInlineTmpNames genlistSuccAddHOLExact
+  rw [crepExpVars_flatMap_codec]
+
+/-- The executed `crepInlineCallBody` at `none` return info lifts to the exact
+    `.call none` arm of `inlineProgHOLCoreExact` under `crepProgToHOL`.
+    Untagged Flapjack-specific infrastructure. -/
+theorem crepProgToHOL_crepInlineCallBody_none {width : Nat} [NeZero width]
+    (name : FunName) (arguments : List (CrepExp (BitVec width)))
+    (argumentNames : List Nat) (body : CrepProg (BitVec width)) :
+    crepProgToHOL (crepInlineCallBody none name arguments argumentNames body) =
+      inlineTailHOLExact
+        (argLoadHOLExact
+          (genlistSuccAddHOLExact
+            (max (((arguments.map crepExpToHOL).flatMap crepExpVarsHOL).foldl max 0)
+              (argumentNames.foldl max 0))
+            argumentNames.length)
+          (arguments.map crepExpToHOL) argumentNames (crepProgToHOL body)) := by
+  unfold crepInlineCallBody
+  rw [crepProgToHOL_crepInlineTail, crepProgToHOL_crepArgLoad, crepInlineTmpNames_codec]
+
 end CrepInlineRoute
 end Flapjack
