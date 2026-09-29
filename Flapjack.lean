@@ -131,8 +131,10 @@ import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.Continue
 import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.Primitive
 import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.Seq
 import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.Ffi
+import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.CutState
 import Flapjack.Pancake.Semantics.LoopSemStateExact.ProductionExtCall
 import Flapjack.Pancake.Semantics.LoopSemStateExact.ProductionEvalHook
+import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.OpShift
 import Flapjack.Pancake.Semantics.LoopSemStateExact.Semantics
 import Flapjack.Pancake.Semantics.LoopProps.EvaluateClockExact
 import Flapjack.Pancake.Semantics.LoopProps.EvaluateIoEventsExact
