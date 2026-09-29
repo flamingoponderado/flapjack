@@ -10,6 +10,7 @@ import Flapjack.Compiler.Backend.Semantics.WordSem.Alloc
 import Flapjack.Compiler.Backend.Semantics.WordSem.ShMem
 import Flapjack.Misc.BinaryIeee
 import Flapjack.Misc.MachineIeee
+import Flapjack.Misc.BinaryIeeeRound
 import Flapjack.Basis.Pure.MlList
 import Flapjack.Pancake.PanLang
 import Flapjack.Pancake.PanLang.Shape
