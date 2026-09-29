@@ -39,6 +39,8 @@ print_eval "comp_longdiv" ``comp ^ctxt
   (loopLang$Arith (LLongDiv 10 11 12 13 14)) ^labels``;
 print_eval "comp_div" ``comp ^ctxt
   (loopLang$Arith (LDiv 10 12 13)) ^labels``;
+
+(* comp_def memory clauses, loop_to_wordScript.sml:79-95 *)
 print_eval "comp_store" ``comp ^ctxt
   (loopLang$Store (loopLang$Var 10) 11) ^labels``;
 print_eval "comp_setglobal" ``comp ^ctxt
@@ -51,3 +53,19 @@ print_eval "comp_store32" ``comp ^ctxt
   (loopLang$Store32 12 14 : 8 word loopLang$prog) ^labels``;
 print_eval "comp_storebyte" ``comp ^ctxt
   (loopLang$StoreByte 13 11 : 8 word loopLang$prog) ^labels``;
+
+(* comp_def simple control/result clauses, loop_to_wordScript.sml:96-110 *)
+print_eval "comp_break" ``comp ^ctxt (loopLang$Break 5) ^labels``;
+print_eval "comp_continue" ``comp ^ctxt (loopLang$Continue 6) ^labels``;
+print_eval "comp_raise" ``comp ^ctxt (loopLang$Raise 10) ^labels``;
+print_eval "comp_return" ``comp ^ctxt (loopLang$Return [10;11;12]) ^labels``;
+print_eval "comp_tick" ``comp ^ctxt loopLang$Tick ^labels``;
+print_eval "comp_fail" ``comp ^ctxt loopLang$Fail ^labels``;
+print_eval "comp_locValue" ``comp ^ctxt (loopLang$LocValue 10 3) ^labels``;
+
+(* comp_def FFI and ShMem clauses, loop_to_wordScript.sml:141-146 *)
+val liveSet = ``insert 6 () LN``;
+print_eval "comp_ffi" ``comp ^ctxt
+  (loopLang$FFI (strlit "foo") 10 11 12 13 ^liveSet) ^labels``;
+print_eval "comp_shMem" ``comp ^ctxt
+  (loopLang$ShMem Load 10 (loopLang$Var 12)) ^labels``;
