@@ -1718,6 +1718,14 @@ run_probe machine_ieee_fp64_compare_probeScript.sml machine_ieee_fp64_compare_pr
   "$hol_dir/src/floating-point/binary_ieeeScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 
+# The fpSem ``fp_cmp`` probe observes the ast$opb comparison selector of
+# ``fp_cmp_def`` at binary64 values (bead flapjack-h29l.6.2.7).
+run_probe fp_sem_fp_cmp_probeScript.sml fp_sem_fp_cmp_probe.out \
+  fp_cmp_lt_one_two fp_cmp_leq_two_one fp_cmp_gt_two_one \
+  fp_cmp_geq_one_one fp_cmp_lt_qnan_one fp_cmp_gt_pinf_one \
+  "$cake_dir/semantics/fpSemScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
 # The binary_ieee rounding-constant probe observes largest and threshold at
 # binary64 and float_top's value (bead flapjack-h29l.6.2.1).
 run_probe binary_ieee_round_constants_probeScript.sml binary_ieee_round_constants_probe.out \

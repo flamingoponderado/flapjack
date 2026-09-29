@@ -316,6 +316,7 @@ import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectStoreByte
 import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectExtCall
 import Flapjack.Pancake.Proofs.CrepInline
 import Flapjack.Pancake.CrepInline.Canonical
+import Flapjack.Pancake.CrepInline.InlineRouteBridge
 import Flapjack.CompileFunctionDistinct
 import Flapjack.Semantics
 import Flapjack.CrepeSemantics
