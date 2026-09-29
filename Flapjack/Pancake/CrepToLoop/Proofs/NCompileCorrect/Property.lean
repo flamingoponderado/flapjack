@@ -42,16 +42,15 @@ def localsResultRel {width : Nat} [NeZero width] {F : Type}
   | some .error => False
   | _ => True
 
-/-- Exact statement shape shared by the `ncompile_correct` constructor cases.
-    The source/target evaluation is existential as in HOL, and no target run or
-    result is assumed. -/
-def Property {width : Nat} [NeZero width] {F : Type}
-    (context : CrepToLoopContextExact) (live : NumSet)
-    (program : CrepProgHOL width) : Prop :=
-  ∀ (source : CrepSemHOLState width F)
-    (target : LoopSemStateFiniteExact width F)
-    (result : Option (CrepResultHOLExact width))
+/-- HOL's induction property at one fixed source state. The source/target
+    evaluation is existential as in `ncompile_correct`; this fixed-state form
+    lets case hypotheses follow `crepSemTheory.evaluate_ind` exactly. -/
+def PropertyAt {width : Nat} [NeZero width] {F : Type}
+    (program : CrepProgHOL width) (source : CrepSemHOLState width F) : Prop :=
+  ∀ (result : Option (CrepResultHOLExact width))
     (sourceFinal : CrepSemHOLState width F),
+    ∀ (target : LoopSemStateFiniteExact width F)
+    (context : CrepToLoopContextExact) (live : NumSet),
     evalCrepSemHOLProgExact source program = (result, sourceFinal) →
     result ≠ some .error →
     crepToLoopStateRelExact source target →

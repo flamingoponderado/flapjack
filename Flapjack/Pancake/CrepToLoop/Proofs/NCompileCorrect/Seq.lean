@@ -42,10 +42,11 @@ theorem holFmapAsFiniteSupportRelationWitness_LoopSemStateFiniteExact
 end NCompileCorrectSeqFmapWitnesses
 
 /-- Genuine `Seq c1 c2` induction case of HOL `ncompile_correct`
-    (`crep_to_loopProofScript.sml:110-154`, resumed at `:1679-1703`). The two
-    induction hypotheses are the theorem property for `c1` and `c2`; the
-    conclusion retains the existential target result, final state, and clock
-    extension. -/
+    (`crep_to_loopProofScript.sml:110-154`, resumed at `:1679-1703`). As in
+    `crepSemTheory.evaluate_ind`, the first IH is at the fixed source state;
+    the second IH is available only after evaluating `c1` to `none` and its
+    resulting state. The conclusion retains the existential target result,
+    final state, and clock extension. -/
 @[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "ncompile_correct"
   (fmap_as_finite_support_relation := [CrepToLoopContextExact.vars,
     CrepToLoopContextExact.funcs, CrepSemHOLState.locals, CrepSemHOLState.globals,
@@ -54,9 +55,11 @@ end NCompileCorrectSeqFmapWitnesses
 theorem crepToLoop_ncompile_correct_seq {width : Nat} [NeZero width] {σ : Type}
     (context : CrepToLoopContextExact) (live : NumSet)
     (first second : CrepProgHOL width)
-    (ihFirst : Property (F := σ) context live first)
-    (ihSecond : Property (F := σ) context live second)
     (source : CrepSemHOLState width σ)
+    (ihSecond : ∀ firstResult firstState,
+      (firstResult, firstState) = evalCrepSemHOLProgExact source first →
+      firstResult = none → PropertyAt second firstState)
+    (ihFirst : PropertyAt first source)
     (target : LoopSemStateFiniteExact width σ)
     (result : Option (CrepResultHOLExact width))
     (sourceFinal : CrepSemHOLState width σ)
@@ -87,7 +90,7 @@ theorem crepToLoop_ncompile_correct_seq {width : Nat} [NeZero width] {σ : Type}
       obtain ⟨firstExtra, firstTargetResult, firstTargetFinal,
         hFirstRun, hFirstState, hFirstMem, hFirstGlobals, hFirstCode,
         hFirstResult, hFirstLocals⟩ :=
-        ihFirst source target none firstState hFirst (by simp)
+        ihFirst none firstState target context live hFirst (by simp)
           hState hMem hGlobals hCode hLocals
       have hFirstTargetNone : firstTargetResult = none := by
         simpa [resultToLoop] using hFirstResult
@@ -95,7 +98,8 @@ theorem crepToLoop_ncompile_correct_seq {width : Nat} [NeZero width] {σ : Type}
       obtain ⟨secondExtra, finalTargetResult, finalTarget,
         hSecondRun, hSecondState, hSecondMem, hSecondGlobals, hSecondCode,
         hSecondResult, hSecondLocals⟩ :=
-        ihSecond firstState firstTargetFinal result sourceFinal hEval hNotError
+        (ihSecond none firstState hFirst.symm rfl)
+          result sourceFinal firstTargetFinal context live hEval hNotError
           hFirstState hFirstMem hFirstGlobals hFirstCode hFirstLocals
       have hFirstRunLift :
           LoopSemStateFiniteExact.evaluate (compileHOLExact context live first)
@@ -124,7 +128,7 @@ theorem crepToLoop_ncompile_correct_seq {width : Nat} [NeZero width] {σ : Type}
       obtain ⟨extra, targetResult, targetFinal,
         hRun, hFinalState, hFinalMem, hFinalGlobals, hFinalCode,
         hResultMap, hFinalLocals⟩ :=
-        ihFirst source target (some firstValue) firstState hFirst hFirstNotError
+        ihFirst (some firstValue) firstState target context live hFirst hFirstNotError
           hState hMem hGlobals hCode hLocals
       have hFinalState' : crepToLoopStateRelExact sourceFinal targetFinal :=
         hFinalEq ▸ hFinalState

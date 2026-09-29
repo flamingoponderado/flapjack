@@ -3,7 +3,6 @@ import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Seq
 import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Primitive
 import Flapjack.Pancake.Semantics.LoopProps.CompSyntaxOkLemmas
 import Flapjack.Pancake.Semantics.PanCommonProps
-import Flapjack.Pancake.Semantics.CrepProps
 import Flapjack.Pancake.CrepToLoop.Proofs.WriteBytearrayMemRel
 
 /-!
@@ -601,5 +600,119 @@ theorem crepToLoop_ncompile_correct_storeGlob {width : Nat} [NeZero width] {σ :
       rw [hne']
       simp only [Bool.false_eq_true, if_false]
       exact h1g ad v hv
-
+/-- `ncompile_correct`, case `Assign n e` (`crep_to_loopProofScript.sml:110-134`
+    statement; `Resume ncompile_correct[Assign]` at 2241-2277). `evaluate_ind`
+    supplies no induction hypothesis in this case. As in the HOL proof, a
+    successful source assignment implies the local already exists, and
+    `locals_rel` therefore supplies its target register. -/
+@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "ncompile_correct"
+  (fmap_as_finite_support_relation := [CrepToLoopContextExact.vars,
+    CrepToLoopContextExact.funcs, CrepSemHOLState.locals, CrepSemHOLState.globals,
+    CrepSemHOLState.code, LoopSemStateFiniteExact.globals])
+  (words_as_type_indexed_bitvec)]
+theorem crepToLoop_ncompile_correct_assign {width : Nat} [NeZero width] {σ : Type} :
+    ∀ (n : Nat) (e : CrepExpHOL width) (v1 : CrepSemHOLState width σ)
+      (res : Option (CrepResultHOLExact width)) (s1 : CrepSemHOLState width σ)
+      (t : LoopSemStateFiniteExact width σ) (ctxt : CrepToLoopContextExact) (l : NumSet),
+      evalCrepSemHOLProgExact v1 (.assign n e) = (res, s1) ∧ res ≠ some .error ∧
+        crepToLoopStateRelExact v1 t ∧
+        crepToLoopMemRelHOLExact v1.memory t.memory v1.memaddrs ∧
+        crepToLoopGlobalsRelHOLExact v1.globals t.globals ∧
+        crepToLoopCodeRelExact ctxt v1.code t.code ∧
+        crepToLoopLocalsRelExact ctxt l v1.locals t.locals →
+      ∃ (ck : Nat) (res1 : Option (LoopSemStateFiniteExact.LoopResultExact width))
+        (t1 : LoopSemStateFiniteExact width σ),
+        LoopSemStateFiniteExact.evaluate (compileHOLExact ctxt l (.assign n e))
+            { t with clock := t.clock + ck } = (res1, t1) ∧
+        crepToLoopStateRelExact s1 t1 ∧
+        crepToLoopMemRelHOLExact s1.memory t1.memory s1.memaddrs ∧
+        crepToLoopGlobalsRelHOLExact s1.globals t1.globals ∧
+        crepToLoopCodeRelExact ctxt s1.code t1.code ∧
+        res1 = crepToLoopResultHOL res ∧
+        crepToLoopResultLocalsHOL ctxt l s1.locals t1.locals res := by
+  intro n e v1 res s1 t ctxt l ⟨he, hne, hs, hm, hg, hc, hl⟩
+  rw [evalCrepSemHOLProgExact_assign] at he
+  cases hev : crepExactEvalExp v1 (fun a => Classical.propDecidable (v1.memaddrs a)) e with
+  | none =>
+      simp only [hev, Prod.mk.injEq] at he
+      exact absurd he.1.symm hne
+  | some value =>
+      cases hlocal : v1.locals.lookup n with
+      | none =>
+          simp only [hev, hlocal, Prod.mk.injEq] at he
+          exact absurd he.1.symm hne
+      | some old =>
+          simp only [hev, hlocal, Prod.mk.injEq] at he
+          obtain ⟨rfl, rfl⟩ := he
+          have hev' : evalCrepSemHOLExp v1 e = some value := by
+            simpa [crepExactEvalExp_eq_eval] using hev
+          have hmap0 := hl.2.2.2 n old hlocal
+          obtain ⟨mapped, hmap, hlive, _⟩ := hmap0
+          rcases hC : compileExpHOLExact ctxt (ctxt.vmax + 1) l e with
+            ⟨p, le, ntmp, nl⟩
+          obtain ⟨ck, st, hp, heval, hst, hm', hg', hc', hl'⟩ :=
+            crepToLoop_comp_exp_preserves_eval v1 e value t ctxt (ctxt.vmax + 1) l
+              p le ntmp nl ⟨hev', hs, hm, hg, hc, hl, hC, Nat.lt_succ_self _⟩
+          obtain ⟨hok, _, hnl⟩ := compile_exp_out_rel ctxt (ctxt.vmax + 1) l e
+            p le ntmp nl hC
+          have hliveIncl : ∀ k, sptMem k l → sptMem k nl := by
+            intro k hk
+            rw [hnl]
+            exact cut_sets_union_domain_subset _ l hok k hk
+          have hcompile : compileHOLExact ctxt l (.assign n e) =
+              loopNestedSeqHOL (p ++ [.assign mapped le]) := by
+            simp [compileHOLExact, hmap, hC]
+          have hrun : LoopSemStateFiniteExact.evaluate
+              (loopNestedSeqHOL (p ++ [.assign mapped le]))
+              { t with clock := t.clock + ck } =
+                (none, LoopSemStateFiniteExact.setVar mapped (wlabWlocExact value) st) := by
+            rw [LoopSemStateFiniteExact.evaluate_nested_seq_append_none _ _ _ _ hp]
+            simp only [loopNestedSeqHOL, LoopSemStateFiniteExact.evaluate_seq]
+            rw [LoopSemStateFiniteExact.evaluate.eq_3]
+            simp [LoopSemStateFiniteExact.setVar, heval, LoopSemStateFiniteExact.evaluate]
+          have hlocals : crepToLoopLocalsRelExact ctxt l
+              (CrepSemHOLState.setVar n value v1).locals
+              (LoopSemStateFiniteExact.setVar mapped (wlabWlocExact value) st).locals := by
+            simp only [LoopSemStateFiniteExact.setVar]
+            refine ⟨hl'.1, hl'.2.1, ?_, ?_⟩
+            · intro k hk
+              exact (sptMem_sptInsert k mapped (wlabWlocExact value) st.locals).mpr
+                (Or.inr (hl'.2.2.1 k (hliveIncl k hk)))
+            · intro key val hval
+              have hlookup : (CrepSemHOLState.setVar n value v1).locals.lookup key =
+                  (FUPDATE_HOL v1.locals.lookup (n, value)) key := by
+                simp [CrepSemHOLState.setVar, HolFiniteMapExact.lookup_updateEq]
+              rw [hlookup] at hval
+              by_cases hkey : key = n
+              · subst key
+                simp [FUPDATE_HOL] at hval
+                have hval' : val = value := hval.symm
+                subst val
+                exact ⟨mapped, hmap, hlive, by
+                  simpa [wlabWlocExact, wlabWlocHOL] using
+                    sptLookup_sptInsert_same mapped (wlabWlocHOL value) st.locals⟩
+              · have hbase : v1.locals.lookup key = some val := by
+                  simpa [FUPDATE_HOL, hkey] using hval
+                obtain ⟨mappedKey, hkeyMap, hkeyLive, _⟩ :=
+                  hl.2.2.2 key val hbase
+                obtain ⟨mappedKey', hkeyMap', hkeyLive', hkeyValue⟩ :=
+                  hl'.2.2.2 key val hbase
+                have hkeysEq : mappedKey' = mappedKey :=
+                  Option.some.inj (hkeyMap'.symm.trans hkeyMap)
+                subst mappedKey'
+                have hneq : mappedKey ≠ mapped := by
+                  intro heq
+                  exact hkey (hl.1 key n mappedKey mapped hkeyMap hmap heq)
+                refine ⟨mappedKey, hkeyMap, hkeyLive, ?_⟩
+                rw [sptLookup_sptInsert_ne mapped mappedKey _ st.locals hneq]
+                exact hkeyValue
+          refine ⟨ck, none, LoopSemStateFiniteExact.setVar mapped (wlabWlocExact value) st,
+            ?_, ?_, ?_, ?_, ?_, rfl, hlocals⟩
+          · rw [hcompile]
+            exact hrun
+          · simpa only [crepToLoopStateRelExact, CrepSemHOLState.setVar,
+              LoopSemStateFiniteExact.setVar] using hst
+          · simpa only [CrepSemHOLState.setVar, LoopSemStateFiniteExact.setVar] using hm'
+          · simpa only [CrepSemHOLState.setVar, LoopSemStateFiniteExact.setVar] using hg'
+          · simpa only [CrepSemHOLState.setVar, LoopSemStateFiniteExact.setVar] using hc'
 end Flapjack
