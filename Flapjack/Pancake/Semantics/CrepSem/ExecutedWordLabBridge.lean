@@ -22,8 +22,12 @@ pointwise agreement for every Crep expression, with no hypothesis. Its
 constructors are `const`/`var`/`loadGlob`/`baseAddr`/`topAddr`, the plain
 `load`, the byte-reading `loadByte`/`load32`, `op`/`crepOp`, and `cmp`/`shift`.
 The byte-reading arms rely on the production alignment, byte index and
-`word32`-then-`w2w` assembly agreeing with HOL's `byte_align`/`byte_index`/
-`mem_load_32` at every width (beads `flapjack-pxn.18.5.4.3.4`/`.5`/`.6`).  The
+`word32`-then-`w2w` assembly agreeing with the Lean HOL-shaped helpers
+(beads `flapjack-pxn.18.5.4.3.4`/`.5`/`.6`).
+Width domain: this is an equality of Lean definitions at every positive width, but it is
+a HOL correspondence only for `width ≥ 8`.  Below width 8 the byte count is 0, HOL's
+`LOG2 0`/`MOD 0` are unspecified, and the Lean HOL-shaped helpers use chosen completions
+(`Nat.log2 0 = 0`, `n % 0 = n`) with no HOL claim.  The
 fragment forms `evalCrepRuntimeExp_executed_of_noLoad32` and
 `evalCrepRuntimeExp_executed_of_noByteMemoryLoad` are corollaries; the latter
 covers the `Const` list path of `evaluate_replicate_const`
@@ -190,8 +194,9 @@ identity on bare words. -/
 /-! ## Byte-reading arms
 
 The plain `load32`/`loadByte` arms consult the runtime byte/endian memory model, while the
-exact `evalCrepSemHOLExp` reads through `panMemLoad32HOL`/`panMemLoadByteHOL`.  `loadByte`
-agrees at every positive width by `crepRuntimeLoadByte_riscv_eq_panMemLoadByteHOL` (bead
+exact `evalCrepSemHOLExp` reads through `panMemLoad32HOL`/`panMemLoadByteHOL`.  As Lean
+equalities, and as HOL correspondences for `width ≥ 8` only, `loadByte`
+agrees by `crepRuntimeLoadByte_riscv_eq_panMemLoadByteHOL` (bead
 `flapjack-pxn.18.5.4.3.5`), and `load32` by `crepRuntimeLoad32_riscv_eq_panMemLoad32HOL`
 (bead `flapjack-pxn.18.5.4.3.6`).  The theorems below take the address-subterm
 correspondence as a hypothesis. -/
@@ -261,9 +266,12 @@ theorem evalCrepRuntimeExp_executed_loadByte {width : Nat} [NeZero width] {σ : 
 /-- The executed production Crep evaluator at the canonical BitVec evaluator
 state agrees with the tagged exact `evalCrepSemHOLExp`, at every positive
 width, for every Crep expression, with no hypothesis: all constructors,
-including the byte-reading `loadByte` and `load32`, whose production alignment,
-byte index and 32-bit assembly are HOL's `byte_align`/`byte_index`/`mem_load_32`
-at every width (beads `flapjack-pxn.18.5.4.3.4`/`.5`/`.6`). The exact value is read through the bare-word projection
+including the byte-reading `loadByte` and `load32` (beads
+`flapjack-pxn.18.5.4.3.4`/`.5`/`.6`).
+Width domain: this is an equality of Lean definitions at every positive width, but it is
+a HOL correspondence only for `width ≥ 8`.  Below width 8 the byte count is 0, HOL's
+`LOG2 0`/`MOD 0` are unspecified, and the Lean HOL-shaped helpers use chosen completions
+(`Nat.log2 0 = 0`, `n % 0 = n`) with no HOL claim. The exact value is read through the bare-word projection
 `holWordLabToWord`, which is what the executed production evaluator returns. -/
 theorem evalCrepRuntimeExp_executed_allWidth {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ) [DecidablePred state.memaddrs]
@@ -552,7 +560,8 @@ theorem evalCrepRuntimeExpsWordLab_replicate_const_matches_exact
 At every positive width every expression arm is bridged
 (`evalCrepRuntimeExp_executed_allWidth`), so the executed production evaluator
 at the canonical BitVec evaluator state agrees with the tagged exact
-`evalCrepSemHOLExp` on all Crep expressions (no hypothesis).  This is a
+`evalCrepSemHOLExp` on all Crep expressions (no hypothesis); as HOL
+correspondence this holds for `width ≥ 8` (see `evalCrepRuntimeExp_executed_allWidth`).  This is a
 Flapjack-specific representation bridge: it carries no `@[hol]` tag (and, not
 being under `Proofs/`, needs no theorem-map entry). -/
 

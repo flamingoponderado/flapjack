@@ -29,16 +29,13 @@ def panRiscVWordOfBytes [NeZero width]
       (byte0.toNat + 256 * byte1.toNat +
         256 ^ 2 * byte2.toNat + 256 ^ 3 * byte3.toNat)
 
-/-- HOL `byte$byte_align w = align (LOG2 (dimindex (:α) DIV 8)) w` over the
-cell's byte count: clear the low `LOG2 bytesInWord` address bits, i.e. round
-down to a multiple of `2 ^ LOG2 bytesInWord`.  With `bytesInWord = width / 8`
-this is HOL's alignment at every width, including non-power-of-two byte counts
-(`width = 24`: address 5 aligns to 4, not 3; direct HOL oracle
-`scripts/hol-probes/byte_align_probe.out`, rows `ba24_5 = 4`, `ba64_13 = 8`,
-`ba8_7 = 7`).  For a power-of-two byte count, such as the production RV64
-`bytesInWord = 8`, it equals rounding down to a multiple of `bytesInWord`.
-HOL leaves `LOG2 0` unspecified; the `bytesInWord = 0` case (width < 8) returns
-the address unchanged. -/
+/-! HOL `byte$byte_align w = align (LOG2 (dimindex (:α) DIV 8)) w` clears the
+low `LOG2 bytesInWord` address bits. Thus, for `bytesInWord = width / 8` and
+`width ≥ 8`, production rounds down to a multiple of `2 ^ Nat.log2 bytesInWord`,
+including non-power-of-two byte counts (width 24: address 5 aligns to 4, not 3;
+see `scripts/hol-probes/byte_align_probe.out`). HOL `LOG2 0` is unspecified, so
+the helper retains its address-identity fallback for a zero byte count without
+claiming correspondence below width 8. -/
 def panRiscVByteAlign [NeZero width]
     (bytesInWord address : Word width) : Word width :=
   let bytes := bytesInWord.toNat
@@ -47,16 +44,14 @@ def panRiscVByteAlign [NeZero width]
     let alignment := 2 ^ Nat.log2 bytes
     BitVec.ofNat width ((address.toNat / alignment) * alignment)
 
-/-! Closed `Nat.log2` values for the power-of-two byte counts of the
-supported word widths, so `simp` evaluates `panRiscVByteAlign` at them. -/
+/-! Closed `Nat.log2` values for common power-of-two byte counts. -/
 @[simp] theorem panRiscV_log2_one : Nat.log2 1 = 0 := Nat.log2_two_pow (n := 0)
 @[simp] theorem panRiscV_log2_two : Nat.log2 2 = 1 := Nat.log2_two_pow (n := 1)
 @[simp] theorem panRiscV_log2_four : Nat.log2 4 = 2 := Nat.log2_two_pow (n := 2)
 @[simp] theorem panRiscV_log2_eight : Nat.log2 8 = 3 := Nat.log2_two_pow (n := 3)
 
-/-- For a power-of-two byte count `bytesInWord.toNat = 2 ^ k`,
-`panRiscVByteAlign` is the HOL `byte$byte_align` bit mask (clear the low `k`
-bits). -/
+/-- When `bytesInWord` is a positive power of two `2 ^ k`, production
+    alignment clears the low `k` bits, as does HOL `byte_align`. -/
 theorem panRiscVByteAlign_eq_bitMask_of_pow2 [NeZero width]
     (bytesInWord address : Word width) (k : Nat)
     (hbytes : bytesInWord.toNat = 2 ^ k) :
@@ -81,10 +76,12 @@ theorem panRiscVByteAlign_eight_eq_bitMask (address : Word 64) :
   exact panRiscVByteAlign_eq_bitMask_of_pow2 (width := 64)
     (bytesInWord := (8 : Word 64)) address 3 h8
 
-/-- Byte offset of `address` within its cell: `w2n a MOD d` from HOL
-`byte$byte_index` (before the big-endian reversal and the factor 8), with
-`d = bytesInWord`.  Nat `% 0` is the identity, which is the Lean rendering of
-HOL's unspecified `MOD 0` for words narrower than a byte. -/
+/-- Byte offset of `address` within its cell.  For `bytesInWord = width / 8`
+with `width ≥ 8` this is `w2n a MOD d` from HOL `byte$byte_index` (before the
+big-endian reversal and the factor 8).  Below width 8 the byte count is 0 and
+HOL's `MOD 0` is unspecified; Nat `% 0` (the identity) is a Flapjack
+convention, chosen to coincide with the Lean `panGetByteHOL` completion, and
+carries no HOL correspondence claim. -/
 def panRiscVByteIndex [NeZero width]
     (bytesInWord address : Word width) : Nat :=
   address.toNat % bytesInWord.toNat
