@@ -203,6 +203,41 @@ example : localsRelHOL (width := 64) localsRelProbeContext
   simpa [LoopSemStateFiniteExact.sptAlistInsert, findVarHOL,
     localsRelProbeContext, sptLookup, sptInsert] using hupdated
 
+/-! Replay the exact `locals_rel_alist_insert_toAList` theorem for empty and
+nonempty updates; the target premise is observed only through the unrestricted
+`toAList`/`fromAList` lookup bridge. -/
+
+example : localsRelHOL (width := 64) localsRelProbeContext
+    (LoopSemStateFiniteExact.sptAlistInsert [] [] localsRelProbeSource)
+    (LoopSemStateFiniteExact.sptAlistInsert [] []
+      (sptFromAList (sptToAList localsRelProbeTarget))) := by
+  have hrel : localsRelHOL (width := 64) localsRelProbeContext
+      localsRelProbeSource localsRelProbeTarget := by
+    simp [localsRelHOL, localsRelProbeContext, localsRelProbeSource,
+      localsRelProbeTarget, findVarHOL, sptMem, sptDomain, sptLookup, sptInsert]
+  exact localsRelHOLAlistInsertToAList (width := 64) localsRelProbeContext
+    [] [] localsRelProbeSource localsRelProbeTarget ⟨hrel, by simp⟩
+
+example : localsRelHOL (width := 64) localsRelProbeContext
+    (LoopSemStateFiniteExact.sptAlistInsert [0] [.word 9] localsRelProbeSource)
+    (LoopSemStateFiniteExact.sptAlistInsert [4] [.word 9]
+      (sptFromAList (sptToAList localsRelProbeTarget))) := by
+  have hrel : localsRelHOL (width := 64) localsRelProbeContext
+      localsRelProbeSource localsRelProbeTarget := by
+    simp [localsRelHOL, localsRelProbeContext, localsRelProbeSource,
+      localsRelProbeTarget, findVarHOL, sptMem, sptDomain, sptLookup, sptInsert]
+  have hmem : sptMem 0 localsRelProbeContext := by
+    simp [sptMem, sptDomain, localsRelProbeContext, sptLookup]
+  have hupdated := localsRelHOLAlistInsertToAList (width := 64)
+    localsRelProbeContext [0] [.word 9] localsRelProbeSource localsRelProbeTarget
+      ⟨hrel, by
+        intro name hname
+        have hnameZero : name = 0 := by simpa using hname
+        subst name
+        exact hmem⟩
+  simpa [LoopSemStateFiniteExact.sptAlistInsert, findVarHOL,
+    localsRelProbeContext, sptLookup, sptInsert] using hupdated
+
 /-! ## Original-domain parity for exact `comp_exp_def`
 
 `comp_exp_def` at `cakeml/pancake/loop_to_wordScript.sml:22-40` is the exact
