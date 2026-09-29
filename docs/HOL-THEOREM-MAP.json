@@ -3207,14 +3207,6 @@
   },
   {
     "hol_path": "cakeml/pancake/pan_globalsScript.sml",
-    "hol_name": "fresh_name_def",
-    "lean_path": "Flapjack/Pancake/PanGlobals/CompileExpExact.lean",
-    "lean_name": "freshNameExactHOL",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-luna-c (source comparison, bead flapjack-pxn.18.5.6.30.4.1.2.2.22.1.1) against pan_globalsScript.sml:55-64: `fresh_name name names = if MEM name names then fresh_name (strcat name \u00ab'\u00bb) names else name` is copied on the faithful MlS (`mlstring`) carrier. Lean membership is HOL list membership; `mlstrAppend name (ofString \"'\")` is the source strcat with the one-byte apostrophe; the recursive condition/result are identical. The well-founded termination measure is Flapjack-only support for HOL's `1 + MAX_SET (IMAGE strlen (set names)) - strlen name` and does not change the function. The exact MlS port duplicates the already-reviewed freshNameMlS clause-for-clause and is tagged here so this definition's source is directly visible. Existing direct HOL fresh-name probe rows remain in pan_globals_fresh_name_probe.out; production compileProgCake is still String-backed and is not claimed routed through compileProgExactHOL."
-  },
-  {
-    "hol_path": "cakeml/pancake/pan_globalsScript.sml",
     "hol_name": "compile_def",
     "lean_path": "Flapjack/Pancake/PanGlobals/CompileExpExact.lean",
     "lean_name": "compileProgExactHOL",
@@ -3223,7 +3215,7 @@
       "globals"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-c (source comparison, bead flapjack-pxn.18.5.6.30.4.1.2.2.22.1.1) against pan_globalsScript.sml:69-149: the Lean function takes the exact positive-width ProgHOL input and PanGlobalsContextExact context and returns the recursively compiled ProgHOL, with no extra premise or altered result. Clause review: Dec; Assign Global lookup success Store/failure Skip and Local fallback; Primitive; Store/Store32/StoreByte; Return/Raise; Seq/If/While; Call's no-result/local destination, global destination success (plain DecCall; handled result/flag Dec/Seq/If/Store path) and missing-global fallbacks; DecCall; ExtCall; ShMemStore; local ShMemLoad; global ShMemLoad only when FLOOKUP yields (One,addr), otherwise Skip; the source's final identity catch-all. The nested Fresh-name list order, shape_val result, address expression and flags were compared literally with `compile_def`. The only Lean carrier translations are PanGlobalsContextExact.globals from HOL finite map to canonical HolFiniteMapExact and HOL type-indexed word to BitVec width, recorded by the two qualifiers; ProgHOL, ExpHOL, ShapeHOL and MlS retain their exact constructors/carriers. Direct original HOL EVAL rows for local/global/missing Assign, Seq, global Return and both handled global-destination Call cases are captured in pan_globals_compile_probe.out; PanGlobalsCompileParity replays them on the exact carriers. This is a proof-side exact port: `compileProgCake` remains the executed String-backed route and no production-routing claim is made."
+    "reviewer": "flapjack-luna-c (source comparison, bead flapjack-pxn.18.5.2.22.1.1) against pan_globalsScript.sml:69-149: the Lean function takes the exact positive-width ProgHOL input and PanGlobalsContextExact context and returns the recursively compiled ProgHOL, with no extra premise or altered result. Clause review: Dec; Assign Global lookup success Store/failure Skip and Local fallback; Primitive; Store/Store32/StoreByte; Return/Raise; Seq/If/While; Call's no-result/local destination, global destination success (plain DecCall; handled result/flag Dec/Seq/If/Store path) and missing-global fallbacks; DecCall; ExtCall; ShMemStore; local ShMemLoad; global ShMemLoad only when FLOOKUP yields (One,addr), otherwise Skip; the source's final identity catch-all. The nested fresh-name list order uses the already-reviewed exact `freshNameMlS`; shape_val result, address expression and flags were compared literally with `compile_def`. The only Lean carrier translations are PanGlobalsContextExact.globals from HOL finite map to canonical HolFiniteMapExact and HOL type-indexed word to BitVec width, recorded by the two qualifiers; ProgHOL, ExpHOL, ShapeHOL and MlS retain their exact constructors/carriers. Direct original HOL EVAL rows for local/global/missing Assign, Seq, global Return and both handled global-destination Call cases are captured in pan_globals_compile_probe.out; PanGlobalsCompileParity replays them on the exact carriers. This is a proof-side exact port: `compileProgCake` remains the executed String-backed route and no production-routing claim is made."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",

@@ -1,5 +1,6 @@
 import Flapjack.Pancake.PanGlobals
 import Flapjack.Pancake.PanLang.Prog
+import Flapjack.Pancake.PanGlobals
 import Flapjack.Pancake.Semantics.CrepSem.HOLState
 
 /-!
@@ -184,46 +185,8 @@ HOL's program compiler is separate from `compile_exp_def`: it recursively
 rewrites control flow and uses the exact global map for global destinations
 and shared-memory loads.  Keep this port on `ProgHOL` and
 `PanGlobalsContextExact`; the production `compileProgCake` is String-backed
-and does not establish this declaration. -/
-
-/-- Flapjack-only termination measure: maximum byte-string length in a name
-    list.  HOL's `MAX_SET (IMAGE strlen (set names))` serves this role, but
-    this list-recursive helper has no separate HOL declaration. -/
-private def maxMlSLength : List MlS → Nat
-  | [] => 0
-  | name :: names => max name.explode.length (maxMlSLength names)
-
-/-- Flapjack-only support for the `freshNameExactHOL` termination proof; this
-    proves membership bounds for the Lean list measure and is not a port of a
-    separately named HOL theorem. -/
-private theorem mlSLength_le_maxMlSLength {name : MlS} :
-    ∀ names : List MlS, name ∈ names → name.explode.length ≤ maxMlSLength names
-  | [], h => by simp at h
-  | candidate :: names, h => by
-      simp only [List.mem_cons] at h
-      simp only [maxMlSLength]
-      rcases h with h | h
-      · subst candidate
-        exact Nat.le_max_left _ _
-      · exact Nat.le_trans (mlSLength_le_maxMlSLength names h) (Nat.le_max_right _ _)
-
-/-- Exact `fresh_name` over the faithful HOL `MlS` carrier.  Appending the
-    ASCII apostrophe appends byte 39, so this follows the source equation on
-    every `mlstring`, including names not representable as a production
-    Unicode `String`. -/
-@[hol "cakeml/pancake/pan_globalsScript.sml" "fresh_name_def"]
-def freshNameExactHOL (name : MlS) (names : List MlS) : MlS :=
-  if name ∈ names then
-    freshNameExactHOL (mlstrAppend name (ofString "'")) names
-  else name
-termination_by 1 + maxMlSLength names - name.explode.length
-decreasing_by
-  simp_wf
-  have hlen := mlSLength_le_maxMlSLength names ‹name ∈ names›
-  have happ : (mlstrAppend name (ofString "'")).explode.length =
-      name.explode.length + 1 := by
-    simp [mlstrAppend, ofString]
-  omega
+and does not establish this declaration. The exact fresh-name clause reuses
+the already-reviewed `freshNameMlS` port. -/
 
 /-- Exact-carrier port of HOL `pan_globals$compile_def`
     (`pan_globalsScript.sml:69-149`).  Its constructor equations and final
@@ -287,8 +250,8 @@ def compileProgExactHOL {width : Nat} [NeZero width]
               let compiledHandler := compileProgExactHOL context handler
               let names := handlerVar :: freeVarIdsHOL compiledHandler ++
                 cargs.flatMap varExpHOL
-              let resultName := freshNameExactHOL (ofString "") names
-              let flagName := freshNameExactHOL (ofString "vn'") (resultName :: names)
+              let resultName := freshNameMlS (ofString "") names
+              let flagName := freshNameMlS (ofString "vn'") (resultName :: names)
               let handlerBody :=
                 .seq compiledHandler (.assign .local flagName (.const (BitVec.ofNat width 1)))
               let callInfo := some (some (.local, resultName),
