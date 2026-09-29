@@ -1,5 +1,6 @@
 import Flapjack.Pancake.CrepToLoop
 import Flapjack.Pancake.CrepToLoop.StateRel
+import Flapjack.Pancake.CrepToLoop.Proofs.MakeFuncsLemmas
 import Flapjack.Pancake.CrepToLoop.Proofs.LocalsRelHelpers
 import Flapjack.Misc.Sptree
 
@@ -1257,7 +1258,7 @@ example :
           (x, List.range y.2.1.length, (fun (_ : List Nat) (_ : Unit) => true) y.2.1 y.2.2))
         [1, 2] ([(0, [], ()), (1, [7, 8], ())] : List (Nat × List Nat × Unit))).map
       Prod.fst = [1, 2] :=
-  mapMap2FstHOL (fun _ _ => true) [1, 2] [(0, [], ()), (1, [7, 8], ())] rfl
+  mapMap2FstHOL [1, 2] [(0, [], ()), (1, [7, 8], ())] (fun _ _ => true) rfl
 
 /-- HOL `alookup_el_pair_eq_el` oracle rows (`ael_*` in
     `scripts/hol-probes/crep_to_loop_alookup_el_probe.out`). -/
