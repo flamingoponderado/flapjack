@@ -36,7 +36,7 @@ theorem findVarHOL_ne_zero {width : Nat} [NeZero width]
 /-- Exact HOL `loop_to_wordProof$find_var_neq_odd`: under an even-only context
 assignment, `find_var` never returns an odd register. -/
 @[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "find_var_neq_odd"]
-theorem findVarHOL_ne_odd {width : Nat} [NeZero width]
+theorem findVarHOL_ne_odd
     (context : Spt Nat) (v k : Nat)
     (hpremises : (∀ n m, sptLookup n context = some m → m ≠ 0 ∧ m % 2 = 0) ∧
       k % 2 ≠ 0) :

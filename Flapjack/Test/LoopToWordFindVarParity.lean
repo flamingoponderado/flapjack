@@ -122,7 +122,7 @@ example : findVarHOL ctx2 0 ≠ 0 :=
 
 /-- Positive: the even-only context premise excludes every odd register. -/
 example : findVarHOL ctx2 0 ≠ 3 :=
-  findVarHOL_ne_odd (width := 64) ctx2 0 3 ⟨ctx2_even, by decide⟩
+  findVarHOL_ne_odd ctx2 0 3 ⟨ctx2_even, by decide⟩
 
 /-- Negative: the odd register `3` of `ctxOdd` is exactly what the even-only
 premise rules out, so keying on an even-only context is necessary. -/
