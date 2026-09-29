@@ -55,6 +55,21 @@ def routedCompileProgSkipShape : Bool :=
 
 #guard routedCompileProgSkipShape
 
+/-- Rebase function code sources and nested call targets together, while
+preserving destination/argument locals and local control labels. -/
+def rebasedFunctionLabelsShape : Bool :=
+  let program : LoopProg (BitVec 64) :=
+    .seq (.locValue 8 64)
+      (.call (some ([1], [2])) (some 65) [3]
+        (some (4, .locValue 9 66, .continue 65, [6])))
+  match rebaseHOLFunctionLabels 3 3 program with
+  | .seq (.locValue 8 3)
+      (.call (some ([1], [2])) (some 4) [3]
+        (some (4, .locValue 9 5, .continue 65, [6]))) => true
+  | _ => false
+
+#guard rebasedFunctionLabelsShape
+
 /-- An out-of-byte-range function name keeps the old production route; the
 exact `MlString` conversion is not used for a truncated Lean `String`. -/
 example : pipelineLoopFunctionsSourceRouted (width := 64) .rv64i 1

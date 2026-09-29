@@ -558,19 +558,20 @@ private def pipelineLoopFunctionsSourceExactAux {width : Nat} [NeZero width]
           (label + 1) programs hTail
 termination_by _ programs _ => programs.length
 
-/-! The exact whole-program `compile_prog_def` numbers its Crep functions from
-`firstLoopName` (64), whereas the source RISC-V pipeline reserves labels and
-starts those functions at `firstLabel` (normally 3). Rebase only call targets
-that name one of the functions in this compiled program; Loop's break and
-continue labels are local control-flow labels and must remain untouched. This
-is an untagged production bridge, not a HOL declaration. -/
-private def rebaseHOLFunctionLabel (firstLabel functionCount label : Nat) : Nat :=
+/-- Rebase a function label from the exact compiler's generated interval to the
+production pipeline's interval. This is Flapjack-only bridge infrastructure:
+HOL's compiler does not perform this cross-pipeline label-space translation. -/
+def rebaseHOLFunctionLabel (firstLabel functionCount label : Nat) : Nat :=
   if firstLoopName ≤ label && label < firstLoopName + functionCount then
     firstLabel + (label - firstLoopName)
   else
     label
 
-private def rebaseHOLFunctionCallTargets (firstLabel functionCount : Nat) :
+/-- Structurally rebase function/code labels in executable Loop syntax. Only
+direct call targets and `locValue` code sources in the generated function-label
+interval change; break/continue labels are local control-flow labels. This is
+an untagged Flapjack production bridge, not a HOL declaration. -/
+def rebaseHOLFunctionLabels (firstLabel functionCount : Nat) :
     LoopProg α → LoopProg α
   | .skip => .skip
   | .assign name value => .assign name value
@@ -584,14 +585,14 @@ private def rebaseHOLFunctionCallTargets (firstLabel functionCount : Nat) :
   | .store32 address value => .store32 address value
   | .storeByte address value => .storeByte address value
   | .seq first second =>
-      .seq (rebaseHOLFunctionCallTargets firstLabel functionCount first)
-        (rebaseHOLFunctionCallTargets firstLabel functionCount second)
+      .seq (rebaseHOLFunctionLabels firstLabel functionCount first)
+        (rebaseHOLFunctionLabels firstLabel functionCount second)
   | .ite operator condition right thenBranch elseBranch live =>
       .ite operator condition right
-        (rebaseHOLFunctionCallTargets firstLabel functionCount thenBranch)
-        (rebaseHOLFunctionCallTargets firstLabel functionCount elseBranch) live
+        (rebaseHOLFunctionLabels firstLabel functionCount thenBranch)
+        (rebaseHOLFunctionLabels firstLabel functionCount elseBranch) live
   | .loop liveIn body liveOut =>
-      .loop liveIn (rebaseHOLFunctionCallTargets firstLabel functionCount body) liveOut
+      .loop liveIn (rebaseHOLFunctionLabels firstLabel functionCount body) liveOut
   | .break label => .break label
   | .continue label => .continue label
   | .raise exception => .raise exception
@@ -599,17 +600,18 @@ private def rebaseHOLFunctionCallTargets (firstLabel functionCount : Nat) :
   | .shMem operator name address => .shMem operator name address
   | .tick => .tick
   | .mark body =>
-      .mark (rebaseHOLFunctionCallTargets firstLabel functionCount body)
+      .mark (rebaseHOLFunctionLabels firstLabel functionCount body)
   | .fail => .fail
-  | .locValue destination source => .locValue destination source
+  | .locValue destination source =>
+      .locValue destination (rebaseHOLFunctionLabel firstLabel functionCount source)
   | .call returns target arguments handler =>
       let rebasedHandler :=
         match handler with
         | none => none
         | some (exception, first, second, live) =>
             some (exception,
-              rebaseHOLFunctionCallTargets firstLabel functionCount first,
-              rebaseHOLFunctionCallTargets firstLabel functionCount second,
+              rebaseHOLFunctionLabels firstLabel functionCount first,
+              rebaseHOLFunctionLabels firstLabel functionCount second,
               live)
       .call returns (target.map (rebaseHOLFunctionLabel firstLabel functionCount)) arguments
         rebasedHandler
@@ -622,6 +624,108 @@ decreasing_by
     | decreasing_trivial
     | (simp_all only [LoopProg.call.sizeOf_spec]; omega)
 
+/-- The exact-carrier structural counterpart used to state the projection
+commutation theorem. HOL has no declaration for cross-pipeline label rebasing;
+this is Flapjack-only infrastructure and makes no claim about code tables or
+runtime state references. -/
+def rebaseHOLFunctionLabelsExact {width : Nat} [NeZero width]
+    (firstLabel functionCount : Nat) : HolLoopProg width → HolLoopProg width
+  | .skip => .skip
+  | .assign name value => .assign name value
+  | .primitive destinations operator arguments => .primitive destinations operator arguments
+  | .arith operation => .arith operation
+  | .store address value => .store address value
+  | .setGlobal address value => .setGlobal address value
+  | .load32 address destination => .load32 address destination
+  | .loadByte address destination => .loadByte address destination
+  | .store32 address value => .store32 address value
+  | .storeByte address value => .storeByte address value
+  | .seq first second =>
+      .seq (rebaseHOLFunctionLabelsExact firstLabel functionCount first)
+        (rebaseHOLFunctionLabelsExact firstLabel functionCount second)
+  | .ite operator condition right thenBranch elseBranch live =>
+      .ite operator condition right
+        (rebaseHOLFunctionLabelsExact firstLabel functionCount thenBranch)
+        (rebaseHOLFunctionLabelsExact firstLabel functionCount elseBranch) live
+  | .loop liveIn body liveOut =>
+      .loop liveIn (rebaseHOLFunctionLabelsExact firstLabel functionCount body) liveOut
+  | .break label => .break label
+  | .continue label => .continue label
+  | .raise exception => .raise exception
+  | .return values => .return values
+  | .shMem operator name address => .shMem operator name address
+  | .tick => .tick
+  | .mark body => .mark (rebaseHOLFunctionLabelsExact firstLabel functionCount body)
+  | .fail => .fail
+  | .locValue destination source =>
+      .locValue destination (rebaseHOLFunctionLabel firstLabel functionCount source)
+  | .call returns target arguments handler =>
+      let rebasedHandler :=
+        match handler with
+        | none => none
+        | some (exception, first, second, live) =>
+            some (exception,
+              rebaseHOLFunctionLabelsExact firstLabel functionCount first,
+              rebaseHOLFunctionLabelsExact firstLabel functionCount second,
+              live)
+      .call returns (target.map (rebaseHOLFunctionLabel firstLabel functionCount)) arguments
+        rebasedHandler
+  | .ffi function configuration configurationLength array arrayLength live =>
+      .ffi function configuration configurationLength array arrayLength live
+termination_by program => sizeOf program
+decreasing_by
+  simp_wf
+  all_goals first
+    | decreasing_trivial
+    | (simp_all only [HolLoopProg.call.sizeOf_spec]; omega)
+
+/-- The rebase is structural on the exact HOL syntax and its executable
+projection. It changes only `locValue` code sources and direct call targets in
+the generated function-label interval; local/register numbers, expressions,
+call-handler variable IDs, break/continue labels, live sets, and FFI names are
+preserved. This establishes only a syntax-level relation. The whole-program
+bridge must separately relate code-table keys and runtime `WordLoc` values
+before claiming execution equivalence. -/
+theorem rebaseHOLFunctionLabels_projection {width : Nat} [NeZero width]
+    (firstLabel functionCount : Nat) (program : HolLoopProg width) :
+    rebaseHOLFunctionLabels firstLabel functionCount
+        (holLoopProgToExecutableCanonical program) =
+      holLoopProgToExecutableCanonical
+        (rebaseHOLFunctionLabelsExact firstLabel functionCount program) := by
+  let mProg : HolLoopProg width → Prop := fun p =>
+    rebaseHOLFunctionLabels firstLabel functionCount
+        (holLoopProgToExecutableCanonical p) =
+      holLoopProgToExecutableCanonical
+        (rebaseHOLFunctionLabelsExact firstLabel functionCount p)
+  let mPair : HolLoopProg width × NumSet → Prop := fun p => mProg p.1
+  let mTriple : HolLoopProg width × HolLoopProg width × NumSet → Prop :=
+    fun p => mProg p.1 ∧ mProg p.2.1
+  let mQuad : Nat × HolLoopProg width × HolLoopProg width × NumSet → Prop :=
+    fun p => mTriple p.2
+  let mHandler : Option (Nat × HolLoopProg width × HolLoopProg width × NumSet) → Prop
+    | none => True
+    | some entry => mQuad entry
+  change mProg program
+  refine HolLoopProg.rec
+      (motive_1 := mProg) (motive_2 := mHandler) (motive_3 := mQuad)
+      (motive_4 := mTriple) (motive_5 := mPair)
+      ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_
+      ?_ ?_ ?_ ?_ ?_ ?_ ?_ program <;>
+    simp_all [mProg, mPair, mTriple, mQuad, mHandler,
+      rebaseHOLFunctionLabels, rebaseHOLFunctionLabelsExact,
+      holLoopProgToExecutableCanonical, holLoopProgToExecutable]
+  case refine_23 =>
+    intro returns target arguments handler hHandler
+    cases handler with
+    | none =>
+        simp [rebaseHOLFunctionLabels, rebaseHOLFunctionLabelsExact,
+          holLoopProgToExecutable]
+    | some value =>
+        rcases value with ⟨exception, first, second, live⟩
+        rcases hHandler with ⟨hFirst, hSecond⟩
+        simp [rebaseHOLFunctionLabels, rebaseHOLFunctionLabelsExact,
+          holLoopProgToExecutable, hFirst, hSecond]
+
 private def pipelineLoopFunctionsSourceCompileProgExact {width : Nat} [NeZero width]
     (firstLabel : Nat) (functions : List (CompiledFunction (BitVec width)))
     (_hFunctionNames : ∀ function ∈ functions, CrepNameRanged function.name)
@@ -631,8 +735,8 @@ private def pipelineLoopFunctionsSourceCompileProgExact {width : Nat} [NeZero wi
     (Flapjack.Basis.Pure.MlString.ofString function.name, function.params,
       crepProgToHOL function.body)
   (compileProgHOLExact .riscv holPrograms).map fun (label, parameters, body) =>
-    (rebaseHOLFunctionLabel firstLabel functions.length label, parameters,
-      rebaseHOLFunctionCallTargets firstLabel functions.length
+      (rebaseHOLFunctionLabel firstLabel functions.length label, parameters,
+      rebaseHOLFunctionLabels firstLabel functions.length
         (holLoopProgToExecutableCanonical body))
 
 /-- Per-function source-pipeline route through exact `compile_def`/`ocompile_def`
