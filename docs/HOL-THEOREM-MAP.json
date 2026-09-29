@@ -22684,5 +22684,35 @@
     "lean_name": "crepSimpMapcsHOL_setGlobals",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only commuting law for the local simp_prog_correct mapcs rendering and exact setGlobals; HOL has no standalone declaration."
+  },
+{
+    "hol_path": "cakeml/pancake/proofs/crep_arithProofScript.sml",
+    "hol_name": "simp_prog_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrectStore32.lean",
+    "lean_name": "simpProgCorrectStore32Case",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison (2026-09-29; bead flapjack-pxn.18.5.4.20): HOL simp_prog_correct (cakeml/pancake/proofs/crep_arithProofScript.sml:184-212) states !p s r s'. evaluate (p,s) = (r,s') ==> r <> SOME Error ==> evaluate (simp_prog p, mapcs s) = (r, mapcs s'). The Store32 dst src case keeps the source evaluation equation, the r <> SOME Error premise, and the target conclusion over the exact CrepProgHOL/CrepSemHOLState/CrepResultHOLExact carriers and the tagged exact crepSimpProgHOL. HOL simp_prog (Store32 exp1 exp2) = Store32 (simp_exp exp1) (simp_exp exp2) (crep_arithScript.sml:87) and evaluate (Store32 dst src, s) requires both operands to be SOME (Word _) and stores the low w2w w through mem_store_32 into (NONE, s with memory := m) or (SOME Error, s) (crepSemScript.sml:274-280). The proof consumes the tagged exact simp_exp_correct (crepSimpExpCorrectNativeHOL) for both address and value, and handles the memory-domain, alignment and Error arms through the tagged exact evalCrepSemHOLProgExact_store32_holShape/panMemStore32HOL clause; the code-only mapcs update is proved to commute with the memory update. No target-run assumption is taken. The named finite-map fields are the exact carrier's locals/globals/code with holFmapAsFiniteSupportWitness supplying the roundtrip, and the positive BitVec width represents HOL's word dimension. Direct HOL oracle rows: scripts/hol-probes/crep_arith_store_32_probe.out (simp_prog_store32, evaluate_store32_const, evaluate_store32_mapc, store32_mapc_commute, evaluate_store32_domain_error, evaluate_store32_unaligned_error, evaluate_store32_missing_var)."
+  },
+{
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrectStore32.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module canonical finite-support witness re-export for the CrepSemHOLState carrier used by the Store32 case tag; no separate HOL declaration."
+  },
+{
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrectStore32.lean",
+    "lean_name": "crepSimpMapcsHOL_setMemory",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only commuting law for the local simp_prog_correct mapcs rendering and exact memory update; HOL has no standalone declaration."
   }
 ]
