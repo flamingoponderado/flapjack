@@ -2133,6 +2133,18 @@ run_probe crep_arith_store_32_probeScript.sml crep_arith_store_32_probe.out \
   evaluate_store32_unaligned_error evaluate_store32_missing_var \
   "$cake_dir/pancake/proofs/crep_arithProofScript.sml" "$cake_dir/pancake/proofs"
 
+# The StoreByte case of crep_arithProofScript.sml:184-212 `simp_prog_correct`.
+# HOL `simp_prog (StoreByte dst src) = StoreByte (simp_exp dst) (simp_exp src)`
+# and `evaluate (StoreByte dst src, s)` evaluates both operands and stores the
+# low byte through `mem_store_byte` (`(NONE, s with memory := m)`, or
+# `(SOME Error, s)`); the local `mapc` overload is inlined.
+run_probe crep_arith_store_byte_probeScript.sml crep_arith_store_byte_probe.out \
+  simp_prog_storebyte evaluate_storebyte_success_result \
+  evaluate_storebyte_mapc_success_result evaluate_storebyte_error_domain \
+  evaluate_storebyte_mapc_error_domain evaluate_storebyte_missing_var \
+  storebyte_memory_mapc \
+  "$cake_dir/pancake/proofs/crep_arithProofScript.sml" "$cake_dir/pancake/proofs"
+
 # The loopSem evaluate_ind statement (rebound through fix_clock_evaluate at
 # loopSemScript.sml:497) is likewise tdefn-generated; capture it for the exact
 # Lean port used by loop_liveProof compile_correct's `recInduct evaluate_ind`.
