@@ -11440,6 +11440,41 @@
     "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.9.16.3) against loop_to_wordProofScript.sml:296-300. HOL quantifies xs, l, n, assumes for all x y v that two lookups of the same SOME v in l imply x=y and v<n, and concludes that two lookups of the same SOME v in make_ctxt n xs l imply x=y. Lean keeps that same result variable v, quantifier order, bound, and conclusion over the exact Spt Nat carrier; makeCtxtHOL and sptInsert are the exact tagged HOL definitions. No ALL_DISTINCT, extra premise, changed lookup result shape, or carrier qualifier is introduced. The proof establishes HOL's induction obligation that inserting the next register preserves injectivity below next+2. Regression exercises repeated names [7,8,7], where the last insertion maps 7 to 8 and 8 to 6."
   },
   {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "make_ctxt_APPEND",
+    "hol_line": 309,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "makeCtxtHOL_append",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.9.16.4) against the local HOL theorem at loop_to_wordProofScript.sml:309-315. HOL states that mapping xs ++ ys from n equals mapping ys from n + 2 * LENGTH xs over the context after mapping xs from n. Lean preserves xs/ys/n/context order, append orientation, the exact +2*length register offset, and equality over the same Spt Nat carrier. makeCtxtHOL is the exact tagged production-counterpart definition; no assumptions or carrier qualifiers were introduced. The regression splits [7,8] from [8,9], including a repeated name across the split, and checks the resulting register lookup."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "make_ctxt_NOT_MEM",
+    "hol_line": 317,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "makeCtxtHOL_notMem",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.9.16.5) against the local HOL theorem at loop_to_wordProofScript.sml:317-321. HOL states that for all xs/n/l/x, nonmembership of x in xs implies lookup x after make_ctxt equals lookup x in l. Lean keeps the same list-membership premise and Option lookup equality over exact Spt Nat, using the same tagged makeCtxtHOL and sptInsert definitions. No bounds, freshness conditions beyond the HOL nonmembership premise, or representation qualifiers are added. Focused regression checks absent key 9 through [4,6,4]."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "lookup_make_ctxt_range",
+    "hol_line": 331,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "makeCtxtHOL_lookupRange",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.9.16.6) against loop_to_wordProofScript.sml:331-339. HOL quantifies xs, m, l, n, y; from lookup n (make_ctxt m xs l) = SOME y it concludes lookup n l = SOME y or m <= y. Lean preserves this order, the same lookup result/value, the source disjunction order and Nat bound over exact Spt Nat. The proof mirrors the HOL induction using same-key insertion, distinct-key lookup preservation and monotonicity of m+2. No freshness or additional assumptions are imposed. Regression checks all results from [5,6] started at 4 are at least 4 and observes registers 4 and 6."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "lookup_EL_make_ctxt",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "makeCtxtHOL_lookupEL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.9.16.7) against loop_to_wordProofScript.sml:323-329. HOL quantifies params, k, n, l and assumes k < LENGTH params ∧ ALL_DISTINCT params before concluding lookup (EL k params) (make_ctxt n params l) = SOME (2*k+n). Lean preserves binder order, the same bound and distinctness premise (List.Nodup is the exact List rendering of ALL_DISTINCT), lookup result, starting register and arithmetic. The dependent List.get index is justified by the existing k < length premise and adds no semantic assumption; both source `make_ctxt` and Spt insertion are constructor-for-constructor exact carriers. Regression checks index zero and index two for distinct [3,5,9] from base 4."
+  },
+  {
     "hol_path": "cakeml/pancake/pan_commonScript.sml",
     "hol_name": "distinct_lists_def",
     "lean_path": "Flapjack/Pancake/PanCommon.lean",
@@ -24029,6 +24064,14 @@
     "reviewer": "Flapjack-only qualifier witness: names WordSemStateFiniteExact and its WordSemStateBroad toBroad/ofBroad roundtrip; supports the relation finite-map qualifier and is not a HOL declaration."
   },
   {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_WordSemStateFiniteExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only qualifier witness: names WordSemStateFiniteExact and its WordSemStateBroad toBroad/ofBroad roundtrip; supports the relation finite-map qualifier of envToListIMPHOL and is not a HOL declaration."
+  },
+  {
     "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
     "hol_name": "locals_rel_get_var",
     "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/LocalsRelLookups.lean",
@@ -24070,7 +24113,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/LocalsRelUpdates.lean",
     "lean_name": "localsRelHOLFromAListToAList",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific private transport lemma: replaces the target Spt by fromAList (toAList env) in localsRelHOL using the unrestricted Spt lookup roundtrip. It is proof infrastructure for the tagged locals_rel_alist_insert_toAList theorem, not a separate HOL declaration."
+    "reviewer": "Flapjack-specific private transport lemma for localsRelHOLAlistInsertToAList: replaces the target Spt by fromAList (toAList env) in localsRelHOL and lifts the relation using the unrestricted external HOL lookup_fromAList_toAList fact. There is no separate CakeML declaration for this helper; it is proof infrastructure for tagged locals_rel_alist_insert_toAList, not an exact HOL port."
   },
   {
     "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
@@ -24139,6 +24182,19 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-c source comparison (2026-09-29; bead flapjack-pxn.18.5.9.17.1) against wordPropsScript.sml:4636-4663. HOL has exactly the premise env_to_list y f = (q,r) and concludes both (!n. ALOOKUP q n = lookup n y) and (!x1 x2. MEM (x1,x2) q ==> lookup x1 y = SOME x2); Lean retains the same result equation, tuple/list carriers, two conjuncts, key/value quantifiers, and no extra premise. Spt ALOOKUP uses the untagged first-match sptAListLookup rendering; the proof uses the exact env_to_list sort/rearrange entry-preservation lemmas and Spt toAList membership/lookup support, deriving uniqueness from functional Spt lookup. WordLocW's type-indexed words use words_as_type_indexed_bitvec; no state, evaluator, map-carrier, or list-to-array translation is introduced."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "env_to_list_IMP",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "envToListIMPHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison (2026-09-29; bead flapjack-pxn.18.5.9.17.3) against loop_to_wordProofScript.sml:410-417, corrected after coordinator review HOLD. HOL quantifies target state t and premise env_to_list env1 t.permute = (l,permute). Lean now takes target : WordSemStateFiniteExact width C F and uses target.permute in the premise, rather than quantifying an independent bijSeq. Both conclusions remain over exact Spt maps: sptDomain/sptFromAList render domain/fromAList, and sptLookup_sptFromAList is the first-match ALOOKUP rendering. The proof obtains lookup equality from env_to_list_lookup_equiv with that same target.permute, with no additional premise. fmap_as_finite_support_relation records only the exact target-state fpRegs/store finite-map carrier; words_as_type_indexed_bitvec records HOL's word dimension."
   },
   {
     "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
@@ -24243,32 +24299,55 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.9.13) against loop_to_wordProofScript.sml:41-52. HOL state_rel s t = EX (len) with t.memory=s.memory, t.mdomain=s.mdomain, t.sh_mdomain=s.sh_mdomain, t.clock=s.clock, t.be=s.be, t.ffi=s.ffi, ALOOKUP (fmap_to_alist t.store) CurrHeap = SOME (Word s.base_addr), ALOOKUP (fmap_to_alist t.store) HeapLength = SOME (Word len), s.top_addr = s.base_addr + 2w*len, globals_rel s.globals t.store, code_rel s.code t.code. Lean loopToWordStateRelHOLExact over LoopSemStateFiniteExact/WordSemStateFiniteExact keeps the same existential length and all eleven conjuncts; ALOOKUP (fmap_to_alist t.store) key is the canonical HolFiniteMapExact lookup, CurrHeap/HeapLength are WordStore .currHeap/.heapLength, Word len is WordLocW.word (BitVec.ofNat width len), and 2w*len is (2 : BitVec width)*BitVec.ofNat width len. The named finite-map carriers are the eligible fields LoopSemStateFiniteExact.globals and WordSemStateFiniteExact.store (both HolFiniteMapExact); code is an Spt tree map and is not named. Same-module witnesses holFmapAsFiniteSupportRelationWitness_LoopSemStateFiniteExact and _WordSemStateFiniteExact re-export the canonical roundtrips."
+  }
+,
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "code_rel_intro",
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/RelationsExact.lean",
+    "lean_name": "loopToWordCodeRelIntroHOLExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.9.14.5) against loop_to_wordProofScript.sml:145-152. Exact HOL code_rel_intro: code_rel s_code t_code ==> !name params body. lookup name s_code = SOME (params,body) ==> lookup name t_code = SOME (LENGTH params+1, comp_func name params body) /\\ ALL_DISTINCT params. Lean exposes exactly the defining implication of loopToWordCodeRelHOLExact over Spt code maps: sptLookup name sourceCode = some (params, body) -> sptLookup name targetCode = some (params.length + 1, loopToWordCompFuncHOL name params body) /\\ params.Nodup. No extra premise."
   },
   {
     "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "state_rel_intro",
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/RelationsExact.lean",
+    "lean_name": "loopToWordStateRelIntroHOLExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "LoopSemStateFiniteExact.globals",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.9.14.5) against loop_to_wordProofScript.sml:154-168. Exact HOL state_rel_intro projects state_rel to: memory, mdomain, clock, be, ffi equality; ALOOKUP (fmap_to_alist t.store) CurrHeap = SOME (Word s.base_addr); globals_rel s.globals t.store; code_rel s.code t.code (HOL drops sh_mdomain, HeapLength and the top-address equation). Lean derives exactly those from loopToWordStateRelHOLExact via the same field order, with the eligible finite-map fields globals/store named by the relation qualifier and same-module witnesses."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/RelationsExact.lean",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "LoopSemStateFiniteExact.globals",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
     "hol_name": "state_rel_IMP",
-    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/RelationsExact.lean",
-    "lean_name": "loopToWordStateRelHOLExact_imp_clock",
-    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support_relation": [
-      "LoopSemStateFiniteExact.globals",
-      "WordSemStateFiniteExact.store"
-    ],
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds5 source comparison (2026-09-29; bead flapjack-pxn.18.5.9.19) against loop_to_wordProofScript.sml:272-274. HOL state_rel s t ==> t.clock = s.clock projects the clock conjunct of state_rel_def. Lean states the same implication over the exact carriers LoopSemStateFiniteExact/WordSemStateFiniteExact and projects the clock conjunct of loopToWordStateRelHOLExact; no extra premise. The relation names the eligible finite-map fields LoopSemStateFiniteExact.globals and WordSemStateFiniteExact.store (both HolFiniteMapExact; code is an Spt tree map and is not named), with the same-module witnesses in LoopToWordStateRelWitnesses."
+    "lean_name": "loopToWordStateRelImpClockHOLExact",
+    "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.9.19) against loop_to_wordProofScript.sml:272-275 `state_rel s t ==> t.clock = s.clock`; Lean over loopToWordStateRelHOLExact projecting the clock conjunct. The tagged signature names the exact LoopSem/WordSem carriers and consumes the relation over their eligible finite-support fields globals/store."
   },
   {
     "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
-    "hol_name": "state_rel_with_clock",
     "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/RelationsExact.lean",
-    "lean_name": "loopToWordStateRelHOLExact_withClock",
     "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
     "fmap_as_finite_support_relation": [
       "LoopSemStateFiniteExact.globals",
       "WordSemStateFiniteExact.store"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds5 source comparison (2026-09-29; bead flapjack-pxn.18.5.9.19) against loop_to_wordProofScript.sml:1497-1501. HOL state_rel s t ==> state_rel (s with clock := k) (t with clock := k) sets the same clock on both states. Lean keeps the same implication and the same existential length and eleven conjuncts over the exact carriers, with the clock conjunct becoming k = k; memory/mdomain/shMdomain/be/ffi/store base and length/top_addr/globals/code are unchanged. Same qualifier carriers and witnesses as state_rel_IMP; no extra premise."
+    "hol_name": "state_rel_with_clock",
+    "lean_name": "loopToWordStateRelWithClockHOLExact",
+    "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.9.19) against loop_to_wordProofScript.sml:1497-1501 `state_rel s t ==> state_rel (s with clock := k) (t with clock := k)`; Lean over loopToWordStateRelHOLExact with both records updated at the same clock; all other conjuncts survive unchanged. Source comparison of the relation carrier and eligible finite-support fields globals/store recorded."
   },
 {
   "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
@@ -24277,6 +24356,6 @@
   "lean_name": "wordShiftHOL_some_mod_dimword",
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
-  "reviewer": "flapjack-ds5 source comparison (2026-09-29; bead flapjack-pxn.18.5.9.18.2) against loop_to_wordProofScript.sml:453-458. HOL statement is exactly good_dimindex (:'a) /\\ word_sh sh (w : 'a word) n = SOME z ==> n MOD dimword (:'a) = n, with sh/w/n/z universally quantified. Lean keeps the same two hypotheses and conclusion, rendering HOL dimindex (:'a) as the positive width (BitVec width), dimword (:'a) = 2 ** dimindex (:'a) as 2 ^ width, HOL word_sh by the tagged Flapjack.wordShiftHOL (word_sh_def, Flapjack/Pancake/WordLang.lean:46) and good_dimindex by the tagged Flapjack.goodDimindex (good_dimindex_def, Flapjack/Misc/GoodDimindex.lean:27). The words_as_type_indexed_bitvec qualifier records the type-indexed-word-to-BitVec translation; the word_sh SOME guard forces n = 0 or n < width, and goodDimindex restricts width to 32 or 64, giving n % 2 ^ width = n. Regression examples in Flapjack.Test.LoopToWordWordShiftModDimwordParity include a good-dimension positive, the overflow (none) rows, and the load-bearing negative (not goodDimindex 8 and 300 % 2 ^ 8 <> 300)."
+  "reviewer": "flapjack-ds5 source comparison (2026-09-29; bead flapjack-pxn.18.5.9.18.2) against loop_to_wordProofScript.sml:453-458. HOL statement is exactly good_dimindex (:'a) /\\ word_sh sh (w : 'a word) n = SOME z ==> n MOD dimword (:'a) = n, with sh/w/n/z universally quantified. Lean keeps the same two hypotheses and conclusion, rendering HOL dimindex (:'a) as the positive width (BitVec width), dimword (:'a) = 2 ** dimindex (:'a) as 2 ^ width, HOL word_sh by the tagged Flapjack.wordShiftHOL (word_sh_def, Flapjack/Pancake/WordLang.lean:46) and good_dimindex by the tagged Flapjack.goodDimindex (good_dimindex_def, Flapjack/Misc/GoodDimindex.lean:27). The words_as_type_indexed_bitvec qualifier records the type-indexed-word-to-BitVec translation; the word_sh SOME guard forces n = 0 or n < width, and goodDimindex restricts width to 32 or 64, giving n % 2 ^ width = n. Regression examples in Flapjack.Test.LoopToWordWordShiftModDimwordParity."
 }
 ]

@@ -115,37 +115,78 @@ def loopToWordStateRelHOLExact {width : Nat} [NeZero width] {C F : Type}
       loopToWordGlobalsRelHOLExact source.globals target.store ∧
       loopToWordCodeRelHOLExact source.code target.code
 
-/-- Exact HOL `loop_to_wordProof$state_rel_IMP` (`loop_to_wordProofScript.sml:272-274`):
-    the state relation pins the target clock to the source clock. -/
+/-- Exact HOL `code_rel_intro` from
+`cakeml/pancake/proofs/loop_to_wordProofScript.sml:145-152`: the defining
+`code_rel` implication, exposing the target lookup result
+`(params.length+1, comp_func name params body)` and the `ALL_DISTINCT params`
+side condition. -/
+@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "code_rel_intro"
+  (words_as_type_indexed_bitvec)]
+theorem loopToWordCodeRelIntroHOLExact {width : Nat} [NeZero width]
+    (sourceCode : Spt (List Nat × HolLoopProg width))
+    (targetCode : Spt (Nat × WordLangProgHOL (BitVec width)))
+    (h : loopToWordCodeRelHOLExact sourceCode targetCode) :
+    ∀ name params body,
+      sptLookup name sourceCode = some (params, body) →
+        sptLookup name targetCode =
+            some (params.length + 1, loopToWordCompFuncHOL name params body) ∧
+          params.Nodup :=
+  h
+
+/-- Exact HOL `state_rel_intro` from
+`cakeml/pancake/proofs/loop_to_wordProofScript.sml:154-168`: the projections of
+`state_rel` that HOL exposes, namely the shared memory, `mdomain`, clock,
+endianness and FFI state, the target `CurrHeap` entry for the source base
+address, and the `globals_rel`/`code_rel` relations. Of the eligible
+finite-map fields only `LoopSemStateFiniteExact.globals` and
+`WordSemStateFiniteExact.store` are named. -/
+@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "state_rel_intro"
+  (fmap_as_finite_support_relation :=
+    [LoopSemStateFiniteExact.globals, WordSemStateFiniteExact.store])
+  (words_as_type_indexed_bitvec)]
+theorem loopToWordStateRelIntroHOLExact {width : Nat} [NeZero width] {C F : Type}
+    (source : LoopSemStateFiniteExact width F)
+    (target : WordSemStateFiniteExact width C F)
+    (h : loopToWordStateRelHOLExact source target) :
+    target.memory = source.memory ∧
+      target.mdomain = source.mdomain ∧
+      target.clock = source.clock ∧
+      target.be = source.be ∧
+      target.ffi = source.ffi ∧
+      target.store.lookup .currHeap = some (.word source.baseAddr) ∧
+      loopToWordGlobalsRelHOLExact source.globals target.store ∧
+      loopToWordCodeRelHOLExact source.code target.code := by
+  obtain ⟨_, hmem, hmdom, _, hclock, hbe, hffi, hcurr, _, _, hglob, hcode⟩ := h
+  exact ⟨hmem, hmdom, hclock, hbe, hffi, hcurr, hglob, hcode⟩
+
+/-- Exact HOL `state_rel_IMP`
+(`cakeml/pancake/proofs/loop_to_wordProofScript.sml:272-275`): the two states of
+`state_rel` share their clock. -/
 @[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "state_rel_IMP"
   (fmap_as_finite_support_relation :=
     [LoopSemStateFiniteExact.globals, WordSemStateFiniteExact.store])
   (words_as_type_indexed_bitvec)]
-theorem loopToWordStateRelHOLExact_imp_clock {width : Nat} [NeZero width] {C F : Type}
+theorem loopToWordStateRelImpClockHOLExact {width : Nat} [NeZero width] {C F : Type}
     (source : LoopSemStateFiniteExact width F)
     (target : WordSemStateFiniteExact width C F)
     (h : loopToWordStateRelHOLExact source target) :
     target.clock = source.clock := by
-  obtain ⟨_len, _hmem, _hmdomain, _hshMdomain, hclock, _⟩ := h
+  obtain ⟨_, _, _, _, hclock, _, _, _, _, _, _, _⟩ := h
   exact hclock
 
-/-- Exact HOL `loop_to_wordProof$state_rel_with_clock`
-    (`loop_to_wordProofScript.sml:1497-1501`): the state relation is preserved
-    by setting the same clock on both sides. -/
+/-- Exact HOL `state_rel_with_clock`
+(`cakeml/pancake/proofs/loop_to_wordProofScript.sml:1497-1501`): replacing both
+clocks by the same `k` preserves `state_rel`. -/
 @[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "state_rel_with_clock"
   (fmap_as_finite_support_relation :=
     [LoopSemStateFiniteExact.globals, WordSemStateFiniteExact.store])
   (words_as_type_indexed_bitvec)]
-theorem loopToWordStateRelHOLExact_withClock {width : Nat} [NeZero width] {C F : Type}
+theorem loopToWordStateRelWithClockHOLExact {width : Nat} [NeZero width] {C F : Type}
     (source : LoopSemStateFiniteExact width F)
     (target : WordSemStateFiniteExact width C F) (k : Nat)
     (h : loopToWordStateRelHOLExact source target) :
     loopToWordStateRelHOLExact { source with clock := k } { target with clock := k } := by
-  obtain ⟨len, hmem, hmdomain, hshMdomain, _hclock, hbe, hffi, hcurrHeap, hheapLength,
-    htopAddr, hglobals, hcode⟩ := h
-  exact ⟨len, by simpa using hmem, by simpa using hmdomain, by simpa using hshMdomain,
-    rfl, by simpa using hbe, by simpa using hffi, by simpa using hcurrHeap,
-    by simpa using hheapLength, by simpa using htopAddr, by simpa using hglobals,
-    by simpa using hcode⟩
+  obtain ⟨len, hmem, hmdom, hshm, _, hbe, hffi, hcurr, hhlen, htop, hglob, hcode⟩ := h
+  exact ⟨len, hmem, hmdom, hshm, rfl, hbe, hffi, hcurr, hhlen, htop, hglob, hcode⟩
 
 end Flapjack
