@@ -205,48 +205,49 @@ theorem makeFuncsDomainCompileProgExact {width : Nat} [NeZero width] :
       _ = lc := hlc.symm
   exact sptFromAList_mem_key (compileProgHOLExact c crep_code) lc hkey
 
-/-- Local total rendering of HOL `EL` on the exact crep program carrier. HOL
+/-- Local total rendering of HOL `EL` on a fully polymorphic triple list. HOL
     `EL` unfolds via `HD`/`TL` (`listScript.sml:225-228`), so for an
-    out-of-range index it is `HD [] = ARB`, an unspecified element of the
-    product type. This rendering instead returns the concrete fallback
-    `(implode [], [], CrepProgHOL.skip)`. The two agree exactly on in-range
-    indices, and the exact theorem below proves its own index is in range, so
-    the fallback is never observed here. This helper is proof infrastructure,
-    not a separately tagged HOL declaration. -/
-private def initialProgEL {width : Nat} [NeZero width]
-    (prog : List (Basis.Pure.MlString.MlString × List Nat × CrepProgHOL width))
-    (n : Nat) : Basis.Pure.MlString.MlString × List Nat × CrepProgHOL width :=
-  (prog[n]?).getD (Basis.Pure.MlString.MlString.implode [], [], CrepProgHOL.skip)
+    out-of-range index it is `HD [] = ARB`, an unspecified element. This
+    rendering returns an explicit `fallback` (the Lean translation of the
+    unspecified `ARB` slot). The two agree exactly on in-range indices, and the
+    exact theorem below proves its own index is in range, so the fallback is
+    never observed here. This helper is proof infrastructure, not a separately
+    tagged HOL declaration. -/
+private def initialProgEL {α β γ : Type} (fallback : α × List β × γ)
+    (prog : List (α × List β × γ)) (n : Nat) : α × List β × γ :=
+  (prog[n]?).getD fallback
 
-private theorem initialProgEL_eq_getElem {width : Nat} [NeZero width]
-    (prog : List (Basis.Pure.MlString.MlString × List Nat × CrepProgHOL width))
-    (n : Nat) (hn : n < prog.length) :
-    initialProgEL prog n = prog[n]'hn := by
+private theorem initialProgEL_eq_getElem {α β γ : Type} (fallback : α × List β × γ)
+    (prog : List (α × List β × γ)) (n : Nat) (hn : n < prog.length) :
+    initialProgEL fallback prog n = prog[n]'hn := by
   simp [initialProgEL, hn]
 
 /-- Exact HOL `initial_prog_make_funcs_el`
-    (`crep_to_loopProofScript.sml:3942-3945`). It keeps HOL's binders
-    `prog, start, n`, lookup premise and conjunction order. `make_funcs` is the
-    exact finite-support result, `first_name` is the tagged `firstLoopName`,
-    and the program is the exact `MlString`/`CrepProgHOL width` carrier. HOL
-    `EL` is rendered by `initialProgEL`; the conclusion itself establishes
-    `n < prog.length`, and `initialProgEL_eq_getElem` shows that on this
-    in-range index the two agree, so the fallback difference is never observed
-    (for an out-of-range index HOL `EL` would be the unspecified `ARB`, while
-    `initialProgEL` uses its concrete default). Only the HOL positive word width
-    uses the reviewed type-indexed BitVec qualifier. -/
-@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "initial_prog_make_funcs_el"
-  (words_as_type_indexed_bitvec)]
-theorem initialProgMakeFuncsElExact {width : Nat} [NeZero width] :
-    ∀ (prog : List (Basis.Pure.MlString.MlString × List Nat × CrepProgHOL width))
-      (start : Basis.Pure.MlString.MlString) (n : Nat),
+    (`crep_to_loopProofScript.sml:3942-3945`). HOL binds `prog : ('a # 'b list #
+    'c) list`, `start : 'a`, `n : num` — all three tuple components and the key
+    are fully polymorphic — assumes `FLOOKUP (make_funcs prog) start = SOME
+    (n + first_name,0)`, and concludes `(start,[],(SND o SND) (EL n prog)) =
+    EL n prog /\ n < LENGTH prog`. Lean keeps HOL's leading binder order
+    `prog, start, n` and the conclusion order over the same right-associated
+    triple, with `make_funcs` the tagged exact finite-support
+    `crepToLoopMakeFuncsExactHOL` and `first_name` the tagged `firstLoopName`.
+    HOL `EL` is rendered by `initialProgEL`, which takes the unspecified
+    out-of-range `ARB` slot as an explicit `fallback`; the conclusion itself
+    establishes `n < prog.length`, and `initialProgEL_eq_getElem` shows the two
+    agree on that in-range index, so the fallback is never observed. No
+    representation qualifier is needed: no word, finite-map or fixed-name
+    carrier appears in the statement. -/
+@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "initial_prog_make_funcs_el"]
+theorem initialProgMakeFuncsElExact {α β γ : Type} :
+    ∀ (prog : List (α × List β × γ)) (start : α) (n : Nat)
+      (fallback : α × List β × γ),
       (crepToLoopMakeFuncsExactHOL prog).lookup start =
           some (n + firstLoopName, 0) →
-        (start, [], (initialProgEL prog n).2.2) = initialProgEL prog n ∧
+        (start, [], (initialProgEL fallback prog n).2.2) =
+            initialProgEL fallback prog n ∧
           n < prog.length := by
-  intro prog start n hlookup
-  letI : DecidableEq Basis.Pure.MlString.MlString :=
-    fun a b => Classical.propDecidable (a = b)
+  intro prog start n fallback hlookup
+  letI : DecidableEq α := fun a b => Classical.propDecidable (a = b)
   rw [holFmapAsFiniteSupportResultWitness_crepToLoopMakeFuncsExactHOL prog start]
     at hlookup
   have hentry : (start, (n + firstLoopName, 0)) ∈
@@ -269,7 +270,7 @@ theorem initialProgMakeFuncsElExact {width : Nat} [NeZero width] :
     · apply Prod.ext
       · exact hparamsN.symm
       · rfl
-  rw [initialProgEL_eq_getElem prog n hn]
+  rw [initialProgEL_eq_getElem fallback prog n hn]
   exact ⟨hshape, hn⟩
 
 /-- Exact HOL `crep_to_loop_compile_prog_lab_min` (`crep_to_loopProofScript.sml:4398-4400`):
