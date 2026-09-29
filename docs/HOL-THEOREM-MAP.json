@@ -22165,5 +22165,19 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.34.8): HOL crep_to_loopProofScript.sml:4178-4185 loop_sem_is_wrapper, with free s and start, states loopSem$semantics s start = let prog = Call NONE (SOME start) [] NONE in semantics_wrapper (((\\res. case res of SOME TimeOut => Incomplete | SOME (FinalFFI e) => CompleteResult (FFI_outcome e) | SOME (Result _) => CompleteResult Success | _ => RunError) ## (\\s. s.ffi.io_events)) o (\\k. loopSem$evaluate (prog, s with clock := k))). Lean loopSemIsWrapper binds s : LoopSemStateFiniteExact width F and start : Nat, the same carriers as the tagged loopSem semantics_def. It states LoopSemStateFiniteExact.semantics s start = let prog : HolLoopProg width := .call none (some start) [] none; crepToLoopSemanticsWrapper ((Prod.map (the same four-way match over Option LoopResultExact) (fun t => t.ffi.ioEvents)) ∘ (fun k => evaluate prog {s with clock := k})), over the tagged exact semantics_def, evaluate and semantics_wrapper_def. HOL ## is Prod.map and o is ∘; there are no extra hypotheses. The private proof helper loopSemWrapperClass and the abstract-E lemma are proof-only and not in the statement. The qualifiers match the tagged loopSem semantics_def: fmap_as_finite_support [globals], since LoopSemStateFiniteExact's HOL |-> globals is the canonical HolFiniteMapExact carrier while locals/code are sptree Spt fields and are not named, with the same-module re-exported witness LoopSemIsWrapperFiniteSupport.holFmapAsFiniteSupportWitness; and words_as_type_indexed_bitvec for the positive-width word and universe-0 FFI carrier. Axioms: propext, Classical.choice, Quot.sound."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "crep_sem_is_wrapper",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/SemanticsWrapper.lean",
+    "lean_name": "crepSemIsWrapper",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.34.7): HOL crep_to_loopProofScript.sml:4138-4147 crep_sem_is_wrapper, with free s and start, states crepSem$semantics s start = let prog = crepLang$Call NONE start [] in semantics_wrapper (((\\res. case res of SOME TimeOut => Incomplete | SOME (FinalFFI e) => CompleteResult (FFI_outcome e) | SOME (Return _) => CompleteResult Success | _ => RunError) ## (\\s. s.ffi.io_events)) o (\\k. crepSem$evaluate (prog, s with clock := k))). Lean crepSemIsWrapper binds s : CrepSemHOLState width σ and start : MlString, the same carriers as the tagged crepSem semantics_def crepSemantics. It states crepSemantics s start = let prog : CrepProgHOL width := .call none start []; crepToLoopSemanticsWrapper ((Prod.map (the same four-way match over Option CrepResultHOLExact) (fun t => t.ffi.ioEvents)) ∘ (fun k => evalCrepSemHOLProgExact {s with clock := k} prog)), over the tagged exact semantics_def, evaluate and semantics_wrapper_def. The Lean evaluator's argument order (state, prog) is the same rendering accepted for crepSemantics; HOL ## is Prod.map and o is ∘; there are no extra hypotheses. The private proof helper crepSemWrapperClass and the abstract-E lemma are proof-only. The qualifiers match crepSemantics: fmap_as_finite_support [locals, globals, code] for CrepSemHOLState's canonical HolFiniteMapExact fields, with the same-module re-exported witness CrepSemIsWrapperFiniteSupport.holFmapAsFiniteSupportWitness; and words_as_type_indexed_bitvec for the positive-width words and universe-0 σ. start is already the exact MlString carrier, so there is no names_as_string qualifier. Axioms: propext, Classical.choice, Quot.sound."
   }
 ]
