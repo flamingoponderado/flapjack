@@ -189,6 +189,22 @@ example : localsRelHOL (makeCtxtHOL 2 [9] (.ln : Spt Nat))
     (sptFromAList ([] : List (Nat × MakeCtxtW))) (sptFromList2 [makeCtxtRet]) := by
   exact localsRelHOLMakeCtxt [] [9] [] makeCtxtRet (by decide)
 
+/-! The exact empty-source `locals_rel_mk_ctxt_ln` clause works for empty and
+nonempty context-name lists and does not constrain the target locals tree. -/
+
+#guard sptLookup 10 (makeCtxtHOL 4 [10, 11] (.ln : Spt Nat)) == some 4
+#guard sptLookup 11 (makeCtxtHOL 4 [10, 11] (.ln : Spt Nat)) == some 6
+
+example (targetLocals : Spt MakeCtxtW) :
+    localsRelHOL (makeCtxtHOL 4 [10, 11] (.ln : Spt Nat))
+      (.ln : Spt MakeCtxtW) targetLocals := by
+  exact localsRelHOLMkCtxtLn 4 [10, 11] targetLocals (by decide)
+
+example (targetLocals : Spt MakeCtxtW) :
+    localsRelHOL (makeCtxtHOL 2 [] (.ln : Spt Nat))
+      (.ln : Spt MakeCtxtW) targetLocals := by
+  exact localsRelHOLMkCtxtLn 2 [] targetLocals (by decide)
+
 /-- Probe context `insert 3 7 (insert 5 9 LN)` over `num |-> num` spt. -/
 def probeContext : Spt Nat := sptInsert 3 7 (sptInsert 5 9 .ln)
 
