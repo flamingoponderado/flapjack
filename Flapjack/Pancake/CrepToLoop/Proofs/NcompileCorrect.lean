@@ -1,5 +1,6 @@
 import Flapjack.Pancake.CrepToLoop.Proofs.CompExpPreservesEval
 import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Seq
+import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Primitive
 import Flapjack.Pancake.Semantics.LoopProps.CompSyntaxOkLemmas
 import Flapjack.Pancake.Semantics.PanCommonProps
 import Flapjack.Pancake.CrepToLoop.Proofs.WriteBytearrayMemRel
