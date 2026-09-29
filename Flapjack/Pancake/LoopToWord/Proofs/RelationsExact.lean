@@ -28,4 +28,17 @@ def loopToWordGlobalsRelHOLExact {width : Nat} [NeZero width]
     (g2 : HolFiniteMapExact WordStoreHOL (WordLocW width)) : Prop :=
   ∀ n v, g1.lookup n = some v → g2.lookup (.temp n) = some v
 
+/-- Exact HOL `globals_rel_intro` from
+`cakeml/pancake/proofs/loop_to_wordProofScript.sml:138-144`. It exposes the
+same one-way lookup implication as `globals_rel_def`. -/
+@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "globals_rel_intro"
+  (fmap_as_finite_support_relation := [g1, g2]) (words_as_type_indexed_bitvec)]
+theorem loopToWordGlobalsRelIntroHOLExact {width : Nat} [NeZero width]
+    (g1 : HolFiniteMapExact (BitVec 5) (WordLocW width))
+    (g2 : HolFiniteMapExact WordStoreHOL (WordLocW width)) :
+    loopToWordGlobalsRelHOLExact g1 g2 →
+      ∀ n v, g1.lookup n = some v → g2.lookup (.temp n) = some v := by
+  intro h n v hLookup
+  exact h n v hLookup
+
 end Flapjack
