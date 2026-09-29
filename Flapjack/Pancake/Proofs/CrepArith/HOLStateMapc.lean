@@ -962,8 +962,8 @@ theorem crepSimpExpCorrect1NativeTopAddrCase
   simp only [CrepSemHOLState.mapc, crepSimpExpHOL, evalCrepSemHOLExp]
 
 /-- Load case of HOL `simp_exp_correct1` (`crep_arithProofScript.sml:111`).
-    The recursive premise is generalized over the state and the unused result
-    binder, as in HOL's induction rule. The successful full Load evaluation
+    The recursive premise is at the same state as the Load evaluation, as in
+    HOL's `eval_ind`. The successful full Load evaluation
     premise is retained; code-only `mapc` preserves evaluation of the address,
     and the complete optional `word_lab` result is unchanged. -/
 @[hol "cakeml/pancake/proofs/crep_arithProofScript.sml" "simp_exp_correct1"
@@ -976,12 +976,10 @@ theorem crepSimpExpCorrect1NativeLoadCase
     (state : CrepSemHOLState width σ) (address : CrepExpHOL width)
     {resultType : Type} (_result : resultType)
     (_h : evalCrepSemHOLExp state (.load address) ≠ none)
-    (ih : ∀ (state' : CrepSemHOLState width σ) {resultType : Type}
-      (_result : resultType),
-      evalCrepSemHOLExp state' address ≠ none →
-      evalCrepSemHOLExp (CrepSemHOLState.mapc update state')
+    (ih : evalCrepSemHOLExp state address ≠ none →
+      evalCrepSemHOLExp (CrepSemHOLState.mapc update state)
           (crepSimpExpHOL address) =
-        evalCrepSemHOLExp state' address) :
+        evalCrepSemHOLExp state address) :
     evalCrepSemHOLExp (CrepSemHOLState.mapc update state)
         (crepSimpExpHOL (.load address)) =
       evalCrepSemHOLExp state (.load address) := by
@@ -989,7 +987,7 @@ theorem crepSimpExpCorrect1NativeLoadCase
     intro hNone
     apply _h
     simp [evalCrepSemHOLExp, hNone]
-  have hAddressEval := ih state _result hAddress
+  have hAddressEval := ih hAddress
   simp only [crepSimpExpHOL]
   simp only [evalCrepSemHOLExp]
   rw [hAddressEval]
