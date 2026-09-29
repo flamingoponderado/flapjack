@@ -2791,9 +2791,11 @@ theorem crepHolEvalMemLoadByte_riscv64_eq_panMemLoadByteHOL {σ : Type}
     and the byte offset is `w2n a MOD d` (reversed when big endian).  Success
     and domain failure are both preserved.
     Width domain: this is an equality of Lean definitions at every positive width, but
-    it is a HOL correspondence only for `width ≥ 8`.  Below width 8 the byte count is 0,
-    HOL's `LOG2 0`/`MOD 0` are unspecified, and the Lean HOL-shaped helpers use chosen
-    completions (`Nat.log2 0 = 0`, `n % 0 = n`) with no HOL claim.
+    it is a HOL correspondence only for `width ≥ 8`.  Below width 8 the byte count `dimindex DIV 8` is 0. HOL's `byte_index` is still
+    specified there (`w2n a MOD 0 = w2n a`, which Lean's `n % 0 = n` matches), but
+    `byte_align` uses `LOG2 0`, which HOL leaves underspecified; the Lean alignment
+    uses the chosen completion `Nat.log2 0 = 0`, with no HOL claim. So this does not
+    establish an all-width HOL correspondence for the byte loads.
     Flapjack-only bridge (bead `flapjack-pxn.18.5.4.3.5`). -/
 theorem crepHolEvalMemLoadByte_riscv_eq_panMemLoadByteHOL [NeZero width] {σ : Type}
     (state : CrepHolState (BitVec width) σ) (address : BitVec width) :
@@ -2831,9 +2833,11 @@ theorem crepHolEvalMemLoadByte_riscv_eq_panMemLoadByteHOL [NeZero width] {σ : T
     production `crepRuntimeLoadByte` at the canonical RISC-V runtime of a
     `CrepHolState` equals the tagged Lean `panMemLoadByteHOL`.
     Width domain: this is an equality of Lean definitions at every positive width, but
-    it is a HOL correspondence only for `width ≥ 8`.  Below width 8 the byte count is 0,
-    HOL's `LOG2 0`/`MOD 0` are unspecified, and the Lean HOL-shaped helpers use chosen
-    completions (`Nat.log2 0 = 0`, `n % 0 = n`) with no HOL claim. -/
+    it is a HOL correspondence only for `width ≥ 8`.  Below width 8 the byte count `dimindex DIV 8` is 0. HOL's `byte_index` is still
+    specified there (`w2n a MOD 0 = w2n a`, which Lean's `n % 0 = n` matches), but
+    `byte_align` uses `LOG2 0`, which HOL leaves underspecified; the Lean alignment
+    uses the chosen completion `Nat.log2 0 = 0`, with no HOL claim. So this does not
+    establish an all-width HOL correspondence for the byte loads. -/
 theorem crepRuntimeLoadByte_riscv_eq_panMemLoadByteHOL [NeZero width] {σ : Type}
     (state : CrepHolState (BitVec width) σ) (address : BitVec width) :
     crepRuntimeLoadByte (riscvCrepWordTarget state.toRuntime) address =
@@ -3077,9 +3081,11 @@ theorem crepHolEvalMemLoad32_riscv64_eq_panMemLoad32HOL {σ : Type}
     byte extractor equals the Lean `panGetByteHOL` (HOL `get_byte`) widened to
     the word.
     Width domain: this is an equality of Lean definitions at every positive width, but
-    it is a HOL correspondence only for `width ≥ 8`.  Below width 8 the byte count is 0,
-    HOL's `LOG2 0`/`MOD 0` are unspecified, and the Lean HOL-shaped helpers use chosen
-    completions (`Nat.log2 0 = 0`, `n % 0 = n`) with no HOL claim. -/
+    it is a HOL correspondence only for `width ≥ 8`.  Below width 8 the byte count `dimindex DIV 8` is 0. HOL's `byte_index` is still
+    specified there (`w2n a MOD 0 = w2n a`, which Lean's `n % 0 = n` matches), but
+    `byte_align` uses `LOG2 0`, which HOL leaves underspecified; the Lean alignment
+    uses the chosen completion `Nat.log2 0 = 0`, with no HOL claim. So this does not
+    establish an all-width HOL correspondence for the byte loads. -/
 theorem panRiscVGetByteEndian_bytesInWord_eq_panGetByteHOL [NeZero width]
     (address value : BitVec width) (bigEndian : Bool) :
     RiscV.panRiscVGetByteEndian (BitVec.ofNat width (width / 8)) address value bigEndian =
@@ -3129,9 +3135,11 @@ theorem panRiscVWordOfBytes_eq_widen32 [NeZero width] (bigEndian : Bool)
     load helper equals the tagged Lean `panMemLoad32HOL` widened to the word.
     Alignment, domain failure and success are all preserved.
     Width domain: this is an equality of Lean definitions at every positive width, but
-    it is a HOL correspondence only for `width ≥ 8`.  Below width 8 the byte count is 0,
-    HOL's `LOG2 0`/`MOD 0` are unspecified, and the Lean HOL-shaped helpers use chosen
-    completions (`Nat.log2 0 = 0`, `n % 0 = n`) with no HOL claim.
+    it is a HOL correspondence only for `width ≥ 8`.  Below width 8 the byte count `dimindex DIV 8` is 0. HOL's `byte_index` is still
+    specified there (`w2n a MOD 0 = w2n a`, which Lean's `n % 0 = n` matches), but
+    `byte_align` uses `LOG2 0`, which HOL leaves underspecified; the Lean alignment
+    uses the chosen completion `Nat.log2 0 = 0`, with no HOL claim. So this does not
+    establish an all-width HOL correspondence for the byte loads.
     Flapjack-only bridge (bead `flapjack-pxn.18.5.4.3.6`). -/
 theorem crepHolEvalMemLoad32_riscv_eq_panMemLoad32HOL [NeZero width] {σ : Type}
     (state : CrepHolState (BitVec width) σ) (address : BitVec width) :
@@ -3171,9 +3179,11 @@ theorem crepHolEvalMemLoad32_riscv_eq_panMemLoad32HOL [NeZero width] {σ : Type}
 
 /-- All-width form of `crepRuntimeLoad32_riscv64_eq_panMemLoad32HOL`.
     Width domain: this is an equality of Lean definitions at every positive width, but
-    it is a HOL correspondence only for `width ≥ 8`.  Below width 8 the byte count is 0,
-    HOL's `LOG2 0`/`MOD 0` are unspecified, and the Lean HOL-shaped helpers use chosen
-    completions (`Nat.log2 0 = 0`, `n % 0 = n`) with no HOL claim. -/
+    it is a HOL correspondence only for `width ≥ 8`.  Below width 8 the byte count `dimindex DIV 8` is 0. HOL's `byte_index` is still
+    specified there (`w2n a MOD 0 = w2n a`, which Lean's `n % 0 = n` matches), but
+    `byte_align` uses `LOG2 0`, which HOL leaves underspecified; the Lean alignment
+    uses the chosen completion `Nat.log2 0 = 0`, with no HOL claim. So this does not
+    establish an all-width HOL correspondence for the byte loads. -/
 theorem crepRuntimeLoad32_riscv_eq_panMemLoad32HOL [NeZero width] {σ : Type}
     (state : CrepHolState (BitVec width) σ) (address : BitVec width) :
     crepRuntimeLoad32 (riscvCrepWordTarget state.toRuntime) address =
