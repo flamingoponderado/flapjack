@@ -968,5 +968,55 @@ theorem crepNotBranchRet_codec {width : Nat} [NeZero width] :
   | .shMem operator name address => by simp only [crepNotBranchRet, crepProgToHOL, notBranchRetHOLExact]
   | .tick => by simp only [crepNotBranchRet, crepProgToHOL, notBranchRetHOLExact]
 
+/-- Executed inline call body with a `some (returnNames, none)` return shape lifts
+    to the exact `some (returnNames, none)` arm computation under `crepProgToHOL`.
+    Here the argument `body` plays the role of the exact `inlinedCallee` that the
+    caller supplies (in the production recursion it is the `crepUnreachElim` result
+    of the recursive inlining of the callee). -/
+theorem crepProgToHOL_crepInlineCallBody_some_none {width : Nat} [NeZero width]
+    (returnNames : List Nat) (name : FunName)
+    (arguments : List (CrepExp (BitVec width)))
+    (argumentNames : List Nat) (body : CrepProg (BitVec width)) :
+    crepProgToHOL (crepInlineCallBody (some (returnNames, none)) name arguments
+        argumentNames body) =
+      (if !crepAllDistinct returnNames then
+        CrepProgHOL.call (some (returnNames, none)) (ofString name)
+          (arguments.map crepExpToHOL)
+      else
+        let maxArguments :=
+          ((arguments.map crepExpToHOL).flatMap crepExpVarsHOL).foldl max 0
+        let maxArgumentNames := argumentNames.foldl max 0
+        let temporaryNames :=
+          genlistSuccAddHOLExact (max maxArguments maxArgumentNames)
+            argumentNames.length
+        let maxReturnNames := returnNames.foldl max 0
+        let maxInlinedCallee := crepVmaxProgHOLExact (crepProgToHOL body)
+        let maxTemporaryNames := temporaryNames.foldl max 0
+        let temporaryReturns :=
+          genlistSuccAddHOLExact
+            (max maxReturnNames (max maxInlinedCallee maxTemporaryNames))
+            returnNames.length
+        let transformedCallee :=
+          if notBranchRetHOLExact (crepProgToHOL body) then
+            .seq .tick (transformEocHOLExact temporaryReturns (crepProgToHOL body))
+          else
+            .while (.const 1)
+              (transformBranchHOLExact 0 temporaryReturns (crepProgToHOL body))
+        inlineNontailHOLExact transformedCallee returnNames temporaryReturns
+          temporaryNames (arguments.map crepExpToHOL) argumentNames) := by
+  simp only [crepInlineCallBody]
+  by_cases hd : (!crepAllDistinct returnNames) = true
+  · rw [if_pos hd, if_pos hd]
+    simp only [crepProgToHOL]
+  · rw [if_neg hd, if_neg hd]
+    rw [crepInlineTmpNames_codec, crepVmaxProg_codec, crepNotBranchRet_codec]
+    by_cases hbr : notBranchRetHOLExact (crepProgToHOL body) = true
+    · rw [if_pos hbr, if_pos hbr]
+      simp only [crepProgToHOL, crepProgToHOL_crepTransformEoc,
+        crepProgToHOL_crepInlineNontail, genlistSuccAddHOLExact, Nat.add_assoc]
+    · rw [if_neg hbr, if_neg hbr]
+      simp only [crepProgToHOL, crepExpToHOL, crepProgToHOL_crepTransformBranch,
+        crepProgToHOL_crepInlineNontail, genlistSuccAddHOLExact, Nat.add_assoc]
+
 end CrepInlineRoute
 end Flapjack
