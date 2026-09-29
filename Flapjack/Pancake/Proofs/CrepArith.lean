@@ -2104,12 +2104,12 @@ private theorem crepEvalCodeMapIrrel {α : Type} [BEq α] [OfNat α 0] [OfNat α
     untagged as HOL `simp_exp_correct1` because this theorem runs the
     compiler's canonical RISC-V runtime, whose memory model is target-specific.
     The all-width source runtime below uses the same finite-index dimension
-    witness with HOL-shaped memory operations. The two runtime configurations
-    differ at width 24: HOL maps `byte_align 5w` to 4, while the RISC-V model
-    with `bytesInWord = 3` maps address 5 to 3. See
-    `PanFixedLoadParity.holByteAlignWidth24Address5` and the direct HOL row in
-    `pan_fixed_load_probe.out`. This remains an untagged target specialization,
-    not the polymorphic HOL theorem. -/
+    witness with HOL-shaped memory operations. For widths at least 8, the
+    RISC-V alignment uses HOL's `2 ^ LOG2 bytesInWord` rule, including width
+    24 (`byte_align 5w = 4w`); see `PanFixedLoadParity` and the direct HOL row
+    in `pan_fixed_load_probe.out`. HOL's `LOG2 0` case below width 8 is
+    unspecified. This remains an untagged target specialization, not the
+    polymorphic HOL theorem. -/
 theorem crepSimpExpCorrect1HolFiniteDimension {ι : Type} {σ : Type}
     [dimension : HolFiniteDimension ι]
     (f : FunName × (List Nat × CrepProg (ι → Bool)) →
