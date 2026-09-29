@@ -515,7 +515,7 @@ decreasing_by
     HOL's free variable `extra` is the outermost binder. -/
 @[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "evaluate_add_clock"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem evaluate_add_clock (extra : Nat) :
+theorem evaluate_add_clock {width : Nat} [NeZero width] {C : Type} {F : Type} (extra : Nat) :
     ∀ (p : WordLangProgHOL (BitVec width)) (s : WordSemStateFiniteExact width C F)
       (r : Option (WordSemResult width)) (s' : WordSemStateFiniteExact width C F),
       evaluate p s = (r, s') ∧ r ≠ some .timeOut →
