@@ -2,11 +2,13 @@ import Flapjack.Pancake.PanStructs
 import Flapjack.Pancake.PanStructsByteRanged
 import Flapjack.Pancake.Proofs.PanStructs
 import Flapjack.Pancake.Proofs.PanStructs.CompileShapeExact
+import Flapjack.Pancake.PanStructs.CompileShapeExact
 
 namespace Flapjack.Test.PanStructsCompileShapeParity
 
 open Flapjack.Pancake.PanLang
 open Flapjack.Pancake.Proofs.PanStructs.CompileShapeExact
+open Flapjack.Pancake.PanStructs.CompileShapeExact
 open Flapjack.Basis.Pure.MlString
 
 private def byteRangedStructCompileInput : List (Decl (BitVec 8)) :=
