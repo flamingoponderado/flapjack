@@ -1,0 +1,67 @@
+evaluate_ind=∀P. (∀s. P (Skip,s)) ∧ (∀s. P (Fail,s)) ∧ (∀v exp s. P (Assign v exp,s)) ∧
+    (∀lhss pop rhss s. P (Primitive lhss pop rhss,s)) ∧
+    (∀arith s. P (Arith arith,s)) ∧ (∀exp v s. P (Store exp v,s)) ∧
+    (∀dst exp s. P (SetGlobal dst exp,s)) ∧ (∀a v s. P (Load32 a v,s)) ∧
+    (∀a v s. P (LoadByte a v,s)) ∧ (∀a w s. P (Store32 a w,s)) ∧
+    (∀a w s. P (StoreByte a w,s)) ∧
+    (∀c1 c2 s.
+       (∀res s1. (res,s1) = evaluate (c1,s) ∧ res = NONE ⇒ P (c2,s1)) ∧
+       P (c1,s) ⇒
+       P (Seq c1 c2,s)) ∧
+    (∀cmp r1 ri c1 c2 live_out s.
+       (∀v2 v3 v5 x v13 y b.
+          (lookup r1 s.locals,get_var_imm ri s) = (v2,v3) ∧ v2 = SOME v5 ∧
+          v5 = Word x ∧ v3 = SOME v13 ∧ v13 = Word y ∧ (b ⇔ word_cmp cmp x y) ⇒
+          P (if b then c1 else c2,s)) ⇒
+       P (If cmp r1 ri c1 c2 live_out,s)) ∧ (∀p s. P (p,s) ⇒ P (Mark p,s)) ∧
+    (∀k s. P (Break k,s)) ∧ (∀k s. P (Continue k,s)) ∧
+    (∀live_in body live_out s.
+       (∀v4 s' v s'' v3 v12.
+          cut_res live_in (NONE,s) = (v4,s') ∧ v4 = NONE ∧
+          evaluate (body,s') = (v,s'') ∧ v = SOME v3 ∧ v3 = Continue v12 ∧
+          v12 = 0 ⇒
+          P (Loop live_in body live_out,s'')) ∧
+       (∀v4 s' v s''.
+          cut_res live_in (NONE,s) = (v4,s') ∧ v4 = NONE ∧
+          evaluate (body,s') = (v,s'') ∧ v = NONE ⇒
+          P (Loop live_in body live_out,s'')) ∧
+       (∀v4 s'. cut_res live_in (NONE,s) = (v4,s') ∧ v4 = NONE ⇒ P (body,s')) ⇒
+       P (Loop live_in body live_out,s)) ∧ (∀n s. P (Raise n,s)) ∧
+    (∀ns s. P (Return ns,s)) ∧ (∀op v ad s. P (ShMem op v ad,s)) ∧
+    (∀s. P (Tick,s)) ∧ (∀r l1 s. P (LocValue r l1,s)) ∧
+    (∀ret dest argvars handler s.
+       (∀argvals v7 env prog v6 ns live v9 s' v8 st v11 retvs v v1 v2 v3 v4 r
+            live_out.
+          get_vars argvars s = SOME argvals ∧
+          find_code dest argvals s.code = SOME v7 ∧ v7 = (env,prog) ∧
+          ret = SOME v6 ∧ v6 = (ns,live) ∧ ALL_DISTINCT ns ∧
+          cut_res live (NONE,s) = (v9,s') ∧ v9 = NONE ∧
+          evaluate (prog,s' with locals := env) = (v8,st) ∧ v8 = SOME v11 ∧
+          v11 = Result retvs ∧ LENGTH retvs = LENGTH ns ∧ handler = SOME v ∧
+          v = (v1,v2) ∧ v2 = (v3,v4) ∧ v4 = (r,live_out) ⇒
+          P (r,set_vars ns retvs (st with locals := s'.locals))) ∧
+       (∀argvals v7 env prog v6 ns live v9 s' v8 st v11 exn v n v2 h v4 v5
+            live_out.
+          get_vars argvars s = SOME argvals ∧
+          find_code dest argvals s.code = SOME v7 ∧ v7 = (env,prog) ∧
+          ret = SOME v6 ∧ v6 = (ns,live) ∧ ALL_DISTINCT ns ∧
+          cut_res live (NONE,s) = (v9,s') ∧ v9 = NONE ∧
+          evaluate (prog,s' with locals := env) = (v8,st) ∧ v8 = SOME v11 ∧
+          v11 = Exception exn ∧ handler = SOME v ∧ v = (n,v2) ∧ v2 = (h,v4) ∧
+          v4 = (v5,live_out) ⇒
+          P (h,set_var n exn (st with locals := s'.locals))) ∧
+       (∀argvals v7 env prog v6 ns live v9 s'.
+          get_vars argvars s = SOME argvals ∧
+          find_code dest argvals s.code = SOME v7 ∧ v7 = (env,prog) ∧
+          ret = SOME v6 ∧ v6 = (ns,live) ∧ ALL_DISTINCT ns ∧
+          cut_res live (NONE,s) = (v9,s') ∧ v9 = NONE ⇒
+          P (prog,s' with locals := env)) ∧
+       (∀argvals v7 env prog.
+          get_vars argvars s = SOME argvals ∧
+          find_code dest argvals s.code = SOME v7 ∧ v7 = (env,prog) ∧
+          ret = NONE ∧ handler = NONE ∧ s.clock ≠ 0 ⇒
+          P (prog,dec_clock s with locals := env)) ⇒
+       P (Call ret dest argvars handler,s)) ∧
+    (∀ffi_index ptr1 len1 ptr2 len2 cutset s.
+       P (FFI ffi_index ptr1 len1 ptr2 len2 cutset,s)) ⇒
+    ∀v v1. P (v,v1)
