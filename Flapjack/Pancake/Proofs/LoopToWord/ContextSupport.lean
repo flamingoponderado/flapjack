@@ -147,7 +147,7 @@ private theorem sptInsert_preserves_bounded_lookup_injectivity
       exact ⟨hxy, by omega⟩
 
 /-- Exact HOL `make_ctxt_inj`
-(`cakeml/pancake/proofs/loop_to_wordProofScript.sml:293-296`). The incoming
+(`cakeml/pancake/proofs/loop_to_wordProofScript.sml:296-300`). The incoming
 context is injective on equal lookup results whose registers are below
 `next`; each `make_ctxt` insertion uses the fresh register `next`, then the
 bound advances by two. This is stated over the exact `Spt Nat` carrier and
@@ -169,5 +169,24 @@ theorem makeCtxtHOL_inj (names : List Nat) (context : Spt Nat) (next : Nat)
         (sptInsert_preserves_bounded_lookup_injectivity next name context hinj)
       · exact hx
       · exact hy
+
+/-- Exact local HOL `make_ctxt_APPEND`
+(`cakeml/pancake/proofs/loop_to_wordProofScript.sml:309-315`). Splitting the
+input names after `xs` advances the starting register for `ys` by exactly two
+per name in the prefix. -/
+@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "make_ctxt_APPEND" 309]
+theorem makeCtxtHOL_append (xs ys : List Nat) (next : Nat)
+    (context : Spt Nat) :
+    Flapjack.makeCtxtHOL next (xs ++ ys) context =
+      Flapjack.makeCtxtHOL (next + 2 * xs.length) ys
+        (Flapjack.makeCtxtHOL next xs context) := by
+  induction xs generalizing next context with
+  | nil => simp [Flapjack.makeCtxtHOL]
+  | cons name names ih =>
+      simp only [List.cons_append, List.length_cons, Flapjack.makeCtxtHOL]
+      rw [ih]
+      have hoffset : (next + 2) + 2 * names.length =
+          next + 2 * (names.length + 1) := by omega
+      rw [hoffset]
 
 end Flapjack.LoopToWord

@@ -81,6 +81,14 @@ example {x y v : Nat}
   exact makeCtxtHOL_inj [7, 8, 7] (.ln : Spt Nat) 4
     (by intro x y v hx hy; simp [sptLookup] at hx) x y v hx hy
 
+example :
+    makeCtxtHOL 3 ([7, 8] ++ [8, 9]) (.ln : Spt Nat) =
+      makeCtxtHOL (3 + 2 * 2) [8, 9]
+        (makeCtxtHOL 3 [7, 8] (.ln : Spt Nat)) := by
+  exact makeCtxtHOL_append [7, 8] [8, 9] 3 (.ln : Spt Nat)
+
+#guard sptLookup 8 (makeCtxtHOL 3 [7, 8, 8, 9] (.ln : Spt Nat)) == some 7
+
 /-- Probe context `insert 3 7 (insert 5 9 LN)` over `num |-> num` spt. -/
 def probeContext : Spt Nat := sptInsert 3 7 (sptInsert 5 9 .ln)
 

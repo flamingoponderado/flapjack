@@ -11440,6 +11440,15 @@
     "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.9.16.3) against loop_to_wordProofScript.sml:296-300. HOL quantifies xs, l, n, assumes for all x y v that two lookups of the same SOME v in l imply x=y and v<n, and concludes that two lookups of the same SOME v in make_ctxt n xs l imply x=y. Lean keeps that same result variable v, quantifier order, bound, and conclusion over the exact Spt Nat carrier; makeCtxtHOL and sptInsert are the exact tagged HOL definitions. No ALL_DISTINCT, extra premise, changed lookup result shape, or carrier qualifier is introduced. The proof establishes HOL's induction obligation that inserting the next register preserves injectivity below next+2. Regression exercises repeated names [7,8,7], where the last insertion maps 7 to 8 and 8 to 6."
   },
   {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "make_ctxt_APPEND",
+    "hol_line": 309,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "makeCtxtHOL_append",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.9.16.4) against the local HOL theorem at loop_to_wordProofScript.sml:309-315. HOL states that mapping xs ++ ys from n equals mapping ys from n + 2 * LENGTH xs over the context after mapping xs from n. Lean preserves xs/ys/n/context order, append orientation, the exact +2*length register offset, and equality over the same Spt Nat carrier. makeCtxtHOL is the exact tagged production-counterpart definition; no assumptions or carrier qualifiers were introduced. The regression splits [7,8] from [8,9], including a repeated name across the split, and checks the resulting register lookup."
+  },
+  {
     "hol_path": "cakeml/pancake/pan_commonScript.sml",
     "hol_name": "distinct_lists_def",
     "lean_path": "Flapjack/Pancake/PanCommon.lean",
