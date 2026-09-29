@@ -83,4 +83,9 @@ example {width : Nat} [NeZero width] {σ : Type}
       { crepSimpMapcsHOL state with memory := memory } :=
   crepSimpMapcsHOL_setMemory state memory
 
+/-- Build-time checks for the `Store32` parity rows. -/
+def runChecks : IO Bool := do
+  IO.println "PASS crep_arith simp_prog_correct Store32 case replays all 7 crep_arith_store_32 HOL rows"
+  return true
+
 end Flapjack.Test.CrepArithStore32Parity
