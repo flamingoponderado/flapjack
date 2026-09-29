@@ -86,8 +86,7 @@ theorem compileLocalAssignTarget {width : Nat} [NeZero width] {σ : Type}
     (hnodup : ns.Nodup) (hle : ∀ k, k ∈ ns → k ≤ ctxt.vmax)
     (hesvars : ∀ k, k ∈ es.flatMap crepExpVarsHOL → k ≤ ctxt.vmax)
     (hns : ns.mapM t.locals.lookup = some ws)
-    (hes : es.map (@evalCrepSemHOLExp width _ σ t
-      (fun address => Classical.propDecidable (t.memaddrs address))) = flat.map some)
+    (hes : es.map (@evalCrepSemHOLExp width _ σ t) = flat.map some)
     (hlen : ns.length = es.length) :
     evalCrepSemHOLProgExact t (compileLocalAssignExactHOLW ctxt name e) =
       (none, { t with locals := t.locals.updateListEq (ns.zip flat) }) := by

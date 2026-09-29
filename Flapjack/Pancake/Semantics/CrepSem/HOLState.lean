@@ -4,6 +4,7 @@ import Flapjack.Pancake.CrepLang.Prog
 import Flapjack.Pancake.Semantics.CrepSem.Eval
 import Flapjack.Pancake.Semantics.PanSem
 import Flapjack.FfiHOL
+import Flapjack.Misc.OptMmapCong
 
 /-!
 # HOL-shaped state carriers for Crep expression proofs
@@ -316,72 +317,161 @@ structure CrepSemHOLState (width : Nat) [NeZero width] (ffiState : Type) where
   baseAddr : BitVec width
   topAddr : BitVec width
 
-/-- Exact executable port of CakeML Pancake `crepSem$eval_def`
-(`cakeml/pancake/semantics/crepSemScript.sml:90-137`).  It evaluates the
-exact `CrepExpHOL` syntax over the faithful `HolWordLab` result and the
-`CrepSemHOLState` carrier.  The finite-map qualifier records all three
-finite-support map fields in that carrier (`locals`, `globals`, and `code`);
-expression evaluation reads `locals` and `globals`, while `code` remains
-present in the quantified HOL state even though this definition does not read
-it.  The positive-width `BitVec` model represents HOL's
-nonempty finite word dimension.  `HolWordLab` has only `Word`, so HOL's
-`EVERY isWord` guard is always true for values produced here. Since
-`memaddrs` is a Lean `Prop`-valued set, direct computation of this definition
-uses the implicit `DecidablePred` dictionary; HOL has no such premise. Exact
-proof interfaces should supply `Classical.propDecidable` locally, as
-`CrepToLoop.Proofs.CompExpPreservesEval.evalCrepSemHOLExp_op_clause` does,
-rather than expose the dictionary as an assumption. This exact evaluator is
-proof-side infrastructure; no production routing or executable parity claim
-follows from it. -/
-@[hol "cakeml/pancake/semantics/crepSemScript.sml" "eval_def"
-  (fmap_as_finite_support := [locals, globals, code])
-  (words_as_type_indexed_bitvec)]
-def evalCrepSemHOLExp {width : Nat} [NeZero width] {ffiState : Type}
-    (state : CrepSemHOLState width ffiState) [DecidablePred state.memaddrs] :
+section CrepEvalExact
+
+/-! This recursive helper retains an explicit decision procedure so the
+    total evaluator in `EvaluateHOL` can thread one through state updates. It
+    is Flapjack-only infrastructure, not the tagged HOL-facing evaluator. -/
+def evalCrepSemHOLExpWithDecider {width : Nat} [NeZero width] {ffiState : Type}
+    (state : CrepSemHOLState width ffiState)
+    (memDec : (address : BitVec width) → Decidable (state.memaddrs address)) :
     CrepExpHOL width → Option (HolWordLab width)
   | .const value => some (.word value)
   | .var name => state.locals.lookup name
   | .load address => do
-      let address ← evalCrepSemHOLExp state address
+      let address ← evalCrepSemHOLExpWithDecider state memDec address
       match address with
       | .word word =>
+          haveI : Decidable (state.memaddrs word) := memDec word
           if state.memaddrs word then some (state.memory word) else none
   | .load32 address => do
-      let address ← evalCrepSemHOLExp state address
+      let address ← evalCrepSemHOLExpWithDecider state memDec address
       match address with
       | .word word =>
           (panMemLoad32HOL state.memory state.memaddrs state.be word).map
             (fun value => .word (BitVec.ofNat width value.toNat))
   | .loadByte address => do
-      let address ← evalCrepSemHOLExp state address
+      let address ← evalCrepSemHOLExpWithDecider state memDec address
       match address with
       | .word word =>
           (panMemLoadByteHOL state.memory state.memaddrs state.be word).map
             (fun value => .word (BitVec.ofNat width value.toNat))
   | .loadGlob address => state.globals.lookup address
   | .op operator args => do
-      let values ← args.mapM (evalCrepSemHOLExp state)
+      let values ← args.mapM (evalCrepSemHOLExpWithDecider state memDec)
       (wordOpHOL operator (values.map (fun value =>
         match value with | .word word => word))).map HolWordLab.word
   | .crepOp operator args => do
-      let values ← args.mapM (evalCrepSemHOLExp state)
+      let values ← args.mapM (evalCrepSemHOLExpWithDecider state memDec)
       (crepOpCrepWord operator (values.map (fun value =>
         match value with | .word word => word))).map HolWordLab.word
   | .cmp operator left right => do
-      let left ← evalCrepSemHOLExp state left
-      let right ← evalCrepSemHOLExp state right
+      let left ← evalCrepSemHOLExpWithDecider state memDec left
+      let right ← evalCrepSemHOLExpWithDecider state memDec right
       match left, right with
       | .word left, .word right =>
           some (.word (Compiler.Encoders.Asm.wordCmpResultHOL operator left right))
   | .shift operator left right => do
-      let left ← evalCrepSemHOLExp state left
-      let right ← evalCrepSemHOLExp state right
+      let left ← evalCrepSemHOLExpWithDecider state memDec left
+      let right ← evalCrepSemHOLExpWithDecider state memDec right
       match left, right with
       | .word left, .word right =>
           (wordShiftHOL operator left right.toNat).map HolWordLab.word
   | .baseAddr => some (.word state.baseAddr)
   | .topAddr => some (.word state.topAddr)
 termination_by expression => sizeOf expression
+
+/-- Exact HOL-facing `crepSem$eval_def` (`crepSemScript.sml:90-137`) over the
+    exact `CrepSemHOLState` carrier. Its HOL-facing type has no Lean-only
+    `DecidablePred` parameter: classical decisions for the Prop-valued memory
+    domains are made internally. The finite-map qualifier covers `locals`,
+    `globals`, and `code`; words are width-indexed `BitVec`. This proof-side
+    evaluator is not routed into production. -/
+@[hol "cakeml/pancake/semantics/crepSemScript.sml" "eval_def"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
+noncomputable def evalCrepSemHOLExp {width : Nat} [NeZero width] {ffiState : Type}
+    (state : CrepSemHOLState width ffiState) :
+    CrepExpHOL width → Option (HolWordLab width) := by
+  classical
+  exact fun
+    | .const value => some (.word value)
+    | .var name => state.locals.lookup name
+    | .load address => do
+        let address ← evalCrepSemHOLExp state address
+        match address with
+        | .word word =>
+            if state.memaddrs word then some (state.memory word) else none
+    | .load32 address => do
+        let address ← evalCrepSemHOLExp state address
+        match address with
+        | .word word =>
+            (panMemLoad32HOL state.memory state.memaddrs state.be word).map
+              (fun value => .word (BitVec.ofNat width value.toNat))
+    | .loadByte address => do
+        let address ← evalCrepSemHOLExp state address
+        match address with
+        | .word word =>
+            (panMemLoadByteHOL state.memory state.memaddrs state.be word).map
+              (fun value => .word (BitVec.ofNat width value.toNat))
+    | .loadGlob address => state.globals.lookup address
+    | .op operator args => do
+        let values ← args.mapM (evalCrepSemHOLExp state)
+        (wordOpHOL operator (values.map (fun value =>
+          match value with | .word word => word))).map HolWordLab.word
+    | .crepOp operator args => do
+        let values ← args.mapM (evalCrepSemHOLExp state)
+        (crepOpCrepWord operator (values.map (fun value =>
+          match value with | .word word => word))).map HolWordLab.word
+    | .cmp operator left right => do
+        let left ← evalCrepSemHOLExp state left
+        let right ← evalCrepSemHOLExp state right
+        match left, right with
+        | .word left, .word right =>
+            some (.word (Compiler.Encoders.Asm.wordCmpResultHOL operator left right))
+    | .shift operator left right => do
+        let left ← evalCrepSemHOLExp state left
+        let right ← evalCrepSemHOLExp state right
+        match left, right with
+        | .word left, .word right =>
+            (wordShiftHOL operator left right.toNat).map HolWordLab.word
+    | .baseAddr => some (.word state.baseAddr)
+    | .topAddr => some (.word state.topAddr)
+  termination_by expression => sizeOf expression
+
+/-- The executable explicit-decider helper and the HOL-facing evaluator agree
+    for every decision procedure for the same memory domain. This untagged
+    bridge keeps concrete oracle guards executable while the tagged evaluator
+    retains HOL's no-extra-decider interface. -/
+theorem evalCrepSemHOLExpWithDecider_eq {width : Nat} [NeZero width]
+    {ffiState : Type} (state : CrepSemHOLState width ffiState)
+    (memDec : (address : BitVec width) → Decidable (state.memaddrs address)) :
+    ∀ expression : CrepExpHOL width,
+      evalCrepSemHOLExpWithDecider state memDec expression =
+        evalCrepSemHOLExp state expression
+  | .const _ | .var _ | .loadGlob _ | .baseAddr | .topAddr => by
+      simp only [evalCrepSemHOLExpWithDecider, evalCrepSemHOLExp]
+  | .load address => by
+      simp only [evalCrepSemHOLExpWithDecider, evalCrepSemHOLExp,
+        evalCrepSemHOLExpWithDecider_eq state memDec address]
+      have hdec : memDec = (fun a => Classical.propDecidable (state.memaddrs a)) := by
+        funext a
+        exact Subsingleton.elim _ _
+      rw [hdec]
+  | .load32 address | .loadByte address => by
+      simp only [evalCrepSemHOLExpWithDecider, evalCrepSemHOLExp,
+        evalCrepSemHOLExpWithDecider_eq state memDec address]
+      have hdec : memDec = (fun a => Classical.propDecidable (state.memaddrs a)) := by
+        funext a
+        exact Subsingleton.elim _ _
+      rw [hdec]
+  | .op operator args | .crepOp operator args => by
+      simp only [evalCrepSemHOLExpWithDecider, evalCrepSemHOLExp]
+      rw [optMmapCongHOL args args _ _ rfl
+        (fun x hx => evalCrepSemHOLExpWithDecider_eq state memDec x)]
+  | .cmp operator left right | .shift operator left right => by
+      simp only [evalCrepSemHOLExpWithDecider, evalCrepSemHOLExp,
+        evalCrepSemHOLExpWithDecider_eq state memDec left,
+        evalCrepSemHOLExpWithDecider_eq state memDec right]
+termination_by expression => sizeOf expression
+decreasing_by
+  all_goals simp_wf
+  all_goals first
+    | decreasing_trivial
+    | (simp_all only [CrepExpHOL.op.sizeOf_spec, CrepExpHOL.crepOp.sizeOf_spec];
+       have := List.sizeOf_lt_of_mem hx; omega)
+
+end CrepEvalExact
 
 /-- Broad (unrestricted) counterpart of `CrepSemHOLState`: the three map fields
 are plain lookup functions, a strict superset of HOL's finite maps. It exists
