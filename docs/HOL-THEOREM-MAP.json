@@ -11483,6 +11483,47 @@
     "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.9.16.8) against loop_to_wordProofScript.sml:341-353. HOL quantifies xs, m, l, n, y; assumes EVEN m, all successful lookups in l are even, and lookup n (make_ctxt m xs l) = SOME y; concludes EVEN y. Lean keeps that binder/premise/conclusion order over exact List Nat and Spt Nat carriers, using the source-reviewed HOL EVEN encoding v % 2 = 0 from FindVarExact. Proof preserves parity at the inserted value and carries existing-context parity through distinct-key insertion. Tests cover both a pre-existing even-valued key and a generated even register."
   },
   {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "locals_rel_make_ctxt",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "localsRelHOLMakeCtxt",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.9.16.9) against loop_to_wordProofScript.sml:356-384. Preserves HOL's premise order: ALL_DISTINCT params, DISJOINT (set params) (set xs), and LENGTH params = LENGTH l. Lean renders these as List.Nodup, the equivalent membership implication, and equal lengths. The result is the same locals_rel over make_ctxt 2 (params ++ xs) LN, fromAList (ZIP (params,l)), and fromList2 (retv::l), using exact Spt Nat and WordLocW. Existing exact ports makeCtxtHOL, sptFromAList, sptFromList2, and localsRelHOL supply the definitions; a local fromList2 lookup lemma proves the argument-to-register correspondence. The only representation difference is HOL word values represented by width-indexed BitVec via WordLocW, recorded by the words qualifier. Tests exercise empty and nonempty parameter lists and lookup at the source name and mapped register.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "sptFromList2At_eq_foldl",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific private proof helper equating the recursive accumulator used to prove fromList2 lookup facts with the exact tagged sptFromList2 fold. It is not a separate CakeML declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "sptLookup_sptFromList2At_below",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific private proof helper showing that later even-key insertions preserve a lookup below the next fromList2 key. It supports localsRelHOLMakeCtxt and is not a separate CakeML declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "sptLookup_sptFromList2At_get",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific private proof helper for lookup at an index in the recursive fromList2 accumulator; it supports the exact tagged fromList2 definition and is not a distinct CakeML theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "sptLookup_sptFromList2_get",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific private support lemma deriving indexed lookup from the tagged misc$fromList2_def; it is not a distinct CakeML declaration."
+  },
+  {
     "hol_path": "cakeml/pancake/pan_commonScript.sml",
     "hol_name": "distinct_lists_def",
     "lean_path": "Flapjack/Pancake/PanCommon.lean",
