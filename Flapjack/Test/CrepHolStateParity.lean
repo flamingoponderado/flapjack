@@ -292,8 +292,8 @@ example :
         simp [evalCrepSemHOLExp, load32State, panMemLoad32HOL,
           panByteAlignHOL, hlog])
       (by
-        intro state' resultType result hAddress
-        exact crepSimpExpCorrect1NativeConstCase sampleMapc64 state'
+        intro resultType result hAddress
+        exact crepSimpExpCorrect1NativeConstCase sampleMapc64 load32State
           (BitVec.ofNat 64 8) result (by simp [evalCrepSemHOLExp])))
 
 example :
@@ -314,8 +314,8 @@ example :
         simp [evalCrepSemHOLExp, load32State, panMemLoadByteHOL,
           panByteAlignHOL, hlog])
       (by
-        intro state' resultType result hAddress
-        exact crepSimpExpCorrect1NativeConstCase sampleMapc64 state'
+        intro resultType result hAddress
+        exact crepSimpExpCorrect1NativeConstCase sampleMapc64 load32State
           (BitVec.ofNat 64 8) result (by simp [evalCrepSemHOLExp])))
 
 example :
@@ -338,12 +338,12 @@ example :
       (by simp [evalCrepSemHOLExp, Compiler.Encoders.Asm.wordCmpResultHOL,
         Compiler.Encoders.Asm.wordCmpHOL])
       (by
-        intro state' resultType result hLeft
-        exact crepSimpExpCorrect1NativeConstCase sampleMapc64 state'
+        intro resultType result hLeft
+        exact crepSimpExpCorrect1NativeConstCase sampleMapc64 load32State
           (BitVec.ofNat 64 5) result (by simp [evalCrepSemHOLExp]))
       (by
-        intro state' resultType result hRight
-        exact crepSimpExpCorrect1NativeConstCase sampleMapc64 state'
+        intro resultType result hRight
+        exact crepSimpExpCorrect1NativeConstCase sampleMapc64 load32State
           (BitVec.ofNat 64 5) result (by simp [evalCrepSemHOLExp])))
 
 example :
@@ -352,6 +352,32 @@ example :
   classical
   simp [evalCrepSemHOLExp, load32State, HolFiniteMapExact.empty,
     Compiler.Encoders.Asm.wordCmpResultHOL, Compiler.Encoders.Asm.wordCmpHOL]
+
+example :
+    evalCrepSemHOLExp (load32State.mapc sampleMapc64)
+        (.shift .lsl (.const (BitVec.ofNat 64 1)) (.const (BitVec.ofNat 64 3))) =
+      evalCrepSemHOLExp load32State
+        (.shift .lsl (.const (BitVec.ofNat 64 1)) (.const (BitVec.ofNat 64 3))) := by
+  classical
+  simpa [crepSimpExpHOL] using
+    (crepSimpExpCorrect1NativeShiftCase sampleMapc64 load32State .lsl
+      (.const (BitVec.ofNat 64 1)) (.const (BitVec.ofNat 64 3))
+      (HolWordLab.word (BitVec.ofNat 64 8))
+      (by simp [evalCrepSemHOLExp, wordShiftHOL])
+      (by
+        intro resultType result hLeft
+        exact crepSimpExpCorrect1NativeConstCase sampleMapc64 load32State
+          (BitVec.ofNat 64 1) result (by simp [evalCrepSemHOLExp]))
+      (by
+        intro resultType result hRight
+        exact crepSimpExpCorrect1NativeConstCase sampleMapc64 load32State
+          (BitVec.ofNat 64 3) result (by simp [evalCrepSemHOLExp])))
+
+example :
+    evalCrepSemHOLExp load32State
+        (.shift .lsl (.const (BitVec.ofNat 64 7)) (.const (BitVec.ofNat 64 64))) = none := by
+  classical
+  simp [evalCrepSemHOLExp, wordShiftHOL]
 
 private def lookupNames : List Nat := [0, 1]
 
