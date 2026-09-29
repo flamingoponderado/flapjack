@@ -24,6 +24,9 @@ namespace Flapjack
 
 open LoopSemStateFiniteExact
 
+instance sptMemDecidable {α : Type} (k : Nat) (t : Spt α) : Decidable (sptMem k t) := by
+  unfold sptMem sptDomain; infer_instance
+
 /-- HOL `domain a = {}`: no key is present. -/
 def sptDomainEmpty {α : Type} (a : Spt α) : Prop := ∀ k, ¬ sptMem k a
 
