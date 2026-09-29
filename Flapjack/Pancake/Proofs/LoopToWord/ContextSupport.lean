@@ -597,7 +597,7 @@ private theorem sptLookup_sptFromList2At_get {α : Type} (next : Nat)
 
 /-- Unqualified support for exact HOL `misc$fromList2_def`: an in-range
 sequence element is found at twice its zero-based index. -/
-private theorem sptLookup_sptFromList2_get {α : Type} (values : List α)
+theorem sptLookup_sptFromList2_get {α : Type} (values : List α)
     (index : Nat) (hindex : index < values.length) :
     sptLookup (2 * index) (sptFromList2 values) = some values[index] := by
   change sptLookup (2 * index)

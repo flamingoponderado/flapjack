@@ -196,6 +196,8 @@ import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Arith
 import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Seq
 import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Memory
 import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.ShMem
+import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call.Support
+import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call.TailCall
 import Flapjack.PanObservationalSemantics
 import Flapjack.PanMrec
 import Flapjack.PanHProgDec
@@ -465,6 +467,7 @@ import Flapjack.Pancake.LoopToWord.ExpCarrierCodec
 import Flapjack.Pancake.LoopToWord.WordExpCarrierCodec
 import Flapjack.Pancake.LoopToWord.WordContextCodec
 import Flapjack.Pancake.LoopToWord.WordCompileExpExact
+import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec
 import Flapjack.Test.WordCompileExpExactParity
 import Flapjack.Pancake.LoopToWord.WordContextCoverage
 import Flapjack.Test.LoopToWordCompileCorrectSeq
