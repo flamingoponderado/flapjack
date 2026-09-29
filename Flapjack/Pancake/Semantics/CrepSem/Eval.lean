@@ -2953,6 +2953,116 @@ theorem crepHolEvalMemLoad32_riscv64_eq_panMemLoad32HOL {σ : Type}
               panSemBitVec64MemoryAccess, panValueMemoryAccessOfModel,
               PanWordLab.toHolWordLab] using hread
 
+/-- At the canonical byte count `bytesInWord = width / 8`, the RISC-V endian
+    byte extractor is HOL `get_byte` widened to the word, at every positive width. -/
+theorem panRiscVGetByteEndian_bytesInWord_eq_panGetByteHOL [NeZero width]
+    (address value : BitVec width) (bigEndian : Bool) :
+    RiscV.panRiscVGetByteEndian (BitVec.ofNat width (width / 8)) address value bigEndian =
+      BitVec.ofNat width (panGetByteHOL address value bigEndian).toNat := by
+  have hlt : width / 8 < 2 ^ width :=
+    Nat.lt_of_le_of_lt (Nat.div_le_self _ _) (Nat.lt_two_pow_self)
+  have hbytes : (BitVec.ofNat width (width / 8)).toNat = width / 8 := by
+    rw [BitVec.toNat_ofNat, Nat.mod_eq_of_lt hlt]
+  unfold panGetByteHOL RiscV.panRiscVGetByteEndian RiscV.panRiscVByteIndex
+  rw [hbytes]
+  dsimp only
+  congr 1
+  simp
+
+/-- HOL `mem_load_32` assembles its four bytes at `word32` and `eval` widens the
+    result with `w2w`; the RISC-V model assembles directly at the word width.
+    Because every byte is `< 256`, the four-byte sum is `< 2^32`, so the two
+    agree at every positive width. -/
+theorem panRiscVWordOfBytes_eq_widen32 [NeZero width] (bigEndian : Bool)
+    (b0 b1 b2 b3 : BitVec width) (h0 : b0.toNat < 256) (h1 : b1.toNat < 256)
+    (h2 : b2.toNat < 256) (h3 : b3.toNat < 256) :
+    RiscV.panRiscVWordOfBytes (width := width) bigEndian [b0, b1, b2, b3] =
+      BitVec.ofNat width
+        (RiscV.panRiscVWordOfBytes (width := 32) bigEndian
+          ([b0, b1, b2, b3].map (fun byte => BitVec.ofNat 32 byte.toNat))).toNat := by
+  have e0 : (BitVec.ofNat 32 b0.toNat).toNat = b0.toNat := by
+    rw [BitVec.toNat_ofNat, Nat.mod_eq_of_lt (by omega)]
+  have e1 : (BitVec.ofNat 32 b1.toNat).toNat = b1.toNat := by
+    rw [BitVec.toNat_ofNat, Nat.mod_eq_of_lt (by omega)]
+  have e2 : (BitVec.ofNat 32 b2.toNat).toNat = b2.toNat := by
+    rw [BitVec.toNat_ofNat, Nat.mod_eq_of_lt (by omega)]
+  have e3 : (BitVec.ofNat 32 b3.toNat).toNat = b3.toNat := by
+    rw [BitVec.toNat_ofNat, Nat.mod_eq_of_lt (by omega)]
+  unfold RiscV.panRiscVWordOfBytes
+  simp only [List.map_cons, List.map_nil, List.getElem?_cons_zero, List.getElem?_cons_succ,
+    Option.getD_some, e0, e1, e2, e3, show (256 : Nat) ^ 2 = 65536 from rfl,
+    show (256 : Nat) ^ 3 = 16777216 from rfl]
+  cases bigEndian
+  · simp only [Bool.false_eq_true, ↓reduceIte]
+    rw [BitVec.toNat_ofNat, Nat.mod_eq_of_lt (by omega)]
+  · simp only [↓reduceIte]
+    rw [BitVec.toNat_ofNat, Nat.mod_eq_of_lt (by omega)]
+
+/-- All-width form of `crepHolEvalMemLoad32_riscv64_eq_panMemLoad32HOL`: at the
+    canonical byte count `bytesInWord = width / 8`, the executed RISC-V 32-bit
+    load helper is the tagged HOL `mem_load_32` widened to the word, at every
+    positive width.  Alignment, domain failure and success are all preserved.
+    Flapjack-only bridge (bead `flapjack-pxn.18.5.4.3.6`). -/
+theorem crepHolEvalMemLoad32_riscv_eq_panMemLoad32HOL [NeZero width] {σ : Type}
+    (state : CrepHolState (BitVec width) σ) (address : BitVec width) :
+    crepHolEvalMemLoad32
+        (RiscV.panRiscVMemoryModelForEndian state.bigEndian) (BitVec.ofNat width (width / 8))
+        state address =
+      (panMemLoad32HOL
+        (fun current => (state.memory current).toHolWordLab)
+        (fun current => state.memaddrs current = true)
+        state.bigEndian address).map (fun value => BitVec.ofNat width value.toNat) := by
+  have haligned : RiscV.panRiscVByteAlign (BitVec.ofNat width (width / 8)) address =
+      panByteAlignHOL address :=
+    panRiscVByteAlign_bytesInWord_eq_holByteAlignBitVec address
+  have hbyte : ∀ a : BitVec width,
+      (BitVec.ofNat width (panGetByteHOL a (panTheWord (state.memory (panByteAlignHOL address)))
+        state.bigEndian).toNat).toNat < 256 := by
+    intro a
+    rw [BitVec.toNat_ofNat]
+    exact Nat.lt_of_le_of_lt (Nat.mod_le _ _) (UInt8.toNat_lt _)
+  unfold crepHolEvalMemLoad32 panMemLoad32HOL
+  simp only [RiscV.panRiscVMemoryModelForEndian, RiscV.aligned, haligned,
+    panRiscVGetByteEndian_bytesInWord_eq_panGetByteHOL]
+  by_cases h4 : address.toNat % 4 = 0
+  · simp only [h4, decide_true, Bool.and_true, ↓reduceIte]
+    cases hcell : state.memory (panByteAlignHOL address) with
+    | word value =>
+        have hv : panTheWord (state.memory (panByteAlignHOL address)) = value := by
+          rw [hcell]; rfl
+        by_cases hdomain : state.memaddrs (panByteAlignHOL address) = true
+        · simp only [PanWordLab.toHolWordLab, hdomain, ↓reduceIte, Option.map_some]
+          apply congrArg some
+          rw [← hv]
+          exact panRiscVWordOfBytes_eq_widen32 _ _ _ _ _
+            (hbyte _) (hbyte _) (hbyte _) (hbyte _)
+        · simp [hdomain]
+  · simp [h4]
+
+/-- All-width form of `crepRuntimeLoad32_riscv64_eq_panMemLoad32HOL`. -/
+theorem crepRuntimeLoad32_riscv_eq_panMemLoad32HOL [NeZero width] {σ : Type}
+    (state : CrepHolState (BitVec width) σ) (address : BitVec width) :
+    crepRuntimeLoad32 (riscvCrepWordTarget state.toRuntime) address =
+      (panMemLoad32HOL
+        (fun current => (state.memory current).toHolWordLab)
+        (fun current => state.memaddrs current = true)
+        state.bigEndian address).map (fun value => BitVec.ofNat width value.toNat) := by
+  calc
+    crepRuntimeLoad32 (riscvCrepWordTarget state.toRuntime) address =
+      panModelRead32 (RiscV.panRiscVMemoryModelForEndian state.bigEndian)
+        state.memaddrs (crepRuntimeMemoryView state.memory)
+        (BitVec.ofNat width (width / 8)) address state.bigEndian :=
+          crepRuntimeLoad32_wordTarget_eq_riscv state.toRuntime address
+    _ = panModelRead32 (RiscV.panRiscVMemoryModelForEndian state.bigEndian)
+        state.memaddrs (fun current => some (panTheWord (state.memory current)))
+        (BitVec.ofNat width (width / 8)) address state.bigEndian := rfl
+    _ = crepHolEvalMemLoad32
+        (RiscV.panRiscVMemoryModelForEndian state.bigEndian) (BitVec.ofNat width (width / 8))
+        state address := by
+          symm
+          exact crepHolEvalMemLoad32_eq_panModelRead32 _ _ _ _
+    _ = _ := crepHolEvalMemLoad32_riscv_eq_panMemLoad32HOL state address
+
 theorem crepRuntimeLoad32_riscv64_eq_panMemLoad32HOL {σ : Type}
     (state : CrepHolState (BitVec 64) σ) (address : BitVec 64) :
     crepRuntimeLoad32 (riscvCrepWordTarget state.toRuntime) address =
