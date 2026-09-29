@@ -312,5 +312,134 @@ theorem map_eq_iff_contains {ms : List MlString} (s : String) (hs : CrepNameRang
     (ms.map toStringOfBytes).contains s = true ↔ ms.contains (ofString s) = true := by
   rw [contains_map_toStringOfBytes s hs]
 
+open Flapjack.Basis.Pure.MlString in
+/-- Name-membership agreement under the `toStringOfBytes` codec on byte-ranged names:
+    given `inlineNames` is the `toStringOfBytes` image of `inl_fname`, filtering by the
+    production String name is the image of filtering by the exact `MlString` name. -/
+theorem contains_toStringOfBytes_agree {inlineNames : List FunName}
+    {inl_fname : List CrepInlineMapHOLName}
+    (hinl : inlineNames = inl_fname.map toStringOfBytes) {s : String}
+    (hs : CrepNameRanged s) :
+    inlineNames.contains s = inl_fname.contains (ofString s) := by
+  rw [hinl, contains_map_toStringOfBytes s hs]
+
+open Flapjack.Basis.Pure.MlString in
+/-- Filter/name agreement across the codec: if the production function-name list is the
+    `toStringOfBytes` image of the exact `MlString` list and every production name is
+    byte-ranged, the production filter on `inlineNames` maps to the exact filter on
+    `inl_fname`. -/
+theorem filter_names_toStringOfBytes {l1 : List FunName} {l2 : List CrepInlineMapHOLName}
+    {inlineNames : List FunName} {inl_fname : List CrepInlineMapHOLName}
+    (h : l1 = l2.map toStringOfBytes)
+    (hinl : inlineNames = inl_fname.map toStringOfBytes)
+    (hrange : ∀ s ∈ l1, CrepNameRanged s) :
+    l1.filter (fun s => inlineNames.contains s) =
+      (l2.filter (fun m => inl_fname.contains m)).map toStringOfBytes := by
+  subst h
+  revert hrange
+  induction l2 with
+  | nil => intro hrange; simp
+  | cons m rest ih =>
+      intro hrange
+      have hm : toStringOfBytes m ∈ (m :: rest).map toStringOfBytes := by
+        simp
+      have hsub : ∀ s ∈ rest.map toStringOfBytes, CrepNameRanged s :=
+        fun s hs => hrange s (by simp only [List.map_cons, List.mem_cons]; exact Or.inr hs)
+      have hcond : inlineNames.contains (toStringOfBytes m) = inl_fname.contains m := by
+        rw [contains_toStringOfBytes_agree hinl (hrange (toStringOfBytes m) hm),
+          ofString_toStringOfBytes]
+      simp only [List.map_cons, List.filter_cons]
+      rw [hcond]
+      by_cases hc : inl_fname.contains m
+      · simp only [hc, if_true]
+        exact congrArg (toStringOfBytes m :: ·) (ih hsub)
+      · simp only [hc]
+        exact ih hsub
+
+open Flapjack.Basis.Pure.MlString
+
+/-- Name codec symmetry: for a byte-ranged `String` name, comparing the
+`MlString` image under `toStringOfBytes` against `s` agrees with comparing
+the `String` against `toStringOfBytes`. Untagged Flapjack-specific support. -/
+theorem beq_toStringOfBytes_eq_ofString {s : String} (hs : CrepNameRanged s)
+    (m : MlString) : (toStringOfBytes m == s) = (m == ofString s) := by
+  rw [beq_comm (toStringOfBytes m) s, ← beq_ofString_eq hs, beq_comm (ofString s) m]
+
+/-- Codec-lifted alist lookup: a `FUPDATE_LIST` over codec-translated entries
+mirrors the exact lookup under `ofString`/`Option.map decode`. -/
+theorem flookup_fupdateList_codec {β γ : Type} [BEq CrepInlineMapHOLName]
+    [LawfulBEq CrepInlineMapHOLName]
+    (base1 : FiniteMap String γ) (base2 : FiniteMap CrepInlineMapHOLName β)
+    (decode : β → γ)
+    (hbase : ∀ t, CrepNameRanged t → base1 t = (base2 (ofString t)).map decode)
+    (entries : List (CrepInlineMapHOLName × β)) (s : String) (hs : CrepNameRanged s) :
+    FLOOKUP (FUPDATE_LIST base1
+        (entries.map (fun e => (toStringOfBytes e.1, decode e.2)))) s =
+      (FLOOKUP (FUPDATE_LIST base2 entries) (ofString s)).map decode := by
+  induction entries generalizing base1 base2 with
+  | nil =>
+      simp only [List.map_nil, FUPDATE_LIST_nil, FLOOKUP]
+      exact hbase s hs
+  | cons entry rest ih =>
+      rw [List.map_cons, FUPDATE_LIST_cons, FUPDATE_LIST_cons]
+      apply ih
+      intro t ht
+      change FLOOKUP (FUPDATE base1 (toStringOfBytes entry.fst, decode entry.snd)) t =
+        Option.map decode (FLOOKUP (FUPDATE base2 entry) (ofString t))
+      rw [FLOOKUP_update, FLOOKUP_update, beq_toStringOfBytes_eq_ofString ht entry.1]
+      by_cases hc : (entry.1 == ofString t) = true
+      · split <;> simp_all
+      · split
+        · simp_all
+        · exact hbase t ht
+
+/-- `alistToFmapHOLExact` looked up through the codec equals the production
+`FUPDATE_LIST` over the translated entries. Untagged support. -/
+theorem alistToFmapHOLExact_codec_lookup {width : Nat} [NeZero width] {γ : Type}
+    [BEq CrepInlineMapHOLName] [LawfulBEq CrepInlineMapHOLName]
+    (decode : (List Nat × CrepProgHOL width) → γ)
+    (entries : List (CrepInlineMapHOLName × (List Nat × CrepProgHOL width)))
+    (s : String) (hs : CrepNameRanged s) :
+    FLOOKUP (FUPDATE_LIST (FEMPTY : FiniteMap String γ)
+        ((entries.map (fun e => (toStringOfBytes e.1, decode e.2))).reverse)) s =
+      ((alistToFmapHOLExact entries).lookup (ofString s)).map decode := by
+  rw [lookup_alistToFmapHOLExact]
+  rw [← List.map_reverse]
+  exact flookup_fupdateList_codec FEMPTY FEMPTY decode
+    (fun t _ => by simp only [FEMPTY, Option.map_none]) entries.reverse s hs
+
+/-- The production inline-candidate lookup `crepInlineLookup` over the codec
+translated entry list equals the exact `alistToFmapHOLExact` lookup under the
+name codec. Untagged; the remaining piece is the body/recursion agreement. -/
+theorem crepInlineLookup_codec {width : Nat} [NeZero width] {α : Type}
+    (bodyDecode : CrepProgHOL width → CrepProg α)
+    (entries : List (CrepInlineMapHOLName × (List Nat × CrepProgHOL width)))
+    (s : String) (hs : CrepNameRanged s) :
+    crepInlineLookup s (entries.map (fun e =>
+        (toStringOfBytes e.1, (e.2.1, bodyDecode e.2.2)))) =
+      ((alistToFmapHOLExact entries).lookup (ofString s)).map
+        (fun e => (e.1, bodyDecode e.2)) := by
+  rw [crepInlineLookup_eq_fupdateList]
+  exact alistToFmapHOLExact_codec_lookup (fun e => (e.1, bodyDecode e.2)) entries s hs
+
+/-- `crepExpToHOL` sends `CrepExp.var` to `CrepExpHOL.var`. -/
+theorem crepExpToHOL_var_map {width : Nat} [NeZero width] (names : List Nat) :
+    (names.map (CrepExp.var (α := BitVec width))).map crepExpToHOL =
+      names.map CrepExpHOL.var := by
+  induction names with
+  | nil => rfl
+  | cons n ns ih => simp only [List.map_cons, ih, crepExpToHOL]
+
+/-- Executed argument loading lifts to the exact argument loading under the
+    `crepProgToHOL` codec. -/
+theorem crepProgToHOL_crepArgLoad {width : Nat} [NeZero width]
+    (temporaryNames argumentNames : List Nat)
+    (arguments : List (CrepExp (BitVec width))) (body : CrepProg (BitVec width)) :
+    crepProgToHOL (crepArgLoad temporaryNames arguments argumentNames body) =
+      argLoadHOLExact temporaryNames (arguments.map crepExpToHOL) argumentNames
+        (crepProgToHOL body) := by
+  simp only [crepArgLoad, argLoadHOLExact, crepProgToHOL_nestedDecs]
+  rw [crepExpToHOL_var_map]
+
 end CrepInlineRoute
 end Flapjack
