@@ -16,6 +16,7 @@ import Flapjack.Misc.BinaryIeeeRoundFp64
 import Flapjack.Misc.BinaryIeeeArithFp64
 import Flapjack.Misc.BinaryIeeeConvert
 import Flapjack.Misc.BinaryIeeeSqrt
+import Flapjack.Misc.BinaryIeeeSqrtFp64
 import Flapjack.FpSemHOL
 import Flapjack.Basis.Pure.MlList
 import Flapjack.Pancake.PanLang

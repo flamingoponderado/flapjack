@@ -1732,6 +1732,13 @@ run_probe machine_ieee_fp64_sqrt_special_probeScript.sml machine_ieee_fp64_sqrt_
   "$hol_dir/src/floating-point/binary_ieeeScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 
+# The binary64 exact-square sqrt probe observes fp64_sqrt roundTiesToEven on
+# exact squares, whose sqrt isqrtLib proves (bead flapjack-h29l.6.3.2.2).
+run_probe machine_ieee_fp64_sqrt_exact_probeScript.sml machine_ieee_fp64_sqrt_exact_probe.out \
+  sqrt_four sqrt_min_sub sqrt_2p1022 \
+  "$hol_dir/src/floating-point/binary_ieeeScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
 # The good_handlers probe observes the structural handler-label predicate,
 # including the NONE-ret case (handler ignored) and nested bad handlers.
 run_probe word_convs_good_handlers_probeScript.sml word_convs_good_handlers_probe.out \
