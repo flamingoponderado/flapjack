@@ -27,4 +27,17 @@ inductive Shift where
   | ror
   deriving DecidableEq, Repr
 
+/-- Exact port of HOL `ast$opb` (`cakeml/semantics/astScript.sml:59-60`):
+`Datatype opb = Lt | Gt | Leq | Geq`. The four nullary constructors and their
+order match; there is no payload, width parameter, or side condition. This is
+the comparison (`cmp`) argument type of the tagged `fpSem` operation
+`fp_cmp_def` (`Flapjack/FpSemHOL.lean`). -/
+@[hol "cakeml/semantics/astScript.sml" "opb"]
+inductive Opb where
+  | lt
+  | gt
+  | leq
+  | geq
+  deriving DecidableEq, Repr
+
 end Flapjack

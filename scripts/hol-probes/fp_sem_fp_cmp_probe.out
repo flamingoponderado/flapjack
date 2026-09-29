@@ -1,0 +1,6 @@
+fp_cmp_lt_one_two=T
+fp_cmp_leq_two_one=F
+fp_cmp_gt_two_one=T
+fp_cmp_geq_one_one=T
+fp_cmp_lt_qnan_one=F
+fp_cmp_gt_pinf_one=T

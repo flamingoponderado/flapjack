@@ -1,3 +1,4 @@
+import Flapjack.AstHOL
 import Flapjack.HolRef
 import Flapjack.Misc.BinaryIeeeArith
 import Flapjack.Misc.BinaryIeeeSqrt
@@ -90,5 +91,17 @@ noncomputable def fpSemFpfma (v1 v2 v3 : BitVec 64) : BitVec 64 :=
 @[hol "cakeml/semantics/fpSemScript.sml" "fp_top_comp_def"]
 noncomputable def fpSemFpTopComp : FpTop → BitVec 64 → BitVec 64 → BitVec 64 → BitVec 64 :=
   fun _ => fpSemFpfma
+
+/-- Exact HOL `fp_cmp_def` (`fpSemScript.sml:24-31`): the comparison argument
+    has the source-syntax carrier `ast$opb` (`Lt | Gt | Leq | Geq`, ported as
+    `Flapjack.Opb`), and each constructor maps to the corresponding
+    `machine_ieee` `fp64_*` predicate.  HOL `word64` is `BitVec 64`.  This is
+    the `ast$opb`-keyed counterpart of the tagged `fpSemFpCmpComp`. -/
+@[hol "cakeml/semantics/fpSemScript.sml" "fp_cmp_def"]
+noncomputable def fpSemFpCmp : Opb → BitVec 64 → BitVec 64 → Bool
+  | .lt => holFp64LessThan
+  | .gt => holFp64GreaterThan
+  | .leq => holFp64LessEqual
+  | .geq => holFp64GreaterEqual
 
 end Flapjack

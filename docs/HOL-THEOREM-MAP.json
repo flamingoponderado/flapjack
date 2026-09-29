@@ -25053,5 +25053,21 @@
   "lean_name": "wordSemGetWord",
   "statement_status": "documented_mismatch",
   "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-h29l.12) against wordSemScript.sml:278-280: HOL `get_word_def` is partial and specifies only `get_word (Word w) = w`, leaving `Loc` unspecified. The Lean total `wordSemGetWord` fixes the `Loc` representative to `0`, so its `Loc` value is not the HOL result; no exact tag is possible and the @[hol] tag is withheld. The specified Word clause is the kernel-checked `wordSemGetWord_word`. Direct Word-case HOL oracle row `get_word_word=5w` (`scripts/hol-probes/word_sem_accessors_probe.out`) with kernel replay in `Flapjack/Test/WordSemAccessorsParity.lean` (`getWordWord`)."
-}
+},
+  {
+    "hol_path": "cakeml/semantics/astScript.sml",
+    "hol_name": "opb",
+    "lean_path": "Flapjack/AstHOL.lean",
+    "lean_name": "Opb",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds10 source comparison (2026-09-29; bead flapjack-h29l.6.2.7) against cakeml/semantics/astScript.sml:59-60: HOL `Datatype opb = Lt | Gt | Leq | Geq`; Lean `Opb` has the same four nullary constructors in the same order, no payload, width parameter, or side condition. This is the source-syntax comparison carrier of the tagged `fpSem` `fp_cmp_def`."
+  },
+  {
+    "hol_path": "cakeml/semantics/fpSemScript.sml",
+    "hol_name": "fp_cmp_def",
+    "lean_path": "Flapjack/FpSemHOL.lean",
+    "lean_name": "fpSemFpCmp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds10 source comparison (2026-09-29; bead flapjack-h29l.6.2.7) against cakeml/semantics/fpSemScript.sml:24-31: HOL `fp_cmp cmp = case cmp of Lt => fp64_lessThan | Leq => fp64_lessEqual | Gt => fp64_greaterThan | Geq => fp64_greaterEqual`, where the parameter's type is the source-syntax `ast$opb` (there is no type named `cmp`; `cmp` is the parameter). The four clauses match in order over the tagged `Opb` carrier. HOL `word64` is the fixed `BitVec 64`, so no width qualifier applies; the `fp64_*` predicates are the untagged `machine_ieee` renderings `holFp64*`, as for the sibling tagged `fpSemFpCmpComp`. Direct HOL rows fp_cmp_lt_one_two/fp_cmp_leq_two_one/fp_cmp_gt_two_one/fp_cmp_geq_one_one/fp_cmp_lt_qnan_one/fp_cmp_gt_pinf_one of scripts/hol-probes/fp_sem_fp_cmp_probe.out are kernel-checked in Flapjack.Test.FpSemOpsParity."
+  }
 ]

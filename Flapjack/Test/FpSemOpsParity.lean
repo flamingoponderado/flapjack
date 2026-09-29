@@ -60,6 +60,34 @@ example : fpSemFpCmpComp .less 1 2 = true := by decide +kernel
 
 example : fpSemFpCmpComp .greater 2 1 = true := by decide +kernel
 
+/-! ## `fp_cmp` over the source-syntax `ast$opb` carrier -/
+
+example : fpSemFpCmp .lt = holFp64LessThan := rfl
+
+example : fpSemFpCmp .gt = holFp64GreaterThan := rfl
+
+example : fpSemFpCmp .leq = holFp64LessEqual := rfl
+
+example : fpSemFpCmp .geq = holFp64GreaterEqual := rfl
+
+example : fpSemFpCmp .lt (0x3FF0000000000000 : BitVec 64) (0x4000000000000000 : BitVec 64) = true :=
+  by decide +kernel
+
+example : fpSemFpCmp .leq (0x4000000000000000 : BitVec 64) (0x3FF0000000000000 : BitVec 64) = false :=
+  by decide +kernel
+
+example : fpSemFpCmp .gt (0x4000000000000000 : BitVec 64) (0x3FF0000000000000 : BitVec 64) = true :=
+  by decide +kernel
+
+example : fpSemFpCmp .geq (0x3FF0000000000000 : BitVec 64) (0x3FF0000000000000 : BitVec 64) = true :=
+  by decide +kernel
+
+example : fpSemFpCmp .lt (0x7FF8000000000000 : BitVec 64) (0x3FF0000000000000 : BitVec 64) = false :=
+  by decide +kernel
+
+example : fpSemFpCmp .gt (0x7FF0000000000000 : BitVec 64) (0x3FF0000000000000 : BitVec 64) = true :=
+  by decide +kernel
+
 /-! ## Executable checks -/
 
 def check (name : String) (actual : Bool) : IO Bool := do
