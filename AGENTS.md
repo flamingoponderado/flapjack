@@ -304,6 +304,19 @@ representation statement only: it does not authorize changed quantifiers,
 hypotheses, conclusions, `BEq` side conditions, or word-model differences, and
 every tagged declaration still needs its own statement/side-condition review.
 
+**Qualify finite maps nested in a function type.** For a HOL type abbreviation
+whose function argument and optional result are products containing `|->` maps,
+use `(fmap_as_finite_support_function := [argument_N, result_M])` with one-based
+product positions. The Lean abbreviation must use `HolFiniteMapExact` at both
+named positions with the same map type, and account for every such map in the
+abbreviation. Keep the same-module `holFmapAsFiniteSupportWitness` and record
+the two positions and the source comparison in the manifest; use status
+`reviewed_fmap_as_finite_support_function` (or its combined
+`_words_as_type_indexed_bitvec` status). This qualifier is mutually exclusive
+with the other finite-map qualifiers. Its syntactic checker and Lean witness
+do not prove HOL-to-Lean equivalence; review the entire function domain,
+codomain, and surrounding word/set carriers against HOL before tagging.
+
 **Qualify standalone finite-map carriers.** Use
 `(fmap_as_finite_support_result)` when a tagged declaration is not a structure
 field but whose own input or result carrier is the reviewed canonical

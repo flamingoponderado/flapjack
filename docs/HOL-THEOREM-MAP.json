@@ -23288,6 +23288,19 @@
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/State.lean",
+    "lean_name": "WordSemGcFun",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "gc_fun_type",
+    "statement_status": "reviewed_fmap_as_finite_support_function_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_function": [
+      "argument_4",
+      "result_3"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Codex source comparison (2026-09-29; bead flapjack-h29l.11.1): HOL gc_fun_type (wordSemScript.sml:193-197) takes a four-component product (root list, word-to-word_loc memory, word set, store_name |-> word_loc) and returns an optional three-component product (root list, memory, store map). Lean WordSemGcFun has the same arrow, Option, and product arities; argument_4 and result_3 are both HolFiniteMapExact WordStoreHOL (WordLocW width). The same-module WordSemStateExact.holFmapAsFiniteSupportWitness proves the canonical toBroad/ofBroad roundtrip for this exact map carrier, which lifts pointwise through the function domain and optional codomain. WordStoreHOL and WordLocW are the tagged exact HOL carriers; WordLocW retains positive width [NeZero width]."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/State.lean",
     "lean_name": "WordSemStackFrame",
     "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
     "hol_name": "stack_frame",
