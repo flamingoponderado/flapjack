@@ -38,7 +38,13 @@ def wordLangArithFromHOL {width : Nat} :
       some (.longMul destinationLeft destinationRight sourceLeft sourceRight)
   | .longDiv destinationLeft destinationRight sourceLeft sourceRight quotient =>
       some (.longDiv destinationLeft destinationRight sourceLeft sourceRight quotient)
-  | .addCarry destination carry sourceLeft sourceRight =>
+  /- HOL asm's `AddCarry r1 r2 r3 r4` consumes r2/r3 as addends and r4 as
+     carry-in/output (asmSemScript.sml:95-100). `loop_to_word$comp` constructs
+     it as `AddCarry scratch_res left right scratch_ci` (loop_to_wordScript.sml:74-77),
+     so this projection must preserve positions 2-4. The old pattern treated
+     position 2 as carry and silently emitted `(r3, r4, r2)` as the production
+     addend/addend/carry tuple, causing arithmetic corpus drift. -/
+  | .addCarry destination sourceLeft sourceRight carry =>
       some (.cakeAddCarry destination sourceLeft sourceRight carry)
   | .addOverflow _ _ _ _ => none
   | .subOverflow _ _ _ _ => none
