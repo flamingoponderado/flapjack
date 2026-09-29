@@ -12,6 +12,7 @@ import Flapjack.Misc.BinaryIeee
 import Flapjack.Misc.MachineIeee
 import Flapjack.Misc.BinaryIeeeRound
 import Flapjack.Misc.BinaryIeeeArith
+import Flapjack.Misc.BinaryIeeeRoundFp64
 import Flapjack.FpSemHOL
 import Flapjack.Basis.Pure.MlList
 import Flapjack.Pancake.PanLang
