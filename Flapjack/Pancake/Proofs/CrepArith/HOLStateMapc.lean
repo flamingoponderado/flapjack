@@ -846,8 +846,8 @@ theorem crepSimpExpCorrect1CrepSemHOLStateHolEval
 
 /-- Flapjack proof support for the `Var` case of HOL
     `simp_exp_correct1` (`crep_arithProofScript.sml:111`). It retains HOL's
-    successful-evaluation premise, unused result binder, full `Option
-    (word_lab)` result and proof-script-local code-only `mapc` update. The
+    successful-evaluation premise, polymorphic unused result binder, full
+    `Option (word_lab)` result and proof-script-local code-only `mapc` update. The
     evaluator reads `locals`, which `mapc` preserves. This is untagged because
     `CrepSemHOLState` is declared in `Semantics.CrepSem.HOLState`, outside this
     counterpart module, so the required same-module finite-map carrier witness
@@ -857,7 +857,7 @@ theorem crepSimpExpCorrect1NativeVarCase
     (update : MlString × (List Nat × CrepProgHOL width) →
       List Nat × CrepProgHOL width)
     (state : CrepSemHOLState width σ) (name : Nat)
-    (_result : HolWordLab width)
+    {resultType : Type} (_result : resultType)
     (_h : evalCrepSemHOLExp state (.var name) ≠ none) :
     evalCrepSemHOLExp (CrepSemHOLState.mapc update state)
         (crepSimpExpHOL (.var name)) =
@@ -866,8 +866,8 @@ theorem crepSimpExpCorrect1NativeVarCase
 
 /-- Flapjack proof support for the `Const` case of HOL
     `simp_exp_correct1` (`crep_arithProofScript.sml:111`). It preserves the
-    same premise/result binders and the complete optional `word_lab`
-    conclusion; a constant evaluates to the same word after the code-only
+    same premise and polymorphic unused result binder, plus the complete
+    optional `word_lab` conclusion; a constant evaluates to the same word after the code-only
     `mapc` update. This is untagged for the same carrier-module reason as the
     `Var` case above; a faithful tagged case remains open. -/
 theorem crepSimpExpCorrect1NativeConstCase
@@ -875,7 +875,7 @@ theorem crepSimpExpCorrect1NativeConstCase
     (update : MlString × (List Nat × CrepProgHOL width) →
       List Nat × CrepProgHOL width)
     (state : CrepSemHOLState width σ) (value : BitVec width)
-    (_result : HolWordLab width)
+    {resultType : Type} (_result : resultType)
     (_h : evalCrepSemHOLExp state (.const value) ≠ none) :
     evalCrepSemHOLExp (CrepSemHOLState.mapc update state)
         (crepSimpExpHOL (.const value)) =
