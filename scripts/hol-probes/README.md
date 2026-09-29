@@ -62,6 +62,13 @@ HOL_PROBE_ONLY=loop_live_optimise_probeScript.sml scripts/hol-probes/regenerate.
 and `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=ocompile_probeScript.sml scripts/hol-probes/regenerate.sh` for
 the ocompile rows.
+`loop_live_domain_list_delete_probe.out` records direct HOL `EVAL` membership
+rows for `domain_list_delete` at
+`cakeml/pancake/proofs/loop_liveProofScript.sml:561-562`; the kernel-checked
+replay is `Flapjack.Test.LoopLiveDomainListDeleteParity`.
+Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=loop_live_domain_list_delete_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
 `Flapjack.Test.LoopPropsCutSetsParity` guards the exact `cut_sets_def`
 clauses over `HolLoopProg`/`NumSet`; its direct HOL outputs for Skip,
 LocValue, Assign, Load32/LoadByte, Seq, If, each Arith variant, and the
@@ -361,6 +368,89 @@ exercising the result side of the local `lookup_code` lemma at
 `cakeml/pancake/proofs/crep_arithProofScript.sml:162`. Its Lean comparison
 uses the exact `lookupCrepHolCode` path in
 `Flapjack.Test.CrepeArithLookupCodeParity`.
+`crep_arith_sh_mem_op_code_probe.out` records nine direct HOL EVAL rows for the
+proof-script-local `sh_mem_op_code` at
+`cakeml/pancake/proofs/crep_arithProofScript.sml:173-180`: the `code` projection
+of the local `mapc` rewrite, and the eight operator cases of
+`sh_mem_op op 1 3w (mapc f s) = (I ## mapc f) (sh_mem_op op 1 3w s)` on
+fixtures whose shared-memory domain is empty.  The `mapc` overload is local to
+that proof script, so the probe inlines `s with code := FMAP_MAP2 f s.code`.
+`Flapjack.Test.CrepArithShMemOpCodeParity` checks the tagged exact
+`crepShMemOpExactHOL_mapc` against every row.  Refresh with
+`HOL_PROBE_ONLY=crep_arith_sh_mem_op_code_probeScript.sml scripts/hol-probes/regenerate.sh`.
+`crep_arith_store_glob_probe.out` records five direct HOL EVAL rows for the
+`StoreGlob` case of the proof-script `simp_prog_correct` at
+`cakeml/pancake/proofs/crep_arithProofScript.sml:184-212`:
+`simp_prog (StoreGlob g exp) = StoreGlob g (simp_exp exp)`
+(`crep_arithScript.sml:89`); the successful `evaluate` equation
+`evaluate (StoreGlob dst (Const 7w), s) = (NONE, set_globals dst 7w s)`
+(`crepSemScript.sml:288-291`); the same row under the local `mapc` rewrite; the
+code-only commutation `set_globals dst 7w (mapc f s) = mapc f (set_globals dst 7w s)`;
+and the missing-variable failure branch `(SOME Error, s)`. The `mapc` overload
+is local to the proof script, so the probe inlines
+`st with code := FMAP_MAP2 f st.code`.
+`Flapjack.Test.CrepArithStoreGlobParity` replays the rows against the tagged
+exact `simpProgCorrectStoreGlobCase` and the exact `CrepSemHOLState.setGlobals`.
+Refresh with
+`HOL_PROBE_ONLY=crep_arith_store_glob_probeScript.sml scripts/hol-probes/regenerate.sh`.
+`crep_arith_store_32_probe.out` records seven direct HOL EVAL rows for the
+`Store32` case of the proof-script `simp_prog_correct` at
+`cakeml/pancake/proofs/crep_arithProofScript.sml:184-212`:
+`simp_prog (Store32 exp1 exp2) = Store32 (simp_exp exp1) (simp_exp exp2)`
+(`crep_arithScript.sml:87`); the successful `evaluate` equation
+`evaluate (Store32 (Const 4w) (Const 0x11w), s)` returning `NONE`
+(`crepSemScript.sml:274-280`); the same row under the local `mapc` rewrite; the
+code-only commutation of `mapc f` with the memory update; and the three
+failure branches `(SOME Error, s)` (memory domain, `mem_store_32` alignment,
+and a failed operand). The `mapc` overload is local to the proof script, so the
+probe inlines `st with code := FMAP_MAP2 f st.code`.
+`Flapjack.Test.CrepArithStore32Parity` replays the rows against the tagged
+exact `simpProgCorrectStore32Case` and the exact `CrepSemHOLState` carriers.
+Refresh with
+`HOL_PROBE_ONLY=crep_arith_store_32_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`crep_arith_if_probe.out` records eight direct HOL EVAL rows for the `If` case
+of the proof-script `simp_prog_correct` at
+`cakeml/pancake/proofs/crep_arithProofScript.sml:184-212`:
+`simp_prog (If exp c1 c2) = If (simp_exp exp) (simp_prog c1) (simp_prog c2)`
+(`crep_arithScript.sml:90`); the true- and false-guard `evaluate` equations
+`evaluate (If e c1 c2, s)` selecting `c1`/`c2` and their resulting states
+(`crepSemScript.sml:307-311`); the absent-condition failure branch
+`(SOME Error, s)`; and the code-only commutation of `mapc f` with the selected
+branch update. The `mapc` overload is local to the proof script, so the probe
+inlines `st with code := FMAP_MAP2 f st.code`.
+`Flapjack.Test.CrepArithIfParity` replays the direct `simp_prog_if`,
+true/false-guard and absent-condition error rows against the exact
+`CrepSemHOLState` carriers; the two code-only `mapc` rows are covered by the
+tagged exact `simpProgCorrectIfCase` proof. Refresh with
+`HOL_PROBE_ONLY=crep_arith_if_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`crep_arith_store_byte_probe.out` records seven direct HOL EVAL rows for the
+`StoreByte` case of the proof-script `simp_prog_correct` at
+`cakeml/pancake/proofs/crep_arithProofScript.sml:184-212`:
+`simp_prog (StoreByte dst src) = StoreByte (simp_exp dst) (simp_exp src)`
+(`crep_arithScript.sml:88`); the successful `evaluate` result under a full byte
+domain and the same result under the local `mapc` rewrite (both projected onto
+their first component, since `=` is undecidable on state pairs); the
+out-of-domain and missing-variable failure branches `(SOME Error, s)` and their
+`mapc` image; and the code-only commutation `(mapc f s).memory = s.memory`. The
+`mapc` overload is local to the proof script, so the probe inlines
+`st with code := FMAP_MAP2 f st.code`.
+`Flapjack.Test.CrepArithStoreByteParity` replays the rows against the tagged
+exact `simpProgCorrectStoreByteCase` and the exact `CrepSemHOLState` memory
+update. Refresh with
+`HOL_PROBE_ONLY=crep_arith_store_byte_probeScript.sml scripts/hol-probes/regenerate.sh`.
+`crep_arith_ext_call_probe.out` records four direct HOL EVAL rows for the
+`ExtCall` case of the proof-script `simp_prog_correct` at
+`cakeml/pancake/proofs/crep_arithProofScript.sml:184-212`: HOL `simp_prog`
+leaves an `ExtCall` unchanged (catch-all at `crep_arithScript.sml:113`), and
+`evaluate (ExtCall ffi_index ptr1 len1 ptr2 len2, s)`
+(`crepSemScript.sml:367-379`) reads four locals and calls `call_FFI`, with the
+missing-locals failure branch `(SOME Error, s)`. The rows pin the source
+identity, the code-only `mapc` rendering, and the failure branch directly and
+under `mapc`; the exact Lean `CrepSemHOLState` counterpart and its replay live
+in `Flapjack.Test.CrepArithExtCallParity`. Refresh with
+`HOL_PROBE_ONLY=crep_arith_ext_call_probeScript.sml scripts/hol-probes/regenerate.sh`.
 `crep_dest_2exp_probe.out` records direct HOL EVAL of
 `crep_arith$dest_2exp_def` at `cakeml/pancake/crep_arithScript.sml:15`, including
 the corresponding `word_lsl 1w` results for successful exponents. Its Lean

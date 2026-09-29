@@ -1,0 +1,7 @@
+simp_prog_store32=T
+evaluate_store32_const=T
+evaluate_store32_mapc=T
+store32_mapc_commute=T
+evaluate_store32_domain_error=T
+evaluate_store32_unaligned_error=T
+evaluate_store32_missing_var=T

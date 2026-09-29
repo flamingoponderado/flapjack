@@ -57,6 +57,13 @@ commit, verification results, or exact blocked reason on the bead, and notify
 the coordinator. Keep dependency beads open until their own acceptance criteria
 are met.
 
+Before creating or claiming a child bead, read the fleet inbox and list the
+parent's children in the shared bead database. Do not duplicate a constructor
+or case already assigned to another agent, even if its bead is still open.
+Use your fleet agent name as the assignee (not a generic tool name). If an
+assignment conflicts with a new message, stop and ask the coordinator which
+case to keep before editing.
+
 Use `bd ready` to choose the next unblocked, commit-sized task. The shared bead
 database is the source of truth for current priorities; do not hard-code a
 temporary strategic focus here or claim a blocked parent merely because it is

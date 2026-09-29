@@ -1410,6 +1410,10 @@ run_probe loop_live_comp_probeScript.sml loop_live_comp_probe.out \
   skip return "$cake_dir/pancake/loop_liveScript.sml"
 run_probe loop_live_optimise_probeScript.sml loop_live_optimise_probe.out \
   skip shrink_loop_fixedpoint "$cake_dir/pancake/loop_liveScript.sml"
+run_probe loop_live_domain_list_delete_probeScript.sml \
+  loop_live_domain_list_delete_probe.out \
+  dld_kept dld_absent \
+  "$cake_dir/pancake/proofs/loop_liveProofScript.sml" "$cake_dir/pancake/proofs"
 run_probe ocompile_probeScript.sml ocompile_probe.out \
   skip ffi "$cake_dir/pancake/crep_to_loopScript.sml"
 run_probe loop_lang_assigned_vars_probeScript.sml \
@@ -1599,6 +1603,13 @@ run_probe word_lang_every_var_probeScript.sml word_lang_every_var_probe.out \
   "$cake_dir/compiler/backend/wordLangScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 
+# The wordSem carrier probe observes buffer_flush/buffer_write/stack_size for
+# the exact carrier port (bead flapjack-h29l.1).
+run_probe word_sem_carriers_probeScript.sml word_sem_carriers_probe.out \
+  buffer_flush_hit stack_size_unbounded \
+  "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
 # The good_handlers probe observes the structural handler-label predicate,
 # including the NONE-ret case (handler ignored) and nested bad handlers.
 run_probe word_convs_good_handlers_probeScript.sml word_convs_good_handlers_probe.out \
@@ -1765,7 +1776,7 @@ run_probe loop_lang_prog_probeScript.sml loop_lang_prog_probe.out \
 # The panLang exp probe pins the `exp` word payload (`Const`), its `mlstring`
 # identifier fields, and representative constructor arities at word type 64.
 run_probe pan_lang_exp_probeScript.sml pan_lang_exp_probe.out \
-  ex_const ex_bytesinword \
+  ex_const ex_nstruct_fields ex_bytesinword \
   "$cake_dir/pancake/panLangScript.sml" \
   "$cake_dir/pancake"
 run_probe sptree_set_ops_probeScript.sml sptree_set_ops_probe.out \
@@ -2094,6 +2105,74 @@ run_probe fupdate_list_append_commutes_probeScript.sml fupdate_list_append_commu
 run_probe crep_sem_evaluate_ind_probeScript.sml crep_sem_evaluate_ind_probe.out \
   evaluate_ind "$cake_dir/pancake/semantics/crepSemScript.sml" \
   "$cake_dir/pancake/semantics"
+
+# The proof-script-local crep_arith `sh_mem_op_code` (crep_arithProofScript.sml
+# :173-180) commutes the local `mapc` code rewrite with `sh_mem_op`; `mapc` is
+# a proof-script `[local]` Overload, so the probe inlines it.  Rows pin the
+# shared-memory domain to the empty set so the domain checks decide.
+run_probe crep_arith_sh_mem_op_code_probeScript.sml crep_arith_sh_mem_op_code_probe.out \
+  sh_mem_op_code_code sh_mem_op_code_load_err sh_mem_op_code_store_err \
+  sh_mem_op_code_load8_err sh_mem_op_code_store8_err sh_mem_op_code_load16_err \
+  sh_mem_op_code_store16_err sh_mem_op_code_load32_err sh_mem_op_code_store32_err \
+  "$cake_dir/pancake/proofs/crep_arithProofScript.sml" "$cake_dir/pancake/proofs"
+
+# The StoreGlob case of crep_arithProofScript.sml:184-212 `simp_prog_correct`.
+# HOL `simp_prog (StoreGlob g exp) = StoreGlob g (simp_exp exp)` and
+# `evaluate (StoreGlob dst src, s)` evaluate only `src` into
+# `(NONE, set_globals dst w s)` (or `(SOME Error, s)`); the local `mapc`
+# overload is inlined, and `storeglob_mapc_commute` pins the code-only `mapc`
+# commutation with `set_globals`.
+run_probe crep_arith_store_glob_probeScript.sml crep_arith_store_glob_probe.out \
+  simp_prog_storeglob evaluate_storeglob_const evaluate_storeglob_mapc \
+  storeglob_mapc_commute evaluate_storeglob_missing_var \
+  "$cake_dir/pancake/proofs/crep_arithProofScript.sml" "$cake_dir/pancake/proofs"
+
+# The Store32 case of crep_arithProofScript.sml:184-212 `simp_prog_correct`.
+# HOL `simp_prog (Store32 exp1 exp2) = Store32 (simp_exp exp1) (simp_exp exp2)`
+# and `evaluate (Store32 dst src, s)` evaluate both operands into
+# `(NONE, s with memory := m)` through `mem_store_32` (or `(SOME Error, s)`);
+# the local `mapc` overload is inlined, and `store32_mapc_commute` pins the
+# code-only `mapc` commutation with the `memory` update.  The domain, alignment
+# and failed-operand rows pin the non-`Error` premise's failure branches.
+run_probe crep_arith_store_32_probeScript.sml crep_arith_store_32_probe.out \
+  simp_prog_store32 evaluate_store32_const evaluate_store32_mapc \
+  store32_mapc_commute evaluate_store32_domain_error \
+  evaluate_store32_unaligned_error evaluate_store32_missing_var \
+  "$cake_dir/pancake/proofs/crep_arithProofScript.sml" "$cake_dir/pancake/proofs"
+
+# The If case of crep_arithProofScript.sml:184-212 `simp_prog_correct`.
+# HOL `simp_prog (If exp c1 c2) = If (simp_exp exp) (simp_prog c1)
+# (simp_prog c2)` and `evaluate (If e c1 c2,s)` selects `c1`/`c2` from the
+# condition word (`(SOME (Word w), if w <> 0w ...)`) or errors; the local
+# `mapc` overload is inlined, and `if_mapc_commute` pins the code-only `mapc`
+# commutation with the selected branch update.  Both guard values and the
+# error branch are exercised.
+run_probe crep_arith_if_probeScript.sml crep_arith_if_probe.out \
+  simp_prog_if evaluate_if_true evaluate_if_true_state evaluate_if_false \
+  evaluate_if_false_state evaluate_if_error if_mapc_true if_mapc_commute \
+  "$cake_dir/pancake/proofs/crep_arithProofScript.sml" "$cake_dir/pancake/proofs"
+
+# The StoreByte case of crep_arithProofScript.sml:184-212 `simp_prog_correct`.
+# HOL `simp_prog (StoreByte dst src) = StoreByte (simp_exp dst) (simp_exp src)`
+# and `evaluate (StoreByte dst src, s)` evaluates both operands and stores the
+# low byte through `mem_store_byte` (`(NONE, s with memory := m)`, or
+# `(SOME Error, s)`); the local `mapc` overload is inlined.
+run_probe crep_arith_store_byte_probeScript.sml crep_arith_store_byte_probe.out \
+  simp_prog_storebyte evaluate_storebyte_success_result \
+  evaluate_storebyte_mapc_success_result evaluate_storebyte_error_domain \
+  evaluate_storebyte_mapc_error_domain evaluate_storebyte_missing_var \
+  storebyte_memory_mapc \
+  "$cake_dir/pancake/proofs/crep_arithProofScript.sml" "$cake_dir/pancake/proofs"
+
+# The ExtCall case of crep_arithProofScript.sml:184-212 `simp_prog_correct`.
+# HOL `simp_prog` leaves an `ExtCall` unchanged (catch-all), and
+# `evaluate (ExtCall ffi_index ptr1 len1 ptr2 len2, s)` reads four locals and
+# calls `call_FFI` (crepSemScript.sml:367-379); the missing-locals branch is
+# `(SOME Error, s)`.  The local `mapc` overload is inlined.
+run_probe crep_arith_ext_call_probeScript.sml crep_arith_ext_call_probe.out \
+  simp_prog_extcall extcall_mapcs_code \
+  evaluate_extcall_missing_locals evaluate_extcall_mapc_missing_locals \
+  "$cake_dir/pancake/proofs/crep_arithProofScript.sml" "$cake_dir/pancake/proofs"
 
 # The loopSem evaluate_ind statement (rebound through fix_clock_evaluate at
 # loopSemScript.sml:497) is likewise tdefn-generated; capture it for the exact

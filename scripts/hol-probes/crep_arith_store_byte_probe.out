@@ -1,0 +1,7 @@
+simp_prog_storebyte=T
+evaluate_storebyte_success_result=T
+evaluate_storebyte_mapc_success_result=T
+evaluate_storebyte_error_domain=T
+evaluate_storebyte_mapc_error_domain=T
+evaluate_storebyte_missing_var=T
+storebyte_memory_mapc=T

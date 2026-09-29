@@ -1354,6 +1354,18 @@ private theorem sptLookup_sptListDelete {α : Type} :
       simp only [sptListDelete, sptLookup_sptListDelete xs, sptLookup_sptDelete', List.mem_cons]
       by_cases h1 : k = x <;> by_cases h2 : k ∈ xs <;> simp [h1, h2]
 
+/-- Exact HOL `domain_list_delete` (`loop_liveProofScript.sml:561-562`, `[simp]`):
+    `domain (list_delete vs s) = domain s DIFF set vs`, rendered set-wise as the
+    pointwise equivalence `sptMem key (sptListDelete vs s) ↔ sptMem key s ∧ key ∉ vs`
+    (`sptMem` is the reviewed rendering of `key IN domain _`, and `set vs`
+    membership is `key ∈ vs`). -/
+@[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "domain_list_delete"]
+theorem sptDomain_sptListDelete {α : Type} (vs : List Nat) (tree : Spt α) :
+    ∀ key, sptMem key (sptListDelete vs tree) ↔ sptMem key tree ∧ key ∉ vs := by
+  intro key
+  rw [sptMem_iff_lookup, sptMem_iff_lookup, sptLookup_sptListDelete]
+  by_cases h : key ∈ vs <;> simp [h]
+
 private theorem holAlookup_zip_none {β : Type} :
     ∀ (xs : List Nat) (ys : List β) (k : Nat), xs.length = ys.length →
       holAlookup (xs.zip ys) k = none → k ∉ xs

@@ -1660,6 +1660,37 @@ INFRASTRUCTURE_THEOREMS = {
         "CrepInline relation qualifiers. It reuses CrepSemHOLState's reviewed "
         "toBroad/ofBroad witness and has no standalone HOL declaration."
     ),
+    ("Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrect.lean", "holFmapAsFiniteSupportWitness"): (
+        "Same-module canonical finite-support roundtrip witness for the tagged "
+        "simp_prog_correct leaf cases. It reuses CrepSemHOLState's reviewed "
+        "toBroad/ofBroad witness and has no standalone HOL declaration."
+    ),
+    ("Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrect.lean", "crepSimpMapcsHOL_emptyLocals"): (
+        "Flapjack-only commuting law for the local simp_prog_correct mapcs "
+        "rendering and exact emptyLocals; HOL has no standalone declaration."
+    ),
+    ("Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrect.lean", "crepSimpMapcsHOL_decClock"): (
+        "Flapjack-only commuting law for the local simp_prog_correct mapcs "
+        "rendering and exact decClock; HOL has no standalone declaration."
+    ),
+    ("Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrectStoreGlob.lean", "holFmapAsFiniteSupportWitness"): (
+        "Same-module canonical finite-support roundtrip witness for the tagged "
+        "simp_prog_correct StoreGlob case. It reuses CrepSemHOLState's reviewed "
+        "toBroad/ofBroad witness and has no standalone HOL declaration."
+    ),
+    ("Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrectStoreGlob.lean", "crepSimpMapcsHOL_setGlobals"): (
+        "Flapjack-only commuting law for the local simp_prog_correct mapcs "
+        "rendering and exact setGlobals; HOL has no standalone declaration."
+    ),
+    ("Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrectStore32.lean", "holFmapAsFiniteSupportWitness"): (
+        "Same-module canonical finite-support roundtrip witness for the tagged "
+        "simp_prog_correct Store32 case. It reuses CrepSemHOLState's reviewed "
+        "toBroad/ofBroad witness and has no standalone HOL declaration."
+    ),
+    ("Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrectStore32.lean", "crepSimpMapcsHOL_setMemory"): (
+        "Flapjack-only commuting law for the local simp_prog_correct mapcs "
+        "rendering and exact memory update; HOL has no standalone declaration."
+    ),
     ("Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean", "panWriteBytearrayWord8HOL_domainCongr"): (
         "Flapjack-specific support for the ExtCall returned-byte state relation. "
         "This congruence handles distinct DecidablePred instances after equality "
@@ -1679,6 +1710,16 @@ INFRASTRUCTURE_THEOREMS = {
         "Flapjack-specific mutual evaluator-induction helper for the strided "
         "mem_load_flat_rel analogue. HOL has no standalone declaration with "
         "this helper statement; its list cases are part of mem_loads_flat_rel."
+    ),
+    ("Flapjack/Pancake/PanLang/Exp.lean", "expOfHOL_expToHOL_nStruct"): (
+        "Flapjack-only constructor refinement for panLang exp NStruct "
+        "(panLangScript.sml:53-69): states the exact production-to-ExpHOL-to-"
+        "production roundtrip under the byte-range premises required to convert "
+        "String structure/field names to HOL mlstring. It specializes the codec, "
+        "is not a separately declared HOL theorem, and does not tag production "
+        "Exp or claim arbitrary String correspondence. The direct HOL constructor "
+        "observation and ordered field payload are replayed in "
+        "pan_lang_exp_probe.out by PanLangExpHOLParity."
     ),
 }
 VALID_STATUSES = {

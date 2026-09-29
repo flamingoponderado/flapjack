@@ -1315,6 +1315,28 @@ theorem panRiscVByteAlign_bytesInWord_eq_holByteAlignBitVec [NeZero width]
   simp [RiscV.panRiscVByteAlign, holByteAlignBitVec,
     Nat.mod_eq_of_lt hlt, hbytes0]
 
+/-- Lean-level equality of two Lean definitions at every positive width:
+    production RISC-V alignment with `bytesInWord = width / 8` equals the Lean
+    `holByteAlignBitVec`.  Only for `width ≥ 8` does this mean HOL `byte_align`
+    (`panRiscVByteAlign_bytesInWord_eq_holByteAlignBitVec`).  Below width 8,
+    HOL's `LOG2 0` is unspecified; there both sides fall back to the address
+    identity (`Nat.log2 0 = 0` and the zero-byte-count branch), a Flapjack
+    convention with no HOL claim.  Flapjack-only, untagged. -/
+theorem panRiscVByteAlign_bytesInWord_eq_holByteAlignBitVec_lean [NeZero width]
+    (address : BitVec width) :
+    RiscV.panRiscVByteAlign (BitVec.ofNat width (width / 8)) address =
+      holByteAlignBitVec address := by
+  have hlt : width / 8 < 2 ^ width :=
+    Nat.lt_of_le_of_lt (Nat.div_le_self _ _) (Nat.lt_two_pow_self)
+  unfold RiscV.panRiscVByteAlign holByteAlignBitVec
+  simp only [BitVec.toNat_ofNat, Nat.mod_eq_of_lt hlt]
+  split
+  · rename_i h0
+    rw [h0]
+    apply BitVec.eq_of_toNat_eq
+    simp
+  · rfl
+
 /-! Source-shaped finite-word memory adapter. Its byteAlign, getByte, and
     aligned fields encode the imported HOL formulas through the finite-word /
     BitVec equivalence. `setByte` implements the pointwise bit-slice cases in
@@ -2762,6 +2784,84 @@ theorem crepHolEvalMemLoadByte_riscv64_eq_panMemLoadByteHOL {σ : Type}
         exact (Nat.mod_eq_of_lt (by omega : byte.toNat < 2 ^ 64)).symm
       · simp [hdomain]
 
+/-- All-width form of `crepHolEvalMemLoadByte_riscv64_eq_panMemLoadByteHOL`: at
+    the canonical byte count `bytesInWord = width / 8`, the executed RISC-V
+    byte-load helper equals the tagged Lean `panMemLoadByteHOL` widened to the
+    word.  The alignment step is `panRiscVByteAlign_bytesInWord_eq_holByteAlignBitVec_lean`
+    and the byte offset is `w2n a MOD d` (reversed when big endian).  Success
+    and domain failure are both preserved.
+    Width domain: this is an equality of Lean definitions at every positive width, but
+    it is a HOL correspondence only for `width ≥ 8`.  Below width 8 the byte count `dimindex DIV 8` is 0. HOL's `byte_index` is still
+    specified there (`w2n a MOD 0 = w2n a`, which Lean's `n % 0 = n` matches), but
+    `byte_align` uses `LOG2 0`, which HOL leaves underspecified; the Lean alignment
+    uses the chosen completion `Nat.log2 0 = 0`, with no HOL claim. So this does not
+    establish an all-width HOL correspondence for the byte loads.
+    Flapjack-only bridge (bead `flapjack-pxn.18.5.4.3.5`). -/
+theorem crepHolEvalMemLoadByte_riscv_eq_panMemLoadByteHOL [NeZero width] {σ : Type}
+    (state : CrepHolState (BitVec width) σ) (address : BitVec width) :
+    crepHolEvalMemLoadByte
+        (RiscV.panRiscVMemoryModelForEndian state.bigEndian) (BitVec.ofNat width (width / 8))
+        state address =
+      (panMemLoadByteHOL
+        (fun current => (state.memory current).toHolWordLab)
+        (fun current => state.memaddrs current = true)
+        state.bigEndian address).map (fun byte => BitVec.ofNat width byte.toNat) := by
+  simp only [crepHolEvalMemLoadByte, panMemLoadByteHOL,
+    RiscV.panRiscVMemoryModelForEndian]
+  have haligned : RiscV.panRiscVByteAlign (BitVec.ofNat width (width / 8)) address =
+      panByteAlignHOL address :=
+    panRiscVByteAlign_bytesInWord_eq_holByteAlignBitVec_lean address
+  simp only [haligned]
+  have hlt : width / 8 < 2 ^ width :=
+    Nat.lt_of_le_of_lt (Nat.div_le_self _ _) (Nat.lt_two_pow_self)
+  have hbytes : (BitVec.ofNat width (width / 8)).toNat = width / 8 := by
+    rw [BitVec.toNat_ofNat, Nat.mod_eq_of_lt hlt]
+  cases hcell : state.memory (panByteAlignHOL address) with
+  | word value =>
+      by_cases hdomain : state.memaddrs (panByteAlignHOL address) = true
+      · simp only [hcell, PanWordLab.toHolWordLab, hdomain,
+          ↓reduceIte, Option.map_some]
+        apply congrArg some
+        unfold panGetByteHOL RiscV.panRiscVGetByteEndian RiscV.panRiscVByteIndex
+        rw [hbytes]
+        dsimp only
+        congr 1
+        simp
+      · simp [hdomain]
+
+/-- All-width form of `crepRuntimeLoadByte_riscv64_eq_panMemLoadByteHOL`: the
+    production `crepRuntimeLoadByte` at the canonical RISC-V runtime of a
+    `CrepHolState` equals the tagged Lean `panMemLoadByteHOL`.
+    Width domain: this is an equality of Lean definitions at every positive width, but
+    it is a HOL correspondence only for `width ≥ 8`.  Below width 8 the byte count `dimindex DIV 8` is 0. HOL's `byte_index` is still
+    specified there (`w2n a MOD 0 = w2n a`, which Lean's `n % 0 = n` matches), but
+    `byte_align` uses `LOG2 0`, which HOL leaves underspecified; the Lean alignment
+    uses the chosen completion `Nat.log2 0 = 0`, with no HOL claim. So this does not
+    establish an all-width HOL correspondence for the byte loads. -/
+theorem crepRuntimeLoadByte_riscv_eq_panMemLoadByteHOL [NeZero width] {σ : Type}
+    (state : CrepHolState (BitVec width) σ) (address : BitVec width) :
+    crepRuntimeLoadByte (riscvCrepWordTarget state.toRuntime) address =
+      (panMemLoadByteHOL
+        (fun current => (state.memory current).toHolWordLab)
+        (fun current => state.memaddrs current = true)
+        state.bigEndian address).map (fun byte => BitVec.ofNat width byte.toNat) := by
+  calc
+    crepRuntimeLoadByte (riscvCrepWordTarget state.toRuntime) address =
+      panModelReadByte (RiscV.panRiscVMemoryModelForEndian state.bigEndian)
+        state.memaddrs (crepRuntimeMemoryView state.memory)
+        (BitVec.ofNat width (width / 8)) address state.bigEndian :=
+          crepRuntimeLoadByte_wordTarget_eq_riscv state.toRuntime address
+    _ = panModelReadByte (RiscV.panRiscVMemoryModelForEndian state.bigEndian)
+        state.memaddrs
+        (fun current => some (panTheWord (state.memory current)))
+        (BitVec.ofNat width (width / 8)) address state.bigEndian := rfl
+    _ = crepHolEvalMemLoadByte
+        (RiscV.panRiscVMemoryModelForEndian state.bigEndian) (BitVec.ofNat width (width / 8))
+        state address := by
+          symm
+          exact crepHolEvalMemLoadByte_eq_panModelReadByte _ _ _ _
+    _ = _ := crepHolEvalMemLoadByte_riscv_eq_panMemLoadByteHOL state address
+
 theorem crepRuntimeLoadByte_riscv64_eq_panMemLoadByteHOL {σ : Type}
     (state : CrepHolState (BitVec 64) σ) (address : BitVec 64) :
     crepRuntimeLoadByte (riscvCrepWordTarget state.toRuntime) address =
@@ -2976,6 +3076,136 @@ theorem crepHolEvalMemLoad32_riscv64_eq_panMemLoad32HOL {σ : Type}
               panValueWordMemory, panSemBitVec64BytesInWord,
               panSemBitVec64MemoryAccess, panValueMemoryAccessOfModel,
               PanWordLab.toHolWordLab] using hread
+
+/-- At the canonical byte count `bytesInWord = width / 8`, the RISC-V endian
+    byte extractor equals the Lean `panGetByteHOL` (HOL `get_byte`) widened to
+    the word.
+    Width domain: this is an equality of Lean definitions at every positive width, but
+    it is a HOL correspondence only for `width ≥ 8`.  Below width 8 the byte count `dimindex DIV 8` is 0. HOL's `byte_index` is still
+    specified there (`w2n a MOD 0 = w2n a`, which Lean's `n % 0 = n` matches), but
+    `byte_align` uses `LOG2 0`, which HOL leaves underspecified; the Lean alignment
+    uses the chosen completion `Nat.log2 0 = 0`, with no HOL claim. So this does not
+    establish an all-width HOL correspondence for the byte loads. -/
+theorem panRiscVGetByteEndian_bytesInWord_eq_panGetByteHOL [NeZero width]
+    (address value : BitVec width) (bigEndian : Bool) :
+    RiscV.panRiscVGetByteEndian (BitVec.ofNat width (width / 8)) address value bigEndian =
+      BitVec.ofNat width (panGetByteHOL address value bigEndian).toNat := by
+  have hlt : width / 8 < 2 ^ width :=
+    Nat.lt_of_le_of_lt (Nat.div_le_self _ _) (Nat.lt_two_pow_self)
+  have hbytes : (BitVec.ofNat width (width / 8)).toNat = width / 8 := by
+    rw [BitVec.toNat_ofNat, Nat.mod_eq_of_lt hlt]
+  unfold panGetByteHOL RiscV.panRiscVGetByteEndian RiscV.panRiscVByteIndex
+  rw [hbytes]
+  dsimp only
+  congr 1
+  simp
+
+/-- HOL `mem_load_32` assembles its four bytes at `word32` and `eval` widens the
+    result with `w2w`; the RISC-V model assembles directly at the word width.
+    Because every byte is `< 256`, the four-byte sum is `< 2^32`, so the two
+    assemblies agree for any word width (a pure arithmetic fact about the two
+    Lean definitions). -/
+theorem panRiscVWordOfBytes_eq_widen32 [NeZero width] (bigEndian : Bool)
+    (b0 b1 b2 b3 : BitVec width) (h0 : b0.toNat < 256) (h1 : b1.toNat < 256)
+    (h2 : b2.toNat < 256) (h3 : b3.toNat < 256) :
+    RiscV.panRiscVWordOfBytes (width := width) bigEndian [b0, b1, b2, b3] =
+      BitVec.ofNat width
+        (RiscV.panRiscVWordOfBytes (width := 32) bigEndian
+          ([b0, b1, b2, b3].map (fun byte => BitVec.ofNat 32 byte.toNat))).toNat := by
+  have e0 : (BitVec.ofNat 32 b0.toNat).toNat = b0.toNat := by
+    rw [BitVec.toNat_ofNat, Nat.mod_eq_of_lt (by omega)]
+  have e1 : (BitVec.ofNat 32 b1.toNat).toNat = b1.toNat := by
+    rw [BitVec.toNat_ofNat, Nat.mod_eq_of_lt (by omega)]
+  have e2 : (BitVec.ofNat 32 b2.toNat).toNat = b2.toNat := by
+    rw [BitVec.toNat_ofNat, Nat.mod_eq_of_lt (by omega)]
+  have e3 : (BitVec.ofNat 32 b3.toNat).toNat = b3.toNat := by
+    rw [BitVec.toNat_ofNat, Nat.mod_eq_of_lt (by omega)]
+  unfold RiscV.panRiscVWordOfBytes
+  simp only [List.map_cons, List.map_nil, List.getElem?_cons_zero, List.getElem?_cons_succ,
+    Option.getD_some, e0, e1, e2, e3, show (256 : Nat) ^ 2 = 65536 from rfl,
+    show (256 : Nat) ^ 3 = 16777216 from rfl]
+  cases bigEndian
+  · simp only [Bool.false_eq_true, ↓reduceIte]
+    rw [BitVec.toNat_ofNat, Nat.mod_eq_of_lt (by omega)]
+  · simp only [↓reduceIte]
+    rw [BitVec.toNat_ofNat, Nat.mod_eq_of_lt (by omega)]
+
+/-- All-width form of `crepHolEvalMemLoad32_riscv64_eq_panMemLoad32HOL`: at the
+    canonical byte count `bytesInWord = width / 8`, the executed RISC-V 32-bit
+    load helper equals the tagged Lean `panMemLoad32HOL` widened to the word.
+    Alignment, domain failure and success are all preserved.
+    Width domain: this is an equality of Lean definitions at every positive width, but
+    it is a HOL correspondence only for `width ≥ 8`.  Below width 8 the byte count `dimindex DIV 8` is 0. HOL's `byte_index` is still
+    specified there (`w2n a MOD 0 = w2n a`, which Lean's `n % 0 = n` matches), but
+    `byte_align` uses `LOG2 0`, which HOL leaves underspecified; the Lean alignment
+    uses the chosen completion `Nat.log2 0 = 0`, with no HOL claim. So this does not
+    establish an all-width HOL correspondence for the byte loads.
+    Flapjack-only bridge (bead `flapjack-pxn.18.5.4.3.6`). -/
+theorem crepHolEvalMemLoad32_riscv_eq_panMemLoad32HOL [NeZero width] {σ : Type}
+    (state : CrepHolState (BitVec width) σ) (address : BitVec width) :
+    crepHolEvalMemLoad32
+        (RiscV.panRiscVMemoryModelForEndian state.bigEndian) (BitVec.ofNat width (width / 8))
+        state address =
+      (panMemLoad32HOL
+        (fun current => (state.memory current).toHolWordLab)
+        (fun current => state.memaddrs current = true)
+        state.bigEndian address).map (fun value => BitVec.ofNat width value.toNat) := by
+  have haligned : RiscV.panRiscVByteAlign (BitVec.ofNat width (width / 8)) address =
+      panByteAlignHOL address :=
+    panRiscVByteAlign_bytesInWord_eq_holByteAlignBitVec_lean address
+  have hbyte : ∀ a : BitVec width,
+      (BitVec.ofNat width (panGetByteHOL a (panTheWord (state.memory (panByteAlignHOL address)))
+        state.bigEndian).toNat).toNat < 256 := by
+    intro a
+    rw [BitVec.toNat_ofNat]
+    exact Nat.lt_of_le_of_lt (Nat.mod_le _ _) (UInt8.toNat_lt _)
+  unfold crepHolEvalMemLoad32 panMemLoad32HOL
+  simp only [RiscV.panRiscVMemoryModelForEndian, RiscV.aligned, haligned,
+    panRiscVGetByteEndian_bytesInWord_eq_panGetByteHOL]
+  by_cases h4 : address.toNat % 4 = 0
+  · simp only [h4, decide_true, Bool.and_true, ↓reduceIte]
+    cases hcell : state.memory (panByteAlignHOL address) with
+    | word value =>
+        have hv : panTheWord (state.memory (panByteAlignHOL address)) = value := by
+          rw [hcell]; rfl
+        by_cases hdomain : state.memaddrs (panByteAlignHOL address) = true
+        · simp only [PanWordLab.toHolWordLab, hdomain, ↓reduceIte, Option.map_some]
+          apply congrArg some
+          rw [← hv]
+          exact panRiscVWordOfBytes_eq_widen32 _ _ _ _ _
+            (hbyte _) (hbyte _) (hbyte _) (hbyte _)
+        · simp [hdomain]
+  · simp [h4]
+
+/-- All-width form of `crepRuntimeLoad32_riscv64_eq_panMemLoad32HOL`.
+    Width domain: this is an equality of Lean definitions at every positive width, but
+    it is a HOL correspondence only for `width ≥ 8`.  Below width 8 the byte count `dimindex DIV 8` is 0. HOL's `byte_index` is still
+    specified there (`w2n a MOD 0 = w2n a`, which Lean's `n % 0 = n` matches), but
+    `byte_align` uses `LOG2 0`, which HOL leaves underspecified; the Lean alignment
+    uses the chosen completion `Nat.log2 0 = 0`, with no HOL claim. So this does not
+    establish an all-width HOL correspondence for the byte loads. -/
+theorem crepRuntimeLoad32_riscv_eq_panMemLoad32HOL [NeZero width] {σ : Type}
+    (state : CrepHolState (BitVec width) σ) (address : BitVec width) :
+    crepRuntimeLoad32 (riscvCrepWordTarget state.toRuntime) address =
+      (panMemLoad32HOL
+        (fun current => (state.memory current).toHolWordLab)
+        (fun current => state.memaddrs current = true)
+        state.bigEndian address).map (fun value => BitVec.ofNat width value.toNat) := by
+  calc
+    crepRuntimeLoad32 (riscvCrepWordTarget state.toRuntime) address =
+      panModelRead32 (RiscV.panRiscVMemoryModelForEndian state.bigEndian)
+        state.memaddrs (crepRuntimeMemoryView state.memory)
+        (BitVec.ofNat width (width / 8)) address state.bigEndian :=
+          crepRuntimeLoad32_wordTarget_eq_riscv state.toRuntime address
+    _ = panModelRead32 (RiscV.panRiscVMemoryModelForEndian state.bigEndian)
+        state.memaddrs (fun current => some (panTheWord (state.memory current)))
+        (BitVec.ofNat width (width / 8)) address state.bigEndian := rfl
+    _ = crepHolEvalMemLoad32
+        (RiscV.panRiscVMemoryModelForEndian state.bigEndian) (BitVec.ofNat width (width / 8))
+        state address := by
+          symm
+          exact crepHolEvalMemLoad32_eq_panModelRead32 _ _ _ _
+    _ = _ := crepHolEvalMemLoad32_riscv_eq_panMemLoad32HOL state address
 
 theorem crepRuntimeLoad32_riscv64_eq_panMemLoad32HOL {σ : Type}
     (state : CrepHolState (BitVec 64) σ) (address : BitVec 64) :

@@ -133,6 +133,7 @@ import Flapjack.Test.LoopEvalParity
 import Flapjack.Test.LoopObservationalSemanticsParity
 import Flapjack.Test.LoopSemEvaluateParity
 import Flapjack.Test.LoopLiveEffectFreeParity
+import Flapjack.Test.LoopLiveDomainListDeleteParity
 import Flapjack.Test.LoopPrimopParity
 import Flapjack.Test.LoopShMemParity
 import Flapjack.Test.LoopFfiParity
@@ -196,8 +197,10 @@ import Flapjack.Test.CrepEvalConstructorParity
 import Flapjack.Test.CrepSemEvalExactParity
 import Flapjack.Test.CrepLocalsWordLabParity
 import Flapjack.Test.CrepShMemHOLParity
+import Flapjack.Test.CrepArithShMemOpCodeParity
 import Flapjack.Test.CrepMemoryRelParity
 import Flapjack.Test.CrepSemStateExactParity
+import Flapjack.Test.CrepSemNonFailStartLookupParity
 import Flapjack.Test.CrepFuelCutoffParity
 import Flapjack.Test.PanToCrepGlobalsLookupParity
 import Flapjack.Test.PanToCrepCallExceptionParity
@@ -313,6 +316,7 @@ import Flapjack.Test.WordLangCallArgParity
 import Flapjack.Test.RegAllocVarParity
 import Flapjack.Test.WordLangNotCreatedParity
 import Flapjack.Test.WordLangEveryVarParity
+import Flapjack.Test.WordSemCarriersParity
 import Flapjack.Test.WordLangGoodHandlersParity
 import Flapjack.Test.NumSetAuditParity
 import Flapjack.Test.WordLangEveryNameParity
@@ -377,6 +381,11 @@ import Flapjack.Test.LoopSemCodeTableParity
 import Flapjack.Test.LoopSemCutParity
 import Flapjack.Test.CrepToLoopCompFuncParity
 import Flapjack.Test.CrepArithExactParity
+import Flapjack.Test.CrepArithStoreGlobParity
+import Flapjack.Test.CrepArithStore32Parity
+import Flapjack.Test.CrepArithStoreByteParity
+import Flapjack.Test.CrepArithExtCallParity
+import Flapjack.Test.CrepArithIfParity
 import Flapjack.Test.CrepToLoopCompileProgParity
 import Flapjack.Test.LoopCallEnvParity
 import Flapjack.Test.InstructionTransfer
@@ -869,6 +878,11 @@ def main : IO Unit := do
     Flapjack.Test.CrepNestedDecsSeqResVarEqParity.runChecks,
     Flapjack.Test.CrepNestedDecsLoadGlobalsParity.runChecks,
     Flapjack.Test.CrepShMemHOLParity.runChecks,
+    Flapjack.Test.CrepArithShMemOpCodeParity.runChecks,
+    Flapjack.Test.CrepArithStoreByteParity.runChecks,
+    Flapjack.Test.CrepArithExtCallParity.runChecks,
+    Flapjack.Test.CrepArithStore32Parity.runChecks,
+    Flapjack.Test.CrepArithIfParity.runChecks,
     Flapjack.Test.PanGlobalsExceptionsAppendParity.runChecks,
     Flapjack.Test.PanGlobalsExceptionsFilterIsFunctionParity.runChecks,
     Flapjack.Test.PanGlobalsDeclPredicateParity.runChecks,
@@ -899,6 +913,7 @@ def main : IO Unit := do
     Flapjack.Test.LoopObservationalSemanticsParity.runChecks,
     Flapjack.Test.LoopSemEvaluateParity.runChecks,
     Flapjack.Test.LoopLiveEffectFreeParity.runChecks,
+    Flapjack.Test.LoopLiveDomainListDeleteParity.runChecks,
     Flapjack.Test.LoopPrimopParity.runChecks,
     Flapjack.Test.LoopShMemParity.runChecks,
     Flapjack.Test.LoopFfiParity.runChecks,
@@ -1048,6 +1063,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.RegAllocVarParity.runChecks,
     Flapjack.Test.WordLangNotCreatedParity.runChecks,
     Flapjack.Test.WordLangEveryVarParity.runChecks,
+    Flapjack.Test.WordSemCarriersParity.runChecks,
     Flapjack.Test.WordLangGoodHandlersParity.runChecks,
     Flapjack.Test.NumSetAuditParity.runChecks,
     Flapjack.Test.WordLangEveryNameParity.runChecks,
