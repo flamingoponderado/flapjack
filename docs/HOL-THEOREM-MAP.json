@@ -24200,5 +24200,19 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.9.1): HOL local fix_clock_evaluate (:1357-1363): fix_clock s (evaluate (c1,s)) = evaluate (c1,s) with free s c1; same equation over the tagged fixClock/evaluate. Over the tagged WordSemStateFiniteExact with fmap_as_finite_support [fpRegs, store] (same-module witness WordSemEvaluateClockSupport.holFmapAsFiniteSupportWitness) and words_as_type_indexed_bitvec; kernel-checked, axioms propext/Classical.choice/Quot.sound."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/EvaluateInd.lean",
+    "lean_name": "evaluate_ind",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "evaluate_ind",
+    "hol_line": 1367,
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.9.2): HOL rebound evaluate_ind (wordSemScript.sml:1367-1368, REWRITE_RULE [fix_clock_evaluate] evaluate_ind), with the statement printed from wordSemTheory. It has 26 clause hypotheses in HOL order: 25 unconditional or single-premise clauses; MustTerminate (s.termdep <> 0 ==> P at clock MustTerminate_limit and termdep - 1); Seq ((res,s1) = evaluate (c1,s) with res = NONE ==> P (c2,s1), and P (c1,s)); If (two premise sets over get_var/get_var_imm/word_cmp with v and ~v); Loop (cut_state (names,LN) s = SOME v, (res,s1) = evaluate (c,v), cont_loop res, s1.clock <> 0 ==> P at STOP Loop and dec_clock s1; and cut_state = SOME v ==> P (c,v)); and Call (four premise sets transcribed binder for binder, including the v3/v10/v1/v6/v9/v11/v5/v8 tuple equations, the Result, Exception-handler, callee and tail-call premises, bad_dest_args, find_code, add_ret_loc, cut_envs, the domain conditions as sptDomainEmpty/sptDomainEqUnion, ALL_DISTINCT as List.Nodup, and push_env/call_env/dec_clock/pop_env). The conclusion is !v v1. P (v,v1). Lean curries P (p, s) to P p s; HOL bool guards are = true; tupled evaluate is the curried tagged evaluate; the hypotheses form one conjunction as in HOL. It is proved by recursion on HOL's termination measure (evaluate_ind_aux) using evaluate_clock, cutState_clock_termdep and popEnv clock/termdep, because Lean's generated evaluate.induct fails the kernel check for this definition. Kernel-checked; axioms propext, Classical.choice, Quot.sound; qualifiers as for evaluate_def with the same-module witness WordSemEvaluateIndSupport.holFmapAsFiniteSupportWitness."
   }
 ]
