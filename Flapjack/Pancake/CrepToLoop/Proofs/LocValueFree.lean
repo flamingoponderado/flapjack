@@ -36,9 +36,9 @@ program that was recursively free of it.  The live-set parameter is
 generalized so the `Seq` case can use the second induction hypothesis at the
 live set returned by compiling the first child. -/
 theorem loopCallCompHOL_preserves_locValueFree {width : Nat} [NeZero width]
-    (program : HolLoopProg width)
+    (program : HolLoopProg width) (live : Spt Nat)
     (hfree : holLoopProgLocValueFree program) :
-    holLoopProgLocValueFree (loopCallCompHOL (.ln : Spt Nat) program).1 := by
+    holLoopProgLocValueFree (loopCallCompHOL live program).1 := by
   let mProg : HolLoopProg width → Prop := fun p =>
     ∀ live, holLoopProgLocValueFree p →
       holLoopProgLocValueFree (loopCallCompHOL live p).1
@@ -109,6 +109,6 @@ theorem loopCallCompHOL_preserves_locValueFree {width : Nat} [NeZero width]
       loopCallCompHOL.eq_15, loopCallCompHOL.eq_16, loopCallCompHOL.eq_17,
       loopCallCompHOL.eq_18, loopCallCompHOL.eq_19, loopCallCompHOL.eq_20,
       loopCallCompHOL.eq_21, loopCallCompHOL.eq_22]
-  exact hgeneral .ln hfree
+  exact hgeneral live hfree
 
 end Flapjack
