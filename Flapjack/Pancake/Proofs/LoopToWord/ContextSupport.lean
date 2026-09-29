@@ -149,6 +149,32 @@ theorem envToListIMPHOL {width : Nat} [NeZero width] {C F : Type}
   · intro key
     rw [sptLookup_sptFromAList, hlookup key]
 
+/-- Exact HOL `cut_env_LN_IMP` from
+`cakeml/pancake/proofs/loop_to_wordProofScript.sml`: cutting with an empty
+second name set returns the first cut as `cut_env`'s union, and exposes that
+same pair through `cut_envs`. The only representation qualification is the
+indexed Lean `BitVec` model of HOL's polymorphic word values. -/
+@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "cut_env_LN_IMP"
+  (words_as_type_indexed_bitvec)]
+theorem wordSemCutEnvLNIMPHOL {width : Nat} [NeZero width]
+    (nameSets : WordLangNumSetHOL) (locals : Spt (WordLocW width))
+    (env : Spt (WordLocW width))
+    (hcut : wordSemCutEnv (nameSets, (Spt.ln : WordLangNumSetHOL)) locals = some env) :
+    wordSemCutEnvs (nameSets, (Spt.ln : WordLangNumSetHOL)) locals =
+      some (env, Spt.ln) := by
+  have hempty : wordSemCutNames (Spt.ln : WordLangNumSetHOL) locals = some Spt.ln := by
+    have hinter : sptInter locals (Spt.ln : WordLangNumSetHOL) = Spt.ln := by
+      cases locals <;> simp [sptInter]
+    simp [wordSemCutNames, LoopSemStateFiniteExact.sptSubsetLive, hinter]
+  unfold wordSemCutEnv at hcut
+  cases hfirst : wordSemCutNames nameSets locals with
+  | none => simp [wordSemCutEnvs, hfirst, hempty] at hcut
+  | some first =>
+      have hfirst_eq : first = env := by
+        simpa [wordSemCutEnvs, hfirst, hempty, sptUnion] using hcut
+      subst env
+      simp [wordSemCutEnvs, hfirst, hempty]
+
 /-- Flapjack-specific induction strengthening for `make_ctxt_inj`: adding a
 fresh register preserves lookup injectivity while advancing its value bound.
 HOL proves this fact inside the `make_ctxt_inj` proof rather than declaring it
