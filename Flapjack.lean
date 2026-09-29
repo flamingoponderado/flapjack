@@ -154,6 +154,7 @@ import Flapjack.Pancake.Semantics.LoopProps.UnassignedVarsExact
 import Flapjack.Pancake.Semantics.LoopProps.NestedSeqSyntaxExact
 import Flapjack.Pancake.Semantics.LoopProps.CompSyntaxOkLemmas
 import Flapjack.Pancake.Semantics.LoopProps.CompSyntaxOkEvalExact
+import Flapjack.Pancake.Proofs.LoopToWord.LocalsRel
 import Flapjack.PanObservationalSemantics
 import Flapjack.PanMrec
 import Flapjack.PanHProgDec

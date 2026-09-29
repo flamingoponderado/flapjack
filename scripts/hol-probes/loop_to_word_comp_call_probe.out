@@ -1,0 +1,5 @@
+comp_call_tail=(Call NONE (SOME 5) [0; 20; 22] NONE,7,11)
+comp_call_no_handler=(Call (SOME ([24; 26],(⦕ 0; 24 ⦖,LN),Skip,7,11)) (SOME 5) [20; 22] NONE,7,12)
+comp_call_handler=(Seq
+   (Call (SOME ([24; 26],(⦕ 0; 24 ⦖,LN),Assign 24 (Const 5w),7,11)) (SOME 5)
+      [20; 22] (SOME (28,Assign 20 (Var 22),7,12))) Tick,7,13)

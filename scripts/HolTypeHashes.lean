@@ -76,6 +76,7 @@ import Flapjack.Pancake.CrepToLoop.Proofs.NotMemContextAssigned
 import Flapjack.Pancake.CrepToLoop.Proofs.CallPreserveStateCodeLocalsRel
 import Flapjack.Pancake.CrepToLoop.StateRel
 import Flapjack.Pancake.LoopToWord
+import Flapjack.Pancake.Proofs.LoopToWord.LocalsRel
 import Flapjack.Pancake.LoopLang.AssignedVars
 import Flapjack.Pancake.Semantics.LoopProps.AssignedVars
 import Flapjack.Pancake.Semantics.LoopProps.CutSets
