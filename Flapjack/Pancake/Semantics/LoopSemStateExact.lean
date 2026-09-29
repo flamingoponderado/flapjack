@@ -766,6 +766,82 @@ theorem LoopSemStateFiniteExact.setVar_prodRel {width : Nat} [NeZero width]
             loopValueOfWordLocW := by
               rw [sptLookup_sptInsert_ne name key value state.locals hkey]
 
+private theorem loopSetVars_sptAlistInsert_map {α β : Type} (f : α → β)
+    (names : List Nat) (values : List α) (tree : Spt α) :
+    loopSetVars (fun key => (sptLookup key tree).map f) names (values.map f) =
+      fun key => (sptLookup key
+        (LoopSemStateFiniteExact.sptAlistInsert names values tree)).map f := by
+  induction names generalizing values tree with
+  | nil =>
+      funext key
+      simp [loopSetVars, lookupFirst, LoopSemStateFiniteExact.sptAlistInsert]
+  | cons name names ih =>
+      cases values with
+      | nil =>
+          funext key
+          simp [loopSetVars, lookupFirst, LoopSemStateFiniteExact.sptAlistInsert]
+      | cons value values =>
+          funext key
+          by_cases hkey : key = name
+          · subst key
+            simp [loopSetVars, lookupFirst, List.zip_cons_cons,
+              LoopSemStateFiniteExact.sptAlistInsert,
+              sptLookup_sptInsert_same]
+          · have htail := ih values tree
+            calc
+              loopSetVars (fun k => (sptLookup k tree).map f)
+                  (name :: names) (f value :: values.map f) key =
+                loopSetVars (fun k => (sptLookup k tree).map f)
+                  names (values.map f) key := by
+                    simp [loopSetVars, lookupFirst, List.zip_cons_cons, hkey]
+              _ = (sptLookup key
+                    (LoopSemStateFiniteExact.sptAlistInsert names values tree)).map f :=
+                    congrFun htail key
+              _ = (sptLookup key
+                    (LoopSemStateFiniteExact.sptAlistInsert (name :: names)
+                      (value :: values) tree)).map f := by
+                    simp only [LoopSemStateFiniteExact.sptAlistInsert]
+                    rw [sptLookup_sptInsert_ne name key value
+                      (LoopSemStateFiniteExact.sptAlistInsert names values tree) hkey]
+
+/-- Production Loop state update paired with a WordLoc-valued exact
+    `set_vars`. Flapjack-only bridge helper; HOL's `set_vars` operates on its
+    single exact state carrier and does not define this production conversion. -/
+def loopMachineSetVarsWordLoc {width : Nat} [NeZero width] {F : Type}
+    (machine : LoopMachineState (BitVec width) F) (names : List Nat)
+    (values : List (WordLocW width)) : LoopMachineState (BitVec width) F :=
+  { machine with locals :=
+      loopSetVars machine.locals names (values.map loopValueOfWordLocW) }
+
+/-- Exact and production Loop states preserve `prodRel` when the source
+    `set_vars` alist insertion is paired with the production overlay. The proof
+    retains HOL's first-occurrence-wins duplicate behavior and `ZIP` truncation
+    for unequal list lengths. This is a Flapjack-only cross-carrier transition
+    lemma for call/return case proofs, not a full evaluator simulation. -/
+theorem LoopSemStateFiniteExact.setVars_prodRel {width : Nat} [NeZero width]
+    {F : Type} {state : LoopSemStateFiniteExact width F}
+    {machine : LoopMachineState (BitVec width) F}
+    (hrel : state.prodRel machine) (names : List Nat)
+    (values : List (WordLocW width)) :
+    (LoopSemStateFiniteExact.setVars names values state).prodRel
+      (loopMachineSetVarsWordLoc machine names values) := by
+  rcases hrel with
+    ⟨hlocals, hglobals, hmemory, hmdomain, hshMdomain, hclock, hbe, hffi,
+      hbaseAddr, htopAddr, hcode, hcoverage⟩
+  refine ⟨?_, hglobals, hmemory, hmdomain, hshMdomain, hclock, hbe, hffi,
+    hbaseAddr, htopAddr, hcode, hcoverage⟩
+  intro key
+  change loopSetVars machine.locals names (values.map loopValueOfWordLocW) key =
+    (sptLookup key (LoopSemStateFiniteExact.sptAlistInsert names values state.locals)).map
+      loopValueOfWordLocW
+  have hlocalsEq : machine.locals =
+      (fun key => (sptLookup key state.locals).map loopValueOfWordLocW) := by
+    funext localName
+    exact hlocals localName
+  rw [hlocalsEq]
+  exact congrFun (loopSetVars_sptAlistInsert_map loopValueOfWordLocW names
+    values state.locals) key
+
 /-- Source-shaped `find_code` (`loopSemScript.sml:147-163`) reading the exact
     `code` `sptree$num_map` through `sptLookup`.  The code-table representation
     (`Spt` versus the production association list) and the program carrier
