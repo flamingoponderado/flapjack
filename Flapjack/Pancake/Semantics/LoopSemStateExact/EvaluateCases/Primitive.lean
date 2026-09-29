@@ -40,6 +40,41 @@ private theorem getVars_eq_loopMachineGetVars {W F : Type}
           cases htail : loopMachineGetVars machine.locals names <;>
             simp [Flapjack.getVars, loopMachineGetVars, hlocal, ih, htail]
 
+/-- The executable `loopPrimopHOL` adapter satisfies exact `loop_primop_def`
+over every HOL-shaped `WordLocW` input. Both Lean definitions implement the
+HOL AddCarry equation: exactly three word cells, `wordAddCarryHOL`, then low
+word and carry word; malformed arities, non-word cells, and other operators
+return `none`. This closes the adapter premise for a hook whose `primitive`
+field is `loopPrimopHOL`; it does not establish that a caller installs it. -/
+theorem loopPrimopHOL_refines_exact {width : Nat} [NeZero width]
+    (operator : PrimOp) (values : List (WordLocW width)) :
+    Flapjack.loopPrimopHOL operator (values.map loopValueOfWordLocW) =
+      (LoopSemStateFiniteExact.loopPrimop operator values).map
+        (List.map loopValueOfWordLocW) := by
+  cases operator with
+  | addCarry =>
+      cases values with
+      | nil => simp [Flapjack.loopPrimopHOL, LoopSemStateFiniteExact.loopPrimop]
+      | cons first rest =>
+          cases rest with
+          | nil => simp [Flapjack.loopPrimopHOL, LoopSemStateFiniteExact.loopPrimop,
+              Flapjack.loopValueOfWordLocW]
+          | cons second rest =>
+              cases rest with
+              | nil => simp [Flapjack.loopPrimopHOL, LoopSemStateFiniteExact.loopPrimop,
+                  Flapjack.loopValueOfWordLocW]
+              | cons third rest =>
+                  cases rest with
+                  | nil =>
+                      cases first <;> cases second <;> cases third <;>
+                        simp [Flapjack.loopPrimopHOL,
+                          LoopSemStateFiniteExact.loopPrimop,
+                          Flapjack.loopValueOfWordLocW]
+                  | cons _ _ =>
+                      simp [Flapjack.loopPrimopHOL,
+                        LoopSemStateFiniteExact.loopPrimop,
+                        Flapjack.loopValueOfWordLocW]
+
 /-- Relate one Primitive step when the production hook refines exact
 `loopPrimop` on every exact input list. Argument values are first related using
 the pre-state `prodRel`; successful outputs use `setVars_prodRel`. This does
