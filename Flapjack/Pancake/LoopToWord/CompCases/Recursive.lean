@@ -5,7 +5,8 @@ import Flapjack.Pancake.LoopToWord
 
 This is a HOL-native case slice for `cakeml/pancake/loop_to_wordScript.sml`.
 It ports the recursive `Seq`, `If`, `Loop`, and `Mark` clauses of `comp_def`
-(lines 107-120 and 138) over `HolLoopProg` and `WordLangProgHOL`. It delegates
+(lines 107-120 and 138), and the `Call` clauses (lines 145-166), over
+`HolLoopProg` and `WordLangProgHOL`. It delegates
 covered leaves to `compInitialHOL`, so `none` means a leaf constructor is not
 yet in the assembled partial port. This intentionally remains untagged and
 does not claim to define total HOL `comp`; the later clause slices must be
@@ -56,6 +57,32 @@ def compRecursiveCasesHOL {width : Nat} [NeZero width] (context : Spt Nat)
             (.seq (.loop (mkNewCutsetHOL context liveIn) wordBody
               (mkNewCutsetHOL context liveOut)) .tick), labels')
   | .mark body => compRecursiveCasesHOL context labels body
+  | .call returns target arguments handler =>
+      let mappedArguments := arguments.map (findVarHOL context)
+      match returns with
+      | none =>
+          some (.call none target (0 :: mappedArguments) none, labels)
+      | some (vs, live) =>
+          let mappedReturns := vs.map (findVarHOL context)
+          let cutset := mkNewCutsetHOL context live
+          let newLabels := (labels.1, labels.2 + 1)
+          match handler with
+          | none =>
+              some (.call (some (mappedReturns, (cutset, .ln), .skip, labels))
+                target mappedArguments none, newLabels)
+          | some (n, p1, p2, _) =>
+              match compRecursiveCasesHOL context newLabels p1 with
+              | none => none
+              | some (wordP1, labels1) =>
+                  match compRecursiveCasesHOL context labels1 p2 with
+                  | none => none
+                  | some (wordP2, labels2) =>
+                      let finalLabels := (labels2.1, labels2.2 + 1)
+                      some (.seq
+                        (.call (some (mappedReturns, (cutset, .ln), wordP2, labels))
+                          target mappedArguments
+                          (some (findVarHOL context n, wordP1, labels2)))
+                        .tick, finalLabels)
   | program => compInitialHOL context labels program
   termination_by program => sizeOf program
   decreasing_by all_goals decreasing_trivial
