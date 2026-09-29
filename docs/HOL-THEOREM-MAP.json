@@ -11703,6 +11703,15 @@
     "reviewer": "Codex (statement compared against alookup_el_pair_eq_el at crep_to_loopProofScript.sml:3921; HOL EL n prog = (start,[],SND(SND(EL n prog))) rendered literally as prog[n]'hn = (start,[],(prog[n]'hn).2.2) over the right-associated triple, ALOOKUP as List.lookup, ALL_DISTINCT (MAP FST prog) as (prog.map Prod.fst).Nodup; the proof delegates to the untagged PanLang counterpart getElem_eq_of_lookup_eq; direct HOL-EVAL rows ael_shape_0/ael_shape_1/ael_distinct/ael_lookup/ael_result=T reproduced by the Lean guard in Flapjack/Test/CrepToLoopParity.lean)"
   },
   {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "initial_prog_make_funcs_el",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/MakeFuncsLemmas.lean",
+    "lean_name": "initialProgMakeFuncsElExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-29; bead flapjack-pxn.18.5.6.33.20.5) against crep_to_loopProofScript.sml:3942-3945. HOL binds prog, start, n; assumes FLOOKUP (make_funcs prog) start = SOME (n + first_name,0); and concludes (start,[],(SND o SND) (EL n prog)) = EL n prog /\\ n < LENGTH prog. Lean keeps that binder order, lookup equality and conclusion order over List (MlString × List Nat × CrepProgHOL width), using the tagged exact finite-support make_funcs_def carrier and firstLoopName for first_name. `initialProgEL` chooses an explicit fallback for an out-of-range list index, but the theorem's conclusion establishes n < prog.length; the helper equality proves that fallback is not observed. The exact zipped-entry lemma shows the successful lookup's label fixes index n and its zero arity fixes the parameter list to []. No evaluator, extra hypothesis or conclusion is introduced. The only direct representation qualifier is HOL's positive type-indexed word width mapped to BitVec width. Proof-only; no production-path change."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/stack_namesScript.sml",
     "hol_name": "ri_find_name_def",
     "lean_path": "Flapjack/Compiler/Backend/StackNames.lean",
