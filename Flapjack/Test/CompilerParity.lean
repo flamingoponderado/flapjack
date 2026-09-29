@@ -346,6 +346,7 @@ import Flapjack.Test.MachineIeeeSqrtSpecialParity
 import Flapjack.Test.MachineIeeeSqrtExactParity
 import Flapjack.Test.WordSemInstParity
 import Flapjack.Test.WordSemEvalPrereqParity
+import Flapjack.Test.WordSemEvaluateParity
 import Flapjack.Test.WordLangGoodHandlersParity
 import Flapjack.Test.NumSetAuditParity
 import Flapjack.Test.WordLangEveryNameParity
@@ -468,6 +469,7 @@ import Flapjack.Test.LoopSemPrimopBytesExactParity
 import Flapjack.Test.LoopSemEvaluateExactParity
 import Flapjack.Test.HolLListParity
 import Flapjack.Test.LoopSemSemanticsExactParity
+import Flapjack.Test.WordSemSemanticsParity
 import Flapjack.Test.LoopPropsEvalExactParity
 import Flapjack.Test.SptreeSetOpsParity
 import Flapjack.Test.WordSimpSeqAssocParity
@@ -1122,6 +1124,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.MachineIeeeSqrtExactParity.runChecks,
     Flapjack.Test.WordSemInstParity.runChecks,
     Flapjack.Test.WordSemEvalPrereqParity.runChecks,
+    Flapjack.Test.WordSemEvaluateParity.runChecks,
     Flapjack.Test.WordLangGoodHandlersParity.runChecks,
     Flapjack.Test.NumSetAuditParity.runChecks,
     Flapjack.Test.WordLangEveryNameParity.runChecks,
@@ -1211,6 +1214,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.LoopSemEvaluateExactParity.runChecks,
     Flapjack.Test.HolLListParity.runChecks,
     Flapjack.Test.LoopSemSemanticsExactParity.runChecks,
+    Flapjack.Test.WordSemSemanticsParity.runChecks,
     Flapjack.Test.LoopPropsEvalExactParity.runChecks,
     Flapjack.Test.SptreeSetOpsParity.runChecks,
     Flapjack.Test.LoopMarkAllHOLParity.runChecks,
