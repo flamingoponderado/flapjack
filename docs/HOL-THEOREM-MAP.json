@@ -308,6 +308,14 @@
     "reviewer": "flapjack-deepseek-three (constructor-by-constructor source comparison; HOL Datatype exp = Const ('a word) | Var varkind varname | RStruct (exp list) | RField index exp | NStruct stcname ((fldname # exp) list) | NField fldname exp | Load shape exp | Load32 exp | LoadByte exp | Op binop (exp list) | Panop panop (exp list) | Cmp cmp exp exp | Shift shift exp exp | BaseAddr | TopAddr | BytesInWord (panLangScript.sml:53-69) vs ExpHOL {width} [NeZero width] with 16 constructors in the same order: const(BitVec width), var(VarKind)(MlS), rstruct(List ExpHOL), rfield(Nat)(ExpHOL), nstruct(MlS)(List (MlS x ExpHOL)), nfield(MlS)(ExpHOL), load(ShapeHOL)(ExpHOL), load32/loadByte(ExpHOL), op/panop(BinOp/PanOp)(List ExpHOL), cmp/shift(Cmp/Shift)(ExpHOL x ExpHOL), baseAddr/topAddr/bytesInWord; arities and field types match with varname/stcname/fldname = MlS (exact mlstring carrier) and Const over BitVec width. Production Flapjack.Exp is generic and untagged; kernel codec expToHOL/expOfHOL with total expToHOL_expOfHOL and byte-ranged ExpByteRanged side condition for expOfHOL_expToHOL; direct HOL oracle scripts/hol-probes/pan_lang_exp_probe.out reproduced by Flapjack/Test/PanLangExpHOLParity.lean)"
   },
   {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/PanLang/Exp.lean",
+    "lean_name": "expOfHOL_expToHOL_nStruct",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only constructor refinement for panLang exp NStruct (panLangScript.sml:53-69): states the exact production-to-ExpHOL-to-production roundtrip under the byte-range premises required to convert the String structure/field names to HOL mlstring. It is a specialization of the codec, not a separately declared HOL theorem, and does not tag production Exp or claim arbitrary String correspondence. The direct HOL constructor observation and ordered field payload are replayed in pan_lang_exp_probe.out by PanLangExpHOLParity."
+  },
+  {
     "hol_path": "cakeml/pancake/panLangScript.sml",
     "hol_name": "MEM_IMP_exp_size",
     "lean_path": "Flapjack/Pancake/PanLang/Exp.lean",
