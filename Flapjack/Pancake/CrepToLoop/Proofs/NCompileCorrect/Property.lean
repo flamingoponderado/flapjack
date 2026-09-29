@@ -42,14 +42,13 @@ def localsResultRel {width : Nat} [NeZero width] {F : Type}
   | some .error => False
   | _ => True
 
-/-- Exact statement shape shared by the `ncompile_correct` constructor cases.
-    The source/target evaluation is existential as in HOL, and no target run or
-    result is assumed. -/
-def Property {width : Nat} [NeZero width] {F : Type}
+/-- HOL's induction property at one fixed source state. The source/target
+    evaluation is existential as in `ncompile_correct`; this fixed-state form
+    lets case hypotheses follow `crepSemTheory.evaluate_ind` exactly. -/
+def PropertyAt {width : Nat} [NeZero width] {F : Type}
     (context : CrepToLoopContextExact) (live : NumSet)
-    (program : CrepProgHOL width) : Prop :=
-  ∀ (source : CrepSemHOLState width F)
-    (target : LoopSemStateFiniteExact width F)
+    (program : CrepProgHOL width) (source : CrepSemHOLState width F) : Prop :=
+  ∀ (target : LoopSemStateFiniteExact width F)
     (result : Option (CrepResultHOLExact width))
     (sourceFinal : CrepSemHOLState width F),
     evalCrepSemHOLProgExact source program = (result, sourceFinal) →
@@ -69,5 +68,12 @@ def Property {width : Nat} [NeZero width] {F : Type}
       crepToLoopCodeRelExact context sourceFinal.code targetFinal.code ∧
       targetResult = resultToLoop result ∧
       localsResultRel context live result sourceFinal targetFinal
+
+/-- Universal closure of the fixed-state property, useful only where HOL's
+    induction hypothesis itself quantifies over arbitrary source states. -/
+def Property {width : Nat} [NeZero width] {F : Type}
+    (context : CrepToLoopContextExact) (live : NumSet)
+    (program : CrepProgHOL width) : Prop :=
+  ∀ source : CrepSemHOLState width F, PropertyAt context live program source
 
 end Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect
