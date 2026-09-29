@@ -3,6 +3,7 @@ import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Seq
 import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Primitive
 import Flapjack.Pancake.Semantics.LoopProps.CompSyntaxOkLemmas
 import Flapjack.Pancake.Semantics.PanCommonProps
+import Flapjack.Pancake.Semantics.CrepProps
 import Flapjack.Pancake.CrepToLoop.Proofs.WriteBytearrayMemRel
 
 /-!
@@ -600,4 +601,5 @@ theorem crepToLoop_ncompile_correct_storeGlob {width : Nat} [NeZero width] {σ :
       rw [hne']
       simp only [Bool.false_eq_true, if_false]
       exact h1g ad v hv
+
 end Flapjack
