@@ -30,18 +30,6 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {σ : Type} :
 
 end SimpProgCorrectCallSupport
 
-/-- Flapjack-only abbreviation (no HOL declaration) of the `simp_prog_correct`
-    statement at a fixed program and state, over the shared `mapcs` renderer
-    `crepSimpMapcsHOL`: the `evaluate_ind` predicate the case proofs receive for
-    a sub-program. -/
-def simpProgCorrectAt {width : Nat} [NeZero width] {σ : Type}
-    (program : CrepProgHOL width) (state : CrepSemHOLState width σ) : Prop :=
-  ∀ (result : Option (CrepResultHOLExact width)) (finalState : CrepSemHOLState width σ),
-    evalCrepSemHOLProgExact state program = (result, finalState) →
-    result ≠ some .error →
-    evalCrepSemHOLProgExact (crepSimpMapcsHOL state) (crepSimpProgHOL program) =
-      (result, crepSimpMapcsHOL finalState)
-
 /-- `lookup_code` at the evaluator's `lookupCodeFiniteHOL` on the mapped code. -/
 private theorem lookupCodeFiniteHOL_mapcs {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ) (fname : MlString)
