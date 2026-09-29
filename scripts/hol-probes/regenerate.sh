@@ -1626,6 +1626,15 @@ run_probe word_sem_accessors_probeScript.sml word_sem_accessors_probe.out \
   "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 
+# The wordSem env/stack probe observes key_val_compare, list_rearrange (with
+# its BIJ guard decided over the finite count set), fromList2, mllist$sort,
+# env_to_list, call_env, push_env/pop_env, jump_exc and the cut_* helpers
+# (bead flapjack-h29l.4).
+run_probe word_sem_env_probeScript.sml word_sem_env_probe.out \
+  kvc_loc_loc rearrange_rev env_to_list push_env_some jump_exc cut_state_opt_none \
+  "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
 # The good_handlers probe observes the structural handler-label predicate,
 # including the NONE-ret case (handler ignored) and nested bad handlers.
 run_probe word_convs_good_handlers_probeScript.sml word_convs_good_handlers_probe.out \
