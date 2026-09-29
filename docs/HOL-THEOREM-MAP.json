@@ -24104,14 +24104,6 @@
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds10 source comparison (2026-09-29; bead flapjack-pxn.18.5.9.8.3) against loop_to_wordScript.sml:152-155. HOL make_ctxt n [] l = l and make_ctxt n (x::xs) l = make_ctxt (n+2) xs (insert x n l); Lean makeCtxtHOL is the constructor-for-constructor port over the exact spt num|->num carrier Spt Nat with the reviewed sptInsert, keeping the same recursion, the +2 register stride, and the list order. No word, fmap, or list qualifier applies (Spt is the ordinary reviewed sptree carrier, as for find_var_neq_0_ctxt). The production association-list makeCtxt in Flapjack/Pancake/LoopToWord.lean stays distinct; executable routing through this reviewed definition remains tracked by the comp_func chain (.18.5.9.8/.18.5.9.9)."
   },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/LocalsRelUpdates.lean",
-    "lean_name": "localsRelHOLFromAListToAList",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "flapjack-ds10 (2026-09-29) infrastructure row: private helper porting the external HOL finite-map theorem lookup_fromAList_toAList (HOL/src/finite_maps, outside cakeml, so untaggable), used to prove the tagged localsRelHOLAlistInsertToAList. The #1176 integration head collected this Proofs-file theorem without a manifest row; adding the required no-HOL row so the inventory check passes."
-  },
 {
   "hol_path": "cakeml/pancake/loopLangScript.sml",
   "hol_name": "acc_vars_def",
