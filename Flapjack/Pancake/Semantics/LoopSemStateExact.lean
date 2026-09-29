@@ -737,6 +737,35 @@ theorem LoopSemStateFiniteExact.toProductionState_prodRel {width : Nat}
   · intro label parameters program hLookup
     exact hCoverage label parameters program hLookup
 
+/-- Exact and production Loop states preserve `prodRel` when the source
+    `set_var` update is paired with the executable `loopSetVar` update. The
+    local-map lookup proof uses the exact `sptInsert` lookup equations; every
+    other state field is unchanged by both updates. This is a Flapjack-only
+    cross-carrier transition lemma for evaluator-case proofs, not a separate
+    HOL declaration or a whole-evaluator simulation theorem. -/
+theorem LoopSemStateFiniteExact.setVar_prodRel {width : Nat} [NeZero width]
+    {F : Type} {state : LoopSemStateFiniteExact width F}
+    {machine : LoopMachineState (BitVec width) F}
+    (hrel : state.prodRel machine) (name : Nat) (value : WordLocW width) :
+    (setVar name value state).prodRel
+      {machine with locals := loopSetVar machine.locals name (loopValueOfWordLocW value)} := by
+  rcases hrel with
+    ⟨hlocals, hglobals, hmemory, hmdomain, hshMdomain, hclock, hbe, hffi,
+      hbaseAddr, htopAddr, hcode, hcoverage⟩
+  refine ⟨?_, hglobals, hmemory, hmdomain, hshMdomain, hclock, hbe, hffi,
+    hbaseAddr, htopAddr, hcode, hcoverage⟩
+  intro key
+  by_cases hkey : key = name
+  · subst key
+    simp [setVar, loopSetVar, sptLookup_sptInsert_same]
+  · calc
+      loopSetVar machine.locals name (loopValueOfWordLocW value) key =
+          machine.locals key := by simp [loopSetVar, hkey]
+      _ = (sptLookup key state.locals).map loopValueOfWordLocW := hlocals key
+      _ = (sptLookup key (sptInsert name value state.locals)).map
+            loopValueOfWordLocW := by
+              rw [sptLookup_sptInsert_ne name key value state.locals hkey]
+
 /-- Source-shaped `find_code` (`loopSemScript.sml:147-163`) reading the exact
     `code` `sptree$num_map` through `sptLookup`.  The code-table representation
     (`Spt` versus the production association list) and the program carrier
