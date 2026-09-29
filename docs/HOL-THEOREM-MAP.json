@@ -11475,6 +11475,14 @@
     "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.9.16.7) against loop_to_wordProofScript.sml:323-329. HOL quantifies params, k, n, l and assumes k < LENGTH params ∧ ALL_DISTINCT params before concluding lookup (EL k params) (make_ctxt n params l) = SOME (2*k+n). Lean preserves binder order, the same bound and distinctness premise (List.Nodup is the exact List rendering of ALL_DISTINCT), lookup result, starting register and arithmetic. The dependent List.get index is justified by the existing k < length premise and adds no semantic assumption; both source `make_ctxt` and Spt insertion are constructor-for-constructor exact carriers. Regression checks index zero and index two for distinct [3,5,9] from base 4."
   },
   {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "lookup_make_ctxt_EVEN",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "makeCtxtHOL_lookupEven",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.9.16.8) against loop_to_wordProofScript.sml:341-353. HOL quantifies xs, m, l, n, y; assumes EVEN m, all successful lookups in l are even, and lookup n (make_ctxt m xs l) = SOME y; concludes EVEN y. Lean keeps that binder/premise/conclusion order over exact List Nat and Spt Nat carriers, using the source-reviewed HOL EVEN encoding v % 2 = 0 from FindVarExact. Proof preserves parity at the inserted value and carries existing-context parity through distinct-key insertion. Tests cover both a pre-existing even-valued key and a generated even register."
+  },
+  {
     "hol_path": "cakeml/pancake/pan_commonScript.sml",
     "hol_name": "distinct_lists_def",
     "lean_path": "Flapjack/Pancake/PanCommon.lean",

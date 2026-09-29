@@ -309,4 +309,35 @@ theorem makeCtxtHOL_lookupRange (names : List Nat) (next : Nat)
           exact Or.inl hsource
       · exact Or.inr (by omega)
 
+/-- Exact HOL `lookup_make_ctxt_EVEN`
+(`cakeml/pancake/proofs/loop_to_wordProofScript.sml:341-353`). Existing
+context lookups remain even, and `make_ctxt` inserts only the even register
+sequence beginning at its even start. HOL `EVEN v` is represented by the exact
+Lean arithmetic predicate `v % 2 = 0`, as in the existing `find_var` ports. -/
+@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "lookup_make_ctxt_EVEN"]
+theorem makeCtxtHOL_lookupEven (names : List Nat) (start : Nat)
+    (context : Spt Nat) (key value : Nat)
+    (hstart : start % 2 = 0)
+    (hcontext : ∀ k v, sptLookup k context = some v → v % 2 = 0)
+    (hlookup : sptLookup key (Flapjack.makeCtxtHOL start names context) =
+      some value) :
+    value % 2 = 0 := by
+  induction names generalizing start context with
+  | nil => exact hcontext key value (by simpa [Flapjack.makeCtxtHOL] using hlookup)
+  | cons name names ih =>
+      have hstart' : (start + 2) % 2 = 0 := by omega
+      have hcontext' :
+          ∀ k v, sptLookup k (sptInsert name start context) = some v → v % 2 = 0 := by
+        intro k v hlookup'
+        by_cases hkey : k = name
+        · subst k
+          rw [sptLookup_sptInsert_same] at hlookup'
+          have hv : v = start := Option.some.inj hlookup'.symm
+          subst v
+          exact hstart
+        · rw [sptLookup_sptInsert_ne name k start context hkey] at hlookup'
+          exact hcontext k v hlookup'
+      apply ih (start + 2) (sptInsert name start context) hstart' hcontext'
+      exact hlookup
+
 end Flapjack.LoopToWord
