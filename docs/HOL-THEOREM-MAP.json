@@ -25087,5 +25087,35 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.9.26.1): the ShMem case of HOL loop_to_wordProof compile_correct (loop_to_wordProofScript.sml:57-97, i.e. loopSem evaluate_ind specialised to goal, resumed at :1455-1496). The statement follows the HOL evaluate_ind conjunct ∀op v ad s. P (ShMem op v ad,s), with P unfolded to HOL's goal written out: ∀res s1 t ctxt retv l. evaluate (prog,s) = (res,s1) ∧ res ≠ SOME Error ∧ state_rel s t ∧ locals_rel ctxt s.locals t.locals ∧ lookup 0 t.locals = SOME retv ∧ good_dimindex(:'a) ∧ ~isWord retv ∧ domain (acc_vars prog LN) ⊆ domain ctxt ⇒ ∃t1 res1. evaluate (FST (comp ctxt prog l),t) = (res1,t1) ∧ t1.ffi = s1.ffi ∧ case res of .... The binders and the premise conjunction are in HOL order. The case over res is the untagged resultCase (LoopToWord/Proofs/CompileCorrect/Property.lean), compared arm by arm: NONE, Result, Exception (including the jump_exc record update of stack and handler), Break, Continue, TimeOut, FinalFFI, and _ => F. The carriers are the tagged exact loopSem evaluate, wordSem evaluate, compHOL (comp_def), loopToWordStateRelHOLExact (state_rel_def), localsRelHOL (locals_rel_def), accVarsHOL (acc_vars_def), goodDimindex, wordSemIsWordLoc (isWord_def) and jumpExc (jump_exc_def). ⊆ on domain is the sptMem implication, and the HOL bool isWord is = true. No induction hypothesis. The target ShareInst op (find_var ctxt v) (comp_exp ctxt ad) evaluates the address via the tagged comp_exp_preserves_eval. For each of the 8 memops, the source sh_mem_op/sh_mem_load/sh_mem_store and the target share_inst/sh_mem_*/sh_mem_set_var test the same sh_mdomain (equal by state_rel) and make the same call_FFI on the same ffi and payload. For Store8 the payloads agree via the tagged TAKE_1_word_to_bytes under good_dimindex. FFI_final gives FinalFFI on both sides with equal ffi, and FFI_return installs the same new ffi; loads write find_var ctxt v (find_var_neq_0, locals_rel_insert), and stores keep the locals. There is no target-run or post-state premise. Kernel-checked. The relation qualifier names the |-> fields of the two state carriers that the goal traverses (loopSem globals; wordSem fpRegs and store), with same-module witnesses LoopToWordCompileCorrectShMemWitnesses.*. This is one of the reviewed case slices of a partial port; the full compile_correct theorem remains partial, with no assembled theorem claimed."
+  },
+  {
+    "hol_path": "cakeml/semantics/astScript.sml",
+    "hol_name": "opb",
+    "lean_path": "Flapjack/AstHOL.lean",
+    "lean_name": "Opb",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-29; bead flapjack-h29l.6.2.7). HOL `Datatype opb = Lt | Gt | Leq | Geq` (cakeml/semantics/astScript.sml:59) has four nullary constructors in that order. Lean `Flapjack.Opb` (Flapjack/AstHOL.lean, the primary counterpart of astScript.sml) has exactly the constructors `lt | gt | leq | geq` in the same order, no payload, width parameter, or side condition. Exact carrier and constructor correspondence; it is the argument carrier of HOL fpSem `fp_cmp_def`."
+  },
+  {
+    "hol_path": "cakeml/semantics/fpSemScript.sml",
+    "hol_name": "fp_cmp_def",
+    "lean_path": "Flapjack/FpSemHOL.lean",
+    "lean_name": "fpSemFpCmp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds5 (source comparison, 2026-09-29; bead flapjack-h29l.6.2.7). HOL `fp_cmp cmp = case cmp of Lt => fp64_lessThan | Leq => fp64_lessEqual | Gt => fp64_greaterThan | Geq => fp64_greaterEqual` (fpSemScript.sml:24-31). The argument carrier is the exact ast `opb` port `Flapjack.Opb` (tagged above against astScript.sml:59); the four clauses match HOL's clause set. HOL `word64` is the fixed `BitVec 64` and the result is `bool`, so no width qualifier applies. `fp64_lessThan/lessEqual/greaterThan/greaterEqual` are the untagged machine_ieee/binary_ieee renderings `holFp64*` already used by `fpSemFpCmpComp`. `Flapjack.Test.FpSemOpsParity` kernel-checks every clause definitional equality and concrete Boolean rows."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/CompileCorrect/Call/TailCall.lean",
+    "lean_name": "compileCorrect_Call_TailCall",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "LoopSemStateFiniteExact.globals",
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.9.27.1): the Call_TailCall piece of HOL loop_to_wordProof compile_correct (loop_to_wordProofScript.sml:57-97, i.e. loopSem evaluate_ind specialised to goal; the Call resume at :1017-1030 does Cases_on ret, and the NONE branch is resumed as Call_TailCall at :1085-1153). The statement is HOL's evaluate_ind Call conjunct (∀ret dest argvars handler s. IHs ⇒ P (Call ret dest argvars handler,s)) with ret fixed to NONE, splitting along HOL's own case structure. With ret = NONE, the three returning-call premise sets are vacuous (each assumes ret = SOME _) and are omitted. The remaining tail-call premise is transcribed binder for binder: ∀argvals v7 env prog. get_vars argvars s = SOME argvals ∧ find_code dest argvals s.code = SOME v7 ∧ v7 = (env,prog) ∧ ret = NONE ∧ handler = NONE ∧ s.clock ≠ 0 ⇒ P (prog, dec_clock s with locals := env), with P rendered as the untagged PropertyAt (HOL goal at (prog,s)). The conclusion is HOL's goal written out for Call NONE dest argvars handler, exactly as for the integrated cases (the same premise conjunction; ∃t1 res1 over comp's first component; t1.ffi = s1.ffi; resultCase). There is no target-run or post-state premise. The proof follows HOL: the target Call NONE dest (0 :: MAP (find_var ctxt) argvars) NONE reads retv from register 0 and the arguments via the tagged locals_rel_get_vars. The untagged findCode_rel (Call/Support.lean) gives wordSem find_code on retv::argvals, the comp_func body under the make_ctxt context, lookup 0 = retv, locals_rel via the tagged locals_rel_make_ctxt, and the acc_vars domain via domain_make_ctxt/set_fromNumSet/domain_toNumSet plus an untagged sptDifference lookup lemma. The IH is applied at call_env args1 ss1 (dec_clock t), and bad_fun_return filtering matches the source Error mapping of NONE/Break/Continue. A handler with SOME, or clock 0, gives Error or TimeOut on both sides. Kernel-checked. The relation qualifier names the |-> fields of the two state carriers (loopSem globals; wordSem fpRegs and store), with same-module witnesses LoopToWordCompileCorrectCallTailWitnesses.*. This is one of the reviewed case slices of a partial port; the full compile_correct theorem remains partial, with no assembled theorem claimed, and the Call case assembly is bead flapjack-pxn.18.5.9.27.4."
   }
 ]
