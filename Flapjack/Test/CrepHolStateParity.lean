@@ -21,6 +21,10 @@ private def sampleMapc
     (entry : MlString × (List Nat × CrepProgHOL 8)) :
     List Nat × CrepProgHOL 8 := (entry.2.1, .tick)
 
+private def sampleMapc64
+    (entry : MlString × (List Nat × CrepProgHOL 64)) :
+    List Nat × CrepProgHOL 64 := (entry.2.1, .tick)
+
 theorem mapc_lookup_fixture :
     (sampleCode.map2 sampleMapc).lookup codeName = some ([], .tick) := by
   simp [HolFiniteMapExact.map2, sampleCode, sampleMapc, codeName]
@@ -257,6 +261,45 @@ example :
     evalCrepSemHOLExp loadState (.load (.const (BitVec.ofNat 8 4))) = none := by
   classical
   simp [evalCrepSemHOLExp, loadState, lookupState]
+
+private def load32State : CrepSemHOLState 64 Unit where
+  locals := HolFiniteMapExact.empty
+  globals := HolFiniteMapExact.empty
+  code := HolFiniteMapExact.empty
+  memory := fun address =>
+    if address = BitVec.ofNat 64 8 then
+      .word (BitVec.ofNat 64 0x1122334455667788)
+    else .word 0
+  memaddrs := fun address => address = BitVec.ofNat 64 8
+  shMemaddrs := fun _ => False
+  clock := 0
+  be := false
+  ffi := { oracle := fun _ _ _ _ => .final .failed, ffiState := (), ioEvents := [] }
+  baseAddr := 0
+  topAddr := 0
+
+example :
+    evalCrepSemHOLExp (load32State.mapc sampleMapc64)
+        (.load32 (.const (BitVec.ofNat 64 8))) =
+      evalCrepSemHOLExp load32State (.load32 (.const (BitVec.ofNat 64 8))) := by
+  classical
+  simpa [crepSimpExpHOL] using
+    (crepSimpExpCorrect1NativeLoad32Case sampleMapc64 load32State
+      (.const (BitVec.ofNat 64 8))
+      (HolWordLab.word (BitVec.ofNat 64 0x55667788))
+      (by
+        have hlog : Nat.log2 8 = 3 := by decide
+        simp [evalCrepSemHOLExp, load32State, panMemLoad32HOL,
+          panByteAlignHOL, hlog])
+      (by
+        intro state' resultType result hAddress
+        exact crepSimpExpCorrect1NativeConstCase sampleMapc64 state'
+          (BitVec.ofNat 64 8) result (by simp [evalCrepSemHOLExp])))
+
+example :
+    evalCrepSemHOLExp load32State (.load32 (.const (BitVec.ofNat 64 9))) = none := by
+  classical
+  simp [evalCrepSemHOLExp, load32State, panMemLoad32HOL, panByteAlignHOL]
 
 private def lookupNames : List Nat := [0, 1]
 
