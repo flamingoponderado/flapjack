@@ -432,7 +432,7 @@ example :
     crepToLoopLocalsRelExact localsRelExactCtxt localsRelExactSet
         localsRelExactSource localsRelExactTarget ↔
       crepToLoopDistinctVars localsRelExactCtxt.vars.lookup ∧
-        crepToLoopCtxtMax localsRelExactCtxt.vmax localsRelExactCtxt.vars.lookup ∧
+        crepToLoopCtxtMaxExact localsRelExactCtxt.vmax localsRelExactCtxt.vars ∧
         (∀ n, sptMem n localsRelExactSet → sptMem n localsRelExactTarget) ∧
         ∀ vname value, localsRelExactSource.lookup vname = some value →
           ∃ n, localsRelExactCtxt.vars.lookup vname = some n ∧
@@ -446,7 +446,7 @@ example :
 example (h : crepToLoopLocalsRelExact localsRelExactCtxt localsRelExactSet
     localsRelExactSource localsRelExactTarget) :
     crepToLoopDistinctVars localsRelExactCtxt.vars.lookup ∧
-      crepToLoopCtxtMax localsRelExactCtxt.vmax localsRelExactCtxt.vars.lookup ∧
+      crepToLoopCtxtMaxExact localsRelExactCtxt.vmax localsRelExactCtxt.vars ∧
       (∀ n, sptMem n localsRelExactSet → sptMem n localsRelExactTarget) ∧
       ∀ vname value, localsRelExactSource.lookup vname = some value →
         ∃ n, localsRelExactCtxt.vars.lookup vname = some n ∧

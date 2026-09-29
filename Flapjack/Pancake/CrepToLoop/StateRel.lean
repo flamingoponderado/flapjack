@@ -437,14 +437,31 @@ theorem crepToLoopDistinctVars_iff {κ β : Type} (vars : FiniteMap κ β) :
         FLOOKUP vars x = some n → FLOOKUP vars y = some m → n = m → x = y :=
   Iff.rfl
 
-/-- Exact port of HOL `crep_to_loop$ctxt_max_def`
-    (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:90-93`): every value
-    stored in the map is bounded by `n`.  HOL's un-annotated `Definition` infers
-    `fm : 'a |-> num` (`m <= n` constrains the values to `num`), so the Lean
-    port is polymorphic in the key and fixed at `Nat` for the values. -/
-@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "ctxt_max_def"]
+/-- Flapjack-specific bound predicate over a raw function-backed finite map.
+    It is intentionally untagged because `κ → Option Nat` admits infinite
+    support. The exact tagged HOL port is `crepToLoopCtxtMaxExact`. -/
 def crepToLoopCtxtMax {κ : Type} (n : Nat) (fm : FiniteMap κ Nat) : Prop :=
   ∀ (v : κ) (m : Nat), FLOOKUP fm v = some m → m ≤ n
+
+/-- Canonical standalone-map witness for the exact `ctxt_max_def` parameter. -/
+theorem holFmapAsFiniteSupportParamWitness_crepToLoopCtxtMaxExact_fm
+    {κ : Type} (fm : HolFiniteMapExact κ Nat) :
+    holFiniteMapofBroad (holFiniteMaptoBroadlookup fm) fm.finiteSupport = fm := by
+  cases fm
+  rfl
+
+/-- Exact HOL `crep_to_loop$ctxt_max_def` (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:90-93`):
+    all values in the standalone `fm : 'a |-> num` are at most `n`. The key is
+    polymorphic, values are `Nat`, and the finite-support carrier is explicit. -/
+@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "ctxt_max_def"
+  (fmap_as_finite_support_parameters := [fm])]
+def crepToLoopCtxtMaxExact {κ : Type} (n : Nat) (fm : HolFiniteMapExact κ Nat) : Prop :=
+  ∀ (v : κ) (m : Nat), fm.lookup v = some m → m ≤ n
+
+/-- Exact predicate bridge to the raw lookup-based Flapjack helper. -/
+theorem crepToLoopCtxtMaxExact_iff_lookup {κ : Type} (n : Nat)
+    (fm : HolFiniteMapExact κ Nat) :
+    crepToLoopCtxtMaxExact n fm ↔ crepToLoopCtxtMax n fm.lookup := Iff.rfl
 
 /-- Untagged iff form of `crepToLoopCtxtMax`, kept for rewriting. -/
 theorem crepToLoopCtxtMax_iff {κ : Type} (n : Nat) (fm : FiniteMap κ Nat) :
@@ -516,7 +533,7 @@ HOL `crepLang$funname = mlstring`); the exact `sptree$num_set` `NumSet` with
 `t_locals`; and the tagged exact `HolWordLab` / `WordLocW` value carriers
 bridged by `wlabWlocHOL`. The `distinct_vars` conjunct is the exact-carrier
 `crepToLoopDistinctVarsExact ctxt.vars`; `ctxt_max` remains the tagged
-lookup-based `crepToLoopCtxtMax ctxt.vmax ctxt.vars.lookup`. Direct HOL oracle rows are in
+exact-carrier `crepToLoopCtxtMaxExact ctxt.vmax ctxt.vars`. Direct HOL oracle rows are in
 `scripts/hol-probes/crep_to_loop_locals_rel_probe.out`
 (`ctxt_vars_lookup`, `distinct_component`, `ctxt_max_component`,
 `set_domain_mem`, `map_lookup`, `subset_domain_component`), together with direct
@@ -538,7 +555,7 @@ def crepToLoopLocalsRelExact {width : Nat} [NeZero width]
     (sLocals : HolFiniteMapExact Nat (HolWordLab width))
     (tLocals : Spt (WordLocW width)) : Prop :=
   crepToLoopDistinctVarsExact ctxt.vars ∧
-  crepToLoopCtxtMax ctxt.vmax ctxt.vars.lookup ∧
+  crepToLoopCtxtMaxExact ctxt.vmax ctxt.vars ∧
   (∀ n, sptMem n l → sptMem n tLocals) ∧
   ∀ vname value, sLocals.lookup vname = some value →
     ∃ n, ctxt.vars.lookup vname = some n ∧ sptMem n l ∧
@@ -552,7 +569,7 @@ theorem crepToLoopLocalsRelExact_iff {width : Nat} [NeZero width]
     (tLocals : Spt (WordLocW width)) :
     crepToLoopLocalsRelExact ctxt l sLocals tLocals ↔
       crepToLoopDistinctVarsExact ctxt.vars ∧
-      crepToLoopCtxtMax ctxt.vmax ctxt.vars.lookup ∧
+      crepToLoopCtxtMaxExact ctxt.vmax ctxt.vars ∧
       (∀ n, sptMem n l → sptMem n tLocals) ∧
       ∀ vname value, sLocals.lookup vname = some value →
         ∃ n, ctxt.vars.lookup vname = some n ∧ sptMem n l ∧
@@ -576,7 +593,7 @@ theorem crepToLoopLocalsRelExact_intro {width : Nat} [NeZero width]
     (tLocals : Spt (WordLocW width))
     (h : crepToLoopLocalsRelExact ctxt l sLocals tLocals) :
     crepToLoopDistinctVarsExact ctxt.vars ∧
-    crepToLoopCtxtMax ctxt.vmax ctxt.vars.lookup ∧
+    crepToLoopCtxtMaxExact ctxt.vmax ctxt.vars ∧
     (∀ n, sptMem n l → sptMem n tLocals) ∧
     ∀ vname value, sLocals.lookup vname = some value →
       ∃ n, ctxt.vars.lookup vname = some n ∧ sptMem n l ∧

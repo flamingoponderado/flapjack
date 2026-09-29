@@ -34,14 +34,14 @@ theorem not_mem_assigned_mem_gt_comp_exp_cases :
     (∀ (ctxt : CrepToLoopContextExact) (tmp : Nat) (l : NumSet) (e : CrepExpHOL width)
       (p : List (HolLoopProg width)) (le : HolLoopExp width) (ntmp : Nat) (nl : NumSet) (n : Nat),
       compileExpHOLExact ctxt tmp l e = (p, le, ntmp, nl) ∧
-      crepToLoopCtxtMax ctxt.vmax ctxt.vars.lookup ∧
+      crepToLoopCtxtMaxExact ctxt.vmax ctxt.vars ∧
       (∀ v m, ctxt.vars.lookup v = some m → n ≠ m) ∧ n < tmp →
       n ∉ holLoopAssignedVars (loopNestedSeqHOL p)) ∧
     (∀ (ctxt : CrepToLoopContextExact) (tmp : Nat) (l : NumSet) (e : List (CrepExpHOL width))
       (p : List (HolLoopProg width)) (le : List (HolLoopExp width)) (ntmp : Nat) (nl : NumSet)
       (n : Nat),
       compileExpsHOLExact ctxt tmp l e = (p, le, ntmp, nl) ∧
-      crepToLoopCtxtMax ctxt.vmax ctxt.vars.lookup ∧
+      crepToLoopCtxtMaxExact ctxt.vmax ctxt.vars ∧
       (∀ v m, ctxt.vars.lookup v = some m → n ≠ m) ∧ n < tmp →
       n ∉ holLoopAssignedVars (loopNestedSeqHOL p)) :=
   ⟨fun ctxt tmp l e p le ntmp nl n ⟨h, _, _, hn⟩ hm => by
@@ -57,7 +57,7 @@ theorem not_mem_assigned_mem_gt_comp_exp :
     ∀ (ctxt : CrepToLoopContextExact) (tmp : Nat) (l : NumSet) (e : CrepExpHOL width)
       (p : List (HolLoopProg width)) (le : HolLoopExp width) (ntmp : Nat) (nl : NumSet) (n : Nat),
       compileExpHOLExact ctxt tmp l e = (p, le, ntmp, nl) ∧
-      crepToLoopCtxtMax ctxt.vmax ctxt.vars.lookup ∧
+      crepToLoopCtxtMaxExact ctxt.vmax ctxt.vars ∧
       (∀ v m, ctxt.vars.lookup v = some m → n ≠ m) ∧ n < tmp →
       n ∉ holLoopAssignedVars (loopNestedSeqHOL p) :=
   not_mem_assigned_mem_gt_comp_exp_cases.1
@@ -71,7 +71,7 @@ theorem not_mem_assigned_mem_gt_comp_exps :
       (p : List (HolLoopProg width)) (le : List (HolLoopExp width)) (ntmp : Nat) (nl : NumSet)
       (n : Nat),
       compileExpsHOLExact ctxt tmp l e = (p, le, ntmp, nl) ∧
-      crepToLoopCtxtMax ctxt.vmax ctxt.vars.lookup ∧
+      crepToLoopCtxtMaxExact ctxt.vmax ctxt.vars ∧
       (∀ v m, ctxt.vars.lookup v = some m → n ≠ m) ∧ n < tmp →
       n ∉ holLoopAssignedVars (loopNestedSeqHOL p) :=
   not_mem_assigned_mem_gt_comp_exp_cases.2
