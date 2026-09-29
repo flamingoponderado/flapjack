@@ -13,6 +13,7 @@ CHECKER = runpy.run_path(
 )
 SITES = CHECKER["hol_attribute_sites"]
 REF_ERROR = CHECKER["hol_ref_error"]
+SCHEMA = CHECKER["external_pin_schema_errors"]
 
 
 class HolAttributeSitesTest(unittest.TestCase):
@@ -2244,6 +2245,51 @@ class ExternalHolSourceTest(unittest.TestCase):
             self.assertIsNone(
                 self._check(self._pin({"difference_def": [1]}, sha256=digest), "difference_def", root=Path(tmp))
             )
+
+    def test_rejects_missing_pinned_source_when_checkout_present(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            error = self._check(
+                self._pin({"difference_def": [319]}), "difference_def", root=Path(tmp)
+            )
+        self.assertIn("has no pinned source", error)
+
+    def test_accepts_missing_pinned_source_without_checkout(self):
+        self.assertIsNone(
+            self._check(
+                self._pin({"difference_def": [319]}),
+                "difference_def",
+                root=Path("/nonexistent-hol-checkout"),
+            )
+        )
+
+    def test_schema_rejects_duplicate_pin_paths(self):
+        data = [
+            {
+                "tag_path": self.TAG,
+                "upstream": "src/finite_maps/sptreeScript.sml",
+                "sha256": "0" * 64,
+                "declarations": {"difference_def": [319]},
+            },
+            {
+                "tag_path": self.TAG,
+                "upstream": "src/finite_maps/sptreeScript.sml",
+                "sha256": "0" * 64,
+                "declarations": {"difference_def": [319]},
+            },
+        ]
+        errors = " ".join(SCHEMA(data))
+        self.assertIn("duplicate external HOL pin", errors)
+
+    def test_schema_rejects_missing_fields_and_bad_prefix(self):
+        errors = SCHEMA(
+            [
+                {"tag_path": "cakeml/x.sml"},
+                {"tag_path": "hol/a.sml", "upstream": "a.sml", "sha256": "0" * 64, "declarations": {}},
+            ]
+        )
+        joined = " ".join(errors)
+        self.assertIn("missing field", joined)
+        self.assertIn("must be a `hol/` path", joined)
 
 
 if __name__ == "__main__":

@@ -2428,14 +2428,19 @@ def hol_ref_error(
     return None
 
 
+def load_external_hol_pin_data() -> list:
+    """Load the raw reviewed external-HOL pin list (empty when absent)."""
+    if not EXTERNAL_HOL_PIN_FILE.is_file():
+        return []
+    return json.loads(EXTERNAL_HOL_PIN_FILE.read_text(encoding="utf-8"))
+
+
 def load_external_hol_pins() -> dict[str, dict]:
     """Load the reviewed external-HOL pin file, keyed by tag path."""
-    if not EXTERNAL_HOL_PIN_FILE.is_file():
-        return {}
-    data = json.loads(EXTERNAL_HOL_PIN_FILE.read_text(encoding="utf-8"))
     pins: dict[str, dict] = {}
-    for entry in data:
-        pins[entry["tag_path"]] = entry
+    for entry in load_external_hol_pin_data():
+        if isinstance(entry, dict) and isinstance(entry.get("tag_path"), str):
+            pins[entry["tag_path"]] = entry
     return pins
 
 
@@ -2447,11 +2452,21 @@ def external_hol_root() -> Path:
 def external_pin_drift_error(
     entry: dict, cache: dict[Path, dict[str, list[int]]], external_root: Path
 ) -> str | None:
-    """Re-derive a pinned external source and report drift, if a checkout is present."""
+    """Re-derive a pinned external source and report drift, if a checkout is present.
+
+    When no external HOL4 checkout is available (for example in CI) the reviewed
+    pin is authoritative and nothing is reported.  When a checkout root exists it
+    must contain the pinned upstream file: a missing file, a sha256 mismatch, or
+    a declaration-index drift is an error.
+    """
     upstream = entry["upstream"]
+    if not external_root.is_dir():
+        return None
     source = external_root / upstream
     if not source.is_file():
-        return None
+        return (
+            f"external HOL checkout {external_root} has no pinned source {upstream}"
+        )
     digest = hashlib.sha256(source.read_bytes()).hexdigest()
     if digest != entry["sha256"]:
         return (
@@ -2467,6 +2482,33 @@ def external_pin_drift_error(
                 f"{lines}"
             )
     return None
+
+
+def external_pin_schema_errors(data: list) -> list[str]:
+    """Report malformed or duplicated entries in the external-HOL pin file."""
+    required = {"tag_path", "upstream", "sha256", "declarations"}
+    errors: list[str] = []
+    seen: set[str] = set()
+    for index, entry in enumerate(data):
+        if not isinstance(entry, dict):
+            errors.append(f"external HOL pin #{index} is not an object")
+            continue
+        missing = sorted(required - set(entry))
+        if missing:
+            errors.append(
+                f"external HOL pin #{index} is missing field(s) {missing}"
+            )
+        tag_path = entry.get("tag_path")
+        if not isinstance(tag_path, str) or not tag_path.startswith(EXTERNAL_HOL_PREFIX):
+            errors.append(
+                f"external HOL pin #{index} tag_path must be a `{EXTERNAL_HOL_PREFIX}` path"
+            )
+            continue
+        if tag_path in seen:
+            errors.append(f"duplicate external HOL pin for {tag_path}")
+        seen.add(tag_path)
+    return errors
+
 
 
 def external_hol_ref_error(
@@ -2516,6 +2558,11 @@ def main(argv: list[str]) -> int:
     mapping: list[tuple[str, str, str, str]] = []
     cache: dict[Path, dict[str, list[int]]] = {}
     reachable = reachable_modules()
+    external_pins_data = load_external_hol_pin_data()
+    for schema_error in external_pin_schema_errors(external_pins_data):
+        errors.append(
+            f"{EXTERNAL_HOL_PIN_FILE.relative_to(ROOT).as_posix()}: {schema_error}"
+        )
     external_pins = load_external_hol_pins()
     external_root = external_hol_root()
     for entry in external_pins.values():

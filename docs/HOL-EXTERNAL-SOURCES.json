@@ -23,6 +23,6 @@
         411
       ]
     },
-    "note": "Pinned from the read-only HOL4 checkout for the reviewed sptree helper ports. Re-derive with scripts/check-hol-refs.py when HOL4_EXTERNAL_ROOT is set; update this pin only after re-reviewing the upstream declarations."
+    "note": "Pinned from the read-only HOL4 checkout for the reviewed sptree helper ports. Re-derive with scripts/check-hol-refs.py when the HOL_EXTERNAL_ROOT checkout (default /home/zksecurity/HOL) is present; update this pin only after re-reviewing the upstream declarations."
   }
 ]
