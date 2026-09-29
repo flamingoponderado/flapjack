@@ -24025,6 +24025,14 @@
     "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.9.15.2) against loop_to_wordProofScript.sml:222-231. HOL quantifies vs/ws/lcl/lcl', assumes locals_rel ctxt lcl lcl' AND set vs SUBSET domain ctxt, and concludes locals_rel after alist_insert vs ws and alist_insert (MAP (find_var ctxt) vs) ws. Lean retains the conjunction premise and list binders, renders set inclusion as every List.mem name satisfying sptMem name context, uses the exact findVarHOL and localsRelHOL, and uses LoopSemStateFiniteExact.sptAlistInsert, the direct recursive rendering of external HOL sptree alist_insert_def (empty-list and shorter-list truncation included). The Spt and WordLocW carriers are exact; only HOL word to BitVec width has [NeZero width]. No list/array or finite-map qualifier applies. Empty and singleton update cases are kernel-checked in LoopToWordExactParity."
   },
   {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/LocalsRelUpdates.lean",
+    "lean_name": "localsRelHOLFromAListToAList",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific private transport lemma: replaces the target Spt by fromAList (toAList env) in localsRelHOL using the unrestricted Spt lookup roundtrip. It is proof infrastructure for the tagged locals_rel_alist_insert_toAList theorem, not a separate HOL declaration."
+  },
+  {
     "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
     "hol_name": "locals_rel_alist_insert_toAList",
     "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/LocalsRelUpdates.lean",
