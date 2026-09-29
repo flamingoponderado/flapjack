@@ -104,6 +104,14 @@ clauses of `comp_def` at `cakeml/pancake/loop_to_wordScript.sml:145-166`
 (tail-call, non-tail without handler, non-tail with handler), checking link slot
 `0`, the computed live cutset, label threading, and the trailing `Tick`. Its
 kernel-checked Lean replay is `Flapjack.Test.LoopToWordCallParity`.
+`loop_to_word_comp_func_probe.out` records direct HOL EVAL rows for the
+executable entry points `comp_func_def` / `compile_prog_def` / `compile_def`
+at `cakeml/pancake/loop_to_wordScript.sml:164-177`: `comp_func` with no new
+temporaries, with a parameter already assigned, and with a fresh
+`acc_vars` temporary; plus the `LENGTH params + 1` mapping of `compile_prog`
+and its `compile` alias over a three-entry code list. Its kernel-checked Lean
+replay is `Flapjack.Test.LoopToWordCompFuncParity` through the tagged exact
+`loopToWordCompFuncHOL` / `loopToWordCompileProgHOL` / `loopToWordCompileHOL`.
 `loop_live_comp_probe.out` records direct HOL EVAL rows for
 `loop_live$comp` at `cakeml/pancake/loop_liveScript.sml:217`; the Lean replay
 is `Flapjack.Test.LoopLiveCompParity`. `loop_live_optimise_probe.out` records
