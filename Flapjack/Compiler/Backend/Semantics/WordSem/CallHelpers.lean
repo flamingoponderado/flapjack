@@ -6,9 +6,9 @@ import Flapjack.Compiler.Backend.Semantics.WordSem.Env
 Counterpart of `cakeml/compiler/backend/semantics/wordSemScript.sml:946-1014`
 (bead `flapjack-h29l.7`).  It covers the helpers used by `evaluate_def`:
 `add_ret_loc`, `bad_dest_args`, the local `termdep_rw` and
-`fix_clock_IMP_LESS_EQ`, `MustTerminate_limit` (untagged; see its
-docstring), `const_addresses`, `const_writes`, `STOP`, `bad_fun_return`,
-`cont_loop`, and `exit_loop`.
+`fix_clock_IMP_LESS_EQ`, `MustTerminate_limit` (tagged under the
+`word_dimension_as_width` qualifier), `const_addresses`, `const_writes`, `STOP`,
+`bad_fun_return`, `cont_loop`, and `exit_loop`.
 The carrier translations are those of the tagged `state` port.
 
 HOL `bytes_in_word = n2w (dimindex (:'a) DIV 8)` (HOL

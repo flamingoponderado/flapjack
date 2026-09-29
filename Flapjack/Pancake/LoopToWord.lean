@@ -364,13 +364,13 @@ def compInitialHOL {width : Nat} [NeZero width] (context : Spt Nat)
       some (.shareInst operator (findVarHOL context name) (compExpHOL context address), labels)
   | _ => none
 
-/-- Exact total port of HOL `comp_def` (`cakeml/pancake/loop_to_wordScript.sml:56-152`)
+/-- Exact total port of HOL `comp_def` (`cakeml/pancake/loop_to_wordScript.sml:56-150`)
 over the exact `HolLoopProg width` carrier with the exact `Spt Nat` variable context
-and the threaded label pair.  Clause-for-clause with the HOL definition: the partial
-helper `compInitialHOL` above renders the constructor slices, while the recursive
-clauses here thread the pair exactly as HOL's `comp` does.  The executable production
-route is tracked separately (bead `flapjack-pxn.18.5.9.5`); this declaration is the
-HOL-shaped reference definition. -/
+and the threaded label pair.  Clause-for-clause with the HOL definition.  The partial
+helper `compInitialHOL` above is an untagged Flapjack slice that covers only the
+nonrecursive clauses; this total definition is the reviewed tagged port.  The
+executable production route is tracked separately (bead `flapjack-pxn.18.5.9.5`);
+this declaration is the HOL-shaped reference definition. -/
 @[hol "cakeml/pancake/loop_to_wordScript.sml" "comp_def"
   (words_as_type_indexed_bitvec)]
 def compHOL {width : Nat} [NeZero width] (context : Spt Nat) :
