@@ -448,22 +448,6 @@ theorem crepProgToHOL_crepInlineTail {width : Nat} [NeZero width]
     crepProgToHOL (crepInlineTail program) = inlineTailHOLExact (crepProgToHOL program) := by
   simp [crepInlineTail, inlineTailHOLExact, crepProgToHOL]
 
-/-- The call shapes that `crepTransformEoc` leaves unchanged are matched by the
-    exact `transformEocHOLExact`, so the identity case of the well-founded
-    induction is vacuous for every call return shape. -/
-private theorem crepCallDefault {width : Nat} [NeZero width] (returnNames : List Nat)
-    (name : FunName) (args : List (CrepExp (BitVec width)))
-    (ret : Option (List Nat × Option (BitVec width × CrepProg (BitVec width))))
-    (h1 : ret ≠ none) (h2 : ∀ names, ret ≠ some (names, none))
-    (h3 : ∀ names handler body, ret ≠ some (names, some (handler, body))) :
-    crepProgToHOL (CrepProg.call ret name args) =
-      transformEocHOLExact returnNames (crepProgToHOL (CrepProg.call ret name args)) := by
-  rcases ret with _ | ⟨names, r⟩
-  · exact absurd rfl h1
-  · rcases r with _ | ⟨handler, body⟩
-    · exact absurd rfl (h2 names)
-    · exact absurd rfl (h3 names handler body)
-
 /-- Executed `crepTransformEoc` lifts to the exact `transformEocHOLExact` under
     the `crepProgToHOL` codec. -/
 theorem crepProgToHOL_crepTransformEoc {width : Nat} [NeZero width]
