@@ -12,6 +12,18 @@ Exact ports of `set_fromNumSet` and `domain_toNumSet` from
 
 namespace Flapjack.LoopToWord
 
+/-- Local finite-map carrier witness for `WordSemStateFiniteExact` in the
+`env_to_list_IMP` theorem below. This records the `fpRegs` and `store`
+translations on the full target state; the theorem only observes its
+`permute` field. -/
+theorem holFmapAsFiniteSupportRelationWitness_WordSemStateFiniteExact
+    {width : Nat} [NeZero width] {C F : Type} :
+    (∀ (state : WordSemStateBroad width C F) (h : state.FiniteSupport),
+      (WordSemStateBroad.ofBroad state h).toBroad = state) ∧
+    (∀ state : WordSemStateFiniteExact width C F,
+      WordSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  WordSemStateExact.holFmapAsFiniteSupportWitness
+
 /-- Inserting an association-list entry makes its key lookup successfully;
 this helper describes the external HOL `fromAList` rendering and has no
 CakeML theorem reference of its own. -/
@@ -115,17 +127,21 @@ theorem sptDomain_makeCtxtHOL (next : Nat) (names : List Nat)
 `cakeml/pancake/proofs/loop_to_wordProofScript.sml:410-417`. The result equation
 feeds the exact `env_to_list_lookup_equiv` theorem; HOL `fromAList` is rendered
 by `sptFromAList`, whose lookup is the same first-match lookup as `ALOOKUP`.
-`WordLocW width` is the sole representation translation. -/
+The premise uses the `permute` field of the exact target WordSem state `t`;
+`fpRegs` and `store` are recorded by the finite-map carrier qualifier, and
+`WordLocW width` by the word-width qualifier. -/
 @[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "env_to_list_IMP"
+  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
+    WordSemStateFiniteExact.store])
   (words_as_type_indexed_bitvec)]
-theorem envToListIMPHOL {width : Nat} [NeZero width]
-    (env : Spt (WordLocW width)) (bijSeq : Nat → Nat → Nat)
+theorem envToListIMPHOL {width : Nat} [NeZero width] {C F : Type}
+    (env : Spt (WordLocW width)) (target : WordSemStateFiniteExact width C F)
     (entries : List (Nat × WordLocW width)) (permutation : Nat → Nat → Nat)
-    (hresult : wordSemEnvToList env bijSeq = (entries, permutation)) :
+    (hresult : wordSemEnvToList env target.permute = (entries, permutation)) :
     sptDomain (sptFromAList entries) = sptDomain env ∧
       ∀ key, sptLookup key (sptFromAList entries) = sptLookup key env := by
   obtain ⟨hlookup, _⟩ :=
-    wordSemEnvToListLookupEquiv env bijSeq entries permutation hresult
+    wordSemEnvToListLookupEquiv env target.permute entries permutation hresult
   constructor
   · funext key
     simp only [sptDomain]
