@@ -13,6 +13,8 @@ case proof `Resume ncompile_correct[Dec]` at lines 2408-2584.
 
 namespace Flapjack
 
+open Pancake.CrepToLoop.Proofs.NCompileCorrect
+
 open LoopSemStateFiniteExact
 
 namespace NCompileCorrectDecFmapWitnesses
@@ -200,7 +202,7 @@ theorem crepToLoop_ncompile_correct_dec {width : Nat} [NeZero width] {σ : Type}
     ∀ (name : Nat) (e : CrepExpHOL width) (body : CrepProgHOL width)
       (v1 : CrepSemHOLState width σ),
       (∀ value, evalCrepSemHOLExp v1 e = some value →
-        crepToLoopNcompileCorrectAt body
+        PropertyAt body
           { v1 with locals := v1.locals.updateEq (name, value) }) →
     ∀ (res : Option (CrepResultHOLExact width)) (s1 : CrepSemHOLState width σ)
       (t : LoopSemStateFiniteExact width σ) (ctxt : CrepToLoopContextExact) (l : NumSet),
@@ -218,8 +220,8 @@ theorem crepToLoop_ncompile_correct_dec {width : Nat} [NeZero width] {σ : Type}
         crepToLoopMemRelHOLExact s1.memory t1.memory s1.memaddrs ∧
         crepToLoopGlobalsRelHOLExact s1.globals t1.globals ∧
         crepToLoopCodeRelExact ctxt s1.code t1.code ∧
-        res1 = crepToLoopResultHOL res ∧
-        crepToLoopResultLocalsHOL ctxt l s1.locals t1.locals res := by
+        res1 = resultToLoop res ∧
+        localsResultRel ctxt l res s1 t1 := by
   intro name e body v1 ih res s1 t ctxt l ⟨he, hne, hs, hm, hg, hc, hl⟩
   rw [evalCrepSemHOLProgExact_dec_holShape] at he
   cases hev : evalCrepSemHOLExp v1 e with
@@ -297,8 +299,8 @@ theorem crepToLoop_ncompile_correct_dec {width : Nat} [NeZero width] {σ : Type}
           hFinalStateBody, hFinalMemBody, hFinalGlobalsBody, hFinalCodeBody,
           hResultBody, hLocalsBody⟩ :=
           bodyIH bodyResult bodyState targetBody bodyCtxt bodyLive
-            ⟨hBodyEval, hBodyNotError, hBodyState, hBodyMem, hBodyGlobals,
-              hBodyCode, hBodyLocals⟩
+            hBodyEval hBodyNotError hBodyState hBodyMem hBodyGlobals
+              hBodyCode hBodyLocals
         have hCompile : compileHOLExact ctxt l (.dec name e body) =
             .seq (loopNestedSeqHOL codePrefix)
               (.seq (.assign temporary compiledValue)
@@ -323,10 +325,10 @@ theorem crepToLoop_ncompile_correct_dec {width : Nat} [NeZero width] {σ : Type}
           simp only [LoopSemStateFiniteExact.evaluate_seq, hPrefixLift]
           rw [hAssignEval]
           exact hTargetBodyEval
-        have hResultFinal : targetResult = crepToLoopResultHOL res := by
+        have hResultFinal : targetResult = resultToLoop res := by
           calc
-            targetResult = crepToLoopResultHOL bodyResult := hResultBody
-            _ = crepToLoopResultHOL res := by rw [← hResult]
+            targetResult = resultToLoop bodyResult := hResultBody
+            _ = resultToLoop res := by rw [← hResult]
         have hSourceFinalLocals : s1.locals =
             bodyState.locals.resVarEq (name, v1.locals.lookup name) := by
           have hLocalsEq := congrArg (fun state : CrepSemHOLState width σ => state.locals) hFinal
@@ -379,14 +381,14 @@ theorem crepToLoop_ncompile_correct_dec {width : Nat} [NeZero width] {σ : Type}
           calc
             sptLookup n targetFinal.locals = sptLookup n targetBody.locals := hRunPreserved
             _ = sptLookup n prefixState.locals := hslotTarget.trans hslotInitial.symm
-        have hFinalLocals : crepToLoopResultLocalsHOL ctxt l s1.locals targetFinal.locals res := by
+        have hFinalLocals : localsResultRel ctxt l res s1 targetFinal := by
           cases res with
           | none =>
               have hGood : UnassignedGoodRes targetResult := by
-                simp [hResultFinal, crepToLoopResultHOL, UnassignedGoodRes]
+                simp [hResultFinal, resultToLoop, UnassignedGoodRes]
               have hBodyLocalsFinal : crepToLoopLocalsRelExact bodyCtxt bodyLive
                   bodyState.locals targetFinal.locals := by
-                  simpa [crepToLoopResultLocalsHOL, hResultBody, hResult] using hLocalsBody
+                  simpa [localsResultRel, hResultBody, hResult] using hLocalsBody
               exact crepToLoopNcompileDecLocalsRestore ctxt bodyCtxt l name temporary
                 v1.locals bodyState.locals s1.locals prefixState.locals targetFinal.locals
                 hLocalsBefore hBodyLocalsFinal (by rfl) hFresh hSourceFinalLocals
@@ -395,20 +397,20 @@ theorem crepToLoop_ncompile_correct_dec {width : Nat} [NeZero width] {σ : Type}
               cases result with
               | «break» n =>
                   have hGood : UnassignedGoodRes targetResult := by
-                    simp [hResultFinal, crepToLoopResultHOL, UnassignedGoodRes]
+                    simp [hResultFinal, resultToLoop, UnassignedGoodRes]
                   have hBodyLocalsFinal : crepToLoopLocalsRelExact bodyCtxt bodyLive
                       bodyState.locals targetFinal.locals := by
-                    simpa [crepToLoopResultLocalsHOL, hResultBody, hResult] using hLocalsBody
+                    simpa [localsResultRel, hResultBody, hResult] using hLocalsBody
                   exact crepToLoopNcompileDecLocalsRestore ctxt bodyCtxt l name temporary
                     v1.locals bodyState.locals s1.locals prefixState.locals targetFinal.locals
                     hLocalsBefore hBodyLocalsFinal (by rfl) hFresh hSourceFinalLocals
                     (hMakePreserve hGood)
               | «continue» n =>
                   have hGood : UnassignedGoodRes targetResult := by
-                    simp [hResultFinal, crepToLoopResultHOL, UnassignedGoodRes]
+                    simp [hResultFinal, resultToLoop, UnassignedGoodRes]
                   have hBodyLocalsFinal : crepToLoopLocalsRelExact bodyCtxt bodyLive
                       bodyState.locals targetFinal.locals := by
-                    simpa [crepToLoopResultLocalsHOL, hResultBody, hResult] using hLocalsBody
+                    simpa [localsResultRel, hResultBody, hResult] using hLocalsBody
                   exact crepToLoopNcompileDecLocalsRestore ctxt bodyCtxt l name temporary
                     v1.locals bodyState.locals s1.locals prefixState.locals targetFinal.locals
                     hLocalsBefore hBodyLocalsFinal (by rfl) hFresh hSourceFinalLocals

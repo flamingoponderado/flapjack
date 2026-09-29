@@ -4,6 +4,7 @@ import Flapjack.Pancake.CrepToLoop.Proofs.RelationsExact
 import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
 import Flapjack.Pancake.Semantics.LoopSemStateExact
 import Flapjack.Pancake.Semantics.LoopSemStateExact.Evaluate
+import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Property
 
 /-!
 # Leaf cases of `crep_to_loop`'s `ncompile_correct`
@@ -19,6 +20,8 @@ evaluation, and no target result or post-relation is a premise.
 -/
 
 namespace Flapjack
+
+open Pancake.CrepToLoop.Proofs.NCompileCorrect
 
 namespace NCompileCorrectLeafFmapWitnesses
 
@@ -48,18 +51,6 @@ theorem holFmapAsFiniteSupportRelationWitness_LoopSemStateFiniteExact
   LoopSemStateFiniteExact.holFmapAsFiniteSupportWitness
 
 end NCompileCorrectLeafFmapWitnesses
-
-private abbrev NCompileResultMap {width : Nat} [NeZero width] :
-    Option (CrepResultHOLExact width) →
-      Option (LoopSemStateFiniteExact.LoopResultExact width)
-  | none => none
-  | some (.break label) => some (.break label)
-  | some (.continue label) => some (.continue label)
-  | some (.return values) => some (.result (values.map wlabWlocExact))
-  | some (.exception value) => some (.exception (.word value))
-  | some .timeOut => some .timeOut
-  | some (.finalFfi event) => some (.finalFfi event)
-  | some .error => some .error
 
 /-- Genuine `Skip` induction case of HOL `ncompile_correct`
     (`crep_to_loopProofScript.sml:110-154`, resumed at `:1648-1653`). The
@@ -91,14 +82,8 @@ theorem ncompileCorrectSkipCase {width : Nat} [NeZero width] {σ : Type}
         crepToLoopMemRelHOLExact s1.memory t1.memory s1.memaddrs ∧
         crepToLoopGlobalsRelHOLExact s1.globals t1.globals ∧
         crepToLoopCodeRelExact ctxt s1.code t1.code ∧
-        res1 = NCompileResultMap res ∧
-        (match res with
-         | none => crepToLoopLocalsRelExact ctxt live s1.locals t1.locals
-         | some (.break _) => crepToLoopLocalsRelExact ctxt live s1.locals t1.locals
-         | some (.continue _) => crepToLoopLocalsRelExact ctxt live s1.locals t1.locals
-         | some (.return _) => True
-         | some .error => False
-         | _ => True) := by
+        res1 = resultToLoop res ∧
+        localsResultRel ctxt live res s1 t1 := by
   have hSource : (res, s1) = (none, v1) := by
     simpa only [evalCrepSemHOLProgExact_skip] using hEval.symm
   cases hSource
@@ -137,14 +122,8 @@ theorem ncompileCorrectBreakCase {width : Nat} [NeZero width] {σ : Type}
         crepToLoopMemRelHOLExact s1.memory t1.memory s1.memaddrs ∧
         crepToLoopGlobalsRelHOLExact s1.globals t1.globals ∧
         crepToLoopCodeRelExact ctxt s1.code t1.code ∧
-        res1 = NCompileResultMap res ∧
-        (match res with
-         | none => crepToLoopLocalsRelExact ctxt live s1.locals t1.locals
-         | some (.break _) => crepToLoopLocalsRelExact ctxt live s1.locals t1.locals
-         | some (.continue _) => crepToLoopLocalsRelExact ctxt live s1.locals t1.locals
-         | some (.return _) => True
-         | some .error => False
-         | _ => True) := by
+        res1 = resultToLoop res ∧
+        localsResultRel ctxt live res s1 t1 := by
   have hSource : (res, s1) = (some (.break label), v1) := by
     simpa only [evalCrepSemHOLProgExact_break] using hEval.symm
   cases hSource
@@ -183,14 +162,8 @@ theorem ncompileCorrectContinueCase {width : Nat} [NeZero width] {σ : Type}
         crepToLoopMemRelHOLExact s1.memory t1.memory s1.memaddrs ∧
         crepToLoopGlobalsRelHOLExact s1.globals t1.globals ∧
         crepToLoopCodeRelExact ctxt s1.code t1.code ∧
-        res1 = NCompileResultMap res ∧
-        (match res with
-         | none => crepToLoopLocalsRelExact ctxt live s1.locals t1.locals
-         | some (.break _) => crepToLoopLocalsRelExact ctxt live s1.locals t1.locals
-         | some (.continue _) => crepToLoopLocalsRelExact ctxt live s1.locals t1.locals
-         | some (.return _) => True
-         | some .error => False
-         | _ => True) := by
+        res1 = resultToLoop res ∧
+        localsResultRel ctxt live res s1 t1 := by
   have hSource : (res, s1) = (some (.continue label), v1) := by
     simpa only [evalCrepSemHOLProgExact_continue] using hEval.symm
   cases hSource
@@ -231,14 +204,8 @@ theorem ncompileCorrectTickCase {width : Nat} [NeZero width] {σ : Type}
         crepToLoopMemRelHOLExact s1.memory t1.memory s1.memaddrs ∧
         crepToLoopGlobalsRelHOLExact s1.globals t1.globals ∧
         crepToLoopCodeRelExact ctxt s1.code t1.code ∧
-        res1 = NCompileResultMap res ∧
-        (match res with
-         | none => crepToLoopLocalsRelExact ctxt live s1.locals t1.locals
-         | some (.break _) => crepToLoopLocalsRelExact ctxt live s1.locals t1.locals
-         | some (.continue _) => crepToLoopLocalsRelExact ctxt live s1.locals t1.locals
-         | some (.return _) => True
-         | some .error => False
-         | _ => True) := by
+        res1 = resultToLoop res ∧
+        localsResultRel ctxt live res s1 t1 := by
   have hClock : v1.clock = t.clock := hState.2.2.1
   by_cases hZero : v1.clock = 0
   · have hSource : (res, s1) =
@@ -254,7 +221,7 @@ theorem ncompileCorrectTickCase {width : Nat} [NeZero width] {σ : Type}
     · simpa [CrepSemHOLState.emptyLocals] using hGlobals
     · simpa [CrepSemHOLState.emptyLocals] using hCode
     · rfl
-    · simp
+    · trivial
   · have hSource : (res, s1) = (none, decClockCrepSemHOL v1) := by
       simpa [evalCrepSemHOLProgExact_tick, hZero] using hEval.symm
     cases hSource
