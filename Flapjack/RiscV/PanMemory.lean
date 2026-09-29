@@ -81,10 +81,13 @@ theorem panRiscVByteAlign_eight_eq_bitMask (address : Word 64) :
   exact panRiscVByteAlign_eq_bitMask_of_pow2 (width := 64)
     (bytesInWord := (8 : Word 64)) address 3 h8
 
+/-- Byte offset of `address` within its cell: `w2n a MOD d` from HOL
+`byte$byte_index` (before the big-endian reversal and the factor 8), with
+`d = bytesInWord`.  Nat `% 0` is the identity, which is the Lean rendering of
+HOL's unspecified `MOD 0` for words narrower than a byte. -/
 def panRiscVByteIndex [NeZero width]
     (bytesInWord address : Word width) : Nat :=
-  let bytes := bytesInWord.toNat
-  if bytes = 0 then 0 else address.toNat % bytes
+  address.toNat % bytesInWord.toNat
 
 def panRiscVGetByte [NeZero width]
     (bytesInWord address value : Word width) : Word width :=

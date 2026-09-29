@@ -2672,6 +2672,72 @@ theorem crepHolEvalMemLoadByte_riscv64_eq_panMemLoadByteHOL {σ : Type}
         exact (Nat.mod_eq_of_lt (by omega : byte.toNat < 2 ^ 64)).symm
       · simp [hdomain]
 
+/-- All-width form of `crepHolEvalMemLoadByte_riscv64_eq_panMemLoadByteHOL`: at
+    the canonical byte count `bytesInWord = width / 8`, the executed RISC-V
+    byte-load helper is the tagged HOL `mem_load_byte` widened to the word, at
+    every positive width.  The alignment is `panRiscVByteAlign_bytesInWord_eq_holByteAlignBitVec`,
+    and the byte offset is HOL `byte_index` (`w2n a MOD d`, reversed when big
+    endian).  Success and domain failure are both preserved.  Flapjack-only
+    bridge (bead `flapjack-pxn.18.5.4.3.5`). -/
+theorem crepHolEvalMemLoadByte_riscv_eq_panMemLoadByteHOL [NeZero width] {σ : Type}
+    (state : CrepHolState (BitVec width) σ) (address : BitVec width) :
+    crepHolEvalMemLoadByte
+        (RiscV.panRiscVMemoryModelForEndian state.bigEndian) (BitVec.ofNat width (width / 8))
+        state address =
+      (panMemLoadByteHOL
+        (fun current => (state.memory current).toHolWordLab)
+        (fun current => state.memaddrs current = true)
+        state.bigEndian address).map (fun byte => BitVec.ofNat width byte.toNat) := by
+  simp only [crepHolEvalMemLoadByte, panMemLoadByteHOL,
+    RiscV.panRiscVMemoryModelForEndian]
+  have haligned : RiscV.panRiscVByteAlign (BitVec.ofNat width (width / 8)) address =
+      panByteAlignHOL address :=
+    panRiscVByteAlign_bytesInWord_eq_holByteAlignBitVec address
+  simp only [haligned]
+  have hlt : width / 8 < 2 ^ width :=
+    Nat.lt_of_le_of_lt (Nat.div_le_self _ _) (Nat.lt_two_pow_self)
+  have hbytes : (BitVec.ofNat width (width / 8)).toNat = width / 8 := by
+    rw [BitVec.toNat_ofNat, Nat.mod_eq_of_lt hlt]
+  cases hcell : state.memory (panByteAlignHOL address) with
+  | word value =>
+      by_cases hdomain : state.memaddrs (panByteAlignHOL address) = true
+      · simp only [hcell, PanWordLab.toHolWordLab, hdomain,
+          ↓reduceIte, Option.map_some]
+        apply congrArg some
+        unfold panGetByteHOL RiscV.panRiscVGetByteEndian RiscV.panRiscVByteIndex
+        rw [hbytes]
+        dsimp only
+        congr 1
+        simp
+      · simp [hdomain]
+
+/-- All-width form of `crepRuntimeLoadByte_riscv64_eq_panMemLoadByteHOL`: the
+    production `crepRuntimeLoadByte` at the canonical RISC-V runtime of a
+    `CrepHolState` is the tagged HOL `mem_load_byte`, at every positive width. -/
+theorem crepRuntimeLoadByte_riscv_eq_panMemLoadByteHOL [NeZero width] {σ : Type}
+    (state : CrepHolState (BitVec width) σ) (address : BitVec width) :
+    crepRuntimeLoadByte (riscvCrepWordTarget state.toRuntime) address =
+      (panMemLoadByteHOL
+        (fun current => (state.memory current).toHolWordLab)
+        (fun current => state.memaddrs current = true)
+        state.bigEndian address).map (fun byte => BitVec.ofNat width byte.toNat) := by
+  calc
+    crepRuntimeLoadByte (riscvCrepWordTarget state.toRuntime) address =
+      panModelReadByte (RiscV.panRiscVMemoryModelForEndian state.bigEndian)
+        state.memaddrs (crepRuntimeMemoryView state.memory)
+        (BitVec.ofNat width (width / 8)) address state.bigEndian :=
+          crepRuntimeLoadByte_wordTarget_eq_riscv state.toRuntime address
+    _ = panModelReadByte (RiscV.panRiscVMemoryModelForEndian state.bigEndian)
+        state.memaddrs
+        (fun current => some (panTheWord (state.memory current)))
+        (BitVec.ofNat width (width / 8)) address state.bigEndian := rfl
+    _ = crepHolEvalMemLoadByte
+        (RiscV.panRiscVMemoryModelForEndian state.bigEndian) (BitVec.ofNat width (width / 8))
+        state address := by
+          symm
+          exact crepHolEvalMemLoadByte_eq_panModelReadByte _ _ _ _
+    _ = _ := crepHolEvalMemLoadByte_riscv_eq_panMemLoadByteHOL state address
+
 theorem crepRuntimeLoadByte_riscv64_eq_panMemLoadByteHOL {σ : Type}
     (state : CrepHolState (BitVec 64) σ) (address : BitVec 64) :
     crepRuntimeLoadByte (riscvCrepWordTarget state.toRuntime) address =
