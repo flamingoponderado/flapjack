@@ -2133,6 +2133,18 @@ run_probe crep_arith_store_32_probeScript.sml crep_arith_store_32_probe.out \
   evaluate_store32_unaligned_error evaluate_store32_missing_var \
   "$cake_dir/pancake/proofs/crep_arithProofScript.sml" "$cake_dir/pancake/proofs"
 
+# The If case of crep_arithProofScript.sml:184-212 `simp_prog_correct`.
+# HOL `simp_prog (If exp c1 c2) = If (simp_exp exp) (simp_prog c1)
+# (simp_prog c2)` and `evaluate (If e c1 c2,s)` selects `c1`/`c2` from the
+# condition word (`(SOME (Word w), if w <> 0w ...)`) or errors; the local
+# `mapc` overload is inlined, and `if_mapc_commute` pins the code-only `mapc`
+# commutation with the selected branch update.  Both guard values and the
+# error branch are exercised.
+run_probe crep_arith_if_probeScript.sml crep_arith_if_probe.out \
+  simp_prog_if evaluate_if_true evaluate_if_true_state evaluate_if_false \
+  evaluate_if_false_state evaluate_if_error if_mapc_true if_mapc_commute \
+  "$cake_dir/pancake/proofs/crep_arithProofScript.sml" "$cake_dir/pancake/proofs"
+
 # The StoreByte case of crep_arithProofScript.sml:184-212 `simp_prog_correct`.
 # HOL `simp_prog (StoreByte dst src) = StoreByte (simp_exp dst) (simp_exp src)`
 # and `evaluate (StoreByte dst src, s)` evaluates both operands and stores the
