@@ -223,6 +223,127 @@ theorem wordSemCutEnvMkNewCutsetIMPHOL {width : Nat} [NeZero width]
       change (sptLookup 0 (mkNewCutsetHOL context live)).isSome at hzero
       simp [hzero]
 
+/-- Flapjack-specific proof infrastructure for `cut_env_mk_new_cutset`:
+HOL proves this subset fact inline rather than declaring it as a separate
+theorem. The context relation maps every live source name to a target register
+present in the target locals; the generated cutset also contains register 0. -/
+private theorem mkNewCutsetHOL_subsetTarget {width : Nat} [NeZero width]
+    (context : Spt Nat) (live : WordLangNumSetHOL)
+    (sourceLocals targetLocals : Spt (WordLocW width)) (zeroValue : WordLocW width)
+    (hrel : localsRelHOL context sourceLocals targetLocals)
+    (hdomain : ∀ name, sptMem name live → sptMem name sourceLocals)
+    (hzero : sptLookup 0 targetLocals = some zeroValue) :
+    LoopSemStateFiniteExact.sptSubsetLive (mkNewCutsetHOL context live) targetLocals := by
+  intro key hmem
+  change sptMem key (sptInsert 0 ()
+    (toNumSetHOL ((fromNumSetHOL live).map (findVarHOL context)))) at hmem
+  rw [sptMem_sptInsert] at hmem
+  rcases hmem with hkeyZero | hkeyLive
+  · subst key
+    exact (sptMem_iff_lookup 0 targetLocals).mpr ⟨zeroValue, hzero⟩
+  · have hkeyList : key ∈ (fromNumSetHOL live).map (findVarHOL context) := by
+      have hdomainTree := congrFun
+        (sptDomain_toNumSetHOL ((fromNumSetHOL live).map (findVarHOL context))) key
+      change sptDomain
+        (toNumSetHOL ((fromNumSetHOL live).map (findVarHOL context))) key at hkeyLive
+      rw [hdomainTree] at hkeyLive
+      exact hkeyLive
+    obtain ⟨name, hnameList, hfind⟩ := List.mem_map.mp hkeyList
+    have hnameLive : sptMem name live := by
+      have hdomainNames := congrFun (fromNumSetHOL_set live) name
+      change sptDomain live name
+      rw [← hdomainNames]
+      exact hnameList
+    obtain ⟨value, hsource⟩ := (sptMem_iff_lookup name sourceLocals).mp
+      (hdomain name hnameLive)
+    obtain ⟨register, hcontext, htarget⟩ := hrel.2.2 name value hsource
+    have hregisterFind : findVarHOL context name = register := by
+      simp [findVarHOL, hcontext]
+    have hregisterKey : register = key := hregisterFind.symm.trans hfind
+    apply (sptMem_iff_lookup key targetLocals).mpr
+    refine ⟨value, ?_⟩
+    rw [← hregisterKey]
+    exact htarget
+
+/-- Exact HOL `cut_env_mk_new_cutset` from
+`cakeml/pancake/proofs/loop_to_wordProofScript.sml:395-408`. The premise
+retains the source locals relation, live-domain subset and target register-zero
+lookup; the conclusion keeps the existential cut result and its relation to
+the intersection of source locals with the live set. The only representation
+qualification is HOL's polymorphic word payload represented by
+`WordLocW width` (`BitVec width`). -/
+@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "cut_env_mk_new_cutset"
+  (words_as_type_indexed_bitvec)]
+theorem wordSemCutEnvMkNewCutsetHOL {width : Nat} [NeZero width]
+    (context : Spt Nat) (live : WordLangNumSetHOL)
+    (sourceLocals targetLocals : Spt (WordLocW width)) (zeroValue : WordLocW width)
+    (hpremises : localsRelHOL context sourceLocals targetLocals ∧
+      (∀ name, sptMem name live → sptMem name sourceLocals) ∧
+      sptLookup 0 targetLocals = some zeroValue) :
+    ∃ result,
+      wordSemCutEnv (mkNewCutsetHOL context live, (Spt.ln : WordLangNumSetHOL))
+        targetLocals = some result ∧
+      localsRelHOL context (sptInter sourceLocals live) result := by
+  rcases hpremises with ⟨hrel, hdomain, hzero⟩
+  have hsubset := mkNewCutsetHOL_subsetTarget context live sourceLocals
+    targetLocals zeroValue hrel hdomain hzero
+  have hempty : wordSemCutNames (Spt.ln : WordLangNumSetHOL) targetLocals =
+      some (Spt.ln : Spt (WordLocW width)) := by
+    have hinter : sptInter targetLocals (Spt.ln : WordLangNumSetHOL) = Spt.ln := by
+      cases targetLocals <;> simp [sptInter]
+    simp [wordSemCutNames, LoopSemStateFiniteExact.sptSubsetLive, hinter]
+  refine ⟨sptInter targetLocals (mkNewCutsetHOL context live), ?_, ?_⟩
+  · unfold wordSemCutEnv
+    change (match wordSemCutEnvs
+        (mkNewCutsetHOL context live, (Spt.ln : WordLangNumSetHOL)) targetLocals with
+      | some (first, second) => some (sptUnion second first)
+      | result => none) = some (sptInter targetLocals (mkNewCutsetHOL context live)
+        )
+    rw [wordSemCutEnvs, hempty]
+    simp only [wordSemCutNames, if_pos hsubset, sptUnion]
+  · rcases hrel with ⟨hinjective, heven, hlookups⟩
+    refine ⟨hinjective, heven, ?_⟩
+    intro name value hsourceCut
+    rw [Flapjack.sptLookup_sptInter] at hsourceCut
+    by_cases hlive : (sptLookup name live).isSome
+    · have hsource : sptLookup name sourceLocals = some value := by
+        simpa [hlive] using hsourceCut
+      obtain ⟨register, hcontext, htarget⟩ := hlookups name value hsource
+      have hnameLive : sptMem name live := by
+        change (sptLookup name live).isSome
+        exact hlive
+      have hnameList : name ∈ fromNumSetHOL live := by
+        have hdomainNames := congrFun (fromNumSetHOL_set live) name
+        change sptDomain live name at hnameLive
+        rw [← hdomainNames] at hnameLive
+        exact hnameLive
+      have hregisterFind : findVarHOL context name = register := by
+        simp [findVarHOL, hcontext]
+      have hregisterTree : sptMem register
+          (toNumSetHOL ((fromNumSetHOL live).map (findVarHOL context))) := by
+        have hregisterList : register ∈
+            (fromNumSetHOL live).map (findVarHOL context) :=
+          List.mem_map.mpr ⟨name, hnameList, hregisterFind⟩
+        have hdomainTree := congrFun
+          (sptDomain_toNumSetHOL
+            ((fromNumSetHOL live).map (findVarHOL context))) register
+        change sptDomain
+          (toNumSetHOL ((fromNumSetHOL live).map (findVarHOL context))) register
+        rw [hdomainTree]
+        exact hregisterList
+      have hregisterCut : sptMem register (mkNewCutsetHOL context live) := by
+        change sptMem register (sptInsert 0 ()
+          (toNumSetHOL ((fromNumSetHOL live).map (findVarHOL context))))
+        rw [sptMem_sptInsert]
+        exact Or.inr hregisterTree
+      have htargetCut : sptLookup register
+          (sptInter targetLocals (mkNewCutsetHOL context live)) = some value := by
+        rw [Flapjack.sptLookup_sptInter]
+        change (sptLookup register (mkNewCutsetHOL context live)).isSome at hregisterCut
+        simp [hregisterCut, htarget]
+      exact ⟨register, hcontext, htargetCut⟩
+    · simp [hlive] at hsourceCut
+
 /-- Flapjack-specific induction strengthening for `make_ctxt_inj`: adding a
 fresh register preserves lookup injectivity while advancing its value bound.
 HOL proves this fact inside the `make_ctxt_inj` proof rather than declaring it
