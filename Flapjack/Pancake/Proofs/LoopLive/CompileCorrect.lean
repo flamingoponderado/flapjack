@@ -148,9 +148,18 @@ theorem loopLive_compile_correct_skip {width : Nat} [NeZero width] {F : Type} :
   obtain ⟨rfl, rfl⟩ := he
   exact ⟨locals, by simp [evaluate], hsub⟩
 
-/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
-    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `Fail` (`loop_liveProofScript.sml:17-37` statement;
-    `Resume compile_correct[Fail]` at 71-74). -/
+/-- Exact `evaluate_ind` leaf case of HOL `compile_correct` for `Fail`
+    (`loop_liveProofScript.sml:17-37`; `Resume compile_correct[Fail]` at
+    71-74). Specializing the HOL case to `Fail` leaves the binders
+    `v1,res,s1,lt,locals,prog1,l1,l0`, all four premises, and the full
+    existential/eight-way result conclusion shown here. There is no recursive
+    sub-program, so this genuine induction case has no induction hypothesis.
+    Its first premise evaluates `Fail` to `Error`, while the second excludes
+    that result; hence the case is vacuous, exactly as in HOL. The state
+    `globals` map and word carrier use only the reviewed finite-support and
+    type-indexed BitVec translations. -/
+@[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 theorem loopLive_compile_correct_fail {width : Nat} [NeZero width] {F : Type} :
     ∀ (v1 : LoopSemStateFiniteExact width F),
     ∀ (res : Option (LoopResultExact width)) (s1 : LoopSemStateFiniteExact width F)

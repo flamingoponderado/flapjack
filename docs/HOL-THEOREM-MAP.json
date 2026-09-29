@@ -20403,12 +20403,16 @@
   "words_as_type_indexed_bitvec": true
 },
 {
-  "hol_path": null,
-  "hol_name": null,
+  "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
+  "hol_name": "compile_correct",
   "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
   "lean_name": "loopLive_compile_correct_fail",
-  "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.8.1.1): auxiliary lemma for case `Fail` of loop_live compile_correct (loop_liveProofScript.sml:17-37 statement; Resume compile_correct[Fail] at 71-74; HOL proves the theorem by recInduct loopSemTheory.evaluate_ind with one Resume block per constructor). The lemma keeps HOL's quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises (evaluate (v,v1) = (res,s1), res ≠ SOME Error, shrink lt v l0 = (prog1,l1), subspt (inter v1.locals l1) locals) and the full existential conclusion including the eight-way case split on res (oEL as sptOel, inter as sptInter, subspt as sptSubspt), over the exact LoopSemStateFiniteExact.evaluate (evaluate_def) and the tagged shrinkHOL (shrink_def). Proof: evaluate Fail = SOME Error, excluded by res ≠ SOME Error. Qualifiers: loopSem state globals as canonical HolFiniteMapExact; width-indexed word carriers."
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "reviewer": "flapjack-luna-c source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.12) against loop_liveProofScript.sml:17-37 and Resume compile_correct[Fail] at 71-74. Specializing HOL evaluate_ind to Fail leaves binders v1,res,s1,lt,locals,prog1,l1,l0, all four premises (evaluate (Fail,v1)=(res,s1), res\u2260SOME Error, shrink lt Fail l0=(prog1,l1), subspt (inter v1.locals l1) locals), and the full existential conclusion with all eight result branches. Lean has that same case statement over the exact LoopSemStateFiniteExact.evaluate, shrinkHOL, sptOel/sptInter/sptSubspt. Fail has no sub-program, so its induction case carries no IH or other premise; it is vacuous because evaluate Fail returns Error and the premise excludes Error. Qualifiers are only globals as canonical HolFiniteMapExact and HOL words as width-indexed BitVec.",
+  "fmap_as_finite_support": [
+    "globals"
+  ],
+  "words_as_type_indexed_bitvec": true
 },
 {
   "hol_path": null,
