@@ -11,6 +11,8 @@ import Flapjack.Compiler.Backend.Semantics.WordSem.ShMem
 import Flapjack.Misc.BinaryIeee
 import Flapjack.Misc.MachineIeee
 import Flapjack.Misc.BinaryIeeeRound
+import Flapjack.Misc.BinaryIeeeArith
+import Flapjack.FpSemHOL
 import Flapjack.Basis.Pure.MlList
 import Flapjack.Pancake.PanLang
 import Flapjack.Pancake.PanLang.Shape
