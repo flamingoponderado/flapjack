@@ -226,13 +226,13 @@ theorem tickFullState :
 theorem constZeroEval :
     crepExactEvalExp sampleHOLState memDecSample (.const (BitVec.ofNat 64 0)) =
       some (HolWordLab.word (BitVec.ofNat 64 0)) := by
-  simp [crepExactEvalExp, evalCrepSemHOLExp]
+  simp [crepExactEvalExp, evalCrepSemHOLExpWithDecider]
 
 /-- `Const 1` evaluates to `Word 1`. -/
 theorem constOneEval :
     crepExactEvalExp sampleHOLState memDecSample (.const (BitVec.ofNat 64 1)) =
       some (HolWordLab.word (BitVec.ofNat 64 1)) := by
-  simp [crepExactEvalExp, evalCrepSemHOLExp]
+  simp [crepExactEvalExp, evalCrepSemHOLExpWithDecider]
 
 /-- Kernel-checked While-false equation using the named constructor equation. -/
 theorem whileFalseFullState :

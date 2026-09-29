@@ -4697,7 +4697,7 @@ compiler calling the reviewed evaluator) remains tracked by
 `flapjack-pxn.18.4.3.48.1`. -/
 @[hol "cakeml/pancake/proofs/pan_to_crepProofScript.sml" "evaluate_replicate_const"]
 theorem evaluateReplicateConstHOL {width : Nat} [NeZero width] {ffiState : Type}
-    (n : Nat) (state : CrepSemHOLState width ffiState) [h : DecidablePred state.memaddrs] :
+    (n : Nat) (state : CrepSemHOLState width ffiState) :
     (List.replicate n (CrepExpHOL.const (0 : BitVec width))).mapM
         (evalCrepSemHOLExp state) =
       some (List.replicate n (HolWordLab.word (0 : BitVec width))) := by

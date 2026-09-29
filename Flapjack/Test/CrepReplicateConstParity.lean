@@ -105,6 +105,10 @@ local instance : DecidablePred exactReplicateState.memaddrs := by
   change Decidable False
   infer_instance
 
+def evalExactReplicateExp (expression : CrepExpHOL 8) :=
+  evalCrepSemHOLExpWithDecider exactReplicateState
+    (fun _ => isFalse (by simp [exactReplicateState])) expression
+
 /-- Exact labelled theorem instance over the faithful crepSem evaluator
 (`evaluateReplicateConstHOL`): matches HOL row `replicate_const_three`. -/
 example : (List.replicate 3 (CrepExpHOL.const (0 : BitVec 8))).mapM
@@ -116,12 +120,12 @@ example : (List.replicate 3 (CrepExpHOL.const (0 : BitVec 8))).mapM
 `replicate_const_one`, `replicate_const_three`, `replicate_const_empty`. -/
 def exactReplicateGuard : Bool :=
   ((List.replicate 1 (CrepExpHOL.const (0 : BitVec 8))).mapM
-      (evalCrepSemHOLExp exactReplicateState) == some [.word (0 : BitVec 8)]) &&
+      evalExactReplicateExp == some [.word (0 : BitVec 8)]) &&
   ((List.replicate 3 (CrepExpHOL.const (0 : BitVec 8))).mapM
-      (evalCrepSemHOLExp exactReplicateState) ==
+      evalExactReplicateExp ==
         some [.word (0 : BitVec 8), .word (0 : BitVec 8), .word (0 : BitVec 8)]) &&
   ((List.replicate 0 (CrepExpHOL.const (0 : BitVec 8))).mapM
-      (evalCrepSemHOLExp exactReplicateState) == some [])
+      evalExactReplicateExp == some [])
 
 #guard exactReplicateGuard
 
