@@ -11,6 +11,10 @@ import Flapjack.Compiler.Backend.Semantics.WordSem.Alloc
 import Flapjack.Compiler.Backend.Semantics.WordSem.ShMem
 import Flapjack.Compiler.Backend.Semantics.WordSem.Inst
 import Flapjack.Compiler.Backend.Semantics.WordSem.Domain
+import Flapjack.Compiler.Backend.Semantics.WordSem.Evaluate
+import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateClock
+import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateInd
+import Flapjack.Compiler.Backend.Semantics.WordSem.Semantics
 import Flapjack.Misc.ShiftSeq
 import Flapjack.Misc.BinaryIeee
 import Flapjack.Misc.MachineIeee
@@ -178,9 +182,12 @@ import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelIntro
 import Flapjack.Pancake.Proofs.LoopToWord.CutsetDomain
 import Flapjack.Pancake.Proofs.LoopToWord.LastNAddCons
 import Flapjack.Pancake.Proofs.LoopToWord.WordShiftModDimword
-import Flapjack.Pancake.Proofs.LoopToWord.CutEnvSupport
 import Flapjack.Pancake.Proofs.LoopToWord.CompExpPreservesEval
+import Flapjack.Pancake.Proofs.LoopToWord.CutEnvSupport
 import Flapjack.Pancake.Proofs.LoopToWord.WordToBytes
+import Flapjack.Pancake.Proofs.LoopToWord.TickUnfold
+import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Base
+import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.ReturnRaise
 import Flapjack.PanObservationalSemantics
 import Flapjack.PanMrec
 import Flapjack.PanHProgDec

@@ -1,249 +1,175 @@
-import Flapjack.Pancake.LoopToWord
 import Flapjack.Pancake.LoopToWord.Proofs.RelationsExact
-import Flapjack.Pancake.Proofs.LoopToWord.LocalsRel
-import Flapjack.Pancake.Proofs.LoopToWord.WordShiftModDimword
-import Flapjack.Pancake.Semantics.LoopSemStateExact
+import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelLookups
 import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
 import Flapjack.Misc.GoodDimindex
 
 /-!
-# Exact port of HOL `comp_exp_preserves_eval`
+# `loop_to_wordProof` `comp_exp_preserves_eval`
 
-The HOL source `loop_to_wordProofScript.sml:460-509` states
-`!s e v t ctxt. eval s e = SOME v /\ good_dimindex(:'a) /\ state_rel s t /\
-locals_rel ctxt s.locals t.locals ==> word_exp t (comp_exp ctxt e) = SOME v`.
-This module ports it over the exact `LoopSemStateFiniteExact.eval`,
-`compExpHOL`, the tagged `WordSemStateFiniteExact.wordExp`,
-`loopToWordStateRelHOLExact` and `localsRelHOL` carriers, using the tagged
-`word_sh_SOME_MOD_dimword` lemma for the shift case.
+Counterpart of `cakeml/pancake/proofs/loop_to_wordProofScript.sml:461-509`
+(bead `flapjack-pxn.18.5.9.18.3`).  This is the expression-level simulation
+of `loop_to_word`: a loopLang expression that evaluates to `v` compiles, via
+`comp_exp`, to a wordLang expression that `word_exp` evaluates to the same
+`v`.  It is stated over these tagged exact ports:
+* the loopSem `eval` and the wordSem `word_exp`;
+* `comp_exp` (`compExpHOL`);
+* `state_rel` and `locals_rel`.
 -/
 
-namespace Flapjack.LoopToWord
+namespace Flapjack
 
-open Flapjack.WordSemStateFiniteExact
+namespace LoopToWordCompExpPreservesEvalWitnesses
 
-private theorem attach_map_val {α β : Type} (l : List α) (f : α → β) :
-    l.attach.map (fun x => f x.val) = l.map f := by
-  induction l with
-  | nil => rfl
-  | cons a l ih => cases l <;> simp_all [List.attach]
-
-private theorem theWords_exists_word {width : Nat} [NeZero width]
-    {ws : List (BitVec width)} :
-    ∀ {l : List (Option (WordLocW width))}, Flapjack.theWords l = some ws →
-      ∀ x ∈ l, ∃ w, x = some (.word w) := by
-  intro l
-  induction l generalizing ws with
-  | nil => intro h x hx; simp at hx
-  | cons y ys ih =>
-    intro h x hx
-    simp only [Flapjack.theWords] at h
-    cases hy : y with
-    | none => rw [hy] at h; simp at h
-    | some v =>
-      cases v with
-      | word w =>
-        cases hys : Flapjack.theWords ys with
-        | none => rw [hy, hys] at h; simp at h
-        | some ws' =>
-          rw [hy, hys] at h
-          simp only [Option.some.injEq] at h
-          rcases List.mem_cons.mp hx with rfl | hx
-          · exact ⟨w, hy⟩
-          · exact ih hys x hx
-      | loc b o => rw [hy] at h; simp at h
-
-private theorem twoPow_one {width : Nat} : BitVec.twoPow width 1 = (2 : BitVec width) := by
-  apply BitVec.eq_of_toNat_eq
-  simp only [BitVec.twoPow, BitVec.toNat_shiftLeft, BitVec.toNat_ofNat, Nat.shiftLeft_eq]
-  rw [Nat.mul_mod, Nat.mul_mod]
-  simp
-
-private theorem wordShiftHOL_lsl_one {width : Nat} [NeZero width] (v : BitVec width)
-    (hgd : goodDimindex width) : wordShiftHOL .lsl v 1 = some (v + v) := by
-  unfold wordShiftHOL
-  have hw : ¬ (1 ≠ 0 ∧ width ≤ 1) := by
-    rintro ⟨_, hle⟩
-    rcases hgd with h | h <;> omega
-  rw [if_neg hw]
-  show some (v <<< (1 : Nat)) = some (v + v)
-  rw [BitVec.shiftLeft_eq_mul_twoPow, twoPow_one, BitVec.mul_comm]
-  exact congrArg some BitVec.two_mul
-
-private theorem ofNat_one_toNat {width : Nat} [NeZero width] (hgd : goodDimindex width) :
-    (BitVec.ofNat width 1).toNat = 1 := by
-  rw [BitVec.toNat_ofNat]
-  have hw : 1 < 2 ^ width := by
-    rcases hgd with h | h <;> (rw [h]; decide)
-  exact Nat.mod_eq_of_lt hw
-
-private theorem findVarHOL_of_lookup {context : Spt Nat} {name : Nat} {r : Nat}
-    (h : sptLookup name context = some r) : findVarHOL context name = r := by
-  unfold findVarHOL; rw [h]; rfl
-
-/-! Fresh-namespace re-exports of the two relation carriers' canonical
-finite-support witnesses, so the `fmap_as_finite_support_relation` qualifier on
-the tagged theorem resolves them in this module without shadowing the imported
-`LoopToWordStateRelWitnesses` declarations (AGENTS precedent). -/
-namespace LoopToWordCompExpWitnesses
-
+/-- Same-module roundtrip for the relation qualifier's loopSem state fields. -/
 theorem holFmapAsFiniteSupportRelationWitness_LoopSemStateFiniteExact
     {width : Nat} [NeZero width] {F : Type} :
     (∀ (state : LoopSemStateBroad width F) (h : state.FiniteSupport),
         (LoopSemStateBroad.ofBroad state h).toBroad = state) ∧
       (∀ state : LoopSemStateFiniteExact width F,
         LoopSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
-  LoopToWordStateRelWitnesses.holFmapAsFiniteSupportRelationWitness_LoopSemStateFiniteExact
+  LoopSemStateFiniteExact.holFmapAsFiniteSupportWitness
 
+/-- Same-module roundtrip for the relation qualifier's wordSem state fields. -/
 theorem holFmapAsFiniteSupportRelationWitness_WordSemStateFiniteExact
     {width : Nat} [NeZero width] {C F : Type} :
     (∀ (state : WordSemStateBroad width C F) (h : state.FiniteSupport),
         (WordSemStateBroad.ofBroad state h).toBroad = state) ∧
       (∀ state : WordSemStateFiniteExact width C F,
         WordSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
-  LoopToWordStateRelWitnesses.holFmapAsFiniteSupportRelationWitness_WordSemStateFiniteExact
+  WordSemStateExact.holFmapAsFiniteSupportWitness
 
-end LoopToWordCompExpWitnesses
+end LoopToWordCompExpPreservesEvalWitnesses
 
-/-- Exact HOL `comp_exp_preserves_eval` (`loop_to_wordProofScript.sml:460-509`):
-`eval s e = SOME v` under `good_dimindex(:'a)`, `state_rel s t` and
-`locals_rel ctxt s.locals t.locals` implies `word_exp t (comp_exp ctxt e) =
-SOME v`. Binder order and hypotheses are exactly HOL's; `word_exp` resolves to
-`WordSemStateFiniteExact.wordExp` via the file-level `open`. -/
+namespace LoopToWord
+
+private theorem attachMap_eq {α β : Type} (l : List α) (f : α → β) :
+    (l.attach.map fun (x : { x // x ∈ l }) => f x.1) = l.map f := by
+  simp
+
+private theorem theWords_map_of {width : Nat} [NeZero width] {α : Type}
+    (f g : α → Option (WordLocW width)) :
+    ∀ (l : List α), (∀ a ∈ l, ∀ v, f a = some v → g a = some v) →
+      ∀ ws, theWords (l.map f) = some ws → theWords (l.map g) = some ws
+  | [], _, ws, h => by simpa [theWords] using h
+  | a :: l, hfg, ws, h => by
+      simp only [List.map_cons, theWords] at h ⊢
+      split at h
+      · rename_i x xs hx hxs
+        rw [hfg a (List.mem_cons_self ..) _ hx,
+          theWords_map_of f g l (fun b hb => hfg b (List.mem_cons_of_mem _ hb)) xs hxs]
+        exact h
+      · cases h
+
+/-- Recursive core of `comp_exp_preserves_eval`, by recursion on the
+    expression as in HOL's `eval_ind`. -/
+private theorem compExpPreservesEvalAux {width : Nat} [NeZero width] {C F : Type}
+    (s : LoopSemStateFiniteExact width F) (t : WordSemStateFiniteExact width C F)
+    (ctxt : Spt Nat) (hgd : goodDimindex width) (hState : loopToWordStateRelHOLExact s t)
+    (hLocals : localsRelHOL ctxt s.locals t.locals) :
+    ∀ (e : HolLoopExp width) (v : WordLocW width),
+      LoopSemStateFiniteExact.eval s e = some v →
+        WordSemStateFiniteExact.wordExp t (compExpHOL ctxt e) = some v
+  | .const w, v, h => by
+      simp only [LoopSemStateFiniteExact.eval] at h
+      rw [compExpHOL, WordSemStateFiniteExact.wordExp]; exact h
+  | .var n, v, h => by
+      simp only [LoopSemStateFiniteExact.eval] at h
+      rw [compExpHOL, WordSemStateFiniteExact.wordExp]
+      exact localsRelHOLGetVar ctxt s.locals t n v ⟨hLocals, h⟩
+  | .lookup name, v, h => by
+      simp only [LoopSemStateFiniteExact.eval] at h
+      rw [compExpHOL, WordSemStateFiniteExact.wordExp]
+      obtain ⟨_, _, _, _, _, _, _, _, _, _, hglob, _⟩ := hState
+      exact hglob name v h
+  | .baseAddr, v, h => by
+      simp only [LoopSemStateFiniteExact.eval, Option.some.injEq] at h
+      subst h
+      rw [compExpHOL, WordSemStateFiniteExact.wordExp]
+      obtain ⟨_, _, _, _, _, _, _, hcur, _⟩ := hState
+      exact hcur
+  | .topAddr, v, h => by
+      simp only [LoopSemStateFiniteExact.eval, Option.some.injEq] at h
+      subst h
+      obtain ⟨len, _, _, _, _, _, _, hcur, hlen, htop, _⟩ := hState
+      have hw : 1 < width := by rcases hgd with h | h <;> omega
+      rw [compExpHOL]
+      simp only [WordSemStateFiniteExact.wordExp, List.attach_cons, List.attach_nil,
+        List.map_cons, List.map_nil, WordSemStateFiniteExact.getStore, hcur, hlen]
+      have h1 : (1#width).toNat = 1 := by
+        rw [BitVec.toNat_ofNat]
+        exact Nat.mod_eq_of_lt (Nat.one_lt_two_pow (by omega))
+      have hs : wordShiftHOL Shift.lsl (BitVec.ofNat width len) 1 =
+          some (BitVec.ofNat width len <<< (1 : Nat)) := by
+        simp only [wordShiftHOL]; rw [if_neg (by omega)]
+      rw [h1, hs]
+      simp only [theWords, Option.map_some, wordOpHOL, wordOp, List.foldr_cons, List.foldr_nil,
+        htop, Option.some.injEq, WordLocW.word.injEq]
+      congr 1
+      apply BitVec.eq_of_toNat_eq
+      simp [BitVec.toNat_shiftLeft, BitVec.toNat_mul, Nat.shiftLeft_eq, Nat.mul_comm]
+  | .load address, v, h => by
+      simp only [LoopSemStateFiniteExact.eval] at h
+      rw [compExpHOL, WordSemStateFiniteExact.wordExp]
+      split at h
+      · rename_i w hw
+        rw [compExpPreservesEvalAux s t ctxt hgd hState hLocals address _ hw]
+        obtain ⟨_, hmem, hmd, _⟩ := hState
+        simpa [WordSemStateFiniteExact.memLoad, LoopSemStateFiniteExact.memLoad, hmem, hmd]
+          using h
+      · cases h
+  | .shift sh e1 e2, v, h => by
+      simp only [LoopSemStateFiniteExact.eval] at h
+      rw [compExpHOL, WordSemStateFiniteExact.wordExp]
+      split at h
+      · rename_i w1 w2 h1 h2
+        rw [compExpPreservesEvalAux s t ctxt hgd hState hLocals e1 _ h1,
+          compExpPreservesEvalAux s t ctxt hgd hState hLocals e2 _ h2]
+        exact h
+      · cases h
+  | .op operator args, v, h => by
+      simp only [LoopSemStateFiniteExact.eval] at h
+      rw [compExpHOL, WordSemStateFiniteExact.wordExp]
+      have hattach := attachMap_eq args (LoopSemStateFiniteExact.eval s)
+      have hattach' := attachMap_eq (args.map (compExpHOL ctxt))
+        (WordSemStateFiniteExact.wordExp t)
+      rw [hattach] at h
+      rw [hattach', List.map_map]
+      split at h
+      · rename_i ws hws
+        rw [theWords_map_of (LoopSemStateFiniteExact.eval s)
+          (WordSemStateFiniteExact.wordExp t ∘ compExpHOL ctxt) args
+          (fun a ha w hw => by
+            have := List.sizeOf_lt_of_mem ha
+            exact compExpPreservesEvalAux s t ctxt hgd hState hLocals a w hw) ws hws]
+        exact h
+      · cases h
+  termination_by e => sizeOf e
+
+/-- Exact HOL `comp_exp_preserves_eval` (`loop_to_wordProofScript.sml:461-509`):
+
+    ```
+    ∀s (e:'a loopLang$exp) v t ctxt.
+      eval s e = SOME v ∧ good_dimindex(:'a) ∧
+      state_rel s t /\ locals_rel ctxt s.locals t.locals ==>
+      word_exp t (comp_exp ctxt e) = SOME v
+    ```
+
+    The target state `t` is typed at the source FFI host `F`, as `state_rel`
+    requires, with an arbitrary compiler-configuration type `C`. -/
 @[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "comp_exp_preserves_eval"
-  (fmap_as_finite_support_relation := [LoopSemStateFiniteExact.globals, WordSemStateFiniteExact.store])
+  (fmap_as_finite_support_relation :=
+    [LoopSemStateFiniteExact.globals, WordSemStateFiniteExact.fpRegs,
+      WordSemStateFiniteExact.store])
   (words_as_type_indexed_bitvec)]
-theorem loopToWordCompExpPreservesEval {width : Nat} [NeZero width] {F : Type}
-    (source : LoopSemStateFiniteExact width F) (expression : HolLoopExp width)
-    (value : WordLocW width) (target : WordSemStateFiniteExact width Nat F)
-    (context : Spt Nat)
-    (heval : LoopSemStateFiniteExact.eval source expression = some value)
-    (hgd : Flapjack.goodDimindex width)
-    (hstate : loopToWordStateRelHOLExact source target)
-    (hlocals : localsRelHOL context source.locals target.locals) :
-    wordExp target (compExpHOL context expression) = some value := by
-  classical
-  revert value target context
-  induction expression using LoopSemStateFiniteExact.eval.induct source with
-  | case1 w => -- const
-    intro value target context heval hstate hlocals
-    simp only [LoopSemStateFiniteExact.eval, Option.some.injEq] at heval
-    have hv : value = .word w := heval.symm
-    subst hv
-    simp only [compExpHOL, wordExp]
-  | case2 v => -- var
-    intro value target context heval hstate hlocals
-    simp only [LoopSemStateFiniteExact.eval] at heval
-    obtain ⟨r, hctx, hloc⟩ := hlocals.2.2 v value heval
-    simp only [compExpHOL, wordExp, WordSemStateFiniteExact.getVar]
-    rw [findVarHOL_of_lookup hctx]
-    exact hloc
-  | case3 name => -- lookup
-    intro value target context heval hstate hlocals
-    obtain ⟨_, _, _, _, _, _, _, _, _, _, hglob, _⟩ := hstate
-    simp only [LoopSemStateFiniteExact.eval] at heval
-    simp only [compExpHOL, wordExp, WordSemStateFiniteExact.getStore]
-    exact hglob name value heval
-  | case4 address w haddr ih => -- load (word address)
-    intro value target context heval hstate hlocals
-    obtain ⟨len, hmem, hmdom, hshm, hclock, hbe, hffi, hcurr, hhlen, htop, hglob, hcode⟩ := hstate
-    have hsrc : LoopSemStateFiniteExact.memLoad w source = some value := by
-      simpa only [LoopSemStateFiniteExact.eval, haddr] using heval
-    have ihw := ih (.word w) target context haddr
-      ⟨len, hmem, hmdom, hshm, hclock, hbe, hffi, hcurr, hhlen, htop, hglob, hcode⟩ hlocals
-    have hmemLoad : WordSemStateFiniteExact.memLoad w target =
-        LoopSemStateFiniteExact.memLoad w source := by
-      unfold WordSemStateFiniteExact.memLoad LoopSemStateFiniteExact.memLoad
-      rw [hmdom, hmem]
-    simp only [compExpHOL, wordExp, ihw, hmemLoad]
-    exact hsrc
-  | case5 address hnotword ih => -- load (non-word address): impossible
-    intro value target context heval hstate hlocals
-    simp only [LoopSemStateFiniteExact.eval] at heval
-    cases h : LoopSemStateFiniteExact.eval source address with
-    | none => simp at heval
-    | some v' =>
-      cases v' with
-      | word w => exact absurd h (hnotword w)
-      | loc b o => simp at heval
-  | case6 operator args ws hwords ih => -- op (success)
-    intro value target context heval hstate hlocals
-    simp only [LoopSemStateFiniteExact.eval, hwords] at heval
-    obtain ⟨w, hw, hval⟩ : ∃ w, wordOpHOL operator ws = some w ∧ value = .word w := by
-      cases hh : wordOpHOL operator ws with
-      | none => simp [hh] at heval
-      | some w => exact ⟨w, rfl, by simpa [hh] using heval.symm⟩
-    subst hval
-    have hwords_map : Flapjack.theWords
-        (args.map (fun e => LoopSemStateFiniteExact.eval source e)) = some ws := by
-      rw [← attach_map_val args (fun e => LoopSemStateFiniteExact.eval source e)]
-      exact hwords
-    have hf_eq : args.map (fun e => LoopSemStateFiniteExact.eval source e) =
-        args.map (fun e => wordExp target (compExpHOL context e)) := by
-      apply List.map_congr_left
-      intro e he
-      obtain ⟨w', hw'⟩ := theWords_exists_word hwords_map
-        (LoopSemStateFiniteExact.eval source e) (List.mem_map.mpr ⟨e, he, rfl⟩)
-      have hih := ih e he (.word w') target context hw' hstate hlocals
-      rw [hih, hw']
-    have hgoal : Flapjack.theWords
-        (args.map (fun e => wordExp target (compExpHOL context e))) = some ws := by
-      rw [← hf_eq]; exact hwords_map
-    have hX : (args.map (compExpHOL context)).attach.map
-        (fun item => wordExp target item.val) =
-        args.map (fun e => wordExp target (compExpHOL context e)) := by
-      rw [← attach_map_val args (fun e => wordExp target (compExpHOL context e))]
-      rw [List.attach_map, List.map_map]
-      simp only [Function.comp_def]
-    simp only [compExpHOL, wordExp, hX, hgoal, hw]
-    rfl
-  | case7 operator args hwords ih => -- op (failure): impossible
-    intro value target context heval hstate hlocals
-    simp only [LoopSemStateFiniteExact.eval, hwords] at heval
-    exact absurd heval (by simp)
-  | case8 sh e1 e2 w1 w2 heval2 heval1 ih1 ih2 => -- shift (success)
-    intro value target context heval hstate hlocals
-    simp only [LoopSemStateFiniteExact.eval, heval1, heval2] at heval
-    simp only [compExpHOL, wordExp]
-    rw [ih1 (.word w1) target context heval1 hstate hlocals,
-        ih2 (.word w2) target context heval2 hstate hlocals]
-    exact heval
-  | case9 sh e1 e2 hnot ih1 ih2 => -- shift (failure): impossible
-    intro value target context heval hstate hlocals
-    simp only [LoopSemStateFiniteExact.eval] at heval
-    cases h1 : LoopSemStateFiniteExact.eval source e1 with
-    | none => simp at heval
-    | some v1 =>
-      cases v1 with
-      | word w1 =>
-        cases h2 : LoopSemStateFiniteExact.eval source e2 with
-        | none => simp at heval
-        | some v2 =>
-          cases v2 with
-          | word w2 => exact (hnot w1 w2 h1 h2).elim
-          | loc b o => simp at heval
-      | loc b o => simp at heval
-  | case10 => -- baseAddr
-    intro value target context heval hstate hlocals
-    obtain ⟨_, _, _, _, _, _, _, hcurr, _, _, _, _⟩ := hstate
-    simp only [LoopSemStateFiniteExact.eval, Option.some.injEq] at heval
-    subst heval
-    simp only [compExpHOL, wordExp, WordSemStateFiniteExact.getStore]
-    exact hcurr
-  | case11 => -- topAddr
-    intro value target context heval hstate hlocals
-    obtain ⟨len, hmem, hmdom, hshm, hclock, hbe, hffi, hcurr, hhlen, htop, hglob, hcode⟩ := hstate
-    simp only [LoopSemStateFiniteExact.eval, Option.some.injEq] at heval
-    subst heval
-    simp only [compExpHOL]
-    have htop' : source.topAddr = source.baseAddr +
-        (BitVec.ofNat width len + BitVec.ofNat width len) := by
-      rw [htop]
-      exact congrArg (fun x => source.baseAddr + x) BitVec.two_mul
-    simp only [wordExp, WordSemStateFiniteExact.getStore, hcurr, hhlen, ofNat_one_toNat hgd,
-      wordShiftHOL_lsl_one _ hgd, Flapjack.theWords, wordOpHOL, wordOp, List.attach_cons,
-      List.attach_nil, List.map_cons, List.map_nil]
-    rw [htop']
-    simp
+theorem compExpPreservesEval {width : Nat} [NeZero width] {C F : Type} :
+    ∀ (s : LoopSemStateFiniteExact width F) (e : HolLoopExp width) (v : WordLocW width)
+      (t : WordSemStateFiniteExact width C F) (ctxt : Spt Nat),
+      LoopSemStateFiniteExact.eval s e = some v ∧ goodDimindex width ∧
+        loopToWordStateRelHOLExact s t ∧ localsRelHOL ctxt s.locals t.locals →
+      WordSemStateFiniteExact.wordExp t (compExpHOL ctxt e) = some v := by
+  rintro s e v t ctxt ⟨h, hgd, hState, hLocals⟩
+  exact compExpPreservesEvalAux s t ctxt hgd hState hLocals e v h
 
-end Flapjack.LoopToWord
+end LoopToWord
+
+end Flapjack

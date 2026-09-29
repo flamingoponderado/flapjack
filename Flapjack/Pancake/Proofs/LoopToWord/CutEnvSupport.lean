@@ -4,7 +4,7 @@ namespace Flapjack.LoopToWord
 
 open Flapjack
 
-/-- Exact HOL `loop_to_wordProofScript.sml:536-541` `env_to_list_LN_IMP`:
+/-- Exact HOL `loop_to_wordProofScript.sml:427-435` `env_to_list_LN_IMP`:
 `env_to_list LN l = (x,p) ==> x = []`, where HOL `env_to_list` is rendered by
 the tagged `Flapjack.wordSemEnvToList` (`wordSemScript.sml:507-515`), `LN` by
 the empty `Spt`, and HOL's indexed word dimension by `WordLocW width`. The
