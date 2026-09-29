@@ -205,11 +205,14 @@ theorem makeFuncsDomainCompileProgExact {width : Nat} [NeZero width] :
       _ = lc := hlc.symm
   exact sptFromAList_mem_key (compileProgHOLExact c crep_code) lc hkey
 
-/-- Local total rendering of HOL `EL` on the exact crep program carrier. The
-    selected fallback is observable only for an out-of-range index. The exact
-    theorem below proves the index is in range, so its statement and proof use
-    this rendering only where it agrees with indexed list lookup. This helper
-    is proof infrastructure, not a separately tagged HOL declaration. -/
+/-- Local total rendering of HOL `EL` on the exact crep program carrier. HOL
+    `EL` unfolds via `HD`/`TL` (`listScript.sml:225-228`), so for an
+    out-of-range index it is `HD [] = ARB`, an unspecified element of the
+    product type. This rendering instead returns the concrete fallback
+    `(implode [], [], CrepProgHOL.skip)`. The two agree exactly on in-range
+    indices, and the exact theorem below proves its own index is in range, so
+    the fallback is never observed here. This helper is proof infrastructure,
+    not a separately tagged HOL declaration. -/
 private def initialProgEL {width : Nat} [NeZero width]
     (prog : List (Basis.Pure.MlString.MlString × List Nat × CrepProgHOL width))
     (n : Nat) : Basis.Pure.MlString.MlString × List Nat × CrepProgHOL width :=
@@ -227,9 +230,11 @@ private theorem initialProgEL_eq_getElem {width : Nat} [NeZero width]
     exact finite-support result, `first_name` is the tagged `firstLoopName`,
     and the program is the exact `MlString`/`CrepProgHOL width` carrier. HOL
     `EL` is rendered by `initialProgEL`; the conclusion itself establishes
-    `n < prog.length`, and `initialProgEL_eq_getElem` shows the chosen fallback
-    is never observed. Only the HOL positive word width uses the reviewed
-    type-indexed BitVec qualifier. -/
+    `n < prog.length`, and `initialProgEL_eq_getElem` shows that on this
+    in-range index the two agree, so the fallback difference is never observed
+    (for an out-of-range index HOL `EL` would be the unspecified `ARB`, while
+    `initialProgEL` uses its concrete default). Only the HOL positive word width
+    uses the reviewed type-indexed BitVec qualifier. -/
 @[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "initial_prog_make_funcs_el"
   (words_as_type_indexed_bitvec)]
 theorem initialProgMakeFuncsElExact {width : Nat} [NeZero width] :
