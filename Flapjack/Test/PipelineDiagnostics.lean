@@ -35,9 +35,8 @@ private def nonByteRoutedFunction : CompiledFunction (BitVec 64) :=
     body := .extCall "λ" 0 0 0 0,
     returnShape := .one }
 
-/-- Byte-ranged pipeline input takes the exact whole-program `compile_prog_def`
-route, rebases Cake's function labels to the selected source-pipeline label
-base, and uses the canonical executable projection. -/
+/-- Byte-ranged per-function input takes the exact `compile_def`/`ocompile_def`
+route, including the canonical executable projection. -/
 def routedSkipShape : Bool :=
   match pipelineLoopFunctionsSourceRouted (width := 64) .rv64i 1
       [routedSkipFunction] with
@@ -46,12 +45,29 @@ def routedSkipShape : Bool :=
 
 #guard routedSkipShape
 
+/-- The parser-backed route executes whole-program `compile_prog_def` and
+rebases its exact first function label (64) to this caller's label base (1). -/
+def routedCompileProgSkipShape : Bool :=
+  match pipelineLoopFunctionsSourceCompileProgRouted (width := 64) .rv64i 1
+      [routedSkipFunction] with
+  | [(1, [], .mark .skip)] => true
+  | _ => false
+
+#guard routedCompileProgSkipShape
+
 /-- An out-of-byte-range function name keeps the old production route; the
 exact `MlString` conversion is not used for a truncated Lean `String`. -/
 example : pipelineLoopFunctionsSourceRouted (width := 64) .rv64i 1
     [nonByteRoutedFunction] =
       pipelineLoopFunctionsSource .rv64i 1 [nonByteRoutedFunction] := by
   simp [pipelineLoopFunctionsSourceRouted, nonByteRoutedFunction,
+    pipelineFunctionInfos, crepMakeFuncsAt, CrepNameRangedBool,
+    CrepProgNameRangedBool, pipelineLoopFunctionsSource]
+
+example : pipelineLoopFunctionsSourceCompileProgRouted (width := 64) .rv64i 1
+    [nonByteRoutedFunction] =
+      pipelineLoopFunctionsSource .rv64i 1 [nonByteRoutedFunction] := by
+  simp [pipelineLoopFunctionsSourceCompileProgRouted, nonByteRoutedFunction,
     pipelineFunctionInfos, crepMakeFuncsAt, CrepNameRangedBool,
     CrepProgNameRangedBool, pipelineLoopFunctionsSource]
 
