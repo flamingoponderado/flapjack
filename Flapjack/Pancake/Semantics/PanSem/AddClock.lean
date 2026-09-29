@@ -2335,15 +2335,42 @@ theorem eval_add_clock_mono_aux
 
 /-! ## Clock-increase event-trace prefix (bead flapjack-tu4j)
 
-The Lean analogue of HOL `panPropsScript.sml:881
-evaluate_add_clock_io_events_mono`: running the exact recursive panSem
-evaluator at a larger clock can only add FFI I/O events, so the
-lower-clock run's `ffi.ioEvents` is a list prefix of the higher-clock
-run's.  Flapjack-specific infrastructure; no `@[hol]` tag. -/
+Flapjack-specific exact-context infrastructure; no `@[hol]` tag.
 
-/-- Given that both the low-clock and the shifted-clock runs terminate at
-the given outputs, the low run's `ffi.ioEvents` is a list prefix of the
-high run's. -/
+Source comparison with HOL `panPropsScript.sml:881
+Theorem evaluate_add_clock_io_events_mono`:
+
+    ∀exps s extra.
+      (SND(evaluate(exps,s))).ffi.io_events ≼
+      (SND(evaluate(exps,s with clock := s.clock + extra))).ffi.io_events
+
+HOL quantifies the expression list `exps`, state `s`, and shift `extra` with no
+hypotheses, and relates the `io_events` of the total, clock-bounded clause
+evaluator `evaluate` over the faithful `panSem$state`.
+
+The Lean declarations below instead concern the FLAPJACK-SPECIFIC partial
+recursive evaluator `evalPanSemRecursiveCallContextHOLExact`
+(`PanSem/TotalEvalExact.lean:168`), which exposes an outer `Option` assembly
+marker and quantifies over the broad `PanSemStateExact` carrier whose map fields
+are unrestricted functions; it is explicitly not tagged as HOL `evaluate_def`.
+Consequently the Lean statement adds the hypotheses `hLow`/`hHigh` selecting the
+`some` branch of that assembly marker (HOL has no such hypothesis; the marker is
+provably inert via `evalPanSemRecursiveCallContextHOLExact_total`), and uses
+`program`/`context` with explicit result pairs rather than HOL's `exps`/`s` and
+`SND`. These evaluator/carrier/hypothesis
+mismatches are not a faithful port, so no tag is added. The faithful finite-map
+port is tracked by bead `flapjack-4ac.4.50.1`; see the
+`evaluate_add_clock_io_events_mono` source review in
+`Flapjack/Pancake/Semantics/PanProps.lean`. -/
+
+/-- Flapjack-specific clock-shift helper, NOT a port of HOL
+`evaluate_add_clock_io_events_mono`: given that both the low-clock and the
+shifted-clock runs of the partial recursive evaluator terminate at the given
+outputs, the low run's `ffi.ioEvents` is a list prefix of the high run's.  The
+extra `hLow`/`hHigh` hypotheses selecting the `some` branch of the inert
+assembly marker, and the different evaluator and carrier, are the precise
+mismatches recorded in the section note above; the
+faithful finite-map port is tracked by `flapjack-4ac.4.50.1`. -/
 theorem evalPanSemRecursiveCallContextHOLExact_add_clock_ioEvents_prefix
     {width : Nat} {σ : Type} [NeZero width]
     (program : ProgHOL width) (context : PanSemExactEvalContext width σ) (extra : Nat)
@@ -2355,7 +2382,10 @@ theorem evalPanSemRecursiveCallContextHOLExact_add_clock_ioEvents_prefix
   (eval_add_clock_mono_aux program context extra resultLow resultHigh hLow hHigh).1
 
 /-- Clock-increase event-trace prefix in terms of the (total) evaluator
-outputs, eliminating the always-present assembly marker. -/
+outputs, eliminating the always-present assembly marker.  Still the
+Flapjack-specific recursive evaluator over the broad `PanSemStateExact` carrier,
+not HOL's clause `evaluate`, so this is untagged; see the section note above and
+bead `flapjack-4ac.4.50.1`. -/
 theorem evalPanSemRecursiveCallContextHOLExact_add_clock_ioEvents_prefix_getD
     {width : Nat} {σ : Type} [NeZero width]
     (program : ProgHOL width) (context : PanSemExactEvalContext width σ) (extra : Nat) :
