@@ -49,7 +49,8 @@ namespace Flapjack
 open Flapjack.Basis.Pure.MlString
 open Flapjack.Pancake.PanLang
   (MlS ShapeHOL ExpHOL expToHOL expOfHOL varExpHOL ExpByteRanged ListExpByteRanged NameRanged
-    shapeToHOL shapeOfHOL ShapeByteRanged ProgByteRanged DeclByteRanged FunDeclByteRanged)
+    shapeToHOL shapeOfHOL ShapeByteRanged ProgHOL progToHOL progOfHOL ProgByteRanged
+    DeclByteRanged FunDeclByteRanged)
 
 /-- `lookupInfo` returns `some` only for a key that occurs in the association
     list.  Used to build the finite-support witness of the exact context from
@@ -490,6 +491,38 @@ def compileProgCakeOfExact [LawfulBEq String] {width : Nat} [NeZero width]
       .shMemStore size (compileExpRouteCake context address) (compileExpRouteCake context value)
   | program => program
 termination_by program => sizeOf program
+
+/-- Constructor-level commute fact for local assignment.  This is Flapjack
+    proof infrastructure (untagged): it discharges the easiest `VarKind`
+    branch of the bridge from the routed production compiler to the exact
+    `pan_globals$compile_def` port.  Only the identifier needs byte-range
+    evidence for decoding `MlS` back to `String`; the expression route itself
+    is definitionally the exact compiler result decoded through `expOfHOL`. -/
+theorem compileProgCakeOfExact_local_assign_exact_bridge [LawfulBEq String]
+    {width : Nat} [NeZero width]
+    (context : GlobalPassContext (BitVec width)) (name : String)
+    (value : Exp (BitVec width)) (hname : NameRanged name) :
+    compileProgCakeOfExact context (.assign .local name value) =
+      progOfHOL (compileProgExactHOL (PanGlobalsContextExact.ofPass context)
+        (progToHOL (.assign .local name value))) := by
+  simp only [compileProgCakeOfExact, compileExpRouteCake, progOfHOL,
+    compileProgExactHOL, progToHOL]
+  rw [Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes name hname]
+
+/-- The exact finite-map lookup induced by a production `InfoMap` is the
+    `shapeToHOL` image of the same production lookup for byte-ranged names.
+    This is the carrier relation needed by the global `VarKind` clauses of the
+    compiler commute proof; it is Flapjack infrastructure, not a HOL
+    declaration. -/
+theorem panGlobalsContextExact_ofPass_lookup [BEq String] [LawfulBEq String]
+    {width : Nat} [NeZero width]
+    (context : GlobalPassContext (BitVec width)) (name : String)
+    (hname : NameRanged name) :
+    (PanGlobalsContextExact.ofPass context).globals.lookup (ofString name) =
+      (lookupInfo name context.globals).map
+        (fun entry => (shapeToHOL entry.1, entry.2)) := by
+  simp [PanGlobalsContextExact.ofPass,
+    Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes name hname]
 
 /-- The routed program compiler computes exactly the production `compileProgCake`
     on the `cakeContextOfPass` view, for byte-ranged programs.  Flapjack routing
