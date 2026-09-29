@@ -50,7 +50,7 @@ private theorem mem_genTemps {n k m : Nat} (h : m ∈ genTemps n k) : n ≤ m :=
 
 private theorem not_mem_context_assigned_aux :
     ∀ (ctxt : CrepToLoopContextExact) (l : NumSet) (p : CrepProgHOL width) (n : Nat),
-      crepToLoopCtxtMax ctxt.vmax ctxt.vars.lookup →
+      crepToLoopCtxtMaxExact ctxt.vmax ctxt.vars →
       (∀ v m, ctxt.vars.lookup v = some m → n ≠ m) → n ≤ ctxt.vmax →
       n ∉ holLoopAssignedVars (compileHOLExact ctxt l p)
   | ctxt, l, .skip, n, _, _, _ => by simp [compileHOLExact, holLoopAssignedVars]
@@ -160,7 +160,7 @@ private theorem not_mem_context_assigned_aux :
       refine ⟨not_mem_assigned_mem_gt_comp_exp ctxt _ l value c v t o n ⟨hA, hmax, hne, by omega⟩,
         by omega, not_mem_context_assigned_aux _ _ body n ?_ ?_ (by simp only; omega)⟩
       · intro x m hx
-        simp only [HolFiniteMapExact.updateEq, FUPDATE_HOL, FLOOKUP] at hx
+        simp only [HolFiniteMapExact.updateEq, FUPDATE_HOL] at hx
         split at hx
         · cases hx; exact Nat.le_refl _
         · exact Nat.le_trans (hmax x m hx) (show ctxt.vmax ≤ t by omega)
@@ -239,7 +239,7 @@ decreasing_by
   (fmap_as_finite_support := [vars, funcs]) (words_as_type_indexed_bitvec)]
 theorem not_mem_context_assigned_mem_gt {width : Nat} [NeZero width] :
     ∀ (ctxt : CrepToLoopContextExact) (l : NumSet) (p : CrepProgHOL width) (n : Nat),
-      crepToLoopCtxtMax ctxt.vmax ctxt.vars.lookup ∧
+      crepToLoopCtxtMaxExact ctxt.vmax ctxt.vars ∧
         (∀ v m, ctxt.vars.lookup v = some m → n ≠ m) ∧ n ≤ ctxt.vmax →
       n ∉ holLoopAssignedVars (compileHOLExact ctxt l p) :=
   fun ctxt l p n ⟨h1, h2, h3⟩ => not_mem_context_assigned_aux ctxt l p n h1 h2 h3
