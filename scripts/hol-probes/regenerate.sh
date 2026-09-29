@@ -242,6 +242,12 @@ run_probe loop_to_word_comp_func_probeScript.sml loop_to_word_comp_func_probe.ou
   comp_func_skip comp_func_param_assign comp_func_new_temp \
   compile_prog_code compile_code \
   "$cake_dir/pancake/loop_to_wordScript.sml"
+run_probe loop_to_word_take_word_to_bytes_probeScript.sml \
+  loop_to_word_take_word_to_bytes_probe.out \
+  take1_statement twb32_0 twb32_1 twb32_hi gb32_0 gb32_1 gb32_hi \
+  twb64_0 twb64_1 twb64_hi gb64_0 gb64_1 gb64_hi \
+  "$cake_dir/pancake/proofs/loop_to_wordProofScript.sml" \
+  "$cake_dir/pancake/proofs"
 # The get_stack_only probe observes the allocator driver's stack-only
 # analysis over wordLang programs (backend word_alloc).
 run_probe get_stack_only_probeScript.sml get_stack_only_probe.out \
