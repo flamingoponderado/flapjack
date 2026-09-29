@@ -22792,5 +22792,31 @@
     "lean_name": "crepSimpMapcsHOL_setMemory",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only commuting law for the local simp_prog_correct mapcs rendering and exact memory update; HOL has no standalone declaration."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_arithProofScript.sml",
+    "hol_name": "simp_prog_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrect/Return.lean",
+    "lean_name": "simpProgCorrectReturnCase",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.4.15): HOL crep_arithProofScript.sml:184-212 states evaluate (p,s)=(r,s') and r<>SOME Error, concluding evaluate (simp_prog p,mapcs s)=(r,mapcs s'). This is the nonrecursive Return leaf of the evaluate_ind case split (crepSemScript.sml:440), so it has no induction-hypothesis premises. HOL evaluate Return (crepSemScript.sml:327-330) OPT_MMAP-evaluates the return expressions; failure yields SOME Error, and success yields SOME (Return words) with empty_locals s. The Lean theorem keeps the source equation, non-Error premise and full target result/post-state equation with no target evaluator fact, using the tagged exact Return evaluator clause and simp_prog definition. On success it applies the tagged opt_mmap_simp_exp_correct to the mapped state and simplifies mapcs/empty_locals, which commute because mapcs changes only code. State locals/globals/code use the witnessed HolFiniteMapExact carrier; BitVec width represents the positive HOL word type."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrect/Return.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module canonical finite-support witness for simpProgCorrectReturnCase: the exact state and broad counterpart roundtrip through toBroad/ofBroad; this is Flapjack representation infrastructure, not a HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrect/Return.lean",
+    "lean_name": "crepSimpMapcsHOL_emptyLocals",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only commuting law for the exact simp_prog_correct mapcs renderer and emptyLocals used by the Return case; HOL has no standalone declaration."
   }
 ]
