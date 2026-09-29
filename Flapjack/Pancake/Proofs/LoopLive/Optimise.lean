@@ -1,4 +1,5 @@
 import Flapjack.Pancake.Proofs.LoopLive.CompileCorrect
+import Flapjack.Pancake.Proofs.LoopCall.CompileCorrect
 
 /-!
 # loop_live `mark_correct` / `comp_correct`
@@ -6,8 +7,8 @@ import Flapjack.Pancake.Proofs.LoopLive.CompileCorrect
 Exact ports of `cakeml/pancake/proofs/loop_liveProofScript.sml`'s `mark_correct`
 (860) and `comp_correct` (931) over the exact `LoopSemStateFiniteExact.evaluate`
 and the tagged `markAllHOL` (`mark_all_def`) / `compHOL` (`comp_def`)
-(beads `flapjack-pxn.18.5.8.2.1`, `.2.2`).  `optimise_correct` (955) waits for
-`loop_callProof`'s `compile_correct` (bead `flapjack-pxn.18.5.7`).
+(beads `flapjack-pxn.18.5.8.2.1`, `.2.2`).  and `optimise_correct` (955, bead `.2.3`, via
+`loop_callProof`'s `compile_correct`).
 -/
 
 namespace Flapjack
@@ -216,5 +217,24 @@ theorem comp_correct {width : Nat} [NeZero width] {F : Type} :
   have hn' : evaluate p' s = (res, s1) := hn
   simp only [compHOL, hs]
   exact mark_correct p' s res s1 hn'
+
+/-- Exact HOL `optimise_correct` (`loop_liveProofScript.sml:955-961`):
+    `evaluate (prog,s) = (res,s1) ∧ res ≠ SOME Error ∧ (∀n. res ≠ SOME (Break n)) ∧
+      (∀n. res ≠ SOME (Continue n)) ∧ res ≠ NONE ⇒ evaluate (optimise prog,s) = (res,s1)`,
+    its free variables quantified in order of occurrence. -/
+@[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "optimise_correct"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
+theorem optimise_correct {width : Nat} [NeZero width] {F : Type} :
+    ∀ (prog : HolLoopProg width) (s : LoopSemStateFiniteExact width F)
+      (res : Option (LoopResultExact width)) (s1 : LoopSemStateFiniteExact width F),
+      evaluate prog s = (res, s1) ∧ res ≠ some .error ∧ (∀ n, res ≠ some (.break n)) ∧
+        (∀ n, res ≠ some (.continue n)) ∧ res ≠ none →
+      evaluate (optimiseHOL prog) s = (res, s1) := by
+  intro prog s res s1 ⟨he, hne, hnb, hnc, hnn⟩
+  rcases hq : loopCallCompHOL (.ln : Spt Nat) prog with ⟨q, r⟩
+  obtain ⟨hq', _⟩ := loopCall_compile_correct prog s res s1 .ln q r
+    ⟨he, hne, hq, fun n x h => by simp [sptLookup] at h⟩
+  simp only [optimiseHOL, hq]
+  exact comp_correct q s res s1 ⟨hq', hne, hnb, hnc, hnn⟩
 
 end Flapjack
