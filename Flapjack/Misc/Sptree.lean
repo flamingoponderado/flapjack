@@ -1032,8 +1032,9 @@ termination_by left _ => sizeOf left
 remove every key present in the right tree while retaining the left payloads.
 The right value type is independent because its payloads are never read. The
 recursive clauses and `sptMkBN`/`sptMkBS` collapse behavior follow the HOL
-definition exactly. The source is outside the CakeML submodule, so this is
-Flapjack infrastructure without an `@[hol]` tag. -/
+definition exactly. The source is outside the CakeML submodule, so it is
+pinned in `docs/HOL-EXTERNAL-SOURCES.json` and cited with the `hol/` prefix. -/
+@[hol "hol/src/finite_maps/sptreeScript.sml" "difference_def"]
 def sptDifference {α β : Type} : Spt α → Spt β → Spt α
   | .ln, _ => .ln
   | .ls value, right =>

@@ -24788,5 +24788,13 @@
     "lean_name": "compExpPreservesEvalAux",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only private recursive core of the tagged compExpPreservesEval, with the four premises as separate hypotheses and recursion on the expression in place of HOL's eval_ind. It has no separate HOL declaration; the tagged theorem restates HOL's exact shape."
+  },
+  {
+    "hol_path": "hol/src/finite_maps/sptreeScript.sml",
+    "hol_name": "difference_def",
+    "lean_path": "Flapjack/Misc/Sptree.lean",
+    "lean_name": "sptDifference",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.9.8.2) against HOL src/finite_maps/sptreeScript.sml:319-339 difference_def, pinned in docs/HOL-EXTERNAL-SOURCES.json (sha256 + declaration index). Lean sptDifference reproduces all four constructor clauses and the sptMkBN/sptMkBS collapse exactly; the right payload type is independent in both. External HOL library source, cited with the hol/ prefix."
   }
 ]
