@@ -1,5 +1,6 @@
 import Flapjack.Pancake.LoopToWord
 import Flapjack.Pancake.LoopToWord.MakeCtxtExact
+import Flapjack.Compiler.Backend.Semantics.WordSem.EnvListSupport
 
 /-!
 # Loop-to-word context-domain support
@@ -109,6 +110,28 @@ theorem sptDomain_makeCtxtHOL (next : Nat) (names : List Nat)
         · rcases hrest with hkey | hnames
           · exact Or.inl (Or.inl hkey)
           · exact Or.inr hnames
+
+/-- Exact HOL `env_to_list_IMP` from
+`cakeml/pancake/proofs/loop_to_wordProofScript.sml:410-417`. The result equation
+feeds the exact `env_to_list_lookup_equiv` theorem; HOL `fromAList` is rendered
+by `sptFromAList`, whose lookup is the same first-match lookup as `ALOOKUP`.
+`WordLocW width` is the sole representation translation. -/
+@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "env_to_list_IMP"
+  (words_as_type_indexed_bitvec)]
+theorem envToListIMPHOL {width : Nat} [NeZero width]
+    (env : Spt (WordLocW width)) (bijSeq : Nat → Nat → Nat)
+    (entries : List (Nat × WordLocW width)) (permutation : Nat → Nat → Nat)
+    (hresult : wordSemEnvToList env bijSeq = (entries, permutation)) :
+    sptDomain (sptFromAList entries) = sptDomain env ∧
+      ∀ key, sptLookup key (sptFromAList entries) = sptLookup key env := by
+  obtain ⟨hlookup, _⟩ :=
+    wordSemEnvToListLookupEquiv env bijSeq entries permutation hresult
+  constructor
+  · funext key
+    simp only [sptDomain]
+    rw [sptLookup_sptFromAList, hlookup key]
+  · intro key
+    rw [sptLookup_sptFromAList, hlookup key]
 
 /-- Flapjack-specific induction strengthening for `make_ctxt_inj`: adding a
 fresh register preserves lookup injectivity while advancing its value bound.

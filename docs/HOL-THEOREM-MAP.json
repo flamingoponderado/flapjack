@@ -24142,6 +24142,15 @@
   },
   {
     "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "env_to_list_IMP",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "envToListIMPHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison (2026-09-29; bead flapjack-pxn.18.5.9.17.3) against loop_to_wordProofScript.sml:410-417. HOL has exactly the premise env_to_list env1 t.permute = (l,permute) and concludes domain(fromAList l) = domain env1 and for every x, lookup x (fromAList l) = lookup x env1. Lean preserves that premise and both conclusions over the exact Spt carrier, rendering HOL domain as sptDomain and fromAList as sptFromAList; sptLookup_sptFromAList is the reviewed first-match ALOOKUP/fromAList rendering. The proof obtains ALOOKUP equality from the completed exact env_to_list_lookup_equiv port flapjack-pxn.18.5.9.17.1; it adds no premise. WordLocW's type-indexed words use words_as_type_indexed_bitvec. No state, evaluator, finite-support, or list-to-array translation is introduced."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
     "hol_name": "TAKE_1_word_to_bytes",
     "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/WordToBytes.lean",
     "lean_name": "takeOneWordToBytesHOL",
