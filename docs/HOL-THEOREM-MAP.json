@@ -23963,5 +23963,22 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-ds5 source comparison (2026-09-29; bead flapjack-pxn.18.5.9.15.3) against loop_to_wordProofScript.sml:234-240. HOL keeps exactly three premises: locals_rel ctxt lcl lcl', set xs SUBSET domain ctxt, and ALL_DISTINCT xs, concluding ALL_DISTINCT (MAP (find_var ctxt) xs). Lean retains the conjunction including both extra premises unchanged; the subset is the reviewed pointwise rendering forall name, name IN xs -> sptMem name context (HOL set membership as a predicate, as in sptDomain/sptMem), ALL_DISTINCT is List.Nodup and HOL MAP is constructor-for-constructor List.map. The proof uses only the injectivity clause of localsRelHOL and findVarHOL (exact find_var_def) over the exact Spt context carrier; sourceLocals/targetLocals appear only in the relation premise. The only representation qualifier is the type-indexed word of the relation carrier (WordLocW), so words_as_type_indexed_bitvec; no finite-map or name qualifier applies. Positive and negative parity examples (distinct-in-domain list, out-of-domain default register 0 collision, repeated name, and non-injective context collision) are kernel-replayed in Flapjack.Test.LoopToWordAllDistinctMapParity."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "find_var_neq_0",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/FindVar.lean",
+    "lean_name": "findVarHOL_ne_zero",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds5 source comparison (2026-09-29; bead flapjack-pxn.18.5.9.14.3) against loop_to_wordProofScript.sml:169-176. HOL premise exactly v IN domain ctxt AND locals_rel ctxt lcl lcl'; conclusion find_var ctxt v <> 0. Lean keeps the conjunction and order (sptMem v context, then localsRelHOL), and derives the nonzero register from the locals_rel lookup clause. Context/locals are the exact Spt carriers and find_var is the exact findVarHOL; the only qualifier is the type-indexed word of the WordLocW relation carrier (words_as_type_indexed_bitvec). No strengthening or extra premise."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "find_var_neq_odd",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/FindVar.lean",
+    "lean_name": "findVarHOL_ne_odd",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-ds5 source comparison (2026-09-29; bead flapjack-pxn.18.5.9.14.3) against loop_to_wordProofScript.sml:187-194. HOL premise is exactly (forall n m. lookup n ctxt = SOME m ==> m <> 0 /\\ EVEN m) /\\ ~EVEN k; conclusion find_var ctxt v <> k, with v and k universally quantified. Lean keeps the conjunction, rendering EVEN m as m % 2 = 0 and ~EVEN k as k % 2 <> 0, over the exact Spt context carrier and exact findVarHOL. The lookup-none branch uses findVarHOL v = 0 (which is even), matching HOL's Cases_on lookup then CCONTR_TAC/res_tac. No word or finite-map carrier occurs in the statement, so the tag is unqualified reviewed_exact (not words_as_type_indexed_bitvec)."
   }
 ]
