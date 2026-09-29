@@ -79,6 +79,7 @@ import Flapjack.Pancake.LoopToWord
 import Flapjack.Pancake.LoopToWord.Proofs.RelationsExact
 import Flapjack.Pancake.Proofs.LoopToWord.LocalsRel
 import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelUpdates
+import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelLookups
 import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelAllDistinct
 import Flapjack.Pancake.LoopLang.AssignedVars
 import Flapjack.Pancake.Semantics.LoopProps.AssignedVars

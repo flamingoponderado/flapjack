@@ -7,3 +7,13 @@ lt_locals_rel_wrong_value=F
 lt_locals_rel_insert_mapped=T
 lt_locals_rel_insert_unmapped=T
 lt_locals_rel_insert_unmapped_collision=F
+locals_rel_get_var_statement=locals_rel ctxt l t.locals ∧ lookup n l = SOME w ⇒
+get_var (find_var ctxt n) t = SOME w
+locals_rel_get_vars_statement=∀argvars argvals.
+  locals_rel ctxt s.locals t.locals ∧ get_vars argvars s = SOME argvals ⇒
+  get_vars (MAP (find_var ctxt) argvars) t = SOME argvals ∧
+  LENGTH argvals = LENGTH argvars
+loop_get_vars_hit=SOME [Word 7w; Word 9w]
+loop_get_vars_miss=NONE
+word_get_vars_hit=SOME [Word 7w; Word 9w]
+word_get_vars_miss=NONE
