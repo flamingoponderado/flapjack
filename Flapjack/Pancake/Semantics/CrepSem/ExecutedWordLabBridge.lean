@@ -17,15 +17,21 @@ and byte width. Every lemma below is Flapjack-specific infrastructure (no
 `@[hol]` tag): it does not port a HOL declaration but discharges the
 representation gap recorded by bead `flapjack-pxn.18.4.3.48.1`.
 
-The scope is the fragment that does not read the byte/endian memory model
-(`crepExpNoByteMemoryLoad` excludes only `load32`/`loadByte`):
-`const`/`var`/`loadGlob`/`baseAddr`/`topAddr`, the plain single-cell `load`,
-the arithmetic hooks `op`/`crepOp`, and the comparisons `cmp`/`shift`. This
-also covers the `Const` list path exercised by `evaluate_replicate_const`
-(`pan_to_crepProofScript.sml:3051`). `evalCrepRuntimeExp_executed_of_noByteMemoryLoad`
-proves the pointwise agreement for that fragment. The byte-reading constructors
-(`load32`/`loadByte`) still need the `mem_load_32`/`mem_load_byte` reassembly
-correspondence, tracked separately under bead `flapjack-pxn.18.4.3.48.1.21`.
+At every positive width, `evalCrepRuntimeExp_executed_allWidth` proves the
+pointwise agreement for every Crep expression, with no hypothesis. Its
+constructors are `const`/`var`/`loadGlob`/`baseAddr`/`topAddr`, the plain
+`load`, the byte-reading `loadByte`/`load32`, `op`/`crepOp`, and `cmp`/`shift`.
+The byte-reading arms rely on the production alignment, byte index and
+`word32`-then-`w2w` assembly agreeing with the Lean HOL-shaped helpers
+(beads `flapjack-pxn.18.5.4.3.4`/`.5`/`.6`).
+Width domain: this is an equality of Lean definitions at every positive width, but it is
+a HOL correspondence only for `width ≥ 8`.  Below width 8 the byte count is 0, HOL's
+`LOG2 0`/`MOD 0` are unspecified, and the Lean HOL-shaped helpers use chosen completions
+(`Nat.log2 0 = 0`, `n % 0 = n`) with no HOL claim.  The
+fragment forms `evalCrepRuntimeExp_executed_of_noLoad32` and
+`evalCrepRuntimeExp_executed_of_noByteMemoryLoad` are corollaries; the latter
+covers the `Const` list path of `evaluate_replicate_const`
+(`pan_to_crepProofScript.sml:3051`).
 -/
 
 namespace Flapjack
@@ -117,6 +123,41 @@ def crepExpNoByteMemoryLoad {width : Nat} [NeZero width] : CrepExp (BitVec width
   | .baseAddr => True
   | .topAddr => True
 
+/-- Crep expressions without a `load32`: every other constructor, including the
+byte-reading `loadByte`, is admitted whenever its subterms are.  This is the
+all-width fragment of `evalCrepRuntimeExp_executed_of_noLoad32`. -/
+def crepExpNoLoad32 {width : Nat} [NeZero width] : CrepExp (BitVec width) → Prop
+  | .const _ => True
+  | .var _ => True
+  | .load address => crepExpNoLoad32 address
+  | .load32 _ => False
+  | .loadByte address => crepExpNoLoad32 address
+  | .loadGlob _ => True
+  | .op _ args => ∀ a ∈ args, crepExpNoLoad32 a
+  | .crepOp _ args => ∀ a ∈ args, crepExpNoLoad32 a
+  | .cmp _ left right => crepExpNoLoad32 left ∧ crepExpNoLoad32 right
+  | .shift _ left right => crepExpNoLoad32 left ∧ crepExpNoLoad32 right
+  | .baseAddr => True
+  | .topAddr => True
+
+/-- Excluding both byte-reading loads excludes `load32`. -/
+theorem crepExpNoLoad32_of_noByteMemoryLoad {width : Nat} [NeZero width] :
+    ∀ e : CrepExp (BitVec width), crepExpNoByteMemoryLoad e → crepExpNoLoad32 e := by
+  intro e
+  induction e using (CrepExp.rec (motive_2 := fun (args : List (CrepExp (BitVec width))) =>
+      ∀ e ∈ args, crepExpNoByteMemoryLoad e → crepExpNoLoad32 e))
+  case nil e he _ => exact absurd he (by simp)
+  case cons head tail head_ih tail_ih e he hm =>
+      rcases List.mem_cons.mp he with rfl | he
+      · exact head_ih hm
+      · exact tail_ih e he hm
+  all_goals intro hm; simp only [crepExpNoByteMemoryLoad, crepExpNoLoad32] at hm ⊢
+  case load address ih => exact ih hm
+  case op _ args ih => exact fun a ha => ih a ha (hm a ha)
+  case crepOp _ args ih => exact fun a ha => ih a ha (hm a ha)
+  case cmp _ _ _ ihl ihr => exact ⟨ihl hm.1, ihr hm.2⟩
+  case shift _ _ _ ihl ihr => exact ⟨ihl hm.1, ihr hm.2⟩
+
 /-- Distribution of `Option.map` over `List.mapM`. -/
 theorem list_mapM_mapOption {α β γ : Type} (f : α → Option β) (g : β → γ) :
     ∀ (xs : List α), xs.mapM (fun x => (f x).map g) = (xs.mapM f).map (List.map g) := by
@@ -150,27 +191,103 @@ identity on bare words. -/
     Option.map (holWordLabToWord ∘ HolWordLab.word) o = o := by
   cases o <;> rfl
 
+/-! ## Byte-reading arms
+
+The plain `load32`/`loadByte` arms consult the runtime byte/endian memory model, while the
+exact `evalCrepSemHOLExp` reads through `panMemLoad32HOL`/`panMemLoadByteHOL`.  As Lean
+equalities, and as HOL correspondences for `width ≥ 8` only, `loadByte`
+agrees by `crepRuntimeLoadByte_riscv_eq_panMemLoadByteHOL` (bead
+`flapjack-pxn.18.5.4.3.5`), and `load32` by `crepRuntimeLoad32_riscv_eq_panMemLoad32HOL`
+(bead `flapjack-pxn.18.5.4.3.6`).  The theorems below take the address-subterm
+correspondence as a hypothesis. -/
+
+theorem evalCrepRuntimeExp_executed_load32 {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (address : CrepExp (BitVec width))
+    (haddr : evalCrepRuntimeExp (executedCrepState state) address =
+      (evalCrepSemHOLExp state (crepExpToHOL address)).map holWordLabToWord) :
+    evalCrepRuntimeExp (executedCrepState state) (.load32 address) =
+      (evalCrepSemHOLExp state (crepExpToHOL (.load32 address))).map holWordLabToWord := by
+  classical
+  simp only [evalCrepRuntimeExp, evalCrepSemHOLExp, crepExpToHOL]
+  rw [haddr]
+  cases ha : evalCrepSemHOLExp state (crepExpToHOL address) with
+  | none => simp
+  | some hwa =>
+      cases hwa with
+      | word w =>
+          have hload : crepRuntimeLoad32 (executedCrepState state) w =
+              (panMemLoad32HOL state.memory state.memaddrs state.be w).map
+                (fun value => BitVec.ofNat width value.toNat) := by
+            have h := crepRuntimeLoad32_riscv_eq_panMemLoad32HOL
+              (state.toBitVecEvaluatorState) w
+            rw [show riscvCrepWordTarget (state.toBitVecEvaluatorState).toRuntime =
+                executedCrepState state from rfl] at h
+            simp only [CrepSemHOLState.toBitVecEvaluatorState, decide_eq_true_eq] at h
+            have hmem : (fun current => (state.memory current).toPanWordLab.toHolWordLab)
+                = state.memory := by
+              funext c
+              exact HolWordLab.toPanWordLab_toHolWordLab (state.memory c)
+            rw [hmem] at h
+            exact h
+          simp [hload, Option.bind, Function.comp_def, holWordLabToWord_eq]
+
+theorem evalCrepRuntimeExp_executed_loadByte {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    (address : CrepExp (BitVec width))
+    (haddr : evalCrepRuntimeExp (executedCrepState state) address =
+      (evalCrepSemHOLExp state (crepExpToHOL address)).map holWordLabToWord) :
+    evalCrepRuntimeExp (executedCrepState state) (.loadByte address) =
+      (evalCrepSemHOLExp state (crepExpToHOL (.loadByte address))).map holWordLabToWord := by
+  classical
+  simp only [evalCrepRuntimeExp, evalCrepSemHOLExp, crepExpToHOL]
+  rw [haddr]
+  cases ha : evalCrepSemHOLExp state (crepExpToHOL address) with
+  | none => simp
+  | some hwa =>
+      cases hwa with
+      | word w =>
+          have hload : crepRuntimeLoadByte (executedCrepState state) w =
+              (panMemLoadByteHOL state.memory state.memaddrs state.be w).map
+                (fun value => BitVec.ofNat width value.toNat) := by
+            have h := crepRuntimeLoadByte_riscv_eq_panMemLoadByteHOL
+              (state.toBitVecEvaluatorState) w
+            rw [show riscvCrepWordTarget (state.toBitVecEvaluatorState).toRuntime =
+                executedCrepState state from rfl] at h
+            simp only [CrepSemHOLState.toBitVecEvaluatorState, decide_eq_true_eq] at h
+            have hmem : (fun current => (state.memory current).toPanWordLab.toHolWordLab)
+                = state.memory := by
+              funext c
+              exact HolWordLab.toPanWordLab_toHolWordLab (state.memory c)
+            rw [hmem] at h
+            exact h
+          simp [hload, Option.bind, Function.comp_def, holWordLabToWord_eq]
+
 /-- The executed production Crep evaluator at the canonical BitVec evaluator
-state agrees with the tagged exact `evalCrepSemHOLExp`, for the fragment that
-does not read the byte/endian memory model
-(`const`/`var`/`loadGlob`/`baseAddr`/`topAddr`, plain `load`, `op`, `crepOp`,
-`cmp`, `shift`). The exact value is read through the bare-word projection
+state agrees with the tagged exact `evalCrepSemHOLExp`, at every positive
+width, for every Crep expression, with no hypothesis: all constructors,
+including the byte-reading `loadByte` and `load32` (beads
+`flapjack-pxn.18.5.4.3.4`/`.5`/`.6`).
+Width domain: this is an equality of Lean definitions at every positive width, but it is
+a HOL correspondence only for `width ≥ 8`.  Below width 8 the byte count is 0, HOL's
+`LOG2 0`/`MOD 0` are unspecified, and the Lean HOL-shaped helpers use chosen completions
+(`Nat.log2 0 = 0`, `n % 0 = n`) with no HOL claim. The exact value is read through the bare-word projection
 `holWordLabToWord`, which is what the executed production evaluator returns. -/
-theorem evalCrepRuntimeExp_executed_of_noByteMemoryLoad {width : Nat} [NeZero width] {σ : Type}
+theorem evalCrepRuntimeExp_executed_allWidth {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ) [DecidablePred state.memaddrs]
-    (e : CrepExp (BitVec width)) (hm : crepExpNoByteMemoryLoad e) :
+    (e : CrepExp (BitVec width)) :
     evalCrepRuntimeExp (executedCrepState state) e =
       (evalCrepSemHOLExp state (crepExpToHOL e)).map holWordLabToWord := by
   induction e using (CrepExp.rec (motive_2 := fun args =>
-      ∀ e ∈ args, crepExpNoByteMemoryLoad e →
+      ∀ e ∈ args,
         evalCrepRuntimeExp (executedCrepState state) e =
           (evalCrepSemHOLExp state (crepExpToHOL e)).map holWordLabToWord))
-  case nil e he hm =>
+  case nil e he =>
       exact absurd he (by simp)
-  case cons head tail head_ih tail_ih e he hm =>
+  case cons head tail head_ih tail_ih e he =>
       rcases List.mem_cons.mp he with rfl | he
-      · exact head_ih hm
-      · exact tail_ih e he hm
+      · exact head_ih
+      · exact tail_ih e he
   case const value =>
       simp [evalCrepRuntimeExp, evalCrepSemHOLExp, crepExpToHOL, holWordLabToWord]
   case var name =>
@@ -188,9 +305,8 @@ theorem evalCrepRuntimeExp_executed_of_noByteMemoryLoad {width : Nat} [NeZero wi
       simp [executedCrepState, CrepSemHOLState.toBitVecEvaluatorState, CrepHolState.toRuntime,
         evalCrepRuntimeExp, evalCrepSemHOLExp, crepExpToHOL, holWordLabToWord]
   case load address ih =>
-      simp only [crepExpNoByteMemoryLoad] at hm
       simp only [evalCrepRuntimeExp, evalCrepSemHOLExp, crepExpToHOL]
-      rw [ih hm]
+      rw [ih]
       cases ha : evalCrepSemHOLExp state (crepExpToHOL address) with
       | none => rfl
       | some hwa =>
@@ -199,14 +315,14 @@ theorem evalCrepRuntimeExp_executed_of_noByteMemoryLoad {width : Nat} [NeZero wi
               simp only [Option.map_some]
               simp [crepRuntimeLoad, executedCrepState, CrepSemHOLState.toBitVecEvaluatorState,
                 CrepHolState.toRuntime, holWordLabToWord]
-  case load32 address ih => simp only [crepExpNoByteMemoryLoad] at hm
-  case loadByte address ih => simp only [crepExpNoByteMemoryLoad] at hm
+  case load32 address ih => exact evalCrepRuntimeExp_executed_load32 state address ih
+  case loadByte address ih =>
+      exact evalCrepRuntimeExp_executed_loadByte state address ih
   case crepOp operator args ih =>
-      simp only [crepExpNoByteMemoryLoad] at hm
       have hpoint : ∀ e ∈ args,
           evalCrepRuntimeExp (executedCrepState state) e =
             (evalCrepSemHOLExp state (crepExpToHOL e)).map holWordLabToWord :=
-        fun e he => ih e he (hm e he)
+        fun e he => ih e he
       cases operator with
       | mul =>
           cases args with
@@ -260,10 +376,8 @@ theorem evalCrepRuntimeExp_executed_of_noByteMemoryLoad {width : Nat} [NeZero wi
                                               | none => simp [hr]
                                               | some vr => simp [ha, hb, hc, hr, crepOpCrepWord]
   case cmp operator left right ihleft ihright =>
-      simp only [crepExpNoByteMemoryLoad] at hm
-      obtain ⟨hml, hmr⟩ := hm
       simp only [evalCrepRuntimeExp, evalCrepSemHOLExp, crepExpToHOL]
-      rw [ihleft hml, ihright hmr]
+      rw [ihleft, ihright]
       cases hl : evalCrepSemHOLExp state (crepExpToHOL left) with
       | none => rfl
       | some hwl =>
@@ -279,10 +393,8 @@ theorem evalCrepRuntimeExp_executed_of_noByteMemoryLoad {width : Nat} [NeZero wi
                         RiscV.panRiscVMemoryModelForEndian, panRiscVCmp_eq_wordCmpResultHOL,
                         holWordLabToWord]
   case shift operator left right ihleft ihright =>
-      simp only [crepExpNoByteMemoryLoad] at hm
-      obtain ⟨hml, hmr⟩ := hm
       simp only [evalCrepRuntimeExp, evalCrepSemHOLExp, crepExpToHOL]
-      rw [ihleft hml, ihright hmr]
+      rw [ihleft, ihright]
       cases hl : evalCrepSemHOLExp state (crepExpToHOL left) with
       | none => rfl
       | some hwl =>
@@ -298,11 +410,10 @@ theorem evalCrepRuntimeExp_executed_of_noByteMemoryLoad {width : Nat} [NeZero wi
                         RiscV.panRiscVMemoryModelForEndian, panRiscVShift_eq_wordShiftHOL,
                         Option.map_map, Function.comp_def]
   case op operator args ih =>
-      simp only [crepExpNoByteMemoryLoad] at hm
       have hpoint : ∀ e ∈ args,
           evalCrepRuntimeExp (executedCrepState state) e =
             (evalCrepSemHOLExp state (crepExpToHOL e)).map holWordLabToWord :=
-        fun e he => ih e he (hm e he)
+        fun e he => ih e he
       have hf : args.mapM (evalCrepRuntimeExp (executedCrepState state)) =
           (args.mapM (fun a => evalCrepSemHOLExp state (crepExpToHOL a))).map
             (List.map holWordLabToWord) := by
@@ -322,75 +433,22 @@ theorem evalCrepRuntimeExp_executed_of_noByteMemoryLoad {width : Nat} [NeZero wi
           apply congrArg (wordOp operator)
           exact List.map_congr_left (fun v _ => holWordLabToWord_eq v)
 
-/-! ## Byte-reading arms at RV64
+/-- Fragment form: expressions without `load32`. -/
+theorem evalCrepRuntimeExp_executed_of_noLoad32 {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) [DecidablePred state.memaddrs]
+    (e : CrepExp (BitVec width)) (_hm : crepExpNoLoad32 e) :
+    evalCrepRuntimeExp (executedCrepState state) e =
+      (evalCrepSemHOLExp state (crepExpToHOL e)).map holWordLabToWord :=
+  evalCrepRuntimeExp_executed_allWidth state e
 
-The plain `load32`/`loadByte` arms consult the runtime byte/endian memory model, while the
-exact `evalCrepSemHOLExp` reads through `panMemLoad32HOL`/`panMemLoadByteHOL`. The two agree
-at width 64 by `crepRuntimeLoad32_riscv64_eq_panMemLoad32HOL` and
-`crepRuntimeLoadByte_riscv64_eq_panMemLoadByteHOL`, so the theorems below take the
-address-subterm correspondence as a hypothesis. -/
-
-theorem evalCrepRuntimeExp_executed_load32 {σ : Type}
-    (state : CrepSemHOLState 64 σ)
-    (address : CrepExp (BitVec 64))
-    (haddr : evalCrepRuntimeExp (executedCrepState state) address =
-      (evalCrepSemHOLExp state (crepExpToHOL address)).map holWordLabToWord) :
-    evalCrepRuntimeExp (executedCrepState state) (.load32 address) =
-      (evalCrepSemHOLExp state (crepExpToHOL (.load32 address))).map holWordLabToWord := by
-  classical
-  simp only [evalCrepRuntimeExp, evalCrepSemHOLExp, crepExpToHOL]
-  rw [haddr]
-  cases ha : evalCrepSemHOLExp state (crepExpToHOL address) with
-  | none => simp
-  | some hwa =>
-      cases hwa with
-      | word w =>
-          have hload : crepRuntimeLoad32 (executedCrepState state) w =
-              (panMemLoad32HOL state.memory state.memaddrs state.be w).map
-                (fun value => BitVec.ofNat 64 value.toNat) := by
-            have h := crepRuntimeLoad32_riscv64_eq_panMemLoad32HOL
-              (state.toBitVecEvaluatorState) w
-            rw [show riscvCrepWordTarget (state.toBitVecEvaluatorState).toRuntime =
-                executedCrepState state from rfl] at h
-            simp only [CrepSemHOLState.toBitVecEvaluatorState, decide_eq_true_eq] at h
-            have hmem : (fun current => (state.memory current).toPanWordLab.toHolWordLab)
-                = state.memory := by
-              funext c
-              exact HolWordLab.toPanWordLab_toHolWordLab (state.memory c)
-            rw [hmem] at h
-            exact h
-          simp [hload, Option.bind, Function.comp_def, holWordLabToWord_eq]
-
-theorem evalCrepRuntimeExp_executed_loadByte {σ : Type}
-    (state : CrepSemHOLState 64 σ)
-    (address : CrepExp (BitVec 64))
-    (haddr : evalCrepRuntimeExp (executedCrepState state) address =
-      (evalCrepSemHOLExp state (crepExpToHOL address)).map holWordLabToWord) :
-    evalCrepRuntimeExp (executedCrepState state) (.loadByte address) =
-      (evalCrepSemHOLExp state (crepExpToHOL (.loadByte address))).map holWordLabToWord := by
-  classical
-  simp only [evalCrepRuntimeExp, evalCrepSemHOLExp, crepExpToHOL]
-  rw [haddr]
-  cases ha : evalCrepSemHOLExp state (crepExpToHOL address) with
-  | none => simp
-  | some hwa =>
-      cases hwa with
-      | word w =>
-          have hload : crepRuntimeLoadByte (executedCrepState state) w =
-              (panMemLoadByteHOL state.memory state.memaddrs state.be w).map
-                (fun value => BitVec.ofNat 64 value.toNat) := by
-            have h := crepRuntimeLoadByte_riscv64_eq_panMemLoadByteHOL
-              (state.toBitVecEvaluatorState) w
-            rw [show riscvCrepWordTarget (state.toBitVecEvaluatorState).toRuntime =
-                executedCrepState state from rfl] at h
-            simp only [CrepSemHOLState.toBitVecEvaluatorState, decide_eq_true_eq] at h
-            have hmem : (fun current => (state.memory current).toPanWordLab.toHolWordLab)
-                = state.memory := by
-              funext c
-              exact HolWordLab.toPanWordLab_toHolWordLab (state.memory c)
-            rw [hmem] at h
-            exact h
-          simp [hload, Option.bind, Function.comp_def, holWordLabToWord_eq]
+/-- The earlier fragment without either byte-reading load is a special case of
+    `evalCrepRuntimeExp_executed_of_noLoad32`. -/
+theorem evalCrepRuntimeExp_executed_of_noByteMemoryLoad {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) [DecidablePred state.memaddrs]
+    (e : CrepExp (BitVec width)) (hm : crepExpNoByteMemoryLoad e) :
+    evalCrepRuntimeExp (executedCrepState state) e =
+      (evalCrepSemHOLExp state (crepExpToHOL e)).map holWordLabToWord :=
+  evalCrepRuntimeExp_executed_of_noLoad32 state e (crepExpNoLoad32_of_noByteMemoryLoad e hm)
 
 /-! ## Production `word_lab` result shape
 
@@ -422,10 +480,10 @@ theorem evalCrepRuntimeExpWordLab_executed_of_noByteMemoryLoad
   rw [evalCrepRuntimeExp_executed_of_noByteMemoryLoad state e hm]
   exact option_map_holWordLabToWord_map_word _
 
-/-- RV64 production `word_lab` result shape for the byte-reading 32-bit load. -/
-theorem evalCrepRuntimeExpWordLab_executed_load32 {σ : Type}
-    (state : CrepSemHOLState 64 σ) [DecidablePred state.memaddrs]
-    (address : CrepExp (BitVec 64))
+/-- All-width production `word_lab` result shape for the byte-reading 32-bit load. -/
+theorem evalCrepRuntimeExpWordLab_executed_load32 {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) [DecidablePred state.memaddrs]
+    (address : CrepExp (BitVec width))
     (haddr : evalCrepRuntimeExp (executedCrepState state) address =
       (evalCrepSemHOLExp state (crepExpToHOL address)).map holWordLabToWord) :
     evalCrepRuntimeExpWordLab (executedCrepState state) (.load32 address) =
@@ -434,10 +492,10 @@ theorem evalCrepRuntimeExpWordLab_executed_load32 {σ : Type}
   rw [evalCrepRuntimeExp_executed_load32 state address haddr]
   exact option_map_holWordLabToWord_map_word _
 
-/-- RV64 production `word_lab` result shape for the byte-reading load. -/
-theorem evalCrepRuntimeExpWordLab_executed_loadByte {σ : Type}
-    (state : CrepSemHOLState 64 σ) [DecidablePred state.memaddrs]
-    (address : CrepExp (BitVec 64))
+/-- All-width production `word_lab` result shape for the byte-reading load. -/
+theorem evalCrepRuntimeExpWordLab_executed_loadByte {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ) [DecidablePred state.memaddrs]
+    (address : CrepExp (BitVec width))
     (haddr : evalCrepRuntimeExp (executedCrepState state) address =
       (evalCrepSemHOLExp state (crepExpToHOL address)).map holWordLabToWord) :
     evalCrepRuntimeExpWordLab (executedCrepState state) (.loadByte address) =
@@ -497,181 +555,32 @@ theorem evalCrepRuntimeExpsWordLab_replicate_const_matches_exact
       obtain ⟨_, rfl⟩ := he
       simp [crepExpNoByteMemoryLoad])
 
-/-! ## Full width-64 projection bridge
+/-! ## Whole-evaluator projection bridge
 
-At width 64 every expression arm is bridged, so the executed production
-evaluator at the canonical BitVec evaluator state agrees with the tagged exact
-`evalCrepSemHOLExp` on all Crep expressions (no hypothesis). The byte-reading
-`load32`/`loadByte` arms reuse the width-64 theorems above; all other arms are
-memory-free or recurse. This is a Flapjack-specific representation bridge: it
-carries no `@[hol]` tag (and, not being under `Proofs/`, needs no theorem-map
-entry). -/
+At every positive width every expression arm is bridged
+(`evalCrepRuntimeExp_executed_allWidth`), so the executed production evaluator
+at the canonical BitVec evaluator state agrees with the tagged exact
+`evalCrepSemHOLExp` on all Crep expressions (no hypothesis); as HOL
+correspondence this holds for `width ≥ 8` (see `evalCrepRuntimeExp_executed_allWidth`).  This is a
+Flapjack-specific representation bridge: it carries no `@[hol]` tag (and, not
+being under `Proofs/`, needs no theorem-map entry). -/
 
-set_option maxHeartbeats 2000000 in
 /-- Executed production Crep evaluator at the canonical BitVec evaluator state
-agrees with the tagged exact `evalCrepSemHOLExp` for every expression at width
-64. -/
-theorem evalCrepRuntimeExp_executed {σ : Type} (state : CrepSemHOLState 64 σ)
-    [DecidablePred state.memaddrs] (e : CrepExp (BitVec 64)) :
+agrees with the tagged exact `evalCrepSemHOLExp` for every expression, at every
+positive width. -/
+theorem evalCrepRuntimeExp_executed {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    [DecidablePred state.memaddrs] (e : CrepExp (BitVec width)) :
     evalCrepRuntimeExp (executedCrepState state) e =
-      (evalCrepSemHOLExp state (crepExpToHOL e)).map holWordLabToWord := by
-  induction e using (CrepExp.rec (motive_2 := fun args =>
-      ∀ e ∈ args,
-        evalCrepRuntimeExp (executedCrepState state) e =
-          (evalCrepSemHOLExp state (crepExpToHOL e)).map holWordLabToWord))
-  case nil e he => simp at he
-  case cons head tail head_ih tail_ih e he =>
-      rcases List.mem_cons.mp he with rfl | he
-      · exact head_ih
-      · exact tail_ih e he
-  case const value =>
-      exact evalCrepRuntimeExp_executed_of_noByteMemoryLoad state _
-        (by simp [crepExpNoByteMemoryLoad])
-  case var name =>
-      exact evalCrepRuntimeExp_executed_of_noByteMemoryLoad state _
-        (by simp [crepExpNoByteMemoryLoad])
-  case loadGlob address =>
-      exact evalCrepRuntimeExp_executed_of_noByteMemoryLoad state _
-        (by simp [crepExpNoByteMemoryLoad])
-  case baseAddr =>
-      exact evalCrepRuntimeExp_executed_of_noByteMemoryLoad state _
-        (by simp [crepExpNoByteMemoryLoad])
-  case topAddr =>
-      exact evalCrepRuntimeExp_executed_of_noByteMemoryLoad state _
-        (by simp [crepExpNoByteMemoryLoad])
-  case load address ih =>
-      simp only [evalCrepRuntimeExp, evalCrepSemHOLExp, crepExpToHOL]
-      rw [ih]
-      cases ha : evalCrepSemHOLExp state (crepExpToHOL address) with
-      | none => rfl
-      | some hwa =>
-          cases hwa with
-          | word w =>
-              simp only [Option.map_some]
-              simp [crepRuntimeLoad, executedCrepState, CrepSemHOLState.toBitVecEvaluatorState,
-                CrepHolState.toRuntime, holWordLabToWord]
-  case load32 address ih => exact evalCrepRuntimeExp_executed_load32 state address ih
-  case loadByte address ih => exact evalCrepRuntimeExp_executed_loadByte state address ih
-  case crepOp operator args ih =>
-      have hpoint : ∀ e ∈ args,
-          evalCrepRuntimeExp (executedCrepState state) e =
-            (evalCrepSemHOLExp state (crepExpToHOL e)).map holWordLabToWord :=
-        fun e he => ih e he
-      cases operator with
-      | mul =>
-          cases args with
-          | nil => simp [evalCrepRuntimeExp, evalCrepSemHOLExp, crepExpToHOL, crepOpCrepWord]
-          | cons a rest =>
-              cases rest with
-              | nil =>
-                  simp only [evalCrepRuntimeExp, evalCrepSemHOLExp, crepExpToHOL]
-                  cases ha : evalCrepSemHOLExp state (crepExpToHOL a) with
-                  | none => simp [ha, crepOpCrepWord]
-                  | some hwa =>
-                      cases hwa with
-                      | word va => simp [ha, crepOpCrepWord]
-              | cons b rest2 =>
-                  cases rest2 with
-                  | nil =>
-                      simp only [evalCrepRuntimeExp, evalCrepSemHOLExp, crepExpToHOL]
-                      rw [hpoint a (by simp), hpoint b (by simp)]
-                      cases ha : evalCrepSemHOLExp state (crepExpToHOL a) with
-                      | none => simp [ha, crepOpCrepWord]
-                      | some hwa =>
-                          cases hwa with
-                          | word l =>
-                              cases hb : evalCrepSemHOLExp state (crepExpToHOL b) with
-                              | none => simp [hb, crepOpCrepWord]
-                              | some hwb =>
-                                  cases hwb with
-                                  | word r =>
-                                      simp [ha, hb, crepOpCrep, crepOpCrepWord, holWordLabToWord]
-                  | cons c rest3 =>
-                      simp only [evalCrepRuntimeExp, evalCrepSemHOLExp, crepExpToHOL,
-                        List.mapM_map, Function.comp_def]
-                      cases ha : evalCrepSemHOLExp state (crepExpToHOL a) with
-                      | none => simp [ha, crepOpCrepWord]
-                      | some hwa =>
-                          cases hwa with
-                          | word va =>
-                              cases hb : evalCrepSemHOLExp state (crepExpToHOL b) with
-                              | none => simp [hb, crepOpCrepWord]
-                              | some hwb =>
-                                  cases hwb with
-                                  | word vb =>
-                                      cases hc : evalCrepSemHOLExp state (crepExpToHOL c) with
-                                      | none => simp [hc, crepOpCrepWord]
-                                      | some hwc =>
-                                          cases hwc with
-                                          | word vc =>
-                                              cases hr : List.mapM
-                                                  (fun x => evalCrepSemHOLExp state (crepExpToHOL x))
-                                                  rest3 with
-                                              | none => simp [hr]
-                                              | some vr => simp [ha, hb, hc, hr, crepOpCrepWord]
-  case cmp operator left right ihleft ihright =>
-      simp only [evalCrepRuntimeExp, evalCrepSemHOLExp, crepExpToHOL]
-      rw [ihleft, ihright]
-      cases hl : evalCrepSemHOLExp state (crepExpToHOL left) with
-      | none => rfl
-      | some hwl =>
-          cases hwl with
-          | word l =>
-              cases hr : evalCrepSemHOLExp state (crepExpToHOL right) with
-              | none => rfl
-              | some hwr =>
-                  cases hwr with
-                  | word r =>
-                      simp only [Option.map_some]
-                      simp [executedCrepState, CrepHolState.toRuntime,
-                        RiscV.panRiscVMemoryModelForEndian, panRiscVCmp_eq_wordCmpResultHOL,
-                        holWordLabToWord]
-  case shift operator left right ihleft ihright =>
-      simp only [evalCrepRuntimeExp, evalCrepSemHOLExp, crepExpToHOL]
-      rw [ihleft, ihright]
-      cases hl : evalCrepSemHOLExp state (crepExpToHOL left) with
-      | none => rfl
-      | some hwl =>
-          cases hwl with
-          | word l =>
-              cases hr : evalCrepSemHOLExp state (crepExpToHOL right) with
-              | none => rfl
-              | some hwr =>
-                  cases hwr with
-                  | word r =>
-                      simp only [Option.map_some]
-                      simp [executedCrepState, CrepHolState.toRuntime,
-                        RiscV.panRiscVMemoryModelForEndian, panRiscVShift_eq_wordShiftHOL,
-                        Option.map_map, Function.comp_def]
-  case op operator args ih =>
-      have hpoint : ∀ e ∈ args,
-          evalCrepRuntimeExp (executedCrepState state) e =
-            (evalCrepSemHOLExp state (crepExpToHOL e)).map holWordLabToWord :=
-        fun e he => ih e he
-      have hf : args.mapM (evalCrepRuntimeExp (executedCrepState state)) =
-          (args.mapM (fun a => evalCrepSemHOLExp state (crepExpToHOL a))).map
-            (List.map holWordLabToWord) := by
-        rw [show args.mapM (evalCrepRuntimeExp (executedCrepState state)) =
-              args.mapM (fun a => (evalCrepSemHOLExp state (crepExpToHOL a)).map holWordLabToWord)
-            from Flapjack.list_mapM_congr _ _ _ hpoint]
-        exact list_mapM_mapOption _ _ args
-      simp only [evalCrepRuntimeExp, evalCrepSemHOLExp, crepExpToHOL, List.mapM_map,
-        Function.comp_def]
-      rw [hf]
-      cases hargs : args.mapM (fun a => evalCrepSemHOLExp state (crepExpToHOL a)) with
-      | none => simp
-      | some values =>
-          simp only [Option.map_some]
-          simp [executedCrepState, CrepHolState.toRuntime, RiscV.panRiscVMemoryModelForEndian,
-            RiscV.panRiscVWordOp, wordOpHOL, option_map_holWordLabToWord_comp_word]
-          apply congrArg (wordOp operator)
-          exact List.map_congr_left (fun v _ => holWordLabToWord_eq v)
+      (evalCrepSemHOLExp state (crepExpToHOL e)).map holWordLabToWord :=
+  evalCrepRuntimeExp_executed_allWidth state e
 
 /-- Executed production `word_lab` Crep evaluator at the canonical BitVec
 evaluator state returns the exact `evalCrepSemHOLExp` result (mapped through
-`HolWordLab.toPanWordLab`) for every expression at width 64. -/
-theorem evalCrepRuntimeExpWordLab_executed {σ : Type} (state : CrepSemHOLState 64 σ)
-    [DecidablePred state.memaddrs] (e : CrepExp (BitVec 64)) :
+`HolWordLab.toPanWordLab`) for every expression, at every positive width. -/
+theorem evalCrepRuntimeExpWordLab_executed {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    [DecidablePred state.memaddrs] (e : CrepExp (BitVec width)) :
     evalCrepRuntimeExpWordLab (executedCrepState state) e =
       (evalCrepSemHOLExp state (crepExpToHOL e)).map HolWordLab.toPanWordLab := by
   rw [← evalCrepRuntimeExp_wordLab_projection (executedCrepState state) e]
@@ -697,13 +606,14 @@ section
 
 set_option maxHeartbeats 1000000
 
-/-- Unconditional width-64 list-level executed bridge: the shipped bare list
+/-- Unconditional all-width list-level executed bridge: the shipped bare list
 evaluator `evalCrepRuntimeExps` at the canonical BitVec evaluator state returns
 the exact `evalCrepSemHOLExp` result (mapped through `holWordLabToWord`) for
 every list of expressions.  This lifts `evalCrepRuntimeExp_executed` from a
 single expression to the list evaluator. -/
-theorem evalCrepRuntimeExps_executed {σ : Type} (state : CrepSemHOLState 64 σ)
-    [DecidablePred state.memaddrs] (es : List (CrepExp (BitVec 64))) :
+theorem evalCrepRuntimeExps_executed {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    [DecidablePred state.memaddrs] (es : List (CrepExp (BitVec width))) :
     evalCrepRuntimeExps (executedCrepState state) es =
       (es.mapM (fun e => evalCrepSemHOLExp state (crepExpToHOL e))).map
         (List.map holWordLabToWord) := by
@@ -718,16 +628,17 @@ theorem evalCrepRuntimeExps_executed {σ : Type} (state : CrepSemHOLState 64 σ)
 
 end
 
-/-- Unconditional width-64 list-level executed production `word_lab` bridge: the
+/-- Unconditional all-width list-level executed production `word_lab` bridge: the
 shipped `word_lab` list evaluator returns the exact `evalCrepSemHOLExp` result
 (mapped through `HolWordLab.toPanWordLab`). -/
-theorem evalCrepRuntimeExpsWordLab_executed {σ : Type} (state : CrepSemHOLState 64 σ)
-    [DecidablePred state.memaddrs] (es : List (CrepExp (BitVec 64))) :
+theorem evalCrepRuntimeExpsWordLab_executed {width : Nat} [NeZero width] {σ : Type}
+    (state : CrepSemHOLState width σ)
+    [DecidablePred state.memaddrs] (es : List (CrepExp (BitVec width))) :
     evalCrepRuntimeExpsWordLab (executedCrepState state) es =
       (es.mapM (fun e => evalCrepSemHOLExp state (crepExpToHOL e))).map
         (List.map HolWordLab.toPanWordLab) := by
   rw [← evalCrepRuntimeExps_wordLab_projection (executedCrepState state) es]
   rw [evalCrepRuntimeExps_executed state es]
-  exact option_map_list_holWordLabToWord_map_word (width := 64) _
+  exact option_map_list_holWordLabToWord_map_word (width := width) _
 
 end Flapjack
