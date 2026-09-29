@@ -47,13 +47,16 @@ kernel-checked Lean replay is `Flapjack.Test.LoopToWordExactParity`.
 loopLang-to-wordLang expression compiler `comp_exp_def` at
 `cakeml/pancake/loop_to_wordScript.sml:22-40`; its kernel-checked Lean replay
 is also `Flapjack.Test.LoopToWordExactParity`.
-`loop_to_word_comp_probe.out` records direct HOL EVAL rows for the first two
-constructor slices of `comp_def` at `cakeml/pancake/loop_to_wordScript.sml:56-108`:
-Skip, Assign, valid and malformed AddCarry Primitive arities, all three Arith
-constructors, Store, SetGlobal, and the four direct memory operations. Its
-kernel-checked Lean replay is in `Flapjack.Test.LoopToWordExactParity`; the
-partial helper is intentionally untagged until every `comp_def` clause has an
-exact Lean port.
+`loop_to_word_comp_probe.out` records direct HOL EVAL rows for the initial
+and memory constructor slices of `comp_def` at
+`cakeml/pancake/loop_to_wordScript.sml:56-108` (Skip, Assign, valid and
+malformed AddCarry Primitive arities, all three Arith constructors, Store,
+SetGlobal, and the four direct memory operations), the simple control/result
+clauses at `:96-110` (Break/Continue/Raise/Return/Tick/Fail/LocValue), and the
+FFI and ShMem clauses at `:141-146` (`comp_ffi` and `comp_shMem`, the latter
+compiling `ShMem` to `ShareInst`). Its kernel-checked Lean replay is in
+`Flapjack.Test.LoopToWordExactParity`; the partial helper is intentionally
+untagged until every `comp_def` clause has an exact Lean port.
 `loop_to_word_comp_recursive_probe.out` records direct HOL EVAL rows for the
 recursive Seq, If, Loop, and Mark clauses of `comp_def` at
 `cakeml/pancake/loop_to_wordScript.sml:107-120,138`, including the threaded
