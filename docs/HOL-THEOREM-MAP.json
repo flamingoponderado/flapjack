@@ -22065,6 +22065,58 @@
     "reviewer": "flapjack-opus source comparison (2026-09-29; beads flapjack-pxn.18.5.6.24/.25) against ocompile_correct at crep_to_loopProofScript.sml:3720-3750: `evaluate (p,s) = (res,s1) ∧ state_rel s t ∧ mem_rel s.memory t.memory s.memaddrs ∧ globals_rel s.globals t.globals ∧ code_rel ctxt s.code t.code ∧ locals_rel ctxt l s.locals t.locals ∧ res ≠ SOME Error ∧ (!n. res ≠ SOME (Break n)) ∧ (!n. res ≠ SOME (Continue n)) ∧ res ≠ NONE ⇒ ∃ck res1 t1. evaluate (ocompile ctxt l p,t with clock := t.clock + ck) = (res1,t1) ∧ state_rel s1 t1 ∧ mem_rel s1.memory t1.memory s1.memaddrs ∧ globals_rel s1.globals t1.globals ∧ code_rel ctxt s1.code t1.code ∧ case res of NONE => F | SOME Error => F | SOME TimeOut => res1 = SOME TimeOut | SOME (Break n) => F | SOME (Continue n) => F | SOME (Return v) => res1 = SOME (Result (MAP wlab_wloc v)) | SOME (Exception eid) => res1 = SOME (Exception (Word eid)) | SOME (FinalFFI f) => res1 = SOME (FinalFFI f)`. HOL's free variables are universally quantified in order of first occurrence (p s res s1 t ctxt l); all ten premises in order, the existential, the four relations and the result case (as an inline match, clause for clause, with MAP wlab_wloc as List.map wlabWlocExact) over the tagged ocompileHOLExact (ocompile_def). No extra hypotheses. The proof is HOL's: the tagged crepToLoop_ncompile_correct, then loop_liveProof optimise_correct (via the untagged helper crepToLoopOcompileCorrectOf). #print axioms: [propext, Classical.choice, Quot.sound]. Qualifiers as for ncompile_correct."
   },
   {
+    "hol_path": "cakeml/pancake/semantics/loopSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 278,
+    "lean_path": "Flapjack/Pancake/Semantics/LoopSemStateExact/EvaluateCases/StateRebinding.lean",
+    "lean_name": "evaluateIfCase",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (bead flapjack-pxgp.22, 2026-09-29): exact loopSem$evaluate_def at loopSemScript.sml:278; If case at 341, Loop at 350, non-tail Call at 386, FFI at 426. Each Lean theorem is the corresponding constructor equation with no added premises, over the same finite-support globals and width-indexed word carriers as evaluate. Loop/Call/FFI statements retain the state rebound by cut_res/cut_state in the source; If retains HOL selected-program-before-cut_res form and is proved equal to the generated Lean equation. Case results are kernel-checked evaluate.eq_13/17/23/24 equations. No executable compiler/runtime path changes."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 278,
+    "lean_path": "Flapjack/Pancake/Semantics/LoopSemStateExact/EvaluateCases/StateRebinding.lean",
+    "lean_name": "evaluateLoopCase",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (bead flapjack-pxgp.22, 2026-09-29): exact loopSem$evaluate_def at loopSemScript.sml:278; If case at 341, Loop at 350, non-tail Call at 386, FFI at 426. Each Lean theorem is the corresponding constructor equation with no added premises, over the same finite-support globals and width-indexed word carriers as evaluate. Loop/Call/FFI statements retain the state rebound by cut_res/cut_state in the source; If retains HOL selected-program-before-cut_res form and is proved equal to the generated Lean equation. Case results are kernel-checked evaluate.eq_13/17/23/24 equations. No executable compiler/runtime path changes."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 278,
+    "lean_path": "Flapjack/Pancake/Semantics/LoopSemStateExact/EvaluateCases/StateRebinding.lean",
+    "lean_name": "evaluateCallCase",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (bead flapjack-pxgp.22, 2026-09-29): exact loopSem$evaluate_def at loopSemScript.sml:278; If case at 341, Loop at 350, non-tail Call at 386, FFI at 426. Each Lean theorem is the corresponding constructor equation with no added premises, over the same finite-support globals and width-indexed word carriers as evaluate. Loop/Call/FFI statements retain the state rebound by cut_res/cut_state in the source; If retains HOL selected-program-before-cut_res form and is proved equal to the generated Lean equation. Case results are kernel-checked evaluate.eq_13/17/23/24 equations. No executable compiler/runtime path changes."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/loopSemScript.sml",
+    "hol_name": "evaluate_def",
+    "hol_line": 278,
+    "lean_path": "Flapjack/Pancake/Semantics/LoopSemStateExact/EvaluateCases/StateRebinding.lean",
+    "lean_name": "evaluateFFICase",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (bead flapjack-pxgp.22, 2026-09-29): exact loopSem$evaluate_def at loopSemScript.sml:278; If case at 341, Loop at 350, non-tail Call at 386, FFI at 426. Each Lean theorem is the corresponding constructor equation with no added premises, over the same finite-support globals and width-indexed word carriers as evaluate. Loop/Call/FFI statements retain the state rebound by cut_res/cut_state in the source; If retains HOL selected-program-before-cut_res form and is proved equal to the generated Lean equation. Case results are kernel-checked evaluate.eq_13/17/23/24 equations. No executable compiler/runtime path changes."
+  },
+  {
     "hol_path": "cakeml/pancake/crep_arithScript.sml",
     "hol_name": "dest_2exp_lemma",
     "lean_path": "Flapjack/Pancake/CrepArith.lean",
@@ -22145,5 +22197,25 @@
     "lean_name": "crepToLoopSemanticsWrapper",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.34.6): HOL crep_to_loopProofScript.sml:4132-4136 semantics_wrapper f = if ?k v. f k = (RunError, v) then Fail else case some res. ?k r ev. f k = (CompleteResult r, ev) /\\ res = Terminate r ev of SOME res => res | NONE => Diverge (LUB (IMAGE (fromList o SND o f) UNIV)). Lean crepToLoopSemanticsWrapper takes the same arbitrary f : Nat -> CrepToLoopSemanticsRunRes HolOutcome x List HolIoEvent (the tagged crep_to_loop semantics_run_res at HOL's outcome instance, which Terminate forces) with no chain, LUB or witness premise; same guard, same some-predicate (binder order k r ev, conjunct order), same branches. HOL option some is holOptionSome (@ as Classical.choose under the guard) and LUB (overload of build_lprefix_lub) is the total chain-free HolLList.buildLprefixLub over the exact lrep_ok llist subtype HolLList, fromList is HolLList.fromList, IMAGE g UNIV is fun l => exists k, l = g k -- the same renderings accepted for the tagged loopSem/crepSem semantics_def. Noncomputable as HOL's classical definition. No finite-map or word carriers occur in the signature, so no qualifier. Caveat (coordinator review, 2026-09-29): HOL @ and Lean Classical.choose are the standard translation and the Lean definition states the same choice formula, but their arbitrarily selected values (buildLprefixLub per-index choice on non-chain families, holOptionSome among several completed runs) are not proved cross-language equal; that is out of scope per docs/SOUNDNESS.md. The generic carrier 4ac.4.105.2 is resolved as a representation port (HolLList = exact lrep_ok subtype; buildLprefixLub unfolds build_lprefix_lub_f, lprefix_lubScript.sml:200-203,430-438), not as a proved choice correspondence; on lprefixChain families buildLprefixLub_thm characterises the LUB uniquely."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "semantics_wrapper_eq",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/SemanticsWrapper.lean",
+    "lean_name": "crepToLoopSemanticsWrapper_eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.34.9): HOL crep_to_loopProofScript.sml:4214-4228 semantics_wrapper_eq has free absf, concf and six curried premises: (1) semantics_wrapper absf <> Fail; (2) !k r ev. absf k = (r, ev) /\\ r <> RunError ==> ?k'. concf (k + k') = (r, ev); (3) !k k' r ev. concf k = (r, ev) ==> r <> Incomplete ==> concf (k + k') = (r, ev); (4) the same for absf; (5) !k k' ev. absf (k + k') = (Incomplete, ev) ==> ?r' ev'. absf k = (r', ev') /\\ IS_PREFIX ev ev'; (6) the same for concf; conclusion semantics_wrapper concf = semantics_wrapper absf. Lean crepToLoopSemanticsWrapper_eq binds absf, concf explicitly at the wrapper's input type and states the same six premises in the same order as curried arrows with the same binders and the same conclusion, over the tagged crepToLoopSemanticsWrapper. The conjunction in (2) is curried (absf k = (r, ev) -> r <> RunError -> ...), which is logically identical. HOL IS_PREFIX ev ev' (ev' is a prefix of ev) is Lean ev' <+: ev. No chain, LUB or result premise is added: both prefix chains are derived in the proof, as in HOL, via buildLprefixLub_thm/lnth_buildLprefixLub. The equality compares two instances of the same wrapper formula, so it does not rely on any cross-language agreement of HOL @ and Lean Classical.choose selections (see the semantics_wrapper_def caveat). Axioms: propext, Classical.choice, Quot.sound."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "loop_sem_is_wrapper",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/SemanticsWrapper.lean",
+    "lean_name": "loopSemIsWrapper",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.34.8): HOL crep_to_loopProofScript.sml:4178-4185 loop_sem_is_wrapper, with free s and start, states loopSem$semantics s start = let prog = Call NONE (SOME start) [] NONE in semantics_wrapper (((\\res. case res of SOME TimeOut => Incomplete | SOME (FinalFFI e) => CompleteResult (FFI_outcome e) | SOME (Result _) => CompleteResult Success | _ => RunError) ## (\\s. s.ffi.io_events)) o (\\k. loopSem$evaluate (prog, s with clock := k))). Lean loopSemIsWrapper binds s : LoopSemStateFiniteExact width F and start : Nat, the same carriers as the tagged loopSem semantics_def. It states LoopSemStateFiniteExact.semantics s start = let prog : HolLoopProg width := .call none (some start) [] none; crepToLoopSemanticsWrapper ((Prod.map (the same four-way match over Option LoopResultExact) (fun t => t.ffi.ioEvents)) ∘ (fun k => evaluate prog {s with clock := k})), over the tagged exact semantics_def, evaluate and semantics_wrapper_def. HOL ## is Prod.map and o is ∘; there are no extra hypotheses. The private proof helper loopSemWrapperClass and the abstract-E lemma are proof-only and not in the statement. The qualifiers match the tagged loopSem semantics_def: fmap_as_finite_support [globals], since LoopSemStateFiniteExact's HOL |-> globals is the canonical HolFiniteMapExact carrier while locals/code are sptree Spt fields and are not named, with the same-module re-exported witness LoopSemIsWrapperFiniteSupport.holFmapAsFiniteSupportWitness; and words_as_type_indexed_bitvec for the positive-width word and universe-0 FFI carrier. Axioms: propext, Classical.choice, Quot.sound."
   }
 ]
