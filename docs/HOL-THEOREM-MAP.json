@@ -23033,5 +23033,23 @@
     "lean_name": "holFmapAsFiniteSupportWitness",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Same-module canonical finite-support witness for crepArithSimpProgCorrect: the exact state and broad counterpart roundtrip through toBroad/ofBroad; this is Flapjack representation infrastructure, not a HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/CodeRelEvaluateCallCorrect.lean",
+    "lean_name": "crepToLoopCodeRelEvaluateCallCorrect",
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "code_rel_evaluate_call_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "LoopSemStateFiniteExact.globals",
+      "s_code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.6.57): HOL code_rel_evaluate_call_correct (crep_to_loopProofScript.sml:4072-4108). Free variables nctxt s_code t_code start s res s' t crep_code lc prog become explicit binders. The curried premises are the same, in the same order: code_rel2 nctxt s_code t_code (tagged crepToLoopCodeRel2Exact); evaluate (Call NONE start [], s) = (res, s') (tagged evalCrepSemHOLProgExact); then the conjunction s.be = t.be, s.sh_memaddrs = t.sh_mdomain, s.memaddrs = t.mdomain (both domain equalities in the reviewed set-as-Bool rendering used by the tagged state_rel), s.clock = t.clock, s.ffi = t.ffi, base_addr, top_addr, mem_rel, globals_rel, s.locals = FEMPTY, s.code = s_code, t.code = t_code; FLOOKUP (make_funcs crep_code) start = SOME (find_lab nctxt start, 0) (tagged crepToLoopMakeFuncsExactHOL/findLabExact); the conjunction find_lab nctxt start = lc, s.code = alist_to_fmap crep_code (alistToFmapCodeExact), nctxt.funcs = make_funcs crep_code, ALOOKUP crep_code start = SOME ([], prog) (holAlookup), distinct_vars nctxt.vars and ctxt_max nctxt.vmax nctxt.vars; and res <> SOME Error. Conclusion: ∃ k res' t'. evaluate (Call NONE (SOME (find_lab nctxt start)) [] NONE, t with clock := t.clock + k) = (res', t') (tagged loopSem evaluate) ∧ state_rel s' t' ∧ res' = the eight-way result case, rendered by the canonical resultToLoop exactly as in the tagged ncompile_correct. There is no target-run, post-state or other premise. The proof follows HOL: tagged simp_prog_correct (crepArithSimpProgCorrect) on the entry call, simp_prog (Call NONE start []) = Call NONE start [], code_rel2 unfolded to code_rel on the mapcs-mapped code (crepSimpMapcsHOL), tagged ncompile_correct at live set LN with locals_rel from distinct_vars/ctxt_max and empty locals, compile (Call NONE start []) = Seq (Call NONE (SOME (find_lab ..)) [] NONE) Skip, and the tagged evaluate_Seq_Skip. The make_funcs/find_lab/alist_to_fmap/ALOOKUP premises are retained as in HOL, though the proof does not need them. Qualifiers: the traversed finite-map carrier fields as in ncompile_correct plus the standalone s_code binder, with same-module relation witnesses; words for BitVec width. Axioms: propext, Classical.choice, Quot.sound."
   }
 ]
