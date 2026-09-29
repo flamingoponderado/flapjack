@@ -10,6 +10,8 @@ import Flapjack.Pancake.CrepArith
 import Flapjack.Pancake.CrepToLoop
 import Flapjack.Pancake.CrepToLoop.Optimise
 import Flapjack.Pancake.CrepToLoop.Proofs.LocValueFree
+import Flapjack.Pancake.CrepToLoop.StateRel
+import Flapjack.Pancake.Semantics.LoopSemStateExact
 import Flapjack.Pancake.LoopToWord
 import Flapjack.Word
 import Flapjack.RiscV.Allocator
@@ -996,6 +998,206 @@ theorem pipelineLoopFunctionsSourceCompileProgRouted_indexedExact
   rw [pipelineLoopFunctionsSourceCompileProgRouted_exact architecture firstLabel functions
     hFunctionNames hProgramNames]
   simp
+
+/-! ### Exact Spt code-table bridge for the source-routed rows
+
+The executable pipeline emits an association list, while the exact Loop state
+uses an `Spt` code field. The declarations here build that Spt table from the
+faithful, structurally rebased `compile_prog` rows and prove both lookup
+directions needed by `LoopSemStateFiniteExact.prodRel`. They are Flapjack-only
+bridges: HOL `compile_prog_def` returns a list and does not state a theorem
+about the parser-backed production code carrier. -/
+
+/-- Exact Spt-row view of the caller-label-rebased `compile_prog_def` output
+for the parser-backed source route. Flapjack-only carrier infrastructure: HOL
+`compile_prog_def` returns triples with the fixed `first_name` base and does
+not expose this caller-rebased Spt table. -/
+def pipelineLoopFunctionsSourceCompileProgRoutedExactCodeRows
+    {width : Nat} [NeZero width] (firstLabel : Nat)
+    (functions : List (CompiledFunction (BitVec width))) :
+    List (Nat × (List Nat × HolLoopProg width)) :=
+  (compileProgHOLExact .riscv (functions.map fun function =>
+    (Flapjack.Basis.Pure.MlString.ofString function.name, function.params,
+      crepProgToHOL function.body))).map fun entry =>
+        (rebaseHOLFunctionLabel firstLabel functions.length entry.1,
+          (entry.2.1,
+            rebaseHOLFunctionLabelsExact firstLabel functions.length entry.2.2))
+
+/-- Nested code-row view of the actual source-routed production list. This
+preserves the association-list order and row payload used by
+`LoopMachineState.code`; it does not construct a runtime state. -/
+def pipelineLoopFunctionsSourceCompileProgRoutedCodeRows
+    {width : Nat} [NeZero width] (architecture : RiscV.Architecture)
+    (firstLabel : Nat) (functions : List (CompiledFunction (BitVec width))) :
+    List (Nat × (List Nat × LoopProg (BitVec width))) :=
+  (pipelineLoopFunctionsSourceCompileProgRouted architecture firstLabel functions).map
+    fun entry => (entry.1, (entry.2.1, entry.2.2))
+
+private theorem pipelineLoopFunctionsSourceCompileProgRouted_codeRows_eq
+    {width : Nat} [NeZero width] (architecture : RiscV.Architecture)
+    (firstLabel : Nat) (functions : List (CompiledFunction (BitVec width)))
+    (hFunctionNames : ∀ function ∈ functions, CrepNameRanged function.name)
+    (hProgramNames : ∀ function ∈ functions, CrepProgNameRanged function.body) :
+    pipelineLoopFunctionsSourceCompileProgRoutedCodeRows architecture firstLabel functions =
+      (pipelineLoopFunctionsSourceCompileProgRoutedExactCodeRows firstLabel functions).map
+        (fun entry => (entry.1,
+          (entry.2.1, holLoopProgToExecutableCanonical entry.2.2))) := by
+  unfold pipelineLoopFunctionsSourceCompileProgRoutedCodeRows
+  rw [pipelineLoopFunctionsSourceCompileProgRouted_exact architecture firstLabel
+    functions hFunctionNames hProgramNames]
+  unfold pipelineLoopFunctionsSourceCompileProgRoutedExactCodeRows
+  simp only [List.map_map, Function.comp_def]
+  congr 1
+  funext entry
+  cases entry with
+  | mk label rest =>
+    cases rest with
+    | mk parameters body =>
+      simp [rebaseHOLFunctionLabels_projection]
+
+private theorem pipelineLoopFunctionsSourceCompileProgRoutedExactCodeRows_length
+    {width : Nat} [NeZero width] (firstLabel : Nat)
+    (functions : List (CompiledFunction (BitVec width))) :
+    (pipelineLoopFunctionsSourceCompileProgRoutedExactCodeRows firstLabel functions).length =
+      functions.length := by
+  simp [pipelineLoopFunctionsSourceCompileProgRoutedExactCodeRows,
+    compileProgHOLExact, List.length_zipWith]
+
+private theorem pipelineLoopFunctionsSourceCompileProgRouted_codeRows_keys
+    {width : Nat} [NeZero width] (architecture : RiscV.Architecture)
+    (firstLabel : Nat) (functions : List (CompiledFunction (BitVec width)))
+    (hFunctionNames : ∀ function ∈ functions, CrepNameRanged function.name)
+    (hProgramNames : ∀ function ∈ functions, CrepProgNameRanged function.body) :
+    (pipelineLoopFunctionsSourceCompileProgRoutedCodeRows architecture firstLabel
+      functions).map Prod.fst =
+      (List.range functions.length).map (fun index => firstLabel + index) := by
+  have hrouteLength :
+      (pipelineLoopFunctionsSourceCompileProgRouted architecture firstLabel functions).length =
+        functions.length := by
+    rw [pipelineLoopFunctionsSourceCompileProgRouted_exact architecture firstLabel
+      functions hFunctionNames hProgramNames]
+    simp [compileProgHOLExact, List.length_zipWith]
+  apply List.ext_getElem
+  · rw [List.length_map, pipelineLoopFunctionsSourceCompileProgRouted_codeRows_eq
+      architecture firstLabel functions hFunctionNames hProgramNames]
+    simp [pipelineLoopFunctionsSourceCompileProgRoutedExactCodeRows_length]
+  · intro index hleft hright
+    have hindex : index < functions.length := by
+      simpa [pipelineLoopFunctionsSourceCompileProgRoutedCodeRows, List.length_map,
+        hrouteLength] using hleft
+    have hrow := pipelineLoopFunctionsSourceCompileProgRouted_rowLabel
+      architecture firstLabel functions hFunctionNames hProgramNames index hindex
+    rw [List.getElem?_eq_getElem (l := pipelineLoopFunctionsSourceCompileProgRouted
+      architecture firstLabel functions) (i := index) (by
+        rw [hrouteLength]
+        exact hindex)] at hrow
+    simp only [Option.map_some] at hrow
+    simpa [pipelineLoopFunctionsSourceCompileProgRoutedCodeRows,
+      List.getElem_map, List.getElem_range] using hrow
+
+private theorem pipelineLoopFunctionsSourceCompileProgRoutedExactCodeRows_keys_nodup
+    {width : Nat} [NeZero width] (architecture : RiscV.Architecture)
+    (firstLabel : Nat) (functions : List (CompiledFunction (BitVec width)))
+    (hFunctionNames : ∀ function ∈ functions, CrepNameRanged function.name)
+    (hProgramNames : ∀ function ∈ functions, CrepProgNameRanged function.body) :
+    ((pipelineLoopFunctionsSourceCompileProgRoutedExactCodeRows firstLabel functions).map
+      Prod.fst).Nodup := by
+  have hkeys := pipelineLoopFunctionsSourceCompileProgRouted_codeRows_keys
+    architecture firstLabel functions hFunctionNames hProgramNames
+  have hsame :
+      (pipelineLoopFunctionsSourceCompileProgRoutedExactCodeRows firstLabel functions).map
+          Prod.fst =
+        (pipelineLoopFunctionsSourceCompileProgRoutedCodeRows architecture firstLabel
+          functions).map Prod.fst := by
+    rw [pipelineLoopFunctionsSourceCompileProgRouted_codeRows_eq architecture firstLabel
+      functions hFunctionNames hProgramNames]
+    simp
+  rw [hsame, hkeys]
+  apply List.nodup_iff_pairwise_ne.mpr
+  apply List.pairwise_iff_getElem.mpr
+  intro i j hi hj hij
+  simp only [List.getElem_map, List.getElem_range] at *
+  omega
+
+private theorem sptLookup_sptFromAList_mem_of_nodup {α : Type}
+    (entries : List (Nat × α)) (hnodup : (entries.map Prod.fst).Nodup)
+    {key : Nat} {value : α}
+    (hlookup : sptLookup key (sptFromAList entries) = some value) :
+    (key, value) ∈ entries := by
+  induction entries with
+  | nil => simp [sptFromAList] at hlookup
+  | cons entry entries ih =>
+      obtain ⟨headKey, headValue⟩ := entry
+      rcases List.nodup_cons.mp hnodup with ⟨hheadNot, htailNodup⟩
+      by_cases hkey : headKey = key
+      · subst key
+        have hhead := sptLookup_sptInsert_same headKey headValue (sptFromAList entries)
+        rw [sptFromAList, hhead] at hlookup
+        injection hlookup with hvalue
+        subst value
+        exact List.mem_cons_self
+      · rw [sptFromAList,
+          sptLookup_sptInsert_ne headKey key headValue (sptFromAList entries)
+            (Ne.symm hkey)] at hlookup
+        exact List.mem_cons_of_mem _ (ih htailNodup hlookup)
+
+private theorem sptFromAList_lookup_mem_of_nodup {α : Type}
+    (entries : List (Nat × α)) (hnodup : (entries.map Prod.fst).Nodup)
+    {key : Nat} {value : α}
+    (hmem : (key, value) ∈ entries) :
+    sptLookup key (sptFromAList entries) = some value :=
+  memLookupFromAListSomeExact hnodup hmem
+
+/-- The parser-routed rebased association-list code table relates in both
+    directions to the exact Spt table formed from caller-rebased
+    `compile_prog_def` rows. Production rows point to exact bodies through
+    `loopProgExecRel`; exact table lookups are covered by production rows.
+    This is the code-table component required by `LoopSemStateFiniteExact.prodRel`,
+    not a state or evaluator simulation theorem. -/
+theorem pipelineLoopFunctionsSourceCompileProgRouted_codeTableRel
+    {width : Nat} [NeZero width] (architecture : RiscV.Architecture)
+    (firstLabel : Nat) (functions : List (CompiledFunction (BitVec width)))
+    (hFunctionNames : ∀ function ∈ functions, CrepNameRanged function.name)
+    (hProgramNames : ∀ function ∈ functions, CrepProgNameRanged function.body) :
+    (∀ entry ∈ pipelineLoopFunctionsSourceCompileProgRoutedCodeRows architecture
+        firstLabel functions,
+      ∃ faithfulBody,
+        sptLookup entry.1
+            (sptFromAList (pipelineLoopFunctionsSourceCompileProgRoutedExactCodeRows
+              firstLabel functions)) = some (entry.2.1, faithfulBody) ∧
+          loopProgExecRel entry.2.2 faithfulBody) ∧
+    (∀ label parameters faithfulBody,
+      sptLookup label
+          (sptFromAList (pipelineLoopFunctionsSourceCompileProgRoutedExactCodeRows
+            firstLabel functions)) = some (parameters, faithfulBody) →
+        ∃ entry ∈ pipelineLoopFunctionsSourceCompileProgRoutedCodeRows architecture
+            firstLabel functions,
+          entry.1 = label ∧ entry.2.1 = parameters ∧
+            loopProgExecRel entry.2.2 faithfulBody) := by
+  have hnodup := pipelineLoopFunctionsSourceCompileProgRoutedExactCodeRows_keys_nodup
+    architecture firstLabel functions hFunctionNames hProgramNames
+  have hrows := pipelineLoopFunctionsSourceCompileProgRouted_codeRows_eq architecture
+    firstLabel functions hFunctionNames hProgramNames
+  constructor
+  · intro entry hentry
+    rw [hrows] at hentry
+    simp only [List.mem_map] at hentry
+    rcases hentry with ⟨faithfulEntry, hfaithfulMem, heq⟩
+    cases faithfulEntry with
+    | mk label rest =>
+      cases rest with
+      | mk parameters faithfulBody =>
+        cases heq
+        refine ⟨faithfulBody, sptFromAList_lookup_mem_of_nodup _ hnodup ?_, ?_⟩
+        · exact hfaithfulMem
+        · exact holLoopProgToExecutableCanonical_rel faithfulBody
+  · intro label parameters faithfulBody hlookup
+    have hmem := sptLookup_sptFromAList_mem_of_nodup _ hnodup hlookup
+    rw [hrows]
+    refine ⟨(label, (parameters, holLoopProgToExecutableCanonical faithfulBody)),
+      ?_, rfl, rfl, ?_⟩
+    · exact List.mem_map.mpr ⟨(label, (parameters, faithfulBody)), hmem, rfl⟩
+    · exact holLoopProgToExecutableCanonical_rel faithfulBody
 
 /-- A successful lookup in the production name-indexed function context points
 to the routed output row at the same source-list position. Its label is both
