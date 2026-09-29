@@ -24057,5 +24057,26 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-ds5 source comparison (2026-09-29; bead flapjack-pxn.18.5.9.14.4) against loop_to_wordProofScript.sml:129-135. HOL conclusion is exactly locals_rel ctxt l1 l2 ==>: INJ (find_var ctxt) (domain ctxt) UNIV /\\ (forall n m. lookup n ctxt = SOME m ==> m <> 0 /\\ EVEN m) /\\ forall n v. lookup n l1 = SOME v ==> exists m. lookup n ctxt = SOME m /\\ lookup m l2 = SOME v. Lean keeps the three conjuncts in order; INJ is rendered pointwise (sptMem domain membership -> findVarHOL equality -> equal keys), EVEN m is m % 2 = 0, and the source simulation uses sptLookup. The theorem is the definitional unfolding of localsRelHOL, so the only qualifier is the type-indexed word of the WordLocW relation carrier (words_as_type_indexed_bitvec). No extra premise and no strengthened quantifiers."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Inst.lean",
+    "lean_name": "inst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "inst_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.6): HOL inst_def (wordSemScript.sml:716-939) compared clause by clause over the tagged WordLangInst (BitVec width) (asm$inst: Skip, Const, Arith with WordLangArith (Binop/Shift/Div/LongMul/LongDiv/AddCarry/AddOverflow/SubOverflow), Mem with WordMemOp and Addr, FP with WordLangFp). Skip/Const/Binop/Shift go through the tagged assign/word_exp with the reg_imm case split. Div reads get_vars [r3;r2] and fails when q = 0w, with w2 / q unsigned division. AddCarry uses the tagged word_add_carry over get_vars [r2;r3;r4], writing r1 then r4. AddOverflow/SubOverflow compare w2i (w2 ± w3) with w2i w2 ± w2i w3 via BitVec.toInt. LongMul writes n2w r to r2 and n2w (r DIV dimword) to r1. LongDiv takes n = w2n w3 * dimword + w2n w4 and d = w2n w5, fails unless d ≠ 0 ∧ q < dimword, and writes q to r1 and n MOD d to r2. Mem forms build Var a + Const w via word_exp and use the tagged mem_load/mem_store and mem_load_byte_aux/mem_load_32/mem_store_byte_aux/mem_store_32, with w2w as setWidth; Load16/Store16 give NONE. FP forms read and write fp_regs via the tagged get_fp_var/set_fp_var. The fp64 operations are the untagged HOL standard-library renderings (machine_ieee/binary_ieee over Rat, with rounding and float_some_qnan as Classical.epsilon; sqrt through the rational-cut rendering), all at roundTiesToEven, and FPFma uses the tagged fpSem fpfma with get_fp_var d1 as the addend. The dimindex (:'a) = 64 tests are width = 64. FPMovToReg/FPMovFromReg/FPToInt/FPFromInt use word_extract (holWordExtract), i2w/w2i (BitVec.ofInt/toInt), bit_field_insert (holBitFieldInsert, only reached with a word32 in a 32-bit field) and @@ into word64 (++ then setWidth 64), with the ODD d1 / d1 DIV 2 field selection as in HOL. The final _ => NONE is unreachable and is omitted. The definition is noncomputable because of the IEEE choices. Qualifiers: fmap_as_finite_support [fpRegs, store] with the same-module witness WordSemInstSupport.holFmapAsFiniteSupportWitness, and words_as_type_indexed_bitvec. The IEEE real-to-Rat/cut correspondence is the external assumption in docs/SOUNDNESS.md item 8. Rows of scripts/hol-probes/word_sem_inst_probe.out (32 rows: every Arith form including failures, Const, Load/Load8/Load32/miss/Load16, Store/Store8/Store16, FPLess/Equal/Add/Div/Sqrt/Fma/Neg/MovToReg/MovFromReg/ToInt/ToInt-overflow/FromInt/missing register) are kernel-checked theorems in Flapjack.Test.WordSemInstParity via the proven roundTiesToEven equivalences."
+  },
+  {
+    "lean_path": "Flapjack/Misc/ShiftSeq.lean",
+    "lean_name": "holShiftSeq",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "shift_seq_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.8.1): HOL shift_seq k s = \\i. s (i + k:num) (miscScript.sml:132-134); Lean fun i => s (i + k), polymorphic in the value type as HOL. Rows shift_seq/shift_seq_zero of scripts/hol-probes/word_sem_eval_prereq_probe.out are kernel-checked in Flapjack.Test.WordSemEvalPrereqParity."
   }
 ]

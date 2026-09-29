@@ -1731,6 +1731,43 @@ run_probe machine_ieee_fp64_arith_nan_probeScript.sml machine_ieee_fp64_arith_na
   "$hol_dir/src/floating-point/binary_ieeeScript.sml" \
   "$hol_dir/src/floating-point"
 
+# The binary64 conversion probe observes fp64_to_int in all four modes (ties,
+# NaN/infinity to NONE) and int_to_fp64 roundTiesToEven (ties, overflow,
+# negative) (bead flapjack-h29l.6.3.1).
+run_probe machine_ieee_fp64_convert_probeScript.sml machine_ieee_fp64_convert_probe.out \
+  to_int_2_5 to_int_nan to_int_rtn_neg_2_1 from_int_2p53_1 from_int_neg_big \
+  "$hol_dir/src/floating-point/binary_ieeeScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
+# The binary64 sqrt special-case probe observes the choice-free fp64_sqrt
+# branches (+inf, -0) (bead flapjack-h29l.6.3.2.1).
+run_probe machine_ieee_fp64_sqrt_special_probeScript.sml machine_ieee_fp64_sqrt_special_probe.out \
+  sqrt_pinf sqrt_nz \
+  "$hol_dir/src/floating-point/binary_ieeeScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
+# The binary64 exact-square sqrt probe observes fp64_sqrt roundTiesToEven on
+# exact squares, whose sqrt isqrtLib proves (bead flapjack-h29l.6.3.2.2).
+run_probe machine_ieee_fp64_sqrt_exact_probeScript.sml machine_ieee_fp64_sqrt_exact_probe.out \
+  sqrt_four sqrt_min_sub sqrt_2p1022 \
+  "$hol_dir/src/floating-point/binary_ieeeScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
+# The wordSem inst_def probe observes integer arithmetic, memory and
+# floating-point instructions over record updates of a free state (bead
+# flapjack-h29l.6).
+run_probe word_sem_inst_probeScript.sml word_sem_inst_probe.out \
+  div long_div load32 store8 fp_fma fp_to_int fp_missing \
+  "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
+# The wordSem evaluate prerequisite probe observes misc$shift_seq and the
+# sptree domain set conditions of the Call clause (bead flapjack-h29l.8.1).
+run_probe word_sem_eval_prereq_probeScript.sml word_sem_eval_prereq_probe.out \
+  shift_seq dom_empty_one dom_union_eq dom_union_missing \
+  "$cake_dir/misc/miscScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
 # The good_handlers probe observes the structural handler-label predicate,
 # including the NONE-ret case (handler ignored) and nested bad handlers.
 run_probe word_convs_good_handlers_probeScript.sml word_convs_good_handlers_probe.out \
