@@ -23904,5 +23904,23 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.3): HOL share_inst (:453-470) over asm$memop (WordMemOp): Load/Load8/Load16/Load32 v ad s = sh_mem_set_var (sh_mem_load/_byte/16/32 ad s) v s; Store/Store8/Store16/Store32 v ad s = case get_var v s of SOME (Word v) => sh_mem_store/_byte/16/32 ad v s | _ => (SOME Error, s); Lean identical, eight clauses. The state is the tagged WordSemStateFiniteExact; its two |-> fields fp_regs/store are recorded by fmap_as_finite_support [fpRegs, store] with the same-module witness WordSemShMemSupport.holFmapAsFiniteSupportWitness. FFI uses the tagged callFFIHOL/HolFfiResult; the HOL byte helpers word_to_bytes/word_of_bytes/byte_align/get_byte are the untagged panWordToBytesHOL/panWordOfBytesHOL/riscvByteAlignHOL/getByteHOL8 renderings shared with the reviewed panSem/loopSem ports. Words are BitVec width with [NeZero width]; word8 is BitVec 8; no other representation change. Rows all (every memop; Loc and missing store variables; unaligned full-word store) of scripts/hol-probes/word_sem_sh_mem_probe.out are checked by Flapjack.Test.WordSemShMemParity (byte-incrementing and diverging oracles, payload observed through io_events)."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/LocalsRelUpdates.lean",
+    "lean_name": "localsRelHOLInsert",
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "locals_rel_insert",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.9.15.1) against loop_to_wordProofScript.sml:195-208. HOL premises are exactly locals_rel ctxt lcl lcl' AND v IN domain ctxt; conclusion updates the source at v and target at find_var ctxt v with the same word_loc value. Lean retains the conjunction premise and same update positions using localsRelHOL, sptMem and sptInsert. Context/source/target are the exact generic Spt carriers, and word_loc is exact WordLocW with only HOL word to BitVec width translation ([NeZero width]); no fmap/list/name qualifier applies. Direct original HOL rows mapped insert and unmapped insert are in loop_to_word_locals_rel_probe.out and kernel-replayed in LoopToWordExactParity."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/LocalsRelUpdates.lean",
+    "lean_name": "localsRelHOLInsertUnmapped",
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "locals_rel_insert_unmapped",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.9.15.1) against loop_to_wordProofScript.sml:210-220. HOL premises are exactly locals_rel ctxt lcl lcl' AND FORALL n. n IN domain ctxt implies find_var ctxt n differs from k; conclusion only inserts (k,x) into target locals. Lean retains the conjunction and universal noncollision premise as sptMem/findVarHOL, without strengthening it, using Spt insertion. The exact Spt and WordLocW carriers and sole words_as_type_indexed_bitvec qualifier match locals_rel_def; no finite-map/list/name qualifier applies. Direct original HOL rows mapped insert and target-register collision are in loop_to_word_locals_rel_probe.out and kernel-replayed in LoopToWordExactParity."
   }
 ]
