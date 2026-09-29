@@ -10,8 +10,9 @@ expression contains the extra `crepOp` or `cmp` constructors. List-backed live
 sets are translated with HOL `toNumSet`; the existing executable/faithful
 relation requires duplicate-free source lists. FFI names are encoded using
 `MlString.ofString`, which truncates non-byte Lean characters; reverse name
-equality requires the explicit `NameRanged` premise. This module does not
-route production compilation through `compHOL`.
+equality requires the explicit `NameRanged` premise. The production route
+checks the FFI byte range before using this codec and preserves the legacy
+implementation for executable-only syntax.
 -/
 
 namespace Flapjack
