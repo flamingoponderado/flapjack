@@ -13,8 +13,10 @@ open crepSemTheory;
 
 fun print_eval label q =
   let val th = SIMP_CONV (srw_ss())
-    [state_rel_def, locals_rel_def, SUBMAP_DEF, FDOM_FEMPTY, FDOM_FUPDATE,
-     FAPPLY_FUPDATE_THM, IN_INSERT, NOT_IN_EMPTY] q in
+    [state_rel_def, locals_rel_def, locals_ext_rel_def, dec_clock_def,
+     SUBMAP_DEF, FDOM_FEMPTY, FDOM_FUPDATE, FAPPLY_FUPDATE_THM, IN_INSERT,
+     NOT_IN_EMPTY, fmap_eq_flookup, FDIFF_def, FLOOKUP_DRESTRICT,
+     FLOOKUP_FDIFF, FLOOKUP_UPDATE] q in
     print (label ^ "=");
     print_term (rconc th);
     print "\n"
@@ -50,5 +52,10 @@ val _ = print_eval "locals_rel_missing_key" ``locals_rel ^stateLeft ^(mkState mi
 val _ = print_eval "locals_rel_conflicting_value" ``locals_rel ^stateLeft ^(mkState conflict no_code)``;
 val _ = print_eval "state_rel_ignores_locals" ``state_rel ^stateLeft ^stateExtended``;
 val _ = print_eval "state_rel_checks_code" ``state_rel ^stateLeft ^stateDifferentCode``;
+val _ = print_eval "locals_ext_rel_self" ``locals_ext_rel ^stateLeft ^stateExtended ^stateLeft ^stateExtended``;
+val _ = print_eval "locals_ext_rel_same_extension" ``locals_ext_rel ^stateLeft ^stateLeft ^stateExtended ^stateExtended``;
+val _ = print_eval "locals_ext_rel_unequal_witness" ``FLOOKUP (FDIFF ^extended (FDOM ^left)) 2 = FLOOKUP (FDIFF ^extended (FDOM ^extended)) 2``;
+val _ = print_eval "locals_rel_dec_clock" ``locals_rel (dec_clock ^stateLeft) (dec_clock ^stateExtended)``;
+val _ = print_eval "state_rel_dec_clock" ``state_rel (dec_clock ^stateLeft) (dec_clock ^stateExtended)``;
 
 val _ = OS.Process.exit OS.Process.success;

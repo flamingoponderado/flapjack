@@ -1,5 +1,6 @@
 import Flapjack.Pancake.CrepToLoop
 import Flapjack.Pancake.CrepToLoop.StateRel
+import Flapjack.Pancake.CrepToLoop.Proofs.MakeFuncsLemmas
 import Flapjack.Pancake.CrepToLoop.Proofs.LocalsRelHelpers
 import Flapjack.Misc.Sptree
 
@@ -432,7 +433,7 @@ example :
     crepToLoopLocalsRelExact localsRelExactCtxt localsRelExactSet
         localsRelExactSource localsRelExactTarget ↔
       crepToLoopDistinctVars localsRelExactCtxt.vars.lookup ∧
-        crepToLoopCtxtMax localsRelExactCtxt.vmax localsRelExactCtxt.vars.lookup ∧
+        crepToLoopCtxtMaxExact localsRelExactCtxt.vmax localsRelExactCtxt.vars ∧
         (∀ n, sptMem n localsRelExactSet → sptMem n localsRelExactTarget) ∧
         ∀ vname value, localsRelExactSource.lookup vname = some value →
           ∃ n, localsRelExactCtxt.vars.lookup vname = some n ∧
@@ -446,7 +447,7 @@ example :
 example (h : crepToLoopLocalsRelExact localsRelExactCtxt localsRelExactSet
     localsRelExactSource localsRelExactTarget) :
     crepToLoopDistinctVars localsRelExactCtxt.vars.lookup ∧
-      crepToLoopCtxtMax localsRelExactCtxt.vmax localsRelExactCtxt.vars.lookup ∧
+      crepToLoopCtxtMaxExact localsRelExactCtxt.vmax localsRelExactCtxt.vars ∧
       (∀ n, sptMem n localsRelExactSet → sptMem n localsRelExactTarget) ∧
       ∀ vname value, localsRelExactSource.lookup vname = some value →
         ∃ n, localsRelExactCtxt.vars.lookup vname = some n ∧
@@ -482,6 +483,12 @@ abbrev localsRelOracleSource : HolFiniteMapExact Nat (HolWordLab 8) :=
 /-- Target `num_map` with `0 |-> Word 9` (probe `locals_rel_true`). -/
 abbrev localsRelOracleTarget : Spt (WordLocW 8) := Spt.ls (WordLocW.word 9)
 
+/-- Same lookup function as the oracle target, with a redundant overwrite at
+    its existing key. This gives a distinct Spt representation for testing
+    `locals_rel_lookup_same`. -/
+abbrev localsRelOracleTargetSameLookup : Spt (WordLocW 8) :=
+  sptInsert 0 (WordLocW.word 9) localsRelOracleTarget
+
 /-- Empty target `num_map` (probe `locals_rel_domain_false`). -/
 abbrev localsRelOracleTargetEmpty : Spt (WordLocW 8) := Spt.ln
 
@@ -489,7 +496,7 @@ abbrev localsRelOracleTargetEmpty : Spt (WordLocW 8) := Spt.ln
 abbrev localsRelOracleTargetBad : Spt (WordLocW 8) := Spt.ls (WordLocW.word 12)
 
 /-- Kernel-checked true row (HOL `locals_rel_true`). -/
-example :
+theorem localsRelOracleTargetRel :
     crepToLoopLocalsRelExact localsRelOracleCtxt localsRelOracleSet
       localsRelOracleSource localsRelOracleTarget := by
   rw [crepToLoopLocalsRelExact]
@@ -532,6 +539,29 @@ example :
         exact ⟨(), by simp [sptLookup]⟩
       · simp [sptLookup, wlabWlocHOL]
     · simp at hv
+
+/-- The two Spt trees are pointwise lookup-equal although the second contains a
+    redundant insertion. -/
+theorem localsRelOracleTargetsAgree :
+    ∀ n, sptLookup n localsRelOracleTarget =
+      sptLookup n localsRelOracleTargetSameLookup := by
+  intro n
+  by_cases hn : n = 0
+  · subst n
+    rw [sptLookup_sptInsert_same]
+    rfl
+  · exact (sptLookup_sptInsert_ne 0 n (WordLocW.word 9)
+      localsRelOracleTarget hn).symm
+
+/-- Kernel-checked instance of the tagged `locals_rel_lookup_same` port using
+    the direct HOL `locals_rel_true` row and a distinct but lookup-equivalent
+    target tree. The theorem itself is universally quantified, so its proof is
+    checked by Lean rather than represented as an EVAL Boolean oracle row. -/
+example :
+    crepToLoopLocalsRelExact localsRelOracleCtxt localsRelOracleSet
+      localsRelOracleSource localsRelOracleTargetSameLookup := by
+  exact crepToLoopLocalsRelExact_lookup_same _ _ _ _ _
+    localsRelOracleTargetRel localsRelOracleTargetsAgree
 
 /-- Kernel-checked domain-false row: `0` is in the source set but absent from
     the target map (HOL `locals_rel_domain_false`). -/
@@ -578,6 +608,16 @@ def localsRelOracleGuard : Bool :=
       some (WordLocW.word 12))
 
 #guard localsRelOracleGuard
+
+/-- The direct HOL relation row's target and the redundant-insert target have
+    equal lookups at the populated key and an absent key. -/
+def localsRelLookupSameGuard : Bool :=
+  (sptLookup 0 localsRelOracleTarget ==
+      sptLookup 0 localsRelOracleTargetSameLookup) &&
+    (sptLookup 1 localsRelOracleTarget ==
+      sptLookup 1 localsRelOracleTargetSameLookup)
+
+#guard localsRelLookupSameGuard
 
 /-! Direct cut-set oracle rows for HOL `locals_rel_cutset_prop`
 (`crep_to_loopProofScript.sml:236-244`), matching
@@ -671,7 +711,8 @@ def runChecks : IO Bool := do
     comparisonKeepsIncomingLive,
     comparisonWithoutLiveDropsIt,
     stateRelExactGuard, ctxtFcExactGuard, localsRelExactGuard,
-    localsRelOracleGuard, localsRelCutsetGuard, localsRelInsertGuard]
+    localsRelOracleGuard, localsRelLookupSameGuard,
+    localsRelCutsetGuard, localsRelInsertGuard]
   let names := [
     "crep_to_loop declaration renaming and live seed",
     "crep_to_loop default call handler",
@@ -686,6 +727,7 @@ def runChecks : IO Bool := do
     "crep_to_loop exact ctxt_fc matches the HOL oracle rows",
     "crep_to_loop exact locals_rel matches the HOL oracle rows",
     "crep_to_loop exact locals_rel direct oracle rows (true/domain-false/value-false)",
+    "crep_to_loop exact locals_rel_lookup_same kernel example and lookup guard",
     "crep_to_loop exact locals_rel_cutset_prop oracle rows (subspt/second/after)",
     "crep_to_loop exact locals_rel_insert_gt_vmax oracle rows (fresh-key/unchanged)"]
   let mut all := true
@@ -1087,6 +1129,42 @@ example : FLOOKUP (crepToLoopMakeFuncsHOL
       ([("f", [1], ()), ("f", [1, 2, 3], ())] : List (String × List Nat × Unit)))
       "f" = some (64, 1) := by decide
 
+/-- Replay the same direct HOL `mkf_*` oracle rows through the canonical
+    finite-support result carrier, rather than only through the raw-map helper. -/
+def exactMakeFuncsProg :
+    List (Flapjack.Basis.Pure.MlString.MlString × List Nat × CrepProgHOL 8) :=
+  [(Flapjack.Basis.Pure.MlString.ofString "f", [1, 2], .skip),
+   (Flapjack.Basis.Pure.MlString.ofString "g", [], .skip)]
+
+example :
+    (crepToLoopMakeFuncsExactHOL exactMakeFuncsProg).lookup
+      (Flapjack.Basis.Pure.MlString.ofString "f") = some (64, 2) := by
+  rw [← crepToLoopMakeFuncsHOL_lookup_eq_exact]
+  decide
+
+example :
+    (crepToLoopMakeFuncsExactHOL exactMakeFuncsProg).lookup
+      (Flapjack.Basis.Pure.MlString.ofString "g") = some (65, 0) := by
+  rw [← crepToLoopMakeFuncsHOL_lookup_eq_exact]
+  decide
+
+example :
+    (crepToLoopMakeFuncsExactHOL exactMakeFuncsProg).lookup
+      (Flapjack.Basis.Pure.MlString.ofString "h") = none := by
+  rw [← crepToLoopMakeFuncsHOL_lookup_eq_exact]
+  decide
+
+/-- Duplicate names keep the first association, as required by HOL
+    `alist_to_fmap` (`mkf_dup_first`). -/
+example :
+    (crepToLoopMakeFuncsExactHOL
+      ([(Flapjack.Basis.Pure.MlString.ofString "f", [1], .skip),
+        (Flapjack.Basis.Pure.MlString.ofString "f", [1, 2, 3], .skip)] :
+          List (Flapjack.Basis.Pure.MlString.MlString × List Nat × CrepProgHOL 8))).lookup
+      (Flapjack.Basis.Pure.MlString.ofString "f") = some (64, 1) := by
+  rw [← crepToLoopMakeFuncsHOL_lookup_eq_exact]
+  decide
+
 /-! The following proofs exercise the *relation itself* on the same 8-bit
     cases as the checked-in HOL oracle, rather than only its total-memory view. -/
 example : crepToLoopMemRel
@@ -1180,7 +1258,7 @@ example :
           (x, List.range y.2.1.length, (fun (_ : List Nat) (_ : Unit) => true) y.2.1 y.2.2))
         [1, 2] ([(0, [], ()), (1, [7, 8], ())] : List (Nat × List Nat × Unit))).map
       Prod.fst = [1, 2] :=
-  mapMap2FstHOL (fun _ _ => true) [1, 2] [(0, [], ()), (1, [7, 8], ())] rfl
+  mapMap2FstHOL [1, 2] [(0, [], ()), (1, [7, 8], ())] (fun _ _ => true) rfl
 
 /-- HOL `alookup_el_pair_eq_el` oracle rows (`ael_*` in
     `scripts/hol-probes/crep_to_loop_alookup_el_probe.out`). -/

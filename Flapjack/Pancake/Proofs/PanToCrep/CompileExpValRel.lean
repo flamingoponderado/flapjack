@@ -80,7 +80,7 @@ def compileExpValRelHOLProp {width : Nat} {σ : Type} [NeZero width]
 theorem compileExpValRelHOL_const {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) [hs : DecidablePred state.memaddrs]
     (context : PanToCrepContextExact width)
-    (targetState : CrepSemHOLState width σ) [ht : DecidablePred targetState.memaddrs]
+    (targetState : CrepSemHOLState width σ)
     (word : BitVec width) (value : ValueHOL width)
     (expressions : List (CrepExpHOL width)) (shape : ShapeHOL)
     (heval : state.evalHOLFinite (ExpHOL.const word) = some value)
@@ -181,7 +181,7 @@ theorem compileExpValRelHOL_var_global {width : Nat} {σ : Type} [NeZero width]
 theorem compileExpListValRelHOL {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) [hs : DecidablePred state.memaddrs]
     (context : PanToCrepContextExact width)
-    (targetState : CrepSemHOLState width σ) [ht : DecidablePred targetState.memaddrs]
+    (targetState : CrepSemHOLState width σ)
     (fields : List (ExpHOL width))
     (hrel : ∀ (expression : ExpHOL width), expression ∈ fields →
         (value : ValueHOL width) → (expressions : List (CrepExpHOL width)) →
@@ -327,7 +327,7 @@ private theorem valueIsWord_eq_true_iff {width : Nat} [NeZero width] (value : Va
 theorem cexpHeads_compileExpListValRelHOL {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) [hs : DecidablePred state.memaddrs]
     (context : PanToCrepContextExact width)
-    (targetState : CrepSemHOLState width σ) [ht : DecidablePred targetState.memaddrs]
+    (targetState : CrepSemHOLState width σ)
     (fields : List (ExpHOL width))
     (hrel : ∀ (expression : ExpHOL width), expression ∈ fields →
         (value : ValueHOL width) → (expressions : List (CrepExpHOL width)) →
@@ -1490,12 +1490,7 @@ theorem compileExpValRelHOL_shift {width : Nat} {σ : Type} [NeZero width]
                                               subst hrrestNil
                                               have hshiftCrep : evalCrepSemHOLExp targetState
                                                   (.shift operator lcode rcode) = some (.word sword) := by
-                                                simp only [evalCrepSemHOLExp, hlcodeEq, hrcodeEq]
-                                                show Option.map HolWordLab.word
-                                                    (wordShiftHOL operator lword rword.toNat) =
-                                                  some (.word sword)
-                                                rw [hshift]
-                                                rfl
+                                                simp [evalCrepSemHOLExp, hlcodeEq, hrcodeEq, hshift]
                                               have hcompile' := hcompile
                                               simp only [compileExpExactHOLW] at hcompile'
                                               rw [hleftCompile] at hcompile'

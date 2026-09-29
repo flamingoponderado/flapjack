@@ -91,6 +91,17 @@ in `Flapjack.Test.CrepToLoopSurvivesMapiAssignParity`. Regenerate with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=crep_to_loop_survives_mapi_assign_probeScript.sml
 bash scripts/hol-probes/regenerate.sh`.
+`crep_to_loop_write_bytearray_mem_rel_probe.out` records direct HOL EVAL rows
+for both sides of `write_bytearray_mem_rel`
+(`cakeml/pancake/proofs/crep_to_loopProofScript.sml:251-256`):
+`panSem$write_bytearray` and `wordSem$write_bytearray` on the same address,
+three-byte list, domain (full and partial) and endianness from
+`wlab_wloc`-related 64-bit memories, read at both affected aligned words.
+The Lean replay, including the pointwise `mem_rel` conclusion, is
+`Flapjack.Test.CrepToLoopWriteBytearrayMemRelParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=crep_to_loop_write_bytearray_mem_rel_probeScript.sml
+bash scripts/hol-probes/regenerate.sh`.
 `loop_props_survives_probe.out` records direct HOL EVAL rows for every clause
 of `survives_def` in `cakeml/pancake/semantics/loopPropsScript.sml:25-38`:
 If/Loop/Call (both handler forms)/FFI domain membership, recursive Mark and
@@ -501,14 +512,17 @@ general multipliers, with a word-valued local. Its matching production runtime
 cases live in `Flapjack.Test.CrepeMulConstParity`.
 `crep_simp_exp_probe.out` records direct HOL EVAL of
 `crep_arith$simp_exp_def` (`crep_arithScript.sml:59-64`) for constant folding,
-left/right constant multiplication, nested multiplication, and recursive
-load/word-operation children. It also evaluates the original
+left/right constant multiplication, nested multiplication, recursive
+load/word-operation children, and identity Var/Const constructor rows used by
+the native `simp_exp_correct1` cases. It also evaluates the original
 `crepSem$eval` before and after simplifying `Crepop Mul [Var 2; Const 8w]`
 with local 2 set to `Word 5w`; the simplifier yields `Shift Lsl (Var 2)
 (Const 3w)` and both evaluations return `SOME (Word 40w)`. The matching
 production source-runtime observation and all-width theorem application are
-in `Flapjack.Test.CrepeSimpExpParity`. These checks exercise the result shape,
-but do not close the polymorphic evaluator-preservation theorem
+in `Flapjack.Test.CrepeSimpExpParity`; the exact-carrier Var/Const replay is
+checked there alongside the tagged native evaluator cases in
+`Flapjack.Pancake.Proofs.CrepArith.HOLStateMapc`. These checks exercise the
+result shape, but do not close the polymorphic evaluator-preservation theorem
 `simp_exp_correct1`; the explicit finite-index adapter's relation to HOL's
 implicit word carrier remains open.
 `crep_eval_probe.out` records direct HOL EVAL of the `Const`, `Var`, `Load`,

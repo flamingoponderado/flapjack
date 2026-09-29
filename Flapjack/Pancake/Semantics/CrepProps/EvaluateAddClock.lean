@@ -104,18 +104,19 @@ theorem decClockCrepSemHOL_addClock {width : Nat} [NeZero width] {σ : Type}
       CrepAddClock (CrepSemHOLState.emptyLocals state) ck := rfl
 
 theorem evalCrepSemHOLExp_addClock {width : Nat} [NeZero width] {σ : Type}
-    (state : CrepSemHOLState width σ) [DecidablePred state.memaddrs]
+    (state : CrepSemHOLState width σ)
     (expression : CrepExpHOL width) (ck : Nat) :
     evalCrepSemHOLExp (CrepAddClock state ck) expression =
-      evalCrepSemHOLExp state expression :=
-  evalCrepSemHOLExp_upd_clock_eq state expression (state.clock + ck)
+      evalCrepSemHOLExp state expression := by
+  classical
+  exact evalCrepSemHOLExp_upd_clock_eq state expression (state.clock + ck)
 
 theorem crepExactEvalExpClassical_addClock {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ) (expression : CrepExpHOL width) (ck : Nat) :
     crepExactEvalExpClassical (CrepAddClock state ck) expression =
       crepExactEvalExpClassical state expression := by
   classical
-  unfold crepExactEvalExpClassical crepExactEvalExp
+  rw [crepExactEvalExpClassical_eq, crepExactEvalExpClassical_eq]
   exact evalCrepSemHOLExp_addClock state expression ck
 
 theorem crepShMemLoadExactHOL_addClock {width : Nat} [NeZero width] {σ : Type}
@@ -167,8 +168,7 @@ theorem crepExactEvalExp_addClock {width : Nat} [NeZero width] {σ : Type}
     crepExactEvalExp (CrepAddClock state ck)
         (fun a => Classical.propDecidable ((CrepAddClock state ck).memaddrs a)) value =
       crepExactEvalExp state (fun a => Classical.propDecidable (state.memaddrs a)) value := by
-  letI : DecidablePred state.memaddrs := fun a => Classical.propDecidable (state.memaddrs a)
-  unfold crepExactEvalExp
+  simp only [crepExactEvalExp_eq_eval]
   exact evalCrepSemHOLExp_addClock state value ck
 
 theorem crepExactMemStore32_addClock {width : Nat} [NeZero width] {σ : Type}
@@ -192,7 +192,7 @@ theorem crepExactMemStoreByte_addClock {width : Nat} [NeZero width] {σ : Type}
   rfl
 
 theorem crepShMemLoadHOL_addClock {width : Nat} [NeZero width] {σ : Type}
-    (operator : CrepMemOp) (name : Nat) (address : BitVec width)
+    (operator : WordMemOp) (name : Nat) (address : BitVec width)
     (state : CrepSemHOLState width σ) (ck : Nat) :
     crepShMemLoadHOL operator name address (CrepAddClock state ck)
         (fun a => Classical.propDecidable ((CrepAddClock state ck).shMemaddrs a)) =
@@ -204,7 +204,7 @@ theorem crepShMemLoadHOL_addClock {width : Nat} [NeZero width] {σ : Type}
   exact crepShMemLoadExactHOL_addClock name address (crepShMemByteWidth operator) state ck
 
 theorem crepShMemStoreHOL_addClock {width : Nat} [NeZero width] {σ : Type}
-    (operator : CrepMemOp) (name : Nat) (address : BitVec width)
+    (operator : WordMemOp) (name : Nat) (address : BitVec width)
     (state : CrepSemHOLState width σ) (ck : Nat) :
     crepShMemStoreHOL operator name address (CrepAddClock state ck)
         (fun a => Classical.propDecidable ((CrepAddClock state ck).shMemaddrs a)) =
@@ -235,11 +235,9 @@ theorem crepExactWriteBytearrayWord8_addClock {width : Nat} [NeZero width] {σ :
 
 theorem evalCrepSemHOLExps_addClock {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ) (expressions : List (CrepExpHOL width)) (ck : Nat) :
-    expressions.mapM (@evalCrepSemHOLExp width ‹NeZero width› σ (CrepAddClock state ck)
-        (fun a => Classical.propDecidable ((CrepAddClock state ck).memaddrs a))) =
-      expressions.mapM (@evalCrepSemHOLExp width ‹NeZero width› σ state
-        (fun a => Classical.propDecidable (state.memaddrs a))) := by
-  letI : DecidablePred state.memaddrs := fun a => Classical.propDecidable (state.memaddrs a)
+    expressions.mapM (evalCrepSemHOLExp (CrepAddClock state ck)) =
+      expressions.mapM (evalCrepSemHOLExp state) := by
+  classical
   induction expressions with
   | nil => rfl
   | cons expression expressions ih =>
@@ -634,8 +632,7 @@ theorem evalCrepSemHOLProgExact_add_clock_eq {width : Nat} [NeZero width] {σ : 
     · intro es s res st ck heval hnt
       rw [evalCrepSemHOLProgExact_return] at heval ⊢
       rw [evalCrepSemHOLExps_addClock] at ⊢
-      cases hval : es.mapM (@evalCrepSemHOLExp width ‹NeZero width› σ s
-          (fun a => Classical.propDecidable (s.memaddrs a))) with
+      cases hval : es.mapM (evalCrepSemHOLExp s) with
       | none =>
           simp only [hval] at heval ⊢
           obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
@@ -665,7 +662,11 @@ theorem evalCrepSemHOLProgExact_add_clock_eq {width : Nat} [NeZero width] {σ : 
       rw [evalCrepSemHOLProgExact_call_holShape] at heval ⊢
       rw [evalCrepSemHOLExps_addClock] at ⊢
       have hargsconv : List.mapM (evalCrepSemHOLExp s) argexps =
-          List.mapM (crepExactEvalExpClassical s) argexps := rfl
+          List.mapM (crepExactEvalExpClassical s) argexps := by
+        have heq := optMmapCongHOL argexps argexps
+          (crepExactEvalExpClassical s) (evalCrepSemHOLExp s) rfl
+          (fun expression _ => crepExactEvalExpClassical_eq s expression)
+        exact heq.symm
       rw [hargsconv] at heval ⊢
       cases hargs : List.mapM (crepExactEvalExpClassical s) argexps with
       | none =>
@@ -691,8 +692,7 @@ theorem evalCrepSemHOLProgExact_add_clock_eq {width : Nat} [NeZero width] {σ : 
                   some (prog, newlocals) :=
                 (lookupCodeHOLFinite_eq_some_iff s.code.lookup fname args args.length
                   prog newlocals).mpr hcode'
-              by_cases hbad : (crepCallFixed_domains.match_1
-                  (fun _ => Prop) caltyp (fun _ => False) (fun rts snd => ¬ rts.Nodup))
+              by_cases hbad : crepReturnInfoNodupError caltyp
               · rw [if_pos hbad] at heval ⊢
                 obtain ⟨rfl, rfl⟩ := Prod.mk.inj heval
                 rfl
@@ -712,7 +712,19 @@ theorem evalCrepSemHOLProgExact_add_clock_eq {width : Nat} [NeZero width] {σ : 
                         rw [hbody] at heval
                         exact hnt (Prod.mk.inj heval).1.symm
                       have ihb := ihnormal args (prog, newlocals) prog newlocals
-                        hargs hcodeFin rfl hbad hclk r t ck hbody hne_body
+                        hargs hcodeFin rfl (by
+                          intro hnotBad
+                          cases caltyp with
+                          | none => cases hnotBad
+                          | some info =>
+                              rcases info with ⟨rts, snd⟩
+                              have hnodup : rts.Nodup := by
+                                by_cases hnodup : rts.Nodup
+                                · exact hnodup
+                                · exact False.elim
+                                    (hbad (by simp [crepReturnInfoNodupError, hnodup]))
+                              exact hnotBad hnodup)
+                        hclk r t ck hbody hne_body
                       have hbodystate : ({ decClockCrepSemHOL (CrepAddClock s ck) with
                           locals := newlocals } : CrepSemHOLState width σ) =
                           CrepAddClock ({ decClockCrepSemHOL s with
@@ -784,7 +796,9 @@ theorem evalCrepSemHOLProgExact_add_clock_eq {width : Nat} [NeZero width] {σ : 
                                           (some (.exception eid)) t (.exception eid) eid
                                           (rts, some (eid', p)) rts (some (eid', p))
                                           (eid', p) eid' p
-                                          hargs hcodeFin rfl hbad hclk rfl hbody rfl rfl rfl rfl rfl rfl heq
+                                          hargs hcodeFin rfl
+                                          (by simpa [crepReturnInfoNodupError] using hbad)
+                                          hclk rfl hbody rfl rfl rfl rfl rfl rfl heq
                                         have hihx' := hihx res st ck heval hnt
                                         rw [CrepAddClock_setLocals]
                                         exact hihx'

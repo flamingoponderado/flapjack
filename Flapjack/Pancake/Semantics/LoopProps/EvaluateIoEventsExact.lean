@@ -57,7 +57,7 @@ theorem shMemStore_ioEvents (v : Nat) (a : BitVec width) (nb : Nat)
     (try exact List.prefix_refl _) <;> split <;> (try exact List.prefix_refl _) <;>
     exact callFFIHOL_return_ioEvents_prefix _ _ _ _ _ _ ‹_›
 
-theorem shMemOp_ioEvents (op : CrepMemOp) (v : Nat) (a : BitVec width)
+theorem shMemOp_ioEvents (op : WordMemOp) (v : Nat) (a : BitVec width)
     (s : LoopSemStateFiniteExact width F) :
     s.ffi.ioEvents <+: (shMemOp op v a s).2.ffi.ioEvents := by
   cases op <;> simp only [shMemOp] <;> first | exact shMemLoad_ioEvents .. | exact shMemStore_ioEvents ..
@@ -250,7 +250,7 @@ theorem add_clock_events_big (p : HolLoopProg width) (s : LoopSemStateFiniteExac
     s.ffi.ioEvents <+: (evaluate p { s with clock := s.clock + extra }).2.ffi.ioEvents :=
   evaluate_io_events_mono_snd p { s with clock := s.clock + extra }
 
-theorem shMemOp_not_timeout (op : CrepMemOp) (v : Nat) (a : BitVec width)
+theorem shMemOp_not_timeout (op : WordMemOp) (v : Nat) (a : BitVec width)
     (s : LoopSemStateFiniteExact width F) : (shMemOp op v a s).1 ≠ some .timeOut := by
   cases op <;> simp only [shMemOp, shMemLoad, shMemStore] <;>
     (repeat' split) <;> simp

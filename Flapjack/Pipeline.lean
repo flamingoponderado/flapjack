@@ -558,12 +558,195 @@ private def pipelineLoopFunctionsSourceExactAux {width : Nat} [NeZero width]
           (label + 1) programs hTail
 termination_by _ programs _ => programs.length
 
-/-- Source-pipeline route through exact `compile_def`/`ocompile_def` whenever
-all compiled-body names and sibling function keys lie in HOL `mlstring`'s byte
-range. The range check is executable and covers the whole list before any
-function is lowered. If a Lean `String` contains a code point outside that
-range, keep the existing generic implementation; no truncating conversion is
-used on that path. -/
+/-- Rebase a function label from the exact compiler's generated interval to the
+production pipeline's interval. This is Flapjack-only bridge infrastructure:
+HOL's compiler does not perform this cross-pipeline label-space translation. -/
+def rebaseHOLFunctionLabel (firstLabel functionCount label : Nat) : Nat :=
+  if firstLoopName ≤ label && label < firstLoopName + functionCount then
+    firstLabel + (label - firstLoopName)
+  else
+    label
+
+/-- Structurally rebase function/code labels in executable Loop syntax. Only
+direct call targets and `locValue` code sources in the generated function-label
+interval change; break/continue labels are local control-flow labels. This is
+an untagged Flapjack production bridge, not a HOL declaration. -/
+def rebaseHOLFunctionLabels (firstLabel functionCount : Nat) :
+    LoopProg α → LoopProg α
+  | .skip => .skip
+  | .assign name value => .assign name value
+  | .primitive destinations operator arguments =>
+      .primitive destinations operator arguments
+  | .arith operation => .arith operation
+  | .store address value => .store address value
+  | .setGlobal address value => .setGlobal address value
+  | .load32 address destination => .load32 address destination
+  | .loadByte address destination => .loadByte address destination
+  | .store32 address value => .store32 address value
+  | .storeByte address value => .storeByte address value
+  | .seq first second =>
+      .seq (rebaseHOLFunctionLabels firstLabel functionCount first)
+        (rebaseHOLFunctionLabels firstLabel functionCount second)
+  | .ite operator condition right thenBranch elseBranch live =>
+      .ite operator condition right
+        (rebaseHOLFunctionLabels firstLabel functionCount thenBranch)
+        (rebaseHOLFunctionLabels firstLabel functionCount elseBranch) live
+  | .loop liveIn body liveOut =>
+      .loop liveIn (rebaseHOLFunctionLabels firstLabel functionCount body) liveOut
+  | .break label => .break label
+  | .continue label => .continue label
+  | .raise exception => .raise exception
+  | .return values => .return values
+  | .shMem operator name address => .shMem operator name address
+  | .tick => .tick
+  | .mark body =>
+      .mark (rebaseHOLFunctionLabels firstLabel functionCount body)
+  | .fail => .fail
+  | .locValue destination source =>
+      .locValue destination (rebaseHOLFunctionLabel firstLabel functionCount source)
+  | .call returns target arguments handler =>
+      let rebasedHandler :=
+        match handler with
+        | none => none
+        | some (exception, first, second, live) =>
+            some (exception,
+              rebaseHOLFunctionLabels firstLabel functionCount first,
+              rebaseHOLFunctionLabels firstLabel functionCount second,
+              live)
+      .call returns (target.map (rebaseHOLFunctionLabel firstLabel functionCount)) arguments
+        rebasedHandler
+  | .ffi function configuration configurationLength array arrayLength live =>
+      .ffi function configuration configurationLength array arrayLength live
+termination_by program => sizeOf program
+decreasing_by
+  simp_wf
+  all_goals first
+    | decreasing_trivial
+    | (simp_all only [LoopProg.call.sizeOf_spec]; omega)
+
+/-- The exact-carrier structural counterpart used to state the projection
+commutation theorem. HOL has no declaration for cross-pipeline label rebasing;
+this is Flapjack-only infrastructure and makes no claim about code tables or
+runtime state references. -/
+def rebaseHOLFunctionLabelsExact {width : Nat} [NeZero width]
+    (firstLabel functionCount : Nat) : HolLoopProg width → HolLoopProg width
+  | .skip => .skip
+  | .assign name value => .assign name value
+  | .primitive destinations operator arguments => .primitive destinations operator arguments
+  | .arith operation => .arith operation
+  | .store address value => .store address value
+  | .setGlobal address value => .setGlobal address value
+  | .load32 address destination => .load32 address destination
+  | .loadByte address destination => .loadByte address destination
+  | .store32 address value => .store32 address value
+  | .storeByte address value => .storeByte address value
+  | .seq first second =>
+      .seq (rebaseHOLFunctionLabelsExact firstLabel functionCount first)
+        (rebaseHOLFunctionLabelsExact firstLabel functionCount second)
+  | .ite operator condition right thenBranch elseBranch live =>
+      .ite operator condition right
+        (rebaseHOLFunctionLabelsExact firstLabel functionCount thenBranch)
+        (rebaseHOLFunctionLabelsExact firstLabel functionCount elseBranch) live
+  | .loop liveIn body liveOut =>
+      .loop liveIn (rebaseHOLFunctionLabelsExact firstLabel functionCount body) liveOut
+  | .break label => .break label
+  | .continue label => .continue label
+  | .raise exception => .raise exception
+  | .return values => .return values
+  | .shMem operator name address => .shMem operator name address
+  | .tick => .tick
+  | .mark body => .mark (rebaseHOLFunctionLabelsExact firstLabel functionCount body)
+  | .fail => .fail
+  | .locValue destination source =>
+      .locValue destination (rebaseHOLFunctionLabel firstLabel functionCount source)
+  | .call returns target arguments handler =>
+      let rebasedHandler :=
+        match handler with
+        | none => none
+        | some (exception, first, second, live) =>
+            some (exception,
+              rebaseHOLFunctionLabelsExact firstLabel functionCount first,
+              rebaseHOLFunctionLabelsExact firstLabel functionCount second,
+              live)
+      .call returns (target.map (rebaseHOLFunctionLabel firstLabel functionCount)) arguments
+        rebasedHandler
+  | .ffi function configuration configurationLength array arrayLength live =>
+      .ffi function configuration configurationLength array arrayLength live
+termination_by program => sizeOf program
+decreasing_by
+  simp_wf
+  all_goals first
+    | decreasing_trivial
+    | (simp_all only [HolLoopProg.call.sizeOf_spec]; omega)
+
+/-- The rebase is structural on the exact HOL syntax and its executable
+projection. It changes only `locValue` code sources and direct call targets in
+the generated function-label interval; local/register numbers, expressions,
+call-handler variable IDs, break/continue labels, live sets, and FFI names are
+preserved. This establishes only a syntax-level relation. The whole-program
+bridge must separately relate code-table keys and runtime `WordLoc` values
+before claiming execution equivalence. -/
+theorem rebaseHOLFunctionLabels_projection {width : Nat} [NeZero width]
+    (firstLabel functionCount : Nat) (program : HolLoopProg width) :
+    rebaseHOLFunctionLabels firstLabel functionCount
+        (holLoopProgToExecutableCanonical program) =
+      holLoopProgToExecutableCanonical
+        (rebaseHOLFunctionLabelsExact firstLabel functionCount program) := by
+  let mProg : HolLoopProg width → Prop := fun p =>
+    rebaseHOLFunctionLabels firstLabel functionCount
+        (holLoopProgToExecutableCanonical p) =
+      holLoopProgToExecutableCanonical
+        (rebaseHOLFunctionLabelsExact firstLabel functionCount p)
+  let mPair : HolLoopProg width × NumSet → Prop := fun p => mProg p.1
+  let mTriple : HolLoopProg width × HolLoopProg width × NumSet → Prop :=
+    fun p => mProg p.1 ∧ mProg p.2.1
+  let mQuad : Nat × HolLoopProg width × HolLoopProg width × NumSet → Prop :=
+    fun p => mTriple p.2
+  let mHandler : Option (Nat × HolLoopProg width × HolLoopProg width × NumSet) → Prop
+    | none => True
+    | some entry => mQuad entry
+  change mProg program
+  refine HolLoopProg.rec
+      (motive_1 := mProg) (motive_2 := mHandler) (motive_3 := mQuad)
+      (motive_4 := mTriple) (motive_5 := mPair)
+      ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_
+      ?_ ?_ ?_ ?_ ?_ ?_ ?_ program <;>
+    simp_all [mProg, mPair, mTriple, mQuad, mHandler,
+      rebaseHOLFunctionLabels, rebaseHOLFunctionLabelsExact,
+      holLoopProgToExecutableCanonical, holLoopProgToExecutable]
+  case refine_23 =>
+    intro returns target arguments handler hHandler
+    cases handler with
+    | none =>
+        simp [rebaseHOLFunctionLabels, rebaseHOLFunctionLabelsExact,
+          holLoopProgToExecutable]
+    | some value =>
+        rcases value with ⟨exception, first, second, live⟩
+        rcases hHandler with ⟨hFirst, hSecond⟩
+        simp [rebaseHOLFunctionLabels, rebaseHOLFunctionLabelsExact,
+          holLoopProgToExecutable, hFirst, hSecond]
+
+/-- Flapjack production adapter around exact whole-program `compile_prog_def`:
+it converts byte-ranged production names to `MlString`, projects exact
+`HolLoopProg`, and rebases function labels to this caller's label base. This is
+not itself a HOL declaration or a claim that code-table/runtime-state
+relations follow from syntax projection. -/
+def pipelineLoopFunctionsSourceCompileProgExact {width : Nat} [NeZero width]
+    (firstLabel : Nat) (functions : List (CompiledFunction (BitVec width)))
+    (_hFunctionNames : ∀ function ∈ functions, CrepNameRanged function.name)
+    (_hProgramNames : ∀ function ∈ functions, CrepProgNameRanged function.body) :
+    List (Nat × List Nat × LoopProg (BitVec width)) :=
+  let holPrograms := functions.map fun function =>
+    (Flapjack.Basis.Pure.MlString.ofString function.name, function.params,
+      crepProgToHOL function.body)
+  (compileProgHOLExact .riscv holPrograms).map fun (label, parameters, body) =>
+      (rebaseHOLFunctionLabel firstLabel functions.length label, parameters,
+      rebaseHOLFunctionLabels firstLabel functions.length
+        (holLoopProgToExecutableCanonical body))
+
+/-- Per-function source-pipeline route through exact `compile_def`/`ocompile_def`
+whenever all compiled-body names and sibling function keys lie in HOL
+`mlstring`'s byte range. -/
 def pipelineLoopFunctionsSourceRouted {width : Nat} [NeZero width]
     (architecture : RiscV.Architecture) (firstLabel : Nat)
     (functions : List (CompiledFunction (BitVec width))) :
@@ -595,6 +778,294 @@ def pipelineLoopFunctionsSourceRouted {width : Nat} [NeZero width]
       firstLabel functions hBodies
   else
     pipelineLoopFunctionsSourceAux architecture functionInfos firstLabel functions
+
+/-! Parser-backed RISC-V compiler entrypoints route through exact whole-program
+`compile_prog_def`. The checked byte-range guard prevents lossy conversion of
+production String names to HOL `mlstring`; the exact HOL label range is then
+rebased consistently to the selected source-pipeline label base. -/
+def pipelineLoopFunctionsSourceCompileProgRouted {width : Nat} [NeZero width]
+    (architecture : RiscV.Architecture) (firstLabel : Nat)
+    (functions : List (CompiledFunction (BitVec width))) :
+    List (Nat × List Nat × LoopProg (BitVec width)) :=
+  let functionInfos := pipelineFunctionInfos firstLabel functions
+  let byteRanged := functions.all (fun function =>
+    CrepNameRangedBool function.name && CrepProgNameRangedBool function.body)
+  if hRanged : byteRanged = true then
+    have hEach : ∀ function ∈ functions,
+        CrepNameRangedBool function.name && CrepProgNameRangedBool function.body := by
+      change functions.all (fun function =>
+        CrepNameRangedBool function.name && CrepProgNameRangedBool function.body) = true
+        at hRanged
+      simpa only [List.all_eq_true] using hRanged
+    have hNames : ∀ function ∈ functions, CrepNameRanged function.name := by
+      intro function hfunction
+      have h := hEach function hfunction
+      have ⟨hname, _⟩ : CrepNameRangedBool function.name = true ∧
+          CrepProgNameRangedBool function.body = true := by simpa using h
+      exact crepNameRangedBool_eq_true_iff function.name |>.mp hname
+    have hBodies : ∀ function ∈ functions, CrepProgNameRanged function.body := by
+      intro function hfunction
+      have h := hEach function hfunction
+      have ⟨_, hbody⟩ : CrepNameRangedBool function.name = true ∧
+          CrepProgNameRangedBool function.body = true := by simpa using h
+      exact (crepProgNameRangedBool_eq_true_iff function.body).mp hbody
+    pipelineLoopFunctionsSourceCompileProgExact firstLabel functions hNames hBodies
+  else
+    pipelineLoopFunctionsSourceAux architecture functionInfos firstLabel functions
+
+/-- On the checked name-ranged fragment, the parser-backed production wrapper
+returns exactly the label-rebased executable projection of the exact whole
+`compile_prog_def` result. The premise is the runtime guard's logical form and
+discharges each production String-to-HOL MlString conversion. This theorem is
+about the compiler output only; relating any incoming state containing
+`WordLoc` values to the rebased code table remains a separate obligation. -/
+theorem pipelineLoopFunctionsSourceCompileProgRouted_exact
+    {width : Nat} [NeZero width] (architecture : RiscV.Architecture)
+    (firstLabel : Nat) (functions : List (CompiledFunction (BitVec width)))
+    (hFunctionNames : ∀ function ∈ functions, CrepNameRanged function.name)
+    (hProgramNames : ∀ function ∈ functions, CrepProgNameRanged function.body) :
+    pipelineLoopFunctionsSourceCompileProgRouted architecture firstLabel functions =
+      (compileProgHOLExact .riscv (functions.map fun function =>
+        (Flapjack.Basis.Pure.MlString.ofString function.name, function.params,
+          crepProgToHOL function.body))).map fun (label, parameters, body) =>
+        (rebaseHOLFunctionLabel firstLabel functions.length label, parameters,
+          rebaseHOLFunctionLabels firstLabel functions.length
+            (holLoopProgToExecutableCanonical body)) := by
+  have hByteRanged : functions.all (fun function =>
+      CrepNameRangedBool function.name && CrepProgNameRangedBool function.body) = true := by
+    apply List.all_eq_true.mpr
+    intro function hFunction
+    have hName := (crepNameRangedBool_eq_true_iff function.name).mpr
+      (hFunctionNames function hFunction)
+    have hBody := (crepProgNameRangedBool_eq_true_iff function.body).mpr
+      (hProgramNames function hFunction)
+    simp [hName, hBody]
+  simp [pipelineLoopFunctionsSourceCompileProgRouted, hByteRanged,
+    pipelineLoopFunctionsSourceCompileProgExact]
+
+/-- Each indexed row from the source-routed exact whole-program compiler is
+stored at the caller's corresponding production function label. This is the
+per-row key component of the code-table bridge, not a state/evaluation theorem.
+HOL `compile_prog_def` fixes its label base at `first_name`; translating those
+rows to this caller-selected base is Flapjack-only infrastructure, so this
+theorem has no separate HOL original. -/
+theorem pipelineLoopFunctionsSourceCompileProgRouted_rowLabel
+    {width : Nat} [NeZero width] (architecture : RiscV.Architecture)
+    (firstLabel : Nat) (functions : List (CompiledFunction (BitVec width)))
+    (hFunctionNames : ∀ function ∈ functions, CrepNameRanged function.name)
+    (hProgramNames : ∀ function ∈ functions, CrepProgNameRanged function.body)
+    (index : Nat) (hindex : index < functions.length) :
+    ((pipelineLoopFunctionsSourceCompileProgRouted architecture firstLabel functions)[index]?).map
+        Prod.fst = some (firstLabel + index) := by
+  rw [pipelineLoopFunctionsSourceCompileProgRouted_exact architecture firstLabel functions
+    hFunctionNames hProgramNames]
+  have hreb : rebaseHOLFunctionLabel firstLabel functions.length
+      (firstLoopName + index) = firstLabel + index := by
+    simp [rebaseHOLFunctionLabel, firstLoopName]
+    omega
+  have hreb' : rebaseHOLFunctionLabel firstLabel functions.length
+      (index + 64) = firstLabel + index := by
+    rw [show index + 64 = firstLoopName + index by simp [firstLoopName, Nat.add_comm]]
+    exact hreb
+  simp [compileProgHOLExact, firstLoopName, hreb', hindex]
+
+/-- Every body emitted by the parser-backed source route is related to the
+corresponding exact `compile_prog_def` body after the same structural label
+rebase. This carries the syntax-level relation through the complete routed
+list, including direct-call target rebasing inside bodies. It does not relate
+the caller's name-indexed context or target code table, nor runtime states;
+those remain separate obligations. This bridge has no separate HOL original. -/
+theorem pipelineLoopFunctionsSourceCompileProgRouted_body_rel
+    {width : Nat} [NeZero width] (architecture : RiscV.Architecture)
+    (firstLabel : Nat) (functions : List (CompiledFunction (BitVec width)))
+    (hFunctionNames : ∀ function ∈ functions, CrepNameRanged function.name)
+    (hProgramNames : ∀ function ∈ functions, CrepProgNameRanged function.body) :
+    ∀ entry ∈ pipelineLoopFunctionsSourceCompileProgRouted architecture firstLabel functions,
+      ∃ faithfulBody : HolLoopProg width,
+        loopProgExecRel entry.2.2 faithfulBody := by
+  intro entry hentry
+  rw [pipelineLoopFunctionsSourceCompileProgRouted_exact architecture firstLabel functions
+    hFunctionNames hProgramNames] at hentry
+  simp only [List.mem_map] at hentry
+  rcases hentry with ⟨exactEntry, hexactEntry, hentry⟩
+  cases hentry
+  refine ⟨rebaseHOLFunctionLabelsExact firstLabel functions.length exactEntry.2.2, ?_⟩
+  rw [rebaseHOLFunctionLabels_projection]
+  exact holLoopProgToExecutableCanonical_rel _
+
+/-- Indexing the parser-backed source route commutes with its exact
+`compile_prog_def` list mapping: each present row has the same rebased label
+and parameters, and its body is the structural executable projection of that
+exact row's rebased HOL body. This explicitly preserves the association
+between source-list position and emitted code-row contents; it still does not
+state a name-map or runtime-state relation. HOL `compile_prog_def` fixes the
+`first_name` label base and has no parser-backed caller-label adapter, so this
+wrapper theorem has no separate HOL original. -/
+theorem pipelineLoopFunctionsSourceCompileProgRouted_indexedExact
+    {width : Nat} [NeZero width] (architecture : RiscV.Architecture)
+    (firstLabel : Nat) (functions : List (CompiledFunction (BitVec width)))
+    (hFunctionNames : ∀ function ∈ functions, CrepNameRanged function.name)
+    (hProgramNames : ∀ function ∈ functions, CrepProgNameRanged function.body)
+    (index : Nat) :
+    (pipelineLoopFunctionsSourceCompileProgRouted architecture firstLabel functions)[index]? =
+      ((compileProgHOLExact .riscv (functions.map fun function =>
+        (Flapjack.Basis.Pure.MlString.ofString function.name, function.params,
+          crepProgToHOL function.body)))[index]?).map
+        (fun (label, parameters, body) =>
+          (rebaseHOLFunctionLabel firstLabel functions.length label, parameters,
+            rebaseHOLFunctionLabels firstLabel functions.length
+              (holLoopProgToExecutableCanonical body))) := by
+  rw [pipelineLoopFunctionsSourceCompileProgRouted_exact architecture firstLabel functions
+    hFunctionNames hProgramNames]
+  simp
+
+/-- A successful lookup in the production name-indexed function context points
+to the routed output row at the same source-list position. Its label is both
+the production `firstLabel + index` assignment and the key of that output row.
+Together with `indexedExact`, the row's body is paired position-for-position
+with the rebased exact `compile_prog_def` body. This only bridges context keys
+to the compiler's emitted list; no Spt/code-state or evaluator relation is
+asserted here. HOL `compile_prog_def` has no declaration relating its fixed
+`mlstring`/`first_name` inputs to this parser-backed String/InfoMap caller, so
+this Flapjack bridge theorem has no separate HOL original. -/
+theorem pipelineLoopFunctionsSourceCompileProgRouted_lookupRowKey
+    {width : Nat} [NeZero width] (architecture : RiscV.Architecture)
+    (firstLabel : Nat) (functions : List (CompiledFunction (BitVec width)))
+    (hFunctionNames : ∀ function ∈ functions, CrepNameRanged function.name)
+    (hProgramNames : ∀ function ∈ functions, CrepProgNameRanged function.body)
+    {name : FunName} {label arity : Nat}
+    (hlookup : lookupInfo name (pipelineFunctionInfos firstLabel functions) =
+      some (label, arity)) :
+    ∃ index, index < functions.length ∧
+      (functions[index]?).map (fun function => function.name) = some name ∧
+      label = firstLabel + index ∧
+      ((pipelineLoopFunctionsSourceCompileProgRouted architecture firstLabel functions)[index]?).map
+        Prod.fst = some label := by
+  change lookupInfo name (crepMakeFuncsAt firstLabel functions) =
+    some (label, arity) at hlookup
+  obtain ⟨index, hlabel, hname, hindex⟩ :=
+    crepMakeFuncsAt_exists_index firstLabel functions hlookup
+  refine ⟨index, hindex, hname, hlabel, ?_⟩
+  rw [pipelineLoopFunctionsSourceCompileProgRouted_rowLabel architecture firstLabel
+    functions hFunctionNames hProgramNames index hindex]
+  exact congrArg some hlabel.symm
+
+/-- A production context lookup selects the same indexed output row as exact
+`compile_prog_def`, after projecting that exact row through caller-label/body
+rebasing. The emitted list row is the production compiler's table entry at
+this boundary. The result does not introduce a synthetic Spt runtime carrier
+or claim equality with an evaluator's `code` field; the latter is a separate
+HOL state-relation obligation. This Flapjack-only bridge has no HOL original
+because HOL `compile_prog_def` has no caller `InfoMap`/label-rebase wrapper. -/
+theorem pipelineLoopFunctionsSourceCompileProgRouted_lookupExactRow
+    {width : Nat} [NeZero width] (architecture : RiscV.Architecture)
+    (firstLabel : Nat) (functions : List (CompiledFunction (BitVec width)))
+    (hFunctionNames : ∀ function ∈ functions, CrepNameRanged function.name)
+    (hProgramNames : ∀ function ∈ functions, CrepProgNameRanged function.body)
+    {name : FunName} {label arity : Nat}
+    (hlookup : lookupInfo name (pipelineFunctionInfos firstLabel functions) =
+      some (label, arity)) :
+    ∃ index, index < functions.length ∧
+      (functions[index]?).map (fun function => function.name) = some name ∧
+      label = firstLabel + index ∧
+      (pipelineLoopFunctionsSourceCompileProgRouted architecture firstLabel
+        functions)[index]? =
+        ((compileProgHOLExact .riscv (functions.map fun function =>
+          (Flapjack.Basis.Pure.MlString.ofString function.name, function.params,
+            crepProgToHOL function.body)))[index]?).map
+          (fun (exactLabel, parameters, body) =>
+            (rebaseHOLFunctionLabel firstLabel functions.length exactLabel,
+              parameters, rebaseHOLFunctionLabels firstLabel functions.length
+                (holLoopProgToExecutableCanonical body))) := by
+  obtain ⟨index, hindex, hname, hlabel, _hrouteLabel⟩ :=
+    pipelineLoopFunctionsSourceCompileProgRouted_lookupRowKey architecture firstLabel
+      functions hFunctionNames hProgramNames hlookup
+  refine ⟨index, hindex, hname, hlabel, ?_⟩
+  exact pipelineLoopFunctionsSourceCompileProgRouted_indexedExact architecture
+    firstLabel functions hFunctionNames hProgramNames index
+
+/-! ### Exact-carrier bridge for the source-routed Loop output
+
+The compiler's source route uses `crepCompFuncThroughHOLExact` when all
+function and body names are byte-ranged. This bridge records the resulting
+executable `LoopProg` bodies against the exact `HolLoopProg` carrier. The
+generic fallback is deliberately excluded: arbitrary Lean `String` names do
+not embed into HOL `mlstring` without the byte-range premise. -/
+
+private theorem pipelineLoopFunctionsSourceExactAux_body_rel
+    {width : Nat} [NeZero width] (architecture : RiscV.Architecture)
+    (functionInfos : InfoMap (Nat × Nat))
+    (hFunctionNames : ∀ entry ∈ functionInfos, CrepNameRanged entry.1) :
+    ∀ (firstLabel : Nat) (programs : List (CompiledFunction (BitVec width)))
+      (hBodies : ∀ function ∈ programs, CrepProgNameRanged function.body)
+      (entry : Nat × List Nat × LoopProg (BitVec width))
+      (_hentry : entry ∈ pipelineLoopFunctionsSourceExactAux architecture functionInfos
+        hFunctionNames firstLabel programs hBodies),
+      ∃ faithfulBody : HolLoopProg width,
+        loopProgExecRel entry.2.2 faithfulBody := by
+  intro firstLabel programs
+  induction programs generalizing firstLabel with
+  | nil =>
+      intro hBodies entry hentry
+      simp [pipelineLoopFunctionsSourceExactAux] at hentry
+  | cons function programs ih =>
+      intro hBodies entry hentry
+      simp only [pipelineLoopFunctionsSourceExactAux, List.mem_cons] at hentry
+      rcases hentry with hhead | htail
+      · rw [hhead]
+        let context : LoopContext (BitVec width) :=
+          crepMkCtxt architecture (crepMakeVmap function.params) functionInfos
+            (function.params.length - 1)
+        let exactContext := productionLoopContextToExact context
+        let faithfulBody := optimiseHOL (compFuncHOLExact exactContext.target
+          exactContext.funcs function.params (crepProgToHOL function.body))
+        refine ⟨faithfulBody, ?_⟩
+        simpa [pipelineLoopFunctionsSourceExactAux,
+          crepCompFuncThroughHOLExact, context, exactContext, faithfulBody] using
+          crepCompFuncThroughHOLExact_rel architecture functionInfos
+            function.params function.body (hBodies function (by simp))
+            hFunctionNames
+      · exact ih (firstLabel + 1)
+          (fun next hnext => hBodies next (by simp [hnext])) entry
+          (by simpa only [pipelineLoopFunctionsSourceExactAux] using htail)
+
+/-- Every function body emitted by the actual source-routed pipeline under its
+byte-range guard is related to a body in the exact `HolLoopProg` carrier. The
+program projection is the reviewed `loopProgExecRel` bridge. The exact state
+relation is `LoopSemStateFiniteExact.prodRel` and is used when relating
+evaluation states; this theorem itself does not claim evaluator result
+correspondence or an executed CLI evaluation path. -/
+theorem pipelineLoopFunctionsSourceRouted_body_rel {width : Nat} [NeZero width]
+    (architecture : RiscV.Architecture) (firstLabel : Nat)
+    (functions : List (CompiledFunction (BitVec width)))
+    (hRanged : functions.all (fun function =>
+      CrepNameRangedBool function.name && CrepProgNameRangedBool function.body) = true) :
+    ∀ entry ∈ pipelineLoopFunctionsSourceRouted architecture firstLabel functions,
+      ∃ faithfulBody : HolLoopProg width,
+        loopProgExecRel entry.2.2 faithfulBody := by
+  have hEach : ∀ function ∈ functions,
+      CrepNameRangedBool function.name && CrepProgNameRangedBool function.body := by
+    simpa only [List.all_eq_true] using hRanged
+  have hNames : ∀ function ∈ functions, CrepNameRanged function.name := by
+    intro function hfunction
+    have ⟨hname, _⟩ : CrepNameRangedBool function.name = true ∧
+        CrepProgNameRangedBool function.body = true := by
+      simpa using hEach function hfunction
+    exact crepNameRangedBool_eq_true_iff function.name |>.mp hname
+  have hBodies : ∀ function ∈ functions, CrepProgNameRanged function.body := by
+    intro function hfunction
+    have ⟨_, hbody⟩ : CrepNameRangedBool function.name = true ∧
+        CrepProgNameRangedBool function.body = true := by
+      simpa using hEach function hfunction
+    exact (crepProgNameRangedBool_eq_true_iff function.body).mp hbody
+  have hFunctionNames : ∀ entry ∈ pipelineFunctionInfos firstLabel functions,
+      CrepNameRanged entry.1 :=
+    pipelineFunctionInfos_byteRanged firstLabel functions hNames
+  unfold pipelineLoopFunctionsSourceRouted
+  simp only [dif_pos hRanged]
+  exact pipelineLoopFunctionsSourceExactAux_body_rel architecture
+    (pipelineFunctionInfos firstLabel functions) hFunctionNames firstLabel
+    functions hBodies
 
 /-! Source-facing port of `loop_to_word$compile_prog`.  CakeML rebuilds a
     dense even-register context from
@@ -705,8 +1176,11 @@ def panCompileTap [CakeDisplayWord α]
     direct output of Cake's tagged `compile_top`. Parser-backed production
     entrypoints provide the byte-range proof composed through the earlier
     passes, selecting `compileProgTopHOLWithMetadataOfExact` at the
-    declaration-to-Crep boundary. The optional proof preserves this helper's
-    source compatibility for callers that do not carry the codec invariant. -/
+    declaration-to-Crep boundary. That branch executes exact compiler and
+    inliner carriers, then decodes for the existing production metadata
+    representation; equality with the generic compatibility route is not
+    claimed. The optional proof preserves this helper's source compatibility
+    for callers that do not carry the codec invariant. -/
 def compileFlapjackEntryCake {width : Nat} [NeZero width]
     [BEq (BitVec width)] [OfNat (BitVec width) 0]
     [OfNat (BitVec width) 1] [Add (BitVec width)] [Mul (BitVec width)]
@@ -745,26 +1219,6 @@ def compileFlapjackEntryCake {width : Nat} [NeZero width]
       let loop := pipelineLoopFunctionsSourceRouted architecture 1 crepe
       let word := pipelineWordFunctionsSource loop
       some (FlapjackPipelineResult.mk simplified structured globals crepe loop word)
-
-/-- The parser-proved exact-carrier route returns the same entire pipeline
-    result as the compatibility route. This composes the two reviewed pass
-    equalities at the entrypoint, so the optional proof changes which tagged
-    definitions execute, not the compiler output. -/
-theorem compileFlapjackEntryCake_ofExact_eq {width : Nat} [NeZero width]
-    [BEq (BitVec width)] [OfNat (BitVec width) 0]
-    [OfNat (BitVec width) 1] [Add (BitVec width)] [Mul (BitVec width)]
-    [AndOp (BitVec width)] [ShiftRight (BitVec width)]
-    [PanShiftWidth (BitVec width)]
-    (architecture : RiscV.Architecture) (bytesInWord : BitVec width)
-    (fromNat : Nat → BitVec width) (start : FunName)
-    (declarations : List (Decl (BitVec width)))
-    (h : ∀ declaration ∈ declarations, DeclByteRanged declaration) :
-    compileFlapjackEntryCake architecture bytesInWord fromNat start declarations
-        (some (.isTrue h)) =
-      compileFlapjackEntryCake architecture bytesInWord fromNat start declarations none := by
-  unfold compileFlapjackEntryCake
-  simp only [globalCompileTopCakeOfExact_eq,
-    compileProgTopHOLWithMetadataOfExact_eq]
 
 /-! Executable mirror of the missing-`main` branch of `pan_to_target_all`
     (`cakeml/pancake/pan_passesScript.sml:20-37`): when the program has no

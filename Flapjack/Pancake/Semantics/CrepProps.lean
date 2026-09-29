@@ -443,7 +443,7 @@ theorem mem_crepAssignedFreeVars_while {α : Type u} (condition : CrepExp α)
       x ∈ crepAssignedFreeVars body := by
   simp [crepAssignedFreeVars]
 
-theorem mem_crepAssignedFreeVars_shMem {α : Type u} (operator : CrepMemOp)
+theorem mem_crepAssignedFreeVars_shMem {α : Type u} (operator : WordMemOp)
     (name : Nat) (address : CrepExp α) (x : Nat) :
     x ∈ crepAssignedFreeVars (.shMem operator name address) ↔ x = name := by
   simp [crepAssignedFreeVars]
@@ -1148,7 +1148,7 @@ field, so replacing it is invisible. Quantifier order follows HOL's `t, e, ck`. 
   (fmap_as_finite_support := [locals, globals, code])
   (words_as_type_indexed_bitvec)]
 theorem evalCrepSemHOLExp_upd_clock_eq {width : Nat} [NeZero width] {σ : Type}
-    (state : CrepSemHOLState width σ) [DecidablePred state.memaddrs]
+    (state : CrepSemHOLState width σ)
     (expression : CrepExpHOL width) (clock : Nat) :
     evalCrepSemHOLExp { state with clock := clock } expression =
       evalCrepSemHOLExp state expression := by
@@ -1159,18 +1159,18 @@ theorem evalCrepSemHOLExp_upd_clock_eq {width : Nat} [NeZero width] {σ : Type}
     (motive_2 := fun expressions =>
       expressions.mapM (evalCrepSemHOLExp { state with clock := clock }) =
         expressions.mapM (evalCrepSemHOLExp state))
-    (fun value => by simp only [evalCrepSemHOLExp])
-    (fun name => by simp only [evalCrepSemHOLExp])
-    (fun address ih => by simp only [evalCrepSemHOLExp, ih])
-    (fun address ih => by simp only [evalCrepSemHOLExp, ih])
-    (fun address ih => by simp only [evalCrepSemHOLExp, ih])
-    (fun address => by simp only [evalCrepSemHOLExp])
-    (fun operator args ih => by simp only [evalCrepSemHOLExp, ih])
-    (fun operator args ih => by simp only [evalCrepSemHOLExp, ih])
-    (fun operator left right ihl ihr => by simp only [evalCrepSemHOLExp, ihl, ihr])
-    (fun operator left right ihl ihr => by simp only [evalCrepSemHOLExp, ihl, ihr])
-    (by simp only [evalCrepSemHOLExp])
-    (by simp only [evalCrepSemHOLExp])
+    (fun value => by simp [evalCrepSemHOLExp])
+    (fun name => by simp [evalCrepSemHOLExp])
+    (fun address ih => by simp [evalCrepSemHOLExp, ih])
+    (fun address ih => by simp [evalCrepSemHOLExp, ih])
+    (fun address ih => by simp [evalCrepSemHOLExp, ih])
+    (fun address => by simp [evalCrepSemHOLExp])
+    (fun operator args ih => by simp [evalCrepSemHOLExp, ih])
+    (fun operator args ih => by simp [evalCrepSemHOLExp, ih])
+    (fun operator left right ihl ihr => by simp [evalCrepSemHOLExp, ihl, ihr])
+    (fun operator left right ihl ihr => by simp [evalCrepSemHOLExp, ihl, ihr])
+    (by simp [evalCrepSemHOLExp])
+    (by simp [evalCrepSemHOLExp])
     (by simp only [List.mapM_nil])
     (fun head tail ihh iht => by simp only [List.mapM_cons, ihh, iht])
     expression
@@ -1180,16 +1180,13 @@ An update of a local absent from `var_cexp` does not change the `eval_def`
 result. This stronger equality statement is support for the successful-result
 HOL theorem below, and is not a separate HOL declaration. -/
 theorem evalCrepSemHOLExp_updateLocals_eq_of_not_vars {width : Nat} [NeZero width]
-    {σ : Type} (state : CrepSemHOLState width σ) [DecidablePred state.memaddrs]
+    {σ : Type} (state : CrepSemHOLState width σ)
     (expression : CrepExpHOL width) (name : Nat) (word : HolWordLab width)
     (hfresh : name ∉ crepExpVarsHOL expression) :
     evalCrepSemHOLExp { state with locals := state.locals.updateEq (name, word) }
         expression = evalCrepSemHOLExp state expression := by
   let updated : CrepSemHOLState width σ :=
     { state with locals := state.locals.updateEq (name, word) }
-  letI : DecidablePred updated.memaddrs := fun address => by
-    change Decidable (state.memaddrs address)
-    exact inferInstance
   change evalCrepSemHOLExp updated expression = evalCrepSemHOLExp state expression
   refine CrepExpHOL.rec
     (motive_1 := fun expression =>
@@ -1208,16 +1205,13 @@ theorem evalCrepSemHOLExp_updateLocals_eq_of_not_vars {width : Nat} [NeZero widt
       simp [evalCrepSemHOLExp, updated, HolFiniteMapExact.updateEq, FUPDATE_HOL, hne])
     (fun address ih hfresh => by
       have hsub : name ∉ crepExpVarsHOL address := by simpa [crepExpVarsHOL] using hfresh
-      simp only [evalCrepSemHOLExp, ih hsub]
-      simp [updated])
+      simp [evalCrepSemHOLExp, ih hsub, updated])
     (fun address ih hfresh => by
       have hsub : name ∉ crepExpVarsHOL address := by simpa [crepExpVarsHOL] using hfresh
-      simp only [evalCrepSemHOLExp, ih hsub]
-      simp [updated])
+      simp [evalCrepSemHOLExp, ih hsub, updated])
     (fun address ih hfresh => by
       have hsub : name ∉ crepExpVarsHOL address := by simpa [crepExpVarsHOL] using hfresh
-      simp only [evalCrepSemHOLExp, ih hsub]
-      simp [updated])
+      simp [evalCrepSemHOLExp, ih hsub, updated])
     (fun _ _ => by simp [evalCrepSemHOLExp, updated])
     (fun _ args ih hfresh => by
       have hargs : ∀ expression, expression ∈ args → name ∉ crepExpVarsHOL expression := by
@@ -1259,11 +1253,11 @@ helper above. A list of HOL-equality local updates whose keys are all absent
 from an expression leaves its exact evaluator result unchanged. There is no
 separate HOL declaration for this list helper; it supports the induction in
 `eval_nested_assign_distinct_eq`. -/
-def evalCrepSemHOLExpWithMemDec {width : Nat} [NeZero width] {σ : Type}
+noncomputable def evalCrepSemHOLExpWithMemDec {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ)
     (memDec : (address : BitVec width) → Decidable (state.memaddrs address))
     (expression : CrepExpHOL width) : Option (HolWordLab width) := by
-  letI : DecidablePred state.memaddrs := memDec
+  let _ := memDec
   exact evalCrepSemHOLExp state expression
 
 theorem evalCrepSemHOLExpWithMemDec_updateLocals_eq_of_not_vars
@@ -1277,7 +1271,6 @@ theorem evalCrepSemHOLExpWithMemDec_updateLocals_eq_of_not_vars
   change evalCrepSemHOLExp
       { state with locals := state.locals.updateEq (name, word) } expression =
     evalCrepSemHOLExp state expression
-  letI : DecidablePred state.memaddrs := memDec
   exact evalCrepSemHOLExp_updateLocals_eq_of_not_vars
     state expression name word hfresh
 
@@ -1322,7 +1315,7 @@ local preserves the result. The finite-map qualifier records the exact
   (fmap_as_finite_support := [locals, globals, code])
   (words_as_type_indexed_bitvec)]
 theorem updateLocalsNotVarsEvalEqCrepHOL {width : Nat} [NeZero width] {σ : Type}
-    (state : CrepSemHOLState width σ) [DecidablePred state.memaddrs]
+    (state : CrepSemHOLState width σ)
     (expression : CrepExpHOL width) (value : HolWordLab width)
     (name : Nat) (word : HolWordLab width)
     (hfresh : name ∉ crepExpVarsHOL expression)
@@ -1395,7 +1388,7 @@ carries the word-dimension qualifier, and it consumes the full
   (fmap_as_finite_support := [locals, globals, code])
   (words_as_type_indexed_bitvec)]
 theorem evalCrepSemHOLExps_upd_clock_eq {width : Nat} [NeZero width] {σ : Type}
-    (state : CrepSemHOLState width σ) [DecidablePred state.memaddrs]
+    (state : CrepSemHOLState width σ)
     (expressions : List (CrepExpHOL width)) (clock : Nat) :
     expressions.mapM
         (fun e => evalCrepSemHOLExp { state with clock := clock + state.clock } e) =
@@ -1621,6 +1614,7 @@ private theorem crepUnassignedFreeVarsEvaluateSameInduct {width : Nat} [NeZero w
   intro x
   obtain ⟨p, s⟩ := x
   apply evalCrepSemHOLProgExact_induct (P := crepUnassignedFreeVarsMotive)
+  all_goals try simp only [crepExactEvalExpClassical_eq] at *
   · -- skip
     intro s res t n k h _ _
     rw [evalCrepSemHOLProgExact_skip] at h
@@ -1629,8 +1623,7 @@ private theorem crepUnassignedFreeVarsEvaluateSameInduct {width : Nat} [NeZero w
     intro v e prog s ih res t n k h hres hn
     classical
     rw [evalCrepSemHOLProgExact_dec_holShape] at h
-    cases he : @evalCrepSemHOLExp width _ σ s
-        (fun address => Classical.propDecidable (s.memaddrs address)) e with
+    cases he : evalCrepSemHOLExp s e with
     | none =>
         rw [he] at h
         obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
@@ -1835,8 +1828,7 @@ private theorem crepUnassignedFreeVarsEvaluateSameInduct {width : Nat} [NeZero w
     intro caltyp f argexps s ihH ihB res t n k h hres hn
     classical
     rw [evalCrepSemHOLProgExact_call_holShape] at h
-    cases ha : argexps.mapM (@evalCrepSemHOLExp width _ σ s
-        (fun address => Classical.propDecidable (s.memaddrs address))) with
+    cases ha : argexps.mapM (evalCrepSemHOLExp s) with
     | none => rw [ha] at h; obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
     | some args =>
       rw [ha] at h
@@ -1899,9 +1891,14 @@ private theorem crepUnassignedFreeVarsEvaluateSameInduct {width : Nat} [NeZero w
                   simp only [crepAssignedFreeVarsHOL, List.mem_append, not_or] at hn
                   split at h
                   · rename_i he
+                    have ha' : argexps.mapM (crepExactEvalExpClassical s) = some args := by
+                      have heq := optMmapCongHOL argexps argexps
+                        (crepExactEvalExpClassical s) (evalCrepSemHOLExp s) rfl
+                        (fun expression _ => crepExactEvalExpClassical_eq s expression)
+                      exact heq.trans ha
                     have hih := ihH args (prog, nl) prog nl (some (.exception eid), st)
                       (some (.exception eid)) st (.exception eid) eid _ rts (some (eid', hp))
-                      (eid', hp) eid' hp ha hl' rfl hg hc hb.symm rfl rfl rfl rfl rfl rfl rfl he
+                      (eid', hp) eid' hp ha' hl' rfl hg hc hb.symm rfl rfl rfl rfl rfl rfl rfl he
                     exact hih res t n k h hres hn.2
                   · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h; simp at hres
   · -- extCall
@@ -2020,9 +2017,11 @@ theorem evaluateSeqStoreGlobalsResHOL {width : Nat} [NeZero width] {σ : Type} :
             simp [FUPDATE_HOL]
           rw [show crepExactEvalExp
               ({ t with locals := t.locals.updateListEq ((h :: vars).zip (v :: vs)) } :
-                CrepSemHOLState width σ) (fun a => Classical.propDecidable _)
+              CrepSemHOLState width σ) (fun a => Classical.propDecidable _)
               (CrepExpHOL.var h) = some v from by
-                unfold crepExactEvalExp; simp only [evalCrepSemHOLExp]; exact hlk]
+                rw [crepExactEvalExp_eq_eval]
+                simp only [evalCrepSemHOLExp]
+                exact hlk]
           dsimp only
           rw [if_pos rfl]
           let t'' : CrepSemHOLState width σ :=
@@ -2088,7 +2087,7 @@ private theorem crepExactEvalExp_var {width : Nat} [NeZero width] {σ : Type}
     (s : CrepSemHOLState width σ) (n : Nat) :
     crepExactEvalExp s (fun a => Classical.propDecidable (s.memaddrs a)) (.var n) =
       s.locals.lookup n := by
-  unfold crepExactEvalExp; simp only [evalCrepSemHOLExp]
+  simp only [crepExactEvalExp_eq_eval, evalCrepSemHOLExp]
 
 private theorem crepExactEvalExp_storeAddr {width : Nat} [NeZero width] {σ : Type}
     (s : CrepSemHOLState width σ) (ad : Nat) (addr a : BitVec width)
@@ -2096,7 +2095,7 @@ private theorem crepExactEvalExp_storeAddr {width : Nat} [NeZero width] {σ : Ty
     crepExactEvalExp s (fun x => Classical.propDecidable (s.memaddrs x))
         (if a == 0 then CrepExpHOL.var ad else .op .add [.var ad, .const a]) =
       some (.word (addr + a)) := by
-  unfold crepExactEvalExp
+  rw [crepExactEvalExp_eq_eval]
   by_cases ha : a = 0
   · subst ha
     simp [evalCrepSemHOLExp, had]

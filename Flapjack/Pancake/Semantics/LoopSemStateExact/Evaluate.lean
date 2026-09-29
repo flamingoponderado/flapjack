@@ -56,6 +56,12 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {F : Type} :
 
 end LoopEvaluateFiniteSupport
 
+/-- The evaluators' untagged `crepIsLoadMemOp` is the tagged `asm$is_load_def`
+    port `asmIsLoad`, over the one shared `asm$memop` carrier `WordMemOp`. -/
+theorem crepIsLoadMemOp_eq_asmIsLoad :
+    crepIsLoadMemOp = Compiler.Encoders.Asm.asmIsLoad := by
+  funext op; cases op <;> rfl
+
 open Flapjack.Compiler.Encoders.Asm in
 /-- Exact HOL `loopSem$evaluate_def` (`loopSemScript.sml:278-440`) over
     `HolLoopProg` and `LoopSemStateFiniteExact`, clause for clause.  HOL proves
@@ -71,7 +77,18 @@ open Flapjack.Compiler.Encoders.Asm in
     then c1 else c2, s))`, equal by `apply_ite`); `res = NONE` / `res ≠ NONE`
     tests are the corresponding `Option` patterns; `l1 ∈ domain s.code` is
     `(lookup l1 s.code).isSome`; HOL `w2w` is `BitVec.setWidth`; and `is_load`
-    over the Crep/Loop `memop` carrier is `crepIsLoadMemOp`. -/
+    over `asm$memop` (`WordMemOp`, tagged as `HolMemop`) is the tagged
+    `asmIsLoad` (`asm$is_load_def`, `asmScript.sml:324-330`; loopLang's
+    ancestors include `asm`).
+
+    Source audit (bead `flapjack-pxgp.19`, 2026-09-29): every HOL equation, from
+    `Skip` to `FFI`, is compared with the clause below.  Where a HOL `case`
+    pattern rebinds `s` to the cut state (`Loop`: `cut_res live_in (NONE,s)`;
+    `Call`: `cut_res live (NONE,s)`; `FFI`: `cut_state cutset s`), the Lean
+    clause names the rebound state `s1`/`s'`.  The post-call `st with locals :=
+    s.locals`, the `FFI` `call_env [] s` and the memory/ffi update all use that
+    rebound state, and the outer fall-through errors use the original `s`,
+    exactly as in HOL. -/
 @[hol "cakeml/pancake/semantics/loopSemScript.sml" "evaluate_def" 278
   (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 def evaluate {width : Nat} [NeZero width] {F : Type} :
@@ -168,7 +185,7 @@ def evaluate {width : Nat} [NeZero width] {F : Type} :
   | .shMem op v ad, s =>
       match eval s ad with
       | some (.word addr) =>
-          if crepIsLoadMemOp op then
+          if asmIsLoad op then
             match sptLookup v s.locals with
             | some _ => shMemOp op v addr s
             | _ => (some .error, s)
@@ -278,7 +295,7 @@ theorem shMemStore_clock {width : Nat} [NeZero width] {F : Type} (v : Nat)
     (shMemStore v a nb s).2.clock = s.clock := by
   unfold shMemStore; split <;> (try split) <;> (try split) <;> (try split) <;> rfl
 
-theorem shMemOp_clock {width : Nat} [NeZero width] {F : Type} (op : CrepMemOp) (v : Nat)
+theorem shMemOp_clock {width : Nat} [NeZero width] {F : Type} (op : WordMemOp) (v : Nat)
     (a : BitVec width) (s : LoopSemStateFiniteExact width F) :
     (shMemOp op v a s).2.clock = s.clock := by
   cases op <;> simp only [shMemOp, shMemLoad_clock, shMemStore_clock]

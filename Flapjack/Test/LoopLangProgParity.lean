@@ -47,7 +47,7 @@ example : progIf =
       emptySet := rfl
 example : progLoop = HolLoopProg.loop emptySet HolLoopProg.tick emptySet := rfl
 example : progReturn = HolLoopProg.return [1, 2] := rfl
-example : progShMem = HolLoopProg.shMem CrepMemOp.load 1 (HolLoopExp.const (w8 0)) := rfl
+example : progShMem = HolLoopProg.shMem WordMemOp.load 1 (HolLoopExp.const (w8 0)) := rfl
 example : progCall =
     HolLoopProg.call (some ([1], emptySet)) none [] (some (2, HolLoopProg.skip, HolLoopProg.tick, emptySet)) := rfl
 example : progFfi = HolLoopProg.ffi fName 1 2 3 4 emptySet := rfl

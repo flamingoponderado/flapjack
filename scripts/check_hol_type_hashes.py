@@ -49,6 +49,7 @@ def validate_export_record(record: Any, line_number: int) -> dict[str, Any]:
         "list_as_array", "names_as_string", "names_as_string_boundary",
         "fmap_as_finite_support", "fmap_as_finite_support_result",
         "fmap_as_finite_support_parameters",
+        "fmap_as_finite_support_existentials",
         "fmap_as_finite_support_relation", "fmap_as_finite_support_equalities",
         "words_as_type_indexed_bitvec",
     }
@@ -134,6 +135,9 @@ def lock_records(
             "reviewed_fmap_as_finite_support_result",
             "reviewed_fmap_as_finite_support_parameters",
             "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
+            "reviewed_fmap_as_finite_support_existentials",
+            "reviewed_fmap_as_finite_support_existentials_words_as_type_indexed_bitvec",
+            "reviewed_fmap_as_finite_support_relation_existentials_words_as_type_indexed_bitvec",
             "reviewed_fmap_as_finite_support_relation",
             "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
             "reviewed_fmap_as_finite_support_equalities",
@@ -169,6 +173,10 @@ def lock_records(
         if record.get("fmap_as_finite_support_parameters", ()):
             qualifiers["fmap_as_finite_support_parameters"] = list(
                 record.get("fmap_as_finite_support_parameters", ())
+            )
+        if record.get("fmap_as_finite_support_existentials", ()):
+            qualifiers["fmap_as_finite_support_existentials"] = list(
+                record.get("fmap_as_finite_support_existentials", ())
             )
         if record.get("fmap_as_finite_support_equalities", False):
             qualifiers["fmap_as_finite_support_equalities"] = True

@@ -67,8 +67,7 @@ theorem pcCompileCorrectAt_while {width : Nat} {σ : Type} [NeZero width]
     · exact ⟨ce, rfl⟩
     · simp [flattenHOL] at hes
   subst hce
-  have hce : @evalCrepSemHOLExp width _ σ t
-      (fun address => Classical.propDecidable (t.memaddrs address)) ce = some (.word w) := by
+  have hce : @evalCrepSemHOLExp width _ σ t ce = some (.word w) := by
     simpa [flattenHOL] using hes
   have hcomp : ∀ ctxt' : PanToCrepContextExact width, ctxt' = ctxt →
       compileProgExactHOLW ctxt' (.while e c) = .while ce (compileProgExactHOLW ctxt' c) := by

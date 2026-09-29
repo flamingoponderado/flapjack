@@ -162,7 +162,7 @@ theorem loopArith_lookup {op : LoopArith} {s st : LoopSemStateFiniteExact width 
     (try split at h) <;> simp only [Option.some.injEq, reduceCtorEq] at h <;> subst h <;>
     simp only [sptLookup_setVar_ne, hna, ne_eq, not_false_eq_true]
 
-theorem shMemOp_lookup (op : CrepMemOp) (v : Nat) (a : BitVec width)
+theorem shMemOp_lookup (op : WordMemOp) (v : Nat) (a : BitVec width)
     (s : LoopSemStateFiniteExact width F) {n : Nat} (hnv : n ≠ v)
     (hg : UnassignedGoodRes (shMemOp op v a s).1) :
     sptLookup n (shMemOp op v a s).2.locals = sptLookup n s.locals := by

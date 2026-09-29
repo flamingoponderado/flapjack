@@ -923,7 +923,7 @@ theorem evalLoopProg_shMem_store_preserves_locals
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α]
     [ShiftRight α] [LT α]
     [DecidableRel (fun left right : α => left < right)] [PanCmp α]
-    (state : LoopState α) (fuel : Nat) (operator : CrepMemOp)
+    (state : LoopState α) (fuel : Nat) (operator : WordMemOp)
     (name : Nat) (address : LoopExp α) (result : LoopResult α)
     (hoperator : operator = .store ∨ operator = .store8 ∨
       operator = .store16 ∨ operator = .store32)
@@ -941,7 +941,7 @@ theorem evalLoopProg_shMem_other_local
     [Sub α] [AndOp α] [OrOp α] [HXor α α α] [ShiftLeft α]
     [ShiftRight α] [LT α]
     [DecidableRel (fun left right : α => left < right)] [PanCmp α]
-    (state : LoopState α) (fuel : Nat) (operator : CrepMemOp)
+    (state : LoopState α) (fuel : Nat) (operator : WordMemOp)
     (name destination : Nat) (address : LoopExp α) (result : LoopResult α)
     (hoperator : operator = .load ∨ operator = .load8 ∨
       operator = .load16 ∨ operator = .load32 ∨
@@ -962,7 +962,7 @@ theorem comp_shMem_load_correct
     [ShiftRight α] [LT α]
     [DecidableRel (fun left right : α => left < right)] [PanCmp α]
     (environment : LocationEnv) (state : LoopState α)
-    (operator : CrepMemOp) (name : Nat) (address : LoopExp α)
+    (operator : WordMemOp) (name : Nat) (address : LoopExp α)
     (addressValue value : α)
     (hoperator : operator = .load ∨ operator = .load8 ∨
       operator = .load16 ∨ operator = .load32)
@@ -991,7 +991,7 @@ theorem comp_shMem_store_correct
     [ShiftRight α] [LT α]
     [DecidableRel (fun left right : α => left < right)] [PanCmp α]
     (environment : LocationEnv) (state : LoopState α)
-    (operator : CrepMemOp) (name : Nat) (address : LoopExp α)
+    (operator : WordMemOp) (name : Nat) (address : LoopExp α)
     (addressValue value : α)
     (hoperator : operator = .store ∨ operator = .store8 ∨
       operator = .store16 ∨ operator = .store32)
