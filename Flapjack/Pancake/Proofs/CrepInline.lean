@@ -1128,6 +1128,34 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {σ : Type} :
         CrepSemBroadState.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
   CrepSemHOLState.holFmapAsFiniteSupportWitness
 
+/-- Carrier-specific alias for the multi-carrier qualifier on code_inl_rel.
+This keeps the same-module witness named for the owning state carrier. -/
+theorem holFmapAsFiniteSupportRelationWitness_CrepSemHOLState
+    {width : Nat} [NeZero width] {σ : Type} :
+    (∀ (state : CrepSemBroadState width σ) (h : state.FiniteSupport),
+        (CrepSemBroadState.ofBroad state h).toBroad = state) ∧
+    (∀ state : CrepSemHOLState width σ,
+        CrepSemBroadState.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  CrepSemHOLState.holFmapAsFiniteSupportWitness
+
+/-- Canonical finite-support witness for `code_inl_rel_def`'s existential
+`inl_bag`, including the lookup and support projections as well as the
+`CrepInlineMapBroad` roundtrip. -/
+theorem holFmapAsFiniteSupportExistentialWitness_crepInlineCodeInlRelExact_inl_bag
+    {width : Nat} [NeZero width]
+    (inl_bag : HolFiniteMapExact CrepInlineMapHOLName
+      (List Nat × CrepProgHOL width)) :
+    (CrepInlineCanonical.CrepInlineMapBroad.ofBroad
+        (CrepInlineCanonical.CrepInlineMapBroad.toBroad inl_bag)).lookup =
+        inl_bag.lookup ∧
+      (CrepInlineCanonical.CrepInlineMapBroad.ofBroad
+        (CrepInlineCanonical.CrepInlineMapBroad.toBroad inl_bag)).finiteSupport =
+        inl_bag.finiteSupport ∧
+      CrepInlineCanonical.CrepInlineMapBroad.ofBroad
+        (CrepInlineCanonical.CrepInlineMapBroad.toBroad inl_bag) = inl_bag := by
+  exact ⟨rfl, rfl,
+    CrepInlineCanonical.CrepInlineMapBroad.ofBroad_toBroad inl_bag⟩
+
 /-- Exact finite-support carrier port of CakeML's `state_rel` relation
 (`crep_inlineProofScript.sml:12-24`). The ten compared fields are globals,
 code, memory, both memory domains, clock, endianness, FFI state, and base/top
@@ -1229,12 +1257,17 @@ canonical finite-map and state carriers. This keeps HOL's existential
 `inl_bag` as a finite-support map and uses the reviewed `inlineProgHOLExact`
 definition, with the source quantifiers and conclusion unchanged.
 
-This declaration intentionally has no `@[hol]` tag yet. The existing
-`fmap_as_finite_support_parameters` qualifier validates explicit input maps,
-but not the existentially bound `inl_bag`; the checker needs a reviewed
-bound-map qualifier before this non-identity carrier translation can be
-tagged. The prior `crepInlineCodeInlRel` remains Flapjack-specific
+The relation qualifier records the three exact state maps and standalone
+`inl_fs`; the existential-map qualifier records `inl_bag` and its canonical
+lookup/support roundtrip; the word qualifier records the positive-width HOL
+word model. The prior `crepInlineCodeInlRel` remains Flapjack-specific
 list-backed infrastructure. -/
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "code_inl_rel_def"
+  (fmap_as_finite_support_relation :=
+    [CrepSemHOLState.locals, CrepSemHOLState.globals,
+      CrepSemHOLState.code, inl_fs])
+  (fmap_as_finite_support_existentials := [inl_bag])
+  (words_as_type_indexed_bitvec)]
 def crepInlineCodeInlRelExact {width : Nat} [NeZero width] {σ : Type}
     (inl_fs : HolFiniteMapExact CrepInlineMapHOLName
       (List Nat × CrepProgHOL width))
@@ -1245,6 +1278,93 @@ def crepInlineCodeInlRelExact {width : Nat} [NeZero width] {σ : Type}
       HolFiniteMapExact.submap inl_bag inl_fs ∧
       t.code.lookup fname = some
         (args, CrepInlineCanonical.inlineProgHOLExact inl_bag prog)
+
+/-- Expression evaluation on the exact state carrier is insensitive to code.
+The code-domain premise is retained to mirror HOL's
+`eval_state_locals_same_code_fdom_same`; this evaluator does not read `code`. -/
+theorem evalCrepSemHOLExp_state_rel_code_exact {width : Nat} [NeZero width]
+    {σ : Type} (s t : CrepSemHOLState width σ) (e : CrepExpHOL width)
+    (hstate : crepInlineStateRelCodeExact s t)
+    (hlocals : crepInlineLocalsStrongRelExact s t)
+    (_hcode : ∀ name, s.code.lookup name ≠ none → t.code.lookup name ≠ none) :
+    evalCrepSemHOLExp s e = evalCrepSemHOLExp t e := by
+  obtain ⟨hg, hm, hma, _hsm, _hclock, hbe, _hffi, hbase, htop⟩ := hstate
+  have hloc : s.locals = t.locals := hlocals
+  induction e using evalCrepSemHOLExp.induct with
+  | case1 value => simp only [evalCrepSemHOLExp]
+  | case2 name => simp only [evalCrepSemHOLExp, hloc]
+  | case3 address ih =>
+      simp [evalCrepSemHOLExp, ih, hm]
+      rw [hma]
+  | case4 address ih =>
+      simp [evalCrepSemHOLExp, ih, hm, hbe, panMemLoad32HOL]
+      rw [hma]
+  | case5 address ih =>
+      simp [evalCrepSemHOLExp, ih, hm, hbe, panMemLoadByteHOL]
+      rw [hma]
+  | case6 address => simp only [evalCrepSemHOLExp, hg]
+  | case7 operator expressions ih =>
+      simp only [evalCrepSemHOLExp]
+      have hmap : expressions.mapM (evalCrepSemHOLExp s) =
+          expressions.mapM (evalCrepSemHOLExp t) := by
+        induction expressions with
+        | nil => simp
+        | cons x xs ihxs =>
+            have htail : xs.mapM (evalCrepSemHOLExp s) =
+                xs.mapM (evalCrepSemHOLExp t) :=
+              ihxs (fun y hy => ih y (by simp [hy]))
+            simp only [List.mapM_cons, ih x (by simp), htail]
+      rw [hmap]
+  | case8 operator expressions ih =>
+      simp only [evalCrepSemHOLExp]
+      have hmap : expressions.mapM (evalCrepSemHOLExp s) =
+          expressions.mapM (evalCrepSemHOLExp t) := by
+        induction expressions with
+        | nil => simp
+        | cons x xs ihxs =>
+            have htail : xs.mapM (evalCrepSemHOLExp s) =
+                xs.mapM (evalCrepSemHOLExp t) :=
+              ihxs (fun y hy => ih y (by simp [hy]))
+            simp only [List.mapM_cons, ih x (by simp), htail]
+      rw [hmap]
+  | case9 operator left right ihl ihr =>
+      simp only [evalCrepSemHOLExp, ihl, ihr]
+  | case10 operator left right ihl ihr =>
+      simp only [evalCrepSemHOLExp, ihl, ihr]
+  | case11 => simp only [evalCrepSemHOLExp, hbase]
+  | case12 => simp only [evalCrepSemHOLExp, htop]
+
+/-- Exact port of CakeML's `eval_code_inl` (`crep_inlineProofScript.sml:1513-1521`).
+The four premises and successful target evaluation conclusion match HOL; the
+intermediate finite-map domain inclusion is derived from `code_inl_rel`. -/
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "eval_code_inl"
+  (fmap_as_finite_support_relation :=
+    [CrepSemHOLState.locals, CrepSemHOLState.globals,
+      CrepSemHOLState.code, inl_fs])
+  (words_as_type_indexed_bitvec)]
+theorem evalCodeInlExact {width : Nat} [NeZero width] {σ : Type}
+    (s : CrepSemHOLState width σ) (e : CrepExpHOL width)
+    (value : HolWordLab width) (t : CrepSemHOLState width σ)
+    (inl_fs : HolFiniteMapExact CrepInlineMapHOLName
+      (List Nat × CrepProgHOL width)) :
+    (evalCrepSemHOLExp s e = some value ∧
+      crepInlineStateRelCodeExact s t ∧
+      crepInlineLocalsStrongRelExact s t ∧
+      crepInlineCodeInlRelExact inl_fs s t) →
+    evalCrepSemHOLExp t e = some value := by
+  intro h
+  obtain ⟨heval, hstate, hlocals, hcode⟩ := h
+  have hsubset : ∀ name, s.code.lookup name ≠ none → t.code.lookup name ≠ none := by
+    intro name hsource
+    cases hlookup : s.code.lookup name with
+    | none => exact False.elim (hsource hlookup)
+    | some entry =>
+        rcases entry with ⟨args, prog⟩
+        obtain ⟨_bag, _hsub, htarget⟩ := hcode name args prog hlookup
+        rw [htarget]
+        simp
+  rw [← heval]
+  exact (evalCrepSemHOLExp_state_rel_code_exact s t e hstate hlocals hsubset).symm
 
 end CrepInlineExact
 
