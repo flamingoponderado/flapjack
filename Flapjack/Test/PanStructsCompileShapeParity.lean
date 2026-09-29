@@ -1,10 +1,15 @@
 import Flapjack.Pancake.PanStructs
 import Flapjack.Pancake.PanStructsByteRanged
 import Flapjack.Pancake.Proofs.PanStructs
+import Flapjack.Pancake.Proofs.PanStructs.CompileShapeExact
+import Flapjack.Pancake.PanStructs.CompileShapeExact
 
 namespace Flapjack.Test.PanStructsCompileShapeParity
 
 open Flapjack.Pancake.PanLang
+open Flapjack.Pancake.Proofs.PanStructs.CompileShapeExact
+open Flapjack.Pancake.PanStructs.CompileShapeExact
+open Flapjack.Basis.Pure.MlString
 
 private def byteRangedStructCompileInput : List (Decl (BitVec 8)) :=
   [ .name "Packet" [("field", .one)]
@@ -35,6 +40,46 @@ private theorem byteRangedStructCompileInput_ok :
 example : ∀ declaration ∈ structCompileTop byteRangedStructCompileInput,
     DeclByteRanged declaration :=
   structCompileTop_byteRanged byteRangedStructCompileInput byteRangedStructCompileInput_ok
+
+/-! Direct replay of the source HOL-EVAL rows in
+    `scripts/hol-probes/compile_shape_probe.out` using the exact
+    `MlString`/`ShapeHOL` carrier. -/
+private def holOuter := ofString "outer"
+private def holInner := ofString "inner"
+private def holField := ofString "field"
+private def holValue := ofString "value"
+
+private def exactForwardContext : ContextExact :=
+  { structs :=
+      [(holOuter, [(holField, .named holInner)]),
+       (holInner, [(holValue, .one)])]
+    , locals := []
+    , globals := [] }
+
+private def exactBackwardContext : ContextExact :=
+  { structs :=
+      [(holInner, [(holValue, .one)]),
+       (holOuter, [(holField, .named holInner)])]
+    , locals := []
+    , globals := [] }
+
+private def exactCompileShapeOracleRows : Bool :=
+  (match compileShapeExact exactForwardContext.structs .one with
+   | .one => true | _ => false) &&
+  (match compileShapeExact exactForwardContext.structs (.comb [.one, .one]) with
+   | .comb [.one, .one] => true | _ => false) &&
+  (match compileShapeExact exactForwardContext.structs (.named holOuter) with
+   | .comb [.comb [.one]] => true | _ => false) &&
+  (match compileShapeExact exactBackwardContext.structs (.named holOuter) with
+   | .comb [.one] => true | _ => false) &&
+  (match compileShapeExact exactForwardContext.structs (.named (ofString "missing")) with
+   | .one => true | _ => false)
+
+#eval exactCompileShapeOracleRows
+#guard exactCompileShapeOracleRows
+
+theorem exactCompileShapeOracleRows_proved : exactCompileShapeOracleRows = true := by
+  native_decide
 
 /-! Direct parity for `pan_structs$compile_shape_def`
     (`pan_structsScript.sml:37`).  The nested cases distinguish the source's
