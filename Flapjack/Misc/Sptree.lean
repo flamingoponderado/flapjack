@@ -558,7 +558,7 @@ theorem lrNext_offset_two (index : Nat) :
           rw [hstep, ih half hlt]
           omega
 
-/-- HOL `sptree$spt_acc` (`HOL/src/finite_maps/sptreeScript.sml:888-894`):
+/-- HOL `sptree$spt_acc` (`HOL/src/finite_maps/sptreeScript.sml:750-755`):
 the key at local index `key` when a subtree is rooted at `index`. This is
 external HOL-library support and is intentionally untagged. -/
 def sptAcc (index : Nat) : Nat → Nat
