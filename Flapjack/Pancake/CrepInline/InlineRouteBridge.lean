@@ -312,5 +312,49 @@ theorem map_eq_iff_contains {ms : List MlString} (s : String) (hs : CrepNameRang
     (ms.map toStringOfBytes).contains s = true ↔ ms.contains (ofString s) = true := by
   rw [contains_map_toStringOfBytes s hs]
 
+open Flapjack.Basis.Pure.MlString in
+/-- Name-membership agreement under the `toStringOfBytes` codec on byte-ranged names:
+    given `inlineNames` is the `toStringOfBytes` image of `inl_fname`, filtering by the
+    production String name is the image of filtering by the exact `MlString` name. -/
+theorem contains_toStringOfBytes_agree {inlineNames : List FunName}
+    {inl_fname : List CrepInlineMapHOLName}
+    (hinl : inlineNames = inl_fname.map toStringOfBytes) {s : String}
+    (hs : CrepNameRanged s) :
+    inlineNames.contains s = inl_fname.contains (ofString s) := by
+  rw [hinl, contains_map_toStringOfBytes s hs]
+
+open Flapjack.Basis.Pure.MlString in
+/-- Filter/name agreement across the codec: if the production function-name list is the
+    `toStringOfBytes` image of the exact `MlString` list and every production name is
+    byte-ranged, the production filter on `inlineNames` maps to the exact filter on
+    `inl_fname`. -/
+theorem filter_names_toStringOfBytes {l1 : List FunName} {l2 : List CrepInlineMapHOLName}
+    {inlineNames : List FunName} {inl_fname : List CrepInlineMapHOLName}
+    (h : l1 = l2.map toStringOfBytes)
+    (hinl : inlineNames = inl_fname.map toStringOfBytes)
+    (hrange : ∀ s ∈ l1, CrepNameRanged s) :
+    l1.filter (fun s => inlineNames.contains s) =
+      (l2.filter (fun m => inl_fname.contains m)).map toStringOfBytes := by
+  subst h
+  revert hrange
+  induction l2 with
+  | nil => intro hrange; simp
+  | cons m rest ih =>
+      intro hrange
+      have hm : toStringOfBytes m ∈ (m :: rest).map toStringOfBytes := by
+        simp
+      have hsub : ∀ s ∈ rest.map toStringOfBytes, CrepNameRanged s :=
+        fun s hs => hrange s (by simp only [List.map_cons, List.mem_cons]; exact Or.inr hs)
+      have hcond : inlineNames.contains (toStringOfBytes m) = inl_fname.contains m := by
+        rw [contains_toStringOfBytes_agree hinl (hrange (toStringOfBytes m) hm),
+          ofString_toStringOfBytes]
+      simp only [List.map_cons, List.filter_cons]
+      rw [hcond]
+      by_cases hc : inl_fname.contains m
+      · simp only [hc, if_true]
+        exact congrArg (toStringOfBytes m :: ·) (ih hsub)
+      · simp only [hc]
+        exact ih hsub
+
 end CrepInlineRoute
 end Flapjack
