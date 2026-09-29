@@ -636,20 +636,32 @@
     "reviewer": "Flapjack support for HOL simp_exp_correct1 over arbitrary finite-index words and exact finite-map/set state fields, with opaque code entries. Evaluation still uses the explicit HolFiniteDimension source projection; native crepSem eval_def, HOL program/FFI carriers, and their representation relations remain unproved, so the declaration is untagged."
   },
   {
-    "hol_path": null,
-    "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
     "lean_name": "crepSimpExpCorrect1NativeVarCase",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack support case for HOL simp_exp_correct1, with the exact native evaluator, successful-evaluation premise, polymorphic unused result binder, code-only mapc update, and Option word_lab result. Kept untagged because CrepSemHOLState is declared in Semantics.CrepSem.HOLState, outside this counterpart module, and the required same-module finite-map carrier witness is unavailable; the faithful tagged case remains open (bead flapjack-pxn.18.5.4.2.19.5)."
+    "hol_path": "cakeml/pancake/proofs/crep_arithProofScript.sml",
+    "hol_name": "simp_exp_correct1",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison (2026-09-29; bead flapjack-pxn.18.5.4.2.19.5): HOL simp_exp_correct1 (crep_arithProofScript.sml:111) universally quantifies s, exp, and unused v, assumes crepSem$eval s exp <> NONE, and concludes eval (mapc f s) (simp_exp exp) = eval s exp. This Var case preserves the successful-evaluation premise, arbitrary unused result binder, full Option (word_lab) equality, and exact code-only mapc update; the Var evaluation reads locals, and simplification preserves the variable. CrepSemHOLState.locals/globals/code are HolFiniteMapExact models of the corresponding HOL |-> fields. The same-module holFmapAsFiniteSupportWitness re-exports the existing CrepSemHOLState/CrepSemBroadState toBroad/ofBroad roundtrip without duplicating the carrier. The words qualifier records the existing positive-width BitVec model; this case does not inspect word payloads."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
+    "lean_name": "crepSimpExpCorrect1NativeConstCase",
+    "hol_path": "cakeml/pancake/proofs/crep_arithProofScript.sml",
+    "hol_name": "simp_exp_correct1",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison (2026-09-29; bead flapjack-pxn.18.5.4.2.19.5): HOL simp_exp_correct1 (crep_arithProofScript.sml:111) universally quantifies s, exp, and unused v, assumes crepSem$eval s exp <> NONE, and concludes eval (mapc f s) (simp_exp exp) = eval s exp. This Const case preserves the successful-evaluation premise, arbitrary unused result binder, full Option (word_lab) equality, and exact code-only mapc update; constant evaluation returns the same word after simp_exp. CrepSemHOLState.locals/globals/code are HolFiniteMapExact models of the corresponding HOL |-> fields. The same-module holFmapAsFiniteSupportWitness re-exports the existing CrepSemHOLState/CrepSemBroadState toBroad/ofBroad roundtrip without duplicating the carrier. The words qualifier records the existing positive-width BitVec model for HOL's arbitrary positive dimindex word."
   },
   {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
-    "lean_name": "crepSimpExpCorrect1NativeConstCase",
+    "lean_name": "holFmapAsFiniteSupportWitness",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack support case for HOL simp_exp_correct1, with the exact native evaluator, successful-evaluation premise, polymorphic unused result binder, code-only mapc update, and Option word_lab result. Kept untagged because CrepSemHOLState is declared in Semantics.CrepSem.HOLState, outside this counterpart module, and the required same-module finite-map carrier witness is unavailable; the faithful tagged case remains open (bead flapjack-pxn.18.5.4.2.19.5)."
+    "reviewer": "Flapjack-only same-module re-export of the existing CrepSemHOLState/CrepSemBroadState toBroad/ofBroad finite-support roundtrip, required by the finite-map qualifiers on the tagged simp_exp_correct1 Var and Const case ports. It introduces no carrier and has no separate HOL declaration."
   },
   {
     "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
@@ -20475,12 +20487,16 @@
   "words_as_type_indexed_bitvec": true
 },
 {
-  "hol_path": null,
-  "hol_name": null,
+  "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
+  "hol_name": "compile_correct",
   "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
   "lean_name": "loopLive_compile_correct_mark",
-  "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.8.1.1): auxiliary lemma for case `Mark` of loop_live compile_correct (loop_liveProofScript.sml:17-37 statement; Resume compile_correct[Mark] at 97-99; HOL proves the theorem by recInduct loopSemTheory.evaluate_ind with one Resume block per constructor). The lemma keeps HOL's quantifier order ∀v v1 res s1 lt locals prog1 l1 l0 with the constructor payload in place of v, all four premises (evaluate (v,v1) = (res,s1), res ≠ SOME Error, shrink lt v l0 = (prog1,l1), subspt (inter v1.locals l1) locals) and the full existential conclusion including the eight-way case split on res (oEL as sptOel, inter as sptInter, subspt as sptSubspt), over the exact LoopSemStateFiniteExact.evaluate (evaluate_def) and the tagged shrinkHOL (shrink_def). Proof: shrink (Mark p) = shrink p and evaluate (Mark p) = evaluate p, so it is the evaluate_ind hypothesis for p (stated by the untagged loopLiveCompileCorrectAt p v1, which unfolds to exactly the HOL statement at (p, v1)). Qualifiers: loopSem state globals as canonical HolFiniteMapExact; width-indexed word carriers."
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.8.1.15) against loop_liveProofScript.sml:17-37: exact evaluate_ind case of HOL compile_correct for Mark p (Resume compile_correct[Mark] at 97-99). Extra antecedent: exactly the tagged loopSem evaluate_ind Mark conjunct P (p,s) ==> P (Mark p,s), with P the compile_correct statement (loopLiveCompileCorrectAt, which unfolds to HOL's statement at that program/state). Otherwise the case has the same binders v1 res s1 lt locals prog1 l1 l0 in HOL order, the same four premises (evaluate = (res,s1), res <> SOME Error, shrink lt v l0 = (prog1,l1), subspt (inter v1.locals l1) locals) and the full existential eight-way conclusion, over the exact LoopSemStateFiniteExact evaluator and shrinkHOL. It has no other premise, and the assembled compile_correct applies the tagged evaluate_induct (bead flapjack-pxn.18.5.8.1.14). Qualifiers as for the other compile_correct pieces: fmap_as_finite_support [globals] (same-module witness LoopLiveCompileCorrectWitnesses.holFmapAsFiniteSupportWitness) and words_as_type_indexed_bitvec.",
+  "fmap_as_finite_support": [
+    "globals"
+  ],
+  "words_as_type_indexed_bitvec": true
 },
 {
   "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
@@ -20539,12 +20555,16 @@
   "reviewer": "Flapjack helper for the loop_live compile_correct Return case (HOL proves it inline by induction on ns with get_vars_def): get_vars is unchanged by a locals map agreeing on the looked-up names; no separate HOL declaration"
 },
 {
-  "hol_path": null,
-  "hol_name": null,
+  "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
+  "hol_name": "compile_correct",
   "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
   "lean_name": "loopLive_compile_correct_seq",
-  "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.8.1.2): auxiliary lemma for case `Seq c1 c2` of loop_live compile_correct (loop_liveProofScript.sml:17-37 statement; Resume compile_correct[Seq] at 118-129). Extra antecedents are exactly loopSem evaluate_ind's Seq hypotheses: the statement for (c1, v1) and, for every s1' with fix_clock v1 (evaluate (c1,v1)) = (NONE, s1'), the statement for (c2, s1'); both via the untagged loopLiveCompileCorrectAt, which unfolds to the HOL statement at that (program, state). Otherwise identical binders/premises/conclusion to the other auxiliary lemmas with v := Seq c1 c2. Proof follows HOL: shrink c2 then c1, IH on c1 then c2 (fix_clock_evaluate), early-exit results carry the c1 conclusion (independent of l0). Qualifiers as for the other pieces."
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.8.1.15) against loop_liveProofScript.sml:17-37: exact evaluate_ind case of HOL compile_correct for Seq c1 c2 (Resume compile_correct[Seq] at 118-129). Extra antecedents: exactly the tagged loopSem evaluate_ind Seq conjunct (!res s1. (res,s1) = evaluate (c1,s) /\\ res = NONE ==> P (c2,s1)) /\\ P (c1,s), curried and in HOL's order; the fix_clock guard of the earlier auxiliary is gone (the proof recovers it with fix_clock_evaluate), with P the compile_correct statement (loopLiveCompileCorrectAt, which unfolds to HOL's statement at that program/state). Otherwise the case has the same binders v1 res s1 lt locals prog1 l1 l0 in HOL order, the same four premises (evaluate = (res,s1), res <> SOME Error, shrink lt v l0 = (prog1,l1), subspt (inter v1.locals l1) locals) and the full existential eight-way conclusion, over the exact LoopSemStateFiniteExact evaluator and shrinkHOL. It has no other premise, and the assembled compile_correct applies the tagged evaluate_induct (bead flapjack-pxn.18.5.8.1.14). Qualifiers as for the other compile_correct pieces: fmap_as_finite_support [globals] (same-module witness LoopLiveCompileCorrectWitnesses.holFmapAsFiniteSupportWitness) and words_as_type_indexed_bitvec.",
+  "fmap_as_finite_support": [
+    "globals"
+  ],
+  "words_as_type_indexed_bitvec": true
 },
 {
   "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
@@ -20930,12 +20950,16 @@
   "reviewer": "Flapjack helper: loopSem sh_mem_store behaves identically up to locals when the stored register agrees; no separate CakeML declaration"
 },
 {
-  "hol_path": null,
-  "hol_name": null,
+  "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
+  "hol_name": "compile_correct",
   "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
   "lean_name": "loopLive_compile_correct_if",
-  "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.5): auxiliary lemma for case `If cmp r1 ri c1 c2 live_out` of loop_live compile_correct (statement loop_liveProofScript.sml:17-37; Resume compile_correct[If] at 534-559). Extra antecedent is exactly loopSem evaluate_ind's If hypothesis: for the register values x, y (lookup r1 = SOME (Word x), get_var_imm ri = SOME (Word y)), the statement for (if word_cmp cmp x y then c1 else c2, v1), via the untagged loopLiveCompileCorrectAt. Otherwise HOL binders/premises/conclusion as in the other auxiliary lemmas. Proof follows HOL: both operands are live in insert r1 () (union l3 (union l1 l2)), the chosen branch's IH at live set inter l0 live_out, then cut_res with the shrunk cutset inter l0 live_out succeeds because of the IH's NONE postcondition (subspt_IMP_domain reasoning inline)."
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.8.1.15) against loop_liveProofScript.sml:17-37: exact evaluate_ind case of HOL compile_correct for If cmp r1 ri c1 c2 live_out (Resume compile_correct[If] at 534-559). Extra antecedent: exactly the tagged loopSem evaluate_ind If conjunct with HOL's binders v2 v3 v5 x v13 y b and guards (lookup r1 s.locals, get_var_imm ri s) = (v2,v3), v2 = SOME v5, v5 = Word x, v3 = SOME v13, v13 = Word y, (b <=> word_cmp cmp x y) ==> P (if b then c1 else c2, s), with P the compile_correct statement (loopLiveCompileCorrectAt, which unfolds to HOL's statement at that program/state). Otherwise the case has the same binders v1 res s1 lt locals prog1 l1 l0 in HOL order, the same four premises (evaluate = (res,s1), res <> SOME Error, shrink lt v l0 = (prog1,l1), subspt (inter v1.locals l1) locals) and the full existential eight-way conclusion, over the exact LoopSemStateFiniteExact evaluator and shrinkHOL. It has no other premise, and the assembled compile_correct applies the tagged evaluate_induct (bead flapjack-pxn.18.5.8.1.14). Qualifiers as for the other compile_correct pieces: fmap_as_finite_support [globals] (same-module witness LoopLiveCompileCorrectWitnesses.holFmapAsFiniteSupportWitness) and words_as_type_indexed_bitvec.",
+  "fmap_as_finite_support": [
+    "globals"
+  ],
+  "words_as_type_indexed_bitvec": true
 },
 {
   "hol_path": null,
@@ -20946,12 +20970,16 @@
   "reviewer": "Flapjack helper: the branch-independent cut_res tail of HOL's Resume compile_correct[If]; no separate CakeML declaration"
 },
 {
-  "hol_path": null,
-  "hol_name": null,
+  "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
+  "hol_name": "compile_correct",
   "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
   "lean_name": "loopLive_compile_correct_call",
-  "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.6): auxiliary lemma for case `Call ret dest args handler` of loop_live compile_correct (statement loop_liveProofScript.sml:17-37; Resume compile_correct[Call] at 567-703). Extra antecedent: for a handler SOME (e, h, r, lo), the statement for the return continuation r and the exception handler h at every state with clock < v1.clock (via the untagged loopLiveCompileCorrectAt). This is the form of loopSem evaluate_ind's Call hypotheses that the lexicographic (clock, size) assembly supplies: every continuation state HOL's induction uses has clock < v1.clock, because the callee runs after dec_clock (or cut_res's dec_clock). The callee body needs no hypothesis because shrink does not touch it and it runs on an identical state (only caller locals differ). Otherwise HOL binders/premises/conclusion as in the other auxiliary lemmas. Proof follows HOL's case split (ret NONE/SOME, handler NONE/SOME, clock 0, callee result): arguments from subspt of union (fromAList args) l1', the shrunk cut_state succeeds (cutset ⊆ live ⊆ source locals and live in l1'), set_vars/set_var on both sides, and continuations via their hypotheses and the shared cut_res tail."
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.8.1.15) against loop_liveProofScript.sml:17-37: exact evaluate_ind case of HOL compile_correct for Call ret dest args handler (Resume compile_correct[Call] at 567-703). Extra antecedents: exactly the four tagged loopSem evaluate_ind Call conjuncts: return continuation r at set_vars ns retvs (st with locals := s'.locals), exception handler h at set_var n exn (st with locals := s'.locals), callee body at s' with locals := env, and tail call at dec_clock s with locals := env. All have HOL's binders and get_vars/find_code/cut_res/ALL_DISTINCT/evaluate/LENGTH guards. The proof uses the first two; the last two are unused, as in HOL, because shrink leaves the callee unchanged. The earlier universal smaller-clock IHs are gone, with P the compile_correct statement (loopLiveCompileCorrectAt, which unfolds to HOL's statement at that program/state). Otherwise the case has the same binders v1 res s1 lt locals prog1 l1 l0 in HOL order, the same four premises (evaluate = (res,s1), res <> SOME Error, shrink lt v l0 = (prog1,l1), subspt (inter v1.locals l1) locals) and the full existential eight-way conclusion, over the exact LoopSemStateFiniteExact evaluator and shrinkHOL. It has no other premise, and the assembled compile_correct applies the tagged evaluate_induct (bead flapjack-pxn.18.5.8.1.14). Qualifiers as for the other compile_correct pieces: fmap_as_finite_support [globals] (same-module witness LoopLiveCompileCorrectWitnesses.holFmapAsFiniteSupportWitness) and words_as_type_indexed_bitvec.",
+  "fmap_as_finite_support": [
+    "globals"
+  ],
+  "words_as_type_indexed_bitvec": true
 },
 {
   "hol_path": null,
@@ -21019,12 +21047,16 @@
   "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.3) against subspt_inter_union_R at loop_liveProofScript.sml:148-150 ([local]): `∀A B C D. subspt (inter A (union B C)) D ⇒ subspt (inter A C) D`; binders in order, union as sptUnion, polymorphic values."
 },
 {
-  "hol_path": null,
-  "hol_name": null,
+  "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
+  "hol_name": "compile_correct",
   "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
   "lean_name": "loopLive_compile_correct_loop",
-  "statement_status": "no_hol_reference_pending_classification",
-  "reviewer": "Flapjack-only auxiliary per-constructor lemma (not a HOL declaration and not an AGENTS.md case piece: its sub-program hypotheses come from the Lean assembly, not evaluate_ind) of the tagged loopLive_compile_correct (HOL compile_correct, loop_liveProofScript.sml:17-37); its sub-program induction hypotheses are those the lexicographic (clock, size) assembly supplies, so it carries no HOL tag of its own. Prior source note: flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.3) against auxiliary lemma for case `Loop live_in body live_out` of loop_live compile_correct (statement loop_liveProofScript.sml:17-37; Resume compile_correct[Loop] at 157-337). Extra antecedent: the statement for the body and for the Loop itself at every state with clock < v1.clock (via the untagged loopLiveCompileCorrectAt): exactly the evaluate_ind recursive calls, all at states after cut_res's dec_clock. Otherwise HOL binders/premises/conclusion as in the other auxiliary lemmas. Proof follows HOL: shrink's fixed-point branch (via the tagged fixedpoint_thm) and no-fixed-point branch both reduce to the private loopLive_loop_core (cut with the shrunk live_in, body IH, then loop IH on NONE/Continue 0, cut_res live_out vs inter live_out l0 on Break 0, exit_loop otherwise)."
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.8.1.15) against loop_liveProofScript.sml:17-37: exact evaluate_ind case of HOL compile_correct for Loop live_in body live_out (Resume compile_correct[Loop] at 157-337). Extra antecedents: exactly the three tagged loopSem evaluate_ind Loop conjuncts: re-entry after body result SOME (Continue 0), re-entry after NONE, and the body at the post-cut_res state, all with HOL's binders v4 s' v s'' v3 v12 and guards; the earlier universal smaller-clock IHs are gone, with P the compile_correct statement (loopLiveCompileCorrectAt, which unfolds to HOL's statement at that program/state). Otherwise the case has the same binders v1 res s1 lt locals prog1 l1 l0 in HOL order, the same four premises (evaluate = (res,s1), res <> SOME Error, shrink lt v l0 = (prog1,l1), subspt (inter v1.locals l1) locals) and the full existential eight-way conclusion, over the exact LoopSemStateFiniteExact evaluator and shrinkHOL. It has no other premise, and the assembled compile_correct applies the tagged evaluate_induct (bead flapjack-pxn.18.5.8.1.14). Qualifiers as for the other compile_correct pieces: fmap_as_finite_support [globals] (same-module witness LoopLiveCompileCorrectWitnesses.holFmapAsFiniteSupportWitness) and words_as_type_indexed_bitvec.",
+  "fmap_as_finite_support": [
+    "globals"
+  ],
+  "words_as_type_indexed_bitvec": true
 },
 {
   "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",

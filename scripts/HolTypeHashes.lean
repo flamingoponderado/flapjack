@@ -88,6 +88,7 @@ import Flapjack.Pancake.PanToCrep.ExpHdlExact
 import Flapjack.Pancake.PanToCrep.MakeVmapHOL
 import Flapjack.Pancake.PanToCrep.ContextExact
 import Flapjack.Pancake.Proofs.CrepArith
+import Flapjack.Pancake.Proofs.CrepArith.HOLStateMapc
 import Flapjack.Pancake.Proofs.CrepArith.MulConst
 import Flapjack.Pancake.Proofs.CrepInline
 import Flapjack.Pancake.Proofs.PanGlobals
