@@ -12,12 +12,13 @@ CakeML's `mem_load_byte_def` and `mem_load_32_def` in
 The recursive evaluator cases at width 24 are also checked against direct
 `crepSem$eval` observations in `crep_eval_load_byte_probe.out` and
 `crep_eval_load_32_probe.out` (`crepSemScript.sml:90-137`). The source-shaped
-runtime agrees with those rows. The production RISC-V runtime adapter returns
-`none` for the same addresses because its byte alignment differs at width 24.
-The shipped `flapjack-compile` entry paths instantiate width 64 and target
-`rv64i` in `Flapjack/CompileMain.lean:96,108,120`; therefore the width-24
-counterexample is for the generic production evaluator adapter, not a CLI-
-reachable compiler configuration. The RV64 load cases below remain checked
+runtime agrees with those rows, and so does the production RISC-V runtime
+adapter: `RiscV.panRiscVByteAlign` is HOL's `byte_align` (round down to a
+multiple of `2 ^ LOG2 bytesInWord`) at every width (bead
+`flapjack-pxn.18.5.4.3.4`).  An earlier division-by-`bytesInWord` alignment
+returned `none` here at width 24.  The shipped `flapjack-compile` entry paths
+instantiate width 64 and target `rv64i` (`Flapjack/CompileMain.lean`), where
+the two alignments coincide. The RV64 load cases below remain checked
 against the direct Crep HOL observations.
 
 The probe uses a little-endian 64-bit word cell at byte address 8. Pancake
@@ -161,12 +162,11 @@ def wordOfBytes32DistinctBig : Word 32 :=
     [BitVec.ofNat 32 0x11, BitVec.ofNat 32 0x22,
      BitVec.ofNat 32 0x33, BitVec.ofNat 32 0x44]
 
-/-! HOL `byte_align_def` is `align (LOG2 (dimindex DIV 8))`, while the
-RISC-V target rounds down by the supplied `bytesInWord`. For a 24-bit word,
-HOL therefore uses exponent `LOG2 3 = 1` and aligns address 5 to 4; the
-production target divides by 3 and aligns it to 3. This direct width-24
-oracle counterexample shows why the all-width theorem cannot silently reuse
-the RISC-V target. -/
+/-! HOL `byte_align_def` is `align (LOG2 (dimindex DIV 8))`.  For a 24-bit
+word HOL uses exponent `LOG2 3 = 1` and aligns address 5 to 4.  The production
+RISC-V target now uses the same `2 ^ LOG2 bytesInWord` alignment, so it also
+aligns 5 to 4 and agrees with the direct width-24 HOL oracle rows.  It
+previously divided by 3, aligning to 3 and returning `none`. -/
 def holByteAlignWidth24Address5 : Word 24 := BitVec.ofNat 24 4
 def riscvByteAlignWidth24Address5 : Word 24 :=
   panRiscVByteAlign (BitVec.ofNat 24 3) (BitVec.ofNat 24 5)
@@ -240,10 +240,9 @@ def finiteWord24Load32 : Option (Fin 24 → Bool) :=
     finiteWord24Domain finiteWord24Memory (finiteWord24 3) (finiteWord24 4) false
 
 /-! Run the same width-24 alignment example through the actual recursive Crep
-    evaluator. The source-shaped adapter uses HOL `byte_align`; the RISC-V
-    runtime target uses its `bytesInWord` divisor. This pins the known
-    all-width behavior boundary at the evaluator call site, rather than only
-    at the memory-model helper. -/
+    evaluator. Both the source-shaped adapter and the RISC-V runtime target use
+    HOL `byte_align`, so they agree at the evaluator call site as well as at the
+    memory-model helper. -/
 def finiteWord24CrepState : CrepHolState (Fin 24 → Bool) Unit :=
   { locals := fun _ => none
     globals := fun _ => none
@@ -367,10 +366,10 @@ example :
 #guard wordOfBytes32DistinctLittle == BitVec.ofNat 32 0x44332211
 #guard wordOfBytes32DistinctBig == BitVec.ofNat 32 0x11223344
 #guard holByteAlignWidth24Address5 == BitVec.ofNat 24 4
-#guard riscvByteAlignWidth24Address5 == BitVec.ofNat 24 3
-#guard holByteAlignWidth24Address5 != riscvByteAlignWidth24Address5
+#guard riscvByteAlignWidth24Address5 == BitVec.ofNat 24 4
+#guard holByteAlignWidth24Address5 == riscvByteAlignWidth24Address5
 #guard holWidth24ByteLoad == some (BitVec.ofNat 24 0x33)
-#guard riscvWidth24ByteLoad == none
+#guard riscvWidth24ByteLoad == holWidth24ByteLoad
 #guard panSemWidth24ByteLoad == holWidth24ByteLoad
 #guard panSemWidth24ByteLoadBE == some (BitVec.ofNat 24 0x11)
 #guard (panSemWidth24ByteLoad.map (fun byte => BitVec.ofNat 8 byte.toNat)) ==
@@ -388,13 +387,19 @@ example :
   some (BitVec.ofNat 24 0x113322)
 #guard (finiteWord24CrepSourceLoadByte.map (holWordToBitVec dimension24)) ==
   some (BitVec.ofNat 24 0x33)
-#guard finiteWord24CrepRiscVLoadByte == none
+#guard finiteWord24CrepRiscVLoadByte == some (BitVec.ofNat 24 0x33)
+#guard finiteWord24CrepRiscVLoadByte ==
+  finiteWord24CrepSourceLoadByte.map (holWordToBitVec dimension24)
 #guard (finiteWord24CrepSourceLoadByteBE.map (holWordToBitVec dimension24)) ==
   some (BitVec.ofNat 24 0x11)
-#guard finiteWord24CrepRiscVLoadByteBE == none
+#guard finiteWord24CrepRiscVLoadByteBE == some (BitVec.ofNat 24 0x11)
+#guard finiteWord24CrepRiscVLoadByteBE ==
+  finiteWord24CrepSourceLoadByteBE.map (holWordToBitVec dimension24)
 #guard (finiteWord24CrepSourceLoad32.map (holWordToBitVec dimension24)) ==
   some (BitVec.ofNat 24 0x113322)
-#guard finiteWord24CrepRiscVLoad32 == none
+#guard finiteWord24CrepRiscVLoad32 == some (BitVec.ofNat 24 0x113322)
+#guard finiteWord24CrepRiscVLoad32 ==
+  finiteWord24CrepSourceLoad32.map (holWordToBitVec dimension24)
 #guard finiteWord24HolLoad32Width24 == originalLoad32Width24
 #guard BitVec.ofNat 24 originalLoad32Width24.toNat == BitVec.ofNat 24 0x113322
 #guard holWordToBitVec dimension24 finiteWord24Fixed32Load ==

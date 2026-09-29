@@ -29,21 +29,34 @@ def panRiscVWordOfBytes [NeZero width]
       (byte0.toNat + 256 * byte1.toNat +
         256 ^ 2 * byte2.toNat + 256 ^ 3 * byte3.toNat)
 
+/-- HOL `byte$byte_align w = align (LOG2 (dimindex (:α) DIV 8)) w` over the
+cell's byte count: clear the low `LOG2 bytesInWord` address bits, i.e. round
+down to a multiple of `2 ^ LOG2 bytesInWord`.  With `bytesInWord = width / 8`
+this is HOL's alignment at every width, including non-power-of-two byte counts
+(`width = 24`: address 5 aligns to 4, not 3; direct HOL oracle
+`scripts/hol-probes/byte_align_probe.out`, rows `ba24_5 = 4`, `ba64_13 = 8`,
+`ba8_7 = 7`).  For a power-of-two byte count, such as the production RV64
+`bytesInWord = 8`, it equals rounding down to a multiple of `bytesInWord`.
+HOL leaves `LOG2 0` unspecified; the `bytesInWord = 0` case (width < 8) returns
+the address unchanged. -/
 def panRiscVByteAlign [NeZero width]
     (bytesInWord address : Word width) : Word width :=
   let bytes := bytesInWord.toNat
   if bytes = 0 then address
-  else BitVec.ofNat width ((address.toNat / bytes) * bytes)
+  else
+    let alignment := 2 ^ Nat.log2 bytes
+    BitVec.ofNat width ((address.toNat / alignment) * alignment)
 
-/-- **Sufficient precondition for HOL faithfulness.** When the byte count
-`bytesInWord.toNat` is a power of two, `bytesInWord.toNat = 2 ^ k`, the
-division-based `panRiscVByteAlign` is exactly the HOL `byte$byte_align` bit
-mask (clear the low `k` bits). The production RISC-V target is fixed at
-`Word 64` with `bytesInWord = 8 = 2^3`, so this covers the only reachable
-production byte count; non-power-of-two byte counts (for example `width = 24`,
-`bytesInWord = 3`) diverge from HOL and are not reachable in the rv64i
-pipeline. See the direct HOL oracle `scripts/hol-probes/byte_align_probe.out`
-(`ba24_5 = 4`, `ba64_13 = 8`, `ba8_7 = 7`). -/
+/-! Closed `Nat.log2` values for the power-of-two byte counts of the
+supported word widths, so `simp` evaluates `panRiscVByteAlign` at them. -/
+@[simp] theorem panRiscV_log2_one : Nat.log2 1 = 0 := Nat.log2_two_pow (n := 0)
+@[simp] theorem panRiscV_log2_two : Nat.log2 2 = 1 := Nat.log2_two_pow (n := 1)
+@[simp] theorem panRiscV_log2_four : Nat.log2 4 = 2 := Nat.log2_two_pow (n := 2)
+@[simp] theorem panRiscV_log2_eight : Nat.log2 8 = 3 := Nat.log2_two_pow (n := 3)
+
+/-- For a power-of-two byte count `bytesInWord.toNat = 2 ^ k`,
+`panRiscVByteAlign` is the HOL `byte$byte_align` bit mask (clear the low `k`
+bits). -/
 theorem panRiscVByteAlign_eq_bitMask_of_pow2 [NeZero width]
     (bytesInWord address : Word width) (k : Nat)
     (hbytes : bytesInWord.toNat = 2 ^ k) :
@@ -57,7 +70,7 @@ theorem panRiscVByteAlign_eq_bitMask_of_pow2 [NeZero width]
   rw [if_neg h0]
   apply BitVec.eq_of_toNat_eq
   simp only [BitVec.toNat_ofNat]
-  rw [Nat.shiftRight_eq_div_pow, Nat.shiftLeft_eq, hbytes]
+  rw [Nat.shiftRight_eq_div_pow, Nat.shiftLeft_eq, hbytes, Nat.log2_two_pow]
 
 /-- Production RISC-V `Word 64` byte alignment (`bytesInWord = 8 = 2^3`) is
 the HOL bit mask `(address >>> 3) <<< 3`. -/

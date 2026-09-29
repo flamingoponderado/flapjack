@@ -1201,11 +1201,29 @@ def holFiniteWordRiscVMemoryModel {ι : Type u}
     (RiscV.panRiscVMemoryModelForEndian bigEndian)
 
 /-! HOL `byte_align_def` clears the low bits selected by
-    `LOG2 (dimindex DIV 8)`. This differs from target rounding when a word has
-    a non-power-of-two number of bytes. -/
+    `LOG2 (dimindex DIV 8)`. -/
 def holByteAlignBitVec [NeZero width] (address : BitVec width) : BitVec width :=
   let alignment := 2 ^ Nat.log2 (width / 8)
   BitVec.ofNat width ((address.toNat / alignment) * alignment)
+
+/-- The production RISC-V byte alignment with the state byte count
+    `bytesInWord = width / 8` is HOL's `byte_align` at every positive width,
+    including non-power-of-two byte counts such as width 24 (bead
+    `flapjack-pxn.18.5.4.3.4`).  Flapjack-only bridge (no HOL declaration). -/
+theorem panRiscVByteAlign_bytesInWord_eq_holByteAlignBitVec [NeZero width]
+    (address : BitVec width) :
+    RiscV.panRiscVByteAlign (BitVec.ofNat width (width / 8)) address =
+      holByteAlignBitVec address := by
+  have hlt : width / 8 < 2 ^ width :=
+    Nat.lt_of_le_of_lt (Nat.div_le_self _ _) (Nat.lt_two_pow_self)
+  unfold RiscV.panRiscVByteAlign holByteAlignBitVec
+  simp only [BitVec.toNat_ofNat, Nat.mod_eq_of_lt hlt]
+  split
+  · rename_i h0
+    rw [h0]
+    apply BitVec.eq_of_toNat_eq
+    simp
+  · rfl
 
 /-! Source-shaped finite-word memory adapter. Its byteAlign, getByte, and
     aligned fields encode the imported HOL formulas through the finite-word /
@@ -1213,10 +1231,11 @@ def holByteAlignBitVec [NeZero width] (address : BitVec width) : BitVec width :=
     HOL's `set_byte_def`, and `wordOfBytes` follows the recursive
     `word_of_bytes_def`. Generic finite-word/BitVec transport is now proved for
     byte alignment, `setByte`, recursive `wordOfBytes`, and the byte/word load
-    helpers. This does not identify the transported model with the production
-    RISC-V memory model at every width (the 24-bit alignment counterexample is
-    documented above), or identify the explicit enumeration with HOL's
-    implicit `finite_index` dictionary. Word operators, comparisons, and shifts
+    helpers. The production RISC-V byte alignment now agrees with HOL
+    `byte_align` at every width (`panRiscVByteAlign_bytesInWord_eq_holByteAlignBitVec`),
+    but this does not by itself identify the transported model with the
+    production RISC-V memory model field by field, or identify the explicit
+    enumeration with HOL's implicit `finite_index` dictionary. Word operators, comparisons, and shifts
     use generic source-level definitions. This runtime supports the untagged
     recursive preservation theorem; production evaluator correspondence and
     unrestricted HOL carrier identification remain open. -/
