@@ -524,6 +524,26 @@ theorem panGlobalsContextExact_ofPass_lookup [BEq String] [LawfulBEq String]
   simp [PanGlobalsContextExact.ofPass,
     Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes name hname]
 
+/-- Constructor-level commute fact for global assignment.  It uses the explicit
+    exact-finite-map/production-`InfoMap` lookup relation above; it remains
+    byte-range scoped because the exact context is keyed by `MlS`.  Flapjack
+    routing infrastructure, not a HOL declaration. -/
+theorem compileProgCakeOfExact_global_assign_exact_bridge [LawfulBEq String]
+    {width : Nat} [NeZero width]
+    (context : GlobalPassContext (BitVec width)) (name : String)
+    (value : Exp (BitVec width)) (hname : NameRanged name) :
+    compileProgCakeOfExact context (.assign .global name value) =
+      progOfHOL (compileProgExactHOL (PanGlobalsContextExact.ofPass context)
+        (progToHOL (.assign .global name value))) := by
+  simp only [compileProgCakeOfExact, compileProgExactHOL, progToHOL, FLOOKUP,
+    FLOOKUP_cakeContextOfPass_globals]
+  rw [panGlobalsContextExact_ofPass_lookup context name hname]
+  cases h : lookupInfo name context.globals with
+  | none => simp [progOfHOL]
+  | some entry =>
+      obtain ⟨shape, address⟩ := entry
+      simp [progOfHOL, compileExpRouteCake, expOfHOL]
+
 /-- The routed program compiler computes exactly the production `compileProgCake`
     on the `cakeContextOfPass` view, for byte-ranged programs.  Flapjack routing
     infrastructure (untagged). -/
