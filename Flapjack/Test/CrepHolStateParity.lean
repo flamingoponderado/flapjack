@@ -213,6 +213,19 @@ example :
           evalCrepSemHOLExp, lookupState, HolFiniteMapExact.lookup_updateEq,
           FUPDATE_HOL_eq_FUPDATE, FUPDATE]))
 
+private def baseTopState : CrepSemHOLState 8 Unit :=
+  { lookupState with
+    baseAddr := BitVec.ofNat 8 12
+    topAddr := BitVec.ofNat 8 13 }
+
+example :
+    evalCrepSemHOLExp (baseTopState.mapc sampleMapc) .baseAddr =
+      evalCrepSemHOLExp baseTopState .baseAddr := by
+  simpa [crepSimpExpHOL] using
+    (crepSimpExpCorrect1NativeBaseAddrCase sampleMapc baseTopState
+      (HolWordLab.word (BitVec.ofNat 8 12)) (by
+        simp [evalCrepSemHOLExp, baseTopState, lookupState]))
+
 private def lookupNames : List Nat := [0, 1]
 
 example :
