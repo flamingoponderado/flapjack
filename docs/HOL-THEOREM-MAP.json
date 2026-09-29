@@ -22510,6 +22510,16 @@
     "reviewer": "Flapjack same-module canonical finite-support witness for the ShMem simp_prog_correct case qualifiers; it restates the CrepSemHOLState roundtrip so the state and word qualifiers on simpProgCorrectShMemCase resolve to a single owning structure. Not a HOL declaration, so no @[hol] tag."
   },
   {
+    "hol_path": "cakeml/pancake/proofs/crep_arithProofScript.sml",
+    "hol_name": "simp_prog_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrect/Seq.lean",
+    "lean_name": "simpProgCorrectSeqCase",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison (2026-09-29; bead flapjack-pxn.18.5.4.18): HOL crep_arithProofScript.sml:184-212 states evaluate (p,s)=(r,s') and r<>SOME Error, concluding evaluate (simp_prog p,mapcs s)=(r,mapcs s'). The Seq clause is the evaluate_ind case from crepSemScript.sml:440, whose exact IHs are P(c1,s) and, for every (res,s1)=evaluate(c1,s) with res=NONE, P(c2,s1). Lean spells P as the unchanged source evaluator equation, non-Error premise, and mapped-state target evaluator conclusion; the second IH retains the exact intermediate state and is guarded by the first result NONE. The HOL Seq evaluator clause at crepSemScript.sml:304-306 evaluates c2 iff c1 returns NONE; Lean uses the same branch in evalCrepSemHOLProgExact_seq_holShape. The only representation qualifiers are finite-support locals/globals/code and width-indexed BitVec, with a same-module roundtrip witness."
+  },
+  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrect.lean",
@@ -22524,6 +22534,14 @@
     "lean_name": "holFmapAsFiniteSupportWitness",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Same-module canonical finite-support witness for simpProgCorrectAssignCase: the exact state and broad counterpart roundtrip through toBroad/ofBroad; this is Flapjack representation infrastructure, not a HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrect/Seq.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module canonical finite-support witness for simpProgCorrectSeqCase: the exact state and broad counterpart roundtrip through toBroad/ofBroad; this is Flapjack representation infrastructure, not a HOL declaration."
   },
   {
     "hol_path": null,
