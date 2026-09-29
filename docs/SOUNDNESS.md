@@ -101,6 +101,16 @@ The following are open review or verification obligations:
    `evalPanValueDeclarationsWithStructs` remains Flapjack-specific and is not
    used as evidence for the exact `compile_top_shape_wf` port. This work does
    not claim a cross-prover equivalence proof.
+8. HOL's floating-point library specifies rounding over real numbers. The
+   current Lean binary64 arithmetic rendering uses `Rat` for finite float
+   values and rational operation inputs. Lean proves its computable
+   round-to-nearest-even algorithm agrees with the Lean choice-based
+   specification for every rational input, but the correspondence between
+   that rational rendering and HOL's real-number specification is a
+   source-reviewed external assumption, not a kernel-checked cross-prover
+   theorem. The value-component theorems do not establish flag equivalence;
+   NaN payload choice remains unspecified. Irrational square-root rounding
+   is not covered by these rational-input theorems.
 
 ## Trust and reproducibility notes
 
