@@ -596,6 +596,89 @@ def pipelineLoopFunctionsSourceRouted {width : Nat} [NeZero width]
   else
     pipelineLoopFunctionsSourceAux architecture functionInfos firstLabel functions
 
+/-! ### Exact-carrier bridge for the source-routed Loop output
+
+The compiler's source route uses `crepCompFuncThroughHOLExact` when all
+function and body names are byte-ranged. This bridge records the resulting
+executable `LoopProg` bodies against the exact `HolLoopProg` carrier. The
+generic fallback is deliberately excluded: arbitrary Lean `String` names do
+not embed into HOL `mlstring` without the byte-range premise. -/
+
+private theorem pipelineLoopFunctionsSourceExactAux_body_rel
+    {width : Nat} [NeZero width] (architecture : RiscV.Architecture)
+    (functionInfos : InfoMap (Nat × Nat))
+    (hFunctionNames : ∀ entry ∈ functionInfos, CrepNameRanged entry.1) :
+    ∀ (firstLabel : Nat) (programs : List (CompiledFunction (BitVec width)))
+      (hBodies : ∀ function ∈ programs, CrepProgNameRanged function.body)
+      (entry : Nat × List Nat × LoopProg (BitVec width))
+      (_hentry : entry ∈ pipelineLoopFunctionsSourceExactAux architecture functionInfos
+        hFunctionNames firstLabel programs hBodies),
+      ∃ faithfulBody : HolLoopProg width,
+        loopProgExecRel entry.2.2 faithfulBody := by
+  intro firstLabel programs
+  induction programs generalizing firstLabel with
+  | nil =>
+      intro hBodies entry hentry
+      simp [pipelineLoopFunctionsSourceExactAux] at hentry
+  | cons function programs ih =>
+      intro hBodies entry hentry
+      simp only [pipelineLoopFunctionsSourceExactAux, List.mem_cons] at hentry
+      rcases hentry with hhead | htail
+      · rw [hhead]
+        let context : LoopContext (BitVec width) :=
+          crepMkCtxt architecture (crepMakeVmap function.params) functionInfos
+            (function.params.length - 1)
+        let exactContext := productionLoopContextToExact context
+        let faithfulBody := optimiseHOL (compFuncHOLExact exactContext.target
+          exactContext.funcs function.params (crepProgToHOL function.body))
+        refine ⟨faithfulBody, ?_⟩
+        simpa [pipelineLoopFunctionsSourceExactAux,
+          crepCompFuncThroughHOLExact, context, exactContext, faithfulBody] using
+          crepCompFuncThroughHOLExact_rel architecture functionInfos
+            function.params function.body (hBodies function (by simp))
+            hFunctionNames
+      · exact ih (firstLabel + 1)
+          (fun next hnext => hBodies next (by simp [hnext])) entry
+          (by simpa only [pipelineLoopFunctionsSourceExactAux] using htail)
+
+/-- Every function body emitted by the actual source-routed pipeline under its
+byte-range guard is related to a body in the exact `HolLoopProg` carrier. The
+program projection is the reviewed `loopProgExecRel` bridge. The exact state
+relation is `LoopSemStateFiniteExact.prodRel` and is used when relating
+evaluation states; this theorem itself does not claim evaluator result
+correspondence or an executed CLI evaluation path. -/
+theorem pipelineLoopFunctionsSourceRouted_body_rel {width : Nat} [NeZero width]
+    (architecture : RiscV.Architecture) (firstLabel : Nat)
+    (functions : List (CompiledFunction (BitVec width)))
+    (hRanged : functions.all (fun function =>
+      CrepNameRangedBool function.name && CrepProgNameRangedBool function.body) = true) :
+    ∀ entry ∈ pipelineLoopFunctionsSourceRouted architecture firstLabel functions,
+      ∃ faithfulBody : HolLoopProg width,
+        loopProgExecRel entry.2.2 faithfulBody := by
+  have hEach : ∀ function ∈ functions,
+      CrepNameRangedBool function.name && CrepProgNameRangedBool function.body := by
+    simpa only [List.all_eq_true] using hRanged
+  have hNames : ∀ function ∈ functions, CrepNameRanged function.name := by
+    intro function hfunction
+    have ⟨hname, _⟩ : CrepNameRangedBool function.name = true ∧
+        CrepProgNameRangedBool function.body = true := by
+      simpa using hEach function hfunction
+    exact crepNameRangedBool_eq_true_iff function.name |>.mp hname
+  have hBodies : ∀ function ∈ functions, CrepProgNameRanged function.body := by
+    intro function hfunction
+    have ⟨_, hbody⟩ : CrepNameRangedBool function.name = true ∧
+        CrepProgNameRangedBool function.body = true := by
+      simpa using hEach function hfunction
+    exact (crepProgNameRangedBool_eq_true_iff function.body).mp hbody
+  have hFunctionNames : ∀ entry ∈ pipelineFunctionInfos firstLabel functions,
+      CrepNameRanged entry.1 :=
+    pipelineFunctionInfos_byteRanged firstLabel functions hNames
+  unfold pipelineLoopFunctionsSourceRouted
+  simp only [dif_pos hRanged]
+  exact pipelineLoopFunctionsSourceExactAux_body_rel architecture
+    (pipelineFunctionInfos firstLabel functions) hFunctionNames firstLabel
+    functions hBodies
+
 /-! Source-facing port of `loop_to_word$compile_prog`.  CakeML rebuilds a
     dense even-register context from
     `params ++ fromNumSet (difference (acc_vars body) params)`.  Use that
@@ -705,8 +788,11 @@ def panCompileTap [CakeDisplayWord α]
     direct output of Cake's tagged `compile_top`. Parser-backed production
     entrypoints provide the byte-range proof composed through the earlier
     passes, selecting `compileProgTopHOLWithMetadataOfExact` at the
-    declaration-to-Crep boundary. The optional proof preserves this helper's
-    source compatibility for callers that do not carry the codec invariant. -/
+    declaration-to-Crep boundary. That branch executes exact compiler and
+    inliner carriers, then decodes for the existing production metadata
+    representation; equality with the generic compatibility route is not
+    claimed. The optional proof preserves this helper's source compatibility
+    for callers that do not carry the codec invariant. -/
 def compileFlapjackEntryCake {width : Nat} [NeZero width]
     [BEq (BitVec width)] [OfNat (BitVec width) 0]
     [OfNat (BitVec width) 1] [Add (BitVec width)] [Mul (BitVec width)]
@@ -745,26 +831,6 @@ def compileFlapjackEntryCake {width : Nat} [NeZero width]
       let loop := pipelineLoopFunctionsSourceRouted architecture 1 crepe
       let word := pipelineWordFunctionsSource loop
       some (FlapjackPipelineResult.mk simplified structured globals crepe loop word)
-
-/-- The parser-proved exact-carrier route returns the same entire pipeline
-    result as the compatibility route. This composes the two reviewed pass
-    equalities at the entrypoint, so the optional proof changes which tagged
-    definitions execute, not the compiler output. -/
-theorem compileFlapjackEntryCake_ofExact_eq {width : Nat} [NeZero width]
-    [BEq (BitVec width)] [OfNat (BitVec width) 0]
-    [OfNat (BitVec width) 1] [Add (BitVec width)] [Mul (BitVec width)]
-    [AndOp (BitVec width)] [ShiftRight (BitVec width)]
-    [PanShiftWidth (BitVec width)]
-    (architecture : RiscV.Architecture) (bytesInWord : BitVec width)
-    (fromNat : Nat → BitVec width) (start : FunName)
-    (declarations : List (Decl (BitVec width)))
-    (h : ∀ declaration ∈ declarations, DeclByteRanged declaration) :
-    compileFlapjackEntryCake architecture bytesInWord fromNat start declarations
-        (some (.isTrue h)) =
-      compileFlapjackEntryCake architecture bytesInWord fromNat start declarations none := by
-  unfold compileFlapjackEntryCake
-  simp only [globalCompileTopCakeOfExact_eq,
-    compileProgTopHOLWithMetadataOfExact_eq]
 
 /-! Executable mirror of the missing-`main` branch of `pan_to_target_all`
     (`cakeml/pancake/pan_passesScript.sml:20-37`): when the program has no
