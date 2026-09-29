@@ -1666,6 +1666,11 @@ class StandaloneFmapResultStatusTest(unittest.TestCase):
         )
         self.assertTrue(any("mutually exclusive" in error for error in errors))
 
+    def test_rejects_result_status_without_source_note(self):
+        errors = self._errors(
+            self._record(reviewer="inventory only"), self._tag())
+        self.assertTrue(any("source-comparison note" in error for error in errors))
+
 
 class MultiOwnerFmapRelationStatusTest(unittest.TestCase):
     def _record(self, **overrides):

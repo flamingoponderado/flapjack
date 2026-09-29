@@ -2356,16 +2356,12 @@ def validate_inventory(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support_result @[hol] tag cannot have "
                 "reviewed_exact status; use reviewed_fmap_as_finite_support_result after source comparison"
             )
-        if fmap_result and status not in {
-            "reviewed_fmap_as_finite_support_result",
-        }:
+        if fmap_result and status != "reviewed_fmap_as_finite_support_result":
             errors.append(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support_result @[hol] tag needs a reviewed "
                 "source classification (reviewed_fmap_as_finite_support_result)"
             )
-        if not fmap_result and status in {
-            "reviewed_fmap_as_finite_support_result",
-        }:
+        if not fmap_result and status == "reviewed_fmap_as_finite_support_result":
             errors.append(
                 f"{key[0]}:{key[1]}: reviewed_fmap_as_finite_support_result needs a "
                 "fmap_as_finite_support_result @[hol] tag"
