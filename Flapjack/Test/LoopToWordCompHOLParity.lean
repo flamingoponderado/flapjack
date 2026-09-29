@@ -4,7 +4,7 @@ import Flapjack.Pancake.LoopToWord
 # Original HOL parity for the total exact `loop_to_word$comp`
 
 The original definition is `comp_def` at
-`cakeml/pancake/loop_to_wordScript.sml:56-152`. The expected observations are
+`cakeml/pancake/loop_to_wordScript.sml:56-150`. The expected observations are
 direct HOL-EVAL results from `scripts/hol-probes/loop_to_word_comp_probe.out`,
 `scripts/hol-probes/loop_to_word_comp_recursive_probe.out`, and
 `scripts/hol-probes/loop_to_word_comp_call_probe.out`, replayed here through the
