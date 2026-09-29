@@ -1,5 +1,6 @@
 import Flapjack.Pancake.LoopToWord
 import Flapjack.Pancake.LoopToWord.Proofs.FindVarExact
+import Flapjack.Pancake.Proofs.LoopToWord.ContextSupport
 import Flapjack.Pancake.Proofs.LoopToWord.LocalsRel
 import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelUpdates
 
@@ -18,6 +19,28 @@ direct HOL-EVAL results from
 namespace Flapjack.Test.LoopToWordExactParity
 
 open Flapjack Flapjack.LoopToWord
+
+/-! The `fromNumSet` support theorem applies even to unrestricted Spt trees;
+`toNumSet` retains list-set behavior, including duplicate elimination. -/
+
+example {α : Type} (tree : Spt α) (key : Nat) :
+    key ∈ fromNumSetHOL tree ↔ sptMem key tree := by
+  exact Iff.of_eq (congrFun (fromNumSetHOL_set tree) key)
+
+example : sptMem 2 (toNumSetHOL [2, 4, 2]) := by
+  change sptDomain (toNumSetHOL [2, 4, 2]) 2
+  rw [sptDomain_toNumSetHOL]
+  simp
+
+example : ¬ sptMem 3 (toNumSetHOL [2, 4, 2]) := by
+  change ¬ sptDomain (toNumSetHOL [2, 4, 2]) 3
+  rw [sptDomain_toNumSetHOL]
+  simp
+
+example : ¬ sptMem 0 (toNumSetHOL ([] : List Nat)) := by
+  change ¬ sptDomain (toNumSetHOL ([] : List Nat)) 0
+  rw [sptDomain_toNumSetHOL]
+  simp
 
 /-- Probe context `insert 3 7 (insert 5 9 LN)` over `num |-> num` spt. -/
 def probeContext : Spt Nat := sptInsert 3 7 (sptInsert 5 9 .ln)
