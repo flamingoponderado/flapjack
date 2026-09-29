@@ -76,6 +76,53 @@ if lake env lean "$test_file" >/dev/null 2>&1; then
   exit 1
 fi
 
+# A nullary reducible abbreviation used as a type is a bare `.const`, not an
+# application, so it must be unfolded before the `.app` default is applied;
+# otherwise `abbrev ZeroWord := BitVec 0` hides a zero-width word.
+printf '%s\n' \
+  'import Flapjack.HolRef' \
+  'abbrev ZeroWord := BitVec 0' \
+  '@[hol "cakeml/pancake/semantics/panSemScript.sml" "state" (words_as_type_indexed_bitvec)]' \
+  'theorem nullaryZeroWidthAbbrev (x : ZeroWord) : True := trivial' > "$test_file"
+if lake env lean "$test_file" >/dev/null 2>&1; then
+  echo 'nullary zero-width abbreviation under the words qualifier was accepted' >&2
+  exit 1
+fi
+
+printf '%s\n' \
+  'import Flapjack.HolRef' \
+  'abbrev W (w : Nat) := BitVec w' \
+  '@[hol "cakeml/pancake/semantics/panSemScript.sml" "state" (words_as_type_indexed_bitvec)]' \
+  'theorem parameterizedZeroWidthAbbrev (x : W 0) : True := trivial' > "$test_file"
+if lake env lean "$test_file" >/dev/null 2>&1; then
+  echo 'parameterized zero-width abbreviation under the words qualifier was accepted' >&2
+  exit 1
+fi
+
+printf '%s\n' \
+  'import Flapjack.HolRef' \
+  'abbrev W (w : Nat) := BitVec w' \
+  '@[hol "cakeml/pancake/semantics/panSemScript.sml" "state" (words_as_type_indexed_bitvec)]' \
+  'theorem parameterizedPositiveWidthAbbrev {w : Nat} [NeZero w] (x : W w) : True := trivial' > "$test_file"
+if ! lake env lean "$test_file" >/dev/null 2>&1; then
+  echo 'parameterized positive-width abbreviation under the words qualifier was rejected' >&2
+  exit 1
+fi
+
+# A declaration type containing a structure projection must be traversed
+# (`Expr.proj`), not skipped or crashed on.
+printf '%s\n' \
+  'import Flapjack.HolRef' \
+  'structure Box where' \
+  '  n : Nat' \
+  '@[hol "cakeml/pancake/semantics/panSemScript.sml" "state" (words_as_type_indexed_bitvec)]' \
+  'theorem projectionTraversal {w : Nat} [NeZero w] (x : BitVec w) (b : Box)' \
+  '    (h : b.n = 0) : True := trivial' > "$test_file"
+if ! lake env lean "$test_file" >/dev/null 2>&1; then
+  echo 'a structure projection in the declaration type was rejected or crashed' >&2
+  exit 1
+fi
+
 printf '%s\n' \
   'import Flapjack.HolRef' \
   '@[hol "cakeml/pancake/semantics/panSemScript.sml" "state" (words_as_type_indexed_bitvec)]' \
