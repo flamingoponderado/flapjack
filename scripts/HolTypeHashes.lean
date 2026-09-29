@@ -82,6 +82,7 @@ import Flapjack.Pancake.LoopToWord
 import Flapjack.Pancake.LoopToWord.Proofs.RelationsExact
 import Flapjack.Pancake.LoopToWord.Proofs.FindVarExact
 import Flapjack.Pancake.LoopToWord.MakeCtxtExact
+import Flapjack.Pancake.LoopToWord.CompFuncExact
 import Flapjack.Pancake.Proofs.LoopToWord.LocalsRel
 import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelUpdates
 import Flapjack.Pancake.Proofs.LoopToWord.ContextSupport
