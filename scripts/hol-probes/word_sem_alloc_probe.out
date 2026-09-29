@@ -1,0 +1,28 @@
+find_code_some=SOME ([Word 1w; Word 2w],Tick,NONE)
+find_code_some_arity=NONE
+find_code_some_missing=NONE
+find_code_none_nil=NONE
+find_code_none_loc=SOME ([Word 1w],Skip,SOME 7)
+find_code_none_offset=NONE
+find_code_none_arity=NONE
+find_code_none_word=NONE
+enc_stack=[Word 1w; Loc 1 0; Word 3w]
+dec_stack_hit=SOME
+  [StackFrame (SOME 1) [(9,Word 9w)] [(2,Word 7w); (4,Word 8w)] NONE;
+   StackFrame NONE [] [(6,Loc 3 3)] (SOME (1,2,3))]
+dec_stack_short=NONE
+dec_stack_extra=NONE
+gc_rev=SOME
+  [StackFrame (SOME 1) [(9,Word 9w)] [(2,Word 3w); (4,Loc 1 0)] NONE;
+   StackFrame NONE [] [(6,Word 1w)] (SOME (1,2,3))]
+gc_fail=T
+has_space_yes=SOME T
+has_space_no=SOME F
+has_space_loc=NONE
+has_space_missing=NONE
+alloc_ok=(NONE,[(4,Loc 1 0); (2,Word 5w)],0,SOME (Word 16w))
+alloc_space=(SOME NotEnoughSpace,[],0,NONE)
+alloc_cut=(SOME Error,[],0,NONE)
+alloc_gc=(SOME Error,[],0,NONE)
+assign=SOME [(1,Word 8w); (2,Word 5w)]
+assign_fail=T

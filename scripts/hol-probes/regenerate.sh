@@ -1651,6 +1651,14 @@ run_probe word_sem_call_helpers_probeScript.sml word_sem_call_helpers_probe.out 
   "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 
+# The wordSem code/GC/alloc probe observes find_code, enc_stack/dec_stack, gc
+# with a supplied gc_fun, has_space, alloc (success, NotEnoughSpace, cut and gc
+# failure) and assign (bead flapjack-h29l.5).
+run_probe word_sem_alloc_probeScript.sml word_sem_alloc_probe.out \
+  find_code_some dec_stack_hit gc_rev alloc_ok assign_fail \
+  "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
 # The good_handlers probe observes the structural handler-label predicate,
 # including the NONE-ret case (handler ignored) and nested bad handlers.
 run_probe word_convs_good_handlers_probeScript.sml word_convs_good_handlers_probe.out \
