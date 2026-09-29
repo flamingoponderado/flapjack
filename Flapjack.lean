@@ -162,6 +162,7 @@ import Flapjack.Pancake.Semantics.LoopProps.CompSyntaxOkLemmas
 import Flapjack.Pancake.Semantics.LoopProps.CompSyntaxOkEvalExact
 import Flapjack.Pancake.Proofs.LoopToWord.LocalsRel
 import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelUpdates
+import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelAllDistinct
 import Flapjack.PanObservationalSemantics
 import Flapjack.PanMrec
 import Flapjack.PanHProgDec
@@ -427,6 +428,7 @@ import Flapjack.Test.CrepFindLabParity
 import Flapjack.Pancake.LoopLive
 import Flapjack.Pancake.LoopToWord
 import Flapjack.Pancake.LoopToWord.Proofs.RelationsExact
+import Flapjack.Pancake.LoopToWord.Proofs.FindVarExact
 import Flapjack.Pancake.LoopLang.AssignedVars
 import Flapjack.Pancake.Semantics.LoopProps.AssignedVars
 import Flapjack.Test.LoopExactAssignedVarsParity

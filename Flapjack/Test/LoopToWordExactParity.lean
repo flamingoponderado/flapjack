@@ -1,4 +1,5 @@
 import Flapjack.Pancake.LoopToWord
+import Flapjack.Pancake.LoopToWord.Proofs.FindVarExact
 import Flapjack.Pancake.Proofs.LoopToWord.LocalsRel
 import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelUpdates
 
@@ -51,6 +52,25 @@ def originalCutsetAbsent : Option Unit := none
   originalCutsetFive
 #guard (sptLookup 2 (mkNewCutsetHOL probeContext probeLive) : Option Unit) ==
   originalCutsetAbsent
+
+/-! ## The HOL proof's `find_var_neq_0_ctxt` context condition
+
+The exact theorem is also applied to a concrete even, nonzero Spt context, so
+the source-level lookup and `domain` renderings are exercised together. -/
+
+def findVarEvenContext : Spt Nat := sptInsert 0 2 .ln
+
+example : findVarHOL findVarEvenContext 0 ≠ 0 := by
+  apply findVarNeZeroContextHOLExact findVarEvenContext 0
+  constructor
+  · intro n m hlookup
+    by_cases hn : n = 0
+    · subst n
+      simp [findVarEvenContext, sptLookup] at hlookup
+      subst m
+      constructor <;> decide
+    · simp [findVarEvenContext, sptLookup, hn] at hlookup
+  · simp [findVarEvenContext, sptMem, sptDomain, sptLookup]
 
 /-! ## Original-domain parity for loop_to_wordProof `locals_rel_def`
 
@@ -151,6 +171,37 @@ example : ¬ localsRelHOL (width := 64) localsRelProbeContext
     localsRelProbeSource (sptInsert 4 (.word 9) localsRelProbeTarget) := by
   simp [localsRelHOL, localsRelProbeContext, localsRelProbeSource,
     localsRelProbeTarget, findVarHOL, sptMem, sptDomain, sptLookup, sptInsert]
+
+/-! Replay empty and nonempty parallel-list insertion cases for
+`locals_rel_alist_insert`. -/
+
+example : localsRelHOL (width := 64) localsRelProbeContext
+    (LoopSemStateFiniteExact.sptAlistInsert [] [] localsRelProbeSource)
+    (LoopSemStateFiniteExact.sptAlistInsert [] [] localsRelProbeTarget) := by
+  have hrel : localsRelHOL (width := 64) localsRelProbeContext
+      localsRelProbeSource localsRelProbeTarget := by
+    simp [localsRelHOL, localsRelProbeContext, localsRelProbeSource,
+      localsRelProbeTarget, findVarHOL, sptMem, sptDomain, sptLookup, sptInsert]
+  simpa [LoopSemStateFiniteExact.sptAlistInsert] using hrel
+
+example : localsRelHOL (width := 64) localsRelProbeContext
+    (LoopSemStateFiniteExact.sptAlistInsert [0] [.word 9] localsRelProbeSource)
+    (LoopSemStateFiniteExact.sptAlistInsert [4] [.word 9] localsRelProbeTarget) := by
+  have hrel : localsRelHOL (width := 64) localsRelProbeContext
+      localsRelProbeSource localsRelProbeTarget := by
+    simp [localsRelHOL, localsRelProbeContext, localsRelProbeSource,
+      localsRelProbeTarget, findVarHOL, sptMem, sptDomain, sptLookup, sptInsert]
+  have hmem : sptMem 0 localsRelProbeContext := by
+    simp [sptMem, sptDomain, localsRelProbeContext, sptLookup]
+  have hupdated := localsRelHOLAlistInsert (width := 64)
+    localsRelProbeContext [0] [.word 9] localsRelProbeSource localsRelProbeTarget
+      ⟨hrel, by
+        intro name hname
+        have hnameZero : name = 0 := by simpa using hname
+        subst name
+        exact hmem⟩
+  simpa [LoopSemStateFiniteExact.sptAlistInsert, findVarHOL,
+    localsRelProbeContext, sptLookup, sptInsert] using hupdated
 
 /-! ## Original-domain parity for exact `comp_exp_def`
 
