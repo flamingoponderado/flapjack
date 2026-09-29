@@ -20496,6 +20496,22 @@
     "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
     "hol_name": "inline_prog_correct",
     "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "inlineProgCorrectSeqCaseExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "inlFs",
+      "inlBag"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison (2026-09-29; bead flapjack-pxn.18.5.5.38) against crep_inlineProofScript.sml:2301-2309 and Seq case 2383-2395, with the exact evaluate_ind Seq conjunct at crepSemScript.sml:440. The statement retains the original source evaluation equation, r <> SOME Error, inl_fs SUBMAP s.code, inl_bag SUBMAP inl_fs, state_rel_code, locals_strong_rel and code_inl_rel premises. It adds exactly the two Seq induction hypotheses: P(first,s), and for every (res1,s1) equal to evaluate(first,s), res1 = NONE implies P(second,s1). Each P instance has the same theorem-predicate binders, premises and result-dependent conclusion, including the existential target evaluation, state/code relations and NONE/Break/Continue/Error/other locals cases. No target-run or post-state premise was added. The source branch evaluates first, runs second only on NONE, and otherwise returns first's result/state; the Lean proof follows evalCrepSemHOLProgExact_seq_holShape and the structural inlineProgHOLExact Seq clause. It uses the tagged exact evaluate_code_invariant port from crepPropsScript.sml:1252 solely to carry inl_fs SUBMAP across the successful first run, as the HOL branch does. CrepSemHOLState fields and both inline maps use the reviewed HolFiniteMapExact translations with same-module witnesses; BitVec width models HOL's positive-width word."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "inline_prog_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
     "lean_name": "inlineProgCorrectReturnCaseExact",
     "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
     "fmap_as_finite_support_relation": [
