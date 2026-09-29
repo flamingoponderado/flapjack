@@ -177,6 +177,7 @@ import Flapjack.Pancake.Proofs.LoopToWord.FindVar
 import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelIntro
 import Flapjack.Pancake.Proofs.LoopToWord.CutsetDomain
 import Flapjack.Pancake.Proofs.LoopToWord.LastNAddCons
+import Flapjack.Pancake.Proofs.LoopToWord.WordShiftModDimword
 import Flapjack.Pancake.Proofs.LoopToWord.WordToBytes
 import Flapjack.PanObservationalSemantics
 import Flapjack.PanMrec
@@ -444,6 +445,7 @@ import Flapjack.Test.CrepFindLabParity
 import Flapjack.Pancake.LoopLive
 import Flapjack.Pancake.LoopToWord
 import Flapjack.Pancake.LoopToWord.ExpCarrierCodec
+import Flapjack.Pancake.LoopToWord.WordExpCarrierCodec
 import Flapjack.Pancake.LoopToWord.Proofs.RelationsExact
 import Flapjack.Pancake.LoopToWord.Proofs.FindVarExact
 import Flapjack.Pancake.LoopToWord.MakeCtxtExact
