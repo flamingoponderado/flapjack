@@ -25339,5 +25339,31 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-v5vz: compared word_allocProofScript.sml:148-170 field by field, all21 equalities in original target=source order. Includes locals_size, stack_limit/max/size, memory/domains, gc_fun, handler, clock, code, ffi, be, termdep, compile/oracle and buffers; omits precisely locals and permute. No relation strengthening. Uses the actual imported exact WordSemStateFiniteExact owner with canonical fpRegs/store finite maps and checked imported roundtrip witness; locals/code/stackSize retain Spt. Positive word dimension and universe0 host types are retained. Definition-body lock records the full field conjunction. This is a prerequisite relation, not allocator correctness."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "strong_locals_rel_set_vars_dom",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/Updates.lean",
+    "lean_name": "strongLocalsRelSetVarsDom",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-g56n: compared word_allocProof865-890 and906-920. HOL INJ f X UNIV is injection restricted to X (UNIV output membership tautological), source locals domain subset X and set ns subset X are predicate implications. The list theorem retains original LENGTH ns = LENGTH ls even though internal exact alist-insert induction proves a stronger helper. The single theorem retains X n. Original strong_locals_rel live set d and post-update relation are unchanged. Exact alist_insert is head insertion after tail, preserving first occurrence on duplicate names; proof propagates domain containment and applies scoped lookup injection at each update. Actual imported exact WordSem state, canonical fpRegs/store map witness, positive BitVec/NeZero widths. No global injection, target evaluation, or stronger live-domain premise. These are allocation update prerequisites, not full allocator simulation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "strong_locals_rel_set_var_dom",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/Updates.lean",
+    "lean_name": "strongLocalsRelSetVarDom",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-g56n: compared word_allocProof865-890 and906-920. HOL INJ f X UNIV is injection restricted to X (UNIV output membership tautological), source locals domain subset X and set ns subset X are predicate implications. The list theorem retains original LENGTH ns = LENGTH ls even though internal exact alist-insert induction proves a stronger helper. The single theorem retains X n. Original strong_locals_rel live set d and post-update relation are unchanged. Exact alist_insert is head insertion after tail, preserving first occurrence on duplicate names; proof propagates domain containment and applies scoped lookup injection at each update. Actual imported exact WordSem state, canonical fpRegs/store map witness, positive BitVec/NeZero widths. No global injection, target evaluation, or stronger live-domain premise. These are allocation update prerequisites, not full allocator simulation."
   }
 ]
