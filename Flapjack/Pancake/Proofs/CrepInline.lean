@@ -1373,6 +1373,50 @@ theorem evalCodeInlExact {width : Nat} [NeZero width] {σ : Type}
   rw [← heval]
   exact (evalCrepSemHOLExp_state_rel_code_exact s t e hstate hlocals hsubset).symm
 
+/-- Exact port of CakeML's `opt_mmap_eval_code_inl`
+    (`crep_inlineProofScript.sml:1530-1540`). HOL's `OPT_MMAP` is Lean's
+    `List.mapM` on the constructor-for-constructor `List` carriers, and the
+    four premises and successful target-list conclusion are unchanged. -/
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "opt_mmap_eval_code_inl"
+  (fmap_as_finite_support_relation :=
+    [CrepSemHOLState.locals, CrepSemHOLState.globals,
+      CrepSemHOLState.code, inl_fs])
+  (words_as_type_indexed_bitvec)]
+theorem optMmapEvalCodeInlExact {width : Nat} [NeZero width] {σ : Type}
+    (s : CrepSemHOLState width σ) (expressions : List (CrepExpHOL width))
+    (values : List (HolWordLab width)) (t : CrepSemHOLState width σ)
+    (inl_fs : HolFiniteMapExact CrepInlineMapHOLName
+      (List Nat × CrepProgHOL width)) :
+    (expressions.mapM (evalCrepSemHOLExp s) = some values ∧
+      crepInlineStateRelCodeExact s t ∧
+      crepInlineLocalsStrongRelExact s t ∧
+      crepInlineCodeInlRelExact inl_fs s t) →
+    expressions.mapM (evalCrepSemHOLExp t) = some values := by
+  rintro ⟨heval, hstate, hlocals, hcode⟩
+  induction expressions generalizing values with
+  | nil =>
+      simp only [List.mapM_nil] at heval ⊢
+      cases heval
+      rfl
+  | cons expression expressions ih =>
+      simp only [List.mapM_cons] at heval ⊢
+      cases hhead : evalCrepSemHOLExp s expression with
+      | none => simp [hhead] at heval
+      | some value =>
+          cases htail : expressions.mapM (evalCrepSemHOLExp s) with
+          | none => simp [hhead, htail] at heval
+          | some tailValues =>
+              have hvalues : values = value :: tailValues := by
+                simpa [hhead, htail] using heval.symm
+              subst values
+              have hheadTarget : evalCrepSemHOLExp t expression = some value :=
+                evalCodeInlExact s expression value t inl_fs
+                  ⟨hhead, hstate, hlocals, hcode⟩
+              have htailTarget :
+                  expressions.mapM (evalCrepSemHOLExp t) = some tailValues :=
+                ih tailValues htail
+              simp [hheadTarget, htailTarget]
+
 /-! ## `inline_prog_correct` Dec constructor case
 
 HOL crep_inlineProofScript.sml:2301 states the source run, non-Error result,
@@ -1664,6 +1708,131 @@ theorem inlineProgCorrectIfCaseExact {width : Nat} [NeZero width] {σ : Type}
           · cases r with
             | none => simpa using hlocalsPost
             | some result => cases result <;> simp_all
+
+/-! ## `inline_prog_correct` Return constructor case
+
+HOL `crep_inlineProofScript.sml:2301-2309` states the theorem; the Return case
+starts at line 2396. It has no recursive `evaluate_ind` hypothesis. HOL's
+`evaluate (Return es, s)` evaluates the list once and clears only locals;
+`inline_prog_def` leaves Return unchanged. The exact clocked Return clause,
+`eval_code_inl`, and `opt_mmap_eval_code_inl` ports use `CrepExpHOL`,
+`CrepProgHOL`, `HolWordLab`, and `CrepSemHOLState` with the reviewed fixed-width
+and canonical finite-map carriers. -/
+
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "inline_prog_correct"
+  (fmap_as_finite_support_relation :=
+    [CrepSemHOLState.locals, CrepSemHOLState.globals,
+      CrepSemHOLState.code, inlFs, inlBag])
+  (words_as_type_indexed_bitvec)]
+theorem inlineProgCorrectReturnCaseExact {width : Nat} [NeZero width] {σ : Type}
+    (values : List (CrepExpHOL width)) (s : CrepSemHOLState width σ)
+    (inlFs : HolFiniteMapExact CrepInlineMapHOLName
+      (List Nat × CrepProgHOL width))
+    (inlBag : HolFiniteMapExact CrepInlineMapHOLName
+      (List Nat × CrepProgHOL width))
+    (t : CrepSemHOLState width σ)
+    (r : Option (CrepResultHOLExact width)) (s' : CrepSemHOLState width σ)
+    (hsource : evalCrepSemHOLProgExact s (.return values) = (r, s'))
+    (hnotError : r ≠ some .error)
+    (_hsubmap : HolFiniteMapExact.submap inlFs s.code)
+    (_hbag : HolFiniteMapExact.submap inlBag inlFs)
+    (hstate : crepInlineStateRelCodeExact s t)
+    (hlocals : crepInlineLocalsStrongRelExact s t)
+    (hcode : crepInlineCodeInlRelExact inlFs s t) :
+    ∃ t' : CrepSemHOLState width σ,
+      evalCrepSemHOLProgExact t
+          (CrepInlineCanonical.inlineProgHOLExact inlBag (.return values)) = (r, t') ∧
+      crepInlineStateRelCodeExact s' t' ∧
+      crepInlineCodeInlRelExact inlFs s' t' ∧
+      match r with
+      | none => crepInlineLocalsStrongRelExact s' t'
+      | some (CrepResultHOLExact.break _) =>
+          crepInlineLocalsStrongRelExact s' t'
+      | some (CrepResultHOLExact.continue _) =>
+          crepInlineLocalsStrongRelExact s' t'
+      | some .error => False
+      | _ => True := by
+  classical
+  rw [evalCrepSemHOLProgExact_return_holShape] at hsource
+  cases heval : values.mapM (evalCrepSemHOLExp s) with
+  | none =>
+      simp [heval] at hsource
+      have hresult : r = some .error := hsource.1.symm
+      exact False.elim (hnotError hresult)
+  | some wordValues =>
+      have htargetValues : values.mapM (evalCrepSemHOLExp t) = some wordValues :=
+        optMmapEvalCodeInlExact s values wordValues t inlFs
+          ⟨heval, hstate, hlocals, hcode⟩
+      simp [heval] at hsource
+      rcases hsource with ⟨hr, hs'⟩
+      subst r
+      subst s'
+      have hinline :
+          CrepInlineCanonical.inlineProgHOLExact inlBag (.return values) = .return values := by
+        unfold CrepInlineCanonical.inlineProgHOLExact
+        simp only [CrepInlineCanonical.inlineProgHOLCoreExact]
+      refine ⟨CrepSemHOLState.emptyLocals t, ?_, ?_, ?_, ?_⟩
+      · rw [hinline, evalCrepSemHOLProgExact_return_holShape, htargetValues]
+      · simpa [crepInlineStateRelCodeExact, CrepSemHOLState.emptyLocals] using hstate
+      · simpa [crepInlineCodeInlRelExact, CrepSemHOLState.emptyLocals] using hcode
+      · simp
+
+/-! ## `inline_prog_correct` Skip constructor case
+
+HOL `crep_inlineProofScript.sml:2301-2309` states the theorem; the terminal
+remaining case in its `evaluate_ind` proof (`:2402-2405`) reduces Skip using
+`inline_prog_def` and `evaluate_def`. The HOL inline transformation's generic
+unchanged-program clause at `crep_inlineScript.sml:249` covers Skip, and
+`crepSemScript.sml:241` gives `evaluate (Skip, s) = (NONE, s)`. Lean's exact
+`CrepProgHOL` Skip constructor and `evalCrepSemHOLProgExact_skip` have the same
+state-preserving behavior. The tagged theorem keeps the same exact finite-map
+and positive-width word carriers reviewed for the other inline cases. -/
+
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "inline_prog_correct"
+  (fmap_as_finite_support_relation :=
+    [CrepSemHOLState.locals, CrepSemHOLState.globals,
+      CrepSemHOLState.code, inlFs, inlBag])
+  (words_as_type_indexed_bitvec)]
+theorem inlineProgCorrectSkipCaseExact {width : Nat} [NeZero width] {σ : Type}
+    (s : CrepSemHOLState width σ)
+    (inlFs : HolFiniteMapExact CrepInlineMapHOLName
+      (List Nat × CrepProgHOL width))
+    (inlBag : HolFiniteMapExact CrepInlineMapHOLName
+      (List Nat × CrepProgHOL width))
+    (t : CrepSemHOLState width σ)
+    (r : Option (CrepResultHOLExact width)) (s' : CrepSemHOLState width σ)
+    (hsource : evalCrepSemHOLProgExact s (.skip : CrepProgHOL width) = (r, s'))
+    (_hnotError : r ≠ some .error)
+    (_hsubmap : HolFiniteMapExact.submap inlFs s.code)
+    (_hbag : HolFiniteMapExact.submap inlBag inlFs)
+    (hstate : crepInlineStateRelCodeExact s t)
+    (hlocals : crepInlineLocalsStrongRelExact s t)
+    (hcode : crepInlineCodeInlRelExact inlFs s t) :
+    ∃ t' : CrepSemHOLState width σ,
+      evalCrepSemHOLProgExact t
+          (CrepInlineCanonical.inlineProgHOLExact inlBag (.skip : CrepProgHOL width)) =
+            (r, t') ∧
+      crepInlineStateRelCodeExact s' t' ∧
+      crepInlineCodeInlRelExact inlFs s' t' ∧
+      match r with
+      | none => crepInlineLocalsStrongRelExact s' t'
+      | some (CrepResultHOLExact.break _) =>
+          crepInlineLocalsStrongRelExact s' t'
+      | some (CrepResultHOLExact.continue _) =>
+          crepInlineLocalsStrongRelExact s' t'
+      | some .error => False
+      | _ => True := by
+  classical
+  rw [evalCrepSemHOLProgExact_skip] at hsource
+  cases hsource
+  have hinline :
+      CrepInlineCanonical.inlineProgHOLExact inlBag (.skip : CrepProgHOL width) =
+        .skip := by
+    unfold CrepInlineCanonical.inlineProgHOLExact
+    simp only [CrepInlineCanonical.inlineProgHOLCoreExact]
+  refine ⟨t, ?_, hstate, hcode, ?_⟩
+  · rw [hinline, evalCrepSemHOLProgExact_skip]
+  · simpa [crepInlineLocalsStrongRelExact]
 
 end CrepInlineExact
 
