@@ -16165,6 +16165,14 @@
     "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.12): staged case lemma for the Panop arm of HOL compile_exp_val_rel; HOL proves it inside compile_exp_val_rel, no standalone case declaration."
   },
   {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel/Load.lean",
+    "lean_name": "compileExpValRelHOL_load_ofProductionRV64",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific all-Shape Load bridge; no standalone HOL declaration exists. It composes the executable RV64 source evaluator agreement with the exact-carrier staged case `compileExpValRelHOL_load` from pan_to_crepProofScript.sml:130-396. The bridge has production/exact representation premises and so is infrastructure, not a direct port of the source-only HOL case."
+  },
+  {
     "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
     "hol_name": "eval_load_shape_el_rel",
     "lean_path": "Flapjack/Pancake/Semantics/CrepProps.lean",
