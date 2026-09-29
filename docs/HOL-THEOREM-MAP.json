@@ -10959,6 +10959,14 @@
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "distinct_make_funcs",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/MakeFuncsLemmas.lean",
+    "lean_name": "distinct_make_funcs",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-b source comparison (2026-09-29; bead flapjack-pxn.18.5.6.33.20.1) against crep_to_loopProofScript.sml:3757-3758: HOL quantifies only crep_code and concludes distinct_funcs (make_funcs crep_code). Lean has the same single outer binder, polymorphic in key α, parameter-element β, and ignored body γ, and concludes crepToLoopDistinctFuncs on the lookup of the exact tagged crepToLoopMakeFuncsExactHOL result. The make_funcs_def dependency separately carries its reviewed finite-support-result translation and same-module HOL-equality lookup witness; the theorem itself observes only FLOOKUP/the lookup and has no finite-map carrier binder/result requiring a second qualifier. No equality typeclass, success condition, or other premise was added. The private lookup-membership and zipped-entry helpers only prove the source theorem and carry no HOL tags."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
     "hol_name": "distinct_vars_def",
     "lean_path": "Flapjack/Pancake/CrepToLoop/StateRel.lean",
     "lean_name": "crepToLoopDistinctVars",
