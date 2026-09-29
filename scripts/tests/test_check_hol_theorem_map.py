@@ -2029,5 +2029,65 @@ class CombinedFmapWordsStatusTest(unittest.TestCase):
         self.assertTrue(any("words_as_type_indexed_bitvec" in error for error in errors))
 
 
+class WordDimensionAsWidthStatusTest(unittest.TestCase):
+    def setUp(self):
+        self.path = "Flapjack/Example.lean"
+        self.key = (self.path, "wordSemMustTerminateLimit")
+        self.hol = (
+            "cakeml/compiler/backend/semantics/wordSemScript.sml",
+            "MustTerminate_limit_def",
+        )
+        self.tag = {
+            self.key: (
+                *self.hol, (), (), (), (), False, (), False, False, (), (), "width",
+            )
+        }
+
+    def record(self, **overrides):
+        record = {
+            "hol_path": self.hol[0],
+            "hol_name": self.hol[1],
+            "lean_path": self.path,
+            "lean_name": self.key[1],
+            "statement_status": "reviewed_word_dimension_as_width",
+            "word_dimension_as_width": "width",
+            "reviewer": "source comparison: HOL dimword dimension corresponds to width",
+        }
+        record.update(overrides)
+        return record
+
+    def errors(self, record, tagged=None):
+        return MAP["validate_inventory"](
+            [record], {self.key}, self.tag if tagged is None else tagged, set()
+        )
+
+    def test_accepts_source_reviewed_word_free_dimension_qualifier(self):
+        self.assertEqual(self.errors(self.record()), [])
+
+    def test_requires_matching_tag_and_manifest_width(self):
+        untagged = {self.key: (*self.tag[self.key][:-1], None)}
+        self.assertTrue(any("manifest word_dimension_as_width" in error
+                            for error in self.errors(self.record(), untagged)))
+        self.assertTrue(any("needs a matching @[hol] qualifier" in error
+                            for error in self.errors(
+                                self.record(statement_status="reviewed_word_dimension_as_width",
+                                            word_dimension_as_width=None),
+                                untagged)))
+
+    def test_rejects_exact_status_and_requires_source_note(self):
+        self.assertTrue(any("cannot have reviewed_exact" in error
+                            for error in self.errors(
+                                self.record(statement_status="reviewed_exact"))))
+        self.assertTrue(any("source-comparison note" in error
+                            for error in self.errors(
+                                self.record(reviewer="reviewed only"))))
+
+    def test_rejects_combining_word_free_dimension_and_word_carrier(self):
+        tag = dict(self.tag)
+        tag[self.key] = (*tag[self.key][:9], True, *tag[self.key][10:])
+        errors = self.errors(self.record(), tag)
+        self.assertTrue(any("mutually exclusive" in error for error in errors))
+
+
 if __name__ == "__main__":
     unittest.main()

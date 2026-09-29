@@ -65,6 +65,9 @@ FMAP_AS_FINITE_SUPPORT_EQUALITIES_RE = re.compile(
 WORDS_AS_TYPE_INDEXED_BITVEC_RE = re.compile(
     r'\(\s*words_as_type_indexed_bitvec\s*\)'
 )
+WORD_DIMENSION_AS_WIDTH_RE = re.compile(
+    r'\(\s*word_dimension_as_width\s*:=\s*([A-Za-z_][A-Za-z0-9_\']*)\s*\)'
+)
 WORD_POSITIVITY_EXTRA_RE = re.compile(
     r"(?:width\s*(?:≠|!=|>|≥)\s*(?:0|1)\b|0\s*<\s*width\b|1\s*≤\s*width\b"
     r"|Nat\.pos\b|NeZero\.out\b)"
@@ -232,7 +235,8 @@ def find_lean_decl(lines: list[str], start: int) -> str:
     return "?"
 
 
-def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = False):
+def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = False,
+                        include_word_dimension_width: bool = False):
     """Yield HOL attributes, including attributes split across Lean lines."""
     comment_depth = 0
     start: int | None = None
@@ -294,9 +298,11 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                     fields_for(FMAP_AS_FINITE_SUPPORT_PARAMS_RE),
                 )
                 if include_fmap_existentials:
-                    yield site + (fields_for(FMAP_AS_FINITE_SUPPORT_EXISTENTIALS_RE),)
-                else:
-                    yield site
+                    site += (fields_for(FMAP_AS_FINITE_SUPPORT_EXISTENTIALS_RE),)
+                if include_word_dimension_width:
+                    width = WORD_DIMENSION_AS_WIDTH_RE.search(attribute)
+                    site += (width.group(1) if width else None,)
+                yield site
         start = None
         chunks = []
         attribute_bracket_depth = 0
@@ -2314,6 +2320,43 @@ def words_as_type_indexed_bitvec_errors(
             )
     return errors
 
+
+def word_dimension_as_width_errors(declaration_text: str, declaration: str,
+                                   width_name: str) -> list[str]:
+    """Validate the narrow word-free type-dimension-to-Nat translation."""
+    if not declaration_text.strip():
+        return [
+            "word_dimension_as_width requires a resolvable tagged declaration "
+            f"signature (checked for `{declaration}`)"
+        ]
+    stripped = strip_lean_comments(declaration_text)
+    decl_start = re.search(
+        r"(?:^|\s)(?:def|theorem|lemma|abbrev|instance|structure)\s", stripped
+    )
+    if decl_start is not None:
+        stripped = stripped[decl_start.start():]
+    signature = stripped.split(":=", 1)[0]
+    if not signature.strip():
+        signature = stripped
+    widths = {match.group(1) for match in NAT_WIDTH_BINDER_RE.finditer(signature)}
+    errors: list[str] = []
+    if width_name not in widths:
+        errors.append(
+            f"word_dimension_as_width `{width_name}` must name an explicit `(width : Nat)` binder"
+        )
+    if re.search(
+        r"\[\s*NeZero\s+" + re.escape(width_name) + r"\s*\]", signature
+    ) is None:
+        errors.append(
+            f"word_dimension_as_width `{width_name}` must retain its own `[NeZero {width_name}]` binder"
+        )
+    if WORD_CARRIER_TOKEN_RE.search(signature):
+        errors.append(
+            "word_dimension_as_width is only for word-free signatures; use "
+            "words_as_type_indexed_bitvec for a signature carrying words"
+        )
+    return errors
+
 def hol_declaration_lines(
     path: Path, cache: dict[Path, dict[str, list[int]]]
 ) -> dict[str, list[int]]:
@@ -2390,8 +2433,9 @@ def main(argv: list[str]) -> int:
         for (number, hol_path, hol_name, hol_line, list_fields,
              names_fields, boundary_fields, fmap_fields, fmap_result,
              fmap_relation, fmap_equalities, words_bitvec,
-             fmap_parameters, fmap_existentials) in hol_attribute_sites(
-                 lines, include_fmap_existentials=True
+             fmap_parameters, fmap_existentials, dimension_width) in hol_attribute_sites(
+                lines, include_fmap_existentials=True,
+                include_word_dimension_width=True,
              ):
             where = f"{rel}:{number}"
             lean_decl = find_lean_decl(lines, number - 1)
@@ -2472,6 +2516,19 @@ def main(argv: list[str]) -> int:
                         module=module,
                         root=str(ROOT),
                         lines=lines,
+                    )
+                )
+            if dimension_width:
+                if words_bitvec:
+                    errors.append(
+                        f"{where}: word_dimension_as_width is mutually exclusive with "
+                        "words_as_type_indexed_bitvec"
+                    )
+                errors.extend(
+                    f"{where}: {error}"
+                    for error in word_dimension_as_width_errors(
+                        tagged_declaration_text(lines, number), lean_decl,
+                        dimension_width,
                     )
                 )
             target = ROOT / hol_path
