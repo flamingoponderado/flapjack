@@ -199,6 +199,7 @@ import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.If
 import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Memory
 import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.ShMem
 import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.FFI
+import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Loop
 import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call.Support
 import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call.TailCall
 import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call.NoHandler

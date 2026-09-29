@@ -25214,6 +25214,20 @@
   {
     "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
     "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/CompileCorrect/Loop.lean",
+    "lean_name": "compileCorrect_Loop",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "LoopSemStateFiniteExact.globals",
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-30; bead flapjack-pxn.18.5.9.23.2): the Loop case of HOL loop_to_wordProof compile_correct (loop_to_wordProofScript.sml:57-97, i.e. loopSem evaluate_ind specialised to goal, resumed at :571-616 with the sub-resumes Loop_bodyNONE :617-661, Loop_Exception :663-666, Loop_Break :668-682 and Loop_Continue :684-728). The statement is HOL's evaluate_ind Loop conjunct ∀live_in body live_out s. (IH1 ∧ IH2 ∧ IH3) ⇒ P (Loop live_in body live_out,s), with the three premise sets as one conjunction in HOL order (checked against scripts/hol-probes/loop_sem_evaluate_ind_probe.out), transcribed binder for binder: (1) ∀v4 s' v s'' v3 v12. cut_res live_in (NONE,s) = (v4,s') ∧ v4 = NONE ∧ evaluate (body,s') = (v,s'') ∧ v = SOME v3 ∧ v3 = Continue v12 ∧ v12 = 0 ⇒ P (Loop live_in body live_out,s''); (2) ∀v4 s' v s''. cut_res live_in (NONE,s) = (v4,s') ∧ v4 = NONE ∧ evaluate (body,s') = (v,s'') ∧ v = NONE ⇒ P (Loop live_in body live_out,s''); (3) ∀v4 s'. cut_res live_in (NONE,s) = (v4,s') ∧ v4 = NONE ⇒ P (body,s'). P is rendered as PropertyAt for the IHs, and the conclusion is HOL's goal written out, as for the integrated cases. There is no target-run or post-state premise. The proof follows HOL. The source cut_res live_in failure or clock 0 gives Error or TimeOut, matching the target's leading Tick. Otherwise the tagged evaluate_tick_loop_tick_unfold reduces the target Seq Tick (Seq (Loop (mk_new_cutset ctxt live_in) wbody (mk_new_cutset ctxt live_out)) Tick) to the word Loop at the decremented clock. That word Loop's cut_state is the cut_env_mk_new_cutset environment (locals_rel, register 0 via _IMP), and the body runs under IH3. On NONE or Continue 0, the word Loop re-enters through STOP, which is exactly the tick-unfold of the compiled Loop at the body's final state; the re-entry IH2 or IH1 at that state closes the case, with resultCase transferred along the unchanged stack and handler (untagged resultCase_congr). A zero clock there is the compiled Loop's leading Tick TimeOut. On Break 0, both sides cut by live_out via cut_env_mk_new_cutset and then tick. On other results, exit_loop decrements Break/Continue n ≠ 0 on both sides, and Result, Exception, TimeOut and FinalFFI pass through. Kernel-checked. The relation qualifier and same-module witnesses (LoopToWordCompileCorrectLoopWitnesses.*) are as for the other cases. This is one of the reviewed case slices of a partial port; the full compile_correct theorem remains partial, with no assembled theorem claimed."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "compile_correct",
     "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/CompileCorrect/If.lean",
     "lean_name": "compileCorrect_If",
     "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
@@ -25287,4 +25301,5 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison 2026-09-30, bead .18.5.11.1.2: HOL strong_locals_rel_insert at word_allocProofScript.sml:785-796. INJ f (n INSERT live) UNIV is rendered by equality injectivity restricted to a=n or live a (UNIV codomain membership is tautological); live DELETE n is live k and k != n. Both exact Spt insert operations and the whole conclusion match. The proof splits lookup at n and excludes an aliased target key solely by the original scoped injectivity premise. No global injectivity is assumed. WordLocW uses positive type-indexed BitVec with NeZero. This is the exact assignment lookup-update prerequisite, not full allocation correctness."
   }
+
 ]
