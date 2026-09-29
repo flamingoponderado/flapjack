@@ -211,6 +211,8 @@ run_probe loop_to_word_locals_rel_probeScript.sml loop_to_word_locals_rel_probe.
   lt_locals_rel_good_with_extra_target lt_locals_rel_odd_register \
   lt_locals_rel_zero_register lt_locals_rel_noninjective \
   lt_locals_rel_missing_context lt_locals_rel_wrong_value \
+  lt_locals_rel_insert_mapped lt_locals_rel_insert_unmapped \
+  lt_locals_rel_insert_unmapped_collision \
   "$cake_dir/pancake/proofs/loop_to_wordProofScript.sml" \
   "$cake_dir/pancake/proofs"
 run_probe loop_to_word_comp_exp_probeScript.sml loop_to_word_comp_exp_probe.out \

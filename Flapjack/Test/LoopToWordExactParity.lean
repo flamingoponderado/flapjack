@@ -1,5 +1,6 @@
 import Flapjack.Pancake.LoopToWord
 import Flapjack.Pancake.Proofs.LoopToWord.LocalsRel
+import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelUpdates
 
 /-!
 # Original-domain parity for the exact `loop_to_word` context definitions
@@ -117,6 +118,39 @@ example : ¬ localsRelHOL (width := 64) localsRelProbeContext
     localsRelProbeSource localsRelProbeWrongTarget := by
   simp [localsRelHOL, localsRelProbeContext, localsRelProbeSource,
     localsRelProbeWrongTarget, findVarHOL, sptMem, sptDomain, sptLookup, sptInsert]
+
+/-! The next examples replay the direct HOL rows for `locals_rel_insert` and
+`locals_rel_insert_unmapped` from the same probe fixture. -/
+
+example : localsRelHOL (width := 64) localsRelProbeContext
+    (sptInsert 0 (.word 9) localsRelProbeSource)
+    (sptInsert 4 (.word 9) localsRelProbeTarget) := by
+  have hrel : localsRelHOL (width := 64) localsRelProbeContext
+      localsRelProbeSource localsRelProbeTarget := by
+    simp [localsRelHOL, localsRelProbeContext, localsRelProbeSource,
+      localsRelProbeTarget, findVarHOL, sptMem, sptDomain, sptLookup, sptInsert]
+  have hname : sptMem 0 localsRelProbeContext := by
+    simp [sptMem, sptDomain, localsRelProbeContext, sptLookup]
+  simpa [findVarHOL, localsRelProbeContext, sptLookup] using
+    (localsRelHOLInsert (width := 64) localsRelProbeContext localsRelProbeSource
+      localsRelProbeTarget 0 (.word 9) ⟨hrel, hname⟩)
+
+example : localsRelHOL (width := 64) localsRelProbeContext
+    localsRelProbeSource (sptInsert 6 (.word 9) localsRelProbeTarget) := by
+  apply localsRelHOLInsertUnmapped
+  constructor
+  · simp [localsRelHOL, localsRelProbeContext, localsRelProbeSource,
+      localsRelProbeTarget, findVarHOL, sptMem, sptDomain, sptLookup, sptInsert]
+  · intro name hmem
+    have hname : name = 0 := by
+      simpa [sptMem, sptDomain, localsRelProbeContext, sptLookup, sptInsert] using hmem
+    subst name
+    simp [findVarHOL, localsRelProbeContext, sptLookup]
+
+example : ¬ localsRelHOL (width := 64) localsRelProbeContext
+    localsRelProbeSource (sptInsert 4 (.word 9) localsRelProbeTarget) := by
+  simp [localsRelHOL, localsRelProbeContext, localsRelProbeSource,
+    localsRelProbeTarget, findVarHOL, sptMem, sptDomain, sptLookup, sptInsert]
 
 /-! ## Original-domain parity for exact `comp_exp_def`
 
