@@ -1,5 +1,6 @@
 import Flapjack.Pancake.CrepToLoop.Proofs.CompExpPreservesEval
 import Flapjack.Pancake.Semantics.LoopProps.CompSyntaxOkLemmas
+import Flapjack.Pancake.Semantics.PanCommonProps
 
 /-!
 # crep_to_loop `ncompile_correct`, split by HOL's `evaluate_ind` cases
@@ -245,4 +246,83 @@ theorem crepToLoop_ncompile_correct_if {width : Nat} [NeZero width] {σ : Type} 
     rw [LoopSemStateFiniteExact.evaluate_nested_seq_append_none np _ _ _ (h1k ck'), htail, h2', hx]
     rfl
 
+
+/-- `ncompile_correct`, case `Return es` (`crep_to_loopProofScript.sml:110-134`
+    statement; `Resume ncompile_correct[Return]` at 1704-1749).  `evaluate_ind`
+    gives this case no induction hypothesis. -/
+@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "ncompile_correct"
+  (fmap_as_finite_support_relation := [CrepToLoopContextExact.vars,
+    CrepToLoopContextExact.funcs, CrepSemHOLState.locals, CrepSemHOLState.globals,
+    CrepSemHOLState.code, LoopSemStateFiniteExact.globals])
+  (words_as_type_indexed_bitvec)]
+theorem crepToLoop_ncompile_correct_return {width : Nat} [NeZero width] {σ : Type} :
+    ∀ (es : List (CrepExpHOL width)) (v1 : CrepSemHOLState width σ)
+      (res : Option (CrepResultHOLExact width)) (s1 : CrepSemHOLState width σ)
+      (t : LoopSemStateFiniteExact width σ) (ctxt : CrepToLoopContextExact) (l : NumSet),
+      evalCrepSemHOLProgExact v1 (.return es) = (res, s1) ∧ res ≠ some .error ∧
+        crepToLoopStateRelExact v1 t ∧
+        crepToLoopMemRelHOLExact v1.memory t.memory v1.memaddrs ∧
+        crepToLoopGlobalsRelHOLExact v1.globals t.globals ∧
+        crepToLoopCodeRelExact ctxt v1.code t.code ∧
+        crepToLoopLocalsRelExact ctxt l v1.locals t.locals →
+      ∃ (ck : Nat) (res1 : Option (LoopSemStateFiniteExact.LoopResultExact width))
+        (t1 : LoopSemStateFiniteExact width σ),
+        LoopSemStateFiniteExact.evaluate (compileHOLExact ctxt l (.return es))
+            { t with clock := t.clock + ck } = (res1, t1) ∧
+        crepToLoopStateRelExact s1 t1 ∧
+        crepToLoopMemRelHOLExact s1.memory t1.memory s1.memaddrs ∧
+        crepToLoopGlobalsRelHOLExact s1.globals t1.globals ∧
+        crepToLoopCodeRelExact ctxt s1.code t1.code ∧
+        res1 = crepToLoopResultHOL res ∧
+        crepToLoopResultLocalsHOL ctxt l s1.locals t1.locals res := by
+  intro es v1 res s1 t ctxt l ⟨he, hne, hs, hm, hg, hc, hl⟩
+  rw [evalCrepSemHOLProgExact_eq_evaluate_def] at he
+  simp only at he
+  cases hes : es.mapM (evalCrepSemHOLExp v1) with
+  | none =>
+    simp only [hes, Prod.mk.injEq] at he
+    exact absurd he.1.symm hne
+  | some ws =>
+  simp only [hes, Prod.mk.injEq] at he
+  obtain ⟨rfl, rfl⟩ := he
+  rcases hC : compileExpsHOLExact ctxt (ctxt.vmax + 1) l es with ⟨p, les, ntmp, nl⟩
+  obtain ⟨ck, st, h1, hles, h1s, h1m, h1g, h1c, h1l⟩ :=
+    crepToLoop_comp_exps_preserves_eval es v1 ws t ctxt (ctxt.vmax + 1) l p les ntmp nl
+      ⟨hes, hs, hm, hg, hc, hl, hC, Nat.lt_succ_self _⟩
+  have hlen : les.length = ws.length := by
+    have := congrArg List.length ((optMmapEqSome les _ _).mp hles)
+    simpa using this
+  let temps := genTemps ntmp les.length
+  have htlen : temps.length = les.length := by simp [temps, genTemps]
+  have htnodup : temps.Nodup := by
+    simp only [temps, genTemps]
+    rw [List.Nodup, List.pairwise_map]
+    exact (List.nodup_range).imp (fun h => by omega)
+  have hdisj : distinctListsHol temps (les.map holLoopLocalsTouched).flatten = true := by
+    simp only [distinctListsHol, List.all_eq_true, decide_eq_true_eq]
+    intro x hx hmem
+    have hx' : ntmp ≤ x := by
+      simp only [temps, genTemps, List.mem_map, List.mem_range] at hx
+      obtain ⟨a, _, rfl⟩ := hx; omega
+    have := (compile_exps_le_tmp_domain ctxt (ctxt.vmax + 1) l es p les ntmp nl x
+      ⟨hl.2.1, hC, Nat.lt_succ_self _, fun k hk => by
+        obtain ⟨w, hw⟩ := crepOptMmapEval_some_var_cexp_local_lookup v1 es ws k ⟨hes, hk⟩
+        obtain ⟨m, hm1, hm2, _⟩ := hl.2.2.2 k w hw
+        exact ⟨m, hm1, hm2⟩, hmem⟩).1
+    omega
+  have hassign := LoopSemStateFiniteExact.loop_eval_nested_assign_distinct_eq les temps st
+    (ws.map wlabWlocExact) ⟨(optMmapEqSome les _ _).mp hles, hdisj, htnodup, htlen⟩
+  have hget := LoopSemStateFiniteExact.get_vars_local_update_some_eq temps
+    (ws.map wlabWlocExact) st htnodup (by simp [htlen, hlen])
+  refine ⟨ck, some (.result (ws.map wlabWlocExact)),
+    LoopSemStateFiniteExact.callEnv []
+      { st with locals := LoopSemStateFiniteExact.sptAlistInsert temps (ws.map wlabWlocExact) st.locals },
+    ?_, h1s, h1m, h1g, h1c, rfl, trivial⟩
+  rw [compileHOLExact, hC]
+  simp only [List.append_assoc]
+  rw [LoopSemStateFiniteExact.evaluate_nested_seq_append_none p _ _ _ h1]
+  rw [LoopSemStateFiniteExact.evaluate_nested_seq_append_none _ _ _ _ hassign]
+  simp only [loopNestedSeqHOL, LoopSemStateFiniteExact.evaluate_seq,
+    LoopSemStateFiniteExact.evaluate]
+  rw [hget]
 end Flapjack

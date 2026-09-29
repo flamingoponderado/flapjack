@@ -21627,5 +21627,22 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.6.42): case piece `If e c1 c2` of ncompile_correct (crep_to_loopProofScript.sml:110-134 statement; Resume ncompile_correct[If] at 2585-2681; HOL proves the theorem by recInduct crepSemTheory.evaluate_ind with suspend/Resume cases). The piece's only extra antecedent is evaluate_ind's If hypothesis `∀w. eval s e = SOME (Word w) ⇒ P (if w ≠ 0w then c1 else c2, s)`, stated with the untagged crepToLoopNcompileCorrectAt (which unfolds to exactly the HOL statement at that program and state). After it the piece keeps HOL's quantifier order ∀res s1 t ctxt l, all seven HOL premises (evaluate (If e c1 c2, v1) = (res,s1), res ≠ SOME Error, state_rel, mem_rel, globals_rel, code_rel, locals_rel), and the full existential conclusion ∃ck res1 t1. evaluate (compile ctxt l (If e c1 c2), t with clock := t.clock + ck) = (res1,t1) ∧ state_rel/mem_rel/globals_rel/code_rel on (s1,t1) ∧ res1 = <HOL result case> ∧ <HOL locals case>. The two HOL case expressions are the untagged crepToLoopResultHOL (NONE, Break, Continue, Return (MAP wlab_wloc), Exception (Word eid), TimeOut, FinalFFI, Error clause for clause) and crepToLoopResultLocalsHOL (locals_rel for NONE/Break/Continue, T for Return, F for Error, T otherwise). evaluate is the tagged exact evalCrepSemHOLProgExact (via evalCrepSemHOLProgExact_eq_evaluate_def) and LoopSemStateFiniteExact.evaluate; compile is the tagged compileHOLExact. The proof follows HOL: comp_exp_preserves_eval on e at tmp = vmax+1; the IH at st with locals := insert tmp (Word w) (locals_rel via cut_sets_union_domain_subset and ctxt_max); for res = NONE the clock witness is ck + ck' + 1 (the If's cut_res tick) and locals_rel ctxt l on inter t1.locals l; otherwise ck + ck' and cut_res passes the result through. Qualifiers as for the comp_exp_preserves_eval pieces; the single shared σ on the Crep and Loop states is HOL's typing (state_rel_def's s.ffi = t.ffi)."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "ncompile_correct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NcompileCorrect.lean",
+    "lean_name": "crepToLoop_ncompile_correct_return",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.6.45): case piece `Return es` of ncompile_correct (crep_to_loopProofScript.sml:110-134 statement; Resume ncompile_correct[Return] at 1704-1749; recInduct crepSemTheory.evaluate_ind, whose Return case has no induction hypothesis). The piece has no extra antecedent: HOL's quantifier order with the payload es and state v1 first, then ∀res s1 t ctxt l, all seven HOL premises with v := Return es, and the full ∃ck res1 t1 conclusion as in the If piece (res1 = crepToLoopResultHOL res; final crepToLoopResultLocalsHOL case), over the tagged evalCrepSemHOLProgExact, LoopSemStateFiniteExact.evaluate and compileHOLExact (Return clause: nested_seq (p ++ MAP2 Assign (gen_temps ntmp (LENGTH les)) les ++ [Return temps]) with compile_exps at vmax+1). The proof follows HOL: comp_exps_preserves_eval (tagged) gives ck and st; opt_mmap_eq_some; loop_eval_nested_assign_distinct_eq with the temporaries disjoint from the touched locals (compile_exps_le_tmp_domain, opt_mmap_eval_some_var_cexp_local_lookup) and ALL_DISTINCT gen_temps; get_vars_local_update_some_eq for the Return; the post states are empty_locals s and call_env [] (locals-only updates), so state/mem/globals/code relations carry over and the Return locals case is T. Qualifiers as for the If piece."
   }
 ]
