@@ -223,5 +223,94 @@ theorem compileInlTopHOLExact_nil_map [BEq FunName] [LawfulBEq FunName]
       (compileInlTopHOL ([] : List FunName) functions).map decode := by
   rw [compileInlTopHOL_nil, compileInlTopHOLExact_nil]
 
+/-- Association-list agreement, generic half: `FUPDATE_LIST` distributes over
+list append (`FUPDATE_LIST` is `List.foldl FUPDATE`). -/
+theorem fupdateList_append {α β : Type} [BEq α] (f : FiniteMap α β)
+    (xs ys : List (α × β)) :
+    FUPDATE_LIST f (xs ++ ys) = FUPDATE_LIST (FUPDATE_LIST f xs) ys := by
+  induction xs generalizing f with
+  | nil => simp [FUPDATE_LIST]
+  | cons x xs ih => simp only [List.cons_append, FUPDATE_LIST_cons]; exact ih (FUPDATE f x)
+
+/-- `BEq` is symmetric under `LawfulBEq`. -/
+theorem beq_comm {α : Type} [BEq α] [LawfulBEq α] (a b : α) : (a == b) = (b == a) := by
+  by_cases h : a = b
+  · subst h; rfl
+  · have h1 : (a == b) = false := beq_eq_false_iff_ne.mpr h
+    have h2 : (b == a) = false := beq_eq_false_iff_ne.mpr (fun he => h he.symm)
+    rw [h1, h2]
+
+/-- Association-list agreement: the production inline-candidate index
+`crepInlineLookup` (first occurrence wins, `Pass.lean:22`) is the `FLOOKUP` of
+the `FUPDATE_LIST` map over the reversed entry list.  This is exactly the map
+read by the exact `alistToFmapHOLExact` (`Canonical.lean:612`, whose lookup is
+`FUPDATE_LIST FEMPTY entries.reverse`), so it is the carrier half of the
+executed-vs-exact candidate-index relation; the remaining half is the
+`toStringOfBytes` name codec. -/
+theorem crepInlineLookup_eq_fupdateList {α : Type} [BEq FunName] [LawfulBEq FunName]
+    (name : FunName) (entries : List (CrepInlineEntry α)) :
+    crepInlineLookup name entries =
+      FLOOKUP (FUPDATE_LIST (FEMPTY : FiniteMap FunName (List Nat × CrepProg α))
+        entries.reverse) name := by
+  induction entries with
+  | nil => rfl
+  | cons entry rest ih =>
+      rw [crepInlineLookup, List.reverse_cons, fupdateList_append]
+      rw [FUPDATE_LIST_cons, FUPDATE_LIST_nil, FLOOKUP_update]
+      rw [beq_comm name entry.1, ih]
+
+open Flapjack.Basis.Pure.MlString in
+/-- `toStringOfBytes` is injective on `MlString` (its right inverse is
+    `ofString`, `ofString_toStringOfBytes`).  This is the forward half of the
+    executed-vs-exact name codec: equal `String` encodings identify the
+    `MlString` inline-map keys. -/
+theorem toStringOfBytes_injective {m1 m2 : MlString}
+    (h : toStringOfBytes m1 = toStringOfBytes m2) : m1 = m2 := by
+  have hc := congrArg ofString h
+  rwa [ofString_toStringOfBytes, ofString_toStringOfBytes] at hc
+
+open Flapjack.Basis.Pure.MlString in
+/-- An `MlString` equals `ofString s` exactly when their byte encodings agree. -/
+theorem ofString_eq_iff_toStringOfBytes_eq {s : String} {m : MlString} :
+    ofString s = m ↔ toStringOfBytes (ofString s) = toStringOfBytes m := by
+  constructor
+  · intro h; rw [h]
+  · intro h
+    have hc := congrArg ofString h
+    simpa only [ofString_toStringOfBytes] using hc
+
+open Flapjack.Basis.Pure.MlString in
+/-- `BEq` agreement under the name codec: for a byte-ranged `String` the
+    `ofString` insertion commutes with `==` and `toStringOfBytes`.  This is the
+    comparison half of the executed-vs-exact name codec. -/
+theorem beq_ofString_eq {s : String} {m : MlString} (hs : CrepNameRanged s) :
+    (ofString s == m) = (s == toStringOfBytes m) := by
+  have hiff : ofString s = m ↔ s = toStringOfBytes m := by
+    rw [ofString_eq_iff_toStringOfBytes_eq, toStringOfBytes_ofString_of_bytes s hs]
+  by_cases h : ofString s = m
+  · rw [beq_iff_eq.mpr h, beq_iff_eq.mpr (hiff.mp h)]
+  · have hm : s ≠ toStringOfBytes m := fun hs' => h (hiff.mpr hs')
+    rw [beq_eq_false_iff_ne.mpr h, beq_eq_false_iff_ne.mpr hm]
+
+open Flapjack.Basis.Pure.MlString in
+/-- Membership under the name codec: for a byte-ranged `String`, membership in
+    the `toStringOfBytes`-image of an `MlString` list is membership of its
+    `ofString` lift.  This is the filter-predicate half of the
+    executed-vs-exact inline-candidate agreement. -/
+theorem contains_map_toStringOfBytes {ms : List MlString} (s : String)
+    (hs : CrepNameRanged s) :
+    (ms.map toStringOfBytes).contains s = ms.contains (ofString s) := by
+  induction ms with
+  | nil => simp only [List.map_nil, List.contains_nil]
+  | cons m ms ih =>
+      simp only [List.map_cons, List.contains_cons]
+      rw [beq_ofString_eq hs, ih]
+
+open Flapjack.Basis.Pure.MlString in
+/-- Boolean form of `contains_map_toStringOfBytes`. -/
+theorem map_eq_iff_contains {ms : List MlString} (s : String) (hs : CrepNameRanged s) :
+    (ms.map toStringOfBytes).contains s = true ↔ ms.contains (ofString s) = true := by
+  rw [contains_map_toStringOfBytes s hs]
+
 end CrepInlineRoute
 end Flapjack
