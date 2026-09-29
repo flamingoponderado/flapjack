@@ -871,6 +871,184 @@ theorem crepToLoop_comp_exp_preserves_eval_crepOp {width : Nat} [NeZero width] {
       simp only [LoopSemStateFiniteExact.setVar, sptLookup_sptInsert]
       rw [if_neg (by omega), if_neg (by omega), if_neg (by omega), if_neg (by omega)]
 
+/-- `comp_exp_preserves_eval`, case `Cmp cmp e e'`
+    (`crep_to_loopProofScript.sml:772-786` statement; case proof at 1128-1233),
+    with the `eval_ind` hypotheses for both operands.  The `If` of `prog_if`
+    consumes one tick in `cut_res`, so the clock witness is HOL's `ck + ck' + 1`. -/
+@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "comp_exp_preserves_eval"
+  (fmap_as_finite_support_relation := [CrepToLoopContextExact.vars,
+    CrepToLoopContextExact.funcs, CrepSemHOLState.locals, CrepSemHOLState.globals,
+    CrepSemHOLState.code, LoopSemStateFiniteExact.globals])
+  (words_as_type_indexed_bitvec)]
+theorem crepToLoop_comp_exp_preserves_eval_cmp {width : Nat} [NeZero width] {σ : Type} :
+    ∀ (s : CrepSemHOLState width σ) (cmp : Cmp)
+      (e1 e2 : CrepExpHOL width),
+      crepToLoopCompExpPreservesEvalAt s e1 → crepToLoopCompExpPreservesEvalAt s e2 →
+    ∀ (v : HolWordLab width) (t : LoopSemStateFiniteExact width σ)
+      (ctxt : CrepToLoopContextExact) (tmp : Nat) (l : NumSet)
+      (p : List (HolLoopProg width)) (le : HolLoopExp width) (ntmp : Nat) (nl : NumSet),
+      evalCrepSemHOLExp s (.cmp cmp e1 e2) = some v ∧
+        crepToLoopStateRelExact s t ∧
+        crepToLoopMemRelHOLExact s.memory t.memory s.memaddrs ∧
+        crepToLoopGlobalsRelHOLExact s.globals t.globals ∧
+        crepToLoopCodeRelExact ctxt s.code t.code ∧
+        crepToLoopLocalsRelExact ctxt l s.locals t.locals ∧
+        compileExpHOLExact ctxt tmp l (.cmp cmp e1 e2) = (p, le, ntmp, nl) ∧
+        ctxt.vmax < tmp →
+      ∃ (ck : Nat) (st : LoopSemStateFiniteExact width σ),
+        LoopSemStateFiniteExact.evaluate (loopNestedSeqHOL p)
+            { t with clock := t.clock + ck } = (none, st) ∧
+        LoopSemStateFiniteExact.eval st le = some (wlabWlocExact v) ∧
+        crepToLoopStateRelExact s st ∧
+        crepToLoopMemRelHOLExact s.memory st.memory s.memaddrs ∧
+        crepToLoopGlobalsRelHOLExact s.globals st.globals ∧
+        crepToLoopCodeRelExact ctxt s.code st.code ∧
+        crepToLoopLocalsRelExact ctxt nl s.locals st.locals := by
+  intro s cmp e1 e2 ih1 ih2 v t ctxt tmp l p le ntmp nl ⟨he, hs, hm, hg, hc, hl, hcomp, hv⟩
+  cases he1 : evalCrepSemHOLExp s e1 with
+  | none => simp [evalCrepSemHOLExp, he1] at he
+  | some a1 =>
+  cases a1 with
+  | word w1 =>
+  cases he2 : evalCrepSemHOLExp s e2 with
+  | none => simp [evalCrepSemHOLExp, he1, he2] at he
+  | some a2 =>
+  cases a2 with
+  | word w2 =>
+  have hvx : v = .word (Compiler.Encoders.Asm.wordCmpResultHOL cmp w1 w2) := by
+    simp [evalCrepSemHOLExp, he1, he2] at he; exact he.symm
+  subst hvx
+  rcases hA : compileExpHOLExact ctxt tmp l e1 with ⟨c1, lv, n1, l1⟩
+  rcases hB : compileExpHOLExact ctxt n1 l1 e2 with ⟨c2, rv, n2, l2⟩
+  rw [compileExpHOLExact, hA] at hcomp
+  simp only [hB, Prod.mk.injEq] at hcomp
+  obtain ⟨rfl, rfl, rfl, rfl⟩ := hcomp
+  obtain ⟨hokA, htA, hlA⟩ := compile_exp_out_rel ctxt tmp l e1 c1 lv n1 l1 hA
+  obtain ⟨hokB, htB, hlB⟩ := compile_exp_out_rel ctxt n1 l1 e2 c2 rv n2 l2 hB
+  obtain ⟨ck1, st1, h1, h1v, h1s, h1m, h1g, h1c, h1l⟩ :=
+    ih1 (.word w1) t ctxt tmp l c1 lv n1 l1 ⟨he1, hs, hm, hg, hc, hl, hA, hv⟩
+  obtain ⟨ck2, st2, h2, h2v, h2s, h2m, h2g, h2c, h2l⟩ :=
+    ih2 (.word w2) st1 ctxt n1 l1 c2 rv n2 l2
+      ⟨he2, h1s, h1m, h1g, h1c, h1l, hB, Nat.lt_of_lt_of_le hv htA⟩
+  have h1ck : LoopSemStateFiniteExact.evaluate (loopNestedSeqHOL c1)
+      { t with clock := t.clock + (ck1 + ck2 + 1) } =
+        (none, { st1 with clock := st1.clock + (ck2 + 1) }) := by
+    have := LoopSemStateFiniteExact.evaluate_add_clock_eq _ _ _ _ (ck2 + 1) h1 (by simp)
+    simpa [Nat.add_assoc] using this
+  have h2ck : LoopSemStateFiniteExact.evaluate (loopNestedSeqHOL c2)
+      { st1 with clock := st1.clock + (ck2 + 1) } =
+        (none, { st2 with clock := st2.clock + 1 }) := by
+    have := LoopSemStateFiniteExact.evaluate_add_clock_eq _ _ _ _ 1 h2 (by simp)
+    simpa [Nat.add_assoc] using this
+  have hlv : LoopSemStateFiniteExact.eval st2 lv = some (.word w1) := by
+    refine LoopSemStateFiniteExact.nested_seq_pure_evaluation c1 c2 t st2 st1 l n1 lv
+      (.word w1) ck1 ck2 ⟨by rw [Nat.add_comm]; exact h1, by rw [Nat.add_comm]; exact h2,
+        hokA, hlA ▸ hokB, ?_, ?_, ?_, by simpa [wlabWlocExact] using h1v⟩
+    · intro n hn
+      exact (comp_exp_assigned_vars_tmp_bound ctxt tmp l e1 c1 lv n1 l1 n ⟨hA, hn⟩).2
+    · intro n hn
+      exact (comp_exp_assigned_vars_tmp_bound ctxt n1 l1 e2 c2 rv n2 l2 n ⟨hB, hn⟩).1
+    · intro n hn
+      have := compile_exp_le_tmp_domain ctxt tmp l e1 c1 lv n1 l1 n
+        ⟨hl.2.1, hA, hv, fun k hk => ?_, hn⟩
+      · exact ⟨this.1, hlA ▸ this.2⟩
+      · obtain ⟨w, hw⟩ := crepEval_some_var_cexp_local_lookup s e1 _ k ⟨he1, hk⟩
+        obtain ⟨m, hm1, hm2, _⟩ := hl.2.2.2 k w hw
+        exact ⟨m, hm1, hm2⟩
+  have hrvt : ∀ k, k ∈ holLoopLocalsTouched rv → k < n2 + 1 := by
+    intro k hk
+    have := (compile_exp_le_tmp_domain ctxt n1 l1 e2 c2 rv n2 l2 k
+      ⟨h1l.2.1, hB, Nat.lt_of_lt_of_le hv htA, fun x hx => by
+        obtain ⟨w, hw⟩ := crepEval_some_var_cexp_local_lookup s e2 _ x ⟨he2, hx⟩
+        obtain ⟨m, hm1, hm2, _⟩ := h1l.2.2.2 x w hw
+        exact ⟨m, hm1, hm2⟩, hk⟩).1
+    omega
+  -- the state after both operands, with the extra tick for the `If` cut
+  let s2 : LoopSemStateFiniteExact width σ := { st2 with clock := st2.clock + 1 }
+  have hv1' : LoopSemStateFiniteExact.eval s2 lv = some (.word w1) := by
+    simp only [s2, LoopSemStateFiniteExact.eval_upd_clock_eq, hlv]
+  have hv2' : LoopSemStateFiniteExact.eval
+      (LoopSemStateFiniteExact.setVar (n2 + 1) (.word w1) s2) rv = some (.word w2) := by
+    rw [eval_setVar_untouched _ rv (n2 + 1) _ hrvt]
+    simp only [s2, LoopSemStateFiniteExact.eval_upd_clock_eq]
+    simpa [wlabWlocExact] using h2v
+  have hvm : ctxt.vmax < n1 := Nat.lt_of_lt_of_le hv htA
+  have hvm2 : ctxt.vmax < n2 := Nat.lt_of_lt_of_le hvm htB
+  let r := Compiler.Encoders.Asm.wordCmpResultHOL cmp w1 w2
+  let s3 := LoopSemStateFiniteExact.setVar (n2 + 2) (.word w2)
+    (LoopSemStateFiniteExact.setVar (n2 + 1) (.word w1) s2)
+  let s4 := LoopSemStateFiniteExact.setVar (n2 + 1) (.word r) s3
+  let L := sptListInsert [n2 + 1, n2 + 2] l2
+  have hLmem : ∀ k, sptMem k L ↔ k = n2 + 2 ∨ k = n2 + 1 ∨ sptMem k l2 := by
+    intro k; simp only [L, sptListInsert, sptMem_sptInsert]
+  have hs4mem : ∀ k, sptMem k L → sptMem k s4.locals := by
+    intro k hk
+    simp only [s4, s3, s2, LoopSemStateFiniteExact.setVar, sptMem_sptInsert]
+    rcases (hLmem k).mp hk with h | h | h
+    · exact Or.inr (Or.inl h)
+    · exact Or.inl h
+    · exact Or.inr (Or.inr (Or.inr (h2l.2.2.1 k h)))
+  have hite : LoopSemStateFiniteExact.evaluate
+      (.ite cmp (n2 + 1) (.reg (n2 + 2)) (.assign (n2 + 1) (.const 1))
+        (.assign (n2 + 1) (.const 0)) L) s3 =
+      (none, { st2 with locals := sptInter s4.locals L }) := by
+    have hbr : LoopSemStateFiniteExact.evaluate
+        (.ite cmp (n2 + 1) (.reg (n2 + 2)) (.assign (n2 + 1) (.const 1))
+          (.assign (n2 + 1) (.const 0)) L) s3 =
+        LoopSemStateFiniteExact.cutRes L (none, s4) := by
+      rw [LoopSemStateFiniteExact.evaluate]
+      simp only [s4, s3, LoopSemStateFiniteExact.setVar, LoopSemStateFiniteExact.getVarImm,
+        sptLookup_sptInsert, if_true, show ¬ n2 + 1 = n2 + 2 by omega, if_false]
+      by_cases hcmp : Compiler.Encoders.Asm.wordCmpHOL cmp w1 w2 = true <;>
+        simp [hcmp, r, Compiler.Encoders.Asm.wordCmpResultHOL, LoopSemStateFiniteExact.evaluate,
+          LoopSemStateFiniteExact.eval, LoopSemStateFiniteExact.setVar]
+    rw [hbr, LoopSemStateFiniteExact.cutRes]
+    simp only
+    rw [LoopSemStateFiniteExact.cutState_of_subset L s4 hs4mem]
+    simp [s4, s3, s2, LoopSemStateFiniteExact.setVar, LoopSemStateFiniteExact.decClock]
+  refine ⟨ck1 + ck2 + 1, { st2 with locals := sptInter s4.locals L }, ?_, ?_, h2s, h2m, h2g,
+    h2c, ?_⟩
+  · simp only [progIfHOLExact, List.append_assoc]
+    rw [LoopSemStateFiniteExact.evaluate_nested_seq_append_none c1 _ _ _ h1ck,
+      LoopSemStateFiniteExact.evaluate_nested_seq_append_none c2 _ _ _ h2ck]
+    simp only [loopNestedSeqHOL, LoopSemStateFiniteExact.evaluate_seq]
+    have ha1 : LoopSemStateFiniteExact.evaluate (.assign (n2 + 1) lv) s2 =
+        (none, LoopSemStateFiniteExact.setVar (n2 + 1) (.word w1) s2) := by
+      simp [LoopSemStateFiniteExact.evaluate, hv1']
+    have ha2 : LoopSemStateFiniteExact.evaluate (.assign (n2 + 2) rv)
+        (LoopSemStateFiniteExact.setVar (n2 + 1) (.word w1) s2) = (none, s3) := by
+      simp [LoopSemStateFiniteExact.evaluate, hv2', s3]
+    change (match LoopSemStateFiniteExact.evaluate (.assign (n2 + 1) lv) s2 with
+      | (none, s1) =>
+        match LoopSemStateFiniteExact.evaluate (HolLoopProg.assign (n2 + 2) rv) s1 with
+        | (none, s1) =>
+          match LoopSemStateFiniteExact.evaluate
+              (HolLoopProg.ite cmp (n2 + 1) (RegImm.reg (n2 + 2)) (.assign (n2 + 1) (.const 1))
+                (.assign (n2 + 1) (.const 0)) L) s1 with
+          | (none, s1) => LoopSemStateFiniteExact.evaluate HolLoopProg.skip s1
+          | (res, s1) => (res, s1)
+        | (res, s1) => (res, s1)
+      | (res, s1) => (res, s1)) = _
+    rw [ha1]; simp only; rw [ha2]; simp only; rw [hite]; simp only
+    rw [LoopSemStateFiniteExact.evaluate]
+  · have hL1 : (sptLookup (n2 + 1) L).isSome := (hLmem (n2 + 1)).mpr (Or.inr (Or.inl rfl))
+    simp only [LoopSemStateFiniteExact.eval, sptLookup_sptInter, hL1, if_true]
+    simp [s4, LoopSemStateFiniteExact.setVar, sptLookup_sptInsert, wlabWlocExact, r]
+  · refine ⟨h2l.1, h2l.2.1, fun k hk => ?_, fun vn val hval => ?_⟩
+    · have hk' : (sptLookup k L).isSome := hk
+      show (sptLookup k (sptInter s4.locals L)).isSome
+      rw [sptLookup_sptInter, if_pos hk']
+      exact hs4mem k hk
+    · obtain ⟨n, h1, h2, h3⟩ := h2l.2.2.2 vn val hval
+      have hn := h2l.2.1 vn n h1
+      have hnL : (sptLookup n L).isSome := (hLmem n).mpr (Or.inr (Or.inr h2))
+      refine ⟨n, h1, hnL, ?_⟩
+      show sptLookup n (sptInter s4.locals L) = _
+      rw [sptLookup_sptInter, if_pos hnL]
+      simp only [s4, s3, s2, LoopSemStateFiniteExact.setVar, sptLookup_sptInsert]
+      rw [if_neg (by omega), if_neg (by omega), if_neg (by omega)]
+      exact h3
+
 /-! ## Op-case clause projections (flapjack-luna-c, bead `flapjack-pxn.18.5.6.33.15.6`) -/
 
 section OpClauses
