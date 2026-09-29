@@ -76,9 +76,26 @@ private def generatedAddCarry : WordLangProgHOL (BitVec 8) :=
   .inst (.arith (.addCarry 3 4 5 6))
 
 example : wordLangProgFromHOL generatedAddCarry =
-    some (.inst (.arith (.cakeAddCarry 3 5 6 4))) := by
+    some (.inst (.arith (.cakeAddCarry 3 4 5 6))) := by
   simp [generatedAddCarry, wordLangProgFromHOL,
     wordLangInstFromHOL, wordLangArithFromHOL]
+
+/-- Projection of the exact original HOL `comp_addcarry_valid` oracle row
+(`scripts/hol-probes/loop_to_word_comp_probe.out`): its distinct source
+registers produce `AddCarry 3 24 26 1`; the projection must retain the two
+addends and carry register in those positions. -/
+example : wordLangArithFromHOL
+    (.addCarry 3 24 26 1 : WordLangArith (BitVec 8)) =
+      some (.cakeAddCarry 3 24 26 1) := by
+  rfl
+
+/-- The adjacent `comp_longmul` row in the same original HOL probe retains
+all four register positions independently; there is no second LongMul
+reordering in the production projection. -/
+example : wordLangArithFromHOL
+    (.longMul 20 22 24 26 : WordLangArith (BitVec 8)) =
+      some (.longMul 20 22 24 26) := by
+  rfl
 
 example : wordLangInstFromHOL
     (.const 3 (BitVec.ofNat 8 9) : WordLangInst (BitVec 8)) =
