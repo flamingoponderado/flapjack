@@ -41,16 +41,17 @@ theorem gc_clock {width : Nat} [NeZero width] {C : Type} {F : Type} :
     · cases h
     · cases h; exact ⟨Nat.le_refl _, rfl⟩
 
-/-- Exact HOL `alloc_clock` (`wordSemScript.sml:1272-1286`).  HOL's statement
-    also binds an unused variable `xs`, which is omitted here. -/
+/-- Exact HOL `alloc_clock` (`wordSemScript.sml:1272-1286`).  HOL binds an
+    unused variable `xs : 'a`; it is kept here, with its type variable as `α`.
+    HOL's free variables `x` and `names` are parameters. -/
 @[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "alloc_clock"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem alloc_clock {width : Nat} [NeZero width] {C : Type} {F : Type}
+theorem alloc_clock {width : Nat} [NeZero width] {C : Type} {F : Type} {α : Type}
     (x : BitVec width) (names : WordLangCutsetsHOL) :
-    ∀ (s1 : WordSemStateFiniteExact width C F) (vs : Option (WordSemResult width))
+    ∀ (_xs : α) (s1 : WordSemStateFiniteExact width C F) (vs : Option (WordSemResult width))
       (s2 : WordSemStateFiniteExact width C F),
       alloc x names s1 = (vs, s2) → s2.clock ≤ s1.clock ∧ s2.termdep = s1.termdep := by
-  intro s1 vs s2 h
+  intro _ s1 vs s2 h
   unfold alloc at h
   split at h
   · cases h; exact ⟨Nat.le_refl _, rfl⟩
@@ -75,11 +76,13 @@ theorem alloc_clock {width : Nat} [NeZero width] {C : Type} {F : Type}
           · cases h; omega
           · cases h; simp only [flushState]; omega
 
-/-- Exact HOL `sh_mem_set_var_clock` (`wordSemScript.sml:1288-1297`). -/
+/-- Exact HOL `sh_mem_set_var_clock` (`wordSemScript.sml:1288-1297`).  HOL's
+    `v2 : 'd result option` has its own word type, here the width `rw`. -/
 @[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "sh_mem_set_var_clock"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem sh_mem_set_var_clock {width : Nat} [NeZero width] {C : Type} {F : Type} :
-    ∀ (v : Nat) (s1 : WordSemStateFiniteExact width C F) (v2 : Option (WordSemResult width))
+theorem sh_mem_set_var_clock {width : Nat} [NeZero width] {C : Type} {F : Type}
+    {rw : Nat} [NeZero rw] :
+    ∀ (v : Nat) (s1 : WordSemStateFiniteExact width C F) (v2 : Option (WordSemResult rw))
       (s2 : WordSemStateFiniteExact width C F) (res : Option (HolFfiResult F)),
       shMemSetVar res v s1 = (v2, s2) → s2.clock ≤ s1.clock ∧ s2.termdep = s1.termdep := by
   intro v s1 v2 s2 res h
@@ -89,15 +92,17 @@ theorem sh_mem_set_var_clock {width : Nat} [NeZero width] {C : Type} {F : Type} 
       exact ⟨Nat.le_refl _, rfl⟩
 
 /-- Exact HOL `share_inst_clock` (`wordSemScript.sml:1299-1312`).  HOL's binder
-    list names an unused `v1`, and the result variable `v2` is free; here `v2`
-    is bound and `v1` is omitted. -/
+    list keeps an unused `v1 : 'd` (here `δ`), and the result variable
+    `v2 : 'e result option` is free in HOL, so it is a parameter here, with
+    its own word type as the width `rw`. -/
 @[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "share_inst_clock"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem share_inst_clock {width : Nat} [NeZero width] {C : Type} {F : Type} :
+theorem share_inst_clock {width : Nat} [NeZero width] {C : Type} {F : Type} {δ : Type}
+    {rw : Nat} [NeZero rw] (v2 : Option (WordSemResult rw)) :
     ∀ (op : WordMemOp) (v : Nat) (ad : BitVec width) (s1 : WordSemStateFiniteExact width C F)
-      (v2 : Option (WordSemResult width)) (s2 : WordSemStateFiniteExact width C F),
+      (_v1 : δ) (s2 : WordSemStateFiniteExact width C F),
       shareInst op v ad s1 = (v2, s2) → s2.clock ≤ s1.clock ∧ s2.termdep = s1.termdep := by
-  intro op v ad s1 v2 s2 h
+  intro op v ad s1 _ s2 h
   cases op <;> simp only [shareInst] at h
   all_goals first
     | exact sh_mem_set_var_clock _ _ _ _ _ h
@@ -186,12 +191,12 @@ theorem evaluate_clock_proj {width : Nat} [NeZero width] {C : Type} {F : Type}
     | exact ⟨Nat.le_refl _, rfl⟩
     | exact ⟨Nat.le_refl _, trivial⟩
     | (constructor <;> first | omega | trivial | rfl)
-    | (rename_i heq; have := alloc_clock _ _ _ _ _ heq; exact this)
+    | (rename_i heq; have := alloc_clock (α := Unit) _ _ () _ _ _ heq; exact this)
     | (rename_i heq; have := inst_clock _ _ _ heq; exact this)
     | (rename_i heq; have := memStore_clock_termdep heq; exact ⟨Nat.le_of_eq this.1, this.2⟩)
     | (rename_i heq; have := jumpExc_clock_termdep heq; exact ⟨Nat.le_of_eq this.1, this.2⟩)
-    | (exact share_inst_clock _ _ _ _ _ _ (Prod.eta _).symm)
-    | (exact alloc_clock _ _ _ _ _ (Prod.eta _).symm)
+    | (exact share_inst_clock (δ := Unit) _ _ _ _ _ () _ (Prod.eta _).symm)
+    | (exact alloc_clock (α := Unit) _ _ () _ _ _ (Prod.eta _).symm)
     | (rw [fixClock_snd_clock, fixClock_snd_termdep]; exact ⟨Nat.min_le_left _ _, rfl⟩)
     | (refine ⟨Nat.le_trans (evaluate_clock_proj _ _).1 ?_, (evaluate_clock_proj _ _).2.trans ?_⟩ <;>
         (try have := cutState_clock_termdep _ _ _ ‹cutState _ _ = some _›) <;>
