@@ -11484,6 +11484,15 @@
   },
   {
     "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "locals_rel_mk_ctxt_ln",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "localsRelHOLMkCtxtLn",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.9.16.10) against loop_to_wordProofScript.sml:1505-1525. Preserves HOL binder order n, xs, lc; premise 0 < n ∧ EVEN n; and conclusion locals_rel (make_ctxt n xs LN) LN lc. Lean uses exact Spt Nat and WordLocW carriers, with EVEN represented by n % 2 = 0. makeCtxtHOL, findVarHOL, and localsRelHOL are the exact tagged definitions; nonzero follows from the source lookup range and positivity, evenness from the exact lookup_make_ctxt_EVEN port, and local simulation is vacuous for the empty source tree. The only representation difference is the width-indexed BitVec rendering of HOL word values, recorded by the words qualifier.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
     "hol_name": "locals_rel_make_ctxt",
     "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
     "lean_name": "localsRelHOLMakeCtxt",

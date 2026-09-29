@@ -677,4 +677,43 @@ theorem localsRelHOLMakeCtxt {width : Nat} [NeZero width]
       simpa [hvalue', Nat.mul_add] using htarget
     simpa [hvalue, Nat.mul_add] using htarget'
 
+/-- Exact HOL `locals_rel_mk_ctxt_ln`
+(`cakeml/pancake/proofs/loop_to_wordProofScript.sml:1505-1525`). A positive
+even initial register keeps every `make_ctxt` assignment positive and even;
+the input local tree is empty, so its lookup-simulation clause is vacuous.
+The sole representation qualifier is HOL words to width-indexed `WordLocW`. -/
+@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "locals_rel_mk_ctxt_ln"
+  (words_as_type_indexed_bitvec)]
+theorem localsRelHOLMkCtxtLn {width : Nat} [NeZero width]
+    (next : Nat) (names : List Nat) (targetLocals : Spt (WordLocW width))
+    (hpremises : 0 < next ∧ next % 2 = 0) :
+    localsRelHOL (Flapjack.makeCtxtHOL next names (.ln : Spt Nat))
+      (.ln : Spt (WordLocW width)) targetLocals := by
+  rcases hpremises with ⟨hpositive, hevenStart⟩
+  refine ⟨?_, ?_, ?_⟩
+  · intro left right hleft hright hfind
+    obtain ⟨leftValue, hleftLookup⟩ := (sptMem_iff_lookup left
+      (Flapjack.makeCtxtHOL next names (.ln : Spt Nat))).mp hleft
+    obtain ⟨rightValue, hrightLookup⟩ := (sptMem_iff_lookup right
+      (Flapjack.makeCtxtHOL next names (.ln : Spt Nat))).mp hright
+    have hequal : leftValue = rightValue := by
+      simp [findVarHOL, hleftLookup, hrightLookup] at hfind
+      exact hfind
+    have hbase : ∀ x y v, sptLookup x (.ln : Spt Nat) = some v →
+        sptLookup y (.ln : Spt Nat) = some v → x = y ∧ v < next := by
+      intro x y v hx _
+      simp at hx
+    have hinj := makeCtxtHOL_inj names (.ln : Spt Nat) next hbase
+    exact hinj left right leftValue hleftLookup (by simpa [hequal] using hrightLookup)
+  · intro name register hlookup
+    have heven := makeCtxtHOL_lookupEven names next (.ln : Spt Nat)
+      name register hevenStart (by intro key value h; simp at h) hlookup
+    have hrange := makeCtxtHOL_lookupRange names next (.ln : Spt Nat)
+      name register hlookup
+    rcases hrange with hnone | hbound
+    · simp at hnone
+    · exact ⟨by omega, heven⟩
+  · intro name value hsource
+    simp at hsource
+
 end Flapjack.LoopToWord
