@@ -1717,6 +1717,14 @@ run_probe machine_ieee_fp64_arith_round_probeScript.sml machine_ieee_fp64_arith_
   "$cake_dir/semantics/fpSemScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 
+# The binary64 conversion probe observes fp64_to_int in all four modes (ties,
+# NaN/infinity to NONE) and int_to_fp64 roundTiesToEven (ties, overflow,
+# negative) (bead flapjack-h29l.6.3.1).
+run_probe machine_ieee_fp64_convert_probeScript.sml machine_ieee_fp64_convert_probe.out \
+  to_int_2_5 to_int_nan to_int_rtn_neg_2_1 from_int_2p53_1 from_int_neg_big \
+  "$hol_dir/src/floating-point/binary_ieeeScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
 # The good_handlers probe observes the structural handler-label predicate,
 # including the NONE-ret case (handler ignored) and nested bad handlers.
 run_probe word_convs_good_handlers_probeScript.sml word_convs_good_handlers_probe.out \
