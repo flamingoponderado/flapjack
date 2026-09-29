@@ -777,6 +777,23 @@ def tagged_declaration_text(lines: list[str], attribute_start: int) -> str:
     return "\n".join(region)
 
 
+def tagged_declaration_source(lines: list[str], attribute_start: int) -> str:
+    """Signature and body of the declaration carrying an attribute.
+
+    Most carrier checks need only the signature. Existential representation
+    qualifiers also need to inspect a relation body whose existential is in
+    the definition, rather than in its type.
+    """
+    signature = tagged_declaration_text(lines, attribute_start)
+    header_lines = len(signature.splitlines())
+    body: list[str] = []
+    for line in lines[attribute_start - 1 + header_lines:]:
+        if TOP_DECL_RE.match(line):
+            break
+        body.append(line)
+    return signature + "\n" + "\n".join(body)
+
+
 TO_FUNCTION_RE = re.compile(r"\bto([A-Z][A-Za-z0-9_']*)")
 OF_FUNCTION_RE = re.compile(r"\bof([A-Z][A-Za-z0-9_']*)")
 FMAP_WITNESS_RE = re.compile(
@@ -1434,21 +1451,37 @@ def fmap_as_finite_support_existentials_errors(
             )
             continue
         statement = match.group("statement")
+        colon = _last_top_level_colon(statement)
+        binder_zone = statement[:colon] if colon >= 0 else ""
+        conclusion = statement[colon + 1:] if colon >= 0 else ""
         has_roundtrip = (
-            re.search(r"ofBroad\s*[\(.A-Za-z_]", statement) is not None
-            and re.search(r"toBroad\s*(?:lookup)?\s*[\(.A-Za-z_]", statement) is not None
-            and re.search(r"lookup\s*[\(.A-Za-z_]", statement) is not None
-            and re.search(r"\.finiteSupport\b|finiteSupport\s*[\),]", statement) is not None
+            re.search(r"ofBroad\s*[\(.A-Za-z_]", conclusion) is not None
+            and re.search(r"toBroad\s*(?:lookup)?\s*[\(.A-Za-z_]", conclusion) is not None
+            and re.search(
+                r"\.lookup\s*=\s*" + re.escape(binder) + r"\.lookup\b",
+                conclusion,
+            ) is not None
+            and re.search(
+                r"\.finiteSupport\s*=\s*" + re.escape(binder) + r"\.finiteSupport\b",
+                conclusion,
+            ) is not None
+            and re.search(
+                r"ofBroad[\s\S]*?toBroad\s+" + re.escape(binder)
+                + r"\s*\)\s*=\s*" + re.escape(binder) + r"\b",
+                conclusion,
+            ) is not None
         )
         if (
-            not identifier_token_occurs(statement, binder)
-            or "HolFiniteMapExact" not in statement
-            or "lookup" not in statement
-            or "finiteSupport" not in statement
-            or "toBroad" not in statement
-            or "ofBroad" not in statement
+            colon < 0
+            or "HolFiniteMapExact" not in binder_zone
+            or re.search(
+                r"\([^():]*:\s*[^)]*(?:lookup|finiteSupport|toBroad|ofBroad)[^)]*\)",
+                binder_zone,
+            ) is not None
+            or "lookup" not in conclusion
+            or "finiteSupport" not in conclusion
+            or _split_top_level(conclusion, ("\u2192", "->")) is not None
             or not has_roundtrip
-            or re.search(r"=\s*" + re.escape(binder) + r"\b", statement) is None
         ):
             errors.append(
                 "fmap_as_finite_support_existentials witness "
@@ -2398,7 +2431,7 @@ def main(argv: list[str]) -> int:
                 errors.extend(
                     f"{where}: {error}"
                     for error in fmap_as_finite_support_existentials_errors(
-                        lines, module, tagged_declaration_text(lines, number),
+                        lines, module, tagged_declaration_source(lines, number),
                         lean_decl, fmap_existentials,
                     )
                 )

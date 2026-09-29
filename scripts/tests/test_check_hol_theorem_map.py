@@ -1657,6 +1657,29 @@ class ExistentialFmapStatusTest(unittest.TestCase):
             self._record(fmap_as_finite_support_existentials=["other"]), self._tag())
         self.assertTrue(any("do not match its @[hol] tag" in e for e in errors))
 
+    def test_accepts_relation_existential_and_word_carrier_composition(self):
+        record = self._record(
+            statement_status=(
+                "reviewed_fmap_as_finite_support_relation_existentials_"
+                "words_as_type_indexed_bitvec"
+            ),
+            reviewer="source comparison of CrepSemHOLState maps, inl_fs, and inl_bag",
+            fmap_as_finite_support_relation=[
+                "CrepSemHOLState.locals", "CrepSemHOLState.globals",
+                "CrepSemHOLState.code", "inl_fs",
+            ],
+            words_as_type_indexed_bitvec=True,
+        )
+        tagged = self._tag()
+        key = next(iter(tagged))
+        old = tagged[key]
+        tagged[key] = old[:7] + (
+            (("CrepSemHOLState", "locals"), ("CrepSemHOLState", "globals"),
+             ("CrepSemHOLState", "code"), ("inl_fs", "")),
+            False, True, (), ("inl_bag",),
+        )
+        self.assertEqual(self._errors(record, tagged), [])
+
 
 class StandaloneFmapResultStatusTest(unittest.TestCase):
     def _record(self, **overrides):

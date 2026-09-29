@@ -118,7 +118,9 @@ class HolAttributeSitesTest(unittest.TestCase):
         lines = [
             "theorem holFmapAsFiniteSupportExistentialWitness_eval_bag",
             "    (bag : HolFiniteMapExact Nat Nat) :",
-            "    mapofBroad (maptoBroadlookup bag) bag.finiteSupport = bag := by",
+            "    (Broad.ofBroad (Broad.toBroad bag)).lookup = bag.lookup ∧",
+            "      (Broad.ofBroad (Broad.toBroad bag)).finiteSupport = bag.finiteSupport ∧",
+            "      Broad.ofBroad (Broad.toBroad bag) = bag := by",
             "  cases bag; rfl",
         ]
         declaration = "theorem eval : ∃ bag : HolFiniteMapExact Nat Nat, P bag"
@@ -145,6 +147,22 @@ class HolAttributeSitesTest(unittest.TestCase):
             lines, "Example.lean",
             "theorem eval : ∃ bag : HolFiniteMapExact Nat Nat, P bag",
             "eval", ("bag",),
+        )
+        self.assertTrue(any("canonical lookup/finiteSupport" in e for e in errors))
+
+    def test_fmap_existential_rejects_witness_assumption_and_scans_definition_body(self):
+        lines = [
+            "theorem holFmapAsFiniteSupportExistentialWitness_eval_bag",
+            "    (bag : HolFiniteMapExact Nat Nat)",
+            "    (h : (Broad.ofBroad (Broad.toBroad bag)).lookup = bag.lookup) :",
+            "    (Broad.ofBroad (Broad.toBroad bag)).lookup = bag.lookup ∧",
+            "      (Broad.ofBroad (Broad.toBroad bag)).finiteSupport = bag.finiteSupport ∧",
+            "      Broad.ofBroad (Broad.toBroad bag) = bag := by",
+            "  exact ⟨h, rfl, rfl⟩",
+        ]
+        declaration = "def eval (bag : HolFiniteMapExact Nat Nat) : Prop :=\n  ∃ bag : HolFiniteMapExact Nat Nat, P bag"
+        errors = CHECKER["fmap_as_finite_support_existentials_errors"](
+            lines, "Example.lean", declaration, "eval", ("bag",)
         )
         self.assertTrue(any("canonical lookup/finiteSupport" in e for e in errors))
 

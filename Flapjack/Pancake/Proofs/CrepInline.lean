@@ -1128,6 +1128,34 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {σ : Type} :
         CrepSemBroadState.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
   CrepSemHOLState.holFmapAsFiniteSupportWitness
 
+/-- Carrier-specific alias for the multi-carrier qualifier on code_inl_rel.
+This keeps the same-module witness named for the owning state carrier. -/
+theorem holFmapAsFiniteSupportRelationWitness_CrepSemHOLState
+    {width : Nat} [NeZero width] {σ : Type} :
+    (∀ (state : CrepSemBroadState width σ) (h : state.FiniteSupport),
+        (CrepSemBroadState.ofBroad state h).toBroad = state) ∧
+    (∀ state : CrepSemHOLState width σ,
+        CrepSemBroadState.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  CrepSemHOLState.holFmapAsFiniteSupportWitness
+
+/-- Canonical finite-support witness for `code_inl_rel_def`'s existential
+`inl_bag`, including the lookup and support projections as well as the
+`CrepInlineMapBroad` roundtrip. -/
+theorem holFmapAsFiniteSupportExistentialWitness_crepInlineCodeInlRelExact_inl_bag
+    {width : Nat} [NeZero width]
+    (inl_bag : HolFiniteMapExact CrepInlineMapHOLName
+      (List Nat × CrepProgHOL width)) :
+    (CrepInlineCanonical.CrepInlineMapBroad.ofBroad
+        (CrepInlineCanonical.CrepInlineMapBroad.toBroad inl_bag)).lookup =
+        inl_bag.lookup ∧
+      (CrepInlineCanonical.CrepInlineMapBroad.ofBroad
+        (CrepInlineCanonical.CrepInlineMapBroad.toBroad inl_bag)).finiteSupport =
+        inl_bag.finiteSupport ∧
+      CrepInlineCanonical.CrepInlineMapBroad.ofBroad
+        (CrepInlineCanonical.CrepInlineMapBroad.toBroad inl_bag) = inl_bag := by
+  exact ⟨rfl, rfl,
+    CrepInlineCanonical.CrepInlineMapBroad.ofBroad_toBroad inl_bag⟩
+
 /-- Exact finite-support carrier port of CakeML's `state_rel` relation
 (`crep_inlineProofScript.sml:12-24`). The ten compared fields are globals,
 code, memory, both memory domains, clock, endianness, FFI state, and base/top
@@ -1229,12 +1257,17 @@ canonical finite-map and state carriers. This keeps HOL's existential
 `inl_bag` as a finite-support map and uses the reviewed `inlineProgHOLExact`
 definition, with the source quantifiers and conclusion unchanged.
 
-This declaration intentionally has no `@[hol]` tag yet. The existing
-`fmap_as_finite_support_parameters` qualifier validates explicit input maps,
-but not the existentially bound `inl_bag`; the checker needs a reviewed
-bound-map qualifier before this non-identity carrier translation can be
-tagged. The prior `crepInlineCodeInlRel` remains Flapjack-specific
+The relation qualifier records the three exact state maps and standalone
+`inl_fs`; the existential-map qualifier records `inl_bag` and its canonical
+lookup/support roundtrip; the word qualifier records the positive-width HOL
+word model. The prior `crepInlineCodeInlRel` remains Flapjack-specific
 list-backed infrastructure. -/
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "code_inl_rel_def"
+  (fmap_as_finite_support_relation :=
+    [CrepSemHOLState.locals, CrepSemHOLState.globals,
+      CrepSemHOLState.code, inl_fs])
+  (fmap_as_finite_support_existentials := [inl_bag])
+  (words_as_type_indexed_bitvec)]
 def crepInlineCodeInlRelExact {width : Nat} [NeZero width] {σ : Type}
     (inl_fs : HolFiniteMapExact CrepInlineMapHOLName
       (List Nat × CrepProgHOL width))
