@@ -3,6 +3,7 @@ import Flapjack.Pancake.CrepArith
 import Flapjack.Pancake.Semantics.CrepRuntimeTarget
 import Flapjack.Pancake.Semantics.CrepSem.Eval
 import Flapjack.Pancake.Proofs.CrepArith.ExactStateProjection
+import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrect
 
 /-! Theorem counterparts and Flapjack support for CakeML's
     `crep_arithProofScript.sml`. The tagged `dest_const_thm` uses the exact
