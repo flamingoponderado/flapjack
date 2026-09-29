@@ -2,6 +2,7 @@ import Flapjack.HolRef
 import Flapjack.PanToCrepMaxList
 import Flapjack.Pancake.Semantics.CrepSem
 import Flapjack.Pancake.Semantics.CrepSem.Eval
+import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
 import Flapjack.Pancake.Semantics.CrepSem.HOLState
 import Flapjack.Pancake.CrepInline.Pass
 import Flapjack.Pancake.CrepInline.Canonical
@@ -1370,6 +1371,150 @@ theorem evalCodeInlExact {width : Nat} [NeZero width] {σ : Type}
         simp
   rw [← heval]
   exact (evalCrepSemHOLExp_state_rel_code_exact s t e hstate hlocals hsubset).symm
+
+/-! ## `inline_prog_correct` Dec constructor case
+
+HOL crep_inlineProofScript.sml:2301 states the source run, non-Error result,
+two SUBMAP premises, state_rel_code, locals_strong_rel, and code_inl_rel. Its
+Dec induction case at lines 2360-2373 adds exactly the recursive body induction
+hypothesis. This declaration uses those same hypotheses and result-dependent
+postconditions. The relation qualifier records the three finite-map state
+fields plus `inlFs`; the standalone `inlBag` map has a canonical roundtrip
+witness. `words_as_type_indexed_bitvec` records the positive HOL word width. -/
+
+@[hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "inline_prog_correct"
+  (fmap_as_finite_support_relation :=
+    [CrepSemHOLState.locals, CrepSemHOLState.globals,
+      CrepSemHOLState.code, inlFs, inlBag])
+  (words_as_type_indexed_bitvec)]
+theorem inlineProgCorrectDecCaseExact {width : Nat} [NeZero width] {σ : Type}
+    (name : Nat) (value : CrepExpHOL width) (body : CrepProgHOL width)
+    (s : CrepSemHOLState width σ)
+    (r : Option (CrepResultHOLExact width)) (s' : CrepSemHOLState width σ)
+    (inlFs : HolFiniteMapExact CrepInlineMapHOLName
+      (List Nat × CrepProgHOL width))
+    (inlBag : HolFiniteMapExact CrepInlineMapHOLName
+      (List Nat × CrepProgHOL width))
+    (t : CrepSemHOLState width σ)
+    (hsource : evalCrepSemHOLProgExact s (.dec name value body) = (r, s'))
+    (hnotError : r ≠ some .error)
+    (hsubmap : HolFiniteMapExact.submap inlFs s.code)
+    (hbag : HolFiniteMapExact.submap inlBag inlFs)
+    (hstate : crepInlineStateRelCodeExact s t)
+    (hlocals : crepInlineLocalsStrongRelExact s t)
+    (hcode : crepInlineCodeInlRelExact inlFs s t)
+    (ih : ∀ (inlFs' : HolFiniteMapExact CrepInlineMapHOLName
+          (List Nat × CrepProgHOL width))
+        (inlBag' : HolFiniteMapExact CrepInlineMapHOLName
+          (List Nat × CrepProgHOL width))
+        (source target : CrepSemHOLState width σ)
+        (result : Option (CrepResultHOLExact width))
+        (source' : CrepSemHOLState width σ),
+        evalCrepSemHOLProgExact source body = (result, source') →
+        result ≠ some .error →
+        HolFiniteMapExact.submap inlFs' source.code →
+        HolFiniteMapExact.submap inlBag' inlFs' →
+        crepInlineStateRelCodeExact source target →
+        crepInlineLocalsStrongRelExact source target →
+        crepInlineCodeInlRelExact inlFs' source target →
+        ∃ target' : CrepSemHOLState width σ,
+          evalCrepSemHOLProgExact target (CrepInlineCanonical.inlineProgHOLExact inlBag' body) =
+            (result, target') ∧
+          crepInlineStateRelCodeExact source' target' ∧
+          crepInlineCodeInlRelExact inlFs' source' target' ∧
+          match result with
+          | none => crepInlineLocalsStrongRelExact source' target'
+          | some (CrepResultHOLExact.break _) => crepInlineLocalsStrongRelExact source' target'
+          | some (CrepResultHOLExact.continue _) => crepInlineLocalsStrongRelExact source' target'
+          | some .error => False
+          | _ => True) :
+    ∃ t' : CrepSemHOLState width σ,
+      evalCrepSemHOLProgExact t
+          (CrepInlineCanonical.inlineProgHOLExact inlBag (.dec name value body)) =
+        (r, t') ∧
+      crepInlineStateRelCodeExact s' t' ∧
+      crepInlineCodeInlRelExact inlFs s' t' ∧
+      match r with
+      | none => crepInlineLocalsStrongRelExact s' t'
+      | some (CrepResultHOLExact.break _) => crepInlineLocalsStrongRelExact s' t'
+      | some (CrepResultHOLExact.continue _) => crepInlineLocalsStrongRelExact s' t'
+      | some .error => False
+      | _ => True := by
+  classical
+  rw [evalCrepSemHOLProgExact_dec_holShape] at hsource
+  cases hexp : evalCrepSemHOLExp s value with
+  | none =>
+      simp [hexp] at hsource
+      exact False.elim (hnotError hsource.1.symm)
+  | some v =>
+      let sourceBound : CrepSemHOLState width σ :=
+        { s with locals := s.locals.updateEq (name, v) }
+      let targetBound : CrepSemHOLState width σ :=
+        { t with locals := t.locals.updateEq (name, v) }
+      have htargetExp : evalCrepSemHOLExp t value = some v := by
+        apply evalCodeInlExact s value v t inlFs
+        exact ⟨hexp, hstate, hlocals, hcode⟩
+      simp only [hexp] at hsource
+      cases hbody : evalCrepSemHOLProgExact sourceBound body with
+      | mk result sourceBody' =>
+          simp only [sourceBound, hbody, Prod.mk.injEq] at hsource
+          rcases hsource with ⟨hr, hs'⟩
+          subst r
+          subst s'
+          have hstateBound : crepInlineStateRelCodeExact sourceBound targetBound := by
+            simpa [sourceBound, targetBound, crepInlineStateRelCodeExact] using hstate
+          have hlocalsBound : crepInlineLocalsStrongRelExact sourceBound targetBound := by
+            change sourceBound.locals = targetBound.locals
+            simpa [sourceBound, targetBound] using
+              congrArg (fun locals => locals.updateEq (name, v)) hlocals
+          have hcodeBound : crepInlineCodeInlRelExact inlFs sourceBound targetBound := by
+            simpa [sourceBound, targetBound, crepInlineCodeInlRelExact] using hcode
+          have hsubmapBound : HolFiniteMapExact.submap inlFs sourceBound.code := by
+            simpa [sourceBound] using hsubmap
+          obtain ⟨targetBody', htargetBody, hstateBody, hcodeBody, hlocalsBody⟩ :=
+            ih inlFs inlBag sourceBound targetBound result sourceBody' hbody
+              (by simpa using hnotError) hsubmapBound hbag hstateBound
+              hlocalsBound hcodeBound
+          have hinlineDec :
+              CrepInlineCanonical.inlineProgHOLExact inlBag (.dec name value body) =
+                .dec name value (CrepInlineCanonical.inlineProgHOLExact inlBag body) := by
+            unfold CrepInlineCanonical.inlineProgHOLExact
+            simp only [CrepInlineCanonical.inlineProgHOLCoreExact]
+          have htargetRun :
+              evalCrepSemHOLProgExact t
+                (CrepInlineCanonical.inlineProgHOLExact inlBag (.dec name value body)) =
+                (result, { targetBody' with
+                  locals := targetBody'.locals.resVarEq (name, t.locals.lookup name) }) := by
+            have htargetBody' :
+                evalCrepSemHOLProgExact
+                  { t with locals := t.locals.updateEq (name, v) }
+                  (CrepInlineCanonical.inlineProgHOLExact inlBag body) =
+                  (result, targetBody') := by
+              simpa [targetBound] using htargetBody
+            rw [hinlineDec, evalCrepSemHOLProgExact_dec_holShape]
+            simp only [htargetExp]
+            rw [htargetBody']
+          have hstatePost :
+              crepInlineStateRelCodeExact
+                { sourceBody' with
+                  locals := sourceBody'.locals.resVarEq (name, s.locals.lookup name) }
+                { targetBody' with
+                  locals := targetBody'.locals.resVarEq (name, t.locals.lookup name) } := by
+            simpa [crepInlineStateRelCodeExact] using hstateBody
+          have hcodePost :
+              crepInlineCodeInlRelExact inlFs
+                { sourceBody' with
+                  locals := sourceBody'.locals.resVarEq (name, s.locals.lookup name) }
+                { targetBody' with
+                  locals := targetBody'.locals.resVarEq (name, t.locals.lookup name) } := by
+            simpa [crepInlineCodeInlRelExact] using hcodeBody
+          refine ⟨{ targetBody' with
+              locals := targetBody'.locals.resVarEq (name, t.locals.lookup name) }, ?_,
+            ?_, ?_, ?_⟩
+          · exact htargetRun
+          · exact hstatePost
+          · exact hcodePost
+          · split <;> simp_all [crepInlineLocalsStrongRelExact]
 
 end CrepInlineExact
 
