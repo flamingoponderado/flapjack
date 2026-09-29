@@ -32,8 +32,10 @@ private def byteSetOracleRiscvResult : Word64 :=
 #guard byteSetOracleRiscvResult == byteSetOracleWord
 #guard byteSetOraclePanResult == byteSetOracleRiscvResult
 
-/-! Width 12 has one complete byte plus four preserved high bits. It is not a
-multiple of eight, but still satisfies the exact theorem's `8 ≤ width` premise. -/
+/-! Width 12 has one complete byte plus four preserved high bits. The original
+HOL observation is `set_byte_width12_preserves_high_numeric=0xA12w` in
+`scripts/hol-probes/word_byte_memory_probe.out`. This width is not a multiple
+of eight, but still satisfies the exact theorem's `8 ≤ width` premise. -/
 private def byteSetWidth12PanResult : RiscV.Word 12 :=
   panSetByteHOL (0 : RiscV.Word 12) (BitVec.ofNat 12 0x12)
     (BitVec.ofNat 12 0xABC) false
