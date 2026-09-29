@@ -23694,14 +23694,6 @@
     "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.7): HOL exit_loop (:1010-1014): SOME (Break n) = SOME (Break (n - 1)), SOME (Continue n) = SOME (Continue (n - 1)), res = res (num monus); Lean identical. Words are BitVec width with [NeZero width] (words_as_type_indexed_bitvec); no other representation change. Rows exit_loop_* of scripts/hol-probes/word_sem_call_helpers_probe.out are checked by Flapjack.Test.WordSemCallHelpersParity."
   },
   {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/LocalsRelUpdates.lean",
-    "lean_name": "localsRelHOLFromAListToAList",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Private Lean-only transport helper for localsRelHOLAlistInsertToAList. It lifts the relation through the unrestricted external HOL lookup_fromAList_toAList fact; there is no CakeML declaration for this helper itself, and it is not tagged as an exact port."
-  },
-  {
     "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
     "hol_name": "globals_rel_def",
     "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/RelationsExact.lean",
@@ -24030,7 +24022,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/LocalsRelUpdates.lean",
     "lean_name": "localsRelHOLFromAListToAList",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific private transport lemma: replaces the target Spt by fromAList (toAList env) in localsRelHOL using the unrestricted Spt lookup roundtrip. It is proof infrastructure for the tagged locals_rel_alist_insert_toAList theorem, not a separate HOL declaration."
+    "reviewer": "Flapjack-specific private transport lemma for localsRelHOLAlistInsertToAList: replaces the target Spt by fromAList (toAList env) in localsRelHOL and lifts the relation using the unrestricted external HOL lookup_fromAList_toAList fact. There is no separate CakeML declaration for this helper; it is proof infrastructure for tagged locals_rel_alist_insert_toAList, not an exact HOL port."
   },
   {
     "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
