@@ -225,6 +225,7 @@ elab "#emit_hol_type_hashes" : command => do
             ("fmap_as_finite_support", toJson ref.fmapAsFiniteSupport),
             ("fmap_as_finite_support_result", toJson ref.fmapAsFiniteSupportResult),
             ("fmap_as_finite_support_parameters", toJson ref.fmapAsFiniteSupportParameters),
+            ("fmap_as_finite_support_existentials", toJson ref.fmapAsFiniteSupportExistentials),
             ("fmap_as_finite_support_relation",
               toJson (ref.fmapAsFiniteSupportRelation.map (fun entry => if entry.1.isEmpty then entry.2 else s!"{entry.1}.{entry.2}"))),
             ("fmap_as_finite_support_equalities", toJson ref.fmapAsFiniteSupportEqualities),

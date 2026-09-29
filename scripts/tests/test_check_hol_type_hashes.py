@@ -231,6 +231,28 @@ class HolTypeHashesTest(unittest.TestCase):
             ["fm", "fm2"],
         )
 
+    def test_fmap_as_finite_support_existentials_qualifier_is_locked(self):
+        manifest = [{
+            **self.manifest[0],
+            "statement_status": "reviewed_fmap_as_finite_support_existentials",
+            "fmap_as_finite_support_existentials": ["inl_bag"],
+        }]
+        export = [{
+            **self.export[0],
+            "qualifiers": {
+                "list_as_array": [],
+                "names_as_string": [],
+                "names_as_string_boundary": [],
+                "fmap_as_finite_support": [],
+                "fmap_as_finite_support_existentials": ["inl_bag"],
+            },
+        }]
+        lock = MODULE.expected_lock(manifest, export, "leanprover/lean4:v4")
+        self.assertEqual(
+            lock["records"][0]["qualifiers"]["fmap_as_finite_support_existentials"],
+            ["inl_bag"],
+        )
+
     def test_words_as_type_indexed_bitvec_qualifier_is_locked(self):
         manifest = [{
             **self.manifest[0],
@@ -342,6 +364,16 @@ class HolTypeHashesTest(unittest.TestCase):
                 },
                 1,
             )
+
+    def test_fmap_existential_qualifier_export_record_validates(self):
+        MODULE.validate_export_record(
+            {
+                "lean_name": "n", "hol_path": "p", "hol_name": "h",
+                "type_expr": "t",
+                "qualifiers": {"fmap_as_finite_support_existentials": ["inl_bag"]},
+            },
+            1,
+        )
 
     def test_unknown_export_field_fails_closed(self):
         with self.assertRaisesRegex(ValueError, "invalid fields"):

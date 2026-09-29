@@ -51,6 +51,13 @@ same-module checked `holFmapAsFiniteSupportParamWitness_<declaration>_<binder>`
 roundtrip through lookup and finite-support evidence. This is distinct from
 both field-owned carriers and the result-map qualifier; source review must
 still preserve HOL binder order, hypotheses, and conclusions.
+The `fmap_as_finite_support_existentials` qualifier records named existential
+finite-map binders represented as `HolFiniteMapExact`. Each listed binder
+must be an explicit existential at that carrier and have a same-module
+`holFmapAsFiniteSupportExistentialWitness_<declaration>_<binder>` roundtrip
+through lookup and finite-support evidence. It is intended for HOL relations
+whose statement existentially quantifies a finite map; it does not alter the
+quantifier or witness role.
 The `fmap_as_finite_support_relation` qualifier is the multi-owner form for a
 HOL relation whose finite maps come from several carrier structures. It lists
 `Owner.field` entries, requires each field to use `HolFiniteMapExact` and each
@@ -160,6 +167,13 @@ structure HolRef where
       for consumed map inputs whose declaration result is not a map; it is
       distinct from the map-valued result qualifier. -/
   fmapAsFiniteSupportParameters : Array String := #[]
+  /-- Existentially bound standalone finite maps represented by
+      HolFiniteMapExact. Each named binder must be an explicit existential at
+      that carrier and have a same-module
+      `holFmapAsFiniteSupportExistentialWitness_<declaration>_<binder>` lookup
+      and finite-support roundtrip. This records only the map representation;
+      it does not change the existential's scope or role. -/
+  fmapAsFiniteSupportExistentials : Array String := #[]
   /-- Multi-carrier finite-map relation entries, each written `Carrier.field`
       or, for a standalone map parameter with no owning carrier, a bare
       parameter name. Used when a relation spans more than one carrier
@@ -208,6 +222,7 @@ syntax "(" "names_as_string_boundary" ":=" "[" ident,+ "]" ")" : holQualifier
 syntax "(" "fmap_as_finite_support" ":=" "[" ident,+ "]" ")" : holQualifier
 syntax "(" "fmap_as_finite_support_result" ")" : holQualifier
 syntax "(" "fmap_as_finite_support_parameters" ":=" "[" ident,+ "]" ")" : holQualifier
+syntax "(" "fmap_as_finite_support_existentials" ":=" "[" ident,+ "]" ")" : holQualifier
 syntax "(" "fmap_as_finite_support_relation" ":=" "[" ident,* "]" ")" : holQualifier
 syntax "(" "fmap_as_finite_support_equalities" ")" : holQualifier
 syntax "(" "words_as_type_indexed_bitvec" ")" : holQualifier
@@ -217,6 +232,7 @@ private def checkedHolRef (path name : String) (line? : Option Nat := none)
     (listAsArray namesAsString namesAsStringBoundary fmapAsFiniteSupport : Array String := #[])
     (fmapAsFiniteSupportResult : Bool := false)
     (fmapAsFiniteSupportParameters : Array String := #[])
+    (fmapAsFiniteSupportExistentials : Array String := #[])
     (fmapAsFiniteSupportRelation : Array (String × String) := #[])
     (fmapAsFiniteSupportEqualities : Bool := false)
     (wordsAsTypeIndexedBitvec : Bool := false) : CoreM HolRef := do
@@ -236,9 +252,11 @@ private def checkedHolRef (path name : String) (line? : Option Nat := none)
     throwError "@[hol]: fmap_as_finite_support fields must be distinct"
   if fmapAsFiniteSupportParameters.toList.eraseDups.length != fmapAsFiniteSupportParameters.size then
     throwError "@[hol]: fmap_as_finite_support_parameters binders must be distinct"
+  if fmapAsFiniteSupportExistentials.toList.eraseDups.length != fmapAsFiniteSupportExistentials.size then
+    throwError "@[hol]: fmap_as_finite_support_existentials binders must be distinct"
   if fmapAsFiniteSupportRelation.toList.eraseDups.length != fmapAsFiniteSupportRelation.size then
     throwError "@[hol]: fmap_as_finite_support_relation entries must be distinct"
-  pure { path, name, line?, listAsArray, namesAsString, namesAsStringBoundary, fmapAsFiniteSupport, fmapAsFiniteSupportResult, fmapAsFiniteSupportParameters, fmapAsFiniteSupportRelation, fmapAsFiniteSupportEqualities, wordsAsTypeIndexedBitvec }
+  pure { path, name, line?, listAsArray, namesAsString, namesAsStringBoundary, fmapAsFiniteSupport, fmapAsFiniteSupportResult, fmapAsFiniteSupportParameters, fmapAsFiniteSupportExistentials, fmapAsFiniteSupportRelation, fmapAsFiniteSupportEqualities, wordsAsTypeIndexedBitvec }
 
 private def parseHolQualifier (stx : Syntax) : CoreM (String × Array String × Bool × Array (String × String)) := do
   match stx with
@@ -255,6 +273,9 @@ private def parseHolQualifier (stx : Syntax) : CoreM (String × Array String × 
   | `(holQualifier| (fmap_as_finite_support_parameters := [$parameters:ident,*])) =>
       pure ("fmap_as_finite_support_parameters", parameters.getElems.map
         (fun parameter => parameter.getId.eraseMacroScopes.toString), false, #[])
+  | `(holQualifier| (fmap_as_finite_support_existentials := [$binders:ident,*])) =>
+      pure ("fmap_as_finite_support_existentials", binders.getElems.map
+        (fun binder => binder.getId.eraseMacroScopes.toString), false, #[])
   | `(holQualifier| (fmap_as_finite_support_relation := [$entries:ident,*])) =>
       let pairs : Array (String × String) := entries.getElems.map fun entry =>
         let text := entry.getId.eraseMacroScopes.toString
@@ -279,6 +300,7 @@ private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
     let mut fmapAsFiniteSupport : Array String := #[]
     let mut fmapAsFiniteSupportResult : Bool := false
     let mut fmapAsFiniteSupportParameters : Array String := #[]
+    let mut fmapAsFiniteSupportExistentials : Array String := #[]
     let mut fmapAsFiniteSupportRelation : Array (String × String) := #[]
     let mut fmapAsFiniteSupportEqualities : Bool := false
     let mut wordsAsTypeIndexedBitvec : Bool := false
@@ -289,11 +311,12 @@ private def parseHolRefAttribute (stx : Syntax) : CoreM HolRef := do
       else if kind == "names_as_string_boundary" then namesAsStringBoundary := namesAsStringBoundary ++ fields
       else if kind == "fmap_as_finite_support_result" then fmapAsFiniteSupportResult := isResult
       else if kind == "fmap_as_finite_support_parameters" then fmapAsFiniteSupportParameters := fmapAsFiniteSupportParameters ++ fields
+      else if kind == "fmap_as_finite_support_existentials" then fmapAsFiniteSupportExistentials := fmapAsFiniteSupportExistentials ++ fields
       else if kind == "fmap_as_finite_support_relation" then fmapAsFiniteSupportRelation := fmapAsFiniteSupportRelation ++ pairs
       else if kind == "fmap_as_finite_support_equalities" then fmapAsFiniteSupportEqualities := isResult
       else if kind == "words_as_type_indexed_bitvec" then wordsAsTypeIndexedBitvec := isResult
       else fmapAsFiniteSupport := fmapAsFiniteSupport ++ fields
-    checkedHolRef path name line? listAsArray namesAsString namesAsStringBoundary fmapAsFiniteSupport fmapAsFiniteSupportResult fmapAsFiniteSupportParameters fmapAsFiniteSupportRelation fmapAsFiniteSupportEqualities wordsAsTypeIndexedBitvec
+    checkedHolRef path name line? listAsArray namesAsString namesAsStringBoundary fmapAsFiniteSupport fmapAsFiniteSupportResult fmapAsFiniteSupportParameters fmapAsFiniteSupportExistentials fmapAsFiniteSupportRelation fmapAsFiniteSupportEqualities wordsAsTypeIndexedBitvec
   match stx with
   | `(attr| hol $path:str $name:str $line:num $qualifiers:holQualifier*) =>
       parse path.getString name.getString (some line.getNat) qualifiers
@@ -450,13 +473,15 @@ private def HolRef.qualifierSuffix (ref : HolRef) : String :=
     " (fmap_as_finite_support_result)" else ""
   let fmapAsFiniteSupportParameters := if ref.fmapAsFiniteSupportParameters.isEmpty then "" else
     s!" (fmap_as_finite_support_parameters := [{String.intercalate ", " ref.fmapAsFiniteSupportParameters.toList}])"
+  let fmapAsFiniteSupportExistentials := if ref.fmapAsFiniteSupportExistentials.isEmpty then "" else
+    s!" (fmap_as_finite_support_existentials := [{String.intercalate ", " ref.fmapAsFiniteSupportExistentials.toList}])"
   let fmapAsFiniteSupportRelation := if ref.fmapAsFiniteSupportRelation.isEmpty then "" else
     s!" (fmap_as_finite_support_relation := [{String.intercalate ", " (ref.fmapAsFiniteSupportRelation.toList.map (fun entry => if entry.1.isEmpty then entry.2 else s!"{entry.1}.{entry.2}"))}])"
   let fmapAsFiniteSupportEqualities := if ref.fmapAsFiniteSupportEqualities then
     " (fmap_as_finite_support_equalities)" else ""
   let wordsAsTypeIndexedBitvec := if ref.wordsAsTypeIndexedBitvec then
     " (words_as_type_indexed_bitvec)" else ""
-  listAsArray ++ namesAsString ++ namesAsStringBoundary ++ fmapAsFiniteSupport ++ fmapAsFiniteSupportResult ++ fmapAsFiniteSupportParameters ++ fmapAsFiniteSupportRelation ++ fmapAsFiniteSupportEqualities ++ wordsAsTypeIndexedBitvec
+  listAsArray ++ namesAsString ++ namesAsStringBoundary ++ fmapAsFiniteSupport ++ fmapAsFiniteSupportResult ++ fmapAsFiniteSupportParameters ++ fmapAsFiniteSupportExistentials ++ fmapAsFiniteSupportRelation ++ fmapAsFiniteSupportEqualities ++ wordsAsTypeIndexedBitvec
 
 /-! Parser regressions for the original syntax, each qualifier alone, and both
 qualifiers together. These elaborate temporary syntax values only; they do not
@@ -527,6 +552,14 @@ run_cmd do
       HolRef.qualifierSuffix fmapParametersRef ==
         " (fmap_as_finite_support_parameters := [fm, fm2])" do
     throwError "@[hol] fmap_as_finite_support_parameters syntax regression"
+  let fmapExistentialsSyntax ← `(attr| hol "cakeml/pancake/proofs/crep_inlineProofScript.sml" "code_inl_rel_def"
+    (fmap_as_finite_support_existentials := [inl_bag]))
+  let fmapExistentialsRef ← Lean.Elab.Command.liftCoreM
+    (parseHolRefAttribute fmapExistentialsSyntax)
+  unless fmapExistentialsRef.fmapAsFiniteSupportExistentials == #["inl_bag"] &&
+      HolRef.qualifierSuffix fmapExistentialsRef ==
+        " (fmap_as_finite_support_existentials := [inl_bag])" do
+    throwError "@[hol] fmap_as_finite_support_existentials syntax regression"
   let fmapDuplicateSyntax ← `(attr| hol "cakeml/pancake/semantics/panSemScript.sml" "set_var_def"
     (fmap_as_finite_support := [locals, locals]))
   let fmapDuplicateRejected ← Lean.Elab.Command.liftCoreM do
