@@ -249,9 +249,10 @@ example :
       (.const (BitVec.ofNat 8 3)) (HolWordLab.word (BitVec.ofNat 8 9))
       (by simp [evalCrepSemHOLExp, loadState, lookupState])
       (by
-        intro state' resultType result hAddress
-        exact crepSimpExpCorrect1NativeConstCase sampleMapc state'
-          (BitVec.ofNat 8 3) result (by simp [evalCrepSemHOLExp])))
+        intro hAddress
+        exact crepSimpExpCorrect1NativeConstCase sampleMapc loadState
+          (BitVec.ofNat 8 3) (HolWordLab.word (BitVec.ofNat 8 9))
+          (by simp [evalCrepSemHOLExp])))
 
 example :
     evalCrepSemHOLExp loadState (.load (.const (BitVec.ofNat 8 4))) = none := by
