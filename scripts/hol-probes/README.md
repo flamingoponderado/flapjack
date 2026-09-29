@@ -48,8 +48,10 @@ source-shaped `locals_rel_def` in
 `cakeml/pancake/proofs/loop_to_wordProofScript.sml:19-24`, including a valid
 mapping with an extra target local and failures for odd/zero/non-injective
 register mappings, a source local absent from the context, and a mismatched
-target value. The exact-carrier Lean replay is in
-`Flapjack.Test.LoopToWordExactParity`.
+target value. It also records HOL observations for `locals_rel_insert` and
+`locals_rel_insert_unmapped`, including mapped overwrite, permitted unmapped
+target insertion, and collision failure (`loop_to_wordProofScript.sml:195-220`).
+The exact-carrier Lean replay is in `Flapjack.Test.LoopToWordExactParity`.
 `loop_to_word_comp_exp_probe.out` records direct HOL EVAL rows for the exact
 loopLang-to-wordLang expression compiler `comp_exp_def` at
 `cakeml/pancake/loop_to_wordScript.sml:22-40`; its kernel-checked Lean replay
@@ -70,6 +72,12 @@ recursive Seq, If, Loop, and Mark clauses of `comp_def` at
 label pair, If/Loop Tick placement, and Loop live cutsets. Its kernel-checked
 Lean replay is `Flapjack.Test.LoopToWordRecursiveParity`; the partial helper
 remains untagged until the other `comp_def` clauses are ported and assembled.
+`loop_to_word_globals_rel_probe.out` records direct HOL EVAL rows for
+`globals_rel_def` at `cakeml/pancake/proofs/loop_to_wordProofScript.sml:27-30`:
+a matching `Temp` value, value/key mismatches, and the one-way empty-source
+case. The exact finite-map relation and kernel replay are
+`Flapjack.Pancake.LoopToWord.Proofs.RelationsExact` and
+`Flapjack.Test.LoopToWordGlobalsRelParity`.
 `loop_to_word_comp_call_probe.out` records direct HOL EVAL rows for the Call
 clauses of `comp_def` at `cakeml/pancake/loop_to_wordScript.sml:145-166`
 (tail-call, non-tail without handler, non-tail with handler), checking link slot

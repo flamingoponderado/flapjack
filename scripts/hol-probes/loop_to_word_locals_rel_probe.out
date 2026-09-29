@@ -4,3 +4,6 @@ lt_locals_rel_zero_register=F
 lt_locals_rel_noninjective=F
 lt_locals_rel_missing_context=F
 lt_locals_rel_wrong_value=F
+lt_locals_rel_insert_mapped=T
+lt_locals_rel_insert_unmapped=T
+lt_locals_rel_insert_unmapped_collision=F
