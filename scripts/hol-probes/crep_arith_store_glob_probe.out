@@ -1,0 +1,5 @@
+simp_prog_storeglob=T
+evaluate_storeglob_const=T
+evaluate_storeglob_mapc=T
+storeglob_mapc_commute=T
+evaluate_storeglob_missing_var=T
