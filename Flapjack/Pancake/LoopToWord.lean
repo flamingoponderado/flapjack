@@ -298,13 +298,14 @@ def compExpHOL {width : Nat} [NeZero width] (context : Spt Nat) :
   decreasing_by all_goals first | sizeOf_list_dec | decreasing_trivial | simp_wf
 
 /-- Flapjack-specific partial slice of HOL `loop_to_word$comp_def` for its
-currently ported clauses (source lines 56-108). It covers Skip, Assign,
-AddCarry Primitive, the three Arith constructors, Store, SetGlobal, and the
-four direct memory operations. `none` marks constructors whose clauses have
-not yet been ported; this helper is deliberately untagged and is not a
-replacement for the total HOL `comp`. The returned label pair is the input
-pair for each covered clause. AddCarry follows HOL's positional order
-`(result, left, right, carry-in)`, confirmed by the direct oracle; the shared
+currently ported clauses. It covers Skip, Assign, AddCarry Primitive, the three
+Arith constructors, Store, SetGlobal, the four direct memory operations, the
+control/result clauses Break, Continue, Raise, Return, Tick, Fail and LocValue
+(source lines 96-110), and FFI and ShMem (source lines 141-146). `none` marks
+constructors whose clauses have not yet been ported; this helper is deliberately
+untagged and is not a replacement for the total HOL `comp`. The returned label
+pair is the input pair for each covered clause. AddCarry follows HOL's positional
+order `(result, left, right, carry-in)`, confirmed by the direct oracle; the shared
 Lean constructor's local binder names do not reorder those four Nat fields. -/
 def compInitialHOL {width : Nat} [NeZero width] (context : Spt Nat)
     (labels : Nat × Nat) : HolLoopProg width →
@@ -348,6 +349,19 @@ def compInitialHOL {width : Nat} [NeZero width] (context : Spt Nat)
   | .storeByte address value =>
       some (.inst (.mem .store8 (findVarHOL context value)
         (.addr (findVarHOL context address) (BitVec.ofNat width 0))), labels)
+  | .break n => some (.break n, labels)
+  | .continue n => some (.continue n, labels)
+  | .raise v => some (.raise (findVarHOL context v), labels)
+  | .return vs => some (.return 0 (vs.map (findVarHOL context)), labels)
+  | .tick => some (.tick, labels)
+  | .fail => some (.skip, labels)
+  | .locValue n m => some (.locValue (findVarHOL context n) m, labels)
+  | .ffi function configuration configurationLength array arrayLength live =>
+      some (.ffi function (findVarHOL context configuration)
+        (findVarHOL context configurationLength) (findVarHOL context array)
+        (findVarHOL context arrayLength) (mkNewCutsetHOL context live, .ln), labels)
+  | .shMem operator name address =>
+      some (.shareInst operator (findVarHOL context name) (compExpHOL context address), labels)
   | _ => none
 
 end Flapjack.LoopToWord
