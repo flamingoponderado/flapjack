@@ -447,6 +447,8 @@ import Flapjack.Pancake.LoopToWord
 import Flapjack.Pancake.LoopToWord.ExpCarrierCodec
 import Flapjack.Pancake.LoopToWord.WordExpCarrierCodec
 import Flapjack.Pancake.LoopToWord.WordContextCodec
+import Flapjack.Pancake.LoopToWord.WordContextCoverage
+import Flapjack.Test.WordContextCoverage
 import Flapjack.Pancake.LoopToWord.Proofs.RelationsExact
 import Flapjack.Pancake.LoopToWord.Proofs.FindVarExact
 import Flapjack.Pancake.LoopToWord.MakeCtxtExact
