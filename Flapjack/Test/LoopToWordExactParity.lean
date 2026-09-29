@@ -163,6 +163,48 @@ example : 10 % 2 = 0 := by
       change sptLookup 1 (sptInsert 1 10 (.ln : Spt Nat)) = some 10
       rw [sptLookup_sptInsert_same])
 
+/-! The exact `locals_rel_make_ctxt` theorem relates zipped parameters and
+source values to their even-indexed target locals, with an optional return
+value occupying target register zero. -/
+
+private abbrev MakeCtxtW := WordLocW 8
+private def makeCtxtRet : MakeCtxtW := .word (BitVec.ofNat 8 1)
+private def makeCtxtArg0 : MakeCtxtW := .word (BitVec.ofNat 8 7)
+private def makeCtxtArg1 : MakeCtxtW := .loc 3 4
+
+#guard sptLookup 2 (sptFromAList ([2, 4].zip [makeCtxtArg0, makeCtxtArg1])) ==
+  some makeCtxtArg0
+#guard sptLookup 2 (sptFromList2 [makeCtxtRet, makeCtxtArg0, makeCtxtArg1]) ==
+  some makeCtxtArg0
+#guard sptLookup 4 (sptFromList2 [makeCtxtRet, makeCtxtArg0, makeCtxtArg1]) ==
+  some makeCtxtArg1
+
+example : localsRelHOL (makeCtxtHOL 2 ([2, 4] ++ [9]) (.ln : Spt Nat))
+    (sptFromAList ([2, 4].zip [makeCtxtArg0, makeCtxtArg1]))
+    (sptFromList2 [makeCtxtRet, makeCtxtArg0, makeCtxtArg1]) := by
+  exact localsRelHOLMakeCtxt [2, 4] [9] [makeCtxtArg0, makeCtxtArg1]
+    makeCtxtRet (by decide)
+
+example : localsRelHOL (makeCtxtHOL 2 [9] (.ln : Spt Nat))
+    (sptFromAList ([] : List (Nat × MakeCtxtW))) (sptFromList2 [makeCtxtRet]) := by
+  exact localsRelHOLMakeCtxt [] [9] [] makeCtxtRet (by decide)
+
+/-! The exact empty-source `locals_rel_mk_ctxt_ln` clause works for empty and
+nonempty context-name lists and does not constrain the target locals tree. -/
+
+#guard sptLookup 10 (makeCtxtHOL 4 [10, 11] (.ln : Spt Nat)) == some 4
+#guard sptLookup 11 (makeCtxtHOL 4 [10, 11] (.ln : Spt Nat)) == some 6
+
+example (targetLocals : Spt MakeCtxtW) :
+    localsRelHOL (makeCtxtHOL 4 [10, 11] (.ln : Spt Nat))
+      (.ln : Spt MakeCtxtW) targetLocals := by
+  exact localsRelHOLMkCtxtLn 4 [10, 11] targetLocals (by decide)
+
+example (targetLocals : Spt MakeCtxtW) :
+    localsRelHOL (makeCtxtHOL 2 [] (.ln : Spt Nat))
+      (.ln : Spt MakeCtxtW) targetLocals := by
+  exact localsRelHOLMkCtxtLn 2 [] targetLocals (by decide)
+
 /-- Probe context `insert 3 7 (insert 5 9 LN)` over `num |-> num` spt. -/
 def probeContext : Spt Nat := sptInsert 3 7 (sptInsert 5 9 .ln)
 
