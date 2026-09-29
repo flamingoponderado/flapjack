@@ -223,7 +223,7 @@ run_probe loop_to_word_locals_rel_probeScript.sml loop_to_word_locals_rel_probe.
 # flapjack-pxn.18.5.9.21/.24, flapjack-h29l.9.2).
 run_probe loop_to_word_compile_correct_cases_probeScript.sml \
   loop_to_word_compile_correct_cases_probe.out \
-  cc_ind_thm_conclusion_is_compile_correct cc_case_Skip cc_case_Fail cc_case_Mark \
+  cc_ind_thm_conclusion_is_compile_correct cc_case_Skip cc_case_Fail cc_case_Mark cc_case_Seq \
   cc_case_Break cc_case_Continue cc_case_Raise cc_case_Return cc_case_Tick \
   ws_evaluate_ind ws_evaluate_def ws_end \
   "$cake_dir/pancake/proofs/loop_to_wordProofScript.sml" \

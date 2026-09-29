@@ -70,6 +70,15 @@ temporary strategic focus here or claim a blocked parent merely because it is
 high priority. The coordinator keeps bead priorities aligned with the current
 goal.
 
+Keep one explicit correctness critical path in the shared bead dependency
+graph, from faithful source semantics through each required compiler pass to
+the RISC-V result. Give every missing HOL declaration a bead; split a large
+declaration into commit-sized children along its HOL cases or prerequisites.
+Before adding a blocking edge, check the HOL proof or definition to confirm it
+really needs that prerequisite. Do not serialize independent ports merely to
+make a tidy-looking chain. Assign P1 work only from unblocked, commit-sized
+leaves; leave blocked parents unassigned and record the exact frontier there.
+
 Agents leave completed slices open and report them as ready for review with
 branch, commit, and checks. The coordinator reviews the source and Lean
 statement, merges the commit into the single integration PR, then closes the
@@ -103,6 +112,18 @@ Before reporting a port complete, build affected Lean modules, run `lake test`,
 compiler changes, compare the executed output with original Pancake where an
 oracle exists; see `docs/PARITY-TESTING.md`. State which checks actually ran and
 which remain pending (including CI).
+
+Keep the edit-check loop short without weakening that completion gate. While
+working, build the affected module with `lake build Module.Name` (or use
+`lake lean path/to/File.lean` for a one-off source check), preserve reusable
+Lake artifacts, and run focused tests first. Independent reference, mapping,
+and probe checks may run concurrently. `check-warnings.sh` invokes Lake, so
+run it sequentially with other Lake commands; do not run multiple Lake builds
+against the same worktree at once.
+Run the full required suite before reporting a branch ready and again on the
+coordinator's merged tree before integration. Profile a persistently slow
+theorem or checker and fix the bottleneck; never shorten default build targets
+or skip a required gate merely to obtain a faster green result.
 
 ## Porting HOL theorems: placement, cross-reference, and shape
 
