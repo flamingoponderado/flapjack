@@ -101,7 +101,30 @@ private theorem lookupInfo_support_of_ne_none {κ β : Type} [BEq κ]
 HOL context. The lookups preserve the production first-match behavior. Function
 keys are decoded from exact `MlString` names only at the lookup boundary; the
 inverse production-name direction remains restricted to `CrepNameRanged` on
-the program's names. -/
+the program's names.
+
+Retention note (source review, bead `flapjack-pji9.3`). The `HolFiniteMapExact`
+carrier is function-backed (`lookup` plus a `finiteSupport` proposition), so a
+"precomputed" replacement can only be a precomputed association list scanned by
+`lookupInfo`; it cannot hold a hashed or balanced structure behind the same
+interface. Keeping this *total* definition is deliberate rather than incidental:
+keying a precomputed list by `ofString entry.1` does NOT preserve the current
+query semantics for arbitrary `MlString` names, because `ofString` truncates
+each character code to its low byte (`MlString.ofString`). Concrete
+counterexample: the key `"€"` (U+20AC, `toNat = 8364`) encodes to
+`ofString "€" = implode [0xAC]`, so the exact query `name = ofString "€"` matches
+a precomputed `ofString` key (`some`), while this total definition decodes
+`toStringOfBytes (ofString "€") = "\xAC"` (char 172) and finds no match
+(`none`). Precomputation therefore agrees with the total definition only on the
+byte-ranged fragment, i.e. when every function key satisfies `CrepNameRanged`;
+that fragment is exactly the documented boundary of the tested-alternative
+`crepCompFuncThroughHOLExact`/`oCompileThroughHOLExact` bridges
+(`CrepToLoop/Optimise.lean`), and this definition is not on the executed
+compiler path. The total definition is retained so out-of-range `MlString`
+queries keep exact behavior; see `precomputedFuncsLookup_eq_of_ranged` for the
+ranged agreement and `Flapjack.Test.CrepToLoopContextLookupParity` for the
+non-ranged counterexample. Per-query cost is O(name length) decode plus an
+O(#functions) first-match scan, with no whole-array-copy pattern. -/
 def productionLoopContextToExact (context : LoopContext α) :
     CrepToLoopContextExact where
   vars := {
@@ -126,6 +149,104 @@ def productionLoopContextToExact (context : LoopContext α) :
   }
   vmax := context.maxVar
   target := .riscv
+
+/-- Characterization: the `vars` lookup of `productionLoopContextToExact` is
+    exactly the production first-match `lookupNatInfo`. Untagged Flapjack
+    infrastructure (the list-backed production carrier has no HOL counterpart
+    in this shape). -/
+theorem productionLoopContextToExact_vars_lookup (context : LoopContext α)
+    (name : Nat) :
+    (productionLoopContextToExact context).vars.lookup name =
+      lookupNatInfo name context.vars :=
+  rfl
+
+/-- Characterization: the `funcs` lookup of `productionLoopContextToExact`
+    decodes the query `MlString` to bytes and scans the production function
+    association list with first-match `lookupInfo`. Untagged Flapjack
+    infrastructure (the list-backed production carrier has no HOL counterpart
+    in this shape). -/
+theorem productionLoopContextToExact_funcs_lookup (context : LoopContext α)
+    (name : MlString) :
+    (productionLoopContextToExact context).funcs.lookup name =
+      lookupInfo (toStringOfBytes name) context.functions :=
+  rfl
+
+/-! ## Precomputed function lookup on the byte-ranged fragment
+
+The review question for bead `flapjack-pji9.3` was whether the `funcs` query
+should precompute an `ofString`-keyed association list. It cannot replace the
+total definition in general (see the retention note on
+`productionLoopContextToExact`); the untagged declarations below record exactly
+how far the precomputed form does agree. -/
+
+/-- A precomputed function-name association list with HOL `mlstring` keys. This
+    is the only "precomputed" shape the function-backed `HolFiniteMapExact`
+    carrier can hold. Untagged Flapjack infrastructure. -/
+def precomputedFuncsLookup {β : Type} (entries : List (String × β)) :
+    MlString → Option β :=
+  fun name =>
+    lookupInfo name (entries.map (fun entry => (ofString entry.1, entry.2)))
+
+/-- `toStringOfBytes` always lands in the byte range, so its result satisfies
+    `CrepNameRanged` with no premise. -/
+theorem crepNameRanged_toStringOfBytes (name : MlString) :
+    CrepNameRanged (toStringOfBytes name) := by
+  unfold toStringOfBytes CrepNameRanged
+  rw [String.toList_ofList]
+  intro c hc
+  rcases List.mem_map.mp hc with ⟨b, _, rfl⟩
+  rw [ofNat_toNat_char]
+  exact b.isLt
+
+/-- `ofString` is injective on the byte-ranged fragment. -/
+theorem ofString_inj_of_ranged {a b : String} (ha : CrepNameRanged a)
+    (hb : CrepNameRanged b) (h : ofString a = ofString b) : a = b := by
+  have h2 := congrArg toStringOfBytes h
+  rwa [toStringOfBytes_ofString_of_bytes a ha,
+    toStringOfBytes_ofString_of_bytes b hb] at h2
+
+/-- On the byte-ranged fragment the `ofString`-key test used by the precomputed
+    lookup is equivalent to the production `String` key test. -/
+theorem ofString_beq_iff_of_ranged (k : String) (name : MlString)
+    (hk : CrepNameRanged k) (hn : CrepNameRanged (toStringOfBytes name)) :
+    (ofString k == name) = (k == toStringOfBytes name) := by
+  rw [Bool.eq_iff_iff, beq_iff_eq, beq_iff_eq]
+  constructor
+  · intro h
+    apply ofString_inj_of_ranged hk hn
+    rw [h, ofString_toStringOfBytes]
+  · intro h
+    rw [h, ofString_toStringOfBytes]
+
+/-- The precomputed `ofString`-keyed lookup agrees with the production
+    first-match list lookup exactly on the byte-ranged fragment: every function
+    key must satisfy `CrepNameRanged`, and the query's decoded bytes always do
+    (`crepNameRanged_toStringOfBytes`). Outside that fragment the two differ in
+    general; see the retention note on `productionLoopContextToExact` and
+    `Flapjack.Test.CrepToLoopContextLookupParity`. -/
+theorem precomputedFuncsLookup_eq_of_ranged {β : Type}
+    (entries : List (String × β)) (name : MlString)
+    (hkeys : ∀ entry ∈ entries, CrepNameRanged entry.1)
+    (hname : CrepNameRanged (toStringOfBytes name)) :
+    precomputedFuncsLookup entries name =
+      lookupInfo (toStringOfBytes name) entries := by
+  induction entries with
+  | nil => rfl
+  | cons entry rest ih =>
+      rcases entry with ⟨k, v⟩
+      have hk : CrepNameRanged k := hkeys (k, v) (by simp)
+      have hrest : ∀ e ∈ rest, CrepNameRanged e.1 := by
+        intro e he
+        exact hkeys e (by simp [he])
+      change (lookupInfo name ((ofString k, v) :: rest.map
+          (fun e => (ofString e.1, e.2)))) =
+        lookupInfo (toStringOfBytes name) ((k, v) :: rest)
+      simp only [lookupInfo]
+      rw [ofString_beq_iff_of_ranged k name hk hname]
+      by_cases h : k == toStringOfBytes name
+      · simp [h]
+      · simp only [h]
+        exact ih hrest
 
 private def CrepToLoopFiniteMap.toBroadlookup (map : HolFiniteMapExact α β) :
     α → Option β := map.lookup
