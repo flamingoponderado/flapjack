@@ -41,6 +41,7 @@ import Flapjack.Pancake.CrepToLoop.Proofs.CompExpPreservesEval
 import Flapjack.Pancake.CrepToLoop.Proofs.NcompileCorrect
 import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.While
 import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Call
+import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.ShMem
 import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Dec
 import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Primitive
 import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Store
