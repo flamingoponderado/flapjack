@@ -440,6 +440,7 @@ import Flapjack.Pancake.LoopLive
 import Flapjack.Pancake.LoopToWord
 import Flapjack.Pancake.LoopToWord.Proofs.RelationsExact
 import Flapjack.Pancake.LoopToWord.Proofs.FindVarExact
+import Flapjack.Pancake.LoopToWord.MakeCtxtExact
 import Flapjack.Pancake.LoopLang.AssignedVars
 import Flapjack.Pancake.Semantics.LoopProps.AssignedVars
 import Flapjack.Test.LoopExactAssignedVarsParity
