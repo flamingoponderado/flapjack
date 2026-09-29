@@ -114,6 +114,7 @@ import Flapjack.Test.LoopToWordLastNParity
 import Flapjack.Test.LoopToWordWordShiftModDimwordParity
 import Flapjack.Test.LoopToWordLocalsRelIntroParity
 import Flapjack.Test.LoopToWordTakeWordToBytesParity
+import Flapjack.Test.LoopToWordAccVarsAccParity
 import Flapjack.Test.LoopToWordExpCarrierCodecParity
 import Flapjack.Test.WordExpCarrierCodecParity
 import Flapjack.Test.WordContextCodecParity
@@ -884,6 +885,7 @@ def main : IO Unit := do
     Flapjack.Test.LoopToWordWordShiftModDimwordParity.runChecks,
     Flapjack.Test.LoopToWordLocalsRelIntroParity.runChecks,
     Flapjack.Test.LoopToWordTakeWordToBytesParity.runChecks,
+    Flapjack.Test.LoopToWordAccVarsAccParity.runChecks,
     Flapjack.Test.LoopToWordExpCarrierCodecParity.runChecks,
     Flapjack.Test.WordExpCarrierCodecParity.runChecks,
     Flapjack.Test.WordContextCodecParity.runChecks,

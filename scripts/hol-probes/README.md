@@ -81,6 +81,18 @@ at the 32- and 64-bit dimensions admitted by `good_dimindex`; both sides agree
 on every row. The theorem port is `takeOneWordToBytesHOL` in
 `Flapjack.Pancake.Proofs.LoopToWord.WordToBytes`; the kernel-checked replay is
 `Flapjack.Test.LoopToWordTakeWordToBytesParity`.
+`loop_to_word_acc_vars_acc_prime_probe.out` records direct HOL EVAL rows for the
+specialisation `acc_vars_acc'`
+(`cakeml/pancake/proofs/loop_to_wordProofScript.sml:979-980`) of
+`loopProps$acc_vars_acc`
+(`cakeml/pancake/semantics/loopPropsScript.sml:89`). Each row prints two
+booleans for a concrete variable: membership in `domain (acc_vars p (acc_vars q
+LN))` and in `domain (acc_vars p LN) UNION domain (acc_vars q LN)`; they agree
+on every row for programs exercising Assign, Seq, If, Loop and Call. The
+theorem ports are `accVarsAccHOL` in
+`Flapjack.Pancake.Semantics.LoopProps.AccVars` and `accVarsAccPrimeHOL` in
+`Flapjack.Pancake.Proofs.LoopToWord.AccVarsAcc`; the kernel-checked replay is
+`Flapjack.Test.LoopToWordAccVarsAccParity`.
 `loop_to_word_comp_exp_probe.out` records direct HOL EVAL rows for the exact
 loopLang-to-wordLang expression compiler `comp_exp_def` at
 `cakeml/pancake/loop_to_wordScript.sml:22-40`; its kernel-checked Lean replay
