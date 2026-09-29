@@ -24383,5 +24383,82 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-ds5 source comparison (2026-09-29; bead flapjack-pxn.18.5.9.17.5) against loop_to_wordProofScript.sml:536-541. HOL statement is exactly env_to_list LN l = (x,p) ==> x = [] (l/bijSeq, x and p universally quantified). Lean keeps the same single hypothesis and conclusion over the exact Spt carrier, rendering HOL env_to_list by the tagged Flapjack.wordSemEnvToList (wordSemScript.sml:507-515), HOL LN by the empty Spt, and the indexed word dimension by WordLocW width (the words_as_type_indexed_bitvec qualifier). Proof: wordSemEnvToList_mem_iff plus sptToAList_ln show no association is emitted from the empty environment, so the list is empty."
+},
+{
+  "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+  "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/CompExpPreservesEval.lean",
+  "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support_relation": [
+    "LoopSemStateFiniteExact.globals",
+    "WordSemStateFiniteExact.store"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "hol_name": "comp_exp_preserves_eval",
+  "lean_name": "loopToWordCompExpPreservesEval",
+  "reviewer": "flapjack-ds5 source comparison (2026-09-29, bead flapjack-pxn.18.5.9.18.3) against loop_to_wordProofScript.sml:460-509: `!s e v t ctxt. eval s e = SOME v /\\ good_dimindex(:'a) /\\ state_rel s t /\\ locals_rel ctxt s.locals t.locals ==> word_exp t (comp_exp ctxt e) = SOME v`. Binder order, the three side conditions and the conclusion are exactly HOL's; `eval` is the tagged LoopSemStateFiniteExact.eval (eval_def), `comp_exp` is tagged compExpHOL (comp_exp_def), `word_exp` is the tagged WordSemStateFiniteExact.wordExp (word_exp_def), `state_rel`/`locals_rel` are the tagged loopToWordStateRelHOLExact/localsRelHOL ports, and the shift case consumes the tagged word_sh_SOME_MOD_dimword port. Proof is the exact eval functional induction over all 11 eval cases (const, var, lookup, load-word, load-nonword, op-success, op-failure, shift-success, shift-failure, baseAddr, topAddr), using the globals_rel and store conjuncts of state_rel for Lookup/BaseAddr/TopAddr and the third locals_rel conjunct for Var. The tagged signature names the two exact carriers and consumes the relation over their eligible finite-support fields globals/store; the words qualifier records the BitVec width rendering."
+},
+{
+  "hol_path": null,
+  "hol_name": null,
+  "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/CompExpPreservesEval.lean",
+  "statement_status": "no_hol_reference_pending_classification",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_LoopSemStateFiniteExact",
+  "reviewer": "Flapjack-only qualifier witness re-export: names LoopSemStateFiniteExact and its LoopSemStateBroad toBroad/ofBroad roundtrip; supports the relation finite-map qualifier on loopToWordCompExpPreservesEval and is not a HOL declaration."
+},
+{
+  "hol_path": null,
+  "hol_name": null,
+  "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/CompExpPreservesEval.lean",
+  "statement_status": "no_hol_reference_pending_classification",
+  "lean_name": "holFmapAsFiniteSupportRelationWitness_WordSemStateFiniteExact",
+  "reviewer": "Flapjack-only qualifier witness re-export: names WordSemStateFiniteExact and its WordSemStateBroad toBroad/ofBroad roundtrip; supports the relation finite-map qualifier on loopToWordCompExpPreservesEval and is not a HOL declaration."
+},
+{
+  "hol_path": null,
+  "hol_name": null,
+  "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/CompExpPreservesEval.lean",
+  "statement_status": "no_hol_reference_pending_classification",
+  "lean_name": "attach_map_val",
+  "reviewer": "Flapjack-specific private list transport used by the op case of the comp_exp_preserves_eval port: `l.attach.map (fun x => f x.val) = l.map f`; it is not a HOL declaration (HOL uses `MAP` with lambda destructuring directly)."
+},
+{
+  "hol_path": null,
+  "hol_name": null,
+  "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/CompExpPreservesEval.lean",
+  "statement_status": "no_hol_reference_pending_classification",
+  "lean_name": "theWords_exists_word",
+  "reviewer": "Flapjack-specific private list lemma used by the op case of the comp_exp_preserves_eval port: every element of a list whose `theWords` is `some ws` is `some (.word w)`; it is not a HOL declaration."
+},
+{
+  "hol_path": null,
+  "hol_name": null,
+  "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/CompExpPreservesEval.lean",
+  "statement_status": "no_hol_reference_pending_classification",
+  "lean_name": "twoPow_one",
+  "reviewer": "`BitVec.twoPow width 1 = (2 : BitVec width)` private arithmetic helper for the TopAddr case of the comp_exp_preserves_eval port; not a HOL declaration."
+},
+{
+  "hol_path": null,
+  "hol_name": null,
+  "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/CompExpPreservesEval.lean",
+  "statement_status": "no_hol_reference_pending_classification",
+  "lean_name": "wordShiftHOL_lsl_one",
+  "reviewer": "private helper relating `wordShiftHOL .lsl v 1` to `v <<< 1` for the TopAddr case of the comp_exp_preserves_eval port; not a HOL declaration."
+},
+{
+  "hol_path": null,
+  "hol_name": null,
+  "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/CompExpPreservesEval.lean",
+  "statement_status": "no_hol_reference_pending_classification",
+  "lean_name": "ofNat_one_toNat",
+  "reviewer": "private helper `goodDimindex width -> (BitVec.ofNat width 1).toNat = 1` for the TopAddr case of the comp_exp_preserves_eval port; not a HOL declaration."
+},
+{
+  "hol_path": null,
+  "hol_name": null,
+  "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/CompExpPreservesEval.lean",
+  "statement_status": "no_hol_reference_pending_classification",
+  "lean_name": "findVarHOL_of_lookup",
+  "reviewer": "private helper `sptLookup name context = some r -> findVarHOL context name = r` for the Var case of the comp_exp_preserves_eval port; not a HOL declaration."
 }
 ]
