@@ -22355,5 +22355,19 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.8.1.14): HOL loopSemScript.sml:497 rebinds evaluate_ind = REWRITE_RULE [fix_clock_evaluate] evaluate_ind. The statement is tdefn-generated and captured verbatim in scripts/hol-probes/loop_sem_evaluate_ind_probe.out (regenerate.sh row evaluate_ind). Lean evaluate_induct states the same 24 conjuncts in HOL's order: Skip, Fail, Assign, Primitive, Arith, Store, SetGlobal, Load32, LoadByte, Store32, StoreByte, Seq, If, Mark, Break, Continue, Loop, Raise, Return, ShMem, Tick, LocValue, Call, FFI. Each has the same binder list and order and the same guard equations, with the conclusion ∀ v v1. P (v, v1) over P : HolLoopProg width × LoopSemStateFiniteExact width F -> Prop. Rendering choices: /\\-chained guards are curried; lookup is sptLookup, get_var_imm getVarImm, word_cmp wordCmpHOL, and (b <=> word_cmp cmp x y) is b = wordCmpHOL cmp x y over Bool; cut_res is cutRes, get_vars getVars, find_code findCode, set_vars/set_var setVars/setVar, dec_clock decClock, ALL_DISTINCT List.Nodup, and evaluate (p, s) is evaluate p s. Seq has fix_clock already rewritten away, as in HOL. The Lean evaluator is the tagged loopSem evaluate_def. The proof is lex (clock, sizeOf) well-founded induction with the tagged evaluate_clock and cutRes_none_clock. Qualifiers: fmap_as_finite_support [globals] (the HOL |-> globals of LoopSemStateFiniteExact; locals/code are Spt), same-module witness LoopEvaluateIndFiniteSupport.holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec for BitVec width with NeZero."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
+    "hol_name": "evaluate_code_invariant",
+    "lean_path": "Flapjack/Pancake/Semantics/CrepProps.lean",
+    "lean_name": "evaluateCodeInvariantHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison (2026-09-29; bead flapjack-pxn.18.5.5.38.1) against crepPropsScript.sml:1252-1260. HOL universally quantifies p, t, res, st and assumes only evaluate (p,t) = (res,st), concluding st.code = t.code. Lean has the same arbitrary program, input state, result and output state with evalCrepSemHOLProgExact t p = (res,st) as its sole premise and st.code = t.code as conclusion; there is no successful-result premise or post-state hypothesis. The state carrier is the same parameterized FFI-state carrier and the exact Crep evaluator. The proof follows the exact evaluator induction clauses, including recursive Call handlers, and uses no extra semantic hypothesis. CrepSemHOLState locals/globals/code are the canonical HolFiniteMapExact translation witnessed by the same-module toBroad/ofBroad roundtrip; words_as_type_indexed_bitvec records HOL positive-width words as BitVec width under [NeZero width]."
   }
 ]
