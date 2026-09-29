@@ -29,6 +29,13 @@ example : loopToWordGlobalsRelHOLExact sourceMatch targetMatch := by
   simp [loopToWordGlobalsRelHOLExact, sourceMatch, targetMatch,
     HolFiniteMapExact.updateEq, HolFiniteMapExact.empty, FUPDATE_HOL]
 
+example : ∀ n v, sourceMatch.lookup n = some v →
+    targetMatch.lookup (.temp n) = some v := by
+  apply loopToWordGlobalsRelIntroHOLExact sourceMatch targetMatch
+  exact fun n v hLookup => by
+    simpa [sourceMatch, targetMatch, HolFiniteMapExact.updateEq,
+      HolFiniteMapExact.empty, FUPDATE_HOL] using hLookup
+
 example : ¬ loopToWordGlobalsRelHOLExact sourceMatch targetDifferentValue := by
   simp [loopToWordGlobalsRelHOLExact, sourceMatch, targetDifferentValue,
     HolFiniteMapExact.updateEq, HolFiniteMapExact.empty, FUPDATE_HOL]
