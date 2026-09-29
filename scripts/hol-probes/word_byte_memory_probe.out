@@ -49,3 +49,4 @@ set_byte_width17_little_nonzero_numeric=bit_field_insert (byte_index 1w F + 7) (
 0x1A5CDw
 set_byte_width17_big_nonzero_numeric=bit_field_insert (byte_index 1w T + 7) (byte_index 1w T) 165w 0x1ABCDw =
 0x1ABA5w
+set_byte_width12_preserves_high_numeric=bit_field_insert (byte_index 0w F + 7) (byte_index 0w F) 18w 2748w = 2578w
