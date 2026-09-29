@@ -21639,5 +21639,22 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.6.44): case piece `Raise eid` of ncompile_correct (crep_to_loopProofScript.sml:110-134 statement; Resume ncompile_correct[Raise] at 1750-1756; evaluate_ind's Raise case has no induction hypothesis). No extra antecedent: the payload eid (the crepLang 'a word) and v1, then HOL's ∀res s1 t ctxt l, all seven premises with v := Raise eid, and the full ∃ck res1 t1 conclusion as in the If piece. compile (Raise eid) = Seq (Assign (vmax+1) (Const eid)) (Raise (vmax+1)) (tagged compileHOLExact). The proof follows HOL: ck = 0; the source gives (SOME (Exception eid), empty_locals s); the target gives (SOME (Exception (Word eid)), call_env [] (set_var ...)), matching the result case; state/mem/globals/code relations carry over (locals-only updates); the locals case is T. Qualifiers as for the If piece."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "ncompile_correct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NcompileCorrect.lean",
+    "lean_name": "crepToLoop_ncompile_correct_extCall",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.6.46): case piece `ExtCall f c cl a al` of ncompile_correct (crep_to_loopProofScript.sml:110-134 statement; Resume ncompile_correct[ExtCall] at 2682-2714; evaluate_ind's ExtCall case has no induction hypothesis). No extra antecedent: the payload (f : mlstring as the reviewed MlString carrier; c cl a al : varname) and v1, then HOL's ∀res s1 t ctxt l, all seven premises with v := ExtCall f c cl a al, and the full ∃ck res1 t1 conclusion as in the If piece. compile (ExtCall ...) = FFI f (ctxt.vars c) (ctxt.vars cl) (ctxt.vars a) (ctxt.vars al) l when all four names map (tagged compileHOLExact; otherwise Skip, which cannot follow a non-Error source run because locals_rel maps every present local). The proof follows HOL: locals_rel_intro gives the four word locals at the mapped names and domain l ⊆ domain t.locals (so cut_state l t succeeds); the HOL mem_load_byte_aux t = mem_load_byte s extensionality step is the private panMemLoadByteWord8HOL_eq_memLoadByteAuxExact (with the width-free get_byte bridge), so both read_bytearray calls agree; call_FFI is the same exact callFFIHOL on s.ffi = t.ffi; FFI_final gives SOME (FinalFFI f) with call_env [] on the target (locals case T); FFI_return gives NONE with mem_rel from the tagged write_bytearray_mem_rel (via a private wrapper that accepts the source domain's decision procedure) and locals_rel ctxt l on inter t.locals l. ck = 0. Qualifiers as for the If piece."
   }
 ]
