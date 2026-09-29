@@ -105,6 +105,7 @@ import Flapjack.Pancake.Proofs.LoopToWord.TickUnfold
 import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Base
 import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.ReturnRaise
 import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Assign
+import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Arith
 import Flapjack.Pancake.LoopLang.AssignedVars
 import Flapjack.Pancake.Semantics.LoopProps.AssignedVars
 import Flapjack.Pancake.Semantics.LoopProps.CutSets
