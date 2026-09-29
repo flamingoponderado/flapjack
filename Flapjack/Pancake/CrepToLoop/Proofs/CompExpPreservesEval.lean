@@ -1,3 +1,5 @@
+import Flapjack.Pancake.CrepToLoop.Proofs.LoopEvaluateHelpers
+import Flapjack.Pancake.CrepToLoop.Proofs.CrepEvalHelpers
 import Flapjack.Pancake.CrepToLoop.Proofs.RelationsExact
 import Flapjack.Pancake.Semantics.LoopSemStateExact.Evaluate
 import Flapjack.Pancake.Semantics.LoopProps.EvalExact
@@ -67,7 +69,7 @@ private theorem wlabWlocHOL_eq_exact {width : Nat} [NeZero width] (v : HolWordLa
     CrepSemHOLState.code, LoopSemStateFiniteExact.globals])
   (words_as_type_indexed_bitvec)]
 theorem crepToLoop_comp_exp_preserves_eval_const {width : Nat} [NeZero width] {σ : Type} :
-    ∀ (s : CrepSemHOLState width σ) [DecidablePred s.memaddrs] (w : BitVec width)
+    ∀ (s : CrepSemHOLState width σ) (w : BitVec width)
       (v : HolWordLab width) (t : LoopSemStateFiniteExact width σ)
       (ctxt : CrepToLoopContextExact) (tmp : Nat) (l : NumSet)
       (p : List (HolLoopProg width)) (le : HolLoopExp width) (ntmp : Nat) (nl : NumSet),
@@ -88,7 +90,7 @@ theorem crepToLoop_comp_exp_preserves_eval_const {width : Nat} [NeZero width] {�
         crepToLoopGlobalsRelHOLExact s.globals st.globals ∧
         crepToLoopCodeRelExact ctxt s.code st.code ∧
         crepToLoopLocalsRelExact ctxt nl s.locals st.locals := by
-  intro s _ w v t ctxt tmp l p le ntmp nl ⟨he, hs, hm, hg, hc, hl, hcomp, _⟩
+  intro s w v t ctxt tmp l p le ntmp nl ⟨he, hs, hm, hg, hc, hl, hcomp, _⟩
   simp only [compileExpHOLExact, Prod.mk.injEq] at hcomp
   obtain ⟨rfl, rfl, rfl, rfl⟩ := hcomp
   refine ⟨0, t, by simp [loopNestedSeqHOL, LoopSemStateFiniteExact.evaluate], ?_, hs, hm, hg, hc, hl⟩
@@ -104,7 +106,7 @@ theorem crepToLoop_comp_exp_preserves_eval_const {width : Nat} [NeZero width] {�
     CrepSemHOLState.code, LoopSemStateFiniteExact.globals])
   (words_as_type_indexed_bitvec)]
 theorem crepToLoop_comp_exp_preserves_eval_var {width : Nat} [NeZero width] {σ : Type} :
-    ∀ (s : CrepSemHOLState width σ) [DecidablePred s.memaddrs] (vname : Nat)
+    ∀ (s : CrepSemHOLState width σ) (vname : Nat)
       (v : HolWordLab width) (t : LoopSemStateFiniteExact width σ)
       (ctxt : CrepToLoopContextExact) (tmp : Nat) (l : NumSet)
       (p : List (HolLoopProg width)) (le : HolLoopExp width) (ntmp : Nat) (nl : NumSet),
@@ -125,7 +127,7 @@ theorem crepToLoop_comp_exp_preserves_eval_var {width : Nat} [NeZero width] {σ 
         crepToLoopGlobalsRelHOLExact s.globals st.globals ∧
         crepToLoopCodeRelExact ctxt s.code st.code ∧
         crepToLoopLocalsRelExact ctxt nl s.locals st.locals := by
-  intro s _ vname v t ctxt tmp l p le ntmp nl ⟨he, hs, hm, hg, hc, hl, hcomp, _⟩
+  intro s vname v t ctxt tmp l p le ntmp nl ⟨he, hs, hm, hg, hc, hl, hcomp, _⟩
   simp only [compileExpHOLExact, Prod.mk.injEq] at hcomp
   obtain ⟨rfl, rfl, rfl, rfl⟩ := hcomp
   refine ⟨0, t, by simp [loopNestedSeqHOL, LoopSemStateFiniteExact.evaluate], ?_, hs, hm, hg, hc, hl⟩
@@ -141,7 +143,7 @@ theorem crepToLoop_comp_exp_preserves_eval_var {width : Nat} [NeZero width] {σ 
     CrepSemHOLState.code, LoopSemStateFiniteExact.globals])
   (words_as_type_indexed_bitvec)]
 theorem crepToLoop_comp_exp_preserves_eval_loadGlob {width : Nat} [NeZero width] {σ : Type} :
-    ∀ (s : CrepSemHOLState width σ) [DecidablePred s.memaddrs] (gadr : BitVec 5)
+    ∀ (s : CrepSemHOLState width σ) (gadr : BitVec 5)
       (v : HolWordLab width) (t : LoopSemStateFiniteExact width σ)
       (ctxt : CrepToLoopContextExact) (tmp : Nat) (l : NumSet)
       (p : List (HolLoopProg width)) (le : HolLoopExp width) (ntmp : Nat) (nl : NumSet),
@@ -162,7 +164,7 @@ theorem crepToLoop_comp_exp_preserves_eval_loadGlob {width : Nat} [NeZero width]
         crepToLoopGlobalsRelHOLExact s.globals st.globals ∧
         crepToLoopCodeRelExact ctxt s.code st.code ∧
         crepToLoopLocalsRelExact ctxt nl s.locals st.locals := by
-  intro s _ gadr v t ctxt tmp l p le ntmp nl ⟨he, hs, hm, hg, hc, hl, hcomp, _⟩
+  intro s gadr v t ctxt tmp l p le ntmp nl ⟨he, hs, hm, hg, hc, hl, hcomp, _⟩
   simp only [compileExpHOLExact, Prod.mk.injEq] at hcomp
   obtain ⟨rfl, rfl, rfl, rfl⟩ := hcomp
   refine ⟨0, t, by simp [loopNestedSeqHOL, LoopSemStateFiniteExact.evaluate], ?_, hs, hm, hg, hc, hl⟩
@@ -177,7 +179,7 @@ theorem crepToLoop_comp_exp_preserves_eval_loadGlob {width : Nat} [NeZero width]
     CrepSemHOLState.code, LoopSemStateFiniteExact.globals])
   (words_as_type_indexed_bitvec)]
 theorem crepToLoop_comp_exp_preserves_eval_baseAddr {width : Nat} [NeZero width] {σ : Type} :
-    ∀ (s : CrepSemHOLState width σ) [DecidablePred s.memaddrs]
+    ∀ (s : CrepSemHOLState width σ)
       (v : HolWordLab width) (t : LoopSemStateFiniteExact width σ)
       (ctxt : CrepToLoopContextExact) (tmp : Nat) (l : NumSet)
       (p : List (HolLoopProg width)) (le : HolLoopExp width) (ntmp : Nat) (nl : NumSet),
@@ -198,7 +200,7 @@ theorem crepToLoop_comp_exp_preserves_eval_baseAddr {width : Nat} [NeZero width]
         crepToLoopGlobalsRelHOLExact s.globals st.globals ∧
         crepToLoopCodeRelExact ctxt s.code st.code ∧
         crepToLoopLocalsRelExact ctxt nl s.locals st.locals := by
-  intro s _ v t ctxt tmp l p le ntmp nl ⟨he, hs, hm, hg, hc, hl, hcomp, _⟩
+  intro s v t ctxt tmp l p le ntmp nl ⟨he, hs, hm, hg, hc, hl, hcomp, _⟩
   simp only [compileExpHOLExact, Prod.mk.injEq] at hcomp
   obtain ⟨rfl, rfl, rfl, rfl⟩ := hcomp
   refine ⟨0, t, by simp [loopNestedSeqHOL, LoopSemStateFiniteExact.evaluate], ?_, hs, hm, hg, hc, hl⟩
@@ -214,7 +216,7 @@ theorem crepToLoop_comp_exp_preserves_eval_baseAddr {width : Nat} [NeZero width]
     CrepSemHOLState.code, LoopSemStateFiniteExact.globals])
   (words_as_type_indexed_bitvec)]
 theorem crepToLoop_comp_exp_preserves_eval_topAddr {width : Nat} [NeZero width] {σ : Type} :
-    ∀ (s : CrepSemHOLState width σ) [DecidablePred s.memaddrs]
+    ∀ (s : CrepSemHOLState width σ)
       (v : HolWordLab width) (t : LoopSemStateFiniteExact width σ)
       (ctxt : CrepToLoopContextExact) (tmp : Nat) (l : NumSet)
       (p : List (HolLoopProg width)) (le : HolLoopExp width) (ntmp : Nat) (nl : NumSet),
@@ -235,7 +237,7 @@ theorem crepToLoop_comp_exp_preserves_eval_topAddr {width : Nat} [NeZero width] 
         crepToLoopGlobalsRelHOLExact s.globals st.globals ∧
         crepToLoopCodeRelExact ctxt s.code st.code ∧
         crepToLoopLocalsRelExact ctxt nl s.locals st.locals := by
-  intro s _ v t ctxt tmp l p le ntmp nl ⟨he, hs, hm, hg, hc, hl, hcomp, _⟩
+  intro s v t ctxt tmp l p le ntmp nl ⟨he, hs, hm, hg, hc, hl, hcomp, _⟩
   simp only [compileExpHOLExact, Prod.mk.injEq] at hcomp
   obtain ⟨rfl, rfl, rfl, rfl⟩ := hcomp
   refine ⟨0, t, by simp [loopNestedSeqHOL, LoopSemStateFiniteExact.evaluate], ?_, hs, hm, hg, hc, hl⟩
@@ -249,7 +251,7 @@ theorem crepToLoop_comp_exp_preserves_eval_topAddr {width : Nat} [NeZero width] 
     receive for a sub-expression.  Only used as an antecedent of the case
     pieces; every piece states its own conclusion in full. -/
 def crepToLoopCompExpPreservesEvalAt {width : Nat} [NeZero width] {σ : Type}
-    (s : CrepSemHOLState width σ) [DecidablePred s.memaddrs] (e : CrepExpHOL width) : Prop :=
+    (s : CrepSemHOLState width σ) (e : CrepExpHOL width) : Prop :=
   ∀ (v : HolWordLab width) (t : LoopSemStateFiniteExact width σ)
     (ctxt : CrepToLoopContextExact) (tmp : Nat) (l : NumSet)
     (p : List (HolLoopProg width)) (le : HolLoopExp width) (ntmp : Nat) (nl : NumSet),
@@ -280,7 +282,7 @@ def crepToLoopCompExpPreservesEvalAt {width : Nat} [NeZero width] {σ : Type}
     CrepSemHOLState.code, LoopSemStateFiniteExact.globals])
   (words_as_type_indexed_bitvec)]
 theorem crepToLoop_comp_exp_preserves_eval_load {width : Nat} [NeZero width] {σ : Type} :
-    ∀ (s : CrepSemHOLState width σ) [DecidablePred s.memaddrs] (e : CrepExpHOL width),
+    ∀ (s : CrepSemHOLState width σ) (e : CrepExpHOL width),
       crepToLoopCompExpPreservesEvalAt s e →
     ∀ (v : HolWordLab width) (t : LoopSemStateFiniteExact width σ)
       (ctxt : CrepToLoopContextExact) (tmp : Nat) (l : NumSet)
@@ -302,7 +304,7 @@ theorem crepToLoop_comp_exp_preserves_eval_load {width : Nat} [NeZero width] {σ
         crepToLoopGlobalsRelHOLExact s.globals st.globals ∧
         crepToLoopCodeRelExact ctxt s.code st.code ∧
         crepToLoopLocalsRelExact ctxt nl s.locals st.locals := by
-  intro s _ e ih v t ctxt tmp l p le ntmp nl ⟨he, hs, hm, hg, hc, hl, hcomp, hv⟩
+  intro s e ih v t ctxt tmp l p le ntmp nl ⟨he, hs, hm, hg, hc, hl, hcomp, hv⟩
   cases hea : evalCrepSemHOLExp s e with
   | none => simp [evalCrepSemHOLExp, hea] at he
   | some a =>
@@ -381,7 +383,7 @@ private theorem locals_rel_insert_domain {width : Nat} [NeZero width]
     CrepSemHOLState.code, LoopSemStateFiniteExact.globals])
   (words_as_type_indexed_bitvec)]
 theorem crepToLoop_comp_exp_preserves_eval_loadByte {width : Nat} [NeZero width] {σ : Type} :
-    ∀ (s : CrepSemHOLState width σ) [DecidablePred s.memaddrs] (e : CrepExpHOL width),
+    ∀ (s : CrepSemHOLState width σ) (e : CrepExpHOL width),
       crepToLoopCompExpPreservesEvalAt s e →
     ∀ (v : HolWordLab width) (t : LoopSemStateFiniteExact width σ)
       (ctxt : CrepToLoopContextExact) (tmp : Nat) (l : NumSet)
@@ -403,7 +405,8 @@ theorem crepToLoop_comp_exp_preserves_eval_loadByte {width : Nat} [NeZero width]
         crepToLoopGlobalsRelHOLExact s.globals st.globals ∧
         crepToLoopCodeRelExact ctxt s.code st.code ∧
         crepToLoopLocalsRelExact ctxt nl s.locals st.locals := by
-  intro s _ e ih v t ctxt tmp l p le ntmp nl ⟨he, hs, hm, hg, hc, hl, hcomp, hv⟩
+  classical
+  intro s e ih v t ctxt tmp l p le ntmp nl ⟨he, hs, hm, hg, hc, hl, hcomp, hv⟩
   cases hea : evalCrepSemHOLExp s e with
   | none => simp [evalCrepSemHOLExp, hea] at he
   | some a =>
@@ -522,7 +525,7 @@ private theorem memLoad32_bridge {width : Nat} [NeZero width]
     CrepSemHOLState.code, LoopSemStateFiniteExact.globals])
   (words_as_type_indexed_bitvec)]
 theorem crepToLoop_comp_exp_preserves_eval_load32 {width : Nat} [NeZero width] {σ : Type} :
-    ∀ (s : CrepSemHOLState width σ) [DecidablePred s.memaddrs] (e : CrepExpHOL width),
+    ∀ (s : CrepSemHOLState width σ) (e : CrepExpHOL width),
       crepToLoopCompExpPreservesEvalAt s e →
     ∀ (v : HolWordLab width) (t : LoopSemStateFiniteExact width σ)
       (ctxt : CrepToLoopContextExact) (tmp : Nat) (l : NumSet)
@@ -544,7 +547,8 @@ theorem crepToLoop_comp_exp_preserves_eval_load32 {width : Nat} [NeZero width] {
         crepToLoopGlobalsRelHOLExact s.globals st.globals ∧
         crepToLoopCodeRelExact ctxt s.code st.code ∧
         crepToLoopLocalsRelExact ctxt nl s.locals st.locals := by
-  intro s _ e ih v t ctxt tmp l p le ntmp nl ⟨he, hs, hm, hg, hc, hl, hcomp, hv⟩
+  classical
+  intro s e ih v t ctxt tmp l p le ntmp nl ⟨he, hs, hm, hg, hc, hl, hcomp, hv⟩
   cases hea : evalCrepSemHOLExp s e with
   | none => simp [evalCrepSemHOLExp, hea] at he
   | some a =>
@@ -590,7 +594,7 @@ theorem crepToLoop_comp_exp_preserves_eval_load32 {width : Nat} [NeZero width] {
     CrepSemHOLState.code, LoopSemStateFiniteExact.globals])
   (words_as_type_indexed_bitvec)]
 theorem crepToLoop_comp_exp_preserves_eval_shift {width : Nat} [NeZero width] {σ : Type} :
-    ∀ (s : CrepSemHOLState width σ) [DecidablePred s.memaddrs] (sh : Shift)
+    ∀ (s : CrepSemHOLState width σ) (sh : Shift)
       (e1 e2 : CrepExpHOL width),
       crepToLoopCompExpPreservesEvalAt s e1 → crepToLoopCompExpPreservesEvalAt s e2 →
     ∀ (v : HolWordLab width) (t : LoopSemStateFiniteExact width σ)
@@ -613,7 +617,7 @@ theorem crepToLoop_comp_exp_preserves_eval_shift {width : Nat} [NeZero width] {�
         crepToLoopGlobalsRelHOLExact s.globals st.globals ∧
         crepToLoopCodeRelExact ctxt s.code st.code ∧
         crepToLoopLocalsRelExact ctxt nl s.locals st.locals := by
-  intro s _ sh e1 e2 ih1 ih2 v t ctxt tmp l p le ntmp nl ⟨he, hs, hm, hg, hc, hl, hcomp, hv⟩
+  intro s sh e1 e2 ih1 ih2 v t ctxt tmp l p le ntmp nl ⟨he, hs, hm, hg, hc, hl, hcomp, hv⟩
   cases he1 : evalCrepSemHOLExp s e1 with
   | none => simp [evalCrepSemHOLExp, he1] at he
   | some a1 =>
@@ -706,15 +710,14 @@ private theorem eval_setVar_untouched {width : Nat} [NeZero width] {F : Type}
 
 /-- `comp_exp_preserves_eval`, case `Crepop bop es`
     (`crep_to_loopProofScript.sml:772-786` statement; case proof at 889-972),
-    with the `eval_ind` hypotheses for every argument expression.
-
-    Deliberately untagged for now: like the other pieces it inherits the
-    HOL-absent `[DecidablePred s.memaddrs]` binder of the current
-    `evalCrepSemHOLExp` interface, and the coordinator holds new case tags until
-    bead `flapjack-pxn.18.5.6.33.15.9` removes it. The `@[hol
-    comp_exp_preserves_eval]` tag is added when the case is restated. -/
+    with the `eval_ind` hypotheses for every argument expression. -/
+@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "comp_exp_preserves_eval"
+  (fmap_as_finite_support_relation := [CrepToLoopContextExact.vars,
+    CrepToLoopContextExact.funcs, CrepSemHOLState.locals, CrepSemHOLState.globals,
+    CrepSemHOLState.code, LoopSemStateFiniteExact.globals])
+  (words_as_type_indexed_bitvec)]
 theorem crepToLoop_comp_exp_preserves_eval_crepOp {width : Nat} [NeZero width] {σ : Type} :
-    ∀ (s : CrepSemHOLState width σ) [DecidablePred s.memaddrs] (bop : CrepOp)
+    ∀ (s : CrepSemHOLState width σ) (bop : CrepOp)
       (es : List (CrepExpHOL width)),
       (∀ e ∈ es, crepToLoopCompExpPreservesEvalAt s e) →
     ∀ (v : HolWordLab width) (t : LoopSemStateFiniteExact width σ)
@@ -737,7 +740,7 @@ theorem crepToLoop_comp_exp_preserves_eval_crepOp {width : Nat} [NeZero width] {
         crepToLoopGlobalsRelHOLExact s.globals st.globals ∧
         crepToLoopCodeRelExact ctxt s.code st.code ∧
         crepToLoopLocalsRelExact ctxt nl s.locals st.locals := by
-  intro s _ bop es ih v t ctxt tmp l p le ntmp nl ⟨he, hs, hm, hg, hc, hl, hcomp, hv⟩
+  intro s bop es ih v t ctxt tmp l p le ntmp nl ⟨he, hs, hm, hg, hc, hl, hcomp, hv⟩
   cases bop
   -- only two-argument word lists reach `crep_op Mul`
   obtain ⟨e1, e2, a, b, rfl, he1, he2, rfl⟩ : ∃ e1 e2 a b, es = [e1, e2] ∧
@@ -867,5 +870,36 @@ theorem crepToLoop_comp_exp_preserves_eval_crepOp {width : Nat} [NeZero width] {
     · intro n hn
       simp only [LoopSemStateFiniteExact.setVar, sptLookup_sptInsert]
       rw [if_neg (by omega), if_neg (by omega), if_neg (by omega), if_neg (by omega)]
+
+/-! ## Op-case clause projections (flapjack-luna-c, bead `flapjack-pxn.18.5.6.33.15.6`) -/
+
+section OpClauses
+
+variable {width : Nat} [NeZero width] {ffiState : Type}
+
+/-- Flapjack-only projection of the exact Crep `eval_def` Op clause. The exact
+    evaluator internally fixes classical decidability for the Prop-valued
+    memory domain, so its HOL-facing type and this helper require no
+    `DecidablePred` premise. -/
+theorem evalCrepSemHOLExp_op_clause (state : CrepSemHOLState width ffiState)
+    (operator : BinOp)
+    (expressions : List (CrepExpHOL width)) (values : List (BitVec width))
+    (hvalues : expressions.mapM (evalCrepSemHOLExp state) =
+      some (values.map HolWordLab.word)) :
+    evalCrepSemHOLExp state (.op operator expressions) =
+      (wordOpHOL operator values).map HolWordLab.word := by
+  simp [evalCrepSemHOLExp, hvalues, Function.comp_def]
+
+/-- Flapjack-only projection of the exact Loop `eval_def` Op clause. -/
+theorem loopEvalHOLExact_op_clause {F : Type}
+    (state : LoopSemStateFiniteExact width F) (operator : BinOp)
+    (expressions : List (HolLoopExp width)) (values : List (BitVec width))
+    (hvalues : theWords (expressions.map (LoopSemStateFiniteExact.eval state)) =
+      some values) :
+    LoopSemStateFiniteExact.eval state (.op operator expressions) =
+      (wordOpHOL operator values).map WordLocW.word := by
+  simp [LoopSemStateFiniteExact.eval, hvalues]
+
+end OpClauses
 
 end Flapjack

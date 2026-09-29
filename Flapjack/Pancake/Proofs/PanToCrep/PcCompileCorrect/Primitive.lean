@@ -93,8 +93,7 @@ theorem pcCompileCorrectAt_primitive {width : Nat} {σ : Type} [NeZero width]
   -- target arguments
   let ces := (compileExpExactHOLWList ctxt es).flatMap Prod.fst
   let flat := vs.flatMap flattenHOL
-  have hcargs : ces.mapM (@evalCrepSemHOLExp width _ σ t
-      (fun address => Classical.propDecidable (t.memaddrs address))) = some flat :=
+  have hcargs : ces.mapM (@evalCrepSemHOLExp width _ σ t) = some flat :=
     pcCompileCorrectCallTargetArgs source t ctxt es vs
       (by simpa [PanSemStateFiniteExact.evalListHOLFinite] using hargs) hstate hcode hlocals
       hloces

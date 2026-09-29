@@ -263,7 +263,9 @@ theorem evalNestedDecsSeqResVarEqCrepHOLWithDeciders
                 apply List.map_congr_left
                 intro e he
                 have hfresh := hNameNotTailVars e he
-                simpa [boundState, CrepSemHOLState.setVar, crepExactEvalExp,
+                rw [crepExactEvalExp_eq_eval boundState memDec e,
+                  crepExactEvalExp_eq_eval state memDec e]
+                simpa [boundState, CrepSemHOLState.setVar,
                   evalCrepSemHOLExpWithMemDec] using
                   evalCrepSemHOLExpWithMemDec_updateLocals_eq_of_not_vars
                     state memDec e name value hfresh
@@ -399,7 +401,8 @@ theorem evalNestedDecsSeqResVarEqCrepHOL {width : Nat} [NeZero width]
     fun address => Classical.propDecidable (state.shMemaddrs address)
   have hEvalDef : evalCrepSemHOLExpDefault state = crepExactEvalExp state memDec := by
     funext expression
-    rfl
+    simp [evalCrepSemHOLExpDefault, evalCrepSemHOLExpWithMemDec,
+      crepExactEvalExp_eq_eval]
   have hEval' : expressions.map (crepExactEvalExp state memDec) = values.map some := by
     rw [← hEvalDef]
     exact hEval
@@ -436,8 +439,7 @@ theorem evalNestedDecsSeqResVarEqCrepHOL {width : Nat} [NeZero width]
 theorem evalNestedDecsSeqResVarEqHOL {width : Nat} [NeZero width] {σ : Type} :
     ∀ (es : List (CrepExpHOL width)) (ns : List Nat) (t : CrepSemHOLState width σ)
       (ev : List (HolWordLab width)) (p : CrepProgHOL width),
-      es.map (@evalCrepSemHOLExp width _ σ t
-          (fun address => Classical.propDecidable (t.memaddrs address))) = ev.map some ∧
+      es.map (evalCrepSemHOLExp t) = ev.map some ∧
         ns.length = es.length ∧
         distinctListsHol ns (es.flatMap crepExpVarsHOL) = true ∧
         ns.Nodup →

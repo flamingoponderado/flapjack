@@ -334,11 +334,11 @@ import Flapjack.Pancake.CrepToLoop.Proofs.RelationsExact
 import Flapjack.Pancake.CrepToLoop.Proofs.LocalsRelHelpers
 import Flapjack.Pancake.CrepToLoop.Proofs.LocalsRelOptMmap
 import Flapjack.Pancake.CrepToLoop.Proofs.CompExpPreservesEval
-import Flapjack.Pancake.CrepToLoop.Proofs.NotMemContextAssigned
+import Flapjack.Pancake.CrepToLoop.Proofs.SemanticsWrapper
 import Flapjack.Pancake.CrepToLoop.Proofs.MakeFuncsLemmas
+import Flapjack.Pancake.CrepToLoop.Proofs.NotMemContextAssigned
 import Flapjack.Pancake.CrepToLoop.Proofs.WriteBytearrayMemRel
 import Flapjack.Pancake.CrepToLoop.Proofs.CodeRel2
-import Flapjack.Pancake.CrepToLoop.Proofs.SemanticsWrapper
 import Flapjack.Pancake.LoopLive.Fixedpoint
 import Flapjack.Pancake.Proofs.LoopLive.CompileCorrect
 import Flapjack.Pancake.Proofs.LoopLive.Optimise

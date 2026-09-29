@@ -44,7 +44,7 @@ private theorem mapM_some_mem {α β : Type} (f : α → Option β) :
           · exact mapM_some_mem f as bs has x hx
 
 private theorem eval_some_var_cexp_aux {width : Nat} [NeZero width] {σ : Type}
-    (s : CrepSemHOLState width σ) [DecidablePred s.memaddrs] (n : Nat) :
+    (s : CrepSemHOLState width σ) (n : Nat) :
     ∀ (e : CrepExpHOL width) (v : HolWordLab width),
       evalCrepSemHOLExp s e = some v → n ∈ crepExpVarsHOL e →
         ∃ w, s.locals.lookup n = some w
@@ -119,11 +119,11 @@ decreasing_by
 @[hol "cakeml/pancake/semantics/crepPropsScript.sml" "eval_some_var_cexp_local_lookup"
   (fmap_as_finite_support := [locals, globals, code]) (words_as_type_indexed_bitvec)]
 theorem crepEval_some_var_cexp_local_lookup {width : Nat} [NeZero width] {σ : Type} :
-    ∀ (s : CrepSemHOLState width σ) [DecidablePred s.memaddrs] (e : CrepExpHOL width)
+    ∀ (s : CrepSemHOLState width σ) (e : CrepExpHOL width)
       (v : HolWordLab width) (n : Nat),
       evalCrepSemHOLExp s e = some v ∧ n ∈ crepExpVarsHOL e →
         ∃ w, s.locals.lookup n = some w :=
-  fun s _ e v n h => eval_some_var_cexp_aux s n e v h.1 h.2
+  fun s e v n h => eval_some_var_cexp_aux s n e v h.1 h.2
 
 /-- Exact HOL `opt_mmap_eval_some_var_cexp_local_lookup`
     (`crepPropsScript.sml:847-850`): `∀s es vs n. OPT_MMAP (eval s) es = SOME vs ∧
@@ -131,11 +131,11 @@ theorem crepEval_some_var_cexp_local_lookup {width : Nat} [NeZero width] {σ : T
 @[hol "cakeml/pancake/semantics/crepPropsScript.sml" "opt_mmap_eval_some_var_cexp_local_lookup"
   (fmap_as_finite_support := [locals, globals, code]) (words_as_type_indexed_bitvec)]
 theorem crepOptMmapEval_some_var_cexp_local_lookup {width : Nat} [NeZero width] {σ : Type} :
-    ∀ (s : CrepSemHOLState width σ) [DecidablePred s.memaddrs] (es : List (CrepExpHOL width))
+    ∀ (s : CrepSemHOLState width σ) (es : List (CrepExpHOL width))
       (vs : List (HolWordLab width)) (n : Nat),
       es.mapM (evalCrepSemHOLExp s) = some vs ∧ n ∈ (es.map crepExpVarsHOL).flatten →
         ∃ w, s.locals.lookup n = some w := by
-  intro s _ es vs n ⟨hes, hn⟩
+  intro s es vs n ⟨hes, hn⟩
   obtain ⟨vars, hvars, hmem⟩ := List.mem_flatten.mp hn
   obtain ⟨e, he, rfl⟩ := List.mem_map.mp hvars
   obtain ⟨v, hv⟩ := mapM_some_mem _ es vs hes e he
