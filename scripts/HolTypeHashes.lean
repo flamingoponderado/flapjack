@@ -276,7 +276,9 @@ by `check_hol_type_hashes.py`.
 Theorem proof terms are deliberately excluded: they may be refactored without
 changing the reviewed statement. Definition and `opaque` bodies are included
 because a tagged definition body can drift without changing its elaborated
-type. -/
+type. Reviewed inductive declarations additionally pin their constructor names
+and elaborated constructor/field types, because an inductive's own elaborated
+type is always `Type` and would otherwise not record any constructor change. -/
 private partial def canonicalExpr : Expr → Expr
   | .forallE _ type body info =>
       .forallE `_ (canonicalExpr type) (canonicalExpr body) info
@@ -293,6 +295,17 @@ private partial def canonicalExpr : Expr → Expr
 private def definitionBody? : ConstantInfo → Option Expr
   | .defnInfo value => some value.value
   | .opaqueInfo value => some value.value
+  | _ => none
+
+/-- The constructor name and elaborated constructor type list of a tagged
+inductive declaration. Constructor names and field types must be pinned
+because an inductive's own elaborated type does not mention them. -/
+private def inductiveCtors? (env : Environment) : ConstantInfo → Option (List (String × String))
+  | .inductInfo info =>
+      some (info.ctors.map (fun ctor =>
+        match env.find? ctor with
+        | some ctorInfo => (ctor.toString, reprStr (canonicalExpr ctorInfo.type))
+        | none => (ctor.toString, "<missing>")))
   | _ => none
 
 elab "#emit_hol_type_hashes" : command => do
@@ -321,6 +334,12 @@ elab "#emit_hol_type_hashes" : command => do
           ("hol_name", toJson ref.name),
           ("type_expr", toJson (reprStr (canonicalExpr info.type))),
           ("qualifiers", Json.mkObj qualifiers)]
+        match inductiveCtors? env info with
+        | some ctors =>
+            fields := fields ++ [("inductors",
+              Json.arr (ctors.map (fun (ctorName, ctorType) =>
+                Json.mkObj [("name", toJson ctorName), ("type_expr", toJson ctorType)])).toArray)]
+        | none => pure ()
         match definitionBody? info with
         | some body =>
             fields := fields ++ [("value_expr", toJson (reprStr (canonicalExpr body)))]

@@ -126,6 +126,75 @@ class HolTypeHashesTest(unittest.TestCase):
             hashlib.sha256(self.export[0]["type_expr"].encode()).hexdigest(),
         )
 
+    def _inductive_export(self, name, type_expr):
+        return {
+            **self.export[0],
+            "type_expr": "Lean.Expr.sort (Lean.Level.zero)",
+            "inductors": [{"name": name, "type_expr": type_expr}],
+        }
+
+    def test_constructor_name_change_changes_review_lock(self):
+        old = MODULE.expected_lock(
+            self.manifest, [self._inductive_export("WordSemResult.Ok", "T")],
+            "leanprover/lean4:v4",
+        )
+        new = MODULE.expected_lock(
+            self.manifest, [self._inductive_export("WordSemResult.Okay", "T")],
+            "leanprover/lean4:v4",
+        )
+        self.assertNotEqual(
+            MODULE.reviewed_payload(self._inductive_export("WordSemResult.Ok", "T")),
+            MODULE.reviewed_payload(self._inductive_export("WordSemResult.Okay", "T")),
+        )
+        self.assertNotEqual(old, new)
+        with self.assertRaisesRegex(ValueError, "reviewed Lean type lock differs"):
+            MODULE.check_lock(old, new)
+
+    def test_constructor_field_type_change_changes_review_lock(self):
+        old = MODULE.expected_lock(
+            self.manifest, [self._inductive_export("WordSemResult.Ok", "T")],
+            "leanprover/lean4:v4",
+        )
+        new = MODULE.expected_lock(
+            self.manifest, [self._inductive_export("WordSemResult.Ok", "U")],
+            "leanprover/lean4:v4",
+        )
+        self.assertNotEqual(old, new)
+        with self.assertRaisesRegex(ValueError, "reviewed Lean type lock differs"):
+            MODULE.check_lock(old, new)
+
+    def test_malformed_inductors_value_fails_closed(self):
+        base = {
+            "lean_name": "n", "hol_path": "p", "hol_name": "h", "type_expr": "t",
+        }
+        MODULE.validate_export_record(
+            {**base, "inductors": [{"name": "C", "type_expr": "T"}]}, 1
+        )
+        for malformed in (
+            "not-a-list",
+            [{"name": "C"}],
+            [{"name": "C", "type_expr": "T", "extra": "x"}],
+            [{"name": "C", "type_expr": 3}],
+            [["C", "T"]],
+        ):
+            with self.subTest(malformed=malformed):
+                with self.assertRaisesRegex(ValueError, "inductors"):
+                    MODULE.validate_export_record({**base, "inductors": malformed}, 1)
+
+    def test_non_inductive_payload_unchanged_by_inductors_feature(self):
+        # The new field must not alter the byte format for records without it.
+        self.assertEqual(MODULE.reviewed_payload(self.export[0]), "Lean.Expr.const `True []")
+        with_body = {**self.export[0], "value_expr": "Lean.Expr.const `False []"}
+        self.assertEqual(
+            MODULE.reviewed_payload(with_body),
+            "Lean.Expr.const `True []\x00Lean.Expr.const `False []",
+        )
+        lock = MODULE.expected_lock(self.manifest, self.export, "leanprover/lean4:v4")
+        self.assertEqual(
+            lock["records"][0]["sha256"],
+            hashlib.sha256(b"Lean.Expr.const `True []").hexdigest(),
+        )
+
     def test_reviewed_fmap_as_finite_support_qualifiers_are_locked(self):
         manifest = [{
             **self.manifest[0],

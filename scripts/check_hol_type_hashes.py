@@ -8,8 +8,11 @@ reviewing the changed statement against HOL, then inspect the lock diff.
 
 For tagged definitions and `opaque` declarations the lock additionally covers
 the elaborated Lean body, because such a body can change without changing its
-type. Proof terms of tagged theorems are not hashed; they may be refactored
-without changing the reviewed statement.
+type. For tagged inductive declarations the lock additionally covers the
+constructor names and elaborated constructor/field types, because an
+inductive's own elaborated type does not record them. Proof terms of tagged
+theorems are not hashed; they may be refactored without changing the reviewed
+statement.
 """
 
 from __future__ import annotations
@@ -32,18 +35,31 @@ EXPORTER = ROOT / "scripts" / "HolTypeHashes.lean"
 
 def validate_export_record(record: Any, line_number: int) -> dict[str, Any]:
     """Reject malformed exporter output. `value_expr` is optional and only
-    emitted for definitions and `opaque` declarations."""
+    emitted for definitions and `opaque` declarations; `inductors` is optional
+    and only emitted for inductive declarations."""
     if not isinstance(record, dict):
         raise ValueError(f"Lean export line {line_number} is not an object")
     required = {"lean_name", "hol_path", "hol_name", "type_expr"}
-    allowed = required | {"value_expr", "qualifiers"}
+    allowed = required | {"value_expr", "qualifiers", "inductors"}
     if not required.issubset(record) or not set(record) <= allowed:
         raise ValueError(f"Lean export line {line_number} has invalid fields")
     if not all(isinstance(record[key], str) for key in record):
         non_string = [key for key, value in record.items()
-                      if key != "qualifiers" and not isinstance(value, str)]
+                      if key not in ("qualifiers", "inductors")
+                      and not isinstance(value, str)]
         if non_string:
             raise ValueError(f"Lean export line {line_number} has non-string fields {non_string}")
+    if "inductors" in record:
+        inductors = record["inductors"]
+        if not isinstance(inductors, list):
+            raise ValueError(f"Lean export line {line_number} has malformed inductors")
+        for constructor in inductors:
+            if (
+                not isinstance(constructor, dict)
+                or set(constructor) != {"name", "type_expr"}
+                or not all(isinstance(value, str) for value in constructor.values())
+            ):
+                raise ValueError(f"Lean export line {line_number} has malformed inductors")
     qualifiers = record.get("qualifiers", {})
     allowed_qualifiers = {
         "list_as_array", "names_as_string", "names_as_string_boundary",
@@ -105,11 +121,16 @@ def reviewed_payload(item: dict[str, Any]) -> str:
     the definition body. A definition whose body appears or disappears (for
     example a change between `def` and `theorem`) changes the hash. Theorem
     records keep their original type-only hash so the lock diff isolates the
-    newly covered definition bodies."""
-    body = (
-        f"{item['type_expr']}\x00{item['value_expr']}"
-        if "value_expr" in item else item["type_expr"]
-    )
+    newly covered definition bodies. Inductive records append their constructor
+    names and elaborated constructor/field types; records without `inductors`
+    keep their original byte format."""
+    body = item["type_expr"]
+    if "inductors" in item:
+        body += "\x00inductors:" + json.dumps(
+            item["inductors"], sort_keys=True, separators=(",", ":")
+        )
+    if "value_expr" in item:
+        body += "\x00" + item["value_expr"]
     qualifiers = {
         key: value for key, value in item.get("qualifiers", {}).items() if value
     }
