@@ -77,11 +77,10 @@ theorem panRiscVByteAlign_eight_eq_bitMask (address : Word 64) :
     (bytesInWord := (8 : Word 64)) address 3 h8
 
 /-- Byte offset of `address` within its cell.  For `bytesInWord = width / 8`
-with `width ≥ 8` this is `w2n a MOD d` from HOL `byte$byte_index` (before the
-big-endian reversal and the factor 8).  Below width 8 the byte count is 0 and
-HOL's `MOD 0` is unspecified; Nat `% 0` (the identity) is a Flapjack
-convention, chosen to coincide with the Lean `panGetByteHOL` completion, and
-carries no HOL correspondence claim. -/
+this is `w2n a MOD d` from HOL `byte$byte_index` (before the
+big-endian reversal and the factor 8).  Below width 8 the byte count is 0;
+HOL natural `MOD 0` is defined (`n MOD 0 = n`), and Nat `% 0` (the identity)
+agrees with it, so the byte offset matches HOL `byte_index` at every width. -/
 def panRiscVByteIndex [NeZero width]
     (bytesInWord address : Word width) : Nat :=
   address.toNat % bytesInWord.toNat
