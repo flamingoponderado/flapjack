@@ -1666,6 +1666,15 @@ run_probe word_sem_alloc_probeScript.sml word_sem_alloc_probe.out \
   "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 
+# The wordSem shared-memory probe observes share_inst for every memop (through
+# sh_mem_store*/sh_mem_load* and sh_mem_set_var) with a byte-incrementing and a
+# diverging FFI oracle, recording configuration and payload bytes via
+# io_events (bead flapjack-h29l.3).
+run_probe word_sem_sh_mem_probeScript.sml word_sem_sh_mem_probe.out \
+  store store_final load8 load_final sh_mem_set_var_none \
+  "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
 # The good_handlers probe observes the structural handler-label predicate,
 # including the NONE-ret case (handler ignored) and nested bad handlers.
 run_probe word_convs_good_handlers_probeScript.sml word_convs_good_handlers_probe.out \
