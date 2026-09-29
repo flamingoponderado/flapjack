@@ -2,6 +2,7 @@ import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Leaf
 import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Seq
 import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Primitive
 import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Store
+import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Store32
 import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Dec
 import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.While
 import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Call
@@ -48,11 +49,9 @@ private theorem lookupCodeFinite_eq_HOLFinite' {width : Nat} [NeZero width]
 
 /-- Flapjack helper (no HOL declaration): HOL `ncompile_correct`'s
     `recInduct crepSemTheory.evaluate_ind` assembly of all the case pieces, given
-    the `Store32` and `StoreByte` cases (beads `flapjack-pxn.18.5.6.52`/`.53`) in
-    `PropertyAt` form.  The tagged assembled theorem instantiates these two. -/
+    the `StoreByte` case (bead `flapjack-pxn.18.5.6.53`) in `PropertyAt` form.  The
+    tagged assembled theorem instantiates it. -/
 theorem crepToLoopNcompileCorrectOf {width : Nat} [NeZero width] {σ : Type}
-    (hstore32 : ∀ (dst src : CrepExpHOL width) (s : CrepSemHOLState width σ),
-      PropertyAt (.store32 dst src) s)
     (hstoreByte : ∀ (dst src : CrepExpHOL width) (s : CrepSemHOLState width σ),
       PropertyAt (.storeByte dst src) s) :
     ∀ (v : CrepProgHOL width) (s : CrepSemHOLState width σ), PropertyAt v s := by
@@ -70,7 +69,9 @@ theorem crepToLoopNcompileCorrectOf {width : Nat} [NeZero width] {σ : Type}
     exact crepToLoop_ncompile_correct_assign v src s res s1 t ctxt l ⟨he, hne, hs, hm, hg, hc, hl⟩
   · intro dst src s res s1 t ctxt l he hne hs hm hg hc hl
     exact crepToLoop_ncompile_correct_store dst src s res s1 t ctxt l ⟨he, hne, hs, hm, hg, hc, hl⟩
-  · exact hstore32
+  · intro dst src s res s1 t ctxt l he hne hs hm hg hc hl
+    exact crepToLoop_ncompile_correct_store32 dst src s res s1 t ctxt l
+      ⟨he, hne, hs, hm, hg, hc, hl⟩
   · exact hstoreByte
   · intro dst src s res s1 t ctxt l he hne hs hm hg hc hl
     exact crepToLoop_ncompile_correct_storeGlob dst src s res s1 t ctxt l
