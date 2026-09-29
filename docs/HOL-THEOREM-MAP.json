@@ -21763,5 +21763,22 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.6.47): case piece `StoreGlob dst e` of ncompile_correct (crep_to_loopProofScript.sml:110-134 statement; Resume ncompile_correct[StoreGlob] at 2075-2104; evaluate_ind's StoreGlob case has no induction hypothesis). No extra antecedent: the payload (dst : 5 word, e) and v1, then HOL's ∀res s1 t ctxt l, all seven premises with v := StoreGlob dst e, and the full ∃ck res1 t1 conclusion as in the If piece. compile (StoreGlob dst e) = nested_seq (p ++ [SetGlobal dst le]) with compile_exp at vmax+1 (tagged compileHOLExact). The proof follows HOL: comp_exp_preserves_eval gives ck and st; evaluate_none_nested_seq_append; the target SetGlobal gives set_globals dst (wlab_wloc w) st; globals_rel after FLOOKUP_UPDATE on both sides (source updateEq / FUPDATE_HOL, target update / FUPDATE); locals_rel ctxt l by locals_rel_cutset_prop with subspt l l' from compile_exp_out_rel and comp_syn_impl_cut_sets_subspt. Qualifiers as for the If piece."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "ncompile_correct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NcompileCorrect.lean",
+    "lean_name": "crepToLoop_ncompile_correct_while",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.6.55): case piece `While e c` of ncompile_correct (crep_to_loopProofScript.sml:110-134 statement; Resume ncompile_correct[While] at 2717-3130). The piece's only extra antecedents are exactly the three While conjuncts of crepSemTheory.evaluate_ind, as printed from the built HOL theory: (∀v2 w res s1 v1 v8. eval s e = SOME v2 ∧ v2 = Word w ∧ w ≠ 0w ∧ s.clock ≠ 0 ∧ (res,s1) = evaluate (c,dec_clock s) ∧ res = SOME v1 ∧ v1 = Continue v8 ∧ v8 = 0 ⇒ P (While e c,s1)), the same with res = NONE, and (∀v2 w. eval s e = SOME v2 ∧ v2 = Word w ∧ w ≠ 0w ∧ s.clock ≠ 0 ⇒ P (c,dec_clock s)). The Lean hypotheses substitute the defining equalities v2 = Word w, v1 = Continue v8, v8 = 0 and state P via the untagged crepToLoopNcompileCorrectAt. After them the piece keeps HOL's ∀res s1 t ctxt l, all seven premises and the full ∃ck res1 t1 conclusion as in the If piece. compile (While e c) = Loop l (nested_seq (np ++ [Assign tmp le; If NotEqual tmp (Imm 0w) (Seq (compile c) (Continue 0)) (Break 0) l])) l (tagged compileHOLExact). The proof follows HOL's case structure: the false case with ck+2 (entry cut_res and exit Break cut_res ticks); the TimeOut case (t.clock = 0 by state_rel, entry cut_res gives TimeOut with locals LN); otherwise comp_exp_preserves_eval from dec_clock s at t with locals := inter t.locals l and clock t.clock-1, then the body IH at insert tmp (Word w), splitting on the body result: NONE and Continue 0 re-enter via the While IHs (ck+ck'+ck''), Break 0 exits with one cut_res tick (ck+ck'+1), and other results exit through exit_loop, which commutes with the result correspondence. Review note (not this piece's statement): HOL's crepSem evaluate_def While clause wraps the body run in fix_clock (dec_clock s), while the tagged Lean equation evalCrepSemHOLProgExact_eq_evaluate_def omits it (the generated evaluate_ind also has no fix_clock); this is sound because evaluation never increases the clock, but it is a statement difference in that tagged equation. #print axioms: [propext, Classical.choice, Quot.sound]. Qualifiers as for the If piece."
   }
 ]
