@@ -226,6 +226,14 @@ example :
       (HolWordLab.word (BitVec.ofNat 8 12)) (by
         simp [evalCrepSemHOLExp, baseTopState, lookupState]))
 
+example :
+    evalCrepSemHOLExp (baseTopState.mapc sampleMapc) .topAddr =
+      evalCrepSemHOLExp baseTopState .topAddr := by
+  simpa [crepSimpExpHOL] using
+    (crepSimpExpCorrect1NativeTopAddrCase sampleMapc baseTopState
+      (HolWordLab.word (BitVec.ofNat 8 13)) (by
+        simp [evalCrepSemHOLExp, baseTopState, lookupState]))
+
 private def lookupNames : List Nat := [0, 1]
 
 example :

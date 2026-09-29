@@ -673,7 +673,17 @@
     "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
     "fmap_as_finite_support": ["locals", "globals", "code"],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "Source comparison (2026-09-29; bead flapjack-pxn.18.5.4.2.21): HOL simp_exp_correct1 (crep_arithProofScript.sml:111) universally quantifies s, exp, and unused v, assumes crepSem$eval s exp <> NONE, and concludes eval (mapc f s) (simp_exp exp) = eval s exp. This BaseAddr case preserves the successful-evaluation premise, arbitrary unused result binder, full Option (word_lab) equality, and exact code-only mapc update. HOL eval_def (crepSemScript.sml:127) reads state.base_addr, simp_exp_def leaves BaseAddr unchanged, and mapc updates only code. The locals/globals/code fields are HolFiniteMapExact models of HOL finite maps, witnessed by the same-module holFmapAsFiniteSupportWitness re-export of the existing carrier roundtrip. The words qualifier records the existing positive-width BitVec model; the direct base/top EVAL fixture is scripts/hol-probes/crep_eval_probe.out."
+    "reviewer": "Source comparison (2026-09-29; bead flapjack-pxn.18.5.4.2.21): HOL simp_exp_correct1 (crep_arithProofScript.sml:111) universally quantifies s, exp, and unused v, assumes crepSem$eval s exp <> NONE, and concludes eval (mapc f s) (simp_exp exp) = eval s exp. This BaseAddr case preserves the successful-evaluation premise, arbitrary unused result binder, full Option (word_lab) equality, and exact code-only mapc update. HOL eval_def (crepSemScript.sml:134-135) reads state.base_addr, simp_exp_def leaves BaseAddr unchanged, and mapc updates only code. The locals/globals/code fields are HolFiniteMapExact models of HOL finite maps, witnessed by the same-module holFmapAsFiniteSupportWitness re-export of the existing carrier roundtrip. The words qualifier records the existing positive-width BitVec model; the direct base/top EVAL fixture is scripts/hol-probes/crep_eval_probe.out."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
+    "lean_name": "crepSimpExpCorrect1NativeTopAddrCase",
+    "hol_path": "cakeml/pancake/proofs/crep_arithProofScript.sml",
+    "hol_name": "simp_exp_correct1",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison (2026-09-29; bead flapjack-pxn.18.5.4.2.22): HOL simp_exp_correct1 (crep_arithProofScript.sml:111) universally quantifies s, exp, and unused v, assumes crepSem$eval s exp <> NONE, and concludes eval (mapc f s) (simp_exp exp) = eval s exp. This TopAddr case preserves the successful-evaluation premise, arbitrary unused result binder, full Option (word_lab) equality, and exact code-only mapc update. HOL eval_def (crepSemScript.sml:136-137) reads state.top_addr, simp_exp_def leaves TopAddr unchanged, and mapc updates only code. The locals/globals/code fields are HolFiniteMapExact models of HOL finite maps, witnessed by the same-module holFmapAsFiniteSupportWitness re-export of the existing carrier roundtrip. The words qualifier records the existing positive-width BitVec model; the direct base/top EVAL fixture is scripts/hol-probes/crep_eval_probe.out."
   },
   {
     "hol_path": null,
@@ -681,7 +691,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
     "lean_name": "holFmapAsFiniteSupportWitness",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-only same-module re-export of the existing CrepSemHOLState/CrepSemBroadState toBroad/ofBroad finite-support roundtrip, required by the finite-map qualifiers on the tagged simp_exp_correct1 Var, Const, LoadGlob, and BaseAddr case ports. It introduces no carrier and has no separate HOL declaration."
+    "reviewer": "Flapjack-only same-module re-export of the existing CrepSemHOLState/CrepSemBroadState toBroad/ofBroad finite-support roundtrip, required by the finite-map qualifiers on the tagged simp_exp_correct1 Var, Const, LoadGlob, BaseAddr, and TopAddr case ports. It introduces no carrier and has no separate HOL declaration."
   },
   {
     "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
