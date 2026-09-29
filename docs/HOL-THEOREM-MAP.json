@@ -11483,6 +11483,56 @@
     "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.9.16.8) against loop_to_wordProofScript.sml:341-353. HOL quantifies xs, m, l, n, y; assumes EVEN m, all successful lookups in l are even, and lookup n (make_ctxt m xs l) = SOME y; concludes EVEN y. Lean keeps that binder/premise/conclusion order over exact List Nat and Spt Nat carriers, using the source-reviewed HOL EVEN encoding v % 2 = 0 from FindVarExact. Proof preserves parity at the inserted value and carries existing-context parity through distinct-key insertion. Tests cover both a pre-existing even-valued key and a generated even register."
   },
   {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "locals_rel_mk_ctxt_ln",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "localsRelHOLMkCtxtLn",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.9.16.10) against loop_to_wordProofScript.sml:1505-1525. Preserves HOL binder order n, xs, lc; premise 0 < n ∧ EVEN n; and conclusion locals_rel (make_ctxt n xs LN) LN lc. Lean uses exact Spt Nat and WordLocW carriers, with EVEN represented by n % 2 = 0. makeCtxtHOL, findVarHOL, and localsRelHOL are the exact tagged definitions; nonzero follows from the source lookup range and positivity, evenness from the exact lookup_make_ctxt_EVEN port, and local simulation is vacuous for the empty source tree. The only representation difference is the width-indexed BitVec rendering of HOL word values, recorded by the words qualifier.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "locals_rel_make_ctxt",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "localsRelHOLMakeCtxt",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.9.16.9) against loop_to_wordProofScript.sml:356-384. Preserves HOL's premise order: ALL_DISTINCT params, DISJOINT (set params) (set xs), and LENGTH params = LENGTH l. Lean renders these as List.Nodup, the equivalent membership implication, and equal lengths. The result is the same locals_rel over make_ctxt 2 (params ++ xs) LN, fromAList (ZIP (params,l)), and fromList2 (retv::l), using exact Spt Nat and WordLocW. Existing exact ports makeCtxtHOL, sptFromAList, sptFromList2, and localsRelHOL supply the definitions; a local fromList2 lookup lemma proves the argument-to-register correspondence. The only representation difference is HOL word values represented by width-indexed BitVec via WordLocW, recorded by the words qualifier. Tests exercise empty and nonempty parameter lists and lookup at the source name and mapped register.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "sptFromList2At_eq_foldl",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific private proof helper equating the recursive accumulator used to prove fromList2 lookup facts with the exact tagged sptFromList2 fold. It is not a separate CakeML declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "sptLookup_sptFromList2At_below",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific private proof helper showing that later even-key insertions preserve a lookup below the next fromList2 key. It supports localsRelHOLMakeCtxt and is not a separate CakeML declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "sptLookup_sptFromList2At_get",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific private proof helper for lookup at an index in the recursive fromList2 accumulator; it supports the exact tagged fromList2 definition and is not a distinct CakeML theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "sptLookup_sptFromList2_get",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific private support lemma deriving indexed lookup from the tagged misc$fromList2_def; it is not a distinct CakeML declaration."
+  },
+  {
     "hol_path": "cakeml/pancake/pan_commonScript.sml",
     "hol_name": "distinct_lists_def",
     "lean_path": "Flapjack/Pancake/PanCommon.lean",
@@ -24212,6 +24262,23 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-c source comparison (2026-09-29; bead flapjack-pxn.18.5.9.17.4) against loop_to_wordProofScript.sml:419-424. HOL states cut_env (s,LN) l = SOME env ==> cut_envs (s,LN) l = SOME (env,LN). Lean retains the same two inputs, success premise, and pair conclusion using WordLangCutsetsHOL = Spt Unit × Spt Unit and exact Spt locals/outputs; no logical premise was added. The tagged wordSem cut_envs/cut_names/cut_env definitions match HOL: the empty second num_set succeeds and intersects to LN, while cut_env unions that second result on the left of e1, so union LN e1 is e1. The only representation qualification is the polymorphic HOL word value model as width-indexed BitVec; the Lean positive-width instance is the carrier constraint."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "mkNewCutsetHOL_subsetTarget",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only private helper for the tagged cut_env_mk_new_cutset proof. HOL derives this subset implication inline from locals_rel and the source live-domain premise; there is no separate HOL declaration."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "cut_env_mk_new_cutset",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "wordSemCutEnvMkNewCutsetHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison (2026-09-29; bead flapjack-pxn.18.5.9.17.7) against loop_to_wordProofScript.sml:395-408. HOL's single premise is the conjunction of locals_rel ctxt l1 l2, domain x1 SUBSET domain l1, and lookup 0 l2 = SOME y. Lean retains that same conjunction over exact Spt and localsRelHOL carriers. Both conclusions existentially return env1/result, assert the same successful cut_env (mk_new_cutset ctxt x1,LN) on l2, and relate the same inter l1 x1 source locals to that result; there are no extra hypotheses. The proof follows the HOL definitions: mk_new_cutset maps the live-domain enumeration through find_var and inserts zero; the subset guard follows from locals_rel and the source-domain premise; cut_env unions the empty second cut on the left; and lookup_inter preserves the mapped locals relation. The only representation qualification is HOL's polymorphic word payload represented by positive-width WordLocW width (BitVec)."
   },
   {
     "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
