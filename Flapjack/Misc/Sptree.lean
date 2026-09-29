@@ -558,6 +558,76 @@ theorem lrNext_offset_two (index : Nat) :
           rw [hstep, ih half hlt]
           omega
 
+/-- HOL `sptree$spt_acc` (`HOL/src/finite_maps/sptreeScript.sml:750-755`):
+the key at local index `key` when a subtree is rooted at `index`. This is
+external HOL-library support and is intentionally untagged. -/
+def sptAcc (index : Nat) : Nat → Nat
+  | 0 => index
+  | key + 1 =>
+      sptAcc (index + if (key + 1) % 2 = 0 then 2 * lrNext index else lrNext index)
+        (key / 2)
+termination_by key => key
+decreasing_by omega
+
+/-- HOL `spt_acc` computes the affine key `index + lrnext index * key`; this
+is the arithmetic bridge between `foldi`'s threaded indices and `lookup`'s
+binary key recursion. -/
+theorem sptAcc_eq (index key : Nat) :
+    sptAcc index key = index + lrNext index * key := by
+  revert index
+  induction key using Nat.strongRecOn with
+  | ind key ih =>
+      cases key with
+      | zero => intro index; simp [sptAcc]
+      | succ key =>
+          intro index
+          rw [sptAcc]
+          by_cases heven : (key + 1) % 2 = 0
+          · rw [if_pos heven]
+            have hlt : key / 2 < key + 1 := by omega
+            have hkey : key + 1 = 2 * (key / 2) + 2 := by omega
+            have hchild := ih (key / 2) hlt (index + 2 * lrNext index)
+            rw [lrNext_offset_two index] at hchild
+            rw [hchild]
+            rw [hkey]
+            have hmul : (2 * lrNext index) * (key / 2) =
+                lrNext index * (2 * (key / 2)) := by
+              simp [Nat.mul_comm, Nat.mul_left_comm]
+            rw [hmul, Nat.mul_add]
+            omega
+          · rw [if_neg heven]
+            have hlt : key / 2 < key + 1 := by omega
+            have hkey : key + 1 = 2 * (key / 2) + 1 := by omega
+            have hchild := ih (key / 2) hlt (index + lrNext index)
+            rw [lrNext_offset_one index] at hchild
+            rw [hchild]
+            rw [hkey]
+            have hmul : (2 * lrNext index) * (key / 2) =
+                lrNext index * (2 * (key / 2)) := by
+              simp [Nat.mul_comm, Nat.mul_left_comm]
+            rw [hmul, Nat.mul_add, Nat.mul_one]
+            omega
+
+/-- `lrNext` is always positive, so the affine address assigned to a local
+index by `sptAcc` is injective. This is the key uniqueness fact needed when
+foldi's mixed traversal order is related back to `lookup` keys. -/
+theorem lrNext_pos (index : Nat) : 0 < lrNext index := by
+  induction index using Nat.strongRecOn with
+  | ind index ih =>
+      cases index with
+      | zero => simp [lrNext]
+      | succ index =>
+          have hlt : index / 2 < index + 1 := by omega
+          simp only [lrNext]
+          exact Nat.mul_pos (by omega) (ih (index / 2) hlt)
+
+/-- Distinct local keys have distinct absolute indices under `sptAcc`. -/
+theorem sptAcc_injective (index : Nat) : Function.Injective (sptAcc index) := by
+  intro left right h
+  rw [sptAcc_eq, sptAcc_eq] at h
+  have hmul : lrNext index * left = lrNext index * right := Nat.add_left_cancel h
+  exact Nat.eq_of_mul_eq_mul_left (lrNext_pos index) hmul
+
 /-- HOL sptree `foldi` (`HOL/src/finite_maps/sptreeScript.sml:737-749`) over
 the exact tree, in the same mixed order. -/
 def sptFoldi {α : Type} (f : Nat → α → List (Nat × α) → List (Nat × α))
@@ -961,6 +1031,31 @@ standard-library definition. -/
 def sptFromAList {α : Type} : List (Nat × α) → Spt α
   | [] => .ln
   | (key, value) :: entries => sptInsert key value (sptFromAList entries)
+
+/-- External HOL-library `ALOOKUP` rendering for numeric Spt association lists:
+return the first value paired with `key`. This helper is untagged because
+`ALOOKUP` and `fromAList` here come from the external Sptree library. -/
+def sptAListLookup {α : Type} (key : Nat) : List (Nat × α) → Option α
+  | [] => none
+  | (other, value) :: entries =>
+      if key = other then some value else sptAListLookup key entries
+
+/-- Lookup in external HOL `fromAList` is first-match association-list lookup,
+with no distinct-key or well-formedness premise. -/
+theorem sptLookup_sptFromAList {α : Type} (key : Nat)
+    (entries : List (Nat × α)) :
+    sptLookup key (sptFromAList entries) = sptAListLookup key entries := by
+  induction entries with
+  | nil => simp [sptFromAList, sptAListLookup]
+  | cons entry entries ih =>
+      obtain ⟨other, value⟩ := entry
+      by_cases hkey : key = other
+      · subst key
+        rw [sptFromAList, sptLookup_sptInsert_same]
+        simp [sptAListLookup]
+      · rw [sptFromAList,
+          sptLookup_sptInsert_ne other key value (sptFromAList entries) hkey]
+        simpa [sptAListLookup, hkey] using ih
 
 /-- Exact HOL `misc$fromList2_def` (`cakeml/misc/miscScript.sml:351-353`):
     `fromList2 l = SND (FOLDL (\(i,t) a. (i + 2, insert i a t)) (0,LN) l)`,

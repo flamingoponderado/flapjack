@@ -53,9 +53,13 @@ theorem fmaPinfProduct : fpSemFpfma one pinf two = 0x7FF0000000000000 := by deci
 theorem fmaNinfAddend : fpSemFpfma ninf one one = 0xFFF0000000000000 := by decide +kernel
 /-- `fma_neg_inf_product=0xFFF0000000000000w` -/
 theorem fmaNegInfProduct : fpSemFpfma one ninf two = 0xFFF0000000000000 := by decide +kernel
+/-- `fma_order_inf=0xFFF0000000000000w`: `fpfma one ninf pinf = (-inf)*pinf + one`,
+    while a product/addend swap would give qNaN.  This row pins the argument
+    order (v1 is the addend). -/
+theorem fmaOrderInf : fpSemFpfma one ninf pinf = 0xFFF0000000000000 := by decide +kernel
 
 def runChecks : IO Bool := do
-  IO.println "PASS binary64 add/sub/mul/div/fpfma infinity and zero-divisor branches match all 16 HOL oracle rows (kernel-checked)"
+  IO.println "PASS binary64 add/sub/mul/div/fpfma infinity and zero-divisor branches match all 17 HOL oracle rows (kernel-checked)"
   pure true
 
 end Flapjack.Test.MachineIeeeArithSpecialParity

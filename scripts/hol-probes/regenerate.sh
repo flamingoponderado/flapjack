@@ -1699,7 +1699,7 @@ run_probe binary_ieee_round_constants_probeScript.sml binary_ieee_round_constant
 # zero-divisor branches of fp64_add/sub/mul/div and the tagged fpSem fpfma
 # (bead flapjack-h29l.6.2.2).
 run_probe machine_ieee_fp64_arith_special_probeScript.sml machine_ieee_fp64_arith_special_probe.out \
-  add_pinf_one div_one_pz fma_neg_inf_product \
+  add_pinf_one div_one_pz fma_order_inf \
   "$cake_dir/semantics/fpSemScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 
