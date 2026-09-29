@@ -24136,5 +24136,32 @@
   "statement_status": "reviewed_words_as_type_indexed_bitvec",
   "words_as_type_indexed_bitvec": true,
   "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.9.8.4): exact port of HOL loopLangScript.sml:118-155 acc_vars_def. All clauses reproduced over the reviewed HolLoopProg width carrier ([NeZero width]) and NumSet = Spt Unit: Seq/Break/Continue/Loop/If; Arith longMul/longDiv insert the first two vars and div the first; Mark/Tick/Skip/Fail/Raise/Return return l; Call with SOME (vs,_) does sptListInsert vs l and recurses into handler p1/p2 with sptInsert n () l; LocValue/Assign/ShMem/Load32/LoadByte sptInsert their destination; Primitive sptListInsert destinations; Store/SetGlobal/Store32/StoreByte/FFI return l. HOL insert is sptInsert and list_insert is sptListInsert. No fmap qualifier: NumSet is Spt Unit, not HolFiniteMapExact. Production loopAccVars over LoopProg is a separate executable helper and is not this declaration."
-}
+},
+  {
+    "hol_path": "cakeml/pancake/loop_to_wordScript.sml",
+    "hol_name": "comp_func_def",
+    "lean_path": "Flapjack/Pancake/LoopToWord/CompFuncExact.lean",
+    "lean_name": "loopToWordCompFuncHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.9.9): exact port of HOL comp_func_def (loop_to_wordScript.sml:164-169) over HolLoopProg width and Spt carriers. Lean binds name : Nat, params : List Nat, body : HolLoopProg width and returns WordLangProgHOL (BitVec width), matching HOL FST (comp ctxt body (name,2)). vs = fromNumSetHOL (sptDifference (accVarsHOL body LN) (toNumSetHOL params)); ctxt = makeCtxtHOL 2 (params ++ vs) LN; reuses reviewed accVarsHOL/toNumSetHOL/fromNumSetHOL/sptDifference/makeCtxtHOL/compHOL. No extra premises; production list route separate."
+  },
+  {
+    "hol_path": "cakeml/pancake/loop_to_wordScript.sml",
+    "hol_name": "compile_prog_def",
+    "lean_path": "Flapjack/Pancake/LoopToWord/CompFuncExact.lean",
+    "lean_name": "loopToWordCompileProgHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.9.9): exact port of HOL compile_prog_def (loop_to_wordScript.sml:171-174). Lean maps each (name, params, body) in List (Nat x List Nat x HolLoopProg width) to (name, params.length + 1, compFuncHOL name params body), matching HOL MAP with LENGTH params+1 and the exact compFuncHOL."
+  },
+  {
+    "hol_path": "cakeml/pancake/loop_to_wordScript.sml",
+    "hol_name": "compile_def",
+    "lean_path": "Flapjack/Pancake/LoopToWord/CompFuncExact.lean",
+    "lean_name": "loopToWordCompileHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.9.9): exact port of HOL compile_def (loop_to_wordScript.sml:176-177) compile p = compile_prog p; Lean compileHOL code = compileProgHOL code."
+  }
 ]
