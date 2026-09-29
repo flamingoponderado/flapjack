@@ -2,6 +2,7 @@ import Flapjack.Pancake.CrepToLoop.StateRel
 import Flapjack.FfiHOL
 import Flapjack.Misc.LprefixLub
 import Flapjack.Pancake.Semantics.LoopSemStateExact.Semantics
+import Flapjack.Pancake.Semantics.CrepSem.CrepObservationalSemantics
 
 /-!
 # crep_to_loop `semantics_run_res` over the exact carrier
@@ -338,5 +339,127 @@ theorem loopSemIsWrapper {width : Nat} [NeZero width] {F : Type}
           (fun k => LoopSemStateFiniteExact.evaluate prog { s with clock := k })) := by
   unfold LoopSemStateFiniteExact.semantics
   exact loopSemIsWrapper_aux _
+
+/-- HOL's result classification in `crep_sem_is_wrapper`, named for the proof only. -/
+private def crepSemWrapperClass {width : Nat} [NeZero width] :
+    Option (CrepResultHOLExact width) → CrepToLoopSemanticsRunRes HolOutcome
+  | some .timeOut => .Incomplete
+  | some (.finalFfi e) => .CompleteResult (HolOutcome.ffiOutcome e)
+  | some (.return _) => .CompleteResult HolOutcome.success
+  | _ => .RunError
+
+open Classical in
+/-- `crep_sem_is_wrapper` over an abstract clock-indexed evaluation `E`. -/
+private theorem crepSemIsWrapper_aux {width : Nat} [NeZero width] {σ : Type}
+    (E : Nat → Option (CrepResultHOLExact width) ×
+      CrepSemHOLState width σ) :
+    (if ∃ k, (match (E k).1 with
+        | some .timeOut => False
+        | some (.finalFfi _) => False
+        | some (.return _) => False
+        | _ => True)
+      then HolBehaviour.fail
+      else
+        match holOptionSome (fun res => ∃ k t r outcome,
+            E k = (r, t) ∧
+            (match r with
+             | some (.finalFfi e) => outcome = HolOutcome.ffiOutcome e
+             | some (.return _) => outcome = HolOutcome.success
+             | _ => False) ∧
+            res = HolBehaviour.terminate outcome t.ffi.ioEvents) with
+        | some res => res
+        | none => .diverge (HolLList.buildLprefixLub (fun l => ∃ k,
+            l = HolLList.fromList (E k).2.ffi.ioEvents))) =
+      crepToLoopSemanticsWrapper
+        (Prod.map crepSemWrapperClass
+          (fun t : CrepSemHOLState width σ => t.ffi.ioEvents) ∘ E) := by
+  have hk : ∀ k, (match (E k).1 with
+      | some .timeOut => False
+      | some (.finalFfi _) => False
+      | some (.return _) => False
+      | _ => True) ↔
+      ∃ v, (Prod.map crepSemWrapperClass
+        (fun t : CrepSemHOLState width σ => t.ffi.ioEvents) ∘ E) k = (.RunError, v) := by
+    intro k
+    simp only [Function.comp_apply]
+    generalize E k = e
+    rcases e with ⟨r, t⟩
+    rcases r with _ | (_ | _ | _ | _ | _ | _ | _) <;> simp [crepSemWrapperClass]
+  have hP : (fun res => ∃ k t r outcome,
+      E k = (r, t) ∧
+      (match r with
+       | some (.finalFfi e) => outcome = HolOutcome.ffiOutcome e
+       | some (.return _) => outcome = HolOutcome.success
+       | _ => False) ∧
+      res = HolBehaviour.terminate outcome t.ffi.ioEvents) =
+      (fun res => ∃ k r ev,
+        (Prod.map crepSemWrapperClass
+          (fun t : CrepSemHOLState width σ => t.ffi.ioEvents) ∘ E) k =
+          (.CompleteResult r, ev) ∧ res = HolBehaviour.terminate r ev) := by
+    funext res
+    apply propext
+    constructor
+    · rintro ⟨k, t, r, outcome, he, hm, rfl⟩
+      refine ⟨k, outcome, t.ffi.ioEvents, ?_, rfl⟩
+      simp only [Function.comp_apply, he, Prod.map]
+      rcases r with _ | (_ | _ | _ | _ | _ | _ | _) <;> simp at hm <;>
+        simp [crepSemWrapperClass, hm]
+    · rintro ⟨k, r', ev, hf, rfl⟩
+      simp only [Function.comp_apply] at hf
+      rcases he : E k with ⟨r, t⟩
+      rw [he] at hf
+      simp only [Prod.map, Prod.mk.injEq] at hf
+      obtain ⟨hg, rfl⟩ := hf
+      refine ⟨k, t, r, r', he, ?_, rfl⟩
+      rcases r with _ | (_ | _ | _ | _ | _ | _ | _) <;> simp [crepSemWrapperClass] at hg ⊢ <;>
+        exact hg.symm
+  unfold crepToLoopSemanticsWrapper
+  rw [exists_congr hk, hP]
+  rfl
+
+namespace CrepSemIsWrapperFiniteSupport
+
+/-- Same-module re-export of the checked canonical finite-support witness for
+`CrepSemHOLState`, used by the `fmap_as_finite_support := [locals, globals, code]`
+qualified `crep_sem_is_wrapper` port below. -/
+theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {σ : Type} :
+    (∀ (state : CrepSemBroadState width σ) (h : state.FiniteSupport),
+        (CrepSemBroadState.ofBroad state h).toBroad = state) ∧
+    (∀ state : CrepSemHOLState width σ,
+        CrepSemBroadState.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  CrepSemShMemExact.holFmapAsFiniteSupportWitness
+
+end CrepSemIsWrapperFiniteSupport
+
+/-- Exact HOL `crep_sem_is_wrapper` (`crep_to_loopProofScript.sml:4138-4147`):
+    ```
+    crepSem$semantics s start =
+      let prog = crepLang$Call NONE start [] in
+      semantics_wrapper (((\res. case res of
+        | SOME TimeOut => Incomplete
+        | SOME (FinalFFI e) => CompleteResult (FFI_outcome e)
+        | SOME (Return _) => CompleteResult Success
+        | _ => RunError) ## (\s. s.ffi.io_events)) o
+        (\k. crepSem$evaluate (prog, s with clock := k)))
+    ```
+    over the tagged exact `crepSemantics` and `evalCrepSemHOLProgExact` (HOL
+    `evaluate (prog, s)` is `evalCrepSemHOLProgExact s prog`).  HOL `f ## g` is
+    `Prod.map f g` and `o` is `∘`. -/
+@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "crep_sem_is_wrapper"
+  (fmap_as_finite_support := [locals, globals, code]) (words_as_type_indexed_bitvec)]
+theorem crepSemIsWrapper {width : Nat} [NeZero width] {σ : Type}
+    (s : CrepSemHOLState width σ) (start : Flapjack.Basis.Pure.MlString.MlString) :
+    crepSemantics s start =
+      let prog : CrepProgHOL width := .call none start []
+      crepToLoopSemanticsWrapper
+        ((Prod.map (fun res : Option (CrepResultHOLExact width) => match res with
+            | some .timeOut => CrepToLoopSemanticsRunRes.Incomplete
+            | some (.finalFfi e) => .CompleteResult (HolOutcome.ffiOutcome e)
+            | some (.return _) => .CompleteResult HolOutcome.success
+            | _ => .RunError)
+          (fun t : CrepSemHOLState width σ => t.ffi.ioEvents)) ∘
+          (fun k => evalCrepSemHOLProgExact { s with clock := k } prog)) := by
+  unfold crepSemantics
+  exact crepSemIsWrapper_aux _
 
 end Flapjack
