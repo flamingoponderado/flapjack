@@ -24103,5 +24103,14 @@
     "lean_name": "localsRelHOLFromAListToAList",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "flapjack-ds10 (2026-09-29) infrastructure row: private helper porting the external HOL finite-map theorem lookup_fromAList_toAList (HOL/src/finite_maps, outside cakeml, so untaggable), used to prove the tagged localsRelHOLAlistInsertToAList. The #1176 integration head collected this Proofs-file theorem without a manifest row; adding the required no-HOL row so the inventory check passes."
-  }
+  },
+{
+  "hol_path": "cakeml/pancake/loopLangScript.sml",
+  "hol_name": "acc_vars_def",
+  "lean_path": "Flapjack/Pancake/LoopLang.lean",
+  "lean_name": "accVarsHOL",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.9.8.4): exact port of HOL loopLangScript.sml:118-155 acc_vars_def. All clauses reproduced over the reviewed HolLoopProg width carrier ([NeZero width]) and NumSet = Spt Unit: Seq/Break/Continue/Loop/If; Arith longMul/longDiv insert the first two vars and div the first; Mark/Tick/Skip/Fail/Raise/Return return l; Call with SOME (vs,_) does sptListInsert vs l and recurses into handler p1/p2 with sptInsert n () l; LocValue/Assign/ShMem/Load32/LoadByte sptInsert their destination; Primitive sptListInsert destinations; Store/SetGlobal/Store32/StoreByte/FFI return l. HOL insert is sptInsert and list_insert is sptListInsert. No fmap qualifier: NumSet is Spt Unit, not HolFiniteMapExact. Production loopAccVars over LoopProg is a separate executable helper and is not this declaration."
+}
 ]
