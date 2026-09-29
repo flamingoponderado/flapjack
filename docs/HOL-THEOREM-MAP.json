@@ -23066,5 +23066,99 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.6.26): HOL crep_to_loop state_rel_imp_semantics (crep_to_loopProofScript.sml:4320-4332): ∀ s t crep_code start lc c. s.memaddrs = t.mdomain ∧ s.be = t.be ∧ s.sh_memaddrs = t.sh_mdomain ∧ s.ffi = t.ffi ∧ s.base_addr = t.base_addr ∧ s.top_addr = t.top_addr ∧ mem_rel s.memory t.memory s.memaddrs ∧ globals_rel s.globals t.globals ∧ ALL_DISTINCT (MAP FST crep_code) ∧ s.code = alist_to_fmap crep_code ∧ t.code = fromAList (compile_prog c crep_code) ∧ s.locals = FEMPTY ∧ FLOOKUP (make_funcs crep_code) start = SOME (lc, 0) ∧ semantics s start <> Fail ==> semantics t lc = semantics s start. Lean crepToLoopStateRelImpSemantics has the same binders in HOL order (c is the target architecture consumed by the tagged compile_prog_def port compileProgHOLExact), the same fourteen conjoined premises in the same order, and the same conclusion. The two domain equalities use the reviewed set-as-Bool rendering of the tagged state_rel; ALL_DISTINCT is List.Nodup, alist_to_fmap is alistToFmapCodeExact, fromAList is sptFromAList, make_funcs is crepToLoopMakeFuncsExactHOL, and the semantics are the tagged crepSem semantics_def (crepSemantics) and loopSem semantics_def. There is no other premise. The proof follows HOL: crep_sem_is_wrapper and loop_sem_is_wrapper; the start entry ALOOKUP crep_code start = SOME ([], prog) from the non-Fail premise (crepSemantics_ne_fail_imp_holAlookup); then the tagged semantics_wrapper_eq, whose premises are discharged by mk_ctxt_code_imp_code_rel2 with code_rel_evaluate_call_correct (at clock k, for source-to-target runs, with the ncompile result mapping preserving the wrapper classification), loopProps and crepProps evaluate_add_clock_eq, and evaluate_io_mono_rephrases. Qualifiers cover the finite-map carrier fields traversed, with same-module relation witnesses; words for BitVec width. Axioms: propext, Classical.choice, Quot.sound."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/State.lean",
+    "lean_name": "WordSemBuffer",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "buffer",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.1): HOL buffer record (wordSemScript.sml:15-20) <| position : 'a word; buffer : 'b word list; space_left : num |> with the same three fields in order, at two independent positive widths aw and bw. Words are BitVec at positive width with NeZero; no other representation change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/State.lean",
+    "lean_name": "wordSemBufferFlush",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "buffer_flush_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.1): HOL buffer_flush (:22-28): if cb.position = w1 ∧ cb.position + n2w (dimindex (:'b) DIV 8) * n2w (LENGTH cb.buffer) = w2 then SOME (cb.buffer, cb with <| position := w2; buffer := [] |>) else NONE. It is the same with n2w k : 'a word as BitVec.ofNat aw k. Direct HOL rows buffer_flush_hit/miss in word_sem_carriers_probe.out are matched by Flapjack.Test.WordSemCarriersParity. Words are BitVec at positive width with NeZero; no other representation change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/State.lean",
+    "lean_name": "wordSemBufferWrite",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "buffer_write_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.1): HOL buffer_write (:30-35): if cb.position + n2w (dimindex (:'b) DIV 8) * n2w (LENGTH cb.buffer) = w ∧ 0 < cb.space_left then SOME (cb with <| buffer := cb.buffer ++ [b]; space_left := cb.space_left - 1 |>) else NONE. It is the same; direct HOL rows buffer_write_hit/miss are matched. Words are BitVec at positive width with NeZero; no other representation change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/State.lean",
+    "lean_name": "WordSemStackFrame",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "stack_frame",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.1): HOL stack_frame (:186-191) = StackFrame (num option) ((num # 'a word_loc) list) ((num # 'a word_loc) list) ((num # num # num) option): one constructor with the same four fields in order, with word_loc as the tagged WordLocW. Words are BitVec at positive width with NeZero; no other representation change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/State.lean",
+    "lean_name": "WordSemResult",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "result",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.1): HOL wordSem result (:241-249): Result ('w word_loc) ('w word_loc list) | Exception ('w word_loc) ('w word_loc) | Break num | Continue num | TimeOut | NotEnoughSpace | FinalFFI final_event | Error. The same eight constructors in order, with the same payloads (WordLocW, HolFinalEvent). Words are BitVec at positive width with NeZero; no other representation change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/State.lean",
+    "lean_name": "wordSemIsResult",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "isResult_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.1): HOL isResult (:252-254): isResult (Result a b) = T, otherwise F; the same over Bool. Words are BitVec at positive width with NeZero; no other representation change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/State.lean",
+    "lean_name": "wordSemIsException",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "isException_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.1): HOL isException (:256-258): isException (Exception a b) = T, otherwise F; the same over Bool. Words are BitVec at positive width with NeZero; no other representation change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/State.lean",
+    "lean_name": "wordSemStackSizeFrame",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "stack_size_frame_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.1): HOL stack_size_frame (:230-233): StackFrame n _ _ NONE = n; StackFrame n _ _ (SOME _) = OPTION_MAP ($+ 3) n. The same, with $+ 3 as fun m => 3 + m. Words are BitVec at positive width with NeZero; no other representation change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/State.lean",
+    "lean_name": "wordSemStackSize",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "stack_size_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.1): HOL stack_size (:235-237) = FOLDR (OPTION_MAP2 $+ ∘ stack_size_frame) (SOME 1). It is List.foldr with OPTION_MAP2 $+ as the Flapjack helper wordSemOptionAdd (SOME x, SOME y ↦ SOME (x+y), otherwise NONE), starting from some 1. Direct HOL rows stack_size_two/unbounded are matched. Words are BitVec at positive width with NeZero; no other representation change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/State.lean",
+    "lean_name": "WordSemStateFiniteExact",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "state",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.1): HOL wordSem state (wordSemScript.sml:203-228) has 24 fields, reproduced in the same order with carriers as follows. locals, stack_size and code (sptree num_map) are exact Spt. locals_size is num option. fp_regs (num |-> word64) and store (store_name |-> 'a word_loc) are the canonical HolFiniteMapExact, via the fmap_as_finite_support [fpRegs, store] qualifier and the same-module witness holFmapAsFiniteSupportWitness (broad counterpart WordSemStateBroad). stack is a WordSemStackFrame list. stack_limit, stack_max, handler, clock and termdep are as in HOL. memory is total 'a word -> 'a word_loc. mdomain and sh_mdomain ('a word set) use the reviewed set-as-Bool rendering of the loopSem state. permute is num -> num -> num. compile and compile_oracle use the config type parameter C and the tagged WordLangProgHOL at BitVec width. code_buffer is ('a,8) buffer and data_buffer is ('a,'a) buffer (WordSemBuffer). gc_fun is gc_fun_type (the untagged abbreviation WordSemGcFun, see its docstring). be is bool, and ffi is the exact HolFfiState F. Words are BitVec at positive width. Caveats: the tagged WordLangProgHOL carrier is generic in its word parameter, and the gc_fun field's nested store finite map is not covered by a qualifier (WordSemGcFun is untagged)."
   }
 ]
