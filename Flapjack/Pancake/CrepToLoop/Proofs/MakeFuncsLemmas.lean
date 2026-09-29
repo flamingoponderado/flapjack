@@ -73,14 +73,14 @@ private theorem makeFuncsExact_entry_mem {α β γ : Type}
 /-- Exact HOL `distinct_make_funcs` (`crep_to_loopProofScript.sml:3757-3758`):
     `!crep_code. distinct_funcs (make_funcs crep_code)`. The exact tagged
     `make_funcs_def` dependency carries the reviewed finite-support result
-    translation and lookup witness; this theorem observes its HOL-defined
-    lookup, so the theorem itself has no carrier qualifier. All three program
-    tuple components remain polymorphic and no equality typeclass or other
-    premise is added. -/
+    translation and lookup witness. Its map is consumed by the exact tagged
+    `crepToLoopDistinctFuncsExact`, whose standalone finite-support parameter
+    has its own canonical roundtrip witness. All three program tuple components
+    remain polymorphic and no equality typeclass or other premise is added. -/
 @[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "distinct_make_funcs"]
 theorem distinct_make_funcs {α β γ : Type} :
     ∀ (crep_code : List (α × List β × γ)),
-      crepToLoopDistinctFuncs (crepToLoopMakeFuncsExactHOL crep_code).lookup := by
+      crepToLoopDistinctFuncsExact (crepToLoopMakeFuncsExactHOL crep_code) := by
   letI : DecidableEq α := fun a b => Classical.propDecidable (a = b)
   intro crep_code x y n m rm rm' hx hy hnm
   change (crepToLoopMakeFuncsExactHOL crep_code).lookup x = some (n, rm) at hx
