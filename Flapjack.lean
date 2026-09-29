@@ -153,6 +153,7 @@ import Flapjack.Pancake.Proofs.PanToCrep.EvaluateNestedDecs
 import Flapjack.Pancake.Proofs.PanToCrep
 import Flapjack.Pancake.Proofs.PanToCrep.StateRelFiniteSupport
 import Flapjack.Pancake.Proofs.PanToCrep.CompileExpValRel
+import Flapjack.Pancake.Proofs.PanToCrep.CompileExpValRel.Load
 import Flapjack.Pancake.Proofs.PanToCrep.Primop
 import Flapjack.Pancake.Proofs.PanToCrep.CompileProgParams
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect
@@ -223,6 +224,7 @@ import Flapjack.Pancake.PanToCrep.ContextExact
 import Flapjack.Pancake.PanToCrep.ContextBridge
 import Flapjack.Pancake.PanToCrep.ContextProductionEvidence
 import Flapjack.Pancake.Proofs.CrepArith
+import Flapjack.Pancake.Proofs.CrepArith.HOLStateMapc
 import Flapjack.Pancake.Proofs.CrepArith.MulConst
 import Flapjack.Pancake.Proofs.CrepInline
 import Flapjack.Pancake.CrepInline.Canonical
