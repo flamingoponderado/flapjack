@@ -25326,5 +25326,18 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-cveo: compared word_allocScript.sml:580-586 and 755-769. Exact WordLangExpHOL at positive BitVec width (NeZero) retains Const/Var/Lookup/Load/Op and binary expression-valued Shift. apply_colour_exp renames Var only, recursively maps lists and both Shift operands; Const and fixed store names are unchanged. get_live_exp uses exact Spt insertion/union and big_union right fold with LN seed. No changed side conditions. Proof-side executable definitions are partial progress; production routing remains tracked by flapjack-7c9s, and cveo inventory stays open until that requirement is met.",
     "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "word_state_eq_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/StateRelation.lean",
+    "lean_name": "wordStateEqRel",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-v5vz: compared word_allocProofScript.sml:148-170 field by field, all21 equalities in original target=source order. Includes locals_size, stack_limit/max/size, memory/domains, gc_fun, handler, clock, code, ffi, be, termdep, compile/oracle and buffers; omits precisely locals and permute. No relation strengthening. Uses the actual imported exact WordSemStateFiniteExact owner with canonical fpRegs/store finite maps and checked imported roundtrip witness; locals/code/stackSize retain Spt. Positive word dimension and universe0 host types are retained. Definition-body lock records the full field conjunction. This is a prerequisite relation, not allocator correctness."
   }
 ]
