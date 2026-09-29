@@ -2145,6 +2145,16 @@ run_probe crep_arith_store_byte_probeScript.sml crep_arith_store_byte_probe.out 
   storebyte_memory_mapc \
   "$cake_dir/pancake/proofs/crep_arithProofScript.sml" "$cake_dir/pancake/proofs"
 
+# The ExtCall case of crep_arithProofScript.sml:184-212 `simp_prog_correct`.
+# HOL `simp_prog` leaves an `ExtCall` unchanged (catch-all), and
+# `evaluate (ExtCall ffi_index ptr1 len1 ptr2 len2, s)` reads four locals and
+# calls `call_FFI` (crepSemScript.sml:367-379); the missing-locals branch is
+# `(SOME Error, s)`.  The local `mapc` overload is inlined.
+run_probe crep_arith_ext_call_probeScript.sml crep_arith_ext_call_probe.out \
+  simp_prog_extcall extcall_mapcs_code \
+  evaluate_extcall_missing_locals evaluate_extcall_mapc_missing_locals \
+  "$cake_dir/pancake/proofs/crep_arithProofScript.sml" "$cake_dir/pancake/proofs"
+
 # The loopSem evaluate_ind statement (rebound through fix_clock_evaluate at
 # loopSemScript.sml:497) is likewise tdefn-generated; capture it for the exact
 # Lean port used by loop_liveProof compile_correct's `recInduct evaluate_ind`.
