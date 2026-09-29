@@ -1199,6 +1199,52 @@ theorem pipelineLoopFunctionsSourceCompileProgRouted_codeTableRel
     · exact List.mem_map.mpr ⟨(label, (parameters, faithfulBody)), hmem, rfl⟩
     · exact holLoopProgToExecutableCanonical_rel faithfulBody
 
+/-- Build a pair of exact/production Loop states whose code fields are the
+rebased exact `compile_prog_def` table and the parser-routed production rows.
+The code-table obligations are derived from
+`pipelineLoopFunctionsSourceCompileProgRouted_codeTableRel`; the only supplied
+cross-carrier premise is the explicit `FfiStateRel`. This is a Flapjack-only
+initial-state relation helper: it neither identifies the actual CLI state
+constructor nor proves evaluator simulation. -/
+theorem pipelineLoopFunctionsSourceCompileProgRouted_initialState_prodRel
+    {width : Nat} [NeZero width] {F : Type}
+    (architecture : RiscV.Architecture) (firstLabel : Nat)
+    (functions : List (CompiledFunction (BitVec width)))
+    (hFunctionNames : ∀ function ∈ functions, CrepNameRanged function.name)
+    (hProgramNames : ∀ function ∈ functions, CrepProgNameRanged function.body)
+    (state : LoopSemStateFiniteExact width F) (ffi : FfiState F)
+    (hFfi : FfiStateRel ffi state.ffi) :
+    let exactState : LoopSemStateFiniteExact width F :=
+      { state with code := sptFromAList (pipelineLoopFunctionsSourceCompileProgRoutedExactCodeRows
+        firstLabel functions) }
+    let productionCode : LoopCode (BitVec width) :=
+      pipelineLoopFunctionsSourceCompileProgRoutedCodeRows
+        architecture firstLabel functions
+    exactState.prodRel (exactState.toProductionState productionCode ffi) := by
+  let exactState : LoopSemStateFiniteExact width F :=
+    { state with code := sptFromAList (pipelineLoopFunctionsSourceCompileProgRoutedExactCodeRows
+      firstLabel functions) }
+  let productionCode : LoopCode (BitVec width) :=
+    pipelineLoopFunctionsSourceCompileProgRoutedCodeRows
+      architecture firstLabel functions
+  have hCodeTables := pipelineLoopFunctionsSourceCompileProgRouted_codeTableRel
+    architecture firstLabel functions hFunctionNames hProgramNames
+  have hRows : ∀ entry, entry ∈ productionCode →
+      ∃ program, sptLookup entry.1 exactState.code =
+        some (entry.2.1, program) ∧ loopProgExecRel entry.2.2 program := by
+    intro entry hentry
+    simpa [exactState, productionCode] using hCodeTables.1 entry hentry
+  have hCoverage : ∀ label parameters program,
+      sptLookup label exactState.code = some (parameters, program) →
+        ∃ entry ∈ productionCode, entry.1 = label ∧
+          entry.2.1 = parameters ∧ loopProgExecRel entry.2.2 program := by
+    intro label parameters program hlookup
+    simpa [exactState, productionCode] using
+      hCodeTables.2 label parameters program hlookup
+  change exactState.prodRel (exactState.toProductionState productionCode ffi)
+  exact LoopSemStateFiniteExact.toProductionState_prodRel exactState
+    productionCode ffi (by simpa [exactState] using hFfi) hRows hCoverage
+
 /-- A successful lookup in the production name-indexed function context points
 to the routed output row at the same source-list position. Its label is both
 the production `firstLabel + index` assignment and the key of that output row.

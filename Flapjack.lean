@@ -124,10 +124,13 @@ import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.Skip
 import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.Tick
 import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.Fail
 import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.Break
-import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.Continue
 import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.Assign
+import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.Continue
+import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.Primitive
+import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.Seq
 import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.Ffi
 import Flapjack.Pancake.Semantics.LoopSemStateExact.ProductionExtCall
+import Flapjack.Pancake.Semantics.LoopSemStateExact.ProductionEvalHook
 import Flapjack.Pancake.Semantics.LoopSemStateExact.Semantics
 import Flapjack.Pancake.Semantics.LoopProps.EvaluateClockExact
 import Flapjack.Pancake.Semantics.LoopProps.EvaluateIoEventsExact
@@ -388,6 +391,8 @@ import Flapjack.Pancake.Proofs.LoopCall.CompileCorrect
 import Flapjack.Pancake.CrepToLoop.Proofs.MakeFuncsLemmas
 import Flapjack.Pancake.CrepToLoop.Proofs.CodeRel2
 import Flapjack.Pancake.CrepToLoop.Proofs.CodeRel2CallEntryLookup
+import Flapjack.Pancake.CrepToLoop.Proofs.CodeRelEvaluateCallCorrect
+import Flapjack.Pancake.CrepToLoop.Proofs.StateRelImpSemantics
 import Flapjack.Pancake.CrepToLoop.Proofs.NotMemContextAssigned
 import Flapjack.Pancake.CrepToLoop.Proofs.WriteBytearrayMemRel
 import Flapjack.Pancake.CrepToLoop.Proofs.CallPreserveStateCodeLocalsRel
