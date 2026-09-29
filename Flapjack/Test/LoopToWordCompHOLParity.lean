@@ -4,19 +4,22 @@ import Flapjack.Pancake.LoopToWord
 # Original HOL parity for the total exact `loop_to_word$comp`
 
 The original definition is `comp_def` at
-`cakeml/pancake/loop_to_wordScript.sml:56-152`. The expected observations are
+`cakeml/pancake/loop_to_wordScript.sml:56-150`. The expected observations are
 direct HOL-EVAL results from `scripts/hol-probes/loop_to_word_comp_probe.out`
-(22 rows), `scripts/hol-probes/loop_to_word_comp_recursive_probe.out` (4 rows),
+(23 rows), `scripts/hol-probes/loop_to_word_comp_recursive_probe.out` (4 rows),
 and `scripts/hol-probes/loop_to_word_comp_call_probe.out` (3 rows); every one
-of those 29 rows is replayed here through the total exact `compHOL` over the
+of those 30 rows is replayed here through the total exact `compHOL` over the
 exact `HolLoopProg` and `WordLangProgHOL` carriers.
 
 The program and label fields are compared structurally. The `mk_new_cutset`
 results are compared by their exact finite support: `cutsetIs` checks that
 every expected key is present and that the tree size equals the key count, so
-each expected cut-set is pinned to a concrete key set rather than left
-symbolic. (`Spt` trees are not canonical, so structural tree equality with a
-hand-written `sptInsert` list is not the right observation.)
+each expected cut-set is pinned to a concrete key set.  This exact-support
+comparison is the cross-language oracle boundary; HOL prints the cut-set as the
+extensional set `⦕ 0; 20 ⦖`, so the boundary observation is the key set, not a
+particular `LN`/`BN`/`BS` constructor tree.  The additional structural `Spt`
+tree fixtures below are chosen Lean representatives of those key sets and are
+asserted as an extra internal check (`Spt` trees are not canonical).
 -/
 
 namespace Flapjack.Test.LoopToWordCompHOLParity
@@ -32,10 +35,22 @@ def compContext : Spt Nat :=
     (sptInsert 11 22 (sptInsert 10 20 .ln))))
 
 /-- The loop `live_in` fixture `insert 10 () LN` of the recursive probe. -/
-def compLiveIn : Spt Unit := sptInsert 10 () .ln
+def compLoopLiveIn : Spt Unit := sptInsert 10 () .ln
 
 /-- The loop `live_out` fixture `insert 11 () LN` of the recursive probe. -/
-def compLiveOut : Spt Unit := sptInsert 11 () .ln
+def compLoopLiveOut : Spt Unit := sptInsert 11 () .ln
+
+/-- A chosen Lean `Spt` tree whose extensional key set is `{0, 20}` (HOL prints
+    the set as `⦕ 0; 20 ⦖`).  Asserted as an extra internal representation
+    check; the cross-language observation is the key set via `cutsetIs`. -/
+def compLoopCutset20 : Spt Unit :=
+  .bs (.bn .ln (.bn (.bn .ln (.ls ())) .ln)) () .ln
+
+/-- A chosen Lean `Spt` tree whose extensional key set is `{0, 22}` (HOL prints
+    the set as `⦕ 0; 22 ⦖`).  Asserted as an extra internal representation
+    check; the cross-language observation is the key set via `cutsetIs`. -/
+def compLoopCutset22 : Spt Unit :=
+  .bs (.bn (.bn (.bn .ln (.ls ())) .ln) .ln) () .ln
 
 /-- The call `live` fixture `insert 12 () LN` of the call probe. -/
 def compCallLive : Spt Unit := sptInsert 12 () .ln
@@ -50,7 +65,8 @@ def cutsetIs (tree : Spt Unit) (keys : List Nat) : Bool :=
   (keys.all (fun key => (sptLookup key tree).isSome)) && (sptSize tree == keys.length)
 
 attribute [local simp] Flapjack.LoopToWord.compHOL.eq_def findVarHOL compExpHOL
-  compContext compLabels compLiveIn compLiveOut compCallLive loopLangFfiRow
+  compContext compLabels compLoopLiveIn compLoopLiveOut compLoopCutset20 compLoopCutset22
+  compCallLive loopLangFfiRow
 attribute [local simp] sptLookup_sptInsert_same sptLookup_sptInsert_ne
 
 example : Flapjack.LoopToWord.compHOL (width := 8) compContext .skip compLabels =
@@ -107,10 +123,10 @@ example : Flapjack.LoopToWord.compHOL (width := 8) compContext
       (.inst (.mem .store8 22 (.addr 26 (BitVec.ofNat 8 0))), compLabels) := by simp
 
 example : Flapjack.LoopToWord.compHOL (width := 8) compContext
-    (.break 10) compLabels = (.break 10, compLabels) := by simp
+    (.break 5) compLabels = (.break 5, compLabels) := by simp
 
 example : Flapjack.LoopToWord.compHOL (width := 8) compContext
-    (.continue 10) compLabels = (.continue 10, compLabels) := by simp
+    (.continue 6) compLabels = (.continue 6, compLabels) := by simp
 
 example : Flapjack.LoopToWord.compHOL (width := 8) compContext
     (.raise 10) compLabels = (.raise 20, compLabels) := by simp
@@ -139,16 +155,24 @@ example : Flapjack.LoopToWord.compHOL (width := 8) compContext
 
 example : Flapjack.LoopToWord.compHOL (width := 8) compContext
     (.ite .equal 10 (.reg 11)
-      (.assign 12 (.const (5 : BitVec 8))) (.assign 13 (.var 14)) compLiveIn) compLabels =
+      (.assign 12 (.const (5 : BitVec 8))) (.assign 13 (.var 14)) compLoopLiveIn) compLabels =
       (.seq (.ite .equal 20 (.reg 22)
         (.assign 24 (.const (5 : BitVec 8))) (.assign 26 (.var 28))) .tick,
         compLabels) := by simp
 
+/-! The direct HOL `comp_loop` row (recursive probe output) is concrete:
+`Loop ⦕ 0; 20 ⦖ (Assign 24 (Var 26)) ⦕ 0; 22 ⦖`.  This checks the complete
+returned program and both `Spt` trees as a chosen Lean representation of the
+HOL key sets (HOL's source clauses are `mk_new_cutset_def` at
+`loop_to_wordScript.sml:51-53` and the Loop branch of `comp_def` at
+`loop_to_wordScript.sml:116-120`); the cross-language boundary check in
+`compHOLProbeChecks` pins the key sets with `cutsetIs`. -/
 example : Flapjack.LoopToWord.compHOL (width := 8) compContext
-    (.loop compLiveIn (.assign 12 (.var 13)) compLiveOut) compLabels =
-      (.seq .tick (.seq (.loop (mkNewCutsetHOL compContext compLiveIn)
-        (.assign 24 (.var 26)) (mkNewCutsetHOL compContext compLiveOut)) .tick),
-        compLabels) := by simp
+    (.loop compLoopLiveIn (.assign 12 (.var 13)) compLoopLiveOut) compLabels =
+      (.seq .tick (.seq (.loop compLoopCutset20
+        (.assign 24 (.var 26)) compLoopCutset22) .tick), compLabels) := by
+  simp [mkNewCutsetHOL, fromNumSetHOL, toNumSetHOL, findVarHOL,
+    sptToAList, sptFoldi, lrNext, sptInsert, sptLookup]
 
 example : Flapjack.LoopToWord.compHOL (width := 8) compContext
     (.mark (.assign 10 (.var 14))) compLabels =
@@ -173,9 +197,10 @@ example : Flapjack.LoopToWord.compHOL (width := 8) compContext
         (some 5) [20, 22] (some (28, .assign 20 (.var 22), (7, 12)))) .tick,
         (7, 13)) := by simp
 
-/-- Every one of the 29 rows of the three direct HOL probes, replayed through
-the total exact `compHOL`; `mk_new_cutset` results are pinned by their exact
-key sets through `cutsetIs`. -/
+/-- Every one of the 30 rows of the three direct HOL probes, replayed through
+the total exact `compHOL`.  Program and label fields are compared structurally
+to the exact HOL output; `mk_new_cutset` results are pinned by their exact key
+sets through `cutsetIs` (the cross-language oracle boundary). -/
 def compHOLProbeChecks : List Bool :=
   [ (match Flapjack.LoopToWord.compHOL (width := 8) compContext .skip compLabels with
       | (.skip, (7, 11)) => true
@@ -220,27 +245,27 @@ def compHOLProbeChecks : List Bool :=
       | _ => false),
     (match Flapjack.LoopToWord.compHOL (width := 8) compContext
         (.load32 12 13) compLabels with
-      | (.inst (.mem .load32 26 (.addr 24 _)), (7, 11)) => true
+      | (.inst (.mem .load32 26 (.addr 24 (BitVec.ofNat 8 0))), (7, 11)) => true
       | _ => false),
     (match Flapjack.LoopToWord.compHOL (width := 8) compContext
         (.loadByte 13 12) compLabels with
-      | (.inst (.mem .load8 24 (.addr 26 _)), (7, 11)) => true
+      | (.inst (.mem .load8 24 (.addr 26 (BitVec.ofNat 8 0))), (7, 11)) => true
       | _ => false),
     (match Flapjack.LoopToWord.compHOL (width := 8) compContext
         (.store32 12 14) compLabels with
-      | (.inst (.mem .store32 28 (.addr 24 _)), (7, 11)) => true
+      | (.inst (.mem .store32 28 (.addr 24 (BitVec.ofNat 8 0))), (7, 11)) => true
       | _ => false),
     (match Flapjack.LoopToWord.compHOL (width := 8) compContext
         (.storeByte 13 11) compLabels with
-      | (.inst (.mem .store8 22 (.addr 26 _)), (7, 11)) => true
+      | (.inst (.mem .store8 22 (.addr 26 (BitVec.ofNat 8 0))), (7, 11)) => true
       | _ => false),
     (match Flapjack.LoopToWord.compHOL (width := 8) compContext
-        (.break 10) compLabels with
-      | (.break 10, (7, 11)) => true
+        (.break 5) compLabels with
+      | (.break 5, (7, 11)) => true
       | _ => false),
     (match Flapjack.LoopToWord.compHOL (width := 8) compContext
-        (.continue 10) compLabels with
-      | (.continue 10, (7, 11)) => true
+        (.continue 6) compLabels with
+      | (.continue 6, (7, 11)) => true
       | _ => false),
     (match Flapjack.LoopToWord.compHOL (width := 8) compContext
         (.raise 10) compLabels with
@@ -262,7 +287,8 @@ def compHOLProbeChecks : List Bool :=
       | _ => false),
     (match Flapjack.LoopToWord.compHOL (width := 8) compContext
         loopLangFfiRow compLabels with
-      | (.ffi _ 20 22 24 26 (cutset, .ln), (7, 11)) => cutsetIs cutset [0]
+      | (.ffi name 20 22 24 26 (cutset, .ln), (7, 11)) =>
+          (name == Flapjack.Basis.Pure.MlString.ofString "foo") && cutsetIs cutset [0]
       | _ => false),
     (match Flapjack.LoopToWord.compHOL (width := 8) compContext
         (.shMem .load 10 (.var 12)) compLabels with
@@ -274,13 +300,13 @@ def compHOLProbeChecks : List Bool :=
       | _ => false),
     (match Flapjack.LoopToWord.compHOL (width := 8) compContext
         (.ite .equal 10 (.reg 11)
-          (.assign 12 (.const (5 : BitVec 8))) (.assign 13 (.var 14)) compLiveIn) compLabels with
+          (.assign 12 (.const (5 : BitVec 8))) (.assign 13 (.var 14)) compLoopLiveIn) compLabels with
       | (.seq (.ite .equal 20 (.reg 22)
           (.assign 24 (.const (5 : BitVec 8))) (.assign 26 (.var 28))) .tick,
           (7, 11)) => true
       | _ => false),
     (match Flapjack.LoopToWord.compHOL (width := 8) compContext
-        (.loop compLiveIn (.assign 12 (.var 13)) compLiveOut) compLabels with
+        (.loop compLoopLiveIn (.assign 12 (.var 13)) compLoopLiveOut) compLabels with
       | (.seq .tick (.seq (.loop cutIn (.assign 24 (.var 26)) cutOut) .tick),
           (7, 11)) => cutsetIs cutIn [0, 20] && cutsetIs cutOut [0, 22]
       | _ => false),
@@ -312,9 +338,9 @@ def compHOLProbeChecks : List Bool :=
 def runChecks : IO Bool := do
   let passed := compHOLProbeChecks.all id
   if passed then
-    IO.println "PASS LoopToWord total compHOL exact HOL EVAL rows (29 rows, cutsets pinned)"
+    IO.println "PASS LoopToWord total compHOL exact HOL EVAL rows (30 rows, cutsets pinned)"
   else
-    IO.println "FAIL LoopToWord total compHOL exact HOL EVAL rows (29 rows, cutsets pinned)"
+    IO.println "FAIL LoopToWord total compHOL exact HOL EVAL rows (30 rows, cutsets pinned)"
   pure passed
 
 end Flapjack.Test.LoopToWordCompHOLParity
