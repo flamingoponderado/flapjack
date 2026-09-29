@@ -20,10 +20,11 @@ without introducing a second divergent LUB proof.
 -- hook and a caller-provided proof of the event-prefix chain, whereas HOL
 -- quantifies the source state and start name, runs its total `evaluate` at
 -- every clock, and constructs the divergence LUB from those executions.
--- `semantics_decls` additionally composes the fresh `decs_stcnames` context,
--- `evaluate_decls`, and that exact source semantics. The individual exact
--- finite-map declaration helpers exist, but this faithful composition waits
--- on the total finite-map evaluator and event-chain proof tracked by
+-- `panSemRunEntryCake` in `PanSem/EntryState.lean` now composes the
+-- exact `decs_stcnames` prepass, production `evaluate_decls`, and one clocked
+-- entry run. It is not the full HOL observation wrapper: the generic
+-- clock-indexed result choice and divergence LUB remain unported on this
+-- carrier. The faithful full composition remains tracked by
 -- `flapjack-pxn.18.4.3.77.17` (blocked by `.77.2`).
 -/
 
