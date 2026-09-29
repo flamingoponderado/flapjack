@@ -105,6 +105,7 @@ import Flapjack.Test.LoopSetVarsParity
 import Flapjack.Test.LoopSetVarParity
 import Flapjack.Test.LoopToWordExactParity
 import Flapjack.Test.LoopToWordRecursiveParity
+import Flapjack.Test.LoopToWordGlobalsRelParity
 import Flapjack.Test.LoopToWordCallParity
 import Flapjack.Test.LoopDecClockParity
 import Flapjack.Test.LoopFixClockParity
@@ -852,6 +853,7 @@ def main : IO Unit := do
     Flapjack.Test.LoopSetVarParity.runChecks,
     Flapjack.Test.LoopToWordExactParity.runChecks,
     Flapjack.Test.LoopToWordRecursiveParity.runChecks,
+    Flapjack.Test.LoopToWordGlobalsRelParity.runChecks,
     Flapjack.Test.LoopToWordCallParity.runChecks,
     Flapjack.Test.LoopDecClockParity.runChecks,
     Flapjack.Test.LoopFixClockParity.runChecks,

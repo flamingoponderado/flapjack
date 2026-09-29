@@ -1,0 +1,4 @@
+globals_rel_match=T
+globals_rel_value_mismatch=F
+globals_rel_temp_mismatch=F
+globals_rel_empty_source=T
