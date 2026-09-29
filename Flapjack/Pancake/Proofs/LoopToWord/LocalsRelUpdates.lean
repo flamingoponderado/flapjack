@@ -1,4 +1,5 @@
 import Flapjack.Pancake.Proofs.LoopToWord.LocalsRel
+import Flapjack.Pancake.Semantics.LoopSemStateExact
 
 /-!
 # Exact update support for the Loop-to-Word locals relation
@@ -88,5 +89,42 @@ theorem localsRelHOLInsertUnmapped {width : Nat} [NeZero width]
   refine ⟨mapped, hcontext, ?_⟩
   rw [sptLookup_sptInsert_ne register mapped value targetLocals hmappedNe]
   exact htarget
+
+/-- Exact HOL `locals_rel_alist_insert`: parallel source/target list updates
+preserve the local relation when every updated source name is in the context.
+HOL list membership is represented directly by `List.mem`; `alist_insert` is
+the reviewed `sptAlistInsert` rendering. -/
+@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml"
+  "locals_rel_alist_insert" (words_as_type_indexed_bitvec)]
+theorem localsRelHOLAlistInsert {width : Nat} [NeZero width]
+    (context : Spt Nat) :
+    ∀ (names : List Nat) (values : List (WordLocW width))
+      (sourceLocals targetLocals : Spt (WordLocW width)),
+      (localsRelHOL context sourceLocals targetLocals ∧
+        ∀ name, name ∈ names → sptMem name context) →
+      localsRelHOL context
+        (LoopSemStateFiniteExact.sptAlistInsert names values sourceLocals)
+        (LoopSemStateFiniteExact.sptAlistInsert
+          (names.map (findVarHOL context)) values targetLocals) := by
+  intro names
+  induction names with
+  | nil =>
+      intro values sourceLocals targetLocals hpremises
+      simpa [LoopSemStateFiniteExact.sptAlistInsert] using hpremises.1
+  | cons name names ih =>
+      intro values sourceLocals targetLocals hpremises
+      cases values with
+      | nil =>
+          simpa [LoopSemStateFiniteExact.sptAlistInsert] using hpremises.1
+      | cons value values =>
+          simp only [LoopSemStateFiniteExact.sptAlistInsert, List.map_cons]
+          apply localsRelHOLInsert
+          constructor
+          · apply ih
+            constructor
+            · exact hpremises.1
+            · intro tailName htail
+              exact hpremises.2 tailName (List.mem_cons_of_mem name htail)
+          · exact hpremises.2 name (by simp)
 
 end Flapjack.LoopToWord
