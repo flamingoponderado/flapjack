@@ -71,6 +71,28 @@ class HolAttributeSitesTest(unittest.TestCase):
               (), ("name", "generated"), ("generated",), (), False, (), False, False, ())],
         )
 
+    def test_word_dimension_as_width_qualifier(self):
+        sites = list(SITES([
+            '@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "MustTerminate_limit_def"',
+            '  (word_dimension_as_width := width)]',
+        ], include_fmap_existentials=True, include_word_dimension_width=True))
+        self.assertEqual(sites[0][-1], "width")
+        self.assertEqual(sites[0][-2], ())
+
+    def test_word_dimension_as_width_requires_its_nat_and_nezero_binders(self):
+        check = CHECKER["word_dimension_as_width_errors"]
+        valid = "def example (width : Nat) [NeZero width] : Nat := width"
+        self.assertEqual(check(valid, "example", "width"), [])
+        missing_nezero = "def example (width : Nat) : Nat := width"
+        self.assertTrue(any("retain its own `[NeZero width]`" in error
+                            for error in check(missing_nezero, "example", "width")))
+        wrong_binder = "def example (n : Nat) [NeZero n] : Nat := n"
+        self.assertTrue(any("explicit `(width : Nat)` binder" in error
+                            for error in check(wrong_binder, "example", "width")))
+        word_carrier = "def example (width : Nat) [NeZero width] : BitVec width := 0"
+        self.assertTrue(any("word-free signatures" in error
+                            for error in check(word_carrier, "example", "width")))
+
     def test_fmap_as_finite_support_fields(self):
         self.assertEqual(
             list(SITES([

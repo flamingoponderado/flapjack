@@ -297,4 +297,108 @@ def compExpHOL {width : Nat} [NeZero width] (context : Spt Nat) :
   termination_by expression => sizeOf expression
   decreasing_by all_goals first | sizeOf_list_dec | decreasing_trivial | simp_wf
 
+/-- Exact total port of HOL `comp_def` (`cakeml/pancake/loop_to_wordScript.sml:56-150`)
+over the exact `HolLoopProg width` carrier with the exact `Spt Nat` variable context
+and the threaded label pair. Clause-for-clause with the HOL definition. This
+total definition is the reviewed tagged port. The executable production route
+is tracked separately (bead `flapjack-pxn.18.5.9.5`); this declaration is the
+HOL-shaped reference definition. -/
+@[hol "cakeml/pancake/loop_to_wordScript.sml" "comp_def"
+  (words_as_type_indexed_bitvec)]
+def compHOL {width : Nat} [NeZero width] (context : Spt Nat) :
+    HolLoopProg width → Nat × Nat → WordLangProgHOL (BitVec width) × (Nat × Nat)
+  | .skip, labels => (.skip, labels)
+  | .assign name expression, labels =>
+      (.assign (findVarHOL context name) (compExpHOL context expression), labels)
+  | .primitive destinations .addCarry arguments, labels =>
+      match destinations, arguments with
+      | [result, carry], [left, right, carryIn] =>
+          (.seq (.assign 1 (.var (findVarHOL context carryIn)))
+            (.seq (.inst (.arith (.addCarry 3
+                (findVarHOL context left) (findVarHOL context right) 1)))
+              (.seq (.assign (findVarHOL context carry) (.var 1))
+                    (.assign (findVarHOL context result) (.var 3)))), labels)
+      | _, _ => (.skip, labels)
+  | .arith (.longMul destinationLeft destinationRight sourceLeft sourceRight), labels =>
+      (.inst (.arith (.longMul (findVarHOL context destinationLeft)
+        (findVarHOL context destinationRight) (findVarHOL context sourceLeft)
+        (findVarHOL context sourceRight))), labels)
+  | .arith (.longDiv destinationLeft destinationRight sourceLeft sourceRight quotient), labels =>
+      (.inst (.arith (.longDiv (findVarHOL context destinationLeft)
+        (findVarHOL context destinationRight) (findVarHOL context sourceLeft)
+        (findVarHOL context sourceRight) (findVarHOL context quotient))), labels)
+  | .arith (.div destination dividend divisor), labels =>
+      (.inst (.arith (.div (findVarHOL context destination)
+        (findVarHOL context dividend) (findVarHOL context divisor))), labels)
+  | .store address value, labels =>
+      (.store (compExpHOL context address) (findVarHOL context value), labels)
+  | .setGlobal address expression, labels =>
+      (.set (.temp address) (compExpHOL context expression), labels)
+  | .load32 address destination, labels =>
+      (.inst (.mem .load32 (findVarHOL context destination)
+        (.addr (findVarHOL context address) (BitVec.ofNat width 0))), labels)
+  | .loadByte address destination, labels =>
+      (.inst (.mem .load8 (findVarHOL context destination)
+        (.addr (findVarHOL context address) (BitVec.ofNat width 0))), labels)
+  | .store32 address value, labels =>
+      (.inst (.mem .store32 (findVarHOL context value)
+        (.addr (findVarHOL context address) (BitVec.ofNat width 0))), labels)
+  | .storeByte address value, labels =>
+      (.inst (.mem .store8 (findVarHOL context value)
+        (.addr (findVarHOL context address) (BitVec.ofNat width 0))), labels)
+  | .seq first second, labels =>
+      let (wordFirst, labels) := compHOL context first labels
+      let (wordSecond, labels) := compHOL context second labels
+      (.seq wordFirst wordSecond, labels)
+  | .ite operator condition right thenBranch elseBranch _, labels =>
+      let (wordThen, labels) := compHOL context thenBranch labels
+      let (wordElse, labels) := compHOL context elseBranch labels
+      (.seq (.ite operator (findVarHOL context condition)
+        (match right with
+         | .imm value => .imm value
+         | .reg name => .reg (findVarHOL context name))
+        wordThen wordElse) .tick, labels)
+  | .loop liveIn body liveOut, labels =>
+      let (wordBody, labels) := compHOL context body labels
+      (.seq .tick (.seq (.loop (mkNewCutsetHOL context liveIn) wordBody
+        (mkNewCutsetHOL context liveOut)) .tick), labels)
+  | .break n, labels => (.break n, labels)
+  | .continue n, labels => (.continue n, labels)
+  | .raise v, labels => (.raise (findVarHOL context v), labels)
+  | .return vs, labels => (.return 0 (vs.map (findVarHOL context)), labels)
+  | .tick, labels => (.tick, labels)
+  | .mark body, labels => compHOL context body labels
+  | .fail, labels => (.skip, labels)
+  | .locValue n m, labels => (.locValue (findVarHOL context n) m, labels)
+  | .call returns target arguments handler, labels =>
+      let mappedArguments := arguments.map (findVarHOL context)
+      match returns with
+      | none => (.call none target (0 :: mappedArguments) none, labels)
+      | some (vs, live) =>
+          let mappedReturns := vs.map (findVarHOL context)
+          let cutset := mkNewCutsetHOL context live
+          let newLabels := (labels.1, labels.2 + 1)
+          match handler with
+          | none =>
+              (.call (some (mappedReturns, (cutset, .ln), .skip, labels))
+                target mappedArguments none, newLabels)
+          | some (n, p1, p2, _) =>
+              let (wordP1, labels1) := compHOL context p1 newLabels
+              let (wordP2, labels2) := compHOL context p2 labels1
+              let finalLabels := (labels2.1, labels2.2 + 1)
+              (.seq
+                (.call (some (mappedReturns, (cutset, .ln), wordP2, labels))
+                  target mappedArguments
+                  (some (findVarHOL context n, wordP1, labels2)))
+                .tick, finalLabels)
+  | .ffi function configuration configurationLength array arrayLength live, labels =>
+      let cutset := mkNewCutsetHOL context live
+      (.ffi function (findVarHOL context configuration)
+        (findVarHOL context configurationLength) (findVarHOL context array)
+        (findVarHOL context arrayLength) (cutset, .ln), labels)
+  | .shMem operator name address, labels =>
+      (.shareInst operator (findVarHOL context name) (compExpHOL context address), labels)
+termination_by program _ => sizeOf program
+decreasing_by all_goals decreasing_trivial
+
 end Flapjack.LoopToWord

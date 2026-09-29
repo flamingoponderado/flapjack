@@ -1,0 +1,17 @@
+add_pinf_one=0x7FF0000000000000w
+add_one_ninf=0xFFF0000000000000w
+add_pinf_pinf=0x7FF0000000000000w
+sub_one_pinf=0xFFF0000000000000w
+sub_ninf_pinf=0xFFF0000000000000w
+mul_pinf_negone=0xFFF0000000000000w
+mul_ninf_ninf=0x7FF0000000000000w
+div_one_pinf=0w
+div_negone_pinf=0x8000000000000000w
+div_pinf_negone=0xFFF0000000000000w
+div_one_pz=0x7FF0000000000000w
+div_negone_pz=0xFFF0000000000000w
+div_one_nz=0xFFF0000000000000w
+fma_pinf_product=0x7FF0000000000000w
+fma_ninf_addend=0xFFF0000000000000w
+fma_neg_inf_product=0xFFF0000000000000w
+fma_order_inf=0xFFF0000000000000w

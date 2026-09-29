@@ -104,6 +104,9 @@ import Flapjack.Test.LoopSetGlobalsParity
 import Flapjack.Test.LoopSetVarsParity
 import Flapjack.Test.LoopSetVarParity
 import Flapjack.Test.LoopToWordExactParity
+import Flapjack.Test.LoopToWordGlobalsRelParity
+import Flapjack.Test.LoopToWordCompHOLParity
+import Flapjack.Test.LoopToWordAllDistinctMapParity
 import Flapjack.Test.LoopDecClockParity
 import Flapjack.Test.LoopFixClockParity
 import Flapjack.Test.LoopPropsSurvivesParity
@@ -317,6 +320,14 @@ import Flapjack.Test.RegAllocVarParity
 import Flapjack.Test.WordLangNotCreatedParity
 import Flapjack.Test.WordLangEveryVarParity
 import Flapjack.Test.WordSemCarriersParity
+import Flapjack.Test.WordSemAccessorsParity
+import Flapjack.Test.WordSemEnvParity
+import Flapjack.Test.WordSemCallHelpersParity
+import Flapjack.Test.WordSemAllocParity
+import Flapjack.Test.WordSemShMemParity
+import Flapjack.Test.MachineIeeeCompareParity
+import Flapjack.Test.BinaryIeeeRoundParity
+import Flapjack.Test.MachineIeeeArithSpecialParity
 import Flapjack.Test.WordLangGoodHandlersParity
 import Flapjack.Test.NumSetAuditParity
 import Flapjack.Test.WordLangEveryNameParity
@@ -843,6 +854,9 @@ def main : IO Unit := do
     Flapjack.Test.LoopSetVarsParity.runChecks,
     Flapjack.Test.LoopSetVarParity.runChecks,
     Flapjack.Test.LoopToWordExactParity.runChecks,
+    Flapjack.Test.LoopToWordGlobalsRelParity.runChecks,
+    Flapjack.Test.LoopToWordCompHOLParity.runChecks,
+    Flapjack.Test.LoopToWordAllDistinctMapParity.runChecks,
     Flapjack.Test.LoopDecClockParity.runChecks,
     Flapjack.Test.LoopFixClockParity.runChecks,
     Flapjack.Test.LoopPropsSurvivesParity.runChecks,
@@ -1064,6 +1078,14 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.WordLangNotCreatedParity.runChecks,
     Flapjack.Test.WordLangEveryVarParity.runChecks,
     Flapjack.Test.WordSemCarriersParity.runChecks,
+    Flapjack.Test.WordSemAccessorsParity.runChecks,
+    Flapjack.Test.WordSemEnvParity.runChecks,
+    Flapjack.Test.WordSemCallHelpersParity.runChecks,
+    Flapjack.Test.WordSemAllocParity.runChecks,
+    Flapjack.Test.WordSemShMemParity.runChecks,
+    Flapjack.Test.MachineIeeeCompareParity.runChecks,
+    Flapjack.Test.BinaryIeeeRoundParity.runChecks,
+    Flapjack.Test.MachineIeeeArithSpecialParity.runChecks,
     Flapjack.Test.WordLangGoodHandlersParity.runChecks,
     Flapjack.Test.NumSetAuditParity.runChecks,
     Flapjack.Test.WordLangEveryNameParity.runChecks,

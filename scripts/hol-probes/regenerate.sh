@@ -207,10 +207,35 @@ run_probe loop_to_word_defs_probeScript.sml loop_to_word_defs_probe.out \
   lt_to_num_set_lookup0 lt_to_num_set_lookup2 lt_to_num_set_lookup3 \
   lt_from_num_set lt_mk_new_cutset_lookup0 lt_mk_new_cutset_lookup5 \
   lt_mk_new_cutset_absent "$cake_dir/pancake/loop_to_wordScript.sml"
+run_probe loop_to_word_locals_rel_probeScript.sml loop_to_word_locals_rel_probe.out \
+  lt_locals_rel_good_with_extra_target lt_locals_rel_odd_register \
+  lt_locals_rel_zero_register lt_locals_rel_noninjective \
+  lt_locals_rel_missing_context lt_locals_rel_wrong_value \
+  lt_locals_rel_insert_mapped lt_locals_rel_insert_unmapped \
+  lt_locals_rel_insert_unmapped_collision \
+  "$cake_dir/pancake/proofs/loop_to_wordProofScript.sml" \
+  "$cake_dir/pancake/proofs"
 run_probe loop_to_word_comp_exp_probeScript.sml loop_to_word_comp_exp_probe.out \
   comp_exp_const comp_exp_var comp_exp_var_miss comp_exp_lookup \
   comp_exp_base_addr comp_exp_top_addr comp_exp_load comp_exp_shift \
   comp_exp_op "$cake_dir/pancake/loop_to_wordScript.sml"
+run_probe loop_to_word_comp_probeScript.sml loop_to_word_comp_probe.out \
+  comp_skip comp_assign comp_addcarry_valid comp_addcarry_bad_dest_arity \
+  comp_addcarry_bad_argument_arity comp_longmul comp_longdiv comp_div \
+  comp_store comp_setglobal comp_load32 comp_loadbyte comp_store32 comp_storebyte \
+  comp_break comp_continue comp_raise comp_return comp_tick comp_fail \
+  comp_locValue comp_ffi comp_shMem \
+  "$cake_dir/pancake/loop_to_wordScript.sml"
+run_probe loop_to_word_comp_recursive_probeScript.sml loop_to_word_comp_recursive_probe.out \
+  comp_seq comp_if comp_loop comp_mark \
+  "$cake_dir/pancake/loop_to_wordScript.sml"
+run_probe loop_to_word_globals_rel_probeScript.sml loop_to_word_globals_rel_probe.out \
+  globals_rel_match globals_rel_value_mismatch globals_rel_temp_mismatch globals_rel_empty_source \
+  "$cake_dir/pancake/proofs/loop_to_wordProofScript.sml" \
+  "$cake_dir/pancake/proofs"
+run_probe loop_to_word_comp_call_probeScript.sml loop_to_word_comp_call_probe.out \
+  comp_call_tail comp_call_no_handler comp_call_handler \
+  "$cake_dir/pancake/loop_to_wordScript.sml"
 # The get_stack_only probe observes the allocator driver's stack-only
 # analysis over wordLang programs (backend word_alloc).
 run_probe get_stack_only_probeScript.sml get_stack_only_probe.out \
@@ -1458,7 +1483,8 @@ run_probe loop_sem_eval_probeScript.sml loop_sem_eval_probe.out \
 run_probe loop_sem_evaluate_probeScript.sml loop_sem_evaluate_probe.out \
   skip tick_timeout "$cake_dir/pancake/semantics/loopSemScript.sml"
 run_probe loop_sem_evaluate_control_probeScript.sml loop_sem_evaluate_control_probe.out \
-  if_true if_false if_cut_error loop_break0 loop_return loop_timeout \
+  if_true if_false if_cut_error if_nonword_left_error if_nonword_right_error \
+  loop_break0 loop_return loop_timeout \
   loop_continue0_timeout loop_break_outer call_return call_return_handler \
   call_exception_handler call_exception_no_handler call_arity_error \
   tail_call_return raise primitive_add_carry loc_value loc_value_missing \
@@ -1608,6 +1634,71 @@ run_probe word_lang_every_var_probeScript.sml word_lang_every_var_probe.out \
 run_probe word_sem_carriers_probeScript.sml word_sem_carriers_probe.out \
   buffer_flush_hit stack_size_unbounded \
   "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
+# The wordSem accessor probe observes word_cmp, is_fwd_ptr, word_exp and the
+# state accessors over record updates of a free state (bead flapjack-h29l.2).
+run_probe word_sem_accessors_probeScript.sml word_sem_accessors_probe.out \
+  cmp_equal exp_op fix_clock var_imm_reg \
+  "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
+# The wordSem env/stack probe observes key_val_compare, list_rearrange (with
+# its BIJ guard decided over the finite count set), fromList2, mllist$sort,
+# env_to_list, call_env, push_env/pop_env, jump_exc and the cut_* helpers
+# (bead flapjack-h29l.4).
+run_probe word_sem_env_probeScript.sml word_sem_env_probe.out \
+  kvc_loc_loc rearrange_rev env_to_list push_env_some jump_exc cut_state_opt_none \
+  "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
+# The wordSem call-helper probe observes add_ret_loc, bad_dest_args,
+# const_addresses/const_writes, STOP, bad_fun_return, cont_loop, exit_loop and
+# the [nocompute] MustTerminate_limit unfolded at width 1 (bead flapjack-h29l.7).
+run_probe word_sem_call_helpers_probeScript.sml word_sem_call_helpers_probe.out \
+  add_ret_loc_none const_writes exit_loop_break0 must_terminate_limit_1 \
+  "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
+# The wordSem code/GC/alloc probe observes find_code, enc_stack/dec_stack, gc
+# with a supplied gc_fun, has_space, alloc (success, NotEnoughSpace, cut and gc
+# failure) and assign (bead flapjack-h29l.5).
+run_probe word_sem_alloc_probeScript.sml word_sem_alloc_probe.out \
+  find_code_some dec_stack_hit gc_rev alloc_ok assign_fail \
+  "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
+# The wordSem shared-memory probe observes share_inst for every memop (through
+# sh_mem_store*/sh_mem_load* and sh_mem_set_var) with a byte-incrementing and a
+# diverging FFI oracle, recording configuration and payload bytes via
+# io_events (bead flapjack-h29l.3).
+run_probe word_sem_sh_mem_probeScript.sml word_sem_sh_mem_probe.out \
+  store store_final load8 load_final sh_mem_set_var_none \
+  "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
+# The machine_ieee fp64 probe observes fp64_lessThan/lessEqual/equal/abs/negate
+# on +-0, subnormals, the least normal, the largest finite value, infinities
+# and quiet/signalling NaNs; binary_ieeeLib extends EVAL with the IEEE
+# conversions (bead flapjack-h29l.6.1).
+run_probe machine_ieee_fp64_compare_probeScript.sml machine_ieee_fp64_compare_probe.out \
+  lt_one_two le_pz_nz eq_pz_nz abs_negone neg_sub1 \
+  "$hol_dir/src/floating-point/binary_ieeeScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
+# The binary_ieee rounding-constant probe observes largest and threshold at
+# binary64 and float_top's value (bead flapjack-h29l.6.2.1).
+run_probe binary_ieee_round_constants_probeScript.sml binary_ieee_round_constants_probe.out \
+  largest_fp64 threshold_fp64 top_is_largest \
+  "$hol_dir/src/floating-point/binary_ieeeScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
+# The binary64 arithmetic special-case probe observes the infinity and
+# zero-divisor branches of fp64_add/sub/mul/div and the tagged fpSem fpfma
+# (bead flapjack-h29l.6.2.2).
+run_probe machine_ieee_fp64_arith_special_probeScript.sml machine_ieee_fp64_arith_special_probe.out \
+  add_pinf_one div_one_pz fma_order_inf \
+  "$cake_dir/semantics/fpSemScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 
 # The good_handlers probe observes the structural handler-label predicate,
