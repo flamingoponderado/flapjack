@@ -45,6 +45,7 @@ import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.ShMem
 import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Dec
 import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Primitive
 import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Store
+import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Store32
 import Flapjack.Pancake.CrepToLoop.Proofs.RelationsExact
 import Flapjack.Pancake.CrepToLoop.Proofs.NCompileCorrect.Leaf
 import Flapjack.Pancake.CrepToLoop.Proofs.LocalsRelHelpers
