@@ -23577,5 +23577,101 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.4): HOL cut_state_opt names s (:607-612) = case names of NONE => SOME s | SOME names => cut_state names s; Lean identical. The state is the tagged WordSemStateFiniteExact; its two |-> fields fp_regs/store are recorded by fmap_as_finite_support [fpRegs, store] with the same-module witness WordSemEnvSupport.holFmapAsFiniteSupportWitness. Words are BitVec width with [NeZero width]; no other representation change. Rows cut_state_opt_none of scripts/hol-probes/word_sem_env_probe.out are checked by Flapjack.Test.WordSemEnvParity."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/CallHelpers.lean",
+    "lean_name": "wordSemAddRetLoc",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "add_ret_loc_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.7): HOL add_ret_loc (:946-949): NONE xs = xs, SOME (n,names,ret_handler,l1,l2) xs = Loc l1 l2 :: xs; Lean identical over the tagged WordLangProgHOL Call returns carrier (num list # cutsets # prog # num # num) option. Words are BitVec width with [NeZero width] (words_as_type_indexed_bitvec); no other representation change. Rows add_ret_loc_none/some of scripts/hol-probes/word_sem_call_helpers_probe.out are checked by Flapjack.Test.WordSemCallHelpersParity."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/CallHelpers.lean",
+    "lean_name": "wordSemBadDestArgs",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "bad_dest_args_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.7): HOL bad_dest_args dest args (:952-954) <=> dest = NONE ∧ args = []; Lean the decided Bool of the same conjunction over num option / num list. Rows bad_dest_args_* of scripts/hol-probes/word_sem_call_helpers_probe.out are checked by Flapjack.Test.WordSemCallHelpersParity."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/CallHelpers.lean",
+    "lean_name": "termdep_rw",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "termdep_rw",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.7): HOL local Theorem termdep_rw (:956-962): (call_env p_1 ss s).termdep = s.termdep ∧ (dec_clock s).termdep = s.termdep ∧ (set_var n v s).termdep = s.termdep, with the free variables p_1, ss, s, n, v bound universally; same three conjuncts over the tagged callEnv/decClock/setVar. The state is the tagged WordSemStateFiniteExact; its two |-> fields fp_regs/store are recorded by fmap_as_finite_support [fpRegs, store] with the same-module witness WordSemCallHelpersSupport.holFmapAsFiniteSupportWitness. Words are BitVec width with [NeZero width]; no other representation change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/CallHelpers.lean",
+    "lean_name": "fixClock_IMP_LESS_EQ",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "fix_clock_IMP_LESS_EQ",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.7): HOL local Theorem fix_clock_IMP_LESS_EQ (:964-968): !x. fix_clock s x = (res,s1) ==> s1.clock <= s.clock ∧ s1.termdep = s.termdep, with free s, res, s1 bound universally (res at an arbitrary result type β, as HOL's polymorphic fix_clock); same statement over the tagged fixClock. The state is the tagged WordSemStateFiniteExact; its two |-> fields fp_regs/store are recorded by fmap_as_finite_support [fpRegs, store] with the same-module witness WordSemCallHelpersSupport.holFmapAsFiniteSupportWitness. Words are BitVec width with [NeZero width]; no other representation change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/CallHelpers.lean",
+    "lean_name": "wordSemConstAddresses",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "const_addresses_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.7): HOL const_addresses (:980-984): a [] d = T, a (x::xs) d = (a IN d ∧ const_addresses (a + bytes_in_word) xs d); Lean identical with the set-as-Bool 'a word set and bytes_in_word = n2w (dimindex (:'a) DIV 8) as wordSemBytesInWord. Words are BitVec width with [NeZero width] (words_as_type_indexed_bitvec); no other representation change. Rows const_addresses_* of scripts/hol-probes/word_sem_call_helpers_probe.out are checked by Flapjack.Test.WordSemCallHelpersParity."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/CallHelpers.lean",
+    "lean_name": "wordSemConstWrites",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "const_writes_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.7): HOL const_writes (:986-991): a off [] m = m, a off ((b,x)::xs) m = const_writes (a + bytes_in_word) off xs ((a =+ Word (if b then x + off else x)) m); Lean identical with =+ as the pointwise if. Words are BitVec width with [NeZero width] (words_as_type_indexed_bitvec); no other representation change. Rows const_writes of scripts/hol-probes/word_sem_call_helpers_probe.out are checked by Flapjack.Test.WordSemCallHelpersParity."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/CallHelpers.lean",
+    "lean_name": "wordSemSTOP",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "STOP_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.7): HOL STOP x = x (:993-995); Lean identical, polymorphic. Rows stop of scripts/hol-probes/word_sem_call_helpers_probe.out are checked by Flapjack.Test.WordSemCallHelpersParity."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/CallHelpers.lean",
+    "lean_name": "wordSemBadFunReturn",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "bad_fun_return_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.7): HOL bad_fun_return (:997-1002): NONE = T, SOME (Break _) = T, SOME (Continue _) = T, _ = F over the tagged WordSemResult; Lean identical. Words are BitVec width with [NeZero width] (words_as_type_indexed_bitvec); no other representation change. Rows bad_fun_return_* of scripts/hol-probes/word_sem_call_helpers_probe.out are checked by Flapjack.Test.WordSemCallHelpersParity."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/CallHelpers.lean",
+    "lean_name": "wordSemContLoop",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "cont_loop_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.7): HOL cont_loop (:1004-1008): NONE = T, SOME (Continue n) = (n = 0), _ = F; Lean identical. Words are BitVec width with [NeZero width] (words_as_type_indexed_bitvec); no other representation change. Rows cont_loop_* of scripts/hol-probes/word_sem_call_helpers_probe.out are checked by Flapjack.Test.WordSemCallHelpersParity."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/CallHelpers.lean",
+    "lean_name": "wordSemExitLoop",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "exit_loop_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.7): HOL exit_loop (:1010-1014): SOME (Break n) = SOME (Break (n - 1)), SOME (Continue n) = SOME (Continue (n - 1)), res = res (num monus); Lean identical. Words are BitVec width with [NeZero width] (words_as_type_indexed_bitvec); no other representation change. Rows exit_loop_* of scripts/hol-probes/word_sem_call_helpers_probe.out are checked by Flapjack.Test.WordSemCallHelpersParity."
   }
 ]
