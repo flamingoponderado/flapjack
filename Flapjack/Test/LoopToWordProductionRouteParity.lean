@@ -31,24 +31,19 @@ private def ffiBody : LoopProg (BitVec 8) :=
 private def nonByteFfiBody : LoopProg (BitVec 8) :=
   .ffi "λ" 0 1 2 3 [0, 1]
 
-example : (loopToWordCompFuncViaHOL 3 [0, 1] controlBody).isSome = true := by
-  native_decide
-example : (loopToWordCompFuncViaHOL 3 [0, 1] handlerBody).isSome = true := by
-  native_decide
-example : (loopToWordCompFuncViaHOL 3 [0, 1] memoryBody).isSome = true := by
-  native_decide
-example : (loopToWordCompFuncViaHOL 3 [0, 1] ffiBody).isSome = true := by
-  native_decide
-example : loopToWordCompFuncViaHOL 3 [0, 1] nonByteFfiBody = none := by
-  native_decide
+#guard (loopToWordCompFuncViaHOL 3 [0, 1] controlBody).isSome = true
+#guard (loopToWordCompFuncViaHOL 3 [0, 1] handlerBody).isSome = true
+#guard (loopToWordCompFuncViaHOL 3 [0, 1] memoryBody).isSome = true
+#guard (loopToWordCompFuncViaHOL 3 [0, 1] ffiBody).isSome = true
+#guard loopToWordCompFuncViaHOL 3 [0, 1] nonByteFfiBody = none
 
-example : reprStr (loopToWordCompFuncRouted 3 [0, 1] controlBody) =
-    reprStr (loopToWordCompFunc 3 [0, 1] controlBody) := by native_decide
-example : reprStr (loopToWordCompFuncRouted 3 [0, 1] handlerBody) =
-    reprStr (loopToWordCompFunc 3 [0, 1] handlerBody) := by native_decide
-example : reprStr (loopToWordCompFuncRouted 3 [0, 1] memoryBody) =
-    reprStr (loopToWordCompFunc 3 [0, 1] memoryBody) := by native_decide
-example : reprStr (loopToWordCompFuncRouted 3 [0, 1] ffiBody) =
-    reprStr (loopToWordCompFunc 3 [0, 1] ffiBody) := by native_decide
+#guard reprStr (loopToWordCompFuncRouted 3 [0, 1] controlBody) =
+  reprStr (loopToWordCompFunc 3 [0, 1] controlBody)
+#guard reprStr (loopToWordCompFuncRouted 3 [0, 1] handlerBody) =
+  reprStr (loopToWordCompFunc 3 [0, 1] handlerBody)
+#guard reprStr (loopToWordCompFuncRouted 3 [0, 1] memoryBody) =
+  reprStr (loopToWordCompFunc 3 [0, 1] memoryBody)
+#guard reprStr (loopToWordCompFuncRouted 3 [0, 1] ffiBody) =
+  reprStr (loopToWordCompFunc 3 [0, 1] ffiBody)
 
 end Flapjack.Test.LoopToWordProductionRouteParity

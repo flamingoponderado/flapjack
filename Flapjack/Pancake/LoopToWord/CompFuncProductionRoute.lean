@@ -88,14 +88,16 @@ success follows from `loopToWordCompFuncViaHOL_ne_none_of_encode_and_byte_names`
 def loopToWordCompFuncRouted {width : Nat} [NeZero width]
     (name : Nat) (params : List Nat) (body : LoopProg (BitVec width)) :
     WordProg (BitVec width) :=
-  (loopToWordCompFuncViaHOL name params body).getD
-    (loopToWordCompFunc name params body)
+  match loopToWordCompFuncViaHOL name params body with
+  | some compiled => compiled
+  | none => loopToWordCompFunc name params body
 
 /-- Formal names chosen by the same guarded route as the body compiler. -/
 def loopToWordCompParametersRouted {width : Nat} [NeZero width]
     (params : List Nat) (body : LoopProg (BitVec width)) : List Nat :=
-  (loopToWordCompParametersViaHOL params body).getD
-    (loopToWordCompParameters params body)
+  match loopToWordCompParametersViaHOL params body with
+  | some compiled => compiled
+  | none => loopToWordCompParameters params body
 
 /-- When both the source encoder and the exact target projection succeed, the
 routed production result is that exact projected HOL output; the compatibility
