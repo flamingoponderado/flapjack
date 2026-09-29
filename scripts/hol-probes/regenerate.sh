@@ -238,6 +238,10 @@ run_probe loop_to_word_globals_rel_probeScript.sml loop_to_word_globals_rel_prob
 run_probe loop_to_word_comp_call_probeScript.sml loop_to_word_comp_call_probe.out \
   comp_call_tail comp_call_no_handler comp_call_handler \
   "$cake_dir/pancake/loop_to_wordScript.sml"
+run_probe loop_to_word_comp_func_probeScript.sml loop_to_word_comp_func_probe.out \
+  comp_func_skip comp_func_param_assign comp_func_new_temp \
+  compile_prog_code compile_code \
+  "$cake_dir/pancake/loop_to_wordScript.sml"
 run_probe loop_to_word_take_word_to_bytes_probeScript.sml \
   loop_to_word_take_word_to_bytes_probe.out \
   take1_statement twb32_0 twb32_1 twb32_hi gb32_0 gb32_1 gb32_hi \
