@@ -69,7 +69,7 @@ def resultCase {width : Nat} [NeZero width] {C F : Type} (ctxt : Spt Nat)
         t1.stack = t.stack ∧ t1.handler = t.handler
   | some .timeOut => res1 = some .timeOut
   | some (.finalFfi f) => res1 = some (.finalFfi f)
-  | _ => False
+  | some .error => False
 
 /-- HOL `compile_correct`'s `goal` at one `(prog, s)` pair
     (`loop_to_wordProofScript.sml:57-92`): the target state `t` is typed at

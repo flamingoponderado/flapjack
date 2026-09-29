@@ -217,6 +217,17 @@ run_probe loop_to_word_locals_rel_probeScript.sml loop_to_word_locals_rel_probe.
   word_get_vars_hit word_get_vars_miss \
   "$cake_dir/pancake/proofs/loop_to_wordProofScript.sml" \
   "$cake_dir/pancake/proofs"
+# The compile_correct case probe rebuilds HOL's specialised evaluate_ind for
+# loop_to_word compile_correct and prints each ported case conjunct, together
+# with the rebound wordSem evaluate_ind/evaluate_def (beads
+# flapjack-pxn.18.5.9.21/.24, flapjack-h29l.9.2).
+run_probe loop_to_word_compile_correct_cases_probeScript.sml \
+  loop_to_word_compile_correct_cases_probe.out \
+  cc_ind_thm_conclusion_is_compile_correct cc_case_Skip cc_case_Fail cc_case_Mark \
+  cc_case_Break cc_case_Continue cc_case_Raise cc_case_Return cc_case_Tick \
+  ws_evaluate_ind ws_evaluate_def ws_end \
+  "$cake_dir/pancake/proofs/loop_to_wordProofScript.sml" \
+  "$cake_dir/pancake/proofs"
 run_probe loop_to_word_comp_exp_probeScript.sml loop_to_word_comp_exp_probe.out \
   comp_exp_const comp_exp_var comp_exp_var_miss comp_exp_lookup \
   comp_exp_base_addr comp_exp_top_addr comp_exp_load comp_exp_shift \
