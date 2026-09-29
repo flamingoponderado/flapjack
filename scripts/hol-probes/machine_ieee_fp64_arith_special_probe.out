@@ -14,3 +14,4 @@ div_one_nz=0xFFF0000000000000w
 fma_pinf_product=0x7FF0000000000000w
 fma_ninf_addend=0xFFF0000000000000w
 fma_neg_inf_product=0xFFF0000000000000w
+fma_order_inf=0xFFF0000000000000w
