@@ -187,9 +187,15 @@ theorem loopLive_compile_correct_fail {width : Nat} [NeZero width] {F : Type} :
   simp only [evaluate, Prod.mk.injEq] at he
   exact absurd he.1.symm hne
 
-/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
-    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `Tick` (`loop_liveProofScript.sml:17-37` statement;
-    `Resume compile_correct[Tick]` at 76-79). -/
+/-- Exact `evaluate_ind` leaf case of HOL `compile_correct` for `Tick`
+    (`loop_liveProofScript.sml:17-37`; `Resume compile_correct[Tick]` at 76-79). Specializing HOL's
+    constructor variable leaves the payload binders, `v1 res s1 lt locals prog1 l1 l0`,
+    all four premises and the full existential/eight-way result conclusion. This
+    case has no recursive sub-program, hence no induction hypothesis; the
+    lexicographic assembly adds none to it. The state `globals` map and word carrier
+    use only the reviewed finite-support and type-indexed BitVec translations. -/
+@[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 theorem loopLive_compile_correct_tick {width : Nat} [NeZero width] {F : Type} :
     ∀ (v1 : LoopSemStateFiniteExact width F),
     ∀ (res : Option (LoopResultExact width)) (s1 : LoopSemStateFiniteExact width F)
@@ -224,9 +230,15 @@ theorem loopLive_compile_correct_tick {width : Nat} [NeZero width] {F : Type} :
     obtain ⟨rfl, rfl⟩ := he
     exact ⟨locals, by simp [evaluate, hc, decClock], hsub⟩
 
-/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
-    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `Continue` (`loop_liveProofScript.sml:17-37` statement;
-    `Resume compile_correct[Continue]` at 81-87). -/
+/-- Exact `evaluate_ind` leaf case of HOL `compile_correct` for `Continue`
+    (`loop_liveProofScript.sml:17-37`; `Resume compile_correct[Continue]` at 81-87). Specializing HOL's
+    constructor variable leaves the payload binders, `v1 res s1 lt locals prog1 l1 l0`,
+    all four premises and the full existential/eight-way result conclusion. This
+    case has no recursive sub-program, hence no induction hypothesis; the
+    lexicographic assembly adds none to it. The state `globals` map and word carrier
+    use only the reviewed finite-support and type-indexed BitVec translations. -/
+@[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 theorem loopLive_compile_correct_continue {width : Nat} [NeZero width] {F : Type} :
     ∀ (k : Nat) (v1 : LoopSemStateFiniteExact width F),
     ∀ (res : Option (LoopResultExact width)) (s1 : LoopSemStateFiniteExact width F)
@@ -261,9 +273,15 @@ theorem loopLive_compile_correct_continue {width : Nat} [NeZero width] {F : Type
   · rename_i cont brk heq; simpa [heq] using hsub
   · trivial
 
-/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
-    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `Break` (`loop_liveProofScript.sml:17-37` statement;
-    `Resume compile_correct[Break]` at 89-95). -/
+/-- Exact `evaluate_ind` leaf case of HOL `compile_correct` for `Break`
+    (`loop_liveProofScript.sml:17-37`; `Resume compile_correct[Break]` at 89-95). Specializing HOL's
+    constructor variable leaves the payload binders, `v1 res s1 lt locals prog1 l1 l0`,
+    all four premises and the full existential/eight-way result conclusion. This
+    case has no recursive sub-program, hence no induction hypothesis; the
+    lexicographic assembly adds none to it. The state `globals` map and word carrier
+    use only the reviewed finite-support and type-indexed BitVec translations. -/
+@[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 theorem loopLive_compile_correct_break {width : Nat} [NeZero width] {F : Type} :
     ∀ (k : Nat) (v1 : LoopSemStateFiniteExact width F),
     ∀ (res : Option (LoopResultExact width)) (s1 : LoopSemStateFiniteExact width F)
@@ -330,9 +348,15 @@ theorem loopLive_compile_correct_mark {width : Nat} [NeZero width] {F : Type} :
   simp only [evaluate] at he
   exact ih res s1 lt locals prog1 l1 l0 ⟨he, hne, hs, hsub⟩
 
-/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
-    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `Return` (`loop_liveProofScript.sml:17-37` statement;
-    `Resume compile_correct[Return]` at 101-110). -/
+/-- Exact `evaluate_ind` leaf case of HOL `compile_correct` for `Return`
+    (`loop_liveProofScript.sml:17-37`; `Resume compile_correct[Return]` at 101-110). Specializing HOL's
+    constructor variable leaves the payload binders, `v1 res s1 lt locals prog1 l1 l0`,
+    all four premises and the full existential/eight-way result conclusion. This
+    case has no recursive sub-program, hence no induction hypothesis; the
+    lexicographic assembly adds none to it. The state `globals` map and word carrier
+    use only the reviewed finite-support and type-indexed BitVec translations. -/
+@[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 theorem loopLive_compile_correct_return {width : Nat} [NeZero width] {F : Type} :
     ∀ (ns : List Nat) (v1 : LoopSemStateFiniteExact width F),
     ∀ (res : Option (LoopResultExact width)) (s1 : LoopSemStateFiniteExact width F)
@@ -368,9 +392,15 @@ theorem loopLive_compile_correct_return {width : Nat} [NeZero width] {F : Type} 
       sptSubspt_inter_lookup hsub (sptMem_sptListInsert_of_mem n ns _ hn) w hw) hg
     exact ⟨(LoopSemStateFiniteExact.callEnv [] v1).locals, by simp [evaluate, hg', LoopSemStateFiniteExact.callEnv], rfl⟩
 
-/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
-    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `Raise` (`loop_liveProofScript.sml:17-37` statement;
-    `Resume compile_correct[Raise]` at 112-116). -/
+/-- Exact `evaluate_ind` leaf case of HOL `compile_correct` for `Raise`
+    (`loop_liveProofScript.sml:17-37`; `Resume compile_correct[Raise]` at 112-116). Specializing HOL's
+    constructor variable leaves the payload binders, `v1 res s1 lt locals prog1 l1 l0`,
+    all four premises and the full existential/eight-way result conclusion. This
+    case has no recursive sub-program, hence no induction hypothesis; the
+    lexicographic assembly adds none to it. The state `globals` map and word carrier
+    use only the reviewed finite-support and type-indexed BitVec translations. -/
+@[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 theorem loopLive_compile_correct_raise {width : Nat} [NeZero width] {F : Type} :
     ∀ (x : Nat) (v1 : LoopSemStateFiniteExact width F),
     ∀ (res : Option (LoopResultExact width)) (s1 : LoopSemStateFiniteExact width F)
@@ -790,9 +820,15 @@ private theorem subspt_inter_apply {width : Nat} [NeZero width]
   rw [(h k ((mem_inter_iff a l k).mpr ⟨ha, hl⟩)).2, sptLookup_sptInter,
     if_pos (show (sptLookup k l).isSome = true from hl)]
 
-/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
-    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `Assign` (`loop_liveProofScript.sml:17-37` statement;
-    `Resume compile_correct[Assign]` at 490-509). -/
+/-- Exact `evaluate_ind` leaf case of HOL `compile_correct` for `Assign`
+    (`loop_liveProofScript.sml:17-37`; `Resume compile_correct[Assign]` at 490-509). Specializing HOL's
+    constructor variable leaves the payload binders, `v1 res s1 lt locals prog1 l1 l0`,
+    all four premises and the full existential/eight-way result conclusion. This
+    case has no recursive sub-program, hence no induction hypothesis; the
+    lexicographic assembly adds none to it. The state `globals` map and word carrier
+    use only the reviewed finite-support and type-indexed BitVec translations. -/
+@[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 theorem loopLive_compile_correct_assign {width : Nat} [NeZero width] {F : Type} :
     ∀ (n : Nat) (x : HolLoopExp width) (v1 : LoopSemStateFiniteExact width F)
       (res : Option (LoopResultExact width)) (s1 : LoopSemStateFiniteExact width F)
@@ -853,9 +889,15 @@ theorem loopLive_compile_correct_assign {width : Nat} [NeZero width] {F : Type} 
       simp only [setVar, sptLookup_sptInsert, hkn, if_false]
       exact subspt_inter_apply hsub hka' hkv
 
-/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
-    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `SetGlobal` (`loop_liveProofScript.sml:17-37` statement;
-    `Resume compile_correct[SetGlobal]` at 511-519). -/
+/-- Exact `evaluate_ind` leaf case of HOL `compile_correct` for `SetGlobal`
+    (`loop_liveProofScript.sml:17-37`; `Resume compile_correct[SetGlobal]` at 511-519). Specializing HOL's
+    constructor variable leaves the payload binders, `v1 res s1 lt locals prog1 l1 l0`,
+    all four premises and the full existential/eight-way result conclusion. This
+    case has no recursive sub-program, hence no induction hypothesis; the
+    lexicographic assembly adds none to it. The state `globals` map and word carrier
+    use only the reviewed finite-support and type-indexed BitVec translations. -/
+@[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 theorem loopLive_compile_correct_setGlobal {width : Nat} [NeZero width] {F : Type} :
     ∀ (g : BitVec 5) (x : HolLoopExp width) (v1 : LoopSemStateFiniteExact width F)
       (res : Option (LoopResultExact width)) (s1 : LoopSemStateFiniteExact width F)
@@ -894,9 +936,15 @@ theorem loopLive_compile_correct_setGlobal {width : Nat} [NeZero width] {F : Typ
   rw [sptLookup_sptInter, if_pos (show (sptLookup k l0).isSome = true from hkl)]
   exact subspt_inter_apply hsub hka ((vars_of_exp_mono x l0 k hkl).1)
 
-/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
-    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `LocValue` (`loop_liveProofScript.sml:17-37` statement;
-    `Resume compile_correct[LocValue]` at 521-532). -/
+/-- Exact `evaluate_ind` leaf case of HOL `compile_correct` for `LocValue`
+    (`loop_liveProofScript.sml:17-37`; `Resume compile_correct[LocValue]` at 521-532). Specializing HOL's
+    constructor variable leaves the payload binders, `v1 res s1 lt locals prog1 l1 l0`,
+    all four premises and the full existential/eight-way result conclusion. This
+    case has no recursive sub-program, hence no induction hypothesis; the
+    lexicographic assembly adds none to it. The state `globals` map and word carrier
+    use only the reviewed finite-support and type-indexed BitVec translations. -/
+@[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 theorem loopLive_compile_correct_locValue {width : Nat} [NeZero width] {F : Type} :
     ∀ (r m : Nat) (v1 : LoopSemStateFiniteExact width F)
       (res : Option (LoopResultExact width)) (s1 : LoopSemStateFiniteExact width F)
@@ -991,9 +1039,15 @@ private theorem post_setVar {width : Nat} [NeZero width]
       simp only [sptLookup_sptInsert, hky, if_false]
       exact subspt_inter_apply h hka' (hsub k hky hkl)
 
-/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
-    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `Store` (`loop_liveProofScript.sml:17-37` statement;
-    `Resume compile_correct[Store]` at 705-718). -/
+/-- Exact `evaluate_ind` leaf case of HOL `compile_correct` for `Store`
+    (`loop_liveProofScript.sml:17-37`; `Resume compile_correct[Store]` at 705-718). Specializing HOL's
+    constructor variable leaves the payload binders, `v1 res s1 lt locals prog1 l1 l0`,
+    all four premises and the full existential/eight-way result conclusion. This
+    case has no recursive sub-program, hence no induction hypothesis; the
+    lexicographic assembly adds none to it. The state `globals` map and word carrier
+    use only the reviewed finite-support and type-indexed BitVec translations. -/
+@[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 theorem loopLive_compile_correct_store {width : Nat} [NeZero width] {F : Type} :
     ∀ (e : HolLoopExp width) (n : Nat) (v1 : LoopSemStateFiniteExact width F)
       (res : Option (LoopResultExact width)) (s1 : LoopSemStateFiniteExact width F)
@@ -1039,9 +1093,15 @@ theorem loopLive_compile_correct_store {width : Nat} [NeZero width] {F : Type} :
     exact post_none_same hsub fun k hk => (vars_of_exp_mono e _ k (mem_insert_of' n hk)).1
   · simp [evaluate, hx, hn, memStore, hd] at he; exact absurd he.1.symm hne
 
-/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
-    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `Store32` (`loop_liveProofScript.sml:17-37` statement;
-    `Resume compile_correct[Store32]` at 720-727). -/
+/-- Exact `evaluate_ind` leaf case of HOL `compile_correct` for `Store32`
+    (`loop_liveProofScript.sml:17-37`; `Resume compile_correct[Store32]` at 720-727). Specializing HOL's
+    constructor variable leaves the payload binders, `v1 res s1 lt locals prog1 l1 l0`,
+    all four premises and the full existential/eight-way result conclusion. This
+    case has no recursive sub-program, hence no induction hypothesis; the
+    lexicographic assembly adds none to it. The state `globals` map and word carrier
+    use only the reviewed finite-support and type-indexed BitVec translations. -/
+@[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 theorem loopLive_compile_correct_store32 {width : Nat} [NeZero width] {F : Type} :
     ∀ (a w : Nat) (v1 : LoopSemStateFiniteExact width F)
       (res : Option (LoopResultExact width)) (s1 : LoopSemStateFiniteExact width F)
@@ -1090,9 +1150,15 @@ theorem loopLive_compile_correct_store32 {width : Nat} [NeZero width] {F : Type}
   refine ⟨locals, by simp [evaluate, ha', hw', hm], ?_⟩
   exact post_none_same hsub fun k hk => mem_insert_of' a (mem_insert_of' w hk)
 
-/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
-    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `StoreByte` (`loop_liveProofScript.sml:17-37` statement;
-    `Resume compile_correct[StoreByte]` at 729-736). -/
+/-- Exact `evaluate_ind` leaf case of HOL `compile_correct` for `StoreByte`
+    (`loop_liveProofScript.sml:17-37`; `Resume compile_correct[StoreByte]` at 729-736). Specializing HOL's
+    constructor variable leaves the payload binders, `v1 res s1 lt locals prog1 l1 l0`,
+    all four premises and the full existential/eight-way result conclusion. This
+    case has no recursive sub-program, hence no induction hypothesis; the
+    lexicographic assembly adds none to it. The state `globals` map and word carrier
+    use only the reviewed finite-support and type-indexed BitVec translations. -/
+@[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 theorem loopLive_compile_correct_storeByte {width : Nat} [NeZero width] {F : Type} :
     ∀ (a w : Nat) (v1 : LoopSemStateFiniteExact width F)
       (res : Option (LoopResultExact width)) (s1 : LoopSemStateFiniteExact width F)
@@ -1141,9 +1207,15 @@ theorem loopLive_compile_correct_storeByte {width : Nat} [NeZero width] {F : Typ
   refine ⟨locals, by simp [evaluate, ha', hw', hm], ?_⟩
   exact post_none_same hsub fun k hk => mem_insert_of' a (mem_insert_of' w hk)
 
-/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
-    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `Load32` (`loop_liveProofScript.sml:17-37` statement;
-    `Resume compile_correct[Load32]` at 738-745). -/
+/-- Exact `evaluate_ind` leaf case of HOL `compile_correct` for `Load32`
+    (`loop_liveProofScript.sml:17-37`; `Resume compile_correct[Load32]` at 738-745). Specializing HOL's
+    constructor variable leaves the payload binders, `v1 res s1 lt locals prog1 l1 l0`,
+    all four premises and the full existential/eight-way result conclusion. This
+    case has no recursive sub-program, hence no induction hypothesis; the
+    lexicographic assembly adds none to it. The state `globals` map and word carrier
+    use only the reviewed finite-support and type-indexed BitVec translations. -/
+@[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 theorem loopLive_compile_correct_load32 {width : Nat} [NeZero width] {F : Type} :
     ∀ (a y : Nat) (v1 : LoopSemStateFiniteExact width F)
       (res : Option (LoopResultExact width)) (s1 : LoopSemStateFiniteExact width F)
@@ -1186,9 +1258,15 @@ theorem loopLive_compile_correct_load32 {width : Nat} [NeZero width] {F : Type} 
   refine post_setVar y _ hsub fun k hky hk => mem_insert_of' a ?_
   simp only [sptMem, sptDomain, sptLookup_sptDelete', hky, if_false]; exact hk
 
-/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
-    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `LoadByte` (`loop_liveProofScript.sml:17-37` statement;
-    `Resume compile_correct[LoadByte]` at 747-754). -/
+/-- Exact `evaluate_ind` leaf case of HOL `compile_correct` for `LoadByte`
+    (`loop_liveProofScript.sml:17-37`; `Resume compile_correct[LoadByte]` at 747-754). Specializing HOL's
+    constructor variable leaves the payload binders, `v1 res s1 lt locals prog1 l1 l0`,
+    all four premises and the full existential/eight-way result conclusion. This
+    case has no recursive sub-program, hence no induction hypothesis; the
+    lexicographic assembly adds none to it. The state `globals` map and word carrier
+    use only the reviewed finite-support and type-indexed BitVec translations. -/
+@[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 theorem loopLive_compile_correct_loadByte {width : Nat} [NeZero width] {F : Type} :
     ∀ (a y : Nat) (v1 : LoopSemStateFiniteExact width F)
       (res : Option (LoopResultExact width)) (s1 : LoopSemStateFiniteExact width F)
@@ -1279,9 +1357,15 @@ private theorem holAlookup_zip_none {β : Type} :
         simp only [List.mem_cons, not_or]
         exact ⟨fun e => hne e.symm, holAlookup_zip_none xs ys k (by simpa using h) hz⟩
 
-/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
-    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `Primitive` (`loop_liveProofScript.sml:17-37` statement;
-    `Resume compile_correct[Primitive]` at 844-856). -/
+/-- Exact `evaluate_ind` leaf case of HOL `compile_correct` for `Primitive`
+    (`loop_liveProofScript.sml:17-37`; `Resume compile_correct[Primitive]` at 844-856). Specializing HOL's
+    constructor variable leaves the payload binders, `v1 res s1 lt locals prog1 l1 l0`,
+    all four premises and the full existential/eight-way result conclusion. This
+    case has no recursive sub-program, hence no induction hypothesis; the
+    lexicographic assembly adds none to it. The state `globals` map and word carrier
+    use only the reviewed finite-support and type-indexed BitVec translations. -/
+@[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 theorem loopLive_compile_correct_primitive {width : Nat} [NeZero width] {F : Type} :
     ∀ (lhss : List Nat) (pop : PrimOp) (rhss : List Nat) (v1 : LoopSemStateFiniteExact width F)
       (res : Option (LoopResultExact width)) (s1 : LoopSemStateFiniteExact width F)
@@ -1336,9 +1420,15 @@ theorem loopLive_compile_correct_primitive {width : Nat} [NeZero width] {F : Typ
       exact subspt_inter_apply hsub hka' (sptMem_sptListInsert_of k rhss _ hkd)
   · simp [evaluate, hg, hp, hl] at he; exact absurd he.1.symm hne
 
-/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
-    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `Arith a` (`loop_liveProofScript.sml:17-37` statement;
-    `Resume compile_correct[Arith]` at 781-790). -/
+/-- Exact `evaluate_ind` leaf case of HOL `compile_correct` for `Arith a`
+    (`loop_liveProofScript.sml:17-37`; `Resume compile_correct[Arith]` at 781-790). Specializing HOL's
+    constructor variable leaves the payload binders, `v1 res s1 lt locals prog1 l1 l0`,
+    all four premises and the full existential/eight-way result conclusion. This
+    case has no recursive sub-program, hence no induction hypothesis; the
+    lexicographic assembly adds none to it. The state `globals` map and word carrier
+    use only the reviewed finite-support and type-indexed BitVec translations. -/
+@[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 theorem loopLive_compile_correct_arith {width : Nat} [NeZero width] {F : Type} :
     ∀ (a : LoopArith) (v1 : LoopSemStateFiniteExact width F)
       (res : Option (LoopResultExact width)) (s1 : LoopSemStateFiniteExact width F)
@@ -1503,9 +1593,15 @@ private theorem shMemStore_frame {width : Nat} [NeZero width] {F : Type}
           | ret f b => exact Or.inl ⟨f, rfl, rfl⟩
         · simp [hd]
 
-/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
-    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `ShMem op r ad` (`loop_liveProofScript.sml:17-37` statement;
-    `Resume compile_correct[ShMem]` at 799-826). -/
+/-- Exact `evaluate_ind` leaf case of HOL `compile_correct` for `ShMem op r ad`
+    (`loop_liveProofScript.sml:17-37`; `Resume compile_correct[ShMem]` at 799-826). Specializing HOL's
+    constructor variable leaves the payload binders, `v1 res s1 lt locals prog1 l1 l0`,
+    all four premises and the full existential/eight-way result conclusion. This
+    case has no recursive sub-program, hence no induction hypothesis; the
+    lexicographic assembly adds none to it. The state `globals` map and word carrier
+    use only the reviewed finite-support and type-indexed BitVec translations. -/
+@[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 theorem loopLive_compile_correct_shMem {width : Nat} [NeZero width] {F : Type} :
     ∀ (op : WordMemOp) (r : Nat) (ad : HolLoopExp width) (v1 : LoopSemStateFiniteExact width F)
       (res : Option (LoopResultExact width)) (s1 : LoopSemStateFiniteExact width F)
@@ -1666,9 +1762,15 @@ theorem loopLive_compile_correct_shMem {width : Nat} [NeZero width] {F : Type} :
         shMemOp, h2]; rfl, rfl⟩
     · rw [he] at h1; exact absurd h1 hne
 
-/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
-    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `FFI name ptr1 len1 ptr2 len2 cutset`
-    (`loop_liveProofScript.sml:17-37` statement; `Resume compile_correct[FFI]` at 756-779). -/
+/-- Exact `evaluate_ind` leaf case of HOL `compile_correct` for `FFI name ptr1 len1 ptr2 len2 cutset`
+    (`loop_liveProofScript.sml:17-37`; `Resume compile_correct[FFI]` at 756-779). Specializing HOL's
+    constructor variable leaves the payload binders, `v1 res s1 lt locals prog1 l1 l0`,
+    all four premises and the full existential/eight-way result conclusion. This
+    case has no recursive sub-program, hence no induction hypothesis; the
+    lexicographic assembly adds none to it. The state `globals` map and word carrier
+    use only the reviewed finite-support and type-indexed BitVec translations. -/
+@[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 theorem loopLive_compile_correct_ffi {width : Nat} [NeZero width] {F : Type} :
     ∀ (idx : Basis.Pure.MlString.MlString) (p1 n1 p2 n2 : Nat) (cs : NumSet) (v1 : LoopSemStateFiniteExact width F)
       (res : Option (LoopResultExact width)) (s1 : LoopSemStateFiniteExact width F)

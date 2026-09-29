@@ -61,6 +61,57 @@ val _ = print_eval "nested_inline"
             params := []; body := panLang$Call NONE «mid» [];
             return := panLang$One |>]``;
 
+(* The HOL inliner removes each selected callee from the finite map before
+   descending into its body.  This mutual cycle must therefore stop at the
+   first re-encountered function rather than recurse forever. *)
+val _ = print_eval "mutual_cycle"
+  ``pan_to_crep$compile_prog
+      [panLang$Function
+         <| name := «f»; inline := T; export := F;
+            params := []; body := panLang$Call NONE «g» [];
+            return := panLang$One |>;
+       panLang$Function
+         <| name := «g»; inline := T; export := F;
+            params := []; body := panLang$Call NONE «f» [];
+            return := panLang$One |>;
+       panLang$Function
+         <| name := «main»; inline := F; export := T;
+            params := []; body := panLang$Call NONE «f» [];
+            return := panLang$One |>]``;
+
+(* A handler call is not itself inlined, but inline_prog recursively traverses
+   the handler body.  Keep an exception declaration so compile_to_crep can
+   assign its real exception identifier. *)
+val _ = print_eval "handled_call"
+  ``pan_to_crep$compile_prog
+      [panLang$ExnDecl «E» panLang$One;
+       panLang$Function
+         <| name := «id»; inline := T; export := F;
+            params := []; body := panLang$Return (panLang$Const (7w : 8 word));
+            return := panLang$One |>;
+       panLang$Function
+         <| name := «main»; inline := F; export := T;
+            params := [];
+            body := panLang$Call
+              (SOME (NONE, SOME («E», «caught», panLang$Call NONE «id» [])))
+              «id» [];
+            return := panLang$One |>]``;
+
+(* Inline a two-word aggregate return so the exact wrapper exercises the
+   non-scalar result and temporary-return path as well as `Return [Const]`. *)
+val _ = print_eval "aggregate_return"
+  ``pan_to_crep$compile_prog
+      [panLang$Function
+         <| name := «pair»; inline := T; export := F;
+            params := []; body := panLang$Return
+              (panLang$RStruct [panLang$Const (7w : 8 word);
+                                panLang$Const (9w : 8 word)]);
+            return := panLang$Comb [panLang$One; panLang$One] |>;
+       panLang$Function
+         <| name := «main»; inline := F; export := T;
+            params := []; body := panLang$Call NONE «pair» [];
+            return := panLang$Comb [panLang$One; panLang$One] |>]``;
+
 val _ = print_eval "params_two_words"
   ``pan_to_crep$compile_prog
       [panLang$Function
