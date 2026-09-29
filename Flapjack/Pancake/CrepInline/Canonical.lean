@@ -6,9 +6,10 @@ import Flapjack.Pancake.CrepInline.Pass
 This module contains the tagged `inlineProgHOLExact` port of HOL
 `inline_prog_def`, its Flapjack-specific termination core and support helpers,
 and the tagged `compileInlTopHOLExact` wrapper for HOL `compile_inl_top_def`.
-The parser-backed production compiler now calls `compileInlTopHOLExact` before
-decoding to its String-backed output carrier; the legacy generic API remains
-separate and untagged.
+The production compiler does not execute `compileInlTopHOLExact` yet: its
+parser-backed route inlines with the proved production `compileInlTopHOL`.
+`compileProgTopHOLProductionExactInline` runs the exact wrapper as a tested
+alternative until an output-equality theorem is proved (PR #1174 review).
 
 The Flapjack-specific recursive core implementing the HOL `inline_prog`
 equations (`cakeml/pancake/crep_inlineScript.sml:203-257`) uses the canonical
@@ -19,9 +20,9 @@ rather than the untagged unique-key list model `CrepInlineFmapHOL`
 
 The recursive core is intentionally untagged because it carries Lean-only
 support-list termination evidence. Its support-independent wrapper and the
-top-level exact wrapper are tagged; parser-backed production now executes the
-top-level wrapper. The wider exact `compile_prog` output/metadata bridge remains
-tracked separately.
+top-level exact wrapper are tagged; the top-level wrapper runs in the tested,
+non-executed alternative `compileProgTopHOLProductionExactInline`. The wider
+exact `compile_prog` output/metadata bridge remains tracked separately.
 
 The core `inlineProgHOLCoreExact` reproduces the clause structure of
 `inlineProgHOLCore` (`Pass.lean:827`) and of the HOL source equation by
@@ -703,9 +704,9 @@ noncomputable def compileInlProgHOLExact
     does not occur in the signature, and the finite support is derived from the
     filtered alist's keys. The word-indexed representation is recorded by the
     qualifier; source membership, alist first-binding behavior, and recursive
-    inlining are checked by `canonicalOracleGuard`. The parser-backed compiler
-    invokes this exact wrapper; callers without byte-range evidence may still
-    use the generic String-backed compatibility route. -/
+    inlining are checked by `canonicalOracleGuard`. The tested alternative
+    `compileProgTopHOLProductionExactInline` invokes this exact wrapper; the
+    executed compiler still inlines with the proved production route. -/
 @[hol "cakeml/pancake/crep_inlineScript.sml" "compile_inl_top_def"
   (words_as_type_indexed_bitvec)]
 def compileInlTopHOLExact

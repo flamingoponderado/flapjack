@@ -67,6 +67,13 @@ HOL_PROBE_ONLY=loop_live_optimise_probeScript.sml scripts/hol-probes/regenerate.
 and `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=ocompile_probeScript.sml scripts/hol-probes/regenerate.sh` for
 the ocompile rows.
+`loop_live_domain_list_delete_probe.out` records direct HOL `EVAL` membership
+rows for `domain_list_delete` at
+`cakeml/pancake/proofs/loop_liveProofScript.sml:561-562`; the kernel-checked
+replay is `Flapjack.Test.LoopLiveDomainListDeleteParity`.
+Regenerate with `CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=loop_live_domain_list_delete_probeScript.sml
+scripts/hol-probes/regenerate.sh`.
 `Flapjack.Test.LoopPropsCutSetsParity` guards the exact `cut_sets_def`
 clauses over `HolLoopProg`/`NumSet`; its direct HOL outputs for Skip,
 LocValue, Assign, Load32/LoadByte, Seq, If, each Arith variant, and the

@@ -1680,6 +1680,16 @@ INFRASTRUCTURE_THEOREMS = {
         "mem_load_flat_rel analogue. HOL has no standalone declaration with "
         "this helper statement; its list cases are part of mem_loads_flat_rel."
     ),
+    ("Flapjack/Pancake/PanLang/Exp.lean", "expOfHOL_expToHOL_nStruct"): (
+        "Flapjack-only constructor refinement for panLang exp NStruct "
+        "(panLangScript.sml:53-69): states the exact production-to-ExpHOL-to-"
+        "production roundtrip under the byte-range premises required to convert "
+        "String structure/field names to HOL mlstring. It specializes the codec, "
+        "is not a separately declared HOL theorem, and does not tag production "
+        "Exp or claim arbitrary String correspondence. The direct HOL constructor "
+        "observation and ordered field payload are replayed in "
+        "pan_lang_exp_probe.out by PanLangExpHOLParity."
+    ),
 }
 VALID_STATUSES = {
     "reviewed_exact",

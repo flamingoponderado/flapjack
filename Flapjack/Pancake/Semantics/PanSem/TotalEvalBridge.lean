@@ -1153,8 +1153,6 @@ theorem panRiscVSetByte_eq_panSetByteHOL (address byte value : RiscV.Word 64) :
   simp only [RiscV.panRiscVSetByte, RiscV.panRiscVByteIndex, panSetByteHOL,
     Bool.false_eq_true, if_false]
   rw [show (BitVec.toNat (8 : RiscV.Word 64)) = 8 by decide]
-  simp only [show (8 : Nat) = 0 ↔ False by decide, if_false,
-    show (64 / 8 : Nat) = 8 by decide]
 
 /-- Writing byte `k` of a word whose bytes below `k` are the value itself (no
     higher set bytes) adds `b * 256^k`, matching `panSetByteHOL` at a small
