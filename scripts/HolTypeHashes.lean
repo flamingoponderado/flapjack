@@ -55,7 +55,6 @@ import Flapjack.Pancake.CrepToLoop.Proofs.LocalsRelOptMmap
 import Flapjack.Pancake.CrepToLoop.Proofs.CompExpPreservesEval.Leaf
 import Flapjack.Pancake.CrepToLoop.Proofs.CompExpPreservesEval.Load
 import Flapjack.Pancake.CrepToLoop.Proofs.SemanticsWrapper
-import Flapjack.Pancake.CrepToLoop.Proofs.SemanticsWrapper.LoopSemIsWrapper
 import Flapjack.Pancake.LoopLive.Fixedpoint
 import Flapjack.Pancake.Proofs.LoopLive.CompileCorrect
 import Flapjack.Pancake.Proofs.LoopLive.Optimise
