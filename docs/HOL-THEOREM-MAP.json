@@ -20278,6 +20278,21 @@
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "opt_mmap_eval_code_inl",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "optMmapEvalCodeInlExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "inl_fs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.5.36) against crep_inlineProofScript.sml:1530-1540. HOL universally quantifies s, es, vals, s1 and inl_fs; its premise is OPT_MMAP (eval s) es = SOME vals with state_rel_code, locals_strong_rel and code_inl_rel, and its conclusion is OPT_MMAP (eval s1) es = SOME vals. Lean optMmapEvalCodeInlExact keeps these four conjuncts and the successful target-list conclusion over List.mapM, which is the constructor-for-constructor Lean List form of HOL lists. Each per-expression transfer follows from the separately reviewed evalCodeInlExact; the list theorem adds no premise. State maps and inl_fs use HolFiniteMapExact; HolWordLab width uses positive-width BitVec."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
     "hol_name": "inline_prog_correct",
     "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
     "lean_name": "inlineProgCorrectDecCaseExact",
@@ -20307,6 +20322,22 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.5.35) against crep_inlineProofScript.sml:2301-2309, If case 2374-2381, and the exact evaluate_ind If conjunct at crepSemScript.sml:440. The conclusion retains the original existential target run, state_rel_code, code_inl_rel, and NONE/Break/Continue/Error/other locals cases. The premise list is exactly the source run equation, non-Error condition, both SUBMAP conditions, state_rel_code, locals_strong_rel, code_inl_rel, plus the single evaluate_ind If hypothesis: for condition result value and word w, successful eval and value = Word w imply the theorem predicate for (if w <> 0w then c1 else c2,s). It has no other IH or target/postcondition premise. Lean uses CrepExpHOL, CrepProgHOL, CrepSemHOLState, HolWordLab, CrepResultHOLExact, the HOL-shaped total evaluator and canonical inline_prog port. The state maps and both standalone inline maps use HolFiniteMapExact with reviewed roundtrip witnesses; BitVec width models HOL's positive-width word. HOL If evaluates the condition once and evaluates the selected branch in the same state; the Lean clause and proof preserve both behaviors."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "inline_prog_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline.lean",
+    "lean_name": "inlineProgCorrectReturnCaseExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "inlFs",
+      "inlBag"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.5.36) against crep_inlineProofScript.sml:2301-2309 and Return case 2396-2400, plus crepSemScript.sml:324-325. The statement preserves the original source run, non-Error condition, both SUBMAP premises, state_rel_code, locals_strong_rel and code_inl_rel premises, existential target evaluation, post-state/code relations, and result-dependent local relation. Return has no recursive evaluate_ind IH. HOL evaluates the return expression list once, clears only locals on a successful return, and inline_prog leaves Return unchanged; the Lean proof does the same using exact evaluate, inline_prog, eval_code_inl, and opt_mmap_eval_code_inl ports. State maps and both inline maps use the reviewed HolFiniteMapExact carrier with same-module witnesses, and BitVec width models the positive-width HOL word."
   },
   {
     "hol_path": null,
