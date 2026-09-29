@@ -85,7 +85,7 @@ theorem fixClock_IMP_LESS_EQ {width : Nat} [NeZero width] {C : Type} {F : Type} 
 
 end WordSemStateFiniteExact
 
-/-- HOL `MustTerminate_limit_def` (`wordSemScript.sml:970-978`, `[nocompute]`):
+/-- Exact HOL `MustTerminate_limit_def` (`wordSemScript.sml:970-978`, `[nocompute]`):
     `2 * dimword (:'a) + dimword (:'a) * dimword (:'a) + dimword (:'a) **
     dimword (:'a) + dimword (:'a) ** dimword (:'a) ** dimword (:'a)`.  Here
     `dimword (:'a) = 2 ^ width`, and HOL `**` is right-associative like Lean
@@ -94,13 +94,15 @@ end WordSemStateFiniteExact
     `word_sem_call_helpers_probe.out` is checked in
     `Flapjack.Test.WordSemCallHelpersParity`.
 
-    Untagged: the only difference from HOL is the translation of the type
-    argument `(:'a)` to the width parameter `width` with `[NeZero width]`.
-    That is the dimension half of `words_as_type_indexed_bitvec`, but the
-    reference checker requires a tagged signature to mention a `BitVec`
-    carrier, and this one has no `'a word` value.  Tagging waits for a
-    reviewed qualifier rule for word-free dimension arguments (bead
-    `flapjack-h29l.13`). -/
+    The HOL type argument `(:'a)` is used only through `dimword (:'a)` as a
+    Nat; Lean names that dimension with the explicit `width : Nat` binder and
+    retains `[NeZero width]`. This is the word-free dimension translation
+    `word_dimension_as_width`, not a claim that this signature carries a word.
+    The equation is otherwise unchanged; direct HOL row `must_terminate_limit_1`
+    in `word_sem_call_helpers_probe.out` is checked by
+    `Flapjack.Test.WordSemCallHelpersParity`. -/
+@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "MustTerminate_limit_def"
+  (word_dimension_as_width := width)]
 def wordSemMustTerminateLimit (width : Nat) [NeZero width] : Nat :=
   let dimword := (2 : Nat) ^ width
   2 * dimword + dimword * dimword + dimword ^ dimword + dimword ^ (dimword ^ dimword)
