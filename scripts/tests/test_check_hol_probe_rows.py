@@ -39,7 +39,7 @@ class ProbeRowCheckerTest(unittest.TestCase):
 
     def test_clean_tree_passes(self):
         ROWS.check(ROWS.PROBES, ROWS.LOCK)
-        self.assertEqual(len(ROWS.expected_lock(ROWS.PROBES)), 531)
+        self.assertEqual(len(ROWS.expected_lock(ROWS.PROBES)), 532)
 
     def test_value_mutation_is_detected(self):
         with tempfile.TemporaryDirectory() as directory:
