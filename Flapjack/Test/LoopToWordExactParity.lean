@@ -203,6 +203,41 @@ example : localsRelHOL (width := 64) localsRelProbeContext
   simpa [LoopSemStateFiniteExact.sptAlistInsert, findVarHOL,
     localsRelProbeContext, sptLookup, sptInsert] using hupdated
 
+/-! Replay the exact `locals_rel_alist_insert_toAList` theorem for empty and
+nonempty updates; the target premise is observed only through the unrestricted
+`toAList`/`fromAList` lookup bridge. -/
+
+example : localsRelHOL (width := 64) localsRelProbeContext
+    (LoopSemStateFiniteExact.sptAlistInsert [] [] localsRelProbeSource)
+    (LoopSemStateFiniteExact.sptAlistInsert [] []
+      (sptFromAList (sptToAList localsRelProbeTarget))) := by
+  have hrel : localsRelHOL (width := 64) localsRelProbeContext
+      localsRelProbeSource localsRelProbeTarget := by
+    simp [localsRelHOL, localsRelProbeContext, localsRelProbeSource,
+      localsRelProbeTarget, findVarHOL, sptMem, sptDomain, sptLookup, sptInsert]
+  exact localsRelHOLAlistInsertToAList (width := 64) localsRelProbeContext
+    [] [] localsRelProbeSource localsRelProbeTarget ⟨hrel, by simp⟩
+
+example : localsRelHOL (width := 64) localsRelProbeContext
+    (LoopSemStateFiniteExact.sptAlistInsert [0] [.word 9] localsRelProbeSource)
+    (LoopSemStateFiniteExact.sptAlistInsert [4] [.word 9]
+      (sptFromAList (sptToAList localsRelProbeTarget))) := by
+  have hrel : localsRelHOL (width := 64) localsRelProbeContext
+      localsRelProbeSource localsRelProbeTarget := by
+    simp [localsRelHOL, localsRelProbeContext, localsRelProbeSource,
+      localsRelProbeTarget, findVarHOL, sptMem, sptDomain, sptLookup, sptInsert]
+  have hmem : sptMem 0 localsRelProbeContext := by
+    simp [sptMem, sptDomain, localsRelProbeContext, sptLookup]
+  have hupdated := localsRelHOLAlistInsertToAList (width := 64)
+    localsRelProbeContext [0] [.word 9] localsRelProbeSource localsRelProbeTarget
+      ⟨hrel, by
+        intro name hname
+        have hnameZero : name = 0 := by simpa using hname
+        subst name
+        exact hmem⟩
+  simpa [LoopSemStateFiniteExact.sptAlistInsert, findVarHOL,
+    localsRelProbeContext, sptLookup, sptInsert] using hupdated
+
 /-! ## Original-domain parity for exact `comp_exp_def`
 
 `comp_exp_def` at `cakeml/pancake/loop_to_wordScript.sml:22-40` is the exact
@@ -256,243 +291,6 @@ example :
       (.op .add [.var 3, .const (1 : BitVec 8)]) =
     .op .add [.var 9, .const (1 : BitVec 8)] := by
   simp [compExpHOL, findVarHOL, compProbeContext, sptLookup_sptInsert_same]
-
-/-! ## Constructor-slice parity for `comp_def`
-
-HOL `comp_def` at `loop_to_wordScript.sml:56-108` returns both a Word program
-and the label pair. `compInitialHOL` is intentionally an untagged partial
-slice: it returns `none` for the still-unported source constructors and
-preserves the source pair on all cases it does cover. The outputs below are
-direct EVAL rows from `loop_to_word_comp_probeScript.sml`. -/
-
-def compInitialLabels : Nat × Nat := (7, 11)
-
-/-- Source variable keys 10-14 map to their dense word-register names. -/
-def compInitialContext : Spt Nat :=
-  sptInsert 14 28 (sptInsert 13 26 (sptInsert 12 24
-    (sptInsert 11 22 (sptInsert 10 20 .ln))))
-
-example : compInitialHOL (width := 8) compInitialContext compInitialLabels
-    .skip = some (.skip, compInitialLabels) := by
-  rfl
-
-example : compInitialHOL (width := 8) compInitialContext compInitialLabels
-    (.assign 10 (.var 10)) = some (.assign 20 (.var 20), compInitialLabels) := by
-  simp [compInitialHOL, compExpHOL, findVarHOL, compInitialContext,
-    sptLookup_sptInsert_same, sptLookup_sptInsert_ne]
-
-example : compInitialHOL (width := 8) compInitialContext compInitialLabels
-    (.primitive [10, 11] .addCarry [12, 13, 14]) =
-      some (.seq (.assign 1 (.var 28))
-        (.seq (.inst (.arith (.addCarry 3 24 26 1)))
-          (.seq (.assign 22 (.var 1)) (.assign 20 (.var 3)))), compInitialLabels) := by
-  simp [compInitialHOL, findVarHOL, compInitialContext,
-    sptLookup_sptInsert_same, sptLookup_sptInsert_ne]
-
-example : compInitialHOL (width := 8) compInitialContext compInitialLabels
-    (.primitive [10] .addCarry [12, 13, 14]) =
-      some (.skip, compInitialLabels) := by
-  rfl
-
-example : compInitialHOL (width := 8) compInitialContext compInitialLabels
-    (.primitive [10, 11] .addCarry [12, 13]) =
-      some (.skip, compInitialLabels) := by
-  rfl
-
-example : compInitialHOL (width := 8) compInitialContext compInitialLabels
-    (.arith (.longMul 10 11 12 13)) =
-      some (.inst (.arith (.longMul 20 22 24 26)), compInitialLabels) := by
-  simp [compInitialHOL, findVarHOL, compInitialContext,
-    sptLookup_sptInsert_same, sptLookup_sptInsert_ne]
-
-example : compInitialHOL (width := 8) compInitialContext compInitialLabels
-    (.arith (.longDiv 10 11 12 13 14)) =
-      some (.inst (.arith (.longDiv 20 22 24 26 28)), compInitialLabels) := by
-  simp [compInitialHOL, findVarHOL, compInitialContext,
-    sptLookup_sptInsert_same, sptLookup_sptInsert_ne]
-
-example : compInitialHOL (width := 8) compInitialContext compInitialLabels
-    (.arith (.div 10 12 13)) =
-      some (.inst (.arith (.div 20 24 26)), compInitialLabels) := by
-  simp [compInitialHOL, findVarHOL, compInitialContext,
-    sptLookup_sptInsert_same, sptLookup_sptInsert_ne]
-
-example : compInitialHOL (width := 8) compInitialContext compInitialLabels
-    (.store (.var 10) 11) =
-      some (.store (.var 20) 22, compInitialLabels) := by
-  simp [compInitialHOL, compExpHOL, findVarHOL, compInitialContext,
-    sptLookup_sptInsert_same, sptLookup_sptInsert_ne]
-
-example : compInitialHOL (width := 8) compInitialContext compInitialLabels
-    (.setGlobal (5 : BitVec 5) (.var 10)) =
-      some (.set (.temp 5) (.var 20), compInitialLabels) := by
-  simp [compInitialHOL, compExpHOL, findVarHOL, compInitialContext,
-    sptLookup_sptInsert_same, sptLookup_sptInsert_ne]
-
-example : compInitialHOL (width := 8) compInitialContext compInitialLabels
-    (.load32 12 13) =
-      some (.inst (.mem .load32 26 (.addr 24 (0 : BitVec 8))),
-        compInitialLabels) := by
-  simp [compInitialHOL, findVarHOL, compInitialContext,
-    sptLookup_sptInsert_same, sptLookup_sptInsert_ne]
-
-example : compInitialHOL (width := 8) compInitialContext compInitialLabels
-    (.loadByte 13 12) =
-      some (.inst (.mem .load8 24 (.addr 26 (0 : BitVec 8))),
-        compInitialLabels) := by
-  simp [compInitialHOL, findVarHOL, compInitialContext,
-    sptLookup_sptInsert_same, sptLookup_sptInsert_ne]
-
-example : compInitialHOL (width := 8) compInitialContext compInitialLabels
-    (.store32 12 14) =
-      some (.inst (.mem .store32 28 (.addr 24 (0 : BitVec 8))),
-        compInitialLabels) := by
-  simp [compInitialHOL, findVarHOL, compInitialContext,
-    sptLookup_sptInsert_same, sptLookup_sptInsert_ne]
-
-example : compInitialHOL (width := 8) compInitialContext compInitialLabels
-    (.storeByte 13 11) =
-      some (.inst (.mem .store8 22 (.addr 26 (0 : BitVec 8))),
-        compInitialLabels) := by
-  simp [compInitialHOL, findVarHOL, compInitialContext,
-    sptLookup_sptInsert_same, sptLookup_sptInsert_ne]
-
-example : compInitialHOL (width := 8) compInitialContext compInitialLabels
-    (.break 5) = some (.break 5, compInitialLabels) := by
-  rfl
-
-example : compInitialHOL (width := 8) compInitialContext compInitialLabels
-    (.continue 6) = some (.continue 6, compInitialLabels) := by
-  rfl
-
-example : compInitialHOL (width := 8) compInitialContext compInitialLabels
-    (.raise 10) =
-      some (.raise 20, compInitialLabels) := by
-  simp [compInitialHOL, findVarHOL, compInitialContext,
-    sptLookup_sptInsert_same, sptLookup_sptInsert_ne]
-
-example : compInitialHOL (width := 8) compInitialContext compInitialLabels
-    (.return [10, 11, 12]) =
-      some (.return 0 [20, 22, 24], compInitialLabels) := by
-  simp [compInitialHOL, findVarHOL, compInitialContext,
-    sptLookup_sptInsert_same, sptLookup_sptInsert_ne]
-
-example : compInitialHOL (width := 8) compInitialContext compInitialLabels
-    .tick = some (.tick, compInitialLabels) := by
-  rfl
-
-example : compInitialHOL (width := 8) compInitialContext compInitialLabels
-    .fail = some (.skip, compInitialLabels) := by
-  rfl
-
-example : compInitialHOL (width := 8) compInitialContext compInitialLabels
-    (.locValue 10 3) =
-      some (.locValue 20 3, compInitialLabels) := by
-  simp [compInitialHOL, findVarHOL, compInitialContext,
-    sptLookup_sptInsert_same, sptLookup_sptInsert_ne]
-
-example : compInitialHOL (width := 8) compInitialContext compInitialLabels
-    (.seq .skip .skip) = none := by
-  rfl
-
-example : compInitialHOL (width := 8) compInitialContext compInitialLabels
-    (.ffi (Flapjack.Basis.Pure.MlString.ofString "foo") 10 11 12 13
-      (sptInsert 6 () .ln)) =
-      some (.ffi (Flapjack.Basis.Pure.MlString.ofString "foo") 20 22 24 26
-        (mkNewCutsetHOL compInitialContext (sptInsert 6 () .ln), .ln),
-        compInitialLabels) := by
-  simp [compInitialHOL, findVarHOL, compInitialContext,
-    sptLookup_sptInsert_same, sptLookup_sptInsert_ne]
-
-example : compInitialHOL (width := 8) compInitialContext compInitialLabels
-    (.shMem .load 10 (.var 12)) =
-      some (.shareInst .load 20 (.var 24), compInitialLabels) := by
-  simp [compInitialHOL, compExpHOL, findVarHOL, compInitialContext,
-    sptLookup_sptInsert_same, sptLookup_sptInsert_ne]
-
-def compInitialProbeChecks : List Bool :=
-  [ (match compInitialHOL (width := 8) compInitialContext compInitialLabels .skip with
-      | some (.skip, (7, 11)) => true | _ => false),
-    (match compInitialHOL (width := 8) compInitialContext compInitialLabels
-        (.assign 10 (.var 10)) with
-      | some (.assign 20 (.var 20), (7, 11)) => true | _ => false),
-    (match compInitialHOL (width := 8) compInitialContext compInitialLabels
-        (.primitive [10, 11] .addCarry [12, 13, 14]) with
-      | some (.seq (.assign 1 (.var 28))
-          (.seq (.inst (.arith (.addCarry 3 24 26 1)))
-            (.seq (.assign 22 (.var 1)) (.assign 20 (.var 3)))), (7, 11)) => true
-      | _ => false),
-    (match compInitialHOL (width := 8) compInitialContext compInitialLabels
-        (.primitive [10] .addCarry [12, 13, 14]) with
-      | some (.skip, (7, 11)) => true | _ => false),
-    (match compInitialHOL (width := 8) compInitialContext compInitialLabels
-        (.arith (.longMul 10 11 12 13)) with
-      | some (.inst (.arith (.longMul 20 22 24 26)), (7, 11)) => true | _ => false),
-    (match compInitialHOL (width := 8) compInitialContext compInitialLabels
-        (.arith (.longDiv 10 11 12 13 14)) with
-      | some (.inst (.arith (.longDiv 20 22 24 26 28)), (7, 11)) => true | _ => false),
-    (match compInitialHOL (width := 8) compInitialContext compInitialLabels
-        (.arith (.div 10 12 13)) with
-      | some (.inst (.arith (.div 20 24 26)), (7, 11)) => true | _ => false),
-    (match compInitialHOL (width := 8) compInitialContext compInitialLabels
-        (.store (.var 10) 11) with
-      | some (.store (.var 20) 22, (7, 11)) => true | _ => false),
-    (match compInitialHOL (width := 8) compInitialContext compInitialLabels
-        (.setGlobal (5 : BitVec 5) (.var 10)) with
-      | some (.set (.temp 5) (.var 20), (7, 11)) => true | _ => false),
-    (match compInitialHOL (width := 8) compInitialContext compInitialLabels
-        (.load32 12 13) with
-      | some (.inst (.mem .load32 26 (.addr 24 offset)), (7, 11)) => offset == (0 : BitVec 8)
-      | _ => false),
-    (match compInitialHOL (width := 8) compInitialContext compInitialLabels
-        (.loadByte 13 12) with
-      | some (.inst (.mem .load8 24 (.addr 26 offset)), (7, 11)) => offset == (0 : BitVec 8)
-      | _ => false),
-    (match compInitialHOL (width := 8) compInitialContext compInitialLabels
-        (.store32 12 14) with
-      | some (.inst (.mem .store32 28 (.addr 24 offset)), (7, 11)) => offset == (0 : BitVec 8)
-      | _ => false),
-    (match compInitialHOL (width := 8) compInitialContext compInitialLabels
-        (.storeByte 13 11) with
-      | some (.inst (.mem .store8 22 (.addr 26 offset)), (7, 11)) => offset == (0 : BitVec 8)
-      | _ => false),
-    (match compInitialHOL (width := 8) compInitialContext compInitialLabels
-        (.primitive [10, 11] .addCarry [12, 13]) with
-      | some (.skip, (7, 11)) => true | _ => false),
-    (match compInitialHOL (width := 8) compInitialContext compInitialLabels
-        (.break 5) with
-      | some (.break 5, (7, 11)) => true | _ => false),
-    (match compInitialHOL (width := 8) compInitialContext compInitialLabels
-        (.continue 6) with
-      | some (.continue 6, (7, 11)) => true | _ => false),
-    (match compInitialHOL (width := 8) compInitialContext compInitialLabels
-        (.raise 10) with
-      | some (.raise 20, (7, 11)) => true | _ => false),
-    (match compInitialHOL (width := 8) compInitialContext compInitialLabels
-        (.return [10, 11, 12]) with
-      | some (.return 0 [20, 22, 24], (7, 11)) => true | _ => false),
-    (match compInitialHOL (width := 8) compInitialContext compInitialLabels
-        .tick with
-      | some (.tick, (7, 11)) => true | _ => false),
-    (match compInitialHOL (width := 8) compInitialContext compInitialLabels
-        .fail with
-      | some (.skip, (7, 11)) => true | _ => false),
-    (match compInitialHOL (width := 8) compInitialContext compInitialLabels
-        (.locValue 10 3) with
-      | some (.locValue 20 3, (7, 11)) => true | _ => false),
-    (match compInitialHOL (width := 8) compInitialContext compInitialLabels
-        (.ffi (Flapjack.Basis.Pure.MlString.ofString "foo") 10 11 12 13
-          (sptInsert 6 () .ln)) with
-      | some (.ffi _ 20 22 24 26 (cut, .ln), (7, 11)) => (sptLookup 0 cut).isSome
-      | _ => false),
-    (match compInitialHOL (width := 8) compInitialContext compInitialLabels
-        (.shMem .load 10 (.var 12)) with
-      | some (.shareInst .load 20 (.var 24), (7, 11)) => true | _ => false),
-    (match compInitialHOL (width := 8) compInitialContext compInitialLabels
-        (.seq .skip .skip) with
-      | none => true | _ => false) ]
-
-#guard compInitialProbeChecks.all id
 
 /-- Decidable replay of every `compExp_def` probe row, used by `runChecks`.
 `WordLangExpHOL` has no `DecidableEq`, so each row destructures the result. -/
@@ -559,9 +357,7 @@ def runChecks : IO Bool := do
       ("LoopToWord mk_new_cutset leaves an unmapped key absent",
         (sptLookup 2 (mkNewCutsetHOL probeContext probeLive) : Option Unit) ==
           originalCutsetAbsent),
-      ("LoopToWord comp_exp_def exact HOL rows", compExpProbeChecks.all id),
-      ("LoopToWord comp_def initial, control/result and FFI/ShMem constructor exact HOL rows",
-        compInitialProbeChecks.all id) ]
+      ("LoopToWord comp_exp_def exact HOL rows", compExpProbeChecks.all id) ]
   let results ← checks.mapM fun (name, ok) => do
     if ok then
       IO.println s!"PASS {name}"

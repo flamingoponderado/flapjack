@@ -83,10 +83,10 @@ namespace WordSemStateFiniteExact
     * `FP` reads and writes the `fp_regs` through `get_fp_var`/`set_fp_var`.
       Its `dimindex (:'a) = 64` tests are `width = 64`.
 
-    Caveat on the FP clauses.  The tag records that the clause structure,
-    fields and operand orders of `inst_def` were compared exactly.  The binary64
-    operations it calls are separate, untagged renderings of the HOL
-    standard library, and this tag does not claim them exact.  Arithmetic,
+    Caveat on the FP clauses. The `inst_def` clauses are a reviewed rendering
+    over the qualified carriers. Correctness of the separately untagged
+    binary64 library renderings is an external assumption, not proved by this
+    tag. Arithmetic,
     comparison and conversion (`Flapjack.Misc.BinaryIeee*`,
     `MachineIeee`) render HOL real values of floats as `Rat`.  Square root
     (`BinaryIeeeSqrt`) renders HOL `sqrt r` through rational cut criteria.
