@@ -1,6 +1,7 @@
 import Flapjack.Pancake.LoopLive
 import Flapjack.Pancake.LoopLive.Fixedpoint
 import Flapjack.Pancake.Semantics.LoopSemStateExact.Evaluate
+import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateInd
 import Flapjack.Pancake.Semantics.LoopProps.EvalExact
 import Flapjack.Pancake.Semantics.LoopProps.UnassignedVarsExact
 import Flapjack.Pancake.Semantics.LoopProps.CompSyntaxOkLemmas
@@ -17,13 +18,14 @@ HOL proves it by `recInduct loopSemTheory.evaluate_ind` and resumes one case
 per constructor (`Resume compile_correct[Skip]`, ...).  The per-constructor
 lemmas below follow those cases, with HOL's quantifier order
 `∀v v1 res s1 lt locals prog1 l1 l0` (constructor payload in place of `v`), all
-four premises and the full conclusion. The leaf `Skip` case below has no
-sub-program induction hypotheses; after specializing `v = Skip`, it is exactly
-the HOL `evaluate_ind` case and carries its own `@[hol]` tag. The recursive
-constructor helpers remain Flapjack-only auxiliaries: their sub-program
-hypotheses are the ones the Lean lexicographic `(clock, program size)` assembly
-supplies, not `evaluate_ind`'s. The assembled theorem also retains its own tag
-(bead `flapjack-pxn.18.5.8.1.9`).
+four premises and the full conclusion.  Every per-constructor piece is an
+exact `evaluate_ind` case and carries the `compile_correct` tag.  The leaf cases
+have no sub-program induction hypotheses.  The recursive cases (`Seq`, `If`,
+`Mark`, `Loop`, `Call`) take exactly the corresponding conjuncts of the tagged
+loopSem `evaluate_ind` (`LoopSemStateFiniteExact.evaluate_induct`,
+bead `flapjack-pxn.18.5.8.1.14`), with `P` the `compile_correct` statement.  The
+assembled theorem applies that induction principle and retains its own tag
+(beads `flapjack-pxn.18.5.8.1.9`, `flapjack-pxn.18.5.8.1.15`).
 -/
 
 namespace Flapjack
@@ -113,8 +115,8 @@ private theorem getVars_locals_agree {width : Nat} [NeZero width] {F : Type}
     66-69). Specializing HOL's constructor variable to `Skip` leaves the
     binders `v1 res s1 lt locals prog1 l1 l0`, all four premises, and the full
     existential/eight-way result conclusion shown here. This leaf has no
-    recursive sub-program induction hypotheses; the lexicographic assembly
-    adds none to it. The state `globals` map and word carrier use only the
+    recursive sub-program induction hypotheses; the `evaluate_ind`
+    assembly adds none to it. The state `globals` map and word carrier use only the
     reviewed finite-support and type-indexed BitVec translations. -/
 @[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
   (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
@@ -192,7 +194,7 @@ theorem loopLive_compile_correct_fail {width : Nat} [NeZero width] {F : Type} :
     constructor variable leaves the payload binders, `v1 res s1 lt locals prog1 l1 l0`,
     all four premises and the full existential/eight-way result conclusion. This
     case has no recursive sub-program, hence no induction hypothesis; the
-    lexicographic assembly adds none to it. The state `globals` map and word carrier
+    `evaluate_ind` assembly adds none to it. The state `globals` map and word carrier
     use only the reviewed finite-support and type-indexed BitVec translations. -/
 @[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
   (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
@@ -235,7 +237,7 @@ theorem loopLive_compile_correct_tick {width : Nat} [NeZero width] {F : Type} :
     constructor variable leaves the payload binders, `v1 res s1 lt locals prog1 l1 l0`,
     all four premises and the full existential/eight-way result conclusion. This
     case has no recursive sub-program, hence no induction hypothesis; the
-    lexicographic assembly adds none to it. The state `globals` map and word carrier
+    `evaluate_ind` assembly adds none to it. The state `globals` map and word carrier
     use only the reviewed finite-support and type-indexed BitVec translations. -/
 @[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
   (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
@@ -278,7 +280,7 @@ theorem loopLive_compile_correct_continue {width : Nat} [NeZero width] {F : Type
     constructor variable leaves the payload binders, `v1 res s1 lt locals prog1 l1 l0`,
     all four premises and the full existential/eight-way result conclusion. This
     case has no recursive sub-program, hence no induction hypothesis; the
-    lexicographic assembly adds none to it. The state `globals` map and word carrier
+    `evaluate_ind` assembly adds none to it. The state `globals` map and word carrier
     use only the reviewed finite-support and type-indexed BitVec translations. -/
 @[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
   (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
@@ -316,9 +318,13 @@ theorem loopLive_compile_correct_break {width : Nat} [NeZero width] {F : Type} :
   · rename_i cont brk heq; simpa [heq] using hsub
   · trivial
 
-/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
-    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `Mark` (`loop_liveProofScript.sml:17-37` statement;
-    `Resume compile_correct[Mark]` at 97-99). -/
+/-- Exact `evaluate_ind` case of HOL `compile_correct` for `Mark p`
+    (`loop_liveProofScript.sml:17-37`; `Resume compile_correct[Mark]` at 97-99).
+    The only extra antecedent is the tagged loopSem `evaluate_ind` Mark conjunct
+    `P (p,s) ⇒ P (Mark p,s)`, with `P` the `compile_correct` statement
+    (`loopLiveCompileCorrectAt`, which unfolds to it at `(p, v1)`). -/
+@[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 theorem loopLive_compile_correct_mark {width : Nat} [NeZero width] {F : Type} :
     ∀ (p : HolLoopProg width) (v1 : LoopSemStateFiniteExact width F),
       loopLiveCompileCorrectAt p v1 →
@@ -353,7 +359,7 @@ theorem loopLive_compile_correct_mark {width : Nat} [NeZero width] {F : Type} :
     constructor variable leaves the payload binders, `v1 res s1 lt locals prog1 l1 l0`,
     all four premises and the full existential/eight-way result conclusion. This
     case has no recursive sub-program, hence no induction hypothesis; the
-    lexicographic assembly adds none to it. The state `globals` map and word carrier
+    `evaluate_ind` assembly adds none to it. The state `globals` map and word carrier
     use only the reviewed finite-support and type-indexed BitVec translations. -/
 @[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
   (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
@@ -397,7 +403,7 @@ theorem loopLive_compile_correct_return {width : Nat} [NeZero width] {F : Type} 
     constructor variable leaves the payload binders, `v1 res s1 lt locals prog1 l1 l0`,
     all four premises and the full existential/eight-way result conclusion. This
     case has no recursive sub-program, hence no induction hypothesis; the
-    lexicographic assembly adds none to it. The state `globals` map and word carrier
+    `evaluate_ind` assembly adds none to it. The state `globals` map and word carrier
     use only the reviewed finite-support and type-indexed BitVec translations. -/
 @[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
   (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
@@ -435,15 +441,17 @@ theorem loopLive_compile_correct_raise {width : Nat} [NeZero width] {F : Type} :
     have hx' := sptSubspt_inter_lookup hsub ((sptMem_sptInsert x x () _).mpr (Or.inl rfl)) w hx
     exact ⟨(LoopSemStateFiniteExact.callEnv [] v1).locals, by simp [evaluate, hx', LoopSemStateFiniteExact.callEnv], rfl⟩
 
-/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
-    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `Seq c1 c2` (`loop_liveProofScript.sml:17-37` statement;
-    `Resume compile_correct[Seq]` at 118-129), with the `evaluate_ind` hypotheses:
-    the statement for `c1` at `v1`, and for `c2` at every `s1` with
-    `fix_clock v1 (evaluate (c1,v1)) = (NONE, s1)`. -/
+/-- Exact `evaluate_ind` case of HOL `compile_correct` for `Seq c1 c2`
+    (`loop_liveProofScript.sml:17-37`; `Resume compile_correct[Seq]` at 118-129).
+    The extra antecedents are exactly the tagged loopSem `evaluate_ind` Seq
+    conjunct `(∀res s1. (res,s1) = evaluate (c1,s) ∧ res = NONE ⇒ P (c2,s1)) ∧
+    P (c1,s)` (curried), with `P` the `compile_correct` statement. -/
+@[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 theorem loopLive_compile_correct_seq {width : Nat} [NeZero width] {F : Type} :
     ∀ (c1 c2 : HolLoopProg width) (v1 : LoopSemStateFiniteExact width F),
+      (∀ res s1', (res, s1') = evaluate c1 v1 → res = none → loopLiveCompileCorrectAt c2 s1') →
       loopLiveCompileCorrectAt c1 v1 →
-      (∀ s1', fixClock v1 (evaluate c1 v1) = (none, s1') → loopLiveCompileCorrectAt c2 s1') →
     ∀ (res : Option (LoopResultExact width)) (s1 : LoopSemStateFiniteExact width F)
       (lt : List (NumSet × NumSet)) (locals : Spt (WordLocW width)) (prog1 : HolLoopProg width)
       (l1 l0 : NumSet),
@@ -465,7 +473,9 @@ theorem loopLive_compile_correct_seq {width : Nat} [NeZero width] {F : Type} :
       | some .timeOut => new_locals = s1.locals
       | some (.finalFfi _) => new_locals = s1.locals
       | some .error => new_locals = s1.locals := by
-  intro c1 c2 v1 ih1 ih2 res s1 lt locals prog1 l1 l0 ⟨he, hne, hs, hsub⟩
+  intro c1 c2 v1 ihSeq ih1 res s1 lt locals prog1 l1 l0 ⟨he, hne, hs, hsub⟩
+  have ih2 : ∀ s1', fixClock v1 (evaluate c1 v1) = (none, s1') → loopLiveCompileCorrectAt c2 s1' :=
+    fun s1' h => ihSeq none s1' (by rw [fix_clock_evaluate] at h; exact h.symm) rfl
   rcases h2s : shrinkHOL lt c2 l0 with ⟨p2', lm⟩
   rcases h1s : shrinkHOL lt c1 lm with ⟨p1', l1'⟩
   rw [shrinkHOL, h2s] at hs
@@ -825,7 +835,7 @@ private theorem subspt_inter_apply {width : Nat} [NeZero width]
     constructor variable leaves the payload binders, `v1 res s1 lt locals prog1 l1 l0`,
     all four premises and the full existential/eight-way result conclusion. This
     case has no recursive sub-program, hence no induction hypothesis; the
-    lexicographic assembly adds none to it. The state `globals` map and word carrier
+    `evaluate_ind` assembly adds none to it. The state `globals` map and word carrier
     use only the reviewed finite-support and type-indexed BitVec translations. -/
 @[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
   (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
@@ -894,7 +904,7 @@ theorem loopLive_compile_correct_assign {width : Nat} [NeZero width] {F : Type} 
     constructor variable leaves the payload binders, `v1 res s1 lt locals prog1 l1 l0`,
     all four premises and the full existential/eight-way result conclusion. This
     case has no recursive sub-program, hence no induction hypothesis; the
-    lexicographic assembly adds none to it. The state `globals` map and word carrier
+    `evaluate_ind` assembly adds none to it. The state `globals` map and word carrier
     use only the reviewed finite-support and type-indexed BitVec translations. -/
 @[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
   (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
@@ -941,7 +951,7 @@ theorem loopLive_compile_correct_setGlobal {width : Nat} [NeZero width] {F : Typ
     constructor variable leaves the payload binders, `v1 res s1 lt locals prog1 l1 l0`,
     all four premises and the full existential/eight-way result conclusion. This
     case has no recursive sub-program, hence no induction hypothesis; the
-    lexicographic assembly adds none to it. The state `globals` map and word carrier
+    `evaluate_ind` assembly adds none to it. The state `globals` map and word carrier
     use only the reviewed finite-support and type-indexed BitVec translations. -/
 @[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
   (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
@@ -1044,7 +1054,7 @@ private theorem post_setVar {width : Nat} [NeZero width]
     constructor variable leaves the payload binders, `v1 res s1 lt locals prog1 l1 l0`,
     all four premises and the full existential/eight-way result conclusion. This
     case has no recursive sub-program, hence no induction hypothesis; the
-    lexicographic assembly adds none to it. The state `globals` map and word carrier
+    `evaluate_ind` assembly adds none to it. The state `globals` map and word carrier
     use only the reviewed finite-support and type-indexed BitVec translations. -/
 @[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
   (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
@@ -1098,7 +1108,7 @@ theorem loopLive_compile_correct_store {width : Nat} [NeZero width] {F : Type} :
     constructor variable leaves the payload binders, `v1 res s1 lt locals prog1 l1 l0`,
     all four premises and the full existential/eight-way result conclusion. This
     case has no recursive sub-program, hence no induction hypothesis; the
-    lexicographic assembly adds none to it. The state `globals` map and word carrier
+    `evaluate_ind` assembly adds none to it. The state `globals` map and word carrier
     use only the reviewed finite-support and type-indexed BitVec translations. -/
 @[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
   (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
@@ -1155,7 +1165,7 @@ theorem loopLive_compile_correct_store32 {width : Nat} [NeZero width] {F : Type}
     constructor variable leaves the payload binders, `v1 res s1 lt locals prog1 l1 l0`,
     all four premises and the full existential/eight-way result conclusion. This
     case has no recursive sub-program, hence no induction hypothesis; the
-    lexicographic assembly adds none to it. The state `globals` map and word carrier
+    `evaluate_ind` assembly adds none to it. The state `globals` map and word carrier
     use only the reviewed finite-support and type-indexed BitVec translations. -/
 @[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
   (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
@@ -1212,7 +1222,7 @@ theorem loopLive_compile_correct_storeByte {width : Nat} [NeZero width] {F : Typ
     constructor variable leaves the payload binders, `v1 res s1 lt locals prog1 l1 l0`,
     all four premises and the full existential/eight-way result conclusion. This
     case has no recursive sub-program, hence no induction hypothesis; the
-    lexicographic assembly adds none to it. The state `globals` map and word carrier
+    `evaluate_ind` assembly adds none to it. The state `globals` map and word carrier
     use only the reviewed finite-support and type-indexed BitVec translations. -/
 @[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
   (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
@@ -1263,7 +1273,7 @@ theorem loopLive_compile_correct_load32 {width : Nat} [NeZero width] {F : Type} 
     constructor variable leaves the payload binders, `v1 res s1 lt locals prog1 l1 l0`,
     all four premises and the full existential/eight-way result conclusion. This
     case has no recursive sub-program, hence no induction hypothesis; the
-    lexicographic assembly adds none to it. The state `globals` map and word carrier
+    `evaluate_ind` assembly adds none to it. The state `globals` map and word carrier
     use only the reviewed finite-support and type-indexed BitVec translations. -/
 @[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
   (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
@@ -1362,7 +1372,7 @@ private theorem holAlookup_zip_none {β : Type} :
     constructor variable leaves the payload binders, `v1 res s1 lt locals prog1 l1 l0`,
     all four premises and the full existential/eight-way result conclusion. This
     case has no recursive sub-program, hence no induction hypothesis; the
-    lexicographic assembly adds none to it. The state `globals` map and word carrier
+    `evaluate_ind` assembly adds none to it. The state `globals` map and word carrier
     use only the reviewed finite-support and type-indexed BitVec translations. -/
 @[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
   (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
@@ -1425,7 +1435,7 @@ theorem loopLive_compile_correct_primitive {width : Nat} [NeZero width] {F : Typ
     constructor variable leaves the payload binders, `v1 res s1 lt locals prog1 l1 l0`,
     all four premises and the full existential/eight-way result conclusion. This
     case has no recursive sub-program, hence no induction hypothesis; the
-    lexicographic assembly adds none to it. The state `globals` map and word carrier
+    `evaluate_ind` assembly adds none to it. The state `globals` map and word carrier
     use only the reviewed finite-support and type-indexed BitVec translations. -/
 @[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
   (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
@@ -1598,7 +1608,7 @@ private theorem shMemStore_frame {width : Nat} [NeZero width] {F : Type}
     constructor variable leaves the payload binders, `v1 res s1 lt locals prog1 l1 l0`,
     all four premises and the full existential/eight-way result conclusion. This
     case has no recursive sub-program, hence no induction hypothesis; the
-    lexicographic assembly adds none to it. The state `globals` map and word carrier
+    `evaluate_ind` assembly adds none to it. The state `globals` map and word carrier
     use only the reviewed finite-support and type-indexed BitVec translations. -/
 @[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
   (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
@@ -1767,7 +1777,7 @@ theorem loopLive_compile_correct_shMem {width : Nat} [NeZero width] {F : Type} :
     constructor variable leaves the payload binders, `v1 res s1 lt locals prog1 l1 l0`,
     all four premises and the full existential/eight-way result conclusion. This
     case has no recursive sub-program, hence no induction hypothesis; the
-    lexicographic assembly adds none to it. The state `globals` map and word carrier
+    `evaluate_ind` assembly adds none to it. The state `globals` map and word carrier
     use only the reviewed finite-support and type-indexed BitVec translations. -/
 @[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
   (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
@@ -2025,16 +2035,22 @@ def regImmLive {α : Type} : RegImm α → NumSet
   | .reg r => sptInsert r () .ln
   | .imm _ => .ln
 
-/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
-    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `If cmp r1 ri c1 c2 live_out` (`loop_liveProofScript.sml:17-37`
-    statement; `Resume compile_correct[If]` at 534-559), with the `evaluate_ind`
-    hypothesis for the branch `if word_cmp cmp x y then c1 else c2` selected by the
-    register values. -/
+/-- Exact `evaluate_ind` case of HOL `compile_correct` for
+    `If cmp r1 ri c1 c2 live_out` (`loop_liveProofScript.sml:17-37`;
+    `Resume compile_correct[If]` at 534-559).  The extra antecedent is exactly the
+    tagged loopSem `evaluate_ind` If conjunct, with the same binders
+    `v2 v3 v5 x v13 y b` and guards, and `P` the `compile_correct` statement. -/
+@[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 theorem loopLive_compile_correct_if {width : Nat} [NeZero width] {F : Type} :
     ∀ (cmp : Cmp) (r1 : Nat) (ri : RegImm (BitVec width)) (c1 c2 : HolLoopProg width)
       (liveOut : NumSet) (v1 : LoopSemStateFiniteExact width F),
-      (∀ x y, sptLookup r1 v1.locals = some (.word x) → LoopSemStateFiniteExact.getVarImm ri v1 = some (.word y) →
-        loopLiveCompileCorrectAt (if Compiler.Encoders.Asm.wordCmpHOL cmp x y then c1 else c2) v1) →
+      (∀ (v2 v3 : Option (WordLocW width)) (v5 : WordLocW width) (x : BitVec width)
+          (v13 : WordLocW width) (y : BitVec width) (b : Bool),
+        (sptLookup r1 v1.locals, LoopSemStateFiniteExact.getVarImm ri v1) = (v2, v3) →
+        v2 = some v5 → v5 = .word x → v3 = some v13 → v13 = .word y →
+        b = Compiler.Encoders.Asm.wordCmpHOL cmp x y →
+        loopLiveCompileCorrectAt (if b then c1 else c2) v1) →
     ∀ (res : Option (LoopResultExact width)) (s1 : LoopSemStateFiniteExact width F)
       (lt : List (NumSet × NumSet)) (locals : Spt (WordLocW width)) (prog1 : HolLoopProg width)
       (l1 l0 : NumSet),
@@ -2057,7 +2073,11 @@ theorem loopLive_compile_correct_if {width : Nat} [NeZero width] {F : Type} :
       | some .timeOut => new_locals = s1.locals
       | some (.finalFfi _) => new_locals = s1.locals
       | some .error => new_locals = s1.locals := by
-  intro cmp r1 ri c1 c2 liveOut v1 ih res s1 lt locals prog1 l1 l0 ⟨he, hne, hs, hsub⟩
+  intro cmp r1 ri c1 c2 liveOut v1 ihIf res s1 lt locals prog1 l1 l0 ⟨he, hne, hs, hsub⟩
+  have ih : ∀ x y, sptLookup r1 v1.locals = some (.word x) →
+      LoopSemStateFiniteExact.getVarImm ri v1 = some (.word y) →
+      loopLiveCompileCorrectAt (if Compiler.Encoders.Asm.wordCmpHOL cmp x y then c1 else c2) v1 :=
+    fun x y hx hy => ihIf _ _ _ x _ y _ (by rw [hx, hy]) rfl rfl rfl rfl rfl
   rcases h1s : shrinkHOL lt c1 (sptInter l0 liveOut) with ⟨p1', l1'⟩
   rcases h2s : shrinkHOL lt c2 (sptInter l0 liveOut) with ⟨p2', l2'⟩
   have hshr : shrinkHOL lt (.ite cmp r1 ri c1 c2 liveOut) l0 =
@@ -2155,20 +2175,60 @@ private theorem sptMem_fromAList_args (k : Nat) :
       · exact mem_insert_self' k _
       · exact mem_insert_of' a (sptMem_fromAList_args k as h)
 
-/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
-    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `Call ret dest args handler` (`loop_liveProofScript.sml:17-37`
-    statement; `Resume compile_correct[Call]` at 567-703), with the `evaluate_ind`
-    hypotheses for the handler's return continuation `r` and exception handler `h`
-    at every state with a smaller clock (the continuation states HOL's induction
-    supplies all have `clock < v1.clock`: the callee runs after `dec_clock`). The
-    callee body itself needs no hypothesis: `shrink` leaves it unchanged and it runs
-    on an identical state. -/
+/-- Exact `evaluate_ind` case of HOL `compile_correct` for
+    `Call ret dest args handler` (`loop_liveProofScript.sml:17-37`;
+    `Resume compile_correct[Call]` at 567-703).  The extra antecedents are
+    exactly the four tagged loopSem `evaluate_ind` Call conjuncts (return
+    continuation, exception handler, callee body, tail call) with HOL's binders
+    and guards, and `P` the `compile_correct` statement.  The proof uses the
+    first two; the callee body is unchanged by `shrink` and runs on an identical
+    state, so the last two go unused, as in HOL's proof. -/
+@[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 theorem loopLive_compile_correct_call {width : Nat} [NeZero width] {F : Type} :
     ∀ (ret : Option (List Nat × NumSet)) (dest : Option Nat) (args : List Nat)
       (handler : Option (Nat × HolLoopProg width × HolLoopProg width × NumSet))
       (v1 : LoopSemStateFiniteExact width F),
-      (∀ e h r lo, handler = some (e, h, r, lo) → ∀ st : LoopSemStateFiniteExact width F,
-        st.clock < v1.clock → loopLiveCompileCorrectAt r st ∧ loopLiveCompileCorrectAt h st) →
+      (∀ argvals (v7 : Spt (WordLocW width) × HolLoopProg width) env prog
+          (v6 : List Nat × NumSet) ns live v9 s' v8 st v11 retvs
+          (v : Nat × HolLoopProg width × HolLoopProg width × NumSet) v1'
+          (v2 : HolLoopProg width × HolLoopProg width × NumSet) v3
+          (v4 : HolLoopProg width × NumSet) r live_out,
+        LoopSemStateFiniteExact.getVars args v1 = some argvals →
+        LoopSemStateFiniteExact.findCode dest argvals v1.code = some v7 → v7 = (env, prog) →
+        ret = some v6 → v6 = (ns, live) → ns.Nodup →
+        cutRes live (none, v1) = (v9, s') → v9 = none →
+        evaluate prog { s' with locals := env } = (v8, st) → v8 = some v11 →
+        v11 = .result retvs → retvs.length = ns.length → handler = some v →
+        v = (v1', v2) → v2 = (v3, v4) → v4 = (r, live_out) →
+        loopLiveCompileCorrectAt r
+          (LoopSemStateFiniteExact.setVars ns retvs { st with locals := s'.locals })) →
+      (∀ argvals (v7 : Spt (WordLocW width) × HolLoopProg width) env prog
+          (v6 : List Nat × NumSet) ns live v9 s' v8 st v11 exn
+          (v : Nat × HolLoopProg width × HolLoopProg width × NumSet) n
+          (v2 : HolLoopProg width × HolLoopProg width × NumSet) h
+          (v4 : HolLoopProg width × NumSet) v5 live_out,
+        LoopSemStateFiniteExact.getVars args v1 = some argvals →
+        LoopSemStateFiniteExact.findCode dest argvals v1.code = some v7 → v7 = (env, prog) →
+        ret = some v6 → v6 = (ns, live) → ns.Nodup →
+        cutRes live (none, v1) = (v9, s') → v9 = none →
+        evaluate prog { s' with locals := env } = (v8, st) → v8 = some v11 →
+        v11 = .exception exn → handler = some v → v = (n, v2) → v2 = (h, v4) →
+        v4 = (v5, live_out) →
+        loopLiveCompileCorrectAt h
+          (LoopSemStateFiniteExact.setVar n exn { st with locals := s'.locals })) →
+      (∀ argvals (v7 : Spt (WordLocW width) × HolLoopProg width) env prog
+          (v6 : List Nat × NumSet) ns live v9 s',
+        LoopSemStateFiniteExact.getVars args v1 = some argvals →
+        LoopSemStateFiniteExact.findCode dest argvals v1.code = some v7 → v7 = (env, prog) →
+        ret = some v6 → v6 = (ns, live) → ns.Nodup →
+        cutRes live (none, v1) = (v9, s') → v9 = none →
+        loopLiveCompileCorrectAt prog { s' with locals := env }) →
+      (∀ argvals (v7 : Spt (WordLocW width) × HolLoopProg width) env prog,
+        LoopSemStateFiniteExact.getVars args v1 = some argvals →
+        LoopSemStateFiniteExact.findCode dest argvals v1.code = some v7 → v7 = (env, prog) →
+        ret = none → handler = none → v1.clock ≠ 0 →
+        loopLiveCompileCorrectAt prog { decClock v1 with locals := env }) →
     ∀ (res : Option (LoopResultExact width)) (s1 : LoopSemStateFiniteExact width F)
       (lt : List (NumSet × NumSet)) (locals : Spt (WordLocW width)) (prog1 : HolLoopProg width)
       (l1 l0 : NumSet),
@@ -2191,7 +2251,8 @@ theorem loopLive_compile_correct_call {width : Nat} [NeZero width] {F : Type} :
       | some .timeOut => new_locals = s1.locals
       | some (.finalFfi _) => new_locals = s1.locals
       | some .error => new_locals = s1.locals := by
-  intro ret dest args handler v1 ihh res s1 lt locals prog1 l1 l0 ⟨he, hne, hs, hsub⟩
+  intro ret dest args handler v1 ihRet ihExn _ihProg _ihTail res s1 lt locals prog1 l1 l0
+    ⟨he, hne, hs, hsub⟩
   have hA : ∀ {K : NumSet} {k : Nat}, k ∈ args →
       sptMem k (sptUnion (sptFromAList (args.map fun x => (x, ()))) K) :=
     fun h => (sptMem_sptUnion' _ _ _).mpr (Or.inl (sptMem_fromAList_args _ args h))
@@ -2360,10 +2421,6 @@ theorem loopLive_compile_correct_call {width : Nat} [NeZero width] {F : Type} :
             exact absurd he.1.symm hne
     | some hd =>
       obtain ⟨e, h, r, lo⟩ := hd
-      obtain ⟨ihr, ihh'⟩ : (∀ st : LoopSemStateFiniteExact width F, st.clock < v1.clock →
-          loopLiveCompileCorrectAt r st) ∧ (∀ st : LoopSemStateFiniteExact width F,
-          st.clock < v1.clock → loopLiveCompileCorrectAt h st) :=
-        ⟨fun st hst => (ihh e h r lo rfl st hst).1, fun st hst => (ihh e h r lo rfl st hst).2⟩
       rcases hr2 : shrinkHOL lt r l0 with ⟨r', l2⟩
       rcases hh3 : shrinkHOL lt h l0 with ⟨h', l3⟩
       have hshr : shrinkHOL lt (.call (some (ns, live)) dest args (some (e, h, r, lo))) l0 =
@@ -2397,11 +2454,6 @@ theorem loopLive_compile_correct_call {width : Nat} [NeZero width] {F : Type} :
         rw [cutRes_none_of_cut hcut']; simp [hz]
       rcases hc : evaluate prog { decClock { v1 with locals := sptInter v1.locals live } with locals := env } with ⟨rc, st⟩
       have hc' : evaluate prog { decClock { v1 with locals := sptInter locals K } with locals := env } = (rc, st) := hc
-      have hstc : st.clock < v1.clock := by
-        have := evaluate_clock_snd prog { decClock { v1 with locals := sptInter v1.locals live } with locals := env }
-        rw [hc] at this
-        simp only [decClock] at this
-        omega
       simp only [evaluate, hg, hfc, hnd, not_true_eq_false, if_false] at he
       rw [hc0] at he
       simp only at he
@@ -2445,7 +2497,12 @@ theorem loopLive_compile_correct_call {width : Nat} [NeZero width] {F : Type} :
             rw [sptLookup_sptInter, if_pos (show (sptLookup k K).isSome = true from hkK),
               sptLookup_sptInter, if_pos (show (sptLookup k live).isSome = true from hklv)]
             exact subspt_inter_apply hsub hkv (hK hkK)
-        obtain ⟨nl, hn, hp⟩ := ihh' (setVar e w { st with locals := sptInter v1.locals live }) hstc
+        have ihH : loopLiveCompileCorrectAt h
+            (setVar e w { st with locals := sptInter v1.locals live }) :=
+          ihExn argvals (env, prog) env prog (ns, live) ns live none _
+            (some (.exception w)) st (.exception w) w (e, h, r, lo) e (h, r, lo) h (r, lo) r lo
+            hg hfc rfl rfl rfl hnd hc0 rfl hc rfl rfl rfl rfl rfl rfl
+        obtain ⟨nl, hn, hp⟩ := ihH
           rr sr lt (sptInsert e w (sptInter locals K)) h' l3 l0
           ⟨hY, hrr, hh3, hpre⟩
         obtain ⟨nl2, hn2, hp2⟩ :=
@@ -2489,7 +2546,12 @@ theorem loopLive_compile_correct_call {width : Nat} [NeZero width] {F : Type} :
             rw [sptLookup_sptInter, if_pos (show (sptLookup k K).isSome = true from hkK),
               sptLookup_sptInter, if_pos (show (sptLookup k live).isSome = true from hklv)]
             exact subspt_inter_apply hsub hkv (hK hkK)
-        obtain ⟨nl, hn, hp⟩ := ihr (setVars ns retvs { st with locals := sptInter v1.locals live }) hstc
+        have ihR : loopLiveCompileCorrectAt r
+            (setVars ns retvs { st with locals := sptInter v1.locals live }) :=
+          ihRet argvals (env, prog) env prog (ns, live) ns live none _
+            (some (.result retvs)) st (.result retvs) retvs (e, h, r, lo) e (h, r, lo) h (r, lo) r lo
+            hg hfc rfl rfl rfl hnd hc0 rfl hc rfl rfl hlen rfl rfl rfl rfl
+        obtain ⟨nl, hn, hp⟩ := ihR
           rr sr lt (sptAlistInsert ns retvs (sptInter locals K)) r' l2 l0
           ⟨hX, hrr, hr2, hpre⟩
         obtain ⟨nl2, hn2, hp2⟩ :=
@@ -2601,10 +2663,16 @@ private theorem loopLive_loop_core {width : Nat} [NeZero width] {F : Type}
     (lt : List (NumSet × NumSet)) (locals : Spt (WordLocW width)) (l0 L' lB BRK : NumSet)
     (B : HolLoopProg width) (res : Option (LoopResultExact width))
     (s1 : LoopSemStateFiniteExact width F)
-    (ihb : ∀ st : LoopSemStateFiniteExact width F, st.clock < v1.clock →
-      loopLiveCompileCorrectAt body st)
-    (ihl : ∀ st : LoopSemStateFiniteExact width F, st.clock < v1.clock →
-      loopLiveCompileCorrectAt (.loop liveIn body liveOut) st)
+    (ihRe : ∀ v4 s' v s'' v3 v12,
+      cutRes liveIn (none, v1) = (v4, s') → v4 = none →
+      evaluate body s' = (v, s'') → v = some v3 → v3 = .continue v12 → v12 = 0 →
+      loopLiveCompileCorrectAt (.loop liveIn body liveOut) s'')
+    (ihNone : ∀ v4 s' v s'',
+      cutRes liveIn (none, v1) = (v4, s') → v4 = none →
+      evaluate body s' = (v, s'') → v = none →
+      loopLiveCompileCorrectAt (.loop liveIn body liveOut) s'')
+    (ihBody : ∀ v4 s', cutRes liveIn (none, v1) = (v4, s') → v4 = none →
+      loopLiveCompileCorrectAt body s')
     (hs : shrinkHOL lt (.loop liveIn body liveOut) l0 = (.loop L' B (sptInter liveOut l0), L'))
     (hB : shrinkHOL ((L', BRK) :: lt) body (sptUnion liveIn (sptInter liveOut l0)) = (B, lB))
     (hL'in : ∀ k, sptMem k L' → sptMem k liveIn)
@@ -2659,12 +2727,6 @@ private theorem loopLive_loop_core {width : Nat} [NeZero width] {F : Type}
   rw [fix_clock_evaluate] at he
   rcases hbe : evaluate body (decClock { v1 with locals := sptInter v1.locals liveIn }) with ⟨rb, sb⟩
   rw [hbe] at he
-  have hs1c : (decClock { v1 with locals := sptInter v1.locals liveIn }).clock < v1.clock := by
-    simp only [decClock]; omega
-  have hsbc : sb.clock < v1.clock := by
-    have := evaluate_clock_snd body (decClock { v1 with locals := sptInter v1.locals liveIn })
-    rw [hbe] at this
-    exact Nat.lt_of_le_of_lt this hs1c
   have hrb : rb ≠ some .error := fun e => by
     subst e; simp [LoopSemStateFiniteExact.exitLoop] at he; exact hne he.1.symm
   have hpre : sptSubspt (sptInter (decClock { v1 with locals := sptInter v1.locals liveIn }).locals lB)
@@ -2679,7 +2741,7 @@ private theorem loopLive_loop_core {width : Nat} [NeZero width] {F : Type}
     have hki' : (sptLookup k liveIn).isSome = true := hki
     simp only [decClock, sptLookup_sptInter, hkb', hkL', hki', if_true]
     exact subspt_inter_apply hsub hkv hkL
-  obtain ⟨nl, hn, hp⟩ := ihb _ hs1c rb sb ((L', BRK) :: lt) (sptInter locals L') B lB
+  obtain ⟨nl, hn, hp⟩ := ihBody _ _ hc0 rfl rb sb ((L', BRK) :: lt) (sptInter locals L') B lB
     (sptUnion liveIn (sptInter liveOut l0)) ⟨hbe, hrb, hB, hpre⟩
   have hn' : evaluate B (decClock { v1 with locals := sptInter locals L' }) =
       (rb, { sb with locals := nl }) := hn
@@ -2703,7 +2765,7 @@ private theorem loopLive_loop_core {width : Nat} [NeZero width] {F : Type}
     fun k hk => (sptMem_sptUnion' _ _ _).mpr (Or.inl (hL'in k hk))
   rcases rb with _ | r
   · simp only at he hp
-    obtain ⟨nl2, hn2, hp2⟩ := ihl sb hsbc res s1 lt nl _ L' l0
+    obtain ⟨nl2, hn2, hp2⟩ := ihNone _ _ _ _ hc0 rfl hbe rfl res s1 lt nl _ L' l0
       ⟨he, hne, hs, post_none_same hp hL'bex⟩
     exact ⟨nl2, (hshr _).mpr hn2, hp2⟩
   cases r with
@@ -2712,7 +2774,8 @@ private theorem loopLive_loop_core {width : Nat} [NeZero width] {F : Type}
     | zero =>
       simp only at he hp
       simp only [sptOel] at hp
-      obtain ⟨nl2, hn2, hp2⟩ := ihl sb hsbc res s1 lt nl _ L' l0 ⟨he, hne, hs, hp⟩
+      obtain ⟨nl2, hn2, hp2⟩ := ihRe _ _ _ _ _ _ hc0 rfl hbe rfl rfl rfl res s1 lt nl _ L' l0
+        ⟨he, hne, hs, hp⟩
       exact ⟨nl2, (hshr _).mpr hn2, hp2⟩
     | succ n =>
       simp only [LoopSemStateFiniteExact.exitLoop, Prod.mk.injEq] at he
@@ -2749,18 +2812,27 @@ private theorem loopLive_loop_core {width : Nat} [NeZero width] {F : Type}
     exact ⟨nl, (hshr _).mpr (by simp [LoopSemStateFiniteExact.exitLoop]), hp⟩
   | error => exact absurd rfl hrb
 
-/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
-    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `Loop live_in body live_out` (`loop_liveProofScript.sml:17-37`
-    statement; `Resume compile_correct[Loop]` at 157-337), with the `evaluate_ind`
-    hypotheses for the body and for the loop itself, at every state with a smaller
-    clock (the body runs after `cut_res`'s `dec_clock`, and the loop re-enters
-    only after the body). -/
+/-- Exact `evaluate_ind` case of HOL `compile_correct` for
+    `Loop live_in body live_out` (`loop_liveProofScript.sml:17-37`;
+    `Resume compile_correct[Loop]` at 157-337).  The extra antecedents are
+    exactly the three tagged loopSem `evaluate_ind` Loop conjuncts (re-entry
+    after `Continue 0`, re-entry after `NONE`, and the body after `cut_res`) with
+    HOL's binders and guards, and `P` the `compile_correct` statement. -/
+@[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 theorem loopLive_compile_correct_loop {width : Nat} [NeZero width] {F : Type} :
     ∀ (liveIn : NumSet) (body : HolLoopProg width) (liveOut : NumSet)
       (v1 : LoopSemStateFiniteExact width F),
-      (∀ st : LoopSemStateFiniteExact width F, st.clock < v1.clock →
-        loopLiveCompileCorrectAt body st ∧
-          loopLiveCompileCorrectAt (.loop liveIn body liveOut) st) →
+      (∀ v4 s' v s'' v3 v12,
+        cutRes liveIn (none, v1) = (v4, s') → v4 = none →
+        evaluate body s' = (v, s'') → v = some v3 → v3 = .continue v12 → v12 = 0 →
+        loopLiveCompileCorrectAt (.loop liveIn body liveOut) s'') →
+      (∀ v4 s' v s'',
+        cutRes liveIn (none, v1) = (v4, s') → v4 = none →
+        evaluate body s' = (v, s'') → v = none →
+        loopLiveCompileCorrectAt (.loop liveIn body liveOut) s'') →
+      (∀ v4 s', cutRes liveIn (none, v1) = (v4, s') → v4 = none →
+        loopLiveCompileCorrectAt body s') →
     ∀ (res : Option (LoopResultExact width)) (s1 : LoopSemStateFiniteExact width F)
       (lt : List (NumSet × NumSet)) (locals : Spt (WordLocW width)) (prog1 : HolLoopProg width)
       (l1 l0 : NumSet),
@@ -2783,9 +2855,7 @@ theorem loopLive_compile_correct_loop {width : Nat} [NeZero width] {F : Type} :
       | some .timeOut => new_locals = s1.locals
       | some (.finalFfi _) => new_locals = s1.locals
       | some .error => new_locals = s1.locals := by
-  intro liveIn body liveOut v1 ih res s1 lt locals prog1 l1 l0 ⟨he, hne, hs, hsub⟩
-  have ihb := fun st hst => (ih st hst).1
-  have ihl := fun st hst => (ih st hst).2
+  intro liveIn body liveOut v1 ihRe ihNone ihBody res s1 lt locals prog1 l1 l0 ⟨he, hne, hs, hsub⟩
   have hbex : ∀ k, sptMem k (sptInter liveOut l0) →
       sptMem k (sptUnion liveIn (sptInter liveOut l0)) :=
     fun k hk => (sptMem_sptUnion' _ _ _).mpr (Or.inr hk)
@@ -2798,7 +2868,7 @@ theorem loopLive_compile_correct_loop {width : Nat} [NeZero width] {F : Type} :
     rw [hsh, Prod.mk.injEq] at hs
     obtain ⟨rfl, rfl⟩ := hs
     exact loopLive_loop_core liveIn liveOut body v1 lt locals l0 (sptInter liveIn l0') l0'
-      (sptUnion liveIn (sptInter liveOut l0)) b' res s1 ihb ihl hsh
+      (sptUnion liveIn (sptInter liveOut l0)) b' res s1 ihRe ihNone ihBody hsh
       (fixedpoint_thm lt liveIn .ln _ body l0' b' hfp)
       (fun k hk => ((mem_inter_iff _ _ k).mp hk).1)
       (fun k hk hki => (mem_inter_iff _ _ k).mpr ⟨hki, hk⟩) hbex hsub he hne
@@ -2811,77 +2881,46 @@ theorem loopLive_compile_correct_loop {width : Nat} [NeZero width] {F : Type} :
     rw [hsh, Prod.mk.injEq] at hs
     obtain ⟨rfl, rfl⟩ := hs
     exact loopLive_loop_core liveIn liveOut body v1 lt locals l0 liveIn lb
-      (sptInter liveOut l0) b res s1 ihb ihl hsh hb (fun _ hk => hk) (fun _ _ hki => hki)
+      (sptInter liveOut l0) b res s1 ihRe ihNone ihBody hsh hb (fun _ hk => hk) (fun _ _ hki => hki)
       (fun _ hk => hk) hsub he hne
 
 /-! ## Assembly -/
 
 private theorem loopLive_compile_correct_at {width : Nat} [NeZero width] {F : Type} :
     ∀ (v : HolLoopProg width) (v1 : LoopSemStateFiniteExact width F),
-      loopLiveCompileCorrectAt v v1 := by
-  have key : ∀ (x : Nat × Nat) (v : HolLoopProg width) (v1 : LoopSemStateFiniteExact width F),
-      (v1.clock, sizeOf v) = x → loopLiveCompileCorrectAt v v1 := by
-    intro x
-    induction x using (Prod.lex Nat.lt_wfRel Nat.lt_wfRel).wf.induction with
-    | h x ih0 =>
-      intro v v1 hx
-      have ih : ∀ (p' : HolLoopProg width) (t' : LoopSemStateFiniteExact width F),
-          Prod.Lex (· < ·) (· < ·) (t'.clock, sizeOf p') (v1.clock, sizeOf v) →
-          loopLiveCompileCorrectAt p' t' :=
-        fun p' t' hlt => ih0 _ (hx ▸ hlt) p' t' rfl
-      clear ih0 hx
-      have ihc : ∀ (p' : HolLoopProg width) (t' : LoopSemStateFiniteExact width F),
-          t'.clock < v1.clock → loopLiveCompileCorrectAt p' t' :=
-        fun p' t' h => ih p' t' (Prod.Lex.left _ _ h)
-      have ihs : ∀ (p' : HolLoopProg width), sizeOf p' < sizeOf v →
-          loopLiveCompileCorrectAt p' v1 :=
-        fun p' h => ih p' v1 (Prod.Lex.right _ h)
-      cases v with
-      | skip => exact loopLive_compile_correct_skip v1
-      | fail => exact loopLive_compile_correct_fail v1
-      | tick => exact loopLive_compile_correct_tick v1
-      | «continue» k => exact loopLive_compile_correct_continue k v1
-      | «break» k => exact loopLive_compile_correct_break k v1
-      | «return» ns => exact loopLive_compile_correct_return ns v1
-      | raise x => exact loopLive_compile_correct_raise x v1
-      | mark p => exact loopLive_compile_correct_mark p v1 (ihs p (by simp <;> omega))
-      | seq c1 c2 =>
-        refine loopLive_compile_correct_seq c1 c2 v1 (ihs c1 (by simp <;> omega)) fun s1' hs1' => ?_
-        have hle : s1'.clock ≤ v1.clock := by
-          have := evaluate_clock_snd c1 v1
-          rw [fix_clock_evaluate] at hs1'
-          rw [hs1'] at this; exact this
-        rcases Nat.lt_or_eq_of_le hle with hlt | heq
-        · exact ihc c2 s1' hlt
-        · exact ih c2 s1' (by rw [heq]; exact Prod.Lex.right _ (by simp <;> omega))
-      | loop liveIn body liveOut =>
-        exact loopLive_compile_correct_loop liveIn body liveOut v1
-          fun st hst => ⟨ihc body st hst, ihc _ st hst⟩
-      | assign n x => exact loopLive_compile_correct_assign n x v1
-      | setGlobal g x => exact loopLive_compile_correct_setGlobal g x v1
-      | locValue r m => exact loopLive_compile_correct_locValue r m v1
-      | store e n => exact loopLive_compile_correct_store e n v1
-      | store32 a w => exact loopLive_compile_correct_store32 a w v1
-      | storeByte a w => exact loopLive_compile_correct_storeByte a w v1
-      | load32 a y => exact loopLive_compile_correct_load32 a y v1
-      | loadByte a y => exact loopLive_compile_correct_loadByte a y v1
-      | arith a => exact loopLive_compile_correct_arith a v1
-      | primitive lhss pop rhss => exact loopLive_compile_correct_primitive lhss pop rhss v1
-      | shMem op r ad => exact loopLive_compile_correct_shMem op r ad v1
-      | ffi idx p1 n1 p2 n2 cs => exact loopLive_compile_correct_ffi idx p1 n1 p2 n2 cs v1
-      | ite cmp r1 ri c1 c2 liveOut =>
-        refine loopLive_compile_correct_if cmp r1 ri c1 c2 liveOut v1 fun x y _ _ => ?_
-        by_cases hb : Compiler.Encoders.Asm.wordCmpHOL cmp x y = true
-        · simp only [hb, if_true]; exact ihs c1 (by simp <;> omega)
-        · simp only [hb, if_false, Bool.false_eq_true]; exact ihs c2 (by simp <;> omega)
-      | call ret dest args handler =>
-        exact loopLive_compile_correct_call ret dest args handler v1
-          fun e h r lo _ st hst => ⟨ihc r st hst, ihc h st hst⟩
-  exact fun v v1 => key _ v v1 rfl
+      loopLiveCompileCorrectAt v v1 :=
+  LoopSemStateFiniteExact.evaluate_induct (fun x => loopLiveCompileCorrectAt x.1 x.2)
+    (fun s => loopLive_compile_correct_skip s)
+    (fun s => loopLive_compile_correct_fail s)
+    (fun v e s => loopLive_compile_correct_assign v e s)
+    (fun lhss pop rhss s => loopLive_compile_correct_primitive lhss pop rhss s)
+    (fun a s => loopLive_compile_correct_arith a s)
+    (fun e v s => loopLive_compile_correct_store e v s)
+    (fun g e s => loopLive_compile_correct_setGlobal g e s)
+    (fun a v s => loopLive_compile_correct_load32 a v s)
+    (fun a v s => loopLive_compile_correct_loadByte a v s)
+    (fun a w s => loopLive_compile_correct_store32 a w s)
+    (fun a w s => loopLive_compile_correct_storeByte a w s)
+    (fun c1 c2 s ihSeq ih1 => loopLive_compile_correct_seq c1 c2 s ihSeq ih1)
+    (fun cmp r1 ri c1 c2 lo s ih => loopLive_compile_correct_if cmp r1 ri c1 c2 lo s ih)
+    (fun p s ih => loopLive_compile_correct_mark p s ih)
+    (fun k s => loopLive_compile_correct_break k s)
+    (fun k s => loopLive_compile_correct_continue k s)
+    (fun li b lo s ihRe ihNone ihBody =>
+      loopLive_compile_correct_loop li b lo s ihRe ihNone ihBody)
+    (fun n s => loopLive_compile_correct_raise n s)
+    (fun ns s => loopLive_compile_correct_return ns s)
+    (fun op v ad s => loopLive_compile_correct_shMem op v ad s)
+    (fun s => loopLive_compile_correct_tick s)
+    (fun r l1 s => loopLive_compile_correct_locValue r l1 s)
+    (fun ret dest args handler s ih1 ih2 ih3 ih4 =>
+      loopLive_compile_correct_call ret dest args handler s ih1 ih2 ih3 ih4)
+    (fun i p1 n1 p2 n2 cs s => loopLive_compile_correct_ffi i p1 n1 p2 n2 cs s)
 
 /-- Exact HOL `compile_correct` (`loop_liveProofScript.sml:17-37`), assembled from
-    the auxiliary per-constructor lemmas above by the lexicographic `(clock, program size)` induction
-    that mirrors `loopSemTheory.evaluate_ind`:
+    the exact per-constructor `evaluate_ind` cases above by the tagged loopSem
+    `evaluate_ind` (`LoopSemStateFiniteExact.evaluate_induct`), as HOL's
+    `recInduct evaluate_ind`:
     `∀v v1 res s1 lt locals prog1 l1 l0. evaluate (v,v1) = (res,s1) ∧ res ≠ SOME Error ∧
       shrink lt v l0 = (prog1,l1) ∧ subspt (inter v1.locals l1) locals ⇒
       ∃new_locals. evaluate (prog1,v1 with locals := locals) =
