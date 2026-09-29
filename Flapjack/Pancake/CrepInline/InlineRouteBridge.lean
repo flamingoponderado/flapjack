@@ -1,0 +1,227 @@
+import Flapjack.Pancake.CrepInline.Canonical
+
+/-!
+# Executed inline route vs. the exact tagged inline pass (first routing step)
+
+The executable `flapjack-compile` inliner runs the production
+`compileInlTopHOL` (`CrepInline/Pass.lean:1283`), while the exact HOL-shaped
+tagged pass is `compileInlTopHOLExact` (`CrepInline/Canonical.lean:712`).  This
+module starts proving that the two agree, so the executable route can be routed
+through the reviewed exact definition.
+
+This slice covers the empty-inline-name base case: with no inline candidate
+names both inliners are the identity, so the production result and the exact
+result agree under any decode/encode that the caller applies.  The relation is
+Flapjack-specific infrastructure (there is no HOL declaration of it), so none of
+these declarations carries a `@[hol]` tag.
+-/
+
+namespace Flapjack
+open Flapjack.CrepInlineCanonical
+
+namespace CrepInlineRoute
+
+/-- With an empty inline-entry list the recursive inliner makes no change,
+whatever the active name set is. -/
+theorem crepInlineProgRecursive_nil [BEq FunName] [LawfulBEq FunName]
+    [LawfulHashable FunName] [OfNat α 0] [OfNat α 1] (active : Std.HashSet FunName)
+    (body : CrepProg α) :
+    crepInlineProgRecursive ([] : List (CrepInlineEntry α)) active body = body := by
+  fun_induction crepInlineProgRecursive ([] : List (CrepInlineEntry α)) active body <;>
+    simp_all [crepInlineLookup]
+
+/-- Production `compileInlTopHOL` is the identity on an empty inline-name list. -/
+theorem compileInlTopHOL_nil [BEq FunName] [LawfulBEq FunName] [LawfulHashable FunName]
+    [OfNat α 0] [OfNat α 1] (functions : List (FunName × List Nat × CrepProg α)) :
+    compileInlTopHOL ([] : List FunName) functions = functions := by
+  simp only [compileInlTopHOL]
+  have hfilter : functions.filter (fun function => ([] : List FunName).contains function.1) = [] := by
+    apply List.filter_eq_nil_iff.mpr
+    intro a _ hmem
+    simp at hmem
+  rw [hfilter]
+  simp only [List.map_nil]
+  have hmap : List.map (fun x : FunName × List Nat × CrepProg α =>
+      (x.fst, x.2.fst, crepInlineProgRecursive []
+        ((crepInlineActiveNames ([] : List (CrepInlineEntry α))).erase x.fst) x.2.snd))
+      functions = List.map id functions := by
+    apply List.map_congr_left
+    intro a _
+    simp only [id_eq]
+    rw [crepInlineProgRecursive_nil]
+  rw [hmap, List.map_id]
+
+/-- Production `compileInlTopHOL` is the identity whenever no function in the
+program is marked inlineable, i.e. the inlineable filter is empty.  This
+generalizes `compileInlTopHOL_nil` from an empty inline-name list to a program
+that simply contains none of the named functions. -/
+theorem compileInlTopHOL_id_of_filter_nil [BEq FunName] [LawfulBEq FunName]
+    [LawfulHashable FunName] [OfNat α 0] [OfNat α 1] (inlineNames : List FunName)
+    (functions : List (FunName × List Nat × CrepProg α))
+    (hfilter : functions.filter (fun function => inlineNames.contains function.1) = []) :
+    compileInlTopHOL inlineNames functions = functions := by
+  simp only [compileInlTopHOL]
+  rw [hfilter]
+  simp only [List.map_nil]
+  have hmap : List.map (fun x : FunName × List Nat × CrepProg α =>
+      (x.fst, x.2.fst, crepInlineProgRecursive []
+        ((crepInlineActiveNames ([] : List (CrepInlineEntry α))).erase x.fst) x.2.snd))
+      functions = List.map id functions := by
+    apply List.map_congr_left
+    intro a _
+    simp only [id_eq]
+    rw [crepInlineProgRecursive_nil]
+  rw [hmap, List.map_id]
+
+/-- On an everywhere-`none` inline map the exact recursive inliner makes no
+change. -/
+theorem inlineProgHOLCoreExact_lookup_none {width : Nat} [NeZero width]
+    (inlineable : HolFiniteMapExact CrepInlineMapHOLName (List Nat × CrepProgHOL width))
+    (supportKeys : List CrepInlineMapHOLName)
+    (support_spec : ∀ key, inlineable.lookup key ≠ none → key ∈ supportKeys)
+    (h : ∀ k, inlineable.lookup k = none)
+    (program : CrepProgHOL width) :
+    inlineProgHOLCoreExact inlineable supportKeys support_spec program = program := by
+  refine @inlineProgHOLCoreExact.induct width _ _ _
+    (fun inlineable supportKeys support_spec prog =>
+      ∀ (supportKeys₂ : List CrepInlineMapHOLName)
+        (support₂ : ∀ key, inlineable.lookup key ≠ none → key ∈ supportKeys₂),
+        (∀ k, inlineable.lookup k = none) →
+        inlineProgHOLCoreExact inlineable supportKeys₂ support₂ prog = prog)
+    ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_
+    inlineable supportKeys support_spec program supportKeys support_spec h
+  · intro inlineable supportKeys support_spec name arguments hl supportKeys₂ support₂ h
+    simp only [inlineProgHOLCoreExact]
+    rw [hl]
+  · intro inlineable supportKeys support_spec name arguments argumentNames body hl ih
+      supportKeys₂ support₂ h
+    exact absurd (hl.symm.trans (h name)) (by simp)
+  · intro inlineable supportKeys support_spec returnNames name arguments hd supportKeys₂ support₂ h
+    simp only [inlineProgHOLCoreExact, hd, if_true]
+  · intro inlineable supportKeys support_spec returnNames name arguments hd hl supportKeys₂ support₂ h
+    simp only [inlineProgHOLCoreExact]
+    simp only [if_neg hd]
+    rw [hl]
+  · intro inlineable supportKeys support_spec returnNames name arguments hd argumentNames body hl ih
+      supportKeys₂ support₂ h
+    exact absurd (hl.symm.trans (h name)) (by simp)
+  · intro inlineable supportKeys support_spec returnNames handler body name arguments ih
+      supportKeys₂ support₂ h
+    simp only [inlineProgHOLCoreExact]
+    rw [ih supportKeys₂ support₂ h]
+  · intro inlineable supportKeys support_spec name value body ih supportKeys₂ support₂ h
+    simp only [inlineProgHOLCoreExact]
+    rw [ih supportKeys₂ support₂ h]
+  · intro inlineable supportKeys support_spec first second ih1 ih2 supportKeys₂ support₂ h
+    simp only [inlineProgHOLCoreExact]
+    rw [ih1 supportKeys₂ support₂ h, ih2 supportKeys₂ support₂ h]
+  · intro inlineable supportKeys support_spec condition first second ih1 ih2 supportKeys₂ support₂ h
+    simp only [inlineProgHOLCoreExact]
+    rw [ih1 supportKeys₂ support₂ h, ih2 supportKeys₂ support₂ h]
+  · intro inlineable supportKeys support_spec condition body ih supportKeys₂ support₂ h
+    simp only [inlineProgHOLCoreExact]
+    rw [ih supportKeys₂ support₂ h]
+  · intro inlineable supportKeys support_spec program hcn hcs hch hdec hseq hite hwhile
+      supportKeys₂ support₂ h
+    cases program with
+    | call ret name args =>
+        cases ret with
+        | none => exact absurd rfl (hcn name args)
+        | some p =>
+            obtain ⟨rn, hb⟩ := p
+            cases hb with
+            | none => exact absurd rfl (hcs rn name args)
+            | some hb' =>
+                obtain ⟨handler, body⟩ := hb'
+                exact absurd rfl (hch rn handler body name args)
+    | dec name value body => exact absurd rfl (hdec name value body)
+    | seq first second => exact absurd rfl (hseq first second)
+    | ite c a b => exact absurd rfl (hite c a b)
+    | «while» c b => exact absurd rfl (hwhile c b)
+    | skip => simp only [inlineProgHOLCoreExact]
+    | assign name value => simp only [inlineProgHOLCoreExact]
+    | primitive names operator args => simp only [inlineProgHOLCoreExact]
+    | store address value => simp only [inlineProgHOLCoreExact]
+    | store32 address value => simp only [inlineProgHOLCoreExact]
+    | storeByte address value => simp only [inlineProgHOLCoreExact]
+    | storeGlob address value => simp only [inlineProgHOLCoreExact]
+    | «break» label => simp only [inlineProgHOLCoreExact]
+    | «continue» label => simp only [inlineProgHOLCoreExact]
+    | extCall function configuration configurationLength array arrayLength =>
+        simp only [inlineProgHOLCoreExact]
+    | raise exception => simp only [inlineProgHOLCoreExact]
+    | «return» values => simp only [inlineProgHOLCoreExact]
+    | shMem operator name address => simp only [inlineProgHOLCoreExact]
+    | tick => simp only [inlineProgHOLCoreExact]
+
+/-- The support-certified exact inliner is the identity on an everywhere-`none`
+inline map. -/
+theorem compileInlProgHOLExactWithSupport_eq_self {width : Nat} [NeZero width]
+    (inl_fs : HolFiniteMapExact CrepInlineMapHOLName (List Nat × CrepProgHOL width))
+    (supportKeys : List CrepInlineMapHOLName)
+    (support_spec : ∀ key, inl_fs.lookup key ≠ none → key ∈ supportKeys)
+    (h : ∀ k, inl_fs.lookup k = none)
+    (prog : List (CrepInlineMapHOLName × List Nat × CrepProgHOL width)) :
+    compileInlProgHOLExactWithSupport inl_fs supportKeys support_spec prog = prog := by
+  unfold compileInlProgHOLExactWithSupport
+  have hmap : List.map (fun triple : CrepInlineMapHOLName × List Nat × CrepProgHOL width =>
+      (triple.fst, triple.snd.fst,
+        inlineProgHOLCoreExact (inl_fs.erase triple.fst)
+          (List.filter (fun key => key != triple.fst) supportKeys)
+          (HolFiniteMapExact.erase_support inl_fs supportKeys support_spec triple.fst)
+          triple.snd.snd)) prog = List.map id prog := by
+    apply List.map_congr_left
+    intro triple _
+    simp only [id_eq]
+    have herase : ∀ k, (inl_fs.erase triple.fst).lookup k = none := by
+      intro k
+      rw [HolFiniteMapExact.lookup_erase]
+      by_cases hk : triple.fst == k <;> simp [FDOMSUB, hk, h k]
+    rw [inlineProgHOLCoreExact_lookup_none (inl_fs.erase triple.fst)
+      (supportKeys.filter (fun k => k != triple.fst))
+      (HolFiniteMapExact.erase_support inl_fs supportKeys support_spec triple.fst) herase triple.snd.snd]
+  rw [hmap, List.map_id]
+
+/-- The plain exact inliner is the identity on an everywhere-`none` inline map. -/
+theorem compileInlProgHOLExact_eq_self {width : Nat} [NeZero width]
+    (inl_fs : HolFiniteMapExact CrepInlineMapHOLName (List Nat × CrepProgHOL width))
+    (h : ∀ k, inl_fs.lookup k = none)
+    (prog : List (CrepInlineMapHOLName × List Nat × CrepProgHOL width)) :
+    compileInlProgHOLExact inl_fs prog = prog := by
+  rw [← compileInlProgHOLExactWithSupport_eq_compileInlProgHOLExact inl_fs
+    (Classical.choose inl_fs.finiteSupport)
+    (Classical.choose_spec inl_fs.finiteSupport) prog]
+  exact compileInlProgHOLExactWithSupport_eq_self inl_fs _ _ h prog
+
+/-- Exact `compileInlTopHOLExact` is the identity on an empty inline-name list. -/
+theorem compileInlTopHOLExact_nil {width : Nat} [NeZero width]
+    (prog : List (CrepInlineMapHOLName × List Nat × CrepProgHOL width)) :
+    compileInlTopHOLExact ([] : List CrepInlineMapHOLName) prog = prog := by
+  rw [compileInlTopHOLExact_eq_compileInlProgHOLExact]
+  have hfilter : prog.filter (fun triple => ([] : List CrepInlineMapHOLName).contains triple.1) =
+      [] := by
+    apply List.filter_eq_nil_iff.mpr
+    intro a _ hmem
+    simp at hmem
+  rw [hfilter]
+  exact compileInlProgHOLExact_eq_self (alistToFmapHOLExact [])
+    (by
+      intro k
+      simp only [alistToFmapHOLExact, List.reverse_nil, HolFiniteMapExact.lookup_updateList,
+        FUPDATE_LIST_nil, HolFiniteMapExact.lookup_empty]) prog
+
+/-- First routing step, decoded form: on an empty inline-name list the exact
+tagged pass maps the decoded production program to the decode of the production
+result.  The decode is arbitrary, so this is the empty-name base case of the
+executed-route/exact-route relation. -/
+theorem compileInlTopHOLExact_nil_map [BEq FunName] [LawfulBEq FunName]
+    [LawfulHashable FunName] [OfNat α 0] [OfNat α 1] {width : Nat} [NeZero width]
+    (decode : FunName × List Nat × CrepProg α →
+      CrepInlineMapHOLName × List Nat × CrepProgHOL width)
+    (functions : List (FunName × List Nat × CrepProg α)) :
+    compileInlTopHOLExact ([] : List CrepInlineMapHOLName) (functions.map decode) =
+      (compileInlTopHOL ([] : List FunName) functions).map decode := by
+  rw [compileInlTopHOL_nil, compileInlTopHOLExact_nil]
+
+end CrepInlineRoute
+end Flapjack
