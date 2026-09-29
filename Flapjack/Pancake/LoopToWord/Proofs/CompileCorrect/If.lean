@@ -1,5 +1,5 @@
 import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Property
-import Flapjack.Pancake.Semantics.LoopProps.UnassignedVarsExact
+import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call.HandlerTail
 import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateClock
 import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelLookups
 import Flapjack.Pancake.Proofs.LoopToWord.AccVarsAcc
@@ -28,79 +28,6 @@ theorem holFmapAsFiniteSupportRelationWitness_WordSemStateFiniteExact
 
 end IfWitnesses
 
-/-- Flapjack-specific proof support for the If case: restricting source locals
-preserves the lookup simulation. HOL uses `lookup_inter_alt` inline rather than
-declaring this lemma separately. -/
-theorem localsRel_inter_if {width : Nat} [NeZero width]
-    (ctxt : Spt Nat) (src dst : Spt (WordLocW width)) (live : NumSet)
-    (h : localsRelHOL ctxt src dst) : localsRelHOL ctxt (sptInter src live) dst := by
-  refine ⟨h.1, h.2.1, ?_⟩
-  intro name value hv
-  rw [sptLookup_sptInter] at hv
-  split at hv
-  · exact h.2.2 name value hv
-  · contradiction
-
-/-- Flapjack-specific proof support for HOL's If case. A non-error source
-`cut_res` after a simulated branch is implemented by the target's trailing
-Tick. No target evaluation is assumed: it is constructed from the branch
-result relation. -/
-theorem cutRes_tick {width : Nat} [NeZero width] {C F : Type}
-    (ctxt : Spt Nat) (retv : WordLocW width)
-    (initial target : WordSemStateFiniteExact width C F)
-    (source final : LoopSemStateFiniteExact width F) (live : NumSet)
-    (branchResult : Option (LoopSemStateFiniteExact.LoopResultExact width))
-    (targetResult : Option (WordSemResult width))
-    (result : Option (LoopSemStateFiniteExact.LoopResultExact width))
-    (hcut : LoopSemStateFiniteExact.cutRes live (branchResult, source) = (result, final))
-    (hne : result ≠ some .error) (hffi : target.ffi = source.ffi)
-    (hrel : resultCase ctxt retv initial branchResult source targetResult target) :
-    ∃ targetFinal resultFinal,
-      (match targetResult with
-        | none => WordSemStateFiniteExact.evaluate .tick target
-        | some r => (some r, target)) = (resultFinal, targetFinal) ∧
-      targetFinal.ffi = final.ffi ∧
-      resultCase ctxt retv initial result final resultFinal targetFinal := by
-  cases branchResult with
-  | some r =>
-    simp only [LoopSemStateFiniteExact.cutRes, Prod.mk.injEq] at hcut
-    rcases hcut with ⟨rfl, rfl⟩
-    have ht : targetResult ≠ none := by
-      intro he
-      cases r <;> simp_all [resultCase]
-    cases targetResult with
-    | none => exact False.elim (ht rfl)
-    | some r => exact ⟨target, some r, rfl, hffi, hrel⟩
-  | none =>
-    rcases hrel with ⟨hstate, rfl, hret, hlocals, hstack, hhandler⟩
-    have hclock := loopToWordStateRelImpClockHOLExact source target hstate
-    simp only [LoopSemStateFiniteExact.cutRes] at hcut
-    cases hc : LoopSemStateFiniteExact.cutState live source with
-    | none => simp [hc] at hcut; obtain ⟨rfl, rfl⟩ := hcut; exact False.elim (hne rfl)
-    | some cut =>
-      rw [hc] at hcut
-      have hsub : LoopSemStateFiniteExact.sptSubsetLive live source.locals := by
-        classical
-        exact Classical.byContradiction fun hn => by
-          rw [LoopSemStateFiniteExact.cutState_eq_none_of_not_subset live source hn] at hc
-          contradiction
-      rw [LoopSemStateFiniteExact.cutState_of_subset live source hsub] at hc
-      cases hc
-      by_cases hz : source.clock = 0
-      · simp [hz] at hcut
-        obtain ⟨rfl, rfl⟩ := hcut
-        refine ⟨WordSemStateFiniteExact.flushState true target, some .timeOut, ?_, ?_, rfl⟩
-        · simp [WordSemStateFiniteExact.evaluate, hclock, hz]
-        · exact hffi
-      · simp [hz] at hcut
-        obtain ⟨rfl, rfl⟩ := hcut
-        refine ⟨WordSemStateFiniteExact.decClock target, none, ?_, hffi, ?_⟩
-        · simp [WordSemStateFiniteExact.evaluate, hclock, hz]
-        · refine ⟨?_, rfl, hret, localsRel_inter_if ctxt source.locals target.locals live hlocals,
-            hstack, hhandler⟩
-          simpa [loopToWordStateRelHOLExact, LoopSemStateFiniteExact.decClock,
-            WordSemStateFiniteExact.decClock, hclock] using hstate
-
 /-- Genuine If induction case of HOL `compile_correct`, resumed at line 982.
 The sole IH is conditional on the exact source operand lookups and comparison;
 it retains every original goal premise and the full existential conclusion. -/
@@ -118,7 +45,17 @@ theorem compileCorrect_If {width : Nat} [NeZero width] {C F : Type}
       v2 = some v5 → v5 = .word x → v3 = some v13 → v13 = .word y →
       b = Compiler.Encoders.Asm.wordCmpHOL cmp x y →
       PropertyAt C (if b then c1 else c2) s) :
-    PropertyAt C (.ite cmp r1 ri c1 c2 live) s := by
+    ∀ (res : Option (LoopSemStateFiniteExact.LoopResultExact width))
+      (final : LoopSemStateFiniteExact width F) (t : WordSemStateFiniteExact width C F)
+      (ctxt : Spt Nat) (retv : WordLocW width) (l : Nat × Nat),
+      LoopSemStateFiniteExact.evaluate (.ite cmp r1 ri c1 c2 live) s = (res, final) ∧
+        res ≠ some .error ∧ loopToWordStateRelHOLExact s t ∧
+        localsRelHOL ctxt s.locals t.locals ∧ sptLookup 0 t.locals = some retv ∧
+        goodDimindex width ∧ ¬ wordSemIsWordLoc retv = true ∧
+        (∀ k, sptMem k (accVarsHOL (.ite cmp r1 ri c1 c2 live) .ln) → sptMem k ctxt) →
+      ∃ tf rf,
+        WordSemStateFiniteExact.evaluate (compHOL ctxt (.ite cmp r1 ri c1 c2 live) l).1 t =
+          (rf, tf) ∧ tf.ffi = final.ffi ∧ resultCase ctxt retv t res final rf tf := by
   intro res final t ctxt retv l ⟨heval, hne, hstate, hlocals, hret, hdim, hword, hacc⟩
   have hchildAcc (b : Bool) :
       ∀ k, sptMem k (accVarsHOL (if b then c1 else c2) .ln) → sptMem k ctxt := by
@@ -172,8 +109,8 @@ theorem compileCorrect_If {width : Nat} [NeZero width] {C F : Type}
             (if b then l else (compHOL ctxt c1 l).2)
             ⟨hc, hcne, hstate, hlocals, hret, hdim, hword, hchildAcc b⟩
           obtain ⟨tf, rf, htick, hff, hresult⟩ :=
-            cutRes_tick ctxt retv t ct cs final live cr tr res (by simpa [hc] using hcut)
-              hne hffi hr
+            handlerTail ctxt retv t t live cr cs tr ct res final hr hffi rfl rfl
+              (by simpa [hc] using hcut) hne
           refine ⟨tf, rf, ?_, hff, hresult⟩
           rcases hcomp1 : compHOL ctxt c1 l with ⟨wc1, labels1⟩
           rcases hcomp2 : compHOL ctxt c2 labels1 with ⟨wc2, labels2⟩
