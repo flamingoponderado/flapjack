@@ -27,7 +27,8 @@ hypotheses for sub-expressions where the case has any).  HOL's quantifier order
 place of `e`.  `wlab_wloc` is the tagged `wlabWlocExact`; `state_rel`,
 `mem_rel`, `globals_rel`, `code_rel` and `locals_rel` are the tagged exact
 relations.  The leaf cases (`Const`, `Var`, `LoadGlob`, `BaseAddr`, `TopAddr`)
-are flapjack-luna-c's pieces in `CompExpPreservesEval/Leaf.lean`.  The
+and the `Load` case are flapjack-luna-c's pieces in
+`CompExpPreservesEval/Leaf.lean` and its focused `Load` module.  The
 assembling theorem is tracked on bead `flapjack-pxn.18.5.6.33.15.8`.
 -/
 
@@ -85,60 +86,6 @@ def crepToLoopCompExpPreservesEvalAt {width : Nat} [NeZero width] {σ : Type}
       crepToLoopGlobalsRelHOLExact s.globals st.globals ∧
       crepToLoopCodeRelExact ctxt s.code st.code ∧
       crepToLoopLocalsRelExact ctxt nl s.locals st.locals
-
-/-- `comp_exp_preserves_eval`, case `Load e` (`crep_to_loopProofScript.sml:772-786`
-    statement; case proof at 982-995), with the `eval_ind` hypothesis for the
-    address sub-expression `e`. -/
-@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "comp_exp_preserves_eval"
-  (fmap_as_finite_support_relation := [CrepToLoopContextExact.vars,
-    CrepToLoopContextExact.funcs, CrepSemHOLState.locals, CrepSemHOLState.globals,
-    CrepSemHOLState.code, LoopSemStateFiniteExact.globals])
-  (words_as_type_indexed_bitvec)]
-theorem crepToLoop_comp_exp_preserves_eval_load {width : Nat} [NeZero width] {σ : Type} :
-    ∀ (s : CrepSemHOLState width σ) (e : CrepExpHOL width),
-      crepToLoopCompExpPreservesEvalAt s e →
-    ∀ (v : HolWordLab width) (t : LoopSemStateFiniteExact width σ)
-      (ctxt : CrepToLoopContextExact) (tmp : Nat) (l : NumSet)
-      (p : List (HolLoopProg width)) (le : HolLoopExp width) (ntmp : Nat) (nl : NumSet),
-      evalCrepSemHOLExp s (.load e) = some v ∧
-        crepToLoopStateRelExact s t ∧
-        crepToLoopMemRelHOLExact s.memory t.memory s.memaddrs ∧
-        crepToLoopGlobalsRelHOLExact s.globals t.globals ∧
-        crepToLoopCodeRelExact ctxt s.code t.code ∧
-        crepToLoopLocalsRelExact ctxt l s.locals t.locals ∧
-        compileExpHOLExact ctxt tmp l (.load e) = (p, le, ntmp, nl) ∧
-        ctxt.vmax < tmp →
-      ∃ (ck : Nat) (st : LoopSemStateFiniteExact width σ),
-        LoopSemStateFiniteExact.evaluate (loopNestedSeqHOL p)
-            { t with clock := t.clock + ck } = (none, st) ∧
-        LoopSemStateFiniteExact.eval st le = some (wlabWlocExact v) ∧
-        crepToLoopStateRelExact s st ∧
-        crepToLoopMemRelHOLExact s.memory st.memory s.memaddrs ∧
-        crepToLoopGlobalsRelHOLExact s.globals st.globals ∧
-        crepToLoopCodeRelExact ctxt s.code st.code ∧
-        crepToLoopLocalsRelExact ctxt nl s.locals st.locals := by
-  intro s e ih v t ctxt tmp l p le ntmp nl ⟨he, hs, hm, hg, hc, hl, hcomp, hv⟩
-  cases hea : evalCrepSemHOLExp s e with
-  | none => simp [evalCrepSemHOLExp, hea] at he
-  | some a =>
-    cases a with
-    | word w =>
-      simp only [evalCrepSemHOLExp, hea] at he
-      by_cases hd : s.memaddrs w
-      · simp [hd] at he
-        subst he
-        rcases hA : compileExpHOLExact ctxt tmp l e with ⟨c, val, m, o⟩
-        rw [compileExpHOLExact, hA] at hcomp
-        simp only [Prod.mk.injEq] at hcomp
-        obtain ⟨rfl, rfl, rfl, rfl⟩ := hcomp
-        obtain ⟨ck, st, h1, h2, h3, h4, h5, h6, h7⟩ :=
-          ih (.word w) t ctxt tmp l c val m o ⟨hea, hs, hm, hg, hc, hl, hA, hv⟩
-        refine ⟨ck, st, h1, ?_, h3, h4, h5, h6, h7⟩
-        have hdom : st.mdomain w = true := (congrFun h3.1 w) ▸ hd
-        simp only [LoopSemStateFiniteExact.eval, h2, wlabWlocExact,
-          LoopSemStateFiniteExact.memLoad, hdom, if_true]
-        exact congrArg some (h4 w hd).symm
-      · simp [if_neg hd] at he
 
 /-- Flapjack bridge (no HOL declaration; HOL's LoadByte case unfolds
     `panSem$mem_load_byte_def` and `wordSem$mem_load_byte_aux_def` inline): under
