@@ -8,6 +8,10 @@ import Flapjack.Compiler.Backend.Semantics.WordSem.CallHelpers
 import Flapjack.Compiler.Backend.Semantics.WordSem.Alloc
 import Flapjack.Compiler.Backend.Semantics.WordSem.ShMem
 import Flapjack.Compiler.Backend.Semantics.WordSem.Inst
+import Flapjack.Compiler.Backend.Semantics.WordSem.Evaluate
+import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateClock
+import Flapjack.Compiler.Backend.Semantics.WordSem.EvaluateInd
+import Flapjack.Compiler.Backend.Semantics.WordSem.Semantics
 import Flapjack.Misc.ShiftSeq
 import Flapjack.FpSemHOL
 import Flapjack.Basis.Pure.MlList
@@ -96,6 +100,9 @@ import Flapjack.Pancake.Proofs.LoopToWord.LastNAddCons
 import Flapjack.Pancake.Proofs.LoopToWord.WordShiftModDimword
 import Flapjack.Pancake.Proofs.LoopToWord.CutEnvSupport
 import Flapjack.Pancake.Proofs.LoopToWord.WordToBytes
+import Flapjack.Pancake.Proofs.LoopToWord.TickUnfold
+import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Base
+import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.ReturnRaise
 import Flapjack.Pancake.LoopLang.AssignedVars
 import Flapjack.Pancake.Semantics.LoopProps.AssignedVars
 import Flapjack.Pancake.Semantics.LoopProps.CutSets
