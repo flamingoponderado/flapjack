@@ -67,40 +67,53 @@ local instance : DecidablePred exactState64.memaddrs := by
   change Decidable (address = word64 8)
   infer_instance
 
-#guard evalCrepSemHOLExp exactState8 (.const (word8 5)) == some (.word (word8 5))
-#guard evalCrepSemHOLExp exactState8 (.var 1) == some (.word (word8 7))
-#guard evalCrepSemHOLExp exactState8 (.var 2) == none
-#guard evalCrepSemHOLExp exactState8 (.load (.const (word8 3))) == some (.word (word8 9))
-#guard evalCrepSemHOLExp exactState8 (.load (.const (word8 8))) == none
-#guard evalCrepSemHOLExp exactState8 (.loadGlob 4) == some (.word (word8 11))
-#guard evalCrepSemHOLExp exactState8 (.loadGlob 8) == none
-#guard evalCrepSemHOLExp exactState8 .baseAddr == some (.word (word8 12))
-#guard evalCrepSemHOLExp exactState8 .topAddr == some (.word (word8 13))
-#guard evalCrepSemHOLExp exactState8
+/- Executable regression spelling for the public exact evaluator: the
+explicit decidability witness keeps this check computational while theorem
+statements use the no-decider HOL-facing declaration. -/
+def evalExact8 (expression : CrepExpHOL 8) :=
+  evalCrepSemHOLExpWithDecider exactState8 (fun _ => inferInstance) expression
+
+def evalExact8AtClock (clock : Nat) (expression : CrepExpHOL 8) :=
+  evalCrepSemHOLExpWithDecider { exactState8 with clock := clock }
+    (fun _ => inferInstance) expression
+
+def evalExact64 (expression : CrepExpHOL 64) :=
+  evalCrepSemHOLExpWithDecider exactState64 (fun _ => inferInstance) expression
+
+#guard evalExact8 (.const (word8 5)) == some (.word (word8 5))
+#guard evalExact8 (.var 1) == some (.word (word8 7))
+#guard evalExact8 (.var 2) == none
+#guard evalExact8 (.load (.const (word8 3))) == some (.word (word8 9))
+#guard evalExact8 (.load (.const (word8 8))) == none
+#guard evalExact8 (.loadGlob 4) == some (.word (word8 11))
+#guard evalExact8 (.loadGlob 8) == none
+#guard evalExact8 .baseAddr == some (.word (word8 12))
+#guard evalExact8 .topAddr == some (.word (word8 13))
+#guard evalExact8
     (.op .add [.const (word8 3), .const (word8 4)]) == some (.word (word8 7))
-#guard evalCrepSemHOLExp exactState8
+#guard evalExact8
     (.op .sub [.const (word8 7), .const (word8 2)]) == some (.word (word8 5))
-#guard evalCrepSemHOLExp exactState8 (.op .add []) == some (.word (word8 0))
-#guard evalCrepSemHOLExp exactState8 (.op .sub [.const (word8 3)]) == none
-#guard evalCrepSemHOLExp exactState8
+#guard evalExact8 (.op .add []) == some (.word (word8 0))
+#guard evalExact8 (.op .sub [.const (word8 3)]) == none
+#guard evalExact8
     (.crepOp .mul [.const (word8 6), .const (word8 7)]) == some (.word (word8 42))
-#guard evalCrepSemHOLExp exactState8 (.crepOp .mul [.const (word8 3)]) == none
-#guard evalCrepSemHOLExp exactState8
+#guard evalExact8 (.crepOp .mul [.const (word8 3)]) == none
+#guard evalExact8
     (.cmp .equal (.const (word8 5)) (.const (word8 5))) == some (.word (word8 1))
-#guard evalCrepSemHOLExp exactState8
+#guard evalExact8
     (.cmp .equal (.const (word8 5)) (.const (word8 6))) == some (.word (word8 0))
-#guard evalCrepSemHOLExp exactState8
+#guard evalExact8
     (.shift .lsl (.const (word8 1)) (.const (word8 3))) == some (.word (word8 8))
-#guard evalCrepSemHOLExp exactState8
+#guard evalExact8
     (.shift .lsl (.const (word8 1)) (.const (word8 8))) == none
-#guard evalCrepSemHOLExp exactState64 (.load32 (.const (word64 8))) ==
+#guard evalExact64 (.load32 (.const (word64 8))) ==
     some (.word (word64 0x55667788))
-#guard evalCrepSemHOLExp exactState64 (.loadByte (.const (word64 8))) ==
+#guard evalExact64 (.loadByte (.const (word64 8))) ==
     some (.word (word64 136))
 
-#guard evalCrepSemHOLExp { exactState8 with clock := 5 }
+#guard evalExact8AtClock 5
     (.op .sub [.const (word8 7), .const (word8 2)]) ==
-  evalCrepSemHOLExp exactState8 (.op .sub [.const (word8 7), .const (word8 2)])
+  evalExact8 (.op .sub [.const (word8 7), .const (word8 2)])
 
 /-- HOL `eval_upd_clock_eq` row: replacing the clock leaves evaluation unchanged. -/
 example : evalCrepSemHOLExp { exactState8 with clock := 5 }

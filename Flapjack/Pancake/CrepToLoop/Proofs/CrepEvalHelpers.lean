@@ -26,7 +26,7 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {ffiState : T
 end CrepToLoopCrepEvalFiniteSupport
 
 theorem evalCrepSemHOLExp_upd_clock {width : Nat} [NeZero width] {ffiState : Type}
-    (s : CrepSemHOLState width ffiState) [DecidablePred s.memaddrs] (v : Nat) :
+    (s : CrepSemHOLState width ffiState) (v : Nat) :
     ∀ e : CrepExpHOL width, evalCrepSemHOLExp { s with clock := v } e = evalCrepSemHOLExp s e
   | .const _ | .var _ | .loadGlob _ | .baseAddr | .topAddr => by simp only [evalCrepSemHOLExp]
   | .load a | .load32 a | .loadByte a => by
@@ -50,7 +50,7 @@ decreasing_by
 @[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "crep_eval_upd_clock"
   (fmap_as_finite_support := [locals, globals, code]) (words_as_type_indexed_bitvec)]
 theorem crep_eval_upd_clock {width : Nat} [NeZero width] {ffiState : Type}
-    (s : CrepSemHOLState width ffiState) [DecidablePred s.memaddrs] (v : Nat) :
+    (s : CrepSemHOLState width ffiState) (v : Nat) :
     evalCrepSemHOLExp { s with clock := v } = evalCrepSemHOLExp s := by
   funext e
   exact evalCrepSemHOLExp_upd_clock s v e

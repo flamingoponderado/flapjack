@@ -138,8 +138,7 @@ theorem pcCompileCorrectCallTargetArgs {width : Nat} {σ : Type} [NeZero width]
     (hlocals : panToCrepLocalsRelFiniteExact ctxt s.locals t.locals)
     (hlocalised : everyExpListHOL localisedExpHOL argexps = true) :
     ((compileExpExactHOLWList ctxt argexps).flatMap Prod.fst).mapM
-        (@evalCrepSemHOLExp width _ σ t
-          (fun address => Classical.propDecidable (t.memaddrs address))) =
+        (@evalCrepSemHOLExp width _ σ t) =
       some (args.flatMap flattenHOL) := by
   classical
   have hmap : argexps.map s.evalHOLFinite = args.map some := by
@@ -192,8 +191,7 @@ theorem pcCompileCorrectCallPrelude {width : Nat} {σ : Type} [NeZero width]
       ctxt.funcs.lookup fname = some (vshapes, rsh) ∧
       ns.length = (args.flatMap flattenHOL).length ∧
       ((compileExpExactHOLWList ctxt argexps).flatMap Prod.fst).mapM
-          (@evalCrepSemHOLExp width _ σ t
-            (fun address => Classical.propDecidable (t.memaddrs address))) =
+          (@evalCrepSemHOLExp width _ σ t) =
         some (args.flatMap flattenHOL) ∧
       lookupCodeFiniteHOL t.code fname (args.flatMap flattenHOL)
           (args.flatMap flattenHOL).length =
@@ -253,8 +251,7 @@ theorem pcCompileCorrectCallNoReturnTarget {width : Nat} {σ : Type} [NeZero wid
     (fname : MlS) (argexps : List (ExpHOL width)) (flat : List (HolWordLab width))
     (body : CrepProgHOL width) (locals : HolFiniteMapExact Nat (HolWordLab width))
     (hargs : ((compileExpExactHOLWList ctxt argexps).flatMap Prod.fst).mapM
-          (@evalCrepSemHOLExp width _ σ t
-            (fun address => Classical.propDecidable (t.memaddrs address))) = some flat)
+          (@evalCrepSemHOLExp width _ σ t) = some flat)
     (hlookup : lookupCodeFiniteHOL t.code fname flat flat.length = some (body, locals))
     (hclock : t.clock ≠ 0) :
     evalCrepSemHOLProgExact t
@@ -273,7 +270,7 @@ theorem pcCompileCorrectCallNoReturnTarget {width : Nat} {σ : Type} [NeZero wid
   dsimp only
   rw [hlookup]
   dsimp only
-  rw [if_neg (by simp), if_neg hclock]
+  rw [if_neg (by simp [crepReturnInfoNodupError]), if_neg hclock]
   rcases evalCrepSemHOLProgExact { decClockCrepSemHOL t with locals := locals } body with
     ⟨_ | r, st⟩
   · rfl
@@ -435,8 +432,7 @@ theorem crepCallTarget {width : Nat} [NeZero width] {σ : Type}
     (returnInfo : Option (List Nat × Option (BitVec width × CrepProgHOL width)))
     (fname : MlS) (cargs : List (CrepExpHOL width)) (flat : List (HolWordLab width))
     (body : CrepProgHOL width) (locals : HolFiniteMapExact Nat (HolWordLab width))
-    (hargs : cargs.mapM (@evalCrepSemHOLExp width _ σ t
-            (fun address => Classical.propDecidable (t.memaddrs address))) = some flat)
+    (hargs : cargs.mapM (@evalCrepSemHOLExp width _ σ t) = some flat)
     (hlookup : lookupCodeFiniteHOL t.code fname flat flat.length = some (body, locals))
     (hguard : ∀ rts h, returnInfo = some (rts, h) → rts.Nodup)
     (hclock : t.clock ≠ 0) :
@@ -445,8 +441,7 @@ theorem crepCallTarget {width : Nat} [NeZero width] {σ : Type}
         (evalCrepSemHOLProgExact { decClockCrepSemHOL t with locals := locals } body) := by
   classical
   rw [evalCrepSemHOLProgExact_call_holShape]
-  change (match cargs.mapM (@evalCrepSemHOLExp width _ σ t
-            (fun address => Classical.propDecidable (t.memaddrs address))) with
+  change (match cargs.mapM (@evalCrepSemHOLExp width _ σ t) with
     | some args => _ | none => _ : Option (CrepResultHOLExact width) × CrepSemHOLState width σ) = _
   rw [hargs]
   dsimp only
@@ -454,8 +449,8 @@ theorem crepCallTarget {width : Nat} [NeZero width] {σ : Type}
   dsimp only
   rw [if_neg (by
     rcases returnInfo with _ | ⟨rts, h⟩
-    · simp
-    · simpa using hguard rts h rfl), if_neg hclock]
+    · simp [crepReturnInfoNodupError]
+    · simpa [crepReturnInfoNodupError] using hguard rts h rfl), if_neg hclock]
   rcases evalCrepSemHOLProgExact { decClockCrepSemHOL t with locals := locals } body with
     ⟨_ | r, st⟩
   · rfl
@@ -472,8 +467,7 @@ theorem crepNestedCallTarget {width : Nat} [NeZero width] {σ : Type}
     (fname : MlS) (cargs : List (CrepExpHOL width)) (flat : List (HolWordLab width))
     (body : CrepProgHOL width) (locals : HolFiniteMapExact Nat (HolWordLab width))
     (rts : List Nat)
-    (hargs : cargs.mapM (@evalCrepSemHOLExp width _ σ t
-            (fun address => Classical.propDecidable (t.memaddrs address))) = some flat)
+    (hargs : cargs.mapM (@evalCrepSemHOLExp width _ σ t) = some flat)
     (hlookup : lookupCodeFiniteHOL t.code fname flat flat.length = some (body, locals))
     (hguard : ∀ rts' h, returnInfo = some (rts', h) → rts'.Nodup)
     (hclock : t.clock ≠ 0)
@@ -498,8 +492,7 @@ theorem crepNestedCallTarget {width : Nat} [NeZero width] {σ : Type}
     (.call returnInfo fname cargs)
     ⟨by simp [zeros, evalCrepSemHOLExp], by simp, by
       simp [distinctListsHol, crepExpVarsHOL], hnodup⟩
-  have hargs' : cargs.mapM (@evalCrepSemHOLExp width _ σ t'
-      (fun address => Classical.propDecidable (t'.memaddrs address))) = some flat :=
+  have hargs' : cargs.mapM (@evalCrepSemHOLExp width _ σ t') = some flat :=
     optMmapEvalDistinctListsNotAffectHOL cargs t flat rts zeros
       ⟨hargs, by simp [zeros], hdist⟩
   have hcall := crepCallTarget t' returnInfo fname cargs flat body locals hargs'
@@ -615,8 +608,7 @@ theorem pcCompileCorrectCallRetTerminalTarget {width : Nat} [NeZero width] {σ :
     (hno : noOverlapFiniteExact ctxt.vars) (hmax : ctxtMaxFiniteExact ctxt.vmax ctxt.vars)
     (hfuncs : ctxt.funcs.lookup f = some (vshapes, rsh))
     (hargs : ((compileExpExactHOLWList ctxt args).flatMap Prod.fst).mapM
-          (@evalCrepSemHOLExp width _ σ t
-            (fun address => Classical.propDecidable (t.memaddrs address))) = some flat)
+          (@evalCrepSemHOLExp width _ σ t) = some flat)
     (hlookup : lookupCodeFiniteHOL t.code f flat flat.length = some (body, locals))
     (hclock : t.clock ≠ 0)
     (hcallee : evalCrepSemHOLProgExact { decClockCrepSemHOL t with locals := locals } body =
@@ -723,8 +715,7 @@ theorem crepCallTimeout {width : Nat} [NeZero width] {σ : Type}
     (returnInfo : Option (List Nat × Option (BitVec width × CrepProgHOL width)))
     (fname : MlS) (cargs : List (CrepExpHOL width)) (flat : List (HolWordLab width))
     (body : CrepProgHOL width) (locals : HolFiniteMapExact Nat (HolWordLab width))
-    (hargs : cargs.mapM (@evalCrepSemHOLExp width _ σ t
-            (fun address => Classical.propDecidable (t.memaddrs address))) = some flat)
+    (hargs : cargs.mapM (@evalCrepSemHOLExp width _ σ t) = some flat)
     (hlookup : lookupCodeFiniteHOL t.code fname flat flat.length = some (body, locals))
     (hguard : ∀ rts h, returnInfo = some (rts, h) → rts.Nodup)
     (hclock : t.clock = 0) :
@@ -732,8 +723,7 @@ theorem crepCallTimeout {width : Nat} [NeZero width] {σ : Type}
       (some .timeOut, CrepSemHOLState.emptyLocals t) := by
   classical
   rw [evalCrepSemHOLProgExact_call_holShape]
-  change (match cargs.mapM (@evalCrepSemHOLExp width _ σ t
-            (fun address => Classical.propDecidable (t.memaddrs address))) with
+  change (match cargs.mapM (@evalCrepSemHOLExp width _ σ t) with
     | some args => _ | none => _ : Option (CrepResultHOLExact width) × CrepSemHOLState width σ) = _
   rw [hargs]
   dsimp only
@@ -741,8 +731,8 @@ theorem crepCallTimeout {width : Nat} [NeZero width] {σ : Type}
   dsimp only
   rw [if_neg (by
     rcases returnInfo with _ | ⟨rts, h⟩
-    · simp
-    · simpa using hguard rts h rfl), if_pos hclock]
+    · simp [crepReturnInfoNodupError]
+    · simpa [crepReturnInfoNodupError] using hguard rts h rfl), if_pos hclock]
 
 /-- The zero-clock target run of a call wrapped in zero-initialised return slots:
     it times out, in a state that differs from the caller's only in locals. -/
@@ -752,8 +742,7 @@ theorem crepNestedCallTimeout {width : Nat} [NeZero width] {σ : Type}
     (fname : MlS) (cargs : List (CrepExpHOL width)) (flat : List (HolWordLab width))
     (body : CrepProgHOL width) (locals : HolFiniteMapExact Nat (HolWordLab width))
     (rts : List Nat)
-    (hargs : cargs.mapM (@evalCrepSemHOLExp width _ σ t
-            (fun address => Classical.propDecidable (t.memaddrs address))) = some flat)
+    (hargs : cargs.mapM (@evalCrepSemHOLExp width _ σ t) = some flat)
     (hlookup : lookupCodeFiniteHOL t.code fname flat flat.length = some (body, locals))
     (hguard : ∀ rts' h, returnInfo = some (rts', h) → rts'.Nodup)
     (hclock : t.clock = 0)
@@ -771,8 +760,7 @@ theorem crepNestedCallTimeout {width : Nat} [NeZero width] {σ : Type}
     (.call returnInfo fname cargs)
     ⟨by simp [zeros, evalCrepSemHOLExp], by simp, by
       simp [distinctListsHol, crepExpVarsHOL], hnodup⟩
-  have hargs' : cargs.mapM (@evalCrepSemHOLExp width _ σ t'
-      (fun address => Classical.propDecidable (t'.memaddrs address))) = some flat :=
+  have hargs' : cargs.mapM (@evalCrepSemHOLExp width _ σ t') = some flat :=
     optMmapEvalDistinctListsNotAffectHOL cargs t flat rts zeros
       ⟨hargs, by simp [zeros], hdist⟩
   have hcall := crepCallTimeout t' returnInfo fname cargs flat body locals hargs'
@@ -966,8 +954,7 @@ theorem pcCompileCorrectCallRetReturnTargetNested {width : Nat} [NeZero width] {
     (hmax : ctxtMaxFiniteExact ctxt.vmax ctxt.vars)
     (hfuncs : ctxt.funcs.lookup f = some (vshapes, rsh))
     (hargs : ((compileExpExactHOLWList ctxt args).flatMap Prod.fst).mapM
-          (@evalCrepSemHOLExp width _ σ t
-            (fun address => Classical.propDecidable (t.memaddrs address))) = some flat)
+          (@evalCrepSemHOLExp width _ σ t) = some flat)
     (hlookup : lookupCodeFiniteHOL t.code f flat flat.length = some (body, locals))
     (hclock : t.clock ≠ 0)
     (hcallee : evalCrepSemHOLProgExact { decClockCrepSemHOL t with locals := locals } body =
@@ -1013,8 +1000,7 @@ theorem pcCompileCorrectCallRetReturnTargetWrap {width : Nat} [NeZero width] {σ
     (hno : noOverlapFiniteExact ctxt.vars)
     (hwrap : wrapRtHOL (ctxt.vars.lookup name) = some (sh, ns))
     (hargs : ((compileExpExactHOLWList ctxt args).flatMap Prod.fst).mapM
-          (@evalCrepSemHOLExp width _ σ t
-            (fun address => Classical.propDecidable (t.memaddrs address))) = some flat)
+          (@evalCrepSemHOLExp width _ σ t) = some flat)
     (hlookup : lookupCodeFiniteHOL t.code f flat flat.length = some (body, locals))
     (hclock : t.clock ≠ 0)
     (hcallee : evalCrepSemHOLProgExact { decClockCrepSemHOL t with locals := locals } body =
@@ -1370,8 +1356,7 @@ theorem pcCompileCorrectCallExcPropagateTarget {width : Nat} [NeZero width] {σ 
     (hno : noOverlapFiniteExact ctxt.vars) (hmax : ctxtMaxFiniteExact ctxt.vmax ctxt.vars)
     (hfuncs : ctxt.funcs.lookup f = some (vshapes, rsh))
     (hargs : ((compileExpExactHOLWList ctxt args).flatMap Prod.fst).mapM
-          (@evalCrepSemHOLExp width _ σ t
-            (fun address => Classical.propDecidable (t.memaddrs address))) = some flat)
+          (@evalCrepSemHOLExp width _ σ t) = some flat)
     (hlookup : lookupCodeFiniteHOL t.code f flat flat.length = some (body, locals))
     (hclock : t.clock ≠ 0)
     (hcallee : evalCrepSemHOLProgExact { decClockCrepSemHOL t with locals := locals } body =
@@ -1421,8 +1406,7 @@ theorem pcCompileCorrectCallExcCaughtTarget {width : Nat} [NeZero width] {σ : T
     (hno : noOverlapFiniteExact ctxt.vars) (hmax : ctxtMaxFiniteExact ctxt.vmax ctxt.vars)
     (hfuncs : ctxt.funcs.lookup f = some (vshapes, rsh))
     (hargs : ((compileExpExactHOLWList ctxt args).flatMap Prod.fst).mapM
-          (@evalCrepSemHOLExp width _ σ t
-            (fun address => Classical.propDecidable (t.memaddrs address))) = some flat)
+          (@evalCrepSemHOLExp width _ σ t) = some flat)
     (hlookup : lookupCodeFiniteHOL t.code f flat flat.length = some (body, locals))
     (hclock : t.clock ≠ 0)
     (hcallee : evalCrepSemHOLProgExact { decClockCrepSemHOL t with locals := locals } body =

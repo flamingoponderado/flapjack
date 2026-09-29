@@ -70,8 +70,7 @@ theorem crepNestedDecCallTarget {width : Nat} [NeZero width] {σ : Type}
     (fname : MlS) (cargs : List (CrepExpHOL width)) (flat : List (HolWordLab width))
     (body : CrepProgHOL width) (locals : HolFiniteMapExact Nat (HolWordLab width))
     (rts : List Nat) (B : CrepProgHOL width)
-    (hargs : cargs.mapM (@evalCrepSemHOLExp width _ σ t
-            (fun address => Classical.propDecidable (t.memaddrs address))) = some flat)
+    (hargs : cargs.mapM (@evalCrepSemHOLExp width _ σ t) = some flat)
     (hlookup : lookupCodeFiniteHOL t.code fname flat flat.length = some (body, locals))
     (hclock : t.clock ≠ 0)
     (hnodup : rts.Nodup)
@@ -96,8 +95,7 @@ theorem crepNestedDecCallTarget {width : Nat} [NeZero width] {σ : Type}
     (.seq (.call (some (rts, none)) fname cargs) B)
     ⟨by simp [zeros, evalCrepSemHOLExp], by simp, by
       simp [distinctListsHol, crepExpVarsHOL], hnodup⟩
-  have hargs' : cargs.mapM (@evalCrepSemHOLExp width _ σ t'
-      (fun address => Classical.propDecidable (t'.memaddrs address))) = some flat :=
+  have hargs' : cargs.mapM (@evalCrepSemHOLExp width _ σ t') = some flat :=
     optMmapEvalDistinctListsNotAffectHOL cargs t flat rts zeros
       ⟨hargs, by simp [zeros], hdist⟩
   have hg : ∀ rts' h, (some (rts, none) : Option (List Nat × Option (BitVec width × CrepProgHOL width))) =
@@ -118,8 +116,7 @@ theorem crepNestedDecCallTimeout {width : Nat} [NeZero width] {σ : Type}
     (fname : MlS) (cargs : List (CrepExpHOL width)) (flat : List (HolWordLab width))
     (body : CrepProgHOL width) (locals : HolFiniteMapExact Nat (HolWordLab width))
     (rts : List Nat) (B : CrepProgHOL width)
-    (hargs : cargs.mapM (@evalCrepSemHOLExp width _ σ t
-            (fun address => Classical.propDecidable (t.memaddrs address))) = some flat)
+    (hargs : cargs.mapM (@evalCrepSemHOLExp width _ σ t) = some flat)
     (hlookup : lookupCodeFiniteHOL t.code fname flat flat.length = some (body, locals))
     (hclock : t.clock = 0)
     (hnodup : rts.Nodup)
@@ -136,8 +133,7 @@ theorem crepNestedDecCallTimeout {width : Nat} [NeZero width] {σ : Type}
     (.seq (.call (some (rts, none)) fname cargs) B)
     ⟨by simp [zeros, evalCrepSemHOLExp], by simp, by
       simp [distinctListsHol, crepExpVarsHOL], hnodup⟩
-  have hargs' : cargs.mapM (@evalCrepSemHOLExp width _ σ t'
-      (fun address => Classical.propDecidable (t'.memaddrs address))) = some flat :=
+  have hargs' : cargs.mapM (@evalCrepSemHOLExp width _ σ t') = some flat :=
     optMmapEvalDistinctListsNotAffectHOL cargs t flat rts zeros
       ⟨hargs, by simp [zeros], hdist⟩
   have hg : ∀ rts' h, (some (rts, none) : Option (List Nat × Option (BitVec width × CrepProgHOL width))) =
