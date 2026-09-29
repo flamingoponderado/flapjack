@@ -11475,6 +11475,14 @@
     "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.9.16.7) against loop_to_wordProofScript.sml:323-329. HOL quantifies params, k, n, l and assumes k < LENGTH params ∧ ALL_DISTINCT params before concluding lookup (EL k params) (make_ctxt n params l) = SOME (2*k+n). Lean preserves binder order, the same bound and distinctness premise (List.Nodup is the exact List rendering of ALL_DISTINCT), lookup result, starting register and arithmetic. The dependent List.get index is justified by the existing k < length premise and adds no semantic assumption; both source `make_ctxt` and Spt insertion are constructor-for-constructor exact carriers. Regression checks index zero and index two for distinct [3,5,9] from base 4."
   },
   {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "lookup_make_ctxt_EVEN",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "makeCtxtHOL_lookupEven",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.9.16.8) against loop_to_wordProofScript.sml:341-353. HOL quantifies xs, m, l, n, y; assumes EVEN m, all successful lookups in l are even, and lookup n (make_ctxt m xs l) = SOME y; concludes EVEN y. Lean keeps that binder/premise/conclusion order over exact List Nat and Spt Nat carriers, using the source-reviewed HOL EVEN encoding v % 2 = 0 from FindVarExact. Proof preserves parity at the inserted value and carries existing-context parity through distinct-key insertion. Tests cover both a pre-existing even-valued key and a generated even register."
+  },
+  {
     "hol_path": "cakeml/pancake/pan_commonScript.sml",
     "hol_name": "distinct_lists_def",
     "lean_path": "Flapjack/Pancake/PanCommon.lean",
@@ -24299,7 +24307,65 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.9.13) against loop_to_wordProofScript.sml:41-52. HOL state_rel s t = EX (len) with t.memory=s.memory, t.mdomain=s.mdomain, t.sh_mdomain=s.sh_mdomain, t.clock=s.clock, t.be=s.be, t.ffi=s.ffi, ALOOKUP (fmap_to_alist t.store) CurrHeap = SOME (Word s.base_addr), ALOOKUP (fmap_to_alist t.store) HeapLength = SOME (Word len), s.top_addr = s.base_addr + 2w*len, globals_rel s.globals t.store, code_rel s.code t.code. Lean loopToWordStateRelHOLExact over LoopSemStateFiniteExact/WordSemStateFiniteExact keeps the same existential length and all eleven conjuncts; ALOOKUP (fmap_to_alist t.store) key is the canonical HolFiniteMapExact lookup, CurrHeap/HeapLength are WordStore .currHeap/.heapLength, Word len is WordLocW.word (BitVec.ofNat width len), and 2w*len is (2 : BitVec width)*BitVec.ofNat width len. The named finite-map carriers are the eligible fields LoopSemStateFiniteExact.globals and WordSemStateFiniteExact.store (both HolFiniteMapExact); code is an Spt tree map and is not named. Same-module witnesses holFmapAsFiniteSupportRelationWitness_LoopSemStateFiniteExact and _WordSemStateFiniteExact re-export the canonical roundtrips."
+  }
+,
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "code_rel_intro",
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/RelationsExact.lean",
+    "lean_name": "loopToWordCodeRelIntroHOLExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.9.14.5) against loop_to_wordProofScript.sml:145-152. Exact HOL code_rel_intro: code_rel s_code t_code ==> !name params body. lookup name s_code = SOME (params,body) ==> lookup name t_code = SOME (LENGTH params+1, comp_func name params body) /\\ ALL_DISTINCT params. Lean exposes exactly the defining implication of loopToWordCodeRelHOLExact over Spt code maps: sptLookup name sourceCode = some (params, body) -> sptLookup name targetCode = some (params.length + 1, loopToWordCompFuncHOL name params body) /\\ params.Nodup. No extra premise."
   },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "state_rel_intro",
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/RelationsExact.lean",
+    "lean_name": "loopToWordStateRelIntroHOLExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "LoopSemStateFiniteExact.globals",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.9.14.5) against loop_to_wordProofScript.sml:154-168. Exact HOL state_rel_intro projects state_rel to: memory, mdomain, clock, be, ffi equality; ALOOKUP (fmap_to_alist t.store) CurrHeap = SOME (Word s.base_addr); globals_rel s.globals t.store; code_rel s.code t.code (HOL drops sh_mdomain, HeapLength and the top-address equation). Lean derives exactly those from loopToWordStateRelHOLExact via the same field order, with the eligible finite-map fields globals/store named by the relation qualifier and same-module witnesses."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/RelationsExact.lean",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "LoopSemStateFiniteExact.globals",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "hol_name": "state_rel_IMP",
+    "lean_name": "loopToWordStateRelImpClockHOLExact",
+    "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.9.19) against loop_to_wordProofScript.sml:272-275 `state_rel s t ==> t.clock = s.clock`; Lean over loopToWordStateRelHOLExact projecting the clock conjunct. The tagged signature names the exact LoopSem/WordSem carriers and consumes the relation over their eligible finite-support fields globals/store."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/RelationsExact.lean",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "LoopSemStateFiniteExact.globals",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "hol_name": "state_rel_with_clock",
+    "lean_name": "loopToWordStateRelWithClockHOLExact",
+    "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.9.19) against loop_to_wordProofScript.sml:1497-1501 `state_rel s t ==> state_rel (s with clock := k) (t with clock := k)`; Lean over loopToWordStateRelHOLExact with both records updated at the same clock; all other conjuncts survive unchanged. Source comparison of the relation carrier and eligible finite-support fields globals/store recorded."
+  },
+{
+  "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+  "hol_name": "word_sh_SOME_MOD_dimword",
+  "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/WordShiftModDimword.lean",
+  "lean_name": "wordShiftHOL_some_mod_dimword",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds5 source comparison (2026-09-29; bead flapjack-pxn.18.5.9.18.2) against loop_to_wordProofScript.sml:453-458. HOL statement is exactly good_dimindex (:'a) /\\ word_sh sh (w : 'a word) n = SOME z ==> n MOD dimword (:'a) = n, with sh/w/n/z universally quantified. Lean keeps the same two hypotheses and conclusion, rendering HOL dimindex (:'a) as the positive width (BitVec width), dimword (:'a) = 2 ** dimindex (:'a) as 2 ^ width, HOL word_sh by the tagged Flapjack.wordShiftHOL (word_sh_def, Flapjack/Pancake/WordLang.lean:46) and good_dimindex by the tagged Flapjack.goodDimindex (good_dimindex_def, Flapjack/Misc/GoodDimindex.lean:27). The words_as_type_indexed_bitvec qualifier records the type-indexed-word-to-BitVec translation; the word_sh SOME guard forces n = 0 or n < width, and goodDimindex restricts width to 32 or 64, giving n % 2 ^ width = n. Regression examples in Flapjack.Test.LoopToWordWordShiftModDimwordParity."
+},
   {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Evaluate.lean",
     "lean_name": "evaluate",
@@ -24479,55 +24545,6 @@
     "lean_name": "holFmapAsFiniteSupportWitness",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only same-module re-export of the existing WordSemStateExact toBroad/ofBroad finite-support roundtrip. The finite-map qualifiers on the tagged evaluate_tick_unfold and evaluate_tick_loop_tick_unfold ports require it. It introduces no carrier and has no separate HOL declaration."
-  }
-,
-  {
-    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
-    "hol_name": "code_rel_intro",
-    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/RelationsExact.lean",
-    "lean_name": "loopToWordCodeRelIntroHOLExact",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.9.14.5) against loop_to_wordProofScript.sml:145-152. Exact HOL code_rel_intro: code_rel s_code t_code ==> !name params body. lookup name s_code = SOME (params,body) ==> lookup name t_code = SOME (LENGTH params+1, comp_func name params body) /\\ ALL_DISTINCT params. Lean exposes exactly the defining implication of loopToWordCodeRelHOLExact over Spt code maps: sptLookup name sourceCode = some (params, body) -> sptLookup name targetCode = some (params.length + 1, loopToWordCompFuncHOL name params body) /\\ params.Nodup. No extra premise."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
-    "hol_name": "state_rel_intro",
-    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/RelationsExact.lean",
-    "lean_name": "loopToWordStateRelIntroHOLExact",
-    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support_relation": [
-      "LoopSemStateFiniteExact.globals",
-      "WordSemStateFiniteExact.store"
-    ],
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.9.14.5) against loop_to_wordProofScript.sml:154-168. Exact HOL state_rel_intro projects state_rel to: memory, mdomain, clock, be, ffi equality; ALOOKUP (fmap_to_alist t.store) CurrHeap = SOME (Word s.base_addr); globals_rel s.globals t.store; code_rel s.code t.code (HOL drops sh_mdomain, HeapLength and the top-address equation). Lean derives exactly those from loopToWordStateRelHOLExact via the same field order, with the eligible finite-map fields globals/store named by the relation qualifier and same-module witnesses."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
-    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/RelationsExact.lean",
-    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support_relation": [
-      "LoopSemStateFiniteExact.globals",
-      "WordSemStateFiniteExact.store"
-    ],
-    "words_as_type_indexed_bitvec": true,
-    "hol_name": "state_rel_IMP",
-    "lean_name": "loopToWordStateRelImpClockHOLExact",
-    "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.9.19) against loop_to_wordProofScript.sml:272-275 `state_rel s t ==> t.clock = s.clock`; Lean over loopToWordStateRelHOLExact projecting the clock conjunct. The tagged signature names the exact LoopSem/WordSem carriers and consumes the relation over their eligible finite-support fields globals/store."
-  },
-  {
-    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
-    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/RelationsExact.lean",
-    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
-    "fmap_as_finite_support_relation": [
-      "LoopSemStateFiniteExact.globals",
-      "WordSemStateFiniteExact.store"
-    ],
-    "words_as_type_indexed_bitvec": true,
-    "hol_name": "state_rel_with_clock",
-    "lean_name": "loopToWordStateRelWithClockHOLExact",
-    "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.9.19) against loop_to_wordProofScript.sml:1497-1501 `state_rel s t ==> state_rel (s with clock := k) (t with clock := k)`; Lean over loopToWordStateRelHOLExact with both records updated at the same clock; all other conjuncts survive unchanged. Source comparison of the relation carrier and eligible finite-support fields globals/store recorded."
   },
   {
     "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
