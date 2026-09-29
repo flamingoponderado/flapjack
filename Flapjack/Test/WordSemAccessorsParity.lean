@@ -105,9 +105,16 @@ theorem varImm : WordSemStateFiniteExact.getVarImm (.imm 4) (st s) = some (.word
 /-- `var_imm_reg=SOME (Loc 4 0)` -/
 theorem varImmReg : WordSemStateFiniteExact.getVarImm (.reg 2) (st s) = some (.loc 4 0) := by wsa_simp
 
+/-- `the_word_word=3w`: the specified `Word` clause of the partial HOL
+    `theWord_def` (`wordSemScript.sml:42-44`). -/
+theorem theWordWord : wordSemTheWord (width := 64) (.word (3 : BitVec 64)) = 3 := rfl
+/-- `get_word_word=5w`: the specified `Word` clause of the partial HOL
+    `get_word_def` (`wordSemScript.sml:278-280`). -/
+theorem getWordWord : wordSemGetWord (width := 64) (.word (5 : BitVec 64)) = 5 := rfl
+
 def runChecks : IO Bool := do
   if pureRows then
-    IO.println "PASS wordSem accessors match all 31 HOL oracle rows (20 kernel-checked over a free state)"
+    IO.println "PASS wordSem accessors match all 33 HOL oracle rows (22 kernel-checked)"
   else
     IO.println "FAIL wordSem accessor HOL oracle rows"
   pure pureRows

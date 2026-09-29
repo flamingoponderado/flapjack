@@ -1671,7 +1671,7 @@ run_probe word_sem_carriers_probeScript.sml word_sem_carriers_probe.out \
 # The wordSem accessor probe observes word_cmp, is_fwd_ptr, word_exp and the
 # state accessors over record updates of a free state (bead flapjack-h29l.2).
 run_probe word_sem_accessors_probeScript.sml word_sem_accessors_probe.out \
-  cmp_equal exp_op fix_clock var_imm_reg \
+  cmp_equal the_word_word get_word_word exp_op fix_clock var_imm_reg \
   "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 

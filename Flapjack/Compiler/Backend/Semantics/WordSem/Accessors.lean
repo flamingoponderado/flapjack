@@ -22,8 +22,11 @@ witness below). `'a word` is `BitVec width` at a positive width.
 
 HOL `theWord_def` (`:42-44`) and `get_word_def` (`:278-280`) are partial:
 there is no clause for `Loc`, so HOL leaves their value on `Loc` unspecified.
-They are not ported, and the accessors below pattern-match on `Word` wherever
-HOL applies them.
+They cannot be tagged exact.  `wordSemTheWord`/`wordSemGetWord` below render
+them as total functions with a fixed `Loc` representative (`0`), recorded as
+`documented_mismatch`, together with the exact Word clauses
+`wordSemTheWord_word`/`wordSemGetWord_word` that the Word-guarded evaluator
+paths use.
 -/
 
 namespace Flapjack
@@ -81,6 +84,34 @@ def wordSemWordCmp {width : Nat} [NeZero width] :
 def wordSemIsWord {width : Nat} [NeZero width] : WordLocW width → Bool
   | .word _ => true
   | _ => false
+
+/-- HOL `theWord_def` (`wordSemScript.sml:42-44`) is partial: it specifies only
+    `theWord (Word w) = w` and leaves `Loc` unspecified (HOL's value there is
+    the arbitrary `ARB`).  A total Lean function cannot return HOL's
+    unspecified value, so this rendering fixes an explicit representative (`0`)
+    on `Loc`; it is therefore recorded as `documented_mismatch` rather than
+    tagged exact.  The specified `Word` equation is the kernel-checked
+    `wordSemTheWord_word` below, and Word-guarded evaluator paths use only that
+    clause. -/
+def wordSemTheWord {width : Nat} [NeZero width] : WordLocW width → BitVec width
+  | .word w => w
+  | .loc _ _ => 0
+
+/-- HOL `theWord (Word w) = w` (`wordSemScript.sml:42-44`), exactly. -/
+@[simp] theorem wordSemTheWord_word {width : Nat} [NeZero width] (w : BitVec width) :
+    wordSemTheWord (.word w) = w := rfl
+
+/-- HOL `get_word_def` (`wordSemScript.sml:278-280`), partial exactly as
+    `theWord`: only `get_word (Word w) = w` is specified and `Loc` is
+    unspecified.  `Loc` is fixed to `0` here and recorded as
+    `documented_mismatch`; see `wordSemGetWord_word`. -/
+def wordSemGetWord {width : Nat} [NeZero width] : WordLocW width → BitVec width
+  | .word w => w
+  | .loc _ _ => 0
+
+/-- HOL `get_word (Word w) = w` (`wordSemScript.sml:278-280`), exactly. -/
+@[simp] theorem wordSemGetWord_word {width : Nat} [NeZero width] (w : BitVec width) :
+    wordSemGetWord (.word w) = w := rfl
 
 namespace WordSemStateFiniteExact
 

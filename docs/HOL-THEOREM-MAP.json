@@ -24903,5 +24903,21 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.9.22.2): the Primitive case of HOL loop_to_wordProof compile_correct (loop_to_wordProofScript.sml:57-97, i.e. loopSem evaluate_ind specialised to goal, resumed at :816-853). The statement follows the HOL evaluate_ind conjunct ∀lhss pop rhss s. P (Primitive lhss pop rhss,s), with P unfolded to HOL's goal written out: ∀res s1 t ctxt retv l. evaluate (prog,s) = (res,s1) ∧ res ≠ SOME Error ∧ state_rel s t ∧ locals_rel ctxt s.locals t.locals ∧ lookup 0 t.locals = SOME retv ∧ good_dimindex(:'a) ∧ ~isWord retv ∧ domain (acc_vars prog LN) ⊆ domain ctxt ⇒ ∃t1 res1. evaluate (FST (comp ctxt prog l),t) = (res1,t1) ∧ t1.ffi = s1.ffi ∧ case res of .... The binders and the premise conjunction are in HOL order. The case over res is the untagged resultCase (LoopToWord/Proofs/CompileCorrect/Property.lean), compared arm by arm: NONE, Result, Exception (including the jump_exc record update of stack and handler), Break, Continue, TimeOut, FinalFFI, and _ => F. The carriers are the tagged exact loopSem evaluate, wordSem evaluate, compHOL (comp_def), loopToWordStateRelHOLExact (state_rel_def), localsRelHOL (locals_rel_def), accVarsHOL (acc_vars_def), goodDimindex, wordSemIsWordLoc (isWord_def) and jumpExc (jump_exc_def). ⊆ on domain is the sptMem implication, and the HOL bool isWord is = true. No induction hypothesis. The only primop, AddCarry with [res; carry] [l; r; ci], compiles to Seq (Assign 1 (Var ci')) (Seq (Inst (Arith (AddCarry 3 l' r' 1))) (Seq (Assign carry' (Var 1)) (Assign res' (Var 3)))), stepped with the rebound evaluate_def. The odd scratch registers 1 and 3 are never find_var images (find_var_neq_odd), so those writes are locals_rel_insert_unmapped. The two destination writes are locals_rel_insert, in the alist_insert order of set_vars. word_add_carry is the shared wordAddCarryHOL. There is no target-run or post-state premise. Kernel-checked. The relation qualifier names the |-> fields of the two state carriers that the goal traverses (loopSem globals; wordSem fpRegs and store), with same-module witnesses LoopToWordCompileCorrectArithWitnesses.*."
-  }
+  },
+{
+  "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+  "hol_name": "theWord_def",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Accessors.lean",
+  "lean_name": "wordSemTheWord",
+  "statement_status": "documented_mismatch",
+  "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-h29l.12) against wordSemScript.sml:42-44: HOL `theWord_def` is partial and specifies only `theWord (Word w) = w`, leaving `Loc` unspecified (HOL the arbitrary ARB). The Lean total `wordSemTheWord` fixes the `Loc` representative to `0`, so its `Loc` value is not the HOL result; no exact tag is possible and the @[hol] tag is withheld. The specified Word clause is the kernel-checked `wordSemTheWord_word`. Untagged Flapjack stand-in, matching the review fitness of `wordLangArbMemOp` (`Flapjack/Pancake/WordConvs.lean:395`). Direct Word-case HOL oracle row `the_word_word=3w` (`scripts/hol-probes/word_sem_accessors_probe.out`) with kernel replay in `Flapjack/Test/WordSemAccessorsParity.lean` (`theWordWord`)."
+},
+{
+  "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+  "hol_name": "get_word_def",
+  "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Accessors.lean",
+  "lean_name": "wordSemGetWord",
+  "statement_status": "documented_mismatch",
+  "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-h29l.12) against wordSemScript.sml:278-280: HOL `get_word_def` is partial and specifies only `get_word (Word w) = w`, leaving `Loc` unspecified. The Lean total `wordSemGetWord` fixes the `Loc` representative to `0`, so its `Loc` value is not the HOL result; no exact tag is possible and the @[hol] tag is withheld. The specified Word clause is the kernel-checked `wordSemGetWord_word`. Direct Word-case HOL oracle row `get_word_word=5w` (`scripts/hol-probes/word_sem_accessors_probe.out`) with kernel replay in `Flapjack/Test/WordSemAccessorsParity.lean` (`getWordWord`)."
+}
 ]

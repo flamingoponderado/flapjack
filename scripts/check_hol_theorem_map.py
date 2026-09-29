@@ -1648,6 +1648,16 @@ DOCUMENTED_MISMATCHES = {
         "a qualifier. Remove the HOL tag until the statement is ported over "
         "DeclHOL and exact compile_prog."
     ),
+    ("Flapjack/Compiler/Backend/Semantics/WordSem/Accessors.lean", "wordSemTheWord"): (
+        "cakeml/compiler/backend/semantics/wordSemScript.sml",
+        "theWord_def",
+        "flapjack-ds10 source comparison (2026-09-29; bead flapjack-h29l.12): HOL `theWord_def` (wordSemScript.sml:42-44) is partial and specifies only `theWord (Word w) = w`, leaving `Loc` unspecified (HOL the arbitrary ARB). The Lean total `wordSemTheWord` fixes the `Loc` representative to `0`, so its `Loc` value is not the HOL result; no exact tag is possible and the @[hol] tag is withheld. The specified Word clause is the kernel-checked `wordSemTheWord_word`; direct Word-case HOL oracle row `the_word_word=3w` with kernel replay `theWordWord` in Flapjack/Test/WordSemAccessorsParity.lean."
+    ),
+    ("Flapjack/Compiler/Backend/Semantics/WordSem/Accessors.lean", "wordSemGetWord"): (
+        "cakeml/compiler/backend/semantics/wordSemScript.sml",
+        "get_word_def",
+        "flapjack-ds10 source comparison (2026-09-29; bead flapjack-h29l.12): HOL `get_word_def` (wordSemScript.sml:278-280) is partial and specifies only `get_word (Word w) = w`, leaving `Loc` unspecified (HOL the arbitrary ARB). The Lean total `wordSemGetWord` fixes the `Loc` representative to `0`, so its `Loc` value is not the HOL result; no exact tag is possible and the @[hol] tag is withheld. The specified Word clause is the kernel-checked `wordSemGetWord_word`; direct Word-case HOL oracle row `get_word_word=5w` with kernel replay `getWordWord` in Flapjack/Test/WordSemAccessorsParity.lean."
+    ),
 }
 
 # Flapjack-specific theorems that support exact HOL ports but are deliberately

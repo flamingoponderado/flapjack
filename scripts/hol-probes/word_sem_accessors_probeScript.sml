@@ -2,7 +2,7 @@
   Direct HOL-EVAL fixture for the wordSem state accessors ported in
   Flapjack/Compiler/Backend/Semantics/WordSem/Accessors.lean
   (cakeml/compiler/backend/semantics/wordSemScript.sml:37-68, 262-372,
-  707-714, 941-944) at 64-bit words.  States are record updates of a free
+  707-714, 941-944, and the Word clause of the partial theWord_def/get_word_def) at 64-bit words.  States are record updates of a free
   state `s`, so every row holds for every omitted field.
 *)
 load "bossLib";
@@ -40,6 +40,8 @@ val _ = print_eval "cmp_equal_loc" ``word_cmp Equal (Loc 1 2 : 64 word_loc) (Loc
 val _ = print_eval "fwd_ptr_8" ``is_fwd_ptr (Word 8w : 64 word_loc)``;
 val _ = print_eval "fwd_ptr_9" ``is_fwd_ptr (Word 9w : 64 word_loc)``;
 val _ = print_eval "fwd_ptr_loc" ``is_fwd_ptr (Loc 0 0 : 64 word_loc)``;
+val _ = print_eval "the_word_word" ``theWord (Word 3w : 64 word_loc)``;
+val _ = print_eval "get_word_word" ``get_word (Word 5w : 64 word_loc)``;
 val _ = print_eval "exp_op" ``word_exp ^st (Op Add [Var 1; Lookup NextFree; Const 1w])``;
 val _ = print_eval "exp_op_loc" ``word_exp ^st (Op Add [Var 1; Var 2])``;
 val _ = print_eval "exp_load_hit" ``word_exp ^st (Load (Const 8w))``;
