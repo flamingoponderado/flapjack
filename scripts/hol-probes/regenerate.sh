@@ -215,6 +215,9 @@ run_probe loop_to_word_comp_probeScript.sml loop_to_word_comp_probe.out \
   comp_skip comp_assign comp_addcarry_valid comp_addcarry_bad_dest_arity \
   comp_addcarry_bad_argument_arity comp_longmul comp_longdiv comp_div \
   "$cake_dir/pancake/loop_to_wordScript.sml"
+run_probe loop_to_word_comp_recursive_probeScript.sml loop_to_word_comp_recursive_probe.out \
+  comp_seq comp_if comp_loop comp_mark \
+  "$cake_dir/pancake/loop_to_wordScript.sml"
 # The get_stack_only probe observes the allocator driver's stack-only
 # analysis over wordLang programs (backend word_alloc).
 run_probe get_stack_only_probeScript.sml get_stack_only_probe.out \
