@@ -1,5 +1,6 @@
 import Flapjack.Pancake.CrepToLoop.Proofs.CrepEvalHelpers
 import Flapjack.Pancake.CrepToLoop.Proofs.LoopEvaluateHelpers
+import Flapjack.Pancake.CrepToLoop.Proofs.CompExpPreservesEval.Load
 
 /-!
 # crep_to_loop expression simulation
