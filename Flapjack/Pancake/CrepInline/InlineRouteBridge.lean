@@ -441,5 +441,59 @@ theorem crepProgToHOL_crepArgLoad {width : Nat} [NeZero width]
   simp only [crepArgLoad, argLoadHOLExact, crepProgToHOL_nestedDecs]
   rw [crepExpToHOL_var_map]
 
+/-- Executed inline-tail lifting: `crepInlineTail` agrees with the exact
+    `inlineTailHOLExact` under the `crepProgToHOL` codec. -/
+theorem crepProgToHOL_crepInlineTail {width : Nat} [NeZero width]
+    (program : CrepProg (BitVec width)) :
+    crepProgToHOL (crepInlineTail program) = inlineTailHOLExact (crepProgToHOL program) := by
+  simp [crepInlineTail, inlineTailHOLExact, crepProgToHOL]
+
+/-- The call shapes that `crepTransformEoc` leaves unchanged are matched by the
+    exact `transformEocHOLExact`, so the identity case of the well-founded
+    induction is vacuous for every call return shape. -/
+private theorem crepCallDefault {width : Nat} [NeZero width] (returnNames : List Nat)
+    (name : FunName) (args : List (CrepExp (BitVec width)))
+    (ret : Option (List Nat × Option (BitVec width × CrepProg (BitVec width))))
+    (h1 : ret ≠ none) (h2 : ∀ names, ret ≠ some (names, none))
+    (h3 : ∀ names handler body, ret ≠ some (names, some (handler, body))) :
+    crepProgToHOL (CrepProg.call ret name args) =
+      transformEocHOLExact returnNames (crepProgToHOL (CrepProg.call ret name args)) := by
+  rcases ret with _ | ⟨names, r⟩
+  · exact absurd rfl h1
+  · rcases r with _ | ⟨handler, body⟩
+    · exact absurd rfl (h2 names)
+    · exact absurd rfl (h3 names handler body)
+
+/-- Executed `crepTransformEoc` lifts to the exact `transformEocHOLExact` under
+    the `crepProgToHOL` codec. -/
+theorem crepProgToHOL_crepTransformEoc {width : Nat} [NeZero width]
+    (returnNames : List Nat) (program : CrepProg (BitVec width)) :
+    crepProgToHOL (crepTransformEoc returnNames program) =
+      transformEocHOLExact returnNames (crepProgToHOL program) := by
+  fun_induction crepTransformEoc returnNames program with
+  | case1 values =>
+      simp only [transformEocHOLExact, crepProgToHOL, crepProgToHOL_crepNestedSeqHOL]
+      rw [List.map_zipWith, List.zipWith_map_right]
+      simp only [crepProgToHOL]
+  | case2 name arguments => simp only [transformEocHOLExact, crepProgToHOL]
+  | case3 names name arguments => simp only [transformEocHOLExact, crepProgToHOL]
+  | case4 names handler body name arguments ih =>
+      simp only [transformEocHOLExact, crepProgToHOL, ih]
+  | case5 name value body ih => simp only [transformEocHOLExact, crepProgToHOL, ih]
+  | case6 condition body ih => simp only [transformEocHOLExact, crepProgToHOL, ih]
+  | case7 first second ih1 ih2 => simp only [transformEocHOLExact, crepProgToHOL, ih1, ih2]
+  | case8 condition thenBranch elseBranch ih1 ih2 =>
+      simp only [transformEocHOLExact, crepProgToHOL, ih1, ih2]
+  | case9 program =>
+      cases program with
+      | call ret nm ar =>
+          rename_i hr hc hcn hcs hdec hwhile hseq hite
+          rcases ret with _ | ⟨names, r⟩
+          · exact absurd rfl (hc nm ar)
+          · rcases r with _ | ⟨handler, body⟩
+            · exact absurd rfl (hcn names nm ar)
+            · exact absurd rfl (hcs names handler body nm ar)
+      | _ => simp_all [transformEocHOLExact, crepProgToHOL]
+
 end CrepInlineRoute
 end Flapjack
