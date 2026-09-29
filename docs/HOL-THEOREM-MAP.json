@@ -22495,5 +22495,33 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.4.2.29): HOL simp_exp_correct (crep_arithProofScript.sml:143-145): crepSem$eval s exp = SOME v ==> eval (mapc f s) (simp_exp exp) = SOME v, with f s exp v free. Lean crepSimpExpCorrectNativeHOL binds update (f), state, exp and v : HolWordLab width (HOL word_lab) with the same premise and conclusion, over the tagged native evalCrepSemHOLExp, crepSimpExpHOL and CrepSemHOLState.mapc. It is proved from simp_exp_correct1 as in HOL (rw [simp_exp_correct1]). There is no other premise. Qualifiers as for simp_exp_correct1. Axioms: propext, Classical.choice, Quot.sound."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
+    "lean_name": "crepOptMmapSimpExpCorrectNativeHOL",
+    "hol_path": "cakeml/pancake/proofs/crep_arithProofScript.sml",
+    "hol_name": "opt_mmap_simp_exp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.4.11): HOL opt_mmap_simp_exp_correct (crep_arithProofScript.sml:150-152): OPT_MMAP (crepSem$eval s) es = SOME vs ==> OPT_MMAP (eval (mapc f s)) (MAP simp_exp es) = SOME vs, with f s es vs free. Lean crepOptMmapSimpExpCorrectNativeHOL binds update (f), state, es : List CrepExpHOL and vs : List HolWordLab, with the same premise and conclusion. HOL OPT_MMAP is List.mapM and MAP is List.map, over the tagged native evalCrepSemHOLExp, crepSimpExpHOL and CrepSemHOLState.mapc. There is no other premise. The proof is elementwise from the tagged simp_exp_correct (crepSimpExpCorrectNativeHOL) via the tagged OPT_MMAP_EQ_SOME_MONO port optMmapEqSomeMono and List.mapM_map, mirroring HOL's OPT_MMAP_MAP_o/OPT_MMAP_CONG. Qualifiers as for simp_exp_correct. Axioms: propext, Classical.choice, Quot.sound."
+  },
+  {
+    "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
+    "hol_name": "evaluate_code_invariant",
+    "lean_path": "Flapjack/Pancake/Semantics/CrepProps.lean",
+    "lean_name": "evaluateCodeInvariantHOL",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison (2026-09-29; bead flapjack-pxn.18.5.5.38.1) against crepPropsScript.sml:1252-1260. HOL universally quantifies p, t, res, st and assumes only evaluate (p,t) = (res,st), concluding st.code = t.code. Lean has the same arbitrary program, input state, result and output state with evalCrepSemHOLProgExact t p = (res,st) as its sole premise and st.code = t.code as conclusion; there is no successful-result premise or post-state hypothesis. The state carrier is the same parameterized FFI-state carrier and the exact Crep evaluator. The proof follows the exact evaluator induction clauses, including recursive Call handlers, and uses no extra semantic hypothesis. CrepSemHOLState locals/globals/code are the canonical HolFiniteMapExact translation witnessed by the same-module toBroad/ofBroad roundtrip; words_as_type_indexed_bitvec records HOL positive-width words as BitVec width under [NeZero width]."
   }
 ]
