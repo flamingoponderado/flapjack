@@ -1719,6 +1719,17 @@ run_probe machine_ieee_fp64_arith_round_probeScript.sml machine_ieee_fp64_arith_
   "$cake_dir/semantics/fpSemScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 
+# The NaN propagation probe checks only HOL's NaN and quiet/signalling
+# classification.  float_some_qnan has an unspecified payload, and these rows
+# do not compare IEEE flags.
+run_probe machine_ieee_fp64_arith_nan_probeScript.sml machine_ieee_fp64_arith_nan_probe.out \
+  add_qnan_input sub_qnan_input mul_qnan_input div_qnan_input fma_qnan_input \
+  add_invalid_infinities sub_invalid_infinities mul_invalid_inf_zero \
+  div_invalid_zero_zero div_invalid_inf_inf fma_invalid_inf_zero \
+  fma_invalid_opposed_infinities \
+  "$hol_dir/src/floating-point/binary_ieeeScript.sml" \
+  "$hol_dir/src/floating-point"
+
 # The good_handlers probe observes the structural handler-label predicate,
 # including the NONE-ret case (handler ignored) and nested bad handlers.
 run_probe word_convs_good_handlers_probeScript.sml word_convs_good_handlers_probe.out \
