@@ -1,4 +1,4 @@
-import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec
+import Flapjack.Pancake.LoopToWord.WordProgCarrierCodec.CompHOLImage
 
 /-!
 # Exact WordLang program carrier fixtures
@@ -93,8 +93,48 @@ example : wordLangInstFromHOL
 example : wordLangInstFromHOL (WordLangInst.skip : WordLangInst (BitVec 8)) = none := by
   rfl
 
+/-! `compHOL` image fixtures: these exercise generated AddCarry, memory,
+nested Seq/Loop/Call-handler, and FFI outputs through the universal projection
+theorem. They do not claim production `loopToWord` calls `compHOL`. -/
+
+private def imageContext : Spt Nat := .ln
+
+private def imageAddCarry : HolLoopProg 8 :=
+  .primitive [1, 2] .addCarry [3, 4, 5]
+
+private def imageMemory : HolLoopProg 8 :=
+  .seq (.load32 1 2) (.storeByte 2 3)
+
+private def imageNestedHandler : HolLoopProg 8 :=
+  .seq imageAddCarry
+    (.loop (toNumSetHOL [1, 2])
+      (.call (some ([7], toNumSetHOL [7])) (some 12) [8]
+        (some (6, .seq (.loadByte 2 3) .tick,
+          .ffi (ofString "write") 1 2 3 4 (toNumSetHOL [4]), toNumSetHOL [6])))
+      (toNumSetHOL [1, 2]))
+
+private def imageFfi : HolLoopProg 8 :=
+  .ffi (ofString "write") 1 2 3 4 (toNumSetHOL [2, 3])
+
+example : wordLangProgFromHOL
+    (LoopToWord.compHOL imageContext imageAddCarry (7, 11)).1 ≠ none :=
+  wordLangProgFromHOL_compHOL_ne_none imageContext imageAddCarry (7, 11)
+
+example : wordLangProgFromHOL
+    (LoopToWord.compHOL imageContext imageMemory (7, 11)).1 ≠ none :=
+  wordLangProgFromHOL_compHOL_ne_none imageContext imageMemory (7, 11)
+
+example : wordLangProgFromHOL
+    (LoopToWord.compHOL imageContext imageNestedHandler (7, 11)).1 ≠ none :=
+  wordLangProgFromHOL_compHOL_ne_none imageContext imageNestedHandler (7, 11)
+
+example : wordLangProgFromHOL
+    (LoopToWord.compHOL imageContext imageFfi (7, 11)).1 ≠ none :=
+  wordLangProgFromHOL_compHOL_ne_none imageContext imageFfi (7, 11)
+
 def runChecks : IO Bool := do
   IO.println "PASS fixed-width WordLangProg projection (loop/call/FFI; AddCarry/memory; unsupported FP/overflow rejected)"
+  IO.println "PASS exact compHOL output image (AddCarry; memory; nested Seq/Loop/Call-handler; FFI)"
   return true
 
 end Flapjack.Test.WordProgCarrierCodecParity
