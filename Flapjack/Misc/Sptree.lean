@@ -998,6 +998,36 @@ def sptUnion {α : Type} : Spt α → Spt α → Spt α
           .bs (sptUnion first first') value (sptUnion second second')
 termination_by left _ => sizeOf left
 
+/-- HOL library `lookup_union` over the exact Spt carrier: union is left
+biased on values. Untagged proof support because its original is outside the
+CakeML submodule (`HOL/src/finite_maps/sptreeScript.sml`). -/
+theorem sptLookup_sptUnion {α : Type} (left right : Spt α) (key : Nat) :
+    sptLookup key (sptUnion left right) =
+      match sptLookup key left with
+      | some v => some v
+      | none => sptLookup key right := by
+  induction left generalizing right key with
+  | ln => simp [sptUnion]
+  | ls v =>
+      cases right <;> by_cases h0 : key = 0 <;> simp [sptUnion, sptLookup, h0]
+  | bn l r ihl ihr =>
+      cases right <;> by_cases h0 : key = 0 <;> by_cases he : key % 2 = 0 <;>
+        simp [sptUnion, sptLookup, h0, he, ihl, ihr]
+      all_goals split <;> simp_all
+  | bs l v r ihl ihr =>
+      cases right <;> by_cases h0 : key = 0 <;> by_cases he : key % 2 = 0 <;>
+        simp [sptUnion, sptLookup, h0, he, ihl, ihr]
+      all_goals split <;> simp_all
+
+/-- HOL library `domain_union`: membership in exact Spt union is disjunction.
+This is untagged library proof support (the HOL original is outside CakeML),
+used by allocation live-set proofs. -/
+theorem sptMem_sptUnion {α : Type} (left right : Spt α) (key : Nat) :
+    sptMem key (sptUnion left right) ↔ sptMem key left ∨ sptMem key right := by
+  unfold sptMem sptDomain
+  rw [sptLookup_sptUnion]
+  cases sptLookup key left <;> simp
+
 /-- HOL `sptree$inter` (`HOL/src/finite_maps/sptreeScript.sml:272-291`): keep
 only keys present in both trees, with the left operand's value.  HOL's declared
 type is heterogeneous (`'a num_map -> 'b num_map -> 'a num_map`; the second
