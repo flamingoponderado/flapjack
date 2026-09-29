@@ -21734,6 +21734,40 @@
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
     "hol_name": "ncompile_correct",
     "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NcompileCorrect.lean",
+    "lean_name": "crepToLoop_ncompile_correct_assign",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-29; bead flapjack-pxn.18.5.6.48) against crep_to_loopProofScript.sml:110-134 and Resume ncompile_correct[Assign] at 2241-2277. evaluate_ind's Assign case has no induction hypothesis. With payload n/e then v1 and ∀res s1 t ctxt l, the Lean case keeps all seven HOL premises (source evaluate, res ≠ SOME Error, state_rel, mem_rel, globals_rel, code_rel, locals_rel) and the full existential ∃ck res1 t1 result with the same result conversion and locals postcondition; no target-success, pass-success, or extra context premise is introduced. Source review checked crepSemScript.sml:257-262: successful Assign requires the source local already be present, yielding the target register from locals_rel; compile_exp preserves e's value, and compile assigns the mapped target register. The proof mirrors HOL's comp_exp_preserves_eval, compile_exp_out_rel live-domain inclusion, final target assignment, and distinct_vars preservation of all other mapped locals. State/memory/globals/code facts are unchanged by the two local-only updates. Carriers and six finite-map fields use the same qualifiers as adjacent exact ncompile_correct cases; Crep and Loop words use the reviewed positive-width BitVec translation."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "ncompile_correct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NCompileCorrect/Dec.lean",
+    "lean_name": "crepToLoop_ncompile_correct_dec",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-29; bead flapjack-pxn.18.5.6.50) against crep_to_loopProofScript.sml:110-154 and Resume ncompile_correct[Dec] at 2408-2584. The payload order is name/e/body/v1 and the sole induction hypothesis is exactly ∀value. eval v1 e = SOME value ⇒ P(body, v1 with locals := v1.locals |+ (name,value)); the case retains all seven HOL premises and the full existential ∃ck res1 t1 conclusion, with no extra target result, successful-pass, or context premise. Source review checked crepSemScript's Dec equation: evaluate the body after the local update, then apply res_var to the body's final locals using the caller's pre-Dec lookup. The tagged compileHOLExact Dec clause compiles e at vmax+1, updates only name→temporary in the body context, inserts that temporary into bodyLive, then runs expression code, assigns its value to the temporary, and compiles the body. The proof constructs the IH's updated source/target relation, preserves any old caller slot using not_mem_context_assigned_mem_gt, member_cutset_survives_comp_prog and unassigned_vars_evaluate_same, and restores the source local with resVarEq; all target/state/memory/globals/code postconditions and the HOL result/locals cases are retained. The six finite-map relation fields and positive-width BitVec translation match adjacent exact cases; executable behavior is unchanged."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "ncompile_correct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NcompileCorrect.lean",
     "lean_name": "crepToLoop_ncompile_correct_extCall",
     "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
     "fmap_as_finite_support_relation": [
