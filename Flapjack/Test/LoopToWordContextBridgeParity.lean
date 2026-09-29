@@ -58,8 +58,8 @@ theorem sptLookup_natInfoMapToSpt_pipelineWordContext_of_mem
 production `wordFindVar` for every present pipeline slot. -/
 theorem findVarHOL_natInfoMapToSpt_pipelineWordContext_of_mem
     (slots : List Nat) (name : Nat) (hmem : name ∈ slots) :
-    findVarHOL (natInfoMapToSpt (pipelineWordContext slots).vars) name = name + 2 := by
-  unfold findVarHOL
+    LoopToWord.findVarHOL (natInfoMapToSpt (pipelineWordContext slots).vars) name = name + 2 := by
+  unfold LoopToWord.findVarHOL
   rw [sptLookup_natInfoMapToSpt_pipelineWordContext_of_mem slots name hmem]
   rfl
 
@@ -68,7 +68,7 @@ theorem findVarHOL_natInfoMapToSpt_pipelineWordContext_of_mem
 theorem wordFindVar_eq_findVarHOL_pipelineWordContext_of_mem
     (slots : List Nat) (name : Nat) (hmem : name ∈ slots) :
     wordFindVar (pipelineWordContext slots) name =
-      findVarHOL (natInfoMapToSpt (pipelineWordContext slots).vars) name := by
+      LoopToWord.findVarHOL (natInfoMapToSpt (pipelineWordContext slots).vars) name := by
   apply wordFindVar_eq_findVarHOL_of_present
   rw [pipelineWordContext]
   exact lookupNatInfo_map_add_two_of_mem slots name hmem
@@ -79,7 +79,7 @@ example : sptLookup 7 (natInfoMapToSpt (pipelineWordContext [4, 7]).vars) = some
   sptLookup_natInfoMapToSpt_pipelineWordContext_of_mem [4, 7] 7 (by simp)
 
 example : wordFindVar (pipelineWordContext [4, 7]) 7 =
-    findVarHOL (natInfoMapToSpt (pipelineWordContext [4, 7]).vars) 7 :=
+    LoopToWord.findVarHOL (natInfoMapToSpt (pipelineWordContext [4, 7]).vars) 7 :=
   wordFindVar_eq_findVarHOL_pipelineWordContext_of_mem [4, 7] 7 (by simp)
 
 /-- Probe context `[(3, 7), (5, 9)]` used by the `runChecks` rows. -/
@@ -104,7 +104,7 @@ example : WordContextCovers
 /-- On that context the production `wordFindVar` agrees with exact `findVarHOL`
 through the adapter, for the referenced register `5`. -/
 example : wordFindVar { vars := loopToWordCompContext [1] coverProbeBody } 5 =
-    findVarHOL (natInfoMapToSpt (loopToWordCompContext [1] coverProbeBody)) 5 :=
+    LoopToWord.findVarHOL (natInfoMapToSpt (loopToWordCompContext [1] coverProbeBody)) 5 :=
   wordFindVar_eq_findVarHOL_loopToWordCompContext [1] coverProbeBody 5
     (by simp [coverProbeBody, loopReferencedVars, loopVarsOfExp])
 
@@ -126,12 +126,12 @@ def runChecks : IO Bool := do
           some 9),
       ("LoopToWord exact findVarHOL matches production wordFindVar on a present key",
         wordFindVar (pipelineWordContext bridgeProbeSlots) 7 ==
-          findVarHOL (natInfoMapToSpt (pipelineWordContext bridgeProbeSlots).vars) 7),
+          LoopToWord.findVarHOL (natInfoMapToSpt (pipelineWordContext bridgeProbeSlots).vars) 7),
       ("LoopToWord comp_func context covers a referenced token at the fallback",
         wordFindVar { vars := loopToWordCompContext [1] coverProbeBody } 5 == 0),
       ("LoopToWord exact findVarHOL matches production wordFindVar on comp_func context",
         wordFindVar { vars := loopToWordCompContext [1] coverProbeBody } 5 ==
-          findVarHOL (natInfoMapToSpt (loopToWordCompContext [1] coverProbeBody)) 5) ]
+          LoopToWord.findVarHOL (natInfoMapToSpt (loopToWordCompContext [1] coverProbeBody)) 5) ]
   let results ← checks.mapM fun (name, ok) => do
     if ok then
       IO.println s!"PASS {name}"
