@@ -102,7 +102,8 @@ set_option linter.unusedSimpArgs false in
 /-- `toNat`-level decomposition of the source `panSetByteHOL` byte-write: the
     preserved low slice, the inserted byte, and the preserved high slice occupy
     the disjoint bit ranges below, at, and above `byteBitIndex`. Flapjack proof
-    infrastructure for the width-multiple case; no separate HOL declaration. -/
+    infrastructure for every word width containing at least one byte; no
+    separate HOL declaration. -/
 theorem panSetByteHOL_toNat {width : Nat} [NeZero width] (h8 : 8 ≤ width)
     (address value : RiscV.Word width) (byte : UInt8) (bigEndian : Bool) :
     (panSetByteHOL address (BitVec.ofNat width byte.toNat) value bigEndian).toNat =

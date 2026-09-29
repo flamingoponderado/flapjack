@@ -63,3 +63,5 @@ val _ = print_simp "set_byte_width17_little_nonzero_numeric"
   ``set_byte (1w:17 word) (0xA5w:word8) (0x1ABCDw:17 word) F``;
 val _ = print_simp "set_byte_width17_big_nonzero_numeric"
   ``set_byte (1w:17 word) (0xA5w:word8) (0x1ABCDw:17 word) T``;
+val _ = print_simp "set_byte_width12_preserves_high_numeric"
+  ``set_byte (0w:12 word) (0x12w:word8) (0xABCw:12 word) F``;

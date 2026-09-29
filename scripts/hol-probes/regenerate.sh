@@ -1517,7 +1517,7 @@ run_probe pan_itree_h_prog_call_probeScript.sml \
   argument_failure lookup_failure \
   "$cake_dir/pancake/semantics/pan_itreeSemScript.sml"
 run_probe word_byte_memory_probeScript.sml word_byte_memory_probe.out \
-  byte_index_definition set_byte_width17_big_nonzero_numeric \
+  byte_index_definition set_byte_width12_preserves_high_numeric \
   "$hol_dir/src/n-bit/byteScript.sml" "$hol_dir/src/n-bit"
 # `labels_rel` is the wordConvs label-preservation relation; the fixture
 # simplifies under `labels_rel_def` because `EVAL` leaves `set ... SUBSET ...`.
