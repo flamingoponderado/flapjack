@@ -58,8 +58,8 @@ theorem crepToLoop_ncompile_correct_seq {width : Nat} [NeZero width] {σ : Type}
     (source : CrepSemHOLState width σ)
     (ihSecond : ∀ firstResult firstState,
       (firstResult, firstState) = evalCrepSemHOLProgExact source first →
-      firstResult = none → PropertyAt context live second firstState)
-    (ihFirst : PropertyAt context live first source)
+      firstResult = none → PropertyAt second firstState)
+    (ihFirst : PropertyAt first source)
     (target : LoopSemStateFiniteExact width σ)
     (result : Option (CrepResultHOLExact width))
     (sourceFinal : CrepSemHOLState width σ)
@@ -90,7 +90,7 @@ theorem crepToLoop_ncompile_correct_seq {width : Nat} [NeZero width] {σ : Type}
       obtain ⟨firstExtra, firstTargetResult, firstTargetFinal,
         hFirstRun, hFirstState, hFirstMem, hFirstGlobals, hFirstCode,
         hFirstResult, hFirstLocals⟩ :=
-        ihFirst target none firstState hFirst (by simp)
+        ihFirst none firstState target context live hFirst (by simp)
           hState hMem hGlobals hCode hLocals
       have hFirstTargetNone : firstTargetResult = none := by
         simpa [resultToLoop] using hFirstResult
@@ -99,7 +99,7 @@ theorem crepToLoop_ncompile_correct_seq {width : Nat} [NeZero width] {σ : Type}
         hSecondRun, hSecondState, hSecondMem, hSecondGlobals, hSecondCode,
         hSecondResult, hSecondLocals⟩ :=
         (ihSecond none firstState hFirst.symm rfl)
-          firstTargetFinal result sourceFinal hEval hNotError
+          result sourceFinal firstTargetFinal context live hEval hNotError
           hFirstState hFirstMem hFirstGlobals hFirstCode hFirstLocals
       have hFirstRunLift :
           LoopSemStateFiniteExact.evaluate (compileHOLExact context live first)
@@ -128,7 +128,7 @@ theorem crepToLoop_ncompile_correct_seq {width : Nat} [NeZero width] {σ : Type}
       obtain ⟨extra, targetResult, targetFinal,
         hRun, hFinalState, hFinalMem, hFinalGlobals, hFinalCode,
         hResultMap, hFinalLocals⟩ :=
-        ihFirst target (some firstValue) firstState hFirst hFirstNotError
+        ihFirst (some firstValue) firstState target context live hFirst hFirstNotError
           hState hMem hGlobals hCode hLocals
       have hFinalState' : crepToLoopStateRelExact sourceFinal targetFinal :=
         hFinalEq ▸ hFinalState
