@@ -297,83 +297,12 @@ def compExpHOL {width : Nat} [NeZero width] (context : Spt Nat) :
   termination_by expression => sizeOf expression
   decreasing_by all_goals first | sizeOf_list_dec | decreasing_trivial | simp_wf
 
-/-- Flapjack-specific partial slice of HOL `loop_to_word$comp_def` for its
-currently ported clauses. It covers Skip, Assign, AddCarry Primitive, the three
-Arith constructors, Store, SetGlobal, the four direct memory operations, the
-control/result clauses Break, Continue, Raise, Return, Tick, Fail and LocValue
-(source lines 96-110), and FFI and ShMem (source lines 141-146). `none` marks
-constructors whose clauses have not yet been ported. This helper is a
-superseded, deliberately untagged partial slice; the canonical reviewed total
-port of HOL `comp_def` is the tagged `compHOL` below, which is the definition
-tests should use. This helper is not a HOL port and no equality between it and
-`compHOL` is proved here or claimed; removing it is tracked separately.
-The returned label pair is the input pair for each covered clause. AddCarry follows HOL's positional
-order `(result, left, right, carry-in)`, confirmed by the direct oracle; the shared
-Lean constructor's local binder names do not reorder those four Nat fields. -/
-def compInitialHOL {width : Nat} [NeZero width] (context : Spt Nat)
-    (labels : Nat × Nat) : HolLoopProg width →
-      Option (WordLangProgHOL (BitVec width) × (Nat × Nat))
-  | .skip => some (.skip, labels)
-  | .assign name expression =>
-      some (.assign (findVarHOL context name) (compExpHOL context expression), labels)
-  | .primitive destinations .addCarry arguments =>
-      match destinations, arguments with
-      | [result, carry], [left, right, carryIn] =>
-          some (.seq (.assign 1 (.var (findVarHOL context carryIn)))
-            (.seq (.inst (.arith (.addCarry 3
-                (findVarHOL context left) (findVarHOL context right) 1)))
-              (.seq (.assign (findVarHOL context carry) (.var 1))
-                    (.assign (findVarHOL context result) (.var 3)))), labels)
-      | _, _ => some (.skip, labels)
-  | .arith (.longMul destinationLeft destinationRight sourceLeft sourceRight) =>
-      some (.inst (.arith (.longMul (findVarHOL context destinationLeft)
-        (findVarHOL context destinationRight) (findVarHOL context sourceLeft)
-        (findVarHOL context sourceRight))), labels)
-  | .arith (.longDiv destinationLeft destinationRight sourceLeft sourceRight quotient) =>
-      some (.inst (.arith (.longDiv (findVarHOL context destinationLeft)
-        (findVarHOL context destinationRight) (findVarHOL context sourceLeft)
-        (findVarHOL context sourceRight) (findVarHOL context quotient))), labels)
-  | .arith (.div destination dividend divisor) =>
-      some (.inst (.arith (.div (findVarHOL context destination)
-        (findVarHOL context dividend) (findVarHOL context divisor))), labels)
-  | .store address value =>
-      some (.store (compExpHOL context address) (findVarHOL context value), labels)
-  | .setGlobal address expression =>
-      some (.set (.temp address) (compExpHOL context expression), labels)
-  | .load32 address destination =>
-      some (.inst (.mem .load32 (findVarHOL context destination)
-        (.addr (findVarHOL context address) (BitVec.ofNat width 0))), labels)
-  | .loadByte address destination =>
-      some (.inst (.mem .load8 (findVarHOL context destination)
-        (.addr (findVarHOL context address) (BitVec.ofNat width 0))), labels)
-  | .store32 address value =>
-      some (.inst (.mem .store32 (findVarHOL context value)
-        (.addr (findVarHOL context address) (BitVec.ofNat width 0))), labels)
-  | .storeByte address value =>
-      some (.inst (.mem .store8 (findVarHOL context value)
-        (.addr (findVarHOL context address) (BitVec.ofNat width 0))), labels)
-  | .break n => some (.break n, labels)
-  | .continue n => some (.continue n, labels)
-  | .raise v => some (.raise (findVarHOL context v), labels)
-  | .return vs => some (.return 0 (vs.map (findVarHOL context)), labels)
-  | .tick => some (.tick, labels)
-  | .fail => some (.skip, labels)
-  | .locValue n m => some (.locValue (findVarHOL context n) m, labels)
-  | .ffi function configuration configurationLength array arrayLength live =>
-      some (.ffi function (findVarHOL context configuration)
-        (findVarHOL context configurationLength) (findVarHOL context array)
-        (findVarHOL context arrayLength) (mkNewCutsetHOL context live, .ln), labels)
-  | .shMem operator name address =>
-      some (.shareInst operator (findVarHOL context name) (compExpHOL context address), labels)
-  | _ => none
-
 /-- Exact total port of HOL `comp_def` (`cakeml/pancake/loop_to_wordScript.sml:56-150`)
 over the exact `HolLoopProg width` carrier with the exact `Spt Nat` variable context
-and the threaded label pair.  Clause-for-clause with the HOL definition.  The partial
-helper `compInitialHOL` above is an untagged Flapjack slice that covers only the
-nonrecursive clauses; this total definition is the reviewed tagged port.  The
-executable production route is tracked separately (bead `flapjack-pxn.18.5.9.5`);
-this declaration is the HOL-shaped reference definition. -/
+and the threaded label pair. Clause-for-clause with the HOL definition. This
+total definition is the reviewed tagged port. The executable production route
+is tracked separately (bead `flapjack-pxn.18.5.9.5`); this declaration is the
+HOL-shaped reference definition. -/
 @[hol "cakeml/pancake/loop_to_wordScript.sml" "comp_def"
   (words_as_type_indexed_bitvec)]
 def compHOL {width : Nat} [NeZero width] (context : Spt Nat) :
