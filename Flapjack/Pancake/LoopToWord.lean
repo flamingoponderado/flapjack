@@ -297,4 +297,42 @@ def compExpHOL {width : Nat} [NeZero width] (context : Spt Nat) :
   termination_by expression => sizeOf expression
   decreasing_by all_goals first | sizeOf_list_dec | decreasing_trivial | simp_wf
 
+/-- Flapjack-specific partial slice of HOL `loop_to_word$comp_def` for its
+initial constructors (source lines 56-77).  It covers Skip, Assign, the sole
+Loop `AddCarry` primitive (including HOL's malformed-arity fallback), and the
+three Arith constructors.  `none` marks constructors whose clauses have not
+yet been ported; this partial helper is deliberately untagged and is not a
+replacement for the total HOL `comp`. The returned label pair is the input
+pair for each covered clause. The AddCarry instruction follows HOL's
+positional order `(result, left, right, carry-in)`, confirmed by the direct
+oracle; the shared Lean constructor's local binder names do not reorder those
+four natural-number fields. -/
+def compInitialHOL {width : Nat} [NeZero width] (context : Spt Nat)
+    (labels : Nat × Nat) : HolLoopProg width →
+      Option (WordLangProgHOL (BitVec width) × (Nat × Nat))
+  | .skip => some (.skip, labels)
+  | .assign name expression =>
+      some (.assign (findVarHOL context name) (compExpHOL context expression), labels)
+  | .primitive destinations .addCarry arguments =>
+      match destinations, arguments with
+      | [result, carry], [left, right, carryIn] =>
+          some (.seq (.assign 1 (.var (findVarHOL context carryIn)))
+            (.seq (.inst (.arith (.addCarry 3
+                (findVarHOL context left) (findVarHOL context right) 1)))
+              (.seq (.assign (findVarHOL context carry) (.var 1))
+                    (.assign (findVarHOL context result) (.var 3)))), labels)
+      | _, _ => some (.skip, labels)
+  | .arith (.longMul destinationLeft destinationRight sourceLeft sourceRight) =>
+      some (.inst (.arith (.longMul (findVarHOL context destinationLeft)
+        (findVarHOL context destinationRight) (findVarHOL context sourceLeft)
+        (findVarHOL context sourceRight))), labels)
+  | .arith (.longDiv destinationLeft destinationRight sourceLeft sourceRight quotient) =>
+      some (.inst (.arith (.longDiv (findVarHOL context destinationLeft)
+        (findVarHOL context destinationRight) (findVarHOL context sourceLeft)
+        (findVarHOL context sourceRight) (findVarHOL context quotient))), labels)
+  | .arith (.div destination dividend divisor) =>
+      some (.inst (.arith (.div (findVarHOL context destination)
+        (findVarHOL context dividend) (findVarHOL context divisor))), labels)
+  | _ => none
+
 end Flapjack.LoopToWord

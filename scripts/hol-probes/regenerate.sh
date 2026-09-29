@@ -211,6 +211,10 @@ run_probe loop_to_word_comp_exp_probeScript.sml loop_to_word_comp_exp_probe.out 
   comp_exp_const comp_exp_var comp_exp_var_miss comp_exp_lookup \
   comp_exp_base_addr comp_exp_top_addr comp_exp_load comp_exp_shift \
   comp_exp_op "$cake_dir/pancake/loop_to_wordScript.sml"
+run_probe loop_to_word_comp_probeScript.sml loop_to_word_comp_probe.out \
+  comp_skip comp_assign comp_addcarry_valid comp_addcarry_bad_dest_arity \
+  comp_addcarry_bad_argument_arity comp_longmul comp_longdiv comp_div \
+  "$cake_dir/pancake/loop_to_wordScript.sml"
 # The get_stack_only probe observes the allocator driver's stack-only
 # analysis over wordLang programs (backend word_alloc).
 run_probe get_stack_only_probeScript.sml get_stack_only_probe.out \
@@ -1607,6 +1611,13 @@ run_probe word_lang_every_var_probeScript.sml word_lang_every_var_probe.out \
 # the exact carrier port (bead flapjack-h29l.1).
 run_probe word_sem_carriers_probeScript.sml word_sem_carriers_probe.out \
   buffer_flush_hit stack_size_unbounded \
+  "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
+# The wordSem accessor probe observes word_cmp, is_fwd_ptr, word_exp and the
+# state accessors over record updates of a free state (bead flapjack-h29l.2).
+run_probe word_sem_accessors_probeScript.sml word_sem_accessors_probe.out \
+  cmp_equal exp_op fix_clock var_imm_reg \
   "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 
