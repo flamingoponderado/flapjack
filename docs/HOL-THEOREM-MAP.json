@@ -23675,6 +23675,19 @@
     "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.7): HOL exit_loop (:1010-1014): SOME (Break n) = SOME (Break (n - 1)), SOME (Continue n) = SOME (Continue (n - 1)), res = res (num monus); Lean identical. Words are BitVec width with [NeZero width] (words_as_type_indexed_bitvec); no other representation change. Rows exit_loop_* of scripts/hol-probes/word_sem_call_helpers_probe.out are checked by Flapjack.Test.WordSemCallHelpersParity."
   },
   {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "globals_rel_def",
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/RelationsExact.lean",
+    "lean_name": "loopToWordGlobalsRelHOLExact",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "g1",
+      "g2"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-29; bead flapjack-pxn.18.5.9.11): HOL globals_rel_def (loop_to_wordProofScript.sml:27-30) quantifies n and v and states FLOOKUP g1 n = SOME v ==> FLOOKUP g2 (Temp n) = SOME v. Lean uses the same one-way implication; g1 and g2 are standalone HOL |-> parameters represented by canonical HolFiniteMapExact, the Temp key retains the fixed BitVec 5 width, and word_loc values are WordLocW width with [NeZero width] under words_as_type_indexed_bitvec. Extra target store entries remain unconstrained. Direct HOL EVAL rows globals_rel_match/value_mismatch/temp_mismatch/empty_source are in scripts/hol-probes/loop_to_word_globals_rel_probe.out and replayed by Flapjack.Test.LoopToWordGlobalsRelParity."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Alloc.lean",
     "lean_name": "wordSemFindCode",
     "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
@@ -23779,5 +23792,135 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.9.15.1) against loop_to_wordProofScript.sml:210-220. HOL premises are exactly locals_rel ctxt lcl lcl' AND FORALL n. n IN domain ctxt implies find_var ctxt n differs from k; conclusion only inserts (k,x) into target locals. Lean retains the conjunction and universal noncollision premise as sptMem/findVarHOL, without strengthening it, using Spt insertion. The exact Spt and WordLocW carriers and sole words_as_type_indexed_bitvec qualifier match locals_rel_def; no finite-map/list/name qualifier applies. Direct original HOL rows mapped insert and target-register collision are in loop_to_word_locals_rel_probe.out and kernel-replayed in LoopToWordExactParity."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/ShMem.lean",
+    "lean_name": "shMemStore",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "sh_mem_store_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.3): HOL sh_mem_store a w s (:374-382) = if a IN s.sh_mdomain then case call_FFI s.ffi (SharedMem MappedWrite) [0w] (word_to_bytes w F ++ word_to_bytes a F) of FFI_final outcome => (SOME (FinalFFI outcome), flush_state T s) | FFI_return new_ffi new_bytes => (NONE, s with ffi := new_ffi) else (SOME Error, s); Lean identical. The state is the tagged WordSemStateFiniteExact; its two |-> fields fp_regs/store are recorded by fmap_as_finite_support [fpRegs, store] with the same-module witness WordSemShMemSupport.holFmapAsFiniteSupportWitness. FFI uses the tagged callFFIHOL/HolFfiResult; the HOL byte helpers word_to_bytes/word_of_bytes/byte_align/get_byte are the untagged panWordToBytesHOL/panWordOfBytesHOL/riscvByteAlignHOL/getByteHOL8 renderings shared with the reviewed panSem/loopSem ports. Words are BitVec width with [NeZero width]; word8 is BitVec 8; no other representation change. Rows store/store_outside/store_final of scripts/hol-probes/word_sem_sh_mem_probe.out are checked by Flapjack.Test.WordSemShMemParity (byte-incrementing and diverging oracles, payload observed through io_events)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/ShMem.lean",
+    "lean_name": "shMemLoad",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "sh_mem_load_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.3): HOL sh_mem_load a s (:384-390) = if a IN s.sh_mdomain then SOME (call_FFI s.ffi (SharedMem MappedRead) [0w] (word_to_bytes a F)) else NONE; Lean identical, returning the Option HolFfiResult. The state is the tagged WordSemStateFiniteExact; its two |-> fields fp_regs/store are recorded by fmap_as_finite_support [fpRegs, store] with the same-module witness WordSemShMemSupport.holFmapAsFiniteSupportWitness. FFI uses the tagged callFFIHOL/HolFfiResult; the HOL byte helpers word_to_bytes/word_of_bytes/byte_align/get_byte are the untagged panWordToBytesHOL/panWordOfBytesHOL/riscvByteAlignHOL/getByteHOL8 renderings shared with the reviewed panSem/loopSem ports. Words are BitVec width with [NeZero width]; word8 is BitVec 8; no other representation change. Rows load/load_outside/load_final of scripts/hol-probes/word_sem_sh_mem_probe.out are checked by Flapjack.Test.WordSemShMemParity (byte-incrementing and diverging oracles, payload observed through io_events)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/ShMem.lean",
+    "lean_name": "shMemStoreByte",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "sh_mem_store_byte_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.3): HOL sh_mem_store_byte a w s (:392-400) = if byte_align a IN s.sh_mdomain then case call_FFI s.ffi (SharedMem MappedWrite) [1w] ([get_byte 0w w F] ++ word_to_bytes a F) of FFI_final outcome => (SOME (FinalFFI outcome), flush_state T s) | FFI_return new_ffi new_bytes => (NONE, s with ffi := new_ffi) else (SOME Error, s); Lean identical. The state is the tagged WordSemStateFiniteExact; its two |-> fields fp_regs/store are recorded by fmap_as_finite_support [fpRegs, store] with the same-module witness WordSemShMemSupport.holFmapAsFiniteSupportWitness. FFI uses the tagged callFFIHOL/HolFfiResult; the HOL byte helpers word_to_bytes/word_of_bytes/byte_align/get_byte are the untagged panWordToBytesHOL/panWordOfBytesHOL/riscvByteAlignHOL/getByteHOL8 renderings shared with the reviewed panSem/loopSem ports. Words are BitVec width with [NeZero width]; word8 is BitVec 8; no other representation change. Rows store8/store8_outside of scripts/hol-probes/word_sem_sh_mem_probe.out are checked by Flapjack.Test.WordSemShMemParity (byte-incrementing and diverging oracles, payload observed through io_events)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/ShMem.lean",
+    "lean_name": "shMemStore16",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "sh_mem_store16_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.3): HOL sh_mem_store16 a w s (:402-410) = if byte_align a IN s.sh_mdomain then case call_FFI s.ffi (SharedMem MappedWrite) [2w] (TAKE 2 (word_to_bytes w F) ++ word_to_bytes a F) of FFI_final outcome => (SOME (FinalFFI outcome), flush_state T s) | FFI_return new_ffi new_bytes => (NONE, s with ffi := new_ffi) else (SOME Error, s); Lean identical. The state is the tagged WordSemStateFiniteExact; its two |-> fields fp_regs/store are recorded by fmap_as_finite_support [fpRegs, store] with the same-module witness WordSemShMemSupport.holFmapAsFiniteSupportWitness. FFI uses the tagged callFFIHOL/HolFfiResult; the HOL byte helpers word_to_bytes/word_of_bytes/byte_align/get_byte are the untagged panWordToBytesHOL/panWordOfBytesHOL/riscvByteAlignHOL/getByteHOL8 renderings shared with the reviewed panSem/loopSem ports. Words are BitVec width with [NeZero width]; word8 is BitVec 8; no other representation change. Rows store16 of scripts/hol-probes/word_sem_sh_mem_probe.out are checked by Flapjack.Test.WordSemShMemParity (byte-incrementing and diverging oracles, payload observed through io_events)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/ShMem.lean",
+    "lean_name": "shMemStore32",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "sh_mem_store32_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.3): HOL sh_mem_store32 a w s (:412-420) = if byte_align a IN s.sh_mdomain then case call_FFI s.ffi (SharedMem MappedWrite) [4w] (TAKE 4 (word_to_bytes w F) ++ word_to_bytes a F) of FFI_final outcome => (SOME (FinalFFI outcome), flush_state T s) | FFI_return new_ffi new_bytes => (NONE, s with ffi := new_ffi) else (SOME Error, s); Lean identical. The state is the tagged WordSemStateFiniteExact; its two |-> fields fp_regs/store are recorded by fmap_as_finite_support [fpRegs, store] with the same-module witness WordSemShMemSupport.holFmapAsFiniteSupportWitness. FFI uses the tagged callFFIHOL/HolFfiResult; the HOL byte helpers word_to_bytes/word_of_bytes/byte_align/get_byte are the untagged panWordToBytesHOL/panWordOfBytesHOL/riscvByteAlignHOL/getByteHOL8 renderings shared with the reviewed panSem/loopSem ports. Words are BitVec width with [NeZero width]; word8 is BitVec 8; no other representation change. Rows store32 of scripts/hol-probes/word_sem_sh_mem_probe.out are checked by Flapjack.Test.WordSemShMemParity (byte-incrementing and diverging oracles, payload observed through io_events)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/ShMem.lean",
+    "lean_name": "shMemLoadByte",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "sh_mem_load_byte_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.3): HOL sh_mem_load_byte a s (:422-428) = if byte_align a IN s.sh_mdomain then SOME (call_FFI s.ffi (SharedMem MappedRead) [1w] (word_to_bytes a F)) else NONE; Lean identical, returning the Option HolFfiResult. The state is the tagged WordSemStateFiniteExact; its two |-> fields fp_regs/store are recorded by fmap_as_finite_support [fpRegs, store] with the same-module witness WordSemShMemSupport.holFmapAsFiniteSupportWitness. FFI uses the tagged callFFIHOL/HolFfiResult; the HOL byte helpers word_to_bytes/word_of_bytes/byte_align/get_byte are the untagged panWordToBytesHOL/panWordOfBytesHOL/riscvByteAlignHOL/getByteHOL8 renderings shared with the reviewed panSem/loopSem ports. Words are BitVec width with [NeZero width]; word8 is BitVec 8; no other representation change. Rows load8 of scripts/hol-probes/word_sem_sh_mem_probe.out are checked by Flapjack.Test.WordSemShMemParity (byte-incrementing and diverging oracles, payload observed through io_events)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/ShMem.lean",
+    "lean_name": "shMemLoad16",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "sh_mem_load16_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.3): HOL sh_mem_load16 a s (:430-436) = if byte_align a IN s.sh_mdomain then SOME (call_FFI s.ffi (SharedMem MappedRead) [2w] (word_to_bytes a F)) else NONE; Lean identical, returning the Option HolFfiResult. The state is the tagged WordSemStateFiniteExact; its two |-> fields fp_regs/store are recorded by fmap_as_finite_support [fpRegs, store] with the same-module witness WordSemShMemSupport.holFmapAsFiniteSupportWitness. FFI uses the tagged callFFIHOL/HolFfiResult; the HOL byte helpers word_to_bytes/word_of_bytes/byte_align/get_byte are the untagged panWordToBytesHOL/panWordOfBytesHOL/riscvByteAlignHOL/getByteHOL8 renderings shared with the reviewed panSem/loopSem ports. Words are BitVec width with [NeZero width]; word8 is BitVec 8; no other representation change. Rows load16 of scripts/hol-probes/word_sem_sh_mem_probe.out are checked by Flapjack.Test.WordSemShMemParity (byte-incrementing and diverging oracles, payload observed through io_events)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/ShMem.lean",
+    "lean_name": "shMemLoad32",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "sh_mem_load32_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.3): HOL sh_mem_load32 a s (:438-444) = if byte_align a IN s.sh_mdomain then SOME (call_FFI s.ffi (SharedMem MappedRead) [4w] (word_to_bytes a F)) else NONE; Lean identical, returning the Option HolFfiResult. The state is the tagged WordSemStateFiniteExact; its two |-> fields fp_regs/store are recorded by fmap_as_finite_support [fpRegs, store] with the same-module witness WordSemShMemSupport.holFmapAsFiniteSupportWitness. FFI uses the tagged callFFIHOL/HolFfiResult; the HOL byte helpers word_to_bytes/word_of_bytes/byte_align/get_byte are the untagged panWordToBytesHOL/panWordOfBytesHOL/riscvByteAlignHOL/getByteHOL8 renderings shared with the reviewed panSem/loopSem ports. Words are BitVec width with [NeZero width]; word8 is BitVec 8; no other representation change. Rows load32 of scripts/hol-probes/word_sem_sh_mem_probe.out are checked by Flapjack.Test.WordSemShMemParity (byte-incrementing and diverging oracles, payload observed through io_events)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/ShMem.lean",
+    "lean_name": "shMemSetVar",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "sh_mem_set_var_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.3): HOL sh_mem_set_var (:447-451): (SOME (FFI_final outcome)) _ s = (SOME (FinalFFI outcome), flush_state T s); (SOME (FFI_return new_ffi new_bytes)) v s = (NONE, set_var v (Word (word_of_bytes F 0w new_bytes)) (s with ffi := new_ffi)); _ _ s = (SOME Error, s); Lean identical clauses in order. The state is the tagged WordSemStateFiniteExact; its two |-> fields fp_regs/store are recorded by fmap_as_finite_support [fpRegs, store] with the same-module witness WordSemShMemSupport.holFmapAsFiniteSupportWitness. FFI uses the tagged callFFIHOL/HolFfiResult; the HOL byte helpers word_to_bytes/word_of_bytes/byte_align/get_byte are the untagged panWordToBytesHOL/panWordOfBytesHOL/riscvByteAlignHOL/getByteHOL8 renderings shared with the reviewed panSem/loopSem ports. Words are BitVec width with [NeZero width]; word8 is BitVec 8; no other representation change. Rows load*/load_final/sh_mem_set_var_none of scripts/hol-probes/word_sem_sh_mem_probe.out are checked by Flapjack.Test.WordSemShMemParity (byte-incrementing and diverging oracles, payload observed through io_events)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/ShMem.lean",
+    "lean_name": "shareInst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "share_inst_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.3): HOL share_inst (:453-470) over asm$memop (WordMemOp): Load/Load8/Load16/Load32 v ad s = sh_mem_set_var (sh_mem_load/_byte/16/32 ad s) v s; Store/Store8/Store16/Store32 v ad s = case get_var v s of SOME (Word v) => sh_mem_store/_byte/16/32 ad v s | _ => (SOME Error, s); Lean identical, eight clauses. The state is the tagged WordSemStateFiniteExact; its two |-> fields fp_regs/store are recorded by fmap_as_finite_support [fpRegs, store] with the same-module witness WordSemShMemSupport.holFmapAsFiniteSupportWitness. FFI uses the tagged callFFIHOL/HolFfiResult; the HOL byte helpers word_to_bytes/word_of_bytes/byte_align/get_byte are the untagged panWordToBytesHOL/panWordOfBytesHOL/riscvByteAlignHOL/getByteHOL8 renderings shared with the reviewed panSem/loopSem ports. Words are BitVec width with [NeZero width]; word8 is BitVec 8; no other representation change. Rows all (every memop; Loc and missing store variables; unaligned full-word store) of scripts/hol-probes/word_sem_sh_mem_probe.out are checked by Flapjack.Test.WordSemShMemParity (byte-incrementing and diverging oracles, payload observed through io_events)."
   }
 ]

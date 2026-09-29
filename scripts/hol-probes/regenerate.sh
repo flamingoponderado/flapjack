@@ -229,6 +229,13 @@ run_probe loop_to_word_comp_probeScript.sml loop_to_word_comp_probe.out \
 run_probe loop_to_word_comp_recursive_probeScript.sml loop_to_word_comp_recursive_probe.out \
   comp_seq comp_if comp_loop comp_mark \
   "$cake_dir/pancake/loop_to_wordScript.sml"
+run_probe loop_to_word_globals_rel_probeScript.sml loop_to_word_globals_rel_probe.out \
+  globals_rel_match globals_rel_value_mismatch globals_rel_temp_mismatch globals_rel_empty_source \
+  "$cake_dir/pancake/proofs/loop_to_wordProofScript.sml" \
+  "$cake_dir/pancake/proofs"
+run_probe loop_to_word_comp_call_probeScript.sml loop_to_word_comp_call_probe.out \
+  comp_call_tail comp_call_no_handler comp_call_handler \
+  "$cake_dir/pancake/loop_to_wordScript.sml"
 # The get_stack_only probe observes the allocator driver's stack-only
 # analysis over wordLang programs (backend word_alloc).
 run_probe get_stack_only_probeScript.sml get_stack_only_probe.out \
@@ -1658,6 +1665,15 @@ run_probe word_sem_call_helpers_probeScript.sml word_sem_call_helpers_probe.out 
 # failure) and assign (bead flapjack-h29l.5).
 run_probe word_sem_alloc_probeScript.sml word_sem_alloc_probe.out \
   find_code_some dec_stack_hit gc_rev alloc_ok assign_fail \
+  "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
+# The wordSem shared-memory probe observes share_inst for every memop (through
+# sh_mem_store*/sh_mem_load* and sh_mem_set_var) with a byte-incrementing and a
+# diverging FFI oracle, recording configuration and payload bytes via
+# io_events (bead flapjack-h29l.3).
+run_probe word_sem_sh_mem_probeScript.sml word_sem_sh_mem_probe.out \
+  store store_final load8 load_final sh_mem_set_var_none \
   "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 
