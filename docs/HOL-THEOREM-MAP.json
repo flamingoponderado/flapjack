@@ -21780,5 +21780,22 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-c source comparison (2026-09-29; bead flapjack-pxn.18.5.6.43) against ncompile_correct at crep_to_loopProofScript.sml:110-154 and Resume ncompile_correct[Seq] at :1679-1703. The two and only two added induction premises are the full ncompile_correct property for c1 and c2 at the same source state; the theorem keeps the source evaluation and non-Error premises, all five input relations, and the HOL existential target clock/result/state and six postconditions. No target evaluation/result or post-relation is assumed. Exact evalCrepSemHOLProgExact, LoopSemStateFiniteExact.evaluate, compileHOLExact and exact relations are used. The source Seq equation is the line-443 fix-clock-free evaluate_def form: run c1, run c2 from its state iff the first result is NONE, otherwise retain its pair. When the first source result is NONE, the proof lifts the first target run by the second clock extension using evaluate_add_clock_eq, then composes the second induction hypothesis; for a non-NONE result, the target Seq short-circuits after the first run. The finite-map relation qualifier names the exact fields traversed by state_rel, mem_rel/globals_rel/code_rel/locals_rel carriers and their context, with same-module roundtrip witnesses; words_as_type_indexed_bitvec records HOL's positive type-indexed word dimension as BitVec width."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "ncompile_correct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NCompileCorrect/Primitive.lean",
+    "lean_name": "crepToLoop_ncompile_correct_primitive",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison (2026-09-29; bead flapjack-pxn.18.5.6.49) against ncompile_correct at crep_to_loopProofScript.sml:110-154 and Resume ncompile_correct[Primitive] at :2357-2407. The Primitive case has no induction hypotheses. The theorem quantifies the constructor payload (lhss, operator, rhss) and source state, then retains all seven HOL premises (source evaluation, non-Error result, state_rel, mem_rel, globals_rel, code_rel, locals_rel) and the full existential target evaluation/result/state conclusion with the mapped result and conditional locals postcondition. No target result, target evaluation, or post-relation is assumed. The source clause is evalCrepSemHOLProgExact_primitive_holShape; the target is exact LoopSemStateFiniteExact.evaluate of compileHOLExact. The proof follows the HOL case: opt_mmap_lhss/rhss_locals_rel establish mappings, crepPrimopLoopPrimopHOL transports the primitive, and updateListEq/FUPDATE_LIST_HOL plus setVars/sptAlistInsert preserve the exact locals relation for mapped assigned keys and untouched keys. The named finite-map relation fields are precisely the context vars/functions, source locals/globals/code, and target globals traversed by the five HOL relations; same-module finite-support roundtrip witnesses are supplied. words_as_type_indexed_bitvec records the width-indexed word carrier."
   }
 ]
