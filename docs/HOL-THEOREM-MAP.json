@@ -23673,5 +23673,84 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.7): HOL exit_loop (:1010-1014): SOME (Break n) = SOME (Break (n - 1)), SOME (Continue n) = SOME (Continue (n - 1)), res = res (num monus); Lean identical. Words are BitVec width with [NeZero width] (words_as_type_indexed_bitvec); no other representation change. Rows exit_loop_* of scripts/hol-probes/word_sem_call_helpers_probe.out are checked by Flapjack.Test.WordSemCallHelpersParity."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Alloc.lean",
+    "lean_name": "wordSemFindCode",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "find_code_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.5): HOL find_code (:614-630): (SOME p) args code ssize = case lookup p code of NONE => NONE | SOME (arity,exp) => if LENGTH args = arity then SOME (args,exp,lookup p ssize) else NONE; NONE args code ssize = if args = [] then NONE else case LAST args of Loc loc 0 => (case lookup loc code of NONE => NONE | SOME (arity,exp) => if LENGTH args = arity + 1 then SOME (FRONT args,exp,lookup loc ssize) else NONE) | other => NONE. Lean identical over the exact Spt code/stack-size maps and tagged WordLangProgHOL, LAST/FRONT on the non-empty list as getLast/dropLast. Words are BitVec width with [NeZero width] (words_as_type_indexed_bitvec); no other representation change. Rows find_code_* (arity, missing, nil, Loc offset 0/1, Word last) of scripts/hol-probes/word_sem_alloc_probe.out are checked by Flapjack.Test.WordSemAllocParity."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Alloc.lean",
+    "lean_name": "wordSemEncStack",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "enc_stack_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.5): HOL enc_stack (:632-635): [] = [], StackFrame n _ l handler :: st = MAP SND l ++ enc_stack st; Lean identical over WordSemStackFrame. Words are BitVec width with [NeZero width] (words_as_type_indexed_bitvec); no other representation change. Rows enc_stack of scripts/hol-probes/word_sem_alloc_probe.out are checked by Flapjack.Test.WordSemAllocParity."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Alloc.lean",
+    "lean_name": "wordSemDecStack",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "dec_stack_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.5): HOL dec_stack (:637-646): [] [] = SOME []; xs (StackFrame n l0 l handler :: st) = if LENGTH xs < LENGTH l then NONE else case dec_stack (DROP (LENGTH l) xs) st of NONE => NONE | SOME s => SOME (StackFrame n l0 (ZIP (MAP FST l, TAKE (LENGTH l) xs)) handler :: s); _ _ = NONE. Lean identical clauses in the same order; ZIP is applied only to equal-length lists under the guard, where List.zip agrees. Words are BitVec width with [NeZero width] (words_as_type_indexed_bitvec); no other representation change. Rows dec_stack_hit/short/extra of scripts/hol-probes/word_sem_alloc_probe.out are checked by Flapjack.Test.WordSemAllocParity."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Alloc.lean",
+    "lean_name": "gc",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "gc_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.5): HOL gc s (:648-661): let wl_list = enc_stack s.stack in case s.gc_fun (wl_list, s.memory, s.mdomain, s.store) of NONE => NONE | SOME (wl,m,st) => case dec_stack wl s.stack of NONE => NONE | SOME stack => SOME (s with <| stack := stack; store := st; memory := m |>); Lean identical, calling the state's gcFun field (carrier WordSemGcFun, whose own tag is tracked by flapjack-h29l.11) with the set-as-Bool mdomain. The state is the tagged WordSemStateFiniteExact; its two |-> fields fp_regs/store are recorded by fmap_as_finite_support [fpRegs, store] with the same-module witness WordSemAllocSupport.holFmapAsFiniteSupportWitness. Words are BitVec width with [NeZero width]; no other representation change. Rows gc_rev/gc_fail of scripts/hol-probes/word_sem_alloc_probe.out are checked by Flapjack.Test.WordSemAllocParity."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Alloc.lean",
+    "lean_name": "hasSpace",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "has_space_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.5): HOL has_space wl s (:663-668): case (wl, get_store NextFree s, get_store TriggerGC s) of (Word w, SOME (Word n), SOME (Word l)) => SOME (w2n w <= w2n (l - n)) | _ => NONE; Lean identical with toNat for w2n and BitVec subtraction for word l - n. The state is the tagged WordSemStateFiniteExact; its two |-> fields fp_regs/store are recorded by fmap_as_finite_support [fpRegs, store] with the same-module witness WordSemAllocSupport.holFmapAsFiniteSupportWitness. Words are BitVec width with [NeZero width]; no other representation change. Rows has_space_yes/no/loc/missing of scripts/hol-probes/word_sem_alloc_probe.out are checked by Flapjack.Test.WordSemAllocParity."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Alloc.lean",
+    "lean_name": "alloc",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "alloc_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.5): HOL alloc w names s (:671-698): case cut_envs names s.locals of NONE => (SOME Error, flush_state T s) | SOME envs => case gc (push_env envs NONE (set_store AllocSize (Word w) s)) of NONE => (SOME Error, flush_state T s) | SOME s => case pop_env s of NONE => (SOME Error, flush_state T s) | SOME s => case get_store AllocSize s of NONE => (SOME Error, s) | SOME w => case has_space w s of NONE => (SOME Error, s) | SOME T => (NONE, s) | SOME F => (SOME NotEnoughSpace, flush_state T s). Lean identical, including which state each flush_state receives (original s for the cut and gc failures, the gc result for the pop_env failure). The state is the tagged WordSemStateFiniteExact; its two |-> fields fp_regs/store are recorded by fmap_as_finite_support [fpRegs, store] with the same-module witness WordSemAllocSupport.holFmapAsFiniteSupportWitness. Words are BitVec width with [NeZero width]; no other representation change. Rows alloc_ok/space/cut/gc of scripts/hol-probes/word_sem_alloc_probe.out are checked by Flapjack.Test.WordSemAllocParity."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Alloc.lean",
+    "lean_name": "assign",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "assign_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.5): HOL assign reg exp s (:700-705) = case word_exp s exp of NONE => NONE | SOME w => SOME (set_var reg w s); Lean identical over the tagged wordExp/setVar. The state is the tagged WordSemStateFiniteExact; its two |-> fields fp_regs/store are recorded by fmap_as_finite_support [fpRegs, store] with the same-module witness WordSemAllocSupport.holFmapAsFiniteSupportWitness. Words are BitVec width with [NeZero width]; no other representation change. Rows assign/assign_fail of scripts/hol-probes/word_sem_alloc_probe.out are checked by Flapjack.Test.WordSemAllocParity."
   }
 ]
