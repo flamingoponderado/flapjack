@@ -334,16 +334,41 @@ theorem installOk :
          (6, (2, WordLangProgHOL.return 0 [2]))], none, .ln, 3) := by
   ev_simp
 
-/-! `call_handler_exception=(NONE,[(3,Word 7w); (5,Word 99w); (2,Word 7w)],2)`
-is captured in the HOL probe (`scripts/hol-probes/word_sem_evaluate_probe.out`) but
-its kernel replay is still open: reducing the returning-`Call` caught-handler
-`Exception` branch under `decide +kernel` does not terminate the kernel
-reduction (the recursive `evaluate` on the callee `Raise` is not unfolded by
-kernel whnf). The row is therefore not asserted here; the faithful kernel
-replay is tracked by bead `flapjack-6m93.1`. -/
+/-- Fixture for `call_handler_exception`: `s0` with the caught-handler locals
+    and a callee `6` that `Raise`s argument key `2`. -/
+private def sHandler : WordSemStateFiniteExact 64 Unit Nat :=
+  { s0 with
+    locals := sptFromAList [(2, .word 7), (4, .word 1), (3, .loc 5 0), (8, .word 16), (9, .word 1)]
+    code := sptFromAList [(6, (2, WordLangProgHOL.raise 2))] }
+
+/-- `call_handler_exception=(NONE,[(3,Word 7w); (5,Word 99w); (2,Word 7w)],2)` -/
+theorem callHandlerException :
+    view (evaluate (.call (some ([4], (units [2], .ln), .skip, 10, 11)) (some 6) [2]
+        (some (3, .assign 5 (.const 99), 7, 8))) sHandler) =
+      (.none, [(3, .word 7), (5, .word 99), (2, .word 7)], 2) := by
+  have h1 : WordSemStateFiniteExact.getVars [2] sHandler = some [.word 7] := by decide +kernel
+  have h3 : wordSemFindCode (some 6)
+      (wordSemAddRetLoc (some ([4], (units [2], .ln), .skip, 10, 11)) [.word 7])
+      sHandler.code sHandler.stackSize =
+      some ([.loc 10 11, .word 7], WordLangProgHOL.raise 2, none) := by
+    simp (config := { decide := true }) [wordSemFindCode, wordSemAddRetLoc, sHandler, s0,
+      sptFromAList, sptInsert, sptLookup]
+  have h4 : wordSemCutEnvs (units [2], .ln) sHandler.locals =
+      some (sptFromAList [(2, .word 7)], .ln) := by decide +kernel
+  simp only [evaluate]
+  rw [h1]; dsimp only
+  rw [if_neg (by decide), h3]; dsimp only
+  rw [if_neg (by decide +kernel), h4]; dsimp only
+  rw [dif_neg (by decide)]
+  rw [evaluate.eq_def]; dsimp only
+  simp only [WordSemStateFiniteExact.decClock, WordSemStateFiniteExact.callEnv,
+    WordSemStateFiniteExact.pushEnv, WordSemStateFiniteExact.fixClock,
+    WordSemStateFiniteExact.jumpExc, WordSemStateFiniteExact.getVar,
+    WordSemStateFiniteExact.setVar, WordSemStateFiniteExact.wordExp]
+  decide +kernel
 
 def runChecks : IO Bool := do
-  IO.println "PASS wordSem evaluate_def matches 35/36 HOL oracle rows (kernel-checked); call_handler_exception probe-only pending flapjack-6m93.1"
+  IO.println "PASS wordSem evaluate_def matches all 36 HOL oracle rows (kernel-checked)"
   pure true
 
 end Flapjack.Test.WordSemEvaluateParity
