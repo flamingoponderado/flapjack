@@ -502,7 +502,7 @@ theorem inlineProgHOLCoreExact_shMem [BEq CrepInlineMapHOLName]
       (List Nat × CrepProgHOL width))
     (supportKeys : List CrepInlineMapHOLName)
     (support_spec : ∀ key, inlineable.lookup key ≠ none → key ∈ supportKeys)
-    (operator : CrepMemOp) (name : Nat) (address : CrepExpHOL width) :
+    (operator : WordMemOp) (name : Nat) (address : CrepExpHOL width) :
     inlineProgHOLCoreExact inlineable supportKeys support_spec (.shMem operator name address) =
       .shMem operator name address := by
   simp only [inlineProgHOLCoreExact]

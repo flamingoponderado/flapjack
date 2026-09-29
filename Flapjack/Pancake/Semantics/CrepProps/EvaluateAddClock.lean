@@ -192,7 +192,7 @@ theorem crepExactMemStoreByte_addClock {width : Nat} [NeZero width] {σ : Type}
   rfl
 
 theorem crepShMemLoadHOL_addClock {width : Nat} [NeZero width] {σ : Type}
-    (operator : CrepMemOp) (name : Nat) (address : BitVec width)
+    (operator : WordMemOp) (name : Nat) (address : BitVec width)
     (state : CrepSemHOLState width σ) (ck : Nat) :
     crepShMemLoadHOL operator name address (CrepAddClock state ck)
         (fun a => Classical.propDecidable ((CrepAddClock state ck).shMemaddrs a)) =
@@ -204,7 +204,7 @@ theorem crepShMemLoadHOL_addClock {width : Nat} [NeZero width] {σ : Type}
   exact crepShMemLoadExactHOL_addClock name address (crepShMemByteWidth operator) state ck
 
 theorem crepShMemStoreHOL_addClock {width : Nat} [NeZero width] {σ : Type}
-    (operator : CrepMemOp) (name : Nat) (address : BitVec width)
+    (operator : WordMemOp) (name : Nat) (address : BitVec width)
     (state : CrepSemHOLState width σ) (ck : Nat) :
     crepShMemStoreHOL operator name address (CrepAddClock state ck)
         (fun a => Classical.propDecidable ((CrepAddClock state ck).shMemaddrs a)) =

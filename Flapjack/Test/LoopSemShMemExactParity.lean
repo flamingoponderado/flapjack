@@ -56,7 +56,7 @@ private def isErr {w : Nat} [NeZero w] (r : Option (LoopResultExact w)) : Bool :
         match p.2.ffi.ioEvents with
         | [e] => e.bytes == [(171, 171), (3, 3), (0, 0), (0, 0), (0, 0)]
         | _ => false)
-private def opConf (op : CrepMemOp) : List (BitVec 8) :=
+private def opConf (op : WordMemOp) : List (BitVec 8) :=
   match (shMemOp op 1 3 { base8 with locals := sptInsert 1 (.word 7) .ln }).2.ffi.ioEvents with
   | [e] => e.configuration | _ => []
 -- load=[0w] store=[0w] load8=[1w] store8=[1w] load16=[2w] store16=[2w] load32=[4w] store32=[4w]

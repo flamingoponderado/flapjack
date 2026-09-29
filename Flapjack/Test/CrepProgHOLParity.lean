@@ -78,7 +78,7 @@ private def prgReturnRow : Bool :=
   | .return es => es.length == 2 | _ => false
 
 private def prgShMemRow : Bool :=
-  match (.shMem CrepMemOp.load8 3 (e 1) : E8) with
+  match (.shMem WordMemOp.load8 3 (e 1) : E8) with
   | .shMem _ n _ => n == 3 | _ => false
 
 private def prgTickRow : Bool :=

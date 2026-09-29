@@ -155,7 +155,7 @@ abbrev CrepFfiHandler (α : Type u) :=
   FunName → α → α → α → α → CrepState α → Option (CrepFfiResult α)
 
 abbrev CrepSharedMemHandler (α : Type u) :=
-  CrepMemOp → Nat → α → CrepState α → Option (CrepState α)
+  WordMemOp → Nat → α → CrepState α → Option (CrepState α)
 
 def restoreCrepLocal (locals : Nat → Option α) (name : Nat)
     (oldValue : Option α) : Nat → Option α :=

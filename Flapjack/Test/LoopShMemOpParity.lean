@@ -31,7 +31,7 @@ def probeState : LoopFfiState Nat Unit :=
     wordOfBytes := fun _ bytes => bytes.head?.getD 0 |>.toNat
     valueToNat := id }
 
-def config (operator : CrepMemOp) : Option (List UInt8) :=
+def config (operator : WordMemOp) : Option (List UInt8) :=
   match loopFfiShMemOp probeState operator 1 3 with
   | (.normal state, _) => state.ffi.ioEvents.head?.map (·.configuration)
   | _ => none

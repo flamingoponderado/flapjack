@@ -1,3 +1,4 @@
+import Flapjack.MemOp
 import Flapjack.Pancake.LoopLive
 import Flapjack.NumSet
 
@@ -81,17 +82,6 @@ inductive WordArith (α : Type u) where
      a register or an immediate word. -/
   | shift (operator : Shift) (destination sourceLeft : Nat)
       (sourceRight : WordRegImm α)
-  deriving DecidableEq, Repr
-
-inductive WordMemOp where
-  | load
-  | load8
-  | load16
-  | load32
-  | store
-  | store8
-  | store16
-  | store32
   deriving DecidableEq, Repr
 
 /-! CakeML's `inst = Const reg ('a word) | Arith arith | Mem memop reg ('a addr)`.
@@ -203,7 +193,7 @@ theorem wordArith_isLoopGenerated {α : Type u}
     wordArithIsLoopGenerated (wordArith (α := α) context operation) := by
   cases operation <;> simp [wordArith, wordArithIsLoopGenerated]
 
-def wordMemOp : CrepMemOp → Option WordMemOp
+def wordMemOp : WordMemOp → Option WordMemOp
   | .load => some .load
   | .load8 => some .load8
   | .load16 => some .load16

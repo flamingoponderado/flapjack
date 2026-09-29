@@ -50,7 +50,7 @@ structure LoopEvaluateHooks (W : Type := Nat) (F : Type := LoopWordLoc) where
   storeByte : LoopMachineState W F → LoopValue W → LoopValue W →
     Option (LoopMachineState W F)
   compare : Cmp → LoopValue W → LoopValue W → Bool
-  shMem : CrepMemOp → Nat → LoopValue W → LoopMachineState W F →
+  shMem : WordMemOp → Nat → LoopValue W → LoopMachineState W F →
     LoopMachineStep W F
   ffi : FunName → W → W → W → W → List Nat →
     LoopMachineState W F → LoopMachineStep W F
@@ -75,7 +75,7 @@ def fixLoopMachineClock {W F : Type} (oldState : LoopMachineState W F)
     clock := if oldState.clock < newState.clock then oldState.clock
       else newState.clock })
 
-def loopIsLoad : CrepMemOp → Bool
+def loopIsLoad : WordMemOp → Bool
   | .load | .load8 | .load16 | .load32 => true
   | .store | .store8 | .store16 | .store32 => false
 
@@ -424,7 +424,7 @@ def loopShMemStore (state : LoopMachineState (RiscV.Word 64) F)
     or 4) matches HOL.  The exact polymorphic port is tracked by the dependency
     bead and recorded as a documented mismatch. -/
 def loopShMemOp (state : LoopMachineState (RiscV.Word 64) F)
-    (operator : CrepMemOp) (name : Nat) (address : RiscV.Word 64) :
+    (operator : WordMemOp) (name : Nat) (address : RiscV.Word 64) :
     LoopMachineStep (RiscV.Word 64) F :=
   match operator with
   | .load => loopShMemLoad state name address 0
@@ -438,7 +438,7 @@ def loopShMemOp (state : LoopMachineState (RiscV.Word 64) F)
 
 /-- The `LoopEvaluateHooks.shMem` boundary: unwrap the evaluated address cell. -/
 def loopShMemHook (state : LoopMachineState (RiscV.Word 64) F)
-    (operator : CrepMemOp) (name : Nat) : LoopValue (RiscV.Word 64) →
+    (operator : WordMemOp) (name : Nat) : LoopValue (RiscV.Word 64) →
     LoopMachineStep (RiscV.Word 64) F
   | .word address => loopShMemOp state operator name address
   | .loc _ _ => (some .error, state)
@@ -677,7 +677,7 @@ def shMemStoreHOL {width : Nat} [NeZero width]
     tracked by `flapjack-s6a.3.2.1`. -/
 def shMemOpHOL {width : Nat} [NeZero width]
     (state : LoopMachineState (RiscV.Word width) F)
-    (operator : CrepMemOp) (name : Nat) (address : RiscV.Word width) :
+    (operator : WordMemOp) (name : Nat) (address : RiscV.Word width) :
     LoopMachineStep (RiscV.Word width) F :=
   match operator with
   | .load => shMemLoadHOL state name address 0

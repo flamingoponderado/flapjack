@@ -36,7 +36,7 @@ generic over `α` and stores its `Call`/`ExtCall` names as `String`, so it is
 not an exact port (HOL `funname = mlstring`); it stays untagged.
 `CrepProgHOL` is the exact carrier: the word type is `BitVec width` with
 `[NeZero width]`, the function names are the faithful `MlString`, and the
-expression/`ShMem` payloads use the exact `CrepExpHOL`/`CrepMemOp` carriers.
+expression/`ShMem` payloads use the exact `CrepExpHOL`/`WordMemOp` carriers.
 -/
 
 namespace Flapjack
@@ -46,7 +46,7 @@ open Flapjack.Basis.Pure.MlString
 /-- Exact port of `crepLang$prog` (`cakeml/pancake/crepLangScript.sml:41-66`):
 19 constructors in HOL order, `funname` as the faithful `MlString`, `varname`
 as `Nat`, the `'a exp` payload as `CrepExpHOL width`, the `('a word)` payloads
-as `BitVec width`, and `memop` as `CrepMemOp`. -/
+as `BitVec width`, and `memop` as `WordMemOp`. -/
 @[hol "cakeml/pancake/crepLangScript.sml" "prog"]
 inductive CrepProgHOL (width : Nat) [NeZero width] where
   | skip
@@ -67,7 +67,7 @@ inductive CrepProgHOL (width : Nat) [NeZero width] where
   | extCall (function : MlString) (configuration configurationLength array arrayLength : Nat)
   | raise (exception : BitVec width)
   | return (values : List (CrepExpHOL width))
-  | shMem (operator : CrepMemOp) (name : Nat) (address : CrepExpHOL width)
+  | shMem (operator : WordMemOp) (name : Nat) (address : CrepExpHOL width)
   | tick
   deriving Repr
 
