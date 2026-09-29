@@ -783,6 +783,22 @@ theorem rebaseHOLFunctionLabels_preserves_locValueFree {width : Nat} [NeZero wid
       (rebaseHOLFunctionLabelsExact_preserves_locValueFree
         firstLabel functionCount program hfree)
 
+/-- A concrete exact `compile_prog_def` row remains free of the runtime-only
+constructor after the same canonical projection and production label rebase
+used by `pipelineLoopFunctionsSourceCompileProgExact`. -/
+theorem rebaseCompileProgHOLExact_rowLocValueFree {width : Nat} [NeZero width]
+    (target : Flapjack.Compiler.Encoders.Asm.AsmArchitecture)
+    (firstLabel functionCount : Nat)
+    (program : List
+      (Flapjack.Basis.Pure.MlString.MlString × List Nat × CrepProgHOL width))
+    (row : Nat × List Nat × HolLoopProg width)
+    (hrow : row ∈ compileProgHOLExact target program) :
+    loopProgLocValueFree
+      (rebaseHOLFunctionLabels firstLabel functionCount
+        (holLoopProgToExecutableCanonical row.2.2)) := by
+  exact rebaseHOLFunctionLabels_preserves_locValueFree firstLabel functionCount
+    row.2.2 (compileProgHOLExact_rowLocValueFree target program row hrow)
+
 /-- Flapjack production adapter around exact whole-program `compile_prog_def`:
 it converts byte-ranged production names to `MlString`, projects exact
 `HolLoopProg`, and rebases function labels to this caller's label base. This is
