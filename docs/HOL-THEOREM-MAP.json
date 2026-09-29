@@ -21831,5 +21831,22 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.6.51) against crep_to_loopProofScript.sml:110-154 and Resume ncompile_correct[Store] at :1758-1856. This Store evaluate_ind case has no induction hypothesis. It preserves the source evaluation and non-Error premises, all five pre-state relations, and the complete existential clock/result/target-state conclusion with all six postconditions; it assumes no target evaluation/result or post relation. It uses the exact Crep and Loop evaluators, compileHOLExact, and exact relations. The proof follows HOL: compile/evaluate destination then source expressions, preserve the destination address across source compilation, assign the source value to its fresh temporary, and store to the destination. The memory relation handles the written address separately from other in-domain addresses; locals_rel follows insert_gt_vmax, cutset propagation, and the compiled-code subspt fact. The finite-map qualifier names the fields traversed by the exact state/context/relation carriers with same-module roundtrip witnesses; words_as_type_indexed_bitvec records HOL's positive word dimension as BitVec width."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "ncompile_correct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NCompileCorrect/Call.lean",
+    "lean_name": "crepToLoop_ncompile_correct_call",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.6.56): case piece `Call caltyp fname argexps` of ncompile_correct (crep_to_loopProofScript.sml:110-134 statement; Resume ncompile_correct[Call] at 3364-3715). The piece's only extra antecedents are exactly the two Call conjuncts of crepSemTheory.evaluate_ind, printed from the built HOL theory: the handler hypothesis (OPT_MMAP (eval s) argexps = SOME args ∧ lookup_code s.code fname args (LENGTH args) = SOME (prog,newlocals) ∧ ¬(case caltyp of NONE => F | SOME (rts,_) => ¬ALL_DISTINCT rts) ∧ s.clock ≠ 0 ∧ evaluate (prog, dec_clock s with locals := newlocals) = (SOME (Exception eid), st) ∧ caltyp = SOME (_, SOME (eid, p)) ⇒ P (p, st with locals := s.locals)) and the callee hypothesis (same guards ⇒ P (prog, dec_clock s with locals := newlocals)); the defining equalities v6 = (prog,newlocals), v4 = SOME v7, v7 = Exception eid, v = (v1,v2), v2 = SOME v3, v3 = (eid',p), eid = eid' are substituted, lookup_code is the evaluator's lookupCodeFiniteHOL (equal on lookups to the tagged lookupCodeHOL), and P is the untagged crepToLoopNcompileCorrectAt. After them the piece keeps HOL's ∀res s1 t ctxt l, all seven premises and the full ∃ck res1 t1 conclusion as in the If piece, over the tagged compileHOLExact Call clause (compile_exps at vmax+1, MAP2 Assign gen_temps, Call with rt_vars returns, find_lab, and the handler Raise / If NotEqual ... (Seq Tick (compile p)) ...). The proof follows HOL: comp_exps_preserves_eval, loop_eval_nested_assign_distinct_eq and get_vars_local_update_some_eq for the arguments; lookup_code and code_rel_intro/find_code/find_lab for the callee; call_preserve_state_code_locals_rel for the callee state; the callee IH then loop_live optimise_correct for ocompile; the tail call (TimeOut / result passthrough); the returning call with cut_res entry (TimeOut at clock 0, all_distinct_ctxt_lookup_all_distinct for the return names), Return with opt_mmap_rhss_locals_rel and the set_vars/Skip/cut_res exit (clock +1) and the locals_rel reconstruction (update_eq_zip_flookup / flookup_fupdate_zip_not_mem / ALOOKUP over ZIP), Exception without handler or with a non-matching eid (Raise passthrough), the caught exception through Tick and the handler IH with locals_rel_insert_gt_vmax (clock +1, +2 more when the handler returns NONE for the two cut_res), and the remaining TimeOut/FinalFFI results. #print axioms: [propext, Classical.choice, Quot.sound]. Qualifiers as for the other ncompile_correct pieces."
   }
 ]
