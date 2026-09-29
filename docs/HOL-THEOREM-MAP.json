@@ -2304,6 +2304,38 @@
     "reviewer": "flapjack-ds8 (bead flapjack-5ldn): clause-for-clause exact vs pan_structsScript.sml:25-34: nil -> none; matching head key -> some 0; otherwise recurse and add 1 to some index. Polymorphic over (alpha x beta) as in HOL; Lean DecidableEq alpha is HOL's computable equality. No extra hypotheses or side conditions."
   },
   {
+    "hol_path": "cakeml/pancake/pan_structsScript.sml",
+    "hol_name": "context",
+    "lean_path": "Flapjack/Pancake/PanStructs/CompileShapeExact.lean",
+    "lean_name": "ContextExact",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.3.77.1.1) against pan_structsScript.sml:15-21. The record fields and order match: structs is a list of (MlString × list (MlString × ShapeHOL)); locals and globals are lists of (MlString × ShapeHOL). Cake aliases stcname, fldname, varname, and shape to these exact carriers. This is a source carrier only; production StructPassContext remains separate."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_structsScript.sml",
+    "hol_name": "compile_shape_def",
+    "lean_path": "Flapjack/Pancake/PanStructs/CompileShapeExact.lean",
+    "lean_name": "compileShapeExact",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a clause comparison (2026-09-29; bead flapjack-pxn.18.5.3.77.1.1) against pan_structsScript.sml:37-67. One returns One; Comb maps the mutually recursive compile_shapes over its children; Named uses HOL first-match dropWhile by structural MlString equality, compiles the selected fields in the returned suffix context, and returns One on no match. The List.dropWhile expression is direct; dropWhile_suffix_length_lt is termination evidence only. Inputs/results use the exact MlString and ShapeHOL carriers. Direct HOL rows One, Comb, forward nested lookup, backward suffix, and missing-name fallback are replayed under #guard and kernel-checked in Test/PanStructsCompileShapeParity. This tagged definition now lives in the Pancake PanStructs source counterpart and does not claim production structCompileShapeWF routing."
+  },
+  {
+    "hol_path": "cakeml/pancake/pan_structsScript.sml",
+    "hol_name": "compile_shape_def",
+    "lean_path": "Flapjack/Pancake/PanStructs/CompileShapeExact.lean",
+    "lean_name": "compileShapesExact",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a clause comparison (2026-09-29; bead flapjack-pxn.18.5.3.77.1.1) against pan_structsScript.sml:44-46. Nil returns nil; cons compiles the head with exact compileShapeExact and recursively compiles the tail with the same fields-only context, preserving list order and the exact MlString/ShapeHOL carriers. This mutual definition is tagged at the source Definition declaration line 37. Direct HOL compile_shape rows are replayed under #guard in Test/PanStructsCompileShapeParity."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_shapes_eq_map",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileShapeExact.lean",
+    "lean_name": "compileShapesExact_eq_map",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a statement comparison (2026-09-30; bead flapjack-pxn.18.5.3.77.1.1.1.1) against pan_structsProofScript.sml:310-314. HOL explicitly quantifies the fields-only context and shape list and states compile_shapes sctxt shs = MAP (compile_shape sctxt) shs. Lean uses the same explicit context and shapes binders and pointwise equality over the exact list carriers, with no added hypotheses, fuel, or production context. The kernel proof is in CompileShapeExact.lean."
+  },
+  {
     "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
     "hol_name": "cexp_heads_def",
     "lean_path": "Flapjack/Pancake/PanToCrep.lean",
