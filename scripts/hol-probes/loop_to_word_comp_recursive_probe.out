@@ -1,0 +1,5 @@
+comp_seq=(Seq (Assign 20 (Var 22)) (Assign 24 (Const 5w)),7,11)
+comp_if=(Seq (If Equal 20 (Reg 22) (Assign 24 (Const 5w)) (Assign 26 (Var 28))) Tick,
+ 7,11)
+comp_loop=(Seq Tick (Seq (Loop ⦕ 0; 20 ⦖ (Assign 24 (Var 26)) ⦕ 0; 22 ⦖) Tick),7,11)
+comp_mark=(Assign 20 (Var 28),7,11)

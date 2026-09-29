@@ -4,6 +4,9 @@ import Flapjack.Compiler.Backend.BackendCommon
 import Flapjack.Compiler.Backend.Semantics.WordSem
 import Flapjack.Compiler.Backend.Semantics.WordSem.State
 import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
+import Flapjack.Compiler.Backend.Semantics.WordSem.Env
+import Flapjack.Compiler.Backend.Semantics.WordSem.CallHelpers
+import Flapjack.Basis.Pure.MlList
 import Flapjack.Pancake.PanLang
 import Flapjack.Pancake.PanLang.Shape
 import Flapjack.Pancake.PanLang.Exp
@@ -206,6 +209,7 @@ import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.ExtCall
 import Flapjack.Pancake.Proofs.PanToCrep.NotMemContextAssignedMemGt
 import Flapjack.Pancake.Proofs.PanToWord
 import Flapjack.Pipeline
+import Flapjack.Pipeline.Proofs.SourceLoopState
 import Flapjack.RiscV.PipelineDiagnostics
 import Flapjack.RiscV.CorrectnessTraps
 import Flapjack.RiscV.RegisterRelabel
