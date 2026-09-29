@@ -818,47 +818,6 @@ def loopMemStoreByteAux (state : LoopMachineState (RiscV.Word 64) F)
   | some memory => some { state with memory := fun current => some (memory current) }
   | none => none
 
-/-- 64-bit instance of HOL `read_bytearray_def` (`miscScript.sml:113`). -/
-def loopReadByteArray (state : LoopMachineState (RiscV.Word 64) F)
-    (address : RiscV.Word 64) : Nat → Option (List UInt8) :=
-  fun length => readBytearrayHOL address length (loopMemLoadByteAux state)
-
-/-- 64-bit instance of HOL `write_bytearray_def` (`wordSemScript.sml:178`).  As in
-    HOL, a failed byte store leaves the original state unchanged. -/
-def loopWriteByteArray (state : LoopMachineState (RiscV.Word 64) F)
-    (address : RiscV.Word 64) : List UInt8 → LoopMachineState (RiscV.Word 64) F
-  | bytes => { state with
-      memory := fun current =>
-        some (writeBytearrayHOL address bytes (loopTotalMemory state)
-          (loopTotalDomain state) state.be current) }
-
-/-! FLAPJACK-SPECIFIC (not an exact HOL port).  The `LoopEvaluateHooks.ffi`
-    boundary for the source `ExtCall` case of `loopSem$evaluate_def`
-    (`loopSemScript.sml:427-440`).  `evaluateLoop` reads the four argument
-    locals from the pre-cut state, then applies `cut_state`, so the hook
-    receives the argument word values together with the cut state.  The exact
-    polymorphic port is tracked by the dependency bead. -/
-def loopMachineExtCall (state : LoopMachineState (RiscV.Word 64) F)
-    (function : FunName)
-    (configurationSize configurationAddress arraySize arrayAddress : RiscV.Word 64) :
-    LoopMachineStep (RiscV.Word 64) F :=
-  match loopReadByteArray state configurationAddress configurationSize.toNat,
-      loopReadByteArray state arrayAddress arraySize.toNat with
-  | some configurationBytes, some arrayBytes =>
-      match callFfi state.ffi (.extCall function) configurationBytes arrayBytes with
-      | .final event => (some (.finalFfi event), callEnv [] state)
-      | .returned newFfi newBytes =>
-          (none, { loopWriteByteArray state arrayAddress newBytes with ffi := newFfi })
-  | _, _ => (some .error, state)
-
-/-- The `LoopEvaluateHooks.ffi` boundary.  The live set is ignored because
-    `evaluateLoop` performs the `cut_state` before calling the hook. -/
-def loopMachineFfiHook (function : FunName)
-    (configurationSize configurationAddress arraySize arrayAddress : RiscV.Word 64)
-    (_live : List Nat) (state : LoopMachineState (RiscV.Word 64) F) :
-    LoopMachineStep (RiscV.Word 64) F :=
-  loopMachineExtCall state function configurationSize configurationAddress arraySize arrayAddress
-
 /-! ## `loopSem.get_var_imm` support (untagged)
 
 HOL `get_var_imm_def` (`cakeml/pancake/semantics/loopSemScript.sml:165-167`) is
