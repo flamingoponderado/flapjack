@@ -24675,5 +24675,59 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.9.24): the Raise case of HOL loop_to_wordProof compile_correct (loop_to_wordProofScript.sml:57-97, i.e. loopSem evaluate_ind specialised to goal, resumed at :747-760). The statement follows the HOL evaluate_ind conjunct ∀n s. P (Raise n,s), with P unfolded to HOL's goal written out: ∀res s1 t ctxt retv l. evaluate (prog,s) = (res,s1) ∧ res ≠ SOME Error ∧ state_rel s t ∧ locals_rel ctxt s.locals t.locals ∧ lookup 0 t.locals = SOME retv ∧ good_dimindex(:'a) ∧ ~isWord retv ∧ domain (acc_vars prog LN) ⊆ domain ctxt ⇒ ∃t1 res1. evaluate (FST (comp ctxt prog l),t) = (res1,t1) ∧ t1.ffi = s1.ffi ∧ case res of .... The binders and the premise conjunction are in HOL order. The case over res is the untagged resultCase (LoopToWord/Proofs/CompileCorrect/Property.lean), compared arm by arm: NONE, Result, Exception (including the jump_exc record update of stack and handler), Break, Continue, TimeOut, FinalFFI, and _ => F. The carriers are the tagged exact loopSem evaluate, wordSem evaluate, compHOL (comp_def), loopToWordStateRelHOLExact (state_rel_def), localsRelHOL (locals_rel_def), accVarsHOL (acc_vars_def), goodDimindex, wordSemIsWordLoc (isWord_def) and jumpExc (jump_exc_def). ⊆ on domain is the sptMem implication, and the HOL bool isWord is = true. No induction hypothesis. The source lookup is carried by the tagged locals_rel_get_var. A failing target jump_exc gives Error, which the Exception arm allows, and the jump_exc-restore implication holds vacuously. A successful jump_exc changes only handler/locals/stack/locals_size, and restoring stack and handler replays the same jump (untagged helper wordSemJumpExc_some_restore, proved from the tagged jump_exc_def). There is no target-run or post-state premise. Kernel-checked. The relation qualifier names the |-> fields of the two state carriers that the goal traverses (loopSem globals; wordSem fpRegs and store), with same-module witnesses LoopToWordCompileCorrectReturnRaiseWitnesses.*."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "comp_exp_preserves_eval",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/CompExpPreservesEval.lean",
+    "lean_name": "compExpPreservesEval",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "LoopSemStateFiniteExact.globals",
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.9.18.3): HOL loop_to_wordProof comp_exp_preserves_eval (loop_to_wordProofScript.sml:461-509): ∀s (e:'a loopLang$exp) v t ctxt. eval s e = SOME v ∧ good_dimindex(:'a) ∧ state_rel s t ∧ locals_rel ctxt s.locals t.locals ⇒ word_exp t (comp_exp ctxt e) = SOME v. Lean has the same binders in HOL order and the same single premise conjunction in HOL order, over the tagged exact loopSem eval (eval_def), wordSem wordExp (word_exp_def), compExpHOL (comp_exp_def), loopToWordStateRelHOLExact (state_rel_def), localsRelHOL (locals_rel_def) and goodDimindex. t is typed at the source FFI host F, with an arbitrary configuration type C, as state_rel requires. There is no extra premise. The proof is recursion on the expression as in HOL's eval_ind: Var via the tagged locals_rel_get_var; Lookup via globals_rel; BaseAddr/TopAddr via state_rel's CurrHeap/HeapLength entries and top_addr = base_addr + 2w*len, where good_dimindex makes the shift by 1 defined; Load via equal memory/mdomain; and Op via the_words over the pointwise IH. Unlike HOL's Shift step, no word_sh_SOME_MOD_dimword rewrite is needed, because both Lean evaluators pass w2n of the second operand. Kernel-checked. The relation qualifier names the |-> fields of both state carriers, with same-module witnesses LoopToWordCompExpPreservesEvalWitnesses.*."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/CompExpPreservesEval.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_LoopSemStateFiniteExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module re-export of the existing canonical LoopSemStateFiniteExact toBroad/ofBroad finite-support roundtrip. The relation qualifier on the tagged compExpPreservesEval requires it. It introduces no carrier and has no separate HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/CompExpPreservesEval.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_WordSemStateFiniteExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only same-module re-export of the existing canonical WordSemStateExact toBroad/ofBroad finite-support roundtrip. The relation qualifier on the tagged compExpPreservesEval requires it. It introduces no carrier and has no separate HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/CompExpPreservesEval.lean",
+    "lean_name": "attachMap_eq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only private list lemma: mapping over List.attach with a function of the underlying value equals List.map. It reconciles the attach-based Op clauses of the Lean eval/wordExp with plain maps. There is no HOL counterpart; HOL uses MAP directly."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/CompExpPreservesEval.lean",
+    "lean_name": "theWords_map_of",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only private lemma: if every f a = SOME v implies g a = SOME v on the list, then the_words (MAP f l) = SOME ws implies the_words (MAP g l) = SOME ws. It is the inner list induction of HOL's Op step (loop_to_wordProofScript.sml:484-498), stated generically. There is no separate HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/CompExpPreservesEval.lean",
+    "lean_name": "compExpPreservesEvalAux",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only private recursive core of the tagged compExpPreservesEval, with the four premises as separate hypotheses and recursion on the expression in place of HOL's eval_ind. It has no separate HOL declaration; the tagged theorem restates HOL's exact shape."
   }
 ]
