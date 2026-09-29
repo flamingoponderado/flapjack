@@ -18,7 +18,7 @@ tagged exact `loopToWordCompFuncHOL` / `loopToWordCompileProgHOL` /
 `loopToWordCompileHOL` over the exact `HolLoopProg` and `WordLangProgHOL`
 carriers, using the same program and parameter inputs as the probe.
 
-The `comp_func` temporaries are pinned by a kernel `native_decide` computation
+The `comp_func` temporaries are pinned by a kernel `decide +kernel` computation
 of the concrete `difference (acc_vars body LN) (toNumSet params)` list, so the
 `comp` body itself is reduced over a literal context (no `sptDifference`
 unfolding inside `simp`).
@@ -54,7 +54,7 @@ theorem compFuncNewTemp :
   have hvs : fromNumSetHOL
       (sptDifference (accVarsHOL (.assign 9 (.var 9) : HolLoopProg 8)
         (.ln : Spt Unit)) (toNumSetHOL ([] : List Nat))) = [9] := by
-    native_decide
+    decide +kernel
   simp only [loopToWordCompFuncHOL]
   rw [hvs]
   simp [makeCtxtHOL, Flapjack.LoopToWord.compHOL.eq_def, compExpHOL, findVarHOL,
