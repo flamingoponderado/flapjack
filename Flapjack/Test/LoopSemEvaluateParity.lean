@@ -116,6 +116,28 @@ def callState : LoopMachineState (BitVec 8) LoopWordLoc :=
 def callResult : LoopMachineStep (BitVec 8) LoopWordLoc :=
   evaluateLoop 5 noEffectHooks (.call none (some 1) [] none) callState
 
+/-- HOL `evaluate_def` rejects a location-valued condition operand without
+    applying the branch's live-out cut. See the direct oracle rows
+    `if_nonword_left_error` and `if_nonword_right_error`. -/
+def ifLocationLeftState : LoopMachineState (BitVec 8) LoopWordLoc :=
+  { probeState 5 with
+    locals := fun name => if name == 1 then some (.loc 9 0) else none }
+
+def ifLocationRightState : LoopMachineState (BitVec 8) LoopWordLoc :=
+  { probeState 5 with
+    locals := fun name =>
+      if name == 1 then some (.word 7)
+      else if name == 2 then some (.loc 8 0)
+      else none }
+
+def ifLocationLeftResult : LoopMachineStep (BitVec 8) LoopWordLoc :=
+  evaluateLoop 5 noEffectHooks
+    (.ite .equal 1 (.imm 7) .skip .skip []) ifLocationLeftState
+
+def ifLocationRightResult : LoopMachineStep (BitVec 8) LoopWordLoc :=
+  evaluateLoop 5 noEffectHooks
+    (.ite .equal 1 (.reg 2) .skip .skip []) ifLocationRightState
+
 def skipMatches : Bool :=
   skipResult.1.isNone && (skipResult.2.clock == 5)
 
@@ -133,11 +155,24 @@ def callMatches : Bool :=
   callResult.1 == some .error && (callResult.2.locals 1).isNone
     && callResult.2.clock == 4
 
+def ifLocationLeftMatches : Bool :=
+  ifLocationLeftResult.1 == some .error
+    && ifLocationLeftResult.2.locals 1 == some (.loc 9 0)
+    && ifLocationLeftResult.2.clock == 5
+
+def ifLocationRightMatches : Bool :=
+  ifLocationRightResult.1 == some .error
+    && ifLocationRightResult.2.locals 1 == some (.word 7)
+    && ifLocationRightResult.2.locals 2 == some (.loc 8 0)
+    && ifLocationRightResult.2.clock == 5
+
 #guard skipMatches
 #guard breakMatches
 #guard continueMatches
 #guard tickMatches
 #guard callMatches
+#guard ifLocationLeftMatches
+#guard ifLocationRightMatches
 
 /-- Runs the executable parity checks. -/
 def runChecks : IO Bool := do
@@ -146,7 +181,9 @@ def runChecks : IO Bool := do
     ("Loop evaluate break", breakMatches),
     ("Loop evaluate continue", continueMatches),
     ("Loop evaluate tick timeout", tickMatches),
-    ("Loop evaluate tail call without result", callMatches)]
+    ("Loop evaluate tail call without result", callMatches),
+    ("Loop If rejects location condition", ifLocationLeftMatches),
+    ("Loop If rejects location register operand", ifLocationRightMatches)]
   let mut ok := true
   for (name, passed) in checks do
     if passed then

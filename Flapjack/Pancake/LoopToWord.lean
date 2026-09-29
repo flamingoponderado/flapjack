@@ -298,15 +298,14 @@ def compExpHOL {width : Nat} [NeZero width] (context : Spt Nat) :
   decreasing_by all_goals first | sizeOf_list_dec | decreasing_trivial | simp_wf
 
 /-- Flapjack-specific partial slice of HOL `loop_to_word$comp_def` for its
-initial constructors (source lines 56-77).  It covers Skip, Assign, the sole
-Loop `AddCarry` primitive (including HOL's malformed-arity fallback), and the
-three Arith constructors.  `none` marks constructors whose clauses have not
-yet been ported; this partial helper is deliberately untagged and is not a
+currently ported clauses (source lines 56-108). It covers Skip, Assign,
+AddCarry Primitive, the three Arith constructors, Store, SetGlobal, and the
+four direct memory operations. `none` marks constructors whose clauses have
+not yet been ported; this helper is deliberately untagged and is not a
 replacement for the total HOL `comp`. The returned label pair is the input
-pair for each covered clause. The AddCarry instruction follows HOL's
-positional order `(result, left, right, carry-in)`, confirmed by the direct
-oracle; the shared Lean constructor's local binder names do not reorder those
-four natural-number fields. -/
+pair for each covered clause. AddCarry follows HOL's positional order
+`(result, left, right, carry-in)`, confirmed by the direct oracle; the shared
+Lean constructor's local binder names do not reorder those four Nat fields. -/
 def compInitialHOL {width : Nat} [NeZero width] (context : Spt Nat)
     (labels : Nat × Nat) : HolLoopProg width →
       Option (WordLangProgHOL (BitVec width) × (Nat × Nat))
@@ -333,6 +332,22 @@ def compInitialHOL {width : Nat} [NeZero width] (context : Spt Nat)
   | .arith (.div destination dividend divisor) =>
       some (.inst (.arith (.div (findVarHOL context destination)
         (findVarHOL context dividend) (findVarHOL context divisor))), labels)
+  | .store address value =>
+      some (.store (compExpHOL context address) (findVarHOL context value), labels)
+  | .setGlobal address expression =>
+      some (.set (.temp address) (compExpHOL context expression), labels)
+  | .load32 address destination =>
+      some (.inst (.mem .load32 (findVarHOL context destination)
+        (.addr (findVarHOL context address) (BitVec.ofNat width 0))), labels)
+  | .loadByte address destination =>
+      some (.inst (.mem .load8 (findVarHOL context destination)
+        (.addr (findVarHOL context address) (BitVec.ofNat width 0))), labels)
+  | .store32 address value =>
+      some (.inst (.mem .store32 (findVarHOL context value)
+        (.addr (findVarHOL context address) (BitVec.ofNat width 0))), labels)
+  | .storeByte address value =>
+      some (.inst (.mem .store8 (findVarHOL context value)
+        (.addr (findVarHOL context address) (BitVec.ofNat width 0))), labels)
   | _ => none
 
 end Flapjack.LoopToWord
