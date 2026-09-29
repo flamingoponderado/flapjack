@@ -119,6 +119,7 @@ import Flapjack.Test.LoopToWordExpCarrierCodecParity
 import Flapjack.Test.WordExpCarrierCodecParity
 import Flapjack.Test.WordContextCodecParity
 import Flapjack.Test.WordCompileExpExactParity
+import Flapjack.Test.LoopProgCarrierCodecParity
 import Flapjack.Test.LoopDecClockParity
 import Flapjack.Test.LoopFixClockParity
 import Flapjack.Test.LoopPropsSurvivesParity
@@ -891,6 +892,7 @@ def main : IO Unit := do
     Flapjack.Test.WordExpCarrierCodecParity.runChecks,
     Flapjack.Test.WordContextCodecParity.runChecks,
     Flapjack.Test.WordCompileExpExactParity.runChecks,
+    Flapjack.Test.LoopProgCarrierCodecParity.runChecks,
     Flapjack.Test.LoopDecClockParity.runChecks,
     Flapjack.Test.LoopFixClockParity.runChecks,
     Flapjack.Test.LoopPropsSurvivesParity.runChecks,
