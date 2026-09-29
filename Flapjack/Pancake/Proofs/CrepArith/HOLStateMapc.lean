@@ -1061,6 +1061,48 @@ theorem crepSimpExpCorrect1NativeLoadByteCase
   rw [hAddressEval]
   rfl
 
+/-- Cmp case of HOL `simp_exp_correct1` (`crep_arithProofScript.sml:111`).
+    Both child induction hypotheses are generalized over state and the unused
+    result binder, matching HOL `eval_ind`; the successful full-Cmp premise,
+    code-only `mapc`, and complete optional result remain unchanged. -/
+@[hol "cakeml/pancake/proofs/crep_arithProofScript.sml" "simp_exp_correct1"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
+theorem crepSimpExpCorrect1NativeCmpCase
+    {width : Nat} [NeZero width] {σ : Type}
+    (update : MlString × (List Nat × CrepProgHOL width) →
+      List Nat × CrepProgHOL width)
+    (state : CrepSemHOLState width σ) (operator : Cmp)
+    (left right : CrepExpHOL width)
+    {resultType : Type} (_result : resultType)
+    (_h : evalCrepSemHOLExp state (.cmp operator left right) ≠ none)
+    (ihLeft : ∀ (state' : CrepSemHOLState width σ) {resultType : Type}
+      (_result : resultType),
+      evalCrepSemHOLExp state' left ≠ none →
+      evalCrepSemHOLExp (CrepSemHOLState.mapc update state')
+          (crepSimpExpHOL left) = evalCrepSemHOLExp state' left)
+    (ihRight : ∀ (state' : CrepSemHOLState width σ) {resultType : Type}
+      (_result : resultType),
+      evalCrepSemHOLExp state' right ≠ none →
+      evalCrepSemHOLExp (CrepSemHOLState.mapc update state')
+          (crepSimpExpHOL right) = evalCrepSemHOLExp state' right) :
+    evalCrepSemHOLExp (CrepSemHOLState.mapc update state)
+        (crepSimpExpHOL (.cmp operator left right)) =
+      evalCrepSemHOLExp state (.cmp operator left right) := by
+  have hLeft : evalCrepSemHOLExp state left ≠ none := by
+    intro hNone
+    apply _h
+    simp [evalCrepSemHOLExp, hNone]
+  have hRight : evalCrepSemHOLExp state right ≠ none := by
+    intro hNone
+    apply _h
+    simp [evalCrepSemHOLExp, hNone]
+  have hLeftEval := ihLeft state _result hLeft
+  have hRightEval := ihRight state _result hRight
+  simp only [crepSimpExpHOL]
+  simp only [evalCrepSemHOLExp]
+  rw [hLeftEval, hRightEval]
+
 /-- Arbitrary finite-index support over the exact HOL-shaped state/code
 carriers. The state retains finite-map locals/globals/code, the HOL
 `MlString`/`CrepProgHOL` code-entry type, total memory and set domains, and
