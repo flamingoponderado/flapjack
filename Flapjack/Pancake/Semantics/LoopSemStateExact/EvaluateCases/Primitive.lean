@@ -43,8 +43,8 @@ private theorem getVars_eq_loopMachineGetVars {W F : Type}
 /-- The executable `loopPrimopHOL` adapter satisfies exact `loop_primop_def`
 over every HOL-shaped `WordLocW` input. Both Lean definitions implement the
 HOL AddCarry equation: exactly three word cells, `wordAddCarryHOL`, then low
-word and carry word; malformed arities, non-word cells, and other operators
-return `none`. This closes the adapter premise for a hook whose `primitive`
+word and carry word; malformed arities and non-word cells return `none`.
+This closes the adapter premise for a hook whose `primitive`
 field is `loopPrimopHOL`; it does not establish that a caller installs it. -/
 theorem loopPrimopHOL_refines_exact {width : Nat} [NeZero width]
     (operator : PrimOp) (values : List (WordLocW width)) :
