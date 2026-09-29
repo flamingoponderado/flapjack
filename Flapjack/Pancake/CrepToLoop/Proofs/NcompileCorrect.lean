@@ -325,4 +325,44 @@ theorem crepToLoop_ncompile_correct_return {width : Nat} [NeZero width] {σ : Ty
   simp only [loopNestedSeqHOL, LoopSemStateFiniteExact.evaluate_seq,
     LoopSemStateFiniteExact.evaluate]
   rw [hget]
+
+/-- `ncompile_correct`, case `Raise eid` (`crep_to_loopProofScript.sml:110-134`
+    statement; `Resume ncompile_correct[Raise]` at 1750-1756).  `evaluate_ind`
+    gives this case no induction hypothesis. -/
+@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "ncompile_correct"
+  (fmap_as_finite_support_relation := [CrepToLoopContextExact.vars,
+    CrepToLoopContextExact.funcs, CrepSemHOLState.locals, CrepSemHOLState.globals,
+    CrepSemHOLState.code, LoopSemStateFiniteExact.globals])
+  (words_as_type_indexed_bitvec)]
+theorem crepToLoop_ncompile_correct_raise {width : Nat} [NeZero width] {σ : Type} :
+    ∀ (eid : BitVec width) (v1 : CrepSemHOLState width σ)
+      (res : Option (CrepResultHOLExact width)) (s1 : CrepSemHOLState width σ)
+      (t : LoopSemStateFiniteExact width σ) (ctxt : CrepToLoopContextExact) (l : NumSet),
+      evalCrepSemHOLProgExact v1 (.raise eid) = (res, s1) ∧ res ≠ some .error ∧
+        crepToLoopStateRelExact v1 t ∧
+        crepToLoopMemRelHOLExact v1.memory t.memory v1.memaddrs ∧
+        crepToLoopGlobalsRelHOLExact v1.globals t.globals ∧
+        crepToLoopCodeRelExact ctxt v1.code t.code ∧
+        crepToLoopLocalsRelExact ctxt l v1.locals t.locals →
+      ∃ (ck : Nat) (res1 : Option (LoopSemStateFiniteExact.LoopResultExact width))
+        (t1 : LoopSemStateFiniteExact width σ),
+        LoopSemStateFiniteExact.evaluate (compileHOLExact ctxt l (.raise eid))
+            { t with clock := t.clock + ck } = (res1, t1) ∧
+        crepToLoopStateRelExact s1 t1 ∧
+        crepToLoopMemRelHOLExact s1.memory t1.memory s1.memaddrs ∧
+        crepToLoopGlobalsRelHOLExact s1.globals t1.globals ∧
+        crepToLoopCodeRelExact ctxt s1.code t1.code ∧
+        res1 = crepToLoopResultHOL res ∧
+        crepToLoopResultLocalsHOL ctxt l s1.locals t1.locals res := by
+  intro eid v1 res s1 t ctxt l ⟨he, _, hs, hm, hg, hc, _⟩
+  rw [evalCrepSemHOLProgExact_eq_evaluate_def] at he
+  simp only [Prod.mk.injEq] at he
+  obtain ⟨rfl, rfl⟩ := he
+  refine ⟨0, some (.exception (.word eid)),
+    LoopSemStateFiniteExact.callEnv []
+      (LoopSemStateFiniteExact.setVar (ctxt.vmax + 1) (.word eid) { t with clock := t.clock + 0 }),
+    ?_, hs, hm, hg, hc, rfl, trivial⟩
+  simp only [compileHOLExact, LoopSemStateFiniteExact.evaluate_seq,
+    LoopSemStateFiniteExact.evaluate, LoopSemStateFiniteExact.eval]
+  simp [LoopSemStateFiniteExact.setVar, sptLookup_sptInsert]
 end Flapjack

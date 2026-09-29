@@ -21712,5 +21712,22 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.6.45): case piece `Return es` of ncompile_correct (crep_to_loopProofScript.sml:110-134 statement; Resume ncompile_correct[Return] at 1704-1749; recInduct crepSemTheory.evaluate_ind, whose Return case has no induction hypothesis). The piece has no extra antecedent: HOL's quantifier order with the payload es and state v1 first, then ∀res s1 t ctxt l, all seven HOL premises with v := Return es, and the full ∃ck res1 t1 conclusion as in the If piece (res1 = crepToLoopResultHOL res; final crepToLoopResultLocalsHOL case), over the tagged evalCrepSemHOLProgExact, LoopSemStateFiniteExact.evaluate and compileHOLExact (Return clause: nested_seq (p ++ MAP2 Assign (gen_temps ntmp (LENGTH les)) les ++ [Return temps]) with compile_exps at vmax+1). The proof follows HOL: comp_exps_preserves_eval (tagged) gives ck and st; opt_mmap_eq_some; loop_eval_nested_assign_distinct_eq with the temporaries disjoint from the touched locals (compile_exps_le_tmp_domain, opt_mmap_eval_some_var_cexp_local_lookup) and ALL_DISTINCT gen_temps; get_vars_local_update_some_eq for the Return; the post states are empty_locals s and call_env [] (locals-only updates), so state/mem/globals/code relations carry over and the Return locals case is T. Qualifiers as for the If piece."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "ncompile_correct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NcompileCorrect.lean",
+    "lean_name": "crepToLoop_ncompile_correct_raise",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.6.44): case piece `Raise eid` of ncompile_correct (crep_to_loopProofScript.sml:110-134 statement; Resume ncompile_correct[Raise] at 1750-1756; evaluate_ind's Raise case has no induction hypothesis). No extra antecedent: the payload eid (the crepLang 'a word) and v1, then HOL's ∀res s1 t ctxt l, all seven premises with v := Raise eid, and the full ∃ck res1 t1 conclusion as in the If piece. compile (Raise eid) = Seq (Assign (vmax+1) (Const eid)) (Raise (vmax+1)) (tagged compileHOLExact). The proof follows HOL: ck = 0; the source gives (SOME (Exception eid), empty_locals s); the target gives (SOME (Exception (Word eid)), call_env [] (set_var ...)), matching the result case; state/mem/globals/code relations carry over (locals-only updates); the locals case is T. Qualifiers as for the If piece."
   }
 ]
