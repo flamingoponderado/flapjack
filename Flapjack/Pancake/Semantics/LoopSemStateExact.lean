@@ -685,6 +685,58 @@ def LoopSemStateFiniteExact.prodRel {width : Nat} [NeZero width] {F : Type}
       loopProgExecRel entry.2.2 program) ∧
   LoopCodeTableCoverage state machine
 
+/-- Construct the production state carrier observed by `prodRel` from an
+    exact HOL-shaped state, while keeping the production FFI carrier and code
+    table explicit. This is Flapjack-only carrier infrastructure: HOL defines
+    one `loopSem$state` datatype and has no conversion to the production
+    association-list / `FfiState` representation. -/
+def LoopSemStateFiniteExact.toProductionState {width : Nat} [NeZero width]
+    {F : Type} (state : LoopSemStateFiniteExact width F)
+    (code : LoopCode (BitVec width)) (ffi : FfiState F) :
+    LoopMachineState (BitVec width) F where
+  locals := fun name => (sptLookup name state.locals).map loopValueOfWordLocW
+  globals := fun address => (state.globals.lookup address).map loopValueOfWordLocW
+  memory := fun address => some (loopValueOfWordLocW (state.memory address))
+  mdomain := state.mdomain
+  shMdomain := state.shMdomain
+  clock := state.clock
+  code := code
+  be := state.be
+  ffi := ffi
+  baseAddr := state.baseAddr
+  topAddr := state.topAddr
+
+/-- The state constructor satisfies the observational production relation when
+    the caller supplies the two genuinely non-structural obligations: related
+    FFI states and both directions of the production-list/exact-Spt code
+    relation. This does not identify any actual CLI state constructor or prove
+    an evaluator simulation; its purpose is to make those remaining premises
+    explicit for subsequent source-route proofs. Flapjack-only infrastructure,
+    with no separate HOL theorem for a carrier conversion. -/
+theorem LoopSemStateFiniteExact.toProductionState_prodRel {width : Nat}
+    [NeZero width] {F : Type} (state : LoopSemStateFiniteExact width F)
+    (code : LoopCode (BitVec width)) (ffi : FfiState F)
+    (hFfi : FfiStateRel ffi state.ffi)
+    (hRows : ∀ entry, entry ∈ code →
+      ∃ program, sptLookup entry.1 state.code = some (entry.2.1, program) ∧
+        loopProgExecRel entry.2.2 program)
+    (hCoverage : ∀ label parameters program,
+      sptLookup label state.code = some (parameters, program) →
+        ∃ entry ∈ code, entry.1 = label ∧ entry.2.1 = parameters ∧
+          loopProgExecRel entry.2.2 program) :
+    state.prodRel (state.toProductionState code ffi) := by
+  refine ⟨?_, ?_, ?_, rfl, rfl, rfl, rfl, hFfi, rfl, rfl, ?_, ?_⟩
+  · intro name
+    rfl
+  · intro global
+    rfl
+  · intro address
+    rfl
+  · intro entry hEntry
+    exact hRows entry hEntry
+  · intro label parameters program hLookup
+    exact hCoverage label parameters program hLookup
+
 /-- Source-shaped `find_code` (`loopSemScript.sml:147-163`) reading the exact
     `code` `sptree$num_map` through `sptLookup`.  The code-table representation
     (`Spt` versus the production association list) and the program carrier
