@@ -356,10 +356,10 @@ def crepToLoopDistinctFuncs {κ α β : Type} (functions : FiniteMap κ (α × �
     FLOOKUP functions x = some (n, rm) →
       FLOOKUP functions y = some (m, rm') → n = m → x = y
 
-private def distinctFuncsMaptoBroadlookup {κ β : Type}
+private def holFiniteMaptoBroadlookup {κ β : Type}
     (functions : HolFiniteMapExact κ β) : κ → Option β := functions.lookup
 
-private def distinctFuncsMapofBroad {κ β : Type} (lookup : κ → Option β)
+private def holFiniteMapofBroad {κ β : Type} (lookup : κ → Option β)
     (finiteSupport : ∃ keys : List κ, ∀ key, lookup key ≠ none → key ∈ keys) :
     HolFiniteMapExact κ β := ⟨lookup, finiteSupport⟩
 
@@ -368,7 +368,7 @@ private def distinctFuncsMapofBroad {κ β : Type} (lookup : κ → Option β)
     support proof. -/
 theorem holFmapAsFiniteSupportParamWitness_crepToLoopDistinctFuncsExact_functions
     {κ β : Type} (functions : HolFiniteMapExact κ β) :
-    distinctFuncsMapofBroad (distinctFuncsMaptoBroadlookup functions) functions.finiteSupport =
+    holFiniteMapofBroad (holFiniteMaptoBroadlookup functions) functions.finiteSupport =
       functions := by
   cases functions
   rfl
@@ -396,16 +396,39 @@ theorem crepToLoopDistinctFuncs_iff {κ α β : Type} (functions : FiniteMap κ 
         FLOOKUP functions y = some (m, rm') → n = m → x = y :=
   Iff.rfl
 
-/-- Exact port of HOL `crep_to_loop$distinct_vars_def`
-    (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:95-99`): distinct
-    variable-map keys are separated by their local slot, so two entries with
-    equal slots must share the key.  HOL's un-annotated `Definition` infers
-    `fm : 'a |-> 'b`, so the Lean port is polymorphic in the key and the value
-    (exactly the inferred HOL polymorphism). -/
-@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "distinct_vars_def"]
+/-- Flapjack-specific predicate over a raw function-backed finite map. It is
+    intentionally untagged because `κ → Option β` admits infinite support and is
+    not HOL's finite-map carrier. The exact tagged port is
+    `crepToLoopDistinctVarsExact`. -/
 def crepToLoopDistinctVars {κ β : Type} (vars : FiniteMap κ β) : Prop :=
   ∀ (x y : κ) (n m : β),
     FLOOKUP vars x = some n → FLOOKUP vars y = some m → n = m → x = y
+
+/-- Canonical standalone-map witness for the exact `distinct_vars_def`
+    parameter. -/
+theorem holFmapAsFiniteSupportParamWitness_crepToLoopDistinctVarsExact_vars
+    {κ β : Type} (vars : HolFiniteMapExact κ β) :
+    holFiniteMapofBroad (holFiniteMaptoBroadlookup vars) vars.finiteSupport = vars := by
+  cases vars
+  rfl
+
+/-- Exact HOL `crep_to_loop$distinct_vars_def`
+    (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:95-99`): if two
+    finite-map entries have equal values, their keys are equal. The key and
+    value remain polymorphic as inferred by HOL; the standalone map binder is
+    represented by the checked canonical finite-support carrier. -/
+@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "distinct_vars_def"
+  (fmap_as_finite_support_parameters := [vars])]
+def crepToLoopDistinctVarsExact {κ β : Type}
+    (vars : HolFiniteMapExact κ β) : Prop :=
+  ∀ (x y : κ) (n m : β),
+    vars.lookup x = some n → vars.lookup y = some m → n = m → x = y
+
+/-- The exact predicate reduces to the broad lookup-based infrastructure when
+    given the same lookup function. -/
+theorem crepToLoopDistinctVarsExact_iff_lookup {κ β : Type}
+    (vars : HolFiniteMapExact κ β) :
+    crepToLoopDistinctVarsExact vars ↔ crepToLoopDistinctVars vars.lookup := Iff.rfl
 
 /-- Untagged iff form of `crepToLoopDistinctVars`, kept for rewriting. -/
 theorem crepToLoopDistinctVars_iff {κ β : Type} (vars : FiniteMap κ β) :
@@ -491,8 +514,9 @@ because HOL `crepLang$varname = num`, while `funcs` is `MlString`-keyed because
 HOL `crepLang$funname = mlstring`); the exact `sptree$num_set` `NumSet` with
 `sptMem` as `domain` membership; the exact `sptree$num_map` `Spt` for
 `t_locals`; and the tagged exact `HolWordLab` / `WordLocW` value carriers
-bridged by `wlabWlocHOL`. The `distinct_vars` / `ctxt_max` conjuncts are the
-parametric tagged renderings. Direct HOL oracle rows are in
+bridged by `wlabWlocHOL`. The `distinct_vars` conjunct is the exact-carrier
+`crepToLoopDistinctVarsExact ctxt.vars`; `ctxt_max` remains the tagged
+lookup-based `crepToLoopCtxtMax ctxt.vmax ctxt.vars.lookup`. Direct HOL oracle rows are in
 `scripts/hol-probes/crep_to_loop_locals_rel_probe.out`
 (`ctxt_vars_lookup`, `distinct_component`, `ctxt_max_component`,
 `set_domain_mem`, `map_lookup`, `subset_domain_component`), together with direct
@@ -513,7 +537,7 @@ def crepToLoopLocalsRelExact {width : Nat} [NeZero width]
     (l : NumSet)
     (sLocals : HolFiniteMapExact Nat (HolWordLab width))
     (tLocals : Spt (WordLocW width)) : Prop :=
-  crepToLoopDistinctVars ctxt.vars.lookup ∧
+  crepToLoopDistinctVarsExact ctxt.vars ∧
   crepToLoopCtxtMax ctxt.vmax ctxt.vars.lookup ∧
   (∀ n, sptMem n l → sptMem n tLocals) ∧
   ∀ vname value, sLocals.lookup vname = some value →
@@ -527,7 +551,7 @@ theorem crepToLoopLocalsRelExact_iff {width : Nat} [NeZero width]
     (sLocals : HolFiniteMapExact Nat (HolWordLab width))
     (tLocals : Spt (WordLocW width)) :
     crepToLoopLocalsRelExact ctxt l sLocals tLocals ↔
-      crepToLoopDistinctVars ctxt.vars.lookup ∧
+      crepToLoopDistinctVarsExact ctxt.vars ∧
       crepToLoopCtxtMax ctxt.vmax ctxt.vars.lookup ∧
       (∀ n, sptMem n l → sptMem n tLocals) ∧
       ∀ vname value, sLocals.lookup vname = some value →
@@ -539,7 +563,7 @@ theorem crepToLoopLocalsRelExact_iff {width : Nat} [NeZero width]
     (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:176-186`): unpack the
     exact `locals_rel` relation into its four conjunctions. HOL states this as
     an implication (`==>`), so the Lean rendering does too. The
-    `distinct_vars`/`ctxt_max` conjuncts are the parametric tagged renderings,
+    `distinct_vars`/`ctxt_max` conjuncts use their exact-carrier tagged renderings,
     and the `num_set`-domain / per-name lookup conjuncts use `sptMem` and the
     `wlabWlocHOL` value bridge. -/
 @[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "locals_rel_intro"
@@ -551,7 +575,7 @@ theorem crepToLoopLocalsRelExact_intro {width : Nat} [NeZero width]
     (sLocals : HolFiniteMapExact Nat (HolWordLab width))
     (tLocals : Spt (WordLocW width))
     (h : crepToLoopLocalsRelExact ctxt l sLocals tLocals) :
-    crepToLoopDistinctVars ctxt.vars.lookup ∧
+    crepToLoopDistinctVarsExact ctxt.vars ∧
     crepToLoopCtxtMax ctxt.vmax ctxt.vars.lookup ∧
     (∀ n, sptMem n l → sptMem n tLocals) ∧
     ∀ vname value, sLocals.lookup vname = some value →
@@ -1152,7 +1176,7 @@ theorem allDistinctCtxtLookupAllDistinct (ctxt : CrepToLoopFiniteMapContext)
     ctxt.vars rts n)`. The Lean statement uses the exact `CrepToLoopContextExact`
     whose `vars` field is the canonical `HolFiniteMapExact Nat Nat` translation
     (matching HOL's `num |-> num`), `rtVars` (`rt_vars_def`) applied to
-    `ctxt.vars.lookup`, `crepToLoopDistinctVars` (`distinct_vars_def`), and
+    `ctxt.vars.lookup`, `crepToLoopDistinctVarsExact` (`distinct_vars_def`), and
     `List.Nodup` for `ALL_DISTINCT`. The traversed finite-map carrier field
     `CrepToLoopContextExact.vars` is recorded by the relation qualifier, with the
     same-module `holFmapAsFiniteSupportRelationWitness_CrepToLoopContextExact`
@@ -1161,7 +1185,7 @@ theorem allDistinctCtxtLookupAllDistinct (ctxt : CrepToLoopFiniteMapContext)
   (fmap_as_finite_support_relation := [CrepToLoopContextExact.vars])]
 theorem allDistinctCtxtLookupAllDistinctExact (ctxt : CrepToLoopContextExact)
     (rts : List Nat) (n : Nat)
-    (hrts : rts.Nodup) (hinj : crepToLoopDistinctVars ctxt.vars.lookup) :
+    (hrts : rts.Nodup) (hinj : crepToLoopDistinctVarsExact ctxt.vars) :
     (rtVars ctxt.vars.lookup rts n).Nodup := by
   unfold rtVars
   cases hmap : rts.mapM (fun v => FLOOKUP ctxt.vars.lookup v) with
@@ -1174,7 +1198,8 @@ theorem allDistinctCtxtLookupAllDistinctExact (ctxt : CrepToLoopContextExact)
       have hk : ka = kb := by
         rw [hka, hkb] at hfab
         exact Option.some.inj hfab
-      exact hinj a b ka kb hka hkb hk
+      exact (crepToLoopDistinctVarsExact_iff_lookup ctxt.vars).mp hinj
+        a b ka kb hka hkb hk
 
 /-- Exact port of HOL `list_insert_SNOC`
     (`cakeml/pancake/proofs/crep_to_loopProofScript.sml:386`): inserting the
