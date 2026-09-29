@@ -22453,5 +22453,19 @@
     "lean_name": "crepSimpMapcsHOL_decClock",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only commuting law for the proof script's local mapcs rendering with exact decClock. HOL has no declaration for this helper theorem."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
+    "lean_name": "crepSimpExpCorrect1NativeOpCase",
+    "hol_path": "cakeml/pancake/proofs/crep_arithProofScript.sml",
+    "hol_name": "simp_exp_correct1",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.4.2.18): HOL simp_exp_correct1 (crep_arithProofScript.sml:111-145) universally quantifies state, expression, and unused result; assumes eval s exp <> NONE; and concludes eval (mapc f s) (simp_exp exp) = eval s exp. This is the native Op induction case over the tagged evalCrepSemHOLExp and crepSimpExpHOL. Its premises are the successful full-Op premise, the eval_ind Op IH fixed to the current state over the operand list (for every child in es, the predicate at (s, child) with its unused polymorphic result binder), exact code-only mapc, and the complete Option (word_lab) result. HOL eval_def (crepSemScript.sml:112-117) evaluates the operand list with OPT_MMAP, checks every value is a Word, and returns OPTION_MAP Word (word_op op ...). The Word check is trivially true over the single-constructor HolWordLab carrier, as recorded on the tagged eval_def entry. HOL simp_exp (crep_arithScript.sml:75) is Op bop (MAP simp_exp exps), matched by crepSimpExpHOL's .op clause. The proof lifts the per-operand IH equalities through OPT_MMAP with OPT_MMAP_EQ_SOME_MONO (optMmapEqSomeMono, crep_arithProofScript.sml:93) and List.mapM_map, and then both sides apply the same wordOpHOL to the same value list. It adds no target-success/result, post-state, or context premise. Direct HOL Op evaluation rows are in scripts/hol-probes/crep_eval_op_rv64_probe.out. The exact finite-map fields and positive-width BitVec qualifiers match the neighboring native cases. Axioms: propext, Classical.choice, Quot.sound."
   }
 ]
