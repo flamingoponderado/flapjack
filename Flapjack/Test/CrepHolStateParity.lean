@@ -249,9 +249,9 @@ example :
       (.const (BitVec.ofNat 8 3)) (HolWordLab.word (BitVec.ofNat 8 9))
       (by simp [evalCrepSemHOLExp, loadState, lookupState])
       (by
-        intro hAddress
+        intro resultType result hAddress
         exact crepSimpExpCorrect1NativeConstCase sampleMapc loadState
-          (BitVec.ofNat 8 3) (HolWordLab.word (BitVec.ofNat 8 9))
+          (BitVec.ofNat 8 3) result
           (by simp [evalCrepSemHOLExp])))
 
 example :

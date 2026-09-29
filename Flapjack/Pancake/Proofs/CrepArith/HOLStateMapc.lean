@@ -976,7 +976,8 @@ theorem crepSimpExpCorrect1NativeLoadCase
     (state : CrepSemHOLState width σ) (address : CrepExpHOL width)
     {resultType : Type} (_result : resultType)
     (_h : evalCrepSemHOLExp state (.load address) ≠ none)
-    (ih : evalCrepSemHOLExp state address ≠ none →
+    (ih : ∀ {resultType : Type} (_result : resultType),
+      evalCrepSemHOLExp state address ≠ none →
       evalCrepSemHOLExp (CrepSemHOLState.mapc update state)
           (crepSimpExpHOL address) =
         evalCrepSemHOLExp state address) :
@@ -987,7 +988,7 @@ theorem crepSimpExpCorrect1NativeLoadCase
     intro hNone
     apply _h
     simp [evalCrepSemHOLExp, hNone]
-  have hAddressEval := ih hAddress
+  have hAddressEval := ih _result hAddress
   simp only [crepSimpExpHOL]
   simp only [evalCrepSemHOLExp]
   rw [hAddressEval]
