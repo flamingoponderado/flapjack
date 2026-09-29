@@ -64,18 +64,26 @@ def rows : List (String × Bool) :=
 
 #guard rows.all (·.2)
 
-/-! Evaluated values of the `Rat` rendering of `float_to_real` at the binary64
-landmarks: `1.0`, `2.0`, `-1.0`, the least subnormal `2^-1074`, and the least
-normal `2^-1022`. -/
+/-- All 32 oracle rows, kernel-checked. -/
+theorem rows_all : rows.all (·.2) = true := by decide +kernel
 
-#guard holFloatValue (holFp64ToFloat one) == .float 1
-#guard holFloatValue (holFp64ToFloat two) == .float 2
-#guard holFloatValue (holFp64ToFloat negone) == .float (-1)
-#guard holFloatValue (holFp64ToFloat sub1) == .float (1 / 2 ^ 1074)
-#guard holFloatValue (holFp64ToFloat minnorm) == .float (1 / 2 ^ 1022)
-#guard holFloatValue (holFp64ToFloat maxsub) == .float ((2 ^ 52 - 1) / 2 ^ 1074)
-#guard holFloatValue (holFp64ToFloat pinf) == .infinity
-#guard holFloatValue (holFp64ToFloat snan) == .nan
+/-! Kernel-checked values of the `Rat` rendering of `float_to_real` at the
+binary64 landmarks: `1.0`, `2.0`, `-1.0`, the least subnormal `2^-1074`, the
+least normal `2^-1022`, and the largest subnormal. -/
+
+theorem value_one : holFloatValue (holFp64ToFloat one) = .float 1 := by decide +kernel
+theorem value_two : holFloatValue (holFp64ToFloat two) = .float 2 := by decide +kernel
+theorem value_negone : holFloatValue (holFp64ToFloat negone) = .float (-1) := by
+  decide +kernel
+theorem value_sub1 : holFloatValue (holFp64ToFloat sub1) = .float (1 / 2 ^ 1074) := by
+  decide +kernel
+theorem value_minnorm : holFloatValue (holFp64ToFloat minnorm) = .float (1 / 2 ^ 1022) := by
+  decide +kernel
+theorem value_maxsub :
+    holFloatValue (holFp64ToFloat maxsub) = .float ((2 ^ 52 - 1) / 2 ^ 1074) := by
+  decide +kernel
+theorem value_pinf : holFloatValue (holFp64ToFloat pinf) = .infinity := by decide +kernel
+theorem value_snan : holFloatValue (holFp64ToFloat snan) = .nan := by decide +kernel
 
 def runChecks : IO Bool := do
   let bad := rows.filter (fun r => !r.2)
