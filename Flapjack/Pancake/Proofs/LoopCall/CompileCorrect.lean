@@ -497,7 +497,7 @@ theorem loopCall_compile_correct_ffi {width : Nat} [NeZero width] {F : Type} :
 /-- Flapjack-only auxiliary lemma (no HOL declaration) for the `ShMem` case of the proof of the
     tagged `loopCall_compile_correct`, following `Resume compile_correct[ShMem]` (`loop_callProofScript.sml:436-443`). -/
 theorem loopCall_compile_correct_shMem {width : Nat} [NeZero width] {F : Type} :
-    ∀ (op : CrepMemOp) (r : Nat) (ad : HolLoopExp width) (v1 : LoopSemStateFiniteExact width F),
+    ∀ (op : WordMemOp) (r : Nat) (ad : HolLoopExp width) (v1 : LoopSemStateFiniteExact width F),
       loopCallCompileCorrectAt (.shMem op r ad) v1 := by
   intro op r ad v1 res s1 l p nl ⟨he, _, hc, _⟩
   simp only [loopCallCompHOL, Prod.mk.injEq] at hc
@@ -649,18 +649,18 @@ theorem loopCall_compile_correct_arith {width : Nat} [NeZero width] {F : Type} :
     · cases hA
 
 private theorem shMemOp_locals {width : Nat} [NeZero width] {F : Type}
-    (op : CrepMemOp) (v : Nat) (addr : BitVec width) (s : LoopSemStateFiniteExact width F) :
+    (op : WordMemOp) (v : Nat) (addr : BitVec width) (s : LoopSemStateFiniteExact width F) :
     (∃ e, (shMemOp op v addr s).1 = some (.finalFfi e)) ∨
       (shMemOp op v addr s).2.locals = s.locals ∨
-      (crepIsLoadMemOp op = true ∧ ∃ w, (shMemOp op v addr s).2.locals = sptInsert v w s.locals) := by
-  cases op <;> simp only [shMemOp, crepIsLoadMemOp] <;>
+      (Compiler.Encoders.Asm.asmIsLoad op = true ∧ ∃ w, (shMemOp op v addr s).2.locals = sptInsert v w s.locals) := by
+  cases op <;> simp only [shMemOp, Compiler.Encoders.Asm.asmIsLoad] <;>
     (first | unfold shMemLoad | unfold shMemStore) <;>
     (repeat' split) <;>
     simp_all [LoopSemStateFiniteExact.setVar, LoopSemStateFiniteExact.callEnv] <;>
     exact Or.inr ⟨_, rfl⟩
 
 private theorem evaluate_shMem_cases {width : Nat} [NeZero width] {F : Type}
-    (op : CrepMemOp) (v : Nat) (ad : HolLoopExp width) (s : LoopSemStateFiniteExact width F)
+    (op : WordMemOp) (v : Nat) (ad : HolLoopExp width) (s : LoopSemStateFiniteExact width F)
     (res : Option (LoopResultExact width)) (s' : LoopSemStateFiniteExact width F)
     (he : evaluate (.shMem op v ad) s = (res, s')) :
     s' = s ∨ ∃ addr, shMemOp op v addr s = (res, s') := by
@@ -683,7 +683,7 @@ private theorem evaluate_shMem_cases {width : Nat} [NeZero width] {F : Type}
 @[hol "cakeml/pancake/proofs/loop_callProofScript.sml" "evaluate_ShMem_neq_locals"
   (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 theorem evaluate_ShMem_neq_locals {width : Nat} [NeZero width] {F : Type} :
-    ∀ (op : CrepMemOp) (v : Nat) (ad : HolLoopExp width) (s : LoopSemStateFiniteExact width F)
+    ∀ (op : WordMemOp) (v : Nat) (ad : HolLoopExp width) (s : LoopSemStateFiniteExact width F)
       (res : Option (LoopResultExact width)) (s' : LoopSemStateFiniteExact width F) (n : Nat)
       (x : Option (WordLocW width)),
       evaluate (.shMem op v ad) s = (res, s') ∧ v ≠ n ∧ ¬ (∃ e, res = some (.finalFfi e)) ∧
@@ -705,13 +705,13 @@ theorem evaluate_ShMem_neq_locals {width : Nat} [NeZero width] {F : Type} :
 @[hol "cakeml/pancake/proofs/loop_callProofScript.sml" "evaluate_ShMem_not_load_locals"
   (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 theorem evaluate_ShMem_not_load_locals {width : Nat} [NeZero width] {F : Type} :
-    ∀ (op : CrepMemOp) (v : Nat) (ad : HolLoopExp width) (s : LoopSemStateFiniteExact width F)
+    ∀ (op : WordMemOp) (v : Nat) (ad : HolLoopExp width) (s : LoopSemStateFiniteExact width F)
       (res : Option (LoopResultExact width)) (s' : LoopSemStateFiniteExact width F),
       evaluate (.shMem op v ad) s = (res, s') ∧ ¬ loopCallIsLoadHOL op = true ∧
         ¬ (∃ e, res = some (.finalFfi e)) →
       s.locals = s'.locals := by
   intro op v ad s res s' ⟨he, hnl, hnf⟩
-  rw [loopCallIsLoadHOL_eq_crepIsLoadMemOp] at hnl
+  rw [loopCallIsLoadHOL_eq_crepIsLoadMemOp, crepIsLoadMemOp_eq_asmIsLoad] at hnl
   rcases evaluate_shMem_cases op v ad s res s' he with rfl | ⟨addr, hop⟩
   · rfl
   · rcases shMemOp_locals op v addr s with ⟨e, he'⟩ | hl | ⟨hld, _, _⟩

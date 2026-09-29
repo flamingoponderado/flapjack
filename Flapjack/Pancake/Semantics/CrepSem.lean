@@ -903,7 +903,7 @@ theorem lookupCrepRuntimeCode_eq_lookupCrepHolCodeW {width : Nat}
 inductive CrepRuntimeRequest (α : Type u) where
   | extCall (function : FunName)
       (configuration array : List UInt8)
-  | sharedMem (operator : CrepMemOp) (name : Nat) (address : α)
+  | sharedMem (operator : WordMemOp) (name : Nat) (address : α)
       (payload : List UInt8)
   deriving DecidableEq, Repr
 
@@ -1066,19 +1066,19 @@ theorem fixCrepHolClock_IMP_LESS_EQW {width : Nat} [NeZero width] {σ : Type} {�
   rw [hfixed] at hbound
   exact hbound
 
-def crepRuntimeMemWidth : CrepMemOp → Nat
+def crepRuntimeMemWidth : WordMemOp → Nat
   | .load | .store => 0
   | .load8 | .store8 => 1
   | .load16 | .store16 => 2
   | .load32 | .store32 => 4
 
 def crepRuntimeSharedAddress (state : CrepRuntimeState α σ)
-    (operator : CrepMemOp) (address : α) : α :=
+    (operator : WordMemOp) (address : α) : α :=
   if crepRuntimeMemWidth operator = 0 then address
   else state.memoryModel.byteAlign state.bytesInWord address
 
 def crepRuntimeSharedAddressValid (state : CrepRuntimeState α σ)
-    (operator : CrepMemOp) (address : α) : Bool :=
+    (operator : WordMemOp) (address : α) : Bool :=
   state.shMemaddrs (crepRuntimeSharedAddress state operator address)
 
 /-- HOL-shaped `word_lab` memory-cell load: HOL `crepSem$eval`'s `Load`
@@ -1484,7 +1484,7 @@ def crepRuntimeExtCall [BEq α] [Add α] [OfNat α 1]
   | _, _, _, _ => (.error, state)
 
 def crepRuntimeSharedMem (handler : CrepRuntimeFfiHandler α σ ε)
-    (state : CrepRuntimeState α σ) (operator : CrepMemOp)
+    (state : CrepRuntimeState α σ) (operator : WordMemOp)
     (name : Nat) (address : α) : CrepRuntimeStep α σ ε :=
   if crepRuntimeSharedAddressValid state operator address then
     match operator with
@@ -1871,7 +1871,7 @@ def crepRuntimeSharedMemExp
     [ShiftLeft α] [ShiftRight α] [LT α]
     [DecidableRel (fun left right : α => left < right)] [PanCmp α]
     (handler : CrepRuntimeFfiHandler α σ ε)
-    (state : CrepRuntimeState α σ) (operator : CrepMemOp)
+    (state : CrepRuntimeState α σ) (operator : WordMemOp)
     (name : Nat) (address : CrepExp α) : CrepRuntimeStep α σ ε :=
   match (evalCrepRuntimeExpWordLab state address).map panTheWord with
   | some address => crepRuntimeSharedMem handler state operator name address

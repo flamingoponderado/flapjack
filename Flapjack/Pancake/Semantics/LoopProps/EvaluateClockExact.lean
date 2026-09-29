@@ -69,7 +69,7 @@ theorem memStore_upd_clock (t : LoopSemStateFiniteExact width F) (ck : Nat) (a :
     memStore a v { t with clock := ck } = (memStore a v t).map ({ · with clock := ck }) := by
   unfold memStore; split <;> rfl
 
-theorem shMemOp_upd_clock (op : CrepMemOp) (v : Nat) (a : BitVec width)
+theorem shMemOp_upd_clock (op : WordMemOp) (v : Nat) (a : BitVec width)
     (t : LoopSemStateFiniteExact width F) (ck : Nat) :
     shMemOp op v a { t with clock := ck } =
       ((shMemOp op v a t).1, { (shMemOp op v a t).2 with clock := ck }) := by

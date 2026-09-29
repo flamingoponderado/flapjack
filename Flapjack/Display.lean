@@ -685,7 +685,7 @@ def loopRegImmToDisplay [CakeDisplayWord α] (value : RegImm α) : DisplayExpr :
   | .reg number => .item none "Reg" [numToDisplay number]
   | .imm value => itemWithWord "Imm" value
 
-def loopMemOpToDisplay : CrepMemOp → DisplayExpr
+def loopMemOpToDisplay : WordMemOp → DisplayExpr
   | .load => emptyDisplayItem "Load"
   | .load8 => emptyDisplayItem "Load8"
   | .load16 => emptyDisplayItem "Load16"

@@ -363,6 +363,7 @@ import Flapjack.Test.CrepToLoopSurvivesMapiAssignParity
    the faithful `findLoopVar` lowering and is intentionally not in this
    umbrella until its old identity-map assumptions are repaired. -/
 import Flapjack.LoopSemantics
+import Flapjack.MemOp
 import Flapjack.Word
 import Flapjack.Stack
 import Flapjack.Compiler.Backend.StackLang
