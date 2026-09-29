@@ -1,4 +1,5 @@
 import Flapjack.Pancake.LoopToWord
+import Flapjack.Pancake.Proofs.LoopToWord.LocalsRel
 
 /-!
 # Original-domain parity for the exact `loop_to_word` context definitions
@@ -49,6 +50,73 @@ def originalCutsetAbsent : Option Unit := none
   originalCutsetFive
 #guard (sptLookup 2 (mkNewCutsetHOL probeContext probeLive) : Option Unit) ==
   originalCutsetAbsent
+
+/-! ## Original-domain parity for loop_to_wordProof `locals_rel_def`
+
+The direct HOL proof rows are in
+`scripts/hol-probes/loop_to_word_locals_rel_probe.out`. They cover the exact
+three clauses, including that extra target locals are allowed. -/
+
+def localsRelProbeContext : Spt Nat := sptInsert 0 4 .ln
+def localsRelProbeSource : Spt (WordLocW 64) :=
+  sptInsert 0 (.word 7) .ln
+def localsRelProbeTarget : Spt (WordLocW 64) :=
+  sptInsert 4 (.word 7) (sptInsert 6 (.loc 1 2) .ln)
+def localsRelProbeOddContext : Spt Nat := sptInsert 0 3 .ln
+def localsRelProbeOddTarget : Spt (WordLocW 64) :=
+  sptInsert 3 (.word 7) .ln
+def localsRelProbeZeroContext : Spt Nat := sptInsert 0 0 .ln
+def localsRelProbeNoninjectiveContext : Spt Nat :=
+  sptInsert 1 4 (sptInsert 0 4 .ln)
+def localsRelProbeNoninjectiveSource : Spt (WordLocW 64) :=
+  sptInsert 0 (.word 7) (sptInsert 1 (.word 8) .ln)
+def localsRelProbeMissingSource : Spt (WordLocW 64) :=
+  sptInsert 2 (.word 7) .ln
+def localsRelProbeWrongTarget : Spt (WordLocW 64) :=
+  sptInsert 4 (.word 8) .ln
+
+example : localsRelHOL (width := 64) localsRelProbeContext
+    localsRelProbeSource localsRelProbeTarget := by
+  simp [localsRelHOL, localsRelProbeContext, localsRelProbeSource,
+    localsRelProbeTarget, findVarHOL, sptMem, sptDomain, sptLookup, sptInsert]
+
+example : ¬ localsRelHOL (width := 64) localsRelProbeOddContext
+    localsRelProbeSource localsRelProbeOddTarget := by
+  simp [localsRelHOL, localsRelProbeOddContext, localsRelProbeSource,
+    localsRelProbeOddTarget, findVarHOL, sptMem, sptDomain, sptLookup, sptInsert]
+
+example : ¬ localsRelHOL (width := 64) localsRelProbeZeroContext
+    localsRelProbeSource (sptInsert 0 (.word 7) .ln) := by
+  simp [localsRelHOL, localsRelProbeZeroContext, localsRelProbeSource,
+    findVarHOL, sptMem, sptDomain, sptLookup]
+
+example : ¬ localsRelHOL (width := 64) localsRelProbeNoninjectiveContext
+    localsRelProbeNoninjectiveSource (sptInsert 4 (.word 7) .ln) := by
+  intro hRel
+  have h0 : sptMem 0 localsRelProbeNoninjectiveContext := by
+    simp [sptMem, sptDomain, localsRelProbeNoninjectiveContext,
+      sptLookup, sptInsert]
+  have h1 : sptMem 1 localsRelProbeNoninjectiveContext := by
+    simp [sptMem, sptDomain, localsRelProbeNoninjectiveContext,
+      sptLookup, sptInsert]
+  have hsame : findVarHOL localsRelProbeNoninjectiveContext 0 =
+      findVarHOL localsRelProbeNoninjectiveContext 1 := by
+    simp [findVarHOL, localsRelProbeNoninjectiveContext, sptLookup, sptInsert]
+  have heq := hRel.1 0 1 h0 h1 hsame
+  omega
+
+example : ¬ localsRelHOL (width := 64) localsRelProbeContext
+    localsRelProbeMissingSource localsRelProbeTarget := by
+  intro hRel
+  have hsrc : sptLookup 2 localsRelProbeMissingSource = some (.word 7) := by
+    simp [localsRelProbeMissingSource, sptLookup, sptInsert]
+  obtain ⟨register, hctx, _⟩ := hRel.2.2 2 (.word 7) hsrc
+  simp [localsRelProbeContext, sptLookup] at hctx
+
+example : ¬ localsRelHOL (width := 64) localsRelProbeContext
+    localsRelProbeSource localsRelProbeWrongTarget := by
+  simp [localsRelHOL, localsRelProbeContext, localsRelProbeSource,
+    localsRelProbeWrongTarget, findVarHOL, sptMem, sptDomain, sptLookup, sptInsert]
 
 /-! ## Original-domain parity for exact `comp_exp_def`
 
