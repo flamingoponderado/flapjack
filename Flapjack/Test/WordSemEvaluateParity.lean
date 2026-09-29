@@ -232,8 +232,118 @@ theorem ffiOk :
     view (evaluate (.ffi ⟨"f".toList.map (fun c => BitVec.ofNat 8 c.toNat)⟩ 8 9 8 9 (units [2], .ln)) (s0)) = (.none, [(2, .word 7)], 3) := by
   ev_simp
 
+/-! ## Additional `evaluate_def` clauses (probe rows `alloc_ok`, `store_ok`,
+`op_curr_heap`, `share_inst_load`, `code_buffer_write`, `data_buffer_write`,
+`install_ok`, `call_handler_exception`). -/
+
+/-- A decidable view of `(result, memory at 16, memory at 17, clock)`. -/
+private def viewStore (r : Option (WordSemResult 64) × WordSemStateFiniteExact 64 Unit Nat) :
+    RV × W × W × Nat :=
+  (rv r.1, r.2.memory 16, r.2.memory 17, r.2.clock)
+
+/-- A decidable view of `(result, code-buffer position/buffer/space, clock)`. -/
+private def viewCodeBuffer (r : Option (WordSemResult 64) × WordSemStateFiniteExact 64 Unit Nat) :
+    RV × BitVec 64 × List (BitVec 8) × Nat × Nat :=
+  (rv r.1, r.2.codeBuffer.position, r.2.codeBuffer.buffer, r.2.codeBuffer.spaceLeft, r.2.clock)
+
+/-- A decidable view of `(result, data-buffer position/buffer/space, clock)`. -/
+private def viewDataBuffer (r : Option (WordSemResult 64) × WordSemStateFiniteExact 64 Unit Nat) :
+    RV × BitVec 64 × List (BitVec 64) × Nat × Nat :=
+  (rv r.1, r.2.dataBuffer.position, r.2.dataBuffer.buffer, r.2.dataBuffer.spaceLeft, r.2.clock)
+
+/-- A decidable view of the `Install` state fields the row observes. -/
+private def viewInstall (r : Option (WordSemResult 64) × WordSemStateFiniteExact 64 Unit Nat) :
+    RV × List (Nat × W) × BitVec 64 × List (BitVec 8) × BitVec 64 × List (BitVec 64) ×
+      List (Nat × (Nat × WordLangProgHOL (BitVec 64))) × Option Nat × Spt Nat × Nat :=
+  (rv r.1, sptToAList r.2.locals, r.2.codeBuffer.position, r.2.codeBuffer.buffer,
+    r.2.dataBuffer.position, r.2.dataBuffer.buffer, sptToAList r.2.code,
+    r.2.stackMax, r.2.stackSize, r.2.clock)
+
+/-- `alloc_ok=(NONE,[(4,Loc 1 0); (2,Word 16w)],3)`: a GC-free successful
+    allocation with an identity `gcFun` and `TriggerGC - NextFree = 16`. -/
+private def sAlloc : WordSemStateFiniteExact 64 Unit Nat :=
+  { s0 with
+    locals := sptFromAList [(2, .word 16), (4, .loc 1 0)]
+    stack := []
+    localsSize := some 3
+    stackMax := none
+    store := (HolFiniteMapExact.empty.update (.nextFree, .word 8)).update (.triggerGC, .word 24)
+    gcFun := fun x => some (x.1, x.2.1, x.2.2.2) }
+
+/-- `alloc_ok=(NONE,[(4,Loc 1 0); (2,Word 16w)],3)` -/
+theorem allocOk :
+    view (evaluate (.alloc 2 (units [2], units [4])) sAlloc) =
+      (.none, [(4, .loc 1 0), (2, .word 16)], 3) := by
+  ev_simp
+
+/-- `store_ok=(NONE,Word 7w,Word 0w,3)`: a successful store at 16 with a
+    read-back of 16 and of the untouched cell 17. -/
+theorem storeOk :
+    viewStore (evaluate (.store (.const 16) 2) s0) = (.none, .word 7, .word 0, 3) := by
+  ev_simp
+
+/-- `op_curr_heap=(NONE,[(3,Loc 5 0); (1,Word 12w); (9,Word 1w); (8,Word 16w); (2,Word 7w)],3)` -/
+theorem opCurrHeap :
+    view (evaluate (.opCurrHeap .add 1 2)
+      { s0 with store := HolFiniteMapExact.empty.update (.currHeap, .word 5) }) =
+      (.none, [(3, .loc 5 0), (1, .word 12), (9, .word 1), (8, .word 16), (2, .word 7)], 3) := by
+  ev_simp
+
+/-- `share_inst_load=(NONE,[(3,Loc 5 0); (1,Word 16w); (9,Word 1w); (8,Word 16w); (2,Word 7w)],3)` -/
+theorem shareInstLoad :
+    view (evaluate (.shareInst .load 1 (.const 16))
+      { s0 with shMdomain := fun a => decide (a = 16) }) =
+      (.none, [(3, .loc 5 0), (1, .word 16), (9, .word 1), (8, .word 16), (2, .word 7)], 3) := by
+  ev_simp
+
+/-- `code_buffer_write=(NONE,0w,[1w; 2w; 7w],4,3)` -/
+theorem codeBufferWrite :
+    viewCodeBuffer (evaluate (.codeBufferWrite 1 2)
+      { s0 with
+        codeBuffer := { position := 0, buffer := [1, 2], spaceLeft := 5 }
+        locals := sptFromAList [(1, .word 2), (2, .word 7)] }) =
+      (.none, 0, [1, 2, 7], 4, 3) := by
+  ev_simp
+
+/-- `data_buffer_write=(NONE,0w,[5w; 7w],1,3)` -/
+theorem dataBufferWrite :
+    viewDataBuffer (evaluate (.dataBufferWrite 1 2)
+      { s0 with
+        dataBuffer := { position := 0, buffer := [5], spaceLeft := 2 }
+        locals := sptFromAList [(1, .word 8), (2, .word 7)] }) =
+      (.none, 0, [5, 7], 1, 3) := by
+  ev_simp
+
+/-- A successful `Install` state: matching flushed buffers, a compile oracle
+    whose next configuration matches, and installed code `42 -> (42, Skip)`. -/
+private def sInstall : WordSemStateFiniteExact 64 Unit Nat :=
+  { s0 with
+    locals := sptFromAList [(1, .word 0), (2, .word 2), (3, .word 0), (4, .word 8)]
+    compile := fun _ _ => some ([1, 2], [3], ())
+    compileOracle := fun _ => ((), [(42, (42, WordLangProgHOL.skip))])
+    codeBuffer := { position := 0, buffer := [1, 2], spaceLeft := 5 }
+    dataBuffer := { position := 0, buffer := [3], spaceLeft := 5 }
+    fpRegs := HolFiniteMapExact.empty
+    code := sptFromAList [(5, (1, WordLangProgHOL.return 0 [0])), (6, (2, WordLangProgHOL.return 0 [2]))] }
+
+/-- `install_ok=(NONE,[(1,Loc 42 0)],2w,[],8w,[],[(5,1,Return 0 [0]); (42,42,Skip); (6,2,Return 0 [2])],NONE,LN,3)` -/
+theorem installOk :
+    viewInstall (evaluate (.install 1 2 3 4 (.ln, .ln)) sInstall) =
+      (.none, [(1, .loc 42 0)], 2, [], 8, [],
+        [(5, (1, WordLangProgHOL.return 0 [0])), (42, (42, WordLangProgHOL.skip)),
+         (6, (2, WordLangProgHOL.return 0 [2]))], none, .ln, 3) := by
+  ev_simp
+
+/-! `call_handler_exception=(NONE,[(3,Word 7w); (5,Word 99w); (2,Word 7w)],2)`
+is captured in the HOL probe (`scripts/hol-probes/word_sem_evaluate_probe.out`) but
+its kernel replay is still open: reducing the returning-`Call` caught-handler
+`Exception` branch under `decide +kernel` does not terminate the kernel
+reduction (the recursive `evaluate` on the callee `Raise` is not unfolded by
+kernel whnf). The row is therefore not asserted here; the faithful kernel
+replay is tracked by bead `flapjack-6m93.1`. -/
+
 def runChecks : IO Bool := do
-  IO.println "PASS wordSem evaluate_def matches all 28 HOL oracle rows (kernel-checked)"
+  IO.println "PASS wordSem evaluate_def matches 35/36 HOL oracle rows (kernel-checked); call_handler_exception probe-only pending flapjack-6m93.1"
   pure true
 
 end Flapjack.Test.WordSemEvaluateParity
