@@ -199,6 +199,33 @@ private def lookupState : CrepSemHOLState 8 Unit where
 private instance : DecidablePred lookupState.memaddrs :=
   fun _ => isFalse (by simp [lookupState])
 
+private def loadGlobState : CrepSemHOLState 8 Unit :=
+  CrepSemHOLState.setGlobals 5 (.word (BitVec.ofNat 8 11)) lookupState
+
+example :
+    evalCrepSemHOLExp (loadGlobState.mapc sampleMapc)
+        (.loadGlob (BitVec.ofNat 5 5)) =
+      evalCrepSemHOLExp loadGlobState (.loadGlob (BitVec.ofNat 5 5)) := by
+  simpa [crepSimpExpHOL] using
+    (crepSimpExpCorrect1NativeLoadGlobCase sampleMapc loadGlobState
+      (BitVec.ofNat 5 5) (HolWordLab.word (BitVec.ofNat 8 11)) (by
+        simp [loadGlobState, CrepSemHOLState.setGlobals,
+          evalCrepSemHOLExp, lookupState, HolFiniteMapExact.lookup_updateEq,
+          FUPDATE_HOL_eq_FUPDATE, FUPDATE]))
+
+private def baseTopState : CrepSemHOLState 8 Unit :=
+  { lookupState with
+    baseAddr := BitVec.ofNat 8 12
+    topAddr := BitVec.ofNat 8 13 }
+
+example :
+    evalCrepSemHOLExp (baseTopState.mapc sampleMapc) .baseAddr =
+      evalCrepSemHOLExp baseTopState .baseAddr := by
+  simpa [crepSimpExpHOL] using
+    (crepSimpExpCorrect1NativeBaseAddrCase sampleMapc baseTopState
+      (HolWordLab.word (BitVec.ofNat 8 12)) (by
+        simp [evalCrepSemHOLExp, baseTopState, lookupState]))
+
 private def lookupNames : List Nat := [0, 1]
 
 example :

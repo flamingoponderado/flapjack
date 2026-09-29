@@ -146,6 +146,100 @@ theorem holFiniteIndex_bijective {ι : Type u}
         _ = dimension.encode value := congrArg dimension.encode hdecoded
     exact congrArg Fin.val hencoded
 
+/-! `HolFiniteDimension` is convenient for transport to `Fin width`, but its
+    inverse maps should not become an extra assumption in a theorem that
+    corresponds to a HOL word theorem.  HOL's source definition is
+    `finite_index = @f. !x. ?!n. n < dimindex(:'a) /\\ f n = x` in
+    `HOL/src/n-bit/fcpScript.sml:118`; the uniqueness property decomposes into
+    coverage and injectivity on the bounded numeric indices below.  The
+    positive-width field corresponds to the source `DIMINDEX_GT_0` theorem in
+    `fcpScript.sml:107`.  This structure records only that source dictionary
+    and its two defining facts. -/
+structure HolFiniteIndexSpec (ι : Type u) where
+  width : Nat
+  width_pos : 0 < width
+  index : Nat → ι
+  covers : ∀ value, ∃ n, n < width ∧ index n = value
+  unique : ∀ n m, n < width → m < width → index n = index m → n = m
+
+namespace HolFiniteIndexSpec
+
+/-- The record's coverage and bounded injectivity are exactly HOL's
+    `?! n. n < dimindex(:'a) /\\ index n = value` property. -/
+theorem satisfiesHolFiniteIndex {ι : Type u} (spec : HolFiniteIndexSpec ι) :
+    ∀ value, ∃ n, n < spec.width ∧ spec.index n = value ∧
+      ∀ m, m < spec.width → spec.index m = value → m = n := by
+  intro value
+  obtain ⟨n, hn, hvalue⟩ := spec.covers value
+  refine ⟨n, hn, hvalue, ?_⟩
+  intro m hm hmvalue
+  exact spec.unique m n hm hn (hmvalue.trans hvalue.symm)
+
+@[instance_reducible] noncomputable def toDimension {ι : Type u}
+    (spec : HolFiniteIndexSpec ι) :
+    HolFiniteDimension ι where
+  width := spec.width
+  width_pos := spec.width_pos
+  encode := fun value =>
+    ⟨Classical.choose (spec.covers value),
+      (Classical.choose_spec (spec.covers value)).1⟩
+  decode := fun index => spec.index index.val
+  encode_decode := by
+    intro index
+    apply Fin.ext
+    apply spec.unique
+    · exact (Classical.choose_spec (spec.covers (spec.index index.val))).1
+    · exact index.isLt
+    · exact (Classical.choose_spec (spec.covers (spec.index index.val))).2
+  decode_encode := by
+    intro value
+    exact (Classical.choose_spec (spec.covers value)).2
+
+/-- The chosen bounded `decode` is exactly HOL's supplied index map at every
+    valid index.  HOL leaves the map's out-of-range values unconstrained. -/
+theorem toDimension_decode {ι : Type u} (spec : HolFiniteIndexSpec ι)
+    (index : Fin spec.width) :
+    spec.toDimension.decode index = spec.index index.val := rfl
+
+end HolFiniteIndexSpec
+
+namespace HolFiniteDimension
+
+/-- Read an explicit `HolFiniteDimension` dictionary back as HOL's
+    finite-index uniqueness property.  Values assigned outside `width` are
+    chosen arbitrarily, as they are unobservable in HOL's defining property. -/
+noncomputable def toFiniteIndexSpec {ι : Type u}
+    (dimension : HolFiniteDimension ι) : HolFiniteIndexSpec ι where
+  width := dimension.width
+  width_pos := dimension.width_pos
+  index := holFiniteIndex dimension
+  covers := by
+    intro value
+    obtain ⟨n, hn, hvalue, _⟩ := holFiniteIndex_bijective dimension value
+    exact ⟨n, hn, hvalue⟩
+  unique := by
+    intro n m hn hm hindex
+    have hdecode : dimension.decode ⟨n, hn⟩ = dimension.decode ⟨m, hm⟩ := by
+      simpa [holFiniteIndex, hn, hm] using hindex
+    have heq : (⟨n, hn⟩ : Fin dimension.width) = ⟨m, hm⟩ := by
+      calc
+        (⟨n, hn⟩ : Fin dimension.width) =
+            dimension.encode (dimension.decode ⟨n, hn⟩) :=
+              (dimension.encode_decode _).symm
+        _ = dimension.encode (dimension.decode ⟨m, hm⟩) :=
+              congrArg dimension.encode hdecode
+        _ = ⟨m, hm⟩ := dimension.encode_decode _
+    exact congrArg Fin.val heq
+
+/-- On the source-defined range, the recovered finite-index map is the
+    dimension dictionary's `decode`. -/
+theorem toFiniteIndexSpec_index {ι : Type u}
+    (dimension : HolFiniteDimension ι) (index : Fin dimension.width) :
+    dimension.toFiniteIndexSpec.index index.val = dimension.decode index := by
+  simp [toFiniteIndexSpec, holFiniteIndex, index.isLt]
+
+end HolFiniteDimension
+
 def holWordToFinBits {ι : Type u} (dimension : HolFiniteDimension ι)
     (word : ι → Bool) : Fin dimension.width → Bool :=
   fun index => word (dimension.decode index)
@@ -4252,6 +4346,25 @@ theorem evalCrepRuntimeExp_finiteDimension_eq {ι : Type}
       · exact ihTail.1 e he state
     · intro state
       simp [evalCrepRuntimeExps, ihHead state, ihTail.2 state]
+
+namespace HolFiniteIndexSpec
+
+/-- Instantiate the all-constructor production-evaluator transport directly
+    from the HOL-shaped bounded finite-index dictionary. This is a Flapjack
+    representation bridge: the RHS remains the explicit source word-operation
+    adapter, so it is not a claim that those operations equal native HOL
+    `crepSem$eval`. -/
+theorem evalCrepRuntimeExp_toProduction {ι : Type}
+    (spec : HolFiniteIndexSpec ι) :
+    letI : HolFiniteDimension ι := spec.toDimension
+    ∀ (state : CrepHolState (ι → Bool) σ) (expression : CrepExp (ι → Bool)),
+      evalCrepRuntimeExp (state.toHolFiniteWordRuntime spec.toDimension) expression =
+        evalCrepHolFiniteDimensionExp spec.toDimension state expression := by
+  intro state expression
+  letI : HolFiniteDimension ι := spec.toDimension
+  exact evalCrepRuntimeExp_finiteDimension_eq spec.toDimension state expression
+
+end HolFiniteIndexSpec
 
 /-! Flapjack-only all-constructor correspondence for the positive-width
 BitVec adapter. -/
