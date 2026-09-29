@@ -869,6 +869,30 @@ theorem pipelineLoopFunctionsSourceCompileProgRouted_rowLabel
     exact hreb
   simp [compileProgHOLExact, firstLoopName, hreb', hindex]
 
+/-- Every body emitted by the parser-backed source route is related to the
+corresponding exact `compile_prog_def` body after the same structural label
+rebase. This carries the syntax-level relation through the complete routed
+list, including direct-call target rebasing inside bodies. It does not relate
+the caller's name-indexed context or target code table, nor runtime states;
+those remain separate obligations. This bridge has no separate HOL original. -/
+theorem pipelineLoopFunctionsSourceCompileProgRouted_body_rel
+    {width : Nat} [NeZero width] (architecture : RiscV.Architecture)
+    (firstLabel : Nat) (functions : List (CompiledFunction (BitVec width)))
+    (hFunctionNames : ∀ function ∈ functions, CrepNameRanged function.name)
+    (hProgramNames : ∀ function ∈ functions, CrepProgNameRanged function.body) :
+    ∀ entry ∈ pipelineLoopFunctionsSourceCompileProgRouted architecture firstLabel functions,
+      ∃ faithfulBody : HolLoopProg width,
+        loopProgExecRel entry.2.2 faithfulBody := by
+  intro entry hentry
+  rw [pipelineLoopFunctionsSourceCompileProgRouted_exact architecture firstLabel functions
+    hFunctionNames hProgramNames] at hentry
+  simp only [List.mem_map] at hentry
+  rcases hentry with ⟨exactEntry, hexactEntry, hentry⟩
+  cases hentry
+  refine ⟨rebaseHOLFunctionLabelsExact firstLabel functions.length exactEntry.2.2, ?_⟩
+  rw [rebaseHOLFunctionLabels_projection]
+  exact holLoopProgToExecutableCanonical_rel _
+
 /-! ### Exact-carrier bridge for the source-routed Loop output
 
 The compiler's source route uses `crepCompFuncThroughHOLExact` when all
