@@ -81,7 +81,22 @@ namespace WordSemStateFiniteExact
       `mem_load`/`mem_store` or the byte/32-bit auxiliaries.  `Load16` and
       `Store16` fail.
     * `FP` reads and writes the `fp_regs` through `get_fp_var`/`set_fp_var`.
-      Its `dimindex (:'a) = 64` tests are `width = 64`. -/
+      Its `dimindex (:'a) = 64` tests are `width = 64`.
+
+    Caveat on the FP clauses.  The tag records that the clause structure,
+    fields and operand orders of `inst_def` were compared exactly.  The binary64
+    operations it calls are separate, untagged renderings of the HOL
+    standard library, and this tag does not claim them exact.  Arithmetic,
+    comparison and conversion (`Flapjack.Misc.BinaryIeee*`,
+    `MachineIeee`) render HOL real values of floats as `Rat`.  Square root
+    (`BinaryIeeeSqrt`) renders HOL `sqrt r` through rational cut criteria.
+    Their agreement with HOL's real-number specification is the external
+    assurance assumption of `docs/SOUNDNESS.md` item 8.  `real_to_float` is
+    reached only through `int_to_fp64` in the `FPFromInt` clause, and there
+    its argument is a Lean `Int` (`w2i` of an extracted word).  So the
+    Rat-restricted `holRealToFloat` only ever receives integers, which is
+    within its covered domain.  NaN results are HOL's unspecified
+    `float_some_qnan`. -/
 @[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "inst_def"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 noncomputable def inst {width : Nat} [NeZero width] {C : Type} {F : Type}
