@@ -40,7 +40,7 @@ example :
     LoopToWord.findVarHOL
         (wordContextToHOLContext
           { vars := LoopToWord.loopToWordCompContext [] (.skip : LoopProg Nat) }) 3 = 0 ∧
-      wordFindVar { vars := LoopToWord.loopToWordCompContext [] (.skip : LoopProg Nat) } 3 = 3 := by
+      wordFindVar { vars := LoopToWord.loopToWordCompContext [] (.skip : LoopProg Nat) } 3 = 0 := by
   apply findVarHOL_wordFindVar_of_missing
   rfl
 

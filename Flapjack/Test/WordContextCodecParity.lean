@@ -25,8 +25,15 @@ example : LoopToWord.findVarHOL
 #guard wordFindVar duplicateContext 3 == 8
 #guard LoopToWord.findVarHOL (wordContextToHOLContext hitContext) 5 == 12
 #guard wordFindVar hitContext 5 == 12
+/-! The `loop_to_word_defs_probe.out` direct HOL EVAL row
+`lt_find_var_miss=0` checks a nonzero name absent from a nonempty context.
+This production fixture checks the same default with an empty context. -/
 #guard LoopToWord.findVarHOL (wordContextToHOLContext emptyContext) 4 == 0
-#guard wordFindVar emptyContext 4 == 4
+#guard wordFindVar emptyContext 4 == 0
+
+example : LoopToWord.findVarHOL (wordContextToHOLContext emptyContext) 4 =
+    wordFindVar emptyContext 4 := by
+  exact findVarHOL_wordFindVar emptyContext 4
 
 def codecChecks : List Bool :=
   [LoopToWord.findVarHOL (wordContextToHOLContext duplicateContext) 3 == 8,
@@ -34,7 +41,7 @@ def codecChecks : List Bool :=
    LoopToWord.findVarHOL (wordContextToHOLContext hitContext) 5 == 12,
    wordFindVar hitContext 5 == 12,
    LoopToWord.findVarHOL (wordContextToHOLContext emptyContext) 4 == 0,
-   wordFindVar emptyContext 4 == 4]
+   wordFindVar emptyContext 4 == 0]
 
 def runChecks : IO Bool := do
   let passed := codecChecks.all id
