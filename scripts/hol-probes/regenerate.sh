@@ -1769,7 +1769,7 @@ run_probe loop_lang_prog_probeScript.sml loop_lang_prog_probe.out \
 # The panLang exp probe pins the `exp` word payload (`Const`), its `mlstring`
 # identifier fields, and representative constructor arities at word type 64.
 run_probe pan_lang_exp_probeScript.sml pan_lang_exp_probe.out \
-  ex_const ex_bytesinword \
+  ex_const ex_nstruct_fields ex_bytesinword \
   "$cake_dir/pancake/panLangScript.sml" \
   "$cake_dir/pancake"
 run_probe sptree_set_ops_probeScript.sml sptree_set_ops_probe.out \

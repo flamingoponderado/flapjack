@@ -313,6 +313,18 @@ decreasing_by
       simp only [Flapjack.Basis.Pure.MlString.toStringOfBytes_ofString_of_bytes fst hf,
         ih hs])
 
+/-- Flapjack-only refinement fact for the HOL `NStruct` constructor
+(`cakeml/pancake/panLangScript.sml:53-69`).  The exact carrier stores its
+structure and field names as `MlS`, while production `Exp` stores `String`; the
+conversion is reversible only under these byte-range premises.  This is a
+constructor-specific view of the codec, not a separate HOL theorem port. -/
+theorem expOfHOL_expToHOL_nStruct {width : Nat} [NeZero width]
+    (name : String) (fields : List (String × Flapjack.Exp (BitVec width)))
+    (hname : ∀ c ∈ name.toList, c.toNat < 256)
+    (hfields : ListFieldByteRanged fields) :
+    expOfHOL (expToHOL (.nStruct name fields)) = .nStruct name fields := by
+  exact expOfHOL_expToHOL _ ⟨hname, hfields⟩
+
 /-! ### Exact `panLang$var_exp` -/
 
 /-- Exact port of HOL `panLang$var_exp` (`cakeml/pancake/panLangScript.sml:253-276`):
