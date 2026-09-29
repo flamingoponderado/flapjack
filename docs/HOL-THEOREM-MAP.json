@@ -24116,6 +24116,15 @@
     "reviewer": "flapjack-luna-c source comparison (2026-09-29; bead flapjack-pxn.18.5.9.17.2) against loop_to_wordProofScript.sml:389-393. HOL states domain (mk_new_cutset ctxt x1) <> {} with no premise. Lean quantifies the exact Spt Nat context and Spt Unit live-set carriers and states sptDomain (mkNewCutsetHOL context live) <> (fun _ => False), the predicate-set rendering of domain nonemptiness. The tagged mkNewCutsetHOL definition is the direct Spt construction and inserts register zero, establishing the same conclusion. No word, finite-map, list, name, evaluator, or extra-hypothesis translation applies."
   },
   {
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "env_to_list_lookup_equiv",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/EnvListSupport.lean",
+    "lean_name": "wordSemEnvToListLookupEquiv",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-c source comparison (2026-09-29; bead flapjack-pxn.18.5.9.17.1) against wordPropsScript.sml:4636-4663. HOL has exactly the premise env_to_list y f = (q,r) and concludes both (!n. ALOOKUP q n = lookup n y) and (!x1 x2. MEM (x1,x2) q ==> lookup x1 y = SOME x2); Lean retains the same result equation, tuple/list carriers, two conjuncts, key/value quantifiers, and no extra premise. Spt ALOOKUP uses the untagged first-match sptAListLookup rendering; the proof uses the exact env_to_list sort/rearrange entry-preservation lemmas and Spt toAList membership/lookup support, deriving uniqueness from functional Spt lookup. WordLocW's type-indexed words use words_as_type_indexed_bitvec; no state, evaluator, map-carrier, or list-to-array translation is introduced."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Inst.lean",
     "lean_name": "inst",
     "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
