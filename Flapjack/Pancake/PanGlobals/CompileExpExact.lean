@@ -1,4 +1,5 @@
 import Flapjack.Pancake.PanGlobals
+import Flapjack.Pancake.PanLang.Prog
 import Flapjack.Pancake.Semantics.CrepSem.HOLState
 
 /-!
@@ -39,7 +40,8 @@ namespace Flapjack
 
 open Flapjack.Basis.Pure.MlString
 open Flapjack.Pancake.PanLang
-  (MlS ShapeHOL ExpHOL expToHOL expOfHOL ExpByteRanged ListExpByteRanged shapeOfHOL)
+  (MlS ShapeHOL ExpHOL expToHOL expOfHOL ExpByteRanged ListExpByteRanged shapeOfHOL
+    shapeValHOL mlstrAppend ProgHOL freeVarIdsHOL varExpHOL)
 
 /-- Broad function-backed representation paired with support evidence, used
     only to state the finite-support representation roundtrip for
@@ -175,6 +177,119 @@ mutual
   decreasing_by
     all_goals first | sizeOf_list_dec | decreasing_trivial
 end
+
+/-! ### Exact-carrier `pan_globals$compile_def`
+
+HOL's program compiler is separate from `compile_exp_def`: it recursively
+rewrites control flow and uses the exact global map for global destinations
+and shared-memory loads.  Keep this port on `ProgHOL` and
+`PanGlobalsContextExact`; the production `compileProgCake` is String-backed
+and does not establish this declaration. The exact fresh-name clause reuses
+the already-reviewed `freshNameMlS` port. -/
+
+/-- Exact-carrier port of HOL `pan_globals$compile_def`
+    (`pan_globalsScript.sml:69-149`).  Its constructor equations and final
+    catch-all are copied from the source, with HOL `compile_exp` represented by the
+    reviewed `compileExpExactHOL`, `free_var_ids` by `freeVarIdsHOL`, and
+    `shape_val` by `shapeValHOL`.  In particular, global call destinations
+    preserve the source's missing-entry fallbacks, handled calls allocate the
+    source-fresh result and flag names, and a global `ShMemLoad` is lowered
+    only for a `One` global. -/
+@[hol "cakeml/pancake/pan_globalsScript.sml" "compile_def"
+  (fmap_as_finite_support := [globals])
+  (words_as_type_indexed_bitvec)]
+def compileProgExactHOL {width : Nat} [NeZero width]
+    (context : PanGlobalsContextExact width) : ProgHOL width → ProgHOL width
+  | .skip => .skip
+  | .dec name shape value body =>
+      .dec name shape (compileExpExactHOL context value) (compileProgExactHOL context body)
+  | .assign .global name value =>
+      match context.globals.lookup name with
+      | some (_shape, address) =>
+          .store (.op .sub [.topAddr, .const address]) (compileExpExactHOL context value)
+      | none => .skip
+  | .assign .local name value => .assign .local name (compileExpExactHOL context value)
+  | .primitive name operator args =>
+      .primitive name operator (compileExpExactHOLList context args)
+  | .store address value =>
+      .store (compileExpExactHOL context address) (compileExpExactHOL context value)
+  | .store32 address value =>
+      .store32 (compileExpExactHOL context address) (compileExpExactHOL context value)
+  | .storeByte address value =>
+      .storeByte (compileExpExactHOL context address) (compileExpExactHOL context value)
+  | .seq first second =>
+      .seq (compileProgExactHOL context first) (compileProgExactHOL context second)
+  | .ite condition thenBranch elseBranch =>
+      .ite (compileExpExactHOL context condition)
+        (compileProgExactHOL context thenBranch) (compileProgExactHOL context elseBranch)
+  | .while condition body =>
+      .while (compileExpExactHOL context condition) (compileProgExactHOL context body)
+  | .call info function args =>
+      let cargs := compileExpExactHOLList context args
+      match info with
+      | none => .call none function cargs
+      | some (none, none) => .call (some (none, none)) function cargs
+      | some (none, some (exception, handlerVar, handler)) =>
+          .call (some (none, some (exception, handlerVar,
+            compileProgExactHOL context handler))) function cargs
+      | some (some (.local, name), none) =>
+          .call (some (some (.local, name), none)) function cargs
+      | some (some (.local, name), some (exception, handlerVar, handler)) =>
+          .call (some (some (.local, name), some (exception, handlerVar,
+            compileProgExactHOL context handler))) function cargs
+      | some (some (.global, name), none) =>
+          match context.globals.lookup name with
+          | some (shape, address) =>
+              .decCall (ofString "") shape function cargs
+                (.store (.op .sub [.topAddr, .const address]) (.var .local (ofString "")))
+          | none => .call (some (none, none)) function cargs
+      | some (some (.global, name), some (exception, handlerVar, handler)) =>
+          match context.globals.lookup name with
+          | some (shape, address) =>
+              let compiledHandler := compileProgExactHOL context handler
+              let names := handlerVar :: freeVarIdsHOL compiledHandler ++
+                cargs.flatMap varExpHOL
+              let resultName := freshNameMlS (ofString "") names
+              let flagName := freshNameMlS (ofString "vn'") (resultName :: names)
+              let handlerBody :=
+                .seq compiledHandler (.assign .local flagName (.const (BitVec.ofNat width 1)))
+              let callInfo := some (some (.local, resultName),
+                some (exception, handlerVar, handlerBody))
+              let storeAddress := .op .sub [.topAddr, .const address]
+              .dec resultName shape (shapeValHOL shape)
+                (.dec flagName .one (.const (BitVec.ofNat width 0))
+                  (.seq (.call callInfo function cargs)
+                    (.ite (.var .local flagName) .skip
+                      (.store storeAddress (.var .local resultName)))))
+          | none =>
+              .call (some (none, some (exception, handlerVar,
+                compileProgExactHOL context handler))) function cargs
+  | .decCall name shape function args body =>
+      .decCall name shape function (compileExpExactHOLList context args)
+        (compileProgExactHOL context body)
+  | .extCall function config configLength array arrayLength =>
+      .extCall function (compileExpExactHOL context config)
+        (compileExpExactHOL context configLength) (compileExpExactHOL context array)
+        (compileExpExactHOL context arrayLength)
+  | .raise exception value => .raise exception (compileExpExactHOL context value)
+  | .return value => .return (compileExpExactHOL context value)
+  | .shMemLoad size .local name address =>
+      .shMemLoad size .local name (compileExpExactHOL context address)
+  | .shMemLoad size .global name address =>
+      match context.globals.lookup name with
+      | some (.one, globalAddress) =>
+          let localName := mlstrAppend name (ofString "'")
+          .dec name .one (compileExpExactHOL context address)
+            (.dec localName .one (.const (BitVec.ofNat width 0))
+              (.seq (.shMemLoad size .local localName (.var .local name))
+                (.store (.op .sub [.topAddr, .const globalAddress]) (.var .local localName))))
+      | _ => .skip
+  | .shMemStore size address value =>
+      .shMemStore size (compileExpExactHOL context address) (compileExpExactHOL context value)
+  | program => program
+termination_by program => sizeOf program
+decreasing_by
+  all_goals decreasing_trivial
 
 /-- Kernel-checked codec bridge between the executed String-backed production
     compiler `compileExpCake` and the reviewed exact `compileExpExactHOL`.  For
