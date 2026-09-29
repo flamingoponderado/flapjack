@@ -96,6 +96,7 @@ import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrect.Seq
 import Flapjack.Pancake.Proofs.CrepArith.MulConst
 import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectPrimitiveRaise
 import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectStoreGlob
+import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectStore32
 import Flapjack.Pancake.Proofs.CrepInline
 import Flapjack.Pancake.Proofs.PanGlobals
 import Flapjack.Pancake.Proofs.PanStructs

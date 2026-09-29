@@ -393,6 +393,21 @@ is local to the proof script, so the probe inlines
 exact `simpProgCorrectStoreGlobCase` and the exact `CrepSemHOLState.setGlobals`.
 Refresh with
 `HOL_PROBE_ONLY=crep_arith_store_glob_probeScript.sml scripts/hol-probes/regenerate.sh`.
+`crep_arith_store_32_probe.out` records seven direct HOL EVAL rows for the
+`Store32` case of the proof-script `simp_prog_correct` at
+`cakeml/pancake/proofs/crep_arithProofScript.sml:184-212`:
+`simp_prog (Store32 exp1 exp2) = Store32 (simp_exp exp1) (simp_exp exp2)`
+(`crep_arithScript.sml:87`); the successful `evaluate` equation
+`evaluate (Store32 (Const 4w) (Const 0x11w), s)` returning `NONE`
+(`crepSemScript.sml:274-280`); the same row under the local `mapc` rewrite; the
+code-only commutation of `mapc f` with the memory update; and the three
+failure branches `(SOME Error, s)` (memory domain, `mem_store_32` alignment,
+and a failed operand). The `mapc` overload is local to the proof script, so the
+probe inlines `st with code := FMAP_MAP2 f st.code`.
+`Flapjack.Test.CrepArithStore32Parity` replays the rows against the tagged
+exact `simpProgCorrectStore32Case` and the exact `CrepSemHOLState` carriers.
+Refresh with
+`HOL_PROBE_ONLY=crep_arith_store_32_probeScript.sml scripts/hol-probes/regenerate.sh`.
 `crep_dest_2exp_probe.out` records direct HOL EVAL of
 `crep_arith$dest_2exp_def` at `cakeml/pancake/crep_arithScript.sml:15`, including
 the corresponding `word_lsl 1w` results for successful exponents. Its Lean
