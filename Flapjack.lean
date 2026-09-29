@@ -188,6 +188,7 @@ import Flapjack.Pancake.Proofs.LoopToWord.WordToBytes
 import Flapjack.Pancake.Proofs.LoopToWord.TickUnfold
 import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Base
 import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.ReturnRaise
+import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Assign
 import Flapjack.PanObservationalSemantics
 import Flapjack.PanMrec
 import Flapjack.PanHProgDec

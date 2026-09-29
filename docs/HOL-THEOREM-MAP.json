@@ -24738,5 +24738,47 @@
     "lean_name": "compExpPreservesEvalAux",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only private recursive core of the tagged compExpPreservesEval, with the four premises as separate hypotheses and recursion on the expression in place of HOL's eval_ind. It has no separate HOL declaration; the tagged theorem restates HOL's exact shape."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/CompileCorrect/Assign.lean",
+    "lean_name": "compileCorrect_Assign",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "LoopSemStateFiniteExact.globals",
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.9.22.1): the Assign case of HOL loop_to_wordProof compile_correct (loop_to_wordProofScript.sml:57-97, i.e. loopSem evaluate_ind specialised to goal, resumed at :798-814). The statement follows the HOL evaluate_ind conjunct ∀v exp s. P (Assign v exp,s), with P unfolded to HOL's goal written out: ∀res s1 t ctxt retv l. evaluate (prog,s) = (res,s1) ∧ res ≠ SOME Error ∧ state_rel s t ∧ locals_rel ctxt s.locals t.locals ∧ lookup 0 t.locals = SOME retv ∧ good_dimindex(:'a) ∧ ~isWord retv ∧ domain (acc_vars prog LN) ⊆ domain ctxt ⇒ ∃t1 res1. evaluate (FST (comp ctxt prog l),t) = (res1,t1) ∧ t1.ffi = s1.ffi ∧ case res of .... The binders and the premise conjunction are in HOL order. The case over res is the untagged resultCase (LoopToWord/Proofs/CompileCorrect/Property.lean), compared arm by arm: NONE, Result, Exception (including the jump_exc record update of stack and handler), Break, Continue, TimeOut, FinalFFI, and _ => F. The carriers are the tagged exact loopSem evaluate, wordSem evaluate, compHOL (comp_def), loopToWordStateRelHOLExact (state_rel_def), localsRelHOL (locals_rel_def), accVarsHOL (acc_vars_def), goodDimindex, wordSemIsWordLoc (isWord_def) and jumpExc (jump_exc_def). ⊆ on domain is the sptMem implication, and the HOL bool isWord is = true. No induction hypothesis. The target Assign (find_var ctxt v) (comp_exp ctxt exp) evaluates via the tagged comp_exp_preserves_eval. acc_vars gives v ∈ domain ctxt, so find_var_neq_0 keeps register 0 (retv), and locals_rel_insert re-establishes locals_rel. There is no target-run or post-state premise. Kernel-checked. The relation qualifier names the |-> fields of the two state carriers that the goal traverses (loopSem globals; wordSem fpRegs and store), with same-module witnesses LoopToWordCompileCorrectAssignWitnesses.*."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/CompileCorrect/Assign.lean",
+    "lean_name": "compileCorrect_LocValue",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "LoopSemStateFiniteExact.globals",
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.9.22.1): the LocValue case of HOL loop_to_wordProof compile_correct (loop_to_wordProofScript.sml:57-97, i.e. loopSem evaluate_ind specialised to goal, resumed at :855-874). The statement follows the HOL evaluate_ind conjunct ∀r l1 s. P (LocValue r l1,s), with P unfolded to HOL's goal written out: ∀res s1 t ctxt retv l. evaluate (prog,s) = (res,s1) ∧ res ≠ SOME Error ∧ state_rel s t ∧ locals_rel ctxt s.locals t.locals ∧ lookup 0 t.locals = SOME retv ∧ good_dimindex(:'a) ∧ ~isWord retv ∧ domain (acc_vars prog LN) ⊆ domain ctxt ⇒ ∃t1 res1. evaluate (FST (comp ctxt prog l),t) = (res1,t1) ∧ t1.ffi = s1.ffi ∧ case res of .... The binders and the premise conjunction are in HOL order. The case over res is the untagged resultCase (LoopToWord/Proofs/CompileCorrect/Property.lean), compared arm by arm: NONE, Result, Exception (including the jump_exc record update of stack and handler), Break, Continue, TimeOut, FinalFFI, and _ => F. The carriers are the tagged exact loopSem evaluate, wordSem evaluate, compHOL (comp_def), loopToWordStateRelHOLExact (state_rel_def), localsRelHOL (locals_rel_def), accVarsHOL (acc_vars_def), goodDimindex, wordSemIsWordLoc (isWord_def) and jumpExc (jump_exc_def). ⊆ on domain is the sptMem implication, and the HOL bool isWord is = true. No induction hypothesis. code_rel carries l1 ∈ domain s.code to l1 ∈ domain t.code. The target sets register find_var ctxt r to Loc l1 0, with find_var_neq_0 and locals_rel_insert as for Assign. There is no target-run or post-state premise. Kernel-checked. The relation qualifier names the |-> fields of the two state carriers that the goal traverses (loopSem globals; wordSem fpRegs and store), with same-module witnesses LoopToWordCompileCorrectAssignWitnesses.*."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/CompileCorrect/Assign.lean",
+    "lean_name": "compileCorrect_SetGlobal",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "LoopSemStateFiniteExact.globals",
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.9.22.1): the SetGlobal case of HOL loop_to_wordProof compile_correct (loop_to_wordProofScript.sml:57-97, i.e. loopSem evaluate_ind specialised to goal, resumed at :965-977). The statement follows the HOL evaluate_ind conjunct ∀dst exp s. P (SetGlobal dst exp,s), with P unfolded to HOL's goal written out: ∀res s1 t ctxt retv l. evaluate (prog,s) = (res,s1) ∧ res ≠ SOME Error ∧ state_rel s t ∧ locals_rel ctxt s.locals t.locals ∧ lookup 0 t.locals = SOME retv ∧ good_dimindex(:'a) ∧ ~isWord retv ∧ domain (acc_vars prog LN) ⊆ domain ctxt ⇒ ∃t1 res1. evaluate (FST (comp ctxt prog l),t) = (res1,t1) ∧ t1.ffi = s1.ffi ∧ case res of .... The binders and the premise conjunction are in HOL order. The case over res is the untagged resultCase (LoopToWord/Proofs/CompileCorrect/Property.lean), compared arm by arm: NONE, Result, Exception (including the jump_exc record update of stack and handler), Break, Continue, TimeOut, FinalFFI, and _ => F. The carriers are the tagged exact loopSem evaluate, wordSem evaluate, compHOL (comp_def), loopToWordStateRelHOLExact (state_rel_def), localsRelHOL (locals_rel_def), accVarsHOL (acc_vars_def), goodDimindex, wordSemIsWordLoc (isWord_def) and jumpExc (jump_exc_def). ⊆ on domain is the sptMem implication, and the HOL bool isWord is = true. No induction hypothesis. The target Set (Temp dst) (comp_exp ctxt exp) is not Handler/BitmapBase, and it evaluates via comp_exp_preserves_eval. set_store at Temp dst (FUPDATE at HOL equality) keeps the CurrHeap/HeapLength entries and re-establishes globals_rel against set_globals. There is no target-run or post-state premise. Kernel-checked. The relation qualifier names the |-> fields of the two state carriers that the goal traverses (loopSem globals; wordSem fpRegs and store), with same-module witnesses LoopToWordCompileCorrectAssignWitnesses.*."
   }
 ]
