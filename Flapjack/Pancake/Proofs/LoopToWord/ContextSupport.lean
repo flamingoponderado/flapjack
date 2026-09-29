@@ -110,4 +110,64 @@ theorem sptDomain_makeCtxtHOL (next : Nat) (names : List Nat)
           · exact Or.inl (Or.inl hkey)
           · exact Or.inr hnames
 
+/-- Flapjack-specific induction strengthening for `make_ctxt_inj`: adding a
+fresh register preserves lookup injectivity while advancing its value bound.
+HOL proves this fact inside the `make_ctxt_inj` proof rather than declaring it
+as a separate theorem. -/
+private theorem sptInsert_preserves_bounded_lookup_injectivity
+    (next name : Nat) (context : Spt Nat)
+    (hinj : ∀ x y v, sptLookup x context = some v →
+      sptLookup y context = some v → x = y ∧ v < next) :
+    ∀ x y v, sptLookup x (sptInsert name next context) = some v →
+      sptLookup y (sptInsert name next context) = some v →
+      x = y ∧ v < next + 2 := by
+  have hnext_absent : ∀ key, sptLookup key context ≠ some next := by
+    intro key hlookup
+    have hbound := (hinj key key next hlookup hlookup).2
+    omega
+  intro x y v hx hy
+  by_cases hxn : x = name
+  · subst x
+    rw [sptLookup_sptInsert_same] at hx
+    have hv : v = next := (Option.some.inj hx).symm
+    subst v
+    by_cases hyn : y = name
+    · exact ⟨hyn.symm, by omega⟩
+    · rw [sptLookup_sptInsert_ne name y next context hyn] at hy
+      exact False.elim (hnext_absent y hy)
+  · rw [sptLookup_sptInsert_ne name x next context hxn] at hx
+    by_cases hyn : y = name
+    · subst y
+      rw [sptLookup_sptInsert_same] at hy
+      have hv : v = next := (Option.some.inj hy).symm
+      subst v
+      exact False.elim (hnext_absent x hx)
+    · rw [sptLookup_sptInsert_ne name y next context hyn] at hy
+      obtain ⟨hxy, hbound⟩ := hinj x y v hx hy
+      exact ⟨hxy, by omega⟩
+
+/-- Exact HOL `make_ctxt_inj`
+(`cakeml/pancake/proofs/loop_to_wordProofScript.sml:293-296`). The incoming
+context is injective on equal lookup results whose registers are below
+`next`; each `make_ctxt` insertion uses the fresh register `next`, then the
+bound advances by two. This is stated over the exact `Spt Nat` carrier and
+retains HOL's same-result lookup binders and premise. -/
+@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "make_ctxt_inj"]
+theorem makeCtxtHOL_inj (names : List Nat) (context : Spt Nat) (next : Nat)
+    (hinj : ∀ x y v, sptLookup x context = some v →
+      sptLookup y context = some v → x = y ∧ v < next) :
+    ∀ x y v, sptLookup x (Flapjack.makeCtxtHOL next names context) = some v →
+      sptLookup y (Flapjack.makeCtxtHOL next names context) = some v →
+      x = y := by
+  induction names generalizing context next with
+  | nil =>
+      intro x y v hx hy
+      exact (hinj x y v hx hy).1
+  | cons name names ih =>
+      intro x y v hx hy
+      apply ih (sptInsert name next context) (next + 2)
+        (sptInsert_preserves_bounded_lookup_injectivity next name context hinj)
+      · exact hx
+      · exact hy
+
 end Flapjack.LoopToWord
