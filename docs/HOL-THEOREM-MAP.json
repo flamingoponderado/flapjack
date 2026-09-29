@@ -22500,6 +22500,16 @@
   {
     "hol_path": "cakeml/pancake/proofs/crep_arithProofScript.sml",
     "hol_name": "simp_prog_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrect/Store.lean",
+    "lean_name": "simpProgCorrectStoreCase",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison (2026-09-29; bead flapjack-pxn.18.5.4.19): HOL crep_arithProofScript.sml:186-212 states evaluate (p,s)=(r,s') and r<>SOME Error, concluding evaluate (simp_prog p,mapcs s)=(r,mapcs s'); this declaration is the Store constructor case of evaluate_ind, with no induction hypothesis. HOL simp_prog maps both Store expressions (crep_arithScript.sml:83-105); crepSemScript.sml:267-273 evaluates address and value, accepts only Word address, then mem_store returns (NONE, memory-updated state) on an in-domain success and (SOME Error, unchanged state) otherwise. The Lean statement retains the source equation, non-Error premise, and complete result/post-state conclusion over the exact native Crep evaluator and simp_prog. Its proof applies tagged simp_exp_correct separately to the successful address and value evaluations and uses the exact mem_store equation; failed expression, non-word address, and out-of-domain store arms contradict the original non-Error premise. Qualifiers are the same-module canonical finite-support locals/globals/code carrier and width-indexed BitVec word representation; the memory and memaddrs projections are preserved exactly."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_arithProofScript.sml",
+    "hol_name": "simp_prog_correct",
     "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrectShMem.lean",
     "lean_name": "simpProgCorrectShMemCase",
     "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
@@ -22534,6 +22544,14 @@
     "lean_name": "holFmapAsFiniteSupportWitness",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Same-module canonical finite-support witness for simpProgCorrectAssignCase: the exact state and broad counterpart roundtrip through toBroad/ofBroad; this is Flapjack representation infrastructure, not a HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrect/Store.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module canonical finite-support witness for simpProgCorrectStoreCase: the exact state and broad counterpart roundtrip through toBroad/ofBroad; this is Flapjack representation infrastructure, not a HOL declaration."
   },
   {
     "hol_path": null,
