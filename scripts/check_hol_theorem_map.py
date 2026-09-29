@@ -1660,6 +1660,19 @@ INFRASTRUCTURE_THEOREMS = {
         "CrepInline relation qualifiers. It reuses CrepSemHOLState's reviewed "
         "toBroad/ofBroad witness and has no standalone HOL declaration."
     ),
+    ("Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrect.lean", "holFmapAsFiniteSupportWitness"): (
+        "Same-module canonical finite-support roundtrip witness for the tagged "
+        "simp_prog_correct leaf cases. It reuses CrepSemHOLState's reviewed "
+        "toBroad/ofBroad witness and has no standalone HOL declaration."
+    ),
+    ("Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrect.lean", "crepSimpMapcsHOL_emptyLocals"): (
+        "Flapjack-only commuting law for the local simp_prog_correct mapcs "
+        "rendering and exact emptyLocals; HOL has no standalone declaration."
+    ),
+    ("Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrect.lean", "crepSimpMapcsHOL_decClock"): (
+        "Flapjack-only commuting law for the local simp_prog_correct mapcs "
+        "rendering and exact decClock; HOL has no standalone declaration."
+    ),
     ("Flapjack/Pancake/Proofs/PanToCrep/StateRelFiniteSupport.lean", "panWriteBytearrayWord8HOL_domainCongr"): (
         "Flapjack-specific support for the ExtCall returned-byte state relation. "
         "This congruence handles distinct DecidablePred instances after equality "
