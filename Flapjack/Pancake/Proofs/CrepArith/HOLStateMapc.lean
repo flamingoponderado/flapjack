@@ -1620,4 +1620,29 @@ theorem crepSimpExpCorrectNativeHOL
   intro h
   rw [crepSimpExpCorrect1NativeHOL update state exp v (by rw [h]; simp), h]
 
+
+/-- Exact HOL `opt_mmap_simp_exp_correct` (`crep_arithProofScript.sml:150-152`):
+    `OPT_MMAP (crepSem$eval s) es = SOME vs ⇒
+      OPT_MMAP (eval (mapc f s)) (MAP simp_exp es) = SOME vs`, with `f s es vs`
+    free.  HOL `OPT_MMAP` is `List.mapM`, over the tagged native
+    `evalCrepSemHOLExp`, `crepSimpExpHOL` and `CrepSemHOLState.mapc`.  Proved
+    from `simp_exp_correct` elementwise, as HOL does with `OPT_MMAP_CONG`. -/
+@[hol "cakeml/pancake/proofs/crep_arithProofScript.sml" "opt_mmap_simp_exp_correct"
+  (fmap_as_finite_support := [locals, globals, code])
+  (words_as_type_indexed_bitvec)]
+theorem crepOptMmapSimpExpCorrectNativeHOL
+    {width : Nat} [NeZero width] {σ : Type}
+    (update : MlString × (List Nat × CrepProgHOL width) →
+      List Nat × CrepProgHOL width)
+    (state : CrepSemHOLState width σ) (es : List (CrepExpHOL width))
+    (vs : List (HolWordLab width)) :
+    es.mapM (evalCrepSemHOLExp state) = some vs →
+    (es.map crepSimpExpHOL).mapM
+        (evalCrepSemHOLExp (CrepSemHOLState.mapc update state)) = some vs := by
+  intro h
+  rw [List.mapM_map]
+  exact optMmapEqSomeMono (evalCrepSemHOLExp state) _ es vs h
+    (fun child value _ hValue =>
+      crepSimpExpCorrectNativeHOL update state child value hValue)
+
 end Flapjack
