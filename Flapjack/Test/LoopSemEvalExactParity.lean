@@ -68,11 +68,15 @@ private def memLoadMissOracle : Bool := isNone (memLoad 4 mem3)
 private def memStoreHitOracle : Bool := isW ((memStore 3 (w 7) mem3s).bind (memLoad 3)) 7
 private def memStoreMissOracle : Bool := (memStore 4 (w 7) mem3s).isNone
 private def memStoreOtherOracle : Bool := isW ((memStore 3 (w 7) mem34).bind (memLoad 4)) 1
+private def evalLoadHitOracle : Bool := isW (eval memS (.load (.const 3))) 11
+private def evalLoadMissOracle : Bool := isNone (eval memS (.load (.const 4)))
 #guard memLoadHitOracle
 #guard memLoadMissOracle
 #guard memStoreHitOracle
 #guard memStoreMissOracle
 #guard memStoreOtherOracle
+#guard evalLoadHitOracle
+#guard evalLoadMissOracle
 
 def runChecks : IO Bool := do
   let checks :=
@@ -81,6 +85,8 @@ def runChecks : IO Bool := do
       ("exact loopSem mem_store update matches direct HOL row", memStoreHitOracle),
       ("exact loopSem mem_store domain miss matches direct HOL row", memStoreMissOracle),
       ("exact loopSem mem_store preserves other memory cells", memStoreOtherOracle),
+      ("exact loopSem evaluate Load hit matches direct HOL row", evalLoadHitOracle),
+      ("exact loopSem evaluate Load miss matches direct HOL row", evalLoadMissOracle),
       ("exact loopSem eval/mem/loop_arith HOL parity guards", true) ]
   let results ← checks.mapM fun (name, ok) => do
     if ok then
