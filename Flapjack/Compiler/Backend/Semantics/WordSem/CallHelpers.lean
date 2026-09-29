@@ -6,8 +6,9 @@ import Flapjack.Compiler.Backend.Semantics.WordSem.Env
 Counterpart of `cakeml/compiler/backend/semantics/wordSemScript.sml:946-1014`
 (bead `flapjack-h29l.7`).  It covers the helpers used by `evaluate_def`:
 `add_ret_loc`, `bad_dest_args`, the local `termdep_rw` and
-`fix_clock_IMP_LESS_EQ`, `MustTerminate_limit`, `const_addresses`,
-`const_writes`, `STOP`, `bad_fun_return`, `cont_loop`, and `exit_loop`.
+`fix_clock_IMP_LESS_EQ`, `MustTerminate_limit` (untagged; see its
+docstring), `const_addresses`, `const_writes`, `STOP`, `bad_fun_return`,
+`cont_loop`, and `exit_loop`.
 The carrier translations are those of the tagged `state` port.
 
 HOL `bytes_in_word = n2w (dimindex (:'a) DIV 8)` (HOL
@@ -84,15 +85,22 @@ theorem fixClock_IMP_LESS_EQ {width : Nat} [NeZero width] {C : Type} {F : Type} 
 
 end WordSemStateFiniteExact
 
-/-- Exact HOL `MustTerminate_limit_def` (`wordSemScript.sml:970-978`,
-    `[nocompute]`):
+/-- HOL `MustTerminate_limit_def` (`wordSemScript.sml:970-978`, `[nocompute]`):
     `2 * dimword (:'a) + dimword (:'a) * dimword (:'a) + dimword (:'a) **
     dimword (:'a) + dimword (:'a) ** dimword (:'a) ** dimword (:'a)`.  Here
     `dimword (:'a) = 2 ^ width`, and HOL `**` is right-associative like Lean
     `^`.  As in HOL, the number is a specification constant and is never
-    evaluated. -/
-@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "MustTerminate_limit_def"
-  (words_as_type_indexed_bitvec)]
+    evaluated.  The HOL row `must_terminate_limit_1=28` of
+    `word_sem_call_helpers_probe.out` is checked in
+    `Flapjack.Test.WordSemCallHelpersParity`.
+
+    Untagged: the only difference from HOL is the translation of the type
+    argument `(:'a)` to the width parameter `width` with `[NeZero width]`.
+    That is the dimension half of `words_as_type_indexed_bitvec`, but the
+    reference checker requires a tagged signature to mention a `BitVec`
+    carrier, and this one has no `'a word` value.  Tagging waits for a
+    reviewed qualifier rule for word-free dimension arguments (bead
+    `flapjack-h29l.13`). -/
 def wordSemMustTerminateLimit (width : Nat) [NeZero width] : Nat :=
   let dimword := (2 : Nat) ^ width
   2 * dimword + dimword * dimword + dimword ^ dimword + dimword ^ (dimword ^ dimword)

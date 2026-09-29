@@ -23623,15 +23623,6 @@
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/CallHelpers.lean",
-    "lean_name": "wordSemMustTerminateLimit",
-    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
-    "hol_name": "MustTerminate_limit_def",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.7): HOL MustTerminate_limit (:'a) (:970-978, [nocompute]) = 2 * dimword (:'a) + dimword (:'a) * dimword (:'a) + dimword (:'a) ** dimword (:'a) + dimword (:'a) ** dimword (:'a) ** dimword (:'a); Lean the same with dimword = 2 ^ width and right-associative ^ (HOL ** is right-associative), the type argument (:'a) rendered as the width parameter with [NeZero width]. Rows must_terminate_limit_1=28 (width 1, the def unfolded as nocompute requires) of scripts/hol-probes/word_sem_call_helpers_probe.out are checked by Flapjack.Test.WordSemCallHelpersParity."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/CallHelpers.lean",
     "lean_name": "wordSemConstAddresses",
     "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
     "hol_name": "const_addresses_def",
