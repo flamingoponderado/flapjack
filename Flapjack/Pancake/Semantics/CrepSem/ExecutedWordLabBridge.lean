@@ -25,9 +25,11 @@ The byte-reading arms rely on the production alignment, byte index and
 `word32`-then-`w2w` assembly agreeing with the Lean HOL-shaped helpers
 (beads `flapjack-pxn.18.5.4.3.4`/`.5`/`.6`).
 Width domain: this is an equality of Lean definitions at every positive width, but it is
-a HOL correspondence only for `width ≥ 8`.  Below width 8 the byte count is 0, HOL's
-`LOG2 0`/`MOD 0` are unspecified, and the Lean HOL-shaped helpers use chosen completions
-(`Nat.log2 0 = 0`, `n % 0 = n`) with no HOL claim.  The
+a HOL correspondence only for `width ≥ 8`.  Below width 8 the byte count `dimindex DIV 8` is 0. HOL's `byte_index` is still
+specified there (`w2n a MOD 0 = w2n a`, which Lean's `n % 0 = n` matches), but
+`byte_align` uses `LOG2 0`, which HOL leaves underspecified; the Lean alignment uses
+the chosen completion `Nat.log2 0 = 0`, with no HOL claim. So this does not establish
+an all-width HOL correspondence for the byte loads.  The
 fragment forms `evalCrepRuntimeExp_executed_of_noLoad32` and
 `evalCrepRuntimeExp_executed_of_noByteMemoryLoad` are corollaries; the latter
 covers the `Const` list path of `evaluate_replicate_const`
@@ -269,9 +271,11 @@ width, for every Crep expression, with no hypothesis: all constructors,
 including the byte-reading `loadByte` and `load32` (beads
 `flapjack-pxn.18.5.4.3.4`/`.5`/`.6`).
 Width domain: this is an equality of Lean definitions at every positive width, but it is
-a HOL correspondence only for `width ≥ 8`.  Below width 8 the byte count is 0, HOL's
-`LOG2 0`/`MOD 0` are unspecified, and the Lean HOL-shaped helpers use chosen completions
-(`Nat.log2 0 = 0`, `n % 0 = n`) with no HOL claim. The exact value is read through the bare-word projection
+a HOL correspondence only for `width ≥ 8`.  Below width 8 the byte count `dimindex DIV 8` is 0. HOL's `byte_index` is still
+specified there (`w2n a MOD 0 = w2n a`, which Lean's `n % 0 = n` matches), but
+`byte_align` uses `LOG2 0`, which HOL leaves underspecified; the Lean alignment uses
+the chosen completion `Nat.log2 0 = 0`, with no HOL claim. So this does not establish
+an all-width HOL correspondence for the byte loads. The exact value is read through the bare-word projection
 `holWordLabToWord`, which is what the executed production evaluator returns. -/
 theorem evalCrepRuntimeExp_executed_allWidth {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ) [DecidablePred state.memaddrs]
@@ -578,8 +582,8 @@ theorem evalCrepRuntimeExp_executed {width : Nat} [NeZero width] {σ : Type}
 
 /-- HOL source-correspondence boundary for the executed Crep evaluator: for
 `width ≥ 8` (every HOL word type with at least one byte, where `byte_align`'s
-`LOG2 (dimindex DIV 8)` and `byte_index`'s `MOD (dimindex DIV 8)` are
-specified), the executed production evaluator at the canonical BitVec
+`LOG2 (dimindex DIV 8)` is specified; `byte_index`'s `MOD (dimindex DIV 8)` is
+specified at every width), the executed production evaluator at the canonical BitVec
 evaluator state returns the tagged exact `crepSem$eval_def` result
 (`evalCrepSemHOLExp`, `crepSemScript.sml:90-137`) for every expression.  The
 width premise marks where the equality is a claim about original HOL
@@ -658,5 +662,65 @@ theorem evalCrepRuntimeExpsWordLab_executed {width : Nat} [NeZero width] {σ : T
   rw [← evalCrepRuntimeExps_wordLab_projection (executedCrepState state) es]
   rw [evalCrepRuntimeExps_executed state es]
   exact option_map_list_holWordLabToWord_map_word (width := width) _
+
+
+/-! ## HOL-quantified evaluator relation (bead `flapjack-pxn.18.5.4.3.8`)
+
+The final form of the production-to-HOL Crep expression evaluator relation.
+The source side ranges over every exact HOL state `CrepSemHOLState` and every
+HOL expression `CrepExpHOL`.  The production side runs `evalCrepRuntimeExpWordLab`
+on the canonical executed runtime `executedCrepState` (built from the HOL state
+fields only) and on the production image `crepExpOfHOL e`.  The result is the
+complete `word_lab` value.  There is no `DecidablePred` instance or other
+premise: the executed state decides memory-domain membership classically, so
+the instance binder of the earlier bridges is discharged inside the proof.
+Width boundary: these theorems give `width ≥ 8` for the whole language, and
+every positive width for expressions without `loadByte`/`load32`.  Below width
+8, HOL `byte_index` is still specified (`w2n a MOD 0 = w2n a`; HOL `DIV`/`MOD`
+by 0 are defined, and Lean's `n % 0 = n` agrees), but `byte_align` uses
+`LOG2 (dimindex DIV 8) = LOG2 0`, which HOL leaves underspecified.  The byte
+loads at widths 1..7 are therefore not covered by any HOL claim here.  This is
+NOT the all-width correspondence required by the parent bead
+`flapjack-pxn.18.5.4.3`, which stays open for those widths.  Flapjack-only,
+untagged: HOL has no production evaluator to relate. -/
+
+/-- For `width ≥ 8`, every exact HOL state and every HOL Crep expression: the
+production evaluator on the executed runtime returns HOL `crepSem$eval_def`'s
+complete `word_lab` result (`evalCrepSemHOLExp`), with no further premise. -/
+theorem evalCrepRuntimeExpWordLab_crepSemEval {width : Nat} [NeZero width] {σ : Type}
+    (_hwidth : 8 ≤ width) (state : CrepSemHOLState width σ) (e : CrepExpHOL width) :
+    evalCrepRuntimeExpWordLab (executedCrepState state) (crepExpOfHOL e) =
+      (evalCrepSemHOLExp state e).map HolWordLab.toPanWordLab := by
+  classical
+  have h := evalCrepRuntimeExpWordLab_executed state (crepExpOfHOL e)
+  rwa [crepExpToHOL_crepExpOfHOL] at h
+
+/-- List form (HOL `OPT_MMAP (eval s) es`) of `evalCrepRuntimeExpWordLab_crepSemEval`. -/
+theorem evalCrepRuntimeExpsWordLab_crepSemEval {width : Nat} [NeZero width] {σ : Type}
+    (_hwidth : 8 ≤ width) (state : CrepSemHOLState width σ) (es : List (CrepExpHOL width)) :
+    evalCrepRuntimeExpsWordLab (executedCrepState state) (es.map crepExpOfHOL) =
+      (es.mapM (evalCrepSemHOLExp state)).map (List.map HolWordLab.toPanWordLab) := by
+  classical
+  have h := evalCrepRuntimeExpsWordLab_executed state (es.map crepExpOfHOL)
+  rw [h]
+  congr 1
+  have hfun : ((fun e => evalCrepSemHOLExp state (crepExpToHOL e)) ∘ crepExpOfHOL) =
+      evalCrepSemHOLExp state := by
+    funext x
+    simp [crepExpToHOL_crepExpOfHOL]
+  rw [List.mapM_map, hfun]
+
+/-- Every positive width, for HOL expressions without `loadByte`/`load32`
+(whose HOL semantics never use `byte_align`/`byte_index`): the production
+evaluator on the executed runtime returns HOL `crepSem$eval_def`'s complete
+`word_lab` result, with no further premise. -/
+theorem evalCrepRuntimeExpWordLab_crepSemEval_noByteLoad {width : Nat} [NeZero width]
+    {σ : Type} (state : CrepSemHOLState width σ) (e : CrepExpHOL width)
+    (hm : crepExpNoByteMemoryLoad (crepExpOfHOL e)) :
+    evalCrepRuntimeExpWordLab (executedCrepState state) (crepExpOfHOL e) =
+      (evalCrepSemHOLExp state e).map HolWordLab.toPanWordLab := by
+  classical
+  have h := evalCrepRuntimeExpWordLab_executed_of_noByteMemoryLoad state (crepExpOfHOL e) hm
+  rwa [crepExpToHOL_crepExpOfHOL] at h
 
 end Flapjack
