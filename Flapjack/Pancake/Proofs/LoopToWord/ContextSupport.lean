@@ -214,4 +214,29 @@ theorem makeCtxtHOL_notMem (names : List Nat) (next : Nat)
         _ = sptLookup key context :=
           sptLookup_sptInsert_ne name key next context hne
 
+/-- Exact HOL `lookup_make_ctxt_range`
+(`cakeml/pancake/proofs/loop_to_wordProofScript.sml:331-339`). Any register
+found after context construction was either already present with the same
+value or lies at or above the starting register. -/
+@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "lookup_make_ctxt_range"]
+theorem makeCtxtHOL_lookupRange (names : List Nat) (next : Nat)
+    (context : Spt Nat) (key value : Nat)
+    (hlookup : sptLookup key (Flapjack.makeCtxtHOL next names context) =
+      some value) :
+    sptLookup key context = some value ∨ next ≤ value := by
+  induction names generalizing next context with
+  | nil => exact Or.inl hlookup
+  | cons name names ih =>
+      have hrec := ih (next + 2) (sptInsert name next context) hlookup
+      rcases hrec with hsource | hbound
+      · by_cases hkey : key = name
+        · subst key
+          rw [sptLookup_sptInsert_same] at hsource
+          have hvalue : value = next := (Option.some.inj hsource).symm
+          subst value
+          exact Or.inr (by omega)
+        · rw [sptLookup_sptInsert_ne name key next context hkey] at hsource
+          exact Or.inl hsource
+      · exact Or.inr (by omega)
+
 end Flapjack.LoopToWord

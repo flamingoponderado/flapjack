@@ -89,6 +89,17 @@ example :
 
 #guard sptLookup 8 (makeCtxtHOL 3 [7, 8, 8, 9] (.ln : Spt Nat)) == some 7
 
+#guard sptLookup 5 (makeCtxtHOL 4 [5, 6] (.ln : Spt Nat)) == some 4
+#guard sptLookup 6 (makeCtxtHOL 4 [5, 6] (.ln : Spt Nat)) == some 6
+
+example {key value : Nat}
+    (hlookup : sptLookup key (makeCtxtHOL 4 [5, 6] (.ln : Spt Nat)) =
+      some value) : 4 ≤ value := by
+  rcases makeCtxtHOL_lookupRange [5, 6] 4 (.ln : Spt Nat) key value hlookup with
+    hsource | hbound
+  · simp [sptLookup] at hsource
+  · exact hbound
+
 example :
     sptLookup 9 (makeCtxtHOL 2 [4, 6, 4] (.ln : Spt Nat)) =
       sptLookup 9 (.ln : Spt Nat) := by

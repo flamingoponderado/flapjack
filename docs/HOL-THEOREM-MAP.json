@@ -11458,6 +11458,15 @@
     "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.9.16.5) against the local HOL theorem at loop_to_wordProofScript.sml:317-321. HOL states that for all xs/n/l/x, nonmembership of x in xs implies lookup x after make_ctxt equals lookup x in l. Lean keeps the same list-membership premise and Option lookup equality over exact Spt Nat, using the same tagged makeCtxtHOL and sptInsert definitions. No bounds, freshness conditions beyond the HOL nonmembership premise, or representation qualifiers are added. Focused regression checks absent key 9 through [4,6,4]."
   },
   {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "lookup_make_ctxt_range",
+    "hol_line": 331,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "makeCtxtHOL_lookupRange",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.9.16.6) against loop_to_wordProofScript.sml:331-339. HOL quantifies xs, m, l, n, y; from lookup n (make_ctxt m xs l) = SOME y it concludes lookup n l = SOME y or m <= y. Lean preserves this order, the same lookup result/value, the source disjunction order and Nat bound over exact Spt Nat. The proof mirrors the HOL induction using same-key insertion, distinct-key lookup preservation and monotonicity of m+2. No freshness or additional assumptions are imposed. Regression checks all results from [5,6] started at 4 are at least 4 and observes registers 4 and 6."
+  },
+  {
     "hol_path": "cakeml/pancake/pan_commonScript.sml",
     "hol_name": "distinct_lists_def",
     "lean_path": "Flapjack/Pancake/PanCommon.lean",
