@@ -636,6 +636,22 @@
     "reviewer": "Flapjack support for HOL simp_exp_correct1 over arbitrary finite-index words and exact finite-map/set state fields, with opaque code entries. Evaluation still uses the explicit HolFiniteDimension source projection; native crepSem eval_def, HOL program/FFI carriers, and their representation relations remain unproved, so the declaration is untagged."
   },
   {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
+    "lean_name": "crepSimpExpCorrect1NativeVarCase",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack support case for HOL simp_exp_correct1, with the exact native evaluator, successful-evaluation premise, polymorphic unused result binder, code-only mapc update, and Option word_lab result. Kept untagged because CrepSemHOLState is declared in Semantics.CrepSem.HOLState, outside this counterpart module, and the required same-module finite-map carrier witness is unavailable; the faithful tagged case remains open (bead flapjack-pxn.18.5.4.2.19.5)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
+    "lean_name": "crepSimpExpCorrect1NativeConstCase",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack support case for HOL simp_exp_correct1, with the exact native evaluator, successful-evaluation premise, polymorphic unused result binder, code-only mapc update, and Option word_lab result. Kept untagged because CrepSemHOLState is declared in Semantics.CrepSem.HOLState, outside this counterpart module, and the required same-module finite-map carrier witness is unavailable; the faithful tagged case remains open (bead flapjack-pxn.18.5.4.2.19.5)."
+  },
+  {
     "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
     "hol_name": "result",
     "lean_path": "Flapjack/Pancake/Semantics/CrepSem/EvaluateHOL.lean",
@@ -16147,6 +16163,14 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "flapjack-ds8 (bead flapjack-4ac.5.81.12): staged case lemma for the Panop arm of HOL compile_exp_val_rel; HOL proves it inside compile_exp_val_rel, no standalone case declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/CompileExpValRel/Load.lean",
+    "lean_name": "compileExpValRelHOL_load_ofProductionRV64",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific all-Shape Load bridge; no standalone HOL declaration exists. It composes the executable RV64 source evaluator agreement with the exact-carrier staged case `compileExpValRelHOL_load` from pan_to_crepProofScript.sml:130-396. The bridge has production/exact representation premises and so is infrastructure, not a direct port of the source-only HOL case."
   },
   {
     "hol_path": "cakeml/pancake/semantics/crepPropsScript.sml",
