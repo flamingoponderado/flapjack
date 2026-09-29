@@ -445,6 +445,22 @@ entire equation and its operator associativity, and record the comparison in
 the manifest. The qualifier permits no changed hypotheses or behavior and does
 not itself prove cross-language equivalence.
 
+**Qualify a body-level HOL `real` to Lean `Rat` rendering.** Use
+`(reals_as_rationals)` when the tagged declaration's body renders HOL `real`
+floating-point values as Lean `Rat` through the reviewed, separately untagged
+binary64 library (arithmetic, comparison and conversion, plus `sqrt` through
+rational cut criteria), as `inst_def`'s FP clauses do. It is mutually exclusive
+with `word_dimension_as_width` and requires a manifest status that names it
+(e.g. `reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec_reals_as_rationals`).
+The checker verifies only that the qualifier is present and consistent between
+the `@[hol]` tag, the elaborated exporter, and the manifest, and that the
+status names it; it does not prove the rational rendering equals HOL's
+real-number specification. That agreement remains the external assumption
+recorded in `docs/SOUNDNESS.md` and must stay stated there. Source review must
+compare each FP clause against its HOL original and record the comparison in
+the manifest. The qualifier records only the representation and authorizes no
+change to quantifiers, hypotheses, side conditions, or conclusions.
+
 **Port the executable path, too.** As HOL definitions are ported, make the
 compiler that `flapjack-compile` actually runs call the reviewed `@[hol]`
 definitions. A tagged proof-only duplicate beside a different production

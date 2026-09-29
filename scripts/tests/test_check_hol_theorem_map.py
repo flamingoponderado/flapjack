@@ -238,6 +238,56 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
                 self.assertIn("globalFreshName", record["reviewer"])
                 self.assertNotIn(key, tagged)
 
+    def test_inst_def_reals_as_rationals_qualifier(self):
+        manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())
+        manifest_by_key = {
+            (record["lean_path"], record["lean_name"]): record
+            for record in manifest
+        }
+        key = (
+            "Flapjack/Compiler/Backend/Semantics/WordSem/Inst.lean",
+            "inst",
+        )
+        record = manifest_by_key[key]
+        self.assertEqual(
+            (record["hol_path"], record["hol_name"]),
+            ("cakeml/compiler/backend/semantics/wordSemScript.sml", "inst_def"),
+        )
+        self.assertEqual(
+            record["statement_status"],
+            "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec_reals_as_rationals",
+        )
+        self.assertEqual(record["fmap_as_finite_support"], ["fpRegs", "store"])
+        self.assertTrue(record["words_as_type_indexed_bitvec"])
+        self.assertTrue(record["reals_as_rationals"])
+        self.assertIn("reals_as_rationals", record["reviewer"])
+        self.assertIn("SOUNDNESS.md", record["reviewer"])
+        self.assertIn(key, MAP["tagged_declarations"]())
+
+    def test_reals_as_rationals_status_requires_matching_qualifier(self):
+        base = {
+            "hol_path": "cakeml/xScript.sml",
+            "hol_name": "foo_def",
+            "lean_path": "F.lean",
+            "lean_name": "foo",
+            "reviewer": "source comparison",
+        }
+        tag = ("cakeml/xScript.sml", "foo_def", (), (), (), ("fpRegs",), False, (),
+               False, True, (), (), None, True)
+        tagged = {("F.lean", "foo"): tag}
+        good = [{
+            **base,
+            "statement_status":
+                "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec_reals_as_rationals",
+            "fmap_as_finite_support": ["fpRegs"],
+            "words_as_type_indexed_bitvec": True,
+            "reals_as_rationals": True,
+        }]
+        self.assertEqual(MAP["validate_inventory"](good, set(), tagged), [])
+        missing = [{**good[0], "reals_as_rationals": False}]
+        errors = MAP["validate_inventory"](missing, set(), tagged)
+        self.assertTrue(any("reals_as_rationals" in error for error in errors))
+
     def test_crep_evaluate_ind_exact_tag(self):
         tagged = MAP["tagged_declarations"]()
         manifest = json.loads(MAP["DEFAULT_MANIFEST"].read_text())

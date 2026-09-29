@@ -98,7 +98,8 @@ namespace WordSemStateFiniteExact
     within its covered domain.  NaN results are HOL's unspecified
     `float_some_qnan`. -/
 @[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "inst_def"
-  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)
+  (reals_as_rationals)]
 noncomputable def inst {width : Nat} [NeZero width] {C : Type} {F : Type}
     (i : WordLangInst (BitVec width)) (s : WordSemStateFiniteExact width C F) :
     Option (WordSemStateFiniteExact width C F) :=

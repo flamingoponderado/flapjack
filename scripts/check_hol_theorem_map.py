@@ -1741,6 +1741,9 @@ VALID_STATUSES = {
     "reviewed_word_dimension_as_width",
     "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec_reals_as_rationals",
+    "reviewed_reals_as_rationals_words_as_type_indexed_bitvec",
+    "reviewed_reals_as_rationals",
     "pending_statement_review",
     "documented_mismatch",
     "no_hol_reference_pending_classification",
@@ -1879,9 +1882,11 @@ def tagged_declarations(
         for (line, hol_path, hol_name, _hol_line, list_fields,
              names_fields, boundary_fields, fmap_fields, fmap_result,
              fmap_relation, fmap_equalities, words_bitvec,
-             fmap_parameters, fmap_existentials, dimension_width) in HOL_ATTRIBUTE_SITES(
+             fmap_parameters, fmap_existentials, dimension_width,
+             reals_as_rationals) in HOL_ATTRIBUTE_SITES(
                  lines, include_fmap_existentials=True,
                  include_word_dimension_width=True,
+                 include_reals_as_rationals=True,
              ):
             lean_name = FIND_LEAN_DECL(lines, line - 1)
             key = (rel, lean_name)
@@ -1891,7 +1896,7 @@ def tagged_declarations(
             value = (hol_path, hol_name, list_fields, names_fields,
                      boundary_fields, fmap_fields, fmap_result, fmap_relation,
                      fmap_equalities, words_bitvec, fmap_parameters,
-                     fmap_existentials, dimension_width)
+                     fmap_existentials, dimension_width, reals_as_rationals)
             if key in tagged and tagged[key] != value:
                 raise ValueError(f"conflicting @[hol] references for {rel}:{lean_name}")
             tagged[key] = value
@@ -1905,7 +1910,7 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
     for (lean_path, lean_name), (
         hol_path, hol_name, list_fields, names_fields, boundary_fields, fmap_fields,
         fmap_result, fmap_relation, fmap_equalities, words_bitvec, fmap_parameters,
-        fmap_existentials, dimension_width,
+        fmap_existentials, dimension_width, reals_as_rationals,
     ) in tagged.items():
         entry = {
             "hol_path": hol_path,
@@ -1938,6 +1943,8 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
             entry["fmap_as_finite_support_equalities"] = True
         if words_bitvec:
             entry["words_as_type_indexed_bitvec"] = True
+        if reals_as_rationals:
+            entry["reals_as_rationals"] = True
         if dimension_width:
             entry["word_dimension_as_width"] = dimension_width
         inventory[(lean_path, lean_name)] = entry
@@ -2212,6 +2219,7 @@ def validate_inventory(
         fmap_parameters = tag[10] if tag is not None and len(tag) > 10 else ()
         fmap_existentials = tag[11] if tag is not None and len(tag) > 11 else ()
         dimension_width = tag[12] if tag is not None and len(tag) > 12 else None
+        reals_as_rationals = bool(tag[13]) if tag is not None and len(tag) > 13 else False
         manifest_list_fields = tuple(record.get("list_as_array", ()))
         manifest_names_fields = tuple(record.get("names_as_string", ()))
         manifest_boundary_fields = tuple(record.get("names_as_string_boundary", ()))
@@ -2266,6 +2274,11 @@ def validate_inventory(
             errors.append(
                 f"{key[0]}:{key[1]}: manifest words_as_type_indexed_bitvec does not match its @[hol] tag"
             )
+        manifest_reals_as_rationals = bool(record.get("reals_as_rationals", False))
+        if manifest_reals_as_rationals != reals_as_rationals:
+            errors.append(
+                f"{key[0]}:{key[1]}: manifest reals_as_rationals does not match its @[hol] tag"
+            )
         manifest_dimension_width = record.get("word_dimension_as_width")
         if manifest_dimension_width != dimension_width:
             errors.append(
@@ -2308,11 +2321,46 @@ def validate_inventory(
         combined_relation_existential_words_status = (
             "reviewed_fmap_as_finite_support_relation_existentials_words_as_type_indexed_bitvec"
         )
-        if words_bitvec and fmap_fields and status != combined_words_status:
+        combined_words_reals_status = (
+            "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec_reals_as_rationals"
+        )
+        reals_statuses = {
+            "reviewed_reals_as_rationals",
+            "reviewed_reals_as_rationals_words_as_type_indexed_bitvec",
+            combined_words_reals_status,
+        }
+        if words_bitvec and fmap_fields and status not in {
+            combined_words_status,
+            combined_words_reals_status,
+        }:
             errors.append(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support combined with "
                 "words_as_type_indexed_bitvec requires the combined review status "
                 "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec"
+            )
+        if reals_as_rationals and status not in reals_statuses:
+            errors.append(
+                f"{key[0]}:{key[1]}: reals_as_rationals @[hol] tag needs a reals_as_rationals "
+                "review status"
+            )
+        if status in reals_statuses and not reals_as_rationals:
+            errors.append(
+                f"{key[0]}:{key[1]}: reals_as_rationals review status needs the matching "
+                "@[hol] qualifier"
+            )
+        if reals_as_rationals and dimension_width:
+            errors.append(
+                f"{key[0]}:{key[1]}: reals_as_rationals is mutually exclusive with "
+                "word_dimension_as_width"
+            )
+        if status == combined_words_reals_status and not (
+            words_bitvec and fmap_fields and reals_as_rationals
+        ):
+            errors.append(
+                f"{key[0]}:{key[1]}: "
+                "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec_reals_as_rationals "
+                "needs the fmap_as_finite_support, words_as_type_indexed_bitvec and "
+                "reals_as_rationals @[hol] qualifiers"
             )
         if words_bitvec and fmap_relation and status not in {
             combined_relation_words_status,
@@ -2384,7 +2432,9 @@ def validate_inventory(
             )
         if words_bitvec and status not in {
             "reviewed_words_as_type_indexed_bitvec",
+            "reviewed_reals_as_rationals_words_as_type_indexed_bitvec",
             combined_words_status,
+            combined_words_reals_status,
             combined_relation_words_status,
             combined_parameter_words_status,
             combined_existential_words_status,
@@ -2582,7 +2632,7 @@ def validate_inventory(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support @[hol] tag cannot have reviewed_exact "
                 "status; use reviewed_fmap_as_finite_support after source comparison"
             )
-        if fmap_fields and status != "reviewed_fmap_as_finite_support" and status != combined_words_status and status != combined_relation_words_status:
+        if fmap_fields and status != "reviewed_fmap_as_finite_support" and status != combined_words_status and status != combined_relation_words_status and status != combined_words_reals_status:
             errors.append(
                 f"{key[0]}:{key[1]}: fmap_as_finite_support @[hol] tag needs a reviewed "
                 "source classification (reviewed_fmap_as_finite_support, or the combined "

@@ -284,6 +284,45 @@ class HolTypeHashesTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "manifest qualifiers differ"):
             MODULE.lock_records(manifest, without_words)
 
+    def test_reals_as_rationals_qualifier_is_locked(self):
+        manifest = [{
+            **self.manifest[0],
+            "statement_status":
+                "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec_reals_as_rationals",
+            "fmap_as_finite_support": ["fpRegs", "store"],
+            "words_as_type_indexed_bitvec": True,
+            "reals_as_rationals": True,
+        }]
+        export = [{
+            **self.export[0],
+            "qualifiers": {
+                "fmap_as_finite_support": ["fpRegs", "store"],
+                "words_as_type_indexed_bitvec": True,
+                "reals_as_rationals": True,
+            },
+        }]
+        lock = MODULE.expected_lock(manifest, export, "leanprover/lean4:v4")
+        self.assertTrue(lock["records"][0]["qualifiers"]["reals_as_rationals"])
+        without_reals = [{
+            **export[0],
+            "qualifiers": {
+                "fmap_as_finite_support": ["fpRegs", "store"],
+                "words_as_type_indexed_bitvec": True,
+            },
+        }]
+        with self.assertRaisesRegex(ValueError, "manifest qualifiers differ"):
+            MODULE.lock_records(manifest, without_reals)
+
+    def test_reals_as_rationals_export_record_validates(self):
+        MODULE.validate_export_record(
+            {
+                "lean_name": "n", "hol_path": "p", "hol_name": "h",
+                "type_expr": "t",
+                "qualifiers": {"reals_as_rationals": True},
+            },
+            1,
+        )
+
     def test_words_as_type_indexed_bitvec_only_status_is_locked(self):
         manifest = [{
             **self.manifest[0],

@@ -78,6 +78,9 @@ FMAP_AS_FINITE_SUPPORT_EQUALITIES_RE = re.compile(
 WORDS_AS_TYPE_INDEXED_BITVEC_RE = re.compile(
     r'\(\s*words_as_type_indexed_bitvec\s*\)'
 )
+REALS_AS_RATIONALS_RE = re.compile(
+    r'\(\s*reals_as_rationals\s*\)'
+)
 WORD_DIMENSION_AS_WIDTH_RE = re.compile(
     r'\(\s*word_dimension_as_width\s*:=\s*([A-Za-z_][A-Za-z0-9_\']*)\s*\)'
 )
@@ -249,7 +252,8 @@ def find_lean_decl(lines: list[str], start: int) -> str:
 
 
 def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = False,
-                        include_word_dimension_width: bool = False):
+                        include_word_dimension_width: bool = False,
+                        include_reals_as_rationals: bool = False):
     """Yield HOL attributes, including attributes split across Lean lines."""
     comment_depth = 0
     start: int | None = None
@@ -315,6 +319,8 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                 if include_word_dimension_width:
                     width = WORD_DIMENSION_AS_WIDTH_RE.search(attribute)
                     site += (width.group(1) if width else None,)
+                if include_reals_as_rationals:
+                    site += (bool(REALS_AS_RATIONALS_RE.search(attribute)),)
                 yield site
         start = None
         chunks = []
@@ -2535,9 +2541,11 @@ def main(argv: list[str]) -> int:
         for (number, hol_path, hol_name, hol_line, list_fields,
              names_fields, boundary_fields, fmap_fields, fmap_result,
              fmap_relation, fmap_equalities, words_bitvec,
-             fmap_parameters, fmap_existentials, dimension_width) in hol_attribute_sites(
+             fmap_parameters, fmap_existentials, dimension_width,
+             reals_as_rationals) in hol_attribute_sites(
                 lines, include_fmap_existentials=True,
                 include_word_dimension_width=True,
+                include_reals_as_rationals=True,
              ):
             where = f"{rel}:{number}"
             lean_decl = find_lean_decl(lines, number - 1)

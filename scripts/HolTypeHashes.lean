@@ -307,7 +307,8 @@ elab "#emit_hol_type_hashes" : command => do
           ("fmap_as_finite_support_relation",
             toJson (ref.fmapAsFiniteSupportRelation.map (fun entry => if entry.1.isEmpty then entry.2 else s!"{entry.1}.{entry.2}"))),
           ("fmap_as_finite_support_equalities", toJson ref.fmapAsFiniteSupportEqualities),
-          ("words_as_type_indexed_bitvec", toJson ref.wordsAsTypeIndexedBitvec)]
+          ("words_as_type_indexed_bitvec", toJson ref.wordsAsTypeIndexedBitvec),
+          ("reals_as_rationals", toJson ref.realsAsRationals)]
         if let some width := ref.wordDimensionAsWidth then
           qualifiers := qualifiers ++ [("word_dimension_as_width", toJson width)]
         let mut fields : List (String × Json) := [

@@ -52,6 +52,7 @@ def validate_export_record(record: Any, line_number: int) -> dict[str, Any]:
         "fmap_as_finite_support_existentials",
         "fmap_as_finite_support_relation", "fmap_as_finite_support_equalities",
         "words_as_type_indexed_bitvec",
+        "reals_as_rationals",
         "word_dimension_as_width",
     }
     if not isinstance(qualifiers, dict) or not set(qualifiers) <= allowed_qualifiers:
@@ -60,7 +61,7 @@ def validate_export_record(record: Any, line_number: int) -> dict[str, Any]:
         (
             not isinstance(qualifiers.get(key), bool)
             if key in ("fmap_as_finite_support_result", "fmap_as_finite_support_equalities",
-                       "words_as_type_indexed_bitvec")
+                       "words_as_type_indexed_bitvec", "reals_as_rationals")
             else not isinstance(value, str)
             if key == "word_dimension_as_width"
             else not isinstance(value, list) or not all(isinstance(field, str) for field in value)
@@ -148,6 +149,9 @@ def lock_records(
             "reviewed_word_dimension_as_width",
             "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
             "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+            "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec_reals_as_rationals",
+            "reviewed_reals_as_rationals_words_as_type_indexed_bitvec",
+            "reviewed_reals_as_rationals",
         }:
             continue
         key = (record["hol_path"], record["hol_name"], record["lean_name"])
@@ -186,6 +190,8 @@ def lock_records(
             qualifiers["fmap_as_finite_support_equalities"] = True
         if record.get("words_as_type_indexed_bitvec", False):
             qualifiers["words_as_type_indexed_bitvec"] = True
+        if record.get("reals_as_rationals", False):
+            qualifiers["reals_as_rationals"] = True
         if record.get("word_dimension_as_width") is not None:
             qualifiers["word_dimension_as_width"] = record["word_dimension_as_width"]
         exported_qualifiers = item.get("qualifiers", {})
