@@ -112,6 +112,7 @@ import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Memory
 import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.ShMem
 import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call.Support
 import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call.TailCall
+import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call.NoHandler
 import Flapjack.Pancake.LoopLang.AssignedVars
 import Flapjack.Pancake.Semantics.LoopProps.AssignedVars
 import Flapjack.Pancake.Semantics.LoopProps.CutSets
