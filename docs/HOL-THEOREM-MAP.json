@@ -24006,5 +24006,30 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-c source comparison (2026-09-29, bead flapjack-pxn.18.5.9.15.4; loop_to_wordProofScript.sml:252-269): locals_rel_get_vars is ∀argvars argvals. locals_rel ctxt s.locals t.locals ∧ loopSem$get_vars argvars s = SOME argvals ⇒ wordSem$get_vars (MAP (find_var ctxt) argvars) t = SOME argvals ∧ LENGTH argvals = LENGTH argvars. The Lean declaration preserves the binders, conjunctive premise, both evaluator carriers, map order, success result, and length equality exactly. The finite-map relation qualifier separately names source globals and target fpRegs/store carriers present in the state signatures; words_as_type_indexed_bitvec records HOL's type-indexed word translation. Direct HOL theorem conclusions and successful/missing evaluator rows are captured in loop_to_word_locals_rel_probe.out and replayed in Flapjack.Test.LoopToWordLocalsRelLookupsParity."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "locals_rel_alist_insert",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/LocalsRelUpdates.lean",
+    "lean_name": "localsRelHOLAlistInsert",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.9.15.2) against loop_to_wordProofScript.sml:222-231. HOL quantifies vs/ws/lcl/lcl', assumes locals_rel ctxt lcl lcl' AND set vs SUBSET domain ctxt, and concludes locals_rel after alist_insert vs ws and alist_insert (MAP (find_var ctxt) vs) ws. Lean retains the conjunction premise and list binders, renders set inclusion as every List.mem name satisfying sptMem name context, uses the exact findVarHOL and localsRelHOL, and uses LoopSemStateFiniteExact.sptAlistInsert, the direct recursive rendering of external HOL sptree alist_insert_def (empty-list and shorter-list truncation included). The Spt and WordLocW carriers are exact; only HOL word to BitVec width has [NeZero width]. No list/array or finite-map qualifier applies. Empty and singleton update cases are kernel-checked in LoopToWordExactParity."
+  },
+  {
+    "hol_path": "cakeml/semantics/fpSemScript.sml",
+    "hol_name": "fpfma_def",
+    "lean_path": "Flapjack/FpSemHOL.lean",
+    "lean_name": "fpSemFpfma",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-h29l.6.2.2): HOL fpfma v1 v2 v3 = fp64_mul_add roundTiesToEven v2 v3 v1 (fpSemScript.sml:60-62), argument order preserved (v1 is the addend). HOL word64 is the fixed BitVec 64 and needs no width qualifier. fp64_mul_add is the untagged HOL standard-library rendering holFp64MulAdd = float_to_fp64 o SND o float_mul_add over fp64_to_float (machine_ieeeLib lift3). float_mul_add renders binary_ieeeScript.sml:692-722 clause for clause, including flags and the zero-sign rule, over the Classical.epsilon rendering of HOL's choice-based rounding and float_some_qnan, so the definition is noncomputable. Rows fma_pinf_product/fma_ninf_addend/fma_neg_inf_product of scripts/hol-probes/machine_ieee_fp64_arith_special_probe.out are kernel-checked in Flapjack.Test.MachineIeeeArithSpecialParity. Rounded finite results await the computable agreement of flapjack-h29l.6.2.3."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "find_var_neq_0_ctxt",
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/FindVarExact.lean",
+    "lean_name": "findVarNeZeroContextHOLExact",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-b source comparison (2026-09-29; bead flapjack-pxn.18.5.9.14.2) against loop_to_wordProofScript.sml:178-184. HOL has one conjunctive premise: (forall n m. lookup n ctxt = SOME m implies m <> 0 and EVEN m) and v IN domain ctxt, implying find_var ctxt v <> 0. Lean now preserves that single conjunction as one hypothesis, including the quantifier order and lookup direction. HOL ctxt is the exact spt num_map carrier rendered by Spt Nat; lookup is sptLookup, domain membership is sptMem with its kernel-checked equivalence to an existential successful lookup in Misc.Sptree, and find_var is the tagged findVarHOL definition (lookup default 0). HOL EVEN is rendered by % 2 = 0, matching the Spt lookup parity equations. No word, fmap, or list representation qualifier applies. A concrete nonzero even singleton context applies the theorem in LoopToWordExactParity."
   }
 ]
