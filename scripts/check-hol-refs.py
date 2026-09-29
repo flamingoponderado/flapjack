@@ -53,6 +53,9 @@ FMAP_AS_FINITE_SUPPORT_RESULT_RE = re.compile(
 FMAP_AS_FINITE_SUPPORT_PARAMS_RE = re.compile(
     r'\(\s*fmap_as_finite_support_parameters\s*:=\s*\[([^]]*)\]\s*\)'
 )
+FMAP_AS_FINITE_SUPPORT_EXISTENTIALS_RE = re.compile(
+    r'\(\s*fmap_as_finite_support_existentials\s*:=\s*\[([^]]*)\]\s*\)'
+)
 FMAP_AS_FINITE_SUPPORT_RELATION_RE = re.compile(
     r'\(\s*fmap_as_finite_support_relation\s*:=\s*\[([^]]*)\]\s*\)'
 )
@@ -229,7 +232,7 @@ def find_lean_decl(lines: list[str], start: int) -> str:
     return "?"
 
 
-def hol_attribute_sites(lines: list[str]):
+def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = False):
     """Yield HOL attributes, including attributes split across Lean lines."""
     comment_depth = 0
     start: int | None = None
@@ -275,7 +278,7 @@ def hol_attribute_sites(lines: list[str]):
                             entries.append((raw.strip(), ""))
                     return tuple(entries)
 
-                yield (
+                site = (
                     start,
                     hol_path,
                     hol_name,
@@ -290,6 +293,10 @@ def hol_attribute_sites(lines: list[str]):
                     bool(WORDS_AS_TYPE_INDEXED_BITVEC_RE.search(attribute)),
                     fields_for(FMAP_AS_FINITE_SUPPORT_PARAMS_RE),
                 )
+                if include_fmap_existentials:
+                    yield site + (fields_for(FMAP_AS_FINITE_SUPPORT_EXISTENTIALS_RE),)
+                else:
+                    yield site
         start = None
         chunks = []
         attribute_bracket_depth = 0
@@ -1376,6 +1383,72 @@ def fmap_as_finite_support_parameters_errors(
     return errors
 
 
+def fmap_as_finite_support_existentials_errors(
+    lines: list[str], module: str, declaration_text: str, decl_name: str,
+    binders: tuple[str, ...],
+) -> list[str]:
+    """Validate named existential HolFiniteMapExact binders.
+
+    This qualifier records only the representation of an existential HOL
+    finite-map witness. The existential scope and use remain part of the
+    tagged declaration and require source review.
+    """
+    errors: list[str] = []
+    if not binders:
+        return ["fmap_as_finite_support_existentials requires at least one binder"]
+    if len(set(binders)) != len(binders):
+        errors.append("fmap_as_finite_support_existentials has duplicate binders")
+    for binder in binders:
+        existential = re.compile(
+            r"∃\s*\(?\s*" + re.escape(binder)
+            + r"\s*:\s*HolFiniteMapExact\b"
+        )
+        if existential.search(declaration_text) is None:
+            errors.append(
+                "fmap_as_finite_support_existentials binder "
+                f"`{binder}` must be an existential typed HolFiniteMapExact"
+            )
+            continue
+        witness = f"holFmapAsFiniteSupportExistentialWitness_{decl_name}_{binder}"
+        source = strip_lean_comments("\n".join(lines))
+        pattern = re.compile(
+            rf"^\s*(?:@\[[\s\S]*?\]\s*)?(?:private\s+|protected\s+)?"
+            rf"(?:theorem|lemma)\s+{re.escape(witness)}\b"
+            rf"(?P<statement>[\s\S]*?):=",
+            re.M,
+        )
+        match = pattern.search(source)
+        if match is None:
+            errors.append(
+                "fmap_as_finite_support_existentials requires same-module "
+                f"canonical witness `{witness}` for binder `{binder}`"
+            )
+            continue
+        statement = match.group("statement")
+        has_roundtrip = (
+            re.search(r"ofBroad\s*[\(.A-Za-z_]", statement) is not None
+            and re.search(r"toBroad\s*(?:lookup)?\s*[\(.A-Za-z_]", statement) is not None
+            and re.search(r"lookup\s*[\(.A-Za-z_]", statement) is not None
+            and re.search(r"\.finiteSupport\b|finiteSupport\s*[\),]", statement) is not None
+        )
+        if (
+            not identifier_token_occurs(statement, binder)
+            or "HolFiniteMapExact" not in statement
+            or "lookup" not in statement
+            or "finiteSupport" not in statement
+            or "toBroad" not in statement
+            or "ofBroad" not in statement
+            or not has_roundtrip
+            or re.search(r"=\s*" + re.escape(binder) + r"\b", statement) is None
+        ):
+            errors.append(
+                "fmap_as_finite_support_existentials witness "
+                f"`{witness}` must state the canonical lookup/finiteSupport "
+                f"toBroad/ofBroad roundtrip for `{binder}`"
+            )
+    return errors
+
+
 def fmap_as_finite_support_equalities_witness_name(decl_name: str, index: int) -> str:
     return f"holFmapAsFiniteSupportEqualityWitness_{decl_name}_{index}"
 
@@ -2275,7 +2348,9 @@ def main(argv: list[str]) -> int:
         for (number, hol_path, hol_name, hol_line, list_fields,
              names_fields, boundary_fields, fmap_fields, fmap_result,
              fmap_relation, fmap_equalities, words_bitvec,
-             fmap_parameters) in hol_attribute_sites(lines):
+             fmap_parameters, fmap_existentials) in hol_attribute_sites(
+                 lines, include_fmap_existentials=True
+             ):
             where = f"{rel}:{number}"
             lean_decl = find_lean_decl(lines, number - 1)
             if module not in reachable and not module_reported:
@@ -2308,6 +2383,14 @@ def main(argv: list[str]) -> int:
                     for error in fmap_as_finite_support_parameters_errors(
                         lines, rel, tagged_declaration_text(lines, number),
                         lean_decl, fmap_parameters,
+                    )
+                )
+            if fmap_existentials:
+                errors.extend(
+                    f"{where}: {error}"
+                    for error in fmap_as_finite_support_existentials_errors(
+                        lines, module, tagged_declaration_text(lines, number),
+                        lean_decl, fmap_existentials,
                     )
                 )
             if fmap_result:

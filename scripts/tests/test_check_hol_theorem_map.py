@@ -353,13 +353,13 @@ class ReviewedSourceComparisonTest(unittest.TestCase):
         )
         self.assertEqual(exact["fmap_as_finite_support_parameters"], ["fm"])
         self.assertIs(exact["words_as_type_indexed_bitvec"], True)
-        self.assertEqual(tagged[exact_key][-1], ("fm",))
+        self.assertEqual(tagged[exact_key][10], ("fm",))
         props = by_key[props_key]
         self.assertEqual(
             props["statement_status"], "reviewed_fmap_as_finite_support_parameters"
         )
         self.assertEqual(props["fmap_as_finite_support_parameters"], ["fm", "fm2"])
-        self.assertEqual(tagged[props_key][-1], ("fm", "fm2"))
+        self.assertEqual(tagged[props_key][10], ("fm", "fm2"))
 
     def test_crep_assigned_vars_nested_seq_carrier_mismatch_is_documented(self):
         key = (
@@ -1611,6 +1611,51 @@ class ValidateInventoryTest(unittest.TestCase):
         self.assertEqual(record["statement_status"], "documented_mismatch")
         self.assertIn("String", record["reviewer"])
         self.assertNotIn(mismatch, MAP["tagged_declarations"]())
+
+
+class ExistentialFmapStatusTest(unittest.TestCase):
+    def _record(self, **overrides):
+        record = {
+            "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+            "hol_name": "code_inl_rel_def",
+            "lean_path": "Flapjack/Example.lean",
+            "lean_name": "codeInlRelExact",
+            "statement_status": "reviewed_fmap_as_finite_support_existentials",
+            "reviewer": "source comparison of HOL existential binder inl_bag",
+            "fmap_as_finite_support_existentials": ["inl_bag"],
+        }
+        record.update(overrides)
+        return record
+
+    def _tag(self, existentials=("inl_bag",)):
+        return {
+            ("Flapjack/Example.lean", "codeInlRelExact"): (
+                "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+                "code_inl_rel_def", (), (), (), (), False, (), False, False,
+                (), existentials,
+            )
+        }
+
+    def _errors(self, record, tagged):
+        return MAP["validate_inventory"]([record], set(), tagged, set())
+
+    def test_accepts_existential_map_status(self):
+        self.assertEqual(self._errors(self._record(), self._tag()), [])
+
+    def test_rejects_status_without_qualifier(self):
+        errors = self._errors(self._record(), self._tag(()))
+        self.assertTrue(any("needs a fmap_as_finite_support_existentials" in e for e in errors))
+
+    def test_requires_source_note_naming_binder(self):
+        errors = self._errors(
+            self._record(reviewer="reviewed without source comparison"), self._tag())
+        self.assertTrue(any("source-comparison note naming every existential binder" in e
+                            for e in errors))
+
+    def test_rejects_manifest_tag_disagreement(self):
+        errors = self._errors(
+            self._record(fmap_as_finite_support_existentials=["other"]), self._tag())
+        self.assertTrue(any("do not match its @[hol] tag" in e for e in errors))
 
 
 class StandaloneFmapResultStatusTest(unittest.TestCase):
