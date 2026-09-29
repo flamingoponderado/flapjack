@@ -8,9 +8,9 @@ It ports the recursive `Seq`, `If`, `Loop`, and `Mark` clauses of `comp_def`
 (lines 107-120 and 138), and the `Call` clauses (lines 145-166), over
 `HolLoopProg` and `WordLangProgHOL`. It delegates
 covered leaves to `compInitialHOL`, so `none` means a leaf constructor is not
-yet in the assembled partial port. This intentionally remains untagged and
-does not claim to define total HOL `comp`; the later clause slices must be
-assembled before that tag is appropriate.
+yet in the assembled partial port. This intentionally remains untagged; it is a
+superseded partial slice helper, not a HOL port. The reviewed total port of
+`comp_def` is the tagged `compHOL` in `Flapjack/Pancake/LoopToWord.lean`.
 
 The source clauses compile `Seq` children left-to-right while threading the
 label pair, compile `If` branches in the same order before appending `Tick`,
