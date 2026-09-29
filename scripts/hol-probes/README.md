@@ -73,6 +73,14 @@ lookups in the exact LoopSem and WordSem state carriers. The theorem ports are
 in `Flapjack.Pancake.Proofs.LoopToWord.LocalsRelLookups`; the kernel-checked
 replay is `Flapjack.Test.LoopToWordLocalsRelLookupsParity`. The earlier exact-
 carrier relation replay remains in `Flapjack.Test.LoopToWordExactParity`.
+`loop_to_word_take_word_to_bytes_probe.out` prints the proved HOL statement of
+`TAKE_1_word_to_bytes`
+(`cakeml/pancake/proofs/loop_to_wordProofScript.sml:1449-1451`) together with
+direct HOL EVAL rows for `TAKE 1 (word_to_bytes w F)` and `[get_byte 0w w F]`
+at the 32- and 64-bit dimensions admitted by `good_dimindex`; both sides agree
+on every row. The theorem port is `takeOneWordToBytesHOL` in
+`Flapjack.Pancake.Proofs.LoopToWord.WordToBytes`; the kernel-checked replay is
+`Flapjack.Test.LoopToWordTakeWordToBytesParity`.
 `loop_to_word_comp_exp_probe.out` records direct HOL EVAL rows for the exact
 loopLang-to-wordLang expression compiler `comp_exp_def` at
 `cakeml/pancake/loop_to_wordScript.sml:22-40`; its kernel-checked Lean replay
