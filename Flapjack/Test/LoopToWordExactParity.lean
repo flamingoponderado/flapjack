@@ -42,6 +42,45 @@ example : ¬ sptMem 0 (toNumSetHOL ([] : List Nat)) := by
   rw [sptDomain_toNumSetHOL]
   simp
 
+/-! The exact `make_ctxt` domain theorem includes empty, nonempty, and repeated
+names over the reviewed Spt context carrier. -/
+
+example {context : Spt Nat} (key : Nat) :
+    sptMem key (makeCtxtHOL 2 [] context) ↔ sptMem key context := by
+  change sptDomain (makeCtxtHOL 2 [] context) key ↔ _
+  rw [sptDomain_makeCtxtHOL]
+  simp [sptMem]
+
+example : sptMem 4 (makeCtxtHOL 2 [4, 6] (.ln : Spt Nat)) := by
+  change sptDomain (makeCtxtHOL 2 [4, 6] (.ln : Spt Nat)) 4
+  rw [sptDomain_makeCtxtHOL]
+  simp
+
+example : ¬ sptMem 9 (makeCtxtHOL 2 [4, 6, 4] (.ln : Spt Nat)) := by
+  change ¬ sptDomain (makeCtxtHOL 2 [4, 6, 4] (.ln : Spt Nat)) 9
+  rw [sptDomain_makeCtxtHOL]
+  simp [sptDomain, sptLookup]
+
+example : sptMem 4 (makeCtxtHOL 2 [4, 6, 4] (.ln : Spt Nat)) := by
+  change sptDomain (makeCtxtHOL 2 [4, 6, 4] (.ln : Spt Nat)) 4
+  rw [sptDomain_makeCtxtHOL]
+  simp
+
+/-! The exact `make_ctxt_inj` theorem covers repeated names as HOL does: the
+last insertion wins, and all names that successfully look up the same
+register must be equal. -/
+
+def makeCtxtInjProbe : Spt Nat := makeCtxtHOL 4 [7, 8, 7] (.ln : Spt Nat)
+
+#guard sptLookup 7 makeCtxtInjProbe == some 8
+#guard sptLookup 8 makeCtxtInjProbe == some 6
+
+example {x y v : Nat}
+    (hx : sptLookup x makeCtxtInjProbe = some v)
+    (hy : sptLookup y makeCtxtInjProbe = some v) : x = y := by
+  exact makeCtxtHOL_inj [7, 8, 7] (.ln : Spt Nat) 4
+    (by intro x y v hx hy; simp [sptLookup] at hx) x y v hx hy
+
 /-- Probe context `insert 3 7 (insert 5 9 LN)` over `num |-> num` spt. -/
 def probeContext : Spt Nat := sptInsert 3 7 (sptInsert 5 9 .ln)
 

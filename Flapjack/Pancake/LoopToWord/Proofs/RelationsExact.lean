@@ -1,4 +1,5 @@
 import Flapjack.Pancake.LoopToWord
+import Flapjack.Pancake.LoopToWord.CompFuncExact
 import Flapjack.Pancake.Semantics.LoopSemStateExact
 import Flapjack.Compiler.Backend.Semantics.WordSem.State
 
@@ -40,5 +41,78 @@ theorem loopToWordGlobalsRelIntroHOLExact {width : Nat} [NeZero width]
       ∀ n v, g1.lookup n = some v → g2.lookup (.temp n) = some v := by
   intro h n v hLookup
   exact h n v hLookup
+
+/-- Exact HOL `code_rel_def` from
+`cakeml/pancake/proofs/loop_to_wordProofScript.sml:33-39`: every source code
+entry `(params, body)` reached by `name` must be compiled to
+`(LENGTH params + 1, comp_func name params body)` in the target code table,
+and the parameter list must have no duplicates. The source code carrier is the
+`loopSem` state's `funname |-> (varname list # prog)` as a reviewed
+`Spt`, the target carrier is `wordSem`'s code `Spt` of
+`Nat × WordLangProgHOL`, and the compiled body uses the exact
+`loopToWordCompFuncHOL` port of HOL `comp_func`. -/
+@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "code_rel_def"
+  (words_as_type_indexed_bitvec)]
+def loopToWordCodeRelHOLExact {width : Nat} [NeZero width]
+    (sourceCode : Spt (List Nat × HolLoopProg width))
+    (targetCode : Spt (Nat × WordLangProgHOL (BitVec width))) : Prop :=
+  ∀ name params body,
+    sptLookup name sourceCode = some (params, body) →
+      sptLookup name targetCode =
+          some (params.length + 1, loopToWordCompFuncHOL name params body) ∧
+        params.Nodup
+
+/-! Exact finite-support relation qualifier support: the two state carriers named
+by `loopToWordStateRelHOLExact` own the finite-map fields `globals` and `store`.
+These same-module re-exports make their canonical kernel-checked roundtrips
+available to the tag checker without declaring another carrier. -/
+namespace LoopToWordStateRelWitnesses
+
+theorem holFmapAsFiniteSupportRelationWitness_LoopSemStateFiniteExact
+    {width : Nat} [NeZero width] {F : Type} :
+    (∀ (state : LoopSemStateBroad width F) (h : state.FiniteSupport),
+        (LoopSemStateBroad.ofBroad state h).toBroad = state) ∧
+      (∀ state : LoopSemStateFiniteExact width F,
+        LoopSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  LoopSemStateFiniteExact.holFmapAsFiniteSupportWitness
+
+theorem holFmapAsFiniteSupportRelationWitness_WordSemStateFiniteExact
+    {width : Nat} [NeZero width] {C F : Type} :
+    (∀ (state : WordSemStateBroad width C F) (h : state.FiniteSupport),
+        (WordSemStateBroad.ofBroad state h).toBroad = state) ∧
+      (∀ state : WordSemStateFiniteExact width C F,
+        WordSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  WordSemStateExact.holFmapAsFiniteSupportWitness
+
+end LoopToWordStateRelWitnesses
+
+/-- Exact HOL `state_rel_def` from
+`cakeml/pancake/proofs/loop_to_wordProofScript.sml:41-52`, over the exact
+`loopSem` and `wordSem` state carriers. It preserves the shared memory,
+domains, clock, endianness and FFI state; the target `store`'s `CurrHeap` and
+`HeapLength` entries for the source base address and an existential length; the
+top-address equation `top_addr = base_addr + 2w*len`; and the exact
+`globals_rel`/`code_rel` relations. Only the eligible finite-map fields
+`LoopSemStateFiniteExact.globals` and `WordSemStateFiniteExact.store` are named
+by the qualifier; `code` is an `Spt` tree map, not a `|->` finite map. -/
+@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "state_rel_def"
+  (fmap_as_finite_support_relation :=
+    [LoopSemStateFiniteExact.globals, WordSemStateFiniteExact.store])
+  (words_as_type_indexed_bitvec)]
+def loopToWordStateRelHOLExact {width : Nat} [NeZero width] {C F : Type}
+    (source : LoopSemStateFiniteExact width F)
+    (target : WordSemStateFiniteExact width C F) : Prop :=
+  ∃ len : Nat,
+    target.memory = source.memory ∧
+      target.mdomain = source.mdomain ∧
+      target.shMdomain = source.shMdomain ∧
+      target.clock = source.clock ∧
+      target.be = source.be ∧
+      target.ffi = source.ffi ∧
+      target.store.lookup .currHeap = some (.word source.baseAddr) ∧
+      target.store.lookup .heapLength = some (.word (BitVec.ofNat width len)) ∧
+      source.topAddr = source.baseAddr + (2 : BitVec width) * BitVec.ofNat width len ∧
+      loopToWordGlobalsRelHOLExact source.globals target.store ∧
+      loopToWordCodeRelHOLExact source.code target.code
 
 end Flapjack
