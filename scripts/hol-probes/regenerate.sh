@@ -2120,6 +2120,19 @@ run_probe crep_arith_store_glob_probeScript.sml crep_arith_store_glob_probe.out 
   storeglob_mapc_commute evaluate_storeglob_missing_var \
   "$cake_dir/pancake/proofs/crep_arithProofScript.sml" "$cake_dir/pancake/proofs"
 
+# The Store32 case of crep_arithProofScript.sml:184-212 `simp_prog_correct`.
+# HOL `simp_prog (Store32 exp1 exp2) = Store32 (simp_exp exp1) (simp_exp exp2)`
+# and `evaluate (Store32 dst src, s)` evaluate both operands into
+# `(NONE, s with memory := m)` through `mem_store_32` (or `(SOME Error, s)`);
+# the local `mapc` overload is inlined, and `store32_mapc_commute` pins the
+# code-only `mapc` commutation with the `memory` update.  The domain, alignment
+# and failed-operand rows pin the non-`Error` premise's failure branches.
+run_probe crep_arith_store_32_probeScript.sml crep_arith_store_32_probe.out \
+  simp_prog_store32 evaluate_store32_const evaluate_store32_mapc \
+  store32_mapc_commute evaluate_store32_domain_error \
+  evaluate_store32_unaligned_error evaluate_store32_missing_var \
+  "$cake_dir/pancake/proofs/crep_arithProofScript.sml" "$cake_dir/pancake/proofs"
+
 # The loopSem evaluate_ind statement (rebound through fix_clock_evaluate at
 # loopSemScript.sml:497) is likewise tdefn-generated; capture it for the exact
 # Lean port used by loop_liveProof compile_correct's `recInduct evaluate_ind`.
