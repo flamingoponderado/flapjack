@@ -86,6 +86,17 @@ in `Flapjack.Test.CrepToLoopSurvivesMapiAssignParity`. Regenerate with
 `CAKEML=/home/zksecurity/pancake-lean/cakeml
 HOL_PROBE_ONLY=crep_to_loop_survives_mapi_assign_probeScript.sml
 bash scripts/hol-probes/regenerate.sh`.
+`crep_to_loop_write_bytearray_mem_rel_probe.out` records direct HOL EVAL rows
+for both sides of `write_bytearray_mem_rel`
+(`cakeml/pancake/proofs/crep_to_loopProofScript.sml:251-256`):
+`panSem$write_bytearray` and `wordSem$write_bytearray` on the same address,
+three-byte list, domain (full and partial) and endianness from
+`wlab_wloc`-related 64-bit memories, read at both affected aligned words.
+The Lean replay, including the pointwise `mem_rel` conclusion, is
+`Flapjack.Test.CrepToLoopWriteBytearrayMemRelParity`. Regenerate with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=crep_to_loop_write_bytearray_mem_rel_probeScript.sml
+bash scripts/hol-probes/regenerate.sh`.
 `loop_props_survives_probe.out` records direct HOL EVAL rows for every clause
 of `survives_def` in `cakeml/pancake/semantics/loopPropsScript.sml:25-38`:
 If/Loop/Call (both handler forms)/FFI domain membership, recursive Mark and
