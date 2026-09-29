@@ -21582,6 +21582,74 @@
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "ncompile_correct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NCompileCorrect/Leaf.lean",
+    "lean_name": "ncompileCorrectSkipCase",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-29; bead flapjack-pxn.18.5.6.41) against ncompile_correct at crep_to_loopProofScript.sml:110-154 and Skip Resume case :1648-1653. This is the genuine Skip evaluate_ind case, retaining the source evaluation equation, non-Error premise, pre-state state_rel/mem_rel/globals_rel/code_rel/locals_rel, existential clock/result/target-state conclusion, target evaluation, all post relations, HOL result mapping, and result-indexed locals_rel. No target result, target evaluation, or post relation is assumed. Exact source/target evaluators, compiler, and relations are used. The source and target return the same leaf result and preserve their input states. The finite-map qualifier names the maps traversed by the state, context, and relation carriers; words_as_type_indexed_bitvec records the positive HOL word dimension as BitVec width."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "ncompile_correct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NCompileCorrect/Leaf.lean",
+    "lean_name": "ncompileCorrectBreakCase",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-29; bead flapjack-pxn.18.5.6.41) against ncompile_correct at crep_to_loopProofScript.sml:110-154 and Break Resume case :1655-1660. This is the genuine Break n evaluate_ind case, retaining the source evaluation equation, non-Error premise, pre-state state_rel/mem_rel/globals_rel/code_rel/locals_rel, existential clock/result/target-state conclusion, target evaluation, all post relations, HOL result mapping, and result-indexed locals_rel. No target result, target evaluation, or post relation is assumed. Exact source/target evaluators, compiler, and relations are used. The source and target return the same leaf result and preserve their input states. The finite-map qualifier names the maps traversed by the state, context, and relation carriers; words_as_type_indexed_bitvec records the positive HOL word dimension as BitVec width."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "ncompile_correct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NCompileCorrect/Leaf.lean",
+    "lean_name": "ncompileCorrectContinueCase",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-29; bead flapjack-pxn.18.5.6.41) against ncompile_correct at crep_to_loopProofScript.sml:110-154 and Continue Resume case :1662-1667. This is the genuine Continue n evaluate_ind case, retaining the source evaluation equation, non-Error premise, pre-state state_rel/mem_rel/globals_rel/code_rel/locals_rel, existential clock/result/target-state conclusion, target evaluation, all post relations, HOL result mapping, and result-indexed locals_rel. No target result, target evaluation, or post relation is assumed. Exact source/target evaluators, compiler, and relations are used. The source and target return the same leaf result and preserve their input states. The finite-map qualifier names the maps traversed by the state, context, and relation carriers; words_as_type_indexed_bitvec records the positive HOL word dimension as BitVec width."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "ncompile_correct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NCompileCorrect/Leaf.lean",
+    "lean_name": "ncompileCorrectTickCase",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-29; bead flapjack-pxn.18.5.6.41) against ncompile_correct at crep_to_loopProofScript.sml:110-154 and Tick Resume case :1669-1677. This is the genuine Tick evaluate_ind case, retaining the source evaluation equation, non-Error premise, pre-state state_rel/mem_rel/globals_rel/code_rel/locals_rel, existential clock/result/target-state conclusion, target evaluation, all post relations, HOL result mapping, and result-indexed locals_rel. No target result, target evaluation, or post relation is assumed. Exact source/target evaluators, compiler, and relations are used. The zero-clock branch clears locals on both sides and produces TimeOut; the positive branch decrements both clocks and preserves locals_rel. The finite-map qualifier names the maps traversed by the state, context, and relation carriers; words_as_type_indexed_bitvec records the positive HOL word dimension as BitVec width."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
     "hol_name": "write_bytearray_mem_rel",
     "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/WriteBytearrayMemRel.lean",
     "lean_name": "write_bytearray_mem_rel",
