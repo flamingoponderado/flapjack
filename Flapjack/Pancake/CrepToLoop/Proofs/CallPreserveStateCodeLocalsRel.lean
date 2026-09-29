@@ -42,16 +42,6 @@ private theorem getElem_le_foldr_max_zero (keys : List Nat) (index : Nat)
           simpa only [List.getElem_cons_succ, List.foldr_cons] using
             (Nat.le_trans (ih index hindex') (Nat.le_max_right head (tail.foldr max 0)))
 
-/-! The exact Crep evaluator needs decidability to execute set membership.
-HOL's evaluator has no such premise: this wrapper fixes a classical decision
-procedure locally instead of exposing `DecidablePred s.memaddrs` as a theorem
-hypothesis. -/
-noncomputable def crepToLoopEvalClassical {width : Nat} [NeZero width]
-    {σ : Type} (state : CrepSemHOLState width σ) (expression : CrepExpHOL width) :
-    Option (HolWordLab width) := by
-  classical
-  exact evalCrepSemHOLExp state expression
-
 namespace CrepToLoopCallPreserveWitnesses
 
 /-- Flapjack-only re-export of the exact context finite-support roundtrip for
@@ -86,8 +76,9 @@ end CrepToLoopCallPreserveWitnesses
 the pre-call `locals_rel ctxt nl s.locals st.locals`; the conclusion relates
 the freshly installed source/target callee locals under `ctxt_fc` and
 `list_to_num_set lns`.  `MAP (eval s) argexps = MAP SOME args` is kept as a
-map of per-expression results, with the membership decision made locally by
-`crepToLoopEvalClassical` rather than added as a premise. -/
+map of per-expression results over the decider-free exact `evalCrepSemHOLExp`
+(`eval_def`), and `MAP wlab_wloc args` uses the tagged `wlabWlocExact`
+(definitionally the `wlabWlocHOL` inside the tagged `locals_rel`). -/
 @[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml"
   "call_preserve_state_code_locals_rel"
   (fmap_as_finite_support_relation := [
@@ -110,21 +101,24 @@ theorem crepToLoopCallPreserveStateCodeLocalsRelExact
       crepToLoopLocalsRelExact ctxt nl s.locals st.locals →
       s.code.lookup fname = some (ns, prog) →
       ctxt.funcs.lookup fname = some (loc, lns.length) →
-      List.map (crepToLoopEvalClassical s) argexps = List.map some args →
+      List.map (evalCrepSemHOLExp s) argexps = List.map some args →
       let nctxt := ctxtFcExact ctxt.target ctxt.funcs ns lns
       crepToLoopStateRelExact
           ({ s with
             locals := HolFiniteMapExact.updateList HolFiniteMapExact.empty (ns.zip args),
             clock := s.clock - 1 })
           ({ st with
-            locals := sptFromAList (lns.zip (args.map wlabWlocHOL)),
+            locals := sptFromAList (lns.zip (args.map wlabWlocExact)),
             clock := st.clock - 1 }) ∧
         crepToLoopCodeRelExact nctxt s.code st.code ∧
         crepToLoopLocalsRelExact nctxt (listToNumSetHOLExact lns)
           (HolFiniteMapExact.updateList HolFiniteMapExact.empty (ns.zip args))
-          (sptFromAList (lns.zip (args.map wlabWlocHOL))) := by
+          (sptFromAList (lns.zip (args.map wlabWlocExact))) := by
   intro ns lns args s st ctxt nl fname argexps prog loc hns hlns hnslen hargslen
     hstate hmem hglobals hcode hlocals hsource hfunction hargs
+  have hw : (wlabWlocExact : HolWordLab width → WordLocW width) = wlabWlocHOL := by
+    funext v; cases v; rfl
+  rw [hw]
   let nctxt : CrepToLoopContextExact := ctxtFcExact ctxt.target ctxt.funcs ns lns
   refine ⟨?_, ?_, ?_⟩
   · simp only [crepToLoopStateRelExact] at hstate ⊢
