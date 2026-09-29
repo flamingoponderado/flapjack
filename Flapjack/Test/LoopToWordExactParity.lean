@@ -200,6 +200,21 @@ example : compInitialHOL (width := 8) compInitialContext compInitialLabels
     (.store (.var 10) 11) = none := by
   rfl
 
+example : compInitialHOL (width := 8) compInitialContext compInitialLabels
+    (.ffi (Flapjack.Basis.Pure.MlString.ofString "foo") 10 11 12 13
+      (sptInsert 6 () .ln)) =
+      some (.ffi (Flapjack.Basis.Pure.MlString.ofString "foo") 20 22 24 26
+        (mkNewCutsetHOL compInitialContext (sptInsert 6 () .ln), .ln),
+        compInitialLabels) := by
+  simp [compInitialHOL, findVarHOL, compInitialContext,
+    sptLookup_sptInsert_same, sptLookup_sptInsert_ne]
+
+example : compInitialHOL (width := 8) compInitialContext compInitialLabels
+    (.shMem .load 10 (.var 12)) =
+      some (.shareInst .load 20 (.var 24), compInitialLabels) := by
+  simp [compInitialHOL, compExpHOL, findVarHOL, compInitialContext,
+    sptLookup_sptInsert_same, sptLookup_sptInsert_ne]
+
 def compInitialProbeChecks : List Bool :=
   [ (match compInitialHOL (width := 8) compInitialContext compInitialLabels .skip with
       | some (.skip, (7, 11)) => true | _ => false),
@@ -248,6 +263,14 @@ def compInitialProbeChecks : List Bool :=
     (match compInitialHOL (width := 8) compInitialContext compInitialLabels
         (.locValue 10 3) with
       | some (.locValue 20 3, (7, 11)) => true | _ => false),
+    (match compInitialHOL (width := 8) compInitialContext compInitialLabels
+        (.ffi (Flapjack.Basis.Pure.MlString.ofString "foo") 10 11 12 13
+          (sptInsert 6 () .ln)) with
+      | some (.ffi _ 20 22 24 26 (cut, .ln), (7, 11)) => (sptLookup 0 cut).isSome
+      | _ => false),
+    (match compInitialHOL (width := 8) compInitialContext compInitialLabels
+        (.shMem .load 10 (.var 12)) with
+      | some (.shareInst .load 20 (.var 24), (7, 11)) => true | _ => false),
     (match compInitialHOL (width := 8) compInitialContext compInitialLabels
         (.store (.var 10) 11) with
       | none => true | _ => false) ]
@@ -320,7 +343,7 @@ def runChecks : IO Bool := do
         (sptLookup 2 (mkNewCutsetHOL probeContext probeLive) : Option Unit) ==
           originalCutsetAbsent),
       ("LoopToWord comp_exp_def exact HOL rows", compExpProbeChecks.all id),
-      ("LoopToWord comp_def initial and control/result constructor exact HOL rows",
+      ("LoopToWord comp_def initial, control/result and FFI/ShMem constructor exact HOL rows",
         compInitialProbeChecks.all id) ]
   let results ← checks.mapM fun (name, ok) => do
     if ok then

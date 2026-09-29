@@ -340,6 +340,12 @@ def compInitialHOL {width : Nat} [NeZero width] (context : Spt Nat)
   | .tick => some (.tick, labels)
   | .fail => some (.skip, labels)
   | .locValue n m => some (.locValue (findVarHOL context n) m, labels)
+  | .ffi function configuration configurationLength array arrayLength live =>
+      some (.ffi function (findVarHOL context configuration)
+        (findVarHOL context configurationLength) (findVarHOL context array)
+        (findVarHOL context arrayLength) (mkNewCutsetHOL context live, .ln), labels)
+  | .shMem operator name address =>
+      some (.shareInst operator (findVarHOL context name) (compExpHOL context address), labels)
   | _ => none
 
 end Flapjack.LoopToWord

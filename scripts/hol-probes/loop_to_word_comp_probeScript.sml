@@ -48,3 +48,10 @@ print_eval "comp_return" ``comp ^ctxt (loopLang$Return [10;11;12]) ^labels``;
 print_eval "comp_tick" ``comp ^ctxt loopLang$Tick ^labels``;
 print_eval "comp_fail" ``comp ^ctxt loopLang$Fail ^labels``;
 print_eval "comp_locValue" ``comp ^ctxt (loopLang$LocValue 10 3) ^labels``;
+
+(* comp_def FFI and ShMem clauses, loop_to_wordScript.sml:141-146 *)
+val liveSet = ``insert 6 () LN``;
+print_eval "comp_ffi" ``comp ^ctxt
+  (loopLang$FFI (strlit "foo") 10 11 12 13 ^liveSet) ^labels``;
+print_eval "comp_shMem" ``comp ^ctxt
+  (loopLang$ShMem Load 10 (loopLang$Var 12)) ^labels``;

@@ -51,7 +51,9 @@ is also `Flapjack.Test.LoopToWordExactParity`.
 constructor slice of `comp_def` at `cakeml/pancake/loop_to_wordScript.sml:56-77`
 and the simple control/result clauses at `:96-110`: Skip, Assign, valid and
 malformed AddCarry Primitive arities, all three Arith constructors, and
-Break/Continue/Raise/Return/Tick/Fail/LocValue. Its kernel-checked Lean replay
+Break/Continue/Raise/Return/Tick/Fail/LocValue, plus the FFI and ShMem clauses at
+`:141-146` (`comp_ffi` and `comp_shMem`, the latter compiling `ShMem` to
+`ShareInst`). Its kernel-checked Lean replay
 is in `Flapjack.Test.LoopToWordExactParity`; the partial helper is intentionally
 untagged until every `comp_def` clause has an exact Lean port.
 `loop_live_comp_probe.out` records direct HOL EVAL rows for
