@@ -1,4 +1,6 @@
 import Flapjack.Pancake.CrepToLoop.StateRel
+import Flapjack.FfiHOL
+import Flapjack.Misc.LprefixLub
 
 /-!
 # crep_to_loop `semantics_run_res` over the exact carrier
@@ -46,4 +48,27 @@ example : CrepToLoopSemanticsRunRes Nat := .RunError
 example (result : Nat) : CrepToLoopSemanticsRunRes Nat := .CompleteResult result
 example : CrepToLoopSemanticsRunRes Nat := .Incomplete
 
+
+open Classical in
+/-- Exact HOL `semantics_wrapper_def` (`crep_to_loopProofScript.sml:4132-4136`):
+    `semantics_wrapper f = (if ?k v. f k = (RunError, v) then Fail
+       else case some res. ?k r ev. f k = (CompleteResult r, ev) /\ res = Terminate r ev
+         of SOME res => res
+          | NONE => Diverge (LUB (IMAGE (fromList o SND o f) (UNIV : num set))))`.
+    HOL's arbitrary `f : num -> outcome semantics_run_res # io_event list` is kept with
+    no chain premise.  `some` is `holOptionSome` (HOL `some P = if ?x. P x then
+    SOME (@x. P x) else NONE`, Hilbert choice rendered by `Classical.choose` on the
+    same predicate), `LUB` is HOL's overload for `build_lprefix_lub`, rendered by
+    the chain-free `HolLList.buildLprefixLub` over HOL's exact `llist` subtype
+    `HolLList` (as in the tagged loopSem/crepSem `semantics_def`), and
+    `IMAGE g UNIV` is the predicate `fun l => ∃ k, l = g k`. -/
+@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "semantics_wrapper_def"]
+noncomputable def crepToLoopSemanticsWrapper
+    (f : Nat → CrepToLoopSemanticsRunRes HolOutcome × List HolIoEvent) : HolBehaviour :=
+  if ∃ k v, f k = (.RunError, v) then .fail
+  else
+    match holOptionSome (fun res => ∃ k r ev,
+        f k = (.CompleteResult r, ev) ∧ res = HolBehaviour.terminate r ev) with
+    | some res => res
+    | none => .diverge (HolLList.buildLprefixLub (fun l => ∃ k, l = HolLList.fromList (f k).2))
 end Flapjack
