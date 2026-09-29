@@ -223,5 +223,41 @@ theorem compileInlTopHOLExact_nil_map [BEq FunName] [LawfulBEq FunName]
       (compileInlTopHOL ([] : List FunName) functions).map decode := by
   rw [compileInlTopHOL_nil, compileInlTopHOLExact_nil]
 
+/-- Association-list agreement, generic half: `FUPDATE_LIST` distributes over
+list append (`FUPDATE_LIST` is `List.foldl FUPDATE`). -/
+theorem fupdateList_append {α β : Type} [BEq α] (f : FiniteMap α β)
+    (xs ys : List (α × β)) :
+    FUPDATE_LIST f (xs ++ ys) = FUPDATE_LIST (FUPDATE_LIST f xs) ys := by
+  induction xs generalizing f with
+  | nil => simp [FUPDATE_LIST]
+  | cons x xs ih => simp only [List.cons_append, FUPDATE_LIST_cons]; exact ih (FUPDATE f x)
+
+/-- `BEq` is symmetric under `LawfulBEq`. -/
+theorem beq_comm {α : Type} [BEq α] [LawfulBEq α] (a b : α) : (a == b) = (b == a) := by
+  by_cases h : a = b
+  · subst h; rfl
+  · have h1 : (a == b) = false := beq_eq_false_iff_ne.mpr h
+    have h2 : (b == a) = false := beq_eq_false_iff_ne.mpr (fun he => h he.symm)
+    rw [h1, h2]
+
+/-- Association-list agreement: the production inline-candidate index
+`crepInlineLookup` (first occurrence wins, `Pass.lean:22`) is the `FLOOKUP` of
+the `FUPDATE_LIST` map over the reversed entry list.  This is exactly the map
+read by the exact `alistToFmapHOLExact` (`Canonical.lean:612`, whose lookup is
+`FUPDATE_LIST FEMPTY entries.reverse`), so it is the carrier half of the
+executed-vs-exact candidate-index relation; the remaining half is the
+`toStringOfBytes` name codec. -/
+theorem crepInlineLookup_eq_fupdateList {α : Type} [BEq FunName] [LawfulBEq FunName]
+    (name : FunName) (entries : List (CrepInlineEntry α)) :
+    crepInlineLookup name entries =
+      FLOOKUP (FUPDATE_LIST (FEMPTY : FiniteMap FunName (List Nat × CrepProg α))
+        entries.reverse) name := by
+  induction entries with
+  | nil => rfl
+  | cons entry rest ih =>
+      rw [crepInlineLookup, List.reverse_cons, fupdateList_append]
+      rw [FUPDATE_LIST_cons, FUPDATE_LIST_nil, FLOOKUP_update]
+      rw [beq_comm name entry.1, ih]
+
 end CrepInlineRoute
 end Flapjack
