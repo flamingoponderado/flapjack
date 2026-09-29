@@ -21729,5 +21729,22 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.6.44): case piece `Raise eid` of ncompile_correct (crep_to_loopProofScript.sml:110-134 statement; Resume ncompile_correct[Raise] at 1750-1756; evaluate_ind's Raise case has no induction hypothesis). No extra antecedent: the payload eid (the crepLang 'a word) and v1, then HOL's ∀res s1 t ctxt l, all seven premises with v := Raise eid, and the full ∃ck res1 t1 conclusion as in the If piece. compile (Raise eid) = Seq (Assign (vmax+1) (Const eid)) (Raise (vmax+1)) (tagged compileHOLExact). The proof follows HOL: ck = 0; the source gives (SOME (Exception eid), empty_locals s); the target gives (SOME (Exception (Word eid)), call_env [] (set_var ...)), matching the result case; state/mem/globals/code relations carry over (locals-only updates); the locals case is T. Qualifiers as for the If piece."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "ncompile_correct",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NcompileCorrect.lean",
+    "lean_name": "crepToLoop_ncompile_correct_assign",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepToLoopContextExact.vars",
+      "CrepToLoopContextExact.funcs",
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code",
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-luna-b source comparison (2026-09-29; bead flapjack-pxn.18.5.6.48) against crep_to_loopProofScript.sml:110-134 and Resume ncompile_correct[Assign] at 2241-2277. evaluate_ind's Assign case has no induction hypothesis. With payload n/e then v1 and ∀res s1 t ctxt l, the Lean case keeps all seven HOL premises (source evaluate, res ≠ SOME Error, state_rel, mem_rel, globals_rel, code_rel, locals_rel) and the full existential ∃ck res1 t1 result with the same result conversion and locals postcondition; no target-success, pass-success, or extra context premise is introduced. Source review checked crepSemScript.sml:257-262: successful Assign requires the source local already be present, yielding the target register from locals_rel; compile_exp preserves e's value, and compile assigns the mapped target register. The proof mirrors HOL's comp_exp_preserves_eval, compile_exp_out_rel live-domain inclusion, final target assignment, and distinct_vars preservation of all other mapped locals. State/memory/globals/code facts are unchanged by the two local-only updates. Carriers and six finite-map fields use the same qualifiers as adjacent exact ncompile_correct cases; Crep and Loop words use the reviewed positive-width BitVec translation."
   }
 ]
