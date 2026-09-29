@@ -17,11 +17,12 @@ HOL proves it by `recInduct loopSemTheory.evaluate_ind` and resumes one case
 per constructor (`Resume compile_correct[Skip]`, ...).  The per-constructor
 lemmas below follow those cases, with HOL's quantifier order
 `∀v v1 res s1 lt locals prog1 l1 l0` (constructor payload in place of `v`), all
-four premises and the full conclusion.  They are Flapjack-only auxiliary lemmas,
-not ports of HOL declarations and not case pieces in the `AGENTS.md` sense:
-their sub-program hypotheses are the ones the Lean lexicographic
-`(clock, program size)` assembly supplies, not `evaluate_ind`'s, so they carry
-no `@[hol]` tag.  The tag is on the assembled `loopLive_compile_correct`
+four premises and the full conclusion. The leaf `Skip` case below has no
+sub-program induction hypotheses; after specializing `v = Skip`, it is exactly
+the HOL `evaluate_ind` case and carries its own `@[hol]` tag. The recursive
+constructor helpers remain Flapjack-only auxiliaries: their sub-program
+hypotheses are the ones the Lean lexicographic `(clock, program size)` assembly
+supplies, not `evaluate_ind`'s. The assembled theorem also retains its own tag
 (bead `flapjack-pxn.18.5.8.1.9`).
 -/
 
@@ -107,9 +108,16 @@ private theorem getVars_locals_agree {width : Nat} [NeZero width] {F : Type}
             getVars_locals_agree v1 locals ns ws (fun m hm => hag m (List.mem_cons_of_mem _ hm)) hr]
           simpa using h
 
-/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
-    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `Skip` (`loop_liveProofScript.sml:17-37` statement;
-    `Resume compile_correct[Skip]` at 66-69). -/
+/-- Exact `evaluate_ind` leaf case of HOL `compile_correct` for `Skip`
+    (`loop_liveProofScript.sml:17-37`; `Resume compile_correct[Skip]` at
+    66-69). Specializing HOL's constructor variable to `Skip` leaves the
+    binders `v1 res s1 lt locals prog1 l1 l0`, all four premises, and the full
+    existential/eight-way result conclusion shown here. This leaf has no
+    recursive sub-program induction hypotheses; the lexicographic assembly
+    adds none to it. The state `globals` map and word carrier use only the
+    reviewed finite-support and type-indexed BitVec translations. -/
+@[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 theorem loopLive_compile_correct_skip {width : Nat} [NeZero width] {F : Type} :
     ∀ (v1 : LoopSemStateFiniteExact width F),
     ∀ (res : Option (LoopResultExact width)) (s1 : LoopSemStateFiniteExact width F)
