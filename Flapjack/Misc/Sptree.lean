@@ -829,4 +829,12 @@ def sptFromAList {α : Type} : List (Nat × α) → Spt α
   | [] => .ln
   | (key, value) :: entries => sptInsert key value (sptFromAList entries)
 
+/-- Exact HOL `misc$fromList2_def` (`cakeml/misc/miscScript.sml:351-353`):
+    `fromList2 l = SND (FOLDL (\(i,t) a. (i + 2, insert i a t)) (0,LN) l)`,
+    which inserts the list elements at the even keys `0, 2, 4, …`. -/
+@[hol "cakeml/misc/miscScript.sml" "fromList2_def"]
+def sptFromList2 {α : Type} (values : List α) : Spt α :=
+  (values.foldl (fun (acc : Nat × Spt α) value => (acc.1 + 2, sptInsert acc.1 value acc.2))
+    (0, .ln)).2
+
 end Flapjack

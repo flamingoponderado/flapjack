@@ -2,6 +2,8 @@ import Flapjack.Compiler.Backend.BackendCommon
 import Flapjack.Compiler.Backend.Semantics.WordSem
 import Flapjack.Compiler.Backend.Semantics.WordSem.State
 import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
+import Flapjack.Compiler.Backend.Semantics.WordSem.Env
+import Flapjack.Basis.Pure.MlList
 import Flapjack.Compiler.Backend.RegAlloc
 import Flapjack.AstHOL
 import Flapjack.Compiler.Backend.StackLang
