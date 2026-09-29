@@ -22462,12 +22462,30 @@
     "reviewer": "Source comparison (2026-09-29; bead flapjack-pxn.18.5.4.8): HOL crep_arithProofScript.sml:184-212 quantifies p,s,r,s', assumes evaluate (p,s)=(r,s') and r<>SOME Error, and concludes evaluate (simp_prog p,mapcs s)=(r,mapcs s'). This is exactly its evaluate_ind Tick leaf, specializing p to Tick; no induction hypothesis is present. Lean preserves the two premises and full result/post-state equation. HOL simp_prog leaves Tick unchanged; evaluate yields TimeOut with empty_locals when the clock is zero and NONE with dec_clock otherwise (crepSemScript.sml:327-329). The Lean proof handles both exact evaluator branches and proves mapcs commutes with emptyLocals and decClock because it changes only code. State and word qualifiers match the exact carriers."
   },
   {
+    "hol_path": "cakeml/pancake/proofs/crep_arithProofScript.sml",
+    "hol_name": "simp_prog_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrect/Assign.lean",
+    "lean_name": "simpProgCorrectAssignCase",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison (2026-09-29; bead flapjack-pxn.18.5.4.13): HOL crep_arithProofScript.sml:184-212 states evaluate (p,s)=(r,s') and r<>SOME Error, concluding evaluate (simp_prog p,mapcs s)=(r,mapcs s'). This is the nonrecursive evaluate_ind Assign leaf. HOL crepSemScript.sml:260-266 evaluates src, requires an existing local binding, then updates locals with |+; failed expression/local lookup returns Error and the unchanged state. The Lean case keeps both original premises and the complete result/post-state conclusion over CrepSemHOLState, evalCrepSemHOLProgExact and exact crepSimpProgHOL. It applies the tagged simp_exp_correct to the code-only mapcs update and preserves the local update. The only carrier qualifiers are finite-support locals/globals/code and width-indexed BitVec, with a same-module roundtrip witness."
+  },
+  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrect.lean",
     "lean_name": "holFmapAsFiniteSupportWitness",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack same-module canonical finite-support witness for simp_prog_correct case qualifiers; it re-exports the existing CrepSemHOLState/CrepSemBroadState toBroad/ofBroad roundtrip and does not add a carrier or a HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrect/Assign.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module canonical finite-support witness for simpProgCorrectAssignCase: the exact state and broad counterpart roundtrip through toBroad/ofBroad; this is Flapjack representation infrastructure, not a HOL declaration."
   },
   {
     "hol_path": null,
@@ -22554,5 +22572,62 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-c source comparison (2026-09-29; bead flapjack-pxn.18.5.5.38.1) against crepPropsScript.sml:1252-1260. HOL universally quantifies p, t, res, st and assumes only evaluate (p,t) = (res,st), concluding st.code = t.code. Lean has the same arbitrary program, input state, result and output state with evalCrepSemHOLProgExact t p = (res,st) as its sole premise and st.code = t.code as conclusion; there is no successful-result premise or post-state hypothesis. The state carrier is the same parameterized FFI-state carrier and the exact Crep evaluator. The proof follows the exact evaluator induction clauses, including recursive Call handlers, and uses no extra semantic hypothesis. CrepSemHOLState locals/globals/code are the canonical HolFiniteMapExact translation witnessed by the same-module toBroad/ofBroad roundtrip; words_as_type_indexed_bitvec records HOL positive-width words as BitVec width under [NeZero width]."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
+    "lean_name": "crepArithLookupCodeNativeHOL",
+    "hol_path": "cakeml/pancake/proofs/crep_arithProofScript.sml",
+    "hol_name": "lookup_code",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "c"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.4.12): HOL local lookup_code (crep_arithProofScript.sml:162-164): lookup_code (FMAP_MAP2 (\\(s,n,p). (n, simp_prog p)) c) fname args len = OPTION_MAP (simp_prog ## I) (lookup_code c fname args len), with c fname args len free and no premise. Lean crepArithLookupCodeNativeHOL binds c : HolFiniteMapExact MlString (List Nat × CrepProgHOL width) (HOL funname |-> varname list # prog, the canonical finite-support carrier, recorded by the standalone relation-qualifier entry c), fname : MlString, args : List HolWordLab and len : Nat, and states lookupCodeHOL (c.map2 (fun (_, n, p) => (n, crepSimpProgHOL p))).lookup fname args len = (lookupCodeHOL c.lookup fname args len).map (Prod.map crepSimpProgHOL id). Carriers: lookup_code is the tagged lookupCodeHOL (crepSemScript.sml:76-84) read through the map's lookup function, exactly as the tagged Crep evaluator reads s.code. FMAP_MAP2 is HolFiniteMapExact.map2 (key-aware value map, the same encoding used by CrepSemHOLState.mapc), simp_prog is the tagged crepSimpProgHOL, f ## I is Prod.map f id, and names are exact MlString. It has the same equality and no side condition. The proof follows HOL's: unfold lookup_code, FLOOKUP of the mapped map, and case on the lookup and the length/ALL_DISTINCT guard. words_as_type_indexed_bitvec for BitVec width with NeZero. The untagged companion crepArithLookupCodeHOLFinite_mapcs restates it at the evaluator's lookupCodeHOLFinite on (mapcs s).code. The production-carrier variants crepArithLookupCodeSimpProg/W remain documented_mismatch. Axioms: propext, Quot.sound."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
+    "lean_name": "crepArithLookupCodeHOLFinite_mapcs",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only companion (bead flapjack-pxn.18.5.4.12) of the tagged crepArithLookupCodeNativeHOL (HOL local lookup_code, crep_arithProofScript.sml:162). It restates that lemma at the untagged finite-support wrapper lookupCodeHOLFinite that the tagged Crep evaluator's Call clause applies to (mapcs s).code: the simp_prog-mapped lookup returns the simplified body with the same callee locals. It is not a HOL declaration; it bridges the wrapper for native simp_prog_correct Call/DecCall cases."
+  }
+,
+{
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrectPrimitiveRaise.lean",
+    "lean_name": "simpProgCorrectPrimitiveCase",
+    "hol_path": "cakeml/pancake/proofs/crep_arithProofScript.sml",
+    "hol_name": "simp_prog_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison (2026-09-29; bead flapjack-pxn.18.5.4.9; PR #1174 review): HOL simp_prog_correct (cakeml/pancake/proofs/crep_arithProofScript.sml:184-212) states !p s r s'. evaluate (p,s) = (r,s') ==> r <> SOME Error ==> evaluate (simp_prog p, mapcs s) = (r, mapcs s'). The Primitive case keeps the source evaluation equation, the r <> SOME Error premise, and the target conclusion over the exact CrepProgHOL/CrepSemHOLState/CrepResultHOLExact carriers and the tagged exact crepSimpProgHOL; simp_prog leaves Primitive unchanged. The code-only mapcs update commutes with the locals/empty_locals changes, so the post-state equality is derived from the source equation and no target-result assumption or simp_exp_correct IH is used. The named finite-map fields are the exact carrier's locals/globals/code with holFmapAsFiniteSupportWitness supplying the roundtrip, and the positive BitVec width represents HOL's word dimension. Direct HOL oracle rows: scripts/hol-probes/crep_arith_probe.out."
+  },
+{
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrectPrimitiveRaise.lean",
+    "lean_name": "simpProgCorrectRaiseCase",
+    "hol_path": "cakeml/pancake/proofs/crep_arithProofScript.sml",
+    "hol_name": "simp_prog_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison (2026-09-29; bead flapjack-pxn.18.5.4.9; PR #1174 review): HOL simp_prog_correct (cakeml/pancake/proofs/crep_arithProofScript.sml:184-212) states !p s r s'. evaluate (p,s) = (r,s') ==> r <> SOME Error ==> evaluate (simp_prog p, mapcs s) = (r, mapcs s'). The Raise case keeps the source evaluation equation, the r <> SOME Error premise, and the target conclusion over the exact CrepProgHOL/CrepSemHOLState/CrepResultHOLExact carriers and the tagged exact crepSimpProgHOL; simp_prog leaves Raise unchanged. The code-only mapcs update commutes with the locals/empty_locals changes, so the post-state equality is derived from the source equation and no target-result assumption or simp_exp_correct IH is used. The named finite-map fields are the exact carrier's locals/globals/code with holFmapAsFiniteSupportWitness supplying the roundtrip, and the positive BitVec width represents HOL's word dimension. Direct HOL oracle rows: scripts/hol-probes/crep_arith_probe.out."
+  },
+{
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrectPrimitiveRaise.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module canonical finite-support witness re-export for the CrepSemHOLState carrier used by the Primitive/Raise case tags; no separate HOL declaration."
   }
 ]

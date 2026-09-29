@@ -200,6 +200,7 @@ import Flapjack.Test.CrepShMemHOLParity
 import Flapjack.Test.CrepArithShMemOpCodeParity
 import Flapjack.Test.CrepMemoryRelParity
 import Flapjack.Test.CrepSemStateExactParity
+import Flapjack.Test.CrepSemNonFailStartLookupParity
 import Flapjack.Test.CrepFuelCutoffParity
 import Flapjack.Test.PanToCrepGlobalsLookupParity
 import Flapjack.Test.PanToCrepCallExceptionParity
