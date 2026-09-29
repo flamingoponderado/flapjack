@@ -209,6 +209,7 @@ import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call.NoHandler
 import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call.HandlerTail
 import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call.SomeHandler
 import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Call
+import Flapjack.Pancake.LoopToWord.Proofs.CompileCorrect.Assembly
 import Flapjack.PanObservationalSemantics
 import Flapjack.PanMrec
 import Flapjack.PanHProgDec
@@ -489,6 +490,7 @@ import Flapjack.Pancake.LoopToWord.Proofs.RelationsExact
 import Flapjack.Pancake.LoopToWord.Proofs.FindVarExact
 import Flapjack.Pancake.LoopToWord.MakeCtxtExact
 import Flapjack.Pancake.LoopToWord.CompFuncExact
+import Flapjack.Test.LoopToWordProductionRouteParity
 import Flapjack.Pancake.LoopLang.AssignedVars
 import Flapjack.Pancake.Semantics.LoopProps.AssignedVars
 import Flapjack.Test.LoopExactAssignedVarsParity
