@@ -46,6 +46,44 @@ theorem mapMap2FstHOL {α β γ : Type} :
   exact panMap2_fst_eq
     (fun _ y => (List.range y.2.1.length, h y.2.1 y.2.2)) xs ys hlen
 
+/-- Flapjack-only list infrastructure: mapping an injective function preserves
+    `List.Nodup`. This generic helper has no standalone HOL declaration. -/
+private theorem nodupMapInjective {α β : Type} (f : α → β)
+    (hf : Function.Injective f) : ∀ xs : List α, xs.Nodup → (xs.map f).Nodup
+  | [], _ => by simp
+  | head :: tail, h => by
+      have hcons := List.nodup_cons.mp h
+      simp only [List.map_cons, List.nodup_cons]
+      constructor
+      · intro hmem
+        rcases List.mem_map.mp hmem with ⟨other, hother, heq⟩
+        have hsame : head = other := hf heq.symm
+        cases hsame
+        exact hcons.1 hother
+      · exact nodupMapInjective f hf tail hcons.2
+
+/-- Exact HOL `first_compile_prog_all_distinct`
+    (`crep_to_loopProofScript.sml:3832-3838`): every compiled program label is
+    distinct. The binders `c, crep_code` and the unqualified conclusion are
+    preserved over `compileProgHOLExact`; only its positive word width uses the
+    reviewed width-indexed BitVec translation. -/
+@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "first_compile_prog_all_distinct"
+  (words_as_type_indexed_bitvec)]
+theorem firstCompileProgAllDistinctExact {width : Nat} [NeZero width] :
+    ∀ (c : Compiler.Encoders.Asm.AsmArchitecture)
+      (crep_code : List (Basis.Pure.MlString.MlString × List Nat × CrepProgHOL width)),
+      ((compileProgHOLExact c crep_code).map Prod.fst).Nodup := by
+  intro c crep_code
+  have hkeys : (compileProgHOLExact c crep_code).map Prod.fst =
+      (List.range crep_code.length).map (fun i => i + firstLoopName) := by
+    simp only [compileProgHOLExact]
+    exact map_fst_zipWith_pair _ _ _ (by simp)
+  rw [hkeys]
+  apply nodupMapInjective (fun i : Nat => i + firstLoopName)
+  · intro i j hij
+    exact Nat.add_right_cancel hij
+  · exact List.nodup_range
+
 /-- A successful lookup in the HOL equality fold over a reversed association
 list must come from an entry in the original list. This is local infrastructure
 for the exact `make_funcs` lemma below. -/
