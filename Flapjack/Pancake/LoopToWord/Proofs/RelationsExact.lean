@@ -62,4 +62,57 @@ def loopToWordCodeRelHOLExact {width : Nat} [NeZero width]
           some (params.length + 1, loopToWordCompFuncHOL name params body) ∧
         params.Nodup
 
+/-! Exact finite-support relation qualifier support: the two state carriers named
+by `loopToWordStateRelHOLExact` own the finite-map fields `globals` and `store`.
+These same-module re-exports make their canonical kernel-checked roundtrips
+available to the tag checker without declaring another carrier. -/
+namespace LoopToWordStateRelWitnesses
+
+theorem holFmapAsFiniteSupportRelationWitness_LoopSemStateFiniteExact
+    {width : Nat} [NeZero width] {F : Type} :
+    (∀ (state : LoopSemStateBroad width F) (h : state.FiniteSupport),
+        (LoopSemStateBroad.ofBroad state h).toBroad = state) ∧
+      (∀ state : LoopSemStateFiniteExact width F,
+        LoopSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  LoopSemStateFiniteExact.holFmapAsFiniteSupportWitness
+
+theorem holFmapAsFiniteSupportRelationWitness_WordSemStateFiniteExact
+    {width : Nat} [NeZero width] {C F : Type} :
+    (∀ (state : WordSemStateBroad width C F) (h : state.FiniteSupport),
+        (WordSemStateBroad.ofBroad state h).toBroad = state) ∧
+      (∀ state : WordSemStateFiniteExact width C F,
+        WordSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  WordSemStateExact.holFmapAsFiniteSupportWitness
+
+end LoopToWordStateRelWitnesses
+
+/-- Exact HOL `state_rel_def` from
+`cakeml/pancake/proofs/loop_to_wordProofScript.sml:41-52`, over the exact
+`loopSem` and `wordSem` state carriers. It preserves the shared memory,
+domains, clock, endianness and FFI state; the target `store`'s `CurrHeap` and
+`HeapLength` entries for the source base address and an existential length; the
+top-address equation `top_addr = base_addr + 2w*len`; and the exact
+`globals_rel`/`code_rel` relations. Only the eligible finite-map fields
+`LoopSemStateFiniteExact.globals` and `WordSemStateFiniteExact.store` are named
+by the qualifier; `code` is an `Spt` tree map, not a `|->` finite map. -/
+@[hol "cakeml/pancake/proofs/loop_to_wordProofScript.sml" "state_rel_def"
+  (fmap_as_finite_support_relation :=
+    [LoopSemStateFiniteExact.globals, WordSemStateFiniteExact.store])
+  (words_as_type_indexed_bitvec)]
+def loopToWordStateRelHOLExact {width : Nat} [NeZero width] {C F : Type}
+    (source : LoopSemStateFiniteExact width F)
+    (target : WordSemStateFiniteExact width C F) : Prop :=
+  ∃ len : Nat,
+    target.memory = source.memory ∧
+      target.mdomain = source.mdomain ∧
+      target.shMdomain = source.shMdomain ∧
+      target.clock = source.clock ∧
+      target.be = source.be ∧
+      target.ffi = source.ffi ∧
+      target.store.lookup .currHeap = some (.word source.baseAddr) ∧
+      target.store.lookup .heapLength = some (.word (BitVec.ofNat width len)) ∧
+      source.topAddr = source.baseAddr + (2 : BitVec width) * BitVec.ofNat width len ∧
+      loopToWordGlobalsRelHOLExact source.globals target.store ∧
+      loopToWordCodeRelHOLExact source.code target.code
+
 end Flapjack
