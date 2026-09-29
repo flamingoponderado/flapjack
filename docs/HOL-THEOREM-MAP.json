@@ -11440,6 +11440,33 @@
     "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.9.16.3) against loop_to_wordProofScript.sml:296-300. HOL quantifies xs, l, n, assumes for all x y v that two lookups of the same SOME v in l imply x=y and v<n, and concludes that two lookups of the same SOME v in make_ctxt n xs l imply x=y. Lean keeps that same result variable v, quantifier order, bound, and conclusion over the exact Spt Nat carrier; makeCtxtHOL and sptInsert are the exact tagged HOL definitions. No ALL_DISTINCT, extra premise, changed lookup result shape, or carrier qualifier is introduced. The proof establishes HOL's induction obligation that inserting the next register preserves injectivity below next+2. Regression exercises repeated names [7,8,7], where the last insertion maps 7 to 8 and 8 to 6."
   },
   {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "make_ctxt_APPEND",
+    "hol_line": 309,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "makeCtxtHOL_append",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.9.16.4) against the local HOL theorem at loop_to_wordProofScript.sml:309-315. HOL states that mapping xs ++ ys from n equals mapping ys from n + 2 * LENGTH xs over the context after mapping xs from n. Lean preserves xs/ys/n/context order, append orientation, the exact +2*length register offset, and equality over the same Spt Nat carrier. makeCtxtHOL is the exact tagged production-counterpart definition; no assumptions or carrier qualifiers were introduced. The regression splits [7,8] from [8,9], including a repeated name across the split, and checks the resulting register lookup."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "make_ctxt_NOT_MEM",
+    "hol_line": 317,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "makeCtxtHOL_notMem",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.9.16.5) against the local HOL theorem at loop_to_wordProofScript.sml:317-321. HOL states that for all xs/n/l/x, nonmembership of x in xs implies lookup x after make_ctxt equals lookup x in l. Lean keeps the same list-membership premise and Option lookup equality over exact Spt Nat, using the same tagged makeCtxtHOL and sptInsert definitions. No bounds, freshness conditions beyond the HOL nonmembership premise, or representation qualifiers are added. Focused regression checks absent key 9 through [4,6,4]."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "lookup_make_ctxt_range",
+    "hol_line": 331,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/ContextSupport.lean",
+    "lean_name": "makeCtxtHOL_lookupRange",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.9.16.6) against loop_to_wordProofScript.sml:331-339. HOL quantifies xs, m, l, n, y; from lookup n (make_ctxt m xs l) = SOME y it concludes lookup n l = SOME y or m <= y. Lean preserves this order, the same lookup result/value, the source disjunction order and Nat bound over exact Spt Nat. The proof mirrors the HOL induction using same-key insertion, distinct-key lookup preservation and monotonicity of m+2. No freshness or additional assumptions are imposed. Regression checks all results from [5,6] started at 4 are at least 4 and observes registers 4 and 6."
+  },
+  {
     "hol_path": "cakeml/pancake/pan_commonScript.sml",
     "hol_name": "distinct_lists_def",
     "lean_path": "Flapjack/Pancake/PanCommon.lean",
@@ -24070,7 +24097,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/LocalsRelUpdates.lean",
     "lean_name": "localsRelHOLFromAListToAList",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific private transport lemma: replaces the target Spt by fromAList (toAList env) in localsRelHOL using the unrestricted Spt lookup roundtrip. It is proof infrastructure for the tagged locals_rel_alist_insert_toAList theorem, not a separate HOL declaration."
+    "reviewer": "Flapjack-specific private transport lemma for localsRelHOLAlistInsertToAList: replaces the target Spt by fromAList (toAList env) in localsRelHOL and lifts the relation using the unrestricted external HOL lookup_fromAList_toAList fact. There is no separate CakeML declaration for this helper; it is proof infrastructure for tagged locals_rel_alist_insert_toAList, not an exact HOL port."
   },
   {
     "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",

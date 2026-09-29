@@ -306,6 +306,7 @@ import Flapjack.Semantics
 import Flapjack.CrepeSemantics
 import Flapjack.CrepeGlobalAddress
 import Flapjack.Pancake.Semantics.CrepSem
+import Flapjack.Pancake.Semantics.CrepSem.Log2ZeroParametric
 import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
 import Flapjack.Pancake.Semantics.CrepSem.EvaluateInd
 import Flapjack.Pancake.Semantics.CrepSem.EventsMono
@@ -448,6 +449,7 @@ import Flapjack.Test.CrepToLoopCompFuncParity
 import Flapjack.Test.CrepFindLabParity
 import Flapjack.Pancake.LoopLive
 import Flapjack.Pancake.LoopToWord
+import Flapjack.Pancake.LoopToWord.ExpCarrierCodec
 import Flapjack.Pancake.LoopToWord.Proofs.RelationsExact
 import Flapjack.Pancake.LoopToWord.Proofs.FindVarExact
 import Flapjack.Pancake.LoopToWord.MakeCtxtExact
