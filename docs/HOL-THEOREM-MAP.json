@@ -103,7 +103,7 @@
     "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
     "fmap_as_finite_support": ["locals", "globals", "code"],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "Source comparison (2026-09-29; bead flapjack-pxn.18.5.4.2.23): HOL simp_exp_correct1 (crep_arithProofScript.sml:111) universally quantifies s, exp, and unused v; assumes eval s exp <> NONE; and concludes eval (mapc f s) (simp_exp exp) = eval s exp. This Load case keeps that successful full-Load premise, the polymorphic unused result binder, full optional word_lab equality, and code-only mapc. Its recursive IH is generalized over the state and unused result binder for the address expression, matching eval_ind; it adds no target-success, target-result, post-state, or context premise. HOL eval_def (crepSemScript.sml:93-95) evaluates the address and calls mem_load; mem_load_def (crepSemScript.sml:48-51) checks memaddrs then reads memory. simp_exp_def (crep_arithScript.sml:74) recursively simplifies the address. The exact carrier fields and qualifiers are unchanged from neighboring native cases, with holFmapAsFiniteSupportWitness establishing the named finite-map translation and BitVec width representing the positive HOL word dimension. Direct HOL memory hit/miss oracle rows are scripts/hol-probes/crep_eval_probe.out:7,9."
+    "reviewer": "Source comparison (2026-09-29; bead flapjack-pxn.18.5.4.2.23; PR #1174 review repair): HOL simp_exp_correct1 (crep_arithProofScript.sml:111) universally quantifies s, exp, and unused v; assumes eval s exp <> NONE; and concludes eval (mapc f s) (simp_exp exp) = eval s exp. This Load case keeps that successful full-Load premise, the polymorphic unused result binder, full optional word_lab equality, and code-only mapc. Its recursive IH is fixed at the same state as the Load evaluation, matching HOL eval_ind after instantiating the unused result binder; it adds no target-success, target-result, post-state, or context premise. HOL eval_def (crepSemScript.sml:93-95) evaluates the address and calls mem_load; mem_load_def (crepSemScript.sml:48-51) checks memaddrs then reads memory. simp_exp_def (crep_arithScript.sml:74) recursively simplifies the address. The exact carrier fields and qualifiers are unchanged from neighboring native cases, with holFmapAsFiniteSupportWitness establishing the named finite-map translation and BitVec width representing the positive HOL word dimension. At PR #1174 this is one of six of twelve native simp_exp_correct1 cases; the theorem is not yet assembled. Direct HOL memory hit/miss oracle rows are scripts/hol-probes/crep_eval_probe.out:7,9."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
@@ -113,7 +113,63 @@
     "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
     "fmap_as_finite_support": ["locals", "globals", "code"],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "Source comparison (2026-09-29; bead flapjack-pxn.18.5.4.2.24): HOL simp_exp_correct1 (crep_arithProofScript.sml:111) universally quantifies s, exp, and unused v; assumes eval s exp <> NONE; and concludes eval (mapc f s) (simp_exp exp) = eval s exp. This Load32 case preserves that successful evaluation premise, the polymorphic unused result binder, complete optional word_lab result, and exact code-only mapc update. Its IH is generalized over state and unused result binder for the address child, mirroring eval_ind; no target-success/result or post-state premise was added. HOL crepSem eval_def (crepSemScript.sml:96-102) evaluates the address and calls mem_load_32, whose exact carrier is HOL panSem mem_load_32_def (panSemScript.sml:94-104); simp_exp recursively transforms the address (crep_arithScript.sml:72-74). Lean uses the exact tagged evalCrepSemHOLExp and panMemLoad32HOL definitions over the same total memory and address-domain carriers, returning the word32 widened to the width-indexed HOL word as `w2w` does. Existing direct Crep HOL hit, unaligned, outside-domain, and endian rows are scripts/hol-probes/crep_eval_load_32_probe.out:1-6. The native fixture uses the same width-64 little-endian address-8 cell and checks the successful case plus unaligned failure. Named finite-map fields and word qualifiers match neighboring reviewed native cases."
+    "reviewer": "Source comparison (2026-09-29; bead flapjack-pxn.18.5.4.2.24): HOL simp_exp_correct1 (crep_arithProofScript.sml:111) universally quantifies s, exp, and unused v; assumes eval s exp <> NONE; and concludes eval (mapc f s) (simp_exp exp) = eval s exp. This Load32 case preserves that successful evaluation premise, the polymorphic unused result binder, complete optional word_lab result, and exact code-only mapc update. Its IH is fixed to the current state and retains the unused result binder, matching this eval_ind case; no target-success/result or post-state premise was added. HOL crepSem eval_def (crepSemScript.sml:96-102) evaluates the address and calls mem_load_32, whose exact carrier is HOL panSem mem_load_32_def (panSemScript.sml:94-104); simp_exp recursively transforms the address (crep_arithScript.sml:72-74). Lean uses the exact tagged evalCrepSemHOLExp and panMemLoad32HOL definitions over the same total memory and address-domain carriers, returning the word32 widened to the width-indexed HOL word as `w2w` does. Existing direct Crep HOL hit, unaligned, outside-domain, and endian rows are scripts/hol-probes/crep_eval_load_32_probe.out:1-6. The native fixture uses the same width-64 little-endian address-8 cell and checks the successful case plus unaligned failure. Named finite-map fields and word qualifiers match neighboring reviewed native cases."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
+    "lean_name": "crepSimpExpCorrect1NativeLoadByteCase",
+    "hol_path": "cakeml/pancake/proofs/crep_arithProofScript.sml",
+    "hol_name": "simp_exp_correct1",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison (2026-09-29; bead flapjack-pxn.18.5.4.2.25): HOL simp_exp_correct1 (crep_arithProofScript.sml:111) universally quantifies s, exp, and unused v; assumes eval s exp <> NONE; and concludes eval (mapc f s) (simp_exp exp) = eval s exp. This LoadByte case preserves the full successful-evaluation premise, unused polymorphic result binder, address IH fixed to the current state with its unused result binder, code-only mapc, and complete Option (word_lab) result. HOL crepSem eval_def (crepSemScript.sml:104-108) evaluates the address then calls mem_load_byte; panSem mem_load_byte_def (panSemScript.sml:86-92) returns word8 from total memory at byte_align after the memaddrs guard; simp_exp recursively transforms the address (crep_arithScript.sml:73). evalCrepSemHOLExp currently uses the UInt8 adapter panMemLoadByteHOL, whose all-width kernel witness panMemLoadByteHOL_eq_word8_projection maps it to the exact tagged panMemLoadByteWord8HOL carrier; the evaluator then widens the byte through toNat/ofNat, matching HOL w2w. The fixed-width source rows used here are scripts/hol-probes/crep_eval_load_byte_probe.out:1,4 (address-8 hit and out-of-domain failure). The width-64 fixture mirrors those rows. Narrow-width direct rows are not claimed as exact HOL observations here; any width<8 evaluator completion fixtures describe Lean behavior only. Finite-map and positive-width BitVec qualifiers match the other native cases."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
+    "lean_name": "crepSimpExpCorrect1NativeCmpCase",
+    "hol_path": "cakeml/pancake/proofs/crep_arithProofScript.sml",
+    "hol_name": "simp_exp_correct1",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison (2026-09-29; bead flapjack-pxn.18.5.4.2.26): HOL simp_exp_correct1 (crep_arithProofScript.sml:111) universally quantifies s, exp, and unused v; assumes eval s exp <> NONE; and concludes eval (mapc f s) (simp_exp exp) = eval s exp. This Cmp case keeps both successful child IHs fixed to the current state with unused result binders, the successful full-Cmp premise, code-only mapc, and complete optional word_lab output. HOL crepSem eval_def (crepSemScript.sml:126-129) evaluates both children and embeds asm word_cmp in a singleton bitstring$v2w result. Lean CrepExpHOL.cmp uses the eight-constructor Cmp carrier reviewed by the tagged wordCmpHOL (asmScript.sml:313-321), and evalCrepSemHOLExp's wordCmpResultHOL supplies the singleton Boolean word encoding; the evaluator's source comparison is recorded on its eval_def map entry. simp_exp recursively simplifies both children (crep_arithScript.sml:75). Direct HOL equal-true/equal-false/order/test rows are scripts/hol-probes/crep_eval_cmp_rv64_probe.out:1-10, including the RV64 one/zero result fixture. State and positive-width BitVec qualifiers match other native cases."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
+    "lean_name": "crepSimpExpCorrect1NativeCrepopCase",
+    "hol_path": "cakeml/pancake/proofs/crep_arithProofScript.sml",
+    "hol_name": "simp_exp_correct1",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison (2026-09-29; bead flapjack-pxn.18.5.4.2.28): HOL simp_exp_correct1 (crep_arithProofScript.sml:111-145) universally quantifies state, expression, and unused result; assumes eval s exp <> NONE; and concludes eval (mapc f s) (simp_exp exp) = eval s exp. This is the native Crepop/Mul induction case with the successful full-expression premise, fixed-current-state child-list IH with the unused polymorphic result binder, exact code-only mapc, and complete Option (word_lab) result. HOL eval_def evaluates the entire operand list with OPT_MMAP, rejects non-Word values, and applies crep_op; crep_op_def (crepSemScript.sml:85-88) returns SOME (w1*w2) only for exactly two operands. simp_exp_def (crep_arithScript.sml:59-81) bottom-up simplifies children, then folds two constants, uses mul_const for either single-constant orientation, or leaves a mapped Crepop; the proof uses OPT_MMAP_EQ_SOME_MONO and eval_mul_const (crep_arithProofScript.sml:93,70-91). The Lean case follows those branches over the tagged evalCrepSemHOLExp, crepOpCrepWord, crepSimpExpHOL, crepDestConstHOL, and crepEval_mul_const declarations. It adds no target-success/result, post-state, or context premise. The test fixture exercises both mul_const orientations and the direct RV64 oracle rows in scripts/hol-probes/crep_eval_crepop_mul_rv64_probe.out:1-5, including empty/one/three-operand failure. Exact finite-map fields and positive-width BitVec qualifiers match the neighboring native cases."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
+    "lean_name": "crepDestConstHOL_eq_some_implies",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only constructor inversion helper for tagged dest_const_def. HOL uses ordinary datatype equality reasoning here; no separate HOL declaration is being ported."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
+    "lean_name": "crepSimpExpHOL_mul_eq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only equation view of the generated Mul branch of tagged simp_exp_def; HOL has the equation as part of that function definition, not as a separate theorem declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
+    "lean_name": "crepSimpExpCorrect1NativeShiftCase",
+    "hol_path": "cakeml/pancake/proofs/crep_arithProofScript.sml",
+    "hol_name": "simp_exp_correct1",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": ["locals", "globals", "code"],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison (2026-09-29; bead flapjack-pxn.18.5.4.2.27): HOL simp_exp_correct1 (crep_arithProofScript.sml:111) universally quantifies s, exp, and unused v; assumes eval s exp <> NONE; and concludes eval (mapc f s) (simp_exp exp) = eval s exp. This Shift case retains the successful full-expression premise, both recursive child IHs fixed to the current state with unused result binders, code-only mapc, and complete optional word_lab result. HOL crepSem eval_def (crepSemScript.sml:131-133) evaluates both children, accepts only Word results, applies word_sh to the left value with w2n of the right, and wraps the optional word result with Word; failure is preserved. Lean CrepExpHOL.shift has the same two word-width-indexed operands and exact ast$shift carrier. The Lean evaluator uses tagged wordShiftHOL (wordLangScript.sml:313-321), whose positive BitVec width and amount-zero/out-of-range boundary match HOL dimindex and word_sh. simp_exp recursively simplifies both children. Direct HOL probe rows scripts/hol-probes/crep_eval_shift_rv64_probe.out:1-6 cover Lsl/Lsr/Asr/Ror, zero amount, and width-sized failing amount; Lean fixtures use the successful Lsl row and the width-sized error row. State and positive-width BitVec qualifiers match other native cases."
   },
   {
     "hol_path": null,
@@ -250,6 +306,14 @@
     "lean_name": "ExpHOL",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-deepseek-three (constructor-by-constructor source comparison; HOL Datatype exp = Const ('a word) | Var varkind varname | RStruct (exp list) | RField index exp | NStruct stcname ((fldname # exp) list) | NField fldname exp | Load shape exp | Load32 exp | LoadByte exp | Op binop (exp list) | Panop panop (exp list) | Cmp cmp exp exp | Shift shift exp exp | BaseAddr | TopAddr | BytesInWord (panLangScript.sml:53-69) vs ExpHOL {width} [NeZero width] with 16 constructors in the same order: const(BitVec width), var(VarKind)(MlS), rstruct(List ExpHOL), rfield(Nat)(ExpHOL), nstruct(MlS)(List (MlS x ExpHOL)), nfield(MlS)(ExpHOL), load(ShapeHOL)(ExpHOL), load32/loadByte(ExpHOL), op/panop(BinOp/PanOp)(List ExpHOL), cmp/shift(Cmp/Shift)(ExpHOL x ExpHOL), baseAddr/topAddr/bytesInWord; arities and field types match with varname/stcname/fldname = MlS (exact mlstring carrier) and Const over BitVec width. Production Flapjack.Exp is generic and untagged; kernel codec expToHOL/expOfHOL with total expToHOL_expOfHOL and byte-ranged ExpByteRanged side condition for expOfHOL_expToHOL; direct HOL oracle scripts/hol-probes/pan_lang_exp_probe.out reproduced by Flapjack/Test/PanLangExpHOLParity.lean)"
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/PanLang/Exp.lean",
+    "lean_name": "expOfHOL_expToHOL_nStruct",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only constructor refinement for panLang exp NStruct (panLangScript.sml:53-69): states the exact production-to-ExpHOL-to-production roundtrip under the byte-range premises required to convert the String structure/field names to HOL mlstring. It is a specialization of the codec, not a separately declared HOL theorem, and does not tag production Exp or claim arbitrary String correspondence. The direct HOL constructor observation and ordered field payload are replayed in pan_lang_exp_probe.out by PanLangExpHOLParity."
   },
   {
     "hol_path": "cakeml/pancake/panLangScript.sml",
@@ -711,7 +775,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/CrepArith/HOLStateMapc.lean",
     "lean_name": "holFmapAsFiniteSupportWitness",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-only same-module re-export of the existing CrepSemHOLState/CrepSemBroadState toBroad/ofBroad finite-support roundtrip, required by the finite-map qualifiers on the tagged simp_exp_correct1 Var, Const, LoadGlob, BaseAddr, TopAddr, Load, and Load32 case ports. It introduces no carrier and has no separate HOL declaration."
+    "reviewer": "Flapjack-only same-module re-export of the existing CrepSemHOLState/CrepSemBroadState toBroad/ofBroad finite-support roundtrip, required by the finite-map qualifiers on the tagged simp_exp_correct1 Var, Const, LoadGlob, BaseAddr, TopAddr, Load, Load32, LoadByte, Cmp, and Shift case ports. It introduces no carrier and has no separate HOL declaration."
   },
   {
     "hol_path": "cakeml/pancake/semantics/crepSemScript.sml",
@@ -20410,7 +20474,7 @@
       "inlBag"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.5.7.10) against crep_inlineProofScript.sml:2301-2309 and Dec case 2360-2373. The case statement retains HOL's source evaluation equation, non-Error condition, inl_fs SUBMAP s.code, inl_bag SUBMAP inl_fs, state_rel_code, locals_strong_rel and code_inl_rel premises. Its only added premise is the recursive body induction hypothesis, universally quantified over the same maps/states/results and carrying the same premises and result-dependent conclusion. The existential target run, post-state relation, code relation and NONE/Break/Continue/Error/other locals cases match HOL. Lean uses evalCrepSemHOLProgExact, CrepSemHOLState, CrepResultHOLExact, CrepInlineCanonical.inlineProgHOLExact and the reviewed exact relation definitions. State maps and both map parameters use HolFiniteMapExact with the same-module CrepSemHOLState and CrepInlineMapBroad roundtrip witnesses; width-indexed BitVec is the reviewed HOL word translation. No target-success hypothesis, extra semantic precondition or weakened postcondition is present."
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.5.7.10) against crep_inlineProofScript.sml:2301-2309 and Dec case 2360-2373. The case statement retains HOL's source evaluation equation, non-Error condition, inl_fs SUBMAP s.code, inl_bag SUBMAP inl_fs, state_rel_code, locals_strong_rel and code_inl_rel premises. Its only added premise is the recursive body induction hypothesis in the fixed-state shape of the tagged crepSem evaluate_ind Dec conjunct (crepSemScript.sml:440, evalCrepSemHOLProgExact_induct hdec): for every value with crepExactEvalExpClassical s e = SOME value, the theorem predicate at (body, setVar v value s), i.e. s with locals := s.locals |+ (v,value). Only the predicate's own binders are quantified, in HOL's inline_prog_correct order r s' inl_fs s1 inl_bag, and it carries the same premises and result-dependent conclusion. The earlier IH quantified over every source state and dropped the eval guard; that was repaired after PR #1174 review 5886834546 (flapjack-opus fallback). The existential target run, post-state relation, code relation and NONE/Break/Continue/Error/other locals cases match HOL. Lean uses evalCrepSemHOLProgExact, CrepSemHOLState, CrepResultHOLExact, CrepInlineCanonical.inlineProgHOLExact and the reviewed exact relation definitions. State maps and both map parameters use HolFiniteMapExact with the same-module CrepSemHOLState and CrepInlineMapBroad roundtrip witnesses; width-indexed BitVec is the reviewed HOL word translation. At PR #1174 four inline_prog_correct cases are ported and the theorem is not yet assembled. No target-success hypothesis, extra semantic precondition or weakened postcondition is present."
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
@@ -20426,7 +20490,7 @@
       "inlBag"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.5.35) against crep_inlineProofScript.sml:2301-2309, If case 2374-2381, and the exact evaluate_ind If conjunct at crepSemScript.sml:440. The conclusion retains the original existential target run, state_rel_code, code_inl_rel, and NONE/Break/Continue/Error/other locals cases. The premise list is exactly the source run equation, non-Error condition, both SUBMAP conditions, state_rel_code, locals_strong_rel, code_inl_rel, plus the single evaluate_ind If hypothesis: for condition result value and word w, successful eval and value = Word w imply the theorem predicate for (if w <> 0w then c1 else c2,s). It has no other IH or target/postcondition premise. Lean uses CrepExpHOL, CrepProgHOL, CrepSemHOLState, HolWordLab, CrepResultHOLExact, the HOL-shaped total evaluator and canonical inline_prog port. The state maps and both standalone inline maps use HolFiniteMapExact with reviewed roundtrip witnesses; BitVec width models HOL's positive-width word. HOL If evaluates the condition once and evaluates the selected branch in the same state; the Lean clause and proof preserve both behaviors."
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.5.35) against crep_inlineProofScript.sml:2301-2309, If case 2374-2381, and the exact evaluate_ind If conjunct at crepSemScript.sml:440. The conclusion retains the original existential target run, state_rel_code, code_inl_rel, and NONE/Break/Continue/Error/other locals cases. The premise list is exactly the source run equation, non-Error condition, both SUBMAP conditions, state_rel_code, locals_strong_rel, code_inl_rel, plus the single evaluate_ind If hypothesis: for condition result value and word w, successful eval and value = Word w imply the theorem predicate for (if w <> 0w then c1 else c2,s) at the fixed source state s. Only the predicate's own binders are quantified, in HOL's order r s' inl_fs s1 inl_bag; the earlier IH quantified over any source state and was repaired after PR #1174 review 5886834546 (flapjack-opus fallback). It has no other IH or target/postcondition premise. Lean uses CrepExpHOL, CrepProgHOL, CrepSemHOLState, HolWordLab, CrepResultHOLExact, the HOL-shaped total evaluator and canonical inline_prog port. The state maps and both standalone inline maps use HolFiniteMapExact with reviewed roundtrip witnesses; BitVec width models HOL's positive-width word. HOL If evaluates the condition once and evaluates the selected branch in the same state; the Lean clause and proof preserve both behaviors."
   },
   {
     "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
@@ -21087,6 +21151,14 @@
   "lean_name": "subspt_inter_union_R",
   "statement_status": "reviewed_exact",
   "reviewer": "flapjack-opus source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.3) against subspt_inter_union_R at loop_liveProofScript.sml:148-150 ([local]): `∀A B C D. subspt (inter A (union B C)) D ⇒ subspt (inter A C) D`; binders in order, union as sptUnion, polymorphic values."
+},
+{
+  "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
+  "hol_name": "domain_list_delete",
+  "lean_path": "Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean",
+  "lean_name": "sptDomain_sptListDelete",
+  "statement_status": "reviewed_exact",
+  "reviewer": "flapjack-ds5 source comparison (2026-09-29; bead flapjack-pxn.18.5.8.1.16) against domain_list_delete at loop_liveProofScript.sml:561-562 ([simp]): forall vs s. domain (list_delete vs s) = domain s DIFF set vs; rendered as the pointwise equivalence sptMem key (sptListDelete vs s) <-> sptMem key s and key notin vs (HOL set equality as the pointwise rendering already used for the sibling domain facts; sptMem is the reviewed rendering of k IN domain _ documented in Flapjack/Misc/Sptree.lean, set vs membership is k in vs, list_delete is sptListDelete, values polymorphic). Direct HOL EVAL rows in scripts/hol-probes/loop_live_domain_list_delete_probe.out replayed by Flapjack.Test.LoopLiveDomainListDeleteParity. No qualifiers: the statement has no word dimension and no finite-map field."
 },
 {
   "hol_path": "cakeml/pancake/proofs/loop_liveProofScript.sml",
