@@ -931,4 +931,68 @@ theorem loopEvalHOLExact_op_clause {F : Type}
 
 end OpClauses
 
+/-! ## Assembly over HOL's `eval_ind` cases -/
+
+/-- Flapjack helper (no HOL declaration): HOL `comp_exp_preserves_eval`'s
+    `ho_match_mp_tac crepSemTheory.eval_ind` assembly of the case pieces, by strong
+    induction on the expression size (sub-expressions of every `eval_ind` case are
+    strictly smaller), given the `Op` case in the same hypothesis shape as the
+    `Crepop` piece.  The tagged assembled theorem instantiates `hop` with the `Op`
+    piece (bead `flapjack-pxn.18.5.6.33.15.6`). -/
+theorem crepToLoopCompExpPreservesEvalOfOp {width : Nat} [NeZero width] {σ : Type}
+    (hop : ∀ (s : CrepSemHOLState width σ) (bop : BinOp) (es : List (CrepExpHOL width)),
+      (∀ e ∈ es, crepToLoopCompExpPreservesEvalAt s e) →
+      crepToLoopCompExpPreservesEvalAt s (.op bop es)) :
+    ∀ (s : CrepSemHOLState width σ) (e : CrepExpHOL width),
+      crepToLoopCompExpPreservesEvalAt s e := by
+  intro s
+  have key : ∀ (n : Nat) (e : CrepExpHOL width), sizeOf e = n →
+      crepToLoopCompExpPreservesEvalAt s e := by
+    intro n
+    induction n using Nat.strongRecOn with
+    | ind n ihn =>
+      intro e hn
+      have ih : ∀ e', sizeOf e' < sizeOf e → crepToLoopCompExpPreservesEvalAt s e' :=
+        fun e' h => ihn _ (hn ▸ h) e' rfl
+      clear ihn hn
+      cases e with
+      | const w =>
+        exact fun v t ctxt tmp l p le ntmp nl ⟨h1, h2, h3, h4, h5, h6, h7, h8⟩ =>
+          compExpPreservesEval_const_case s w v t ctxt tmp l p le ntmp nl h1 h2 h3 h4 h5 h6 h7 h8
+      | var x =>
+        exact fun v t ctxt tmp l p le ntmp nl ⟨h1, h2, h3, h4, h5, h6, h7, h8⟩ =>
+          compExpPreservesEval_var_case s x v t ctxt tmp l p le ntmp nl h1 h2 h3 h4 h5 h6 h7 h8
+      | loadGlob g =>
+        exact fun v t ctxt tmp l p le ntmp nl ⟨h1, h2, h3, h4, h5, h6, h7, h8⟩ =>
+          compExpPreservesEval_loadGlob_case s g v t ctxt tmp l p le ntmp nl h1 h2 h3 h4 h5 h6 h7 h8
+      | baseAddr =>
+        exact fun v t ctxt tmp l p le ntmp nl ⟨h1, h2, h3, h4, h5, h6, h7, h8⟩ =>
+          compExpPreservesEval_baseAddr_case s v t ctxt tmp l p le ntmp nl h1 h2 h3 h4 h5 h6 h7 h8
+      | topAddr =>
+        exact fun v t ctxt tmp l p le ntmp nl ⟨h1, h2, h3, h4, h5, h6, h7, h8⟩ =>
+          compExpPreservesEval_topAddr_case s v t ctxt tmp l p le ntmp nl h1 h2 h3 h4 h5 h6 h7 h8
+      | load a =>
+        have iha := ih a (by simp)
+        exact fun v t ctxt tmp l p le ntmp nl ⟨h1, h2, h3, h4, h5, h6, h7, h8⟩ =>
+          compExpPreservesEval_load_case s a v t ctxt tmp l p le ntmp nl h1 h2 h3 h4 h5 h6 h7 h8
+            (fun av ac ar an al g1 g2 g3 g4 g5 g6 g7 g8 =>
+              iha av t ctxt tmp l ac ar an al ⟨g1, g2, g3, g4, g5, g6, g7, g8⟩)
+      | loadByte a =>
+        exact crepToLoop_comp_exp_preserves_eval_loadByte s a (ih a (by simp))
+      | load32 a =>
+        exact crepToLoop_comp_exp_preserves_eval_load32 s a (ih a (by simp))
+      | op bop es =>
+        exact hop s bop es fun e he => ih e (by
+          have := List.sizeOf_lt_of_mem he; simp only [CrepExpHOL.op.sizeOf_spec]; omega)
+      | crepOp bop es =>
+        exact crepToLoop_comp_exp_preserves_eval_crepOp s bop es fun e he => ih e (by
+          have := List.sizeOf_lt_of_mem he; simp only [CrepExpHOL.crepOp.sizeOf_spec]; omega)
+      | cmp c e1 e2 =>
+        exact crepToLoop_comp_exp_preserves_eval_cmp s c e1 e2 (ih e1 (by simp; omega))
+          (ih e2 (by simp; omega))
+      | shift sh e1 e2 =>
+        exact crepToLoop_comp_exp_preserves_eval_shift s sh e1 e2 (ih e1 (by simp; omega))
+          (ih e2 (by simp; omega))
+  exact fun e => key _ e rfl
+
 end Flapjack
