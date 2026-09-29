@@ -422,5 +422,24 @@ theorem crepInlineLookup_codec {width : Nat} [NeZero width] {α : Type}
   rw [crepInlineLookup_eq_fupdateList]
   exact alistToFmapHOLExact_codec_lookup (fun e => (e.1, bodyDecode e.2)) entries s hs
 
+/-- `crepExpToHOL` sends `CrepExp.var` to `CrepExpHOL.var`. -/
+theorem crepExpToHOL_var_map {width : Nat} [NeZero width] (names : List Nat) :
+    (names.map (CrepExp.var (α := BitVec width))).map crepExpToHOL =
+      names.map CrepExpHOL.var := by
+  induction names with
+  | nil => rfl
+  | cons n ns ih => simp only [List.map_cons, ih, crepExpToHOL]
+
+/-- Executed argument loading lifts to the exact argument loading under the
+    `crepProgToHOL` codec. -/
+theorem crepProgToHOL_crepArgLoad {width : Nat} [NeZero width]
+    (temporaryNames argumentNames : List Nat)
+    (arguments : List (CrepExp (BitVec width))) (body : CrepProg (BitVec width)) :
+    crepProgToHOL (crepArgLoad temporaryNames arguments argumentNames body) =
+      argLoadHOLExact temporaryNames (arguments.map crepExpToHOL) argumentNames
+        (crepProgToHOL body) := by
+  simp only [crepArgLoad, argLoadHOLExact, crepProgToHOL_nestedDecs]
+  rw [crepExpToHOL_var_map]
+
 end CrepInlineRoute
 end Flapjack
