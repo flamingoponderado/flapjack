@@ -94,11 +94,14 @@ no HOL tag. The faithful theorem port is tracked by
 existential conclusion as `semantics_decls_has_main'` at line 1628: from
 `semantics_decls s start code <> Fail`, it proves that
 `FLOOKUP (s.code |++ functions code) start` is `SOME ([], body, rshape)` for
-some body and return shape. The exact Lean finite `evaluate_decls` port does
-not supply the HOL `semantics_decls` wrapper or its clock-indexed `semantics`
-result, so the nearest hook-based `PanObservationalSemantics.panSemantics`
-cannot prove this theorem without changing its premise's meaning. No `@[hol]`
-tag is appropriate on that API. The faithful replacement is tracked by
+some body and return shape. `PanSem/EntryState.lean` now has an untagged
+clocked-entry runner that includes the exact `decs_stcnames` prepass and
+production `evaluate_decls`, with an exact finite-map agreement theorem. It
+still does not supply the HOL `semantics` observation result or its
+clock-indexed termination/divergence choice, so the nearest hook-based
+`PanObservationalSemantics.panSemantics` cannot prove this theorem without
+changing its premise's meaning. No `@[hol]` tag is appropriate on that API.
+The faithful replacement is tracked by
 `flapjack-4ac.4.110`, which depends on the exact PanSem evaluator, declaration
 composition, and wrapper/LUB semantics ports (`flapjack-4ac.3.45`, `.3.53`,
 `.4.105.1`). -/
@@ -197,11 +200,13 @@ that theorem is kernel-checked over the accepted exact evaluator. -/
 (`panPropsScript.sml:1628-1638`): HOL assumes
 `semantics_decls s start code <> Fail` and proves that
 `FLOOKUP (s.code |++ functions code) start` contains a zero-argument function
-body and return shape. The exact `evaluate_decls_def` finite-map definition is
-available as `evaluateDeclsHOLFinite`, but Flapjack has no HOL-shaped
-`semantics_decls` composition or clocked `semantics` result over that carrier.
-The existing `PanObservationalSemantics.panSemantics` takes arbitrary hooks and
-a caller-supplied prefix-chain/LUB contract; it does not implement HOL's
+body and return shape. `PanSem/EntryState.lean` now composes the exact
+`decs_stcnames` prepass with production `evaluate_decls` and a clocked entry
+run, and proves its result agrees with the exact finite-map path under the
+state relation. Flapjack still has no full HOL `semantics_decls` observation
+composition or clocked `semantics` result over that carrier. The existing
+`PanObservationalSemantics.panSemantics` takes arbitrary hooks and a
+caller-supplied prefix-chain/LUB contract; it does not implement HOL's
 `Fail`/termination/divergence choice in `semantics_def`. Consequently there is
 no exact Lean theorem to tag here: adding the desired implication over that
 different wrapper would change the source semantics. The faithful theorem

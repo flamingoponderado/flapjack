@@ -1,4 +1,5 @@
 import Flapjack.Pancake.Proofs.PanToCrep
+import Flapjack.Pancake.Semantics.PanSem.EntryState
 
 /-!
 # Parity checks for the exact `decs_stcnames` port
@@ -32,6 +33,17 @@ private def wfMiss : List (DeclHOL 8) :=
 private def skipDecl : List (DeclHOL 8) :=
   [.decl .one (ml "x") (.const (7 : BitVec 8)), .name (ml "A") []]
 
+private def productionNameA : Decl (RiscV.Word 64) :=
+  declOfHOL (.name (ml "A") [(ml "f", .one)])
+
+private def productionDuplicateNames : List (Decl (RiscV.Word 64)) :=
+  [productionNameA, .name "A" [("other", .one)]]
+
+private def productionContextSummary : Option (Nat × Nat) :=
+  match panSemDeclarationsStructsCake [productionNameA] with
+  | some [(_, info)] => some (info.fields.length, info.size)
+  | _ => none
+
 private def ctxLen (result : Option StructContextExact) : Option Nat :=
   result.map List.length
 
@@ -62,6 +74,14 @@ example : (decsStcnamesHOLExact (width := 8) [] wfMiss).isNone = true := by deci
 /-- `Decl`/`Function`/`ExnDecl` entries are skipped and the scan continues. -/
 example : ctxLen (decsStcnamesHOLExact (width := 8) [] skipDecl) = some 1 := by decide
 
+/-- The accepted HOL `Name` context is decoded and used as the production
+    entry context, preserving field order and size while filling the
+    implementation-only shaped-field cache with its documented default. -/
+example : productionContextSummary = some (1, 1) := by
+  simp [productionContextSummary, panSemDeclarationsStructsCake,
+    productionNameA, decsStcnamesHOLExact, panStructContextOfHOL,
+    structContextOfHOL, structInfoOfHOL, paramOfHOL, shapeOfHOL]
+
 /-- `decs_stcnames_lemma`: a code list of only function/exception declarations
 leaves the context unchanged (tagged exact port). -/
 private def functionAndExn : List (DeclHOL 8) :=
@@ -80,13 +100,15 @@ private def decsGuard : Bool :=
   (decsStcnamesHOLExact (width := 8) [] nameADup).isNone &&
   (decsStcnamesHOLExact (width := 8) [] dupField).isNone &&
   (decsStcnamesHOLExact (width := 8) [] wfMiss).isNone &&
-  (ctxLen (decsStcnamesHOLExact (width := 8) [] skipDecl) == some 1)
+  (ctxLen (decsStcnamesHOLExact (width := 8) [] skipDecl) == some 1) &&
+  (productionContextSummary == some (1, 1)) &&
+  (panSemDeclarationsStructsCake productionDuplicateNames).isNone
 
 #eval decsGuard
 #guard decsGuard
 
 def runChecks : IO Bool := do
-  IO.println "PASS panSem decs_stcnames exact carrier matches all 7 oracle rows"
+  IO.println "PASS panSem decs_stcnames exact carrier matches 7 oracle rows and production routing guards"
   pure decsGuard
 
 end Flapjack.Test.PanSemDecsStcnamesHOLParity

@@ -24,6 +24,15 @@ lists (`flapjack-pxn.18.4.3.77.2.17.2`), and
 exception-shape rangedness (`flapjack-pxn.18.4.3.77.2.17.3`).
 -/
 
+/-!
+The production `StructContext` carries an additional shape cache and String
+names.  The complete prepass below therefore runs on the exact declarations
+and decodes the resulting context before it enters the production evaluator.
+This conversion is lossless on the ranged source declarations used by the
+agreement theorem; it is not an exact HOL definition of the production
+carrier.
+-/
+
 namespace Flapjack
 
 open Flapjack.Pancake.PanLang
@@ -53,6 +62,15 @@ def panSemEntryStateOfDecls {σ : Type}
   ffi := decl.runtime.ffi
   baseAddress := decl.runtime.baseAddress
   topAddress := decl.runtime.topAddress
+
+/-- Structure context supplied to the production entry by HOL's
+    `decs_stcnames [] declarations` prepass.  The HOL-shaped context is
+    converted with `panStructContextOfHOL`, which drops only the production
+    `shapedFields` cache. -/
+def panSemDeclarationsStructsCake
+    (declarations : List (Decl (RiscV.Word 64))) : Option StructContext :=
+  (decsStcnamesHOLExact (width := 64) ([] : StructContextExact)
+      (declarations.map declToHOL)).map panStructContextOfHOL
 
 /-- **Production `evaluate_decls` frame.**  A successful production
     `evaluateDecls` changes only `runtime.globals`, `code` and `eshapes`; the rest
@@ -462,11 +480,11 @@ theorem panSemEntryStateOfDecls_codeRanged_exnRanged {σ : Type}
     obtain ⟨k, hk⟩ := lookupInfo_mem_of_some out.eshapes eid shape hlookup
     exact heOut (k, shape) hk
 
-/-- The production clock-indexed program entry of HOL `semantics_decls`: run the
-    declarations with production `evaluateDecls`, build the entry state, and
-    evaluate `Call NONE start []` with the canonical `panSemTotalEvaluateCake` at
-    the absolute clock.  `none` is declaration failure (HOL `Fail`). -/
-def panSemRunEntryCake {σ : Type}
+/-- Raw production entry after the declaration context has already been
+    computed and installed: run `evaluateDecls`, build the entry state, and
+    evaluate `Call NONE start []` at the absolute clock.  The public
+    `panSemRunEntryCake` below performs the `semantics_decls` prepass itself. -/
+def panSemRunEntryAfterDeclsCake {σ : Type}
     (machine : PanSemState (RiscV.Word 64) (FfiState σ))
     (decl : PanSemDeclarationState (RiscV.Word 64) σ)
     (declarations : List (Decl (RiscV.Word 64))) (start : String) (clock : Nat) :
@@ -475,21 +493,50 @@ def panSemRunEntryCake {σ : Type}
     panSemTotalEvaluateCake (.call none start [])
       { panSemEntryStateOfDecls machine out with clock := clock }
 
-/-- The exact counterpart: `evaluate_decls` then `evaluate (Call NONE start [],
-    s' with clock := k)`. -/
-noncomputable def panSemRunEntryExact {σ : Type}
+/-- Exact finite-map entry after the declaration context has already been
+    computed and installed. -/
+noncomputable def panSemRunEntryAfterDeclsExact {σ : Type}
     (exact : PanSemStateFiniteExact 64 σ) (declarations : List (DeclHOL 64)) (start : MlS)
     (clock : Nat) : Option (Option (PanSemResultExact 64) × PanSemStateFiniteExact 64 σ) :=
   (@evaluateDeclsHOLFinite 64 σ _ exact (fun a => Classical.propDecidable (exact.memaddrs a))
       declarations).map fun out =>
     evaluateHOLFiniteState { out with clock := clock } (.call none start [])
 
-/-- **Declarations-to-entry agreement.**  For byte-ranged production
-    declarations, a related initial declaration state with byte-ranged code and
-    exception shapes, and every clock, the production and exact program entries
-    either both fail at declaration evaluation, or both run the entry call with
-    related results and `PanSemStateRelExec`-related final states. -/
-theorem panSemRunEntryCake_agree {σ : Type}
+/-- The production clock-indexed entry for HOL `semantics_decls`: perform its
+    `decs_stcnames [] declarations` prepass, install the resulting context in
+    the production declaration state, run production `evaluateDecls`, build the
+    entry state, and evaluate `Call NONE start []` at the absolute clock.  The
+    prepass uses the exact MlString/ShapeHOL carrier and decodes its context to
+    production before execution.  This is the prepass/clocked-entry slice of
+    HOL `semantics_decls_def`, not its final unclocked observation wrapper, so
+    this production bridge is intentionally untagged. -/
+def panSemRunEntryCake {σ : Type}
+    (machine : PanSemState (RiscV.Word 64) (FfiState σ))
+    (decl : PanSemDeclarationState (RiscV.Word 64) σ)
+    (declarations : List (Decl (RiscV.Word 64))) (start : String) (clock : Nat) :=
+  match panSemDeclarationsStructsCake declarations with
+  | none => none
+  | some context =>
+      panSemRunEntryAfterDeclsCake machine
+        { decl with runtime := { decl.runtime with structs := context } }
+        declarations start clock
+
+/-- The exact finite-map counterpart of the clocked entry, including the
+    `decs_stcnames [] declarations` prepass. -/
+noncomputable def panSemRunEntryExact {σ : Type}
+    (exact : PanSemStateFiniteExact 64 σ)
+    (declarations : List (Decl (RiscV.Word 64))) (start : MlS) (clock : Nat) :=
+  match decsStcnamesHOLExact (width := 64) ([] : StructContextExact)
+      (declarations.map declToHOL) with
+  | none => none
+  | some context =>
+      panSemRunEntryAfterDeclsExact { exact with structs := context }
+        (declarations.map declToHOL) start clock
+
+/-- Agreement for an explicitly pre-evaluated declaration state.  This helper
+    is kept to make the `evaluate_decls` case split available to the public
+    entry theorem below. -/
+theorem panSemRunEntryAfterDeclsCake_agree {σ : Type}
     (machine : PanSemState (RiscV.Word 64) (FfiState σ))
     (decl : PanSemDeclarationState (RiscV.Word 64) σ) (exact : PanSemStateFiniteExact 64 σ)
     (declarations : List (Decl (RiscV.Word 64))) (start : MlS) (clock : Nat)
@@ -498,15 +545,15 @@ theorem panSemRunEntryCake_agree {σ : Type}
     (hcode : ∀ entry ∈ decl.code,
       PanLangEntryByteRanged (entry.2.params, entry.2.body, entry.2.returnShape))
     (hexn : ∀ entry ∈ decl.eshapes, ShapeByteRanged entry.2) :
-    match panSemRunEntryCake machine decl declarations (toStringOfBytes start) clock,
-      panSemRunEntryExact exact (declarations.map declToHOL) start clock with
+    match panSemRunEntryAfterDeclsCake machine decl declarations (toStringOfBytes start) clock,
+      panSemRunEntryAfterDeclsExact exact (declarations.map declToHOL) start clock with
     | none, none => True
     | some production, some exactRun =>
         PanSemHOLResultOptionRel production.1 exactRun.1 ∧
           PanSemStateRelExec production.2 exactRun.2.toExact
     | _, _ => False := by
   have hagree := evaluateDecls_agree machine declarations decl exact hranged hrel
-  unfold panSemRunEntryCake panSemRunEntryExact
+  unfold panSemRunEntryAfterDeclsCake panSemRunEntryAfterDeclsExact
   revert hagree
   cases hp : evaluateDecls decl declarations <;>
     cases he : @evaluateDeclsHOLFinite 64 σ _ exact
@@ -524,5 +571,46 @@ theorem panSemRunEntryCake_agree {σ : Type}
   simp only [Option.map_some]
   exact panSemTotalEvaluateCake_agree_entry start (panSemEntryStateOfDecls machine out) exactOut
     hrelOut hrgOut hcodeOut hexnOut clock
+
+/-- Production/exact agreement through the public clocked entry.  It first
+    accounts for the literal `semantics_decls` structure prepass, then uses the
+    declaration evaluator and entry-run agreement.  The state premise is the
+    ordinary relation after installing the prepass result; neither evaluator's
+    result nor a target run is assumed.  Declaration byte-rangedness is
+    required because the production declaration carrier uses String while the
+    exact HOL declaration carrier uses MlString. -/
+theorem panSemRunEntryCake_agree {σ : Type}
+    (machine : PanSemState (RiscV.Word 64) (FfiState σ))
+    (decl : PanSemDeclarationState (RiscV.Word 64) σ)
+    (exact : PanSemStateFiniteExact 64 σ)
+    (declarations : List (Decl (RiscV.Word 64))) (start : MlS) (clock : Nat)
+    (hranged : ∀ d ∈ declarations, DeclByteRanged d)
+    (hrel : ∀ context,
+      decsStcnamesHOLExact (width := 64) ([] : StructContextExact)
+          (declarations.map declToHOL) = some context →
+      PanSemDeclEntryRel machine
+          { decl with runtime := { decl.runtime with structs := panStructContextOfHOL context } }
+          { exact with structs := context })
+    (hcode : ∀ entry ∈ decl.code,
+      PanLangEntryByteRanged (entry.2.params, entry.2.body, entry.2.returnShape))
+    (hexn : ∀ entry ∈ decl.eshapes, ShapeByteRanged entry.2) :
+    match panSemRunEntryCake machine decl declarations (toStringOfBytes start) clock,
+      panSemRunEntryExact exact declarations start clock with
+    | none, none => True
+    | some production, some exactRun =>
+        PanSemHOLResultOptionRel production.1 exactRun.1 ∧
+          PanSemStateRelExec production.2 exactRun.2.toExact
+    | _, _ => False := by
+  classical
+  unfold panSemRunEntryCake panSemRunEntryExact panSemDeclarationsStructsCake
+  cases hpre : decsStcnamesHOLExact (width := 64) ([] : StructContextExact)
+      (declarations.map declToHOL) with
+  | none => simp
+  | some context =>
+      simpa [hpre] using
+        (panSemRunEntryAfterDeclsCake_agree machine
+          { decl with runtime := { decl.runtime with structs := panStructContextOfHOL context } }
+          { exact with structs := context } declarations start clock hranged
+          (hrel context hpre) hcode hexn)
 
 end Flapjack
