@@ -24048,5 +24048,14 @@
     "lean_name": "findVarHOL_ne_odd",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-ds5 source comparison (2026-09-29; bead flapjack-pxn.18.5.9.14.3, repaired after coordinator HOLD) against loop_to_wordProofScript.sml:187-194. HOL premise is exactly (forall n m. lookup n ctxt = SOME m ==> m <> 0 /\\ EVEN m) /\\ ~EVEN k; conclusion find_var ctxt v <> k, with v and k universally quantified and NO word/type-dimension variable. Lean keeps the conjunction, rendering EVEN m as m % 2 = 0 and ~EVEN k as k % 2 <> 0, over the exact Spt context carrier and exact findVarHOL, and carries no width/NeZero binder. The lookup-none branch uses findVarHOL v = 0 (which is even), matching HOL Cases_on lookup then CCONTR_TAC/res_tac. No qualifier applies (reviewed_exact). Kernel and guard parity rows are in Flapjack.Test.LoopToWordFindVarParity."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "locals_rel_intro",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/LocalsRelIntro.lean",
+    "lean_name": "localsRelHOLIntro",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds5 source comparison (2026-09-29; bead flapjack-pxn.18.5.9.14.4) against loop_to_wordProofScript.sml:129-135. HOL conclusion is exactly locals_rel ctxt l1 l2 ==>: INJ (find_var ctxt) (domain ctxt) UNIV /\\ (forall n m. lookup n ctxt = SOME m ==> m <> 0 /\\ EVEN m) /\\ forall n v. lookup n l1 = SOME v ==> exists m. lookup n ctxt = SOME m /\\ lookup m l2 = SOME v. Lean keeps the three conjuncts in order; INJ is rendered pointwise (sptMem domain membership -> findVarHOL equality -> equal keys), EVEN m is m % 2 = 0, and the source simulation uses sptLookup. The theorem is the definitional unfolding of localsRelHOL, so the only qualifier is the type-indexed word of the WordLocW relation carrier (words_as_type_indexed_bitvec). No extra premise and no strengthened quantifiers."
   }
 ]
