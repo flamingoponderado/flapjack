@@ -628,6 +628,21 @@ theorem sptAcc_injective (index : Nat) : Function.Injective (sptAcc index) := by
   have hmul : lrNext index * left = lrNext index * right := Nat.add_left_cancel h
   exact Nat.eq_of_mul_eq_mul_left (lrNext_pos index) hmul
 
+/-- Child offsets produced by `foldi` agree with `sptAcc`'s parent-key
+encoding. -/
+theorem sptAcc_childLeft (index key : Nat) :
+    sptAcc (index + 2 * lrNext index) key = sptAcc index (2 * key + 2) := by
+  rw [sptAcc_eq, sptAcc_eq, lrNext_offset_two]
+  rw [Nat.mul_add, ← Nat.mul_assoc, Nat.mul_comm (lrNext index) 2]
+  omega
+
+/-- Right-child counterpart of `sptAcc_childLeft`. -/
+theorem sptAcc_childRight (index key : Nat) :
+    sptAcc (index + lrNext index) key = sptAcc index (2 * key + 1) := by
+  rw [sptAcc_eq, sptAcc_eq, lrNext_offset_one]
+  rw [Nat.mul_add, ← Nat.mul_assoc, Nat.mul_comm (lrNext index) 2]
+  omega
+
 /-- HOL sptree `foldi` (`HOL/src/finite_maps/sptreeScript.sml:737-749`) over
 the exact tree, in the same mixed order. -/
 def sptFoldi {α : Type} (f : Nat → α → List (Nat × α) → List (Nat × α))
