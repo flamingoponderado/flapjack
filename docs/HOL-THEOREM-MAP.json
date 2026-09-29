@@ -22197,5 +22197,17 @@
     "lean_name": "crepToLoopSemanticsWrapper",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus source comparison (bead flapjack-pxn.18.5.6.34.6): HOL crep_to_loopProofScript.sml:4132-4136 semantics_wrapper f = if ?k v. f k = (RunError, v) then Fail else case some res. ?k r ev. f k = (CompleteResult r, ev) /\\ res = Terminate r ev of SOME res => res | NONE => Diverge (LUB (IMAGE (fromList o SND o f) UNIV)). Lean crepToLoopSemanticsWrapper takes the same arbitrary f : Nat -> CrepToLoopSemanticsRunRes HolOutcome x List HolIoEvent (the tagged crep_to_loop semantics_run_res at HOL's outcome instance, which Terminate forces) with no chain, LUB or witness premise; same guard, same some-predicate (binder order k r ev, conjunct order), same branches. HOL option some is holOptionSome (@ as Classical.choose under the guard) and LUB (overload of build_lprefix_lub) is the total chain-free HolLList.buildLprefixLub over the exact lrep_ok llist subtype HolLList, fromList is HolLList.fromList, IMAGE g UNIV is fun l => exists k, l = g k -- the same renderings accepted for the tagged loopSem/crepSem semantics_def. Noncomputable as HOL's classical definition. No finite-map or word carriers occur in the signature, so no qualifier. Caveat (coordinator review, 2026-09-29): HOL @ and Lean Classical.choose are the standard translation and the Lean definition states the same choice formula, but their arbitrarily selected values (buildLprefixLub per-index choice on non-chain families, holOptionSome among several completed runs) are not proved cross-language equal; that is out of scope per docs/SOUNDNESS.md. The generic carrier 4ac.4.105.2 is resolved as a representation port (HolLList = exact lrep_ok subtype; buildLprefixLub unfolds build_lprefix_lub_f, lprefix_lubScript.sml:200-203,430-438), not as a proved choice correspondence; on lprefixChain families buildLprefixLub_thm characterises the LUB uniquely."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+    "hol_name": "loop_sem_is_wrapper",
+    "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/SemanticsWrapper/LoopSemIsWrapper.lean",
+    "lean_name": "loopSemIsWrapper",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-b source review (bead flapjack-pxn.18.5.6.34.8, 2026-09-29) against crep_to_loopProofScript.sml:4178-4210: same s/start conclusion loopSem$semantics s start = semantics_wrapper (((result classifier) ## (ffi.io_events projection)) o (clock-indexed loopSem$evaluate of Call NONE (SOME start) [] NONE)); result mapping is SOME TimeOut→Incomplete, SOME (FinalFFI e)→CompleteResult (FFI_outcome e), SOME (Result _)→CompleteResult Success, otherwise RunError. No extra hypothesis or evaluator target. Lean uses LoopSemStateFiniteExact.semantics/evaluate over the exact LoopLang program/state/results and the `crep_to_loop` semantics_run_res wrapper. Representation qualifiers: only state.globals is HOL |-> (same-module canonical finite-support witness), and HOL `'a word` is the reviewed positive-width BitVec carrier. HOL proof unfolds loopSem semantics_def and semantics_wrapper_def with no additional chain/run/state premises. Lean proves successful observation uniqueness from evaluate_add_clock_eq so the two equivalent holOptionSome predicates choose the same result, without a choice-extensionality axiom.",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true
   }
 ]
