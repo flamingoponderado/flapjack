@@ -1410,6 +1410,10 @@ run_probe loop_live_comp_probeScript.sml loop_live_comp_probe.out \
   skip return "$cake_dir/pancake/loop_liveScript.sml"
 run_probe loop_live_optimise_probeScript.sml loop_live_optimise_probe.out \
   skip shrink_loop_fixedpoint "$cake_dir/pancake/loop_liveScript.sml"
+run_probe loop_live_domain_list_delete_probeScript.sml \
+  loop_live_domain_list_delete_probe.out \
+  dld_kept dld_absent \
+  "$cake_dir/pancake/proofs/loop_liveProofScript.sml" "$cake_dir/pancake/proofs"
 run_probe ocompile_probeScript.sml ocompile_probe.out \
   skip ffi "$cake_dir/pancake/crep_to_loopScript.sml"
 run_probe loop_lang_assigned_vars_probeScript.sml \
@@ -1765,7 +1769,7 @@ run_probe loop_lang_prog_probeScript.sml loop_lang_prog_probe.out \
 # The panLang exp probe pins the `exp` word payload (`Const`), its `mlstring`
 # identifier fields, and representative constructor arities at word type 64.
 run_probe pan_lang_exp_probeScript.sml pan_lang_exp_probe.out \
-  ex_const ex_bytesinword \
+  ex_const ex_nstruct_fields ex_bytesinword \
   "$cake_dir/pancake/panLangScript.sml" \
   "$cake_dir/pancake"
 run_probe sptree_set_ops_probeScript.sml sptree_set_ops_probe.out \

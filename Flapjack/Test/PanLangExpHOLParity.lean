@@ -46,6 +46,18 @@ private def nstructRow : Bool :=
   ((([(ofString "f", .const (1 : BitVec 64)),
       (ofString "g", .const 2)] : List (MlString × ExpHOL 64)).length) = 2)
 
+/-- Row `ex_nstruct_fields`: preserve the structure name, field order/names,
+and nested word expressions through the production-to-exact codec. -/
+private def nstructFieldsRow : Bool :=
+  match expToHOL
+      (Exp.nStruct "S"
+        [("f", .const (1 : BitVec 64)), ("g", .const 2)]) with
+  | .nstruct name [(f, .const x), (g, .const y)] =>
+      name.explode = (ofString "S").explode &&
+        f.explode = (ofString "f").explode &&
+        g.explode = (ofString "g").explode && x.toNat = 1 && y.toNat = 2
+  | _ => false
+
 /-- Row `ex_nfield_len`: `NField (strlit "foo") _` has name length `3`. -/
 private def nfieldRow : Bool :=
   match (ExpHOL.nfield (ofString "foo") (.const (1 : BitVec 64)) : ExpHOL 64) with
@@ -103,7 +115,8 @@ private def bytesInWordRow : Bool :=
   | _ => false
 
 private def parityGuard : Bool :=
-  constRow && varRow && rstructRow && rfieldRow && nstructRow && nfieldRow &&
+  constRow && varRow && rstructRow && rfieldRow && nstructRow &&
+    nstructFieldsRow && nfieldRow &&
     loadShapeRow && load32Row && opRow && panopRow && cmpRow && shiftRow &&
     baseAddrRow && topAddrRow && bytesInWordRow
 
@@ -129,6 +142,17 @@ example : expOfHOL (expToHOL (Exp.const (7 : BitVec 64))) =
 example : expOfHOL (expToHOL (Exp.nField "foo" (Exp.const (7 : BitVec 64)))) =
     Exp.nField "foo" (Exp.const (7 : BitVec 64)) :=
   expOfHOL_expToHOL _ (by simp [ExpByteRanged])
+
+/-- The NStruct codec preserves both names, their order, and the nested values
+when production identifiers are representable as HOL `mlstring`. -/
+example : expOfHOL (expToHOL
+      (Exp.nStruct "S" [("f", Exp.const (1 : BitVec 64)),
+        ("g", Exp.const (2 : BitVec 64))])) =
+    Exp.nStruct "S" [("f", Exp.const (1 : BitVec 64)),
+      ("g", Exp.const (2 : BitVec 64))] := by
+  apply expOfHOL_expToHOL_nStruct
+  · simp
+  · simp [ListFieldByteRanged, ExpByteRanged]
 
 /-! ### `panLang$shape_val` parity (bead `flapjack-4ac.1.29`)
 

@@ -3,6 +3,7 @@ ex_var_len=2
 ex_rstruct_len=2
 ex_rfield=3
 ex_nstruct_len=2
+ex_nstruct_fields=T
 ex_nfield_len=3
 ex_load_shape=«1»
 ex_load32=1
