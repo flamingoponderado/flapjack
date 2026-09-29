@@ -3,6 +3,7 @@
 import hashlib
 import importlib.util
 import json
+import os
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -541,6 +542,11 @@ class HolTypeHashesTest(unittest.TestCase):
             "lake", "--quiet", "lean", str(MODULE.EXPORTER),
         ])
 
+    @unittest.skipUnless(
+        os.environ.get("FLAPJACK_NATIVE_EXPORT") == "1",
+        "native Lake export path is opt-in; set FLAPJACK_NATIVE_EXPORT=1 "
+        "(or run the integration suite) to exercise it",
+    )
     def test_native_export_sees_recent_crep_props_source_declaration(self):
         # This exact declaration was missing from an old saved
         # Flapjack.setup.json after Lake had rebuilt CrepProps from source.
