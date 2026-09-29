@@ -1194,3 +1194,18 @@ trees; it loads only `bossLib`/`sptreeTheory` (no CakeML `preamble`), so it runs
 in a bare HOL session.  `Flapjack.Test.SptreeSetOpsParity.sptreeInterMixedGuard`
 checks the Lean `sptInter` against every row.  Refresh with
 `HOL_PROBE_ONLY=sptree_inter_mixed_probeScript.sml scripts/hol-probes/regenerate.sh`.
+
+`word_sem_evaluate_probe.out` records 36 direct HOL `EVAL` rows for
+`wordSem$evaluate_def` (`cakeml/compiler/backend/semantics/wordSemScript.sml:
+1016-1260`) at 64-bit words, over record updates of a free state: the
+straight-line and control clauses plus `Alloc`, `Store`, `OpCurrHeap`,
+`ShareInst`, `CodeBufferWrite`, `DataBufferWrite`, `Install`, and the
+returning-`Call` caught-handler exception path (a handler is installed, the
+callee `Raise`s with the handler's labels, and the handler body runs).
+Rows print `(result, toAList locals, clock)` unless the clause updates another
+field, in which case the projection adds the affected field (memory/buffer
+contents, code map, `stack_max`/`stack_size`). The kernel-checked Lean replay
+is `Flapjack.Test.WordSemEvaluateParity`. Refresh with
+`CAKEML=/home/zksecurity/pancake-lean/cakeml
+HOL_PROBE_ONLY=word_sem_evaluate_probeScript.sml
+bash scripts/hol-probes/regenerate.sh`.
