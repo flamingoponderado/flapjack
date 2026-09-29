@@ -23954,5 +23954,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.9.15.1) against loop_to_wordProofScript.sml:210-220. HOL premises are exactly locals_rel ctxt lcl lcl' AND FORALL n. n IN domain ctxt implies find_var ctxt n differs from k; conclusion only inserts (k,x) into target locals. Lean retains the conjunction and universal noncollision premise as sptMem/findVarHOL, without strengthening it, using Spt insertion. The exact Spt and WordLocW carriers and sole words_as_type_indexed_bitvec qualifier match locals_rel_def; no finite-map/list/name qualifier applies. Direct original HOL rows mapped insert and target-register collision are in loop_to_word_locals_rel_probe.out and kernel-replayed in LoopToWordExactParity."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "locals_rel_ALL_DISTINCT_MAP",
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/LocalsRelAllDistinct.lean",
+    "lean_name": "localsRelHOLAllDistinctMap",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-ds5 source comparison (2026-09-29; bead flapjack-pxn.18.5.9.15.3) against loop_to_wordProofScript.sml:234-240. HOL keeps exactly three premises: locals_rel ctxt lcl lcl', set xs SUBSET domain ctxt, and ALL_DISTINCT xs, concluding ALL_DISTINCT (MAP (find_var ctxt) xs). Lean retains the conjunction including both extra premises unchanged; the subset is the reviewed pointwise rendering forall name, name IN xs -> sptMem name context (HOL set membership as a predicate, as in sptDomain/sptMem), ALL_DISTINCT is List.Nodup and HOL MAP is constructor-for-constructor List.map. The proof uses only the injectivity clause of localsRelHOL and findVarHOL (exact find_var_def) over the exact Spt context carrier; sourceLocals/targetLocals appear only in the relation premise. The only representation qualifier is the type-indexed word of the relation carrier (WordLocW), so words_as_type_indexed_bitvec; no finite-map or name qualifier applies. Positive and negative parity examples (distinct-in-domain list, out-of-domain default register 0 collision, repeated name, and non-injective context collision) are kernel-replayed in Flapjack.Test.LoopToWordAllDistinctMapParity."
   }
 ]
