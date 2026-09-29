@@ -520,50 +520,92 @@ def pipelineLoopFunctionsSource [OfNat α 0] [OfNat α 1]
   pipelineLoopFunctionsSourceAux architecture (pipelineFunctionInfos firstLabel functions)
     firstLabel functions
 
-private theorem pipelineFunctionInfos_byteRanged {width : Nat}
-    (firstLabel : Nat) (functions : List (CompiledFunction (BitVec width)))
-    (hnames : ∀ function ∈ functions, CrepNameRanged function.name) :
-    ∀ entry ∈ pipelineFunctionInfos firstLabel functions,
-      CrepNameRanged entry.1 := by
-  induction functions generalizing firstLabel with
-  | nil => simp [pipelineFunctionInfos, crepMakeFuncsAt]
-  | cons function functions ih =>
-      intro entry hentry
-      change entry ∈
-        (function.name, (firstLabel, function.params.length)) ::
-          crepMakeFuncsAt (firstLabel + 1) functions at hentry
-      simp only [List.mem_cons] at hentry
-      rcases hentry with hhead | htail
-      · cases hhead
-        exact hnames function (by simp)
-      · exact ih (firstLabel + 1)
-          (fun next hnext => hnames next (by simp [hnext])) entry htail
+/-! The exact whole-program `compile_prog_def` numbers its Crep functions from
+`firstLoopName` (64), whereas the source RISC-V pipeline reserves labels and
+starts those functions at `firstLabel` (normally 3). Rebase only call targets
+that name one of the functions in this compiled program; Loop's break and
+continue labels are local control-flow labels and must remain untouched. This
+is an untagged production bridge, not a HOL declaration. -/
+private def rebaseHOLFunctionLabel (firstLabel functionCount label : Nat) : Nat :=
+  if firstLoopName ≤ label && label < firstLoopName + functionCount then
+    firstLabel + (label - firstLoopName)
+  else
+    label
 
-private def pipelineLoopFunctionsSourceExactAux {width : Nat} [NeZero width]
-    (architecture : RiscV.Architecture) (functionInfos : InfoMap (Nat × Nat))
-    (hFunctionNames : ∀ entry ∈ functionInfos, CrepNameRanged entry.1) :
-    Nat → (programs : List (CompiledFunction (BitVec width))) →
-      (∀ function ∈ programs, CrepProgNameRanged function.body) →
-      List (Nat × List Nat × LoopProg (BitVec width))
-  | _, [], _ => []
-  | label, function :: programs, hBodies =>
-      let hBody := hBodies function (by simp)
-      let hTail : ∀ next ∈ programs, CrepProgNameRanged next.body := by
-        intro next hnext
-        exact hBodies next (by simp [hnext])
-      (label, List.range function.params.length,
-        crepCompFuncThroughHOLExact architecture functionInfos function.params
-          function.body hBody hFunctionNames) ::
-        pipelineLoopFunctionsSourceExactAux architecture functionInfos hFunctionNames
-          (label + 1) programs hTail
-termination_by _ programs _ => programs.length
+private def rebaseHOLFunctionCallTargets (firstLabel functionCount : Nat) :
+    LoopProg α → LoopProg α
+  | .skip => .skip
+  | .assign name value => .assign name value
+  | .primitive destinations operator arguments =>
+      .primitive destinations operator arguments
+  | .arith operation => .arith operation
+  | .store address value => .store address value
+  | .setGlobal address value => .setGlobal address value
+  | .load32 address destination => .load32 address destination
+  | .loadByte address destination => .loadByte address destination
+  | .store32 address value => .store32 address value
+  | .storeByte address value => .storeByte address value
+  | .seq first second =>
+      .seq (rebaseHOLFunctionCallTargets firstLabel functionCount first)
+        (rebaseHOLFunctionCallTargets firstLabel functionCount second)
+  | .ite operator condition right thenBranch elseBranch live =>
+      .ite operator condition right
+        (rebaseHOLFunctionCallTargets firstLabel functionCount thenBranch)
+        (rebaseHOLFunctionCallTargets firstLabel functionCount elseBranch) live
+  | .loop liveIn body liveOut =>
+      .loop liveIn (rebaseHOLFunctionCallTargets firstLabel functionCount body) liveOut
+  | .break label => .break label
+  | .continue label => .continue label
+  | .raise exception => .raise exception
+  | .return values => .return values
+  | .shMem operator name address => .shMem operator name address
+  | .tick => .tick
+  | .mark body =>
+      .mark (rebaseHOLFunctionCallTargets firstLabel functionCount body)
+  | .fail => .fail
+  | .locValue destination source => .locValue destination source
+  | .call returns target arguments handler =>
+      let rebasedHandler :=
+        match handler with
+        | none => none
+        | some (exception, first, second, live) =>
+            some (exception,
+              rebaseHOLFunctionCallTargets firstLabel functionCount first,
+              rebaseHOLFunctionCallTargets firstLabel functionCount second,
+              live)
+      .call returns (target.map (rebaseHOLFunctionLabel firstLabel functionCount)) arguments
+        rebasedHandler
+  | .ffi function configuration configurationLength array arrayLength live =>
+      .ffi function configuration configurationLength array arrayLength live
+termination_by program => sizeOf program
+decreasing_by
+  simp_wf
+  all_goals first
+    | decreasing_trivial
+    | (simp_all only [LoopProg.call.sizeOf_spec]; omega)
+
+private def pipelineLoopFunctionsSourceCompileProgExact {width : Nat} [NeZero width]
+    (firstLabel : Nat) (functions : List (CompiledFunction (BitVec width)))
+    (_hFunctionNames : ∀ function ∈ functions, CrepNameRanged function.name)
+    (_hProgramNames : ∀ function ∈ functions, CrepProgNameRanged function.body) :
+    List (Nat × List Nat × LoopProg (BitVec width)) :=
+  let holPrograms := functions.map fun function =>
+    (Flapjack.Basis.Pure.MlString.ofString function.name, function.params,
+      crepProgToHOL function.body)
+  (compileProgHOLExact .riscv holPrograms).map fun (label, parameters, body) =>
+    (rebaseHOLFunctionLabel firstLabel functions.length label, parameters,
+      rebaseHOLFunctionCallTargets firstLabel functions.length
+        (holLoopProgToExecutableCanonical body))
 
 /-- Source-pipeline route through exact `compile_def`/`ocompile_def` whenever
 all compiled-body names and sibling function keys lie in HOL `mlstring`'s byte
 range. The range check is executable and covers the whole list before any
 function is lowered. If a Lean `String` contains a code point outside that
 range, keep the existing generic implementation; no truncating conversion is
-used on that path. -/
+used on that path. On the ranged path it invokes exact whole-program
+`compileProgHOLExact`; its HOL function-label base is rebased consistently to
+the source pipeline's caller-selected label base before the downstream Loop
+passes. -/
 def pipelineLoopFunctionsSourceRouted {width : Nat} [NeZero width]
     (architecture : RiscV.Architecture) (firstLabel : Nat)
     (functions : List (CompiledFunction (BitVec width))) :
@@ -590,9 +632,7 @@ def pipelineLoopFunctionsSourceRouted {width : Nat} [NeZero width]
       have ⟨_, hbody⟩ : CrepNameRangedBool function.name = true ∧
           CrepProgNameRangedBool function.body = true := by simpa using h
       exact (crepProgNameRangedBool_eq_true_iff function.body).mp hbody
-    pipelineLoopFunctionsSourceExactAux architecture functionInfos
-      (pipelineFunctionInfos_byteRanged firstLabel functions hNames)
-      firstLabel functions hBodies
+    pipelineLoopFunctionsSourceCompileProgExact firstLabel functions hNames hBodies
   else
     pipelineLoopFunctionsSourceAux architecture functionInfos firstLabel functions
 

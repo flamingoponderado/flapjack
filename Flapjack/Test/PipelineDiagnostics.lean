@@ -35,8 +35,9 @@ private def nonByteRoutedFunction : CompiledFunction (BitVec 64) :=
     body := .extCall "λ" 0 0 0 0,
     returnShape := .one }
 
-/-- Byte-ranged pipeline input takes the exact `compile_def`/`ocompile_def`
-route, including the canonical executable projection. -/
+/-- Byte-ranged pipeline input takes the exact whole-program `compile_prog_def`
+route, rebases Cake's function labels to the selected source-pipeline label
+base, and uses the canonical executable projection. -/
 def routedSkipShape : Bool :=
   match pipelineLoopFunctionsSourceRouted (width := 64) .rv64i 1
       [routedSkipFunction] with
