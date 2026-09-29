@@ -234,6 +234,30 @@ example :
       (HolWordLab.word (BitVec.ofNat 8 13)) (by
         simp [evalCrepSemHOLExp, baseTopState, lookupState]))
 
+private def loadState : CrepSemHOLState 8 Unit :=
+  { lookupState with
+    memory := fun _ => .word (BitVec.ofNat 8 9)
+    memaddrs := fun address => address = BitVec.ofNat 8 3 }
+
+example :
+    evalCrepSemHOLExp (loadState.mapc sampleMapc)
+        (.load (.const (BitVec.ofNat 8 3))) =
+      evalCrepSemHOLExp loadState (.load (.const (BitVec.ofNat 8 3))) := by
+  classical
+  simpa [crepSimpExpHOL] using
+    (crepSimpExpCorrect1NativeLoadCase sampleMapc loadState
+      (.const (BitVec.ofNat 8 3)) (HolWordLab.word (BitVec.ofNat 8 9))
+      (by simp [evalCrepSemHOLExp, loadState, lookupState])
+      (by
+        intro state' resultType result hAddress
+        exact crepSimpExpCorrect1NativeConstCase sampleMapc state'
+          (BitVec.ofNat 8 3) result (by simp [evalCrepSemHOLExp])))
+
+example :
+    evalCrepSemHOLExp loadState (.load (.const (BitVec.ofNat 8 4))) = none := by
+  classical
+  simp [evalCrepSemHOLExp, loadState, lookupState]
+
 private def lookupNames : List Nat := [0, 1]
 
 example :
