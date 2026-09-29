@@ -51,7 +51,12 @@ register mappings, a source local absent from the context, and a mismatched
 target value. It also records HOL observations for `locals_rel_insert` and
 `locals_rel_insert_unmapped`, including mapped overwrite, permitted unmapped
 target insertion, and collision failure (`loop_to_wordProofScript.sml:195-220`).
-The exact-carrier Lean replay is in `Flapjack.Test.LoopToWordExactParity`.
+The same fixture prints the source conclusions for `locals_rel_get_var` and
+`locals_rel_get_vars` (`:252-269`) and evaluates successful and missing-list
+lookups in the exact LoopSem and WordSem state carriers. The theorem ports are
+in `Flapjack.Pancake.Proofs.LoopToWord.LocalsRelLookups`; the kernel-checked
+replay is `Flapjack.Test.LoopToWordLocalsRelLookupsParity`. The earlier exact-
+carrier relation replay remains in `Flapjack.Test.LoopToWordExactParity`.
 `loop_to_word_comp_exp_probe.out` records direct HOL EVAL rows for the exact
 loopLang-to-wordLang expression compiler `comp_exp_def` at
 `cakeml/pancake/loop_to_wordScript.sml:22-40`; its kernel-checked Lean replay

@@ -19,6 +19,9 @@ fun print_eval label q =
     print (label ^ "="); print_term (rconc th); print "\n"
   end;
 
+fun print_conclusion label th =
+  (print (label ^ "="); print_term (concl th); print "\n");
+
 val ctxt = ``insert 0 4 (LN : num num_map)``;
 val src = ``insert 0 (Word 7w) (LN : 64 word_loc num_map)``;
 val dst = ``insert 4 (Word 7w) (insert 6 (Loc 1 2) (LN : 64 word_loc num_map))``;
@@ -70,3 +73,16 @@ val unmapped_dst = ``insert 6 (Word 9w) ^dst``;
 prove_row "lt_locals_rel_insert_unmapped" ``locals_rel ^ctxt ^src ^unmapped_dst``;
 refute_row "lt_locals_rel_insert_unmapped_collision"
   ``~locals_rel ^ctxt ^src (insert 4 (Word 9w) ^dst)``;
+
+(* Exact source theorem statements, followed by direct evaluator observations. *)
+print_conclusion "locals_rel_get_var_statement" locals_rel_get_var;
+print_conclusion "locals_rel_get_vars_statement" locals_rel_get_vars;
+
+val lookup_src = ``insert 2 (Word 9w) (insert 1 (Word 7w) (LN : 64 word_loc num_map))``;
+val lookup_dst = ``insert 6 (Word 9w) (insert 4 (Word 7w) (LN : 64 word_loc num_map))``;
+val loop_state = ``(s:(64,unit) loopSem$state) with locals := ^lookup_src``;
+val word_state = ``(t:(64,unit,unit) wordSem$state) with locals := ^lookup_dst``;
+print_eval "loop_get_vars_hit" ``loopSem$get_vars [1;2] ^loop_state``;
+print_eval "loop_get_vars_miss" ``loopSem$get_vars [1;3] ^loop_state``;
+print_eval "word_get_vars_hit" ``wordSem$get_vars [4;6] ^word_state``;
+print_eval "word_get_vars_miss" ``wordSem$get_vars [4;5] ^word_state``;
