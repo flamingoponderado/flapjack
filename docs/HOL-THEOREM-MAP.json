@@ -63,6 +63,39 @@
     "words_as_type_indexed_bitvec": true
   },
   {
+    "hol_path": "cakeml/pancake/crep_inlineScript.sml",
+    "hol_name": "inline_prog_def",
+    "lean_path": "Flapjack/Pancake/CrepInline/Canonical.lean",
+    "lean_name": "inlineProgHOLExact",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.5.7) against cakeml/pancake/crep_inlineScript.sml:203-257. Compared the standalone inlineable finite-map parameter and Crep program input/output; HOL's map has type mlstring |-> (num list # prog), Lean uses HolFiniteMapExact MlString (List Nat × CrepProgHOL width), and the same-module holFmapAsFiniteSupportParamWitness_inlineProgHOLExact_inlineable proves lookup and finite-support roundtrips. MlString is the exact tagged HOL mlstring carrier, so its map-key equality is HOL equality; the wrapper fixes the global lawful equality and adds no generic BEq/LawfulBEq assumptions. words_as_type_indexed_bitvec records HOL's positive word dimension as BitVec width under [NeZero width]. Reviewed all source clauses: Call handler recursion uses the unchanged inline map; return non-distinctness returns the call; FLOOKUP miss preserves it; a hit recurses after DOMSUB of the callee; tail and non-tail paths preserve the HOL MAX_LIST/GENLIST/arg_load/transform sequence; Dec, Seq, If, While recurse structurally and the catch-all is identity. The support list/proof are confined to an untagged termination core and the wrapper's result is proved support-independent. Direct HOL rows are replayed by canonicalOracleGuard. Production compiler routing is not claimed here and remains open in flapjack-e7w.2.1.13.",
+    "fmap_as_finite_support_parameters": [
+      "inlineable"
+    ],
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_inlineScript.sml",
+    "hol_name": "compile_inl_prog_def",
+    "lean_path": "Flapjack/Pancake/CrepInline/Canonical.lean",
+    "lean_name": "compileInlProgHOLExact",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.5.7) against cakeml/pancake/crep_inlineScript.sml:259-262. HOL MAPs each (name, params, body) triple to the same name and params with inline_prog (inl_fs \\ name) body. Lean maps over the same List triple carrier, uses HolFiniteMapExact.erase for DOMSUB and the tagged inlineProgHOLExact; the standalone inl_fs parameter has a same-module lookup/finite-support roundtrip witness. MlString is the exact tagged HOL mlstring carrier, and the word-indexed program carrier uses words_as_type_indexed_bitvec. No BEq/LawfulBEq binders remain on the tagged declaration. Direct HOL output rows for inlining are replayed by canonicalOracleGuard; production compiler routing remains open in flapjack-e7w.2.1.13.",
+    "fmap_as_finite_support_parameters": [
+      "inl_fs"
+    ],
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/pancake/crep_inlineScript.sml",
+    "hol_name": "compile_inl_top_def",
+    "lean_path": "Flapjack/Pancake/CrepInline/Canonical.lean",
+    "lean_name": "compileInlTopHOLExact",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-luna-a source comparison (2026-09-29; bead flapjack-pxn.18.5.5.7) against cakeml/pancake/crep_inlineScript.sml:264-269. HOL filters prog by membership of each function name in inl_fname, creates alist_to_fmap over the selected triples, and calls compile_inl_prog on the original prog. Lean uses List.filter with MlString's fixed lawful equality, alistToFmapHOLExact whose lookup rows match HOL's first-occurrence-wins alist_to_fmap, then the support-certified executable inline pass over the original prog. The function signature has the same two list inputs and triple-list output with exact MlString names and width-indexed CrepProgHOL; words_as_type_indexed_bitvec records the positive word model. Direct HOL inline/alist rows are replayed by canonicalOracleGuard. This tag records the HOL definition but not production compiler routing, which remains open in flapjack-e7w.2.1.13.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
     "hol_path": null,
     "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/CrepArith.lean",
@@ -20051,6 +20084,28 @@
   "lean_name": "foldl_resVarEq_lookup",
   "statement_status": "no_hol_reference_pending_classification",
   "reviewer": "Flapjack-only bridge: folding the exact HolFiniteMapExact resVarEq over a list of entries equals folding HOL's raw-map res_var over the underlying lookup; no CakeML HOL declaration."
+},
+{
+  "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+  "hol_name": "not_mem_context_assigned_mem_gt",
+  "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/NotMemContextAssigned.lean",
+  "lean_name": "not_mem_context_assigned_mem_gt",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "vars",
+    "funcs"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.19) against not_mem_context_assigned_mem_gt at crep_to_loopProofScript.sml:1570-1575. HOL `!ctxt l p n. ctxt_max ctxt.vmax ctxt.vars /\\ (!v m. FLOOKUP ctxt.vars v = SOME m ==> n <> m) ∧ n <= ctxt.vmax ==> ~MEM n (assigned_vars (compile ctxt l p))`. Lean keeps the binders in order (ctxt : CrepToLoopContextExact, l : NumSet, p : CrepProgHOL width, n : Nat), the same three-conjunct premise (tagged crepToLoopCtxtMax over ctxt.vars.lookup, FLOOKUP as HolFiniteMapExact.lookup) and conclusion over the tagged compileHOLExact (compile_def) and holLoopAssignedVars (assigned_vars_def). No Crep evaluator occurs, so no DecidablePred binder. Proof: well-founded recursion on the source program mirroring compile_ind, using the tagged not_mem_assigned_mem_gt_comp_exp(s), compile_exp(s)_out_rel, assigned_vars_nested_seq_split and assigned_vars_nested_seq_assign. Qualifiers: ctxt's HOL |-> vars/funcs as canonical HolFiniteMapExact; width-indexed Crep/Loop program carriers."
+},
+{
+  "hol_path": "cakeml/pancake/proofs/crep_to_loopProofScript.sml",
+  "hol_name": "crep_to_loop_compile_prog_lab_min",
+  "lean_path": "Flapjack/Pancake/CrepToLoop/Proofs/MakeFuncsLemmas.lean",
+  "lean_name": "crep_to_loop_compile_prog_lab_min",
+  "statement_status": "reviewed_words_as_type_indexed_bitvec",
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-opus source comparison (2026-09-28; bead flapjack-pxn.18.5.6.33.21) against crep_to_loop_compile_prog_lab_min at crep_to_loopProofScript.sml:4398-4400. HOL `crep_to_loop$compile_prog c cprog = lprog ⇒ EVERY (λprog. 60 ≤ FST prog) lprog` with free variables c, cprog, lprog (implicitly universal); Lean quantifies them in order of occurrence (c as the AsmArchitecture carrier of the tagged compileProgHOLExact, cprog at its argument type, lprog at its result type), keeps the equation premise, and renders EVERY as ∀ prog ∈ lprog with FST as .1. Words qualifier for the width-indexed Crep/Loop program carriers."
 },
   {
     "hol_path": null,
