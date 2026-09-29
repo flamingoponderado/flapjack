@@ -22591,29 +22591,5 @@
     "lean_name": "holFmapAsFiniteSupportWitness",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Same-module canonical finite-support witness re-export for the CrepSemHOLState carrier used by the Primitive/Raise case tags; no separate HOL declaration."
-  },
-{
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrectPrimitiveRaise.lean",
-    "lean_name": "crepSimpMapcsHOLPrimitiveRaise_locals",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-only locals projection for the slice-local mapcs rendering; HOL mapc is a script-local overload with no named declaration."
-  },
-{
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrectPrimitiveRaise.lean",
-    "lean_name": "crepSimpMapcsHOLPrimitiveRaise_localsUpdate",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-only commutation of the slice-local mapcs rendering with a locals update; HOL mapc/FMAP_MAP2 reasoning is inline in the proof script."
-  },
-{
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrectPrimitiveRaise.lean",
-    "lean_name": "crepSimpMapcsHOLPrimitiveRaise_emptyLocals",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-only commutation of the slice-local mapcs rendering with empty_locals; HOL mapc/FMAP_MAP2 reasoning is inline in the proof script."
   }
 ]

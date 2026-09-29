@@ -1,5 +1,5 @@
 import Flapjack.Pancake.CrepArith
-import Flapjack.Pancake.Proofs.CrepArith.HOLStateMapc
+import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrect
 import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
 import Flapjack.Pancake.Semantics.CrepSem.HOLState
 
@@ -40,32 +40,6 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {σ : Type} :
 
 end SimpProgCorrectPrimitiveRaiseSupport
 
-/-- Slice-local rendering of the proof script's `mapcs` overload: preserve each
-    code key and formal-parameter list, mapping each stored program body with the
-    exact HOL-shaped `crepSimpProgHOL`. -/
-abbrev crepSimpMapcsHOLPrimitiveRaise {width : Nat} [NeZero width] {σ : Type}
-    (state : CrepSemHOLState width σ) : CrepSemHOLState width σ :=
-  state.mapc (fun entry => (entry.2.1, crepSimpProgHOL entry.2.2))
-
-@[simp] theorem crepSimpMapcsHOLPrimitiveRaise_locals
-    {width : Nat} [NeZero width] {σ : Type} (state : CrepSemHOLState width σ) :
-    (crepSimpMapcsHOLPrimitiveRaise state).locals = state.locals := rfl
-
-theorem crepSimpMapcsHOLPrimitiveRaise_localsUpdate
-    {width : Nat} [NeZero width] {σ : Type} (state : CrepSemHOLState width σ)
-    (locals : HolFiniteMapExact Nat (HolWordLab width)) :
-    crepSimpMapcsHOLPrimitiveRaise { state with locals := locals } =
-      { crepSimpMapcsHOLPrimitiveRaise state with locals := locals } := by
-  cases state
-  rfl
-
-theorem crepSimpMapcsHOLPrimitiveRaise_emptyLocals
-    {width : Nat} [NeZero width] {σ : Type} (state : CrepSemHOLState width σ) :
-    crepSimpMapcsHOLPrimitiveRaise (CrepSemHOLState.emptyLocals state) =
-      CrepSemHOLState.emptyLocals (crepSimpMapcsHOLPrimitiveRaise state) := by
-  cases state
-  rfl
-
 /-- The `Primitive lhss pop rhss` specialization of HOL `simp_prog_correct`
     (`crep_arithProofScript.sml:184-212`).  Its non-`Error` premise forces the
     three HOL guard conjuncts; the resulting locals update is independent of the
@@ -80,16 +54,16 @@ theorem simpProgCorrectPrimitiveCase {width : Nat} [NeZero width] {σ : Type} :
       evalCrepSemHOLProgExact state (.primitive names operator args : CrepProgHOL width) =
           (result, finalState) →
       result ≠ some .error →
-      evalCrepSemHOLProgExact (crepSimpMapcsHOLPrimitiveRaise state)
+      evalCrepSemHOLProgExact (crepSimpMapcsHOL state)
           (crepSimpProgHOL (.primitive names operator args : CrepProgHOL width)) =
-        (result, crepSimpMapcsHOLPrimitiveRaise finalState) := by
+        (result, crepSimpMapcsHOL finalState) := by
   intro state names operator args result finalState heval hresult
   have hsimp : crepSimpProgHOL (.primitive names operator args : CrepProgHOL width) =
       (.primitive names operator args : CrepProgHOL width) := by
     simp only [crepSimpProgHOL]
   rw [hsimp]
   rw [evalCrepSemHOLProgExact_primitive] at heval ⊢
-  rw [show (crepSimpMapcsHOLPrimitiveRaise state).locals = state.locals from rfl] at ⊢
+  rw [show (crepSimpMapcsHOL state).locals = state.locals from rfl] at ⊢
   rcases hargs : args.mapM state.locals.lookup with _ | ws
   · simp only [hargs] at heval ⊢
     exact absurd (Prod.ext_iff.mp heval).1.symm hresult
@@ -124,9 +98,9 @@ theorem simpProgCorrectRaiseCase {width : Nat} [NeZero width] {σ : Type} :
       evalCrepSemHOLProgExact state (.raise exception : CrepProgHOL width) =
           (result, finalState) →
       result ≠ some .error →
-      evalCrepSemHOLProgExact (crepSimpMapcsHOLPrimitiveRaise state)
+      evalCrepSemHOLProgExact (crepSimpMapcsHOL state)
           (crepSimpProgHOL (.raise exception : CrepProgHOL width)) =
-        (result, crepSimpMapcsHOLPrimitiveRaise finalState) := by
+        (result, crepSimpMapcsHOL finalState) := by
   intro state exception result finalState heval _hresult
   have hsimp : crepSimpProgHOL (.raise exception : CrepProgHOL width) =
       (.raise exception : CrepProgHOL width) := by
