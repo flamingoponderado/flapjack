@@ -207,6 +207,12 @@ run_probe loop_to_word_defs_probeScript.sml loop_to_word_defs_probe.out \
   lt_to_num_set_lookup0 lt_to_num_set_lookup2 lt_to_num_set_lookup3 \
   lt_from_num_set lt_mk_new_cutset_lookup0 lt_mk_new_cutset_lookup5 \
   lt_mk_new_cutset_absent "$cake_dir/pancake/loop_to_wordScript.sml"
+run_probe loop_to_word_locals_rel_probeScript.sml loop_to_word_locals_rel_probe.out \
+  lt_locals_rel_good_with_extra_target lt_locals_rel_odd_register \
+  lt_locals_rel_zero_register lt_locals_rel_noninjective \
+  lt_locals_rel_missing_context lt_locals_rel_wrong_value \
+  "$cake_dir/pancake/proofs/loop_to_wordProofScript.sml" \
+  "$cake_dir/pancake/proofs"
 run_probe loop_to_word_comp_exp_probeScript.sml loop_to_word_comp_exp_probe.out \
   comp_exp_const comp_exp_var comp_exp_var_miss comp_exp_lookup \
   comp_exp_base_addr comp_exp_top_addr comp_exp_load comp_exp_shift \
@@ -1645,6 +1651,14 @@ run_probe word_sem_env_probeScript.sml word_sem_env_probe.out \
 # the [nocompute] MustTerminate_limit unfolded at width 1 (bead flapjack-h29l.7).
 run_probe word_sem_call_helpers_probeScript.sml word_sem_call_helpers_probe.out \
   add_ret_loc_none const_writes exit_loop_break0 must_terminate_limit_1 \
+  "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
+# The wordSem code/GC/alloc probe observes find_code, enc_stack/dec_stack, gc
+# with a supplied gc_fun, has_space, alloc (success, NotEnoughSpace, cut and gc
+# failure) and assign (bead flapjack-h29l.5).
+run_probe word_sem_alloc_probeScript.sml word_sem_alloc_probe.out \
+  find_code_some dec_stack_hit gc_rev alloc_ok assign_fail \
   "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 
