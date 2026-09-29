@@ -92,9 +92,14 @@ namespace Flapjack
 
 open Flapjack.Basis.Pure.MlString
 
-/-- HOL `is_load` (`cakeml/pancake/loop_callScript.sml:10-15`): true for the
-    four shared-memory load operations. Flapjack-specific helper for the `ShMem`
-    clause; no separate HOL declaration is claimed. -/
+/-- HOL `asm$is_load` (`cakeml/compiler/encoders/asm/asmScript.sml:324-330`),
+    which crepSem's and loopSem's `ShMem` clauses use (crepLang and loopLang
+    reuse `asm$memop`), over the duplicate Crep/Loop `memop` carrier
+    `CrepMemOp`: true for the four shared-memory load operations. Untagged; the
+    tagged port is `asmIsLoad` over `HolMemop`, and
+    `crepIsLoadMemOp_eq_asmIsLoad` (in `LoopSemStateExact/Evaluate.lean`) proves
+    agreement.  (loop_call defines its own `is_load_def`, ported as
+    `loopCallIsLoadHOL`.) -/
 def crepIsLoadMemOp : CrepMemOp → Bool
   | .load | .load8 | .load16 | .load32 => true
   | .store | .store8 | .store16 | .store32 => false
