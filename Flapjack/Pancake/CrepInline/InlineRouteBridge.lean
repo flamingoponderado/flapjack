@@ -495,5 +495,33 @@ theorem crepProgToHOL_crepTransformEoc {width : Nat} [NeZero width]
             · exact absurd rfl (hcs names handler body nm ar)
       | _ => simp_all [transformEocHOLExact, crepProgToHOL]
 
+/-- Executed `crepTransformBranch` lifts to the exact `transformBranchHOLExact`
+    under the `crepProgToHOL` codec. -/
+theorem crepProgToHOL_crepTransformBranch {width : Nat} [NeZero width] (loopDepth : Nat)
+    (returnNames : List Nat) (program : CrepProg (BitVec width)) :
+    crepProgToHOL (crepTransformBranch loopDepth returnNames program) =
+      transformBranchHOLExact loopDepth returnNames (crepProgToHOL program) := by
+  fun_induction crepTransformBranch loopDepth returnNames program with
+  | case1 =>
+      simp_all only [transformBranchHOLExact, crepProgToHOL,
+        crepProgToHOL_crepNestedSeqHOL, List.map_zipWith, List.zipWith_map_right]
+  | case2 => simp_all only [transformBranchHOLExact, crepProgToHOL]
+  | case3 => simp_all only [transformBranchHOLExact, crepProgToHOL]
+  | case4 => simp_all only [transformBranchHOLExact, crepProgToHOL]
+  | case5 => simp_all only [transformBranchHOLExact, crepProgToHOL]
+  | case6 => simp_all only [transformBranchHOLExact, crepProgToHOL]
+  | case7 => simp_all only [transformBranchHOLExact, crepProgToHOL]
+  | case8 => simp_all only [transformBranchHOLExact, crepProgToHOL]
+  | case9 lp program =>
+      cases program with
+      | call ret nm ar =>
+          rename_i hr hc hcn hcs hdec hwhile hseq hite
+          rcases ret with _ | ⟨names, r⟩
+          · exact absurd rfl (hc nm ar)
+          · rcases r with _ | ⟨handler, body⟩
+            · exact absurd rfl (hcn names nm ar)
+            · exact absurd rfl (hcs names handler body nm ar)
+      | _ => simp_all [transformBranchHOLExact, crepProgToHOL]
+
 end CrepInlineRoute
 end Flapjack
