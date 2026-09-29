@@ -327,12 +327,12 @@ theorem hfresh_update [BEq String] [LawfulBEq String]
 
 /-- HOL `panLang$load_op` (`panLangScript.sml:300-305`): `Op8 ↦ Load8`,
     `Op16 ↦ Load16`, `OpW ↦ Load`, `Op32 ↦ Load32`. `OpSize` is the tagged
-    exact `opsize` port; `CrepMemOp`'s eight nullary constructors mirror
+    exact `opsize` port; `WordMemOp`'s eight nullary constructors mirror
     `asm$memop`, the representation accepted for `shMem` in the reviewed
     `HolLoopProg` entry. The executable `compileProg` below calls this
     definition directly. -/
 @[hol "cakeml/pancake/panLangScript.sml" "load_op_def"]
-def loadMemOpHOL : OpSize → CrepMemOp
+def loadMemOpHOL : OpSize → WordMemOp
   | .op8 => .load8
   | .opW => .load
   | .op32 => .load32
@@ -342,7 +342,7 @@ def loadMemOpHOL : OpSize → CrepMemOp
     `Op16 ↦ Store16`, `OpW ↦ Store`, `Op32 ↦ Store32`. See `loadMemOpHOL`
     for the carrier comparison. -/
 @[hol "cakeml/pancake/panLangScript.sml" "store_op_def"]
-def storeMemOpHOL : OpSize → CrepMemOp
+def storeMemOpHOL : OpSize → WordMemOp
   | .op8 => .store8
   | .opW => .store
   | .op32 => .store32

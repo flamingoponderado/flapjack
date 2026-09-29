@@ -5,7 +5,7 @@ import Flapjack.Pancake.Semantics.CrepSem.EvaluateHOL
 # loop_call `is_load_def`
 
 Exact port of `cakeml/pancake/loop_callScript.sml`'s `is_load_def` (10-15) over
-`CrepMemOp`, the `memop` carrier of the tagged `HolLoopProg.shMem` (bead
+`WordMemOp`, the `memop` carrier of the tagged `HolLoopProg.shMem` (bead
 `flapjack-pxn.18.5.7.3.1`).
 -/
 
@@ -15,7 +15,7 @@ namespace Flapjack
     `is_load Load = T ∧ is_load Load8 = T ∧ is_load Load16 = T ∧ is_load Load32 = T ∧
       is_load _ = F`. -/
 @[hol "cakeml/pancake/loop_callScript.sml" "is_load_def"]
-def loopCallIsLoadHOL : CrepMemOp → Bool
+def loopCallIsLoadHOL : WordMemOp → Bool
   | .load => true
   | .load8 => true
   | .load16 => true

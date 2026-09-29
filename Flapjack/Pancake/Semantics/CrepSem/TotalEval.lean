@@ -50,7 +50,7 @@ inductive CrepClockProg (width : Nat) where
   | raiseException (value : BitVec width)
   | assignLocal (name : Nat) (value : CrepExp (BitVec width))
   | store (destination source : CrepExp (BitVec width))
-  | sharedMemory (operator : CrepMemOp) (name : Nat)
+  | sharedMemory (operator : WordMemOp) (name : Nat)
       (address : CrepExp (BitVec width))
   | extCall (function : String)
       (configuration configurationLength array arrayLength : Nat)
@@ -188,7 +188,7 @@ def crepClockWordOfBytes {width : Nat} (bytes : List UInt8) : BitVec width :=
     `FfiFinalEvent`; the exact `HolFfiState`/`word8` bridge is not asserted here,
     so this definition intentionally has no `@[hol]` tag. -/
 def evalCrepClockShMem [NeZero width] {σ : Type _}
-    (operator : CrepMemOp) (name : Nat)
+    (operator : WordMemOp) (name : Nat)
     (addressExp : CrepExp (BitVec width))
     (state : CrepHolState (BitVec width) σ) :
     Option (CrepResultHOL (BitVec width) FfiFinalEvent) ×

@@ -99,7 +99,7 @@ def shMemStore {width : Nat} [NeZero width] {F : Type}
 @[hol "cakeml/pancake/semantics/loopSemScript.sml" "sh_mem_op_def"
   (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 def shMemOp {width : Nat} [NeZero width] {F : Type} :
-    CrepMemOp → Nat → BitVec width → LoopSemStateFiniteExact width F →
+    WordMemOp → Nat → BitVec width → LoopSemStateFiniteExact width F →
       Option (LoopResultExact width) × LoopSemStateFiniteExact width F
   | .load, r, ad, s => shMemLoad r ad 0 s
   | .store, r, ad, s => shMemStore r ad 0 s

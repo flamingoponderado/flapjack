@@ -180,7 +180,7 @@ theorem crepShMemStoreExactHOL_crepStateAddClock {width : Nat} [NeZero width] {�
 
 /-- The shared-memory dispatch commutes with the clock shift. -/
 theorem crepShMemOpExactHOL_crepStateAddClock {width : Nat} [NeZero width] {σ : Type}
-    (operator : CrepMemOp) (name : Nat) (address : BitVec width)
+    (operator : WordMemOp) (name : Nat) (address : BitVec width)
     (state : CrepSemHOLState width σ) [DecidablePred state.shMemaddrs]
     (r : Option (CrepResultHOLExact width)) (s' : CrepSemHOLState width σ)
     (extra : Nat) (h : crepShMemOpExactHOL operator name address state = (r, s')) :

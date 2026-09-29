@@ -1,4 +1,5 @@
 import Flapjack.HolRef
+import Flapjack.MemOp
 import Flapjack.Pancake.PanLang
 
 /-!
@@ -32,16 +33,8 @@ inductive CrepExp (α : Type u) where
   | topAddr
   deriving BEq, Repr
 
-inductive CrepMemOp where
-  | load
-  | load8
-  | load16
-  | load32
-  | store
-  | store8
-  | store16
-  | store32
-  deriving DecidableEq, Repr
+-- HOL crepLang/loopLang `memop` is `asm$memop` (both theories have `asm` as
+-- an ancestor); its one Lean carrier is `Flapjack.WordMemOp` (`Flapjack.MemOp`).
 
 inductive CrepProg (α : Type u) where
   | skip
@@ -62,7 +55,7 @@ inductive CrepProg (α : Type u) where
   | extCall (function : FunName) (configuration configurationLength array arrayLength : Nat)
   | raise (exception : α)
   | return (values : List (CrepExp α))
-  | shMem (operator : CrepMemOp) (name : Nat) (address : CrepExp α)
+  | shMem (operator : WordMemOp) (name : Nat) (address : CrepExp α)
   | tick
   deriving Repr
 
