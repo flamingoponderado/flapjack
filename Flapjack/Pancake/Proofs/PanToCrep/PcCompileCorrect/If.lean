@@ -52,8 +52,7 @@ theorem pcCompileCorrectAt_ite {width : Nat} {σ : Type} [NeZero width]
     · exact ⟨ce, rfl⟩
     · simp [flattenHOL] at hes
   subst hce
-  have hce : @evalCrepSemHOLExp width _ σ t
-      (fun address => Classical.propDecidable (t.memaddrs address)) ce = some (.word w) := by
+  have hce : @evalCrepSemHOLExp width _ σ t ce = some (.word w) := by
     simpa [flattenHOL] using hes
   have hcomp : compileProgExactHOLW ctxt (.ite e c1 c2) =
       .ite ce (compileProgExactHOLW ctxt c1) (compileProgExactHOLW ctxt c2) := by

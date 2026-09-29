@@ -126,8 +126,10 @@ theorem evalNestedAssignDistinctEqCrepHOLWithDeciders {width : Nat} [NeZero widt
                     apply List.map_congr_left
                     intro e he
                     have hfresh := hNameNotTailVars e he
+                    rw [crepExactEvalExp_eq_eval updatedState memDec e,
+                      crepExactEvalExp_eq_eval state memDec e]
                     simpa [updatedState, assignedState, CrepSemHOLState.setVar,
-                      crepStampExactDomains, fixClockCrepSemHOL, crepExactEvalExp,
+                      crepStampExactDomains, fixClockCrepSemHOL,
                       evalCrepSemHOLExpWithMemDec] using
                       evalCrepSemHOLExpWithMemDec_updateLocals_eq_of_not_vars
                         state memDec e name value hfresh
@@ -153,7 +155,9 @@ theorem evalNestedAssignDistinctEqCrepHOLWithDeciders {width : Nat} [NeZero widt
                   have hAssign :
                       evalCrepSemHOLProg state memDec shMemDec (.assign name expression) =
                         (none, assignedState) := by
-                    simp [evalCrepSemHOLProg_assign, hEvalHead, hlookup, assignedState,
+                    have hEvalHeadPublic : evalCrepSemHOLExp state expression = some value := by
+                      simpa only [crepExactEvalExp_eq_eval] using hEvalHead
+                    simp [evalCrepSemHOLProg_assign, hEvalHeadPublic, hlookup, assignedState,
                       CrepSemHOLState.setVar]
                   simp only [List.zipWith, crepNestedSeqHOL]
                   rw [evalCrepSemHOLProg_seq_normal_of_eval_eq state memDec shMemDec
@@ -211,7 +215,8 @@ theorem evalNestedAssignDistinctEqCrepHOL {width : Nat} [NeZero width]
   have hEvalDef :
       evalCrepSemHOLExpDefault state = crepExactEvalExp state memDec := by
     funext expression
-    rfl
+    simp [evalCrepSemHOLExpDefault, evalCrepSemHOLExpWithMemDec,
+      crepExactEvalExp_eq_eval]
   have hEval' : expressions.map (crepExactEvalExp state memDec) = values.map some := by
     rw [← hEvalDef]
     exact hEval

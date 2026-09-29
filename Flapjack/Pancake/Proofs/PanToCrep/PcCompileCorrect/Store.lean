@@ -111,8 +111,7 @@ theorem pcCompileCorrectAt_store {width : Nat} {σ : Type} [NeZero width]
     rcases hx with rfl | hx
     · simp only [ad] at this; omega
     · have := htemps_gt x hx; simp only [ad] at *; omega
-  have hmap : (ca :: es).map (@evalCrepSemHOLExp width _ σ t
-      (fun address => Classical.propDecidable (t.memaddrs address))) =
+  have hmap : (ca :: es).map (@evalCrepSemHOLExp width _ σ t) =
       (HolWordLab.word addr :: flattenHOL value).map some := by
     simp only [List.map_cons]
     simp only [flattenHOL, List.map_cons, List.map_nil, List.cons.injEq] at hdes
