@@ -63,8 +63,32 @@ private def mem34 : LoopSemStateFiniteExact 8 Unit :=
   { base with mdomain := fun a => a == 3 || a == 4, memory := fun a => if a = 4 then w 1 else base.memory a }
 #guard isW ((memStore 3 (w 7) mem34).bind (memLoad 4)) 1
 
+private def memLoadHitOracle : Bool := isW (memLoad 3 mem3) 7
+private def memLoadMissOracle : Bool := isNone (memLoad 4 mem3)
+private def memStoreHitOracle : Bool := isW ((memStore 3 (w 7) mem3s).bind (memLoad 3)) 7
+private def memStoreMissOracle : Bool := (memStore 4 (w 7) mem3s).isNone
+private def memStoreOtherOracle : Bool := isW ((memStore 3 (w 7) mem34).bind (memLoad 4)) 1
+#guard memLoadHitOracle
+#guard memLoadMissOracle
+#guard memStoreHitOracle
+#guard memStoreMissOracle
+#guard memStoreOtherOracle
+
 def runChecks : IO Bool := do
-  IO.println "PASS exact loopSem eval/mem/loop_arith HOL parity"
-  pure true
+  let checks :=
+    [ ("exact loopSem mem_load hit matches direct HOL row", memLoadHitOracle),
+      ("exact loopSem mem_load domain miss matches direct HOL row", memLoadMissOracle),
+      ("exact loopSem mem_store update matches direct HOL row", memStoreHitOracle),
+      ("exact loopSem mem_store domain miss matches direct HOL row", memStoreMissOracle),
+      ("exact loopSem mem_store preserves other memory cells", memStoreOtherOracle),
+      ("exact loopSem eval/mem/loop_arith HOL parity guards", true) ]
+  let results ← checks.mapM fun (name, ok) => do
+    if ok then
+      IO.println s!"PASS {name}"
+      pure true
+    else
+      IO.println s!"FAIL {name}"
+      pure false
+  pure (results.all id)
 
 end Flapjack.Test.LoopSemEvalExactParity
