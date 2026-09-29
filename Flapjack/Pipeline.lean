@@ -843,6 +843,32 @@ theorem pipelineLoopFunctionsSourceCompileProgRouted_exact
   simp [pipelineLoopFunctionsSourceCompileProgRouted, hByteRanged,
     pipelineLoopFunctionsSourceCompileProgExact]
 
+/-- Each indexed row from the source-routed exact whole-program compiler is
+stored at the caller's corresponding production function label. This is the
+per-row key component of the code-table bridge, not a state/evaluation theorem.
+HOL `compile_prog_def` fixes its label base at `first_name`; translating those
+rows to this caller-selected base is Flapjack-only infrastructure, so this
+theorem has no separate HOL original. -/
+theorem pipelineLoopFunctionsSourceCompileProgRouted_rowLabel
+    {width : Nat} [NeZero width] (architecture : RiscV.Architecture)
+    (firstLabel : Nat) (functions : List (CompiledFunction (BitVec width)))
+    (hFunctionNames : ∀ function ∈ functions, CrepNameRanged function.name)
+    (hProgramNames : ∀ function ∈ functions, CrepProgNameRanged function.body)
+    (index : Nat) (hindex : index < functions.length) :
+    ((pipelineLoopFunctionsSourceCompileProgRouted architecture firstLabel functions)[index]?).map
+        Prod.fst = some (firstLabel + index) := by
+  rw [pipelineLoopFunctionsSourceCompileProgRouted_exact architecture firstLabel functions
+    hFunctionNames hProgramNames]
+  have hreb : rebaseHOLFunctionLabel firstLabel functions.length
+      (firstLoopName + index) = firstLabel + index := by
+    simp [rebaseHOLFunctionLabel, firstLoopName]
+    omega
+  have hreb' : rebaseHOLFunctionLabel firstLabel functions.length
+      (index + 64) = firstLabel + index := by
+    rw [show index + 64 = firstLoopName + index by simp [firstLoopName, Nat.add_comm]]
+    exact hreb
+  simp [compileProgHOLExact, firstLoopName, hreb', hindex]
+
 /-! ### Exact-carrier bridge for the source-routed Loop output
 
 The compiler's source route uses `crepCompFuncThroughHOLExact` when all
