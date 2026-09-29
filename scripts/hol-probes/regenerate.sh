@@ -1741,6 +1741,14 @@ run_probe machine_ieee_fp64_sqrt_exact_probeScript.sml machine_ieee_fp64_sqrt_ex
   "$hol_dir/src/floating-point/binary_ieeeScript.sml" \
   "$cake_dir/compiler/backend/semantics"
 
+# The wordSem inst_def probe observes integer arithmetic, memory and
+# floating-point instructions over record updates of a free state (bead
+# flapjack-h29l.6).
+run_probe word_sem_inst_probeScript.sml word_sem_inst_probe.out \
+  div long_div load32 store8 fp_fma fp_to_int fp_missing \
+  "$cake_dir/compiler/backend/semantics/wordSemScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+
 # The good_handlers probe observes the structural handler-label predicate,
 # including the NONE-ret case (handler ignored) and nested bad handlers.
 run_probe word_convs_good_handlers_probeScript.sml word_convs_good_handlers_probe.out \
