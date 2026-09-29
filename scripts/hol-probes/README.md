@@ -393,6 +393,21 @@ is local to the proof script, so the probe inlines
 exact `simpProgCorrectStoreGlobCase` and the exact `CrepSemHOLState.setGlobals`.
 Refresh with
 `HOL_PROBE_ONLY=crep_arith_store_glob_probeScript.sml scripts/hol-probes/regenerate.sh`.
+`crep_arith_store_byte_probe.out` records seven direct HOL EVAL rows for the
+`StoreByte` case of the proof-script `simp_prog_correct` at
+`cakeml/pancake/proofs/crep_arithProofScript.sml:184-212`:
+`simp_prog (StoreByte dst src) = StoreByte (simp_exp dst) (simp_exp src)`
+(`crep_arithScript.sml:88`); the successful `evaluate` result under a full byte
+domain and the same result under the local `mapc` rewrite (both projected onto
+their first component, since `=` is undecidable on state pairs); the
+out-of-domain and missing-variable failure branches `(SOME Error, s)` and their
+`mapc` image; and the code-only commutation `(mapc f s).memory = s.memory`. The
+`mapc` overload is local to the proof script, so the probe inlines
+`st with code := FMAP_MAP2 f st.code`.
+`Flapjack.Test.CrepArithStoreByteParity` replays the rows against the tagged
+exact `simpProgCorrectStoreByteCase` and the exact `CrepSemHOLState` memory
+update. Refresh with
+`HOL_PROBE_ONLY=crep_arith_store_byte_probeScript.sml scripts/hol-probes/regenerate.sh`.
 `crep_dest_2exp_probe.out` records direct HOL EVAL of
 `crep_arith$dest_2exp_def` at `cakeml/pancake/crep_arithScript.sml:15`, including
 the corresponding `word_lsl 1w` results for successful exponents. Its Lean

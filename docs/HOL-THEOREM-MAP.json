@@ -22706,5 +22706,35 @@
     "lean_name": "crepSimpMapcsHOL_setGlobals",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only commuting law for the local simp_prog_correct mapcs rendering and exact setGlobals; HOL has no standalone declaration."
-  }
+  },
+{
+  "hol_path": "cakeml/pancake/proofs/crep_arithProofScript.sml",
+  "hol_name": "simp_prog_correct",
+  "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrectStoreByte.lean",
+  "lean_name": "simpProgCorrectStoreByteCase",
+  "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+  "fmap_as_finite_support": [
+    "locals",
+    "globals",
+    "code"
+  ],
+  "words_as_type_indexed_bitvec": true,
+  "reviewer": "flapjack-ds5 source comparison (2026-09-29; bead flapjack-pxn.18.5.4.21): HOL simp_prog_correct (cakeml/pancake/proofs/crep_arithProofScript.sml:184-212) states !p s r s'. evaluate (p,s) = (r,s') ==> r <> SOME Error ==> evaluate (simp_prog p, mapcs s) = (r, mapcs s'). The StoreByte dst src case keeps the same source evaluation equation and non-Error side condition, with the conclusion over the exact CrepProgHOL/CrepSemHOLState/CrepResultHOLExact carriers. HOL's StoreByte clause simp_prog (StoreByte dst src) = StoreByte (simp_exp dst) (simp_exp src) (crep_arithScript.sml:88) and evaluate clause (crepSemScript.sml:281-287) are mirrored; the two simplified operands evaluate to the same words via the tagged crepSimpExpCorrectNativeHOL (simp_exp_correct), the exact mem_store_byte_def port panMemStoreByteWord8HOL renders HOL's w2w, and the code-only crepSimpMapcsHOL commutes with the memory update (crepSimpMapcsHOL_withMemory). The only additional binder is the local mapcs rendering; the same-module holFmapAsFiniteSupportWitness validates the CrepSemHOLState carrier. No target-run, post-state, or strengthened-induction hypothesis is taken. Direct HOL rows: scripts/hol-probes/crep_arith_store_byte_probe.out (7 rows) replayed by Flapjack/Test/CrepArithStoreByteParity.lean."
+},
+{
+  "hol_path": null,
+  "hol_name": null,
+  "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrectStoreByte.lean",
+  "lean_name": "holFmapAsFiniteSupportWitness",
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Same-module canonical finite-support witness re-export for the CrepSemHOLState carrier used by the StoreByte case tag; no separate HOL declaration."
+},
+{
+  "hol_path": null,
+  "hol_name": null,
+  "lean_path": "Flapjack/Pancake/Proofs/CrepArith/SimpProgCorrectStoreByte.lean",
+  "lean_name": "crepSimpMapcsHOL_withMemory",
+  "statement_status": "no_hol_reference_pending_classification",
+  "reviewer": "Flapjack-only commuting law for the local simp_prog_correct mapcs rendering and the exact memory update performed by the byte store; HOL has no standalone declaration."
+}
 ]
