@@ -25291,6 +25291,15 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-pxn.18.5.11.1.1: compared word_allocProofScript.sml:177-253. HOL live sets are predicates Nat -> Prop, union is pointwise disjunction and subset is universal implication. Source/target locals are exact Spt WordLocW maps. All quantified variables, conjunctive premises and lookup/list/domain conclusions match HOL; no injectivity or stronger live-set premise is added. get_vars preserves source argument order and repeated arguments by list induction. Positive HOL word dimension is BitVec width with NeZero; WordSemStateFiniteExact is the actual exact evaluator state, globals are absent, fpRegs/store use the canonical finite-support carrier with imported roundtrip witness, locals/code remain Spt. This establishes lookup transport prerequisites, not evaluate_apply_colour or allocator correctness."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "strong_locals_rel_insert",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/StrongLocalsRel.lean",
+    "lean_name": "strongLocalsRelInsert",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead .18.5.11.1.2: HOL strong_locals_rel_insert at word_allocProofScript.sml:785-796. INJ f (n INSERT live) UNIV is rendered by equality injectivity restricted to a=n or live a (UNIV codomain membership is tautological); live DELETE n is live k and k != n. Both exact Spt insert operations and the whole conclusion match. The proof splits lookup at n and excludes an aliased target key solely by the original scoped injectivity premise. No global injectivity is assumed. WordLocW uses positive type-indexed BitVec with NeZero. This is the exact assignment lookup-update prerequisite, not full allocation correctness."
   }
 
 ]
