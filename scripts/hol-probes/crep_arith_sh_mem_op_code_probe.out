@@ -1,0 +1,9 @@
+sh_mem_op_code_code=T
+sh_mem_op_code_load_err=T
+sh_mem_op_code_store_err=T
+sh_mem_op_code_load8_err=T
+sh_mem_op_code_store8_err=T
+sh_mem_op_code_load16_err=T
+sh_mem_op_code_store16_err=T
+sh_mem_op_code_load32_err=T
+sh_mem_op_code_store32_err=T

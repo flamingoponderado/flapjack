@@ -368,6 +368,16 @@ exercising the result side of the local `lookup_code` lemma at
 `cakeml/pancake/proofs/crep_arithProofScript.sml:162`. Its Lean comparison
 uses the exact `lookupCrepHolCode` path in
 `Flapjack.Test.CrepeArithLookupCodeParity`.
+`crep_arith_sh_mem_op_code_probe.out` records nine direct HOL EVAL rows for the
+proof-script-local `sh_mem_op_code` at
+`cakeml/pancake/proofs/crep_arithProofScript.sml:173-180`: the `code` projection
+of the local `mapc` rewrite, and the eight operator cases of
+`sh_mem_op op 1 3w (mapc f s) = (I ## mapc f) (sh_mem_op op 1 3w s)` on
+fixtures whose shared-memory domain is empty.  The `mapc` overload is local to
+that proof script, so the probe inlines `s with code := FMAP_MAP2 f s.code`.
+`Flapjack.Test.CrepArithShMemOpCodeParity` checks the tagged exact
+`crepShMemOpExactHOL_mapc` against every row.  Refresh with
+`HOL_PROBE_ONLY=crep_arith_sh_mem_op_code_probeScript.sml scripts/hol-probes/regenerate.sh`.
 `crep_dest_2exp_probe.out` records direct HOL EVAL of
 `crep_arith$dest_2exp_def` at `cakeml/pancake/crep_arithScript.sml:15`, including
 the corresponding `word_lsl 1w` results for successful exponents. Its Lean
