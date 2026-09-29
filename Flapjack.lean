@@ -5,6 +5,7 @@ import Flapjack.Compiler.Backend.Semantics.WordSem
 import Flapjack.Compiler.Backend.Semantics.WordSem.State
 import Flapjack.Compiler.Backend.Semantics.WordSem.Accessors
 import Flapjack.Compiler.Backend.Semantics.WordSem.Env
+import Flapjack.Compiler.Backend.Semantics.WordSem.EnvListSupport
 import Flapjack.Compiler.Backend.Semantics.WordSem.CallHelpers
 import Flapjack.Compiler.Backend.Semantics.WordSem.Alloc
 import Flapjack.Compiler.Backend.Semantics.WordSem.ShMem
