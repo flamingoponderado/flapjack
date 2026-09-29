@@ -27,10 +27,10 @@ hypotheses for sub-expressions where the case has any).  HOL's quantifier order
 `∀s e v t ctxt tmp l p le ntmp nl` is kept, with the constructor payload in
 place of `e`.  `wlab_wloc` is the tagged `wlabWlocExact`; `state_rel`,
 `mem_rel`, `globals_rel`, `code_rel` and `locals_rel` are the tagged exact
-relations.  The leaf cases (`Const`, `Var`, `LoadGlob`, `BaseAddr`, `TopAddr`)
-and the `Load` case are flapjack-luna-c's pieces in
-`CompExpPreservesEval/Leaf.lean` and its focused `Load` module.  The
-assembling theorem is tracked on bead `flapjack-pxn.18.5.6.33.15.8`.
+relations.  The Op case, the assembled theorem and `comp_exps_preserves_eval`
+are at the end of this file.  The leaf cases (`Const`, `Var`, `LoadGlob`,
+`BaseAddr`, `TopAddr`) and the `Load` case are flapjack-luna-c's pieces in
+`CompExpPreservesEval/Leaf.lean` and `CompExpPreservesEval/Load.lean`.
 -/
 
 namespace Flapjack
@@ -297,14 +297,24 @@ theorem crepToLoop_comp_exp_preserves_eval_loadByte {width : Nat} [NeZero width]
 
 /-- Flapjack helper (no HOL declaration): HOL `wordSem$mem_load_32_alt`'s
     shift/OR form of `word_of_bytes be (0w:word32)` at the four concrete byte
-    positions (HOL proves it by `EVAL_TAC >> BBLAST_TAC`). -/
+    positions (HOL proves it by `EVAL_TAC >> BBLAST_TAC`; here bit by bit). -/
 private theorem wordOfBytes32_alt (be : Bool) (g0 g1 g2 g3 : BitVec 8) :
     wordOfBytesHOL8 be (0 : BitVec 32) [g0, g1, g2, g3] =
       if be then g0.setWidth 32 <<< 24 ||| g1.setWidth 32 <<< 16 |||
           g2.setWidth 32 <<< 8 ||| g3.setWidth 32
       else g0.setWidth 32 ||| g1.setWidth 32 <<< 8 |||
           g2.setWidth 32 <<< 16 ||| g3.setWidth 32 <<< 24 := by
-  cases be <;> simp [wordOfBytesHOL8, setByteHOL8, byteIndexHOL] <;> bv_decide
+  -- bitwise, without `bv_decide`, so the proof uses no native-evaluation axioms
+  cases be <;> simp [wordOfBytesHOL8, setByteHOL8, byteIndexHOL] <;> ext i hi <;>
+    simp [BitVec.getElem_or, BitVec.getElem_and, BitVec.getElem_shiftLeft,
+      BitVec.getElem_setWidth] <;>
+    (match i, hi with
+      | 0, _ | 1, _ | 2, _ | 3, _ | 4, _ | 5, _ | 6, _ | 7, _
+      | 8, _ | 9, _ | 10, _ | 11, _ | 12, _ | 13, _ | 14, _ | 15, _
+      | 16, _ | 17, _ | 18, _ | 19, _ | 20, _ | 21, _ | 22, _ | 23, _
+      | 24, _ | 25, _ | 26, _ | 27, _ | 28, _ | 29, _ | 30, _ | 31, _ =>
+        simp (config := { decide := true }) [BitVec.getLsbD_of_ge]
+      | n + 32, h => omega)
 
 /-- The `UInt8`-valued `panGetByteHOL` and the `word8`-valued `getByteHOL8`
     (both HOL `byte$get_byte`) select the same byte. -/
@@ -931,6 +941,94 @@ theorem loopEvalHOLExact_op_clause {F : Type}
 
 end OpClauses
 
+/-- Flapjack helper (no HOL declaration): a successful `OPT_MMAP` yielding only words
+    is a successful HOL `the_words` over the mapped list. -/
+private theorem theWords_map_of_mapM {width : Nat} [NeZero width] {α : Type}
+    (f : α → Option (WordLocW width)) :
+    ∀ (les : List α) (ws : List (BitVec width)),
+      les.mapM f = some (ws.map WordLocW.word) → theWords (les.map f) = some ws
+  | [], ws, h => by
+      cases ws with
+      | nil => rfl
+      | cons _ _ => simp at h
+  | a :: rest, ws, h => by
+      cases hfa : f a with
+      | none => simp [List.mapM_cons, hfa] at h
+      | some y =>
+      cases hr : rest.mapM f with
+      | none => simp [List.mapM_cons, hfa, hr] at h
+      | some ys =>
+      cases ws with
+      | nil => simp [List.mapM_cons, hfa, hr] at h
+      | cons w ws' =>
+      simp only [List.mapM_cons, hfa, hr, List.map_cons, Option.bind_eq_bind, Option.bind_some,
+        Option.pure_def, Option.some.injEq, List.cons.injEq] at h
+      obtain ⟨rfl, rfl⟩ := h
+      simp [theWords, hfa, theWords_map_of_mapM f rest ws' hr]
+
+/-- `comp_exp_preserves_eval`, case `Op bop es`
+    (`crep_to_loopProofScript.sml:772-786` statement; case proof at 790-888),
+    with the `eval_ind` hypotheses for every argument expression.  HOL's inner
+    `Induct` over `es` is `crepToLoopCompExpsPreservesEvalOfAt`; `the_words` is
+    `theWords`. -/
+@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "comp_exp_preserves_eval"
+  (fmap_as_finite_support_relation := [CrepToLoopContextExact.vars,
+    CrepToLoopContextExact.funcs, CrepSemHOLState.locals, CrepSemHOLState.globals,
+    CrepSemHOLState.code, LoopSemStateFiniteExact.globals])
+  (words_as_type_indexed_bitvec)]
+theorem crepToLoop_comp_exp_preserves_eval_op {width : Nat} [NeZero width] {σ : Type} :
+    ∀ (s : CrepSemHOLState width σ) (bop : BinOp)
+      (es : List (CrepExpHOL width)),
+      (∀ e ∈ es, crepToLoopCompExpPreservesEvalAt s e) →
+    ∀ (v : HolWordLab width) (t : LoopSemStateFiniteExact width σ)
+      (ctxt : CrepToLoopContextExact) (tmp : Nat) (l : NumSet)
+      (p : List (HolLoopProg width)) (le : HolLoopExp width) (ntmp : Nat) (nl : NumSet),
+      evalCrepSemHOLExp s (.op bop es) = some v ∧
+        crepToLoopStateRelExact s t ∧
+        crepToLoopMemRelHOLExact s.memory t.memory s.memaddrs ∧
+        crepToLoopGlobalsRelHOLExact s.globals t.globals ∧
+        crepToLoopCodeRelExact ctxt s.code t.code ∧
+        crepToLoopLocalsRelExact ctxt l s.locals t.locals ∧
+        compileExpHOLExact ctxt tmp l (.op bop es) = (p, le, ntmp, nl) ∧
+        ctxt.vmax < tmp →
+      ∃ (ck : Nat) (st : LoopSemStateFiniteExact width σ),
+        LoopSemStateFiniteExact.evaluate (loopNestedSeqHOL p)
+            { t with clock := t.clock + ck } = (none, st) ∧
+        LoopSemStateFiniteExact.eval st le = some (wlabWlocExact v) ∧
+        crepToLoopStateRelExact s st ∧
+        crepToLoopMemRelHOLExact s.memory st.memory s.memaddrs ∧
+        crepToLoopGlobalsRelHOLExact s.globals st.globals ∧
+        crepToLoopCodeRelExact ctxt s.code st.code ∧
+        crepToLoopLocalsRelExact ctxt nl s.locals st.locals := by
+  intro s bop es ih v t ctxt tmp l p le ntmp nl ⟨he, hs, hm, hg, hc, hl, hcomp, hv⟩
+  cases hes : es.mapM (evalCrepSemHOLExp s) with
+  | none => simp [evalCrepSemHOLExp, hes] at he
+  | some vs =>
+  let ws : List (BitVec width) := vs.map fun | .word w => w
+  have hvs : vs = ws.map HolWordLab.word := by
+    simp only [ws, List.map_map]
+    conv => lhs; rw [← List.map_id vs]
+    congr 1
+  obtain ⟨x, hx, rfl⟩ : ∃ x, wordOpHOL bop ws = some x ∧ v = .word x := by
+    rw [evalCrepSemHOLExp_op_clause s bop es ws (hvs ▸ hes)] at he
+    cases hw : wordOpHOL bop ws with
+    | none => simp [hw] at he
+    | some x => simp [hw] at he; exact ⟨x, rfl, he.symm⟩
+  rcases hC : compileExpsHOLExact ctxt tmp l es with ⟨c, les, n, o⟩
+  rw [compileExpHOLExact, hC] at hcomp
+  simp only [Prod.mk.injEq] at hcomp
+  obtain ⟨rfl, rfl, rfl, rfl⟩ := hcomp
+  obtain ⟨ck, st, h1, hles, h1s, h1m, h1g, h1c, h1l⟩ :=
+    crepToLoopCompExpsPreservesEvalOfAt s es ih vs t ctxt tmp l c les n o
+      ⟨hes, hs, hm, hg, hc, hl, hC, hv⟩
+  refine ⟨ck, st, h1, ?_, h1s, h1m, h1g, h1c, h1l⟩
+  have hmap : vs.map wlabWlocExact = ws.map WordLocW.word := by
+    rw [hvs, List.map_map]; rfl
+  rw [loopEvalHOLExact_op_clause st bop les ws
+    (theWords_map_of_mapM _ les ws (hmap ▸ hles)), hx]
+  rfl
+
+
 /-! ## Assembly over HOL's `eval_ind` cases -/
 
 /-- Flapjack helper (no HOL declaration): HOL `comp_exp_preserves_eval`'s
@@ -994,5 +1092,85 @@ theorem crepToLoopCompExpPreservesEvalOfOp {width : Nat} [NeZero width] {σ : Ty
         exact crepToLoop_comp_exp_preserves_eval_shift s sh e1 e2 (ih e1 (by simp; omega))
           (ih e2 (by simp; omega))
   exact fun e => key _ e rfl
+
+/-- Exact HOL `comp_exp_preserves_eval` (`crep_to_loopProofScript.sml:772-786`):
+    `∀s e v t ctxt tmp l p le ntmp nl. eval s e = SOME v ∧ state_rel s t ∧
+      mem_rel s.memory t.memory s.memaddrs ∧ globals_rel s.globals t.globals ∧
+      code_rel ctxt s.code t.code ∧ locals_rel ctxt l s.locals t.locals ∧
+      compile_exp ctxt tmp l e = (p,le,ntmp,nl) ∧ ctxt.vmax < tmp ⇒
+      ∃ck st. evaluate (nested_seq p,t with clock := t.clock + ck) = (NONE,st) ∧
+        eval st le = SOME (wlab_wloc v) ∧ state_rel s st ∧
+        mem_rel s.memory st.memory s.memaddrs ∧ globals_rel s.globals st.globals ∧
+        code_rel ctxt s.code st.code ∧ locals_rel ctxt nl s.locals st.locals`,
+    assembled from the `eval_ind` case pieces above. -/
+@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "comp_exp_preserves_eval"
+  (fmap_as_finite_support_relation := [CrepToLoopContextExact.vars,
+    CrepToLoopContextExact.funcs, CrepSemHOLState.locals, CrepSemHOLState.globals,
+    CrepSemHOLState.code, LoopSemStateFiniteExact.globals])
+  (words_as_type_indexed_bitvec)]
+theorem crepToLoop_comp_exp_preserves_eval {width : Nat} [NeZero width] {σ : Type} :
+    ∀ (s : CrepSemHOLState width σ) (e : CrepExpHOL width)
+      (v : HolWordLab width) (t : LoopSemStateFiniteExact width σ)
+      (ctxt : CrepToLoopContextExact) (tmp : Nat) (l : NumSet)
+      (p : List (HolLoopProg width)) (le : HolLoopExp width) (ntmp : Nat) (nl : NumSet),
+      evalCrepSemHOLExp s e = some v ∧
+        crepToLoopStateRelExact s t ∧
+        crepToLoopMemRelHOLExact s.memory t.memory s.memaddrs ∧
+        crepToLoopGlobalsRelHOLExact s.globals t.globals ∧
+        crepToLoopCodeRelExact ctxt s.code t.code ∧
+        crepToLoopLocalsRelExact ctxt l s.locals t.locals ∧
+        compileExpHOLExact ctxt tmp l e = (p, le, ntmp, nl) ∧
+        ctxt.vmax < tmp →
+      ∃ (ck : Nat) (st : LoopSemStateFiniteExact width σ),
+        LoopSemStateFiniteExact.evaluate (loopNestedSeqHOL p)
+            { t with clock := t.clock + ck } = (none, st) ∧
+        LoopSemStateFiniteExact.eval st le = some (wlabWlocExact v) ∧
+        crepToLoopStateRelExact s st ∧
+        crepToLoopMemRelHOLExact s.memory st.memory s.memaddrs ∧
+        crepToLoopGlobalsRelHOLExact s.globals st.globals ∧
+        crepToLoopCodeRelExact ctxt s.code st.code ∧
+        crepToLoopLocalsRelExact ctxt nl s.locals st.locals :=
+  fun s e => crepToLoopCompExpPreservesEvalOfOp crepToLoop_comp_exp_preserves_eval_op s e
+
+/-- Exact HOL `comp_exps_preserves_eval` (`crep_to_loopProofScript.sml:1241-1254`):
+    `∀es s vs t ctxt tmp l p les ntmp nl. OPT_MMAP (eval s) es = SOME vs ∧ state_rel s t ∧
+      mem_rel s.memory t.memory s.memaddrs ∧ globals_rel s.globals t.globals ∧
+      code_rel ctxt s.code t.code ∧ locals_rel ctxt l s.locals t.locals ∧
+      compile_exps ctxt tmp l es = (p,les,ntmp,nl) ∧ ctxt.vmax < tmp ⇒
+      ∃ck st. evaluate (nested_seq p,t with clock := t.clock + ck) = (NONE,st) ∧
+        OPT_MMAP (eval st) les = SOME (MAP wlab_wloc vs) ∧ state_rel s st ∧
+        mem_rel s.memory st.memory s.memaddrs ∧ globals_rel s.globals st.globals ∧
+        code_rel ctxt s.code st.code ∧ locals_rel ctxt nl s.locals st.locals`.
+    `OPT_MMAP` is `List.mapM`, `MAP wlab_wloc` is `List.map wlabWlocExact`, and
+    `compile_exps` is `compileExpsHOLExact` (the list half of `compile_exp_def`). -/
+@[hol "cakeml/pancake/proofs/crep_to_loopProofScript.sml" "comp_exps_preserves_eval"
+  (fmap_as_finite_support_relation := [CrepToLoopContextExact.vars,
+    CrepToLoopContextExact.funcs, CrepSemHOLState.locals, CrepSemHOLState.globals,
+    CrepSemHOLState.code, LoopSemStateFiniteExact.globals])
+  (words_as_type_indexed_bitvec)]
+theorem crepToLoop_comp_exps_preserves_eval {width : Nat} [NeZero width] {σ : Type} :
+    ∀ (es : List (CrepExpHOL width)) (s : CrepSemHOLState width σ)
+      (vs : List (HolWordLab width)) (t : LoopSemStateFiniteExact width σ)
+      (ctxt : CrepToLoopContextExact) (tmp : Nat) (l : NumSet)
+      (p : List (HolLoopProg width)) (les : List (HolLoopExp width)) (ntmp : Nat) (nl : NumSet),
+      es.mapM (evalCrepSemHOLExp s) = some vs ∧
+        crepToLoopStateRelExact s t ∧
+        crepToLoopMemRelHOLExact s.memory t.memory s.memaddrs ∧
+        crepToLoopGlobalsRelHOLExact s.globals t.globals ∧
+        crepToLoopCodeRelExact ctxt s.code t.code ∧
+        crepToLoopLocalsRelExact ctxt l s.locals t.locals ∧
+        compileExpsHOLExact ctxt tmp l es = (p, les, ntmp, nl) ∧
+        ctxt.vmax < tmp →
+      ∃ (ck : Nat) (st : LoopSemStateFiniteExact width σ),
+        LoopSemStateFiniteExact.evaluate (loopNestedSeqHOL p)
+            { t with clock := t.clock + ck } = (none, st) ∧
+        les.mapM (LoopSemStateFiniteExact.eval st) = some (vs.map wlabWlocExact) ∧
+        crepToLoopStateRelExact s st ∧
+        crepToLoopMemRelHOLExact s.memory st.memory s.memaddrs ∧
+        crepToLoopGlobalsRelHOLExact s.globals st.globals ∧
+        crepToLoopCodeRelExact ctxt s.code st.code ∧
+        crepToLoopLocalsRelExact ctxt nl s.locals st.locals :=
+  fun es s => crepToLoopCompExpsPreservesEvalOfAt s es
+    fun e _ => crepToLoop_comp_exp_preserves_eval s e
 
 end Flapjack
