@@ -54,6 +54,15 @@ val _ = print_eval "ex_nstruct_len"
              [(strlit "f", Const (1w : 64 word));
               (strlit "g", Const (2w : 64 word))] : 64 exp) of
        NStruct _ flds => LENGTH flds | _ => 0)``;
+val _ = print_eval "ex_nstruct_fields"
+  ``(case (NStruct (strlit "S")
+             [(strlit "f", Const (1w : 64 word));
+              (strlit "g", Const (2w : 64 word))] : 64 exp) of
+       NStruct name flds =>
+         name = strlit "S" /\
+         flds = [(strlit "f", Const (1w : 64 word));
+                 (strlit "g", Const (2w : 64 word))]
+     | _ => F)``;
 val _ = print_eval "ex_nfield_len"
   ``(case (NField (strlit "foo") (Const (1w : 64 word)) : 64 exp) of
        NField nm _ => strlen nm | _ => 0)``;

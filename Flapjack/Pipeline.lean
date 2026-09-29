@@ -801,9 +801,11 @@ def pipelineLoopFunctionsSourceCompileProgExact {width : Nat} [NeZero width]
       rebaseHOLFunctionLabels firstLabel functions.length
         (holLoopProgToExecutableCanonical body))
 
-/-- Per-function source-pipeline route through exact `compile_def`/`ocompile_def`
-whenever all compiled-body names and sibling function keys lie in HOL
-`mlstring`'s byte range. -/
+/-- Tested alternative, NOT executed: a per-function source-pipeline route
+through exact `compile_def`/`ocompile_def` whenever all compiled-body names and
+sibling function keys lie in HOL `mlstring`'s byte range (runtime guard, with
+fallback to the production route). The executed route is
+`pipelineLoopFunctionsSource` (PR #1174 review). -/
 def pipelineLoopFunctionsSourceRouted {width : Nat} [NeZero width]
     (architecture : RiscV.Architecture) (firstLabel : Nat)
     (functions : List (CompiledFunction (BitVec width))) :
@@ -836,10 +838,13 @@ def pipelineLoopFunctionsSourceRouted {width : Nat} [NeZero width]
   else
     pipelineLoopFunctionsSourceAux architecture functionInfos firstLabel functions
 
-/-! Parser-backed RISC-V compiler entrypoints route through exact whole-program
-`compile_prog_def`. The checked byte-range guard prevents lossy conversion of
-production String names to HOL `mlstring`; the exact HOL label range is then
-rebased consistently to the selected source-pipeline label base. -/
+/-! Tested alternative, NOT executed: a Crep-to-Loop route through exact
+whole-program `compile_prog_def`. The runtime byte-range guard prevents lossy
+conversion of production String names to HOL `mlstring` and otherwise falls
+back to the production route; the exact HOL label range is rebased to the
+selected label base. No compiler entrypoint calls it until its output equality
+with `pipelineLoopFunctionsSource` is proved (PR #1174 review); the executed
+route is `pipelineLoopFunctionsSource`. -/
 def pipelineLoopFunctionsSourceCompileProgRouted {width : Nat} [NeZero width]
     (architecture : RiscV.Architecture) (firstLabel : Nat)
     (functions : List (CompiledFunction (BitVec width))) :
@@ -1043,8 +1048,9 @@ theorem pipelineLoopFunctionsSourceCompileProgRouted_lookupExactRow
 
 /-! ### Exact-carrier bridge for the source-routed Loop output
 
-The compiler's source route uses `crepCompFuncThroughHOLExact` when all
-function and body names are byte-ranged. This bridge records the resulting
+The tested alternative `pipelineLoopFunctionsSourceRouted` uses
+`crepCompFuncThroughHOLExact` when all function and body names are
+byte-ranged (it is not executed by the compiler). This bridge records the resulting
 executable `LoopProg` bodies against the exact `HolLoopProg` carrier. The
 generic fallback is deliberately excluded: arbitrary Lean `String` names do
 not embed into HOL `mlstring` without the byte-range premise. -/
@@ -1233,10 +1239,14 @@ def panCompileTap [CakeDisplayWord α]
     direct output of Cake's tagged `compile_top`. Parser-backed production
     entrypoints provide the byte-range proof composed through the earlier
     passes, selecting `compileProgTopHOLWithMetadataOfExact` at the
-    declaration-to-Crep boundary. That branch executes exact compiler and
-    inliner carriers, then decodes for the existing production metadata
-    representation; equality with the generic compatibility route is not
-    claimed. The optional proof preserves this helper's source compatibility
+    declaration-to-Crep boundary. That branch executes the exact per-function
+    compiler and decodes for the existing production metadata representation;
+    `compileFlapjackEntryCake_ofExact_eq` below proves the whole pipeline result
+    equals the compatibility route. Crep-to-Loop is the single production route
+    `pipelineLoopFunctionsSource`, which the CLI drivers reuse. The exact
+    `compile_prog`/`comp_func` Crep-to-Loop routes and the exact inliner are
+    tested alternatives only, until their output equality is proved (PR #1174
+    review). The optional proof preserves this helper's source compatibility
     for callers that do not carry the codec invariant. -/
 def compileFlapjackEntryCake {width : Nat} [NeZero width]
     [BEq (BitVec width)] [OfNat (BitVec width) 0]
@@ -1273,9 +1283,29 @@ def compileFlapjackEntryCake {width : Nat} [NeZero width]
       let metadata := globalCompileTop bytesInWord fromNat prepared
       let globals := { metadata with declarations := cakeDeclarations }
       let crepe := crepSimpFunctions fromNat compiled.2
-      let loop := pipelineLoopFunctionsSourceRouted architecture 1 crepe
+      let loop := pipelineLoopFunctionsSource architecture 1 crepe
       let word := pipelineWordFunctionsSource loop
       some (FlapjackPipelineResult.mk simplified structured globals crepe loop word)
+
+/-- The parser-proved exact-carrier route returns the same entire pipeline
+    result as the compatibility route. This composes the two reviewed pass
+    equalities at the entrypoint, so the optional proof changes which tagged
+    definitions execute, not the compiler output. -/
+theorem compileFlapjackEntryCake_ofExact_eq {width : Nat} [NeZero width]
+    [BEq (BitVec width)] [OfNat (BitVec width) 0]
+    [OfNat (BitVec width) 1] [Add (BitVec width)] [Mul (BitVec width)]
+    [AndOp (BitVec width)] [ShiftRight (BitVec width)]
+    [PanShiftWidth (BitVec width)]
+    (architecture : RiscV.Architecture) (bytesInWord : BitVec width)
+    (fromNat : Nat → BitVec width) (start : FunName)
+    (declarations : List (Decl (BitVec width)))
+    (h : ∀ declaration ∈ declarations, DeclByteRanged declaration) :
+    compileFlapjackEntryCake architecture bytesInWord fromNat start declarations
+        (some (.isTrue h)) =
+      compileFlapjackEntryCake architecture bytesInWord fromNat start declarations none := by
+  unfold compileFlapjackEntryCake
+  simp only [globalCompileTopCakeOfExact_eq,
+    compileProgTopHOLWithMetadataOfExact_eq]
 
 /-! Executable mirror of the missing-`main` branch of `pan_to_target_all`
     (`cakeml/pancake/pan_passesScript.sml:20-37`): when the program has no

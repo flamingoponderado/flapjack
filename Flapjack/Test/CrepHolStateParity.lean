@@ -253,9 +253,10 @@ example :
       (.const (BitVec.ofNat 8 3)) (HolWordLab.word (BitVec.ofNat 8 9))
       (by simp [evalCrepSemHOLExp, loadState, lookupState])
       (by
-        intro state' resultType result hAddress
-        exact crepSimpExpCorrect1NativeConstCase sampleMapc state'
-          (BitVec.ofNat 8 3) result (by simp [evalCrepSemHOLExp])))
+        intro resultType result hAddress
+        exact crepSimpExpCorrect1NativeConstCase sampleMapc loadState
+          (BitVec.ofNat 8 3) result
+          (by simp [evalCrepSemHOLExp])))
 
 example :
     evalCrepSemHOLExp loadState (.load (.const (BitVec.ofNat 8 4))) = none := by
@@ -277,6 +278,82 @@ private def load32State : CrepSemHOLState 64 Unit where
   ffi := { oracle := fun _ _ _ _ => .final .failed, ffiState := (), ioEvents := [] }
   baseAddr := 0
   topAddr := 0
+
+private def mulLocals : HolFiniteMapExact Nat (HolWordLab 64) where
+  lookup name := if name = 0 then some (.word (BitVec.ofNat 64 14)) else none
+  finiteSupport := by
+    refine ⟨[0], ?_⟩
+    intro name hlookup
+    by_cases h : name = 0
+    · simp [h]
+    · simp [h] at hlookup
+
+private def mulState : CrepSemHOLState 64 Unit :=
+  { load32State with locals := mulLocals }
+
+/-- Direct source row for HOL `eval_def`/`crep_op_def`: two constants multiply. -/
+example :
+    evalCrepSemHOLExp load32State
+        (.crepOp .mul [.const (BitVec.ofNat 64 6), .const (BitVec.ofNat 64 7)]) =
+      some (.word (BitVec.ofNat 64 42)) := by
+  simp [evalCrepSemHOLExp, crepOpCrepWord]
+
+/-- Native `simp_exp_correct1` Crepop case: when the left operand is constant,
+the exact `eval_mul_const` helper preserves the successful product after the
+code-only `mapc` update. The result matches the direct HOL Mul row. -/
+example :
+    evalCrepSemHOLExp (mulState.mapc sampleMapc64)
+        (crepSimpExpHOL (.crepOp .mul [.const (BitVec.ofNat 64 3), .var 0])) =
+      evalCrepSemHOLExp mulState
+        (.crepOp .mul [.const (BitVec.ofNat 64 3), .var 0]) := by
+  exact crepSimpExpCorrect1NativeCrepopCase sampleMapc64 mulState .mul
+      [.const (BitVec.ofNat 64 3), .var 0] ()
+      (by simp [evalCrepSemHOLExp, mulState, mulLocals, load32State, crepOpCrepWord])
+      (by
+        intro child hmem resultType result hChild
+        rcases List.mem_cons.mp hmem with hLeft | hRight
+        · cases hLeft
+          exact crepSimpExpCorrect1NativeConstCase sampleMapc64 mulState
+            (BitVec.ofNat 64 3) result hChild
+        · have hVar : child = .var 0 := List.mem_singleton.mp hRight
+          cases hVar
+          exact crepSimpExpCorrect1NativeVarCase sampleMapc64 mulState 0
+            result hChild)
+
+/-- Native `simp_exp_correct1` Crepop case in the other `mul_const` orientation;
+the bitvector commutativity step is needed to match HOL's operand order. -/
+example :
+    evalCrepSemHOLExp (mulState.mapc sampleMapc64)
+        (crepSimpExpHOL (.crepOp .mul [.var 0, .const (BitVec.ofNat 64 3)])) =
+      evalCrepSemHOLExp mulState
+        (.crepOp .mul [.var 0, .const (BitVec.ofNat 64 3)]) := by
+  exact crepSimpExpCorrect1NativeCrepopCase sampleMapc64 mulState .mul
+      [.var 0, .const (BitVec.ofNat 64 3)] ()
+      (by simp [evalCrepSemHOLExp, mulState, mulLocals, load32State, crepOpCrepWord])
+      (by
+        intro child hmem resultType result hChild
+        rcases List.mem_cons.mp hmem with hLeft | hRight
+        · cases hLeft
+          exact crepSimpExpCorrect1NativeVarCase sampleMapc64 mulState 0
+            result hChild
+        · have hConst : child = .const (BitVec.ofNat 64 3) :=
+            List.mem_singleton.mp hRight
+          cases hConst
+          exact crepSimpExpCorrect1NativeConstCase sampleMapc64 mulState
+            (BitVec.ofNat 64 3) result hChild)
+
+/-- Direct source rows for malformed HOL `crep_op Mul` argument lists. -/
+example : evalCrepSemHOLExp load32State (.crepOp .mul []) = none := by
+  simp [evalCrepSemHOLExp, crepOpCrepWord]
+
+example : evalCrepSemHOLExp load32State
+    (.crepOp .mul [.const (BitVec.ofNat 64 2)]) = none := by
+  simp [evalCrepSemHOLExp, crepOpCrepWord]
+
+example : evalCrepSemHOLExp load32State
+    (.crepOp .mul [.const (BitVec.ofNat 64 2), .const (BitVec.ofNat 64 3),
+      .const (BitVec.ofNat 64 4)]) = none := by
+  simp [evalCrepSemHOLExp, crepOpCrepWord]
 
 example :
     evalCrepSemHOLExp (load32State.mapc sampleMapc64)
