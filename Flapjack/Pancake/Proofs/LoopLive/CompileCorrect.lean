@@ -17,11 +17,12 @@ HOL proves it by `recInduct loopSemTheory.evaluate_ind` and resumes one case
 per constructor (`Resume compile_correct[Skip]`, ...).  The per-constructor
 lemmas below follow those cases, with HOL's quantifier order
 `∀v v1 res s1 lt locals prog1 l1 l0` (constructor payload in place of `v`), all
-four premises and the full conclusion.  They are Flapjack-only auxiliary lemmas,
-not ports of HOL declarations and not case pieces in the `AGENTS.md` sense:
-their sub-program hypotheses are the ones the Lean lexicographic
-`(clock, program size)` assembly supplies, not `evaluate_ind`'s, so they carry
-no `@[hol]` tag.  The tag is on the assembled `loopLive_compile_correct`
+four premises and the full conclusion. The leaf `Skip` case below has no
+sub-program induction hypotheses; after specializing `v = Skip`, it is exactly
+the HOL `evaluate_ind` case and carries its own `@[hol]` tag. The recursive
+constructor helpers remain Flapjack-only auxiliaries: their sub-program
+hypotheses are the ones the Lean lexicographic `(clock, program size)` assembly
+supplies, not `evaluate_ind`'s. The assembled theorem also retains its own tag
 (bead `flapjack-pxn.18.5.8.1.9`).
 -/
 
@@ -107,9 +108,16 @@ private theorem getVars_locals_agree {width : Nat} [NeZero width] {F : Type}
             getVars_locals_agree v1 locals ns ws (fun m hm => hag m (List.mem_cons_of_mem _ hm)) hr]
           simpa using h
 
-/-- Flapjack-only auxiliary lemma (no HOL declaration; the `@[hol compile_correct]` tag is on
-    the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `Skip` (`loop_liveProofScript.sml:17-37` statement;
-    `Resume compile_correct[Skip]` at 66-69). -/
+/-- Exact `evaluate_ind` leaf case of HOL `compile_correct` for `Skip`
+    (`loop_liveProofScript.sml:17-37`; `Resume compile_correct[Skip]` at
+    66-69). Specializing HOL's constructor variable to `Skip` leaves the
+    binders `v1 res s1 lt locals prog1 l1 l0`, all four premises, and the full
+    existential/eight-way result conclusion shown here. This leaf has no
+    recursive sub-program induction hypotheses; the lexicographic assembly
+    adds none to it. The state `globals` map and word carrier use only the
+    reviewed finite-support and type-indexed BitVec translations. -/
+@[hol "cakeml/pancake/proofs/loop_liveProofScript.sml" "compile_correct"
+  (fmap_as_finite_support := [globals]) (words_as_type_indexed_bitvec)]
 theorem loopLive_compile_correct_skip {width : Nat} [NeZero width] {F : Type} :
     ∀ (v1 : LoopSemStateFiniteExact width F),
     ∀ (res : Option (LoopResultExact width)) (s1 : LoopSemStateFiniteExact width F)
@@ -1490,7 +1498,7 @@ private theorem shMemStore_frame {width : Nat} [NeZero width] {F : Type}
     the assembled `loopLive_compile_correct` below) for the proof of `compile_correct`, case `ShMem op r ad` (`loop_liveProofScript.sml:17-37` statement;
     `Resume compile_correct[ShMem]` at 799-826). -/
 theorem loopLive_compile_correct_shMem {width : Nat} [NeZero width] {F : Type} :
-    ∀ (op : CrepMemOp) (r : Nat) (ad : HolLoopExp width) (v1 : LoopSemStateFiniteExact width F)
+    ∀ (op : WordMemOp) (r : Nat) (ad : HolLoopExp width) (v1 : LoopSemStateFiniteExact width F)
       (res : Option (LoopResultExact width)) (s1 : LoopSemStateFiniteExact width F)
       (lt : List (NumSet × NumSet)) (locals : Spt (WordLocW width)) (prog1 : HolLoopProg width)
       (l1 l0 : NumSet),
@@ -1527,125 +1535,125 @@ theorem loopLive_compile_correct_shMem {width : Nat} [NeZero width] {F : Type} :
       sptMem k (varsOfExpHOL ad (sptInsert r () l0)) := fun k hk => (vars_of_exp_mono ad _ k hk).1
   cases hrv : sptLookup r v1.locals with
   | none =>
-    cases hl : crepIsLoadMemOp op <;> simp [evaluate, hx, hrv, hl] at he <;>
+    cases hl : Compiler.Encoders.Asm.asmIsLoad op <;> simp [evaluate, hx, hrv, hl] at he <;>
       exact absurd he.1.symm hne
   | some rv =>
   have hr' := lookup_of_subspt hsub (hsubr r (mem_insert_self' r l0)) hrv
   cases op with
   | load =>
-    simp only [evaluate, hx, crepIsLoadMemOp, if_true, hrv, shMemOp] at he
+    simp only [evaluate, hx, Compiler.Encoders.Asm.asmIsLoad, if_true, hrv, shMemOp] at he
     rcases shMemLoad_frame r addr 0 v1 locals with ⟨val, ffi', h1, h2⟩ | ⟨e, h1, h2⟩ | h1
     · rw [h1, Prod.mk.injEq] at he
       obtain ⟨rfl, rfl⟩ := he
       refine ⟨sptInsert r val locals, ?_, ?_⟩
-      · simp only [evaluate, hx', crepIsLoadMemOp, if_true, hr', shMemOp, h2]; rfl
+      · simp only [evaluate, hx', Compiler.Encoders.Asm.asmIsLoad, if_true, hr', shMemOp, h2]; rfl
       · exact post_setVar r val hsub fun k hk hl => hsubr k (mem_insert_of' r hl)
     · rw [h1, Prod.mk.injEq] at he
       obtain ⟨rfl, rfl⟩ := he
-      exact ⟨_, by simp only [evaluate, hx', crepIsLoadMemOp, if_true, hr', shMemOp, h2]; rfl, rfl⟩
+      exact ⟨_, by simp only [evaluate, hx', Compiler.Encoders.Asm.asmIsLoad, if_true, hr', shMemOp, h2]; rfl, rfl⟩
     · rw [he] at h1; exact absurd h1 hne
   | store =>
     cases rv with
     | loc _ _ =>
-      simp [evaluate, hx, crepIsLoadMemOp, hrv] at he; exact absurd he.1.symm hne
+      simp [evaluate, hx, Compiler.Encoders.Asm.asmIsLoad, hrv] at he; exact absurd he.1.symm hne
     | word _ =>
-    simp only [evaluate, hx, crepIsLoadMemOp, Bool.false_eq_true, if_false, hrv, shMemOp] at he
+    simp only [evaluate, hx, Compiler.Encoders.Asm.asmIsLoad, Bool.false_eq_true, if_false, hrv, shMemOp] at he
     rcases shMemStore_frame r addr 0 v1 locals (by rw [hr', hrv]) with ⟨ffi', h1, h2⟩ | ⟨e, h1, h2⟩ | h1
     · rw [h1, Prod.mk.injEq] at he
       obtain ⟨rfl, rfl⟩ := he
       refine ⟨locals, ?_, ?_⟩
-      · simp only [evaluate, hx', crepIsLoadMemOp, Bool.false_eq_true, if_false, hr', shMemOp, h2]
+      · simp only [evaluate, hx', Compiler.Encoders.Asm.asmIsLoad, Bool.false_eq_true, if_false, hr', shMemOp, h2]
       · exact post_none_same hsub fun k hk => hsubr k (mem_insert_of' r hk)
     · rw [h1, Prod.mk.injEq] at he
       obtain ⟨rfl, rfl⟩ := he
-      exact ⟨_, by simp only [evaluate, hx', crepIsLoadMemOp, Bool.false_eq_true, if_false, hr',
+      exact ⟨_, by simp only [evaluate, hx', Compiler.Encoders.Asm.asmIsLoad, Bool.false_eq_true, if_false, hr',
         shMemOp, h2]; rfl, rfl⟩
     · rw [he] at h1; exact absurd h1 hne
   | load8 =>
-    simp only [evaluate, hx, crepIsLoadMemOp, if_true, hrv, shMemOp] at he
+    simp only [evaluate, hx, Compiler.Encoders.Asm.asmIsLoad, if_true, hrv, shMemOp] at he
     rcases shMemLoad_frame r addr 1 v1 locals with ⟨val, ffi', h1, h2⟩ | ⟨e, h1, h2⟩ | h1
     · rw [h1, Prod.mk.injEq] at he
       obtain ⟨rfl, rfl⟩ := he
       refine ⟨sptInsert r val locals, ?_, ?_⟩
-      · simp only [evaluate, hx', crepIsLoadMemOp, if_true, hr', shMemOp, h2]; rfl
+      · simp only [evaluate, hx', Compiler.Encoders.Asm.asmIsLoad, if_true, hr', shMemOp, h2]; rfl
       · exact post_setVar r val hsub fun k hk hl => hsubr k (mem_insert_of' r hl)
     · rw [h1, Prod.mk.injEq] at he
       obtain ⟨rfl, rfl⟩ := he
-      exact ⟨_, by simp only [evaluate, hx', crepIsLoadMemOp, if_true, hr', shMemOp, h2]; rfl, rfl⟩
+      exact ⟨_, by simp only [evaluate, hx', Compiler.Encoders.Asm.asmIsLoad, if_true, hr', shMemOp, h2]; rfl, rfl⟩
     · rw [he] at h1; exact absurd h1 hne
   | store8 =>
     cases rv with
     | loc _ _ =>
-      simp [evaluate, hx, crepIsLoadMemOp, hrv] at he; exact absurd he.1.symm hne
+      simp [evaluate, hx, Compiler.Encoders.Asm.asmIsLoad, hrv] at he; exact absurd he.1.symm hne
     | word _ =>
-    simp only [evaluate, hx, crepIsLoadMemOp, Bool.false_eq_true, if_false, hrv, shMemOp] at he
+    simp only [evaluate, hx, Compiler.Encoders.Asm.asmIsLoad, Bool.false_eq_true, if_false, hrv, shMemOp] at he
     rcases shMemStore_frame r addr 1 v1 locals (by rw [hr', hrv]) with ⟨ffi', h1, h2⟩ | ⟨e, h1, h2⟩ | h1
     · rw [h1, Prod.mk.injEq] at he
       obtain ⟨rfl, rfl⟩ := he
       refine ⟨locals, ?_, ?_⟩
-      · simp only [evaluate, hx', crepIsLoadMemOp, Bool.false_eq_true, if_false, hr', shMemOp, h2]
+      · simp only [evaluate, hx', Compiler.Encoders.Asm.asmIsLoad, Bool.false_eq_true, if_false, hr', shMemOp, h2]
       · exact post_none_same hsub fun k hk => hsubr k (mem_insert_of' r hk)
     · rw [h1, Prod.mk.injEq] at he
       obtain ⟨rfl, rfl⟩ := he
-      exact ⟨_, by simp only [evaluate, hx', crepIsLoadMemOp, Bool.false_eq_true, if_false, hr',
+      exact ⟨_, by simp only [evaluate, hx', Compiler.Encoders.Asm.asmIsLoad, Bool.false_eq_true, if_false, hr',
         shMemOp, h2]; rfl, rfl⟩
     · rw [he] at h1; exact absurd h1 hne
   | load16 =>
-    simp only [evaluate, hx, crepIsLoadMemOp, if_true, hrv, shMemOp] at he
+    simp only [evaluate, hx, Compiler.Encoders.Asm.asmIsLoad, if_true, hrv, shMemOp] at he
     rcases shMemLoad_frame r addr 2 v1 locals with ⟨val, ffi', h1, h2⟩ | ⟨e, h1, h2⟩ | h1
     · rw [h1, Prod.mk.injEq] at he
       obtain ⟨rfl, rfl⟩ := he
       refine ⟨sptInsert r val locals, ?_, ?_⟩
-      · simp only [evaluate, hx', crepIsLoadMemOp, if_true, hr', shMemOp, h2]; rfl
+      · simp only [evaluate, hx', Compiler.Encoders.Asm.asmIsLoad, if_true, hr', shMemOp, h2]; rfl
       · exact post_setVar r val hsub fun k hk hl => hsubr k (mem_insert_of' r hl)
     · rw [h1, Prod.mk.injEq] at he
       obtain ⟨rfl, rfl⟩ := he
-      exact ⟨_, by simp only [evaluate, hx', crepIsLoadMemOp, if_true, hr', shMemOp, h2]; rfl, rfl⟩
+      exact ⟨_, by simp only [evaluate, hx', Compiler.Encoders.Asm.asmIsLoad, if_true, hr', shMemOp, h2]; rfl, rfl⟩
     · rw [he] at h1; exact absurd h1 hne
   | store16 =>
     cases rv with
     | loc _ _ =>
-      simp [evaluate, hx, crepIsLoadMemOp, hrv] at he; exact absurd he.1.symm hne
+      simp [evaluate, hx, Compiler.Encoders.Asm.asmIsLoad, hrv] at he; exact absurd he.1.symm hne
     | word _ =>
-    simp only [evaluate, hx, crepIsLoadMemOp, Bool.false_eq_true, if_false, hrv, shMemOp] at he
+    simp only [evaluate, hx, Compiler.Encoders.Asm.asmIsLoad, Bool.false_eq_true, if_false, hrv, shMemOp] at he
     rcases shMemStore_frame r addr 2 v1 locals (by rw [hr', hrv]) with ⟨ffi', h1, h2⟩ | ⟨e, h1, h2⟩ | h1
     · rw [h1, Prod.mk.injEq] at he
       obtain ⟨rfl, rfl⟩ := he
       refine ⟨locals, ?_, ?_⟩
-      · simp only [evaluate, hx', crepIsLoadMemOp, Bool.false_eq_true, if_false, hr', shMemOp, h2]
+      · simp only [evaluate, hx', Compiler.Encoders.Asm.asmIsLoad, Bool.false_eq_true, if_false, hr', shMemOp, h2]
       · exact post_none_same hsub fun k hk => hsubr k (mem_insert_of' r hk)
     · rw [h1, Prod.mk.injEq] at he
       obtain ⟨rfl, rfl⟩ := he
-      exact ⟨_, by simp only [evaluate, hx', crepIsLoadMemOp, Bool.false_eq_true, if_false, hr',
+      exact ⟨_, by simp only [evaluate, hx', Compiler.Encoders.Asm.asmIsLoad, Bool.false_eq_true, if_false, hr',
         shMemOp, h2]; rfl, rfl⟩
     · rw [he] at h1; exact absurd h1 hne
   | load32 =>
-    simp only [evaluate, hx, crepIsLoadMemOp, if_true, hrv, shMemOp] at he
+    simp only [evaluate, hx, Compiler.Encoders.Asm.asmIsLoad, if_true, hrv, shMemOp] at he
     rcases shMemLoad_frame r addr 4 v1 locals with ⟨val, ffi', h1, h2⟩ | ⟨e, h1, h2⟩ | h1
     · rw [h1, Prod.mk.injEq] at he
       obtain ⟨rfl, rfl⟩ := he
       refine ⟨sptInsert r val locals, ?_, ?_⟩
-      · simp only [evaluate, hx', crepIsLoadMemOp, if_true, hr', shMemOp, h2]; rfl
+      · simp only [evaluate, hx', Compiler.Encoders.Asm.asmIsLoad, if_true, hr', shMemOp, h2]; rfl
       · exact post_setVar r val hsub fun k hk hl => hsubr k (mem_insert_of' r hl)
     · rw [h1, Prod.mk.injEq] at he
       obtain ⟨rfl, rfl⟩ := he
-      exact ⟨_, by simp only [evaluate, hx', crepIsLoadMemOp, if_true, hr', shMemOp, h2]; rfl, rfl⟩
+      exact ⟨_, by simp only [evaluate, hx', Compiler.Encoders.Asm.asmIsLoad, if_true, hr', shMemOp, h2]; rfl, rfl⟩
     · rw [he] at h1; exact absurd h1 hne
   | store32 =>
     cases rv with
     | loc _ _ =>
-      simp [evaluate, hx, crepIsLoadMemOp, hrv] at he; exact absurd he.1.symm hne
+      simp [evaluate, hx, Compiler.Encoders.Asm.asmIsLoad, hrv] at he; exact absurd he.1.symm hne
     | word _ =>
-    simp only [evaluate, hx, crepIsLoadMemOp, Bool.false_eq_true, if_false, hrv, shMemOp] at he
+    simp only [evaluate, hx, Compiler.Encoders.Asm.asmIsLoad, Bool.false_eq_true, if_false, hrv, shMemOp] at he
     rcases shMemStore_frame r addr 4 v1 locals (by rw [hr', hrv]) with ⟨ffi', h1, h2⟩ | ⟨e, h1, h2⟩ | h1
     · rw [h1, Prod.mk.injEq] at he
       obtain ⟨rfl, rfl⟩ := he
       refine ⟨locals, ?_, ?_⟩
-      · simp only [evaluate, hx', crepIsLoadMemOp, Bool.false_eq_true, if_false, hr', shMemOp, h2]
+      · simp only [evaluate, hx', Compiler.Encoders.Asm.asmIsLoad, Bool.false_eq_true, if_false, hr', shMemOp, h2]
       · exact post_none_same hsub fun k hk => hsubr k (mem_insert_of' r hk)
     · rw [h1, Prod.mk.injEq] at he
       obtain ⟨rfl, rfl⟩ := he
-      exact ⟨_, by simp only [evaluate, hx', crepIsLoadMemOp, Bool.false_eq_true, if_false, hr',
+      exact ⟨_, by simp only [evaluate, hx', Compiler.Encoders.Asm.asmIsLoad, Bool.false_eq_true, if_false, hr',
         shMemOp, h2]; rfl, rfl⟩
     · rw [he] at h1; exact absurd h1 hne
 

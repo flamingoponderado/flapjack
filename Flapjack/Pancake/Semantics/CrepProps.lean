@@ -443,7 +443,7 @@ theorem mem_crepAssignedFreeVars_while {α : Type u} (condition : CrepExp α)
       x ∈ crepAssignedFreeVars body := by
   simp [crepAssignedFreeVars]
 
-theorem mem_crepAssignedFreeVars_shMem {α : Type u} (operator : CrepMemOp)
+theorem mem_crepAssignedFreeVars_shMem {α : Type u} (operator : WordMemOp)
     (name : Nat) (address : CrepExp α) (x : Nat) :
     x ∈ crepAssignedFreeVars (.shMem operator name address) ↔ x = name := by
   simp [crepAssignedFreeVars]

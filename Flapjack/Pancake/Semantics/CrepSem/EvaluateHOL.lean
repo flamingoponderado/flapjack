@@ -94,19 +94,20 @@ open Flapjack.Basis.Pure.MlString
 
 /-- HOL `asm$is_load` (`cakeml/compiler/encoders/asm/asmScript.sml:324-330`),
     which crepSem's and loopSem's `ShMem` clauses use (crepLang and loopLang
-    reuse `asm$memop`), over the duplicate Crep/Loop `memop` carrier
-    `CrepMemOp`: true for the four shared-memory load operations. Untagged; the
-    tagged port is `asmIsLoad` over `HolMemop`, and
+    reuse `asm$memop`), over the tagged `asm$memop` carrier `WordMemOp`
+    (`HolMemop`): true for the four shared-memory load operations. Untagged
+    (this module cannot import `Compiler.Encoders.Asm`); the tagged port is
+    `asmIsLoad`, and
     `crepIsLoadMemOp_eq_asmIsLoad` (in `LoopSemStateExact/Evaluate.lean`) proves
     agreement.  (loop_call defines its own `is_load_def`, ported as
     `loopCallIsLoadHOL`.) -/
-def crepIsLoadMemOp : CrepMemOp → Bool
+def crepIsLoadMemOp : WordMemOp → Bool
   | .load | .load8 | .load16 | .load32 => true
   | .store | .store8 | .store16 | .store32 => false
 
 /-- HOL `sh_mem_op` byte width (`crepSemScript.sml:210-218`): `Load`/`Store`
     use `0`, the `8`/`16`/`32` variants use `1`/`2`/`4`. -/
-def crepShMemByteWidth : CrepMemOp → Nat
+def crepShMemByteWidth : WordMemOp → Nat
   | .load | .store => 0
   | .load8 | .store8 => 1
   | .load16 | .store16 => 2
@@ -402,7 +403,7 @@ def crepShMemLoadExactHOL {width : Nat} [NeZero width] {σ : Type}
     This is the form the `ShMem` evaluator clause calls; it is not itself the
     exact HOL statement because HOL's `nb` is a free argument. -/
 def crepShMemLoadHOL {width : Nat} [NeZero width] {σ : Type}
-    (operator : CrepMemOp) (name : Nat) (address : BitVec width)
+    (operator : WordMemOp) (name : Nat) (address : BitVec width)
     (state : CrepSemHOLState width σ)
     (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a)) :
     Option (CrepResultHOLExact width) × CrepSemHOLState width σ :=
@@ -455,7 +456,7 @@ def crepShMemStoreExactHOL {width : Nat} [NeZero width] {σ : Type}
     word-dimension translations. -/
 @[hol "cakeml/pancake/semantics/crepSemScript.sml" "sh_mem_op_def" (fmap_as_finite_support := [locals, globals, code]) (words_as_type_indexed_bitvec)]
 def crepShMemOpExactHOL {width : Nat} [NeZero width] {σ : Type}
-    (operator : CrepMemOp) (name : Nat) (address : BitVec width)
+    (operator : WordMemOp) (name : Nat) (address : BitVec width)
     (state : CrepSemHOLState width σ) [DecidablePred state.shMemaddrs] :
     Option (CrepResultHOLExact width) × CrepSemHOLState width σ :=
   match operator with
@@ -474,7 +475,7 @@ def crepShMemOpExactHOL {width : Nat} [NeZero width] {σ : Type}
     evaluator clause calls; it is not itself the exact HOL statement because
     HOL's `nb` is a free argument. -/
 def crepShMemStoreHOL {width : Nat} [NeZero width] {σ : Type}
-    (operator : CrepMemOp) (name : Nat) (address : BitVec width)
+    (operator : WordMemOp) (name : Nat) (address : BitVec width)
     (state : CrepSemHOLState width σ)
     (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a)) :
     Option (CrepResultHOLExact width) × CrepSemHOLState width σ :=
@@ -551,7 +552,7 @@ theorem crepShMemStoreClock {width : Nat} [NeZero width] {σ : Type}
 @[hol "cakeml/pancake/semantics/crepSemScript.sml" "sh_mem_op_clock" (fmap_as_finite_support := [locals, globals, code])
   (words_as_type_indexed_bitvec)]
 theorem crepShMemOpClock {width : Nat} [NeZero width] {σ : Type}
-    (operator : CrepMemOp) (name : Nat) (address : BitVec width)
+    (operator : WordMemOp) (name : Nat) (address : BitVec width)
     (state : CrepSemHOLState width σ) [DecidablePred state.shMemaddrs]
     (r : Option (CrepResultHOLExact width)) (s' : CrepSemHOLState width σ)
     (h : crepShMemOpExactHOL operator name address state = (r, s')) :
@@ -618,7 +619,7 @@ theorem crepShMemStoreExactHOL_ioEvents_prefix {width : Nat} [NeZero width] {σ 
 
 /-- The exact HOL `sh_mem_op_def` dispatch only extends the FFI event log. -/
 theorem crepShMemOpExactHOL_ioEvents_prefix {width : Nat} [NeZero width] {σ : Type}
-    (operator : CrepMemOp) (name : Nat) (address : BitVec width)
+    (operator : WordMemOp) (name : Nat) (address : BitVec width)
     (state : CrepSemHOLState width σ) [DecidablePred state.shMemaddrs] :
     state.ffi.ioEvents <+:
       (crepShMemOpExactHOL operator name address state).2.ffi.ioEvents := by
@@ -630,7 +631,7 @@ theorem crepShMemOpExactHOL_ioEvents_prefix {width : Nat} [NeZero width] {σ : T
 
 /-- Operator-indexed exact load specialization only extends the FFI event log. -/
 theorem crepShMemLoadHOL_ioEvents_prefix {width : Nat} [NeZero width] {σ : Type}
-    (operator : CrepMemOp) (name : Nat) (address : BitVec width)
+    (operator : WordMemOp) (name : Nat) (address : BitVec width)
     (state : CrepSemHOLState width σ)
     (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a)) :
     state.ffi.ioEvents <+:
@@ -641,7 +642,7 @@ theorem crepShMemLoadHOL_ioEvents_prefix {width : Nat} [NeZero width] {σ : Type
 
 /-- Operator-indexed exact store specialization only extends the FFI event log. -/
 theorem crepShMemStoreHOL_ioEvents_prefix {width : Nat} [NeZero width] {σ : Type}
-    (operator : CrepMemOp) (name : Nat) (address : BitVec width)
+    (operator : WordMemOp) (name : Nat) (address : BitVec width)
     (state : CrepSemHOLState width σ)
     (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a)) :
     state.ffi.ioEvents <+:
@@ -1552,7 +1553,7 @@ theorem evalCrepSemHOLProg_while_timeout {width : Nat} [NeZero width] {σ : Type
 /-- HOL `evaluate (ShMem op v ad, s)` (`crepSemScript.sml:292-303`),
     source-reviewed as one clause only. The address uses the tagged exact
     `eval_def` port `evalCrepSemHOLExp` (`crepSemScript.sml:90-137`) and both
-    HOL and Lean require a `Word` result. `CrepMemOp` is the width-independent
+    HOL and Lean require a `Word` result. `WordMemOp` is the width-independent
     eight-constructor mirror of `asm$memop` used by the HOL Crep/loop syntax.
     `crepIsLoadMemOp`'s four load cases and four false cases reproduce HOL
     `is_load_def` (`cakeml/pancake/loop_callScript.sml:10-15`). Loads require
@@ -1561,7 +1562,7 @@ theorem evalCrepSemHOLProg_while_timeout {width : Nat} [NeZero width] {σ : Type
     one-constructor `word_lab = Word word` carrier, both local guards match
     HOL's `FLOOKUP` patterns.
 
-    The load/store adapters dispatch each of the eight `CrepMemOp` constructors
+    The load/store adapters dispatch each of the eight `WordMemOp` constructors
     with the same byte count as tagged `crepShMemOpExactHOL` for HOL
     `sh_mem_op_def` (`crepSemScript.sml:210-218`): `Load`/`Store` 0, `8` 1,
     `16` 2, `32` 4. They delegate to the tagged exact `sh_mem_load_def` and
@@ -1575,7 +1576,7 @@ theorem evalCrepSemHOLProg_while_timeout {width : Nat} [NeZero width] {σ : Type
     (state : CrepSemHOLState width σ)
     (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
     (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
-    (operator : CrepMemOp) (name : Nat) (address : CrepExpHOL width) :
+    (operator : WordMemOp) (name : Nat) (address : CrepExpHOL width) :
     evalCrepSemHOLProg state memDec shMemDec (.shMem operator name address) =
       (match crepExactEvalExp state memDec address with
        | some (.word addressValue) =>
@@ -1984,7 +1985,7 @@ theorem evalCrepSemHOLProg_shMem_ffi {width : Nat} [NeZero width] {σ : Type}
     (state : CrepSemHOLState width σ)
     (memDec : (a : BitVec width) → Decidable (state.memaddrs a))
     (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a))
-    (operator : CrepMemOp) (name : Nat) (address : CrepExpHOL width) :
+    (operator : WordMemOp) (name : Nat) (address : CrepExpHOL width) :
     (evalCrepSemHOLProg state memDec shMemDec (.shMem operator name address)).2.ffi =
       (match crepExactEvalExp state memDec address with
        | some (.word addressValue) =>
@@ -2184,7 +2185,7 @@ theorem crepShMemStoreExactHOL_preserves_domains {width : Nat} [NeZero width] {�
 
 /-- The ShMem-load helper preserves both domain fields. -/
 theorem crepShMemLoadHOL_preserves_domains {width : Nat} [NeZero width] {σ : Type}
-    (operator : CrepMemOp) (name : Nat) (address : BitVec width)
+    (operator : WordMemOp) (name : Nat) (address : BitVec width)
     (state : CrepSemHOLState width σ)
     (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a)) :
     (crepShMemLoadHOL operator name address state shMemDec).2.memaddrs = state.memaddrs ∧
@@ -2196,7 +2197,7 @@ theorem crepShMemLoadHOL_preserves_domains {width : Nat} [NeZero width] {σ : Ty
 
 /-- The ShMem-store helper preserves both domain fields. -/
 theorem crepShMemStoreHOL_preserves_domains {width : Nat} [NeZero width] {σ : Type}
-    (operator : CrepMemOp) (name : Nat) (address : BitVec width)
+    (operator : WordMemOp) (name : Nat) (address : BitVec width)
     (state : CrepSemHOLState width σ)
     (shMemDec : (a : BitVec width) → Decidable (state.shMemaddrs a)) :
     (crepShMemStoreHOL operator name address state shMemDec).2.memaddrs = state.memaddrs ∧
@@ -3438,7 +3439,7 @@ theorem evalCrepSemHOLProgExact_while {width : Nat} [NeZero width] {σ : Type}
 
 /-- HOL `evaluate (ShMem op name e, s)` (`crepSemScript.sml:384-394`) over the no-decider interface. -/
 theorem evalCrepSemHOLProgExact_shMem {width : Nat} [NeZero width] {σ : Type}
-    (state : CrepSemHOLState width σ) (operator : CrepMemOp) (name : Nat)
+    (state : CrepSemHOLState width σ) (operator : WordMemOp) (name : Nat)
     (address : CrepExpHOL width) :
     evalCrepSemHOLProgExact state (.shMem operator name address) =
       (match crepExactEvalExp state
@@ -3847,7 +3848,7 @@ declaration, and the finite-support carrier qualification remains under review,
 so it is intentionally untagged. -/
 theorem evalCrepSemHOLProgExact_shMem_unstamped {width : Nat} [NeZero width]
     {σ : Type} (state : CrepSemHOLState width σ)
-    (operator : CrepMemOp) (name : Nat) (address : CrepExpHOL width) :
+    (operator : WordMemOp) (name : Nat) (address : CrepExpHOL width) :
     evalCrepSemHOLProgExact state (.shMem operator name address) =
       (match crepExactEvalExp state
           (fun a => Classical.propDecidable (state.memaddrs a)) address with
@@ -4395,7 +4396,7 @@ private theorem fixClock_clock_le {width : Nat} [NeZero width] {σ : Type}
   | mk r s' => exact fixClockCrepSemHOL_IMP_LESS_EQ state step r s' h
 
 private theorem shMemLoadClockEq {width : Nat} [NeZero width] {σ : Type}
-    (operator : CrepMemOp) (name : Nat) (address : BitVec width)
+    (operator : WordMemOp) (name : Nat) (address : BitVec width)
     (state : CrepSemHOLState width σ) [hsh : DecidablePred state.shMemaddrs] :
     (crepShMemLoadHOL operator name address state hsh).2.clock = state.clock := by
   cases h : crepShMemLoadHOL operator name address state hsh with
@@ -4403,7 +4404,7 @@ private theorem shMemLoadClockEq {width : Nat} [NeZero width] {σ : Type}
     exact crepShMemLoadClock name address (crepShMemByteWidth operator) state r s' h
 
 private theorem shMemStoreClockEq {width : Nat} [NeZero width] {σ : Type}
-    (operator : CrepMemOp) (name : Nat) (address : BitVec width)
+    (operator : WordMemOp) (name : Nat) (address : BitVec width)
     (state : CrepSemHOLState width σ) [hsh : DecidablePred state.shMemaddrs] :
     (crepShMemStoreHOL operator name address state hsh).2.clock = state.clock := by
   cases h : crepShMemStoreHOL operator name address state hsh with
@@ -5212,7 +5213,7 @@ open Classical in
     local) and the store branch (a `Word` local). An arm of the tagged
     `evalCrepSemHOLProgExact_eq_evaluate_def`. -/
 theorem evalCrepSemHOLProgExact_shMem_holShape {width : Nat} [NeZero width] {σ : Type}
-    (state : CrepSemHOLState width σ) (operator : CrepMemOp) (name : Nat)
+    (state : CrepSemHOLState width σ) (operator : WordMemOp) (name : Nat)
     (address : CrepExpHOL width) :
     evalCrepSemHOLProgExact state (.shMem operator name address) =
       (match evalCrepSemHOLExp state address with
@@ -5441,7 +5442,7 @@ The helpers are the tagged ports (`eval_def`, `crep_primop_def`,
 `write_bytearray_def`, `call_FFI_def`). There are three untagged adapters.
 `lookupCodeFiniteHOL` is `lookup_code_def` over the finite-support carrier,
 equal on lookups to the tagged `lookupCodeHOL`. `crepIsLoadMemOp` is
-`asm$is_load_def` clause for clause on `CrepMemOp`, which matches HOL `memop`
+`asm$is_load_def` clause for clause on `WordMemOp`, which matches HOL `memop`
 constructor for constructor, as in the tagged `prog`. `updateEq` is `|+`.
 
 Original-HOL oracle rows cover every arm. `crep_clock_leaf_eval_probe`,

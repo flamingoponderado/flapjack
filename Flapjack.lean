@@ -345,6 +345,7 @@ import Flapjack.Pancake.Proofs.LoopCall.CompileCorrect
 import Flapjack.Pancake.CrepToLoop.Proofs.MakeFuncsLemmas
 import Flapjack.Pancake.CrepToLoop.Proofs.CodeRel2
 import Flapjack.Pancake.CrepToLoop.Proofs.NotMemContextAssigned
+import Flapjack.Pancake.CrepToLoop.Proofs.WriteBytearrayMemRel
 import Flapjack.Pancake.CrepToLoop.Proofs.CallPreserveStateCodeLocalsRel
 import Flapjack.Pancake.CrepToLoop.Optimise
 import Flapjack.Pancake.CrepToLoop.StateRel
@@ -363,6 +364,7 @@ import Flapjack.Test.CrepToLoopSurvivesMapiAssignParity
    the faithful `findLoopVar` lowering and is intentionally not in this
    umbrella until its old identity-map assumptions are repaired. -/
 import Flapjack.LoopSemantics
+import Flapjack.MemOp
 import Flapjack.Word
 import Flapjack.Stack
 import Flapjack.Compiler.Backend.StackLang

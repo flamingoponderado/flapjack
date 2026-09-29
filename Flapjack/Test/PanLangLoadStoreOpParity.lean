@@ -8,7 +8,7 @@ The expected values are direct HOL-EVAL observations from
 `cakeml/pancake/panLangScript.sml:300-313`.
 
 The Lean result uses the reviewed tagged `loadMemOpHOL`/`storeMemOpHOL`
-definitions over `OpSize`/`CrepMemOp`; the executable `compileProg` calls these
+definitions over `OpSize`/`WordMemOp`; the executable `compileProg` calls these
 definitions directly. The eight direct HOL-EVAL rows are reproduced below, both
 as `#guard` computations and as kernel-checked `rfl` equations.
 -/
