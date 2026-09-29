@@ -62,3 +62,11 @@ val _ = prove(
 print "lt_locals_rel_noninjective=F\n";
 refute_row "lt_locals_rel_missing_context" ``~locals_rel ^ctxt ^missing_src ^dst``;
 refute_row "lt_locals_rel_wrong_value" ``~locals_rel ^ctxt ^src ^wrong_dst``;
+
+val inserted_src = ``insert 0 (Word 9w) ^src``;
+val inserted_dst = ``insert 4 (Word 9w) ^dst``;
+prove_row "lt_locals_rel_insert_mapped" ``locals_rel ^ctxt ^inserted_src ^inserted_dst``;
+val unmapped_dst = ``insert 6 (Word 9w) ^dst``;
+prove_row "lt_locals_rel_insert_unmapped" ``locals_rel ^ctxt ^src ^unmapped_dst``;
+refute_row "lt_locals_rel_insert_unmapped_collision"
+  ``~locals_rel ^ctxt ^src (insert 4 (Word 9w) ^dst)``;
