@@ -25300,6 +25300,31 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison 2026-09-30, bead .18.5.11.1.2: HOL strong_locals_rel_insert at word_allocProofScript.sml:785-796. INJ f (n INSERT live) UNIV is rendered by equality injectivity restricted to a=n or live a (UNIV codomain membership is tautological); live DELETE n is live k and k != n. Both exact Spt insert operations and the whole conclusion match. The proof splits lookup at n and excludes an aliased target key solely by the original scoped injectivity premise. No global injectivity is assumed. WordLocW uses positive type-indexed BitVec with NeZero. This is the exact assignment lookup-update prerequisite, not full allocation correctness."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "apply_colour_exp_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Expressions.lean",
+    "lean_name": "applyColourExp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-cveo: compared word_allocScript.sml:580-586 and 755-769. Exact WordLangExpHOL at positive BitVec width (NeZero) retains Const/Var/Lookup/Load/Op and binary expression-valued Shift. apply_colour_exp renames Var only, recursively maps lists and both Shift operands; Const and fixed store names are unchanged. get_live_exp uses exact Spt insertion/union and big_union right fold with LN seed. No changed side conditions. Proof-side executable definitions are partial progress; production routing remains tracked by flapjack-7c9s, and cveo inventory stays open until that requirement is met.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "big_union_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Expressions.lean",
+    "lean_name": "bigUnion",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-cveo: compared word_allocScript.sml:580-586 and 755-769. Exact WordLangExpHOL at positive BitVec width (NeZero) retains Const/Var/Lookup/Load/Op and binary expression-valued Shift. apply_colour_exp renames Var only, recursively maps lists and both Shift operands; Const and fixed store names are unchanged. get_live_exp uses exact Spt insertion/union and big_union right fold with LN seed. No changed side conditions. Proof-side executable definitions are partial progress; production routing remains tracked by flapjack-7c9s, and cveo inventory stays open until that requirement is met."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/word_allocScript.sml",
+    "hol_name": "get_live_exp_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Expressions.lean",
+    "lean_name": "getLiveExp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol source comparison 2026-09-30, bead flapjack-cveo: compared word_allocScript.sml:580-586 and 755-769. Exact WordLangExpHOL at positive BitVec width (NeZero) retains Const/Var/Lookup/Load/Op and binary expression-valued Shift. apply_colour_exp renames Var only, recursively maps lists and both Shift operands; Const and fixed store names are unchanged. get_live_exp uses exact Spt insertion/union and big_union right fold with LN seed. No changed side conditions. Proof-side executable definitions are partial progress; production routing remains tracked by flapjack-7c9s, and cveo inventory stays open until that requirement is met.",
+    "words_as_type_indexed_bitvec": true
   }
-
 ]
