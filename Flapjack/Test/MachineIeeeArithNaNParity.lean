@@ -1,14 +1,14 @@
 import Flapjack.Misc.BinaryIeeeArithFp64
 
 /-!
-Direct HOL EVAL classifications for binary64 NaN-input and invalid-operation
-branches (`scripts/hol-probes/machine_ieee_fp64_arith_nan_probe.out`), from
-`binary_ieeeScript.sml:587-722` and the `machine_ieee` fp64 encoding. These
-rows check only `float_is_nan` and `float_is_signalling`: HOL leaves the
-`float_some_qnan` payload unspecified, and flags are not compared here. Each
-Lean result is kernel-checked against the exact fp64 operation through the
-value-refinement lemmas in `BinaryIeeeArithFp64` and the HOL qNaN existence
-specification.
+The probe fixture (`scripts/hol-probes/machine_ieee_fp64_arith_nan_probe.out`)
+records exact HOL EVAL results for five qNaN-input and seven invalid-operation
+branches from `binary_ieeeScript.sml:587-722`. The outputs retain a symbolic
+`float_some_qnan`; the same fixture includes a HOL kernel theorem from
+`some_nan_properties` proving every such value is NaN and non-signalling.
+The Lean theorems below kernel-check the 12 classifications against the exact
+fp64 operation through the value-refinement lemmas and the qNaN specification.
+No payload or IEEE flags are claimed.
 -/
 
 namespace Flapjack.Test.MachineIeeeArithNaNParity
@@ -252,7 +252,7 @@ theorem allNaNObservations :
 
 def runChecks : IO Bool := do
   let _checkedRows := allNaNObservations
-  IO.println "PASS 12 kernel-checked HOL NaN/invalid-operation classifications"
+  IO.println "PASS 12 kernel-checked fp64 NaN/invalid-operation classifications"
   pure true
 
 end Flapjack.Test.MachineIeeeArithNaNParity

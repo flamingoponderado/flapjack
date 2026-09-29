@@ -1,618 +1,115 @@
-add_qnan_input=((62 >< 52)
-   ((float_some_qnan
-       (FP_Add roundTiesToEven
-          <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Sign @@
-    2047w @@
-    (float_some_qnan
-       (FP_Add roundTiesToEven
-          <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Significand) =
- 2047w ∧
- (51 >< 0)
-   ((float_some_qnan
-       (FP_Add roundTiesToEven
-          <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Sign @@
-    2047w @@
-    (float_some_qnan
-       (FP_Add roundTiesToEven
-          <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Significand) ≠
- 0w,
- (62 >< 52)
-   ((float_some_qnan
-       (FP_Add roundTiesToEven
-          <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Sign @@
-    2047w @@
-    (float_some_qnan
-       (FP_Add roundTiesToEven
-          <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Significand) =
- 2047w ∧
- ¬word_msb
-   ((51 >< 0)
-      ((float_some_qnan
-          (FP_Add roundTiesToEven
-             <|Sign := 0w; Exponent := 2047w;
-               Significand := 0x8000000000000w|>
-             <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Sign @@
-       2047w @@
-       (float_some_qnan
-          (FP_Add roundTiesToEven
-             <|Sign := 0w; Exponent := 2047w;
-               Significand := 0x8000000000000w|>
-             <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).
-       Significand)) ∧
- (51 >< 0)
-   ((float_some_qnan
-       (FP_Add roundTiesToEven
-          <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Sign @@
-    2047w @@
-    (float_some_qnan
-       (FP_Add roundTiesToEven
-          <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Significand) ≠
- 0w)
-sub_qnan_input=((62 >< 52)
-   ((float_some_qnan
-       (FP_Sub roundTiesToEven
-          <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Sign @@
-    2047w @@
-    (float_some_qnan
-       (FP_Sub roundTiesToEven
-          <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Significand) =
- 2047w ∧
- (51 >< 0)
-   ((float_some_qnan
-       (FP_Sub roundTiesToEven
-          <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Sign @@
-    2047w @@
-    (float_some_qnan
-       (FP_Sub roundTiesToEven
-          <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Significand) ≠
- 0w,
- (62 >< 52)
-   ((float_some_qnan
-       (FP_Sub roundTiesToEven
-          <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Sign @@
-    2047w @@
-    (float_some_qnan
-       (FP_Sub roundTiesToEven
-          <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Significand) =
- 2047w ∧
- ¬word_msb
-   ((51 >< 0)
-      ((float_some_qnan
-          (FP_Sub roundTiesToEven
-             <|Sign := 0w; Exponent := 2047w;
-               Significand := 0x8000000000000w|>
-             <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Sign @@
-       2047w @@
-       (float_some_qnan
-          (FP_Sub roundTiesToEven
-             <|Sign := 0w; Exponent := 2047w;
-               Significand := 0x8000000000000w|>
-             <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).
-       Significand)) ∧
- (51 >< 0)
-   ((float_some_qnan
-       (FP_Sub roundTiesToEven
-          <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Sign @@
-    2047w @@
-    (float_some_qnan
-       (FP_Sub roundTiesToEven
-          <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Significand) ≠
- 0w)
-mul_qnan_input=((62 >< 52)
-   ((float_some_qnan
-       (FP_Mul roundTiesToEven
-          <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Sign @@
-    2047w @@
-    (float_some_qnan
-       (FP_Mul roundTiesToEven
-          <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Significand) =
- 2047w ∧
- (51 >< 0)
-   ((float_some_qnan
-       (FP_Mul roundTiesToEven
-          <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Sign @@
-    2047w @@
-    (float_some_qnan
-       (FP_Mul roundTiesToEven
-          <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Significand) ≠
- 0w,
- (62 >< 52)
-   ((float_some_qnan
-       (FP_Mul roundTiesToEven
-          <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Sign @@
-    2047w @@
-    (float_some_qnan
-       (FP_Mul roundTiesToEven
-          <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Significand) =
- 2047w ∧
- ¬word_msb
-   ((51 >< 0)
-      ((float_some_qnan
-          (FP_Mul roundTiesToEven
-             <|Sign := 0w; Exponent := 2047w;
-               Significand := 0x8000000000000w|>
-             <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Sign @@
-       2047w @@
-       (float_some_qnan
-          (FP_Mul roundTiesToEven
-             <|Sign := 0w; Exponent := 2047w;
-               Significand := 0x8000000000000w|>
-             <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).
-       Significand)) ∧
- (51 >< 0)
-   ((float_some_qnan
-       (FP_Mul roundTiesToEven
-          <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Sign @@
-    2047w @@
-    (float_some_qnan
-       (FP_Mul roundTiesToEven
-          <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Significand) ≠
- 0w)
-div_qnan_input=((62 >< 52)
-   ((float_some_qnan
-       (FP_Div roundTiesToEven
-          <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Sign @@
-    2047w @@
-    (float_some_qnan
-       (FP_Div roundTiesToEven
-          <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Significand) =
- 2047w ∧
- (51 >< 0)
-   ((float_some_qnan
-       (FP_Div roundTiesToEven
-          <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Sign @@
-    2047w @@
-    (float_some_qnan
-       (FP_Div roundTiesToEven
-          <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Significand) ≠
- 0w,
- (62 >< 52)
-   ((float_some_qnan
-       (FP_Div roundTiesToEven
-          <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Sign @@
-    2047w @@
-    (float_some_qnan
-       (FP_Div roundTiesToEven
-          <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Significand) =
- 2047w ∧
- ¬word_msb
-   ((51 >< 0)
-      ((float_some_qnan
-          (FP_Div roundTiesToEven
-             <|Sign := 0w; Exponent := 2047w;
-               Significand := 0x8000000000000w|>
-             <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Sign @@
-       2047w @@
-       (float_some_qnan
-          (FP_Div roundTiesToEven
-             <|Sign := 0w; Exponent := 2047w;
-               Significand := 0x8000000000000w|>
-             <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).
-       Significand)) ∧
- (51 >< 0)
-   ((float_some_qnan
-       (FP_Div roundTiesToEven
-          <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Sign @@
-    2047w @@
-    (float_some_qnan
-       (FP_Div roundTiesToEven
-          <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Significand) ≠
- 0w)
-fma_qnan_input=((62 >< 52)
-   ((float_some_qnan
-       (FP_MulAdd roundTiesToEven
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>
-          <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>)).
-    Sign @@ 2047w @@
-    (float_some_qnan
-       (FP_MulAdd roundTiesToEven
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>
-          <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>)).
-    Significand) =
- 2047w ∧
- (51 >< 0)
-   ((float_some_qnan
-       (FP_MulAdd roundTiesToEven
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>
-          <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>)).
-    Sign @@ 2047w @@
-    (float_some_qnan
-       (FP_MulAdd roundTiesToEven
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>
-          <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>)).
-    Significand) ≠ 0w,
- (62 >< 52)
-   ((float_some_qnan
-       (FP_MulAdd roundTiesToEven
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>
-          <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>)).
-    Sign @@ 2047w @@
-    (float_some_qnan
-       (FP_MulAdd roundTiesToEven
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>
-          <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>)).
-    Significand) =
- 2047w ∧
- ¬word_msb
-   ((51 >< 0)
-      ((float_some_qnan
-          (FP_MulAdd roundTiesToEven
-             <|Sign := 0w; Exponent := 1023w; Significand := 0w|>
-             <|Sign := 0w; Exponent := 1023w; Significand := 0w|>
-             <|Sign := 0w; Exponent := 2047w;
-               Significand := 0x8000000000000w|>)).Sign @@ 2047w @@
-       (float_some_qnan
-          (FP_MulAdd roundTiesToEven
-             <|Sign := 0w; Exponent := 1023w; Significand := 0w|>
-             <|Sign := 0w; Exponent := 1023w; Significand := 0w|>
-             <|Sign := 0w; Exponent := 2047w;
-               Significand := 0x8000000000000w|>)).Significand)) ∧
- (51 >< 0)
-   ((float_some_qnan
-       (FP_MulAdd roundTiesToEven
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>
-          <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>)).
-    Sign @@ 2047w @@
-    (float_some_qnan
-       (FP_MulAdd roundTiesToEven
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>
-          <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>)).
-    Significand) ≠ 0w)
-add_invalid_infinities=((62 >< 52)
-   ((float_some_qnan
-       (FP_Add roundTiesToEven (float_plus_infinity (:52 # 11))
-          (float_minus_infinity (:52 # 11)))).Sign @@ 2047w @@
-    (float_some_qnan
-       (FP_Add roundTiesToEven (float_plus_infinity (:52 # 11))
-          (float_minus_infinity (:52 # 11)))).Significand) =
- 2047w ∧
- (51 >< 0)
-   ((float_some_qnan
-       (FP_Add roundTiesToEven (float_plus_infinity (:52 # 11))
-          (float_minus_infinity (:52 # 11)))).Sign @@ 2047w @@
-    (float_some_qnan
-       (FP_Add roundTiesToEven (float_plus_infinity (:52 # 11))
-          (float_minus_infinity (:52 # 11)))).Significand) ≠ 0w,
- (62 >< 52)
-   ((float_some_qnan
-       (FP_Add roundTiesToEven (float_plus_infinity (:52 # 11))
-          (float_minus_infinity (:52 # 11)))).Sign @@ 2047w @@
-    (float_some_qnan
-       (FP_Add roundTiesToEven (float_plus_infinity (:52 # 11))
-          (float_minus_infinity (:52 # 11)))).Significand) =
- 2047w ∧
- ¬word_msb
-   ((51 >< 0)
-      ((float_some_qnan
-          (FP_Add roundTiesToEven (float_plus_infinity (:52 # 11))
-             (float_minus_infinity (:52 # 11)))).Sign @@ 2047w @@
-       (float_some_qnan
-          (FP_Add roundTiesToEven (float_plus_infinity (:52 # 11))
-             (float_minus_infinity (:52 # 11)))).Significand)) ∧
- (51 >< 0)
-   ((float_some_qnan
-       (FP_Add roundTiesToEven (float_plus_infinity (:52 # 11))
-          (float_minus_infinity (:52 # 11)))).Sign @@ 2047w @@
-    (float_some_qnan
-       (FP_Add roundTiesToEven (float_plus_infinity (:52 # 11))
-          (float_minus_infinity (:52 # 11)))).Significand) ≠ 0w)
-sub_invalid_infinities=((62 >< 52)
-   ((float_some_qnan
-       (FP_Sub roundTiesToEven (float_plus_infinity (:52 # 11))
-          (float_plus_infinity (:52 # 11)))).Sign @@ 2047w @@
-    (float_some_qnan
-       (FP_Sub roundTiesToEven (float_plus_infinity (:52 # 11))
-          (float_plus_infinity (:52 # 11)))).Significand) =
- 2047w ∧
- (51 >< 0)
-   ((float_some_qnan
-       (FP_Sub roundTiesToEven (float_plus_infinity (:52 # 11))
-          (float_plus_infinity (:52 # 11)))).Sign @@ 2047w @@
-    (float_some_qnan
-       (FP_Sub roundTiesToEven (float_plus_infinity (:52 # 11))
-          (float_plus_infinity (:52 # 11)))).Significand) ≠ 0w,
- (62 >< 52)
-   ((float_some_qnan
-       (FP_Sub roundTiesToEven (float_plus_infinity (:52 # 11))
-          (float_plus_infinity (:52 # 11)))).Sign @@ 2047w @@
-    (float_some_qnan
-       (FP_Sub roundTiesToEven (float_plus_infinity (:52 # 11))
-          (float_plus_infinity (:52 # 11)))).Significand) =
- 2047w ∧
- ¬word_msb
-   ((51 >< 0)
-      ((float_some_qnan
-          (FP_Sub roundTiesToEven (float_plus_infinity (:52 # 11))
-             (float_plus_infinity (:52 # 11)))).Sign @@ 2047w @@
-       (float_some_qnan
-          (FP_Sub roundTiesToEven (float_plus_infinity (:52 # 11))
-             (float_plus_infinity (:52 # 11)))).Significand)) ∧
- (51 >< 0)
-   ((float_some_qnan
-       (FP_Sub roundTiesToEven (float_plus_infinity (:52 # 11))
-          (float_plus_infinity (:52 # 11)))).Sign @@ 2047w @@
-    (float_some_qnan
-       (FP_Sub roundTiesToEven (float_plus_infinity (:52 # 11))
-          (float_plus_infinity (:52 # 11)))).Significand) ≠ 0w)
-mul_invalid_inf_zero=((62 >< 52)
-   ((float_some_qnan
-       (FP_Mul roundTiesToEven (float_plus_infinity (:52 # 11))
-          <|Sign := 0w; Exponent := 0w; Significand := 0w|>)).Sign @@
-    2047w @@
-    (float_some_qnan
-       (FP_Mul roundTiesToEven (float_plus_infinity (:52 # 11))
-          <|Sign := 0w; Exponent := 0w; Significand := 0w|>)).Significand) =
- 2047w ∧
- (51 >< 0)
-   ((float_some_qnan
-       (FP_Mul roundTiesToEven (float_plus_infinity (:52 # 11))
-          <|Sign := 0w; Exponent := 0w; Significand := 0w|>)).Sign @@
-    2047w @@
-    (float_some_qnan
-       (FP_Mul roundTiesToEven (float_plus_infinity (:52 # 11))
-          <|Sign := 0w; Exponent := 0w; Significand := 0w|>)).Significand) ≠
- 0w,
- (62 >< 52)
-   ((float_some_qnan
-       (FP_Mul roundTiesToEven (float_plus_infinity (:52 # 11))
-          <|Sign := 0w; Exponent := 0w; Significand := 0w|>)).Sign @@
-    2047w @@
-    (float_some_qnan
-       (FP_Mul roundTiesToEven (float_plus_infinity (:52 # 11))
-          <|Sign := 0w; Exponent := 0w; Significand := 0w|>)).Significand) =
- 2047w ∧
- ¬word_msb
-   ((51 >< 0)
-      ((float_some_qnan
-          (FP_Mul roundTiesToEven (float_plus_infinity (:52 # 11))
-             <|Sign := 0w; Exponent := 0w; Significand := 0w|>)).Sign @@
-       2047w @@
-       (float_some_qnan
-          (FP_Mul roundTiesToEven (float_plus_infinity (:52 # 11))
-             <|Sign := 0w; Exponent := 0w; Significand := 0w|>)).Significand)) ∧
- (51 >< 0)
-   ((float_some_qnan
-       (FP_Mul roundTiesToEven (float_plus_infinity (:52 # 11))
-          <|Sign := 0w; Exponent := 0w; Significand := 0w|>)).Sign @@
-    2047w @@
-    (float_some_qnan
-       (FP_Mul roundTiesToEven (float_plus_infinity (:52 # 11))
-          <|Sign := 0w; Exponent := 0w; Significand := 0w|>)).Significand) ≠
- 0w)
-div_invalid_zero_zero=((62 >< 52)
-   ((float_some_qnan
-       (FP_Div roundTiesToEven
-          <|Sign := 0w; Exponent := 0w; Significand := 0w|>
-          <|Sign := 0w; Exponent := 0w; Significand := 0w|>)).Sign @@
-    2047w @@
-    (float_some_qnan
-       (FP_Div roundTiesToEven
-          <|Sign := 0w; Exponent := 0w; Significand := 0w|>
-          <|Sign := 0w; Exponent := 0w; Significand := 0w|>)).Significand) =
- 2047w ∧
- (51 >< 0)
-   ((float_some_qnan
-       (FP_Div roundTiesToEven
-          <|Sign := 0w; Exponent := 0w; Significand := 0w|>
-          <|Sign := 0w; Exponent := 0w; Significand := 0w|>)).Sign @@
-    2047w @@
-    (float_some_qnan
-       (FP_Div roundTiesToEven
-          <|Sign := 0w; Exponent := 0w; Significand := 0w|>
-          <|Sign := 0w; Exponent := 0w; Significand := 0w|>)).Significand) ≠
- 0w,
- (62 >< 52)
-   ((float_some_qnan
-       (FP_Div roundTiesToEven
-          <|Sign := 0w; Exponent := 0w; Significand := 0w|>
-          <|Sign := 0w; Exponent := 0w; Significand := 0w|>)).Sign @@
-    2047w @@
-    (float_some_qnan
-       (FP_Div roundTiesToEven
-          <|Sign := 0w; Exponent := 0w; Significand := 0w|>
-          <|Sign := 0w; Exponent := 0w; Significand := 0w|>)).Significand) =
- 2047w ∧
- ¬word_msb
-   ((51 >< 0)
-      ((float_some_qnan
-          (FP_Div roundTiesToEven
-             <|Sign := 0w; Exponent := 0w; Significand := 0w|>
-             <|Sign := 0w; Exponent := 0w; Significand := 0w|>)).Sign @@
-       2047w @@
-       (float_some_qnan
-          (FP_Div roundTiesToEven
-             <|Sign := 0w; Exponent := 0w; Significand := 0w|>
-             <|Sign := 0w; Exponent := 0w; Significand := 0w|>)).Significand)) ∧
- (51 >< 0)
-   ((float_some_qnan
-       (FP_Div roundTiesToEven
-          <|Sign := 0w; Exponent := 0w; Significand := 0w|>
-          <|Sign := 0w; Exponent := 0w; Significand := 0w|>)).Sign @@
-    2047w @@
-    (float_some_qnan
-       (FP_Div roundTiesToEven
-          <|Sign := 0w; Exponent := 0w; Significand := 0w|>
-          <|Sign := 0w; Exponent := 0w; Significand := 0w|>)).Significand) ≠
- 0w)
-div_invalid_inf_inf=((62 >< 52)
-   ((float_some_qnan
-       (FP_Div roundTiesToEven (float_plus_infinity (:52 # 11))
-          (float_minus_infinity (:52 # 11)))).Sign @@ 2047w @@
-    (float_some_qnan
-       (FP_Div roundTiesToEven (float_plus_infinity (:52 # 11))
-          (float_minus_infinity (:52 # 11)))).Significand) =
- 2047w ∧
- (51 >< 0)
-   ((float_some_qnan
-       (FP_Div roundTiesToEven (float_plus_infinity (:52 # 11))
-          (float_minus_infinity (:52 # 11)))).Sign @@ 2047w @@
-    (float_some_qnan
-       (FP_Div roundTiesToEven (float_plus_infinity (:52 # 11))
-          (float_minus_infinity (:52 # 11)))).Significand) ≠ 0w,
- (62 >< 52)
-   ((float_some_qnan
-       (FP_Div roundTiesToEven (float_plus_infinity (:52 # 11))
-          (float_minus_infinity (:52 # 11)))).Sign @@ 2047w @@
-    (float_some_qnan
-       (FP_Div roundTiesToEven (float_plus_infinity (:52 # 11))
-          (float_minus_infinity (:52 # 11)))).Significand) =
- 2047w ∧
- ¬word_msb
-   ((51 >< 0)
-      ((float_some_qnan
-          (FP_Div roundTiesToEven (float_plus_infinity (:52 # 11))
-             (float_minus_infinity (:52 # 11)))).Sign @@ 2047w @@
-       (float_some_qnan
-          (FP_Div roundTiesToEven (float_plus_infinity (:52 # 11))
-             (float_minus_infinity (:52 # 11)))).Significand)) ∧
- (51 >< 0)
-   ((float_some_qnan
-       (FP_Div roundTiesToEven (float_plus_infinity (:52 # 11))
-          (float_minus_infinity (:52 # 11)))).Sign @@ 2047w @@
-    (float_some_qnan
-       (FP_Div roundTiesToEven (float_plus_infinity (:52 # 11))
-          (float_minus_infinity (:52 # 11)))).Significand) ≠ 0w)
-fma_invalid_inf_zero=((62 >< 52)
-   ((float_some_qnan
-       (FP_MulAdd roundTiesToEven (float_plus_infinity (:52 # 11))
-          <|Sign := 0w; Exponent := 0w; Significand := 0w|>
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Sign @@
-    2047w @@
-    (float_some_qnan
-       (FP_MulAdd roundTiesToEven (float_plus_infinity (:52 # 11))
-          <|Sign := 0w; Exponent := 0w; Significand := 0w|>
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Significand) =
- 2047w ∧
- (51 >< 0)
-   ((float_some_qnan
-       (FP_MulAdd roundTiesToEven (float_plus_infinity (:52 # 11))
-          <|Sign := 0w; Exponent := 0w; Significand := 0w|>
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Sign @@
-    2047w @@
-    (float_some_qnan
-       (FP_MulAdd roundTiesToEven (float_plus_infinity (:52 # 11))
-          <|Sign := 0w; Exponent := 0w; Significand := 0w|>
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Significand) ≠
- 0w,
- (62 >< 52)
-   ((float_some_qnan
-       (FP_MulAdd roundTiesToEven (float_plus_infinity (:52 # 11))
-          <|Sign := 0w; Exponent := 0w; Significand := 0w|>
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Sign @@
-    2047w @@
-    (float_some_qnan
-       (FP_MulAdd roundTiesToEven (float_plus_infinity (:52 # 11))
-          <|Sign := 0w; Exponent := 0w; Significand := 0w|>
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Significand) =
- 2047w ∧
- ¬word_msb
-   ((51 >< 0)
-      ((float_some_qnan
-          (FP_MulAdd roundTiesToEven (float_plus_infinity (:52 # 11))
-             <|Sign := 0w; Exponent := 0w; Significand := 0w|>
-             <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Sign @@
-       2047w @@
-       (float_some_qnan
-          (FP_MulAdd roundTiesToEven (float_plus_infinity (:52 # 11))
-             <|Sign := 0w; Exponent := 0w; Significand := 0w|>
-             <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).
-       Significand)) ∧
- (51 >< 0)
-   ((float_some_qnan
-       (FP_MulAdd roundTiesToEven (float_plus_infinity (:52 # 11))
-          <|Sign := 0w; Exponent := 0w; Significand := 0w|>
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Sign @@
-    2047w @@
-    (float_some_qnan
-       (FP_MulAdd roundTiesToEven (float_plus_infinity (:52 # 11))
-          <|Sign := 0w; Exponent := 0w; Significand := 0w|>
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Significand) ≠
- 0w)
-fma_invalid_opposed_infinities=((62 >< 52)
-   ((float_some_qnan
-       (FP_MulAdd roundTiesToEven (float_plus_infinity (:52 # 11))
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>
-          (float_minus_infinity (:52 # 11)))).Sign @@ 2047w @@
-    (float_some_qnan
-       (FP_MulAdd roundTiesToEven (float_plus_infinity (:52 # 11))
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>
-          (float_minus_infinity (:52 # 11)))).Significand) =
- 2047w ∧
- (51 >< 0)
-   ((float_some_qnan
-       (FP_MulAdd roundTiesToEven (float_plus_infinity (:52 # 11))
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>
-          (float_minus_infinity (:52 # 11)))).Sign @@ 2047w @@
-    (float_some_qnan
-       (FP_MulAdd roundTiesToEven (float_plus_infinity (:52 # 11))
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>
-          (float_minus_infinity (:52 # 11)))).Significand) ≠ 0w,
- (62 >< 52)
-   ((float_some_qnan
-       (FP_MulAdd roundTiesToEven (float_plus_infinity (:52 # 11))
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>
-          (float_minus_infinity (:52 # 11)))).Sign @@ 2047w @@
-    (float_some_qnan
-       (FP_MulAdd roundTiesToEven (float_plus_infinity (:52 # 11))
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>
-          (float_minus_infinity (:52 # 11)))).Significand) =
- 2047w ∧
- ¬word_msb
-   ((51 >< 0)
-      ((float_some_qnan
-          (FP_MulAdd roundTiesToEven (float_plus_infinity (:52 # 11))
-             <|Sign := 0w; Exponent := 1023w; Significand := 0w|>
-             (float_minus_infinity (:52 # 11)))).Sign @@ 2047w @@
-       (float_some_qnan
-          (FP_MulAdd roundTiesToEven (float_plus_infinity (:52 # 11))
-             <|Sign := 0w; Exponent := 1023w; Significand := 0w|>
-             (float_minus_infinity (:52 # 11)))).Significand)) ∧
- (51 >< 0)
-   ((float_some_qnan
-       (FP_MulAdd roundTiesToEven (float_plus_infinity (:52 # 11))
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>
-          (float_minus_infinity (:52 # 11)))).Sign @@ 2047w @@
-    (float_some_qnan
-       (FP_MulAdd roundTiesToEven (float_plus_infinity (:52 # 11))
-          <|Sign := 0w; Exponent := 1023w; Significand := 0w|>
-          (float_minus_infinity (:52 # 11)))).Significand) ≠ 0w)
+source_qnan_classification=⊢ ∀fp_op.
+    (float_is_nan (float_some_qnan fp_op),
+     float_is_signalling (float_some_qnan fp_op)) =
+    (T,F)
+add_qnan_input=⊢ fp64_add roundTiesToEven 0x7FF8000000000000w 0x3FF0000000000000w =
+  (float_some_qnan
+     (FP_Add roundTiesToEven
+        <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>
+        <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Sign @@
+  2047w @@
+  (float_some_qnan
+     (FP_Add roundTiesToEven
+        <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>
+        <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Significand
+sub_qnan_input=⊢ fp64_sub roundTiesToEven 0x7FF8000000000000w 0x3FF0000000000000w =
+  (float_some_qnan
+     (FP_Sub roundTiesToEven
+        <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>
+        <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Sign @@
+  2047w @@
+  (float_some_qnan
+     (FP_Sub roundTiesToEven
+        <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>
+        <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Significand
+mul_qnan_input=⊢ fp64_mul roundTiesToEven 0x7FF8000000000000w 0x3FF0000000000000w =
+  (float_some_qnan
+     (FP_Mul roundTiesToEven
+        <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>
+        <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Sign @@
+  2047w @@
+  (float_some_qnan
+     (FP_Mul roundTiesToEven
+        <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>
+        <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Significand
+div_qnan_input=⊢ fp64_div roundTiesToEven 0x7FF8000000000000w 0x3FF0000000000000w =
+  (float_some_qnan
+     (FP_Div roundTiesToEven
+        <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>
+        <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Sign @@
+  2047w @@
+  (float_some_qnan
+     (FP_Div roundTiesToEven
+        <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>
+        <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Significand
+fma_qnan_input=⊢ fp64_mul_add roundTiesToEven 0x3FF0000000000000w 0x3FF0000000000000w
+    0x7FF8000000000000w =
+  (float_some_qnan
+     (FP_MulAdd roundTiesToEven
+        <|Sign := 0w; Exponent := 1023w; Significand := 0w|>
+        <|Sign := 0w; Exponent := 1023w; Significand := 0w|>
+        <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>)).
+  Sign @@ 2047w @@
+  (float_some_qnan
+     (FP_MulAdd roundTiesToEven
+        <|Sign := 0w; Exponent := 1023w; Significand := 0w|>
+        <|Sign := 0w; Exponent := 1023w; Significand := 0w|>
+        <|Sign := 0w; Exponent := 2047w; Significand := 0x8000000000000w|>)).
+  Significand
+add_invalid_infinities=⊢ fp64_add roundTiesToEven 0x7FF0000000000000w 0xFFF0000000000000w =
+  (float_some_qnan
+     (FP_Add roundTiesToEven (float_plus_infinity (:52 # 11))
+        (float_minus_infinity (:52 # 11)))).Sign @@ 2047w @@
+  (float_some_qnan
+     (FP_Add roundTiesToEven (float_plus_infinity (:52 # 11))
+        (float_minus_infinity (:52 # 11)))).Significand
+sub_invalid_infinities=⊢ fp64_sub roundTiesToEven 0x7FF0000000000000w 0x7FF0000000000000w =
+  (float_some_qnan
+     (FP_Sub roundTiesToEven (float_plus_infinity (:52 # 11))
+        (float_plus_infinity (:52 # 11)))).Sign @@ 2047w @@
+  (float_some_qnan
+     (FP_Sub roundTiesToEven (float_plus_infinity (:52 # 11))
+        (float_plus_infinity (:52 # 11)))).Significand
+mul_invalid_inf_zero=⊢ fp64_mul roundTiesToEven 0x7FF0000000000000w 0w =
+  (float_some_qnan
+     (FP_Mul roundTiesToEven (float_plus_infinity (:52 # 11))
+        <|Sign := 0w; Exponent := 0w; Significand := 0w|>)).Sign @@ 2047w @@
+  (float_some_qnan
+     (FP_Mul roundTiesToEven (float_plus_infinity (:52 # 11))
+        <|Sign := 0w; Exponent := 0w; Significand := 0w|>)).Significand
+div_invalid_zero_zero=⊢ fp64_div roundTiesToEven 0w 0w =
+  (float_some_qnan
+     (FP_Div roundTiesToEven
+        <|Sign := 0w; Exponent := 0w; Significand := 0w|>
+        <|Sign := 0w; Exponent := 0w; Significand := 0w|>)).Sign @@ 2047w @@
+  (float_some_qnan
+     (FP_Div roundTiesToEven
+        <|Sign := 0w; Exponent := 0w; Significand := 0w|>
+        <|Sign := 0w; Exponent := 0w; Significand := 0w|>)).Significand
+div_invalid_inf_inf=⊢ fp64_div roundTiesToEven 0x7FF0000000000000w 0xFFF0000000000000w =
+  (float_some_qnan
+     (FP_Div roundTiesToEven (float_plus_infinity (:52 # 11))
+        (float_minus_infinity (:52 # 11)))).Sign @@ 2047w @@
+  (float_some_qnan
+     (FP_Div roundTiesToEven (float_plus_infinity (:52 # 11))
+        (float_minus_infinity (:52 # 11)))).Significand
+fma_invalid_inf_zero=⊢ fp64_mul_add roundTiesToEven 0x7FF0000000000000w 0w 0x3FF0000000000000w =
+  (float_some_qnan
+     (FP_MulAdd roundTiesToEven (float_plus_infinity (:52 # 11))
+        <|Sign := 0w; Exponent := 0w; Significand := 0w|>
+        <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Sign @@
+  2047w @@
+  (float_some_qnan
+     (FP_MulAdd roundTiesToEven (float_plus_infinity (:52 # 11))
+        <|Sign := 0w; Exponent := 0w; Significand := 0w|>
+        <|Sign := 0w; Exponent := 1023w; Significand := 0w|>)).Significand
+fma_invalid_opposed_infinities=⊢ fp64_mul_add roundTiesToEven 0x7FF0000000000000w 0x3FF0000000000000w
+    0xFFF0000000000000w =
+  (float_some_qnan
+     (FP_MulAdd roundTiesToEven (float_plus_infinity (:52 # 11))
+        <|Sign := 0w; Exponent := 1023w; Significand := 0w|>
+        (float_minus_infinity (:52 # 11)))).Sign @@ 2047w @@
+  (float_some_qnan
+     (FP_MulAdd roundTiesToEven (float_plus_infinity (:52 # 11))
+        <|Sign := 0w; Exponent := 1023w; Significand := 0w|>
+        (float_minus_infinity (:52 # 11)))).Significand
