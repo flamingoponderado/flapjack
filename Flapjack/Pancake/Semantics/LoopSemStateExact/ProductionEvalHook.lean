@@ -18,15 +18,21 @@ This module defines a candidate production adapter `loopMachineEvalHook` and
 proves that, under the exact/production state relation
 `LoopSemStateFiniteExact.prodRel`, it agrees with the exact
 `LoopSemStateFiniteExact.eval` on the `HolLoopExp.const` and `.var` expressions
-carried across by `holLoopExpToExecutable`.  The `Var` statement covers a present
-word-valued local, a present location-valued local, and an absent local, i.e. the
-complete word/location payload, and it is derived from the `prodRel` local-lookup
-conjunct rather than assumed as a hook equation.
+carried across by `holLoopExpToExecutable`. It also proves the `Lookup` clause
+and the `Load` clause from the exact relation. The `Var` statement covers a
+present word-valued local, a present location-valued local, and an absent local,
+i.e. the complete word/location payload, and it is derived from the `prodRel`
+local-lookup conjunct rather than assumed as a hook equation. `Load` takes the
+agreement for its address as a recursive premise; its proof handles failed and
+location-valued address evaluation, an address outside `mdomain`, and both word
+and location-valued memory cells.
 
-Only `Const` and `Var` are verified here; the other adapter cases and wiring to
-an executed caller remain open. These are Flapjack-specific cross-carrier
-bridges between the exact finite-support carrier and the production carrier;
-none ports a HOL declaration, so they intentionally carry no `@[hol]` tag.
+Only `Const`, `Var`, `Lookup`, `BaseAddr`, `TopAddr`, and the `Load` case with
+its recursive address premise are verified here; `Op`/`Shift`, other adapter
+cases, and wiring to an executed caller remain open. These are Flapjack-specific
+cross-carrier bridges between the exact finite-support carrier and the
+production carrier; none ports a HOL declaration, so they intentionally carry
+no `@[hol]` tag.
 -/
 
 namespace Flapjack
@@ -44,8 +50,10 @@ def loopValueToWordLocW {width : Nat} [NeZero width] :
     word, `Var` reads the local cell (word or location, or `none` when absent),
     `Lookup` reads globals, `Load` consults `mdomain`/`memory`, `Op`/`Shift`
     reuse the reviewed `wordOpHOL`/`wordShiftHOL`, and `BaseAddr`/`TopAddr`
-    return the state's address bounds. Only `Const` and `Var` have proven
-    exact/production agreement below; the other clauses need separate review.
+    return the state's address bounds. `Const`, `Var`, `Lookup`, `BaseAddr`, and
+    `TopAddr` have unconditional exact/production agreement below; `Load` has
+    agreement when supplied the recursive agreement for its address. `Op` and
+    `Shift` still need separate review.
 
     Only the `crepOp`/`cmp` constructors, which the executable `LoopExp` adds but
     the faithful `HolLoopExp` does not contain, have no source counterpart and
@@ -150,5 +158,94 @@ theorem loopMachineEvalHook_var_none_prodRel {width : Nat} [NeZero width] {F : T
   have hlocal := hrel.1 name
   rw [hlookup] at hlocal
   simpa [holLoopExpToExecutable] using hlocal
+
+/-- The production `Lookup` hook agrees with exact `eval` for every result,
+    including a missing global and either `WordLocW` payload. This is exactly
+    the globals lookup conjunct of `prodRel`; no desired hook equation is
+    assumed. Flapjack-only cross-carrier bridge, with no `@[hol]` tag. -/
+theorem loopMachineEvalHook_lookup_prodRel {width : Nat} [NeZero width] {F : Type}
+    {state : LoopSemStateFiniteExact width F}
+    {machine : LoopMachineState (BitVec width) F}
+    (hrel : state.prodRel machine) (name : BitVec 5) :
+    loopMachineEvalHook machine (holLoopExpToExecutable (.lookup name)) =
+      (LoopSemStateFiniteExact.eval state (.lookup name)).map loopValueOfWordLocW := by
+  have hglobals := hrel.2.1 name
+  simpa [holLoopExpToExecutable, LoopSemStateFiniteExact.eval, loopMachineEvalHook] using hglobals
+
+/-- The production `Load` hook agrees with exact `eval` when the address
+    expression agrees under the recursive premise. The proof derives its cases
+    from that premise and `prodRel`: failure or a location-valued address gives
+    `none`; a word address outside `mdomain` gives `none`; an in-domain word
+    address returns the related memory cell, preserving either its word or
+    location payload. The premise is the genuine strict-subexpression IH for
+    `address`, not an assumed equation for the `Load` expression. Flapjack-only
+    cross-carrier bridge, with no `@[hol]` tag. -/
+theorem loopMachineEvalHook_load_prodRel_of_ih {width : Nat} [NeZero width] {F : Type}
+    {state : LoopSemStateFiniteExact width F}
+    {machine : LoopMachineState (BitVec width) F}
+    (hrel : state.prodRel machine) (address : HolLoopExp width)
+    (haddress :
+      loopMachineEvalHook machine (holLoopExpToExecutable address) =
+        (LoopSemStateFiniteExact.eval state address).map loopValueOfWordLocW) :
+    loopMachineEvalHook machine (holLoopExpToExecutable (.load address)) =
+      (LoopSemStateFiniteExact.eval state (.load address)).map loopValueOfWordLocW := by
+  cases heval : LoopSemStateFiniteExact.eval state address with
+  | none =>
+      have hhook : loopMachineEvalHook machine (holLoopExpToExecutable address) = none := by
+        simpa [heval] using haddress
+      simp [holLoopExpToExecutable, loopMachineEvalHook,
+        LoopSemStateFiniteExact.eval, heval, hhook]
+  | some value =>
+      cases value with
+      | loc identifier offset =>
+          have hhook :
+              loopMachineEvalHook machine (holLoopExpToExecutable address) =
+                some (.loc identifier offset) := by
+            simpa [heval, loopValueOfWordLocW] using haddress
+          simp [holLoopExpToExecutable, loopMachineEvalHook,
+            LoopSemStateFiniteExact.eval, heval, hhook]
+      | word word =>
+          have hhook :
+              loopMachineEvalHook machine (holLoopExpToExecutable address) =
+                some (.word word) := by
+            simpa [heval, loopValueOfWordLocW] using haddress
+          rcases hrel with
+            ⟨_, _, hmemory, hmdomain, _, _, _, _, _, _, _, _⟩
+          simp only [holLoopExpToExecutable, loopMachineEvalHook, hhook,
+            LoopSemStateFiniteExact.eval, heval]
+          rw [hmdomain]
+          by_cases hdomain : state.mdomain word
+          · cases hcell : state.memory word <;>
+              simp [LoopSemStateFiniteExact.memLoad, hmemory word, hcell,
+                loopValueOfWordLocW, hdomain]
+          · simp [LoopSemStateFiniteExact.memLoad, hdomain]
+
+/-- The production `BaseAddr` hook agrees with exact `eval` under `prodRel`.
+    The equation follows from the base-address conjunct and preserves the
+    width-indexed word payload. Flapjack-only cross-carrier bridge, with no
+    `@[hol]` tag. -/
+theorem loopMachineEvalHook_baseAddr_prodRel {width : Nat} [NeZero width] {F : Type}
+    {state : LoopSemStateFiniteExact width F}
+    {machine : LoopMachineState (BitVec width) F}
+    (hrel : state.prodRel machine) :
+    loopMachineEvalHook machine (holLoopExpToExecutable (.baseAddr : HolLoopExp width)) =
+      (LoopSemStateFiniteExact.eval state .baseAddr).map loopValueOfWordLocW := by
+  rcases hrel with ⟨_, _, _, _, _, _, _, _, hbaseAddr, _, _, _⟩
+  simp [holLoopExpToExecutable, loopMachineEvalHook,
+    LoopSemStateFiniteExact.eval, loopValueOfWordLocW, hbaseAddr]
+
+/-- The production `TopAddr` hook agrees with exact `eval` under `prodRel`.
+    The equation follows from the top-address conjunct and preserves the
+    width-indexed word payload. Flapjack-only cross-carrier bridge, with no
+    `@[hol]` tag. -/
+theorem loopMachineEvalHook_topAddr_prodRel {width : Nat} [NeZero width] {F : Type}
+    {state : LoopSemStateFiniteExact width F}
+    {machine : LoopMachineState (BitVec width) F}
+    (hrel : state.prodRel machine) :
+    loopMachineEvalHook machine (holLoopExpToExecutable (.topAddr : HolLoopExp width)) =
+      (LoopSemStateFiniteExact.eval state .topAddr).map loopValueOfWordLocW := by
+  rcases hrel with ⟨_, _, _, _, _, _, _, _, _, htopAddr, _, _⟩
+  simp [holLoopExpToExecutable, loopMachineEvalHook,
+    LoopSemStateFiniteExact.eval, loopValueOfWordLocW, htopAddr]
 
 end Flapjack

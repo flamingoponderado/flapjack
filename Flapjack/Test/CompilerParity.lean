@@ -316,6 +316,7 @@ import Flapjack.Test.WordLangCallArgParity
 import Flapjack.Test.RegAllocVarParity
 import Flapjack.Test.WordLangNotCreatedParity
 import Flapjack.Test.WordLangEveryVarParity
+import Flapjack.Test.WordSemCarriersParity
 import Flapjack.Test.WordLangGoodHandlersParity
 import Flapjack.Test.NumSetAuditParity
 import Flapjack.Test.WordLangEveryNameParity
@@ -1062,6 +1063,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.RegAllocVarParity.runChecks,
     Flapjack.Test.WordLangNotCreatedParity.runChecks,
     Flapjack.Test.WordLangEveryVarParity.runChecks,
+    Flapjack.Test.WordSemCarriersParity.runChecks,
     Flapjack.Test.WordLangGoodHandlersParity.runChecks,
     Flapjack.Test.NumSetAuditParity.runChecks,
     Flapjack.Test.WordLangEveryNameParity.runChecks,

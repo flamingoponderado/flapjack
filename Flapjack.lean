@@ -2,6 +2,7 @@ import Flapjack.HolRef
 import Flapjack.AstHOL
 import Flapjack.Compiler.Backend.BackendCommon
 import Flapjack.Compiler.Backend.Semantics.WordSem
+import Flapjack.Compiler.Backend.Semantics.WordSem.State
 import Flapjack.Pancake.PanLang
 import Flapjack.Pancake.PanLang.Shape
 import Flapjack.Pancake.PanLang.Exp
@@ -128,8 +129,11 @@ import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.Assign
 import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.Continue
 import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.Primitive
 import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.Seq
+import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.Ffi
+import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.CutState
 import Flapjack.Pancake.Semantics.LoopSemStateExact.ProductionExtCall
 import Flapjack.Pancake.Semantics.LoopSemStateExact.ProductionEvalHook
+import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.OpShift
 import Flapjack.Pancake.Semantics.LoopSemStateExact.Semantics
 import Flapjack.Pancake.Semantics.LoopProps.EvaluateClockExact
 import Flapjack.Pancake.Semantics.LoopProps.EvaluateIoEventsExact
