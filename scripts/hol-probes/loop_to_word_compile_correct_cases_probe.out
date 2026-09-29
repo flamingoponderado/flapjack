@@ -43,6 +43,76 @@ cc_case_Fail=!s res s1 t ctxt retv l.
     | SOME TimeOut => res1 = SOME TimeOut
     | SOME (FinalFFI f) => res1 = SOME (FinalFFI f)
     | SOME Error => F
+cc_case_Seq=!c1 c2 s.
+  (!res s1.
+     (res,s1) = evaluate (c1,s) /\ res = NONE ==>
+     !res s1' t ctxt retv l.
+       evaluate (c2,s1) = (res,s1') /\ res <> SOME Error /\ state_rel s1 t /\ locals_rel ctxt s1.locals t.locals /\ lookup 0 t.locals = SOME retv /\
+       good_dimindex (:'a) /\ ~isWord retv /\ domain (acc_vars c2 LN) SUBSET domain ctxt ==>
+       ?t1 res1.
+         evaluate (FST (comp ctxt c2 l),t) = (res1,t1) /\ t1.ffi = s1'.ffi /\
+         case res of
+           NONE =>
+             state_rel s1' t1 /\ res1 = NONE /\ lookup 0 t1.locals = SOME retv /\ locals_rel ctxt s1'.locals t1.locals /\ t1.stack = t.stack /\
+             t1.handler = t.handler
+         | SOME (Result v) => state_rel s1' t1 /\ res1 = SOME (Result retv v) /\ t1.stack = t.stack /\ t1.handler = t.handler
+         | SOME (Exception v') =>
+           state_rel s1' t1 /\ (res1 <> SOME Error ==> ?u1 u2. res1 = SOME (Exception u1 u2)) /\
+           !r l1 l2.
+             jump_exc (t1 with <|stack := t.stack; handler := t.handler|>) = SOME (r,l1,l2) ==> res1 = SOME (Exception (Loc l1 l2) v') /\ r = t1
+         | SOME (Break n) =>
+           state_rel s1' t1 /\ res1 = SOME (Break n) /\ lookup 0 t1.locals = SOME retv /\ locals_rel ctxt s1'.locals t1.locals /\
+           t1.stack = t.stack /\ t1.handler = t.handler
+         | SOME (Continue n') =>
+           state_rel s1' t1 /\ res1 = SOME (Continue n') /\ lookup 0 t1.locals = SOME retv /\ locals_rel ctxt s1'.locals t1.locals /\
+           t1.stack = t.stack /\ t1.handler = t.handler
+         | SOME TimeOut => res1 = SOME TimeOut
+         | SOME (FinalFFI f) => res1 = SOME (FinalFFI f)
+         | SOME Error => F) /\
+  (!res s1 t ctxt retv l.
+     evaluate (c1,s) = (res,s1) /\ res <> SOME Error /\ state_rel s t /\ locals_rel ctxt s.locals t.locals /\ lookup 0 t.locals = SOME retv /\
+     good_dimindex (:'a) /\ ~isWord retv /\ domain (acc_vars c1 LN) SUBSET domain ctxt ==>
+     ?t1 res1.
+       evaluate (FST (comp ctxt c1 l),t) = (res1,t1) /\ t1.ffi = s1.ffi /\
+       case res of
+         NONE =>
+           state_rel s1 t1 /\ res1 = NONE /\ lookup 0 t1.locals = SOME retv /\ locals_rel ctxt s1.locals t1.locals /\ t1.stack = t.stack /\
+           t1.handler = t.handler
+       | SOME (Result v) => state_rel s1 t1 /\ res1 = SOME (Result retv v) /\ t1.stack = t.stack /\ t1.handler = t.handler
+       | SOME (Exception v') =>
+         state_rel s1 t1 /\ (res1 <> SOME Error ==> ?u1 u2. res1 = SOME (Exception u1 u2)) /\
+         !r l1 l2. jump_exc (t1 with <|stack := t.stack; handler := t.handler|>) = SOME (r,l1,l2) ==> res1 = SOME (Exception (Loc l1 l2) v') /\ r = t1
+       | SOME (Break n) =>
+         state_rel s1 t1 /\ res1 = SOME (Break n) /\ lookup 0 t1.locals = SOME retv /\ locals_rel ctxt s1.locals t1.locals /\ t1.stack = t.stack /\
+         t1.handler = t.handler
+       | SOME (Continue n') =>
+         state_rel s1 t1 /\ res1 = SOME (Continue n') /\ lookup 0 t1.locals = SOME retv /\ locals_rel ctxt s1.locals t1.locals /\
+         t1.stack = t.stack /\ t1.handler = t.handler
+       | SOME TimeOut => res1 = SOME TimeOut
+       | SOME (FinalFFI f) => res1 = SOME (FinalFFI f)
+       | SOME Error => F) ==>
+  !res s1 t ctxt retv l.
+    evaluate (Seq c1 c2,s) = (res,s1) /\ res <> SOME Error /\ state_rel s t /\ locals_rel ctxt s.locals t.locals /\ lookup 0 t.locals = SOME retv /\
+    good_dimindex (:'a) /\ ~isWord retv /\ domain (acc_vars (Seq c1 c2) LN) SUBSET domain ctxt ==>
+    ?t1 res1.
+      evaluate (FST (comp ctxt (Seq c1 c2) l),t) = (res1,t1) /\ t1.ffi = s1.ffi /\
+      case res of
+        NONE =>
+          state_rel s1 t1 /\ res1 = NONE /\ lookup 0 t1.locals = SOME retv /\ locals_rel ctxt s1.locals t1.locals /\ t1.stack = t.stack /\
+          t1.handler = t.handler
+      | SOME (Result v) => state_rel s1 t1 /\ res1 = SOME (Result retv v) /\ t1.stack = t.stack /\ t1.handler = t.handler
+      | SOME (Exception v') =>
+        state_rel s1 t1 /\ (res1 <> SOME Error ==> ?u1 u2. res1 = SOME (Exception u1 u2)) /\
+        !r l1 l2. jump_exc (t1 with <|stack := t.stack; handler := t.handler|>) = SOME (r,l1,l2) ==> res1 = SOME (Exception (Loc l1 l2) v') /\ r = t1
+      | SOME (Break n) =>
+        state_rel s1 t1 /\ res1 = SOME (Break n) /\ lookup 0 t1.locals = SOME retv /\ locals_rel ctxt s1.locals t1.locals /\ t1.stack = t.stack /\
+        t1.handler = t.handler
+      | SOME (Continue n') =>
+        state_rel s1 t1 /\ res1 = SOME (Continue n') /\ lookup 0 t1.locals = SOME retv /\ locals_rel ctxt s1.locals t1.locals /\ t1.stack = t.stack /\
+        t1.handler = t.handler
+      | SOME TimeOut => res1 = SOME TimeOut
+      | SOME (FinalFFI f) => res1 = SOME (FinalFFI f)
+      | SOME Error => F
 cc_case_Mark=!p s.
   (!res s1 t ctxt retv l.
      evaluate (p,s) = (res,s1) /\ res <> SOME Error /\ state_rel s t /\ locals_rel ctxt s.locals t.locals /\ lookup 0 t.locals = SOME retv /\

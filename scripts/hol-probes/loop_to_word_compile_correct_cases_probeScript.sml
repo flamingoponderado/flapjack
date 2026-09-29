@@ -46,7 +46,7 @@ fun ctor_of conj =
       val prog = fst (pairSyntax.dest_pair (rand e))
   in #Name (dest_thy_const (fst (strip_comb prog))) end;
 
-val wanted = ["Skip", "Fail", "Tick", "Continue", "Break", "Mark", "Return", "Raise"];
+val wanted = ["Skip", "Fail", "Tick", "Continue", "Break", "Mark", "Return", "Raise", "Seq"];
 val cases = strip_conj (fst (dest_imp (concl ind_thm)));
 val _ = List.app (fn c =>
   let val n = ctor_of c in
