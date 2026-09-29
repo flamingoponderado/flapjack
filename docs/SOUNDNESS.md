@@ -109,7 +109,11 @@ The following are open review or verification obligations:
    that rational rendering and HOL's real-number specification is a
    source-reviewed external assumption, not a kernel-checked cross-prover
    theorem. The value-component theorems do not establish flag equivalence;
-   NaN payload choice remains unspecified. Irrational square-root rounding
+   NaN payload choice remains unspecified. HOL `real_to_float` and
+   `real_to_fp64` accept arbitrary reals. Lean renders them only for
+   rational inputs (`holRealToFloat`, `holRealToFp64`), and there is no
+   general-real result. The one wordSem use, `int_to_fp64`, applies them to
+   integers, which are in scope. Irrational square-root rounding
    is not covered by these rational-input theorems, and is handled
    separately below.
 

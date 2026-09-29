@@ -4,8 +4,8 @@ import Flapjack.Misc.MachineIeee
 /-!
 # HOL `binary_ieee` integer conversions and their binary64 lifts
 
-A rendering of `float_to_int` and `real_to_float`
-(`HOL/src/floating-point/binary_ieeeScript.sml:539-572`), together with the
+A rendering of `float_to_int` and of `real_to_float` restricted to rational
+inputs (`HOL/src/floating-point/binary_ieeeScript.sml:539-572`), with the
 `fp64_to_int`, `real_to_fp64` and `int_to_fp64` encodings that
 `machine_ieeeLib` generates (bead `flapjack-h29l.6.3.1`).  These are used by
 wordSem `inst_def`'s `FPToInt` and `FPFromInt` cases.  HOL `INT_FLOOR` and
@@ -36,7 +36,11 @@ def holFloatToInt {t w : Nat} (mode : HolRounding) (x : HolFloat t w) : Option I
   | _ => none
 
 /-- HOL `real_to_float_def` (`binary_ieeeScript.sml:539-541`):
-    `real_to_float m = float_round m (m = roundTowardNegative)`. -/
+    `real_to_float m = float_round m (m = roundTowardNegative)`, restricted to
+    rational inputs.  HOL's `real_to_float` accepts an arbitrary real.  Lean
+    has no general-real version, so this is not an exact port of the full HOL
+    definition; its only use here is `int_to_fp64`, whose argument
+    `real_of_int a` is an integer and so lies in the covered domain. -/
 noncomputable def holRealToFloat {t w : Nat} (mode : HolRounding) (r : Rat) : HolFloat t w :=
   holFloatRound mode (decide (mode = .roundTowardNegative)) r
 
@@ -44,7 +48,8 @@ noncomputable def holRealToFloat {t w : Nat} (mode : HolRounding) (r : Rat) : Ho
 def holFp64ToInt (mode : HolRounding) (a : BitVec 64) : Option Int :=
   holFloatToInt mode (holFp64ToFloat a)
 
-/-- HOL `real_to_fp64 mode = float_to_fp64 o real_to_float mode`. -/
+/-- HOL `real_to_fp64 mode = float_to_fp64 o real_to_float mode`, restricted
+    to rational inputs like `holRealToFloat`. -/
 noncomputable def holRealToFp64 (mode : HolRounding) (r : Rat) : BitVec 64 :=
   holFloatToFp64 (holRealToFloat mode r)
 
