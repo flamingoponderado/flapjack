@@ -440,6 +440,17 @@ out-of-domain and missing-variable failure branches `(SOME Error, s)` and their
 exact `simpProgCorrectStoreByteCase` and the exact `CrepSemHOLState` memory
 update. Refresh with
 `HOL_PROBE_ONLY=crep_arith_store_byte_probeScript.sml scripts/hol-probes/regenerate.sh`.
+`crep_arith_ext_call_probe.out` records four direct HOL EVAL rows for the
+`ExtCall` case of the proof-script `simp_prog_correct` at
+`cakeml/pancake/proofs/crep_arithProofScript.sml:184-212`: HOL `simp_prog`
+leaves an `ExtCall` unchanged (catch-all at `crep_arithScript.sml:113`), and
+`evaluate (ExtCall ffi_index ptr1 len1 ptr2 len2, s)`
+(`crepSemScript.sml:367-379`) reads four locals and calls `call_FFI`, with the
+missing-locals failure branch `(SOME Error, s)`. The rows pin the source
+identity, the code-only `mapc` rendering, and the failure branch directly and
+under `mapc`; the exact Lean `CrepSemHOLState` counterpart and its replay live
+in `Flapjack.Test.CrepArithExtCallParity`. Refresh with
+`HOL_PROBE_ONLY=crep_arith_ext_call_probeScript.sml scripts/hol-probes/regenerate.sh`.
 `crep_dest_2exp_probe.out` records direct HOL EVAL of
 `crep_arith$dest_2exp_def` at `cakeml/pancake/crep_arithScript.sml:15`, including
 the corresponding `word_lsl 1w` results for successful exponents. Its Lean

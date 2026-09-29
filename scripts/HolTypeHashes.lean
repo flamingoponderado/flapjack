@@ -103,6 +103,7 @@ import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectPrimitiveRaise
 import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectStoreGlob
 import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectStore32
 import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectStoreByte
+import Flapjack.Pancake.Proofs.CrepArith.SimpProgCorrectExtCall
 import Flapjack.Pancake.Proofs.CrepInline
 import Flapjack.Pancake.Proofs.PanGlobals
 import Flapjack.Pancake.Proofs.PanStructs
@@ -163,6 +164,7 @@ import Flapjack.Pancake.Semantics.LoopSemStateExact.ShMem
 import Flapjack.Pancake.Semantics.LoopSemStateExact.Evaluate
 import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateInd
 import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.StateRebinding
+import Flapjack.Pancake.Semantics.LoopSemStateExact.EvaluateCases.Continue
 import Flapjack.Pancake.Semantics.LoopSemStateExact.Semantics
 import Flapjack.Pancake.Semantics.LoopProps.EvaluateClockExact
 import Flapjack.Pancake.Semantics.LoopProps.EvaluateIoEventsExact
